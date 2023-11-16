@@ -28,6 +28,7 @@ export const createDbConnPostgres = async ({
 
         return ok(parsed);
       } catch (error) {
+        console.error(error);
         return err(String(error));
       }
     },

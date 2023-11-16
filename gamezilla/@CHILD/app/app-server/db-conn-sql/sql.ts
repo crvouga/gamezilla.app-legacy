@@ -1,5 +1,9 @@
 export function toSql(query: string, params: { [key: string]: any }): string {
-  for (const key in params) {
+  const keys = Object.keys(params);
+
+  const longestToShortest = keys.sort((a, b) => b.length - a.length);
+
+  for (const key of longestToShortest) {
     const value = params[key] ?? undefined;
 
     switch (typeof value) {

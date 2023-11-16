@@ -67,3 +67,14 @@ test("sql - handles parameter names with underscores", () => {
     "SELECT * FROM users WHERE age > 30"
   );
 });
+
+test("sql - handles parameter with overlapping names", () => {
+  expect(
+    toSql(
+      "SELECT * FROM users WHERE phone_number = :phone_number AND phone_number_country = :phone_number_country",
+      { phone_number: "555-555-5555", phone_number_country: "US" }
+    )
+  ).toBe(
+    "SELECT * FROM users WHERE phone_number = '555-555-5555' AND phone_number_country = 'US'"
+  );
+});

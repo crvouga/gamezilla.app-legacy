@@ -49,15 +49,9 @@ export const update = ({
             phoneNumber: msg.phoneNumber,
           });
 
-          if (found.t === "err") {
-            return;
-          }
-
-          const account = found.value;
-
           dispatch({
             t: "got-user-account",
-            result: ok(account),
+            result: found,
             clientId: msg.clientId,
             sessionId: msg.sessionId,
           });
@@ -67,6 +61,7 @@ export const update = ({
 
     case "got-user-account": {
       if (msg.result.t === "err") {
+        console.log(msg.result);
         return {
           model,
         };

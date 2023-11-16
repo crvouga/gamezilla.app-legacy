@@ -16,6 +16,8 @@ export const createDbConnSqlite = async ({
       try {
         const sql = toSql(rawSql, params);
 
+        console.log("[db]", sql);
+
         const rows = database.query(sql).all();
 
         const parsed = Array.isArray(rows)
@@ -29,6 +31,7 @@ export const createDbConnSqlite = async ({
 
         return ok(parsed);
       } catch (error) {
+        console.error("[db]", error);
         return err(String(error));
       }
     },
