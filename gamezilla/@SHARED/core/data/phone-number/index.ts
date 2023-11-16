@@ -10,7 +10,7 @@ export type PhoneNumber = {
 
 type Problem = "invalid_phone_number";
 
-const decode = (
+const parse = (
   country: Iso3166Alpha2Code,
   phoneNumber: string
 ): Result<{ code: Problem; userMessage: string }, PhoneNumber> => {
@@ -68,6 +68,6 @@ export const PhoneNumber = {
   toString,
   eq,
   toCountry,
-  decode,
+  parse,
   format,
 };

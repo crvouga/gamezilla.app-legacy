@@ -43,7 +43,6 @@ export const update = ({
 }): {
   model: ClientModel;
   cmd?: ClientCmd<ToServer>[];
-  // cmd: RouteCmd<AuthRoute>;
 } => {
   switch (msg.t) {
     case "inputted-phone-number": {
@@ -66,7 +65,7 @@ export const update = ({
     }
 
     case "clicked-send-code": {
-      const phoneNumber = PhoneNumber.decode(
+      const phoneNumber = PhoneNumber.parse(
         model.countryCodeInput,
         model.phoneNumberInput
       );

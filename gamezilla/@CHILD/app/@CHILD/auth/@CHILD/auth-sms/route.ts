@@ -39,7 +39,7 @@ export const toRoute = (location: Location): Route => {
     if (typeof phoneNumber !== "string") {
       return { t: "/" };
     }
-    const parsed = PhoneNumber.decode(phoneNumberCountry, phoneNumber);
+    const parsed = PhoneNumber.parse(phoneNumberCountry, phoneNumber);
     if (parsed.t === "err") {
       return { t: "/" };
     }

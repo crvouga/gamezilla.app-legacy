@@ -99,7 +99,7 @@ export const update = ({
         return { model: { ...model, validation: "empty-phone-number" } };
       }
 
-      const decoded = PhoneNumber.decode(model.country, model.phoneNumber);
+      const decoded = PhoneNumber.parse(model.country, model.phoneNumber);
 
       if (decoded.t === "err") {
         return { model: { ...model, validation: "invalid-phone-number" } };

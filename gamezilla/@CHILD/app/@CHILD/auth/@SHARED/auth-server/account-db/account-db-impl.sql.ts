@@ -58,7 +58,7 @@ const rowToAccount = (row: AccountRow): Result<string, Account> => {
 
   const parsedPhoneNumber =
     parsedPhoneNumberCountryCode && row.phone_number
-      ? PhoneNumber.decode(parsedPhoneNumberCountryCode, row.phone_number)
+      ? PhoneNumber.parse(parsedPhoneNumberCountryCode, row.phone_number)
       : null;
 
   const account: Account = {

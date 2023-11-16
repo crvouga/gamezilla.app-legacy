@@ -127,7 +127,7 @@ export const decodeAuth = (pathname: string): RouteAuth | null => {
     if (!Iso3166Alpha2Code.is(country)) {
       return null;
     }
-    const decoded = PhoneNumber.decode(country, phoneNumber);
+    const decoded = PhoneNumber.parse(country, phoneNumber);
     if (decoded.t === "err") {
       return null;
     }
