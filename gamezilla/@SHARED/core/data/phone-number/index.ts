@@ -11,22 +11,43 @@ export type PhoneNumber = {
 type Problem = "invalid_phone_number";
 
 const parse = (
-  country: Iso3166Alpha2Code,
-  phoneNumber: string
+  phoneNumber: unknown
 ): Result<{ code: Problem; userMessage: string }, PhoneNumber> => {
-  const result = phone(phoneNumber, { country });
-
-  if (result.isValid) {
-    return Result.ok({
-      _opaque: "PhoneNumber",
-      _validPhoneNumber: result.phoneNumber,
-      _country: country,
+  if (typeof phoneNumber !== "string") {
+    return Result.err({
+      code: "invalid_phone_number",
+      userMessage: `Invalid phone number`,
     });
   }
 
-  return Result.err({
-    code: "invalid_phone_number",
-    userMessage: `Invalid phone number`,
+  const result = phone(phoneNumber);
+
+  if (!result.isValid) {
+    return Result.err({
+      code: "invalid_phone_number",
+      userMessage: `Invalid phone number`,
+    });
+  }
+
+  const country = Iso3166Alpha2Code.is(result.countryCode)
+    ? result.countryCode
+    : Iso3166Alpha2Code.is(result.countryIso2)
+    ? result.countryIso2
+    : Iso3166Alpha2Code.is(result.countryIso3)
+    ? result.countryIso3
+    : null;
+
+  if (!country) {
+    return Result.err({
+      code: "invalid_phone_number",
+      userMessage: `Invalid phone number`,
+    });
+  }
+
+  return Result.ok({
+    _opaque: "PhoneNumber",
+    _validPhoneNumber: result.phoneNumber,
+    _country: country,
   });
 };
 

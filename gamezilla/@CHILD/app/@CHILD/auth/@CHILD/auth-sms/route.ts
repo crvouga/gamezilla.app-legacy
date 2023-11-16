@@ -31,15 +31,11 @@ export const toLocation = (route: Route): Location => {
 
 export const toRoute = (location: Location): Route => {
   if (location.pathname.includes("verify")) {
-    const phoneNumberCountry = location.searchParams?.get("phoneNumberCountry");
-    if (!Iso3166Alpha2Code.is(phoneNumberCountry)) {
-      return { t: "/" };
-    }
     const phoneNumber = location.searchParams?.get("phoneNumber");
     if (typeof phoneNumber !== "string") {
       return { t: "/" };
     }
-    const parsed = PhoneNumber.parse(phoneNumberCountry, phoneNumber);
+    const parsed = PhoneNumber.parse(phoneNumber);
     if (parsed.t === "err") {
       return { t: "/" };
     }

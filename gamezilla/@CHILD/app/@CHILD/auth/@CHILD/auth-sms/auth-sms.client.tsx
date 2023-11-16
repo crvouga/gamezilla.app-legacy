@@ -69,10 +69,7 @@ export const update = ({
     }
 
     case "clicked-send-code": {
-      const phoneNumber = PhoneNumber.parse(
-        model.countryCodeInput,
-        model.phoneNumberInput
-      );
+      const phoneNumber = PhoneNumber.parse(model.phoneNumberInput);
 
       if (phoneNumber.t === "err") {
         return {

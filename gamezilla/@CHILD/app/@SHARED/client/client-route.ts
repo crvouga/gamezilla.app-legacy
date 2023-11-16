@@ -119,15 +119,11 @@ export const decodeAuth = (pathname: string): RouteAuth | null => {
   }
   if (pathname.startsWith("/auth/login/phone/verify/")) {
     const split = pathname.split("/");
-    const country = split[split.length - 2];
     const phoneNumber = split[split.length - 1];
-    if (!country || !phoneNumber) {
+    if (!phoneNumber) {
       return null;
     }
-    if (!Iso3166Alpha2Code.is(country)) {
-      return null;
-    }
-    const decoded = PhoneNumber.parse(country, phoneNumber);
+    const decoded = PhoneNumber.parse(phoneNumber);
     if (decoded.t === "err") {
       return null;
     }

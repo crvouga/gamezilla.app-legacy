@@ -1,0 +1,7 @@
+-- migrate:up
+
+ALTER TABLE user_account DROP COLUMN phone_number_iso_3166_alpha_2;
+
+-- migrate:down
+
+ALTER TABLE user_account ADD COLUMN phone_number_iso_3166_alpha_2 TEXT;

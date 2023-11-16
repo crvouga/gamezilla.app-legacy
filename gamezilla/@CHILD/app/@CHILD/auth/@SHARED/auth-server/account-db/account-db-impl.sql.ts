@@ -15,7 +15,6 @@ type AccountRow = {
   user_id: string;
   email_address?: string | null;
   phone_number?: string | null;
-  phone_number_iso_3166_alpha_2?: string | null;
 };
 
 export const toAccountRow = (x: unknown): AccountRow | null => {
@@ -23,8 +22,7 @@ export const toAccountRow = (x: unknown): AccountRow | null => {
     P.obj(x) &&
     P.has(x, "user_id", P.str) &&
     P.has(x, "email_address", P.or(P.str, P.nullish)) &&
-    P.has(x, "phone_number", P.or(P.str, P.nullish)) &&
-    P.has(x, "phone_number_iso_3166_alpha_2", P.or(P.str, P.nullish))
+    P.has(x, "phone_number", P.or(P.str, P.nullish))
   ) {
     return {
       user_id: x.user_id,
@@ -50,16 +48,9 @@ const rowToAccount = (row: AccountRow): Result<string, Account> => {
     console.error(parsedEmailAddress);
   }
 
-  const parsedPhoneNumberCountryCode = Iso3166Alpha2Code.is(
-    row.phone_number_iso_3166_alpha_2
-  )
-    ? row.phone_number_iso_3166_alpha_2
+  const parsedPhoneNumber = row.phone_number
+    ? PhoneNumber.parse(row.phone_number)
     : null;
-
-  const parsedPhoneNumber =
-    parsedPhoneNumberCountryCode && row.phone_number
-      ? PhoneNumber.parse(parsedPhoneNumberCountryCode, row.phone_number)
-      : null;
 
   const account: Account = {
     userId: parsedUserId.value,
@@ -83,9 +74,6 @@ const accountToRow = (account: Account): AccountRow => {
     phone_number: account.phoneNumber
       ? PhoneNumber.toString(account.phoneNumber)
       : null,
-    phone_number_iso_3166_alpha_2: account.phoneNumber
-      ? PhoneNumber.toCountry(account.phoneNumber)
-      : null,
   };
 };
 
@@ -101,8 +89,7 @@ export const createAccountDb = ({
         `SELECT
           user_id,
           email_address,
-          phone_number,
-          phone_number_iso_3166_alpha_2
+          phone_number
         FROM
           user_account
         WHERE
@@ -150,29 +137,19 @@ export const createAccountDb = ({
       return account;
     },
     async insertOne(input) {
-      const rowNew: AccountRow = {
-        user_id: input.account.userId,
-        email_address: input.account.emailAddress,
-        phone_number: input.account.phoneNumber
-          ? PhoneNumber.toString(input.account.phoneNumber)
-          : null,
-        phone_number_iso_3166_alpha_2: input.account.phoneNumber
-          ? PhoneNumber.toCountry(input.account.phoneNumber)
-          : null,
-      };
+      const rowNew = accountToRow(input.account);
+
       const queried = await dbConn.query(
         P.is(toAccountRow),
         `INSERT INTO user_account (
             user_id,
             email_address,
-            phone_number,
-            phone_number_iso_3166_alpha_2
+            phone_number
           )
           VALUES (
             :user_id,
             :email_address,
-            :phone_number,
-            :phone_number_iso_3166_alpha_2
+            :phone_number
           )`,
         rowNew
       );
