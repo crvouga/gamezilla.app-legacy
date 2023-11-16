@@ -101,6 +101,17 @@ export const update = ({
     }
 
     case "clicked-verify-code": {
+      if (model.codeInput === "") {
+        return {
+          model: {
+            ...model,
+            verifyCode: {
+              t: "err",
+              error: "Code cannot be empty",
+            },
+          },
+        };
+      }
       return {
         model: {
           ...model,
