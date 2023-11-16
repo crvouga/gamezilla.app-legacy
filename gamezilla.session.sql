@@ -11,5 +11,6 @@ INSERT INTO user_account (
             ':phone_number_iso_3166_alpha_2'
           )
 
-DELETE FROM user_account WHERE user_id = ':user_id'
-SELECT * FROM user_account WHERE user_id = ':user_id' LIMIT 1
+DELETE FROM user_account WHERE email_address = ':email_address'
+
+SELECT * FROM user_account
