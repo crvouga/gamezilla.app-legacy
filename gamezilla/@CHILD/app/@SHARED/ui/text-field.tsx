@@ -24,7 +24,7 @@ export const TextField = ({
   label: string;
   value?: string | number;
   error?: boolean;
-  helperText?: string;
+  helperText?: string | null;
   min?: number;
   max?: number;
   step?: number;

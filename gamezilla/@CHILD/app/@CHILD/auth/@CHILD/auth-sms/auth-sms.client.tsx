@@ -75,7 +75,7 @@ export const update = ({
         return {
           model: {
             ...model,
-            phoneNumberError: "Phone number is invalid",
+            phoneNumberError: phoneNumber.error.userMessage,
           },
         };
       }
@@ -213,6 +213,8 @@ export const View = ({
               id="phoneNumberInput"
               label="Phone Number"
               type="tel"
+              error={typeof model.phoneNumberError === "string"}
+              helperText={model.phoneNumberError}
               onChange={(value) => {
                 dispatch({ t: "inputted-phone-number", phoneNumber: value });
               }}

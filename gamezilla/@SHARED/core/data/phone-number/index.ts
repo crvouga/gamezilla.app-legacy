@@ -13,7 +13,7 @@ type Problem = "invalid_phone_number";
 const decode = (
   country: Iso3166Alpha2Code,
   phoneNumber: string
-): Result<Problem, PhoneNumber> => {
+): Result<{ code: Problem; userMessage: string }, PhoneNumber> => {
   const result = phone(phoneNumber, { country });
 
   if (result.isValid) {
@@ -24,7 +24,10 @@ const decode = (
     });
   }
 
-  return Result.err("invalid_phone_number");
+  return Result.err({
+    code: "invalid_phone_number",
+    userMessage: `Invalid phone number`,
+  });
 };
 
 const toString = (phoneNumber: PhoneNumber): string => {
