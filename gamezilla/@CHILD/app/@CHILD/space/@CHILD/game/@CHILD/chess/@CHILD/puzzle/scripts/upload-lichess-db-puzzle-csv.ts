@@ -58,17 +58,21 @@ export const uploadLichessDbPuzzleCsv = async ({
     return;
   }
 
-  const fs: Awaited<typeof import("fs")> = await require("fs");
-  const csv: Awaited<typeof import("csv-parser")> = await require("csv-parser");
-
   console.log(`reading ${lichessDbPuzzleCsvPath}`);
 
-  const stream = fs.createReadStream(lichessDbPuzzleCsvPath).pipe(csv());
+  const file = Bun.file(lichessDbPuzzleCsvPath);
+
+  if (await file.exists()) {
+    console.log(`file ${lichessDbPuzzleCsvPath} does not exist`);
+    return;
+  }
+
+  console.error(`not implemented`);
 
   let batch: PuzzleRow[] = [];
 
   console.log("starting upload");
-  for await (const lichessRow of stream) {
+  for await (const lichessRow of []) {
     const parsed = toLichessRow(lichessRow);
     if (!parsed) {
       continue;
