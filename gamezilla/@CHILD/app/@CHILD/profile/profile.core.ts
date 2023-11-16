@@ -2,6 +2,7 @@ import { RemoteResult, Result } from "gamezilla/@SHARED/core";
 import {
   ClientId,
   Profile,
+  ProfileAvatar,
   ProfileAvatarSeed,
   ProfileAvatarStyle,
   UserId,
@@ -18,11 +19,21 @@ import {
 
 export type ProfileCore = {
   userId: UserId;
-  avatarUrl: string;
   username: Username;
   avatarSeed: ProfileAvatarSeed | null;
   avatarStyle: ProfileAvatarStyle | null;
 };
+
+export function profileCoreToProfile(profile: ProfileCore): Profile {
+  return {
+    avatarUrl: ProfileAvatar.toUrl({
+      seed: profile.avatarSeed ?? profile.username,
+      style: profile.avatarStyle ?? ProfileAvatar.STYLES["big-ears-neutral"],
+    }),
+    userId: profile.userId,
+    username: profile.username,
+  };
+}
 
 export type ClientModel = {
   profiles: {

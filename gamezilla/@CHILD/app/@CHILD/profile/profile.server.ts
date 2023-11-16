@@ -1,4 +1,4 @@
-import { Eff, err, ok, Result } from "gamezilla/@SHARED/core";
+import { Eff, err, ok, p, Result } from "gamezilla/@SHARED/core";
 import {
   Profile,
   ProfileAvatar,
@@ -15,6 +15,7 @@ import { ProfileDb } from "./profile-db/profile-db";
 import { createProfileDb } from "./profile-db/profile-db-impl.sql";
 import {
   ProfileCore,
+  profileCoreToProfile,
   Req,
   ServerModel,
   ServerMsg,
@@ -114,7 +115,7 @@ export const updateFromEvent = ({
             clientId: msg.clientId,
             msg: {
               t: "current-user-profile",
-              result,
+              result: Result.mapOk(result, profileCoreToProfile),
               source: msg,
               loggedIn: msg.loggedIn,
             },
@@ -141,7 +142,9 @@ const handler = async ({
   switch (msg.t) {
     case "find-one": {
       const found = await ProfileDb.findOneByUserId(msg.userId);
-      return found;
+      return Result.mapOk(found, (profiles) =>
+        profiles.map(profileCoreToProfile)
+      );
     }
 
     case "change-username": {
@@ -181,10 +184,6 @@ const findElseInsertNew = async ({
   const randomUsername = Username.generate(".");
   const profileNew: ProfileCore = {
     userId,
-    avatarUrl: ProfileAvatar.toUrl({
-      seed: randomSeed,
-      style: "adventurer-neutral",
-    }),
     username: randomUsername,
     avatarSeed: randomSeed,
     avatarStyle: "adventurer-neutral",
