@@ -1,4 +1,6 @@
+// @ts-ignore
 import * as fs from "node:fs";
+// @ts-ignore
 import * as path from "node:path";
 
 interface FileImport {
