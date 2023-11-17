@@ -103,6 +103,15 @@ export const update = ({
       };
     }
 
+    case "send-code-timed-out": {
+      return {
+        model: {
+          ...model,
+          sendCode: RemoteResult.err("Timed out"),
+        },
+      };
+    }
+
     case "inputted-code": {
       return {
         model: {

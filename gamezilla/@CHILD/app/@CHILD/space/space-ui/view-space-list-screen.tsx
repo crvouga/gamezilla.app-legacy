@@ -126,7 +126,7 @@ function EmptyState() {
         </div>
 
         <p class="text-lg text-secondary" style={{ "text-wrap": "balance" }}>
-          Start a space to start playing games
+          Start a space to start playing
         </p>
       </div>
     </div>
