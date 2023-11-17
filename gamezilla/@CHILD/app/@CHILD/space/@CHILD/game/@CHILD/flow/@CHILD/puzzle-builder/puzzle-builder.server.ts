@@ -13,26 +13,26 @@ import {
 } from "./puzzle-builder.core";
 import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server";
 
-type Server = GameServer<
-  ServerModel,
-  ServerMsg,
-  ToClient,
-  ToServer,
-  null,
-  null
->;
+type Server = GameServer<{
+  ServerModel: ServerModel;
+  ServerMsg: ServerMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  GameEvent: null;
+  GameState: null;
+}>;
 
-const init: Server["init"] = () => {
+const init: Server["init"] = async () => {
   return {
     model: initCore,
   };
 };
 
-const update: Server["update"] = (input) => {
+const update: Server["update"] = async (input) => {
   return input;
 };
 
-const updateFromClient: Server["updateFromClient"] = (input) => {
+const updateFromClient: Server["updateFromClient"] = async (input) => {
   const { ctx, msg, model } = input;
 
   switch (msg.t) {
@@ -58,15 +58,15 @@ const updateFromClient: Server["updateFromClient"] = (input) => {
   }
 };
 
-const updateFromEvent: Server["updateFromEvent"] = (input) => {
+const updateFromEvent: Server["updateFromEvent"] = async (input) => {
   return input;
 };
 
-const subscriptions: Server["subscriptions"] = () => {
+const subscriptions: Server["subscriptions"] = async () => {
   return Sub.None;
 };
 
-export const updateFromGame: Server["updateFromGame"] = (input) => {
+export const updateFromGame: Server["updateFromGame"] = async (input) => {
   const { model } = input;
 
   return { model };

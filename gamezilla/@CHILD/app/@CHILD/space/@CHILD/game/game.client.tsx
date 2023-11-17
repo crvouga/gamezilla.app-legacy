@@ -1,15 +1,17 @@
-import { Sub } from "gamezilla/@SHARED/core";
 import {
-  SpaceClientCtx,
   GameClient,
+  SpaceClientCtx,
+  SpaceClientEvt,
   SpaceViewCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
+import { Sub } from "gamezilla/@SHARED/core";
+import * as ChessClient from "./@CHILD/chess/chess.client";
 import * as ConnectFourClient from "./@CHILD/connect-four/connect-four.client";
 import {
   ClientModel,
   ClientMsg,
   GameEvent,
-  GameName,
   GameState,
   ToClient,
   ToServer,
@@ -23,18 +25,21 @@ import {
 //
 //
 
-type Client = GameClient<
-  ClientModel,
-  ClientMsg,
-  ToClient,
-  ToServer,
-  GameState,
-  GameEvent,
-  SpaceViewCtx,
-  SpaceClientCtx
->;
+type Client = GameClient<{
+  ClientModel: ClientModel;
+  ClientMsg: ClientMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  GameState: GameState;
+  GameEvent: GameEvent;
+  ClientCtx: SpaceClientCtx;
+  ViewCtx: SpaceViewCtx;
+  ClientCmd: ClientCmd<ToServer>;
+  ClientEvt: SpaceClientEvt;
+}>;
 
 const ConnectFour = GameClient.tag("connect-four", ConnectFourClient);
+const Chess = GameClient.tag("chess", ChessClient);
 
 //
 //
@@ -50,6 +55,10 @@ export const init: Client["init"] = (input) => {
   switch (state.t) {
     case "connect-four": {
       return ConnectFour.init({ ...input, state });
+    }
+
+    case "chess": {
+      return Chess.init({ ...input, state });
     }
   }
 };
@@ -79,35 +88,50 @@ export const update: Client["update"] = (input) => {
 };
 
 export const updateFromServer: Client["updateFromServer"] = (input) => {
-  const { ctx, msg, model, state } = input;
+  const { msg, model, state } = input;
 
-  if (state.t === "connect-four" && msg.t === "connect-four") {
-    return ConnectFour.updateFromServer({ ...input, msg, model });
+  if (
+    state.t === "connect-four" &&
+    msg.t === "connect-four" &&
+    model.t === "connect-four"
+  ) {
+    return ConnectFour.updateFromServer({ ...input, msg, model, state });
   }
 
-  const initial = model ? { model } : init(input);
-  return initial;
+  if (state.t === "chess" && msg.t === "chess" && model.t === "chess") {
+    return Chess.updateFromServer({ ...input, msg, model, state });
+  }
+
+  return { model };
 };
 
 export const updateFromGame: Client["updateFromGame"] = (input) => {
-  const { state, model } = input;
+  const { state, model, msg } = input;
 
-  if (!model) {
-    return init(input);
+  if (
+    state.t === "connect-four" &&
+    model.t === "connect-four" &&
+    msg.t === "connect-four"
+  ) {
+    return ConnectFour.updateFromGame({ ...input, msg, state, model });
   }
 
-  if (state.t === "connect-four" && model.t === "connect-four") {
-    return ConnectFour.updateFromGame({ ...input, state, model });
+  if (state.t === "chess" && model.t === "chess" && msg.t === "chess") {
+    return Chess.updateFromGame({ ...input, msg, state, model });
   }
 
-  return init(input);
+  return { model };
 };
 
 export const updateFromEvent: Client["updateFromEvent"] = (input) => {
   const { state, model } = input;
 
   if (state.t === "connect-four" && model.t === "connect-four") {
-    return ConnectFour.updateFromEvent(input);
+    return ConnectFour.updateFromEvent({ ...input, state, model });
+  }
+
+  if (state.t === "chess" && model.t === "chess") {
+    return Chess.updateFromEvent({ ...input, state, model });
   }
 
   return input;
@@ -140,16 +164,21 @@ export const subscriptions: Client["subscriptions"] = (input): Sub<Msg> => {
 //
 
 export const View: Client["View"] = (input) => {
-  const { model, ctx, state, dispatch, dispatchEvent } = input;
+  const { model, ctx, state, dispatch } = input;
+
+  if (state.t === "chess" && model.t === "chess") {
+    return (
+      <Chess.View ctx={ctx} dispatch={dispatch} state={state} model={model} />
+    );
+  }
 
   if (state.t === "connect-four" && model.t === "connect-four") {
     return (
-      <ConnectFourClient.View
+      <ConnectFour.View
         ctx={ctx}
-        dispatch={(c) => dispatch({ t: "connect-four", c })}
-        state={state.c}
-        model={model.c}
-        dispatchEvent={(c) => dispatchEvent({ t: "connect-four", c })}
+        dispatch={dispatch}
+        state={state}
+        model={model}
       />
     );
   }

@@ -32,6 +32,7 @@ export type Mode = "none" | "vs-user" | "vs-bot";
 //
 
 export type ClientMsg =
+  | GameEvent
   | { t: "vs-user"; c: VsUser.ClientMsg }
   | { t: "vs-bot"; c: VsBot.ClientMsg };
 

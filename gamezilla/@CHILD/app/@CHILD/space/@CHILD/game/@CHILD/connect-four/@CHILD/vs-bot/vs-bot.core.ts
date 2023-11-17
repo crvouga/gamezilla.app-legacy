@@ -28,6 +28,7 @@ export type ClientModel = {
 //
 
 export type ClientMsg =
+  | GameEvent
   | { t: "opened-activity-feed-drawer" }
   | { t: "closed-activity-feed-drawer" }
   | { t: "vs-bot-setup"; c: VsBotSetup.Msg }

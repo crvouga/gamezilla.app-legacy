@@ -1,6 +1,7 @@
 import { Sub, chain } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
+  ClientCmd,
   playSound,
   sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -8,7 +9,11 @@ import {
   IconGamepad,
   IconScrewdriverWrench,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import {
+  GameClient,
+  SpaceClientCtx,
+  SpaceClientEvt,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
 import { CoverArt } from "./@SHARED/flow-cover-art";
 import { FlowViewCtx } from "./@SHARED/flow-ctx";
@@ -16,7 +21,22 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./flow.core";
 import { PlayClient } from "./@CHILD/play";
 import { PuzzleBuilderClient } from "./@CHILD/puzzle-builder";
 
-type Client = GameClient<ClientModel, ClientMsg, ToClient, ToServer>;
+type Client = GameClient<{
+  ClientModel: ClientModel;
+  ClientMsg: ClientMsg;
+  //
+  ToClient: ToClient;
+  ToServer: ToServer;
+  //
+  GameEvent: null;
+  GameState: null;
+  //
+  ClientCtx: SpaceClientCtx;
+  ViewCtx: FlowViewCtx;
+  //
+  ClientCmd: ClientCmd<ToServer>;
+  ClientEvt: SpaceClientEvt;
+}>;
 
 const PuzzleBuilder = GameClient.tag("puzzle-builder", PuzzleBuilderClient);
 

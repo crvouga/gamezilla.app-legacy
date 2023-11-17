@@ -9,14 +9,20 @@ import {
   ToServer,
 } from "./vs-user.core";
 
-type Server = GameServer<
-  ServerModel,
-  ServerMsg,
-  ToClient,
-  ToServer,
-  GameState,
-  GameEvent
->;
+//
+//
+//
+//
+//
+
+type Server = GameServer<{
+  ServerModel: ServerModel;
+  ServerMsg: ServerMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  GameState: GameState;
+  GameEvent: GameEvent;
+}>;
 
 export const init: Server["init"] = async () => {
   return {
@@ -24,23 +30,23 @@ export const init: Server["init"] = async () => {
   };
 };
 
-export const update: Server["update"] = (input) => {
+export const update: Server["update"] = async (input) => {
   return input;
 };
 
-export const updateFromClient: Server["updateFromClient"] = (input) => {
+export const updateFromClient: Server["updateFromClient"] = async (input) => {
   return input;
 };
 
-export const updateFromEvent: Server["updateFromEvent"] = (input) => {
+export const updateFromEvent: Server["updateFromEvent"] = async (input) => {
   return input;
 };
 
-export const subscriptions: Server["subscriptions"] = (input) => {
+export const subscriptions: Server["subscriptions"] = async (input) => {
   return Sub.None;
 };
 
-export const updateFromGame: Server["updateFromGame"] = (input) => {
+export const updateFromGame: Server["updateFromGame"] = async (input) => {
   const { model } = input;
   return { model };
 };

@@ -1,8 +1,13 @@
 import { Sub, chain } from "gamezilla/@SHARED/core";
-import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  APP_SOUND,
+  ClientCmd,
+  playSound,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   GameClient,
   SpaceClientCtx,
+  SpaceClientEvt,
   SpaceViewCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
@@ -21,14 +26,18 @@ import {
 import * as VsBotClient from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUserClient from "./@CHILD/vs-user/vs-user.client";
 
-type Client = GameClient<
-  ClientModel,
-  ClientMsg,
-  ToClient,
-  ToServer,
-  GameState,
-  GameEvent
->;
+type Client = GameClient<{
+  ClientModel: ClientModel;
+  ClientMsg: ClientMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  GameState: GameState;
+  GameEvent: GameEvent;
+  ClientCtx: SpaceClientCtx;
+  ViewCtx: SpaceViewCtx;
+  ClientCmd: ClientCmd<ToServer>;
+  ClientEvt: SpaceClientEvt;
+}>;
 
 const VsBot = GameClient.tag("vs-bot", VsBotClient);
 
@@ -94,11 +103,11 @@ export const updateFromServer: Client["updateFromServer"] = ({
     return initial;
   }
 
-  if (state.t === "vs-bot" && msg.t === "vs-bot") {
+  if (state.t === "vs-bot" && msg.t === "vs-bot" && model.t === "vs-bot") {
     return VsBot.updateFromServer({
       ctx,
       msg,
-      model: model?.t === "vs-bot" ? model : null,
+      model,
       state,
     });
   }
@@ -175,28 +184,20 @@ export const View = ({
   dispatch,
   ctx,
   state,
-  dispatchEvent,
+
   model,
 }: {
   dispatch: (msg: ClientMsg) => void;
-  dispatchEvent: (m: GameEvent) => void;
   ctx: SpaceViewCtx;
   state: GameState;
   model: ClientModel;
 }) => {
-  const onQuit = () =>
-    dispatchEvent({
-      t: "user-changed-mode",
-      mode: "none",
-      userId: ctx.currentUserId,
-    });
-
+  const onQuit = () => {};
   if (state.t === "vs-bot" && model.t === "vs-bot") {
     return (
       <VsBot.View
         ctx={{ ...ctx, onQuit }}
         dispatch={dispatch}
-        dispatchEvent={dispatchEvent}
         model={model}
         state={state}
       />
@@ -208,7 +209,6 @@ export const View = ({
       <VsUser.View
         ctx={{ ...ctx, onQuit }}
         dispatch={dispatch}
-        dispatchEvent={dispatchEvent}
         model={model}
         state={state}
       />
@@ -223,7 +223,7 @@ export const View = ({
       buttons={[
         mainMenuButtons.playFriend({
           onClick: () =>
-            dispatchEvent({
+            dispatch({
               mode: "vs-user",
               t: "user-changed-mode",
               userId: ctx.currentUserId,
@@ -231,7 +231,7 @@ export const View = ({
         }),
         mainMenuButtons.playComputer({
           onClick: () =>
-            dispatchEvent({
+            dispatch({
               mode: "vs-bot",
               t: "user-changed-mode",
               userId: ctx.currentUserId,

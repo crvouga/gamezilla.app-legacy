@@ -12,14 +12,23 @@ import {
 } from "./vs-bot.core";
 import * as ConnectFour from "../../@SHARED/connect-four/connect-four";
 import { ConnectFourBotWorker } from "../../@SHARED/connect-four";
-type Server = GameServer<
-  ServerModel,
-  ServerMsg,
-  ToClient,
-  ToServer,
-  GameState,
-  GameEvent
->;
+
+//
+//
+//
+//
+//
+//
+//
+
+type Server = GameServer<{
+  ServerModel: ServerModel;
+  ServerMsg: ServerMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  GameState: GameState;
+  GameEvent: GameEvent;
+}>;
 
 export const init: Server["init"] = async () => {
   return {
@@ -27,7 +36,7 @@ export const init: Server["init"] = async () => {
   };
 };
 
-export const update: Server["update"] = (input) => {
+export const update: Server["update"] = async (input) => {
   const { msg, model } = input;
   switch (msg.t) {
     case "bot-dropped-disc": {
@@ -39,15 +48,15 @@ export const update: Server["update"] = (input) => {
   }
 };
 
-export const updateFromClient: Server["updateFromClient"] = (input) => {
+export const updateFromClient: Server["updateFromClient"] = async (input) => {
   return input;
 };
 
-export const updateFromEvent: Server["updateFromEvent"] = (input) => {
+export const updateFromEvent: Server["updateFromEvent"] = async (input) => {
   return input;
 };
 
-export const updateFromGame: Server["updateFromGame"] = (input) => {
+export const updateFromGame: Server["updateFromGame"] = async (input) => {
   const { model, prev, next } = input;
 
   if ((!prev || !isBotTurn(prev)) && isBotTurn(next) && next.type === "game") {
@@ -79,6 +88,6 @@ export const updateFromGame: Server["updateFromGame"] = (input) => {
   return { model };
 };
 
-export const subscriptions: Server["subscriptions"] = (input) => {
+export const subscriptions: Server["subscriptions"] = async (input) => {
   return Sub.None;
 };

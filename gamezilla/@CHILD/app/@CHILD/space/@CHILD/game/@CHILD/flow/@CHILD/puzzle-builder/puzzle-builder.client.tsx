@@ -1,6 +1,7 @@
 import { Sub, chain } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
+  ClientCmd,
   playSound,
   sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -10,7 +11,11 @@ import {
   IconPlay,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import {
+  GameClient,
+  SpaceClientCtx,
+  SpaceClientEvt,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { ViewBottomButtonBar } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
 import { FlowGridUI, FlowGridUIPlay, FlowUI } from "../../@SHARED/flow";
 import { FlowViewCtx } from "../../@SHARED/flow-ctx";
@@ -23,15 +28,18 @@ import {
   updateCore,
 } from "./puzzle-builder.core";
 
-type Client = GameClient<
-  ClientModel,
-  ClientMsg,
-  ToClient,
-  ToServer,
-  null,
-  null,
-  FlowViewCtx
->;
+type Client = GameClient<{
+  ClientModel: ClientModel;
+  ClientMsg: ClientMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  GameEvent: null;
+  GameState: null;
+  ClientCtx: SpaceClientCtx;
+  ViewCtx: FlowViewCtx;
+  ClientCmd: ClientCmd<ToServer>;
+  ClientEvt: SpaceClientEvt;
+}>;
 
 const init: Client["init"] = () => {
   return { model: initCore };

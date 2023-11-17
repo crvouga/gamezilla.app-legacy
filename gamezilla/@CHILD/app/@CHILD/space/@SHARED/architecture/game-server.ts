@@ -10,101 +10,93 @@ import { SpaceServerCmd } from "../space-cmd";
 //
 //
 
-type MaybePromise<T> = Promise<T> | T;
+export type GameServerTypes = {
+  ServerModel: any;
+  ServerMsg: any;
+  ToClient: any;
+  ToServer: any;
+  GameState: any;
+  GameEvent: any;
+};
 
-export type GameServer<
-  ServerModel,
-  ServerMsg,
-  ToClient,
-  ToServer,
-  GameState = null,
-  GameEvent = null
-> = {
-  init: (input: { ctx: SpaceServerCtx; state: GameState }) => MaybePromise<{
-    model: ServerModel;
-    eff?: Eff<ServerMsg>;
-    cmd?: SpaceServerCmd<ToClient>[];
+export type GameServer<T extends GameServerTypes> = {
+  init: (input: { ctx: SpaceServerCtx; state: T["GameState"] }) => Promise<{
+    model: T["ServerModel"];
+    eff?: Eff<T["ServerMsg"]>;
+    cmd?: SpaceServerCmd<T["ToClient"]>[];
   }>;
 
   update: (input: {
     ctx: SpaceServerCtx;
-    msg: ServerMsg;
-    model: ServerModel;
-    state: GameState;
-  }) => MaybePromise<{
-    model: ServerModel;
-    events?: GameEvent[];
-    eff?: Eff<ServerMsg>;
-    cmd?: SpaceServerCmd<ToClient>[];
+    msg: T["ServerMsg"];
+    model: T["ServerModel"];
+    state: T["GameState"];
+  }) => Promise<{
+    model: T["ServerModel"];
+    events?: T["GameEvent"][];
+    eff?: Eff<T["ServerMsg"]>;
+    cmd?: SpaceServerCmd<T["ToClient"]>[];
   }>;
 
   updateFromClient: (input: {
     ctx: SpaceReqCtx;
-    msg: ToServer;
-    model: ServerModel;
-    state: GameState;
-  }) => MaybePromise<{
-    model: ServerModel;
-    events?: GameEvent[];
-    eff?: Eff<ServerMsg>;
-    cmd?: SpaceServerCmd<ToClient>[];
+    msg: T["ToServer"];
+    model: T["ServerModel"];
+    state: T["GameState"];
+  }) => Promise<{
+    model: T["ServerModel"];
+    events?: T["GameEvent"][];
+    eff?: Eff<T["ServerMsg"]>;
+    cmd?: SpaceServerCmd<T["ToClient"]>[];
   }>;
 
   updateFromEvent: (input: {
     ctx: SpaceServerCtx;
     msg: SpaceServerEvt;
-    model: ServerModel;
-    state: GameState;
-  }) => MaybePromise<{
-    model: ServerModel;
-    events?: GameEvent[];
-    eff?: Eff<ServerMsg>;
-    cmd?: SpaceServerCmd<ToClient>[];
+    model: T["ServerModel"];
+    state: T["GameState"];
+  }) => Promise<{
+    model: T["ServerModel"];
+    events?: T["GameEvent"][];
+    eff?: Eff<T["ServerMsg"]>;
+    cmd?: SpaceServerCmd<T["ToClient"]>[];
   }>;
 
   updateFromGame: (input: {
     ctx: SpaceServerCtx;
-    msg: GameEvent;
-    model: ServerModel;
-    prev: GameState | null;
-    next: GameState;
-  }) => MaybePromise<{
-    model: ServerModel;
-    events?: GameEvent[];
-    eff?: Eff<ServerMsg>;
-    cmd?: SpaceServerCmd<ToClient>[];
+    msg: T["GameEvent"];
+    model: T["ServerModel"];
+    prev: T["GameState"] | null;
+    next: T["GameState"];
+  }) => Promise<{
+    model: T["ServerModel"];
+    events?: T["GameEvent"][];
+    eff?: Eff<T["ServerMsg"]>;
+    cmd?: SpaceServerCmd<T["ToClient"]>[];
   }>;
 
   subscriptions: (input: {
-    model: ServerModel;
+    model: T["ServerModel"];
     intervalId: string;
     ctx: SpaceServerCtx;
-    state: GameState;
-  }) => MaybePromise<Sub<ServerMsg>>;
+    state: T["GameState"];
+  }) => Promise<Sub<T["ServerMsg"]>>;
 };
 
 /**
- * Tags to all the messages and models that are inputted and outputted from this module
+ * Tags all the messages and models that are inputted and outputted from this module.
  */
-const tag = <
-  T extends string,
-  ServerModel,
-  ServerMsg,
-  ToClient,
-  ToServer,
-  State,
-  Evt
->(
+const tag = <T extends string, Types extends GameServerTypes>(
   tag: T,
-  server: GameServer<ServerModel, ServerMsg, ToClient, ToServer, State, Evt>
-): GameServer<
-  { t: T; c: ServerModel },
-  { t: T; c: ServerMsg },
-  { t: T; c: ToClient },
-  { t: T; c: ToServer },
-  { t: T; c: State },
-  { t: T; c: Evt }
-> => {
+  server: GameServer<Types>
+): GameServer<{
+  ServerModel: { t: T; c: Types["ServerModel"] };
+  ServerMsg: { t: T; c: Types["ServerMsg"] };
+  ToClient: { t: T; c: Types["ToClient"] };
+  ToServer: { t: T; c: Types["ToServer"] };
+  GameState: { t: T; c: Types["GameState"] };
+  GameEvent: { t: T; c: Types["GameEvent"] };
+}> => {
   return {
     init: async (input) => {
       const initial = await server.init({

@@ -11,14 +11,14 @@ import {
 import * as VsBotServer from "./@CHILD/vs-bot/vs-bot.server";
 import * as VsUserServer from "./@CHILD/vs-user/vs-user.server";
 
-type Server = GameServer<
-  ServerModel,
-  ServerMsg,
-  ToClient,
-  ToServer,
-  GameState,
-  GameEvent
->;
+type Server = GameServer<{
+  ServerModel: ServerModel;
+  ServerMsg: ServerMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  GameState: GameState;
+  GameEvent: GameEvent;
+}>;
 
 const VsBot = GameServer.tag("vs-bot", VsBotServer);
 const VsUser = GameServer.tag("vs-user", VsUserServer);
@@ -58,7 +58,7 @@ export const init: Server["init"] = async (input) => {
 
 export type Msg = ServerMsg;
 
-export const update: Server["update"] = (input) => {
+export const update: Server["update"] = async (input) => {
   const { state, msg, model } = input;
 
   if (state.t === "vs-bot" && msg.t === "vs-bot" && model.t === "vs-bot") {
@@ -72,7 +72,7 @@ export const update: Server["update"] = (input) => {
   return { model };
 };
 
-export const updateFromClient: Server["updateFromClient"] = (input) => {
+export const updateFromClient: Server["updateFromClient"] = async (input) => {
   const { state, msg, model } = input;
 
   if (state.t === "vs-bot" && msg.t === "vs-bot" && model.t === "vs-bot") {
@@ -86,7 +86,7 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
   return { model };
 };
 
-export const updateFromEvent: Server["updateFromEvent"] = (input) => {
+export const updateFromEvent: Server["updateFromEvent"] = async (input) => {
   const { state, model } = input;
 
   if (state.t === "vs-bot" && model.t === "vs-bot") {
@@ -100,7 +100,7 @@ export const updateFromEvent: Server["updateFromEvent"] = (input) => {
   return { model };
 };
 
-export const updateFromGame: Server["updateFromGame"] = (input) => {
+export const updateFromGame: Server["updateFromGame"] = async (input) => {
   const { prev, next, model, msg } = input;
 
   if (next.t === "vs-bot" && model.t === "vs-bot" && msg.t === "vs-bot") {
@@ -134,7 +134,7 @@ export const updateFromGame: Server["updateFromGame"] = (input) => {
 //
 //
 
-export const subscriptions: Server["subscriptions"] = (input) => {
+export const subscriptions: Server["subscriptions"] = async (input) => {
   const { state, model } = input;
 
   if (state.t === "vs-bot" && model.t === "vs-bot") {

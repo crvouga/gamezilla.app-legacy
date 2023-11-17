@@ -1,6 +1,9 @@
 import { Sub } from "gamezilla/@SHARED/core";
 import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import {
+  GameClient,
+  SpaceClientEvt,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowViewCtx } from "../../@SHARED/flow-ctx";
 import {
@@ -10,16 +13,20 @@ import {
   ToServer,
   initShared,
 } from "./play.core";
+import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 
-type Client = GameClient<
-  ClientModel,
-  ClientMsg,
-  ToClient,
-  ToServer,
-  null,
-  null,
-  FlowViewCtx
->;
+type Client = GameClient<{
+  ClientModel: ClientModel;
+  ClientMsg: ClientMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  GameEvent: null;
+  GameState: null;
+  ViewCtx: FlowViewCtx;
+  ClientCtx: FlowViewCtx;
+  ClientCmd: ClientCmd<ToServer>;
+  ClientEvt: SpaceClientEvt;
+}>;
 
 const init: Client["init"] = () => {
   return { model: initShared };
@@ -44,7 +51,10 @@ const updateFromGame: Client["updateFromGame"] = (input) => {
   if (model) {
     return { model };
   }
-  return init(input);
+  return init({
+    ctx: input.ctx,
+    state: input.state,
+  });
 };
 
 const subscriptions: Client["subscriptions"] = () => {

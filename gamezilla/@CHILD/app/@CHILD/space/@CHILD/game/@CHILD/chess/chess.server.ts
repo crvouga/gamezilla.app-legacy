@@ -1,17 +1,32 @@
-import { Eff, err, ok, Sub } from "gamezilla/@SHARED/core";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server";
 import {
-  SpaceServerEvt,
+  GameServer,
   SpaceReqCtx,
   SpaceServerCmd,
-  SpaceServerCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import { ChessGameMsg } from "./@SHARED/chess/chess-shared";
-import { Res, ServerModel, ServerMsg, ToClient, ToServer } from "./chess.core";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server";
+import { Eff, err, ok, Sub } from "gamezilla/@SHARED/core";
 import * as Puzzle from "./@CHILD/puzzle/puzzle.server";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.server";
 import * as VsUser from "./@CHILD/vs-user/vs-user.server";
+import { Res, ServerModel, ServerMsg, ToClient, ToServer } from "./chess.core";
+
+//
+//
+//
+//
+//
+//
+//
+
+type Server = GameServer<{
+  GameEvent: null;
+  GameState: null;
+  ServerModel: ServerModel;
+  ServerMsg: ServerMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+}>;
 
 //
 //
@@ -21,9 +36,11 @@ import * as VsUser from "./@CHILD/vs-user/vs-user.server";
 //
 //
 
-export type Model = ServerModel;
-
-export const init: Model = { t: "none" };
+export const init: Server["init"] = async () => {
+  return {
+    model: { t: "none" },
+  };
+};
 
 //
 //
@@ -33,21 +50,7 @@ export const init: Model = { t: "none" };
 //
 //
 
-export type Msg = ServerMsg;
-
-export const update = ({
-  ctx,
-  msg,
-  model,
-}: {
-  msg: Msg;
-  model: Model;
-  ctx: SpaceServerCtx;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
-  cmd?: SpaceServerCmd<ToClient>[];
-} => {
+export const update: Server["update"] = async ({ ctx, msg, model }) => {
   switch (model.t) {
     case "none": {
       return { model };
@@ -101,19 +104,11 @@ export const update = ({
   }
 };
 
-export const updateFromClient = ({
+export const updateFromClient: Server["updateFromClient"] = async ({
   msg,
   model,
   ctx,
-}: {
-  ctx: SpaceReqCtx;
-  msg: ToServer;
-  model: Model;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
-  cmd?: SpaceServerCmd<ToClient>[];
-} => {
+}) => {
   switch (msg.t) {
     case "input-mode": {
       const { result, eff } = initMode({
@@ -130,14 +125,8 @@ export const updateFromClient = ({
         };
       }
 
-      const updated = updateFromGame({
-        msg: { t: "mode-changed", mode: result.value.t },
-        model: result.value,
-      });
-
       return {
-        model: updated.model,
-        eff: Eff.batch([updated.eff, eff]),
+        model,
         cmd: [{ t: "send-to-space", msg: { ...msg, result } }],
       };
     }
@@ -192,17 +181,11 @@ export const updateFromClient = ({
   }
 };
 
-export const updateFromEvent = ({
+export const updateFromEvent: Server["updateFromEvent"] = async ({
   msg,
+
   model,
-}: {
-  model: Model;
-  msg: SpaceServerEvt;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
-  cmd?: SpaceServerCmd<ToClient>[];
-} => {
+}) => {
   switch (model.t) {
     case "none": {
       return { model };
@@ -245,31 +228,17 @@ export const updateFromEvent = ({
   }
 };
 
-export const updateFromGame = ({
+export const updateFromGame: Server["updateFromGame"] = async ({
   msg,
   model,
-}: {
-  msg: ChessGameMsg;
-  model: Model;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
-} => {
+}) => {
   switch (model.t) {
     case "none": {
       return { model };
     }
 
     case "puzzle": {
-      const updated = Puzzle.updateFromGame({
-        model: model.c,
-        msg,
-      });
-
-      return {
-        model: { t: "puzzle", c: updated.model },
-        eff: Eff.t("puzzle", updated.eff),
-      };
+      return { model };
     }
 
     case "vs-bot": {
@@ -294,7 +263,7 @@ const initMode = ({
   userId: UserId;
 }): {
   result: Res["result"];
-  eff?: Eff<Msg>;
+  eff?: Eff<ServerMsg>;
 } => {
   if (ctx.space.hostId !== userId) {
     return { result: err("must_be_the_host") };
@@ -343,7 +312,10 @@ const initMode = ({
 //
 //
 
-export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
+export const subscriptions: Server["subscriptions"] = async ({
+  intervalId,
+  model,
+}) => {
   switch (model.t) {
     case "none": {
       return Sub.None;

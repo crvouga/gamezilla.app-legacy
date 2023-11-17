@@ -1,4 +1,13 @@
-import { Eff, RemoteResult, Sub, chain } from "gamezilla/@SHARED/core";
+import {
+  MainMenuScreen,
+  mainMenuButtons,
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import {
+  GameClient,
+  SpaceClientCtx,
+  SpaceClientEvt,
+  SpaceViewCtx,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
   APP_SOUND,
   ClientCmd,
@@ -7,26 +16,33 @@ import {
   sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconPuzzlePiece } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import {
-  MainMenuScreen,
-  mainMenuButtons,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
-import { CoverArt } from "./@SHARED/chess-ui";
-import { CHESS_SOUND } from "./@SHARED/chess/chess-sounds";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./chess.core";
+import { Eff, RemoteResult, Sub, chain } from "gamezilla/@SHARED/core";
 import * as Puzzle from "./@CHILD/puzzle/puzzle.client";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUser from "./@CHILD/vs-user/vs-user.client";
+import { CoverArt } from "./@SHARED/chess-ui";
+import { CHESS_SOUND } from "./@SHARED/chess/chess-sounds";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./chess.core";
 
-type Client = GameClient<
-  ClientModel,
-  ClientMsg,
-  ToClient,
-  ToServer,
-  null,
-  null
->;
+//
+//
+//
+//
+//
+//
+
+type Client = GameClient<{
+  ClientModel: ClientModel;
+  ClientMsg: ClientMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  ClientCtx: SpaceClientCtx;
+  ViewCtx: SpaceViewCtx;
+  GameEvent: null;
+  GameState: null;
+  ClientCmd: ClientCmd<ToServer>;
+  ClientEvt: SpaceClientEvt;
+}>;
 
 //
 //
@@ -214,6 +230,10 @@ export const updateFromEvent: Client["updateFromEvent"] = (input) => {
   return input;
 };
 
+export const updateFromGame: Client["updateFromGame"] = (input) => {
+  return input;
+};
+
 //
 //
 //
@@ -234,7 +254,7 @@ export const subscriptions: Client["subscriptions"] = (input) => {
 //
 //
 
-export const View: Client["View"] = ({ ctx, model, dispatch }) => {
+export const View: Client["View"] = ({ ctx, state, model, dispatch }) => {
   switch (model.mode?.t) {
     case "none": {
       return (

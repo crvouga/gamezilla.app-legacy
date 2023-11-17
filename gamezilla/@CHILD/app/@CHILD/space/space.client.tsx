@@ -152,8 +152,23 @@ export const update = ({
         },
       };
 
+      const gameEventNew = updated.gameEvent
+        ? withMeta<Event>({
+            t: "game",
+            c: updated.gameEvent,
+            spaceId: msg.spaceId,
+          })
+        : null;
+
+      const appended = gameEventNew
+        ? appendEvent(modelNew, gameEventNew)
+        : modelNew;
+
       return {
-        model: modelNew,
+        model: {
+          ...modelNew,
+          ...appended,
+        },
         eff: Eff.map_(
           (c) => ({
             t: "game-msg",
@@ -321,9 +336,22 @@ export const updateFromServer = ({
             state: space.game,
           });
 
+          const gameEventNew = updated.gameEvent
+            ? withMeta<Event>({
+                t: "game",
+                c: updated.gameEvent,
+                spaceId: msg.spaceId,
+              })
+            : null;
+
+          const appended = gameEventNew
+            ? appendEvent(model, gameEventNew)
+            : updated.model;
+
           return {
             model: {
               ...model,
+              ...appended,
               games: {
                 ...model.games,
                 [msg.spaceId]: updated.model,
@@ -534,6 +562,7 @@ export const updateFromEvent = (input: {
     case "route-changed": {
       return { model: { ...model, modal: null } };
     }
+
     default: {
       return input;
     }
@@ -919,9 +948,6 @@ const ViewSpaceScreenMain = ({
           <GameClient.View
             state={space.game}
             ctx={ctx}
-            dispatchEvent={(c) =>
-              dispatchEvent({ t: "game", spaceId: ctx.space.spaceId, c })
-            }
             dispatch={(msg) =>
               dispatch({ t: "game-msg", spaceId: ctx.space.spaceId, c: msg })
             }

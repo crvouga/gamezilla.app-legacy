@@ -38,6 +38,7 @@ export type ServerModel = null;
 export type ServerMsg = { t: null };
 
 export type ClientMsg =
+  | GameEvent
   | { t: "hovered-over-columns"; columnIndex: ColumnIndex }
   | { t: "clicked-resign"; userId: UserId }
   | { t: "close-modal" };

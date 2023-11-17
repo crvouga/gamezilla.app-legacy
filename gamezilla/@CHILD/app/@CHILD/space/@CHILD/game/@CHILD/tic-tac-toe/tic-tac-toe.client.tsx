@@ -6,6 +6,8 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   GameClient,
+  SpaceClientCtx,
+  SpaceClientEvt,
   SpaceViewCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
@@ -17,14 +19,18 @@ import { CoverArt } from "./@SHARED/tic-tic-toe/tic-tac-toe-ui";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUser from "./@CHILD/vs-user/vs-user.client";
 
-type Client = GameClient<
-  ClientModel,
-  ClientMsg,
-  ToClient,
-  ToServer,
-  null,
-  null
->;
+type Client = GameClient<{
+  ClientModel: ClientModel;
+  ClientMsg: ClientMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  GameEvent: null;
+  GameState: null;
+  ClientCtx: SpaceClientCtx;
+  ViewCtx: SpaceViewCtx;
+  ClientCmd: ClientCmd<ToServer>;
+  ClientEvt: SpaceClientEvt;
+}>;
 
 //
 //

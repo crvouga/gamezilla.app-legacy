@@ -1,19 +1,3 @@
-import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
-import {
-  APP_SOUND,
-  ClientCmd,
-  playSound,
-} from "gamezilla/@CHILD/app/@SHARED/client";
-import {
-  IconArrowLeftOnRect,
-  IconArrowRotateLeft,
-  IconRightLeft,
-  LoadingBar,
-} from "gamezilla/@CHILD/app/@SHARED/ui";
-import {
-  GameClient,
-  SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
   GameLayout,
   IconBotHappy,
@@ -26,12 +10,30 @@ import {
   VsBotProps,
   VsBotSetup,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import {
+  GameClient,
+  SpaceClientCtx,
+  SpaceClientEvt,
+  SpaceViewCtx,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import {
+  APP_SOUND,
+  ClientCmd,
+  playSound,
+} from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  IconArrowLeftOnRect,
+  IconArrowRotateLeft,
+  IconRightLeft,
+  LoadingBar,
+} from "gamezilla/@CHILD/app/@SHARED/ui";
+import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
 import { Columns, toStatus, toTurn } from "../../@SHARED/connect-four";
 import {
+  CoverArt,
   PlayerOneIcon,
   PlayerTwoIcon,
   ViewColumns,
-  CoverArt,
   gameTheme,
 } from "../../@SHARED/connect-four-ui";
 import {
@@ -45,15 +47,18 @@ import {
   allBotLevels,
 } from "./vs-bot.core";
 
-type Client = GameClient<
-  ClientModel,
-  ClientMsg,
-  ToClient,
-  ToServer,
-  GameState,
-  GameEvent,
-  SpaceViewCtx & { onQuit: () => void }
->;
+type Client = GameClient<{
+  ClientModel: ClientModel;
+  ClientMsg: ClientMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  GameState: GameState;
+  GameEvent: GameEvent;
+  ClientCtx: SpaceClientCtx;
+  ViewCtx: SpaceViewCtx & { onQuit: () => void };
+  ClientCmd: ClientCmd<ToServer>;
+  ClientEvt: SpaceClientEvt;
+}>;
 
 //
 //
@@ -97,6 +102,10 @@ export const update: Client["update"] = (input) => {
         }
         case "closed-activity-feed-drawer": {
           return { model: { ...model, opened: null } };
+        }
+
+        default: {
+          return { model, gameEvent: msg };
         }
       }
     },
@@ -233,13 +242,7 @@ function toGameOver(columns: Columns): VsBotGame.GameOver {
   }
 }
 
-export const View: Client["View"] = ({
-  model,
-  ctx,
-  state,
-  dispatch,
-  dispatchEvent,
-}) => {
+export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
   const vsBotProps: VsBotProps = {
     ctx: ctx,
     onQuit: ctx.onQuit,
@@ -247,15 +250,15 @@ export const View: Client["View"] = ({
     renderCoverArt: (props) => <CoverArt {...props} />,
     canStartGame: state.playingUserId !== null,
     onSwapSides: () =>
-      dispatchEvent({ t: "user-swapped-sides", userId: ctx.currentUserId }),
+      dispatch({ t: "user-swapped-sides", userId: ctx.currentUserId }),
     onStartGame: () =>
-      dispatchEvent({ t: "user-started-game", userId: ctx.currentUserId }),
+      dispatch({ t: "user-started-game", userId: ctx.currentUserId }),
     botVariants: allBotLevels.map((botLevel) => {
       return {
         label: botLevel,
         renderIcon: (props) => renderBotLevel({ level: botLevel, ...props }),
         onSelect: () =>
-          dispatchEvent({
+          dispatch({
             t: "user-changed-bot-level",
             botLevel,
             userId: ctx.currentUserId,
@@ -276,25 +279,25 @@ export const View: Client["View"] = ({
       label: "Red",
       renderIcon: (props) => <PlayerOneIcon {...props} />,
       onStartPlaying: () =>
-        dispatchEvent({
+        dispatch({
           t: "user-started-playing",
           playerType: "player-one",
           userId: ctx.currentUserId,
         }),
       onStopPlaying: () =>
-        dispatchEvent({ t: "user-stopped-playing", userId: ctx.currentUserId }),
+        dispatch({ t: "user-stopped-playing", userId: ctx.currentUserId }),
     },
     playerTwo: {
       label: "Yellow",
       renderIcon: (props) => <PlayerTwoIcon {...props} />,
       onStartPlaying: () =>
-        dispatchEvent({
+        dispatch({
           t: "user-started-playing",
           playerType: "player-two",
           userId: ctx.currentUserId,
         }),
       onStopPlaying: () =>
-        dispatchEvent({ t: "user-stopped-playing", userId: ctx.currentUserId }),
+        dispatch({ t: "user-stopped-playing", userId: ctx.currentUserId }),
     },
   };
 
@@ -338,7 +341,7 @@ export const View: Client["View"] = ({
             columns={state.columns}
             disabled={ctx.currentUserId !== state.playingUserId}
             onDropDisc={(columnIndex) => {
-              dispatchEvent({
+              dispatch({
                 t: "user-dropped-disc",
                 columnIndex,
                 userId: ctx.currentUserId,
@@ -350,7 +353,7 @@ export const View: Client["View"] = ({
             {...vsBotGameProps}
             model={model.vsBotGame}
             onPlayAgain={() =>
-              dispatchEvent({
+              dispatch({
                 t: "user-restarted-game",
                 userId: ctx.currentUserId,
               })
@@ -379,7 +382,7 @@ export const View: Client["View"] = ({
               label: "Exit",
               icon: <IconArrowLeftOnRect class="h-6 w-6" />,
               onClick: () =>
-                dispatchEvent({
+                dispatch({
                   t: "user-stopped-game",
                   userId: ctx.currentUserId,
                 }),
@@ -388,7 +391,7 @@ export const View: Client["View"] = ({
               label: "Swap sides",
               icon: <IconRightLeft class="h-6 w-6" />,
               onClick: () =>
-                dispatchEvent({
+                dispatch({
                   t: "user-swapped-sides",
                   userId: ctx.currentUserId,
                 }),
@@ -397,7 +400,7 @@ export const View: Client["View"] = ({
               label: "Restart",
               icon: <IconArrowRotateLeft class="h-6 w-6" />,
               onClick: () =>
-                dispatchEvent({
+                dispatch({
                   t: "user-restarted-game",
                   userId: ctx.currentUserId,
                 }),

@@ -1,19 +1,24 @@
-import { err, ok, Sub } from "gamezilla/@SHARED/core";
 import {
   GameServer,
   sendToSpace,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { err, Sub } from "gamezilla/@SHARED/core";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.core";
-import { PlayServer } from "./@CHILD/play";
-import { PuzzleBuilderServer } from "./@CHILD/puzzle-builder";
 
-type Server = GameServer<ServerModel, ServerMsg, ToClient, ToServer>;
+type Server = GameServer<{
+  ServerModel: ServerModel;
+  ServerMsg: ServerMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  GameEvent: null;
+  GameState: null;
+}>;
 
-export const init: Server["init"] = () => {
+export const init: Server["init"] = async () => {
   return { model: { t: "none" } };
 };
 
-export const update: Server["update"] = ({ msg, model, ...input }) => {
+export const update: Server["update"] = async ({ msg, model, ...input }) => {
   switch (msg.t) {
     case "play": {
       return { model };
@@ -25,7 +30,7 @@ export const update: Server["update"] = ({ msg, model, ...input }) => {
   }
 };
 
-export const updateFromClient: Server["updateFromClient"] = (input) => {
+export const updateFromClient: Server["updateFromClient"] = async (input) => {
   const { msg, model, ctx } = input;
 
   switch (msg.t) {
@@ -50,10 +55,10 @@ export const updateFromClient: Server["updateFromClient"] = (input) => {
   }
 };
 
-export const updateFromEvent: Server["updateFromEvent"] = (input) => {
+export const updateFromEvent: Server["updateFromEvent"] = async (input) => {
   return input;
 };
 
-export const subscriptions: Server["subscriptions"] = () => {
+export const subscriptions: Server["subscriptions"] = async () => {
   return Sub.None;
 };

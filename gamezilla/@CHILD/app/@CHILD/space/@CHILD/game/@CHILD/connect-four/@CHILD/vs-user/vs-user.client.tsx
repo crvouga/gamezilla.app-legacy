@@ -1,5 +1,9 @@
 import { Sub, chain } from "gamezilla/@SHARED/core";
-import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  ClientCmd,
+  ClientCtx,
+  ViewCtx,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
   ConformationDialog,
@@ -13,6 +17,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
   GameClient,
+  SpaceClientEvt,
   SpaceViewCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
@@ -35,15 +40,18 @@ import {
   toPlayerType,
 } from "./vs-user.core";
 
-type Client = GameClient<
-  ClientModel,
-  ClientMsg,
-  ToClient,
-  ToServer,
-  GameState,
-  GameEvent,
-  SpaceViewCtx & { onQuit: () => void }
->;
+type Client = GameClient<{
+  ClientModel: ClientModel;
+  ClientMsg: ClientMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  GameState: GameState;
+  GameEvent: GameEvent;
+  ClientCtx: ClientCtx;
+  ViewCtx: SpaceViewCtx & { onQuit: () => void };
+  ClientCmd: ClientCmd<ToServer>;
+  ClientEvt: SpaceClientEvt;
+}>;
 
 //
 //
@@ -82,6 +90,13 @@ export const update: Client["update"] = ({ msg, model }) => {
 
     case "close-modal": {
       return { model: { ...model, openedModal: null } };
+    }
+
+    default: {
+      return {
+        model,
+        gameEvent: msg,
+      };
     }
   }
 };
@@ -140,13 +155,7 @@ export const subscriptions: Client["subscriptions"] = () => {
 //
 //
 
-export const View: Client["View"] = ({
-  ctx,
-  model,
-  state,
-  dispatch,
-  dispatchEvent,
-}) => {
+export const View: Client["View"] = ({ ctx, model, state, dispatch }) => {
   if (state.type === "setup") {
     return (
       <VsUserSetupScreen
@@ -160,20 +169,20 @@ export const View: Client["View"] = ({
           );
         }}
         onStartGame={() => {
-          dispatchEvent({ t: "user-started-game", userId: ctx.currentUserId });
+          dispatch({ t: "user-started-game", userId: ctx.currentUserId });
         }}
         onQuit={ctx.onQuit}
         playerOne={{
           label: "Red",
           onStartPlaying: () => {
-            dispatchEvent({
+            dispatch({
               t: "user-started-playing",
               playerType: "player-one",
               userId: ctx.currentUserId,
             });
           },
           onStopPlaying: () => {
-            dispatchEvent({
+            dispatch({
               t: "user-stopped-playing",
               userId: ctx.currentUserId,
             });
@@ -186,14 +195,14 @@ export const View: Client["View"] = ({
         playerTwo={{
           label: "Yellow",
           onStartPlaying: () => {
-            dispatchEvent({
+            dispatch({
               t: "user-started-playing",
               userId: ctx.currentUserId,
               playerType: "player-two",
             });
           },
           onStopPlaying: () => {
-            dispatchEvent({
+            dispatch({
               t: "user-stopped-playing",
               userId: ctx.currentUserId,
             });
@@ -224,7 +233,7 @@ export const View: Client["View"] = ({
             columns={state.columns}
             gameId={state.gameId}
             onDropDisc={(columnIndex) =>
-              dispatchEvent({
+              dispatch({
                 t: "user-dropped-disc",
                 userId: ctx.currentUserId,
                 columnIndex,
@@ -241,7 +250,7 @@ export const View: Client["View"] = ({
           {state.type === "game-over" && (
             <div class="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
               <ViewGameOverMessage
-                dispatchEvent={dispatchEvent}
+                dispatch={dispatch}
                 ctx={ctx}
                 state={state}
               />
@@ -273,7 +282,7 @@ export const View: Client["View"] = ({
                   icon: <IconArrowLeftOnRect class="h-6 w-6" />,
                   label: "Exit",
                   onClick: () => {
-                    dispatchEvent({
+                    dispatch({
                       t: "user-stopped-game",
                       userId: ctx.currentUserId,
                     });
@@ -283,7 +292,7 @@ export const View: Client["View"] = ({
                   icon: <IconArrowRotateLeft class="h-6 w-6" />,
                   label: "Rematch",
                   onClick: () => {
-                    dispatchEvent({
+                    dispatch({
                       t: "user-requested-rematch",
                       userId: ctx.currentUserId,
                     });
@@ -301,7 +310,7 @@ export const View: Client["View"] = ({
         onClose={() => dispatch({ t: "close-modal" })}
         confirmTitle="Resign"
         onConfirm={() =>
-          dispatchEvent({ t: "user-resigned", userId: ctx.currentUserId })
+          dispatch({ t: "user-resigned", userId: ctx.currentUserId })
         }
         open={model.openedModal === "confirm-resign"}
       />
@@ -312,11 +321,11 @@ export const View: Client["View"] = ({
 const ViewGameOverMessage = ({
   ctx,
   state,
-  dispatchEvent,
+  dispatch,
 }: {
   state: StateGameOver;
   ctx: ViewCtx;
-  dispatchEvent: (msg: GameEvent) => void;
+  dispatch: (msg: GameEvent) => void;
 }) => {
   const currentPlayerType = toPlayerType(ctx.currentUserId, state);
 
@@ -331,7 +340,7 @@ const ViewGameOverMessage = ({
         <Button
           variant="contained"
           onClick={() =>
-            dispatchEvent({
+            dispatch({
               t: "user-cancelled-rematch",
               userId: ctx.currentUserId,
             })
@@ -354,7 +363,7 @@ const ViewGameOverMessage = ({
           <Button
             variant="contained"
             onClick={() =>
-              dispatchEvent({
+              dispatch({
                 t: "user-responded-to-rematch-request",
                 userId: ctx.currentUserId,
                 response: "Decline",
@@ -367,7 +376,7 @@ const ViewGameOverMessage = ({
           <Button
             variant="contained"
             onClick={() =>
-              dispatchEvent({
+              dispatch({
                 t: "user-responded-to-rematch-request",
                 userId: ctx.currentUserId,
                 response: "Decline",

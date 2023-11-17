@@ -1,5 +1,6 @@
-import { RemoteResult, Result } from "gamezilla/@SHARED/core";
+import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { RemoteResult, Result } from "gamezilla/@SHARED/core";
 import * as Puzzle from "./@CHILD/puzzle/puzzle.core";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.core";
 import * as VsUser from "./@CHILD/vs-user/vs-user.core";
@@ -52,3 +53,61 @@ export type Res = Req & {
   result: Result<Problem, ServerModel>;
 };
 export type Problem = "must_be_the_host";
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+export type GameEvent = { t: "user-changed-mode"; mode: Mode; userId: UserId };
+
+export type GameState =
+  | {
+      t: "none";
+    }
+  | {
+      t: "vs-user";
+    }
+  | {
+      t: "vs-bot";
+    };
+
+export const initState = (): GameState => {
+  return {
+    t: "none",
+  };
+};
+
+export const reducer = ({
+  ctx,
+  event,
+  state,
+}: {
+  ctx: SpaceCtx;
+  state: GameState;
+  event: GameEvent;
+}): GameState => {
+  switch (event.t) {
+    case "user-changed-mode": {
+      switch (event.mode) {
+        case "none": {
+          return { t: "none" };
+        }
+        case "puzzle": {
+          return { t: "none" };
+        }
+        case "vs-bot": {
+          return { t: "none" };
+        }
+        case "vs-user": {
+          return { t: "none" };
+        }
+      }
+    }
+  }
+};
