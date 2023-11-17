@@ -13,16 +13,8 @@ const program = Program.create({
       documentVisibilityState: Browser.getDocumentVisibilityState(),
     });
   },
-  update: (input) => {
-    return AppClient.update({
-      now: input.ctx.now,
-      model: input.model,
-      msg: input.msg,
-    });
-  },
-  subscriptions: (input) => {
-    return AppClient.subscriptions({ now: input.ctx.now, model: input.model });
-  },
+  update: AppClient.update,
+  subscriptions: AppClient.subscriptions,
 });
 
 program.subscribe((model, ctx) => {

@@ -100,7 +100,7 @@ export const init = ({
 //
 
 export const update = (input: {
-  now: Posix;
+  ctx: { now: Posix };
   msg: ClientMsg;
   model: ClientModel;
 }): {
@@ -112,6 +112,7 @@ export const update = (input: {
   for (const evt of acc.evt ?? []) {
     const updatedEvt = updateFromEvent({
       ...input,
+
       model: acc.model,
       msg: evt,
     });
@@ -136,9 +137,9 @@ export const update = (input: {
 const updateMain = ({
   msg,
   model,
-  now,
+  ctx,
 }: {
-  now: Posix;
+  ctx: { now: Posix };
   msg: ClientMsg;
   model: ClientModel;
 }): {
@@ -147,12 +148,12 @@ const updateMain = ({
   evt?: ClientEvt[];
   cmd?: ClientCmd<ToServer>[];
 } => {
-  const ctx = toCtx({ model, now });
+  const ctxApp = toCtx({ model, now: ctx.now });
 
   switch (msg.t) {
     case "➡️": {
       return updateFromServer({
-        now,
+        ctx: ctxApp,
         msg: msg.c,
         model,
       });
@@ -212,9 +213,9 @@ const updateMain = ({
     }
 
     case "space": {
-      if (UserId.is(ctx.currentUserId)) {
+      if (UserId.is(ctxApp.currentUserId)) {
         const updated = SpaceClient.update({
-          ctx: { ...ctx, currentUserId: ctx.currentUserId },
+          ctx: { ...ctxApp, currentUserId: ctxApp.currentUserId },
           msg: msg.c,
           model: model.space,
         });
@@ -291,20 +292,18 @@ const toCtx = (input: {
 
 const updateFromServer = ({
   msg,
-  now,
+  ctx,
   model,
 }: {
   msg: ToClient;
   model: ClientModel;
-  now: Posix;
+  ctx: ClientCtx | AnonymousClientCtx;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<ToServer>[];
   evt?: ClientEvt[];
 } => {
-  const ctx = toCtx({ model, now });
-
   switch (msg.t) {
     case "auth": {
       const updated = AuthClient.updateFromServer({
@@ -466,9 +465,9 @@ const updateFromCmd = ({
 const updateFromEvent = ({
   model,
   msg,
-  now,
+  ctx,
 }: {
-  now: Posix;
+  ctx: { now: Posix };
   model: ClientModel;
   msg: ClientEvt;
 }): {
@@ -476,7 +475,7 @@ const updateFromEvent = ({
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<ToServer>[];
 } => {
-  const ctx = toCtx({ model, now });
+  const ctxApp = toCtx({ model, now: ctx.now });
 
   const chat = ChatClient.updateFromEvent({
     model: model.chat,
@@ -491,13 +490,13 @@ const updateFromEvent = ({
   const profile = ProfileClient.updateFromEvent({
     model: model.profile,
     evt: msg,
-    ctx,
+    ctx: ctxApp,
   });
 
   const auth = AuthClient.updateFromEvent({
     model: model.auth,
     msg,
-    ctx,
+    ctx: ctxApp,
   });
 
   return {
@@ -544,10 +543,10 @@ export const fromServer = Sub.create<ToClient[]>();
 //
 
 export const subscriptions = ({
-  now,
+  ctx,
   model,
 }: {
-  now: Posix;
+  ctx: { now: Posix };
   model: ClientModel;
 }): Sub<ClientMsg> => {
   return Sub.batch<ClientMsg>([
@@ -559,18 +558,18 @@ export const subscriptions = ({
       t: "document-visibility-changed",
       state,
     })),
-    spaceSub(now, model),
+    spaceSub(ctx, model),
   ]);
 };
 
-const spaceSub = (now: Posix, model: ClientModel): Sub<ClientMsg> => {
+const spaceSub = (ctx: { now: Posix }, model: ClientModel): Sub<ClientMsg> => {
   if (model.auth.currentUser.t === "logged-in") {
     return Sub.tag(
       "space",
       SpaceClient.subscriptions(
         {
           currentRoute: model.routing,
-          now,
+          now: ctx.now,
           currentUserId: model.auth.currentUser.userId,
           profiles: model.profile.profiles,
           documentVisibilityState: model.documentVisibilityState,
