@@ -38,7 +38,9 @@ import * as SpaceClient from "./@CHILD/space/space.client";
 export const init = ({
   location,
   documentVisibilityState,
+  stored,
 }: {
+  stored: ClientModel | null;
   ctx: { now: Posix };
   location: Browser.Location;
   documentVisibilityState: DocumentVisibilityState;
@@ -87,6 +89,14 @@ export const init = ({
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
     };
   }
+
+  acc = {
+    ...acc,
+    model: {
+      ...acc.model,
+      ...stored,
+    },
+  };
 
   return acc;
 };
