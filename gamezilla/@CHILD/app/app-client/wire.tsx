@@ -17,8 +17,21 @@ export type Model =
   | { t: "server-disconnected" }
   | { t: "server-connected" };
 
-export const init: Model = {
-  t: "server-connecting",
+export const init = ({
+  stored,
+}: {
+  stored: Model | null;
+}): { model: Model } => {
+  if (stored) {
+    return {
+      model: stored,
+    };
+  }
+  return {
+    model: {
+      t: "server-connecting",
+    },
+  };
 };
 
 //

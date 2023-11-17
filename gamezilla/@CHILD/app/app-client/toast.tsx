@@ -77,12 +77,18 @@ export type Toast = {
   variant: "error" | "info";
 };
 
-export const init = ({ stored }: { stored: Model | null }): Model => {
+export const init = ({
+  stored,
+}: {
+  stored: Model | null;
+}): { model: Model } => {
   return {
-    runningId: 0,
-    toasts: [],
-    hold: {},
-    uiToasts: Transition.init<Toast>(),
+    model: {
+      runningId: 0,
+      toasts: [],
+      hold: {},
+      uiToasts: Transition.init<Toast>(),
+    },
   };
 };
 

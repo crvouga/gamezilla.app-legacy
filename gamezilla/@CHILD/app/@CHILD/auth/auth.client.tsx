@@ -34,13 +34,25 @@ import * as AuthClientSMS from "./@CHILD/auth-sms/auth-sms.client";
 //
 //
 
-export const init: { model: ClientModel; eff?: Eff<ClientMsg> } = {
-  model: {
-    currentUser: { t: "loading" },
-    loginWithGoogle: notAsked,
-    logout: notAsked,
-    sms: AuthClientSMS.init,
-  },
+export const init = ({
+  stored,
+}: {
+  stored: ClientModel | null;
+}): { model: ClientModel; eff?: Eff<ClientMsg> } => {
+  if (stored) {
+    return {
+      model: stored,
+    };
+  }
+
+  return {
+    model: {
+      currentUser: { t: "loading" },
+      loginWithGoogle: notAsked,
+      logout: notAsked,
+      sms: AuthClientSMS.init,
+    },
+  };
 };
 
 //

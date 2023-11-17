@@ -48,23 +48,42 @@ export const init = ({
   model: ClientModel;
   eff: Eff<ClientMsg>;
 } => {
-  const routing = Routing.init(location);
+  const routing = Routing.init({
+    location,
+    stored: stored?.routing ?? null,
+  });
+
   const toast = Toast.init({
     stored: stored?.toast ?? null,
   });
-  const wire = Wire.init;
-  const auth = AuthClient.init;
-  const space = SpaceClient.init;
-  const profile = ProfileClient.init({ currentRoute: routing.model });
+
+  const wire = Wire.init({
+    stored: stored?.wire ?? null,
+  });
+
+  const auth = AuthClient.init({
+    stored: stored?.auth ?? null,
+  });
+
+  const space = SpaceClient.init({
+    stored: stored?.space ?? null,
+  });
+
+  const profile = ProfileClient.init({
+    currentRoute: routing.model,
+  });
+
   const chat = ChatClient.init;
+
   const search = SearchClient.init;
+
   const sound = Sound.init;
 
   let acc: { model: ClientModel; eff: Eff<ClientMsg> } = {
     model: {
       routing: routing.model,
-      toast,
-      wire,
+      toast: toast.model,
+      wire: wire.model,
       sound,
       //
       documentVisibilityState,
@@ -91,14 +110,6 @@ export const init = ({
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
     };
   }
-
-  acc = {
-    ...acc,
-    model: {
-      ...acc.model,
-      ...stored,
-    },
-  };
 
   return acc;
 };

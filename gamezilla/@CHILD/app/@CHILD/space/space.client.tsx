@@ -62,17 +62,27 @@ import {
 //
 //
 
-export const init: {
+export const init = ({
+  stored,
+}: {
+  stored: ClientModel | null;
+}): {
   model: ClientModel;
-  cmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} = {
-  model: {
-    ...initCore(),
-    games: {},
-    modal: null,
-    previewUserId: null,
-  },
-  cmd: [],
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+} => {
+  if (stored) {
+    return {
+      model: stored,
+    };
+  }
+  return {
+    model: {
+      ...initCore(),
+      games: {},
+      modal: null,
+      previewUserId: null,
+    },
+  };
 };
 
 //

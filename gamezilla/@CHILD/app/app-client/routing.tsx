@@ -21,9 +21,13 @@ export type ClientModel = AppRoute;
 
 const FALLBACK: AppRoute = { t: "space", c: { t: "space-list" } };
 
-export const init = (
-  location: Browser.Location
-): {
+export const init = ({
+  location,
+  stored,
+}: {
+  location: Browser.Location;
+  stored: ClientModel | null;
+}): {
   model: ClientModel;
   eff?: Eff;
 } => {
