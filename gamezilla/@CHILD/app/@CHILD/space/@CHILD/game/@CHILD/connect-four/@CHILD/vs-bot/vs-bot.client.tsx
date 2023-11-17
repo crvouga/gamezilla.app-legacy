@@ -321,15 +321,15 @@ export const View: Client["View"] = ({
 
   return (
     <GameLayout isSpectating={ctx.currentUserId !== state.playingUserId}>
-      <div className="flex w-full flex-1 flex-col items-center justify-center">
+      <div class="flex w-full flex-1 flex-col items-center justify-center">
         <VsBotPlayerSection {...vsBotGameProps} />
 
-        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
+        <div class="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <LoadingBar
             disabled={
               turn === state.userPlayerType || status.type !== "Playing"
             }
-            className="w-full"
+            class="w-full"
             color={gameTheme.primary.dark}
           />
 
@@ -377,7 +377,7 @@ export const View: Client["View"] = ({
           actions={[
             {
               label: "Exit",
-              icon: <IconArrowLeftOnRect className="h-6 w-6" />,
+              icon: <IconArrowLeftOnRect class="h-6 w-6" />,
               onClick: () =>
                 dispatchEvent({
                   t: "user-stopped-game",
@@ -386,7 +386,7 @@ export const View: Client["View"] = ({
             },
             {
               label: "Swap sides",
-              icon: <IconRightLeft className="h-6 w-6" />,
+              icon: <IconRightLeft class="h-6 w-6" />,
               onClick: () =>
                 dispatchEvent({
                   t: "user-swapped-sides",
@@ -395,7 +395,7 @@ export const View: Client["View"] = ({
             },
             {
               label: "Restart",
-              icon: <IconArrowRotateLeft className="h-6 w-6" />,
+              icon: <IconArrowRotateLeft class="h-6 w-6" />,
               onClick: () =>
                 dispatchEvent({
                   t: "user-restarted-game",

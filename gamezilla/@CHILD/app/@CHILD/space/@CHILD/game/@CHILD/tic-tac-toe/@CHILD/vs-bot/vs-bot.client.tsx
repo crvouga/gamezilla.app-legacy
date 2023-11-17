@@ -224,12 +224,12 @@ export const View = ({
   const status = toStatus(model.board);
 
   return (
-    <div className="flex h-full w-full flex-col ">
-      <div className="flex flex-1 flex-col items-center justify-center">
+    <div class="flex h-full w-full flex-col ">
+      <div class="flex flex-1 flex-col items-center justify-center">
         <VsBotPlayerSection {...vsBotGameProps} />
 
         <LoadingBar
-          className="w-full"
+          class="w-full"
           disabled={model.userPlayerType === turn || status.type !== "Turn"}
           color={gameTheme.background}
         />
@@ -241,17 +241,17 @@ export const View = ({
       <ViewBottomButtonBar
         actions={[
           {
-            icon: <IconArrowLeftOnRect className="h-6 w-6" />,
+            icon: <IconArrowLeftOnRect class="h-6 w-6" />,
             label: "Exit",
             onClick: () => dispatch({ t: "stop-game" }),
           },
           {
-            icon: <IconRightLeft className="h-6 w-6" />,
+            icon: <IconRightLeft class="h-6 w-6" />,
             label: "Swap sides",
             onClick: () => dispatch({ t: "swap-sides" }),
           },
           {
-            icon: <IconArrowRotateLeft className="h-6 w-6" />,
+            icon: <IconArrowRotateLeft class="h-6 w-6" />,
             label: "Restart",
             onClick: () => dispatch({ t: "restart" }),
           },

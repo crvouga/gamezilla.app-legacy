@@ -181,9 +181,7 @@ export const View = ({
             }
           : null
       }
-      className={
-        model.state.t === "dragging" ? "cursor-grabbing" : "cursor-grab"
-      }
+      class={model.state.t === "dragging" ? "cursor-grabbing" : "cursor-grab"}
       isActive={({ groupId }) =>
         model.state.t === "dragging" && model.state.activeGroupId === groupId
       }

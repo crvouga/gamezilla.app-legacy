@@ -140,7 +140,7 @@ export const View = ({
   dispatch: (msg: Msg) => void;
 }) => {
   return (
-    <div className="flex h-full w-full flex-col">
+    <div class="flex h-full w-full flex-col">
       <TopBar
         left={
           <TopBarBackButton onClick={() => dispatch({ t: "clicked-back" })} />
@@ -149,7 +149,7 @@ export const View = ({
       />
 
       <form
-        className="flex flex-col gap-6 p-4"
+        class="flex flex-col gap-6 p-4"
         onSubmit={(event) => {
           event.preventDefault();
           dispatch({ t: "clicked-send-login-link" });
@@ -177,7 +177,7 @@ export const View = ({
         <Button
           variant="contained"
           size="lg"
-          className="w-full"
+          class="w-full"
           color="primary"
           type="submit"
           loading={model.submission.type === "loading"}
@@ -190,11 +190,11 @@ export const View = ({
 
         {model.submission.type === "ok" && (
           <AlertSuccess>
-            <div className="flex flex-col gap-1">
-              <div className="text-lg">Check your email</div>
-              <div className="font-light">
+            <div class="flex flex-col gap-1">
+              <div class="text-lg">Check your email</div>
+              <div class="font-light">
                 Login link was send to{" "}
-                <span className="font-semibold text-white">
+                <span class="font-semibold text-white">
                   {model.submission.sentToEmailAddress}
                 </span>
               </div>

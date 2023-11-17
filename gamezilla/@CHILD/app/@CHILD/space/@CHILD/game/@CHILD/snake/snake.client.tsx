@@ -200,7 +200,7 @@ export const ViewBoard = (_props: {
   dispatch: (msg: Msg) => void;
 }) => {
   return (
-    <canvas className="pointer-events-none h-full max-h-full min-h-full w-full touch-none select-none" />
+    <canvas class="pointer-events-none h-full max-h-full min-h-full w-full touch-none select-none" />
   );
 };
 

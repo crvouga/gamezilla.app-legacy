@@ -6,7 +6,7 @@ const theme = {
   pawn: "#93BA46",
 };
 
-export const CoverArt = (props: { className?: string }) => {
+export const CoverArt = (props: { class?: string }) => {
   return (
     <svg width="100%" viewBox={"0 0 2 2"} {...props}>
       <rect x={0} y={0} width={1} height={1} fill={theme.lightSquare} />

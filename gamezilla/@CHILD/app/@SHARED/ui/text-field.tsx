@@ -33,13 +33,13 @@ export const TextField = ({
   onChange: (value: string) => void;
 }) => {
   return (
-    <div className="flex w-full flex-col gap-1">
-      <label htmlFor={id} className={cn("text-base", error && "text-red-500")}>
+    <div class="flex w-full flex-col gap-1">
+      <label htmlFor={id} class={cn("text-base", error && "text-red-500")}>
         {label}
       </label>
 
       <div
-        className={cn(
+        class={cn(
           "flex appearance-none items-center rounded-md border border-neutral-700 bg-neutral-800 p-3 py-4 text-xl outline-none",
           error && "border border-red-500 text-red-500",
           !error && " ring-blue-600 focus-within:ring-2"
@@ -61,25 +61,23 @@ export const TextField = ({
             e.preventDefault();
             onChange(e.currentTarget.value);
           }}
-          className="w-auto flex-1 bg-transparent outline-none"
+          class="w-auto flex-1 bg-transparent outline-none"
         />
         {onClear && (
           <button
-            className="rounded-md outline-none ring-blue-600 focus:ring-2"
+            class="rounded-md outline-none ring-blue-600 focus:ring-2"
             onClick={(event) => {
               event.preventDefault();
               document.getElementById(id)?.focus();
               onClear();
             }}>
-            <IconXMark className="h-6 w-6" />
+            <IconXMark class="h-6 w-6" />
           </button>
         )}
       </div>
 
       {helperText && (
-        <div className={cn("text-sm", error && "text-red-500")}>
-          {helperText}
-        </div>
+        <div class={cn("text-sm", error && "text-red-500")}>{helperText}</div>
       )}
     </div>
   );

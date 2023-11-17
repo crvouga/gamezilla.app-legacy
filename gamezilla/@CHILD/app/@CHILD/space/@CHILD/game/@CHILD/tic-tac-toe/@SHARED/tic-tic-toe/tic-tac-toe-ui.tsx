@@ -96,7 +96,7 @@ export const ViewBoard = ({
           key={[position.column, position.row, toSlot(board, position)].join(
             " "
           )}
-          className="cursor-pointer"
+          class="cursor-pointer"
           x={Number(position.column) * scale}
           y={Number(position.row) * scale}
           width={1 * scale}
@@ -336,7 +336,7 @@ export const PlayerTypeIcon = ({
   className?: string;
 }) => {
   return (
-    <svg viewBox="-1 -1 2 2" fill="currentColor" className={className}>
+    <svg viewBox="-1 -1 2 2" fill="currentColor" class={className}>
       <ViewSlot
         key={playerType}
         cx={0}
@@ -350,7 +350,7 @@ export const PlayerTypeIcon = ({
   );
 };
 
-export const CoverArt = (props: { className?: string }) => {
+export const CoverArt = (props: { class?: string }) => {
   const positions: [Position, Slot][] = [
     [{ row: 0, column: 0 }, "X"],
     [{ row: 0, column: 1 }, Empty],

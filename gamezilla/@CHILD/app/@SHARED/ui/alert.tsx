@@ -11,12 +11,12 @@ export const AlertError = ({
 }) => {
   return (
     <div
-      className={cn(
+      class={cn(
         "flex w-full items-center rounded-md bg-red-500 p-4 text-white",
         className
       )}>
-      <div className="mr-2">
-        <IconExclamationCircle className="h-6 w-6" />
+      <div class="mr-2">
+        <IconExclamationCircle class="h-6 w-6" />
       </div>
 
       {children}
@@ -33,12 +33,12 @@ export const AlertInfo = ({
 }) => {
   return (
     <div
-      className={cn(
+      class={cn(
         className,
         "flex w-full items-center rounded-md bg-blue-500 p-4 text-white"
       )}>
-      <div className="mr-2">
-        <IconInfoCircle className="h-6 w-6" />
+      <div class="mr-2">
+        <IconInfoCircle class="h-6 w-6" />
       </div>
       {children}
     </div>
@@ -54,12 +54,12 @@ export const AlertSuccess = ({
 }) => {
   return (
     <div
-      className={cn(
+      class={cn(
         className,
         "flex w-full items-center rounded-md bg-green-500 p-4 text-white"
       )}>
-      <div className="mr-2">
-        <IconCheckmarkCircle className="h-6 w-6" />
+      <div class="mr-2">
+        <IconCheckmarkCircle class="h-6 w-6" />
       </div>
       {children}
     </div>

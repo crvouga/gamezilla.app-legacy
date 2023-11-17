@@ -57,10 +57,10 @@ export const View = ({
   onPressDown,
   onPressUp,
   isActive,
-  className,
+  class: className,
   autocompleteEdge,
 }: {
-  className?: string;
+  class?: string;
   //
   model: ViewModel;
   //
@@ -78,7 +78,7 @@ export const View = ({
 }) => {
   return (
     <svg
-      className={cn("w-full touch-none select-none", className)}
+      class={cn("w-full touch-none select-none", className)}
       onContextMenu={(event) => {
         event.stopPropagation();
         event.preventDefault();
@@ -270,7 +270,7 @@ export const View = ({
               x={node.x}
               y={node.y}
               width={1}
-              className="cursor-pointer"
+              class="cursor-pointer"
               height={1}
               fill="transparent"
               onMouseDown={() => {

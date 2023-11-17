@@ -15,7 +15,7 @@ export const IconGoogle = (props: IconProps) => {
     //   xmlns="http://www.w3.org/2000/svg"
     //   preserveAspectRatio="xMidYMid"
     //   viewBox="0 0 256 262"
-    //   className={'w-6 h-6'}
+    //   class={'w-6 h-6'}
     //   {...props}
     // >
     //   <path

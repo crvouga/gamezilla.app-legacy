@@ -239,45 +239,45 @@ export const View = ({
       <ViewStatusBar model={model} />
 
       {/* top heads up */}
-      <div className="flex w-full flex-1 flex-col items-center justify-center">
-        <div className="flex w-full items-center gap-2 px-3 py-2">
+      <div class="flex w-full flex-1 flex-col items-center justify-center">
+        <div class="flex w-full items-center gap-2 px-3 py-2">
           <MyAvatar
             src={ctx.profiles[ctx.space.hostId]?.avatarUrl}
-            className="h-10 w-10"
+            class="h-10 w-10"
             alt=""
           />
 
-          <div className="flex flex-1 flex-col justify-center">
-            <p className="-mb-1/2 text-xs text-neutral-300">Rating</p>
-            <div className="flex items-center gap-1">
-              <p className="text-xl font-semibold">
+          <div class="flex flex-1 flex-col justify-center">
+            <p class="-mb-1/2 text-xs text-neutral-300">Rating</p>
+            <div class="flex items-center gap-1">
+              <p class="text-xl font-semibold">
                 {model.profile?.eloRating ?? "..."}
               </p>
 
               {model.t === "solved" && !model.hasLost && nextEloRating && (
-                <div className="rounded-xl text-lg  font-semibold text-green-500">
+                <div class="rounded-xl text-lg  font-semibold text-green-500">
                   +{nextEloRating - model.profile.eloRating}
                 </div>
               )}
               {model.t !== "loading" && model.hasLost && nextEloRating && (
-                <div className="rounded-xl  text-lg   font-semibold text-red-500">
+                <div class="rounded-xl  text-lg   font-semibold text-red-500">
                   {nextEloRating - model.profile.eloRating}
                 </div>
               )}
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2">
+          <div class="flex items-center justify-end gap-2">
             <TickingClock
               sec={durationMs ? Math.floor(durationMs / 1_000) : 0}
             />
-            <p className="font-mono text-lg font-bold  text-neutral-300">
+            <p class="font-mono text-lg font-bold  text-neutral-300">
               {durationMs ? formatDuration(durationMs) : "-:--"}
             </p>
           </div>
         </div>
 
-        <div className="relative flex aspect-square w-full items-center justify-end overflow-hidden bg-neutral-700">
+        <div class="relative flex aspect-square w-full items-center justify-end overflow-hidden bg-neutral-700">
           <Chessboard
             id="puzzle-chess-board"
             orientation={
@@ -322,24 +322,24 @@ export const View = ({
             }}
           />
           {model.t === "loading" && (
-            <div className="absolute left-0 top-0 z-20 grid h-full w-full place-items-center bg-black/50">
+            <div class="absolute left-0 top-0 z-20 grid h-full w-full place-items-center bg-black/50">
               <Spinner />
             </div>
           )}
         </div>
-        <div className="grid w-full grid-cols-2 px-2 py-1">
-          <div className="flex items-center justify-start gap-1 text-xs ">
-            <p className="text-neutral-300">Puzzle Rating</p>
+        <div class="grid w-full grid-cols-2 px-2 py-1">
+          <div class="flex items-center justify-start gap-1 text-xs ">
+            <p class="text-neutral-300">Puzzle Rating</p>
             <p>{model.t === "loading" ? "..." : model.puzzle.rating}</p>
           </div>
 
-          <div className="flex flex-1 items-center justify-end gap-1 text-right text-xs">
-            <p className="text-neutral-300">Moved</p>
-            <p className="text-inherit">
+          <div class="flex flex-1 items-center justify-end gap-1 text-right text-xs">
+            <p class="text-neutral-300">Moved</p>
+            <p class="text-inherit">
               {model.t === "loading" ? "0" : model.moves?.length ?? "0"}
             </p>
-            <p className="text-neutral-300">out of</p>
-            <p className="text-inherit">
+            <p class="text-neutral-300">out of</p>
+            <p class="text-inherit">
               {model.t === "loading" ? "0" : model.puzzle?.moves?.length ?? "0"}
             </p>
           </div>
@@ -405,33 +405,33 @@ export const toBottomBarActions = ({
   dispatch: (m: ClientMsg) => void;
 }): BottomBarButtonAction[] => {
   const exit: BottomBarButtonAction = {
-    icon: <IconArrowLeftOnRect className="h-6 w-6" />,
+    icon: <IconArrowLeftOnRect class="h-6 w-6" />,
     label: "Exit",
     onClick: onClose,
   };
 
   const hint: BottomBarButtonAction = {
-    icon: <IconLightbulb className="h-6 w-6" />,
+    icon: <IconLightbulb class="h-6 w-6" />,
     label: "Hint",
     disabled: isNoMoreHints(model),
     onClick: () => dispatch({ t: "show-hint" }),
   };
 
   const retry: BottomBarButtonAction = {
-    icon: <IconArrowRotateLeft className="h-6 w-6" />,
+    icon: <IconArrowRotateLeft class="h-6 w-6" />,
     label: "Retry",
     onClick: () => dispatch({ t: "retry" }),
     color: "danger",
   };
 
   const skip: BottomBarButtonAction = {
-    icon: <IconArrowRight className="h-6 w-6" />,
+    icon: <IconArrowRight class="h-6 w-6" />,
     label: "Skip",
     onClick: () => dispatch({ t: "skip" }),
   };
 
   const next: BottomBarButtonAction = {
-    icon: <IconArrowCircle className="h-6 w-6" />,
+    icon: <IconArrowCircle class="h-6 w-6" />,
     label: "Next",
     color: "success",
     onClick: () => dispatch({ t: "next" }),
@@ -463,26 +463,26 @@ export const toBottomBarActions = ({
 const ViewStatusBar = ({ model }: { model: ClientModel }) => {
   if (model.t === "loading") {
     return (
-      <div className="flex w-full items-center justify-center p-2">
-        <p className="text-xl">...</p>
+      <div class="flex w-full items-center justify-center p-2">
+        <p class="text-xl">...</p>
       </div>
     );
   }
 
   if (model.t === "incorrect") {
     return (
-      <div className="flex w-full items-center justify-center gap-2 bg-red-500 p-2 text-white">
-        <IconXMark className="h-6 w-6" />
-        <p className="text-xl">Incorrect</p>
+      <div class="flex w-full items-center justify-center gap-2 bg-red-500 p-2 text-white">
+        <IconXMark class="h-6 w-6" />
+        <p class="text-xl">Incorrect</p>
       </div>
     );
   }
 
   if (model.t === "solved") {
     return (
-      <div className="flex w-full items-center justify-center gap-2 bg-green-500 p-2 text-white">
-        <IconCheckmarkCircle className="h-6 w-6" />
-        <p className="text-xl">Correct</p>
+      <div class="flex w-full items-center justify-center gap-2 bg-green-500 p-2 text-white">
+        <IconCheckmarkCircle class="h-6 w-6" />
+        <p class="text-xl">Correct</p>
       </div>
     );
   }
@@ -490,20 +490,20 @@ const ViewStatusBar = ({ model }: { model: ClientModel }) => {
   if (model.t === "started") {
     return (
       <div
-        className={cn(
+        class={cn(
           "flex w-full items-center justify-center gap-2 p-2",
           toPlayerColor(model.puzzle) === "b"
             ? "bg-black text-white"
             : "bg-white text-black"
         )}>
         <div
-          className={cn(
+          class={cn(
             "h-6 w-6 rounded-full border-2",
             toPlayerColor(model.puzzle) === "b"
               ? "border-[#ababab] bg-black"
               : "border-black bg-white"
           )}></div>
-        <p className="text-xl text-inherit">
+        <p class="text-xl text-inherit">
           {Chess.colorToString(toPlayerColor(model.puzzle))} to move
         </p>
       </div>
@@ -512,9 +512,9 @@ const ViewStatusBar = ({ model }: { model: ClientModel }) => {
 
   if (model.t === "solved-with-hint") {
     return (
-      <div className="flex w-full items-center justify-center gap-2 bg-neutral-600 p-2 text-white">
-        <IconCheckmarkCircle className="h-6 w-6" />
-        <p className="text-xl">Solved with hint</p>
+      <div class="flex w-full items-center justify-center gap-2 bg-neutral-600 p-2 text-white">
+        <IconCheckmarkCircle class="h-6 w-6" />
+        <p class="text-xl">Solved with hint</p>
       </div>
     );
   }
@@ -525,7 +525,7 @@ const ViewStatusBar = ({ model }: { model: ClientModel }) => {
 const TickingClock = (input: { sec: number }) => {
   return (
     <svg
-      className="h-5 w-5"
+      class="h-5 w-5"
       viewBox="-1 -1 2 2"
       stroke="currentColor"
       stroke-width="0.2">

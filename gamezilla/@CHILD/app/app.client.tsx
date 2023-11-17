@@ -601,7 +601,7 @@ export const View = ({
   dispatch: (msg: ClientMsg) => void;
 }) => {
   return (
-    <div className="fixed left-1/2 top-1/2 mx-auto box-content flex h-full max-h-[850px] w-full max-w-md -translate-x-1/2 -translate-y-1/2 touch-none select-none flex-col overflow-hidden rounded border border-neutral-700 bg-black text-white">
+    <div class="fixed left-1/2 top-1/2 mx-auto box-content flex h-full max-h-[850px] w-full max-w-md -translate-x-1/2 -translate-y-1/2 touch-none select-none flex-col overflow-hidden rounded border border-neutral-700 bg-black text-white">
       <ViewMain model={model} now={now} dispatch={dispatch} />
 
       <Wire.View model={model.wire} />
@@ -677,7 +677,7 @@ const ViewMain = ({
 
 const LogoScreen = () => {
   return (
-    <div className="flex h-full w-full items-center justify-center text-8xl">
+    <div class="flex h-full w-full items-center justify-center text-8xl">
       🦕
     </div>
   );
@@ -815,35 +815,35 @@ const ViewBottomBar = ({
         c: { t: "space-list" },
       },
       label: "Spaces",
-      icon: <IconGamepad className="h-6 w-6" />,
+      icon: <IconGamepad class="h-6 w-6" />,
     },
     {
       route: { t: "profile", c: { t: "profile", userId: ctx.currentUserId } },
       label: "Profile",
-      icon: <IconUserCircle className="h-6 w-6" />,
+      icon: <IconUserCircle class="h-6 w-6" />,
     },
   ];
 
   return (
-    <div className="flex w-full flex-col items-center justify-center">
+    <div class="flex w-full flex-col items-center justify-center">
       <SpaceClient.ViewCurrentSpaceBar
         ctx={ctx}
         model={model.space}
         dispatch={(c) => dispatch({ t: "space", c })}
       />
-      <div className="flex w-full items-center justify-center border-t border-neutral-700">
+      <div class="flex w-full items-center justify-center border-t border-neutral-700">
         {items.map((item) => {
           const isSelected = AppRoute.eq(model.routing, item.route);
           return (
             <button
               key={AppRoute.encode(item.route)}
               onClick={() => ctx.push(item.route)}
-              className={cn(
+              class={cn(
                 "flex flex-1 flex-col items-center justify-center pb-2 pt-1",
                 isSelected ? "text-blue-500" : "opacity-80"
               )}>
               {item.icon}
-              <div className="mt-0.5 text-xs">{item.label}</div>
+              <div class="mt-0.5 text-xs">{item.label}</div>
             </button>
           );
         })}

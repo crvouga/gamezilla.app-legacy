@@ -14,13 +14,13 @@ export const ViewBottomButtonBar = ({
   actions: BottomBarButtonAction[];
 }) => {
   return (
-    <div className="flex w-full items-center border-t border-neutral-700">
+    <div class="flex w-full items-center border-t border-neutral-700">
       {actions.map(({ label, disabled, icon, onClick, color = "default" }) => (
         <button
           disabled={disabled}
           key={label}
           onClick={onClick}
-          className={cn(
+          class={cn(
             "flex flex-1 flex-col items-center gap-0.5 p-1 text-sm active:opacity-50",
             disabled && "opacity-50",
             color === "danger" && "text-red-500",
@@ -28,7 +28,7 @@ export const ViewBottomButtonBar = ({
             color === "default" && "text-inherit"
           )}>
           {icon}
-          <p className="text-xs">{label}</p>
+          <p class="text-xs">{label}</p>
         </button>
       ))}
     </div>

@@ -224,13 +224,13 @@ export const View = ({
   switch (route.t) {
     case "login-phone": {
       return (
-        <div className="w-full">
+        <div class="w-full">
           <TopBar
             left={<TopBarBackButton onClick={() => ctx.back()} />}
             title="Login with phone"
           />
 
-          <div className="flex w-full flex-col gap-6 p-4 py-6">
+          <div class="flex w-full flex-col gap-6 p-4 py-6">
             <Select
               id="countryCode"
               label="Country"
@@ -260,11 +260,11 @@ export const View = ({
               }}
             />
 
-            <div className="w-full pt-1"></div>
+            <div class="w-full pt-1"></div>
 
             <Button
               text="Send Code"
-              className="w-full"
+              class="w-full"
               variant="contained"
               color="primary"
               loading={model.sendCode.t === "loading"}
@@ -275,7 +275,7 @@ export const View = ({
           </div>
 
           {model.sendCode.t === "err" && (
-            <div className="w-full p-4">
+            <div class="w-full p-4">
               <AlertError>{model.sendCode.error}</AlertError>
             </div>
           )}
@@ -285,13 +285,13 @@ export const View = ({
 
     case "login-phone-verify": {
       return (
-        <div className="w-full">
+        <div class="w-full">
           <TopBar
             left={<TopBarBackButton onClick={() => ctx.back()} />}
             title="Login with phone"
           />
 
-          <div className="flex w-full flex-col gap-6 p-4 py-6">
+          <div class="flex w-full flex-col gap-6 p-4 py-6">
             <TextField
               value={model.codeInput}
               id="codeInput"
@@ -307,7 +307,7 @@ export const View = ({
               }}
             />
             <Button
-              className="w-full"
+              class="w-full"
               text="Verify Code"
               color="primary"
               loading={model.verifyCode.t === "loading" || model.loggingIn}
@@ -321,7 +321,7 @@ export const View = ({
           </div>
 
           {model.verifyCode.t === "err" && (
-            <div className="w-full p-4">
+            <div class="w-full p-4">
               <AlertError>{model.verifyCode.error}</AlertError>
             </div>
           )}

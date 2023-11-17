@@ -243,12 +243,12 @@ export function View({
   return (
     <div
       id={ROOT_HTML_ID}
-      className="pointer-events-none absolute left-0 top-0 flex w-full flex-col items-center gap-4 px-4 pt-4">
+      class="pointer-events-none absolute left-0 top-0 flex w-full flex-col items-center gap-4 px-4 pt-4">
       {model.uiToasts.map(({ item: toast }) => (
         <div
           key={String(config.toId(toast))}
           id={String(config.toId(toast))}
-          className="w-full overflow-visible"
+          class="w-full overflow-visible"
           //
           onMouseDown={() => dispatch({ t: "pressed-down-on-toast", toast })}
           onMouseUp={() => dispatch({ t: "pressed-up-on-toast", toast })}
@@ -260,7 +260,7 @@ export function View({
             e.preventDefault();
           }}>
           <div
-            className={cn(
+            class={cn(
               "pointer-events-auto z-40 flex w-full max-w-md items-center justify-between overflow-hidden  rounded-lg border p-3 text-lg text-white shadow-2xl",
               toast.variant === "info" && "border-neutral-600 bg-neutral-700",
               toast.variant === "error" && "border-red-400 bg-red-500"

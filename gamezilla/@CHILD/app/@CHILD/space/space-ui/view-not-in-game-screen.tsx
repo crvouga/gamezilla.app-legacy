@@ -30,11 +30,11 @@ export const ViewNotInGameScreen = ({
   }
 
   return (
-    <div className="flex h-full w-full flex-1 flex-col">
-      <section className="flex flex-col gap-4 p-4">
-        <h1 className="text-center text-3xl font-bold">Games</h1>
+    <div class="flex h-full w-full flex-1 flex-col">
+      <section class="flex flex-col gap-4 p-4">
+        <h1 class="text-center text-3xl font-bold">Games</h1>
 
-        <div className="grid grid-cols-3 justify-between gap-8">
+        <div class="grid grid-cols-3 justify-between gap-8">
           {gameNameList.map((gameName) => (
             <div key={gameName}>
               <button
@@ -47,11 +47,11 @@ export const ViewNotInGameScreen = ({
                     game: gameName,
                   })
                 }
-                className="flex overflow-hidden rounded-lg">
+                class="flex overflow-hidden rounded-lg">
                 <CoverArt gameName={gameName} />
               </button>
 
-              <p className="mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold">
+              <p class="mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold">
                 {gameNameToString(gameName)}
               </p>
             </div>
@@ -62,7 +62,7 @@ export const ViewNotInGameScreen = ({
         <ViewUsersInSpaceList ctx={ctx} />
       )}
       <div>
-        <div className="h-24 w-full"></div>
+        <div class="h-24 w-full"></div>
       </div>
     </div>
   );

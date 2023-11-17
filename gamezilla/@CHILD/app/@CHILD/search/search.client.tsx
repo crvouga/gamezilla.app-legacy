@@ -124,14 +124,14 @@ export const View = ({
 
   return (
     <>
-      <div className="flex h-full w-full flex-col">
+      <div class="flex h-full w-full flex-col">
         {/* input */}
-        <div className="w-full p-4">
-          <div className="flex w-full items-center gap-2 rounded-full bg-neutral-700 px-4 py-2">
-            <IconMagnifyingGlass className="h-6 w-6" />
+        <div class="w-full p-4">
+          <div class="flex w-full items-center gap-2 rounded-full bg-neutral-700 px-4 py-2">
+            <IconMagnifyingGlass class="h-6 w-6" />
             <input
               id={searchInputId}
-              className="flex-1 bg-transparent text-lg outline-none"
+              class="flex-1 bg-transparent text-lg outline-none"
               placeholder="Search"
               value={model.searchText}
               onChange={(event) =>
@@ -141,7 +141,7 @@ export const View = ({
                 })
               }></input>
             <button onClick={() => dispatch({ t: "clicked-clear" })}>
-              <IconXMark className="h-6 w-6" />
+              <IconXMark class="h-6 w-6" />
             </button>
           </div>
         </div>
@@ -150,7 +150,7 @@ export const View = ({
           {results.map((result) => (
             <li key={result.userId}>
               <button
-                className="flex w-full items-center gap-4 p-4 hover:bg-neutral-700"
+                class="flex w-full items-center gap-4 p-4 hover:bg-neutral-700"
                 onClick={() =>
                   dispatch({ t: "clicked-result", userId: result.userId })
                 }>

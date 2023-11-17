@@ -21,7 +21,7 @@ const letterToColor = (letter: "b" | "r" | "o" | "g" | "y"): string => {
   }
 };
 
-export const CoverArt = (props: { className?: string }) => {
+export const CoverArt = (props: { class?: string }) => {
   return (
     <svg width="100%" viewBox="0 0 5 5" {...props}>
       <rect width="100%" height="100%" fill="black" />

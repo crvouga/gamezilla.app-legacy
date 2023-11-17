@@ -16,11 +16,8 @@ export const VsBotPlayerSection = ({
 }) => {
   const humanSlot = (
     <>
-      <MyAvatar
-        className="h-6 w-6 "
-        src={ctx.profiles[human.userId]?.avatarUrl}
-      />
-      <p className="overflow-hidden text-ellipsis whitespace-nowrap">
+      <MyAvatar class="h-6 w-6 " src={ctx.profiles[human.userId]?.avatarUrl} />
+      <p class="overflow-hidden text-ellipsis whitespace-nowrap">
         {ctx.profiles[human.userId]?.username}
       </p>
     </>
@@ -28,21 +25,19 @@ export const VsBotPlayerSection = ({
 
   const botSlot = (
     <>
-      {bot.renderIcon({ className: "h-6 w-6 flex-shrink-0" })}
-      <p className="overflow-hidden text-ellipsis whitespace-nowrap">
-        {bot.label}
-      </p>
+      {bot.renderIcon({ class: "h-6 w-6 flex-shrink-0" })}
+      <p class="overflow-hidden text-ellipsis whitespace-nowrap">{bot.label}</p>
     </>
   );
 
   return (
-    <section className="flex w-full items-center">
+    <section class="flex w-full items-center">
       <Slot>
-        <div>{playerOne.renderIcon({ className: "h-6 w-6" })}</div>
+        <div>{playerOne.renderIcon({ class: "h-6 w-6" })}</div>
         {human.player === "player-one" ? humanSlot : botSlot}
       </Slot>
       <Slot>
-        {playerTwo.renderIcon({ className: "h-6 w-6" })}
+        {playerTwo.renderIcon({ class: "h-6 w-6" })}
         {human.player === "player-two" ? humanSlot : botSlot}
       </Slot>
     </section>
@@ -51,8 +46,8 @@ export const VsBotPlayerSection = ({
 
 const Slot = ({ children }: { children: VDomChildren }) => {
   return (
-    <div className="w-1/2 p-2">
-      <div className="flex items-center gap-2 rounded-md border border-neutral-600 bg-neutral-900 p-2 text-sm">
+    <div class="w-1/2 p-2">
+      <div class="flex items-center gap-2 rounded-md border border-neutral-600 bg-neutral-900 p-2 text-sm">
         {children}
       </div>
     </div>

@@ -22,7 +22,7 @@ export const ConformationDialog = ({
 }) => {
   return (
     <div
-      className={cn(
+      class={cn(
         "absolute left-0 top-0 grid h-full w-full place-items-center",
         open ? "block" : "hidden"
       )}
@@ -32,17 +32,17 @@ export const ConformationDialog = ({
         }
         onClose();
       }}>
-      <div className="flex w-80 flex-col gap-6 rounded-lg bg-neutral-900 p-6">
-        <p className="text-center text-xl font-semibold">{title}</p>
+      <div class="flex w-80 flex-col gap-6 rounded-lg bg-neutral-900 p-6">
+        <p class="text-center text-xl font-semibold">{title}</p>
 
-        <div className="flex w-full items-center gap-4">
+        <div class="flex w-full items-center gap-4">
           <Button
             variant="outlined"
             onClick={(event) => {
               event.stopPropagation();
               onCancel();
             }}
-            className="flex-1"
+            class="flex-1"
             text={cancelTitle}
           />
 
@@ -53,7 +53,7 @@ export const ConformationDialog = ({
               event.stopPropagation();
               onConfirm();
             }}
-            className="flex-1"
+            class="flex-1"
             text={confirmTitle}
           />
         </div>

@@ -46,14 +46,14 @@ export const ViewSpaceListScreen = ({
   );
 
   return (
-    <div className="flex w-full flex-1 flex-col overflow-hidden">
+    <div class="flex w-full flex-1 flex-col overflow-hidden">
       <TopBar title="Spaces" />
 
-      <div className="relative flex w-full flex-1 flex-col gap-5 overflow-hidden overflow-y-scroll p-5 pb-8">
+      <div class="relative flex w-full flex-1 flex-col gap-5 overflow-hidden overflow-y-scroll p-5 pb-8">
         {spaces.length === 0 && (
-          <div className="absolute inset-0 flex h-full w-full flex-1 flex-col items-center justify-center gap-2 opacity-60">
-            <IconGamepad className="h-14 w-14" />
-            <p className="text-lg text-secondary">No active spaces</p>
+          <div class="absolute inset-0 flex h-full w-full flex-1 flex-col items-center justify-center gap-2 opacity-60">
+            <IconGamepad class="h-14 w-14" />
+            <p class="text-lg text-secondary">No active spaces</p>
           </div>
         )}
 
@@ -98,10 +98,10 @@ export const ViewSpaceListScreen = ({
       </div>
 
       {!user.spaceId && (
-        <div className="w-full border-t border-neutral-700 p-4">
+        <div class="w-full border-t border-neutral-700 p-4">
           <Button
             size="lg"
-            className="w-full"
+            class="w-full"
             color="primary"
             onClick={() =>
               dispatch(
@@ -140,28 +140,26 @@ const ViewSpaceCard = ({
   return (
     <button
       onClick={onClick}
-      className="flex flex-col gap-3 rounded-md bg-blue-600 p-4 active:opacity-70">
-      <div className="flex w-full items-center justify-start">
-        <p className="block flex-1 text-left font-bold uppercase">LIVE</p>
-        {isCurrentSpace && (
-          <p className="block text-xs italic">Current space</p>
-        )}
+      class="flex flex-col gap-3 rounded-md bg-blue-600 p-4 active:opacity-70">
+      <div class="flex w-full items-center justify-start">
+        <p class="block flex-1 text-left font-bold uppercase">LIVE</p>
+        {isCurrentSpace && <p class="block text-xs italic">Current space</p>}
       </div>
 
       {gameName && (
-        <div className="flex items-center justify-start gap-2">
-          <div className="h-12 w-12 overflow-hidden rounded border-2 border-white/40">
+        <div class="flex items-center justify-start gap-2">
+          <div class="h-12 w-12 overflow-hidden rounded border-2 border-white/40">
             <CoverArt gameName={gameName} />
           </div>
-          <p className="text-xl">{gameNameToString(gameName)}</p>
+          <p class="text-xl">{gameNameToString(gameName)}</p>
         </div>
       )}
 
-      <div className="flex items-center justify-start gap-2 overflow-hidden">
-        <MyAvatar src={host.avatarUrl} alt="avatar" className="h-12 w-12" />
+      <div class="flex items-center justify-start gap-2 overflow-hidden">
+        <MyAvatar src={host.avatarUrl} alt="avatar" class="h-12 w-12" />
 
-        <div className="flex-1 overflow-hidden">
-          <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xl">
+        <div class="flex-1 overflow-hidden">
+          <p class="overflow-hidden text-ellipsis whitespace-nowrap text-xl">
             {host.username}
           </p>
         </div>
@@ -169,25 +167,25 @@ const ViewSpaceCard = ({
       </div>
 
       {users.length > 1 && (
-        <div className="flex items-center justify-start gap-2">
-          <div className="flex items-center">
+        <div class="flex items-center justify-start gap-2">
+          <div class="flex items-center">
             {users.slice(0, MAX_AVATAR_COUNT).map((user, index) => (
               <MyAvatar
                 key={user.username}
                 src={user.avatarUrl}
                 alt="avatar"
-                className={cn("h-8 w-8", index !== 0 && "-ml-2")}
+                class={cn("h-8 w-8", index !== 0 && "-ml-2")}
               />
             ))}
             {users.length > MAX_AVATAR_COUNT && (
-              <div className="-ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/30">
-                <p className="text-xs">
+              <div class="-ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/30">
+                <p class="text-xs">
                   +{(users.length - MAX_AVATAR_COUNT).toLocaleString()}
                 </p>
               </div>
             )}
           </div>
-          <p className="text-lg">{users.length} people</p>
+          <p class="text-lg">{users.length} people</p>
         </div>
       )}
     </button>

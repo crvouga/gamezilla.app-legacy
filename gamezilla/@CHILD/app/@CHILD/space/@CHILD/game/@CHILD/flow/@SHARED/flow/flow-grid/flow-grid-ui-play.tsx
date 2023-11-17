@@ -178,7 +178,7 @@ export const View = ({
   dispatch: (m: Msg) => void;
 }) => {
   return (
-    <div className="flex w-full flex-col gap-4 overflow-y-auto">
+    <div class="flex w-full flex-col gap-4 overflow-y-auto">
       <FlowGridUI.View
         model={model.grid}
         showCoordinates
@@ -195,9 +195,7 @@ export const View = ({
               }
             : null
         }
-        className={
-          model.state.t === "dragging" ? "cursor-grabbing" : "cursor-grab"
-        }
+        class={model.state.t === "dragging" ? "cursor-grabbing" : "cursor-grab"}
         isActive={({ groupId }) =>
           model.state.t === "dragging" && model.state.activeGroupId === groupId
         }

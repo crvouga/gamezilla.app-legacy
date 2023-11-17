@@ -120,13 +120,13 @@ type Props = {
   };
   bot: {
     label: string;
-    renderIcon: (props: { className: string }) => VDom;
+    renderIcon: (props: { class: string }) => VDom;
   };
   playerOne: {
-    renderIcon: (props: { className: string }) => VDom;
+    renderIcon: (props: { class: string }) => VDom;
   };
   playerTwo: {
-    renderIcon: (props: { className: string }) => VDom;
+    renderIcon: (props: { class: string }) => VDom;
   };
   onPlayAgain?: () => void;
 };
@@ -143,32 +143,32 @@ export const ViewGameOverOverlay = (props: Props) => {
             key={String(overlayConfig.toId(gameOver))}
             onClick={props.onPlayAgain}>
             {gameOver?.t === "winner" && (
-              <div className="absolute inset-0 flex cursor-pointer flex-col justify-center bg-black/60">
-                <div className="flex-1"></div>
+              <div class="absolute inset-0 flex cursor-pointer flex-col justify-center bg-black/60">
+                <div class="flex-1"></div>
                 <Winner {...props} winner={gameOver.winner} />
                 {props.onPlayAgain ? (
                   <div
-                    className="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0"
+                    class="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0"
                     id={PLAY_AGAIN_ID}>
                     Tap to play again
                   </div>
                 ) : (
-                  <div className="flex-1"></div>
+                  <div class="flex-1"></div>
                 )}
               </div>
             )}
             {gameOver?.t === "draw" && (
-              <div className="absolute inset-0 cursor-pointer bg-black/60">
-                <div className="flex-1"></div>
+              <div class="absolute inset-0 cursor-pointer bg-black/60">
+                <div class="flex-1"></div>
                 <Draw {...props} />
                 {props.onPlayAgain ? (
                   <div
-                    className="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0"
+                    class="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0"
                     id={PLAY_AGAIN_ID}>
                     Tap to play again
                   </div>
                 ) : (
-                  <div className="flex-1"></div>
+                  <div class="flex-1"></div>
                 )}
               </div>
             )}
@@ -189,43 +189,40 @@ const Winner = ({
 }: Props & { winner: PlayerType }) => {
   const humanSlot = (
     <>
-      <MyAvatar
-        className="h-16 w-16"
-        src={ctx.profiles[human.userId]?.avatarUrl}
-      />
+      <MyAvatar class="h-16 w-16" src={ctx.profiles[human.userId]?.avatarUrl} />
     </>
   );
 
-  const botSlot = <>{bot.renderIcon({ className: "h-16 w-16" })}</>;
+  const botSlot = <>{bot.renderIcon({ class: "h-16 w-16" })}</>;
 
   const playerOneSlot = (
-    <div className="flex flex-col items-center justify-center gap-3">
-      <div className="flex items-center justify-center gap-3">
-        {playerOne.renderIcon({ className: "h-16 w-16" })}
+    <div class="flex flex-col items-center justify-center gap-3">
+      <div class="flex items-center justify-center gap-3">
+        {playerOne.renderIcon({ class: "h-16 w-16" })}
         {human.player === "player-one" ? humanSlot : botSlot}
       </div>
-      <p className="text-center text-4xl font-black">
+      <p class="text-center text-4xl font-black">
         {winner === "player-one" ? "Winner" : "Loser"}
       </p>
     </div>
   );
 
   const playerTwoSlot = (
-    <div className="flex flex-col items-center justify-center gap-3">
-      <div className="flex items-center justify-center gap-3">
-        {playerTwo.renderIcon({ className: "h-16 w-16" })}
+    <div class="flex flex-col items-center justify-center gap-3">
+      <div class="flex items-center justify-center gap-3">
+        {playerTwo.renderIcon({ class: "h-16 w-16" })}
 
         {human.player === "player-two" ? humanSlot : botSlot}
       </div>
 
-      <p className="text-center text-4xl font-black">
+      <p class="text-center text-4xl font-black">
         {winner === "player-two" ? "Winner" : "Loser"}
       </p>
     </div>
   );
 
   return (
-    <div className="grid w-full flex-1 grid-cols-2 items-center">
+    <div class="grid w-full flex-1 grid-cols-2 items-center">
       {playerOneSlot}
       {playerTwoSlot}
     </div>
@@ -241,26 +238,26 @@ const Draw = ({ ctx, playerOne, playerTwo, human }: Props) => {
 
   const botSlot = (
     <>
-      <IconRobot className="h-6 w-6" />
+      <IconRobot class="h-6 w-6" />
     </>
   );
 
   const playerOneSlot = (
     <>
-      {playerOne.renderIcon({ className: "h-5 w-5" })}
+      {playerOne.renderIcon({ class: "h-5 w-5" })}
       {human.player === "player-one" ? humanSlot : botSlot}
     </>
   );
 
   const playerTwoSlot = (
     <>
-      {playerTwo.renderIcon({ className: "h-5 w-5" })}
+      {playerTwo.renderIcon({ class: "h-5 w-5" })}
       {human.player === "player-two" ? humanSlot : botSlot}
     </>
   );
 
   return (
-    <div className="flex h-full w-full flex-1 items-center justify-center">
+    <div class="flex h-full w-full flex-1 items-center justify-center">
       <div>
         {playerOneSlot}
         {playerTwoSlot}

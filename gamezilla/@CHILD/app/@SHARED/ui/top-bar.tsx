@@ -9,14 +9,14 @@ export const TopBar = (input: {
   right?: VDomChildren;
 }) => {
   return (
-    <div className="min-h-fit w-full">
-      <nav className="grid  h-14 w-full grid-cols-5 justify-center border-b border-neutral-700">
-        <div className="flex items-center justify-start">{input.left}</div>
-        <div className="col-span-3 flex items-center justify-center">
-          <p className="text-center text-xl font-semibold">{input.title}</p>
-          {input.loading && <IconSpinner className="h-3 w-3 animate-spin" />}
+    <div class="min-h-fit w-full">
+      <nav class="grid  h-14 w-full grid-cols-5 justify-center border-b border-neutral-700">
+        <div class="flex items-center justify-start">{input.left}</div>
+        <div class="col-span-3 flex items-center justify-center">
+          <p class="text-center text-xl font-semibold">{input.title}</p>
+          {input.loading && <IconSpinner class="h-3 w-3 animate-spin" />}
         </div>
-        <div className="flex items-center justify-end">{input.right}</div>
+        <div class="flex items-center justify-end">{input.right}</div>
       </nav>
     </div>
   );
@@ -25,7 +25,7 @@ export const TopBar = (input: {
 export const TopBarBackButton = ({ onClick }: { onClick: () => void }) => {
   return (
     <IconButton onClick={onClick}>
-      <IconChevronLeft className="h-6 w-6" />
+      <IconChevronLeft class="h-6 w-6" />
     </IconButton>
   );
 };

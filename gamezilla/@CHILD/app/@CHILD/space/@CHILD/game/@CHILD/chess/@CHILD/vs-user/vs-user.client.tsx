@@ -310,18 +310,18 @@ export const View = ({
   if (model.coreModel.type === "setup") {
     return (
       <div>
-        <div className="flex-1"></div>
-        <div className="flex items-center gap-4 border-t border-neutral-700 p-4">
+        <div class="flex-1"></div>
+        <div class="flex items-center gap-4 border-t border-neutral-700 p-4">
           <Button
-            className="flex-1"
+            class="flex-1"
             onClick={onQuit}
-            start={<IconArrowLeftOnRect className="h-6 w-6" />}
+            start={<IconArrowLeftOnRect class="h-6 w-6" />}
             text="Quit"
           />
           <Button
             variant="contained"
             color="primary"
-            className="flex-1"
+            class="flex-1"
             text="Start Game"
           />
         </div>
@@ -375,7 +375,7 @@ export const View = ({
         }}
       /> */}
 
-      <div className="flex-1"></div>
+      <div class="flex-1"></div>
 
       <ViewGameOverDialog model={model} dispatch={dispatch} />
     </div>

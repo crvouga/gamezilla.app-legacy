@@ -44,7 +44,7 @@ export const viewStoneIcon = ({ stone }: { stone: Stone }) => {
   );
 };
 
-export const CoverArt = (props: { className?: string }) => {
+export const CoverArt = (props: { class?: string }) => {
   return (
     <ViewBoard
       {...props}
@@ -99,7 +99,7 @@ export const ViewBoard = ({
     <svg
       width="100%"
       viewBox={viewBox}
-      className={cn("overflow-hidden", className)}>
+      class={cn("overflow-hidden", className)}>
       <g stroke-width={0.05}>
         <rect
           x={boundsView.lower.x}
@@ -178,7 +178,7 @@ export const ViewBoard = ({
               r={0.5}
               fill="transparent"
               onClick={() => onPress?.({ x, y })}
-              className="cursor-pointer"
+              class="cursor-pointer"
             />
           ))}
         </g>

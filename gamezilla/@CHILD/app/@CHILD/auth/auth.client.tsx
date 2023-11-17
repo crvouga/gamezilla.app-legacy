@@ -297,30 +297,27 @@ const ViewLoginScreen = ({
 }) => {
   const isLoading = model.loginWithGoogle?.t === "loading";
   return (
-    <div className="relative flex h-full w-full flex-1 flex-col">
-      <LoadingBar
-        disabled={!isLoading}
-        className="absolute left-0 top-0 w-full"
-      />
+    <div class="relative flex h-full w-full flex-1 flex-col">
+      <LoadingBar disabled={!isLoading} class="absolute left-0 top-0 w-full" />
       <div
-        className={cn(
+        class={cn(
           "flex flex-1 flex-col items-center justify-center gap-8 p-4",
           isLoading && "pointer-events-none opacity-50"
         )}>
-        <div className="flex w-full flex-col items-start justify-center">
-          <p className="text-2xl text-neutral-200">Sign in to</p>
-          <h1 className="bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent">
+        <div class="flex w-full flex-col items-start justify-center">
+          <p class="text-2xl text-neutral-200">Sign in to</p>
+          <h1 class="bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent">
             gamezilla.app
           </h1>
         </div>
 
-        <div className="flex w-full flex-col gap-6">
+        <div class="flex w-full flex-col gap-6">
           {false && (
             <Button
               onClick={() => dispatch({ t: "clicked-login-with-google" })}
               size="lg"
-              className="w-full"
-              start={<IconGoogle className="h-6 w-6" />}
+              class="w-full"
+              start={<IconGoogle class="h-6 w-6" />}
               text="Continue With Google"
             />
           )}
@@ -334,8 +331,8 @@ const ViewLoginScreen = ({
                 })
               }
               size="lg"
-              className="w-full"
-              start={<IconMobilePhone className="h-6 w-6" />}
+              class="w-full"
+              start={<IconMobilePhone class="h-6 w-6" />}
               text="Continue With Phone"
             />
           )}
@@ -346,8 +343,8 @@ const ViewLoginScreen = ({
                 ctx.push({ t: "auth", c: { t: "login-email-link" } })
               }
               size="lg"
-              className="w-full"
-              start={<IconEnvelope className="h-6 w-6" />}
+              class="w-full"
+              start={<IconEnvelope class="h-6 w-6" />}
               text="Continue With Email"
             />
           )}

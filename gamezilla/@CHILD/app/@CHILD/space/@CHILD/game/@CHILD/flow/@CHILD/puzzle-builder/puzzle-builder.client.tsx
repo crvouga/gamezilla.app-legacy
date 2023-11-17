@@ -97,12 +97,12 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
   switch (model.mode) {
     case "edit": {
       return (
-        <div className="flex h-full w-full flex-col items-center justify-center">
-          <div className="flex w-full items-center justify-center gap-2 bg-yellow-500 p-2 text-xl text-white">
-            <IconPenToSquare className="h-6 w-6" />
+        <div class="flex h-full w-full flex-col items-center justify-center">
+          <div class="flex w-full items-center justify-center gap-2 bg-yellow-500 p-2 text-xl text-white">
+            <IconPenToSquare class="h-6 w-6" />
             Edit Mode
           </div>
-          <div className="flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll">
+          <div class="flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll">
             <FlowGridUI.View
               model={model.editUI}
               onPressDown={(nodeId) => {
@@ -113,8 +113,8 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
               }}
             />
 
-            <div className="flex w-full snap-x flex-col items-center overflow-x-auto px-4">
-              <svg viewBox="-1 -1 2 2" className={cn("h-12 w-12")}>
+            <div class="flex w-full snap-x flex-col items-center overflow-x-auto px-4">
+              <svg viewBox="-1 -1 2 2" class={cn("h-12 w-12")}>
                 <circle
                   cx={0}
                   cy={0}
@@ -133,12 +133,12 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
             actions={[
               {
                 label: "Exit Builder",
-                icon: <IconArrowLeftOnRect className="h-6 w-6" />,
+                icon: <IconArrowLeftOnRect class="h-6 w-6" />,
                 onClick: ctx.onExit,
               },
               {
                 label: "Play Mode",
-                icon: <IconPlay className="h-6 w-6" />,
+                icon: <IconPlay class="h-6 w-6" />,
                 onClick: () => {
                   dispatch({ t: "input-mode", mode: "play" });
                 },
@@ -151,12 +151,12 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
 
     case "play": {
       return (
-        <div className="flex h-full w-full flex-col items-center justify-center">
-          <div className="flex w-full items-center justify-center gap-2 bg-blue-500 p-2 text-xl text-white">
-            <IconPlay className="h-6 w-6" />
+        <div class="flex h-full w-full flex-col items-center justify-center">
+          <div class="flex w-full items-center justify-center gap-2 bg-blue-500 p-2 text-xl text-white">
+            <IconPlay class="h-6 w-6" />
             Play Mode
           </div>
-          <div className="flex w-full flex-1 flex-col items-center justify-center gap-3">
+          <div class="flex w-full flex-1 flex-col items-center justify-center gap-3">
             <FlowGridUIPlay.View
               model={model.playUI}
               dispatch={(m) => dispatch({ t: "play-ui", c: m })}
@@ -166,12 +166,12 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
             actions={[
               {
                 label: "Exit Builder",
-                icon: <IconArrowLeftOnRect className="h-6 w-6" />,
+                icon: <IconArrowLeftOnRect class="h-6 w-6" />,
                 onClick: ctx.onExit,
               },
               {
                 label: "Edit Mode",
-                icon: <IconPenToSquare className="h-6 w-6" />,
+                icon: <IconPenToSquare class="h-6 w-6" />,
                 onClick: () => {
                   dispatch({ t: "input-mode", mode: "edit" });
                 },

@@ -53,18 +53,18 @@ const subscriptions: Client["subscriptions"] = () => {
 
 const View: Client["View"] = ({ model, dispatch, ctx }) => {
   return (
-    <div className="flex h-full w-full flex-1 flex-col">
-      <div className="flex flex-1 items-center justify-center">
+    <div class="flex h-full w-full flex-1 flex-col">
+      <div class="flex flex-1 items-center justify-center">
         <FlowGridUIPlay.View
           dispatch={(c) => dispatch({ t: "grid", c })}
           model={model.grid}
         />
       </div>
-      <div className="w-full p-4">
+      <div class="w-full p-4">
         <Button
-          className="w-full"
+          class="w-full"
           onClick={ctx.onExit}
-          start={<IconArrowLeftOnRect className="h-6 w-6" />}
+          start={<IconArrowLeftOnRect class="h-6 w-6" />}
           text="Exit"
         />
       </div>

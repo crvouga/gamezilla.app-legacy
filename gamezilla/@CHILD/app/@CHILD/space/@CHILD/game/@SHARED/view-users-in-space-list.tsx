@@ -7,16 +7,16 @@ import {
 export const ViewUsersInSpaceList = ({ ctx }: { ctx: SpaceViewCtx }) => {
   const profiles = spaceToProfiles(ctx, ctx.space);
   return (
-    <section className="flex w-full flex-col gap-2 py-4">
-      <p className="text-center text-3xl font-bold">People</p>
+    <section class="flex w-full flex-col gap-2 py-4">
+      <p class="text-center text-3xl font-bold">People</p>
 
-      <div className="w-full">
+      <div class="w-full">
         {profiles.map((profile) => {
           return (
             <button
               key={profile.userId}
               onClick={() => ctx.viewProfile(profile.userId)}
-              className="flex w-full items-center gap-2 p-2 px-4 active:opacity-60">
+              class="flex w-full items-center gap-2 p-2 px-4 active:opacity-60">
               <MyAvatar src={profile.avatarUrl} />
               <p>{profile.username}</p>
               {profile.userId === ctx.space.hostId && <ViewSpaceHostChip />}
@@ -31,8 +31,8 @@ export const ViewUsersInSpaceList = ({ ctx }: { ctx: SpaceViewCtx }) => {
 
 export const ViewSpaceHostChip = () => {
   return (
-    <div className="flex items-center gap-1 rounded-xl border border-white/20 bg-white/20 px-2 py-1 text-xs font-semibold">
-      <IconCrown className="h-4 w-4 text-yellow-300" />
+    <div class="flex items-center gap-1 rounded-xl border border-white/20 bg-white/20 px-2 py-1 text-xs font-semibold">
+      <IconCrown class="h-4 w-4 text-yellow-300" />
       Host
     </div>
   );
@@ -40,7 +40,7 @@ export const ViewSpaceHostChip = () => {
 
 export const ViewYouChip = () => {
   return (
-    <div className="rounded-xl border border-white/20 bg-white/20 px-2 py-1 text-xs">
+    <div class="rounded-xl border border-white/20 bg-white/20 px-2 py-1 text-xs">
       You
     </div>
   );

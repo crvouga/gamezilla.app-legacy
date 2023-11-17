@@ -84,7 +84,7 @@ export const ViewColumnsSvg = ({
 
         {[...new Array(COLUMN_COUNT)].map((_, columnIndex) => (
           <rect
-            className={cn(
+            class={cn(
               disabled || !onClick
                 ? undefined
                 : (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
@@ -155,7 +155,7 @@ const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
             stroke="transparent"
             fill="transparent"
             stroke-width={n / 8}
-            className="pointer-events-none"
+            class="pointer-events-none"
           />,
         ];
       })}

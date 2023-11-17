@@ -19,12 +19,12 @@ export const View = ({
   onPressDown,
   onPressUp,
   isActive,
-  className,
+  class: className,
   autocompleteEdge,
   showCoordinates,
   onLeave,
 }: {
-  className?: string;
+  class?: string;
   model: FlowGrid.Model;
   onPressDown?: (nodeId: Flow.NodeId) => void;
   onPressUp?: (nodeId: Flow.NodeId) => void;
@@ -58,7 +58,7 @@ export const View = ({
 
   return (
     <svg
-      className={cn(
+      class={cn(
         "w-full touch-none select-none",
         isDragging && "cursor-grabbing",
         className
@@ -222,7 +222,7 @@ export const View = ({
           {map(FlowGrid.yieldNodes(model), (node) => {
             return (
               <text
-                className="pointer-events-none"
+                class="pointer-events-none"
                 key={node.nodeId}
                 x={node.x}
                 y={node.y}
@@ -252,7 +252,7 @@ export const View = ({
               x={node.x}
               y={node.y}
               width={1}
-              className={cn(
+              class={cn(
                 isDragging
                   ? "cursor-grabbing"
                   : groupId

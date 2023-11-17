@@ -8,7 +8,7 @@ export const PlayerIcon = ({
 }: {
   playerType: PlayerType;
   key?: string;
-  className?: string;
+  class?: string;
 }) => {
   switch (playerType) {
     case "player-one": {
@@ -58,7 +58,7 @@ export const ViewPlayerTwoGradientDef = ({
   );
 };
 
-export const PlayerOneIcon = (props: { key?: string; className?: string }) => {
+export const PlayerOneIcon = (props: { key?: string; class?: string }) => {
   const playerOneId = Uuid.generate();
   return (
     <svg viewBox="-1 -1 2 2" {...props}>
@@ -68,7 +68,7 @@ export const PlayerOneIcon = (props: { key?: string; className?: string }) => {
   );
 };
 
-export const PlayerTwoIcon = (props: { key?: string; className?: string }) => {
+export const PlayerTwoIcon = (props: { key?: string; class?: string }) => {
   const playerTwoId = Uuid.generate();
   return (
     <svg viewBox="-1 -1 2 2" {...props}>

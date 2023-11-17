@@ -83,7 +83,7 @@ type PlayerProp =
       t: "user";
       userId: UserId | null;
       playerLabel: string;
-      renderIcon: (props: { className: string }) => VDom;
+      renderIcon: (props: { class: string }) => VDom;
       onStartPlaying: () => void;
       onStopPlaying: () => void;
     }
@@ -91,9 +91,9 @@ type PlayerProp =
       t: "bot";
 
       botLabel: string;
-      renderBotIcon: (props: { className: string }) => VDom;
+      renderBotIcon: (props: { class: string }) => VDom;
       playerLabel: string;
-      renderIcon: (props: { className: string }) => VDom;
+      renderIcon: (props: { class: string }) => VDom;
       onStartPlaying: () => void;
       onStopPlaying: () => void;
     };
@@ -149,27 +149,27 @@ export const View = ({
         };
 
   return (
-    <div className="flex w-full flex-1 flex-col">
+    <div class="flex w-full flex-1 flex-col">
       <ViewGameHeader renderCoverArt={renderCoverArt} title={title} />
 
-      <div className="flex w-full flex-col gap-2 p-4">
-        <div className="grid w-full grid-cols-7">
+      <div class="flex w-full flex-col gap-2 p-4">
+        <div class="grid w-full grid-cols-7">
           <PlayerIcons player={playerOneProp} ctx={ctx} />
-          <div className="col-span-1 grid place-items-center">
-            <p className=" flex h-full flex-1 flex-col items-center justify-center  text-3xl font-black">
+          <div class="col-span-1 grid place-items-center">
+            <p class=" flex h-full flex-1 flex-col items-center justify-center  text-3xl font-black">
               VS
             </p>
           </div>
           <PlayerIcons player={playerTwoProp} ctx={ctx} />
         </div>
 
-        <div className="grid w-full grid-cols-7">
+        <div class="grid w-full grid-cols-7">
           <PlayerLabels player={playerOneProp} ctx={ctx} />
-          <div className="col-span-1"></div>
+          <div class="col-span-1"></div>
           <PlayerLabels player={playerTwoProp} ctx={ctx} />
         </div>
 
-        <div className="mt-2 grid w-full grid-cols-7">
+        <div class="mt-2 grid w-full grid-cols-7">
           <PlayerButtons
             onSwapSides={onSwapSides}
             dispatch={dispatch}
@@ -177,7 +177,7 @@ export const View = ({
             player={playerOneProp}
             ctx={ctx}
           />
-          <div className="col-span-1"></div>
+          <div class="col-span-1"></div>
           <PlayerButtons
             onSwapSides={onSwapSides}
             dispatch={dispatch}
@@ -188,21 +188,21 @@ export const View = ({
         </div>
       </div>
 
-      <div className="flex flex-1 items-center justify-center"></div>
+      <div class="flex flex-1 items-center justify-center"></div>
 
       {ctx.currentUserId === ctx.space.hostId && (
-        <div className="flex items-center gap-4 border-t border-neutral-700 p-4">
+        <div class="flex items-center gap-4 border-t border-neutral-700 p-4">
           <Button
-            className="flex-1"
+            class="flex-1"
             onClick={onQuit}
-            start={<IconArrowLeftOnRect className="h-6 w-6" />}
+            start={<IconArrowLeftOnRect class="h-6 w-6" />}
             text="Quit"
           />
           <Button
             disabled={!canStartGame}
             variant="contained"
             color="primary"
-            className="flex-1"
+            class="flex-1"
             onClick={onStartGame}
             text="Start Game"
           />
@@ -213,8 +213,8 @@ export const View = ({
         id="change-bot"
         open={model.opened === "change-bot"}
         onClose={() => dispatch({ t: "closed-modal" })}>
-        <div className="flex flex-col pb-6">
-          <p className="p-4 text-2xl font-bold">Change bot</p>
+        <div class="flex flex-col pb-6">
+          <p class="p-4 text-2xl font-bold">Change bot</p>
           <div>
             {botVariants.map((botLevel) => {
               const onClick = () => {
@@ -224,9 +224,9 @@ export const View = ({
               return (
                 <button
                   key={botLevel.label}
-                  className="flex w-full items-center gap-3 p-4 text-left text-xl font-bold"
+                  class="flex w-full items-center gap-3 p-4 text-left text-xl font-bold"
                   onClick={onClick}>
-                  {botLevel.renderIcon({ className: "w-10 h-10" })}
+                  {botLevel.renderIcon({ class: "w-10 h-10" })}
                   {botLevel.label}
                 </button>
               );
@@ -246,22 +246,22 @@ const PlayerIcons = ({
   player: PlayerProp;
 }) => {
   return (
-    <div className="col-span-3 grid grid-cols-2 place-items-center">
+    <div class="col-span-3 grid grid-cols-2 place-items-center">
       {player.t === "bot" ? (
-        player.renderBotIcon({ className: "h-14 w-14" })
+        player.renderBotIcon({ class: "h-14 w-14" })
       ) : player.userId ? (
         <MyAvatar
-          className="h-14 w-14"
+          class="h-14 w-14"
           src={ctx.profiles[player.userId]?.avatarUrl}
         />
       ) : (
         <div
           role="button"
-          className="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-600">
-          <IconQuestionMark className="h-10 w-10 text-neutral-300" />
+          class="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-600">
+          <IconQuestionMark class="h-10 w-10 text-neutral-300" />
         </div>
       )}
-      {player.renderIcon({ className: "w-14 h-14" })}
+      {player.renderIcon({ class: "w-14 h-14" })}
     </div>
   );
 };
@@ -274,8 +274,8 @@ const PlayerLabels = ({
   player: PlayerProp;
 }) => {
   return (
-    <div className="col-span-3 grid grid-cols-2 place-items-center">
-      <p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm text-secondary">
+    <div class="col-span-3 grid grid-cols-2 place-items-center">
+      <p class="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm text-secondary">
         {player.t === "bot"
           ? player.botLabel
           : player.userId
@@ -283,7 +283,7 @@ const PlayerLabels = ({
           : "?"}
       </p>
 
-      <p className="text-center text-sm text-secondary">{player.playerLabel}</p>
+      <p class="text-center text-sm text-secondary">{player.playerLabel}</p>
     </div>
   );
 };
@@ -302,11 +302,11 @@ const PlayerButtons = ({
   dispatch: (m: Msg) => void;
 }) => {
   return (
-    <div className="col-span-3 flex flex-col gap-2">
+    <div class="col-span-3 flex flex-col gap-2">
       {!human.userId && (
         <Button
           onClick={player.onStartPlaying}
-          className="w-full"
+          class="w-full"
           color="primary"
           text="Start playing"
         />
@@ -314,7 +314,7 @@ const PlayerButtons = ({
       {player.t === "user" && ctx.currentUserId === player.userId && (
         <Button
           onClick={player.onStopPlaying}
-          className="w-full"
+          class="w-full"
           variant="text"
           color="primary"
           text="Stop playing"
@@ -323,7 +323,7 @@ const PlayerButtons = ({
       {player.t === "bot" && human.userId === ctx.currentUserId && (
         <Button
           onClick={onSwapSides}
-          className="w-full"
+          class="w-full"
           variant="text"
           color="primary"
           text="Swap sides"
@@ -332,7 +332,7 @@ const PlayerButtons = ({
       {player.t === "bot" && human.userId === ctx.currentUserId && (
         <Button
           onClick={() => dispatch({ t: "clicked-change-bot" })}
-          className="w-full"
+          class="w-full"
           variant="text"
           color="primary"
           text="Change bot"

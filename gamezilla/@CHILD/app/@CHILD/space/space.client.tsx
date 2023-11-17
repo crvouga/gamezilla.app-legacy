@@ -710,7 +710,7 @@ const ViewSpaceScreen = ({
         onClose={() => dispatch({ t: "modal-closed" })}>
         <div>
           <button
-            className="flex w-full flex-col items-center justify-center gap-2 p-4"
+            class="flex w-full flex-col items-center justify-center gap-2 p-4"
             onClick={() => {
               if (model.previewUserId) {
                 ctx.push({
@@ -728,14 +728,14 @@ const ViewSpaceScreen = ({
                   ? ctx.profiles[model.previewUserId]?.avatarUrl
                   : undefined
               }
-              className="h-24 w-24"
+              class="h-24 w-24"
             />
-            <p className="text-xl font-semibold">
+            <p class="text-xl font-semibold">
               {model.previewUserId
                 ? ctx.profiles[model.previewUserId]?.username ?? "..."
                 : "..."}
             </p>
-            <div className="flex items-center gap-2">
+            <div class="flex items-center gap-2">
               {spaceCtx.space.hostId === model.previewUserId && (
                 <ViewSpaceHostChip />
               )}
@@ -745,7 +745,7 @@ const ViewSpaceScreen = ({
             </div>
           </button>
 
-          <div className="w-full px-4 pb-8">
+          <div class="w-full px-4 pb-8">
             <Button
               onClick={() => {
                 if (model.previewUserId) {
@@ -758,7 +758,7 @@ const ViewSpaceScreen = ({
                   });
                 }
               }}
-              className="w-full"
+              class="w-full"
               text="See profile"
             />
           </div>
@@ -781,10 +781,10 @@ const ViewActivityFeedBar = ({
 }) => {
   return (
     <>
-      <button className="flex w-full items-center justify-start text-center"></button>
+      <button class="flex w-full items-center justify-start text-center"></button>
 
       <Drawer id="activity-feed-drawer" open={false} onClose={() => {}}>
-        <div className="pb-4ya flex max-h-72 w-full flex-col justify-end overflow-y-scroll text-left"></div>
+        <div class="pb-4ya flex max-h-72 w-full flex-col justify-end overflow-y-scroll text-left"></div>
       </Drawer>
     </>
   );
@@ -808,7 +808,7 @@ const Item = ({
 }) => {
   return (
     <div
-      className={cn(
+      class={cn(
         "w-full p-2 text-sm text-secondary",
         variant === "error" && "text-orange-500"
       )}>
@@ -847,34 +847,34 @@ const ViewSpaceScreenMain = ({
   const gameModel = model.games[ctx.space.spaceId];
 
   return (
-    <div className="flex h-full w-full flex-1 flex-col">
-      <nav className="flex h-14 w-full items-center border-b border-neutral-700 px-2 py-1">
-        <div className="grid w-20 place-items-center">
+    <div class="flex h-full w-full flex-1 flex-col">
+      <nav class="flex h-14 w-full items-center border-b border-neutral-700 px-2 py-1">
+        <div class="grid w-20 place-items-center">
           <ActionButton
             label="Home"
-            icon={<IconHome className="h-6 w-6" />}
+            icon={<IconHome class="h-6 w-6" />}
             onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
           />
         </div>
 
-        <div className="grid w-20 place-items-center">
+        <div class="grid w-20 place-items-center">
           <ActionButton
             label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
-            icon={<IconUserGroup className="h-6 w-6" />}
+            icon={<IconUserGroup class="h-6 w-6" />}
             onClick={() => dispatch({ t: "modal-open", c: "users" })}
           />
         </div>
 
-        <div className="flex-1"></div>
+        <div class="flex-1"></div>
 
-        <div className="w-20">
+        <div class="w-20">
           <ActionButton
             label={ctx.sound.muted ? "Unmute" : "Mute"}
             icon={
               ctx.sound.muted ? (
-                <IconVolumeHigh className="h-6 w-6" />
+                <IconVolumeHigh class="h-6 w-6" />
               ) : (
-                <IconVolumeXMark className="h-6 w-6" />
+                <IconVolumeXMark class="h-6 w-6" />
               )
             }
             onClick={ctx.toggleSound}
@@ -914,7 +914,7 @@ const ViewSpaceScreenMain = ({
         )}
       </nav>
 
-      <div className="flex w-full flex-1 flex-col overflow-hidden">
+      <div class="flex w-full flex-1 flex-col overflow-hidden">
         {space.game ? (
           <GameClient.View
             state={space.game}
@@ -943,14 +943,14 @@ const ViewSpaceScreenMain = ({
 
 const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4">
-      <p className="text-center text-2xl">Space not found</p>
+    <div class="flex flex-1 flex-col items-center justify-center gap-4">
+      <p class="text-center text-2xl">Space not found</p>
       <Button
         onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
         size="lg"
         variant="contained"
         color="primary"
-        start={<IconHome className="h-6 w-6" />}
+        start={<IconHome class="h-6 w-6" />}
         text="Go Home"
       />
     </div>
@@ -959,14 +959,14 @@ const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
 
 const ViewSpaceEnded = ({ ctx }: { ctx: ViewCtx }) => {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4">
-      <p className="text-center text-2xl">Space ended</p>
+    <div class="flex flex-1 flex-col items-center justify-center gap-4">
+      <p class="text-center text-2xl">Space ended</p>
       <Button
         onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
         size="lg"
         variant="contained"
         color="primary"
-        start={<IconHome className="h-6 w-6" />}
+        start={<IconHome class="h-6 w-6" />}
         text="Go Home"
       />
     </div>
@@ -1009,37 +1009,35 @@ export const ViewCurrentSpaceBar = ({
   const userCount = Object.values(space.users).length;
 
   return (
-    <div className="flex w-full items-center overflow-hidden border-t-2 border-blue-600 text-inherit">
+    <div class="flex w-full items-center overflow-hidden border-t-2 border-blue-600 text-inherit">
       <button
-        className="flex flex-1 items-center overflow-hidden"
+        class="flex flex-1 items-center overflow-hidden"
         onClick={() => {
           ctx.push({
             t: "space",
             c: { t: "space", spaceId: space.spaceId },
           });
         }}>
-        <div className="mr-2 p-2">
+        <div class="mr-2 p-2">
           {!game && (
             <MyAvatar
               src={hostProfile?.avatarUrl}
               alt="Host Avatar"
-              className="h-12 w-12"
+              class="h-12 w-12"
             />
           )}
           {game && (
-            <div className="h-12 w-12 overflow-hidden rounded border border-neutral-600">
+            <div class="h-12 w-12 overflow-hidden rounded border border-neutral-600">
               <CoverArt gameName={game.t} />
             </div>
           )}
         </div>
 
-        <div className="flex flex-1 flex-col gap-1 overflow-hidden">
-          <p className="text-left">
+        <div class="flex flex-1 flex-col gap-1 overflow-hidden">
+          <p class="text-left">
             {hostProfile ? `${hostProfile.username}'s space` : "..."}
           </p>
-          <p className="text-left text-xs text-neutral-300">
-            {userCount} in space
-          </p>
+          <p class="text-left text-xs text-neutral-300">{userCount} in space</p>
         </div>
       </button>
 
@@ -1053,8 +1051,8 @@ export const ViewCurrentSpaceBar = ({
               spaceId: space.spaceId,
             });
           }}
-          className="mr-4">
-          <IconXMark className="h-8 w-8" />
+          class="mr-4">
+          <IconXMark class="h-8 w-8" />
         </button>
       )}
 
@@ -1068,8 +1066,8 @@ export const ViewCurrentSpaceBar = ({
               spaceId: space.spaceId,
             });
           }}
-          className="mr-4">
-          <IconXMark className="h-8 w-8" />
+          class="mr-4">
+          <IconXMark class="h-8 w-8" />
         </button>
       )}
     </div>

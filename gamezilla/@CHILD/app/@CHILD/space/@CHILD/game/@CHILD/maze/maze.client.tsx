@@ -264,7 +264,7 @@ export const View = ({
           />
           <div>
             <ActionButton
-              icon={<IconArrowLeftOnRect className="h-6 w-6" />}
+              icon={<IconArrowLeftOnRect class="h-6 w-6" />}
               label="Exit"
               onClick={() =>
                 dispatch(["stop-game", { userId: ctx.currentUserId }])
@@ -297,7 +297,7 @@ const ViewJoystick = ({
       <svg
         width="100%"
         viewBox="-1 -1 2 2"
-        className="touch-none select-none overflow-hidden">
+        class="touch-none select-none overflow-hidden">
         <defs>
           <clipPath id="cut-off-bottom">
             <circle x="0" y="0" r={1} />
@@ -336,14 +336,14 @@ const ViewJoystick = ({
             y="0"
             r={0.5}
             fill={fill}
-            className="pointer-events-none touch-none select-none"
+            class="pointer-events-none touch-none select-none"
             stroke={stroke}
           />
           <circle
             x="0"
             y="0"
             r={0.98}
-            className="pointer-events-none touch-none select-none"
+            class="pointer-events-none touch-none select-none"
             fill="transparent"
             stroke={stroke}
           />

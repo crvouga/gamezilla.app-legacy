@@ -4,7 +4,7 @@ import { gameTheme } from "./shared";
 
 const coverArtId = Uuid.generate();
 
-export const CoverArt = (props: { className?: string }) => {
+export const CoverArt = (props: { class?: string }) => {
   const ids = {
     playerOneGradient: `playerOneGradient${coverArtId}`,
     playerTwoGradient: `playerTwoGradient${coverArtId}`,

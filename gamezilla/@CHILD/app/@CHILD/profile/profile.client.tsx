@@ -274,7 +274,7 @@ export const View = ({
   switch (route.t) {
     case "profile": {
       return (
-        <div className="relative flex h-full w-full flex-col">
+        <div class="relative flex h-full w-full flex-col">
           <ViewProfileScreen
             model={model}
             ctx={ctx}
@@ -318,7 +318,7 @@ const ViewUpdateScreen = ({
 }) => {
   const profile = ctx.profiles[ctx.currentUserId];
   return (
-    <div className="flex h-full w-full flex-col items-center gap-4">
+    <div class="flex h-full w-full flex-col items-center gap-4">
       <TopBar
         left={
           <TopBarBackButton
@@ -333,10 +333,10 @@ const ViewUpdateScreen = ({
         title="Update Profile"
       />
 
-      <div className="flex w-full flex-col items-center gap-2 py-2">
+      <div class="flex w-full flex-col items-center gap-2 py-2">
         <MyAvatar
           src={profile?.avatarUrl}
-          className="h-28 w-28"
+          class="h-28 w-28"
           alt="profile avatar"
           onClick={() =>
             ctx.push({ t: "profile", c: { t: "profile-update-avatar" } })
@@ -347,7 +347,7 @@ const ViewUpdateScreen = ({
           size="sm"
           color="primary"
           variant="text"
-          className="block"
+          class="block"
           onClick={() =>
             ctx.push({ t: "profile", c: { t: "profile-update-avatar" } })
           }
@@ -377,19 +377,19 @@ export const ViewField = ({
 }) => (
   <button
     onClick={onClick}
-    className="flex w-full items-center justify-start px-4 py-2">
-    <div className="flex flex-1 flex-col items-start">
-      <p className="text-sm text-neutral-300">{label}</p>
+    class="flex w-full items-center justify-start px-4 py-2">
+    <div class="flex flex-1 flex-col items-start">
+      <p class="text-sm text-neutral-300">{label}</p>
       {typeof value === "string" ? (
-        <p className="h-7 text-lg">{value}</p>
+        <p class="h-7 text-lg">{value}</p>
       ) : (
-        <div className="flex h-7 w-full items-center ">
-          <div className="h-4 w-1/2 animate-pulse rounded-lg bg-neutral-600"></div>
+        <div class="flex h-7 w-full items-center ">
+          <div class="h-4 w-1/2 animate-pulse rounded-lg bg-neutral-600"></div>
         </div>
       )}
     </div>
 
-    <IconChevronRight className="h-6 w-6" />
+    <IconChevronRight class="h-6 w-6" />
   </button>
 );
 
@@ -405,7 +405,7 @@ const ViewUpdateUsernameScreen = ({
   const inputVal =
     model.draft?.username ?? model.profiles[ctx.currentUserId]?.username ?? "";
   return (
-    <div className="flex h-full w-full flex-col">
+    <div class="flex h-full w-full flex-col">
       <TopBar
         left={
           <Button
@@ -433,7 +433,7 @@ const ViewUpdateUsernameScreen = ({
         }
       />
 
-      <div className="w-full p-4">
+      <div class="w-full p-4">
         <TextField
           label="Username"
           value={inputVal}

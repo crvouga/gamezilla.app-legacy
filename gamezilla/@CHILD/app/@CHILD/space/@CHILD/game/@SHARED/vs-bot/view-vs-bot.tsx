@@ -7,7 +7,7 @@ export type PlayerType = "player-one" | "player-two";
 export type VsBotProps = {
   ctx: SpaceViewCtx;
   title: string;
-  renderCoverArt: (props: { className: string }) => VDom;
+  renderCoverArt: (props: { class: string }) => VDom;
   onQuit: () => void;
   canStartGame: boolean;
   onStartGame: () => void;
@@ -18,23 +18,23 @@ export type VsBotProps = {
   onSwapSides: () => void;
   bot: {
     label: string;
-    renderIcon: (props: { className: string }) => VDom;
+    renderIcon: (props: { class: string }) => VDom;
   };
   playerOne: {
     label: string;
-    renderIcon: (props: { className: string }) => VDom;
+    renderIcon: (props: { class: string }) => VDom;
     onStartPlaying: () => void;
     onStopPlaying: () => void;
   };
   playerTwo: {
     label: string;
-    renderIcon: (props: { className: string }) => VDom;
+    renderIcon: (props: { class: string }) => VDom;
     onStartPlaying: () => void;
     onStopPlaying: () => void;
   };
   botVariants: {
     label: string;
-    renderIcon: (props: { className: string }) => VDom;
+    renderIcon: (props: { class: string }) => VDom;
     onSelect: () => void;
   }[];
 };

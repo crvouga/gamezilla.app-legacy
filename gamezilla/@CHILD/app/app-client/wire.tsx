@@ -99,15 +99,15 @@ export const updateFromCmd = ({
 export const View = ({ model }: { model: Model }) => {
   if (model.t === "server-connect-error" && model.errorCount > 2) {
     return (
-      <div className="flex h-6 w-full items-center justify-center gap-2 bg-yellow-600 text-white">
-        <IconSpinner className="h-5 w-5 animate-spin text-white" />
+      <div class="flex h-6 w-full items-center justify-center gap-2 bg-yellow-600 text-white">
+        <IconSpinner class="h-5 w-5 animate-spin text-white" />
         Server disconnected. Trying to reconnect...
       </div>
     );
   }
   if (model.t === "server-disconnected") {
     return (
-      <div className="flex h-6 w-full items-center justify-center gap-2 bg-red-500 text-white">
+      <div class="flex h-6 w-full items-center justify-center gap-2 bg-red-500 text-white">
         Server disconnected
       </div>
     );
