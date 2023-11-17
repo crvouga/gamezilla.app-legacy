@@ -260,8 +260,6 @@ export const View = ({
               }}
             />
 
-            <div class="w-full pt-1"></div>
-
             <Button
               text="Send Code"
               class="w-full"

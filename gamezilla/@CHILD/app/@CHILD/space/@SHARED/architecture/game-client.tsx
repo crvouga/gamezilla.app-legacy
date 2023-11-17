@@ -23,7 +23,11 @@ export type GameClientTypes = {
 };
 
 export type GameClient<T extends GameClientTypes> = {
-  init: (input: { ctx: T["ClientCtx"]; state: T["GameState"] }) => {
+  init: (input: {
+    ctx: T["ClientCtx"];
+    state: T["GameState"];
+    model?: T["ClientModel"] | null;
+  }) => {
     model: T["ClientModel"];
     eff?: Eff<T["ClientMsg"]>;
     cmd?: ClientCmd<T["ToServer"]>[];
@@ -121,6 +125,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
       const initial = client.init({
         ctx: input.ctx,
         state: input.state.c,
+        model: input.model?.c,
       });
       return {
         model: { t: tag, c: initial.model },

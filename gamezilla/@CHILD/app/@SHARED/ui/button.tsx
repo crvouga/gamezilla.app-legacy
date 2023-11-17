@@ -20,7 +20,7 @@ export const Button = ({
   onClick,
   variant = "contained",
   color = "default",
-  size = "md",
+  size = "lg",
   disabled = false,
   loading = false,
   text = "",

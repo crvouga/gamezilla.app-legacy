@@ -65,7 +65,11 @@ type Client = GameClient<{
 //
 //
 
-export const init: Client["init"] = () => {
+export const init: Client["init"] = ({ model }) => {
+  if (model) {
+    return { model };
+  }
+
   return {
     model: {
       opened: null,

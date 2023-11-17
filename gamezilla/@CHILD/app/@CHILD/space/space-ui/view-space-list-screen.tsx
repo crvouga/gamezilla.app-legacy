@@ -50,12 +50,7 @@ export const ViewSpaceListScreen = ({
       <TopBar title="Spaces" />
 
       <div class="relative flex w-full flex-1 flex-col gap-5 overflow-hidden overflow-y-scroll p-5 pb-8">
-        {spaces.length === 0 && (
-          <div class="absolute inset-0 flex h-full w-full flex-1 flex-col items-center justify-center gap-2 opacity-60">
-            <IconGamepad class="h-14 w-14" />
-            <p class="text-lg text-secondary">No active spaces</p>
-          </div>
-        )}
+        {spaces.length === 0 && <EmptyState />}
 
         {spaces.flatMap((state) => {
           const host = ctx.profiles[state.hostId];
@@ -112,7 +107,7 @@ export const ViewSpaceListScreen = ({
                 })
               )
             }
-            text="Create space"
+            text="Start space"
           />
         </div>
       )}
@@ -120,7 +115,25 @@ export const ViewSpaceListScreen = ({
   );
 };
 
-const MAX_AVATAR_COUNT = 2;
+function EmptyState() {
+  return (
+    <div class="absolute inset-0 flex h-full w-full flex-1 flex-col items-center justify-center gap-2 px-5 text-center opacity-60">
+      <div class="flex flex-col items-center justify-center gap-3">
+        <p class="text-2xl font-bold ">No active spaces</p>
+
+        <div class="flex aspect-square flex-col items-center justify-center rounded-full bg-neutral-700 p-7">
+          <IconGamepad class="h-14 w-14" />
+        </div>
+
+        <p class="text-lg text-secondary" style={{ "text-wrap": "balance" }}>
+          Start a space to start playing games
+        </p>
+      </div>
+    </div>
+  );
+}
+
+const MAX_AVATAR_COUNT = 3;
 const ViewSpaceCard = ({
   gameName,
   onClick,

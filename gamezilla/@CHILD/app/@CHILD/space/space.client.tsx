@@ -144,15 +144,7 @@ export const update = ({
         state: space.game,
       });
 
-      const modelNew: ClientModel = {
-        ...model,
-        games: {
-          ...model.games,
-          [msg.spaceId]: updated.model,
-        },
-      };
-
-      const gameEventNew = updated.gameEvent
+      const event = updated.gameEvent
         ? withMeta<Event>({
             t: "game",
             c: updated.gameEvent,
@@ -160,29 +152,65 @@ export const update = ({
           })
         : null;
 
-      const appended = gameEventNew
-        ? appendEvent(modelNew, gameEventNew)
-        : modelNew;
+      return chain(
+        { model },
+        (model) => {
+          if (!event) {
+            return { model };
+          }
+          const appended = appendEvent(model, event);
 
-      return {
-        model: {
-          ...modelNew,
-          ...appended,
+          const modelNew: ClientModel = {
+            ...model,
+            ...appended,
+          };
+
+          return {
+            model: modelNew,
+            cmd: [
+              sendToServer({
+                ...event,
+                profile: ctx.profiles[ctx.currentUserId],
+              }),
+            ],
+          };
         },
-        eff: Eff.map_(
-          (c) => ({
-            t: "game-msg",
-            spaceId: msg.spaceId,
-            c,
-          }),
-          updated.eff
-        ),
-        cmd: ClientCmd.map(updated.cmd ?? [], (m) => ({
-          t: "game-msg",
-          spaceId: msg.spaceId,
-          c: m,
-        })),
-      };
+        (model) => {
+          if (!event) {
+            return { model };
+          }
+          return updateGameModel({
+            ctx,
+            model,
+            msg: event,
+          });
+        },
+        (model) => {
+          const modelNew: ClientModel = {
+            ...model,
+            games: {
+              ...model.games,
+              [msg.spaceId]: updated.model,
+            },
+          };
+          return {
+            model: modelNew,
+            eff: Eff.map_(
+              (c) => ({
+                t: "game-msg",
+                spaceId: msg.spaceId,
+                c,
+              }),
+              updated.eff
+            ),
+            cmd: ClientCmd.map(updated.cmd ?? [], (m) => ({
+              t: "game-msg",
+              spaceId: msg.spaceId,
+              c: m,
+            })),
+          };
+        }
+      );
     }
 
     default: {
@@ -455,6 +483,7 @@ const updateGameModel = ({
       const initial = GameClient.init({
         ctx: { ...ctx, space },
         state: space.game,
+        model: null,
       });
 
       return {
@@ -500,14 +529,11 @@ const updateGameModel = ({
 
       const gameModel = model.games[msg.spaceId];
 
-      const game = gameModel
-        ? {
-            model: gameModel,
-          }
-        : GameClient.init({
-            ctx: { ...ctx, space: space },
-            state: gameState,
-          });
+      const game = GameClient.init({
+        ctx: { ...ctx, space: space },
+        state: gameState,
+        model: gameModel ? gameModel : null,
+      });
 
       const updated = GameClient.updateFromGame({
         ctx: { ...ctx, space: space },

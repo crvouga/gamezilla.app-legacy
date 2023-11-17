@@ -1,7 +1,7 @@
 import { EventMeta } from "./event";
 import { EventId } from "./event-id";
 
-export type EventStream<T, TIndexName extends string> = {
+export type EventStream<T, TIndexName extends string = never> = {
   /**
    * Order of events in the stream
    */
