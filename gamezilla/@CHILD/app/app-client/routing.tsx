@@ -6,6 +6,7 @@ import {
   AppRoute,
   RouteCmd,
   playSound,
+  SoundCmd,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 
 //
@@ -16,14 +17,14 @@ import {
 //
 //
 
-export type Model = AppRoute;
+export type ClientModel = AppRoute;
 
 const FALLBACK: AppRoute = { t: "space", c: { t: "space-list" } };
 
 export const init = (
   location: Browser.Location
 ): {
-  model: Model;
+  model: ClientModel;
   eff?: Eff;
 } => {
   const decoded = AppRoute.decode(location.pathname);
@@ -53,12 +54,12 @@ export const update = ({
   model,
 }: {
   msg: Msg;
-  model: Model;
+  model: ClientModel;
 }): {
-  model: Model;
+  model: ClientModel;
   eff?: Eff<Msg>;
   evt?: ClientEvt[];
-  cmd?: ClientCmd[];
+  cmd?: SoundCmd[];
 } => {
   switch (msg.t) {
     case "clicked-back": {
@@ -91,9 +92,9 @@ export const updateFromCmd = ({
   model,
 }: {
   cmd: RouteCmd;
-  model: Model;
+  model: ClientModel;
 }): {
-  model: Model;
+  model: ClientModel;
   eff?: Eff<Msg>;
 } => {
   switch (msg.t) {

@@ -9,6 +9,7 @@ import {
   pushRoute,
   sendToServer,
   showToast,
+  startTimeout,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   AlertError,
@@ -19,9 +20,11 @@ import {
   TopBarBackButton,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
+  Eff,
   Iso3166Alpha2Code,
   PhoneNumber,
   RemoteResult,
+  Time,
 } from "gamezilla/@SHARED/core";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth-sms.core";
 
@@ -34,6 +37,7 @@ export const init: ClientModel = {
   phoneNumberError: null,
   //
   loggingIn: false,
+  timeoutId: null,
   sendCode: RemoteResult.notAsked,
   verifyCode: RemoteResult.notAsked,
 };
@@ -46,7 +50,10 @@ export const update = ({
   msg: ClientMsg;
 }): {
   model: ClientModel;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{
+    ToServer: ToServer;
+    ClientMsg: ClientMsg;
+  }>[];
 } => {
   switch (msg.t) {
     case "inputted-phone-number": {
@@ -81,12 +88,17 @@ export const update = ({
       }
 
       return {
-        model: { ...model, sendCode: RemoteResult.loading },
+        model: {
+          ...model,
+          sendCode: RemoteResult.loading,
+        },
+
         cmd: [
           sendToServer({
             t: "send-code",
             phoneNumber: phoneNumber.value,
           }),
+          startTimeout("send-code", 5_000, { t: "send-code-timed-out" }),
         ],
       };
     }
@@ -140,7 +152,7 @@ export const updateFromServer = ({
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg.t) {
     case "sent-code": {

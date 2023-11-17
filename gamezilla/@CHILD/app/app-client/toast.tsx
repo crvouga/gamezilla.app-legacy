@@ -190,7 +190,10 @@ export function updateFromCmd({
   cmd: msg,
   model,
 }: {
-  cmd: ClientCmd<unknown>;
+  cmd: ClientCmd<{
+    ClientMsg: Msg;
+    ToServer: never;
+  }>;
   model: Model;
 }): {
   model: Model;

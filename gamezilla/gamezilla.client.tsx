@@ -18,18 +18,15 @@ console.log(
 
 const program = Program.create({
   init: (input) => {
-    const storedRaw = sessionStorage.getItem(sessionStorageKey);
-    const stored = storedRaw ? JSON.parse(storedRaw) : null;
-
     const init = AppClient.init({
       ctx: input.ctx,
       location: Browser.getLocation(),
       documentVisibilityState: Browser.getDocumentVisibilityState(),
-      stored: stored,
+      stored: null,
     });
 
     return {
-      model: stored ? stored : init.model,
+      model: init.model,
       eff: init.eff,
     };
   },
@@ -40,8 +37,6 @@ const program = Program.create({
 program.subscribe((model, ctx) => {
   // @ts-ignore
   window.model = model;
-
-  sessionStorage.setItem(sessionStorageKey, JSON.stringify(model));
 
   render(
     <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,

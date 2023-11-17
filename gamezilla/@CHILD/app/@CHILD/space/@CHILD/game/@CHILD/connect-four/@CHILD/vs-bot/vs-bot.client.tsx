@@ -56,7 +56,7 @@ type Client = GameClient<{
   GameEvent: GameEvent;
   ClientCtx: SpaceClientCtx;
   ViewCtx: SpaceViewCtx & { onQuit: () => void };
-  ClientCmd: ClientCmd<ToServer>;
+  ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
   ClientEvt: SpaceClientEvt;
 }>;
 
@@ -151,7 +151,12 @@ export const updateFromGame: Client["updateFromGame"] = (input) => {
   );
 };
 
-const eventToSound = (event: GameEvent): ClientCmd<ToServer>[] => {
+const eventToSound = (
+  event: GameEvent
+): ClientCmd<{
+  ToServer: ToServer;
+  ClientMsg: ClientMsg;
+}>[] => {
   switch (event.t) {
     case "user-started-playing":
     case "user-stopped-playing":
@@ -190,7 +195,7 @@ const watch = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   const vsBotGame = VsBotGame.watch(
     model.vsBotGame,

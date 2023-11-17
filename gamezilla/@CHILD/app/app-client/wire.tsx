@@ -71,7 +71,7 @@ export const updateFromCmd = ({
   msg,
   model,
 }: {
-  msg: ClientCmd;
+  msg: ClientCmd<{ ClientMsg: never; ToServer: never }>;
   model: Model;
 }): {
   model: Model;

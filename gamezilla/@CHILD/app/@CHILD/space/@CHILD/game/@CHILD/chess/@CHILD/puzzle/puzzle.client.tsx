@@ -72,7 +72,7 @@ export const update = (input: {
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   return chain(
     input,
@@ -109,7 +109,7 @@ export const updateMain = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   const updated = updateCore({ msg, model, ctx });
 
@@ -132,7 +132,7 @@ export const updateFromServer = (input: {
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   return p(updateFromServerMain(input), andThen(watch));
 };
@@ -146,7 +146,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg.t) {
     case "clock-tick": {

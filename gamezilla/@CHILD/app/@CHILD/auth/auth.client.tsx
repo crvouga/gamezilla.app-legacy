@@ -63,7 +63,7 @@ export const update = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
   evt?: ClientEvt[];
 } => {
   switch (msg.t) {
@@ -127,7 +127,7 @@ export const updateFromServer = ({
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   evt?: ClientEvt[];
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg.t) {
     case "get-social-login-result": {
@@ -220,7 +220,7 @@ export const updateFromEvent = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   const updated = AuthClientSMS.updateFromEvent({
     model: model.sms,

@@ -49,7 +49,7 @@ export const update = ({
   model: Model;
   eff?: Eff<Msg>;
   evt?: ClientEvt[];
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   if (msg.t === "focus-done") {
     return { model };

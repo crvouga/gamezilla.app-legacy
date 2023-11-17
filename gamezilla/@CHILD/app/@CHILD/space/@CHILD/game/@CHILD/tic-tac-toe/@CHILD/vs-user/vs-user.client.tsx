@@ -47,7 +47,7 @@ export const update = (
   model: ClientModel
 ): {
   model: ClientModel;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg[0]) {
     //

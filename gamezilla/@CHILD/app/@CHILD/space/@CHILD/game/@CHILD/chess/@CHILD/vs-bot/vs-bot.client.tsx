@@ -64,7 +64,7 @@ export const update = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   const model: ClientModel = { ...modelPrev, openedMenuId: null };
 

@@ -24,7 +24,7 @@ type Client = GameClient<{
   GameState: null;
   ViewCtx: FlowViewCtx;
   ClientCtx: FlowViewCtx;
-  ClientCmd: ClientCmd<ToServer>;
+  ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
   ClientEvt: SpaceClientEvt;
 }>;
 

@@ -34,6 +34,7 @@ export type ClientModel = {
   //
   codeInput: string;
   codeError: string | null;
+  timeoutId: string | null;
   //
   sendCode: RemoteResult<string, null>;
   verifyCode: RemoteResult<string, null>;
@@ -43,6 +44,7 @@ export type ClientMsg =
   | { t: "inputted-phone-number"; phoneNumber: string }
   | { t: "inputted-country-code"; countryCode: Iso3166Alpha2Code }
   | { t: "clicked-send-code" }
+  | { t: "send-code-timed-out" }
   | { t: "inputted-code"; code: string }
   | { t: "clicked-verify-code"; phoneNumber: PhoneNumber };
 

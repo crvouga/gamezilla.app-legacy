@@ -64,7 +64,7 @@ import {
 
 export const init: {
   model: ClientModel;
-  cmd: ClientCmd<ToServer>[];
+  cmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } = {
   model: {
     ...initCore(),
@@ -95,7 +95,7 @@ export const update = ({
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   evt?: ClientEvt[];
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg.t) {
     case "modal-closed": {
@@ -203,11 +203,19 @@ export const update = ({
               }),
               updated.eff
             ),
-            cmd: ClientCmd.map(updated.cmd ?? [], (m) => ({
-              t: "game-msg",
-              spaceId: msg.spaceId,
-              c: m,
-            })),
+            cmd: ClientCmd.map(
+              updated.cmd ?? [],
+              (m) => ({
+                t: "game-msg",
+                spaceId: msg.spaceId,
+                c: m,
+              }),
+              (m) => ({
+                t: "game-msg",
+                spaceId: msg.spaceId,
+                c: m,
+              })
+            ),
           };
         }
       );
@@ -272,7 +280,7 @@ const updateSound = ({
   msg: ClientMsg;
 }): {
   model: ClientModel;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   if (msg.t === "user-joined-space" && msg.userId === ctx.currentUserId) {
     return {
@@ -330,7 +338,7 @@ export const updateFromServer = ({
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   evt?: ClientEvt[];
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   return chain(
     { model },
@@ -393,11 +401,19 @@ export const updateFromServer = ({
               }),
               updated.eff
             ),
-            cmd: ClientCmd.map(updated.cmd ?? [], (m) => ({
-              t: "game-msg",
-              spaceId: msg.spaceId,
-              c: m,
-            })),
+            cmd: ClientCmd.map(
+              updated.cmd ?? [],
+              (m) => ({
+                t: "game-msg",
+                spaceId: msg.spaceId,
+                c: m,
+              }),
+              (m) => ({
+                t: "game-msg",
+                spaceId: msg.spaceId,
+                c: m,
+              })
+            ),
           };
         }
 
@@ -462,7 +478,7 @@ const updateGameModel = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg.t) {
     case "user-inputted-game": {
@@ -502,11 +518,19 @@ const updateGameModel = ({
           }),
           initial.eff
         ),
-        cmd: ClientCmd.map(initial.cmd ?? [], (m) => ({
-          t: "game-msg",
-          spaceId: msg.spaceId,
-          c: m,
-        })),
+        cmd: ClientCmd.map(
+          initial.cmd ?? [],
+          (m) => ({
+            t: "game-msg",
+            spaceId: msg.spaceId,
+            c: m,
+          }),
+          (m) => ({
+            t: "game-msg",
+            spaceId: msg.spaceId,
+            c: m,
+          })
+        ),
       };
     }
 
@@ -564,6 +588,11 @@ const updateGameModel = ({
             t: "game-msg",
             spaceId: msg.spaceId,
             c: m,
+          }),
+          (m) => ({
+            t: "game-msg",
+            spaceId: msg.spaceId,
+            c: m,
           })
         ),
       };
@@ -580,7 +609,7 @@ export const updateFromEvent = (input: {
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   const { msg, model } = input;
 

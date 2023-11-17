@@ -84,7 +84,7 @@ export const update = ({
   model: Model;
 
   eff?: Eff<Msg>;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   if (msg.t === "vs-bot-setup") {
     const updated = VsBotSetup.update(model.vsBotSetup, msg.c);

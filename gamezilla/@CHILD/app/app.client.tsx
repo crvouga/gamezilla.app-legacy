@@ -1,4 +1,4 @@
-import { Browser, Eff, Posix, Sub } from "gamezilla/@SHARED/core";
+import { Browser, Eff, Posix, Sub, Time } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
   AnonymousClientCtx,
@@ -76,7 +76,7 @@ export const init = ({
     eff: Eff.batch<ClientMsg>([routing.eff, Eff.t("auth", auth.eff)]),
   };
 
-  const cmdList: ClientCmd<ToServer>[] = [
+  const cmdList: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[] = [
     ...ClientCmd.tag("space", space.cmd),
     ...ClientCmd.tag("profile", profile.cmd),
     preloadSound(Object.values(APP_SOUND)),
@@ -156,7 +156,7 @@ const updateMain = ({
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   evt?: ClientEvt[];
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   const ctxApp = toCtx({ model, now: ctx.now });
 
@@ -311,7 +311,7 @@ const updateFromServer = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
   evt?: ClientEvt[];
 } => {
   switch (msg.t) {
@@ -397,7 +397,7 @@ const updateFromCmd = ({
   cmd,
 }: {
   model: ClientModel;
-  cmd: ClientCmd<ToServer>;
+  cmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
@@ -469,6 +469,20 @@ const updateFromCmd = ({
         },
       };
     }
+
+    case "time/start-timeout": {
+      return {
+        model,
+        eff: Time.startTimeout(cmd.timeoutId, cmd.duration, cmd.msg),
+      };
+    }
+
+    case "time/cancel-timeout": {
+      return {
+        model,
+        eff: Time.cancelTimeout(cmd.timeoutId),
+      };
+    }
   }
 };
 
@@ -483,7 +497,7 @@ const updateFromEvent = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   const ctxApp = toCtx({ model, now: ctx.now });
 

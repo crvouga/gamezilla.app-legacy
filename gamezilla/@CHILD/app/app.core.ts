@@ -30,7 +30,7 @@ export type ClientModel = {
   chat: Chat.ClientModel;
   search: Search.ClientModel;
   //
-  routing: Routing.Model;
+  routing: Routing.ClientModel;
   toast: Toast.Model;
   wire: Wire.Model;
   sound: Sound.Model;

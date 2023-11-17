@@ -37,7 +37,7 @@ type Client = GameClient<{
   ViewCtx: SpaceViewCtx;
   GameEvent: null;
   GameState: null;
-  ClientCmd: ClientCmd<ToServer>;
+  ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
   ClientEvt: SpaceClientEvt;
 }>;
 

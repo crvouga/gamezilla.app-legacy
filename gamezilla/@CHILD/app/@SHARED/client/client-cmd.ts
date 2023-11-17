@@ -8,12 +8,18 @@ import { AppRoute } from "./client-route";
 //
 //
 
-export type ClientCmd<ToServer = null> =
-  | SendToServerCmd<ToServer>
+type ClientCmdTypes = {
+  ClientMsg: any;
+  ToServer: any;
+};
+
+export type ClientCmd<T extends ClientCmdTypes> =
+  | SendToServerCmd<T>
   | ToastCmd
   | RouteCmd
   | SoundCmd
-  | ViewCmd;
+  | ViewCmd
+  | TimeCmd<T>;
 
 //
 //
@@ -21,15 +27,59 @@ export type ClientCmd<ToServer = null> =
 //
 //
 
-export type SendToServerCmd<T> = {
+export type TimeCmd<T extends ClientCmdTypes> =
+  | {
+      t: "time/start-timeout";
+      timeoutId: string;
+      duration: number;
+      msg: T["ClientMsg"];
+    }
+  | {
+      t: "time/cancel-timeout";
+
+      timeoutId: string;
+    };
+
+export const startTimeout = <T extends ClientCmdTypes>(
+  timeoutId: string,
+  duration: number,
+  msg: T["ClientMsg"]
+): ClientCmd<T> => {
+  return {
+    t: "time/start-timeout",
+    timeoutId,
+    duration,
+    msg,
+  };
+};
+
+export const cancelTimeout = <T extends ClientCmdTypes>(
+  timeoutId: string,
+  msg: T["ClientMsg"]
+): ClientCmd<T> => {
+  return {
+    t: "time/cancel-timeout",
+    timeoutId,
+  };
+};
+
+//
+//
+//
+//
+//
+
+export type SendToServerCmd<T extends ClientCmdTypes> = {
   t: "send-to-server";
-  msg: T | null;
+  msg: T["ToServer"] | null;
 };
 
 /**
  * A cmd creator for sending a messages to the server.
  */
-export const sendToServer = <T>(msg: T): ClientCmd<T> => {
+export const sendToServer = <T extends ClientCmdTypes>(
+  msg: T["ToServer"]
+): ClientCmd<T> => {
   return {
     t: "send-to-server",
     msg,
@@ -50,7 +100,7 @@ export type ToastCmd = {
   duration?: number;
 };
 
-export const showToast = <T>(
+export const showToast = <T extends ClientCmdTypes>(
   text: string,
   variant?: "error" | "info",
   duration?: number
@@ -95,7 +145,9 @@ export const playSound = <T>(src: string, volume?: UnitInterval): SoundCmd => {
   };
 };
 
-export const preloadSound = <T>(src: string[]): ClientCmd<T> => {
+export const preloadSound = <T extends ClientCmdTypes>(
+  src: string[]
+): ClientCmd<T> => {
   return {
     t: "sound/preload",
     src,
@@ -115,7 +167,9 @@ type ViewCmd = {
   htmlId: string;
 };
 
-export const focusView = <T>(htmlId: string): ClientCmd<T> => {
+export const focusView = <T extends ClientCmdTypes>(
+  htmlId: string
+): ClientCmd<T> => {
   return { t: "view/focus", htmlId };
 };
 
@@ -133,11 +187,15 @@ export type RouteCmd =
   | { t: "routing/replace"; route: AppRoute }
   | { t: "routing/back" };
 
-export const pushRoute = <T>(route: AppRoute): ClientCmd<T> => {
+export const pushRoute = <T extends ClientCmdTypes>(
+  route: AppRoute
+): ClientCmd<T> => {
   return { t: "routing/push", route };
 };
 
-export const replaceRoute = <T>(route: AppRoute): ClientCmd<T> => {
+export const replaceRoute = <T extends ClientCmdTypes>(
+  route: AppRoute
+): ClientCmd<T> => {
   return { t: "routing/replace", route };
 };
 
@@ -150,10 +208,13 @@ export const replaceRoute = <T>(route: AppRoute): ClientCmd<T> => {
 //
 //
 
-const tagOne = <T extends string, Msg>(
-  t: T,
-  cmd: ClientCmd<Msg>
-): ClientCmd<{ t: T; c: Msg }> => {
+const tagOne = <Tag extends string, T extends ClientCmdTypes>(
+  t: Tag,
+  cmd: ClientCmd<T>
+): ClientCmd<{
+  ClientMsg: { t: Tag; c: T["ClientMsg"] };
+  ToServer: { t: Tag; c: T["ToServer"] };
+}> => {
   switch (cmd.t) {
     case "send-to-server": {
       if (cmd.msg) {
@@ -162,27 +223,47 @@ const tagOne = <T extends string, Msg>(
       return { ...cmd, msg: null };
     }
 
+    case "time/start-timeout": {
+      return {
+        ...cmd,
+        msg: { t, c: cmd.msg },
+      };
+    }
+
     default: {
       return cmd;
     }
   }
 };
 
-const tag = <T extends string, Msg>(
-  t: T,
-  cmd?: ClientCmd<Msg>[]
-): ClientCmd<{ t: T; c: Msg }>[] => {
-  return cmd?.map((c) => tagOne(t, c)) ?? [];
+const tag = <Tag extends string, T extends ClientCmdTypes>(
+  tag: Tag,
+  cmd?: ClientCmd<T>[]
+): ClientCmd<{
+  ClientMsg: { t: Tag; c: T["ClientMsg"] };
+  ToServer: { t: Tag; c: T["ToServer"] };
+}>[] => {
+  return cmd?.map((c) => tagOne(tag, c)) ?? [];
 };
 
-const map = <A, B>(cmd: ClientCmd<A>[], f: (a: A) => B): ClientCmd<B>[] => {
+const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
+  cmd: ClientCmd<A>[],
+  toServerMap: (a: A["ToServer"]) => B["ToServer"],
+  clientMsgMap: (b: B["ClientMsg"]) => A["ClientMsg"]
+): ClientCmd<B>[] => {
   return cmd.map((cmd) => {
     switch (cmd.t) {
       case "send-to-server": {
         if (cmd.msg) {
-          return { ...cmd, msg: f(cmd.msg) };
+          return { ...cmd, msg: toServerMap(cmd.msg) };
         }
         return { ...cmd, msg: null };
+      }
+      case "time/start-timeout": {
+        return {
+          ...cmd,
+          msg: clientMsgMap(cmd.msg),
+        };
       }
       default: {
         return cmd;

@@ -37,13 +37,13 @@ export const init = ({
   currentRoute: AppRoute;
 }): {
   model: ClientModel;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   return p(
     {
       model: { profiles: {}, requests: {} },
     },
-    andThen((model) => {
+    andThen((model): ReturnType<typeof init> => {
       if (currentRoute.t === "profile" && currentRoute.c.t === "profile") {
         return loadProfile(currentRoute.c.userId, model);
       }
@@ -68,7 +68,7 @@ export const update = ({
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg.t) {
     case "inputted-username": {
@@ -130,7 +130,7 @@ export const updateFromServer = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg.t) {
     case "current-user-profile": {
@@ -200,7 +200,7 @@ export const updateFromEvent = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (evt.t) {
     case "route-changed": {
@@ -231,7 +231,7 @@ const loadProfile = (
   model: ClientModel
 ): {
   model: ClientModel;
-  cmd?: ClientCmd<ToServer>[];
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   return {
     model: {
