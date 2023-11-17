@@ -8,7 +8,7 @@ import {
   ServerEvt,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, EmailAddress, ok, Result } from "gamezilla/@SHARED/core";
-import { createAccountDb } from "./@SHARED/auth-server/account-db";
+import { createAccountDb } from "./@SHARED/server/account-db";
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
 import {
   Account,

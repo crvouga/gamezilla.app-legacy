@@ -8,9 +8,9 @@ import {
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, PhoneNumber, Result, ok } from "gamezilla/@SHARED/core";
-import { createAccountDb } from "../../@SHARED/auth-server/account-db";
+import { createAccountDb } from "../../@SHARED/server/account-db";
 import { Account } from "../../auth.core";
-import { VerifySMS } from "./auth-sms-server/verify-sms/verify-sms-impl";
+import { VerifySMS } from "./server/verify-sms/verify-sms-impl";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth-sms.core";
 
 export const init: ServerModel = {
