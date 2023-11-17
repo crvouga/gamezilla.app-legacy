@@ -267,6 +267,7 @@ export const View = ({
               class="w-full"
               variant="contained"
               color="primary"
+              size="lg"
               loading={model.sendCode.t === "loading"}
               onClick={() => {
                 dispatch({ t: "clicked-send-code" });
@@ -310,6 +311,7 @@ export const View = ({
               class="w-full"
               text="Verify Code"
               color="primary"
+              size="lg"
               loading={model.verifyCode.t === "loading" || model.loggingIn}
               onClick={() => {
                 dispatch({
