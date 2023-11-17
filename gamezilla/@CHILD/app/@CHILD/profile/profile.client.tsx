@@ -33,7 +33,9 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./profile.core";
 
 export const init = ({
   currentRoute,
+  stored,
 }: {
+  stored: ClientModel | null;
   currentRoute: AppRoute;
 }): {
   model: ClientModel;
@@ -41,7 +43,7 @@ export const init = ({
 } => {
   return p(
     {
-      model: { profiles: {}, requests: {} },
+      model: stored ? stored : { profiles: {}, requests: {} },
     },
     andThen((model): ReturnType<typeof init> => {
       if (currentRoute.t === "profile" && currentRoute.c.t === "profile") {

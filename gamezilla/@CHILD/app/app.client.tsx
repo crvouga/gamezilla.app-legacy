@@ -71,6 +71,7 @@ export const init = ({
 
   const profile = ProfileClient.init({
     currentRoute: routing.model,
+    stored: stored?.profile ?? null,
   });
 
   const chat = ChatClient.init;
