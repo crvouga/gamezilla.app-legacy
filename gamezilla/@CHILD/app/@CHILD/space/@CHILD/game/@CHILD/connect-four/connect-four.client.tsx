@@ -10,10 +10,7 @@ import {
   SpaceClientEvt,
   SpaceViewCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import {
-  MainMenuScreen,
-  mainMenuButtons,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
 import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art";
 import {
   ClientModel,
@@ -76,19 +73,26 @@ export const init: Client["init"] = (input) => {
 //
 
 export const update: Client["update"] = ({ ctx, msg, model, state }) => {
-  if (state.t === "none") {
-    return { model };
-  }
+  switch (msg.t) {
+    case "user-changed-mode": {
+      return initMode({ ctx, model, state });
+    }
 
-  if (state.t === "vs-bot" && model.t === "vs-bot" && msg.t === "vs-bot") {
-    return VsBot.update({ ctx, msg, model, state });
-  }
+    case "vs-bot": {
+      if (state.t === "vs-bot" && model.t === "vs-bot") {
+        return VsBot.update({ ctx, msg, model, state });
+      }
+      return { model };
+    }
 
-  if (state.t === "vs-user" && model.t === "vs-user" && msg.t === "vs-user") {
-    return { model };
-  }
+    case "vs-user": {
+      if (state.t === "vs-user" && model.t === "vs-user") {
+        return VsUser.update({ ctx, msg, model, state });
+      }
 
-  return { model };
+      return { model };
+    }
+  }
 };
 
 export const updateFromServer: Client["updateFromServer"] = ({
@@ -146,8 +150,8 @@ const initMode = (input: {
   ctx: SpaceClientCtx;
   state: GameState;
   model: ClientModel;
-}): ReturnType<typeof updateFromGame> => {
-  const { state, model } = input;
+}): ReturnType<typeof update> => {
+  const { state } = input;
 
   return chain(
     //
@@ -158,6 +162,7 @@ const initMode = (input: {
           return {
             model,
             cmd: [playSound(APP_SOUND.navBackwardMin)],
+            gameEvent: { t: "user-changed-mode", mode: "none" },
           };
         }
         case "vs-user":
@@ -165,6 +170,7 @@ const initMode = (input: {
           return {
             model,
             cmd: [playSound(APP_SOUND.navForwardMin)],
+            gameEvent: { t: "user-changed-mode", mode: state.t },
           };
         }
       }
@@ -216,12 +222,12 @@ export const View = ({
   }
 
   return (
-    <MainMenuScreen
+    <MainMenuScreen.View
       ctx={ctx}
       title="Connect Four"
       renderCoverArt={(props) => <CoverArt {...props} />}
       buttons={[
-        mainMenuButtons.playFriend({
+        MainMenuScreen.buttons.playFriend({
           onClick: () =>
             dispatch({
               mode: "vs-user",
@@ -229,7 +235,7 @@ export const View = ({
               userId: ctx.currentUserId,
             }),
         }),
-        mainMenuButtons.playComputer({
+        MainMenuScreen.buttons.playComputer({
           onClick: () =>
             dispatch({
               mode: "vs-bot",

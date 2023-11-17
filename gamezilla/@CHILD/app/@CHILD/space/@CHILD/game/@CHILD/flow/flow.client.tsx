@@ -127,7 +127,7 @@ export const View: Client["View"] = (input) => {
   };
 
   return (
-    <MainMenuScreen
+    <MainMenuScreen.View
       renderCoverArt={(props) => <CoverArt {...props} />}
       ctx={ctx}
       title="Flow"

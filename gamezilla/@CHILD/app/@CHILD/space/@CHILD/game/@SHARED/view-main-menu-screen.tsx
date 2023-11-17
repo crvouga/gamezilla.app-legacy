@@ -16,7 +16,7 @@ type MainMenuButton = {
   onClick: () => void;
 };
 
-export const MainMenuScreen = ({
+const View = ({
   title,
   renderCoverArt,
   buttons,
@@ -74,7 +74,7 @@ export const MainMenuScreen = ({
   );
 };
 
-export const mainMenuButtons = {
+const buttons = {
   playFriend: (input: { onClick: () => void }): MainMenuButton => {
     return {
       ...input,
@@ -92,4 +92,9 @@ export const mainMenuButtons = {
       description: "Play against a computer",
     };
   },
+};
+
+export const MainMenuScreen = {
+  buttons,
+  View,
 };

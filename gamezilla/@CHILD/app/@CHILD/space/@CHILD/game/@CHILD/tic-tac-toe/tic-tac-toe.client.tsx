@@ -10,10 +10,7 @@ import {
   SpaceClientEvt,
   SpaceViewCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import {
-  MainMenuScreen,
-  mainMenuButtons,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./tic-tac-toe.core";
 import { CoverArt } from "./@SHARED/tic-tic-toe/tic-tac-toe-ui";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
@@ -166,15 +163,15 @@ export const View = ({
 
   if (model.t === "none") {
     return (
-      <MainMenuScreen
+      <MainMenuScreen.View
         title="Tic-Tac-Toe"
         ctx={ctx}
         renderCoverArt={(props) => <CoverArt {...props} />}
         buttons={[
-          mainMenuButtons.playFriend({
+          MainMenuScreen.buttons.playFriend({
             onClick: () => dispatch({ t: "input-mode", mode: "vs-user" }),
           }),
-          mainMenuButtons.playComputer({
+          MainMenuScreen.buttons.playComputer({
             onClick: () => dispatch({ t: "input-mode", mode: "vs-bot" }),
           }),
         ]}

@@ -1,7 +1,4 @@
-import {
-  MainMenuScreen,
-  mainMenuButtons,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
 import {
   GameClient,
   SpaceClientCtx,
@@ -258,12 +255,12 @@ export const View: Client["View"] = ({ ctx, state, model, dispatch }) => {
   switch (model.mode?.t) {
     case "none": {
       return (
-        <MainMenuScreen
+        <MainMenuScreen.View
           title="Chess"
           ctx={ctx}
           renderCoverArt={(props) => <CoverArt {...props} />}
           buttons={[
-            mainMenuButtons.playComputer({
+            MainMenuScreen.buttons.playComputer({
               onClick: () =>
                 dispatch({
                   t: "input-mode",
@@ -271,7 +268,7 @@ export const View: Client["View"] = ({ ctx, state, model, dispatch }) => {
                   userId: ctx.currentUserId,
                 }),
             }),
-            mainMenuButtons.playFriend({
+            MainMenuScreen.buttons.playFriend({
               onClick: () =>
                 dispatch({
                   t: "input-mode",
