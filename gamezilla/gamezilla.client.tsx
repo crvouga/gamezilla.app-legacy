@@ -8,6 +8,8 @@ import "./main.css";
 const VITE_DEPLOYMENT_ID = import.meta.env["VITE_DEPLOYMENT_ID"] ?? null;
 
 const sessionStorageKey = `model:${VITE_DEPLOYMENT_ID ?? ""}`;
+const stored = sessionStorage.getItem(sessionStorageKey);
+const parsed = stored ? JSON.parse(stored) : null;
 
 console.log(
   "VITE_DEPLOYMENT_ID",
@@ -22,7 +24,7 @@ const program = Program.create({
       ctx: input.ctx,
       location: Browser.getLocation(),
       documentVisibilityState: Browser.getDocumentVisibilityState(),
-      stored: null,
+      stored: parsed,
     });
 
     return {
@@ -37,6 +39,8 @@ const program = Program.create({
 program.subscribe((model, ctx) => {
   // @ts-ignore
   window.model = model;
+
+  sessionStorage.setItem(sessionStorageKey, JSON.stringify(model));
 
   render(
     <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,

@@ -49,7 +49,9 @@ export const init = ({
   eff: Eff<ClientMsg>;
 } => {
   const routing = Routing.init(location);
-  const toast = Toast.init;
+  const toast = Toast.init({
+    stored: stored?.toast ?? null,
+  });
   const wire = Wire.init;
   const auth = AuthClient.init;
   const space = SpaceClient.init;
