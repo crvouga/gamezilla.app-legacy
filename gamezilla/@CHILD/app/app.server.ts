@@ -137,7 +137,7 @@ export const update = async (input: {
       acc = {
         model: updatedCmd.model,
         eff: Eff.batch([acc.eff, updatedCmd.eff]),
-        cmd: updatedCmd.cmd ?? [],
+        cmd: updatedCmd.cmd,
         evt: updatedCmd.evt,
       };
     }
