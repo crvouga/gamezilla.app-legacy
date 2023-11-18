@@ -144,10 +144,22 @@ export const updateFromCmd = <ToClient>({
             };
           } = {};
 
-          const userIds = new Set<UserId>();
           for (const userId of cmd.userIds) {
-            const sessionId = usersBySessionId[userId].sessionId;
+            const sessionId = sessionIdByUserId[userId];
+            if (!sessionId) {
+              continue;
+            }
+            const client = model.clientsBySessionId[sessionId];
+            if (!client) {
+              continue;
+            }
+            toClientPayload[client.clientId] = {
+              clientId: client.clientId,
+              msgs: [cmd.msg],
+            };
           }
+
+          toClient.publish(toClientPayload);
         },
       };
     }

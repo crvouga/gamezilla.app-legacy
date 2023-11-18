@@ -258,7 +258,7 @@ const updateFromClient = async ({
   cmd?: ServerCmd<ToClient>[];
   evt?: ServerEvt[];
 }> => {
-  const currentUserId = model.auth.userIdBySessionId[ctx.sessionId]?.userId;
+  const currentUserId = model.auth.userIdBySessionId[ctx.sessionId];
   const authReqCtx: ReqCtx | null = currentUserId
     ? {
         ...ctx,
@@ -483,7 +483,7 @@ export const createCtx = async (): Promise<Result<string, ServerCtx>> => {
     return err("databaseUrl not found in env vars");
   }
 
-  const created = await createDbConn({ databaseUrl });
+  const created = await createDbConn({ databaseUrl, logger });
 
   if (created.t === "err") {
     return created;
