@@ -18,14 +18,26 @@ export type ClientCmd<T extends ClientCmdTypes> =
   | ToastCmd
   | RouteCmd
   | SoundCmd
-  | ViewCmd
-  | TimeCmd<T>;
+  | PlatformCmd<T>;
 
 //
 //
 //
 //
 //
+
+export type PlatformCmd<T extends ClientCmdTypes> = ViewCmd | TimeCmd<T>;
+
+type ViewCmd = {
+  t: "view/focus";
+  htmlId: string;
+};
+
+export const focusView = <T extends ClientCmdTypes>(
+  htmlId: string
+): ClientCmd<T> => {
+  return { t: "view/focus", htmlId };
+};
 
 export type TimeCmd<T extends ClientCmdTypes> =
   | {
@@ -151,25 +163,6 @@ export const preloadSound = <T extends ClientCmdTypes>(
     t: "sound/preload",
     src,
   };
-};
-
-//
-//
-//
-//
-//
-//
-//
-
-type ViewCmd = {
-  t: "view/focus";
-  htmlId: string;
-};
-
-export const focusView = <T extends ClientCmdTypes>(
-  htmlId: string
-): ClientCmd<T> => {
-  return { t: "view/focus", htmlId };
 };
 
 //

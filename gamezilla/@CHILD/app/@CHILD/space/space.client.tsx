@@ -2,6 +2,7 @@ import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
 import { withMeta } from "gamezilla/@SHARED/event-stream";
 import {
   APP_SOUND,
+  AnonymousClientCtx,
   ClientCmd,
   ClientCtx,
   ClientEvt,
@@ -645,9 +646,19 @@ export const updateFromEvent = (input: {
 //
 
 export const subscriptions = (
-  ctx: ClientCtx,
+  ctx: AnonymousClientCtx,
   model: ClientModel
 ): Sub<ClientMsg> => {
+  const { currentUserId } = ctx;
+  if (!currentUserId) {
+    return Sub.None;
+  }
+
+  const clientCtx = {
+    ...ctx,
+    currentUserId,
+  };
+
   const subs: Sub<ClientMsg>[] = [];
   for (const spaceId in model.events.indexes.indexSpaceId) {
     if (!SpaceId.is(spaceId)) {
@@ -676,7 +687,7 @@ export const subscriptions = (
 
     const sub = Sub.map(
       GameClient.subscriptions({
-        ctx: { ...ctx, space: space },
+        ctx: { ...clientCtx, space: space },
         state: space.game,
         model: game,
         intervalId: String(spaceId),

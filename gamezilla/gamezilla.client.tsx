@@ -22,7 +22,6 @@ const program = Program.create({
     const init = AppClient.init({
       ctx: input.ctx,
       location: Browser.getLocation(),
-      documentVisibilityState: Browser.getDocumentVisibilityState(),
       stored: stored,
     });
 

@@ -92,11 +92,11 @@ const None: Sub<never> = {
   subscribe: () => () => {},
 };
 
-const flatten = <A, B>(sub: Sub<A>, fn: (a: A) => B[]): Sub<B> => {
+const flat = <A>(sub: Sub<Iterable<A>>): Sub<A> => {
   return {
     subscribe: (subscriber) => {
       return sub.subscribe((a) => {
-        for (const b of fn(a)) {
+        for (const b of a) {
           subscriber(b);
         }
       });
@@ -145,8 +145,9 @@ export const Sub = {
   batch,
   create: createSub,
   None,
-  flatten,
+  flat,
   tag,
+
   flatMap,
 };
 
@@ -159,7 +160,7 @@ export const PubSub = {
   batch,
   create,
   None,
-  flatten,
+  flatten: flat,
   tag,
   flatMap,
   toSub,

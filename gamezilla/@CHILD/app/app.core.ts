@@ -3,10 +3,10 @@ import * as Chat from "./@CHILD/chat/chat.core";
 import * as Profile from "./@CHILD/profile/profile.core";
 import * as Search from "./@CHILD/search/search.core";
 import * as Space from "./@CHILD/space/space.core";
-import { ClientId, SessionId } from "./@SHARED/data";
-import { Routing, Sound, Toast } from "./app-client";
 import * as Wire from "./@CHILD/wire/wire.core";
 import { ServerWireMsg } from "./@CHILD/wire/wire.core";
+import { ClientId, SessionId } from "./@SHARED/data";
+import { Platform, Routing, Sound, Toast } from "./app-client";
 
 //
 //
@@ -35,15 +35,13 @@ export type ClientModel = {
   routing: Routing.Model;
   toast: Toast.Model;
   sound: Sound.Model;
-  //
-  documentVisibilityState: DocumentVisibilityState;
+  platform: Platform.Model;
 };
 
 //
 //
 //
-//
-//
+// Msg
 //
 //
 //
@@ -61,19 +59,15 @@ export type ToClient =
   | { t: "profile"; c: Profile.ToClient }
   | { t: "search"; c: Search.ToClient }
   | { t: "chat"; c: Chat.ToClient }
-  | { t: "auth"; c: Auth.ToClient }
-  | { t: "access-denied"; msg: ToServer };
+  | { t: "auth"; c: Auth.ToClient };
 
 export type ClientMsg =
   | { t: "➡️"; c: ToClient }
-  //
-  | { t: "wire"; c: Wire.ClientMsg }
   | { t: "routing"; c: Routing.Msg }
   | { t: "toast"; c: Toast.Msg }
   | { t: "sound"; c: Sound.Msg }
-  //
-  | { t: "document-visibility-changed"; state: DocumentVisibilityState }
-  //
+  | { t: "platform"; c: Platform.Msg }
+  | { t: "wire"; c: Wire.ClientMsg }
   | { t: "space"; c: Space.ClientMsg }
   | { t: "chat"; c: Chat.ClientMsg }
   | { t: "auth"; c: Auth.ClientMsg }
@@ -81,12 +75,7 @@ export type ClientMsg =
   | { t: "search"; c: Search.ClientMsg };
 
 export type ServerMsg =
-  | {
-      t: "➡️";
-      sessionId: SessionId;
-      clientId: ClientId;
-      c: ToServer;
-    }
+  | { t: "➡️"; sessionId: SessionId; clientId: ClientId; c: ToServer }
   | { t: "wire"; c: ServerWireMsg }
   | { t: "space"; c: Space.ServerMsg }
   | { t: "profile"; c: Profile.ServerMsg }

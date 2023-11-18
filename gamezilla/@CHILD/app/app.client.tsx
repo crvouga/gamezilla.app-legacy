@@ -22,7 +22,7 @@ import * as ProfileClient from "./@CHILD/profile/profile.client";
 import * as SearchClient from "./@CHILD/search/search.client";
 import * as SpaceClient from "./@CHILD/space/space.client";
 import { UserId } from "./@SHARED/data";
-import { Routing, Sound, Toast } from "./app-client";
+import { Platform, Routing, Sound, Toast } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
 import * as Wire from "./@CHILD/wire/wire.client";
 
@@ -50,13 +50,11 @@ export const { toClient, toServer } = Wire.createTransport<
 
 export const init = ({
   location,
-  documentVisibilityState,
   stored,
 }: {
   stored: ClientModel | null;
   ctx: { now: Posix };
   location: Browser.Location;
-  documentVisibilityState: DocumentVisibilityState;
 }): {
   model: ClientModel;
   eff: Eff<ClientMsg>;
@@ -99,15 +97,17 @@ export const init = ({
     stored: stored?.sound ?? null,
   });
 
+  const platform = Platform.init({
+    stored: stored?.platform ?? null,
+  });
+
   let acc: ReturnType<typeof init> = {
     model: {
       routing: routing.model,
       toast: toast.model,
       wire: wire.model,
       sound: sound.model,
-      //
-      documentVisibilityState,
-      //
+      platform: platform.model,
       chat: chat.model,
       space: space.model,
       auth: auth.model,
@@ -190,7 +190,7 @@ const updateMain = ({
   evt?: ClientEvt[];
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
-  const ctxApp = toCtx({ model, now: ctx.now });
+  const ctxApp = toCtx({ model, ctx });
 
   switch (msg.t) {
     case "➡️": {
@@ -304,10 +304,13 @@ const updateMain = ({
       };
     }
 
-    case "document-visibility-changed": {
+    case "platform": {
+      const updated = Platform.update({
+        msg: msg.c,
+        model: model.platform,
+      });
       return {
-        model: { ...model, documentVisibilityState: msg.state },
-        evt: [msg],
+        model: { ...model, platform: updated.model },
       };
     }
   }
@@ -315,13 +318,14 @@ const updateMain = ({
 
 const toCtx = (input: {
   model: ClientModel;
-  now: Posix;
+  ctx: { now: Posix };
 }): ClientCtx | AnonymousClientCtx => {
   const anonymousCtx: AnonymousClientCtx = {
     profiles: input.model.profile.profiles,
-    now: input.now,
-    documentVisibilityState: input.model.documentVisibilityState,
+    now: input.ctx.now,
+    documentVisibilityState: input.model.platform.documentVisibilityState,
     currentRoute: input.model.routing,
+    currentUserId: null,
   };
   if (input.model.auth.currentUser.t === "logged-in") {
     return {
@@ -417,10 +421,6 @@ const updateFromServer = ({
         eff: Eff.t("profile", updated.eff),
       };
     }
-
-    case "access-denied": {
-      return { model };
-    }
   }
 };
 
@@ -479,15 +479,22 @@ const updateFromCmd = ({
       };
     }
 
-    case "view/focus": {
+    case "time/start-timeout":
+    case "time/cancel-timeout": {
       return {
         model,
-        eff: () => {
-          const element = document.getElementById(cmd.htmlId);
-          if (element) {
-            element.focus();
-          }
-        },
+        eff: Time.cancelTimeout(cmd.timeoutId),
+      };
+    }
+
+    case "view/focus": {
+      const updated = Platform.updateFromCmd({
+        cmd: cmd,
+        model: model.platform,
+      });
+      return {
+        model: { ...model, platform: updated.model },
+        eff: Eff.t("platform", updated.eff),
       };
     }
 
@@ -500,20 +507,6 @@ const updateFromCmd = ({
       return {
         model: { ...model, wire: wire.model },
         eff: Eff.t("wire", wire.eff),
-      };
-    }
-
-    case "time/start-timeout": {
-      return {
-        model,
-        eff: Time.startTimeout(cmd.timeoutId, cmd.duration, cmd.msg),
-      };
-    }
-
-    case "time/cancel-timeout": {
-      return {
-        model,
-        eff: Time.cancelTimeout(cmd.timeoutId),
       };
     }
   }
@@ -532,7 +525,7 @@ const updateFromEvent = ({
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
-  const ctxApp = toCtx({ model, now: ctx.now });
+  const ctxApp = toCtx({ model, ctx });
 
   const chat = ChatClient.updateFromEvent({
     model: model.chat,
@@ -587,44 +580,22 @@ const updateFromEvent = ({
 //
 //
 
-export const subscriptions = ({
-  ctx,
-  model,
-}: {
+export const subscriptions = (input: {
   ctx: { now: Posix };
   model: ClientModel;
 }): Sub<ClientMsg> => {
+  const { model } = input;
+
+  const ctxApp = toCtx(input);
+
   return Sub.batch<ClientMsg>([
-    Sub.flatten(toClient, (msgs) => msgs.map((msg) => ({ t: "➡️", c: msg }))),
+    Sub.tag("➡️", Sub.flat(toClient)),
     Sub.tag("wire", Wire.subscriptions),
+    Sub.tag("platform", Platform.subscriptions),
     Sub.tag("routing", Routing.subscriptions),
     Sub.tag("auth", AuthClient.subscriptions(model.auth)),
-    Browser.onDocumentVisibilityState((state) => ({
-      t: "document-visibility-changed",
-      state,
-    })),
-    spaceSub(ctx, model),
+    Sub.tag("space", SpaceClient.subscriptions(ctxApp, model.space)),
   ]);
-};
-
-const spaceSub = (ctx: { now: Posix }, model: ClientModel): Sub<ClientMsg> => {
-  if (model.auth.currentUser.t === "logged-in") {
-    return Sub.tag(
-      "space",
-      SpaceClient.subscriptions(
-        {
-          currentRoute: model.routing,
-          now: ctx.now,
-          currentUserId: model.auth.currentUser.userId,
-          profiles: model.profile.profiles,
-          documentVisibilityState: model.documentVisibilityState,
-        },
-        model.space
-      )
-    );
-  }
-
-  return Sub.None;
 };
 
 //
@@ -679,7 +650,7 @@ const ViewMain = ({
             currentUserId: model.auth.currentUser.userId,
             profiles: model.profile.profiles,
             sound: model.sound,
-            documentVisibilityState: model.documentVisibilityState,
+            documentVisibilityState: model.platform.documentVisibilityState,
             toggleSound: () =>
               dispatch({ t: "sound", c: { t: "toggle-mute" } }),
             push: (route) =>
@@ -699,7 +670,7 @@ const ViewMain = ({
             currentRoute: model.routing,
             profiles: model.profile.profiles,
             sound: model.sound,
-            documentVisibilityState: model.documentVisibilityState,
+            documentVisibilityState: model.platform.documentVisibilityState,
             toggleSound: () =>
               dispatch({ t: "sound", c: { t: "toggle-mute" } }),
             back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),

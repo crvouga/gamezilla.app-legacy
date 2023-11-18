@@ -13,6 +13,7 @@ import {
   Sub,
   err,
   ok,
+  p,
   toMsgType,
 } from "gamezilla/@SHARED/core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
@@ -274,7 +275,7 @@ const updateFromClient = async ({
 
     case "profile": {
       if (!authReqCtx) {
-        return { model, cmd: [sendBack(ctx, { t: "access-denied", msg })] };
+        return { model };
       }
 
       const updated = ProfileServer.updateFromClient({
@@ -313,7 +314,7 @@ const updateFromClient = async ({
 
     case "space": {
       if (!authReqCtx) {
-        return { model, cmd: [sendBack(ctx, { t: "access-denied", msg })] };
+        return { model };
       }
 
       const updated = await SpaceServer.updateFromClient({
@@ -440,14 +441,17 @@ export const subscriptions = async ({
       await SpaceServer.subscriptions({ model: model.space, ctx })
     ),
     Sub.tag("wire", WireServer.subscriptions),
-    Sub.flatten(toServer, ({ sessionId, clientId, msgs }) =>
-      msgs.map(
-        (msg): ServerMsg => ({
-          t: "➡️",
-          sessionId,
-          clientId,
-          c: msg,
-        })
+
+    Sub.flat(
+      Sub.map(toServer, ({ sessionId, clientId, msgs }) =>
+        msgs.map(
+          (msg: any): ServerMsg => ({
+            t: "➡️",
+            sessionId,
+            clientId,
+            c: msg,
+          })
+        )
       )
     ),
   ]);
