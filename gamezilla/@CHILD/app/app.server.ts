@@ -14,6 +14,7 @@ import {
   err,
   ok,
   p,
+  toMsgPayload,
   toMsgType,
 } from "gamezilla/@SHARED/core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
@@ -86,7 +87,9 @@ export const update = async (input: {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
 }> => {
-  input.ctx.logger.info(toMsgType(input.msg));
+  input.ctx.logger.info(
+    `[msg] ${toMsgType(input.msg)} ${JSON.stringify(toMsgPayload(input.msg))}`
+  );
 
   const updated = await updateMain(input);
 
@@ -96,15 +99,18 @@ export const update = async (input: {
   while (true) {
     iterations++;
     if (iterations > 100) {
+      input.ctx.logger.error("update loop exceeded 100 iterations");
       break;
     }
 
-    if (acc.evt?.length === 0 && acc.cmd?.length === 0) {
+    if ((acc.evt?.length ?? 0) === 0 && (acc.cmd?.length ?? 0) === 0) {
       break;
     }
 
     for (const evt of acc.evt ?? []) {
-      input.ctx.logger.info(`[evt] ${toMsgType(evt)}`);
+      input.ctx.logger.info(
+        `[evt] ${toMsgType(evt)} ${JSON.stringify(toMsgPayload(evt))}`
+      );
       const updatedEvt = await updateFromEvent({
         ...input,
         model: acc.model,
@@ -113,13 +119,15 @@ export const update = async (input: {
       acc = {
         model: updatedEvt.model,
         eff: Eff.batch([acc.eff, updatedEvt.eff]),
-        cmd: [...(acc.cmd ?? []), ...(updatedEvt.cmd ?? [])],
+        cmd: updatedEvt.cmd,
         evt: updatedEvt.evt,
       };
     }
 
     for (const cmd of acc.cmd ?? []) {
-      input.ctx.logger.info(`[cmd] ${toMsgType(cmd)}`);
+      input.ctx.logger.info(
+        `[cmd] ${toMsgType(cmd)} ${JSON.stringify(toMsgPayload(cmd))}`
+      );
       const updatedCmd = updateFromCmd({
         ...input,
         model: acc.model,
@@ -128,7 +136,7 @@ export const update = async (input: {
       acc = {
         model: updatedCmd.model,
         eff: Eff.batch([acc.eff, updatedCmd.eff]),
-        cmd: [...(acc.cmd ?? []), ...(updatedCmd.cmd ?? [])],
+        cmd: updatedCmd.cmd ?? [],
         evt: updatedCmd.evt,
       };
     }
@@ -171,9 +179,7 @@ const updateMain = async ({
       });
       return {
         model: { ...model, wire: updated.model },
-        // cmd: ServerCmd.tag("wire", updated.cmd),
-        // eff: Eff.t("wire", updated.eff),
-        // evt: updated.evt,
+        evt: updated.evt,
       };
     }
 

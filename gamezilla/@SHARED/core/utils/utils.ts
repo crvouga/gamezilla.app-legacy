@@ -314,7 +314,7 @@ export const toMsgType = (msg: unknown): string => {
 
 export const toMsgPayload = (
   msg: unknown,
-  acc: Record<string, unknown>
+  acc: Record<string, unknown> = {}
 ): Record<string, unknown> => {
   if (!isAnyMsg(msg)) {
     return acc;

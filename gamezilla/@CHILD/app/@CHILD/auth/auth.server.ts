@@ -249,7 +249,15 @@ export const updateFromEvent = ({
     }
 
     case "client-unauthenticated": {
-      return { model, cmd: [sendToClient([evt.clientId], evt)] };
+      const usersBySessionIdNew = { ...model.usersBySessionId };
+      delete usersBySessionIdNew[evt.sessionId];
+      return {
+        model: {
+          ...model,
+          usersBySessionId: usersBySessionIdNew,
+        },
+        cmd: [sendToClient([evt.clientId], evt)],
+      };
     }
 
     default: {

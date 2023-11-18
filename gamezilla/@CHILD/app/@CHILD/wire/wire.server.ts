@@ -1,6 +1,6 @@
 import { ServerWebSocket } from "bun";
 import { UserId, ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { ServerCmd } from "gamezilla/@CHILD/app/@SHARED/server";
+import { ServerCmd, ServerEvt } from "gamezilla/@CHILD/app/@SHARED/server";
 import { PubSub } from "gamezilla/@SHARED/core/sub";
 import { Eff } from "gamezilla/@SHARED/core";
 import {
@@ -36,6 +36,7 @@ export const update = ({
   msg: ServerMsg;
 }): {
   model: ServerModel;
+  evt?: ServerEvt[];
 } => {
   switch (msg.t) {
     case "client-connected": {
@@ -53,6 +54,7 @@ export const update = ({
           ...model,
           clientsBySessionId: clientsBySessionIdNew,
         },
+        evt: [msg],
       };
     }
 
@@ -71,6 +73,7 @@ export const update = ({
           ...model,
           clientsBySessionId: clientsBySessionIdNew,
         },
+        evt: [msg],
       };
     }
   }
@@ -110,7 +113,23 @@ export const updateFromCmd = <ToClient>({
     case "wire/send-to-client": {
       return {
         model,
-        eff: () => {},
+        eff: () => {
+          const toClientPayload: {
+            [clientId: ClientId]: {
+              clientId: ClientId;
+              msgs: ToClient[];
+            };
+          } = {};
+
+          for (const clientId of cmd.clientIds) {
+            toClientPayload[clientId] = {
+              clientId,
+              msgs: [cmd.msg],
+            };
+          }
+
+          toClient.publish(toClientPayload);
+        },
       };
     }
 

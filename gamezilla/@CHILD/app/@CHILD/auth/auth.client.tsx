@@ -63,8 +63,6 @@ export const init = ({
 //
 //
 
-const socialLogin = createSocialLogin();
-
 export const update = ({
   msg,
   model,
