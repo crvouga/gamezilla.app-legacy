@@ -124,10 +124,6 @@ function EmptyState() {
         <div class="flex aspect-square flex-col items-center justify-center rounded-full bg-neutral-700 p-7">
           <IconGamepad class="h-14 w-14" />
         </div>
-
-        <p class="text-lg text-secondary" style={{ "text-wrap": "balance" }}>
-          Start a space to start playing
-        </p>
       </div>
     </div>
   );
