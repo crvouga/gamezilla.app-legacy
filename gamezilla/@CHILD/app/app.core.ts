@@ -5,8 +5,8 @@ import * as Search from "./@CHILD/search/search.core";
 import * as Space from "./@CHILD/space/space.core";
 import { ClientId, SessionId } from "./@SHARED/data";
 import { Routing, Sound, Toast } from "./app-client";
-import * as Wire from "./wire/wire.core";
-import { ServerWireMsg } from "./wire/wire.core";
+import * as Wire from "./@CHILD/wire/wire.core";
+import { ServerWireMsg } from "./@CHILD/wire/wire.core";
 
 //
 //

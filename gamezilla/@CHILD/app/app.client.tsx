@@ -24,7 +24,7 @@ import * as SpaceClient from "./@CHILD/space/space.client";
 import { UserId } from "./@SHARED/data";
 import { Routing, Sound, Toast } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
-import * as Wire from "./wire/wire.client";
+import * as Wire from "./@CHILD/wire/wire.client";
 
 //
 //

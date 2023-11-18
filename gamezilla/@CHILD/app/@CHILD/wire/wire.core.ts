@@ -1,4 +1,4 @@
-import { ClientId, SessionId } from "../@SHARED/data";
+import { ClientId, SessionId } from "../../@SHARED/data";
 
 //
 //
