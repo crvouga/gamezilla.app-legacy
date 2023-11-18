@@ -1,12 +1,11 @@
-import { Browser, Eff, Posix, Sub, Time } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
   AnonymousClientCtx,
   AnonymousViewCtx,
+  AppRoute,
   ClientCmd,
   ClientCtx,
   ClientEvt,
-  AppRoute,
   ViewCtx,
   preloadSound,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -16,14 +15,16 @@ import {
   VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { UserId } from "./@SHARED/data";
-import { Routing, Sound, Toast, Wire } from "./app-client";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
+import { Browser, Eff, Posix, Sub, Time } from "gamezilla/@SHARED/core";
 import * as AuthClient from "./@CHILD/auth/auth.client";
 import * as ChatClient from "./@CHILD/chat/chat.client";
 import * as ProfileClient from "./@CHILD/profile/profile.client";
 import * as SearchClient from "./@CHILD/search/search.client";
 import * as SpaceClient from "./@CHILD/space/space.client";
+import { UserId } from "./@SHARED/data";
+import { Routing, Sound, Toast } from "./app-client";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
+import * as Wire from "./wire/wire.client";
 
 //
 //
@@ -566,9 +567,20 @@ const updateFromEvent = ({
 //
 //
 
-export const wire = Sub.create<Wire.Msg>();
 export const toServer = Sub.create<ToServer[]>();
 export const fromServer = Sub.create<ToClient[]>();
+const SERVER_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://server.gamezilla.app/"
+    : false
+    ? "https://gamezilla-server.ngrok.io/"
+    : `http://localhost:5000/`;
+
+Wire.attachClientTransport({
+  baseServerUrl: SERVER_URL,
+  fromServer: fromServer,
+  toServer: toServer,
+});
 
 //
 //
@@ -589,7 +601,7 @@ export const subscriptions = ({
 }): Sub<ClientMsg> => {
   return Sub.batch<ClientMsg>([
     Sub.flatten(fromServer, (msgs) => msgs.map((msg) => ({ t: "➡️", c: msg }))),
-    Sub.tag("wire", wire),
+    Sub.tag("wire", Wire.subscriptions),
     Sub.tag("routing", Routing.subscriptions),
     Sub.tag("auth", AuthClient.subscriptions(model.auth)),
     Browser.onDocumentVisibilityState((state) => ({

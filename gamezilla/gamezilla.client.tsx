@@ -1,7 +1,6 @@
 import { Browser, Program } from "gamezilla/@SHARED/core";
 import { render } from "preact";
 import * as AppClient from "./@CHILD/app/app.client";
-import { attachClientTransport } from "./@CHILD/app/wire";
 import { attachDebugger } from "./@SHARED/core/debug";
 import "./main.css";
 
@@ -48,20 +47,6 @@ program.subscribe((model, ctx) => {
   );
 });
 
-const SERVER_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://server.gamezilla.app/"
-    : false
-    ? "https://gamezilla-server.ngrok.io/"
-    : `http://localhost:5000/`;
-
 attachDebugger(program);
-
-attachClientTransport({
-  baseServerUrl: SERVER_URL,
-  wire: AppClient.wire,
-  fromServer: AppClient.fromServer,
-  toServer: AppClient.toServer,
-});
 
 program.start();

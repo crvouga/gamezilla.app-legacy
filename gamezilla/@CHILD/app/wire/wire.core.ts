@@ -1,5 +1,27 @@
 import { ClientId, SessionId } from "../@SHARED/data";
 
+//
+//
+//
+//
+//
+//
+
+export type ClientModel =
+  | { t: "server-connecting" }
+  | { t: "server-connect-error"; errorCount: number }
+  | { t: "server-disconnected" }
+  | { t: "server-connected" };
+
+export type ClientMsg = ClientWireMsg;
+
+//
+//
+//
+//
+//
+//
+
 export type ServerToClientMsg<ToClient> =
   | { t: "to-client"; msgs: ToClient[] }
   | { t: "session-id"; sessionId: SessionId };

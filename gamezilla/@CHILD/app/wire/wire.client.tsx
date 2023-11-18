@@ -1,23 +1,165 @@
-import { PubSub } from "../../../@SHARED/core/sub";
+import { PubSub } from "gamezilla/@SHARED/core";
+import { ClientCmd, ClientEvt } from "gamezilla/@CHILD/app/@SHARED/client";
+import { IconSpinner } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
+  ClientModel,
+  ClientMsg,
   ClientToServerMsg,
   ClientWireMsg,
   ServerToClientMsg,
-} from "./wire-core";
+} from "./wire.core";
+
+//
+//
+//
+// Model
+//
+//
+//
+
+export const init = ({
+  stored,
+}: {
+  stored: ClientModel | null;
+}): { model: ClientModel } => {
+  if (stored) {
+    return {
+      model: stored,
+    };
+  }
+  return {
+    model: {
+      t: "server-connecting",
+    },
+  };
+};
+
+//
+//
+//
+//  Update
+//
+//
+//
+
+export const update = ({
+  msg,
+  model,
+}: {
+  msg: ClientMsg;
+  model: ClientModel;
+}): {
+  model: ClientModel;
+  evt?: ClientEvt[];
+} => {
+  switch (msg.t) {
+    case "server-connect-error": {
+      return {
+        model: {
+          t: "server-connect-error",
+          errorCount:
+            model.t === "server-connect-error" ? model.errorCount + 1 : 1,
+        },
+      };
+    }
+
+    case "server-connected": {
+      return {
+        model: {
+          t: "server-connected",
+        },
+        evt: [{ t: "server-connected" }],
+      };
+    }
+
+    case "server-disconnected": {
+      return { model: { t: msg.t } };
+    }
+  }
+};
+
+export const updateFromCmd = ({
+  msg,
+  model,
+}: {
+  msg: ClientCmd<{ ClientMsg: never; ToServer: never }>;
+  model: ClientModel;
+}): {
+  model: ClientModel;
+} => {
+  switch (msg.t) {
+    case "send-to-server": {
+      return {
+        model,
+      };
+    }
+    default: {
+      return { model };
+    }
+  }
+};
+
+//
+//
+//
+// View
+//
+//
+//
+
+export const View = ({ model }: { model: ClientModel }) => {
+  if (model.t === "server-connect-error" && model.errorCount > 2) {
+    return (
+      <div class="flex h-6 w-full items-center justify-center gap-2 bg-yellow-600 text-white">
+        <IconSpinner class="h-5 w-5 animate-spin text-white" />
+        Server disconnected. Trying to reconnect...
+      </div>
+    );
+  }
+  if (model.t === "server-disconnected") {
+    return (
+      <div class="flex h-6 w-full items-center justify-center gap-2 bg-red-500 text-white">
+        Server disconnected
+      </div>
+    );
+  }
+  return null;
+};
+
+//
+//
+//
+//
+//
+//
+
+const wire = PubSub.create<ClientWireMsg>();
+
+export const subscriptions = wire;
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 const SESSION_ID_KEY = "gamezilla-session-id";
-
 const RECONNECT_INTERVAL = 2000; // 1 second
 const MAX_RECONNECT_ATTEMPTS = 5; // Adjust as needed
 
 export const attachClientTransport = <ToServer, ToClient>({
   baseServerUrl,
-  wire,
   fromServer,
   toServer,
 }: {
   baseServerUrl: string;
-  wire: PubSub<ClientWireMsg>;
   toServer: PubSub<ToServer[]>;
   fromServer: PubSub<ToClient[]>;
 }) => {

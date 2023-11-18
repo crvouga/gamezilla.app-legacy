@@ -6,7 +6,7 @@ import {
   ClientToServerMsg,
   ServerToClientMsg,
   ServerWireMsg,
-} from "./wire-core";
+} from "./wire.core";
 
 type ServerWebSocketData = {
   clientId: ClientId;

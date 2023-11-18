@@ -1,11 +1,12 @@
-import { Routing, Toast, Wire, Sound } from "./app-client";
 import * as Auth from "./@CHILD/auth/auth.core";
 import * as Chat from "./@CHILD/chat/chat.core";
 import * as Profile from "./@CHILD/profile/profile.core";
 import * as Search from "./@CHILD/search/search.core";
 import * as Space from "./@CHILD/space/space.core";
 import { ClientId, SessionId } from "./@SHARED/data";
-import { ServerWireMsg } from "./wire";
+import { Routing, Sound, Toast } from "./app-client";
+import * as Wire from "./wire/wire.core";
+import { ServerWireMsg } from "./wire/wire.core";
 
 export type ServerModel = {
   sessions: {
@@ -30,9 +31,10 @@ export type ClientModel = {
   chat: Chat.ClientModel;
   search: Search.ClientModel;
   //
+  wire: Wire.ClientModel;
+  //
   routing: Routing.ClientModel;
   toast: Toast.Model;
-  wire: Wire.Model;
   sound: Sound.Model;
   //
   documentVisibilityState: DocumentVisibilityState;
@@ -57,7 +59,7 @@ export type ToClient =
 export type ClientMsg =
   | { t: "➡️"; c: ToClient }
   //
-  | { t: "wire"; c: Wire.Msg }
+  | { t: "wire"; c: Wire.ClientMsg }
   | { t: "routing"; c: Routing.Msg }
   | { t: "toast"; c: Toast.Msg }
   | { t: "sound"; c: Sound.Msg }

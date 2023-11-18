@@ -7,7 +7,6 @@ import {
   ServerEvt,
   sendBack,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-
 import { Eff, Posix, Sub } from "gamezilla/@SHARED/core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
 import * as ChatServer from "./@CHILD/chat/chat.server";
@@ -15,7 +14,8 @@ import * as ProfileServer from "./@CHILD/profile/profile.server";
 import * as SearchServer from "./@CHILD/search/search.server";
 import * as SpaceServer from "./@CHILD/space/space.server";
 import { ClientId, SessionId } from "./@SHARED/data";
-
+import { createDbConn } from "./app-server/db-conn-sql";
+import { createSMS } from "./app-server/sms";
 import {
   ServerModel,
   ServerMsg,
@@ -23,9 +23,7 @@ import {
   ToServer,
   WireSession,
 } from "./app.core";
-import { ServerWireMsg } from "./wire";
-import { createDbConn } from "./app-server/db-conn-sql";
-import { createSMS } from "./app-server/sms";
+import { ServerWireMsg } from "./wire/wire.core";
 
 //
 //
