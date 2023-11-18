@@ -25,6 +25,14 @@ CREATE INDEX IF NOT EXISTS idx_immutable_store_id ON immutable_store (id);
 CREATE INDEX IF NOT EXISTS idx_immutable_store_timestamp ON immutable_store (timestamp);
 `;
 
+type Row = {
+  id: string;
+  parent_id: string | null;
+  timestamp: number;
+  key: string;
+  value: string | null;
+};
+
 export const createSqliteStore = <TKey extends string | number, TValue>({
   connectionString,
   namespace,
