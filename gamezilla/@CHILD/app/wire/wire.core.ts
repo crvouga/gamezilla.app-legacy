@@ -15,6 +15,17 @@ export type ClientModel =
 
 export type ClientMsg = ClientWireMsg;
 
+export type ServerModel = {
+  clients: {
+    [sessionId: SessionId]: Session;
+  };
+};
+
+export type Session = {
+  sessionId: SessionId;
+  clientId?: ClientId;
+};
+
 //
 //
 //
