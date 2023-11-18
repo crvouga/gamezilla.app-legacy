@@ -1,4 +1,4 @@
-import { Eff, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Sub, isErr } from "gamezilla/@SHARED/core";
 import { ClientCtx, ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   ClientModel,
@@ -48,7 +48,7 @@ export const update = ({
     default: {
       const result = handle({ ctx, msg, model });
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return {
           model,
           eff: Eff.None,

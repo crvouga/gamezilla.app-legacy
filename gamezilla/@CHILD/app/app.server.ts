@@ -3,8 +3,7 @@ import {
   ReqCtx,
   ServerCmd,
   ServerCtx,
-  ServerEvt,
-  sendBack,
+  ServerEvt
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import {
   Eff,
@@ -12,10 +11,10 @@ import {
   Result,
   Sub,
   err,
+  isErr,
   ok,
-  p,
   toMsgPayload,
-  toMsgType,
+  toMsgType
 } from "gamezilla/@SHARED/core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
 import * as ChatServer from "./@CHILD/chat/chat.server";
@@ -485,7 +484,7 @@ export const createCtx = async (): Promise<Result<string, ServerCtx>> => {
 
   const created = await createDbConn({ databaseUrl, logger });
 
-  if (created.t === "err") {
+  if (isErr(created)) {
     return created;
   }
 

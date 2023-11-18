@@ -15,7 +15,6 @@ export * from "./pipe";
 export * as Program from "./program";
 export { Random, shuffle } from "./random";
 export * from "./range";
-export * from "./remote-result";
 export * from "./result";
 export { Set } from "./set";
 export * from "./sub";

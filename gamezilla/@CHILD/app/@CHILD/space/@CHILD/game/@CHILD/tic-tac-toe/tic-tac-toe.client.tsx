@@ -1,4 +1,4 @@
-import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
+import { Eff, Sub, chain, isErr } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
   ClientCmd,
@@ -91,7 +91,7 @@ export const updateFromServer: Client["updateFromServer"] = ({
       (model) => {
         const { result } = msg;
 
-        if (result.t === "err") {
+        if (isErr(result)) {
           return { model };
         }
 

@@ -1,4 +1,11 @@
-import { Eff, Keyboard, Option, Sub, exhaustive } from "gamezilla/@SHARED/core";
+import {
+  Eff,
+  Keyboard,
+  Option,
+  Sub,
+  exhaustive,
+  isErr,
+} from "gamezilla/@SHARED/core";
 import * as Board from "./@SHARED/board";
 import * as Direction from "./@SHARED/direction";
 import * as Piece from "./@SHARED/piece";
@@ -160,7 +167,7 @@ export const updateFromServer = (
     case "MouseMove_Done": {
       const result = msg[1];
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return [model, Eff.None];
       }
 
@@ -172,7 +179,7 @@ export const updateFromServer = (
     case "InputDrop_Done": {
       const result = msg[1];
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return [model, Eff.None];
       }
 
@@ -189,7 +196,7 @@ export const updateFromServer = (
     case "InputRotate_Done": {
       const result = msg[1];
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return [model, Eff.None];
       }
 
@@ -201,7 +208,7 @@ export const updateFromServer = (
     case "InputTranslate_Done": {
       const result = msg[1];
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return [model, Eff.None];
       }
 

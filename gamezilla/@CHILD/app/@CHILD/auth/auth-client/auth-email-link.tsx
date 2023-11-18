@@ -1,4 +1,4 @@
-import { Eff, Result, exhaustive } from "gamezilla/@SHARED/core";
+import { Eff, Result, exhaustive, isErr } from "gamezilla/@SHARED/core";
 import { RouteCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   AlertError,
@@ -64,7 +64,7 @@ export const update = ({
   }
 
   if (msg.t === "login-done") {
-    if (msg.result.t === "err") {
+    if (isErr(msg.result)) {
       return {
         model: {
           ...model,

@@ -1,4 +1,4 @@
-import { eq, Option, Result } from "gamezilla/@SHARED/core";
+import { eq, isErr, Option, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Chess } from "../../@SHARED/chess";
 import * as Clock from "../../@SHARED/chess/chess-clock";
@@ -166,7 +166,7 @@ export const inputMove = (
 
   const result = Chess.move(moveInput, model.board);
 
-  if (result.t === "err") {
+  if (isErr(result)) {
     return result;
   }
 

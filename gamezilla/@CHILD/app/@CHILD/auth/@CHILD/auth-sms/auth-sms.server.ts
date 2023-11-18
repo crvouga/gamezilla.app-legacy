@@ -7,7 +7,7 @@ import {
   ServerEvt,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, PhoneNumber, Result, ok } from "gamezilla/@SHARED/core";
+import { Eff, PhoneNumber, Result, isErr, ok } from "gamezilla/@SHARED/core";
 import { createAccountDb } from "../../@SHARED/server/account-db";
 import { Account } from "../../auth.core";
 import { VerifySMS } from "./server/verify-sms/verify-sms-impl";
@@ -33,7 +33,7 @@ export const update = ({
 } => {
   switch (msg.t) {
     case "verified-code": {
-      if (msg.result.t === "err") {
+      if (isErr(msg.result)) {
         return {
           model,
           cmd: [sendToClient([msg.clientId], msg)],
@@ -60,10 +60,12 @@ export const update = ({
     }
 
     case "got-user-account": {
-      if (msg.result.t === "err") {
-        console.log(msg.result);
+      if (isErr(msg.result)) {
         return {
           model,
+          eff: () => {
+            console.log(msg.result);
+          },
         };
       }
       return {
@@ -100,7 +102,7 @@ const findElseInsertAccount = async ({
 
   const found = await accountDb.findOneByPhoneNumber({ phoneNumber });
 
-  if (found.t === "err") {
+  if (isErr(found)) {
     console.error(found);
     return found;
   }
@@ -118,7 +120,7 @@ const findElseInsertAccount = async ({
 
   const inserted = await accountDb.insertOne({ account: accountNew });
 
-  if (inserted.t === "err") {
+  if (isErr(inserted)) {
     return inserted;
   }
 

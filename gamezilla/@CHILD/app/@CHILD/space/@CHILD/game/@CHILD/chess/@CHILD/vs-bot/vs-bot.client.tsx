@@ -1,4 +1,11 @@
-import { Eff, Sub, andThen, exhaustive, p } from "gamezilla/@SHARED/core";
+import {
+  Eff,
+  Sub,
+  andThen,
+  exhaustive,
+  isErr,
+  p,
+} from "gamezilla/@SHARED/core";
 import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
@@ -151,7 +158,7 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
     case "bot-moved": {
       const { result } = msg;
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return { model };
       }
 
@@ -171,7 +178,7 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
     case "input-move": {
       const { result } = msg;
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return { model };
       }
 
@@ -188,7 +195,7 @@ const updateFromServerMain: typeof updateFromServer = ({ msg, model }) => {
     default: {
       const { result } = msg;
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return { model };
       }
 

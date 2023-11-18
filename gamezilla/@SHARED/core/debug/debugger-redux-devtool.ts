@@ -8,7 +8,7 @@
 import * as Json from "../json";
 import { p } from "../pipe";
 import { Program } from "../program";
-import { Result } from "../result";
+import { Result, isErr } from "../result";
 import { PubSub, Sub } from "../sub";
 import { Task } from "../task";
 import { toMsgPayload, toMsgType } from "../utils";
@@ -144,7 +144,7 @@ const handleSubscription = <Model, Msg extends {}>(
 
   return (msg) => {
     const result = handler(msg);
-    if (result.t === "err") {
+    if (isErr(result)) {
       console.warn("[REDUX DEV TOOL]", result.error);
       return;
     }

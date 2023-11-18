@@ -1,4 +1,11 @@
-import { Eff, RemoteResult, Sub, exhaustive, p } from "gamezilla/@SHARED/core";
+import {
+  Eff,
+  RemoteResult,
+  Sub,
+  exhaustive,
+  isErr,
+  p,
+} from "gamezilla/@SHARED/core";
 import {
   ClientCtx,
   AppRoute,
@@ -92,7 +99,7 @@ export const updateFromServer = (
         [msg[0]]: RemoteResult.map(msg[2], () => null),
       };
 
-      if (msg[2].t === "err") {
+      if (isErr(msg[2])) {
         return [{ ...model, requests: requestsNew }, Eff.None];
       }
 

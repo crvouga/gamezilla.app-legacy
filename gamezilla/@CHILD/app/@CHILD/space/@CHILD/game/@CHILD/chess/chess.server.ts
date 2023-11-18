@@ -5,7 +5,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, err, ok, Sub } from "gamezilla/@SHARED/core";
+import { Eff, err, isErr, ok, Sub } from "gamezilla/@SHARED/core";
 import * as Puzzle from "./@CHILD/puzzle/puzzle.server";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.server";
 import * as VsUser from "./@CHILD/vs-user/vs-user.server";
@@ -117,7 +117,7 @@ export const updateFromClient: Server["updateFromClient"] = async ({
         userId: msg.userId,
       });
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return {
           model,
           eff,

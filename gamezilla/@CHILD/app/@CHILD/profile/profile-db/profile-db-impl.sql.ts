@@ -93,7 +93,7 @@ export const createProfileDb = ({
 
       const parsed = Result.combine(queried.value.map(fromProfileRow));
 
-      if (parsed.t === "err") {
+      if (isErr(parsed)) {
         return parsed;
       }
 

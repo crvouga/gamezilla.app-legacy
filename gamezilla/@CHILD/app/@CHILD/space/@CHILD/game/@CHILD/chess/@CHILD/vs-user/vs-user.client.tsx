@@ -1,4 +1,4 @@
-import { Eff, Option, Sub, exhaustive } from "gamezilla/@SHARED/core";
+import { Eff, Option, Sub, exhaustive, isErr } from "gamezilla/@SHARED/core";
 import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
@@ -194,7 +194,7 @@ export const updateFromServer = (
     case "CancelDraw_Done": {
       const result = msg[1];
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return [model, Eff.None];
       }
 

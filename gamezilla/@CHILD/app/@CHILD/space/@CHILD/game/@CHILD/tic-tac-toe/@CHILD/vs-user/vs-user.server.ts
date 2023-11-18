@@ -1,4 +1,4 @@
-import { Sub, Time } from "gamezilla/@SHARED/core";
+import { Sub, Time, isErr } from "gamezilla/@SHARED/core";
 import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server";
 import {
   SpaceServerEvt,
@@ -66,7 +66,7 @@ export const update = (
     case "RoundCountDown": {
       const result = roundCountDown(model);
 
-      const modelNew = result.t === "err" ? model : result.value;
+      const modelNew = isErr(result) ? model : result.value;
 
       return {
         model: modelNew,
@@ -77,7 +77,7 @@ export const update = (
     case "MoveCountDown": {
       const result = moveCountDown(model);
 
-      const modelNew = result.t === "err" ? model : result.value;
+      const modelNew = isErr(result) ? model : result.value;
 
       return {
         model: modelNew,
@@ -99,7 +99,7 @@ export const updateFromClient = (
     case "InputPlayer": {
       const result = inputPlayer(msg[1], model);
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return {
           model,
           cmd: [sendBack(ctx, ["InputPlayer_Done", result])],
@@ -117,7 +117,7 @@ export const updateFromClient = (
     case "stop-playing": {
       const result = stopPlaying(msg[1], model);
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return {
           model,
           cmd: [sendBack(ctx, ["StopPlaying_Done", result])],
@@ -134,7 +134,7 @@ export const updateFromClient = (
     case "start-game": {
       const result = startGame(msg[1], model);
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return {
           model,
           cmd: [sendBack(ctx, ["StartGame_Done", result])],
@@ -151,7 +151,7 @@ export const updateFromClient = (
     case "resign": {
       const result = resign(msg[1], model);
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return {
           model,
           cmd: [sendBack(ctx, ["resign_Done", result])],
@@ -168,7 +168,7 @@ export const updateFromClient = (
     case "input-move": {
       const result = inputMove(msg[1], model);
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return {
           model,
           cmd: [sendBack(ctx, ["input-move-done", result])],
@@ -185,7 +185,7 @@ export const updateFromClient = (
     case "NewGame": {
       const result = NewGame(msg[1], model);
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return {
           model,
           cmd: [sendBack(ctx, ["NewGame_Done", result])],
@@ -203,7 +203,7 @@ export const updateFromClient = (
     case "InputBestOutOf": {
       const result = inputBestOutOf(msg[1], model);
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return {
           model,
           cmd: [sendBack(ctx, ["InputBestOutOf_Done", result])],
@@ -221,7 +221,7 @@ export const updateFromClient = (
       const result = rematchAccept(msg[1], model);
       const res: Res = ["RematchAccept_Done", result];
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return {
           model,
           cmd: [sendBack(ctx, res)],
@@ -238,7 +238,7 @@ export const updateFromClient = (
       const result = rematchAsk(msg[1], model);
       const res: Res = ["RematchAsk_Done", result];
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return {
           model,
           cmd: [sendBack(ctx, res)],
@@ -255,7 +255,7 @@ export const updateFromClient = (
       const result = rematchDecline(msg[1], model);
       const res: Res = ["RematchDecline_Done", result];
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return {
           model,
           cmd: [sendBack(ctx, res)],
@@ -272,7 +272,7 @@ export const updateFromClient = (
       const result = rematchCancel(msg[1], model);
       const res: Res = ["Rematch_Cancel_Done", result];
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return {
           model,
           cmd: [sendBack(ctx, res)],

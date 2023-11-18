@@ -1,6 +1,7 @@
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
 import { ISessionDb } from "./session-db";
 import { Parsing as P } from "gamezilla/@SHARED/parsing";
+import { isErr } from "gamezilla/@SHARED/core";
 
 type SessionRow = {
   user_id: string;
@@ -53,7 +54,7 @@ export const SessionDb = ({ dbConn }: { dbConn: DbConnSql }): ISessionDb => {
         }
       );
 
-      if (queried.t === "err") {
+      if (isErr(queried)) {
         console.error(queried.error);
       }
 
@@ -81,7 +82,7 @@ export const SessionDb = ({ dbConn }: { dbConn: DbConnSql }): ISessionDb => {
         }
       );
 
-      if (queried.t === "err") {
+      if (isErr(queried)) {
         console.error(queried.error);
       }
 

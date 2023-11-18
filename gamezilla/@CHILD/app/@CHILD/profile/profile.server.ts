@@ -1,4 +1,4 @@
-import { Eff, err, ok, p, Result } from "gamezilla/@SHARED/core";
+import { Eff, err, isErr, ok, p, Result } from "gamezilla/@SHARED/core";
 import {
   Profile,
   ProfileAvatar,
@@ -171,7 +171,7 @@ const findElseInsertNew = async ({
 }) => {
   const found = await ProfileDb.findOneByUserId(userId);
 
-  if (found.t === "err") {
+  if (isErr(found)) {
     return found;
   }
 
@@ -192,7 +192,7 @@ const findElseInsertNew = async ({
 
   const inserted = await ProfileDb.insertOne(profileNew);
 
-  if (inserted.t === "err") {
+  if (isErr(inserted)) {
     return inserted;
   }
 

@@ -5,6 +5,7 @@ import {
   Result,
   Sub,
   exhaustive,
+  isErr,
 } from "gamezilla/@SHARED/core";
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -149,7 +150,7 @@ const updateResponse = <
   result: TResult,
   model: Model
 ): [Model, Eff<Msg>] => {
-  if (result.t === "err") {
+  if (isErr(result)) {
     return [model, Eff.None];
   }
   const coreModel = result.value;

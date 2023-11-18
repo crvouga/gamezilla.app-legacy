@@ -1,4 +1,4 @@
-import { Sub, chain } from "gamezilla/@SHARED/core";
+import { Sub, chain, isErr } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
   ClientCmd,
@@ -74,7 +74,7 @@ export const updateFromServer: Client["updateFromServer"] = (input) => {
   switch (msg.t) {
     case "input-mode": {
       const { result } = msg;
-      if (result.t === "err") {
+      if (isErr(result)) {
         return initial;
       }
       return chain(initial, (model) => {

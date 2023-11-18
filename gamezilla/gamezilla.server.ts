@@ -5,7 +5,8 @@ async function main() {
   const created = await AppServer.createCtx();
 
   if (isErr(created)) {
-    return created;
+    console.error(created.error);
+    return;
   }
 
   const ctx = created.value;

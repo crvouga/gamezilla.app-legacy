@@ -1,4 +1,4 @@
-import { Eff, andThen, chain, p } from "gamezilla/@SHARED/core";
+import { Eff, andThen, chain, isErr, p } from "gamezilla/@SHARED/core";
 import {
   APP_SOUND,
   ClientCmd,
@@ -157,7 +157,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
     default: {
       const result = msg.result;
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         if (msg.t === "db-got-puzzles") {
           return {
             model,

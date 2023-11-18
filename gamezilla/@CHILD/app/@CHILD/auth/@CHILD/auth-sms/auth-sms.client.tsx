@@ -21,11 +21,10 @@ import {
   TopBarBackButton,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
-  Eff,
   Iso3166Alpha2Code,
   PhoneNumber,
   RemoteResult,
-  Time,
+  isErr,
 } from "gamezilla/@SHARED/core";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth-sms.core";
 
@@ -79,7 +78,7 @@ export const update = ({
     case "clicked-send-code": {
       const phoneNumber = PhoneNumber.parse(model.phoneNumberInput);
 
-      if (phoneNumber.t === "err") {
+      if (isErr(phoneNumber)) {
         return {
           model: {
             ...model,
@@ -167,7 +166,7 @@ export const updateFromServer = ({
 } => {
   switch (msg.t) {
     case "sent-code": {
-      if (msg.result.t === "err") {
+      if (isErr(msg.result)) {
         return { model: { ...model, sendCode: msg.result } };
       }
       return {
@@ -193,7 +192,7 @@ export const updateFromServer = ({
     }
 
     case "verified-code": {
-      if (msg.result.t === "err") {
+      if (isErr(msg.result)) {
         return { model: { ...model, verifyCode: msg.result } };
       }
       return {
@@ -298,7 +297,7 @@ export const View = ({
             />
           </div>
 
-          {model.sendCode.t === "err" && (
+          {isErr(model.sendCode) && (
             <div class="w-full p-4">
               <AlertError>{model.sendCode.error}</AlertError>
             </div>
@@ -345,7 +344,7 @@ export const View = ({
             />
           </div>
 
-          {model.verifyCode.t === "err" && (
+          {isErr(model.verifyCode) && (
             <div class="w-full p-4">
               <AlertError>{model.verifyCode.error}</AlertError>
             </div>

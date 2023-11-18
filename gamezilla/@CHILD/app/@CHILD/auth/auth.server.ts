@@ -6,7 +6,7 @@ import {
   ServerEvt,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff } from "gamezilla/@SHARED/core";
+import { Eff, isErr } from "gamezilla/@SHARED/core";
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 
@@ -52,9 +52,11 @@ export const update = ({
 } => {
   switch (msg.t) {
     case "got-user-account": {
-      if (msg.result.t === "err") {
+      if (isErr(msg.result)) {
         console.error(msg.result.error);
-        return { model };
+        return {
+          model,
+        };
       }
 
       return {

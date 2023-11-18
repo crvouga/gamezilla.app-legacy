@@ -1,4 +1,4 @@
-import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
+import { Eff, Sub, Time, isErr } from "gamezilla/@SHARED/core";
 import {
   ServerModel,
   ServerMsg,
@@ -64,7 +64,7 @@ export const updateFromClient = (
     case "InputDrop": {
       const result = inputDrop(model);
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return [model, Eff.None];
       }
 
@@ -76,7 +76,7 @@ export const updateFromClient = (
     case "InputTranslate": {
       const result = inputTranslate(msg[1], model);
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return [model, Eff.None];
       }
 
@@ -88,7 +88,7 @@ export const updateFromClient = (
     case "InputRotate": {
       const result = inputRotate(model);
 
-      if (result.t === "err") {
+      if (isErr(result)) {
         return [model, Eff.None];
       }
 

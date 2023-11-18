@@ -1,4 +1,4 @@
-import { Eff, loading, andThen, p } from "gamezilla/@SHARED/core";
+import { Eff, loading, andThen, p, isErr } from "gamezilla/@SHARED/core";
 import {
   AnonymousClientCtx,
   ClientCmd,
@@ -137,7 +137,7 @@ export const updateFromServer = ({
 } => {
   switch (msg.t) {
     case "current-user-profile": {
-      if (msg.result.t === "err") {
+      if (isErr(msg.result)) {
         return { model };
       }
 
@@ -159,7 +159,7 @@ export const updateFromServer = ({
       };
     }
     default: {
-      if (msg.result.t === "err") {
+      if (isErr(msg.result)) {
         return {
           model: {
             ...model,

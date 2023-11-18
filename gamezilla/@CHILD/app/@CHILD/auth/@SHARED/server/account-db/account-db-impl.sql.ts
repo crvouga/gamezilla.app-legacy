@@ -3,6 +3,7 @@ import {
   Iso3166Alpha2Code,
   PhoneNumber,
   Result,
+  isErr,
   ok,
 } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
@@ -36,7 +37,7 @@ export const toAccountRow = (x: unknown): AccountRow | null => {
 const rowToAccount = (row: AccountRow): Result<string, Account> => {
   const parsedUserId = UserId.parse(row.user_id);
 
-  if (parsedUserId.t === "err") {
+  if (isErr(parsedUserId)) {
     return parsedUserId;
   }
 
@@ -44,7 +45,7 @@ const rowToAccount = (row: AccountRow): Result<string, Account> => {
     ? EmailAddress.parse(row.email_address)
     : null;
 
-  if (parsedEmailAddress && parsedEmailAddress.t === "err") {
+  if (parsedEmailAddress && isErr(parsedEmailAddress)) {
     console.error(parsedEmailAddress);
   }
 
@@ -99,7 +100,7 @@ export const createAccountDb = ({
         }
       );
 
-      if (queried.t === "err") {
+      if (isErr(queried)) {
         return queried;
       }
 
@@ -122,7 +123,7 @@ export const createAccountDb = ({
         }
       );
 
-      if (queried.t === "err") {
+      if (isErr(queried)) {
         return queried;
       }
 
@@ -154,7 +155,7 @@ export const createAccountDb = ({
         rowNew
       );
 
-      if (queried.t === "err") {
+      if (isErr(queried)) {
         return queried;
       }
       return ok(null);

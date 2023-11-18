@@ -1,4 +1,4 @@
-import { err, ok, Result } from "gamezilla/@SHARED/core";
+import { err, isErr, ok, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { VsBotSetup } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
 import { Chess } from "../../@SHARED/chess";
@@ -314,7 +314,7 @@ export const botMoved = (
 
   const result = Chess.move(botMoveInput, model.board);
 
-  if (result.t === "err") {
+  if (isErr(result)) {
     return result;
   }
 

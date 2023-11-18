@@ -1,5 +1,5 @@
 import { Location } from "gamezilla/@CHILD/app/@SHARED/client";
-import { Iso3166Alpha2Code, PhoneNumber } from "gamezilla/@SHARED/core";
+import { Iso3166Alpha2Code, PhoneNumber, isErr } from "gamezilla/@SHARED/core";
 
 //
 //
@@ -36,7 +36,7 @@ export const toRoute = (location: Location): Route => {
       return { t: "/" };
     }
     const parsed = PhoneNumber.parse(phoneNumber);
-    if (parsed.t === "err") {
+    if (isErr(parsed)) {
       return { t: "/" };
     }
     return {

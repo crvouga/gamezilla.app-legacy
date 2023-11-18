@@ -1,4 +1,4 @@
-import { Eff, exhaustive } from "gamezilla/@SHARED/core";
+import { Eff, exhaustive, isErr } from "gamezilla/@SHARED/core";
 import { Res, ServerModel, ServerMsg, ToServer, handle } from "./party.core";
 
 //
@@ -49,7 +49,7 @@ export const updateFromClient = (
     case "party-get":
     case "PartyLeave": {
       const res: Res = [...msg, handle(msg, model)];
-      if (res[2].t === "err") {
+      if (isErr(res[2])) {
         return [model, Eff.None];
       }
       return [res[2].value, Eff.None];
