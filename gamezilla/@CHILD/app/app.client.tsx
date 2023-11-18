@@ -57,7 +57,7 @@ export const init = ({
   location: Browser.Location;
 }): {
   model: ClientModel;
-  eff: Eff<ClientMsg>;
+  eff?: Eff<ClientMsg>;
 } => {
   const routing = Routing.init({
     location,
@@ -734,80 +734,84 @@ const ViewLoggedIn = ({
   model: ClientModel;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  if (model.routing.t === "chat") {
-    return (
-      <ChatClient.View
-        dispatch={(m) => dispatch({ t: "chat", c: m })}
-        model={model.chat}
-        ctx={ctx}
-        route={model.routing.c}
-        viewBottomBar={
-          <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
-        }
-        userSearch={{
-          loading: model.profile.requests.search?.t === "loading",
-          onInput: (query) => {
-            dispatch({
-              t: "profile",
-              c: { t: "search", query },
-            });
-          },
-        }}
-      />
-    );
-  }
+  switch (model.routing.t) {
+    case "chat": {
+      return (
+        <ChatClient.View
+          dispatch={(m) => dispatch({ t: "chat", c: m })}
+          model={model.chat}
+          ctx={ctx}
+          route={model.routing.c}
+          viewBottomBar={
+            <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
+          }
+          userSearch={{
+            loading: model.profile.requests.search?.t === "loading",
+            onInput: (query) => {
+              dispatch({
+                t: "profile",
+                c: { t: "search", query },
+              });
+            },
+          }}
+        />
+      );
+    }
 
-  if (model.routing.t === "space") {
-    return (
-      <SpaceClient.View
-        dispatch={(m) => dispatch({ t: "space", c: m })}
-        model={model.space}
-        ctx={ctx}
-        route={model.routing.c}
-        viewBottomBar={
-          <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
-        }
-      />
-    );
-  }
+    case "space": {
+      return (
+        <SpaceClient.View
+          dispatch={(m) => dispatch({ t: "space", c: m })}
+          model={model.space}
+          ctx={ctx}
+          route={model.routing.c}
+          viewBottomBar={
+            <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
+          }
+        />
+      );
+    }
 
-  if (model.routing.t === "profile") {
-    return (
-      <ProfileClient.View
-        dispatch={(m) => dispatch({ t: "profile", c: m })}
-        model={model.profile}
-        ctx={ctx}
-        route={model.routing.c}
-        viewBottomBar={
-          <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
-        }
-      />
-    );
-  }
+    case "profile": {
+      return (
+        <ProfileClient.View
+          dispatch={(m) => dispatch({ t: "profile", c: m })}
+          model={model.profile}
+          ctx={ctx}
+          route={model.routing.c}
+          viewBottomBar={
+            <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
+          }
+        />
+      );
+    }
 
-  if (model.routing.t === "search") {
-    return (
-      <SearchClient.View
-        dispatch={(m) => dispatch({ t: "search", c: m })}
-        model={model.search}
-        viewBottomBar={
-          <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
-        }
-      />
-    );
-  }
+    case "search": {
+      return (
+        <SearchClient.View
+          dispatch={(m) => dispatch({ t: "search", c: m })}
+          model={model.search}
+          viewBottomBar={
+            <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
+          }
+        />
+      );
+    }
 
-  if (model.routing.t === "logout") {
-    return (
-      <AuthClient.ViewLogoutScreen
-        dispatch={(m) => dispatch({ t: "auth", c: m })}
-        ctx={ctx}
-        model={model.auth}
-      />
-    );
-  }
+    case "logout": {
+      return (
+        <AuthClient.ViewLogoutScreen
+          dispatch={(m) => dispatch({ t: "auth", c: m })}
+          ctx={ctx}
+          model={model.auth}
+        />
+      );
+    }
 
-  return <LogoScreen />;
+    case "auth": {
+      return <LogoScreen />;
+    }
+  }
 };
 
 const ViewBottomBar = ({
