@@ -24,6 +24,7 @@
     "postgres": "^3.4.3",
     "preact": "^10.19.1",
     "vite": "^5.0.0",
+    "vite-plugin-pwa": "^0.17.0",
     "vite-tsconfig-paths": "^4.2.1"
   },
   "devDependencies": {
