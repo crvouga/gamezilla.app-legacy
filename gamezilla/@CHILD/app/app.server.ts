@@ -59,6 +59,7 @@ export const init = ({
 } => {
   const wire = WireServer.init();
   const space = SpaceServer.init();
+  const auth = AuthServer.init();
   return {
     model: {
       wire: wire.model,
@@ -66,7 +67,7 @@ export const init = ({
       profile: ProfileServer.init,
       search: SearchServer.init.model,
       chat: ChatServer.init.model,
-      auth: AuthServer.init,
+      auth: auth.model,
     },
   };
 };

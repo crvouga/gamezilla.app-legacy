@@ -1,22 +1,14 @@
 import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   AnonymousReqCtx,
-  DbConnSql,
-  sendToClient,
   ServerCmd,
   ServerCtx,
   ServerEvt,
+  sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, EmailAddress, ok, Result } from "gamezilla/@SHARED/core";
-import { createAccountDb } from "./@SHARED/server/account-db";
+import { Eff } from "gamezilla/@SHARED/core";
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
-import {
-  Account,
-  ServerModel,
-  ServerMsg,
-  ToClient,
-  ToServer,
-} from "./auth.core";
+import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 
 //
 //
@@ -26,9 +18,14 @@ import {
 //
 //
 
-export const init: ServerModel = {
-  userIdBySessionId: {},
-  sms: AuthServerSMS.init,
+export const init = (): { model: ServerModel } => {
+  return {
+    model: {
+      userIdBySessionId: {},
+      sessionIdByUserId: {},
+      sms: AuthServerSMS.init,
+    },
+  };
 };
 
 //
