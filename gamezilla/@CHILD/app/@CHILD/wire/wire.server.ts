@@ -82,13 +82,13 @@ export const update = ({
 export const updateFromCmd = <ToClient>({
   cmd,
   model,
-  usersBySessionId,
+  sessionIdByUserId,
   toClient,
   toClientBroadcast,
 }: {
   cmd: ServerCmd<ToClient>;
   model: ServerModel;
-  usersBySessionId: { [sessionId: SessionId]: { userId: UserId } };
+  sessionIdByUserId: { [userId: UserId]: SessionId };
   toClient: PubSub<{
     [clientId: ClientId]: {
       clientId: ClientId;
@@ -136,7 +136,19 @@ export const updateFromCmd = <ToClient>({
     case "wire/send-to-user": {
       return {
         model,
-        eff: () => {},
+        eff: () => {
+          const toClientPayload: {
+            [clientId: ClientId]: {
+              clientId: ClientId;
+              msgs: ToClient[];
+            };
+          } = {};
+
+          const userIds = new Set<UserId>();
+          for (const userId of cmd.userIds) {
+            const sessionId = usersBySessionId[userId].sessionId;
+          }
+        },
       };
     }
 

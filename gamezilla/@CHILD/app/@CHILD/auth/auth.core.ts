@@ -31,13 +31,8 @@ export type ClientModel = {
 };
 
 export type ServerModel = {
-  usersBySessionId: {
-    [sessionId: SessionId]: {
-      sessionId: SessionId;
-      userId: UserId;
-    };
-  };
-
+  userIdBySessionId: { [sessionId: SessionId]: UserId };
+  sessionIdByUserId: { [userId: UserId]: SessionId };
   sms: AuthSMS.ServerModel;
 };
 

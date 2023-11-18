@@ -257,7 +257,7 @@ const updateFromClient = async ({
   cmd?: ServerCmd<ToClient>[];
   evt?: ServerEvt[];
 }> => {
-  const currentUserId = model.auth.usersBySessionId[ctx.sessionId]?.userId;
+  const currentUserId = model.auth.userIdBySessionId[ctx.sessionId]?.userId;
   const authReqCtx: ReqCtx | null = currentUserId
     ? {
         ...ctx,
@@ -409,11 +409,11 @@ const updateFromCmd = ({
     case "wire/broadcast":
     case "wire/send-to-client": {
       const updated = WireServer.updateFromCmd({
-        usersBySessionId: model.auth.usersBySessionId,
         cmd,
         model: model.wire,
         toClient: toClient,
         toClientBroadcast: toClientBroadcast,
+        sessionIdByUserId: model.auth.sessionIdByUserId,
       });
       return {
         model: {

@@ -1,4 +1,4 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   AnonymousReqCtx,
   DbConnSql,
@@ -27,7 +27,7 @@ import {
 //
 
 export const init: ServerModel = {
-  usersBySessionId: {},
+  userIdBySessionId: {},
   sms: AuthServerSMS.init,
 };
 
@@ -63,8 +63,8 @@ export const update = ({
       return {
         model: {
           ...model,
-          usersBySessionId: {
-            ...model.usersBySessionId,
+          userIdBySessionId: {
+            ...model.userIdBySessionId,
             [msg.sessionId]: {
               sessionId: msg.sessionId,
               userId: msg.result.value.userId,
@@ -119,13 +119,10 @@ export const updateFromClient = ({
 } => {
   switch (msg.t) {
     case "logout": {
-      const sessionsNew = { ...model.usersBySessionId };
-      delete sessionsNew[ctx.sessionId];
+      const modelNew = removeSession(model, ctx.sessionId);
+
       return {
-        model: {
-          ...model,
-          usersBySessionId: sessionsNew,
-        },
+        model: modelNew,
         evt: [
           {
             t: "client-unauthenticated",
@@ -155,41 +152,6 @@ export const updateFromClient = ({
   }
 };
 
-const findElseInsertAccount = async ({
-  dbConn,
-  emailAddress,
-}: {
-  dbConn: DbConnSql;
-  emailAddress: EmailAddress;
-}): Promise<Result<string, Account>> => {
-  const accountDb = createAccountDb({ dbConn });
-
-  const found = await accountDb.findOneByEmail({ emailAddress });
-
-  if (found.t === "err") {
-    return found;
-  }
-
-  const maybeAccount = found.value;
-
-  if (maybeAccount) {
-    return ok(maybeAccount);
-  }
-
-  const accountNew: Account = {
-    userId: UserId.generate(),
-    emailAddress,
-  };
-
-  const inserted = await accountDb.insertOne({ account: accountNew });
-
-  if (inserted.t === "err") {
-    return inserted;
-  }
-
-  return ok(accountNew);
-};
-
 export const updateFromEvent = ({
   msg: evt,
   model,
@@ -203,10 +165,9 @@ export const updateFromEvent = ({
 } => {
   switch (evt.t) {
     case "client-connected": {
-      const session = model.usersBySessionId[evt.sessionId];
-      const userId = session?.userId;
+      const userId = model.userIdBySessionId[evt.sessionId];
 
-      if (!session || !userId) {
+      if (!userId) {
         return {
           model,
           evt: [
@@ -223,9 +184,8 @@ export const updateFromEvent = ({
         model,
         evt: [
           {
+            ...evt,
             t: "client-authenticated",
-            clientId: evt.clientId,
-            sessionId: evt.sessionId,
             userId,
           },
         ],
@@ -233,29 +193,18 @@ export const updateFromEvent = ({
     }
 
     case "client-authenticated": {
+      const modelNew = addSession(model, evt);
+
       return {
-        model: {
-          ...model,
-          usersBySessionId: {
-            ...model.usersBySessionId,
-            [evt.sessionId]: {
-              sessionId: evt.sessionId,
-              userId: evt.userId,
-            },
-          },
-        },
+        model: modelNew,
         cmd: [sendToClient([evt.clientId], evt)],
       };
     }
 
     case "client-unauthenticated": {
-      const usersBySessionIdNew = { ...model.usersBySessionId };
-      delete usersBySessionIdNew[evt.sessionId];
+      const modelNew = removeSession(model, evt.sessionId);
       return {
-        model: {
-          ...model,
-          usersBySessionId: usersBySessionIdNew,
-        },
+        model: modelNew,
         cmd: [sendToClient([evt.clientId], evt)],
       };
     }
@@ -277,15 +226,54 @@ export const updateFromCmd = ({
   evt?: ServerEvt[];
 } => {
   switch (cmd.t) {
-    case "wire/send-to-user": {
-      return {
-        model: {
-          ...model,
-        },
-      };
-    }
     default: {
       return { model };
     }
   }
 };
+
+//
+//
+//
+//
+//
+//
+//
+//
+
+function addSession(
+  model: ServerModel,
+  { sessionId, userId }: { sessionId: SessionId; userId: UserId }
+): ServerModel {
+  const userIdBySessionIdNew: ServerModel["userIdBySessionId"] = {
+    ...model.userIdBySessionId,
+    [sessionId]: userId,
+  };
+  const sessionIdByUserIdNew: ServerModel["sessionIdByUserId"] = {
+    ...model.sessionIdByUserId,
+    [userId]: sessionId,
+  };
+
+  return {
+    ...model,
+    sessionIdByUserId: sessionIdByUserIdNew,
+    userIdBySessionId: userIdBySessionIdNew,
+  };
+}
+
+function removeSession(model: ServerModel, sessionId: SessionId): ServerModel {
+  const userIdBySessionIdNew = { ...model.userIdBySessionId };
+  delete userIdBySessionIdNew[sessionId];
+
+  const sessionIdByUserIdNew = { ...model.sessionIdByUserId };
+  const userId = model.userIdBySessionId[sessionId];
+  if (userId) {
+    delete sessionIdByUserIdNew[userId];
+  }
+
+  return {
+    ...model,
+    sessionIdByUserId: sessionIdByUserIdNew,
+    userIdBySessionId: userIdBySessionIdNew,
+  };
+}
