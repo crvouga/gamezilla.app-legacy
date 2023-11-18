@@ -2,11 +2,14 @@ import { err, ok } from "gamezilla/@SHARED/core";
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
 import { toSql } from "./sql";
 import { Database } from "bun:sqlite";
+import { Logger } from "../../@SHARED/server/logger";
 
 export const createDbConnSqlite = async ({
   databaseUrl,
+  logger,
 }: {
   databaseUrl: string;
+  logger: Logger;
 }): Promise<DbConnSql> => {
   const cleaned = databaseUrl.replace("sqlite:", "");
   const database = new Database(cleaned);
@@ -16,7 +19,7 @@ export const createDbConnSqlite = async ({
       try {
         const sql = toSql(rawSql, params);
 
-        console.log("[db]", sql);
+        logger.info(`[db] ${sql}`);
 
         const rows = database.query(sql).all();
 
@@ -31,7 +34,7 @@ export const createDbConnSqlite = async ({
 
         return ok(parsed);
       } catch (error) {
-        console.error("[db]", error);
+        logger.error(`[db] ${error}`);
         return err(String(error));
       }
     },
