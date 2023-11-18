@@ -1,4 +1,4 @@
-import { PubSub } from "gamezilla/@SHARED/core";
+import { Eff, PubSub } from "gamezilla/@SHARED/core";
 import { ClientCmd, ClientEvt } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconSpinner } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
@@ -78,20 +78,29 @@ export const update = ({
   }
 };
 
-export const updateFromCmd = ({
-  msg,
+export const updateFromCmd = <ToServer,>({
+  cmd,
   model,
+  toServer,
 }: {
-  msg: ClientCmd<{ ClientMsg: never; ToServer: never }>;
+  cmd: ClientCmd<{ ClientMsg: never; ToServer: ToServer }>;
   model: ClientModel;
+  toServer: PubSub<ToServer[]>;
 }): {
   model: ClientModel;
+  eff?: Eff<ClientMsg>;
 } => {
-  switch (msg.t) {
-    case "send-to-server": {
+  switch (cmd.t) {
+    case "wire/send-to-server": {
       return {
         model,
+        eff: () => {
+          if (cmd.msg) {
+            toServer.publish([cmd.msg]);
+          }
+        },
       };
+      return { model };
     }
     default: {
       return { model };
@@ -156,12 +165,12 @@ const MAX_RECONNECT_ATTEMPTS = 5; // Adjust as needed
 
 export const attachClientTransport = <ToServer, ToClient>({
   baseServerUrl,
-  fromServer,
+  toClient,
   toServer,
 }: {
   baseServerUrl: string;
   toServer: PubSub<ToServer[]>;
-  fromServer: PubSub<ToClient[]>;
+  toClient: PubSub<ToClient[]>;
 }) => {
   const serverUrl = toWebsocketServerUrl(baseServerUrl);
 
@@ -212,7 +221,7 @@ export const attachClientTransport = <ToServer, ToClient>({
       const msg = JSON.parse(event.data) as ServerToClientMsg<ToClient>; // leap of faith
 
       if (msg.t === "to-client") {
-        fromServer.publish(msg.msgs);
+        toClient.publish(msg.msgs);
         return;
       }
 

@@ -474,14 +474,15 @@ const updateFromCmd = ({
       };
     }
 
-    case "send-to-server": {
+    case "wire/send-to-server": {
+      const wire = Wire.updateFromCmd({
+        cmd,
+        toServer: toServer,
+        model: model.wire,
+      });
       return {
-        model,
-        eff: () => {
-          if (cmd.msg) {
-            toServer.publish([cmd.msg]);
-          }
-        },
+        model: { ...model, wire: wire.model },
+        eff: Eff.t("wire", wire.eff),
       };
     }
 
@@ -568,7 +569,8 @@ const updateFromEvent = ({
 //
 
 export const toServer = Sub.create<ToServer[]>();
-export const fromServer = Sub.create<ToClient[]>();
+export const toClient = Sub.create<ToClient[]>();
+
 const SERVER_URL =
   process.env.NODE_ENV === "production"
     ? "https://server.gamezilla.app/"
@@ -578,7 +580,7 @@ const SERVER_URL =
 
 Wire.attachClientTransport({
   baseServerUrl: SERVER_URL,
-  fromServer: fromServer,
+  toClient: toClient,
   toServer: toServer,
 });
 
@@ -600,7 +602,7 @@ export const subscriptions = ({
   model: ClientModel;
 }): Sub<ClientMsg> => {
   return Sub.batch<ClientMsg>([
-    Sub.flatten(fromServer, (msgs) => msgs.map((msg) => ({ t: "➡️", c: msg }))),
+    Sub.flatten(toClient, (msgs) => msgs.map((msg) => ({ t: "➡️", c: msg }))),
     Sub.tag("wire", Wire.subscriptions),
     Sub.tag("routing", Routing.subscriptions),
     Sub.tag("auth", AuthClient.subscriptions(model.auth)),

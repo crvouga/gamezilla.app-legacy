@@ -17,7 +17,7 @@ import {
 //
 //
 
-export type ClientModel = AppRoute;
+export type Model = AppRoute;
 
 const FALLBACK: AppRoute = { t: "space", c: { t: "space-list" } };
 
@@ -26,9 +26,9 @@ export const init = ({
   stored,
 }: {
   location: Browser.Location;
-  stored: ClientModel | null;
+  stored: Model | null;
 }): {
-  model: ClientModel;
+  model: Model;
   eff?: Eff;
 } => {
   const decoded = AppRoute.decode(location.pathname);
@@ -58,9 +58,9 @@ export const update = ({
   model,
 }: {
   msg: Msg;
-  model: ClientModel;
+  model: Model;
 }): {
-  model: ClientModel;
+  model: Model;
   eff?: Eff<Msg>;
   evt?: ClientEvt[];
   cmd?: SoundCmd[];
@@ -96,9 +96,9 @@ export const updateFromCmd = ({
   model,
 }: {
   cmd: RouteCmd;
-  model: ClientModel;
+  model: Model;
 }): {
-  model: ClientModel;
+  model: Model;
   eff?: Eff<Msg>;
 } => {
   switch (msg.t) {

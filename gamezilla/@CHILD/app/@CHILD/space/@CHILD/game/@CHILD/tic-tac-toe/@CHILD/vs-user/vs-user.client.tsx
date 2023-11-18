@@ -1,4 +1,4 @@
-import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   SpaceClientCtx,
   SpaceViewCtx,
@@ -83,7 +83,7 @@ export const update = (
     case "stop-playing":
     case "start-game":
     case "NewGame": {
-      return { model, cmd: [{ t: "send-to-server", msg }] };
+      return { model, cmd: [sendToServer(msg)] };
     }
 
     default: {

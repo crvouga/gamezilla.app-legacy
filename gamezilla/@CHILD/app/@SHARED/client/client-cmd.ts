@@ -14,7 +14,7 @@ type ClientCmdTypes = {
 };
 
 export type ClientCmd<T extends ClientCmdTypes> =
-  | SendToServerCmd<T>
+  | WireCmd<T>
   | ToastCmd
   | RouteCmd
   | SoundCmd
@@ -68,8 +68,8 @@ export const cancelTimeout = <T extends ClientCmdTypes>(
 //
 //
 
-export type SendToServerCmd<T extends ClientCmdTypes> = {
-  t: "send-to-server";
+export type WireCmd<T extends ClientCmdTypes> = {
+  t: "wire/send-to-server";
   msg: T["ToServer"] | null;
 };
 
@@ -80,7 +80,7 @@ export const sendToServer = <T extends ClientCmdTypes>(
   msg: T["ToServer"]
 ): ClientCmd<T> => {
   return {
-    t: "send-to-server",
+    t: "wire/send-to-server",
     msg,
   };
 };
@@ -215,7 +215,7 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
   ToServer: { t: Tag; c: T["ToServer"] };
 }> => {
   switch (cmd.t) {
-    case "send-to-server": {
+    case "wire/send-to-server": {
       if (cmd.msg) {
         return { ...cmd, msg: { t, c: cmd.msg } };
       }
@@ -252,7 +252,7 @@ const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
 ): ClientCmd<B>[] => {
   return cmd.map((cmd) => {
     switch (cmd.t) {
-      case "send-to-server": {
+      case "wire/send-to-server": {
         if (cmd.msg) {
           return { ...cmd, msg: toServerMap(cmd.msg) };
         }

@@ -7,6 +7,7 @@ import {
   RouteProfile,
   ViewCtx,
   showToast,
+  sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { ProfileAvatar, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
@@ -117,7 +118,7 @@ export const update = ({
             [msg.t]: { t: "loading" },
           },
         },
-        cmd: [{ t: "send-to-server", msg }],
+        cmd: [{ t: "wire/send-to-server", msg }],
       };
     }
   }
@@ -241,13 +242,10 @@ const loadProfile = (
       requests: { ...model.requests, "find-one": loading },
     },
     cmd: [
-      {
-        t: "send-to-server",
-        msg: {
-          t: "find-one",
-          userId,
-        },
-      },
+      sendToServer({
+        t: "find-one",
+        userId,
+      }),
     ],
   };
 };

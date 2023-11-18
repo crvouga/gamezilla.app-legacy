@@ -3,6 +3,7 @@ import {
   APP_SOUND,
   ClientCmd,
   playSound,
+  sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   GameClient,
@@ -50,7 +51,7 @@ export const init = (): { model: ClientModel } => {
 
 export const update: Client["update"] = ({ msg, model, ctx }) => {
   if (msg.t === "input-mode") {
-    return { model, cmd: [{ t: "send-to-server", msg }] };
+    return { model, cmd: [sendToServer(msg)] };
   }
 
   if (msg.t === "vs-user" && model.t === "vs-user") {

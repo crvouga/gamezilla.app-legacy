@@ -3,6 +3,7 @@ import {
   APP_SOUND,
   ClientCmd,
   playSound,
+  sendToServer,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
@@ -120,7 +121,7 @@ export const updateMain = ({
 
   return {
     model: modelNew,
-    cmd: [{ t: "send-to-server", msg }],
+    cmd: [sendToServer(msg)],
     eff: Eff.None,
   };
 };

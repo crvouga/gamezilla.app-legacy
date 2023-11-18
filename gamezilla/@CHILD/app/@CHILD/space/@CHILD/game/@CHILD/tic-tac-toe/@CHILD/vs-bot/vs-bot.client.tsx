@@ -3,6 +3,7 @@ import {
   ClientEvt,
   ClientCmd,
   ClientCtx,
+  sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
@@ -93,14 +94,14 @@ export const update = ({
 
   const handled = handle({ ctx, msg, model });
   if (handled.t === "err") {
-    return { model, cmd: [{ t: "send-to-server", msg }] };
+    return { model, cmd: [sendToServer(msg)] };
   }
   const merged = mergeWithServer({
     ...ctx,
     client: model,
     server: handled.value,
   });
-  return { model: merged, cmd: [{ t: "send-to-server", msg }] };
+  return { model: merged, cmd: [sendToServer(msg)] };
 };
 
 export const updateFromServer = ({

@@ -33,7 +33,7 @@ export type ClientModel = {
   //
   wire: Wire.ClientModel;
   //
-  routing: Routing.ClientModel;
+  routing: Routing.Model;
   toast: Toast.Model;
   sound: Sound.Model;
   //

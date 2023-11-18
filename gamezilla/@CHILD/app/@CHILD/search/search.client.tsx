@@ -1,5 +1,9 @@
 import { Browser, Eff, matchSort, p } from "gamezilla/@SHARED/core";
-import { ClientEvt, ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  ClientEvt,
+  ClientCmd,
+  sendToServer,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconMagnifyingGlass,
   IconXMark,
@@ -86,7 +90,7 @@ export const update = ({
     };
   }
 
-  return { model, cmd: [{ t: "send-to-server", msg }] };
+  return { model, cmd: [sendToServer(msg)] };
 };
 
 export const updateFromServer = ({
