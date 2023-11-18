@@ -83,7 +83,7 @@ export const update = ({
       return {
         model: {
           ...model,
-          currentUser: { t: "loading" },
+          currentUser: { t: "logged-out" },
         },
         cmd: [sendToServer({ t: "logout" })],
       };
