@@ -46,7 +46,8 @@ export type ClientMsg =
   | { t: "clicked-send-code" }
   | { t: "send-code-timed-out" }
   | { t: "inputted-code"; code: string }
-  | { t: "clicked-verify-code"; phoneNumber: PhoneNumber };
+  | { t: "clicked-verify-code"; phoneNumber: PhoneNumber }
+  | { t: "verify-code-timed-out" };
 
 type SentCode = {
   t: "sent-code";

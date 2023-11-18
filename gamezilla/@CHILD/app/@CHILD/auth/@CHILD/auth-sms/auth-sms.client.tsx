@@ -4,6 +4,7 @@ import {
   ClientCmd,
   ClientEvt,
   RouteAuth,
+  cancelTimeout,
   focusView,
   playSound,
   pushRoute,
@@ -143,6 +144,7 @@ export const update = ({
             code: model.codeInput,
             phoneNumber: msg.phoneNumber,
           }),
+          startTimeout("verify-code", 5_000, { t: "verify-code-timed-out" }),
         ],
       };
     }
@@ -185,6 +187,7 @@ export const updateFromServer = ({
           ),
           focusView("codeInput"),
           playSound(APP_SOUND.navForwardMin),
+          cancelTimeout("send-code"),
         ],
       };
     }
@@ -199,6 +202,7 @@ export const updateFromServer = ({
           verifyCode: msg.result,
           loggingIn: true,
         },
+        cmd: [cancelTimeout("verify-code")],
       };
     }
   }

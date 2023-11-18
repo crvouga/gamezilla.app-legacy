@@ -54,8 +54,7 @@ export const startTimeout = <T extends ClientCmdTypes>(
 };
 
 export const cancelTimeout = <T extends ClientCmdTypes>(
-  timeoutId: string,
-  msg: T["ClientMsg"]
+  timeoutId: string
 ): ClientCmd<T> => {
   return {
     t: "time/cancel-timeout",
