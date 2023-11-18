@@ -135,5 +135,5 @@ const toWebsocketServerUrl = (baseServerUrl: string) => {
 
   baseServerUrlObj.pathname = "/ws";
 
-  return baseServerUrlObj.href;
+  return baseServerUrlObj.toString();
 };
