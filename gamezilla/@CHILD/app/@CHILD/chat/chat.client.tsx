@@ -15,17 +15,29 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./chat.core";
 //
 //
 
-export type Model = ClientModel;
+export const init = ({
+  stored,
+}: {
+  stored: ClientModel | null;
+}): { model: ClientModel } => {
+  if (stored) {
+    return {
+      model: stored,
+    };
+  }
 
-export const init: Model = {
-  chats: {},
-  chatsUsers: {},
-  users: {},
-  messageDrafts: {},
-  messages: {},
-  requests: {},
-  userSearch: "",
-  userSelected: {},
+  return {
+    model: {
+      chats: {},
+      chatsUsers: {},
+      users: {},
+      messageDrafts: {},
+      messages: {},
+      requests: {},
+      userSearch: "",
+      userSelected: {},
+    },
+  };
 };
 
 //
@@ -53,8 +65,8 @@ export const update = ({
   model,
 }: {
   msg: Msg;
-  model: Model;
-}): { model: Model; eff?: Eff<Msg> } => {
+  model: ClientModel;
+}): { model: ClientModel; eff?: Eff<Msg> } => {
   switch (msg[0]) {
     case "clicked-user-search-result": {
       return {
@@ -128,9 +140,9 @@ export const updateFromServer = ({
   model,
 }: {
   msg: ToClient;
-  model: Model;
+  model: ClientModel;
 }): {
-  model: Model;
+  model: ClientModel;
   eff?: Eff<Msg>;
 } => {
   return { model };
@@ -141,9 +153,9 @@ export const updateFromEvent = ({
   model,
 }: {
   msg: ClientEvt;
-  model: Model;
+  model: ClientModel;
 }): {
-  model: Model;
+  model: ClientModel;
   eff?: Eff<Msg>;
 } => {
   switch (msg.t) {
@@ -194,7 +206,7 @@ export const View = ({
   userSearch,
   viewBottomBar,
 }: {
-  model: Model;
+  model: ClientModel;
   dispatch: (m: Msg) => void;
   ctx: ViewCtx;
   route: RouteChat;
@@ -235,13 +247,16 @@ export const View = ({
   }
 };
 
-const ViewChat = (_props: { model: Model; dispatch: (m: Msg) => void }) => {
+const ViewChat = (_props: {
+  model: ClientModel;
+  dispatch: (m: Msg) => void;
+}) => {
   return <div>ViewChat</div>;
 };
 
 const ViewChatNew = (_props: {
   ctx: ViewCtx;
-  model: Model;
+  model: ClientModel;
   dispatch: (m: Msg) => void;
   userSearch: {
     onInput: (searchText: string) => void;
@@ -253,7 +268,7 @@ const ViewChatNew = (_props: {
 
 const ViewChatList = (_props: {
   ctx: ViewCtx;
-  model: Model;
+  model: ClientModel;
   dispatch: (m: Msg) => void;
 }) => {
   return <div></div>;

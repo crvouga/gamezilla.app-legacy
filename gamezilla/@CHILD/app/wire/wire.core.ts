@@ -16,15 +16,18 @@ export type ClientModel =
 export type ClientMsg = ClientWireMsg;
 
 export type ServerModel = {
-  clients: {
-    [sessionId: SessionId]: Session;
+  clientsBySessionId: {
+    [sessionId: SessionId]: Client;
   };
 };
 
-export type Session = {
+export type Client = {
   sessionId: SessionId;
-  clientId?: ClientId;
+  clientId: ClientId;
+  status: "connected" | "disconnected";
 };
+
+export type ServerMsg = ServerWireMsg;
 
 //
 //

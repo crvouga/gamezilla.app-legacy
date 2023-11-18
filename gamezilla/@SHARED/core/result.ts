@@ -21,6 +21,18 @@ export const err = <T>(error: T): Err<T> => {
   return { t: "err", error };
 };
 
+export const isErr = <TError, TValue>(
+  result: Result<TError, TValue>
+): result is Err<TError> => {
+  return result.t === "err";
+};
+
+export const isOk = <TError, TValue>(
+  result: Result<TError, TValue>
+): result is Ok<TValue> => {
+  return result.t === "ok";
+};
+
 const mapErr =
   <A, B, TValue>(mapper: (a: A) => B) =>
   (result: Result<A, TValue>): Result<B, TValue> => {

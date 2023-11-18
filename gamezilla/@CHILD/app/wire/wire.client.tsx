@@ -1,6 +1,6 @@
-import { Eff, PubSub } from "gamezilla/@SHARED/core";
 import { ClientCmd, ClientEvt } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconSpinner } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { Eff, Pub, PubSub } from "gamezilla/@SHARED/core";
 import {
   ClientModel,
   ClientMsg,
@@ -85,7 +85,7 @@ export const updateFromCmd = <ToServer,>({
 }: {
   cmd: ClientCmd<{ ClientMsg: never; ToServer: ToServer }>;
   model: ClientModel;
-  toServer: PubSub<ToServer[]>;
+  toServer: Pub<ToServer[]>;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
@@ -144,7 +144,7 @@ export const View = ({ model }: { model: ClientModel }) => {
 
 const wire = PubSub.create<ClientWireMsg>();
 
-export const subscriptions = wire;
+export const subscriptions = PubSub.toSub(wire);
 
 //
 //
@@ -158,21 +158,23 @@ export const subscriptions = wire;
 //
 //
 //
+
+const BASE_SERVER_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://server.gamezilla.app/"
+    : false
+    ? "https://gamezilla-server.ngrok.io/"
+    : `http://localhost:5000/`;
 
 const SESSION_ID_KEY = "gamezilla-session-id";
 const RECONNECT_INTERVAL = 2000; // 1 second
 const MAX_RECONNECT_ATTEMPTS = 5; // Adjust as needed
 
-export const attachClientTransport = <ToServer, ToClient>({
-  baseServerUrl,
-  toClient,
-  toServer,
-}: {
-  baseServerUrl: string;
-  toServer: PubSub<ToServer[]>;
-  toClient: PubSub<ToClient[]>;
-}) => {
-  const serverUrl = toWebsocketServerUrl(baseServerUrl);
+const serverUrl = toWebsocketServerUrl(BASE_SERVER_URL);
+
+export const createTransport = <ToServer, ToClient>() => {
+  const toServer = PubSub.create<ToServer[]>();
+  const toClient = PubSub.create<ToClient[]>();
 
   let reconnectAttempts = 0;
   let ws: WebSocket;
@@ -266,9 +268,14 @@ export const attachClientTransport = <ToServer, ToClient>({
   toServer.subscribe((msgs) => {
     send({ t: "to-server", msgs });
   });
+
+  return {
+    toClient: PubSub.toSub(toClient),
+    toServer: PubSub.toPub(toServer),
+  };
 };
 
-const toWebsocketServerUrl = (baseServerUrl: string) => {
+function toWebsocketServerUrl(baseServerUrl: string) {
   const baseServerUrlObj = new URL(baseServerUrl);
   const sessionId = localStorage.getItem(SESSION_ID_KEY);
 
@@ -287,4 +294,4 @@ const toWebsocketServerUrl = (baseServerUrl: string) => {
   baseServerUrlObj.pathname = "/ws";
 
   return baseServerUrlObj.toString();
-};
+}

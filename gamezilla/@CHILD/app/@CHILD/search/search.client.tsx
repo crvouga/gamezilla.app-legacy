@@ -19,16 +19,25 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./search.core";
 //
 //
 
-export type Model = ClientModel;
-
-export const init: {
-  model: Model;
-} = {
-  model: {
-    searchText: "",
-    searchResults: {},
-    requests: {},
-  },
+export const init = ({
+  stored,
+}: {
+  stored: ClientModel | null;
+}): {
+  model: ClientModel;
+} => {
+  if (stored) {
+    return {
+      model: stored,
+    };
+  }
+  return {
+    model: {
+      searchText: "",
+      searchResults: {},
+      requests: {},
+    },
+  };
 };
 
 //
@@ -48,9 +57,9 @@ export const update = ({
   model,
 }: {
   msg: Msg;
-  model: Model;
+  model: ClientModel;
 }): {
-  model: Model;
+  model: ClientModel;
   eff?: Eff<Msg>;
   evt?: ClientEvt[];
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
@@ -97,8 +106,8 @@ export const updateFromServer = ({
   model,
 }: {
   msg: ToClient;
-  model: Model;
-}): { model: Model; eff?: Eff<Msg> } => {
+  model: ClientModel;
+}): { model: ClientModel; eff?: Eff<Msg> } => {
   return { model };
 };
 
@@ -115,7 +124,7 @@ export const View = ({
   dispatch,
   viewBottomBar,
 }: {
-  model: Model;
+  model: ClientModel;
   dispatch: (msg: Msg) => void;
   viewBottomBar: VDom;
 }) => {

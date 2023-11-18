@@ -7,6 +7,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   ReqCtx,
+  sendToClient,
   ServerCmd,
   ServerCtx,
   ServerEvt,
@@ -55,7 +56,7 @@ export const update = ({
     case "handled": {
       return {
         model,
-        cmd: [{ t: "send-to-client", clientIds: [msg.clientId], msg: msg.msg }],
+        cmd: [sendToClient([msg.clientId], msg.msg)],
       };
     }
   }

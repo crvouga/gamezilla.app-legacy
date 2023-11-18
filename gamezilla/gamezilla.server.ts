@@ -1,53 +1,45 @@
-import { Program, toMsgType } from "gamezilla/@SHARED/core";
+import { Program, isErr } from "gamezilla/@SHARED/core";
 import * as AppServer from "./@CHILD/app/app.server";
-import { attachServerTransport } from "./@CHILD/app/wire/wire.server";
 
-const run = async () => {
-  const ctx = await AppServer.initCtx();
+async function main() {
+  const created = await AppServer.createCtx();
+
+  if (isErr(created)) {
+    return created;
+  }
+
+  const ctx = created.value;
 
   const program = Program.create({
-    init: () => AppServer.init,
+    init: () => {
+      const initial = AppServer.init({
+        ctx,
+      });
+
+      return initial;
+    },
 
     update: (input) => {
       const updated = AppServer.update({
         model: input.model,
         msg: input.msg,
-        ctx: {
-          sms: ctx.sms,
-          dbConn: ctx.dbConn,
-          now: input.ctx.now,
-        },
+        ctx,
       });
 
       return updated;
     },
 
     subscriptions: (input) => {
-      return AppServer.subscriptions({
+      const sub = AppServer.subscriptions({
         ...input,
-        ctx: {
-          dbConn: ctx.dbConn,
-          sms: ctx.sms,
-          now: input.ctx.now,
-        },
+        ctx,
       });
+
+      return sub;
     },
   });
 
-  program.subscribe((modelNew, _ctx, msg) => {
-    if (msg) {
-      console.log(toMsgType(msg));
-    }
-  });
-
   program.start();
+}
 
-  attachServerTransport({
-    wire: AppServer.wire,
-    fromClient: AppServer.fromClient,
-    toClient: AppServer.toClient,
-    toClientBroadcast: AppServer.toClientBroadcast,
-  });
-};
-
-run();
+main();

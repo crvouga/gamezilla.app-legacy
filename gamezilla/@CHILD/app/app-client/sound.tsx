@@ -16,9 +16,25 @@ export type Model = {
   isDocumentVisible: boolean;
 };
 
-export const init: Model = {
-  muted: false,
-  isDocumentVisible: false,
+export const init = ({
+  stored,
+}: {
+  stored: Model | null;
+}): {
+  model: Model;
+} => {
+  if (stored) {
+    return {
+      model: stored,
+    };
+  }
+
+  return {
+    model: {
+      muted: false,
+      isDocumentVisible: false,
+    },
+  };
 };
 
 //

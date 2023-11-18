@@ -2,9 +2,8 @@
   "compilerOptions": {
     "target": "ES2015",
     "lib": ["DOM", "DOM.Iterable", "ESNext", "WebWorker", "es2016", "dom"],
-    "module": "ESNext",
+    "module": "ES2022",
     "esModuleInterop": true,
-
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "strictNullChecks": true,
@@ -22,6 +21,7 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "Node",
+
     "types": ["vite/client", "preact", "bun-types"],
 
     "jsxImportSource": "preact",

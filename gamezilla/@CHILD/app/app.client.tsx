@@ -30,6 +30,18 @@ import * as Wire from "./wire/wire.client";
 //
 //
 //
+//
+//
+
+export const { toClient, toServer } = Wire.createTransport<
+  ToServer,
+  ToClient
+>();
+
+//
+//
+//
+//
 // Model
 //
 //
@@ -75,22 +87,28 @@ export const init = ({
     stored: stored?.profile ?? null,
   });
 
-  const chat = ChatClient.init;
+  const chat = ChatClient.init({
+    stored: stored?.chat ?? null,
+  });
 
-  const search = SearchClient.init;
+  const search = SearchClient.init({
+    stored: stored?.search ?? null,
+  });
 
-  const sound = Sound.init;
+  const sound = Sound.init({
+    stored: stored?.sound ?? null,
+  });
 
-  let acc: { model: ClientModel; eff: Eff<ClientMsg> } = {
+  let acc: ReturnType<typeof init> = {
     model: {
       routing: routing.model,
       toast: toast.model,
       wire: wire.model,
-      sound,
+      sound: sound.model,
       //
       documentVisibilityState,
       //
-      chat,
+      chat: chat.model,
       space: space.model,
       auth: auth.model,
       search: search.model,
@@ -137,7 +155,6 @@ export const update = (input: {
   for (const evt of acc.evt ?? []) {
     const updatedEvt = updateFromEvent({
       ...input,
-
       model: acc.model,
       msg: evt,
     });
@@ -559,30 +576,6 @@ const updateFromEvent = ({
     ],
   };
 };
-
-//
-//
-//
-//
-//
-//
-//
-
-export const toServer = Sub.create<ToServer[]>();
-export const toClient = Sub.create<ToClient[]>();
-
-const SERVER_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://server.gamezilla.app/"
-    : false
-    ? "https://gamezilla-server.ngrok.io/"
-    : `http://localhost:5000/`;
-
-Wire.attachClientTransport({
-  baseServerUrl: SERVER_URL,
-  toClient: toClient,
-  toServer: toServer,
-});
 
 //
 //

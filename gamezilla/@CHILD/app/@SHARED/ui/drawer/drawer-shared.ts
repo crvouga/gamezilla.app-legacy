@@ -1,4 +1,4 @@
-import { Sub } from "gamezilla/@SHARED/core";
+import { PubSub } from "gamezilla/@SHARED/core";
 
 export type DrawerProps = {
   id: string;
@@ -10,4 +10,4 @@ export type DrawerEvent = DrawerProps & {
   type: "props";
 };
 
-export const drawerSub = Sub.create<DrawerEvent>();
+export const drawerSub = PubSub.create<DrawerEvent>();

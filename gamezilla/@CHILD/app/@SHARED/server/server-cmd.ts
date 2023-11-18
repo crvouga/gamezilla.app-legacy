@@ -10,16 +10,16 @@ import { ClientId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 export type ServerCmd<ToClient> =
   | {
-      t: "broadcast";
+      t: "wire/broadcast";
       msg: ToClient;
     }
   | {
-      t: "send-to-client";
+      t: "wire/send-to-client";
       clientIds: ClientId[];
       msg: ToClient;
     }
   | {
-      t: "send-to-user";
+      t: "wire/send-to-user";
       userIds: UserId[];
       msg: ToClient;
     };
@@ -28,16 +28,12 @@ export const sendBack = <ToClient>(
   ctx: { clientId: ClientId },
   msg: ToClient
 ): ServerCmd<ToClient> => {
-  return {
-    t: "send-to-client",
-    clientIds: [ctx.clientId],
-    msg,
-  };
+  return sendToClient([ctx.clientId], msg);
 };
 
 export const broadcast = <ToClient>(msg: ToClient): ServerCmd<ToClient> => {
   return {
-    t: "broadcast",
+    t: "wire/broadcast",
     msg,
   };
 };
@@ -47,7 +43,7 @@ export const sendToClient = <ToClient>(
   msg: ToClient
 ): ServerCmd<ToClient> => {
   return {
-    t: "send-to-client",
+    t: "wire/send-to-client",
     clientIds,
     msg,
   };
@@ -58,7 +54,7 @@ export const sendToUser = <ToClient>(
   msg: ToClient
 ): ServerCmd<ToClient> => {
   return {
-    t: "send-to-user",
+    t: "wire/send-to-user",
     userIds,
     msg,
   };
@@ -75,9 +71,9 @@ export const sendToUser = <ToClient>(
 
 const mapOne = <A, B>(fn: (a: A) => B, cmd: ServerCmd<A>): ServerCmd<B> => {
   switch (cmd.t) {
-    case "send-to-client":
-    case "send-to-user":
-    case "broadcast": {
+    case "wire/send-to-client":
+    case "wire/send-to-user":
+    case "wire/broadcast": {
       return { ...cmd, msg: fn(cmd.msg) };
     }
     default:

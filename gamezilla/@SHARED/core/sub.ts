@@ -111,7 +111,50 @@ const tag = <Tag extends string, Msg>(
   return Sub.map(sub, (c) => ({ t, c }));
 };
 
+const toSub = <Msg>(pubSub: PubSub<Msg>): Sub<Msg> => {
+  return {
+    subscribe: (subscriber) => {
+      return pubSub.subscribe(subscriber);
+    },
+  };
+};
+
+const toPub = <Msg>(pubSub: PubSub<Msg>): Pub<Msg> => {
+  return {
+    publish: (msg) => {
+      pubSub.publish(msg);
+    },
+    isSubscribed: () => {
+      return pubSub.isSubscribed();
+    },
+  };
+};
+
+const createSub = <Msg>(): Sub<Msg> => {
+  const pubSub = create<Msg>();
+  return toSub(pubSub);
+};
+
+const createPub = <Msg>(): Pub<Msg> => {
+  const pubSub = create<Msg>();
+  return toPub(pubSub);
+};
+
 export const Sub = {
+  map,
+  batch,
+  create: createSub,
+  None,
+  flatten,
+  tag,
+  flatMap,
+};
+
+export const Pub = {
+  create: createPub,
+};
+
+export const PubSub = {
   map,
   batch,
   create,
@@ -119,6 +162,6 @@ export const Sub = {
   flatten,
   tag,
   flatMap,
+  toSub,
+  toPub,
 };
-
-export const PubSub = Sub;

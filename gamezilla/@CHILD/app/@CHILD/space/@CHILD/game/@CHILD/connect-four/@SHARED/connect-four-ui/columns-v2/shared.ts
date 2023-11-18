@@ -1,5 +1,5 @@
-import { Sub } from "gamezilla/@SHARED/core";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { PubSub } from "gamezilla/@SHARED/core";
 import { ColumnIndex, Columns, PlayerType } from "../../connect-four";
 
 export type ColumnsProps = {
@@ -15,4 +15,4 @@ export type ColumnsProps = {
   gameOverOverlay?: () => VDom | VDom[] | null;
 };
 
-export const columnsPropsSub = Sub.create<ColumnsProps>();
+export const columnsPropsSub = PubSub.create<ColumnsProps>();

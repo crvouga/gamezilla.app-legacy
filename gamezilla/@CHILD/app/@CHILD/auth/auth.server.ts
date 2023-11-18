@@ -14,7 +14,6 @@ import {
   Account,
   ServerModel,
   ServerMsg,
-  SocialLoginState,
   ToClient,
   ToServer,
 } from "./auth.core";
@@ -28,8 +27,7 @@ import {
 //
 
 export const init: ServerModel = {
-  sessions: {},
-  socialLoginStates: {},
+  usersBySessionId: {},
   sms: AuthServerSMS.init,
 };
 
@@ -65,8 +63,8 @@ export const update = ({
       return {
         model: {
           ...model,
-          sessions: {
-            ...model.sessions,
+          usersBySessionId: {
+            ...model.usersBySessionId,
             [msg.sessionId]: {
               sessionId: msg.sessionId,
               userId: msg.result.value.userId,
@@ -120,84 +118,13 @@ export const updateFromClient = ({
   eff?: Eff<ServerMsg>;
 } => {
   switch (msg.t) {
-    case "started-social-login": {
-      return {
-        model: {
-          ...model,
-          socialLoginStates: {
-            ...model.socialLoginStates,
-            [ctx.sessionId]: {
-              sessionId: ctx.sessionId,
-              t: "in-progress",
-            },
-          },
-        },
-      };
-    }
-
-    case "got-social-login-result": {
-      const socialLogin = model.socialLoginStates[ctx.sessionId];
-
-      if (!socialLogin) {
-        return { model };
-      }
-
-      const emailAddress = msg.result.t === "ok" ? msg.result.value : null;
-
-      const socialLoginNew: SocialLoginState = {
-        t: "done",
-        sessionId: ctx.sessionId,
-        emailAddress,
-      };
-
-      const socialLoginsNew = {
-        ...model.socialLoginStates,
-        [socialLoginNew.sessionId]: socialLoginNew,
-      };
-
-      if (emailAddress) {
-        return {
-          model: {
-            ...model,
-            socialLoginStates: socialLoginsNew,
-          },
-          eff: async (dispatch) => {
-            const result = await findElseInsertAccount({
-              emailAddress,
-              dbConn: ctx.dbConn,
-            });
-            dispatch({
-              t: "got-user-account",
-              result,
-              sessionId: ctx.sessionId,
-              clientId: ctx.clientId,
-            });
-          },
-        };
-      }
-
-      return {
-        model: {
-          ...model,
-          socialLoginStates: socialLoginsNew,
-        },
-        evt: [
-          {
-            t: "client-unauthenticated",
-            clientId: ctx.clientId,
-            sessionId: ctx.sessionId,
-          },
-        ],
-      };
-    }
-
     case "logout": {
-      const sessionsNew = { ...model.sessions };
+      const sessionsNew = { ...model.usersBySessionId };
       delete sessionsNew[ctx.sessionId];
       return {
         model: {
           ...model,
-          sessions: sessionsNew,
+          usersBySessionId: sessionsNew,
         },
         evt: [
           {
@@ -276,33 +203,10 @@ export const updateFromEvent = ({
 } => {
   switch (evt.t) {
     case "client-connected": {
-      const socialLoginState = model.socialLoginStates[evt.sessionId];
+      const session = model.usersBySessionId[evt.sessionId];
+      const userId = session?.userId;
 
-      if (socialLoginState?.t === "in-progress") {
-        return {
-          model,
-          cmd: [sendToClient([evt.clientId], { t: "get-social-login-result" })],
-        };
-      }
-
-      const session = model.sessions[evt.sessionId];
-
-      if (!session) {
-        return {
-          model,
-          evt: [
-            {
-              t: "client-unauthenticated",
-              clientId: evt.clientId,
-              sessionId: evt.sessionId,
-            },
-          ],
-        };
-      }
-
-      const userId = session.userId;
-
-      if (!userId) {
+      if (!session || !userId) {
         return {
           model,
           evt: [
@@ -332,8 +236,8 @@ export const updateFromEvent = ({
       return {
         model: {
           ...model,
-          sessions: {
-            ...model.sessions,
+          usersBySessionId: {
+            ...model.usersBySessionId,
             [evt.sessionId]: {
               sessionId: evt.sessionId,
               userId: evt.userId,
@@ -348,6 +252,30 @@ export const updateFromEvent = ({
       return { model, cmd: [sendToClient([evt.clientId], evt)] };
     }
 
+    default: {
+      return { model };
+    }
+  }
+};
+
+export const updateFromCmd = ({
+  cmd,
+  model,
+}: {
+  cmd: ServerCmd<ToClient>;
+  model: ServerModel;
+}): {
+  model: ServerModel;
+  evt?: ServerEvt[];
+} => {
+  switch (cmd.t) {
+    case "wire/send-to-user": {
+      return {
+        model: {
+          ...model,
+        },
+      };
+    }
     default: {
       return { model };
     }

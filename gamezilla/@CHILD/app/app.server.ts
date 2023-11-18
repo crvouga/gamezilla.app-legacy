@@ -1,4 +1,3 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   AnonymousReqCtx,
   ReqCtx,
@@ -7,23 +6,38 @@ import {
   ServerEvt,
   sendBack,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, Posix, Sub } from "gamezilla/@SHARED/core";
+import {
+  Eff,
+  Posix,
+  Result,
+  Sub,
+  err,
+  ok,
+  toMsgType,
+} from "gamezilla/@SHARED/core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
 import * as ChatServer from "./@CHILD/chat/chat.server";
 import * as ProfileServer from "./@CHILD/profile/profile.server";
 import * as SearchServer from "./@CHILD/search/search.server";
 import * as SpaceServer from "./@CHILD/space/space.server";
-import { ClientId, SessionId } from "./@SHARED/data";
 import { createDbConn } from "./app-server/db-conn-sql";
 import { createSMS } from "./app-server/sms";
-import {
-  ServerModel,
-  ServerMsg,
-  ToClient,
+import { ServerModel, ServerMsg, ToClient, ToServer } from "./app.core";
+import * as WireServer from "./wire/wire.server";
+import { LoggerConsole } from "./@SHARED/server/logger";
+
+//
+//
+//
+//
+//
+//
+//
+
+const { toClient, toClientBroadcast, toServer } = WireServer.createTransport<
   ToServer,
-  WireSession,
-} from "./app.core";
-import { ServerWireMsg } from "./wire/wire.core";
+  ToClient
+>();
 
 //
 //
@@ -33,15 +47,26 @@ import { ServerWireMsg } from "./wire/wire.core";
 //
 //
 
-export const init: { model: ServerModel; eff?: Eff<ServerMsg> } = {
-  model: {
-    sessions: {},
-    space: SpaceServer.init().model,
-    profile: ProfileServer.init,
-    search: SearchServer.init.model,
-    chat: ChatServer.init.model,
-    auth: AuthServer.init,
-  },
+export const init = ({
+  ctx,
+}: {
+  ctx: ServerCtx;
+}): {
+  model: ServerModel;
+  eff?: Eff<ServerMsg>;
+} => {
+  const wire = WireServer.init();
+  const space = SpaceServer.init();
+  return {
+    model: {
+      wire: wire.model,
+      space: space.model,
+      profile: ProfileServer.init,
+      search: SearchServer.init.model,
+      chat: ChatServer.init.model,
+      auth: AuthServer.init,
+    },
+  };
 };
 
 //
@@ -60,21 +85,29 @@ export const update = async (input: {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
 }> => {
-  const { model, ctx } = input;
+  input.ctx.logger.info(toMsgType(input.msg));
 
   const updated = await updateMain(input);
 
   let acc = updated;
 
   let iterations = 0;
-  while (count(acc.evt) > 0 && iterations < 100) {
+  while (true) {
     iterations++;
-    for (const e of acc.evt ?? []) {
+    if (iterations > 100) {
+      break;
+    }
+
+    if (acc.evt?.length === 0 && acc.cmd?.length === 0) {
+      break;
+    }
+
+    for (const evt of acc.evt ?? []) {
+      input.ctx.logger.info(`[evt] ${toMsgType(evt)}`);
       const updatedEvt = await updateFromEvent({
         ...input,
-        ctx,
         model: acc.model,
-        msg: e,
+        msg: evt,
       });
       acc = {
         model: updatedEvt.model,
@@ -83,96 +116,24 @@ export const update = async (input: {
         evt: updatedEvt.evt,
       };
     }
-  }
 
-  const eff = cmdToEff(model, acc.cmd ?? []);
-
-  return {
-    model: acc.model,
-    eff: Eff.batch([eff, acc.eff]),
-  };
-};
-
-const count = <T>(arr?: T[]): number => {
-  return arr?.length ?? 0;
-};
-
-const cmdToEff = (
-  model: ServerModel,
-  cmdList: ServerCmd<ToClient>[]
-): Eff<ServerMsg> => {
-  const broadcastMsgs: ToClient[] = [];
-  const toClientMsgs: {
-    [clientId: ClientId]: {
-      clientId: ClientId;
-      msgs: ToClient[];
-    };
-  } = {};
-
-  for (const cmd of cmdList) {
-    switch (cmd.t) {
-      case "broadcast": {
-        broadcastMsgs.push(cmd.msg);
-        break;
-      }
-      case "send-to-client": {
-        for (const clientId of cmd.clientIds) {
-          toClientMsgs[clientId] = {
-            clientId,
-            msgs: [cmd.msg, ...(toClientMsgs[clientId]?.msgs ?? [])],
-          };
-        }
-        break;
-      }
-      case "send-to-user": {
-        const clientIds: ClientId[] = [];
-
-        const userIdSet = new Set<UserId>(cmd.userIds);
-
-        for (const sessionId in model.sessions) {
-          if (!SessionId.is(sessionId)) {
-            continue;
-          }
-
-          const session = model.sessions[sessionId];
-
-          const authSession = model.auth.sessions[sessionId];
-
-          if (!session) {
-            continue;
-          }
-
-          if (!authSession) {
-            continue;
-          }
-
-          if (!userIdSet.has(authSession.userId)) {
-            continue;
-          }
-
-          if (!session.clientId) {
-            continue;
-          }
-
-          clientIds.push(session.clientId);
-        }
-
-        for (const clientId of clientIds) {
-          toClientMsgs[clientId] = {
-            clientId,
-            msgs: [cmd.msg, ...(toClientMsgs[clientId]?.msgs ?? [])],
-          };
-        }
-
-        break;
-      }
+    for (const cmd of acc.cmd ?? []) {
+      input.ctx.logger.info(`[cmd] ${toMsgType(cmd)}`);
+      const updatedCmd = updateFromCmd({
+        ...input,
+        model: acc.model,
+        cmd,
+      });
+      acc = {
+        model: updatedCmd.model,
+        eff: Eff.batch([acc.eff, updatedCmd.eff]),
+        cmd: [...(acc.cmd ?? []), ...(updatedCmd.cmd ?? [])],
+        evt: updatedCmd.evt,
+      };
     }
   }
 
-  return () => {
-    toClientBroadcast.publish(broadcastMsgs);
-    toClient.publish(toClientMsgs);
-  };
+  return acc;
 };
 
 const updateMain = async ({
@@ -203,7 +164,16 @@ const updateMain = async ({
     }
 
     case "wire": {
-      return updateWire({ msg: msg.c, model });
+      const updated = WireServer.update({
+        model: model.wire,
+        msg: msg.c,
+      });
+      return {
+        model: { ...model, wire: updated.model },
+        // cmd: ServerCmd.tag("wire", updated.cmd),
+        // eff: Eff.t("wire", updated.eff),
+        // evt: updated.evt,
+      };
     }
 
     case "space": {
@@ -266,59 +236,6 @@ const updateMain = async ({
   }
 };
 
-const updateWire = ({
-  msg,
-  model,
-}: {
-  msg: ServerWireMsg;
-  model: ServerModel;
-}): {
-  model: ServerModel;
-  evt?: ServerEvt[];
-} => {
-  switch (msg.t) {
-    case "client-connected": {
-      const sessionId = msg.sessionId;
-      const sessionNew: WireSession = {
-        clientId: msg.clientId,
-        sessionId,
-      };
-
-      return {
-        model: {
-          ...model,
-          sessions: {
-            ...model.sessions,
-            [sessionNew.sessionId]: sessionNew,
-          },
-        },
-        evt: [
-          {
-            ...msg,
-            userId: model.auth.sessions[msg.sessionId]?.userId,
-            t: "client-connected",
-          },
-        ],
-      };
-    }
-
-    case "client-disconnected": {
-      const sessionNew: WireSession = {
-        sessionId: msg.sessionId,
-      };
-      return {
-        model: {
-          ...model,
-          sessions: {
-            ...model.sessions,
-            [sessionNew.sessionId]: sessionNew,
-          },
-        },
-      };
-    }
-  }
-};
-
 const updateFromClient = async ({
   msg,
   model,
@@ -333,7 +250,7 @@ const updateFromClient = async ({
   cmd?: ServerCmd<ToClient>[];
   evt?: ServerEvt[];
 }> => {
-  const currentUserId = model.auth.sessions[ctx.sessionId]?.userId;
+  const currentUserId = model.auth.usersBySessionId[ctx.sessionId]?.userId;
   const authReqCtx: ReqCtx | null = currentUserId
     ? {
         ...ctx,
@@ -467,6 +384,41 @@ const updateFromEvent = async ({
   };
 };
 
+const updateFromCmd = ({
+  cmd,
+  model,
+}: {
+  cmd: ServerCmd<ToClient>;
+  model: ServerModel;
+  ctx: ServerCtx;
+}): {
+  model: ServerModel;
+  eff?: Eff<ServerMsg>;
+  evt?: ServerEvt[];
+  cmd?: ServerCmd<ToClient>[];
+} => {
+  switch (cmd.t) {
+    case "wire/send-to-user":
+    case "wire/broadcast":
+    case "wire/send-to-client": {
+      const updated = WireServer.updateFromCmd({
+        usersBySessionId: model.auth.usersBySessionId,
+        cmd,
+        model: model.wire,
+        toClient: toClient,
+        toClientBroadcast: toClientBroadcast,
+      });
+      return {
+        model: {
+          ...model,
+          wire: updated.model,
+        },
+        eff: Eff.t("wire", updated.eff),
+      };
+    }
+  }
+};
+
 //
 //
 //
@@ -487,8 +439,8 @@ export const subscriptions = async ({
       "space",
       await SpaceServer.subscriptions({ model: model.space, ctx })
     ),
-    Sub.tag("wire", wire),
-    Sub.flatten(fromClient, ({ sessionId, clientId, msgs }) =>
+    Sub.tag("wire", WireServer.subscriptions),
+    Sub.flatten(toServer, ({ sessionId, clientId, msgs }) =>
       msgs.map(
         (msg): ServerMsg => ({
           t: "➡️",
@@ -501,23 +453,6 @@ export const subscriptions = async ({
   ]);
 };
 
-export const toClient = Sub.create<{
-  [clientId: ClientId]: {
-    clientId: ClientId;
-    msgs: ToClient[];
-  };
-}>();
-
-export const toClientBroadcast = Sub.create<ToClient[]>();
-
-export const fromClient = Sub.create<{
-  sessionId: SessionId;
-  clientId: ClientId;
-  msgs: ToServer[];
-}>();
-
-export const wire = Sub.create<ServerWireMsg>();
-
 //
 //
 //
@@ -525,8 +460,8 @@ export const wire = Sub.create<ServerWireMsg>();
 //
 //
 
-export const initCtx = async (): Promise<ServerCtx> => {
-  console.log("[server] init ctx");
+export const createCtx = async (): Promise<Result<string, ServerCtx>> => {
+  const logger = LoggerConsole("app");
 
   const databaseUrl =
     process.env.NODE_ENV === "production"
@@ -534,24 +469,23 @@ export const initCtx = async (): Promise<ServerCtx> => {
       : process.env["DATABASE_URL"];
 
   if (!databaseUrl) {
-    throw new Error("databaseUrl not found in env vars");
+    return err("databaseUrl not found in env vars");
   }
-
-  console.log("[server] db url:", databaseUrl);
 
   const created = await createDbConn({ databaseUrl });
 
   if (created.t === "err") {
-    throw new Error(`Failed to connect to db. Error: ${created.error}`);
+    return created;
   }
 
   const dbConn = created.value;
 
   const sms = createSMS("twilio");
 
-  return {
+  return ok({
     sms,
+    logger,
     dbConn,
     now: Posix.now(),
-  };
+  });
 };

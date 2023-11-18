@@ -1,8 +1,8 @@
-import { Sub } from "../sub";
+import { PubSub, Sub } from "../sub";
 
 type VisibilityState = "visible" | "hidden";
 
-const documentVisibilityState = Sub.create<VisibilityState>();
+const documentVisibilityState = PubSub.create<VisibilityState>();
 
 export const onDocumentVisibilityState = <T>(
   fn: (state: VisibilityState) => T

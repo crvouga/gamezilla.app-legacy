@@ -8,20 +8,21 @@ import { Routing, Sound, Toast } from "./app-client";
 import * as Wire from "./wire/wire.core";
 import { ServerWireMsg } from "./wire/wire.core";
 
+//
+//
+//
+// Model
+//
+//
+//
+
 export type ServerModel = {
-  sessions: {
-    [sessionId: SessionId]: WireSession;
-  };
+  wire: Wire.ServerModel;
   space: Space.ServerModel;
   profile: Profile.ServerModel;
   search: Search.ServerModel;
   chat: Chat.ServerModel;
   auth: Auth.ServerModel;
-};
-
-export type WireSession = {
-  sessionId: SessionId;
-  clientId?: ClientId;
 };
 
 export type ClientModel = {
@@ -30,15 +31,22 @@ export type ClientModel = {
   profile: Profile.ClientModel;
   chat: Chat.ClientModel;
   search: Search.ClientModel;
-  //
   wire: Wire.ClientModel;
-  //
   routing: Routing.Model;
   toast: Toast.Model;
   sound: Sound.Model;
   //
   documentVisibilityState: DocumentVisibilityState;
 };
+
+//
+//
+//
+//
+//
+//
+//
+//
 
 export type ToServer =
   | { t: "space"; c: Space.ToServer }

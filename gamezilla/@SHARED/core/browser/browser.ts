@@ -1,6 +1,6 @@
 import { Eff } from "../eff";
 import { Result } from "../result";
-import { Sub } from "../sub";
+import { PubSub, Sub } from "../sub";
 import { Task } from "../task";
 
 //
@@ -16,7 +16,7 @@ export type Location = {
   query: { [key: string]: string };
 };
 
-const locationSub = Sub.create<Location>();
+const locationSub = PubSub.create<Location>();
 const handler = () => {
   locationSub.publish(getLocation());
 };

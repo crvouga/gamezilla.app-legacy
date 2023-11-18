@@ -4,7 +4,7 @@ import {
   Username,
 } from "gamezilla/@CHILD/app/@SHARED/data";
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
-import { err, ok, Result } from "gamezilla/@SHARED/core";
+import { err, isErr, ok, Result } from "gamezilla/@SHARED/core";
 import { Parsing as P } from "gamezilla/@SHARED/parsing";
 import { ProfileCore } from "../profile.core";
 import { ProfileDb } from "./profile-db";
@@ -87,7 +87,7 @@ export const createProfileDb = ({
         user_id: userId,
       });
 
-      if (queried.t === "err") {
+      if (isErr(queried)) {
         return queried;
       }
 
@@ -126,7 +126,7 @@ export const createProfileDb = ({
         rowNew
       );
 
-      if (inserted.t === "err") {
+      if (isErr(inserted)) {
         return inserted;
       }
 

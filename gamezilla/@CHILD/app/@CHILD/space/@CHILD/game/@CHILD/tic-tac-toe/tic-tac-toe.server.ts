@@ -8,6 +8,7 @@ import {
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./tic-tac-toe.core";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.server";
 import * as VsUser from "./@CHILD/vs-user/vs-user.server";
+import { sendToClient } from "gamezilla/@CHILD/app/@SHARED/server";
 
 const { err: Err, ok: Ok } = Result;
 
@@ -85,11 +86,7 @@ export const updateFromClient = ({
       return {
         model,
         cmd: [
-          {
-            t: "send-to-client",
-            clientIds: [ctx.clientId],
-            msg: { ...msg, result: Err("must-be-host") },
-          },
+          sendToClient([ctx.clientId], { ...msg, result: Err("must-be-host") }),
         ],
       };
     }

@@ -5,13 +5,13 @@
  *
  * @since 0.5.0
  */
-import { Sub } from "../sub";
-import { toMsgPayload, toMsgType } from "../utils";
 import * as Json from "../json";
 import { p } from "../pipe";
 import { Program } from "../program";
-import { err, Result } from "../result";
+import { Result } from "../result";
+import { PubSub, Sub } from "../sub";
 import { Task } from "../task";
+import { toMsgPayload, toMsgType } from "../utils";
 import {
   Debug,
   Debugger,
@@ -494,7 +494,7 @@ export const attachDebugger = <Model, Msg extends {}>(
     });
   });
 
-  const sub = Sub.create<{ msg: Msg; model: Model }>();
+  const sub = PubSub.create<{ msg: Msg; model: Model }>();
 
   program.subscribe((model, ctx, msg) => {
     if (msg) {
@@ -547,7 +547,7 @@ export const createDebugger = <Model, Msg extends {}>(initialModel: Model) => {
 
   const Debugger = makeDebugger<Model, Msg>(connection);
 
-  const model = Sub.create<Model>();
+  const model = PubSub.create<Model>();
 
   const debuggerInstance = Debugger({
     dispatch: (msg) => {

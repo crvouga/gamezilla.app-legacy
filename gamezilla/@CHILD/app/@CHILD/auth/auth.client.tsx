@@ -79,21 +79,6 @@ export const update = ({
   evt?: ClientEvt[];
 } => {
   switch (msg.t) {
-    case "clicked-login-with-google": {
-      return {
-        model: {
-          ...model,
-          loginWithGoogle: loading,
-        },
-        cmd: [sendToServer({ t: "started-social-login" })],
-        eff: async () => {
-          await socialLogin.redirectSocialLogin({
-            provider: "google",
-          });
-        },
-      };
-    }
-
     case "clicked-logout": {
       return {
         model: {
@@ -101,13 +86,6 @@ export const update = ({
           currentUser: { t: "loading" },
         },
         cmd: [sendToServer({ t: "logout" })],
-      };
-    }
-
-    case "got-social-login-result": {
-      return {
-        model,
-        cmd: [sendToServer(msg)],
       };
     }
 
@@ -142,16 +120,6 @@ export const updateFromServer = ({
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg.t) {
-    case "get-social-login-result": {
-      return {
-        model,
-        eff: async (dispatch) => {
-          const result = await socialLogin.getSocialLoginResult();
-          dispatch({ t: "got-social-login-result", result });
-        },
-      };
-    }
-
     case "client-unauthenticated": {
       return chain(
         { model },
@@ -324,30 +292,18 @@ const ViewLoginScreen = ({
         </div>
 
         <div class="flex w-full flex-col gap-6">
-          {false && (
-            <Button
-              onClick={() => dispatch({ t: "clicked-login-with-google" })}
-              size="lg"
-              class="w-full"
-              start={<IconGoogle class="h-6 w-6" />}
-              text="Continue With Google"
-            />
-          )}
-
-          {true && (
-            <Button
-              onClick={() =>
-                ctx.push({
-                  t: "auth",
-                  c: { t: "login-phone", isSelectingCountry: false },
-                })
-              }
-              size="lg"
-              class="w-full"
-              start={<IconMobilePhone class="h-6 w-6" />}
-              text="Continue With Phone"
-            />
-          )}
+          <Button
+            onClick={() =>
+              ctx.push({
+                t: "auth",
+                c: { t: "login-phone", isSelectingCountry: false },
+              })
+            }
+            size="lg"
+            class="w-full"
+            start={<IconMobilePhone class="h-6 w-6" />}
+            text="Continue With Phone"
+          />
 
           {false && (
             <Button
