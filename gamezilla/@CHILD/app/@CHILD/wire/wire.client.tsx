@@ -102,6 +102,7 @@ export const updateFromCmd = <ToServer,>({
       };
       return { model };
     }
+
     default: {
       return { model };
     }
@@ -170,7 +171,7 @@ const SESSION_ID_KEY = "gamezilla-session-id";
 const RECONNECT_INTERVAL = 2000; // 1 second
 const MAX_RECONNECT_ATTEMPTS = 5; // Adjust as needed
 
-const serverUrl = toWebsocketServerUrl(BASE_SERVER_URL);
+const SERVER_URL = toWebsocketServerUrl(BASE_SERVER_URL);
 
 export const createTransport = <ToServer, ToClient>() => {
   const toServer = PubSub.create<ToServer[]>();
@@ -187,7 +188,7 @@ export const createTransport = <ToServer, ToClient>() => {
       return;
     }
     isConnected = true;
-    ws = new WebSocket(serverUrl);
+    ws = new WebSocket(SERVER_URL);
 
     ws.onopen = () => {
       reconnectAttempts = 0;
