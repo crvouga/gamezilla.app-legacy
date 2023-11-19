@@ -1,7 +1,7 @@
 import { EmailAddress, PhoneNumber, Result } from "gamezilla/@SHARED/core";
 import { Account } from "../../../auth.core";
 
-export type AccountDb = {
+export type IAccountDb = {
   findOneByEmail: (input: {
     emailAddress: EmailAddress;
   }) => Promise<Result<string, Account | null>>;

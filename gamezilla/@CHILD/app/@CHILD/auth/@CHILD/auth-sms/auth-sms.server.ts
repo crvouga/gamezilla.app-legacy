@@ -8,10 +8,10 @@ import {
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, PhoneNumber, Result, isErr, ok } from "gamezilla/@SHARED/core";
-import { createAccountDb } from "../../@SHARED/server/account-db";
+import { AccountDb } from "../../@SHARED/server/account-db/account-db-impl";
 import { Account } from "../../auth.core";
-import { VerifySMS } from "./server/verify-sms/verify-sms-impl";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth-sms.core";
+import { VerifySMS } from "./server/verify-sms/verify-sms-impl";
 
 export const init: ServerModel = {
   verifications: {},
@@ -91,6 +91,65 @@ export const update = ({
   }
 };
 
+export const updateFromClient = ({
+  msg,
+  model,
+  ctx,
+}: {
+  msg: ToServer;
+  model: ServerModel;
+  ctx: AnonymousReqCtx;
+}): {
+  model: ServerModel;
+  cmd?: ServerCmd<ToClient>[];
+  eff?: Eff<ServerMsg>;
+} => {
+  const verifySMS = VerifySMS({
+    logger: ctx.logger,
+    impl: "test",
+  });
+  switch (msg.t) {
+    case "send-code": {
+      return {
+        model,
+        eff: async (dispatch) => {
+          dispatch({
+            t: "sent-code",
+            phoneNumber: msg.phoneNumber,
+            result: await verifySMS.sendCode(msg),
+            clientId: ctx.clientId,
+          });
+        },
+      };
+    }
+
+    case "verify-code": {
+      return {
+        model,
+        eff: async (dispatch) => {
+          dispatch({
+            t: "verified-code",
+            phoneNumber: msg.phoneNumber,
+            clientId: ctx.clientId,
+            result: await verifySMS.verifyCode(msg),
+            sessionId: ctx.sessionId,
+          });
+        },
+      };
+    }
+  }
+};
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 const findElseInsertAccount = async ({
   dbConn,
   phoneNumber,
@@ -98,7 +157,7 @@ const findElseInsertAccount = async ({
   dbConn: DbConnSql;
   phoneNumber: PhoneNumber;
 }): Promise<Result<string, Account>> => {
-  const accountDb = createAccountDb({ dbConn });
+  const accountDb = AccountDb({ dbConn });
 
   const found = await accountDb.findOneByPhoneNumber({ phoneNumber });
 
@@ -125,58 +184,4 @@ const findElseInsertAccount = async ({
   }
 
   return ok(accountNew);
-};
-
-export const updateFromClient = ({
-  msg,
-  model,
-  ctx,
-}: {
-  msg: ToServer;
-  model: ServerModel;
-  ctx: AnonymousReqCtx;
-}): {
-  model: ServerModel;
-  cmd?: ServerCmd<ToClient>[];
-  eff?: Eff<ServerMsg>;
-} => {
-  switch (msg.t) {
-    case "send-code": {
-      return {
-        model,
-        eff: async (dispatch) => {
-          const sent = await VerifySMS("test").sendCode({
-            phoneNumber: msg.phoneNumber,
-          });
-
-          dispatch({
-            t: "sent-code",
-            phoneNumber: msg.phoneNumber,
-            result: sent,
-            clientId: ctx.clientId,
-          });
-        },
-      };
-    }
-
-    case "verify-code": {
-      return {
-        model,
-        eff: async (dispatch) => {
-          const verified = await VerifySMS("test").verifyCode({
-            phoneNumber: msg.phoneNumber,
-            code: msg.code,
-          });
-
-          dispatch({
-            t: "verified-code",
-            phoneNumber: msg.phoneNumber,
-            clientId: ctx.clientId,
-            result: verified,
-            sessionId: ctx.sessionId,
-          });
-        },
-      };
-    }
-  }
 };

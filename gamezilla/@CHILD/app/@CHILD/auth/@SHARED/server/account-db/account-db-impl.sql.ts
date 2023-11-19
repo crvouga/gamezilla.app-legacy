@@ -1,16 +1,15 @@
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
 import {
   EmailAddress,
-  Iso3166Alpha2Code,
   PhoneNumber,
   Result,
   isErr,
   ok,
 } from "gamezilla/@SHARED/core";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Account } from "../../../auth.core";
-import { AccountDb } from "./account-db";
 import { Parsing as P } from "gamezilla/@SHARED/parsing";
+import { Account } from "../../../auth.core";
+import { IAccountDb } from "./account-db";
 
 type AccountRow = {
   user_id: string;
@@ -78,11 +77,7 @@ const accountToRow = (account: Account): AccountRow => {
   };
 };
 
-export const createAccountDb = ({
-  dbConn,
-}: {
-  dbConn: DbConnSql;
-}): AccountDb => {
+export const AccountDb = ({ dbConn }: { dbConn: DbConnSql }): IAccountDb => {
   return {
     async findOneByEmail(input) {
       const queried = await dbConn.query(

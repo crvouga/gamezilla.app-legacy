@@ -1,9 +1,9 @@
 import { ok } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Account } from "../../../auth.core";
-import { AccountDb } from "./account-db";
+import { IAccountDb } from "./account-db";
 
-export const createAccountDb = (): AccountDb => {
+export const AccountDb = (): IAccountDb => {
   const accounts = new Map<UserId, Account>();
   return {
     async findOneByEmail(input) {
