@@ -3,6 +3,7 @@ import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
 import { toSql } from "./sql";
 import { Database } from "bun:sqlite";
 import { Logger } from "../../@SHARED/server/logger";
+import { logQuery } from "./shared";
 
 export const createDbConnSqlite = async ({
   databaseUrl,
@@ -19,9 +20,13 @@ export const createDbConnSqlite = async ({
       try {
         const sql = toSql(rawSql, params);
 
-        logger.info(`[db] ${sql}`);
+        const start = Date.now();
 
         const rows = database.query(sql).all();
+
+        const end = Date.now();
+
+        logQuery({ logger, start, end, sql });
 
         const parsed = Array.isArray(rows)
           ? rows.flatMap((row) => {

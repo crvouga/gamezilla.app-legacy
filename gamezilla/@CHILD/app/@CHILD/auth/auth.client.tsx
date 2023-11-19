@@ -87,6 +87,7 @@ export const update = ({
           currentUser: { t: "logged-out" },
         },
         cmd: [sendToServer({ t: "logout" })],
+        evt: [{ t: "client-unauthenticated" }],
       };
     }
 
@@ -110,7 +111,6 @@ export const update = ({
 export const updateFromServer = ({
   model,
   msg,
-  ctx,
 }: {
   ctx: AnonymousClientCtx;
   msg: ToClient;
@@ -123,60 +123,23 @@ export const updateFromServer = ({
 } => {
   switch (msg.t) {
     case "client-unauthenticated": {
-      return chain(
-        { model },
-        (model) => {
-          return {
-            model: { ...model, currentUser: { t: "logged-out" } },
-            evt: [msg],
-          };
-        },
-        (model) => {
-          if (ctx.currentRoute.t !== "auth") {
-            return {
-              model,
-              cmd: [replaceRoute({ t: "auth", c: { t: "login" } })],
-            };
-          }
-          return { model };
-        }
-      );
+      return {
+        model: { ...model, currentUser: { t: "logged-out" } },
+        evt: [msg],
+      };
     }
 
     case "client-authenticated": {
-      return chain(
-        { model },
-        (model): ReturnType<typeof updateFromServer> => {
-          return {
-            model: {
-              ...model,
-              currentUser: {
-                t: "logged-in",
-                userId: msg.userId,
-              },
-            },
-            evt: [msg],
-          };
+      return {
+        model: {
+          ...model,
+          currentUser: {
+            t: "logged-in",
+            userId: msg.userId,
+          },
         },
-        (model) => {
-          if (msg.loggedIn) {
-            return {
-              model,
-              cmd: [playSound(APP_SOUND.navForward)],
-            };
-          }
-          return { model };
-        },
-        (model) => {
-          if (ctx.currentRoute.t === "auth") {
-            return {
-              model,
-              cmd: [replaceRoute({ t: "space", c: { t: "space-list" } })],
-            };
-          }
-          return { model };
-        }
-      );
+        evt: [msg],
+      };
     }
 
     case "sms": {
@@ -207,7 +170,7 @@ export const updateFromEvent = ({
 } => {
   return chain(
     { model },
-    (model) => handleAuthRouteGuard({ ctx, model, evt }),
+    (model) => handleAuthRedirect({ ctx, model, evt }),
     (model) => {
       const updated = AuthClientSMS.updateFromEvent({
         model: model.sms,
@@ -220,8 +183,36 @@ export const updateFromEvent = ({
   );
 };
 
-const handleAuthRouteGuard: typeof updateFromEvent = ({ model, evt }) => {
+const handleAuthRedirect: typeof updateFromEvent = ({ model, evt, ctx }) => {
   switch (evt.t) {
+    case "client-authenticated": {
+      if (ctx.currentRoute.t === "auth") {
+        return {
+          model,
+          cmd: [
+            replaceRoute({ t: "space", c: { t: "space-list" } }),
+            playSound(APP_SOUND.navForward),
+          ],
+        };
+      }
+
+      return { model };
+    }
+
+    case "client-unauthenticated": {
+      if (ctx.currentRoute.t !== "auth") {
+        return {
+          model,
+          cmd: [
+            replaceRoute({ t: "auth", c: { t: "login" } }),
+            playSound(APP_SOUND.navBackward),
+          ],
+        };
+      }
+
+      return { model };
+    }
+
     case "route-changed": {
       if (model.currentUser.t === "logged-in" && evt.route.t === "auth") {
         return {
@@ -230,7 +221,7 @@ const handleAuthRouteGuard: typeof updateFromEvent = ({ model, evt }) => {
         };
       }
 
-      if (model.currentUser.t === "logged-in" && evt.route.t !== "auth") {
+      if (model.currentUser.t === "logged-out" && evt.route.t !== "auth") {
         return {
           model,
           cmd: [replaceRoute({ t: "auth", c: { t: "login" } })],

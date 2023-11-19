@@ -3,7 +3,7 @@ import {
   ReqCtx,
   ServerCmd,
   ServerCtx,
-  ServerEvt
+  ServerEvt,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import {
   Eff,
@@ -14,7 +14,7 @@ import {
   isErr,
   ok,
   toMsgPayload,
-  toMsgType
+  toMsgType,
 } from "gamezilla/@SHARED/core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
 import * as ChatServer from "./@CHILD/chat/chat.server";
@@ -87,9 +87,7 @@ export const update = async (input: {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
 }> => {
-  input.ctx.logger.info(
-    `[msg] ${toMsgType(input.msg)} ${JSON.stringify(toMsgPayload(input.msg))}`
-  );
+  logMsg({ msg: input.msg, logger: input.ctx.logger });
 
   const updated = await updateMain(input);
 
@@ -108,9 +106,8 @@ export const update = async (input: {
     }
 
     for (const evt of acc.evt ?? []) {
-      input.ctx.logger.info(
-        `[evt] ${toMsgType(evt)} ${JSON.stringify(toMsgPayload(evt))}`
-      );
+      logMsg({ evt, logger: input.ctx.logger });
+
       const updatedEvt = await updateFromEvent({
         ...input,
         model: acc.model,
@@ -125,9 +122,8 @@ export const update = async (input: {
     }
 
     for (const cmd of acc.cmd ?? []) {
-      input.ctx.logger.info(
-        `[cmd] ${toMsgType(cmd)} ${JSON.stringify(toMsgPayload(cmd))}`
-      );
+      logMsg({ cmd, logger: input.ctx.logger });
+
       const updatedCmd = updateFromCmd({
         ...input,
         model: acc.model,
@@ -144,6 +140,25 @@ export const update = async (input: {
 
   return acc;
 };
+
+function logMsg({
+  msg,
+  evt,
+  cmd,
+  logger,
+}: {
+  logger: Logger;
+  msg?: ServerMsg;
+  evt?: ServerEvt;
+  cmd?: ServerCmd<ToClient>;
+}) {
+  const prefix = msg ? "[msg]" : evt ? "[evt]" : "[cmd]";
+  const obj = { ...msg, ...evt, ...cmd };
+
+  logger.info(
+    `${prefix} ${toMsgType(obj)}\n${JSON.stringify(toMsgPayload(obj))}\n`
+  );
+}
 
 const updateMain = async ({
   msg,

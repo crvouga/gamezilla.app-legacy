@@ -3,6 +3,7 @@ import { err, ok } from "gamezilla/@SHARED/core";
 import postgres from "postgres";
 import { toSql } from "./sql";
 import { Logger } from "../../@SHARED/server/logger";
+import { logQuery } from "./shared";
 
 export const createDbConnPostgres = async ({
   databaseUrl,
@@ -18,9 +19,13 @@ export const createDbConnPostgres = async ({
       try {
         const sql = toSql(rawSql, params);
 
-        logger.info(`[db] ${sql}`);
+        const start = Date.now();
 
         const rows = await database.unsafe(sql);
+
+        const end = Date.now();
+
+        logQuery({ logger, sql, start, end });
 
         const parsed = Array.isArray(rows)
           ? rows.flatMap((row) => {
