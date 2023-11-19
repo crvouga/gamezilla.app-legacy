@@ -13,9 +13,10 @@ type Subscriber<Model, Msg> = (
 export type Program<Model, Msg> = {
   dispatch: (msg: Msg) => void;
   subscribe: (subscriber: Subscriber<Model, Msg>) => () => void;
-  getState: () => Model;
-  setState: (state: Model) => void;
   start: () => () => void;
+  // internal functions for debuggers
+  _getState: () => Model;
+  _setState: (state: Model) => void;
 };
 
 export function create<Model, Msg>(input: {
@@ -121,8 +122,8 @@ export function create<Model, Msg>(input: {
     start,
     dispatch: enqueueMsg,
     subscribe,
-    getState: () => state.model,
-    setState: (newState) => {
+    _getState: () => state.model,
+    _setState: (newState) => {
       const ctx = {
         now: Posix.fromNumber(Date.now()),
       };
