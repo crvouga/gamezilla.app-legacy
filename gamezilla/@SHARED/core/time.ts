@@ -1,25 +1,60 @@
 import { Eff } from "./eff";
-import { p } from "./pipe";
 import { PubSub, Sub } from "./sub";
 import { Task } from "./task";
+import { TimeSpan } from "./time-span";
 
-export type Posix = number & { _tag: "Posix" };
+export type Posix = number & { Posix: "Posix" };
+
+const minPosixTime = new Date("1970-01-01T00:00:00.000Z").getTime();
+const maxPosixTime = new Date("2038-01-19T03:14:07.999Z").getTime();
+
+const is = (posixTime: unknown): posixTime is Posix => {
+  if (typeof posixTime !== "number") {
+    return false;
+  }
+
+  if (posixTime < minPosixTime || posixTime > maxPosixTime) {
+    return false;
+  }
+
+  return true;
+};
+
+const fromNumber = (posixTime: number): Posix => {
+  const clamped = Math.min(Math.max(posixTime, minPosixTime), maxPosixTime);
+  if (is(clamped)) {
+    return clamped;
+  }
+  throw new Error("impossible condition. failed to clamp posix time");
+};
+
+const toNumber = (posixTime: Posix): number => {
+  return posixTime;
+};
+
+const now = (): Posix => {
+  return fromNumber(Date.now());
+};
+
+const diff = (a: Posix, b: Posix): TimeSpan => {
+  return TimeSpan.fromMilliseconds(Math.abs(a - b));
+};
 
 export const Posix = {
-  is: (posixTime: unknown): posixTime is Posix => {
-    if (typeof posixTime !== "number") {
-      return false;
-    }
-
-    const minPosixTime = new Date("1970-01-01T00:00:00.000Z").getTime();
-    const maxPosixTime = new Date("2038-01-19T03:14:07.999Z").getTime();
-    if (posixTime < minPosixTime || posixTime > maxPosixTime) {
-      return false;
-    }
-
-    return true;
-  },
+  is,
+  fromNumber,
+  toNumber,
+  now,
+  diff,
 };
+
+//
+//
+//
+//
+//
+//
+//
 
 export const delay =
   <TMsg>(timeout: number, msg?: TMsg): Task<TMsg | null> =>
@@ -72,15 +107,18 @@ export const cancelTimeout = (timeoutId: string): Eff => {
 //
 //
 
-const intervals = new Map<string, PubSub<number>>();
+const intervals = new Map<string, PubSub<Posix>>();
 
-const onTimeout = (intervalId: string, time: number) => {
+const onTimeout = (intervalId: string, timeSpan: TimeSpan) => {
   const sub = intervals.get(intervalId);
 
   if (sub && sub.isSubscribed()) {
-    sub.publish(new Date().getTime());
+    sub.publish(Posix.now());
 
-    setTimeout(() => onTimeout(intervalId, time), time);
+    setTimeout(
+      () => onTimeout(intervalId, timeSpan),
+      TimeSpan.toMilliseconds(timeSpan)
+    );
 
     return;
   }
@@ -90,22 +128,22 @@ const onTimeout = (intervalId: string, time: number) => {
 
 export const every = <Msg>(
   intervalId: string,
-  time: number,
-  f: (time: number) => Msg
+  timeSpan: TimeSpan,
+  f: (now: Posix) => Msg
 ): Sub<Msg> => {
   const sub = intervals.get(intervalId);
 
   if (sub) {
-    return Sub.map(sub, () => f(Date.now()));
+    return Sub.map(sub, () => f(Posix.now()));
   }
 
-  const subNew = PubSub.create<number>();
+  const subNew = PubSub.create<Posix>();
 
   intervals.set(intervalId, subNew);
 
   setTimeout(() => {
-    onTimeout(intervalId, time);
-  }, time);
+    onTimeout(intervalId, timeSpan);
+  }, TimeSpan.toMilliseconds(timeSpan));
 
   return {
     subscribe: (subscriber) => {

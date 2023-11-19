@@ -20,6 +20,7 @@ export { Set } from "./set";
 export * from "./sub";
 export { Task } from "./task";
 export * as Time from "./time";
+export { Posix } from "./time";
+export { TimeSpan } from "./time-span";
 export * as Transition from "./transition";
-export { Posix } from "./unix-time";
 export * from "./utils";

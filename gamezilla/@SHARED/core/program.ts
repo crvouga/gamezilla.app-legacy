@@ -1,6 +1,6 @@
 import { Eff } from "./eff";
 import { Sub } from "./sub";
-import { Posix } from "./unix-time";
+import { Posix } from "./time";
 
 export type Ctx = { now: Posix };
 
@@ -30,10 +30,13 @@ export function create<Model, Msg>(input: {
         eff?: Eff<Msg>;
       }>;
   subscriptions: (input: {
+    intervalId: string;
     ctx: Ctx;
     model: Model;
   }) => Sub<Msg> | Promise<Sub<Msg>>;
 }): Program<Model, Msg> {
+  const programId = `program:${Math.random().toString(36).slice(2)}`;
+
   let subscriberId = 0;
   const subscribers = new Map<number, Subscriber<Model, Msg>>();
   let state = input.init({
@@ -67,7 +70,11 @@ export function create<Model, Msg>(input: {
     state = newState;
     publish(state.model, ctx, msg);
 
-    const sub = await input.subscriptions({ ctx, model: state.model });
+    const sub = await input.subscriptions({
+      intervalId: programId,
+      ctx,
+      model: state.model,
+    });
     if (unsubscribe) {
       unsubscribe();
     }

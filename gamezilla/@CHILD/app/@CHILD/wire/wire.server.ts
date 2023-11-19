@@ -223,31 +223,40 @@ export const createTransport = <ToServer, ToClient>() => {
     port: port,
 
     fetch(req, server) {
-      const reqUrl = req.url;
+      const url = new URL(req.url);
 
-      const parsedUrl = new URL(reqUrl);
+      switch (url.pathname) {
+        case "/ws": {
+          const maybeSessionId = url.searchParams.get("session-id");
 
-      if (parsedUrl.pathname === "/ws") {
-        const maybeSessionId = parsedUrl.searchParams.get("session-id");
+          const sessionId = SessionId.is(maybeSessionId)
+            ? maybeSessionId
+            : SessionId.generate();
 
-        const sessionId = SessionId.is(maybeSessionId)
-          ? maybeSessionId
-          : SessionId.generate();
+          const clientId = ClientId.generate();
 
-        const clientId = ClientId.generate();
+          const data: ServerWebSocketData = {
+            clientId,
+            sessionId,
+          };
 
-        const data: ServerWebSocketData = {
-          clientId,
-          sessionId,
-        };
+          const didUpgrade = server.upgrade(req, {
+            headers: {
+              "Set-Cookie": `session-id=${sessionId}; SameSite=None; Secure`,
+            },
+            data,
+          });
 
-        if (server.upgrade(req, { data })) {
-          return;
+          if (didUpgrade) {
+            return;
+          }
+          return new Response("Upgrade failed :(", { status: 500 });
         }
-        return new Response("Upgrade failed :(", { status: 500 });
-      }
 
-      return new Response("Hello from gamezilla server", { status: 404 });
+        default: {
+          return new Response("Hello from gamezilla server", { status: 404 });
+        }
+      }
     },
 
     websocket: {

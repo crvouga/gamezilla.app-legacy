@@ -11,6 +11,7 @@ import {
   ToServer,
   ToClient,
 } from "./tetris.core";
+import { TimeSpan } from "gamezilla/@SHARED/core/time-span";
 
 //
 //
@@ -108,5 +109,9 @@ export const updateFromClient = (
 //
 
 export const subscriptions = (intervalId: string, _model: Model): Sub<Msg> => {
-  return Time.every(intervalId, 500, (): Msg => ["tick"]);
+  return Time.every(
+    intervalId,
+    TimeSpan.fromMilliseconds(500),
+    (): Msg => ["tick"]
+  );
 };

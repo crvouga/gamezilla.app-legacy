@@ -2,6 +2,7 @@ import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Iso3166Alpha2Code,
   PhoneNumber,
+  Posix,
   RemoteResult,
   Result,
 } from "gamezilla/@SHARED/core";
@@ -34,9 +35,11 @@ export type ClientModel = {
   //
   codeInput: string;
   codeError: string | null;
-  timeoutId: string | null;
   //
+  sentCodeAt: Posix | null;
   sendCode: RemoteResult<string, null>;
+  //
+  verifiedCodeAt: Posix | null;
   verifyCode: RemoteResult<string, null>;
 };
 
@@ -44,10 +47,9 @@ export type ClientMsg =
   | { t: "inputted-phone-number"; phoneNumber: string }
   | { t: "inputted-country-code"; countryCode: Iso3166Alpha2Code }
   | { t: "clicked-send-code" }
-  | { t: "send-code-timed-out" }
   | { t: "inputted-code"; code: string }
   | { t: "clicked-verify-code"; phoneNumber: PhoneNumber }
-  | { t: "verify-code-timed-out" };
+  | { t: "time-passed"; now: Posix };
 
 type SentCode = {
   t: "sent-code";

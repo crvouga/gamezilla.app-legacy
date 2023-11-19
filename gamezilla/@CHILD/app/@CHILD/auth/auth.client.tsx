@@ -11,6 +11,7 @@ import {
   sendToServer,
   playSound,
   APP_SOUND,
+  ClientCtx,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
@@ -66,7 +67,9 @@ export const init = ({
 export const update = ({
   msg,
   model,
+  ctx,
 }: {
+  ctx: AnonymousClientCtx;
   route: AppRoute;
   msg: ClientMsg;
   model: ClientModel;
@@ -91,6 +94,7 @@ export const update = ({
       const updated = AuthClientSMS.update({
         model: model.sms,
         msg: msg.c,
+        ctx,
       });
       return {
         model: {
@@ -216,8 +220,20 @@ export const updateFromEvent = ({
 //
 //
 
-export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
-  return Sub.None;
+export const subscriptions = ({
+  intervalId,
+  model,
+}: {
+  intervalId: string;
+  model: ClientModel;
+}): Sub<ClientMsg> => {
+  return Sub.tag(
+    "sms",
+    AuthClientSMS.subscriptions({
+      model: model.sms,
+      intervalId: `${intervalId}/sms`,
+    })
+  );
 };
 
 //

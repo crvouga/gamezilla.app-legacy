@@ -203,6 +203,7 @@ const updateMain = ({
 
     case "auth": {
       const updated = AuthClient.update({
+        ctx: ctxApp,
         route: model.routing,
         msg: msg.c,
         model: model.auth,
@@ -582,9 +583,10 @@ const updateFromEvent = ({
 
 export const subscriptions = (input: {
   ctx: { now: Posix };
+  intervalId: string;
   model: ClientModel;
 }): Sub<ClientMsg> => {
-  const { model } = input;
+  const { model, intervalId } = input;
 
   const ctxApp = toCtx(input);
 
@@ -593,7 +595,13 @@ export const subscriptions = (input: {
     Sub.tag("wire", Wire.subscriptions),
     Sub.tag("platform", Platform.subscriptions),
     Sub.tag("routing", Routing.subscriptions),
-    Sub.tag("auth", AuthClient.subscriptions(model.auth)),
+    Sub.tag(
+      "auth",
+      AuthClient.subscriptions({
+        intervalId: `${intervalId}/auth`,
+        model: model.auth,
+      })
+    ),
     Sub.tag("space", SpaceClient.subscriptions(ctxApp, model.space)),
   ]);
 };

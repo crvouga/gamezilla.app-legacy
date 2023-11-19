@@ -32,6 +32,7 @@ import {
   startGame,
   stopPlaying,
 } from "./vs-user.core";
+import { TimeSpan } from "gamezilla/@SHARED/core/time-span";
 
 //
 //
@@ -356,7 +357,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
           const turn = toTurn(currentRound.board);
           return Time.every(
             `${intervalId}-move-count-down-${turn}`,
-            1000,
+            TimeSpan.fromSeconds(1),
             (): Msg => ["MoveCountDown"]
           );
         }
@@ -364,7 +365,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
         case "RoundStarting": {
           return Time.every(
             `${intervalId}-round-count-down`,
-            750,
+            TimeSpan.fromSeconds(3 / 4),
             (): Msg => ["RoundCountDown"]
           );
         }

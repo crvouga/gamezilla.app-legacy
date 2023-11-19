@@ -1,6 +1,7 @@
 import { NonNegInt, PosNum } from "gamezilla/@SHARED/core";
 import { Direction } from "./direction";
 import { Position } from "./position";
+import { TimeSpan } from "gamezilla/@SHARED/core/time-span";
 
 //
 //
@@ -17,7 +18,7 @@ export type Model = {
   food: Position;
   tailLength: NonNegInt;
   foodEatenCount: NonNegInt;
-  tickRate: PosNum;
+  tickRate: TimeSpan;
   direction: Direction;
   directionQueue: Direction[];
   bounds: {
@@ -63,7 +64,7 @@ const food: Model["food"] = Position.add(head, { x: 3, y: 0 });
 
 export const init: Model = {
   status: "Paused",
-  tickRate: PosNum.fromNum(1000 / 6),
+  tickRate: TimeSpan.fromMilliseconds(1000 / 6),
   head,
   tail,
   food,

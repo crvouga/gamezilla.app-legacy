@@ -1,16 +1,15 @@
 import {
   APP_SOUND,
+  AnonymousClientCtx,
   AnonymousViewCtx,
   ClientCmd,
   ClientEvt,
   RouteAuth,
-  cancelTimeout,
   focusView,
   playSound,
   pushRoute,
   sendToServer,
   showToast,
-  startTimeout,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   AlertError,
@@ -23,8 +22,13 @@ import {
 import {
   Iso3166Alpha2Code,
   PhoneNumber,
+  Posix,
   RemoteResult,
+  Sub,
+  Time,
+  chain,
   isErr,
+  TimeSpan,
 } from "gamezilla/@SHARED/core";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth-sms.core";
 
@@ -37,15 +41,20 @@ export const init: ClientModel = {
   phoneNumberError: null,
   //
   loggingIn: false,
-  timeoutId: null,
+
+  sentCodeAt: null,
   sendCode: RemoteResult.notAsked,
+
+  verifiedCodeAt: null,
   verifyCode: RemoteResult.notAsked,
 };
 
 export const update = ({
   model,
   msg,
+  ctx,
 }: {
+  ctx: AnonymousClientCtx;
   model: ClientModel;
   msg: ClientMsg;
 }): {
@@ -91,25 +100,58 @@ export const update = ({
         model: {
           ...model,
           sendCode: RemoteResult.loading,
+          sentCodeAt: ctx.now,
         },
-
         cmd: [
           sendToServer({
             t: "send-code",
             phoneNumber: phoneNumber.value,
           }),
-          startTimeout("send-code", 5_000, { t: "send-code-timed-out" }),
         ],
       };
     }
 
-    case "send-code-timed-out": {
-      return {
-        model: {
-          ...model,
-          sendCode: RemoteResult.err("Timed out"),
+    case "time-passed": {
+      return chain(
+        { model },
+        (model) => {
+          if (
+            model.sentCodeAt &&
+            model.sendCode.t === "loading" &&
+            TimeSpan.gte(
+              Posix.diff(ctx.now, model.sentCodeAt),
+              TimeSpan.fromSeconds(5)
+            )
+          ) {
+            return {
+              model: {
+                ...model,
+                sendCode: RemoteResult.err("Timed out"),
+              },
+            };
+          }
+          return { model };
         },
-      };
+        (model) => {
+          if (
+            model.verifiedCodeAt &&
+            model.verifyCode.t === "loading" &&
+            TimeSpan.gte(
+              Posix.diff(ctx.now, model.verifiedCodeAt),
+              TimeSpan.fromSeconds(5)
+            )
+          ) {
+            return {
+              model: {
+                ...model,
+                verifyCode: RemoteResult.err("Timed out"),
+              },
+            };
+          }
+
+          return { model };
+        }
+      );
     }
 
     case "inputted-code": {
@@ -135,6 +177,7 @@ export const update = ({
       return {
         model: {
           ...model,
+          verifiedCodeAt: ctx.now,
           verifyCode: RemoteResult.loading,
         },
         cmd: [
@@ -143,7 +186,6 @@ export const update = ({
             code: model.codeInput,
             phoneNumber: msg.phoneNumber,
           }),
-          startTimeout("verify-code", 5_000, { t: "verify-code-timed-out" }),
         ],
       };
     }
@@ -186,7 +228,6 @@ export const updateFromServer = ({
           ),
           focusView("codeInput"),
           playSound(APP_SOUND.navForwardMin),
-          cancelTimeout("send-code"),
         ],
       };
     }
@@ -201,7 +242,6 @@ export const updateFromServer = ({
           verifyCode: msg.result,
           loggingIn: true,
         },
-        cmd: [cancelTimeout("verify-code")],
       };
     }
   }
@@ -232,6 +272,23 @@ export const updateFromEvent = ({
       };
     }
   }
+};
+
+export const subscriptions = ({
+  intervalId,
+  model,
+}: {
+  intervalId: string;
+  model: ClientModel;
+}): Sub<ClientMsg> => {
+  if (model.sendCode.t === "loading" || model.verifyCode.t === "loading") {
+    return Time.every(intervalId, TimeSpan.fromMilliseconds(1000), (now) => ({
+      t: "time-passed",
+      now,
+    }));
+  }
+
+  return Sub.None;
 };
 
 export const View = ({

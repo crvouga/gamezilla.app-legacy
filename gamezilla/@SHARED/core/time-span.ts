@@ -113,6 +113,26 @@ const decode = (encoded: string): TimeSpan | null => {
   };
 };
 
+const eq = (timeSpan1: TimeSpan, timeSpan2: TimeSpan): boolean => {
+  return toMilliseconds(timeSpan1) === toMilliseconds(timeSpan2);
+};
+
+const gt = (timeSpan1: TimeSpan, timeSpan2: TimeSpan): boolean => {
+  return toMilliseconds(timeSpan1) > toMilliseconds(timeSpan2);
+};
+
+const lt = (timeSpan1: TimeSpan, timeSpan2: TimeSpan): boolean => {
+  return toMilliseconds(timeSpan1) < toMilliseconds(timeSpan2);
+};
+
+const gte = (timeSpan1: TimeSpan, timeSpan2: TimeSpan): boolean => {
+  return toMilliseconds(timeSpan1) >= toMilliseconds(timeSpan2);
+};
+
+const lte = (timeSpan1: TimeSpan, timeSpan2: TimeSpan): boolean => {
+  return toMilliseconds(timeSpan1) <= toMilliseconds(timeSpan2);
+};
+
 export const TimeSpan = {
   fromMilliseconds,
   fromSeconds,
@@ -129,8 +149,13 @@ export const TimeSpan = {
   toDays,
   add,
   subtract,
-  multiply: scale,
+  scale,
   encode,
   decode,
   toYears,
+  eq,
+  gt,
+  lt,
+  gte,
+  lte,
 };

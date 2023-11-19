@@ -30,6 +30,7 @@ import {
   transitionLoadingToStarted,
   updateCore,
 } from "./puzzle.core";
+import { TimeSpan } from "gamezilla/@SHARED/core/time-span";
 
 //
 //
@@ -425,7 +426,7 @@ export const updateFromEvent = ({
 //
 //
 
-const TICK_RATE = 500;
+const TICK_RATE = TimeSpan.fromMilliseconds(500);
 
 export const subscriptions = (
   intervalId: string,

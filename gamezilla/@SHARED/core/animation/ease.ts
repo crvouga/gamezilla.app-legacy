@@ -1,4 +1,4 @@
-import { Posix } from "../unix-time";
+import { Posix } from "../time";
 
 export type Easing =
   | { type: "ease-out-bounce"; n1?: number; d1?: number }

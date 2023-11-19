@@ -11,6 +11,7 @@ import {
   ToClient,
   ToServer,
 } from "./vs-user.core";
+import { TimeSpan } from "gamezilla/@SHARED/core/time-span";
 
 //
 //
@@ -135,10 +136,18 @@ export const subscriptions = (
 
       switch (turn) {
         case "b": {
-          return Time.every(`${intervalId}-b`, 1000, () => ["ClockTicked"]);
+          return Time.every(
+            `${intervalId}-b`,
+            TimeSpan.fromMilliseconds(1000),
+            () => ["ClockTicked"]
+          );
         }
         case "w": {
-          return Time.every(`${intervalId}-w`, 1000, () => ["ClockTicked"]);
+          return Time.every(
+            `${intervalId}-w`,
+            TimeSpan.fromMilliseconds(1000),
+            () => ["ClockTicked"]
+          );
         }
       }
     }
