@@ -546,7 +546,7 @@ const updateFromEvent = ({
 
   const auth = AuthClient.updateFromEvent({
     model: model.auth,
-    msg,
+    evt: msg,
     ctx: ctxApp,
   });
 

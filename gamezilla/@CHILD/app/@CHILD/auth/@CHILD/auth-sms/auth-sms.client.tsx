@@ -252,14 +252,14 @@ export const updateFromServer = ({
 
 export const updateFromEvent = ({
   model,
-  msg,
+  evt,
 }: {
   model: ClientModel;
-  msg: ClientEvt;
+  evt: ClientEvt;
 }): {
   model: ClientModel;
 } => {
-  switch (msg.t) {
+  switch (evt.t) {
     case "client-authenticated": {
       return {
         model: {

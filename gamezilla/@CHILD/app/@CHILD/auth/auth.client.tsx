@@ -194,24 +194,56 @@ export const updateFromServer = ({
 
 export const updateFromEvent = ({
   model,
-  msg,
+  evt,
+  ctx,
 }: {
   ctx: AnonymousClientCtx;
-  msg: ClientEvt;
+  evt: ClientEvt;
   model: ClientModel;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
-  const updated = AuthClientSMS.updateFromEvent({
-    model: model.sms,
-    msg: msg,
-  });
-  return {
-    model: { ...model, sms: updated.model },
-    // cmd: ClientCmd.tag("sms", updated.cmd),
-  };
+  return chain(
+    { model },
+    (model) => handleAuthRouteGuard({ ctx, model, evt }),
+    (model) => {
+      const updated = AuthClientSMS.updateFromEvent({
+        model: model.sms,
+        evt: evt,
+      });
+      return {
+        model: { ...model, sms: updated.model },
+      };
+    }
+  );
+};
+
+const handleAuthRouteGuard: typeof updateFromEvent = ({ model, evt }) => {
+  switch (evt.t) {
+    case "route-changed": {
+      if (model.currentUser.t === "logged-in" && evt.route.t === "auth") {
+        return {
+          model,
+          cmd: [replaceRoute({ t: "space", c: { t: "space-list" } })],
+        };
+      }
+
+      if (model.currentUser.t === "logged-in" && evt.route.t !== "auth") {
+        return {
+          model,
+          cmd: [replaceRoute({ t: "auth", c: { t: "login" } })],
+        };
+      }
+
+      return { model };
+    }
+
+    default: {
+      return { model };
+    }
+  }
 };
 
 //
