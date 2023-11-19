@@ -94,7 +94,7 @@ export const updateFromCmd = ({
 
             for (let i = 0; i < 10; i++) {
               element.focus();
-              console.log("focus", i, element);
+
               await new Promise((resolve) => setTimeout(resolve, 500));
               if (focused) {
                 break;
