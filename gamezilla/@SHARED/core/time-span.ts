@@ -70,16 +70,12 @@ const toYears = (timeSpan: TimeSpan): number => {
   return toMonths(timeSpan) / 12;
 };
 
-const add = (timeSpan1: TimeSpan, timeSpan2: TimeSpan): TimeSpan => {
-  return fromMilliseconds(
-    toMilliseconds(timeSpan1) + toMilliseconds(timeSpan2)
-  );
+const add = (left: TimeSpan, right: TimeSpan): TimeSpan => {
+  return fromMilliseconds(toMilliseconds(left) + toMilliseconds(right));
 };
 
-const subtract = (timeSpan1: TimeSpan, timeSpan2: TimeSpan): TimeSpan => {
-  return fromMilliseconds(
-    toMilliseconds(timeSpan1) - toMilliseconds(timeSpan2)
-  );
+const subtract = (left: TimeSpan, right: TimeSpan): TimeSpan => {
+  return fromMilliseconds(toMilliseconds(left) - toMilliseconds(right));
 };
 
 const scale = (timeSpan: TimeSpan, factor: number): TimeSpan => {
@@ -113,27 +109,34 @@ const decode = (encoded: string): TimeSpan | null => {
   };
 };
 
-const eq = (timeSpan1: TimeSpan, timeSpan2: TimeSpan): boolean => {
-  return toMilliseconds(timeSpan1) === toMilliseconds(timeSpan2);
+const eq = (left: TimeSpan, right: TimeSpan): boolean => {
+  return toMilliseconds(left) === toMilliseconds(right);
 };
 
-const gt = (timeSpan1: TimeSpan, timeSpan2: TimeSpan): boolean => {
-  return toMilliseconds(timeSpan1) > toMilliseconds(timeSpan2);
+const gt = (left: TimeSpan, right: TimeSpan): boolean => {
+  return toMilliseconds(left) > toMilliseconds(right);
 };
 
-const lt = (timeSpan1: TimeSpan, timeSpan2: TimeSpan): boolean => {
-  return toMilliseconds(timeSpan1) < toMilliseconds(timeSpan2);
+const lt = (left: TimeSpan, right: TimeSpan): boolean => {
+  return toMilliseconds(left) < toMilliseconds(right);
 };
 
-const gte = (timeSpan1: TimeSpan, timeSpan2: TimeSpan): boolean => {
-  return toMilliseconds(timeSpan1) >= toMilliseconds(timeSpan2);
+const gte = (left: TimeSpan, right: TimeSpan): boolean => {
+  return toMilliseconds(left) >= toMilliseconds(right);
 };
 
-const lte = (timeSpan1: TimeSpan, timeSpan2: TimeSpan): boolean => {
-  return toMilliseconds(timeSpan1) <= toMilliseconds(timeSpan2);
+const lte = (left: TimeSpan, right: TimeSpan): boolean => {
+  return toMilliseconds(left) <= toMilliseconds(right);
 };
 
+/**
+ * @description
+ * `TimeSpan` represents a duration of time.
+ */
 export const TimeSpan = {
+  //
+  //
+  //
   fromMilliseconds,
   fromSeconds,
   fromMinutes,
@@ -142,20 +145,32 @@ export const TimeSpan = {
   fromWeeks,
   fromMonths,
   fromYears,
+  //
+  //
+  //
   toMilliseconds,
   toSeconds,
   toMinutes,
   toHours,
   toDays,
+  toYears,
+  //
+  //
+  //
   add,
   subtract,
   scale,
-  encode,
-  decode,
-  toYears,
+  //
+  //
+  //
   eq,
   gt,
   lt,
   gte,
   lte,
+  //
+  //
+  //
+  encode,
+  decode,
 };
