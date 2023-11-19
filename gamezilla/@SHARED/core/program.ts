@@ -14,12 +14,14 @@ export type Program<Model, Msg> = {
   dispatch: (msg: Msg) => void;
   subscribe: (subscriber: Subscriber<Model, Msg>) => () => void;
   start: () => () => void;
-  // internal functions for debuggers
-  _getState: () => Model;
-  _setState: (state: Model) => void;
+
+  _debugger: {
+    getModel: () => Model;
+    setModel: (model: Model) => void;
+  };
 };
 
-export function create<Model, Msg>(input: {
+type ProgramConfig<Model, Msg> = {
   init: (input: { ctx: Ctx }) => { model: Model; eff?: Eff<Msg> };
   update: (input: { ctx: Ctx; msg: Msg; model: Model }) =>
     | {
@@ -35,30 +37,38 @@ export function create<Model, Msg>(input: {
     ctx: Ctx;
     model: Model;
   }) => Sub<Msg> | Promise<Sub<Msg>>;
-}): Program<Model, Msg> {
+};
+
+export function create<Model, Msg>(
+  input: ProgramConfig<Model, Msg>
+): Program<Model, Msg> {
   const programId = `program:${Math.random().toString(36).slice(2)}`;
 
-  let subscriberId = 0;
   const subscribers = new Map<number, Subscriber<Model, Msg>>();
+
   let state = input.init({
     ctx: {
       now: Posix.fromNumber(Date.now()),
     },
   });
+
   let isProcessing = false;
+
   const messageQueue: Msg[] = [];
+
   let unsubscribe: () => void = () => {};
 
   async function publish(model: Model, ctx: Ctx, msg: Msg | null) {
+    const promises: (void | Promise<void>)[] = [];
     for (const subscriber of subscribers.values()) {
-      await subscriber(model, ctx, msg);
+      promises.push(subscriber(model, ctx, msg));
     }
+    await Promise.allSettled(promises);
   }
 
-  async function dispatch(msg: Msg) {
-    const ctx = {
-      now: Posix.fromNumber(Date.now()),
-    };
+  async function handleMsg(msg: Msg) {
+    const ctx = { now: Posix.now() };
+
     const updated = await input.update({ ctx, msg, model: state.model });
     setState(updated, ctx, msg);
   }
@@ -79,14 +89,14 @@ export function create<Model, Msg>(input: {
     if (unsubscribe) {
       unsubscribe();
     }
-    unsubscribe = sub.subscribe((msg) => enqueueMsg(msg));
+    unsubscribe = sub.subscribe((msg) => dispatch(msg));
 
     if (state.eff) {
-      state.eff(enqueueMsg);
+      state.eff(dispatch);
     }
   }
 
-  function enqueueMsg(msg: Msg) {
+  function dispatch(msg: Msg) {
     messageQueue.push(msg);
     processQueue();
   }
@@ -96,38 +106,61 @@ export function create<Model, Msg>(input: {
     isProcessing = true;
     const msg = messageQueue.shift();
     if (msg) {
-      await dispatch(msg);
+      await handleMsg(msg);
     }
     isProcessing = false;
     processQueue();
   }
 
+  //
+  //
+  //
+  //
+
+  let runningSubscriberId = 0;
   const subscribe = (subscriber: Subscriber<Model, Msg>): (() => void) => {
-    subscribers.set(++subscriberId, subscriber);
-    return () => subscribers.delete(subscriberId);
+    subscribers.set(++runningSubscriberId, subscriber);
+
+    const unsubscribe = () => {
+      subscribers.delete(runningSubscriberId);
+    };
+
+    return unsubscribe;
   };
 
   const start = () => {
-    const ctx = {
-      now: Posix.fromNumber(Date.now()),
-    };
+    const ctx = { now: Posix.now() };
+
     setState(state, ctx, null);
-    return () => {
-      if (unsubscribe) unsubscribe();
+
+    const stop = () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
       subscribers.clear();
     };
+
+    return stop;
+  };
+
+  const getModel = () => {
+    return state.model;
+  };
+
+  const setModel = (newState: Model) => {
+    const ctx = { now: Posix.now() };
+
+    state = { model: newState };
+    publish(state.model, ctx, null);
   };
 
   return {
     start,
-    dispatch: enqueueMsg,
+    dispatch,
     subscribe,
-    _getState: () => state.model,
-    _setState: (newState) => {
-      const ctx = {
-        now: Posix.fromNumber(Date.now()),
-      };
-      setState({ model: newState }, ctx, null);
+    _debugger: {
+      getModel,
+      setModel,
     },
   };
 }
