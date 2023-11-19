@@ -434,7 +434,7 @@ export const subscriptions = (
 ): Sub<ServerMsg> => {
   switch (model.t) {
     case "started": {
-      return Time.every(intervalId, TICK_RATE, () => ({ t: "clock-tick" }));
+      return Time.interval(intervalId, TICK_RATE, () => ({ t: "clock-tick" }));
     }
     default: {
       return Sub.None;

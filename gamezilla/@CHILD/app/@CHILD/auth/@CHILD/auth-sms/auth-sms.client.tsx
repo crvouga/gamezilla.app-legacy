@@ -282,10 +282,14 @@ export const subscriptions = ({
   model: ClientModel;
 }): Sub<ClientMsg> => {
   if (model.sendCode.t === "loading" || model.verifyCode.t === "loading") {
-    return Time.every(intervalId, TimeSpan.fromMilliseconds(1000), (now) => ({
-      t: "time-passed",
-      now,
-    }));
+    return Time.interval(
+      intervalId,
+      TimeSpan.fromMilliseconds(1000),
+      (now) => ({
+        t: "time-passed",
+        now,
+      })
+    );
   }
 
   return Sub.None;

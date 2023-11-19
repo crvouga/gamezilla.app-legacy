@@ -355,7 +355,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
       switch (currentRound.type) {
         case "RoundStarted": {
           const turn = toTurn(currentRound.board);
-          return Time.every(
+          return Time.interval(
             `${intervalId}-move-count-down-${turn}`,
             TimeSpan.fromSeconds(1),
             (): Msg => ["MoveCountDown"]
@@ -363,7 +363,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
         }
 
         case "RoundStarting": {
-          return Time.every(
+          return Time.interval(
             `${intervalId}-round-count-down`,
             TimeSpan.fromSeconds(3 / 4),
             (): Msg => ["RoundCountDown"]

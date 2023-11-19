@@ -126,7 +126,7 @@ const onTimeout = (intervalId: string, timeSpan: TimeSpan) => {
   intervals.delete(intervalId);
 };
 
-export const every = <Msg>(
+export const interval = <Msg>(
   intervalId: string,
   timeSpan: TimeSpan,
   f: (now: Posix) => Msg

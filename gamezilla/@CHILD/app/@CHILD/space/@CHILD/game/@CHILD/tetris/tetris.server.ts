@@ -109,7 +109,7 @@ export const updateFromClient = (
 //
 
 export const subscriptions = (intervalId: string, _model: Model): Sub<Msg> => {
-  return Time.every(
+  return Time.interval(
     intervalId,
     TimeSpan.fromMilliseconds(500),
     (): Msg => ["tick"]

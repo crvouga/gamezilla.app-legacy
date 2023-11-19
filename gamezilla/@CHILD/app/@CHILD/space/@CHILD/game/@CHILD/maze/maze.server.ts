@@ -73,7 +73,9 @@ export const subscriptions = (
   model: ServerModel
 ): Sub<Msg> => {
   if (model.type === "game") {
-    return Time.every(intervalId, TimeSpan.fromSeconds(1 / 2), () => ["tick"]);
+    return Time.interval(intervalId, TimeSpan.fromSeconds(1 / 2), () => [
+      "tick",
+    ]);
     // return Sub.None
   }
   return Sub.None;

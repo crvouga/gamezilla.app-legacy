@@ -109,7 +109,7 @@ export const subscriptions = (intervalId: string, model: Model): Sub<Msg> => {
     }
 
     case "Playing": {
-      return Time.every<Msg>(intervalId, model.tickRate, () => ["tick"]);
+      return Time.interval<Msg>(intervalId, model.tickRate, () => ["tick"]);
     }
   }
 };
