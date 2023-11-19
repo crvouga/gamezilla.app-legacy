@@ -41,6 +41,10 @@ async function main() {
   });
 
   program.start();
+
+  program.subscribe((model) => {
+    ctx.logger.info(`[program] ${JSON.stringify(model)}`);
+  });
 }
 
 main();

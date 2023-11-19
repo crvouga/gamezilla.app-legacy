@@ -9,6 +9,7 @@ export default defineConfig({
     tsconfigPaths(),
     preact(),
     VitePWA({
+      registerType: "prompt",
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.png"],
       manifest: {
         name: "gamezilla.app",
