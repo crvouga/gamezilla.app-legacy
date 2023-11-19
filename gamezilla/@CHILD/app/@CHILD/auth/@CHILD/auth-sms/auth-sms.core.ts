@@ -8,14 +8,7 @@ import {
 } from "gamezilla/@SHARED/core";
 import { Account } from "../../auth.core";
 
-export type ServerModel = {
-  verifications: {
-    [id: string]: {
-      verify: RemoteResult<string, null>;
-      phoneNumber: PhoneNumber;
-    };
-  };
-};
+export type ServerModel = null;
 
 export type Route =
   | {

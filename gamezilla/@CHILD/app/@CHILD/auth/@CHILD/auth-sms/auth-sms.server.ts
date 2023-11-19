@@ -13,9 +13,7 @@ import { Account } from "../../auth.core";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth-sms.core";
 import { VerifySMS } from "./server/verify-sms/verify-sms-impl";
 
-export const init: ServerModel = {
-  verifications: {},
-};
+export const init: ServerModel = null;
 
 export const update = ({
   msg,

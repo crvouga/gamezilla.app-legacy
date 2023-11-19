@@ -19,10 +19,15 @@ export const init = ({
   };
 };
 
-export type Msg = {
-  t: "document-visibility-change";
-  state: DocumentVisibilityState;
-};
+export type Msg =
+  | {
+      t: "document-visibility-change";
+      state: DocumentVisibilityState;
+    }
+  | {
+      t: "element-focused";
+      id: string;
+    };
 
 export const update = ({
   msg,
@@ -40,6 +45,12 @@ export const update = ({
           ...model,
           documentVisibilityState: msg.state,
         },
+      };
+    }
+
+    case "element-focused": {
+      return {
+        model,
       };
     }
   }
@@ -62,11 +73,36 @@ export const updateFromCmd = ({
     case "view/focus": {
       return {
         model,
-        eff: () => {
+        eff: async (dispatch) => {
           const element = document.getElementById(cmd.htmlId);
-          if (element) {
-            element.focus();
+
+          if (!element) {
+            return;
           }
+
+          await new Promise<null>(async (resolve) => {
+            let focused = false;
+            const handler = () => {
+              focused = true;
+              element.removeEventListener("focus", handler);
+              dispatch({
+                t: "element-focused",
+                id: cmd.htmlId,
+              });
+            };
+            element.addEventListener("focus", handler);
+
+            for (let i = 0; i < 10; i++) {
+              element.focus();
+              console.log("focus", i, element);
+              await new Promise((resolve) => setTimeout(resolve, 500));
+              if (focused) {
+                break;
+              }
+            }
+
+            resolve(null);
+          });
         },
       };
     }

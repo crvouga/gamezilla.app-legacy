@@ -189,12 +189,10 @@ export const update = ({
         ],
       };
     }
-
-    default: {
-      return { model };
-    }
   }
 };
+
+const CODE_INPUT_VIEW_ID = "codeInput";
 
 export const updateFromServer = ({
   msg,
@@ -212,7 +210,12 @@ export const updateFromServer = ({
         return { model: { ...model, sendCode: msg.result } };
       }
       return {
-        model: { ...model, sendCode: msg.result, codeInput: "" },
+        model: {
+          ...model,
+          sendCode: msg.result,
+          verifyCode: RemoteResult.notAsked,
+          codeInput: "",
+        },
         cmd: [
           pushRoute({
             t: "auth",
@@ -226,7 +229,7 @@ export const updateFromServer = ({
             "info",
             4000
           ),
-          focusView("codeInput"),
+          focusView(CODE_INPUT_VIEW_ID),
           playSound(APP_SOUND.navForwardMin),
         ],
       };
@@ -378,7 +381,7 @@ export const View = ({
           <div class="flex w-full flex-col gap-6 p-4 py-6">
             <TextField
               value={model.codeInput}
-              id="codeInput"
+              id={CODE_INPUT_VIEW_ID}
               label="Code"
               error={typeof model.codeError === "string"}
               helperText={
