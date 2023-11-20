@@ -1,8 +1,8 @@
-import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { SpaceClientCtx, SpaceClientEvt, SpaceViewCtx } from "../space";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { ActivityFeedItem } from "../activity-feed";
+import { SpaceClientEvt } from "../space";
 
 export type GameClientTypes = {
   //
