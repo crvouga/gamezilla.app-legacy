@@ -360,9 +360,17 @@ export const updateFromEvent = async (input: {
   eff?: Eff<ServerMsg>;
   cmd?: ServerCmd<ToClient>[];
 }> => {
-  const { msg } = input;
+  const { msg, model } = input;
 
   switch (msg.t) {
+    case "client-disconnected": {
+      return {
+        model: {
+          ...model,
+        },
+      };
+    }
+
     default: {
       return input;
     }
