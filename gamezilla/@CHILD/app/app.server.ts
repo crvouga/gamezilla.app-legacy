@@ -13,7 +13,6 @@ import {
   err,
   isErr,
   ok,
-  toMsgPayload,
   toMsgType,
 } from "gamezilla/@SHARED/core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
@@ -21,6 +20,8 @@ import * as ChatServer from "./@CHILD/chat/chat.server";
 import * as ProfileServer from "./@CHILD/profile/profile.server";
 import * as SearchServer from "./@CHILD/search/search.server";
 import * as SpaceServer from "./@CHILD/space/space.server";
+
+import { ServerTransport } from "./@CHILD/wire/transport-server";
 import * as WireServer from "./@CHILD/wire/wire.server";
 import { Logger, LoggerConsole } from "./@SHARED/server/logger";
 import { createDbConn } from "./app-server/db-conn-sql";
@@ -35,10 +36,7 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./app.core";
 //
 //
 
-const { toClient, toClientBroadcast, toServer } = WireServer.createTransport<
-  ToServer,
-  ToClient
->();
+const transport = ServerTransport<ToServer, ToClient>("bun-web-sockets");
 
 //
 //
@@ -424,16 +422,15 @@ const updateFromCmd = ({
   cmd?: ServerCmd<ToClient>[];
 } => {
   switch (cmd.t) {
-    case "wire/publish":
-    case "wire/subscribe":
+    case "wire/topic-publish":
+    case "wire/topic-subscribe":
     case "wire/send-to-user":
     case "wire/broadcast":
     case "wire/send-to-client": {
-      const updated = WireServer.updateFromCmd({
+      const updated = WireServer.updateFromCmd<ToServer, ToClient>({
         cmd,
         model: model.wire,
-        toClient: toClient,
-        toClientBroadcast: toClientBroadcast,
+        transport,
         sessionIdByUserId: model.auth.sessionIdByUserId,
       });
       return {
@@ -467,10 +464,10 @@ export const subscriptions = async ({
       "space",
       await SpaceServer.subscriptions({ model: model.space, ctx })
     ),
-    Sub.tag("wire", WireServer.subscriptions),
+    Sub.tag("wire", WireServer.subscriptions({ transport })),
 
     Sub.flat(
-      Sub.map(toServer, ({ sessionId, clientId, msgs }) =>
+      Sub.map(transport.toServer, ({ sessionId, clientId, msgs }) =>
         msgs.map(
           (msg: any): ServerMsg => ({
             t: "➡️",

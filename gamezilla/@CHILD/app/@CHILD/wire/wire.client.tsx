@@ -5,14 +5,8 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconSpinner } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Pub, PubSub } from "gamezilla/@SHARED/core";
-import {
-  ClientModel,
-  ClientMsg,
-  ClientToServerMsg,
-  ServerToClientMsg,
-  ToClient,
-  ToServer,
-} from "./wire.core";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./wire.core";
+import { ClientToServerMsg, ServerToClientMsg } from "./transport.core";
 
 //
 //

@@ -15,6 +15,7 @@ import {
   broadcast,
   sendToClient,
   sendToUser,
+  topicPublish,
   topicSubscribe,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import * as GameServer from "./@CHILD/game/game.server";
@@ -331,6 +332,7 @@ const appendEventServer = async (
     },
     eff: updated.eff,
     cmd: [
+      topicPublish([`space/${event.spaceId}`, "spaces"], event),
       event.t === "game" && next.type === "started"
         ? sendToUser(Object.values(next.users), event)
         : broadcast(event),
@@ -377,7 +379,10 @@ export const updateFromEvent = async (input: {
 
       return {
         model,
-        cmd: [topicSubscribe([`space/${state.spaceId}`], [msg.clientId])],
+        cmd: [
+          topicSubscribe([`space/${state.spaceId}`], [msg.clientId]),
+          topicSubscribe([`spaces`], [msg.clientId]),
+        ],
       };
     }
 

@@ -1,5 +1,6 @@
 import { Posix } from "gamezilla/@SHARED/core";
 import { ClientId, SessionId } from "../../@SHARED/data";
+import { ServerTransportMsg } from "./transport-server";
 
 //
 //
@@ -32,10 +33,7 @@ export type Client = {
   status: "connected" | "disconnected";
 };
 
-export type ServerMsg =
-  | { t: "client-connected"; clientId: ClientId; sessionId: SessionId }
-  | { t: "client-disconnected"; clientId: ClientId; sessionId: SessionId }
-  | { t: "server-started" };
+export type ServerMsg = ServerTransportMsg;
 
 //
 //
@@ -47,16 +45,3 @@ export type ServerMsg =
 export type ToServer = { t: null };
 
 export type ToClient = { t: "server-restarted" };
-
-//
-//
-//
-//
-//
-//
-
-export type ServerToClientMsg<ToClient> =
-  | { t: "to-client"; msgs: ToClient[] }
-  | { t: "session-id"; sessionId: SessionId };
-
-export type ClientToServerMsg<ToServer> = { t: "to-server"; msgs: ToServer[] };

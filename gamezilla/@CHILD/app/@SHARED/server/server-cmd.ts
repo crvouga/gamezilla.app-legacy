@@ -24,12 +24,12 @@ export type ServerCmd<ToClient> =
       msg: ToClient;
     }
   | {
-      t: "wire/publish";
+      t: "wire/topic-publish";
       topics: string[];
       msg: ToClient;
     }
   | {
-      t: "wire/subscribe";
+      t: "wire/topic-subscribe";
       topics: string[];
       clientIds: ClientId[];
     };
@@ -46,7 +46,7 @@ export const topicPublish = <ToClient>(
   msg: ToClient
 ): ServerCmd<ToClient> => {
   return {
-    t: "wire/publish",
+    t: "wire/topic-publish",
     topics,
     msg,
   };
@@ -57,7 +57,7 @@ export const topicSubscribe = <ToClient>(
   clientIds: ClientId[]
 ): ServerCmd<ToClient> => {
   return {
-    t: "wire/subscribe",
+    t: "wire/topic-subscribe",
     topics,
     clientIds,
   };
@@ -105,11 +105,11 @@ const mapOne = <A, B>(fn: (a: A) => B, cmd: ServerCmd<A>): ServerCmd<B> => {
   switch (cmd.t) {
     case "wire/send-to-client":
     case "wire/send-to-user":
-    case "wire/publish":
+    case "wire/topic-publish":
     case "wire/broadcast": {
       return { ...cmd, msg: fn(cmd.msg) };
     }
-    case "wire/subscribe": {
+    case "wire/topic-subscribe": {
       return cmd;
     }
   }
