@@ -444,6 +444,9 @@ export const View = ({
               onChange={(value) => {
                 dispatch({ t: "inputted-code", code: value });
               }}
+              onClear={() => {
+                dispatch({ t: "clicked-code-clear" });
+              }}
             />
             <Button
               class="w-full"
