@@ -32,12 +32,14 @@ const program = Program.create({
 });
 
 program.subscribe((model, ctx) => {
-  modelStorage.set(model);
-
   render(
     <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
     document.body
   );
+});
+
+program.subscribe((model) => {
+  modelStorage.set(model);
 });
 
 attachDebugger(program);
