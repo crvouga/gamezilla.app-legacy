@@ -56,25 +56,26 @@ export const update = ({
   }
 };
 
-export const updateFromCmd = ({
+export const updateFromCmd = <TClientMsg, TToServer>({
   cmd,
   model,
 }: {
   cmd: PlatformCmd<{
-    ClientMsg: Msg;
-    ToServer: any;
+    ClientMsg: TClientMsg;
+    ToServer: TToServer;
   }>;
   model: Model;
 }): {
   model: Model;
+  parentEff?: Eff<TClientMsg>;
   eff?: Eff<Msg>;
 } => {
   switch (cmd.t) {
-    case "view/focus": {
+    case "platform/focus": {
       return {
         model,
         eff: async (dispatch) => {
-          const element = document.getElementById(cmd.htmlId);
+          const element = document.getElementById(cmd.viewId);
 
           if (!element) {
             return;
@@ -87,7 +88,7 @@ export const updateFromCmd = ({
               element.removeEventListener("focus", handler);
               dispatch({
                 t: "element-focused",
-                id: cmd.htmlId,
+                id: cmd.viewId,
               });
             };
             element.addEventListener("focus", handler);
@@ -107,17 +108,17 @@ export const updateFromCmd = ({
       };
     }
 
-    case "time/start-timeout": {
+    case "platform/start-timeout": {
       return {
         model,
-        eff: Time.startTimeout(cmd.timeoutId, cmd.duration, cmd.msg),
+        parentEff: Time.startTimeout(cmd.timeoutId, cmd.duration, cmd.msg),
       };
     }
 
-    case "time/cancel-timeout": {
+    case "platform/cancel-timeout": {
       return {
         model,
-        eff: Time.cancelTimeout(cmd.timeoutId),
+        parentEff: Time.cancelTimeout(cmd.timeoutId),
       };
     }
 

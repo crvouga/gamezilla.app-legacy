@@ -488,22 +488,16 @@ const updateFromCmd = ({
       };
     }
 
-    case "time/start-timeout":
-    case "time/cancel-timeout": {
-      return {
-        model,
-        eff: Time.cancelTimeout(cmd.timeoutId),
-      };
-    }
-
-    case "view/focus": {
+    case "platform/start-timeout":
+    case "platform/cancel-timeout":
+    case "platform/focus": {
       const updated = Platform.updateFromCmd({
-        cmd: cmd,
         model: model.platform,
+        cmd,
       });
       return {
         model: { ...model, platform: updated.model },
-        eff: Eff.t("platform", updated.eff),
+        eff: Eff.batch([Eff.t("platform", updated.eff), updated.parentEff]),
       };
     }
 

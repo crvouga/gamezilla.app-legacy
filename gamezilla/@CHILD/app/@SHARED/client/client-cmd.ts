@@ -26,31 +26,27 @@ export type ClientCmd<T extends ClientCmdTypes> =
 //
 //
 
-export type PlatformCmd<T extends ClientCmdTypes> = ViewCmd | TimeCmd<T>;
-
-type ViewCmd = {
-  t: "view/focus";
-  htmlId: string;
-};
-
-export const focusView = <T extends ClientCmdTypes>(
-  htmlId: string
-): ClientCmd<T> => {
-  return { t: "view/focus", htmlId };
-};
-
-export type TimeCmd<T extends ClientCmdTypes> =
+export type PlatformCmd<T extends ClientCmdTypes> =
   | {
-      t: "time/start-timeout";
+      t: "platform/focus";
+      viewId: string;
+    }
+  | {
+      t: "platform/start-timeout";
       timeoutId: string;
       duration: number;
       msg: T["ClientMsg"];
     }
   | {
-      t: "time/cancel-timeout";
-
+      t: "platform/cancel-timeout";
       timeoutId: string;
     };
+
+export const focusView = <T extends ClientCmdTypes>(
+  viewId: string
+): ClientCmd<T> => {
+  return { t: "platform/focus", viewId: viewId };
+};
 
 export const startTimeout = <T extends ClientCmdTypes>(
   timeoutId: string,
@@ -58,7 +54,7 @@ export const startTimeout = <T extends ClientCmdTypes>(
   msg: T["ClientMsg"]
 ): ClientCmd<T> => {
   return {
-    t: "time/start-timeout",
+    t: "platform/start-timeout",
     timeoutId,
     duration,
     msg,
@@ -69,7 +65,7 @@ export const cancelTimeout = <T extends ClientCmdTypes>(
   timeoutId: string
 ): ClientCmd<T> => {
   return {
-    t: "time/cancel-timeout",
+    t: "platform/cancel-timeout",
     timeoutId,
   };
 };
@@ -218,7 +214,7 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
       return { ...cmd, msg: null };
     }
 
-    case "time/start-timeout": {
+    case "platform/start-timeout": {
       return {
         ...cmd,
         msg: { t, c: cmd.msg },
@@ -254,7 +250,7 @@ const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
         }
         return { ...cmd, msg: null };
       }
-      case "time/start-timeout": {
+      case "platform/start-timeout": {
         return {
           ...cmd,
           msg: clientMsgMap(cmd.msg),
