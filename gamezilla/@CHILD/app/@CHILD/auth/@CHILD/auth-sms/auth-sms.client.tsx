@@ -347,7 +347,7 @@ export const View = ({
   switch (route.t) {
     case "login-phone": {
       return (
-        <div class="w-full">
+        <div class="w-full flex-1">
           <TopBar
             left={<TopBarBackButton onClick={() => ctx.back()} />}
             title="Login with phone"
@@ -407,7 +407,7 @@ export const View = ({
 
     case "login-phone-verify": {
       return (
-        <div class="w-full">
+        <div class="w-full flex-1">
           <TopBar
             left={<TopBarBackButton onClick={() => ctx.back()} />}
             title="Login with phone"

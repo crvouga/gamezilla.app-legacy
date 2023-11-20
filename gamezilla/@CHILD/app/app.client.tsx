@@ -624,7 +624,7 @@ export const View = ({
   dispatch: (msg: ClientMsg) => void;
 }) => {
   return (
-    <div class="fixed left-1/2 top-1/2 mx-auto box-content flex h-full max-h-[850px] w-full max-w-md -translate-x-1/2 -translate-y-1/2 touch-none select-none flex-col overflow-hidden rounded border border-neutral-700 bg-black text-white">
+    <div class="flex h-full w-full flex-col items-center justify-center">
       <ViewMain model={model} now={now} dispatch={dispatch} />
 
       <Wire.View model={model.wire} />
