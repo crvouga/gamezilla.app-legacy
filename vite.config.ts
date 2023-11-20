@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import preact from "@preact/preset-vite";
 import { VitePWA } from "vite-plugin-pwa";
+
 const vitePWA = VitePWA({
   registerType: "prompt",
   includeAssets: ["favicon.ico", "apple-touch-icon.png", "mask-icon.png"],
