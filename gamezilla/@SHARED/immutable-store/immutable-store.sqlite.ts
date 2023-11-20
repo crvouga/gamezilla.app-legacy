@@ -36,11 +36,13 @@ type Row = {
 export const SqliteStore = <TKey extends string | number, TValue>({
   connectionString,
   namespace,
+  encodeValue,
+  decodeValue,
 }: {
   namespace: string;
   connectionString: string;
   decodeValue: (encoded: string) => TValue | null;
-  encodeValue: (value: TValue) => string | null;
+  encodeValue: (value: TValue | null) => string | null;
 }): IStore<TKey, TValue> => {
   const db = new Database(connectionString);
 
@@ -53,7 +55,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
   const append = async (
     now: number,
     instance: StoreInstance<TKey, TValue>,
-    entries: [TKey, TValue | undefined][]
+    entries: [TKey, TValue | null][]
   ): Promise<StoreInstance<TKey, TValue>> => {
     const instanceNew: StoreInstance<TKey, TValue> = {
       timestamp: now,
@@ -61,9 +63,22 @@ export const SqliteStore = <TKey extends string | number, TValue>({
       appendStep: runningAppendStep++,
     };
 
-    const sql_values = entries.map(([key, value]) => {});
+    const sql_values = entries
+      .map(([key, value]) => {
+        const value_sql = (value ? encodeValue(value) : null) ?? "NULL";
+        return [
+          quote(namespace),
+          quote(key),
+          quote(instanceNew.timestamp),
+          instanceNew.appendStep,
+          instanceNew.instanceStep,
+          quote(value_sql),
+        ].join(", ");
+      })
+      .map((values) => `(${values})`)
+      .join(",\n");
 
-    const sql = `
+    const sql_query = `
       INSERT INTO immutable_store (
         namespace,
         key,
@@ -71,10 +86,11 @@ export const SqliteStore = <TKey extends string | number, TValue>({
         append_step,
         instance_step,
         value
-      ) VALUES (
-        ${sql_values}
-      )
+      ) VALUES
+      ${sql_values}
     `;
+
+    db.query(sql_query).run();
 
     return instanceNew;
   };
@@ -96,14 +112,14 @@ export const SqliteStore = <TKey extends string | number, TValue>({
     },
 
     async dissoc(now, instance, key) {
-      return append(now, instance, [[key, undefined]]);
+      return append(now, instance, [[key, null]]);
     },
 
     async dissocMany(now, instance, keys) {
       return append(
         now,
         instance,
-        keys.map((key) => [key, undefined])
+        keys.map((key) => [key, null])
       );
     },
 
@@ -143,10 +159,26 @@ export const SqliteStore = <TKey extends string | number, TValue>({
             timestamp <= :to
         ORDER BY
             timestamp DESC,
-            instance_step ASC,
-            append_step ASC
+            instance_step DESC,
+            append_step DESC
         LIMIT 1
       `;
+
+      const rows = db.query(query).all();
+
+      const parsed = rows.flatMap((row) => {
+        if (
+          typeof row === "object" &&
+          row !== null &&
+          "value" in row &&
+          typeof row.value === "string"
+        ) {
+          return {
+            ...row,
+            value: decodeValue(row.value),
+          };
+        }
+      });
 
       for (const entry of map.get(key) ?? []) {
         // SKIP entry is too old
@@ -198,3 +230,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
     },
   };
 };
+
+function quote(str: string | number): string {
+  return `'${str}'`;
+}
