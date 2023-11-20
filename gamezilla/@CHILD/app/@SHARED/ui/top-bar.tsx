@@ -1,5 +1,6 @@
-import { IconChevronLeft, IconSpinner } from "./icon";
+import { IconChevronLeft } from "./icon";
 import { IconButton } from "./icon-button";
+import { Spinner } from "./spinner";
 import { VDomChildren } from "./utils";
 
 export const TopBar = (input: {
@@ -14,7 +15,7 @@ export const TopBar = (input: {
         <div class="flex items-center justify-start">{input.left}</div>
         <div class="col-span-3 flex items-center justify-center">
           <p class="text-center text-xl font-semibold">{input.title}</p>
-          {input.loading && <IconSpinner class="h-3 w-3 animate-spin" />}
+          {input.loading && <Spinner class="h-3 w-3" />}
         </div>
         <div class="flex items-center justify-end">{input.right}</div>
       </nav>
@@ -24,7 +25,7 @@ export const TopBar = (input: {
 
 export const TopBarBackButton = ({ onClick }: { onClick: () => void }) => {
   return (
-    <IconButton onClick={onClick}>
+    <IconButton onClick={onClick} label="Go back">
       <IconChevronLeft class="h-6 w-6" />
     </IconButton>
   );
