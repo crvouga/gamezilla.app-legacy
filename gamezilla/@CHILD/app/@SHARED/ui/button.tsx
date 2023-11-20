@@ -44,7 +44,7 @@ export const Button = ({
       type={type}
       class={cn(
         className,
-        "relative flex select-none flex-nowrap items-center justify-center font-semibold",
+        "relative flex select-none appearance-none flex-nowrap items-center justify-center font-semibold outline-none ring-blue-500 focus:ring-2",
         combo === "contained-primary" && "rounded-md bg-blue-600 text-white",
         combo === "contained-danger" && "rounded-md bg-red-600 text-white",
         combo === "contained-default" &&

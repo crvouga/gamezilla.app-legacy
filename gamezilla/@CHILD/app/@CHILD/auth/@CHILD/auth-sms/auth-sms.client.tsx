@@ -14,6 +14,7 @@ import {
 import {
   AlertError,
   Button,
+  IconMobilePhone,
   Select,
   TextField,
   TopBar,
@@ -106,6 +107,12 @@ export const update = ({
       };
     }
 
+    case "clicked-phone-number-clear": {
+      return {
+        model: { ...model, phoneNumberInput: "", phoneNumberError: null },
+      };
+    }
+
     case "inputted-country-code": {
       return {
         model: {
@@ -151,6 +158,12 @@ export const update = ({
           codeInput: msg.code,
           codeError: null,
         },
+      };
+    }
+
+    case "clicked-code-clear": {
+      return {
+        model: { ...model, codeInput: "", codeError: null },
       };
     }
 
@@ -376,10 +389,14 @@ export const View = ({
               id="phoneNumberInput"
               label="Phone Number"
               type="tel"
+              startIcon={<IconMobilePhone class="h-5 w-5" />}
               error={typeof model.phoneNumberError === "string"}
               helperText={model.phoneNumberError}
               onChange={(value) => {
                 dispatch({ t: "inputted-phone-number", phoneNumber: value });
+              }}
+              onClear={() => {
+                dispatch({ t: "clicked-phone-number-clear" });
               }}
             />
 
