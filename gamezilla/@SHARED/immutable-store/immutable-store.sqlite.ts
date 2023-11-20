@@ -58,9 +58,9 @@ export const SqliteStore = <TKey extends string | number, TValue>({
     entries: [TKey, TValue | null][]
   ): Promise<StoreInstance<TKey, TValue>> => {
     const instanceNew: StoreInstance<TKey, TValue> = {
-      timestamp: now,
-      instanceStep: instance.instanceStep + 1,
-      appendStep: runningAppendStep++,
+      _timestamp: now,
+      _instanceStep: instance._instanceStep + 1,
+      _appendStep: runningAppendStep++,
     };
 
     const sql_values = entries
@@ -69,9 +69,9 @@ export const SqliteStore = <TKey extends string | number, TValue>({
         return [
           quote(namespace),
           quote(key),
-          quote(instanceNew.timestamp),
-          instanceNew.appendStep,
-          instanceNew.instanceStep,
+          quote(instanceNew._timestamp),
+          instanceNew._appendStep,
+          instanceNew._instanceStep,
           quote(value_sql),
         ].join(", ");
       })
@@ -98,9 +98,9 @@ export const SqliteStore = <TKey extends string | number, TValue>({
   return {
     init(now) {
       return {
-        timestamp: now,
-        instanceStep: 0,
-        appendStep: 0,
+        _timestamp: now,
+        _instanceStep: 0,
+        _appendStep: 0,
       };
     },
     async assoc(now, instance, key, value) {
@@ -182,22 +182,22 @@ export const SqliteStore = <TKey extends string | number, TValue>({
 
       for (const entry of map.get(key) ?? []) {
         // SKIP entry is too old
-        if (entry.timestamp < from) {
+        if (entry._timestamp < from) {
           continue;
         }
 
         // SKIP entry is from the future
-        if (entry.timestamp > to) {
+        if (entry._timestamp > to) {
           continue;
         }
 
         // SKIP entry is from the future
-        if (entry.instanceStep > instance.instanceStep) {
+        if (entry._instanceStep > instance._instanceStep) {
           continue;
         }
 
         // SKIP entry is from the future
-        if (entry.appendStep > instance.appendStep) {
+        if (entry._appendStep > instance._appendStep) {
           continue;
         }
 
@@ -208,19 +208,19 @@ export const SqliteStore = <TKey extends string | number, TValue>({
         }
 
         // KEEP entry is newer
-        if (entry.timestamp > runningEntry.timestamp) {
+        if (entry._timestamp > runningEntry._timestamp) {
           runningEntry = entry;
           continue;
         }
 
         // KEEP entry is newer
-        if (entry.instanceStep > runningEntry.instanceStep) {
+        if (entry._instanceStep > runningEntry._instanceStep) {
           runningEntry = entry;
           continue;
         }
 
         // KEEP entry is newer
-        if (entry.appendStep > runningEntry.appendStep) {
+        if (entry._appendStep > runningEntry._appendStep) {
           runningEntry = entry;
           continue;
         }

@@ -1,33 +1,33 @@
 export type StoreInstance<_TKey, _TValue> = {
-  timestamp: number;
-  instanceStep: number;
-  appendStep: number;
+  _timestamp: number;
+  _instanceStep: number;
+  _appendStep: number;
 };
 
 export type IStore<TKey extends string | number, TValue> = {
-  init: (timestamp: number) => StoreInstance<TKey, TValue>;
+  init: (posix: number) => StoreInstance<TKey, TValue>;
 
   assoc: (
-    timestamp: number,
+    posix: number,
     instance: StoreInstance<TKey, TValue>,
     key: TKey,
     value: TValue
   ) => Promise<StoreInstance<TKey, TValue>>;
 
   assocMany: (
-    timestamp: number,
+    posix: number,
     instance: StoreInstance<TKey, TValue>,
     entries: [TKey, TValue][]
   ) => Promise<StoreInstance<TKey, TValue>>;
 
   dissoc: (
-    timestamp: number,
+    posix: number,
     instance: StoreInstance<TKey, TValue>,
     key: TKey
   ) => Promise<StoreInstance<TKey, TValue>>;
 
   dissocMany: (
-    timestamp: number,
+    posix: number,
     instance: StoreInstance<TKey, TValue>,
     keys: TKey[]
   ) => Promise<StoreInstance<TKey, TValue>>;
@@ -36,8 +36,8 @@ export type IStore<TKey extends string | number, TValue> = {
    * Returns the latest value for the given key, if it exists.
    */
   latest: (
-    from: number,
-    to: number,
+    posixFrom: number,
+    posixTo: number,
     instance: StoreInstance<TKey, TValue>,
     key: TKey
   ) => Promise<TValue | null>;
@@ -47,8 +47,8 @@ export type IStore<TKey extends string | number, TValue> = {
    * timestamps.
    */
   listLatest: (
-    from: number,
-    to: number,
+    posixFrom: number,
+    posixTo: number,
     instance: StoreInstance<TKey, TValue>
   ) => Promise<TValue[]>;
 };
