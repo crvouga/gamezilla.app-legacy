@@ -50,15 +50,10 @@ attachDebugger(program);
 
 program.start();
 
-//
-//
-//
-//
-//
-//
-//
-//
-
+/**
+ * Use this to render runtime errors to the screen.
+ * This is useful for debugging on mobile devices.
+ */
 function renderRuntimeErrors() {
   window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
     showError(errorMsg, url, lineNumber, column);
