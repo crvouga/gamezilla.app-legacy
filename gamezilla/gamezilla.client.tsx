@@ -1,44 +1,38 @@
 import { Browser, Program } from "gamezilla/@SHARED/core";
 import { render } from "preact";
 import * as AppClient from "./@CHILD/app/app.client";
+import * as App from "./@CHILD/app/app.core";
 import { attachDebugger } from "./@SHARED/core/debug";
 import "./main.css";
 
-const VITE_DEPLOYMENT_ID = import.meta.env["VITE_DEPLOYMENT_ID"] ?? null;
-
-const sessionStorageKey = `model:${VITE_DEPLOYMENT_ID ?? ""}`;
-const storedJson = sessionStorage.getItem(sessionStorageKey);
-const stored = storedJson ? JSON.parse(storedJson) : null;
-
-console.log(
-  "VITE_DEPLOYMENT_ID",
-  VITE_DEPLOYMENT_ID,
-  "sessionStorageKey",
-  sessionStorageKey
-);
+const modelStorage = ModelStorage<App.ClientModel>();
 
 const program = Program.create({
   init: (input) => {
     const init = AppClient.init({
-      ctx: input.ctx,
+      ...input,
       location: Browser.getLocation(),
-      stored: stored,
+      stored: modelStorage.get(),
     });
 
-    return {
-      model: init.model,
-      eff: init.eff,
-    };
+    return init;
   },
-  update: AppClient.update,
-  subscriptions: AppClient.subscriptions,
+
+  update: (input) => {
+    const updated = AppClient.update(input);
+
+    return updated;
+  },
+
+  subscriptions: (input) => {
+    const sub = AppClient.subscriptions(input);
+
+    return sub;
+  },
 });
 
 program.subscribe((model, ctx) => {
-  // @ts-ignore
-  window.model = model;
-
-  sessionStorage.setItem(sessionStorageKey, JSON.stringify(model));
+  modelStorage.set(model);
 
   render(
     <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
@@ -49,6 +43,37 @@ program.subscribe((model, ctx) => {
 attachDebugger(program);
 
 program.start();
+
+/**
+ * Use this to persist state across page refreshes.
+ * It retains type safety by using deployment IDs.
+ */
+function ModelStorage<TModel>() {
+  const DEPLOYMENT_ID_KEY = "gamezilla/deployment-id";
+  const MODEL_KEY = "gamezilla/model";
+  const VITE_DEPLOYMENT_ID = import.meta.env["VITE_DEPLOYMENT_ID"] ?? null;
+
+  return {
+    get: () => {
+      const storedDeploymentId = sessionStorage.getItem(DEPLOYMENT_ID_KEY);
+
+      if (storedDeploymentId !== VITE_DEPLOYMENT_ID) {
+        return null;
+      }
+
+      const got = sessionStorage.getItem(MODEL_KEY);
+
+      const maybeModel = got ? (JSON.parse(got) as TModel) : null;
+
+      return maybeModel;
+    },
+
+    set: (model: TModel) => {
+      sessionStorage.setItem(DEPLOYMENT_ID_KEY, VITE_DEPLOYMENT_ID);
+      sessionStorage.setItem(MODEL_KEY, JSON.stringify(model));
+    },
+  };
+}
 
 /**
  * Use this to render runtime errors to the screen.
