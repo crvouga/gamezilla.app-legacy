@@ -31,22 +31,14 @@ const program = Program.create({
   },
 });
 
-const root = document.getElementById("root");
+program.subscribe((model, ctx) => {
+  modelStorage.set(model);
 
-if (root) {
-  program.subscribe((model, ctx) => {
-    modelStorage.set(model);
-
-    render(
-      <AppClient.View
-        now={ctx.now}
-        model={model}
-        dispatch={program.dispatch}
-      />,
-      root
-    );
-  });
-}
+  render(
+    <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
+    document.body
+  );
+});
 
 attachDebugger(program);
 
