@@ -206,23 +206,13 @@ export const updateFromEvent = ({
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (evt.t) {
-    case "route-changed": {
+    case "routing/route-changed": {
       if (evt.route.t === "profile" && evt.route.c.t === "profile") {
         return loadProfile(evt.route.c.userId, model);
       }
       return { model };
     }
-    case "got-profiles": {
-      return {
-        model: {
-          ...model,
-          profiles: {
-            ...model.profiles,
-            ...evt.profiles,
-          },
-        },
-      };
-    }
+
     default: {
       return { model };
     }

@@ -15,6 +15,7 @@ import {
   broadcast,
   sendToClient,
   sendToUser,
+  topicSubscribe,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import * as GameServer from "./@CHILD/game/game.server";
 import {
@@ -363,7 +364,7 @@ export const updateFromEvent = async (input: {
   const { msg, model } = input;
 
   switch (msg.t) {
-    case "client-disconnected": {
+    case "wire/client-disconnected": {
       return {
         model: {
           ...model,
@@ -371,18 +372,12 @@ export const updateFromEvent = async (input: {
       };
     }
 
-    case "client-authenticated": {
+    case "auth/client-authenticated": {
       const state = toStateUser(model, msg.userId);
 
       return {
         model,
-        cmd: [
-          {
-            t: "wire/subscribe",
-            clientId: msg.clientId,
-            topic: `space/${state.spaceId}`,
-          },
-        ],
+        cmd: [topicSubscribe([`space/${state.spaceId}`], [msg.clientId])],
       };
     }
 

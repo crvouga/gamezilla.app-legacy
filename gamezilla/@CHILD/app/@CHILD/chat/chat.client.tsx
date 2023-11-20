@@ -159,7 +159,7 @@ export const updateFromEvent = ({
   eff?: Eff<Msg>;
 } => {
   switch (msg.t) {
-    case "route-changed": {
+    case "routing/route-changed": {
       if (msg.route.t !== "chat") {
         return { model };
       }

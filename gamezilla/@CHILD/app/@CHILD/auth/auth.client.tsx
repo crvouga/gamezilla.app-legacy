@@ -87,7 +87,7 @@ export const update = ({
           currentUser: { t: "logged-out" },
         },
         cmd: [sendToServer({ t: "logout" })],
-        evt: [{ t: "client-unauthenticated" }],
+        evt: [{ t: "auth/client-unauthenticated" }],
       };
     }
 
@@ -122,14 +122,14 @@ export const updateFromServer = ({
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg.t) {
-    case "client-unauthenticated": {
+    case "auth/client-unauthenticated": {
       return {
         model: { ...model, currentUser: { t: "logged-out" } },
         evt: [msg],
       };
     }
 
-    case "client-authenticated": {
+    case "auth/client-authenticated": {
       return {
         model: {
           ...model,
@@ -185,7 +185,7 @@ export const updateFromEvent = ({
 
 const handleAuthRedirect: typeof updateFromEvent = ({ model, evt, ctx }) => {
   switch (evt.t) {
-    case "client-authenticated": {
+    case "auth/client-authenticated": {
       if (ctx.currentRoute.t === "auth") {
         return {
           model,
@@ -199,7 +199,7 @@ const handleAuthRedirect: typeof updateFromEvent = ({ model, evt, ctx }) => {
       return { model };
     }
 
-    case "client-unauthenticated": {
+    case "auth/client-unauthenticated": {
       if (ctx.currentRoute.t !== "auth") {
         return {
           model,
@@ -213,7 +213,7 @@ const handleAuthRedirect: typeof updateFromEvent = ({ model, evt, ctx }) => {
       return { model };
     }
 
-    case "route-changed": {
+    case "routing/route-changed": {
       if (model.currentUser.t === "logged-in" && evt.route.t === "auth") {
         return {
           model,

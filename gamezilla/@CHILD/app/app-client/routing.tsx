@@ -84,7 +84,7 @@ export const update = ({
     case "route-changed": {
       return {
         model: msg.route,
-        evt: [{ t: "route-changed", route: msg.route }],
+        evt: [{ t: "routing/route-changed", route: msg.route }],
       };
     }
   }

@@ -73,7 +73,7 @@ export const update = ({
         model: {
           t: "server-connected",
         },
-        evt: [{ t: "server-connected" }],
+        evt: [{ t: "wire/server-connected" }],
       };
     }
 

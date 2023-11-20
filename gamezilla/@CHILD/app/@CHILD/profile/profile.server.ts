@@ -110,7 +110,7 @@ export const updateFromEvent = ({
   eff?: Eff<ServerMsg>;
 } => {
   switch (msg.t) {
-    case "client-authenticated": {
+    case "auth/client-authenticated": {
       return {
         model,
         eff: async (dispatch) => {

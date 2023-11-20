@@ -68,7 +68,13 @@ export const update = ({
               ...model,
               clientsBySessionId: clientsBySessionIdNew,
             },
-            evt: [msg],
+            evt: [
+              {
+                t: "wire/client-connected",
+                clientId: msg.clientId,
+                sessionId: msg.sessionId,
+              },
+            ],
           };
         },
         (model) => {
@@ -106,7 +112,13 @@ export const update = ({
           ...model,
           clientsBySessionId: clientsBySessionIdNew,
         },
-        evt: [msg],
+        evt: [
+          {
+            t: "wire/client-disconnected",
+            clientId: msg.clientId,
+            sessionId: msg.sessionId,
+          },
+        ],
       };
     }
 

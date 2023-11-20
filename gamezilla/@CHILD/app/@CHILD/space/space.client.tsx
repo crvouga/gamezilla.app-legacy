@@ -8,7 +8,6 @@ import {
   ClientEvt,
   RouteGameSpace,
   ViewCtx,
-  gotProfiles,
   playSound,
   pushRoute,
   sendToServer,
@@ -507,7 +506,7 @@ export const updateFromServer = ({
     (model) => {
       return {
         model,
-        evt: msg.profiles ? [gotProfiles(msg.profiles)] : [],
+        // evt: msg.profiles ? [gotProfiles(msg.profiles)] : [],
       };
     }
   );
@@ -660,11 +659,11 @@ export const updateFromEvent = (input: {
   const { msg, model } = input;
 
   switch (msg.t) {
-    case "route-changed": {
+    case "routing/route-changed": {
       return { model: { ...model, modal: null } };
     }
 
-    case "server-connected": {
+    case "wire/server-connected": {
       return {
         model,
         cmd: [

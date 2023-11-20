@@ -104,7 +104,7 @@ export const updateFromEvent = ({
   eff?: Eff<Msg>;
 } => {
   switch (evt.t) {
-    case "document-visibility-changed": {
+    case "platform/document-visibility-changed": {
       return {
         model: { ...model, muted: evt.state === "hidden" },
       };

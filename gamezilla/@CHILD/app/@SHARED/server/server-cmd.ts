@@ -8,16 +8,6 @@ import { ClientId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 //
 //
 
-type WireTopic =
-  | {
-      t: "client";
-      clientIds: ClientId[];
-    }
-  | {
-      t: "user";
-      userIds: UserId[];
-    };
-
 export type ServerCmd<ToClient> =
   | {
       t: "wire/broadcast";
@@ -35,13 +25,13 @@ export type ServerCmd<ToClient> =
     }
   | {
       t: "wire/publish";
-      topic: string;
+      topics: string[];
       msg: ToClient;
     }
   | {
       t: "wire/subscribe";
-      topic: string;
-      clientId: ClientId;
+      topics: string[];
+      clientIds: ClientId[];
     };
 
 export const sendBack = <ToClient>(
@@ -49,6 +39,28 @@ export const sendBack = <ToClient>(
   msg: ToClient
 ): ServerCmd<ToClient> => {
   return sendToClient([ctx.clientId], msg);
+};
+
+export const topicPublish = <ToClient>(
+  topics: string[],
+  msg: ToClient
+): ServerCmd<ToClient> => {
+  return {
+    t: "wire/publish",
+    topics,
+    msg,
+  };
+};
+
+export const topicSubscribe = <ToClient>(
+  topics: string[],
+  clientIds: ClientId[]
+): ServerCmd<ToClient> => {
+  return {
+    t: "wire/subscribe",
+    topics,
+    clientIds,
+  };
 };
 
 export const broadcast = <ToClient>(msg: ToClient): ServerCmd<ToClient> => {

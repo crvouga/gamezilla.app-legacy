@@ -72,7 +72,7 @@ export const update = ({
         },
         evt: [
           {
-            t: "client-authenticated",
+            t: "auth/client-authenticated",
             clientId: msg.clientId,
             sessionId: msg.sessionId,
             userId: msg.result.value.userId,
@@ -124,7 +124,7 @@ export const updateFromClient = ({
         model: modelNew,
         evt: [
           {
-            t: "client-unauthenticated",
+            t: "auth/client-unauthenticated",
             clientId: ctx.clientId,
             sessionId: ctx.sessionId,
           },
@@ -163,7 +163,7 @@ export const updateFromEvent = ({
   evt?: ServerEvt[];
 } => {
   switch (evt.t) {
-    case "client-connected": {
+    case "wire/client-connected": {
       const userId = model.userIdBySessionId[evt.sessionId];
 
       if (!userId) {
@@ -171,7 +171,7 @@ export const updateFromEvent = ({
           model,
           evt: [
             {
-              t: "client-unauthenticated",
+              t: "auth/client-unauthenticated",
               clientId: evt.clientId,
               sessionId: evt.sessionId,
             },
@@ -184,14 +184,14 @@ export const updateFromEvent = ({
         evt: [
           {
             ...evt,
-            t: "client-authenticated",
+            t: "auth/client-authenticated",
             userId,
           },
         ],
       };
     }
 
-    case "client-authenticated": {
+    case "auth/client-authenticated": {
       const modelNew = addSession(model, evt);
 
       return {
@@ -200,7 +200,7 @@ export const updateFromEvent = ({
       };
     }
 
-    case "client-unauthenticated": {
+    case "auth/client-unauthenticated": {
       const modelNew = removeSession(model, evt.sessionId);
       return {
         model: modelNew,
