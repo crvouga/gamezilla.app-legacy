@@ -21,7 +21,7 @@ const is = (posixTime: unknown): posixTime is Posix => {
 };
 
 const fromNumber = (posixTime: number): Posix => {
-  const clamped = Math.min(Math.max(posixTime, minPosixTime), maxPosixTime);
+  const clamped = Math.max(posixTime, minPosixTime);
   if (is(clamped)) {
     return clamped;
   }

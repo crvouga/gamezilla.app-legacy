@@ -14,6 +14,7 @@ export type ServerCtx = {
 export type AnonymousReqCtx = ServerCtx & {
   sessionId: SessionId;
   clientId: ClientId;
+  currentUserId?: UserId;
 };
 
 export type ReqCtx = AnonymousReqCtx & {

@@ -1,4 +1,4 @@
-import { Eff, Sub, chainAwait } from "gamezilla/@SHARED/core";
+import { Eff, Sub, chain, chainAwait } from "gamezilla/@SHARED/core";
 import { EventMeta, withMeta } from "gamezilla/@SHARED/event-stream";
 import {
   Space,
@@ -7,6 +7,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
+  AnonymousReqCtx,
   ReqCtx,
   ServerCmd,
   ServerCtx,
@@ -25,6 +26,7 @@ import {
   ToServer,
   appendEvent,
   initCore,
+  mergeModels,
   toSpaceEvents,
   toStateSpace,
   toStateUser,
@@ -154,7 +156,7 @@ export const update = async ({
 };
 
 export const updateFromClient = async (input: {
-  ctx: ReqCtx;
+  ctx: AnonymousReqCtx;
   msg: ToServer;
   model: ServerModel;
 }): Promise<{
@@ -186,8 +188,12 @@ export const updateFromClient = async (input: {
         return { model };
       }
 
+      if (!ctx.currentUserId) {
+        return { model };
+      }
+
       const updated = await GameServer.updateFromClient({
-        ctx: { ...ctx, space: space },
+        ctx: { ...ctx, currentUserId: ctx.currentUserId, space: space },
         state: space.game,
         msg: msg.c,
         model: game,
@@ -214,6 +220,27 @@ export const updateFromClient = async (input: {
           }))
         ),
       };
+    }
+
+    case "sync": {
+      return chain(
+        { model },
+        (model) => {
+          const merged = mergeModels(model, {
+            events: msg.events,
+            initialState: model.initialState,
+          });
+          return {
+            model: { ...model, ...merged },
+          };
+        },
+        (model) => {
+          return {
+            model,
+            cmd: [broadcast({ t: "sync", events: model.events })],
+          };
+        }
+      );
     }
 
     default: {
@@ -336,19 +363,9 @@ export const updateFromEvent = async (input: {
   const { msg } = input;
 
   switch (msg.t) {
-    case "client-authenticated": {
-      if (msg.loggedIn) {
-        return sync(input);
-      }
-
-      return input;
-    }
-
+    case "client-authenticated":
     case "client-connected": {
-      if (msg.userId) {
-        return sync(input);
-      }
-      return input;
+      return sync(input);
     }
 
     default: {

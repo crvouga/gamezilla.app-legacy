@@ -9,12 +9,12 @@ async function main() {
     return;
   }
 
-  const ctx = created.value;
+  const baseCtx = created.value;
 
   const program = Program.create({
-    init: () => {
+    init: ({ ctx }) => {
       const initial = AppServer.init({
-        ctx,
+        ctx: { ...baseCtx, ...ctx },
       });
 
       return initial;
@@ -22,9 +22,9 @@ async function main() {
 
     update: (input) => {
       const updated = AppServer.update({
+        ctx: { ...baseCtx, ...input.ctx },
         model: input.model,
         msg: input.msg,
-        ctx,
       });
 
       return updated;
@@ -33,7 +33,7 @@ async function main() {
     subscriptions: (input) => {
       const sub = AppServer.subscriptions({
         ...input,
-        ctx,
+        ctx: { ...baseCtx, ...input.ctx },
       });
 
       return sub;

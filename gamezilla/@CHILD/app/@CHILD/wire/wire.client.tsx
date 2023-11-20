@@ -1,12 +1,17 @@
-import { ClientCmd, ClientEvt } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  ClientCmd,
+  ClientEvt,
+  showToast,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconSpinner } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Pub, PubSub } from "gamezilla/@SHARED/core";
 import {
   ClientModel,
   ClientMsg,
   ClientToServerMsg,
-  ClientWireMsg,
   ServerToClientMsg,
+  ToClient,
+  ToServer,
 } from "./wire.core";
 
 //
@@ -78,14 +83,34 @@ export const update = ({
   }
 };
 
-export const updateFromCmd = <ToServer,>({
+export const updateFromServer = ({
+  model,
+  msg,
+}: {
+  model: ClientModel;
+  msg: ToClient;
+}): {
+  model: ClientModel;
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+} => {
+  switch (msg.t) {
+    case "server-restarted": {
+      return {
+        model,
+        cmd: [showToast("Server restarted")],
+      };
+    }
+  }
+};
+
+export const updateFromCmd = <TExternalToServer,>({
   cmd,
   model,
   toServer,
 }: {
-  cmd: ClientCmd<{ ClientMsg: never; ToServer: ToServer }>;
+  cmd: ClientCmd<{ ClientMsg: never; ToServer: TExternalToServer }>;
   model: ClientModel;
-  toServer: Pub<ToServer[]>;
+  toServer: Pub<TExternalToServer[]>;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
@@ -118,7 +143,7 @@ export const updateFromCmd = <ToServer,>({
 //
 
 export const View = ({ model }: { model: ClientModel }) => {
-  if (model.t === "server-connect-error" && model.errorCount > 2) {
+  if (model.t === "server-connect-error" && model.errorCount > 1) {
     return (
       <div class="flex h-6 w-full items-center justify-center gap-2 bg-yellow-600 text-white">
         <IconSpinner class="h-5 w-5 animate-spin text-white" />
@@ -143,7 +168,7 @@ export const View = ({ model }: { model: ClientModel }) => {
 //
 //
 
-const wire = PubSub.create<ClientWireMsg>();
+const wire = PubSub.create<ClientMsg>();
 
 export const subscriptions = PubSub.toSub(wire);
 

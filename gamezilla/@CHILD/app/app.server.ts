@@ -89,9 +89,7 @@ export const update = async (input: {
 }> => {
   logMsg({ msg: input.msg, logger: input.ctx.logger });
 
-  const updated = await updateMain(input);
-
-  let acc = updated;
+  let acc = await updateMain(input);
 
   let iterations = 0;
   while (true) {
@@ -101,41 +99,43 @@ export const update = async (input: {
       break;
     }
 
-    if ((acc.evt?.length ?? 0) === 0 && (acc.cmd?.length ?? 0) === 0) {
-      break;
-    }
+    let newEvents: ServerEvt[] = [];
+    let newCommands: ServerCmd<ToClient>[] = [];
 
+    // Process events
     for (const evt of acc.evt ?? []) {
       logMsg({ evt, logger: input.ctx.logger });
-
       const updatedEvt = await updateFromEvent({
         ...input,
         model: acc.model,
         msg: evt,
       });
-      acc = {
-        model: updatedEvt.model,
-        eff: Eff.batch([acc.eff, updatedEvt.eff]),
-        cmd: updatedEvt.cmd,
-        evt: updatedEvt.evt,
-      };
+      acc.model = updatedEvt.model;
+      newEvents = newEvents.concat(updatedEvt.evt ?? []);
+      newCommands = newCommands.concat(updatedEvt.cmd ?? []);
+      acc.eff = Eff.batch([acc.eff, updatedEvt.eff]);
     }
 
+    // Process commands
     for (const cmd of acc.cmd ?? []) {
       logMsg({ cmd, logger: input.ctx.logger });
-
-      const updatedCmd = updateFromCmd({
+      const updatedCmd = await updateFromCmd({
         ...input,
         model: acc.model,
         cmd,
       });
-      acc = {
-        model: updatedCmd.model,
-        eff: Eff.batch([acc.eff, updatedCmd.eff]),
-        cmd: updatedCmd.cmd,
-        evt: updatedCmd.evt,
-      };
+      acc.model = updatedCmd.model;
+      newEvents = newEvents.concat(updatedCmd.evt ?? []);
+      newCommands = newCommands.concat(updatedCmd.cmd ?? []);
+      acc.eff = Eff.batch([acc.eff, updatedCmd.eff]);
     }
+
+    if (newEvents.length === 0 && newCommands.length === 0) {
+      break;
+    }
+
+    acc.evt = newEvents;
+    acc.cmd = newCommands;
   }
 
   return acc;
@@ -192,10 +192,13 @@ const updateMain = async ({
       const updated = WireServer.update({
         model: model.wire,
         msg: msg.c,
+        ctx,
       });
+
       return {
         model: { ...model, wire: updated.model },
         evt: updated.evt,
+        cmd: ServerCmd.tag("wire", updated.cmd),
       };
     }
 
@@ -274,12 +277,12 @@ const updateFromClient = async ({
   evt?: ServerEvt[];
 }> => {
   const currentUserId = model.auth.userIdBySessionId[ctx.sessionId];
-  const authReqCtx: ReqCtx | null = currentUserId
+  const authReqCtx: ReqCtx | AnonymousReqCtx = currentUserId
     ? {
         ...ctx,
         currentUserId,
       }
-    : null;
+    : ctx;
   switch (msg.t) {
     case "auth": {
       const updated = AuthServer.updateFromClient({
@@ -296,10 +299,6 @@ const updateFromClient = async ({
     }
 
     case "profile": {
-      if (!authReqCtx) {
-        return { model };
-      }
-
       const updated = ProfileServer.updateFromClient({
         model: model.profile,
         msg: msg.c,
@@ -335,10 +334,6 @@ const updateFromClient = async ({
     }
 
     case "space": {
-      if (!authReqCtx) {
-        return { model };
-      }
-
       const updated = await SpaceServer.updateFromClient({
         ctx: authReqCtx,
         msg: msg.c,
@@ -352,6 +347,16 @@ const updateFromClient = async ({
         },
         eff: Eff.t("space", updated.eff),
         cmd: ServerCmd.tag("space", updated.cmd),
+      };
+    }
+
+    case "wire": {
+      const updated = WireServer.updateFromClient({
+        model: model.wire,
+        msg: msg.c,
+      });
+      return {
+        model: { ...model, wire: updated.model },
       };
     }
   }

@@ -1,15 +1,21 @@
 import { ServerWebSocket } from "bun";
-import { UserId, ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { ServerCmd, ServerEvt } from "gamezilla/@CHILD/app/@SHARED/server";
+import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import {
+  ServerCmd,
+  ServerCtx,
+  ServerEvt,
+  sendToClient,
+} from "gamezilla/@CHILD/app/@SHARED/server";
+import { Eff, Posix, TimeSpan, chain } from "gamezilla/@SHARED/core";
 import { PubSub } from "gamezilla/@SHARED/core/sub";
-import { Eff } from "gamezilla/@SHARED/core";
 import {
   Client,
   ClientToServerMsg,
   ServerModel,
   ServerMsg,
   ServerToClientMsg,
-  ServerWireMsg,
+  ToClient,
+  ToServer,
 } from "./wire.core";
 
 //
@@ -24,6 +30,7 @@ export const init = (): { model: ServerModel } => {
   return {
     model: {
       clientsBySessionId: {},
+      serverStartedAt: null,
     },
   };
 };
@@ -31,19 +38,64 @@ export const init = (): { model: ServerModel } => {
 export const update = ({
   msg,
   model,
+  ctx,
 }: {
+  ctx: ServerCtx;
   model: ServerModel;
   msg: ServerMsg;
 }): {
   model: ServerModel;
   evt?: ServerEvt[];
+  cmd?: ServerCmd<ToClient>[];
 } => {
   switch (msg.t) {
     case "client-connected": {
+      return chain(
+        { model },
+        (model) => {
+          const clientNew: Client = {
+            sessionId: msg.sessionId,
+            clientId: msg.clientId,
+            status: "connected",
+          };
+          const clientsBySessionIdNew: ServerModel["clientsBySessionId"] = {
+            ...model.clientsBySessionId,
+            [msg.sessionId]: clientNew,
+          };
+
+          return {
+            model: {
+              ...model,
+              clientsBySessionId: clientsBySessionIdNew,
+            },
+            evt: [msg],
+          };
+        },
+        (model) => {
+          const didServerRestart =
+            model.serverStartedAt &&
+            TimeSpan.lte(
+              Posix.diff(ctx.now, model.serverStartedAt),
+              TimeSpan.fromSeconds(3)
+            );
+
+          if (didServerRestart) {
+            return {
+              model,
+              cmd: [sendToClient([msg.clientId], { t: "server-restarted" })],
+            };
+          }
+
+          return { model };
+        }
+      );
+    }
+
+    case "client-disconnected": {
       const clientNew: Client = {
         sessionId: msg.sessionId,
         clientId: msg.clientId,
-        status: "connected",
+        status: "disconnected",
       };
       const clientsBySessionIdNew: ServerModel["clientsBySessionId"] = {
         ...model.clientsBySessionId,
@@ -58,25 +110,27 @@ export const update = ({
       };
     }
 
-    case "client-disconnected": {
-      const clientNew: Client = {
-        sessionId: msg.sessionId,
-        clientId: msg.clientId,
-        status: "connected",
-      };
-      const clientsBySessionIdNew: ServerModel["clientsBySessionId"] = {
-        ...model.clientsBySessionId,
-        [msg.sessionId]: clientNew,
-      };
+    case "server-started": {
       return {
         model: {
           ...model,
-          clientsBySessionId: clientsBySessionIdNew,
+          serverStartedAt: ctx.now,
         },
-        evt: [msg],
       };
     }
   }
+};
+
+export const updateFromClient = ({
+  model,
+  msg,
+}: {
+  model: ServerModel;
+  msg: ToServer;
+}): {
+  model: ServerModel;
+} => {
+  return { model };
 };
 
 export const updateFromCmd = <ToClient>({
@@ -170,7 +224,7 @@ export const updateFromCmd = <ToClient>({
   }
 };
 
-const wire = PubSub.create<ServerWireMsg>();
+const wire = PubSub.create<ServerMsg>();
 
 export const subscriptions = wire;
 
@@ -299,6 +353,10 @@ export const createTransport = <ToServer, ToClient>() => {
         console.log("drain");
       },
     },
+  });
+
+  wire.publish({
+    t: "server-started",
   });
 
   console.log(`[server] Listening on port ${port}`);

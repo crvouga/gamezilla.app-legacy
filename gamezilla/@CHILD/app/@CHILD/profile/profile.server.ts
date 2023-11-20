@@ -6,6 +6,7 @@ import {
   Username,
 } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
+  AnonymousReqCtx,
   ReqCtx,
   sendToClient,
   ServerCmd,
@@ -69,7 +70,7 @@ export const updateFromClient = ({
 }: {
   msg: ToServer;
   model: ServerModel;
-  ctx: ReqCtx;
+  ctx: ReqCtx | AnonymousReqCtx;
 }): {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
@@ -77,8 +78,15 @@ export const updateFromClient = ({
   return {
     model,
     eff: async (dispatch) => {
+      if (!ctx.currentUserId) {
+        return;
+      }
       const ProfileDb = createProfileDb({ dbConn: ctx.dbConn });
-      const result = await handler({ ProfileDb, msg, ctx });
+      const result = await handler({
+        ProfileDb,
+        msg,
+        ctx: { ...ctx, currentUserId: ctx.currentUserId },
+      });
 
       dispatch({
         t: "handled",

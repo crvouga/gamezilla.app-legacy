@@ -44,15 +44,21 @@ type ModalModel = null | "user-preview" | "users";
 //
 //
 
+type Sync = { t: "sync"; events: CoreModel["events"] };
+
 export type ToClient = ToClientExtra &
   (
     | EventWithMeta
+    | Sync
     | { t: "game-msg"; spaceId: SpaceId; c: Game.ToClient }
-    | { t: "sync"; events: CoreModel["events"] }
   );
 
 export type ToServer = ToServerExtra &
-  (EventWithMeta | { t: "game-msg"; spaceId: SpaceId; c: Game.ToServer });
+  (
+    | EventWithMeta
+    | Sync
+    | { t: "game-msg"; spaceId: SpaceId; c: Game.ToServer }
+  );
 
 export type ToClientExtra = {
   profiles?: { [userId: UserId]: Profile };

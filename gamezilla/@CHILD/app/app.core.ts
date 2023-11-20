@@ -4,7 +4,6 @@ import * as Profile from "./@CHILD/profile/profile.core";
 import * as Search from "./@CHILD/search/search.core";
 import * as Space from "./@CHILD/space/space.core";
 import * as Wire from "./@CHILD/wire/wire.core";
-import { ServerWireMsg } from "./@CHILD/wire/wire.core";
 import { ClientId, SessionId } from "./@SHARED/data";
 import { Platform, Routing, Sound, Toast } from "./app-client";
 
@@ -52,14 +51,16 @@ export type ToServer =
   | { t: "profile"; c: Profile.ToServer }
   | { t: "search"; c: Search.ToServer }
   | { t: "chat"; c: Chat.ToServer }
-  | { t: "auth"; c: Auth.ToServer };
+  | { t: "auth"; c: Auth.ToServer }
+  | { t: "wire"; c: Wire.ToServer };
 
 export type ToClient =
   | { t: "space"; c: Space.ToClient }
   | { t: "profile"; c: Profile.ToClient }
   | { t: "search"; c: Search.ToClient }
   | { t: "chat"; c: Chat.ToClient }
-  | { t: "auth"; c: Auth.ToClient };
+  | { t: "auth"; c: Auth.ToClient }
+  | { t: "wire"; c: Wire.ToClient };
 
 export type ClientMsg =
   | { t: "➡️"; c: ToClient }
@@ -76,7 +77,7 @@ export type ClientMsg =
 
 export type ServerMsg =
   | { t: "➡️"; sessionId: SessionId; clientId: ClientId; c: ToServer }
-  | { t: "wire"; c: ServerWireMsg }
+  | { t: "wire"; c: Wire.ServerMsg }
   | { t: "space"; c: Space.ServerMsg }
   | { t: "profile"; c: Profile.ServerMsg }
   | { t: "search"; c: Search.ServerMsg }

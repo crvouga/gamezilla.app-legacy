@@ -256,22 +256,18 @@ const updateMain = ({
     }
 
     case "space": {
-      if (UserId.is(ctxApp.currentUserId)) {
-        const updated = SpaceClient.update({
-          ctx: { ...ctxApp, currentUserId: ctxApp.currentUserId },
-          msg: msg.c,
-          model: model.space,
-        });
+      const updated = SpaceClient.update({
+        ctx: ctxApp,
+        msg: msg.c,
+        model: model.space,
+      });
 
-        return {
-          model: { ...model, space: updated.model },
-          eff: Eff.t("space", updated.eff ?? Eff.None),
-          evt: updated.evt,
-          cmd: ClientCmd.tag("space", updated.cmd),
-        };
-      }
-
-      return { model };
+      return {
+        model: { ...model, space: updated.model },
+        eff: Eff.t("space", updated.eff ?? Eff.None),
+        evt: updated.evt,
+        cmd: ClientCmd.tag("space", updated.cmd),
+      };
     }
 
     case "profile": {
@@ -420,6 +416,18 @@ const updateFromServer = ({
         cmd: ClientCmd.tag("profile", updated.cmd),
         model: { ...model, profile: updated.model },
         eff: Eff.t("profile", updated.eff),
+      };
+    }
+
+    case "wire": {
+      const updated = Wire.updateFromServer({
+        msg: msg.c,
+        model: model.wire,
+      });
+
+      return {
+        model: { ...model, wire: updated.model },
+        cmd: ClientCmd.tag("wire", updated.cmd),
       };
     }
   }
@@ -624,7 +632,7 @@ export const View = ({
   dispatch: (msg: ClientMsg) => void;
 }) => {
   return (
-    <div class="flex h-full w-full flex-col items-center justify-center">
+    <div class="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
       <ViewMain model={model} now={now} dispatch={dispatch} />
       <Wire.View model={model.wire} />
       <Toast.View

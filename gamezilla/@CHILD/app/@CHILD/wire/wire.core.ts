@@ -1,3 +1,4 @@
+import { Posix } from "gamezilla/@SHARED/core";
 import { ClientId, SessionId } from "../../@SHARED/data";
 
 //
@@ -13,12 +14,16 @@ export type ClientModel =
   | { t: "server-disconnected" }
   | { t: "server-connected" };
 
-export type ClientMsg = ClientWireMsg;
+export type ClientMsg =
+  | { t: "server-connected" }
+  | { t: "server-disconnected" }
+  | { t: "server-connect-error" };
 
 export type ServerModel = {
   clientsBySessionId: {
     [sessionId: SessionId]: Client;
   };
+  serverStartedAt: Posix | null;
 };
 
 export type Client = {
@@ -27,7 +32,21 @@ export type Client = {
   status: "connected" | "disconnected";
 };
 
-export type ServerMsg = ServerWireMsg;
+export type ServerMsg =
+  | { t: "client-connected"; clientId: ClientId; sessionId: SessionId }
+  | { t: "client-disconnected"; clientId: ClientId; sessionId: SessionId }
+  | { t: "server-started" };
+
+//
+//
+//
+//
+//
+//
+
+export type ToServer = { t: null };
+
+export type ToClient = { t: "server-restarted" };
 
 //
 //
@@ -41,12 +60,3 @@ export type ServerToClientMsg<ToClient> =
   | { t: "session-id"; sessionId: SessionId };
 
 export type ClientToServerMsg<ToServer> = { t: "to-server"; msgs: ToServer[] };
-
-export type ClientWireMsg =
-  | { t: "server-connected" }
-  | { t: "server-disconnected" }
-  | { t: "server-connect-error" };
-
-export type ServerWireMsg =
-  | { t: "client-connected"; clientId: ClientId; sessionId: SessionId }
-  | { t: "client-disconnected"; clientId: ClientId; sessionId: SessionId };

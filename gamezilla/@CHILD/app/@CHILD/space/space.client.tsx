@@ -99,7 +99,7 @@ export const update = ({
   model,
   ctx,
 }: {
-  ctx: ClientCtx;
+  ctx: ClientCtx | AnonymousClientCtx;
   msg: ClientMsg;
   model: ClientModel;
 }): {
@@ -128,6 +128,10 @@ export const update = ({
     }
 
     case "game-msg": {
+      if (!ctx.currentUserId) {
+        return { model };
+      }
+
       const game = model.games[msg.spaceId];
 
       if (!game) {
@@ -149,7 +153,7 @@ export const update = ({
       }
 
       const updated = GameClient.update({
-        ctx: { ...ctx, space: space },
+        ctx: { ...ctx, currentUserId: ctx.currentUserId, space: space },
         msg: msg.c,
         model: game,
         state: space.game,
@@ -163,10 +167,17 @@ export const update = ({
           })
         : null;
 
+      if (!ctx.currentUserId) {
+        return { model };
+      }
+
       return chain(
         { model },
         (model) => {
           if (!event) {
+            return { model };
+          }
+          if (!ctx.currentUserId) {
             return { model };
           }
           const appended = appendEvent(model, event);
@@ -190,8 +201,12 @@ export const update = ({
           if (!event) {
             return { model };
           }
+          if (!ctx.currentUserId) {
+            return { model };
+          }
+
           return updateGameModel({
-            ctx,
+            ctx: { ...ctx, currentUserId: ctx.currentUserId },
             model,
             msg: event,
           });
@@ -233,9 +248,15 @@ export const update = ({
     }
 
     default: {
+      if (!ctx.currentUserId) {
+        return { model };
+      }
       return chain(
         { model },
         (model): ReturnType<typeof update> => {
+          if (!ctx.currentUserId) {
+            return { model };
+          }
           const updated = appendEvent(model, msg);
 
           const modelNew: ClientModel = {
@@ -271,10 +292,24 @@ export const update = ({
           return { model };
         },
         (model) => {
-          return updateGameModel({ msg, ctx, model });
+          if (!ctx.currentUserId) {
+            return { model };
+          }
+          return updateGameModel({
+            msg,
+            ctx: { ...ctx, currentUserId: ctx.currentUserId },
+            model,
+          });
         },
         (model) => {
-          return updateSound({ ctx, model, msg });
+          if (!ctx.currentUserId) {
+            return { model };
+          }
+          return updateSound({
+            ctx: { ...ctx, currentUserId: ctx.currentUserId },
+            model,
+            msg,
+          });
         }
       );
     }
@@ -627,6 +662,14 @@ export const updateFromEvent = (input: {
   switch (msg.t) {
     case "route-changed": {
       return { model: { ...model, modal: null } };
+    }
+
+    case "client-authenticated":
+    case "server-connected": {
+      return {
+        model,
+        cmd: [sendToServer({ t: "sync", events: model.events })],
+      };
     }
 
     default: {
