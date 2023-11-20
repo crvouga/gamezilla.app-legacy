@@ -179,14 +179,40 @@ const MyAudioContext: typeof window.AudioContext =
   // @ts-ignore
   window.webkitAudioContext;
 
-const audioContext = new MyAudioContext();
+let _audioContext: AudioContext;
 
-document.body.addEventListener("click", function () {
-  if (audioContext.state === "suspended") {
-    audioContext.resume().then(() => {
-      console.log("AudioContext resumed successfully");
-    });
+const getAudioContext = () => {
+  if (!_audioContext) {
+    _audioContext = new MyAudioContext();
   }
+  return _audioContext;
+};
+
+const resumedPromise = new Promise((resolve) => {
+  const handler = async (): Promise<null> => {
+    const audioContext = getAudioContext();
+
+    switch (audioContext.state) {
+      case "closed":
+      case "running": {
+        resolve(null);
+        document.body.removeEventListener("click", handler);
+        document.body.removeEventListener("touchstart", handler);
+        return null;
+      }
+
+      case "suspended": {
+        await audioContext.resume();
+        resolve(null);
+        document.body.removeEventListener("click", handler);
+        document.body.removeEventListener("touchstart", handler);
+        return null;
+      }
+    }
+  };
+
+  document.body.addEventListener("click", handler);
+  document.body.addEventListener("touchstart", handler);
 });
 
 const audioBuffers = new Map<string, AudioBuffer>();
@@ -197,8 +223,11 @@ async function preloadSounds(src: string[]) {
 }
 
 async function preloadSound(src: string) {
+  await resumedPromise;
+
   const response = await fetch(src);
   const arrayBuffer = await response.arrayBuffer();
+  const audioContext = getAudioContext();
   const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
   audioBuffers.set(src, audioBuffer);
   return ok(null);
@@ -208,14 +237,14 @@ async function playSound(
   src: string,
   volume: number
 ): Promise<Result<string, null>> {
-  if (audioContext.state === "suspended") {
-    await audioContext.resume();
-  }
+  await resumedPromise;
+
   const audioBuffer = audioBuffers.get(src);
+
   if (!audioBuffer) {
     return err(`Sound not loaded. src: ${src}`);
   }
-
+  const audioContext = getAudioContext();
   const sourceNode = audioContext.createBufferSource();
   sourceNode.buffer = audioBuffer;
   const gainNode = audioContext.createGain();
