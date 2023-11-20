@@ -363,19 +363,6 @@ export const updateFromEvent = async (input: {
   const { msg } = input;
 
   switch (msg.t) {
-    case "client-connected": {
-      return {
-        model: input.model,
-        cmd: [
-          sendToClient([input.msg.clientId], {
-            t: "sync",
-            events: input.model.events,
-            profiles: input.model.profileCache,
-          }),
-        ],
-      };
-    }
-
     default: {
       return input;
     }

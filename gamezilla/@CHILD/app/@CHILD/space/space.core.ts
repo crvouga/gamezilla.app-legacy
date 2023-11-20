@@ -62,10 +62,12 @@ export type ToServer = ToServerExtra &
 
 export type ToClientExtra = {
   profiles?: { [userId: UserId]: Profile };
+  meta?: Record<string, unknown>;
 };
 
 export type ToServerExtra = {
   profile?: Profile | null;
+  meta?: Record<string, unknown>;
 };
 
 export type ServerMsg = { t: "game-msg"; spaceId: SpaceId; c: Game.ServerMsg };

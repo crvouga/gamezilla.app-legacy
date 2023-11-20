@@ -667,7 +667,13 @@ export const updateFromEvent = (input: {
     case "server-connected": {
       return {
         model,
-        cmd: [sendToServer({ t: "sync", events: model.events })],
+        cmd: [
+          sendToServer({
+            t: "sync",
+            events: model.events,
+            meta: { initiator: msg },
+          }),
+        ],
       };
     }
 
