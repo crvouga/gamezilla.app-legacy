@@ -12,7 +12,7 @@ const program = Program.create({
     const init = AppClient.init({
       ...input,
       location: Browser.getLocation(),
-      stored: null, //modelStorage.get(),
+      stored: modelStorage.get(),
     });
 
     return init;
@@ -103,4 +103,4 @@ function renderRuntimeErrors() {
   }
 }
 
-renderRuntimeErrors();
+// renderRuntimeErrors();
