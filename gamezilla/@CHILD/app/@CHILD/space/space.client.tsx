@@ -664,7 +664,6 @@ export const updateFromEvent = (input: {
       return { model: { ...model, modal: null } };
     }
 
-    case "client-authenticated":
     case "server-connected": {
       return {
         model,

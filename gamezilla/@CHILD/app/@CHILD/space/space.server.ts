@@ -363,28 +363,23 @@ export const updateFromEvent = async (input: {
   const { msg } = input;
 
   switch (msg.t) {
-    case "client-authenticated":
     case "client-connected": {
-      return sync(input);
+      return {
+        model: input.model,
+        cmd: [
+          sendToClient([input.msg.clientId], {
+            t: "sync",
+            events: input.model.events,
+            profiles: input.model.profileCache,
+          }),
+        ],
+      };
     }
 
     default: {
       return input;
     }
   }
-};
-
-const sync: typeof updateFromEvent = async (input) => {
-  return {
-    model: input.model,
-    cmd: [
-      sendToClient([input.msg.clientId], {
-        t: "sync",
-        events: input.model.events,
-        profiles: input.model.profileCache,
-      }),
-    ],
-  };
 };
 
 const updateGameModel = async ({
