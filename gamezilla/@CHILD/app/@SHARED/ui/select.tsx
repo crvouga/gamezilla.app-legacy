@@ -36,6 +36,7 @@ export const Select = <T,>({
           error && "border border-red-500 text-red-500",
           !error && " ring-blue-600 focus:ring-2"
         )}
+        aria-labelledby={id}
         value={value ? toKey(value) : undefined}
         onChange={(e) => {
           for (const option of options) {
