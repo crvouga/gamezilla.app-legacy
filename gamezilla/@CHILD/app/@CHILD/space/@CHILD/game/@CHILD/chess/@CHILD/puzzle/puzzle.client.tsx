@@ -89,7 +89,7 @@ export const update = (input: {
     },
     (model) => {
       if (!isIncorrect(input.model) && isIncorrect(model)) {
-        return { model, cmd: [playSound(APP_SOUND.error)] };
+        return { model, cmd: [playSound(APP_SOUND.alertErrorMd)] };
       }
       if (!isSolved(input.model) && isSolved(model)) {
         return { model, cmd: [playSound(APP_SOUND.celebration)] };

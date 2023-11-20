@@ -20,7 +20,6 @@ export type Route =
     };
 
 export type ClientModel = {
-  loggingIn: boolean;
   //
   phoneNumberInput: string;
   phoneNumberError: string | null;

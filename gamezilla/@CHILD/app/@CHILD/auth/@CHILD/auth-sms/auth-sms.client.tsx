@@ -40,7 +40,6 @@ export const init: ClientModel = {
   countryCodeInput: Iso3166Alpha2Code.of("US"),
   phoneNumberError: null,
   //
-  loggingIn: false,
 
   sentCodeAt: null,
   sendCode: RemoteResult.notAsked,
@@ -93,6 +92,7 @@ export const update = ({
             ...model,
             phoneNumberError: phoneNumber.error.userMessage,
           },
+          cmd: [playSound(APP_SOUND.alertErrorSm)],
         };
       }
 
@@ -107,6 +107,7 @@ export const update = ({
             t: "send-code",
             phoneNumber: phoneNumber.value,
           }),
+          playSound(APP_SOUND.tap),
         ],
       };
     }
@@ -126,8 +127,11 @@ export const update = ({
             return {
               model: {
                 ...model,
-                sendCode: RemoteResult.err("Timed out"),
+                sendCode: RemoteResult.err(
+                  "Timed out. Server took too long to response"
+                ),
               },
+              cmd: [playSound(APP_SOUND.alertErrorMd)],
             };
           }
           return { model };
@@ -144,8 +148,11 @@ export const update = ({
             return {
               model: {
                 ...model,
-                verifyCode: RemoteResult.err("Timed out"),
+                verifyCode: RemoteResult.err(
+                  "Timed out. Server took too long to response"
+                ),
               },
+              cmd: [playSound(APP_SOUND.alertErrorMd)],
             };
           }
 
@@ -171,6 +178,7 @@ export const update = ({
             ...model,
             codeError: "Please enter the code",
           },
+          cmd: [playSound(APP_SOUND.alertErrorSm)],
         };
       }
 
@@ -181,6 +189,7 @@ export const update = ({
           verifyCode: RemoteResult.loading,
         },
         cmd: [
+          playSound(APP_SOUND.tap),
           sendToServer({
             t: "verify-code",
             code: model.codeInput,
@@ -207,7 +216,10 @@ export const updateFromServer = ({
   switch (msg.t) {
     case "sent-code": {
       if (isErr(msg.result)) {
-        return { model: { ...model, sendCode: msg.result } };
+        return {
+          model: { ...model, sendCode: msg.result },
+          cmd: [playSound(APP_SOUND.alertErrorMd)],
+        };
       }
       return {
         model: {
@@ -237,13 +249,15 @@ export const updateFromServer = ({
 
     case "verified-code": {
       if (isErr(msg.result)) {
-        return { model: { ...model, verifyCode: msg.result } };
+        return {
+          model: { ...model, verifyCode: msg.result },
+          cmd: [playSound(APP_SOUND.alertErrorMd)],
+        };
       }
       return {
         model: {
           ...model,
           verifyCode: msg.result,
-          loggingIn: true,
         },
       };
     }
@@ -260,15 +274,6 @@ export const updateFromEvent = ({
   model: ClientModel;
 } => {
   switch (evt.t) {
-    case "client-authenticated": {
-      return {
-        model: {
-          ...model,
-          loggingIn: false,
-        },
-      };
-    }
-
     default: {
       return {
         model,
@@ -398,7 +403,9 @@ export const View = ({
               text="Verify Code"
               color="primary"
               size="lg"
-              loading={model.verifyCode.t === "loading" || model.loggingIn}
+              loading={
+                model.verifyCode.t === "loading" || model.verifyCode.t === "ok"
+              }
               onClick={() => {
                 dispatch({
                   t: "clicked-verify-code",

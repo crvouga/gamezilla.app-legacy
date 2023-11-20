@@ -139,13 +139,15 @@ export type SoundCmd =
     };
 
 export const APP_SOUND = {
-  tap: "./tap.wav",
-  error: "./alert-error.wav",
-  celebration: "./celebration.wav",
-  navForward: "./nav-forward.wav",
-  navBackward: "./nav-backward.wav",
-  navForwardMin: "./nav-forward-min.wav",
-  navBackwardMin: "./nav-backward-min.wav",
+  tap: "./app/tap.wav",
+  alertErrorLg: "./app/alert-error-lg.wav",
+  alertErrorMd: "./app/alert-error-md.wav",
+  alertErrorSm: "./app/alert-error-sm.wav",
+  celebration: "./app/celebration.wav",
+  navForward: "./app/nav-forward.wav",
+  navBackward: "./app/nav-backward.wav",
+  navForwardMin: "./app/nav-forward-min.wav",
+  navBackwardMin: "./app/nav-backward-min.wav",
 };
 
 export const playSound = (src: string, volume?: UnitInterval): SoundCmd => {
