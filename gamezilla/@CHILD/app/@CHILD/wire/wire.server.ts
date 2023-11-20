@@ -218,6 +218,14 @@ export const updateFromCmd = <ToClient>({
       };
     }
 
+    case "wire/publish": {
+      return { model };
+    }
+
+    case "wire/subscribe": {
+      return { model };
+    }
+
     default: {
       return { model };
     }
@@ -273,7 +281,7 @@ export const createTransport = <ToServer, ToClient>() => {
 
   const port = Number(process.env["PORT"]) || 5000;
 
-  Bun.serve({
+  const server = Bun.serve({
     port: port,
 
     fetch(req, server) {

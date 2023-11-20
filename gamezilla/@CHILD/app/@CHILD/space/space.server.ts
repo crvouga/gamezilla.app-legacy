@@ -371,6 +371,21 @@ export const updateFromEvent = async (input: {
       };
     }
 
+    case "client-authenticated": {
+      const state = toStateUser(model, msg.userId);
+
+      return {
+        model,
+        cmd: [
+          {
+            t: "wire/subscribe",
+            clientId: msg.clientId,
+            topic: `space/${state.spaceId}`,
+          },
+        ],
+      };
+    }
+
     default: {
       return input;
     }

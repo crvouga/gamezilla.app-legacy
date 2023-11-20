@@ -8,6 +8,16 @@ import { ClientId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 //
 //
 
+type WireTopic =
+  | {
+      t: "client";
+      clientIds: ClientId[];
+    }
+  | {
+      t: "user";
+      userIds: UserId[];
+    };
+
 export type ServerCmd<ToClient> =
   | {
       t: "wire/broadcast";
@@ -22,6 +32,16 @@ export type ServerCmd<ToClient> =
       t: "wire/send-to-user";
       userIds: UserId[];
       msg: ToClient;
+    }
+  | {
+      t: "wire/publish";
+      topic: string;
+      msg: ToClient;
+    }
+  | {
+      t: "wire/subscribe";
+      topic: string;
+      clientId: ClientId;
     };
 
 export const sendBack = <ToClient>(
@@ -73,11 +93,13 @@ const mapOne = <A, B>(fn: (a: A) => B, cmd: ServerCmd<A>): ServerCmd<B> => {
   switch (cmd.t) {
     case "wire/send-to-client":
     case "wire/send-to-user":
+    case "wire/publish":
     case "wire/broadcast": {
       return { ...cmd, msg: fn(cmd.msg) };
     }
-    default:
+    case "wire/subscribe": {
       return cmd;
+    }
   }
 };
 

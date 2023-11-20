@@ -424,6 +424,8 @@ const updateFromCmd = ({
   cmd?: ServerCmd<ToClient>[];
 } => {
   switch (cmd.t) {
+    case "wire/publish":
+    case "wire/subscribe":
     case "wire/send-to-user":
     case "wire/broadcast":
     case "wire/send-to-client": {
