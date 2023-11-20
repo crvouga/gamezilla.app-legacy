@@ -32,6 +32,14 @@ import {
 } from "gamezilla/@SHARED/core";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth-sms.core";
 
+//
+//
+//
+//
+//
+//
+//
+
 export const init: ClientModel = {
   codeInput: "",
   codeError: null,
@@ -47,6 +55,30 @@ export const init: ClientModel = {
   verifiedCodeAt: null,
   verifyCode: RemoteResult.notAsked,
 };
+
+//
+//
+//
+//
+//
+//
+//
+
+const CODE_INPUT_VIEW_ID = "codeInput";
+
+const focusCodeInput = focusView(CODE_INPUT_VIEW_ID);
+
+const PHONE_NUMBER_INPUT_VIEW_ID = "phoneNumberInput";
+
+const focusPhoneNumberInput = focusView(PHONE_NUMBER_INPUT_VIEW_ID);
+
+//
+//
+//
+//
+//
+//
+//
 
 export const update = ({
   model,
@@ -92,7 +124,7 @@ export const update = ({
             ...model,
             phoneNumberError: phoneNumber.error.userMessage,
           },
-          cmd: [playSound(APP_SOUND.alertErrorSm)],
+          cmd: [playSound(APP_SOUND.alertErrorSm), focusPhoneNumberInput],
         };
       }
 
@@ -108,6 +140,44 @@ export const update = ({
             phoneNumber: phoneNumber.value,
           }),
           playSound(APP_SOUND.tap),
+        ],
+      };
+    }
+
+    case "inputted-code": {
+      return {
+        model: {
+          ...model,
+          codeInput: msg.code,
+          codeError: null,
+        },
+      };
+    }
+
+    case "clicked-verify-code": {
+      if (model.codeInput === "") {
+        return {
+          model: {
+            ...model,
+            codeError: "Please enter the code",
+          },
+          cmd: [playSound(APP_SOUND.alertErrorSm), focusCodeInput],
+        };
+      }
+
+      return {
+        model: {
+          ...model,
+          verifiedCodeAt: ctx.now,
+          verifyCode: RemoteResult.loading,
+        },
+        cmd: [
+          playSound(APP_SOUND.tap),
+          sendToServer({
+            t: "verify-code",
+            code: model.codeInput,
+            phoneNumber: msg.phoneNumber,
+          }),
         ],
       };
     }
@@ -160,48 +230,8 @@ export const update = ({
         }
       );
     }
-
-    case "inputted-code": {
-      return {
-        model: {
-          ...model,
-          codeInput: msg.code,
-          codeError: null,
-        },
-      };
-    }
-
-    case "clicked-verify-code": {
-      if (model.codeInput === "") {
-        return {
-          model: {
-            ...model,
-            codeError: "Please enter the code",
-          },
-          cmd: [playSound(APP_SOUND.alertErrorSm)],
-        };
-      }
-
-      return {
-        model: {
-          ...model,
-          verifiedCodeAt: ctx.now,
-          verifyCode: RemoteResult.loading,
-        },
-        cmd: [
-          playSound(APP_SOUND.tap),
-          sendToServer({
-            t: "verify-code",
-            code: model.codeInput,
-            phoneNumber: msg.phoneNumber,
-          }),
-        ],
-      };
-    }
   }
 };
-
-const CODE_INPUT_VIEW_ID = "codeInput";
 
 export const updateFromServer = ({
   msg,
@@ -241,7 +271,7 @@ export const updateFromServer = ({
             "info",
             4000
           ),
-          focusView(CODE_INPUT_VIEW_ID),
+          focusCodeInput,
           playSound(APP_SOUND.navForwardMin),
         ],
       };
