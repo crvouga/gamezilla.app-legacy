@@ -24,19 +24,24 @@ export const Select = <T,>({
   startIcon?: VDom;
   onChange: (value: T) => void;
 }) => {
+  const labelId = `${id}-label`;
   return (
     <div class="flex w-full flex-col gap-1">
-      <label htmlFor={id} class={cn("text-base", error && "text-red-500")}>
+      <label
+        id={labelId}
+        htmlFor={id}
+        class={cn("text-base", error && "text-red-500")}>
         {label}
       </label>
 
       <select
+        id={id}
         class={cn(
           "flex appearance-none items-center rounded-md border border-neutral-700 bg-neutral-800 p-3 py-4 text-xl outline-none",
           error && "border border-red-500 text-red-500",
           !error && " ring-blue-600 focus:ring-2"
         )}
-        aria-labelledby={id}
+        aria-labelledby={labelId}
         value={value ? toKey(value) : undefined}
         onChange={(e) => {
           for (const option of options) {
