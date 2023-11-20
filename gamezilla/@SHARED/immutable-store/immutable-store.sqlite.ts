@@ -1,4 +1,4 @@
-import { Store, StoreInstance } from "./immutable-store";
+import { IStore, StoreInstance } from "./immutable-store";
 import { Database } from "bun:sqlite";
 
 export type MapEntry<TKey extends string | number, TValue> = StoreInstance<
@@ -9,13 +9,13 @@ export type MapEntry<TKey extends string | number, TValue> = StoreInstance<
   value: TValue | undefined;
 };
 
-const sql = `
+const UPGRADE_SQL = `
 CREATE TABLE IF NOT EXISTS immutable_store (
     namespace TEXT NOT NULL,
-    id TEXT NOT NULL,
-    parent_id TEXT,
-    timestamp TIMESTAMP NOT NULL,
     key TEXT NOT NULL,
+    timestamp TIMESTAMP NOT NULL,
+    append_step NUMBER NOT NULL,
+    instance_step NUMBER NOT NULL,
     value TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_immutable_store_namespace_key_timestamp ON immutable_store (namespace, key, timestamp);
@@ -33,16 +33,18 @@ type Row = {
   value: string | null;
 };
 
-export const createSqliteStore = <TKey extends string | number, TValue>({
+export const SqliteStore = <TKey extends string | number, TValue>({
   connectionString,
   namespace,
 }: {
   namespace: string;
   connectionString: string;
   decodeValue: (encoded: string) => TValue | null;
-  encodeValue: (value: TValue) => string;
-}): Store<TKey, TValue> => {
+  encodeValue: (value: TValue) => string | null;
+}): IStore<TKey, TValue> => {
   const db = new Database(connectionString);
+
+  db.query(UPGRADE_SQL).run();
 
   const map = new Map<TKey, MapEntry<TKey, TValue>[]>();
 
@@ -58,6 +60,21 @@ export const createSqliteStore = <TKey extends string | number, TValue>({
       instanceStep: instance.instanceStep + 1,
       appendStep: runningAppendStep++,
     };
+
+    const sql_values = entries.map(([key, value]) => {});
+
+    const sql = `
+      INSERT INTO immutable_store (
+        namespace,
+        key,
+        timestamp,
+        append_step,
+        instance_step,
+        value
+      ) VALUES (
+        ${sql_values}
+      )
+    `;
 
     return instanceNew;
   };
@@ -109,8 +126,8 @@ export const createSqliteStore = <TKey extends string | number, TValue>({
 
       const query = `
         SELECT
-            id,
-            parent_id,
+            append_step,
+            instance_step,
             timestamp,
             key,
             value
@@ -125,8 +142,10 @@ export const createSqliteStore = <TKey extends string | number, TValue>({
         AND
             timestamp <= :to
         ORDER BY
-            timestamp DESC
-        LIMIT 100
+            timestamp DESC,
+            instance_step ASC,
+            append_step ASC
+        LIMIT 1
       `;
 
       for (const entry of map.get(key) ?? []) {
@@ -175,7 +194,7 @@ export const createSqliteStore = <TKey extends string | number, TValue>({
         }
       }
 
-      return runningEntry?.value;
+      return runningEntry?.value ?? null;
     },
   };
 };

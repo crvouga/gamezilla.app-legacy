@@ -1,4 +1,4 @@
-import { Store, StoreInstance } from "./immutable-store";
+import { IStore, StoreInstance } from "./immutable-store";
 
 export type MapEntry<TKey extends string | number, TValue> = StoreInstance<
   TKey,
@@ -8,11 +8,11 @@ export type MapEntry<TKey extends string | number, TValue> = StoreInstance<
   value: TValue | undefined;
 };
 
-export const createInMemoryStore = <TKey extends string | number, TValue>({
+export const InMemoryStore = <TKey extends string | number, TValue>({
   maxEntryCount,
 }: {
   maxEntryCount: number;
-}): Store<TKey, TValue> & {
+}): IStore<TKey, TValue> & {
   toJSON: () => unknown;
 } => {
   const map = new Map<TKey, MapEntry<TKey, TValue>[]>();
@@ -98,7 +98,7 @@ export const createInMemoryStore = <TKey extends string | number, TValue>({
     },
 
     async latest(from, to, instance, key) {
-      let runningEntry: MapEntry<TKey, TValue> | undefined = undefined;
+      let runningEntry: MapEntry<TKey, TValue> | null = null;
 
       for (const entry of map.get(key) ?? []) {
         // SKIP entry is too old
@@ -146,7 +146,7 @@ export const createInMemoryStore = <TKey extends string | number, TValue>({
         }
       }
 
-      return runningEntry?.value;
+      return runningEntry?.value ?? null;
     },
   };
 };

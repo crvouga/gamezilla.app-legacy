@@ -1,7 +1,7 @@
-import { createInMemoryStore } from "./immutable-store.in-memory";
+import { InMemoryStore } from "./immutable-store.in-memory";
 import { buildTest } from "./immutable-store.test";
 
-const Store = createInMemoryStore<string, string | null | undefined>({
+const Store = InMemoryStore<string, string | null>({
   maxEntryCount: 10,
 });
 

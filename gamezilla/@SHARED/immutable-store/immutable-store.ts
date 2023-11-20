@@ -1,12 +1,10 @@
 export type StoreInstance<_TKey, _TValue> = {
   timestamp: number;
-  // parentId: string | null;
-  // id: string;
   instanceStep: number;
   appendStep: number;
 };
 
-export type Store<TKey extends string | number, TValue> = {
+export type IStore<TKey extends string | number, TValue> = {
   init: (timestamp: number) => StoreInstance<TKey, TValue>;
 
   assoc: (
@@ -42,7 +40,7 @@ export type Store<TKey extends string | number, TValue> = {
     to: number,
     instance: StoreInstance<TKey, TValue>,
     key: TKey
-  ) => Promise<TValue | undefined>;
+  ) => Promise<TValue | null>;
 
   /**
    * Returns a list of all values in the store that exist between the given
