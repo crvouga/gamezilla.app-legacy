@@ -625,10 +625,9 @@ export const View = ({
 }) => {
   return (
     <div class="flex h-full w-full flex-col items-center justify-center">
+      hello
       <ViewMain model={model} now={now} dispatch={dispatch} />
-
       <Wire.View model={model.wire} />
-
       <Toast.View
         model={model.toast}
         dispatch={(c) => dispatch({ t: "toast", c })}
