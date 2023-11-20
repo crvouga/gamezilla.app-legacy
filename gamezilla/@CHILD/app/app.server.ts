@@ -20,7 +20,6 @@ import * as ChatServer from "./@CHILD/chat/chat.server";
 import * as ProfileServer from "./@CHILD/profile/profile.server";
 import * as SearchServer from "./@CHILD/search/search.server";
 import * as SpaceServer from "./@CHILD/space/space.server";
-
 import { ServerTransport } from "./@CHILD/wire/transport-server";
 import * as WireServer from "./@CHILD/wire/wire.server";
 import { Logger, LoggerConsole } from "./@SHARED/server/logger";
@@ -36,7 +35,9 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./app.core";
 //
 //
 
-const transport = ServerTransport<ToServer, ToClient>("bun-web-sockets");
+const transport = ServerTransport<ToServer, ToClient>({
+  impl: "bun-web-sockets",
+});
 
 //
 //

@@ -4,9 +4,9 @@ import {
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconSpinner } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Eff, Pub, PubSub } from "gamezilla/@SHARED/core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
+import { IClientTransport } from "./transport-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./wire.core";
-import { ClientToServerMsg, ServerToClientMsg } from "./transport.core";
 
 //
 //
@@ -97,14 +97,17 @@ export const updateFromServer = ({
   }
 };
 
-export const updateFromCmd = <TExternalToServer,>({
+export const updateFromCmd = <TToServer, TToClient>({
   cmd,
   model,
-  toServer,
+  transport,
 }: {
-  cmd: ClientCmd<{ ClientMsg: never; ToServer: TExternalToServer }>;
+  cmd: ClientCmd<{ ClientMsg: never; ToServer: TToServer }>;
   model: ClientModel;
-  toServer: Pub<TExternalToServer[]>;
+  transport: IClientTransport<{
+    ToServer: TToServer;
+    ToClient: TToClient;
+  }>;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
@@ -115,7 +118,7 @@ export const updateFromCmd = <TExternalToServer,>({
         model,
         eff: () => {
           if (cmd.msg) {
-            toServer.publish([cmd.msg]);
+            transport.toServer.publish([cmd.msg]);
           }
         },
       };
@@ -137,22 +140,31 @@ export const updateFromCmd = <TExternalToServer,>({
 //
 
 export const View = ({ model }: { model: ClientModel }) => {
-  if (model.t === "server-connect-error" && model.errorCount > 1) {
-    return (
-      <div class="flex h-6 w-full items-center justify-center gap-2 bg-yellow-600 text-white">
-        <IconSpinner class="h-5 w-5 animate-spin text-white" />
-        Server disconnected. Trying to reconnect...
-      </div>
-    );
+  switch (model.t) {
+    case "server-connect-error": {
+      if (model.errorCount === 0) {
+        return null;
+      }
+      return (
+        <div class="flex h-6 w-full items-center justify-center gap-2 bg-yellow-600 text-white">
+          <IconSpinner class="h-5 w-5 animate-spin text-white" />
+          Server disconnected. Trying to reconnect...
+        </div>
+      );
+    }
+
+    case "server-disconnected": {
+      return (
+        <div class="flex h-6 w-full items-center justify-center gap-2 bg-red-500 text-white">
+          Server disconnected
+        </div>
+      );
+    }
+
+    default: {
+      return null;
+    }
   }
-  if (model.t === "server-disconnected") {
-    return (
-      <div class="flex h-6 w-full items-center justify-center gap-2 bg-red-500 text-white">
-        Server disconnected
-      </div>
-    );
-  }
-  return null;
 };
 
 //
@@ -162,156 +174,10 @@ export const View = ({ model }: { model: ClientModel }) => {
 //
 //
 
-const wire = PubSub.create<ClientMsg>();
-
-export const subscriptions = PubSub.toSub(wire);
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-const BASE_SERVER_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://server.gamezilla.app/"
-    : false
-    ? "https://gamezilla-server.ngrok.io/"
-    : `http://localhost:5000/`;
-
-const SESSION_ID_KEY = "gamezilla-session-id";
-const RECONNECT_INTERVAL = 2000; // 1 second
-const MAX_RECONNECT_ATTEMPTS = 5; // Adjust as needed
-
-const SERVER_URL = toWebsocketServerUrl(BASE_SERVER_URL);
-
-export const createTransport = <ToServer, ToClient>() => {
-  const toServer = PubSub.create<ToServer[]>();
-  const toClient = PubSub.create<ToClient[]>();
-
-  let reconnectAttempts = 0;
-  let ws: WebSocket;
-  let isConnected = false;
-  let isDocumentHidden = false;
-  let queue: ClientToServerMsg<ToServer>[] = [];
-
-  const connect = () => {
-    if (isConnected) {
-      return;
-    }
-    isConnected = true;
-    ws = new WebSocket(SERVER_URL);
-
-    ws.onopen = () => {
-      reconnectAttempts = 0;
-      wire.publish({ t: "server-connected" });
-      for (const msg of queue) {
-        send(msg);
-      }
-      queue = [];
-    };
-
-    ws.onerror = () => {
-      wire.publish({ t: "server-connect-error" });
-    };
-
-    ws.onclose = () => {
-      isConnected = false;
-      if (isDocumentHidden) {
-        console.log("closed socket because document is hidden");
-        return;
-      }
-
-      if (reconnectAttempts > MAX_RECONNECT_ATTEMPTS) {
-        wire.publish({ t: "server-disconnected" });
-        console.log("server disconnected. max reconnect attempts reached");
-        return;
-      }
-      reconnectAttempts++;
-      setTimeout(connect, RECONNECT_INTERVAL);
-      return;
-    };
-
-    ws.onmessage = (event) => {
-      const msg = JSON.parse(event.data) as ServerToClientMsg<ToClient>; // leap of faith
-
-      if (msg.t === "to-client") {
-        toClient.publish(msg.msgs);
-        return;
-      }
-
-      if (msg.t === "session-id") {
-        localStorage.setItem(SESSION_ID_KEY, msg.sessionId);
-        return;
-      }
-    };
-  };
-
-  connect();
-
-  let closeTimeout: ReturnType<typeof setTimeout> | null = null;
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-      isDocumentHidden = true;
-      if (ws) {
-        ws.close(); // Close the WebSocket connection
-        isConnected = false;
-      }
-      if (closeTimeout) {
-        clearTimeout(closeTimeout);
-      }
-    } else {
-      isDocumentHidden = false;
-      connect(); // Re-establish the WebSocket connection when the page is shown again
-    }
-  });
-
-  const send = (msg: ClientToServerMsg<ToServer>) => {
-    if (!isConnected) {
-      queue.push(msg);
-      queue = queue.slice(-100);
-      return;
-    }
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify(msg));
-      return;
-    }
-  };
-
-  toServer.subscribe((msgs) => {
-    send({ t: "to-server", msgs });
-  });
-
-  return {
-    toClient: PubSub.toSub(toClient),
-    toServer: PubSub.toPub(toServer),
-  };
+export const subscriptions = <ToServer, ToClient>({
+  transport,
+}: {
+  transport: IClientTransport<{ ToServer: ToServer; ToClient: ToClient }>;
+}): Sub<ClientMsg> => {
+  return transport.wire;
 };
-
-function toWebsocketServerUrl(baseServerUrl: string) {
-  const baseServerUrlObj = new URL(baseServerUrl);
-  const sessionId = localStorage.getItem(SESSION_ID_KEY);
-
-  if (sessionId) {
-    baseServerUrlObj.searchParams.append("session-id", sessionId);
-  }
-
-  if (baseServerUrlObj.protocol === "https:") {
-    baseServerUrlObj.protocol = "wss";
-  }
-
-  if (baseServerUrlObj.protocol === "http:") {
-    baseServerUrlObj.protocol = "ws";
-  }
-
-  baseServerUrlObj.pathname = "/ws";
-
-  return baseServerUrlObj.toString();
-}

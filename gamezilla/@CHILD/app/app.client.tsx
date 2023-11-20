@@ -25,6 +25,7 @@ import { UserId } from "./@SHARED/data";
 import { Platform, Routing, Sound, Toast } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
 import * as Wire from "./@CHILD/wire/wire.client";
+import { ClientTransport } from "./@CHILD/wire/transport-client";
 
 //
 //
@@ -33,10 +34,9 @@ import * as Wire from "./@CHILD/wire/wire.client";
 //
 //
 
-export const { toClient, toServer } = Wire.createTransport<
-  ToServer,
-  ToClient
->();
+export const transport = ClientTransport<ToServer, ToClient>({
+  impl: "web-sockets",
+});
 
 //
 //
@@ -504,7 +504,7 @@ const updateFromCmd = ({
     case "wire/send-to-server": {
       const wire = Wire.updateFromCmd({
         cmd,
-        toServer: toServer,
+        transport,
         model: model.wire,
       });
       return {
@@ -593,8 +593,8 @@ export const subscriptions = (input: {
   const ctxApp = toCtx(input);
 
   return Sub.batch<ClientMsg>([
-    Sub.tag("➡️", Sub.flat(toClient)),
-    Sub.tag("wire", Wire.subscriptions),
+    Sub.tag("➡️", Sub.flat(transport.toClient)),
+    Sub.tag("wire", Wire.subscriptions({ transport })),
     Sub.tag("platform", Platform.subscriptions),
     Sub.tag("routing", Routing.subscriptions),
     Sub.tag(
