@@ -3,9 +3,9 @@ import { buildTest } from "./immutable-store.test";
 
 const Store = SqliteStore<string, string | null>({
   connectionString: ":memory:",
-  namespace: "test",
+  keySpace: "test",
   decodeValue: (encoded) => encoded,
   encodeValue: (value) => value,
 });
 
-// buildTest(Store);
+buildTest(Store);

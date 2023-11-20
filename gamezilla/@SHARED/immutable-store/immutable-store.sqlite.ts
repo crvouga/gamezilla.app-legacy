@@ -11,44 +11,71 @@ export type MapEntry<TKey extends string | number, TValue> = StoreInstance<
 
 const UPGRADE_SQL = `
 CREATE TABLE IF NOT EXISTS immutable_store (
-    namespace TEXT NOT NULL,
+    key_space TEXT NOT NULL,
     key TEXT NOT NULL,
-    timestamp TIMESTAMP NOT NULL,
+    posix_timestamp NUMBER NOT NULL,
     append_step NUMBER NOT NULL,
     instance_step NUMBER NOT NULL,
     value TEXT
 );
-CREATE INDEX IF NOT EXISTS idx_immutable_store_namespace_key_timestamp ON immutable_store (namespace, key, timestamp);
-CREATE INDEX IF NOT EXISTS idx_immutable_store_key_timestamp ON immutable_store (key, timestamp);
-CREATE INDEX IF NOT EXISTS idx_immutable_store_parent_id ON immutable_store (parent_id);
-CREATE INDEX IF NOT EXISTS idx_immutable_store_id ON immutable_store (id);
-CREATE INDEX IF NOT EXISTS idx_immutable_store_timestamp ON immutable_store (timestamp);
+CREATE INDEX IF NOT EXISTS idx_immutable_store_key_space_key_timestamp ON immutable_store (key_space, key, posix_timestamp, append_step, instance_step);
 `;
 
 type Row = {
-  id: string;
-  parent_id: string | null;
-  timestamp: number;
+  key_space: string;
+  append_step: number;
+  instance_step: number;
+  posix_timestamp: number;
   key: string;
   value: string | null;
 };
 
+function toRow(row: unknown): Row | null {
+  if (
+    typeof row === "object" &&
+    row !== null &&
+    "value" in row &&
+    (typeof row.value === "string" || row.value === null) &&
+    "key_space" in row &&
+    typeof row.key_space === "string" &&
+    "append_step" in row &&
+    typeof row.append_step === "number" &&
+    "instance_step" in row &&
+    typeof row.instance_step === "number" &&
+    "posix_timestamp" in row &&
+    typeof row.posix_timestamp === "number" &&
+    "key" in row &&
+    typeof row.key === "string"
+  ) {
+    return {
+      key_space: row.key_space,
+      append_step: row.append_step,
+      instance_step: row.instance_step,
+      posix_timestamp: row.posix_timestamp,
+      key: row.key,
+      value: row.value,
+    };
+  }
+
+  return null;
+}
+
 export const SqliteStore = <TKey extends string | number, TValue>({
   connectionString,
-  namespace,
+  keySpace: keySpace,
   encodeValue,
   decodeValue,
 }: {
-  namespace: string;
+  keySpace: string;
   connectionString: string;
-  decodeValue: (encoded: string) => TValue | null;
+  decodeValue: (encoded: string | null) => TValue | null;
   encodeValue: (value: TValue | null) => string | null;
 }): IStore<TKey, TValue> => {
   const db = new Database(connectionString);
 
-  db.query(UPGRADE_SQL).run();
+  const ran = db.query(UPGRADE_SQL).run();
 
-  const map = new Map<TKey, MapEntry<TKey, TValue>[]>();
+  console.log(ran);
 
   let runningAppendStep = 1;
 
@@ -58,7 +85,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
     entries: [TKey, TValue | null][]
   ): Promise<StoreInstance<TKey, TValue>> => {
     const instanceNew: StoreInstance<TKey, TValue> = {
-      _timestamp: now,
+      _posixTimestamp: now,
       _instanceStep: instance._instanceStep + 1,
       _appendStep: runningAppendStep++,
     };
@@ -67,9 +94,9 @@ export const SqliteStore = <TKey extends string | number, TValue>({
       .map(([key, value]) => {
         const value_sql = (value ? encodeValue(value) : null) ?? "NULL";
         return [
-          quote(namespace),
+          quote(keySpace),
           quote(key),
-          quote(instanceNew._timestamp),
+          instanceNew._posixTimestamp,
           instanceNew._appendStep,
           instanceNew._instanceStep,
           quote(value_sql),
@@ -80,9 +107,9 @@ export const SqliteStore = <TKey extends string | number, TValue>({
 
     const sql_query = `
       INSERT INTO immutable_store (
-        namespace,
+        key_space,
         key,
-        timestamp,
+        posix_timestamp,
         append_step,
         instance_step,
         value
@@ -98,7 +125,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
   return {
     init(now) {
       return {
-        _timestamp: now,
+        _posixTimestamp: now,
         _instanceStep: 0,
         _appendStep: 0,
       };
@@ -124,109 +151,98 @@ export const SqliteStore = <TKey extends string | number, TValue>({
     },
 
     async listLatest(from, to, instance) {
-      const latestValues: TValue[] = [];
-      for (const key of map.keys()) {
-        const value = await this.latest(from, to, instance, key);
+      const sql_query = `
+      SELECT
+          key_space,
+          append_step,
+          instance_step,
+          posix_timestamp,
+          key,
+          value
+      FROM
+          immutable_store
+      WHERE
+        key_space = '${keySpace}'
+      AND
+        posix_timestamp >= ${from}
+      AND
+        posix_timestamp <= ${to}
+      AND
+        instance_step <= ${instance._instanceStep}
+      AND
+        append_step <= ${instance._appendStep}
+      AND
+        posix_timestamp >= ${instance._posixTimestamp}
+      ORDER BY
+        posix_timestamp DESC,
+        instance_step DESC,
+        append_step DESC
+      LIMIT 1
+    `;
 
-        if (!value) {
-          continue;
+      const rows = db.query(sql_query).all();
+
+      const values = rows.flatMap((row) => {
+        const maybeParsedRow = toRow(row);
+        if (!maybeParsedRow) {
+          return [];
         }
+        const parsedValue = decodeValue(maybeParsedRow.value);
+        if (!parsedValue) {
+          return [];
+        }
+        return [parsedValue];
+      });
 
-        latestValues.push(value);
-      }
-      return latestValues;
+      return values;
     },
 
     async latest(from, to, instance, key) {
-      let runningEntry: MapEntry<TKey, TValue> | undefined = undefined;
-
-      const query = `
+      const sql_query = `
         SELECT
+            key_space,
             append_step,
             instance_step,
-            timestamp,
+            posix_timestamp,
             key,
             value
         FROM
             immutable_store
         WHERE
-            key = :key
+          key_space = '${keySpace}'
         AND
-            namespace = :namespace
+          key = '${key}'
         AND
-            timestamp >= :from
+          posix_timestamp >= ${from}
         AND
-            timestamp <= :to
+          posix_timestamp <= ${to}
+        AND
+          instance_step <= ${instance._instanceStep}
+        AND
+          append_step <= ${instance._appendStep}
+        AND
+          posix_timestamp >= ${instance._posixTimestamp}
         ORDER BY
-            timestamp DESC,
-            instance_step DESC,
-            append_step DESC
+          timestamp DESC,
+          instance_step DESC,
+          append_step DESC
         LIMIT 1
       `;
 
-      const rows = db.query(query).all();
+      const rows = db.query(sql_query).all();
 
-      const parsed = rows.flatMap((row) => {
-        if (
-          typeof row === "object" &&
-          row !== null &&
-          "value" in row &&
-          typeof row.value === "string"
-        ) {
-          return {
-            ...row,
-            value: decodeValue(row.value),
-          };
+      const values = rows.flatMap((row) => {
+        const maybeParsedRow = toRow(row);
+        if (maybeParsedRow) {
+          const parsedValue = decodeValue(maybeParsedRow.value);
+          return [parsedValue];
         }
+        return [];
       });
 
-      for (const entry of map.get(key) ?? []) {
-        // SKIP entry is too old
-        if (entry._timestamp < from) {
-          continue;
-        }
+      const latestValue = values[0] ?? null;
 
-        // SKIP entry is from the future
-        if (entry._timestamp > to) {
-          continue;
-        }
-
-        // SKIP entry is from the future
-        if (entry._instanceStep > instance._instanceStep) {
-          continue;
-        }
-
-        // SKIP entry is from the future
-        if (entry._appendStep > instance._appendStep) {
-          continue;
-        }
-
-        // KEEP entry exists
-        if (!runningEntry) {
-          runningEntry = entry;
-          continue;
-        }
-
-        // KEEP entry is newer
-        if (entry._timestamp > runningEntry._timestamp) {
-          runningEntry = entry;
-          continue;
-        }
-
-        // KEEP entry is newer
-        if (entry._instanceStep > runningEntry._instanceStep) {
-          runningEntry = entry;
-          continue;
-        }
-
-        // KEEP entry is newer
-        if (entry._appendStep > runningEntry._appendStep) {
-          runningEntry = entry;
-          continue;
-        }
-      }
-
-      return runningEntry?.value ?? null;
+      return latestValue;
     },
   };
 };

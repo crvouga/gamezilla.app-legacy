@@ -25,7 +25,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
     entries: [TKey, TValue | undefined][]
   ): Promise<StoreInstance<TKey, TValue>> => {
     const instanceNew: StoreInstance<TKey, TValue> = {
-      _timestamp: now,
+      _posixTimestamp: now,
       _instanceStep: instance._instanceStep + 1,
       _appendStep: runningAppendStep++,
     };
@@ -58,7 +58,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
     },
     init(now) {
       return {
-        _timestamp: now,
+        _posixTimestamp: now,
         _instanceStep: 0,
         _appendStep: 0,
       };
@@ -102,12 +102,12 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
 
       for (const entry of map.get(key) ?? []) {
         // SKIP entry is too old
-        if (entry._timestamp < from) {
+        if (entry._posixTimestamp < from) {
           continue;
         }
 
         // SKIP entry is from the future
-        if (entry._timestamp > to) {
+        if (entry._posixTimestamp > to) {
           continue;
         }
 
@@ -128,7 +128,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
         }
 
         // KEEP entry is newer
-        if (entry._timestamp > runningEntry._timestamp) {
+        if (entry._posixTimestamp > runningEntry._posixTimestamp) {
           runningEntry = entry;
           continue;
         }
