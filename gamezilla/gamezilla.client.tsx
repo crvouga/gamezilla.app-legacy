@@ -12,7 +12,7 @@ const program = Program.create({
     const init = AppClient.init({
       ...input,
       location: Browser.getLocation(),
-      stored: modelStorage.get(),
+      stored: null, //modelStorage.get(),
     });
 
     return init;
