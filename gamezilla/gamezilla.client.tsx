@@ -3,7 +3,6 @@ import { render } from "preact";
 import * as AppClient from "./@CHILD/app/app.client";
 import * as App from "./@CHILD/app/app.core";
 import { attachDebugger } from "./@SHARED/core/debug";
-import "./main.css";
 
 const modelStorage = ModelStorage<App.ClientModel>();
 
