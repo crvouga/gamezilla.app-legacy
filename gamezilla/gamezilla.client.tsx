@@ -51,15 +51,16 @@ program.start();
  * It retains type safety by using deployment IDs.
  */
 function ModelStorage<TModel>() {
-  const DEPLOYMENT_ID_KEY = "gamezilla/deployment-id";
+  const CODEBASE_VERSION_ID_KEY = "gamezilla/codebase-version-id";
   const MODEL_KEY = "gamezilla/model";
-  const VITE_DEPLOYMENT_ID = import.meta.env["VITE_DEPLOYMENT_ID"] ?? null;
+  const VITE_CODEBASE_VERSION_ID =
+    import.meta.env["VITE_CODEBASE_VERSION_ID"] ?? null;
 
   return {
     get: () => {
-      const storedDeploymentId = sessionStorage.getItem(DEPLOYMENT_ID_KEY);
+      const storedId = sessionStorage.getItem(CODEBASE_VERSION_ID_KEY);
 
-      if (storedDeploymentId !== VITE_DEPLOYMENT_ID) {
+      if (storedId !== VITE_CODEBASE_VERSION_ID) {
         return null;
       }
 
@@ -71,7 +72,7 @@ function ModelStorage<TModel>() {
     },
 
     set: (model: TModel) => {
-      sessionStorage.setItem(DEPLOYMENT_ID_KEY, VITE_DEPLOYMENT_ID);
+      sessionStorage.setItem(CODEBASE_VERSION_ID_KEY, VITE_CODEBASE_VERSION_ID);
       sessionStorage.setItem(MODEL_KEY, JSON.stringify(model));
     },
   };
