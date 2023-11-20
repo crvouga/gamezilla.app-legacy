@@ -102,3 +102,5 @@ function renderRuntimeErrors() {
     document.body.appendChild(errorDiv);
   }
 }
+
+renderRuntimeErrors();
