@@ -1,7 +1,9 @@
 import { expect, test } from "bun:test";
-import { IStore } from "./immutable-store";
+import { StoreModule } from "./immutable-store";
 
-export const buildTest = (makeStore: () => IStore<string, string | null>) => {
+export const buildTest = (
+  makeStore: () => StoreModule<string, string | null>
+) => {
   test("working with one key", async () => {
     const Store = makeStore();
     const t0 = Date.now();
@@ -13,31 +15,37 @@ export const buildTest = (makeStore: () => IStore<string, string | null>) => {
 
     const t1 = t0 + 1000;
 
-    expect(await Store.latest(store1, key)).toEqual(null);
-    expect(await Store.latest(store2A, key)).toEqual("2A");
-    expect(await Store.latest(store2B, key)).toEqual("2B");
+    expect(await Store.get(store1, key)).toEqual(null);
+    expect(await Store.get(store2A, key)).toEqual("2A");
+    expect(await Store.get(store2B, key)).toEqual("2B");
   });
 
   test("working with two keys", async () => {
     const Store = makeStore();
     const t0 = Date.now();
+
     const key1 = "key-1";
+    const value1 = "value-1";
+
     const key2 = "key-2";
+    const value2 = "value-2";
 
     const store0 = Store.startingAt(t0);
 
-    const store1 = await Store.assoc(t0, store0, key1, "value-1");
+    const store1 = await Store.assoc(t0, store0, key1, value1);
 
-    const store2 = await Store.assoc(t0, store1, key2, "value-2");
+    const store2 = await Store.assoc(t0, store1, key2, value2);
 
     const t1 = t0 + 1000;
 
-    expect(await Store.latest(store0, key1)).toEqual(null);
-    expect(await Store.latest(store0, key2)).toEqual(null);
-    expect(await Store.latest(store1, key1)).toEqual("value-1");
-    expect(await Store.latest(store1, key2)).toEqual(null);
-    expect(await Store.latest(store2, key1)).toEqual("value-1");
-    expect(await Store.latest(store2, key2)).toEqual("value-2");
+    expect(await Store.get(store0, key1)).toEqual(null);
+    expect(await Store.get(store0, key2)).toEqual(null);
+
+    expect(await Store.get(store1, key1)).toEqual(value1);
+    expect(await Store.get(store1, key2)).toEqual(null);
+
+    expect(await Store.get(store2, key1)).toEqual(value1);
+    expect(await Store.get(store2, key2)).toEqual(value2);
   });
 
   test("immutable behavior", async () => {
@@ -51,10 +59,10 @@ export const buildTest = (makeStore: () => IStore<string, string | null>) => {
     const t1 = t0 + 1000;
     // Ensure the original store is unchanged after 'set'
 
-    expect(await Store.latest(store1, key)).toEqual(null);
+    expect(await Store.get(store1, key)).toEqual(null);
 
     // Ensure the new store has the updated value
-    expect(await Store.latest(store2, key)).toEqual("value");
+    expect(await Store.get(store2, key)).toEqual("value");
   });
 
   test("chaining updates", async () => {
@@ -71,16 +79,16 @@ export const buildTest = (makeStore: () => IStore<string, string | null>) => {
 
     // Ensure original stores are unchanged
 
-    expect(await Store.latest(store0, key1)).toEqual(null);
+    expect(await Store.get(store0, key1)).toEqual(null);
 
-    expect(await Store.latest(store0, key2)).toEqual(null);
-    expect(await Store.latest(store1, key1)).toEqual("value-1");
+    expect(await Store.get(store0, key2)).toEqual(null);
+    expect(await Store.get(store1, key1)).toEqual("value-1");
 
-    expect(await Store.latest(store1, key2)).toEqual(null);
+    expect(await Store.get(store1, key2)).toEqual(null);
 
     // Ensure the new store has updated values
-    expect(await Store.latest(store2, key1)).toEqual("value-1");
-    expect(await Store.latest(store2, key2)).toEqual("value-2");
+    expect(await Store.get(store2, key1)).toEqual("value-1");
+    expect(await Store.get(store2, key2)).toEqual("value-2");
   });
 
   test("deleting keys", async () => {
@@ -95,14 +103,14 @@ export const buildTest = (makeStore: () => IStore<string, string | null>) => {
     const t1 = t0 + 1000;
     // Ensure the original store is unchanged
 
-    expect(await Store.latest(store1, key)).toEqual(null);
+    expect(await Store.get(store1, key)).toEqual(null);
 
     // Ensure the new store has the updated value
-    expect(await Store.latest(store2, key)).toEqual("value");
+    expect(await Store.get(store2, key)).toEqual("value");
 
     // Ensure the key is deleted in the final store
 
-    expect(await Store.latest(store3, key)).toEqual(null);
+    expect(await Store.get(store3, key)).toEqual(null);
   });
 
   test("key not found", async () => {
@@ -114,7 +122,7 @@ export const buildTest = (makeStore: () => IStore<string, string | null>) => {
     const t1 = t0 + 1000;
     // Ensure a key that doesn't exist returns null
 
-    expect(await Store.latest(store, key)).toEqual(null);
+    expect(await Store.get(store, key)).toEqual(null);
   });
 
   test("overwriting values", async () => {
@@ -128,11 +136,11 @@ export const buildTest = (makeStore: () => IStore<string, string | null>) => {
     const t1 = t0 + 1000;
     // Ensure original values remain unchanged
 
-    expect(await Store.latest(store1, key)).toEqual(null);
-    expect(await Store.latest(store2, key)).toEqual("value1");
+    expect(await Store.get(store1, key)).toEqual(null);
+    expect(await Store.get(store2, key)).toEqual("value1");
 
     // Ensure the new value is set in the new store
-    expect(await Store.latest(store3, key)).toEqual("value2");
+    expect(await Store.get(store3, key)).toEqual("value2");
   });
 
   test("multiple keys independently updated", async () => {
@@ -148,16 +156,16 @@ export const buildTest = (makeStore: () => IStore<string, string | null>) => {
     const t1 = t0 + 1000;
     // Ensure original stores are unchanged
 
-    expect(await Store.latest(store1, key1)).toEqual(null);
+    expect(await Store.get(store1, key1)).toEqual(null);
 
-    expect(await Store.latest(store1, key2)).toEqual(null);
-    expect(await Store.latest(store2, key1)).toEqual("value1");
+    expect(await Store.get(store1, key2)).toEqual(null);
+    expect(await Store.get(store2, key1)).toEqual("value1");
 
-    expect(await Store.latest(store2, key2)).toEqual(null);
+    expect(await Store.get(store2, key2)).toEqual(null);
 
     // Ensure the new store has updated values
-    expect(await Store.latest(store3, key1)).toEqual("value1");
-    expect(await Store.latest(store3, key2)).toEqual("value2");
+    expect(await Store.get(store3, key1)).toEqual("value1");
+    expect(await Store.get(store3, key2)).toEqual("value2");
   });
 
   test("empty key handling", async () => {
@@ -169,7 +177,7 @@ export const buildTest = (makeStore: () => IStore<string, string | null>) => {
     const store2 = await Store.assoc(t0, store1, key, "value");
 
     const t1 = t0 + 1000;
-    expect(await Store.latest(store2, key)).toEqual("value");
+    expect(await Store.get(store2, key)).toEqual("value");
   });
 
   test("null and null values", async () => {
@@ -183,9 +191,9 @@ export const buildTest = (makeStore: () => IStore<string, string | null>) => {
     const store3 = await Store.assoc(t0, store2, key2, null);
 
     const t1 = t0 + 1000;
-    expect(await Store.latest(store3, key1)).toEqual(null);
+    expect(await Store.get(store3, key1)).toEqual(null);
 
-    expect(await Store.latest(store3, key2)).toEqual(null);
+    expect(await Store.get(store3, key2)).toEqual(null);
   });
 
   test("concurrent reads", async () => {
@@ -199,7 +207,7 @@ export const buildTest = (makeStore: () => IStore<string, string | null>) => {
     const t1 = t0 + 1000;
     // Simulate concurrent reads by creating multiple promises
     const concurrentReads = Array.from({ length: 10 }, () => {
-      return Store.latest(store2, key);
+      return Store.get(store2, key);
     });
 
     // Await all concurrent reads to finish
@@ -227,9 +235,9 @@ export const buildTest = (makeStore: () => IStore<string, string | null>) => {
     const t3 = t2 + 1000;
     const storeC2 = await Store.assoc(t3, storeC1, key, "valueC");
 
-    expect(await Store.latest(storeA2, key)).toEqual("valueA");
-    expect(await Store.latest(storeB2, key)).toEqual("valueB");
-    expect(await Store.latest(storeC2, key)).toEqual("valueC");
+    expect(await Store.get(storeA2, key)).toEqual("valueA");
+    expect(await Store.get(storeB2, key)).toEqual("valueB");
+    expect(await Store.get(storeC2, key)).toEqual("valueC");
   });
 
   test("add then remove", async () => {
@@ -242,9 +250,9 @@ export const buildTest = (makeStore: () => IStore<string, string | null>) => {
     const t2 = t1 + 1000;
     const removed = await Store.dissoc(t2, added, key);
 
-    expect(await Store.latest(added, key)).toEqual("value");
+    expect(await Store.get(added, key)).toEqual("value");
 
-    expect(await Store.latest(removed, key)).toEqual(null);
+    expect(await Store.get(removed, key)).toEqual(null);
   });
 
   test("add then remove then add", async () => {
@@ -259,10 +267,10 @@ export const buildTest = (makeStore: () => IStore<string, string | null>) => {
     const t3 = t2 + 1000;
     const addedAgain = await Store.assoc(t3, removed, key, "valueAgain");
 
-    expect(await Store.latest(added, key)).toEqual("value");
+    expect(await Store.get(added, key)).toEqual("value");
 
-    expect(await Store.latest(removed, key)).toEqual(null);
-    expect(await Store.latest(addedAgain, key)).toEqual("valueAgain");
+    expect(await Store.get(removed, key)).toEqual(null);
+    expect(await Store.get(addedAgain, key)).toEqual("valueAgain");
   });
 
   test("listing spaces of different keys", async () => {

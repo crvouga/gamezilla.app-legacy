@@ -1,4 +1,4 @@
-import { IStore, StoreInstance } from "./immutable-store";
+import { StoreModule, Store } from "./immutable-store";
 import { Database } from "bun:sqlite";
 
 const UPGRADE_SQL = `
@@ -69,7 +69,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
   connectionString: string;
   decodeValue: (encoded: string | null) => TValue | null;
   encodeValue: (value: TValue | null) => string | null;
-}): IStore<TKey, TValue> => {
+}): StoreModule<TKey, TValue> => {
   const db = new Database(connectionString, {
     create: true,
   });
@@ -80,10 +80,10 @@ export const SqliteStore = <TKey extends string | number, TValue>({
 
   const append = async (
     now: number,
-    instance: StoreInstance<TKey, TValue>,
+    instance: Store<TKey, TValue>,
     entries: [TKey, TValue | null][]
-  ): Promise<StoreInstance<TKey, TValue>> => {
-    const instanceNew: StoreInstance<TKey, TValue> = {
+  ): Promise<Store<TKey, TValue>> => {
+    const instanceNew: Store<TKey, TValue> = {
       _posixTimestamp: now,
       _instanceStep: instance._instanceStep + 1,
       _appendStep: runningAppendStep++,
@@ -204,7 +204,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
       return values;
     },
 
-    async latest(instance, key) {
+    async get(instance, key) {
       const latestQuery = `
         SELECT
             key_space,
@@ -219,15 +219,20 @@ export const SqliteStore = <TKey extends string | number, TValue>({
           key_space = '${keySpace}'
         AND
           key = '${key}'
-        AND
-          posix_timestamp < ${instance._posixTimestamp}
-        OR (
-              posix_timestamp = ${instance._posixTimestamp}
-          AND instance_step < ${instance._instanceStep}
-        ) OR (
-              posix_timestamp = ${instance._posixTimestamp}
-          AND instance_step = ${instance._instanceStep}
-          AND append_step <= ${instance._appendStep}
+        AND (
+            posix_timestamp < ${instance._posixTimestamp}
+          OR (
+                posix_timestamp = ${instance._posixTimestamp}
+            AND instance_step < ${instance._instanceStep}
+          ) OR (
+                posix_timestamp = ${instance._posixTimestamp}
+            AND instance_step = ${instance._instanceStep}
+            AND append_step < ${instance._appendStep}
+          ) OR (
+                posix_timestamp = ${instance._posixTimestamp}
+            AND instance_step = ${instance._instanceStep}
+            AND append_step = ${instance._appendStep}
+          )
         )
         ORDER BY
           posix_timestamp DESC,

@@ -168,7 +168,7 @@ export const updateFromEvent = async ({
 }> => {
   switch (evt.t) {
     case "wire/client-connected": {
-      const userId = await StoreUserIdBySessionId.latest(
+      const userId = await StoreUserIdBySessionId.get(
         model.userIdBySessionId,
         evt.sessionId
       );
@@ -288,7 +288,7 @@ async function removeSession(
     sessionId
   );
 
-  const userId = await StoreUserIdBySessionId.latest(
+  const userId = await StoreUserIdBySessionId.get(
     model.userIdBySessionId,
     sessionId
   );

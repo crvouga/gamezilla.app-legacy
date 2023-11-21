@@ -1,6 +1,6 @@
-import { IStore, StoreInstance } from "./immutable-store";
+import { StoreModule, Store } from "./immutable-store";
 
-export type MapEntry<TKey extends string | number, TValue> = StoreInstance<
+export type MapEntry<TKey extends string | number, TValue> = Store<
   TKey,
   TValue
 > & {
@@ -12,7 +12,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
   maxEntryCount,
 }: {
   maxEntryCount: number;
-}): IStore<TKey, TValue> & {
+}): StoreModule<TKey, TValue> & {
   toJSON: () => unknown;
 } => {
   const map = new Map<TKey, MapEntry<TKey, TValue>[]>();
@@ -21,10 +21,10 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
 
   const append = async (
     now: number,
-    instance: StoreInstance<TKey, TValue>,
+    instance: Store<TKey, TValue>,
     entries: [TKey, TValue | undefined][]
-  ): Promise<StoreInstance<TKey, TValue>> => {
-    const instanceNew: StoreInstance<TKey, TValue> = {
+  ): Promise<Store<TKey, TValue>> => {
+    const instanceNew: Store<TKey, TValue> = {
       _posixTimestamp: now,
       _instanceStep: instance._instanceStep + 1,
       _appendStep: runningAppendStep++,
@@ -86,7 +86,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
     async listLatest(from, to, instance) {
       const latestValues: TValue[] = [];
       for (const key of map.keys()) {
-        const value = await this.latest(instance, key);
+        const value = await this.get(instance, key);
 
         if (!value) {
           continue;
@@ -97,7 +97,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
       return latestValues;
     },
 
-    async latest(instance, key) {
+    async get(instance, key) {
       let runningEntry: MapEntry<TKey, TValue> | null = null;
 
       for (const entry of map.get(key) ?? []) {
