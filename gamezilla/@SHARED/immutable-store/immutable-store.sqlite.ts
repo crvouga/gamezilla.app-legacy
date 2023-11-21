@@ -11,14 +11,21 @@ export type MapEntry<TKey extends string | number, TValue> = StoreInstance<
 
 const UPGRADE_SQL = `
 CREATE TABLE IF NOT EXISTS immutable_store (
-    key_space TEXT NOT NULL,
-    key TEXT NOT NULL,
-    posix_timestamp NUMBER NOT NULL,
-    append_step NUMBER NOT NULL,
-    instance_step NUMBER NOT NULL,
-    value TEXT
+  key_space TEXT NOT NULL,
+  key TEXT NOT NULL,
+  posix_timestamp NUMBER NOT NULL,
+  append_step NUMBER NOT NULL,
+  instance_step NUMBER NOT NULL,
+  value TEXT
 );
-CREATE INDEX IF NOT EXISTS idx_immutable_store_key_space_key_timestamp ON immutable_store (key_space, key, posix_timestamp, append_step, instance_step);
+
+CREATE INDEX IF NOT EXISTS idx_query1 ON immutable_store (key_space, key, posix_timestamp DESC, instance_step DESC, append_step DESC);
+CREATE INDEX IF NOT EXISTS idx_key_posix_timestamp ON immutable_store (key, posix_timestamp);
+CREATE INDEX IF NOT EXISTS idx_query2_join_order ON immutable_store (key, posix_timestamp, instance_step, append_step);
+CREATE INDEX IF NOT EXISTS idx_latest_keys ON immutable_store (key, posix_timestamp, instance_step, append_step);
+CREATE INDEX IF NOT EXISTS idx_join_optimization ON immutable_store (key, posix_timestamp);
+CREATE INDEX IF NOT EXISTS idx_order_by ON immutable_store (posix_timestamp, instance_step, append_step);
+
 `;
 
 type Row = {
@@ -151,7 +158,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
     },
 
     async listLatest(from, to, instance, log) {
-      const sql_query_v2 = `
+      const listLatestQuery = `
           WITH latest_keys AS (
             SELECT
                 key,
@@ -186,9 +193,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
             immutable_store.append_step ASC
       `;
 
-      const rows = db.query(sql_query_v2).all();
-
-      const allRows = db.query("SELECT * FROM immutable_store").all();
+      const rows = db.query(listLatestQuery).all();
 
       const values = rows.flatMap((row) => {
         const maybeParsedRow = toRow(row);
@@ -206,7 +211,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
     },
 
     async latest(from, to, instance, key) {
-      const sql_query = `
+      const latestQuery = `
         SELECT
             key_space,
             append_step,
@@ -237,7 +242,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
         LIMIT 1
       `;
 
-      const rows = db.query(sql_query).all();
+      const rows = db.query(latestQuery).all();
 
       const values = rows.flatMap((row) => {
         const maybeParsedRow = toRow(row);
