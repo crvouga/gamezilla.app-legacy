@@ -73,9 +73,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
 }): IStore<TKey, TValue> => {
   const db = new Database(connectionString);
 
-  const ran = db.query(UPGRADE_SQL).run();
-
-  console.log(ran);
+  db.query(UPGRADE_SQL).run();
 
   let runningAppendStep = 1;
 
@@ -92,14 +90,16 @@ export const SqliteStore = <TKey extends string | number, TValue>({
 
     const sql_values = entries
       .map(([key, value]) => {
-        const value_sql = (value ? encodeValue(value) : null) ?? "NULL";
+        const encodedValue = value ? encodeValue(value) : null;
+        const valueSql =
+          typeof encodedValue === "string" ? quote(encodedValue) : "NULL";
         return [
           quote(keySpace),
           quote(key),
           instanceNew._posixTimestamp,
           instanceNew._appendStep,
           instanceNew._instanceStep,
-          quote(value_sql),
+          valueSql,
         ].join(", ");
       })
       .map((values) => `(${values})`)
@@ -150,7 +150,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
       );
     },
 
-    async listLatest(from, to, instance) {
+    async listLatest(from, to, instance, log) {
       const sql_query = `
       SELECT
           key_space,
@@ -159,28 +159,35 @@ export const SqliteStore = <TKey extends string | number, TValue>({
           posix_timestamp,
           key,
           value
-      FROM
-          immutable_store
-      WHERE
-        key_space = '${keySpace}'
-      AND
-        posix_timestamp >= ${from}
-      AND
-        posix_timestamp <= ${to}
-      AND
-        instance_step <= ${instance._instanceStep}
-      AND
-        append_step <= ${instance._appendStep}
-      AND
-        posix_timestamp >= ${instance._posixTimestamp}
+      FROM (
+          SELECT
+              *,
+              ROW_NUMBER() OVER (PARTITION BY key ORDER BY posix_timestamp DESC, instance_step DESC, append_step DESC) as rn
+          FROM
+              immutable_store
+          WHERE
+              key_space = '${keySpace}'
+          AND
+              posix_timestamp >= ${from}
+          AND
+              posix_timestamp <= ${to}
+          AND
+              instance_step <= ${instance._instanceStep}
+          AND
+              append_step <= ${instance._appendStep}
+          AND
+              posix_timestamp <= ${instance._posixTimestamp}
+      )
+      WHERE rn = 1
       ORDER BY
-        posix_timestamp DESC,
-        instance_step DESC,
-        append_step DESC
-      LIMIT 1
-    `;
+          posix_timestamp ASC,
+          instance_step ASC,
+          append_step ASC
+      `;
 
       const rows = db.query(sql_query).all();
+
+      const allRows = db.query("SELECT * FROM immutable_store").all();
 
       const values = rows.flatMap((row) => {
         const maybeParsedRow = toRow(row);
@@ -193,6 +200,14 @@ export const SqliteStore = <TKey extends string | number, TValue>({
         }
         return [parsedValue];
       });
+
+      if (values.length < rows.length) {
+        console.log("some values were not parsed", { values, rows, allRows });
+      }
+
+      if (log) {
+        console.log(sql_query, { rows, allRows, values });
+      }
 
       return values;
     },
@@ -221,9 +236,9 @@ export const SqliteStore = <TKey extends string | number, TValue>({
         AND
           append_step <= ${instance._appendStep}
         AND
-          posix_timestamp >= ${instance._posixTimestamp}
+          posix_timestamp <= ${instance._posixTimestamp}
         ORDER BY
-          timestamp DESC,
+          posix_timestamp DESC,
           instance_step DESC,
           append_step DESC
         LIMIT 1

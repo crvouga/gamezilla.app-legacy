@@ -1,8 +1,9 @@
 import { expect, test } from "bun:test";
 import { IStore } from "./immutable-store";
 
-export const buildTest = (Store: IStore<string, string | null>) => {
+export const buildTest = (makeStore: () => IStore<string, string | null>) => {
   test("working with one key", async () => {
+    const Store = makeStore();
     const t0 = Date.now();
     const key = "user-123";
 
@@ -18,6 +19,7 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("working with two keys", async () => {
+    const Store = makeStore();
     const t0 = Date.now();
     const key1 = "key-1";
     const key2 = "key-2";
@@ -39,6 +41,7 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("immutable behavior", async () => {
+    const Store = makeStore();
     const t0 = Date.now();
     const key = "user-123";
 
@@ -55,6 +58,7 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("chaining updates", async () => {
+    const Store = makeStore();
     const t0 = Date.now();
     const key1 = "key-1";
     const key2 = "key-2";
@@ -80,6 +84,7 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("deleting keys", async () => {
+    const Store = makeStore();
     const t0 = Date.now();
     const key = "key-1";
 
@@ -101,6 +106,7 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("key not found", async () => {
+    const Store = makeStore();
     const t0 = Date.now();
     const key = "nonexistent-key";
 
@@ -112,6 +118,7 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("overwriting values", async () => {
+    const Store = makeStore();
     const t0 = Date.now();
     const key = "key-1";
 
@@ -129,6 +136,7 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("multiple keys independently updated", async () => {
+    const Store = makeStore();
     const t0 = Date.now();
     const key1 = "key-1";
     const key2 = "key-2";
@@ -153,6 +161,7 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("empty key handling", async () => {
+    const Store = makeStore();
     const t0 = Date.now();
     const key = "";
 
@@ -164,6 +173,7 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("null and null values", async () => {
+    const Store = makeStore();
     const t0 = Date.now();
     const key1 = "null-key";
     const key2 = "null-key";
@@ -179,6 +189,7 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("concurrent reads", async () => {
+    const Store = makeStore();
     const t0 = Date.now();
     const key = "concurrent-key";
 
@@ -201,6 +212,7 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("concurrent", async () => {
+    const Store = makeStore();
     const key = "key";
     const t0 = Date.now();
     const storeA1 = Store.init(t0);
@@ -221,6 +233,7 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("add then remove", async () => {
+    const Store = makeStore();
     const key = "key";
     const t0 = Date.now();
     const initial = Store.init(t0);
@@ -235,6 +248,7 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("add then remove then add", async () => {
+    const Store = makeStore();
     const key = "key";
     const t0 = Date.now();
     const initial = Store.init(t0);
@@ -252,7 +266,7 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("listing spaces of different keys", async () => {
-    const key = "key";
+    const Store = makeStore();
     const t0 = Date.now() + 10_0000;
     const initial = Store.init(t0);
     const t1 = t0 + 1000;
@@ -278,15 +292,16 @@ export const buildTest = (Store: IStore<string, string | null>) => {
   });
 
   test("listing spaces of same keys", async () => {
+    const Store = makeStore();
     const key = "key";
     const t0 = Date.now() + 10_001;
     const initial = Store.init(t0);
     const t1 = t0 + 1000;
-    const added1 = await Store.assoc(t1, initial, "k1", "1");
+    const added1 = await Store.assoc(t1, initial, key, "1");
     const t2 = t1 + 1000;
-    const added2 = await Store.assoc(t2, added1, "k1", "2");
+    const added2 = await Store.assoc(t2, added1, key, "2");
     const t3 = t2 + 1000;
-    const added3 = await Store.assoc(t3, added2, "k1", "3");
+    const added3 = await Store.assoc(t3, added2, key, "3");
 
     expect(await Store.listLatest(t0, t1, initial)).toEqual([]);
     //

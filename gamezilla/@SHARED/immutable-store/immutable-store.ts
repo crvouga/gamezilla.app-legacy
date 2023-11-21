@@ -49,6 +49,7 @@ export type IStore<TKey extends string | number, TValue> = {
   listLatest: (
     posixFrom: number,
     posixTo: number,
-    instance: StoreInstance<TKey, TValue>
+    instance: StoreInstance<TKey, TValue>,
+    log?: boolean
   ) => Promise<TValue[]>;
 };
