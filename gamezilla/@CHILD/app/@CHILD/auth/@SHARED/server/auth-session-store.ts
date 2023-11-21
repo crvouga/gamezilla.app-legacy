@@ -1,7 +1,7 @@
 import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { SqliteStore } from "gamezilla/@SHARED/immutable-store";
 
-const databaseUrl = "data/gamezilla.db";
+const databaseUrl = "sqlite:data/gamezilla.db";
 
 export const StoreUserIdBySessionId = SqliteStore<SessionId, UserId>({
   connectionString: databaseUrl,

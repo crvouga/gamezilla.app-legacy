@@ -70,7 +70,9 @@ export const SqliteStore = <TKey extends string | number, TValue>({
   decodeValue: (encoded: string | null) => TValue | null;
   encodeValue: (value: TValue | null) => string | null;
 }): StoreModule<TKey, TValue> => {
-  const db = new Database(connectionString, {
+  const cleaned = connectionString.replace("sqlite:", "");
+
+  const db = new Database(cleaned, {
     create: true,
   });
 
