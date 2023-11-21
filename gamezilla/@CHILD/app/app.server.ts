@@ -15,6 +15,7 @@ import {
   ok,
   toMsgType,
 } from "gamezilla/@SHARED/core";
+import { toSessionId, toUserId } from "./@CHILD/auth/auth.core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
 import * as ChatServer from "./@CHILD/chat/chat.server";
 import * as ProfileServer from "./@CHILD/profile/profile.server";
@@ -26,8 +27,6 @@ import { Logger, LoggerConsole } from "./@SHARED/server/logger";
 import { createDbConn } from "./app-server/db-conn-sql";
 import { createSMS } from "./app-server/sms";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./app.core";
-import { StoreSessionIdByUserId } from "./@CHILD/auth/@SHARED/server/auth-session-store";
-import { toCurrentUserId } from "./@CHILD/auth/auth.core";
 
 //
 //
@@ -279,7 +278,7 @@ const updateFromClient = async ({
   cmd?: ServerCmd<ToClient>[];
   evt?: ServerEvt[];
 }> => {
-  const currentUserId = await toCurrentUserId(model.auth, ctx.sessionId);
+  const currentUserId = await toUserId(model.auth, ctx.sessionId);
 
   const authReqCtx: ReqCtx | AnonymousReqCtx = currentUserId
     ? {
@@ -440,7 +439,7 @@ const updateFromCmd = ({
         cmd,
         model: model.wire,
         transport,
-        sessionIdByUserId: model.auth.sessionIdByUserId,
+        toSessionId: (userId) => toSessionId(model.auth, userId),
       });
       return {
         model: {

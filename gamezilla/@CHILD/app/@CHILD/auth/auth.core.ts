@@ -2,12 +2,16 @@ import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   EmailAddress,
   PhoneNumber,
+  Posix,
   RemoteResult,
   Result,
 } from "gamezilla/@SHARED/core";
 import * as AuthSMS from "./@CHILD/auth-sms/auth-sms.core";
 import { Store } from "gamezilla/@SHARED/immutable-store";
-import { StoreUserIdBySessionId } from "./@SHARED/server/auth-session-store";
+import {
+  StoreSessionIdByUserId,
+  StoreUserIdBySessionId,
+} from "./@SHARED/server/auth-session-store";
 
 //
 //
@@ -38,7 +42,7 @@ export type ServerModel = {
   sms: AuthSMS.ServerModel;
 };
 
-export const toCurrentUserId = async (
+export const toUserId = async (
   model: ServerModel,
   sessionId: SessionId
 ): Promise<UserId | null> => {
@@ -47,6 +51,17 @@ export const toCurrentUserId = async (
     sessionId
   );
   return userId ?? null;
+};
+
+export const toSessionId = async (
+  model: ServerModel,
+  userId: UserId
+): Promise<SessionId | null> => {
+  const sessionId = await StoreSessionIdByUserId.get(
+    model.sessionIdByUserId,
+    userId
+  );
+  return sessionId ?? null;
 };
 
 //

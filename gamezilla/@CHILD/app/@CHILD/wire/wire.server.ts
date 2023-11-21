@@ -15,6 +15,7 @@ import {
   ToClient,
   ToServer,
 } from "./wire.core";
+import { Store, StoreModule } from "gamezilla/@SHARED/immutable-store";
 
 //
 //
@@ -146,13 +147,14 @@ export const updateFromClient = ({
 export const updateFromCmd = <TToServer, TToClient>({
   cmd,
   model,
-  sessionIdByUserId,
   transport,
+  toSessionId,
 }: {
   cmd: ServerCmd<TToClient>;
   model: ServerModel;
-  sessionIdByUserId: { [userId: UserId]: SessionId };
   transport: IServerTransport<{ ToClient: TToClient; ToServer: TToServer }>;
+  //
+  toSessionId: (userId: UserId) => Promise<SessionId | null>;
 }): {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
@@ -193,7 +195,7 @@ export const updateFromCmd = <TToServer, TToClient>({
     case "wire/send-to-user": {
       return {
         model,
-        eff: () => {
+        eff: async () => {
           const toClientPayload: {
             [clientId: ClientId]: {
               clientId: ClientId;
@@ -202,14 +204,18 @@ export const updateFromCmd = <TToServer, TToClient>({
           } = {};
 
           for (const userId of cmd.userIds) {
-            const sessionId = sessionIdByUserId[userId];
+            const sessionId = await toSessionId(userId);
+
             if (!sessionId) {
               continue;
             }
+
             const client = model.clientsBySessionId[sessionId];
+
             if (!client) {
               continue;
             }
+
             toClientPayload[client.clientId] = {
               clientId: client.clientId,
               msgs: [cmd.msg],
