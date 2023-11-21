@@ -3,20 +3,20 @@ import { Database } from "bun:sqlite";
 
 const UPGRADE_SQL = `
 CREATE TABLE IF NOT EXISTS immutable_store (
-  key_space TEXT NOT NULL,
-  key TEXT NOT NULL,
+  key_space       TEXT NOT NULL,
+  key             TEXT NOT NULL,
   posix_timestamp NUMBER NOT NULL,
-  append_step NUMBER NOT NULL,
-  instance_step NUMBER NOT NULL,
-  value TEXT
+  append_step     NUMBER NOT NULL,
+  instance_step   NUMBER NOT NULL,
+  value           TEXT
 );
 
-CREATE INDEX IF NOT EXISTS idx_query1 ON immutable_store (key_space, key, posix_timestamp DESC, instance_step DESC, append_step DESC);
+CREATE INDEX IF NOT EXISTS idx_query1              ON immutable_store (key_space, key, posix_timestamp DESC, instance_step DESC, append_step DESC);
 CREATE INDEX IF NOT EXISTS idx_key_posix_timestamp ON immutable_store (key, posix_timestamp);
-CREATE INDEX IF NOT EXISTS idx_query2_join_order ON immutable_store (key, posix_timestamp, instance_step, append_step);
-CREATE INDEX IF NOT EXISTS idx_latest_keys ON immutable_store (key, posix_timestamp, instance_step, append_step);
-CREATE INDEX IF NOT EXISTS idx_join_optimization ON immutable_store (key, posix_timestamp);
-CREATE INDEX IF NOT EXISTS idx_order_by ON immutable_store (posix_timestamp, instance_step, append_step);
+CREATE INDEX IF NOT EXISTS idx_query2_join_order   ON immutable_store (key, posix_timestamp, instance_step, append_step);
+CREATE INDEX IF NOT EXISTS idx_latest_keys         ON immutable_store (key, posix_timestamp, instance_step, append_step);
+CREATE INDEX IF NOT EXISTS idx_join_optimization   ON immutable_store (key, posix_timestamp);
+CREATE INDEX IF NOT EXISTS idx_order_by            ON immutable_store (posix_timestamp, instance_step, append_step);
 
 `;
 

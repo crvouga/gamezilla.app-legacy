@@ -273,6 +273,139 @@ export const buildTest = (
     expect(await Store.get(addedAgain, key)).toEqual("valueAgain");
   });
 
+  test("multiple timelines one level deep", async () => {
+    const Store = makeStore();
+
+    const key = "key";
+
+    const t0 = Date.now();
+
+    const initial = Store.startingAt(t0);
+    const start = await Store.assoc(t0, initial, key, "start");
+    const left = await Store.assoc(t0, start, key, "left");
+    const right = await Store.assoc(t0, start, key, "right");
+
+    expect(await Store.get(initial, key)).toEqual(null);
+    expect(await Store.get(start, key)).toEqual("start");
+    expect(await Store.get(left, key)).toEqual("left");
+    expect(await Store.get(right, key)).toEqual("right");
+  });
+
+  test("multiple timelines two levels deep", async () => {
+    const Store = makeStore();
+
+    const key = "key";
+
+    const t0 = Date.now();
+
+    const initial = Store.startingAt(t0);
+    const start = await Store.assoc(t0, initial, key, "start");
+    //
+    const left = await Store.assoc(t0, start, key, "left");
+    const right = await Store.assoc(t0, start, key, "right");
+    //
+    const left_left = await Store.assoc(t0, left, key, "left_left");
+    const left_right = await Store.assoc(t0, left, key, "left_right");
+    const right_left = await Store.assoc(t0, right, key, "right_left");
+    const right_right = await Store.assoc(t0, right, key, "right_right");
+
+    expect(await Store.get(initial, key)).toEqual(null);
+    expect(await Store.get(start, key)).toEqual("start");
+    expect(await Store.get(left, key)).toEqual("left");
+    expect(await Store.get(right, key)).toEqual("right");
+    expect(await Store.get(left_left, key)).toEqual("left_left");
+    expect(await Store.get(left_right, key)).toEqual("left_right");
+    expect(await Store.get(right_left, key)).toEqual("right_left");
+    expect(await Store.get(right_right, key)).toEqual("right_right");
+  });
+
+  test("multiple timelines three levels deep", async () => {
+    const Store = makeStore();
+
+    const key = "key";
+
+    const t0 = Date.now();
+
+    const initial = Store.startingAt(t0);
+    const start = await Store.assoc(t0, initial, key, "start");
+    //
+    const left = await Store.assoc(t0, start, key, "left");
+    const right = await Store.assoc(t0, start, key, "right");
+    //
+    const left_left = await Store.assoc(t0, left, key, "left_left");
+    const left_right = await Store.assoc(t0, left, key, "left_right");
+    const right_left = await Store.assoc(t0, right, key, "right_left");
+    const right_right = await Store.assoc(t0, right, key, "right_right");
+    //
+    const left_left_left = await Store.assoc(
+      t0,
+      left_left,
+      key,
+      "left_left_left"
+    );
+    const left_left_right = await Store.assoc(
+      t0,
+      left_left,
+      key,
+      "left_left_right"
+    );
+    const left_right_left = await Store.assoc(
+      t0,
+      left_right,
+      key,
+      "left_right_left"
+    );
+    const left_right_right = await Store.assoc(
+      t0,
+      left_right,
+      key,
+      "left_right_right"
+    );
+    const right_left_left = await Store.assoc(
+      t0,
+      right_left,
+      key,
+      "right_left_left"
+    );
+    const right_left_right = await Store.assoc(
+      t0,
+      right_left,
+      key,
+      "right_left_right"
+    );
+    const right_right_left = await Store.assoc(
+      t0,
+      right_right,
+      key,
+      "right_right_left"
+    );
+    const right_right_right = await Store.assoc(
+      t0,
+      right_right,
+      key,
+      "right_right_right"
+    );
+
+    expect(await Store.get(initial, key)).toEqual(null);
+    expect(await Store.get(start, key)).toEqual("start");
+    expect(await Store.get(left, key)).toEqual("left");
+    expect(await Store.get(right, key)).toEqual("right");
+    expect(await Store.get(left_left, key)).toEqual("left_left");
+    expect(await Store.get(left_right, key)).toEqual("left_right");
+    expect(await Store.get(right_left, key)).toEqual("right_left");
+    expect(await Store.get(right_right, key)).toEqual("right_right");
+    expect(await Store.get(left_left_left, key)).toEqual("left_left_left");
+    expect(await Store.get(left_left_right, key)).toEqual("left_left_right");
+    expect(await Store.get(left_right_left, key)).toEqual("left_right_left");
+    expect(await Store.get(left_right_right, key)).toEqual("left_right_right");
+    expect(await Store.get(right_left_left, key)).toEqual("right_left_left");
+    expect(await Store.get(right_left_right, key)).toEqual("right_left_right");
+    expect(await Store.get(right_right_left, key)).toEqual("right_right_left");
+    expect(await Store.get(right_right_right, key)).toEqual(
+      "right_right_right"
+    );
+  });
+
   test("listing spaces of different keys", async () => {
     const Store = makeStore();
     const t0 = Date.now() + 10_0000;
@@ -324,5 +457,29 @@ export const buildTest = (
     expect(await Store.listLatest(t0, t1, added3)).toEqual(["1"]);
     expect(await Store.listLatest(t0, t2, added3)).toEqual(["2"]);
     expect(await Store.listLatest(t0, t3, added3)).toEqual(["3"]);
+  });
+
+  test("multiple timelines one level deep with dissoc", async () => {
+    const Store = makeStore();
+
+    const key = "key";
+
+    const t0 = Date.now();
+
+    const initial = Store.startingAt(t0);
+    const start = await Store.assoc(t0, initial, key, "start");
+    const left = await Store.assoc(t0, start, key, "left");
+    const right = await Store.assoc(t0, start, key, "right");
+    const startDissoc = await Store.dissoc(t0, start, key);
+    const leftDissoc = await Store.dissoc(t0, left, key);
+    const rightDissoc = await Store.dissoc(t0, right, key);
+
+    expect(await Store.get(initial, key)).toEqual(null);
+    expect(await Store.get(start, key)).toEqual("start");
+    expect(await Store.get(left, key)).toEqual("left");
+    expect(await Store.get(right, key)).toEqual("right");
+    expect(await Store.get(startDissoc, key)).toEqual(null);
+    expect(await Store.get(leftDissoc, key)).toEqual(null);
+    expect(await Store.get(rightDissoc, key)).toEqual(null);
   });
 };
