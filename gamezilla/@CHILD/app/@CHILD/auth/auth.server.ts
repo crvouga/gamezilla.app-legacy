@@ -9,6 +9,10 @@ import {
 import { Eff, isErr } from "gamezilla/@SHARED/core";
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
+import {
+  StoreSessionIdByUserId,
+  StoreUserIdBySessionId,
+} from "./@SHARED/server/auth-session-store";
 
 //
 //
@@ -18,11 +22,11 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 //
 //
 
-export const init = (): { model: ServerModel } => {
+export const init = ({ ctx }: { ctx: ServerCtx }): { model: ServerModel } => {
   return {
     model: {
-      userIdBySessionId: {},
-      sessionIdByUserId: {},
+      userIdBySessionId: StoreUserIdBySessionId.startingAt(ctx.now),
+      sessionIdByUserId: StoreSessionIdByUserId.startingAt(ctx.now),
       sms: AuthServerSMS.init,
     },
   };
@@ -36,7 +40,7 @@ export const init = (): { model: ServerModel } => {
 //
 //
 
-export const update = ({
+export const update = async ({
   ctx,
   model,
   msg,
@@ -44,12 +48,12 @@ export const update = ({
   msg: ServerMsg;
   model: ServerModel;
   ctx: ServerCtx;
-}): {
+}): Promise<{
   model: ServerModel;
   cmd?: ServerCmd<ToClient>[];
   evt?: ServerEvt[];
   eff?: Eff<ServerMsg>;
-} => {
+}> => {
   switch (msg.t) {
     case "got-user-account": {
       if (isErr(msg.result)) {
@@ -59,17 +63,15 @@ export const update = ({
         };
       }
 
+      const modelNew = await addSession(
+        ctx,
+        model,
+        msg.sessionId,
+        msg.result.value.userId
+      );
+
       return {
-        model: {
-          ...model,
-          userIdBySessionId: {
-            ...model.userIdBySessionId,
-            [msg.sessionId]: {
-              sessionId: msg.sessionId,
-              userId: msg.result.value.userId,
-            },
-          },
-        },
+        model: modelNew,
         evt: [
           {
             t: "auth/client-authenticated",
@@ -102,7 +104,7 @@ export const update = ({
   }
 };
 
-export const updateFromClient = ({
+export const updateFromClient = async ({
   ctx,
   model,
   msg,
@@ -110,15 +112,15 @@ export const updateFromClient = ({
   ctx: AnonymousReqCtx;
   msg: ToServer;
   model: ServerModel;
-}): {
+}): Promise<{
   model: ServerModel;
   evt?: ServerEvt[];
   cmd?: ServerCmd<ToClient>[];
   eff?: Eff<ServerMsg>;
-} => {
+}> => {
   switch (msg.t) {
     case "logout": {
-      const modelNew = removeSession(model, ctx.sessionId);
+      const modelNew = await removeSession(ctx, model, ctx.sessionId);
 
       return {
         model: modelNew,
@@ -151,24 +153,29 @@ export const updateFromClient = ({
   }
 };
 
-export const updateFromEvent = ({
+export const updateFromEvent = async ({
   msg: evt,
   model,
+  ctx,
 }: {
+  ctx: ServerCtx;
   msg: ServerEvt;
   model: ServerModel;
-}): {
+}): Promise<{
   model: ServerModel;
   cmd?: ServerCmd<ToClient>[];
   evt?: ServerEvt[];
-} => {
+}> => {
   switch (evt.t) {
     case "wire/client-connected": {
-      const userId = model.userIdBySessionId[evt.sessionId];
+      const userId = await StoreUserIdBySessionId.latest(
+        model.userIdBySessionId,
+        evt.sessionId
+      );
 
       if (!userId) {
         return {
-          model,
+          model: model,
           evt: [
             {
               t: "auth/client-unauthenticated",
@@ -180,7 +187,7 @@ export const updateFromEvent = ({
       }
 
       return {
-        model,
+        model: model,
         evt: [
           {
             ...evt,
@@ -192,18 +199,21 @@ export const updateFromEvent = ({
     }
 
     case "auth/client-authenticated": {
-      const modelNew = addSession(model, evt);
-
+      if (evt.loggedIn) {
+        return {
+          model: await addSession(ctx, model, evt.sessionId, evt.userId),
+          cmd: [sendToClient([evt.clientId], evt)],
+        };
+      }
       return {
-        model: modelNew,
+        model: model,
         cmd: [sendToClient([evt.clientId], evt)],
       };
     }
 
     case "auth/client-unauthenticated": {
-      const modelNew = removeSession(model, evt.sessionId);
       return {
-        model: modelNew,
+        model: model,
         cmd: [sendToClient([evt.clientId], evt)],
       };
     }
@@ -240,18 +250,25 @@ export const updateFromCmd = ({
 //
 //
 
-function addSession(
+async function addSession(
+  ctx: ServerCtx,
   model: ServerModel,
-  { sessionId, userId }: { sessionId: SessionId; userId: UserId }
-): ServerModel {
-  const userIdBySessionIdNew: ServerModel["userIdBySessionId"] = {
-    ...model.userIdBySessionId,
-    [sessionId]: userId,
-  };
-  const sessionIdByUserIdNew: ServerModel["sessionIdByUserId"] = {
-    ...model.sessionIdByUserId,
-    [userId]: sessionId,
-  };
+  sessionId: SessionId,
+  userId: UserId
+): Promise<ServerModel> {
+  const userIdBySessionIdNew = await StoreUserIdBySessionId.assoc(
+    ctx.now,
+    model.userIdBySessionId,
+    sessionId,
+    userId
+  );
+
+  const sessionIdByUserIdNew = await StoreSessionIdByUserId.assoc(
+    ctx.now,
+    model.sessionIdByUserId,
+    userId,
+    sessionId
+  );
 
   return {
     ...model,
@@ -260,15 +277,34 @@ function addSession(
   };
 }
 
-function removeSession(model: ServerModel, sessionId: SessionId): ServerModel {
-  const userIdBySessionIdNew = { ...model.userIdBySessionId };
-  delete userIdBySessionIdNew[sessionId];
+async function removeSession(
+  ctx: ServerCtx,
+  model: ServerModel,
+  sessionId: SessionId
+): Promise<ServerModel> {
+  const userIdBySessionIdNew = await StoreUserIdBySessionId.dissoc(
+    ctx.now,
+    model.userIdBySessionId,
+    sessionId
+  );
 
-  const sessionIdByUserIdNew = { ...model.sessionIdByUserId };
-  const userId = model.userIdBySessionId[sessionId];
-  if (userId) {
-    delete sessionIdByUserIdNew[userId];
+  const userId = await StoreUserIdBySessionId.latest(
+    model.userIdBySessionId,
+    sessionId
+  );
+
+  if (!userId) {
+    return {
+      ...model,
+      userIdBySessionId: userIdBySessionIdNew,
+    };
   }
+
+  const sessionIdByUserIdNew = await StoreSessionIdByUserId.dissoc(
+    ctx.now,
+    model.sessionIdByUserId,
+    userId
+  );
 
   return {
     ...model,

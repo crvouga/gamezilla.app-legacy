@@ -56,7 +56,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
       }
       return json;
     },
-    init(now) {
+    startingAt(now) {
       return {
         _posixTimestamp: now,
         _instanceStep: 0,
@@ -86,7 +86,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
     async listLatest(from, to, instance) {
       const latestValues: TValue[] = [];
       for (const key of map.keys()) {
-        const value = await this.latest(from, to, instance, key);
+        const value = await this.latest(instance, key);
 
         if (!value) {
           continue;
@@ -97,17 +97,12 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
       return latestValues;
     },
 
-    async latest(from, to, instance, key) {
+    async latest(instance, key) {
       let runningEntry: MapEntry<TKey, TValue> | null = null;
 
       for (const entry of map.get(key) ?? []) {
-        // SKIP entry is too old
-        if (entry._posixTimestamp < from) {
-          continue;
-        }
-
         // SKIP entry is from the future
-        if (entry._posixTimestamp > to) {
+        if (entry._posixTimestamp > instance._posixTimestamp) {
           continue;
         }
 

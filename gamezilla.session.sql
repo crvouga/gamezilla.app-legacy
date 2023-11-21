@@ -1,1 +1,3 @@
-SELECT * FROM user_profile
+
+SELECT * FROM immutable_store;
+

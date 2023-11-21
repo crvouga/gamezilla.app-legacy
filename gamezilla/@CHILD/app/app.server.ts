@@ -26,6 +26,8 @@ import { Logger, LoggerConsole } from "./@SHARED/server/logger";
 import { createDbConn } from "./app-server/db-conn-sql";
 import { createSMS } from "./app-server/sms";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./app.core";
+import { StoreSessionIdByUserId } from "./@CHILD/auth/@SHARED/server/auth-session-store";
+import { toCurrentUserId } from "./@CHILD/auth/auth.core";
 
 //
 //
@@ -57,7 +59,7 @@ export const init = ({
 } => {
   const wire = WireServer.init();
   const space = SpaceServer.init();
-  const auth = AuthServer.init();
+  const auth = AuthServer.init({ ctx });
   return {
     model: {
       wire: wire.model,
@@ -236,7 +238,11 @@ const updateMain = async ({
     }
 
     case "auth": {
-      const updated = AuthServer.update({ ctx, model: model.auth, msg: msg.c });
+      const updated = await AuthServer.update({
+        ctx,
+        model: model.auth,
+        msg: msg.c,
+      });
       return {
         model: { ...model, auth: updated.model },
         cmd: ServerCmd.tag("auth", updated.cmd),
@@ -273,7 +279,8 @@ const updateFromClient = async ({
   cmd?: ServerCmd<ToClient>[];
   evt?: ServerEvt[];
 }> => {
-  const currentUserId = model.auth.userIdBySessionId[ctx.sessionId];
+  const currentUserId = await toCurrentUserId(model.auth, ctx.sessionId);
+
   const authReqCtx: ReqCtx | AnonymousReqCtx = currentUserId
     ? {
         ...ctx,
@@ -282,7 +289,7 @@ const updateFromClient = async ({
     : ctx;
   switch (msg.t) {
     case "auth": {
-      const updated = AuthServer.updateFromClient({
+      const updated = await AuthServer.updateFromClient({
         ctx,
         model: model.auth,
         msg: msg.c,
@@ -385,9 +392,10 @@ const updateFromEvent = async ({
     model: model.profile,
   });
 
-  const auth = AuthServer.updateFromEvent({
+  const auth = await AuthServer.updateFromEvent({
     msg,
     model: model.auth,
+    ctx,
   });
 
   return {

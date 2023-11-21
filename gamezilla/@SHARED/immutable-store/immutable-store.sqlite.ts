@@ -70,7 +70,9 @@ export const SqliteStore = <TKey extends string | number, TValue>({
   decodeValue: (encoded: string | null) => TValue | null;
   encodeValue: (value: TValue | null) => string | null;
 }): IStore<TKey, TValue> => {
-  const db = new Database(connectionString);
+  const db = new Database(connectionString, {
+    create: true,
+  });
 
   db.query(UPGRADE_SQL).run();
 
@@ -122,7 +124,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
   };
 
   return {
-    init(now) {
+    startingAt(now) {
       return {
         _posixTimestamp: now,
         _instanceStep: 0,
@@ -202,7 +204,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
       return values;
     },
 
-    async latest(from, to, instance, key) {
+    async latest(instance, key) {
       const latestQuery = `
         SELECT
             key_space,
@@ -218,15 +220,15 @@ export const SqliteStore = <TKey extends string | number, TValue>({
         AND
           key = '${key}'
         AND
-          posix_timestamp >= ${from}
-        AND
-          posix_timestamp <= ${to}
-        AND
-          instance_step <= ${instance._instanceStep}
-        AND
-          append_step <= ${instance._appendStep}
-        AND
-          posix_timestamp <= ${instance._posixTimestamp}
+          posix_timestamp < ${instance._posixTimestamp}
+        OR (
+              posix_timestamp = ${instance._posixTimestamp}
+          AND instance_step < ${instance._instanceStep}
+        ) OR (
+              posix_timestamp = ${instance._posixTimestamp}
+          AND instance_step = ${instance._instanceStep}
+          AND append_step <= ${instance._appendStep}
+        )
         ORDER BY
           posix_timestamp DESC,
           instance_step DESC,

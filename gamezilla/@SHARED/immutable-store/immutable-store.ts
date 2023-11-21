@@ -5,7 +5,7 @@ export type StoreInstance<_TKey, _TValue> = {
 };
 
 export type IStore<TKey extends string | number, TValue> = {
-  init: (posix: number) => StoreInstance<TKey, TValue>;
+  startingAt: (posix: number) => StoreInstance<TKey, TValue>;
 
   assoc: (
     posix: number,
@@ -36,8 +36,6 @@ export type IStore<TKey extends string | number, TValue> = {
    * Returns the latest value for the given key, if it exists.
    */
   latest: (
-    posixFrom: number,
-    posixTo: number,
     instance: StoreInstance<TKey, TValue>,
     key: TKey
   ) => Promise<TValue | null>;
