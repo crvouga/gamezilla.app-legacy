@@ -84,7 +84,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
     entries: [TKey, TValue | null][]
   ): Promise<Store<TKey, TValue>> => {
     const instanceNew: Store<TKey, TValue> = {
-      _posixTimestamp: now,
+      _posixTimestamp: Math.max(now, 0),
       _instanceStep: instance._instanceStep + 1,
       _appendStep: runningAppendStep++,
     };
@@ -126,7 +126,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
   return {
     startingAt(now) {
       return {
-        _posixTimestamp: now,
+        _posixTimestamp: Math.max(now, 0),
         _instanceStep: 0,
         _appendStep: 0,
       };

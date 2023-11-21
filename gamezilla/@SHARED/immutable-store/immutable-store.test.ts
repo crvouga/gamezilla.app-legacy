@@ -482,4 +482,27 @@ export const buildTest = (
     expect(await Store.get(leftDissoc, key)).toEqual(null);
     expect(await Store.get(rightDissoc, key)).toEqual(null);
   });
+
+  test("handling invalid timestamp", async () => {
+    const Store = makeStore();
+
+    const key = "key";
+
+    const initial = Store.startingAt(1);
+    const invalid = await Store.assoc(-1, initial, key, "start");
+
+    expect(await Store.get(invalid, key)).toEqual("start");
+  });
+
+  test("adding to the past", async () => {
+    const Store = makeStore();
+
+    const key = "key";
+
+    const initial = Store.startingAt(1);
+    const invalid = await Store.assoc(0, initial, key, "start");
+
+    expect(await Store.get(initial, key)).toEqual(null);
+    expect(await Store.get(invalid, key)).toEqual("start");
+  });
 };
