@@ -151,41 +151,42 @@ export const SqliteStore = <TKey extends string | number, TValue>({
     },
 
     async listLatest(from, to, instance, log) {
-      const sql_query = `
-      SELECT
-          key_space,
-          append_step,
-          instance_step,
-          posix_timestamp,
-          key,
-          value
-      FROM (
-          SELECT
-              *,
-              ROW_NUMBER() OVER (PARTITION BY key ORDER BY posix_timestamp DESC, instance_step DESC, append_step DESC) as rn
-          FROM
-              immutable_store
-          WHERE
-              key_space = '${keySpace}'
-          AND
-              posix_timestamp >= ${from}
-          AND
-              posix_timestamp <= ${to}
-          AND
-              instance_step <= ${instance._instanceStep}
-          AND
-              append_step <= ${instance._appendStep}
-          AND
-              posix_timestamp <= ${instance._posixTimestamp}
-      )
-      WHERE rn = 1
-      ORDER BY
-          posix_timestamp ASC,
-          instance_step ASC,
-          append_step ASC
+      const sql_query_v2 = `
+          WITH latest_keys AS (
+            SELECT
+                key,
+                MAX(posix_timestamp) as max_posix_timestamp
+            FROM
+                immutable_store
+            WHERE
+                key_space = '${keySpace}'
+            AND
+                posix_timestamp >= ${from}
+            AND
+                posix_timestamp <= ${to}
+            AND
+                instance_step <= ${instance._instanceStep}
+            AND
+                append_step <= ${instance._appendStep}
+            AND
+                posix_timestamp <= ${instance._posixTimestamp}
+            GROUP BY
+                key
+        )
+        SELECT
+            immutable_store.*
+        FROM
+            immutable_store
+        INNER JOIN latest_keys ON
+            immutable_store.key = latest_keys.key AND
+            immutable_store.posix_timestamp = latest_keys.max_posix_timestamp
+        ORDER BY
+            immutable_store.posix_timestamp ASC,
+            immutable_store.instance_step ASC,
+            immutable_store.append_step ASC
       `;
 
-      const rows = db.query(sql_query).all();
+      const rows = db.query(sql_query_v2).all();
 
       const allRows = db.query("SELECT * FROM immutable_store").all();
 
@@ -200,14 +201,6 @@ export const SqliteStore = <TKey extends string | number, TValue>({
         }
         return [parsedValue];
       });
-
-      if (values.length < rows.length) {
-        console.log("some values were not parsed", { values, rows, allRows });
-      }
-
-      if (log) {
-        console.log(sql_query, { rows, allRows, values });
-      }
 
       return values;
     },
