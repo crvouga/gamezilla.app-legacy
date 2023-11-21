@@ -502,14 +502,25 @@ const updateFromCmd = ({
     }
 
     case "wire/send-to-server": {
-      const wire = Wire.updateFromCmd({
+      const updated = Wire.updateFromCmd({
         cmd,
         transport,
         model: model.wire,
       });
       return {
-        model: { ...model, wire: wire.model },
-        eff: Eff.t("wire", wire.eff),
+        model: { ...model, wire: updated.model },
+        eff: Eff.t("wire", updated.eff),
+      };
+    }
+
+    case "profile/add-profiles": {
+      const updated = ProfileClient.updateFromCmd({
+        cmd,
+        model: model.profile,
+      });
+
+      return {
+        model: { ...model, profile: updated.model },
       };
     }
   }
@@ -538,6 +549,7 @@ const updateFromEvent = ({
   const space = SpaceClient.updateFromEvent({
     model: model.space,
     msg,
+    ctx: ctxApp,
   });
 
   const profile = ProfileClient.updateFromEvent({

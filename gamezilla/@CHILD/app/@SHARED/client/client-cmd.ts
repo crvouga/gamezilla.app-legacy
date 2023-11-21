@@ -1,4 +1,5 @@
 import { UnitInterval } from "gamezilla/@SHARED/core";
+import { Profile, UserId } from "../data";
 import { AppRoute } from "./client-route";
 
 //
@@ -18,7 +19,27 @@ export type ClientCmd<T extends ClientCmdTypes> =
   | ToastCmd
   | RouteCmd
   | SoundCmd
-  | PlatformCmd<T>;
+  | PlatformCmd<T>
+  | ProfileCmd;
+
+//
+//
+//
+//
+//
+
+export type ProfileCmd = {
+  t: "profile/add-profiles";
+  profiles: {
+    [userId: UserId]: Profile;
+  };
+};
+
+export const addProfiles = <T extends ClientCmdTypes>(profiles: {
+  [userId: UserId]: Profile;
+}): ClientCmd<T> => {
+  return { t: "profile/add-profiles", profiles };
+};
 
 //
 //

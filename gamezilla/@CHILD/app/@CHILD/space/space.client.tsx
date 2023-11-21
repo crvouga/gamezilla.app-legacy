@@ -8,6 +8,7 @@ import {
   ClientEvt,
   RouteGameSpace,
   ViewCtx,
+  addProfiles,
   playSound,
   pushRoute,
   sendToServer,
@@ -475,7 +476,10 @@ export const updateFromServer = ({
               };
             },
             (model) => {
-              return { model };
+              return {
+                model,
+                cmd: msg.profiles ? [addProfiles(msg.profiles)] : [],
+              };
             }
           );
         }
@@ -506,7 +510,7 @@ export const updateFromServer = ({
     (model) => {
       return {
         model,
-        // evt: msg.profiles ? [gotProfiles(msg.profiles)] : [],
+        cmd: msg.profiles ? [addProfiles(msg.profiles)] : [],
       };
     }
   );
@@ -650,6 +654,7 @@ const updateGameModel = ({
 };
 
 export const updateFromEvent = (input: {
+  ctx: ClientCtx | AnonymousClientCtx;
   msg: ClientEvt;
   model: ClientModel;
 }): {
@@ -664,6 +669,10 @@ export const updateFromEvent = (input: {
     }
 
     case "wire/server-connected": {
+      const currentUserId = input.ctx.currentUserId;
+      const currentUserProfile = currentUserId
+        ? input.ctx.profiles[currentUserId]
+        : null;
       return {
         model,
         cmd: [
@@ -671,6 +680,11 @@ export const updateFromEvent = (input: {
             t: "sync",
             events: model.events,
             meta: { initiator: msg },
+            profiles: currentUserProfile
+              ? {
+                  [currentUserProfile.userId]: currentUserProfile,
+                }
+              : {},
           }),
         ],
       };

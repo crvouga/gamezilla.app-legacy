@@ -44,7 +44,11 @@ type ModalModel = null | "user-preview" | "users";
 //
 //
 
-type Sync = { t: "sync"; events: CoreModel["events"] };
+type Sync = {
+  t: "sync";
+  events: CoreModel["events"];
+  profiles?: { [userId: UserId]: Profile };
+};
 
 export type ToClient = ToClientExtra &
   (

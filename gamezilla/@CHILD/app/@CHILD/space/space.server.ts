@@ -238,8 +238,25 @@ export const updateFromClient = async (input: {
         },
         (model) => {
           return {
+            model: {
+              ...model,
+              profileCache: {
+                ...model.profileCache,
+                ...msg.profiles,
+              },
+            },
+          };
+        },
+        (model) => {
+          return {
             model,
-            cmd: [broadcast({ t: "sync", events: model.events })],
+            cmd: [
+              broadcast({
+                t: "sync",
+                events: model.events,
+                profiles: model.profileCache,
+              }),
+            ],
           };
         }
       );

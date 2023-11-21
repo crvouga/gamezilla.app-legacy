@@ -8,6 +8,7 @@ import {
   ViewCtx,
   showToast,
   sendToServer,
+  ProfileCmd,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { ProfileAvatar, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
@@ -238,6 +239,34 @@ const loadProfile = (
       }),
     ],
   };
+};
+
+export const updateFromCmd = ({
+  cmd,
+  model,
+}: {
+  cmd: ProfileCmd;
+  model: ClientModel;
+}): {
+  model: ClientModel;
+} => {
+  switch (cmd.t) {
+    case "profile/add-profiles": {
+      return {
+        model: {
+          ...model,
+          profiles: {
+            ...model.profiles,
+            ...cmd.profiles,
+          },
+        },
+      };
+    }
+
+    default: {
+      return { model };
+    }
+  }
 };
 
 //
