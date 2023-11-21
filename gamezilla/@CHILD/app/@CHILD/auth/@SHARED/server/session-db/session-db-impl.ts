@@ -1,7 +1,9 @@
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
-import { ISessionDb } from "./session-db";
+import { AuthSession, IAuthSessionDb } from "./session-db";
 import { Parsing as P } from "gamezilla/@SHARED/parsing";
 import { isErr } from "gamezilla/@SHARED/core";
+import { SqliteStore } from "gamezilla/@SHARED/immutable-store";
+import { SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 type SessionRow = {
   user_id: string;
@@ -28,7 +30,23 @@ const toSessionRow = (row: unknown): SessionRow | null => {
   return null;
 };
 
-export const SessionDb = ({ dbConn }: { dbConn: DbConnSql }): ISessionDb => {
+SqliteStore<SessionId, AuthSession>({
+  connectionString: ":memory:",
+  keySpace: "test",
+  decodeValue: (encoded) => {
+    if (!encoded) {
+      return null;
+    }
+    const json = JSON.parse(encoded);
+  },
+  encodeValue: (value) => JSON.stringify(value),
+});
+
+export const AuthSessionDb = ({
+  dbConn,
+}: {
+  dbConn: DbConnSql;
+}): IAuthSessionDb => {
   return {
     async assoc(now, session) {
       const queried = await dbConn.query(

@@ -1,14 +1,6 @@
 import { IStore, StoreInstance } from "./immutable-store";
 import { Database } from "bun:sqlite";
 
-export type MapEntry<TKey extends string | number, TValue> = StoreInstance<
-  TKey,
-  TValue
-> & {
-  key: TKey;
-  value: TValue | undefined;
-};
-
 const UPGRADE_SQL = `
 CREATE TABLE IF NOT EXISTS immutable_store (
   key_space TEXT NOT NULL,
