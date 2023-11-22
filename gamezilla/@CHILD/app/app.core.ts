@@ -83,3 +83,43 @@ export type ServerMsg =
   | { t: "search"; c: Search.ServerMsg }
   | { t: "chat"; c: Chat.ServerMsg }
   | { t: "auth"; c: Auth.ServerMsg };
+
+//
+//
+//
+//
+// Config
+//
+//
+//
+//
+
+const IS_PROD = process.env.NODE_ENV === "production";
+const SERVER_PORT_LOCAL = 5000;
+const SERVER_URL_LOCAL = "http://localhost:5000/";
+const SERVER_URL_NGROK = "https://gamezilla-server.ngrok.io/";
+const SERVER_URL_PROD = "https://server.gamezilla.app/";
+const WEB_SOCKETS_ENDPOINT = "/ws";
+const USE_NGROK = true;
+
+const SERVER_URL = IS_PROD
+  ? SERVER_URL_PROD
+  : USE_NGROK
+  ? SERVER_URL_NGROK
+  : SERVER_URL_LOCAL;
+
+const SERVER_PORT = IS_PROD ? process.env.PORT : SERVER_PORT_LOCAL;
+
+if (!SERVER_URL) {
+  throw new Error("SERVER_URL not set");
+}
+
+if (!SERVER_PORT) {
+  throw new Error("SERVER_PORT not set");
+}
+
+export const APP_CONFIG = {
+  SERVER_URL,
+  SERVER_PORT: Number(SERVER_PORT),
+  WEB_SOCKETS_ENDPOINT,
+};

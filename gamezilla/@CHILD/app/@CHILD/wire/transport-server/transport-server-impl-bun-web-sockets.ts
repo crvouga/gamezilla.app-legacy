@@ -1,17 +1,22 @@
 import { ServerWebSocket } from "bun";
 import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { ClientToServerMsg, ServerToClientMsg } from "../transport.core";
-import { IServerTransport, initServerTransport } from "./transport-server";
+import {
+  IServerTransport,
+  ServerTransportWebSocketImpl,
+  initServerTransport,
+} from "./transport-server";
 
 type ServerWebSocketData = {
   clientId: ClientId;
   sessionId: SessionId;
 };
 
-export const ServerTransportBunWebSockets = <
-  ToServer,
-  ToClient
->(): IServerTransport<{
+export const ServerTransportBunWebSockets = <ToServer, ToClient>({
+  impl,
+}: {
+  impl: ServerTransportWebSocketImpl;
+}): IServerTransport<{
   ToClient: ToClient;
   ToServer: ToServer;
 }> => {
@@ -29,16 +34,14 @@ export const ServerTransportBunWebSockets = <
   //
   const clients = new Map<ClientId, ServerWebSocket<ServerWebSocketData>>();
 
-  const port = Number(process.env["PORT"]) || 5000;
-
   const server = Bun.serve({
-    port: port,
+    port: impl.serverPort,
 
     fetch(req, server) {
       const url = new URL(req.url);
 
       switch (url.pathname) {
-        case "/ws": {
+        case impl.endpoint: {
           const maybeSessionId = url.searchParams.get("session-id");
 
           const sessionId = SessionId.is(maybeSessionId)
@@ -133,7 +136,7 @@ export const ServerTransportBunWebSockets = <
     t: "server-started",
   });
 
-  console.log(`[server] Listening on port ${port}`);
+  console.log(`[server] Listening on port ${impl.serverPort}`);
 
   const send = (
     ws: ServerWebSocket<ServerWebSocketData>,

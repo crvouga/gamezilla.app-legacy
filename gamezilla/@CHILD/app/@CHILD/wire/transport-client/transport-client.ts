@@ -21,3 +21,11 @@ export const initClientTransport = <ToServer, ToClient>(): IClientTransport<{
     wire: PubSub.create(),
   };
 };
+
+export type ClientTransportImpl = ClientTransportWebSocketImpl;
+
+export type ClientTransportWebSocketImpl = {
+  t: "web-sockets";
+  serverUrl: string;
+  endpoint: string;
+};

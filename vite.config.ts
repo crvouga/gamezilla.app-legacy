@@ -43,4 +43,5 @@ const vitePWA = VitePWA({
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [tsconfigPaths(), preact(), false ? vitePWA : null],
+  define: { "process.env": process.env },
 });

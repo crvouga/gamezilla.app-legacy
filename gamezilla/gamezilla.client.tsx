@@ -105,4 +105,4 @@ function renderRuntimeErrors() {
   }
 }
 
-// renderRuntimeErrors();
+renderRuntimeErrors();

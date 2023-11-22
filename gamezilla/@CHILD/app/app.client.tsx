@@ -23,7 +23,13 @@ import * as SearchClient from "./@CHILD/search/search.client";
 import * as SpaceClient from "./@CHILD/space/space.client";
 import { UserId } from "./@SHARED/data";
 import { Platform, Routing, Sound, Toast } from "./app-client";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
+import {
+  APP_CONFIG,
+  ClientModel,
+  ClientMsg,
+  ToClient,
+  ToServer,
+} from "./app.core";
 import * as Wire from "./@CHILD/wire/wire.client";
 import { ClientTransport } from "./@CHILD/wire/transport-client";
 
@@ -35,7 +41,11 @@ import { ClientTransport } from "./@CHILD/wire/transport-client";
 //
 
 export const transport = ClientTransport<ToServer, ToClient>({
-  impl: "web-sockets",
+  impl: {
+    t: "web-sockets",
+    serverUrl: APP_CONFIG.SERVER_URL,
+    endpoint: APP_CONFIG.WEB_SOCKETS_ENDPOINT,
+  },
 });
 
 //

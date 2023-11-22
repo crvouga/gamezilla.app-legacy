@@ -1,24 +1,22 @@
 import { PubSub } from "gamezilla/@SHARED/core";
 import { ClientToServerMsg, ServerToClientMsg } from "../transport.core";
-import { IClientTransport, initClientTransport } from "./transport-client";
-
-const BASE_SERVER_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://server.gamezilla.app/"
-    : false
-    ? "https://gamezilla-server.ngrok.io/"
-    : `http://localhost:5000/`;
+import {
+  IClientTransport,
+  ClientTransportWebSocketImpl,
+  initClientTransport,
+} from "./transport-client";
 
 const SESSION_ID_KEY = "gamezilla-session-id";
 const RECONNECT_INTERVAL = 2000; // 1 second
-const MAX_RECONNECT_ATTEMPTS = 5; // Adjust as needed
+const MAX_RECONNECT_ATTEMPTS = 6; // Adjust as needed
 
-const SERVER_URL = toWebsocketServerUrl(BASE_SERVER_URL);
+export const ClientTransportWebSockets = <ToServer, ToClient>({
+  impl,
+}: {
+  impl: ClientTransportWebSocketImpl;
+}): IClientTransport<{ ToServer: ToServer; ToClient: ToClient }> => {
+  const serverUrl = toWebsocketServerUrl(impl.serverUrl);
 
-export const ClientTransportWebSockets = <
-  ToServer,
-  ToClient
->(): IClientTransport<{ ToServer: ToServer; ToClient: ToClient }> => {
   const transport = initClientTransport<ToServer, ToClient>();
 
   let reconnectAttempts = 0;
@@ -32,7 +30,7 @@ export const ClientTransportWebSockets = <
       return;
     }
     isConnected = true;
-    ws = new WebSocket(SERVER_URL);
+    ws = new WebSocket(serverUrl);
 
     ws.onopen = () => {
       reconnectAttempts = 0;

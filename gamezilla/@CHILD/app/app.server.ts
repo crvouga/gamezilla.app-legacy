@@ -27,7 +27,13 @@ import * as WireServer from "./@CHILD/wire/wire.server";
 import { Logger, LoggerConsole } from "./@SHARED/server/logger";
 import { createDbConn } from "./app-server/db-conn-sql";
 import { createSMS } from "./app-server/sms";
-import { ServerModel, ServerMsg, ToClient, ToServer } from "./app.core";
+import {
+  APP_CONFIG,
+  ServerModel,
+  ServerMsg,
+  ToClient,
+  ToServer,
+} from "./app.core";
 
 //
 //
@@ -38,7 +44,11 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./app.core";
 //
 
 const transport = ServerTransport<ToServer, ToClient>({
-  impl: "bun-web-sockets",
+  impl: {
+    t: "bun-web-sockets",
+    serverPort: APP_CONFIG.SERVER_PORT,
+    endpoint: APP_CONFIG.WEB_SOCKETS_ENDPOINT,
+  },
 });
 
 //
@@ -60,6 +70,7 @@ export const init = ({
   const wire = WireServer.init();
   const space = SpaceServer.init();
   const auth = AuthServer.init({ ctx });
+  ctx.logger.info(`app config:\n${JSON.stringify(APP_CONFIG, null, 4)}`);
   return {
     model: {
       wire: wire.model,
@@ -157,7 +168,7 @@ function logMsg({
 
   const obj = { ...msg, ...evt, ...cmd };
 
-  logger.info(`${prefix} ${toMsgType(obj)}\b${toMsgPayload(obj)}`);
+  logger.info(`${prefix} ${toMsgType(obj)}`);
 }
 
 const updateMain = async ({
