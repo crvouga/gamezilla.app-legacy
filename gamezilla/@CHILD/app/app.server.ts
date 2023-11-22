@@ -13,6 +13,7 @@ import {
   err,
   isErr,
   ok,
+  toMsgPayload,
   toMsgType,
 } from "gamezilla/@SHARED/core";
 import { toSessionId, toUserId } from "./@CHILD/auth/auth.core";
@@ -156,7 +157,7 @@ function logMsg({
 
   const obj = { ...msg, ...evt, ...cmd };
 
-  logger.info(`${prefix} ${toMsgType(obj)}`);
+  logger.info(`${prefix} ${toMsgType(obj)}\b${toMsgPayload(obj)}`);
 }
 
 const updateMain = async ({
