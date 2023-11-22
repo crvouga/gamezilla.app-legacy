@@ -108,18 +108,14 @@ const SERVER_URL = IS_PROD
   ? SERVER_URL_NGROK
   : SERVER_URL_LOCAL;
 
-const SERVER_PORT = IS_PROD ? process.env.PORT : SERVER_PORT_LOCAL;
+const SERVER_PORT = Number(process.env.PORT ?? SERVER_PORT_LOCAL);
 
 if (!SERVER_URL) {
   throw new Error("SERVER_URL not set");
 }
 
-if (!SERVER_PORT) {
-  throw new Error("SERVER_PORT not set");
-}
-
 export const APP_CONFIG = {
   SERVER_URL,
-  SERVER_PORT: Number(SERVER_PORT),
+  SERVER_PORT,
   WEB_SOCKETS_ENDPOINT,
 };
