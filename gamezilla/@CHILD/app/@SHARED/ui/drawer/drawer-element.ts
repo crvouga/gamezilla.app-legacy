@@ -44,6 +44,12 @@ if (typeof window !== "undefined" && "customElements" in window) {
       this.initUI();
     }
 
+    onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        this.props?.onClose();
+      }
+    }
+
     initUI() {
       this.unsubscribe = drawerSub.subscribe((event) => {
         if (event.id === this.getAttribute("id")) {
@@ -123,18 +129,21 @@ if (typeof window !== "undefined" && "customElements" in window) {
         this.root.classList.remove("pointer-events-none");
         this.root.classList.add("darken-background");
         this.backdrop.classList.add("visible");
-        // this.root.tabIndex = 0;
-        this.focusTrap.activate(this.root);
+        this.root.tabIndex = 0;
+        this.tabIndex = 0;
+        // this.focusTrap.activate(this);
+        this.addEventListener("keydown", this.onKeyDown);
         return;
       }
 
-      // this.root.tabIndex = -1;
-      this.focusTrap.deactivate(this.root);
+      this.removeEventListener("keydown", this.onKeyDown);
+      this.tabIndex = -1;
+      this.root.tabIndex = -1;
+      // this.focusTrap.deactivate(this);
       this.backdrop.classList.remove("visible");
       this.content.classList.remove("open");
       this.root.classList.remove("darken-background");
       this.root.classList.add("pointer-events-none");
-      this.focusTrap.activate(this.root);
     }
   }
 
