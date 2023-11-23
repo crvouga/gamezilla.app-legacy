@@ -1015,21 +1015,19 @@ const ViewSpaceScreenMain = ({
   return (
     <div class="flex h-full w-full flex-1 flex-col">
       <nav class="flex h-14 w-full items-center border-b border-neutral-700 px-2 py-1">
-        <div class="grid w-20 place-items-center">
-          <ActionButton
-            label="Home"
-            icon={<IconHome class="h-6 w-6" />}
-            onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
-          />
-        </div>
+        <button
+          class="grid w-20 place-items-center"
+          onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}>
+          <IconHome class="h-6 w-6" />
+          <p class="text-sm">Home</p>
+        </button>
 
-        <div class="grid w-20 place-items-center">
-          <ActionButton
-            label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
-            icon={<IconUserGroup class="h-6 w-6" />}
-            onClick={() => dispatch({ t: "modal-open", c: "users" })}
-          />
-        </div>
+        <button
+          class="grid w-20 place-items-center"
+          onClick={() => dispatch({ t: "modal-open", c: "users" })}>
+          <IconUserGroup class="h-6 w-6" />
+          <p>{peopleCount > 1 ? `People (${peopleCount})` : `People`}</p>
+        </button>
 
         <div class="flex-1"></div>
 
