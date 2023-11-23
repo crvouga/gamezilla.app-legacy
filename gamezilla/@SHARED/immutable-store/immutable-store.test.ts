@@ -500,9 +500,9 @@ export const buildTest = (
     const key = "key";
 
     const initial = Store.startingAt(1);
-    const invalid = await Store.assoc(0, initial, key, "start");
+    const addedPast = await Store.assoc(0, initial, key, "start");
 
     expect(await Store.get(initial, key)).toEqual(null);
-    expect(await Store.get(invalid, key)).toEqual("start");
+    expect(await Store.get(addedPast, key)).toEqual("start");
   });
 };
