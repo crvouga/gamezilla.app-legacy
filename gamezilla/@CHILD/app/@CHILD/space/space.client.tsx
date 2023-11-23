@@ -1014,16 +1014,16 @@ const ViewSpaceScreenMain = ({
 
   return (
     <div class="flex h-full w-full flex-1 flex-col">
-      <nav class="flex h-14 w-full items-center border-b border-neutral-700 px-2 py-1">
+      <nav class="flex h-14 w-full items-center border-b border-neutral-700 px-2">
         <button
-          class="grid w-20 place-items-center"
+          class="grid w-20 place-items-center py-1"
           onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}>
           <IconHome class="h-6 w-6" />
           <p class="text-sm">Home</p>
         </button>
 
         <button
-          class="grid w-20 place-items-center"
+          class="grid w-20 place-items-center py-1"
           onClick={() => dispatch({ t: "modal-open", c: "users" })}>
           <IconUserGroup class="h-6 w-6" />
           <p>{peopleCount > 1 ? `People (${peopleCount})` : `People`}</p>
@@ -1031,19 +1031,16 @@ const ViewSpaceScreenMain = ({
 
         <div class="flex-1"></div>
 
-        <div class="w-20">
-          <ActionButton
-            label={ctx.sound.muted ? "Unmute" : "Mute"}
-            icon={
-              ctx.sound.muted ? (
-                <IconVolumeHigh class="h-6 w-6" />
-              ) : (
-                <IconVolumeXMark class="h-6 w-6" />
-              )
-            }
-            onClick={ctx.toggleSound}
-          />
-        </div>
+        <button
+          class="grid w-20 place-items-center py-1"
+          onClick={ctx.toggleSound}>
+          {ctx.sound.muted ? (
+            <IconVolumeHigh class="h-6 w-6" />
+          ) : (
+            <IconVolumeXMark class="h-6 w-6" />
+          )}
+          <p>{ctx.sound.muted ? "Unmute" : "Mute"}</p>
+        </button>
 
         {ctx.space.hostId !== ctx.currentUserId && (
           <Button
