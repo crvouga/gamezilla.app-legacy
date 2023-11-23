@@ -32,6 +32,12 @@
       "driver": "SQLite",
       "database": "${workspaceFolder:gamezilla.app}/data/gamezilla.db",
       "name": "gamezilla"
+    },
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "gamezilla-session",
+      "database": "data/gamezilla-session.db"
     }
   ],
   "sqltools.useNodeRuntime": true

@@ -11,3 +11,6 @@ SELECT * FROM user_profile;
 SELECT * FROM user_account
 LEFT JOIN user_profile
 ON user_account.user_id = user_profile.user_id;
+
+
+
