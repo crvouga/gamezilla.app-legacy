@@ -86,10 +86,14 @@ export const init: Client["init"] = ({ model }) => {
 //
 
 export const update: Client["update"] = (input) => {
-  return chain(
-    input,
+  return GameClient.chain(
+    init(input),
     (model) => {
       const { msg } = input;
+      if (!msg) {
+        return { model };
+      }
+
       switch (msg.t) {
         case "vs-bot-game": {
           const updated = VsBotGame.update(model.vsBotGame, msg.c);
@@ -109,45 +113,33 @@ export const update: Client["update"] = (input) => {
         }
 
         default: {
-          return { model, gameEvent: msg };
+          return { model, gameEvent: [msg] };
         }
       }
     },
-    (model) => watch({ ...input, model })
-  );
-};
-
-export const updateFromServer: Client["updateFromServer"] = (input) => {
-  return chain(
-    input.model ? { model: input.model } : init(input),
     (model) => {
-      const { msg } = input;
-      switch (msg.t) {
+      const { serverMsg } = input;
+      if (!serverMsg) {
+        return { model };
+      }
+      switch (serverMsg.t) {
         default: {
           return { model };
         }
       }
     },
-    (model) => watch({ ...input, model })
-  );
-};
-
-export const updateFromGame: Client["updateFromGame"] = (input) => {
-  const { model, msg } = input;
-
-  return chain(
-    model ? { model } : init(input),
     (model) => {
-      const soundCmd = eventToSound(msg);
+      const { gameEvent } = input;
+      if (!gameEvent) {
+        return { model };
+      }
+
       return {
         model,
-        cmd: soundCmd,
+        cmd: eventToSound(gameEvent),
       };
     },
-
-    (model) => {
-      return watch({ ...input, model });
-    }
+    (model) => watch({ ...input, model })
   );
 };
 
@@ -180,10 +172,6 @@ const eventToSound = (
       return [];
     }
   }
-};
-
-export const updateFromEvent: Client["updateFromEvent"] = (input) => {
-  return input;
 };
 
 const watch = ({
@@ -311,6 +299,9 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
   };
 
   if (state.type === "setup") {
+    if (!model) {
+      return null;
+    }
     return (
       <VsBotSetup.View
         model={model.vsBotSetup}
@@ -344,7 +335,6 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
             class="w-full"
             color={gameTheme.primary.dark}
           />
-
           <ViewColumns
             gameId={0}
             columns={state.columns}
@@ -357,30 +347,31 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
               });
             }}
           />
-
-          <ViewGameOverOverlay
-            {...vsBotGameProps}
-            model={model.vsBotGame}
-            onPlayAgain={() =>
-              dispatch({
-                t: "user-restarted-game",
-                userId: ctx.currentUserId,
-              })
-            }
-            gameOver={
-              status.type === "Tie"
-                ? { t: "draw" }
-                : status.type === "Winner"
-                ? {
-                    t: "winner",
-                    winner:
-                      status.winner === "player-one"
-                        ? "player-one"
-                        : "player-two",
-                  }
-                : null
-            }
-          />
+          {model && (
+            <ViewGameOverOverlay
+              {...vsBotGameProps}
+              model={model.vsBotGame}
+              onPlayAgain={() =>
+                dispatch({
+                  t: "user-restarted-game",
+                  userId: ctx.currentUserId,
+                })
+              }
+              gameOver={
+                status.type === "Tie"
+                  ? { t: "draw" }
+                  : status.type === "Winner"
+                  ? {
+                      t: "winner",
+                      winner:
+                        status.winner === "player-one"
+                          ? "player-one"
+                          : "player-two",
+                    }
+                  : null
+              }
+            />
+          )}
         </div>
       </div>
 

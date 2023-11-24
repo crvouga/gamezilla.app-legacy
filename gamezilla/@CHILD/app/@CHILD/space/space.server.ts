@@ -265,7 +265,7 @@ export const updateFromClient = async (input: {
     default: {
       const prev = toStateSpace(model, msg.spaceId);
 
-      const appended = appendEvent(model, msg);
+      const appended = appendEvent(model, [msg]);
 
       const next = toStateSpace(appended, msg.spaceId);
 
@@ -326,7 +326,7 @@ const appendEventServer = async (
 ): ReturnType<typeof update> => {
   const prev = toStateSpace(model, event.spaceId);
 
-  const appended = appendEvent(model, event);
+  const appended = appendEvent(model, [event]);
 
   const next = toStateSpace(appended, event.spaceId);
 

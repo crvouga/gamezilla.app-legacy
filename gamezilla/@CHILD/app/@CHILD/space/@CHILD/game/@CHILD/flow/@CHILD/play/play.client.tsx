@@ -1,4 +1,4 @@
-import { Sub } from "gamezilla/@SHARED/core";
+import { Sub, chain } from "gamezilla/@SHARED/core";
 import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
   GameClient,
@@ -33,28 +33,7 @@ const init: Client["init"] = () => {
 };
 
 const update: Client["update"] = (input) => {
-  const { msg, model } = input;
-  return { model };
-};
-
-const updateFromServer: Client["updateFromServer"] = (input) => {
-  const initial = input.model ? { model: input.model } : init(input);
-  return initial;
-};
-
-const updateFromEvent: Client["updateFromEvent"] = (input) => {
-  return input;
-};
-
-const updateFromGame: Client["updateFromGame"] = (input) => {
-  const { model } = input;
-  if (model) {
-    return { model };
-  }
-  return init({
-    ctx: input.ctx,
-    state: input.state,
-  });
+  return chain(init(input));
 };
 
 const subscriptions: Client["subscriptions"] = () => {
@@ -62,12 +41,15 @@ const subscriptions: Client["subscriptions"] = () => {
 };
 
 const View: Client["View"] = ({ model, dispatch, ctx }) => {
+  if (!model) {
+    return <div></div>;
+  }
   return (
     <div class="flex h-full w-full flex-1 flex-col">
       <div class="flex flex-1 items-center justify-center">
         <FlowGridUIPlay.View
           dispatch={(c) => dispatch({ t: "grid", c })}
-          model={model.grid}
+          model={model?.grid}
         />
       </div>
       <div class="w-full p-4">
@@ -85,9 +67,6 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
 export const PlayClient: Client = {
   init,
   update,
-  updateFromServer,
-  updateFromEvent,
-  updateFromGame,
   subscriptions,
   View,
 };

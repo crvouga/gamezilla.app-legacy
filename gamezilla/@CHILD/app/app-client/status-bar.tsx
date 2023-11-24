@@ -10,6 +10,7 @@ export const View = () => {
           <IconVolumeHigh class="h-3 w-3" />
         </div>
       </button>
+
       <Drawer id="drawer" open={true} onClose={() => {}}>
         settings
       </Drawer>

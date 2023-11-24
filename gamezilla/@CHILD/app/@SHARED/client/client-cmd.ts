@@ -261,7 +261,7 @@ const tag = <Tag extends string, T extends ClientCmdTypes>(
 const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
   cmd: ClientCmd<A>[],
   toServerMap: (a: A["ToServer"]) => B["ToServer"],
-  clientMsgMap: (b: B["ClientMsg"]) => A["ClientMsg"]
+  clientMsgMap: (b: A["ClientMsg"]) => B["ClientMsg"]
 ): ClientCmd<B>[] => {
   return cmd.map((cmd) => {
     switch (cmd.t) {

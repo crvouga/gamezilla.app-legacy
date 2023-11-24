@@ -75,6 +75,9 @@ export type GameState =
     }
   | {
       t: "vs-bot";
+    }
+  | {
+      t: "puzzle";
     };
 
 export const initState = (): GameState => {

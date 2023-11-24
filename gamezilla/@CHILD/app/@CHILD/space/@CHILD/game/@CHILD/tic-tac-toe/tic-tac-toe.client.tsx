@@ -38,7 +38,11 @@ type Client = GameClient<{
 //
 //
 
-export const init = (): { model: ClientModel } => {
+export const init: Client["init"] = ({ model }) => {
+  if (model) {
+    return { model };
+  }
+
   return { model: { t: "none" } };
 };
 
@@ -49,86 +53,8 @@ export const init = (): { model: ClientModel } => {
 //
 //
 
-export const update: Client["update"] = ({ msg, model, ctx }) => {
-  if (msg.t === "input-mode") {
-    return { model, cmd: [sendToServer(msg)] };
-  }
-
-  if (msg.t === "vs-user" && model.t === "vs-user") {
-    const updated = VsUser.update(msg.c, model.c);
-    return {
-      model: { t: "vs-user", c: updated.model },
-      cmd: ClientCmd.tag("vs-user", updated.cmd),
-    };
-  }
-
-  if (msg.t === "vs-bot" && model.t === "vs-bot") {
-    const updated = VsBot.update({
-      ctx,
-      msg: msg.c,
-      model: model.c,
-    });
-
-    return {
-      model: { t: "vs-bot", c: updated.model },
-      eff: Eff.t("vs-bot", updated.eff),
-      cmd: ClientCmd.tag("vs-bot", updated.cmd),
-    };
-  }
-
-  return { model };
-};
-
-export const updateFromServer: Client["updateFromServer"] = ({
-  ctx,
-  msg,
-  model,
-}) => {
-  const initial = model ? { model } : init();
-  if (msg.t === "input-mode") {
-    return chain(
-      initial,
-      (model) => {
-        const { result } = msg;
-
-        if (isErr(result)) {
-          return { model };
-        }
-
-        return { model };
-      },
-      (model) => {
-        if (model.t === "none") {
-          return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
-        }
-        return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
-      }
-    );
-  }
-
-  if (msg.t === "vs-user" && model?.t === "vs-user") {
-    const updated = VsUser.updateFromServer({ ctx }, msg.c, model.c);
-    return {
-      model: { t: "vs-user", c: updated[0] },
-    };
-  }
-
-  if (msg.t === "vs-bot" && model?.t === "vs-bot") {
-    const updated = VsBot.updateFromServer({
-      ctx,
-      msg: msg.c,
-      model: model.c,
-    });
-    return {
-      model: { t: "vs-bot", c: updated.model },
-    };
-  }
-
-  return initial;
-};
-
-export const updateFromEvent: Client["updateFromEvent"] = (input) => {
-  return input;
+export const update: Client["update"] = (input) => {
+  return init(input);
 };
 
 //

@@ -101,11 +101,14 @@ export const initCore = (): CoreModel => {
 
 export const appendEvent = (
   model: CoreModel,
-  event: EventWithMeta
+  event: EventWithMeta[]
 ): CoreModel => {
   return {
     ...model,
-    events: EventStream.append(config, model.events, event),
+    events: event.reduce(
+      (events, e) => EventStream.append(config, events, e),
+      model.events
+    ),
   };
 };
 
@@ -173,7 +176,7 @@ export type Event =
       t: "user-joined-space";
       userId: UserId;
       spaceId: SpaceId;
-      profile?: Profile;
+      profile?: Profile | null;
     }
   | {
       t: "user-left-space";

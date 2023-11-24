@@ -1,25 +1,20 @@
-import { Sub, chain, isErr } from "gamezilla/@SHARED/core";
-import {
-  APP_SOUND,
-  ClientCmd,
-  playSound,
-  sendToServer,
-} from "gamezilla/@CHILD/app/@SHARED/client";
-import {
-  IconGamepad,
-  IconScrewdriverWrench,
-} from "gamezilla/@CHILD/app/@SHARED/ui";
+import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
 import {
   GameClient,
   SpaceClientCtx,
   SpaceClientEvt,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  IconGamepad,
+  IconScrewdriverWrench,
+} from "gamezilla/@CHILD/app/@SHARED/ui";
+import { Sub, chain } from "gamezilla/@SHARED/core";
+import { PlayClient } from "./@CHILD/play";
+import { PuzzleBuilderClient } from "./@CHILD/puzzle-builder";
 import { CoverArt } from "./@SHARED/flow-cover-art";
 import { FlowViewCtx } from "./@SHARED/flow-ctx";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./flow.core";
-import { PlayClient } from "./@CHILD/play";
-import { PuzzleBuilderClient } from "./@CHILD/puzzle-builder";
 
 type Client = GameClient<{
   ClientModel: ClientModel;
@@ -42,7 +37,10 @@ const PuzzleBuilder = GameClient.tag("puzzle-builder", PuzzleBuilderClient);
 
 const Play = GameClient.tag("play", PlayClient);
 
-export const init: Client["init"] = () => {
+export const init: Client["init"] = ({ model }) => {
+  if (model) {
+    return { model };
+  }
   return {
     model: {
       t: "none",
@@ -51,53 +49,27 @@ export const init: Client["init"] = () => {
 };
 
 export const update: Client["update"] = (input) => {
-  const { model, msg } = input;
+  return chain(init(input), (model) => {
+    const { msg } = input;
 
-  switch (msg.t) {
-    case "input-mode": {
-      return { model, cmd: [sendToServer(msg)] };
-    }
-
-    case "play": {
+    if (!msg) {
       return { model };
     }
 
-    case "puzzle-builder": {
-      return { model };
-    }
-  }
-};
-
-export const updateFromServer: Client["updateFromServer"] = (input) => {
-  const { model, msg } = input;
-  const initial = model ? { model } : init(input);
-  switch (msg.t) {
-    case "input-mode": {
-      const { result } = msg;
-      if (isErr(result)) {
-        return initial;
+    switch (msg.t) {
+      case "input-mode": {
+        return { model, cmd: [sendToServer(msg)] };
       }
-      return chain(initial, (model) => {
-        if (model.t === "none") {
-          return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
-        }
-        return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
-      });
-    }
 
-    case "play": {
-      return initial;
-    }
+      case "play": {
+        return { model };
+      }
 
-    case "puzzle-builder": {
-      return initial;
+      case "puzzle-builder": {
+        return { model };
+      }
     }
-  }
-};
-
-export const updateFromEvent: Client["updateFromEvent"] = (input) => {
-  const { model } = input;
-  return { model };
+  });
 };
 
 //

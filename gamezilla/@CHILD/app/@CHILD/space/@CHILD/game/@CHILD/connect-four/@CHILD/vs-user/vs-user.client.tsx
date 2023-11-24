@@ -17,6 +17,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
   GameClient,
+  SpaceClientCtx,
   SpaceClientEvt,
   SpaceViewCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
@@ -47,10 +48,8 @@ type Client = GameClient<{
   ToServer: ToServer;
   GameState: GameState;
   GameEvent: GameEvent;
-  ClientCtx: ClientCtx;
+  ClientCtx: SpaceClientCtx;
   ViewCtx: SpaceViewCtx & { onQuit: () => void };
-  ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-  ClientEvt: SpaceClientEvt;
 }>;
 
 //
@@ -78,61 +77,35 @@ export const init: Client["init"] = () => {
 //
 //
 
-export const update: Client["update"] = ({ msg, model }) => {
-  switch (msg.t) {
-    case "clicked-resign": {
-      return { model: { ...model, openedModal: "confirm-resign" } };
-    }
+export const update: Client["update"] = (input) => {
+  return chain(init(input), (model) => {
+    const { msg } = input;
 
-    case "hovered-over-columns": {
-      return { model: { ...model, ghostIndex: msg.columnIndex } };
-    }
-
-    case "close-modal": {
-      return { model: { ...model, openedModal: null } };
-    }
-
-    default: {
-      return {
-        model,
-        gameEvent: msg,
-      };
-    }
-  }
-};
-
-export const updateFromServer: Client["updateFromServer"] = ({
-  model,
-  state,
-  ctx,
-}) => {
-  const initial = model
-    ? { model }
-    : init({
-        state,
-        ctx,
-      });
-  return initial;
-};
-
-export const updateFromEvent: Client["updateFromEvent"] = (
-  input
-): {
-  model: ClientModel;
-} => {
-  return input;
-};
-
-export const updateFromGame: Client["updateFromGame"] = (input) => {
-  const { model } = input;
-
-  return chain(
-    //
-    model ? { model } : init(input),
-    (model) => {
+    if (!msg) {
       return { model };
     }
-  );
+
+    switch (msg.t) {
+      case "clicked-resign": {
+        return { model: { ...model, openedModal: "confirm-resign" } };
+      }
+
+      case "hovered-over-columns": {
+        return { model: { ...model, ghostIndex: msg.columnIndex } };
+      }
+
+      case "close-modal": {
+        return { model: { ...model, openedModal: null } };
+      }
+
+      default: {
+        return {
+          model,
+          gameEvent: msg,
+        };
+      }
+    }
+  });
 };
 
 //
@@ -156,6 +129,10 @@ export const subscriptions: Client["subscriptions"] = () => {
 //
 
 export const View: Client["View"] = ({ ctx, model, state, dispatch }) => {
+  if (!model) {
+    return null;
+  }
+
   if (state.type === "setup") {
     return (
       <VsUserSetupScreen

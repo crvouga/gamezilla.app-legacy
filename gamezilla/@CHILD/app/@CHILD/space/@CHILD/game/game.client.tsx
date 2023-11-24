@@ -1,11 +1,9 @@
 import {
   GameClient,
   SpaceClientCtx,
-  SpaceClientEvt,
   SpaceViewCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
-import { Sub, chain } from "gamezilla/@SHARED/core";
+import { Sub } from "gamezilla/@SHARED/core";
 import * as ChessClient from "./@CHILD/chess/chess.client";
 import * as ConnectFourClient from "./@CHILD/connect-four/connect-four.client";
 import {
@@ -34,8 +32,6 @@ type Client = GameClient<{
   GameEvent: GameEvent;
   ClientCtx: SpaceClientCtx;
   ViewCtx: SpaceViewCtx;
-  ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-  ClientEvt: SpaceClientEvt;
 }>;
 
 const ConnectFour = GameClient.tag("connect-four", ConnectFourClient);
@@ -79,88 +75,39 @@ export const init: Client["init"] = (input) => {
 //
 //
 
-export type Msg = ClientMsg;
-
 export const update: Client["update"] = (input) => {
-  const { state, ctx, msg, model } = input;
+  return GameClient.chain(
+    init(input),
 
-  return chain(init(input), (model) => {
-    switch (state.t) {
-      case "chess": {
-        if (state.t === "chess" && model.t === "chess" && msg.t === "chess") {
-          return Chess.update({ state, ctx, msg, model });
+    (model) => {
+      const { state, ctx, msg, serverMsg, evt, gameEvent } = input;
+      switch (state.t) {
+        case "chess": {
+          return Chess.update({
+            state: state,
+            ctx,
+            model: model?.t === "chess" ? model : undefined,
+            msg: msg?.t === "chess" ? msg : undefined,
+            gameEvent: gameEvent?.t === "chess" ? gameEvent : undefined,
+            serverMsg: serverMsg?.t === "chess" ? serverMsg : undefined,
+            evt: evt,
+          });
         }
-        return { model };
-      }
 
-      case "connect-four": {
-        if (
-          state.t === "connect-four" &&
-          model.t === "connect-four" &&
-          msg.t === "connect-four"
-        ) {
-          return ConnectFour.update({ state, ctx, msg, model });
+        case "connect-four": {
+          return ConnectFour.update({
+            state,
+            ctx,
+            model: model?.t === "connect-four" ? model : undefined,
+            msg: msg?.t === "connect-four" ? msg : undefined,
+            gameEvent: gameEvent?.t === "connect-four" ? gameEvent : undefined,
+            serverMsg: serverMsg?.t === "connect-four" ? serverMsg : undefined,
+            evt: evt,
+          });
         }
-        return { model };
       }
     }
-  });
-};
-
-export const updateFromServer: Client["updateFromServer"] = (input) => {
-  const { msg, model, state } = input;
-
-  return chain(init(input), (model) => {
-    if (
-      state.t === "connect-four" &&
-      msg.t === "connect-four" &&
-      model.t === "connect-four"
-    ) {
-      return ConnectFour.updateFromServer({ ...input, msg, model, state });
-    }
-
-    if (state.t === "chess" && msg.t === "chess" && model.t === "chess") {
-      return Chess.updateFromServer({ ...input, msg, model, state });
-    }
-
-    return { model };
-  });
-};
-
-export const updateFromGame: Client["updateFromGame"] = (input) => {
-  const { state, msg } = input;
-
-  return chain(init(input), (model) => {
-    if (
-      state.t === "connect-four" &&
-      model.t === "connect-four" &&
-      msg.t === "connect-four"
-    ) {
-      return ConnectFour.updateFromGame({ ...input, msg, state, model });
-    }
-
-    if (state.t === "chess" && model.t === "chess" && msg.t === "chess") {
-      return Chess.updateFromGame({ ...input, msg, state, model });
-    }
-
-    return { model };
-  });
-};
-
-export const updateFromEvent: Client["updateFromEvent"] = (input) => {
-  const { state, model } = input;
-
-  return chain(init(input), (model) => {
-    if (state.t === "connect-four" && model.t === "connect-four") {
-      return ConnectFour.updateFromEvent({ ...input, state, model });
-    }
-
-    if (state.t === "chess" && model.t === "chess") {
-      return Chess.updateFromEvent({ ...input, state, model });
-    }
-
-    return input;
-  });
+  );
 };
 
 //
@@ -171,14 +118,27 @@ export const updateFromEvent: Client["updateFromEvent"] = (input) => {
 //
 //
 
-export const subscriptions: Client["subscriptions"] = (input): Sub<Msg> => {
+export const subscriptions: Client["subscriptions"] = (
+  input
+): Sub<ClientMsg> => {
   const { state, model } = input;
+  switch (state.t) {
+    case "chess": {
+      return Chess.subscriptions({
+        ...input,
+        state,
+        model: model?.t === "chess" ? model : undefined,
+      });
+    }
 
-  if (model.t === "connect-four" && state.t === "connect-four") {
-    return ConnectFour.subscriptions({ ...input, state, model });
+    case "connect-four": {
+      return ConnectFour.subscriptions({
+        ...input,
+        state,
+        model: model?.t === "connect-four" ? model : undefined,
+      });
+    }
   }
-
-  return Sub.None;
 };
 
 //
@@ -192,24 +152,28 @@ export const subscriptions: Client["subscriptions"] = (input): Sub<Msg> => {
 export const View: Client["View"] = (input) => {
   const { model, ctx, state, dispatch } = input;
 
-  if (state.t === "chess" && model.t === "chess") {
-    return (
-      <Chess.View ctx={ctx} dispatch={dispatch} state={state} model={model} />
-    );
+  switch (state.t) {
+    case "chess": {
+      return (
+        <Chess.View
+          ctx={ctx}
+          dispatch={dispatch}
+          state={state}
+          model={model?.t === "chess" ? model : undefined}
+        />
+      );
+    }
+    case "connect-four": {
+      return (
+        <ConnectFour.View
+          ctx={ctx}
+          dispatch={dispatch}
+          state={state}
+          model={model?.t === "connect-four" ? model : undefined}
+        />
+      );
+    }
   }
-
-  if (state.t === "connect-four" && model.t === "connect-four") {
-    return (
-      <ConnectFour.View
-        ctx={ctx}
-        dispatch={dispatch}
-        state={state}
-        model={model}
-      />
-    );
-  }
-
-  return null;
 };
 
 export const viewEvent: Client["viewEvent"] = (input) => {

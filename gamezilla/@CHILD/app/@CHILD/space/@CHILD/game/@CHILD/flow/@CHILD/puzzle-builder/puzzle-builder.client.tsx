@@ -41,67 +41,45 @@ type Client = GameClient<{
   ClientEvt: SpaceClientEvt;
 }>;
 
-const init: Client["init"] = () => {
+const init: Client["init"] = ({ model }) => {
+  if (model) {
+    return { model };
+  }
   return { model: initCore };
 };
 
 const update: Client["update"] = (input) => {
-  const { msg, model } = input;
+  return chain(init(input), (model) => {
+    const { msg } = input;
 
-  switch (msg.t) {
-    case "play-ui": {
-      const updated = FlowGridUIPlay.update({
-        model: model.playUI,
-        msg: msg.c,
-      });
-      return { model: { ...model, playUI: updated.model } };
+    if (!msg) {
+      return { model };
     }
 
-    default: {
-      const updated = updateCore({ ...input, msg });
-
-      const modelNew: ClientModel =
-        updated.t === "ok" ? { ...model, ...updated.value } : input.model;
-
-      return { model: modelNew, cmd: [sendToServer(msg)] };
-    }
-  }
-};
-
-const updateFromServer: Client["updateFromServer"] = (input) => {
-  const { ctx, msg, model } = input;
-  const initial = model ? { model } : init(input);
-
-  switch (msg.t) {
-    default: {
-      const { result } = msg;
-      if (isErr(result)) {
-        return initial;
+    switch (msg.t) {
+      case "play-ui": {
+        const updated = FlowGridUIPlay.update({
+          model: model.playUI,
+          msg: msg.c,
+        });
+        return { model: { ...model, playUI: updated.model } };
       }
 
-      return chain(initial, (model) => {
-        if (msg.t === "input-mode") {
-          return { model, cmd: [playSound(APP_SOUND.tap)] };
-        }
-        return { model };
-      });
+      default: {
+        return { model, cmd: [sendToServer(msg)] };
+      }
     }
-  }
-};
-
-const updateFromEvent: Client["updateFromEvent"] = (input) => {
-  return input;
+  });
 };
 
 const subscriptions: Client["subscriptions"] = () => {
   return Sub.None;
 };
 
-const updateFromGame: Client["updateFromGame"] = (input) => {
-  return init(input);
-};
-
 const View: Client["View"] = ({ model, dispatch, ctx }) => {
+  if (!model) {
+    return <div></div>;
+  }
   switch (model.mode) {
     case "edit": {
       return (
@@ -199,9 +177,6 @@ const capitalize = (s: string) => {
 export const PuzzleBuilderClient: Client = {
   init,
   update,
-  updateFromServer,
-  updateFromEvent,
   subscriptions,
-  updateFromGame,
   View,
 };
