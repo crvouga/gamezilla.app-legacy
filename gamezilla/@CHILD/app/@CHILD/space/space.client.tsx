@@ -1014,69 +1014,54 @@ const ViewSpaceScreenMain = ({
 
   return (
     <div class="flex h-full w-full flex-1 flex-col">
-      <nav class="flex h-14 w-full items-center border-b border-neutral-700 px-2">
-        <button
-          class="grid w-20 place-items-center py-1"
-          onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}>
-          <IconHome class="h-6 w-6" />
-          <p>Home</p>
-        </button>
+      <nav class="flex h-14 w-full items-center border-b border-neutral-700">
+        <TopButton
+          onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
+          label="Home"
+          icon={<IconHome class="h-6 w-6" />}
+        />
 
-        <button
-          class="grid w-20 place-items-center py-1"
-          onClick={() => dispatch({ t: "modal-open", c: "users" })}>
-          <IconUserGroup class="h-6 w-6" />
-          <p>{peopleCount > 1 ? `People (${peopleCount})` : `People`}</p>
-        </button>
+        <TopButton
+          onClick={() => dispatch({ t: "modal-open", c: "users" })}
+          label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
+          icon={<IconUserGroup class="h-6 w-6" />}
+        />
 
         <div class="flex-1"></div>
 
-        {ctx.sound.muted ? (
-          <button
-            class="grid w-20 place-items-center py-1"
-            onClick={ctx.toggleSound}>
-            <IconVolumeHigh class="h-6 w-6" />
-            <p>Unmute</p>
-          </button>
-        ) : (
-          <button
-            class="grid w-20 place-items-center py-1"
-            onClick={ctx.toggleSound}>
-            <IconVolumeXMark class="h-6 w-6" />
-            <p>Mute</p>
-          </button>
-        )}
-
         {ctx.space.hostId !== ctx.currentUserId && (
-          <Button
-            color="danger"
-            variant="contained"
-            size="sm"
-            text="Leave"
-            onClick={() => {
-              dispatchEvent({
-                t: "user-left-space",
-                spaceId: ctx.space.spaceId,
-                userId: ctx.currentUserId,
-              });
-            }}
-          />
+          <div class="p-2">
+            <Button
+              color="danger"
+              variant="contained"
+              size="sm"
+              text="Leave"
+              onClick={() => {
+                dispatchEvent({
+                  t: "user-left-space",
+                  spaceId: ctx.space.spaceId,
+                  userId: ctx.currentUserId,
+                });
+              }}
+            />
+          </div>
         )}
-
         {ctx.space.hostId === ctx.currentUserId && (
-          <Button
-            color="danger"
-            variant="contained"
-            size="sm"
-            text="End"
-            onClick={() => {
-              dispatchEvent({
-                t: "user-ended-space",
-                userId: ctx.currentUserId,
-                spaceId: ctx.space.spaceId,
-              });
-            }}
-          />
+          <div class="p-2">
+            <Button
+              color="danger"
+              variant="contained"
+              size="sm"
+              text="End"
+              onClick={() => {
+                dispatchEvent({
+                  t: "user-ended-space",
+                  userId: ctx.currentUserId,
+                  spaceId: ctx.space.spaceId,
+                });
+              }}
+            />
+          </div>
         )}
       </nav>
 
@@ -1103,6 +1088,23 @@ const ViewSpaceScreenMain = ({
     </div>
   );
 };
+
+function TopButton({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: VDom;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button class="grid w-20 place-items-center py-1" onClick={onClick}>
+      {icon}
+      <p class="text-xs">{label}</p>
+    </button>
+  );
+}
 
 const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
   return (

@@ -44,11 +44,13 @@ export const Button = ({
       type={type}
       class={cn(
         className,
-        "relative flex select-none appearance-none flex-nowrap items-center justify-center font-semibold outline-none ring-blue-500 focus:ring-2",
-        combo === "contained-primary" && "rounded-md bg-blue-600 text-white",
-        combo === "contained-danger" && "rounded-md bg-red-600 text-white",
+        "relative flex select-none appearance-none flex-nowrap items-center justify-center font-semibold outline-none focus:ring-2",
+        combo === "contained-primary" &&
+          "rounded-md bg-blue-600 text-white ring-blue-500",
+        combo === "contained-danger" &&
+          "rounded-md bg-red-600 text-white ring-red-500",
         combo === "contained-default" &&
-          "rounded-md border border-neutral-700 bg-neutral-900 text-blue-500",
+          "rounded-md border border-neutral-700 bg-neutral-900 text-blue-500 ring-blue-500",
         combo === "outlined-default" &&
           "rounded-md border border-neutral-800 text-inherit text-neutral-400",
 

@@ -16,7 +16,10 @@ import { Browser, Eff, UnitInterval } from "gamezilla/@SHARED/core";
 //
 //
 
-export type Model = AppRoute;
+export type Model = {
+  previousRoute: AppRoute;
+  currentRoute: AppRoute;
+};
 
 const FALLBACK: AppRoute = { t: "space", c: { t: "space-list" } };
 
@@ -33,10 +36,13 @@ export const init = ({
   const decoded = AppRoute.decode(location.pathname);
 
   if (decoded) {
-    return { model: decoded };
+    return { model: { currentRoute: decoded, previousRoute: decoded } };
   }
 
-  return { model: FALLBACK, eff: Browser.replace(AppRoute.encode(FALLBACK)) };
+  return {
+    model: { currentRoute: FALLBACK, previousRoute: FALLBACK },
+    eff: Browser.replace(AppRoute.encode(FALLBACK)),
+  };
 };
 
 //
@@ -69,13 +75,16 @@ export const update = ({
       return {
         model,
         eff: Browser.back,
-        cmd: [playSound(APP_SOUND.navForwardMin, UnitInterval.init(0.5))],
+        cmd: [playSound(APP_SOUND.tap, UnitInterval.init(0.5))],
       };
     }
 
     case "clicked-link": {
       return {
-        model: msg.route,
+        model: {
+          previousRoute: model.currentRoute,
+          currentRoute: msg.route,
+        },
         eff: Browser.push(AppRoute.encode(msg.route)),
         cmd: [playSound(APP_SOUND.tap, UnitInterval.init(0.5))],
       };
@@ -83,7 +92,10 @@ export const update = ({
 
     case "route-changed": {
       return {
-        model: msg.route,
+        model: {
+          previousRoute: model.currentRoute,
+          currentRoute: msg.route,
+        },
         evt: [{ t: "routing/route-changed", route: msg.route }],
       };
     }
@@ -103,7 +115,10 @@ export const updateFromCmd = ({
   switch (msg.t) {
     case "routing/push": {
       return {
-        model: msg.route,
+        model: {
+          previousRoute: model.currentRoute,
+          currentRoute: msg.route,
+        },
         eff: Browser.push(AppRoute.encode(msg.route)),
       };
     }
@@ -117,7 +132,10 @@ export const updateFromCmd = ({
 
     case "routing/replace": {
       return {
-        model: msg.route,
+        model: {
+          previousRoute: model.currentRoute,
+          currentRoute: msg.route,
+        },
         eff: Browser.replace(AppRoute.encode(msg.route)),
       };
     }

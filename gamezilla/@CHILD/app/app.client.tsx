@@ -92,7 +92,7 @@ export const init = ({
   });
 
   const profile = ProfileClient.init({
-    currentRoute: routing.model,
+    currentRoute: routing.model.currentRoute,
     stored: stored?.profile ?? null,
   });
 
@@ -215,7 +215,7 @@ const updateMain = ({
     case "auth": {
       const updated = AuthClient.update({
         ctx: ctxApp,
-        route: model.routing,
+        route: model.routing.currentRoute,
         msg: msg.c,
         model: model.auth,
       });
@@ -332,7 +332,7 @@ const toCtx = (input: {
     profiles: input.model.profile.profiles,
     now: input.ctx.now,
     documentVisibilityState: input.model.platform.documentVisibilityState,
-    currentRoute: input.model.routing,
+    currentRoute: input.model.routing.currentRoute,
     currentUserId: null,
   };
   if (input.model.auth.currentUser.t === "logged-in") {
@@ -650,13 +650,15 @@ export const View = ({
 }) => {
   return (
     <div class="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
-      {false && <button class="flex w-full items-center gap-2 border-b border-neutral-800 p-0.5 px-2 text-xs text-secondary">
-        <div>Connected</div>
-        <div class="flex-1"></div>
-        <div>
-          <IconVolumeHigh class="h-3 w-3" />
-        </div>
-      </button>}
+      {false && (
+        <button class="flex w-full items-center gap-2 border-b border-neutral-700 p-0.5 px-2 text-xs text-secondary">
+          <div>Connected</div>
+          <div class="flex-1"></div>
+          <div>
+            <IconVolumeHigh class="h-3 w-3" />
+          </div>
+        </button>
+      )}
       <ViewMain model={model} now={now} dispatch={dispatch} />
       <Wire.View model={model.wire} />
       <Toast.View
@@ -684,7 +686,7 @@ const ViewMain = ({
           dispatch={dispatch}
           ctx={{
             now,
-            currentRoute: model.routing,
+            currentRoute: model.routing.currentRoute,
             currentUserId: model.auth.currentUser.userId,
             profiles: model.profile.profiles,
             sound: model.sound,
@@ -705,7 +707,7 @@ const ViewMain = ({
           model={model}
           ctx={{
             now,
-            currentRoute: model.routing,
+            currentRoute: model.routing.currentRoute,
             profiles: model.profile.profiles,
             sound: model.sound,
             documentVisibilityState: model.platform.documentVisibilityState,
@@ -745,17 +747,17 @@ const ViewLoggedOut = ({
   dispatch: (m: ClientMsg) => void;
   ctx: AnonymousViewCtx;
 }) => {
-  if (model.routing.t === "auth") {
+  if (model.routing.currentRoute.t === "auth") {
     return (
       <AuthClient.View
         location={{
-          pathname: model.routing.c.t,
+          pathname: model.routing.currentRoute.c.t,
           searchParams: new URLSearchParams(),
         }}
         dispatch={(m) => dispatch({ t: "auth", c: m })}
         model={model.auth}
         ctx={ctx}
-        route={model.routing.c}
+        route={model.routing.currentRoute.c}
       />
     );
   }
@@ -772,14 +774,14 @@ const ViewLoggedIn = ({
   model: ClientModel;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  switch (model.routing.t) {
+  switch (model.routing.currentRoute.t) {
     case "chat": {
       return (
         <ChatClient.View
           dispatch={(m) => dispatch({ t: "chat", c: m })}
           model={model.chat}
           ctx={ctx}
-          route={model.routing.c}
+          route={model.routing.currentRoute.c}
           viewBottomBar={
             <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
           }
@@ -802,7 +804,7 @@ const ViewLoggedIn = ({
           dispatch={(m) => dispatch({ t: "space", c: m })}
           model={model.space}
           ctx={ctx}
-          route={model.routing.c}
+          route={model.routing.currentRoute.c}
           viewBottomBar={
             <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
           }
@@ -816,7 +818,7 @@ const ViewLoggedIn = ({
           dispatch={(m) => dispatch({ t: "profile", c: m })}
           model={model.profile}
           ctx={ctx}
-          route={model.routing.c}
+          route={model.routing.currentRoute.c}
           viewBottomBar={
             <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
           }
@@ -890,7 +892,10 @@ const ViewBottomBar = ({
       />
       <div class="flex w-full items-center justify-center border-t border-neutral-700">
         {items.map((item) => {
-          const isSelected = AppRoute.eq(model.routing, item.route);
+          const isSelected = AppRoute.eq(
+            model.routing.currentRoute,
+            item.route
+          );
           return (
             <button
               key={AppRoute.encode(item.route)}
