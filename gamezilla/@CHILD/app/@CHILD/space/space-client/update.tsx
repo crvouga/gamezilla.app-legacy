@@ -144,6 +144,7 @@ export const mergeNewEvents = (input: {
       return acc;
     },
 
+    // Redirect to space if current user started space
     (model) => {
       const found = eventsNew.find(
         (event) =>
@@ -246,6 +247,14 @@ const updateSoundFromEvent = ({
   model: ClientModel;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
+  const currentUserState = ctx.currentUserId
+    ? toStateUser(model, ctx.currentUserId)
+    : null;
+
+  if (currentUserState?.spaceId !== event.spaceId) {
+    return { model };
+  }
+
   if (event.t === "user-joined-space" && event.userId === ctx.currentUserId) {
     return {
       model,
