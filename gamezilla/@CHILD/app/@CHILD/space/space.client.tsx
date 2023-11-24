@@ -1019,7 +1019,7 @@ const ViewSpaceScreenMain = ({
           class="grid w-20 place-items-center py-1"
           onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}>
           <IconHome class="h-6 w-6" />
-          <p class="text-sm">Home</p>
+          <p>Home</p>
         </button>
 
         <button
@@ -1031,16 +1031,21 @@ const ViewSpaceScreenMain = ({
 
         <div class="flex-1"></div>
 
-        <button
-          class="grid w-20 place-items-center py-1"
-          onClick={ctx.toggleSound}>
-          {ctx.sound.muted ? (
+        {ctx.sound.muted ? (
+          <button
+            class="grid w-20 place-items-center py-1"
+            onClick={ctx.toggleSound}>
             <IconVolumeHigh class="h-6 w-6" />
-          ) : (
+            <p>Unmute</p>
+          </button>
+        ) : (
+          <button
+            class="grid w-20 place-items-center py-1"
+            onClick={ctx.toggleSound}>
             <IconVolumeXMark class="h-6 w-6" />
-          )}
-          <p>{ctx.sound.muted ? "Unmute" : "Mute"}</p>
-        </button>
+            <p>Mute</p>
+          </button>
+        )}
 
         {ctx.space.hostId !== ctx.currentUserId && (
           <Button
