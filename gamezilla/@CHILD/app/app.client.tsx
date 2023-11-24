@@ -650,13 +650,13 @@ export const View = ({
 }) => {
   return (
     <div class="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
-      <button class="flex w-full items-center gap-2 border-b border-neutral-800 p-0.5 px-2 text-xs text-secondary">
+      {false && <button class="flex w-full items-center gap-2 border-b border-neutral-800 p-0.5 px-2 text-xs text-secondary">
         <div>Connected</div>
         <div class="flex-1"></div>
         <div>
           <IconVolumeHigh class="h-3 w-3" />
         </div>
-      </button>
+      </button>}
       <ViewMain model={model} now={now} dispatch={dispatch} />
       <Wire.View model={model.wire} />
       <Toast.View
