@@ -148,7 +148,8 @@ export const mergeNewEvents = (input: {
       const found = eventsNew.find(
         (event) =>
           event.t === "user-started-space" &&
-          toStateUser(model, event.userId).spaceId === event.spaceId
+          ctx.currentUserId &&
+          toStateUser(model, ctx.currentUserId).spaceId === event.spaceId
       );
 
       if (found) {
