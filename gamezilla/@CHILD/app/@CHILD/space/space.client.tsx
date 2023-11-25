@@ -439,6 +439,7 @@ const ViewSpaceScreen = ({
       />
 
       <Drawer
+        position="bottom"
         id="users"
         open={model.modal === "users"}
         onClose={() => dispatch({ t: "modal-closed" })}>
@@ -446,6 +447,7 @@ const ViewSpaceScreen = ({
       </Drawer>
 
       <Drawer
+        position="bottom"
         id="user-preview"
         open={model.modal === "user-preview"}
         onClose={() => dispatch({ t: "modal-closed" })}>
@@ -524,7 +526,11 @@ const ViewActivityFeedBar = ({
     <>
       <button class="flex w-full items-center justify-start text-center"></button>
 
-      <Drawer id="activity-feed-drawer" open={false} onClose={() => {}}>
+      <Drawer
+        position="top"
+        id="activity-feed-drawer"
+        open={false}
+        onClose={() => {}}>
         <div class="pb-4ya flex max-h-72 w-full flex-col justify-end overflow-y-scroll text-left"></div>
       </Drawer>
     </>

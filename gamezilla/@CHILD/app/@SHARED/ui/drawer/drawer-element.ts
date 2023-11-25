@@ -7,6 +7,7 @@ declare global {
       "drawer-element": {
         id: string;
         children: unknown;
+        position: "bottom" | "top";
       };
     }
   }
@@ -15,6 +16,7 @@ declare global {
       "drawer-element": {
         id: string;
         children: unknown;
+        position: "bottom" | "top";
       };
     }
   }
@@ -66,22 +68,35 @@ if (typeof window !== "undefined" && "customElements" in window) {
       <style>
         .root {
           position: absolute;
-          bottom: 0;
-          left: 0;
+          inset: 0;
           width: 100%;
           height: 100vh;
           overflow: hidden;
           display: flex;
           flex-direction: column;
-          justify-content: flex-end;
           z-index: 100;
           background-color: rgba(0, 0, 0, 0);
           transition: background-color 0.2s ease-in-out;
         }
-        .content {
+
+        .root-top {
+          flex-direction: column-reverse;
+        }
+
+        .root-bottom {
+          flex-direction: column;
+        }
+
+        .content-bottom {
           transition: transform 0.2s ease-in-out;
           transform: translateY(100%);
         }
+
+        .content-top {
+          transition: transform 0.2s ease-in-out;
+          transform: translateY(-100%);
+        }
+
         .backdrop {
           flex: 1;
           width: 100%;
@@ -108,15 +123,22 @@ if (typeof window !== "undefined" && "customElements" in window) {
       </div>
     `;
 
+      this.root = this.shadowRoot.querySelector(".root");
       this.backdrop = this.shadowRoot.querySelector(".backdrop");
       this.content = this.shadowRoot.querySelector(".content");
-      this.root = this.shadowRoot.querySelector(".root");
-
-      this.root?.classList.add("pointer-events-none");
 
       this.backdrop?.addEventListener("click", () => {
         this.props?.onClose();
       });
+
+      this.root?.classList.add("pointer-events-none");
+      if (this.getAttribute("position")?.toLowerCase().trim().includes("top")) {
+        this.root?.classList.add("root-top");
+        this.content?.classList.add("content-top");
+      } else {
+        this.root?.classList.add("root-bottom");
+        this.content?.classList.add("content-bottom");
+      }
     }
 
     syncUI() {
@@ -131,15 +153,29 @@ if (typeof window !== "undefined" && "customElements" in window) {
         this.backdrop.classList.add("visible");
         this.root.tabIndex = 0;
         this.tabIndex = 0;
-        // this.focusTrap.activate(this);
         this.addEventListener("keydown", this.onKeyDown);
+
+        // Adjust the position of the root element
+        if (this.props.position === "top") {
+          this.root.style.bottom = "auto"; // Remove bottom positioning
+          this.root.style.top = "0"; // Position at the top
+          this.root.style.flexDirection = "column-reverse";
+          this.content.classList.add("content-top");
+          this.content.classList.remove("content-bottom");
+        } else {
+          // Default to bottom if not specified or 'bottom'
+          this.root.style.top = "auto"; // Remove top positioning
+          this.root.style.bottom = "0"; // Position at the bottom
+          this.root.style.flexDirection = "column";
+          this.content.classList.add("content-bottom");
+          this.content.classList.remove("content-top");
+        }
         return;
       }
 
       this.removeEventListener("keydown", this.onKeyDown);
       this.tabIndex = -1;
       this.root.tabIndex = -1;
-      // this.focusTrap.deactivate(this);
       this.backdrop.classList.remove("visible");
       this.content.classList.remove("open");
       this.root.classList.remove("darken-background");

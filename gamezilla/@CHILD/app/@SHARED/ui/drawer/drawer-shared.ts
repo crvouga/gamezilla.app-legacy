@@ -4,6 +4,7 @@ export type DrawerProps = {
   id: string;
   onClose: () => void;
   open: boolean;
+  position: "bottom" | "top";
 };
 
 export type DrawerEvent = DrawerProps & {

@@ -139,6 +139,73 @@ export const updateFromCmd = <TToServer, TToClient>({
 //
 //
 
+export const ViewStatusBar = ({ model }: { model: ClientModel }) => {
+  switch (model.t) {
+    case "server-connected": {
+      return <span class="h-2 w-2 rounded-full bg-green-500"></span>;
+    }
+
+    case "server-connecting": {
+      return (
+        <div>
+          <span class="h-2 w-2 rounded-full bg-orange-500"></span>
+          <p>Connecting...</p>
+        </div>
+      );
+    }
+
+    case "server-connect-error": {
+      return (
+        <div>
+          <span class="h-2 w-2 rounded-full bg-orange-500"></span>
+          <p>Connecting...</p>
+        </div>
+      );
+    }
+
+    case "server-disconnected": {
+      return (
+        <div>
+          <span class="h-2 w-2 rounded-full bg-red-500"></span>
+          <p>Disconnected</p>
+        </div>
+      );
+    }
+  }
+};
+
+export const ViewStatusBarDrawer = ({ model }: { model: ClientModel }) => {
+  switch (model.t) {
+    case "server-connected": {
+      return (
+        <div class="flex w-full items-center gap-2 p-4">
+          <span class="h-5 w-5 rounded-full bg-green-500"></span>
+          <p class="text-green-500">Server connected</p>
+        </div>
+      );
+    }
+
+    case "server-connect-error":
+    case "server-connecting": {
+      return (
+        <div class="flex w-full items-center gap-2 p-4">
+          <span class="h-5 w-5 rounded-full bg-orange-500"></span>
+          <p>Server connecting</p>
+        </div>
+      );
+    }
+
+    case "server-disconnected": {
+      return (
+        <div class="flex w-full items-center gap-2 p-4">
+          <span class="h-5 w-5 rounded-full bg-red-500"></span>
+          <p>Offline</p>
+        </div>
+      );
+    }
+  }
+};
+
 export const View = ({ model }: { model: ClientModel }) => {
   switch (model.t) {
     case "server-connect-error": {

@@ -210,6 +210,7 @@ export const View = ({
       )}
 
       <Drawer
+        position="bottom"
         id="change-bot"
         open={model.opened === "change-bot"}
         onClose={() => dispatch({ t: "closed-modal" })}>

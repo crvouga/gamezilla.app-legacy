@@ -23,7 +23,7 @@ import * as ProfileClient from "./@CHILD/profile/profile.client";
 import * as SearchClient from "./@CHILD/search/search.client";
 import * as SpaceClient from "./@CHILD/space/space.client";
 import { UserId } from "./@SHARED/data";
-import { Platform, Routing, Sound, Toast } from "./app-client";
+import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import {
   APP_CONFIG,
   ClientModel,
@@ -112,8 +112,13 @@ export const init = ({
     stored: stored?.platform ?? null,
   });
 
+  const statusBar = StatusBar.init({
+    stored: stored?.statusBar ?? null,
+  });
+
   let acc: ReturnType<typeof init> = {
     model: {
+      statusBar: statusBar.model,
       routing: routing.model,
       toast: toast.model,
       wire: wire.model,
@@ -319,6 +324,16 @@ const updateMain = ({
       });
       return {
         model: { ...model, platform: updated.model },
+      };
+    }
+
+    case "status-bar": {
+      const updated = StatusBar.update({
+        msg: msg.c,
+        model: model.statusBar,
+      });
+      return {
+        model: { ...model, statusBar: updated.model },
       };
     }
   }
@@ -650,17 +665,19 @@ export const View = ({
 }) => {
   return (
     <div class="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
-      {false && (
-        <button class="flex w-full items-center gap-2 border-b border-neutral-700 p-0.5 px-2 text-xs text-secondary">
-          <div>Connected</div>
-          <div class="flex-1"></div>
-          <div>
-            <IconVolumeHigh class="h-3 w-3" />
-          </div>
-        </button>
-      )}
-      <ViewMain model={model} now={now} dispatch={dispatch} />
-      <Wire.View model={model.wire} />
+      <StatusBar.View
+        model={model.statusBar}
+        dispatch={(c) => dispatch({ t: "status-bar", c })}
+        wire={{
+          drawer: <Wire.ViewStatusBarDrawer model={model.wire} />,
+          statusBar: <Wire.ViewStatusBar model={model.wire} />,
+        }}
+      />
+
+      <div class="flex w-full flex-1 flex-col overflow-hidden ">
+        <ViewMain model={model} now={now} dispatch={dispatch} />
+      </div>
+
       <Toast.View
         model={model.toast}
         dispatch={(c) => dispatch({ t: "toast", c })}

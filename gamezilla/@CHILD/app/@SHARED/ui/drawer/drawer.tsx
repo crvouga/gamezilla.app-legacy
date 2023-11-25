@@ -7,12 +7,13 @@ export const Drawer = ({
   open,
   onClose,
   children,
+  position,
 }: DrawerProps & {
   children?: VDom | VDom[];
 }) => {
-  drawerSub.publish({ type: "props", id, onClose, open });
+  drawerSub.publish({ type: "props", id, onClose, open, position });
   return (
-    <drawer-element id={id}>
+    <drawer-element id={id} position={position}>
       <div class="w-full border border-neutral-700 bg-black">{children}</div>
     </drawer-element>
   );

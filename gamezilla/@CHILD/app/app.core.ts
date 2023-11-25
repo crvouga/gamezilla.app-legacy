@@ -5,7 +5,7 @@ import * as Search from "./@CHILD/search/search.core";
 import * as Space from "./@CHILD/space/space.core";
 import * as Wire from "./@CHILD/wire/wire.core";
 import { ClientId, SessionId } from "./@SHARED/data";
-import { Platform, Routing, Sound, Toast } from "./app-client";
+import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 
 //
 //
@@ -35,6 +35,7 @@ export type ClientModel = {
   toast: Toast.Model;
   sound: Sound.Model;
   platform: Platform.Model;
+  statusBar: StatusBar.Model;
 };
 
 //
@@ -68,6 +69,7 @@ export type ClientMsg =
   | { t: "toast"; c: Toast.Msg }
   | { t: "sound"; c: Sound.Msg }
   | { t: "platform"; c: Platform.Msg }
+  | { t: "status-bar"; c: StatusBar.Msg }
   | { t: "wire"; c: Wire.ClientMsg }
   | { t: "space"; c: Space.ClientMsg }
   | { t: "chat"; c: Chat.ClientMsg }

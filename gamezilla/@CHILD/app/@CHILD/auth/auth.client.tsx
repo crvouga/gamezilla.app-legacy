@@ -373,13 +373,15 @@ export const ViewLogoutScreen = ({
   }
 
   return (
-    <ConformationDialog
-      open
-      title="Logout of Gamezilla?"
-      confirmTitle="Logout"
-      onClose={ctx.back}
-      onCancel={ctx.back}
-      onConfirm={() => dispatch({ t: "clicked-logout" })}
-    />
+    <div class="relative h-full w-full flex-1">
+      <ConformationDialog
+        open
+        title="Logout of Gamezilla?"
+        confirmTitle="Logout"
+        onClose={ctx.back}
+        onCancel={ctx.back}
+        onConfirm={() => dispatch({ t: "clicked-logout" })}
+      />
+    </div>
   );
 };
