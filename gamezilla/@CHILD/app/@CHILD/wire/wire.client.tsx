@@ -178,7 +178,7 @@ export const ViewStatusBarDrawer = ({ model }: { model: ClientModel }) => {
   switch (model.t) {
     case "server-connected": {
       return (
-        <div class="flex w-full items-center gap-2 p-4">
+        <div class="flex w-full items-center gap-4 p-4">
           <span class="h-5 w-5 rounded-full bg-green-500"></span>
           <p class="text-green-500">Server connected</p>
         </div>
@@ -188,7 +188,7 @@ export const ViewStatusBarDrawer = ({ model }: { model: ClientModel }) => {
     case "server-connect-error":
     case "server-connecting": {
       return (
-        <div class="flex w-full items-center gap-2 p-4">
+        <div class="flex w-full items-center gap-4 p-4">
           <span class="h-5 w-5 rounded-full bg-orange-500"></span>
           <p>Server connecting</p>
         </div>
@@ -197,7 +197,7 @@ export const ViewStatusBarDrawer = ({ model }: { model: ClientModel }) => {
 
     case "server-disconnected": {
       return (
-        <div class="flex w-full items-center gap-2 p-4">
+        <div class="flex w-full items-center gap-4 p-4">
           <span class="h-5 w-5 rounded-full bg-red-500"></span>
           <p>Offline</p>
         </div>
@@ -213,7 +213,7 @@ export const View = ({ model }: { model: ClientModel }) => {
         return null;
       }
       return (
-        <div class="flex h-6 w-full items-center justify-center gap-2 bg-yellow-600 text-white">
+        <div class="flex h-6 w-full items-center justify-center gap-4 bg-yellow-600 text-white">
           <IconSpinner class="h-5 w-5 animate-spin text-white" />
           Server disconnected. Trying to reconnect...
         </div>
@@ -222,7 +222,7 @@ export const View = ({ model }: { model: ClientModel }) => {
 
     case "server-disconnected": {
       return (
-        <div class="flex h-6 w-full items-center justify-center gap-2 bg-red-500 text-white">
+        <div class="flex h-6 w-full items-center justify-center gap-4 bg-red-500 text-white">
           Server disconnected
         </div>
       );

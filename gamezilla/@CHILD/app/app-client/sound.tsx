@@ -1,5 +1,12 @@
-import { ClientEvt, SoundCmd } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  APP_SOUND,
+  ClientCmd,
+  ClientEvt,
+  SoundCmd,
+  playSound,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, err, ok, Result, UnitInterval } from "gamezilla/@SHARED/core";
+import { IconVolumeHigh, IconVolumeXMark, ToggleButton } from "../@SHARED/ui";
 
 //
 //
@@ -70,9 +77,22 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
+  cmd?: ClientCmd<{
+    ClientMsg: Msg;
+    ToServer: any;
+  }>[];
 } => {
   switch (msg.t) {
     case "toggle-mute": {
+      if (model.muted) {
+        return {
+          model: {
+            ...model,
+            muted: false,
+          },
+          cmd: [playSound(APP_SOUND.stateChangeUp)],
+        };
+      }
       return {
         model: {
           ...model,
@@ -147,7 +167,7 @@ export const updateFromCmd = ({
       return {
         model,
         eff: async (dispatch) => {
-          const played = await playSound(
+          const played = await playSoundEff(
             cmd.src,
             cmd.volume ?? UnitInterval.init(1)
           );
@@ -160,6 +180,42 @@ export const updateFromCmd = ({
       };
     }
   }
+};
+
+export const ViewStatusBar = ({ model }: { model: Model }) => {
+  if (model.muted) {
+    return <IconVolumeXMark class="h-4 w-4" />;
+  }
+
+  return <IconVolumeHigh class="h-4 w-4" />;
+};
+
+export const ViewStatusBarDrawer = ({
+  model,
+  dispatch,
+}: {
+  model: Model;
+  dispatch: (m: Msg) => void;
+}) => {
+  return (
+    <button
+      class="flex w-full items-center gap-4 p-4"
+      onClick={() => dispatch({ t: "toggle-mute" })}>
+      {model.muted ? (
+        <>
+          <IconVolumeXMark class="h-5 w-5" />
+          <p>Sound off</p>
+        </>
+      ) : (
+        <>
+          <IconVolumeHigh class="h-5 w-5" />
+          <p>Sound on</p>
+        </>
+      )}
+      <div class="flex-1"></div>
+      <ToggleButton checked={!model.muted} id="sound" />
+    </button>
+  );
 };
 
 //
@@ -233,7 +289,7 @@ async function preloadSound(src: string) {
   return ok(null);
 }
 
-async function playSound(
+async function playSoundEff(
   src: string,
   volume: number
 ): Promise<Result<string, null>> {

@@ -268,7 +268,15 @@ const updateMain = ({
         msg: msg.c,
         model: model.sound,
       });
-      return { model: { ...model, sound: updated.model } };
+      const cmd = ClientCmd.map(
+        updated?.cmd ?? [],
+        (x) => x,
+        (x) => ({ t: "sound", c: x })
+      );
+      return {
+        model: { ...model, sound: updated.model },
+        cmd,
+      };
     }
 
     case "space": {
@@ -671,6 +679,15 @@ export const View = ({
         wire={{
           drawer: <Wire.ViewStatusBarDrawer model={model.wire} />,
           statusBar: <Wire.ViewStatusBar model={model.wire} />,
+        }}
+        sound={{
+          drawer: (
+            <Sound.ViewStatusBarDrawer
+              model={model.sound}
+              dispatch={(c) => dispatch({ t: "sound", c })}
+            />
+          ),
+          statusBar: <Sound.ViewStatusBar model={model.sound} />,
         }}
       />
 

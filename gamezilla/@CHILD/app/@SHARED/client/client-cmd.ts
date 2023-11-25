@@ -165,6 +165,8 @@ export const APP_SOUND = {
   navBackward: "./app/nav-backward.wav",
   navForwardMin: "./app/nav-forward-min.wav",
   navBackwardMin: "./app/nav-backward-min.wav",
+  stateChangeUp: "./app/state-change-up.wav",
+  stateChangeDown: "./app/state-change-down.wav",
 };
 
 export const playSound = (src: string, volume?: UnitInterval): SoundCmd => {

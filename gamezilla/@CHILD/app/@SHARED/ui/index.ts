@@ -13,6 +13,7 @@ export * from "./loading-screen";
 export * from "./select";
 export * from "./spinner";
 export * from "./text-field";
+export * from "./toggle-button";
 export * from "./top-bar";
-export * from "./utils";
 export * from "./transition";
+export * from "./utils";

@@ -1,4 +1,4 @@
-import { Drawer, IconVolumeHigh, VDom } from "../@SHARED/ui";
+import { Drawer, VDom } from "../@SHARED/ui";
 
 export type Model = {
   isDrawerOpen: boolean;
@@ -38,8 +38,13 @@ export const View = ({
   model,
   dispatch,
   wire,
+  sound,
 }: {
   wire: {
+    statusBar: VDom;
+    drawer: VDom;
+  };
+  sound: {
     statusBar: VDom;
     drawer: VDom;
   };
@@ -55,9 +60,7 @@ export const View = ({
 
         <div class="flex-1"></div>
 
-        <div>
-          <IconVolumeHigh class="h-3 w-3" />
-        </div>
+        {sound.statusBar}
       </button>
 
       <Drawer
@@ -66,6 +69,8 @@ export const View = ({
         open={model.isDrawerOpen}
         onClose={() => dispatch({ t: "closed-drawer" })}>
         {wire.drawer}
+
+        {sound.drawer}
       </Drawer>
     </div>
   );
