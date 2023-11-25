@@ -110,13 +110,6 @@ export const update = ({
       };
     }
 
-    case "enqueue-toast": {
-      return {
-        model,
-        cmd: [showToast(`Enqueued toast, ${Math.random()}`)],
-      };
-    }
-
     default: {
       return {
         model: {
@@ -306,11 +299,6 @@ export const View = ({
             ctx={ctx}
             dispatch={dispatch}
             userId={route.userId}
-          />
-          <Button
-            onClick={() => dispatch({ t: "enqueue-toast" })}
-            class="w-full"
-            text="Enqueue toast"
           />
 
           {viewBottomBar}

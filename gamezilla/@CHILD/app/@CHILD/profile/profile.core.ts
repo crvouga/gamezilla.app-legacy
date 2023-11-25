@@ -64,8 +64,7 @@ export type ClientMsg =
   | { t: "inputted-username"; username: string }
   | { t: "inputted-avatar-seed"; seed: string }
   | { t: "inputted-avatar-style"; style: ProfileAvatarStyle }
-  | { t: "clicked-generate-random-seed" }
-  | { t: "enqueue-toast" };
+  | { t: "clicked-generate-random-seed" };
 
 export type ServerMsg = { t: "handled"; clientId: ClientId; msg: ToClient };
 
