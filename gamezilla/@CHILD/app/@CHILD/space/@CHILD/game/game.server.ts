@@ -40,13 +40,23 @@ const Chess = GameServer.tag("chess", ChessServer);
 //
 
 export const init: Server["init"] = async (input) => {
-  const { state } = input;
+  const { state, model } = input;
+
   switch (state.t) {
     case "connect-four": {
-      return ConnectFour.init({ ...input, state });
+      return ConnectFour.init({
+        state,
+        ctx: input.ctx,
+        model: model?.t === "connect-four" ? model : null,
+      });
     }
+
     case "chess": {
-      return Chess.init({ ...input, state });
+      return Chess.init({
+        ctx: input.ctx,
+        state,
+        model: model?.t === "chess" ? model : null,
+      });
     }
   }
 };
@@ -60,61 +70,36 @@ export const init: Server["init"] = async (input) => {
 //
 
 export const update: Server["update"] = async (input) => {
-  const { msg, state, model } = input;
+  const { msg, state, ctx, gameEvent, clientMsg, evt } = input;
 
-  if (
-    state.t === "connect-four" &&
-    model.t === "connect-four" &&
-    msg.t === "connect-four"
-  ) {
-    return ConnectFour.update({ ...input, state, msg, model });
-  }
+  return GameServer.chain(
+    init(input),
 
-  return { model };
-};
+    async (model) => {
+      switch (state.t) {
+        case "chess": {
+          return Chess.update({
+            ctx,
+            state,
+            model: model.t === "chess" ? model : null,
+            msg: msg?.t === "chess" ? msg : null,
+            clientMsg: clientMsg?.t === "chess" ? clientMsg : null,
+            evt,
+            gameEvent: gameEvent?.t === "chess" ? gameEvent : null,
+          });
+        }
 
-export const updateFromClient: Server["updateFromClient"] = async (input) => {
-  const { state, msg, model } = input;
-
-  if (
-    state.t === "connect-four" &&
-    model.t === "connect-four" &&
-    msg.t === "connect-four"
-  ) {
-    return ConnectFour.updateFromClient({ ...input, msg, model, state });
-  }
-
-  return { model };
-};
-
-export const updateFromEvent: Server["updateFromEvent"] = async (input) => {
-  const { model, state } = input;
-
-  if (state.t === "connect-four" && model.t === "connect-four") {
-    return ConnectFour.updateFromEvent({ ...input, state, model });
-  }
-
-  return { model };
-};
-
-export const updateFromGame: Server["updateFromGame"] = async (input) => {
-  const { model, prev, next, msg } = input;
-
-  if (
-    next.t === "connect-four" &&
-    model.t === "connect-four" &&
-    msg.t === "connect-four"
-  ) {
-    return ConnectFour.updateFromGame({
-      ...input,
-      prev: prev?.t === "connect-four" ? prev : null,
-      next: next,
-      model,
-      msg,
-    });
-  }
-
-  return { model };
+        case "connect-four": {
+          return ConnectFour.update({
+            ctx,
+            state,
+            model: model.t === "connect-four" ? model : null,
+            msg: msg?.t === "connect-four" ? msg : null,
+          });
+        }
+      }
+    }
+  );
 };
 
 //
@@ -128,9 +113,17 @@ export const updateFromGame: Server["updateFromGame"] = async (input) => {
 export const subscriptions: Server["subscriptions"] = async (input) => {
   const { state, model } = input;
 
-  if (state.t === "connect-four" && model.t === "connect-four") {
-    return await ConnectFour.subscriptions({ ...input, state, model });
-  }
+  switch (state.t) {
+    case "chess": {
+      return Sub.None;
+    }
 
-  return Sub.None;
+    case "connect-four": {
+      return await ConnectFour.subscriptions({
+        ...input,
+        state,
+        model: model?.t === "connect-four" ? model : null,
+      });
+    }
+  }
 };

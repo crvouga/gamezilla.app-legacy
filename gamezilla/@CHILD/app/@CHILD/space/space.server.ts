@@ -21,6 +21,7 @@ import {
 import * as GameServer from "./@CHILD/game/game.server";
 import {
   Event,
+  EventWithMeta,
   ServerModel,
   ServerMsg,
   StateSpace,
@@ -30,6 +31,7 @@ import {
   initCore,
   mergeModels,
   toSpaceEvents,
+  toStartedSpace,
   toStateSpace,
   toStateUser,
 } from "./space.core";
@@ -79,23 +81,9 @@ export const update = async ({
     case "game-msg": {
       const { spaceId } = msg;
 
-      const space = toStateSpace(model, spaceId);
+      const space = toStartedSpace(model, spaceId);
 
-      const game = model.games[spaceId];
-
-      if (!game) {
-        return { model };
-      }
-
-      if (space.type === "initial") {
-        return { model };
-      }
-
-      if (space.type === "ended") {
-        return { model };
-      }
-
-      if (!space.game) {
+      if (!space || !space.game) {
         return { model };
       }
 
@@ -106,55 +94,62 @@ export const update = async ({
 
       const updated = await GameServer.update({
         ctx: spaceCtx,
-        model: game,
+        model: model.games[spaceId] ?? null,
         msg: msg.c,
         state: space.game,
       });
 
-      const gameEvent = updated.events?.[0] ?? null;
+      const eventsNew =
+        updated.gameEvent?.map((event) =>
+          withMeta<Event>({ t: "game", spaceId, c: event })
+        ) ?? [];
 
       return chainAwait(
-        model,
-        (model) => {
-          if (!gameEvent) {
-            return { model };
-          }
-          return appendEventServer(
-            spaceCtx,
-            model,
-            withMeta({
-              t: "game",
-              spaceId: msg.spaceId,
-              c: gameEvent,
-            })
-          );
-        },
-        (model) => {
-          return {
-            model: {
-              ...model,
-              games: {
-                ...model.games,
-                [spaceId]: updated.model,
-              },
-            },
-            eff: Eff.map_(
-              (c): ServerMsg => ({ t: "game-msg", spaceId, c }),
-              updated.eff
-            ),
-            cmd: spaceCmdToCmd(
-              space,
-              SpaceServerCmd.map(updated.cmd ?? [], (c) => ({
-                t: "game-msg",
-                spaceId: msg.spaceId,
-                c,
-              }))
-            ),
-          };
-        }
+        { model },
+        (model) => mergeNewEvents({ ctx: spaceCtx, events: eventsNew, model }),
+        (model) => mergeUpdatedGame({ model, space, updated })
       );
     }
   }
+};
+
+/**
+ * Handles updating the client model from updated game model
+ */
+export const mergeUpdatedGame = ({
+  model,
+  space,
+  updated,
+}: {
+  space: Space;
+  model: ServerModel;
+  updated: Awaited<ReturnType<typeof GameServer.update>>;
+}): {
+  model: ServerModel;
+  cmd?: ServerCmd<ToClient>[];
+  eff?: Eff<ServerMsg>;
+} => {
+  return {
+    model: {
+      ...model,
+      games: {
+        ...model.games,
+        [space.spaceId]: updated.model,
+      },
+    },
+    cmd: spaceCmdToCmd(
+      space,
+      SpaceServerCmd.map(updated.cmd ?? [], (c) => ({
+        t: "game-msg",
+        spaceId: space.spaceId,
+        c,
+      }))
+    ),
+    eff: Eff.map_(
+      (c) => ({ t: "game-msg", c, spaceId: space.spaceId }),
+      updated.eff
+    ),
+  };
 };
 
 export const updateFromClient = async (input: {
@@ -170,58 +165,42 @@ export const updateFromClient = async (input: {
 
   switch (msg.t) {
     case "game-msg": {
-      const space = toStateSpace(model, msg.spaceId);
+      const space = toStartedSpace(model, msg.spaceId);
 
-      const game = model.games[msg.spaceId];
-
-      if (!game) {
+      if (!space || !space.game || !ctx.currentUserId) {
         return { model };
       }
 
-      if (space.type === "initial") {
-        return { model };
-      }
-
-      if (space.type === "ended") {
-        return { model };
-      }
-
-      if (!space.game) {
-        return { model };
-      }
-
-      if (!ctx.currentUserId) {
-        return { model };
-      }
-
-      const updated = await GameServer.updateFromClient({
+      const updated = await GameServer.update({
         ctx: { ...ctx, currentUserId: ctx.currentUserId, space: space },
         state: space.game,
-        msg: msg.c,
-        model: game,
+        clientMsg: msg.c,
+        model: model.games[msg.spaceId],
       });
 
-      return {
-        model: {
-          ...model,
-          games: {
-            ...model.games,
-            [msg.spaceId]: updated.model,
-          },
+      const eventsNew =
+        updated.gameEvent?.map((event) =>
+          withMeta<Event>({ t: "game", spaceId: msg.spaceId, c: event })
+        ) ?? [];
+
+      return chainAwait(
+        { model },
+        (model) => {
+          return mergeUpdatedGame({
+            model,
+            space,
+            updated,
+          });
         },
-        eff: Eff.map_(
-          (c) => ({ t: "game-msg", spaceId: space.spaceId, c }),
-          updated.eff
-        ),
-        cmd: spaceCmdToCmd(
-          space,
-          SpaceServerCmd.map(updated.cmd ?? [], (c) => ({
-            t: "game-msg",
-            spaceId: msg.spaceId,
-            c,
-          }))
-        ),
-      };
+
+        (model) => {
+          return mergeNewEvents({
+            ctx,
+            events: eventsNew,
+            model,
+          });
+        }
+      );
     }
 
     case "sync": {
@@ -263,98 +242,52 @@ export const updateFromClient = async (input: {
     }
 
     default: {
-      const prev = toStateSpace(model, msg.spaceId);
-
-      const appended = appendEvent(model, [msg]);
-
-      const next = toStateSpace(appended, msg.spaceId);
-
-      const updated = await updateGameModel({
-        model,
-        msg,
-        ctx,
-        prev,
-        next,
+      return chain({ model }, (model) => {
+        const merged = mergeNewEvents({
+          ctx,
+          events: [msg],
+          model,
+        });
+        return {
+          model: { ...model, ...merged },
+        };
       });
-
-      const cmd: ServerCmd<ToClient>[] = [];
-
-      if (
-        "userId" in msg &&
-        toStateUser(model, msg.userId).spaceId !== msg.spaceId &&
-        toStateUser(appended, msg.userId).spaceId === msg.spaceId
-      ) {
-        cmd.push(
-          sendToClient([ctx.clientId], {
-            t: "sync",
-            events: toSpaceEvents(appended, msg.spaceId),
-            profiles: model.profileCache,
-          })
-        );
-      }
-
-      if (msg.t === "game" && next.type === "started") {
-        cmd.push(sendToUser(Object.values(next.users), msg));
-      } else {
-        cmd.push(broadcast(msg));
-      }
-
-      return {
-        model: {
-          ...model,
-          ...appended,
-          games: {
-            ...model.games,
-            ...updated.model.games,
-          },
-          profileCache: {
-            ...model.profileCache,
-            ...(msg.profile ? { [msg.profile.userId]: msg.profile } : {}),
-          },
-        },
-        eff: updated.eff,
-        cmd: cmd,
-      };
     }
   }
 };
 
-const appendEventServer = async (
-  ctx: ServerCtx,
-  model: ServerModel,
-  event: Event & EventMeta
-): ReturnType<typeof update> => {
-  const prev = toStateSpace(model, event.spaceId);
-
-  const appended = appendEvent(model, [event]);
-
-  const next = toStateSpace(appended, event.spaceId);
-
-  const updated = await updateGameModel({
-    model,
-    msg: event,
-    ctx,
-    prev,
-    next,
-  });
-
-  return {
-    model: {
-      ...model,
-      ...appended,
-      games: {
-        ...model.games,
-        ...updated.model.games,
-      },
+const mergeNewEvents = async (input: {
+  ctx: ServerCtx;
+  model: ServerModel;
+  events: EventWithMeta[];
+}): ReturnType<typeof update> => {
+  const events = input.events.filter(
+    (event) => !(event.eventId in input.model.events.events)
+  );
+  return chainAwait(
+    input,
+    // merge new events
+    (model) => {
+      const appended = appendEvent(model, events);
+      return {
+        model: { ...model, ...appended },
+      };
     },
-    eff: updated.eff,
-    cmd: [
-      topicPublish([`space/${event.spaceId}`, "spaces"], event),
-      event.t === "game" && next.type === "started"
-        ? sendToUser(Object.values(next.users), event)
-        : broadcast(event),
-    ],
-  };
+    // send to clients
+    (model) => {
+      const cmd = events.flatMap((event) => {
+        const space = toStateSpace(model, event.spaceId);
+        if (space.type === "initial" || space.type === "ended") {
+          return [];
+        }
+        if (event.t === "game") {
+          return sendToUser(Object.values(space.users), event);
+        }
+        return broadcast(event);
+      });
+      return { model, cmd };
+    }
+  );
 };
 
 const spaceCmdToCmd = (space: Space, cmd?: SpaceServerCmd<ToClient>[]) => {
@@ -405,118 +338,6 @@ export const updateFromEvent = async (input: {
 
     default: {
       return input;
-    }
-  }
-};
-
-const updateGameModel = async ({
-  model,
-  msg,
-  ctx,
-  prev,
-  next,
-}: {
-  prev: StateSpace;
-  next: StateSpace;
-  model: ServerModel;
-  msg: Event;
-  ctx: ServerCtx;
-}): Promise<{
-  model: ServerModel;
-  eff?: Eff<ServerMsg>;
-  cmd?: ServerCmd<ToClient>[];
-}> => {
-  switch (msg.t) {
-    case "game": {
-      if (
-        prev.type === "initial" ||
-        prev.type === "ended" ||
-        next.type === "initial" ||
-        next.type === "ended"
-      ) {
-        return { model };
-      }
-
-      const gameState = next.game;
-
-      if (!gameState) {
-        return { model };
-      }
-
-      return chainAwait(
-        model,
-        async (model) => {
-          const gameModel = model.games[msg.spaceId];
-
-          if (gameModel) {
-            return { model };
-          }
-
-          const init = await GameServer.init({
-            ctx: {
-              ...ctx,
-              space: next,
-            },
-            state: gameState,
-          });
-
-          return {
-            model: {
-              ...model,
-              games: {
-                ...model.games,
-                [msg.spaceId]: init.model,
-              },
-            },
-          };
-        },
-        async (model) => {
-          const gameModel = model.games[msg.spaceId];
-
-          if (!gameModel) {
-            return { model };
-          }
-
-          const updated = await GameServer.updateFromGame({
-            ctx: { ...ctx, space: next },
-            msg: msg.c,
-            model: gameModel,
-            prev: prev.game,
-            next: gameState,
-          });
-
-          return {
-            model: {
-              ...model,
-              games: {
-                ...model.games,
-                [msg.spaceId]: updated.model,
-              },
-            },
-            eff: Eff.map_(
-              (c) => ({
-                t: "game-msg",
-                spaceId: msg.spaceId,
-                c,
-              }),
-              updated.eff
-            ),
-
-            cmd: spaceCmdToCmd(
-              next,
-              SpaceServerCmd.map(updated.cmd ?? [], (c) => ({
-                t: "game-msg",
-                spaceId: msg.spaceId,
-                c,
-              }))
-            ),
-          };
-        }
-      );
-    }
-
-    default: {
-      return { model };
     }
   }
 };

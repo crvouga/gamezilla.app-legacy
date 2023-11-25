@@ -170,7 +170,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
  * @param updaters - a list of update functions to apply to the model
  * @returns Accumulated output from all the update functions
  */
-export const chain = <T extends GameClientTypes>(
+const chain = <T extends GameClientTypes>(
   initial: Output<T>,
   ...updaters: ((input: T["ClientModel"]) => Output<T>)[]
 ): Output<T> => {

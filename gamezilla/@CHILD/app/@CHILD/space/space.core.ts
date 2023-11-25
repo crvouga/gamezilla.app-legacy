@@ -225,6 +225,27 @@ export const toStateSpace = (
   return spaceState;
 };
 
+export const toStartedSpace = (
+  model: CoreModel,
+  spaceId: SpaceId
+): StateStarted | null => {
+  const state = toState(model);
+
+  const spaceState: StateSpace = state.spaces[spaceId] ?? {
+    type: "initial",
+  };
+
+  if (spaceState.type === "initial") {
+    return null;
+  }
+
+  if (spaceState.type === "ended") {
+    return null;
+  }
+
+  return spaceState;
+};
+
 type State = {
   spaces: {
     [spaceId: SpaceId]: StateSpace;

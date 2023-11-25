@@ -11,72 +11,48 @@ import { SpaceServerCmd } from "../space-cmd";
 //
 
 export type GameServerTypes = {
+  //
   ServerModel: any;
   ServerMsg: any;
   ToClient: any;
   ToServer: any;
+  //
   GameState: any;
   GameEvent: any;
+  //
+};
+
+type Output<T extends GameServerTypes> = {
+  model: T["ServerModel"];
+  gameEvent?: T["GameEvent"][];
+  eff?: Eff<T["ServerMsg"]>;
+  cmd?: SpaceServerCmd<T["ToClient"]>[];
 };
 
 export type GameServer<T extends GameServerTypes> = {
-  init: (input: { ctx: SpaceServerCtx; state: T["GameState"] }) => Promise<{
+  init: (input: {
+    ctx: SpaceServerCtx;
+    state: T["GameState"];
+    model?: T["ServerModel"] | null;
+  }) => Promise<{
     model: T["ServerModel"];
     eff?: Eff<T["ServerMsg"]>;
     cmd?: SpaceServerCmd<T["ToClient"]>[];
   }>;
 
   update: (input: {
-    ctx: SpaceServerCtx;
-    msg: T["ServerMsg"];
-    model: T["ServerModel"];
+    ctx: SpaceServerCtx | SpaceReqCtx;
     state: T["GameState"];
-  }) => Promise<{
-    model: T["ServerModel"];
-    events?: T["GameEvent"][];
-    eff?: Eff<T["ServerMsg"]>;
-    cmd?: SpaceServerCmd<T["ToClient"]>[];
-  }>;
-
-  updateFromClient: (input: {
-    ctx: SpaceReqCtx;
-    msg: T["ToServer"];
-    model: T["ServerModel"];
-    state: T["GameState"];
-  }) => Promise<{
-    model: T["ServerModel"];
-    events?: T["GameEvent"][];
-    eff?: Eff<T["ServerMsg"]>;
-    cmd?: SpaceServerCmd<T["ToClient"]>[];
-  }>;
-
-  updateFromEvent: (input: {
-    ctx: SpaceServerCtx;
-    msg: SpaceServerEvt;
-    model: T["ServerModel"];
-    state: T["GameState"];
-  }) => Promise<{
-    model: T["ServerModel"];
-    events?: T["GameEvent"][];
-    eff?: Eff<T["ServerMsg"]>;
-    cmd?: SpaceServerCmd<T["ToClient"]>[];
-  }>;
-
-  updateFromGame: (input: {
-    ctx: SpaceServerCtx;
-    msg: T["GameEvent"];
-    model: T["ServerModel"];
-    prev: T["GameState"] | null;
-    next: T["GameState"];
-  }) => Promise<{
-    model: T["ServerModel"];
-    events?: T["GameEvent"][];
-    eff?: Eff<T["ServerMsg"]>;
-    cmd?: SpaceServerCmd<T["ToClient"]>[];
-  }>;
+    model?: T["ServerModel"] | null;
+    //
+    msg?: T["ServerMsg"] | null;
+    clientMsg?: T["ToServer"] | null;
+    gameEvent?: T["GameEvent"] | null;
+    evt?: SpaceServerEvt | null;
+  }) => Promise<Output<T>>;
 
   subscriptions: (input: {
-    model: T["ServerModel"];
+    model?: T["ServerModel"] | null;
     intervalId: string;
     ctx: SpaceServerCtx;
     state: T["GameState"];
@@ -113,55 +89,17 @@ const tag = <T extends string, Types extends GameServerTypes>(
       const updated = await server.update({
         ctx: input.ctx,
         state: input.state.c,
-        msg: input.msg.c,
-        model: input.model.c,
-      });
-      return {
-        model: { t: tag, c: updated.model },
-        eff: Eff.t(tag, updated.eff),
-        events: updated.events?.map((event) => ({ t: tag, c: event })),
-        cmd: SpaceServerCmd.tag(tag, updated.cmd),
-      };
-    },
-    updateFromClient: async (input) => {
-      const updated = await server.updateFromClient({
-        ctx: input.ctx,
-        state: input.state.c,
-        msg: input.msg.c,
-        model: input.model.c,
-      });
-      return {
-        model: { t: tag, c: updated.model },
-        eff: Eff.t(tag, updated.eff),
-        events: updated.events?.map((event) => ({ t: tag, c: event })),
-        cmd: SpaceServerCmd.tag(tag, updated.cmd),
-      };
-    },
-    updateFromGame: async (input) => {
-      const updated = await server.updateFromGame({
-        ctx: input.ctx,
-        prev: input.prev?.c ?? null,
-        next: input.next.c,
-        msg: input.msg.c,
         model: input.model?.c,
+        msg: input.msg?.t === tag ? input.msg.c : null,
+        clientMsg: input.clientMsg?.t === tag ? input.clientMsg.c : null,
+        gameEvent: input.gameEvent?.t === tag ? input.gameEvent.c : null,
+        evt: input.evt ?? null,
       });
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
+        gameEvent: updated.gameEvent?.map((event) => ({ t: tag, c: event })),
         cmd: SpaceServerCmd.tag(tag, updated.cmd),
-      };
-    },
-    updateFromEvent: async (input) => {
-      const updated = await server.updateFromEvent({
-        ctx: input.ctx,
-        state: input.state.c,
-        msg: input.msg,
-        model: input.model.c,
-      });
-      return {
-        model: { t: tag, c: updated.model },
-        eff: Eff.t(tag, updated.eff),
-        events: updated.events?.map((event) => ({ t: tag, c: event })),
       };
     },
     subscriptions: async (input) => {
@@ -170,7 +108,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
         await server.subscriptions({
           ctx: input.ctx,
           intervalId: input.intervalId,
-          model: input.model.c,
+          model: input.model?.c,
           state: input.state.c,
         })
       );
@@ -178,6 +116,69 @@ const tag = <T extends string, Types extends GameServerTypes>(
   };
 };
 
+/**
+ * @description
+ * A helper function used for chaining together update functions together.
+ * @example
+ * const updated = chain(
+ * { model: 0 },
+ * (model) => ({ model: model + 1, evt: [someEvent] }),
+ * (model) => ({ model: model + 1, eff: someEff }),
+ * (model) => ({ model: model + 1, cmd: [someCmd] }),
+ * )
+ * //=> { model: 3, evt: [someEvt], eff: someEff, cmd: [someCmd] }
+ *
+ * @param initial - the model to start with
+ * @param updaters - a list of update functions to apply to the model
+ * @returns Accumulated output from all the update functions
+ */
+const chain = async <T extends GameServerTypes>(
+  initial: Output<T> | Promise<Output<T>>,
+  ...updaters: ((input: T["ServerModel"]) => Promise<Output<T>>)[]
+): Promise<Output<T>> => {
+  const cmd: SpaceServerCmd<T["ToClient"]>[] = (await initial).cmd ?? [];
+  const gameEvents: T["GameEvent"][] = (await initial)?.gameEvent ?? [];
+  const eff: Eff<T["ServerMsg"]>[] = (await initial).eff
+    ? [(await initial).eff!]
+    : [];
+
+  let model = (await initial).model;
+  let i = 0;
+  let len = updaters.length;
+
+  for (i = 0; i < len; ++i) {
+    const updated = await updaters[i]!(model);
+
+    model = updated.model;
+
+    if (updated.eff) {
+      eff.push(updated.eff);
+    }
+    if (updated.gameEvent) {
+      let j = 0;
+      let len = updated.gameEvent.length;
+      for (j = 0; j < len; ++j) {
+        gameEvents.push(updated.gameEvent[j]!);
+      }
+    }
+    if (updated.cmd) {
+      let j = 0;
+      let len = updated.cmd.length;
+      for (j = 0; j < len; ++j) {
+        cmd.push(updated.cmd[j]!);
+      }
+    }
+  }
+
+  return {
+    model,
+    eff: Eff.batch(eff),
+    gameEvent: gameEvents,
+    cmd,
+  };
+};
+
 export const GameServer = {
   tag,
+  chain,
 };

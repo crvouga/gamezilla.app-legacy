@@ -24,29 +24,19 @@ type Server = GameServer<{
   GameEvent: GameEvent;
 }>;
 
-export const init: Server["init"] = async () => {
+export const init: Server["init"] = async ({ model }) => {
+  if (model) {
+    return { model };
+  }
   return {
     model: null,
   };
 };
 
 export const update: Server["update"] = async (input) => {
-  return input;
-};
-
-export const updateFromClient: Server["updateFromClient"] = async (input) => {
-  return input;
-};
-
-export const updateFromEvent: Server["updateFromEvent"] = async (input) => {
-  return input;
+  return init(input);
 };
 
 export const subscriptions: Server["subscriptions"] = async (input) => {
   return Sub.None;
-};
-
-export const updateFromGame: Server["updateFromGame"] = async (input) => {
-  const { model } = input;
-  return { model };
 };

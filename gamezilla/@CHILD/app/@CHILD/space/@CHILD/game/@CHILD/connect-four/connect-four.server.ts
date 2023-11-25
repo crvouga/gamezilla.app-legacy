@@ -32,18 +32,23 @@ const VsUser = GameServer.tag("vs-user", VsUserServer);
 //
 
 export const init: Server["init"] = async (input) => {
-  const { state } = input;
+  if (input.model) {
+    return { model: input.model };
+  }
+
+  const { ctx, state } = input;
+
   switch (state.t) {
     case "none": {
       return { model: { t: null } };
     }
 
     case "vs-bot": {
-      return VsBot.init({ ...input, state });
+      return VsBot.init({ ctx, state });
     }
 
     case "vs-user": {
-      return VsUser.init({ ...input, state });
+      return VsUser.init({ ctx, state });
     }
   }
 };
@@ -59,71 +64,37 @@ export const init: Server["init"] = async (input) => {
 export type Msg = ServerMsg;
 
 export const update: Server["update"] = async (input) => {
-  const { state, msg, model } = input;
+  return GameServer.chain(
+    await init(input),
 
-  if (state.t === "vs-bot" && msg.t === "vs-bot" && model.t === "vs-bot") {
-    return VsBot.update({ ...input, msg, state, model });
-  }
+    async (model) => {
+      const { state, msg } = input;
 
-  if (state.t === "vs-user" && msg.t === "vs-user" && model.t === "vs-user") {
-    return VsUser.update({ ...input, msg, state, model });
-  }
+      switch (state.t) {
+        case "none": {
+          return { model };
+        }
 
-  return { model };
-};
+        case "vs-bot": {
+          return VsBot.update({
+            ctx: input.ctx,
+            msg: msg?.t === "vs-bot" ? msg : null,
+            state,
+            model: model?.t === "vs-bot" ? model : null,
+          });
+        }
 
-export const updateFromClient: Server["updateFromClient"] = async (input) => {
-  const { state, msg, model } = input;
-
-  if (state.t === "vs-bot" && msg.t === "vs-bot" && model.t === "vs-bot") {
-    return VsBot.updateFromClient({ ...input, msg, state, model });
-  }
-
-  if (state.t === "vs-user" && msg.t === "vs-user" && model.t === "vs-user") {
-    return VsUser.updateFromClient({ ...input, msg, state, model });
-  }
-
-  return { model };
-};
-
-export const updateFromEvent: Server["updateFromEvent"] = async (input) => {
-  const { state, model } = input;
-
-  if (state.t === "vs-bot" && model.t === "vs-bot") {
-    return VsBot.updateFromEvent({ ...input, state, model });
-  }
-
-  if (state.t === "vs-user" && model.t === "vs-user") {
-    return VsUser.updateFromEvent({ ...input, state, model });
-  }
-
-  return { model };
-};
-
-export const updateFromGame: Server["updateFromGame"] = async (input) => {
-  const { prev, next, model, msg } = input;
-
-  if (next.t === "vs-bot" && model.t === "vs-bot" && msg.t === "vs-bot") {
-    return VsBot.updateFromGame({
-      ...input,
-      msg,
-      model,
-      next: next,
-      prev: prev?.t === "vs-bot" ? prev : null,
-    });
-  }
-
-  if (next.t === "vs-user" && model.t === "vs-user" && msg.t === "vs-user") {
-    return VsUser.updateFromGame({
-      ...input,
-      prev: prev?.t === "vs-user" ? prev : null,
-      next: next,
-      model,
-      msg,
-    });
-  }
-
-  return input;
+        case "vs-user": {
+          return VsUser.update({
+            ctx: input.ctx,
+            msg: msg?.t === "vs-user" ? msg : null,
+            state,
+            model: model?.t === "vs-user" ? model : null,
+          });
+        }
+      }
+    }
+  );
 };
 
 //
@@ -137,13 +108,25 @@ export const updateFromGame: Server["updateFromGame"] = async (input) => {
 export const subscriptions: Server["subscriptions"] = async (input) => {
   const { state, model } = input;
 
-  if (state.t === "vs-bot" && model.t === "vs-bot") {
-    return VsBot.subscriptions({ ...input, state, model });
-  }
+  switch (state.t) {
+    case "none": {
+      return Sub.None;
+    }
 
-  if (state.t === "vs-user" && model.t === "vs-user") {
-    return VsUser.subscriptions({ ...input, state, model });
-  }
+    case "vs-bot": {
+      return VsBot.subscriptions({
+        ...input,
+        state,
+        model: model?.t === "vs-bot" ? model : null,
+      });
+    }
 
-  return Sub.None;
+    case "vs-user": {
+      return VsUser.subscriptions({
+        ...input,
+        state,
+        model: model?.t === "vs-user" ? model : null,
+      });
+    }
+  }
 };

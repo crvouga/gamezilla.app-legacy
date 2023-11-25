@@ -305,6 +305,7 @@ export const subscriptions = (
   model: ClientModel
 ): Sub<ClientMsg> => {
   const { currentUserId } = ctx;
+
   if (!currentUserId) {
     return Sub.None;
   }
@@ -320,23 +321,9 @@ export const subscriptions = (
       continue;
     }
 
-    const game = model.games[spaceId];
-
-    if (!game) {
-      continue;
-    }
-
     const space = toStateSpace(model, spaceId);
 
-    if (space.type === "initial") {
-      continue;
-    }
-
-    if (space.type === "ended") {
-      continue;
-    }
-
-    if (!space.game) {
+    if (space.type === "initial" || space.type === "ended" || !space.game) {
       continue;
     }
 
@@ -344,14 +331,10 @@ export const subscriptions = (
       GameClient.subscriptions({
         ctx: { ...clientCtx, space: space },
         state: space.game,
-        model: game,
-        intervalId: String(spaceId),
+        model: model.games[spaceId],
+        intervalId: spaceId,
       }),
-      (c): ClientMsg => ({
-        t: "game-msg",
-        c,
-        spaceId,
-      })
+      (c): ClientMsg => ({ t: "game-msg", c, spaceId })
     );
     subs.push(sub);
   }
@@ -447,8 +430,6 @@ const ViewSpaceScreen = ({
 
   return (
     <>
-      {/* <pre class="w-full text-xs">{JSON.stringify(state, null, 4)}</pre> */}
-
       <ViewSpaceScreenMain
         space={space}
         dispatchEvent={dispatchEvent}

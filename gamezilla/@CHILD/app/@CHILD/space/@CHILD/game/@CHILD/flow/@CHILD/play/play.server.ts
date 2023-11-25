@@ -24,31 +24,15 @@ const init: Server["init"] = async () => {
 };
 
 const update: Server["update"] = async (input) => {
-  return input;
-};
-
-const updateFromClient: Server["updateFromClient"] = async (input) => {
-  return input;
-};
-
-const updateFromEvent: Server["updateFromEvent"] = async (input) => {
-  return input;
+  return init(input);
 };
 
 const subscriptions: Server["subscriptions"] = async () => {
   return Sub.None;
 };
 
-export const updateFromGame: Server["updateFromGame"] = async (input) => {
-  const { model } = input;
-  return { model };
-};
-
 export const PlayServer: Server = {
   init,
   update,
-  updateFromClient,
-  updateFromEvent,
   subscriptions,
-  updateFromGame: updateFromGame,
 };
