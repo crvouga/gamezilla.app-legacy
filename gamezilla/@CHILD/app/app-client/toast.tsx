@@ -1,6 +1,6 @@
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconXMark, Transition, cn } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Eff, Time, andThen, p } from "gamezilla/@SHARED/core";
+import { Eff, Time } from "gamezilla/@SHARED/core";
 
 //
 //
@@ -194,7 +194,7 @@ export function View({
 
 async function onEnter(node: HTMLElement) {
   await node?.animate(
-    [{ transform: "translateY(-100%)" }, { transform: "translateY(0%)" }],
+    [{ transform: "translateY(-150%)" }, { transform: "translateY(0%)" }],
     {
       duration: 200,
       easing: "ease-in-out",
@@ -205,7 +205,7 @@ async function onEnter(node: HTMLElement) {
 
 async function onExit(node: HTMLElement) {
   await node?.animate(
-    [{ transform: "translateY(0%)" }, { transform: "translateY(-100%)" }],
+    [{ transform: "translateY(0%)" }, { transform: "translateY(-150%)" }],
     {
       duration: 200,
       easing: "ease-in-out",

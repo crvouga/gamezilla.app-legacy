@@ -21,5 +21,5 @@ export const Transition = ({
     class: className,
     mode,
   });
-  return <mount-transition id={id}>{children}</mount-transition>;
+  return <transition-element id={id}>{children}</transition-element>;
 };

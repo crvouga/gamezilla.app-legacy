@@ -15,7 +15,9 @@ const create = <Msg>(): PubSub<Msg> => {
   let queue: Msg[] = [];
 
   return {
-    isSubscribed: () => subscribers.size > 0,
+    isSubscribed: () => {
+      return subscribers.size > 0;
+    },
     subscribe: (subscriber) => {
       runningId++;
       const id = runningId;

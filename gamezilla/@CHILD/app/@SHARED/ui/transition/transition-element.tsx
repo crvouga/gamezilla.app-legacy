@@ -11,7 +11,7 @@ function log(...args: any[]) {
 declare global {
   namespace preact.createElement.JSX {
     interface IntrinsicElements {
-      "mount-transition": {
+      "transition-element": {
         id: string;
         children: unknown;
       };
@@ -19,7 +19,7 @@ declare global {
   }
   namespace JSX {
     interface IntrinsicElements {
-      "mount-transition": {
+      "transition-element": {
         id: string;
         children: unknown;
       };
@@ -151,5 +151,5 @@ if (typeof window !== "undefined" && "customElements" in window) {
     }
   }
 
-  customElements.define("mount-transition", Transition);
+  customElements.define("transition-element", Transition);
 }
