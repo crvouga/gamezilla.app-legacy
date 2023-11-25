@@ -242,16 +242,14 @@ export const updateFromClient = async (input: {
     }
 
     default: {
-      return chain({ model }, (model) => {
-        const merged = mergeNewEvents({
-          ctx,
-          events: [msg],
-          model,
-        });
-        return {
-          model: { ...model, ...merged },
-        };
+      const merged = mergeNewEvents({
+        ctx,
+        events: [msg],
+        model,
       });
+      return {
+        model: { ...model, ...merged },
+      };
     }
   }
 };
