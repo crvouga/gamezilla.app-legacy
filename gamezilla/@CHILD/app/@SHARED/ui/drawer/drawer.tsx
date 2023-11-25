@@ -12,8 +12,8 @@ export const Drawer = ({
 }) => {
   drawerSub.publish({ type: "props", id, onClose, open });
   return (
-    <bottom-drawer id={id}>
+    <drawer-element id={id}>
       <div class="w-full border border-neutral-700 bg-black">{children}</div>
-    </bottom-drawer>
+    </drawer-element>
   );
 };

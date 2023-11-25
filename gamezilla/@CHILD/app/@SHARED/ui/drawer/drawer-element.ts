@@ -4,7 +4,7 @@ import { drawerSub, DrawerProps } from "./drawer-shared";
 declare global {
   namespace preact.createElement.JSX {
     interface IntrinsicElements {
-      "bottom-drawer": {
+      "drawer-element": {
         id: string;
         children: unknown;
       };
@@ -12,7 +12,7 @@ declare global {
   }
   namespace JSX {
     interface IntrinsicElements {
-      "bottom-drawer": {
+      "drawer-element": {
         id: string;
         children: unknown;
       };
@@ -147,5 +147,5 @@ if (typeof window !== "undefined" && "customElements" in window) {
     }
   }
 
-  customElements.define("bottom-drawer", BottomDrawer);
+  customElements.define("drawer-element", BottomDrawer);
 }
