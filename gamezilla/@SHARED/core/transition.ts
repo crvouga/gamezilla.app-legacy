@@ -11,6 +11,7 @@ import { Eff } from "./eff";
 export type Id = string | number | null | undefined | boolean;
 
 export type Config<T> = {
+  mode?: "out-in" | "in-out";
   toId: (item: T) => Id;
   enter: (item: T) => Promise<void>;
   exit: (item: T) => Promise<void>;
@@ -118,17 +119,35 @@ export function watch<T>(
   //
 
   const eff: Eff<Msg> = async (dispatch) => {
-    const promises: Promise<void>[] = [];
+    const mode = config.mode ?? "out-in";
+
+    const promisesIn: Promise<void>[] = [];
+    const promisesOut: Promise<void>[] = [];
 
     for (const item of entering.values()) {
-      promises.push(config.enter(item.item));
+      promisesIn.push(config.enter(item.item));
     }
 
     for (const item of exiting.values()) {
-      promises.push(config.exit(item.item));
+      promisesOut.push(config.exit(item.item));
     }
 
-    await Promise.all(promises);
+    const promiseOut = Promise.all(promisesOut);
+
+    const promiseIn = Promise.all(promisesIn);
+
+    switch (mode) {
+      case "out-in": {
+        await promiseOut;
+        await promiseIn;
+        break;
+      }
+      case "in-out": {
+        await promiseIn;
+        await promiseOut;
+        break;
+      }
+    }
 
     if (exiting.size > 0) {
       dispatch({

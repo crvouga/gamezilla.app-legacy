@@ -93,7 +93,7 @@ export const startTimeout = <Msg>(
   };
 };
 
-export const cancelTimeout = (timeoutId: string): Eff => {
+export const cancelTimeout = (timeoutId: string | number): Eff => {
   return () => {
     timeouts.delete(timeoutId);
   };
