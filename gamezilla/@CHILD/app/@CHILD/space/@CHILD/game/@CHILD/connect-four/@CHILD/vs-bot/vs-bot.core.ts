@@ -13,7 +13,9 @@ import * as ConnectFour from "../../@SHARED/connect-four";
 //
 //
 
-export type ServerModel = null;
+export type ServerModel = {
+  isBotMoving: boolean;
+};
 
 export type ClientModel = {
   opened: "activity-feed-drawer" | null;

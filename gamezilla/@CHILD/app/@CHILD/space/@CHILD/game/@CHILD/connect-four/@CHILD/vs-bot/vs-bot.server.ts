@@ -1,5 +1,8 @@
-import { Sub, chainAwait } from "gamezilla/@SHARED/core";
-import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { Sub, chainAwait, isErr } from "gamezilla/@SHARED/core";
+import {
+  GameServer,
+  sendToSpace,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
   GameEvent,
   ServerModel,
@@ -34,18 +37,43 @@ export const init: Server["init"] = async ({ model }) => {
   if (model) {
     return { model };
   }
-  return { model: null };
+  return { model: { isBotMoving: false } };
 };
 
 export const update: Server["update"] = async (input) => {
-  return chainAwait(
+  return GameServer.chain(
     await init(input),
     //
-    (model) => {
-      return { model };
-    },
-    (model) => {
-      return { model };
+    async (model): ReturnType<Server["update"]> => {
+      if (
+        model.isBotMoving ||
+        !isBotTurn(input.state) ||
+        input.state.type !== "game"
+      ) {
+        return { model };
+      }
+
+      const found = ConnectFourBotWorker.findBestMove({
+        columns: input.state.columns,
+        maxDepth: 4,
+        maximizingPlayer: toBotPlayer(input.state),
+      });
+
+      if (isErr(found)) {
+        console.log(found.error);
+        return { model };
+      }
+
+      const columnIndex = found.value.columnIndex;
+
+      if (!ConnectFour.isColumnIndex(columnIndex)) {
+        return { model };
+      }
+
+      return {
+        model,
+        gameEvent: [{ t: "bot-dropped-disc", columnIndex }],
+      };
     }
   );
 };

@@ -86,6 +86,7 @@ export const init: Client["init"] = ({ model }) => {
 //
 
 export const update: Client["update"] = (input) => {
+  console.log(input);
   return GameClient.chain(
     init(input),
     (model) => {
@@ -130,9 +131,12 @@ export const update: Client["update"] = (input) => {
     },
     (model) => {
       const { gameEvent } = input;
+
       if (!gameEvent) {
         return { model };
       }
+
+      console.log(gameEvent);
 
       return {
         model,

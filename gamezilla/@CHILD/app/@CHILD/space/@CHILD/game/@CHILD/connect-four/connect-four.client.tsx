@@ -42,7 +42,7 @@ const VsUser = GameClient.tag("vs-user", VsUserClient);
 //
 
 export const init: Client["init"] = (input) => {
-  const { state, model, ctx } = input;
+  const { state, model } = input;
 
   switch (state.t) {
     case "none": {
@@ -83,34 +83,35 @@ export const update: Client["update"] = (input) => {
   return GameClient.chain(
     init(input),
     (model): ReturnType<Client["update"]> => {
-      const { ctx, msg, state } = input;
+      const { ctx, msg, evt, gameEvent, serverMsg, state } = input;
 
-      if (!msg) {
-        return { model };
-      }
-
-      switch (msg.t) {
-        case "vs-bot": {
-          if (state.t === "vs-bot" && model.t === "vs-bot") {
-            return VsBot.update({ ctx, msg, model, state });
-          }
+      switch (state.t) {
+        case "none": {
           return { model };
+        }
+
+        case "vs-bot": {
+          return VsBot.update({
+            ctx,
+            msg: msg?.t === "vs-bot" ? msg : null,
+            evt: evt,
+            gameEvent: gameEvent?.t === "vs-bot" ? gameEvent : null,
+            serverMsg: serverMsg?.t === "vs-bot" ? serverMsg : null,
+            model: model.t === "vs-bot" ? model : null,
+            state,
+          });
         }
 
         case "vs-user": {
-          if (state.t === "vs-user" && model.t === "vs-user") {
-            // return VsUser.update({ ctx, msg, model, state });
-            return { model };
-          }
-
-          return { model };
-        }
-
-        case "user-changed-mode": {
-          return {
-            model,
-            gameEvent: [msg],
-          };
+          return VsUser.update({
+            ctx,
+            model: model.t === "vs-user" ? model : null,
+            msg: msg?.t === "vs-user" ? msg : null,
+            evt: evt,
+            gameEvent: gameEvent?.t === "vs-user" ? gameEvent : null,
+            serverMsg: serverMsg?.t === "vs-user" ? serverMsg : null,
+            state,
+          });
         }
       }
     },
@@ -131,6 +132,7 @@ export const update: Client["update"] = (input) => {
           cmd: [playSound(APP_SOUND.navBackwardMin)],
         };
       }
+
       return {
         model,
         cmd: [playSound(APP_SOUND.navForwardMin)],
