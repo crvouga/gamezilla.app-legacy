@@ -180,7 +180,8 @@ export const ViewStatusBarDrawer = ({ model }: { model: ClientModel }) => {
       return (
         <div class="flex w-full items-center gap-4 p-4">
           <span class="h-5 w-5 rounded-full bg-green-500"></span>
-          <p class="text-green-500">Server connected</p>
+
+          <p class="text-green-500">Online</p>
         </div>
       );
     }
@@ -190,7 +191,7 @@ export const ViewStatusBarDrawer = ({ model }: { model: ClientModel }) => {
       return (
         <div class="flex w-full items-center gap-4 p-4">
           <span class="h-5 w-5 rounded-full bg-orange-500"></span>
-          <p>Server connecting</p>
+          <p>Server connecting...</p>
         </div>
       );
     }
