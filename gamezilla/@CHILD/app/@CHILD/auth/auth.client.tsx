@@ -69,6 +69,8 @@ export const init: Client["init"] = ({ stored, ctx }) => {
       logout: notAsked,
       sms: sms.model,
     },
+    eff: Eff.t("sms", sms.eff),
+    msg: AppClient.tagOutMsgs("sms", sms.msg),
   };
 };
 
