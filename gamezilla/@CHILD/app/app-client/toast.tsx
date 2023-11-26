@@ -34,7 +34,10 @@ export const init = ({
 } => {
   if (stored) {
     return {
-      model: stored,
+      model: {
+        ...stored,
+        toast: null,
+      },
     };
   }
   return {
