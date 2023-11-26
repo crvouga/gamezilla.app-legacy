@@ -81,6 +81,7 @@ export const update: Client["update"] = (input) => {
 
     (model) => {
       const { state, ctx, msg, serverMsg, evt, gameEvent } = input;
+
       switch (state.t) {
         case "chess": {
           return Chess.update({
