@@ -217,6 +217,7 @@ export const ViewStatusBarDrawer = ({
       </button>
       <div class="flex items-center justify-center p-4">
         <ToggleButton
+          label="toggle sound"
           onToggle={() => dispatch({ t: "toggle-mute" })}
           checked={!model.muted}
           id="sound"

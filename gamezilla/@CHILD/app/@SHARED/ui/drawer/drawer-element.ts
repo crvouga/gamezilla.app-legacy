@@ -33,7 +33,6 @@ if (typeof window !== "undefined" && "customElements" in window) {
     constructor() {
       super();
       this.attachShadow({ mode: "open" });
-
     }
 
     disconnectedCallback() {
@@ -152,6 +151,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
         this.root.tabIndex = 0;
         this.tabIndex = 0;
         this.addEventListener("keydown", this.onKeyDown);
+        this.ariaHidden = "false";
 
         // Adjust the position of the root element
         if (this.props.position === "top") {
@@ -171,6 +171,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
         return;
       }
 
+      this.ariaHidden = "true";
       this.removeEventListener("keydown", this.onKeyDown);
       this.tabIndex = -1;
       this.root.tabIndex = -1;

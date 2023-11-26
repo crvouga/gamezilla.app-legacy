@@ -1,7 +1,9 @@
 export const ToggleButton = ({
   onToggle,
   checked,
+  label,
 }: {
+  label: string;
   id: string;
   checked: boolean;
   onToggle?: (event: Event) => void;
@@ -18,6 +20,7 @@ export const ToggleButton = ({
   return (
     <label class="relative inline-flex cursor-pointer items-center">
       <input
+        aria-label={label}
         type="checkbox"
         value=""
         class="peer sr-only"
