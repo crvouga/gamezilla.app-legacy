@@ -1,5 +1,5 @@
 import { Browser, Eff, Sub, Time } from "gamezilla/@SHARED/core";
-import { ClientCmd, PlatformCmd } from "../@SHARED/client";
+import { PlatformCmd } from "../@SHARED/client";
 
 export type Model = {
   documentVisibilityState: DocumentVisibilityState;
@@ -12,6 +12,11 @@ export const init = ({
 }): {
   model: Model;
 } => {
+  if (stored) {
+    return {
+      model: stored,
+    };
+  }
   return {
     model: {
       documentVisibilityState: document.visibilityState,

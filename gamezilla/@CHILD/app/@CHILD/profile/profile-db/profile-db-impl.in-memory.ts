@@ -1,4 +1,4 @@
-import { Profile, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { ok } from "gamezilla/@SHARED/core";
 import { ProfileCore } from "../profile.core";
 import { ProfileDb } from "./profile-db";

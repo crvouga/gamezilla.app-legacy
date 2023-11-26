@@ -1,13 +1,5 @@
 import { transitionSub, TransitionProps } from "./transition-shared";
 
-const DEBUG = true;
-
-function log(...args: any[]) {
-  if (DEBUG) {
-    console.log(...args);
-  }
-}
-
 declare global {
   namespace preact.createElement.JSX {
     interface IntrinsicElements {
@@ -67,7 +59,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
       this.unsubscribe();
     }
 
-    onMutations(mutationsList: MutationRecord[], observer: MutationObserver) {
+    onMutations(mutationsList: MutationRecord[], _observer: MutationObserver) {
       switch (this.props.mode) {
         case "in-out": {
           mutationsList.forEach((mutation) => {
@@ -106,7 +98,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
       }
     }
 
-    removeChild<T extends Node>(node: T): T {
+    override removeChild<T extends Node>(node: T): T {
       this.applyTransition(node, "exit").then(() => {
         if (node.parentNode === this) {
           super.removeChild(node);

@@ -7,14 +7,13 @@ import {
   toWins,
   winToId,
 } from "../../connect-four";
+import "./columns-element";
 import { ViewColumnsCanvas } from "./columns-ui-canvas";
 import { ViewColumnsSvg } from "./columns-ui-svg";
-import "./columns-element";
 import {
   Disc,
   Model as SharedModel,
   ViewColumnsProps,
-  columnsPropsSub,
   toDiscs,
 } from "./shared";
 

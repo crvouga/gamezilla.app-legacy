@@ -108,9 +108,6 @@ export const update = ({
           sentToEmailAddress: model.emailAddress,
         },
       },
-      eff: async (dispatch) => {
-        //
-      },
     };
   }
 

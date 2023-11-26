@@ -102,7 +102,7 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
           sessionId: ws.data.sessionId,
         });
       },
-      close(ws: ServerWebSocket<ServerWebSocketData>, code, message) {
+      close(ws: ServerWebSocket<ServerWebSocketData>, _code, _message) {
         clients.delete(ws.data.clientId);
         transport.wire.publish({
           t: "client-disconnected",
@@ -110,7 +110,7 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
           sessionId: ws.data.sessionId,
         });
       },
-      drain(ws) {
+      drain(_ws) {
         console.log("drain");
       },
     },

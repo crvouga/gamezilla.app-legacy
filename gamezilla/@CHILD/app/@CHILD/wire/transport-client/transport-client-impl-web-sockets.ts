@@ -1,8 +1,7 @@
-import { PubSub } from "gamezilla/@SHARED/core";
 import { ClientToServerMsg, ServerToClientMsg } from "../transport.core";
 import {
-  IClientTransport,
   ClientTransportWebSocketImpl,
+  IClientTransport,
   initClientTransport,
 } from "./transport-client";
 

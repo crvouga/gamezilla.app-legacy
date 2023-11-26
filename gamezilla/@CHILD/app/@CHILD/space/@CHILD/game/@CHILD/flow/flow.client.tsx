@@ -10,8 +10,6 @@ import {
   IconScrewdriverWrench,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub, chain } from "gamezilla/@SHARED/core";
-import { PlayClient } from "./@CHILD/play";
-import { PuzzleBuilderClient } from "./@CHILD/puzzle-builder";
 import { CoverArt } from "./@SHARED/flow-cover-art";
 import { FlowViewCtx } from "./@SHARED/flow-ctx";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./flow.core";
@@ -32,10 +30,6 @@ type Client = GameClient<{
   ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
   ClientEvt: SpaceClientEvt;
 }>;
-
-const PuzzleBuilder = GameClient.tag("puzzle-builder", PuzzleBuilderClient);
-
-const Play = GameClient.tag("play", PlayClient);
 
 export const init: Client["init"] = ({ model }) => {
   if (model) {
@@ -81,7 +75,7 @@ export const update: Client["update"] = (input) => {
 //
 //
 
-export const subscriptions: Client["subscriptions"] = (input) => {
+export const subscriptions: Client["subscriptions"] = (_input) => {
   return Sub.None;
 };
 

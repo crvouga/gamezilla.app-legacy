@@ -1,31 +1,28 @@
-import { Eff, loading, notAsked, Sub, chain } from "gamezilla/@SHARED/core";
 import {
+  APP_SOUND,
   AnonymousClientCtx,
   AnonymousViewCtx,
+  AppRoute,
   ClientCmd,
   ClientEvt,
   Location,
-  AppRoute,
   RouteAuth,
+  playSound,
   replaceRoute,
   sendToServer,
-  playSound,
-  APP_SOUND,
-  ClientCtx,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
   ConformationDialog,
   IconEnvelope,
-  IconGoogle,
   IconMobilePhone,
   LoadingBar,
   LoadingScreen,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { createSocialLogin } from "./auth-client/social-login";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.core";
+import { Eff, Sub, chain, notAsked } from "gamezilla/@SHARED/core";
 import * as AuthClientSMS from "./@CHILD/auth-sms/auth-sms.client";
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.core";
 
 //
 //
@@ -304,7 +301,6 @@ export const View = ({
 };
 
 const ViewLoginScreen = ({
-  dispatch,
   ctx,
   model,
 }: {

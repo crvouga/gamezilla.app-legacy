@@ -15,7 +15,6 @@ import {
   ClientMsg,
   ServerModel,
   ToClient,
-  ToServer,
   columnCount,
   initShared,
   rowCount,

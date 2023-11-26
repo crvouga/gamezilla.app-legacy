@@ -96,7 +96,7 @@ export type ServerMsg =
 //
 //
 
-const IS_PROD = process.env.NODE_ENV === "production";
+const IS_PROD = process.env["NODE_ENV"] === "production";
 const SERVER_PORT_LOCAL = 5000;
 const SERVER_URL_LOCAL = "http://localhost:5000/";
 const SERVER_URL_NGROK = "https://gamezilla-server.ngrok.io/";
@@ -110,7 +110,7 @@ const SERVER_URL = IS_PROD
   ? SERVER_URL_NGROK
   : SERVER_URL_LOCAL;
 
-const SERVER_PORT = Number(process.env.PORT ?? SERVER_PORT_LOCAL);
+const SERVER_PORT = Number(process.env["PORT"] ?? SERVER_PORT_LOCAL);
 
 if (!SERVER_URL) {
   throw new Error("SERVER_URL not set");

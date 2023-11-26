@@ -1,5 +1,4 @@
-import { FocusTrap, createFocusTrap } from "../focus-trap";
-import { drawerSub, DrawerProps } from "./drawer-shared";
+import { DrawerProps, drawerSub } from "./drawer-shared";
 
 declare global {
   namespace preact.createElement.JSX {
@@ -30,12 +29,11 @@ if (typeof window !== "undefined" && "customElements" in window) {
 
     private unsubscribe: () => void = () => {};
     private props: DrawerProps | null = null;
-    private focusTrap: FocusTrap;
 
     constructor() {
       super();
       this.attachShadow({ mode: "open" });
-      this.focusTrap = createFocusTrap();
+
     }
 
     disconnectedCallback() {

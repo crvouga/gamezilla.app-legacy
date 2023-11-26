@@ -53,7 +53,7 @@ const init = <T, TIndexName extends string>(
 };
 
 const empty = <T, TIndexName extends string>(
-  config: EventStreamConfig<T, TIndexName>
+  _config: EventStreamConfig<T, TIndexName>
 ): EventStream<T, TIndexName> => {
   return {
     events: {},

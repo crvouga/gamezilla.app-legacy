@@ -25,7 +25,6 @@ const FALLBACK: AppRoute = { t: "space", c: { t: "space-list" } };
 
 export const init = ({
   location,
-  stored,
 }: {
   location: Browser.Location;
   stored: Model | null;

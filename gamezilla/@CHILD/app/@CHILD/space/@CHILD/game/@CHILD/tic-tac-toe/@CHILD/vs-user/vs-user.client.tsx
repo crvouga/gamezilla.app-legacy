@@ -1,15 +1,13 @@
-import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
+import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
 import {
   SpaceClientCtx,
   SpaceViewCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
-import { Position, Slot, toTurn } from "../../@SHARED/tic-tic-toe/tic-tac-toe";
+import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
+import { toTurn } from "../../@SHARED/tic-tic-toe/tic-tac-toe";
 import {
   CoverArt,
   PlayerTypeIcon,
-  ViewSlot,
-  gameTheme,
 } from "../../@SHARED/tic-tic-toe/tic-tac-toe-ui";
 import * as Round from "./vs-user-round";
 import {

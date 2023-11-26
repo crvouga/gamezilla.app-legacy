@@ -1,20 +1,3 @@
-import { Eff, Posix } from "gamezilla/@SHARED/core";
-import {
-  ClientEvt,
-  ClientCmd,
-  ClientCtx,
-  sendToServer,
-} from "gamezilla/@CHILD/app/@SHARED/client";
-import {
-  IconArrowLeftOnRect,
-  IconArrowRotateLeft,
-  IconRightLeft,
-  LoadingBar,
-} from "gamezilla/@CHILD/app/@SHARED/ui";
-import {
-  SpaceClientCtx,
-  SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
   IconBotCute,
   IconBotLevel1,
@@ -25,15 +8,31 @@ import {
   VsBotSetup,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
 import {
+  SpaceClientCtx,
+  SpaceViewCtx,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import {
+  ClientCmd,
+  ClientCtx,
+  sendToServer,
+} from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  IconArrowLeftOnRect,
+  IconArrowRotateLeft,
+  IconRightLeft,
+  LoadingBar,
+} from "gamezilla/@CHILD/app/@SHARED/ui";
+import { Eff, Posix } from "gamezilla/@SHARED/core";
+import {
   BotLevel,
   allBotLevels,
   toStatus,
   toTurn,
 } from "../../@SHARED/tic-tic-toe/tic-tac-toe";
 import {
+  CoverArt,
   PlayerTypeIcon,
   ViewBoard,
-  CoverArt,
   gameTheme,
 } from "../../@SHARED/tic-tic-toe/tic-tac-toe-ui";
 import {

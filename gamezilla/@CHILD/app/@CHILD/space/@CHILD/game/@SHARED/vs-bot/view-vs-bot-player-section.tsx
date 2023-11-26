@@ -1,5 +1,5 @@
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { MyAvatar, VDom, VDomChildren } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { MyAvatar, VDomChildren } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { PlayerType, VsBotProps } from "./view-vs-bot";
 
 export const VsBotPlayerSection = ({

@@ -23,7 +23,6 @@ import {
   IconXMark,
   MyAvatar,
   VDom,
-  cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
 import { withMeta } from "gamezilla/@SHARED/event-stream";
@@ -512,12 +511,7 @@ const ViewSpaceScreen = ({
   );
 };
 
-const ViewActivityFeedBar = ({
-  model,
-  ctx,
-
-  dispatch,
-}: {
+export const _ViewActivityFeedBar = (_props: {
   dispatch: (m: ClientMsg) => void;
 
   model: ClientModel;
@@ -535,33 +529,6 @@ const ViewActivityFeedBar = ({
         <div class="pb-4ya flex max-h-72 w-full flex-col justify-end overflow-y-scroll text-left"></div>
       </Drawer>
     </>
-  );
-};
-const ViewActivityFeedItem = ({
-  event,
-  ctx,
-}: {
-  ctx: SpaceViewCtx;
-  event: Event;
-}) => {
-  return null;
-};
-
-const Item = ({
-  text,
-  variant,
-}: {
-  text: string;
-  variant?: "error" | "normal";
-}) => {
-  return (
-    <div
-      class={cn(
-        "w-full p-2 text-sm text-secondary",
-        variant === "error" && "text-orange-500"
-      )}>
-      {text}
-    </div>
   );
 };
 

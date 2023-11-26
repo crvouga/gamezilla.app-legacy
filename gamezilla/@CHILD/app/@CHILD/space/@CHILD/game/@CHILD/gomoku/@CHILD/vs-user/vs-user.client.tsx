@@ -5,7 +5,6 @@ import {
   ClientMsg,
   ServerModel,
   ToClient,
-  ToServer,
   initShared,
 } from "./vs-user.core";
 

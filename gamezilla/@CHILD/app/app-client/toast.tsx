@@ -32,6 +32,11 @@ export const init = ({
 }): {
   model: Model;
 } => {
+  if (stored) {
+    return {
+      model: stored,
+    };
+  }
   return {
     model: {
       runningId: 0,

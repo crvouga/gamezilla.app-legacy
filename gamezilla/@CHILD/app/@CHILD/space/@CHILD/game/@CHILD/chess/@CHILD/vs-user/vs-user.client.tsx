@@ -1,7 +1,8 @@
-import { Eff, Option, Sub, exhaustive, isErr } from "gamezilla/@SHARED/core";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { Eff, Option, Sub, exhaustive, isErr } from "gamezilla/@SHARED/core";
 import { Chess } from "../../@SHARED/chess";
 import {
   ClientModel,
@@ -9,11 +10,8 @@ import {
   CoreModel,
   ServerModel,
   ToClient,
-  ToServer,
   initCore,
-  inputMove,
 } from "./vs-user.core";
-import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
 
 //
 //
@@ -270,11 +268,6 @@ export const updateFromServer = (
       return exhaustive(msg[0]);
     }
   }
-};
-
-const playAudio = (_src: string): Eff<Msg> => {
-  // return Audio.play(src, t("audio-done"));
-  return Eff.None;
 };
 
 //

@@ -7,7 +7,7 @@ export const createSocialLogin = (): SocialLogin => {
       return err("Failed to authenticate");
     },
 
-    async redirectSocialLogin({ provider }) {
+    async redirectSocialLogin(_input) {
       return err("Failed to authenticate");
     },
   };

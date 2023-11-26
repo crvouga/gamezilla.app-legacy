@@ -1,12 +1,11 @@
 import {
-  Space,
-  SpaceViewCtx,
-  spaceToHostTitle,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import {
   ViewGameHeader,
   ViewUsersInSpaceList,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import {
+  SpaceViewCtx,
+  spaceToHostTitle,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { gameNameList, gameNameToString } from "../@CHILD/game/game.core";
 import { Event } from "../space.core";

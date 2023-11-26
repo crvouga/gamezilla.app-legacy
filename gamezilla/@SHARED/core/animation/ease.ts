@@ -75,22 +75,6 @@ const ease = (easing: Easing, x: number): number => {
   }
 };
 
-function bounceIn(timeFraction: number): number {
-  let a = 0;
-  let b = 1;
-
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    if (timeFraction >= (7 - 4 * a) / 11) {
-      return (
-        -Math.pow((11 - 6 * a - 11 * timeFraction) / 4, 2) + Math.pow(b, 2)
-      );
-    }
-    a += b;
-    b /= 2;
-  }
-}
-
 function easeOutBounce(x: number): number {
   const n1 = 7.5625;
   const d1 = 2.75;

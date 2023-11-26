@@ -1,11 +1,11 @@
-import { Browser, Eff, exhaustive, p } from "gamezilla/@SHARED/core";
 import {
   ClientEvt,
   RouteChat,
   ViewCtx,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./chat.core";
+import { Browser, Eff, exhaustive, p } from "gamezilla/@SHARED/core";
+import { ClientModel, ClientMsg, ToClient } from "./chat.core";
 
 //
 //

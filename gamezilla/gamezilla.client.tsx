@@ -87,7 +87,7 @@ function ModelStorage<TModel>() {
  * This is useful for debugging on mobile devices.
  */
 function renderRuntimeErrors() {
-  window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+  window.onerror = function (errorMsg, url, lineNumber, column, _errorObj) {
     showError(errorMsg, url, lineNumber, column);
   };
 

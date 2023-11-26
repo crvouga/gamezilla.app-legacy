@@ -1,20 +1,17 @@
-import { Sub, chainAwait, isErr } from "gamezilla/@SHARED/core";
-import {
-  GameServer,
-  sendToSpace,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { Sub, isErr } from "gamezilla/@SHARED/core";
+import { ConnectFourBotWorker } from "../../@SHARED/connect-four";
+import * as ConnectFour from "../../@SHARED/connect-four/connect-four";
 import {
   GameEvent,
+  GameState,
   ServerModel,
   ServerMsg,
-  GameState,
   ToClient,
   ToServer,
   isBotTurn,
   toBotPlayer,
 } from "./vs-bot.core";
-import * as ConnectFour from "../../@SHARED/connect-four/connect-four";
-import { ConnectFourBotWorker } from "../../@SHARED/connect-four";
 
 //
 //
@@ -78,6 +75,6 @@ export const update: Server["update"] = async (input) => {
   );
 };
 
-export const subscriptions: Server["subscriptions"] = async (input) => {
+export const subscriptions: Server["subscriptions"] = async (_input) => {
   return Sub.None;
 };

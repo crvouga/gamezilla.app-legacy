@@ -1,17 +1,14 @@
 import {
   GameServer,
-  SpaceReqCtx,
   SpaceServerCmd,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { Eff, Sub, err, ok } from "gamezilla/@SHARED/core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import * as Puzzle from "./@CHILD/puzzle/puzzle.server";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.server";
 import * as VsUser from "./@CHILD/vs-user/vs-user.server";
 import {
   GameEvent,
   GameState,
-  Res,
   ServerModel,
   ServerMsg,
   ToClient,
@@ -124,59 +121,6 @@ export const update: Server["update"] = async (input) => {
   );
 };
 
-const initMode = ({
-  mode,
-  userId,
-
-  ctx,
-}: {
-  ctx: SpaceReqCtx;
-
-  mode: ServerModel["t"];
-  userId: UserId;
-}): {
-  result: Res["result"];
-  eff?: Eff<ServerMsg>;
-} => {
-  if (ctx.space.hostId !== userId) {
-    return { result: err("must_be_the_host") };
-  }
-
-  switch (mode) {
-    case "none": {
-      const modelNew: ServerModel = { t: "none" };
-
-      return { result: ok(modelNew) };
-    }
-
-    case "vs-bot": {
-      const modelNew: ServerModel = {
-        t: "vs-bot",
-        c: VsBot.init({ userId: userId }),
-      };
-
-      return { result: ok(modelNew) };
-    }
-
-    case "vs-user": {
-      const modelNew: ServerModel = {
-        t: "vs-user",
-        c: VsUser.init({ userId: userId }),
-      };
-
-      return { result: ok(modelNew) };
-    }
-
-    case "puzzle": {
-      const initial = Puzzle.init({ ctx });
-
-      const modelNew: ServerModel = { t: "puzzle", c: initial.model };
-
-      return { result: ok(modelNew), eff: Eff.t("puzzle", initial.eff) };
-    }
-  }
-};
-
 //
 //
 //
@@ -185,10 +129,6 @@ const initMode = ({
 //
 //
 
-export const subscriptions: Server["subscriptions"] = async ({
-  intervalId,
-  model,
-  state,
-}) => {
+export const subscriptions: Server["subscriptions"] = async (_input) => {
   return Sub.None;
 };

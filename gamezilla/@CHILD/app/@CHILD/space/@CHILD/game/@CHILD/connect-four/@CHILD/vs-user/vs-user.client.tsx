@@ -1,9 +1,14 @@
-import { Sub, chain } from "gamezilla/@SHARED/core";
 import {
-  ClientCmd,
-  ClientCtx,
-  ViewCtx,
-} from "gamezilla/@CHILD/app/@SHARED/client";
+  GameLayout,
+  ViewBottomButtonBar,
+  VsUserSetupScreen,
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import {
+  GameClient,
+  SpaceClientCtx,
+  SpaceViewCtx,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
   ConformationDialog,
@@ -15,20 +20,10 @@ import {
   IconXMark,
   MyAvatar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import {
-  GameClient,
-  SpaceClientCtx,
-  SpaceClientEvt,
-  SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import {
-  GameLayout,
-  ViewBottomButtonBar,
-  VsUserSetupScreen,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import { Sub, chain } from "gamezilla/@SHARED/core";
 import { PlayerType, toTurn } from "../../@SHARED/connect-four";
-import { CoverArt } from "../../@SHARED/connect-four-ui/connect-four-cover-art";
 import { PlayerIcon, ViewColumns } from "../../@SHARED/connect-four-ui";
+import { CoverArt } from "../../@SHARED/connect-four-ui/connect-four-cover-art";
 import {
   ClientModel,
   ClientMsg,

@@ -7,7 +7,7 @@ export const createSocialLogin = (): SocialLogin => {
       return err("Failed to authenticate. Not implemented");
     },
 
-    async redirectSocialLogin({ provider }) {
+    async redirectSocialLogin(_input) {
       return err("Failed to authenticate. Not implemented");
     },
   };

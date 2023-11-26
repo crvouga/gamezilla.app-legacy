@@ -363,7 +363,7 @@ const map = <T, TY>(iterable: Iterable<T>, fn: (x: T) => TY): TY[] => {
   return result;
 };
 
-const yieldRange = function* (lower: number, upper: number) {
+export const yieldRange = function* (lower: number, upper: number) {
   for (let i = lower; i < upper; i++) {
     yield i;
   }

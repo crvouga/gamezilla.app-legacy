@@ -496,7 +496,7 @@ export const attachDebugger = <Model, Msg extends {}>(
 
   const sub = PubSub.create<{ msg: Msg; model: Model }>();
 
-  program.subscribe((model, ctx, msg) => {
+  program.subscribe((model, _ctx, msg) => {
     if (msg) {
       sub.publish({ msg, model });
     }

@@ -27,7 +27,7 @@ import {
   IconRightLeft,
   LoadingBar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { Columns, toStatus, toTurn } from "../../@SHARED/connect-four";
 import {
   CoverArt,
@@ -212,7 +212,7 @@ const watch = ({
 //
 
 export const subscriptions: Client["subscriptions"] = (
-  input
+  _input
 ): Sub<ClientMsg> => {
   return Sub.None;
 };

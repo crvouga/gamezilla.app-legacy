@@ -13,8 +13,6 @@ export const buildTest = (
     const store2A = await Store.assoc(t0, store1, key, "2A");
     const store2B = await Store.assoc(t0, store1, key, "2B");
 
-    const t1 = t0 + 1000;
-
     expect(await Store.get(store1, key)).toEqual(null);
     expect(await Store.get(store2A, key)).toEqual("2A");
     expect(await Store.get(store2B, key)).toEqual("2B");
@@ -36,8 +34,6 @@ export const buildTest = (
 
     const store2 = await Store.assoc(t0, store1, key2, value2);
 
-    const t1 = t0 + 1000;
-
     expect(await Store.get(store0, key1)).toEqual(null);
     expect(await Store.get(store0, key2)).toEqual(null);
 
@@ -56,7 +52,6 @@ export const buildTest = (
     const store1 = Store.startingAt(t0);
     const store2 = await Store.assoc(t0, store1, key, "value");
 
-    const t1 = t0 + 1000;
     // Ensure the original store is unchanged after 'set'
 
     expect(await Store.get(store1, key)).toEqual(null);
@@ -74,8 +69,6 @@ export const buildTest = (
     const store0 = Store.startingAt(t0);
     const store1 = await Store.assoc(t0, store0, key1, "value-1");
     const store2 = await Store.assoc(t0, store1, key2, "value-2");
-
-    const t1 = t0 + 1000;
 
     // Ensure original stores are unchanged
 
@@ -100,7 +93,6 @@ export const buildTest = (
     const store2 = await Store.assoc(t0, store1, key, "value");
     const store3 = await Store.dissoc(t0, store2, key);
 
-    const t1 = t0 + 1000;
     // Ensure the original store is unchanged
 
     expect(await Store.get(store1, key)).toEqual(null);
@@ -119,7 +111,7 @@ export const buildTest = (
     const key = "nonexistent-key";
 
     const store = Store.startingAt(t0);
-    const t1 = t0 + 1000;
+
     // Ensure a key that doesn't exist returns null
 
     expect(await Store.get(store, key)).toEqual(null);
@@ -133,7 +125,7 @@ export const buildTest = (
     const store1 = Store.startingAt(t0);
     const store2 = await Store.assoc(t0, store1, key, "value1");
     const store3 = await Store.assoc(t0, store2, key, "value2");
-    const t1 = t0 + 1000;
+
     // Ensure original values remain unchanged
 
     expect(await Store.get(store1, key)).toEqual(null);
@@ -153,7 +145,6 @@ export const buildTest = (
     const store2 = await Store.assoc(t0, store1, key1, "value1");
     const store3 = await Store.assoc(t0, store2, key2, "value2");
 
-    const t1 = t0 + 1000;
     // Ensure original stores are unchanged
 
     expect(await Store.get(store1, key1)).toEqual(null);
@@ -176,7 +167,6 @@ export const buildTest = (
     const store1 = Store.startingAt(t0);
     const store2 = await Store.assoc(t0, store1, key, "value");
 
-    const t1 = t0 + 1000;
     expect(await Store.get(store2, key)).toEqual("value");
   });
 
@@ -190,7 +180,6 @@ export const buildTest = (
     const store2 = await Store.assoc(t0, store1, key1, null);
     const store3 = await Store.assoc(t0, store2, key2, null);
 
-    const t1 = t0 + 1000;
     expect(await Store.get(store3, key1)).toEqual(null);
 
     expect(await Store.get(store3, key2)).toEqual(null);
@@ -204,7 +193,6 @@ export const buildTest = (
     const store1 = Store.startingAt(t0);
     const store2 = await Store.assoc(t0, store1, key, "value");
 
-    const t1 = t0 + 1000;
     // Simulate concurrent reads by creating multiple promises
     const concurrentReads = Array.from({ length: 10 }, () => {
       return Store.get(store2, key);

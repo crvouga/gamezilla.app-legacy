@@ -37,6 +37,6 @@ export const update: Server["update"] = async (input) => {
   return init(input);
 };
 
-export const subscriptions: Server["subscriptions"] = async (input) => {
+export const subscriptions: Server["subscriptions"] = async (_input) => {
   return Sub.None;
 };

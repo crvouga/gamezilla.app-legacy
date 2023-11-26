@@ -1,20 +1,14 @@
-import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { ClientCtx, ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
 import {
   SpaceClientCtx,
   SpaceViewCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
-import {
-  ClientModel,
-  ClientMsg,
-  ServerModel,
-  ToClient,
-  ToServer,
-} from "./gomoku.core";
-import { CoverArt } from "./@SHARED/gomoku/gomoku-ui";
+import { ClientCtx, ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUser from "./@CHILD/vs-user/vs-user.client";
+import { CoverArt } from "./@SHARED/gomoku/gomoku-ui";
+import { ClientModel, ClientMsg, ServerModel, ToClient } from "./gomoku.core";
 
 //
 //

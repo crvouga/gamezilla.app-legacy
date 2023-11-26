@@ -83,7 +83,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
       );
     },
 
-    async listLatest(from, to, instance) {
+    async listLatest(_from, _to, instance) {
       const latestValues: TValue[] = [];
       for (const key of map.keys()) {
         const value = await this.get(instance, key);

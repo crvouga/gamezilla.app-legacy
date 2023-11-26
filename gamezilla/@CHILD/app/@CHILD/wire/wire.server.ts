@@ -15,7 +15,6 @@ import {
   ToClient,
   ToServer,
 } from "./wire.core";
-import { Store, StoreModule } from "gamezilla/@SHARED/immutable-store";
 
 //
 //
@@ -134,7 +133,6 @@ export const update = ({
 
 export const updateFromClient = ({
   model,
-  msg,
 }: {
   model: ServerModel;
   msg: ToServer;

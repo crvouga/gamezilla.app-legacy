@@ -1,11 +1,10 @@
-import { Eff, Sub, isErr } from "gamezilla/@SHARED/core";
 import { ClientCtx, ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import { Eff, Sub, isErr } from "gamezilla/@SHARED/core";
 import {
   ClientModel,
   ClientMsg,
   ServerModel,
   ToClient,
-  ToServer,
   handle,
   initShared,
 } from "./vs-bot.core";

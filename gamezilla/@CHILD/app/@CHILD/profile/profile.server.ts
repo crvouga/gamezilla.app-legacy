@@ -1,4 +1,3 @@
-import { Eff, err, isErr, ok, p, Result } from "gamezilla/@SHARED/core";
 import {
   Profile,
   ProfileAvatar,
@@ -8,21 +7,22 @@ import {
 import {
   AnonymousReqCtx,
   ReqCtx,
-  sendToClient,
   ServerCmd,
   ServerCtx,
   ServerEvt,
+  sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
+import { Eff, Result, err, isErr, ok } from "gamezilla/@SHARED/core";
 import { ProfileDb } from "./profile-db/profile-db";
 import { createProfileDb } from "./profile-db/profile-db-impl.sql";
 import {
   ProfileCore,
-  profileCoreToProfile,
   Req,
   ServerModel,
   ServerMsg,
   ToClient,
   ToServer,
+  profileCoreToProfile,
 } from "./profile.core";
 
 //
@@ -142,7 +142,6 @@ export const updateFromEvent = ({
 const handler = async ({
   ProfileDb,
   msg,
-  ctx,
 }: {
   ProfileDb: ProfileDb;
   msg: Req;

@@ -3,10 +3,10 @@ import { IVerifySMS } from "./verify-sms";
 
 export const VerifySMS = (): IVerifySMS => {
   return {
-    async sendCode(input) {
+    async sendCode(_input) {
       return err("not implemented");
     },
-    async verifyCode(input) {
+    async verifyCode(_input) {
       return err("not implemented");
     },
   };

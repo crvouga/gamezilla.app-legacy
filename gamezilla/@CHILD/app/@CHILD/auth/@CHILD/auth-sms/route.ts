@@ -1,5 +1,5 @@
 import { Location } from "gamezilla/@CHILD/app/@SHARED/client";
-import { Iso3166Alpha2Code, PhoneNumber, isErr } from "gamezilla/@SHARED/core";
+import { PhoneNumber, isErr } from "gamezilla/@SHARED/core";
 
 //
 //

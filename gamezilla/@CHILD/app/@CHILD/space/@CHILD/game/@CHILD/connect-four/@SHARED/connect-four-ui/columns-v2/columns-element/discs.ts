@@ -48,11 +48,11 @@ export async function exitDisc({
   x: number;
   y: number;
 }) {
-  if (node.dataset.exiting === "true") {
+  if (node.dataset["exiting"] === "true") {
     return;
   }
 
-  node.dataset.exiting = "true";
+  node.dataset["exiting"] = "true";
 
   await easeAttrs(node, {
     cy: {

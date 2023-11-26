@@ -1,18 +1,15 @@
 import {
+  ViewGameHeader,
+  ViewUsersInSpaceList,
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import {
   Button,
   TopBar,
   TopBarBackButton,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import {
-  SpaceViewCtx,
-  spaceToHostTitle,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import {
-  ViewGameHeader,
-  ViewUsersInSpaceList,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
-import { gameNameToString } from "../@CHILD/game/game.core";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
+import { gameNameToString } from "../@CHILD/game/game.core";
 import { ClientModel, Event, toStateSpace } from "../space.core";
 
 export const ViewSpaceJoinScreen = ({

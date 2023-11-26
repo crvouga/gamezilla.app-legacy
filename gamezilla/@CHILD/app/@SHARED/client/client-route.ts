@@ -1,6 +1,6 @@
-import { Iso3166Alpha2Code, PhoneNumber } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data/space-id";
+import { PhoneNumber } from "gamezilla/@SHARED/core";
 
 //
 //

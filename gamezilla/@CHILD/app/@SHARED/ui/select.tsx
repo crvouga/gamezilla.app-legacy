@@ -1,4 +1,3 @@
-import { IconXMark } from "./icon";
 import { VDom, cn } from "./utils";
 
 export const Select = <T,>({
@@ -11,7 +10,6 @@ export const Select = <T,>({
   toName,
   error,
   helperText,
-  startIcon,
 }: {
   helperText?: string;
   id: string;

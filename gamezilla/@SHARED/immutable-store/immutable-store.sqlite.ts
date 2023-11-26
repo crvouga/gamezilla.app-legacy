@@ -153,7 +153,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
       );
     },
 
-    async listLatest(from, to, instance, log) {
+    async listLatest(from, to, instance, _log) {
       const listLatestQuery = `
           WITH latest_keys AS (
             SELECT

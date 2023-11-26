@@ -126,11 +126,11 @@ export async function enterWin({
 }
 
 export async function exitWin({ node }: { node: SVGRectElement }) {
-  if (node.dataset.animating === "true") {
+  if (node.dataset["animating"] === "true") {
     return;
   }
 
-  node.dataset.animating = "true";
+  node.dataset["animating"] = "true";
 
   const length = node.getTotalLength();
   node.style.strokeDasharray = length.toString();

@@ -1,15 +1,14 @@
 import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
+import { TimeSpan } from "gamezilla/@SHARED/core/time-span";
 import {
+  Res,
   ServerModel,
   ServerMsg,
+  ToServer,
   handle,
   initShared,
-  Res,
   tick,
-  ToServer,
-  ToClient,
 } from "./maze.core";
-import { TimeSpan } from "gamezilla/@SHARED/core/time-span";
 
 //
 //

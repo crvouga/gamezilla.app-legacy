@@ -13,7 +13,6 @@ import {
   err,
   isErr,
   ok,
-  toMsgPayload,
   toMsgType,
 } from "gamezilla/@SHARED/core";
 import { toSessionId, toUserId } from "./@CHILD/auth/auth.core";
@@ -298,6 +297,7 @@ const updateFromClient = async ({
         currentUserId,
       }
     : ctx;
+
   switch (msg.t) {
     case "auth": {
       const updated = await AuthServer.updateFromClient({
@@ -305,6 +305,7 @@ const updateFromClient = async ({
         model: model.auth,
         msg: msg.c,
       });
+
       return {
         model: { ...model, auth: updated.model },
         cmd: ServerCmd.tag("auth", updated.cmd),

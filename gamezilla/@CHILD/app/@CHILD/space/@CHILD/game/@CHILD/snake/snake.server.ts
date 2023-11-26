@@ -1,20 +1,19 @@
 import { Eff, Result, Sub, Time } from "gamezilla/@SHARED/core";
 import * as Snake from "./@SHARED/snake";
 import {
-  ServerModel,
-  ServerMsg,
-  initCoreModel,
+  CoreModel,
   InputDirection,
   InputDirection_Done,
   InputPlayer,
   InputPlayer_Done,
   Response,
-  CoreModel,
-  startGame,
+  ServerModel,
+  ServerMsg,
   ToServer,
-  ToClient,
   ToggleStatus,
   ToggleStatusResult,
+  initCoreModel,
+  startGame,
 } from "./snake.core";
 
 //

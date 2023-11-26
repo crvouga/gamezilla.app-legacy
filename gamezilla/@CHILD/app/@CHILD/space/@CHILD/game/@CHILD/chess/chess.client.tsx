@@ -250,7 +250,7 @@ export const update: Client["update"] = (input) => {
 //
 //
 
-export const subscriptions: Client["subscriptions"] = (input) => {
+export const subscriptions: Client["subscriptions"] = (_input) => {
   return Sub.None;
 };
 
@@ -262,7 +262,7 @@ export const subscriptions: Client["subscriptions"] = (input) => {
 //
 //
 
-export const View: Client["View"] = ({ ctx, state, model, dispatch }) => {
+export const View: Client["View"] = ({ ctx, state, dispatch }) => {
   switch (state.t) {
     case "none": {
       return (
