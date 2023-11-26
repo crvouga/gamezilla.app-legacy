@@ -60,13 +60,7 @@ export const update = ({
   };
 };
 
-export const updateModel = ({
-  msg,
-  model,
-}: {
-  msg: Msg;
-  model: Model;
-}): Model => {
+export const updateModel = ({ model }: { msg: Msg; model: Model }): Model => {
   return model;
 };
 

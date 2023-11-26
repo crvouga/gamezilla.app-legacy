@@ -87,9 +87,7 @@ export const initState = (): GameState => {
 };
 
 export const reducer = ({
-  ctx,
   event,
-  state,
 }: {
   ctx: SpaceCtx;
   state: GameState;
