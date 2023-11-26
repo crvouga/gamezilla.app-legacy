@@ -73,8 +73,8 @@ export const update = ({
   msg,
   model,
 }: {
-  msg: Msg;
   model: Model;
+  msg: Msg;
 }): {
   model: Model;
   cmd?: ClientCmd<{
@@ -198,27 +198,31 @@ export const ViewStatusBarDrawer = ({
   dispatch: (m: Msg) => void;
 }) => {
   return (
-    <button
-      class="flex w-full items-center gap-4 p-4"
-      onClick={() => dispatch({ t: "toggle-mute" })}>
-      {model.muted ? (
-        <>
-          <IconVolumeXMark class="h-5 w-5" />
-          <p>Sound off</p>
-        </>
-      ) : (
-        <>
-          <IconVolumeHigh class="h-5 w-5" />
-          <p>Sound on</p>
-        </>
-      )}
-      <div class="flex-1"></div>
-      <ToggleButton
-        onToggle={() => dispatch({ t: "toggle-mute" })}
-        checked={!model.muted}
-        id="sound"
-      />
-    </button>
+    <div class="flex w-full items-center">
+      <button
+        class="flex w-full flex-1 items-center gap-4 p-4"
+        tabIndex={-1}
+        onClick={() => dispatch({ t: "toggle-mute" })}>
+        {model.muted ? (
+          <>
+            <IconVolumeXMark class="h-5 w-5" />
+            <p>Sound off</p>
+          </>
+        ) : (
+          <>
+            <IconVolumeHigh class="h-5 w-5" />
+            <p>Sound on</p>
+          </>
+        )}
+      </button>
+      <div class="flex items-center justify-center p-4">
+        <ToggleButton
+          onToggle={() => dispatch({ t: "toggle-mute" })}
+          checked={!model.muted}
+          id="sound"
+        />
+      </div>
+    </div>
   );
 };
 
