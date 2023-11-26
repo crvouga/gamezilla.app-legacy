@@ -22,7 +22,7 @@ import {
 /**
  * Handles updating the client model from updated game model
  */
-export const mergeUpdatedGame = ({
+export const updateFromGame = ({
   model,
   space,
   updated,

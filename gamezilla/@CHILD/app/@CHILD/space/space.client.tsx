@@ -33,7 +33,7 @@ import {
   ViewSpaceJoinScreen,
   ViewSpaceListScreen,
 } from "./space-client";
-import { updateWithEvents, updateWithUpdatedGame } from "./space-client/update";
+import { updateFromEvents, updateFromGame } from "./space-client/update";
 import {
   ClientModel,
   ClientMsg,
@@ -148,20 +148,20 @@ export const update = ({
       return chain(
         { model },
         (model) => {
-          return updateWithUpdatedGame({
+          return updateFromGame({
             model,
             spaceId: msg.spaceId,
             updated: updatedGame,
           });
         },
         (model) => {
-          return updateWithEvents({ ctx, events: eventsNew, model });
+          return updateFromEvents({ ctx, events: eventsNew, model });
         }
       );
     }
 
     default: {
-      return updateWithEvents({ ctx, events: [msg], model });
+      return updateFromEvents({ ctx, events: [msg], model });
     }
   }
 };
@@ -225,20 +225,20 @@ export const updateFromServer = ({
           return chain(
             { model },
             (model) => {
-              return updateWithUpdatedGame({
+              return updateFromGame({
                 model,
                 spaceId: msg.spaceId,
                 updated: updatedGame,
               });
             },
             (model) => {
-              return updateWithEvents({ ctx, events: eventsNew, model });
+              return updateFromEvents({ ctx, events: eventsNew, model });
             }
           );
         }
 
         default: {
-          return updateWithEvents({ ctx, events: [msg], model });
+          return updateFromEvents({ ctx, events: [msg], model });
         }
       }
     }

@@ -24,7 +24,7 @@ import {
 /**
  * Handles updating the client model from updated game model
  */
-export const updateWithUpdatedGame = ({
+export const updateFromGame = ({
   model,
   spaceId,
   updated,
@@ -57,7 +57,7 @@ export const updateWithUpdatedGame = ({
 /**
  * Handles merging new events into the client model
  */
-export function updateWithEvents(input: {
+export function updateFromEvents(input: {
   ctx: ClientCtx | AnonymousClientCtx;
   model: ClientModel;
   events: EventWithMeta[];
@@ -103,7 +103,7 @@ export function updateWithEvents(input: {
   }
 
   function updateSounds(model: ClientModel) {
-    let acc: ReturnType<typeof updateWithEvents> = { model };
+    let acc: ReturnType<typeof updateFromEvents> = { model };
 
     for (const event of eventsNew) {
       const updated = updateSound({
@@ -122,7 +122,7 @@ export function updateWithEvents(input: {
   }
 
   function updateGames(model: ClientModel) {
-    let acc: ReturnType<typeof updateWithEvents> = { model };
+    let acc: ReturnType<typeof updateFromEvents> = { model };
 
     for (const event of eventsNew) {
       const updated = updateOneGame({

@@ -1,5 +1,6 @@
 import { expect, test } from "bun:test";
-import { withMeta } from "./event";
+import { Posix } from "../core";
+import { EventMeta, withMeta } from "./event";
 import { EventStream } from "./event-stream";
 
 type Event =
@@ -107,3 +108,48 @@ test("should be able get subsets", () => {
     user_b_count_a,
   ]);
 });
+
+test("should be able to merge", () => {
+  const t0 = Posix.now();
+
+  const event1 = withMetaAt(
+    {
+      t: "incremented",
+      userId: "1",
+      counterId: "1",
+    },
+    t0
+  );
+
+  const event2 = withMetaAt(
+    {
+      t: "incremented",
+      userId: "1",
+      counterId: "2",
+    },
+    Posix.fromNumber(t0 + 1000)
+  );
+
+  const event3 = withMetaAt(
+    {
+      t: "incremented",
+      userId: "1",
+      counterId: "3",
+    },
+    Posix.fromNumber(t0 + 2000)
+  );
+
+  const streamA = EventStream.fromArray(config, [event1, event3]);
+  const streamB = EventStream.fromArray(config, [event2]);
+  const actual = EventStream.merge(config, streamA, streamB);
+  const expected = EventStream.fromArray(config, [event1, event2, event3]);
+
+  expect(EventStream.toArray(actual)).toEqual(EventStream.toArray(expected));
+});
+
+function withMetaAt(event: Event, happenedAt: Posix): Event & EventMeta {
+  return {
+    ...withMeta<Event>(event),
+    happenedAt,
+  };
+}
