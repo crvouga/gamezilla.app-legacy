@@ -95,6 +95,9 @@ export const update: Server["update"] = async (input) => {
             state,
             model: model.t === "connect-four" ? model : null,
             msg: msg?.t === "connect-four" ? msg : null,
+            clientMsg: clientMsg?.t === "connect-four" ? clientMsg : null,
+            evt,
+            gameEvent: gameEvent?.t === "connect-four" ? gameEvent : null,
           });
         }
       }

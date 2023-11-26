@@ -1,22 +1,25 @@
 import {
   Space,
   SpaceServerCmd,
+  SpaceServerCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
   ServerCmd,
-  ServerCtx,
   broadcast,
   sendToUser,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, chainAwait } from "gamezilla/@SHARED/core";
+import { Eff } from "gamezilla/@SHARED/core";
+import { withMeta } from "gamezilla/@SHARED/event-stream";
 import * as GameServer from "../@CHILD/game/game.server";
 import {
+  Event,
   EventWithMeta,
   ServerModel,
   ServerMsg,
+  StateStarted,
   ToClient,
   appendEvent,
-  toStateSpace,
+  toStartedSpace,
 } from "../space.core";
 
 /**
@@ -59,41 +62,60 @@ export const updateFromGame = ({
 };
 
 export const updateFromEvents = async (input: {
-  ctx: ServerCtx;
+  ctx: SpaceServerCtx;
   model: ServerModel;
   events: EventWithMeta[];
 }): Promise<{
   model: ServerModel;
   cmd?: ServerCmd<ToClient>[];
 }> => {
-  const eventsNew = input.events.filter(
-    (event) => !(event.eventId in input.model.events.events)
-  );
-
-  return chainAwait(input, appendEvents, sendEventsToClients);
-
-  function appendEvents(model: ServerModel) {
-    const appended = appendEvent(model, eventsNew);
-    return { model: { ...model, ...appended } };
-  }
-
-  function sendEventsToClients(model: ServerModel) {
-    const cmd = eventsNew.flatMap((event) => {
-      const space = toStateSpace(model, event.spaceId);
-      if (space.type === "initial" || space.type === "ended") {
-        return [];
-      }
-      if (event.t === "game") {
-        return sendToUser(Object.values(space.users), event);
-      }
-      return broadcast(event);
-    });
-
-    return { model, cmd };
-  }
+  return updateGamesLoop(input.ctx, input);
 };
 
-const spaceCmdToCmd = (space: Space, cmd?: SpaceServerCmd<ToClient>[]) => {
+async function updateGamesLoop(
+  ctx: SpaceServerCtx,
+  acc: Awaited<ReturnType<typeof updateOneGame>>
+) {
+  const [event, ...rest] = acc.events ?? [];
+
+  if (!event) {
+    return acc;
+  }
+
+  if (event.eventId in acc.model.events.events) {
+    return acc;
+  }
+
+  const appended: ServerModel = {
+    ...acc.model,
+    ...appendEvent(acc.model, [event]),
+  };
+
+  const space = toStartedSpace(appended, event.spaceId);
+
+  const updatedGame = await updateOneGame({
+    ctx: ctx,
+    space,
+    model: appended,
+    event,
+  });
+
+  const cmd =
+    event.t === "game" && space
+      ? sendToUser(Object.values(space.users), event)
+      : broadcast<ToClient>(event);
+
+  const accNew: Awaited<ReturnType<typeof updateOneGame>> = {
+    model: updatedGame.model,
+    cmd: [...(acc.cmd ?? []), ...(updatedGame.cmd ?? []), cmd],
+    eff: Eff.batch([acc.eff, updatedGame.eff]),
+    events: [...(rest ?? []), ...(updatedGame.events ?? [])],
+  };
+
+  return updateGamesLoop(ctx, accNew);
+}
+
+function spaceCmdToCmd(space: Space, cmd?: SpaceServerCmd<ToClient>[]) {
   return cmd?.map((cmd): ServerCmd<ToClient> => {
     switch (cmd.t) {
       case "send-to-space": {
@@ -105,4 +127,66 @@ const spaceCmdToCmd = (space: Space, cmd?: SpaceServerCmd<ToClient>[]) => {
       }
     }
   });
-};
+}
+
+async function updateOneGame({
+  model,
+  ctx,
+  event,
+  space,
+}: {
+  space: StateStarted | null;
+  ctx: SpaceServerCtx;
+  model: ServerModel;
+  event: EventWithMeta;
+}): Promise<{
+  model: ServerModel;
+  cmd?: ServerCmd<ToClient>[];
+  eff?: Eff<ServerMsg>;
+  events?: EventWithMeta[];
+}> {
+  if (!space || !space.game || event.t !== "game") {
+    return { model };
+  }
+
+  const updated = await GameServer.update({
+    ctx,
+    model: model.games[event.spaceId],
+    gameEvent: event.c,
+    state: space.game,
+  });
+
+  const eventsNew =
+    updated.gameEvent?.map((e) =>
+      withMeta<Event>({
+        t: "game",
+        spaceId: event.spaceId,
+        c: e,
+      })
+    ) ?? [];
+
+  const modelNew: ServerModel = {
+    ...model,
+    games: {
+      ...model.games,
+      [event.spaceId]: updated.model,
+    },
+  };
+
+  return {
+    model: modelNew,
+    cmd: spaceCmdToCmd(
+      space,
+      SpaceServerCmd.map(updated.cmd ?? [], (c) => ({
+        t: "game-msg",
+        spaceId: event.spaceId,
+        c,
+      }))
+    ),
+    eff: Eff.map_(
+      (c) => ({ t: "game-msg", c, spaceId: event.spaceId }),
+      updated.eff
+    ),
+    events: eventsNew,
+  };
+}

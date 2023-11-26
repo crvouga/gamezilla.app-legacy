@@ -125,12 +125,20 @@ export const updateFromClient = async (input: {
         return { model };
       }
 
+      const spaceCtx = {
+        ...ctx,
+        currentUserId: ctx.currentUserId,
+        space: space,
+      };
+
       const updated = await GameServer.update({
-        ctx: { ...ctx, currentUserId: ctx.currentUserId, space: space },
+        ctx: spaceCtx,
         state: space.game,
         clientMsg: msg.c,
         model: model.games[msg.spaceId],
       });
+
+      console.log("input", input, "updated", updated);
 
       const eventsNew =
         updated.gameEvent?.map((event) =>
@@ -149,7 +157,7 @@ export const updateFromClient = async (input: {
 
         (model) => {
           return updateFromEvents({
-            ctx,
+            ctx: spaceCtx,
             events: eventsNew,
             model,
           });
@@ -196,14 +204,23 @@ export const updateFromClient = async (input: {
     }
 
     default: {
-      const merged = updateFromEvents({
-        ctx,
+      const space = toStartedSpace(model, msg.spaceId);
+
+      if (!space || !space.game || !ctx.currentUserId) {
+        return { model };
+      }
+
+      const spaceCtx = {
+        ...ctx,
+        currentUserId: ctx.currentUserId,
+        space: space,
+      };
+
+      return updateFromEvents({
+        ctx: spaceCtx,
         events: [msg],
         model,
       });
-      return {
-        model: { ...model, ...merged },
-      };
     }
   }
 };

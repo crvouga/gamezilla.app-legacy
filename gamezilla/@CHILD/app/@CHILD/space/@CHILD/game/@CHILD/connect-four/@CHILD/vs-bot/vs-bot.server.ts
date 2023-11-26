@@ -10,6 +10,7 @@ import {
   ToClient,
   ToServer,
   isBotTurn,
+  reducer,
   toBotPlayer,
 } from "./vs-bot.core";
 
@@ -42,11 +43,19 @@ export const update: Server["update"] = async (input) => {
     await init(input),
     //
     async (model): ReturnType<Server["update"]> => {
-      if (
-        model.isBotMoving ||
-        !isBotTurn(input.state) ||
-        input.state.type !== "game"
-      ) {
+      if (!input.gameEvent) {
+        return { model };
+      }
+
+      if (!isBotTurn(input.state)) {
+        return { model };
+      }
+
+      if (model.isBotMoving) {
+        return { model };
+      }
+
+      if (input.state.type !== "game") {
         return { model };
       }
 
@@ -57,7 +66,6 @@ export const update: Server["update"] = async (input) => {
       });
 
       if (isErr(found)) {
-        console.log(found.error);
         return { model };
       }
 

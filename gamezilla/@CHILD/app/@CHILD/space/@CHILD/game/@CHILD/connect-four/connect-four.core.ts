@@ -114,7 +114,7 @@ export const reducer = ({
   if (event.t === "vs-bot" && state.t === "vs-bot") {
     return {
       t: "vs-bot",
-      c: VsBot.reducer(state.c, { ...event, ...event.c }),
+      c: VsBot.reducer({ state: state.c, event: { ...event, ...event.c } }),
     };
   }
 

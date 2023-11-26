@@ -117,14 +117,9 @@ export const update = ({
     }
 
     case "game-msg": {
-      const space = toStateSpace(model, msg.spaceId);
+      const space = toStartedSpace(model, msg.spaceId);
 
-      if (
-        space.type === "initial" ||
-        space.type === "ended" ||
-        !space.game ||
-        !ctx.currentUserId
-      ) {
+      if (!space || !space.game || !ctx.currentUserId) {
         return { model };
       }
 
@@ -136,12 +131,8 @@ export const update = ({
       });
 
       const eventsNew = updatedGame.gameEvent
-        ? updatedGame.gameEvent.map((e) =>
-            withMeta<Event>({
-              t: "game",
-              c: e,
-              spaceId: msg.spaceId,
-            })
+        ? updatedGame.gameEvent.map((c) =>
+            withMeta<Event>({ t: "game", c, spaceId: msg.spaceId })
           )
         : [];
 

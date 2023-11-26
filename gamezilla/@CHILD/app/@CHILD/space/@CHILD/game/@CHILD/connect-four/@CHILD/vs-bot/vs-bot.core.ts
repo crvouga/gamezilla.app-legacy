@@ -112,7 +112,13 @@ export type StateGame = {
   columns: ConnectFour.Columns;
 };
 
-export const reducer = (state: GameState, event: GameEvent): GameState => {
+export const reducer = ({
+  state,
+  event,
+}: {
+  state: GameState;
+  event: GameEvent;
+}): GameState => {
   switch (state.type) {
     case "setup": {
       switch (event.t) {

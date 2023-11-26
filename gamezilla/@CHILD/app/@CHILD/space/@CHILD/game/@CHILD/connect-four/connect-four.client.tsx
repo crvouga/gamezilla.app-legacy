@@ -116,27 +116,30 @@ export const update: Client["update"] = (input) => {
       }
     },
     (model) => {
+      const { msg } = input;
+
+      switch (msg?.t) {
+        case "user-changed-mode": {
+          return { model, gameEvent: [msg] };
+        }
+
+        default: {
+          return { model };
+        }
+      }
+    },
+    (model) => {
       const { state, gameEvent } = input;
 
-      if (!gameEvent) {
-        return { model };
-      }
-
-      if (gameEvent.t !== "user-changed-mode") {
+      if (gameEvent?.t !== "user-changed-mode") {
         return { model };
       }
 
       if (state.t === "none") {
-        return {
-          model,
-          cmd: [playSound(APP_SOUND.navBackwardMin)],
-        };
+        return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
       }
 
-      return {
-        model,
-        cmd: [playSound(APP_SOUND.navForwardMin)],
-      };
+      return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
     }
   );
 };
