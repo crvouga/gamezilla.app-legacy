@@ -65,6 +65,7 @@ export type Client = AppClient<{
   ToServer: ToServer;
   ClientCtx: { now: Posix };
   ViewCtx: { now: Posix };
+  Cmd: never;
 }>;
 
 //
@@ -80,6 +81,7 @@ export type Client = AppClient<{
 export const init = ({
   location,
   stored,
+  ctx,
 }: {
   stored: ClientModel | null;
   ctx: { now: Posix };
@@ -101,8 +103,17 @@ export const init = ({
     stored: stored?.wire ?? null,
   });
 
+  const appCtx: ClientCtx | AnonymousClientCtx = {
+    currentRoute: routing.model.currentRoute,
+    currentUserId: null,
+    documentVisibilityState: "visible",
+    now: ctx.now,
+    profiles: {},
+  };
+
   const auth = AuthClient.init({
     stored: stored?.auth ?? null,
+    ctx: appCtx,
   });
 
   const space = SpaceClient.init({
@@ -110,13 +121,7 @@ export const init = ({
   });
 
   const profile = ProfileClient.init({
-    ctx: {
-      currentRoute: routing.model.currentRoute,
-      currentUserId: null,
-      documentVisibilityState: "visible",
-      now: Posix.now(),
-      profiles: {},
-    },
+    ctx: appCtx,
     stored: stored?.profile ?? null,
   });
 
@@ -247,15 +252,17 @@ const updateMain = ({
     case "auth": {
       const updated = AuthClient.update({
         ctx: ctxApp,
-        route: model.routing.currentRoute,
-        msg: msg.c,
+        msg: { ...msg.c, variant: "msg" },
         model: model.auth,
       });
       return {
         model: { ...model, auth: updated.model },
         eff: Eff.t("auth", updated.eff),
-        evt: updated.evt,
-        cmd: ClientCmd.tag("auth", updated.cmd),
+        evt: updated.msg?.flatMap((x) => (x.variant === "evt" ? [x] : [])),
+        cmd: ClientCmd.tag(
+          "auth",
+          updated.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
+        ),
       };
     }
 
@@ -416,16 +423,19 @@ const updateFromServer = ({
 } => {
   switch (msg.t) {
     case "auth": {
-      const updated = AuthClient.updateFromServer({
+      const updated = AuthClient.update({
         ctx,
-        msg: msg.c,
+        msg: { ...msg.c, variant: "from-server" },
         model: model.auth,
       });
       return {
-        evt: updated.evt,
+        evt: updated.msg?.flatMap((x) => (x.variant === "evt" ? [x] : [])),
         model: { ...model, auth: updated.model },
         eff: Eff.t("auth", updated.eff),
-        cmd: ClientCmd.tag("auth", updated.cmd),
+        cmd: ClientCmd.tag(
+          "auth",
+          updated.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
+        ),
       };
     }
 
@@ -627,7 +637,7 @@ const updateFromEvent = ({
 
   const auth = AuthClient.updateFromEvent({
     model: model.auth,
-    evt: msg,
+    msg: { ...msg, variant: "evt" },
     ctx: ctxApp,
   });
 
@@ -646,7 +656,10 @@ const updateFromEvent = ({
     ]),
     cmd: [
       ...ClientCmd.tag("space", space.cmd),
-      ...ClientCmd.tag("auth", auth.cmd),
+      ...ClientCmd.tag(
+        "auth",
+        auth.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
+      ),
       ...ClientCmd.tag(
         "profile",
         profile.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
@@ -682,6 +695,7 @@ export const subscriptions = (input: {
     Sub.tag(
       "auth",
       AuthClient.subscriptions({
+        ctx: ctxApp,
         intervalId: `${intervalId}/auth`,
         model: model.auth,
       })
@@ -814,14 +828,9 @@ const ViewLoggedOut = ({
   if (model.routing.currentRoute.t === "auth") {
     return (
       <AuthClient.View
-        location={{
-          pathname: model.routing.currentRoute.c.t,
-          searchParams: new URLSearchParams(),
-        }}
         dispatch={(m) => dispatch({ t: "auth", c: m })}
         model={model.auth}
-        ctx={ctx}
-        route={model.routing.currentRoute.c}
+        ctx={{ ...ctx, route: model.routing.currentRoute.c }}
       />
     );
   }

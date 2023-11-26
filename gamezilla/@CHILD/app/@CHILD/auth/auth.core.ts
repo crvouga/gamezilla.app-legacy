@@ -88,6 +88,6 @@ export type ServerMsg =
 export type ToServer = { t: "logout" } | { t: "sms"; c: AuthSMS.ToServer };
 
 export type ToClient =
-  | { t: "auth/client-authenticated"; userId: UserId; loggedIn?: boolean }
+  | { t: "auth/client-authenticated"; userId: UserId; loggedIn: boolean }
   | { t: "auth/client-unauthenticated" }
   | { t: "sms"; c: AuthSMS.ToClient };

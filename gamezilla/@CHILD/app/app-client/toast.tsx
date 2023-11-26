@@ -242,7 +242,7 @@ function Toast({
       }}>
       <div
         class={cn(
-          "pointer-events-auto z-40 flex w-full max-w-md items-center justify-between overflow-hidden  rounded-lg border p-3 text-lg text-white shadow-2xl",
+          "pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden  rounded-lg border p-3 text-lg text-white shadow-2xl",
           toast.variant === "info" && "border-neutral-600 bg-neutral-700",
           toast.variant === "error" && "border-red-400 bg-red-500"
         )}

@@ -1,9 +1,8 @@
+import { AppClient } from "gamezilla/@CHILD/app/@SHARED/architecture";
 import {
   APP_SOUND,
   AnonymousClientCtx,
   AnonymousViewCtx,
-  ClientCmd,
-  ClientEvt,
   RouteAuth,
   focusView,
   playSound,
@@ -27,9 +26,9 @@ import {
   RemoteResult,
   Sub,
   Time,
+  TimeSpan,
   chain,
   isErr,
-  TimeSpan,
 } from "gamezilla/@SHARED/core";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth-sms.core";
 
@@ -41,20 +40,42 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth-sms.core";
 //
 //
 
-export const init: ClientModel = {
-  codeInput: "",
-  codeError: null,
-  //
-  phoneNumberInput: "",
-  countryCodeInput: Iso3166Alpha2Code.of("US"),
-  phoneNumberError: null,
-  //
+type Client = AppClient<{
+  ClientModel: ClientModel;
+  ClientMsg: ClientMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  ClientCtx: AnonymousClientCtx;
+  ViewCtx: AnonymousViewCtx & { route: RouteAuth };
+  Cmd: never;
+}>;
 
-  sentCodeAt: null,
-  sendCode: RemoteResult.notAsked,
+//
+//
+//
+//
+//
+//
+//
 
-  verifiedCodeAt: null,
-  verifyCode: RemoteResult.notAsked,
+export const init: Client["init"] = () => {
+  return {
+    model: {
+      codeInput: "",
+      codeError: null,
+      //
+      phoneNumberInput: "",
+      countryCodeInput: Iso3166Alpha2Code.of("US"),
+      phoneNumberError: null,
+      //
+
+      sentCodeAt: null,
+      sendCode: RemoteResult.notAsked,
+
+      verifiedCodeAt: null,
+      verifyCode: RemoteResult.notAsked,
+    },
+  };
 };
 
 //
@@ -81,21 +102,21 @@ const focusPhoneNumberInput = focusView(PHONE_NUMBER_INPUT_VIEW_ID);
 //
 //
 
-export const update = ({
-  model,
-  msg,
-  ctx,
-}: {
-  ctx: AnonymousClientCtx;
-  model: ClientModel;
-  msg: ClientMsg;
-}): {
-  model: ClientModel;
-  cmd?: ClientCmd<{
-    ToServer: ToServer;
-    ClientMsg: ClientMsg;
-  }>[];
-} => {
+export const update: Client["update"] = (input) => {
+  return AppClient.chain(
+    { model: input.model },
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromServer({ ...input, model })
+  );
+};
+
+const updateFromMsg: Client["update"] = (input) => {
+  const { model, msg, ctx } = input;
+
+  if (msg.variant !== "msg") {
+    return { model };
+  }
+
   switch (msg.t) {
     case "inputted-phone-number": {
       return {
@@ -131,7 +152,7 @@ export const update = ({
             ...model,
             phoneNumberError: phoneNumber.error.userMessage,
           },
-          cmd: [playSound(APP_SOUND.alertErrorSm), focusPhoneNumberInput],
+          msg: [playSound(APP_SOUND.alertErrorSm), focusPhoneNumberInput],
         };
       }
 
@@ -141,7 +162,7 @@ export const update = ({
           sendCode: RemoteResult.loading,
           sentCodeAt: ctx.now,
         },
-        cmd: [
+        msg: [
           sendToServer({
             t: "send-code",
             phoneNumber: phoneNumber.value,
@@ -174,7 +195,7 @@ export const update = ({
             ...model,
             codeError: "Please enter the code",
           },
-          cmd: [playSound(APP_SOUND.alertErrorSm), focusCodeInput],
+          msg: [playSound(APP_SOUND.alertErrorSm), focusCodeInput],
         };
       }
 
@@ -184,7 +205,7 @@ export const update = ({
           verifiedCodeAt: ctx.now,
           verifyCode: RemoteResult.loading,
         },
-        cmd: [
+        msg: [
           playSound(APP_SOUND.tap),
           sendToServer({
             t: "verify-code",
@@ -214,7 +235,7 @@ export const update = ({
                   "Timed out. Server took too long to response"
                 ),
               },
-              cmd: [playSound(APP_SOUND.alertErrorMd)],
+              msg: [playSound(APP_SOUND.alertErrorMd)],
             };
           }
           return { model };
@@ -235,7 +256,7 @@ export const update = ({
                   "Timed out. Server took too long to response"
                 ),
               },
-              cmd: [playSound(APP_SOUND.alertErrorMd)],
+              msg: [playSound(APP_SOUND.alertErrorMd)],
             };
           }
 
@@ -246,22 +267,17 @@ export const update = ({
   }
 };
 
-export const updateFromServer = ({
-  msg,
-  model,
-}: {
-  msg: ToClient;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} => {
+const updateFromServer: Client["update"] = ({ msg, model }) => {
+  if (msg.variant !== "from-server") {
+    return { model };
+  }
+
   switch (msg.t) {
     case "sent-code": {
       if (isErr(msg.result)) {
         return {
           model: { ...model, sendCode: msg.result },
-          cmd: [playSound(APP_SOUND.alertErrorMd)],
+          msg: [playSound(APP_SOUND.alertErrorMd)],
         };
       }
       return {
@@ -271,7 +287,7 @@ export const updateFromServer = ({
           verifyCode: RemoteResult.notAsked,
           codeInput: "",
         },
-        cmd: [
+        msg: [
           pushRoute({
             t: "auth",
             c: {
@@ -294,7 +310,7 @@ export const updateFromServer = ({
       if (isErr(msg.result)) {
         return {
           model: { ...model, verifyCode: msg.result },
-          cmd: [playSound(APP_SOUND.alertErrorMd)],
+          msg: [playSound(APP_SOUND.alertErrorMd)],
         };
       }
       return {
@@ -307,31 +323,18 @@ export const updateFromServer = ({
   }
 };
 
-export const updateFromEvent = ({
-  model,
-  evt,
-}: {
-  model: ClientModel;
-  evt: ClientEvt;
-}): {
-  model: ClientModel;
-} => {
-  switch (evt.t) {
-    default: {
-      return {
-        model,
-      };
-    }
-  }
-};
+//
+//
+//
+//
+//
+//
+//
 
-export const subscriptions = ({
+export const subscriptions: Client["subscriptions"] = ({
   intervalId,
   model,
-}: {
-  intervalId: string;
-  model: ClientModel;
-}): Sub<ClientMsg> => {
+}) => {
   if (model.sendCode.t === "loading" || model.verifyCode.t === "loading") {
     return Time.interval(
       intervalId,
@@ -346,17 +349,18 @@ export const subscriptions = ({
   return Sub.None;
 };
 
-export const View = ({
-  route,
-  model,
-  dispatch,
-  ctx,
-}: {
-  ctx: AnonymousViewCtx;
-  route: RouteAuth;
-  model: ClientModel;
-  dispatch: (m: ClientMsg) => void;
-}) => {
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+export const View: Client["View"] = ({ model, dispatch, ctx }) => {
+  const { route } = ctx;
   switch (route.t) {
     case "login-phone": {
       return (

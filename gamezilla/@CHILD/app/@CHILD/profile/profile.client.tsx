@@ -1,8 +1,8 @@
 import { AppClient } from "gamezilla/@CHILD/app/@SHARED/architecture";
 import {
   AnonymousClientCtx,
-  ClientCmd,
   ClientCtx,
+  ProfileCmd,
   RouteProfile,
   ViewCtx,
   sendToServer,
@@ -42,6 +42,7 @@ type Client = AppClient<{
     viewBottomBar: VDom;
     route: RouteProfile;
   };
+  Cmd: ProfileCmd;
 }>;
 
 //
@@ -106,10 +107,6 @@ const updateFromCommand: Client["update"] = (input) => {
         },
       };
     }
-
-    default: {
-      return { model };
-    }
   }
 };
 
@@ -159,7 +156,7 @@ const updateFromServer: Client["update"] = (input) => {
 
       return {
         model: modelNew,
-        cmd: msg.loggedIn
+        msg: msg.loggedIn
           ? [showToast(`Logged in as ${profile.username}`)]
           : undefined,
       };
@@ -257,7 +254,7 @@ const updateFromMsg: Client["update"] = (input) => {
             [msg.t]: { t: "loading" },
           },
         },
-        cmd: [sendToServer(msg)],
+        msg: [sendToServer(msg)],
       };
     }
   }
@@ -266,16 +263,13 @@ const updateFromMsg: Client["update"] = (input) => {
 const loadProfile = (
   userId: UserId,
   model: ClientModel
-): {
-  model: ClientModel;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} => {
+): ReturnType<Client["update"]> => {
   return {
     model: {
       ...model,
       requests: { ...model.requests, "find-one": loading },
     },
-    cmd: [
+    msg: [
       sendToServer({
         t: "find-one",
         userId,
