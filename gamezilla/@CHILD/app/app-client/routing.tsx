@@ -5,6 +5,7 @@ import {
   RouteCmd,
   SoundCmd,
   playSound,
+  BaseCmd,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Browser, Eff, UnitInterval } from "gamezilla/@SHARED/core";
 
@@ -67,7 +68,7 @@ export const update = ({
   model: Model;
   eff?: Eff<Msg>;
   evt?: ClientEvt[];
-  cmd?: SoundCmd[];
+  cmd?: BaseCmd<SoundCmd>[];
 } => {
   switch (msg.t) {
     case "clicked-back": {

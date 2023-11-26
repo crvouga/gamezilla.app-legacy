@@ -3,6 +3,7 @@ import {
   ClientEvt,
   ClientCmd,
   sendToServer,
+  pushRoute,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconMagnifyingGlass,
@@ -82,13 +83,10 @@ export const update = ({
     return {
       model,
       cmd: [
-        {
-          t: "routing/push",
-          route: {
-            t: "profile",
-            c: { t: "profile", userId: msg.userId },
-          },
-        },
+        pushRoute({
+          t: "profile",
+          c: { t: "profile", userId: msg.userId },
+        }),
       ],
     };
   }

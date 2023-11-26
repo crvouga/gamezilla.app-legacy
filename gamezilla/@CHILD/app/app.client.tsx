@@ -31,10 +31,12 @@ import {
   ToClient,
   ToServer,
 } from "./app.core";
+import { AppClient } from "./@SHARED/architecture";
 
 //
 //
 //
+// Transport
 //
 //
 //
@@ -46,6 +48,24 @@ export const transport = ClientTransport<ToServer, ToClient>({
     endpoint: APP_CONFIG.WEB_SOCKETS_ENDPOINT,
   },
 });
+
+//
+//
+//
+//
+//
+//
+//
+//
+
+export type Client = AppClient<{
+  ClientModel: ClientModel;
+  ClientMsg: ClientMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  ClientCtx: { now: Posix };
+  ViewCtx: { now: Posix };
+}>;
 
 //
 //
@@ -90,7 +110,13 @@ export const init = ({
   });
 
   const profile = ProfileClient.init({
-    currentRoute: routing.model.currentRoute,
+    ctx: {
+      currentRoute: routing.model.currentRoute,
+      currentUserId: null,
+      documentVisibilityState: "visible",
+      now: Posix.now(),
+      profiles: {},
+    },
     stored: stored?.profile ?? null,
   });
 
@@ -133,7 +159,10 @@ export const init = ({
 
   const cmdList: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[] = [
     ...ClientCmd.tag("space", space.cmd),
-    ...ClientCmd.tag("profile", profile.cmd),
+    ...ClientCmd.tag(
+      "profile",
+      profile.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
+    ),
     preloadSound(Object.values(APP_SOUND)),
   ];
 
@@ -294,12 +323,18 @@ const updateMain = ({
 
     case "profile": {
       const updated = ProfileClient.update({
-        msg: msg.c,
+        msg: { ...msg.c, variant: "msg" },
         model: model.profile,
+        ctx: ctxApp,
       });
       return {
         model: { ...model, profile: updated.model },
-        cmd: ClientCmd.tag("profile", updated.cmd),
+        eff: Eff.t("profile", updated.eff),
+        cmd: ClientCmd.tag(
+          "profile",
+          updated.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
+        ),
+        evt: updated.msg?.flatMap((x) => (x.variant === "evt" ? [x] : [])),
       };
     }
 
@@ -434,12 +469,16 @@ const updateFromServer = ({
     }
 
     case "profile": {
-      const updated = ProfileClient.updateFromServer({
-        msg: msg.c,
+      const updated = ProfileClient.update({
+        msg: { ...msg.c, variant: "from-server" },
         model: model.profile,
+        ctx,
       });
       return {
-        cmd: ClientCmd.tag("profile", updated.cmd),
+        cmd: ClientCmd.tag(
+          "profile",
+          updated.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
+        ),
         model: { ...model, profile: updated.model },
         eff: Eff.t("profile", updated.eff),
       };
@@ -469,6 +508,7 @@ const updateFromCmd = ({
   model: ClientModel;
   eff?: Eff<ClientMsg>;
 } => {
+  const ctxApp = toCtx({ model, ctx: { now: Posix.now() } });
   switch (cmd.t) {
     case "routing/replace":
     case "routing/back":
@@ -540,9 +580,10 @@ const updateFromCmd = ({
     }
 
     case "profile/add-profiles": {
-      const updated = ProfileClient.updateFromCmd({
-        cmd,
+      const updated = ProfileClient.update({
+        msg: cmd,
         model: model.profile,
+        ctx: ctxApp,
       });
 
       return {
@@ -578,9 +619,9 @@ const updateFromEvent = ({
     ctx: ctxApp,
   });
 
-  const profile = ProfileClient.updateFromEvent({
+  const profile = ProfileClient.update({
     model: model.profile,
-    evt: msg,
+    msg: { ...msg, variant: "evt" },
     ctx: ctxApp,
   });
 
@@ -606,7 +647,10 @@ const updateFromEvent = ({
     cmd: [
       ...ClientCmd.tag("space", space.cmd),
       ...ClientCmd.tag("auth", auth.cmd),
-      ...ClientCmd.tag("profile", profile.cmd),
+      ...ClientCmd.tag(
+        "profile",
+        profile.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
+      ),
     ],
   };
 };
@@ -837,11 +881,13 @@ const ViewLoggedIn = ({
         <ProfileClient.View
           dispatch={(m) => dispatch({ t: "profile", c: m })}
           model={model.profile}
-          ctx={ctx}
-          route={model.routing.currentRoute.c}
-          viewBottomBar={
-            <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
-          }
+          ctx={{
+            ...ctx,
+            route: model.routing.currentRoute.c,
+            viewBottomBar: (
+              <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
+            ),
+          }}
         />
       );
     }

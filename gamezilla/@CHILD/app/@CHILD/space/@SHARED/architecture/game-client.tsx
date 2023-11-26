@@ -28,6 +28,15 @@ type Output<T extends GameClientTypes> = {
   gameEvent?: T["GameEvent"][];
 };
 
+export type InMsg<T extends GameClientTypes> =
+  | ({ variant: "msg" } & T["ClientMsg"])
+  | ({ variant: "to-client" } & T["ToClient"])
+  | ({ variant: "evt" } & ClientEvt);
+
+export type OutMsg<T extends GameClientTypes> =
+  | ({ variant: "cmd" } & ClientCmd<T>)
+  | ({ variant: "game-event" } & T["GameEvent"]);
+
 export type GameClient<T extends GameClientTypes> = {
   init: (input: {
     ctx: T["ClientCtx"];

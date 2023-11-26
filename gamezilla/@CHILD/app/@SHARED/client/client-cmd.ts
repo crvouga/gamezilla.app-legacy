@@ -14,13 +14,13 @@ type ClientCmdTypes = {
   ToServer: any;
 };
 
-export type ClientCmd<T extends ClientCmdTypes> =
-  | WireCmd<T>
-  | ToastCmd
-  | RouteCmd
-  | SoundCmd
-  | PlatformCmd<T>
-  | ProfileCmd;
+export type BaseCmd<T> = T & {
+  variant: "cmd";
+};
+
+export type ClientCmd<T extends ClientCmdTypes> = BaseCmd<
+  WireCmd<T> | ToastCmd | RouteCmd | SoundCmd | PlatformCmd<T> | ProfileCmd
+>;
 
 //
 //
@@ -38,7 +38,7 @@ export type ProfileCmd = {
 export const addProfiles = <T extends ClientCmdTypes>(profiles: {
   [userId: UserId]: Profile;
 }): ClientCmd<T> => {
-  return { t: "profile/add-profiles", profiles };
+  return { t: "profile/add-profiles", profiles, variant: "cmd" };
 };
 
 //
@@ -66,7 +66,7 @@ export type PlatformCmd<T extends ClientCmdTypes> =
 export const focusView = <T extends ClientCmdTypes>(
   viewId: string
 ): ClientCmd<T> => {
-  return { t: "platform/focus", viewId: viewId };
+  return { t: "platform/focus", viewId: viewId, variant: "cmd" };
 };
 
 export const startTimeout = <T extends ClientCmdTypes>(
@@ -79,6 +79,7 @@ export const startTimeout = <T extends ClientCmdTypes>(
     timeoutId,
     duration,
     msg,
+    variant: "cmd",
   };
 };
 
@@ -88,6 +89,7 @@ export const cancelTimeout = <T extends ClientCmdTypes>(
   return {
     t: "platform/cancel-timeout",
     timeoutId,
+    variant: "cmd",
   };
 };
 
@@ -111,6 +113,7 @@ export const sendToServer = <T extends ClientCmdTypes>(
   return {
     t: "wire/send-to-server",
     msg,
+    variant: "cmd",
   };
 };
 
@@ -124,7 +127,7 @@ export const sendToServer = <T extends ClientCmdTypes>(
 export type ToastCmd = {
   t: "toast/enqueue";
   text: string;
-  variant?: "error" | "info";
+  toastVariant?: "error" | "info";
   duration?: number;
 };
 
@@ -133,7 +136,13 @@ export const showToast = <T extends ClientCmdTypes>(
   variant?: "error" | "info",
   duration?: number
 ): ClientCmd<T> => {
-  return { t: "toast/enqueue", text, variant, duration };
+  return {
+    t: "toast/enqueue",
+    text,
+    toastVariant: variant,
+    duration,
+    variant: "cmd",
+  };
 };
 
 //
@@ -169,11 +178,15 @@ export const APP_SOUND = {
   stateChangeDown: "./app/state-change-down.wav",
 };
 
-export const playSound = (src: string, volume?: UnitInterval): SoundCmd => {
+export const playSound = (
+  src: string,
+  volume?: UnitInterval
+): BaseCmd<SoundCmd> => {
   return {
     t: "sound/play",
     src,
     volume,
+    variant: "cmd",
   };
 };
 
@@ -183,6 +196,7 @@ export const preloadSound = <T extends ClientCmdTypes>(
   return {
     t: "sound/preload",
     src,
+    variant: "cmd",
   };
 };
 
@@ -203,14 +217,14 @@ export type RouteCmd =
 export const pushRoute = <T extends ClientCmdTypes>(
   route: AppRoute
 ): ClientCmd<T> => {
-  return { t: "routing/push", route };
+  return { t: "routing/push", route, variant: "cmd" };
 };
 
 export const replaceRoute = <T extends ClientCmdTypes>(
   route: AppRoute,
   reason?: string
 ): ClientCmd<T> => {
-  return { t: "routing/replace", route, reason };
+  return { t: "routing/replace", route, reason, variant: "cmd" };
 };
 
 //

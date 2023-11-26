@@ -139,7 +139,7 @@ export function updateFromCmd({
         toastId: model.runningId,
         text: msg.text,
         duration: msg.duration ?? 2000,
-        variant: msg.variant ?? "info",
+        variant: msg.toastVariant ?? "info",
       };
 
       return {

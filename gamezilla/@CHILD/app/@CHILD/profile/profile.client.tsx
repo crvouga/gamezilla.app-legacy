@@ -1,14 +1,12 @@
-import { Eff, loading, andThen, p, isErr } from "gamezilla/@SHARED/core";
+import { AppClient } from "gamezilla/@CHILD/app/@SHARED/architecture";
 import {
   AnonymousClientCtx,
   ClientCmd,
-  ClientEvt,
-  AppRoute,
+  ClientCtx,
   RouteProfile,
   ViewCtx,
-  showToast,
   sendToServer,
-  ProfileCmd,
+  showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { ProfileAvatar, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
@@ -21,6 +19,7 @@ import {
   TopBarBackButton,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { Sub, isErr, loading } from "gamezilla/@SHARED/core";
 import { ViewProfileScreen } from "./profile-client/profile-client-view-profile-screen";
 import { ViewUpdateAvatarScreen } from "./profile-client/profile-client-view-update-avatar-screen";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./profile.core";
@@ -28,114 +27,120 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./profile.core";
 //
 //
 //
-// model
+//
 //
 //
 //
 
-export const init = ({
-  currentRoute,
-  stored,
-}: {
-  stored: ClientModel | null;
-  currentRoute: AppRoute;
-}): {
-  model: ClientModel;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} => {
-  return p(
+type Client = AppClient<{
+  ClientModel: ClientModel;
+  ClientMsg: ClientMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  ClientCtx: ClientCtx | AnonymousClientCtx;
+  ViewCtx: ViewCtx & {
+    viewBottomBar: VDom;
+    route: RouteProfile;
+  };
+}>;
+
+//
+//
+//
+// Model
+//
+//
+//
+
+export const init: Client["init"] = ({ ctx, stored }) => {
+  return AppClient.chain(
     {
       model: stored ? stored : { profiles: {}, requests: {} },
     },
-    andThen((model): ReturnType<typeof init> => {
-      if (currentRoute.t === "profile" && currentRoute.c.t === "profile") {
-        return loadProfile(currentRoute.c.userId, model);
+    (model) => {
+      if (
+        ctx.currentRoute.t === "profile" &&
+        ctx.currentRoute.c.t === "profile"
+      ) {
+        return loadProfile(ctx.currentRoute.c.userId, model);
       }
       return { model };
-    })
+    }
   );
 };
 
 //
 //
 //
-// update
+// Update
 //
 //
 //
 
-export const update = ({
-  msg,
-  model,
-}: {
-  msg: ClientMsg;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} => {
+export const update: Client["update"] = (input) => {
+  return AppClient.chain(
+    { model: input.model },
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromServer({ ...input, model }),
+    (model) => updateFromEvent({ ...input, model }),
+    (model) => updateFromCommand({ ...input, model })
+  );
+};
+
+const updateFromCommand: Client["update"] = (input) => {
+  const { model, msg } = input;
+
+  if (msg.variant !== "cmd") {
+    return { model };
+  }
+
   switch (msg.t) {
-    case "inputted-username": {
-      return {
-        model: { ...model, draft: { ...model.draft, username: msg.username } },
-      };
-    }
-
-    case "inputted-avatar-seed": {
+    case "profile/add-profiles": {
       return {
         model: {
           ...model,
-          draft: { ...model.draft, avatarSeed: ProfileAvatar.toSeed(msg.seed) },
-        },
-      };
-    }
-
-    case "inputted-avatar-style": {
-      return {
-        model: {
-          ...model,
-          draft: { ...model.draft, avatarStyle: msg.style },
-        },
-      };
-    }
-
-    case "clicked-generate-random-seed": {
-      return {
-        model: {
-          ...model,
-          draft: {
-            ...model.draft,
+          profiles: {
+            ...model.profiles,
+            ...msg.profiles,
           },
         },
       };
     }
 
     default: {
-      return {
-        model: {
-          ...model,
-          requests: {
-            ...model.requests,
-            [msg.t]: { t: "loading" },
-          },
-        },
-        cmd: [{ t: "wire/send-to-server", msg }],
-      };
+      return { model };
     }
   }
 };
 
-export const updateFromServer = ({
-  msg,
-  model,
-}: {
-  msg: ToClient;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} => {
+const updateFromEvent: Client["update"] = (input) => {
+  const { msg, model } = input;
+
+  if (msg.variant !== "evt") {
+    return { model };
+  }
+
+  switch (msg.t) {
+    case "routing/route-changed": {
+      if (msg.route.t === "profile" && msg.route.c.t === "profile") {
+        return loadProfile(msg.route.c.userId, model);
+      }
+      return { model };
+    }
+
+    default: {
+      return { model };
+    }
+  }
+};
+
+const updateFromServer: Client["update"] = (input) => {
+  const { msg, model } = input;
+
+  if (msg.variant !== "from-server") {
+    return { model };
+  }
+
   switch (msg.t) {
     case "current-user-profile": {
       if (isErr(msg.result)) {
@@ -194,28 +199,66 @@ export const updateFromServer = ({
   }
 };
 
-export const updateFromEvent = ({
-  evt,
-  model,
-}: {
-  evt: ClientEvt;
-  model: ClientModel;
-  ctx: AnonymousClientCtx;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} => {
-  switch (evt.t) {
-    case "routing/route-changed": {
-      if (evt.route.t === "profile" && evt.route.c.t === "profile") {
-        return loadProfile(evt.route.c.userId, model);
-      }
-      return { model };
+const updateFromMsg: Client["update"] = (input) => {
+  const { msg, model } = input;
+
+  if (msg.variant !== "msg") {
+    return { model };
+  }
+
+  switch (msg.t) {
+    case "inputted-username": {
+      return {
+        model: {
+          ...model,
+          draft: { ...model.draft, username: msg.username },
+        },
+      };
+    }
+
+    case "inputted-avatar-seed": {
+      return {
+        model: {
+          ...model,
+          draft: {
+            ...model.draft,
+            avatarSeed: ProfileAvatar.toSeed(msg.seed),
+          },
+        },
+      };
+    }
+
+    case "inputted-avatar-style": {
+      return {
+        model: {
+          ...model,
+          draft: { ...model.draft, avatarStyle: msg.style },
+        },
+      };
+    }
+
+    case "clicked-generate-random-seed": {
+      return {
+        model: {
+          ...model,
+          draft: {
+            ...model.draft,
+          },
+        },
+      };
     }
 
     default: {
-      return { model };
+      return {
+        model: {
+          ...model,
+          requests: {
+            ...model.requests,
+            [msg.t]: { t: "loading" },
+          },
+        },
+        cmd: [sendToServer(msg)],
+      };
     }
   }
 };
@@ -241,32 +284,16 @@ const loadProfile = (
   };
 };
 
-export const updateFromCmd = ({
-  cmd,
-  model,
-}: {
-  cmd: ProfileCmd;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-} => {
-  switch (cmd.t) {
-    case "profile/add-profiles": {
-      return {
-        model: {
-          ...model,
-          profiles: {
-            ...model.profiles,
-            ...cmd.profiles,
-          },
-        },
-      };
-    }
+//
+//
+//
+// Subscriptions
+//
+//
+//
 
-    default: {
-      return { model };
-    }
-  }
+export const subscriptions: Client["subscriptions"] = (_input) => {
+  return Sub.None;
 };
 
 //
@@ -277,20 +304,10 @@ export const updateFromCmd = ({
 //
 //
 
-export const View = ({
-  model,
-  route,
-  dispatch,
-  ctx,
-  viewBottomBar,
-}: {
-  ctx: ViewCtx;
-  model: ClientModel;
-  route: RouteProfile;
-  dispatch: (msg: ClientMsg) => void;
-  viewBottomBar: VDom;
-}) => {
-  switch (route.t) {
+export const View: Client["View"] = ({ model, dispatch, ctx }) => {
+  const { route: routeProfile } = ctx;
+
+  switch (routeProfile.t) {
     case "profile": {
       return (
         <div class="relative flex h-full w-full flex-col">
@@ -298,10 +315,10 @@ export const View = ({
             model={model}
             ctx={ctx}
             dispatch={dispatch}
-            userId={route.userId}
+            userId={routeProfile.userId}
           />
 
-          {viewBottomBar}
+          {ctx.viewBottomBar}
         </div>
       );
     }
@@ -385,7 +402,7 @@ const ViewUpdateScreen = ({
   );
 };
 
-export const ViewField = ({
+const ViewField = ({
   label,
   value,
   onClick,
