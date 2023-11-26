@@ -12,16 +12,17 @@ import {
 import {
   IconGamepad,
   IconUserCircle,
-  IconVolumeHigh,
   VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Browser, Eff, Posix, Sub, Time } from "gamezilla/@SHARED/core";
+import { Browser, Eff, Posix, Sub } from "gamezilla/@SHARED/core";
 import * as AuthClient from "./@CHILD/auth/auth.client";
 import * as ChatClient from "./@CHILD/chat/chat.client";
 import * as ProfileClient from "./@CHILD/profile/profile.client";
 import * as SearchClient from "./@CHILD/search/search.client";
 import * as SpaceClient from "./@CHILD/space/space.client";
+import { ClientTransport } from "./@CHILD/wire/transport-client";
+import * as Wire from "./@CHILD/wire/wire.client";
 import { UserId } from "./@SHARED/data";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import {
@@ -31,8 +32,6 @@ import {
   ToClient,
   ToServer,
 } from "./app.core";
-import * as Wire from "./@CHILD/wire/wire.client";
-import { ClientTransport } from "./@CHILD/wire/transport-client";
 
 //
 //
@@ -723,10 +722,7 @@ const ViewMain = ({
             currentRoute: model.routing.currentRoute,
             currentUserId: model.auth.currentUser.userId,
             profiles: model.profile.profiles,
-            sound: model.sound,
             documentVisibilityState: model.platform.documentVisibilityState,
-            toggleSound: () =>
-              dispatch({ t: "sound", c: { t: "toggle-mute" } }),
             push: (route) =>
               dispatch({ t: "routing", c: { t: "clicked-link", route } }),
             back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
@@ -743,10 +739,7 @@ const ViewMain = ({
             now,
             currentRoute: model.routing.currentRoute,
             profiles: model.profile.profiles,
-            sound: model.sound,
             documentVisibilityState: model.platform.documentVisibilityState,
-            toggleSound: () =>
-              dispatch({ t: "sound", c: { t: "toggle-mute" } }),
             back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
             push: (route) =>
               dispatch({

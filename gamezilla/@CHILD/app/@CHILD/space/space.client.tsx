@@ -44,6 +44,7 @@ import {
   ToServer,
   initCore,
   mergeModels,
+  toStartedSpace,
   toStateSpace,
   toStateUser,
 } from "./space.core";
@@ -738,13 +739,9 @@ export const ViewCurrentSpaceBar = ({
     return null;
   }
 
-  const space = toStateSpace(model, userState.spaceId);
+  const space = toStartedSpace(model, userState.spaceId);
 
-  if (space.type === "initial") {
-    return null;
-  }
-
-  if (space.type === "ended") {
+  if (!space) {
     return null;
   }
 
