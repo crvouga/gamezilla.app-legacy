@@ -28,12 +28,11 @@ import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
 import { withMeta } from "gamezilla/@SHARED/event-stream";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import * as GameClient from "./@CHILD/game/game.client";
-import {
-  ViewNotInGameScreen,
-  ViewSpaceJoinScreen,
-  ViewSpaceListScreen,
-} from "./space-client";
-import { updateFromEvents, updateFromGame } from "./space-client/update";
+import { updateFromEvents } from "./space-client/update-from-events";
+import { updateFromGame } from "./space-client/update-from-game";
+import { ViewNotInGameScreen } from "./space-client/view-not-in-game-screen";
+import { ViewSpaceJoinScreen } from "./space-client/view-space-join-screen";
+import { ViewSpaceListScreen } from "./space-client/view-space-list-screen";
 import {
   ClientModel,
   ClientMsg,
@@ -102,12 +101,12 @@ export const update = ({
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg.t) {
-    case "modal-closed": {
+    case "closed-modal": {
       return { model: { ...model, modal: null } };
     }
 
-    case "modal-open": {
-      return { model: { ...model, modal: msg.c } };
+    case "clicked-people-button": {
+      return { model: { ...model, modal: "users" } };
     }
 
     case "clicked-user": {
@@ -130,11 +129,10 @@ export const update = ({
         state: space.game,
       });
 
-      const eventsNew = updatedGame.gameEvent
-        ? updatedGame.gameEvent.map((c) =>
-            withMeta<Event>({ t: "game", c, spaceId: msg.spaceId })
-          )
-        : [];
+      const eventsNew =
+        updatedGame.gameEvent?.map((c) =>
+          withMeta<Event>({ t: "game", c, spaceId: msg.spaceId })
+        ) ?? [];
 
       return chain(
         { model },
@@ -162,7 +160,7 @@ export const updateFromServer = ({
   msg,
   model,
 }: {
-  ctx: ClientCtx;
+  ctx: ClientCtx | AnonymousClientCtx;
   msg: ToClient;
   model: ClientModel;
 }): {
@@ -191,18 +189,14 @@ export const updateFromServer = ({
         }
 
         case "game-msg": {
-          const space = toStateSpace(model, msg.spaceId);
+          const space = toStartedSpace(model, msg.spaceId);
 
-          if (
-            space.type === "initial" ||
-            space.type === "ended" ||
-            !space.game
-          ) {
+          if (!space || !space.game || !ctx.currentUserId) {
             return { model };
           }
 
           const updatedGame = GameClient.update({
-            ctx: { ...ctx, space: space },
+            ctx: { ...ctx, space: space, currentUserId: ctx.currentUserId },
             model: model.games[msg.spaceId],
             serverMsg: msg.c,
             state: space.game,
@@ -433,7 +427,7 @@ const ViewSpaceScreen = ({
         position="bottom"
         id="users"
         open={model.modal === "users"}
-        onClose={() => dispatch({ t: "modal-closed" })}>
+        onClose={() => dispatch({ t: "closed-modal" })}>
         <ViewUsersInSpaceList ctx={spaceCtx} />
       </Drawer>
 
@@ -441,7 +435,7 @@ const ViewSpaceScreen = ({
         position="bottom"
         id="user-preview"
         open={model.modal === "user-preview"}
-        onClose={() => dispatch({ t: "modal-closed" })}>
+        onClose={() => dispatch({ t: "closed-modal" })}>
         <div>
           <button
             class="flex w-full flex-col items-center justify-center gap-2 p-4"
@@ -562,7 +556,7 @@ const ViewSpaceScreenMain = ({
         />
 
         <TopButton
-          onClick={() => dispatch({ t: "modal-open", c: "users" })}
+          onClick={() => dispatch({ t: "clicked-people-button" })}
           label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
           icon={<IconUserGroup class="h-6 w-6" />}
         />
@@ -613,13 +607,7 @@ const ViewSpaceScreenMain = ({
             dispatch={(msg) =>
               dispatch({ t: "game-msg", spaceId: ctx.space.spaceId, c: msg })
             }
-            model={
-              gameModel ??
-              GameClient.init({
-                ctx,
-                state: space.game,
-              }).model
-            }
+            model={gameModel}
           />
         ) : (
           <ViewNotInGameScreen ctx={ctx} dispatchEvent={dispatchEvent} />

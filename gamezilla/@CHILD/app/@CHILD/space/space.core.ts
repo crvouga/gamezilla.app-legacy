@@ -79,8 +79,8 @@ export type ServerMsg = { t: "game-msg"; spaceId: SpaceId; c: Game.ServerMsg };
 export type ClientMsg =
   | EventWithMeta
   | { t: "game-msg"; spaceId: SpaceId; c: Game.ClientMsg }
-  | { t: "modal-closed" }
-  | { t: "modal-open"; c: ModalModel }
+  | { t: "closed-modal" }
+  | { t: "clicked-people-button" }
   | { t: "clicked-user"; userId: UserId };
 
 //

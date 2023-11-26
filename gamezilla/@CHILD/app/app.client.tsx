@@ -23,7 +23,6 @@ import * as SearchClient from "./@CHILD/search/search.client";
 import * as SpaceClient from "./@CHILD/space/space.client";
 import { ClientTransport } from "./@CHILD/wire/transport-client";
 import * as Wire from "./@CHILD/wire/wire.client";
-import { UserId } from "./@SHARED/data";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import {
   APP_CONFIG,
@@ -420,24 +419,18 @@ const updateFromServer = ({
     }
 
     case "space": {
-      if (UserId.is(ctx.currentUserId)) {
-        const updated = SpaceClient.updateFromServer({
-          ctx: {
-            ...ctx,
-            currentUserId: ctx.currentUserId,
-          },
-          msg: msg.c,
-          model: model.space,
-        });
+      const updated = SpaceClient.updateFromServer({
+        ctx,
+        msg: msg.c,
+        model: model.space,
+      });
 
-        return {
-          evt: updated.evt,
-          cmd: ClientCmd.tag("space", updated.cmd),
-          model: { ...model, space: updated.model },
-          eff: Eff.t("space", updated.eff),
-        };
-      }
-      return { model };
+      return {
+        evt: updated.evt,
+        cmd: ClientCmd.tag("space", updated.cmd),
+        model: { ...model, space: updated.model },
+        eff: Eff.t("space", updated.eff),
+      };
     }
 
     case "profile": {

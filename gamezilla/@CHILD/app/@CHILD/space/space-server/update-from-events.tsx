@@ -1,5 +1,4 @@
 import {
-  Space,
   SpaceServerCmd,
   SpaceServerCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
@@ -21,45 +20,7 @@ import {
   appendEvent,
   toStartedSpace,
 } from "../space.core";
-
-/**
- * Handles updating the client model from updated game model
- */
-export const updateFromGame = ({
-  model,
-  space,
-  updated,
-}: {
-  space: Space;
-  model: ServerModel;
-  updated: Awaited<ReturnType<typeof GameServer.update>>;
-}): {
-  model: ServerModel;
-  cmd?: ServerCmd<ToClient>[];
-  eff?: Eff<ServerMsg>;
-} => {
-  return {
-    model: {
-      ...model,
-      games: {
-        ...model.games,
-        [space.spaceId]: updated.model,
-      },
-    },
-    cmd: spaceCmdToCmd(
-      space,
-      SpaceServerCmd.map(updated.cmd ?? [], (c) => ({
-        t: "game-msg",
-        spaceId: space.spaceId,
-        c,
-      }))
-    ),
-    eff: Eff.map_(
-      (c) => ({ t: "game-msg", c, spaceId: space.spaceId }),
-      updated.eff
-    ),
-  };
-};
+import { spaceCmdToCmd } from "./update-shared";
 
 export const updateFromEvents = async (input: {
   ctx: SpaceServerCtx;
@@ -69,20 +30,21 @@ export const updateFromEvents = async (input: {
   model: ServerModel;
   cmd?: ServerCmd<ToClient>[];
 }> => {
-  return updateGamesLoop(input.ctx, input);
+  return updateFromEventsRecur(input.ctx, {
+    model: input.model,
+    events: input.events,
+    cmd: [],
+    eff: Eff.None,
+  });
 };
 
-async function updateGamesLoop(
+async function updateFromEventsRecur(
   ctx: SpaceServerCtx,
-  acc: Awaited<ReturnType<typeof updateOneGame>>
+  acc: Awaited<ReturnType<typeof updateGameFromEvent>>
 ) {
   const [event, ...rest] = acc.events ?? [];
 
-  if (!event) {
-    return acc;
-  }
-
-  if (event.eventId in acc.model.events.events) {
+  if (!event || event.eventId in acc.model.events.events) {
     return acc;
   }
 
@@ -93,7 +55,7 @@ async function updateGamesLoop(
 
   const space = toStartedSpace(appended, event.spaceId);
 
-  const updatedGame = await updateOneGame({
+  const updatedGame = await updateGameFromEvent({
     ctx: ctx,
     space,
     model: appended,
@@ -105,31 +67,17 @@ async function updateGamesLoop(
       ? sendToUser(Object.values(space.users), event)
       : broadcast<ToClient>(event);
 
-  const accNew: Awaited<ReturnType<typeof updateOneGame>> = {
+  const accNew: Awaited<ReturnType<typeof updateGameFromEvent>> = {
     model: updatedGame.model,
     cmd: [...(acc.cmd ?? []), ...(updatedGame.cmd ?? []), cmd],
     eff: Eff.batch([acc.eff, updatedGame.eff]),
     events: [...(rest ?? []), ...(updatedGame.events ?? [])],
   };
 
-  return updateGamesLoop(ctx, accNew);
+  return updateFromEventsRecur(ctx, accNew);
 }
 
-function spaceCmdToCmd(space: Space, cmd?: SpaceServerCmd<ToClient>[]) {
-  return cmd?.map((cmd): ServerCmd<ToClient> => {
-    switch (cmd.t) {
-      case "send-to-space": {
-        const userIds = Object.values(space.users);
-        return sendToUser(userIds, cmd.msg);
-      }
-      default: {
-        return cmd;
-      }
-    }
-  });
-}
-
-async function updateOneGame({
+async function updateGameFromEvent({
   model,
   ctx,
   event,

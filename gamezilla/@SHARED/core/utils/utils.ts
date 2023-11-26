@@ -126,23 +126,22 @@ export const chainAwait = async <Model, Msg, Evt, Cmd>(
   let model: Model = initial.model;
 
   for (let i = 0, len = updaters.length; i < len; ++i) {
-    // @ts-ignore
-    const updated = await updaters[i](model);
+    const updated = await updaters[i]!(model);
     model = updated.model;
 
     if (updated.eff) {
       eff.push(updated.eff);
     }
+
     if (updated.evt) {
       for (let j = 0, len = updated.evt.length; j < len; ++j) {
-        // @ts-ignore
-        evt.push(updated.evt[j]);
+        evt.push(updated.evt[j]!);
       }
     }
+
     if (updated.cmd) {
       for (let j = 0, len = updated.cmd.length; j < len; ++j) {
-        // @ts-ignore
-        cmd.push(updated.cmd[j]);
+        cmd.push(updated.cmd[j]!);
       }
     }
   }

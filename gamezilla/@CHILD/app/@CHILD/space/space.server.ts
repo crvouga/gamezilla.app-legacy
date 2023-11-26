@@ -11,7 +11,8 @@ import {
 import { Eff, Sub, chain, chainAwait } from "gamezilla/@SHARED/core";
 import { withMeta } from "gamezilla/@SHARED/event-stream";
 import * as GameServer from "./@CHILD/game/game.server";
-import { updateFromGame, updateFromEvents } from "./space-server/update";
+import { updateFromEvents } from "./space-server/update-from-events";
+import { updateFromGame } from "./space-server/update-from-game";
 import {
   Event,
   ServerModel,
