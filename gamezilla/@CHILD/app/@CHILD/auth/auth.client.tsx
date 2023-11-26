@@ -267,7 +267,6 @@ export const subscriptions = ({
 export const View = ({
   model,
   ctx,
-  location,
   dispatch,
   route,
 }: {

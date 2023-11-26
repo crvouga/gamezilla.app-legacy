@@ -101,7 +101,8 @@ export const update = async ({
 
       return chainAwait(
         { model },
-        (model) => mergeNewEvents({ ctx: spaceCtx, events: eventsNew, model }),
+        (model) =>
+          updateWithEvents({ ctx: spaceCtx, events: eventsNew, model }),
         (model) => mergeUpdatedGame({ model, space, updated })
       );
     }
@@ -189,7 +190,7 @@ export const updateFromClient = async (input: {
         },
 
         (model) => {
-          return mergeNewEvents({
+          return updateWithEvents({
             ctx,
             events: eventsNew,
             model,
@@ -237,7 +238,7 @@ export const updateFromClient = async (input: {
     }
 
     default: {
-      const merged = mergeNewEvents({
+      const merged = updateWithEvents({
         ctx,
         events: [msg],
         model,
@@ -249,38 +250,36 @@ export const updateFromClient = async (input: {
   }
 };
 
-const mergeNewEvents = async (input: {
+const updateWithEvents = async (input: {
   ctx: ServerCtx;
   model: ServerModel;
   events: EventWithMeta[];
 }): ReturnType<typeof update> => {
-  const events = input.events.filter(
+  const eventsNew = input.events.filter(
     (event) => !(event.eventId in input.model.events.events)
   );
-  return chainAwait(
-    input,
-    // merge new events
-    (model) => {
-      const appended = appendEvent(model, events);
-      return {
-        model: { ...model, ...appended },
-      };
-    },
-    // send to clients
-    (model) => {
-      const cmd = events.flatMap((event) => {
-        const space = toStateSpace(model, event.spaceId);
-        if (space.type === "initial" || space.type === "ended") {
-          return [];
-        }
-        if (event.t === "game") {
-          return sendToUser(Object.values(space.users), event);
-        }
-        return broadcast(event);
-      });
-      return { model, cmd };
-    }
-  );
+
+  return chainAwait(input, appendEvents, sendEventsToClients);
+
+  function appendEvents(model: ServerModel) {
+    const appended = appendEvent(model, eventsNew);
+    return { model: { ...model, ...appended } };
+  }
+
+  function sendEventsToClients(model: ServerModel) {
+    const cmd = eventsNew.flatMap((event) => {
+      const space = toStateSpace(model, event.spaceId);
+      if (space.type === "initial" || space.type === "ended") {
+        return [];
+      }
+      if (event.t === "game") {
+        return sendToUser(Object.values(space.users), event);
+      }
+      return broadcast(event);
+    });
+
+    return { model, cmd };
+  }
 };
 
 const spaceCmdToCmd = (space: Space, cmd?: SpaceServerCmd<ToClient>[]) => {
@@ -317,7 +316,7 @@ export const updateFromEvent = async (input: {
       };
     }
 
-    case "auth/client-authenticated": {
+    case "auth/connected-client-authenticated": {
       const state = toStateUser(model, msg.userId);
 
       return {

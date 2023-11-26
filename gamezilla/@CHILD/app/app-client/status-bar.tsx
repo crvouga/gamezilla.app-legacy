@@ -20,7 +20,9 @@ export const init = ({
   };
 };
 
-export type Msg = { t: "clicked-status-bar" } | { t: "closed-drawer" };
+export type Msg =
+  | { t: "clicked-status-bar" }
+  | { t: "closed-status-bar-drawer" };
 
 export const update = (input: { model: Model; msg: Msg }): { model: Model } => {
   switch (input.msg.t) {
@@ -28,7 +30,7 @@ export const update = (input: { model: Model; msg: Msg }): { model: Model } => {
       return { model: { ...input.model, isDrawerOpen: true } };
     }
 
-    case "closed-drawer": {
+    case "closed-status-bar-drawer": {
       return { model: { ...input.model, isDrawerOpen: false } };
     }
   }
@@ -67,7 +69,7 @@ export const View = ({
         position="top"
         id="drawer"
         open={model.isDrawerOpen}
-        onClose={() => dispatch({ t: "closed-drawer" })}>
+        onClose={() => dispatch({ t: "closed-status-bar-drawer" })}>
         {wire.drawer}
 
         {sound.drawer}

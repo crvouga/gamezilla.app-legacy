@@ -90,7 +90,7 @@ export const update = ({
             ...model,
             muted: false,
           },
-          cmd: [playSound(APP_SOUND.stateChangeUp)],
+          cmd: [playSound(APP_SOUND.tap)],
         };
       }
       return {

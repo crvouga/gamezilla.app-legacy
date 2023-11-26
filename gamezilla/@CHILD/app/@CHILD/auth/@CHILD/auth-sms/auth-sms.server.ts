@@ -70,7 +70,7 @@ export const update = ({
         model,
         evt: [
           {
-            t: "auth/client-authenticated",
+            t: "auth/connected-client-authenticated",
             clientId: msg.clientId,
             sessionId: msg.sessionId,
             userId: msg.result.value.userId,

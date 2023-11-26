@@ -6,13 +6,13 @@ import {
   ServerEvt,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, isErr } from "gamezilla/@SHARED/core";
+import { Eff, chainAwait, isErr } from "gamezilla/@SHARED/core";
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
-import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 import {
   StoreSessionIdByUserId,
   StoreUserIdBySessionId,
 } from "./@SHARED/server/auth-session-store";
+import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 
 //
 //
@@ -74,7 +74,7 @@ export const update = async ({
         model: modelNew,
         evt: [
           {
-            t: "auth/client-authenticated",
+            t: "auth/connected-client-authenticated",
             clientId: msg.clientId,
             sessionId: msg.sessionId,
             userId: msg.result.value.userId,
@@ -126,7 +126,7 @@ export const updateFromClient = async ({
         model: modelNew,
         evt: [
           {
-            t: "auth/client-unauthenticated",
+            t: "auth/connected-client-unauthenticated",
             clientId: ctx.clientId,
             sessionId: ctx.sessionId,
           },
@@ -178,7 +178,7 @@ export const updateFromEvent = async ({
           model: model,
           evt: [
             {
-              t: "auth/client-unauthenticated",
+              t: "auth/connected-client-unauthenticated",
               clientId: evt.clientId,
               sessionId: evt.sessionId,
             },
@@ -191,30 +191,50 @@ export const updateFromEvent = async ({
         evt: [
           {
             ...evt,
-            t: "auth/client-authenticated",
+            t: "auth/connected-client-authenticated",
             userId,
           },
         ],
       };
     }
 
-    case "auth/client-authenticated": {
-      if (evt.loggedIn) {
-        return {
-          model: await addSession(ctx, model, evt.sessionId, evt.userId),
-          cmd: [sendToClient([evt.clientId], evt)],
-        };
-      }
-      return {
-        model: model,
-        cmd: [sendToClient([evt.clientId], evt)],
-      };
+    case "auth/connected-client-authenticated": {
+      return chainAwait(
+        { model },
+        async (model) => {
+          if (evt.loggedIn) {
+            return {
+              model: await addSession(ctx, model, evt.sessionId, evt.userId),
+            };
+          }
+          return { model };
+        },
+
+        (model) => {
+          return {
+            model,
+            cmd: [
+              sendToClient([evt.clientId], {
+                t: "auth/client-authenticated",
+                userId: evt.userId,
+                sessionId: evt.sessionId,
+                loggedIn: true,
+              }),
+            ],
+          };
+        }
+      );
     }
 
-    case "auth/client-unauthenticated": {
+    case "auth/connected-client-unauthenticated": {
       return {
         model: model,
-        cmd: [sendToClient([evt.clientId], evt)],
+        cmd: [
+          sendToClient([evt.clientId], {
+            t: "auth/client-unauthenticated",
+            sessionId: evt.sessionId,
+          }),
+        ],
       };
     }
 
