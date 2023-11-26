@@ -11,7 +11,7 @@ import {
 import { Eff, Sub, chain, chainAwait } from "gamezilla/@SHARED/core";
 import { withMeta } from "gamezilla/@SHARED/event-stream";
 import * as GameServer from "./@CHILD/game/game.server";
-import { mergeUpdatedGame, updateWithEvents } from "./space-server/update";
+import { mergeUpdatedGame, updateFromEvents } from "./space-server/update";
 import {
   Event,
   ServerModel,
@@ -96,7 +96,7 @@ export const update = async ({
       return chainAwait(
         { model },
         (model) => {
-          return updateWithEvents({ ctx: spaceCtx, events: eventsNew, model });
+          return updateFromEvents({ ctx: spaceCtx, events: eventsNew, model });
         },
         (model) => {
           return mergeUpdatedGame({ model, space, updated });
@@ -148,7 +148,7 @@ export const updateFromClient = async (input: {
         },
 
         (model) => {
-          return updateWithEvents({
+          return updateFromEvents({
             ctx,
             events: eventsNew,
             model,
@@ -196,7 +196,7 @@ export const updateFromClient = async (input: {
     }
 
     default: {
-      const merged = updateWithEvents({
+      const merged = updateFromEvents({
         ctx,
         events: [msg],
         model,

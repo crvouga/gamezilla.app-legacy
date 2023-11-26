@@ -58,7 +58,7 @@ export const mergeUpdatedGame = ({
   };
 };
 
-export const updateWithEvents = async (input: {
+export const updateFromEvents = async (input: {
   ctx: ServerCtx;
   model: ServerModel;
   events: EventWithMeta[];
