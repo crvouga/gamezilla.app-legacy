@@ -205,20 +205,8 @@ export const updateFromClient = async (input: {
     }
 
     default: {
-      const space = toStartedSpace(model, msg.spaceId);
-
-      if (!space || !space.game || !ctx.currentUserId) {
-        return { model };
-      }
-
-      const spaceCtx = {
-        ...ctx,
-        currentUserId: ctx.currentUserId,
-        space: space,
-      };
-
       return updateFromEvents({
-        ctx: spaceCtx,
+        ctx: ctx,
         events: [msg],
         model,
       });

@@ -9,6 +9,7 @@ export type ServerCtx = {
   sms: SMS;
   now: Posix;
   logger: Logger;
+  currentUserId?: UserId;
 };
 
 export type AnonymousReqCtx = ServerCtx & {

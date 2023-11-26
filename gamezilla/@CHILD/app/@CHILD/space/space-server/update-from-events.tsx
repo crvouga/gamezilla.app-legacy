@@ -3,7 +3,9 @@ import {
   SpaceServerCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
+  ReqCtx,
   ServerCmd,
+  ServerCtx,
   broadcast,
   sendToUser,
 } from "gamezilla/@CHILD/app/@SHARED/server";
@@ -23,14 +25,14 @@ import {
 import { spaceCmdToCmd } from "./update-shared";
 
 export const updateFromEvents = async (input: {
-  ctx: SpaceServerCtx;
+  ctx: ServerCtx | ReqCtx;
   model: ServerModel;
   events: EventWithMeta[];
 }): Promise<{
   model: ServerModel;
   cmd?: ServerCmd<ToClient>[];
 }> => {
-  return updateFromEventsRecur(input.ctx, {
+  return updateFromEventsLoop(input.ctx, {
     model: input.model,
     events: input.events,
     cmd: [],
@@ -38,8 +40,8 @@ export const updateFromEvents = async (input: {
   });
 };
 
-async function updateFromEventsRecur(
-  ctx: SpaceServerCtx,
+async function updateFromEventsLoop(
+  ctx: ServerCtx | ReqCtx,
   acc: Awaited<ReturnType<typeof updateGameFromEvent>>
 ) {
   const [event, ...rest] = acc.events ?? [];
@@ -74,7 +76,7 @@ async function updateFromEventsRecur(
     events: [...(rest ?? []), ...(updatedGame.events ?? [])],
   };
 
-  return updateFromEventsRecur(ctx, accNew);
+  return updateFromEventsLoop(ctx, accNew);
 }
 
 async function updateGameFromEvent({
@@ -84,7 +86,7 @@ async function updateGameFromEvent({
   space,
 }: {
   space: StateStarted | null;
-  ctx: SpaceServerCtx;
+  ctx: ServerCtx | ReqCtx;
   model: ServerModel;
   event: EventWithMeta;
 }): Promise<{
@@ -93,12 +95,12 @@ async function updateGameFromEvent({
   eff?: Eff<ServerMsg>;
   events?: EventWithMeta[];
 }> {
-  if (!space || !space.game || event.t !== "game") {
+  if (!space || !space.game || event.t !== "game" || !ctx.currentUserId) {
     return { model };
   }
 
   const updated = await GameServer.update({
-    ctx,
+    ctx: { ...ctx, currentUserId: ctx.currentUserId, space: space },
     model: model.games[event.spaceId],
     gameEvent: event.c,
     state: space.game,
