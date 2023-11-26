@@ -1,7 +1,4 @@
-import {
-  SpaceServerCmd,
-  SpaceServerCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
   ReqCtx,
   ServerCmd,
