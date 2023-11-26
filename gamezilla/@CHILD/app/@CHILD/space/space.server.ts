@@ -1,8 +1,4 @@
-import {
-  Space,
-  SpaceServerCmd,
-  SpaceServerCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { SpaceServerCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   AnonymousReqCtx,
@@ -10,20 +6,18 @@ import {
   ServerCtx,
   ServerEvt,
   broadcast,
-  sendToUser,
   topicSubscribe,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Sub, chain, chainAwait } from "gamezilla/@SHARED/core";
 import { withMeta } from "gamezilla/@SHARED/event-stream";
 import * as GameServer from "./@CHILD/game/game.server";
+import { mergeUpdatedGame, updateWithEvents } from "./space-server/update";
 import {
   Event,
-  EventWithMeta,
   ServerModel,
   ServerMsg,
   ToClient,
   ToServer,
-  appendEvent,
   initCore,
   mergeModels,
   toStartedSpace,
@@ -101,51 +95,15 @@ export const update = async ({
 
       return chainAwait(
         { model },
-        (model) =>
-          updateWithEvents({ ctx: spaceCtx, events: eventsNew, model }),
-        (model) => mergeUpdatedGame({ model, space, updated })
+        (model) => {
+          return updateWithEvents({ ctx: spaceCtx, events: eventsNew, model });
+        },
+        (model) => {
+          return mergeUpdatedGame({ model, space, updated });
+        }
       );
     }
   }
-};
-
-/**
- * Handles updating the client model from updated game model
- */
-export const mergeUpdatedGame = ({
-  model,
-  space,
-  updated,
-}: {
-  space: Space;
-  model: ServerModel;
-  updated: Awaited<ReturnType<typeof GameServer.update>>;
-}): {
-  model: ServerModel;
-  cmd?: ServerCmd<ToClient>[];
-  eff?: Eff<ServerMsg>;
-} => {
-  return {
-    model: {
-      ...model,
-      games: {
-        ...model.games,
-        [space.spaceId]: updated.model,
-      },
-    },
-    cmd: spaceCmdToCmd(
-      space,
-      SpaceServerCmd.map(updated.cmd ?? [], (c) => ({
-        t: "game-msg",
-        spaceId: space.spaceId,
-        c,
-      }))
-    ),
-    eff: Eff.map_(
-      (c) => ({ t: "game-msg", c, spaceId: space.spaceId }),
-      updated.eff
-    ),
-  };
 };
 
 export const updateFromClient = async (input: {
@@ -248,52 +206,6 @@ export const updateFromClient = async (input: {
       };
     }
   }
-};
-
-const updateWithEvents = async (input: {
-  ctx: ServerCtx;
-  model: ServerModel;
-  events: EventWithMeta[];
-}): ReturnType<typeof update> => {
-  const eventsNew = input.events.filter(
-    (event) => !(event.eventId in input.model.events.events)
-  );
-
-  return chainAwait(input, appendEvents, sendEventsToClients);
-
-  function appendEvents(model: ServerModel) {
-    const appended = appendEvent(model, eventsNew);
-    return { model: { ...model, ...appended } };
-  }
-
-  function sendEventsToClients(model: ServerModel) {
-    const cmd = eventsNew.flatMap((event) => {
-      const space = toStateSpace(model, event.spaceId);
-      if (space.type === "initial" || space.type === "ended") {
-        return [];
-      }
-      if (event.t === "game") {
-        return sendToUser(Object.values(space.users), event);
-      }
-      return broadcast(event);
-    });
-
-    return { model, cmd };
-  }
-};
-
-const spaceCmdToCmd = (space: Space, cmd?: SpaceServerCmd<ToClient>[]) => {
-  return cmd?.map((cmd): ServerCmd<ToClient> => {
-    switch (cmd.t) {
-      case "send-to-space": {
-        const userIds = Object.values(space.users);
-        return sendToUser(userIds, cmd.msg);
-      }
-      default: {
-        return cmd;
-      }
-    }
-  });
 };
 
 export const updateFromEvent = async (input: {
