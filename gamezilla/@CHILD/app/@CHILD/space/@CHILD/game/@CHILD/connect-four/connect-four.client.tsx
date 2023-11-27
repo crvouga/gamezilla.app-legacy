@@ -129,13 +129,13 @@ export const update: Client["update"] = (input) => {
       }
     },
     (model) => {
-      const { state, gameEvent } = input;
+      const { gameEvent } = input;
 
       if (gameEvent?.t !== "user-changed-mode") {
         return { model };
       }
 
-      if (state.t === "none") {
+      if (gameEvent.mode === "none") {
         return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
       }
 

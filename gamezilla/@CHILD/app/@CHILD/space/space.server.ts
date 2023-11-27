@@ -205,11 +205,13 @@ export const updateFromClient = async (input: {
     }
 
     default: {
-      return updateFromEvents({
+      const updated = await updateFromEvents({
         ctx: ctx,
         events: [msg],
         model,
       });
+
+      return updated;
     }
   }
 };

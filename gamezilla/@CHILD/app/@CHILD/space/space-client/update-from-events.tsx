@@ -61,20 +61,20 @@ export function updateFromEventsLoop(
     return acc;
   }
 
-  const updatedGame = updateGameFromEvent({ model: acc.model, ctx, event });
-
   const updated = chain(
-    updatedGame,
+    acc,
     (model) => appendEvents({ model, event }),
     (model) => sendEventToServer({ model, event }),
     (model) => updateSoundFromEvent({ model, ctx, event }),
     (model) => redirectWhenSpaceStarted({ model, ctx, event })
   );
 
+  const updatedGame = updateGameFromEvent({ model: updated.model, ctx, event });
+
   const accNew: typeof acc = {
-    model: updated.model,
-    cmd: batchMsgs(acc.cmd, updated.cmd),
-    eff: Eff.batch([acc.eff, updated.eff]),
+    model: updatedGame.model,
+    cmd: batchMsgs(acc.cmd, updatedGame.cmd, updated.cmd),
+    eff: Eff.batch([acc.eff, updatedGame.eff, updated.eff]),
     events: batchMsgs(rest, updatedGame.event),
   };
 
@@ -196,21 +196,19 @@ function updateGameFromEvent({
       updatedGame.eff
     ),
     event: eventsNew,
-    cmd: updatedGame.cmd
-      ? ClientCmd.map(
-          updatedGame.cmd,
-          (c) => ({
-            t: "game-msg",
-            c,
-            spaceId: space.spaceId,
-          }),
-          (c) => ({
-            t: "game-msg",
-            c,
-            spaceId: space.spaceId,
-          })
-        )
-      : undefined,
+    cmd: ClientCmd.map(
+      updatedGame?.cmd ?? [],
+      (c) => ({
+        t: "game-msg",
+        c,
+        spaceId: space.spaceId,
+      }),
+      (c) => ({
+        t: "game-msg",
+        c,
+        spaceId: space.spaceId,
+      })
+    ),
   };
 }
 
