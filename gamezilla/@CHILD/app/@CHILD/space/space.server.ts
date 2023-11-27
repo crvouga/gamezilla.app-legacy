@@ -6,6 +6,7 @@ import {
   ServerCtx,
   ServerEvt,
   broadcast,
+  sendToClient,
   topicSubscribe,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Sub, chain, chainAwait } from "gamezilla/@SHARED/core";
@@ -139,8 +140,6 @@ export const updateFromClient = async (input: {
         model: model.games[msg.spaceId],
       });
 
-      console.log("input", input, "updated", updated);
-
       const eventsNew =
         updated.gameEvent?.map((event) =>
           withMeta<Event>({ t: "game", spaceId: msg.spaceId, c: event })
@@ -236,12 +235,22 @@ export const updateFromEvent = async (input: {
       };
     }
 
+    case "wire/client-connected": {
+      return {
+        model,
+        cmd: [
+          sendToClient([msg.clientId], { t: "sync", events: model.events }),
+        ],
+      };
+    }
+
     case "auth/connected-client-authenticated": {
       const state = toStateUser(model, msg.userId);
 
       return {
         model,
         cmd: [
+          sendToClient([msg.clientId], { t: "sync", events: model.events }),
           topicSubscribe([`space/${state.spaceId}`], [msg.clientId]),
           topicSubscribe([`spaces`], [msg.clientId]),
         ],

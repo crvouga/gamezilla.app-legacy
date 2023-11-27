@@ -83,7 +83,7 @@ export const update: Client["update"] = (input) => {
   return GameClient.chain(
     init(input),
     (model): ReturnType<Client["update"]> => {
-      const { ctx, msg, evt, gameEvent, serverMsg, state } = input;
+      const { ctx, msg, evt, gameEvent, serverMsg, state, stateBefore } = input;
 
       switch (state.t) {
         case "none": {
@@ -99,6 +99,7 @@ export const update: Client["update"] = (input) => {
             serverMsg: serverMsg?.t === "vs-bot" ? serverMsg : null,
             model: model.t === "vs-bot" ? model : null,
             state,
+            stateBefore: stateBefore.t === "vs-bot" ? stateBefore : state,
           });
         }
 
@@ -111,6 +112,7 @@ export const update: Client["update"] = (input) => {
             gameEvent: gameEvent?.t === "vs-user" ? gameEvent : null,
             serverMsg: serverMsg?.t === "vs-user" ? serverMsg : null,
             state,
+            stateBefore: stateBefore.t === "vs-user" ? stateBefore : state,
           });
         }
       }

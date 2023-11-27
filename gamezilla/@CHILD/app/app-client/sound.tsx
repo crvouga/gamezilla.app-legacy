@@ -5,7 +5,14 @@ import {
   SoundCmd,
   playSound,
 } from "gamezilla/@CHILD/app/@SHARED/client";
-import { Eff, err, ok, Result, UnitInterval } from "gamezilla/@SHARED/core";
+import {
+  Eff,
+  err,
+  ok,
+  Result,
+  TimeSpan,
+  UnitInterval,
+} from "gamezilla/@SHARED/core";
 import { IconVolumeHigh, IconVolumeXMark, ToggleButton } from "../@SHARED/ui";
 
 //
@@ -167,6 +174,14 @@ export const updateFromCmd = ({
       return {
         model,
         eff: async (dispatch) => {
+          const { delay } = cmd;
+
+          if (delay) {
+            await new Promise((r) =>
+              setTimeout(r, TimeSpan.toMilliseconds(delay))
+            );
+          }
+
           const played = await playSoundEff(
             cmd.src,
             cmd.volume ?? UnitInterval.init(1)

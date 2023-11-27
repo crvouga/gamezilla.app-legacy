@@ -1,4 +1,4 @@
-import { UnitInterval } from "gamezilla/@SHARED/core";
+import { TimeSpan, UnitInterval } from "gamezilla/@SHARED/core";
 import { Profile, UserId } from "../data";
 import { AppRoute } from "./client-route";
 
@@ -158,6 +158,7 @@ export type SoundCmd =
       t: "sound/play";
       src: string;
       volume?: UnitInterval;
+      delay?: TimeSpan;
     }
   | {
       t: "sound/preload";
@@ -180,13 +181,17 @@ export const APP_SOUND = {
 
 export const playSound = (
   src: string,
-  volume?: UnitInterval
+  config?: {
+    volume?: UnitInterval;
+    delay?: TimeSpan;
+  }
 ): BaseCmd<SoundCmd> => {
   return {
     t: "sound/play",
     src,
-    volume,
     variant: "cmd",
+    volume: config?.volume,
+    delay: config?.delay,
   };
 };
 

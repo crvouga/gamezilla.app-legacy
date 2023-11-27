@@ -27,7 +27,7 @@ import {
   IconRightLeft,
   LoadingBar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Sub } from "gamezilla/@SHARED/core";
+import { Sub, TimeSpan } from "gamezilla/@SHARED/core";
 import { Columns, toStatus, toTurn } from "../../@SHARED/connect-four";
 import {
   CoverArt,
@@ -105,13 +105,6 @@ export const update: Client["update"] = (input) => {
           return { model: { ...model, vsBotSetup: updated } };
         }
 
-        case "opened-activity-feed-drawer": {
-          return { model: { ...model, opened: "activity-feed-drawer" } };
-        }
-        case "closed-activity-feed-drawer": {
-          return { model: { ...model, opened: null } };
-        }
-
         default: {
           return { model, gameEvent: [msg] };
         }
@@ -139,6 +132,52 @@ export const update: Client["update"] = (input) => {
         model,
         cmd: eventToSound(gameEvent),
       };
+    },
+    (model) => {
+      const { state, stateBefore } = input;
+
+      if (stateBefore.type !== "game" || state.type !== "game") {
+        return { model };
+      }
+
+      const statusBefore = toStatus(stateBefore.columns);
+
+      const status = toStatus(state.columns);
+
+      if (statusBefore.type === status.type) {
+        return { model };
+      }
+
+      switch (status.type) {
+        case "Playing": {
+          return { model };
+        }
+
+        case "Tie": {
+          return { model, cmd: [playSound(APP_SOUND.alertErrorSm)] };
+        }
+
+        case "Winner": {
+          if (status.winner === state.userPlayerType) {
+            return {
+              model,
+              cmd: [
+                playSound(APP_SOUND.celebration, {
+                  delay: TimeSpan.fromSeconds(1 / 2),
+                }),
+              ],
+            };
+          }
+          return {
+            model,
+            cmd: [
+              playSound(APP_SOUND.alertErrorLg, {
+                delay: TimeSpan.fromSeconds(1 / 2),
+              }),
+            ],
+          };
+        }
+      }
     }
   );
 };
@@ -152,13 +191,16 @@ const eventToSound = (
   switch (event.t) {
     case "user-started-playing":
     case "user-stopped-playing":
+    case "user-changed-bot-level": {
+      return [playSound(APP_SOUND.tap)];
+    }
+
     case "user-dropped-disc":
-    case "user-changed-bot-level":
-    case "user-swapped-sides":
     case "bot-dropped-disc": {
       return [playSound(APP_SOUND.tap)];
     }
 
+    case "user-swapped-sides":
     case "user-restarted-game":
     case "user-started-game": {
       return [playSound(APP_SOUND.navForwardMin)];

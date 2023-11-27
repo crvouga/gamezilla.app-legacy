@@ -127,6 +127,7 @@ export const update = ({
         msg: msg.c,
         model: model.games[msg.spaceId],
         state: space.game,
+        stateBefore: space.game,
       });
 
       const eventsNew =
@@ -200,6 +201,7 @@ export const updateFromServer = ({
             model: model.games[msg.spaceId],
             serverMsg: msg.c,
             state: space.game,
+            stateBefore: space.game,
           });
 
           const eventsNew =

@@ -34,7 +34,7 @@ export const init: Server["init"] = async ({ model }) => {
   if (model) {
     return { model };
   }
-  return { model: { isBotMoving: false } };
+  return { model: { isBotFindingMove: false } };
 };
 
 export const update: Server["update"] = async (input) => {
@@ -42,42 +42,70 @@ export const update: Server["update"] = async (input) => {
     await init(input),
     //
     async (model): ReturnType<Server["update"]> => {
-      if (!input.gameEvent) {
+      const { state, gameEvent } = input;
+      if (!gameEvent) {
         return { model };
       }
 
-      if (!isBotTurn(input.state)) {
+      if (!isBotTurn(state)) {
         return { model };
       }
 
-      if (model.isBotMoving) {
+      if (model.isBotFindingMove) {
         return { model };
       }
 
-      if (input.state.type !== "game") {
+      if (state.type !== "game") {
         return { model };
       }
 
-      const found = ConnectFourBotWorker.findBestMove({
-        columns: input.state.columns,
-        maxDepth: 4,
-        maximizingPlayer: toBotPlayer(input.state),
-      });
-
-      if (isErr(found)) {
-        return { model };
-      }
-
-      const columnIndex = found.value.columnIndex;
-
-      if (!ConnectFour.isColumnIndex(columnIndex)) {
+      if (model.isBotFindingMove) {
         return { model };
       }
 
       return {
-        model,
-        gameEvent: [{ t: "bot-dropped-disc", columnIndex }],
+        model: {
+          ...model,
+          isBotFindingMove: true,
+        },
+        eff: async (dispatch) => {
+          await new Promise((r) => setTimeout(r, 1000));
+          const found = ConnectFourBotWorker.findBestMove({
+            columns: state.columns,
+            maxDepth: 4,
+            maximizingPlayer: toBotPlayer(state),
+          });
+          dispatch({ t: "bot-found-best-move", found });
+        },
       };
+    },
+    async (model) => {
+      const { msg } = input;
+
+      if (!msg) {
+        return { model };
+      }
+
+      switch (msg.t) {
+        case "bot-found-best-move": {
+          const { found } = msg;
+
+          if (isErr(found)) {
+            return { model: { ...model, isBotFindingMove: false } };
+          }
+
+          const columnIndex = found.value.columnIndex;
+
+          if (!ConnectFour.isColumnIndex(columnIndex)) {
+            return { model: { ...model, isBotFindingMove: false } };
+          }
+
+          return {
+            model: { ...model, isBotFindingMove: false },
+            gameEvent: [{ t: "bot-dropped-disc", columnIndex }],
+          };
+        }
+      }
     }
   );
 };

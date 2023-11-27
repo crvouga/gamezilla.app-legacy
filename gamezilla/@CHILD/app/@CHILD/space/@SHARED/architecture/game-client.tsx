@@ -47,6 +47,7 @@ export type GameClient<T extends GameClientTypes> = {
   update: (input: {
     ctx: T["ClientCtx"];
     state: T["GameState"];
+    stateBefore: T["GameState"];
     model?: T["ClientModel"] | null;
     //
     msg?: T["ClientMsg"] | null;
@@ -58,7 +59,7 @@ export type GameClient<T extends GameClientTypes> = {
   subscriptions: (input: {
     intervalId: string;
     ctx: T["ClientCtx"];
-    model?: T["ClientModel"];
+    model?: T["ClientModel"] | null;
     state: T["GameState"];
   }) => Sub<T["ClientMsg"]>;
 
@@ -114,6 +115,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         serverMsg: input.serverMsg?.t === tag ? input.serverMsg?.c : undefined,
         ctx: input.ctx,
         state: input.state.c,
+        stateBefore: input.stateBefore.c,
       });
       return {
         model: { t: tag, c: updated.model },

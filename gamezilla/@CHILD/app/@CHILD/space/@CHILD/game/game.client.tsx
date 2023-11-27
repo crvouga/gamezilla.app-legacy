@@ -80,18 +80,19 @@ export const update: Client["update"] = (input) => {
     init(input),
 
     (model) => {
-      const { state, ctx, msg, serverMsg, evt, gameEvent } = input;
+      const { state, ctx, msg, serverMsg, evt, gameEvent, stateBefore } = input;
 
       switch (state.t) {
         case "chess": {
           return Chess.update({
             state: state,
             ctx,
-            model: model?.t === "chess" ? model : undefined,
-            msg: msg?.t === "chess" ? msg : undefined,
-            gameEvent: gameEvent?.t === "chess" ? gameEvent : undefined,
-            serverMsg: serverMsg?.t === "chess" ? serverMsg : undefined,
+            model: model?.t === "chess" ? model : null,
+            msg: msg?.t === "chess" ? msg : null,
+            gameEvent: gameEvent?.t === "chess" ? gameEvent : null,
+            serverMsg: serverMsg?.t === "chess" ? serverMsg : null,
             evt: evt,
+            stateBefore: stateBefore.t === "chess" ? stateBefore : state,
           });
         }
 
@@ -99,10 +100,11 @@ export const update: Client["update"] = (input) => {
           return ConnectFour.update({
             state,
             ctx,
-            model: model?.t === "connect-four" ? model : undefined,
-            msg: msg?.t === "connect-four" ? msg : undefined,
-            gameEvent: gameEvent?.t === "connect-four" ? gameEvent : undefined,
-            serverMsg: serverMsg?.t === "connect-four" ? serverMsg : undefined,
+            model: model?.t === "connect-four" ? model : null,
+            msg: msg?.t === "connect-four" ? msg : null,
+            gameEvent: gameEvent?.t === "connect-four" ? gameEvent : null,
+            serverMsg: serverMsg?.t === "connect-four" ? serverMsg : null,
+            stateBefore: stateBefore.t === "connect-four" ? stateBefore : state,
             evt: evt,
           });
         }
@@ -128,7 +130,7 @@ export const subscriptions: Client["subscriptions"] = (
       return Chess.subscriptions({
         ...input,
         state,
-        model: model?.t === "chess" ? model : undefined,
+        model: model?.t === "chess" ? model : null,
       });
     }
 
@@ -136,7 +138,7 @@ export const subscriptions: Client["subscriptions"] = (
       return ConnectFour.subscriptions({
         ...input,
         state,
-        model: model?.t === "connect-four" ? model : undefined,
+        model: model?.t === "connect-four" ? model : null,
       });
     }
   }
@@ -160,7 +162,7 @@ export const View: Client["View"] = (input) => {
           ctx={ctx}
           dispatch={dispatch}
           state={state}
-          model={model?.t === "chess" ? model : undefined}
+          model={model?.t === "chess" ? model : null}
         />
       );
     }
@@ -170,7 +172,7 @@ export const View: Client["View"] = (input) => {
           ctx={ctx}
           dispatch={dispatch}
           state={state}
-          model={model?.t === "connect-four" ? model : undefined}
+          model={model?.t === "connect-four" ? model : null}
         />
       );
     }

@@ -14,7 +14,7 @@ import * as ConnectFour from "../../@SHARED/connect-four";
 //
 
 export type ServerModel = {
-  isBotMoving: boolean;
+  isBotFindingMove: boolean;
 };
 
 export type ClientModel = {
@@ -31,14 +31,12 @@ export type ClientModel = {
 
 export type ClientMsg =
   | GameEvent
-  | { t: "opened-activity-feed-drawer" }
-  | { t: "closed-activity-feed-drawer" }
   | { t: "vs-bot-setup"; c: VsBotSetup.Msg }
   | { t: "vs-bot-game"; c: VsBotGame.Msg };
 
 export type ServerMsg = {
-  t: "bot-dropped-disc";
-  columnIndex: ConnectFour.ColumnIndex;
+  t: "bot-found-best-move";
+  found: ConnectFour.BestMoveResult;
 };
 
 export type ToClient = { t: null };

@@ -15,6 +15,7 @@ import {
   ClientMsg,
   Event,
   EventWithMeta,
+  StateStarted,
   ToServer,
   appendEvent,
   toStartedSpace,
@@ -61,6 +62,8 @@ export function updateFromEventsLoop(
     return acc;
   }
 
+  const spaceBefore = toStartedSpace(acc.model, event.spaceId);
+
   const updated = chain(
     acc,
     (model) => appendEvents({ model, event }),
@@ -69,7 +72,15 @@ export function updateFromEventsLoop(
     (model) => redirectWhenSpaceStarted({ model, ctx, event })
   );
 
-  const updatedGame = updateGameFromEvent({ model: updated.model, ctx, event });
+  const spaceAfter = toStartedSpace(updated.model, event.spaceId);
+
+  const updatedGame = updateGameFromEvent({
+    model: updated.model,
+    ctx,
+    event,
+    before: spaceBefore,
+    after: spaceAfter,
+  });
 
   const accNew: typeof acc = {
     model: updatedGame.model,
@@ -147,7 +158,11 @@ function updateGameFromEvent({
   model,
   event,
   ctx,
+  before,
+  after,
 }: {
+  before: StateStarted | null;
+  after: StateStarted | null;
   model: ClientModel;
   event: EventWithMeta;
   ctx: ClientCtx | AnonymousClientCtx;
@@ -157,9 +172,7 @@ function updateGameFromEvent({
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
   event?: EventWithMeta[];
 } {
-  const space = toStartedSpace(model, event.spaceId);
-
-  if (!space?.game || !ctx.currentUserId) {
+  if (!after || !after.game || !ctx.currentUserId) {
     return { model };
   }
 
@@ -167,11 +180,12 @@ function updateGameFromEvent({
     ctx: {
       ...ctx,
       currentUserId: ctx.currentUserId,
-      space: space,
+      space: after,
     },
     gameEvent: event.t === "game" ? event.c : null,
     model: model.games[event.spaceId],
-    state: space.game,
+    state: after.game,
+    stateBefore: before?.game ?? after.game,
   });
 
   const eventsNew =
@@ -201,12 +215,12 @@ function updateGameFromEvent({
       (c) => ({
         t: "game-msg",
         c,
-        spaceId: space.spaceId,
+        spaceId: event.spaceId,
       }),
       (c) => ({
         t: "game-msg",
         c,
-        spaceId: space.spaceId,
+        spaceId: event.spaceId,
       })
     ),
   };
