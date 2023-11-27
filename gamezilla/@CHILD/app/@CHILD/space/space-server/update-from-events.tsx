@@ -6,7 +6,7 @@ import {
   broadcast,
   sendToUser,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, batchMsgs } from "gamezilla/@SHARED/core";
+import { Eff, batchMsgs, chainAwait } from "gamezilla/@SHARED/core";
 import { withMeta } from "gamezilla/@SHARED/event-stream";
 import * as GameServer from "../@CHILD/game/game.server";
 import {
@@ -47,17 +47,18 @@ async function updateFromEventsLoop(
     return acc;
   }
 
-  const appended: ServerModel = {
-    ...acc.model,
-    ...appendEvent(acc.model, [event]),
-  };
+  const updated = await chainAwait(
+    acc,
+    (model) => appendEvents({ model, event: event }),
+    (model) => syncUserWhenJoined({ model, event: event })
+  );
 
-  const space = toStartedSpace(appended, event.spaceId);
+  const space = toStartedSpace(updated.model, event.spaceId);
 
   const updatedGame = await updateGameFromEvent({
     ctx: ctx,
     space,
-    model: appended,
+    model: updated.model,
     event,
   });
 
@@ -68,12 +69,56 @@ async function updateFromEventsLoop(
 
   const accNew: Awaited<ReturnType<typeof updateGameFromEvent>> = {
     model: updatedGame.model,
-    cmd: batchMsgs(acc.cmd, updatedGame.cmd, cmd),
-    eff: Eff.batch([acc.eff, updatedGame.eff]),
+    cmd: batchMsgs(acc.cmd, updated.cmd, updatedGame.cmd, cmd),
+    eff: Eff.batch([acc.eff, updated.eff, updatedGame.eff]),
     events: batchMsgs(rest, updatedGame.events),
   };
 
   return updateFromEventsLoop(ctx, accNew);
+}
+
+async function appendEvents({
+  model,
+  event,
+}: {
+  model: ServerModel;
+  event: EventWithMeta;
+}) {
+  const appended: ServerModel = {
+    ...model,
+    ...appendEvent(model, [event]),
+  };
+  return { model: appended };
+}
+
+async function syncUserWhenJoined({
+  model,
+  event,
+}: {
+  model: ServerModel;
+  event: EventWithMeta;
+}): Promise<{
+  model: ServerModel;
+  cmd?: ServerCmd<ToClient>[];
+}> {
+  if (event.t === "user-joined-space") {
+    const space = toStartedSpace(model, event.spaceId);
+
+    if (!space) {
+      return { model };
+    }
+
+    return {
+      model,
+      cmd: [
+        sendToUser([event.userId], {
+          t: "sync",
+          events: model.events,
+        }),
+      ],
+    };
+  }
+  return { model };
 }
 
 async function updateGameFromEvent({
