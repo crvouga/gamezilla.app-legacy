@@ -87,7 +87,7 @@ export const ViewGameOverOverlay = (props: Props) => {
       }}>
       {gameOver?.t === "winner" && (
         <button
-          class="absolute inset-0 flex flex-col items-center justify-center bg-black/60"
+          class="absolute inset-0 flex flex-col items-center justify-center bg-black/70"
           onClick={props.onPlayAgain}>
           <div class="flex-1"></div>
 
