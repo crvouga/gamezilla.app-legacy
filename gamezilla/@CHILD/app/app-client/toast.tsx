@@ -1,6 +1,26 @@
-import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientEvt, ToastCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconXMark, Transition, cn } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Eff, Time } from "gamezilla/@SHARED/core";
+import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
+import { ClientModule } from "../@SHARED/architecture/app-client-v2";
+
+//
+//
+//
+//
+//
+//
+//
+
+type Module = ClientModule<{
+  Ctx: {};
+  FromServer: {};
+  InCmd: ToastCmd;
+  InEvt: ClientEvt;
+  Model: Model;
+  Msg: Msg;
+  OutCmd: {};
+  OutEvt: {};
+}>;
 
 //
 //
@@ -25,13 +45,7 @@ export type Toast = {
   variant: "error" | "info";
 };
 
-export const init = ({
-  stored,
-}: {
-  stored: Model | null;
-}): {
-  model: Model;
-} => {
+export const init: Module["init"] = ({ stored }) => {
   if (stored) {
     return {
       model: {
@@ -64,13 +78,18 @@ export type Msg =
   | { t: "clicked-dismiss-button"; toastId: number }
   | { t: "toast-duration-elapsed"; toastId: number };
 
-export function update(
-  model: Model,
-  msg: Msg
-): {
-  model: Model;
-  eff?: Eff<Msg>;
-} {
+export const update: Module["update"] = (input) => {
+  return ClientModule.chain(
+    { model: input.model },
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromCmd({ ...input, model })
+  );
+};
+
+const updateFromMsg: Module["update"] = ({ msg, model }) => {
+  if (msg.v !== "msg") {
+    return { model };
+  }
   switch (msg.t) {
     case "clicked-dismiss-button": {
       return {
@@ -116,26 +135,13 @@ export function update(
       };
     }
   }
-}
+};
 
-//
-//
-//
-//
+const updateFromCmd: Module["update"] = ({ msg, model }) => {
+  if (msg.v !== "cmd") {
+    return { model };
+  }
 
-export function updateFromCmd({
-  cmd: msg,
-  model,
-}: {
-  cmd: ClientCmd<{
-    ClientMsg: Msg;
-    ToServer: never;
-  }>;
-  model: Model;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
-} {
   switch (msg.t) {
     case "toast/enqueue": {
       const toastNew: Toast = {
@@ -161,11 +167,19 @@ export function updateFromCmd({
         ]),
       };
     }
-    default: {
-      return { model };
-    }
   }
-}
+};
+
+//
+//
+//
+//
+//
+//
+
+export const subscriptions: Module["subscriptions"] = () => {
+  return Sub.None;
+};
 
 //
 //
@@ -175,13 +189,7 @@ export function updateFromCmd({
 //
 //
 
-export function View({
-  model,
-  dispatch,
-}: {
-  model: Model;
-  dispatch: (m: Msg) => void;
-}) {
+export const View: Module["View"] = ({ model, dispatch }) => {
   return (
     <Transition
       mode="out-in"
@@ -198,7 +206,7 @@ export function View({
       )}
     </Transition>
   );
-}
+};
 
 async function onEnter(node: HTMLElement) {
   await node?.animate(

@@ -32,6 +32,7 @@ import {
   ToServer,
 } from "./app.core";
 import { AppClient } from "./@SHARED/architecture";
+import { Cmd, Msg } from "./@SHARED/architecture/app-client-v2";
 
 //
 //
@@ -94,15 +95,6 @@ export const init = ({
     location,
     stored: stored?.routing ?? null,
   });
-
-  const toast = Toast.init({
-    stored: stored?.toast ?? null,
-  });
-
-  const wire = Wire.init({
-    stored: stored?.wire ?? null,
-  });
-
   const appCtx: ClientCtx | AnonymousClientCtx = {
     currentRoute: routing.model.currentRoute,
     currentUserId: null,
@@ -110,6 +102,15 @@ export const init = ({
     now: ctx.now,
     profiles: {},
   };
+
+  const toast = Toast.init({
+    stored: stored?.toast ?? null,
+    ctx: {},
+  });
+
+  const wire = Wire.init({
+    stored: stored?.wire ?? null,
+  });
 
   const auth = AuthClient.init({
     stored: stored?.auth ?? null,
@@ -267,7 +268,11 @@ const updateMain = ({
     }
 
     case "toast": {
-      const updated = Toast.update(model.toast, msg.c);
+      const updated = Toast.update({
+        ctx: {},
+        model: model.toast,
+        msg: Msg(msg.c),
+      });
       return {
         model: { ...model, toast: updated.model },
         eff: Eff.t("toast", updated.eff),
@@ -538,9 +543,10 @@ const updateFromCmd = ({
     }
 
     case "toast/enqueue": {
-      const toast = Toast.updateFromCmd({
+      const toast = Toast.update({
         model: model.toast,
-        cmd,
+        msg: Cmd(cmd),
+        ctx: {},
       });
 
       return {
@@ -746,6 +752,7 @@ export const View = ({
       </div>
 
       <Toast.View
+        ctx={{}}
         model={model.toast}
         dispatch={(c) => dispatch({ t: "toast", c })}
       />

@@ -115,12 +115,20 @@ export type ClientModule<T extends ClientModuleTypes> = {
  * @param updaters - a list of update functions to apply to the model
  * @returns Accumulated output from all the update functions
  */
-const chain = <T extends ClientModuleTypes>(
-  initial: Output<T>,
-  ...updaters: ((input: T["Model"]) => Output<T>)[]
-): Output<T> => {
-  const outMsg: OutputMsg<T>[] = initial.msg ? [...initial.msg] : [];
-  const eff: Eff<T["Msg"]>[] = initial.eff ? [initial.eff] : [];
+export const chain = <TModel, TMsg, TOutMsg>(
+  initial: { model: TModel; eff?: Eff<TMsg>; msg?: TOutMsg[] },
+  ...updaters: ((input: TModel) => {
+    model: TModel;
+    eff?: Eff<TMsg>;
+    msg?: TOutMsg[];
+  })[]
+): {
+  model: TModel;
+  eff: Eff<TMsg>;
+  msg: TOutMsg[];
+} => {
+  const outMsg: TOutMsg[] = initial.msg ? [...initial.msg] : [];
+  const eff: Eff<TMsg>[] = initial.eff ? [initial.eff] : [];
 
   let model = initial.model;
   let i = 0;

@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { ClientCtx, showToast } from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Posix } from "gamezilla/@SHARED/core";
 import { withMeta } from "gamezilla/@SHARED/event-stream";
