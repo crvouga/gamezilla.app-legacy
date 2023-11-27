@@ -69,22 +69,8 @@ export const ViewGameOverOverlay = (props: Props) => {
     <Transition
       id="game-over-overlay"
       mode="out-in"
-      onEnter={async (node) => {
-        await node.animate([{ opacity: 0 }, { opacity: 1 }], {
-          duration: 200,
-          delay: 500,
-          easing: "ease-in-out",
-          fill: "both",
-        }).finished;
-      }}
-      onExit={async (node) => {
-        await node.animate([{ opacity: 1 }, { opacity: 0 }], {
-          duration: 200,
-          delay: 0,
-          easing: "ease-in-out",
-          fill: "both",
-        }).finished;
-      }}>
+      onEnter={fadeIn}
+      onExit={fadeOut}>
       {gameOver?.t === "winner" && (
         <button
           class="absolute inset-0 flex flex-col items-center justify-center bg-black/70"
@@ -119,6 +105,24 @@ export const ViewGameOverOverlay = (props: Props) => {
       )}
     </Transition>
   );
+};
+
+const fadeIn = async (node: HTMLElement) => {
+  await node.animate([{ opacity: 0 }, { opacity: 1 }], {
+    duration: 200,
+    delay: 500,
+    easing: "ease-in-out",
+    fill: "both",
+  }).finished;
+};
+
+const fadeOut = async (node: HTMLElement) => {
+  await node.animate([{ opacity: 1 }, { opacity: 0 }], {
+    duration: 200,
+    delay: 0,
+    easing: "ease-in-out",
+    fill: "both",
+  }).finished;
 };
 
 const Winner = ({
