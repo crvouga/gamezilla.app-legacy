@@ -1,13 +1,13 @@
 import {
   APP_SOUND,
   AppRoute,
+  BaseCmd,
   ClientEvt,
   RouteCmd,
   SoundCmd,
   playSound,
-  BaseCmd,
 } from "gamezilla/@CHILD/app/@SHARED/client";
-import { Browser, Eff, UnitInterval } from "gamezilla/@SHARED/core";
+import { Browser, Eff } from "gamezilla/@SHARED/core";
 
 //
 //
@@ -75,7 +75,7 @@ export const update = ({
       return {
         model,
         eff: Browser.back,
-        cmd: [playSound(APP_SOUND.tap, UnitInterval.init(0.5))],
+        cmd: [playSound(APP_SOUND.tap)],
       };
     }
 
@@ -86,7 +86,7 @@ export const update = ({
           currentRoute: msg.route,
         },
         eff: Browser.push(AppRoute.encode(msg.route)),
-        cmd: [playSound(APP_SOUND.tap, UnitInterval.init(0.5))],
+        cmd: [playSound(APP_SOUND.tap)],
       };
     }
 
