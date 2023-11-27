@@ -98,28 +98,28 @@ export const chain = <Model, Msg, Evt, Cmd>(
   };
 };
 
+type NullishItems<T> = T | null | undefined | Array<NullishItems<T>>;
+
 /**
  * @description
  * A helper function used for composing update functions together.
  */
-export function batchMsgs<T>(
-  ...msgs: (T | null | undefined | (T | null | undefined)[])[]
-): T[] {
-  const [head, tail] = msgs;
+export function batchMsgs<T>(...msgs: Array<NullishItems<T>>): Array<T> {
+  const flattened: Array<T> = [];
 
-  if (!head) {
-    return [];
+  const stack = [...msgs];
+
+  while (stack.length > 0) {
+    const item = stack.pop();
+
+    if (Array.isArray(item)) {
+      stack.push(...item);
+    } else if (item !== null && item !== undefined) {
+      flattened.push(item);
+    }
   }
 
-  if (head === null || head === undefined) {
-    return batchMsgs(tail);
-  }
-
-  if (Array.isArray(head)) {
-    return batchMsgs(...head, tail);
-  }
-
-  return [head, ...batchMsgs(tail)];
+  return flattened.reverse();
 }
 
 /**
