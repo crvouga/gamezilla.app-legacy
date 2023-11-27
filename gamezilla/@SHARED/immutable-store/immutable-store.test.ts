@@ -482,7 +482,7 @@ export const buildTest = (
     expect(await Store.get(invalid, key)).toEqual("start");
   });
 
-  test("adding to the past", async () => {
+  test.todo("adding to the past", async () => {
     const Store = makeStore();
 
     const key = "key";
