@@ -1,104 +1,103 @@
-import { ClientCmd, ClientEvt } from "gamezilla/@CHILD/app/@SHARED/client";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 
-export type AppClientTypes = {
-  //
-  ClientModel: any;
-  ClientMsg: any;
-  //
-  ToClient: any;
-  ToServer: any;
-  //
-  ViewCtx: any;
-  ClientCtx: any;
-  //
-  Cmd: any;
+export type ClientModuleTypes = {
+  /**
+   * `Model` is the state of the module
+   */
+  Model: any;
+  /**
+   * `Msg` is a message that is local to the module
+   */
+  Msg: any;
+  /**
+   * `ToClient` is a message to send to the client component of the module
+   */
+  FromServer: any;
+  /**
+   * `Ctx` is data passed down from parent modules
+   */
+  Ctx: any;
+  /**
+   * `InCmd` is a message from other modules. Usually verbs
+   */
+  InCmd: any;
+  /**
+   * `InEvt` is a message to notify other modules. Usually past tense verbs
+   */
+  InEvt: any;
+  /**
+   * `OutCmd` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
+   */
+  OutCmd: any;
+  /**
+   * `OutEvt` is a message that is only produced by this module. Always past tense verbs
+   */
+  OutEvt: any;
 };
 
-type Output<T extends AppClientTypes> = {
-  model: T["ClientModel"];
-  eff?: Eff<T["ClientMsg"]>;
-  msg?: OutMsg<T>[];
+export type InputMsg<T extends ClientModuleTypes> =
+  | ({ v: "msg" } & T["Msg"])
+  | ({ v: "from-server" } & T["FromServer"])
+  | ({ v: "evt" } & T["InEvt"])
+  | ({ v: "cmd" } & T["InCmd"]);
+
+export type OutputMsg<T extends ClientModuleTypes> =
+  | ({ v: "cmd" } & T["OutCmd"])
+  | ({ v: "evt" } & T["OutEvt"]);
+
+export type Output<T extends ClientModuleTypes> = {
+  /**
+   * `model` will be the new state of the module
+   */
+  model: T["Model"];
+  /**
+   * `eff` is a side effect to be performed. May emit a message
+   */
+  eff?: Eff<T["Msg"]>;
+  /**
+   * `msg` is out message like events and commands
+   */
+  msg?: OutputMsg<T>[];
 };
 
-export type InMsg<T extends AppClientTypes> =
-  | ({ variant: "msg" } & T["ClientMsg"])
-  | ({ variant: "from-server" } & T["ToClient"])
-  | ({ variant: "evt" } & ClientEvt)
-  | ({ variant: "cmd" } & T["Cmd"]);
-
-export type OutMsg<T extends AppClientTypes> =
-  | ({ variant: "cmd" } & ClientCmd<T>)
-  | ({ variant: "evt" } & ClientEvt);
-
-export type AppClient<T extends AppClientTypes> = {
+export type ClientModule<T extends ClientModuleTypes> = {
+  /**
+   * `init` is the initial state of the module
+   */
   init: (input: {
-    ctx: T["ClientCtx"];
-    stored: T["ClientModel"] | null;
+    //
+    ctx: T["Ctx"];
+    stored: T["Model"] | null;
   }) => Output<T>;
 
+  /**
+   * `update` handles all the state transitions and business logic of the module
+   */
   update: (input: {
-    ctx: T["ClientCtx"];
-    model: T["ClientModel"];
-    msg: InMsg<T>;
+    ctx: T["Ctx"];
+    model: T["Model"];
+    msg: InputMsg<T>;
   }) => Output<T>;
 
+  /**
+   * `subscriptions` is emits msgs specific to the module
+   */
   subscriptions: (input: {
     intervalId: string;
-    ctx: T["ClientCtx"];
-    model: T["ClientModel"];
-  }) => Sub<T["ClientMsg"]>;
+    ctx: T["Ctx"];
+    model: T["Model"];
+  }) => Sub<T["Msg"]>;
 
+  /**
+   * `View` is for rendering the UI for the module
+   */
   View: (input: {
-    ctx: T["ViewCtx"];
-    dispatch: (msg: T["ClientMsg"]) => void;
-    model: T["ClientModel"];
+    ctx: T["Ctx"];
+    dispatch: (msg: T["Msg"]) => void;
+    model: T["Model"];
   }) => VDom;
 };
-
-function tagOutMsg<TTag extends string, T extends AppClientTypes>(
-  tag: TTag,
-  msg: OutMsg<T>
-): OutMsg<{
-  ClientCtx: T["ClientCtx"];
-  ClientModel: T["ClientModel"];
-  ClientMsg: { t: TTag; c: T["ClientMsg"] };
-  ToClient: { t: TTag; c: T["ToClient"] };
-  ToServer: { t: TTag; c: T["ToServer"] };
-  ViewCtx: T["ViewCtx"];
-  Cmd: T["Cmd"];
-}> {
-  switch (msg.variant) {
-    case "cmd": {
-      const taggedCmd = ClientCmd.tag(tag, [msg]);
-
-      return {
-        ...taggedCmd[0]!,
-        variant: "cmd",
-      };
-    }
-
-    case "evt": {
-      return msg;
-    }
-  }
-}
-
-function tagOutMsgs<TTag extends string, T extends AppClientTypes>(
-  tag: TTag,
-  msg?: OutMsg<T>[]
-): OutMsg<{
-  ClientCtx: T["ClientCtx"];
-  ClientModel: T["ClientModel"];
-  ClientMsg: { t: TTag; c: T["ClientMsg"] };
-  ToClient: { t: TTag; c: T["ToClient"] };
-  ToServer: { t: TTag; c: T["ToServer"] };
-  ViewCtx: T["ViewCtx"];
-  Cmd: T["Cmd"];
-}>[] {
-  return msg?.map((m) => tagOutMsg(tag, m)) ?? [];
-}
 
 /**
  * @description
@@ -116,12 +115,12 @@ function tagOutMsgs<TTag extends string, T extends AppClientTypes>(
  * @param updaters - a list of update functions to apply to the model
  * @returns Accumulated output from all the update functions
  */
-const chain = <T extends AppClientTypes>(
+const chain = <T extends ClientModuleTypes>(
   initial: Output<T>,
-  ...updaters: ((input: T["ClientModel"]) => Output<T>)[]
+  ...updaters: ((input: T["Model"]) => Output<T>)[]
 ): Output<T> => {
-  const outMsg: OutMsg<T>[] = initial.msg ? [...initial.msg] : [];
-  const eff: Eff<T["ClientMsg"]>[] = initial.eff ? [initial.eff] : [];
+  const outMsg: OutputMsg<T>[] = initial.msg ? [...initial.msg] : [];
+  const eff: Eff<T["Msg"]>[] = initial.eff ? [initial.eff] : [];
 
   let model = initial.model;
   let i = 0;
@@ -152,7 +151,30 @@ const chain = <T extends AppClientTypes>(
   };
 };
 
-export const AppClient = {
-  tagOutMsgs,
+export const ClientModule = {
   chain,
 };
+
+export type BaseCmd<T> = T & { v: "cmd" };
+
+export function Cmd<T>(cmd: T): BaseCmd<T> {
+  return { v: "cmd", ...cmd };
+}
+
+export type BaseEvt<T> = T & { v: "evt" };
+
+export function Evt<T>(evt: T): BaseEvt<T> {
+  return { v: "evt", ...evt };
+}
+
+export type BaseMsg<T> = T & { v: "msg" };
+
+export function Msg<T>(msg: T): BaseMsg<T> {
+  return { v: "msg", ...msg };
+}
+
+export type BaseFromServer<T> = T & { v: "from-server" };
+
+export function FromServer<T>(fromServer: T): BaseFromServer<T> {
+  return { v: "from-server", ...fromServer };
+}
