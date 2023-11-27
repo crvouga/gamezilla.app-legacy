@@ -101,6 +101,30 @@ export const chain = <Model, Msg, Evt, Cmd>(
 /**
  * @description
  * A helper function used for composing update functions together.
+ */
+export function batchMsgs<T>(
+  ...msgs: (T | null | undefined | (T | null | undefined)[])[]
+): T[] {
+  const [head, tail] = msgs;
+
+  if (!head) {
+    return [];
+  }
+
+  if (head === null || head === undefined) {
+    return batchMsgs(tail);
+  }
+
+  if (Array.isArray(head)) {
+    return batchMsgs(...head, tail);
+  }
+
+  return [head, ...batchMsgs(tail)];
+}
+
+/**
+ * @description
+ * A helper function used for composing update functions together.
  * @example
  * const updated = chain(
  * { model: 0 },

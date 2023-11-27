@@ -15,7 +15,7 @@ import {
   VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Browser, Eff, Posix, Sub } from "gamezilla/@SHARED/core";
+import { Browser, Eff, Posix, Sub, batchMsgs } from "gamezilla/@SHARED/core";
 import * as AuthClient from "./@CHILD/auth/auth.client";
 import * as ChatClient from "./@CHILD/chat/chat.client";
 import * as ProfileClient from "./@CHILD/profile/profile.client";
@@ -209,7 +209,7 @@ export const update = (input: {
     acc = {
       model: updatedEvt.model,
       eff: Eff.batch([acc.eff, updatedEvt.eff]),
-      cmd: [...(acc.cmd ?? []), ...(updatedEvt.cmd ?? [])],
+      cmd: batchMsgs(acc.cmd, updatedEvt.cmd),
     };
   }
 

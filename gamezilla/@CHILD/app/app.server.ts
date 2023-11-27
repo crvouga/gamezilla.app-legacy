@@ -10,6 +10,7 @@ import {
   Posix,
   Result,
   Sub,
+  batchMsgs,
   err,
   isErr,
   ok,
@@ -421,11 +422,11 @@ const updateFromEvent = async ({
       Eff.t("space", space.eff),
       Eff.t("profile", profile.eff),
     ]),
-    cmd: [
-      ...(ServerCmd.tag("space", space.cmd) ?? []),
-      ...(ServerCmd.tag("auth", auth.cmd) ?? []),
-    ],
-    evt: [...(auth.evt ?? [])],
+    cmd: batchMsgs<ServerCmd<ToClient>>(
+      ServerCmd.tag("space", space.cmd),
+      ServerCmd.tag("auth", auth.cmd)
+    ),
+    evt: batchMsgs(auth.evt),
   };
 };
 

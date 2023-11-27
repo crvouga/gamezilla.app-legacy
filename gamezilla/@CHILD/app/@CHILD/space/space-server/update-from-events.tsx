@@ -6,7 +6,7 @@ import {
   broadcast,
   sendToUser,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff } from "gamezilla/@SHARED/core";
+import { Eff, batchMsgs } from "gamezilla/@SHARED/core";
 import { withMeta } from "gamezilla/@SHARED/event-stream";
 import * as GameServer from "../@CHILD/game/game.server";
 import {
@@ -68,9 +68,9 @@ async function updateFromEventsLoop(
 
   const accNew: Awaited<ReturnType<typeof updateGameFromEvent>> = {
     model: updatedGame.model,
-    cmd: [...(acc.cmd ?? []), ...(updatedGame.cmd ?? []), cmd],
+    cmd: batchMsgs(acc.cmd, updatedGame.cmd, cmd),
     eff: Eff.batch([acc.eff, updatedGame.eff]),
-    events: [...(rest ?? []), ...(updatedGame.events ?? [])],
+    events: batchMsgs(rest, updatedGame.events),
   };
 
   return updateFromEventsLoop(ctx, accNew);
