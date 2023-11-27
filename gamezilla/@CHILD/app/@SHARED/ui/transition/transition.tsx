@@ -11,7 +11,6 @@ export const Transition = ({
   mode,
 }: TransitionProps & {
   children?: VDom | VDom[];
-  class: string;
 }) => {
   transitionSub.publish({
     type: "props",

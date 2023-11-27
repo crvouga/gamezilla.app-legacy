@@ -1,7 +1,11 @@
-import { Eff, Transition } from "gamezilla/@SHARED/core";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { IconRobot, MyAvatar, VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import {
+  IconRobot,
+  MyAvatar,
+  Transition,
+  VDom,
+} from "gamezilla/@CHILD/app/@SHARED/ui";
 import { PlayerType } from "./view-vs-bot";
 
 //
@@ -11,91 +15,18 @@ import { PlayerType } from "./view-vs-bot";
 //
 //
 
-const toOverlayId = (gameOver: GameOver): string =>
-  gameOver.t === null ? "not-game-over" : "game-over";
+export type Model = null;
 
-const PLAY_AGAIN_ID = "play-again";
-
-const overlayConfig = Transition.config<GameOver>({
-  toId: toOverlayId,
-  enter: async (val) => {
-    const playAgainNode = await Transition.waitForElementById(PLAY_AGAIN_ID);
-    if (playAgainNode) {
-      playAgainNode.style.opacity = "0";
-    }
-    await fadeIn(toOverlayId(val), 600);
-    await fadeIn(PLAY_AGAIN_ID, 600);
-  },
-  exit: async (val) => {
-    await fadeOut(toOverlayId(val));
-    await fadeOut(PLAY_AGAIN_ID);
-  },
-});
-
-async function fadeIn(id: string, delay: number = 0) {
-  const node = await Transition.waitForElementById(id);
-
-  await node?.animate([{ opacity: 0 }, { opacity: 1 }], {
-    duration: 200,
-    delay,
-    easing: "ease-in-out",
-    fill: "both",
-  }).finished;
-}
-
-async function fadeOut(id: string) {
-  const node = await Transition.waitForElementById(id);
-  await node?.animate([{ opacity: 1 }, { opacity: 0 }], {
-    duration: 200,
-    easing: "ease-in-out",
-    fill: "both",
-  }).finished;
-}
-
-//
-//
-//
-//
-//
-//
-
-export type Model = {
-  gameOverOverlay: Transition.Model<GameOver>;
-};
-
-export function init(gameOver?: GameOver | null): Model {
-  return {
-    gameOverOverlay: Transition.init(
-      overlayConfig.toId,
-      gameOver ? [gameOver] : []
-    ),
-  };
+export function init(_gameOver?: GameOver | null): Model {
+  return null;
 }
 
 export type Msg = {
-  t: "overlay";
-  c: Transition.Msg;
+  t: null;
 };
 
-export const update = (model: Model, msg: Msg): Model => {
-  const overlay = Transition.update(model?.gameOverOverlay, msg.c);
-
-  return { gameOverOverlay: overlay };
-};
-
-export const watch = (
-  model: Model,
-  gameOver?: GameOver
-): { model: Model; eff: Eff<Msg> } => {
-  const overlay = Transition.watch(
-    overlayConfig,
-    model.gameOverOverlay,
-    gameOver ? [gameOver] : undefined
-  );
-  return {
-    model: { gameOverOverlay: overlay.model },
-    eff: Eff.t("overlay", overlay.eff),
-  };
+export const update = (model: Model, _msg: Msg): Model => {
+  return model;
 };
 
 export type GameOver =
@@ -132,50 +63,61 @@ type Props = {
 };
 
 export const ViewGameOverOverlay = (props: Props) => {
-  const { model } = props;
+  const { gameOver } = props;
 
   return (
-    <>
-      {model?.gameOverOverlay.map(({ item: gameOver }) => {
-        return (
-          <div
-            id={String(overlayConfig.toId(gameOver))}
-            key={String(overlayConfig.toId(gameOver))}
-            onClick={props.onPlayAgain}>
-            {gameOver?.t === "winner" && (
-              <div class="absolute inset-0 flex cursor-pointer flex-col justify-center bg-black/60">
-                <div class="flex-1"></div>
-                <Winner {...props} winner={gameOver.winner} />
-                {props.onPlayAgain ? (
-                  <div
-                    class="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0"
-                    id={PLAY_AGAIN_ID}>
-                    Tap to play again
-                  </div>
-                ) : (
-                  <div class="flex-1"></div>
-                )}
-              </div>
-            )}
-            {gameOver?.t === "draw" && (
-              <div class="absolute inset-0 cursor-pointer bg-black/60">
-                <div class="flex-1"></div>
-                <Draw {...props} />
-                {props.onPlayAgain ? (
-                  <div
-                    class="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0"
-                    id={PLAY_AGAIN_ID}>
-                    Tap to play again
-                  </div>
-                ) : (
-                  <div class="flex-1"></div>
-                )}
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </>
+    <Transition
+      id="game-over-overlay"
+      mode="out-in"
+      onEnter={async (node) => {
+        await node.animate([{ opacity: 0 }, { opacity: 1 }], {
+          duration: 200,
+          delay: 500,
+          easing: "ease-in-out",
+          fill: "both",
+        }).finished;
+      }}
+      onExit={async (node) => {
+        await node.animate([{ opacity: 1 }, { opacity: 0 }], {
+          duration: 200,
+          delay: 0,
+          easing: "ease-in-out",
+          fill: "both",
+        }).finished;
+      }}>
+      {gameOver?.t === "winner" && (
+        <button
+          class="absolute inset-0 flex flex-col items-center justify-center bg-black/60"
+          onClick={props.onPlayAgain}>
+          <div class="flex-1"></div>
+
+          <Winner {...props} winner={gameOver.winner} />
+
+          {props.onPlayAgain ? (
+            <div class="flex flex-1 items-center justify-center pb-2 text-2xl font-bold">
+              Tap to play again
+            </div>
+          ) : (
+            <div class="flex-1"></div>
+          )}
+        </button>
+      )}
+      {gameOver?.t === "draw" && (
+        <button
+          class="absolute inset-0 flex flex-col items-center justify-center bg-black/60"
+          onClick={props.onPlayAgain}>
+          <div class="flex-1"></div>
+          <Draw {...props} />
+          {props.onPlayAgain ? (
+            <div class="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0">
+              Tap to play again
+            </div>
+          ) : (
+            <div class="flex-1"></div>
+          )}
+        </button>
+      )}
+    </Transition>
   );
 };
 

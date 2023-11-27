@@ -48,10 +48,18 @@ if (typeof window !== "undefined" && "customElements" in window) {
           this.syncUI();
         }
       });
+
+      if (this.props.appear) {
+        Array.from(this.childNodes).forEach((child) => {
+          if (child instanceof HTMLElement) {
+            this.applyTransition(child, "enter");
+          }
+        });
+      }
     }
 
     syncUI() {
-      this.className = this.props.class;
+      this.className = this.props.class ?? "";
     }
 
     disconnectedCallback() {

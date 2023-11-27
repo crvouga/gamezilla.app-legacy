@@ -27,7 +27,7 @@ import {
   IconRightLeft,
   LoadingBar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Eff, Sub } from "gamezilla/@SHARED/core";
+import { Sub } from "gamezilla/@SHARED/core";
 import { Columns, toStatus, toTurn } from "../../@SHARED/connect-four";
 import {
   CoverArt,
@@ -139,8 +139,7 @@ export const update: Client["update"] = (input) => {
         model,
         cmd: eventToSound(gameEvent),
       };
-    },
-    (model) => watch({ ...input, model })
+    }
   );
 };
 
@@ -175,31 +174,6 @@ const eventToSound = (
   }
 };
 
-const watch = ({
-  model,
-  state,
-}: {
-  state: GameState;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} => {
-  const vsBotGame = VsBotGame.watch(
-    model.vsBotGame,
-    "columns" in state ? toGameOver(state.columns) : undefined
-  );
-
-  return {
-    model: {
-      ...model,
-      vsBotGame: vsBotGame.model,
-    },
-    eff: Eff.batch<ClientMsg>([Eff.t("vs-bot-game", vsBotGame.eff)]),
-  };
-};
-
 //
 //
 //
@@ -222,7 +196,7 @@ export const subscriptions: Client["subscriptions"] = (
 //
 //
 
-function toGameOver(columns: Columns): VsBotGame.GameOver {
+export function toGameOver(columns: Columns): VsBotGame.GameOver {
   const status = toStatus(columns);
   switch (status.type) {
     case "Playing": {
@@ -358,19 +332,7 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
                   userId: ctx.currentUserId,
                 })
               }
-              gameOver={
-                status.type === "Tie"
-                  ? { t: "draw" }
-                  : status.type === "Winner"
-                  ? {
-                      t: "winner",
-                      winner:
-                        status.winner === "player-one"
-                          ? "player-one"
-                          : "player-two",
-                    }
-                  : null
-              }
+              gameOver={toGameOver(state.columns)}
             />
           )}
         </div>
