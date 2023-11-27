@@ -23,8 +23,8 @@ import {
   initCore,
   mergeModels,
   toStartedSpace,
-  toStateSpace,
-  toStateUser,
+  toSpaceState,
+  toUserState,
 } from "./space.core";
 
 //
@@ -245,7 +245,7 @@ export const updateFromEvent = async (input: {
     }
 
     case "auth/connected-client-authenticated": {
-      const state = toStateUser(model, msg.userId);
+      const state = toUserState(model, msg.userId);
 
       return {
         model,
@@ -291,7 +291,7 @@ export const subscriptions = async ({
       continue;
     }
 
-    const space = toStateSpace(model, spaceId);
+    const space = toSpaceState(model, spaceId);
 
     if (space.type === "initial") {
       continue;

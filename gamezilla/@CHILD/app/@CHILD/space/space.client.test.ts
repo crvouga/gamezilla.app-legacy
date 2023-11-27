@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCtx, showToast } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Posix } from "gamezilla/@SHARED/core";
 import { withMeta } from "gamezilla/@SHARED/event-stream";
@@ -19,58 +19,166 @@ const ctx: ClientCtx = {
   currentUserId: UserId.generate(),
 };
 
+function init() {
+  return SpaceClient.init({ stored: null });
+}
+
+function userStartedSpace(input: {
+  model: SpaceCore.ClientModel;
+  userId: UserId;
+  spaceId: SpaceId;
+}) {
+  return SpaceClient.update({
+    ctx,
+    model: input.model,
+    msg: withMeta({
+      t: "user-started-space",
+      spaceId: input.spaceId,
+      userId: input.userId,
+    }),
+  });
+}
+
+function userJoinedSpace(input: {
+  model: SpaceCore.ClientModel;
+  userId: UserId;
+  spaceId: SpaceId;
+}) {
+  return SpaceClient.update({
+    ctx,
+    model: input.model,
+    msg: withMeta({
+      t: "user-joined-space",
+      spaceId: input.spaceId,
+      userId: input.userId,
+    }),
+  });
+}
+
+function userLeftSpace(input: {
+  model: SpaceCore.ClientModel;
+  userId: UserId;
+  spaceId: SpaceId;
+}) {
+  return SpaceClient.update({
+    ctx,
+    model: input.model,
+    msg: withMeta({
+      t: "user-left-space",
+      spaceId: input.spaceId,
+      userId: input.userId,
+    }),
+  });
+}
+
 test("current user starting space", async () => {
   const spaceId = SpaceId.generate();
 
-  const initial = SpaceClient.init({ stored: null });
+  const initial = init();
 
-  const started = SpaceClient.update({
-    ctx,
+  const started = userStartedSpace({
     model: initial.model,
-    msg: withMeta({
-      t: "user-started-space",
-      spaceId: spaceId,
-      userId: ctx.currentUserId,
-    }),
+    spaceId,
+    userId: ctx.currentUserId,
   });
 
-  const before = SpaceCore.toStateUser(initial.model, ctx.currentUserId);
-  const after = SpaceCore.toStateUser(started.model, ctx.currentUserId);
+  const before = SpaceCore.toUserState(initial.model, ctx.currentUserId);
+  const after = SpaceCore.toUserState(started.model, ctx.currentUserId);
+
+  expect(before).toEqual({ spaceId: null, userId: ctx.currentUserId });
+  expect(after).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
+});
+
+test("current user joining started space", async () => {
+  const spaceId = SpaceId.generate();
+
+  const initial = init();
+
+  const started = userStartedSpace({
+    model: initial.model,
+    spaceId,
+    userId: UserId.generate(),
+  });
+
+  const joined = userJoinedSpace({
+    model: started.model,
+    spaceId,
+    userId: ctx.currentUserId,
+  });
+
+  const before = SpaceCore.toUserState(started.model, ctx.currentUserId);
+  const after = SpaceCore.toUserState(joined.model, ctx.currentUserId);
 
   expect(before).toEqual({ spaceId: null, userId: ctx.currentUserId });
   expect(after).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
   //
 });
 
-test("current user joining started space", async () => {
+test("current user leaving joined space", async () => {
   const spaceId = SpaceId.generate();
 
-  const initial = SpaceClient.init({ stored: null });
+  const initial = init();
 
-  const started = SpaceClient.update({
-    ctx,
+  const started = userStartedSpace({
     model: initial.model,
-    msg: withMeta({
-      t: "user-started-space",
-      spaceId: spaceId,
-      userId: UserId.generate(),
-    }),
+    spaceId,
+    userId: UserId.generate(),
   });
 
-  const joined = SpaceClient.update({
-    ctx,
+  const joined = userJoinedSpace({
     model: started.model,
-    msg: withMeta({
-      t: "user-joined-space",
-      spaceId,
-      userId: ctx.currentUserId,
-    }),
+    spaceId,
+    userId: ctx.currentUserId,
   });
 
-  const before = SpaceCore.toStateUser(started.model, ctx.currentUserId);
-  const after = SpaceCore.toStateUser(joined.model, ctx.currentUserId);
+  const left = userLeftSpace({
+    model: joined.model,
+    spaceId,
+    userId: ctx.currentUserId,
+  });
 
-  expect(before).toEqual({ spaceId: null, userId: ctx.currentUserId });
-  expect(after).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
+  const before = SpaceCore.toUserState(joined.model, ctx.currentUserId);
+  const after = SpaceCore.toUserState(left.model, ctx.currentUserId);
+
+  expect(before).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
+  expect(after).toEqual({ spaceId: null, userId: ctx.currentUserId });
+  //
+});
+
+test("blocking joining space if in another space", async () => {
+  const spaceIdA = SpaceId.generate();
+  const spaceIdB = SpaceId.generate();
+
+  const initial = init();
+
+  const startedA = userStartedSpace({
+    model: initial.model,
+    spaceId: spaceIdA,
+    userId: UserId.generate(),
+  });
+
+  const joinedA = userJoinedSpace({
+    model: startedA.model,
+    spaceId: spaceIdA,
+    userId: ctx.currentUserId,
+  });
+
+  const startedB = userStartedSpace({
+    model: joinedA.model,
+    spaceId: spaceIdB,
+    userId: UserId.generate(),
+  });
+
+  const joinedB = userLeftSpace({
+    model: startedB.model,
+    spaceId: spaceIdB,
+    userId: ctx.currentUserId,
+  });
+
+  const before = SpaceCore.toUserState(joinedA.model, ctx.currentUserId);
+  const after = SpaceCore.toUserState(joinedB.model, ctx.currentUserId);
+
+  expect(before).toEqual({ spaceId: spaceIdA, userId: ctx.currentUserId });
+  expect(after).toEqual({ spaceId: spaceIdA, userId: ctx.currentUserId });
   //
 });

@@ -43,8 +43,8 @@ import {
   initCore,
   mergeModels,
   toStartedSpace,
-  toStateSpace,
-  toStateUser,
+  toSpaceState,
+  toUserState,
 } from "./space.core";
 
 //
@@ -308,7 +308,7 @@ export const subscriptions = (
       continue;
     }
 
-    const space = toStateSpace(model, spaceId);
+    const space = toSpaceState(model, spaceId);
 
     if (space.type === "initial" || space.type === "ended" || !space.game) {
       continue;
@@ -392,7 +392,7 @@ const ViewSpaceScreen = ({
   dispatch: (m: ClientMsg) => void;
   spaceId: SpaceId;
 }) => {
-  const space = toStateSpace(model, spaceId);
+  const space = toSpaceState(model, spaceId);
 
   if (space.type === "initial") {
     return <ViewSpaceNotFound ctx={ctx} />;
@@ -532,7 +532,7 @@ const ViewSpaceScreenMain = ({
   dispatch: (m: ClientMsg) => void;
   dispatchEvent: (m: Event) => void;
 }) => {
-  const user = toStateUser(model, ctx.currentUserId);
+  const user = toUserState(model, ctx.currentUserId);
 
   if (user.spaceId !== space.spaceId) {
     return (
@@ -681,7 +681,7 @@ export const ViewCurrentSpaceBar = ({
     dispatch(withMeta(msg));
   };
 
-  const userState = toStateUser(model, ctx.currentUserId);
+  const userState = toUserState(model, ctx.currentUserId);
 
   if (!userState.spaceId) {
     return null;

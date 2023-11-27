@@ -14,8 +14,8 @@ import { GameName, gameNameToString } from "../@CHILD/game/game.core";
 import {
   ClientModel,
   ClientMsg,
-  toStateSpace,
-  toStateUser,
+  toSpaceState,
+  toUserState,
 } from "../space.core";
 
 export const ViewSpaceListScreen = ({
@@ -27,7 +27,7 @@ export const ViewSpaceListScreen = ({
   ctx: ViewCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  const user = toStateUser(model, ctx.currentUserId);
+  const user = toUserState(model, ctx.currentUserId);
 
   const spaces = Object.keys(model.events.indexes.indexSpaceId ?? {}).flatMap(
     (spaceId) => {
@@ -35,7 +35,7 @@ export const ViewSpaceListScreen = ({
         return [];
       }
 
-      const state = toStateSpace(model, spaceId);
+      const state = toSpaceState(model, spaceId);
 
       if (state.type !== "started") {
         return [];

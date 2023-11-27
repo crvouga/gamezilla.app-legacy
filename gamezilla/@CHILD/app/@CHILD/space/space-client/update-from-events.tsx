@@ -19,7 +19,7 @@ import {
   ToServer,
   appendEvent,
   toStartedSpace,
-  toStateUser,
+  toUserState,
 } from "../space.core";
 
 /**
@@ -138,7 +138,7 @@ function redirectWhenSpaceStarted({
   if (
     event.t === "user-started-space" &&
     ctx.currentUserId &&
-    toStateUser(model, ctx.currentUserId).spaceId === event.spaceId
+    toUserState(model, ctx.currentUserId).spaceId === event.spaceId
   ) {
     return {
       model,
@@ -242,7 +242,7 @@ const updateSoundFromEvent = ({
     return { model };
   }
 
-  const currentUserState = toStateUser(model, ctx.currentUserId);
+  const currentUserState = toUserState(model, ctx.currentUserId);
 
   if (event.t === "user-joined-space" && event.userId === ctx.currentUserId) {
     return {

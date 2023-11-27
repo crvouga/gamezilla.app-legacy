@@ -122,7 +122,10 @@ export const update: Client["update"] = (input) => {
 
       switch (msg?.t) {
         case "user-changed-mode": {
-          return { model, gameEvent: [msg] };
+          return {
+            model,
+            gameEvent: [msg],
+          };
         }
 
         default: {

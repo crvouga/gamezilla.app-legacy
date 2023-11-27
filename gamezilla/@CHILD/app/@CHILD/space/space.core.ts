@@ -129,27 +129,21 @@ const config = EventStream.init<Event, Indexes>({
   indexSpaceId: (event) => event.spaceId,
 });
 
-export const toSpaceEvents = (
-  model: CoreModel,
-  spaceId: SpaceId
-): EventStream<Event, Indexes> => {
-  return EventStream.subset(config, model.events, "indexSpaceId", spaceId);
-};
-
-type StateUser = {
+type UserState = {
   userId: UserId;
   spaceId: SpaceId | null;
 };
 
-export const toStateUser = (model: CoreModel, userId: UserId): StateUser => {
+export const toUserState = (model: CoreModel, userId: UserId): UserState => {
   const state = toState(model);
 
   const userSpaceId = state.spaceIdByUserId[userId];
 
-  const stateUser: StateUser = {
+  const stateUser: UserState = {
     userId,
     spaceId: userSpaceId ?? null,
   };
+
   return stateUser;
 };
 
@@ -212,7 +206,7 @@ export type StateEnded = Space & {
 
 export type StateSpace = StateInitial | StateStarted | StateEnded;
 
-export const toStateSpace = (
+export const toSpaceState = (
   model: CoreModel,
   spaceId: SpaceId
 ): StateSpace => {
@@ -504,5 +498,5 @@ if (typeof window !== "undefined") {
   //@ts-ignore
   window.toState = toState;
   // @ts-ignore
-  window.toStateSpace = toStateSpace;
+  window.toStateSpace = toSpaceState;
 }
