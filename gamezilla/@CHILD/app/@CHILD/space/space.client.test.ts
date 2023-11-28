@@ -145,7 +145,7 @@ test("current user leaving joined space", async () => {
   //
 });
 
-test("blocking joining space if in another space", async () => {
+test("prevent joining a space if already in a space", async () => {
   const spaceIdA = SpaceId.generate();
   const spaceIdB = SpaceId.generate();
 
