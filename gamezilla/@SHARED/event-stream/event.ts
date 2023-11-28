@@ -6,10 +6,10 @@ export type EventMeta = {
   eventId: EventId;
 };
 
-export const withMeta = <T>(eventNew: T): T & EventMeta => {
+export const withMeta$ = <T>(eventNew: T): T & EventMeta => {
   return {
     ...eventNew,
-    happenedAt: Posix.now(),
+    happenedAt: Posix.now$(),
     eventId: EventId.generate(),
   };
 };

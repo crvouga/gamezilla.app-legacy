@@ -536,6 +536,6 @@ export const createCtx = async (): Promise<Result<string, ServerCtx>> => {
     sms,
     logger,
     dbConn,
-    now: Posix.now(),
+    now: Posix.now$(),
   });
 };

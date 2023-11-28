@@ -7,7 +7,7 @@ import {
   sendToUser,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, batchMsgs, chainAwait } from "gamezilla/@SHARED/core";
-import { withMeta } from "gamezilla/@SHARED/event-stream";
+import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 import * as GameServer from "../@CHILD/game/game.server";
 import {
   Event,
@@ -150,7 +150,7 @@ async function updateGameFromEvent({
 
   const eventsNew =
     updated.gameEvent?.map((e) =>
-      withMeta<Event>({
+      withMeta$<Event>({
         t: "game",
         spaceId: event.spaceId,
         c: e,

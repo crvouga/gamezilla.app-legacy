@@ -10,7 +10,7 @@ import {
   topicSubscribe,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Sub, chain, chainAwait } from "gamezilla/@SHARED/core";
-import { withMeta } from "gamezilla/@SHARED/event-stream";
+import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 import * as GameServer from "./@CHILD/game/game.server";
 import { updateFromEvents } from "./space-server/update-from-events";
 import { updateFromGame } from "./space-server/update-from-game";
@@ -92,7 +92,7 @@ export const update = async ({
 
       const eventsNew =
         updated.gameEvent?.map((event) =>
-          withMeta<Event>({ t: "game", spaceId, c: event })
+          withMeta$<Event>({ t: "game", spaceId, c: event })
         ) ?? [];
 
       return chainAwait(
@@ -142,7 +142,7 @@ export const updateFromClient = async (input: {
 
       const eventsNew =
         updated.gameEvent?.map((event) =>
-          withMeta<Event>({ t: "game", spaceId: msg.spaceId, c: event })
+          withMeta$<Event>({ t: "game", spaceId: msg.spaceId, c: event })
         ) ?? [];
 
       return chainAwait(

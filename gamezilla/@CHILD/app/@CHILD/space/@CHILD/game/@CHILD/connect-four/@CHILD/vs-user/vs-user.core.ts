@@ -246,7 +246,7 @@ export const reducer = (state: GameState, event: GameEvent): GameState => {
             type: "game",
             columns: EMPTY_COLUMNS,
             moveTimeLimit: state.moveTimeLimit,
-            lastMoveAt: Posix.now(),
+            lastMoveAt: Posix.now$(),
             gameId: 0,
             players: {
               "player-one": playerOne,

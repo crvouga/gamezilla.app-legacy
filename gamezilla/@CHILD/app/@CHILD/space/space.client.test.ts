@@ -2,7 +2,7 @@ import { expect, test } from "bun:test";
 import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Posix } from "gamezilla/@SHARED/core";
-import { withMeta } from "gamezilla/@SHARED/event-stream";
+import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 import * as SpaceClient from "./space.client";
 import * as SpaceCore from "./space.core";
 
@@ -14,7 +14,7 @@ const ctx: ClientCtx = {
     },
   },
   documentVisibilityState: "visible",
-  now: Posix.now(),
+  now: Posix.now$(),
   profiles: {},
   currentUserId: UserId.generate(),
 };
@@ -31,7 +31,7 @@ function userStartedSpace(input: {
   return SpaceClient.update({
     ctx,
     model: input.model,
-    msg: withMeta({
+    msg: withMeta$({
       t: "user-started-space",
       spaceId: input.spaceId,
       userId: input.userId,
@@ -47,7 +47,7 @@ function userJoinedSpace(input: {
   return SpaceClient.update({
     ctx,
     model: input.model,
-    msg: withMeta({
+    msg: withMeta$({
       t: "user-joined-space",
       spaceId: input.spaceId,
       userId: input.userId,
@@ -63,7 +63,7 @@ function userLeftSpace(input: {
   return SpaceClient.update({
     ctx,
     model: input.model,
-    msg: withMeta({
+    msg: withMeta$({
       t: "user-left-space",
       spaceId: input.spaceId,
       userId: input.userId,

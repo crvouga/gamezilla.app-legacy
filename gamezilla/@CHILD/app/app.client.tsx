@@ -523,7 +523,7 @@ const updateFromCmd = ({
   model: ClientModel;
   eff?: Eff<ClientMsg>;
 } => {
-  const ctxApp = toCtx({ model, ctx: { now: Posix.now() } });
+  const ctxApp = toCtx({ model, ctx: { now: Posix.now$() } });
   switch (cmd.t) {
     case "routing/replace":
     case "routing/back":

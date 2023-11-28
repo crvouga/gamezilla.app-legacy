@@ -32,10 +32,16 @@ const toNumber = (posixTime: Posix): number => {
   return posixTime;
 };
 
-const now = (): Posix => {
+/**
+ * Impure function that returns the current posix timestamp.
+ */
+const now$ = (): Posix => {
   return fromNumber(Date.now());
 };
 
+/**
+ * Returns the time span between two posix timestamps.
+ */
 const diff = (a: Posix, b: Posix): TimeSpan => {
   return TimeSpan.fromMilliseconds(Math.abs(a - b));
 };
@@ -44,7 +50,7 @@ export const Posix = {
   is,
   fromNumber,
   toNumber,
-  now,
+  now$,
   diff,
 };
 
@@ -113,7 +119,7 @@ const onTimeout = (intervalId: string, timeSpan: TimeSpan) => {
   const sub = intervals.get(intervalId);
 
   if (sub && sub.isSubscribed()) {
-    sub.publish(Posix.now());
+    sub.publish(Posix.now$());
 
     setTimeout(
       () => onTimeout(intervalId, timeSpan),
@@ -134,7 +140,7 @@ export const interval = <Msg>(
   const sub = intervals.get(intervalId);
 
   if (sub) {
-    return Sub.map(sub, () => f(Posix.now()));
+    return Sub.map(sub, () => f(Posix.now$()));
   }
 
   const subNew = PubSub.create<Posix>();

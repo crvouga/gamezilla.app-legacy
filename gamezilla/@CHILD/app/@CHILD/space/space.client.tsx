@@ -25,7 +25,7 @@ import {
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
-import { withMeta } from "gamezilla/@SHARED/event-stream";
+import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import * as GameClient from "./@CHILD/game/game.client";
 import { updateFromEvents } from "./space-client/update-from-events";
@@ -132,7 +132,7 @@ export const update = ({
 
       const eventsNew =
         updatedGame.gameEvent?.map((c) =>
-          withMeta<Event>({ t: "game", c, spaceId: msg.spaceId })
+          withMeta$<Event>({ t: "game", c, spaceId: msg.spaceId })
         ) ?? [];
 
       return chain(
@@ -206,7 +206,7 @@ export const updateFromServer = ({
 
           const eventsNew =
             updatedGame.gameEvent?.map((e) =>
-              withMeta<Event>({ t: "game", c: e, spaceId: msg.spaceId })
+              withMeta$<Event>({ t: "game", c: e, spaceId: msg.spaceId })
             ) ?? [];
 
           return chain(
@@ -353,7 +353,7 @@ export const View = ({
   viewBottomBar: VDom;
 }): VDom => {
   const dispatchEvent = (m: Event) => {
-    dispatch(withMeta(m));
+    dispatch(withMeta$(m));
   };
   switch (route.t) {
     case "space-list": {
@@ -678,7 +678,7 @@ export const ViewCurrentSpaceBar = ({
   dispatch: (msg: ClientMsg) => void;
 }) => {
   const dispatchEvent = (msg: Event) => {
-    dispatch(withMeta(msg));
+    dispatch(withMeta$(msg));
   };
 
   const userState = toUserState(model, ctx.currentUserId);

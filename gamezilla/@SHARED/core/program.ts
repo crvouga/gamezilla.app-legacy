@@ -67,7 +67,7 @@ export function create<Model, Msg>(
   }
 
   async function handleMsg(msg: Msg) {
-    const ctx = { now: Posix.now() };
+    const ctx = { now: Posix.now$() };
 
     const updated = await input.update({ ctx, msg, model: state.model });
     setState(updated, ctx, msg);
@@ -129,7 +129,7 @@ export function create<Model, Msg>(
   };
 
   const start = () => {
-    const ctx = { now: Posix.now() };
+    const ctx = { now: Posix.now$() };
 
     setState(state, ctx, null);
 
@@ -148,7 +148,7 @@ export function create<Model, Msg>(
   };
 
   const setModel = (newState: Model) => {
-    const ctx = { now: Posix.now() };
+    const ctx = { now: Posix.now$() };
 
     state = { model: newState };
     publish(state.model, ctx, null);

@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
 import { Posix } from "../core";
-import { EventMeta, withMeta } from "./event";
+import { EventMeta, withMeta$ } from "./event";
 import { EventStream } from "./event-stream";
 
 type Event =
@@ -24,7 +24,7 @@ const config = EventStream.init<Event, Indexes>({
 
 test("should be able to append events", () => {
   const before = EventStream.empty(config);
-  const event = withMeta<Event>({
+  const event = withMeta$<Event>({
     t: "incremented",
     userId: "1",
     counterId: "1",
@@ -36,17 +36,17 @@ test("should be able to append events", () => {
 });
 
 test("should be able to append events", () => {
-  const event1 = withMeta<Event>({
+  const event1 = withMeta$<Event>({
     t: "incremented",
     userId: "1",
     counterId: "1",
   });
-  const event2 = withMeta<Event>({
+  const event2 = withMeta$<Event>({
     t: "incremented",
     userId: "1",
     counterId: "2",
   });
-  const event3 = withMeta<Event>({
+  const event3 = withMeta$<Event>({
     t: "incremented",
     userId: "1",
     counterId: "3",
@@ -61,19 +61,19 @@ test("should be able to append events", () => {
 });
 
 test("should be able get subsets", () => {
-  const user_a_count_a = withMeta<Event>({
+  const user_a_count_a = withMeta$<Event>({
     t: "incremented",
     userId: "userA",
     counterId: "counterA",
   });
 
-  const user_a_count_b = withMeta<Event>({
+  const user_a_count_b = withMeta$<Event>({
     t: "incremented",
     userId: "userA",
     counterId: "counterB",
   });
 
-  const user_b_count_a = withMeta<Event>({
+  const user_b_count_a = withMeta$<Event>({
     t: "incremented",
     userId: "userB",
     counterId: "counterB",
@@ -110,7 +110,7 @@ test("should be able get subsets", () => {
 });
 
 test("should be able to merge", () => {
-  const t0 = Posix.now();
+  const t0 = Posix.now$();
 
   const event1 = withMetaAt(
     {
@@ -149,7 +149,7 @@ test("should be able to merge", () => {
 
 function withMetaAt(event: Event, happenedAt: Posix): Event & EventMeta {
   return {
-    ...withMeta<Event>(event),
+    ...withMeta$<Event>(event),
     happenedAt,
   };
 }
