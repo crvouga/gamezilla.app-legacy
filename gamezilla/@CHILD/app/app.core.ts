@@ -102,7 +102,7 @@ const SERVER_URL_LOCAL = "http://localhost:5000/";
 const SERVER_URL_NGROK = "https://gamezilla-server.ngrok.io/";
 const SERVER_URL_PROD = "https://server.gamezilla.app/";
 const WEB_SOCKETS_ENDPOINT = "/ws";
-const USE_NGROK = false;
+const USE_NGROK = true;
 
 const SERVER_URL = IS_PROD
   ? SERVER_URL_PROD
