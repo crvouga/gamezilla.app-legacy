@@ -102,7 +102,7 @@ const updateFromMsg: Module["update"] = ({ ctx, msg, model }) => {
         Posix.diff(model.toast.createdAt, ctx.now)
       );
 
-      if (!isToastInactive) {
+      if (isToastInactive) {
         return { model: { ...model, toast: null } };
       }
 
