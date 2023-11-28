@@ -174,7 +174,7 @@ export const subscriptions: Module["subscriptions"] = ({
   model,
 }) => {
   if (model.toast) {
-    return Time.interval(intervalId, TimeSpan.fromSeconds(0.5), () => ({
+    return Time.interval(intervalId, model.toast.duration, () => ({
       t: "time-passed",
     }));
   }
