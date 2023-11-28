@@ -144,7 +144,7 @@ const updateFromCmd: Module["update"] = ({ ctx, msg, model }) => {
       const toastNew: Toast = {
         toastId: model.runningId,
         text: msg.text,
-        duration: msg.duration ?? TimeSpan.fromSeconds(3),
+        duration: msg.duration ?? TimeSpan.fromSeconds(2.5),
         variant: msg.toastVariant ?? "info",
         createdAt: ctx.now,
       };
@@ -172,7 +172,7 @@ export const subscriptions: Module["subscriptions"] = ({
   model,
 }) => {
   if (model.toast) {
-    return Time.interval(intervalId, TimeSpan.fromSeconds(1), () => ({
+    return Time.interval(intervalId, TimeSpan.fromSeconds(0.5), () => ({
       t: "time-passed",
     }));
   }
