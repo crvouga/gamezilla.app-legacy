@@ -689,7 +689,7 @@ export const subscriptions = (input: {
   intervalId: string;
   model: ClientModel;
 }): Sub<ClientMsg> => {
-  const { model, intervalId } = input;
+  const { ctx, model, intervalId } = input;
 
   const ctxApp = toCtx(input);
 
@@ -698,6 +698,14 @@ export const subscriptions = (input: {
     Sub.tag("wire", Wire.subscriptions({ transport })),
     Sub.tag("platform", Platform.subscriptions),
     Sub.tag("routing", Routing.subscriptions),
+    Sub.tag(
+      "toast",
+      Toast.subscriptions({
+        ctx: ctx,
+        intervalId: `${intervalId}/toast`,
+        model: model.toast,
+      })
+    ),
     Sub.tag(
       "auth",
       AuthClient.subscriptions({
