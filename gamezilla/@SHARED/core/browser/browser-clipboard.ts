@@ -1,4 +1,4 @@
-import { Result } from "../result";
+import { Result } from "../data/result";
 import { Task } from "../task";
 
 export type CopyResult = Result<Problem, null>;

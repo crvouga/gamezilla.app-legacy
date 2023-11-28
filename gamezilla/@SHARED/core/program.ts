@@ -1,6 +1,6 @@
 import { Eff } from "./eff";
 import { Sub } from "./sub";
-import { Posix } from "./time";
+import { Posix } from "./data";
 
 export type Ctx = { now: Posix };
 
@@ -164,3 +164,7 @@ export function create<Model, Msg>(
     },
   };
 }
+
+export const Program = {
+  create,
+};

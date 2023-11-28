@@ -1,4 +1,4 @@
-import { p } from "./pipe";
+import { p } from "./utils/pipe";
 import { Task } from "./task";
 
 export type Eff<Msg = never> = (dispatch: (msg: Msg) => void) => void;

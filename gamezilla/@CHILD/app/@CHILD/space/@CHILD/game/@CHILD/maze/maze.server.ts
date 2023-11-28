@@ -1,5 +1,5 @@
 import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
-import { TimeSpan } from "gamezilla/@SHARED/core/time-span";
+import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";
 import {
   Res,
   ServerModel,

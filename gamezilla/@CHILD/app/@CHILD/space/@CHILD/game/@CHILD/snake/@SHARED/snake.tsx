@@ -1,5 +1,5 @@
 import { NonNegInt } from "gamezilla/@SHARED/core";
-import { TimeSpan } from "gamezilla/@SHARED/core/time-span";
+import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";
 import { Direction } from "./direction";
 import { Position } from "./position";
 

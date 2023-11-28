@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { batchMsgs } from "./utils";
+import { batchMsgs } from "./update";
 
 test("batchMsgs", () => {
   const expected = [{ t: "foo" }, { t: "bar" }, { t: "baz" }];

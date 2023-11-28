@@ -1,4 +1,4 @@
-import { err, NonEmpty, ok, Result, shuffle } from "gamezilla/@SHARED/core";
+import { err, NonEmpty, ok, Result, Random } from "gamezilla/@SHARED/core";
 import { Direction, Position } from "./gomoku-position";
 
 export type Board = {
@@ -163,7 +163,7 @@ export const toBestMove = ({
   stone: Stone;
   board: Board;
 }) => {
-  for (const position of shuffle(String(Math.random()), allPositions)) {
+  for (const position of Random.shuffle(String(Math.random()), allPositions)) {
     const moved = move({ position, stone, board });
     if (moved.t === "ok") {
       return position;

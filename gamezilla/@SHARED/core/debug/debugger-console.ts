@@ -3,9 +3,9 @@
  *
  * @since 0.5.0
  */
-import { Option } from '../option';
-import { p } from '../pipe';
-import { Debugger, DebugMsg } from './debugger-commons';
+import { Option } from "../data/option";
+import { p } from "../utils/pipe";
+import { Debugger, DebugMsg } from "./debugger-commons";
 
 /**
  * **[UNSAFE]** Simple debugger that uses the standard browser's `console`
@@ -19,34 +19,34 @@ export const makeDebugger = <Model, Msg extends {}>(): Debugger<Model, Msg> => {
       debug: (data) => {
         const [action, model] = data;
 
-        console.group('%cLOG', 'background-color: green; color: black');
+        console.group("%cLOG", "background-color: green; color: black");
 
         // --- Action
-        if (action.type === 'INIT') {
-          console.info('[INIT]');
+        if (action.type === "INIT") {
+          console.info("[INIT]");
         }
 
-        if (action.type === 'MESSAGE') {
-          const showType = p(action, getMsgType, Option.withDefault(''));
+        if (action.type === "MESSAGE") {
+          const showType = p(action, getMsgType, Option.withDefault(""));
 
           console.groupCollapsed(
             `[MESSAGE] %c${showType}`,
-            'font-weight: bold'
+            "font-weight: bold"
           );
           console.dir(action.payload);
           console.groupEnd();
         }
 
         // --- Model
-        console.groupCollapsed('[MODEL]');
+        console.groupCollapsed("[MODEL]");
         console.dir(model);
         console.groupEnd();
         console.groupEnd();
       },
 
       stop: () => {
-        console.group('%cLOG', 'background-color: green; color: black');
-        console.info('--- stop debugger ---');
+        console.group("%cLOG", "background-color: green; color: black");
+        console.info("--- stop debugger ---");
         console.groupEnd();
       },
     };
@@ -61,39 +61,39 @@ function getMsgType<Msg>(m: DebugMsg<Msg>): Option<string> {
   // todo: remove any
   const { payload } = m as any;
 
-  const tag = Option.fromNullable(payload['tag']);
+  const tag = Option.fromNullable(payload["tag"]);
 
-  if (tag.type === 'Some') {
+  if (tag.type === "Some") {
     return tag;
   }
 
-  const _tag = Option.fromNullable(payload['_tag']);
+  const _tag = Option.fromNullable(payload["_tag"]);
 
-  if (_tag.type === 'Some') {
+  if (_tag.type === "Some") {
     return _tag;
   }
 
-  const type = Option.fromNullable(payload['type']);
+  const type = Option.fromNullable(payload["type"]);
 
-  if (type.type === 'Some') {
+  if (type.type === "Some") {
     return type;
   }
 
-  const _type = Option.fromNullable(payload['_type']);
+  const _type = Option.fromNullable(payload["_type"]);
 
-  if (_type.type === 'Some') {
+  if (_type.type === "Some") {
     return _type;
   }
 
-  const kind = Option.fromNullable(payload['kind']);
+  const kind = Option.fromNullable(payload["kind"]);
 
-  if (kind.type === 'Some') {
+  if (kind.type === "Some") {
     return kind;
   }
 
-  const _kind = Option.fromNullable(payload['_kind']);
+  const _kind = Option.fromNullable(payload["_kind"]);
 
-  if (_kind.type === 'Some') {
+  if (_kind.type === "Some") {
     return _kind;
   }
 

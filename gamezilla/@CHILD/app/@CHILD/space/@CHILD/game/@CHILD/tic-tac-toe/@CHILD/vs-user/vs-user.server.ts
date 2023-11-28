@@ -32,7 +32,7 @@ import {
   startGame,
   stopPlaying,
 } from "./vs-user.core";
-import { TimeSpan } from "gamezilla/@SHARED/core/time-span";
+import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";
 
 //
 //

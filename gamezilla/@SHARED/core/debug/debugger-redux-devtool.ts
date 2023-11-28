@@ -5,10 +5,10 @@
  *
  * @since 0.5.0
  */
-import * as Json from "../json";
-import { p } from "../pipe";
+import * as Json from "../data/json";
+import { p } from "../utils/pipe";
 import { Program } from "../program";
-import { Result, isErr } from "../result";
+import { Result, isErr } from "../data/result";
 import { PubSub, Sub } from "../sub";
 import { Task } from "../task";
 import { toMsgPayload, toMsgType } from "../utils";

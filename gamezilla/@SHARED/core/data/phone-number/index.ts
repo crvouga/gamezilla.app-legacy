@@ -1,4 +1,4 @@
-import { Result } from "../../result";
+import { Result } from "../result";
 import { Iso3166Alpha2Code } from "../Iso-3166-alpha-2-code";
 import { phone } from "./phone";
 

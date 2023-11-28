@@ -1,4 +1,4 @@
-import { Eff } from "./eff";
+import { Eff } from "../eff";
 
 /**
  *

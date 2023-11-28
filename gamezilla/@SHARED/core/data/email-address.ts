@@ -1,4 +1,4 @@
-import { err, ok, Result } from "../result";
+import { err, ok, Result } from "./result";
 
 type Problem = "Invalid";
 

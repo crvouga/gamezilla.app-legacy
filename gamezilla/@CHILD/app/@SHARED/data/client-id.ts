@@ -1,4 +1,4 @@
-import { Result } from "../../../../@SHARED/core/result";
+import { Result } from "../../../../@SHARED/core/data/result";
 
 export type ClientId = string & { _opaque: "ClientId" };
 

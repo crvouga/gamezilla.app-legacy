@@ -1,4 +1,4 @@
-import { p, shuffle } from "gamezilla/@SHARED/core";
+import { p, Random } from "gamezilla/@SHARED/core";
 import { Position } from "./position";
 import { PositionSet } from "./position-set";
 
@@ -43,7 +43,7 @@ export const initMines = ({
 }): PositionSet => {
   return p(
     Position.range({ maxX: columnCount, maxY: rowCount }),
-    (x) => shuffle(seed, x),
+    (x) => Random.shuffle(seed, x),
     (x) => x.slice(0, mineCount),
     PositionSet.fromArray
   );
