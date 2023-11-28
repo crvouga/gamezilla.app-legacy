@@ -60,7 +60,7 @@ export type PlatformCmd<Msg> =
   | {
       t: "platform/start-timeout";
       timeoutId: string | number;
-      duration: number;
+      duration: TimeSpan;
       msg: Msg;
     }
   | {
@@ -76,7 +76,7 @@ export const focusView = <T extends ClientCmdTypes>(
 
 export const startTimeout = <T extends ClientCmdTypes>(
   timeoutId: string | number,
-  duration: number,
+  duration: TimeSpan,
   msg: T["ClientMsg"]
 ): ClientCmd<T> => {
   return {
@@ -133,13 +133,13 @@ export type ToastCmd = {
   t: "toast/enqueue";
   text: string;
   toastVariant?: "error" | "info";
-  duration?: number;
+  duration?: TimeSpan;
 };
 
 export const showToast = <T extends ClientCmdTypes>(
   text: string,
   variant?: "error" | "info",
-  duration?: number
+  duration?: TimeSpan
 ): ClientCmd<T> => {
   return {
     t: "toast/enqueue",

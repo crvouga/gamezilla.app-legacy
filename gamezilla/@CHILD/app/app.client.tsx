@@ -105,7 +105,7 @@ export const init = ({
 
   const toast = Toast.init({
     stored: stored?.toast ?? null,
-    ctx: {},
+    ctx: ctx,
   });
 
   const wire = Wire.init({
@@ -269,7 +269,7 @@ const updateMain = ({
 
     case "toast": {
       const updated = Toast.update({
-        ctx: {},
+        ctx: ctx,
         model: model.toast,
         msg: Msg(msg.c),
       });
@@ -546,7 +546,7 @@ const updateFromCmd = ({
       const toast = Toast.update({
         model: model.toast,
         msg: Cmd(cmd),
-        ctx: {},
+        ctx: ctxApp,
       });
 
       return {
@@ -752,7 +752,7 @@ export const View = ({
       </div>
 
       <Toast.View
-        ctx={{}}
+        ctx={{ now }}
         model={model.toast}
         dispatch={(c) => dispatch({ t: "toast", c })}
       />

@@ -298,7 +298,7 @@ const updateFromServer: Client["update"] = ({ msg, model }) => {
           showToast(
             `Sent code to ${PhoneNumber.toString(msg.phoneNumber)}`,
             "info",
-            4000
+            TimeSpan.fromSeconds(4)
           ),
           focusCodeInput,
           playSound(APP_SOUND.navForwardMin),

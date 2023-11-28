@@ -75,7 +75,7 @@ const timeouts = new Map<string | number, string | number>();
 
 export const startTimeout = <Msg>(
   timeoutId: string | number,
-  duration: number,
+  duration: TimeSpan,
   msg: Msg
 ): Eff<Msg> => {
   return (dispatch) => {
@@ -89,7 +89,7 @@ export const startTimeout = <Msg>(
       }
 
       timeouts.delete(timeoutId);
-    }, duration);
+    }, TimeSpan.toMilliseconds(duration));
   };
 };
 

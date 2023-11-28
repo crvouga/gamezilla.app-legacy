@@ -1,11 +1,6 @@
-import {
-  PlatformCmd,
-  ToastCmd,
-  cancelTimeout,
-  startTimeout,
-} from "gamezilla/@CHILD/app/@SHARED/client";
+import { ToastCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconXMark, Transition, cn } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Sub } from "gamezilla/@SHARED/core";
+import { Posix, Sub, Time, TimeSpan } from "gamezilla/@SHARED/core";
 import { ClientModule } from "../@SHARED/architecture/app-client-v2";
 
 //
@@ -20,10 +15,9 @@ type Module = ClientModule<{
   Model: Model;
   Msg: Msg;
   InCmd: ToastCmd;
-  OutCmd: PlatformCmd<Msg>;
-  //
+  Ctx: { now: Posix };
+  OutCmd: {};
   InEvt: {};
-  Ctx: {};
   FromServer: {};
   OutEvt: {};
 }>;
@@ -47,25 +41,18 @@ export type Model = {
 export type Toast = {
   toastId: number;
   text: string;
-  duration: number;
+  duration: TimeSpan;
   variant: "error" | "info";
+  createdAt: Posix;
 };
 
 export const init: Module["init"] = ({ stored }) => {
   if (stored) {
-    return {
-      model: {
-        ...stored,
-        toast: null,
-      },
-    };
+    return { model: stored };
   }
+
   return {
-    model: {
-      runningId: 0,
-      toast: null,
-      hold: {},
-    },
+    model: { runningId: 0, toast: null, hold: {} },
   };
 };
 
@@ -78,11 +65,10 @@ export const init: Module["init"] = ({ stored }) => {
 //
 
 export type Msg =
-  | { t: "time" }
+  | { t: "time-passed" }
   | { t: "pressed-down-on-toast"; toast: Toast }
   | { t: "pressed-up-on-toast"; toast: Toast }
-  | { t: "clicked-dismiss-button"; toastId: number }
-  | { t: "toast-duration-elapsed"; toastId: number };
+  | { t: "clicked-dismiss-button"; toastId: number };
 
 export const update: Module["update"] = (input) => {
   return ClientModule.chain(
@@ -92,7 +78,7 @@ export const update: Module["update"] = (input) => {
   );
 };
 
-const updateFromMsg: Module["update"] = ({ msg, model }) => {
+const updateFromMsg: Module["update"] = ({ ctx, msg, model }) => {
   if (msg.v !== "msg") {
     return { model };
   }
@@ -106,16 +92,20 @@ const updateFromMsg: Module["update"] = ({ msg, model }) => {
       };
     }
 
-    case "toast-duration-elapsed": {
-      if (model.toast?.toastId !== msg.toastId) {
+    case "time-passed": {
+      if (!model.toast) {
         return { model };
       }
-      return {
-        model: { ...model, toast: null },
-      };
-    }
 
-    case "time": {
+      const isToastActive = TimeSpan.lte(
+        Posix.diff(model.toast.createdAt, ctx.now),
+        model.toast.duration
+      );
+
+      if (!isToastActive) {
+        return { model: { ...model, toast: null } };
+      }
+
       return { model };
     }
 
@@ -130,6 +120,7 @@ const updateFromMsg: Module["update"] = ({ msg, model }) => {
         },
       };
     }
+
     case "pressed-up-on-toast": {
       const holdNew = { ...model.hold };
       delete holdNew[msg.toast.toastId];
@@ -143,7 +134,7 @@ const updateFromMsg: Module["update"] = ({ msg, model }) => {
   }
 };
 
-const updateFromCmd: Module["update"] = ({ msg, model }) => {
+const updateFromCmd: Module["update"] = ({ ctx, msg, model }) => {
   if (msg.v !== "cmd") {
     return { model };
   }
@@ -153,8 +144,9 @@ const updateFromCmd: Module["update"] = ({ msg, model }) => {
       const toastNew: Toast = {
         toastId: model.runningId,
         text: msg.text,
-        duration: msg.duration ?? 2000,
+        duration: msg.duration ?? TimeSpan.fromSeconds(3),
         variant: msg.toastVariant ?? "info",
+        createdAt: ctx.now,
       };
 
       return {
@@ -163,14 +155,6 @@ const updateFromCmd: Module["update"] = ({ msg, model }) => {
           runningId: model.runningId + 1,
           toast: toastNew,
         },
-
-        cmd: [
-          startTimeout(toastNew.toastId, toastNew.duration, {
-            t: "toast-duration-elapsed",
-            toastId: model.runningId,
-          }),
-          cancelTimeout(toastNew.toastId),
-        ],
       };
     }
   }
@@ -183,7 +167,16 @@ const updateFromCmd: Module["update"] = ({ msg, model }) => {
 //
 //
 
-export const subscriptions: Module["subscriptions"] = () => {
+export const subscriptions: Module["subscriptions"] = ({
+  intervalId,
+  model,
+}) => {
+  if (model.toast) {
+    return Time.interval(intervalId, TimeSpan.fromSeconds(1), () => ({
+      t: "time-passed",
+    }));
+  }
+
   return Sub.None;
 };
 
