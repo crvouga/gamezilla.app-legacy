@@ -14,12 +14,14 @@ import { ClientModule } from "../@SHARED/architecture/app-client-v2";
 type Module = ClientModule<{
   Model: Model;
   Msg: Msg;
+  //
   InCmd: ToastCmd;
   Ctx: { now: Posix };
-  OutCmd: {};
-  InEvt: {};
-  FromServer: {};
-  OutEvt: {};
+  //
+  OutCmd: undefined;
+  InEvt: undefined;
+  FromServer: undefined;
+  OutEvt: undefined;
 }>;
 
 //
@@ -144,7 +146,7 @@ const updateFromCmd: Module["update"] = ({ ctx, msg, model }) => {
       const toastNew: Toast = {
         toastId: model.runningId,
         text: msg.text,
-        duration: msg.duration ?? TimeSpan.fromSeconds(2.5),
+        duration: msg.duration ?? TimeSpan.fromSeconds(2),
         variant: msg.toastVariant ?? "info",
         createdAt: ctx.now,
       };
