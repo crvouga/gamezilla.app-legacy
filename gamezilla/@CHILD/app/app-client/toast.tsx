@@ -97,12 +97,12 @@ const updateFromMsg: Module["update"] = ({ ctx, msg, model }) => {
         return { model };
       }
 
-      const isToastActive = TimeSpan.lte(
-        Posix.diff(model.toast.createdAt, ctx.now),
-        model.toast.duration
+      const isToastInactive = TimeSpan.lte(
+        model.toast.duration,
+        Posix.diff(model.toast.createdAt, ctx.now)
       );
 
-      if (!isToastActive) {
+      if (!isToastInactive) {
         return { model: { ...model, toast: null } };
       }
 
