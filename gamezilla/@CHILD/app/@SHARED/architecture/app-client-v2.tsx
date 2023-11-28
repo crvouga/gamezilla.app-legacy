@@ -7,7 +7,7 @@ export type ClientModuleTypes = {
    */
   Model: any;
   /**
-   * `Msg` is a message that is local to the module
+   * `Msg` is a message that is local to the module. Should almost always be past tense like an event
    */
   Msg: any;
   /**

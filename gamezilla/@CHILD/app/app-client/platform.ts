@@ -61,14 +61,11 @@ export const update = ({
   }
 };
 
-export const updateFromCmd = <TClientMsg, TToServer>({
+export const updateFromCmd = <TClientMsg>({
   cmd,
   model,
 }: {
-  cmd: PlatformCmd<{
-    ClientMsg: TClientMsg;
-    ToServer: TToServer;
-  }>;
+  cmd: PlatformCmd<TClientMsg>;
   model: Model;
 }): {
   model: Model;

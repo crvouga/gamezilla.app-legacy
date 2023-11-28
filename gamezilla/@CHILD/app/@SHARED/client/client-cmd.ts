@@ -19,7 +19,12 @@ export type BaseCmd<T> = T & {
 };
 
 export type ClientCmd<T extends ClientCmdTypes> = BaseCmd<
-  WireCmd<T> | ToastCmd | RouteCmd | SoundCmd | PlatformCmd<T> | ProfileCmd
+  | WireCmd<T>
+  | ToastCmd
+  | RouteCmd
+  | SoundCmd
+  | PlatformCmd<T["ClientMsg"]>
+  | ProfileCmd
 >;
 
 //
@@ -47,20 +52,20 @@ export const addProfiles = <T extends ClientCmdTypes>(profiles: {
 //
 //
 
-export type PlatformCmd<T extends ClientCmdTypes> =
+export type PlatformCmd<Msg> =
   | {
       t: "platform/focus";
       viewId: string;
     }
   | {
       t: "platform/start-timeout";
-      timeoutId: string;
+      timeoutId: string | number;
       duration: number;
-      msg: T["ClientMsg"];
+      msg: Msg;
     }
   | {
       t: "platform/cancel-timeout";
-      timeoutId: string;
+      timeoutId: string | number;
     };
 
 export const focusView = <T extends ClientCmdTypes>(
@@ -70,7 +75,7 @@ export const focusView = <T extends ClientCmdTypes>(
 };
 
 export const startTimeout = <T extends ClientCmdTypes>(
-  timeoutId: string,
+  timeoutId: string | number,
   duration: number,
   msg: T["ClientMsg"]
 ): ClientCmd<T> => {
@@ -84,7 +89,7 @@ export const startTimeout = <T extends ClientCmdTypes>(
 };
 
 export const cancelTimeout = <T extends ClientCmdTypes>(
-  timeoutId: string
+  timeoutId: string | number
 ): ClientCmd<T> => {
   return {
     t: "platform/cancel-timeout",

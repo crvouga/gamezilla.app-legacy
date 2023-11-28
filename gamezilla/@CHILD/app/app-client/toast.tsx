@@ -1,6 +1,11 @@
-import { ClientEvt, ToastCmd } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  PlatformCmd,
+  ToastCmd,
+  cancelTimeout,
+  startTimeout,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconXMark, Transition, cn } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
+import { Sub } from "gamezilla/@SHARED/core";
 import { ClientModule } from "../@SHARED/architecture/app-client-v2";
 
 //
@@ -12,13 +17,14 @@ import { ClientModule } from "../@SHARED/architecture/app-client-v2";
 //
 
 type Module = ClientModule<{
-  Ctx: {};
-  FromServer: {};
-  InCmd: ToastCmd;
-  InEvt: ClientEvt;
   Model: Model;
   Msg: Msg;
-  OutCmd: {};
+  InCmd: ToastCmd;
+  OutCmd: PlatformCmd<Msg>;
+  //
+  InEvt: {};
+  Ctx: {};
+  FromServer: {};
   OutEvt: {};
 }>;
 
@@ -158,13 +164,13 @@ const updateFromCmd: Module["update"] = ({ msg, model }) => {
           toast: toastNew,
         },
 
-        eff: Eff.batch([
-          Time.cancelTimeout(toastNew.toastId),
-          Time.startTimeout(toastNew.toastId, toastNew.duration, {
+        cmd: [
+          startTimeout(toastNew.toastId, toastNew.duration, {
             t: "toast-duration-elapsed",
             toastId: model.runningId,
           }),
-        ]),
+          cancelTimeout(toastNew.toastId),
+        ],
       };
     }
   }
