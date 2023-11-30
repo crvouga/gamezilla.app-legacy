@@ -5,6 +5,8 @@ import {
   ProfileCmd,
   RouteProfile,
   ViewCtx,
+  back,
+  replaceRoute,
   sendToServer,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -243,6 +245,22 @@ const updateFromMsg: Client["update"] = (input) => {
           },
         },
       };
+    }
+
+    case "clicked-back-button": {
+      switch (msg.from.t) {
+        case "profile": {
+          return { model, msg: [back()] };
+        }
+        case "profile-avatar": {
+          return {
+            model,
+            msg: [
+              replaceRoute({ t: "profile", c: { t: "profile-update-avatar" } }),
+            ],
+          };
+        }
+      }
     }
 
     default: {

@@ -15,6 +15,7 @@ export const ViewProfileScreen = ({
   model,
   ctx,
   userId,
+  dispatch,
 }: {
   ctx: ViewCtx;
   userId: UserId;
@@ -66,7 +67,16 @@ export const ViewProfileScreen = ({
   return (
     <div class="flex h-full w-full flex-col">
       <TopBar
-        left={<TopBarBackButton onClick={ctx.back} />}
+        left={
+          <TopBarBackButton
+            onClick={() =>
+              dispatch({
+                t: "clicked-back-button",
+                from: { t: "profile", userId: profile.userId },
+              })
+            }
+          />
+        }
         title={profile.username}
       />
       <div class="flex flex-col items-center justify-center gap-4 overflow-x-hidden p-4">

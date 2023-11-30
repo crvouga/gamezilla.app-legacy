@@ -10,7 +10,6 @@ type Profile = {
 
 export type AnonymousViewCtx = {
   push: (route: Route.AppRoute) => void;
-  back: () => void;
   currentRoute: Route.AppRoute;
   now: Posix;
   documentVisibilityState: DocumentVisibilityState;

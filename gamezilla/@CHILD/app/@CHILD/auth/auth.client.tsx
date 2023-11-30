@@ -20,7 +20,13 @@ import {
 import { Eff, Sub, notAsked } from "gamezilla/@SHARED/core";
 import { AppClient } from "../../@SHARED/architecture";
 import * as AuthClientSMS from "./@CHILD/auth-sms/auth-sms.client";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth.core";
+import {
+  ClientModel,
+  ClientMsg,
+  LogoutMsg,
+  ToClient,
+  ToServer,
+} from "./auth.core";
 
 //
 //
@@ -122,11 +128,38 @@ const updateChild: Client["update"] = (input) => {
 
 const updateFromMsg: Client["update"] = (input) => {
   const { msg, model } = input;
+
   if (msg.variant !== "msg") {
     return { model };
   }
+
   switch (msg.t) {
-    case "clicked-logout": {
+    case "logout": {
+      return updateFromLogoutMsg({ msg: msg.c, model });
+    }
+
+    case "sms": {
+      return { model };
+    }
+  }
+};
+
+const updateFromLogoutMsg = ({
+  msg,
+  model,
+}: {
+  msg: LogoutMsg;
+  model: ClientModel;
+}): ReturnType<Client["update"]> => {
+  const currentUserId =
+    model.currentUser.t === "logged-in" ? model.currentUser.userId : null;
+
+  if (!currentUserId) {
+    return { model };
+  }
+
+  switch (msg.t) {
+    case "clicked-confirm": {
       return {
         model: {
           ...model,
@@ -140,8 +173,17 @@ const updateFromMsg: Client["update"] = (input) => {
       };
     }
 
-    default: {
-      return { model };
+    case "closed":
+    case "clicked-cancel": {
+      return {
+        model: { ...model, logout: notAsked },
+        msg: [
+          replaceRoute({
+            t: "profile",
+            c: { t: "profile", userId: currentUserId },
+          }),
+        ],
+      };
     }
   }
 };
@@ -362,7 +404,6 @@ const ViewLoginScreen = ({
 export const ViewLogoutScreen = ({
   model,
   dispatch,
-  ctx,
 }: {
   ctx: AnonymousViewCtx;
   model: ClientModel;
@@ -372,15 +413,17 @@ export const ViewLogoutScreen = ({
     return <LoadingScreen />;
   }
 
+  const dispatchLogout = (c: LogoutMsg) => dispatch({ t: "logout", c });
+
   return (
     <div class="relative h-full w-full flex-1">
       <ConformationDialog
         open
         title="Logout of Gamezilla?"
         confirmTitle="Logout"
-        onClose={ctx.back}
-        onCancel={ctx.back}
-        onConfirm={() => dispatch({ t: "clicked-logout" })}
+        onClose={() => dispatchLogout({ t: "closed" })}
+        onCancel={() => dispatchLogout({ t: "clicked-cancel" })}
+        onConfirm={() => dispatchLogout({ t: "clicked-confirm" })}
       />
     </div>
   );

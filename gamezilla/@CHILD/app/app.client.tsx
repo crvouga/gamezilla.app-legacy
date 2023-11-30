@@ -791,7 +791,6 @@ const ViewMain = ({
             documentVisibilityState: model.platform.documentVisibilityState,
             push: (route) =>
               dispatch({ t: "routing", c: { t: "clicked-link", route } }),
-            back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
           }}
         />
       );
@@ -806,7 +805,6 @@ const ViewMain = ({
             currentRoute: model.routing.currentRoute,
             profiles: model.profile.profiles,
             documentVisibilityState: model.platform.documentVisibilityState,
-            back: () => dispatch({ t: "routing", c: { t: "clicked-back" } }),
             push: (route) =>
               dispatch({
                 t: "routing",

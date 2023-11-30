@@ -36,6 +36,7 @@ export type ClientModel = {
 };
 
 export type ClientMsg =
+  | { t: "clicked-back-button" }
   | { t: "inputted-phone-number"; phoneNumber: string }
   | { t: "inputted-country-code"; countryCode: Iso3166Alpha2Code }
   | { t: "clicked-phone-number-clear" }

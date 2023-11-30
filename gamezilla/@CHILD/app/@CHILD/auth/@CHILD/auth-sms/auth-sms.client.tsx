@@ -7,6 +7,7 @@ import {
   focusView,
   playSound,
   pushRoute,
+  replaceRoute,
   sendToServer,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -118,6 +119,25 @@ const updateFromMsg: Client["update"] = (input) => {
   }
 
   switch (msg.t) {
+    case "clicked-back-button": {
+      if (
+        ctx.currentRoute.t === "auth" &&
+        ctx.currentRoute.c.t === "login-phone-verify"
+      ) {
+        return {
+          model,
+          msg: [
+            replaceRoute({
+              t: "auth",
+              c: { t: "login-phone", isSelectingCountry: false },
+            }),
+          ],
+        };
+      }
+
+      return { model, msg: [replaceRoute({ t: "auth", c: { t: "login" } })] };
+    }
+
     case "inputted-phone-number": {
       return {
         model: {
@@ -366,7 +386,11 @@ export const View: Client["View"] = ({ model, dispatch, ctx }) => {
       return (
         <div class="w-full flex-1">
           <TopBar
-            left={<TopBarBackButton onClick={() => ctx.back()} />}
+            left={
+              <TopBarBackButton
+                onClick={() => dispatch({ t: "clicked-back-button" })}
+              />
+            }
             title="Login with phone"
           />
 
@@ -430,7 +454,11 @@ export const View: Client["View"] = ({ model, dispatch, ctx }) => {
       return (
         <div class="w-full flex-1">
           <TopBar
-            left={<TopBarBackButton onClick={() => ctx.back()} />}
+            left={
+              <TopBarBackButton
+                onClick={() => dispatch({ t: "clicked-back-button" })}
+              />
+            }
             title="Login with phone"
           />
 

@@ -9,7 +9,6 @@ import {
 import { ClientModel, ClientMsg } from "../profile.core";
 
 export const ViewUpdateAvatarScreen = ({
-  ctx,
   model,
   dispatch,
 }: {
@@ -24,7 +23,12 @@ export const ViewUpdateAvatarScreen = ({
           <Button
             color="primary"
             variant="text"
-            onClick={() => ctx.back()}
+            onClick={() =>
+              dispatch({
+                t: "clicked-back-button",
+                from: { t: "profile-avatar" },
+              })
+            }
             text="Cancel"
           />
         }

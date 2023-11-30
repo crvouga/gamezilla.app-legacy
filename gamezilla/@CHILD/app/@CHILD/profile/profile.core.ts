@@ -1,4 +1,3 @@
-import { RemoteResult, Result } from "gamezilla/@SHARED/core";
 import {
   ClientId,
   Profile,
@@ -8,6 +7,7 @@ import {
   UserId,
   Username,
 } from "gamezilla/@CHILD/app/@SHARED/data";
+import { RemoteResult, Result } from "gamezilla/@SHARED/core";
 
 //
 //
@@ -61,6 +61,10 @@ export type ServerModel = null;
 
 export type ClientMsg =
   | Req
+  | {
+      t: "clicked-back-button";
+      from: { t: "profile"; userId: UserId } | { t: "profile-avatar" };
+    }
   | { t: "inputted-username"; username: string }
   | { t: "inputted-avatar-seed"; seed: string }
   | { t: "inputted-avatar-style"; style: ProfileAvatarStyle }
