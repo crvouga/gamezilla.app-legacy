@@ -27,6 +27,15 @@ export type Model = {
   };
 };
 
+export type Event =
+  | {
+      t: "tick";
+    }
+  | {
+      t: "changed-direction";
+      direction: Direction;
+    };
+
 export type Status = "Paused" | "Playing";
 
 export type MouseStatus = "active" | "inactive";
