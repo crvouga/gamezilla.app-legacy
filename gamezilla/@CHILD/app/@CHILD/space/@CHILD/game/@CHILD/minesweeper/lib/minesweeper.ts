@@ -1,4 +1,4 @@
-import { Iter, NonNegInt, Num, Random, Set, p } from "gamezilla/@SHARED/core";
+import { Iter, NonNegInt, Random, Set, p } from "gamezilla/@SHARED/core";
 import { Position } from "./position";
 
 export type Model = {
@@ -44,11 +44,7 @@ const toAllPositions = (model: Model): Set<Position> => {
 };
 
 export const didWin = (model: Model) => {
-  return Set.eq(
-    Position.toKey,
-    model.holes,
-    Set.diff(toAllPositions(model), model.mines)
-  );
+  return Set.eq(model.holes, Set.diff(toAllPositions(model), model.mines));
 };
 
 export const plantFlag = (model: Model, position: Position): Model => {

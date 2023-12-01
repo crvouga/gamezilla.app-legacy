@@ -112,7 +112,7 @@ const isMember = <T>(toKey: ToKey<T>, element: T, set: Set<T>): boolean => {
   return Boolean(set._elements[key]);
 };
 
-const eq = <T>(toKey: ToKey<T>, a: Set<T>, b: Set<T>): boolean => {
+const eq = <T>(a: Set<T>, b: Set<T>): boolean => {
   return Num.eq(size(intersect(a, b)), size(a));
 };
 

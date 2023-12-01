@@ -3,7 +3,6 @@ import {
   ClientEvt,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
-import { IconSpinner } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { IClientTransport } from "./transport-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./wire.core";
@@ -192,36 +191,9 @@ export const ViewStatusBarDrawer = ({ model }: { model: ClientModel }) => {
         <div class="flex w-full items-center gap-4 p-4">
           <span class="h-5 w-5 rounded-full bg-red-500"></span>
           <p class="flex-1 text-red-500">Offline</p>
+          <button class="text-red-500">Reconnect</button>
         </div>
       );
-    }
-  }
-};
-
-export const View = ({ model }: { model: ClientModel }) => {
-  switch (model.t) {
-    case "server-connect-error": {
-      if (model.errorCount === 0) {
-        return null;
-      }
-      return (
-        <div class="flex h-6 w-full items-center justify-center gap-4 bg-yellow-600 text-white">
-          <IconSpinner class="h-5 w-5 animate-spin text-white" />
-          Server disconnected. Trying to reconnect...
-        </div>
-      );
-    }
-
-    case "server-disconnected": {
-      return (
-        <div class="flex h-6 w-full items-center justify-center gap-4 bg-red-500 text-white">
-          Server disconnected
-        </div>
-      );
-    }
-
-    default: {
-      return null;
     }
   }
 };
