@@ -89,6 +89,28 @@ test("current user starting space", async () => {
   expect(after).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
 });
 
+test("redirecting when stating a room", async () => {
+  const spaceId = SpaceId.generate();
+
+  const initial = init();
+
+  const started = userStartedSpace({
+    model: initial.model,
+    spaceId,
+    userId: ctx.currentUserId,
+  });
+
+  expect(
+    started.cmd?.filter(
+      (cmd) =>
+        cmd.t === "routing/push" &&
+        cmd.route.t === "space" &&
+        cmd.route.c.t === "space" &&
+        cmd.route.c.spaceId === spaceId
+    ).length
+  ).toBe(1);
+});
+
 test("current user joining started space", async () => {
   const spaceId = SpaceId.generate();
 

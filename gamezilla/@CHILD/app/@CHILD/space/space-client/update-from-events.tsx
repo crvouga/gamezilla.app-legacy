@@ -34,32 +34,34 @@ export function updateFromEvents(input: {
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } {
-  return updateFromEventsLoop(input.ctx, {
+  return updateFromEventsLoop(input.ctx, input.events, {
     model: input.model,
     cmd: [],
     eff: Eff.None,
-    events: input.events,
   });
 }
 
 export function updateFromEventsLoop(
   ctx: ClientCtx | AnonymousClientCtx,
+  events: EventWithMeta[],
   acc: {
     model: ClientModel;
     cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
     eff?: Eff<ClientMsg>;
-    events?: EventWithMeta[];
   }
 ): {
   model: ClientModel;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
   eff?: Eff<ClientMsg>;
-  events?: EventWithMeta[];
 } {
-  const [event, ...rest] = acc.events ?? [];
+  const [event, ...rest] = events;
 
-  if (!event || event.eventId in acc.model.events.events) {
+  if (!event) {
     return acc;
+  }
+
+  if (event.eventId in acc.model.events.events) {
+    return updateFromEventsLoop(ctx, rest, acc);
   }
 
   const spaceBefore = toStartedSpace(acc.model, event.spaceId);
@@ -86,10 +88,11 @@ export function updateFromEventsLoop(
     model: updatedGame.model,
     cmd: batchMsgs(acc.cmd, updatedGame.cmd, updated.cmd),
     eff: Eff.batch([acc.eff, updatedGame.eff, updated.eff]),
-    events: batchMsgs(rest, updatedGame.event),
   };
 
-  return updateFromEventsLoop(ctx, accNew);
+  const eventsNew = batchMsgs(rest, updatedGame.event);
+
+  return updateFromEventsLoop(ctx, eventsNew, accNew);
 }
 
 function sendEventToServer({
@@ -104,12 +107,7 @@ function sendEventToServer({
 } {
   return {
     model,
-    cmd: [
-      sendToServer({
-        ...event,
-        profile: null,
-      }),
-    ],
+    cmd: [sendToServer({ ...event, profile: null })],
   };
 }
 

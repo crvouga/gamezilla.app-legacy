@@ -55,10 +55,10 @@ export const chain = <Model, Msg, Evt, Cmd>(
   initial: Output<Model, Msg, Evt, Cmd>,
   ...updaters: ((input: Model) => Output<Model, Msg, Evt, Cmd>)[]
 ): Output<Model, Msg, Evt, Cmd> => {
-  const cmd: Cmd[] = initial.cmd ?? [];
-  const evt: Evt[] = initial.evt ?? [];
+  const cmd: Cmd[] = [...(initial.cmd ?? [])];
+  const evt: Evt[] = [...(initial.evt ?? [])];
   const eff: Eff<Msg>[] = initial.eff ? [initial.eff] : [];
-  let model = initial.model;
+  let model = { ...initial.model };
   let i = 0;
   let len = updaters.length;
 
