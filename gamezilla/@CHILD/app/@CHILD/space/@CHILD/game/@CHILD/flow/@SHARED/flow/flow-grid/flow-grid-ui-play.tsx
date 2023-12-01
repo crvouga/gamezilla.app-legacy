@@ -33,6 +33,43 @@ export const init = (grid: FlowGrid.Model): Model => {
   };
 };
 
+export type GameEvent =
+  | {
+      t: "pressed-down";
+      nodeId: Flow.NodeId;
+    }
+  | {
+      t: "pressed-up";
+      nodeId: Flow.NodeId;
+    }
+  | {
+      t: "dragged-over";
+      nodeId: Flow.NodeId;
+    };
+
+export type GameState = {
+  grid: FlowGrid.Model;
+  state: State;
+};
+
+export const reducer = ({
+  event,
+  state,
+}: {
+  event: GameEvent;
+  state: GameState;
+}): GameState => {
+  switch (state.state.t) {
+    case "dragging": {
+      return updateDragging({ msg: event, model: state, state: state.state });
+    }
+
+    case "idle": {
+      return updateIdle({ msg: event, model: state });
+    }
+  }
+};
+
 //
 //
 //
