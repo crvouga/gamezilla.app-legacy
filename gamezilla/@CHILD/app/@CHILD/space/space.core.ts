@@ -48,6 +48,7 @@ type Sync = {
   t: "sync";
   events: CoreModel["events"];
   profiles?: { [userId: UserId]: Profile };
+  causedBy: unknown;
 };
 
 export type ToClient = ToClientExtra &

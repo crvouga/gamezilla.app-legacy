@@ -195,6 +195,7 @@ export const updateFromClient = async (input: {
               broadcast({
                 t: "sync",
                 events: model.events,
+                causedBy: msg,
                 profiles: model.profileCache,
               }),
             ],
@@ -235,14 +236,18 @@ export const updateFromEvent = async (input: {
       };
     }
 
-    case "wire/client-connected": {
-      return {
-        model,
-        cmd: [
-          sendToClient([msg.clientId], { t: "sync", events: model.events }),
-        ],
-      };
-    }
+    // case "wire/client-connected": {
+    //   return {
+    //     model,
+    //     cmd: [
+    //       sendToClient([msg.clientId], {
+    //         t: "sync",
+    //         causedBy: msg,
+    //         events: model.events,
+    //       }),
+    //     ],
+    //   };
+    // }
 
     case "auth/connected-client-authenticated": {
       const state = toUserState(model, msg.userId);
@@ -250,7 +255,11 @@ export const updateFromEvent = async (input: {
       return {
         model,
         cmd: [
-          sendToClient([msg.clientId], { t: "sync", events: model.events }),
+          sendToClient([msg.clientId], {
+            t: "sync",
+            causedBy: msg,
+            events: model.events,
+          }),
           topicSubscribe([`space/${state.spaceId}`], [msg.clientId]),
           topicSubscribe([`spaces`], [msg.clientId]),
         ],

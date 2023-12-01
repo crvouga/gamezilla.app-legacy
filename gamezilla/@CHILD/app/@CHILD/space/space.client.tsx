@@ -258,8 +258,8 @@ export const updateFromEvent = (input: {
           cmd: [
             sendToServer({
               t: "sync",
+              causedBy: msg,
               events: model.events,
-              meta: { initiator: msg },
               profiles: currentUserProfile
                 ? {
                     [currentUserProfile.userId]: currentUserProfile,
