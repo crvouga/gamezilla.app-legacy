@@ -89,7 +89,7 @@ test("current user starting space", async () => {
   expect(after).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
 });
 
-test("redirecting when stating a room", async () => {
+test("redirecting when starting a space", async () => {
   const spaceId = SpaceId.generate();
 
   const initial = init();
