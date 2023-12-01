@@ -297,9 +297,14 @@ const updateMain = ({
       const updated = Wire.update({
         msg: msg.c,
         model: model.wire,
+        transport,
       });
 
-      return { model: { ...model, wire: updated.model }, evt: updated.evt };
+      return {
+        model: { ...model, wire: updated.model },
+        evt: updated.evt,
+        eff: Eff.t("wire", updated.eff),
+      };
     }
 
     case "sound": {
@@ -741,7 +746,12 @@ export const View = ({
         model={model.statusBar}
         dispatch={(c) => dispatch({ t: "status-bar", c })}
         wire={{
-          drawer: <Wire.ViewStatusBarDrawer model={model.wire} />,
+          drawer: (
+            <Wire.ViewStatusBarDrawer
+              model={model.wire}
+              dispatch={(c) => dispatch({ t: "wire", c })}
+            />
+          ),
           statusBar: <Wire.ViewStatusBar model={model.wire} />,
         }}
         sound={{

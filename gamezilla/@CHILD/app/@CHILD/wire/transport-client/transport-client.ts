@@ -1,14 +1,17 @@
 import { PubSub } from "gamezilla/@SHARED/core/sub";
 
-export type ClientTransportMsg =
+export type ClientTransportEvent =
   | { t: "server-connected" }
   | { t: "server-disconnected" }
   | { t: "server-connect-error" };
 
+type ClientTransportCommand = { t: "try-reconnect" };
+
 export type IClientTransport<T extends { ToClient: any; ToServer: any }> = {
   toClient: PubSub<T["ToClient"][]>;
   toServer: PubSub<T["ToServer"][]>;
-  wire: PubSub<ClientTransportMsg>;
+  evt: PubSub<ClientTransportEvent>;
+  cmd: PubSub<ClientTransportCommand>;
 };
 
 export const initClientTransport = <ToServer, ToClient>(): IClientTransport<{
@@ -18,7 +21,8 @@ export const initClientTransport = <ToServer, ToClient>(): IClientTransport<{
   return {
     toClient: PubSub.create(),
     toServer: PubSub.create(),
-    wire: PubSub.create(),
+    evt: PubSub.create(),
+    cmd: PubSub.create(),
   };
 };
 

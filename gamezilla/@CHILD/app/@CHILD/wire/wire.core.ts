@@ -1,6 +1,6 @@
 import { Posix } from "gamezilla/@SHARED/core";
 import { ClientId, SessionId } from "../../@SHARED/data";
-import { ClientTransportMsg } from "./transport-client";
+import { ClientTransportEvent } from "./transport-client";
 import { ServerTransportMsg } from "./transport-server";
 
 //
@@ -16,7 +16,7 @@ export type ClientModel =
   | { t: "server-disconnected" }
   | { t: "server-connected" };
 
-export type ClientMsg = ClientTransportMsg;
+export type ClientMsg = ClientTransportEvent | { t: "clicked-try-reconnect" };
 
 export type ServerModel = {
   clientsBySessionId: {
