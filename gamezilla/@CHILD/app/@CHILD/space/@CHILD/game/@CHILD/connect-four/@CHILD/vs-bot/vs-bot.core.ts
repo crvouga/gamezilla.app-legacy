@@ -6,6 +6,7 @@ import {
   VsBotSetup,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
 import * as ConnectFour from "../../@SHARED/connect-four";
+import { EventMeta } from "gamezilla/@SHARED/event-stream";
 
 //
 //
@@ -115,7 +116,7 @@ export const reducer = ({
   event,
 }: {
   state: GameState;
-  event: GameEvent;
+  event: GameEvent & EventMeta;
 }): GameState => {
   switch (state.type) {
     case "setup": {
@@ -273,16 +274,21 @@ export const reducer = ({
 
 const addError = (
   state: GameState,
-  event: GameEvent,
+  event: GameEvent & EventMeta,
   error: EventErr
 ): GameState => {
   return {
     ...state,
     errors: {
       ...state.errors,
-      [JSON.stringify(event)]: { ...event, error },
+      [event.eventId]: { ...event, error },
     },
   };
+};
+
+export const toError = (state: GameState, event: GameEvent & EventMeta) => {
+  const stateNew = reducer({ state, event });
+  return stateNew.errors[event.eventId] ?? null;
 };
 
 export const isBotTurn = (state: GameState): boolean => {

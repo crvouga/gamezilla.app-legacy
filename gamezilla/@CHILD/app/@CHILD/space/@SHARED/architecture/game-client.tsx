@@ -2,6 +2,7 @@ import { ClientCmd, ClientEvt } from "gamezilla/@CHILD/app/@SHARED/client";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { ActivityFeedItem } from "../activity-feed";
+import { EventMeta } from "gamezilla/@SHARED/event-stream";
 
 export type GameClientTypes = {
   //
@@ -25,7 +26,7 @@ type Output<T extends GameClientTypes> = {
     ClientMsg: T["ClientMsg"];
     ToServer: T["ToServer"];
   }>[];
-  gameEvent?: T["GameEvent"][];
+  gameEvent?: (T["GameEvent"] & EventMeta)[];
 };
 
 export type InMsg<T extends GameClientTypes> =
@@ -35,7 +36,7 @@ export type InMsg<T extends GameClientTypes> =
 
 export type OutMsg<T extends GameClientTypes> =
   | ({ variant: "cmd" } & ClientCmd<T>)
-  | ({ variant: "game-event" } & T["GameEvent"]);
+  | ({ variant: "game-event" } & T["GameEvent"] & EventMeta);
 
 export type GameClient<T extends GameClientTypes> = {
   init: (input: {
@@ -122,10 +123,14 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         eff: Eff.t(tag, updated.eff),
         cmd: ClientCmd.tag(tag, updated.cmd),
         gameEvent: updated.gameEvent
-          ? updated.gameEvent.map((gameEvent) => ({
-              t: tag,
-              c: gameEvent,
-            }))
+          ? updated.gameEvent.map(
+              (gameEvent): EventMeta & { t: T; c: Types["GameEvent"] } => ({
+                eventId: gameEvent.eventId,
+                happenedAt: gameEvent.happenedAt,
+                t: tag,
+                c: gameEvent,
+              })
+            )
           : undefined,
       };
     },
@@ -251,7 +256,12 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
       ? output.cmd.map((cmd) => ClientCmd.tagOne(tag, cmd))
       : undefined,
     gameEvent: output.gameEvent
-      ? output.gameEvent.map((gameEvent) => ({ t: tag, c: gameEvent }))
+      ? output.gameEvent.map((gameEvent) => ({
+          eventId: gameEvent.eventId,
+          happenedAt: gameEvent.happenedAt,
+          t: tag,
+          c: gameEvent,
+        }))
       : undefined,
   };
 };

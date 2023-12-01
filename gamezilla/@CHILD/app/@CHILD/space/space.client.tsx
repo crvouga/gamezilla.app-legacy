@@ -45,6 +45,7 @@ import {
   toStartedSpace,
   toSpaceState,
   toUserState,
+  EventWithMeta,
 } from "./space.core";
 
 //
@@ -131,8 +132,8 @@ export const update = ({
       });
 
       const eventsNew =
-        updatedGame.gameEvent?.map((c) =>
-          withMeta$<Event>({ t: "game", c, spaceId: msg.spaceId })
+        updatedGame.gameEvent?.map(
+          (c): EventWithMeta => ({ ...c, t: "game", c, spaceId: msg.spaceId })
         ) ?? [];
 
       return chain(
@@ -205,8 +206,13 @@ export const updateFromServer = ({
           });
 
           const eventsNew =
-            updatedGame.gameEvent?.map((e) =>
-              withMeta$<Event>({ t: "game", c: e, spaceId: msg.spaceId })
+            updatedGame.gameEvent?.map(
+              (e): EventWithMeta => ({
+                ...e,
+                spaceId: msg.spaceId,
+                t: "game",
+                c: e,
+              })
             ) ?? [];
 
           return chain(

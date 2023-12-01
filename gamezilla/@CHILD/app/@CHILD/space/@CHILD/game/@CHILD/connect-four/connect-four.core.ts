@@ -2,6 +2,7 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.core";
 import * as VsUser from "./@CHILD/vs-user/vs-user.core";
+import { EventMeta } from "gamezilla/@SHARED/event-stream";
 
 //
 //
@@ -85,7 +86,7 @@ export const reducer = ({
 }: {
   ctx: SpaceCtx;
   state: GameState;
-  event: GameEvent;
+  event: GameEvent & EventMeta;
 }): GameState => {
   if (event.t === "user-changed-mode") {
     switch (event.mode) {
@@ -114,7 +115,7 @@ export const reducer = ({
   if (event.t === "vs-bot" && state.t === "vs-bot") {
     return {
       t: "vs-bot",
-      c: VsBot.reducer({ state: state.c, event: event.c }),
+      c: VsBot.reducer({ state: state.c, event: { ...event, ...event.c } }),
     };
   }
 

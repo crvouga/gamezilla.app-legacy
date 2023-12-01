@@ -28,6 +28,7 @@ import {
   LoadingBar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub, TimeSpan } from "gamezilla/@SHARED/core";
+import { EventMeta, withMeta$ } from "gamezilla/@SHARED/event-stream";
 import { Columns, toStatus, toTurn } from "../../@SHARED/connect-four";
 import {
   CoverArt,
@@ -45,6 +46,7 @@ import {
   ToClient,
   ToServer,
   allBotLevels,
+  toError,
 } from "./vs-bot.core";
 
 type Client = GameClient<{
@@ -106,7 +108,12 @@ export const update: Client["update"] = (input) => {
         }
 
         default: {
-          return { model, gameEvent: [msg] };
+          const event = withMeta$(msg);
+          return {
+            model,
+            gameEvent: [event],
+            cmd: eventToSound(input.state, event),
+          };
         }
       }
     },
@@ -120,18 +127,6 @@ export const update: Client["update"] = (input) => {
           return { model };
         }
       }
-    },
-    (model) => {
-      const { gameEvent } = input;
-
-      if (!gameEvent) {
-        return { model };
-      }
-
-      return {
-        model,
-        cmd: eventToSound(gameEvent),
-      };
     },
     (model) => {
       const { state, stateBefore } = input;
@@ -183,11 +178,18 @@ export const update: Client["update"] = (input) => {
 };
 
 const eventToSound = (
-  event: GameEvent
+  state: GameState,
+  event: GameEvent & EventMeta
 ): ClientCmd<{
   ToServer: ToServer;
   ClientMsg: ClientMsg;
 }>[] => {
+  const error = toError(state, event);
+
+  if (error) {
+    return [playSound(APP_SOUND.alertErrorSm)];
+  }
+
   switch (event.t) {
     case "user-started-playing":
     case "user-stopped-playing":

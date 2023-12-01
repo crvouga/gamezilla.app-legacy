@@ -17,6 +17,7 @@ import {
   ToClient,
   ToServer,
 } from "./connect-four.core";
+import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 
 type Client = GameClient<{
   ClientModel: ClientModel;
@@ -124,7 +125,7 @@ export const update: Client["update"] = (input) => {
         case "user-changed-mode": {
           return {
             model,
-            gameEvent: [msg],
+            gameEvent: [withMeta$(msg)],
           };
         }
 

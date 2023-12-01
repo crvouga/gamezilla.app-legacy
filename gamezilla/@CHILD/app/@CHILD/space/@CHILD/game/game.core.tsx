@@ -1,6 +1,7 @@
 import { SpaceCtx } from "../../@SHARED";
 import * as ConnectFour from "./@CHILD/connect-four/connect-four.core";
 import * as Chess from "./@CHILD/chess/chess.core";
+import { EventMeta } from "gamezilla/@SHARED/event-stream";
 
 //
 //
@@ -161,7 +162,7 @@ export const reducer = ({
 }: {
   ctx: SpaceCtx;
   state: GameState;
-  event: GameEvent;
+  event: GameEvent & EventMeta;
 }): GameState => {
   if (state.t === "connect-four" && event.t === "connect-four") {
     return {
