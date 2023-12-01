@@ -1,4 +1,4 @@
-import { NonNegInt } from "gamezilla/@SHARED/core";
+import { List, NonNegInt, p } from "gamezilla/@SHARED/core";
 import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";
 import { Direction } from "./direction";
 import { Position } from "./position";
@@ -14,7 +14,7 @@ import { Position } from "./position";
 export type Model = {
   status: Status;
   head: Position;
-  tail: Position[];
+  tail: List<Position>;
   food: Position;
   tailLength: NonNegInt;
   foodEatenCount: NonNegInt;
@@ -64,10 +64,10 @@ const head: Model["head"] = {
   y: Math.floor((bounds.upper.y - bounds.lower.y) / 2),
 };
 
-const tail: Model["tail"] = [
+const tail: Model["tail"] = List.fromArray([
   Position.subtract(head, { x: 1, y: 0 }),
   Position.subtract(head, { x: 2, y: 0 }),
-];
+]);
 
 const food: Model["food"] = Position.add(head, { x: 3, y: 0 });
 
@@ -77,8 +77,8 @@ export const init: Model = {
   head,
   tail,
   food,
-  tailLength: NonNegInt.floor(4),
-  foodEatenCount: NonNegInt.floor(0),
+  tailLength: NonNegInt.of(4),
+  foodEatenCount: NonNegInt.of(0),
   direction: "right",
   directionQueue: [],
   bounds,
@@ -115,17 +115,22 @@ export const enqueueDirection = (direction: Direction, model: Model): Model => {
 };
 
 export const toEmptyPositions = (model: Model) => {
-  const snake = [model.head, ...model.tail];
+  const snake = List.concat(List.of(model.head), model.tail);
   return Position.range(model.bounds).filter((position) =>
-    snake.every((snakePosition) => !Position.equals(position, snakePosition))
+    List.every(
+      snake,
+      (snakePosition) => !Position.equals(position, snakePosition)
+    )
   );
 };
 
 export const step = (model: Model): Model => {
-  const tailNew = [model.head]
-    .concat(model.tail)
-    .slice(0, model.tailLength)
-    .map((position) => circular(model, position));
+  const tailNew = p(
+    List.of(model.head),
+    (x) => List.concat(x, model.tail),
+    (x) => List.take(model.tailLength, x),
+    (x) => List.map(x, (x) => circular(model, x))
+  );
 
   const queuedDirection = model.directionQueue[0] ?? model.direction;
 
@@ -140,8 +145,9 @@ export const step = (model: Model): Model => {
     Position.add(model.head, Direction.toVector(directionNew))
   );
 
-  const isSnakeEatingFood = [headNew, ...tailNew].some((position) =>
-    Position.equals(position, model.food)
+  const isSnakeEatingFood = List.some(
+    List.concat(List.of(model.head), tailNew),
+    (position) => Position.equals(position, model.food)
   );
 
   const foodNew = isSnakeEatingFood
@@ -229,7 +235,7 @@ export const draw = (
     );
   }
 
-  for (const position of [model.head, ...model.tail]) {
+  for (const position of List.concat(List.of(model.head), model.tail)) {
     ctx.fillStyle = theme.snake;
     ctx.strokeStyle = theme.snake;
     ctx.strokeRect(
@@ -284,10 +290,10 @@ export const CoverArt = () => {
     },
   };
 
-  const tail: Model["tail"] = [
+  const tail: Model["tail"] = List.fromArray([
     { x: 0, y: 1 },
     { x: 1, y: 1 },
-  ];
+  ]);
 
   const food: Model["food"] = { x: 2, y: 2 };
 
@@ -305,7 +311,7 @@ export const CoverArt = () => {
         />
       ))}
 
-      {tail.map(({ x, y }, index) => (
+      {List.map(tail, ({ x, y }, index) => (
         <rect
           key={`${x} ${y} ${index}`}
           x={x}

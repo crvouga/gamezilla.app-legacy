@@ -1,52 +1,59 @@
+import { Num } from "./num";
+import { NonNegInt } from "./num/non-neg-int";
+
 export type Set<T> = {
-  [key: string]: T;
+  _type: "Set";
+  _elements: { [key: string]: T };
+};
+
+export const empty = <T>(): Set<T> => {
+  return {
+    _type: "Set",
+    _elements: {},
+  };
 };
 
 type ToKey<T> = (element: T) => string;
 
-const singleton = <T>(element: T, toKey?: ToKey<T>): Set<T> => {
+const singleton = <T>(toKey: ToKey<T>, element: T): Set<T> => {
   const key = toKey ? toKey(element) : String(element);
   return {
-    [key]: element,
+    _type: "Set",
+    _elements: {
+      [key]: element,
+    },
   };
 };
 
-const fromArray = <T>(array: T[], toKey?: ToKey<T>): Set<T> => {
-  const set: Set<T> = {};
+const from = <T>(toKey: ToKey<T>, array: Iterable<T>): Set<T> => {
+  let set = empty<T>();
 
   for (const element of array) {
-    const key = toKey ? toKey(element) : String(element);
-
-    set[key] = element;
+    set = add(toKey, element, set);
   }
 
   return set;
 };
 
 const toArray = <T>(set: Set<T>): T[] => {
-  return Object.values(set);
+  return Object.values(set._elements);
 };
 
-const add = <T>(
-  element: T,
-  set: Set<T>,
-  toKey?: (element: T) => string
-): Set<T> => {
-  const key = toKey ? toKey(element) : String(element);
+const add = <T>(toKey: ToKey<T>, element: T, set: Set<T>): Set<T> => {
+  const key = toKey(element);
   return {
     ...set,
     [key]: element,
   };
 };
 
-const remove = <T>(
-  element: T,
-  set: Set<T>,
-  toKey?: (element: T) => string
-): Set<T> => {
-  const key = toKey ? toKey(element) : String(element);
-  const { [key]: _removed, ...rest } = set;
-  return rest;
+const remove = <T>(toKey: ToKey<T>, element: T, set: Set<T>): Set<T> => {
+  const key = toKey(element);
+  const { [key]: _removed, ...rest } = set._elements;
+  return {
+    ...set,
+    _elements: rest,
+  };
 };
 
 const union = <T>(a: Set<T>, b: Set<T>): Set<T> => {
@@ -57,17 +64,17 @@ const union = <T>(a: Set<T>, b: Set<T>): Set<T> => {
 };
 
 const intersect = <T>(a: Set<T>, b: Set<T>): Set<T> => {
-  const c: Set<T> = {};
+  const c = empty<T>();
 
   for (const key in a) {
-    const element = a[key];
+    const element = a._elements[key];
 
     if (!element) {
       continue;
     }
 
-    if (b[key]) {
-      c[key] = element;
+    if (b._elements[key]) {
+      c._elements[key] = element;
     }
   }
 
@@ -75,39 +82,43 @@ const intersect = <T>(a: Set<T>, b: Set<T>): Set<T> => {
 };
 
 const diff = <T>(a: Set<T>, b: Set<T>): Set<T> => {
-  const c: Set<T> = { ...a };
+  const c: Set<T> = { ...a, _elements: { ...a._elements } };
 
   for (const key in a) {
-    const element = a[key];
+    const element = a._elements[key];
 
     if (!element) {
       continue;
     }
 
-    if (b[key]) {
-      delete c[key];
+    if (b._elements[key]) {
+      delete c._elements[key];
     }
   }
 
   return c;
 };
 
-const size = <T>(a: Set<T>): number => {
-  return Object.keys(a).length;
+const size = <T>(a: Set<T>): NonNegInt => {
+  return NonNegInt.of(Object.keys(a).length);
 };
 
 const isEmpty = <T>(a: Set<T>): boolean => {
-  return size(a) === 0;
+  return Num.eq(size(a), Num.init(0));
 };
 
-const isMember = <T>(element: T, set: Set<T>, toKey?: ToKey<T>): boolean => {
-  const key = toKey ? toKey(element) : String(element);
-  return Boolean(set[key]);
+const isMember = <T>(toKey: ToKey<T>, element: T, set: Set<T>): boolean => {
+  const key = toKey(element);
+  return Boolean(set._elements[key]);
+};
+
+const eq = <T>(toKey: ToKey<T>, a: Set<T>, b: Set<T>): boolean => {
+  return Num.eq(size(intersect(a, b)), size(a));
 };
 
 export const Set = {
   singleton,
-  fromArray,
+  from,
   toArray,
   add,
   remove,
@@ -117,4 +128,5 @@ export const Set = {
   size,
   isEmpty,
   isMember,
+  eq,
 };

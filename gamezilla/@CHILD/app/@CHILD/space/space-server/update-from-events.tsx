@@ -114,6 +114,7 @@ async function syncUserWhenJoined({
         sendToUser([event.userId], {
           t: "sync",
           events: model.events,
+          causedBy: event,
         }),
       ],
     };

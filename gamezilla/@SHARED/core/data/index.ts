@@ -1,8 +1,7 @@
 export * from "./Iso-3166-alpha-2-code";
 export * from "./email-address";
-export * from "./non-neg-int";
+export * from "./num";
 export * from "./phone-number";
-export * from "./pos-num";
 export * from "./posix";
 export * from "./set";
 export * from "./time-span";
@@ -14,3 +13,5 @@ export * from "./option";
 export * from "./result";
 export * from "./range";
 export * from "./hex";
+export * from "./list";
+export * from "./iter";

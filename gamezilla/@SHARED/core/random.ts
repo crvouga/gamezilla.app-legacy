@@ -1,5 +1,7 @@
 // source: https://stackoverflow.com/questions/16801687/javascript-random-ordering-with-seed
 
+import { Iter } from "./data";
+
 const mulberry32 = (a: number) => {
   return () => {
     let t = (a += 0x6d2b79f5);
@@ -50,7 +52,7 @@ const generator = (seed: string) => {
  * shuffle("some seed", x) //=> ['b', 'a', 'c']
  * shuffle("different seed", x) //=> ['c', 'a', 'b']
  */
-const shuffle = <T>(seed: string, xs: T[]): T[] => {
+const shuffle = <T>(seed: string, xs: Iterable<T>): Iter<T> => {
   const random = generator(seed);
   const ys = [...xs];
   for (let i = ys.length - 1; i >= 0; i--) {
@@ -62,7 +64,7 @@ const shuffle = <T>(seed: string, xs: T[]): T[] => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     ys[j]! = temp;
   }
-  return ys;
+  return Iter.init(ys);
 };
 
 export const Random = {

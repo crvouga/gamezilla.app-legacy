@@ -1,33 +1,16 @@
-import { p, Random } from "gamezilla/@SHARED/core";
+import { Iter, NonNegInt, Num, Random, Set, p } from "gamezilla/@SHARED/core";
 import { Position } from "./position";
-import { PositionSet } from "./position-set";
 
 export type Model = {
-  mines: PositionSet;
-  flags: PositionSet;
-  holes: PositionSet;
-  rowCount: number;
-  columnCount: number;
+  mines: Set<Position>;
+  flags: Set<Position>;
+  holes: Set<Position>;
+  rowCount: NonNegInt;
+  columnCount: NonNegInt;
 };
 
-export const toMineCount = (model: Model, position: Position): number => {
-  let count = 0;
-
-  for (let dx = -1; dx <= 1; dx++) {
-    for (let dy = -1; dy <= 1; dy++) {
-      if (dx === 0 && dy === 0) {
-        continue;
-      }
-
-      const adjacent = Position.add(position, { x: dx, y: dy });
-
-      if (PositionSet.has(model.mines, adjacent)) {
-        count++;
-      }
-    }
-  }
-
-  return count;
+export const toMineCount = (model: Model, position: Position): NonNegInt => {
+  return Set.size(Set.intersect(model.mines, Position.toAdjacent(position)));
 };
 
 export const initMines = ({
@@ -36,55 +19,63 @@ export const initMines = ({
   mineCount,
   seed,
 }: {
-  rowCount: number;
-  columnCount: number;
-  mineCount: number;
+  rowCount: NonNegInt;
+  columnCount: NonNegInt;
+  mineCount: NonNegInt;
   seed: string;
-}): PositionSet => {
+}): Set<Position> => {
   return p(
-    Position.range({ maxX: columnCount, maxY: rowCount }),
+    Position.range(columnCount, rowCount),
     (x) => Random.shuffle(seed, x),
-    (x) => x.slice(0, mineCount),
-    PositionSet.fromArray
+    (x) => Iter.take(mineCount, x),
+    (x) => Set.from(Position.toKey, x)
   );
 };
 
 export const didLose = (model: Model) => {
-  return PositionSet.size(PositionSet.intersect(model.mines, model.holes)) > 0;
+  return !Set.isEmpty(Set.intersect(model.mines, model.holes));
+};
+
+const toAllPositions = (model: Model): Set<Position> => {
+  return Set.from(
+    Position.toKey,
+    Position.range(model.columnCount, model.rowCount)
+  );
 };
 
 export const didWin = (model: Model) => {
-  const holeCount = PositionSet.size(model.holes);
-  const mineCount = PositionSet.size(model.mines);
-  const slotCount = model.rowCount * model.columnCount;
-  return holeCount + mineCount === slotCount;
+  return Set.eq(
+    Position.toKey,
+    model.holes,
+    Set.diff(toAllPositions(model), model.mines)
+  );
 };
 
 export const plantFlag = (model: Model, position: Position): Model => {
-  if (PositionSet.has(model.holes, position)) {
+  if (Set.isMember(Position.toKey, position, model.holes)) {
     return model;
   }
 
   return {
     ...model,
-    flags: PositionSet.add(model.flags, position),
+    flags: Set.add(Position.toKey, position, model.flags),
   };
 };
 
 export const removeFlag = (model: Model, position: Position): Model => {
   return {
     ...model,
-    flags: PositionSet.remove(model.flags, position),
+    flags: Set.remove(Position.toKey, position, model.flags),
   };
 };
 
 export const digHole = (model: Model, position: Position): Model => {
-  if (PositionSet.has(model.flags, position)) {
+  if (Set.isMember(Position.toKey, position, model.flags)) {
     return model;
   }
 
   return {
     ...model,
-    holes: PositionSet.add(model.holes, position),
+    holes: Set.add(Position.toKey, position, model.holes),
   };
 };
