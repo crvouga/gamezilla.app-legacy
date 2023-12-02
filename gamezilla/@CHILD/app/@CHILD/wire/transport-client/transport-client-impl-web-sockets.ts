@@ -47,13 +47,11 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
     ws.onclose = () => {
       isConnected = false;
       if (isDocumentHidden) {
-        console.log("closed socket because document is hidden");
         return;
       }
 
       if (reconnectAttempts > MAX_RECONNECT_ATTEMPTS) {
         transport.evt.publish({ t: "server-disconnected" });
-        console.log("server disconnected. max reconnect attempts reached");
         return;
       }
       reconnectAttempts++;
