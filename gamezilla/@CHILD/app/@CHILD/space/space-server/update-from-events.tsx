@@ -14,7 +14,6 @@ import {
   EventWithMeta,
   ServerModel,
   ServerMsg,
-  StateStarted,
   ToClient,
   appendEvent,
   toStartedSpace,
@@ -28,6 +27,7 @@ export const updateFromEvents = async (input: {
 }): Promise<{
   model: ServerModel;
   cmd?: ServerCmd<ToClient>[];
+  eff?: Eff<ServerMsg>;
 }> => {
   return updateFromEventsLoop(input.ctx, {
     model: input.model,
@@ -43,33 +43,30 @@ async function updateFromEventsLoop(
 ) {
   const [event, ...rest] = acc.events ?? [];
 
-  if (!event || event.eventId in acc.model.events.events) {
+  if (!event) {
     return acc;
+  }
+
+  if (event.eventId in acc.model.events.events) {
+    return updateFromEventsLoop(ctx, acc);
   }
 
   const updated = await chainAwait(
     acc,
-    (model) => appendEvents({ model, event: event }),
-    (model) => syncUserWhenJoined({ model, event: event })
+    (model) => appendNewEvent({ model, event: event }),
+    (model) => syncUserWhenJoined({ model, event: event }),
+    (model) => sendEventToClients({ model, event: event })
   );
-
-  const space = toStartedSpace(updated.model, event.spaceId);
 
   const updatedGame = await updateGameFromEvent({
     ctx: ctx,
-    space,
     model: updated.model,
     event,
   });
 
-  const cmd =
-    event.t === "game" && space
-      ? sendToUser(Object.values(space.users), event)
-      : broadcast<ToClient>(event);
-
   const accNew: Awaited<ReturnType<typeof updateGameFromEvent>> = {
     model: updatedGame.model,
-    cmd: batchMsgs(acc.cmd, updated.cmd, updatedGame.cmd, cmd),
+    cmd: batchMsgs(acc.cmd, updated.cmd, updatedGame.cmd),
     eff: Eff.batch([acc.eff, updated.eff, updatedGame.eff]),
     events: batchMsgs(rest, updatedGame.events),
   };
@@ -77,7 +74,7 @@ async function updateFromEventsLoop(
   return updateFromEventsLoop(ctx, accNew);
 }
 
-async function appendEvents({
+async function appendNewEvent({
   model,
   event,
 }: {
@@ -89,6 +86,21 @@ async function appendEvents({
     ...appendEvent(model, [event]),
   };
   return { model: appended };
+}
+
+async function sendEventToClients({
+  model,
+  event,
+}: {
+  model: ServerModel;
+  event: EventWithMeta;
+}) {
+  const space = toStartedSpace(model, event.spaceId);
+  const cmd =
+    event.t === "game" && space
+      ? sendToUser(Object.values(space.users), event)
+      : broadcast<ToClient>(event);
+  return { model, cmd: [cmd] };
 }
 
 async function syncUserWhenJoined({
@@ -126,9 +138,7 @@ async function updateGameFromEvent({
   model,
   ctx,
   event,
-  space,
 }: {
-  space: StateStarted | null;
   ctx: ServerCtx | ReqCtx;
   model: ServerModel;
   event: EventWithMeta;
@@ -138,6 +148,8 @@ async function updateGameFromEvent({
   eff?: Eff<ServerMsg>;
   events?: EventWithMeta[];
 }> {
+  const space = toStartedSpace(model, event.spaceId);
+
   if (!space || !space.game || event.t !== "game" || !ctx.currentUserId) {
     return { model };
   }

@@ -490,7 +490,7 @@ function toState_(model: CoreModel): State {
   return state;
 }
 
-const toState = memoize((model) => model.events.hash, toState_);
+export const toState = memoize((model) => model.events.hash, toState_);
 // const toState = toState_;
 
 if (typeof window !== "undefined") {

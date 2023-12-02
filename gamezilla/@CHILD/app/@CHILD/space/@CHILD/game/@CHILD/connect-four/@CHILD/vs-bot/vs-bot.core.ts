@@ -1,4 +1,4 @@
-import { Posix } from "gamezilla/@SHARED/core";
+import { Posix, TimeSpan } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
@@ -15,8 +15,18 @@ import { EventMeta } from "gamezilla/@SHARED/event-stream";
 //
 
 export type ServerModel = {
-  isBotFindingMove: boolean;
+  botStartedFindingMoveAt: Posix | null;
 };
+
+export function isBotMoving(now: Posix, model: ServerModel) {
+  if (!model.botStartedFindingMoveAt) {
+    return false;
+  }
+  return TimeSpan.lte(
+    Posix.diff(now, model.botStartedFindingMoveAt),
+    TimeSpan.fromSeconds(5)
+  );
+}
 
 export type ClientModel = {
   opened: "activity-feed-drawer" | null;
@@ -35,10 +45,14 @@ export type ClientMsg =
   | { t: "vs-bot-setup"; c: VsBotSetup.Msg }
   | { t: "vs-bot-game"; c: VsBotGame.Msg };
 
-export type ServerMsg = {
-  t: "bot-found-best-move";
-  found: ConnectFour.BestMoveResult;
-};
+export type ServerMsg =
+  | {
+      t: "bot-found-best-move";
+      found: ConnectFour.BestMoveResult;
+    }
+  | {
+      t: "time-passed";
+    };
 
 export type ToClient = { t: null };
 

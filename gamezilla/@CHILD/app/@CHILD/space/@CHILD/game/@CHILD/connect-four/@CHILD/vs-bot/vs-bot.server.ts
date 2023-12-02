@@ -1,5 +1,5 @@
 import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import { Sub, isErr } from "gamezilla/@SHARED/core";
+import { Time, TimeSpan, isErr } from "gamezilla/@SHARED/core";
 import { ConnectFourBotWorker } from "../../@SHARED/connect-four";
 import * as ConnectFour from "../../@SHARED/connect-four/connect-four";
 import {
@@ -9,6 +9,7 @@ import {
   ServerMsg,
   ToClient,
   ToServer,
+  isBotMoving,
   isBotTurn,
   toBotPlayer,
 } from "./vs-bot.core";
@@ -34,53 +35,15 @@ export const init: Server["init"] = async ({ model }) => {
   if (model) {
     return { model };
   }
-  return { model: { isBotFindingMove: false } };
+  return { model: { botStartedFindingMoveAt: null } };
 };
 
 export const update: Server["update"] = async (input) => {
   return GameServer.chain(
     await init(input),
-    //
-    async (model): ReturnType<Server["update"]> => {
-      const { state, gameEvent } = input;
-      if (!gameEvent) {
-        return { model };
-      }
 
-      if (!isBotTurn(state)) {
-        return { model };
-      }
-
-      if (model.isBotFindingMove) {
-        return { model };
-      }
-
-      if (state.type !== "game") {
-        return { model };
-      }
-
-      if (model.isBotFindingMove) {
-        return { model };
-      }
-
-      return {
-        model: {
-          ...model,
-          isBotFindingMove: true,
-        },
-        eff: async (dispatch) => {
-          await new Promise((r) => setTimeout(r, 1000));
-          const found = ConnectFourBotWorker.findBestMove({
-            columns: state.columns,
-            maxDepth: 4,
-            maximizingPlayer: toBotPlayer(state),
-          });
-          dispatch({ t: "bot-found-best-move", found });
-        },
-      };
-    },
     async (model) => {
-      const { msg } = input;
+      const { msg, state, ctx } = input;
 
       if (!msg) {
         return { model };
@@ -91,25 +54,55 @@ export const update: Server["update"] = async (input) => {
           const { found } = msg;
 
           if (isErr(found)) {
-            return { model: { ...model, isBotFindingMove: false } };
+            return { model: { ...model, botStartedFindingMoveAt: null } };
           }
 
           const columnIndex = found.value.columnIndex;
 
           if (!ConnectFour.isColumnIndex(columnIndex)) {
-            return { model: { ...model, isBotFindingMove: false } };
+            return { model: { ...model, botStartedFindingMoveAt: null } };
           }
 
           return {
-            model: { ...model, isBotFindingMove: false },
+            model: { ...model, botStartedFindingMoveAt: null },
             gameEvent: [{ t: "bot-dropped-disc", columnIndex }],
           };
+        }
+
+        case "time-passed": {
+          if (
+            state.type === "game" &&
+            isBotTurn(state) &&
+            !isBotMoving(ctx.now, model)
+          ) {
+            return {
+              model: {
+                ...model,
+                botStartedFindingMoveAt: ctx.now,
+              },
+              eff: async (dispatch) => {
+                await new Promise((r) => setTimeout(r, 1000));
+                const found = ConnectFourBotWorker.findBestMove({
+                  columns: state.columns,
+                  maxDepth: 4,
+                  maximizingPlayer: toBotPlayer(state),
+                });
+                dispatch({ t: "bot-found-best-move", found });
+              },
+            };
+          }
+
+          return { model };
         }
       }
     }
   );
 };
 
-export const subscriptions: Server["subscriptions"] = async (_input) => {
-  return Sub.None;
+export const subscriptions: Server["subscriptions"] = async (input) => {
+  const intervalId = `${input.intervalId}/vs-bot`;
+
+  return Time.interval(intervalId, TimeSpan.fromSeconds(1), () => ({
+    t: "time-passed",
+  }));
 };

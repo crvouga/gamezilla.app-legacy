@@ -16,6 +16,7 @@ import { updateFromEvents } from "./space-server/update-from-events";
 import { updateFromGame } from "./space-server/update-from-game";
 import {
   Event,
+  toState,
   ServerModel,
   ServerMsg,
   ToClient,
@@ -23,7 +24,6 @@ import {
   initCore,
   mergeModels,
   toStartedSpace,
-  toSpaceState,
   toUserState,
 } from "./space.core";
 
@@ -144,6 +144,8 @@ export const updateFromClient = async (input: {
         updated.gameEvent?.map((event) =>
           withMeta$<Event>({ t: "game", spaceId: msg.spaceId, c: event })
         ) ?? [];
+
+      console.log("eventsNew", eventsNew);
 
       return chainAwait(
         { model },
@@ -289,35 +291,23 @@ export const subscriptions = async ({
 }): Promise<Sub<ServerMsg>> => {
   const batch: Sub<ServerMsg>[] = [];
 
-  for (const spaceId in model.games) {
+  const state = toState(model);
+
+  for (const spaceId in state.active) {
     if (!SpaceId.is(spaceId)) {
       continue;
     }
 
-    const game = model.games[spaceId];
+    const space = toStartedSpace(model, spaceId);
 
-    if (!game) {
-      continue;
-    }
-
-    const space = toSpaceState(model, spaceId);
-
-    if (space.type === "initial") {
-      continue;
-    }
-
-    if (space.type === "ended") {
-      continue;
-    }
-
-    if (!space.game) {
+    if (!space?.game) {
       continue;
     }
 
     const sub = await GameServer.subscriptions({
       ctx: { ...ctx, space: space },
       intervalId: space.spaceId,
-      model: game,
+      model: model.games[spaceId],
       state: space.game,
     });
 
