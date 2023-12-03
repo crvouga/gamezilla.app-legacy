@@ -156,6 +156,7 @@ async function updateGameFromEvent({
     gameEvent: event.c,
     state: space.game,
   });
+  
 
   const eventsNew =
     updated.gameEvent?.map((e) =>

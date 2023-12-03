@@ -263,6 +263,7 @@ export function toGameOver(columns: Columns): VsBotGame.GameOver {
 }
 
 export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
+  
   const vsBotProps: VsBotProps = {
     ctx: ctx,
     onQuit: ctx.onQuit,

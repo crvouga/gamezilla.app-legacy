@@ -1,5 +1,5 @@
 import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import { Eff, Posix, Sub, Time, TimeSpan, isErr } from "gamezilla/@SHARED/core";
+import { Posix, Sub, Time, TimeSpan, isErr } from "gamezilla/@SHARED/core";
 import { ConnectFourBotWorker } from "../../@SHARED/connect-four";
 import * as ConnectFour from "../../@SHARED/connect-four/connect-four";
 import {
@@ -41,8 +41,8 @@ export const init: Server["init"] = async ({ model }) => {
 export const update: Server["update"] = async (input) => {
   return GameServer.chain(
     await init(input),
+    (model) => watchForBotMove(model)(input),
     (model) => updateFromMsg(model)(input),
-    (model) => watchForBotMove(model)(input)
   );
 };
 
@@ -76,10 +76,6 @@ const updateFromMsg =
               return { model };
             }
 
-            if(isBotMoving(input.ctx.now, model)) {
-              return { model };
-            }
-
             return {
               model,
               gameEvent: [{ t: "bot-dropped-disc", columnIndex }],
@@ -95,14 +91,20 @@ const updateFromMsg =
 
 const watchForBotMove =
   (model: ServerModel): Server["update"] =>
-  async ({ state, ctx }) => {
+  async ({ state, ctx,...input }) => {
+
     if (state.type === "game" && shouldBotMove({ state, ctx, model })) {
-      const now = ctx.now;
-      console.log("bot started finding move at", now)
+      console.log({
+        model: model,
+         clientMsg: input.clientMsg?.t,
+         evt: input.evt?.t,
+         gameEvent: input.gameEvent?.t,
+         msg: input.msg?.t,
+      });
       return {
         model: {
           ...model,
-          botStartedFindingMoveAt: now,
+          botStartedFindingMoveAt: ctx.now,
         },
         eff: async (dispatch) => {
           await new Promise((r) => setTimeout(r, 1000/2));
@@ -110,9 +112,8 @@ const watchForBotMove =
             columns: state.columns,
             maxDepth: 4,
             maximizingPlayer: toBotPlayer(state),
-          });
-          console.log("bot found move", now)
-          dispatch({ t: "bot-found-best-move", found, startedAt: now });
+          });          
+          dispatch({ t: "bot-found-best-move", found, startedAt: ctx.now });
         },
       };
     }

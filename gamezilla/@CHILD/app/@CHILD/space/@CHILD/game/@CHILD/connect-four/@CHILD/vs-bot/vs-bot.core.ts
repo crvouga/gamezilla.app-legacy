@@ -80,6 +80,8 @@ export type GameEvent =
   | { t: "time-passed"; now: Posix }
   | { t: "user-restarted-game"; userId: UserId };
 
+
+
 type EventErr =
   | { t: "not-playing" }
   | { t: "move"; c: ConnectFour.MoveProblem };
@@ -300,7 +302,6 @@ const addError = (
     },
   };
 };
-
 
 export const isBotTurn = (state: GameState): boolean => {
   if (state.type !== "game") {
