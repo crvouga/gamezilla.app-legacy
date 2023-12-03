@@ -46,6 +46,7 @@ import {
   toSpaceState,
   toUserState,
   EventWithMeta,
+  toState,
 } from "./space.core";
 
 //
@@ -309,14 +310,17 @@ export const subscriptions = (
   };
 
   const subs: Sub<ClientMsg>[] = [];
-  for (const spaceId in model.events.indexes.indexSpaceId) {
+
+  const state = toState(model);
+  
+  for (const spaceId in state.active) {
     if (!SpaceId.is(spaceId)) {
       continue;
     }
 
-    const space = toSpaceState(model, spaceId);
+    const space = toStartedSpace(model, spaceId);
 
-    if (space.type === "initial" || space.type === "ended" || !space.game) {
+    if (!space?.game) {
       continue;
     }
 
@@ -329,6 +333,7 @@ export const subscriptions = (
       }),
       (c): ClientMsg => ({ t: "game-msg", c, spaceId })
     );
+    
     subs.push(sub);
   }
 
@@ -504,9 +509,8 @@ const ViewSpaceScreen = ({
   );
 };
 
-export const _ViewActivityFeedBar = (_props: {
+export const ViewActivityFeedBar = (_props: {
   dispatch: (m: ClientMsg) => void;
-
   model: ClientModel;
   ctx: SpaceViewCtx;
 }) => {
@@ -557,13 +561,13 @@ const ViewSpaceScreenMain = ({
   return (
     <div class="flex h-full w-full flex-1 flex-col">
       <nav class="flex h-14 w-full items-center border-b border-neutral-700">
-        <TopButton
+        <ViewTopButton
           onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
           label="Home"
           icon={<IconHome class="h-6 w-6" />}
         />
 
-        <TopButton
+        <ViewTopButton
           onClick={() => dispatch({ t: "clicked-people-button" })}
           label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
           icon={<IconUserGroup class="h-6 w-6" />}
@@ -625,7 +629,7 @@ const ViewSpaceScreenMain = ({
   );
 };
 
-function TopButton({
+function ViewTopButton({
   icon,
   label,
   onClick,

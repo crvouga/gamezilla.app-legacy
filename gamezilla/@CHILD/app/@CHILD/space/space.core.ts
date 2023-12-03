@@ -248,7 +248,7 @@ type State = {
     [userId: UserId]: SpaceId;
   };
   active: {
-    [spaceId: SpaceId]: true;
+    [spaceId: SpaceId]: SpaceId;
   };
   errorsByUserId: {
     [userId: UserId]: EventWithMeta & { error: string };
@@ -446,34 +446,45 @@ const reducer = ({
 
     case "user-started-space": {
       const space = state.spaces[event.spaceId];
+
       if (space) {
         return state;
       }
+
       const userSpaceId = state.spaceIdByUserId[event.userId];
+
       if (userSpaceId) {
         return state;
       }
-      const spaceIdByUserIdNew = { ...state.spaceIdByUserId };
+
+      const spaceIdByUserIdNew: State["spaceIdByUserId"] = {
+        ...state.spaceIdByUserId,
+      };
       spaceIdByUserIdNew[event.userId] = event.spaceId;
 
-      const activeNew = { ...state.active };
-      activeNew[event.spaceId] = true;
+      const activeNew: State["active"] = { ...state.active };
+      activeNew[event.spaceId] = event.spaceId;
+
+      const spaceNew: State["spaces"][SpaceId] = {
+        type: "started",
+        spaceId: event.spaceId,
+        hostId: event.userId,
+        visibility: "public",
+        users: {
+          [event.userId]: event.userId,
+        },
+        game: null,
+      };
+
+      const spacesNew: State["spaces"] = {
+        ...state.spaces,
+        [event.spaceId]: spaceNew,
+      };
+
       return {
         ...state,
         active: activeNew,
-        spaces: {
-          ...state.spaces,
-          [event.spaceId]: {
-            type: "started",
-            spaceId: event.spaceId,
-            hostId: event.userId,
-            visibility: "public",
-            users: {
-              [event.userId]: event.userId,
-            },
-            game: null,
-          },
-        },
+        spaces: spacesNew,
         spaceIdByUserId: spaceIdByUserIdNew,
       };
     }
@@ -486,6 +497,7 @@ function toState_(model: CoreModel): State {
   for (const event of EventStream.toIterable(model.events)) {
     state = reducer({ state, event });
   }
+
   return state;
 }
 
