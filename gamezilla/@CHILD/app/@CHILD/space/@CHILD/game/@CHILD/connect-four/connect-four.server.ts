@@ -83,7 +83,7 @@ export const update: Server["update"] = async (input) => {
             model: model?.t === "vs-bot" ? model : null,
             clientMsg: clientMsg?.t === "vs-bot" ? clientMsg : null,
             evt: evt,
-            gameEvent: gameEvent?.t === "vs-bot" ? gameEvent : null,
+            gameEvent: gameEvent?.t === "vs-bot" ? {...gameEvent, c: {...gameEvent, ...gameEvent.c}}: null,
           });
         }
 
@@ -95,7 +95,7 @@ export const update: Server["update"] = async (input) => {
             model: model?.t === "vs-user" ? model : null,
             clientMsg: clientMsg?.t === "vs-user" ? clientMsg : null,
             evt: evt,
-            gameEvent: gameEvent?.t === "vs-user" ? gameEvent : null,
+            gameEvent: gameEvent?.t === "vs-user" ? {...gameEvent, c: {...gameEvent, ...gameEvent.c}}: null,
           });
         }
       }

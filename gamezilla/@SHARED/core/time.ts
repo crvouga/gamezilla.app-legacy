@@ -71,10 +71,9 @@ const onTimeout = (intervalId: string, timeSpan: TimeSpan) => {
   if (sub && sub.isSubscribed()) {
     sub.publish(Posix.now$());
 
-    setTimeout(
-      () => onTimeout(intervalId, timeSpan),
-      TimeSpan.toMilliseconds(timeSpan)
-    );
+    setTimeout(() => {
+      onTimeout(intervalId, timeSpan);
+    }, TimeSpan.toMilliseconds(timeSpan));
 
     return;
   }
@@ -96,8 +95,6 @@ const interval = <Msg>(
   const subNew = PubSub.create<Posix>();
 
   intervals.set(intervalId, subNew);
-
-  console.log("interval started", intervalId, intervals)
 
   setTimeout(() => {
     onTimeout(intervalId, timeSpan);

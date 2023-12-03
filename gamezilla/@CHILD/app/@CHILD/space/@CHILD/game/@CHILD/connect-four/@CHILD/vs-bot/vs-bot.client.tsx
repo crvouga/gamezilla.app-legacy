@@ -91,6 +91,7 @@ export const update: Client["update"] = (input) => {
     init(input),
     (model) => {
       const { msg } = input;
+      
       if (!msg) {
         return { model };
       }
@@ -121,7 +122,7 @@ export const update: Client["update"] = (input) => {
       }
     },
     (model) => {
-      const { gameEvent } = input;
+      const { gameEvent, state } = input;
 
       if (!gameEvent) {
         return { model };
@@ -129,7 +130,7 @@ export const update: Client["update"] = (input) => {
 
       return {
         model,
-        cmd: eventToSound(input.state, gameEvent),
+        cmd: eventToSound(state, gameEvent),
       };
     },
     (model) => {

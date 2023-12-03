@@ -25,7 +25,7 @@ export type GameServerTypes = {
 
 type Output<T extends GameServerTypes> = {
   model: T["ServerModel"];
-  gameEvent?: T["GameEvent"][];
+  gameEvent?: (T["GameEvent"] & EventMeta)[];
   eff?: Eff<T["ServerMsg"]>;
   cmd?: SpaceServerCmd<T["ToClient"]>[];
 };
@@ -72,7 +72,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
   ToClient: { t: T; c: Types["ToClient"] };
   ToServer: { t: T; c: Types["ToServer"] };
   GameState: { t: T; c: Types["GameState"] };
-  GameEvent: { t: T; c: Types["GameEvent"] };
+  GameEvent: { t: T; c: Types["GameEvent"] & EventMeta };
 }> => {
   return {
     init: async (input) => {
@@ -86,21 +86,31 @@ const tag = <T extends string, Types extends GameServerTypes>(
         cmd: SpaceServerCmd.tag(tag, initial.cmd),
       };
     },
+
     update: async (input) => {
       const updated = await server.update({
+        evt: input.evt,
+        msg: input.msg?.t === tag ? input.msg?.c : undefined,
+        model: input.model?.t === tag ? input.model?.c : undefined,
+        gameEvent: input.gameEvent?.t === tag ? input.gameEvent?.c : undefined,
+        clientMsg: input.clientMsg?.t === tag ? input.clientMsg?.c : undefined,
         ctx: input.ctx,
         state: input.state.c,
-        model: input.model?.c,
-        msg: input.msg?.t === tag ? input.msg.c : null,
-        clientMsg: input.clientMsg?.t === tag ? input.clientMsg.c : null,
-        gameEvent: input.gameEvent?.t === tag ? input.gameEvent.c : null,
-        evt: input.evt ?? null,
       });
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.t(tag, updated.eff),
-        gameEvent: updated.gameEvent?.map((event) => ({ t: tag, c: event })),
         cmd: SpaceServerCmd.tag(tag, updated.cmd),
+        gameEvent: updated.gameEvent
+          ? updated.gameEvent.map(
+              (gameEvent): EventMeta & { t: T; c: Types["GameEvent"] } => ({
+                eventId: gameEvent.eventId,
+                happenedAt: gameEvent.happenedAt,
+                t: tag,
+                c: gameEvent,
+              })
+            )
+          : undefined,
       };
     },
     subscriptions: async (input) => {
@@ -138,7 +148,8 @@ const chain = async <T extends GameServerTypes>(
   ...updaters: ((input: T["ServerModel"]) => Promise<Output<T>>)[]
 ): Promise<Output<T>> => {
   const cmd: SpaceServerCmd<T["ToClient"]>[] = (await initial).cmd ?? [];
-  const gameEvents: T["GameEvent"][] = (await initial)?.gameEvent ?? [];
+  const gameEvents: (T["GameEvent"] & EventMeta)[] =
+    (await initial)?.gameEvent ?? [];
   const eff: Eff<T["ServerMsg"]>[] = (await initial).eff
     ? [(await initial).eff!]
     : [];

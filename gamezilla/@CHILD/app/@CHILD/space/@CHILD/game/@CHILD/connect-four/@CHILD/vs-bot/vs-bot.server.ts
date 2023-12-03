@@ -13,6 +13,7 @@ import {
   isBotTurn,
   toBotPlayer,
 } from "./vs-bot.core";
+import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 
 //
 //
@@ -42,7 +43,7 @@ export const update: Server["update"] = async (input) => {
   return GameServer.chain(
     await init(input),
     (model) => watchForBotMove(model)(input),
-    (model) => updateFromMsg(model)(input),
+    (model) => updateFromMsg(model)(input)
   );
 };
 
@@ -76,9 +77,11 @@ const updateFromMsg =
               return { model };
             }
 
+            const eventNew =  withMeta$<GameEvent>({ t: "bot-dropped-disc", columnIndex })
+
             return {
               model,
-              gameEvent: [{ t: "bot-dropped-disc", columnIndex }],
+              gameEvent: [eventNew],
             };
           },
           async (model) => {
@@ -91,24 +94,24 @@ const updateFromMsg =
 
 const watchForBotMove =
   (model: ServerModel): Server["update"] =>
-  async ({ state, gameEvent, ctx,...input }) => {
-
-    const didError = Boolean(gameEvent ? state.errors[gameEvent.eventId] : false);
-    const didLoop = Boolean(input.msg ? input.msg.t === 'bot-found-best-move' : false);
-
-    if (state.type === "game" && shouldBotMove({ state, ctx, model }) && !didLoop  && !didError) {
+  async ({ state, ctx, msg }) => {
+    if (
+      state.type === "game" &&
+      shouldBotMove({ state, ctx, model }) &&
+      msg?.t === 'time-passed'
+    ) {
       return {
         model: {
           ...model,
           botStartedFindingMoveAt: ctx.now,
         },
         eff: async (dispatch) => {
-          await new Promise((r) => setTimeout(r, 1000/2));
+          await new Promise((r) => setTimeout(r, 1000 / 4));
           const found = ConnectFourBotWorker.findBestMove({
             columns: state.columns,
             maxDepth: 4,
             maximizingPlayer: toBotPlayer(state),
-          });          
+          });
           dispatch({ t: "bot-found-best-move", found, startedAt: ctx.now });
         },
       };
@@ -122,20 +125,17 @@ function shouldBotMove(input: {
   ctx: { now: Posix };
   model: ServerModel;
 }) {
-  return (
-    isBotTurn(input.state) &&
-    !isBotMoving(input.ctx.now, input.model)
-  );
+  return isBotTurn(input.state) && !isBotMoving(input.ctx.now, input.model);
 }
 
 export const subscriptions: Server["subscriptions"] = async (input) => {
   const { model } = input;
-  if (model && shouldBotMove({ ...input, model })) {
-    const intervalId = `${input.intervalId}/vs-bot`;
-
-    return Time.interval(intervalId, TimeSpan.fromSeconds(1), () => ({
+  if(model && shouldBotMove({...input, model})){
+    return Time.interval(`${input.intervalId}/vs-bot`, TimeSpan.fromSeconds(1/2), () => ({
       t: "time-passed",
     }));
   }
+
   return Sub.None;
+
 };
