@@ -102,9 +102,12 @@ const interval = <Msg>(
 
   return {
     subscribe: (subscriber) => {
-      return subNew.subscribe((msg) => {
+      const unsub = subNew.subscribe((msg) => {
         subscriber(f(msg));
-      });
+      })
+      return () => {
+        unsub()
+      };
     },
   };
 };
