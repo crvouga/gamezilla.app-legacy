@@ -171,7 +171,6 @@ export type Event =
       t: "user-joined-space";
       userId: UserId;
       spaceId: SpaceId;
-      profile?: Profile | null;
     }
   | {
       t: "user-left-space";
