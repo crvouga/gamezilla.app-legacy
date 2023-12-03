@@ -94,7 +94,7 @@ const watchForBotMove =
   async ({ state, gameEvent, ctx,...input }) => {
 
     const didError = Boolean(gameEvent ? state.errors[gameEvent.eventId] : false);
-    const didLoop = Boolean(input.msg?.t === 'bot-found-best-move');
+    const didLoop = Boolean(input.msg ? input.msg.t === 'bot-found-best-move' : false);
 
     if (state.type === "game" && shouldBotMove({ state, ctx, model }) && !didLoop  && !didError) {
       return {
