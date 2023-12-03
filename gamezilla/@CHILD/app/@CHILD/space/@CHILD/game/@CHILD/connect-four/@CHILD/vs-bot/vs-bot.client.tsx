@@ -348,7 +348,7 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
 
   return (
     <GameLayout isSpectating={ctx.currentUserId !== state.playingUserId}>
-      <div class="flex w-full flex-1 flex-col items-center justify-center">
+      <div class="flex w-full flex-1 flex-col items-center justify-center gap-1">
         <VsBotGame.VsBotPlayerSection {...vsBotGameProps} />
 
         <VsBotGame.ViewStatusBar

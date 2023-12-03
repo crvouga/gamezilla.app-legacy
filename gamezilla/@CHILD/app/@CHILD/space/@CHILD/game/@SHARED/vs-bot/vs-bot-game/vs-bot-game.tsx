@@ -5,12 +5,15 @@ import {
   MyAvatar,
   Transition,
   VDom,
+  VDomChildren,
+  cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { PlayerType, VsBotProps } from "../vs-bot";
 
 //
 //
 //
+// Model
 //
 //
 //
@@ -21,6 +24,14 @@ export function init(_gameOver?: GameOver | null): Model {
   return null;
 }
 
+//
+//
+//
+// Update
+//
+//
+//
+
 export type Msg = {
   t: null;
 };
@@ -28,6 +39,14 @@ export type Msg = {
 export const update = (model: Model, _msg: Msg): Model => {
   return model;
 };
+
+//
+//
+//
+// View
+//
+//
+//
 
 export type GameOver =
   | {
@@ -94,7 +113,7 @@ export const ViewStatusBar = (props: VsBotProps & { status: Status }) => {
     >
       <div
         key={statusToKey(props.status)}
-        class="absolute inset-0 flex items-center justify-center gap-2 text-secondary"
+        class="absolute inset-0 flex items-center justify-center gap-1 text-secondary"
       >
         <ViewStatusBarContent {...props} />
       </div>
@@ -142,9 +161,7 @@ const ViewStatusBarContent = (props: VsBotProps & { status: Status }) => {
           return (
             <>
               {props.playerOne.renderIcon({ class: "h-5 w-5" })}
-              <p>
-              Turn
-              </p>
+              <p>Turn</p>
             </>
           );
         }
@@ -153,9 +170,7 @@ const ViewStatusBarContent = (props: VsBotProps & { status: Status }) => {
           return (
             <>
               {props.playerTwo.renderIcon({ class: "h-5 w-5" })}
-              <p>
-              Turn
-              </p>
+              <p>Turn</p>
             </>
           );
         }
@@ -163,7 +178,7 @@ const ViewStatusBarContent = (props: VsBotProps & { status: Status }) => {
     }
 
     default: {
-      return <p>Game Over</p>
+      return <p>Game Over</p>;
     }
   }
 };
@@ -217,28 +232,6 @@ export const ViewGameOverOverlay = (props: Props) => {
     </Transition>
   );
 };
-
-const fadeIn =
-  ({ duration, delay }: { delay: number; duration: number }) =>
-  async (node: HTMLElement) => {
-    await node.animate([{ opacity: 0 }, { opacity: 1 }], {
-      duration: duration,
-      delay: delay,
-      easing: "ease-in-out",
-      fill: "both",
-    }).finished;
-  };
-
-const fadeOut =
-  ({ duration, delay }: { delay: number; duration: number }) =>
-  async (node: HTMLElement) => {
-    await node.animate([{ opacity: 1 }, { opacity: 0 }], {
-      duration: duration,
-      delay: delay,
-      easing: "ease-in-out",
-      fill: "both",
-    }).finished;
-  };
 
 const Winner = ({
   ctx,
@@ -327,3 +320,92 @@ const Draw = ({ ctx, playerOne, playerTwo, human }: Props) => {
     </div>
   );
 };
+
+export const VsBotPlayerSection = ({
+  ctx,
+  human,
+  bot,
+  playerOne,
+  playerTwo,
+  turn,
+}: VsBotGameProps) => {
+  const humanSlot = (
+    <>
+      <MyAvatar class="h-6 w-6 " src={ctx.profiles[human.userId]?.avatarUrl} />
+      <p class="overflow-hidden text-ellipsis whitespace-nowrap">
+        {ctx.profiles[human.userId]?.username}
+      </p>
+    </>
+  );
+
+  const botSlot = (
+    <>
+      {bot.renderIcon({ class: "h-6 w-6 flex-shrink-0" })}
+      <p class="overflow-hidden text-ellipsis whitespace-nowrap">{bot.label}</p>
+    </>
+  );
+
+  return (
+    <section class="flex w-full items-center gap-3 px-3">
+      <Slot active={turn === "player-one"}>
+        <div>{playerOne.renderIcon({ class: "h-6 w-6" })}</div>
+        {human.player === "player-one" ? humanSlot : botSlot}
+      </Slot>
+
+      <Slot active={turn === "player-two"}>
+        {playerTwo.renderIcon({ class: "h-6 w-6" })}
+        {human.player === "player-two" ? humanSlot : botSlot}
+      </Slot>
+    </section>
+  );
+};
+
+const Slot = ({
+  active,
+  children,
+}: {
+  active: boolean;
+  children: VDomChildren;
+}) => {
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-2 rounded-md border border-b-2 border-neutral-600 bg-neutral-900 p-2 text-sm transition-colors duration-200 ease-in-out flex-1",
+        active && "border-b-blue-500"
+      )}
+    >
+      {children}
+    </div>
+  );
+};
+
+//
+//
+//
+//
+//
+//
+//
+//
+
+const fadeIn =
+  ({ duration, delay }: { delay: number; duration: number }) =>
+  async (node: HTMLElement) => {
+    await node.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: duration,
+      delay: delay,
+      easing: "ease-in-out",
+      fill: "both",
+    }).finished;
+  };
+
+const fadeOut =
+  ({ duration, delay }: { delay: number; duration: number }) =>
+  async (node: HTMLElement) => {
+    await node.animate([{ opacity: 1 }, { opacity: 0 }], {
+      duration: duration,
+      delay: delay,
+      easing: "ease-in-out",
+      fill: "both",
+    }).finished;
+  };
