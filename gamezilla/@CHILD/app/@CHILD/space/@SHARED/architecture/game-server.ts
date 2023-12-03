@@ -41,6 +41,7 @@ export type GameServer<T extends GameServerTypes> = {
     cmd?: SpaceServerCmd<T["ToClient"]>[];
   }>;
 
+
   update: (input: {
     ctx: SpaceServerCtx | SpaceReqCtx;
     state: T["GameState"];
