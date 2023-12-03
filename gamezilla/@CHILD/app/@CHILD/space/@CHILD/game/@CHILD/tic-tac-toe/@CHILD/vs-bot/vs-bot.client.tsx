@@ -1,12 +1,13 @@
 import {
+  ViewBottomButtonBar,
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
+import {
   IconBotCute,
   IconBotLevel1,
   IconBotScary,
-  ViewBottomButtonBar,
-  VsBotPlayerSection,
-  VsBotProps,
-  VsBotSetup,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+  VsBotGame,
+  VsBotSetup
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
 import {
   SpaceClientCtx,
   SpaceViewCtx,
@@ -164,7 +165,7 @@ export const View = ({
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {
-  const vsBotProps: VsBotProps = {
+  const vsBotProps: VsBotSetup.VsBotSetupProps = {
     bot: {
       label: model.botLevel,
       renderIcon: (props) =>
@@ -212,12 +213,13 @@ export const View = ({
     );
   }
 
-  const vsBotGameProps = {
+  const vsBotGameProps: VsBotGame.VsBotGameProps = {
     ...vsBotProps,
     human: {
       ...vsBotProps.human,
       userId: model.player,
     },
+    turn: null
   };
 
   const turn = toTurn(model.board);
@@ -226,18 +228,20 @@ export const View = ({
   return (
     <div class="flex h-full w-full flex-col ">
       <div class="flex flex-1 flex-col items-center justify-center">
-        <VsBotPlayerSection {...vsBotGameProps} />
+        <VsBotGame.VsBotPlayerSection {...vsBotGameProps} />
 
         <LoadingBar
           class="w-full"
           disabled={model.userPlayerType === turn || status.type !== "Turn"}
           color={gameTheme.background}
         />
+        
         <ViewBoard
           board={model.board}
           onClick={(position) => dispatch({ t: "input-move", position })}
         />
       </div>
+
       <ViewBottomButtonBar
         actions={[
           {

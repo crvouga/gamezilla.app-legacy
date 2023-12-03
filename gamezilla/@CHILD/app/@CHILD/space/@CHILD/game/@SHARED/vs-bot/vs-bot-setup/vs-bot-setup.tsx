@@ -8,8 +8,8 @@ import {
   MyAvatar,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { ViewGameHeader } from "../view-game-header";
-import { VsBotProps } from "./view-vs-bot";
+import { ViewGameHeader } from "../../game/view-game-header";
+import { PlayerType, VsBotProps } from "../vs-bot";
 
 //
 //
@@ -29,7 +29,6 @@ export const init: Model = {
   opened: null,
 };
 
-
 //
 //
 //
@@ -45,7 +44,7 @@ export const update = (model: Model, msg: Msg): Model => {
     case "clicked-change-bot": {
       return { ...model, opened: "change-bot" };
     }
-    
+
     case "closed-modal": {
       return { ...model, opened: null };
     }
@@ -80,7 +79,15 @@ type PlayerProp =
       onStopPlaying: () => void;
     };
 
-type Props = VsBotProps & { model: Model; dispatch: (m: Msg) => void };
+export type VsBotSetupProps = VsBotProps & {
+  human: {
+    player: PlayerType;
+    userId: UserId | null;
+  };
+  canStartGame: boolean;
+};
+
+type Props = VsBotSetupProps & { model: Model; dispatch: (m: Msg) => void };
 
 export const View = ({
   dispatch,

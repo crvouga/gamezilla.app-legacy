@@ -8,7 +8,7 @@ import {
   TopBar,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { ViewSpaceHostChip } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import { ViewSpaceHostChip } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { GameName, gameNameToString } from "../@CHILD/game/game.core";
 import {

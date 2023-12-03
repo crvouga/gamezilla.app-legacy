@@ -7,7 +7,7 @@ import {
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import { ViewGameHeader } from "./view-game-header";
+import { ViewGameHeader } from "../game/view-game-header";
 
 type IconProps = { class: string };
 

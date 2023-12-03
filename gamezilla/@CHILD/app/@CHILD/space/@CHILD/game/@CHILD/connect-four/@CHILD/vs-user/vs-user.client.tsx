@@ -1,8 +1,10 @@
 import {
   GameLayout,
   ViewBottomButtonBar,
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
+import {
   VsUserSetupScreen,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-user";
 import {
   GameClient,
   SpaceClientCtx,

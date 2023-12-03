@@ -1,15 +1,15 @@
 import {
-  GameLayout,
+
   IconBotHappy,
   IconBotLevel1,
   IconBotLevel4,
-  ViewBottomButtonBar,
-  ViewGameOverOverlay,
   VsBotGame,
-  VsBotPlayerSection,
-  VsBotProps,
   VsBotSetup,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
+import {
+  GameLayout,
+  ViewBottomButtonBar,
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import {
   GameClient,
   SpaceClientCtx,
@@ -25,17 +25,15 @@ import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
-  LoadingBar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub, TimeSpan } from "gamezilla/@SHARED/core";
 import { EventMeta, withMeta$ } from "gamezilla/@SHARED/event-stream";
-import { Columns, toStatus, toTurn } from "../../@SHARED/connect-four";
+import { Columns, Status, toStatus } from "../../@SHARED/connect-four";
 import {
   CoverArt,
   PlayerOneIcon,
   PlayerTwoIcon,
   ViewColumns,
-  gameTheme,
 } from "../../@SHARED/connect-four-ui";
 import {
   BotLevel,
@@ -45,7 +43,7 @@ import {
   GameState,
   ToClient,
   ToServer,
-  allBotLevels
+  allBotLevels,
 } from "./vs-bot.core";
 
 type Client = GameClient<{
@@ -91,7 +89,7 @@ export const update: Client["update"] = (input) => {
     init(input),
     (model) => {
       const { msg } = input;
-      
+
       if (!msg) {
         return { model };
       }
@@ -189,7 +187,7 @@ const eventToSound = (
   ToServer: ToServer;
   ClientMsg: ClientMsg;
 }>[] => {
-  const error = state.errors[event.eventId]
+  const error = state.errors[event.eventId];
 
   if (error) {
     return [playSound(APP_SOUND.alertErrorSm)];
@@ -231,9 +229,7 @@ const eventToSound = (
 //
 //
 
-export const subscriptions: Client["subscriptions"] = (
-  _input
-): Sub<ClientMsg> => {
+export const subscriptions: Client["subscriptions"] = (): Sub<ClientMsg> => {
   return Sub.None;
 };
 
@@ -264,8 +260,7 @@ export function toGameOver(columns: Columns): VsBotGame.GameOver {
 }
 
 export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
-  
-  const vsBotProps: VsBotProps = {
+  const vsBotProps: VsBotSetup.VsBotSetupProps = {
     ctx: ctx,
     onQuit: ctx.onQuit,
     title: "Connect Four",
@@ -336,34 +331,37 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
     );
   }
 
-  const vsBotGameProps = {
+  const status = toStatus(state.columns);
+
+  const vsBotGameProps: VsBotGame.VsBotGameProps = {
     ...vsBotProps,
     human: {
       ...vsBotProps.human,
       userId: state.playingUserId,
     },
+    turn:
+      status.type !== "Playing"
+        ? null
+        : status.turn === "player-one"
+        ? "player-one"
+        : "player-two",
   };
-
-  const turn = toTurn(state.columns);
-  const status = toStatus(state.columns);
 
   return (
     <GameLayout isSpectating={ctx.currentUserId !== state.playingUserId}>
       <div class="flex w-full flex-1 flex-col items-center justify-center">
-        <VsBotPlayerSection {...vsBotGameProps} />
+        <VsBotGame.VsBotPlayerSection {...vsBotGameProps} />
+
+        <ViewStatusBar status={status} />
 
         <div class="relative flex w-full flex-col items-center justify-center overflow-hidden">
-          <LoadingBar
-            disabled={
-              turn === state.userPlayerType || status.type !== "Playing"
-            }
-            class="w-full"
-            color={gameTheme.primary.dark}
-          />
           <ViewColumns
             gameId={0}
             columns={state.columns}
-            disabled={ctx.currentUserId !== state.playingUserId}
+            disabled={
+              ctx.currentUserId !== state.playingUserId ||
+              status.type !== "Playing"
+            }
             onDropDisc={(columnIndex) => {
               dispatch({
                 t: "user-dropped-disc",
@@ -373,7 +371,7 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
             }}
           />
           {model && (
-            <ViewGameOverOverlay
+            <VsBotGame.ViewGameOverOverlay
               {...vsBotGameProps}
               model={model.vsBotGame}
               onPlayAgain={() =>
@@ -423,6 +421,36 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
       )}
     </GameLayout>
   );
+};
+
+const ViewStatusBar = ({ status }: { status: Status }) => {
+  switch (status.type) {
+    case "Playing": {
+      switch (status.turn) {
+        case "player-one": {
+          return <div>Player One</div>;
+        }
+        case "player-two": {
+          return <div>Player Two</div>;
+        }
+      }
+    }
+
+    case "Tie": {
+      return <div>Tie</div>;
+    }
+
+    case "Winner": {
+      switch (status.winner) {
+        case "player-one": {
+          return <div>Player One Wins</div>;
+        }
+        case "player-two": {
+          return <div>Player Two Wins</div>;
+        }
+      }
+    }
+  }
 };
 
 export const viewEvent: Client["viewEvent"] = ({ event, ctx }) => {

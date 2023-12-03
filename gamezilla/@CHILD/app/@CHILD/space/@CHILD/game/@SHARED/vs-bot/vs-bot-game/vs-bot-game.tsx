@@ -6,7 +6,7 @@ import {
   Transition,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { PlayerType } from "./view-vs-bot";
+import { PlayerType, VsBotProps } from "../vs-bot";
 
 //
 //
@@ -60,6 +60,14 @@ type Props = {
     renderIcon: (props: { class: string }) => VDom;
   };
   onPlayAgain?: () => void;
+};
+
+export type VsBotGameProps = VsBotProps & {
+  turn: PlayerType | null;
+  human: {
+    player: PlayerType;
+    userId: UserId;
+  };
 };
 
 export const ViewGameOverOverlay = (props: Props) => {
@@ -127,6 +135,8 @@ const fadeOut = async (node: HTMLElement) => {
     fill: "both",
   }).finished;
 };
+
+
 
 const Winner = ({
   ctx,

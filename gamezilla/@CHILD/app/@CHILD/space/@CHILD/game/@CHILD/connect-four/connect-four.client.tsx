@@ -1,4 +1,4 @@
-import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import {
   GameClient,
   SpaceClientCtx,
@@ -6,6 +6,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Sub } from "gamezilla/@SHARED/core";
+import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 import * as VsBotClient from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUserClient from "./@CHILD/vs-user/vs-user.client";
 import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art";
@@ -17,7 +18,6 @@ import {
   ToClient,
   ToServer,
 } from "./connect-four.core";
-import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 
 type Client = GameClient<{
   ClientModel: ClientModel;

@@ -1,9 +1,9 @@
-import { Result } from "gamezilla/@SHARED/core";
 import {
   ChildrenFn,
   Minimax,
   ScoreFn,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/minimax";
+import { Result } from "gamezilla/@SHARED/core";
 import {
   Columns,
   MAX_COLUMN_HEIGHT,

@@ -7,7 +7,7 @@ import {
   IconBotLevel4,
   IconBotScary,
   IconBotSimple,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
 
 export type BotLevel = 0 | 1 | 2 | 3 | 4;
 

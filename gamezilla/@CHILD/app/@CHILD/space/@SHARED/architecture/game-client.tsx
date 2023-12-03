@@ -124,11 +124,17 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         cmd: ClientCmd.tag(tag, updated.cmd),
         gameEvent: updated.gameEvent
           ? updated.gameEvent.map(
-              (gameEvent): EventMeta & { t: T; c: Types["GameEvent"] } => ({
+              (
+                gameEvent
+              ): EventMeta & { t: T; c: EventMeta & Types["GameEvent"] } => ({
                 eventId: gameEvent.eventId,
                 happenedAt: gameEvent.happenedAt,
                 t: tag,
-                c: gameEvent,
+                c: {
+                  ...gameEvent,
+                  eventId: gameEvent.eventId,
+                  happenedAt: gameEvent.happenedAt,
+                },
               })
             )
           : undefined,

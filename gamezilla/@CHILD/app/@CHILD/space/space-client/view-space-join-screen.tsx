@@ -1,7 +1,7 @@
 import {
   ViewGameHeader,
   ViewUsersInSpaceList,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
   Button,
