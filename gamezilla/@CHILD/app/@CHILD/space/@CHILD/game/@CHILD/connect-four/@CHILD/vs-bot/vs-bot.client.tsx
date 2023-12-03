@@ -186,36 +186,51 @@ const eventToSound = (
   ToServer: ToServer;
   ClientMsg: ClientMsg;
 }>[] => {
-  const error = state.errors[event.eventId];
+  switch (state.type) {
+    case "game": {
+      switch (event.t) {
+        case "user-dropped-disc":
+        case "bot-dropped-disc": {
+          const error = state.errors[event.eventId];
 
-  if (error) {
-    return [playSound(APP_SOUND.alertErrorSm)];
-  }
+          if (error) {
+            return [playSound(APP_SOUND.alertErrorSm)];
+          }
 
-  switch (event.t) {
-    case "user-started-playing":
-    case "user-stopped-playing":
-    case "user-changed-bot-level": {
-      return [playSound(APP_SOUND.tap)];
+          return [playSound(APP_SOUND.tap)];
+        }
+
+        case "user-swapped-sides":
+        case "user-restarted-game": {
+          return [playSound(APP_SOUND.navForwardMin)];
+        }
+
+        case "user-stopped-game": {
+          return [playSound(APP_SOUND.navBackwardMin)];
+        }
+
+        default: {
+          return [];
+        }
+      }
     }
 
-    case "user-dropped-disc":
-    case "bot-dropped-disc": {
-      return [playSound(APP_SOUND.tap)];
-    }
+    case "setup": {
+      switch (event.t) {
+        case "user-started-playing":
+        case "user-stopped-playing":
+        case "user-changed-bot-level": {
+          return [playSound(APP_SOUND.tap)];
+        }
 
-    case "user-swapped-sides":
-    case "user-restarted-game":
-    case "user-started-game": {
-      return [playSound(APP_SOUND.navForwardMin)];
-    }
+        case "user-started-game": {
+          return [playSound(APP_SOUND.navForwardMin)];
+        }
 
-    case "user-stopped-game": {
-      return [playSound(APP_SOUND.navBackwardMin)];
-    }
-
-    default: {
-      return [];
+        default: {
+          return [];
+        }
+      }
     }
   }
 };
