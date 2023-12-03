@@ -32,5 +32,3 @@ export type VsBotProps = {
     onSelect: () => void;
   }[];
 };
-
-

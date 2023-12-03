@@ -70,6 +70,104 @@ export type VsBotGameProps = VsBotProps & {
   };
 };
 
+export type Status =
+  | {
+      t: "playing";
+      turn: PlayerType;
+    }
+  | {
+      t: "winner";
+      winner: PlayerType;
+    }
+  | {
+      t: "draw";
+    };
+
+export const ViewStatusBar = (props: VsBotProps & { status: Status }) => {
+  return (
+    <Transition
+      id="status-bar"
+      mode="in-out"
+      onEnter={fadeIn({ duration: 300, delay: 0 })}
+      onExit={fadeOut({ duration: 300, delay: 0 })}
+      class="relative h-8 w-full"
+    >
+      <div
+        key={statusToKey(props.status)}
+        class="absolute inset-0 flex items-center justify-center gap-2 text-secondary"
+      >
+        <ViewStatusBarContent {...props} />
+      </div>
+    </Transition>
+  );
+};
+
+function statusToKey(status: Status) {
+  switch (status.t) {
+    case "playing": {
+      switch (status.turn) {
+        case "player-one": {
+          return "playing/player-one";
+        }
+
+        case "player-two": {
+          return "playing/player-two";
+        }
+      }
+    }
+
+    case "winner": {
+      switch (status.winner) {
+        case "player-one": {
+          return "winner/player-one";
+        }
+
+        case "player-two": {
+          return "winner/player-two";
+        }
+      }
+    }
+
+    case "draw": {
+      return "draw";
+    }
+  }
+}
+
+const ViewStatusBarContent = (props: VsBotProps & { status: Status }) => {
+  switch (props.status.t) {
+    case "playing": {
+      switch (props.status.turn) {
+        case "player-one": {
+          return (
+            <>
+              {props.playerOne.renderIcon({ class: "h-5 w-5" })}
+              <p>
+              Turn
+              </p>
+            </>
+          );
+        }
+
+        case "player-two": {
+          return (
+            <>
+              {props.playerTwo.renderIcon({ class: "h-5 w-5" })}
+              <p>
+              Turn
+              </p>
+            </>
+          );
+        }
+      }
+    }
+
+    default: {
+      return <p>Game Over</p>
+    }
+  }
+};
+
 export const ViewGameOverOverlay = (props: Props) => {
   const { gameOver } = props;
 
@@ -77,12 +175,14 @@ export const ViewGameOverOverlay = (props: Props) => {
     <Transition
       id="game-over-overlay"
       mode="out-in"
-      onEnter={fadeIn}
-      onExit={fadeOut}>
+      onEnter={fadeIn({ duration: 200, delay: 500 })}
+      onExit={fadeOut({ duration: 200, delay: 0 })}
+    >
       {gameOver?.t === "winner" && (
         <button
           class="absolute inset-0 flex flex-col items-center justify-center bg-black/70"
-          onClick={props.onPlayAgain}>
+          onClick={props.onPlayAgain}
+        >
           <div class="flex-1"></div>
 
           <Winner {...props} winner={gameOver.winner} />
@@ -99,10 +199,10 @@ export const ViewGameOverOverlay = (props: Props) => {
       {gameOver?.t === "draw" && (
         <button
           class="absolute inset-0 flex flex-col items-center justify-center bg-black/60"
-          onClick={props.onPlayAgain}>
-          
+          onClick={props.onPlayAgain}
+        >
           <div class="flex-1"></div>
-          
+
           <Draw {...props} />
 
           {props.onPlayAgain ? (
@@ -118,25 +218,27 @@ export const ViewGameOverOverlay = (props: Props) => {
   );
 };
 
-const fadeIn = async (node: HTMLElement) => {
-  await node.animate([{ opacity: 0 }, { opacity: 1 }], {
-    duration: 200,
-    delay: 500,
-    easing: "ease-in-out",
-    fill: "both",
-  }).finished;
-};
+const fadeIn =
+  ({ duration, delay }: { delay: number; duration: number }) =>
+  async (node: HTMLElement) => {
+    await node.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: duration,
+      delay: delay,
+      easing: "ease-in-out",
+      fill: "both",
+    }).finished;
+  };
 
-const fadeOut = async (node: HTMLElement) => {
-  await node.animate([{ opacity: 1 }, { opacity: 0 }], {
-    duration: 200,
-    delay: 0,
-    easing: "ease-in-out",
-    fill: "both",
-  }).finished;
-};
-
-
+const fadeOut =
+  ({ duration, delay }: { delay: number; duration: number }) =>
+  async (node: HTMLElement) => {
+    await node.animate([{ opacity: 1 }, { opacity: 0 }], {
+      duration: duration,
+      delay: delay,
+      easing: "ease-in-out",
+      fill: "both",
+    }).finished;
+  };
 
 const Winner = ({
   ctx,

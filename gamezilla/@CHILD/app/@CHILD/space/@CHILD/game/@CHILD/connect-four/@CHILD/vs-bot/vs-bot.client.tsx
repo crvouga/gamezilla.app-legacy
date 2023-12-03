@@ -1,5 +1,4 @@
 import {
-
   IconBotHappy,
   IconBotLevel1,
   IconBotLevel4,
@@ -260,7 +259,7 @@ export function toGameOver(columns: Columns): VsBotGame.GameOver {
 }
 
 export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
-  const vsBotProps: VsBotSetup.VsBotSetupProps = {
+  const vsBotSetupProps: VsBotSetup.VsBotSetupProps = {
     ctx: ctx,
     onQuit: ctx.onQuit,
     title: "Connect Four",
@@ -326,7 +325,7 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
       <VsBotSetup.View
         model={model.vsBotSetup}
         dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
-        {...vsBotProps}
+        {...vsBotSetupProps}
       />
     );
   }
@@ -334,9 +333,9 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
   const status = toStatus(state.columns);
 
   const vsBotGameProps: VsBotGame.VsBotGameProps = {
-    ...vsBotProps,
+    ...vsBotSetupProps,
     human: {
-      ...vsBotProps.human,
+      ...vsBotSetupProps.human,
       userId: state.playingUserId,
     },
     turn:
@@ -352,7 +351,10 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
       <div class="flex w-full flex-1 flex-col items-center justify-center">
         <VsBotGame.VsBotPlayerSection {...vsBotGameProps} />
 
-        <ViewStatusBar status={status} />
+        <VsBotGame.ViewStatusBar
+          {...vsBotSetupProps}
+          status={toVsBotStatus(status)}
+        />
 
         <div class="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <ViewColumns
@@ -423,35 +425,19 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
   );
 };
 
-const ViewStatusBar = ({ status }: { status: Status }) => {
+function toVsBotStatus(status: Status): VsBotGame.Status {
   switch (status.type) {
     case "Playing": {
-      switch (status.turn) {
-        case "player-one": {
-          return <div>Player One</div>;
-        }
-        case "player-two": {
-          return <div>Player Two</div>;
-        }
-      }
+      return { t: "playing", turn: status.turn };
     }
-
     case "Tie": {
-      return <div>Tie</div>;
+      return { t: "draw" };
     }
-
     case "Winner": {
-      switch (status.winner) {
-        case "player-one": {
-          return <div>Player One Wins</div>;
-        }
-        case "player-two": {
-          return <div>Player Two Wins</div>;
-        }
-      }
+      return { t: "winner", winner: status.winner };
     }
   }
-};
+}
 
 export const viewEvent: Client["viewEvent"] = ({ event, ctx }) => {
   const username =
