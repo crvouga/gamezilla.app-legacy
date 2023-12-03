@@ -20,35 +20,33 @@ import {
 } from "../space.core";
 import { spaceCmdToCmd } from "./update-shared";
 
+type Output = {
+  model: ServerModel;
+  cmd?: ServerCmd<ToClient>[];
+  eff?: Eff<ServerMsg>;
+}
+
 export const updateFromEvents = async (input: {
   ctx: ServerCtx | ReqCtx;
   model: ServerModel;
   events: EventWithMeta[];
-}): Promise<{
-  model: ServerModel;
-  cmd?: ServerCmd<ToClient>[];
-  eff?: Eff<ServerMsg>;
-}> => {
-  return updateFromEventsLoop(input.ctx, {
-    model: input.model,
-    events: input.events,
-    cmd: [],
-    eff: Eff.None,
-  });
+}): Promise<Output> => {
+  return updateFromEventsLoop(input.ctx, input.events, input);
 };
 
 async function updateFromEventsLoop(
   ctx: ServerCtx | ReqCtx,
-  acc: Awaited<ReturnType<typeof updateGameFromEvent>>
-) {
-  const [event, ...rest] = acc.events ?? [];
+  events: EventWithMeta[],
+  acc: Output
+): Promise<Output> {
+  const [event, ...rest] = events;
 
   if (!event) {
     return acc;
   }
 
   if (event.eventId in acc.model.events.events) {
-    return updateFromEventsLoop(ctx, acc);
+    return updateFromEventsLoop(ctx, rest, acc);
   }
 
   const updated = await chainAwait(
@@ -64,14 +62,15 @@ async function updateFromEventsLoop(
     event,
   });
 
-  const accNew: Awaited<ReturnType<typeof updateGameFromEvent>> = {
+  const accNew: Output = {
     model: updatedGame.model,
     cmd: batchMsgs(acc.cmd, updated.cmd, updatedGame.cmd),
     eff: Eff.batch([acc.eff, updated.eff, updatedGame.eff]),
-    events: batchMsgs(rest, updatedGame.events),
   };
 
-  return updateFromEventsLoop(ctx, accNew);
+  const eventsNew: EventWithMeta[] = batchMsgs(rest, updatedGame.events);
+
+  return updateFromEventsLoop(ctx, eventsNew, accNew);
 }
 
 async function appendNewEvent({
