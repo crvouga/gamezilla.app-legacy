@@ -1,14 +1,14 @@
 import {
+  GameLayout,
+  ViewBottomButtonBar,
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
+import {
   IconBotHappy,
   IconBotLevel1,
   IconBotLevel4,
   VsBotGame,
   VsBotSetup,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
-import {
-  GameLayout,
-  ViewBottomButtonBar,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import {
   GameClient,
   SpaceClientCtx,
@@ -27,7 +27,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub, TimeSpan } from "gamezilla/@SHARED/core";
 import { EventMeta, withMeta$ } from "gamezilla/@SHARED/event-stream";
-import { Columns, Status, toStatus } from "../../@SHARED/connect-four";
+import * as ConnectFour from "../../@SHARED/connect-four";
 import {
   CoverArt,
   PlayerOneIcon,
@@ -137,9 +137,9 @@ export const update: Client["update"] = (input) => {
         return { model };
       }
 
-      const statusBefore = toStatus(stateBefore.columns);
+      const statusBefore = ConnectFour.toStatus(stateBefore.columns);
 
-      const status = toStatus(state.columns);
+      const status = ConnectFour.toStatus(state.columns);
 
       if (statusBefore.type === status.type) {
         return { model };
@@ -255,8 +255,8 @@ export const subscriptions: Client["subscriptions"] = (): Sub<ClientMsg> => {
 //
 //
 
-export function toGameOver(columns: Columns): VsBotGame.GameOver {
-  const status = toStatus(columns);
+export function toGameOver(columns: ConnectFour.Columns): VsBotGame.GameOver {
+  const status = ConnectFour.toStatus(columns);
   switch (status.type) {
     case "Playing": {
       return { t: null };
@@ -345,7 +345,7 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
     );
   }
 
-  const status = toStatus(state.columns);
+  const status = ConnectFour.toStatus(state.columns);
 
   const vsBotGameProps: VsBotGame.VsBotGameProps = {
     ...vsBotSetupProps,
@@ -440,7 +440,7 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
   );
 };
 
-function toVsBotStatus(status: Status): VsBotGame.Status {
+function toVsBotStatus(status: ConnectFour.Status): VsBotGame.Status {
   switch (status.type) {
     case "Playing": {
       return { t: "playing", turn: status.turn };

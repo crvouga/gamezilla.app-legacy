@@ -29,7 +29,6 @@ export function isBotMoving(now: Posix, model: ServerModel) {
 }
 
 export type ClientModel = {
-  opened: "activity-feed-drawer" | null;
   vsBotSetup: VsBotSetup.Model;
   vsBotGame: VsBotGame.Model;
 };
