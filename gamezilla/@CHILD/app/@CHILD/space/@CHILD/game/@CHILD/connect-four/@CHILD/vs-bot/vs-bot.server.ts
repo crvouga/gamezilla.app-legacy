@@ -56,10 +56,11 @@ const updateFromMsg =
 
     switch (msg.t) {
       case "time-passed": {
+        const shouldBotMove = isBotTurn(state) && !isBotMoving(ctx.now, model)
         if (
           state.type === "game" &&
-          shouldBotMove({ state, ctx, model }) &&
-          msg?.t === "time-passed"
+          shouldBotMove &&
+          msg.t === "time-passed"
         ) {
           return {
             model: {
@@ -115,13 +116,7 @@ const updateFromMsg =
     }
   };
 
-function shouldBotMove(input: {
-  state: GameState;
-  ctx: { now: Posix };
-  model: ServerModel;
-}) {
-  return isBotTurn(input.state) && !isBotMoving(input.ctx.now, input.model);
-}
+
 
 export const subscriptions: Server["subscriptions"] = async (input) => {
   return Time.interval(
