@@ -153,7 +153,7 @@ async function updateGameFromEvent({
   const updated = await GameServer.update({
     ctx: { ...ctx, currentUserId: ctx.currentUserId, space: space },
     model: model.games[event.spaceId],
-    gameEvent: event.c,
+    gameEvent: {...event,...event.c},
     state: space.game,
   });
   

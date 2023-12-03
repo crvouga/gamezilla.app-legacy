@@ -91,16 +91,11 @@ const updateFromMsg =
 
 const watchForBotMove =
   (model: ServerModel): Server["update"] =>
-  async ({ state, ctx,...input }) => {
+  async ({ state, gameEvent, ctx,...input }) => {
 
-    if (state.type === "game" && shouldBotMove({ state, ctx, model })) {
-      console.log({
-        model: model,
-         clientMsg: input.clientMsg?.t,
-         evt: input.evt?.t,
-         gameEvent: input.gameEvent?.t,
-         msg: input.msg?.t,
-      });
+    const didError = Boolean(gameEvent ? state.errors[gameEvent.eventId] : false);
+
+    if (state.type === "game" && shouldBotMove({ state, ctx, model }) && input.msg?.t !=='bot-found-best-move' && !didError) {
       return {
         model: {
           ...model,

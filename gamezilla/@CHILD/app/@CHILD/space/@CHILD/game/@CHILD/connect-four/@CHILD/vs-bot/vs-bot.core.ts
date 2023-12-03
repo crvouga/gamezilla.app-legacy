@@ -209,9 +209,11 @@ export const reducer = ({
             event.columnIndex,
             toBotPlayer(state)
           );
+          
           if (moved.t === "err") {
             return addError(state, event, { t: "move", c: moved.error });
           }
+
           return { ...state, columns: moved.value };
         }
 
@@ -225,9 +227,11 @@ export const reducer = ({
             event.columnIndex,
             state.userPlayerType
           );
+
           if (moved.t === "err") {
             return addError(state, event, { t: "move", c: moved.error });
           }
+
           return { ...state, columns: moved.value };
         }
 
