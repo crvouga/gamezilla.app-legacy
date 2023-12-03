@@ -92,8 +92,11 @@ export const ViewGameOverOverlay = (props: Props) => {
         <button
           class="absolute inset-0 flex flex-col items-center justify-center bg-black/60"
           onClick={props.onPlayAgain}>
+          
           <div class="flex-1"></div>
+          
           <Draw {...props} />
+
           {props.onPlayAgain ? (
             <div class="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0">
               Tap to play again

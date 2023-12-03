@@ -45,8 +45,7 @@ import {
   GameState,
   ToClient,
   ToServer,
-  allBotLevels,
-  toError,
+  allBotLevels
 } from "./vs-bot.core";
 
 type Client = GameClient<{
@@ -98,35 +97,40 @@ export const update: Client["update"] = (input) => {
 
       switch (msg.t) {
         case "vs-bot-game": {
-          const updated = VsBotGame.update(model.vsBotGame, msg.c);
-          return { model: { ...model, vsBotGame: updated } };
+          return {
+            model: {
+              ...model,
+              vsBotGame: VsBotGame.update(model.vsBotGame, msg.c),
+            },
+          };
         }
 
         case "vs-bot-setup": {
-          const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
-          return { model: { ...model, vsBotSetup: updated } };
+          return {
+            model: {
+              ...model,
+              vsBotSetup: VsBotSetup.update(model.vsBotSetup, msg.c),
+            },
+          };
         }
 
         default: {
           const event = withMeta$(msg);
-          return {
-            model,
-            gameEvent: [event],
-            cmd: eventToSound(input.state, event),
-          };
+          return { model, gameEvent: [event] };
         }
       }
     },
     (model) => {
-      const { serverMsg } = input;
-      if (!serverMsg) {
+      const { gameEvent } = input;
+
+      if (!gameEvent) {
         return { model };
       }
-      switch (serverMsg.t) {
-        default: {
-          return { model };
-        }
-      }
+
+      return {
+        model,
+        cmd: eventToSound(input.state, gameEvent),
+      };
     },
     (model) => {
       const { state, stateBefore } = input;
@@ -184,7 +188,7 @@ const eventToSound = (
   ToServer: ToServer;
   ClientMsg: ClientMsg;
 }>[] => {
-  const error = toError(state, event);
+  const error = state.errors[event.eventId]
 
   if (error) {
     return [playSound(APP_SOUND.alertErrorSm)];

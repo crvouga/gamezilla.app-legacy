@@ -6,7 +6,7 @@ import {
   VsBotSetup,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
 import * as ConnectFour from "../../@SHARED/connect-four";
-import { EventMeta } from "gamezilla/@SHARED/event-stream";
+import { EventId, EventMeta } from "gamezilla/@SHARED/event-stream";
 
 //
 //
@@ -49,6 +49,7 @@ export type ServerMsg =
   | {
       t: "bot-found-best-move";
       found: ConnectFour.BestMoveResult;
+      startedAt: Posix;
     }
   | {
       t: "time-passed";
@@ -96,7 +97,7 @@ export const eventErrorToString = ({ error }: { error: EventErr }): string => {
 
 export type GameState = (StateSetup | StateGame) & {
   errors: {
-    [eventId: string]: GameEvent & { error: EventErr };
+    [eventId: EventId]: GameEvent & { error: EventErr };
   };
 };
 
@@ -300,10 +301,6 @@ const addError = (
   };
 };
 
-export const toError = (state: GameState, event: GameEvent & EventMeta) => {
-  const stateNew = reducer({ state, event });
-  return stateNew.errors[event.eventId] ?? null;
-};
 
 export const isBotTurn = (state: GameState): boolean => {
   if (state.type !== "game") {

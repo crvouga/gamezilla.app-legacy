@@ -1,4 +1,4 @@
-import { Columns, PlayerType, toStatus, toWins } from "./connect-four";
+import { Columns, PlayerType, toStatus, findWins } from "./connect-four";
 import { expect, test } from "bun:test";
 
 const expectWinner = (columns: Columns) => {
@@ -13,28 +13,28 @@ const expectWinner = (columns: Columns) => {
 
 test("detects horizontal win", () => {
   expectWinner(horizontal);
-  expect(toWins(horizontal).length).toBe(1);
+  expect(findWins(horizontal).length).toBe(1);
 });
 
 test("detects vertical win", () => {
   expectWinner(vertical);
-  expect(toWins(vertical).length).toBe(1);
+  expect(findWins(vertical).length).toBe(1);
 });
 
 test("detects right diagonal win", () => {
   expectWinner(rightDiagonal);
-  expect(toWins(rightDiagonal).length).toBe(1);
+  expect(findWins(rightDiagonal).length).toBe(1);
 });
 
 test("detects left diagonal win", () => {
   expectWinner(leftDiagonal);
-  expect(toWins(leftDiagonal).length).toBe(1);
+  expect(findWins(leftDiagonal).length).toBe(1);
 });
 
 test("detects left and right diagonal win", () => {
   expectWinner(leftAndRightDiagonal);
 
-  const wins = toWins(leftAndRightDiagonal);
+  const wins = findWins(leftAndRightDiagonal);
 
   expect(wins.length).toBe(2);
 });
@@ -42,7 +42,7 @@ test("detects left and right diagonal win", () => {
 test("detects wins longer than 4", () => {
   expectWinner(horizontalLongest);
 
-  const wins = toWins(horizontalLongest);
+  const wins = findWins(horizontalLongest);
 
   expect(wins.length).toBeGreaterThanOrEqual(1);
 
@@ -71,7 +71,7 @@ test("detects left diagonal win", () => {
     [],
   ];
 
-  const wins = toWins(columns);
+  const wins = findWins(columns);
 
   expect(wins.length).toBe(1);
 });
@@ -87,7 +87,7 @@ test("detects diagonal", () => {
     [],
   ];
 
-  const wins = toWins(columns);
+  const wins = findWins(columns);
 
   expect(wins.length).toBe(1);
 });
@@ -103,9 +103,28 @@ test("detects right most vertical", () => {
     [p1, p1, p1, p1],
   ];
 
-  const wins = toWins(columns);
+  const wins = findWins(columns);
 
   expect(wins.length).toBe(1);
+});
+
+test("remove win subsets", () => {
+  const columns: Columns = [
+    [p1],
+    [p1],
+    [p1],
+    [p1, p2, p2, p1, p2, p2],
+    [p1, p2],
+    [],
+    [],
+  ];
+
+  const wins = findWins(columns);
+
+  expect(wins.length).toBe(1);
+  if (wins[0]) {
+    expect(wins[0].length).toBe(5);
+  }
 });
 
 export const p1: PlayerType = "player-one";

@@ -1,4 +1,4 @@
-import { Transition, p } from "gamezilla/@SHARED/core";
+import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Button,
@@ -8,12 +8,13 @@ import {
   MyAvatar,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { ViewGameHeader } from "../view-game-header";
 import { VsBotProps } from "./view-vs-bot";
 
 //
 //
+//
+// Model
 //
 //
 //
@@ -28,30 +29,11 @@ export const init: Model = {
   opened: null,
 };
 
-export const openedConfig = Transition.config<Opened>({
-  toId: (val) => String(val),
-  enter: (val) => fadeIn(String(val)),
-  exit: (val) => fadeOut(String(val)),
-});
-
-async function fadeOut(htmlId: string) {
-  const node = await Transition.waitForElementById(htmlId);
-  await node?.animate([{ opacity: 1 }, { opacity: 0 }], {
-    duration: 200,
-    fill: "both",
-  }).finished;
-}
-
-async function fadeIn(htmlId: string) {
-  const node = await Transition.waitForElementById(htmlId);
-  await node?.animate([{ opacity: 0 }, { opacity: 1 }], {
-    duration: 200,
-    fill: "both",
-  }).finished;
-}
 
 //
 //
+//
+// Msg
 //
 //
 //
@@ -59,21 +41,21 @@ async function fadeIn(htmlId: string) {
 export type Msg = { t: "clicked-change-bot" } | { t: "closed-modal" };
 
 export const update = (model: Model, msg: Msg): Model => {
-  return p(model, (model): Model => {
-    if (msg.t === "clicked-change-bot") {
+  switch (msg.t) {
+    case "clicked-change-bot": {
       return { ...model, opened: "change-bot" };
     }
-    if (msg.t === "closed-modal") {
+    
+    case "closed-modal": {
       return { ...model, opened: null };
     }
-
-    return model;
-  });
+  }
 };
 
 //
 //
 //
+// View
 //
 //
 //
@@ -213,7 +195,8 @@ export const View = ({
         position="bottom"
         id="change-bot"
         open={model.opened === "change-bot"}
-        onClose={() => dispatch({ t: "closed-modal" })}>
+        onClose={() => dispatch({ t: "closed-modal" })}
+      >
         <div class="flex flex-col pb-6">
           <p class="p-4 text-2xl font-bold">Change bot</p>
           <div>
@@ -226,7 +209,8 @@ export const View = ({
                 <button
                   key={botLevel.label}
                   class="flex w-full items-center gap-3 p-4 text-left text-xl font-bold"
-                  onClick={onClick}>
+                  onClick={onClick}
+                >
                   {botLevel.renderIcon({ class: "w-10 h-10" })}
                   {botLevel.label}
                 </button>
@@ -258,7 +242,8 @@ const PlayerIcons = ({
       ) : (
         <div
           role="button"
-          class="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-600">
+          class="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-600"
+        >
           <IconQuestionMark class="h-10 w-10 text-neutral-300" />
         </div>
       )}

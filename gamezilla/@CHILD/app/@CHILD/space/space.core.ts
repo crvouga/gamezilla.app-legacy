@@ -47,39 +47,30 @@ type ModalModel = null | "user-preview" | "users";
 type Sync = {
   t: "sync";
   events: CoreModel["events"];
-  profiles?: { [userId: UserId]: Profile };
-  causedBy: unknown;
 };
 
 export type ToClient = ToClientExtra &
-  (
-    | EventWithMeta
-    | Sync
-    | { t: "game-msg"; spaceId: SpaceId; c: Game.ToClient }
-  );
+  ({t: 'event', c: EventWithMeta} | Sync | { t: "game"; spaceId: SpaceId; c: Game.ToClient });
 
 export type ToServer = ToServerExtra &
-  (
-    | EventWithMeta
-    | Sync
-    | { t: "game-msg"; spaceId: SpaceId; c: Game.ToServer }
-  );
+  ({t: 'event', c: EventWithMeta} | Sync | { t: "game"; spaceId: SpaceId; c: Game.ToServer });
 
 export type ToClientExtra = {
   profiles?: { [userId: UserId]: Profile };
+  causedBy?: unknown;
   meta?: Record<string, unknown>;
 };
 
 export type ToServerExtra = {
-  profile?: Profile | null;
+  profiles?: { [userId: UserId]: Profile };
   meta?: Record<string, unknown>;
 };
 
-export type ServerMsg = { t: "game-msg"; spaceId: SpaceId; c: Game.ServerMsg };
+export type ServerMsg = { t: "game"; spaceId: SpaceId; c: Game.ServerMsg };
 
 export type ClientMsg =
-  | EventWithMeta
-  | { t: "game-msg"; spaceId: SpaceId; c: Game.ClientMsg }
+  | { t: "event"; c: EventWithMeta }
+  | { t: "game"; spaceId: SpaceId; c: Game.ClientMsg }
   | { t: "closed-modal" }
   | { t: "clicked-people-button" }
   | { t: "clicked-user"; userId: UserId };

@@ -4,7 +4,7 @@ import {
   Columns,
   MAX_COLUMN_HEIGHT,
   Win,
-  toWins,
+  findWins,
   winToId,
 } from "../../connect-four";
 import "./columns-element";
@@ -49,7 +49,7 @@ const rootId = "connect-four-columns-svg";
 export function init(columns?: Columns): Model {
   return {
     discs: Transition.init(discsConfig.toId, columns ? toDiscs(columns) : []),
-    wins: Transition.init(winsConfig.toId, columns ? toWins(columns) : []),
+    wins: Transition.init(winsConfig.toId, columns ? findWins(columns) : []),
   };
 }
 
@@ -74,7 +74,7 @@ export function watch(model: Model, columns?: Columns) {
   const wins = Transition.watch<Win>(
     winsConfig,
     model.wins,
-    columns ? toWins(columns) : undefined
+    columns ? findWins(columns) : undefined
   );
   return {
     model: {

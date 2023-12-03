@@ -7,7 +7,7 @@ import {
   PlayerType,
   Win,
   isColumnIndex,
-  toWins,
+  findWins,
 } from "../../connect-four";
 import { gameTheme } from "../shared";
 
@@ -75,7 +75,7 @@ export const create = ({
     }
     previousColumns = columnsNew;
 
-    const wins = toWins(columnsNew);
+    const wins = findWins(columnsNew);
 
     for (const win of wins) {
       const westMost = win[0];

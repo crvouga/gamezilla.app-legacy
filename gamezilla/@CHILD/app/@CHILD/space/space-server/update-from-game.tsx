@@ -35,13 +35,14 @@ export const updateFromGame = ({
     cmd: spaceCmdToCmd(
       space,
       SpaceServerCmd.map(updated.cmd ?? [], (c) => ({
-        t: "game-msg",
+        t: "game",
         spaceId: space.spaceId,
+        causedBy: null,
         c,
       }))
     ),
     eff: Eff.map_(
-      (c) => ({ t: "game-msg", c, spaceId: space.spaceId }),
+      (c) => ({ t: "game", c, spaceId: space.spaceId }),
       updated.eff
     ),
   };

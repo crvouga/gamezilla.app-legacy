@@ -31,11 +31,14 @@ function userStartedSpace(input: {
   return SpaceClient.update({
     ctx,
     model: input.model,
-    msg: withMeta$({
-      t: "user-started-space",
-      spaceId: input.spaceId,
-      userId: input.userId,
-    }),
+    msg: {
+      t: "event",
+      c: withMeta$({
+        t: "user-started-space",
+        spaceId: input.spaceId,
+        userId: input.userId,
+      }),
+    },
   });
 }
 
@@ -47,11 +50,14 @@ function userJoinedSpace(input: {
   return SpaceClient.update({
     ctx,
     model: input.model,
-    msg: withMeta$({
-      t: "user-joined-space",
-      spaceId: input.spaceId,
-      userId: input.userId,
-    }),
+    msg: {
+      t: "event",
+      c: withMeta$({
+        t: "user-joined-space",
+        spaceId: input.spaceId,
+        userId: input.userId,
+      }),
+    },
   });
 }
 
@@ -63,11 +69,14 @@ function userLeftSpace(input: {
   return SpaceClient.update({
     ctx,
     model: input.model,
-    msg: withMeta$({
-      t: "user-left-space",
-      spaceId: input.spaceId,
-      userId: input.userId,
-    }),
+    msg: {
+      t: "event",
+      c: withMeta$({
+        t: "user-left-space",
+        spaceId: input.spaceId,
+        userId: input.userId,
+      }),
+    },
   });
 }
 

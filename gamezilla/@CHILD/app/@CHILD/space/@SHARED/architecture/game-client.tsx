@@ -54,7 +54,7 @@ export type GameClient<T extends GameClientTypes> = {
     msg?: T["ClientMsg"] | null;
     serverMsg?: T["ToClient"] | null;
     evt?: ClientEvt | null;
-    gameEvent?: T["GameEvent"] | null;
+    gameEvent?: (T["GameEvent"] & EventMeta) | null;
   }) => Output<T>;
 
   subscriptions: (input: {

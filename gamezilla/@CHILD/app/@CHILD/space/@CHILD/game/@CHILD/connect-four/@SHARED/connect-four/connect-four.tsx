@@ -167,7 +167,7 @@ export type Status =
     };
 
 export const toStatus = (columns: Columns): Status => {
-  const wins = toWins(columns);
+  const wins = findWins(columns);
   const turn = toTurn(columns);
   const [win] = wins;
 
@@ -216,7 +216,7 @@ export const toStatus = (columns: Columns): Status => {
 //
 //
 
-export type Pos2 = { x: number; y: number };
+export type Pos2d = { x: number; y: number };
 
 const toKey = ({
   x,
@@ -232,29 +232,36 @@ const toKey = ({
   return `${x}, ${y}, ${dx}, ${dy}`;
 };
 
-export const minWinLength = 4;
+export const MIN_WIN_LENGTH = 4;
 
 const directions: [number, number][] = [
   // horizontal
   [1, 0],
-  [-1, 0],
+  // [-1, 0],
   // vertical
   [0, 1],
-  [0, -1],
+  // [0, -1],
   // right diagonal
   [1, 1],
-  [-1, -1],
+  // [-1, -1],
   // left diagonal
   [1, -1],
-  [-1, 1],
+  // [-1, 1],
 ];
 
-export type Win = [Pos2, Pos2, Pos2, Pos2, ...Pos2[]];
+export type Win = [Pos2d, Pos2d, Pos2d, Pos2d, ...Pos2d[]];
 
 export const winToId = (win: Win) => win.map((x) => `${x.x},${x.y}`).join(" ");
 
-export const toWins = (columns: Columns): Win[] => {
-  const wins: Win[] = [];
+export const findWins = (columns: Columns): Win[] => {
+  const consecutives = findAllConsecutives(columns);
+  const wins = consecutives.filter(isWin)
+  const uniqueWins = unique(isSameWin, wins)
+  return uniqueWins
+};
+
+const findAllConsecutives = (columns: Columns): Pos2d[][] => {
+  const consecutives: Pos2d[][] = [];
 
   const visited = new Set<string>();
 
@@ -277,30 +284,36 @@ export const toWins = (columns: Columns): Win[] => {
           continue;
         }
 
-        const win: Pos2[] = [];
+        const consecutive: Pos2d[] = [];
 
         let position = { x, y };
 
-        while (toSlot(columns, position) === targetSlot) {
+        while (true) {
+          const currentSlot = toSlot(columns, position);
+
+          if (currentSlot !== targetSlot) {
+            break;
+          }
+
           visited.add(toKey({ x: position.x, y: position.y, dx, dy }));
 
-          win.push(position);
+          consecutive.push(position);
 
           position = { x: position.x + dx, y: position.y + dy };
         }
-
-        if (isWin(win)) {
-          wins.push(win);
-        }
+        consecutives.push(consecutive);
       }
     }
   }
 
-  return unique(isSameWin, wins);
+  return consecutives
+}
+  
+
+const isWin = (positions: Pos2d[]): positions is Win => {
+  return positions.length >= MIN_WIN_LENGTH;
 };
 
-const isWin = (positions: Pos2[]): positions is Win => {
-  return positions.length >= minWinLength;
+const isSameWin = (a: Win, b: Win) => {
+  return isSubset(eq, a, b) && isSubset(eq, b, a)
 };
-
-const isSameWin = (a: Win, b: Win) => isSubset(eq, a, b) && isSubset(eq, b, a);

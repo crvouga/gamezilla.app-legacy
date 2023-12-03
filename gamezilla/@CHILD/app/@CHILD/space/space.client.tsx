@@ -117,7 +117,7 @@ export const update = ({
       };
     }
 
-    case "game-msg": {
+    case "game": {
       const space = toStartedSpace(model, msg.spaceId);
 
       if (!space || !space.game || !ctx.currentUserId) {
@@ -153,7 +153,7 @@ export const update = ({
     }
 
     default: {
-      return updateFromEvents({ ctx, events: [msg], model });
+      return updateFromEvents({ ctx, events: [msg.c], model });
     }
   }
 };
@@ -191,7 +191,7 @@ export const updateFromServer = ({
           return { model: { ...model, ...merged } };
         }
 
-        case "game-msg": {
+        case "game": {
           const space = toStartedSpace(model, msg.spaceId);
 
           if (!space || !space.game || !ctx.currentUserId) {
@@ -231,8 +231,8 @@ export const updateFromServer = ({
           );
         }
 
-        default: {
-          return updateFromEvents({ ctx, events: [msg], model });
+        case "event": {
+          return updateFromEvents({ ctx, events: [msg.c], model });
         }
       }
     }
@@ -265,7 +265,6 @@ export const updateFromEvent = (input: {
           cmd: [
             sendToServer({
               t: "sync",
-              causedBy: msg,
               events: model.events,
               profiles: currentUserProfile
                 ? {
@@ -312,7 +311,7 @@ export const subscriptions = (
   const subs: Sub<ClientMsg>[] = [];
 
   const state = toState(model);
-  
+
   for (const spaceId in state.active) {
     if (!SpaceId.is(spaceId)) {
       continue;
@@ -331,9 +330,9 @@ export const subscriptions = (
         model: model.games[spaceId],
         intervalId: spaceId,
       }),
-      (c): ClientMsg => ({ t: "game-msg", c, spaceId })
+      (c): ClientMsg => ({ t: "game", c, spaceId })
     );
-    
+
     subs.push(sub);
   }
 
@@ -364,7 +363,10 @@ export const View = ({
   viewBottomBar: VDom;
 }): VDom => {
   const dispatchEvent = (m: Event) => {
-    dispatch(withMeta$(m));
+    dispatch({
+      t: "event",
+      c: withMeta$(m),
+    });
   };
   switch (route.t) {
     case "space-list": {
@@ -440,7 +442,8 @@ const ViewSpaceScreen = ({
         position="bottom"
         id="users"
         open={model.modal === "users"}
-        onClose={() => dispatch({ t: "closed-modal" })}>
+        onClose={() => dispatch({ t: "closed-modal" })}
+      >
         <ViewUsersInSpaceList ctx={spaceCtx} />
       </Drawer>
 
@@ -448,7 +451,8 @@ const ViewSpaceScreen = ({
         position="bottom"
         id="user-preview"
         open={model.modal === "user-preview"}
-        onClose={() => dispatch({ t: "closed-modal" })}>
+        onClose={() => dispatch({ t: "closed-modal" })}
+      >
         <div>
           <button
             class="flex w-full flex-col items-center justify-center gap-2 p-4"
@@ -462,7 +466,8 @@ const ViewSpaceScreen = ({
                   },
                 });
               }
-            }}>
+            }}
+          >
             <MyAvatar
               src={
                 model.previewUserId
@@ -522,7 +527,8 @@ export const ViewActivityFeedBar = (_props: {
         position="top"
         id="activity-feed-drawer"
         open={false}
-        onClose={() => {}}>
+        onClose={() => {}}
+      >
         <div class="pb-4ya flex max-h-72 w-full flex-col justify-end overflow-y-scroll text-left"></div>
       </Drawer>
     </>
@@ -617,7 +623,7 @@ const ViewSpaceScreenMain = ({
             state={space.game}
             ctx={ctx}
             dispatch={(msg) =>
-              dispatch({ t: "game-msg", spaceId: ctx.space.spaceId, c: msg })
+              dispatch({ t: "game", spaceId: ctx.space.spaceId, c: msg })
             }
             model={gameModel}
           />
@@ -688,7 +694,10 @@ export const ViewCurrentSpaceBar = ({
   dispatch: (msg: ClientMsg) => void;
 }) => {
   const dispatchEvent = (msg: Event) => {
-    dispatch(withMeta$(msg));
+    dispatch({
+      t: "event",
+      c: withMeta$(msg),
+    });
   };
 
   const userState = toUserState(model, ctx.currentUserId);
@@ -718,7 +727,8 @@ export const ViewCurrentSpaceBar = ({
             t: "space",
             c: { t: "space", spaceId: space.spaceId },
           });
-        }}>
+        }}
+      >
         <div class="mr-2 p-2">
           {!game && (
             <MyAvatar
@@ -752,7 +762,8 @@ export const ViewCurrentSpaceBar = ({
               spaceId: space.spaceId,
             });
           }}
-          class="mr-4">
+          class="mr-4"
+        >
           <IconXMark class="h-8 w-8" />
         </button>
       )}
@@ -767,7 +778,8 @@ export const ViewCurrentSpaceBar = ({
               spaceId: space.spaceId,
             });
           }}
-          class="mr-4">
+          class="mr-4"
+        >
           <IconXMark class="h-8 w-8" />
         </button>
       )}

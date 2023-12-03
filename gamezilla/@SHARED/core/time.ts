@@ -97,6 +97,8 @@ const interval = <Msg>(
 
   intervals.set(intervalId, subNew);
 
+  console.log("interval started", intervalId, intervals)
+
   setTimeout(() => {
     onTimeout(intervalId, timeSpan);
   }, TimeSpan.toMilliseconds(timeSpan));

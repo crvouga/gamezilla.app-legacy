@@ -93,12 +93,12 @@ async function sendEventToClients({
 }: {
   model: ServerModel;
   event: EventWithMeta;
-}) {
+}): Promise<Output> {
   const space = toStartedSpace(model, event.spaceId);
   const cmd =
     event.t === "game" && space
-      ? sendToUser(Object.values(space.users), event)
-      : broadcast<ToClient>(event);
+      ? sendToUser<ToClient>(Object.values(space.users), {t: 'event', c: event, causedBy: event})
+      : broadcast<ToClient>({t: 'event', c: event, causedBy: event});
   return { model, cmd: [cmd] };
 }
 
@@ -108,10 +108,7 @@ async function syncUserWhenJoined({
 }: {
   model: ServerModel;
   event: EventWithMeta;
-}): Promise<{
-  model: ServerModel;
-  cmd?: ServerCmd<ToClient>[];
-}> {
+}): Promise<Output> {
   if (event.t === "user-joined-space") {
     const space = toStartedSpace(model, event.spaceId);
 
@@ -182,13 +179,14 @@ async function updateGameFromEvent({
     cmd: spaceCmdToCmd(
       space,
       SpaceServerCmd.map(updated.cmd ?? [], (c) => ({
-        t: "game-msg",
+        t: "game",
         spaceId: event.spaceId,
+        causedBy: event,
         c,
       }))
     ),
     eff: Eff.map_(
-      (c) => ({ t: "game-msg", c, spaceId: event.spaceId }),
+      (c) => ({ t: "game", c, spaceId: event.spaceId }),
       updated.eff
     ),
     events: eventsNew,

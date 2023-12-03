@@ -15,7 +15,7 @@ import {
   VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Browser, Eff, Posix, Sub, batchMsgs } from "gamezilla/@SHARED/core";
+import { Browser, Eff, Posix, Sub, batchMsgs, toMsgType } from "gamezilla/@SHARED/core";
 import * as AuthClient from "./@CHILD/auth/auth.client";
 import * as ChatClient from "./@CHILD/chat/chat.client";
 import * as ProfileClient from "./@CHILD/profile/profile.client";
@@ -199,9 +199,11 @@ export const update = (input: {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
 } => {
+  console.log("[msg]", toMsgType(input.msg));
   let acc = updateMain(input);
 
   for (const evt of acc.evt ?? []) {
+    console.log("[evt]", toMsgType(evt));
     const updatedEvt = updateFromEvent({
       ...input,
       model: acc.model,
@@ -215,6 +217,7 @@ export const update = (input: {
   }
 
   for (const cmd of acc.cmd ?? []) {
+    console.log("[cmd]", toMsgType(cmd));
     const updatedCmd = updateFromCmd({ ...input, model: acc.model, cmd });
     acc = {
       model: updatedCmd.model,
