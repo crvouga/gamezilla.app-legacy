@@ -199,11 +199,11 @@ export const update = (input: {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
 } => {
-  console.log("[msg]", toMsgType(input.msg));
+  // console.log("[msg]", toMsgType(input.msg));
   let acc = updateMain(input);
 
   for (const evt of acc.evt ?? []) {
-    console.log("[evt]", toMsgType(evt));
+    // console.log("[evt]", toMsgType(evt));
     const updatedEvt = updateFromEvent({
       ...input,
       model: acc.model,
@@ -217,7 +217,7 @@ export const update = (input: {
   }
 
   for (const cmd of acc.cmd ?? []) {
-    console.log("[cmd]", toMsgType(cmd));
+    // console.log("[cmd]", toMsgType(cmd));
     const updatedCmd = updateFromCmd({ ...input, model: acc.model, cmd });
     acc = {
       model: updatedCmd.model,
