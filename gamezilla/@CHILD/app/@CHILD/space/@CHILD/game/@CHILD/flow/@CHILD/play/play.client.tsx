@@ -69,4 +69,5 @@ export const PlayClient: Client = {
   update,
   subscriptions,
   View,
+  ViewFeedItem: () => null,
 };

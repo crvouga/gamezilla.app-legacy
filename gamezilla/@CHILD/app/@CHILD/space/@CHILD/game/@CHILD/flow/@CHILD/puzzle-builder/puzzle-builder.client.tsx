@@ -173,4 +173,5 @@ export const PuzzleBuilderClient: Client = {
   update,
   subscriptions,
   View,
+  ViewFeedItem: () => null,
 };

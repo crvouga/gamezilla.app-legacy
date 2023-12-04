@@ -478,3 +478,8 @@ const PlayerSlot = ({
     </div>
   );
 };
+
+
+export const ViewFeedItem: Client["ViewFeedItem"] = () => {
+  return null;
+}

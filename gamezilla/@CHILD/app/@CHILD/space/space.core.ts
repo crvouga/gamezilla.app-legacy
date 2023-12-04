@@ -1,4 +1,8 @@
-import { EventMeta, EventStream } from "gamezilla/@SHARED/event-stream";
+import {
+  EventId,
+  EventMeta,
+  EventStream,
+} from "gamezilla/@SHARED/event-stream";
 import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import * as Game from "./@CHILD/game/game.core";
@@ -50,10 +54,18 @@ type Sync = {
 };
 
 export type ToClient = ToClientExtra &
-  ({t: 'event', c: EventWithMeta} | Sync | { t: "game"; spaceId: SpaceId; c: Game.ToClient });
+  (
+    | { t: "event"; c: EventWithMeta }
+    | Sync
+    | { t: "game"; spaceId: SpaceId; c: Game.ToClient }
+  );
 
 export type ToServer = ToServerExtra &
-  ({t: 'event', c: EventWithMeta} | Sync | { t: "game"; spaceId: SpaceId; c: Game.ToServer });
+  (
+    | { t: "event"; c: EventWithMeta }
+    | Sync
+    | { t: "game"; spaceId: SpaceId; c: Game.ToServer }
+  );
 
 export type ToClientExtra = {
   profiles?: { [userId: UserId]: Profile };
@@ -182,20 +194,25 @@ export type Event =
 
 export type EventWithMeta = Event & EventMeta;
 
-export type StateInitial = {
+export type SpaceStateInitial = {
   type: "initial";
 };
 
-export type StateStarted = Space & {
+export type SpaceStateStarted = Space & {
   type: "started";
   game: Game.GameState | null;
+  latestEvent: EventId;
 };
 
-export type StateEnded = Space & {
+export type SpaceStateEnded = Space & {
   type: "ended";
+  latestEvent: EventId;
 };
 
-export type StateSpace = StateInitial | StateStarted | StateEnded;
+export type StateSpace =
+  | SpaceStateInitial
+  | SpaceStateStarted
+  | SpaceStateEnded;
 
 export const toSpaceState = (
   model: CoreModel,
@@ -213,7 +230,7 @@ export const toSpaceState = (
 export const toStartedSpace = (
   model: CoreModel,
   spaceId: SpaceId
-): StateStarted | null => {
+): SpaceStateStarted | null => {
   const state = toState(model);
 
   const spaceState: StateSpace = state.spaces[spaceId] ?? {
@@ -268,6 +285,7 @@ const reducer = ({
       if (!space) {
         return state;
       }
+
       if (space.type === "initial") {
         return state;
       }
@@ -286,6 +304,7 @@ const reducer = ({
           ...state.spaces,
           [event.spaceId]: {
             ...space,
+            latestEvent: event.eventId,
             game: gameNew,
           },
         },
@@ -326,6 +345,7 @@ const reducer = ({
           ...state.spaces,
           [event.spaceId]: {
             ...space,
+            latestEvent: event.eventId,
             type: "ended",
           },
         },
@@ -359,6 +379,7 @@ const reducer = ({
           ...state.spaces,
           [event.spaceId]: {
             ...space,
+            latestEvent: event.eventId,
             game: event.game ? Game.initState(event.game) : null,
           },
         },
@@ -387,6 +408,7 @@ const reducer = ({
           ...state.spaces,
           [event.spaceId]: {
             ...space,
+            latestEvent: event.eventId,
             users: {
               ...space.users,
               [event.userId]: event.userId,
@@ -428,6 +450,7 @@ const reducer = ({
           ...state.spaces,
           [userSpaceId]: {
             ...space,
+            latestEvent: event.eventId,
             users: usersNew,
           },
         },
@@ -465,6 +488,7 @@ const reducer = ({
           [event.userId]: event.userId,
         },
         game: null,
+        latestEvent: event.eventId,
       };
 
       const spacesNew: State["spaces"] = {

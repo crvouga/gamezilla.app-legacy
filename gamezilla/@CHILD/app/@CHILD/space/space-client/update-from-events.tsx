@@ -15,7 +15,7 @@ import {
   ClientMsg,
   Event,
   EventWithMeta,
-  StateStarted,
+  SpaceStateStarted,
   ToServer,
   appendEvent,
   toStartedSpace,
@@ -159,8 +159,8 @@ function updateGameFromEvent({
   before,
   after,
 }: {
-  before: StateStarted | null;
-  after: StateStarted | null;
+  before: SpaceStateStarted | null;
+  after: SpaceStateStarted | null;
   model: ClientModel;
   event: EventWithMeta;
   ctx: ClientCtx | AnonymousClientCtx;

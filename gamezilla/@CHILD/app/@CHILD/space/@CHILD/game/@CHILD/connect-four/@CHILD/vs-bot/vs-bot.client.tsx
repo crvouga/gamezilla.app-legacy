@@ -10,6 +10,7 @@ import {
   VsBotSetup,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
 import {
+  FeedItem,
   GameClient,
   SpaceClientCtx,
   SpaceClientEvt,
@@ -454,49 +455,52 @@ function toVsBotStatus(status: ConnectFour.Status): VsBotGame.Status {
   }
 }
 
-export const viewEvent: Client["viewEvent"] = ({ event, ctx }) => {
+export const ViewFeedItem: Client["ViewFeedItem"] = ({ event, ctx }) => {
   const username =
     "userId" in event ? ctx.profiles[event.userId]?.username ?? null : null;
 
   switch (event.t) {
     case "bot-dropped-disc": {
-      return {
-        text: "Bot dropped disc",
-      };
+      return <FeedItem.Info text="Bot dropped disc" />;
     }
+
     case "user-changed-bot-level": {
-      return { text: `${username} changed bot level to ${event.botLevel}` };
+      return (
+        <FeedItem.Info
+          text={`${username} changed bot level to ${event.botLevel}`}
+        />
+      );
     }
     case "user-dropped-disc": {
       if (event.userId === ctx.currentUserId) {
-        return { text: "You dropped disc" };
+        return <FeedItem.Info text={`${username} dropped disc`} />;
       }
 
-      return { text: `${username} dropped disc` };
+      return <FeedItem.Info text={`${username} dropped disc`} />;
     }
     case "user-restarted-game": {
-      return { text: `${username} restarted game` };
+      return <FeedItem.Info text={`${username} restarted game`} />;
     }
     case "user-started-game": {
-      return { text: `${username} started game` };
+      return <FeedItem.Info text={`${username} started game`} />;
     }
     case "user-started-playing": {
-      return { text: `${username} started playing` };
+      return <FeedItem.Info text={`${username} started playing`} />;
     }
     case "user-stopped-game": {
-      return { text: `${username} stopped game` };
+      return <FeedItem.Info text={`${username} stopped game`} />;
     }
     case "user-stopped-playing": {
-      return { text: `${username} stopped playing` };
+      return <FeedItem.Info text={`${username} stopped playing`} />;
     }
     case "user-swapped-sides": {
-      return { text: `${username} swapped sides` };
+      return <FeedItem.Info text={`${username} swapped sides`} />;
     }
     case "time-passed": {
       return null;
     }
     case "user-left": {
-      return { text: `${username} left` };
+      return <FeedItem.Info text={`${username} left space`} />;
     }
   }
 };

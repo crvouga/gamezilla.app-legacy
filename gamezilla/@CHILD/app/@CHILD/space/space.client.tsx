@@ -3,7 +3,10 @@ import {
   ViewUsersInSpaceList,
   ViewYouChip,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
-import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import {
+  FeedItem,
+  SpaceViewCtx,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
   AnonymousClientCtx,
   ClientCmd,
@@ -23,6 +26,7 @@ import {
   IconXMark,
   MyAvatar,
   VDom,
+  Transition,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
 import { withMeta$ } from "gamezilla/@SHARED/event-stream";
@@ -37,16 +41,16 @@ import {
   ClientModel,
   ClientMsg,
   Event,
-  StateStarted,
+  EventWithMeta,
+  SpaceStateStarted,
   ToClient,
   ToServer,
   initCore,
   mergeModels,
-  toStartedSpace,
   toSpaceState,
-  toUserState,
-  EventWithMeta,
+  toStartedSpace,
   toState,
+  toUserState,
 } from "./space.core";
 
 //
@@ -407,25 +411,56 @@ const ViewSpaceScreen = ({
 }) => {
   const space = toSpaceState(model, spaceId);
 
-  if (space.type === "initial") {
-    return <ViewSpaceNotFound ctx={ctx} />;
-  }
+  switch (space.type) {
+    case "ended": {
+      return <ViewSpaceEnded ctx={ctx} />;
+    }
 
-  if (space.type === "ended") {
-    return <ViewSpaceEnded ctx={ctx} />;
-  }
+    case "initial": {
+      return <ViewSpaceNotFound ctx={ctx} />;
+    }
 
+    case "started": {
+      return (
+        <ViewSpaceStarted
+          ctx={ctx}
+          dispatchEvent={dispatchEvent}
+          dispatch={dispatch}
+          model={model}
+          space={space}
+        />
+      );
+    }
+  }
+};
+
+const ViewSpaceStarted = ({
+  ctx,
+  dispatchEvent,
+  dispatch,
+  model,
+  space,
+}: {
+  model: ClientModel;
+  ctx: ViewCtx;
+  dispatchEvent: (m: Event) => void;
+  dispatch: (m: ClientMsg) => void;
+  space: SpaceStateStarted;
+}) => {
   const spaceCtx: SpaceViewCtx = {
     ...ctx,
     space: space,
-    viewProfile: (userId) => dispatch({ t: "clicked-user", userId: userId }),
-    quit: () =>
+    viewProfile: (userId) => {
+      dispatch({ t: "clicked-user", userId: userId });
+    },
+    quit: () => {
       dispatchEvent({
         t: "user-inputted-game",
         spaceId: space.spaceId,
         userId: ctx.currentUserId,
         game: null,
-      }),
+      });
+    },
   };
 
   return (
@@ -514,25 +549,125 @@ const ViewSpaceScreen = ({
   );
 };
 
-export const ViewActivityFeedBar = (_props: {
+const ViewFeed = ({
+  state,
+  ctx,
+  model,
+}: {
+  state: SpaceStateStarted;
   dispatch: (m: ClientMsg) => void;
   model: ClientModel;
   ctx: SpaceViewCtx;
 }) => {
-  return (
-    <>
-      <button class="flex w-full items-center justify-start text-center"></button>
+  const event = model.events.events[state.latestEvent];
 
-      <Drawer
-        position="top"
-        id="activity-feed-drawer"
-        open={false}
-        onClose={() => {}}
+  if (!event) {
+    return null;
+  }
+
+  return (
+    <Transition
+      id="event"
+      mode="in-out"
+      onEnter={async (el) => {
+        await el.animate([{ opacity: 0 }, { opacity: 1 }], {
+          fill: "both",
+          duration: 200,
+        }).finished;
+      }}
+      onExit={async (el) => {
+        await el.animate([{ opacity: 1 }, { opacity: 0 }], {
+          fill: "both",
+          duration: 200,
+        }).finished;
+      }}
+      class="relative h-6 w-full"
+    >
+      <div
+        key={event.eventId}
+        class="absolute inset-0 flex items-center justify-center"
       >
-        <div class="pb-4ya flex max-h-72 w-full flex-col justify-end overflow-y-scroll text-left"></div>
-      </Drawer>
-    </>
+        <ViewFeedItem ctx={ctx} event={event} state={state} />
+      </div>
+    </Transition>
   );
+};
+
+const ViewFeedItem = ({
+  ctx,
+  event,
+  state,
+}: {
+  ctx: SpaceViewCtx;
+  event: EventWithMeta;
+  state: SpaceStateStarted;
+}) => {
+  switch (event.t) {
+    case "game": {
+      if (!state.game) {
+        return null;
+      }
+      return (
+        <GameClient.ViewFeedItem
+          ctx={ctx}
+          event={{ ...event, ...event.c }}
+          state={state.game}
+        />
+      );
+    }
+
+    case "user-ended-space": {
+      const profile = ctx.profiles[event.userId];
+      return (
+        <FeedItem.Info
+          text={`${profile?.username ?? "Someone"} ended the space`}
+        />
+      );
+    }
+
+    case "user-inputted-game": {
+      const profile = ctx.profiles[event.userId];
+      if (!event.game) {
+        return (
+          <FeedItem.Info
+            text={`${profile?.username ?? "Someone"} quit the game`}
+          />
+        );
+      }
+      return (
+        <FeedItem.Info
+          text={`${profile?.username ?? "Someone"} started a game`}
+        />
+      );
+    }
+
+    case "user-joined-space": {
+      const profile = ctx.profiles[event.userId];
+      return (
+        <FeedItem.Info
+          text={`${profile?.username ?? "Someone"} joined the space`}
+        />
+      );
+    }
+
+    case "user-left-space": {
+      const profile = ctx.profiles[event.userId];
+      return (
+        <FeedItem.Info
+          text={`${profile?.username ?? "Someone"} left the space`}
+        />
+      );
+    }
+
+    case "user-started-space": {
+      const profile = ctx.profiles[event.userId];
+      return (
+        <FeedItem.Info
+          text={`${profile?.username ?? "Someone"} started the space`}
+        />
+      );
+    }
+  }
 };
 
 const ViewSpaceScreenMain = ({
@@ -542,7 +677,7 @@ const ViewSpaceScreenMain = ({
   dispatch,
   dispatchEvent,
 }: {
-  space: StateStarted;
+  space: SpaceStateStarted;
   model: ClientModel;
   ctx: SpaceViewCtx;
   dispatch: (m: ClientMsg) => void;
@@ -616,6 +751,10 @@ const ViewSpaceScreenMain = ({
           </div>
         )}
       </nav>
+
+      <ViewFeed state={space} ctx={ctx} model={model} dispatch={dispatch} />
+
+      <div class="w-full border-b border-neutral-700"></div>
 
       <div class="flex w-full flex-1 flex-col overflow-hidden">
         {space.game ? (

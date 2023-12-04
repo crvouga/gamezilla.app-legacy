@@ -358,3 +358,7 @@ export const View: Client["View"] = ({ ctx, state, dispatch }) => {
     }
   }
 };
+
+export const ViewFeedItem: Client["ViewFeedItem"] = () => {
+  return null
+}

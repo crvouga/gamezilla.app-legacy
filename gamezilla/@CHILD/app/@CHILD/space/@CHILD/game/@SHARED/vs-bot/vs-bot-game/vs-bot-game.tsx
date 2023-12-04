@@ -347,15 +347,19 @@ export const VsBotPlayerSection = ({
 
   return (
     <section class="flex w-full items-center gap-3 px-3">
-      <Slot active={turn === "player-one"}>
-        <div>{playerOne.renderIcon({ class: "h-6 w-6" })}</div>
-        {human.player === "player-one" ? humanSlot : botSlot}
-      </Slot>
+      <div class="flex w-1/2 items-center justify-center overflow-hidden">
+        <Slot active={turn === "player-one"}>
+          <div>{playerOne.renderIcon({ class: "h-6 w-6" })}</div>
+          {human.player === "player-one" ? humanSlot : botSlot}
+        </Slot>
+      </div>
 
-      <Slot active={turn === "player-two"}>
-        {playerTwo.renderIcon({ class: "h-6 w-6" })}
-        {human.player === "player-two" ? humanSlot : botSlot}
-      </Slot>
+      <div class="flex w-1/2 items-center justify-center overflow-hidden">
+        <Slot active={turn === "player-two"}>
+          {playerTwo.renderIcon({ class: "h-6 w-6" })}
+          {human.player === "player-two" ? humanSlot : botSlot}
+        </Slot>
+      </div>
     </section>
   );
 };
@@ -370,7 +374,7 @@ const Slot = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-2 rounded-md border border-b-2 border-neutral-600 bg-neutral-900 p-2 text-sm transition-colors duration-200 ease-in-out flex-1",
+        "flex flex-1 items-center gap-2 rounded-md border border-b-2 border-neutral-600 bg-neutral-900 p-2 text-sm transition-colors duration-200 ease-in-out max-w-full",
         active && "border-b-blue-500"
       )}
     >
