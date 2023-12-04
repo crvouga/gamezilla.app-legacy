@@ -80,8 +80,8 @@ export const update: Module["update"] = (input) => {
   );
 };
 
-const updateFromMsg: Module["update"] = ({ ctx, msg, model }) => {
-  if (msg.v !== "msg") {
+const updateFromMsg: Module["update"] = ({ t, ctx, msg, model }) => {
+  if (t !== "msg") {
     return { model };
   }
   switch (msg.t) {
@@ -136,8 +136,8 @@ const updateFromMsg: Module["update"] = ({ ctx, msg, model }) => {
   }
 };
 
-const updateFromCmd: Module["update"] = ({ ctx, msg, model }) => {
-  if (msg.v !== "cmd") {
+const updateFromCmd: Module["update"] = ({ t, ctx, msg, model }) => {
+  if (t !== "cmd") {
     return { model };
   }
 

@@ -24,7 +24,6 @@ import * as SpaceClient from "./@CHILD/space/space.client";
 import { ClientTransport } from "./@CHILD/wire/transport-client";
 import * as Wire from "./@CHILD/wire/wire.client";
 import { AppClient } from "./@SHARED/architecture";
-import { Cmd, Msg } from "./@SHARED/architecture/app-client-v2";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import {
   APP_CONFIG,
@@ -272,9 +271,10 @@ const updateMain = ({
 
     case "toast": {
       const updated = Toast.update({
+        t: 'msg',
         ctx: ctx,
         model: model.toast,
-        msg: Msg(msg.c),
+        msg: msg.c,
       });
       return {
         model: { ...model, toast: updated.model },
@@ -553,8 +553,9 @@ const updateFromCmd = ({
     case "toast/enqueue": {
       const toast = Toast.update({
         model: model.toast,
-        msg: Cmd(cmd),
+        msg: cmd,
         ctx: ctxApp,
+        t: 'cmd'
       });
 
       return {
