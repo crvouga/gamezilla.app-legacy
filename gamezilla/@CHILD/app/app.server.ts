@@ -169,9 +169,6 @@ function logMsg({
   const obj = { ...msg, ...evt, ...cmd };
 
   logger.info(`${prefix} ${toMsgType(obj)}`);
-  if(cmd) {
-    logger.info(JSON.stringify(cmd, null, 4))
-  }
 }
 
 const updateMain = async ({

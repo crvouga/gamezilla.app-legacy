@@ -126,7 +126,7 @@ const updateIndexes = <T, TIndexName extends string>(
     for (let i = 0; i < indexEvents.ordering.length; i++) {
       if (
         !inserted &&
-        (stream.events?.[indexEvents.ordering?.[i] ?? EventId.generate()]
+        (stream.events?.[indexEvents.ordering?.[i] ?? EventId.generate$()]
           ?.happenedAt ?? -Infinity) > event.happenedAt
       ) {
         newOrdering.push(event.eventId);

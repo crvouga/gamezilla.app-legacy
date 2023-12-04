@@ -4,7 +4,7 @@ const is = (id: unknown): id is Uuid => {
   return typeof id === "string";
 };
 
-const generate = (): Uuid => {
+const generate$ = (): Uuid => {
   let d = new Date().getTime();
   let d2 = (performance && performance.now && performance.now() * 1000) || 0;
 
@@ -28,6 +28,6 @@ const generate = (): Uuid => {
 };
 
 export const Uuid = {
-  generate,
+  generate$,
   is,
 };

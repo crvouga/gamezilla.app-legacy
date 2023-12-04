@@ -18,7 +18,7 @@ const parse = (id: unknown): Result<Problem, UserId> => {
 };
 
 const generate = () => {
-  const id = Uuid.generate();
+  const id = Uuid.generate$();
   const userId = `${namespace}${separator}${id}`;
 
   if (is(userId)) {

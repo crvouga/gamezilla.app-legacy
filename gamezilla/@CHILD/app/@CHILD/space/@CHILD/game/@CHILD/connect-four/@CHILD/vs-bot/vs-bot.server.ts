@@ -1,5 +1,5 @@
 import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import { Time, TimeSpan, isErr } from "gamezilla/@SHARED/core";
+import { Sub, Time, TimeSpan, isErr } from "gamezilla/@SHARED/core";
 import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 import { ConnectFourBotWorker } from "../../@SHARED/connect-four";
 import * as ConnectFour from "../../@SHARED/connect-four/connect-four";
@@ -56,12 +56,8 @@ const updateFromMsg =
 
     switch (msg.t) {
       case "time-passed": {
-        const shouldBotMove = isBotTurn(state) && !isBotMoving(ctx.now, model)
-        if (
-          state.type === "game" &&
-          shouldBotMove &&
-          msg.t === "time-passed"
-        ) {
+        const shouldBotMove = isBotTurn(state) && !isBotMoving(ctx.now, model);
+        if (state.type === "game" && shouldBotMove && msg.t === "time-passed") {
           return {
             model: {
               ...model,
@@ -116,14 +112,15 @@ const updateFromMsg =
     }
   };
 
-
-
 export const subscriptions: Server["subscriptions"] = async (input) => {
-  return Time.interval(
-    `${input.intervalId}/vs-bot`,
-    TimeSpan.fromSeconds(1 / 2),
-    () => ({
-      t: "time-passed",
-    })
-  );
+  if (isBotTurn(input.state)) {
+    return Time.interval(
+      `${input.intervalId}/vs-bot`,
+      TimeSpan.fromSeconds(1 / 2),
+      () => ({
+        t: "time-passed",
+      })
+    );
+  }
+  return Sub.None;
 };
