@@ -201,6 +201,7 @@ const eventToSound = (
           return [playSound(APP_SOUND.tap)];
         }
 
+        case "user-started-game":
         case "user-swapped-sides":
         case "user-restarted-game": {
           return [playSound(APP_SOUND.navForwardMin)];
@@ -220,11 +221,17 @@ const eventToSound = (
       switch (event.t) {
         case "user-started-playing":
         case "user-stopped-playing":
+        case "user-swapped-sides":
         case "user-changed-bot-level": {
           return [playSound(APP_SOUND.tap)];
         }
 
         case "user-started-game": {
+          return [playSound(APP_SOUND.navForwardMin)];
+        }
+
+        case "user-stopped-game":
+        case "user-restarted-game": {
           return [playSound(APP_SOUND.navForwardMin)];
         }
 
