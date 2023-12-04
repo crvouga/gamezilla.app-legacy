@@ -17,7 +17,7 @@ const parse = (id: unknown): Result<Problem, UserId> => {
   return err("invalid_user_id");
 };
 
-const generate = () => {
+const generate$ = () => {
   const id = Uuid.generate$();
   const userId = `${namespace}${separator}${id}`;
 
@@ -29,7 +29,7 @@ const generate = () => {
 };
 
 export const UserId = {
-  generate,
+  generate$,
   parse,
   is,
 };

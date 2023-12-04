@@ -16,7 +16,7 @@ const ctx: ClientCtx = {
   documentVisibilityState: "visible",
   now: Posix.now$(),
   profiles: {},
-  currentUserId: UserId.generate(),
+  currentUserId: UserId.generate$(),
 };
 
 function init() {
@@ -81,7 +81,7 @@ function userLeftSpace(input: {
 }
 
 test("current user starting space", async () => {
-  const spaceId = SpaceId.generate();
+  const spaceId = SpaceId.generate$();
 
   const initial = init();
 
@@ -99,7 +99,7 @@ test("current user starting space", async () => {
 });
 
 test("redirecting when starting a space", async () => {
-  const spaceId = SpaceId.generate();
+  const spaceId = SpaceId.generate$();
 
   const initial = init();
 
@@ -121,14 +121,14 @@ test("redirecting when starting a space", async () => {
 });
 
 test("current user joining started space", async () => {
-  const spaceId = SpaceId.generate();
+  const spaceId = SpaceId.generate$();
 
   const initial = init();
 
   const started = userStartedSpace({
     model: initial.model,
     spaceId,
-    userId: UserId.generate(),
+    userId: UserId.generate$(),
   });
 
   const joined = userJoinedSpace({
@@ -146,14 +146,14 @@ test("current user joining started space", async () => {
 });
 
 test("current user leaving joined space", async () => {
-  const spaceId = SpaceId.generate();
+  const spaceId = SpaceId.generate$();
 
   const initial = init();
 
   const started = userStartedSpace({
     model: initial.model,
     spaceId,
-    userId: UserId.generate(),
+    userId: UserId.generate$(),
   });
 
   const joined = userJoinedSpace({
@@ -177,15 +177,15 @@ test("current user leaving joined space", async () => {
 });
 
 test("prevent joining a space if already in a space", async () => {
-  const spaceIdA = SpaceId.generate();
-  const spaceIdB = SpaceId.generate();
+  const spaceIdA = SpaceId.generate$();
+  const spaceIdB = SpaceId.generate$();
 
   const initial = init();
 
   const startedA = userStartedSpace({
     model: initial.model,
     spaceId: spaceIdA,
-    userId: UserId.generate(),
+    userId: UserId.generate$(),
   });
 
   const joinedA = userJoinedSpace({
@@ -197,7 +197,7 @@ test("prevent joining a space if already in a space", async () => {
   const startedB = userStartedSpace({
     model: joinedA.model,
     spaceId: spaceIdB,
-    userId: UserId.generate(),
+    userId: UserId.generate$(),
   });
 
   const joinedB = userLeftSpace({

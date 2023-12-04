@@ -103,7 +103,7 @@ export const ViewSpaceListScreen = ({
                 t: "event",
                 c: withMeta$({
                   t: "user-started-space",
-                  spaceId: SpaceId.generate(),
+                  spaceId: SpaceId.generate$(),
                   userId: ctx.currentUserId,
                 }),
               })

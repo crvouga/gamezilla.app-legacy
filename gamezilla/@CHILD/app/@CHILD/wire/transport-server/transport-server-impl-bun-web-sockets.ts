@@ -46,9 +46,9 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
 
           const sessionId = SessionId.is(maybeSessionId)
             ? maybeSessionId
-            : SessionId.generate();
+            : SessionId.generate$();
 
-          const clientId = ClientId.generate();
+          const clientId = ClientId.generate$();
 
           const data: ServerWebSocketData = {
             clientId,
