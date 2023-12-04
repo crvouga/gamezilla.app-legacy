@@ -15,7 +15,7 @@ import {
   VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Browser, Eff, Posix, Sub, batchMsgs, toMsgType } from "gamezilla/@SHARED/core";
+import { Browser, Eff, Posix, Sub, batchMsgs } from "gamezilla/@SHARED/core";
 import * as AuthClient from "./@CHILD/auth/auth.client";
 import * as ChatClient from "./@CHILD/chat/chat.client";
 import * as ProfileClient from "./@CHILD/profile/profile.client";
@@ -23,6 +23,8 @@ import * as SearchClient from "./@CHILD/search/search.client";
 import * as SpaceClient from "./@CHILD/space/space.client";
 import { ClientTransport } from "./@CHILD/wire/transport-client";
 import * as Wire from "./@CHILD/wire/wire.client";
+import { AppClient } from "./@SHARED/architecture";
+import { Cmd, Msg } from "./@SHARED/architecture/app-client-v2";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import {
   APP_CONFIG,
@@ -31,8 +33,6 @@ import {
   ToClient,
   ToServer,
 } from "./app.core";
-import { AppClient } from "./@SHARED/architecture";
-import { Cmd, Msg } from "./@SHARED/architecture/app-client-v2";
 
 //
 //
