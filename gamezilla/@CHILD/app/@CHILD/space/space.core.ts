@@ -114,7 +114,7 @@ export const appendEvent = (
 };
 
 export const mergeModels = (left: CoreModel, right: CoreModel): CoreModel => {
-  const streamNew = EventStream.merge(config, left.events, right.events);
+  const streamNew = EventStream.mergeLeft(config, left.events, right.events);
 
   const modelNew: CoreModel = {
     initialState: left.initialState,

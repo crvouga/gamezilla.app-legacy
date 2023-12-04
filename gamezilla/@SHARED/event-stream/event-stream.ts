@@ -150,7 +150,7 @@ const updateIndexes = <T, TIndexName extends string>(
   };
 };
 
-const merge = <T, TIndexName extends string>(
+const mergeLeft = <T, TIndexName extends string>(
   config: EventStreamConfig<T, TIndexName>,
   left: EventStream<T, TIndexName>,
   right: EventStream<T, TIndexName>
@@ -220,7 +220,7 @@ const fromArray = <T, TIndexName extends string>(
 export const EventStream = {
   subset,
   append,
-  merge,
+  mergeLeft,
   empty,
   init,
   toArray,

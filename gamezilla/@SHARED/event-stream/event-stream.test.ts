@@ -141,7 +141,7 @@ test("should be able to merge", () => {
 
   const streamA = EventStream.fromArray(config, [event1, event3]);
   const streamB = EventStream.fromArray(config, [event2]);
-  const actual = EventStream.merge(config, streamA, streamB);
+  const actual = EventStream.mergeLeft(config, streamA, streamB);
   const expected = EventStream.fromArray(config, [event1, event2, event3]);
 
   expect(EventStream.toArray(actual)).toEqual(EventStream.toArray(expected));
