@@ -314,3 +314,18 @@ const toNextGroupId = (groupId: Flow.GroupId): Flow.GroupId => {
 
   return groupIdNew;
 };
+
+export type GameEvent =
+  | {
+      t: "play-ui";
+      c: FlowGridUIPlay.GameEvent;
+    }
+  | {
+      t: "edit-ui";
+    };
+
+
+  export type GameState = {
+    play: FlowGridUIPlay.GameState;
+  
+  }
