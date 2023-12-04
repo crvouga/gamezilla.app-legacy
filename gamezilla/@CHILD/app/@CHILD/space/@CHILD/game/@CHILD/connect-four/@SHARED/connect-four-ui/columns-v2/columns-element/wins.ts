@@ -1,4 +1,4 @@
-import { Columns, Win, toWins } from "../../../connect-four";
+import { Columns, Win, findWins } from "../../../connect-four";
 
 /* Have to increase the viewBox so that the draw animation is smooth >:-{ */
 const N = 1000;
@@ -22,8 +22,8 @@ export function syncWins({
   parentNode: SVGElement;
   columns: Columns;
 }) {
-  const prevWins = prevColumns ? toWins(prevColumns) : null;
-  const wins = columns ? toWins(columns) : [];
+  const prevWins = prevColumns ? findWins(prevColumns) : null;
+  const wins = columns ? findWins(columns) : [];
 
   const additions = prevWins
     ? wins.filter((win) => !prevWins.some((w) => toWinId(w) === toWinId(win)))
@@ -60,7 +60,7 @@ export function initWins({
 }) {
   parentNode.innerHTML = "";
 
-  const wins = toWins(columns);
+  const wins = findWins(columns);
 
   for (const win of wins) {
     const node = createWinNode(win);

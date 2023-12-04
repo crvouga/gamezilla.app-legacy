@@ -1,4 +1,4 @@
-import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-user";
 import {
   SpaceClientCtx,
   SpaceViewCtx,

@@ -140,10 +140,10 @@ export const chainAwait = async <Model, Msg, Evt, Cmd>(
     input: Model
   ) => Output<Model, Msg, Evt, Cmd> | Promise<Output<Model, Msg, Evt, Cmd>>)[]
 ): Promise<Output<Model, Msg, Evt, Cmd>> => {
-  const cmd: Cmd[] = initial.cmd ?? [];
-  const evt: Evt[] = initial.evt ?? [];
+  const cmd: Cmd[] = [...(initial.cmd ?? [])];
+  const evt: Evt[] = [...(initial.evt ?? [])];
   const eff: Eff<Msg>[] = initial.eff ? [initial.eff] : [];
-  let model: Model = initial.model;
+  let model: Model = {...initial.model};
 
   for (let i = 0, len = updaters.length; i < len; ++i) {
     const updated = await updaters[i]!(model);

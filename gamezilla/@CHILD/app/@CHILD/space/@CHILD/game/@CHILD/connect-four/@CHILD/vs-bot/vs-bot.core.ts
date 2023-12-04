@@ -1,12 +1,12 @@
-import { Posix, TimeSpan } from "gamezilla/@SHARED/core";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
   VsBotGame,
   VsBotSetup,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
+import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { Posix, TimeSpan } from "gamezilla/@SHARED/core";
+import { EventId, EventMeta } from "gamezilla/@SHARED/event-stream";
 import * as ConnectFour from "../../@SHARED/connect-four";
-import { EventMeta } from "gamezilla/@SHARED/event-stream";
 
 //
 //
@@ -29,7 +29,6 @@ export function isBotMoving(now: Posix, model: ServerModel) {
 }
 
 export type ClientModel = {
-  opened: "activity-feed-drawer" | null;
   vsBotSetup: VsBotSetup.Model;
   vsBotGame: VsBotGame.Model;
 };
@@ -49,6 +48,7 @@ export type ServerMsg =
   | {
       t: "bot-found-best-move";
       found: ConnectFour.BestMoveResult;
+      startedAt: Posix;
     }
   | {
       t: "time-passed";
@@ -79,6 +79,8 @@ export type GameEvent =
   | { t: "time-passed"; now: Posix }
   | { t: "user-restarted-game"; userId: UserId };
 
+
+
 type EventErr =
   | { t: "not-playing" }
   | { t: "move"; c: ConnectFour.MoveProblem };
@@ -96,7 +98,7 @@ export const eventErrorToString = ({ error }: { error: EventErr }): string => {
 
 export type GameState = (StateSetup | StateGame) & {
   errors: {
-    [eventId: string]: GameEvent & { error: EventErr };
+    [eventId: EventId]: GameEvent & { error: EventErr };
   };
 };
 
@@ -206,9 +208,11 @@ export const reducer = ({
             event.columnIndex,
             toBotPlayer(state)
           );
+          
           if (moved.t === "err") {
             return addError(state, event, { t: "move", c: moved.error });
           }
+
           return { ...state, columns: moved.value };
         }
 
@@ -222,9 +226,11 @@ export const reducer = ({
             event.columnIndex,
             state.userPlayerType
           );
+
           if (moved.t === "err") {
             return addError(state, event, { t: "move", c: moved.error });
           }
+
           return { ...state, columns: moved.value };
         }
 
@@ -298,11 +304,6 @@ const addError = (
       [event.eventId]: { ...event, error },
     },
   };
-};
-
-export const toError = (state: GameState, event: GameEvent & EventMeta) => {
-  const stateNew = reducer({ state, event });
-  return stateNew.errors[event.eventId] ?? null;
 };
 
 export const isBotTurn = (state: GameState): boolean => {

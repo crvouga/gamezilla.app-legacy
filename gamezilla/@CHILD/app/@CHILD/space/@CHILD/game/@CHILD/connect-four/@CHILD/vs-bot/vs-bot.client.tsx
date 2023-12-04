@@ -1,16 +1,16 @@
 import {
   GameLayout,
+  ViewBottomButtonBar,
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
+import {
   IconBotHappy,
   IconBotLevel1,
   IconBotLevel4,
-  ViewBottomButtonBar,
-  ViewGameOverOverlay,
   VsBotGame,
-  VsBotPlayerSection,
-  VsBotProps,
   VsBotSetup,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
 import {
+  FeedItem,
   GameClient,
   SpaceClientCtx,
   SpaceClientEvt,
@@ -25,17 +25,15 @@ import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
-  LoadingBar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub, TimeSpan } from "gamezilla/@SHARED/core";
 import { EventMeta, withMeta$ } from "gamezilla/@SHARED/event-stream";
-import { Columns, toStatus, toTurn } from "../../@SHARED/connect-four";
+import * as ConnectFour from "../../@SHARED/connect-four";
 import {
   CoverArt,
   PlayerOneIcon,
   PlayerTwoIcon,
   ViewColumns,
-  gameTheme,
 } from "../../@SHARED/connect-four-ui";
 import {
   BotLevel,
@@ -46,7 +44,6 @@ import {
   ToClient,
   ToServer,
   allBotLevels,
-  toError,
 } from "./vs-bot.core";
 
 type Client = GameClient<{
@@ -92,41 +89,47 @@ export const update: Client["update"] = (input) => {
     init(input),
     (model) => {
       const { msg } = input;
+
       if (!msg) {
         return { model };
       }
 
       switch (msg.t) {
         case "vs-bot-game": {
-          const updated = VsBotGame.update(model.vsBotGame, msg.c);
-          return { model: { ...model, vsBotGame: updated } };
+          return {
+            model: {
+              ...model,
+              vsBotGame: VsBotGame.update(model.vsBotGame, msg.c),
+            },
+          };
         }
 
         case "vs-bot-setup": {
-          const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
-          return { model: { ...model, vsBotSetup: updated } };
+          return {
+            model: {
+              ...model,
+              vsBotSetup: VsBotSetup.update(model.vsBotSetup, msg.c),
+            },
+          };
         }
 
         default: {
           const event = withMeta$(msg);
-          return {
-            model,
-            gameEvent: [event],
-            cmd: eventToSound(input.state, event),
-          };
+          return { model, gameEvent: [event] };
         }
       }
     },
     (model) => {
-      const { serverMsg } = input;
-      if (!serverMsg) {
+      const { gameEvent, state } = input;
+
+      if (!gameEvent) {
         return { model };
       }
-      switch (serverMsg.t) {
-        default: {
-          return { model };
-        }
-      }
+
+      return {
+        model,
+        cmd: eventToSound(state, gameEvent),
+      };
     },
     (model) => {
       const { state, stateBefore } = input;
@@ -135,9 +138,9 @@ export const update: Client["update"] = (input) => {
         return { model };
       }
 
-      const statusBefore = toStatus(stateBefore.columns);
+      const statusBefore = ConnectFour.toStatus(stateBefore.columns);
 
-      const status = toStatus(state.columns);
+      const status = ConnectFour.toStatus(state.columns);
 
       if (statusBefore.type === status.type) {
         return { model };
@@ -184,36 +187,58 @@ const eventToSound = (
   ToServer: ToServer;
   ClientMsg: ClientMsg;
 }>[] => {
-  const error = toError(state, event);
+  switch (state.type) {
+    case "game": {
+      switch (event.t) {
+        case "user-dropped-disc":
+        case "bot-dropped-disc": {
+          const error = state.errors[event.eventId];
 
-  if (error) {
-    return [playSound(APP_SOUND.alertErrorSm)];
-  }
+          if (error) {
+            return [playSound(APP_SOUND.alertErrorSm)];
+          }
 
-  switch (event.t) {
-    case "user-started-playing":
-    case "user-stopped-playing":
-    case "user-changed-bot-level": {
-      return [playSound(APP_SOUND.tap)];
+          return [playSound(APP_SOUND.tap)];
+        }
+
+        case "user-started-game":
+        case "user-swapped-sides":
+        case "user-restarted-game": {
+          return [playSound(APP_SOUND.navForwardMin)];
+        }
+
+        case "user-stopped-game": {
+          return [playSound(APP_SOUND.navBackwardMin)];
+        }
+
+        default: {
+          return [];
+        }
+      }
     }
 
-    case "user-dropped-disc":
-    case "bot-dropped-disc": {
-      return [playSound(APP_SOUND.tap)];
-    }
+    case "setup": {
+      switch (event.t) {
+        case "user-started-playing":
+        case "user-stopped-playing":
+        case "user-swapped-sides":
+        case "user-changed-bot-level": {
+          return [playSound(APP_SOUND.tap)];
+        }
 
-    case "user-swapped-sides":
-    case "user-restarted-game":
-    case "user-started-game": {
-      return [playSound(APP_SOUND.navForwardMin)];
-    }
+        case "user-started-game": {
+          return [playSound(APP_SOUND.navForwardMin)];
+        }
 
-    case "user-stopped-game": {
-      return [playSound(APP_SOUND.navBackwardMin)];
-    }
+        case "user-stopped-game":
+        case "user-restarted-game": {
+          return [playSound(APP_SOUND.navForwardMin)];
+        }
 
-    default: {
-      return [];
+        default: {
+          return [];
+        }
+      }
     }
   }
 };
@@ -226,9 +251,7 @@ const eventToSound = (
 //
 //
 
-export const subscriptions: Client["subscriptions"] = (
-  _input
-): Sub<ClientMsg> => {
+export const subscriptions: Client["subscriptions"] = (): Sub<ClientMsg> => {
   return Sub.None;
 };
 
@@ -240,8 +263,8 @@ export const subscriptions: Client["subscriptions"] = (
 //
 //
 
-export function toGameOver(columns: Columns): VsBotGame.GameOver {
-  const status = toStatus(columns);
+export function toGameOver(columns: ConnectFour.Columns): VsBotGame.GameOver {
+  const status = ConnectFour.toStatus(columns);
   switch (status.type) {
     case "Playing": {
       return { t: null };
@@ -259,7 +282,7 @@ export function toGameOver(columns: Columns): VsBotGame.GameOver {
 }
 
 export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
-  const vsBotProps: VsBotProps = {
+  const vsBotSetupProps: VsBotSetup.VsBotSetupProps = {
     ctx: ctx,
     onQuit: ctx.onQuit,
     title: "Connect Four",
@@ -325,39 +348,45 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
       <VsBotSetup.View
         model={model.vsBotSetup}
         dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
-        {...vsBotProps}
+        {...vsBotSetupProps}
       />
     );
   }
 
-  const vsBotGameProps = {
-    ...vsBotProps,
+  const status = ConnectFour.toStatus(state.columns);
+
+  const vsBotGameProps: VsBotGame.VsBotGameProps = {
+    ...vsBotSetupProps,
     human: {
-      ...vsBotProps.human,
+      ...vsBotSetupProps.human,
       userId: state.playingUserId,
     },
+    turn:
+      status.type !== "Playing"
+        ? null
+        : status.turn === "player-one"
+        ? "player-one"
+        : "player-two",
   };
-
-  const turn = toTurn(state.columns);
-  const status = toStatus(state.columns);
 
   return (
     <GameLayout isSpectating={ctx.currentUserId !== state.playingUserId}>
-      <div class="flex w-full flex-1 flex-col items-center justify-center">
-        <VsBotPlayerSection {...vsBotGameProps} />
+      <div class="flex w-full flex-1 flex-col items-center justify-center gap-1">
+        <VsBotGame.VsBotPlayerSection {...vsBotGameProps} />
+
+        <VsBotGame.ViewStatusBar
+          {...vsBotSetupProps}
+          status={toVsBotStatus(status)}
+        />
 
         <div class="relative flex w-full flex-col items-center justify-center overflow-hidden">
-          <LoadingBar
-            disabled={
-              turn === state.userPlayerType || status.type !== "Playing"
-            }
-            class="w-full"
-            color={gameTheme.primary.dark}
-          />
           <ViewColumns
             gameId={0}
             columns={state.columns}
-            disabled={ctx.currentUserId !== state.playingUserId}
+            disabled={
+              ctx.currentUserId !== state.playingUserId ||
+              status.type !== "Playing"
+            }
             onDropDisc={(columnIndex) => {
               dispatch({
                 t: "user-dropped-disc",
@@ -367,7 +396,7 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
             }}
           />
           {model && (
-            <ViewGameOverOverlay
+            <VsBotGame.ViewGameOverOverlay
               {...vsBotGameProps}
               model={model.vsBotGame}
               onPlayAgain={() =>
@@ -419,49 +448,66 @@ export const View: Client["View"] = ({ model, ctx, state, dispatch }) => {
   );
 };
 
-export const viewEvent: Client["viewEvent"] = ({ event, ctx }) => {
+function toVsBotStatus(status: ConnectFour.Status): VsBotGame.Status {
+  switch (status.type) {
+    case "Playing": {
+      return { t: "playing", turn: status.turn };
+    }
+    case "Tie": {
+      return { t: "draw" };
+    }
+    case "Winner": {
+      return { t: "winner", winner: status.winner };
+    }
+  }
+}
+
+export const ViewFeedItem: Client["ViewFeedItem"] = ({ event, ctx }) => {
   const username =
     "userId" in event ? ctx.profiles[event.userId]?.username ?? null : null;
 
   switch (event.t) {
     case "bot-dropped-disc": {
-      return {
-        text: "Bot dropped disc",
-      };
+      return <FeedItem.Info text="Bot dropped disc" />;
     }
+
     case "user-changed-bot-level": {
-      return { text: `${username} changed bot level to ${event.botLevel}` };
+      return (
+        <FeedItem.Info
+          text={`${username} changed bot level to ${event.botLevel}`}
+        />
+      );
     }
     case "user-dropped-disc": {
       if (event.userId === ctx.currentUserId) {
-        return { text: "You dropped disc" };
+        return <FeedItem.Info text={`${username} dropped disc`} />;
       }
 
-      return { text: `${username} dropped disc` };
+      return <FeedItem.Info text={`${username} dropped disc`} />;
     }
     case "user-restarted-game": {
-      return { text: `${username} restarted game` };
+      return <FeedItem.Info text={`${username} restarted game`} />;
     }
     case "user-started-game": {
-      return { text: `${username} started game` };
+      return <FeedItem.Info text={`${username} started game`} />;
     }
     case "user-started-playing": {
-      return { text: `${username} started playing` };
+      return <FeedItem.Info text={`${username} started playing`} />;
     }
     case "user-stopped-game": {
-      return { text: `${username} stopped game` };
+      return <FeedItem.Info text={`${username} stopped game`} />;
     }
     case "user-stopped-playing": {
-      return { text: `${username} stopped playing` };
+      return <FeedItem.Info text={`${username} stopped playing`} />;
     }
     case "user-swapped-sides": {
-      return { text: `${username} swapped sides` };
+      return <FeedItem.Info text={`${username} swapped sides`} />;
     }
     case "time-passed": {
       return null;
     }
     case "user-left": {
-      return { text: `${username} left` };
+      return <FeedItem.Info text={`${username} left space`} />;
     }
   }
 };

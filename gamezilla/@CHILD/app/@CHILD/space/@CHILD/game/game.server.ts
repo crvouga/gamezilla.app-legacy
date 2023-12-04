@@ -85,7 +85,7 @@ export const update: Server["update"] = async (input) => {
             msg: msg?.t === "chess" ? msg : null,
             clientMsg: clientMsg?.t === "chess" ? clientMsg : null,
             evt,
-            gameEvent: gameEvent?.t === "chess" ? gameEvent : null,
+            gameEvent: gameEvent?.t === "chess" ? {...gameEvent, c: {...gameEvent, ...gameEvent.c}} : null,
           });
         }
 
@@ -97,7 +97,7 @@ export const update: Server["update"] = async (input) => {
             msg: msg?.t === "connect-four" ? msg : null,
             clientMsg: clientMsg?.t === "connect-four" ? clientMsg : null,
             evt,
-            gameEvent: gameEvent?.t === "connect-four" ? gameEvent : null,
+            gameEvent: gameEvent?.t === "connect-four" ? {...gameEvent, c: {...gameEvent, ...gameEvent.c}} : null,
           });
         }
       }

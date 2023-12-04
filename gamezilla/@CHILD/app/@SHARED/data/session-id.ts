@@ -1,4 +1,4 @@
-import { Result } from "../../../../@SHARED/core/data/result";
+import { Result } from "gamezilla/@SHARED/core/data/result";
 
 export type SessionId = string & { _opaque: "SessionId" };
 
@@ -36,7 +36,7 @@ const generateId = (length: number): string => {
   return runningId;
 };
 
-export const generate = (): SessionId => {
+export const generate$ = (): SessionId => {
   const id = `${generateId(5)}`;
   const sessionId = `${namespace}${separator}${id}`;
 
@@ -48,7 +48,7 @@ export const generate = (): SessionId => {
 };
 
 export const SessionId = {
-  generate,
+  generate$,
   decode,
   is,
 };

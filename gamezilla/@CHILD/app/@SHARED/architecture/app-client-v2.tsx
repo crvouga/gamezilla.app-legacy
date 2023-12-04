@@ -61,6 +61,31 @@ export type Output<T extends ClientModuleTypes> = {
   msg?: OutputMsg<T>[];
 };
 
+export type InputVariant<T extends ClientModuleTypes> =
+  | {
+      t: "msg";
+      msg: T["Msg"];
+    }
+  | {
+      t: "from-server";
+      msg: T["FromServer"];
+    }
+  | {
+      t: "evt";
+      msg: T["InEvt"];
+    }
+  | {
+      t: "cmd";
+      msg: T["InCmd"];
+    };
+
+type InputBase<T extends ClientModuleTypes> = {
+  ctx: T["Ctx"];
+  model: T["Model"];
+};
+
+type Input<T extends ClientModuleTypes> = InputBase<T> & InputVariant<T>;
+
 export type ClientModule<T extends ClientModuleTypes> = {
   /**
    * `init` is the initial state of the module
@@ -74,11 +99,7 @@ export type ClientModule<T extends ClientModuleTypes> = {
   /**
    * `update` handles all the state transitions and business logic of the module
    */
-  update: (input: {
-    ctx: T["Ctx"];
-    model: T["Model"];
-    msg: InputMsg<T>;
-  }) => Output<T>;
+  update: (input: Input<T>) => Output<T>;
 
   /**
    * `subscriptions` is emits msgs specific to the module

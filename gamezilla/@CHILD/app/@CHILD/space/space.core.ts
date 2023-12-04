@@ -1,4 +1,8 @@
-import { EventMeta, EventStream } from "gamezilla/@SHARED/event-stream";
+import {
+  EventId,
+  EventMeta,
+  EventStream,
+} from "gamezilla/@SHARED/event-stream";
 import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import * as Game from "./@CHILD/game/game.core";
@@ -47,39 +51,38 @@ type ModalModel = null | "user-preview" | "users";
 type Sync = {
   t: "sync";
   events: CoreModel["events"];
-  profiles?: { [userId: UserId]: Profile };
-  causedBy: unknown;
 };
 
 export type ToClient = ToClientExtra &
   (
-    | EventWithMeta
+    | { t: "event"; c: EventWithMeta }
     | Sync
-    | { t: "game-msg"; spaceId: SpaceId; c: Game.ToClient }
+    | { t: "game"; spaceId: SpaceId; c: Game.ToClient }
   );
 
 export type ToServer = ToServerExtra &
   (
-    | EventWithMeta
+    | { t: "event"; c: EventWithMeta }
     | Sync
-    | { t: "game-msg"; spaceId: SpaceId; c: Game.ToServer }
+    | { t: "game"; spaceId: SpaceId; c: Game.ToServer }
   );
 
 export type ToClientExtra = {
   profiles?: { [userId: UserId]: Profile };
+  causedBy?: unknown;
   meta?: Record<string, unknown>;
 };
 
 export type ToServerExtra = {
-  profile?: Profile | null;
+  profiles?: { [userId: UserId]: Profile };
   meta?: Record<string, unknown>;
 };
 
-export type ServerMsg = { t: "game-msg"; spaceId: SpaceId; c: Game.ServerMsg };
+export type ServerMsg = { t: "game"; spaceId: SpaceId; c: Game.ServerMsg };
 
 export type ClientMsg =
-  | EventWithMeta
-  | { t: "game-msg"; spaceId: SpaceId; c: Game.ClientMsg }
+  | { t: "event"; c: EventWithMeta }
+  | { t: "game"; spaceId: SpaceId; c: Game.ClientMsg }
   | { t: "closed-modal" }
   | { t: "clicked-people-button" }
   | { t: "clicked-user"; userId: UserId };
@@ -171,7 +174,6 @@ export type Event =
       t: "user-joined-space";
       userId: UserId;
       spaceId: SpaceId;
-      profile?: Profile | null;
     }
   | {
       t: "user-left-space";
@@ -192,20 +194,25 @@ export type Event =
 
 export type EventWithMeta = Event & EventMeta;
 
-export type StateInitial = {
+export type SpaceStateInitial = {
   type: "initial";
 };
 
-export type StateStarted = Space & {
+export type SpaceStateStarted = Space & {
   type: "started";
   game: Game.GameState | null;
+  latestEvent: EventId;
 };
 
-export type StateEnded = Space & {
+export type SpaceStateEnded = Space & {
   type: "ended";
+  latestEvent: EventId;
 };
 
-export type StateSpace = StateInitial | StateStarted | StateEnded;
+export type StateSpace =
+  | SpaceStateInitial
+  | SpaceStateStarted
+  | SpaceStateEnded;
 
 export const toSpaceState = (
   model: CoreModel,
@@ -223,7 +230,7 @@ export const toSpaceState = (
 export const toStartedSpace = (
   model: CoreModel,
   spaceId: SpaceId
-): StateStarted | null => {
+): SpaceStateStarted | null => {
   const state = toState(model);
 
   const spaceState: StateSpace = state.spaces[spaceId] ?? {
@@ -249,7 +256,7 @@ type State = {
     [userId: UserId]: SpaceId;
   };
   active: {
-    [spaceId: SpaceId]: true;
+    [spaceId: SpaceId]: SpaceId;
   };
   errorsByUserId: {
     [userId: UserId]: EventWithMeta & { error: string };
@@ -278,6 +285,7 @@ const reducer = ({
       if (!space) {
         return state;
       }
+
       if (space.type === "initial") {
         return state;
       }
@@ -296,6 +304,7 @@ const reducer = ({
           ...state.spaces,
           [event.spaceId]: {
             ...space,
+            latestEvent: event.eventId,
             game: gameNew,
           },
         },
@@ -336,6 +345,7 @@ const reducer = ({
           ...state.spaces,
           [event.spaceId]: {
             ...space,
+            latestEvent: event.eventId,
             type: "ended",
           },
         },
@@ -369,6 +379,7 @@ const reducer = ({
           ...state.spaces,
           [event.spaceId]: {
             ...space,
+            latestEvent: event.eventId,
             game: event.game ? Game.initState(event.game) : null,
           },
         },
@@ -397,6 +408,7 @@ const reducer = ({
           ...state.spaces,
           [event.spaceId]: {
             ...space,
+            latestEvent: event.eventId,
             users: {
               ...space.users,
               [event.userId]: event.userId,
@@ -438,6 +450,7 @@ const reducer = ({
           ...state.spaces,
           [userSpaceId]: {
             ...space,
+            latestEvent: event.eventId,
             users: usersNew,
           },
         },
@@ -447,34 +460,46 @@ const reducer = ({
 
     case "user-started-space": {
       const space = state.spaces[event.spaceId];
+
       if (space) {
         return state;
       }
+
       const userSpaceId = state.spaceIdByUserId[event.userId];
+
       if (userSpaceId) {
         return state;
       }
-      const spaceIdByUserIdNew = { ...state.spaceIdByUserId };
+
+      const spaceIdByUserIdNew: State["spaceIdByUserId"] = {
+        ...state.spaceIdByUserId,
+      };
       spaceIdByUserIdNew[event.userId] = event.spaceId;
 
-      const activeNew = { ...state.active };
-      activeNew[event.spaceId] = true;
+      const activeNew: State["active"] = { ...state.active };
+      activeNew[event.spaceId] = event.spaceId;
+
+      const spaceNew: State["spaces"][SpaceId] = {
+        type: "started",
+        spaceId: event.spaceId,
+        hostId: event.userId,
+        visibility: "public",
+        users: {
+          [event.userId]: event.userId,
+        },
+        game: null,
+        latestEvent: event.eventId,
+      };
+
+      const spacesNew: State["spaces"] = {
+        ...state.spaces,
+        [event.spaceId]: spaceNew,
+      };
+
       return {
         ...state,
         active: activeNew,
-        spaces: {
-          ...state.spaces,
-          [event.spaceId]: {
-            type: "started",
-            spaceId: event.spaceId,
-            hostId: event.userId,
-            visibility: "public",
-            users: {
-              [event.userId]: event.userId,
-            },
-            game: null,
-          },
-        },
+        spaces: spacesNew,
         spaceIdByUserId: spaceIdByUserIdNew,
       };
     }
@@ -487,6 +512,7 @@ function toState_(model: CoreModel): State {
   for (const event of EventStream.toIterable(model.events)) {
     state = reducer({ state, event });
   }
+
   return state;
 }
 

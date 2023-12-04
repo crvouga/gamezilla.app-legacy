@@ -36,7 +36,7 @@ const generateId = (length: number): string => {
 const namespace = "client";
 const separator = ":";
 
-const generate = (): ClientId => {
+const generate$ = (): ClientId => {
   const id = `${generateId(5)}`;
 
   const clientId = `${namespace}${separator}${id}`;
@@ -51,5 +51,5 @@ const generate = (): ClientId => {
 export const ClientId = {
   is,
   decode,
-  generate,
+  generate$,
 };

@@ -15,7 +15,7 @@ import {
   ClientMsg,
   Event,
   EventWithMeta,
-  StateStarted,
+  SpaceStateStarted,
   ToServer,
   appendEvent,
   toStartedSpace,
@@ -107,7 +107,7 @@ function sendEventToServer({
 } {
   return {
     model,
-    cmd: [sendToServer({ ...event, profile: null })],
+    cmd: [sendToServer({ t: "event", c: { ...event } })],
   };
 }
 
@@ -159,8 +159,8 @@ function updateGameFromEvent({
   before,
   after,
 }: {
-  before: StateStarted | null;
-  after: StateStarted | null;
+  before: SpaceStateStarted | null;
+  after: SpaceStateStarted | null;
   model: ClientModel;
   event: EventWithMeta;
   ctx: ClientCtx | AnonymousClientCtx;
@@ -180,7 +180,7 @@ function updateGameFromEvent({
       currentUserId: ctx.currentUserId,
       space: after,
     },
-    gameEvent: event.t === "game" ? event.c : null,
+    gameEvent: event.t === "game" ? { ...event, ...event.c } : null,
     model: model.games[event.spaceId],
     state: after.game,
     stateBefore: before?.game ?? after.game,
@@ -204,19 +204,19 @@ function updateGameFromEvent({
       },
     },
     eff: Eff.map_(
-      (c) => ({ t: "game-msg", spaceId: event.spaceId, c }),
+      (c) => ({ t: "game", spaceId: event.spaceId, c }),
       updatedGame.eff
     ),
     event: eventsNew,
     cmd: ClientCmd.map(
       updatedGame?.cmd ?? [],
       (c) => ({
-        t: "game-msg",
+        t: "game",
         c,
         spaceId: event.spaceId,
       }),
       (c) => ({
-        t: "game-msg",
+        t: "game",
         c,
         spaceId: event.spaceId,
       })

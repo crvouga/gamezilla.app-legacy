@@ -1,6 +1,5 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 
 export type PlayerType = "player-one" | "player-two";
 
@@ -9,12 +8,7 @@ export type VsBotProps = {
   title: string;
   renderCoverArt: (props: { class: string }) => VDom;
   onQuit: () => void;
-  canStartGame: boolean;
   onStartGame: () => void;
-  human: {
-    player: PlayerType;
-    userId: UserId | null;
-  };
   onSwapSides: () => void;
   bot: {
     label: string;

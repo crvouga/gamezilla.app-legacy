@@ -179,11 +179,26 @@ export const View: Client["View"] = (input) => {
   }
 };
 
-export const viewEvent: Client["viewEvent"] = (input) => {
-  const { event, ctx } = input;
-  if (event.t === "connect-four") {
-    return ConnectFour.viewEvent?.({ ctx, event }) ?? null;
-  }
+export const ViewFeedItem: Client["ViewFeedItem"] = (input) => {
+  const { state, event, ctx } = input;
 
-  return null;
+  switch (event.t) {
+    case "connect-four": {
+      switch (state.t) {
+        case "connect-four": {
+          return (
+            <ConnectFour.ViewFeedItem ctx={ctx} event={event} state={state} />
+          );
+        }
+
+        default: {
+          return null;
+        }
+      }
+    }
+
+    case "chess": {
+      return null;
+    }
+  }
 };

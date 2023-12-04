@@ -1,7 +1,6 @@
 import { ClientCmd, ClientEvt } from "gamezilla/@CHILD/app/@SHARED/client";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { ActivityFeedItem } from "../activity-feed";
 import { EventMeta } from "gamezilla/@SHARED/event-stream";
 
 export type GameClientTypes = {
@@ -54,7 +53,7 @@ export type GameClient<T extends GameClientTypes> = {
     msg?: T["ClientMsg"] | null;
     serverMsg?: T["ToClient"] | null;
     evt?: ClientEvt | null;
-    gameEvent?: T["GameEvent"] | null;
+    gameEvent?: (T["GameEvent"] & EventMeta) | null;
   }) => Output<T>;
 
   subscriptions: (input: {
@@ -71,10 +70,11 @@ export type GameClient<T extends GameClientTypes> = {
     model?: T["ClientModel"] | null;
   }) => VDom;
 
-  viewEvent?: (input: {
+  ViewFeedItem: (input: {
     ctx: T["ClientCtx"];
-    event: T["GameEvent"];
-  }) => ActivityFeedItem | null;
+    state: T['GameState']
+    event: T["GameEvent"] & EventMeta;
+  }) => VDom;
 };
 
 /**
@@ -124,11 +124,17 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         cmd: ClientCmd.tag(tag, updated.cmd),
         gameEvent: updated.gameEvent
           ? updated.gameEvent.map(
-              (gameEvent): EventMeta & { t: T; c: Types["GameEvent"] } => ({
+              (
+                gameEvent
+              ): EventMeta & { t: T; c: EventMeta & Types["GameEvent"] } => ({
                 eventId: gameEvent.eventId,
                 happenedAt: gameEvent.happenedAt,
                 t: tag,
-                c: gameEvent,
+                c: {
+                  ...gameEvent,
+                  eventId: gameEvent.eventId,
+                  happenedAt: gameEvent.happenedAt,
+                },
               })
             )
           : undefined,
@@ -158,11 +164,12 @@ export const tag = <T extends string, Types extends GameClientTypes>(
       );
     },
 
-    viewEvent: (input) => {
-      if (client.viewEvent) {
-        return client.viewEvent({
+    ViewFeedItem: (input) => {
+      if (client.ViewFeedItem) {
+        return client.ViewFeedItem({
           ctx: input.ctx,
           event: input.event.c,
+          state: input.state.c,
         });
       }
       return null;

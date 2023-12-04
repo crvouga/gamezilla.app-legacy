@@ -1,11 +1,13 @@
-import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import {
+  FeedItem,
   GameClient,
   SpaceClientCtx,
   SpaceViewCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Sub } from "gamezilla/@SHARED/core";
+import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 import * as VsBotClient from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUserClient from "./@CHILD/vs-user/vs-user.client";
 import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art";
@@ -17,7 +19,6 @@ import {
   ToClient,
   ToServer,
 } from "./connect-four.core";
-import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 
 type Client = GameClient<{
   ClientModel: ClientModel;
@@ -220,31 +221,61 @@ export const View: Client["View"] = ({ dispatch, ctx, state, model }) => {
   }
 };
 
-export const viewEvent: Client["viewEvent"] = (input) => {
-  const { event, ctx } = input;
+export const ViewFeedItem: Client["ViewFeedItem"] = (input) => {
+  const { event, ctx, state } = input;
+  switch (event.t) {
+    case "user-changed-mode": {
+      switch (event.mode) {
+        case "none": {
+          const profile = ctx.profiles[ctx.currentUserId];
 
-  if (event.t === "user-changed-mode") {
-    const profile = ctx.profiles[ctx.currentUserId];
-    if (!profile) {
-      return null;
+          if (!profile) {
+            return <FeedItem.Info text={`Exited game to main menu`} />;
+          }
+
+          return (
+            <FeedItem.Info
+              text={`${profile.username} exited game to main menu`}
+            />
+          );
+        }
+
+        default: {
+          const profile = ctx.profiles[ctx.currentUserId];
+
+          if (!profile) {
+            return <FeedItem.Info text={`Changed game mode`} />;
+          }
+
+          return (
+            <FeedItem.Info text={`${profile.username} changed game mode`} />
+          );
+        }
+      }
     }
-    if (event.mode === "none") {
-      return { text: `${profile.username} exited game to main menu` };
+
+    case "vs-bot": {
+      switch (state.t) {
+        case "vs-bot": {
+          return <VsBot.ViewFeedItem ctx={ctx} event={event} state={state} />;
+        }
+        default: {
+          return null;
+        }
+      }
     }
-    return {
-      text: `${profile.username} changed`,
-    };
-  }
 
-  if (event.t === "vs-bot") {
-    return VsBot.viewEvent?.({ ctx, event }) ?? null;
+    case "vs-user": {
+      switch (state.t) {
+        case "vs-user": {
+          return <VsUser.ViewFeedItem ctx={ctx} event={event} state={state} />;
+        }
+        default: {
+          return null;
+        }
+      }
+    }
   }
-
-  if (event.t === "vs-user") {
-    return VsUser.viewEvent?.({ ctx, event }) ?? null;
-  }
-
-  return null;
 };
 
 //

@@ -26,7 +26,7 @@ import {
   BottomBarButtonAction,
   GameLayout,
   ViewBottomButtonBar,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import { Chess } from "../../@SHARED/chess";
 import { Chessboard } from "../../@SHARED/chess-ui/chessboard";
 import { CHESS_SOUND } from "../../@SHARED/chess/chess-sounds";

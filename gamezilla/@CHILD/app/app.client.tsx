@@ -23,6 +23,7 @@ import * as SearchClient from "./@CHILD/search/search.client";
 import * as SpaceClient from "./@CHILD/space/space.client";
 import { ClientTransport } from "./@CHILD/wire/transport-client";
 import * as Wire from "./@CHILD/wire/wire.client";
+import { AppClient } from "./@SHARED/architecture";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import {
   APP_CONFIG,
@@ -31,8 +32,6 @@ import {
   ToClient,
   ToServer,
 } from "./app.core";
-import { AppClient } from "./@SHARED/architecture";
-import { Cmd, Msg } from "./@SHARED/architecture/app-client-v2";
 
 //
 //
@@ -199,9 +198,11 @@ export const update = (input: {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
 } => {
+  // console.log("[msg]", toMsgType(input.msg));
   let acc = updateMain(input);
 
   for (const evt of acc.evt ?? []) {
+    // console.log("[evt]", toMsgType(evt));
     const updatedEvt = updateFromEvent({
       ...input,
       model: acc.model,
@@ -215,6 +216,7 @@ export const update = (input: {
   }
 
   for (const cmd of acc.cmd ?? []) {
+    // console.log("[cmd]", toMsgType(cmd));
     const updatedCmd = updateFromCmd({ ...input, model: acc.model, cmd });
     acc = {
       model: updatedCmd.model,
@@ -269,9 +271,10 @@ const updateMain = ({
 
     case "toast": {
       const updated = Toast.update({
+        t: 'msg',
         ctx: ctx,
         model: model.toast,
-        msg: Msg(msg.c),
+        msg: msg.c,
       });
       return {
         model: { ...model, toast: updated.model },
@@ -550,8 +553,9 @@ const updateFromCmd = ({
     case "toast/enqueue": {
       const toast = Toast.update({
         model: model.toast,
-        msg: Cmd(cmd),
+        msg: cmd,
         ctx: ctxApp,
+        t: 'cmd'
       });
 
       return {

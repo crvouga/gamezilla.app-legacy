@@ -97,8 +97,8 @@ export type ServerMsg =
 //
 
 const IS_PROD = process.env["NODE_ENV"] === "production";
-const SERVER_PORT_LOCAL = 5000;
-const SERVER_URL_LOCAL = "http://localhost:5000/";
+const SERVER_PORT_LOCAL = 5002;
+const SERVER_URL_LOCAL = `http://localhost:${SERVER_PORT_LOCAL}/`;
 const SERVER_URL_NGROK = "https://gamezilla-server.ngrok.io/";
 const SERVER_URL_PROD = "https://server.gamezilla.app/";
 const WEB_SOCKETS_ENDPOINT = "/ws";

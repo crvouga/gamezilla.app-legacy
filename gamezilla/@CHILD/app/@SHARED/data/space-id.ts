@@ -20,7 +20,7 @@ const decode = (id: string): Result<Problem, SpaceId> => {
   return Result.err("invalid_id");
 };
 
-const generate = (): SpaceId => {
+const generate$ = (): SpaceId => {
   // warning collisions could happen
   // use short id so the logs are more readable
   const spaceId = `${namespace}${separator}${Math.random()
@@ -37,5 +37,5 @@ const generate = (): SpaceId => {
 export const SpaceId = {
   is,
   decode,
-  generate,
+  generate$,
 };

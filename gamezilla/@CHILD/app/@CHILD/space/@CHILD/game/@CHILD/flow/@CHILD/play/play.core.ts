@@ -1,4 +1,4 @@
-import { FlowGridUIPlay, FlowGridSamples } from "../../@SHARED/flow";
+import { FlowGridSamples, FlowGridUIPlay } from "../../@SHARED/flow";
 
 //
 //
@@ -39,3 +39,12 @@ export type ToServer = {
 };
 
 export type ToClient = { t: null };
+
+export type GameEvent = {
+  t: "grid";
+  c: FlowGridUIPlay.GameEvent;
+};
+
+export type GameState = {
+  play: FlowGridUIPlay.GameState;
+};

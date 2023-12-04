@@ -10,6 +10,6 @@ export const withMeta$ = <T>(eventNew: T): T & EventMeta => {
   return {
     ...eventNew,
     happenedAt: Posix.now$(),
-    eventId: EventId.generate(),
+    eventId: EventId.generate$(),
   };
 };

@@ -51,3 +51,31 @@ export type Req = {
 export type Res = Req & {
   result: Result<string, ServerModel>;
 };
+
+export type Mode = "puzzle-builder" | "play";
+
+export type GameEvent =
+  | {
+      t: "user-changed-mode";
+      mode: Mode;
+    }
+  | {
+      t: "play";
+      c: Play.GameEvent;
+    }
+  | {
+      t: "puzzle-builder";
+      c: PuzzleBuilder.GameEvent;
+    };
+
+
+export type GameState =
+  | {
+      t: "puzzle-builder";
+      c: PuzzleBuilder.GameState;
+    }
+  | {
+      t: "play";
+      c: Play.GameState;
+    };
+

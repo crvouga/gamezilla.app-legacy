@@ -69,7 +69,7 @@ export const update = async ({
   cmd?: ServerCmd<ToClient>[];
 }> => {
   switch (msg.t) {
-    case "game-msg": {
+    case "game": {
       const { spaceId } = msg;
 
       const space = toStartedSpace(model, spaceId);
@@ -120,7 +120,7 @@ export const updateFromClient = async (input: {
   const { msg, model, ctx } = input;
 
   switch (msg.t) {
-    case "game-msg": {
+    case "game": {
       const space = toStartedSpace(model, msg.spaceId);
 
       if (!space || !space.game || !ctx.currentUserId) {
@@ -206,10 +206,10 @@ export const updateFromClient = async (input: {
       );
     }
 
-    default: {
+    case "event": {
       const updated = await updateFromEvents({
         ctx: ctx,
-        events: [msg],
+        events: [msg.c],
         model,
       });
 
@@ -311,10 +311,7 @@ export const subscriptions = async ({
       state: space.game,
     });
 
-    const mapped = Sub.map(
-      sub,
-      (c): ServerMsg => ({ t: "game-msg", c, spaceId })
-    );
+    const mapped = Sub.map(sub, (c): ServerMsg => ({ t: "game", c, spaceId }));
 
     batch.push(mapped);
   }

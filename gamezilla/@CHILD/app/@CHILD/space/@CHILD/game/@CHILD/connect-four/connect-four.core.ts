@@ -88,43 +88,62 @@ export const reducer = ({
   state: GameState;
   event: GameEvent & EventMeta;
 }): GameState => {
-  if (event.t === "user-changed-mode") {
-    switch (event.mode) {
-      case "none": {
-        return {
-          t: "none",
-        };
-      }
+  switch (event.t) {
+    case "user-changed-mode": {
+      switch (event.mode) {
+        case "none": {
+          return {
+            t: "none",
+          };
+        }
 
-      case "vs-bot": {
-        return {
-          t: "vs-bot",
-          c: VsBot.initState(ctx),
-        };
-      }
+        case "vs-bot": {
+          return {
+            t: "vs-bot",
+            c: VsBot.initState(ctx),
+          };
+        }
 
-      case "vs-user": {
-        return {
-          t: "vs-user",
-          c: VsUser.initState(ctx),
-        };
+        case "vs-user": {
+          return {
+            t: "vs-user",
+            c: VsUser.initState(ctx),
+          };
+        }
+      }
+    }
+
+    case "vs-bot": {
+      switch (state.t) {
+        case "vs-bot": {
+          return {
+            t: "vs-bot",
+            c: VsBot.reducer({
+              state: state.c,
+              event: { ...event, ...event.c },
+            }),
+          };
+        }
+        default: {
+          return state;
+        }
+      }
+    }
+
+    case "vs-user": {
+      switch (state.t) {
+        case "vs-user": {
+          return {
+            t: "vs-user",
+            c: VsUser.reducer(state.c, event.c),
+          };
+        }
+
+        default: {
+          return state;
+        }
       }
     }
   }
-
-  if (event.t === "vs-bot" && state.t === "vs-bot") {
-    return {
-      t: "vs-bot",
-      c: VsBot.reducer({ state: state.c, event: { ...event, ...event.c } }),
-    };
-  }
-
-  if (event.t === "vs-user" && state.t === "vs-user") {
-    return {
-      t: "vs-user",
-      c: VsUser.reducer(state.c, event.c),
-    };
-  }
-
-  return state;
 };
+

@@ -30,9 +30,9 @@ export const updateFromGame = ({
     },
     cmd: ClientCmd.map(
       updated.cmd ?? [],
-      (c) => ({ t: "game-msg", c, spaceId }),
-      (c) => ({ t: "game-msg", c, spaceId })
+      (c) => ({ t: "game", c, spaceId }),
+      (c) => ({ t: "game", c, spaceId })
     ),
-    eff: Eff.map_((c) => ({ t: "game-msg", c, spaceId }), updated.eff),
+    eff: Eff.map_((c) => ({ t: "game", c, spaceId }), updated.eff),
   };
 };

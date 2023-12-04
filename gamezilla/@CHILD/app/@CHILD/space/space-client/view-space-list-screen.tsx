@@ -8,7 +8,7 @@ import {
   TopBar,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { ViewSpaceHostChip } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import { ViewSpaceHostChip } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { GameName, gameNameToString } from "../@CHILD/game/game.core";
 import {
@@ -99,13 +99,14 @@ export const ViewSpaceListScreen = ({
             class="w-full"
             color="primary"
             onClick={() =>
-              dispatch(
-                withMeta$({
+              dispatch({
+                t: "event",
+                c: withMeta$({
                   t: "user-started-space",
-                  spaceId: SpaceId.generate(),
+                  spaceId: SpaceId.generate$(),
                   userId: ctx.currentUserId,
-                })
-              )
+                }),
+              })
             }
             text="Start space"
           />
@@ -149,7 +150,8 @@ const ViewSpaceCard = ({
   return (
     <button
       onClick={onClick}
-      class="flex flex-col gap-3 rounded-md bg-blue-600 p-4 active:opacity-70">
+      class="flex flex-col gap-3 rounded-md bg-blue-600 p-4 active:opacity-70"
+    >
       <div class="flex w-full items-center justify-start">
         <p class="block flex-1 text-left font-bold uppercase">LIVE</p>
         {isCurrentSpace && <p class="block text-xs italic">Current space</p>}

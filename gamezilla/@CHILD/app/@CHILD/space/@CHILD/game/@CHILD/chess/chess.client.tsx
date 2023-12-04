@@ -1,4 +1,4 @@
-import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED";
+import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import {
   GameClient,
   SpaceClientCtx,
@@ -358,3 +358,7 @@ export const View: Client["View"] = ({ ctx, state, dispatch }) => {
     }
   }
 };
+
+export const ViewFeedItem: Client["ViewFeedItem"] = () => {
+  return null
+}
