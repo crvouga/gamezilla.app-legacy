@@ -366,10 +366,7 @@ export const View = ({
   viewBottomBar: VDom;
 }): VDom => {
   const dispatchEvent = (m: Event) => {
-    dispatch({
-      t: "event",
-      c: withMeta$(m),
-    });
+    dispatch({ t: "event", c: withMeta$(m) });
   };
   switch (route.t) {
     case "space-list": {
