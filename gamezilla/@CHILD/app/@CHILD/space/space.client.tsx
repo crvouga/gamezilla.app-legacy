@@ -26,7 +26,6 @@ import {
   IconXMark,
   MyAvatar,
   VDom,
-  Transition,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
 import { withMeta$ } from "gamezilla/@SHARED/event-stream";
@@ -566,30 +565,9 @@ const ViewFeed = ({
   }
 
   return (
-    <Transition
-      id="event"
-      mode="in-out"
-      onEnter={async (el) => {
-        await el.animate([{ opacity: 0 }, { opacity: 1 }], {
-          fill: "both",
-          duration: 200,
-        }).finished;
-      }}
-      onExit={async (el) => {
-        await el.animate([{ opacity: 1 }, { opacity: 0 }], {
-          fill: "both",
-          duration: 200,
-        }).finished;
-      }}
-      class="relative h-6 w-full"
-    >
-      <div
-        key={event.eventId}
-        class="absolute inset-0 flex items-center justify-center"
-      >
-        <ViewFeedItem ctx={ctx} event={event} state={state} />
-      </div>
-    </Transition>
+    <div class="flex w-full items-center justify-center border-b border-neutral-700 p-1">
+      <ViewFeedItem ctx={ctx} event={event} state={state} />
+    </div>
   );
 };
 
@@ -695,66 +673,11 @@ const ViewSpaceScreenMain = ({
     );
   }
 
-  const peopleCount = Object.keys(ctx.space.users).length;
-
-  const gameModel = model.games[ctx.space.spaceId];
-
   return (
     <div class="flex h-full w-full flex-1 flex-col">
-      <nav class="flex h-14 w-full items-center border-b border-neutral-700">
-        <ViewTopButton
-          onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
-          label="Home"
-          icon={<IconHome class="h-6 w-6" />}
-        />
-
-        <ViewTopButton
-          onClick={() => dispatch({ t: "clicked-people-button" })}
-          label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
-          icon={<IconUserGroup class="h-6 w-6" />}
-        />
-
-        <div class="flex-1"></div>
-
-        {ctx.space.hostId !== ctx.currentUserId && (
-          <div class="p-2">
-            <Button
-              color="danger"
-              variant="contained"
-              size="sm"
-              text="Leave"
-              onClick={() => {
-                dispatchEvent({
-                  t: "user-left-space",
-                  spaceId: ctx.space.spaceId,
-                  userId: ctx.currentUserId,
-                });
-              }}
-            />
-          </div>
-        )}
-        {ctx.space.hostId === ctx.currentUserId && (
-          <div class="p-2">
-            <Button
-              color="danger"
-              variant="contained"
-              size="sm"
-              text="End"
-              onClick={() => {
-                dispatchEvent({
-                  t: "user-ended-space",
-                  userId: ctx.currentUserId,
-                  spaceId: ctx.space.spaceId,
-                });
-              }}
-            />
-          </div>
-        )}
-      </nav>
+      <ViewTopBar ctx={ctx} dispatch={dispatch} dispatchEvent={dispatchEvent} />
 
       <ViewFeed state={space} ctx={ctx} model={model} dispatch={dispatch} />
-
-      <div class="w-full border-b border-neutral-700"></div>
 
       <div class="flex w-full flex-1 flex-col overflow-hidden">
         {space.game ? (
@@ -764,7 +687,7 @@ const ViewSpaceScreenMain = ({
             dispatch={(msg) =>
               dispatch({ t: "game", spaceId: ctx.space.spaceId, c: msg })
             }
-            model={gameModel}
+            model={model.games[ctx.space.spaceId]}
           />
         ) : (
           <ViewNotInGameScreen ctx={ctx} dispatchEvent={dispatchEvent} />
@@ -773,6 +696,71 @@ const ViewSpaceScreenMain = ({
     </div>
   );
 };
+
+function ViewTopBar({
+  ctx,
+  dispatch,
+  dispatchEvent,
+}: {
+  ctx: SpaceViewCtx;
+  dispatch: (m: ClientMsg) => void;
+  dispatchEvent: (m: Event) => void;
+}) {
+  const peopleCount = Object.keys(ctx.space.users).length;
+
+  return (
+    <nav class="flex h-14 w-full items-center border-b border-neutral-700">
+      <ViewTopButton
+        onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
+        label="Home"
+        icon={<IconHome class="h-6 w-6" />}
+      />
+
+      <ViewTopButton
+        onClick={() => dispatch({ t: "clicked-people-button" })}
+        label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
+        icon={<IconUserGroup class="h-6 w-6" />}
+      />
+
+      <div class="flex-1"></div>
+
+      {ctx.space.hostId !== ctx.currentUserId && (
+        <div class="p-2">
+          <Button
+            color="danger"
+            variant="contained"
+            size="sm"
+            text="Leave"
+            onClick={() => {
+              dispatchEvent({
+                t: "user-left-space",
+                spaceId: ctx.space.spaceId,
+                userId: ctx.currentUserId,
+              });
+            }}
+          />
+        </div>
+      )}
+      {ctx.space.hostId === ctx.currentUserId && (
+        <div class="p-2">
+          <Button
+            color="danger"
+            variant="contained"
+            size="sm"
+            text="End"
+            onClick={() => {
+              dispatchEvent({
+                t: "user-ended-space",
+                userId: ctx.currentUserId,
+                spaceId: ctx.space.spaceId,
+              });
+            }}
+          />
+        </div>
+      )}
+    </nav>
+  );
+}
 
 function ViewTopButton({
   icon,
