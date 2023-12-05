@@ -1,4 +1,4 @@
-import { withMeta$ } from "gamezilla/@SHARED/event-stream";
+import { withEventId$ } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
@@ -101,7 +101,7 @@ export const ViewSpaceListScreen = ({
             onClick={() =>
               dispatch({
                 t: "event",
-                c: withMeta$({
+                c: withEventId$({
                   t: "user-started-space",
                   spaceId: SpaceId.generate$(),
                   userId: ctx.currentUserId,

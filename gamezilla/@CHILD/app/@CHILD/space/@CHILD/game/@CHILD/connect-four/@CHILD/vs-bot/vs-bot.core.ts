@@ -5,7 +5,7 @@ import {
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Posix, TimeSpan } from "gamezilla/@SHARED/core";
-import { EventId, EventMeta } from "gamezilla/@SHARED/event-stream";
+import { EventMeta, EventId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";;
 import * as ConnectFour from "../../@SHARED/connect-four";
 
 //

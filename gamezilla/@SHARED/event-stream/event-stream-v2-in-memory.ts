@@ -7,6 +7,7 @@ export type EventStreamInMemoryInstance = {
 export const EventStreamInMemory = <TEvent, TIndexName extends string>(): IEventStream<
   TEvent,
   TIndexName,
+  string,
   EventStreamInMemoryInstance
 > => {
   return {

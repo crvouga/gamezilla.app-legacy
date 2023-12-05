@@ -3,6 +3,7 @@ import {
   ViewUsersInSpaceList,
   ViewYouChip,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
+import { WithEventId, withEventId$ } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import {
   FeedItem,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
@@ -30,7 +31,6 @@ import {
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
-import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import * as GameClient from "./@CHILD/game/game.client";
 import { updateFromEvents } from "./space-client/update-from-events";
@@ -42,7 +42,6 @@ import {
   ClientModel,
   ClientMsg,
   Event,
-  EventWithMeta,
   SpaceStateStarted,
   ToClient,
   ToServer,
@@ -139,7 +138,7 @@ export const update = ({
 
       const eventsNew =
         updatedGame.gameEvent?.map(
-          (c): EventWithMeta => ({ ...c, t: "game", c, spaceId: msg.spaceId })
+          (c): WithEventId<Event> => ({ ...c, t: "game", c, spaceId: msg.spaceId })
         ) ?? [];
 
       return chain(
@@ -214,7 +213,7 @@ export const updateFromServer = ({
 
           const eventsNew =
             updatedGame.gameEvent?.map(
-              (e): EventWithMeta => ({
+              (e): WithEventId<Event> => ({
                 ...e,
                 spaceId: msg.spaceId,
                 t: "game",
@@ -370,7 +369,7 @@ export const View = ({
   viewBottomBar: VDom;
 }): VDom => {
   const dispatchEvent = (m: Event) => {
-    dispatch({ t: "event", c: withMeta$(m) });
+    dispatch({ t: "event", c: withEventId$(m) });
   };
   switch (route.t) {
     case "space-list": {
@@ -578,7 +577,7 @@ const ViewFeedItem = ({
   state,
 }: {
   ctx: SpaceViewCtx;
-  event: EventWithMeta;
+  event: WithEventId<Event>;
   state: SpaceStateStarted;
 }) => {
   switch (event.t) {
@@ -824,7 +823,7 @@ export const ViewCurrentSpaceBar = ({
   const dispatchEvent = (msg: Event) => {
     dispatch({
       t: "event",
-      c: withMeta$(msg),
+      c: withEventId$(msg),
     });
   };
 

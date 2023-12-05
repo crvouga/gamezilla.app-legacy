@@ -12,6 +12,7 @@ import {
 import {
   GameClient,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import { EventMeta, withEventId$ } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import {
   FeedItem
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
@@ -31,7 +32,6 @@ import {
   IconRightLeft,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub, TimeSpan } from "gamezilla/@SHARED/core";
-import { EventMeta, withMeta$ } from "gamezilla/@SHARED/event-stream";
 import * as ConnectFour from "../../@SHARED/connect-four";
 import {
   CoverArt,
@@ -118,7 +118,7 @@ export const update: Client["update"] = (input) => {
         }
 
         default: {
-          const event = withMeta$(msg);
+          const event = withEventId$(msg);
           return { model, gameEvent: [event] };
         }
       }

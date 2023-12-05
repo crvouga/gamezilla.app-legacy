@@ -1,8 +1,9 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { WithEventMeta } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.core";
 import * as VsUser from "./@CHILD/vs-user/vs-user.core";
-import { EventMeta } from "gamezilla/@SHARED/event-stream";
+
 
 //
 //
@@ -86,7 +87,7 @@ export const reducer = ({
 }: {
   ctx: SpaceCtx;
   state: GameState;
-  event: GameEvent & EventMeta;
+  event: WithEventMeta<GameEvent>;
 }): GameState => {
   switch (event.t) {
     case "user-changed-mode": {

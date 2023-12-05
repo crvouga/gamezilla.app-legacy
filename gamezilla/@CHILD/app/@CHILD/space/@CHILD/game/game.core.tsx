@@ -1,5 +1,5 @@
 
-import { EventMeta } from "gamezilla/@SHARED/event-stream";
+import { EventMeta } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { SpaceCtx } from "../../@SHARED/space";
 import * as Chess from "./@CHILD/chess/chess.core";
 import * as ConnectFour from "./@CHILD/connect-four/connect-four.core";

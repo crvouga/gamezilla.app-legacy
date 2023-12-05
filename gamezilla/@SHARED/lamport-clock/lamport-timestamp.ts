@@ -1,11 +1,11 @@
 export type LamportTimestamp = {
-  LamportTimestamp: "LamportTimestamp";
+  _type: "LamportTimestamp";
   _value: number;
 };
 
 const fromNumber = (value: number): LamportTimestamp => {
   return {
-    LamportTimestamp: "LamportTimestamp",
+    _type: "LamportTimestamp",
     _value: Math.max(0, Math.floor(value)),
   };
 };

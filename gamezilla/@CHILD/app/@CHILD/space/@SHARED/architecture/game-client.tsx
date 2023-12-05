@@ -1,7 +1,7 @@
 import { ClientCmd, ClientEvt } from "gamezilla/@CHILD/app/@SHARED/client";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { EventMeta } from "gamezilla/@SHARED/event-stream";
+import {WithEventId, WithEventMeta  } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 
 export type GameClientTypes = {
   //
@@ -25,7 +25,7 @@ type Output<T extends GameClientTypes> = {
     ClientMsg: T["ClientMsg"];
     ToServer: T["ToServer"];
   }>[];
-  gameEvent?: (T["GameEvent"] & EventMeta)[];
+  gameEvent?: WithEventId<T["GameEvent"]>[];
 };
 
 export type InMsg<T extends GameClientTypes> =
@@ -35,7 +35,7 @@ export type InMsg<T extends GameClientTypes> =
 
 export type OutMsg<T extends GameClientTypes> =
   | ({ variant: "cmd" } & ClientCmd<T>)
-  | ({ variant: "game-event" } & T["GameEvent"] & EventMeta);
+  | ({ variant: "game-event" } & WithEventId<T["GameEvent"]>);
 
 export type GameClient<T extends GameClientTypes> = {
   init: (input: {
@@ -53,7 +53,7 @@ export type GameClient<T extends GameClientTypes> = {
     msg?: T["ClientMsg"] | null;
     serverMsg?: T["ToClient"] | null;
     evt?: ClientEvt | null;
-    gameEvent?: (T["GameEvent"] & EventMeta) | null;
+    gameEvent?: (WithEventMeta<T["GameEvent"]>) | null;
   }) => Output<T>;
 
   subscriptions: (input: {
@@ -73,7 +73,7 @@ export type GameClient<T extends GameClientTypes> = {
   ViewFeedItem: (input: {
     ctx: T["ClientCtx"];
     state: T['GameState']
-    event: T["GameEvent"] & EventMeta;
+    event: T["GameEvent"];
   }) => VDom;
 };
 
@@ -126,7 +126,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
           ? updated.gameEvent.map(
               (
                 gameEvent
-              ): EventMeta & { t: T; c: EventMeta & Types["GameEvent"] } => ({
+              ): WithEventMeta<{ t: T; c: WithEventMeta<Types["GameEvent"]> }> => ({
                 eventId: gameEvent.eventId,
                 happenedAt: gameEvent.happenedAt,
                 t: tag,

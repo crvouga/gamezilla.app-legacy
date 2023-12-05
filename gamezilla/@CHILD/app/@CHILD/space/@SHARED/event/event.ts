@@ -10,6 +10,8 @@ export type WithEventId<T> = T & {
   eventId: EventId;
 };
 
+export type WithEventMeta<T> = T & EventMeta
+
 export const withEventId$ = <T>(eventNew: T): WithEventId<T> => {
   return {
     ...eventNew,

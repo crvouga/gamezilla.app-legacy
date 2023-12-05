@@ -29,13 +29,18 @@ const update = (
   };
 };
 
+const toTimestamp = (clock: LamportClock): LamportTimestamp => {
+  return clock._timestamp;
+};
+
 const toNumber = (clock: LamportClock): number => {
-  return LamportTimestamp.toNumber(clock._timestamp);
+  return LamportTimestamp.toNumber(toTimestamp(clock))
 };
 
 export const LamportClock = {
   init,
   increment,
   update,
+  toTimestamp,
   toNumber,
 };

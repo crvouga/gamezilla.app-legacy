@@ -1,3 +1,4 @@
+import { EventId, WithEventId, withEventId$ } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import {
   APP_SOUND,
   AnonymousClientCtx,
@@ -8,13 +9,12 @@ import {
   sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, batchMsgs, chain } from "gamezilla/@SHARED/core";
-import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 import * as GameClient from "../@CHILD/game/game.client";
 import {
   ClientModel,
   ClientMsg,
   Event,
-  EventWithMeta,
+
   SpaceStateStarted,
   ToServer,
   appendEvent,
@@ -28,7 +28,7 @@ import {
 export function updateFromEvents(input: {
   ctx: ClientCtx | AnonymousClientCtx;
   model: ClientModel;
-  events: EventWithMeta[];
+  events: WithEventId<Event>[];
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
@@ -43,7 +43,7 @@ export function updateFromEvents(input: {
 
 export function updateFromEventsLoop(
   ctx: ClientCtx | AnonymousClientCtx,
-  events: EventWithMeta[],
+  events: WithEventId<Event>[],
   acc: {
     model: ClientModel;
     cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
@@ -69,7 +69,7 @@ export function updateFromEventsLoop(
   const updated = chain(
     acc,
     (model) => appendEvents({ model, event }),
-    (model) => sendEventToServer({ model, event }),
+    (model) => sendEventToServer({ model, eventId: event.eventId }),
     (model) => updateSoundFromEvent({ model, ctx, event }),
     (model) => redirectWhenSpaceStarted({ model, ctx, event })
   );
@@ -79,7 +79,7 @@ export function updateFromEventsLoop(
   const updatedGame = updateGameFromEvent({
     model: updated.model,
     ctx,
-    event,
+    eventId: event.eventId,
     before: spaceBefore,
     after: spaceAfter,
   });
@@ -97,17 +97,24 @@ export function updateFromEventsLoop(
 
 function sendEventToServer({
   model,
-  event,
+  eventId,
 }: {
   model: ClientModel;
-  event: EventWithMeta;
+  eventId:  EventId;
 }): {
   model: ClientModel;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } {
+
+  const eventWithMeta = model.events.events[eventId];
+
+  if(!eventWithMeta) {
+    return { model };
+  }
+
   return {
     model,
-    cmd: [sendToServer({ t: "event", c: { ...event }, clock: model.clock })],
+    cmd: [sendToServer({ t: "event", c: { ...eventWithMeta }, clock: model.clock })],
   };
 }
 
@@ -116,7 +123,7 @@ function appendEvents({
   event,
 }: {
   model: ClientModel;
-  event: EventWithMeta;
+  event: WithEventId<Event>;
 }): {
   model: ClientModel;
 } {
@@ -130,7 +137,7 @@ function redirectWhenSpaceStarted({
   event,
 }: {
   model: ClientModel;
-  event: EventWithMeta;
+  event: WithEventId<Event>;
   ctx: ClientCtx | AnonymousClientCtx;
 }) {
   if (
@@ -154,7 +161,7 @@ function redirectWhenSpaceStarted({
 
 function updateGameFromEvent({
   model,
-  event,
+  eventId,
   ctx,
   before,
   after,
@@ -162,15 +169,18 @@ function updateGameFromEvent({
   before: SpaceStateStarted | null;
   after: SpaceStateStarted | null;
   model: ClientModel;
-  event: EventWithMeta;
+  eventId: EventId;
   ctx: ClientCtx | AnonymousClientCtx;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-  event?: EventWithMeta[];
+  event?: WithEventId<Event>[];
 } {
-  if (!after || !after.game || !ctx.currentUserId) {
+
+  const eventWithMeta = model.events.events[eventId];
+
+  if (!after || !after.game || !ctx.currentUserId || !eventWithMeta) {
     return { model };
   }
 
@@ -180,17 +190,17 @@ function updateGameFromEvent({
       currentUserId: ctx.currentUserId,
       space: after,
     },
-    gameEvent: event.t === "game" ? { ...event, ...event.c } : null,
-    model: model.games[event.spaceId],
+    gameEvent: eventWithMeta.t === "game" ? { ...eventWithMeta, ...eventWithMeta.c } : null,
+    model: model.games[eventWithMeta.spaceId],
     state: after.game,
     stateBefore: before?.game ?? after.game,
   });
 
   const eventsNew =
     updatedGame.gameEvent?.map((e) =>
-      withMeta$<Event>({
+      withEventId$<Event>({
         t: "game",
-        spaceId: event.spaceId,
+        spaceId: eventWithMeta.spaceId,
         c: e,
       })
     ) ?? [];
@@ -200,11 +210,11 @@ function updateGameFromEvent({
       ...model,
       games: {
         ...model.games,
-        [event.spaceId]: updatedGame.model,
+        [eventWithMeta.spaceId]: updatedGame.model,
       },
     },
     eff: Eff.map_(
-      (c) => ({ t: "game", spaceId: event.spaceId, c }),
+      (c) => ({ t: "game", spaceId: eventWithMeta.spaceId, c }),
       updatedGame.eff
     ),
     event: eventsNew,
@@ -213,12 +223,12 @@ function updateGameFromEvent({
       (c) => ({
         t: "game",
         c,
-        spaceId: event.spaceId,
+        spaceId: eventWithMeta.spaceId,
       }),
       (c) => ({
         t: "game",
         c,
-        spaceId: event.spaceId,
+        spaceId: eventWithMeta.spaceId,
       })
     ),
   };

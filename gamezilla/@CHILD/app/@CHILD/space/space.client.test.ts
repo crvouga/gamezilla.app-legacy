@@ -2,7 +2,7 @@ import { expect, test } from "bun:test";
 import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Posix } from "gamezilla/@SHARED/core";
-import { withMeta$ } from "gamezilla/@SHARED/event-stream";
+import { withEventId$ } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import * as SpaceClient from "./space.client";
 import * as SpaceCore from "./space.core";
 
@@ -33,7 +33,7 @@ function userStartedSpace(input: {
     model: input.model,
     msg: {
       t: "event",
-      c: withMeta$({
+      c: withEventId$({
         t: "user-started-space",
         spaceId: input.spaceId,
         userId: input.userId,
@@ -52,7 +52,7 @@ function userJoinedSpace(input: {
     model: input.model,
     msg: {
       t: "event",
-      c: withMeta$({
+      c: withEventId$({
         t: "user-joined-space",
         spaceId: input.spaceId,
         userId: input.userId,
@@ -71,7 +71,7 @@ function userLeftSpace(input: {
     model: input.model,
     msg: {
       t: "event",
-      c: withMeta$({
+      c: withEventId$({
         t: "user-left-space",
         spaceId: input.spaceId,
         userId: input.userId,

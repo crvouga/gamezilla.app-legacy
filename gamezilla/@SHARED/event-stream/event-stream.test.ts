@@ -1,8 +1,21 @@
 import { expect, test } from "bun:test";
 import { Posix } from "../core";
-import { EventMeta, withMeta$ } from "./event";
 import { EventStream } from "./event-stream";
-import { EventId } from "./event-id";
+
+type EventId = string
+
+type EventMeta = {
+  happenedAt: Posix;
+  eventId: EventId;
+};
+
+const withEventId$ = <T>(eventNew: T): T & EventMeta => {
+  return {
+    ...eventNew,
+    happenedAt: Posix.now$(),
+    eventId: Math.random().toString(),
+  };
+}
 
 type Event =
   | {
@@ -29,7 +42,7 @@ const config = EventStream.initConfig<Event & EventMeta, Indexes, EventId>({
 
 test("should be able to append events", () => {
   const before = EventStream.empty(config);
-  const event = withMeta$<Event>({
+  const event = withEventId$<Event>({
     t: "incremented",
     userId: "1",
     counterId: "1",
@@ -41,17 +54,17 @@ test("should be able to append events", () => {
 });
 
 test("should be able to append events", () => {
-  const event1 = withMeta$<Event>({
+  const event1 = withEventId$<Event>({
     t: "incremented",
     userId: "1",
     counterId: "1",
   });
-  const event2 = withMeta$<Event>({
+  const event2 = withEventId$<Event>({
     t: "incremented",
     userId: "1",
     counterId: "2",
   });
-  const event3 = withMeta$<Event>({
+  const event3 = withEventId$<Event>({
     t: "incremented",
     userId: "1",
     counterId: "3",
@@ -66,19 +79,19 @@ test("should be able to append events", () => {
 });
 
 test("should be able get subsets", () => {
-  const user_a_count_a = withMeta$<Event>({
+  const user_a_count_a = withEventId$<Event>({
     t: "incremented",
     userId: "userA",
     counterId: "counterA",
   });
 
-  const user_a_count_b = withMeta$<Event>({
+  const user_a_count_b = withEventId$<Event>({
     t: "incremented",
     userId: "userA",
     counterId: "counterB",
   });
 
-  const user_b_count_a = withMeta$<Event>({
+  const user_b_count_a = withEventId$<Event>({
     t: "incremented",
     userId: "userB",
     counterId: "counterB",
@@ -154,7 +167,7 @@ test("should be able to merge", () => {
 
 function withMetaAt(event: Event, happenedAt: Posix): Event & EventMeta {
   return {
-    ...withMeta$<Event>(event),
+    ...withEventId$<Event>(event),
     happenedAt,
   };
 }

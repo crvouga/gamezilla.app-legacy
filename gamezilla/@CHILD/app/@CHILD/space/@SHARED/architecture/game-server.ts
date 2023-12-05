@@ -1,7 +1,7 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { SpaceReqCtx, SpaceServerCtx, SpaceServerEvt } from "../space";
 import { SpaceServerCmd } from "../space-cmd";
-import { EventMeta } from "gamezilla/@SHARED/event-stream";
+import { EventMeta, WithEventId, WithEventMeta } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 
 //
 //
@@ -25,7 +25,7 @@ export type GameServerTypes = {
 
 type Output<T extends GameServerTypes> = {
   model: T["ServerModel"];
-  gameEvent?: (T["GameEvent"] & EventMeta)[];
+  gameEvent?: WithEventId<T["GameEvent"]>[];
   eff?: Eff<T["ServerMsg"]>;
   cmd?: SpaceServerCmd<T["ToClient"]>[];
 };
@@ -49,7 +49,7 @@ export type GameServer<T extends GameServerTypes> = {
     //
     msg?: T["ServerMsg"] | null;
     clientMsg?: T["ToServer"] | null;
-    gameEvent?: (T["GameEvent"] & EventMeta) | null;
+    gameEvent?: WithEventMeta<T["GameEvent"]> | null;
     evt?: SpaceServerEvt | null;
   }) => Promise<Output<T>>;
 

@@ -1,13 +1,18 @@
+import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { memoize } from "gamezilla/@SHARED/core";
+import {
+  EventStream,
+} from "gamezilla/@SHARED/event-stream";
+import { LamportClock } from "gamezilla/@SHARED/lamport-clock";
+import * as Game from "./@CHILD/game/game.core";
 import {
   EventId,
   EventMeta,
-  EventStream,
-} from "gamezilla/@SHARED/event-stream";
-import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import * as Game from "./@CHILD/game/game.core";
-import { memoize } from "gamezilla/@SHARED/core";
-import { LamportClock } from "gamezilla/@SHARED/lamport-clock";
+  WithEventId,
+  WithEventMeta,
+} from "./@SHARED/event";
+import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock/lamport-timestamp";
 
 //
 //
@@ -54,7 +59,7 @@ export type ToClient = ToClientExtra &
   (
     | {
         t: "event";
-        c: EventWithMeta;
+        c: WithEventMeta<Event>;
         clock: LamportClock;
       }
     | {
@@ -73,7 +78,7 @@ export type ToServer = ToServerExtra &
   (
     | {
         t: "event";
-        c: EventWithMeta;
+        c: WithEventMeta<Event>;
         clock: LamportClock;
       }
     | {
@@ -102,7 +107,7 @@ export type ToServerExtra = {
 export type ServerMsg = { t: "game"; spaceId: SpaceId; c: Game.ServerMsg };
 
 export type ClientMsg =
-  | { t: "event"; c: EventWithMeta }
+  | { t: "event"; c: WithEventId<Event> }
   | { t: "game"; spaceId: SpaceId; c: Game.ClientMsg }
   | { t: "closed-modal" }
   | { t: "clicked-people-button" }
@@ -127,12 +132,16 @@ export const initCore = (): CoreModel => {
 
 export const appendEvent = (
   model: CoreModel,
-  event: EventWithMeta
+  event: WithEventId<Event>
 ): CoreModel => {
+  const eventWithMeta: WithEventMeta<Event> = {
+    ...event,
+    happenedAt: LamportClock.toTimestamp(model.clock),
+  }
   return {
     ...model,
     clock: LamportClock.increment(model.clock),
-    events: EventStream.append(config, model.events, event),
+    events: EventStream.append(config, model.events, eventWithMeta),
   };
 };
 
@@ -155,7 +164,7 @@ const config = EventStream.initConfig<Event & EventMeta, Indexes, EventId>({
     indexSpaceId: (event) => event.spaceId,
   },
   toId: (event) => event.eventId,
-  toOrdering: (event) => event.happenedAt,
+  toOrdering: (event) => LamportTimestamp.toNumber(event.happenedAt),
 });
 
 type UserState = {
@@ -217,7 +226,6 @@ export type Event =
       c: Game.GameEvent;
     };
 
-export type EventWithMeta = Event & EventMeta;
 
 export type SpaceStateInitial = {
   type: "initial";
@@ -284,7 +292,7 @@ type State = {
     [spaceId: SpaceId]: SpaceId;
   };
   errorsByUserId: {
-    [userId: UserId]: EventWithMeta & { error: string };
+    [userId: UserId]: WithEventId<Event> & { error: string };
   };
 };
 
@@ -302,7 +310,7 @@ const reducer = ({
   event,
 }: {
   state: State;
-  event: EventWithMeta;
+  event: WithEventMeta<Event>;
 }): State => {
   switch (event.t) {
     case "game": {
