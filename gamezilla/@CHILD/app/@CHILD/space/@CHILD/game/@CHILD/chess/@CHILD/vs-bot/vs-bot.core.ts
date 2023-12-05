@@ -2,7 +2,7 @@ import { err, isErr, ok, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { VsBotSetup } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
 import { Chess } from "../../@SHARED/chess";
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 
 //
 //

@@ -1,18 +1,20 @@
 // https://en.wikipedia.org/wiki/Lamport_timestamp
 
+import { LamportTimestamp } from "./lamport-timestamp";
+
 export type LamportClock = {
-  _timestamp: number;
+  _timestamp: LamportTimestamp;
 };
 
 const init = (): LamportClock => {
   return {
-    _timestamp: 0,
+    _timestamp: LamportTimestamp.fromNumber(0),
   };
 };
 
 const increment = (clock: LamportClock): LamportClock => {
   return {
-    _timestamp: clock._timestamp + 1,
+    _timestamp: LamportTimestamp.increment(clock._timestamp),
   };
 };
 
@@ -21,18 +23,19 @@ const update = (
   otherClock: LamportClock
 ): LamportClock => {
   return {
-    _timestamp: Math.max(clock._timestamp, otherClock._timestamp) + 1,
+    _timestamp: LamportTimestamp.increment(
+      LamportTimestamp.max(clock._timestamp, otherClock._timestamp)
+    ),
   };
 };
 
-const toTimestamp = (clock: LamportClock): number => {
-  return clock._timestamp;
+const toNumber = (clock: LamportClock): number => {
+  return LamportTimestamp.toNumber(clock._timestamp);
 };
-
 
 export const LamportClock = {
   init,
   increment,
   update,
-  toTimestamp,
+  toNumber,
 };

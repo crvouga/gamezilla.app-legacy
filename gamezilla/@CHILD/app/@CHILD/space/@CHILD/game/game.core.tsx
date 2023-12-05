@@ -1,8 +1,8 @@
-import { SpaceCtx } from "../../@SHARED";
-import * as ConnectFour from "./@CHILD/connect-four/connect-four.core";
-import * as Chess from "./@CHILD/chess/chess.core";
-import { EventMeta } from "gamezilla/@SHARED/event-stream";
 
+import { EventMeta } from "gamezilla/@SHARED/event-stream";
+import { SpaceCtx } from "../../@SHARED/space";
+import * as Chess from "./@CHILD/chess/chess.core";
+import * as ConnectFour from "./@CHILD/connect-four/connect-four.core";
 //
 //
 //

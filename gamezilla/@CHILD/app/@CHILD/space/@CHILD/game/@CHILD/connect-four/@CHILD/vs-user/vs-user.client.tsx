@@ -7,9 +7,11 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-user";
 import {
   GameClient,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import {
   SpaceClientCtx,
   SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,

@@ -1,4 +1,4 @@
-import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 
 export type PlayerType = "player-one" | "player-two";

@@ -2,7 +2,7 @@ import { Eff, Sub } from "gamezilla/@SHARED/core";
 import {
   SpaceServerEvt,
   SpaceReqCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   Res,
   ServerModel,

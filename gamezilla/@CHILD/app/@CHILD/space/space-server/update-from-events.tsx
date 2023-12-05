@@ -1,4 +1,3 @@
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import {
   ReqCtx,
   ServerCmd,
@@ -9,6 +8,7 @@ import {
 import { Eff, batchMsgs, chainAwait } from "gamezilla/@SHARED/core";
 import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 import * as GameServer from "../@CHILD/game/game.server";
+import { SpaceServerCmd } from "../@SHARED/space-cmd";
 import {
   Event,
   EventWithMeta,

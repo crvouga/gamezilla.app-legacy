@@ -5,8 +5,10 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import {
   FeedItem,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
+import {
   SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   AnonymousClientCtx,
   ClientCmd,

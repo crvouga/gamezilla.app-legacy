@@ -2,7 +2,7 @@ import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game
 import {
   SpaceClientCtx,
   SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import { toTurn } from "../../@SHARED/tic-tic-toe/tic-tac-toe";
 import {

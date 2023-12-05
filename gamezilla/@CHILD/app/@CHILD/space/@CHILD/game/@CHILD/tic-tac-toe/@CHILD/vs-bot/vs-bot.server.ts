@@ -1,9 +1,9 @@
-import { Eff, err, ok, Sub, andThen, p } from "gamezilla/@SHARED/core";
 import {
-  SpaceServerEvt,
   SpaceReqCtx,
-  SpaceServerCmd,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+  SpaceServerEvt,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { Eff, Sub, andThen, err, ok, p } from "gamezilla/@SHARED/core";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-cmd";
 import { TicTacToe } from "../../@SHARED/tic-tic-toe";
 import {
   Res,

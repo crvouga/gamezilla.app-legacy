@@ -1,4 +1,4 @@
-import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Button,

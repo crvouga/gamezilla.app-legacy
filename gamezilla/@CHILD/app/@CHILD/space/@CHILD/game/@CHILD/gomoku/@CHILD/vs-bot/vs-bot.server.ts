@@ -1,7 +1,7 @@
 import {
   SpaceReqCtx,
   SpaceServerEvt,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { Eff, Sub, andThen, p } from "gamezilla/@SHARED/core";
 import {
   Res,

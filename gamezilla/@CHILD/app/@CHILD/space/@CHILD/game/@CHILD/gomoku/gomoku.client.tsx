@@ -2,7 +2,7 @@ import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@S
 import {
   SpaceClientCtx,
   SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCtx, ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";

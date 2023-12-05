@@ -5,7 +5,7 @@ import {
 import {
   SpaceViewCtx,
   spaceToHostTitle,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { gameNameList, gameNameToString } from "../@CHILD/game/game.core";
 import { Event } from "../space.core";

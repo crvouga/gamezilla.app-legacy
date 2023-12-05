@@ -1,10 +1,12 @@
 import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import {
   GameClient,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import {
   SpaceClientCtx,
   SpaceClientEvt,
   SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   APP_SOUND,
   ClientCmd,

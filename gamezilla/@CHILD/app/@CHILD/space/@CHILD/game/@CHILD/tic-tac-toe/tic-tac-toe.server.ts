@@ -1,14 +1,14 @@
-import { Eff, Result, Sub } from "gamezilla/@SHARED/core";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
-  SpaceServerEvt,
   SpaceReqCtx,
-  SpaceServerCmd,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
-import { ServerModel, ServerMsg, ToClient, ToServer } from "./tic-tac-toe.core";
+  SpaceServerEvt,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-cmd";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { sendToClient } from "gamezilla/@CHILD/app/@SHARED/server";
+import { Eff, Result, Sub } from "gamezilla/@SHARED/core";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.server";
 import * as VsUser from "./@CHILD/vs-user/vs-user.server";
-import { sendToClient } from "gamezilla/@CHILD/app/@SHARED/server";
+import { ServerModel, ServerMsg, ToClient, ToServer } from "./tic-tac-toe.core";
 
 const { err: Err, ok: Ok } = Result;
 

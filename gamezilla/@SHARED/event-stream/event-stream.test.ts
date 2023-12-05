@@ -2,6 +2,7 @@ import { expect, test } from "bun:test";
 import { Posix } from "../core";
 import { EventMeta, withMeta$ } from "./event";
 import { EventStream } from "./event-stream";
+import { EventId } from "./event-id";
 
 type Event =
   | {
@@ -17,11 +18,13 @@ type Event =
 
 type Indexes = "byUserId" | "byCounterId";
 
-const config = EventStream.initConfig<Event, Indexes>({
+const config = EventStream.initConfig<Event & EventMeta, Indexes, EventId>({
   indexes: {
     byUserId: (event) => event.userId,
     byCounterId: (event) => event.counterId,
-  }
+  },
+  toId: (event) => event.eventId,
+  toOrdering: (event) => event.happenedAt,
 });
 
 test("should be able to append events", () => {

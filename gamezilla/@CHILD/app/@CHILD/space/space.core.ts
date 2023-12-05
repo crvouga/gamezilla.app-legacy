@@ -4,7 +4,7 @@ import {
   EventStream,
 } from "gamezilla/@SHARED/event-stream";
 import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import * as Game from "./@CHILD/game/game.core";
 import { memoize } from "gamezilla/@SHARED/core";
 import { LamportClock } from "gamezilla/@SHARED/lamport-clock";
@@ -19,7 +19,7 @@ import { LamportClock } from "gamezilla/@SHARED/lamport-clock";
 
 export type CoreModel = {
   clock: LamportClock;
-  events: EventStream<Event, Indexes>;
+  events: EventStream<Event & EventMeta, Indexes, EventId>;
   initialState: State;
 };
 
@@ -150,10 +150,12 @@ export const mergeModels = (model: CoreModel, otherModel: CoreModel): CoreModel 
 
 type Indexes = "indexSpaceId";
 
-const config = EventStream.initConfig<Event, Indexes>({
+const config = EventStream.initConfig<Event & EventMeta, Indexes, EventId>({
   indexes: {
     indexSpaceId: (event) => event.spaceId,
-  }
+  },
+  toId: (event) => event.eventId,
+  toOrdering: (event) => event.happenedAt,
 });
 
 type UserState = {

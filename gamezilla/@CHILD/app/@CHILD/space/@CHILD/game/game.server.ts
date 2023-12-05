@@ -1,5 +1,5 @@
 import { Sub } from "gamezilla/@SHARED/core";
-import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
 import * as ConnectFourServer from "./@CHILD/connect-four/connect-four.server";
 import * as ChessServer from "./@CHILD/chess/chess.server";
 import {

@@ -1,4 +1,4 @@
-import { SpaceServerCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { SpaceServerCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   AnonymousReqCtx,

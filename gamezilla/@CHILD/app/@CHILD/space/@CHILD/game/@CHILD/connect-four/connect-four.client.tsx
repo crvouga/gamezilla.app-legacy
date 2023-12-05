@@ -1,10 +1,14 @@
 import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import {
-  FeedItem,
   GameClient,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import {
+  FeedItem,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
+import {
   SpaceClientCtx,
   SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Sub } from "gamezilla/@SHARED/core";
 import { withMeta$ } from "gamezilla/@SHARED/event-stream";

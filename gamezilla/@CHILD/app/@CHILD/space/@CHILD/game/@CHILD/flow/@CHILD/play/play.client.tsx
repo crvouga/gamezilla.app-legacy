@@ -1,9 +1,10 @@
-import { Sub, chain } from "gamezilla/@SHARED/core";
-import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
-  GameClient,
   SpaceClientEvt,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { Sub, chain } from "gamezilla/@SHARED/core";
+import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowViewCtx } from "../../@SHARED/flow-ctx";
 import {
@@ -13,7 +14,6 @@ import {
   ToServer,
   initShared,
 } from "./play.core";
-import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 
 type Client = GameClient<{
   ClientModel: ClientModel;

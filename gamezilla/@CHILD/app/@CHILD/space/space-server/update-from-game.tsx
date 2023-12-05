@@ -1,11 +1,11 @@
+import * as GameServer from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/game.server";
 import {
   Space,
-  SpaceServerCmd,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-cmd";
+import { ServerModel, ServerMsg, ToClient } from "gamezilla/@CHILD/app/@CHILD/space/space.core";
 import { ServerCmd } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff } from "gamezilla/@SHARED/core";
-import * as GameServer from "../@CHILD/game/game.server";
-import { ServerModel, ServerMsg, ToClient } from "../space.core";
 import { spaceCmdToCmd } from "./update-shared";
 
 /**

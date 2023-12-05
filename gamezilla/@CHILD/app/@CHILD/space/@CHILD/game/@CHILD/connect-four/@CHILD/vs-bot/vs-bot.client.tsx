@@ -10,12 +10,16 @@ import {
   VsBotSetup,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
 import {
-  FeedItem,
   GameClient,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import {
+  FeedItem
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
+import {
   SpaceClientCtx,
   SpaceClientEvt,
   SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   APP_SOUND,
   ClientCmd,

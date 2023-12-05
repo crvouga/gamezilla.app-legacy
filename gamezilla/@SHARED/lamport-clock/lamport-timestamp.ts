@@ -1,0 +1,33 @@
+export type LamportTimestamp = {
+  LamportTimestamp: "LamportTimestamp";
+  _value: number;
+};
+
+const fromNumber = (value: number): LamportTimestamp => {
+  return {
+    LamportTimestamp: "LamportTimestamp",
+    _value: Math.max(0, Math.floor(value)),
+  };
+};
+
+const toNumber = (timestamp: LamportTimestamp): number => {
+  return timestamp._value;
+};
+
+const increment = (timestamp: LamportTimestamp): LamportTimestamp => {
+  return fromNumber(timestamp._value + 1);
+};
+
+const max = (
+  timestampA: LamportTimestamp,
+  timestampB: LamportTimestamp
+): LamportTimestamp => {
+  return fromNumber(Math.max(timestampA._value, timestampB._value));
+};
+
+export const LamportTimestamp = {
+  fromNumber,
+  toNumber,
+  max,
+  increment,
+};

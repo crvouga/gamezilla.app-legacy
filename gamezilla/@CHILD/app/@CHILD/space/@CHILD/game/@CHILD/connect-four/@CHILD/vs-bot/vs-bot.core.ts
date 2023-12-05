@@ -2,7 +2,7 @@ import {
   VsBotGame,
   VsBotSetup,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Posix, TimeSpan } from "gamezilla/@SHARED/core";
 import { EventId, EventMeta } from "gamezilla/@SHARED/event-stream";

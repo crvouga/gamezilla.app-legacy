@@ -7,7 +7,7 @@ import {
   exhaustive,
   isErr,
 } from "gamezilla/@SHARED/core";
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Direction } from "./@SHARED/direction";
 import {

@@ -2,8 +2,8 @@ import { Eff, p, Sub } from "gamezilla/@SHARED/core";
 import {
   SpaceServerEvt,
   SpaceReqCtx,
-  SpaceServerCmd,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-cmd";
 import { Chess } from "../../@SHARED/chess";
 import {
   botMoved,

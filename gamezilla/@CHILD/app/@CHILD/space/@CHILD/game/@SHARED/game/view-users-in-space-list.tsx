@@ -2,7 +2,7 @@ import { IconCrown, MyAvatar } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
   SpaceViewCtx,
   spaceToProfiles,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 
 export const ViewUsersInSpaceList = ({ ctx }: { ctx: SpaceViewCtx }) => {
   const profiles = spaceToProfiles(ctx, ctx.space);

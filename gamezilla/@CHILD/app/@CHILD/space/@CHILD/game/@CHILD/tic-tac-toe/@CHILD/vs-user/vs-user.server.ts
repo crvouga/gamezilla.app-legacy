@@ -1,10 +1,11 @@
-import { Sub, Time, isErr } from "gamezilla/@SHARED/core";
-import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server";
 import {
-  SpaceServerEvt,
   SpaceReqCtx,
-  SpaceServerCmd,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+  SpaceServerEvt,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-cmd";
+import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server";
+import { Sub, Time, isErr } from "gamezilla/@SHARED/core";
+import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";
 import {
   PlayerType,
   toOpposite,
@@ -32,7 +33,6 @@ import {
   startGame,
   stopPlaying,
 } from "./vs-user.core";
-import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";
 
 //
 //

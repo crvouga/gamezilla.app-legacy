@@ -11,7 +11,7 @@ import {
   toOpposite,
   toStatus,
 } from "../../@SHARED/tic-tic-toe/tic-tac-toe";
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 
 //
 //

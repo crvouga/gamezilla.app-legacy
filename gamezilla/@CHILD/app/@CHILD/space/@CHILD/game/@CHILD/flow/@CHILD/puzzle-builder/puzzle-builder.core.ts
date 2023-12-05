@@ -6,7 +6,7 @@ import {
   FlowGridPosition,
   FlowGridUIPlay,
 } from "../../@SHARED/flow";
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 
 /**
  * Just like a Terminal but invalid

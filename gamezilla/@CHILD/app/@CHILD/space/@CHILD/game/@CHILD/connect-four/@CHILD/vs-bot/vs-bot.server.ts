@@ -1,4 +1,4 @@
-import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
 import { Sub, Time, TimeSpan, isErr } from "gamezilla/@SHARED/core";
 import { withMeta$ } from "gamezilla/@SHARED/event-stream";
 import { ConnectFourBotWorker } from "../../@SHARED/connect-four";

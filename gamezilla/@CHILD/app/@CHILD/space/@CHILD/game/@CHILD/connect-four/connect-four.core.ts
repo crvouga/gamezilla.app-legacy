@@ -1,5 +1,5 @@
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.core";
 import * as VsUser from "./@CHILD/vs-user/vs-user.core";
 import { EventMeta } from "gamezilla/@SHARED/event-stream";

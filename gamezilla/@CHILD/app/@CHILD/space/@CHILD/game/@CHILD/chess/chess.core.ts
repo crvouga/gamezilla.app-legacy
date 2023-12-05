@@ -1,4 +1,4 @@
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { RemoteResult, Result } from "gamezilla/@SHARED/core";
 import * as Puzzle from "./@CHILD/puzzle/puzzle.core";

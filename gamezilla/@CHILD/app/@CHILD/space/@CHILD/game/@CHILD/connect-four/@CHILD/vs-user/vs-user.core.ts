@@ -10,7 +10,7 @@ import {
   toStatus,
   toTurn,
 } from "../../@SHARED/connect-four/connect-four";
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 
 //
 //

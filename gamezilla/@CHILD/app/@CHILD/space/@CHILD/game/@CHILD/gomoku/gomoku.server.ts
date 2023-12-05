@@ -1,7 +1,7 @@
 import {
   SpaceReqCtx,
   SpaceServerEvt,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.server";
