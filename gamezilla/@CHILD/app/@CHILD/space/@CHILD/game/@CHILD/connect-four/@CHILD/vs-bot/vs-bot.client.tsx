@@ -9,13 +9,12 @@ import {
   VsBotGame,
   VsBotSetup,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
+import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
 import {
-  GameClient,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
-import { EventMeta, withEventId$ } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
-import {
-  FeedItem
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
+  EventMeta,
+  withEventId$,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
+import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
 import {
   SpaceClientCtx,
   SpaceClientEvt,
@@ -230,13 +229,13 @@ const eventToSound = (
           return [playSound(APP_SOUND.tap)];
         }
 
+        case "user-restarted-game":
         case "user-started-game": {
           return [playSound(APP_SOUND.navForwardMin)];
         }
 
-        case "user-stopped-game":
-        case "user-restarted-game": {
-          return [playSound(APP_SOUND.navForwardMin)];
+        case "user-stopped-game": {
+          return [playSound(APP_SOUND.navBackwardMin)];
         }
 
         default: {
