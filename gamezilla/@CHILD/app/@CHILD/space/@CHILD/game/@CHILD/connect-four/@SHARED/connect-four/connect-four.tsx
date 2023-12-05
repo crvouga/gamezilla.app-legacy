@@ -125,7 +125,7 @@ export const dropDisc = (
     return err("out-of-bounds");
   }
 
-  if (column.length === MAX_COLUMN_HEIGHT) {
+  if (column.length >= MAX_COLUMN_HEIGHT) {
     return err("column-is-full");
   }
 
