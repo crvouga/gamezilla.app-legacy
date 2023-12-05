@@ -519,11 +519,20 @@ function toState_(model: CoreModel): State {
 export const toState = memoize((model) => model.events.hash, toState_);
 // const toState = toState_;
 
+const exposed = {
+  toState_,
+  toState,
+  toSpaceState,
+  EventStream,
+  config,
+};
+
+declare global {
+  interface Window {
+    space: typeof exposed;
+  }
+}
+
 if (typeof window !== "undefined") {
-  //@ts-ignore
-  window.toState_ = toState_;
-  //@ts-ignore
-  window.toState = toState;
-  // @ts-ignore
-  window.toStateSpace = toSpaceState;
+  window.space = exposed;
 }
