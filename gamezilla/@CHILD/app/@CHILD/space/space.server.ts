@@ -174,6 +174,7 @@ export const updateFromClient = async (input: {
           const merged = mergeModels(model, {
             events: msg.events,
             initialState: model.initialState,
+            clock: model.clock,      
           });
           return {
             model: { ...model, ...merged },
@@ -194,11 +195,12 @@ export const updateFromClient = async (input: {
           return {
             model,
             cmd: [
-              broadcast({
+              broadcast<ToClient>({
                 t: "sync",
                 events: model.events,
                 causedBy: msg,
                 profiles: model.profileCache,
+                clock: model.clock,
               }),
             ],
           };
@@ -261,6 +263,7 @@ export const updateFromEvent = async (input: {
             t: "sync",
             causedBy: msg,
             events: model.events,
+            clock: model.clock,
           }),
           topicSubscribe([`space/${state.spaceId}`], [msg.clientId]),
           topicSubscribe([`spaces`], [msg.clientId]),

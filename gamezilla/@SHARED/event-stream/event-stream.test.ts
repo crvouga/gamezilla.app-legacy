@@ -17,9 +17,11 @@ type Event =
 
 type Indexes = "byUserId" | "byCounterId";
 
-const config = EventStream.init<Event, Indexes>({
-  byUserId: (event) => event.userId,
-  byCounterId: (event) => event.counterId,
+const config = EventStream.initConfig<Event, Indexes>({
+  indexes: {
+    byUserId: (event) => event.userId,
+    byCounterId: (event) => event.counterId,
+  }
 });
 
 test("should be able to append events", () => {

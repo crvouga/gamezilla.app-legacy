@@ -97,8 +97,8 @@ async function sendEventToClients({
   const space = toStartedSpace(model, event.spaceId);
   const cmd =
     event.t === "game" && space
-      ? sendToUser<ToClient>(Object.values(space.users), {t: 'event', c: event, causedBy: event})
-      : broadcast<ToClient>({t: 'event', c: event, causedBy: event});
+      ? sendToUser<ToClient>(Object.values(space.users), {t: 'event', c: event, causedBy: event, clock: model.clock})
+      : broadcast<ToClient>({t: 'event', c: event, causedBy: event, clock: model.clock});
   return { model, cmd: [cmd] };
 }
 
@@ -123,6 +123,7 @@ async function syncUserWhenJoined({
           t: "sync",
           events: model.events,
           causedBy: event,
+          clock: model.clock,
         }),
       ],
     };

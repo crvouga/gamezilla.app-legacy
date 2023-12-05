@@ -7,6 +7,7 @@ import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED";
 import * as Game from "./@CHILD/game/game.core";
 import { memoize } from "gamezilla/@SHARED/core";
+import { LamportClock } from "gamezilla/@SHARED/lamport-clock";
 
 //
 //
@@ -17,6 +18,7 @@ import { memoize } from "gamezilla/@SHARED/core";
 //
 
 export type CoreModel = {
+  clock: LamportClock;
   events: EventStream<Event, Indexes>;
   initialState: State;
 };
@@ -48,23 +50,42 @@ type ModalModel = null | "user-preview" | "users";
 //
 //
 
-type Sync = {
-  t: "sync";
-  events: CoreModel["events"];
-};
-
 export type ToClient = ToClientExtra &
   (
-    | { t: "event"; c: EventWithMeta }
-    | Sync
-    | { t: "game"; spaceId: SpaceId; c: Game.ToClient }
+    | {
+        t: "event";
+        c: EventWithMeta;
+        clock: LamportClock;
+      }
+    | {
+        t: "sync";
+        events: CoreModel["events"];
+        clock: LamportClock;
+      }
+    | {
+        t: "game";
+        spaceId: SpaceId;
+        c: Game.ToClient;
+      }
   );
 
 export type ToServer = ToServerExtra &
   (
-    | { t: "event"; c: EventWithMeta }
-    | Sync
-    | { t: "game"; spaceId: SpaceId; c: Game.ToServer }
+    | {
+        t: "event";
+        c: EventWithMeta;
+        clock: LamportClock;
+      }
+    | {
+        t: "sync";
+        events: CoreModel["events"];
+        clock: LamportClock;
+      }
+    | {
+        t: "game";
+        spaceId: SpaceId;
+        c: Game.ToServer;
+      }
   );
 
 export type ToClientExtra = {
@@ -100,6 +121,7 @@ export const initCore = (): CoreModel => {
   return {
     events: EventStream.empty(config),
     initialState: initState(),
+    clock: LamportClock.init(),
   };
 };
 
@@ -116,12 +138,13 @@ export const appendEvent = (
   };
 };
 
-export const mergeModels = (left: CoreModel, right: CoreModel): CoreModel => {
-  const streamNew = EventStream.mergeLeft(config, left.events, right.events);
+export const mergeModels = (model: CoreModel, otherModel: CoreModel): CoreModel => {
+  const streamNew = EventStream.mergeLeft(config, model.events, otherModel.events);
 
   const modelNew: CoreModel = {
-    initialState: left.initialState,
+    initialState: model.initialState,
     events: streamNew,
+    clock: LamportClock.update(model.clock, otherModel.clock),
   };
 
   return modelNew;
@@ -129,8 +152,10 @@ export const mergeModels = (left: CoreModel, right: CoreModel): CoreModel => {
 
 type Indexes = "indexSpaceId";
 
-const config = EventStream.init<Event, Indexes>({
-  indexSpaceId: (event) => event.spaceId,
+const config = EventStream.initConfig<Event, Indexes>({
+  indexes: {
+    indexSpaceId: (event) => event.spaceId,
+  }
 });
 
 type UserState = {

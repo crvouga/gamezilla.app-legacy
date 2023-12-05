@@ -189,6 +189,7 @@ export const updateFromServer = ({
           const merged = mergeModels(model, {
             events: msg.events,
             initialState: model.initialState,
+            clock: msg.clock,
           });
 
           return { model: { ...model, ...merged } };
@@ -269,6 +270,7 @@ export const updateFromEvent = (input: {
             sendToServer({
               t: "sync",
               events: model.events,
+              clock: model.clock,
               profiles: currentUserProfile
                 ? {
                     [currentUserProfile.userId]: currentUserProfile,

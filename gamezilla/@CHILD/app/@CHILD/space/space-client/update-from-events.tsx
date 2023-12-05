@@ -107,7 +107,7 @@ function sendEventToServer({
 } {
   return {
     model,
-    cmd: [sendToServer({ t: "event", c: { ...event } })],
+    cmd: [sendToServer({ t: "event", c: { ...event }, clock: model.clock })],
   };
 }
 

@@ -44,9 +44,11 @@ export type EventStreamConfig<T, TIndexName extends string> = {
   };
 };
 
-const init = <T, TIndexName extends string>(
-  indexes: EventStreamConfig<T, TIndexName>["indexes"]
-): EventStreamConfig<T, TIndexName> => {
+const initConfig = <T, TIndexName extends string>({
+  indexes,
+}: {
+  indexes: EventStreamConfig<T, TIndexName>["indexes"];
+}): EventStreamConfig<T, TIndexName> => {
   return {
     indexes,
   };
@@ -222,7 +224,7 @@ export const EventStream = {
   append,
   mergeLeft,
   empty,
-  init,
+  initConfig,
   toArray,
   fromArray,
   toIterable,
