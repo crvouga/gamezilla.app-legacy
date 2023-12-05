@@ -41,10 +41,10 @@ export type ColumnIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export const ALL_COLUMN_INDEXES: ColumnIndex[] = [0, 1, 2, 3, 4, 5, 6];
 
-export const allPositions: { x: number; y: number }[] = [];
+export const ALL_POSITIONS: { x: number; y: number }[] = [];
 for (let x = 0; x < COLUMN_COUNT; x++) {
   for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {
-    allPositions.push({ x: x, y: y });
+    ALL_POSITIONS.push({ x: x, y: y });
   }
 }
 
@@ -237,16 +237,12 @@ export const MIN_WIN_LENGTH = 4;
 const directions: [number, number][] = [
   // horizontal
   [1, 0],
-  // [-1, 0],
   // vertical
   [0, 1],
-  // [0, -1],
   // right diagonal
   [1, 1],
-  // [-1, -1],
   // left diagonal
   [1, -1],
-  // [-1, 1],
 ];
 
 export type Win = [Pos2d, Pos2d, Pos2d, Pos2d, ...Pos2d[]];
@@ -255,9 +251,9 @@ export const winToId = (win: Win) => win.map((x) => `${x.x},${x.y}`).join(" ");
 
 export const findWins = (columns: Columns): Win[] => {
   const consecutives = findAllConsecutives(columns);
-  const wins = consecutives.filter(isWin)
-  const uniqueWins = unique(isSameWin, wins)
-  return uniqueWins
+  const wins = consecutives.filter(isWin);
+  const uniqueWins = unique(isSameWin, wins);
+  return uniqueWins;
 };
 
 const findAllConsecutives = (columns: Columns): Pos2d[][] => {
@@ -306,14 +302,13 @@ const findAllConsecutives = (columns: Columns): Pos2d[][] => {
     }
   }
 
-  return consecutives
-}
-  
+  return consecutives;
+};
 
 const isWin = (positions: Pos2d[]): positions is Win => {
   return positions.length >= MIN_WIN_LENGTH;
 };
 
 const isSameWin = (a: Win, b: Win) => {
-  return isSubset(eq, a, b) && isSubset(eq, b, a)
+  return isSubset(eq, a, b) && isSubset(eq, b, a);
 };
