@@ -1,5 +1,16 @@
 import { err, ok, Result, eq, isSubset, unique } from "gamezilla/@SHARED/core";
 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+
+export type Pos2d = { x: number; y: number };
+
 //
 //
 //
@@ -41,7 +52,7 @@ export type ColumnIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export const ALL_COLUMN_INDEXES: ColumnIndex[] = [0, 1, 2, 3, 4, 5, 6];
 
-export const ALL_POSITIONS: { x: number; y: number }[] = [];
+export const ALL_POSITIONS: Pos2d[] = [];
 for (let x = 0; x < COLUMN_COUNT; x++) {
   for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {
     ALL_POSITIONS.push({ x: x, y: y });
@@ -216,7 +227,7 @@ export const toStatus = (columns: Columns): Status => {
 //
 //
 
-export type Pos2d = { x: number; y: number };
+
 
 const toKey = ({
   x,
