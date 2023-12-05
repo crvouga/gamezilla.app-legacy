@@ -10,11 +10,18 @@ import { ServerTransportMsg } from "./transport-server";
 //
 //
 
-export type ClientModel =
-  | { t: "server-connecting" }
-  | { t: "server-connect-error"; errorCount: number }
-  | { t: "server-disconnected" }
-  | { t: "server-connected" };
+export type ClientModel = {
+  state:
+    | { t: "server-connecting" }
+    | { t: "server-connect-error"; errorCount: number }
+    | { t: "server-disconnected" }
+    | { t: "server-connected" };
+    
+  serverTime: {
+    serverNow: Posix;
+    recordedAt: Posix;
+  } | null;
+};
 
 export type ClientMsg = ClientTransportEvent | { t: "clicked-try-reconnect" };
 

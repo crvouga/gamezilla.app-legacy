@@ -799,6 +799,7 @@ const ViewMain = ({
           dispatch={dispatch}
           ctx={{
             now,
+            serverTime: model.wire.serverTime,
             currentRoute: model.routing.currentRoute,
             currentUserId: model.auth.currentUser.userId,
             profiles: model.profile.profiles,
@@ -816,6 +817,7 @@ const ViewMain = ({
           model={model}
           ctx={{
             now,
+            serverTime: model.wire.serverTime,
             currentRoute: model.routing.currentRoute,
             profiles: model.profile.profiles,
             documentVisibilityState: model.platform.documentVisibilityState,

@@ -27,7 +27,10 @@ export const init = ({
   }
   return {
     model: {
-      t: "server-connecting",
+      state: {
+        t: "server-connecting",
+      },
+      serverTime: null,
     },
   };
 };
@@ -60,9 +63,14 @@ export const update = <TToClient, TToServer>({
     case "server-connect-error": {
       return {
         model: {
-          t: "server-connect-error",
-          errorCount:
-            model.t === "server-connect-error" ? model.errorCount + 1 : 1,
+          ...model,
+          state: {
+            t: "server-connect-error",
+            errorCount:
+              model.state.t === "server-connect-error"
+                ? model.state.errorCount + 1
+                : 1,
+          },
         },
       };
     }
@@ -70,19 +78,22 @@ export const update = <TToClient, TToServer>({
     case "server-connected": {
       return {
         model: {
-          t: "server-connected",
+          ...model,
+          state: {
+            t: "server-connected",
+          },
         },
         evt: [{ t: "wire/server-connected" }],
       };
     }
 
     case "server-disconnected": {
-      return { model: { t: msg.t } };
+      return { model: { ...model, state: { t: msg.t } } };
     }
 
     case "clicked-try-reconnect": {
       return {
-        model: { t: "server-connecting" },
+        model: { ...model, state: { t: "server-connecting" } },
         eff: () => {
           transport.cmd.publish({ t: "try-reconnect" });
         },
@@ -153,7 +164,7 @@ export const updateFromCmd = <TToServer, TToClient>({
 //
 
 export const ViewStatusBar = ({ model }: { model: ClientModel }) => {
-  switch (model.t) {
+  switch (model.state.t) {
     case "server-connected": {
       return <span class="h-2 w-2 rounded-full bg-green-500"></span>;
     }
@@ -186,7 +197,7 @@ export const ViewStatusBarDrawer = ({
   model: ClientModel;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  switch (model.t) {
+  switch (model.state.t) {
     case "server-connected": {
       return (
         <div class="flex w-full items-center gap-4 p-4">
@@ -214,7 +225,8 @@ export const ViewStatusBarDrawer = ({
           <p class="flex-1 text-red-500">Offline</p>
           <button
             onClick={() => dispatch({ t: "clicked-try-reconnect" })}
-            class="font-bold text-red-500">
+            class="font-bold text-red-500"
+          >
             Try reconnect
           </button>
         </div>
