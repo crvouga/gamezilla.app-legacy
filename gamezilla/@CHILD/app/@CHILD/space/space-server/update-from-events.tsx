@@ -9,7 +9,7 @@ import { Eff, batchMsgs, chainAwait } from "gamezilla/@SHARED/core";
 import {
   EventId,
   WithEventId,
-  withEventId$,
+  withId,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import * as GameServer from "../@CHILD/game/game.server";
 import { SpaceServerCmd } from "../@SHARED/space-cmd";
@@ -192,7 +192,7 @@ async function updateGameFromEvent({
 
   const eventsNew =
     updated.gameEvent?.map((e) =>
-      withEventId$<Event>({
+      withId<Event>({
         t: "game",
         spaceId: eventWithMeta.spaceId,
         c: e,

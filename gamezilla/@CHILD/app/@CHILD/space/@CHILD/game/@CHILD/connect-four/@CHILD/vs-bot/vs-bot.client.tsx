@@ -12,7 +12,7 @@ import {
 import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
 import {
   EventMeta,
-  withEventId$,
+  withId,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
 import {
@@ -118,7 +118,7 @@ export const update: Client["update"] = (input) => {
         }
 
         default: {
-          const event = withEventId$(msg);
+          const event = withId(msg);
           return { model, gameEvent: [event] };
         }
       }

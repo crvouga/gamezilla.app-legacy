@@ -3,7 +3,7 @@ import {
   ViewUsersInSpaceList,
   ViewYouChip,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
-import { WithEventId, withEventId$ } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
+import { WithEventId, withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import {
   FeedItem,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
@@ -369,7 +369,7 @@ export const View = ({
   viewBottomBar: VDom;
 }): VDom => {
   const dispatchEvent = (m: Event) => {
-    dispatch({ t: "event", c: withEventId$(m) });
+    dispatch({ t: "event", c: withId(m) });
   };
   switch (route.t) {
     case "space-list": {
@@ -823,7 +823,7 @@ export const ViewCurrentSpaceBar = ({
   const dispatchEvent = (msg: Event) => {
     dispatch({
       t: "event",
-      c: withEventId$(msg),
+      c: withId(msg),
     });
   };
 

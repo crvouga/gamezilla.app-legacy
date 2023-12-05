@@ -11,7 +11,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Sub } from "gamezilla/@SHARED/core";
-import { withEventId$ } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import * as VsBotClient from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUserClient from "./@CHILD/vs-user/vs-user.client";
 import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art";
@@ -130,7 +130,7 @@ export const update: Client["update"] = (input) => {
         case "user-changed-mode": {
           return {
             model,
-            gameEvent: [withEventId$(msg)],
+            gameEvent: [withId(msg)],
           };
         }
 

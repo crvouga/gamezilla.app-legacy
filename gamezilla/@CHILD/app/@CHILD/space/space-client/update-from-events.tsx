@@ -1,4 +1,4 @@
-import { EventId, WithEventId, withEventId$ } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
+import { EventId, WithEventId, withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import {
   APP_SOUND,
   AnonymousClientCtx,
@@ -198,7 +198,7 @@ function updateGameFromEvent({
 
   const eventsNew =
     updatedGame.gameEvent?.map((e) =>
-      withEventId$<Event>({
+      withId<Event>({
         t: "game",
         spaceId: eventWithMeta.spaceId,
         c: e,

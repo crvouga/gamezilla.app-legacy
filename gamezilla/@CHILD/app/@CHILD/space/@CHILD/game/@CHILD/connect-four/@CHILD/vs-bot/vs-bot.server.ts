@@ -1,6 +1,6 @@
 import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
 import { Sub, Time, TimeSpan, isErr } from "gamezilla/@SHARED/core";
-import { withEventId$ } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { ConnectFourBotWorker } from "../../@SHARED/connect-four";
 import * as ConnectFour from "../../@SHARED/connect-four/connect-four";
 import {
@@ -94,7 +94,7 @@ const updateFromMsg =
               return { model };
             }
 
-            const eventNew = withEventId$<GameEvent>({
+            const eventNew = withId<GameEvent>({
               t: "bot-dropped-disc",
               columnIndex,
             });

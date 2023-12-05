@@ -12,7 +12,7 @@ export type WithEventId<T> = T & {
 
 export type WithEventMeta<T> = T & EventMeta
 
-export const withEventId$ = <T>(eventNew: T): WithEventId<T> => {
+export const withId = <T>(eventNew: T): WithEventId<T> => {
   return {
     ...eventNew,
     eventId: EventId.generate$(),
