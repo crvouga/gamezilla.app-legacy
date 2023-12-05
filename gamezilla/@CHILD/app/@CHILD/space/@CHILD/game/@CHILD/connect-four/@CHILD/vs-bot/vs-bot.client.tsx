@@ -48,6 +48,7 @@ import {
   ToServer,
   allBotLevels,
 } from "./vs-bot.core";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 type Client = GameClient<{
   ClientModel: ClientModel;
@@ -123,7 +124,7 @@ export const update: Client["update"] = (input) => {
       }
     },
     (model) => {
-      const { gameEvent, state } = input;
+      const { gameEvent, state, ctx } = input;
 
       if (!gameEvent) {
         return { model };
@@ -131,7 +132,7 @@ export const update: Client["update"] = (input) => {
 
       return {
         model,
-        cmd: eventToSound(state, gameEvent),
+        cmd: eventToSound(ctx.currentUserId, state, gameEvent),
       };
     },
     (model) => {
@@ -184,6 +185,7 @@ export const update: Client["update"] = (input) => {
 };
 
 const eventToSound = (
+  currentUserId: UserId,
   state: GameState,
   event: GameEvent & EventMeta
 ): ClientCmd<{
@@ -193,14 +195,17 @@ const eventToSound = (
   switch (state.type) {
     case "game": {
       switch (event.t) {
-        case "user-dropped-disc":
-        case "bot-dropped-disc": {
+        case "user-dropped-disc": {
           const error = state.errors[event.eventId];
 
-          if (error) {
+          if (error && event.userId === currentUserId) {
             return [playSound(APP_SOUND.alertErrorSm)];
           }
 
+          return [playSound(APP_SOUND.tap)];
+        }
+
+        case "bot-dropped-disc": {
           return [playSound(APP_SOUND.tap)];
         }
 
