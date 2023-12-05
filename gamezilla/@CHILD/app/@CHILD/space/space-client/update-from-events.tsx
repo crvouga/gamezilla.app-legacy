@@ -120,7 +120,7 @@ function appendEvents({
 }): {
   model: ClientModel;
 } {
-  const appended = appendEvent(model, [event]);
+  const appended = appendEvent(model, event);
   return { model: { ...model, ...appended } };
 }
 

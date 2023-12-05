@@ -127,14 +127,12 @@ export const initCore = (): CoreModel => {
 
 export const appendEvent = (
   model: CoreModel,
-  event: EventWithMeta[]
+  event: EventWithMeta
 ): CoreModel => {
   return {
     ...model,
-    events: event.reduce(
-      (events, e) => EventStream.append(config, events, e),
-      model.events
-    ),
+    clock: LamportClock.increment(model.clock),
+    events: EventStream.append(config, model.events, event),
   };
 };
 

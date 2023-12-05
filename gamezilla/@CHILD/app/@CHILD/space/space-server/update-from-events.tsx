@@ -82,7 +82,7 @@ async function appendNewEvent({
 }) {
   const appended: ServerModel = {
     ...model,
-    ...appendEvent(model, [event]),
+    ...appendEvent(model, event),
   };
   return { model: appended };
 }
