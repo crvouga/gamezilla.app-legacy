@@ -1,9 +1,7 @@
 import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { memoize } from "gamezilla/@SHARED/core";
-import {
-  EventStream,
-} from "gamezilla/@SHARED/event-stream";
+import { EventStream } from "gamezilla/@SHARED/event-stream";
 import { LamportClock } from "gamezilla/@SHARED/lamport-clock";
 import * as Game from "./@CHILD/game/game.core";
 import {
@@ -137,7 +135,7 @@ export const appendEvent = (
   const eventWithMeta: WithEventMeta<Event> = {
     ...event,
     happenedAt: LamportClock.toTimestamp(model.clock),
-  }
+  };
   return {
     ...model,
     clock: LamportClock.increment(model.clock),
@@ -145,8 +143,15 @@ export const appendEvent = (
   };
 };
 
-export const mergeModels = (model: CoreModel, otherModel: CoreModel): CoreModel => {
-  const streamNew = EventStream.mergeLeft(config, model.events, otherModel.events);
+export const mergeModels = (
+  model: CoreModel,
+  otherModel: CoreModel
+): CoreModel => {
+  const streamNew = EventStream.mergeLeft(
+    config,
+    model.events,
+    otherModel.events
+  );
 
   const modelNew: CoreModel = {
     initialState: model.initialState,
@@ -225,7 +230,6 @@ export type Event =
       spaceId: SpaceId;
       c: Game.GameEvent;
     };
-
 
 export type SpaceStateInitial = {
   type: "initial";
