@@ -1,12 +1,15 @@
-;
-
 export type EventStreamConfig<TEvent, TIndexName extends string> = {
   indexes: {
-    [indexName in TIndexName]: (event: TEvent ) => string;
+    [indexName in TIndexName]: (event: TEvent) => string;
   };
 };
 
-export type IEventStream<TEvent, TIndexName extends string, TEventId extends string, EventStreamInstance> = {
+export type IEventStream<
+  TEvent,
+  TIndexName extends string,
+  TEventId extends string,
+  EventStreamInstance
+> = {
   startingAt: (timestamp: number) => Promise<EventStreamInstance>;
   append: (
     instance: EventStreamInstance,
@@ -22,11 +25,6 @@ export type IEventStream<TEvent, TIndexName extends string, TEventId extends str
     instance: EventStreamInstance,
     indexName: TIndexName
   ) => Promise<EventStreamInstance>;
-  toIterable: (
-    instance: EventStreamInstance
-  ) => AsyncIterable<TEvent>;
-  has: (
-    instance: EventStreamInstance,
-    eventId: TEventId
-  ) => Promise<boolean>;
+  toIterable: (instance: EventStreamInstance) => AsyncIterable<TEvent>;
+  has: (instance: EventStreamInstance, eventId: TEventId) => Promise<boolean>;
 };
