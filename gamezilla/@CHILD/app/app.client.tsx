@@ -166,7 +166,7 @@ export const update = (input: {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
 } => {
-  const updated = updateMain(input);
+  const updated = updateFromMsg(input);
 
   const toServerCmd = updated.toServer?.map((c) => sendToServer(c));
 
@@ -209,7 +209,7 @@ export const update = (input: {
   return acc;
 };
 
-const updateMain = ({
+const updateFromMsg = ({
   msg,
   model,
   ctx,
@@ -422,6 +422,7 @@ const updateFromServer = ({
         cmd: ClientCmd.tag("space", updated.cmd),
         model: { ...model, space: updated.model },
         eff: Eff.t("space", updated.eff),
+        toServer: updated.toServer?.map((c) => ({ t: "space", c })),
       };
     }
 
@@ -559,6 +560,7 @@ const updateFromEvent = ({
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  toServer?: ToServer[];
 } => {
   const ctxApp = toCtx({ model, ctx });
 
@@ -590,12 +592,18 @@ const updateFromEvent = ({
     eff: Eff.batch<ClientMsg>([
       Eff.t("profile", profile.eff),
       Eff.t("auth", auth.eff),
+      Eff.t("space", space.eff),
     ]),
     cmd: [
       ...ClientCmd.tag("space", space.cmd),
       ...ClientCmd.tag("auth", auth.cmd),
       ...ClientCmd.tag("profile", profile.cmd),
     ],
+    toServer: batchMsgs<ToServer>(
+      space.toServer?.map((c) => ({ t: "space", c })),
+      profile.toServer?.map((c) => ({ t: "profile", c })),
+      auth.toServer?.map((c) => ({ t: "auth", c }))
+    ),
   };
 };
 
