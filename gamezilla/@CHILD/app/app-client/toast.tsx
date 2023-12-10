@@ -1,5 +1,7 @@
-import { chainUpdates } from "gamezilla/@CHILD/app/@SHARED/architecture";
-import { ClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client-v2";
+import {
+  chainUpdates,
+  ClientModule,
+} from "gamezilla/@CHILD/app/@SHARED/architecture/app-client-v2";
 import { ToastCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconXMark, Transition, cn } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Posix, Sub, Time, TimeSpan, Uuid } from "gamezilla/@SHARED/core";
@@ -12,17 +14,21 @@ import { Posix, Sub, Time, TimeSpan, Uuid } from "gamezilla/@SHARED/core";
 //
 //
 
+type Ctx = { now: Posix };
+
 type Module = ClientModule<{
   Model: Model;
   Msg: Msg;
-  //
   InCmd: ToastCmd;
-  Ctx: { now: Posix };
+  Ctx: Ctx;
   //
-  OutCmd: undefined;
-  InEvt: undefined;
-  FromServer: undefined;
-  OutEvt: undefined;
+  ToClient: never;
+  ToServer: never;
+  //
+  OutCmd: never;
+  //
+  InEvt: never;
+  OutEvt: never;
 }>;
 
 //
@@ -81,8 +87,8 @@ export const update: Module["update"] = (input) => {
 };
 
 const updateFromMsg: Module["update"] = (input) => {
-  if (input.t !== "msg") {
-    return input;
+  if (!input.msg) {
+    return { model: input.model };
   }
 
   const { ctx, model, msg } = input;
@@ -140,7 +146,7 @@ const updateFromMsg: Module["update"] = (input) => {
 };
 
 const updateFromCmd: Module["update"] = (input) => {
-  if (input.t !== "cmd") {
+  if (!input.cmd) {
     return { model: input.model };
   }
 

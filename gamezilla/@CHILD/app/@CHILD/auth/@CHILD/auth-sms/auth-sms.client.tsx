@@ -1,16 +1,21 @@
-import { AppClient } from "gamezilla/@CHILD/app/@SHARED/architecture";
+import {
+  ClientModule,
+  chainUpdates,
+} from "gamezilla/@CHILD/app/@SHARED/architecture/app-client-v2";
 import {
   APP_SOUND,
   AnonymousClientCtx,
-  AnonymousViewCtx,
-  RouteAuth,
+  ClientEvt,
+} from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  ClientCmd,
   focusView,
   playSound,
   pushRoute,
   replaceRoute,
   sendToServer,
   showToast,
-} from "gamezilla/@CHILD/app/@SHARED/client";
+} from "gamezilla/@CHILD/app/@SHARED/client/client-cmd";
 import {
   AlertError,
   Button,
@@ -28,7 +33,7 @@ import {
   Sub,
   Time,
   TimeSpan,
-  chain,
+  Uuid,
   isErr,
 } from "gamezilla/@SHARED/core";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth-sms.core";
@@ -41,14 +46,19 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth-sms.core";
 //
 //
 
-type Client = AppClient<{
-  ClientModel: ClientModel;
-  ClientMsg: ClientMsg;
+type Module = ClientModule<{
+  Model: ClientModel;
+  Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  ClientCtx: AnonymousClientCtx;
-  ViewCtx: AnonymousViewCtx & { route: RouteAuth };
-  Cmd: never;
+  Ctx: AnonymousClientCtx;
+  InCmd: null;
+  InEvt: ClientEvt;
+  OutCmd: ClientCmd<{
+    ClientMsg: ClientMsg;
+    ToServer: ToServer;
+  }>;
+  OutEvt: ClientEvt;
 }>;
 
 //
@@ -59,7 +69,7 @@ type Client = AppClient<{
 //
 //
 
-export const init: Client["init"] = () => {
+export const init: Module["init"] = () => {
   return {
     model: {
       codeInput: "",
@@ -89,12 +99,8 @@ export const init: Client["init"] = () => {
 
 const CODE_INPUT_VIEW_ID = "codeInput";
 
-const focusCodeInput = focusView(CODE_INPUT_VIEW_ID);
-
 const PHONE_NUMBER_INPUT_VIEW_ID = "phoneNumberInput";
 
-const focusPhoneNumberInput = focusView(PHONE_NUMBER_INPUT_VIEW_ID);
-
 //
 //
 //
@@ -103,20 +109,19 @@ const focusPhoneNumberInput = focusView(PHONE_NUMBER_INPUT_VIEW_ID);
 //
 //
 
-export const update: Client["update"] = (input) => {
-  return AppClient.chain(
-    { model: input.model },
+export const update: Module["update"] = (input) => {
+  return chainUpdates({ model: input.model }, [
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromServer({ ...input, model })
-  );
+    (model) => updateFromServer({ ...input, model }),
+  ]);
 };
 
-const updateFromMsg: Client["update"] = (input) => {
-  const { model, msg, ctx } = input;
-
-  if (msg.variant !== "msg") {
-    return { model };
+const updateFromMsg: Module["update"] = (input) => {
+  if (!input.msg) {
+    return { model: input.model };
   }
+
+  const { ctx, model, msg } = input;
 
   switch (msg.t) {
     case "clicked-back-button": {
@@ -126,7 +131,7 @@ const updateFromMsg: Client["update"] = (input) => {
       ) {
         return {
           model,
-          msg: [
+          cmd: [
             replaceRoute({
               t: "auth",
               c: { t: "login-phone", isSelectingCountry: false },
@@ -135,7 +140,10 @@ const updateFromMsg: Client["update"] = (input) => {
         };
       }
 
-      return { model, msg: [replaceRoute({ t: "auth", c: { t: "login" } })] };
+      return {
+        model,
+        cmd: [replaceRoute({ t: "auth", c: { t: "login" } })],
+      };
     }
 
     case "inputted-phone-number": {
@@ -156,10 +164,7 @@ const updateFromMsg: Client["update"] = (input) => {
 
     case "inputted-country-code": {
       return {
-        model: {
-          ...model,
-          countryCodeInput: msg.countryCode,
-        },
+        model: { ...model, countryCodeInput: msg.countryCode },
       };
     }
 
@@ -172,7 +177,10 @@ const updateFromMsg: Client["update"] = (input) => {
             ...model,
             phoneNumberError: phoneNumber.error.userMessage,
           },
-          msg: [playSound(APP_SOUND.alertErrorSm), focusPhoneNumberInput],
+          cmd: [
+            playSound(APP_SOUND.alertErrorSm),
+            focusView(PHONE_NUMBER_INPUT_VIEW_ID),
+          ],
         };
       }
 
@@ -182,7 +190,7 @@ const updateFromMsg: Client["update"] = (input) => {
           sendCode: RemoteResult.loading,
           sentCodeAt: ctx.now,
         },
-        msg: [
+        cmd: [
           sendToServer({
             t: "send-code",
             phoneNumber: phoneNumber.value,
@@ -194,11 +202,7 @@ const updateFromMsg: Client["update"] = (input) => {
 
     case "inputted-code": {
       return {
-        model: {
-          ...model,
-          codeInput: msg.code,
-          codeError: null,
-        },
+        model: { ...model, codeInput: msg.code, codeError: null },
       };
     }
 
@@ -215,7 +219,10 @@ const updateFromMsg: Client["update"] = (input) => {
             ...model,
             codeError: "Please enter the code",
           },
-          msg: [playSound(APP_SOUND.alertErrorSm), focusCodeInput],
+          cmd: [
+            playSound(APP_SOUND.alertErrorSm),
+            focusView(CODE_INPUT_VIEW_ID),
+          ],
         };
       }
 
@@ -225,7 +232,7 @@ const updateFromMsg: Client["update"] = (input) => {
           verifiedCodeAt: ctx.now,
           verifyCode: RemoteResult.loading,
         },
-        msg: [
+        cmd: [
           playSound(APP_SOUND.tap),
           sendToServer({
             t: "verify-code",
@@ -237,8 +244,7 @@ const updateFromMsg: Client["update"] = (input) => {
     }
 
     case "time-passed": {
-      return chain(
-        { model },
+      return chainUpdates({ model }, [
         (model) => {
           if (
             model.sentCodeAt &&
@@ -255,7 +261,7 @@ const updateFromMsg: Client["update"] = (input) => {
                   "Timed out. Server took too long to response"
                 ),
               },
-              msg: [playSound(APP_SOUND.alertErrorMd)],
+              cmd: [playSound(APP_SOUND.alertErrorMd)],
             };
           }
           return { model };
@@ -276,67 +282,70 @@ const updateFromMsg: Client["update"] = (input) => {
                   "Timed out. Server took too long to response"
                 ),
               },
-              msg: [playSound(APP_SOUND.alertErrorMd)],
+              cmd: [playSound(APP_SOUND.alertErrorMd)],
             };
           }
 
           return { model };
-        }
-      );
+        },
+      ]);
     }
   }
 };
 
-const updateFromServer: Client["update"] = ({ msg, model }) => {
-  if (msg.variant !== "from-server") {
-    return { model };
+const updateFromServer: Module["update"] = (input) => {
+  if (!input.fromServer) {
+    return { model: input.model };
   }
 
-  switch (msg.t) {
+  const { model, fromServer } = input;
+
+  switch (fromServer.t) {
     case "sent-code": {
-      if (isErr(msg.result)) {
+      if (isErr(fromServer.result)) {
         return {
-          model: { ...model, sendCode: msg.result },
-          msg: [playSound(APP_SOUND.alertErrorMd)],
+          model: { ...model, sendCode: fromServer.result },
+          cmd: [playSound(APP_SOUND.alertErrorMd)],
         };
       }
+
       return {
         model: {
           ...model,
-          sendCode: msg.result,
+          sendCode: fromServer.result,
           verifyCode: RemoteResult.notAsked,
           codeInput: "",
         },
-        msg: [
+        cmd: [
           pushRoute({
             t: "auth",
             c: {
               t: "login-phone-verify",
-              phoneNumber: msg.phoneNumber,
+              phoneNumber: fromServer.phoneNumber,
             },
           }),
           showToast(
-            `Sent code to ${PhoneNumber.toString(msg.phoneNumber)}`,
+            `Sent code to ${PhoneNumber.toString(fromServer.phoneNumber)}`,
             "info",
             TimeSpan.fromSeconds(4)
           ),
-          focusCodeInput,
+          focusView(CODE_INPUT_VIEW_ID),
           playSound(APP_SOUND.navForwardMin),
         ],
       };
     }
 
     case "verified-code": {
-      if (isErr(msg.result)) {
+      if (isErr(fromServer.result)) {
         return {
-          model: { ...model, verifyCode: msg.result },
-          msg: [playSound(APP_SOUND.alertErrorMd)],
+          model: { ...model, verifyCode: fromServer.result },
+          cmd: [playSound(APP_SOUND.alertErrorMd)],
         };
       }
       return {
         model: {
           ...model,
-          verifyCode: msg.result,
+          verifyCode: fromServer.result,
         },
       };
     }
@@ -351,13 +360,12 @@ const updateFromServer: Client["update"] = ({ msg, model }) => {
 //
 //
 
-export const subscriptions: Client["subscriptions"] = ({
-  intervalId,
-  model,
-}) => {
+const INTERVAL_ID = Uuid.generate$();
+
+export const subscriptions: Module["subscriptions"] = ({ model }) => {
   if (model.sendCode.t === "loading" || model.verifyCode.t === "loading") {
     return Time.interval(
-      intervalId,
+      INTERVAL_ID,
       TimeSpan.fromMilliseconds(1000),
       (now) => ({
         t: "time-passed",
@@ -379,8 +387,15 @@ export const subscriptions: Client["subscriptions"] = ({
 //
 //
 
-export const View: Client["View"] = ({ model, dispatch, ctx }) => {
-  const { route } = ctx;
+export const View: Module["View"] = ({ model, dispatch, ctx }) => {
+  const { currentRoute } = ctx;
+
+  if (currentRoute.t !== "auth") {
+    return null;
+  }
+
+  const route = currentRoute.c;
+
   switch (route.t) {
     case "login-phone": {
       return (

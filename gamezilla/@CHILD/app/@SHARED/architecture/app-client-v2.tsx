@@ -9,6 +9,10 @@ import { Eff, Sub } from "gamezilla/@SHARED/core";
 
 export type ClientModuleTypes = {
   /**
+   * `Ctx` is data passed down from parent modules
+   */
+  Ctx: any;
+  /**
    * `Model` is the state of the module
    */
   Model: any;
@@ -19,11 +23,11 @@ export type ClientModuleTypes = {
   /**
    * `ToClient` is a message to send to the client component of the module
    */
-  FromServer: any;
+  ToClient: any;
   /**
-   * `Ctx` is data passed down from parent modules
+   * `ToServer` is a message to send to the client component of the module
    */
-  Ctx: any;
+  ToServer: any;
   /**
    * `InCmd` is a message from other modules. Usually verbs
    */
@@ -48,13 +52,7 @@ export type ClientModuleTypes = {
 //
 //
 
-type InputVariant<T extends ClientModuleTypes> =
-  | { t: "msg"; msg: T["Msg"] }
-  | { t: "from-server"; fromServer: T["FromServer"] }
-  | { t: "evt"; evt: T["InEvt"] }
-  | { t: "cmd"; cmd: T["InCmd"] };
-
-type InputBase<T extends ClientModuleTypes> = {
+export type Input<T extends ClientModuleTypes> = {
   /**
    * `ctx` is data passed down from parent modules
    */
@@ -63,19 +61,29 @@ type InputBase<T extends ClientModuleTypes> = {
    * `model` is the current state of the module
    */
   model: T["Model"];
+  /**
+   *
+   */
+  msg?: T["Msg"] | null;
+  /**
+   *
+   */
+  fromServer?: T["ToClient"] | null;
+  /**
+   *
+   */
+  evt?: T["InEvt"] | null;
+  /**
+   *
+   */
+  cmd?: T["InCmd"] | null;
 };
-
-export type Input<T extends ClientModuleTypes> = InputBase<T> & InputVariant<T>;
 
 //
 //
 // Output
 //
 //
-
-export type OutputMsg<T extends ClientModuleTypes> =
-  | { t: "cmd"; c: T["OutCmd"] }
-  | { t: "evt"; c: T["OutEvt"] };
 
 export type Output<T extends ClientModuleTypes> = {
   /**
@@ -87,9 +95,17 @@ export type Output<T extends ClientModuleTypes> = {
    */
   eff?: Eff<T["Msg"]>;
   /**
-   * `msg` is out message like events and commands
+   *
    */
-  msg?: OutputMsg<T>[];
+  toServer?: T["ToServer"][];
+  /**
+   *
+   */
+  cmd?: T["OutCmd"][];
+  /**
+   *
+   */
+  evt?: T["OutEvt"][];
 };
 
 /**
@@ -119,4 +135,30 @@ export type ClientModule<T extends ClientModuleTypes> = {
     model: T["Model"];
     dispatch: (msg: T["Msg"]) => void;
   }) => VDom;
+};
+
+export const chainUpdates = <T extends ClientModuleTypes>(
+  acc: Output<T>,
+  updates: ((model: T["Model"]) => Output<T>)[]
+): Output<T> => {
+  const [update, ...rest] = updates;
+
+  if (!update) {
+    return acc;
+  }
+
+  const updated = update(acc.model);
+
+  const accNew: Output<T> = {
+    model: updated.model,
+    eff: Eff.batch([acc.eff, updated.eff]),
+    cmd: [...(acc.cmd ?? []), ...(updated.cmd ?? [])],
+    evt: [...(acc.evt ?? []), ...(updated.evt ?? [])],
+  };
+
+  return chainUpdates(accNew, rest);
+};
+
+const ClientModule = {
+  chainUpdates,
 };

@@ -70,6 +70,7 @@ export const toSessionId = async (
 //
 
 export type ClientMsg =
+  | { t: "user-clicked-login-with-phone" }
   | { t: "logout"; c: LogoutMsg }
   | { t: "sms"; c: AuthSMS.ClientMsg };
 

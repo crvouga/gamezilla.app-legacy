@@ -8,6 +8,7 @@ import {
   ClientEvt,
   ViewCtx,
   preloadSound,
+  sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconGamepad,
@@ -198,11 +199,23 @@ export const update = (input: {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
 } => {
-  // console.log("[msg]", toMsgType(input.msg));
-  let acc = updateMain(input);
+  const updated = updateMain(input);
+
+  const toServerCmd = updated.toServer?.map((c) => sendToServer(c));
+
+  let acc: {
+    model: ClientModel;
+    eff?: Eff<ClientMsg>;
+    cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+    evt?: ClientEvt[];
+  } = {
+    model: updated.model,
+    eff: updated.eff,
+    cmd: batchMsgs(updated.cmd, toServerCmd),
+    evt: updated.evt,
+  };
 
   for (const evt of acc.evt ?? []) {
-    // console.log("[evt]", toMsgType(evt));
     const updatedEvt = updateFromEvent({
       ...input,
       model: acc.model,
@@ -216,7 +229,6 @@ export const update = (input: {
   }
 
   for (const cmd of acc.cmd ?? []) {
-    // console.log("[cmd]", toMsgType(cmd));
     const updatedCmd = updateFromCmd({ ...input, model: acc.model, cmd });
     acc = {
       model: updatedCmd.model,
@@ -240,6 +252,7 @@ const updateMain = ({
   eff?: Eff<ClientMsg>;
   evt?: ClientEvt[];
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  toServer?: ToServer[];
 } => {
   const ctxApp = toCtx({ model, ctx });
 
@@ -255,23 +268,20 @@ const updateMain = ({
     case "auth": {
       const updated = AuthClient.update({
         ctx: ctxApp,
-        msg: { ...msg.c, variant: "msg" },
+        msg: msg.c,
         model: model.auth,
       });
       return {
         model: { ...model, auth: updated.model },
         eff: Eff.t("auth", updated.eff),
-        evt: updated.msg?.flatMap((x) => (x.variant === "evt" ? [x] : [])),
-        cmd: ClientCmd.tag(
-          "auth",
-          updated.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
-        ),
+        evt: updated.evt,
+        cmd: ClientCmd.tag("auth", updated.cmd),
+        toServer: updated.toServer?.map((c) => ({ t: "auth", c })),
       };
     }
 
     case "toast": {
       const updated = Toast.update({
-        t: "msg",
         ctx: ctx,
         model: model.toast,
         msg: msg.c,
@@ -279,6 +289,9 @@ const updateMain = ({
       return {
         model: { ...model, toast: updated.model },
         eff: Eff.t("toast", updated.eff),
+        cmd: updated.cmd,
+        evt: updated.evt,
+        toServer: updated.toServer,
       };
     }
 
@@ -433,22 +446,21 @@ const updateFromServer = ({
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
   evt?: ClientEvt[];
+  toServer?: ToServer[];
 } => {
   switch (msg.t) {
     case "auth": {
       const updated = AuthClient.update({
         ctx,
-        msg: { ...msg.c, variant: "from-server" },
+        fromServer: msg.c,
         model: model.auth,
       });
       return {
-        evt: updated.msg?.flatMap((x) => (x.variant === "evt" ? [x] : [])),
         model: { ...model, auth: updated.model },
+        evt: updated.evt,
         eff: Eff.t("auth", updated.eff),
-        cmd: ClientCmd.tag(
-          "auth",
-          updated.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
-        ),
+        cmd: ClientCmd.tag("auth", updated.cmd),
+        toServer: updated.toServer?.map((c) => ({ t: "auth", c })),
       };
     }
 
@@ -552,7 +564,6 @@ const updateFromCmd = ({
 
     case "toast/enqueue": {
       const toast = Toast.update({
-        t: "cmd",
         ctx: ctxApp,
         model: model.toast,
         cmd,
@@ -652,7 +663,7 @@ const updateFromEvent = ({
 
   const auth = AuthClient.updateFromEvent({
     model: model.auth,
-    msg: { ...msg, variant: "evt" },
+    evt: msg,
     ctx: ctxApp,
   });
 
@@ -671,10 +682,7 @@ const updateFromEvent = ({
     ]),
     cmd: [
       ...ClientCmd.tag("space", space.cmd),
-      ...ClientCmd.tag(
-        "auth",
-        auth.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
-      ),
+      ...ClientCmd.tag("auth", auth.cmd),
       ...ClientCmd.tag(
         "profile",
         profile.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
@@ -695,10 +703,9 @@ const updateFromEvent = ({
 
 export const subscriptions = (input: {
   ctx: { now: Posix };
-  intervalId: string;
   model: ClientModel;
 }): Sub<ClientMsg> => {
-  const { ctx, model, intervalId } = input;
+  const { ctx, model } = input;
 
   const ctxApp = toCtx(input);
 
@@ -710,11 +717,7 @@ export const subscriptions = (input: {
     Sub.tag("toast", Toast.subscriptions({ ctx, model: model.toast })),
     Sub.tag(
       "auth",
-      AuthClient.subscriptions({
-        ctx: ctxApp,
-        intervalId: `${intervalId}/auth`,
-        model: model.auth,
-      })
+      AuthClient.subscriptions({ ctx: ctxApp, model: model.auth })
     ),
     Sub.tag("space", SpaceClient.subscriptions(ctxApp, model.space)),
   ]);
@@ -847,17 +850,20 @@ const ViewLoggedOut = ({
   dispatch: (m: ClientMsg) => void;
   ctx: AnonymousViewCtx;
 }) => {
-  if (model.routing.currentRoute.t === "auth") {
-    return (
-      <AuthClient.View
-        dispatch={(m) => dispatch({ t: "auth", c: m })}
-        model={model.auth}
-        ctx={{ ...ctx, route: model.routing.currentRoute.c }}
-      />
-    );
+  switch (model.routing.currentRoute.t) {
+    case "auth": {
+      return (
+        <AuthClient.View
+          dispatch={(m) => dispatch({ t: "auth", c: m })}
+          model={model.auth}
+          ctx={ctx}
+        />
+      );
+    }
+    default: {
+      return <LogoScreen />;
+    }
   }
-
-  return <LogoScreen />;
 };
 
 const ViewLoggedIn = ({

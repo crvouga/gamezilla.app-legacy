@@ -1,9 +1,15 @@
 import {
+  ClientModule,
+  chainUpdates,
+} from "gamezilla/@CHILD/app/@SHARED/architecture/app-client-v2";
+import {
   APP_SOUND,
   AnonymousClientCtx,
   AnonymousViewCtx,
-  RouteAuth,
+  ClientCmd,
+  ClientEvt,
   playSound,
+  pushRoute,
   replaceRoute,
   sendToServer,
   showToast,
@@ -11,14 +17,10 @@ import {
 import {
   Button,
   ConformationDialog,
-  IconEnvelope,
   IconMobilePhone,
-  LoadingBar,
   LoadingScreen,
-  cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub, notAsked } from "gamezilla/@SHARED/core";
-import { AppClient } from "../../@SHARED/architecture";
 import * as AuthClientSMS from "./@CHILD/auth-sms/auth-sms.client";
 import {
   ClientModel,
@@ -36,14 +38,19 @@ import {
 //
 //
 
-type Client = AppClient<{
-  ClientModel: ClientModel;
-  ClientMsg: ClientMsg;
+type Client = ClientModule<{
+  Model: ClientModel;
+  Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  ViewCtx: AnonymousViewCtx & { route: RouteAuth };
-  ClientCtx: AnonymousClientCtx;
-  Cmd: never;
+  Ctx: AnonymousClientCtx;
+  InCmd: never;
+  InEvt: ClientEvt;
+  OutCmd: ClientCmd<{
+    ClientMsg: ClientMsg;
+    ToServer: ToServer;
+  }>;
+  OutEvt: ClientEvt;
 }>;
 
 //
@@ -64,7 +71,9 @@ export const init: Client["init"] = ({ stored, ctx }) => {
     return {
       model: { ...stored, sms: sms.model },
       eff: Eff.t("sms", sms.eff),
-      msg: AppClient.tagOutMsgs("sms", sms.msg),
+      evt: sms.evt,
+      toServer: sms.toServer?.map((c) => ({ t: "sms", c })),
+      cmd: ClientCmd.tag("sms", sms.cmd),
     };
   }
 
@@ -75,8 +84,10 @@ export const init: Client["init"] = ({ stored, ctx }) => {
       logout: notAsked,
       sms: sms.model,
     },
+    toServer: sms.toServer?.map((c) => ({ t: "sms", c })),
     eff: Eff.t("sms", sms.eff),
-    msg: AppClient.tagOutMsgs("sms", sms.msg),
+    evt: sms.evt,
+    cmd: ClientCmd.tag("sms", sms.cmd),
   };
 };
 
@@ -89,55 +100,54 @@ export const init: Client["init"] = ({ stored, ctx }) => {
 //
 
 export const update: Client["update"] = (input) => {
-  return AppClient.chain(
-    { model: input.model },
+  return chainUpdates({ model: input.model }, [
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
-    (model) => updateChild({ ...input, model })
-  );
+    (model) => updateChild({ ...input, model }),
+  ]);
 };
 
 const updateChild: Client["update"] = (input) => {
-  const { msg, model, ctx } = input;
+  const updated = AuthClientSMS.update({
+    ctx: input.ctx,
+    model: input.model.sms,
+    cmd: input.cmd,
+    evt: input.evt,
+    fromServer: input.fromServer?.t === "sms" ? input.fromServer.c : null,
+    msg: input.msg?.t === "sms" ? input.msg.c : null,
+  });
 
-  if (msg.t === "sms" || msg.variant === "evt") {
-    const updated = AuthClientSMS.update({
-      ctx,
-      model: model.sms,
-      msg:
-        msg.variant === "evt"
-          ? msg
-          : msg.variant === "from-server"
-          ? { ...msg.c, variant: "from-server" }
-          : { ...msg.c, variant: "msg" },
-    });
-
-    return {
-      model: {
-        ...model,
-        sms: updated.model,
-      },
-      eff: Eff.t("sms", updated.eff),
-      msg: AppClient.tagOutMsgs("sms", updated.msg),
-    };
-  }
-
-  return { model };
+  return {
+    model: { ...input.model, sms: updated.model },
+    cmd: ClientCmd.tag("sms", updated.cmd),
+    eff: Eff.t("sms", updated.eff),
+    evt: updated.evt,
+    toServer: updated.toServer?.map((c) => ({ t: "sms", c })),
+  };
 };
 
 const updateFromMsg: Client["update"] = (input) => {
-  const { msg, model } = input;
-
-  if (msg.variant !== "msg") {
-    return { model };
+  if (!input.msg) {
+    return { model: input.model };
   }
-
+  const { model, msg } = input;
   switch (msg.t) {
     case "logout": {
       return updateFromLogoutMsg({ msg: msg.c, model });
     }
 
+    case "user-clicked-login-with-phone": {
+      return {
+        model,
+        cmd: [
+          pushRoute({
+            t: "auth",
+            c: { t: "login-phone", isSelectingCountry: false },
+          }),
+        ],
+      };
+    }
     case "sms": {
       return { model };
     }
@@ -165,11 +175,8 @@ const updateFromLogoutMsg = ({
           ...model,
           currentUser: { t: "logged-out" },
         },
-        msg: [
-          sendToServer({ t: "logout" }),
-          showToast("Logged out"),
-          { t: "auth/client-unauthenticated", variant: "evt" },
-        ],
+        cmd: [sendToServer({ t: "logout" }), showToast("Logged out")],
+        evt: [{ t: "auth/client-unauthenticated" }],
       };
     }
 
@@ -177,7 +184,7 @@ const updateFromLogoutMsg = ({
     case "clicked-cancel": {
       return {
         model: { ...model, logout: notAsked },
-        msg: [
+        cmd: [
           replaceRoute({
             t: "profile",
             c: { t: "profile", userId: currentUserId },
@@ -189,17 +196,17 @@ const updateFromLogoutMsg = ({
 };
 
 const updateFromServer: Client["update"] = (input) => {
-  const { msg, model } = input;
-
-  if (msg.variant !== "from-server") {
-    return { model };
+  if (!input.fromServer) {
+    return { model: input.model };
   }
 
-  switch (msg.t) {
+  const { model, fromServer } = input;
+
+  switch (fromServer.t) {
     case "auth/client-unauthenticated": {
       return {
         model: { ...model, currentUser: { t: "logged-out" } },
-        msg: [{ ...msg, variant: "evt" }],
+        evt: [fromServer],
       };
     }
 
@@ -209,45 +216,40 @@ const updateFromServer: Client["update"] = (input) => {
           ...model,
           currentUser: {
             t: "logged-in",
-            userId: msg.userId,
+            userId: fromServer.userId,
           },
         },
-        msg: [{ ...msg, variant: "evt" }],
+        evt: [fromServer],
       };
     }
 
-    default: {
+    case "sms": {
       return { model };
     }
   }
 };
 
 export const updateFromEvent: Client["update"] = (input) => {
-  const { model, msg } = input;
-
-  if (msg.variant !== "evt") {
-    return { model };
-  }
-
-  return AppClient.chain({ model }, (model) =>
-    handleRedirect({ ...input, model })
-  );
+  return updateRedirect(input);
 };
 
-export const handleRedirect: Client["update"] = (input) => {
-  const { model, msg, ctx } = input;
-
-  if (msg.variant !== "evt") {
-    return { model };
+export const updateRedirect: Client["update"] = (input) => {
+  if (!input.evt) {
+    return { model: input.model };
   }
 
-  switch (msg.t) {
+  const { ctx, evt, model } = input;
+
+  switch (evt.t) {
     case "auth/client-authenticated": {
       if (ctx.currentRoute.t === "auth") {
         return {
           model,
-          msg: [
-            replaceRoute({ t: "space", c: { t: "space-list" } }),
+          cmd: [
+            replaceRoute({
+              t: "space",
+              c: { t: "space-list" },
+            }),
             playSound(APP_SOUND.navForward),
           ],
         };
@@ -260,8 +262,11 @@ export const handleRedirect: Client["update"] = (input) => {
       if (ctx.currentRoute.t !== "auth") {
         return {
           model,
-          msg: [
-            replaceRoute({ t: "auth", c: { t: "login" } }),
+          cmd: [
+            replaceRoute({
+              t: "auth",
+              c: { t: "login" },
+            }),
             playSound(APP_SOUND.navBackward),
           ],
         };
@@ -271,17 +276,27 @@ export const handleRedirect: Client["update"] = (input) => {
     }
 
     case "routing/route-changed": {
-      if (model.currentUser.t === "logged-in" && msg.route.t === "auth") {
+      if (model.currentUser.t === "logged-in" && evt.route.t === "auth") {
         return {
           model,
-          msg: [replaceRoute({ t: "space", c: { t: "space-list" } })],
+          cmd: [
+            replaceRoute({
+              t: "space",
+              c: { t: "space-list" },
+            }),
+          ],
         };
       }
 
-      if (model.currentUser.t === "logged-out" && msg.route.t !== "auth") {
+      if (model.currentUser.t === "logged-out" && evt.route.t !== "auth") {
         return {
           model,
-          msg: [replaceRoute({ t: "auth", c: { t: "login" } })],
+          cmd: [
+            replaceRoute({
+              t: "auth",
+              c: { t: "login" },
+            }),
+          ],
         };
       }
 
@@ -300,19 +315,8 @@ export const handleRedirect: Client["update"] = (input) => {
 //
 //
 
-export const subscriptions: Client["subscriptions"] = ({
-  intervalId,
-  model,
-  ctx,
-}) => {
-  return Sub.tag(
-    "sms",
-    AuthClientSMS.subscriptions({
-      model: model.sms,
-      intervalId: `${intervalId}/sms`,
-      ctx,
-    })
-  );
+export const subscriptions: Client["subscriptions"] = ({ model, ctx }) => {
+  return Sub.tag("sms", AuthClientSMS.subscriptions({ model: model.sms, ctx }));
 };
 
 //
@@ -324,9 +328,13 @@ export const subscriptions: Client["subscriptions"] = ({
 //
 
 export const View: Client["View"] = ({ model, ctx, dispatch }) => {
-  switch (ctx.route.t) {
+  if (ctx.currentRoute.t !== "auth") {
+    return null;
+  }
+  const route = ctx.currentRoute.c;
+  switch (route.t) {
     case "login": {
-      return <ViewLoginScreen ctx={ctx} model={model} dispatch={dispatch} />;
+      return <ViewLoginScreen dispatch={dispatch} />;
     }
 
     case "login-phone-verify":
@@ -347,22 +355,13 @@ export const View: Client["View"] = ({ model, ctx, dispatch }) => {
 };
 
 const ViewLoginScreen = ({
-  ctx,
-  model,
+  dispatch,
 }: {
-  ctx: AnonymousViewCtx;
-  model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  const isLoading = model.loginWithGoogle?.t === "loading";
   return (
     <div class="relative flex h-full w-full flex-1 flex-col">
-      <LoadingBar disabled={!isLoading} class="absolute left-0 top-0 w-full" />
-      <div
-        class={cn(
-          "flex flex-1 flex-col items-center justify-center gap-8 p-4",
-          isLoading && "pointer-events-none opacity-50"
-        )}>
+      <div class="flex flex-1 flex-col items-center justify-center gap-8 p-4">
         <div class="flex w-full flex-col items-start justify-center">
           <p class="text-2xl text-neutral-200">Sign in to</p>
           <h1 class="bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent">
@@ -372,29 +371,12 @@ const ViewLoginScreen = ({
 
         <div class="flex w-full flex-col gap-6">
           <Button
-            onClick={() =>
-              ctx.push({
-                t: "auth",
-                c: { t: "login-phone", isSelectingCountry: false },
-              })
-            }
+            onClick={() => dispatch({ t: "user-clicked-login-with-phone" })}
             size="lg"
             class="w-full"
             start={<IconMobilePhone class="h-6 w-6" />}
             text="Continue With Phone"
           />
-
-          {false && (
-            <Button
-              onClick={() =>
-                ctx.push({ t: "auth", c: { t: "login-email-link" } })
-              }
-              size="lg"
-              class="w-full"
-              start={<IconEnvelope class="h-6 w-6" />}
-              text="Continue With Email"
-            />
-          )}
         </div>
       </div>
     </div>

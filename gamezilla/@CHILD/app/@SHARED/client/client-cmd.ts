@@ -283,12 +283,12 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
 
 const tag = <Tag extends string, T extends ClientCmdTypes>(
   tag: Tag,
-  cmd?: ClientCmd<T>[]
+  cmd?: (ClientCmd<T> | null | undefined)[] | null | undefined
 ): ClientCmd<{
   ClientMsg: { t: Tag; c: T["ClientMsg"] };
   ToServer: { t: Tag; c: T["ToServer"] };
 }>[] => {
-  return cmd?.map((c) => tagOne(tag, c)) ?? [];
+  return cmd?.flatMap((c) => (c ? [tagOne(tag, c)] : [])) ?? [];
 };
 
 const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
