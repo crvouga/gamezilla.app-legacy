@@ -271,7 +271,7 @@ const updateMain = ({
 
     case "toast": {
       const updated = Toast.update({
-        t: 'msg',
+        t: "msg",
         ctx: ctx,
         model: model.toast,
         msg: msg.c,
@@ -555,7 +555,7 @@ const updateFromCmd = ({
         model: model.toast,
         msg: cmd,
         ctx: ctxApp,
-        t: 'cmd'
+        t: "cmd",
       });
 
       return {
@@ -707,14 +707,7 @@ export const subscriptions = (input: {
     Sub.tag("wire", Wire.subscriptions({ transport })),
     Sub.tag("platform", Platform.subscriptions),
     Sub.tag("routing", Routing.subscriptions),
-    Sub.tag(
-      "toast",
-      Toast.subscriptions({
-        ctx: ctx,
-        intervalId: `${intervalId}/toast`,
-        model: model.toast,
-      })
-    ),
+    Sub.tag("toast", Toast.subscriptions({ ctx, model: model.toast })),
     Sub.tag(
       "auth",
       AuthClient.subscriptions({
@@ -1007,7 +1000,8 @@ const ViewBottomBar = ({
               class={cn(
                 "flex flex-1 flex-col items-center justify-center pb-2 pt-1",
                 isSelected ? "text-blue-500" : "opacity-80"
-              )}>
+              )}
+            >
               {item.icon}
               <div class="mt-0.5 text-xs">{item.label}</div>
             </button>

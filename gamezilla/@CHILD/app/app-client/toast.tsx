@@ -1,12 +1,13 @@
+import { chainUpdates } from "gamezilla/@CHILD/app/@SHARED/architecture";
+import { ClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client-v2";
 import { ToastCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconXMark, Transition, cn } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Posix, Sub, Time, TimeSpan } from "gamezilla/@SHARED/core";
-import { ClientModule } from "../@SHARED/architecture/app-client-v2";
+import { Posix, Sub, Time, TimeSpan, Uuid } from "gamezilla/@SHARED/core";
 
 //
 //
 //
-//
+// Module
 //
 //
 //
@@ -73,15 +74,14 @@ export type Msg =
   | { t: "clicked-dismiss-button"; toastId: number };
 
 export const update: Module["update"] = (input) => {
-  return ClientModule.chain(
-    { model: input.model },
+  return chainUpdates({ model: input.model }, [
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromCmd({ ...input, model })
-  );
+    (model) => updateFromCmd({ ...input, model }),
+  ]);
 };
 
-const updateFromMsg: Module["update"] = ({ ctx, msg, model }) => {
-  if (msg.t !== "msg") {
+const updateFromMsg: Module["update"] = ({ t, ctx, msg, model }) => {
+  if (t !== "msg") {
     return { model };
   }
   switch (msg.t) {
@@ -169,12 +169,11 @@ const updateFromCmd: Module["update"] = ({ t, ctx, msg, model }) => {
 //
 //
 
-export const subscriptions: Module["subscriptions"] = ({
-  intervalId,
-  model,
-}) => {
+const INTERVAL_ID = Uuid.generate$();
+
+export const subscriptions: Module["subscriptions"] = ({ model }) => {
   if (model.toast) {
-    return Time.interval(intervalId, model.toast.duration, () => ({
+    return Time.interval(INTERVAL_ID, model.toast.duration, () => ({
       t: "time-passed",
     }));
   }

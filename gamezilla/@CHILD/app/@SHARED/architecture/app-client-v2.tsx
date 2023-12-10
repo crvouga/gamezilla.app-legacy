@@ -1,6 +1,12 @@
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 
+//
+//
+//
+//
+//
+
 export type ClientModuleTypes = {
   /**
    * `Model` is the state of the module
@@ -36,30 +42,11 @@ export type ClientModuleTypes = {
   OutEvt: any;
 };
 
-export type InputMsg<T extends ClientModuleTypes> =
-  | ({ v: "msg" } & T["Msg"])
-  | ({ v: "from-server" } & T["FromServer"])
-  | ({ v: "evt" } & T["InEvt"])
-  | ({ v: "cmd" } & T["InCmd"]);
-
-export type OutputMsg<T extends ClientModuleTypes> =
-  | ({ v: "cmd" } & T["OutCmd"])
-  | ({ v: "evt" } & T["OutEvt"]);
-
-export type Output<T extends ClientModuleTypes> = {
-  /**
-   * `model` will be the new state of the module
-   */
-  model: T["Model"];
-  /**
-   * `eff` is a side effect to be performed. May emit a message
-   */
-  eff?: Eff<T["Msg"]>;
-  /**
-   * `msg` is out message like events and commands
-   */
-  msg?: OutputMsg<T>[];
-};
+//
+//
+// Input
+//
+//
 
 type InputVariant<T extends ClientModuleTypes> =
   | { t: "msg"; msg: T["Msg"] }
@@ -80,15 +67,39 @@ type InputBase<T extends ClientModuleTypes> = {
 
 export type Input<T extends ClientModuleTypes> = InputBase<T> & InputVariant<T>;
 
+//
+//
+// Output
+//
+//
+
+export type OutputMsg<T extends ClientModuleTypes> =
+  | ({ v: "cmd" } & T["OutCmd"])
+  | ({ v: "evt" } & T["OutEvt"]);
+
+export type Output<T extends ClientModuleTypes> = {
+  /**
+   * `model` will be the new state of the module
+   */
+  model: T["Model"];
+  /**
+   * `eff` is a side effect to be performed. May emit a message
+   */
+  eff?: Eff<T["Msg"]>;
+  /**
+   * `msg` is out message like events and commands
+   */
+  msg?: OutputMsg<T>[];
+};
+
+/**
+ * `ClientModule` represents a client side app module
+ */
 export type ClientModule<T extends ClientModuleTypes> = {
   /**
    * `init` is the initial state of the module
    */
-  init: (input: {
-    //
-    ctx: T["Ctx"];
-    stored: T["Model"] | null;
-  }) => Output<T>;
+  init: (input: { ctx: T["Ctx"]; stored: T["Model"] | null }) => Output<T>;
 
   /**
    * `update` handles all the state transitions and business logic of the module
@@ -98,106 +109,14 @@ export type ClientModule<T extends ClientModuleTypes> = {
   /**
    * `subscriptions` is emits msgs specific to the module
    */
-  subscriptions: (input: {
-    intervalId: string;
-    ctx: T["Ctx"];
-    model: T["Model"];
-  }) => Sub<T["Msg"]>;
+  subscriptions: (input: { ctx: T["Ctx"]; model: T["Model"] }) => Sub<T["Msg"]>;
 
   /**
    * `View` is for rendering the UI for the module
    */
   View: (input: {
     ctx: T["Ctx"];
-    dispatch: (msg: T["Msg"]) => void;
     model: T["Model"];
+    dispatch: (msg: T["Msg"]) => void;
   }) => VDom;
 };
-
-/**
- * @description
- * A helper function used for chaining together update functions together.
- * @example
- * const updated = chain(
- * { model: 0 },
- * (model) => ({ model: model + 1, evt: [someEvent] }),
- * (model) => ({ model: model + 1, eff: someEff }),
- * (model) => ({ model: model + 1, cmd: [someCmd] }),
- * )
- * //=> { model: 3, evt: [someEvt], eff: someEff, cmd: [someCmd] }
- *
- * @param initial - the model to start with
- * @param updaters - a list of update functions to apply to the model
- * @returns Accumulated output from all the update functions
- */
-export const chain = <TModel, TMsg, TOutMsg>(
-  initial: { model: TModel; eff?: Eff<TMsg>; msg?: TOutMsg[] },
-  ...updaters: ((input: TModel) => {
-    model: TModel;
-    eff?: Eff<TMsg>;
-    msg?: TOutMsg[];
-  })[]
-): {
-  model: TModel;
-  eff: Eff<TMsg>;
-  msg: TOutMsg[];
-} => {
-  const outMsg: TOutMsg[] = initial.msg ? [...initial.msg] : [];
-  const eff: Eff<TMsg>[] = initial.eff ? [initial.eff] : [];
-
-  let model = initial.model;
-  let i = 0;
-  let len = updaters.length;
-
-  for (i = 0; i < len; ++i) {
-    const updated = updaters[i]!(model);
-
-    model = updated.model;
-
-    if (updated.eff) {
-      eff.push(updated.eff);
-    }
-
-    if (updated.msg) {
-      let j = 0;
-      let len = updated.msg.length;
-      for (j = 0; j < len; ++j) {
-        outMsg.push(updated.msg[j]!);
-      }
-    }
-  }
-
-  return {
-    model,
-    eff: Eff.batch(eff),
-    msg: outMsg,
-  };
-};
-
-export const ClientModule = {
-  chain,
-};
-
-export type BaseCmd<T> = T & { v: "cmd" };
-
-export function Cmd<T>(cmd: T): BaseCmd<T> {
-  return { v: "cmd", ...cmd };
-}
-
-export type BaseEvt<T> = T & { v: "evt" };
-
-export function Evt<T>(evt: T): BaseEvt<T> {
-  return { v: "evt", ...evt };
-}
-
-export type BaseMsg<T> = T & { v: "msg" };
-
-export function Msg<T>(msg: T): BaseMsg<T> {
-  return { v: "msg", ...msg };
-}
-
-export type BaseFromServer<T> = T & { v: "from-server" };
-
-export function FromServer<T>(fromServer: T): BaseFromServer<T> {
-  return { v: "from-server", ...fromServer };
-}
