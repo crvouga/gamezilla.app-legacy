@@ -229,11 +229,11 @@ const updateFromServer: Client["update"] = (input) => {
   }
 };
 
-export const updateFromEvent: Client["update"] = (input) => {
+const updateFromEvent: Client["update"] = (input) => {
   return updateRedirect(input);
 };
 
-export const updateRedirect: Client["update"] = (input) => {
+const updateRedirect: Client["update"] = (input) => {
   if (!input.evt) {
     return { model: input.model };
   }

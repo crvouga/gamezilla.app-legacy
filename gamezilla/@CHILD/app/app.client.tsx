@@ -576,7 +576,7 @@ const updateFromEvent = ({
     ctx: { ...ctxApp, viewBottomBar: null },
   });
 
-  const auth = AuthClient.updateFromEvent({
+  const auth = AuthClient.update({
     model: model.auth,
     evt: msg,
     ctx: ctxApp,
