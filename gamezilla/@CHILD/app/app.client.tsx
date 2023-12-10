@@ -337,12 +337,13 @@ const updateMain = ({
     }
 
     case "platform": {
-      const updated = Platform.update({
+      const updated = Platform.update<ClientMsg>({
         msg: msg.c,
         model: model.platform,
       });
       return {
         model: { ...model, platform: updated.model },
+        eff: Eff.batch([Eff.t("platform", updated.eff), updated.parentEff]),
       };
     }
 
@@ -470,7 +471,7 @@ const updateFromCmd = ({
     case "routing/replace":
     case "routing/back":
     case "routing/push": {
-      const routing = Routing.updateFromCmd({
+      const routing = Routing.update({
         model: model.routing,
         cmd,
       });
@@ -516,10 +517,7 @@ const updateFromCmd = ({
     case "platform/start-timeout":
     case "platform/cancel-timeout":
     case "platform/focus": {
-      const updated = Platform.updateFromCmd({
-        model: model.platform,
-        cmd,
-      });
+      const updated = Platform.update({ model: model.platform, cmd });
       return {
         model: { ...model, platform: updated.model },
         eff: Eff.batch([Eff.t("platform", updated.eff), updated.parentEff]),
@@ -585,7 +583,6 @@ const updateFromEvent = ({
   return {
     model: {
       ...model,
-
       profile: profile.model,
       space: space.model,
       auth: auth.model,

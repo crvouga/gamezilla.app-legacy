@@ -34,15 +34,34 @@ export type Msg =
       id: string;
     };
 
-export const update = ({
+export const update = <TClientMsg>({
   msg,
   model,
+  cmd,
 }: {
-  msg: Msg;
+  cmd?: PlatformCmd<TClientMsg> | null;
+  msg?: Msg | null;
   model: Model;
 }): {
   model: Model;
+  parentEff?: Eff<TClientMsg>;
+  eff?: Eff<Msg>;
 } => {
+  if (msg) {
+    return updateFromMsg({ msg, model });
+  }
+
+  if (cmd) {
+    return updateFromCmd({ cmd, model });
+  }
+
+  return { model };
+};
+
+const updateFromMsg: typeof update = ({ msg, model }) => {
+  if (!msg) {
+    return { model };
+  }
   switch (msg.t) {
     case "document-visibility-change": {
       return {
@@ -61,17 +80,11 @@ export const update = ({
   }
 };
 
-export const updateFromCmd = <TClientMsg>({
-  cmd,
-  model,
-}: {
-  cmd: PlatformCmd<TClientMsg>;
-  model: Model;
-}): {
-  model: Model;
-  parentEff?: Eff<TClientMsg>;
-  eff?: Eff<Msg>;
-} => {
+const updateFromCmd: typeof update = ({ cmd, model }) => {
+  if (!cmd) {
+    return { model };
+  }
+
   switch (cmd.t) {
     case "platform/focus": {
       return {

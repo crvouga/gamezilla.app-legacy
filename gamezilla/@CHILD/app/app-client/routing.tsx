@@ -60,8 +60,10 @@ export type Msg =
 export const update = ({
   msg,
   model,
+  cmd,
 }: {
-  msg: Msg;
+  cmd?: RouteCmd | null;
+  msg?: Msg | null;
   model: Model;
 }): {
   model: Model;
@@ -69,6 +71,19 @@ export const update = ({
   evt?: ClientEvt[];
   cmd?: SoundCmd[];
 } => {
+  if (msg) {
+    return updateFromMsg({ msg, model });
+  }
+  if (cmd) {
+    return updateFromCmd({ cmd, model });
+  }
+  return { model };
+};
+
+const updateFromMsg: typeof update = ({ msg, model }) => {
+  if (!msg) {
+    return { model };
+  }
   switch (msg.t) {
     case "clicked-back": {
       return {
@@ -101,24 +116,19 @@ export const update = ({
   }
 };
 
-export const updateFromCmd = ({
-  cmd: msg,
-  model,
-}: {
-  cmd: RouteCmd;
-  model: Model;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
-} => {
-  switch (msg.t) {
+const updateFromCmd: typeof update = ({ cmd, model }) => {
+  if (!cmd) {
+    return { model };
+  }
+
+  switch (cmd.t) {
     case "routing/push": {
       return {
         model: {
           previousRoute: model.currentRoute,
-          currentRoute: msg.route,
+          currentRoute: cmd.route,
         },
-        eff: Browser.push(AppRoute.encode(msg.route)),
+        eff: Browser.push(AppRoute.encode(cmd.route)),
       };
     }
 
@@ -133,9 +143,9 @@ export const updateFromCmd = ({
       return {
         model: {
           previousRoute: model.currentRoute,
-          currentRoute: msg.route,
+          currentRoute: cmd.route,
         },
-        eff: Browser.replace(AppRoute.encode(msg.route)),
+        eff: Browser.replace(AppRoute.encode(cmd.route)),
       };
     }
   }
