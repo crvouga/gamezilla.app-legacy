@@ -1,11 +1,14 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
+  AnonymousClientCtx,
+  ClientCtx,
+} from "gamezilla/@CHILD/app/@SHARED/client";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import {
+  Button,
   IconArrowLeftOnRect,
   IconSpinner,
   IconUserPen,
   MyAvatar,
-  Button,
   TopBar,
   TopBarBackButton,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -17,7 +20,7 @@ export const ViewProfileScreen = ({
   userId,
   dispatch,
 }: {
-  ctx: ViewCtx;
+  ctx: ClientCtx | AnonymousClientCtx;
   userId: UserId;
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
@@ -47,14 +50,13 @@ export const ViewProfileScreen = ({
             @{profile.username}
           </p>
           <Button
-            onClick={() =>
-              ctx.push({ t: "profile", c: { t: "profile-update" } })
-            }
+            onClick={() => dispatch({ t: "clicked-edit-profile-button" })}
             class="w-full"
             start={<IconUserPen class="h-6 w-6" />}
-            text="Edit Profile"></Button>
+            text="Edit Profile"
+          ></Button>
           <Button
-            onClick={() => ctx.push({ t: "logout" })}
+            onClick={() => dispatch({ t: "clicked-logout-button" })}
             class="w-full"
             start={<IconArrowLeftOnRect class="h-6 w-6" />}
             text="Logout"

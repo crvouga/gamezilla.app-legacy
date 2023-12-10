@@ -1,7 +1,7 @@
 import {
   ClientModule,
   chainUpdates,
-} from "gamezilla/@CHILD/app/@SHARED/architecture/app-client-v2";
+} from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import {
   APP_SOUND,
   AnonymousClientCtx,

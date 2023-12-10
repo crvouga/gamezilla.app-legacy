@@ -24,7 +24,6 @@ import * as SearchClient from "./@CHILD/search/search.client";
 import * as SpaceClient from "./@CHILD/space/space.client";
 import { ClientTransport } from "./@CHILD/wire/transport-client";
 import * as Wire from "./@CHILD/wire/wire.client";
-import { AppClient } from "./@SHARED/architecture";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import {
   APP_CONFIG,
@@ -49,25 +48,6 @@ export const transport = ClientTransport<ToServer, ToClient>({
     endpoint: APP_CONFIG.WEB_SOCKETS_ENDPOINT,
   },
 });
-
-//
-//
-//
-//
-//
-//
-//
-//
-
-export type Client = AppClient<{
-  ClientModel: ClientModel;
-  ClientMsg: ClientMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
-  ClientCtx: { now: Posix };
-  ViewCtx: { now: Posix };
-  Cmd: never;
-}>;
 
 //
 //
@@ -122,7 +102,7 @@ export const init = ({
   });
 
   const profile = ProfileClient.init({
-    ctx: appCtx,
+    ctx: { ...appCtx, viewBottomBar: null },
     stored: stored?.profile ?? null,
   });
 
@@ -165,10 +145,7 @@ export const init = ({
 
   const cmdList: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[] = [
     ...ClientCmd.tag("space", space.cmd),
-    ...ClientCmd.tag(
-      "profile",
-      profile.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
-    ),
+    ...ClientCmd.tag("profile", profile.cmd),
     preloadSound(Object.values(APP_SOUND)),
   ];
 
@@ -207,7 +184,7 @@ export const update = (input: {
     model: ClientModel;
     eff?: Eff<ClientMsg>;
     cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-    evt?: ClientEvt[];
+    evt?: (ClientEvt | null | undefined)[];
   } = {
     model: updated.model,
     eff: updated.eff,
@@ -216,6 +193,9 @@ export const update = (input: {
   };
 
   for (const evt of acc.evt ?? []) {
+    if (!evt) {
+      continue;
+    }
     const updatedEvt = updateFromEvent({
       ...input,
       model: acc.model,
@@ -250,7 +230,7 @@ const updateMain = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  evt?: ClientEvt[];
+  evt?: (ClientEvt | null | undefined)[];
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
   toServer?: ToServer[];
 } => {
@@ -356,18 +336,16 @@ const updateMain = ({
 
     case "profile": {
       const updated = ProfileClient.update({
-        msg: { ...msg.c, variant: "msg" },
+        msg: msg.c,
         model: model.profile,
-        ctx: ctxApp,
+        ctx: { ...ctxApp, viewBottomBar: null },
       });
       return {
         model: { ...model, profile: updated.model },
         eff: Eff.t("profile", updated.eff),
-        cmd: ClientCmd.tag(
-          "profile",
-          updated.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
-        ),
-        evt: updated.msg?.flatMap((x) => (x.variant === "evt" ? [x] : [])),
+        cmd: ClientCmd.tag("profile", updated.cmd),
+        evt: updated.evt,
+        toServer: updated.toServer?.map((c) => ({ t: "profile", c })),
       };
     }
 
@@ -505,17 +483,16 @@ const updateFromServer = ({
 
     case "profile": {
       const updated = ProfileClient.update({
-        msg: { ...msg.c, variant: "from-server" },
+        fromServer: msg.c,
         model: model.profile,
-        ctx,
+        ctx: { ...ctx, viewBottomBar: null },
       });
       return {
-        cmd: ClientCmd.tag(
-          "profile",
-          updated.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
-        ),
+        cmd: ClientCmd.tag("profile", updated.cmd),
         model: { ...model, profile: updated.model },
         eff: Eff.t("profile", updated.eff),
+        evt: updated.evt,
+        toServer: updated.toServer?.map((c) => ({ t: "profile", c })),
       };
     }
 
@@ -617,13 +594,14 @@ const updateFromCmd = ({
 
     case "profile/add-profiles": {
       const updated = ProfileClient.update({
-        msg: cmd,
+        cmd: cmd,
         model: model.profile,
-        ctx: ctxApp,
+        ctx: { ...ctxApp, viewBottomBar: null },
       });
 
       return {
         model: { ...model, profile: updated.model },
+        eff: Eff.t("profile", updated.eff),
       };
     }
   }
@@ -657,8 +635,8 @@ const updateFromEvent = ({
 
   const profile = ProfileClient.update({
     model: model.profile,
-    msg: { ...msg, variant: "evt" },
-    ctx: ctxApp,
+    evt: msg,
+    ctx: { ...ctxApp, viewBottomBar: null },
   });
 
   const auth = AuthClient.updateFromEvent({
@@ -683,10 +661,7 @@ const updateFromEvent = ({
     cmd: [
       ...ClientCmd.tag("space", space.cmd),
       ...ClientCmd.tag("auth", auth.cmd),
-      ...ClientCmd.tag(
-        "profile",
-        profile.msg?.flatMap((x) => (x.variant === "cmd" ? [x] : []))
-      ),
+      ...ClientCmd.tag("profile", profile.cmd),
     ],
   };
 };
@@ -920,7 +895,6 @@ const ViewLoggedIn = ({
           model={model.profile}
           ctx={{
             ...ctx,
-            route: model.routing.currentRoute.c,
             viewBottomBar: (
               <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
             ),

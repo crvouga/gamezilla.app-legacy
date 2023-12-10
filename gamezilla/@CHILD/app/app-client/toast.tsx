@@ -1,7 +1,7 @@
 import {
   chainUpdates,
   ClientModule,
-} from "gamezilla/@CHILD/app/@SHARED/architecture/app-client-v2";
+} from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import { ToastCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconXMark, Transition, cn } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Posix, Sub, Time, TimeSpan, Uuid } from "gamezilla/@SHARED/core";

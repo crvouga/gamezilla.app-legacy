@@ -63,12 +63,21 @@ export type ClientMsg =
   | Req
   | {
       t: "clicked-back-button";
-      from: { t: "profile"; userId: UserId } | { t: "profile-avatar" };
+      from:
+        | { t: "profile"; userId: UserId }
+        | { t: "profile-avatar" }
+        | { t: "profile-update" }
+        | { t: "profile-update-username" };
     }
   | { t: "inputted-username"; username: string }
   | { t: "inputted-avatar-seed"; seed: string }
   | { t: "inputted-avatar-style"; style: ProfileAvatarStyle }
-  | { t: "clicked-generate-random-seed" };
+  | { t: "clicked-generate-random-seed" }
+  | { t: "clicked-logout-button" }
+  | { t: "clicked-edit-profile-button" }
+  | { t: "clicked-change-avatar-button" }
+  | { t: "clicked-avatar" }
+  | { t: "clicked-update-username-button" };
 
 export type ServerMsg = { t: "handled"; clientId: ClientId; msg: ToClient };
 

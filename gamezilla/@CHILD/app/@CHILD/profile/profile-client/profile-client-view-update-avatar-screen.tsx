@@ -1,4 +1,3 @@
-import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { ProfileAvatar } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Button,
@@ -12,7 +11,6 @@ export const ViewUpdateAvatarScreen = ({
   model,
   dispatch,
 }: {
-  ctx: ViewCtx;
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {

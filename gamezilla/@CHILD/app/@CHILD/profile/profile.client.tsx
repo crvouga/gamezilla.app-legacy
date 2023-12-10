@@ -1,10 +1,13 @@
-import { AppClient } from "gamezilla/@CHILD/app/@SHARED/architecture";
+import {
+  ClientModule,
+  chainUpdates,
+} from "gamezilla/@CHILD/app/@SHARED/architecture";
 import {
   AnonymousClientCtx,
+  ClientCmd,
   ClientCtx,
+  ClientEvt,
   ProfileCmd,
-  RouteProfile,
-  ViewCtx,
   back,
   replaceRoute,
   sendToServer,
@@ -34,17 +37,23 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./profile.core";
 //
 //
 
-type Client = AppClient<{
-  ClientModel: ClientModel;
-  ClientMsg: ClientMsg;
+type Ctx = (ClientCtx | AnonymousClientCtx) & {
+  viewBottomBar: VDom;
+};
+
+type Module = ClientModule<{
+  Model: ClientModel;
+  Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  ClientCtx: ClientCtx | AnonymousClientCtx;
-  ViewCtx: ViewCtx & {
-    viewBottomBar: VDom;
-    route: RouteProfile;
-  };
-  Cmd: ProfileCmd;
+  Ctx: Ctx;
+  InCmd: ProfileCmd;
+  InEvt: ClientEvt;
+  OutCmd: ClientCmd<{
+    ClientMsg: ClientMsg;
+    ToServer: ToServer;
+  }>;
+  OutEvt: never;
 }>;
 
 //
@@ -55,20 +64,27 @@ type Client = AppClient<{
 //
 //
 
-export const init: Client["init"] = ({ ctx, stored }) => {
-  return AppClient.chain(
+export const init: Module["init"] = ({ ctx, stored }) => {
+  const initialModel: ClientModel = {
+    profiles: {},
+    requests: {},
+    draft: {},
+  };
+  return chainUpdates(
     {
-      model: stored ? stored : { profiles: {}, requests: {} },
+      model: stored ? stored : initialModel,
     },
-    (model) => {
-      if (
-        ctx.currentRoute.t === "profile" &&
-        ctx.currentRoute.c.t === "profile"
-      ) {
-        return loadProfile(ctx.currentRoute.c.userId, model);
-      }
-      return { model };
-    }
+    [
+      (model) => {
+        if (
+          ctx.currentRoute.t === "profile" &&
+          ctx.currentRoute.c.t === "profile"
+        ) {
+          return loadProfile(ctx.currentRoute.c.userId, model);
+        }
+        return { model };
+      },
+    ]
   );
 };
 
@@ -80,31 +96,30 @@ export const init: Client["init"] = ({ ctx, stored }) => {
 //
 //
 
-export const update: Client["update"] = (input) => {
-  return AppClient.chain(
-    { model: input.model },
+export const update: Module["update"] = (input) => {
+  return chainUpdates({ model: input.model }, [
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
-    (model) => updateFromCommand({ ...input, model })
-  );
+    (model) => updateFromCmd({ ...input, model }),
+  ]);
 };
 
-const updateFromCommand: Client["update"] = (input) => {
-  const { model, msg } = input;
+const updateFromCmd: Module["update"] = (input) => {
+  const { model, cmd } = input;
 
-  if (msg.variant !== "cmd") {
+  if (!cmd) {
     return { model };
   }
 
-  switch (msg.t) {
+  switch (cmd.t) {
     case "profile/add-profiles": {
       return {
         model: {
           ...model,
           profiles: {
             ...model.profiles,
-            ...msg.profiles,
+            ...cmd.profiles,
           },
         },
       };
@@ -112,17 +127,17 @@ const updateFromCommand: Client["update"] = (input) => {
   }
 };
 
-const updateFromEvent: Client["update"] = (input) => {
-  const { msg, model } = input;
+const updateFromEvent: Module["update"] = (input) => {
+  const { evt, model } = input;
 
-  if (msg.variant !== "evt") {
+  if (!evt) {
     return { model };
   }
 
-  switch (msg.t) {
+  switch (evt.t) {
     case "routing/route-changed": {
-      if (msg.route.t === "profile" && msg.route.c.t === "profile") {
-        return loadProfile(msg.route.c.userId, model);
+      if (evt.route.t === "profile" && evt.route.c.t === "profile") {
+        return loadProfile(evt.route.c.userId, model);
       }
       return { model };
     }
@@ -133,20 +148,20 @@ const updateFromEvent: Client["update"] = (input) => {
   }
 };
 
-const updateFromServer: Client["update"] = (input) => {
-  const { msg, model } = input;
+const updateFromServer: Module["update"] = (input) => {
+  const { model, fromServer } = input;
 
-  if (msg.variant !== "from-server") {
+  if (!fromServer) {
     return { model };
   }
 
-  switch (msg.t) {
+  switch (fromServer.t) {
     case "current-user-profile": {
-      if (isErr(msg.result)) {
+      if (isErr(fromServer.result)) {
         return { model };
       }
 
-      const profile = msg.result.value;
+      const profile = fromServer.result.value;
 
       const modelNew: ClientModel = {
         ...model,
@@ -158,33 +173,32 @@ const updateFromServer: Client["update"] = (input) => {
 
       return {
         model: modelNew,
-        msg: msg.loggedIn
+        cmd: fromServer.loggedIn
           ? [showToast(`Logged in as ${profile.username}`)]
-          : undefined,
+          : [],
       };
     }
     default: {
-      if (isErr(msg.result)) {
+      if (isErr(fromServer.result)) {
         return {
           model: {
             ...model,
             requests: {
               ...model.requests,
-              [msg.t]: msg.result,
+              [fromServer.t]: fromServer.result,
             },
           },
         };
       }
 
-      const profilesNew = msg.result.value.reduce<ClientModel["profiles"]>(
-        (acc, profile) => {
-          return {
-            ...acc,
-            [profile.userId]: profile,
-          };
-        },
-        model.profiles
-      );
+      const profilesNew = fromServer.result.value.reduce<
+        ClientModel["profiles"]
+      >((acc, profile) => {
+        return {
+          ...acc,
+          [profile.userId]: profile,
+        };
+      }, model.profiles);
 
       const modelNew: ClientModel = {
         ...model,
@@ -198,10 +212,14 @@ const updateFromServer: Client["update"] = (input) => {
   }
 };
 
-const updateFromMsg: Client["update"] = (input) => {
-  const { msg, model } = input;
+const updateFromMsg: Module["update"] = (input) => {
+  const { msg, model, ctx } = input;
 
-  if (msg.variant !== "msg") {
+  if (!msg) {
+    return { model };
+  }
+
+  if (!ctx.currentUserId) {
     return { model };
   }
 
@@ -252,12 +270,32 @@ const updateFromMsg: Client["update"] = (input) => {
         case "profile": {
           return { model, msg: [back()] };
         }
+
+        case "profile-update": {
+          return {
+            model,
+            msg: [
+              replaceRoute({
+                t: "profile",
+                c: { t: "profile", userId: ctx.currentUserId },
+              }),
+            ],
+          };
+        }
+
         case "profile-avatar": {
           return {
             model,
             msg: [
               replaceRoute({ t: "profile", c: { t: "profile-update-avatar" } }),
             ],
+          };
+        }
+
+        case "profile-update-username": {
+          return {
+            model,
+            msg: [replaceRoute({ t: "profile", c: { t: "profile-update" } })],
           };
         }
       }
@@ -281,18 +319,13 @@ const updateFromMsg: Client["update"] = (input) => {
 const loadProfile = (
   userId: UserId,
   model: ClientModel
-): ReturnType<Client["update"]> => {
+): ReturnType<Module["update"]> => {
   return {
     model: {
       ...model,
       requests: { ...model.requests, "find-one": loading },
     },
-    msg: [
-      sendToServer({
-        t: "find-one",
-        userId,
-      }),
-    ],
+    toServer: [{ t: "find-one", userId }],
   };
 };
 
@@ -304,7 +337,7 @@ const loadProfile = (
 //
 //
 
-export const subscriptions: Client["subscriptions"] = (_input) => {
+export const subscriptions: Module["subscriptions"] = (_input) => {
   return Sub.None;
 };
 
@@ -316,10 +349,16 @@ export const subscriptions: Client["subscriptions"] = (_input) => {
 //
 //
 
-export const View: Client["View"] = ({ model, dispatch, ctx }) => {
-  const { route: routeProfile } = ctx;
+export const View: Module["View"] = ({ model, dispatch, ctx }) => {
+  const { currentRoute } = ctx;
 
-  switch (routeProfile.t) {
+  if (currentRoute.t !== "profile") {
+    return null;
+  }
+
+  const route = currentRoute.c;
+
+  switch (route.t) {
     case "profile": {
       return (
         <div class="relative flex h-full w-full flex-col">
@@ -327,7 +366,7 @@ export const View: Client["View"] = ({ model, dispatch, ctx }) => {
             model={model}
             ctx={ctx}
             dispatch={dispatch}
-            userId={routeProfile.userId}
+            userId={route.userId}
           />
 
           {ctx.viewBottomBar}
@@ -336,7 +375,7 @@ export const View: Client["View"] = ({ model, dispatch, ctx }) => {
     }
 
     case "profile-update": {
-      return <ViewUpdateScreen dispatch={dispatch} ctx={ctx} model={model} />;
+      return <ViewUpdateScreen ctx={ctx} dispatch={dispatch} />;
     }
 
     case "profile-update-username": {
@@ -346,9 +385,7 @@ export const View: Client["View"] = ({ model, dispatch, ctx }) => {
     }
 
     case "profile-update-avatar": {
-      return (
-        <ViewUpdateAvatarScreen dispatch={dispatch} ctx={ctx} model={model} />
-      );
+      return <ViewUpdateAvatarScreen dispatch={dispatch} model={model} />;
     }
 
     default: {
@@ -359,21 +396,26 @@ export const View: Client["View"] = ({ model, dispatch, ctx }) => {
 
 const ViewUpdateScreen = ({
   ctx,
+  dispatch,
 }: {
-  ctx: ViewCtx;
-  model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  ctx: Ctx;
+  dispatch: (m: ClientMsg) => void;
 }) => {
+  if (!ctx.currentUserId) {
+    return null;
+  }
+
   const profile = ctx.profiles[ctx.currentUserId];
+
   return (
     <div class="flex h-full w-full flex-col items-center gap-4">
       <TopBar
         left={
           <TopBarBackButton
             onClick={() =>
-              ctx.push({
-                t: "profile",
-                c: { t: "profile", userId: ctx.currentUserId },
+              dispatch({
+                t: "clicked-back-button",
+                from: { t: "profile-update" },
               })
             }
           />
@@ -386,9 +428,7 @@ const ViewUpdateScreen = ({
           src={profile?.avatarUrl}
           class="h-28 w-28"
           alt="profile avatar"
-          onClick={() =>
-            ctx.push({ t: "profile", c: { t: "profile-update-avatar" } })
-          }
+          onClick={() => dispatch({ t: "clicked-avatar" })}
         />
 
         <Button
@@ -396,17 +436,13 @@ const ViewUpdateScreen = ({
           color="primary"
           variant="text"
           class="block"
-          onClick={() =>
-            ctx.push({ t: "profile", c: { t: "profile-update-avatar" } })
-          }
+          onClick={() => dispatch({ t: "clicked-change-avatar-button" })}
           text=" Change Avatar"
         />
       </div>
 
       <ViewField
-        onClick={() =>
-          ctx.push({ t: "profile", c: { t: "profile-update-username" } })
-        }
+        onClick={() => dispatch({ t: "clicked-update-username-button" })}
         label="Username"
         value={profile?.username}
       />
@@ -425,7 +461,8 @@ const ViewField = ({
 }) => (
   <button
     onClick={onClick}
-    class="flex w-full items-center justify-start px-4 py-2">
+    class="flex w-full items-center justify-start px-4 py-2"
+  >
     <div class="flex flex-1 flex-col items-start">
       <p class="text-sm text-neutral-300">{label}</p>
       {typeof value === "string" ? (
@@ -448,10 +485,13 @@ const ViewUpdateUsernameScreen = ({
 }: {
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
-  ctx: ViewCtx;
+  ctx: Ctx;
 }) => {
-  const inputVal =
-    model.draft?.username ?? model.profiles[ctx.currentUserId]?.username ?? "";
+  const currentUsername = ctx.currentUserId
+    ? model.profiles[ctx.currentUserId]?.username
+    : null;
+
+  const inputVal = model.draft?.username ?? currentUsername ?? "";
   return (
     <div class="flex h-full w-full flex-col">
       <TopBar
@@ -460,9 +500,12 @@ const ViewUpdateUsernameScreen = ({
             variant="text"
             color="primary"
             onClick={() =>
-              ctx.push({ t: "profile", c: { t: "profile-update" } })
+              dispatch({
+                t: "clicked-back-button",
+                from: { t: "profile-update-username" },
+              })
             }
-            text="Cancel"
+            text="Back"
           />
         }
         title="Username"
