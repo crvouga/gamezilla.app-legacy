@@ -98,6 +98,7 @@ export const init = ({
   });
 
   const space = SpaceClient.init({
+    ctx: appCtx,
     stored: stored?.space ?? null,
   });
 

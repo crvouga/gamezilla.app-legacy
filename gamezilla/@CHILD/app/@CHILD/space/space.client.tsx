@@ -3,13 +3,12 @@ import {
   ViewUsersInSpaceList,
   ViewYouChip,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
-import { WithEventId, withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import {
-  FeedItem,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
-import {
-  SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+  WithEventId,
+  withId,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
+import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
+import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   AnonymousClientCtx,
   ClientCmd,
@@ -52,6 +51,28 @@ import {
   toState,
   toUserState,
 } from "./space.core";
+import { ClientModule } from "../../@SHARED/architecture";
+
+//
+//
+//
+//
+//
+//
+//
+//
+
+type Module = ClientModule<{
+  Ctx: AnonymousClientCtx;
+  InCmd: never;
+  InEvt: ClientEvt;
+  Model: ClientModel;
+  Msg: ClientMsg;
+  OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
+  OutEvt: ClientEvt;
+  ToClient: ToClient;
+  ToServer: ToServer;
+}>;
 
 //
 //
@@ -61,14 +82,7 @@ import {
 //
 //
 
-export const init = ({
-  stored,
-}: {
-  stored: ClientModel | null;
-}): {
-  model: ClientModel;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} => {
+export const init: Module["init"] = ({ stored }) => {
   if (stored) {
     return {
       model: stored,
@@ -138,7 +152,12 @@ export const update = ({
 
       const eventsNew =
         updatedGame.gameEvent?.map(
-          (c): WithEventId<Event> => ({ ...c, t: "game", c, spaceId: msg.spaceId })
+          (c): WithEventId<Event> => ({
+            ...c,
+            t: "game",
+            c,
+            spaceId: msg.spaceId,
+          })
         ) ?? [];
 
       return chain(

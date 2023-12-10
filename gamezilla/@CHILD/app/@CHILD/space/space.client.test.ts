@@ -20,7 +20,7 @@ const ctx: ClientCtx = {
 };
 
 function init() {
-  return SpaceClient.init({ stored: null });
+  return SpaceClient.init({ ctx, stored: null });
 }
 
 function userStartedSpace(input: {
