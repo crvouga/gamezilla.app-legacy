@@ -106,6 +106,7 @@ export const init = ({
   });
 
   const sound = Sound.init({
+    ctx: null,
     stored: stored?.sound ?? null,
   });
 
@@ -294,17 +295,14 @@ const updateMain = ({
 
     case "sound": {
       const updated = Sound.update({
+        ctx: null,
         msg: msg.c,
         model: model.sound,
       });
-      const cmd = ClientCmd.map(
-        updated?.cmd ?? [],
-        (x) => x,
-        (x) => ({ t: "sound", c: x })
-      );
+
       return {
         model: { ...model, sound: updated.model },
-        cmd,
+        cmd: updated.cmd,
       };
     }
 
@@ -442,14 +440,16 @@ const updateFromServer = ({
     }
 
     case "wire": {
-      const updated = Wire.updateFromServer({
-        msg: msg.c,
+      const updated = Wire.update({
+        fromServer: msg.c,
+        transport,
         model: model.wire,
       });
 
       return {
         model: { ...model, wire: updated.model },
-        cmd: ClientCmd.tag("wire", updated.cmd),
+        eff: Eff.t("wire", updated.eff),
+        evt: updated.evt,
       };
     }
   }
@@ -502,9 +502,10 @@ const updateFromCmd = ({
 
     case "sound/preload":
     case "sound/play": {
-      const sound = Sound.updateFromCmd({
+      const sound = Sound.update({
         model: model.sound,
         cmd,
+        ctx: null,
       });
       return {
         model: { ...model, sound: sound.model },
@@ -526,11 +527,7 @@ const updateFromCmd = ({
     }
 
     case "wire/send-to-server": {
-      const updated = Wire.updateFromCmd({
-        cmd,
-        transport,
-        model: model.wire,
-      });
+      const updated = Wire.update({ cmd, transport, model: model.wire });
       return {
         model: { ...model, wire: updated.model },
         eff: Eff.t("wire", updated.eff),

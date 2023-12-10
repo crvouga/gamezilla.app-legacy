@@ -5,14 +5,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { IClientTransport } from "./transport-client";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./wire.core";
-
-//
-//
-//
-//
-//
-//
+import { ClientModel, ClientMsg, ToClient } from "./wire.core";
 
 //
 //
@@ -52,10 +45,14 @@ export const init = ({
 
 export const update = <TToClient, TToServer>({
   msg,
+  fromServer,
+  cmd,
   model,
   transport,
 }: {
-  msg: ClientMsg;
+  msg?: ClientMsg | null;
+  fromServer?: ToClient | null;
+  cmd?: ClientCmd<{ ClientMsg: ClientMsg; ToServer: TToServer }> | null;
   model: ClientModel;
   transport: IClientTransport<{
     ToServer: TToServer;
@@ -66,6 +63,30 @@ export const update = <TToClient, TToServer>({
   evt?: ClientEvt[];
   eff?: Eff<ClientMsg>;
 } => {
+  if (msg) {
+    return updateFromMsg({ msg, model, transport });
+  }
+
+  if (fromServer) {
+    return updateFromServer({ model, fromServer, transport });
+  }
+
+  if (cmd) {
+    return updateFromCmd({
+      cmd,
+      model,
+      transport,
+    });
+  }
+
+  return { model };
+};
+
+const updateFromMsg: typeof update = ({ msg, model, transport }) => {
+  if (!msg) {
+    return { model };
+  }
+
   switch (msg.t) {
     case "server-connect-error": {
       return {
@@ -109,17 +130,12 @@ export const update = <TToClient, TToServer>({
   }
 };
 
-export const updateFromServer = ({
-  model,
-  msg,
-}: {
-  model: ClientModel;
-  msg: ToClient;
-}): {
-  model: ClientModel;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} => {
-  switch (msg.t) {
+const updateFromServer: typeof update = ({ model, fromServer }) => {
+  if (!fromServer) {
+    return { model };
+  }
+
+  switch (fromServer.t) {
     case "server-restarted": {
       return {
         model,
@@ -129,21 +145,11 @@ export const updateFromServer = ({
   }
 };
 
-export const updateFromCmd = <TToServer, TToClient>({
-  cmd,
-  model,
-  transport,
-}: {
-  cmd: ClientCmd<{ ClientMsg: never; ToServer: TToServer }>;
-  model: ClientModel;
-  transport: IClientTransport<{
-    ToServer: TToServer;
-    ToClient: TToClient;
-  }>;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-} => {
+const updateFromCmd: typeof update = ({ cmd, model, transport }) => {
+  if (!cmd) {
+    return { model };
+  }
+
   switch (cmd.t) {
     case "wire/send-to-server": {
       return {

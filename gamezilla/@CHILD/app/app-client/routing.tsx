@@ -1,7 +1,6 @@
 import {
   APP_SOUND,
   AppRoute,
-  BaseCmd,
   ClientEvt,
   RouteCmd,
   SoundCmd,
@@ -68,7 +67,7 @@ export const update = ({
   model: Model;
   eff?: Eff<Msg>;
   evt?: ClientEvt[];
-  cmd?: BaseCmd<SoundCmd>[];
+  cmd?: SoundCmd[];
 } => {
   switch (msg.t) {
     case "clicked-back": {

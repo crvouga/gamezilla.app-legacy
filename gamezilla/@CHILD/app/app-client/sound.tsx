@@ -1,19 +1,38 @@
 import {
   APP_SOUND,
-  ClientCmd,
   ClientEvt,
   SoundCmd,
   playSound,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
-  Eff,
-  err,
-  ok,
   Result,
   TimeSpan,
   UnitInterval,
+  err,
+  ok,
 } from "gamezilla/@SHARED/core";
+import { ClientModule, chainUpdates } from "../@SHARED/architecture";
 import { IconVolumeHigh, IconVolumeXMark, ToggleButton } from "../@SHARED/ui";
+
+//
+//
+//
+//
+//
+//
+//
+
+type Module = ClientModule<{
+  Ctx: null;
+  InCmd: SoundCmd;
+  InEvt: ClientEvt;
+  Model: Model;
+  Msg: Msg;
+  OutCmd: SoundCmd;
+  OutEvt: never;
+  ToClient: never;
+  ToServer: never;
+}>;
 
 //
 //
@@ -30,13 +49,7 @@ export type Model = {
   isDocumentVisible: boolean;
 };
 
-export const init = ({
-  stored,
-}: {
-  stored: Model | null;
-}): {
-  model: Model;
-} => {
+export const init: Module["init"] = ({ stored }) => {
   if (stored) {
     return {
       model: stored,
@@ -76,19 +89,19 @@ export type Msg =
       result: Result<string, null>;
     };
 
-export const update = ({
-  msg,
-  model,
-}: {
-  model: Model;
-  msg: Msg;
-}): {
-  model: Model;
-  cmd?: ClientCmd<{
-    ClientMsg: Msg;
-    ToServer: any;
-  }>[];
-} => {
+export const update: Module["update"] = (input) => {
+  return chainUpdates({ model: input.model }, [
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromCmd({ ...input, model }),
+    (model) => updateFromEvent({ ...input, model }),
+  ]);
+};
+
+const updateFromMsg: Module["update"] = ({ msg, model }) => {
+  if (!msg) {
+    return { model };
+  }
+
   switch (msg.t) {
     case "toggle-mute": {
       if (model.muted) {
@@ -120,38 +133,29 @@ export const update = ({
   }
 };
 
-export const updateFromEvent = ({
-  model,
-  evt,
-}: {
-  model: Model;
-  evt: ClientEvt;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
-} => {
+const updateFromEvent: Module["update"] = ({ model, evt }) => {
+  if (!evt) {
+    return { model };
+  }
+
   switch (evt.t) {
     case "platform/document-visibility-changed": {
       return {
         model: { ...model, muted: evt.state === "hidden" },
       };
     }
+
     default: {
       return { model };
     }
   }
 };
 
-export const updateFromCmd = ({
-  model,
-  cmd,
-}: {
-  model: Model;
-  cmd: SoundCmd;
-}): {
-  model: Model;
-  eff?: Eff<Msg>;
-} => {
+export const updateFromCmd: Module["update"] = ({ model, cmd }) => {
+  if (!cmd) {
+    return { model };
+  }
+
   switch (cmd.t) {
     case "sound/preload": {
       return {
@@ -217,7 +221,8 @@ export const ViewStatusBarDrawer = ({
       <button
         class="flex w-full flex-1 items-center gap-4 p-4"
         tabIndex={-1}
-        onClick={() => dispatch({ t: "toggle-mute" })}>
+        onClick={() => dispatch({ t: "toggle-mute" })}
+      >
         {model.muted ? (
           <>
             <IconVolumeXMark class="h-5 w-5" />
