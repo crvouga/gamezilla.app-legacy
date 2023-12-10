@@ -80,10 +80,13 @@ export const update: Module["update"] = (input) => {
   ]);
 };
 
-const updateFromMsg: Module["update"] = ({ t, ctx, msg, model }) => {
-  if (t !== "msg") {
-    return { model };
+const updateFromMsg: Module["update"] = (input) => {
+  if (input.t !== "msg") {
+    return input;
   }
+
+  const { ctx, model, msg } = input;
+
   switch (msg.t) {
     case "clicked-dismiss-button": {
       return {
@@ -136,18 +139,20 @@ const updateFromMsg: Module["update"] = ({ t, ctx, msg, model }) => {
   }
 };
 
-const updateFromCmd: Module["update"] = ({ t, ctx, msg, model }) => {
-  if (t !== "cmd") {
-    return { model };
+const updateFromCmd: Module["update"] = (input) => {
+  if (input.t !== "cmd") {
+    return { model: input.model };
   }
 
-  switch (msg.t) {
+  const { ctx, cmd, model } = input;
+
+  switch (cmd.t) {
     case "toast/enqueue": {
       const toastNew: Toast = {
         toastId: model.runningId,
-        text: msg.text,
-        duration: msg.duration ?? TimeSpan.fromSeconds(2),
-        variant: msg.toastVariant ?? "info",
+        text: cmd.text,
+        duration: cmd.duration ?? TimeSpan.fromSeconds(2),
+        variant: cmd.toastVariant ?? "info",
         createdAt: ctx.now,
       };
 

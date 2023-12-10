@@ -50,9 +50,9 @@ export type ClientModuleTypes = {
 
 type InputVariant<T extends ClientModuleTypes> =
   | { t: "msg"; msg: T["Msg"] }
-  | { t: "from-server"; msg: T["FromServer"] }
-  | { t: "evt"; msg: T["InEvt"] }
-  | { t: "cmd"; msg: T["InCmd"] };
+  | { t: "from-server"; fromServer: T["FromServer"] }
+  | { t: "evt"; evt: T["InEvt"] }
+  | { t: "cmd"; cmd: T["InCmd"] };
 
 type InputBase<T extends ClientModuleTypes> = {
   /**
@@ -74,8 +74,8 @@ export type Input<T extends ClientModuleTypes> = InputBase<T> & InputVariant<T>;
 //
 
 export type OutputMsg<T extends ClientModuleTypes> =
-  | ({ v: "cmd" } & T["OutCmd"])
-  | ({ v: "evt" } & T["OutEvt"]);
+  | { t: "cmd"; c: T["OutCmd"] }
+  | { t: "evt"; c: T["OutEvt"] };
 
 export type Output<T extends ClientModuleTypes> = {
   /**

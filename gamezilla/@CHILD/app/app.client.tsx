@@ -552,10 +552,10 @@ const updateFromCmd = ({
 
     case "toast/enqueue": {
       const toast = Toast.update({
-        model: model.toast,
-        msg: cmd,
-        ctx: ctxApp,
         t: "cmd",
+        ctx: ctxApp,
+        model: model.toast,
+        cmd,
       });
 
       return {
