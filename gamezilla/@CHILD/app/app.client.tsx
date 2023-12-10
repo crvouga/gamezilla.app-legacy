@@ -695,7 +695,10 @@ export const subscriptions = (input: {
       "auth",
       AuthClient.subscriptions({ ctx: ctxApp, model: model.auth })
     ),
-    Sub.tag("space", SpaceClient.subscriptions(ctxApp, model.space)),
+    Sub.tag(
+      "space",
+      SpaceClient.subscriptions({ ctx: ctxApp, model: model.space })
+    ),
   ]);
 };
 

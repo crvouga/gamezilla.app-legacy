@@ -302,10 +302,7 @@ const updateFromEvent: Module["update"] = (input) => {
 //
 //
 
-export const subscriptions = (
-  ctx: AnonymousClientCtx,
-  model: ClientModel
-): Sub<ClientMsg> => {
+export const subscriptions: Module["subscriptions"] = ({ ctx, model }) => {
   const { currentUserId } = ctx;
 
   if (!currentUserId) {
