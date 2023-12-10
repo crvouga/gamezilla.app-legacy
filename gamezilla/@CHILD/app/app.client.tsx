@@ -468,9 +468,9 @@ const updateFromServer = ({
     }
 
     case "space": {
-      const updated = SpaceClient.updateFromServer({
+      const updated = SpaceClient.update({
         ctx,
-        msg: msg.c,
+        fromServer: msg.c,
         model: model.space,
       });
 
@@ -628,9 +628,9 @@ const updateFromEvent = ({
     msg,
   });
 
-  const space = SpaceClient.updateFromEvent({
+  const space = SpaceClient.update({
     model: model.space,
-    msg,
+    evt: msg,
     ctx: ctxApp,
   });
 

@@ -12,7 +12,6 @@ import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   AnonymousClientCtx,
   ClientCmd,
-  ClientCtx,
   ClientEvt,
   RouteGameSpace,
   ViewCtx,
@@ -29,7 +28,8 @@ import {
   MyAvatar,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Eff, Sub, chain } from "gamezilla/@SHARED/core";
+import { Sub, chain } from "gamezilla/@SHARED/core";
+import { ClientModule, chainUpdates } from "../../@SHARED/architecture";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import * as GameClient from "./@CHILD/game/game.client";
 import { updateFromEvents } from "./space-client/update-from-events";
@@ -51,7 +51,6 @@ import {
   toState,
   toUserState,
 } from "./space.core";
-import { ClientModule } from "../../@SHARED/architecture";
 
 //
 //
@@ -106,20 +105,18 @@ export const init: Module["init"] = ({ stored }) => {
 //
 //
 
-export const update = ({
-  msg,
-  model,
-  ctx,
-}: {
-  ctx: ClientCtx | AnonymousClientCtx;
-  msg: ClientMsg;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  evt?: ClientEvt[];
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} => {
+export const update: Module["update"] = (input) => {
+  return chainUpdates({ model: input.model }, [
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromServer({ ...input, model }),
+    (model) => updateFromEvent({ ...input, model }),
+  ]);
+};
+
+const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
+  if (!msg) {
+    return { model };
+  }
   switch (msg.t) {
     case "closed-modal": {
       return { model: { ...model, modal: null } };
@@ -181,42 +178,34 @@ export const update = ({
   }
 };
 
-export const updateFromServer = ({
-  ctx,
-  msg,
-  model,
-}: {
-  ctx: ClientCtx | AnonymousClientCtx;
-  msg: ToClient;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  evt?: ClientEvt[];
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} => {
-  return chain(
-    { model },
+const updateFromServer: Module["update"] = (input) => {
+  if (!input.fromServer) {
+    return { model: input.model };
+  }
+
+  const { ctx, fromServer } = input;
+
+  return chainUpdates({ model: input.model }, [
     (model) => {
       return {
         model,
-        cmd: msg.profiles ? [addProfiles(msg.profiles)] : [],
+        cmd: fromServer.profiles ? [addProfiles(fromServer.profiles)] : [],
       };
     },
-    (model): ReturnType<typeof updateFromServer> => {
-      switch (msg.t) {
+    (model) => {
+      switch (fromServer.t) {
         case "sync": {
           const merged = mergeModels(model, {
-            events: msg.events,
+            events: fromServer.events,
             initialState: model.initialState,
-            clock: msg.clock,
+            clock: fromServer.clock,
           });
 
           return { model: { ...model, ...merged } };
         }
 
         case "game": {
-          const space = toStartedSpace(model, msg.spaceId);
+          const space = toStartedSpace(model, fromServer.spaceId);
 
           if (!space || !space.game || !ctx.currentUserId) {
             return { model };
@@ -224,8 +213,8 @@ export const updateFromServer = ({
 
           const updatedGame = GameClient.update({
             ctx: { ...ctx, space: space, currentUserId: ctx.currentUserId },
-            model: model.games[msg.spaceId],
-            serverMsg: msg.c,
+            model: model.games[fromServer.spaceId],
+            serverMsg: fromServer.c,
             state: space.game,
             stateBefore: space.game,
           });
@@ -234,7 +223,7 @@ export const updateFromServer = ({
             updatedGame.gameEvent?.map(
               (e): WithEventId<Event> => ({
                 ...e,
-                spaceId: msg.spaceId,
+                spaceId: fromServer.spaceId,
                 t: "game",
                 c: e,
               })
@@ -245,7 +234,7 @@ export const updateFromServer = ({
             (model) => {
               return updateFromGame({
                 model,
-                spaceId: msg.spaceId,
+                spaceId: fromServer.spaceId,
                 updated: updatedGame,
               });
             },
@@ -256,56 +245,51 @@ export const updateFromServer = ({
         }
 
         case "event": {
-          return updateFromEvents({ ctx, events: [msg.c], model });
+          return updateFromEvents({ ctx, events: [fromServer.c], model });
         }
       }
-    }
-  );
+    },
+  ]);
 };
 
-export const updateFromEvent = (input: {
-  ctx: ClientCtx | AnonymousClientCtx;
-  msg: ClientEvt;
-  model: ClientModel;
-}): {
-  model: ClientModel;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} => {
-  return chain(input, (model) => {
-    const { msg } = input;
+const updateFromEvent: Module["update"] = (input) => {
+  if (!input.evt) {
+    return { model: input.model };
+  }
 
-    switch (msg.t) {
-      case "routing/route-changed": {
-        return { model: { ...model, modal: null } };
-      }
+  const { model, evt } = input;
 
-      case "wire/server-connected": {
-        const currentUserId = input.ctx.currentUserId;
-        const currentUserProfile = currentUserId
-          ? input.ctx.profiles[currentUserId]
-          : null;
-        return {
-          model,
-          cmd: [
-            sendToServer({
-              t: "sync",
-              events: model.events,
-              clock: model.clock,
-              profiles: currentUserProfile
-                ? {
-                    [currentUserProfile.userId]: currentUserProfile,
-                  }
-                : {},
-            }),
-          ],
-        };
-      }
-
-      default: {
-        return input;
-      }
+  switch (evt.t) {
+    case "routing/route-changed": {
+      return { model: { ...model, modal: null } };
     }
-  });
+
+    case "wire/server-connected": {
+      const currentUserId = input.ctx.currentUserId;
+      const currentUserProfile = currentUserId
+        ? input.ctx.profiles[currentUserId]
+        : null;
+      return {
+        model,
+        cmd: [
+          sendToServer({
+            t: "sync",
+            events: model.events,
+            clock: model.clock,
+            profiles: currentUserProfile
+              ? {
+                  [currentUserProfile.userId]: currentUserProfile,
+                }
+              : {},
+          }),
+        ],
+      };
+    }
+
+    default: {
+      return { model: input.model };
+    }
+  }
 };
 
 //
