@@ -15,7 +15,7 @@ export type ClientModel = {
     | { t: "server-connecting" }
     | { t: "server-connect-error"; errorCount: number }
     | { t: "server-disconnected" }
-    | { t: "server-connected" };
+    | { t: "server-connected",  }
     
   serverTime: {
     serverNow: Posix;

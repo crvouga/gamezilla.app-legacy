@@ -61,13 +61,13 @@ export type Output<T extends ClientModuleTypes> = {
   msg?: OutputMsg<T>[];
 };
 
-export type InMsg<T extends ClientModuleTypes> =
-  | { t: "msg"; c: T["Msg"] }
-  | { t: "from-server"; c: T["FromServer"] }
-  | { t: "evt"; c: T["InEvt"] }
-  | { t: "cmd"; c: T["InCmd"] };
+type InputVariant<T extends ClientModuleTypes> =
+  | { t: "msg"; msg: T["Msg"] }
+  | { t: "from-server"; msg: T["FromServer"] }
+  | { t: "evt"; msg: T["InEvt"] }
+  | { t: "cmd"; msg: T["InCmd"] };
 
-type Input<T extends ClientModuleTypes> = {
+type InputBase<T extends ClientModuleTypes> = {
   /**
    * `ctx` is data passed down from parent modules
    */
@@ -76,11 +76,9 @@ type Input<T extends ClientModuleTypes> = {
    * `model` is the current state of the module
    */
   model: T["Model"];
-  /**
-   * `msg` is the message that was sent to the module
-   */
-  msg: InMsg<T>;
 };
+
+export type Input<T extends ClientModuleTypes> = InputBase<T> & InputVariant<T>;
 
 export type ClientModule<T extends ClientModuleTypes> = {
   /**

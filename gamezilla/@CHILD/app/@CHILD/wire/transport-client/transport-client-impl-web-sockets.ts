@@ -32,8 +32,9 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
     ws = new WebSocket(serverUrl);
 
     ws.onopen = () => {
+      
       reconnectAttempts = 0;
-      transport.evt.publish({ t: "server-connected" });
+      transport.evt.publish({ t: "server-connected",  });
       for (const msg of queue) {
         send(msg);
       }

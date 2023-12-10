@@ -80,8 +80,8 @@ export const update: Module["update"] = (input) => {
   );
 };
 
-const updateFromMsg: Module["update"] = ({ t, ctx, msg, model }) => {
-  if (t !== "msg") {
+const updateFromMsg: Module["update"] = ({ ctx, msg, model }) => {
+  if (msg.t !== "msg") {
     return { model };
   }
   switch (msg.t) {
@@ -197,7 +197,8 @@ export const View: Module["View"] = ({ model, dispatch }) => {
       class="pointer-events-none absolute left-0 top-0 flex w-full flex-col items-center gap-4 px-4 pt-4"
       id="toast-root"
       onEnter={onEnter}
-      onExit={onExit}>
+      onExit={onExit}
+    >
       {model.toast && (
         <Toast
           key={model.toast.toastId}
@@ -251,14 +252,16 @@ function Toast({
       //
       onContextMenu={(e) => {
         e.preventDefault();
-      }}>
+      }}
+    >
       <div
         class={cn(
           "pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden  rounded-lg border p-3 text-lg text-white shadow-2xl",
           toast.variant === "info" && "border-neutral-600 bg-neutral-700",
           toast.variant === "error" && "border-red-400 bg-red-500"
         )}
-        key={toast.toastId}>
+        key={toast.toastId}
+      >
         {toast.text}
         <button
           onClick={() =>
@@ -266,7 +269,8 @@ function Toast({
               t: "clicked-dismiss-button",
               toastId: toast.toastId,
             })
-          }>
+          }
+        >
           <IconXMark />
         </button>
       </div>
