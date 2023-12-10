@@ -18,9 +18,7 @@ import {
 } from "gamezilla/@SHARED/core";
 import { toSessionId, toUserId } from "./@CHILD/auth/auth.core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
-import * as ChatServer from "./@CHILD/chat/chat.server";
 import * as ProfileServer from "./@CHILD/profile/profile.server";
-import * as SearchServer from "./@CHILD/search/search.server";
 import * as SpaceServer from "./@CHILD/space/space.server";
 import { ServerTransport } from "./@CHILD/wire/transport-server";
 import * as WireServer from "./@CHILD/wire/wire.server";
@@ -70,14 +68,13 @@ export const init = ({
   const wire = WireServer.init();
   const space = SpaceServer.init();
   const auth = AuthServer.init({ ctx });
+  const profile = ProfileServer.init;
   ctx.logger.info(`app config:\n${JSON.stringify(APP_CONFIG, null, 4)}`);
   return {
     model: {
       wire: wire.model,
       space: space.model,
-      profile: ProfileServer.init,
-      search: SearchServer.init.model,
-      chat: ChatServer.init.model,
+      profile: profile,
       auth: auth.model,
     },
   };
@@ -237,17 +234,6 @@ const updateMain = async ({
       };
     }
 
-    case "search": {
-      const updated = SearchServer.update({
-        model: model.search,
-        msg: msg.c,
-      });
-      return {
-        model: { ...model, search: updated.model },
-        eff: Eff.t("search", updated.eff),
-      };
-    }
-
     case "auth": {
       const updated = await AuthServer.update({
         ctx,
@@ -259,18 +245,6 @@ const updateMain = async ({
         cmd: ServerCmd.tag("auth", updated.cmd),
         eff: Eff.t("auth", updated.eff),
         evt: updated.evt,
-      };
-    }
-
-    case "chat": {
-      const updated = ChatServer.update({
-        model: model.chat,
-        msg: msg.c,
-      });
-
-      return {
-        model: { ...model, chat: updated.model },
-        eff: Eff.t("chat", updated.eff),
       };
     }
   }
@@ -325,28 +299,6 @@ const updateFromClient = async ({
       return {
         model: { ...model, profile: updated.model },
         eff: Eff.t("profile", updated.eff),
-      };
-    }
-
-    case "search": {
-      const updated = SearchServer.updateFromClient({
-        model: model.search,
-        msg: msg.c,
-      });
-      return {
-        model: { ...model, search: updated.model },
-        eff: Eff.t("search", updated.eff),
-      };
-    }
-
-    case "chat": {
-      const updated = ChatServer.updateFromClient({
-        model: model.chat,
-        msg: msg.c,
-      });
-      return {
-        model: { ...model, chat: updated.model },
-        eff: Eff.t("chat", updated.eff),
       };
     }
 

@@ -18,9 +18,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Browser, Eff, Posix, Sub, batchMsgs } from "gamezilla/@SHARED/core";
 import * as AuthClient from "./@CHILD/auth/auth.client";
-import * as ChatClient from "./@CHILD/chat/chat.client";
 import * as ProfileClient from "./@CHILD/profile/profile.client";
-import * as SearchClient from "./@CHILD/search/search.client";
 import * as SpaceClient from "./@CHILD/space/space.client";
 import { ClientTransport } from "./@CHILD/wire/transport-client";
 import * as Wire from "./@CHILD/wire/wire.client";
@@ -107,14 +105,6 @@ export const init = ({
     stored: stored?.profile ?? null,
   });
 
-  const chat = ChatClient.init({
-    stored: stored?.chat ?? null,
-  });
-
-  const search = SearchClient.init({
-    stored: stored?.search ?? null,
-  });
-
   const sound = Sound.init({
     stored: stored?.sound ?? null,
   });
@@ -135,10 +125,8 @@ export const init = ({
       wire: wire.model,
       sound: sound.model,
       platform: platform.model,
-      chat: chat.model,
       space: space.model,
       auth: auth.model,
-      search: search.model,
       profile: profile.model,
     },
     eff: Eff.batch<ClientMsg>([routing.eff, Eff.t("auth", auth.eff)]),
@@ -350,26 +338,6 @@ const updateMain = ({
       };
     }
 
-    case "chat": {
-      const updated = ChatClient.update({ msg: msg.c, model: model.chat });
-      return {
-        model: { ...model, chat: updated.model },
-        eff: Eff.t("chat", updated?.eff ?? Eff.None),
-      };
-    }
-
-    case "search": {
-      const updated = SearchClient.update({
-        msg: msg.c,
-        model: model.search,
-      });
-      return {
-        model: { ...model, search: updated.model },
-        eff: Eff.t("search", updated.eff),
-        cmd: ClientCmd.tag("search", updated.cmd),
-      };
-    }
-
     case "platform": {
       const updated = Platform.update({
         msg: msg.c,
@@ -440,30 +408,6 @@ const updateFromServer = ({
         eff: Eff.t("auth", updated.eff),
         cmd: ClientCmd.tag("auth", updated.cmd),
         toServer: updated.toServer?.map((c) => ({ t: "auth", c })),
-      };
-    }
-
-    case "search": {
-      const updated = SearchClient.updateFromServer({
-        msg: msg.c,
-        model: model.search,
-      });
-      return {
-        ...updated,
-        model: { ...model, search: updated.model },
-        eff: Eff.t("search", updated.eff),
-      };
-    }
-
-    case "chat": {
-      const updated = ChatClient.updateFromServer({
-        msg: msg.c,
-        model: model.chat,
-      });
-      return {
-        ...updated,
-        model: { ...model, chat: updated.model },
-        eff: Eff.t("chat", updated.eff),
       };
     }
 
@@ -623,11 +567,6 @@ const updateFromEvent = ({
 } => {
   const ctxApp = toCtx({ model, ctx });
 
-  const chat = ChatClient.updateFromEvent({
-    model: model.chat,
-    msg,
-  });
-
   const space = SpaceClient.update({
     model: model.space,
     evt: msg,
@@ -649,13 +588,12 @@ const updateFromEvent = ({
   return {
     model: {
       ...model,
-      chat: chat.model,
+
       profile: profile.model,
       space: space.model,
       auth: auth.model,
     },
     eff: Eff.batch<ClientMsg>([
-      Eff.t("chat", chat.eff),
       Eff.t("profile", profile.eff),
       Eff.t("auth", auth.eff),
     ]),
@@ -856,26 +794,7 @@ const ViewLoggedIn = ({
 }) => {
   switch (model.routing.currentRoute.t) {
     case "chat": {
-      return (
-        <ChatClient.View
-          dispatch={(m) => dispatch({ t: "chat", c: m })}
-          model={model.chat}
-          ctx={ctx}
-          route={model.routing.currentRoute.c}
-          viewBottomBar={
-            <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
-          }
-          userSearch={{
-            loading: model.profile.requests.search?.t === "loading",
-            onInput: (query) => {
-              dispatch({
-                t: "profile",
-                c: { t: "search", query },
-              });
-            },
-          }}
-        />
-      );
+      return null;
     }
 
     case "space": {
@@ -908,15 +827,7 @@ const ViewLoggedIn = ({
     }
 
     case "search": {
-      return (
-        <SearchClient.View
-          dispatch={(m) => dispatch({ t: "search", c: m })}
-          model={model.search}
-          viewBottomBar={
-            <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
-          }
-        />
-      );
+      return null;
     }
 
     case "logout": {
