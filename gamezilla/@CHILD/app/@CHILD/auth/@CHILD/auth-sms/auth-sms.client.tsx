@@ -110,10 +110,13 @@ const PHONE_NUMBER_INPUT_VIEW_ID = "phoneNumberInput";
 //
 
 export const update: Module["update"] = (input) => {
-  return chainUpdates({ model: input.model }, [
-    (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromServer({ ...input, model }),
-  ]);
+  if (input.msg) {
+    return updateFromMsg(input);
+  }
+  if (input.fromServer) {
+    return updateFromServer(input);
+  }
+  return { model: input.model };
 };
 
 const updateFromMsg: Module["update"] = (input) => {
