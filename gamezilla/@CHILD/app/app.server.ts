@@ -57,16 +57,16 @@ const transport = ServerTransport<ToServer, ToClient>({
 //
 //
 
-export const init = ({
+export const init = async ({
   ctx,
 }: {
   ctx: ServerCtx;
-}): {
+}): Promise<{
   model: ServerModel;
   eff?: Eff<ServerMsg>;
-} => {
+}> => {
   const wire = WireServer.init();
-  const space = SpaceServer.init({
+  const space = await SpaceServer.init({
     ctx,
     stored: null,
   });
@@ -306,9 +306,13 @@ const updateFromClient = async ({
     }
 
     case "space": {
-      const updated = await SpaceServer.updateFromClient({
+      const updated = await SpaceServer.update({
         ctx: authReqCtx,
-        msg: msg.c,
+        fromClient: {
+          ...msg.c,
+          clientId: ctx.clientId,
+          sessionId: ctx.sessionId,
+        },
         model: model.space,
       });
 
@@ -348,9 +352,9 @@ const updateFromEvent = async ({
   cmd?: ServerCmd<ToClient>[];
   evt?: ServerEvt[];
 }> => {
-  const space = await SpaceServer.updateFromEvent({
+  const space = await SpaceServer.update({
     ctx,
-    msg,
+    evt: msg,
     model: model.space,
   });
 

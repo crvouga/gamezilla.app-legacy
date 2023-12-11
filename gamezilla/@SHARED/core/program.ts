@@ -21,32 +21,30 @@ export type Program<Model, Msg> = {
   };
 };
 
+type MaybePromise<T> = T | Promise<T>;
+
 type ProgramConfig<Model, Msg> = {
-  init: (input: { ctx: Ctx }) => { model: Model; eff?: Eff<Msg> };
-  update: (input: { ctx: Ctx; msg: Msg; model: Model }) =>
-    | {
-        model: Model;
-        eff?: Eff<Msg>;
-      }
-    | Promise<{
-        model: Model;
-        eff?: Eff<Msg>;
-      }>;
+  init: (input: { ctx: Ctx }) => MaybePromise<{ model: Model; eff?: Eff<Msg> }>;
+  update: (input: { ctx: Ctx; msg: Msg; model: Model }) => MaybePromise<{
+    model: Model;
+    eff?: Eff<Msg>;
+  }>;
+
   subscriptions: (input: {
     intervalId: string;
     ctx: Ctx;
     model: Model;
-  }) => Sub<Msg> | Promise<Sub<Msg>>;
+  }) => MaybePromise<Sub<Msg>>;
 };
 
-export function create<Model, Msg>(
+export async function create<Model, Msg>(
   input: ProgramConfig<Model, Msg>
-): Program<Model, Msg> {
+): Promise<Program<Model, Msg>> {
   const programId = `program:${Math.random().toString(36).slice(2)}`;
 
   const subscribers = new Map<number, Subscriber<Model, Msg>>();
 
-  let state = input.init({
+  let state = await input.init({
     ctx: {
       now: Posix.fromNumber(Date.now()),
     },

@@ -11,17 +11,17 @@ async function main() {
 
   const baseCtx = created.value;
 
-  const program = Program.create({
-    init: ({ ctx }) => {
-      const initial = AppServer.init({
+  const program = await Program.create({
+    init: async ({ ctx }) => {
+      const initial = await AppServer.init({
         ctx: { ...baseCtx, ...ctx },
       });
 
       return initial;
     },
 
-    update: (input) => {
-      const updated = AppServer.update({
+    update: async (input) => {
+      const updated = await AppServer.update({
         ctx: { ...baseCtx, ...input.ctx },
         model: input.model,
         msg: input.msg,
@@ -30,8 +30,8 @@ async function main() {
       return updated;
     },
 
-    subscriptions: (input) => {
-      const sub = AppServer.subscriptions({
+    subscriptions: async (input) => {
+      const sub = await AppServer.subscriptions({
         ...input,
         ctx: { ...baseCtx, ...input.ctx },
       });

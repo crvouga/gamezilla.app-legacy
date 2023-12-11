@@ -117,30 +117,38 @@ export type ServerModule<T extends ServerModuleTypes> = {
   /**
    * `init` is the initial state of the module
    */
-  init: (input: { ctx: T["Ctx"]; stored: T["Model"] | null }) => Output<T>;
+  init: (input: {
+    ctx: T["Ctx"];
+    stored: T["Model"] | null;
+  }) => Promise<Output<T>>;
 
   /**
    * `update` handles all the state transitions and business logic of the module
    */
-  update: (input: Input<T>) => Output<T>;
+  update: (input: Input<T>) => Promise<Output<T>>;
 
   /**
    * `subscriptions` is emits msgs specific to the module
    */
-  subscriptions: (input: { ctx: T["Ctx"]; model: T["Model"] }) => Sub<T["Msg"]>;
+  subscriptions: (input: {
+    ctx: T["Ctx"];
+    model: T["Model"];
+  }) => Promise<Sub<T["Msg"]>>;
 };
 
-export const chainUpdates = <T extends ServerModuleTypes>(
+type MaybePromise<T> = T | Promise<T>;
+
+export const chainUpdates = async <T extends ServerModuleTypes>(
   acc: Output<T>,
-  updates: ((model: T["Model"]) => Output<T>)[]
-): Output<T> => {
+  updates: ((model: T["Model"]) => MaybePromise<Output<T>>)[]
+): Promise<Output<T>> => {
   const [update, ...rest] = updates;
 
   if (!update) {
     return acc;
   }
 
-  const updated = update(acc.model);
+  const updated = await update(acc.model);
 
   const accNew: Output<T> = {
     model: updated.model,

@@ -1,7 +1,7 @@
+import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { SpaceServerCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
-  AnonymousReqCtx,
   ServerCmd,
   ServerCtx,
   ServerEvt,
@@ -9,14 +9,16 @@ import {
   sendToClient,
   topicSubscribe,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, Sub, chain, chainAwait } from "gamezilla/@SHARED/core";
-import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
+import { Sub } from "gamezilla/@SHARED/core";
+import {
+  ServerModule,
+  chainUpdates,
+} from "../../@SHARED/architecture/app-server";
 import * as GameServer from "./@CHILD/game/game.server";
 import { updateFromEvents } from "./space-server/update-from-events";
 import { updateFromGame } from "./space-server/update-from-game";
 import {
   Event,
-  toState,
   ServerModel,
   ServerMsg,
   ToClient,
@@ -24,9 +26,9 @@ import {
   initCore,
   mergeModels,
   toStartedSpace,
+  toState,
   toUserState,
 } from "./space.core";
-import { ServerModule } from "../../@SHARED/architecture/app-server";
 
 //
 //
@@ -56,7 +58,7 @@ type Module = ServerModule<{
 //
 //
 
-export const init: Module["init"] = () => {
+export const init: Module["init"] = async () => {
   const core = initCore();
   return {
     model: {
@@ -75,19 +77,44 @@ export const init: Module["init"] = () => {
 //
 //
 
-export const update = async ({
+export const update: Module["update"] = async ({
   model,
   msg,
+  evt,
+  fromClient,
   ctx,
-}: {
-  model: ServerModel;
-  msg: ServerMsg;
-  ctx: ServerCtx;
-}): Promise<{
-  model: ServerModel;
-  eff?: Eff<ServerMsg>;
-  cmd?: ServerCmd<ToClient>[];
-}> => {
+}) => {
+  if (msg) {
+    return updateFromMsg({
+      ctx,
+      model,
+      msg,
+    });
+  }
+
+  if (fromClient) {
+    return updateFromClient({
+      ctx,
+      model,
+      fromClient,
+    });
+  }
+
+  if (evt) {
+    return updateFromEvt({
+      ctx,
+      model,
+      evt,
+    });
+  }
+
+  return { model };
+};
+
+export const updateFromMsg: Module["update"] = async ({ model, msg, ctx }) => {
+  if (!msg) {
+    return { model };
+  }
   switch (msg.t) {
     case "game": {
       const { spaceId } = msg;
@@ -115,33 +142,28 @@ export const update = async ({
           withId<Event>({ t: "game", spaceId, c: event })
         ) ?? [];
 
-      return chainAwait(
-        { model },
+      return chainUpdates({ model }, [
         (model) => {
           return updateFromEvents({ ctx: spaceCtx, events: eventsNew, model });
         },
         (model) => {
           return updateFromGame({ model, space, updated });
-        }
-      );
+        },
+      ]);
     }
   }
 };
 
-export const updateFromClient = async (input: {
-  ctx: AnonymousReqCtx;
-  msg: ToServer;
-  model: ServerModel;
-}): Promise<{
-  model: ServerModel;
-  cmd?: ServerCmd<ToClient>[];
-  eff?: Eff<ServerMsg>;
-}> => {
-  const { msg, model, ctx } = input;
+const updateFromClient: Module["update"] = async (input) => {
+  const { fromClient, model, ctx } = input;
 
-  switch (msg.t) {
+  if (!fromClient) {
+    return { model };
+  }
+
+  switch (fromClient.t) {
     case "game": {
-      const space = toStartedSpace(model, msg.spaceId);
+      const space = toStartedSpace(model, fromClient.spaceId);
 
       if (!space || !space.game || !ctx.currentUserId) {
         return { model };
@@ -156,19 +178,16 @@ export const updateFromClient = async (input: {
       const updated = await GameServer.update({
         ctx: spaceCtx,
         state: space.game,
-        clientMsg: msg.c,
-        model: model.games[msg.spaceId],
+        clientMsg: fromClient.c,
+        model: model.games[fromClient.spaceId],
       });
 
       const eventsNew =
         updated.gameEvent?.map((event) =>
-          withId<Event>({ t: "game", spaceId: msg.spaceId, c: event })
+          withId<Event>({ t: "game", spaceId: fromClient.spaceId, c: event })
         ) ?? [];
 
-      console.log("eventsNew", eventsNew);
-
-      return chainAwait(
-        { model },
+      return chainUpdates({ model }, [
         (model) => {
           return updateFromGame({
             model,
@@ -183,16 +202,15 @@ export const updateFromClient = async (input: {
             events: eventsNew,
             model,
           });
-        }
-      );
+        },
+      ]);
     }
 
     case "sync": {
-      return chain(
-        { model },
+      return chainUpdates({ model }, [
         (model) => {
           const merged = mergeModels(model, {
-            events: msg.events,
+            events: fromClient.events,
             initialState: model.initialState,
             clock: model.clock,
           });
@@ -206,7 +224,7 @@ export const updateFromClient = async (input: {
               ...model,
               profileCache: {
                 ...model.profileCache,
-                ...msg.profiles,
+                ...fromClient.profiles,
               },
             },
           };
@@ -218,20 +236,20 @@ export const updateFromClient = async (input: {
               broadcast<ToClient>({
                 t: "sync",
                 events: model.events,
-                causedBy: msg,
+                causedBy: fromClient,
                 profiles: model.profileCache,
                 clock: model.clock,
               }),
             ],
           };
-        }
-      );
+        },
+      ]);
     }
 
     case "event": {
       const updated = await updateFromEvents({
         ctx: ctx,
-        events: [msg.c],
+        events: [fromClient.c],
         model,
       });
 
@@ -240,59 +258,34 @@ export const updateFromClient = async (input: {
   }
 };
 
-export const updateFromEvent = async (input: {
-  ctx: ServerCtx;
-  msg: ServerEvt;
-  model: ServerModel;
-}): Promise<{
-  model: ServerModel;
-  eff?: Eff<ServerMsg>;
-  cmd?: ServerCmd<ToClient>[];
-}> => {
-  const { msg, model } = input;
+const updateFromEvt: Module["update"] = async (input) => {
+  const { evt, model } = input;
 
-  switch (msg.t) {
-    case "wire/client-disconnected": {
-      return {
-        model: {
-          ...model,
-        },
-      };
-    }
+  if (!evt) {
+    return { model };
+  }
 
-    // case "wire/client-connected": {
-    //   return {
-    //     model,
-    //     cmd: [
-    //       sendToClient([msg.clientId], {
-    //         t: "sync",
-    //         causedBy: msg,
-    //         events: model.events,
-    //       }),
-    //     ],
-    //   };
-    // }
-
+  switch (evt.t) {
     case "auth/connected-client-authenticated": {
-      const state = toUserState(model, msg.userId);
+      const state = toUserState(model, evt.userId);
 
       return {
         model,
         cmd: [
-          sendToClient([msg.clientId], {
+          sendToClient([evt.clientId], {
             t: "sync",
-            causedBy: msg,
+            causedBy: evt,
             events: model.events,
             clock: model.clock,
           }),
-          topicSubscribe([`space/${state.spaceId}`], [msg.clientId]),
-          topicSubscribe([`spaces`], [msg.clientId]),
+          topicSubscribe([`space/${state.spaceId}`], [evt.clientId]),
+          topicSubscribe([`spaces`], [evt.clientId]),
         ],
       };
     }
 
     default: {
-      return input;
+      return { model };
     }
   }
 };
@@ -305,13 +298,10 @@ export const updateFromEvent = async (input: {
 //
 //
 
-export const subscriptions = async ({
+export const subscriptions: Module["subscriptions"] = async ({
   model,
   ctx,
-}: {
-  model: ServerModel;
-  ctx: ServerCtx;
-}): Promise<Sub<ServerMsg>> => {
+}) => {
   const batch: Sub<ServerMsg>[] = [];
 
   const state = toState(model);

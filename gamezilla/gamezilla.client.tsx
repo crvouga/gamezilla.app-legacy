@@ -6,49 +6,57 @@ import { attachDebugger } from "./@SHARED/core/debug";
 
 const modelStorage = ModelStorage<App.ClientModel>();
 
-const program = Program.create({
-  init: (input) => {
-    const init = AppClient.init({
-      ...input,
-      location: Browser.getLocation(),
-      stored: modelStorage.get(),
-    });
+const main = async () => {
+  const program = await Program.create({
+    init: (input) => {
+      const init = AppClient.init({
+        ...input,
+        location: Browser.getLocation(),
+        stored: modelStorage.get(),
+      });
 
-    return init;
-  },
+      return init;
+    },
 
-  update: (input) => {
-    const updated = AppClient.update(input);
+    update: (input) => {
+      const updated = AppClient.update(input);
 
-    return updated;
-  },
+      return updated;
+    },
 
-  subscriptions: (input) => {
-    const sub = AppClient.subscriptions(input);
+    subscriptions: (input) => {
+      const sub = AppClient.subscriptions(input);
 
-    return sub;
-  },
-});
+      return sub;
+    },
+  });
 
-program.subscribe((model, ctx) => {
-  render(
-    <AppClient.View now={ctx.now} model={model} dispatch={program.dispatch} />,
-    document.body
-  );
-});
+  program.subscribe((model, ctx) => {
+    render(
+      <AppClient.View
+        now={ctx.now}
+        model={model}
+        dispatch={program.dispatch}
+      />,
+      document.body
+    );
+  });
 
-program.subscribe((model) => {
-  // @ts-ignore
-  window.model = model;
-});
+  program.subscribe((model) => {
+    // @ts-ignore
+    window.model = model;
+  });
 
-program.subscribe((model) => {
-  modelStorage.set(model);
-});
+  program.subscribe((model) => {
+    modelStorage.set(model);
+  });
 
-attachDebugger(program);
+  attachDebugger(program);
 
-program.start();
+  program.start();
+};
+
+main();
 
 /**
  * Use this to persist state across page refreshes.
