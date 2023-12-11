@@ -1,7 +1,6 @@
-import { Sub } from "gamezilla/@SHARED/core";
 import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-server";
 import * as ConnectFourServer from "./@CHILD/connect-four/connect-four.server";
-import * as ChessServer from "./@CHILD/chess/chess.server";
+// import * as ChessServer from "./@CHILD/chess/chess.server";
 import {
   GameEvent,
   ServerModel,
@@ -29,7 +28,7 @@ type Server = GameServer<{
 }>;
 
 const ConnectFour = GameServer.tag("connect-four", ConnectFourServer);
-const Chess = GameServer.tag("chess", ChessServer);
+// const Chess = GameServer.tag("chess", ChessServer);
 
 //
 //
@@ -51,13 +50,13 @@ export const init: Server["init"] = async (input) => {
       });
     }
 
-    case "chess": {
-      return Chess.init({
-        ctx: input.ctx,
-        state,
-        model: model?.t === "chess" ? model : null,
-      });
-    }
+    // case "chess": {
+    //   return Chess.init({
+    //     ctx: input.ctx,
+    //     state,
+    //     model: model?.t === "chess" ? model : null,
+    //   });
+    // }
   }
 };
 
@@ -77,20 +76,20 @@ export const update: Server["update"] = async (input) => {
 
     async (model) => {
       switch (state.t) {
-        case "chess": {
-          return Chess.update({
-            ctx,
-            state,
-            model: model.t === "chess" ? model : null,
-            msg: msg?.t === "chess" ? msg : null,
-            clientMsg: clientMsg?.t === "chess" ? clientMsg : null,
-            evt,
-            gameEvent:
-              gameEvent?.t === "chess"
-                ? { ...gameEvent, c: { ...gameEvent, ...gameEvent.c } }
-                : null,
-          });
-        }
+        // case "chess": {
+        //   return Chess.update({
+        //     ctx,
+        //     state,
+        //     model: model.t === "chess" ? model : null,
+        //     msg: msg?.t === "chess" ? msg : null,
+        //     clientMsg: clientMsg?.t === "chess" ? clientMsg : null,
+        //     evt,
+        //     gameEvent:
+        //       gameEvent?.t === "chess"
+        //         ? { ...gameEvent, c: { ...gameEvent, ...gameEvent.c } }
+        //         : null,
+        //   });
+        // }
 
         case "connect-four": {
           return ConnectFour.update({
@@ -123,9 +122,9 @@ export const subscriptions: Server["subscriptions"] = async (input) => {
   const { state, model } = input;
 
   switch (state.t) {
-    case "chess": {
-      return Sub.None;
-    }
+    // case "chess": {
+    //   return Sub.None;
+    // }
 
     case "connect-four": {
       return await ConnectFour.subscriptions({
