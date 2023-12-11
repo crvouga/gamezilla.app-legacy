@@ -5,7 +5,7 @@ import {
   broadcast,
   sendToUser,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, batchMsgs, chainAwait } from "gamezilla/@SHARED/core";
+import { Eff, batchMsgs } from "gamezilla/@SHARED/core";
 import {
   EventId,
   WithEventId,
@@ -22,6 +22,7 @@ import {
   toStartedSpace,
 } from "../space.core";
 import { spaceCmdToCmd } from "./update-shared";
+import { chainUpdates } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server";
 
 type Output = {
   model: ServerModel;
@@ -52,12 +53,11 @@ async function updateFromEventsLoop(
     return updateFromEventsLoop(ctx, rest, acc);
   }
 
-  const updated = await chainAwait(
-    acc,
+  const updated = await chainUpdates(acc, [
     (model) => appendNewEvent({ model, event: event }),
     (model) => syncUserWhenJoined({ model, event: event }),
-    (model) => sendEventToClients({ model, eventId: event.eventId })
-  );
+    (model) => sendEventToClients({ model, eventId: event.eventId }),
+  ]);
 
   const updatedGame = await updateGameFromEvent({
     ctx: ctx,
