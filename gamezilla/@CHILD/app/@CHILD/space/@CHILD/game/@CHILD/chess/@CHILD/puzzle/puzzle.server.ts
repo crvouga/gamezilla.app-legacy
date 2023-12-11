@@ -1,12 +1,9 @@
 import {
   SpaceReqCtx,
-
   SpaceServerCtx,
   SpaceServerEvt,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import {
-  SpaceServerCmd,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-cmd";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-server-cmd";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
 import {

@@ -113,10 +113,6 @@ export type Output<T extends GameAppClientModuleTypes> = {
   /**
    *
    */
-  toServer?: T["ToServer"][];
-  /**
-   *
-   */
   cmd?: T["OutCmd"][];
   /**
    *
@@ -131,7 +127,11 @@ export type GameAppClientModule<T extends GameAppClientModuleTypes> = {
   /**
    * `init` is the initial state of the module
    */
-  init: (input: { ctx: T["Ctx"]; stored: T["Model"] | null }) => Output<T>;
+  init: (input: {
+    ctx: T["Ctx"];
+    gameState: T["GameState"];
+    model: T["Model"] | null;
+  }) => Output<T>;
 
   /**
    * `update` handles all the state transitions and business logic of the module
@@ -141,13 +141,18 @@ export type GameAppClientModule<T extends GameAppClientModuleTypes> = {
   /**
    * `subscriptions` is emits msgs specific to the module
    */
-  subscriptions: (input: { ctx: T["Ctx"]; model: T["Model"] }) => Sub<T["Msg"]>;
+  subscriptions: (input: {
+    ctx: T["Ctx"];
+    gameState: T["GameState"];
+    model: T["Model"];
+  }) => Sub<T["Msg"]>;
 
   /**
    * `View` is for rendering the UI for the module
    */
   View: (input: {
     ctx: T["Ctx"];
+    gameState: T["GameState"];
     model: T["Model"];
     dispatch: (msg: T["Msg"]) => void;
   }) => VDom;
@@ -157,6 +162,7 @@ export type GameAppClientModule<T extends GameAppClientModuleTypes> = {
    */
   ViewFeedItem: (input: {
     ctx: T["Ctx"];
+    gameState: T["GameState"];
     model: T["Model"];
     dispatch: (msg: T["Msg"]) => void;
   }) => VDom;

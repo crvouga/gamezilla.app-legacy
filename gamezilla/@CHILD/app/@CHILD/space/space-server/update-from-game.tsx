@@ -1,6 +1,6 @@
 import * as GameServer from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/game.server";
 import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-cmd";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-server-cmd";
 import {
   ServerModel,
   ServerMsg,

@@ -3,7 +3,7 @@ import {
   SpaceServerEvt,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { Eff, Sub, andThen, err, ok, p } from "gamezilla/@SHARED/core";
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-cmd";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-server-cmd";
 import { TicTacToe } from "../../@SHARED/tic-tic-toe";
 import {
   Res,

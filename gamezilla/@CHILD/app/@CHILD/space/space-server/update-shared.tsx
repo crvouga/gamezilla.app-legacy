@@ -1,5 +1,5 @@
 import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-cmd";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-server-cmd";
 import { ServerCmd, sendToUser } from "gamezilla/@CHILD/app/@SHARED/server";
 import { ToClient } from "../space.core";
 

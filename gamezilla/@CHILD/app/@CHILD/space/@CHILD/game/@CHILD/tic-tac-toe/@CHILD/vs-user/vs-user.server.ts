@@ -2,7 +2,7 @@ import {
   SpaceReqCtx,
   SpaceServerEvt,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-cmd";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-server-cmd";
 import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Sub, Time, isErr } from "gamezilla/@SHARED/core";
 import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";

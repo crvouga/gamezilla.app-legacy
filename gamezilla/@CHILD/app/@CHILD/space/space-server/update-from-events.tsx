@@ -12,7 +12,7 @@ import {
   withId,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import * as GameServer from "../@CHILD/game/game.server";
-import { SpaceServerCmd } from "../@SHARED/space-cmd";
+import { SpaceServerCmd } from "../@SHARED/space-server-cmd";
 import {
   Event,
   ServerModel,

@@ -1,7 +1,11 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { SpaceReqCtx, SpaceServerCtx, SpaceServerEvt } from "../space";
-import { SpaceServerCmd } from "../space-cmd";
-import { EventMeta, WithEventId, WithEventMeta } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
+import { SpaceServerCmd } from "../space-server-cmd";
+import {
+  EventMeta,
+  WithEventId,
+  WithEventMeta,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 
 //
 //
@@ -40,7 +44,6 @@ export type GameServer<T extends GameServerTypes> = {
     eff?: Eff<T["ServerMsg"]>;
     cmd?: SpaceServerCmd<T["ToClient"]>[];
   }>;
-
 
   update: (input: {
     ctx: SpaceServerCtx | SpaceReqCtx;

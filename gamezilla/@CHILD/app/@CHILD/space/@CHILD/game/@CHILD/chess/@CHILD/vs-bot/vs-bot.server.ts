@@ -3,7 +3,7 @@ import {
   SpaceServerEvt,
   SpaceReqCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-cmd";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-server-cmd";
 import { Chess } from "../../@SHARED/chess";
 import {
   botMoved,

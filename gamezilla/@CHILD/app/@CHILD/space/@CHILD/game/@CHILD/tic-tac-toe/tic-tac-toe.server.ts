@@ -2,7 +2,7 @@ import {
   SpaceReqCtx,
   SpaceServerEvt,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-cmd";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-server-cmd";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { sendToClient } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Result, Sub } from "gamezilla/@SHARED/core";

@@ -1,14 +1,39 @@
 import { ServerCmd } from "gamezilla/@CHILD/app/@SHARED/server";
 
+//
+//
+//
+//
+//
+//
+//
+
 export type SpaceServerCmd<ToClient> =
   | ServerCmd<ToClient>
   | { t: "send-to-space"; msg: ToClient };
+
+//
+//
+//
+//
+//
+//
+//
+//
 
 export const sendToSpace = <ToClient>(
   msg: ToClient
 ): SpaceServerCmd<ToClient> => {
   return { t: "send-to-space", msg };
 };
+
+//
+//
+//
+//
+//
+//
+//
 
 const mapOne = <A, B>(
   fn: (a: A) => B,
