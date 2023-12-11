@@ -6,7 +6,7 @@ import {
   ServerEvt,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, Sub, chainAwait, isErr } from "gamezilla/@SHARED/core";
+import { Eff, Sub, isErr } from "gamezilla/@SHARED/core";
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
 import {
   StoreSessionIdByUserId,
@@ -71,6 +71,7 @@ export const update: Module["update"] = async (input) => {
   return ServerModule.composeUpdates({ model: input.model }, [
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),
+    (model) => updateFromEvent({ ...input, model }),
     (model) => updateChild({ ...input, model }),
   ]);
 };
@@ -171,19 +172,11 @@ const updateFromClient: Module["update"] = async ({
   }
 };
 
-export const updateFromEvent = async ({
-  msg: evt,
-  model,
-  ctx,
-}: {
-  ctx: ServerCtx;
-  msg: ServerEvt;
-  model: ServerModel;
-}): Promise<{
-  model: ServerModel;
-  cmd?: ServerCmd<ToClient>[];
-  evt?: ServerEvt[];
-}> => {
+const updateFromEvent: typeof update = async ({ evt, model, ctx }) => {
+  if (!evt) {
+    return { model };
+  }
+
   switch (evt.t) {
     case "wire/client-connected": {
       const userId = await StoreUserIdBySessionId.get(
@@ -217,8 +210,7 @@ export const updateFromEvent = async ({
     }
 
     case "auth/connected-client-authenticated": {
-      return chainAwait(
-        { model },
+      return ServerModule.composeUpdates({ model }, [
         async (model) => {
           if (evt.loggedIn) {
             return {
@@ -227,8 +219,7 @@ export const updateFromEvent = async ({
           }
           return { model };
         },
-
-        (model) => {
+        async (model) => {
           return {
             model,
             cmd: [
@@ -240,8 +231,8 @@ export const updateFromEvent = async ({
               }),
             ],
           };
-        }
-      );
+        },
+      ]);
     }
 
     case "auth/connected-client-unauthenticated": {
