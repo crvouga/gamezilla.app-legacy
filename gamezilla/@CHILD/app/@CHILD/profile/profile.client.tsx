@@ -1,4 +1,4 @@
-import { ClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture";
+import { ClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import {
   APP_SOUND,
   AnonymousClientCtx,

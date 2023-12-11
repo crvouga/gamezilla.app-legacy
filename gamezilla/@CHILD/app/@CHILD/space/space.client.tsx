@@ -10,6 +10,10 @@ import {
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
+  ClientModule,
+  chainUpdates,
+} from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
+import {
   AnonymousClientCtx,
   ClientCmd,
   ClientCtx,
@@ -31,7 +35,6 @@ import {
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
-import { ClientModule, chainUpdates } from "../../@SHARED/architecture";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import * as GameClient from "./@CHILD/game/game.client";
 import { updateFromEvents } from "./space-client/update-from-events";

@@ -1,9 +1,18 @@
 import {
+  ClientModule,
+  chainUpdates,
+} from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
+import {
   APP_SOUND,
   ClientEvt,
   SoundCmd,
   playSound,
 } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  IconVolumeHigh,
+  IconVolumeXMark,
+  ToggleButton,
+} from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
   Result,
   TimeSpan,
@@ -11,8 +20,6 @@ import {
   err,
   ok,
 } from "gamezilla/@SHARED/core";
-import { ClientModule, chainUpdates } from "../@SHARED/architecture";
-import { IconVolumeHigh, IconVolumeXMark, ToggleButton } from "../@SHARED/ui";
 
 //
 //
