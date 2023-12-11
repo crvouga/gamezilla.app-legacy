@@ -108,7 +108,7 @@ export const update: Module["update"] = async ({
   return { model };
 };
 
-export const updateFromMsg: Module["update"] = async ({ model, msg, ctx }) => {
+const updateFromMsg: Module["update"] = async ({ model, msg, ctx }) => {
   if (!msg) {
     return { model };
   }
