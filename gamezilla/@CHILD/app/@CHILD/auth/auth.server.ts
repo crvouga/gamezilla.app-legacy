@@ -1,12 +1,12 @@
 import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
-  AnonymousReqCtx,
   ServerCmd,
   ServerCtx,
   ServerEvt,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, chainAwait, isErr } from "gamezilla/@SHARED/core";
+import { Eff, Sub, chainAwait, isErr } from "gamezilla/@SHARED/core";
+import { ServerModule } from "../../@SHARED/architecture/app-server";
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
 import {
   StoreSessionIdByUserId,
@@ -17,12 +17,33 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 //
 //
 //
+//
+//
+//
+//
+//
+
+type Module = ServerModule<{
+  Ctx: ServerCtx;
+  InCmd: {};
+  InEvt: ServerEvt;
+  Model: ServerModel;
+  Msg: ServerMsg;
+  OutCmd: ServerCmd<ToClient>;
+  OutEvt: ServerEvt;
+  ToClient: ToClient;
+  ToServer: ToServer;
+}>;
+
+//
+//
+//
 // Model
 //
 //
 //
 
-export const init = ({ ctx }: { ctx: ServerCtx }): { model: ServerModel } => {
+export const init: Module["init"] = async ({ ctx }) => {
   return {
     model: {
       userIdBySessionId: StoreUserIdBySessionId.startingAt(ctx.now),
@@ -40,20 +61,23 @@ export const init = ({ ctx }: { ctx: ServerCtx }): { model: ServerModel } => {
 //
 //
 
-export const update = async ({
-  ctx,
-  model,
-  msg,
-}: {
-  msg: ServerMsg;
-  model: ServerModel;
-  ctx: ServerCtx;
-}): Promise<{
-  model: ServerModel;
-  cmd?: ServerCmd<ToClient>[];
-  evt?: ServerEvt[];
-  eff?: Eff<ServerMsg>;
-}> => {
+export const update: Module["update"] = async (input) => {
+  if (input.msg) {
+    return updateFromMsg(input);
+  }
+
+  if (input.fromClient) {
+    return updateFromClient(input);
+  }
+
+  return { model: input.model };
+};
+
+export const updateFromMsg: Module["update"] = async ({ ctx, model, msg }) => {
+  if (!msg) {
+    return { model };
+  }
+
   switch (msg.t) {
     case "got-user-account": {
       if (isErr(msg.result)) {
@@ -104,31 +128,26 @@ export const update = async ({
   }
 };
 
-export const updateFromClient = async ({
+const updateFromClient: Module["update"] = async ({
   ctx,
   model,
-  msg,
-}: {
-  ctx: AnonymousReqCtx;
-  msg: ToServer;
-  model: ServerModel;
-}): Promise<{
-  model: ServerModel;
-  evt?: ServerEvt[];
-  cmd?: ServerCmd<ToClient>[];
-  eff?: Eff<ServerMsg>;
-}> => {
-  switch (msg.t) {
+  fromClient,
+}) => {
+  if (!fromClient) {
+    return { model };
+  }
+
+  switch (fromClient.t) {
     case "logout": {
-      const modelNew = await removeSession(ctx, model, ctx.sessionId);
+      const modelNew = await removeSession(ctx, model, fromClient.sessionId);
 
       return {
         model: modelNew,
         evt: [
           {
             t: "auth/connected-client-unauthenticated",
-            clientId: ctx.clientId,
-            sessionId: ctx.sessionId,
+            clientId: fromClient.clientId,
+            sessionId: fromClient.sessionId,
           },
         ],
       };
@@ -137,8 +156,12 @@ export const updateFromClient = async ({
     case "sms": {
       const updated = AuthServerSMS.updateFromClient({
         model: model.sms,
-        msg: msg.c,
-        ctx,
+        msg: fromClient.c,
+        ctx: {
+          ...ctx,
+          sessionId: fromClient.sessionId,
+          clientId: fromClient.clientId,
+        },
       });
 
       return {
@@ -332,3 +355,16 @@ async function removeSession(
     userIdBySessionId: userIdBySessionIdNew,
   };
 }
+
+//
+//
+//
+//
+//
+//
+//
+//
+
+export const subscriptions: Module["subscriptions"] = async () => {
+  return Sub.None;
+};

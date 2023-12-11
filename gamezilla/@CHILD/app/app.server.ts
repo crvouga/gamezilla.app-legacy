@@ -66,16 +66,24 @@ export const init = async ({
   eff?: Eff<ServerMsg>;
 }> => {
   const wire = WireServer.init();
+
   const space = await SpaceServer.init({
     ctx,
     stored: null,
   });
-  const auth = AuthServer.init({ ctx });
+
+  const auth = await AuthServer.init({
+    ctx,
+    stored: null,
+  });
+
   const profile = await ProfileServer.init({
     ctx,
     stored: null,
   });
+
   ctx.logger.info(`app config:\n${JSON.stringify(APP_CONFIG, null, 4)}`);
+
   return {
     model: {
       wire: wire.model,
@@ -283,10 +291,14 @@ const updateFromClient = async ({
 
   switch (msg.t) {
     case "auth": {
-      const updated = await AuthServer.updateFromClient({
+      const updated = await AuthServer.update({
         ctx,
         model: model.auth,
-        msg: msg.c,
+        fromClient: {
+          ...msg.c,
+          clientId: ctx.clientId,
+          sessionId: ctx.sessionId,
+        },
       });
 
       return {
