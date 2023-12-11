@@ -9,10 +9,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import {
-  AppClientModule,
-  chainUpdates,
-} from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
+import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import {
   AnonymousClientCtx,
   ClientCmd,
@@ -197,7 +194,7 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
           })
         ) ?? [];
 
-      return chainUpdates({ model }, [
+      return AppClientModule.chainUpdates({ model }, [
         (model) => {
           return updateFromGame({
             model,
@@ -224,7 +221,7 @@ const updateFromServer: Module["update"] = (input) => {
 
   const { ctx, fromServer } = input;
 
-  return chainUpdates({ model: input.model }, [
+  return AppClientModule.chainUpdates({ model: input.model }, [
     (model) => {
       return {
         model,
@@ -274,7 +271,7 @@ const updateFromServer: Module["update"] = (input) => {
               })
             ) ?? [];
 
-          return chainUpdates({ model }, [
+          return AppClientModule.chainUpdates({ model }, [
             (model) => {
               return updateFromGame({
                 model,

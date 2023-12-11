@@ -1,7 +1,4 @@
-import {
-  chainUpdates,
-  AppClientModule,
-} from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
+import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import { ToastCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconXMark, Transition, cn } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Posix, Sub, Time, TimeSpan, Uuid } from "gamezilla/@SHARED/core";
@@ -80,7 +77,7 @@ export type Msg =
   | { t: "clicked-dismiss-button"; toastId: number };
 
 export const update: Module["update"] = (input) => {
-  return chainUpdates({ model: input.model }, [
+  return AppClientModule.chainUpdates({ model: input.model }, [
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
   ]);

@@ -133,7 +133,7 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
   }) => VDom;
 };
 
-export const chainUpdates = <T extends AppClientModuleTypes>(
+const chainUpdates = <T extends AppClientModuleTypes>(
   acc: Output<T>,
   updates: ((model: T["Model"]) => Output<T>)[]
 ): Output<T> => {

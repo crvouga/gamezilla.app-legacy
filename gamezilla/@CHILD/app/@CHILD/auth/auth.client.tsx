@@ -1,7 +1,4 @@
-import {
-  AppClientModule,
-  chainUpdates,
-} from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
+import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import {
   APP_SOUND,
   AnonymousClientCtx,
@@ -97,7 +94,7 @@ export const init: Client["init"] = ({ stored, ctx }) => {
 //
 
 export const update: Client["update"] = (input) => {
-  return chainUpdates({ model: input.model }, [
+  return AppClientModule.chainUpdates({ model: input.model }, [
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),

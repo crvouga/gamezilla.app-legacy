@@ -1,7 +1,4 @@
-import {
-  AppClientModule,
-  chainUpdates,
-} from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
+import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import {
   APP_SOUND,
   AnonymousClientCtx,
@@ -247,7 +244,7 @@ const updateFromMsg: Module["update"] = (input) => {
     }
 
     case "time-passed": {
-      return chainUpdates({ model }, [
+      return AppClientModule.chainUpdates({ model }, [
         (model) => {
           if (
             model.sentCodeAt &&
