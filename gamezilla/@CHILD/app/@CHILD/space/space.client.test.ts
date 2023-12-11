@@ -3,8 +3,8 @@ import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Posix } from "gamezilla/@SHARED/core";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
-import * as SpaceClient from "../space.client";
-import * as SpaceCore from "../space.core";
+import * as SpaceClient from "./space.client";
+import * as SpaceCore from "./space.core";
 
 const ctx: ClientCtx = {
   currentRoute: {
