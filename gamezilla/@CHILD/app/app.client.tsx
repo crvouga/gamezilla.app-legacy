@@ -71,6 +71,7 @@ export const init = ({
     location,
     stored: stored?.routing ?? null,
   });
+
   const appCtx: ClientCtx | AnonymousClientCtx = {
     currentRoute: routing.model.currentRoute,
     currentUserId: null,
