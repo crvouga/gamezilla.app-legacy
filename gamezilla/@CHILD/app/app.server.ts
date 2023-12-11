@@ -65,7 +65,7 @@ export const init = async ({
   model: ServerModel;
   eff?: Eff<ServerMsg>;
 }> => {
-  const wire = WireServer.init();
+  const wire = await WireServer.init();
 
   const space = await SpaceServer.init({
     ctx,
@@ -210,10 +210,12 @@ const updateMain = async ({
     }
 
     case "wire": {
-      const updated = WireServer.update({
+      const updated = await WireServer.update({
         model: model.wire,
         msg: msg.c,
         ctx,
+        toSessionId: (userId) => toSessionId(model.auth, userId),
+        transport,
       });
 
       return {
@@ -348,9 +350,12 @@ const updateFromClient = async ({
     }
 
     case "wire": {
-      const updated = WireServer.updateFromClient({
+      const updated = await WireServer.update({
         model: model.wire,
-        msg: msg.c,
+        fromClient: msg.c,
+        ctx,
+        toSessionId: (userId) => toSessionId(model.auth, userId),
+        transport,
       });
       return {
         model: { ...model, wire: updated.model },
@@ -410,26 +415,28 @@ const updateFromEvent = async ({
   };
 };
 
-const updateFromCmd = ({
+const updateFromCmd = async ({
   cmd,
   model,
+  ctx,
 }: {
   cmd: ServerCmd<ToClient>;
   model: ServerModel;
   ctx: ServerCtx;
-}): {
+}): Promise<{
   model: ServerModel;
   eff?: Eff<ServerMsg>;
   evt?: ServerEvt[];
   cmd?: ServerCmd<ToClient>[];
-} => {
+}> => {
   switch (cmd.t) {
     case "wire/topic-publish":
     case "wire/topic-subscribe":
     case "wire/send-to-user":
     case "wire/broadcast":
     case "wire/send-to-client": {
-      const updated = WireServer.updateFromCmd<ToServer, ToClient>({
+      const updated = await WireServer.update<ToClient, ToServer>({
+        ctx,
         cmd,
         model: model.wire,
         transport,

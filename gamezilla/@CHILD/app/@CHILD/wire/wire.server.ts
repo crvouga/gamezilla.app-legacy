@@ -5,8 +5,9 @@ import {
   ServerEvt,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, Posix, TimeSpan, chain } from "gamezilla/@SHARED/core";
+import { Eff, Posix, TimeSpan } from "gamezilla/@SHARED/core";
 import { Sub } from "gamezilla/@SHARED/core/sub";
+import { ServerModule } from "../../@SHARED/architecture/app-server";
 import { IServerTransport } from "./transport-server";
 import {
   Client,
@@ -24,7 +25,7 @@ import {
 //
 //
 
-export const init = (): { model: ServerModel } => {
+export const init = async (): Promise<{ model: ServerModel }> => {
   return {
     model: {
       clientsBySessionId: {},
@@ -33,24 +34,59 @@ export const init = (): { model: ServerModel } => {
   };
 };
 
-export const update = ({
-  msg,
-  model,
-  ctx,
-}: {
+//
+//
+//
+//
+//
+//
+
+type Input<TToClient, TToServer> = {
   ctx: ServerCtx;
   model: ServerModel;
-  msg: ServerMsg;
-}): {
+  //
+  msg?: ServerMsg | null;
+  fromClient?: ToServer | null;
+  cmd?: ServerCmd<TToClient> | null;
+  //
+  transport: IServerTransport<{
+    ToClient: TToClient;
+    ToServer: TToServer;
+  }>;
+  toSessionId: (userId: UserId) => Promise<SessionId | null>;
+};
+
+type Output = {
   model: ServerModel;
+  eff?: Eff<ServerMsg>;
   evt?: ServerEvt[];
   cmd?: ServerCmd<ToClient>[];
-} => {
+};
+
+//
+//
+//
+//
+
+export const update = async <TToClient, TToServer>(
+  input: Input<TToClient, TToServer>
+): Promise<Output> => {
+  return ServerModule.composeUpdates({ model: input.model }, [
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromClient({ ...input, model }),
+    (model) => updateFromCmd({ ...input, model }),
+  ]);
+};
+
+const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
+  if (!msg) {
+    return { model };
+  }
+
   switch (msg.t) {
     case "client-connected": {
-      return chain(
-        { model },
-        (model) => {
+      return ServerModule.composeUpdates({ model }, [
+        async (model) => {
           const clientNew: Client = {
             sessionId: msg.sessionId,
             clientId: msg.clientId,
@@ -75,7 +111,7 @@ export const update = ({
             ],
           };
         },
-        (model) => {
+        async (model) => {
           const didServerRestart =
             model.serverStartedAt &&
             TimeSpan.lte(
@@ -91,8 +127,8 @@ export const update = ({
           }
 
           return { model };
-        }
-      );
+        },
+      ]);
     }
 
     case "client-disconnected": {
@@ -131,32 +167,20 @@ export const update = ({
   }
 };
 
-export const updateFromClient = ({
-  model,
-}: {
-  model: ServerModel;
-  msg: ToServer;
-}): {
-  model: ServerModel;
-} => {
+const updateFromClient: typeof update = async ({ model }) => {
   return { model };
 };
 
-export const updateFromCmd = <TToServer, TToClient>({
+const updateFromCmd = async <TToClient, TToServer>({
   cmd,
   model,
   transport,
   toSessionId,
-}: {
-  cmd: ServerCmd<TToClient>;
-  model: ServerModel;
-  transport: IServerTransport<{ ToClient: TToClient; ToServer: TToServer }>;
-  //
-  toSessionId: (userId: UserId) => Promise<SessionId | null>;
-}): {
-  model: ServerModel;
-  eff?: Eff<ServerMsg>;
-} => {
+}: Input<TToClient, TToServer>): Promise<Output> => {
+  if (!cmd) {
+    return { model };
+  }
+
   switch (cmd.t) {
     case "wire/broadcast": {
       return {

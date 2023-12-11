@@ -111,7 +111,7 @@ export type Output<T extends ServerModuleTypes> = {
 };
 
 /**
- * `ServerModule` represents a client side app module
+ * `ServerModule` represents a server side app module
  */
 export type ServerModule<T extends ServerModuleTypes> = {
   /**
