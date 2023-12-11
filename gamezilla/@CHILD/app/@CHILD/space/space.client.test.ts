@@ -112,10 +112,11 @@ test("redirecting when starting a space", async () => {
   expect(
     started.cmd?.filter(
       (cmd) =>
-        cmd.t === "routing/push" &&
-        cmd.route.t === "space" &&
-        cmd.route.c.t === "space" &&
-        cmd.route.c.spaceId === spaceId
+        cmd.t === "routing" &&
+        cmd.c.t === "push" &&
+        cmd.c.route.t === "space" &&
+        cmd.c.route.c.t === "space" &&
+        cmd.c.route.c.spaceId === spaceId
     ).length
   ).toBe(1);
 });

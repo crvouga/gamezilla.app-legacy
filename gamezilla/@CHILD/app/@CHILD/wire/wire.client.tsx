@@ -150,13 +150,15 @@ const updateFromCmd: typeof update = ({ cmd, model, transport }) => {
     return { model };
   }
 
-  switch (cmd.t) {
-    case "wire/send-to-server": {
+  const wireCmd = cmd.c;
+
+  switch (wireCmd.t) {
+    case "send-to-server": {
       return {
         model,
         eff: () => {
-          if (cmd.msg) {
-            transport.toServer.publish([cmd.msg]);
+          if (wireCmd.msg) {
+            transport.toServer.publish([wireCmd.msg]);
           }
         },
       };

@@ -85,12 +85,14 @@ const updateFromCmd: typeof update = ({ cmd, model }) => {
     return { model };
   }
 
-  switch (cmd.t) {
-    case "platform/focus": {
+  const platformCmd = cmd.c;
+
+  switch (platformCmd.t) {
+    case "focus": {
       return {
         model,
         eff: async (dispatch) => {
-          const element = document.getElementById(cmd.viewId);
+          const element = document.getElementById(platformCmd.viewId);
 
           if (!element) {
             return;
@@ -103,7 +105,7 @@ const updateFromCmd: typeof update = ({ cmd, model }) => {
               element.removeEventListener("focus", handler);
               dispatch({
                 t: "element-focused",
-                id: cmd.viewId,
+                id: platformCmd.viewId,
               });
             };
             element.addEventListener("focus", handler);
@@ -123,17 +125,21 @@ const updateFromCmd: typeof update = ({ cmd, model }) => {
       };
     }
 
-    case "platform/start-timeout": {
+    case "start-timeout": {
       return {
         model,
-        parentEff: Time.startTimeout(cmd.timeoutId, cmd.duration, cmd.msg),
+        parentEff: Time.startTimeout(
+          platformCmd.timeoutId,
+          platformCmd.duration,
+          platformCmd.msg
+        ),
       };
     }
 
-    case "platform/cancel-timeout": {
+    case "cancel-timeout": {
       return {
         model,
-        parentEff: Time.cancelTimeout(cmd.timeoutId),
+        parentEff: Time.cancelTimeout(platformCmd.timeoutId),
       };
     }
 

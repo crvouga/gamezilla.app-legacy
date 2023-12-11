@@ -156,21 +156,23 @@ export const updateFromCmd: Module["update"] = ({ model, cmd }) => {
     return { model };
   }
 
-  switch (cmd.t) {
-    case "sound/preload": {
+  const soundCmd = cmd.c;
+
+  switch (soundCmd.t) {
+    case "preload": {
       return {
         model,
         eff: async (dispatch) => {
-          const preloaded = await preloadSounds(cmd.src);
+          const preloaded = await preloadSounds(soundCmd.src);
           dispatch({
             t: "preloaded-sounds",
-            src: cmd.src,
+            src: soundCmd.src,
             result: preloaded,
           });
         },
       };
     }
-    case "sound/play": {
+    case "play": {
       if (model.muted) {
         return { model };
       }
@@ -178,7 +180,7 @@ export const updateFromCmd: Module["update"] = ({ model, cmd }) => {
       return {
         model,
         eff: async (dispatch) => {
-          const { delay } = cmd;
+          const { delay } = soundCmd;
 
           if (delay) {
             await new Promise((r) =>
@@ -187,12 +189,12 @@ export const updateFromCmd: Module["update"] = ({ model, cmd }) => {
           }
 
           const played = await playSoundEff(
-            cmd.src,
-            cmd.volume ?? UnitInterval.init(1)
+            soundCmd.src,
+            soundCmd.volume ?? UnitInterval.init(1)
           );
           dispatch({
             t: "played-sound",
-            src: cmd.src,
+            src: soundCmd.src,
             result: played,
           });
         },

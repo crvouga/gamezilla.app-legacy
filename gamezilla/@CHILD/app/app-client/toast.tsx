@@ -152,13 +152,15 @@ const updateFromCmd: Module["update"] = (input) => {
 
   const { ctx, cmd, model } = input;
 
-  switch (cmd.t) {
-    case "toast/enqueue": {
+  const toastCmd = cmd.c;
+
+  switch (toastCmd.t) {
+    case "enqueue": {
       const toastNew: Toast = {
         toastId: model.runningId,
-        text: cmd.text,
-        duration: cmd.duration ?? TimeSpan.fromSeconds(2),
-        variant: cmd.toastVariant ?? "info",
+        text: toastCmd.text,
+        duration: toastCmd.duration ?? TimeSpan.fromSeconds(2),
+        variant: toastCmd.toastVariant ?? "info",
         createdAt: ctx.now,
       };
 

@@ -114,7 +114,7 @@ export const update = ({
   if (msg.t === "clicked-back") {
     return {
       model: model,
-      cmd: [{ t: "routing/back" }],
+      cmd: [{ t: "routing", c: { t: "back" } }],
     };
   }
 
@@ -150,7 +150,8 @@ export const View = ({
         onSubmit={(event) => {
           event.preventDefault();
           dispatch({ t: "clicked-send-login-link" });
-        }}>
+        }}
+      >
         <TextField
           autoFocus
           id="email-address"

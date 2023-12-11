@@ -121,31 +121,33 @@ const updateFromCmd: typeof update = ({ cmd, model }) => {
     return { model };
   }
 
-  switch (cmd.t) {
-    case "routing/push": {
+  const routeCmd = cmd.c;
+
+  switch (routeCmd.t) {
+    case "push": {
       return {
         model: {
           previousRoute: model.currentRoute,
-          currentRoute: cmd.route,
+          currentRoute: routeCmd.route,
         },
-        eff: Browser.push(AppRoute.encode(cmd.route)),
+        eff: Browser.push(AppRoute.encode(routeCmd.route)),
       };
     }
 
-    case "routing/back": {
+    case "back": {
       return {
         model,
         eff: Browser.back,
       };
     }
 
-    case "routing/replace": {
+    case "replace": {
       return {
         model: {
           previousRoute: model.currentRoute,
-          currentRoute: cmd.route,
+          currentRoute: routeCmd.route,
         },
-        eff: Browser.replace(AppRoute.encode(cmd.route)),
+        eff: Browser.replace(AppRoute.encode(routeCmd.route)),
       };
     }
   }

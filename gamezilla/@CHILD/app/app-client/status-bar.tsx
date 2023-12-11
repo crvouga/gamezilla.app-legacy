@@ -1,3 +1,4 @@
+import { Eff } from "gamezilla/@SHARED/core";
 import { Drawer, VDom } from "../@SHARED/ui";
 
 export type Model = {
@@ -24,7 +25,17 @@ export type Msg =
   | { t: "clicked-status-bar" }
   | { t: "closed-status-bar-drawer" };
 
-export const update = (input: { model: Model; msg: Msg }): { model: Model } => {
+export const update = (input: {
+  model: Model;
+  msg: Msg | null;
+}): {
+  model: Model;
+  eff?: Eff<Msg>;
+} => {
+  if (!input.msg) {
+    return { model: input.model };
+  }
+
   switch (input.msg.t) {
     case "clicked-status-bar": {
       return { model: { ...input.model, isDrawerOpen: true } };
@@ -58,7 +69,8 @@ export const View = ({
       <button
         aria-label="open status bar"
         class="flex w-full items-center gap-2 border-b border-neutral-700 p-0.5 px-2 text-xs text-secondary"
-        onClick={() => dispatch({ t: "clicked-status-bar" })}>
+        onClick={() => dispatch({ t: "clicked-status-bar" })}
+      >
         {wire.statusBar}
 
         <div class="flex-1"></div>
@@ -70,7 +82,8 @@ export const View = ({
         position="top"
         id="drawer"
         open={model.isDrawerOpen}
-        onClose={() => dispatch({ t: "closed-status-bar-drawer" })}>
+        onClose={() => dispatch({ t: "closed-status-bar-drawer" })}
+      >
         {wire.drawer}
 
         {sound.drawer}

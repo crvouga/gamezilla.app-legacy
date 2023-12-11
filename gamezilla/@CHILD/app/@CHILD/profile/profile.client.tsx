@@ -9,8 +9,8 @@ import {
   ClientEvt,
   ProfileCmd,
   back,
+  pushRoute,
   replaceRoute,
-  sendToServer,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { ProfileAvatar, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
@@ -112,14 +112,14 @@ const updateFromCmd: Module["update"] = (input) => {
     return { model };
   }
 
-  switch (cmd.t) {
-    case "profile/add-profiles": {
+  switch (cmd.c.t) {
+    case "add-profiles": {
       return {
         model: {
           ...model,
           profiles: {
             ...model.profiles,
-            ...cmd.profiles,
+            ...cmd.c.profiles,
           },
         },
       };
@@ -268,13 +268,13 @@ const updateFromMsg: Module["update"] = (input) => {
     case "clicked-back-button": {
       switch (msg.from.t) {
         case "profile": {
-          return { model, msg: [back()] };
+          return { model, cmd: [back()] };
         }
 
         case "profile-update": {
           return {
             model,
-            msg: [
+            cmd: [
               replaceRoute({
                 t: "profile",
                 c: { t: "profile", userId: ctx.currentUserId },
@@ -286,7 +286,7 @@ const updateFromMsg: Module["update"] = (input) => {
         case "profile-avatar": {
           return {
             model,
-            msg: [
+            cmd: [
               replaceRoute({ t: "profile", c: { t: "profile-update-avatar" } }),
             ],
           };
@@ -295,10 +295,36 @@ const updateFromMsg: Module["update"] = (input) => {
         case "profile-update-username": {
           return {
             model,
-            msg: [replaceRoute({ t: "profile", c: { t: "profile-update" } })],
+            cmd: [replaceRoute({ t: "profile", c: { t: "profile-update" } })],
           };
         }
       }
+    }
+
+    case "clicked-logout-button": {
+      return { model, cmd: [pushRoute({ t: "logout" })] };
+    }
+
+    case "clicked-update-username-button": {
+      return {
+        model,
+        cmd: [pushRoute({ t: "profile", c: { t: "profile-update-username" } })],
+      };
+    }
+
+    case "clicked-edit-profile-button": {
+      return {
+        model,
+        cmd: [pushRoute({ t: "profile", c: { t: "profile-update" } })],
+      };
+    }
+
+    case "clicked-avatar":
+    case "clicked-change-avatar-button": {
+      return {
+        model,
+        cmd: [pushRoute({ t: "profile", c: { t: "profile-update-avatar" } })],
+      };
     }
 
     default: {
@@ -310,7 +336,7 @@ const updateFromMsg: Module["update"] = (input) => {
             [msg.t]: { t: "loading" },
           },
         },
-        msg: [sendToServer(msg)],
+        toServer: [msg],
       };
     }
   }

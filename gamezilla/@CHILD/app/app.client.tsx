@@ -118,36 +118,43 @@ export const init = ({
     stored: stored?.statusBar ?? null,
   });
 
-  let acc: ReturnType<typeof init> = {
-    model: {
-      statusBar: statusBar.model,
-      routing: routing.model,
-      toast: toast.model,
-      wire: wire.model,
-      sound: sound.model,
-      platform: platform.model,
-      space: space.model,
-      auth: auth.model,
-      profile: profile.model,
-    },
-    eff: Eff.batch<ClientMsg>([routing.eff, Eff.t("auth", auth.eff)]),
+  const initialModel: ClientModel = {
+    statusBar: statusBar.model,
+    routing: routing.model,
+    toast: toast.model,
+    wire: wire.model,
+    sound: sound.model,
+    platform: platform.model,
+    space: space.model,
+    auth: auth.model,
+    profile: profile.model,
   };
 
-  const cmdList: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[] = [
-    ...ClientCmd.tag("space", space.cmd),
-    ...ClientCmd.tag("profile", profile.cmd),
-    preloadSound(Object.values(APP_SOUND)),
-  ];
+  const initialEff = Eff.batch<ClientMsg>([
+    routing.eff,
+    Eff.t("auth", auth.eff),
+  ]);
 
-  for (const cmd of cmdList) {
-    const updatedCmd = updateFromCmd({ model: acc.model, cmd });
-    acc = {
-      model: updatedCmd.model,
-      eff: Eff.batch([acc.eff, updatedCmd.eff]),
-    };
-  }
+  const initialCmd = batchMsgs<
+    ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>
+  >(
+    ClientCmd.tag("space", space.cmd),
+    ClientCmd.tag("profile", profile.cmd),
+    preloadSound(Object.values(APP_SOUND))
+  );
 
-  return acc;
+  const updated = updateLoop(ctx.now, {
+    model: initialModel,
+    eff: initialEff,
+    cmd: initialCmd,
+    evt: [],
+    toServer: [],
+  });
+
+  return {
+    model: updated.model,
+    eff: updated.eff,
+  };
 };
 
 //
@@ -166,197 +173,208 @@ export const update = (input: {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
 } => {
-  const updated = updateFromMsg(input);
+  const updatedFromMsg = updateChild({
+    now: input.ctx.now,
+    model: input.model,
+    msg: input.msg,
+  });
 
-  const toServerCmd = updated.toServer?.map((c) => sendToServer(c));
+  const updated = updateLoop(input.ctx.now, updatedFromMsg);
 
-  let acc: {
-    model: ClientModel;
-    eff?: Eff<ClientMsg>;
-    cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-    evt?: (ClientEvt | null | undefined)[];
-  } = {
-    model: updated.model,
-    eff: updated.eff,
-    cmd: batchMsgs(updated.cmd, toServerCmd),
-    evt: updated.evt,
-  };
+  return updated;
+};
 
-  for (const evt of acc.evt ?? []) {
-    if (!evt) {
-      continue;
-    }
-    const updatedEvt = updateFromEvent({
-      ...input,
-      model: acc.model,
-      msg: evt,
+type Output = {
+  model: ClientModel;
+  eff: Eff<ClientMsg>;
+  evt: ClientEvt[];
+  cmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  toServer: ToServer[];
+};
+
+const updateLoop = (now: Posix, acc: Output): Output => {
+  const [cmd, ...cmdRest] = acc.cmd;
+
+  if (cmd) {
+    const updatedCmd = updateChild({ now, model: acc.model, cmd });
+    return updateLoop(now, {
+      model: updatedCmd.model,
+      cmd: [...cmdRest, ...updatedCmd.cmd],
+      eff: Eff.batch([acc.eff, updatedCmd.eff]),
+      evt: batchMsgs(acc.evt, updatedCmd.evt),
+      toServer: batchMsgs(acc.toServer, updatedCmd.toServer),
     });
-    acc = {
-      model: updatedEvt.model,
-      eff: Eff.batch([acc.eff, updatedEvt.eff]),
-      cmd: batchMsgs(acc.cmd, updatedEvt.cmd),
-    };
   }
 
-  for (const cmd of acc.cmd ?? []) {
-    const updatedCmd = updateFromCmd({ ...input, model: acc.model, cmd });
-    acc = {
-      model: updatedCmd.model,
-      eff: Eff.batch([acc.eff, updatedCmd.eff]),
-    };
+  const cmds = acc.toServer.map((c) => sendToServer(c));
+
+  if (cmds.length > 0) {
+    return updateLoop(now, {
+      model: acc.model,
+      eff: acc.eff,
+      evt: acc.evt,
+      cmd: [...cmdRest, ...cmds],
+      toServer: [],
+    });
+  }
+
+  const [evt, ...evtRest] = acc.evt;
+
+  if (evt) {
+    const updatedEvt = updateChild({ now, model: acc.model, evt });
+    return updateLoop(now, {
+      model: updatedEvt.model,
+      cmd: [...cmdRest, ...updatedEvt.cmd],
+      eff: Eff.batch([acc.eff, updatedEvt.eff]),
+      evt: batchMsgs(evtRest, updatedEvt.evt),
+      toServer: batchMsgs(acc.toServer, updatedEvt.toServer),
+    });
   }
 
   return acc;
 };
 
-const updateFromMsg = ({
-  msg,
+const updateChild = ({
+  now,
   model,
-  ctx,
+  msg,
+  fromServer,
+  evt,
+  cmd,
 }: {
-  ctx: { now: Posix };
-  msg: ClientMsg;
+  now: Posix;
   model: ClientModel;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  evt?: (ClientEvt | null | undefined)[];
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-  toServer?: ToServer[];
-} => {
-  const ctxApp = toCtx({ model, ctx });
+  msg?: ClientMsg;
+  fromServer?: ToClient;
+  evt?: ClientEvt;
+  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
+}): Output => {
+  const ctx = toCtx({ model, ctx: { now } });
 
-  switch (msg.t) {
-    case "➡️": {
-      return updateFromServer({
-        ctx: ctxApp,
-        msg: msg.c,
-        model,
-      });
-    }
+  const space = SpaceClient.update({
+    ctx: ctx,
+    model: model.space,
+    msg: msg?.t === "space" ? msg.c : null,
+    fromServer: fromServer?.t === "space" ? fromServer.c : null,
+    evt: evt,
+    cmd: null,
+  });
 
-    case "auth": {
-      const updated = AuthClient.update({
-        ctx: ctxApp,
-        msg: msg.c,
-        model: model.auth,
-      });
-      return {
-        model: { ...model, auth: updated.model },
-        eff: Eff.t("auth", updated.eff),
-        evt: updated.evt,
-        cmd: ClientCmd.tag("auth", updated.cmd),
-        toServer: updated.toServer?.map((c) => ({ t: "auth", c })),
-      };
-    }
+  const profile = ProfileClient.update({
+    ctx: { ...ctx, viewBottomBar: null },
+    model: model.profile,
+    msg: msg?.t === "profile" ? msg.c : null,
+    fromServer: fromServer?.t === "profile" ? fromServer.c : null,
+    evt: evt,
+    cmd: cmd?.t === "profile" ? cmd : null,
+  });
 
-    case "toast": {
-      const updated = Toast.update({
-        ctx: ctx,
-        model: model.toast,
-        msg: msg.c,
-      });
-      return {
-        model: { ...model, toast: updated.model },
-        eff: Eff.t("toast", updated.eff),
-        cmd: updated.cmd,
-        evt: updated.evt,
-        toServer: updated.toServer,
-      };
-    }
+  const auth = AuthClient.update({
+    ctx: ctx,
+    model: model.auth,
+    msg: msg?.t === "auth" ? msg.c : null,
+    fromServer: fromServer?.t === "auth" ? fromServer.c : null,
+    evt: evt,
+    cmd: null,
+  });
 
-    case "routing": {
-      const updated = Routing.update({
-        msg: msg.c,
-        model: model.routing,
-      });
+  const routing = Routing.update({
+    model: model.routing,
+    msg: msg?.t === "routing" ? msg.c : null,
+    cmd: cmd?.t === "routing" ? cmd : null,
+  });
 
-      return {
-        model: { ...model, routing: updated.model },
-        eff: Eff.t("routing", updated.eff),
-        evt: updated.evt,
-        cmd: updated.cmd,
-      };
-    }
+  const wire = Wire.update({
+    model: model.wire,
+    msg: msg?.t === "wire" ? msg.c : null,
+    fromServer: fromServer?.t === "wire" ? fromServer.c : null,
+    cmd: cmd?.t === "wire" ? cmd : null,
+    transport,
+  });
 
-    case "wire": {
-      const updated = Wire.update({
-        msg: msg.c,
-        model: model.wire,
-        transport,
-      });
+  const sound = Sound.update({
+    model: model.sound,
+    msg: msg?.t === "sound" ? msg.c : null,
+    cmd: cmd?.t === "sound" ? cmd : null,
+    ctx: null,
+  });
 
-      return {
-        model: { ...model, wire: updated.model },
-        evt: updated.evt,
-        eff: Eff.t("wire", updated.eff),
-      };
-    }
+  const platform = Platform.update({
+    model: model.platform,
+    msg: msg?.t === "platform" ? msg.c : null,
+    cmd: cmd?.t === "platform" ? cmd : null,
+  });
 
-    case "sound": {
-      const updated = Sound.update({
-        ctx: null,
-        msg: msg.c,
-        model: model.sound,
-      });
+  const statusBar = StatusBar.update({
+    model: model.statusBar,
+    msg: msg?.t === "status-bar" ? msg.c : null,
+  });
 
-      return {
-        model: { ...model, sound: updated.model },
-        cmd: updated.cmd,
-      };
-    }
+  const toast = Toast.update({
+    model: model.toast,
+    msg: msg?.t === "toast" ? msg.c : null,
+    cmd: cmd?.t === "toast" ? cmd : null,
+    ctx: ctx,
+  });
 
-    case "space": {
-      const updated = SpaceClient.update({
-        ctx: ctxApp,
-        msg: msg.c,
-        model: model.space,
-      });
+  const modelNew: ClientModel = {
+    auth: auth.model,
+    platform: platform.model,
+    profile: profile.model,
+    routing: routing.model,
+    sound: sound.model,
+    space: space.model,
+    statusBar: statusBar.model,
+    toast: toast.model,
+    wire: wire.model,
+  };
 
-      return {
-        model: { ...model, space: updated.model },
-        eff: Eff.t("space", updated.eff ?? Eff.None),
-        evt: updated.evt,
-        cmd: ClientCmd.tag("space", updated.cmd),
-      };
-    }
+  const effNew = Eff.batch<ClientMsg>([
+    Eff.t("auth", auth.eff),
+    Eff.t("platform", platform.eff),
+    Eff.t("profile", profile.eff),
+    Eff.t("routing", routing.eff),
+    Eff.t("sound", sound.eff),
+    Eff.t("space", space.eff),
+    Eff.t("status-bar", statusBar.eff),
+    Eff.t("toast", toast.eff),
+    Eff.t("wire", wire.eff),
+  ]);
 
-    case "profile": {
-      const updated = ProfileClient.update({
-        msg: msg.c,
-        model: model.profile,
-        ctx: { ...ctxApp, viewBottomBar: null },
-      });
-      return {
-        model: { ...model, profile: updated.model },
-        eff: Eff.t("profile", updated.eff),
-        cmd: ClientCmd.tag("profile", updated.cmd),
-        evt: updated.evt,
-        toServer: updated.toServer?.map((c) => ({ t: "profile", c })),
-      };
-    }
+  const evtNew = batchMsgs<ClientEvt>(
+    auth.evt,
+    profile.evt,
+    routing.evt,
+    sound.evt,
+    space.evt,
+    toast.evt,
+    wire.evt
+  );
 
-    case "platform": {
-      const updated = Platform.update<ClientMsg>({
-        msg: msg.c,
-        model: model.platform,
-      });
-      return {
-        model: { ...model, platform: updated.model },
-        eff: Eff.batch([Eff.t("platform", updated.eff), updated.parentEff]),
-      };
-    }
+  const cmdNew = batchMsgs<
+    ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>
+  >(
+    ClientCmd.tag("auth", auth.cmd),
+    ClientCmd.tag("profile", profile.cmd),
+    ClientCmd.tag("space", space.cmd),
+    routing.cmd,
+    sound.cmd,
+    toast.cmd
+  );
 
-    case "status-bar": {
-      const updated = StatusBar.update({
-        msg: msg.c,
-        model: model.statusBar,
-      });
-      return {
-        model: { ...model, statusBar: updated.model },
-      };
-    }
-  }
+  const toServerNew = batchMsgs<ToServer>(
+    space.toServer?.map((c) => ({ t: "space", c })),
+    profile.toServer?.map((c) => ({ t: "profile", c })),
+    auth.toServer?.map((c) => ({ t: "auth", c }))
+  );
+
+  return {
+    model: modelNew,
+    eff: effNew,
+    cmd: cmdNew,
+    evt: evtNew,
+    toServer: toServerNew,
+  };
 };
 
 const toCtx = (input: {
@@ -377,234 +395,6 @@ const toCtx = (input: {
     };
   }
   return anonymousCtx;
-};
-
-const updateFromServer = ({
-  msg,
-  ctx,
-  model,
-}: {
-  msg: ToClient;
-  model: ClientModel;
-  ctx: ClientCtx | AnonymousClientCtx;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-  evt?: ClientEvt[];
-  toServer?: ToServer[];
-} => {
-  switch (msg.t) {
-    case "auth": {
-      const updated = AuthClient.update({
-        ctx,
-        fromServer: msg.c,
-        model: model.auth,
-      });
-      return {
-        model: { ...model, auth: updated.model },
-        evt: updated.evt,
-        eff: Eff.t("auth", updated.eff),
-        cmd: ClientCmd.tag("auth", updated.cmd),
-        toServer: updated.toServer?.map((c) => ({ t: "auth", c })),
-      };
-    }
-
-    case "space": {
-      const updated = SpaceClient.update({
-        ctx,
-        fromServer: msg.c,
-        model: model.space,
-      });
-
-      return {
-        evt: updated.evt,
-        cmd: ClientCmd.tag("space", updated.cmd),
-        model: { ...model, space: updated.model },
-        eff: Eff.t("space", updated.eff),
-        toServer: updated.toServer?.map((c) => ({ t: "space", c })),
-      };
-    }
-
-    case "profile": {
-      const updated = ProfileClient.update({
-        fromServer: msg.c,
-        model: model.profile,
-        ctx: { ...ctx, viewBottomBar: null },
-      });
-      return {
-        cmd: ClientCmd.tag("profile", updated.cmd),
-        model: { ...model, profile: updated.model },
-        eff: Eff.t("profile", updated.eff),
-        evt: updated.evt,
-        toServer: updated.toServer?.map((c) => ({ t: "profile", c })),
-      };
-    }
-
-    case "wire": {
-      const updated = Wire.update({
-        fromServer: msg.c,
-        transport,
-        model: model.wire,
-      });
-
-      return {
-        model: { ...model, wire: updated.model },
-        eff: Eff.t("wire", updated.eff),
-        evt: updated.evt,
-      };
-    }
-  }
-};
-
-const updateFromCmd = ({
-  model,
-  cmd,
-}: {
-  model: ClientModel;
-  cmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-} => {
-  const ctxApp = toCtx({ model, ctx: { now: Posix.now$() } });
-  switch (cmd.t) {
-    case "routing/replace":
-    case "routing/back":
-    case "routing/push": {
-      const routing = Routing.update({
-        model: model.routing,
-        cmd,
-      });
-
-      return {
-        model: {
-          ...model,
-          routing: routing.model,
-        },
-        eff: Eff.t("routing", routing.eff),
-      };
-    }
-
-    case "toast/enqueue": {
-      const toast = Toast.update({
-        ctx: ctxApp,
-        model: model.toast,
-        cmd,
-      });
-
-      return {
-        model: {
-          ...model,
-          toast: toast.model,
-        },
-        eff: Eff.t("toast", toast.eff),
-      };
-    }
-
-    case "sound/preload":
-    case "sound/play": {
-      const sound = Sound.update({
-        model: model.sound,
-        cmd,
-        ctx: null,
-      });
-      return {
-        model: { ...model, sound: sound.model },
-        eff: Eff.t("sound", sound.eff),
-      };
-    }
-
-    case "platform/start-timeout":
-    case "platform/cancel-timeout":
-    case "platform/focus": {
-      const updated = Platform.update({ model: model.platform, cmd });
-      return {
-        model: { ...model, platform: updated.model },
-        eff: Eff.batch([Eff.t("platform", updated.eff), updated.parentEff]),
-      };
-    }
-
-    case "wire/send-to-server": {
-      const updated = Wire.update({ cmd, transport, model: model.wire });
-      return {
-        model: { ...model, wire: updated.model },
-        eff: Eff.t("wire", updated.eff),
-      };
-    }
-
-    case "profile/add-profiles": {
-      const updated = ProfileClient.update({
-        cmd: cmd,
-        model: model.profile,
-        ctx: { ...ctxApp, viewBottomBar: null },
-      });
-
-      return {
-        model: { ...model, profile: updated.model },
-        eff: Eff.t("profile", updated.eff),
-      };
-    }
-  }
-};
-
-const updateFromEvent = ({
-  model,
-  msg,
-  ctx,
-}: {
-  ctx: { now: Posix };
-  model: ClientModel;
-  msg: ClientEvt;
-}): {
-  model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-  toServer?: ToServer[];
-} => {
-  const ctxApp = toCtx({ model, ctx });
-
-  const space = SpaceClient.update({
-    model: model.space,
-    evt: msg,
-    ctx: ctxApp,
-  });
-
-  const profile = ProfileClient.update({
-    model: model.profile,
-    evt: msg,
-    ctx: { ...ctxApp, viewBottomBar: null },
-  });
-
-  const auth = AuthClient.update({
-    model: model.auth,
-    evt: msg,
-    ctx: ctxApp,
-  });
-
-  return {
-    model: {
-      ...model,
-      profile: profile.model,
-      space: space.model,
-      auth: auth.model,
-    },
-    eff: Eff.batch<ClientMsg>([
-      Eff.t("profile", profile.eff),
-      Eff.t("auth", auth.eff),
-      Eff.t("space", space.eff),
-    ]),
-    cmd: [
-      ...ClientCmd.tag("space", space.cmd),
-      ...ClientCmd.tag("auth", auth.cmd),
-      ...ClientCmd.tag("profile", profile.cmd),
-    ],
-    toServer: batchMsgs<ToServer>(
-      space.toServer?.map((c) => ({ t: "space", c })),
-      profile.toServer?.map((c) => ({ t: "profile", c })),
-      auth.toServer?.map((c) => ({ t: "auth", c }))
-    ),
-  };
 };
 
 //
