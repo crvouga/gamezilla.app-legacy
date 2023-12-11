@@ -1,5 +1,5 @@
 import {
-  ClientModule,
+  AppClientModule,
   chainUpdates,
 } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import {
@@ -29,7 +29,7 @@ import {
 //
 //
 
-type Module = ClientModule<{
+type Module = AppClientModule<{
   Ctx: null;
   InCmd: SoundCmd;
   InEvt: ClientEvt;

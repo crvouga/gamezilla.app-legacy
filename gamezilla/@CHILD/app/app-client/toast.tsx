@@ -1,6 +1,6 @@
 import {
   chainUpdates,
-  ClientModule,
+  AppClientModule,
 } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import { ToastCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconXMark, Transition, cn } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -16,7 +16,7 @@ import { Posix, Sub, Time, TimeSpan, Uuid } from "gamezilla/@SHARED/core";
 
 type Ctx = { now: Posix };
 
-type Module = ClientModule<{
+type Module = AppClientModule<{
   Model: Model;
   Msg: Msg;
   InCmd: ToastCmd;

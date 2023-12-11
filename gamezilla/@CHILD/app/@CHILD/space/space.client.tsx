@@ -10,7 +10,7 @@ import {
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
-  ClientModule,
+  AppClientModule,
   chainUpdates,
 } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import {
@@ -66,7 +66,7 @@ import {
 //
 //
 
-type Module = ClientModule<{
+type Module = AppClientModule<{
   Ctx: AnonymousClientCtx;
   InCmd: never;
   InEvt: ClientEvt;

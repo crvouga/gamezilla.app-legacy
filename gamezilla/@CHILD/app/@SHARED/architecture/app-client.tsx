@@ -7,7 +7,7 @@ import { Eff, Sub } from "gamezilla/@SHARED/core";
 //
 //
 
-export type ClientModuleTypes = {
+export type AppClientModuleTypes = {
   /**
    * `Ctx` is data passed down from parent modules
    */
@@ -52,7 +52,7 @@ export type ClientModuleTypes = {
 //
 //
 
-export type Input<T extends ClientModuleTypes> = {
+export type Input<T extends AppClientModuleTypes> = {
   /**
    * `ctx` is data passed down from parent modules
    */
@@ -85,7 +85,7 @@ export type Input<T extends ClientModuleTypes> = {
 //
 //
 
-export type Output<T extends ClientModuleTypes> = {
+export type Output<T extends AppClientModuleTypes> = {
   /**
    * `model` will be the new state of the module
    */
@@ -105,9 +105,9 @@ export type Output<T extends ClientModuleTypes> = {
 };
 
 /**
- * `ClientModule` represents a client side app module
+ * `AppClientModule` represents a client side app module
  */
-export type ClientModule<T extends ClientModuleTypes> = {
+export type AppClientModule<T extends AppClientModuleTypes> = {
   /**
    * `init` is the initial state of the module
    */
@@ -133,7 +133,7 @@ export type ClientModule<T extends ClientModuleTypes> = {
   }) => VDom;
 };
 
-export const chainUpdates = <T extends ClientModuleTypes>(
+export const chainUpdates = <T extends AppClientModuleTypes>(
   acc: Output<T>,
   updates: ((model: T["Model"]) => Output<T>)[]
 ): Output<T> => {
@@ -155,6 +155,6 @@ export const chainUpdates = <T extends ClientModuleTypes>(
   return chainUpdates(accNew, rest);
 };
 
-const ClientModule = {
+export const AppClientModule = {
   chainUpdates,
 };

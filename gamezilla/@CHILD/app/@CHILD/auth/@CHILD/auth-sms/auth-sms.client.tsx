@@ -1,5 +1,5 @@
 import {
-  ClientModule,
+  AppClientModule,
   chainUpdates,
 } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import {
@@ -46,7 +46,7 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth-sms.core";
 //
 //
 
-type Module = ClientModule<{
+type Module = AppClientModule<{
   Model: ClientModel;
   Msg: ClientMsg;
   ToClient: ToClient;

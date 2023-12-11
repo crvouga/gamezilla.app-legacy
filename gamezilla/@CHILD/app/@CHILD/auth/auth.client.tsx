@@ -1,5 +1,5 @@
 import {
-  ClientModule,
+  AppClientModule,
   chainUpdates,
 } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import {
@@ -37,7 +37,7 @@ import {
 //
 //
 
-type Client = ClientModule<{
+type Client = AppClientModule<{
   Model: ClientModel;
   Msg: ClientMsg;
   ToClient: ToClient;
