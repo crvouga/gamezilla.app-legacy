@@ -503,7 +503,6 @@ const ViewMain = ({
           dispatch={dispatch}
           ctx={{
             now,
-
             currentRoute: model.routing.currentRoute,
             currentUserId: model.auth.currentUser.userId,
             profiles: model.profile.profiles,
