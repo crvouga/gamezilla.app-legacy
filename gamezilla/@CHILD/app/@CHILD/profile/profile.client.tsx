@@ -1,7 +1,4 @@
-import {
-  ClientModule,
-  chainUpdates,
-} from "gamezilla/@CHILD/app/@SHARED/architecture";
+import { ClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture";
 import {
   APP_SOUND,
   AnonymousClientCtx,
@@ -72,22 +69,14 @@ export const init: Module["init"] = ({ ctx, stored }) => {
     requests: {},
     draft: {},
   };
-  return chainUpdates(
-    {
-      model: stored ? stored : initialModel,
-    },
-    [
-      (model) => {
-        if (
-          ctx.currentRoute.t === "profile" &&
-          ctx.currentRoute.c.t === "profile"
-        ) {
-          return loadProfile(ctx.currentRoute.c.userId, model);
-        }
-        return { model };
-      },
-    ]
-  );
+
+  const model = stored ? stored : initialModel;
+
+  if (ctx.currentRoute.t === "profile" && ctx.currentRoute.c.t === "profile") {
+    return loadProfile(ctx.currentRoute.c.userId, model);
+  }
+
+  return { model };
 };
 
 //
@@ -99,12 +88,23 @@ export const init: Module["init"] = ({ ctx, stored }) => {
 //
 
 export const update: Module["update"] = (input) => {
-  return chainUpdates({ model: input.model }, [
-    (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromServer({ ...input, model }),
-    (model) => updateFromEvent({ ...input, model }),
-    (model) => updateFromCmd({ ...input, model }),
-  ]);
+  if (input.evt) {
+    return updateFromEvent(input);
+  }
+
+  if (input.msg) {
+    return updateFromMsg(input);
+  }
+
+  if (input.fromServer) {
+    return updateFromServer(input);
+  }
+
+  if (input.cmd) {
+    return updateFromCmd(input);
+  }
+
+  return { model: input.model };
 };
 
 const updateFromCmd: Module["update"] = (input) => {
