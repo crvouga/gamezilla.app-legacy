@@ -56,7 +56,6 @@ export const init: Module["init"] = async (input) => {
     eff: Eff.t("sms", sms.eff),
     cmd: ServerCmd.tag("sms", sms.cmd),
     evt: sms.evt,
-    toServer: sms.toServer?.map((msg) => ({ t: "sms", c: msg })),
   };
 };
 
@@ -97,7 +96,6 @@ const updateChild: Module["update"] = async (input) => {
     eff: Eff.t("sms", sms.eff),
     cmd: ServerCmd.tag("sms", sms.cmd),
     evt: sms.evt,
-    toServer: sms.toServer?.map((msg) => ({ t: "sms", c: msg })),
   };
 };
 

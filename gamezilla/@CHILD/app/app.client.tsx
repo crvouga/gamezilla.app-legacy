@@ -317,63 +317,55 @@ const updateChild = ({
     ctx: ctx,
   });
 
-  const modelNew: ClientModel = {
-    auth: auth.model,
-    platform: platform.model,
-    profile: profile.model,
-    routing: routing.model,
-    sound: sound.model,
-    space: space.model,
-    statusBar: statusBar.model,
-    toast: toast.model,
-    wire: wire.model,
-  };
-
-  const effNew = Eff.batch<ClientMsg>([
-    Eff.t("auth", auth.eff),
-    Eff.t("platform", platform.eff),
-    Eff.t("profile", profile.eff),
-    Eff.t("routing", routing.eff),
-    Eff.t("sound", sound.eff),
-    Eff.t("space", space.eff),
-    Eff.t("status-bar", statusBar.eff),
-    Eff.t("toast", toast.eff),
-    Eff.t("wire", wire.eff),
-  ]);
-
-  const evtNew = batchMsgs<ClientEvt>(
-    auth.evt,
-    profile.evt,
-    routing.evt,
-    sound.evt,
-    space.evt,
-    toast.evt,
-    wire.evt
-  );
-
-  const cmdNew = batchMsgs<
-    ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>
-  >(
-    ClientCmd.tag("auth", auth.cmd),
-    ClientCmd.tag("profile", profile.cmd),
-    ClientCmd.tag("space", space.cmd),
-    routing.cmd,
-    sound.cmd,
-    toast.cmd
-  );
-
-  const toServerNew = batchMsgs<ToServer>(
-    space.toServer?.map((c) => ({ t: "space", c })),
-    profile.toServer?.map((c) => ({ t: "profile", c })),
-    auth.toServer?.map((c) => ({ t: "auth", c }))
-  );
-
   return {
-    model: modelNew,
-    eff: effNew,
-    cmd: cmdNew,
-    evt: evtNew,
-    toServer: toServerNew,
+    model: {
+      auth: auth.model,
+      platform: platform.model,
+      profile: profile.model,
+      routing: routing.model,
+      sound: sound.model,
+      space: space.model,
+      statusBar: statusBar.model,
+      toast: toast.model,
+      wire: wire.model,
+    },
+
+    eff: Eff.batch<ClientMsg>([
+      Eff.t("auth", auth.eff),
+      Eff.t("platform", platform.eff),
+      Eff.t("profile", profile.eff),
+      Eff.t("routing", routing.eff),
+      Eff.t("sound", sound.eff),
+      Eff.t("space", space.eff),
+      Eff.t("status-bar", statusBar.eff),
+      Eff.t("toast", toast.eff),
+      Eff.t("wire", wire.eff),
+    ]),
+
+    evt: batchMsgs<ClientEvt>(
+      auth.evt,
+      profile.evt,
+      routing.evt,
+      sound.evt,
+      space.evt,
+      toast.evt,
+      wire.evt
+    ),
+
+    cmd: batchMsgs<ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>>(
+      ClientCmd.tag("auth", auth.cmd),
+      ClientCmd.tag("profile", profile.cmd),
+      ClientCmd.tag("space", space.cmd),
+      routing.cmd,
+      sound.cmd,
+      toast.cmd
+    ),
+
+    toServer: batchMsgs<ToServer>(
+      space.toServer?.map((c) => ({ t: "space", c })),
+      profile.toServer?.map((c) => ({ t: "profile", c })),
+      auth.toServer?.map((c) => ({ t: "auth", c }))
+    ),
   };
 };
 

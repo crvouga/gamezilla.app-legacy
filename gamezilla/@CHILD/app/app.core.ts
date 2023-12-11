@@ -66,11 +66,17 @@ export type ClientMsg =
   | { t: "profile"; c: Profile.ClientMsg };
 
 export type ServerMsg =
-  | { t: "➡️"; sessionId: SessionId; clientId: ClientId; c: ToServer }
+  | ({ t: "➡️"; c: ToServer } & ToServerMeta)
   | { t: "wire"; c: Wire.ServerMsg }
   | { t: "space"; c: Space.ServerMsg }
   | { t: "profile"; c: Profile.ServerMsg }
   | { t: "auth"; c: Auth.ServerMsg };
+
+//
+//
+//
+
+export type ToServerMeta = { sessionId: SessionId; clientId: ClientId };
 
 //
 //

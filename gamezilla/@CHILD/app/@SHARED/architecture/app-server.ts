@@ -99,10 +99,6 @@ export type Output<T extends ServerModuleTypes> = {
   /**
    *
    */
-  toServer?: T["ToServer"][];
-  /**
-   *
-   */
   cmd?: T["OutCmd"][];
   /**
    *

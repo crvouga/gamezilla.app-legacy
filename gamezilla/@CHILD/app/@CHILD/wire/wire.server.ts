@@ -47,6 +47,7 @@ type Input<TToClient, TToServer> = {
   //
   msg?: ServerMsg | null;
   fromClient?: ToServer | null;
+  evt?: ServerEvt | null;
   cmd?: ServerCmd<TToClient> | null;
   //
   transport: IServerTransport<{

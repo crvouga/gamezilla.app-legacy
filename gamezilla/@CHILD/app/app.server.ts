@@ -1,6 +1,4 @@
 import {
-  AnonymousReqCtx,
-  ReqCtx,
   ServerCmd,
   ServerCtx,
   ServerEvt,
@@ -16,7 +14,7 @@ import {
   ok,
   toMsgType,
 } from "gamezilla/@SHARED/core";
-import { toSessionId, toUserId } from "./@CHILD/auth/auth.core";
+import { toSessionId } from "./@CHILD/auth/auth.core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
 import * as ProfileServer from "./@CHILD/profile/profile.server";
 import * as SpaceServer from "./@CHILD/space/space.server";
@@ -31,6 +29,7 @@ import {
   ServerMsg,
   ToClient,
   ToServer,
+  ToServerMeta,
 } from "./app.core";
 
 //
@@ -112,56 +111,19 @@ export const update = async (input: {
 }> => {
   logMsg({ msg: input.msg, logger: input.ctx.logger });
 
-  let acc = await updateMain(input);
+  const updatedFromMsg = await updateChild({
+    ctx: input.ctx,
+    model: input.model,
+    msg: input.msg,
+    fromClient: input.msg.t === "➡️" ? { ...input.msg, ...input.msg.c } : null,
+  });
 
-  let iterations = 0;
-  while (true) {
-    iterations++;
-    if (iterations > 100) {
-      input.ctx.logger.error("update loop exceeded 100 iterations");
-      break;
-    }
+  const updated = await updateLoop(input.ctx, updatedFromMsg);
 
-    let newEvents: ServerEvt[] = [];
-    let newCommands: ServerCmd<ToClient>[] = [];
-
-    // Process events
-    for (const evt of acc.evt ?? []) {
-      logMsg({ evt, logger: input.ctx.logger });
-      const updatedEvt = await updateFromEvent({
-        ...input,
-        model: acc.model,
-        msg: evt,
-      });
-      acc.model = updatedEvt.model;
-      newEvents = newEvents.concat(updatedEvt.evt ?? []);
-      newCommands = newCommands.concat(updatedEvt.cmd ?? []);
-      acc.eff = Eff.batch([acc.eff, updatedEvt.eff]);
-    }
-
-    // Process commands
-    for (const cmd of acc.cmd ?? []) {
-      logMsg({ cmd, logger: input.ctx.logger });
-      const updatedCmd = await updateFromCmd({
-        ...input,
-        model: acc.model,
-        cmd,
-      });
-      acc.model = updatedCmd.model;
-      newEvents = newEvents.concat(updatedCmd.evt ?? []);
-      newCommands = newCommands.concat(updatedCmd.cmd ?? []);
-      acc.eff = Eff.batch([acc.eff, updatedCmd.eff]);
-    }
-
-    if (newEvents.length === 0 && newCommands.length === 0) {
-      break;
-    }
-
-    acc.evt = newEvents;
-    acc.cmd = newCommands;
-  }
-
-  return acc;
+  return {
+    model: updated.model,
+    eff: updated.eff,
+  };
 };
 
 function logMsg({
@@ -182,275 +144,136 @@ function logMsg({
   logger.info(`${prefix} ${toMsgType(obj)}`);
 }
 
-const updateMain = async ({
-  msg,
-  model,
-  ctx,
-}: {
-  msg: ServerMsg;
+type Output = {
   model: ServerModel;
-  ctx: ServerCtx;
-}): Promise<{
-  model: ServerModel;
-  eff?: Eff<ServerMsg>;
-  evt?: ServerEvt[];
-  cmd?: ServerCmd<ToClient>[];
-}> => {
-  switch (msg.t) {
-    case "➡️": {
-      return updateFromClient({
-        ctx: {
-          ...ctx,
-          sessionId: msg.sessionId,
-          clientId: msg.clientId,
-        },
-        msg: msg.c,
-        model,
-      });
-    }
-
-    case "wire": {
-      const updated = await WireServer.update({
-        model: model.wire,
-        msg: msg.c,
-        ctx,
-        toSessionId: (userId) => toSessionId(model.auth, userId),
-        transport,
-      });
-
-      return {
-        model: { ...model, wire: updated.model },
-        evt: updated.evt,
-        cmd: ServerCmd.tag("wire", updated.cmd),
-      };
-    }
-
-    case "space": {
-      const updated = await SpaceServer.update({
-        msg: msg.c,
-        model: model.space,
-        ctx,
-      });
-
-      return {
-        model: { ...model, space: updated.model },
-        eff: Eff.t("space", updated.eff ?? Eff.None),
-        cmd: ServerCmd.tag("space", updated.cmd),
-      };
-    }
-
-    case "profile": {
-      const updated = await ProfileServer.update({
-        model: model.profile,
-        msg: msg.c,
-        ctx,
-      });
-      return {
-        model: { ...model, profile: updated.model },
-        cmd: ServerCmd.tag("profile", updated.cmd),
-        eff: Eff.t("profile", updated.eff),
-      };
-    }
-
-    case "auth": {
-      const updated = await AuthServer.update({
-        ctx,
-        model: model.auth,
-        msg: msg.c,
-      });
-      return {
-        model: { ...model, auth: updated.model },
-        cmd: ServerCmd.tag("auth", updated.cmd),
-        eff: Eff.t("auth", updated.eff),
-        evt: updated.evt,
-      };
-    }
-  }
+  eff: Eff<ServerMsg>;
+  evt: ServerEvt[];
+  cmd: ServerCmd<ToClient>[];
 };
 
-const updateFromClient = async ({
-  msg,
-  model,
-  ctx,
-}: {
-  ctx: AnonymousReqCtx;
-  msg: ToServer;
-  model: ServerModel;
-}): Promise<{
-  model: ServerModel;
-  eff?: Eff<ServerMsg>;
-  cmd?: ServerCmd<ToClient>[];
-  evt?: ServerEvt[];
-}> => {
-  const currentUserId = await toUserId(model.auth, ctx.sessionId);
+const updateLoop = async (ctx: ServerCtx, acc: Output): Promise<Output> => {
+  const [cmd, ...cmdRest] = acc.cmd;
 
-  const authReqCtx: ReqCtx | AnonymousReqCtx = currentUserId
-    ? {
-        ...ctx,
-        currentUserId,
-      }
-    : ctx;
+  if (cmd) {
+    const updatedCmd = await updateChild({ ctx, model: acc.model, cmd });
 
-  switch (msg.t) {
-    case "auth": {
-      const updated = await AuthServer.update({
-        ctx,
-        model: model.auth,
-        fromClient: {
-          ...msg.c,
-          clientId: ctx.clientId,
-          sessionId: ctx.sessionId,
-        },
-      });
+    const accNew: Output = {
+      model: updatedCmd.model,
+      cmd: [...cmdRest, ...updatedCmd.cmd],
+      eff: Eff.batch([acc.eff, updatedCmd.eff]),
+      evt: batchMsgs(acc.evt, updatedCmd.evt),
+    };
 
-      return {
-        model: { ...model, auth: updated.model },
-        cmd: ServerCmd.tag("auth", updated.cmd),
-        evt: updated.evt,
-        eff: Eff.t("auth", updated.eff),
-      };
-    }
-
-    case "profile": {
-      const updated = await ProfileServer.update({
-        model: model.profile,
-        fromClient: {
-          ...msg.c,
-          clientId: ctx.clientId,
-          sessionId: ctx.sessionId,
-        },
-        ctx: authReqCtx,
-      });
-
-      return {
-        model: { ...model, profile: updated.model },
-        eff: Eff.t("profile", updated.eff),
-      };
-    }
-
-    case "space": {
-      const updated = await SpaceServer.update({
-        ctx: authReqCtx,
-        fromClient: {
-          ...msg.c,
-          clientId: ctx.clientId,
-          sessionId: ctx.sessionId,
-        },
-        model: model.space,
-      });
-
-      return {
-        model: {
-          ...model,
-          space: updated.model,
-        },
-        eff: Eff.t("space", updated.eff),
-        cmd: ServerCmd.tag("space", updated.cmd),
-      };
-    }
-
-    case "wire": {
-      const updated = await WireServer.update({
-        model: model.wire,
-        fromClient: msg.c,
-        ctx,
-        toSessionId: (userId) => toSessionId(model.auth, userId),
-        transport,
-      });
-      return {
-        model: { ...model, wire: updated.model },
-      };
-    }
+    return updateLoop(ctx, accNew);
   }
+
+  const [evt, ...evtRest] = acc.evt;
+
+  if (evt) {
+    const updatedEvt = await updateChild({ ctx, model: acc.model, evt });
+
+    const accNew: Output = {
+      model: updatedEvt.model,
+      cmd: [...cmdRest, ...updatedEvt.cmd],
+      eff: Eff.batch([acc.eff, updatedEvt.eff]),
+      evt: batchMsgs(evtRest, updatedEvt.evt),
+    };
+
+    return updateLoop(ctx, accNew);
+  }
+
+  return acc;
 };
 
-const updateFromEvent = async ({
+export const updateChild = async ({
   ctx,
   msg,
+  fromClient,
+  evt,
+  cmd,
   model,
 }: {
   ctx: ServerCtx;
-  msg: ServerEvt;
   model: ServerModel;
-}): Promise<{
-  model: ServerModel;
-  eff?: Eff<ServerMsg>;
-  cmd?: ServerCmd<ToClient>[];
-  evt?: ServerEvt[];
-}> => {
+  msg?: ServerMsg;
+  fromClient?: (ToServer & ToServerMeta) | null;
+  evt?: ServerEvt;
+  cmd?: ServerCmd<ToClient>;
+}): Promise<Output> => {
+  //
+  //
+  //
+  //
+  //
+
   const space = await SpaceServer.update({
-    ctx,
-    evt: msg,
     model: model.space,
+    ctx,
+    cmd: null,
+    evt: evt,
+    fromClient:
+      fromClient?.t === "space" ? { ...fromClient, ...fromClient.c } : null,
+    msg: msg?.t === "space" ? msg.c : null,
+  });
+
+  const auth = await AuthServer.update({
+    model: model.auth,
+    ctx,
+    cmd: null,
+    evt: evt,
+    fromClient:
+      fromClient?.t === "auth" ? { ...fromClient, ...fromClient.c } : null,
+    msg: msg?.t === "auth" ? msg.c : null,
+  });
+
+  const wire = await WireServer.update({
+    model: model.wire,
+    ctx,
+    cmd: cmd,
+    evt: evt,
+    fromClient:
+      fromClient?.t === "wire" ? { ...fromClient, ...fromClient.c } : null,
+    msg: msg?.t === "wire" ? msg.c : null,
+    toSessionId: (userId) => toSessionId(model.auth, userId),
+    transport,
   });
 
   const profile = await ProfileServer.update({
-    ctx,
-    evt: msg,
     model: model.profile,
+    ctx,
+    cmd: null,
+    evt: evt,
+    fromClient:
+      fromClient?.t === "profile" ? { ...fromClient, ...fromClient.c } : null,
+    msg: msg?.t === "profile" ? msg.c : null,
   });
 
-  const auth = await AuthServer.updateFromEvent({
-    msg,
-    model: model.auth,
-    ctx,
-  });
+  //
+  //
+  //
+  //
 
   return {
     model: {
-      ...model,
-      space: space.model,
-      profile: profile.model,
       auth: auth.model,
+      profile: profile.model,
+      space: space.model,
+      wire: wire.model,
     },
-    eff: Eff.batch<ServerMsg>([
-      Eff.t("space", space.eff),
-      Eff.t("profile", profile.eff),
-    ]),
     cmd: batchMsgs<ServerCmd<ToClient>>(
       ServerCmd.tag("space", space.cmd),
-      ServerCmd.tag("auth", auth.cmd)
+      ServerCmd.tag("auth", auth.cmd),
+      ServerCmd.tag("wire", wire.cmd),
+      ServerCmd.tag("profile", profile.cmd)
     ),
-    evt: batchMsgs(auth.evt),
+    eff: Eff.batch<ServerMsg>([
+      Eff.t("space", space.eff),
+      Eff.t("auth", auth.eff),
+      Eff.t("wire", wire.eff),
+      Eff.t("profile", profile.eff),
+    ]),
+    evt: batchMsgs<ServerEvt>(auth.evt, space.evt, wire.evt, profile.evt),
   };
-};
-
-const updateFromCmd = async ({
-  cmd,
-  model,
-  ctx,
-}: {
-  cmd: ServerCmd<ToClient>;
-  model: ServerModel;
-  ctx: ServerCtx;
-}): Promise<{
-  model: ServerModel;
-  eff?: Eff<ServerMsg>;
-  evt?: ServerEvt[];
-  cmd?: ServerCmd<ToClient>[];
-}> => {
-  switch (cmd.t) {
-    case "wire/topic-publish":
-    case "wire/topic-subscribe":
-    case "wire/send-to-user":
-    case "wire/broadcast":
-    case "wire/send-to-client": {
-      const updated = await WireServer.update<ToClient, ToServer>({
-        ctx,
-        cmd,
-        model: model.wire,
-        transport,
-        toSessionId: (userId) => toSessionId(model.auth, userId),
-      });
-      return {
-        model: {
-          ...model,
-          wire: updated.model,
-        },
-        eff: Eff.t("wire", updated.eff),
-      };
-    }
-  }
 };
 
 //
