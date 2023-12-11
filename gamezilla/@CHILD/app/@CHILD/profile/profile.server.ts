@@ -5,14 +5,13 @@ import {
   Username,
 } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
-  AnonymousReqCtx,
-  ReqCtx,
   ServerCmd,
   ServerCtx,
   ServerEvt,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, Result, err, isErr, ok } from "gamezilla/@SHARED/core";
+import { Result, err, isErr, ok } from "gamezilla/@SHARED/core";
+import { ServerModule } from "../../@SHARED/architecture/app-server";
 import { ProfileDb } from "./profile-db/profile-db";
 import { createProfileDb } from "./profile-db/profile-db-impl.sql";
 import {
@@ -28,12 +27,35 @@ import {
 //
 //
 //
+//
+//
+//
+
+type Module = ServerModule<{
+  Ctx: ServerCtx;
+  InCmd: null;
+  InEvt: ServerEvt;
+  Model: ServerModel;
+  Msg: ServerMsg;
+  OutCmd: ServerCmd<ToClient>;
+  OutEvt: null;
+  ToClient: ToClient;
+  ToServer: ToServer;
+}>;
+
+//
+//
+//
 // model
 //
 //
 //
 
-export const init: ServerModel = null;
+export const init: Module["init"] = async () => {
+  return {
+    model: null,
+  };
+};
 
 //
 //
@@ -43,16 +65,27 @@ export const init: ServerModel = null;
 //
 //
 
-export const update = ({
-  msg,
-  model,
-}: {
-  msg: ServerMsg;
-  model: ServerModel;
-}): {
-  model: ServerModel;
-  cmd: ServerCmd<ToClient>[];
-} => {
+export const update: Module["update"] = async (input) => {
+  if (input.msg) {
+    return updateFromMsg(input);
+  }
+
+  if (input.fromClient) {
+    return updateFromClient(input);
+  }
+
+  if (input.evt) {
+    return updateFromEvent(input);
+  }
+
+  return { model: input.model };
+};
+
+const updateFromMsg: Module["update"] = async ({ msg, model }) => {
+  if (!msg) {
+    return { model };
+  }
+
   switch (msg.t) {
     case "handled": {
       return {
@@ -63,18 +96,15 @@ export const update = ({
   }
 };
 
-export const updateFromClient = ({
-  msg,
+const updateFromClient: Module["update"] = async ({
+  fromClient,
   model,
   ctx,
-}: {
-  msg: ToServer;
-  model: ServerModel;
-  ctx: ReqCtx | AnonymousReqCtx;
-}): {
-  model: ServerModel;
-  eff?: Eff<ServerMsg>;
-} => {
+}) => {
+  if (!fromClient) {
+    return { model };
+  }
+
   return {
     model,
     eff: async (dispatch) => {
@@ -84,32 +114,25 @@ export const updateFromClient = ({
       const ProfileDb = createProfileDb({ dbConn: ctx.dbConn });
       const result = await handler({
         ProfileDb,
-        msg,
+        msg: fromClient,
         ctx: { ...ctx, currentUserId: ctx.currentUserId },
       });
 
       dispatch({
         t: "handled",
-        clientId: ctx.clientId,
-        msg: { ...msg, result },
+        clientId: fromClient.clientId,
+        msg: { ...fromClient, result },
       });
     },
   };
 };
 
-export const updateFromEvent = ({
-  msg,
-  model,
-  ctx,
-}: {
-  ctx: ServerCtx;
-  msg: ServerEvt;
-  model: ServerModel;
-}): {
-  model: ServerModel;
-  eff?: Eff<ServerMsg>;
-} => {
-  switch (msg.t) {
+const updateFromEvent: Module["update"] = async ({ evt, model, ctx }) => {
+  if (!evt) {
+    return { model };
+  }
+
+  switch (evt.t) {
     case "auth/connected-client-authenticated": {
       return {
         model,
@@ -117,16 +140,16 @@ export const updateFromEvent = ({
           const ProfileDb = createProfileDb({ dbConn: ctx.dbConn });
           const result = await findElseInsertNew({
             ProfileDb,
-            userId: msg.userId,
+            userId: evt.userId,
           });
           dispatch({
             t: "handled",
-            clientId: msg.clientId,
+            clientId: evt.clientId,
             msg: {
               t: "current-user-profile",
               result: Result.mapOk(result, profileCoreToProfile),
-              source: msg,
-              loggedIn: msg.loggedIn,
+              source: evt,
+              loggedIn: evt.loggedIn,
             },
           });
         },

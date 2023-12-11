@@ -71,13 +71,16 @@ export const init = async ({
     stored: null,
   });
   const auth = AuthServer.init({ ctx });
-  const profile = ProfileServer.init;
+  const profile = await ProfileServer.init({
+    ctx,
+    stored: null,
+  });
   ctx.logger.info(`app config:\n${JSON.stringify(APP_CONFIG, null, 4)}`);
   return {
     model: {
       wire: wire.model,
       space: space.model,
-      profile: profile,
+      profile: profile.model,
       auth: auth.model,
     },
   };
@@ -227,13 +230,15 @@ const updateMain = async ({
     }
 
     case "profile": {
-      const updated = ProfileServer.update({
+      const updated = await ProfileServer.update({
         model: model.profile,
         msg: msg.c,
+        ctx,
       });
       return {
         model: { ...model, profile: updated.model },
         cmd: ServerCmd.tag("profile", updated.cmd),
+        eff: Eff.t("profile", updated.eff),
       };
     }
 
@@ -293,9 +298,13 @@ const updateFromClient = async ({
     }
 
     case "profile": {
-      const updated = ProfileServer.updateFromClient({
+      const updated = await ProfileServer.update({
         model: model.profile,
-        msg: msg.c,
+        fromClient: {
+          ...msg.c,
+          clientId: ctx.clientId,
+          sessionId: ctx.sessionId,
+        },
         ctx: authReqCtx,
       });
 
@@ -358,9 +367,9 @@ const updateFromEvent = async ({
     model: model.space,
   });
 
-  const profile = ProfileServer.updateFromEvent({
+  const profile = await ProfileServer.update({
     ctx,
-    msg,
+    evt: msg,
     model: model.profile,
   });
 
