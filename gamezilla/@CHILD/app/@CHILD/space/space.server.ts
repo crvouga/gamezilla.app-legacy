@@ -26,6 +26,27 @@ import {
   toStartedSpace,
   toUserState,
 } from "./space.core";
+import { ServerModule } from "../../@SHARED/architecture/app-server";
+
+//
+//
+//
+//
+//
+//
+//
+
+type Module = ServerModule<{
+  Ctx: ServerCtx;
+  InCmd: null;
+  InEvt: ServerEvt;
+  Model: ServerModel;
+  Msg: ServerMsg;
+  OutCmd: ServerCmd<ToClient>;
+  OutEvt: null;
+  ToClient: ToClient;
+  ToServer: ToServer;
+}>;
 
 //
 //
@@ -35,12 +56,11 @@ import {
 //
 //
 
-export const init = (): {
-  model: ServerModel;
-} => {
+export const init: Module["init"] = () => {
+  const core = initCore();
   return {
     model: {
-      ...initCore(),
+      ...core,
       games: {},
       profileCache: {},
     },
@@ -174,7 +194,7 @@ export const updateFromClient = async (input: {
           const merged = mergeModels(model, {
             events: msg.events,
             initialState: model.initialState,
-            clock: model.clock,      
+            clock: model.clock,
           });
           return {
             model: { ...model, ...merged },

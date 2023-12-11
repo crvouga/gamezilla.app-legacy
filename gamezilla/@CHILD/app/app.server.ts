@@ -66,7 +66,10 @@ export const init = ({
   eff?: Eff<ServerMsg>;
 } => {
   const wire = WireServer.init();
-  const space = SpaceServer.init();
+  const space = SpaceServer.init({
+    ctx,
+    stored: null,
+  });
   const auth = AuthServer.init({ ctx });
   const profile = ProfileServer.init;
   ctx.logger.info(`app config:\n${JSON.stringify(APP_CONFIG, null, 4)}`);
