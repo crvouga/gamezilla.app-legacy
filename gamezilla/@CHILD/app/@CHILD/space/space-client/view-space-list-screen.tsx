@@ -1,5 +1,5 @@
 import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
-import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Button,
@@ -24,7 +24,7 @@ export const ViewSpaceListScreen = ({
   model,
 }: {
   model: ClientModel;
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
   const user = toUserState(model, ctx.currentUserId);
@@ -81,12 +81,9 @@ export const ViewSpaceListScreen = ({
               isCurrentSpace={user.spaceId === state.spaceId}
               users={users}
               gameName={gameName}
-              onClick={() => {
-                ctx.push({
-                  t: "space",
-                  c: { t: "space", spaceId: state.spaceId },
-                });
-              }}
+              onClick={() =>
+                dispatch({ t: "clicked-space-card", spaceId: state.spaceId })
+              }
             />
           );
         })}

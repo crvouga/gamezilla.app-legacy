@@ -1,9 +1,6 @@
 import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
-import {
-  SpaceClientCtx,
-  SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { ClientCtx, ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUser from "./@CHILD/vs-user/vs-user.client";
@@ -221,8 +218,8 @@ export const view = ({
   dispatch,
 }: {
   model: Model;
-  ctx: ViewCtx;
-  spaceCtx: SpaceViewCtx;
+  ctx: ClientCtx;
+  spaceCtx: SpaceClientCtx;
   dispatch: (m: Msg) => void;
 }) => {
   switch (model.t) {

@@ -1,4 +1,4 @@
-import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   Button,
   IconArrowLeftOnRect,
@@ -22,7 +22,7 @@ const View = ({
   buttons,
   ctx,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   title: string;
   renderCoverArt: (props: { class: string }) => VDom;
   buttons: MainMenuButton[];
@@ -46,7 +46,8 @@ const View = ({
             <button
               class="mb-6 flex w-full items-center rounded-lg bg-neutral-800 p-6 active:opacity-70"
               onClick={onClick}
-              key={`${index} ${title}`}>
+              key={`${index} ${title}`}
+            >
               {renderIcon({
                 class: "aspect-square w-12 h-12 mr-4",
               })}

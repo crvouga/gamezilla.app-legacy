@@ -3,7 +3,6 @@ import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architectu
 import {
   SpaceClientCtx,
   SpaceClientEvt,
-  SpaceViewCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Sub } from "gamezilla/@SHARED/core";
@@ -20,7 +19,6 @@ type Client = GameClient<{
   GameEvent: null;
   GameState: null;
   ClientCtx: SpaceClientCtx;
-  ViewCtx: SpaceViewCtx;
   ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
   ClientEvt: SpaceClientEvt;
 }>;
@@ -77,7 +75,7 @@ export const View = ({
   model,
   dispatch,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {

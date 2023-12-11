@@ -3,7 +3,7 @@ import {
   ViewUsersInSpaceList,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import {
-  SpaceViewCtx,
+  SpaceClientCtx,
   spaceToHostTitle,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
@@ -15,7 +15,7 @@ export const ViewNotInGameScreen = ({
 
   dispatchEvent,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   dispatchEvent: (m: Event) => void;
 }) => {
   if (ctx.space.hostId !== ctx.currentUserId) {
@@ -46,7 +46,8 @@ export const ViewNotInGameScreen = ({
                     game: gameName,
                   })
                 }
-                class="flex overflow-hidden rounded-lg">
+                class="flex overflow-hidden rounded-lg"
+              >
                 <CoverArt gameName={gameName} />
               </button>
 

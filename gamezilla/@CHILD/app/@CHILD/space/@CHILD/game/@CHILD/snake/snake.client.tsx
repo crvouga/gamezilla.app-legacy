@@ -8,7 +8,7 @@ import {
   isErr,
 } from "gamezilla/@SHARED/core";
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Direction } from "./@SHARED/direction";
 import {
   ClientModel,
@@ -181,7 +181,7 @@ export const View = ({
   model,
   dispatch,
 }: {
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {

@@ -1,4 +1,4 @@
-import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   ActionButton,
   IconArrowLeftOnRect,
@@ -182,7 +182,7 @@ export const View = ({
   ctx,
   dispatch,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
 }) => {
@@ -216,7 +216,8 @@ export const View = ({
           <g
             key={[a.x, a.y, b.x, b.y].join("-")}
             stroke-width="0.1"
-            stroke={"#fff"}>
+            stroke={"#fff"}
+          >
             <line
               x1={a.x + 1 / 2}
               y1={a.y + 1 / 2}
@@ -293,7 +294,8 @@ const ViewJoystick = ({
       <svg
         width="100%"
         viewBox="-1 -1 2 2"
-        class="touch-none select-none overflow-hidden">
+        class="touch-none select-none overflow-hidden"
+      >
         <defs>
           <clipPath id="cut-off-bottom">
             <circle x="0" y="0" r={1} />

@@ -1,4 +1,4 @@
-import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import {
   ClientModel,
@@ -120,7 +120,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 
 export const View = (_props: {
   dispatch: (m: Msg) => void;
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   model: Model;
   onCancel: () => void;
 }) => {

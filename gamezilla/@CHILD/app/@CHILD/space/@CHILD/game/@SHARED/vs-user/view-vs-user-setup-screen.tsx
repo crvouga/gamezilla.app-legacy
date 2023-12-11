@@ -6,7 +6,7 @@ import {
   Button,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ViewGameHeader } from "../game/view-game-header";
 
 type IconProps = { class: string };
@@ -26,7 +26,7 @@ const VersusSection = ({
 }: {
   playerOne: PlayerProp;
   playerTwo: PlayerProp;
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
 }) => {
   return (
     <div class="flex w-full flex-col gap-2 p-4">
@@ -69,7 +69,7 @@ const PlayerButtons = ({
   player,
   ctx,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   player: PlayerProp;
 }) => {
   return (
@@ -103,7 +103,7 @@ const PlayerIcons = ({
   player,
   ctx,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   player: PlayerProp;
 }) => {
   return (
@@ -113,7 +113,8 @@ const PlayerIcons = ({
         player.userId === ctx.currentUserId
           ? player.onStopPlaying
           : player.onStartPlaying
-      }>
+      }
+    >
       {player.userId ? (
         <MyAvatar
           class="h-14 w-14"
@@ -123,7 +124,8 @@ const PlayerIcons = ({
       ) : (
         <div
           role="button"
-          class="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-600">
+          class="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-600"
+        >
           <IconQuestionMark class="h-10 w-10 text-neutral-300" />
         </div>
       )}
@@ -137,7 +139,7 @@ const PlayerLabels = ({
   player,
   ctx,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   player: PlayerProp;
 }) => {
   return (
@@ -163,7 +165,7 @@ export const VsUserSetupScreen = ({
   onQuit,
   canStartGame = Boolean(playerOne.userId && playerTwo.userId),
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   title: string;
   renderCoverArt: (props: { class: string }) => VDom;
   playerOne: PlayerProp;

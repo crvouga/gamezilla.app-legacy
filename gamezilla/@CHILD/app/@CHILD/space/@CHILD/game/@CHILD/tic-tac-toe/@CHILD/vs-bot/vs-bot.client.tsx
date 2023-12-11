@@ -1,17 +1,12 @@
-import {
-  ViewBottomButtonBar,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
+import { ViewBottomButtonBar } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import {
   IconBotCute,
   IconBotLevel1,
   IconBotScary,
   VsBotGame,
-  VsBotSetup
+  VsBotSetup,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
-import {
-  SpaceClientCtx,
-  SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   ClientCmd,
   ClientCtx,
@@ -160,7 +155,7 @@ export const View = ({
   ctx,
   dispatch,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   goBack: () => void;
   model: Model;
   dispatch: (msg: Msg) => void;
@@ -219,7 +214,7 @@ export const View = ({
       ...vsBotProps.human,
       userId: model.player,
     },
-    turn: null
+    turn: null,
   };
 
   const turn = toTurn(model.board);
@@ -235,7 +230,7 @@ export const View = ({
           disabled={model.userPlayerType === turn || status.type !== "Turn"}
           color={gameTheme.background}
         />
-        
+
         <ViewBoard
           board={model.board}
           onClick={(position) => dispatch({ t: "input-move", position })}

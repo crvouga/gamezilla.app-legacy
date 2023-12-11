@@ -1,12 +1,10 @@
 import {
   APP_SOUND,
   AnonymousClientCtx,
-  AnonymousViewCtx,
   AppRoute,
   ClientCmd,
   ClientCtx,
   ClientEvt,
-  ViewCtx,
   preloadSound,
   sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -505,17 +503,16 @@ const ViewMain = ({
           dispatch={dispatch}
           ctx={{
             now,
-            serverTime: model.wire.serverTime,
+
             currentRoute: model.routing.currentRoute,
             currentUserId: model.auth.currentUser.userId,
             profiles: model.profile.profiles,
             documentVisibilityState: model.platform.documentVisibilityState,
-            push: (route) =>
-              dispatch({ t: "routing", c: { t: "clicked-link", route } }),
           }}
         />
       );
     }
+
     case "logged-out": {
       return (
         <ViewLoggedOut
@@ -523,27 +520,21 @@ const ViewMain = ({
           model={model}
           ctx={{
             now,
-            serverTime: model.wire.serverTime,
             currentRoute: model.routing.currentRoute,
             profiles: model.profile.profiles,
             documentVisibilityState: model.platform.documentVisibilityState,
-            push: (route) =>
-              dispatch({
-                t: "routing",
-                c: { t: "clicked-link", route },
-              }),
           }}
         />
       );
     }
 
     case "loading": {
-      return <LogoScreen />;
+      return <SplashScreen />;
     }
   }
 };
 
-const LogoScreen = () => {
+const SplashScreen = () => {
   return (
     <div class="flex h-full w-full items-center justify-center text-8xl">
       🦕
@@ -558,7 +549,7 @@ const ViewLoggedOut = ({
 }: {
   model: ClientModel;
   dispatch: (m: ClientMsg) => void;
-  ctx: AnonymousViewCtx;
+  ctx: AnonymousClientCtx;
 }) => {
   switch (model.routing.currentRoute.t) {
     case "auth": {
@@ -571,7 +562,7 @@ const ViewLoggedOut = ({
       );
     }
     default: {
-      return <LogoScreen />;
+      return <SplashScreen />;
     }
   }
 };
@@ -581,7 +572,7 @@ const ViewLoggedIn = ({
   ctx,
   dispatch,
 }: {
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   model: ClientModel;
   dispatch: (m: ClientMsg) => void;
 }) => {
@@ -634,7 +625,7 @@ const ViewLoggedIn = ({
     }
 
     case "auth": {
-      return <LogoScreen />;
+      return <SplashScreen />;
     }
   }
 };
@@ -644,7 +635,7 @@ const ViewBottomBar = ({
   dispatch,
   ctx,
 }: {
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   model: ClientModel;
   dispatch: (m: ClientMsg) => void;
 }) => {
@@ -684,7 +675,12 @@ const ViewBottomBar = ({
           return (
             <button
               key={AppRoute.encode(item.route)}
-              onClick={() => ctx.push(item.route)}
+              onClick={() =>
+                dispatch({
+                  t: "routing",
+                  c: { t: "clicked-link", route: item.route },
+                })
+              }
               class={cn(
                 "flex flex-1 flex-col items-center justify-center pb-2 pt-1",
                 isSelected ? "text-blue-500" : "opacity-80"

@@ -1,7 +1,7 @@
 import {
   ClientEvt,
   RouteChat,
-  ViewCtx,
+  ClientCtx,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Browser, Eff, exhaustive, p } from "gamezilla/@SHARED/core";
@@ -208,7 +208,7 @@ export const View = ({
 }: {
   model: ClientModel;
   dispatch: (m: Msg) => void;
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   route: RouteChat;
   userSearch: {
     onInput: (searchText: string) => void;
@@ -255,7 +255,7 @@ const ViewChat = (_props: {
 };
 
 const ViewChatNew = (_props: {
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   model: ClientModel;
   dispatch: (m: Msg) => void;
   userSearch: {
@@ -267,7 +267,7 @@ const ViewChatNew = (_props: {
 };
 
 const ViewChatList = (_props: {
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   model: ClientModel;
   dispatch: (m: Msg) => void;
 }) => {

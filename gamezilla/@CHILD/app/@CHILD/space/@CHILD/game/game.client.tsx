@@ -1,8 +1,5 @@
 import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
-import {
-  SpaceClientCtx,
-  SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { Sub } from "gamezilla/@SHARED/core";
 import * as ChessClient from "./@CHILD/chess/chess.client";
 import * as ConnectFourClient from "./@CHILD/connect-four/connect-four.client";
@@ -31,7 +28,6 @@ type Client = GameClient<{
   GameState: GameState;
   GameEvent: GameEvent;
   ClientCtx: SpaceClientCtx;
-  ViewCtx: SpaceViewCtx;
 }>;
 
 const ConnectFour = GameClient.tag("connect-four", ConnectFourClient);

@@ -1,4 +1,8 @@
-import { EventId, WithEventId, withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
+import {
+  EventId,
+  WithEventId,
+  withId,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import {
   APP_SOUND,
   AnonymousClientCtx,
@@ -14,7 +18,6 @@ import {
   ClientModel,
   ClientMsg,
   Event,
-
   SpaceStateStarted,
   ToServer,
   appendEvent,
@@ -100,21 +103,22 @@ function sendEventToServer({
   eventId,
 }: {
   model: ClientModel;
-  eventId:  EventId;
+  eventId: EventId;
 }): {
   model: ClientModel;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } {
-
   const eventWithMeta = model.events.events[eventId];
 
-  if(!eventWithMeta) {
+  if (!eventWithMeta) {
     return { model };
   }
 
   return {
     model,
-    cmd: [sendToServer({ t: "event", c: { ...eventWithMeta }, clock: model.clock })],
+    cmd: [
+      sendToServer({ t: "event", c: { ...eventWithMeta }, clock: model.clock }),
+    ],
   };
 }
 
@@ -177,7 +181,6 @@ function updateGameFromEvent({
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
   event?: WithEventId<Event>[];
 } {
-
   const eventWithMeta = model.events.events[eventId];
 
   if (!after || !after.game || !ctx.currentUserId || !eventWithMeta) {
@@ -189,8 +192,17 @@ function updateGameFromEvent({
       ...ctx,
       currentUserId: ctx.currentUserId,
       space: after,
+      quit() {
+        return;
+      },
+      viewProfile() {
+        return;
+      },
     },
-    gameEvent: eventWithMeta.t === "game" ? { ...eventWithMeta, ...eventWithMeta.c } : null,
+    gameEvent:
+      eventWithMeta.t === "game"
+        ? { ...eventWithMeta, ...eventWithMeta.c }
+        : null,
     model: model.games[eventWithMeta.spaceId],
     state: after.game,
     stateBefore: before?.game ?? after.game,

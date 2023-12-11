@@ -5,7 +5,6 @@ import {
 import {
   APP_SOUND,
   AnonymousClientCtx,
-  AnonymousViewCtx,
   ClientCmd,
   ClientEvt,
   playSound,
@@ -387,7 +386,7 @@ export const ViewLogoutScreen = ({
   model,
   dispatch,
 }: {
-  ctx: AnonymousViewCtx;
+  ctx: AnonymousClientCtx;
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {

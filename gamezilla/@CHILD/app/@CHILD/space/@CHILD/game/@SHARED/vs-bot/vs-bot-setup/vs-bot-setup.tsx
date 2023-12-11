@@ -1,4 +1,4 @@
-import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Button,
@@ -234,7 +234,7 @@ const PlayerIcons = ({
   player,
   ctx,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   player: PlayerProp;
 }) => {
   return (
@@ -263,7 +263,7 @@ const PlayerLabels = ({
   player,
   ctx,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   player: PlayerProp;
 }) => {
   return (
@@ -290,7 +290,7 @@ const PlayerButtons = ({
 }: {
   onSwapSides: () => void;
   human: { userId: UserId | null };
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   player: PlayerProp;
   dispatch: (m: Msg) => void;
 }) => {

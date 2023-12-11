@@ -2,13 +2,8 @@ import {
   GameLayout,
   ViewBottomButtonBar,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
-import {
-  VsBotSetup,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
-import {
-  SpaceClientCtx,
-  SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { VsBotSetup } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
@@ -261,7 +256,7 @@ export const View = ({
   dispatch,
   onClose,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
   onClose: () => void;

@@ -1,5 +1,5 @@
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Option, Sub, exhaustive, isErr } from "gamezilla/@SHARED/core";
@@ -295,7 +295,7 @@ export const View = ({
   dispatch,
   onQuit,
 }: {
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   model: Model;
   dispatch: (msg: Msg) => void;
   onQuit: () => void;

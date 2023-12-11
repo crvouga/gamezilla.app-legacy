@@ -2,17 +2,10 @@ import {
   GameLayout,
   ViewBottomButtonBar,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
-import {
-  VsUserSetupScreen,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-user";
-import {
-  GameClient,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
-import {
-  SpaceClientCtx,
-  SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-user";
+import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
   ConformationDialog,
@@ -47,8 +40,7 @@ type Client = GameClient<{
   ToServer: ToServer;
   GameState: GameState;
   GameEvent: GameEvent;
-  ClientCtx: SpaceClientCtx;
-  ViewCtx: SpaceViewCtx & { onQuit: () => void };
+  ClientCtx: SpaceClientCtx & { onQuit: () => void };
 }>;
 
 //
@@ -300,7 +292,7 @@ const ViewGameOverMessage = ({
   dispatch,
 }: {
   state: StateGameOver;
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   dispatch: (msg: GameEvent) => void;
 }) => {
   const currentPlayerType = toPlayerType(ctx.currentUserId, state);
@@ -427,7 +419,7 @@ const Feedback = ({
   ctx,
   state,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   state: StateGame | StateGameOver;
 }) => {
   if (state.type === "game-over") {
@@ -464,7 +456,7 @@ const PlayerSlot = ({
 }: {
   state: StateGame | StateGameOver;
   playerType: PlayerType;
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
 }) => {
   return (
     <div class="flex flex-1 items-center gap-2 overflow-hidden rounded border border-neutral-700 p-2">
@@ -481,7 +473,6 @@ const PlayerSlot = ({
   );
 };
 
-
 export const ViewFeedItem: Client["ViewFeedItem"] = () => {
   return null;
-}
+};

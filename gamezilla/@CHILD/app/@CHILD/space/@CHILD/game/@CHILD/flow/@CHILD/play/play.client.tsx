@@ -1,12 +1,10 @@
-import {
-  SpaceClientEvt,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientEvt } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub, chain } from "gamezilla/@SHARED/core";
 import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { FlowGridUIPlay } from "../../@SHARED/flow";
-import { FlowViewCtx } from "../../@SHARED/flow-ctx";
+import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import {
   ClientModel,
   ClientMsg,
@@ -22,8 +20,7 @@ type Client = GameClient<{
   ToServer: ToServer;
   GameEvent: null;
   GameState: null;
-  ViewCtx: FlowViewCtx;
-  ClientCtx: FlowViewCtx;
+  ClientCtx: FlowClientCtx;
   ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
   ClientEvt: SpaceClientEvt;
 }>;

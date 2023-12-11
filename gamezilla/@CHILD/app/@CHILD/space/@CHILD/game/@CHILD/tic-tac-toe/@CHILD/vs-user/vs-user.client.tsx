@@ -1,8 +1,5 @@
 import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-user";
-import {
-  SpaceClientCtx,
-  SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import { toTurn } from "../../@SHARED/tic-tic-toe/tic-tac-toe";
 import {
@@ -164,7 +161,7 @@ export const View = ({
   dispatch,
   onCloseGame,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
   onCloseGame: () => void;

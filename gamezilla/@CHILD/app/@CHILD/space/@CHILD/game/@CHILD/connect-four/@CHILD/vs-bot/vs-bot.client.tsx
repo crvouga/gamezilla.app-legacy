@@ -18,13 +18,13 @@ import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
 import {
   SpaceClientCtx,
   SpaceClientEvt,
-  SpaceViewCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   APP_SOUND,
   ClientCmd,
   playSound,
 } from "gamezilla/@CHILD/app/@SHARED/client";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
@@ -48,7 +48,6 @@ import {
   ToServer,
   allBotLevels,
 } from "./vs-bot.core";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 type Client = GameClient<{
   ClientModel: ClientModel;
@@ -57,8 +56,7 @@ type Client = GameClient<{
   ToServer: ToServer;
   GameState: GameState;
   GameEvent: GameEvent;
-  ClientCtx: SpaceClientCtx;
-  ViewCtx: SpaceViewCtx & { onQuit: () => void };
+  ClientCtx: SpaceClientCtx & { onQuit: () => void };
   ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
   ClientEvt: SpaceClientEvt;
 }>;

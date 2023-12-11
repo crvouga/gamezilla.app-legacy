@@ -1,7 +1,10 @@
+import {
+  WithEventId,
+  WithEventMeta,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { ClientCmd, ClientEvt } from "gamezilla/@CHILD/app/@SHARED/client";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import {WithEventId, WithEventMeta  } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 
 export type GameClientTypes = {
   //
@@ -14,7 +17,6 @@ export type GameClientTypes = {
   GameState: any;
   GameEvent: any;
   //
-  ViewCtx: any;
   ClientCtx: any;
 };
 
@@ -53,7 +55,7 @@ export type GameClient<T extends GameClientTypes> = {
     msg?: T["ClientMsg"] | null;
     serverMsg?: T["ToClient"] | null;
     evt?: ClientEvt | null;
-    gameEvent?: (WithEventMeta<T["GameEvent"]>) | null;
+    gameEvent?: WithEventMeta<T["GameEvent"]> | null;
   }) => Output<T>;
 
   subscriptions: (input: {
@@ -64,7 +66,7 @@ export type GameClient<T extends GameClientTypes> = {
   }) => Sub<T["ClientMsg"]>;
 
   View: (input: {
-    ctx: T["ViewCtx"];
+    ctx: T["ClientCtx"];
     dispatch: (msg: T["ClientMsg"]) => void;
     state: T["GameState"];
     model?: T["ClientModel"] | null;
@@ -72,7 +74,7 @@ export type GameClient<T extends GameClientTypes> = {
 
   ViewFeedItem: (input: {
     ctx: T["ClientCtx"];
-    state: T['GameState']
+    state: T["GameState"];
     event: T["GameEvent"];
   }) => VDom;
 };
@@ -90,7 +92,6 @@ export const tag = <T extends string, Types extends GameClientTypes>(
   ToServer: { t: T; c: Types["ToServer"] };
   GameState: { t: T; c: Types["GameState"] };
   GameEvent: { t: T; c: Types["GameEvent"] };
-  ViewCtx: Types["ViewCtx"];
   ClientCtx: Types["ClientCtx"];
 }> => {
   return {
@@ -126,7 +127,10 @@ export const tag = <T extends string, Types extends GameClientTypes>(
           ? updated.gameEvent.map(
               (
                 gameEvent
-              ): WithEventMeta<{ t: T; c: WithEventMeta<Types["GameEvent"]> }> => ({
+              ): WithEventMeta<{
+                t: T;
+                c: WithEventMeta<Types["GameEvent"]>;
+              }> => ({
                 eventId: gameEvent.eventId,
                 happenedAt: gameEvent.happenedAt,
                 t: tag,
@@ -250,7 +254,6 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
   ToServer: { t: TTag; c: TTypes["ToServer"] };
   GameState: { t: TTag; c: TTypes["GameState"] };
   GameEvent: { t: TTag; c: TTypes["GameEvent"] };
-  ViewCtx: TTypes["ViewCtx"];
   ClientCtx: TTypes["ClientCtx"];
 }> => {
   return {

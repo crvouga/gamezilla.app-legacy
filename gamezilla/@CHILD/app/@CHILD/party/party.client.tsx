@@ -1,8 +1,4 @@
-import {
-  AppRoute,
-  ClientCtx,
-  ViewCtx,
-} from "gamezilla/@CHILD/app/@SHARED/client";
+import { AppRoute, ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Eff,
@@ -198,7 +194,7 @@ export const ViewBanner = ({
   model,
   ctx,
 }: {
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   route: AppRoute;
   model: Model;
   dispatch: (msg: Msg) => void;

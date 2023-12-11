@@ -8,14 +8,16 @@ import {
   withId,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
-import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   AnonymousClientCtx,
   ClientCmd,
   ClientEvt,
   RouteGameSpace,
-  ViewCtx,
+  ClientCtx,
   addProfiles,
+  pushRoute,
+  replaceRoute,
   sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
@@ -132,6 +134,30 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
       };
     }
 
+    case "clicked-link": {
+      return { model, cmd: [pushRoute(msg.route)] };
+    }
+
+    case "clicked-back-button": {
+      switch (msg.from) {
+        case "join-screen": {
+          return {
+            model,
+            cmd: [replaceRoute({ t: "space", c: { t: "space-list" } })],
+          };
+        }
+      }
+    }
+
+    case "clicked-space-card": {
+      return {
+        model,
+        cmd: [
+          pushRoute({ t: "space", c: { t: "space", spaceId: msg.spaceId } }),
+        ],
+      };
+    }
+
     case "game": {
       const space = toStartedSpace(model, msg.spaceId);
 
@@ -140,7 +166,13 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
       }
 
       const updatedGame = GameClient.update({
-        ctx: { ...ctx, currentUserId: ctx.currentUserId, space: space },
+        ctx: {
+          ...ctx,
+          currentUserId: ctx.currentUserId,
+          space: space,
+          quit() {},
+          viewProfile() {},
+        },
         msg: msg.c,
         model: model.games[msg.spaceId],
         state: space.game,
@@ -212,7 +244,13 @@ const updateFromServer: Module["update"] = (input) => {
           }
 
           const updatedGame = GameClient.update({
-            ctx: { ...ctx, space: space, currentUserId: ctx.currentUserId },
+            ctx: {
+              ...ctx,
+              space: space,
+              currentUserId: ctx.currentUserId,
+              quit() {},
+              viewProfile() {},
+            },
             model: model.games[fromServer.spaceId],
             serverMsg: fromServer.c,
             state: space.game,
@@ -331,7 +369,7 @@ export const subscriptions: Module["subscriptions"] = ({ ctx, model }) => {
 
     const sub = Sub.map(
       GameClient.subscriptions({
-        ctx: { ...clientCtx, space: space },
+        ctx: { ...clientCtx, space: space, quit() {}, viewProfile() {} },
         state: space.game,
         model: model.games[spaceId],
         intervalId: spaceId,
@@ -363,7 +401,7 @@ export const View = ({
   viewBottomBar,
 }: {
   model: ClientModel;
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   dispatch: (m: ClientMsg) => void;
   route: RouteGameSpace;
   viewBottomBar: VDom;
@@ -403,7 +441,7 @@ const ViewSpaceScreen = ({
   spaceId,
 }: {
   model: ClientModel;
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   dispatchEvent: (m: Event) => void;
   dispatch: (m: ClientMsg) => void;
   spaceId: SpaceId;
@@ -412,11 +450,11 @@ const ViewSpaceScreen = ({
 
   switch (space.type) {
     case "ended": {
-      return <ViewSpaceEnded ctx={ctx} />;
+      return <ViewSpaceEnded dispatch={dispatch} />;
     }
 
     case "initial": {
-      return <ViewSpaceNotFound ctx={ctx} />;
+      return <ViewSpaceNotFound dispatch={dispatch} />;
     }
 
     case "started": {
@@ -441,12 +479,12 @@ const ViewSpaceStarted = ({
   space,
 }: {
   model: ClientModel;
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   dispatchEvent: (m: Event) => void;
   dispatch: (m: ClientMsg) => void;
   space: SpaceStateStarted;
 }) => {
-  const spaceCtx: SpaceViewCtx = {
+  const spaceCtx: SpaceClientCtx = {
     ...ctx,
     space: space,
     viewProfile: (userId) => {
@@ -492,11 +530,14 @@ const ViewSpaceStarted = ({
             class="flex w-full flex-col items-center justify-center gap-2 p-4"
             onClick={() => {
               if (model.previewUserId) {
-                ctx.push({
-                  t: "profile",
-                  c: {
+                dispatch({
+                  t: "clicked-link",
+                  route: {
                     t: "profile",
-                    userId: model.previewUserId,
+                    c: {
+                      t: "profile",
+                      userId: model.previewUserId,
+                    },
                   },
                 });
               }
@@ -529,11 +570,14 @@ const ViewSpaceStarted = ({
             <Button
               onClick={() => {
                 if (model.previewUserId) {
-                  ctx.push({
-                    t: "profile",
-                    c: {
+                  dispatch({
+                    t: "clicked-link",
+                    route: {
                       t: "profile",
-                      userId: model.previewUserId,
+                      c: {
+                        t: "profile",
+                        userId: model.previewUserId,
+                      },
                     },
                   });
                 }
@@ -556,7 +600,7 @@ const ViewFeed = ({
   state: SpaceStateStarted;
   dispatch: (m: ClientMsg) => void;
   model: ClientModel;
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
 }) => {
   const event = model.events.events[state.latestEvent];
 
@@ -576,7 +620,7 @@ const ViewFeedItem = ({
   event,
   state,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   event: WithEventId<Event>;
   state: SpaceStateStarted;
 }) => {
@@ -657,7 +701,7 @@ const ViewSpaceScreenMain = ({
 }: {
   space: SpaceStateStarted;
   model: ClientModel;
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   dispatch: (m: ClientMsg) => void;
   dispatchEvent: (m: Event) => void;
 }) => {
@@ -667,6 +711,7 @@ const ViewSpaceScreenMain = ({
     return (
       <ViewSpaceJoinScreen
         ctx={ctx}
+        dispatch={dispatch}
         dispatchEvent={dispatchEvent}
         model={model}
       />
@@ -702,7 +747,7 @@ function ViewTopBar({
   dispatch,
   dispatchEvent,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   dispatch: (m: ClientMsg) => void;
   dispatchEvent: (m: Event) => void;
 }) {
@@ -711,7 +756,12 @@ function ViewTopBar({
   return (
     <nav class="flex h-14 w-full items-center border-b border-neutral-700">
       <ViewTopButton
-        onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
+        onClick={() =>
+          dispatch({
+            t: "clicked-link",
+            route: { t: "space", c: { t: "space-list" } },
+          })
+        }
         label="Home"
         icon={<IconHome class="h-6 w-6" />}
       />
@@ -779,12 +829,21 @@ function ViewTopButton({
   );
 }
 
-const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
+const ViewSpaceNotFound = ({
+  dispatch,
+}: {
+  dispatch: (m: ClientMsg) => void;
+}) => {
   return (
     <div class="flex flex-1 flex-col items-center justify-center gap-4">
       <p class="text-center text-2xl">Space not found</p>
       <Button
-        onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
+        onClick={() =>
+          dispatch({
+            t: "clicked-link",
+            route: { t: "space", c: { t: "space-list" } },
+          })
+        }
         size="lg"
         variant="contained"
         color="primary"
@@ -795,12 +854,17 @@ const ViewSpaceNotFound = ({ ctx }: { ctx: ViewCtx }) => {
   );
 };
 
-const ViewSpaceEnded = ({ ctx }: { ctx: ViewCtx }) => {
+const ViewSpaceEnded = ({ dispatch }: { dispatch: (m: ClientMsg) => void }) => {
   return (
     <div class="flex flex-1 flex-col items-center justify-center gap-4">
       <p class="text-center text-2xl">Space ended</p>
       <Button
-        onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
+        onClick={() =>
+          dispatch({
+            t: "clicked-link",
+            route: { t: "space", c: { t: "space-list" } },
+          })
+        }
         size="lg"
         variant="contained"
         color="primary"
@@ -816,7 +880,7 @@ export const ViewCurrentSpaceBar = ({
   model,
   dispatch,
 }: {
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
@@ -850,9 +914,12 @@ export const ViewCurrentSpaceBar = ({
       <button
         class="flex flex-1 items-center overflow-hidden"
         onClick={() => {
-          ctx.push({
-            t: "space",
-            c: { t: "space", spaceId: space.spaceId },
+          dispatch({
+            t: "clicked-link",
+            route: {
+              t: "space",
+              c: { t: "space", spaceId: space.spaceId },
+            },
           });
         }}
       >

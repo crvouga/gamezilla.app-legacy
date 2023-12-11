@@ -1,4 +1,4 @@
-import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   IconRobot,
@@ -61,7 +61,7 @@ export type GameOver =
     };
 
 type Props = {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   model?: Model;
   gameOver: GameOver | null;
   human: {
@@ -374,7 +374,7 @@ const Slot = ({
   return (
     <div
       className={cn(
-        "flex flex-1 items-center gap-2 rounded-md border border-b-2 border-neutral-600 bg-neutral-900 p-2 text-sm transition-colors duration-200 ease-in-out max-w-full",
+        "flex max-w-full flex-1 items-center gap-2 rounded-md border border-b-2 border-neutral-600 bg-neutral-900 p-2 text-sm transition-colors duration-200 ease-in-out",
         active && "border-b-blue-500"
       )}
     >

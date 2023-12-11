@@ -1,4 +1,9 @@
-import { Eff, andThen, chain, isErr, p } from "gamezilla/@SHARED/core";
+import {
+  BottomBarButtonAction,
+  GameLayout,
+  ViewBottomButtonBar,
+} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   APP_SOUND,
   ClientCmd,
@@ -18,15 +23,7 @@ import {
   Spinner,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import {
-  SpaceClientCtx,
-  SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import {
-  BottomBarButtonAction,
-  GameLayout,
-  ViewBottomButtonBar,
-} from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
+import { Eff, andThen, chain, isErr, p } from "gamezilla/@SHARED/core";
 import { Chess } from "../../@SHARED/chess";
 import { Chessboard } from "../../@SHARED/chess-ui/chessboard";
 import { CHESS_SOUND } from "../../@SHARED/chess/chess-sounds";
@@ -211,7 +208,7 @@ function watch(model: ClientModel): {
 //
 //
 
-const toDurationMs = (ctx: SpaceViewCtx, model: ClientModel) => {
+const toDurationMs = (ctx: SpaceClientCtx, model: ClientModel) => {
   if (model.t === "loading") {
     return null;
   }
@@ -227,7 +224,7 @@ export const View = ({
   ctx,
   dispatch,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   model: ClientModel;
   dispatch: (m: ClientMsg) => void;
   onClose: () => void;
@@ -496,14 +493,16 @@ const ViewStatusBar = ({ model }: { model: ClientModel }) => {
           toPlayerColor(model.puzzle) === "b"
             ? "bg-black text-white"
             : "bg-white text-black"
-        )}>
+        )}
+      >
         <div
           class={cn(
             "h-6 w-6 rounded-full border-2",
             toPlayerColor(model.puzzle) === "b"
               ? "border-[#ababab] bg-black"
               : "border-black bg-white"
-          )}></div>
+          )}
+        ></div>
         <p class="text-xl text-inherit">
           {Chess.colorToString(toPlayerColor(model.puzzle))} to move
         </p>
@@ -529,7 +528,8 @@ const TickingClock = (input: { sec: number }) => {
       class="h-5 w-5"
       viewBox="-1 -1 2 2"
       stroke="currentColor"
-      stroke-width="0.2">
+      stroke-width="0.2"
+    >
       <circle cx="0" cy="0" r="0.9"></circle>
 
       {/* up */}
@@ -538,7 +538,8 @@ const TickingClock = (input: { sec: number }) => {
         x1="0"
         y1="0"
         x2="0"
-        y2="-1"></line>
+        y2="-1"
+      ></line>
 
       {/* right */}
       <line
@@ -546,7 +547,8 @@ const TickingClock = (input: { sec: number }) => {
         x1="0"
         y1="0"
         x2="1"
-        y2="0"></line>
+        y2="0"
+      ></line>
 
       {/* down */}
       <line
@@ -554,7 +556,8 @@ const TickingClock = (input: { sec: number }) => {
         x1="0"
         y1="0"
         x2="0"
-        y2="1"></line>
+        y2="1"
+      ></line>
 
       {/* left */}
       <line
@@ -562,7 +565,8 @@ const TickingClock = (input: { sec: number }) => {
         x1="0"
         y1="0"
         x2="-1"
-        y2="0"></line>
+        y2="0"
+      ></line>
     </svg>
   );
 };

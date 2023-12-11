@@ -1,4 +1,4 @@
-import { ClientCtx, ViewCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, Sub, isErr } from "gamezilla/@SHARED/core";
 import {
   ClientModel,
@@ -134,7 +134,7 @@ export const subscriptions = (_ctx: ClientCtx, model: Model): Sub<Msg> => {
 
 export const View = (_props: {
   model: Model;
-  ctx: ViewCtx;
+  ctx: ClientCtx;
   dispatch: (m: Msg) => void;
   onBack: () => void;
 }) => {

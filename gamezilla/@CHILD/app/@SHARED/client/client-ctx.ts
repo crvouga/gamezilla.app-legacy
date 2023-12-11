@@ -8,22 +8,6 @@ type Profile = {
   avatarUrl: string;
 };
 
-export type AnonymousViewCtx = {
-  push: (route: Route.AppRoute) => void;
-  currentRoute: Route.AppRoute;
-  serverTime: {
-    serverNow: Posix
-    recordedAt: Posix;
-  } | null
-  now: Posix;
-  documentVisibilityState: DocumentVisibilityState;
-  profiles: { [userId: UserId]: Profile };
-};
-
-export type ViewCtx = AnonymousViewCtx & {
-  currentUserId: UserId;
-};
-
 export type AnonymousClientCtx = {
   currentRoute: Route.AppRoute;
   now: Posix;

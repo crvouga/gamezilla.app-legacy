@@ -1,10 +1,10 @@
-import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 
 export type PlayerType = "player-one" | "player-two";
 
 export type VsBotProps = {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   title: string;
   renderCoverArt: (props: { class: string }) => VDom;
   onQuit: () => void;

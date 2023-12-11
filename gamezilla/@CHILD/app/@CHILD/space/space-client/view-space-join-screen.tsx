@@ -2,7 +2,7 @@ import {
   ViewGameHeader,
   ViewUsersInSpaceList,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
-import { SpaceViewCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   Button,
   TopBar,
@@ -10,15 +10,17 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { gameNameToString } from "../@CHILD/game/game.core";
-import { ClientModel, Event, toSpaceState } from "../space.core";
+import { ClientModel, ClientMsg, Event, toSpaceState } from "../space.core";
 
 export const ViewSpaceJoinScreen = ({
   model,
   ctx,
+  dispatch,
   dispatchEvent,
 }: {
-  ctx: SpaceViewCtx;
+  ctx: SpaceClientCtx;
   model: ClientModel;
+  dispatch: (msg: ClientMsg) => void;
   dispatchEvent: (m: Event) => void;
 }) => {
   const space = toSpaceState(model, ctx.space.spaceId);
@@ -40,7 +42,9 @@ export const ViewSpaceJoinScreen = ({
       <TopBar
         left={
           <TopBarBackButton
-            onClick={() => ctx.push({ t: "space", c: { t: "space-list" } })}
+            onClick={() =>
+              dispatch({ t: "clicked-back-button", from: "join-screen" })
+            }
           />
         }
         title="Join space"

@@ -1,8 +1,10 @@
 import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { AppRoute } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { memoize } from "gamezilla/@SHARED/core";
 import { EventStream } from "gamezilla/@SHARED/event-stream";
 import { LamportClock } from "gamezilla/@SHARED/lamport-clock";
+import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock/lamport-timestamp";
 import * as Game from "./@CHILD/game/game.core";
 import {
   EventId,
@@ -10,7 +12,6 @@ import {
   WithEventId,
   WithEventMeta,
 } from "./@SHARED/event";
-import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock/lamport-timestamp";
 
 //
 //
@@ -109,7 +110,10 @@ export type ClientMsg =
   | { t: "game"; spaceId: SpaceId; c: Game.ClientMsg }
   | { t: "closed-modal" }
   | { t: "clicked-people-button" }
-  | { t: "clicked-user"; userId: UserId };
+  | { t: "clicked-back-button"; from: "join-screen" }
+  | { t: "clicked-space-card"; spaceId: SpaceId }
+  | { t: "clicked-user"; userId: UserId }
+  | { t: "clicked-link"; route: AppRoute };
 
 //
 //

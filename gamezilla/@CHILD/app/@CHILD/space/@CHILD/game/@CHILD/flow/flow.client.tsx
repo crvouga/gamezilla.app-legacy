@@ -1,9 +1,6 @@
 import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
-import {
-  SpaceClientCtx,
-  SpaceClientEvt,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientEvt } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconGamepad,
@@ -11,7 +8,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub, chain } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@SHARED/flow-cover-art";
-import { FlowViewCtx } from "./@SHARED/flow-ctx";
+import { FlowClientCtx } from "./@SHARED/flow-ctx";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./flow.core";
 
 type Client = GameClient<{
@@ -24,8 +21,7 @@ type Client = GameClient<{
   GameEvent: null;
   GameState: null;
   //
-  ClientCtx: SpaceClientCtx;
-  ViewCtx: FlowViewCtx;
+  ClientCtx: FlowClientCtx;
   //
   ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
   ClientEvt: SpaceClientEvt;
@@ -87,7 +83,7 @@ export const subscriptions: Client["subscriptions"] = (_input) => {
 
 export const View: Client["View"] = (input) => {
   const { dispatch } = input;
-  const ctx: FlowViewCtx = {
+  const ctx: FlowClientCtx = {
     ...input.ctx,
     onExit: () => dispatch({ t: "input-mode", mode: "none" }),
   };

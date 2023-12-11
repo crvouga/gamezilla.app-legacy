@@ -1,11 +1,8 @@
 import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
-import {
-  GameClient,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
 import {
   SpaceClientCtx,
   SpaceClientEvt,
-  SpaceViewCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   APP_SOUND,
@@ -43,7 +40,6 @@ type Client = GameClient<{
   ToClient: ToClient;
   ToServer: ToServer;
   ClientCtx: SpaceClientCtx;
-  ViewCtx: SpaceViewCtx;
   GameEvent: GameEvent;
   GameState: GameState;
   ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
@@ -362,5 +358,5 @@ export const View: Client["View"] = ({ ctx, state, dispatch }) => {
 };
 
 export const ViewFeedItem: Client["ViewFeedItem"] = () => {
-  return null
-}
+  return null;
+};

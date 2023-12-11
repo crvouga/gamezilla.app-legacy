@@ -1,8 +1,4 @@
-import {
-  ClientCtx,
-  ClientEvt,
-  ViewCtx,
-} from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCtx, ClientEvt } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   ReqCtx,
@@ -60,9 +56,7 @@ export type SpaceCtx = {
   space: Space;
 };
 
-export type SpaceClientCtx = ClientCtx & SpaceCtx;
-
-export type SpaceViewCtx = ViewCtx &
+export type SpaceClientCtx = ClientCtx &
   SpaceCtx & {
     quit: () => void;
     viewProfile: (userId: UserId) => void;
@@ -78,7 +72,7 @@ export type SpaceViewCtx = ViewCtx &
 //
 //
 
-export const spaceToProfiles = (ctx: SpaceViewCtx, space: Space) => {
+export const spaceToProfiles = (ctx: SpaceClientCtx, space: Space) => {
   const profiles: Profile[] = [];
   for (const userId in space.users) {
     if (!UserId.is(userId)) {
@@ -93,7 +87,7 @@ export const spaceToProfiles = (ctx: SpaceViewCtx, space: Space) => {
   return profiles;
 };
 
-export const spaceToHostTitle = (ctx: SpaceViewCtx, space: Space) => {
+export const spaceToHostTitle = (ctx: SpaceClientCtx, space: Space) => {
   const host = ctx.profiles[space.hostId];
   if (!host) {
     return null;

@@ -1,17 +1,10 @@
 import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
-import {
-  GameClient,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
-import {
-  FeedItem,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
-import {
-  SpaceClientCtx,
-  SpaceViewCtx,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
+import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Sub } from "gamezilla/@SHARED/core";
-import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import * as VsBotClient from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUserClient from "./@CHILD/vs-user/vs-user.client";
 import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art";
@@ -32,7 +25,6 @@ type Client = GameClient<{
   GameState: GameState;
   GameEvent: GameEvent;
   ClientCtx: SpaceClientCtx;
-  ViewCtx: SpaceViewCtx;
 }>;
 
 const VsBot = GameClient.tag("vs-bot", VsBotClient);
@@ -60,6 +52,7 @@ export const init: Client["init"] = (input) => {
         ...input,
         state,
         model: model?.t === "vs-bot" ? model : null,
+        ctx: { ...input.ctx, onQuit: () => {} },
       });
 
       return initial;
@@ -69,6 +62,7 @@ export const init: Client["init"] = (input) => {
       const initial = VsUser.init({
         ...input,
         state,
+        ctx: { ...input.ctx, onQuit: () => {} },
         model: model?.t === "vs-user" ? model : null,
       });
 
@@ -89,7 +83,7 @@ export const update: Client["update"] = (input) => {
   return GameClient.chain(
     init(input),
     (model): ReturnType<Client["update"]> => {
-      const { ctx, msg, evt, gameEvent, serverMsg, state, stateBefore } = input;
+      const { msg, evt, gameEvent, serverMsg, state, stateBefore } = input;
 
       switch (state.t) {
         case "none": {
@@ -98,7 +92,7 @@ export const update: Client["update"] = (input) => {
 
         case "vs-bot": {
           return VsBot.update({
-            ctx,
+            ctx: { ...input.ctx, onQuit: () => {} },
             msg: msg?.t === "vs-bot" ? msg : null,
             evt: evt,
             gameEvent: gameEvent?.t === "vs-bot" ? gameEvent : null,
@@ -111,7 +105,7 @@ export const update: Client["update"] = (input) => {
 
         case "vs-user": {
           return VsUser.update({
-            ctx,
+            ctx: { ...input.ctx, onQuit: () => {} },
             model: model.t === "vs-user" ? model : null,
             msg: msg?.t === "vs-user" ? msg : null,
             evt: evt,
@@ -261,7 +255,13 @@ export const ViewFeedItem: Client["ViewFeedItem"] = (input) => {
     case "vs-bot": {
       switch (state.t) {
         case "vs-bot": {
-          return <VsBot.ViewFeedItem ctx={ctx} event={event} state={state} />;
+          return (
+            <VsBot.ViewFeedItem
+              ctx={{ ...ctx, onQuit: () => {} }}
+              event={event}
+              state={state}
+            />
+          );
         }
         default: {
           return null;
@@ -272,7 +272,13 @@ export const ViewFeedItem: Client["ViewFeedItem"] = (input) => {
     case "vs-user": {
       switch (state.t) {
         case "vs-user": {
-          return <VsUser.ViewFeedItem ctx={ctx} event={event} state={state} />;
+          return (
+            <VsUser.ViewFeedItem
+              ctx={{ ...ctx, onQuit: () => {} }}
+              event={event}
+              state={state}
+            />
+          );
         }
         default: {
           return null;
@@ -303,6 +309,7 @@ export const subscriptions: Client["subscriptions"] = (input) => {
         ...input,
         model: model?.t === "vs-bot" ? model : undefined,
         state,
+        ctx: { ...input.ctx, onQuit: () => {} },
       });
     }
 
@@ -311,6 +318,7 @@ export const subscriptions: Client["subscriptions"] = (input) => {
         ...input,
         model: model?.t === "vs-user" ? model : undefined,
         state,
+        ctx: { ...input.ctx, onQuit: () => {} },
       });
     }
   }
