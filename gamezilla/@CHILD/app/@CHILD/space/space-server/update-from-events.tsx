@@ -22,7 +22,7 @@ import {
   toStartedSpace,
 } from "../space.core";
 import { spaceCmdToCmd } from "./update-shared";
-import { chainUpdates } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server";
+import { ServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server";
 
 type Output = {
   model: ServerModel;
@@ -53,7 +53,7 @@ async function updateFromEventsLoop(
     return updateFromEventsLoop(ctx, rest, acc);
   }
 
-  const updated = await chainUpdates(acc, [
+  const updated = await ServerModule.composeUpdates(acc, [
     (model) => appendNewEvent({ model, event: event }),
     (model) => syncUserWhenJoined({ model, event: event }),
     (model) => sendEventToClients({ model, eventId: event.eventId }),

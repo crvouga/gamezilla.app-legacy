@@ -138,7 +138,7 @@ export type ServerModule<T extends ServerModuleTypes> = {
 
 type MaybePromise<T> = T | Promise<T>;
 
-export const chainUpdates = async <T extends ServerModuleTypes>(
+const composeUpdates = async <T extends ServerModuleTypes>(
   acc: Output<T>,
   updates: ((model: T["Model"]) => MaybePromise<Output<T>>)[]
 ): Promise<Output<T>> => {
@@ -157,9 +157,9 @@ export const chainUpdates = async <T extends ServerModuleTypes>(
     evt: [...(acc.evt ?? []), ...(updated.evt ?? [])],
   };
 
-  return chainUpdates(accNew, rest);
+  return composeUpdates(accNew, rest);
 };
 
-const ServerModule = {
-  chainUpdates,
+export const ServerModule = {
+  composeUpdates,
 };

@@ -1,3 +1,4 @@
+import { ServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server";
 import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   ServerCmd,
@@ -6,7 +7,6 @@ import {
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Sub, chainAwait, isErr } from "gamezilla/@SHARED/core";
-import { ServerModule } from "../../@SHARED/architecture/app-server";
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
 import {
   StoreSessionIdByUserId,
@@ -43,13 +43,20 @@ type Module = ServerModule<{
 //
 //
 
-export const init: Module["init"] = async ({ ctx }) => {
+export const init: Module["init"] = async (input) => {
+  const { ctx } = input;
+  const sms = await AuthServerSMS.init({ ...input, stored: null });
+
   return {
     model: {
       userIdBySessionId: StoreUserIdBySessionId.startingAt(ctx.now),
       sessionIdByUserId: StoreSessionIdByUserId.startingAt(ctx.now),
-      sms: AuthServerSMS.init,
+      sms: sms.model,
     },
+    eff: Eff.t("sms", sms.eff),
+    cmd: ServerCmd.tag("sms", sms.cmd),
+    evt: sms.evt,
+    toServer: sms.toServer?.map((msg) => ({ t: "sms", c: msg })),
   };
 };
 
@@ -62,18 +69,39 @@ export const init: Module["init"] = async ({ ctx }) => {
 //
 
 export const update: Module["update"] = async (input) => {
-  if (input.msg) {
-    return updateFromMsg(input);
-  }
-
-  if (input.fromClient) {
-    return updateFromClient(input);
-  }
-
-  return { model: input.model };
+  return ServerModule.composeUpdates({ model: input.model }, [
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromClient({ ...input, model }),
+    (model) => updateChild({ ...input, model }),
+  ]);
 };
 
-export const updateFromMsg: Module["update"] = async ({ ctx, model, msg }) => {
+const updateChild: Module["update"] = async (input) => {
+  const sms = await AuthServerSMS.update({
+    ctx: input.ctx,
+    model: input.model.sms,
+    cmd: input.cmd,
+    evt: input.evt,
+    fromClient:
+      input.fromClient?.t === "sms"
+        ? { ...input.fromClient, ...input.fromClient.c }
+        : null,
+    msg: input.msg?.t === "sms" ? input.msg.c : null,
+  });
+
+  return {
+    model: {
+      ...input.model,
+      sms: sms.model,
+    },
+    eff: Eff.t("sms", sms.eff),
+    cmd: ServerCmd.tag("sms", sms.cmd),
+    evt: sms.evt,
+    toServer: sms.toServer?.map((msg) => ({ t: "sms", c: msg })),
+  };
+};
+
+const updateFromMsg: Module["update"] = async ({ ctx, model, msg }) => {
   if (!msg) {
     return { model };
   }
@@ -109,21 +137,7 @@ export const updateFromMsg: Module["update"] = async ({ ctx, model, msg }) => {
     }
 
     case "sms": {
-      const updated = AuthServerSMS.update({
-        model: model.sms,
-        msg: msg.c,
-        ctx,
-      });
-
-      return {
-        model: {
-          ...model,
-          sms: updated.model,
-        },
-        cmd: ServerCmd.tag("sms", updated.cmd),
-        eff: Eff.t("sms", updated.eff),
-        evt: updated.evt,
-      };
+      return { model };
     }
   }
 };
@@ -154,24 +168,7 @@ const updateFromClient: Module["update"] = async ({
     }
 
     case "sms": {
-      const updated = AuthServerSMS.updateFromClient({
-        model: model.sms,
-        msg: fromClient.c,
-        ctx: {
-          ...ctx,
-          sessionId: fromClient.sessionId,
-          clientId: fromClient.clientId,
-        },
-      });
-
-      return {
-        model: {
-          ...model,
-          sms: updated.model,
-        },
-        cmd: ServerCmd.tag("sms", updated.cmd),
-        eff: Eff.t("sms", updated.eff),
-      };
+      return { model };
     }
   }
 };
@@ -365,6 +362,11 @@ async function removeSession(
 //
 //
 
-export const subscriptions: Module["subscriptions"] = async () => {
-  return Sub.None;
+export const subscriptions: Module["subscriptions"] = async (input) => {
+  return Sub.batch([
+    Sub.tag(
+      "sms",
+      await AuthServerSMS.subscriptions({ ...input, model: input.model.sms })
+    ),
+  ]);
 };

@@ -10,10 +10,7 @@ import {
   topicSubscribe,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Sub } from "gamezilla/@SHARED/core";
-import {
-  ServerModule,
-  chainUpdates,
-} from "../../@SHARED/architecture/app-server";
+import { ServerModule } from "../../@SHARED/architecture/app-server";
 import * as GameServer from "./@CHILD/game/game.server";
 import { updateFromEvents } from "./space-server/update-from-events";
 import { updateFromGame } from "./space-server/update-from-game";
@@ -142,7 +139,7 @@ export const updateFromMsg: Module["update"] = async ({ model, msg, ctx }) => {
           withId<Event>({ t: "game", spaceId, c: event })
         ) ?? [];
 
-      return chainUpdates({ model }, [
+      return ServerModule.composeUpdates({ model }, [
         (model) => {
           return updateFromEvents({ ctx: spaceCtx, events: eventsNew, model });
         },
@@ -187,7 +184,7 @@ const updateFromClient: Module["update"] = async (input) => {
           withId<Event>({ t: "game", spaceId: fromClient.spaceId, c: event })
         ) ?? [];
 
-      return chainUpdates({ model }, [
+      return ServerModule.composeUpdates({ model }, [
         (model) => {
           return updateFromGame({
             model,
@@ -207,7 +204,7 @@ const updateFromClient: Module["update"] = async (input) => {
     }
 
     case "sync": {
-      return chainUpdates({ model }, [
+      return ServerModule.composeUpdates({ model }, [
         (model) => {
           const merged = mergeModels(model, {
             events: fromClient.events,

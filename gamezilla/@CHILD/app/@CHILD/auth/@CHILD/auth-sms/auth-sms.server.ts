@@ -1,34 +1,75 @@
+import { ServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
-  AnonymousReqCtx,
   DbConnSql,
   ServerCmd,
   ServerCtx,
   ServerEvt,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, PhoneNumber, Result, isErr, ok } from "gamezilla/@SHARED/core";
+import { PhoneNumber, Result, Sub, isErr, ok } from "gamezilla/@SHARED/core";
 import { AccountDb } from "../../@SHARED/server/account-db/account-db-impl";
 import { Account } from "../../auth.core";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth-sms.core";
 import { VerifySMS } from "./server/verify-sms/verify-sms-impl";
 
-export const init: ServerModel = null;
+//
+//
+//
+//
+//
+//
 
-export const update = ({
-  msg,
-  model,
-  ctx,
-}: {
-  ctx: ServerCtx;
-  msg: ServerMsg;
-  model: ServerModel;
-}): {
-  model: ServerModel;
-  cmd?: ServerCmd<ToClient>[];
-  eff?: Eff<ServerMsg>;
-  evt?: ServerEvt[];
-} => {
+type Module = ServerModule<{
+  Ctx: ServerCtx;
+  InCmd: {};
+  InEvt: ServerEvt;
+  Model: ServerModel;
+  Msg: ServerMsg;
+  OutCmd: ServerCmd<ToClient>;
+  OutEvt: ServerEvt;
+  ToClient: ToClient;
+  ToServer: ToServer;
+}>;
+
+//
+//
+//
+//
+//
+//
+
+export const init: Module["init"] = async () => {
+  return {
+    model: null,
+  };
+};
+
+//
+//
+//
+//
+//
+//
+//
+
+export const update: Module["update"] = async (input) => {
+  if (input.msg) {
+    return updateFromMsg(input);
+  }
+
+  if (input.fromClient) {
+    return updateFromClient(input);
+  }
+
+  return { model: input.model };
+};
+
+const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
+  if (!msg) {
+    return { model };
+  }
+
   switch (msg.t) {
     case "verified-code": {
       if (isErr(msg.result)) {
@@ -89,33 +130,29 @@ export const update = ({
   }
 };
 
-export const updateFromClient = ({
-  msg,
+export const updateFromClient: Module["update"] = async ({
+  fromClient,
   model,
   ctx,
-}: {
-  msg: ToServer;
-  model: ServerModel;
-  ctx: AnonymousReqCtx;
-}): {
-  model: ServerModel;
-  cmd?: ServerCmd<ToClient>[];
-  eff?: Eff<ServerMsg>;
-} => {
+}) => {
+  if (!fromClient) {
+    return { model };
+  }
+
   const verifySMS = VerifySMS({
     logger: ctx.logger,
     impl: "test",
   });
-  switch (msg.t) {
+  switch (fromClient.t) {
     case "send-code": {
       return {
         model,
         eff: async (dispatch) => {
           dispatch({
             t: "sent-code",
-            phoneNumber: msg.phoneNumber,
-            result: await verifySMS.sendCode(msg),
-            clientId: ctx.clientId,
+            phoneNumber: fromClient.phoneNumber,
+            result: await verifySMS.sendCode(fromClient),
+            clientId: fromClient.clientId,
           });
         },
       };
@@ -127,15 +164,26 @@ export const updateFromClient = ({
         eff: async (dispatch) => {
           dispatch({
             t: "verified-code",
-            phoneNumber: msg.phoneNumber,
-            clientId: ctx.clientId,
-            result: await verifySMS.verifyCode(msg),
-            sessionId: ctx.sessionId,
+            phoneNumber: fromClient.phoneNumber,
+            clientId: fromClient.clientId,
+            result: await verifySMS.verifyCode(fromClient),
+            sessionId: fromClient.sessionId,
           });
         },
       };
     }
   }
+};
+
+//
+//
+//
+//
+//
+//
+
+export const subscriptions: Module["subscriptions"] = async () => {
+  return Sub.None;
 };
 
 //
