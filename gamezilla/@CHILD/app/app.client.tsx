@@ -6,7 +6,6 @@ import {
   ClientCtx,
   ClientEvt,
   preloadSound,
-  sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconGamepad,
@@ -147,7 +146,6 @@ export const init = ({
     eff: initialEff,
     cmd: initialCmd,
     evt: [],
-    toServer: [],
   });
 
   return {
@@ -189,7 +187,6 @@ type Output = {
   eff: Eff<ClientMsg>;
   evt: ClientEvt[];
   cmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-  toServer: ToServer[];
 };
 
 const updateLoop = (now: Posix, acc: Output): Output => {
@@ -202,19 +199,6 @@ const updateLoop = (now: Posix, acc: Output): Output => {
       cmd: [...cmdRest, ...updatedCmd.cmd],
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
       evt: batchMsgs(acc.evt, updatedCmd.evt),
-      toServer: batchMsgs(acc.toServer, updatedCmd.toServer),
-    });
-  }
-
-  const cmds = acc.toServer.map((c) => sendToServer(c));
-
-  if (cmds.length > 0) {
-    return updateLoop(now, {
-      model: acc.model,
-      eff: acc.eff,
-      evt: acc.evt,
-      cmd: [...cmdRest, ...cmds],
-      toServer: [],
     });
   }
 
@@ -227,7 +211,6 @@ const updateLoop = (now: Posix, acc: Output): Output => {
       cmd: [...cmdRest, ...updatedEvt.cmd],
       eff: Eff.batch([acc.eff, updatedEvt.eff]),
       evt: batchMsgs(evtRest, updatedEvt.evt),
-      toServer: batchMsgs(acc.toServer, updatedEvt.toServer),
     });
   }
 
@@ -359,12 +342,6 @@ const updateChild = ({
       routing.cmd,
       sound.cmd,
       toast.cmd
-    ),
-
-    toServer: batchMsgs<ToServer>(
-      space.toServer?.map((c) => ({ t: "space", c })),
-      profile.toServer?.map((c) => ({ t: "profile", c })),
-      auth.toServer?.map((c) => ({ t: "auth", c }))
     ),
   };
 };

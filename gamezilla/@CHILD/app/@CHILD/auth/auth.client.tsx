@@ -71,7 +71,6 @@ export const init: Client["init"] = ({ stored, ctx }) => {
       model: { ...stored, sms: sms.model },
       eff: Eff.t("sms", sms.eff),
       evt: sms.evt,
-      toServer: sms.toServer?.map((c) => ({ t: "sms", c })),
       cmd: ClientCmd.tag("sms", sms.cmd),
     };
   }
@@ -83,7 +82,6 @@ export const init: Client["init"] = ({ stored, ctx }) => {
       logout: notAsked,
       sms: sms.model,
     },
-    toServer: sms.toServer?.map((c) => ({ t: "sms", c })),
     eff: Eff.t("sms", sms.eff),
     evt: sms.evt,
     cmd: ClientCmd.tag("sms", sms.cmd),
@@ -122,7 +120,6 @@ const updateChild: Client["update"] = (input) => {
     cmd: ClientCmd.tag("sms", updated.cmd),
     eff: Eff.t("sms", updated.eff),
     evt: updated.evt,
-    toServer: updated.toServer?.map((c) => ({ t: "sms", c })),
   };
 };
 
