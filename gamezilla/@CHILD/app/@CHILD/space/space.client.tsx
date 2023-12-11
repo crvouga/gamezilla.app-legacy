@@ -12,9 +12,9 @@ import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space"
 import {
   AnonymousClientCtx,
   ClientCmd,
+  ClientCtx,
   ClientEvt,
   RouteGameSpace,
-  ClientCtx,
   addProfiles,
   pushRoute,
   replaceRoute,
@@ -30,7 +30,7 @@ import {
   MyAvatar,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Sub, chain } from "gamezilla/@SHARED/core";
+import { Sub } from "gamezilla/@SHARED/core";
 import { ClientModule, chainUpdates } from "../../@SHARED/architecture";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import * as GameClient from "./@CHILD/game/game.client";
@@ -108,11 +108,16 @@ export const init: Module["init"] = ({ stored }) => {
 //
 
 export const update: Module["update"] = (input) => {
-  return chainUpdates({ model: input.model }, [
-    (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromServer({ ...input, model }),
-    (model) => updateFromEvent({ ...input, model }),
-  ]);
+  if (input.msg) {
+    return updateFromMsg(input);
+  }
+  if (input.fromServer) {
+    return updateFromServer(input);
+  }
+  if (input.evt) {
+    return updateFromEvent(input);
+  }
+  return { model: input.model };
 };
 
 const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
@@ -189,8 +194,7 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
           })
         ) ?? [];
 
-      return chain(
-        { model },
+      return chainUpdates({ model }, [
         (model) => {
           return updateFromGame({
             model,
@@ -200,8 +204,8 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
         },
         (model) => {
           return updateFromEvents({ ctx, events: eventsNew, model });
-        }
-      );
+        },
+      ]);
     }
 
     default: {
@@ -267,8 +271,7 @@ const updateFromServer: Module["update"] = (input) => {
               })
             ) ?? [];
 
-          return chain(
-            { model },
+          return chainUpdates({ model }, [
             (model) => {
               return updateFromGame({
                 model,
@@ -278,8 +281,8 @@ const updateFromServer: Module["update"] = (input) => {
             },
             (model) => {
               return updateFromEvents({ ctx, events: eventsNew, model });
-            }
-          );
+            },
+          ]);
         }
 
         case "event": {
