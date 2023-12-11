@@ -1,5 +1,5 @@
 import { Sub } from "gamezilla/@SHARED/core";
-import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-server";
 import * as ConnectFourServer from "./@CHILD/connect-four/connect-four.server";
 import * as ChessServer from "./@CHILD/chess/chess.server";
 import {
@@ -85,7 +85,10 @@ export const update: Server["update"] = async (input) => {
             msg: msg?.t === "chess" ? msg : null,
             clientMsg: clientMsg?.t === "chess" ? clientMsg : null,
             evt,
-            gameEvent: gameEvent?.t === "chess" ? {...gameEvent, c: {...gameEvent, ...gameEvent.c}} : null,
+            gameEvent:
+              gameEvent?.t === "chess"
+                ? { ...gameEvent, c: { ...gameEvent, ...gameEvent.c } }
+                : null,
           });
         }
 
@@ -97,7 +100,10 @@ export const update: Server["update"] = async (input) => {
             msg: msg?.t === "connect-four" ? msg : null,
             clientMsg: clientMsg?.t === "connect-four" ? clientMsg : null,
             evt,
-            gameEvent: gameEvent?.t === "connect-four" ? {...gameEvent, c: {...gameEvent, ...gameEvent.c}} : null,
+            gameEvent:
+              gameEvent?.t === "connect-four"
+                ? { ...gameEvent, c: { ...gameEvent, ...gameEvent.c } }
+                : null,
           });
         }
       }

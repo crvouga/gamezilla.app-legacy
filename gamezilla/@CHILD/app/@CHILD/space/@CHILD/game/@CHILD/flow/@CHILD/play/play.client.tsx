@@ -1,7 +1,7 @@
 import { SpaceClientEvt } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub, chain } from "gamezilla/@SHARED/core";
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";

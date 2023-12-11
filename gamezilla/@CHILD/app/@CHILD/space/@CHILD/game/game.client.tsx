@@ -1,4 +1,4 @@
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client";
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { Sub } from "gamezilla/@SHARED/core";
 import * as ChessClient from "./@CHILD/chess/chess.client";

@@ -3,7 +3,7 @@ import {
   ViewBottomButtonBar,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-user";
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client";
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import {

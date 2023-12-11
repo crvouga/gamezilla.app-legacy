@@ -9,7 +9,7 @@ import {
   VsBotGame,
   VsBotSetup,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client";
 import {
   EventMeta,
   withId,

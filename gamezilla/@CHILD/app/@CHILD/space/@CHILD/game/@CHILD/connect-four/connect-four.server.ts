@@ -1,5 +1,5 @@
 import { Sub } from "gamezilla/@SHARED/core";
-import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-server";
 import {
   GameEvent,
   ServerModel,
@@ -83,7 +83,10 @@ export const update: Server["update"] = async (input) => {
             model: model?.t === "vs-bot" ? model : null,
             clientMsg: clientMsg?.t === "vs-bot" ? clientMsg : null,
             evt: evt,
-            gameEvent: gameEvent?.t === "vs-bot" ? {...gameEvent, c: {...gameEvent, ...gameEvent.c}}: null,
+            gameEvent:
+              gameEvent?.t === "vs-bot"
+                ? { ...gameEvent, c: { ...gameEvent, ...gameEvent.c } }
+                : null,
           });
         }
 
@@ -95,7 +98,10 @@ export const update: Server["update"] = async (input) => {
             model: model?.t === "vs-user" ? model : null,
             clientMsg: clientMsg?.t === "vs-user" ? clientMsg : null,
             evt: evt,
-            gameEvent: gameEvent?.t === "vs-user" ? {...gameEvent, c: {...gameEvent, ...gameEvent.c}}: null,
+            gameEvent:
+              gameEvent?.t === "vs-user"
+                ? { ...gameEvent, c: { ...gameEvent, ...gameEvent.c } }
+                : null,
           });
         }
       }

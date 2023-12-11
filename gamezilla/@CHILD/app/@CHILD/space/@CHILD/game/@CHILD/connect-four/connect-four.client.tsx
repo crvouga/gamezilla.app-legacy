@@ -1,5 +1,5 @@
 import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";

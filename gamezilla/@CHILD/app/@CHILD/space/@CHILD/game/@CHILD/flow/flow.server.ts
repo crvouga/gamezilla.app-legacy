@@ -1,4 +1,4 @@
-import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-server";
 import { Sub } from "gamezilla/@SHARED/core";
 import { ServerModel, ServerMsg, ToClient, ToServer } from "./flow.core";
 

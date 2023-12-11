@@ -1,9 +1,5 @@
-import {
-  GameServer,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
-import {
-  SpaceServerCmd,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-cmd";
+import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-server";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-cmd";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import * as Puzzle from "./@CHILD/puzzle/puzzle.server";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.server";

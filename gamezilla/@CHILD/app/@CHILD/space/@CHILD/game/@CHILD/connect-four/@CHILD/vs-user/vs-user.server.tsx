@@ -1,5 +1,5 @@
 import { Sub } from "gamezilla/@SHARED/core";
-import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture";
+import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-server";
 import {
   GameEvent,
   ServerModel,
