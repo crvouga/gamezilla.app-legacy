@@ -3,12 +3,14 @@ import {
   chainUpdates,
 } from "gamezilla/@CHILD/app/@SHARED/architecture";
 import {
+  APP_SOUND,
   AnonymousClientCtx,
   ClientCmd,
   ClientCtx,
   ClientEvt,
   ProfileCmd,
   back,
+  playSound,
   pushRoute,
   replaceRoute,
   showToast,
@@ -302,7 +304,10 @@ const updateFromMsg: Module["update"] = (input) => {
     }
 
     case "clicked-logout-button": {
-      return { model, cmd: [pushRoute({ t: "logout" })] };
+      return {
+        model,
+        cmd: [pushRoute({ t: "logout" }), playSound(APP_SOUND.tap)],
+      };
     }
 
     case "clicked-update-username-button": {

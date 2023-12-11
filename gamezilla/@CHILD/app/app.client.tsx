@@ -177,6 +177,7 @@ export const update = (input: {
     now: input.ctx.now,
     model: input.model,
     msg: input.msg,
+    fromServer: input.msg.t === "➡️" ? input.msg.c : undefined,
   });
 
   const updated = updateLoop(input.ctx.now, updatedFromMsg);
