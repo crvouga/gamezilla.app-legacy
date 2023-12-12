@@ -65,14 +65,12 @@ main();
 function ModelStorage<TModel>() {
   const CODEBASE_VERSION_ID_KEY = "gamezilla/codebase-version-id";
   const MODEL_KEY = "gamezilla/model";
-  const VITE_CODEBASE_VERSION_ID =
-    import.meta.env["VITE_CODEBASE_VERSION_ID"] ?? null;
 
   return {
     get: () => {
       const storedId = sessionStorage.getItem(CODEBASE_VERSION_ID_KEY);
 
-      if (storedId !== VITE_CODEBASE_VERSION_ID) {
+      if (storedId !== App.PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID) {
         return null;
       }
 
@@ -84,7 +82,10 @@ function ModelStorage<TModel>() {
     },
 
     set: (model: TModel) => {
-      sessionStorage.setItem(CODEBASE_VERSION_ID_KEY, VITE_CODEBASE_VERSION_ID);
+      sessionStorage.setItem(
+        CODEBASE_VERSION_ID_KEY,
+        App.PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID
+      );
       sessionStorage.setItem(MODEL_KEY, JSON.stringify(model));
     },
   };
