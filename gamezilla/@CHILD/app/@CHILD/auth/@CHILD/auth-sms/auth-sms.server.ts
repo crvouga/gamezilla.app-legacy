@@ -1,4 +1,4 @@
-import { ServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server";
+import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   DbConnSql,
@@ -20,7 +20,7 @@ import { VerifySMS } from "./server/verify-sms/verify-sms-impl";
 //
 //
 
-type Module = ServerModule<{
+type Module = AppServerModule<{
   Ctx: ServerCtx;
   InCmd: {};
   InEvt: ServerEvt;

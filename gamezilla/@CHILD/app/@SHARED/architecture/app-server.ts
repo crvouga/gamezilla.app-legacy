@@ -7,7 +7,7 @@ import { Eff, Sub } from "gamezilla/@SHARED/core";
 //
 //
 
-export type ServerModuleTypes = {
+export type AppServerModuleTypes = {
   /**
    * `Ctx` is data passed down from parent modules
    */
@@ -52,7 +52,7 @@ export type ServerModuleTypes = {
 //
 //
 
-export type Input<T extends ServerModuleTypes> = {
+export type Input<T extends AppServerModuleTypes> = {
   /**
    * `ctx` is data passed down from parent modules
    */
@@ -87,7 +87,7 @@ export type Input<T extends ServerModuleTypes> = {
 //
 //
 
-export type Output<T extends ServerModuleTypes> = {
+export type Output<T extends AppServerModuleTypes> = {
   /**
    * `model` will be the new state of the module
    */
@@ -107,9 +107,9 @@ export type Output<T extends ServerModuleTypes> = {
 };
 
 /**
- * `ServerModule` represents a server side app module
+ * `AppServerModule` represents a server side app module
  */
-export type ServerModule<T extends ServerModuleTypes> = {
+export type AppServerModule<T extends AppServerModuleTypes> = {
   /**
    * `init` is the initial state of the module
    */
@@ -134,7 +134,7 @@ export type ServerModule<T extends ServerModuleTypes> = {
 
 type MaybePromise<T> = T | Promise<T>;
 
-const chainUpdates = async <T extends ServerModuleTypes>(
+const chainUpdates = async <T extends AppServerModuleTypes>(
   acc: Output<T>,
   ...updates: ((model: T["Model"]) => MaybePromise<Output<T>>)[]
 ): Promise<Output<T>> => {
@@ -156,6 +156,6 @@ const chainUpdates = async <T extends ServerModuleTypes>(
   return chainUpdates(accNew, ...rest);
 };
 
-export const ServerModule = {
+export const AppServerModule = {
   chainUpdates,
 };

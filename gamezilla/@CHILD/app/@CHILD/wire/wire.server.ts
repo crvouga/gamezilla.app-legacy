@@ -7,7 +7,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Posix, TimeSpan } from "gamezilla/@SHARED/core";
 import { Sub } from "gamezilla/@SHARED/core/sub";
-import { ServerModule } from "../../@SHARED/architecture/app-server";
+import { AppServerModule } from "../../@SHARED/architecture/app-server";
 import { IServerTransport } from "./transport-server";
 import {
   Client,
@@ -72,7 +72,7 @@ type Output = {
 export const update = async <TToClient, TToServer>(
   input: Input<TToClient, TToServer>
 ): Promise<Output> => {
-  return ServerModule.chainUpdates(
+  return AppServerModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),
@@ -87,7 +87,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
 
   switch (msg.t) {
     case "client-connected": {
-      return ServerModule.chainUpdates(
+      return AppServerModule.chainUpdates(
         { model },
         async (model) => {
           const clientNew: Client = {

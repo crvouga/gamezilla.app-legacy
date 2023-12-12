@@ -11,7 +11,7 @@ import {
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Result, err, isErr, ok } from "gamezilla/@SHARED/core";
-import { ServerModule } from "../../@SHARED/architecture/app-server";
+import { AppServerModule } from "../../@SHARED/architecture/app-server";
 import { ProfileDb } from "./profile-db/profile-db";
 import { createProfileDb } from "./profile-db/profile-db-impl.sql";
 import {
@@ -31,7 +31,7 @@ import {
 //
 //
 
-type Module = ServerModule<{
+type Module = AppServerModule<{
   Ctx: ServerCtx;
   InCmd: null;
   InEvt: ServerEvt;

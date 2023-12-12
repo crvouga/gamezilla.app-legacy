@@ -1,4 +1,4 @@
-import { ServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server";
+import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server";
 import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   ServerCmd,
@@ -23,7 +23,7 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 //
 //
 
-type Module = ServerModule<{
+type Module = AppServerModule<{
   Ctx: ServerCtx;
   InCmd: {};
   InEvt: ServerEvt;
@@ -68,7 +68,7 @@ export const init: Module["init"] = async (input) => {
 //
 
 export const update: Module["update"] = async (input) => {
-  return ServerModule.chainUpdates(
+  return AppServerModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),
@@ -211,7 +211,7 @@ const updateFromEvent: typeof update = async ({ evt, model, ctx }) => {
     }
 
     case "auth/connected-client-authenticated": {
-      return ServerModule.chainUpdates(
+      return AppServerModule.chainUpdates(
         { model },
         async (model) => {
           if (evt.loggedIn) {

@@ -10,7 +10,7 @@ import {
   topicSubscribe,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Sub } from "gamezilla/@SHARED/core";
-import { ServerModule } from "../../@SHARED/architecture/app-server";
+import { AppServerModule } from "../../@SHARED/architecture/app-server";
 import * as GameServer from "./@CHILD/game/game.server";
 import { updateFromEvents } from "./space-server/update-from-events";
 import { updateFromGame } from "./space-server/update-from-game";
@@ -35,7 +35,7 @@ import {
 //
 //
 
-type Module = ServerModule<{
+type Module = AppServerModule<{
   Ctx: ServerCtx;
   InCmd: null;
   InEvt: ServerEvt;
@@ -139,7 +139,7 @@ const updateFromMsg: Module["update"] = async ({ model, msg, ctx }) => {
           withId<Event>({ t: "game", spaceId, c: event })
         ) ?? [];
 
-      return ServerModule.chainUpdates(
+      return AppServerModule.chainUpdates(
         { model },
         (model) => {
           return updateFromEvents({ ctx: spaceCtx, events: eventsNew, model });
@@ -185,7 +185,7 @@ const updateFromClient: Module["update"] = async (input) => {
           withId<Event>({ t: "game", spaceId: fromClient.spaceId, c: event })
         ) ?? [];
 
-      return ServerModule.chainUpdates(
+      return AppServerModule.chainUpdates(
         { model },
         (model) => {
           return updateFromGame({
@@ -206,7 +206,7 @@ const updateFromClient: Module["update"] = async (input) => {
     }
 
     case "sync": {
-      return ServerModule.chainUpdates(
+      return AppServerModule.chainUpdates(
         { model },
         (model) => {
           const merged = mergeModels(model, {
