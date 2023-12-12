@@ -205,6 +205,45 @@ const chainUpdates = <T extends GameClientModuleTypes>(
   return chainUpdates(accNew, ...rest);
 };
 
+const tagOutput = <
+  TTag extends string,
+  T extends GameClientModuleTypes,
+  TTaggedCmd extends GameClientModuleTypes["OutCmd"]
+>(
+  tag: TTag,
+  tagCmd: (cmd: T["OutCmd"][]) => TTaggedCmd[],
+  output: Output<T>
+): {
+  model: { t: TTag; c: T["Model"] };
+
+  eff?: Eff<{ t: TTag; c: T["Msg"] }>;
+  /**
+   *
+   */
+  cmd?: TTaggedCmd[];
+  /**
+   *
+   */
+  evt?: T["OutEvt"][];
+  /**
+   *
+   */
+  gameEvent?: WithEventId<{ t: TTag; c: T["GameEvent"] }>[];
+} => {
+  return {
+    model: { t: tag, c: output.model },
+    cmd: output.cmd ? tagCmd(output.cmd) : [],
+    eff: Eff.t(tag, output.eff),
+    evt: output.evt,
+    gameEvent: output.gameEvent?.map((c) => ({
+      eventId: c.eventId,
+      c: c,
+      t: tag,
+    })),
+  };
+};
+
 export const GameClientModule = {
   chainUpdates,
+  tagOutput,
 };

@@ -298,6 +298,8 @@ const updateChild = ({
     msg: msg?.t === "toast" ? msg.c : null,
     cmd: cmd?.t === "toast" ? cmd : null,
     ctx: ctx,
+    evt: null,
+    fromServer: null,
   });
 
   return {
@@ -653,8 +655,7 @@ const ViewBottomBar = ({
               class={cn(
                 "flex flex-1 flex-col items-center justify-center pb-2 pt-1",
                 isSelected ? "text-blue-500" : "opacity-80"
-              )}
-            >
+              )}>
               {item.icon}
               <div class="mt-0.5 text-xs">{item.label}</div>
             </button>

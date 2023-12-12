@@ -4,7 +4,6 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.core";
 import * as VsUser from "./@CHILD/vs-user/vs-user.core";
 
-
 //
 //
 //
@@ -120,8 +119,8 @@ export const reducer = ({
           return {
             t: "vs-bot",
             c: VsBot.reducer({
-              state: state.c,
-              event: { ...event, ...event.c },
+              gameState: state.c,
+              gameEvent: { ...event, ...event.c },
             }),
           };
         }
@@ -147,4 +146,3 @@ export const reducer = ({
     }
   }
 };
-

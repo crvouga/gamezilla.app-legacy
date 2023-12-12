@@ -97,6 +97,10 @@ export const update: Module["update"] = (input) => {
 const updateFromMsg: Module["update"] = (input) => {
   const { msg, model } = input;
 
+  if (!model) {
+    return init(input);
+  }
+
   if (!msg) {
     return { model };
   }

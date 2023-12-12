@@ -1,5 +1,5 @@
 import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client";
+import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
 import {
@@ -23,7 +23,6 @@ import {
   ToClient,
   ToServer,
 } from "./connect-four.core";
-import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
 
 //
 //
@@ -69,23 +68,31 @@ export const init: Module["init"] = (input) => {
     case "vs-bot": {
       const initial = VsBot.init({
         ...input,
-        gameState,
-        model: model?.t === "vs-bot" ? model : null,
+        gameState: gameState.c,
+        model: model?.t === "vs-bot" ? model.c : null,
         ctx: { ...input.ctx, onQuit: () => {} },
       });
 
-      return initial;
+      return GameClientModule.tagOutput(
+        "vs-bot",
+        (cmd) => ClientCmd.tag("vs-bot", cmd),
+        initial
+      );
     }
 
     case "vs-user": {
       const initial = VsUser.init({
         ...input,
-        gameState,
+        gameState: gameState.c,
         ctx: { ...input.ctx, onQuit: () => {} },
-        model: model?.t === "vs-user" ? model : null,
+        model: model?.t === "vs-user" ? model.c : null,
       });
 
-      return initial;
+      return GameClientModule.tagOutput(
+        "vs-user",
+        (cmd) => ClientCmd.tag("vs-user", cmd),
+        initial
+      );
     }
   }
 };
@@ -99,11 +106,10 @@ export const init: Module["init"] = (input) => {
 //
 
 export const update: Module["update"] = (input) => {
-  return GameClient.chain(
+  return GameClientModule.chainUpdates(
     init(input),
-    (model): ReturnType<Module["update"]> => {
-      const { msg, evt, gameEvent, serverMsg, gameState, gameStateBefore } =
-        input;
+    (model) => {
+      const { msg, evt, gameEvent, fromServer, gameState } = input;
 
       switch (gameState.t) {
         case "none": {
@@ -111,38 +117,58 @@ export const update: Module["update"] = (input) => {
         }
 
         case "vs-bot": {
-          return VsBot.update({
+          const updated = VsBot.update({
             ctx: { ...input.ctx, onQuit: () => {} },
-            msg: msg?.t === "vs-bot" ? msg : null,
+            msg: msg?.t === "vs-bot" ? msg.c : null,
             evt: evt,
-            gameEvent: gameEvent?.t === "vs-bot" ? gameEvent : null,
-            serverMsg: serverMsg?.t === "vs-bot" ? serverMsg : null,
-            model: model.t === "vs-bot" ? model : null,
-            gameState,
-            gameStateBefore:
-              gameStateBefore.t === "vs-bot" ? gameStateBefore : gameState,
+            cmd: null,
+            gameEvent:
+              gameEvent?.t === "vs-bot"
+                ? { ...gameEvent, ...gameEvent.c }
+                : null,
+            fromServer: fromServer?.t === "vs-bot" ? fromServer.c : null,
+            model: model.t === "vs-bot" ? model.c : null,
+            gameState: gameState.c,
           });
+
+          return GameClientModule.tagOutput(
+            "vs-bot",
+            (cmd) => ClientCmd.tag("vs-bot", cmd),
+            updated
+          );
         }
 
         case "vs-user": {
-          return VsUser.update({
+          const updated = VsUser.update({
             ctx: { ...input.ctx, onQuit: () => {} },
-            model: model.t === "vs-user" ? model : null,
-            msg: msg?.t === "vs-user" ? msg : null,
+            model: model.t === "vs-user" ? model.c : null,
+            msg: msg?.t === "vs-user" ? msg.c : null,
+            cmd: null,
             evt: evt,
-            gameEvent: gameEvent?.t === "vs-user" ? gameEvent : null,
-            serverMsg: serverMsg?.t === "vs-user" ? serverMsg : null,
-            gameState,
-            gameStateBefore:
-              gameStateBefore.t === "vs-user" ? gameStateBefore : gameState,
+            gameEvent:
+              gameEvent?.t === "vs-user"
+                ? { ...gameEvent, ...gameEvent.c }
+                : null,
+            fromServer: fromServer?.t === "vs-user" ? fromServer.c : null,
+            gameState: gameState.c,
           });
+
+          return GameClientModule.tagOutput(
+            "vs-user",
+            (cmd) => ClientCmd.tag("vs-user", cmd),
+            updated
+          );
         }
       }
     },
     (model) => {
       const { msg } = input;
 
-      switch (msg?.t) {
+      if (!msg) {
+        return { model };
+      }
+
+      switch (msg.t) {
         case "user-changed-mode": {
           return {
             model,
@@ -150,7 +176,8 @@ export const update: Module["update"] = (input) => {
           };
         }
 
-        default: {
+        case "vs-user":
+        case "vs-bot": {
           return { model };
         }
       }
@@ -158,15 +185,28 @@ export const update: Module["update"] = (input) => {
     (model) => {
       const { gameEvent } = input;
 
-      if (gameEvent?.t !== "user-changed-mode") {
+      if (!gameEvent) {
         return { model };
       }
 
-      if (gameEvent.mode === "none") {
-        return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
-      }
+      switch (gameEvent.t) {
+        case "user-changed-mode": {
+          switch (gameEvent.mode) {
+            case "none": {
+              return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
+            }
+            case "vs-bot":
+            case "vs-user": {
+              return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
+            }
+          }
+        }
 
-      return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
+        case "vs-bot":
+        case "vs-user": {
+          return { model };
+        }
+      }
     }
   );
 };
@@ -221,9 +261,9 @@ export const View: Module["View"] = ({ dispatch, ctx, gameState, model }) => {
       return (
         <VsBot.View
           ctx={{ ...ctx, onQuit }}
-          dispatch={dispatch}
-          model={model?.t === "vs-bot" ? model : null}
-          gameState={gameState}
+          dispatch={(c) => dispatch({ t: "vs-bot", c })}
+          model={model?.t === "vs-bot" ? model.c : null}
+          gameState={gameState.c}
         />
       );
     }
@@ -232,8 +272,8 @@ export const View: Module["View"] = ({ dispatch, ctx, gameState, model }) => {
       return (
         <VsUser.View
           ctx={{ ...ctx, onQuit }}
-          dispatch={dispatch}
-          model={model?.t === "vs-user" ? model : null}
+          dispatch={(c) => dispatch({ t: "vs-user", c })}
+          model={model?.t === "vs-user" ? model.c : null}
           gameState={gameState.c}
         />
       );

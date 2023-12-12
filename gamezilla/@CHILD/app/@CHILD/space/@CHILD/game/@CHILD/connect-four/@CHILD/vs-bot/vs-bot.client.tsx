@@ -10,11 +10,11 @@ import {
   VsBotSetup,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-bot";
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
-import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
 import {
   EventMeta,
   withId,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/gameEvent";
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
+import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
 import {
   SpaceClientCtx,
   SpaceClientEvt,
@@ -214,7 +214,7 @@ const gameEventToSound = (
     case "game": {
       switch (gameEvent.t) {
         case "user-dropped-disc": {
-          const error = gameState.errors[gameEvent.gameEventId];
+          const error = gameState.errors[gameEvent.eventId];
 
           if (error && gameEvent.userId === currentUserId) {
             return [playSound(APP_SOUND.alertErrorSm)];
