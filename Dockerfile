@@ -19,10 +19,8 @@ FROM base as build
 
 # Install necessary packages for building, including git
 RUN apt-get update -qq && \
-    apt-get install -y build-essential pkg-config python-is-python3 libsqlite3-dev git
+    apt-get install -y build-essential pkg-config python-is-python3 libsqlite3-dev
 
-# Copy the .git directory for accessing git information
-COPY .git /app/.git
 
 # Copy package files and install dependencies
 COPY bun.lockb package.json ./
@@ -47,11 +45,6 @@ COPY --from=dbmate /usr/local/bin/dbmate /usr/local/bin/dbmate
 # Expose the application port
 EXPOSE 5000
 
-# Copy the shell script into the image
-COPY set_env.sh /app
-
-# Grant execution permissions to the script
-RUN chmod +x /app/set_env.sh
 
 # Modify the CMD instruction to run the script before starting the server
-CMD /app/set_env.sh && bun run server-prod
+CMD  bun run server-prod
