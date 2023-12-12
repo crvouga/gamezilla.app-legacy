@@ -139,14 +139,15 @@ const updateFromMsg: Module["update"] = async ({ model, msg, ctx }) => {
           withId<Event>({ t: "game", spaceId, c: event })
         ) ?? [];
 
-      return ServerModule.composeUpdates({ model }, [
+      return ServerModule.chainUpdates(
+        { model },
         (model) => {
           return updateFromEvents({ ctx: spaceCtx, events: eventsNew, model });
         },
         (model) => {
           return updateFromGame({ model, space, updated });
-        },
-      ]);
+        }
+      );
     }
   }
 };
@@ -184,7 +185,8 @@ const updateFromClient: Module["update"] = async (input) => {
           withId<Event>({ t: "game", spaceId: fromClient.spaceId, c: event })
         ) ?? [];
 
-      return ServerModule.composeUpdates({ model }, [
+      return ServerModule.chainUpdates(
+        { model },
         (model) => {
           return updateFromGame({
             model,
@@ -199,12 +201,13 @@ const updateFromClient: Module["update"] = async (input) => {
             events: eventsNew,
             model,
           });
-        },
-      ]);
+        }
+      );
     }
 
     case "sync": {
-      return ServerModule.composeUpdates({ model }, [
+      return ServerModule.chainUpdates(
+        { model },
         (model) => {
           const merged = mergeModels(model, {
             events: fromClient.events,
@@ -239,8 +242,8 @@ const updateFromClient: Module["update"] = async (input) => {
               }),
             ],
           };
-        },
-      ]);
+        }
+      );
     }
 
     case "event": {

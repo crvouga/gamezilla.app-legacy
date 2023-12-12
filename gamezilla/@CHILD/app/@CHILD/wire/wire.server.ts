@@ -72,11 +72,12 @@ type Output = {
 export const update = async <TToClient, TToServer>(
   input: Input<TToClient, TToServer>
 ): Promise<Output> => {
-  return ServerModule.composeUpdates({ model: input.model }, [
+  return ServerModule.chainUpdates(
+    { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),
-    (model) => updateFromCmd({ ...input, model }),
-  ]);
+    (model) => updateFromCmd({ ...input, model })
+  );
 };
 
 const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
@@ -86,7 +87,8 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
 
   switch (msg.t) {
     case "client-connected": {
-      return ServerModule.composeUpdates({ model }, [
+      return ServerModule.chainUpdates(
+        { model },
         async (model) => {
           const clientNew: Client = {
             sessionId: msg.sessionId,
@@ -128,8 +130,8 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
           }
 
           return { model };
-        },
-      ]);
+        }
+      );
     }
 
     case "client-disconnected": {

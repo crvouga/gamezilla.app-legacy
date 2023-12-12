@@ -53,11 +53,12 @@ async function updateFromEventsLoop(
     return updateFromEventsLoop(ctx, rest, acc);
   }
 
-  const updated = await ServerModule.composeUpdates(acc, [
+  const updated = await ServerModule.chainUpdates(
+    acc,
     (model) => appendNewEvent({ model, event: event }),
     (model) => syncUserWhenJoined({ model, event: event }),
-    (model) => sendEventToClients({ model, eventId: event.eventId }),
-  ]);
+    (model) => sendEventToClients({ model, eventId: event.eventId })
+  );
 
   const updatedGame = await updateGameFromEvent({
     ctx: ctx,

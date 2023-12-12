@@ -68,12 +68,13 @@ export const init: Module["init"] = async (input) => {
 //
 
 export const update: Module["update"] = async (input) => {
-  return ServerModule.composeUpdates({ model: input.model }, [
+  return ServerModule.chainUpdates(
+    { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
-    (model) => updateChild({ ...input, model }),
-  ]);
+    (model) => updateChild({ ...input, model })
+  );
 };
 
 const updateChild: Module["update"] = async (input) => {
@@ -210,7 +211,8 @@ const updateFromEvent: typeof update = async ({ evt, model, ctx }) => {
     }
 
     case "auth/connected-client-authenticated": {
-      return ServerModule.composeUpdates({ model }, [
+      return ServerModule.chainUpdates(
+        { model },
         async (model) => {
           if (evt.loggedIn) {
             return {
@@ -231,8 +233,8 @@ const updateFromEvent: typeof update = async ({ evt, model, ctx }) => {
               }),
             ],
           };
-        },
-      ]);
+        }
+      );
     }
 
     case "auth/connected-client-unauthenticated": {
