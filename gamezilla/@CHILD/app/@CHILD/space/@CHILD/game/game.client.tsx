@@ -2,7 +2,7 @@ import {
   SpaceClientCtx,
   SpaceClientEvt,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { Eff, Sub } from "gamezilla/@SHARED/core";
+import { Sub } from "gamezilla/@SHARED/core";
 // import * as ChessClient from "./@CHILD/chess/chess.client";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { GameClientModule } from "../../@SHARED/architecture/game-client-v2";
@@ -60,12 +60,13 @@ export const init: Module["init"] = (input) => {
         gameState: gameState.c,
       });
 
-      return {
-        model: { t: "connect-four", c: initial.model },
-        cmd: ClientCmd.tag("connect-four", initial.cmd),
-        eff: Eff.t("connect-four", initial.eff),
-        evt: initial.evt,
-      };
+      const tagged = GameClientModule.tagOutput(
+        "connect-four",
+        (cmd) => ClientCmd.tag("connect-four", cmd),
+        initial
+      );
+
+      return tagged;
     }
   }
 };
@@ -97,12 +98,13 @@ export const update: Module["update"] = (input) => {
         msg: msg?.t === "connect-four" ? msg.c : null,
       });
 
-      return {
-        model: { t: "connect-four", c: updated.model },
-        cmd: ClientCmd.tag("connect-four", updated.cmd),
-        eff: Eff.t("connect-four", updated.eff),
-        evt: updated.evt,
-      };
+      const tagged = GameClientModule.tagOutput(
+        "connect-four",
+        (cmd) => ClientCmd.tag("connect-four", cmd),
+        updated
+      );
+
+      return tagged;
     }
   }
 };

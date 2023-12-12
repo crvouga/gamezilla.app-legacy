@@ -243,7 +243,57 @@ const tagOutput = <
   };
 };
 
+const untagInput = <TTag extends string, T extends GameClientModuleTypes>(
+  tag: TTag,
+  input: {
+    ctx: T["Ctx"];
+
+    model?: { t: TTag; c: T["Model"] } | { t: string; c: unknown } | null;
+    /**
+     *
+     */
+    gameState: { t: TTag; c: T["GameState"] } | { t: string; c: unknown };
+    /**
+     *
+     */
+    gameEvent?:
+      | { t: TTag; c: T["GameEvent"] & EventMeta }
+      | { t: string; c: unknown }
+      | null;
+    /**
+     *
+     */
+    msg?: { t: TTag; c: T["Msg"] } | { t: string; c: unknown } | null;
+    /**
+     *
+     */
+    fromServer?:
+      | { t: TTag; c: T["ToClient"] }
+      | { t: string; c: unknown }
+      | null;
+    /**
+     *
+     */
+    evt?: T["InEvt"] | null;
+    /**
+     *
+     */
+    cmd?: T["InCmd"] | null;
+  }
+) => {
+  return {
+    model: input.model?.t === tag ? input.model.c : null,
+    gameState: input.gameState.t === tag ? input.gameState.c : null,
+    msg: input.msg?.t === tag ? input.msg.c : null,
+    fromServer: input.fromServer?.t === tag ? input.fromServer.c : null,
+    evt: input.evt,
+    cmd: input.cmd,
+    gameEvent: input.gameEvent?.t === tag ? input.gameEvent.c : null,
+  };
+};
+
 export const GameClientModule = {
   chainUpdates,
   tagOutput,
+  untagInput,
 };
