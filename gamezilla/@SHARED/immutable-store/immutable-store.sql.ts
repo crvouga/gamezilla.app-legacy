@@ -58,7 +58,7 @@ function toRow(row: unknown): Row | null {
   return null;
 }
 
-export const SqlStore = async <TKey extends string | number, TValue>({
+export const SqlStore = <TKey extends string | number, TValue>({
   executeSql,
   keySpace,
   encodeValue,
@@ -68,8 +68,16 @@ export const SqlStore = async <TKey extends string | number, TValue>({
   executeSql: (rawSql: string) => Promise<unknown[]>;
   decodeValue: (encoded: string | null) => TValue | null;
   encodeValue: (value: TValue | null) => string | null;
-}): Promise<StoreModule<TKey, TValue>> => {
-  await executeSql(UPGRADE_SQL);
+}): StoreModule<TKey, TValue> => {
+  let upgraded = false;
+
+  const upgrade = async () => {
+    if (upgraded) {
+      return;
+    }
+    await executeSql(UPGRADE_SQL);
+    upgraded = true;
+  };
 
   let runningAppendStep = 1;
 
@@ -78,6 +86,8 @@ export const SqlStore = async <TKey extends string | number, TValue>({
     instance: Store<TKey, TValue>,
     entries: [TKey, TValue | null][]
   ): Promise<Store<TKey, TValue>> => {
+    await upgrade();
+
     const instanceNew: Store<TKey, TValue> = {
       _posixTimestamp: Math.max(now, 0),
       _instanceStep: instance._instanceStep + 1,

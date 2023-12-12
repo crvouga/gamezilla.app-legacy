@@ -49,8 +49,8 @@ export const init: Module["init"] = async (input) => {
 
   return {
     model: {
-      userIdBySessionId: StoreUserIdBySessionId.startingAt(ctx.now),
-      sessionIdByUserId: StoreSessionIdByUserId.startingAt(ctx.now),
+      userIdBySessionId: StoreUserIdBySessionId(input.ctx).startingAt(ctx.now),
+      sessionIdByUserId: StoreSessionIdByUserId(input.ctx).startingAt(ctx.now),
       sms: sms.model,
     },
     eff: Eff.t("sms", sms.eff),
@@ -179,7 +179,7 @@ const updateFromEvent: typeof update = async ({ evt, model, ctx }) => {
 
   switch (evt.t) {
     case "wire/client-connected": {
-      const userId = await StoreUserIdBySessionId.get(
+      const userId = await StoreUserIdBySessionId(ctx).get(
         model.userIdBySessionId,
         evt.sessionId
       );
@@ -285,14 +285,14 @@ async function addSession(
   sessionId: SessionId,
   userId: UserId
 ): Promise<ServerModel> {
-  const userIdBySessionIdNew = await StoreUserIdBySessionId.assoc(
+  const userIdBySessionIdNew = await StoreUserIdBySessionId(ctx).assoc(
     ctx.now,
     model.userIdBySessionId,
     sessionId,
     userId
   );
 
-  const sessionIdByUserIdNew = await StoreSessionIdByUserId.assoc(
+  const sessionIdByUserIdNew = await StoreSessionIdByUserId(ctx).assoc(
     ctx.now,
     model.sessionIdByUserId,
     userId,
@@ -311,13 +311,13 @@ async function removeSession(
   model: ServerModel,
   sessionId: SessionId
 ): Promise<ServerModel> {
-  const userIdBySessionIdNew = await StoreUserIdBySessionId.dissoc(
+  const userIdBySessionIdNew = await StoreUserIdBySessionId(ctx).dissoc(
     ctx.now,
     model.userIdBySessionId,
     sessionId
   );
 
-  const userId = await StoreUserIdBySessionId.get(
+  const userId = await StoreUserIdBySessionId(ctx).get(
     model.userIdBySessionId,
     sessionId
   );
@@ -329,7 +329,7 @@ async function removeSession(
     };
   }
 
-  const sessionIdByUserIdNew = await StoreSessionIdByUserId.dissoc(
+  const sessionIdByUserIdNew = await StoreSessionIdByUserId(ctx).dissoc(
     ctx.now,
     model.sessionIdByUserId,
     userId

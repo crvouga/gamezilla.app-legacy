@@ -234,7 +234,7 @@ export const updateChild = async ({
     fromClient:
       fromClient?.t === "wire" ? { ...fromClient, ...fromClient.c } : null,
     msg: msg?.t === "wire" ? msg.c : null,
-    toSessionId: (userId) => toSessionId(model.auth, userId),
+    toSessionId: (userId) => toSessionId(ctx, model.auth, userId),
     transport,
   });
 

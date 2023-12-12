@@ -11,6 +11,7 @@ import {
   StoreSessionIdByUserId,
   StoreUserIdBySessionId,
 } from "./@SHARED/server/auth-session-store";
+import { ServerCtx } from "gamezilla/@CHILD/app/@SHARED/server";
 
 //
 //
@@ -42,10 +43,11 @@ export type ServerModel = {
 };
 
 export const toUserId = async (
+  ctx: ServerCtx,
   model: ServerModel,
   sessionId: SessionId
 ): Promise<UserId | null> => {
-  const userId = await StoreUserIdBySessionId.get(
+  const userId = await StoreUserIdBySessionId(ctx).get(
     model.userIdBySessionId,
     sessionId
   );
@@ -53,10 +55,11 @@ export const toUserId = async (
 };
 
 export const toSessionId = async (
+  ctx: ServerCtx,
   model: ServerModel,
   userId: UserId
 ): Promise<SessionId | null> => {
-  const sessionId = await StoreSessionIdByUserId.get(
+  const sessionId = await StoreSessionIdByUserId(ctx).get(
     model.sessionIdByUserId,
     userId
   );
