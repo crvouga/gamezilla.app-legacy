@@ -2,10 +2,10 @@ import { expect, test } from "bun:test";
 import { StoreModule } from "./immutable-store";
 
 export const buildTest = (
-  makeStore: () => StoreModule<string, string | null>
+  makeStore: () => Promise<StoreModule<string, string | null>>
 ) => {
   test("working with one key", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const t0 = Date.now();
     const key = "user-123";
 
@@ -19,7 +19,7 @@ export const buildTest = (
   });
 
   test("working with two keys", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const t0 = Date.now();
 
     const key1 = "key-1";
@@ -45,7 +45,7 @@ export const buildTest = (
   });
 
   test("immutable behavior", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const t0 = Date.now();
     const key = "user-123";
 
@@ -61,7 +61,7 @@ export const buildTest = (
   });
 
   test("chaining updates", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const t0 = Date.now();
     const key1 = "key-1";
     const key2 = "key-2";
@@ -85,7 +85,7 @@ export const buildTest = (
   });
 
   test("deleting keys", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const t0 = Date.now();
     const key = "key-1";
 
@@ -106,7 +106,7 @@ export const buildTest = (
   });
 
   test("key not found", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const t0 = Date.now();
     const key = "nonexistent-key";
 
@@ -118,7 +118,7 @@ export const buildTest = (
   });
 
   test("overwriting values", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const t0 = Date.now();
     const key = "key-1";
 
@@ -136,7 +136,7 @@ export const buildTest = (
   });
 
   test("multiple keys independently updated", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const t0 = Date.now();
     const key1 = "key-1";
     const key2 = "key-2";
@@ -160,7 +160,7 @@ export const buildTest = (
   });
 
   test("empty key handling", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const t0 = Date.now();
     const key = "";
 
@@ -171,7 +171,7 @@ export const buildTest = (
   });
 
   test("null and null values", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const t0 = Date.now();
     const key1 = "null-key";
     const key2 = "null-key";
@@ -186,7 +186,7 @@ export const buildTest = (
   });
 
   test("concurrent reads", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const t0 = Date.now();
     const key = "concurrent-key";
 
@@ -208,7 +208,7 @@ export const buildTest = (
   });
 
   test("concurrent", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const key = "key";
     const t0 = Date.now();
     const storeA1 = Store.startingAt(t0);
@@ -229,7 +229,7 @@ export const buildTest = (
   });
 
   test("add then remove", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const key = "key";
     const t0 = Date.now();
     const initial = Store.startingAt(t0);
@@ -244,7 +244,7 @@ export const buildTest = (
   });
 
   test("add then remove then add", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const key = "key";
     const t0 = Date.now();
     const initial = Store.startingAt(t0);
@@ -261,8 +261,8 @@ export const buildTest = (
     expect(await Store.get(addedAgain, key)).toEqual("valueAgain");
   });
 
-  test("multiple timelines one level deep", async () => {
-    const Store = makeStore();
+  test("multiple timelines one  levelawait deep", async () => {
+    const Store = await makeStore();
 
     const key = "key";
 
@@ -279,8 +279,8 @@ export const buildTest = (
     expect(await Store.get(right, key)).toEqual("right");
   });
 
-  test("multiple timelines two levels deep", async () => {
-    const Store = makeStore();
+  test("multiple timelines two  levelsawait deep", async () => {
+    const Store = await makeStore();
 
     const key = "key";
 
@@ -307,8 +307,8 @@ export const buildTest = (
     expect(await Store.get(right_right, key)).toEqual("right_right");
   });
 
-  test("multiple timelines three levels deep", async () => {
-    const Store = makeStore();
+  test("multiple timelines three  levelsawait deep", async () => {
+    const Store = await makeStore();
 
     const key = "key";
 
@@ -394,8 +394,8 @@ export const buildTest = (
     );
   });
 
-  test("listing spaces of different keys", async () => {
-    const Store = makeStore();
+  test("listing values  of different keys", async () => {
+    const Store = await makeStore();
     const t0 = Date.now() + 10_0000;
     const initial = Store.startingAt(t0);
     const t1 = t0 + 1000;
@@ -421,7 +421,7 @@ export const buildTest = (
   });
 
   test("listing spaces of same keys", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
     const key = "key";
     const t0 = Date.now() + 10_001;
     const initial = Store.startingAt(t0);
@@ -447,8 +447,8 @@ export const buildTest = (
     expect(await Store.listLatest(t0, t3, added3)).toEqual(["3"]);
   });
 
-  test("multiple timelines one level deep with dissoc", async () => {
-    const Store = makeStore();
+  test("multiple timelines one  levelawait deep with dissoc", async () => {
+    const Store = await makeStore();
 
     const key = "key";
 
@@ -472,7 +472,7 @@ export const buildTest = (
   });
 
   test("handling invalid timestamp", async () => {
-    const Store = makeStore();
+    const Store = await makeStore();
 
     const key = "key";
 
@@ -482,8 +482,8 @@ export const buildTest = (
     expect(await Store.get(invalid, key)).toEqual("start");
   });
 
-  test.todo("adding to the past", async () => {
-    const Store = makeStore();
+  test.todo("adding to  theawait past", async () => {
+    const Store = await makeStore();
 
     const key = "key";
 

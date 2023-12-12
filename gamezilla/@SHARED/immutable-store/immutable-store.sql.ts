@@ -1,27 +1,28 @@
-import { StoreModule, Store } from "./immutable-store";
-import { Database } from "bun:sqlite";
-
-export type Instance = {
-  _posixTimestamp: number;
-  _parentInstance: Instance | null;
-  _id: string;
-};
+import { Store, StoreModule } from "./immutable-store";
 
 const UPGRADE_SQL = `
-CREATE TABLE IF NOT EXISTS immutable_store_v2 (
+CREATE TABLE IF NOT EXISTS immutable_store (
   key_space       TEXT NOT NULL,
   key             TEXT NOT NULL,
   posix_timestamp NUMBER NOT NULL,
-  id              TEXT NOT NULL,
-  parent_id       TEXT,
+  append_step     NUMBER NOT NULL,
+  instance_step   NUMBER NOT NULL,
   value           TEXT
 );
+
+CREATE INDEX IF NOT EXISTS idx_query1              ON immutable_store (key_space, key, posix_timestamp DESC, instance_step DESC, append_step DESC);
+CREATE INDEX IF NOT EXISTS idx_key_posix_timestamp ON immutable_store (key, posix_timestamp);
+CREATE INDEX IF NOT EXISTS idx_query2_join_order   ON immutable_store (key, posix_timestamp, instance_step, append_step);
+CREATE INDEX IF NOT EXISTS idx_latest_keys         ON immutable_store (key, posix_timestamp, instance_step, append_step);
+CREATE INDEX IF NOT EXISTS idx_join_optimization   ON immutable_store (key, posix_timestamp);
+CREATE INDEX IF NOT EXISTS idx_order_by            ON immutable_store (posix_timestamp, instance_step, append_step);
+
 `;
 
 type Row = {
   key_space: string;
-  parent_id: string | null;
-  id: string;
+  append_step: number;
+  instance_step: number;
   posix_timestamp: number;
   key: string;
   value: string | null;
@@ -35,10 +36,10 @@ function toRow(row: unknown): Row | null {
     (typeof row.value === "string" || row.value === null) &&
     "key_space" in row &&
     typeof row.key_space === "string" &&
-    "id" in row &&
-    typeof row.id === "string" &&
-    "parent_id" in row &&
-    (typeof row.parent_id === "string" || row.parent_id === null) &&
+    "append_step" in row &&
+    typeof row.append_step === "number" &&
+    "instance_step" in row &&
+    typeof row.instance_step === "number" &&
     "posix_timestamp" in row &&
     typeof row.posix_timestamp === "number" &&
     "key" in row &&
@@ -46,8 +47,8 @@ function toRow(row: unknown): Row | null {
   ) {
     return {
       key_space: row.key_space,
-      id: row.id,
-      parent_id: row.parent_id,
+      append_step: row.append_step,
+      instance_step: row.instance_step,
       posix_timestamp: row.posix_timestamp,
       key: row.key,
       value: row.value,
@@ -57,24 +58,18 @@ function toRow(row: unknown): Row | null {
   return null;
 }
 
-export const SqliteStore = <TKey extends string | number, TValue>({
-  connectionString,
-  keySpace: keySpace,
+export const SqlStore = async <TKey extends string | number, TValue>({
+  executeSql,
+  keySpace,
   encodeValue,
   decodeValue,
 }: {
   keySpace: string;
-  connectionString: string;
+  executeSql: (rawSql: string) => Promise<unknown[]>;
   decodeValue: (encoded: string | null) => TValue | null;
   encodeValue: (value: TValue | null) => string | null;
-}): StoreModule<TKey, TValue> => {
-  const cleaned = connectionString.replace("sqlite:", "");
-
-  const db = new Database(cleaned, {
-    create: true,
-  });
-
-  db.query(UPGRADE_SQL).run();
+}): Promise<StoreModule<TKey, TValue>> => {
+  await executeSql(UPGRADE_SQL);
 
   let runningAppendStep = 1;
 
@@ -118,7 +113,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
       ${sql_values}
     `;
 
-    db.query(sql_query).run();
+    await executeSql(sql_query);
 
     return instanceNew;
   };
@@ -187,7 +182,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
             immutable_store.append_step ASC
       `;
 
-      const rows = db.query(listLatestQuery).all();
+      const rows = await executeSql(listLatestQuery);
 
       const values = rows.flatMap((row) => {
         const maybeParsedRow = toRow(row);
@@ -241,7 +236,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
         LIMIT 1
       `;
 
-      const rows = db.query(latestQuery).all();
+      const rows = await executeSql(latestQuery);
 
       const values = rows.flatMap((row) => {
         const maybeParsedRow = toRow(row);
