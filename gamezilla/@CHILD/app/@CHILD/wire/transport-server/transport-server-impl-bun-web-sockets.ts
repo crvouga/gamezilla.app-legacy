@@ -82,14 +82,14 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
           message.toString()
         ) as ClientToServerMsg<ToServer>; // leap of faith
 
-        if (msg.codebaseVersionId !== codebaseVersionId) {
-          console.error(
-            `Client ${ws.data.clientId} is using codebase version ${msg.codebaseVersionId} but server is using ${codebaseVersionId}`
-          );
-          return;
-        }
-
         if (msg.t === "to-server") {
+          if (msg.codebaseVersionId !== codebaseVersionId) {
+            console.error(
+              `Client ${ws.data.clientId} is using codebase version ${msg.codebaseVersionId} but server is using ${codebaseVersionId}`
+            );
+            return;
+          }
+
           transport.toServer.publish({
             clientId: ws.data.clientId,
             sessionId: ws.data.sessionId,
