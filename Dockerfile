@@ -17,9 +17,12 @@ FROM amacneil/dbmate:latest as dbmate
 # Build Stage: Compile and build the application
 FROM base as build
 
-# Install necessary packages for building
+# Install necessary packages for building, including git
 RUN apt-get update -qq && \
-    apt-get install -y build-essential pkg-config python-is-python3 libsqlite3-dev
+    apt-get install -y build-essential pkg-config python-is-python3 libsqlite3-dev git
+
+# Copy the .git directory for accessing git information
+COPY .git /app/.git
 
 # Copy package files and install dependencies
 COPY bun.lockb package.json ./
