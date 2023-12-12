@@ -69,12 +69,14 @@ type Module = GameClientModule<{
 //
 //
 
+const initModel: ClientModel = {
+  ghostIndex: null,
+  openedModal: null,
+};
+
 export const init: Module["init"] = () => {
   return {
-    model: {
-      ghostIndex: null,
-      openedModal: null,
-    },
+    model: initModel,
   };
 };
 
@@ -87,44 +89,40 @@ export const init: Module["init"] = () => {
 //
 
 export const update: Module["update"] = (input) => {
-  return GameClientModule.chainUpdates(
-    //
-    init(input),
-    (model) => updateFromMsg({ ...input, model })
+  return GameClientModule.chainUpdates(init(input), (model) =>
+    updateFromMsg(model)(input)
   );
 };
 
-const updateFromMsg: Module["update"] = (input) => {
-  const { msg, model } = input;
+const updateFromMsg =
+  (model: ClientModel): Module["update"] =>
+  (input) => {
+    const { msg } = input;
 
-  if (!model) {
-    return init(input);
-  }
-
-  if (!msg) {
-    return { model };
-  }
-
-  switch (msg.t) {
-    case "clicked-resign": {
-      return { model: { ...model, openedModal: "confirm-resign" } };
+    if (!msg) {
+      return { model };
     }
 
-    case "hovered-over-columns": {
-      return { model: { ...model, ghostIndex: msg.columnIndex } };
-    }
+    switch (msg.t) {
+      case "clicked-resign": {
+        return { model: { ...model, openedModal: "confirm-resign" } };
+      }
 
-    case "close-modal": {
-      return { model: { ...model, openedModal: null } };
-    }
+      case "hovered-over-columns": {
+        return { model: { ...model, ghostIndex: msg.columnIndex } };
+      }
 
-    default: {
-      return {
-        model,
-      };
+      case "close-modal": {
+        return { model: { ...model, openedModal: null } };
+      }
+
+      default: {
+        return {
+          model,
+        };
+      }
     }
-  }
-};
+  };
 
 //
 //
@@ -151,166 +149,179 @@ export const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
     return null;
   }
 
-  if (gameState.type === "setup") {
-    return (
-      <VsUserSetupScreen
-        ctx={ctx}
-        title="Connect Four"
-        renderCoverArt={(props) => {
-          return (
-            <div {...props}>
-              <CoverArt />
-            </div>
-          );
-        }}
-        onStartGame={() => {
-          dispatch({ t: "user-started-game", userId: ctx.currentUserId });
-        }}
-        onQuit={ctx.onQuit}
-        playerOne={{
-          label: "Red",
-          onStartPlaying: () => {
-            dispatch({
-              t: "user-started-playing",
-              playerType: "player-one",
-              userId: ctx.currentUserId,
-            });
-          },
-          onStopPlaying: () => {
-            dispatch({
-              t: "user-stopped-playing",
-              userId: ctx.currentUserId,
-            });
-          },
-          renderIcon: (props) => {
-            return <PlayerIcon playerType="player-one" {...props} />;
-          },
-          userId: gameState.players["player-one"],
-        }}
-        playerTwo={{
-          label: "Yellow",
-          onStartPlaying: () => {
-            dispatch({
-              t: "user-started-playing",
-              userId: ctx.currentUserId,
-              playerType: "player-two",
-            });
-          },
-          onStopPlaying: () => {
-            dispatch({
-              t: "user-stopped-playing",
-              userId: ctx.currentUserId,
-            });
-          },
-          renderIcon: (props) => {
-            return <PlayerIcon playerType="player-two" {...props} />;
-          },
-          userId: gameState.players["player-two"],
-        }}
-      />
-    );
-  }
-
-  const currentUserPlayerType = toPlayerType(ctx.currentUserId, gameState);
-
-  return (
-    <GameLayout isSpectating={currentUserPlayerType === null}>
-      <div class="flex w-full flex-1 flex-col items-center justify-center gap-2">
-        <div class="flex w-full items-center gap-2 px-2">
-          <PlayerSlot playerType="player-one" gameState={gameState} ctx={ctx} />
-          <PlayerSlot playerType="player-two" gameState={gameState} ctx={ctx} />
-        </div>
-
-        <Feedback ctx={ctx} gameState={gameState} />
-
-        <div class="relative w-full">
-          <ViewColumns
-            columns={gameState.columns}
-            gameId={gameState.gameId}
-            onDropDisc={(columnIndex) =>
+  switch (gameState.type) {
+    case "setup": {
+      return (
+        <VsUserSetupScreen
+          ctx={ctx}
+          title="Connect Four"
+          renderCoverArt={(props) => {
+            return (
+              <div {...props}>
+                <CoverArt />
+              </div>
+            );
+          }}
+          onStartGame={() => {
+            dispatch({ t: "user-started-game", userId: ctx.currentUserId });
+          }}
+          onQuit={ctx.onQuit}
+          playerOne={{
+            label: "Red",
+            onStartPlaying: () => {
               dispatch({
-                t: "user-dropped-disc",
+                t: "user-started-playing",
+                playerType: "player-one",
                 userId: ctx.currentUserId,
-                columnIndex,
-              })
-            }
-            onHover={(columnIndex) =>
-              dispatch({ t: "hovered-over-columns", columnIndex })
-            }
-            disabled={
-              toTurn(gameState.columns) !== currentUserPlayerType ||
-              gameState.type === "game-over"
-            }
-          />
-          {gameState.type === "game-over" && (
-            <div class="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
-              <ViewGameOverMessage
-                dispatch={dispatch}
-                ctx={ctx}
+              });
+            },
+            onStopPlaying: () => {
+              dispatch({
+                t: "user-stopped-playing",
+                userId: ctx.currentUserId,
+              });
+            },
+            renderIcon: (props) => {
+              return <PlayerIcon playerType="player-one" {...props} />;
+            },
+            userId: gameState.players["player-one"],
+          }}
+          playerTwo={{
+            label: "Yellow",
+            onStartPlaying: () => {
+              dispatch({
+                t: "user-started-playing",
+                userId: ctx.currentUserId,
+                playerType: "player-two",
+              });
+            },
+            onStopPlaying: () => {
+              dispatch({
+                t: "user-stopped-playing",
+                userId: ctx.currentUserId,
+              });
+            },
+            renderIcon: (props) => {
+              return <PlayerIcon playerType="player-two" {...props} />;
+            },
+            userId: gameState.players["player-two"],
+          }}
+        />
+      );
+    }
+
+    case "game":
+    case "game-over": {
+      const currentUserPlayerType = toPlayerType(ctx.currentUserId, gameState);
+
+      return (
+        <GameLayout isSpectating={currentUserPlayerType === null}>
+          <div class="flex w-full flex-1 flex-col items-center justify-center gap-2">
+            <div class="flex w-full items-center gap-2 px-2">
+              <PlayerSlot
+                playerType="player-one"
                 gameState={gameState}
+                ctx={ctx}
+              />
+              <PlayerSlot
+                playerType="player-two"
+                gameState={gameState}
+                ctx={ctx}
               />
             </div>
-          )}
-        </div>
-      </div>
 
-      <ViewBottomButtonBar
-        actions={[
-          ...(gameState.type === "game"
-            ? [
-                {
-                  icon: <IconFlag class="h-6 w-6" />,
-                  label: "Resign",
-                  onClick: () => {
-                    dispatch({
-                      t: "clicked-resign",
-                      userId: ctx.currentUserId,
-                    });
-                  },
-                },
-              ]
-            : []),
-          ...(gameState.type === "game-over" &&
-          ctx.currentUserId === ctx.space.hostId
-            ? [
-                {
-                  icon: <IconArrowLeftOnRect class="h-6 w-6" />,
-                  label: "Exit",
-                  onClick: () => {
-                    dispatch({
-                      t: "user-stopped-game",
-                      userId: ctx.currentUserId,
-                    });
-                  },
-                },
-                {
-                  icon: <IconArrowRotateLeft class="h-6 w-6" />,
-                  label: "Rematch",
-                  onClick: () => {
-                    dispatch({
-                      t: "user-requested-rematch",
-                      userId: ctx.currentUserId,
-                    });
-                  },
-                },
-              ]
-            : []),
-        ]}
-      />
+            <Feedback ctx={ctx} gameState={gameState} />
 
-      <ConformationDialog
-        headerIcon={<IconFlag class="h-10 w-10" />}
-        title="Resign from game?"
-        onCancel={() => dispatch({ t: "close-modal" })}
-        onClose={() => dispatch({ t: "close-modal" })}
-        confirmTitle="Resign"
-        onConfirm={() =>
-          dispatch({ t: "user-resigned", userId: ctx.currentUserId })
-        }
-        open={model.openedModal === "confirm-resign"}
-      />
-    </GameLayout>
-  );
+            <div class="relative w-full">
+              <ViewColumns
+                columns={gameState.columns}
+                gameId={gameState.gameId}
+                onDropDisc={(columnIndex) =>
+                  dispatch({
+                    t: "user-dropped-disc",
+                    userId: ctx.currentUserId,
+                    columnIndex,
+                  })
+                }
+                onHover={(columnIndex) =>
+                  dispatch({ t: "hovered-over-columns", columnIndex })
+                }
+                disabled={
+                  toTurn(gameState.columns) !== currentUserPlayerType ||
+                  gameState.type === "game-over"
+                }
+              />
+              {gameState.type === "game-over" && (
+                <div class="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
+                  <ViewGameOverMessage
+                    dispatch={dispatch}
+                    ctx={ctx}
+                    gameState={gameState}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <ViewBottomButtonBar
+            actions={[
+              ...(gameState.type === "game"
+                ? [
+                    {
+                      icon: <IconFlag class="h-6 w-6" />,
+                      label: "Resign",
+                      onClick: () => {
+                        dispatch({
+                          t: "clicked-resign",
+                          userId: ctx.currentUserId,
+                        });
+                      },
+                    },
+                  ]
+                : []),
+              ...(gameState.type === "game-over" &&
+              ctx.currentUserId === ctx.space.hostId
+                ? [
+                    {
+                      icon: <IconArrowLeftOnRect class="h-6 w-6" />,
+                      label: "Exit",
+                      onClick: () => {
+                        dispatch({
+                          t: "user-stopped-game",
+                          userId: ctx.currentUserId,
+                        });
+                      },
+                    },
+                    {
+                      icon: <IconArrowRotateLeft class="h-6 w-6" />,
+                      label: "Rematch",
+                      onClick: () => {
+                        dispatch({
+                          t: "user-requested-rematch",
+                          userId: ctx.currentUserId,
+                        });
+                      },
+                    },
+                  ]
+                : []),
+            ]}
+          />
+
+          <ConformationDialog
+            headerIcon={<IconFlag class="h-10 w-10" />}
+            title="Resign from game?"
+            onCancel={() => dispatch({ t: "close-modal" })}
+            onClose={() => dispatch({ t: "close-modal" })}
+            confirmTitle="Resign"
+            onConfirm={() =>
+              dispatch({ t: "user-resigned", userId: ctx.currentUserId })
+            }
+            open={model.openedModal === "confirm-resign"}
+          />
+        </GameLayout>
+      );
+    }
+  }
 };
 
 const ViewGameOverMessage = ({
