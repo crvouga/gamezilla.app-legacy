@@ -1,10 +1,10 @@
 import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
+import { ServerCtx } from "gamezilla/@CHILD/app/@SHARED/server";
 import { SqlStore } from "gamezilla/@SHARED/immutable-store/immutable-store.sql";
 
 const isObj = (x: unknown): x is object => typeof x === "object";
 
-export const StoreUserIdBySessionId = ({ dbConn }: { dbConn: DbConnSql }) => {
+export const StoreUserIdBySessionId = ({ dbConn }: ServerCtx) => {
   return SqlStore<SessionId, UserId>({
     async executeSql(rawSql) {
       const rows = await dbConn.query(isObj, rawSql, {});
@@ -19,7 +19,7 @@ export const StoreUserIdBySessionId = ({ dbConn }: { dbConn: DbConnSql }) => {
   });
 };
 
-export const StoreSessionIdByUserId = ({ dbConn }: { dbConn: DbConnSql }) => {
+export const StoreSessionIdByUserId = ({ dbConn }: ServerCtx) => {
   return SqlStore<UserId, SessionId>({
     async executeSql(rawSql) {
       const rows = await dbConn.query(isObj, rawSql, {});
