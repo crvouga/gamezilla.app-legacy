@@ -10,8 +10,10 @@ const RECONNECT_INTERVAL = 2000; // 1 second
 const MAX_RECONNECT_ATTEMPTS = 6; // Adjust as needed
 
 export const ClientTransportWebSockets = <ToServer, ToClient>({
+  codebaseVersionId,
   impl,
 }: {
+  codebaseVersionId: string;
   impl: ClientTransportWebSocketImpl;
 }): IClientTransport<{ ToServer: ToServer; ToClient: ToClient }> => {
   const serverUrl = toWebsocketServerUrl(impl.serverUrl);
@@ -32,9 +34,8 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
     ws = new WebSocket(serverUrl);
 
     ws.onopen = () => {
-      
       reconnectAttempts = 0;
-      transport.evt.publish({ t: "server-connected",  });
+      transport.evt.publish({ t: "server-connected" });
       for (const msg of queue) {
         send(msg);
       }
@@ -107,7 +108,11 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
   };
 
   transport.toServer.subscribe((msgs) => {
-    send({ t: "to-server", msgs });
+    send({
+      t: "to-server",
+      msgs,
+      codebaseVersionId,
+    });
   });
 
   transport.cmd.subscribe((cmd) => {

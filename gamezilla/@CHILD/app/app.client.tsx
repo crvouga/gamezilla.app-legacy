@@ -42,6 +42,7 @@ export const transport = ClientTransport<ToServer, ToClient>({
     serverUrl: APP_CONFIG.SERVER_URL,
     endpoint: APP_CONFIG.WEB_SOCKETS_ENDPOINT,
   },
+  codebaseVersionId: APP_CONFIG.CODEBASE_VERSION_ID,
 });
 
 //

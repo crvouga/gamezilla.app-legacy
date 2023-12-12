@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "server-prod": "bun db-prod:up && bun gamezilla/gamezilla.server.ts",
+    "server-prod": "bun db-prod:up && VITE_CODEBASE_VERSION_ID=$(git rev-parse HEAD) bun gamezilla/gamezilla.server.ts",
     "db-prod:up": "dbmate -e DATABASE_URL_PROD up",
-    "server": "bun gamezilla/gamezilla.server.ts",
+    "server": "VITE_CODEBASE_VERSION_ID=$(git rev-parse HEAD) bun gamezilla/gamezilla.server.ts",
     "db:up": "dbmate -e DATABASE_URL up",
     "client:build": "VITE_CODEBASE_VERSION_ID=$(git rev-parse HEAD) vite build",
     "client:serve": "bun x serve -s dist -p 3000",

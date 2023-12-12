@@ -108,8 +108,17 @@ if (!SERVER_URL) {
   throw new Error("SERVER_URL not set");
 }
 
+const VITE_CODEBASE_VERSION_ID =
+  process.env["VITE_CODEBASE_VERSION_ID"] ?? null;
+const CODEBASE_VERSION_ID = VITE_CODEBASE_VERSION_ID;
+
+if (!CODEBASE_VERSION_ID) {
+  throw new Error("CODEBASE_VERSION_ID not set");
+}
+
 export const APP_CONFIG = {
   SERVER_URL,
   SERVER_PORT,
   WEB_SOCKETS_ENDPOINT,
+  CODEBASE_VERSION_ID,
 };

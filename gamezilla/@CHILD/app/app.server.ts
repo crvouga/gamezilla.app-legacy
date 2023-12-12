@@ -41,6 +41,7 @@ import {
 //
 
 const transport = ServerTransport<ToServer, ToClient>({
+  codebaseVersionId: APP_CONFIG.CODEBASE_VERSION_ID,
   impl: {
     t: "bun-web-sockets",
     serverPort: APP_CONFIG.SERVER_PORT,

@@ -14,7 +14,9 @@ type ServerWebSocketData = {
 
 export const ServerTransportBunWebSockets = <ToServer, ToClient>({
   impl,
+  codebaseVersionId,
 }: {
+  codebaseVersionId: string;
   impl: ServerTransportWebSocketImpl;
 }): IServerTransport<{
   ToClient: ToClient;
@@ -154,7 +156,7 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
 
   transport.toClientBroadcast.subscribe((msgs) => {
     for (const client of clients.values()) {
-      send(client, { t: "to-client", msgs });
+      send(client, { t: "to-client", msgs, codebaseVersionId });
     }
   });
 
@@ -176,7 +178,11 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
         continue;
       }
 
-      send(client, { t: "to-client", msgs: toClientSingle.msgs });
+      send(client, {
+        t: "to-client",
+        msgs: toClientSingle.msgs,
+        codebaseVersionId,
+      });
     }
   });
 

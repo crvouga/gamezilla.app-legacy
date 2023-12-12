@@ -13,6 +13,7 @@ export const createDbConnSqlite = async ({
   logger: Logger;
 }): Promise<DbConnSql> => {
   const cleaned = databaseUrl.replace("sqlite:", "");
+
   const database = new Database(cleaned);
 
   return {
