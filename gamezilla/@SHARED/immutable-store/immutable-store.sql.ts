@@ -4,9 +4,9 @@ const UPGRADE_SQL = `
 CREATE TABLE IF NOT EXISTS immutable_store (
   key_space       TEXT NOT NULL,
   key             TEXT NOT NULL,
-  posix_timestamp NUMBER NOT NULL,
-  append_step     NUMBER NOT NULL,
-  instance_step   NUMBER NOT NULL,
+  posix_timestamp NUMERIC NOT NULL,
+  append_step     NUMERIC NOT NULL,
+  instance_step   NUMERIC NOT NULL,
   value           TEXT
 );
 
