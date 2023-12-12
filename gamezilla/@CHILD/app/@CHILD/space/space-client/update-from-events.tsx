@@ -28,7 +28,7 @@ import {
 /**
  * Handles merging new events into the client model
  */
-export function updateFromEvents(input: {
+export function updateFromSpaceEvents(input: {
   ctx: ClientCtx | AnonymousClientCtx;
   model: ClientModel;
   events: WithEventId<Event>[];
@@ -37,14 +37,14 @@ export function updateFromEvents(input: {
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } {
-  return updateFromEventsLoop(input.ctx, input.events, {
+  return updateFromSpaceEventsLoop(input.ctx, input.events, {
     model: input.model,
     cmd: [],
     eff: Eff.None,
   });
 }
 
-export function updateFromEventsLoop(
+export function updateFromSpaceEventsLoop(
   ctx: ClientCtx | AnonymousClientCtx,
   events: WithEventId<Event>[],
   acc: {
@@ -64,7 +64,7 @@ export function updateFromEventsLoop(
   }
 
   if (event.eventId in acc.model.events.events) {
-    return updateFromEventsLoop(ctx, rest, acc);
+    return updateFromSpaceEventsLoop(ctx, rest, acc);
   }
 
   const spaceBefore = toStartedSpace(acc.model, event.spaceId);
@@ -95,7 +95,7 @@ export function updateFromEventsLoop(
 
   const eventsNew = batchMsgs(rest, updatedGame.event);
 
-  return updateFromEventsLoop(ctx, eventsNew, accNew);
+  return updateFromSpaceEventsLoop(ctx, eventsNew, accNew);
 }
 
 function sendEventToServer({

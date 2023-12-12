@@ -75,7 +75,7 @@ export const update: Module["update"] = async (input) => {
   }
 
   if (input.evt) {
-    return updateFromEvent(input);
+    return updateFromEvt(input);
   }
 
   return { model: input.model };
@@ -127,7 +127,7 @@ const updateFromClient: Module["update"] = async ({
   };
 };
 
-const updateFromEvent: Module["update"] = async ({ evt, model, ctx }) => {
+const updateFromEvt: Module["update"] = async ({ evt, model, ctx }) => {
   if (!evt) {
     return { model };
   }

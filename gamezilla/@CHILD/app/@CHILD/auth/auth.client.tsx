@@ -98,7 +98,7 @@ export const update: Client["update"] = (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
-    (model) => updateFromEvent({ ...input, model }),
+    (model) => updateFromEvt({ ...input, model }),
     (model) => updateChild({ ...input, model })
   );
 };
@@ -223,7 +223,7 @@ const updateFromServer: Client["update"] = (input) => {
   }
 };
 
-const updateFromEvent: Client["update"] = (input) => {
+const updateFromEvt: Client["update"] = (input) => {
   return updateRedirect(input);
 };
 

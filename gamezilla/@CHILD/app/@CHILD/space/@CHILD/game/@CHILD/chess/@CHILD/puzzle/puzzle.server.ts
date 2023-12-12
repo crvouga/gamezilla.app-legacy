@@ -407,7 +407,7 @@ export const updateFromGame = ({
   return { model };
 };
 
-export const updateFromEvent = ({
+export const updateFromEvt = ({
   model,
 }: {
   msg: SpaceServerEvt;

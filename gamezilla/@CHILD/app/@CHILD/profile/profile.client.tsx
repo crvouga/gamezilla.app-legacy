@@ -90,7 +90,7 @@ export const init: Module["init"] = ({ ctx, stored }) => {
 
 export const update: Module["update"] = (input) => {
   if (input.evt) {
-    return updateFromEvent(input);
+    return updateFromEvt(input);
   }
 
   if (input.msg) {
@@ -130,7 +130,7 @@ const updateFromCmd: Module["update"] = (input) => {
   }
 };
 
-const updateFromEvent: Module["update"] = (input) => {
+const updateFromEvt: Module["update"] = (input) => {
   const { evt, model } = input;
 
   if (!evt) {
@@ -493,8 +493,7 @@ const ViewField = ({
 }) => (
   <button
     onClick={onClick}
-    class="flex w-full items-center justify-start px-4 py-2"
-  >
+    class="flex w-full items-center justify-start px-4 py-2">
     <div class="flex flex-1 flex-col items-start">
       <p class="text-sm text-neutral-300">{label}</p>
       {typeof value === "string" ? (

@@ -98,7 +98,7 @@ export const update: Module["update"] = (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
-    (model) => updateFromEvent({ ...input, model })
+    (model) => updateFromEvt({ ...input, model })
   );
 };
 
@@ -138,7 +138,7 @@ const updateFromMsg: Module["update"] = ({ msg, model }) => {
   }
 };
 
-const updateFromEvent: Module["update"] = ({ model, evt }) => {
+const updateFromEvt: Module["update"] = ({ model, evt }) => {
   if (!evt) {
     return { model };
   }

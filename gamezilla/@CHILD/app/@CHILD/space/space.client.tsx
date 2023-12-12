@@ -34,7 +34,7 @@ import {
 import { Sub } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import * as GameClient from "./@CHILD/game/game.client";
-import { updateFromEvents } from "./space-client/update-from-events";
+import { updateFromSpaceEvents } from "./space-client/update-from-events";
 import { updateFromGame } from "./space-client/update-from-game";
 import { ViewNotInGameScreen } from "./space-client/view-not-in-game-screen";
 import { ViewSpaceJoinScreen } from "./space-client/view-space-join-screen";
@@ -112,7 +112,7 @@ export const update: Module["update"] = (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
-    (model) => updateFromEvent({ ...input, model }),
+    (model) => updateFromEvt({ ...input, model }),
     (model) => updateGame({ ...input, model })
   );
 };
@@ -166,7 +166,7 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
     }
 
     case "event": {
-      return updateFromEvents({ ctx, events: [msg.c], model });
+      return updateFromSpaceEvents({ ctx, events: [msg.c], model });
     }
   }
 };
@@ -203,14 +203,14 @@ const updateFromServer: Module["update"] = (input) => {
         }
 
         case "event": {
-          return updateFromEvents({ ctx, events: [fromServer.c], model });
+          return updateFromSpaceEvents({ ctx, events: [fromServer.c], model });
         }
       }
     }
   );
 };
 
-const updateFromEvent: Module["update"] = (input) => {
+const updateFromEvt: Module["update"] = (input) => {
   if (!input.evt) {
     return { model: input.model };
   }
@@ -299,7 +299,7 @@ const updateGame: Module["update"] = (input) => {
   return AppClientModule.chainUpdates(
     { model },
     (model) => updateFromGame({ model, spaceId, updated }),
-    (model) => updateFromEvents({ ctx, events: eventsNew, model })
+    (model) => updateFromSpaceEvents({ ctx, events: eventsNew, model })
   );
 };
 

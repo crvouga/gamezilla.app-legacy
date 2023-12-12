@@ -72,7 +72,7 @@ export const update: Module["update"] = async (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),
-    (model) => updateFromEvent({ ...input, model }),
+    (model) => updateFromEvt({ ...input, model }),
     (model) => updateChild({ ...input, model })
   );
 };
@@ -173,7 +173,7 @@ const updateFromClient: Module["update"] = async ({
   }
 };
 
-const updateFromEvent: typeof update = async ({ evt, model, ctx }) => {
+const updateFromEvt: typeof update = async ({ evt, model, ctx }) => {
   if (!evt) {
     return { model };
   }

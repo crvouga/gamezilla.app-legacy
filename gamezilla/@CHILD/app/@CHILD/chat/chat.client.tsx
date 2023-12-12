@@ -148,7 +148,7 @@ export const updateFromServer = ({
   return { model };
 };
 
-export const updateFromEvent = ({
+export const updateFromEvt = ({
   msg,
   model,
 }: {
