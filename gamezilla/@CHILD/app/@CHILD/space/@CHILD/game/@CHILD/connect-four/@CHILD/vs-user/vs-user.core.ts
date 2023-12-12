@@ -307,11 +307,6 @@ export const reducer = (state: GameState, event: GameEvent): GameState => {
   }
 };
 
-export const toState = (events: GameEvent[], state: GameState): GameState => {
-  const stateNew = events.reduce(reducer, state);
-  return stateNew;
-};
-
 export const toPlayerType = (
   userId: UserId,
   state: GameState

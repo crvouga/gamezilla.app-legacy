@@ -1,7 +1,7 @@
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import { ToastCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconXMark, Transition, cn } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Posix, Sub, Time, TimeSpan, Uuid } from "gamezilla/@SHARED/core";
+import { Posix, Sub, Time, TimeSpan } from "gamezilla/@SHARED/core";
 
 //
 //
@@ -179,11 +179,9 @@ const updateFromCmd: Module["update"] = (input) => {
 //
 //
 
-const INTERVAL_ID = Uuid.generate$();
-
 export const subscriptions: Module["subscriptions"] = ({ model }) => {
   if (model.toast) {
-    return Time.interval(INTERVAL_ID, model.toast.duration, () => ({
+    return Time.interval("toasts", model.toast.duration, () => ({
       t: "time-passed",
     }));
   }
