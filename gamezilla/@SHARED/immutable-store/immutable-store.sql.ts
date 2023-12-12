@@ -70,7 +70,6 @@ export const SqlStore = <TKey extends string | number, TValue>({
   encodeValue: (value: TValue | null) => string | null;
 }): StoreModule<TKey, TValue> => {
   let upgraded = false;
-
   const upgrade = async () => {
     if (upgraded) {
       return;
