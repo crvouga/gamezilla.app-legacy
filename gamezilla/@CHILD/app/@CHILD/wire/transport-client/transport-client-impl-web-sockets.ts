@@ -64,6 +64,13 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
     ws.onmessage = (event) => {
       const msg = JSON.parse(event.data) as ServerToClientMsg<ToClient>; // leap of faith
 
+      if (msg.codebaseVersionId !== codebaseVersionId) {
+        console.error(
+          `[client] Codebase version mismatch. Expected ${codebaseVersionId} but got ${msg.codebaseVersionId}`
+        );
+        return;
+      }
+
       if (msg.t === "to-client") {
         transport.toClient.publish(msg.msgs);
         return;
