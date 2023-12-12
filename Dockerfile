@@ -44,5 +44,11 @@ COPY --from=dbmate /usr/local/bin/dbmate /usr/local/bin/dbmate
 # Expose the application port
 EXPOSE 5000
 
-# Command to run the server
-CMD [ "bun", "run", "server-prod" ]
+# Copy the shell script into the image
+COPY set_env.sh /app
+
+# Grant execution permissions to the script
+RUN chmod +x /app/set_env.sh
+
+# Modify the CMD instruction to run the script before starting the server
+CMD /app/set_env.sh && bun run server-prod
