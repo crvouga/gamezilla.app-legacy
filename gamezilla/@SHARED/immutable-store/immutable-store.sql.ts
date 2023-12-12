@@ -137,18 +137,22 @@ export const SqlStore = <TKey extends string | number, TValue>({
       };
     },
     async assoc(now, instance, key, value) {
+      await upgrade();
       return append(now, instance, [[key, value]]);
     },
 
     async assocMany(now, instance, entries) {
+      await upgrade();
       return append(now, instance, entries);
     },
 
     async dissoc(now, instance, key) {
+      await upgrade();
       return append(now, instance, [[key, null]]);
     },
 
     async dissocMany(now, instance, keys) {
+      await upgrade();
       return append(
         now,
         instance,
@@ -157,6 +161,7 @@ export const SqlStore = <TKey extends string | number, TValue>({
     },
 
     async listLatest(from, to, instance, _log) {
+      await upgrade();
       const listLatestQuery = `
           WITH latest_keys AS (
             SELECT
@@ -210,6 +215,7 @@ export const SqlStore = <TKey extends string | number, TValue>({
     },
 
     async get(instance, key) {
+      await upgrade();
       const latestQuery = `
         SELECT
             key_space,
