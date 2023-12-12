@@ -4,6 +4,7 @@ import * as Space from "./@CHILD/space/space.core";
 import * as Wire from "./@CHILD/wire/wire.core";
 import { ClientId, SessionId } from "./@SHARED/data";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
+import config from "config.json";
 
 //
 //
@@ -108,15 +109,13 @@ if (!SERVER_URL) {
   throw new Error("SERVER_URL not set");
 }
 
-const VITE_CODEBASE_VERSION_ID =
-  process.env["VITE_CODEBASE_VERSION_ID"] ?? null;
-const CODEBASE_VERSION_ID = VITE_CODEBASE_VERSION_ID;
+const CODEBASE_VERSION_ID = config["codebase_version_id"];
 
 if (!CODEBASE_VERSION_ID) {
   throw new Error("CODEBASE_VERSION_ID not set");
 }
 
-export const APP_CONFIG = {
+export const PUBLIC_APP_CONFIG = {
   SERVER_URL,
   SERVER_PORT,
   WEB_SOCKETS_ENDPOINT,

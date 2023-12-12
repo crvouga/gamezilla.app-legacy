@@ -24,7 +24,7 @@ import { Logger, LoggerConsole } from "./@SHARED/server/logger";
 import { createDbConn } from "./app-server/db-conn-sql";
 import { createSMS } from "./app-server/sms";
 import {
-  APP_CONFIG,
+  PUBLIC_APP_CONFIG,
   ServerModel,
   ServerMsg,
   ToClient,
@@ -41,11 +41,11 @@ import {
 //
 
 const transport = ServerTransport<ToServer, ToClient>({
-  codebaseVersionId: APP_CONFIG.CODEBASE_VERSION_ID,
+  codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
   impl: {
     t: "bun-web-sockets",
-    serverPort: APP_CONFIG.SERVER_PORT,
-    endpoint: APP_CONFIG.WEB_SOCKETS_ENDPOINT,
+    serverPort: PUBLIC_APP_CONFIG.SERVER_PORT,
+    endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
   },
 });
 
@@ -81,8 +81,6 @@ export const init = async ({
     ctx,
     stored: null,
   });
-
-  ctx.logger.info(`app config:\n${JSON.stringify(APP_CONFIG, null, 4)}`);
 
   return {
     model: {

@@ -53,8 +53,9 @@
     "paths": {
       "react": ["node_modules/preact/compat"],
       "react-dom": ["./node_modules/preact/compat/"]
-    }
+    },
     // "typeRoots": ["src/types", "./node_modules/@types"]
+    "resolveJsonModule": true
   },
   "include": ["gamezilla"],
   "references": [{ "path": "./tsconfig.node.json" }]

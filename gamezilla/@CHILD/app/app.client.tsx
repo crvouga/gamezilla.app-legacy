@@ -21,7 +21,7 @@ import { ClientTransport } from "./@CHILD/wire/transport-client";
 import * as Wire from "./@CHILD/wire/wire.client";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import {
-  APP_CONFIG,
+  PUBLIC_APP_CONFIG,
   ClientModel,
   ClientMsg,
   ToClient,
@@ -39,10 +39,10 @@ import {
 export const transport = ClientTransport<ToServer, ToClient>({
   impl: {
     t: "web-sockets",
-    serverUrl: APP_CONFIG.SERVER_URL,
-    endpoint: APP_CONFIG.WEB_SOCKETS_ENDPOINT,
+    serverUrl: PUBLIC_APP_CONFIG.SERVER_URL,
+    endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
   },
-  codebaseVersionId: APP_CONFIG.CODEBASE_VERSION_ID,
+  codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
 });
 
 //
