@@ -1,6 +1,5 @@
 import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-server";
 import * as ConnectFourServer from "./@CHILD/connect-four/connect-four.server";
-// import * as ChessServer from "./@CHILD/chess/chess.server";
 import {
   GameEvent,
   ServerModel,
@@ -122,10 +121,6 @@ export const subscriptions: Server["subscriptions"] = async (input) => {
   const { state, model } = input;
 
   switch (state.t) {
-    // case "chess": {
-    //   return Sub.None;
-    // }
-
     case "connect-four": {
       return await ConnectFour.subscriptions({
         ...input,
