@@ -3,9 +3,12 @@ import {
   ViewBottomButtonBar,
 } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/vs-user";
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client";
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
+import {
+  SpaceClientCtx,
+  SpaceClientEvt,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { ClientCmd, ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
   ConformationDialog,
@@ -17,7 +20,7 @@ import {
   IconXMark,
   MyAvatar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Sub, chain } from "gamezilla/@SHARED/core";
+import { Sub } from "gamezilla/@SHARED/core";
 import { PlayerType, toTurn } from "../../@SHARED/connect-four";
 import { PlayerIcon, ViewColumns } from "../../@SHARED/connect-four-ui";
 import { CoverArt } from "../../@SHARED/connect-four-ui/connect-four-cover-art";
@@ -33,14 +36,29 @@ import {
   toPlayerType,
 } from "./vs-user.core";
 
-type Client = GameClient<{
-  ClientModel: ClientModel;
-  ClientMsg: ClientMsg;
+//
+//
+//
+//
+//
+//
+//
+
+type Module = GameClientModule<{
+  Model: ClientModel;
+  Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
   GameState: GameState;
   GameEvent: GameEvent;
-  ClientCtx: SpaceClientCtx & { onQuit: () => void };
+  Ctx: SpaceClientCtx & { onQuit: () => void };
+  InCmd: null;
+  InEvt: SpaceClientEvt;
+  OutCmd: ClientCmd<{
+    ClientMsg: ClientMsg;
+    ToServer: ToServer;
+  }>;
+  OutEvt: null;
 }>;
 
 //
@@ -51,7 +69,7 @@ type Client = GameClient<{
 //
 //
 
-export const init: Client["init"] = () => {
+export const init: Module["init"] = () => {
   return {
     model: {
       ghostIndex: null,
@@ -68,35 +86,40 @@ export const init: Client["init"] = () => {
 //
 //
 
-export const update: Client["update"] = (input) => {
-  return chain(init(input), (model) => {
-    const { msg } = input;
+export const update: Module["update"] = (input) => {
+  return GameClientModule.chainUpdates(
+    //
+    init(input),
+    (model) => updateFromMsg({ ...input, model })
+  );
+};
 
-    if (!msg) {
-      return { model };
+const updateFromMsg: Module["update"] = (input) => {
+  const { msg, model } = input;
+
+  if (!msg) {
+    return { model };
+  }
+
+  switch (msg.t) {
+    case "clicked-resign": {
+      return { model: { ...model, openedModal: "confirm-resign" } };
     }
 
-    switch (msg.t) {
-      case "clicked-resign": {
-        return { model: { ...model, openedModal: "confirm-resign" } };
-      }
-
-      case "hovered-over-columns": {
-        return { model: { ...model, ghostIndex: msg.columnIndex } };
-      }
-
-      case "close-modal": {
-        return { model: { ...model, openedModal: null } };
-      }
-
-      default: {
-        return {
-          model,
-          gameEvent: msg,
-        };
-      }
+    case "hovered-over-columns": {
+      return { model: { ...model, ghostIndex: msg.columnIndex } };
     }
-  });
+
+    case "close-modal": {
+      return { model: { ...model, openedModal: null } };
+    }
+
+    default: {
+      return {
+        model,
+      };
+    }
+  }
 };
 
 //
@@ -107,7 +130,7 @@ export const update: Client["update"] = (input) => {
 //
 //
 
-export const subscriptions: Client["subscriptions"] = () => {
+export const subscriptions: Module["subscriptions"] = () => {
   return Sub.None;
 };
 
@@ -119,12 +142,12 @@ export const subscriptions: Client["subscriptions"] = () => {
 //
 //
 
-export const View: Client["View"] = ({ ctx, model, state, dispatch }) => {
+export const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
   if (!model) {
     return null;
   }
 
-  if (state.type === "setup") {
+  if (gameState.type === "setup") {
     return (
       <VsUserSetupScreen
         ctx={ctx}
@@ -158,7 +181,7 @@ export const View: Client["View"] = ({ ctx, model, state, dispatch }) => {
           renderIcon: (props) => {
             return <PlayerIcon playerType="player-one" {...props} />;
           },
-          userId: state.players["player-one"],
+          userId: gameState.players["player-one"],
         }}
         playerTwo={{
           label: "Yellow",
@@ -178,28 +201,28 @@ export const View: Client["View"] = ({ ctx, model, state, dispatch }) => {
           renderIcon: (props) => {
             return <PlayerIcon playerType="player-two" {...props} />;
           },
-          userId: state.players["player-two"],
+          userId: gameState.players["player-two"],
         }}
       />
     );
   }
 
-  const currentUserPlayerType = toPlayerType(ctx.currentUserId, state);
+  const currentUserPlayerType = toPlayerType(ctx.currentUserId, gameState);
 
   return (
     <GameLayout isSpectating={currentUserPlayerType === null}>
       <div class="flex w-full flex-1 flex-col items-center justify-center gap-2">
         <div class="flex w-full items-center gap-2 px-2">
-          <PlayerSlot playerType="player-one" state={state} ctx={ctx} />
-          <PlayerSlot playerType="player-two" state={state} ctx={ctx} />
+          <PlayerSlot playerType="player-one" gameState={gameState} ctx={ctx} />
+          <PlayerSlot playerType="player-two" gameState={gameState} ctx={ctx} />
         </div>
 
-        <Feedback ctx={ctx} state={state} />
+        <Feedback ctx={ctx} gameState={gameState} />
 
         <div class="relative w-full">
           <ViewColumns
-            columns={state.columns}
-            gameId={state.gameId}
+            columns={gameState.columns}
+            gameId={gameState.gameId}
             onDropDisc={(columnIndex) =>
               dispatch({
                 t: "user-dropped-disc",
@@ -211,16 +234,16 @@ export const View: Client["View"] = ({ ctx, model, state, dispatch }) => {
               dispatch({ t: "hovered-over-columns", columnIndex })
             }
             disabled={
-              toTurn(state.columns) !== currentUserPlayerType ||
-              state.type === "game-over"
+              toTurn(gameState.columns) !== currentUserPlayerType ||
+              gameState.type === "game-over"
             }
           />
-          {state.type === "game-over" && (
+          {gameState.type === "game-over" && (
             <div class="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
               <ViewGameOverMessage
                 dispatch={dispatch}
                 ctx={ctx}
-                state={state}
+                gameState={gameState}
               />
             </div>
           )}
@@ -229,7 +252,7 @@ export const View: Client["View"] = ({ ctx, model, state, dispatch }) => {
 
       <ViewBottomButtonBar
         actions={[
-          ...(state.type === "game"
+          ...(gameState.type === "game"
             ? [
                 {
                   icon: <IconFlag class="h-6 w-6" />,
@@ -243,7 +266,7 @@ export const View: Client["View"] = ({ ctx, model, state, dispatch }) => {
                 },
               ]
             : []),
-          ...(state.type === "game-over" &&
+          ...(gameState.type === "game-over" &&
           ctx.currentUserId === ctx.space.hostId
             ? [
                 {
@@ -288,18 +311,18 @@ export const View: Client["View"] = ({ ctx, model, state, dispatch }) => {
 
 const ViewGameOverMessage = ({
   ctx,
-  state,
+  gameState,
   dispatch,
 }: {
-  state: StateGameOver;
+  gameState: StateGameOver;
   ctx: ClientCtx;
   dispatch: (msg: GameEvent) => void;
 }) => {
-  const currentPlayerType = toPlayerType(ctx.currentUserId, state);
+  const currentPlayerType = toPlayerType(ctx.currentUserId, gameState);
 
   if (
-    state.rematch.type === "Asking" &&
-    state.rematch.asker === currentPlayerType
+    gameState.rematch.type === "Asking" &&
+    gameState.rematch.asker === currentPlayerType
   ) {
     return (
       <>
@@ -320,8 +343,8 @@ const ViewGameOverMessage = ({
   }
 
   if (
-    state.rematch.type === "Asking" &&
-    state.rematch.asker !== currentPlayerType &&
+    gameState.rematch.type === "Asking" &&
+    gameState.rematch.asker !== currentPlayerType &&
     currentPlayerType !== null
   ) {
     return (
@@ -358,12 +381,12 @@ const ViewGameOverMessage = ({
     );
   }
 
-  if (state.gameOver.type === "Draw") {
+  if (gameState.gameOver.type === "Draw") {
     return <p class="text-xl">Tie</p>;
   }
 
-  if (state.gameOver.type === "resignation") {
-    const { resigner } = state.gameOver;
+  if (gameState.gameOver.type === "resignation") {
+    const { resigner } = gameState.gameOver;
 
     const winner: PlayerType =
       resigner === "player-one" ? "player-two" : "player-one";
@@ -375,7 +398,7 @@ const ViewGameOverMessage = ({
             <PlayerIcon playerType={winner} />
             <MyAvatar
               alt=""
-              src={ctx.profiles[state.players[winner]]?.avatarUrl}
+              src={ctx.profiles[gameState.players[winner]]?.avatarUrl}
             />
           </div>
           <p>Winner</p>
@@ -391,8 +414,8 @@ const ViewGameOverMessage = ({
     );
   }
 
-  if (state.gameOver.type === "Winner") {
-    const { winner } = state.gameOver;
+  if (gameState.gameOver.type === "Winner") {
+    const { winner } = gameState.gameOver;
 
     if (currentPlayerType === null) {
       return (
@@ -401,7 +424,7 @@ const ViewGameOverMessage = ({
             <PlayerIcon playerType={winner} class="h-20 w-20" />
             <MyAvatar
               class="h-20 w-20"
-              src={ctx.profiles[state.players[winner]]?.avatarUrl}
+              src={ctx.profiles[gameState.players[winner]]?.avatarUrl}
             />
           </div>
           <p>Winner</p>
@@ -417,20 +440,20 @@ const ViewGameOverMessage = ({
 
 const Feedback = ({
   ctx,
-  state,
+  gameState,
 }: {
   ctx: SpaceClientCtx;
-  state: StateGame | StateGameOver;
+  gameState: StateGame | StateGameOver;
 }) => {
-  if (state.type === "game-over") {
+  if (gameState.type === "game-over") {
     return (
       <p class="flex items-center justify-center text-secondary">Game Over</p>
     );
   }
 
-  const turn = toTurn(state.columns);
+  const turn = toTurn(gameState.columns);
 
-  const currentUserPlayerType = toPlayerType(ctx.currentUserId, state);
+  const currentUserPlayerType = toPlayerType(ctx.currentUserId, gameState);
 
   if (currentUserPlayerType !== turn) {
     return (
@@ -450,11 +473,11 @@ const Feedback = ({
 };
 
 const PlayerSlot = ({
-  state,
+  gameState,
   playerType,
   ctx,
 }: {
-  state: StateGame | StateGameOver;
+  gameState: StateGame | StateGameOver;
   playerType: PlayerType;
   ctx: SpaceClientCtx;
 }) => {
@@ -464,15 +487,15 @@ const PlayerSlot = ({
       <MyAvatar
         class="h-8 w-8"
         alt=""
-        src={ctx.profiles[state.players[playerType]]?.avatarUrl}
+        src={ctx.profiles[gameState.players[playerType]]?.avatarUrl}
       />
       <p class="text-secondary">
-        {ctx.profiles[state.players[playerType]]?.username ?? "..."}
+        {ctx.profiles[gameState.players[playerType]]?.username ?? "..."}
       </p>
     </div>
   );
 };
 
-export const ViewFeedItem: Client["ViewFeedItem"] = () => {
+export const ViewFeedItem: Module["ViewFeedItem"] = () => {
   return null;
 };

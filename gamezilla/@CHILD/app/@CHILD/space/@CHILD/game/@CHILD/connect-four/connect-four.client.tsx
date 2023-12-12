@@ -2,11 +2,18 @@ import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@S
 import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  SpaceClientCtx,
+  SpaceClientEvt,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import {
+  APP_SOUND,
+  ClientCmd,
+  playSound,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import { Sub } from "gamezilla/@SHARED/core";
-import * as VsBotClient from "./@CHILD/vs-bot/vs-bot.client";
-import * as VsUserClient from "./@CHILD/vs-user/vs-user.client";
+import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
+import * as VsUser from "./@CHILD/vs-user/vs-user.client";
 import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art";
 import {
   ClientModel,
@@ -16,20 +23,32 @@ import {
   ToClient,
   ToServer,
 } from "./connect-four.core";
+import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
 
-type Client = GameClient<{
-  ClientModel: ClientModel;
-  ClientMsg: ClientMsg;
+//
+//
+//
+//
+//
+//
+//
+
+type Module = GameClientModule<{
+  Model: ClientModel;
+  Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
   GameState: GameState;
   GameEvent: GameEvent;
-  ClientCtx: SpaceClientCtx;
+  Ctx: SpaceClientCtx;
+  InCmd: null;
+  InEvt: SpaceClientEvt;
+  OutCmd: ClientCmd<{
+    ClientMsg: ClientMsg;
+    ToServer: ToServer;
+  }>;
+  OutEvt: null;
 }>;
-
-const VsBot = GameClient.tag("vs-bot", VsBotClient);
-
-const VsUser = GameClient.tag("vs-user", VsUserClient);
 
 //
 //
@@ -39,10 +58,10 @@ const VsUser = GameClient.tag("vs-user", VsUserClient);
 //
 //
 
-export const init: Client["init"] = (input) => {
-  const { state, model } = input;
+export const init: Module["init"] = (input) => {
+  const { gameState, model } = input;
 
-  switch (state.t) {
+  switch (gameState.t) {
     case "none": {
       return { model: { t: null } };
     }
@@ -50,7 +69,7 @@ export const init: Client["init"] = (input) => {
     case "vs-bot": {
       const initial = VsBot.init({
         ...input,
-        state,
+        gameState,
         model: model?.t === "vs-bot" ? model : null,
         ctx: { ...input.ctx, onQuit: () => {} },
       });
@@ -61,7 +80,7 @@ export const init: Client["init"] = (input) => {
     case "vs-user": {
       const initial = VsUser.init({
         ...input,
-        state,
+        gameState,
         ctx: { ...input.ctx, onQuit: () => {} },
         model: model?.t === "vs-user" ? model : null,
       });
@@ -79,13 +98,14 @@ export const init: Client["init"] = (input) => {
 //
 //
 
-export const update: Client["update"] = (input) => {
+export const update: Module["update"] = (input) => {
   return GameClient.chain(
     init(input),
-    (model): ReturnType<Client["update"]> => {
-      const { msg, evt, gameEvent, serverMsg, state, stateBefore } = input;
+    (model): ReturnType<Module["update"]> => {
+      const { msg, evt, gameEvent, serverMsg, gameState, gameStateBefore } =
+        input;
 
-      switch (state.t) {
+      switch (gameState.t) {
         case "none": {
           return { model };
         }
@@ -98,8 +118,9 @@ export const update: Client["update"] = (input) => {
             gameEvent: gameEvent?.t === "vs-bot" ? gameEvent : null,
             serverMsg: serverMsg?.t === "vs-bot" ? serverMsg : null,
             model: model.t === "vs-bot" ? model : null,
-            state,
-            stateBefore: stateBefore.t === "vs-bot" ? stateBefore : state,
+            gameState,
+            gameStateBefore:
+              gameStateBefore.t === "vs-bot" ? gameStateBefore : gameState,
           });
         }
 
@@ -111,8 +132,9 @@ export const update: Client["update"] = (input) => {
             evt: evt,
             gameEvent: gameEvent?.t === "vs-user" ? gameEvent : null,
             serverMsg: serverMsg?.t === "vs-user" ? serverMsg : null,
-            state,
-            stateBefore: stateBefore.t === "vs-user" ? stateBefore : state,
+            gameState,
+            gameStateBefore:
+              gameStateBefore.t === "vs-user" ? gameStateBefore : gameState,
           });
         }
       }
@@ -157,7 +179,7 @@ export const update: Client["update"] = (input) => {
 //
 //
 
-export const View: Client["View"] = ({ dispatch, ctx, state, model }) => {
+export const View: Module["View"] = ({ dispatch, ctx, gameState, model }) => {
   const onQuit = () => {
     dispatch({
       t: "user-changed-mode",
@@ -166,7 +188,7 @@ export const View: Client["View"] = ({ dispatch, ctx, state, model }) => {
     });
   };
 
-  switch (state.t) {
+  switch (gameState.t) {
     case "none": {
       return (
         <MainMenuScreen.View
@@ -201,7 +223,7 @@ export const View: Client["View"] = ({ dispatch, ctx, state, model }) => {
           ctx={{ ...ctx, onQuit }}
           dispatch={dispatch}
           model={model?.t === "vs-bot" ? model : null}
-          state={state}
+          gameState={gameState}
         />
       );
     }
@@ -212,18 +234,18 @@ export const View: Client["View"] = ({ dispatch, ctx, state, model }) => {
           ctx={{ ...ctx, onQuit }}
           dispatch={dispatch}
           model={model?.t === "vs-user" ? model : null}
-          state={state}
+          gameState={gameState.c}
         />
       );
     }
   }
 };
 
-export const ViewFeedItem: Client["ViewFeedItem"] = (input) => {
-  const { event, ctx, state } = input;
-  switch (event.t) {
+export const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
+  const { gameState, ctx, gameEvent } = input;
+  switch (gameEvent.t) {
     case "user-changed-mode": {
-      switch (event.mode) {
+      switch (gameEvent.mode) {
         case "none": {
           const profile = ctx.profiles[ctx.currentUserId];
 
@@ -253,13 +275,17 @@ export const ViewFeedItem: Client["ViewFeedItem"] = (input) => {
     }
 
     case "vs-bot": {
-      switch (state.t) {
+      switch (gameState.t) {
         case "vs-bot": {
           return (
             <VsBot.ViewFeedItem
               ctx={{ ...ctx, onQuit: () => {} }}
-              event={event}
-              state={state}
+              gameEvent={gameEvent.c}
+              gameState={gameState.c}
+              dispatch={() => {
+                //
+              }}
+              model={input.model?.t === "vs-bot" ? input.model.c : null}
             />
           );
         }
@@ -270,13 +296,17 @@ export const ViewFeedItem: Client["ViewFeedItem"] = (input) => {
     }
 
     case "vs-user": {
-      switch (state.t) {
+      switch (gameState.t) {
         case "vs-user": {
           return (
             <VsUser.ViewFeedItem
               ctx={{ ...ctx, onQuit: () => {} }}
-              event={event}
-              state={state}
+              gameEvent={gameEvent.c}
+              gameState={gameState.c}
+              dispatch={() => {
+                //
+              }}
+              model={input.model?.t === "vs-user" ? input.model.c : null}
             />
           );
         }
@@ -296,30 +326,36 @@ export const ViewFeedItem: Client["ViewFeedItem"] = (input) => {
 //
 //
 
-export const subscriptions: Client["subscriptions"] = (input) => {
-  const { model, state } = input;
+export const subscriptions: Module["subscriptions"] = (input) => {
+  const { model, gameState } = input;
 
-  switch (state.t) {
+  switch (gameState.t) {
     case "none": {
       return Sub.None;
     }
 
     case "vs-bot": {
-      return VsBot.subscriptions({
-        ...input,
-        model: model?.t === "vs-bot" ? model : undefined,
-        state,
-        ctx: { ...input.ctx, onQuit: () => {} },
-      });
+      return Sub.tag(
+        "vs-bot",
+        VsBot.subscriptions({
+          ...input,
+          model: model?.t === "vs-bot" ? model.c : undefined,
+          gameState: gameState.c,
+          ctx: { ...input.ctx, onQuit: () => {} },
+        })
+      );
     }
 
     case "vs-user": {
-      return VsUser.subscriptions({
-        ...input,
-        model: model?.t === "vs-user" ? model : undefined,
-        state,
-        ctx: { ...input.ctx, onQuit: () => {} },
-      });
+      return Sub.tag(
+        "vs-user",
+        VsUser.subscriptions({
+          ...input,
+          model: model?.t === "vs-user" ? model.c : null,
+          gameState: gameState.c,
+          ctx: { ...input.ctx, onQuit: () => {} },
+        })
+      );
     }
   }
 };

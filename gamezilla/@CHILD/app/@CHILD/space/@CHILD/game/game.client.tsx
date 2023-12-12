@@ -1,8 +1,12 @@
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client";
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { Sub } from "gamezilla/@SHARED/core";
+import {
+  SpaceClientCtx,
+  SpaceClientEvt,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 // import * as ChessClient from "./@CHILD/chess/chess.client";
-import * as ConnectFourClient from "./@CHILD/connect-four/connect-four.client";
+import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
+import { GameClientModule } from "../../@SHARED/architecture/game-client-v2";
+import * as ConnectFour from "./@CHILD/connect-four/connect-four.client";
 import {
   ClientModel,
   ClientMsg,
@@ -20,18 +24,22 @@ import {
 //
 //
 
-type Client = GameClient<{
-  ClientModel: ClientModel;
-  ClientMsg: ClientMsg;
+type Module = GameClientModule<{
+  Model: ClientModel;
+  Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
   GameState: GameState;
   GameEvent: GameEvent;
-  ClientCtx: SpaceClientCtx;
+  Ctx: SpaceClientCtx;
+  InCmd: null;
+  InEvt: SpaceClientEvt;
+  OutCmd: ClientCmd<{
+    ClientMsg: ClientMsg;
+    ToServer: ToServer;
+  }>;
+  OutEvt: null;
 }>;
-
-const ConnectFour = GameClient.tag("connect-four", ConnectFourClient);
-// const Chess = GameClient.tag("chess", ChessClient);
 
 //
 //
@@ -41,25 +49,24 @@ const ConnectFour = GameClient.tag("connect-four", ConnectFourClient);
 //
 //
 
-export const init: Client["init"] = (input) => {
-  const { state, model } = input;
+export const init: Module["init"] = (input) => {
+  const { gameState } = input;
 
-  switch (state.t) {
+  switch (gameState.t) {
     case "connect-four": {
-      return ConnectFour.init({
-        ...input,
-        state,
-        model: model?.t === "connect-four" ? model : null,
+      const initial = ConnectFour.init({
+        ctx: input.ctx,
+        model: input.model?.t === "connect-four" ? input.model.c : null,
+        gameState: gameState.c,
       });
-    }
 
-    // case "chess": {
-    //   return Chess.init({
-    //     ...input,
-    //     state,
-    //     model: model?.t === "chess" ? model : null,
-    //   });
-    // }
+      return {
+        model: { t: "connect-four", c: initial.model },
+        cmd: ClientCmd.tag("connect-four", initial.cmd),
+        eff: Eff.t("connect-four", initial.eff),
+        evt: initial.evt,
+      };
+    }
   }
 };
 
@@ -71,42 +78,33 @@ export const init: Client["init"] = (input) => {
 //
 //
 
-export const update: Client["update"] = (input) => {
-  return GameClient.chain(
-    init(input),
+export const update: Module["update"] = (input) => {
+  const { ctx, msg, fromServer, cmd, evt, gameEvent, gameState } = input;
 
-    (model) => {
-      const { state, ctx, msg, serverMsg, evt, gameEvent, stateBefore } = input;
+  switch (gameState.t) {
+    case "connect-four": {
+      const updated = ConnectFour.update({
+        ctx,
+        gameState: gameState.c,
+        model: input.model?.t === "connect-four" ? input.model.c : null,
+        cmd: cmd,
+        evt: evt,
+        fromServer: fromServer?.t === "connect-four" ? fromServer.c : null,
+        gameEvent:
+          gameEvent?.t === "connect-four"
+            ? { ...gameEvent, ...gameEvent.c }
+            : null,
+        msg: msg?.t === "connect-four" ? msg.c : null,
+      });
 
-      switch (state.t) {
-        // case "chess": {
-        //   return Chess.update({
-        //     state: state,
-        //     ctx,
-        //     model: model?.t === "chess" ? model : null,
-        //     msg: msg?.t === "chess" ? msg : null,
-        //     gameEvent: gameEvent?.t === "chess" ? gameEvent : null,
-        //     serverMsg: serverMsg?.t === "chess" ? serverMsg : null,
-        //     evt: evt,
-        //     stateBefore: stateBefore.t === "chess" ? stateBefore : state,
-        //   });
-        // }
-
-        case "connect-four": {
-          return ConnectFour.update({
-            state,
-            ctx,
-            model: model?.t === "connect-four" ? model : null,
-            msg: msg?.t === "connect-four" ? msg : null,
-            gameEvent: gameEvent?.t === "connect-four" ? gameEvent : null,
-            serverMsg: serverMsg?.t === "connect-four" ? serverMsg : null,
-            stateBefore: stateBefore.t === "connect-four" ? stateBefore : state,
-            evt: evt,
-          });
-        }
-      }
+      return {
+        model: { t: "connect-four", c: updated.model },
+        cmd: ClientCmd.tag("connect-four", updated.cmd),
+        eff: Eff.t("connect-four", updated.eff),
+        evt: updated.evt,
+      };
     }
-  );
+  }
 };
 
 //
@@ -117,25 +115,20 @@ export const update: Client["update"] = (input) => {
 //
 //
 
-export const subscriptions: Client["subscriptions"] = (
+export const subscriptions: Module["subscriptions"] = (
   input
 ): Sub<ClientMsg> => {
-  const { state, model } = input;
-  switch (state.t) {
-    // case "chess": {
-    //   return Chess.subscriptions({
-    //     ...input,
-    //     state,
-    //     model: model?.t === "chess" ? model : null,
-    //   });
-    // }
-
+  const { gameState, model } = input;
+  switch (gameState.t) {
     case "connect-four": {
-      return ConnectFour.subscriptions({
-        ...input,
-        state,
-        model: model?.t === "connect-four" ? model : null,
-      });
+      return Sub.tag(
+        "connect-four",
+        ConnectFour.subscriptions({
+          ctx: input.ctx,
+          gameState: gameState.c,
+          model: model?.t === "connect-four" ? model.c : null,
+        })
+      );
     }
   }
 };
@@ -148,53 +141,48 @@ export const subscriptions: Client["subscriptions"] = (
 //
 //
 
-export const View: Client["View"] = (input) => {
-  const { model, ctx, state, dispatch } = input;
+export const View: Module["View"] = (input) => {
+  const { model, ctx, gameState, dispatch } = input;
 
-  switch (state.t) {
-    // case "chess": {
-    //   return (
-    //     <Chess.View
-    //       ctx={ctx}
-    //       dispatch={dispatch}
-    //       state={state}
-    //       model={model?.t === "chess" ? model : null}
-    //     />
-    //   );
-    // }
+  switch (gameState.t) {
     case "connect-four": {
       return (
         <ConnectFour.View
           ctx={ctx}
-          dispatch={dispatch}
-          state={state}
-          model={model?.t === "connect-four" ? model : null}
+          dispatch={(c) => dispatch({ t: "connect-four", c })}
+          gameState={gameState.c}
+          model={model?.t === "connect-four" ? model.c : null}
         />
       );
     }
   }
 };
 
-export const ViewFeedItem: Client["ViewFeedItem"] = (input) => {
-  const { state, event, ctx } = input;
+export const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
+  const { gameEvent, gameState, ctx, dispatch } = input;
 
-  switch (event.t) {
+  switch (gameState.t) {
     case "connect-four": {
-      switch (state.t) {
+      switch (gameEvent.t) {
         case "connect-four": {
           return (
-            <ConnectFour.ViewFeedItem ctx={ctx} event={event} state={state} />
+            <ConnectFour.ViewFeedItem
+              ctx={ctx}
+              gameEvent={gameEvent.c}
+              gameState={gameState.c}
+              dispatch={(c) => dispatch({ t: "connect-four", c })}
+              model={input.model?.t === "connect-four" ? input.model.c : null}
+            />
           );
         }
-
         default: {
           return null;
         }
       }
     }
 
-    // case "chess": {
-    //   return null;
-    // }
+    default: {
+      return null;
+    }
   }
 };

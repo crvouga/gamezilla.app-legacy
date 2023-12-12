@@ -180,8 +180,7 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
         },
         msg: msg.c,
         model: model.games[msg.spaceId],
-        state: space.game,
-        stateBefore: space.game,
+        gameState: space.game,
       });
 
       const eventsNew =
@@ -256,9 +255,8 @@ const updateFromServer: Module["update"] = (input) => {
               viewProfile() {},
             },
             model: model.games[fromServer.spaceId],
-            serverMsg: fromServer.c,
-            state: space.game,
-            stateBefore: space.game,
+            fromServer: fromServer.c,
+            gameState: space.game,
           });
 
           const eventsNew =
@@ -373,9 +371,8 @@ export const subscriptions: Module["subscriptions"] = ({ ctx, model }) => {
     const sub = Sub.map(
       GameClient.subscriptions({
         ctx: { ...clientCtx, space: space, quit() {}, viewProfile() {} },
-        state: space.game,
+        gameState: space.game,
         model: model.games[spaceId],
-        intervalId: spaceId,
       }),
       (c): ClientMsg => ({ t: "game", c, spaceId })
     );
@@ -635,8 +632,11 @@ const ViewFeedItem = ({
       return (
         <GameClient.ViewFeedItem
           ctx={ctx}
-          event={{ ...event, ...event.c }}
-          state={state.game}
+          gameEvent={{ ...event, ...event.c }}
+          gameState={state.game}
+          dispatch={(_msg) => {
+            //
+          }}
         />
       );
     }
@@ -730,7 +730,7 @@ const ViewSpaceScreenMain = ({
       <div class="flex w-full flex-1 flex-col overflow-hidden">
         {space.game ? (
           <GameClient.View
-            state={space.game}
+            gameState={space.game}
             ctx={ctx}
             dispatch={(msg) =>
               dispatch({ t: "game", spaceId: ctx.space.spaceId, c: msg })

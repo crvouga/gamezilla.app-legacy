@@ -204,8 +204,7 @@ function updateGameFromEvent({
         ? { ...eventWithMeta, ...eventWithMeta.c }
         : null,
     model: model.games[eventWithMeta.spaceId],
-    state: after.game,
-    stateBefore: before?.game ?? after.game,
+    gameState: before?.game ?? after.game,
   });
 
   const eventsNew =

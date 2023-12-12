@@ -1,5 +1,6 @@
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
+import { EventMeta, WithEventId } from "../event";
 
 //
 //
@@ -76,7 +77,7 @@ export type Input<T extends GameClientModuleTypes> = {
   /**
    *
    */
-  gameEvent?: T["GameEvent"] | null;
+  gameEvent?: (T["GameEvent"] & EventMeta) | null;
   /**
    *
    */
@@ -118,6 +119,10 @@ export type Output<T extends GameClientModuleTypes> = {
    *
    */
   evt?: T["OutEvt"][];
+  /**
+   *
+   */
+  gameEvent?: WithEventId<T["GameEvent"]>[];
 };
 
 /**
@@ -130,7 +135,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
   init: (input: {
     ctx: T["Ctx"];
     gameState: T["GameState"];
-    model: T["Model"] | null;
+    model?: T["Model"] | null;
   }) => Output<T>;
 
   /**
@@ -144,7 +149,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
   subscriptions: (input: {
     ctx: T["Ctx"];
     gameState: T["GameState"];
-    model: T["Model"];
+    model?: T["Model"] | null;
   }) => Sub<T["Msg"]>;
 
   /**
@@ -153,7 +158,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
   View: (input: {
     ctx: T["Ctx"];
     gameState: T["GameState"];
-    model: T["Model"];
+    model?: T["Model"] | null;
     dispatch: (msg: T["Msg"]) => void;
   }) => VDom;
 
@@ -162,8 +167,9 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
    */
   ViewFeedItem: (input: {
     ctx: T["Ctx"];
+    gameEvent: T["GameEvent"];
     gameState: T["GameState"];
-    model: T["Model"];
+    model?: T["Model"] | null;
     dispatch: (msg: T["Msg"]) => void;
   }) => VDom;
 };
@@ -177,9 +183,9 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
 //
 //
 
-export const chainUpdates = <T extends GameClientModuleTypes>(
+const chainUpdates = <T extends GameClientModuleTypes>(
   acc: Output<T>,
-  updates: ((model: T["Model"]) => Output<T>)[]
+  ...updates: ((model: T["Model"]) => Output<T>)[]
 ): Output<T> => {
   const [update, ...rest] = updates;
 
@@ -196,7 +202,7 @@ export const chainUpdates = <T extends GameClientModuleTypes>(
     evt: [...(acc.evt ?? []), ...(updated.evt ?? [])],
   };
 
-  return chainUpdates(accNew, rest);
+  return chainUpdates(accNew, ...rest);
 };
 
 export const GameClientModule = {

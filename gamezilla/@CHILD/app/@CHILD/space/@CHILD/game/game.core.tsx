@@ -10,9 +10,11 @@ import * as ConnectFour from "./@CHILD/connect-four/connect-four.core";
 //
 //
 
-export type ClientModel = { t: "connect-four"; c: ConnectFour.ClientModel };
+export type ClientModel = {
+  t: "connect-four";
+  c: ConnectFour.ClientModel;
+};
 // | { t: "chess"; c: Chess.ClientModel };
-
 // | { t: "tic-tac-toe"; c: TicTacToe.ClientModel }
 // | { t: "flow"; c: Flow.ClientModel };
 
