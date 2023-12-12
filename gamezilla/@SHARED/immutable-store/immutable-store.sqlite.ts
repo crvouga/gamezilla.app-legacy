@@ -72,8 +72,6 @@ export const SqliteStore = <TKey extends string | number, TValue>({
 }): StoreModule<TKey, TValue> => {
   const cleaned = connectionString.replace("sqlite:", "");
 
-  console.log("cleaned", cleaned);
-
   const db = new Database(cleaned, {
     create: true,
     readwrite: true,
