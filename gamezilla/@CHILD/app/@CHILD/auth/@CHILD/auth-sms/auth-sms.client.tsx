@@ -244,7 +244,8 @@ const updateFromMsg: Module["update"] = (input) => {
     }
 
     case "time-passed": {
-      return AppClientModule.chainUpdates({ model }, [
+      return AppClientModule.chainUpdates(
+        { model },
         (model) => {
           if (
             model.sentCodeAt &&
@@ -287,8 +288,8 @@ const updateFromMsg: Module["update"] = (input) => {
           }
 
           return { model };
-        },
-      ]);
+        }
+      );
     }
   }
 };

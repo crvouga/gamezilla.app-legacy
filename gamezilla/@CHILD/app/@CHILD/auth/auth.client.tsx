@@ -94,12 +94,13 @@ export const init: Client["init"] = ({ stored, ctx }) => {
 //
 
 export const update: Client["update"] = (input) => {
-  return AppClientModule.chainUpdates({ model: input.model }, [
+  return AppClientModule.chainUpdates(
+    { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
-    (model) => updateChild({ ...input, model }),
-  ]);
+    (model) => updateChild({ ...input, model })
+  );
 };
 
 const updateChild: Client["update"] = (input) => {

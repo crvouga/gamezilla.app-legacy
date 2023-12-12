@@ -77,10 +77,11 @@ export type Msg =
   | { t: "clicked-dismiss-button"; toastId: number };
 
 export const update: Module["update"] = (input) => {
-  return AppClientModule.chainUpdates({ model: input.model }, [
+  return AppClientModule.chainUpdates(
+    { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromCmd({ ...input, model }),
-  ]);
+    (model) => updateFromCmd({ ...input, model })
+  );
 };
 
 const updateFromMsg: Module["update"] = (input) => {

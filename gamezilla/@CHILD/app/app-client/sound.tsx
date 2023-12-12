@@ -94,11 +94,12 @@ export type Msg =
     };
 
 export const update: Module["update"] = (input) => {
-  return AppClientModule.chainUpdates({ model: input.model }, [
+  return AppClientModule.chainUpdates(
+    { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
-    (model) => updateFromEvent({ ...input, model }),
-  ]);
+    (model) => updateFromEvent({ ...input, model })
+  );
 };
 
 const updateFromMsg: Module["update"] = ({ msg, model }) => {
@@ -227,8 +228,7 @@ export const ViewStatusBarDrawer = ({
       <button
         class="flex w-full flex-1 items-center gap-4 p-4"
         tabIndex={-1}
-        onClick={() => dispatch({ t: "toggle-mute" })}
-      >
+        onClick={() => dispatch({ t: "toggle-mute" })}>
         {model.muted ? (
           <>
             <IconVolumeXMark class="h-5 w-5" />

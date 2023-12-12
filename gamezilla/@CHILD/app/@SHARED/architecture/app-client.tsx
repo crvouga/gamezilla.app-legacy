@@ -135,7 +135,7 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
 
 const chainUpdates = <T extends AppClientModuleTypes>(
   acc: Output<T>,
-  updates: ((model: T["Model"]) => Output<T>)[]
+  ...updates: ((model: T["Model"]) => Output<T>)[]
 ): Output<T> => {
   const [update, ...rest] = updates;
 
@@ -152,7 +152,7 @@ const chainUpdates = <T extends AppClientModuleTypes>(
     evt: [...(acc.evt ?? []), ...(updated.evt ?? [])],
   };
 
-  return chainUpdates(accNew, rest);
+  return chainUpdates(accNew, ...rest);
 };
 
 export const AppClientModule = {

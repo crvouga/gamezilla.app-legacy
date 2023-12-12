@@ -108,22 +108,20 @@ export const init: Module["init"] = ({ stored }) => {
 //
 
 export const update: Module["update"] = (input) => {
-  if (input.msg) {
-    return updateFromMsg(input);
-  }
-  if (input.fromServer) {
-    return updateFromServer(input);
-  }
-  if (input.evt) {
-    return updateFromEvent(input);
-  }
-  return { model: input.model };
+  return AppClientModule.chainUpdates(
+    { model: input.model },
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromServer({ ...input, model }),
+    (model) => updateFromEvent({ ...input, model }),
+    (model) => updateGame({ ...input, model })
+  );
 };
 
 const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
   if (!msg) {
     return { model };
   }
+
   switch (msg.t) {
     case "closed-modal": {
       return { model: { ...model, modal: null } };
@@ -164,63 +162,24 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
     }
 
     case "game": {
-      const space = toStartedSpace(model, msg.spaceId);
-
-      if (!space || !space.game || !ctx.currentUserId) {
-        return { model };
-      }
-
-      const updatedGame = GameClient.update({
-        ctx: {
-          ...ctx,
-          currentUserId: ctx.currentUserId,
-          space: space,
-          quit() {},
-          viewProfile() {},
-        },
-        msg: msg.c,
-        model: model.games[msg.spaceId],
-        gameState: space.game,
-      });
-
-      const eventsNew =
-        updatedGame.gameEvent?.map(
-          (c): WithEventId<Event> => ({
-            ...c,
-            t: "game",
-            c,
-            spaceId: msg.spaceId,
-          })
-        ) ?? [];
-
-      return AppClientModule.chainUpdates({ model }, [
-        (model) => {
-          return updateFromGame({
-            model,
-            spaceId: msg.spaceId,
-            updated: updatedGame,
-          });
-        },
-        (model) => {
-          return updateFromEvents({ ctx, events: eventsNew, model });
-        },
-      ]);
+      return { model };
     }
 
-    default: {
+    case "event": {
       return updateFromEvents({ ctx, events: [msg.c], model });
     }
   }
 };
 
 const updateFromServer: Module["update"] = (input) => {
-  if (!input.fromServer) {
+  const { ctx, fromServer } = input;
+
+  if (!fromServer) {
     return { model: input.model };
   }
 
-  const { ctx, fromServer } = input;
-
-  return AppClientModule.chainUpdates({ model: input.model }, [
+  return AppClientModule.chainUpdates(
+    { model: input.model },
     (model) => {
       return {
         model,
@@ -240,55 +199,15 @@ const updateFromServer: Module["update"] = (input) => {
         }
 
         case "game": {
-          const space = toStartedSpace(model, fromServer.spaceId);
-
-          if (!space || !space.game || !ctx.currentUserId) {
-            return { model };
-          }
-
-          const updatedGame = GameClient.update({
-            ctx: {
-              ...ctx,
-              space: space,
-              currentUserId: ctx.currentUserId,
-              quit() {},
-              viewProfile() {},
-            },
-            model: model.games[fromServer.spaceId],
-            fromServer: fromServer.c,
-            gameState: space.game,
-          });
-
-          const eventsNew =
-            updatedGame.gameEvent?.map(
-              (e): WithEventId<Event> => ({
-                ...e,
-                spaceId: fromServer.spaceId,
-                t: "game",
-                c: e,
-              })
-            ) ?? [];
-
-          return AppClientModule.chainUpdates({ model }, [
-            (model) => {
-              return updateFromGame({
-                model,
-                spaceId: fromServer.spaceId,
-                updated: updatedGame,
-              });
-            },
-            (model) => {
-              return updateFromEvents({ ctx, events: eventsNew, model });
-            },
-          ]);
+          return { model };
         }
 
         case "event": {
           return updateFromEvents({ ctx, events: [fromServer.c], model });
         }
       }
-    },
-  ]);
+    }
+  );
 };
 
 const updateFromEvent: Module["update"] = (input) => {
@@ -329,6 +248,59 @@ const updateFromEvent: Module["update"] = (input) => {
       return { model: input.model };
     }
   }
+};
+
+const updateGame: Module["update"] = (input) => {
+  const { ctx, model, fromServer, evt, msg } = input;
+
+  const spaceId =
+    msg && "spaceId" in msg
+      ? msg.spaceId
+      : fromServer && "spaceId" in fromServer
+      ? fromServer.spaceId
+      : null;
+
+  if (!spaceId) {
+    return { model };
+  }
+
+  const space = toStartedSpace(model, spaceId);
+
+  if (!space || !space.game || !ctx.currentUserId) {
+    return { model };
+  }
+
+  const updated = GameClient.update({
+    ctx: {
+      ...ctx,
+      space: space,
+      currentUserId: ctx.currentUserId,
+      quit() {},
+      viewProfile() {},
+    },
+    model: model.games[space.spaceId],
+    gameState: space.game,
+    fromServer: fromServer?.t === "game" ? fromServer.c : null,
+    cmd: null,
+    evt,
+    msg: msg?.t === "game" ? msg.c : null,
+  });
+
+  const eventsNew =
+    updated.gameEvent?.map(
+      (e): WithEventId<Event> => ({
+        ...e,
+        spaceId: space.spaceId,
+        t: "game",
+        c: e,
+      })
+    ) ?? [];
+
+  return AppClientModule.chainUpdates(
+    { model },
+    (model) => updateFromGame({ model, spaceId, updated }),
+    (model) => updateFromEvents({ ctx, events: eventsNew, model })
+  );
 };
 
 //
@@ -514,8 +486,7 @@ const ViewSpaceStarted = ({
         position="bottom"
         id="users"
         open={model.modal === "users"}
-        onClose={() => dispatch({ t: "closed-modal" })}
-      >
+        onClose={() => dispatch({ t: "closed-modal" })}>
         <ViewUsersInSpaceList ctx={spaceCtx} />
       </Drawer>
 
@@ -523,8 +494,7 @@ const ViewSpaceStarted = ({
         position="bottom"
         id="user-preview"
         open={model.modal === "user-preview"}
-        onClose={() => dispatch({ t: "closed-modal" })}
-      >
+        onClose={() => dispatch({ t: "closed-modal" })}>
         <div>
           <button
             class="flex w-full flex-col items-center justify-center gap-2 p-4"
@@ -541,8 +511,7 @@ const ViewSpaceStarted = ({
                   },
                 });
               }
-            }}
-          >
+            }}>
             <MyAvatar
               src={
                 model.previewUserId
@@ -924,8 +893,7 @@ export const ViewCurrentSpaceBar = ({
               c: { t: "space", spaceId: space.spaceId },
             },
           });
-        }}
-      >
+        }}>
         <div class="mr-2 p-2">
           {!game && (
             <MyAvatar
@@ -959,8 +927,7 @@ export const ViewCurrentSpaceBar = ({
               spaceId: space.spaceId,
             });
           }}
-          class="mr-4"
-        >
+          class="mr-4">
           <IconXMark class="h-8 w-8" />
         </button>
       )}
@@ -975,8 +942,7 @@ export const ViewCurrentSpaceBar = ({
               spaceId: space.spaceId,
             });
           }}
-          class="mr-4"
-        >
+          class="mr-4">
           <IconXMark class="h-8 w-8" />
         </button>
       )}
