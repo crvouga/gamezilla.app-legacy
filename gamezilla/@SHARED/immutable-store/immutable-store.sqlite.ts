@@ -74,6 +74,7 @@ export const SqliteStore = <TKey extends string | number, TValue>({
 
   const db = new Database(cleaned, {
     create: true,
+    readwrite: true,
   });
 
   db.query(UPGRADE_SQL).run();
