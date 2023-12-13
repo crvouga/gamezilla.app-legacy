@@ -108,108 +108,118 @@ export const init: Module["init"] = (input) => {
 export const update: Module["update"] = (input) => {
   return GameClientModule.chainUpdates(
     init(input),
-    (model) => {
-      const { msg, evt, gameEvent, fromServer, gameState } = input;
-
-      switch (gameState.t) {
-        case "none": {
-          return { model };
-        }
-
-        case "vs-bot": {
-          const updated = VsBot.update({
-            ctx: { ...input.ctx, onQuit: () => {} },
-            msg: msg?.t === "vs-bot" ? msg.c : null,
-            evt: evt,
-            cmd: null,
-            gameEvent:
-              gameEvent?.t === "vs-bot"
-                ? { ...gameEvent, ...gameEvent.c }
-                : null,
-            fromServer: fromServer?.t === "vs-bot" ? fromServer.c : null,
-            model: model.t === "vs-bot" ? model.c : null,
-            gameState: gameState.c,
-          });
-
-          return GameClientModule.tagOutput(
-            "vs-bot",
-            (cmd) => ClientCmd.tag("vs-bot", cmd),
-            updated
-          );
-        }
-
-        case "vs-user": {
-          const updated = VsUser.update({
-            ctx: { ...input.ctx, onQuit: () => {} },
-            model: model.t === "vs-user" ? model.c : null,
-            msg: msg?.t === "vs-user" ? msg.c : null,
-            cmd: null,
-            evt: evt,
-            gameEvent:
-              gameEvent?.t === "vs-user"
-                ? { ...gameEvent, ...gameEvent.c }
-                : null,
-            fromServer: fromServer?.t === "vs-user" ? fromServer.c : null,
-            gameState: gameState.c,
-          });
-
-          return GameClientModule.tagOutput(
-            "vs-user",
-            (cmd) => ClientCmd.tag("vs-user", cmd),
-            updated
-          );
-        }
-      }
-    },
-    (model) => {
-      const { msg } = input;
-
-      if (!msg) {
-        return { model };
-      }
-
-      switch (msg.t) {
-        case "user-changed-mode": {
-          return {
-            model,
-            gameEvent: [withId(msg)],
-          };
-        }
-
-        case "vs-user":
-        case "vs-bot": {
-          return { model };
-        }
-      }
-    },
-    (model) => {
-      const { gameEvent } = input;
-
-      if (!gameEvent) {
-        return { model };
-      }
-
-      switch (gameEvent.t) {
-        case "user-changed-mode": {
-          switch (gameEvent.mode) {
-            case "none": {
-              return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
-            }
-            case "vs-bot":
-            case "vs-user": {
-              return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
-            }
-          }
-        }
-
-        case "vs-bot":
-        case "vs-user": {
-          return { model };
-        }
-      }
-    }
+    (model) => updateChild(model)(input),
+    (model) => updateFromMsg(model)(input),
+    (model) => updateFromGameEvent(model)(input)
   );
 };
+
+const updateFromMsg =
+  (model: ClientModel): Module["update"] =>
+  (input) => {
+    const { msg } = input;
+
+    if (!msg) {
+      return { model };
+    }
+
+    switch (msg.t) {
+      case "user-changed-mode": {
+        return {
+          model,
+          gameEvent: [withId(msg)],
+        };
+      }
+
+      case "vs-user":
+      case "vs-bot": {
+        return { model };
+      }
+    }
+  };
+
+const updateFromGameEvent =
+  (model: ClientModel): Module["update"] =>
+  (input) => {
+    const { gameEvent } = input;
+
+    if (!gameEvent) {
+      return { model };
+    }
+
+    switch (gameEvent.t) {
+      case "user-changed-mode": {
+        switch (gameEvent.mode) {
+          case "none": {
+            return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
+          }
+          case "vs-bot":
+          case "vs-user": {
+            return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
+          }
+        }
+      }
+
+      case "vs-bot":
+      case "vs-user": {
+        return { model };
+      }
+    }
+  };
+
+const updateChild =
+  (model: ClientModel): Module["update"] =>
+  (input) => {
+    const { msg, evt, gameEvent, fromServer, gameState } = input;
+
+    switch (gameState.t) {
+      case "none": {
+        return { model };
+      }
+
+      case "vs-bot": {
+        const updated = VsBot.update({
+          ctx: { ...input.ctx, onQuit: () => {} },
+          msg: msg?.t === "vs-bot" ? msg.c : null,
+          evt: evt,
+          cmd: null,
+          gameEvent:
+            gameEvent?.t === "vs-bot" ? { ...gameEvent, ...gameEvent.c } : null,
+          fromServer: fromServer?.t === "vs-bot" ? fromServer.c : null,
+          model: model.t === "vs-bot" ? model.c : null,
+          gameState: gameState.c,
+        });
+
+        return GameClientModule.tagOutput(
+          "vs-bot",
+          (cmd) => ClientCmd.tag("vs-bot", cmd),
+          updated
+        );
+      }
+
+      case "vs-user": {
+        const updated = VsUser.update({
+          ctx: { ...input.ctx, onQuit: () => {} },
+          model: model.t === "vs-user" ? model.c : null,
+          msg: msg?.t === "vs-user" ? msg.c : null,
+          cmd: null,
+          evt: evt,
+          gameEvent:
+            gameEvent?.t === "vs-user"
+              ? { ...gameEvent, ...gameEvent.c }
+              : null,
+          fromServer: fromServer?.t === "vs-user" ? fromServer.c : null,
+          gameState: gameState.c,
+        });
+
+        return GameClientModule.tagOutput(
+          "vs-user",
+          (cmd) => ClientCmd.tag("vs-user", cmd),
+          updated
+        );
+      }
+    }
+  };
 
 //
 //
