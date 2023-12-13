@@ -37,14 +37,14 @@ export function updateFromSpaceEvents(input: {
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } {
-  return updateFromSpaceEventsLoop(input.ctx, input.events, {
+  return loop(input.ctx, input.events, {
     model: input.model,
     cmd: [],
     eff: Eff.None,
   });
 }
 
-export function updateFromSpaceEventsLoop(
+function loop(
   ctx: ClientCtx | AnonymousClientCtx,
   events: WithEventId<Event>[],
   acc: {
@@ -64,7 +64,7 @@ export function updateFromSpaceEventsLoop(
   }
 
   if (event.eventId in acc.model.events.events) {
-    return updateFromSpaceEventsLoop(ctx, rest, acc);
+    return loop(ctx, rest, acc);
   }
 
   const spaceBefore = toStartedSpace(acc.model, event.spaceId);
@@ -95,7 +95,7 @@ export function updateFromSpaceEventsLoop(
 
   const eventsNew = batchMsgs(rest, updatedGame.event);
 
-  return updateFromSpaceEventsLoop(ctx, eventsNew, accNew);
+  return loop(ctx, eventsNew, accNew);
 }
 
 function sendEventToServer({
