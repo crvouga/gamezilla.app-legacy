@@ -200,6 +200,7 @@ const chainUpdates = <T extends GameClientModuleTypes>(
     eff: Eff.batch([acc.eff, updated.eff]),
     cmd: [...(acc.cmd ?? []), ...(updated.cmd ?? [])],
     evt: [...(acc.evt ?? []), ...(updated.evt ?? [])],
+    gameEvent: [...(acc.gameEvent ?? []), ...(updated.gameEvent ?? [])],
   };
 
   return chainUpdates(accNew, ...rest);

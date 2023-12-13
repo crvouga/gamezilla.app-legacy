@@ -163,7 +163,7 @@ function redirectWhenSpaceStarted({
   return { model };
 }
 
-function updateGameFromEvent({
+const updateGameFromEvent = ({
   model,
   eventId,
   ctx,
@@ -180,7 +180,7 @@ function updateGameFromEvent({
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
   event?: WithEventId<Event>[];
-} {
+} => {
   const eventWithMeta = model.events.events[eventId];
 
   if (!after || !after.game || !ctx.currentUserId || !eventWithMeta) {
@@ -243,7 +243,7 @@ function updateGameFromEvent({
       })
     ),
   };
-}
+};
 
 const updateSoundFromEvent = ({
   ctx,

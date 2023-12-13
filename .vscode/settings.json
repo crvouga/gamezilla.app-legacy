@@ -40,5 +40,6 @@
       "database": "data/gamezilla-session.db"
     }
   ],
-  "sqltools.useNodeRuntime": true
+  "sqltools.useNodeRuntime": true,
+  "editor.fontFamily": "'BigBlueTerm437 Nerd Font', Menlo, Monaco, 'Courier New', monospace"
 }

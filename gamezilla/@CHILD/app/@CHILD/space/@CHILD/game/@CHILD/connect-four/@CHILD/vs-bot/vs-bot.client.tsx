@@ -100,107 +100,119 @@ export const init: Module["init"] = ({ model }) => {
 export const update: Module["update"] = (input) => {
   return GameClientModule.chainUpdates(
     init(input),
-    (model) => {
-      const { msg } = input;
+    (model) => updateFromMsg(model)(input),
+    (model) => updateFromGameEvent(model)(input),
+    (model) => watchGameOver(model)(input)
+  );
+};
 
-      if (!msg) {
+const watchGameOver =
+  (model: ClientModel): Module["update"] =>
+  (input) => {
+    const { gameEvent, gameState } = input;
+
+    if (!gameEvent) {
+      return { model };
+    }
+
+    const gameStateNext = reducer({
+      gameEvent: gameEvent,
+      gameState: gameState,
+    });
+
+    if (gameState.type !== "game" || gameStateNext.type !== "game") {
+      return { model };
+    }
+
+    const statusBefore = ConnectFour.toStatus(gameState.columns);
+
+    const status = ConnectFour.toStatus(gameStateNext.columns);
+
+    if (statusBefore.type === status.type) {
+      return { model };
+    }
+
+    switch (status.type) {
+      case "Playing": {
         return { model };
       }
 
-      switch (msg.t) {
-        case "vs-bot-game": {
-          return {
-            model: {
-              ...model,
-              vsBotGame: VsBotGame.update(model.vsBotGame, msg.c),
-            },
-          };
-        }
-
-        case "vs-bot-setup": {
-          return {
-            model: {
-              ...model,
-              vsBotSetup: VsBotSetup.update(model.vsBotSetup, msg.c),
-            },
-          };
-        }
-
-        default: {
-          const gameEvent = withId(msg);
-          return { model, gameEvent: [gameEvent] };
-        }
-      }
-    },
-    (model) => {
-      const { gameEvent, gameState, ctx } = input;
-
-      if (!gameEvent) {
-        return { model };
+      case "Tie": {
+        return { model, cmd: [playSound(APP_SOUND.alertErrorSm)] };
       }
 
-      return {
-        model,
-        cmd: gameEventToSound(ctx.currentUserId, gameState, gameEvent),
-      };
-    },
-    (model) => {
-      const { gameEvent, gameState } = input;
-
-      if (!gameEvent) {
-        return { model };
-      }
-
-      const gameStateNext = reducer({
-        gameEvent: gameEvent,
-        gameState: gameState,
-      });
-
-      if (gameState.type !== "game" || gameStateNext.type !== "game") {
-        return { model };
-      }
-
-      const statusBefore = ConnectFour.toStatus(gameState.columns);
-
-      const status = ConnectFour.toStatus(gameStateNext.columns);
-
-      if (statusBefore.type === status.type) {
-        return { model };
-      }
-
-      switch (status.type) {
-        case "Playing": {
-          return { model };
-        }
-
-        case "Tie": {
-          return { model, cmd: [playSound(APP_SOUND.alertErrorSm)] };
-        }
-
-        case "Winner": {
-          if (status.winner === gameStateNext.userPlayerType) {
-            return {
-              model,
-              cmd: [
-                playSound(APP_SOUND.celebration, {
-                  delay: TimeSpan.fromSeconds(1 / 2),
-                }),
-              ],
-            };
-          }
+      case "Winner": {
+        if (status.winner === gameStateNext.userPlayerType) {
           return {
             model,
             cmd: [
-              playSound(APP_SOUND.alertErrorLg, {
+              playSound(APP_SOUND.celebration, {
                 delay: TimeSpan.fromSeconds(1 / 2),
               }),
             ],
           };
         }
+        return {
+          model,
+          cmd: [
+            playSound(APP_SOUND.alertErrorLg, {
+              delay: TimeSpan.fromSeconds(1 / 2),
+            }),
+          ],
+        };
       }
     }
-  );
-};
+  };
+
+const updateFromGameEvent =
+  (model: ClientModel): Module["update"] =>
+  (input) => {
+    const { gameEvent, gameState, ctx } = input;
+
+    if (!gameEvent) {
+      return { model };
+    }
+
+    return {
+      model,
+      cmd: gameEventToSound(ctx.currentUserId, gameState, gameEvent),
+    };
+  };
+
+const updateFromMsg =
+  (model: ClientModel): Module["update"] =>
+  (input) => {
+    const { msg } = input;
+
+    if (!msg) {
+      return { model };
+    }
+
+    switch (msg.t) {
+      case "vs-bot-game": {
+        return {
+          model: {
+            ...model,
+            vsBotGame: VsBotGame.update(model.vsBotGame, msg.c),
+          },
+        };
+      }
+
+      case "vs-bot-setup": {
+        return {
+          model: {
+            ...model,
+            vsBotSetup: VsBotSetup.update(model.vsBotSetup, msg.c),
+          },
+        };
+      }
+
+      default: {
+        const gameEvent = withId(msg);
+        return { model, gameEvent: [gameEvent] };
+      }
+    }
+  };
 
 const gameEventToSound = (
   currentUserId: UserId,
