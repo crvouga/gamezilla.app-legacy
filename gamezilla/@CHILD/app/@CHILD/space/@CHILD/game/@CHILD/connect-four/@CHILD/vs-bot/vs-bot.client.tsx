@@ -77,7 +77,7 @@ type Module = GameClientModule<{
 //
 //
 
-export const init: Module["init"] = ({ model }) => {
+const init: Module["init"] = ({ model }) => {
   if (model) {
     return { model };
   }
@@ -97,7 +97,7 @@ export const init: Module["init"] = ({ model }) => {
 //
 //
 
-export const update: Module["update"] = (input) => {
+const update: Module["update"] = (input) => {
   return GameClientModule.chainUpdates(
     init(input),
     (model) => updateFromMsg(model)(input),
@@ -175,7 +175,7 @@ const updateFromGameEvent =
 
     return {
       model,
-      cmd: gameEventToSound(ctx.currentUserId, gameState, gameEvent),
+      cmd: updateSound(ctx.currentUserId, gameState, gameEvent),
     };
   };
 
@@ -214,7 +214,7 @@ const updateFromMsg =
     }
   };
 
-const gameEventToSound = (
+const updateSound = (
   currentUserId: UserId,
   gameState: GameState,
   gameEvent: GameEvent & EventMeta
@@ -289,7 +289,7 @@ const gameEventToSound = (
 //
 //
 
-export const subscriptions: Module["subscriptions"] = (): Sub<ClientMsg> => {
+const subscriptions: Module["subscriptions"] = (): Sub<ClientMsg> => {
   return Sub.None;
 };
 
@@ -319,7 +319,7 @@ export function toGameOver(columns: ConnectFour.Columns): VsBotGame.GameOver {
   }
 }
 
-export const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
+const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
   const vsBotSetupProps: VsBotSetup.VsBotSetupProps = {
     ctx: ctx,
     onQuit: ctx.onQuit,
@@ -333,7 +333,7 @@ export const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
     botVariants: allBotLevels.map((botLevel) => {
       return {
         label: botLevel,
-        renderIcon: (props) => renderBotLevel({ level: botLevel, ...props }),
+        renderIcon: (props) => <ViewBotLevel {...props} level={botLevel} />,
         onSelect: () =>
           dispatch({
             t: "user-changed-bot-level",
@@ -349,8 +349,9 @@ export const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
     },
     bot: {
       label: gameState.botLevel,
-      renderIcon: (props) =>
-        renderBotLevel({ level: gameState.botLevel, ...props }),
+      renderIcon: (props) => (
+        <ViewBotLevel {...props} level={gameState.botLevel} />
+      ),
     },
     playerOne: {
       label: "Red",
@@ -381,7 +382,7 @@ export const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
   if (!model) {
     return null;
   }
-  
+
   if (gameState.type === "setup") {
     return (
       <VsBotSetup.View
@@ -501,7 +502,7 @@ function toVsBotStatus(status: ConnectFour.Status): VsBotGame.Status {
   }
 }
 
-export const ViewFeedItem: Module["ViewFeedItem"] = ({ gameEvent, ctx }) => {
+const ViewFeedItem: Module["ViewFeedItem"] = ({ gameEvent, ctx }) => {
   const username =
     "userId" in gameEvent
       ? ctx.profiles[gameEvent.userId]?.username ?? null
@@ -557,7 +558,7 @@ export const ViewFeedItem: Module["ViewFeedItem"] = ({ gameEvent, ctx }) => {
   }
 };
 
-export const renderBotLevel = ({
+const ViewBotLevel = ({
   level,
   ...props
 }: {
@@ -575,4 +576,12 @@ export const renderBotLevel = ({
       return <IconBotLevel4 {...props} />;
     }
   }
+};
+
+export const VsBot: Module = {
+  init,
+  update,
+  subscriptions,
+  View,
+  ViewFeedItem,
 };

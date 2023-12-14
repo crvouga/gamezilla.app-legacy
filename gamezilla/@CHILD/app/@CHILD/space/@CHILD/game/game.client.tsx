@@ -2,11 +2,10 @@ import {
   SpaceClientCtx,
   SpaceClientEvt,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { Sub } from "gamezilla/@SHARED/core";
-// import * as ChessClient from "./@CHILD/chess/chess.client";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
+import { Sub } from "gamezilla/@SHARED/core";
 import { GameClientModule } from "../../@SHARED/architecture/game-client-v2";
-import * as ConnectFour from "./@CHILD/connect-four/connect-four.client";
+import { ConnectFour } from "./@CHILD/connect-four/connect-four.client";
 import {
   ClientModel,
   ClientMsg,

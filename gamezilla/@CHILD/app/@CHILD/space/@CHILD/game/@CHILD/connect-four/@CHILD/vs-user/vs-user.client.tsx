@@ -74,7 +74,7 @@ const initModel: ClientModel = {
   openedModal: null,
 };
 
-export const init: Module["init"] = () => {
+const init: Module["init"] = () => {
   return {
     model: initModel,
   };
@@ -88,7 +88,7 @@ export const init: Module["init"] = () => {
 //
 //
 
-export const update: Module["update"] = (input) => {
+const update: Module["update"] = (input) => {
   return GameClientModule.chainUpdates(init(input), (model) =>
     updateFromMsg(model)(input)
   );
@@ -132,7 +132,7 @@ const updateFromMsg =
 //
 //
 
-export const subscriptions: Module["subscriptions"] = () => {
+const subscriptions: Module["subscriptions"] = () => {
   return Sub.None;
 };
 
@@ -144,7 +144,7 @@ export const subscriptions: Module["subscriptions"] = () => {
 //
 //
 
-export const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
+const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
   if (!model) {
     return null;
   }
@@ -511,6 +511,14 @@ const PlayerSlot = ({
   );
 };
 
-export const ViewFeedItem: Module["ViewFeedItem"] = () => {
+const ViewFeedItem: Module["ViewFeedItem"] = () => {
   return null;
+};
+
+export const VsUser: Module = {
+  init,
+  update,
+  subscriptions,
+  View,
+  ViewFeedItem,
 };

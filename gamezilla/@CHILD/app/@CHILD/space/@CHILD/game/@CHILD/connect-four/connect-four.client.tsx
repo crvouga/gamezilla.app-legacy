@@ -12,8 +12,8 @@ import {
   playSound,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Sub } from "gamezilla/@SHARED/core";
-import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
-import * as VsUser from "./@CHILD/vs-user/vs-user.client";
+import { VsBot } from "./@CHILD/vs-bot/vs-bot.client";
+import { VsUser } from "./@CHILD/vs-user/vs-user.client";
 import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art";
 import {
   ClientModel,
@@ -57,7 +57,7 @@ type Module = GameClientModule<{
 //
 //
 
-export const init: Module["init"] = (input) => {
+const init: Module["init"] = (input) => {
   const { gameState, model } = input;
 
   switch (gameState.t) {
@@ -105,7 +105,7 @@ export const init: Module["init"] = (input) => {
 //
 //
 
-export const update: Module["update"] = (input) => {
+const update: Module["update"] = (input) => {
   return GameClientModule.chainUpdates(
     init(input),
     (model) => updateChild(model)(input),
@@ -229,7 +229,7 @@ const updateChild =
 //
 //
 
-export const View: Module["View"] = ({ dispatch, ctx, gameState, model }) => {
+const View: Module["View"] = ({ dispatch, ctx, gameState, model }) => {
   const onQuit = () => {
     dispatch({
       t: "user-changed-mode",
@@ -291,7 +291,7 @@ export const View: Module["View"] = ({ dispatch, ctx, gameState, model }) => {
   }
 };
 
-export const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
+const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
   const { gameState, ctx, gameEvent } = input;
   switch (gameEvent.t) {
     case "user-changed-mode": {
@@ -376,7 +376,7 @@ export const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
 //
 //
 
-export const subscriptions: Module["subscriptions"] = (input) => {
+const subscriptions: Module["subscriptions"] = (input) => {
   const { model, gameState } = input;
 
   switch (gameState.t) {
@@ -408,4 +408,12 @@ export const subscriptions: Module["subscriptions"] = (input) => {
       );
     }
   }
+};
+
+export const ConnectFour: Module = {
+  init,
+  update,
+  View,
+  ViewFeedItem,
+  subscriptions,
 };
