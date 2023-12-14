@@ -131,7 +131,7 @@ export const init = ({
 
   const initialEff = Eff.batch<ClientMsg>([
     routing.eff,
-    Eff.t("auth", auth.eff),
+    Eff.tag("auth", auth.eff),
   ]);
 
   const initialCmd = batchMsgs<
@@ -317,15 +317,15 @@ const updateChild = ({
     },
 
     eff: Eff.batch<ClientMsg>([
-      Eff.t("auth", auth.eff),
-      Eff.t("platform", platform.eff),
-      Eff.t("profile", profile.eff),
-      Eff.t("routing", routing.eff),
-      Eff.t("sound", sound.eff),
-      Eff.t("space", space.eff),
-      Eff.t("status-bar", statusBar.eff),
-      Eff.t("toast", toast.eff),
-      Eff.t("wire", wire.eff),
+      Eff.tag("auth", auth.eff),
+      Eff.tag("platform", platform.eff),
+      Eff.tag("profile", profile.eff),
+      Eff.tag("routing", routing.eff),
+      Eff.tag("sound", sound.eff),
+      Eff.tag("space", space.eff),
+      Eff.tag("status-bar", statusBar.eff),
+      Eff.tag("toast", toast.eff),
+      Eff.tag("wire", wire.eff),
     ]),
 
     evt: batchMsgs<ClientEvt>(

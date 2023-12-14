@@ -234,7 +234,7 @@ const tagOutput = <
   return {
     model: { t: tag, c: output.model },
     cmd: output.cmd ? tagCmd(output.cmd) : [],
-    eff: Eff.t(tag, output.eff),
+    eff: Eff.tag(tag, output.eff),
     evt: output.evt,
     gameEvent: output.gameEvent?.map((c) => ({
       eventId: c.eventId,

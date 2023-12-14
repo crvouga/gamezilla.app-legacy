@@ -90,7 +90,7 @@ export const update: Server["update"] = async (input) => {
 
             return {
               model: { t: "vs-bot", c: updated.model },
-              eff: Eff.t("vs-bot", updated.eff),
+              eff: Eff.tag("vs-bot", updated.eff),
             };
           }
 
@@ -110,7 +110,7 @@ export const update: Server["update"] = async (input) => {
 
           return {
             model: { t: "puzzle", c: updated.model },
-            eff: Eff.t("puzzle", updated.eff),
+            eff: Eff.tag("puzzle", updated.eff),
             cmd: SpaceServerCmd.tag("puzzle", updated.cmd),
           };
         }

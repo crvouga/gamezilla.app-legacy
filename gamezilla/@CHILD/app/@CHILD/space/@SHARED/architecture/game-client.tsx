@@ -103,7 +103,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
       });
       return {
         model: { t: tag, c: initial.model },
-        eff: Eff.t(tag, initial.eff),
+        eff: Eff.tag(tag, initial.eff),
         cmd: ClientCmd.tag(tag, initial.cmd),
       };
     },
@@ -121,7 +121,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
       });
       return {
         model: { t: tag, c: updated.model },
-        eff: Eff.t(tag, updated.eff),
+        eff: Eff.tag(tag, updated.eff),
         cmd: ClientCmd.tag(tag, updated.cmd),
         gameEvent: updated.gameEvent
           ? updated.gameEvent.map(
@@ -261,7 +261,7 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
       t: tag,
       c: output.model,
     },
-    eff: output.eff ? Eff.t(tag, output.eff) : undefined,
+    eff: output.eff ? Eff.tag(tag, output.eff) : undefined,
     cmd: output.cmd
       ? output.cmd.map((cmd) => ClientCmd.tagOne(tag, cmd))
       : undefined,

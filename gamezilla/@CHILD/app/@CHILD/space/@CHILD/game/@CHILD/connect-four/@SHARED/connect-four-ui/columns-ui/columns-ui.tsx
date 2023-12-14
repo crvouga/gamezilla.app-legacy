@@ -81,7 +81,10 @@ export function watch(model: Model, columns?: Columns) {
       discs: discs.model,
       wins: wins.model,
     },
-    eff: Eff.batch<Msg>([Eff.t("discs", discs.eff), Eff.t("wins", wins.eff)]),
+    eff: Eff.batch<Msg>([
+      Eff.tag("discs", discs.eff),
+      Eff.tag("wins", wins.eff),
+    ]),
   };
 }
 

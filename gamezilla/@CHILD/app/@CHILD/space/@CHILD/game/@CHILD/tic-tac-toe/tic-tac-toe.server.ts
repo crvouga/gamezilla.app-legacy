@@ -125,7 +125,7 @@ export const updateFromClient = ({
 
     return {
       model: { ...model, c: updated.model },
-      eff: Eff.t("vs-bot", updated.eff),
+      eff: Eff.tag("vs-bot", updated.eff),
       cmd: SpaceServerCmd.tag("vs-bot", updated.cmd),
     };
   }

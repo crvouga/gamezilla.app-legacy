@@ -45,7 +45,7 @@ const chain =
     };
   };
 
-const t = <Tag extends string, Msg>(
+const tag = <Tag extends string, Msg>(
   tagName: Tag,
   eff: Eff<Msg> | undefined | null
 ): Eff<{ t: Tag; c: Msg }> => {
@@ -92,7 +92,7 @@ export const Eff = {
   None,
   perform,
   batch,
-  t,
+  tag,
   chain,
   map,
   map_,

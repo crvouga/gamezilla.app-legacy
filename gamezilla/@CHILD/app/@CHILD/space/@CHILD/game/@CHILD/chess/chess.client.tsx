@@ -102,7 +102,7 @@ export const update: Client["update"] = (input) => {
 
             return {
               model: { ...model, mode: { t: "vs-user", c: updated.model } },
-              eff: Eff.t("vs-user", updated.eff),
+              eff: Eff.tag("vs-user", updated.eff),
             };
           }
 
@@ -119,7 +119,7 @@ export const update: Client["update"] = (input) => {
 
             return {
               model: { ...model, mode: { t: "vs-bot", c: updated.model } },
-              eff: Eff.t("vs-bot", updated.eff),
+              eff: Eff.tag("vs-bot", updated.eff),
             };
           }
 
@@ -139,7 +139,7 @@ export const update: Client["update"] = (input) => {
                 ...model,
                 mode: { t: "puzzle", c: updated.model },
               },
-              eff: Eff.t("puzzle", updated?.eff ?? Eff.None),
+              eff: Eff.tag("puzzle", updated?.eff ?? Eff.None),
               cmd: ClientCmd.tag("puzzle", updated.cmd),
             };
           }
@@ -195,7 +195,7 @@ export const update: Client["update"] = (input) => {
 
             return {
               model: { ...model, mode: { t: "vs-user", c: child } },
-              eff: Eff.t("vs-user", eff),
+              eff: Eff.tag("vs-user", eff),
             };
           }
 
@@ -211,7 +211,7 @@ export const update: Client["update"] = (input) => {
 
             return {
               model: { ...model, mode: { t: "vs-bot", c: updated.model } },
-              eff: Eff.t("vs-bot", updated.eff),
+              eff: Eff.tag("vs-bot", updated.eff),
             };
           }
 
@@ -231,7 +231,7 @@ export const update: Client["update"] = (input) => {
 
           return {
             model: { ...model, mode: { t: "puzzle", c: updated.model } },
-            eff: Eff.t("puzzle", updated?.eff ?? Eff.None),
+            eff: Eff.tag("puzzle", updated?.eff ?? Eff.None),
             cmd: ClientCmd.tag("puzzle", updated.cmd),
           };
         }

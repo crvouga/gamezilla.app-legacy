@@ -65,7 +65,7 @@ export const update = ({
     const updated = VsBot.update({ msg: msg.c, model: model.c });
     return {
       model: { t: "vs-bot", c: updated.model },
-      eff: Eff.t("vs-bot", updated.eff),
+      eff: Eff.tag("vs-bot", updated.eff),
     };
   }
 
@@ -73,7 +73,7 @@ export const update = ({
     const updated = VsUser.update({ msg: msg.c, model: model.c });
     return {
       model: { t: "vs-user", c: updated.model },
-      eff: Eff.t("vs-user", updated.eff),
+      eff: Eff.tag("vs-user", updated.eff),
     };
   }
 
@@ -108,7 +108,7 @@ export const updateFromClient = ({
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      eff: Eff.t("vs-bot", updated.eff),
+      eff: Eff.tag("vs-bot", updated.eff),
     };
   }
 
@@ -121,7 +121,7 @@ export const updateFromClient = ({
 
     return {
       model: { t: "vs-user", c: updated.model },
-      eff: Eff.t("vs-user", updated.eff),
+      eff: Eff.tag("vs-user", updated.eff),
     };
   }
 
@@ -142,7 +142,7 @@ export const updateFromEvt = ({
     const updated = VsBot.updateFromEvt({ msg, model: model.c });
     return {
       model: { t: "vs-bot", c: updated.model },
-      eff: Eff.t("vs-bot", updated.eff),
+      eff: Eff.tag("vs-bot", updated.eff),
     };
   }
 
@@ -150,7 +150,7 @@ export const updateFromEvt = ({
     const updated = VsUser.updateFromEvt({ msg, model: model.c });
     return {
       model: { t: "vs-user", c: updated.model },
-      eff: Eff.t("vs-user", updated.eff),
+      eff: Eff.tag("vs-user", updated.eff),
     };
   }
 

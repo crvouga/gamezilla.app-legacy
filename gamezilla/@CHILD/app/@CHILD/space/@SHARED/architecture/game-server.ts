@@ -86,7 +86,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
       });
       return {
         model: { t: tag, c: initial.model },
-        eff: Eff.t(tag, initial.eff),
+        eff: Eff.tag(tag, initial.eff),
         cmd: SpaceServerCmd.tag(tag, initial.cmd),
       };
     },
@@ -103,7 +103,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
       });
       return {
         model: { t: tag, c: updated.model },
-        eff: Eff.t(tag, updated.eff),
+        eff: Eff.tag(tag, updated.eff),
         cmd: SpaceServerCmd.tag(tag, updated.cmd),
         gameEvent: updated.gameEvent
           ? updated.gameEvent.map(

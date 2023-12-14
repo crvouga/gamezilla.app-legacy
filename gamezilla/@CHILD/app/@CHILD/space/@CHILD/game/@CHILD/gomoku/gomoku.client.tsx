@@ -55,7 +55,7 @@ export const update = ({
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      eff: Eff.t("vs-bot", updated.eff),
+      eff: Eff.tag("vs-bot", updated.eff),
     };
   }
 
@@ -66,7 +66,7 @@ export const update = ({
     });
     return {
       model: { t: "vs-user", c: updated.model },
-      eff: Eff.t("vs-user", updated.eff),
+      eff: Eff.tag("vs-user", updated.eff),
     };
   }
 
@@ -105,7 +105,7 @@ export const updateFromServer = ({
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      eff: Eff.t("vs-bot", updated.eff),
+      eff: Eff.tag("vs-bot", updated.eff),
     };
   }
 
@@ -116,7 +116,7 @@ export const updateFromServer = ({
     });
     return {
       model: { t: "vs-user", c: updated.model },
-      eff: Eff.t("vs-user", updated.eff),
+      eff: Eff.tag("vs-user", updated.eff),
     };
   }
 

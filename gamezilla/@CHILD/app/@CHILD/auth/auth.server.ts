@@ -53,7 +53,7 @@ export const init: Module["init"] = async (input) => {
       sessionIdByUserId: StoreSessionIdByUserId(input.ctx).startingAt(ctx.now),
       sms: sms.model,
     },
-    eff: Eff.t("sms", sms.eff),
+    eff: Eff.tag("sms", sms.eff),
     cmd: ServerCmd.tag("sms", sms.cmd),
     evt: sms.evt,
   };
@@ -95,7 +95,7 @@ const updateChild: Module["update"] = async (input) => {
       ...input.model,
       sms: sms.model,
     },
-    eff: Eff.t("sms", sms.eff),
+    eff: Eff.tag("sms", sms.eff),
     cmd: ServerCmd.tag("sms", sms.cmd),
     evt: sms.evt,
   };

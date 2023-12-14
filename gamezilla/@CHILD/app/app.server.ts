@@ -266,10 +266,10 @@ export const updateChild = async ({
       ServerCmd.tag("profile", profile.cmd)
     ),
     eff: Eff.batch<ServerMsg>([
-      Eff.t("space", space.eff),
-      Eff.t("auth", auth.eff),
-      Eff.t("wire", wire.eff),
-      Eff.t("profile", profile.eff),
+      Eff.tag("space", space.eff),
+      Eff.tag("auth", auth.eff),
+      Eff.tag("wire", wire.eff),
+      Eff.tag("profile", profile.eff),
     ]),
     evt: batchMsgs<ServerEvt>(auth.evt, space.evt, wire.evt, profile.evt),
   };

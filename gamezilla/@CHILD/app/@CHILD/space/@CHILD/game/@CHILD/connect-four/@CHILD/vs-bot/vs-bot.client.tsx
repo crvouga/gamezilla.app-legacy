@@ -378,10 +378,11 @@ export const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
     },
   };
 
+  if (!model) {
+    return null;
+  }
+  
   if (gameState.type === "setup") {
-    if (!model) {
-      return null;
-    }
     return (
       <VsBotSetup.View
         model={model.vsBotSetup}
