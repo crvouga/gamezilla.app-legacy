@@ -64,26 +64,22 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
     ws.onmessage = (event) => {
       const msg = JSON.parse(event.data) as ServerToClientMsg<ToClient>; // leap of faith
 
-      if (msg.t === "to-client") {
-        if (msg.codebaseVersionId !== codebaseVersionId) {
-          console.error(
-            `[client] Codebase version mismatch. Expected ${codebaseVersionId} but got ${msg.codebaseVersionId}`
-          );
+      switch (msg.t) {
+        case "session-id": {
+          localStorage.setItem(SESSION_ID_KEY, msg.sessionId);
           return;
         }
-        transport.toClient.publish(msg.msgs);
-        return;
-      }
 
-      if (msg.t === "session-id") {
-        if (msg.codebaseVersionId !== codebaseVersionId) {
-          console.error(
-            `[client] Codebase version mismatch. Expected ${codebaseVersionId} but got ${msg.codebaseVersionId}`
-          );
+        case "to-client": {
+          if (msg.codebaseVersionId !== codebaseVersionId) {
+            console.error(
+              `[client] Codebase version mismatch. Expected ${codebaseVersionId} but got ${msg.codebaseVersionId}`
+            );
+            return;
+          }
+          transport.toClient.publish(msg.msgs);
           return;
         }
-        localStorage.setItem(SESSION_ID_KEY, msg.sessionId);
-        return;
       }
     };
   };
