@@ -149,15 +149,24 @@ const updateFromGameEvent =
 
     switch (gameEvent.t) {
       case "user-changed-mode": {
-        switch (gameEvent.mode) {
-          case "none": {
-            return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
+        return GameClientModule.chainUpdates(
+          { model },
+          (model) => {
+            switch (gameEvent.mode) {
+              case "none": {
+                return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
+              }
+              case "vs-bot":
+              case "vs-user": {
+                return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
+              }
+            }
+          },
+          (model) => {
+            //
+            return { model };
           }
-          case "vs-bot":
-          case "vs-user": {
-            return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
-          }
-        }
+        );
       }
 
       case "vs-bot":
