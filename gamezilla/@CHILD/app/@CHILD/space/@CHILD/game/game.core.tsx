@@ -14,9 +14,9 @@ export type ClientModel = {
   t: "connect-four";
   c: ConnectFour.ClientModel;
 };
+// | { t: "flow"; c: Flow.ClientModel };
 // | { t: "chess"; c: Chess.ClientModel };
 // | { t: "tic-tac-toe"; c: TicTacToe.ClientModel }
-// | { t: "flow"; c: Flow.ClientModel };
 
 export type ServerModel = { t: "connect-four"; c: ConnectFour.ServerModel };
 // | { t: "chess"; c: Chess.ServerModel };

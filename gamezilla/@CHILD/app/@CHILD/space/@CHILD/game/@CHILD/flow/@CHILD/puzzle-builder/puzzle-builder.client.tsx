@@ -1,5 +1,5 @@
 import { ViewBottomButtonBar } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client";
+import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
 import { SpaceClientEvt } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
@@ -8,7 +8,7 @@ import {
   IconPlay,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Sub, chain } from "gamezilla/@SHARED/core";
+import { Sub } from "gamezilla/@SHARED/core";
 import { FlowGridUI, FlowGridUIPlay, FlowUI } from "../../@SHARED/flow";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import {
@@ -19,57 +19,49 @@ import {
   initCore,
 } from "./puzzle-builder.core";
 
-type Client = GameClient<{
-  ClientModel: ClientModel;
-  ClientMsg: ClientMsg;
+type Module = GameClientModule<{
+  Model: ClientModel;
+  Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
   GameEvent: null;
   GameState: null;
-  ClientCtx: FlowClientCtx;
-  ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-  ClientEvt: SpaceClientEvt;
+  Ctx: FlowClientCtx;
+  OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
+  InEvt: SpaceClientEvt;
+  InCmd: null;
+  OutEvt: null;
 }>;
 
-const init: Client["init"] = ({ model }) => {
-  if (model) {
+const init: Module["init"] = initCore;
+
+const update: Module["update"] = (input) => {
+  const { model, msg } = input;
+
+  if (!msg) {
     return { model };
   }
-  return { model: initCore };
-};
 
-const update: Client["update"] = (input) => {
-  return chain(init(input), (model) => {
-    const { msg } = input;
-
-    if (!msg) {
-      return { model };
+  switch (msg.t) {
+    case "play-ui": {
+      const updated = FlowGridUIPlay.update({
+        model: model.playUI,
+        msg: msg.c,
+      });
+      return { model: { ...model, playUI: updated.model } };
     }
 
-    switch (msg.t) {
-      case "play-ui": {
-        const updated = FlowGridUIPlay.update({
-          model: model.playUI,
-          msg: msg.c,
-        });
-        return { model: { ...model, playUI: updated.model } };
-      }
-
-      default: {
-        return { model, cmd: [sendToServer(msg)] };
-      }
+    default: {
+      return { model, cmd: [sendToServer(msg)] };
     }
-  });
+  }
 };
 
-const subscriptions: Client["subscriptions"] = () => {
+const subscriptions: Module["subscriptions"] = () => {
   return Sub.None;
 };
 
-const View: Client["View"] = ({ model, dispatch, ctx }) => {
-  if (!model) {
-    return <div></div>;
-  }
+const View: Module["View"] = ({ model, dispatch, ctx }) => {
   switch (model.mode) {
     case "edit": {
       return (
@@ -160,14 +152,18 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
   }
 };
 
+const ViewFeedItem: Module["ViewFeedItem"] = () => {
+  return <div></div>;
+};
+
 const capitalize = (s: string) => {
   return `${s.charAt(0).toUpperCase()}${s.slice(1).toLowerCase()}`;
 };
 
-export const PuzzleBuilderClient: Client = {
+export const PuzzleBuilderClient: Module = {
   init,
   update,
   subscriptions,
   View,
-  ViewFeedItem: () => null,
+  ViewFeedItem,
 };

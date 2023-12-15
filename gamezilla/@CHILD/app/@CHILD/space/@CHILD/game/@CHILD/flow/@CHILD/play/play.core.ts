@@ -1,4 +1,6 @@
+import { GameCore } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-core";
 import { FlowGridSamples, FlowGridUIPlay } from "../../@SHARED/flow";
+import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 
 //
 //
@@ -47,4 +49,24 @@ export type GameEvent = {
 
 export type GameState = {
   play: FlowGridUIPlay.GameState;
+};
+
+type Module = GameCore<{
+  Ctx: SpaceCtx;
+  GameState: GameState;
+  GameEvent: GameEvent;
+}>;
+
+export const initState: Module["initState"] = (input) => {
+  return {
+    play: FlowGridUIPlay.initState(input),
+  };
+};
+
+export const reducer: Module["reducer"] = ({ event, state }) => {
+  switch (event.t) {
+    case "grid": {
+      return state;
+    }
+  }
 };

@@ -112,15 +112,15 @@ export type Output<T extends GameClientModuleTypes> = {
    */
   eff?: Eff<T["Msg"]>;
   /**
-   *
+   * `cmd` is a message to one other module. Always present tense
    */
   cmd?: T["OutCmd"][];
   /**
-   *
+   * `evt` is a message to many other modules. Always past tense
    */
   evt?: T["OutEvt"][];
   /**
-   *
+   *  `gameEvent` is an event that occurred in the game. Shared with the server side
    */
   gameEvent?: WithEventId<T["GameEvent"]>[];
 };

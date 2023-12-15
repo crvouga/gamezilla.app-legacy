@@ -1,8 +1,8 @@
+import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
 import { SpaceClientEvt } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Sub, chain } from "gamezilla/@SHARED/core";
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
+import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { Sub } from "gamezilla/@SHARED/core";
 import { FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import {
@@ -13,34 +13,33 @@ import {
   initShared,
 } from "./play.core";
 
-type Client = GameClient<{
-  ClientModel: ClientModel;
-  ClientMsg: ClientMsg;
+type Module = GameClientModule<{
+  Model: ClientModel;
+  Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
   GameEvent: null;
   GameState: null;
-  ClientCtx: FlowClientCtx;
-  ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-  ClientEvt: SpaceClientEvt;
+  Ctx: FlowClientCtx;
+  OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
+  InEvt: SpaceClientEvt;
+  OutEvt: null;
+  InCmd: null;
 }>;
 
-const init: Client["init"] = () => {
-  return { model: initShared };
+const init: Module["init"] = initShared;
+
+const update: Module["update"] = (input) => {
+  return {
+    model: input.model,
+  };
 };
 
-const update: Client["update"] = (input) => {
-  return chain(init(input));
-};
-
-const subscriptions: Client["subscriptions"] = () => {
+const subscriptions: Module["subscriptions"] = () => {
   return Sub.None;
 };
 
-const View: Client["View"] = ({ model, dispatch, ctx }) => {
-  if (!model) {
-    return <div></div>;
-  }
+const View: Module["View"] = ({ model, dispatch, ctx }) => {
   return (
     <div class="flex h-full w-full flex-1 flex-col">
       <div class="flex flex-1 items-center justify-center">
@@ -61,10 +60,14 @@ const View: Client["View"] = ({ model, dispatch, ctx }) => {
   );
 };
 
-export const PlayClient: Client = {
+export const ViewFeedItem: Module["ViewFeedItem"] = () => {
+  return null;
+};
+
+export const PlayClient: Module = {
   init,
   update,
   subscriptions,
   View,
-  ViewFeedItem: () => null,
+  ViewFeedItem,
 };

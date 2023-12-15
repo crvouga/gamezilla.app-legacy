@@ -1,10 +1,14 @@
-import { SpaceCtx } from "../space";
+export type GameCoreTypes = {
+  Ctx: any;
+  GameState: any;
+  GameEvent: any;
+};
 
-export type GameCore<GameState, GameEvent> = {
-  initState: (input: { ctx: SpaceCtx }) => GameState;
+export type GameCore<T extends GameCoreTypes> = {
+  initState: (input: { ctx: T["Ctx"] }) => T["GameState"];
   reducer: (input: {
-    ctx: SpaceCtx;
-    msg: GameEvent;
-    state: GameState;
-  }) => GameState;
+    ctx: T["Ctx"];
+    event: T["GameEvent"];
+    state: T["GameState"];
+  }) => T["GameState"];
 };

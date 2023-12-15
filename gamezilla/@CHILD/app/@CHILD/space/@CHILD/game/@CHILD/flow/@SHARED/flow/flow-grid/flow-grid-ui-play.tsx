@@ -1,7 +1,10 @@
+import { GameCore } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-core";
 import { AlgoDrawPipes } from "../algo";
 import * as Flow from "../flow";
 import * as FlowGrid from "./flow-grid";
 import * as FlowGridUI from "./flow-grid-ui";
+import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { samples } from "./flow-grid-samples";
 
 //
 //
@@ -52,22 +55,34 @@ export type GameState = {
   state: State;
 };
 
-export const reducer = ({
-  event,
-  state,
-}: {
-  event: GameEvent;
-  state: GameState;
-}): GameState => {
+type Module = GameCore<{
+  Ctx: SpaceCtx;
+  GameEvent: GameEvent;
+  GameState: GameState;
+}>;
+
+export const reducer: Module["reducer"] = ({ event, state }) => {
   switch (state.state.t) {
     case "dragging": {
-      return updateDragging({ msg: event, model: state, state: state.state });
+      return reducerDragging({ msg: event, model: state, state: state.state });
     }
 
     case "idle": {
-      return updateIdle({ msg: event, model: state });
+      return reducerIdle({ msg: event, model: state });
     }
   }
+};
+
+export const initState: Module["initState"] = () => {
+  return {
+    grid: samples["6x6"][1],
+    state: { t: "idle" },
+  };
+};
+
+export const FlowGridUIPlay: Module = {
+  initState,
+  reducer,
 };
 
 //
@@ -107,16 +122,16 @@ export const updateModel = ({
 }): Model => {
   switch (model.state.t) {
     case "dragging": {
-      return updateDragging({ msg, model, state: model.state });
+      return reducerDragging({ msg, model, state: model.state });
     }
 
     case "idle": {
-      return updateIdle({ msg, model });
+      return reducerIdle({ msg, model });
     }
   }
 };
 
-const updateIdle = ({ msg, model }: { msg: Msg; model: Model }): Model => {
+const reducerIdle = ({ msg, model }: { msg: Msg; model: Model }): Model => {
   switch (msg.t) {
     case "pressed-down": {
       const groupId = Flow.toGroupId(model.grid.flow, msg.nodeId);
@@ -153,7 +168,7 @@ const updateIdle = ({ msg, model }: { msg: Msg; model: Model }): Model => {
   }
 };
 
-const updateDragging = ({
+const reducerDragging = ({
   msg,
   state,
   model,
