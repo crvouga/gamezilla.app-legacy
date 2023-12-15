@@ -132,7 +132,6 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
   /**
    * `init` is the initial state of the module
    */
-
   init: T["Model"];
 
   /**
