@@ -2,7 +2,7 @@ import { Uuid } from "gamezilla/@SHARED/core";
 import { COLUMN_COUNT, MAX_COLUMN_HEIGHT } from "../connect-four";
 import { gameTheme } from "./shared";
 
-const coverArtId = Uuid.generate$();
+const coverArtId = Uuid.generate();
 
 export const CoverArt = (props: { class?: string }) => {
   const ids = {

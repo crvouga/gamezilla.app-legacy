@@ -48,7 +48,7 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
 
           const sessionId = SessionId.is(maybeSessionId)
             ? maybeSessionId
-            : SessionId.generate$();
+            : SessionId.generate();
 
           const clientId = ClientId.generate();
 
@@ -103,9 +103,11 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
       open(ws: ServerWebSocket<ServerWebSocketData>) {
         clients.set(ws.data.clientId, ws);
 
-        ws.send(
-          JSON.stringify({ t: "session-id", sessionId: ws.data.sessionId })
-        );
+        send(ws, {
+          t: "session-id",
+          codebaseVersionId,
+          sessionId: ws.data.sessionId,
+        });
 
         transport.wire.publish({
           t: "client-connected",
@@ -143,9 +145,7 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
     }
   });
 
-  transport.wire.publish({
-    t: "server-started",
-  });
+  transport.wire.publish({ t: "server-started" });
 
   console.log(`[server] Listening on port ${impl.serverPort}`);
 
@@ -153,13 +153,17 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
     ws: ServerWebSocket<ServerWebSocketData>,
     msg: ServerToClientMsg<ToClient>
   ) => {
-    if (msg.t === "to-client" && msg.msgs.length === 0) {
-      return;
-    }
-
-    if (ws.readyState === 1) {
-      ws.send(JSON.stringify(msg));
-      return;
+    switch (ws.readyState) {
+      case 1: {
+        if (msg.t === "to-client" && msg.msgs.length === 0) {
+          return;
+        }
+        ws.send(JSON.stringify(msg));
+        return;
+      }
+      default: {
+        return;
+      }
     }
   };
 

@@ -19,8 +19,8 @@ const decode = (id: string): Result<Problem, EventId> => {
   return err("invalid_id");
 };
 
-const generate$ = (): EventId => {
-  const uuid = Uuid.generate$();
+const generate = (): EventId => {
+  const uuid = Uuid.generate();
 
   const evtId = `${namespace}${separator}${uuid}`;
 
@@ -34,5 +34,5 @@ const generate$ = (): EventId => {
 export const EventId = {
   is,
   decode,
-  generate$,
+  generate,
 };

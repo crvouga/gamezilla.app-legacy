@@ -59,7 +59,7 @@ export const ViewPlayerTwoGradientDef = ({
 };
 
 export const PlayerOneIcon = (props: { key?: string; class?: string }) => {
-  const playerOneId = Uuid.generate$();
+  const playerOneId = Uuid.generate();
   return (
     <svg viewBox="-1 -1 2 2" {...props}>
       <ViewPlayerOneGradientDef cx={0} cy={0} r={1} gradientId={playerOneId} />
@@ -69,7 +69,7 @@ export const PlayerOneIcon = (props: { key?: string; class?: string }) => {
 };
 
 export const PlayerTwoIcon = (props: { key?: string; class?: string }) => {
-  const playerTwoId = Uuid.generate$();
+  const playerTwoId = Uuid.generate();
   return (
     <svg viewBox="-1 -1 2 2" {...props}>
       <ViewPlayerTwoGradientDef gradientId={playerTwoId} />

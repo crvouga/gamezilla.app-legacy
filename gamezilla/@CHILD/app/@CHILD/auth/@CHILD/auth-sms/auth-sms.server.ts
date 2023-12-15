@@ -219,7 +219,7 @@ const findElseInsertAccount = async ({
   }
 
   const accountNew: Account = {
-    userId: UserId.generate$(),
+    userId: UserId.generate(),
     phoneNumber,
   };
 

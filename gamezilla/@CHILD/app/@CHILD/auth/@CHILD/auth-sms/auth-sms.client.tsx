@@ -361,7 +361,7 @@ const updateFromServer: Module["update"] = (input) => {
 //
 //
 
-const INTERVAL_ID = Uuid.generate$();
+const INTERVAL_ID = Uuid.generate();
 
 export const subscriptions: Module["subscriptions"] = ({ model }) => {
   if (model.sendCode.t === "loading" || model.verifyCode.t === "loading") {

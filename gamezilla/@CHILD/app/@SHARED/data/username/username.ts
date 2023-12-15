@@ -30,7 +30,7 @@ const fromString = (username: string): Username => {
   throw new Error("impossible state. did not create username from string");
 };
 
-function generate$(
+function generate(
   separator?: string,
   digitCount?: number,
   length?: number
@@ -67,5 +67,5 @@ export const Username = {
   is,
   fromString,
   decode,
-  generate$,
+  generate,
 };
