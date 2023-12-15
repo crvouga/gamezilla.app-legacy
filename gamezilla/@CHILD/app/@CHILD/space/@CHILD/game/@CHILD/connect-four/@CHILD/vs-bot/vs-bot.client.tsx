@@ -77,18 +77,9 @@ type Module = GameClientModule<{
 //
 //
 
-const init: Module["init"] = ({ model }) => {
-  if (model) {
-    return { model };
-  }
-
-  return {
-    model: {
-      opened: null,
-      vsBotSetup: VsBotSetup.init,
-      vsBotGame: VsBotGame.init(),
-    },
-  };
+const init: Module["init"] = {
+  vsBotSetup: VsBotSetup.init,
+  vsBotGame: VsBotGame.init(),
 };
 
 //
@@ -99,7 +90,7 @@ const init: Module["init"] = ({ model }) => {
 
 const update: Module["update"] = (input) => {
   return GameClientModule.chainUpdates(
-    init(input),
+    { model: input.model },
     (model) => updateFromMsg(model)(input),
     (model) => updateFromGameEvent(model)(input),
     (model) => watchGameOver(model)(input)

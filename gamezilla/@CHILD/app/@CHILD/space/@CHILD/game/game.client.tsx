@@ -10,6 +10,7 @@ import {
   ClientModel,
   ClientMsg,
   GameEvent,
+  GameName,
   GameState,
   ToClient,
   ToServer,
@@ -48,24 +49,13 @@ type Module = GameClientModule<{
 //
 //
 
-export const init: Module["init"] = (input) => {
-  const { gameState } = input;
-
-  switch (gameState.t) {
+export const init = (gameName: GameName): Module["init"] => {
+  switch (gameName) {
     case "connect-four": {
-      const initial = ConnectFour.init({
-        ctx: input.ctx,
-        model: input.model?.t === "connect-four" ? input.model.c : null,
-        gameState: gameState.c,
-      });
-
-      const tagged = GameClientModule.tagOutput(
-        "connect-four",
-        (cmd) => ClientCmd.tag("connect-four", cmd),
-        initial
-      );
-
-      return tagged;
+      return {
+        t: "connect-four",
+        c: ConnectFour.init,
+      };
     }
   }
 };
@@ -86,7 +76,8 @@ export const update: Module["update"] = (input) => {
       const updated = ConnectFour.update({
         ctx,
         gameState: gameState.c,
-        model: input.model?.t === "connect-four" ? input.model.c : null,
+        model:
+          input.model?.t === "connect-four" ? input.model.c : ConnectFour.init,
         cmd: cmd,
         evt: evt,
         fromServer: fromServer?.t === "connect-four" ? fromServer.c : null,

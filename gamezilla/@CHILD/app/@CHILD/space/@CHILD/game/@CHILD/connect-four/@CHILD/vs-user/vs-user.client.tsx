@@ -69,15 +69,9 @@ type Module = GameClientModule<{
 //
 //
 
-const initModel: ClientModel = {
+const init: Module["init"] = {
   ghostIndex: null,
   openedModal: null,
-};
-
-const init: Module["init"] = () => {
-  return {
-    model: initModel,
-  };
 };
 
 //
@@ -89,7 +83,7 @@ const init: Module["init"] = () => {
 //
 
 const update: Module["update"] = (input) => {
-  return GameClientModule.chainUpdates(init(input), (model) =>
+  return GameClientModule.chainUpdates({ model: input.model }, (model) =>
     updateFromMsg(model)(input)
   );
 };

@@ -278,7 +278,7 @@ const updateGame: Module["update"] = (input) => {
       quit() {},
       viewProfile() {},
     },
-    model: model.games[space.spaceId],
+    model: model.games[space.spaceId] ?? GameClient.init(space.game.t),
     gameState: space.game,
     fromServer: fromServer?.t === "game" ? fromServer.c : null,
     cmd: null,

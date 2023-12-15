@@ -69,7 +69,7 @@ export type Input<T extends GameClientModuleTypes> = {
   /**
    * `model` is the current state of the module
    */
-  model?: T["Model"] | null;
+  model: T["Model"];
   /**
    *
    */
@@ -132,11 +132,8 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
   /**
    * `init` is the initial state of the module
    */
-  init: (input: {
-    ctx: T["Ctx"];
-    gameState: T["GameState"];
-    model?: T["Model"] | null;
-  }) => Output<T>;
+
+  init: T["Model"];
 
   /**
    * `update` handles all the state transitions and business logic of the module

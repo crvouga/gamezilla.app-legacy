@@ -203,7 +203,7 @@ const updateGameFromEvent = ({
       eventWithMeta.t === "game"
         ? { ...eventWithMeta, ...eventWithMeta.c }
         : null,
-    model: model.games[eventWithMeta.spaceId],
+    model: model.games[eventWithMeta.spaceId] ?? GameClient.init(after.game.t),
     gameState: before?.game ?? after.game,
   });
 
