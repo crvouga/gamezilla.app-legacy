@@ -1,4 +1,4 @@
-import { IconCrown, MyAvatar } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { IconCrown, Avatar } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
   SpaceClientCtx,
   spaceToProfiles,
@@ -16,9 +16,8 @@ export const ViewUsersInSpaceList = ({ ctx }: { ctx: SpaceClientCtx }) => {
             <button
               key={profile.userId}
               onClick={() => ctx.viewProfile(profile.userId)}
-              class="flex w-full items-center gap-2 p-2 px-4 active:opacity-60"
-            >
-              <MyAvatar src={profile.avatarUrl} />
+              class="flex w-full items-center gap-2 p-2 px-4 active:opacity-60">
+              <Avatar src={profile.avatarUrl} />
               <p>{profile.username}</p>
               {profile.userId === ctx.space.hostId && <ViewSpaceHostChip />}
               {profile.userId === ctx.currentUserId && <ViewYouChip />}

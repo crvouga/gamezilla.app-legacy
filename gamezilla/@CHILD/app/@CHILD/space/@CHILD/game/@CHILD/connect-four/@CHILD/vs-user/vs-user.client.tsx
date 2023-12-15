@@ -18,7 +18,7 @@ import {
   IconFlag,
   IconSpinner,
   IconXMark,
-  MyAvatar,
+  Avatar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
 import { PlayerType, toTurn } from "../../@SHARED/connect-four";
@@ -411,7 +411,7 @@ const ViewGameOverMessage = ({
         <>
           <div class="flex w-full items-center justify-center">
             <PlayerIcon playerType={winner} />
-            <MyAvatar
+            <Avatar
               alt=""
               src={ctx.profiles[gameState.players[winner]]?.avatarUrl}
             />
@@ -437,7 +437,7 @@ const ViewGameOverMessage = ({
         <div class="flex w-full flex-col items-center justify-center gap-2">
           <div class="flex w-full items-center justify-center gap-2">
             <PlayerIcon playerType={winner} class="h-20 w-20" />
-            <MyAvatar
+            <Avatar
               class="h-20 w-20"
               src={ctx.profiles[gameState.players[winner]]?.avatarUrl}
             />
@@ -499,7 +499,7 @@ const PlayerSlot = ({
   return (
     <div class="flex flex-1 items-center gap-2 overflow-hidden rounded border border-neutral-700 p-2">
       <PlayerIcon class="h-8 w-8" playerType={playerType} />
-      <MyAvatar
+      <Avatar
         class="h-8 w-8"
         alt=""
         src={ctx.profiles[gameState.players[playerType]]?.avatarUrl}

@@ -5,7 +5,7 @@ import {
   Drawer,
   IconArrowLeftOnRect,
   IconQuestionMark,
-  MyAvatar,
+  Avatar,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { ViewGameHeader } from "../../game/view-game-header";
@@ -202,8 +202,7 @@ export const View = ({
         position="bottom"
         id="change-bot"
         open={model.opened === "change-bot"}
-        onClose={() => dispatch({ t: "closed-modal" })}
-      >
+        onClose={() => dispatch({ t: "closed-modal" })}>
         <div class="flex flex-col pb-6">
           <p class="p-4 text-2xl font-bold">Change bot</p>
           <div>
@@ -216,8 +215,7 @@ export const View = ({
                 <button
                   key={botLevel.label}
                   class="flex w-full items-center gap-3 p-4 text-left text-xl font-bold"
-                  onClick={onClick}
-                >
+                  onClick={onClick}>
                   {botLevel.renderIcon({ class: "w-10 h-10" })}
                   {botLevel.label}
                 </button>
@@ -242,15 +240,14 @@ const PlayerIcons = ({
       {player.t === "bot" ? (
         player.renderBotIcon({ class: "h-14 w-14" })
       ) : player.userId ? (
-        <MyAvatar
+        <Avatar
           class="h-14 w-14"
           src={ctx.profiles[player.userId]?.avatarUrl}
         />
       ) : (
         <div
           role="button"
-          class="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-600"
-        >
+          class="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-600">
           <IconQuestionMark class="h-10 w-10 text-neutral-300" />
         </div>
       )}

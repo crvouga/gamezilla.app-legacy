@@ -18,7 +18,7 @@ import {
   Button,
   IconChevronRight,
   LoadingScreen,
-  MyAvatar,
+  Avatar,
   TextField,
   TopBar,
   TopBarBackButton,
@@ -456,7 +456,7 @@ const ViewUpdateScreen = ({
       />
 
       <div class="flex w-full flex-col items-center gap-2 py-2">
-        <MyAvatar
+        <Avatar
           src={profile?.avatarUrl}
           class="h-28 w-28"
           alt="profile avatar"

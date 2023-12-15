@@ -8,7 +8,7 @@ import {
   IconArrowLeftOnRect,
   IconSpinner,
   IconUserPen,
-  MyAvatar,
+  Avatar,
   TopBar,
   TopBarBackButton,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -41,7 +41,7 @@ export const ViewProfileScreen = ({
         <TopBar title={profile.username} />
 
         <div class="flex flex-col items-center justify-center gap-4 overflow-x-hidden p-4">
-          <MyAvatar
+          <Avatar
             class="h-28 w-28"
             src={profile.avatarUrl}
             alt="profile avatar"
@@ -53,8 +53,7 @@ export const ViewProfileScreen = ({
             onClick={() => dispatch({ t: "clicked-edit-profile-button" })}
             class="w-full"
             start={<IconUserPen class="h-6 w-6" />}
-            text="Edit Profile"
-          ></Button>
+            text="Edit Profile"></Button>
           <Button
             onClick={() => dispatch({ t: "clicked-logout-button" })}
             class="w-full"
@@ -82,7 +81,7 @@ export const ViewProfileScreen = ({
         title={profile.username}
       />
       <div class="flex flex-col items-center justify-center gap-4 overflow-x-hidden p-4">
-        <MyAvatar
+        <Avatar
           class="h-28 w-28"
           src={profile.avatarUrl}
           alt="profile avatar"

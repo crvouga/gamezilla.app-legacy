@@ -19,7 +19,7 @@ import {
   IconCheckmarkCircle,
   IconLightbulb,
   IconXMark,
-  MyAvatar,
+  Avatar,
   Spinner,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -239,7 +239,7 @@ export const View = ({
       {/* top heads up */}
       <div class="flex w-full flex-1 flex-col items-center justify-center">
         <div class="flex w-full items-center gap-2 px-3 py-2">
-          <MyAvatar
+          <Avatar
             src={ctx.profiles[ctx.space.hostId]?.avatarUrl}
             class="h-10 w-10"
             alt=""
@@ -493,16 +493,14 @@ const ViewStatusBar = ({ model }: { model: ClientModel }) => {
           toPlayerColor(model.puzzle) === "b"
             ? "bg-black text-white"
             : "bg-white text-black"
-        )}
-      >
+        )}>
         <div
           class={cn(
             "h-6 w-6 rounded-full border-2",
             toPlayerColor(model.puzzle) === "b"
               ? "border-[#ababab] bg-black"
               : "border-black bg-white"
-          )}
-        ></div>
+          )}></div>
         <p class="text-xl text-inherit">
           {Chess.colorToString(toPlayerColor(model.puzzle))} to move
         </p>
@@ -528,8 +526,7 @@ const TickingClock = (input: { sec: number }) => {
       class="h-5 w-5"
       viewBox="-1 -1 2 2"
       stroke="currentColor"
-      stroke-width="0.2"
-    >
+      stroke-width="0.2">
       <circle cx="0" cy="0" r="0.9"></circle>
 
       {/* up */}
@@ -538,8 +535,7 @@ const TickingClock = (input: { sec: number }) => {
         x1="0"
         y1="0"
         x2="0"
-        y2="-1"
-      ></line>
+        y2="-1"></line>
 
       {/* right */}
       <line
@@ -547,8 +543,7 @@ const TickingClock = (input: { sec: number }) => {
         x1="0"
         y1="0"
         x2="1"
-        y2="0"
-      ></line>
+        y2="0"></line>
 
       {/* down */}
       <line
@@ -556,8 +551,7 @@ const TickingClock = (input: { sec: number }) => {
         x1="0"
         y1="0"
         x2="0"
-        y2="1"
-      ></line>
+        y2="1"></line>
 
       {/* left */}
       <line
@@ -565,8 +559,7 @@ const TickingClock = (input: { sec: number }) => {
         x1="0"
         y1="0"
         x2="-1"
-        y2="0"
-      ></line>
+        y2="0"></line>
     </svg>
   );
 };

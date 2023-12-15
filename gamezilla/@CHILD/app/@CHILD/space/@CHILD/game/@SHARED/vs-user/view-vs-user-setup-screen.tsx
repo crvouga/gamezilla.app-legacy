@@ -2,7 +2,7 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   IconArrowLeftOnRect,
   IconQuestionMark,
-  MyAvatar,
+  Avatar,
   Button,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -113,10 +113,9 @@ const PlayerIcons = ({
         player.userId === ctx.currentUserId
           ? player.onStopPlaying
           : player.onStartPlaying
-      }
-    >
+      }>
       {player.userId ? (
-        <MyAvatar
+        <Avatar
           class="h-14 w-14"
           src={ctx.profiles[player.userId]?.avatarUrl}
           alt=""
@@ -124,8 +123,7 @@ const PlayerIcons = ({
       ) : (
         <div
           role="button"
-          class="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-600"
-        >
+          class="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-600">
           <IconQuestionMark class="h-10 w-10 text-neutral-300" />
         </div>
       )}

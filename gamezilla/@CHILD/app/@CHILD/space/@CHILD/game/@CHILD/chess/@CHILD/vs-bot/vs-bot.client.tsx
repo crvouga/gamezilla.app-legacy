@@ -8,7 +8,7 @@ import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconRobot,
-  MyAvatar,
+  Avatar,
   Spinner,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
@@ -335,7 +335,7 @@ export const View = ({
 
   const userSlot = (
     <div class="flex w-full items-center gap-3 p-3">
-      <MyAvatar
+      <Avatar
         class="h-10 w-10"
         src={ctx.profiles[model.coreModel.userId]?.avatarUrl}
       />

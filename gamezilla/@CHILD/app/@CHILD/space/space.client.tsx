@@ -28,7 +28,7 @@ import {
   IconHome,
   IconUserGroup,
   IconXMark,
-  MyAvatar,
+  Avatar,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
@@ -512,7 +512,7 @@ const ViewSpaceStarted = ({
                 });
               }
             }}>
-            <MyAvatar
+            <Avatar
               src={
                 model.previewUserId
                   ? ctx.profiles[model.previewUserId]?.avatarUrl
@@ -896,7 +896,7 @@ export const ViewCurrentSpaceBar = ({
         }}>
         <div class="mr-2 p-2">
           {!game && (
-            <MyAvatar
+            <Avatar
               src={hostProfile?.avatarUrl}
               alt="Host Avatar"
               class="h-12 w-12"

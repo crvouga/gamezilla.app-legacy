@@ -1,6 +1,6 @@
 import { cn } from "./utils";
 
-export const MyAvatar = ({
+export const Avatar = ({
   class: className,
   src,
   alt,
@@ -18,9 +18,10 @@ export const MyAvatar = ({
         src={src}
         alt={alt ?? "user avatar"}
         class={cn(
-          `inline-block aspect-square h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-white/40`,
+          "inline-block aspect-square h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-white/40",
           className
-        )}></img>
+        )}
+      />
     );
   }
 

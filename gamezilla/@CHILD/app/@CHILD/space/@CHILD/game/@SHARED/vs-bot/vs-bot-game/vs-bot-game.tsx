@@ -2,7 +2,7 @@ import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space"
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   IconRobot,
-  MyAvatar,
+  Avatar,
   Transition,
   VDom,
   VDomChildren,
@@ -109,12 +109,10 @@ export const ViewStatusBar = (props: VsBotProps & { status: Status }) => {
       mode="in-out"
       onEnter={fadeIn({ duration: 300, delay: 0 })}
       onExit={fadeOut({ duration: 300, delay: 0 })}
-      class="relative h-8 w-full"
-    >
+      class="relative h-8 w-full">
       <div
         key={statusToKey(props.status)}
-        class="absolute inset-0 flex items-center justify-center gap-1 text-secondary"
-      >
+        class="absolute inset-0 flex items-center justify-center gap-1 text-secondary">
         <ViewStatusBarContent {...props} />
       </div>
     </Transition>
@@ -191,13 +189,11 @@ export const ViewGameOverOverlay = (props: Props) => {
       id="game-over-overlay"
       mode="out-in"
       onEnter={fadeIn({ duration: 200, delay: 500 })}
-      onExit={fadeOut({ duration: 200, delay: 0 })}
-    >
+      onExit={fadeOut({ duration: 200, delay: 0 })}>
       {gameOver?.t === "winner" && (
         <button
           class="absolute inset-0 flex flex-col items-center justify-center bg-black/70"
-          onClick={props.onPlayAgain}
-        >
+          onClick={props.onPlayAgain}>
           <div class="flex-1"></div>
 
           <Winner {...props} winner={gameOver.winner} />
@@ -214,8 +210,7 @@ export const ViewGameOverOverlay = (props: Props) => {
       {gameOver?.t === "draw" && (
         <button
           class="absolute inset-0 flex flex-col items-center justify-center bg-black/60"
-          onClick={props.onPlayAgain}
-        >
+          onClick={props.onPlayAgain}>
           <div class="flex-1"></div>
 
           <Draw {...props} />
@@ -243,7 +238,7 @@ const Winner = ({
 }: Props & { winner: PlayerType }) => {
   const humanSlot = (
     <>
-      <MyAvatar class="h-16 w-16" src={ctx.profiles[human.userId]?.avatarUrl} />
+      <Avatar class="h-16 w-16" src={ctx.profiles[human.userId]?.avatarUrl} />
     </>
   );
 
@@ -286,7 +281,7 @@ const Winner = ({
 const Draw = ({ ctx, playerOne, playerTwo, human }: Props) => {
   const humanSlot = (
     <>
-      <MyAvatar src={ctx.profiles[ctx.currentUserId]?.avatarUrl} />
+      <Avatar src={ctx.profiles[ctx.currentUserId]?.avatarUrl} />
     </>
   );
 
@@ -331,7 +326,7 @@ export const VsBotPlayerSection = ({
 }: VsBotGameProps) => {
   const humanSlot = (
     <>
-      <MyAvatar class="h-6 w-6 " src={ctx.profiles[human.userId]?.avatarUrl} />
+      <Avatar class="h-6 w-6 " src={ctx.profiles[human.userId]?.avatarUrl} />
       <p class="overflow-hidden text-ellipsis whitespace-nowrap">
         {ctx.profiles[human.userId]?.username}
       </p>
@@ -376,8 +371,7 @@ const Slot = ({
       className={cn(
         "flex max-w-full flex-1 items-center gap-2 rounded-md border border-b-2 border-neutral-600 bg-neutral-900 p-2 text-sm transition-colors duration-200 ease-in-out",
         active && "border-b-blue-500"
-      )}
-    >
+      )}>
       {children}
     </div>
   );

@@ -1,7 +1,7 @@
 import { ProfileAvatar } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Button,
-  MyAvatar,
+  Avatar,
   TextField,
   TopBar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -35,7 +35,7 @@ export const ViewUpdateAvatarScreen = ({
       />
 
       <div class="flex w-full flex-1 flex-col gap-8 p-4">
-        <MyAvatar
+        <Avatar
           src={
             model.draft?.avatarSeed && model.draft?.avatarStyle
               ? ProfileAvatar.toUrl({

@@ -4,7 +4,7 @@ import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Button,
   IconGamepad,
-  MyAvatar,
+  Avatar,
   TopBar,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -147,8 +147,7 @@ const ViewSpaceCard = ({
   return (
     <button
       onClick={onClick}
-      class="flex flex-col gap-3 rounded-md bg-blue-600 p-4 active:opacity-70"
-    >
+      class="flex flex-col gap-3 rounded-md bg-blue-600 p-4 active:opacity-70">
       <div class="flex w-full items-center justify-start">
         <p class="block flex-1 text-left font-bold uppercase">LIVE</p>
         {isCurrentSpace && <p class="block text-xs italic">Current space</p>}
@@ -164,7 +163,7 @@ const ViewSpaceCard = ({
       )}
 
       <div class="flex items-center justify-start gap-2 overflow-hidden">
-        <MyAvatar src={host.avatarUrl} alt="avatar" class="h-12 w-12" />
+        <Avatar src={host.avatarUrl} alt="avatar" class="h-12 w-12" />
 
         <div class="flex-1 overflow-hidden">
           <p class="overflow-hidden text-ellipsis whitespace-nowrap text-xl">
@@ -178,7 +177,7 @@ const ViewSpaceCard = ({
         <div class="flex items-center justify-start gap-2">
           <div class="flex items-center">
             {users.slice(0, MAX_AVATAR_COUNT).map((user, index) => (
-              <MyAvatar
+              <Avatar
                 key={user.username}
                 src={user.avatarUrl}
                 alt="avatar"
