@@ -71,27 +71,27 @@ export type Input<T extends GameClientModuleTypes> = {
    */
   model: T["Model"];
   /**
-   *
+   * `gameState` is the current state of the game. This is shared between client and server.
    */
   gameState: T["GameState"];
   /**
-   *
+   * `gameEvent` is an event of game
    */
   gameEvent?: (T["GameEvent"] & EventMeta) | null;
   /**
-   *
+   * `msg`
    */
   msg?: T["Msg"] | null;
   /**
-   *
+   * `fromServer`
    */
   fromServer?: T["ToClient"] | null;
   /**
-   *
+   * `evt`
    */
   evt?: T["InEvt"] | null;
   /**
-   *
+   * `cmd`
    */
   cmd?: T["InCmd"] | null;
 };
@@ -165,7 +165,6 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
     ctx: T["Ctx"];
     gameEvent: T["GameEvent"];
     gameState: T["GameState"];
-    model?: T["Model"] | null;
     dispatch: (msg: T["Msg"]) => void;
   }) => VDom;
 };

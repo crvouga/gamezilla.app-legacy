@@ -49,7 +49,7 @@ type Module = GameClientModule<{
 //
 //
 
-export const init = (gameName: GameName): Module["init"] => {
+const init = (gameName: GameName): Module["init"] => {
   switch (gameName) {
     case "connect-four": {
       return {
@@ -68,7 +68,7 @@ export const init = (gameName: GameName): Module["init"] => {
 //
 //
 
-export const update: Module["update"] = (input) => {
+const update: Module["update"] = (input) => {
   const { ctx, msg, fromServer, cmd, evt, gameEvent, gameState } = input;
 
   switch (gameState.t) {
@@ -107,9 +107,7 @@ export const update: Module["update"] = (input) => {
 //
 //
 
-export const subscriptions: Module["subscriptions"] = (
-  input
-): Sub<ClientMsg> => {
+const subscriptions: Module["subscriptions"] = (input): Sub<ClientMsg> => {
   const { gameState, model } = input;
   switch (gameState.t) {
     case "connect-four": {
@@ -133,7 +131,7 @@ export const subscriptions: Module["subscriptions"] = (
 //
 //
 
-export const View: Module["View"] = (input) => {
+const View: Module["View"] = (input) => {
   const { model, ctx, gameState, dispatch } = input;
 
   switch (gameState.t) {
@@ -150,7 +148,7 @@ export const View: Module["View"] = (input) => {
   }
 };
 
-export const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
+const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
   const { gameEvent, gameState, ctx, dispatch } = input;
 
   switch (gameState.t) {
@@ -163,7 +161,6 @@ export const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
               gameEvent={gameEvent.c}
               gameState={gameState.c}
               dispatch={(c) => dispatch({ t: "connect-four", c })}
-              model={input.model?.t === "connect-four" ? input.model.c : null}
             />
           );
         }
@@ -177,4 +174,12 @@ export const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
       return null;
     }
   }
+};
+
+export const Game = {
+  init,
+  subscriptions,
+  update,
+  View,
+  ViewFeedItem,
 };

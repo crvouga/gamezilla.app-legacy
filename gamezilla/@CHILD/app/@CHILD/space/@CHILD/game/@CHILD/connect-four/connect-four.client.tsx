@@ -307,10 +307,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
               ctx={{ ...ctx, onQuit: () => {} }}
               gameEvent={gameEvent.c}
               gameState={gameState.c}
-              dispatch={() => {
-                //
-              }}
-              model={input.model?.t === "vs-bot" ? input.model.c : null}
+              dispatch={(c) => input.dispatch({ t: "vs-bot", c })}
             />
           );
         }
@@ -328,10 +325,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
               ctx={{ ...ctx, onQuit: () => {} }}
               gameEvent={gameEvent.c}
               gameState={gameState.c}
-              dispatch={() => {
-                //
-              }}
-              model={input.model?.t === "vs-user" ? input.model.c : null}
+              dispatch={(c) => input.dispatch({ t: "vs-user", c })}
             />
           );
         }

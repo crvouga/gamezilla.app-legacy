@@ -23,17 +23,17 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
+  Avatar,
   Button,
   Drawer,
   IconHome,
   IconUserGroup,
   IconXMark,
-  Avatar,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
-import * as GameClient from "./@CHILD/game/game.client";
+import { Game } from "./@CHILD/game/game.client";
 import { updateFromSpaceEvents } from "./space-client/update-from-events";
 import { updateFromGame } from "./space-client/update-from-game";
 import { ViewNotInGameScreen } from "./space-client/view-not-in-game-screen";
@@ -89,6 +89,7 @@ export const init: Module["init"] = ({ stored }) => {
       model: stored,
     };
   }
+
   return {
     model: {
       ...initCore(),
@@ -270,7 +271,7 @@ const updateGame: Module["update"] = (input) => {
     return { model };
   }
 
-  const updated = GameClient.update({
+  const updated = Game.update({
     ctx: {
       ...ctx,
       space: space,
@@ -278,7 +279,7 @@ const updateGame: Module["update"] = (input) => {
       quit() {},
       viewProfile() {},
     },
-    model: model.games[space.spaceId] ?? GameClient.init(space.game.t),
+    model: model.games[space.spaceId] ?? Game.init(space.game.t),
     gameState: space.game,
     fromServer: fromServer?.t === "game" ? fromServer.c : null,
     cmd: null,
@@ -341,10 +342,10 @@ export const subscriptions: Module["subscriptions"] = ({ ctx, model }) => {
     }
 
     const sub = Sub.map(
-      GameClient.subscriptions({
+      Game.subscriptions({
         ctx: { ...clientCtx, space: space, quit() {}, viewProfile() {} },
         gameState: space.game,
-        model: model.games[spaceId] ?? GameClient.init(space.game.t),
+        model: model.games[spaceId] ?? Game.init(space.game.t),
       }),
       (c): ClientMsg => ({ t: "game", c, spaceId })
     );
@@ -599,7 +600,7 @@ const ViewFeedItem = ({
         return null;
       }
       return (
-        <GameClient.ViewFeedItem
+        <Game.ViewFeedItem
           ctx={ctx}
           gameEvent={{ ...event, ...event.c }}
           gameState={state.game}
@@ -697,23 +698,43 @@ const ViewSpaceScreenMain = ({
       <ViewFeed state={space} ctx={ctx} model={model} dispatch={dispatch} />
 
       <div class="flex w-full flex-1 flex-col overflow-hidden">
-        {space.game ? (
-          <GameClient.View
-            gameState={space.game}
-            ctx={ctx}
-            dispatch={(msg) =>
-              dispatch({ t: "game", spaceId: ctx.space.spaceId, c: msg })
-            }
-            model={
-              model.games[ctx.space.spaceId] ?? GameClient.init(space.game.t)
-            }
-          />
-        ) : (
-          <ViewNotInGameScreen ctx={ctx} dispatchEvent={dispatchEvent} />
-        )}
+        <ViewGame
+          ctx={ctx}
+          dispatch={dispatch}
+          dispatchEvent={dispatchEvent}
+          model={model}
+          space={space}
+        />
       </div>
     </div>
   );
+};
+
+const ViewGame = ({
+  space,
+  model,
+  ctx,
+  dispatch,
+  dispatchEvent,
+}: {
+  space: SpaceStateStarted;
+  model: ClientModel;
+  ctx: SpaceClientCtx;
+  dispatch: (m: ClientMsg) => void;
+  dispatchEvent: (m: Event) => void;
+}) => {
+  if (space.game) {
+    return (
+      <Game.View
+        gameState={space.game}
+        ctx={ctx}
+        dispatch={(c) => dispatch({ t: "game", spaceId: ctx.space.spaceId, c })}
+        model={model.games[ctx.space.spaceId] ?? Game.init(space.game.t)}
+      />
+    );
+  }
+
+  return <ViewNotInGameScreen ctx={ctx} dispatchEvent={dispatchEvent} />;
 };
 
 function ViewTopBar({

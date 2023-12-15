@@ -13,7 +13,7 @@ import {
   sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, batchMsgs, chain } from "gamezilla/@SHARED/core";
-import * as GameClient from "../@CHILD/game/game.client";
+import { Game } from "../@CHILD/game/game.client";
 import {
   ClientModel,
   ClientMsg,
@@ -187,7 +187,7 @@ const updateGameFromEvent = ({
     return { model };
   }
 
-  const updatedGame = GameClient.update({
+  const updatedGame = Game.update({
     ctx: {
       ...ctx,
       currentUserId: ctx.currentUserId,
@@ -203,7 +203,7 @@ const updateGameFromEvent = ({
       eventWithMeta.t === "game"
         ? { ...eventWithMeta, ...eventWithMeta.c }
         : null,
-    model: model.games[eventWithMeta.spaceId] ?? GameClient.init(after.game.t),
+    model: model.games[eventWithMeta.spaceId] ?? Game.init(after.game.t),
     gameState: before?.game ?? after.game,
   });
 

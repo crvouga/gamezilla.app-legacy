@@ -1,7 +1,7 @@
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Eff } from "gamezilla/@SHARED/core";
-import * as GameClient from "../@CHILD/game/game.client";
+import { Game } from "../@CHILD/game/game.client";
 import { ClientModel, ClientMsg, ToServer } from "../space.core";
 
 /**
@@ -14,7 +14,7 @@ export const updateFromGame = ({
 }: {
   spaceId: SpaceId;
   model: ClientModel;
-  updated: ReturnType<typeof GameClient.update>;
+  updated: ReturnType<typeof Game.update>;
 }): {
   model: ClientModel;
   cmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
