@@ -344,7 +344,7 @@ export const subscriptions: Module["subscriptions"] = ({ ctx, model }) => {
       GameClient.subscriptions({
         ctx: { ...clientCtx, space: space, quit() {}, viewProfile() {} },
         gameState: space.game,
-        model: model.games[spaceId],
+        model: model.games[spaceId] ?? GameClient.init(space.game.t),
       }),
       (c): ClientMsg => ({ t: "game", c, spaceId })
     );
@@ -704,7 +704,9 @@ const ViewSpaceScreenMain = ({
             dispatch={(msg) =>
               dispatch({ t: "game", spaceId: ctx.space.spaceId, c: msg })
             }
-            model={model.games[ctx.space.spaceId]}
+            model={
+              model.games[ctx.space.spaceId] ?? GameClient.init(space.game.t)
+            }
           />
         ) : (
           <ViewNotInGameScreen ctx={ctx} dispatchEvent={dispatchEvent} />

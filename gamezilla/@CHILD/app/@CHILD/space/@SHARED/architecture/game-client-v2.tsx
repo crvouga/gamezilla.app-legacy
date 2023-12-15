@@ -145,7 +145,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
   subscriptions: (input: {
     ctx: T["Ctx"];
     gameState: T["GameState"];
-    model?: T["Model"] | null;
+    model: T["Model"];
   }) => Sub<T["Msg"]>;
 
   /**
@@ -154,7 +154,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
   View: (input: {
     ctx: T["Ctx"];
     gameState: T["GameState"];
-    model?: T["Model"] | null;
+    model: T["Model"];
     dispatch: (msg: T["Msg"]) => void;
   }) => VDom;
 

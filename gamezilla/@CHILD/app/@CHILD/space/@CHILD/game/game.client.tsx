@@ -118,7 +118,7 @@ export const subscriptions: Module["subscriptions"] = (
         ConnectFour.subscriptions({
           ctx: input.ctx,
           gameState: gameState.c,
-          model: model?.t === "connect-four" ? model.c : null,
+          model: model?.t === "connect-four" ? model.c : ConnectFour.init,
         })
       );
     }
@@ -143,7 +143,7 @@ export const View: Module["View"] = (input) => {
           ctx={ctx}
           dispatch={(c) => dispatch({ t: "connect-four", c })}
           gameState={gameState.c}
-          model={model?.t === "connect-four" ? model.c : null}
+          model={model?.t === "connect-four" ? model.c : ConnectFour.init}
         />
       );
     }

@@ -247,7 +247,7 @@ const View: Module["View"] = ({ dispatch, ctx, gameState, model }) => {
         <VsBot.View
           ctx={{ ...ctx, onQuit }}
           dispatch={(c) => dispatch({ t: "vs-bot", c })}
-          model={model?.t === "vs-bot" ? model.c : null}
+          model={model?.t === "vs-bot" ? model.c : VsBot.init}
           gameState={gameState.c}
         />
       );
@@ -258,7 +258,7 @@ const View: Module["View"] = ({ dispatch, ctx, gameState, model }) => {
         <VsUser.View
           ctx={{ ...ctx, onQuit }}
           dispatch={(c) => dispatch({ t: "vs-user", c })}
-          model={model?.t === "vs-user" ? model.c : null}
+          model={model?.t === "vs-user" ? model.c : VsUser.init}
           gameState={gameState.c}
         />
       );
@@ -364,7 +364,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
         "vs-bot",
         VsBot.subscriptions({
           ...input,
-          model: model?.t === "vs-bot" ? model.c : undefined,
+          model: model?.t === "vs-bot" ? model.c : VsBot.init,
           gameState: gameState.c,
           ctx: { ...input.ctx, onQuit: () => {} },
         })
@@ -376,7 +376,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
         "vs-user",
         VsUser.subscriptions({
           ...input,
-          model: model?.t === "vs-user" ? model.c : null,
+          model: model?.t === "vs-user" ? model.c : VsUser.init,
           gameState: gameState.c,
           ctx: { ...input.ctx, onQuit: () => {} },
         })
