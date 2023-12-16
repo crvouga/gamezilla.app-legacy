@@ -1,6 +1,6 @@
 import { GameCore } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-core";
-import { FlowGridSamples, FlowGridUIPlay } from "../../@SHARED/flow";
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { FlowGridUIPlay } from "../../@SHARED/flow";
 
 //
 //
@@ -9,17 +9,9 @@ import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 //
 //
 
-export type CoreModel = {
-  grid: FlowGridUIPlay.Model;
-};
+export type ClientModel = {};
 
-export type ClientModel = CoreModel;
-
-export type ServerModel = CoreModel;
-
-export const initShared: CoreModel = {
-  grid: FlowGridUIPlay.init(FlowGridSamples.samples["8x8"][0]),
-};
+export type ServerModel = {};
 
 //
 //
@@ -28,27 +20,21 @@ export const initShared: CoreModel = {
 //
 //
 
-export type ClientMsg = {
-  t: "grid";
-  c: FlowGridUIPlay.Msg;
-};
+export type ClientMsg = GameEvent;
 
 export type ServerMsg = { t: null };
 
-export type ToServer = {
-  t: "new-sync";
-  model: CoreModel;
-};
+export type ToServer = { t: null };
 
 export type ToClient = { t: null };
 
 export type GameEvent = {
   t: "grid";
-  c: FlowGridUIPlay.GameEvent;
+  c: FlowGridUIPlay.Msg;
 };
 
 export type GameState = {
-  play: FlowGridUIPlay.GameState;
+  grid: FlowGridUIPlay.Model;
 };
 
 type Module = GameCore<{
@@ -57,16 +43,20 @@ type Module = GameCore<{
   GameEvent: GameEvent;
 }>;
 
-export const initState: Module["initState"] = (input) => {
+export const initState: Module["initState"] = () => {
   return {
-    play: FlowGridUIPlay.initState(input),
+    grid: FlowGridUIPlay.init(),
   };
 };
 
 export const reducer: Module["reducer"] = ({ event, state }) => {
   switch (event.t) {
     case "grid": {
-      return state;
+      const grid = FlowGridUIPlay.update({
+        msg: event.c,
+        model: state.grid,
+      });
+      return { ...state, grid };
     }
   }
 };

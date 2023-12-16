@@ -112,16 +112,42 @@ export const reducer = ({
   state: GameState;
   event: GameEvent & EventMeta;
 }): GameState => {
-  if (state.t === "connect-four" && event.t === "connect-four") {
-    return {
-      t: "connect-four",
-      c: ConnectFour.reducer({
-        ctx,
-        event: { ...event, ...event.c },
-        state: state.c,
-      }),
-    };
-  }
+  switch (state.t) {
+    case "connect-four": {
+      switch (event.t) {
+        case "connect-four": {
+          return {
+            t: "connect-four",
+            c: ConnectFour.reducer({
+              ctx,
+              event: { ...event, ...event.c },
+              state: state.c,
+            }),
+          };
+        }
+        default: {
+          return state;
+        }
+      }
+    }
 
-  return state;
+    case "flow": {
+      switch (event.t) {
+        case "flow": {
+          return {
+            t: "flow",
+            c: Flow.reducer({
+              ctx,
+              event: { ...event, ...event.c },
+              state: state.c,
+            }),
+          };
+        }
+
+        default: {
+          return state;
+        }
+      }
+    }
+  }
 };

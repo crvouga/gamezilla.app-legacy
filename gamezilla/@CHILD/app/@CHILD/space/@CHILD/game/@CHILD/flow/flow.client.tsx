@@ -1,12 +1,18 @@
 import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
 import { SpaceClientEvt } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  APP_SOUND,
+  ClientCmd,
+  playSound,
+  showToast,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconGamepad,
   IconScrewdriverWrench,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
+import { withId } from "../../../../@SHARED/event";
 import { CoverArt } from "./@SHARED/flow-cover-art";
 import { FlowClientCtx } from "./@SHARED/flow-ctx";
 import {
@@ -17,6 +23,7 @@ import {
   ToClient,
   ToServer,
 } from "./flow.core";
+import { PlayClient } from "./@CHILD/play/play.client";
 
 type Module = GameClientModule<{
   Model: ClientModel;
@@ -44,12 +51,85 @@ const update: Module["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromGameEvent({ ...input, model }),
     (model) => updateChild({ ...input, model })
   );
 };
 
 const updateChild: Module["update"] = (input) => {
-  return { model: input.model };
+  const { model, gameState, gameEvent, ctx, cmd, evt, fromServer, msg } = input;
+
+  switch (gameState.t) {
+    case null: {
+      return { model };
+    }
+
+    case "play": {
+      const updated = PlayClient.update({
+        ctx,
+        gameState: gameState.c,
+        model: model.t === "play" ? model.c : PlayClient.init,
+        cmd: cmd,
+        evt: evt,
+        fromServer: fromServer?.t === "play" ? fromServer.c : null,
+        gameEvent:
+          gameEvent?.t === "play" ? { ...gameEvent, ...gameEvent.c } : null,
+        msg: msg?.t === "play" ? msg.c : null,
+      });
+
+      const tagged = GameClientModule.tagOutput(
+        "play",
+        (cmd) => ClientCmd.tag("play", cmd),
+        updated
+      );
+
+      return tagged;
+    }
+
+    case "puzzle-builder": {
+      return { model };
+    }
+  }
+};
+
+const updateFromGameEvent: Module["update"] = (input) => {
+  const { gameEvent, model } = input;
+
+  if (!gameEvent) {
+    return { model };
+  }
+
+  switch (gameEvent.t) {
+    case "puzzle-builder":
+    case "play": {
+      return { model };
+    }
+
+    case "user-changed-mode": {
+      switch (gameEvent.mode) {
+        case "play": {
+          return {
+            model: { t: "play", c: PlayClient.init },
+            cmd: [playSound(APP_SOUND.navForwardMin)],
+          };
+        }
+
+        case "puzzle-builder": {
+          return {
+            model: { t: "none" },
+            cmd: [showToast("Not supported")],
+          };
+        }
+
+        case null: {
+          return {
+            model: { t: "none" },
+            cmd: [playSound(APP_SOUND.navBackwardMin)],
+          };
+        }
+      }
+    }
+  }
 };
 
 const updateFromMsg: Module["update"] = (input) => {
@@ -60,16 +140,20 @@ const updateFromMsg: Module["update"] = (input) => {
   }
 
   switch (msg.t) {
-    case "input-mode": {
-      return { model, cmd: [sendToServer(msg)] };
-    }
-
     case "play": {
       return { model };
     }
 
     case "puzzle-builder": {
       return { model };
+    }
+
+    case "user-changed-mode": {
+      const gameEvent = withId(msg);
+      return {
+        model,
+        gameEvent: [gameEvent],
+      };
     }
   }
 };
@@ -94,37 +178,56 @@ const subscriptions: Module["subscriptions"] = (_input) => {
 //
 
 const View: Module["View"] = (input) => {
-  const { dispatch } = input;
+  const { gameState, dispatch } = input;
+
   const ctx: FlowClientCtx = {
     ...input.ctx,
-    onExit: () => dispatch({ t: "input-mode", mode: "none" }),
+    onExit: () => dispatch({ t: "user-changed-mode", mode: null }),
   };
 
-  return (
-    <MainMenuScreen.View
-      renderCoverArt={(props) => <CoverArt {...props} />}
-      ctx={ctx}
-      title="Flow"
-      buttons={[
-        {
-          renderIcon: (props) => <IconGamepad {...props} />,
-          title: "Play",
-          description: "Start playing puzzles",
-          onClick: () => {
-            dispatch({ t: "input-mode", mode: "play" });
-          },
-        },
-        {
-          renderIcon: (props) => <IconScrewdriverWrench {...props} />,
-          title: "Puzzle builder",
-          description: "Build new puzzles to play",
-          onClick: () => {
-            dispatch({ t: "input-mode", mode: "puzzle-builder" });
-          },
-        },
-      ]}
-    />
-  );
+  switch (gameState.t) {
+    case null: {
+      return (
+        <MainMenuScreen.View
+          renderCoverArt={(props) => <CoverArt {...props} />}
+          ctx={ctx}
+          title="Flow"
+          buttons={[
+            {
+              renderIcon: (props) => <IconGamepad {...props} />,
+              title: "Play",
+              description: "Start playing puzzles",
+              onClick: () => {
+                dispatch({ t: "user-changed-mode", mode: "play" });
+              },
+            },
+            {
+              renderIcon: (props) => <IconScrewdriverWrench {...props} />,
+              title: "Puzzle builder",
+              description: "Build new puzzles to play",
+              onClick: () => {
+                dispatch({ t: "user-changed-mode", mode: "puzzle-builder" });
+              },
+            },
+          ]}
+        />
+      );
+    }
+
+    case "puzzle-builder":
+      return <div></div>;
+
+    case "play": {
+      return (
+        <PlayClient.View
+          ctx={ctx}
+          dispatch={(c) => dispatch({ t: "play", c })}
+          gameState={gameState.c}
+          model={input.model.t === "play" ? input.model.c : PlayClient.init}
+        />
+      );
+    }
+  }
 };
 
 const ViewFeedItem: Module["ViewFeedItem"] = () => {

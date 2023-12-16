@@ -40,7 +40,7 @@ export type ServerModel = CoreModel;
 const emptyGrid = FlowGrid.init({ bounds: FlowGridPosition.bounds8x8 });
 
 export const initCore: CoreModel = {
-  playUI: FlowGridUIPlay.init(emptyGrid),
+  playUI: FlowGridUIPlay.init(),
   editUI: emptyGrid,
   draftTerminals: {},
   activeGroupId: Flow.PATH_ID_ORDER[0],
@@ -318,14 +318,12 @@ const toNextGroupId = (groupId: Flow.GroupId): Flow.GroupId => {
 export type GameEvent =
   | {
       t: "play-ui";
-      c: FlowGridUIPlay.GameEvent;
+      c: FlowGridUIPlay.Msg;
     }
   | {
       t: "edit-ui";
     };
 
-
-  export type GameState = {
-    play: FlowGridUIPlay.GameState;
-  
-  }
+export type GameState = {
+  play: FlowGridUIPlay.Model;
+};

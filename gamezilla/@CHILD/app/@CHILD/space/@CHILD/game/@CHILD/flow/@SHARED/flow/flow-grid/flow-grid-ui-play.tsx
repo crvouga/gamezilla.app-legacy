@@ -1,10 +1,8 @@
-import { GameCore } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-core";
 import { AlgoDrawPipes } from "../algo";
 import * as Flow from "../flow";
 import * as FlowGrid from "./flow-grid";
-import * as FlowGridUI from "./flow-grid-ui";
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { samples } from "./flow-grid-samples";
+import * as FlowGridUI from "./flow-grid-ui";
 
 //
 //
@@ -13,11 +11,6 @@ import { samples } from "./flow-grid-samples";
 //
 //
 //
-
-export type Model = {
-  grid: FlowGrid.Model;
-  state: State;
-};
 
 type Idle = { t: "idle" };
 
@@ -29,14 +22,19 @@ type Dragging = {
 
 type State = Idle | Dragging;
 
-export const init = (grid: FlowGrid.Model): Model => {
-  return {
-    state: { t: "idle" },
-    grid,
-  };
+export type Model = {
+  grid: FlowGrid.Model;
+  state: State;
 };
 
-export type GameEvent =
+//
+//
+//
+//
+//
+//
+
+export type Msg =
   | {
       t: "pressed-down";
       nodeId: Flow.NodeId;
@@ -50,88 +48,26 @@ export type GameEvent =
       nodeId: Flow.NodeId;
     };
 
-export type GameState = {
-  grid: FlowGrid.Model;
-  state: State;
-};
-
-type Module = GameCore<{
-  Ctx: SpaceCtx;
-  GameEvent: GameEvent;
-  GameState: GameState;
-}>;
-
-export const reducer: Module["reducer"] = ({ event, state }) => {
-  switch (state.state.t) {
-    case "dragging": {
-      return reducerDragging({ msg: event, model: state, state: state.state });
-    }
-
-    case "idle": {
-      return reducerIdle({ msg: event, model: state });
-    }
-  }
-};
-
-export const initState: Module["initState"] = () => {
+export const init = (): Model => {
   return {
     grid: samples["6x6"][1],
     state: { t: "idle" },
   };
 };
 
-export const FlowGridUIPlay: Module = {
-  initState,
-  reducer,
-};
-
-//
-//
-//
-// Update
-//
-//
-//
-
-export type Msg =
-  | { t: "dragged-over"; nodeId: Flow.NodeId }
-  | { t: "pressed-down"; nodeId: Flow.NodeId }
-  | { t: "pressed-up"; nodeId: Flow.NodeId }
-  | { t: "left" };
-
-export const update = ({
-  msg,
-  model,
-}: {
-  msg: Msg;
-  model: Model;
-}): {
-  model: Model;
-} => {
-  return {
-    model: updateModel({ msg, model }),
-  };
-};
-
-export const updateModel = ({
-  msg,
-  model,
-}: {
-  msg: Msg;
-  model: Model;
-}): Model => {
+export const update = ({ msg, model }: { msg: Msg; model: Model }): Model => {
   switch (model.state.t) {
     case "dragging": {
-      return reducerDragging({ msg, model, state: model.state });
+      return updateDragging({ msg, model, state: model.state });
     }
 
     case "idle": {
-      return reducerIdle({ msg, model });
+      return updateIdle({ msg, model });
     }
   }
 };
 
-const reducerIdle = ({ msg, model }: { msg: Msg; model: Model }): Model => {
+const updateIdle: typeof update = ({ msg, model }) => {
   switch (msg.t) {
     case "pressed-down": {
       const groupId = Flow.toGroupId(model.grid.flow, msg.nodeId);
@@ -152,23 +88,24 @@ const reducerIdle = ({ msg, model }: { msg: Msg; model: Model }): Model => {
           ...model.grid,
           flow: started,
         },
-        state: { t: "dragging", activeGroupId: groupId },
+        state: {
+          t: "dragging",
+          activeGroupId: groupId,
+        },
       };
     }
 
-    case "left": {
-      return model;
-    }
     case "dragged-over": {
       return model;
     }
+
     case "pressed-up": {
       return model;
     }
   }
 };
 
-const reducerDragging = ({
+const updateDragging = ({
   msg,
   state,
   model,
@@ -204,10 +141,6 @@ const reducerDragging = ({
       return model;
     }
 
-    case "left": {
-      return { ...model, state: { t: "idle" } };
-    }
-
     case "pressed-up": {
       return { ...model, state: { t: "idle" } };
     }
@@ -233,12 +166,12 @@ export const View = ({
     <div class="flex w-full flex-col gap-4 overflow-y-auto">
       <FlowGridUI.View
         model={model.grid}
-        showCoordinates
+        showCoordinates={false}
         isDragging={model.state.t === "dragging"}
         onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
         onPressDown={(nodeId) => dispatch({ t: "pressed-down", nodeId })}
         onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
-        onLeave={() => dispatch({ t: "left" })}
+        onLeave={() => {}}
         autocompleteEdge={
           model.state.t === "dragging" && model.state.autocompleteEdge
             ? {

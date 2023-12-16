@@ -1,7 +1,6 @@
-import { Result } from "gamezilla/@SHARED/core";
-import * as PuzzleBuilder from "./@CHILD/puzzle-builder/puzzle-builder.core";
-import * as Play from "./@CHILD/play/play.core";
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import * as Play from "./@CHILD/play/play.core";
+import * as PuzzleBuilder from "./@CHILD/puzzle-builder/puzzle-builder.core";
 
 //
 //
@@ -26,7 +25,7 @@ export type ServerModel =
 //
 
 export type ClientMsg =
-  | Req
+  | GameEvent
   | { t: "puzzle-builder"; c: PuzzleBuilder.ClientMsg }
   | { t: "play"; c: Play.ClientMsg };
 
@@ -35,28 +34,17 @@ export type ServerMsg =
   | { t: "play"; c: Play.ServerMsg };
 
 export type ToServer =
-  | Req
   | { t: "puzzle-builder"; c: PuzzleBuilder.ToServer }
   | { t: "play"; c: Play.ToServer };
 
 export type ToClient =
-  | Res
   | { t: "puzzle-builder"; c: PuzzleBuilder.ToClient }
   | { t: "play"; c: Play.ToClient };
-
-export type Req = {
-  t: "input-mode";
-  mode: ServerModel["t"];
-};
-
-export type Res = Req & {
-  result: Result<string, ServerModel>;
-};
 
 export type Mode = "puzzle-builder" | "play";
 
 export type GameEvent =
-  | { t: "user-changed-mode"; mode: Mode }
+  | { t: "user-changed-mode"; mode: Mode | null }
   | { t: "play"; c: Play.GameEvent }
   | { t: "puzzle-builder"; c: PuzzleBuilder.GameEvent };
 
@@ -102,7 +90,22 @@ export const reducer = ({
     }
 
     case "user-changed-mode": {
-      return state;
+      switch (event.mode) {
+        case null: {
+          return { t: null };
+        }
+
+        case "play": {
+          return {
+            t: "play",
+            c: Play.initState({ ctx }),
+          };
+        }
+
+        case "puzzle-builder": {
+          return state;
+        }
+      }
     }
   }
 };

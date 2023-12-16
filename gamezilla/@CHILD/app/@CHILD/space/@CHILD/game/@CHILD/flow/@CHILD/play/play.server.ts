@@ -1,11 +1,5 @@
 import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-server";
-import {
-  ServerModel,
-  ServerMsg,
-  ToClient,
-  ToServer,
-  initShared,
-} from "./play.core";
+import { ServerModel, ServerMsg, ToClient, ToServer } from "./play.core";
 import { Sub } from "gamezilla/@SHARED/core";
 
 type Server = GameServer<{
@@ -19,7 +13,7 @@ type Server = GameServer<{
 
 const init: Server["init"] = async () => {
   return {
-    model: initShared,
+    model: {},
   };
 };
 

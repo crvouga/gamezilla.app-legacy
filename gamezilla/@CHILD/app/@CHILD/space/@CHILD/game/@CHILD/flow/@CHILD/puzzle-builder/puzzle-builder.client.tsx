@@ -48,7 +48,7 @@ const update: Module["update"] = (input) => {
         model: model.playUI,
         msg: msg.c,
       });
-      return { model: { ...model, playUI: updated.model } };
+      return { model: { ...model, playUI: updated } };
     }
 
     default: {

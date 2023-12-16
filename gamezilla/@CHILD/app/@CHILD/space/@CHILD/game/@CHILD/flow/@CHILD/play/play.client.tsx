@@ -1,4 +1,5 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { SpaceClientEvt } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -8,9 +9,10 @@ import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import {
   ClientModel,
   ClientMsg,
+  GameEvent,
+  GameState,
   ToClient,
   ToServer,
-  initShared,
 } from "./play.core";
 
 type Module = GameClientModule<{
@@ -18,8 +20,8 @@ type Module = GameClientModule<{
   Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  GameEvent: null;
-  GameState: null;
+  GameEvent: GameEvent;
+  GameState: GameState;
   Ctx: FlowClientCtx;
   OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
   InEvt: SpaceClientEvt;
@@ -27,25 +29,43 @@ type Module = GameClientModule<{
   InCmd: null;
 }>;
 
-const init: Module["init"] = initShared;
+const init: Module["init"] = {};
 
 const update: Module["update"] = (input) => {
-  return {
-    model: input.model,
-  };
+  return GameClientModule.chainUpdates({ model: input.model }, (model) =>
+    updateFromMsg({ ...input, model })
+  );
+};
+
+const updateFromMsg: Module["update"] = (input) => {
+  const { msg, model } = input;
+
+  if (!msg) {
+    return { model };
+  }
+
+  switch (msg.t) {
+    case "grid": {
+      const gameEvent = withId(msg);
+      return {
+        model,
+        gameEvent: [gameEvent],
+      };
+    }
+  }
 };
 
 const subscriptions: Module["subscriptions"] = () => {
   return Sub.None;
 };
 
-const View: Module["View"] = ({ model, dispatch, ctx }) => {
+const View: Module["View"] = ({ gameState, dispatch, ctx }) => {
   return (
     <div class="flex h-full w-full flex-1 flex-col">
       <div class="flex flex-1 items-center justify-center">
         <FlowGridUIPlay.View
           dispatch={(c) => dispatch({ t: "grid", c })}
-          model={model?.grid}
+          model={gameState.grid}
         />
       </div>
       <div class="w-full p-4">
