@@ -46,6 +46,9 @@ export type Msg =
   | {
       t: "dragged-over";
       nodeId: Flow.NodeId;
+    }
+  | {
+      t: "left";
     };
 
 export const init = (): Model => {
@@ -102,6 +105,10 @@ const updateIdle: typeof update = ({ msg, model }) => {
     case "pressed-up": {
       return model;
     }
+
+    case "left": {
+      return model;
+    }
   }
 };
 
@@ -144,6 +151,10 @@ const updateDragging = ({
     case "pressed-up": {
       return { ...model, state: { t: "idle" } };
     }
+
+    case "left": {
+      return { ...model, state: { t: "idle" } };
+    }
   }
 };
 
@@ -171,7 +182,7 @@ export const View = ({
         onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
         onPressDown={(nodeId) => dispatch({ t: "pressed-down", nodeId })}
         onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
-        onLeave={() => {}}
+        onLeave={() => dispatch({ t: "left" })}
         autocompleteEdge={
           model.state.t === "dragging" && model.state.autocompleteEdge
             ? {
