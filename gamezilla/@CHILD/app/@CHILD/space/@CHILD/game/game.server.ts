@@ -8,6 +8,7 @@ import {
   ToClient,
   ToServer,
 } from "./game.core";
+import { Sub } from "gamezilla/@SHARED/core";
 
 //
 //
@@ -49,13 +50,9 @@ export const init: Server["init"] = async (input) => {
       });
     }
 
-    // case "chess": {
-    //   return Chess.init({
-    //     ctx: input.ctx,
-    //     state,
-    //     model: model?.t === "chess" ? model : null,
-    //   });
-    // }
+    case "flow": {
+      return { model: { t: "flow", c: { t: "none" } } };
+    }
   }
 };
 
@@ -75,20 +72,9 @@ export const update: Server["update"] = async (input) => {
 
     async (model) => {
       switch (state.t) {
-        // case "chess": {
-        //   return Chess.update({
-        //     ctx,
-        //     state,
-        //     model: model.t === "chess" ? model : null,
-        //     msg: msg?.t === "chess" ? msg : null,
-        //     clientMsg: clientMsg?.t === "chess" ? clientMsg : null,
-        //     evt,
-        //     gameEvent:
-        //       gameEvent?.t === "chess"
-        //         ? { ...gameEvent, c: { ...gameEvent, ...gameEvent.c } }
-        //         : null,
-        //   });
-        // }
+        case "flow": {
+          return { model };
+        }
 
         case "connect-four": {
           return ConnectFour.update({
@@ -127,6 +113,10 @@ export const subscriptions: Server["subscriptions"] = async (input) => {
         state,
         model: model?.t === "connect-four" ? model : null,
       });
+    }
+
+    case "flow": {
+      return Sub.None;
     }
   }
 };

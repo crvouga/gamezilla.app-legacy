@@ -65,6 +65,10 @@ export type GameState =
   | { t: "puzzle-builder"; c: PuzzleBuilder.GameState }
   | { t: "play"; c: Play.GameState };
 
+export const initState = () => {
+  return { t: null };
+};
+
 export const reducer = ({
   ctx,
   event,
@@ -80,7 +84,11 @@ export const reducer = ({
         case "play": {
           return {
             t: "play",
-            c: Play.reducer({ ctx, event: event.c, state: state.c }),
+            c: Play.reducer({
+              ctx,
+              event: event.c,
+              state: state.c,
+            }),
           };
         }
         default: {

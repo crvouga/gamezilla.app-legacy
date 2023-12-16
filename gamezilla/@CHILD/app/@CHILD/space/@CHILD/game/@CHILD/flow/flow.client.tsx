@@ -9,17 +9,24 @@ import {
 import { Sub } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@SHARED/flow-cover-art";
 import { FlowClientCtx } from "./@SHARED/flow-ctx";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./flow.core";
+import {
+  ClientModel,
+  ClientMsg,
+  GameEvent,
+  GameState,
+  ToClient,
+  ToServer,
+} from "./flow.core";
 
-type Client = GameClientModule<{
+type Module = GameClientModule<{
   Model: ClientModel;
   Msg: ClientMsg;
   //
   ToClient: ToClient;
   ToServer: ToServer;
   //
-  GameEvent: null;
-  GameState: null;
+  GameEvent: GameEvent;
+  GameState: GameState;
   //
   Ctx: FlowClientCtx;
   //
@@ -29,11 +36,11 @@ type Client = GameClientModule<{
   OutEvt: null;
 }>;
 
-export const init: Client["init"] = {
+const init: Module["init"] = {
   t: "none",
 };
 
-export const update: Client["update"] = (input) => {
+const update: Module["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
@@ -41,11 +48,11 @@ export const update: Client["update"] = (input) => {
   );
 };
 
-const updateChild: Client["update"] = (input) => {
+const updateChild: Module["update"] = (input) => {
   return { model: input.model };
 };
 
-export const updateFromMsg: Client["update"] = (input) => {
+const updateFromMsg: Module["update"] = (input) => {
   const { msg, model } = input;
 
   if (!msg) {
@@ -76,7 +83,7 @@ export const updateFromMsg: Client["update"] = (input) => {
 //
 //
 
-export const subscriptions: Client["subscriptions"] = (_input) => {
+const subscriptions: Module["subscriptions"] = (_input) => {
   return Sub.None;
 };
 
@@ -86,7 +93,7 @@ export const subscriptions: Client["subscriptions"] = (_input) => {
 //
 //
 
-export const View: Client["View"] = (input) => {
+const View: Module["View"] = (input) => {
   const { dispatch } = input;
   const ctx: FlowClientCtx = {
     ...input.ctx,
@@ -118,4 +125,16 @@ export const View: Client["View"] = (input) => {
       ]}
     />
   );
+};
+
+const ViewFeedItem: Module["ViewFeedItem"] = () => {
+  return <div></div>;
+};
+
+export const Flow: Module = {
+  init,
+  subscriptions,
+  update,
+  View,
+  ViewFeedItem,
 };

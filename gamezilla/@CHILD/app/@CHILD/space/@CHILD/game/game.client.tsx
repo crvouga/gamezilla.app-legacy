@@ -6,6 +6,7 @@ import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Sub } from "gamezilla/@SHARED/core";
 import { GameClientModule } from "../../@SHARED/architecture/game-client-v2";
 import { ConnectFour } from "./@CHILD/connect-four/connect-four.client";
+import { Flow } from "./@CHILD/flow/flow.client";
 import {
   ClientModel,
   ClientMsg,
@@ -57,6 +58,13 @@ const init = (gameName: GameName): Module["init"] => {
         c: ConnectFour.init,
       };
     }
+
+    case "flow": {
+      return {
+        t: "flow",
+        c: Flow.init,
+      };
+    }
   }
 };
 
@@ -96,6 +104,28 @@ const update: Module["update"] = (input) => {
 
       return tagged;
     }
+
+    case "flow": {
+      const updated = Flow.update({
+        ctx: { ...ctx, onExit() {} },
+        gameState: gameState.c,
+        model: input.model?.t === "flow" ? input.model.c : Flow.init,
+        cmd: cmd,
+        evt: evt,
+        fromServer: fromServer?.t === "flow" ? fromServer.c : null,
+        gameEvent:
+          gameEvent?.t === "flow" ? { ...gameEvent, ...gameEvent.c } : null,
+        msg: msg?.t === "flow" ? msg.c : null,
+      });
+
+      const tagged = GameClientModule.tagOutput(
+        "flow",
+        (cmd) => ClientCmd.tag("flow", cmd),
+        updated
+      );
+
+      return tagged;
+    }
   }
 };
 
@@ -109,6 +139,7 @@ const update: Module["update"] = (input) => {
 
 const subscriptions: Module["subscriptions"] = (input): Sub<ClientMsg> => {
   const { gameState, model } = input;
+
   switch (gameState.t) {
     case "connect-four": {
       return Sub.tag(
@@ -116,7 +147,21 @@ const subscriptions: Module["subscriptions"] = (input): Sub<ClientMsg> => {
         ConnectFour.subscriptions({
           ctx: input.ctx,
           gameState: gameState.c,
-          model: model?.t === "connect-four" ? model.c : ConnectFour.init,
+          model: model.t === "connect-four" ? model.c : ConnectFour.init,
+        })
+      );
+    }
+
+    case "flow": {
+      return Sub.tag(
+        "flow",
+        Flow.subscriptions({
+          ctx: {
+            ...input.ctx,
+            onExit() {},
+          },
+          gameState: gameState.c,
+          model: model.t === "flow" ? model.c : Flow.init,
         })
       );
     }
@@ -142,6 +187,17 @@ const View: Module["View"] = (input) => {
           dispatch={(c) => dispatch({ t: "connect-four", c })}
           gameState={gameState.c}
           model={model?.t === "connect-four" ? model.c : ConnectFour.init}
+        />
+      );
+    }
+
+    case "flow": {
+      return (
+        <Flow.View
+          ctx={{ ...ctx, onExit() {} }}
+          dispatch={(c) => dispatch({ t: "flow", c })}
+          gameState={gameState.c}
+          model={model.t === "flow" ? model.c : Flow.init}
         />
       );
     }
