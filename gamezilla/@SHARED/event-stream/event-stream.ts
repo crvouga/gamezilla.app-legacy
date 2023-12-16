@@ -202,6 +202,20 @@ const subset = <T, TIndexName extends string, TEventId extends string>(
   return streamNew;
 };
 
+const toIterableBackwards = function* <
+  T,
+  TIndexName extends string,
+  TEventId extends string
+>(stream: EventStream<T, TIndexName, TEventId>): Iterable<T> {
+  for (let i = stream.ordering.length - 1; i >= 0; i--) {
+    const eventId = stream.ordering[i]!;
+    const event = stream.events[eventId as TEventId];
+    if (event) {
+      yield event;
+    }
+  }
+};
+
 const toIterable = function* <
   T,
   TIndexName extends string,
@@ -241,6 +255,7 @@ export const EventStream = {
   toArray,
   fromArray,
   toIterable,
+  toIterableBackwards,
 };
 
 function hash<TEventId extends string>(ordering: TEventId[]): string | number {

@@ -192,12 +192,8 @@ const updateGameFromEvent = ({
       ...ctx,
       currentUserId: ctx.currentUserId,
       space: after,
-      quit() {
-        return;
-      },
-      viewProfile() {
-        return;
-      },
+      quit() {},
+      viewProfile() {},
     },
     gameEvent:
       eventWithMeta.t === "game"

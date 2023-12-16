@@ -115,6 +115,7 @@ const updateFromClient: Module["update"] = async (input) => {
             events: fromClient.events,
             initialState: model.initialState,
             clock: model.clock,
+            snapshots: model.snapshots,
           });
           return {
             model: { ...model, ...merged },

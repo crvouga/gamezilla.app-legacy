@@ -25,6 +25,9 @@ export type CoreModel = {
   clock: LamportClock;
   events: EventStream<Event & EventMeta, Indexes, EventId>;
   initialState: State;
+  snapshots: {
+    [eventId: EventId]: State;
+  };
 };
 
 export type ServerModel = CoreModel & {
@@ -129,6 +132,7 @@ export const initCore = (): CoreModel => {
     events: EventStream.empty(config),
     initialState: initState(),
     clock: LamportClock.init(),
+    snapshots: {},
   };
 };
 
@@ -140,10 +144,46 @@ export const appendEvent = (
     ...event,
     happenedAt: LamportClock.toTimestamp(model.clock),
   };
-  return {
+
+  const appended: CoreModel = {
     ...model,
     clock: LamportClock.increment(model.clock),
     events: EventStream.append(config, model.events, eventWithMeta),
+  };
+
+  return appended;
+};
+
+const MAX_SNAPSHOT_COUNT = 5;
+
+export const addSnapshot = (
+  model: CoreModel,
+  event: WithEventId<Event>,
+  state: State
+): CoreModel => {
+  const snapshotsNew: CoreModel["snapshots"] = {};
+  let snapshotCount = 0;
+
+  for (const event of EventStream.toIterableBackwards(model.events)) {
+    snapshotCount++;
+
+    const snapshot = model.snapshots[event.eventId];
+
+    if (snapshot) {
+      snapshotsNew[event.eventId] = snapshot;
+    }
+
+    if (snapshotCount > MAX_SNAPSHOT_COUNT) {
+      break;
+    }
+  }
+
+  return {
+    ...model,
+    snapshots: {
+      ...snapshotsNew,
+      [event.eventId]: state,
+    },
   };
 };
 
@@ -158,9 +198,10 @@ export const mergeModels = (
   );
 
   const modelNew: CoreModel = {
-    initialState: model.initialState,
+    initialState: { ...model.initialState },
     events: streamNew,
     clock: LamportClock.update(model.clock, otherModel.clock),
+    snapshots: { ...model.snapshots, ...otherModel.snapshots },
   };
 
   return modelNew;
@@ -548,17 +589,24 @@ const reducer = ({
 };
 
 function toState_(model: CoreModel): State {
+  //
+  //
+  //
+
   let state: State = model.initialState;
 
   for (const event of EventStream.toIterable(model.events)) {
     state = reducer({ state, event });
   }
 
+  //
+  //
+  //
+
   return state;
 }
 
 export const toState = memoize((model) => model.events.hash, toState_);
-// const toState = toState_;
 
 const exposed = {
   toState_,

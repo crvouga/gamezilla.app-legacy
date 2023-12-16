@@ -12,7 +12,8 @@ const main = async () => {
       const init = AppClient.init({
         ...input,
         location: Browser.getLocation(),
-        stored: modelStorage.get(),
+        // stored: modelStorage.get(),
+        stored: null,
       });
 
       return init;
