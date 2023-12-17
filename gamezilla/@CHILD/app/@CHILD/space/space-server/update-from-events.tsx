@@ -35,10 +35,10 @@ export const updateFromSpaceEvents = async (input: {
   model: ServerModel;
   events: WithEventId<Event>[];
 }): Promise<Output> => {
-  return updateFromSpaceEventsLoop(input.ctx, input.events, input);
+  return loop(input.ctx, input.events, input);
 };
 
-async function updateFromSpaceEventsLoop(
+async function loop(
   ctx: ServerCtx | ReqCtx,
   events: WithEventId<Event>[],
   acc: Output
@@ -50,7 +50,7 @@ async function updateFromSpaceEventsLoop(
   }
 
   if (event.eventId in acc.model.events.events) {
-    return updateFromSpaceEventsLoop(ctx, rest, acc);
+    return loop(ctx, rest, acc);
   }
 
   const updated = await AppServerModule.chainUpdates(
@@ -74,7 +74,7 @@ async function updateFromSpaceEventsLoop(
 
   const eventsNew: WithEventId<Event>[] = batchMsgs(rest, updatedGame.events);
 
-  return updateFromSpaceEventsLoop(ctx, eventsNew, accNew);
+  return loop(ctx, eventsNew, accNew);
 }
 
 async function appendNewEvent({
