@@ -22,10 +22,15 @@ export type ServerModel = {};
 //
 //
 
-export type ClientMsg = {
-  t: "grid-play";
-  c: FlowGridUIPlay.Msg;
-};
+export type ClientMsg =
+  | {
+      t: "event";
+      c: GameEvent;
+    }
+  | {
+      t: "grid";
+      c: FlowGridUIPlay.Msg;
+    };
 
 export type ServerMsg = { t: null };
 
@@ -34,7 +39,8 @@ export type ToServer = { t: null };
 export type ToClient = { t: null };
 
 export type GameEvent = {
-  t: null;
+  t: "grid";
+  c: FlowGridUIPlay.Msg;
 };
 
 export type GameState = {
@@ -53,6 +59,14 @@ export const initState: Module["initState"] = () => {
   };
 };
 
-export const reducer: Module["reducer"] = ({ state }) => {
-  return state;
+export const reducer: Module["reducer"] = ({ state, event }) => {
+  switch (event.t) {
+    case "grid": {
+      const grid = FlowGridUIPlay.update({
+        msg: event.c,
+        model: state.grid,
+      });
+      return { grid };
+    }
+  }
 };

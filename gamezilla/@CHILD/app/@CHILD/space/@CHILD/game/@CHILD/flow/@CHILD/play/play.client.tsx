@@ -14,6 +14,7 @@ import {
   ToServer,
 } from "./play.core";
 import { GameLayout } from "../../../../@SHARED/game";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 
 type Module = GameClientModule<{
   Model: ClientModel;
@@ -49,7 +50,7 @@ const updateFromMsg: Module["update"] = (input) => {
   }
 
   switch (msg.t) {
-    case "grid-play": {
+    case "grid": {
       const grid = FlowGridUIPlay.update({
         msg: msg.c,
         model: model.grid,
@@ -60,6 +61,14 @@ const updateFromMsg: Module["update"] = (input) => {
         },
       };
     }
+
+    case "event": {
+      const gameEvent = withId(msg.c);
+      return {
+        model,
+        gameEvent: [gameEvent],
+      };
+    }
   }
 };
 
@@ -67,16 +76,26 @@ const subscriptions: Module["subscriptions"] = () => {
   return Sub.None;
 };
 
-const View: Module["View"] = ({ model, dispatch, ctx }) => {
+const USE_GAME_STATE = true;
+
+const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
   const isSpectating = ctx.currentUserId !== ctx.space.hostId;
   return (
     <GameLayout isSpectating={isSpectating}>
       <div class="flex w-full flex-1 items-center justify-center">
-        <FlowGridUIPlay.View
-          dispatch={(c) => dispatch({ t: "grid-play", c })}
-          model={model.grid}
-          disabled={isSpectating}
-        />
+        {USE_GAME_STATE ? (
+          <FlowGridUIPlay.View
+            dispatch={(c) => dispatch({ t: "event", c: { t: "grid", c } })}
+            model={gameState.grid}
+            disabled={isSpectating}
+          />
+        ) : (
+          <FlowGridUIPlay.View
+            dispatch={(c) => dispatch({ t: "grid", c })}
+            model={model.grid}
+            disabled={isSpectating}
+          />
+        )}
       </div>
       {!isSpectating && (
         <div class="w-full p-4">
