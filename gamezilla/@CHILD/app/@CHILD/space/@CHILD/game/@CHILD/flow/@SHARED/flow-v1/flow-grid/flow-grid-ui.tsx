@@ -279,9 +279,6 @@ export const View = ({
               onMouseUp={() => {
                 onPressUp?.(nodeId);
               }}
-              onMouseOver={() => {
-                onDraggedOver?.(nodeId);
-              }}
               onMouseMove={() => {
                 onDraggedOver?.(nodeId);
               }}

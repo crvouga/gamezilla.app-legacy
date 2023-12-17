@@ -61,7 +61,6 @@ export async function create<Model, Msg>(
     for (const subscriber of subscribers.values()) {
       promises.push(subscriber(model, ctx, msg));
     }
-    await Promise.allSettled(promises);
   }
 
   async function handleMsg(msg: Msg) {

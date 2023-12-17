@@ -147,12 +147,18 @@ export const appendEvent = (
     events: EventStream.append(config, model.events, eventWithMeta),
   };
 
-  return appended;
+  const stateNew = deriveState(appended);
+
+  const modelNew = saveSnapshot(appended, eventWithMeta, stateNew);
+
+  const end = performance.now();
+
+  return modelNew;
 };
 
 const MAX_SNAPSHOT_COUNT = 5;
 
-export const addSnapshot = (
+export const saveSnapshot = (
   model: CoreModel,
   event: WithEventId<Event>,
   state: State
@@ -581,36 +587,53 @@ const reducer = ({
   }
 };
 
-function toState_(model: CoreModel): State {
-  //
-  //
-  //
-  let i = 0;
-  const start = performance.now();
+const deriveState = (model: CoreModel): State => {
+  let runningState: State = INIT_STATE;
+  const eventIds: EventId[] = [];
 
-  let state: State = INIT_STATE;
+  for (let i = model.events.ordering.length - 1; i >= 0; i--) {
+    const eventId = model.events.ordering[i];
 
-  for (const eventId of model.events.ordering) {
-    const event = model.events.events[eventId as EventId]!;
-    state = reducer({ state, event });
-    i++;
+    if (!eventId) {
+      continue;
+    }
+
+    if (eventId in model.snapshots) {
+      runningState = model.snapshots[eventId]!;
+      break;
+    }
+
+    eventIds.push(eventId);
   }
 
-  //
-  //
-  //
+  for (let i = eventIds.length - 1; i >= 0; i--) {
+    const eventId = eventIds[i];
 
-  const end = performance.now();
+    if (!eventId) {
+      continue;
+    }
 
-  console.log(`toState i=${i} duration=${end - start}ms`);
+    const event = model.events.events[eventId];
 
-  return state;
-}
+    if (!event) {
+      continue;
+    }
 
-export const toState = memoize((model) => model.events.hash, toState_);
+    runningState = reducer({ state: runningState, event });
+  }
+
+  return runningState;
+};
+
+export const toStateMemoized = memoize(
+  (model) => model.events.hash,
+  deriveState
+);
+
+export const toState = toStateMemoized;
 
 const exposed = {
-  toState_,
+  toState_: deriveState,
   toState,
   toSpaceState,
   EventStream,

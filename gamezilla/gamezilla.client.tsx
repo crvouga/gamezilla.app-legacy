@@ -43,16 +43,16 @@ const main = async () => {
     );
   });
 
-  program.subscribe((model) => {
-    // @ts-ignore
-    window.model = model;
-  });
+  // program.subscribe((model) => {
+  //   // @ts-ignore
+  //   window.model = model;
+  // });
 
-  program.subscribe((model) => {
-    modelStorage.set(model);
-  });
+  // program.subscribe((model) => {
+  //   modelStorage.set(model);
+  // });
 
-  attachDebugger(program);
+  // attachDebugger(program);
 
   program.start();
 };
