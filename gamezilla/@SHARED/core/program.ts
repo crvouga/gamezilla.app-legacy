@@ -40,41 +40,35 @@ export async function create<Model, Msg>(
   input: ProgramConfig<Model, Msg>
 ): Promise<Program<Model, Msg>> {
   const programId = `program:${Math.random().toString(36).slice(2)}`;
-
   const subscribers = new Map<number, Subscriber<Model, Msg>>();
-
+  let isProcessing = false;
+  const messageQueue: Msg[] = [];
+  let unsubscribe: () => void = () => {};
   let state = await input.init({
     ctx: {
       now: Posix.fromNumber(Date.now()),
     },
   });
 
-  let isProcessing = false;
-
-  const messageQueue: Msg[] = [];
-
-  let unsubscribe: () => void = () => {};
-
-  async function publish(model: Model, ctx: Ctx, msg: Msg | null) {
-    const promises: (void | Promise<void>)[] = [];
+  function publish(model: Model, ctx: Ctx, msg: Msg | null) {
     for (const subscriber of subscribers.values()) {
-      promises.push(subscriber(model, ctx, msg));
+      subscriber(model, ctx, msg);
     }
   }
 
-  async function handleMsg(msg: Msg) {
+  const onMsg = async (msg: Msg) => {
     const ctx = { now: Posix.now$() };
-
     const updated = await input.update({ ctx, msg, model: state.model });
     setState(updated, ctx, msg);
-  }
+  };
 
-  async function setState(
+  const setState = async (
     newState: { model: Model; eff?: Eff<Msg> },
     ctx: Ctx,
     msg: Msg | null
-  ) {
+  ) => {
     state = newState;
+
     publish(state.model, ctx, msg);
 
     const sub = await input.subscriptions({
@@ -82,31 +76,35 @@ export async function create<Model, Msg>(
       ctx,
       model: state.model,
     });
+
     if (unsubscribe) {
       unsubscribe();
     }
-    unsubscribe = sub.subscribe((msg) => dispatch(msg));
+
+    unsubscribe = sub.subscribe(dispatch);
 
     if (state.eff) {
       state.eff(dispatch);
     }
-  }
+  };
 
-  function dispatch(msg: Msg) {
+  const dispatch = (msg: Msg) => {
     messageQueue.push(msg);
     processQueue();
-  }
+  };
 
-  async function processQueue() {
-    if (isProcessing || messageQueue.length === 0) return;
+  const processQueue = async () => {
+    if (isProcessing || messageQueue.length === 0) {
+      return;
+    }
     isProcessing = true;
     const msg = messageQueue.shift();
     if (msg) {
-      await handleMsg(msg);
+      await onMsg(msg);
     }
     isProcessing = false;
     processQueue();
-  }
+  };
 
   //
   //
@@ -139,25 +137,38 @@ export async function create<Model, Msg>(
     return stop;
   };
 
+  //
+  //
+  //
+  //
+  //
+
   const getModel = () => {
     return state.model;
   };
 
   const setModel = (newState: Model) => {
     const ctx = { now: Posix.now$() };
-
     state = { model: newState };
     publish(state.model, ctx, null);
   };
+
+  const _debugger = {
+    getModel,
+    setModel,
+  };
+
+  //
+  //
+  //
+  //
+  //
 
   return {
     start,
     dispatch,
     subscribe,
-    _debugger: {
-      getModel,
-      setModel,
-    },
+    _debugger,
   };
 }
 
