@@ -24,10 +24,7 @@ import {
 export type CoreModel = {
   clock: LamportClock;
   events: EventStream<Event & EventMeta, Indexes, EventId>;
-  initialState: State;
-  snapshots: {
-    [eventId: EventId]: State;
-  };
+  snapshots: { [eventId: EventId]: State };
 };
 
 export type ServerModel = CoreModel & {
@@ -130,7 +127,6 @@ export type ClientMsg =
 export const initCore = (): CoreModel => {
   return {
     events: EventStream.empty(config),
-    initialState: initState(),
     clock: LamportClock.init(),
     snapshots: {},
   };
@@ -198,7 +194,6 @@ export const mergeModels = (
   );
 
   const modelNew: CoreModel = {
-    initialState: { ...model.initialState },
     events: streamNew,
     clock: LamportClock.update(model.clock, otherModel.clock),
     snapshots: { ...model.snapshots, ...otherModel.snapshots },
@@ -345,13 +340,11 @@ type State = {
   };
 };
 
-const initState = (): State => {
-  return {
-    spaces: {},
-    spaceIdByUserId: {},
-    active: {},
-    errorsByUserId: {},
-  };
+const INIT_STATE: State = {
+  spaces: {},
+  spaceIdByUserId: {},
+  active: {},
+  errorsByUserId: {},
 };
 
 const reducer = ({
@@ -595,7 +588,7 @@ function toState_(model: CoreModel): State {
   let i = 0;
   const start = performance.now();
 
-  let state: State = model.initialState;
+  let state: State = INIT_STATE;
 
   for (const eventId of model.events.ordering) {
     const event = model.events.events[eventId as EventId]!;

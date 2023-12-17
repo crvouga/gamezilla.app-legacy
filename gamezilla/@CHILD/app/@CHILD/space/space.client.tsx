@@ -192,7 +192,6 @@ const updateFromServer: Module["update"] = (input) => {
         case "sync": {
           const merged = mergeModels(model, {
             events: fromServer.events,
-            initialState: model.initialState,
             clock: fromServer.clock,
             snapshots: model.snapshots,
           });

@@ -255,7 +255,14 @@ const toEvent = <T, TIndexName extends string, TEventId extends string>(
   return event ?? null;
 };
 
+const startingAt = <T, TIndexName extends string, TEventId extends string>(
+  stream: EventStream<T, TIndexName, TEventId>
+): EventStream<T, TIndexName, TEventId> => {
+  return stream;
+};
+
 export const EventStream = {
+  startingAt,
   subset,
   append,
   mergeLeft,
