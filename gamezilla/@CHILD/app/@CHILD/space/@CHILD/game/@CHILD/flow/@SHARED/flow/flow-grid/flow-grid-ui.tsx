@@ -71,12 +71,12 @@ export const View = ({
         event.preventDefault();
       }}
       viewBox={toViewBox(model)}
-      // onTouchMove={(event) => {
-      //   const nodeId = touchEventToNodeId(event);
-      //   if (nodeId) {
-      //     draggedOver?.(nodeId);
-      //   }
-      // }}
+      onTouchMove={(event) => {
+        const nodeId = touchEventToNodeId(event);
+        if (nodeId) {
+          draggedOver?.(nodeId);
+        }
+      }}
       onMouseLeave={left}>
       {/*
 

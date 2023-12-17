@@ -14,7 +14,6 @@ export type Program<Model, Msg> = {
   dispatch: (msg: Msg) => void;
   subscribe: (subscriber: Subscriber<Model, Msg>) => () => void;
   start: () => () => void;
-
   _debugger: {
     getModel: () => Model;
     setModel: (model: Model) => void;

@@ -487,9 +487,15 @@ export const attachDebugger = <Model, Msg extends {}>(
 
   const started = new Promise<null>((resolve) => {
     const unsubscribe = connection.subscribe((msg) => {
-      if (msg.type === "START") {
-        unsubscribe();
-        resolve(null);
+      switch (msg.type) {
+        case "START": {
+          unsubscribe();
+          resolve(null);
+          break;
+        }
+        default: {
+          break;
+        }
       }
     });
   });
