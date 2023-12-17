@@ -597,9 +597,10 @@ function toState_(model: CoreModel): State {
 
   let state: State = model.initialState;
 
-  for (const event of EventStream.toIterable(model.events)) {
-    i++;
+  for (const eventId of model.events.ordering) {
+    const event = model.events.events[eventId as EventId]!;
     state = reducer({ state, event });
+    i++;
   }
 
   //
