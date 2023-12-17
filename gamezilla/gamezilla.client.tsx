@@ -2,9 +2,6 @@ import { Browser, Program } from "gamezilla/@SHARED/core";
 import { render } from "preact";
 import * as AppClient from "./@CHILD/app/app.client";
 import * as App from "./@CHILD/app/app.core";
-import { attachDebugger } from "./@SHARED/core/debug";
-
-const modelStorage = ModelStorage<App.ClientModel>();
 
 const main = async () => {
   const program = await Program.create({
@@ -12,24 +9,15 @@ const main = async () => {
       const init = AppClient.init({
         ...input,
         location: Browser.getLocation(),
-        // stored: modelStorage.get(),
         stored: null,
       });
 
       return init;
     },
 
-    update: (input) => {
-      const updated = AppClient.update(input);
+    update: AppClient.update,
 
-      return updated;
-    },
-
-    subscriptions: (input) => {
-      const sub = AppClient.subscriptions(input);
-
-      return sub;
-    },
+    subscriptions: AppClient.subscriptions,
   });
 
   program.subscribe((model, ctx) => {
@@ -43,17 +31,6 @@ const main = async () => {
     );
   });
 
-  // program.subscribe((model) => {
-  //   // @ts-ignore
-  //   window.model = model;
-  // });
-
-  // program.subscribe((model) => {
-  //   modelStorage.set(model);
-  // });
-
-  // attachDebugger(program);
-
   program.start();
 };
 
@@ -63,7 +40,7 @@ main();
  * Use this to persist state across page refreshes.
  * It retains type safety by using deployment IDs.
  */
-function ModelStorage<TModel>() {
+export const ModelStorage = <TModel,>() => {
   const CODEBASE_VERSION_ID_KEY = "gamezilla/codebase-version-id";
   const MODEL_KEY = "gamezilla/model";
 
@@ -90,7 +67,7 @@ function ModelStorage<TModel>() {
       sessionStorage.setItem(MODEL_KEY, JSON.stringify(model));
     },
   };
-}
+};
 
 /**
  * Use this to render runtime errors to the screen.
