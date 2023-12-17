@@ -592,16 +592,23 @@ function toState_(model: CoreModel): State {
   //
   //
   //
+  let i = 0;
+  const start = performance.now();
 
   let state: State = model.initialState;
 
   for (const event of EventStream.toIterable(model.events)) {
+    i++;
     state = reducer({ state, event });
   }
 
   //
   //
   //
+
+  const end = performance.now();
+
+  console.log(`toState i=${i} duration=${end - start}ms`);
 
   return state;
 }

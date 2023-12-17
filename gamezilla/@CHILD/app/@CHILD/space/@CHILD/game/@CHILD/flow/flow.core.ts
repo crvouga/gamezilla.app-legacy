@@ -1,6 +1,7 @@
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import * as Play from "./@CHILD/play/play.core";
 import * as PuzzleBuilder from "./@CHILD/puzzle-builder/puzzle-builder.core";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 //
 //
@@ -44,7 +45,7 @@ export type ToClient =
 export type Mode = "puzzle-builder" | "play";
 
 export type GameEvent =
-  | { t: "user-changed-mode"; mode: Mode | null }
+  | { t: "user-changed-mode"; mode: Mode | null; userId: UserId }
   | { t: "play"; c: Play.GameEvent }
   | { t: "puzzle-builder"; c: PuzzleBuilder.GameEvent };
 
@@ -72,11 +73,7 @@ export const reducer = ({
         case "play": {
           return {
             t: "play",
-            c: Play.reducer({
-              ctx,
-              event: event.c,
-              state: state.c,
-            }),
+            c: Play.reducer({ ctx, event: event.c, state: state.c }),
           };
         }
         default: {
@@ -90,6 +87,10 @@ export const reducer = ({
     }
 
     case "user-changed-mode": {
+      if (event.userId !== ctx.space.hostId) {
+        return state;
+      }
+
       switch (event.mode) {
         case null: {
           return { t: null };

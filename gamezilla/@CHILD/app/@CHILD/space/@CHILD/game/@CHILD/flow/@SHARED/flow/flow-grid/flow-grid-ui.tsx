@@ -22,8 +22,10 @@ export const View = ({
   class: className,
   autocompleteEdge,
   showCoordinates,
+  disabled,
   onLeave,
 }: {
+  disabled?: boolean;
   class?: string;
   model: FlowGrid.Model;
   onPressDown?: (nodeId: Flow.NodeId) => void;
@@ -61,6 +63,7 @@ export const View = ({
       class={cn(
         "w-full touch-none select-none",
         isDragging && "cursor-grabbing",
+        disabled && "pointer-events-none",
         className
       )}
       onContextMenu={(event) => {

@@ -169,33 +169,33 @@ const updateDragging = ({
 export const View = ({
   model,
   dispatch,
+  disabled,
 }: {
   model: Model;
   dispatch: (m: Msg) => void;
+  disabled?: boolean;
 }) => {
   return (
-    <div class="flex w-full flex-col gap-4 overflow-y-auto">
-      <FlowGridUI.View
-        model={model.grid}
-        showCoordinates={false}
-        isDragging={model.state.t === "dragging"}
-        onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
-        onPressDown={(nodeId) => dispatch({ t: "pressed-down", nodeId })}
-        onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
-        onLeave={() => dispatch({ t: "left" })}
-        autocompleteEdge={
-          model.state.t === "dragging" && model.state.autocompleteEdge
-            ? {
-                ...model.state.autocompleteEdge,
-                groupId: model.state.activeGroupId,
-              }
-            : null
-        }
-        class={model.state.t === "dragging" ? "cursor-grabbing" : "cursor-grab"}
-        isActive={({ groupId }) =>
-          model.state.t === "dragging" && model.state.activeGroupId === groupId
-        }
-      />
-    </div>
+    <FlowGridUI.View
+      disabled={disabled}
+      model={model.grid}
+      showCoordinates={false}
+      isDragging={model.state.t === "dragging"}
+      onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
+      onPressDown={(nodeId) => dispatch({ t: "pressed-down", nodeId })}
+      onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
+      onLeave={() => dispatch({ t: "left" })}
+      autocompleteEdge={
+        model.state.t === "dragging" && model.state.autocompleteEdge
+          ? {
+              ...model.state.autocompleteEdge,
+              groupId: model.state.activeGroupId,
+            }
+          : null
+      }
+      isActive={({ groupId }) =>
+        model.state.t === "dragging" && model.state.activeGroupId === groupId
+      }
+    />
   );
 };

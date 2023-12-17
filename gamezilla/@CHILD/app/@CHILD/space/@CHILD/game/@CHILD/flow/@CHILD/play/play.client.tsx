@@ -13,6 +13,7 @@ import {
   ToClient,
   ToServer,
 } from "./play.core";
+import { GameLayout } from "../../../../@SHARED/game";
 
 type Module = GameClientModule<{
   Model: ClientModel;
@@ -67,23 +68,27 @@ const subscriptions: Module["subscriptions"] = () => {
 };
 
 const View: Module["View"] = ({ model, dispatch, ctx }) => {
+  const isSpectating = ctx.currentUserId !== ctx.space.hostId;
   return (
-    <div class="flex h-full w-full flex-1 flex-col">
-      <div class="flex flex-1 items-center justify-center">
+    <GameLayout isSpectating={isSpectating}>
+      <div class="flex w-full flex-1 items-center justify-center">
         <FlowGridUIPlay.View
           dispatch={(c) => dispatch({ t: "grid-play", c })}
           model={model.grid}
+          disabled={isSpectating}
         />
       </div>
-      <div class="w-full p-4">
-        <Button
-          class="w-full"
-          onClick={ctx.onExit}
-          start={<IconArrowLeftOnRect class="h-6 w-6" />}
-          text="Exit"
-        />
-      </div>
-    </div>
+      {!isSpectating && (
+        <div class="w-full p-4">
+          <Button
+            class="w-full"
+            onClick={ctx.onExit}
+            start={<IconArrowLeftOnRect class="h-6 w-6" />}
+            text="Exit"
+          />
+        </div>
+      )}
+    </GameLayout>
   );
 };
 

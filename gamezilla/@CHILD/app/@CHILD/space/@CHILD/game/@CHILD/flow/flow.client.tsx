@@ -183,7 +183,14 @@ const View: Module["View"] = (input) => {
   const ctx: FlowClientCtx = {
     ...input.ctx,
     onExit: () =>
-      dispatch({ t: "event", c: { t: "user-changed-mode", mode: null } }),
+      dispatch({
+        t: "event",
+        c: {
+          t: "user-changed-mode",
+          mode: null,
+          userId: input.ctx.currentUserId,
+        },
+      }),
   };
 
   switch (gameState.t) {
@@ -201,7 +208,11 @@ const View: Module["View"] = (input) => {
               onClick: () => {
                 dispatch({
                   t: "event",
-                  c: { t: "user-changed-mode", mode: "play" },
+                  c: {
+                    t: "user-changed-mode",
+                    mode: "play",
+                    userId: input.ctx.currentUserId,
+                  },
                 });
               },
             },
@@ -212,7 +223,11 @@ const View: Module["View"] = (input) => {
               onClick: () => {
                 dispatch({
                   t: "event",
-                  c: { t: "user-changed-mode", mode: "puzzle-builder" },
+                  c: {
+                    t: "user-changed-mode",
+                    mode: "puzzle-builder",
+                    userId: input.ctx.currentUserId,
+                  },
                 });
               },
             },
