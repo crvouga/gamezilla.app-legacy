@@ -23,6 +23,7 @@ import {
 } from "../space.core";
 import { spaceCmdToCmd } from "./update-shared";
 import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server";
+import { EventStream } from "gamezilla/@SHARED/event-stream";
 
 type Output = {
   model: ServerModel;
@@ -98,28 +99,25 @@ async function sendEventToClients({
   model: ServerModel;
   eventId: EventId;
 }): Promise<Output> {
-  const eventWithMeta = model.events.events[eventId];
+  const event = EventStream.toEvent(model.events, eventId);
 
-  if (!eventWithMeta) {
+  if (!event) {
     return { model };
   }
 
-  const space = toStartedSpace(model, eventWithMeta.spaceId);
+  const space = toStartedSpace(model, event.spaceId);
+
+  const toClient: ToClient = {
+    t: "event",
+    c: event,
+    causedBy: event,
+    clock: model.clock,
+  };
 
   const cmd =
-    eventWithMeta.t === "game" && space
-      ? sendToUser<ToClient>(Object.values(space.users), {
-          t: "event",
-          c: eventWithMeta,
-          causedBy: eventWithMeta,
-          clock: model.clock,
-        })
-      : broadcast<ToClient>({
-          t: "event",
-          c: eventWithMeta,
-          causedBy: eventWithMeta,
-          clock: model.clock,
-        });
+    event.t === "game" && space
+      ? sendToUser<ToClient>(Object.values(space.users), toClient)
+      : broadcast<ToClient>(toClient);
 
   return { model, cmd: [cmd] };
 }

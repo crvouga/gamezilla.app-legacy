@@ -246,6 +246,15 @@ const fromArray = <T, TIndexName extends string, TEventId extends string>(
   return stream;
 };
 
+const toEvent = <T, TIndexName extends string, TEventId extends string>(
+  stream: EventStream<T, TIndexName, TEventId>,
+  eventId: TEventId
+): T | null => {
+  const event = stream.events[eventId];
+
+  return event ?? null;
+};
+
 export const EventStream = {
   subset,
   append,
@@ -256,6 +265,7 @@ export const EventStream = {
   fromArray,
   toIterable,
   toIterableBackwards,
+  toEvent,
 };
 
 function hash<TEventId extends string>(ordering: TEventId[]): string | number {
