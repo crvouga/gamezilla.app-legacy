@@ -25,7 +25,7 @@ export type ServerModel =
 //
 
 export type ClientMsg =
-  | GameEvent
+  | { t: "event"; c: GameEvent }
   | { t: "puzzle-builder"; c: PuzzleBuilder.ClientMsg }
   | { t: "play"; c: Play.ClientMsg };
 

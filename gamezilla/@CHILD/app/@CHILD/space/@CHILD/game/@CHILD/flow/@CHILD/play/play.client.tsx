@@ -1,5 +1,4 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
-import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { SpaceClientEvt } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -29,11 +28,15 @@ type Module = GameClientModule<{
   InCmd: null;
 }>;
 
-const init: Module["init"] = {};
+const init: Module["init"] = {
+  grid: FlowGridUIPlay.init(),
+};
 
 const update: Module["update"] = (input) => {
-  return GameClientModule.chainUpdates({ model: input.model }, (model) =>
-    updateFromMsg({ ...input, model })
+  return GameClientModule.chainUpdates(
+    { model: input.model },
+    //
+    (model) => updateFromMsg({ ...input, model })
   );
 };
 
@@ -45,11 +48,15 @@ const updateFromMsg: Module["update"] = (input) => {
   }
 
   switch (msg.t) {
-    case "grid": {
-      const gameEvent = withId(msg);
+    case "grid-play": {
+      const grid = FlowGridUIPlay.update({
+        msg: msg.c,
+        model: model.grid,
+      });
       return {
-        model,
-        gameEvent: [gameEvent],
+        model: {
+          grid,
+        },
       };
     }
   }
@@ -59,13 +66,13 @@ const subscriptions: Module["subscriptions"] = () => {
   return Sub.None;
 };
 
-const View: Module["View"] = ({ gameState, dispatch, ctx }) => {
+const View: Module["View"] = ({ model, dispatch, ctx }) => {
   return (
     <div class="flex h-full w-full flex-1 flex-col">
       <div class="flex flex-1 items-center justify-center">
         <FlowGridUIPlay.View
-          dispatch={(c) => dispatch({ t: "grid", c })}
-          model={gameState.grid}
+          dispatch={(c) => dispatch({ t: "grid-play", c })}
+          model={model.grid}
         />
       </div>
       <div class="w-full p-4">

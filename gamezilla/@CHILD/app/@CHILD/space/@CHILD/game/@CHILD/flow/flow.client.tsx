@@ -148,8 +148,8 @@ const updateFromMsg: Module["update"] = (input) => {
       return { model };
     }
 
-    case "user-changed-mode": {
-      const gameEvent = withId(msg);
+    case "event": {
+      const gameEvent = withId(msg.c);
       return {
         model,
         gameEvent: [gameEvent],
@@ -182,7 +182,8 @@ const View: Module["View"] = (input) => {
 
   const ctx: FlowClientCtx = {
     ...input.ctx,
-    onExit: () => dispatch({ t: "user-changed-mode", mode: null }),
+    onExit: () =>
+      dispatch({ t: "event", c: { t: "user-changed-mode", mode: null } }),
   };
 
   switch (gameState.t) {
@@ -198,7 +199,10 @@ const View: Module["View"] = (input) => {
               title: "Play",
               description: "Start playing puzzles",
               onClick: () => {
-                dispatch({ t: "user-changed-mode", mode: "play" });
+                dispatch({
+                  t: "event",
+                  c: { t: "user-changed-mode", mode: "play" },
+                });
               },
             },
             {
@@ -206,7 +210,10 @@ const View: Module["View"] = (input) => {
               title: "Puzzle builder",
               description: "Build new puzzles to play",
               onClick: () => {
-                dispatch({ t: "user-changed-mode", mode: "puzzle-builder" });
+                dispatch({
+                  t: "event",
+                  c: { t: "user-changed-mode", mode: "puzzle-builder" },
+                });
               },
             },
           ]}

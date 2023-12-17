@@ -9,7 +9,9 @@ import { FlowGridUIPlay } from "../../@SHARED/flow";
 //
 //
 
-export type ClientModel = {};
+export type ClientModel = {
+  grid: FlowGridUIPlay.Model;
+};
 
 export type ServerModel = {};
 
@@ -20,7 +22,10 @@ export type ServerModel = {};
 //
 //
 
-export type ClientMsg = GameEvent;
+export type ClientMsg = {
+  t: "grid-play";
+  c: FlowGridUIPlay.Msg;
+};
 
 export type ServerMsg = { t: null };
 
@@ -29,8 +34,7 @@ export type ToServer = { t: null };
 export type ToClient = { t: null };
 
 export type GameEvent = {
-  t: "grid";
-  c: FlowGridUIPlay.Msg;
+  t: null;
 };
 
 export type GameState = {
@@ -49,14 +53,6 @@ export const initState: Module["initState"] = () => {
   };
 };
 
-export const reducer: Module["reducer"] = ({ event, state }) => {
-  switch (event.t) {
-    case "grid": {
-      const grid = FlowGridUIPlay.update({
-        msg: event.c,
-        model: state.grid,
-      });
-      return { ...state, grid };
-    }
-  }
+export const reducer: Module["reducer"] = ({ state }) => {
+  return state;
 };
