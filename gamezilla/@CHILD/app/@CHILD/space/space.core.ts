@@ -12,6 +12,7 @@ import {
   WithEventId,
   WithEventMeta,
 } from "./@SHARED/event";
+import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
 
 //
 //
@@ -24,7 +25,7 @@ import {
 export type CoreModel = {
   clock: LamportClock;
   events: EventStream<Event & EventMeta, Indexes, EventId>;
-  snapshots: { [eventId: EventId]: State };
+  snapshots: CappedOrderedDict<EventId, State>;
 };
 
 export type ServerModel = CoreModel & {
@@ -128,7 +129,7 @@ export const initCore = (): CoreModel => {
   return {
     events: EventStream.empty(config),
     clock: LamportClock.init(),
-    snapshots: {},
+    snapshots: CappedOrderedDict.init({ maxSize: 10 }),
   };
 };
 
@@ -147,46 +148,18 @@ export const appendEvent = (
     events: EventStream.append(config, model.events, eventWithMeta),
   };
 
-  const stateNew = deriveState(appended);
+  const stateNew = deriveStateWithSnapshots(appended);
 
-  const modelNew = saveSnapshot(appended, eventWithMeta, stateNew);
-
-  const end = performance.now();
-
-  return modelNew;
-};
-
-const MAX_SNAPSHOT_COUNT = 5;
-
-export const saveSnapshot = (
-  model: CoreModel,
-  event: WithEventId<Event>,
-  state: State
-): CoreModel => {
-  const snapshotsNew: CoreModel["snapshots"] = {};
-  let snapshotCount = 0;
-
-  for (const event of EventStream.toIterableBackwards(model.events)) {
-    snapshotCount++;
-
-    const snapshot = model.snapshots[event.eventId];
-
-    if (snapshot) {
-      snapshotsNew[event.eventId] = snapshot;
-    }
-
-    if (snapshotCount > MAX_SNAPSHOT_COUNT) {
-      break;
-    }
-  }
-
-  return {
-    ...model,
-    snapshots: {
-      ...snapshotsNew,
-      [event.eventId]: state,
-    },
+  const added: CoreModel = {
+    ...appended,
+    snapshots: CappedOrderedDict.add(
+      appended.snapshots,
+      eventWithMeta.eventId,
+      stateNew
+    ),
   };
+
+  return added;
 };
 
 export const mergeModels = (
@@ -320,15 +293,13 @@ export const toStartedSpace = (
     type: "initial",
   };
 
-  if (spaceState.type === "initial") {
-    return null;
+  switch (spaceState.type) {
+    case "initial":
+    case "ended":
+      return null;
+    case "started":
+      return spaceState;
   }
-
-  if (spaceState.type === "ended") {
-    return null;
-  }
-
-  return spaceState;
 };
 
 type State = {
@@ -587,7 +558,7 @@ const reducer = ({
   }
 };
 
-const deriveState = (model: CoreModel): State => {
+const deriveStateWithSnapshots = (model: CoreModel): State => {
   let runningState: State = INIT_STATE;
   const eventIds: EventId[] = [];
 
@@ -599,7 +570,7 @@ const deriveState = (model: CoreModel): State => {
     }
 
     if (eventId in model.snapshots) {
-      runningState = model.snapshots[eventId]!;
+      runningState = CappedOrderedDict.get(model.snapshots, eventId)!;
       break;
     }
 
@@ -627,13 +598,13 @@ const deriveState = (model: CoreModel): State => {
 
 export const toStateMemoized = memoize(
   (model) => model.events.hash,
-  deriveState
+  deriveStateWithSnapshots
 );
 
 export const toState = toStateMemoized;
 
 const exposed = {
-  toState_: deriveState,
+  toState_: deriveStateWithSnapshots,
   toState,
   toSpaceState,
   EventStream,

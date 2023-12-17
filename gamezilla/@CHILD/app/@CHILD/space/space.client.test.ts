@@ -90,7 +90,6 @@ test("current user starting space", async () => {
     spaceId,
     userId: ctx.currentUserId,
   });
-
   const before = SpaceCore.toUserState(initial.model, ctx.currentUserId);
   const after = SpaceCore.toUserState(started.model, ctx.currentUserId);
 

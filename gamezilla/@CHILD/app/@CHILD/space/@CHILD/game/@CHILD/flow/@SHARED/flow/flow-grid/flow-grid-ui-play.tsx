@@ -53,7 +53,7 @@ export type Msg =
 
 export const init = (): Model => {
   return {
-    grid: samples["6x6"][1],
+    grid: samples["8x8"][1],
     state: { t: "idle" },
   };
 };
