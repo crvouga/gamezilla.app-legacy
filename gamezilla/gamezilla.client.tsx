@@ -2,6 +2,7 @@ import { Browser, Program } from "gamezilla/@SHARED/core";
 import { render } from "preact";
 import * as AppClient from "./@CHILD/app/app.client";
 import * as App from "./@CHILD/app/app.core";
+// import { attachDebugger } from "./@SHARED/core/debug";
 
 const main = async () => {
   const program = await Program.create({
@@ -30,6 +31,8 @@ const main = async () => {
       document.body
     );
   });
+
+  // attachDebugger(program);
 
   program.start();
 };

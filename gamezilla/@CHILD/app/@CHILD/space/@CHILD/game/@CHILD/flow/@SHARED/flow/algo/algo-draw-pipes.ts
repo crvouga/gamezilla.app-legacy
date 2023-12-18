@@ -40,9 +40,9 @@ export const startDrawPipes = (
 export const drawPipes = (
   model: Flow.Model,
   groupId: Flow.GroupId,
-  newNodeId: Flow.NodeId
+  nodeIdNew: Flow.NodeId
 ): Flow.Model => {
-  const newNodeGroupId = Flow.findGroupIdByNodeId(model, newNodeId);
+  const newNodeGroupId = Flow.findGroupIdByNodeId(model, nodeIdNew);
 
   // Prevent drawing over other groups
   if (newNodeGroupId && newNodeGroupId !== groupId) {
@@ -73,21 +73,27 @@ export const drawPipes = (
     (pipeline) =>
       takeWhile(
         pipeline,
-        (nodeId) => nodeId !== newNodeId && nodeId !== terminal.endId
+        (nodeId) => nodeId !== nodeIdNew && nodeId !== terminal.endId
       ),
 
-    (pipeline) => [...pipeline, newNodeId],
+    (pipeline) => [...pipeline, nodeIdNew],
 
     (pipeline) => takeWhileConnected(model, pipeline),
 
     (pipeline) => {
+      const skip = false;
+
+      if (skip) {
+        return pipeline;
+      }
+
       const startNodeId = pipeline[pipeline.length - 1];
 
       if (!startNodeId) {
         return pipeline;
       }
 
-      const shortest = findShortestEmptyPipeline(model, startNodeId, newNodeId);
+      const shortest = findShortestEmptyPipeline(model, startNodeId, nodeIdNew);
 
       const pipelineNew = [...pipeline, ...shortest.slice(1)];
 
@@ -111,7 +117,8 @@ const takeWhileConnected = (
   model: Flow.Model,
   pipeline: Pipeline
 ): Pipeline => {
-  const result: Pipeline = [];
+  const pipelineNew: Pipeline = [];
+
   for (let i = 0; i < pipeline.length; i++) {
     const currNode = pipeline[i];
 
@@ -119,21 +126,21 @@ const takeWhileConnected = (
       continue;
     }
 
-    const prevNode = result[result.length - 1];
+    const prevNode = pipelineNew[pipelineNew.length - 1];
 
     if (!prevNode) {
-      result.push(currNode);
+      pipelineNew.push(currNode);
       continue;
     }
 
     if (Flow.hasEdge(model, prevNode, currNode)) {
-      result.push(currNode);
+      pipelineNew.push(currNode);
       continue;
     }
 
     break;
   }
-  return result;
+  return pipelineNew;
 };
 
 /**
@@ -141,24 +148,27 @@ const takeWhileConnected = (
  */
 const isTerminalConnected = (
   model: Flow.Model,
-  terminal: Flow.Terminal,
-  currentId: Flow.NodeId = terminal.startId
+  terminal: Flow.Terminal
 ): boolean => {
-  if (currentId === terminal.endId) {
-    return true;
+  let currentId = terminal.startId;
+
+  while (true) {
+    if (currentId === terminal.endId) {
+      return true;
+    }
+
+    const pipe = Flow.toPipeBySourceId(model, currentId);
+
+    if (!pipe) {
+      return false;
+    }
+
+    if (pipe.groupId !== terminal.groupId) {
+      return false;
+    }
+
+    currentId = pipe.edge.targetId;
   }
-
-  const pipe = Flow.toPipeBySourceId(model, currentId);
-
-  if (!pipe) {
-    return false;
-  }
-
-  if (pipe.groupId !== terminal.groupId) {
-    return false;
-  }
-
-  return isTerminalConnected(model, terminal, pipe.edge.targetId);
 };
 
 /**
@@ -167,21 +177,28 @@ const isTerminalConnected = (
 const findPipeline = (
   model: Flow.Model,
   groupId: Flow.GroupId,
-  currentId: Flow.NodeId
+  initial: Flow.NodeId
 ): Pipeline => {
-  const pipe = Flow.toPipeBySourceId(model, currentId);
+  const pipeline: Pipeline = [];
+  let currentId = initial;
 
-  if (!pipe) {
-    return [currentId];
+  while (true) {
+    pipeline.push(currentId);
+
+    const pipe = Flow.toPipeBySourceId(model, currentId);
+
+    if (!pipe) {
+      break;
+    }
+
+    if (pipe.groupId !== groupId) {
+      break;
+    }
+
+    currentId = pipe.edge.targetId;
   }
 
-  if (pipe.groupId !== groupId) {
-    return [];
-  }
-
-  const pipeline = findPipeline(model, groupId, pipe.edge.targetId);
-
-  return [currentId, ...pipeline];
+  return pipeline;
 };
 
 /**
@@ -217,37 +234,39 @@ const addPipeline = (
   terminal: Flow.Terminal,
   pipeline: Pipeline
 ): Flow.Model => {
-  const first = pipeline[0];
+  let modelNew: Flow.Model = { ...model };
 
-  if (!first) {
-    return model;
+  for (let i = 0; i < pipeline.length - 1; i++) {
+    const first = pipeline[i];
+
+    if (!first) {
+      break;
+    }
+
+    const second = pipeline[i + 1];
+
+    if (!second) {
+      break;
+    }
+
+    const edge: Flow.Edge = {
+      sourceId: first,
+      targetId: second,
+    };
+
+    if (!Flow.hasEdge(modelNew, first, second)) {
+      continue;
+    }
+
+    const pipeNew: Flow.Pipe = {
+      edgeId: Flow.toEdgeId(edge),
+      groupId: terminal.groupId,
+    };
+
+    modelNew.pipesBySourceId[edge.sourceId] = pipeNew;
   }
 
-  const second = pipeline[1];
-
-  if (!second) {
-    return model;
-  }
-
-  const edge: Flow.Edge = {
-    sourceId: first,
-    targetId: second,
-  };
-
-  const pipeNew: Flow.Pipe = {
-    edgeId: Flow.toEdgeId(edge),
-    groupId: terminal.groupId,
-  };
-
-  const added = Flow.addPipe(model, pipeNew);
-
-  if (!added) {
-    return model;
-  }
-
-  const tail = pipeline.slice(1);
-
-  return addPipeline(added, terminal, tail);
+  return modelNew;
 };
 
 /**
