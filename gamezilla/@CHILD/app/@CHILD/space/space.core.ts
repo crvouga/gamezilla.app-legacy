@@ -129,7 +129,7 @@ export const initCore = (): CoreModel => {
   return {
     events: EventStream.empty(config),
     clock: LamportClock.init(),
-    snapshots: CappedOrderedDict.init({ maxSize: 10 }),
+    snapshots: CappedOrderedDict.init({ maxSize: 5 }),
   };
 };
 
@@ -559,7 +559,7 @@ const reducer = ({
 };
 
 const deriveStateWithSnapshots = (model: CoreModel): State => {
-  let runningState: State = INIT_STATE;
+  let derivedState: State = INIT_STATE;
   const eventIds: EventId[] = [];
 
   for (let i = model.events.ordering.length - 1; i >= 0; i--) {
@@ -569,8 +569,9 @@ const deriveStateWithSnapshots = (model: CoreModel): State => {
       continue;
     }
 
-    if (eventId in model.snapshots) {
-      runningState = CappedOrderedDict.get(model.snapshots, eventId)!;
+    const snapshot = CappedOrderedDict.get(model.snapshots, eventId);
+    if (snapshot) {
+      derivedState = snapshot;
       break;
     }
 
@@ -590,10 +591,10 @@ const deriveStateWithSnapshots = (model: CoreModel): State => {
       continue;
     }
 
-    runningState = reducer({ state: runningState, event });
+    derivedState = reducer({ state: derivedState, event });
   }
 
-  return runningState;
+  return derivedState;
 };
 
 export const toStateMemoized = memoize(

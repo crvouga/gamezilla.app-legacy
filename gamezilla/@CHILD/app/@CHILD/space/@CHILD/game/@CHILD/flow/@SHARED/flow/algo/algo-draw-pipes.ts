@@ -103,8 +103,6 @@ export const drawPipes = (
         nodeIdNew
       );
 
-      console.log(shortest);
-
       const pipelineNew = [...pipeline, ...shortest.slice(1)];
 
       return pipelineNew;
