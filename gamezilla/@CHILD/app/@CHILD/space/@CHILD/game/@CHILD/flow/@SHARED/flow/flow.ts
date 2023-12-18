@@ -471,6 +471,11 @@ export const toTerminalByGroupId = (
   return model.terminalsByGroupId[groupId] ?? null;
 };
 
+export const toIndexTerminalByEndId = (_model: Model) => {
+  // TODO
+  return {};
+};
+
 /**
  * Find the terminal where the inputted node id is either the start or end node.
  */

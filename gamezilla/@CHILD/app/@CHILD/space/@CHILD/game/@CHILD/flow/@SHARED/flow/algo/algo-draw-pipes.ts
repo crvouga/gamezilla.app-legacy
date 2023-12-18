@@ -441,6 +441,12 @@ export const findShortestEmptyPipelineAStar = (
       return reconstructPath(cameFrom, current);
     }
 
+    const currentTerminal = Flow.findTerminalByNodeId(model, current);
+
+    if (currentTerminal) {
+      return reconstructPath(cameFrom, current);
+    }
+
     for (const outEdge of Flow.yieldEdgesOut(model, current)) {
       const adjacent = outEdge.targetId;
 
