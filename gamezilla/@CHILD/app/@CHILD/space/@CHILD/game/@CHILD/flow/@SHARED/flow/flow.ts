@@ -347,11 +347,7 @@ export const yieldEdgesOut = function* (
   const indexEdgesOut = toIndexEdgesOutMemoized(model);
 
   for (const targetId in indexEdgesOut[sourceNodeId]) {
-    if (!isNodeId(model, targetId)) {
-      continue;
-    }
-
-    const edgeId = indexEdgesOut[sourceNodeId]?.[targetId];
+    const edgeId = indexEdgesOut[sourceNodeId]?.[targetId as NodeId];
 
     if (!edgeId) {
       continue;
