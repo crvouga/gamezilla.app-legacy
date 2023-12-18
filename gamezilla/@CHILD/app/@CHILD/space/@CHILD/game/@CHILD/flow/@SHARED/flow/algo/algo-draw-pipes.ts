@@ -84,12 +84,6 @@ export const drawPipes = (
     (pipeline) => takeWhileConnected(model, pipeline),
 
     (pipeline) => {
-      const skip = false;
-
-      if (skip) {
-        return pipeline;
-      }
-
       const startNodeId = pipeline[pipeline.length - 1];
 
       if (!startNodeId) {
@@ -447,8 +441,8 @@ export const findShortestEmptyPipelineAStar = (
       return reconstructPath(cameFrom, current);
     }
 
-    for (const outEdge of Flow.yieldEdgesOut(model, current)) {
-      const adjacent = outEdge.targetId;
+    for (const edgeOut of Flow.yieldEdgesOut(model, current)) {
+      const adjacent = edgeOut.targetId;
 
       const adjacentPipe = Flow.findPipeByNodeId(model, adjacent);
 
@@ -462,7 +456,9 @@ export const findShortestEmptyPipelineAStar = (
         continue;
       }
 
-      const tentativeGScore = (gScore.get(current) ?? Infinity) + 0;
+      const edgeWeight = 0;
+
+      const tentativeGScore = (gScore.get(current) ?? Infinity) + edgeWeight;
 
       if (tentativeGScore < (gScore.get(adjacent) ?? Infinity)) {
         cameFrom.set(adjacent, current);
