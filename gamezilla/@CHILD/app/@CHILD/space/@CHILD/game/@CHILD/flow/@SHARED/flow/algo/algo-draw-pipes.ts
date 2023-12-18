@@ -96,7 +96,7 @@ export const drawPipes = (
         return pipeline;
       }
 
-      const shortest = findShortestEmptyPipelineV2(
+      const shortest = findShortestEmptyPipelineAStar(
         (nodeId) => 1 - 1 / distance(nodeId, nodeIdNew),
         model,
         startNodeId,
@@ -280,7 +280,7 @@ const addPipeline = (
 /**
  * Returns a list of nodes without a groupId that form the shortest path between the source and target nodes.
  */
-export const findShortestEmptyPipeline = (
+export const findShortestEmptyPipelineBFS = (
   model: Flow.Model,
   sourceId: Flow.NodeId,
   targetId: Flow.NodeId
@@ -386,22 +386,7 @@ export const findShortestEmptyPipeline = (
   return nodePath;
 };
 
-const reconstructPath = (
-  cameFrom: Map<Flow.NodeId, Flow.NodeId>,
-  start: Flow.NodeId
-): Flow.NodeId[] => {
-  let current = start;
-  const totalPath = [current];
-
-  while (cameFrom.has(current)) {
-    current = cameFrom.get(current)!;
-    totalPath.push(current);
-  }
-
-  return totalPath.reverse();
-};
-
-export const findShortestEmptyPipelineV2 = (
+export const findShortestEmptyPipelineAStar = (
   heuristicScore: (node: Flow.NodeId) => number,
   model: Flow.Model,
   sourceId: Flow.NodeId,
@@ -485,4 +470,19 @@ export const findShortestEmptyPipelineV2 = (
   }
 
   return [];
+};
+
+const reconstructPath = (
+  cameFrom: Map<Flow.NodeId, Flow.NodeId>,
+  start: Flow.NodeId
+): Flow.NodeId[] => {
+  let current = start;
+  const totalPath = [current];
+
+  while (cameFrom.has(current)) {
+    current = cameFrom.get(current)!;
+    totalPath.push(current);
+  }
+
+  return totalPath.reverse();
 };
