@@ -26,7 +26,7 @@ export type CoreModel = {
   clock: LamportClock;
   events: EventStream<Event & EventMeta, Indexes, EventId>;
   snapshots: CappedOrderedDict<EventId, State>;
-  games: {
+  gameEvents: {
     [spaceId: SpaceId]: {
       clock: LamportClock;
       events: EventStream<Game.GameEvent & EventMeta, Indexes, EventId>;
@@ -137,7 +137,7 @@ export const initCore = (): CoreModel => {
     events: EventStream.empty(config),
     clock: LamportClock.init(),
     snapshots: CappedOrderedDict.init({ maxSize: 5 }),
-    games: {},
+    gameEvents: {},
   };
 };
 
@@ -184,7 +184,7 @@ export const mergeModels = (
     events: streamNew,
     clock: LamportClock.update(model.clock, otherModel.clock),
     snapshots: { ...model.snapshots, ...otherModel.snapshots },
-    games: {},
+    gameEvents: {},
   };
 
   return modelNew;
