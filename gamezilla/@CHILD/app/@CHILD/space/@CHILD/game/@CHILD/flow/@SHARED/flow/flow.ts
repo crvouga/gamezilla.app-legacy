@@ -334,6 +334,7 @@ export const yieldEdgesOut = function* (
   sourceNodeId: NodeId
 ): Iterable<Edge> {
   const indexEdgesOut = toIndexEdgesOut(model);
+
   for (const targetId in indexEdgesOut[sourceNodeId]) {
     if (!isNodeId(model, targetId)) {
       continue;
