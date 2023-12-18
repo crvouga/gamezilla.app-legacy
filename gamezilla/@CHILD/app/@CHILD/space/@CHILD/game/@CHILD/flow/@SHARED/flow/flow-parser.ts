@@ -9,7 +9,13 @@ export const toModel = (x: unknown): Model | null => {
     P.has(x, "indexEdgesIn", P.obj) &&
     P.has(x, "indexEdgesOut", P.obj)
   ) {
-    return null;
+    return {
+      edgeHash: "",
+      edges: {},
+      nodes: {},
+      pipesBySourceId: {},
+      terminalsByGroupId: {},
+    };
   }
   return null;
 };
