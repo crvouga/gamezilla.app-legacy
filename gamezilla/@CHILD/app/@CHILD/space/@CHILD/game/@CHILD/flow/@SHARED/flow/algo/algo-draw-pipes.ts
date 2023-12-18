@@ -81,7 +81,7 @@ export const drawPipes = (
     (pipeline) => takeWhileConnected(model, pipeline),
 
     (pipeline) => {
-      const skip = false;
+      const skip = true;
 
       if (skip) {
         return pipeline;
@@ -376,4 +376,12 @@ export const findShortestEmptyPipeline = (
   // Done
 
   return nodePath;
+};
+
+export const findShortestEmptyPipelineV2 = (
+  _model: Flow.Model,
+  _sourceId: Flow.NodeId,
+  _targetId: Flow.NodeId
+): Flow.NodeId[] => {
+  return [];
 };
