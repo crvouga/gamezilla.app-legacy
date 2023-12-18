@@ -12,6 +12,7 @@ type Pipeline = Flow.NodeId[];
  * Starts
  */
 export const startDrawPipes = (
+  distance: (a: Flow.NodeId, b: Flow.NodeId) => number,
   model: Flow.Model,
   groupId: Flow.GroupId,
   newNodeId: Flow.NodeId
@@ -25,12 +26,12 @@ export const startDrawPipes = (
   if (terminal.endId === newNodeId) {
     const reversed = Flow.flipTerminal(model, terminal);
 
-    const drew = drawPipes(reversed, groupId, newNodeId);
+    const drew = drawPipes(distance, reversed, groupId, newNodeId);
 
     return drew;
   }
 
-  const drew = drawPipes(model, groupId, newNodeId);
+  const drew = drawPipes(distance, model, groupId, newNodeId);
 
   return drew;
 };
@@ -39,6 +40,7 @@ export const startDrawPipes = (
  * Algorithm that draws pipes from the inputted group id to the inputted node id
  */
 export const drawPipes = (
+  distance: (a: Flow.NodeId, b: Flow.NodeId) => number,
   model: Flow.Model,
   groupId: Flow.GroupId,
   nodeIdNew: Flow.NodeId
@@ -82,7 +84,7 @@ export const drawPipes = (
     (pipeline) => takeWhileConnected(model, pipeline),
 
     (pipeline) => {
-      const skip = true;
+      const skip = false;
 
       if (skip) {
         return pipeline;
@@ -94,7 +96,14 @@ export const drawPipes = (
         return pipeline;
       }
 
-      const shortest = findShortestEmptyPipeline(model, startNodeId, nodeIdNew);
+      const shortest = findShortestEmptyPipelineV2(
+        (nodeId) => 1 - 1 / distance(nodeId, nodeIdNew),
+        model,
+        startNodeId,
+        nodeIdNew
+      );
+
+      console.log(shortest);
 
       const pipelineNew = [...pipeline, ...shortest.slice(1)];
 
@@ -379,11 +388,103 @@ export const findShortestEmptyPipeline = (
   return nodePath;
 };
 
-export const findShortestEmptyPipelineV2 = (
-  _model: Flow.Model,
-  _sourceId: Flow.NodeId,
-  _targetId: Flow.NodeId
+const reconstructPath = (
+  cameFrom: Map<Flow.NodeId, Flow.NodeId>,
+  start: Flow.NodeId
 ): Flow.NodeId[] => {
-  const minHeap = new MinHeap();
+  let current = start;
+  const totalPath = [current];
+
+  while (cameFrom.has(current)) {
+    current = cameFrom.get(current)!;
+    totalPath.push(current);
+  }
+
+  return totalPath.reverse();
+};
+
+export const findShortestEmptyPipelineV2 = (
+  heuristicScore: (node: Flow.NodeId) => number,
+  model: Flow.Model,
+  sourceId: Flow.NodeId,
+  targetId: Flow.NodeId
+): Flow.NodeId[] => {
+  const sourceGroupId = Flow.findGroupIdByNodeId(model, sourceId);
+
+  if (!sourceGroupId) {
+    return [];
+  }
+
+  //
+  //
+  //
+  const gScore = new Map<Flow.NodeId, number>();
+  gScore.set(sourceId, 0);
+
+  //
+  //
+  //
+  const fScore = new Map<Flow.NodeId, number>();
+  fScore.set(sourceId, heuristicScore(sourceId));
+
+  //
+  //
+  //
+  const cameFrom = new Map<Flow.NodeId, Flow.NodeId>();
+
+  //
+  //
+  //
+  const openSet = new MinHeap<Flow.NodeId>((a, b) => {
+    const fScoreA = fScore.get(a) ?? Infinity;
+    const fScoreB = fScore.get(b) ?? Infinity;
+    return fScoreA - fScoreB;
+  });
+
+  openSet.insert(sourceId);
+
+  //
+  //
+  //
+  while (true) {
+    const current = openSet.extractMin();
+
+    if (!current) {
+      break;
+    }
+
+    if (current === targetId) {
+      return reconstructPath(cameFrom, current);
+    }
+
+    for (const outEdge of Flow.yieldEdgesOut(model, current)) {
+      const adjacent = outEdge.targetId;
+
+      const adjacentPipe = Flow.findPipeByNodeId(model, adjacent);
+
+      if (adjacentPipe) {
+        continue;
+      }
+
+      const adjacentTerminal = Flow.findTerminalByNodeId(model, adjacent);
+
+      if (adjacentTerminal && adjacentTerminal.groupId !== sourceGroupId) {
+        continue;
+      }
+
+      const tentativeGScore = (gScore.get(current) ?? Infinity) + 0;
+
+      if (tentativeGScore < (gScore.get(adjacent) ?? Infinity)) {
+        cameFrom.set(adjacent, current);
+        gScore.set(adjacent, tentativeGScore);
+        fScore.set(adjacent, tentativeGScore + heuristicScore(adjacent));
+
+        if (!openSet.has(adjacent)) {
+          openSet.insert(adjacent);
+        }
+      }
+    }
+  }
+
   return [];
 };

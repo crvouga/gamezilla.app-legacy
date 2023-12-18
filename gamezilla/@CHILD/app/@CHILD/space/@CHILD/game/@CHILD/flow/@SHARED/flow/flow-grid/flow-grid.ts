@@ -21,6 +21,18 @@ export const positionToNodeId = (position: Position): Flow.NodeId => {
   return Flow.createNodeId(`${position.x},${position.y}`);
 };
 
+export const distance = (model: Model, a: Flow.NodeId, b: Flow.NodeId) => {
+  const positionA = model.positions[a];
+  if (!positionA) {
+    return Infinity;
+  }
+  const positionB = model.positions[b];
+  if (!positionB) {
+    return Infinity;
+  }
+  return Position.distance(positionA, positionB);
+};
+
 //
 //
 //
