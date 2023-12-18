@@ -76,7 +76,7 @@ const subscriptions: Module["subscriptions"] = () => {
   return Sub.None;
 };
 
-const USE_GAME_STATE = false;
+const USE_GAME_STATE = true;
 
 const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
   const isSpectating = ctx.currentUserId !== ctx.space.hostId;

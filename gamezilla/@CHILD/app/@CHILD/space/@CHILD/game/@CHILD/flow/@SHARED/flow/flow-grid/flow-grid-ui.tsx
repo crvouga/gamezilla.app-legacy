@@ -77,7 +77,8 @@ export const View = ({
           draggedOver?.(nodeId);
         }
       }}
-      onMouseLeave={left}>
+      onMouseLeave={left}
+    >
       {/*
 
 
@@ -230,7 +231,8 @@ export const View = ({
                 x={node.x}
                 y={node.y}
                 style={{ fontSize: 0.2 }}
-                fill="#fff">
+                fill="#fff"
+              >
                 {`${node.x},${node.y}`}
               </text>
             );
@@ -260,7 +262,7 @@ export const View = ({
                   ? "cursor-grabbing"
                   : groupId
                   ? "cursor-pointer"
-                  : "cursor-default"
+                  : null
               )}
               height={1}
               fill="transparent"
