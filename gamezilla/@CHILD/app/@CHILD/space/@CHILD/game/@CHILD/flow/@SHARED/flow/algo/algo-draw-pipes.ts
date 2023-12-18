@@ -1,6 +1,7 @@
 import { p } from "gamezilla/@SHARED/core";
 import * as Flow from "../flow";
 import { takeWhile } from "./utils";
+import { MinHeap } from "gamezilla/@SHARED/data-structures/min-heap";
 
 /**
  * A `Pipeline` represents the sequence of nodes the user draws when connecting terminals.
@@ -383,5 +384,6 @@ export const findShortestEmptyPipelineV2 = (
   _sourceId: Flow.NodeId,
   _targetId: Flow.NodeId
 ): Flow.NodeId[] => {
+  const minHeap = new MinHeap();
   return [];
 };

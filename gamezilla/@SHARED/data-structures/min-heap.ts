@@ -1,8 +1,10 @@
-export class MinHeap {
-  private heap: number[];
+export class MinHeap<T> {
+  private heap: T[];
+  private compare: (a: T, b: T) => number;
 
-  constructor() {
+  constructor(compare: (a: T, b: T) => number) {
     this.heap = [];
+    this.compare = compare;
   }
 
   private getLeftChildIndex(parentIndex: number): number {
@@ -29,7 +31,7 @@ export class MinHeap {
     let index = this.heap.length - 1;
     while (index > 0) {
       const parentIndex = this.getParentIndex(index);
-      if (this.heap[parentIndex]! > this.heap[index]!) {
+      if (this.compare(this.heap[parentIndex]!, this.heap[index]!) > 0) {
         this.swap(parentIndex, index);
         index = parentIndex;
       } else {
@@ -48,13 +50,13 @@ export class MinHeap {
 
       if (
         leftChildIndex < this.heap.length &&
-        this.heap[leftChildIndex]! < this.heap[smallest]!
+        this.compare(this.heap[leftChildIndex]!, this.heap[smallest]!) < 0
       ) {
         smallest = leftChildIndex;
       }
       if (
         rightChildIndex < this.heap.length &&
-        this.heap[rightChildIndex]! < this.heap[smallest]!
+        this.compare(this.heap[rightChildIndex]!, this.heap[smallest]!) < 0
       ) {
         smallest = rightChildIndex;
       }
@@ -68,12 +70,12 @@ export class MinHeap {
     }
   }
 
-  public insert(value: number): void {
+  public insert(value: T): void {
     this.heap.push(value);
     this.heapifyUp();
   }
 
-  public extractMin(): number | undefined {
+  public extractMin(): T | undefined {
     if (this.heap.length === 0) return undefined;
     if (this.heap.length === 1) return this.heap.pop();
 
@@ -83,7 +85,7 @@ export class MinHeap {
     return min;
   }
 
-  public peek(): number | undefined {
+  public peek(): T | undefined {
     return this.heap.length > 0 ? this.heap[0] : undefined;
   }
 
