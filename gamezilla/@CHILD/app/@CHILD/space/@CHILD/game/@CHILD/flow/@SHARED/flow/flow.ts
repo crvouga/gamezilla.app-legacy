@@ -1,3 +1,5 @@
+import { memoize } from "gamezilla/@SHARED/core";
+
 export type NodeId = string & { readonly __brand: unique symbol };
 
 export const createNodeId = (nodeId: string): NodeId => {
@@ -86,6 +88,8 @@ export type Model = {
     [edgeId: EdgeId]: Edge;
   };
 
+  edgeHash: string | number;
+
   /**
    * Represents the start and end nodes for each group.
    */
@@ -111,6 +115,7 @@ export const init: Model = {
   edges: {},
   terminalsByGroupId: {},
   pipesBySourceId: {},
+  edgeHash: 0,
 };
 
 /**
@@ -189,13 +194,15 @@ export const addNode = (model: Model, node: Node): Model => {
  * Adds an edge to the puzzle.
  */
 export const addEdge = (model: Model, edge: Edge): Model => {
-  return {
+  const modelNew: Model = {
     ...model,
     edges: {
       ...model.edges,
       [toEdgeId(edge)]: edge,
     },
   };
+  const hashNew = djb2Hash(Object.values(modelNew.edges).sort().join(","));
+  return { ...modelNew, edgeHash: hashNew };
 };
 
 /**
@@ -311,6 +318,10 @@ export const toIndexEdgesOut = (model: Model) => {
   return indexEdgesOut;
 };
 
+export const toIndexEdgesOutMemoized = memoize(
+  (model) => model.edgeHash,
+  toIndexEdgesOut
+);
 export const toIndexEdgesIn = (model: Model) => {
   let indexEdgesIn: { [targetId: NodeId]: { [sourceId: NodeId]: EdgeId } } = {};
 
@@ -333,7 +344,7 @@ export const yieldEdgesOut = function* (
   model: Model,
   sourceNodeId: NodeId
 ): Iterable<Edge> {
-  const indexEdgesOut = toIndexEdgesOut(model);
+  const indexEdgesOut = toIndexEdgesOutMemoized(model);
 
   for (const targetId in indexEdgesOut[sourceNodeId]) {
     if (!isNodeId(model, targetId)) {
@@ -552,3 +563,12 @@ export const flipTerminal = (model: Model, terminal: Terminal): Model => {
     },
   };
 };
+
+function djb2Hash(str: string) {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) + hash + char; /* hash * 33 + c */
+  }
+  return hash;
+}

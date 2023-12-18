@@ -429,6 +429,7 @@ export const findShortestEmptyPipelineAStar = (
   //
   //
   //
+
   while (true) {
     const current = openSet.extractMin();
 
