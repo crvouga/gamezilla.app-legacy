@@ -212,7 +212,7 @@ const modelToKey = (model: Model): string => {
   return model.map((col) => col.join(",")).join(",");
 };
 
-export const toWins = memoize(modelToKey, (board: Model): Wins => {
+const toWinsNotMemoized = (board: Model): Wins => {
   const wins: Wins = {
     X: [],
     O: [],
@@ -243,6 +243,12 @@ export const toWins = memoize(modelToKey, (board: Model): Wins => {
   }
 
   return wins;
+};
+
+export const toWins = memoize({
+  toKey: modelToKey,
+  func: toWinsNotMemoized,
+  cacheCapacity: 100,
 });
 
 export type Status = { type: "Turn"; turn: PlayerType } | GameOver;

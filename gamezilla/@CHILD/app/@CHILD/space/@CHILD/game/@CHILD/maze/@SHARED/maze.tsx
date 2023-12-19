@@ -121,11 +121,12 @@ const remove_dead_ends = (
   }
 };
 
-const makeMemoized = memoize(
-  ({ seed, lower, upper }) =>
+const makeMemoized = memoize({
+  toKey: ({ seed, lower, upper }) =>
     [seed, lower.x, lower.y, upper.x, upper.y].join("-"),
-  make
-);
+  func: make,
+  cacheCapacity: 100,
+});
 
 const toConnections = (position: Position, maze: Maze) => {
   const adjacent: Position[] = [];

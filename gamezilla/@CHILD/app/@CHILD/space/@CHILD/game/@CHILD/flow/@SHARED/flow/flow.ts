@@ -318,10 +318,12 @@ export const toIndexEdgesOut = (model: Model) => {
   return indexEdgesOut;
 };
 
-export const toIndexEdgesOutMemoized = memoize(
-  (model) => model.edgeHash,
-  toIndexEdgesOut
-);
+export const toIndexEdgesOutMemoized = memoize({
+  toKey: (model) => model.edgeHash,
+  func: toIndexEdgesOut,
+  cacheCapacity: 100,
+});
+
 export const toIndexEdgesIn = (model: Model) => {
   let indexEdgesIn: { [targetId: NodeId]: { [sourceId: NodeId]: EdgeId } } = {};
 

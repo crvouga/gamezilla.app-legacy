@@ -599,10 +599,11 @@ const deriveStateWithSnapshots = (model: CoreModel): State => {
   return derivedState;
 };
 
-export const toStateMemoized = memoize(
-  (model) => model.events.hash,
-  deriveStateWithSnapshots
-);
+export const toStateMemoized = memoize({
+  toKey: (model) => model.events.hash,
+  func: deriveStateWithSnapshots,
+  cacheCapacity: 100,
+});
 
 export const toState = toStateMemoized;
 
