@@ -80,7 +80,7 @@ const updateIdle: typeof update = ({ msg, model }) => {
       }
 
       const started = AlgoDrawPipes.startDrawPipes(
-        (a, b) => FlowGrid.distance(model.grid, a, b),
+        FlowGrid.distance(model.grid),
         model.grid.flow,
         groupId,
         msg.nodeId
@@ -127,7 +127,7 @@ const updateDragging = ({
       const { nodeId } = msg;
 
       const extended = AlgoDrawPipes.drawPipes(
-        (a, b) => FlowGrid.distance(model.grid, a, b),
+        FlowGrid.distance(model.grid),
         model.grid.flow,
         state.activeGroupId,
         nodeId
