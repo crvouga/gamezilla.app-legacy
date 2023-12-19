@@ -411,22 +411,24 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
           />
 
           <div class="flex w-full flex-col gap-6 p-4 py-6">
-            <Select
-              id="countryCode"
-              label="Country"
-              onChange={(countryCodeNew) => {
-                dispatch({
-                  t: "inputted-country-code",
-                  countryCode: countryCodeNew,
-                });
-              }}
-              value={model.countryCodeInput}
-              options={Iso3166Alpha2Code.all}
-              toKey={(countryCode) => countryCode}
-              toName={(countryCode) =>
-                Iso3166Alpha2Code.toNameWithEmoji(countryCode)
-              }
-            />
+            {false && (
+              <Select
+                id="countryCode"
+                label="Country"
+                onChange={(countryCodeNew) => {
+                  dispatch({
+                    t: "inputted-country-code",
+                    countryCode: countryCodeNew,
+                  });
+                }}
+                value={model.countryCodeInput}
+                options={Iso3166Alpha2Code.all}
+                toKey={(countryCode) => countryCode}
+                toName={(countryCode) =>
+                  Iso3166Alpha2Code.toNameWithEmoji(countryCode)
+                }
+              />
+            )}
 
             <TextField
               value={model.phoneNumberInput}
