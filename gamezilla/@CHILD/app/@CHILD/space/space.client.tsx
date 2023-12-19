@@ -194,6 +194,7 @@ const updateFromServer: Module["update"] = (input) => {
             events: fromServer.events,
             clock: fromServer.clock,
             snapshots: model.snapshots,
+            gameEvents: {},
           });
 
           return { model: { ...model, ...merged } };
@@ -487,7 +488,8 @@ const ViewSpaceStarted = ({
         position="bottom"
         id="users"
         open={model.modal === "users"}
-        onClose={() => dispatch({ t: "closed-modal" })}>
+        onClose={() => dispatch({ t: "closed-modal" })}
+      >
         <ViewUsersInSpaceList ctx={spaceCtx} />
       </Drawer>
 
@@ -495,7 +497,8 @@ const ViewSpaceStarted = ({
         position="bottom"
         id="user-preview"
         open={model.modal === "user-preview"}
-        onClose={() => dispatch({ t: "closed-modal" })}>
+        onClose={() => dispatch({ t: "closed-modal" })}
+      >
         <div>
           <button
             class="flex w-full flex-col items-center justify-center gap-2 p-4"
@@ -512,7 +515,8 @@ const ViewSpaceStarted = ({
                   },
                 });
               }
-            }}>
+            }}
+          >
             <Avatar
               src={
                 model.previewUserId
@@ -916,7 +920,8 @@ export const ViewCurrentSpaceBar = ({
               c: { t: "space", spaceId: space.spaceId },
             },
           });
-        }}>
+        }}
+      >
         <div class="mr-2 p-2">
           {!game && (
             <Avatar
@@ -950,7 +955,8 @@ export const ViewCurrentSpaceBar = ({
               spaceId: space.spaceId,
             });
           }}
-          class="mr-4">
+          class="mr-4"
+        >
           <IconXMark class="h-8 w-8" />
         </button>
       )}
@@ -965,7 +971,8 @@ export const ViewCurrentSpaceBar = ({
               spaceId: space.spaceId,
             });
           }}
-          class="mr-4">
+          class="mr-4"
+        >
           <IconXMark class="h-8 w-8" />
         </button>
       )}
