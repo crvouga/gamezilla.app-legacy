@@ -194,7 +194,6 @@ const updateFromServer: Module["update"] = (input) => {
             events: fromServer.events,
             clock: fromServer.clock,
             snapshots: model.snapshots,
-            gameEvents: {},
           });
 
           return { model: { ...model, ...merged } };

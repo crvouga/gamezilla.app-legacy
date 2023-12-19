@@ -26,13 +26,6 @@ export type CoreModel = {
   clock: LamportClock;
   events: EventStream<Event & EventMeta, Indexes, EventId>;
   snapshots: CappedOrderedDict<EventId, State>;
-  gameEvents: {
-    [spaceId: SpaceId]: {
-      clock: LamportClock;
-      events: EventStream<Game.GameEvent & EventMeta, Indexes, EventId>;
-      snapshots: CappedOrderedDict<EventId, Game.GameState>;
-    };
-  };
 };
 
 export type ServerModel = CoreModel & {
@@ -137,7 +130,6 @@ export const initCore = (): CoreModel => {
     events: EventStream.empty(config),
     clock: LamportClock.init(),
     snapshots: CappedOrderedDict.init({ maxSize: 5 }),
-    gameEvents: {},
   };
 };
 
@@ -184,17 +176,18 @@ export const mergeModels = (
     events: streamNew,
     clock: LamportClock.update(model.clock, otherModel.clock),
     snapshots: { ...model.snapshots, ...otherModel.snapshots },
-    gameEvents: {},
   };
 
   return modelNew;
 };
 
-type Indexes = "indexSpaceId";
+type Indexes = "indexSpaceId" | "indexSpaceIdAndGame";
 
 const config = EventStream.initConfig<Event & EventMeta, Indexes, EventId>({
   indexes: {
     indexSpaceId: (event) => event.spaceId,
+    indexSpaceIdAndGame: (event) =>
+      `${event.spaceId},${event.t === "game" ? event.c.t : ""}`,
   },
   toId: (event) => event.eventId,
   toOrdering: (event) => LamportTimestamp.toNumber(event.happenedAt),
