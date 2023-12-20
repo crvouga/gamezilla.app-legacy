@@ -1,4 +1,5 @@
 export type CappedOrderedDict<TKey extends string | number, TValue> = {
+  _type: "CappedOrderedDict";
   _valuesByKey: {
     [key in TKey]?: TValue;
   };
@@ -12,6 +13,7 @@ const init = <TKey extends string | number, TValue>({
   maxSize: number;
 }): CappedOrderedDict<TKey, TValue> => {
   return {
+    _type: "CappedOrderedDict",
     _valuesByKey: {},
     _maxSize: maxSize,
     _orderNewestFirst: [],
@@ -40,6 +42,7 @@ const add = <TKey extends string | number, TValue>(
   }
 
   return {
+    _type: "CappedOrderedDict",
     _valuesByKey: valuesByKeyNew,
     _maxSize: model._maxSize,
     _orderNewestFirst: orderNewestFirstNew,
@@ -53,6 +56,7 @@ const remove = <TKey extends string | number, TValue>(
   const valuesByKeyNew = { ...model._valuesByKey };
   delete valuesByKeyNew[key];
   return {
+    _type: "CappedOrderedDict",
     _maxSize: model._maxSize,
     _orderNewestFirst: model._orderNewestFirst.filter(
       (existingKey) => existingKey !== key
