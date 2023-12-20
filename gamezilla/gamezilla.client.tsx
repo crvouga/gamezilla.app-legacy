@@ -1,4 +1,5 @@
 import { Browser, Program } from "gamezilla/@SHARED/core";
+import "preact/debug";
 import { render } from "preact";
 import * as AppClient from "./@CHILD/app/app.client";
 import * as App from "./@CHILD/app/app.core";
