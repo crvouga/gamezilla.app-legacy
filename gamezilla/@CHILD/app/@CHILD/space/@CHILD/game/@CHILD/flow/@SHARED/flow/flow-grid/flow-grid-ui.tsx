@@ -9,7 +9,7 @@ const TERMINAL_NODE_RADIUS = 0.33;
 const EDGE_STROKE_WIDTH = 0.3;
 
 let lastDraggedOver: Flow.NodeId | null = null;
-let lastTouchMove = 0;
+
 /**
  * Renders the Flow Grid UI
  */
@@ -61,14 +61,6 @@ export const View = ({
   };
 
   const onTouchMove = (event: TouchEvent) => {
-    const now = Date.now();
-
-    if (now - lastTouchMove < 100) {
-      return;
-    }
-
-    lastTouchMove = now;
-
     const nodeId = touchEventToNodeId(event);
 
     if (!nodeId) {
