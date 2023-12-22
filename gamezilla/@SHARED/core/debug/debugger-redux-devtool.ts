@@ -6,19 +6,19 @@
  * @since 0.5.0
  */
 import * as Json from "../data/json";
-import { p } from "../utils/pipe";
-import { Program } from "../program";
 import { Result, isErr } from "../data/result";
-import { PubSub, Sub } from "../sub";
+import { Program } from "../program";
+import { PubSub } from "../sub";
 import { Task } from "../task";
 import { toMsgPayload, toMsgType } from "../utils";
+import { p } from "../utils/pipe";
 import {
   Debug,
   Debugger,
   DebuggerDeps,
   Global,
   MsgWithDebug,
-} from "./debugger-commons";
+} from "./debugger";
 
 type Unsubscribe = () => void;
 
@@ -27,8 +27,8 @@ type Unsubscribe = () => void;
  * @category model
  * @since 0.5.0
  */
-export interface Extension {
-  connect: <Model, Msg extends {}>() => Connection<Model, Msg>;
+export interface ReduxDevToolsBrowserExtension {
+  connect: <Model, Msg extends object>() => ReduxDevToolsConnection<Model, Msg>;
 }
 
 /**
@@ -36,7 +36,7 @@ export interface Extension {
  * @category model
  * @since 0.5.0
  */
-export interface Connection<Model, Msg extends {}> {
+export interface ReduxDevToolsConnection<Model, Msg extends object> {
   subscribe: (listener?: (m: DevToolMsg) => void) => Unsubscribe;
   send(action: null, state: LiftedState<Model>): void;
   send(action: Msg, state: Model): void;
@@ -82,9 +82,9 @@ interface LiftedState<Model> {
   isPaused: boolean;
 }
 
-interface DevToolHandlerR<Model, Msg extends {}>
+interface DevToolHandlerR<Model, Msg extends object>
   extends DebuggerDeps<Model, Msg> {
-  connection: Connection<Model, Msg>;
+  connection: ReduxDevToolsConnection<Model, Msg>;
 }
 
 /**
@@ -92,9 +92,9 @@ interface DevToolHandlerR<Model, Msg extends {}>
  * @category utils
  * @since 0.5.0
  */
-export const getConnection = <Model, Msg extends {}>(
+export const getBrowserExtensionConnection = <Model, Msg extends object>(
   global: Global
-): Connection<Model, Msg> | null => {
+): ReduxDevToolsConnection<Model, Msg> | null => {
   return hasExtension(global)
     ? global.__REDUX_DEVTOOLS_EXTENSION__.connect<Model, Msg>()
     : null;
@@ -108,7 +108,9 @@ export const getConnection = <Model, Msg extends {}>(
  */
 const hasExtension = (
   global: Global
-): global is Global & { __REDUX_DEVTOOLS_EXTENSION__: Extension } => {
+): global is Global & {
+  __REDUX_DEVTOOLS_EXTENSION__: ReduxDevToolsBrowserExtension;
+} => {
   return "__REDUX_DEVTOOLS_EXTENSION__" in global;
 };
 
@@ -117,8 +119,8 @@ const hasExtension = (
  * @category constructors
  * @since 0.5.4
  */
-export const makeDebugger = <Model, Msg extends {}>(
-  connection: Connection<Model, Msg>
+export const makeDebugger = <Model, Msg extends object>(
+  connection: ReduxDevToolsConnection<Model, Msg>
 ): Debugger<Model, Msg> => {
   return (d) => {
     const deps = { ...d, connection };
@@ -137,7 +139,7 @@ export const makeDebugger = <Model, Msg extends {}>(
  * **[UNSAFE]** Handles the execution of an effect related to an incoming messages sent from extension monitor.
  * @since 0.5.0
  */
-const handleSubscription = <Model, Msg extends {}>(
+const handleSubscription = <Model, Msg extends object>(
   deps: DevToolHandlerR<Model, Msg>
 ): ((msg: DevToolMsg) => void) => {
   const handler = handleIncomingMsg(deps);
@@ -160,7 +162,7 @@ const handleSubscription = <Model, Msg extends {}>(
  * **Note:** the monitor can dispatch messages of any shape that will be re-dispatched into the application; these messages **are not validated** and can lead to unexpected behaviours.
  * @since 0.5.0
  */
-const handleIncomingMsg = <Model, Msg extends {}>({
+const handleIncomingMsg = <Model, Msg extends object>({
   connection,
   init,
   dispatch,
@@ -273,7 +275,7 @@ const handleIncomingMsg = <Model, Msg extends {}>({
  * The `MESSAGE` action will send the message payload and state to the connected extension (`connection`).
  * @since 0.5.0
  */
-const handleActions = <Model, Msg extends {}>({
+const handleActions = <Model, Msg extends object>({
   connection,
 }: DevToolHandlerR<Model, Msg>): Debug<Model, Msg> => {
   return ([action, model]) =>
@@ -381,7 +383,9 @@ const parseToggleAction = <Model>(
  */
 
 const toggleAction =
-  <Model, Msg extends {}>(dispatch: (m: MsgWithDebug<Model, Msg>) => void) =>
+  <Model, Msg extends object>(
+    dispatch: (m: MsgWithDebug<Model, Msg>) => void
+  ) =>
   (id: number, liftedState: LiftedState<Model>): Task<LiftedState<Model>> =>
   async () => {
     const state = unsafeCopy(liftedState);
@@ -440,15 +444,26 @@ const unsafeCopy = <A>(a: A): A => {
   return JSON.parse(JSON.stringify(a));
 };
 
-export const attachDebugger = <Model, Msg extends {}>(
-  program: Program<Model, Msg>
+/**
+ * Attaches program to the redux dev tools extension.
+ */
+export const attachDebuggerBrowserExtension = <Model, Msg extends object>(
+  program: Program<Model, Msg>,
+  global: Global = window
 ) => {
-  const connection = getConnection<Model, Msg>(window);
+  const connection = getBrowserExtensionConnection<Model, Msg>(global);
 
-  if (!connection) {
-    return;
+  if (connection) {
+    return attachDebugger(program, connection);
   }
 
+  return null;
+};
+
+export const attachDebugger = <Model, Msg extends object>(
+  program: Program<Model, Msg>,
+  connection: ReduxDevToolsConnection<Model, Msg>
+) => {
   connection.subscribe((msg) => {
     switch (msg.type) {
       case "ACTION": {
@@ -520,66 +535,4 @@ export const attachDebugger = <Model, Msg extends {}>(
   });
 
   return { ...debuggerInstance, started };
-};
-
-export const createDebugger = <Model, Msg extends {}>(initialModel: Model) => {
-  const connection = getConnection<Model, Msg>(window);
-
-  if (!connection) {
-    return {
-      model: Sub.create<Model>(),
-      started: Promise.resolve(null),
-      snapshot: () => {},
-      stop: () => {},
-    };
-  }
-
-  const snapshot = (
-    action: { type: string; payload: unknown },
-    model: Model
-  ) => {
-    // @ts-ignore
-    connection.send(action, model);
-  };
-
-  const started = new Promise<null>((resolve) => {
-    const unsubscribe = connection.subscribe((msg) => {
-      if (msg.type === "START") {
-        unsubscribe();
-        resolve(null);
-      }
-    });
-  });
-
-  const Debugger = makeDebugger<Model, Msg>(connection);
-
-  const model = PubSub.create<Model>();
-
-  const debuggerInstance = Debugger({
-    dispatch: (msg) => {
-      if ("type" in msg) {
-        switch (msg.type) {
-          case "__DebugApplyMsg__": {
-            return;
-          }
-          case "__DebugStarted__": {
-            return;
-          }
-          case "__DebugUpdateModel__": {
-            model.publish(msg.payload);
-
-            return;
-          }
-        }
-      }
-    },
-    init: initialModel,
-  });
-
-  return {
-    model,
-    started,
-    snapshot,
-    stop: debuggerInstance.stop,
-  };
 };

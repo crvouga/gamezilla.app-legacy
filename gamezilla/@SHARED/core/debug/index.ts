@@ -1,2 +1,2 @@
-export * from "./debugger-commons";
+export * from "./debugger";
 export * from "./debugger-redux-devtool";
