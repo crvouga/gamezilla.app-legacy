@@ -1,7 +1,7 @@
 import { Program, isErr } from "gamezilla/@SHARED/core";
 import * as AppServer from "./@CHILD/app/app.server";
 
-async function main() {
+const main = async () => {
   const created = await AppServer.createCtx();
 
   if (isErr(created)) {
@@ -41,6 +41,6 @@ async function main() {
   });
 
   program.start();
-}
+};
 
 main();
