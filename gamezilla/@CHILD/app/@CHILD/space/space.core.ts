@@ -3,7 +3,7 @@ import { AppRoute } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { memoizeAsync } from "gamezilla/@SHARED/core";
 import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
-import { EventStreamInMemory } from "gamezilla/@SHARED/event-stream";
+import { EventStreamInMemory, EventStreamInferInstance } from "gamezilla/@SHARED/event-stream";
 import {
   LamportClock,
   LamportTimestamp,
@@ -30,14 +30,12 @@ export const SpaceEvents = EventStreamInMemory<
   Indexes
 >();
 
-export type SpaceEventsInstance = Awaited<
-  ReturnType<(typeof SpaceEvents)["init"]>
->;
+export type SpaceEventsInstance = EventStreamInferInstance<typeof SpaceEvents>
 
-export type CoreModel = {
+export type CoreModel= {
   clock: LamportClock;
-  events: SpaceEventsInstance;
   snapshots: CappedOrderedDict<EventId, State>;
+  events: SpaceEventsInstance;
 };
 
 export type ServerModel = CoreModel & {

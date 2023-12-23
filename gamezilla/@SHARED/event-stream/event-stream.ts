@@ -10,6 +10,7 @@ export type IEventStreamConfig<
   };
 };
 
+
 export type IEventStream<
   TEventId extends string,
   TEvent,
@@ -56,3 +57,6 @@ export type IEventStream<
   toIterable: (instance: TInstance) => AsyncIterable<TEvent>;
   has: (instance: TInstance, eventId: TEventId) => Promise<boolean>;
 };
+
+
+export type EventStreamInferInstance<T extends IEventStream<any, any, any, any>> = T extends IEventStream<any, any, any, infer TInstance> ? TInstance : never;

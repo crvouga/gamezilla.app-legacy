@@ -3,6 +3,7 @@ import {
   WithEventId,
   withId,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
+import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import {
   APP_SOUND,
   AnonymousClientCtx,
@@ -25,7 +26,6 @@ import {
   toStartedSpace,
   toUserState,
 } from "../space.core";
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 
 /**
  * Handles merging new events into the client model
@@ -75,8 +75,7 @@ async function loop(
     acc,
     (model) => appendEvents({ model, event }),
     (model) => sendEventToServer({ model, eventId: event.eventId }),
-    (model) => updateSoundFromEvent({ model, ctx, event }),
-    (model) => redirectWhenSpaceStarted({ model, ctx, event })
+    (model) => updateSpaceFromEvent({ model, ctx, event })
   );
 
   const spaceAfter = toStartedSpace(updated.model.latestState, event.spaceId);
@@ -135,34 +134,6 @@ async function appendEvents({
 }> {
   const appended = await appendEvent(model, event);
   return { model: { ...model, ...appended } };
-}
-
-async function redirectWhenSpaceStarted({
-  model,
-  ctx,
-  event,
-}: {
-  model: ClientModel;
-  event: WithEventId<Event>;
-  ctx: ClientCtx | AnonymousClientCtx;
-}) {
-  if (
-    event.t === "user-started-space" &&
-    ctx.currentUserId &&
-    toUserState(model.latestState, ctx.currentUserId).spaceId === event.spaceId
-  ) {
-    return {
-      model,
-      cmd: [
-        pushRoute({
-          t: "space",
-          c: { t: "space", spaceId: event.spaceId },
-        }),
-      ],
-    };
-  }
-
-  return { model };
 }
 
 const updateGameFromEvent = async ({
@@ -243,7 +214,7 @@ const updateGameFromEvent = async ({
   };
 };
 
-const updateSoundFromEvent = async ({
+const updateSpaceFromEvent = async ({
   ctx,
   model,
   event,
@@ -261,49 +232,72 @@ const updateSoundFromEvent = async ({
 
   const currentUserState = toUserState(model.latestState, ctx.currentUserId);
 
-  if (event.t === "user-joined-space" && event.userId === ctx.currentUserId) {
-    return {
-      model,
-      cmd: [playSound(APP_SOUND.navForward)],
-    };
-  }
+  switch (event.t) {
+    case "user-joined-space": {
+      if (event.userId === ctx.currentUserId) {
+        return {
+          model,
+          cmd: [playSound(APP_SOUND.navForward)],
+        };
+      }
+      return { model };
+    }
 
-  if (event.t === "user-left-space" && event.userId === ctx.currentUserId) {
-    return {
-      model,
-      cmd: [playSound(APP_SOUND.navBackward)],
-    };
-  }
+    case "user-left-space": {
+      if (event.userId === ctx.currentUserId) {
+        return {
+          model,
+          cmd: [playSound(APP_SOUND.navBackward)],
+        };
+      }
+      return { model };
+    }
 
-  if (event.t === "user-started-space" && event.userId === ctx.currentUserId) {
-    return {
-      model,
-      cmd: [playSound(APP_SOUND.navForward)],
-    };
-  }
+    case "user-started-space": {
+      if (event.userId === ctx.currentUserId) {
+        return {
+          model,
+          cmd: [
+            playSound(APP_SOUND.navForward),
+            pushRoute({
+              t: "space",
+              c: { t: "space", spaceId: event.spaceId },
+            }),
+          ],
+        };
+      }
+      return { model };
+    }
 
-  if (event.t === "user-ended-space" && event.userId === ctx.currentUserId) {
-    return {
-      model,
-      cmd: [playSound(APP_SOUND.navBackward)],
-    };
-  }
+    case "user-ended-space": {
+      return {
+        model,
+        cmd: [
+          playSound(APP_SOUND.navBackward),
+          pushRoute({
+            t: "space",
+            c: { t: "space", spaceId: event.spaceId },
+          }),
+        ],
+      };
+    }
 
-  if (
-    event.t === "user-inputted-game" &&
-    event.spaceId === currentUserState.spaceId
-  ) {
-    return {
-      model,
-      cmd: [
-        playSound(
-          event.game ? APP_SOUND.navForwardMin : APP_SOUND.navBackwardMin
-        ),
-      ],
-    };
-  }
+    case "user-inputted-game": {
+      if (event.spaceId === currentUserState.spaceId) {
+        return {
+          model,
+          cmd: [
+            playSound(
+              event.game ? APP_SOUND.navForwardMin : APP_SOUND.navBackwardMin
+            ),
+          ],
+        };
+      }
+      return { model };
+    }
 
-  return {
-    model,
-  };
+    case "game": {
+      return { model };
+    }
+  }
 };
