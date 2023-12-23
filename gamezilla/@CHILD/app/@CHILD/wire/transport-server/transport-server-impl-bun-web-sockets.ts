@@ -115,9 +115,6 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
         sessionId: ws.data.sessionId,
       });
     },
-    drain(_ws) {
-      console.log("drain");
-    },
     message(ws: ServerWebSocket<ServerWebSocketData>, message) {
       const msg = JSON.parse(message.toString()) as ClientToServerMsg<ToServer>; // leap of faith
 
