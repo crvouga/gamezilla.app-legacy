@@ -90,8 +90,8 @@ test("current user starting space", async () => {
     spaceId,
     userId: ctx.currentUserId,
   });
-  const before = SpaceCore.toUserState(initial.model.latestState, ctx.currentUserId);
-  const after = SpaceCore.toUserState(started.model.latestState, ctx.currentUserId);
+  const before = SpaceCore.toUserState(await SpaceCore.toState(initial.model), ctx.currentUserId);
+  const after = SpaceCore.toUserState(await SpaceCore.toState(started.model), ctx.currentUserId);
 
   expect(before).toEqual({ spaceId: null, userId: ctx.currentUserId });
   expect(after).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });

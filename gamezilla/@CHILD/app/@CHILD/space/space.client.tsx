@@ -262,7 +262,7 @@ const updateFromEvt: Module["update"] = (input) => {
   }
 };
 
-const updateGame: Module["update"] = (input) => {
+const updateGame: Module["update"] = async (input) => {
   const { ctx, model, fromServer, evt, msg } = input;
 
   const spaceId =
@@ -276,7 +276,9 @@ const updateGame: Module["update"] = (input) => {
     return { model };
   }
 
-  const space = model.latestState.spaces[spaceId] ?? {
+  const state = await toState(model);
+
+  const space = state.spaces[spaceId] ?? {
     type: "initial",
   };
 

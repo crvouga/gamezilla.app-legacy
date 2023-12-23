@@ -12,6 +12,7 @@ import {
   playSound,
   pushRoute,
   sendToServer,
+  showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, batchMsgs } from "gamezilla/@SHARED/core";
 import { Game } from "../@CHILD/game/game.client";
@@ -24,6 +25,7 @@ import {
   ToServer,
   appendEvent,
   toStartedSpace,
+  toState,
   toUserState,
 } from "../space.core";
 
@@ -69,16 +71,19 @@ async function loop(
     return loop(ctx, rest, acc);
   }
 
-  const spaceBefore = toStartedSpace(acc.model.latestState, event.spaceId);
+  const spaceBefore = toStartedSpace(await toState(acc.model), event.spaceId);
 
   const updated = await AppClientModule.chainUpdates(
     acc,
+    (model) => updateSpaceFromEvent({ model, ctx, event }),
     (model) => appendEvents({ model, event }),
     (model) => sendEventToServer({ model, eventId: event.eventId }),
-    (model) => updateSpaceFromEvent({ model, ctx, event })
   );
 
-  const spaceAfter = toStartedSpace(updated.model.latestState, event.spaceId);
+  const spaceAfter = toStartedSpace(
+    await toState(updated.model),
+    event.spaceId
+  );
 
   const updatedGame = await updateGameFromEvent({
     model: updated.model,
@@ -230,11 +235,13 @@ const updateSpaceFromEvent = async ({
     return { model };
   }
 
-  const currentUserState = toUserState(model.latestState, ctx.currentUserId);
+  const state = await toState(model);
+
+  const currentUserState = toUserState(state, ctx.currentUserId);
 
   switch (event.t) {
     case "user-joined-space": {
-      if (event.userId === ctx.currentUserId) {
+      if (event.spaceId === currentUserState.spaceId) {
         return {
           model,
           cmd: [playSound(APP_SOUND.navForward)],
@@ -244,7 +251,7 @@ const updateSpaceFromEvent = async ({
     }
 
     case "user-left-space": {
-      if (event.userId === ctx.currentUserId) {
+      if (event.spaceId === currentUserState.spaceId) {
         return {
           model,
           cmd: [playSound(APP_SOUND.navBackward)],
@@ -270,16 +277,56 @@ const updateSpaceFromEvent = async ({
     }
 
     case "user-ended-space": {
-      return {
-        model,
-        cmd: [
-          playSound(APP_SOUND.navBackward),
-          pushRoute({
-            t: "space",
-            c: { t: "space", spaceId: event.spaceId },
-          }),
-        ],
-      };
+      if (event.spaceId !== currentUserState.spaceId) {
+        return { model };
+      }
+      return AppClientModule.chainUpdates(
+        { model },
+        (model) => {
+          return {
+            model,
+            cmd: [playSound(APP_SOUND.navBackward)],
+          };
+        },
+        (model) => {
+          if (
+            ctx.currentRoute.t === "space" &&
+            ctx.currentRoute.c.t === "space" &&
+            ctx.currentRoute.c.spaceId === event.spaceId
+          ) {
+            return {
+              model,
+              cmd: [pushRoute({ t: "space", c: { t: "space-list" } })],
+            };
+          }
+          return {
+            model,
+            cmd: [],
+          };
+        },
+        (model) => {
+          if (event.userId === ctx.currentUserId) {
+            return {
+              model,
+              cmd: [showToast("You ended the space")],
+            };
+          }
+
+          const profile = ctx.profiles[event.userId];
+
+          if (!profile) {
+            return {
+              model,
+              cmd: [showToast("The host ended the space")],
+            };
+          }
+
+          return {
+            model,
+            cmd: [showToast(`${profile.username} ended the space`)],
+          };
+        }
+      );
     }
 
     case "user-inputted-game": {
