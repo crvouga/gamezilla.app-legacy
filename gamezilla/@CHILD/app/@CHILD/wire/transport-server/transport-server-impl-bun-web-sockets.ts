@@ -44,9 +44,17 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
   const clientsBySessionId = new Map<SessionId, Set<ClientId>>();
   const addClient = (ws: ServerWebSocket<ServerWebSocketData>) => {
     clients.set(ws.data.clientId, ws);
-    const clientIds = clientsBySessionId.get(ws.data.sessionId) ?? new Set();
+
+    const clientIds = clientsBySessionId.get(ws.data.sessionId);
+
+    if (!clientIds) {
+      const clientIdsNew = new Set<ClientId>();
+      clientIdsNew.add(ws.data.clientId);
+      clientsBySessionId.set(ws.data.sessionId, clientIdsNew);
+      return;
+    }
+
     clientIds.add(ws.data.clientId);
-    clientsBySessionId.set(ws.data.sessionId, clientIds);
   };
 
   //
