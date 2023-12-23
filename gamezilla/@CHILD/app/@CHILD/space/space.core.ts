@@ -38,7 +38,6 @@ export type CoreModel = {
   clock: LamportClock;
   events: SpaceEventsInstance;
   snapshots: CappedOrderedDict<EventId, State>;
-  latestState: State;
 };
 
 export type ServerModel = CoreModel & {
@@ -56,6 +55,7 @@ export type ClientModel = CoreModel & {
   };
   previewUserId: UserId | null;
   modal: ModalModel;
+  latestState: State;
 };
 
 type ModalModel = null | "user-preview" | "users";
@@ -143,7 +143,6 @@ export const initCore = async (): Promise<CoreModel> => {
     events: await SpaceEvents.init(config),
     clock: LamportClock.init(),
     snapshots: CappedOrderedDict.init({ maxSize: 5 }),
-    latestState: initState(),
   };
 };
 
@@ -171,7 +170,6 @@ export const appendEvent = async (
       eventWithMeta.eventId,
       stateNew
     ),
-    latestState: stateNew,
   };
 
   return added;
@@ -191,10 +189,6 @@ export const mergeModels = async (
     events: streamNew,
     clock: LamportClock.update(model.clock, otherModel.clock),
     snapshots: { ...model.snapshots, ...otherModel.snapshots },
-    latestState: await deriveStateWithSnapshots({
-      ...model,
-      events: streamNew,
-    }),
   };
 
   return modelNew;

@@ -22,6 +22,7 @@ import {
   ToClient,
   appendEvent,
   toStartedSpace,
+  toState,
 } from "../space.core";
 import { spaceCmdToCmd } from "./update-shared";
 
@@ -105,7 +106,9 @@ async function sendEventToClients({
     return { model };
   }
 
-  const space = toStartedSpace(model.latestState, event.spaceId);
+  const state = await toState(model);
+
+  const space = toStartedSpace(state, event.spaceId);
 
   const toClient: ToClient = {
     t: "event",
@@ -129,26 +132,32 @@ async function syncUserWhenJoined({
   model: ServerModel;
   event: WithEventId<Event>;
 }): Promise<Output> {
-  if (event.t === "user-joined-space") {
-    const space = toStartedSpace(model.latestState, event.spaceId);
+  switch (event.t) {
+    case "user-joined-space": {
+      const state = await toState(model);
+      const space = toStartedSpace(state, event.spaceId);
 
-    if (!space) {
-      return { model };
+      if (!space) {
+        return { model };
+      }
+
+      return {
+        model,
+        cmd: [
+          sendToUser([event.userId], {
+            t: "sync",
+            events: model.events,
+            causedBy: event,
+            clock: model.clock,
+          }),
+        ],
+      };
     }
 
-    return {
-      model,
-      cmd: [
-        sendToUser([event.userId], {
-          t: "sync",
-          events: model.events,
-          causedBy: event,
-          clock: model.clock,
-        }),
-      ],
-    };
+    default: {
+      return { model };
+    }
   }
-  return { model };
 }
 
 async function updateGameFromEvent({
@@ -171,7 +180,9 @@ async function updateGameFromEvent({
     return { model };
   }
 
-  const space = toStartedSpace(model.latestState, eventWithMeta.spaceId);
+  const state = await toState(model);
+
+  const space = toStartedSpace(state, eventWithMeta.spaceId);
 
   if (
     !space ||

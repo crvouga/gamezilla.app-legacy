@@ -48,7 +48,8 @@ import {
   ToServer,
   initCore,
   initState,
-  mergeModels
+  mergeModels,
+  toState
 } from "./space.core";
 
 //
@@ -93,7 +94,7 @@ export const init: Module["init"] = async ({ stored }) => {
       games: {},
       modal: null,
       previewUserId: null,
-      state: initState(),
+      latestState: initState(),
     },
   };
 };
@@ -112,9 +113,21 @@ export const update: Module["update"] = (input) => {
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
     (model) => updateFromEvt({ ...input, model }),
-    (model) => updateGame({ ...input, model })
+    (model) => updateGame({ ...input, model }),
+    (model) => updateLatestState({ ...input, model }),
   );
 };
+
+const updateLatestState: Module["update"] = async ({  model }) => {
+  const latestState = await toState(model);
+  return {
+    model: {
+      ...model,
+      latestState
+    },
+  }
+
+}
 
 const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
   if (!msg) {
@@ -192,7 +205,6 @@ const updateFromServer: Module["update"] = (input) => {
             events: fromServer.events,
             clock: fromServer.clock,
             snapshots: model.snapshots,
-            latestState: model.latestState,
           });
 
           return { model: { ...model, ...merged } };

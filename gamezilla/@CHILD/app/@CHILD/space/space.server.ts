@@ -115,7 +115,6 @@ const updateFromClient: Module["update"] = async (input) => {
             events: fromClient.events,
             clock: model.clock,
             snapshots: model.snapshots,
-            latestState: model.latestState,
           });
           return {
             model: { ...model, ...merged },
@@ -170,7 +169,8 @@ const updateFromEvt: Module["update"] = async (input) => {
 
   switch (evt.t) {
     case "auth/connected-client-authenticated": {
-      const state = toUserState(model.latestState, evt.userId);
+      const state = await toState(model);
+      const userState = toUserState(state, evt.userId);
 
       return {
         model,
@@ -181,7 +181,7 @@ const updateFromEvt: Module["update"] = async (input) => {
             events: model.events,
             clock: model.clock,
           }),
-          topicSubscribe([`space/${state.spaceId}`], [evt.clientId]),
+          topicSubscribe([`space/${userState.spaceId}`], [evt.clientId]),
           topicSubscribe([`spaces`], [evt.clientId]),
         ],
       };
@@ -207,7 +207,9 @@ const updateGame: Module["update"] = async (input) => {
     return { model };
   }
 
-  const space = toStartedSpace(model.latestState, spaceId);
+  const state = await toState(model);
+
+  const space = toStartedSpace(state, spaceId);
 
   if (!space || !space.game) {
     return { model };
