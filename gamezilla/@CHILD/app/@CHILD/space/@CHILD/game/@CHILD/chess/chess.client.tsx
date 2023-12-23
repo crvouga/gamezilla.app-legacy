@@ -12,7 +12,7 @@ import {
   sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconPuzzlePiece } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Eff, RemoteResult, Sub, chain, isErr } from "gamezilla/@SHARED/core";
+import { Eff, RemoteResult, Sub,  isErr } from "gamezilla/@SHARED/core";
 import * as Puzzle from "./@CHILD/puzzle/puzzle.client";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUser from "./@CHILD/vs-user/vs-user.client";
@@ -26,6 +26,7 @@ import {
   ToClient,
   ToServer,
 } from "./chess.core";
+import { GameClientModule } from "../../../../@SHARED/architecture/game-client-v2";
 
 //
 //
@@ -77,7 +78,7 @@ export const init: Client["init"] = ({ model }) => {
 //
 
 export const update: Client["update"] = (input) => {
-  return chain(
+  return GameClientModule.chainUpdates(
     init(input),
     //
     (model) => {
@@ -156,7 +157,7 @@ export const update: Client["update"] = (input) => {
 
       switch (serverMsg.t) {
         case "input-mode": {
-          return chain(
+          return GameClientModule.chainUpdates(
             { model },
             (model) => {
               const { result } = serverMsg;

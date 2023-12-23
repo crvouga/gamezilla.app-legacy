@@ -1,4 +1,10 @@
 import {
+  EventId,
+  WithEventId,
+  withId,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
+import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server";
+import {
   ReqCtx,
   ServerCmd,
   ServerCtx,
@@ -6,24 +12,18 @@ import {
   sendToUser,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, batchMsgs } from "gamezilla/@SHARED/core";
-import {
-  EventId,
-  WithEventId,
-  withId,
-} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import * as GameServer from "../@CHILD/game/game.server";
 import { SpaceServerCmd } from "../@SHARED/space-server-cmd";
 import {
   Event,
   ServerModel,
   ServerMsg,
+  SpaceEvents,
   ToClient,
   appendEvent,
   toStartedSpace,
 } from "../space.core";
 import { spaceCmdToCmd } from "./update-shared";
-import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server";
-import { EventStream } from "gamezilla/@SHARED/event-stream";
 
 type Output = {
   model: ServerModel;
@@ -50,7 +50,7 @@ async function loop(
     return acc;
   }
 
-  if (event.eventId in acc.model.events.events) {
+  if (event.eventId in acc.model.events._events) {
     return loop(ctx, rest, acc);
   }
 
@@ -87,7 +87,7 @@ async function appendNewEvent({
 }) {
   const appended: ServerModel = {
     ...model,
-    ...appendEvent(model, event),
+    ...(await appendEvent(model, event)),
   };
   return { model: appended };
 }
@@ -99,7 +99,7 @@ async function sendEventToClients({
   model: ServerModel;
   eventId: EventId;
 }): Promise<Output> {
-  const event = EventStream.toEvent(model.events, eventId);
+  const event = await SpaceEvents.get(model.events, eventId);
 
   if (!event) {
     return { model };
@@ -165,7 +165,7 @@ async function updateGameFromEvent({
   eff?: Eff<ServerMsg>;
   events?: WithEventId<Event>[];
 }> {
-  const eventWithMeta = model.events.events[eventId];
+  const eventWithMeta = model.events._events[eventId];
 
   if (!eventWithMeta) {
     return { model };

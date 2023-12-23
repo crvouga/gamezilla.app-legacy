@@ -83,9 +83,9 @@ function userLeftSpace(input: {
 test("current user starting space", async () => {
   const spaceId = SpaceId.generate();
 
-  const initial = init();
+  const initial = await init();
 
-  const started = userStartedSpace({
+  const started = await userStartedSpace({
     model: initial.model,
     spaceId,
     userId: ctx.currentUserId,
@@ -100,9 +100,9 @@ test("current user starting space", async () => {
 test("redirecting when starting a space", async () => {
   const spaceId = SpaceId.generate();
 
-  const initial = init();
+  const initial = await init();
 
-  const started = userStartedSpace({
+  const started = await userStartedSpace({
     model: initial.model,
     spaceId,
     userId: ctx.currentUserId,
@@ -123,15 +123,15 @@ test("redirecting when starting a space", async () => {
 test("current user joining started space", async () => {
   const spaceId = SpaceId.generate();
 
-  const initial = init();
+  const initial = await init();
 
-  const started = userStartedSpace({
+  const started = await userStartedSpace({
     model: initial.model,
     spaceId,
     userId: UserId.generate(),
   });
 
-  const joined = userJoinedSpace({
+  const joined = await userJoinedSpace({
     model: started.model,
     spaceId,
     userId: ctx.currentUserId,
@@ -148,21 +148,21 @@ test("current user joining started space", async () => {
 test("current user leaving joined space", async () => {
   const spaceId = SpaceId.generate();
 
-  const initial = init();
+  const initial = await init();
 
-  const started = userStartedSpace({
+  const started = await userStartedSpace({
     model: initial.model,
     spaceId,
     userId: UserId.generate(),
   });
 
-  const joined = userJoinedSpace({
+  const joined = await userJoinedSpace({
     model: started.model,
     spaceId,
     userId: ctx.currentUserId,
   });
 
-  const left = userLeftSpace({
+  const left = await userLeftSpace({
     model: joined.model,
     spaceId,
     userId: ctx.currentUserId,
@@ -180,27 +180,27 @@ test("prevent joining a space if already in a space", async () => {
   const spaceIdA = SpaceId.generate();
   const spaceIdB = SpaceId.generate();
 
-  const initial = init();
+  const initial = await init();
 
-  const startedA = userStartedSpace({
+  const startedA = await userStartedSpace({
     model: initial.model,
     spaceId: spaceIdA,
     userId: UserId.generate(),
   });
 
-  const joinedA = userJoinedSpace({
+  const joinedA = await userJoinedSpace({
     model: startedA.model,
     spaceId: spaceIdA,
     userId: ctx.currentUserId,
   });
 
-  const startedB = userStartedSpace({
+  const startedB = await userStartedSpace({
     model: joinedA.model,
     spaceId: spaceIdB,
     userId: UserId.generate(),
   });
 
-  const joinedB = userLeftSpace({
+  const joinedB = await userLeftSpace({
     model: startedB.model,
     spaceId: spaceIdB,
     userId: ctx.currentUserId,

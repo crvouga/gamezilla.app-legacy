@@ -55,7 +55,7 @@ type Module = AppServerModule<{
 //
 
 export const init: Module["init"] = async () => {
-  const core = initCore();
+  const core = await initCore();
   return {
     model: {
       ...core,
@@ -110,8 +110,8 @@ const updateFromClient: Module["update"] = async (input) => {
     case "sync": {
       return AppServerModule.chainUpdates(
         { model },
-        (model) => {
-          const merged = mergeModels(model, {
+        async (model) => {
+          const merged = await mergeModels(model, {
             events: fromClient.events,
             clock: model.clock,
             snapshots: model.snapshots,

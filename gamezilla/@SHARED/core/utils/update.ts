@@ -35,64 +35,6 @@ export const andThen =
     };
   };
 
-/**
- * @description
- * A helper function used for chaining together update functions together.
- * @example
- * const updated = chain(
- * { model: 0 },
- * (model) => ({ model: model + 1, evt: [someEvent] }),
- * (model) => ({ model: model + 1, eff: someEff }),
- * (model) => ({ model: model + 1, cmd: [someCmd] }),
- * )
- * //=> { model: 3, evt: [someEvt], eff: someEff, cmd: [someCmd] }
- *
- * @param initial - the model to start with
- * @param updaters - a list of update functions to apply to the model
- * @returns Accumulated output from all the update functions
- */
-export const chain = <Model, Msg, Evt, Cmd>(
-  initial: Output<Model, Msg, Evt, Cmd>,
-  ...updaters: ((input: Model) => Output<Model, Msg, Evt, Cmd>)[]
-): Output<Model, Msg, Evt, Cmd> => {
-  const cmd: Cmd[] = [...(initial.cmd ?? [])];
-  const evt: Evt[] = [...(initial.evt ?? [])];
-  const eff: Eff<Msg>[] = initial.eff ? [initial.eff] : [];
-  let model = { ...initial.model };
-  let i = 0;
-  let len = updaters.length;
-
-  for (i = 0; i < len; ++i) {
-    const updated = updaters[i]!(model);
-
-    model = updated.model;
-
-    if (updated.eff) {
-      eff.push(updated.eff);
-    }
-    if (updated.evt) {
-      let j = 0;
-      let len = updated.evt.length;
-      for (j = 0; j < len; ++j) {
-        evt.push(updated.evt[j]!);
-      }
-    }
-    if (updated.cmd) {
-      let j = 0;
-      let len = updated.cmd.length;
-      for (j = 0; j < len; ++j) {
-        cmd.push(updated.cmd[j]!);
-      }
-    }
-  }
-
-  return {
-    model,
-    eff: Eff.batch(eff),
-    evt,
-    cmd,
-  };
-};
 
 type NullishItems<T> = T | null | undefined | Array<NullishItems<T>>;
 

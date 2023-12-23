@@ -2,9 +2,9 @@ import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { AppRoute } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { memoize } from "gamezilla/@SHARED/core";
-import { EventStream } from "gamezilla/@SHARED/event-stream";
-import { LamportClock } from "gamezilla/@SHARED/lamport-clock";
-import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock/lamport-timestamp";
+import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
+import { EventStreamInMemory } from "gamezilla/@SHARED/event-stream";
+import { LamportClock, LamportTimestamp } from "gamezilla/@SHARED/lamport-clock";
 import * as Game from "./@CHILD/game/game.core";
 import {
   EventId,
@@ -12,7 +12,6 @@ import {
   WithEventId,
   WithEventMeta,
 } from "./@SHARED/event";
-import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
 
 //
 //
@@ -22,9 +21,13 @@ import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-orde
 //
 //
 
+export const SpaceEvents = EventStreamInMemory<EventId, Event & EventMeta, Indexes>();
+
+export type SpaceEventsInstance = Awaited<ReturnType<typeof SpaceEvents['init']>>
+
 export type CoreModel = {
   clock: LamportClock;
-  events: EventStream<Event & EventMeta, Indexes, EventId>;
+  events: SpaceEventsInstance;
   snapshots: CappedOrderedDict<EventId, State>;
 };
 
@@ -125,18 +128,18 @@ export type ClientMsg =
 //
 //
 
-export const initCore = (): CoreModel => {
+export const initCore = async (): Promise<CoreModel> => {
   return {
-    events: EventStream.empty(config),
+    events: await SpaceEvents.init(config),
     clock: LamportClock.init(),
     snapshots: CappedOrderedDict.init({ maxSize: 5 }),
   };
 };
 
-export const appendEvent = (
+export const appendEvent = async (
   model: CoreModel,
   event: WithEventId<Event>
-): CoreModel => {
+): Promise<CoreModel> => {
   const eventWithMeta: WithEventMeta<Event> = {
     ...event,
     happenedAt: LamportClock.toTimestamp(model.clock),
@@ -145,7 +148,7 @@ export const appendEvent = (
   const appended: CoreModel = {
     ...model,
     clock: LamportClock.increment(model.clock),
-    events: EventStream.append(config, model.events, eventWithMeta),
+    events: await SpaceEvents.append(config, model.events, eventWithMeta),
   };
 
   const stateNew = deriveStateWithSnapshots(appended);
@@ -162,11 +165,11 @@ export const appendEvent = (
   return added;
 };
 
-export const mergeModels = (
+export const mergeModels = async (
   model: CoreModel,
   otherModel: CoreModel
-): CoreModel => {
-  const streamNew = EventStream.mergeLeft(
+): Promise<CoreModel> => {
+  const streamNew = await SpaceEvents.mergeLeft(
     config,
     model.events,
     otherModel.events
@@ -183,7 +186,7 @@ export const mergeModels = (
 
 type Indexes = "indexSpaceId" | "indexSpaceIdAndGame";
 
-const config = EventStream.initConfig<Event & EventMeta, Indexes, EventId>({
+const config = SpaceEvents.config({
   indexes: {
     indexSpaceId: (event) => event.spaceId,
     indexSpaceIdAndGame: (event) =>
@@ -564,8 +567,8 @@ const deriveStateWithSnapshots = (model: CoreModel): State => {
   let derivedState: State = INIT_STATE;
   const eventIds: EventId[] = [];
 
-  for (let i = model.events.ordering.length - 1; i >= 0; i--) {
-    const eventId = model.events.ordering[i];
+  for (let i = model.events._ordering.length - 1; i >= 0; i--) {
+    const eventId = model.events._ordering[i];
 
     if (!eventId) {
       continue;
@@ -587,7 +590,7 @@ const deriveStateWithSnapshots = (model: CoreModel): State => {
       continue;
     }
 
-    const event = model.events.events[eventId];
+    const event = model.events._events[eventId];
 
     if (!event) {
       continue;
@@ -600,7 +603,7 @@ const deriveStateWithSnapshots = (model: CoreModel): State => {
 };
 
 export const toStateMemoized = memoize({
-  toKey: (model) => model.events.hash,
+  toKey: (model) => SpaceEvents.toHash(model.events),
   func: deriveStateWithSnapshots,
   cacheCapacity: 100,
 });
@@ -608,10 +611,10 @@ export const toStateMemoized = memoize({
 export const toState = toStateMemoized;
 
 const exposed = {
-  toState_: deriveStateWithSnapshots,
+  deriveStateWithSnapshots,
   toState,
   toSpaceState,
-  EventStream,
+  SpaceEvents,
   config,
 };
 

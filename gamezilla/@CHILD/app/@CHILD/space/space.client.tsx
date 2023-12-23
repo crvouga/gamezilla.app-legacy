@@ -83,7 +83,7 @@ type Module = AppClientModule<{
 //
 //
 
-export const init: Module["init"] = ({ stored }) => {
+export const init: Module["init"] = async ({ stored }) => {
   if (stored) {
     return {
       model: stored,
@@ -92,7 +92,7 @@ export const init: Module["init"] = ({ stored }) => {
 
   return {
     model: {
-      ...initCore(),
+      ...(await initCore()),
       games: {},
       modal: null,
       previewUserId: null,
@@ -187,10 +187,10 @@ const updateFromServer: Module["update"] = (input) => {
         cmd: fromServer.profiles ? [addProfiles(fromServer.profiles)] : [],
       };
     },
-    (model) => {
+    async (model) => {
       switch (fromServer.t) {
         case "sync": {
-          const merged = mergeModels(model, {
+          const merged = await mergeModels(model, {
             events: fromServer.events,
             clock: fromServer.clock,
             snapshots: model.snapshots,
@@ -575,7 +575,7 @@ const ViewFeed = ({
   model: ClientModel;
   ctx: SpaceClientCtx;
 }) => {
-  const event = model.events.events[state.latestEvent];
+  const event = model.events._events[state.latestEvent];
 
   if (!event) {
     return null;

@@ -1,4 +1,4 @@
-import { EventStreamConfig, IEventStream } from "./event-stream-v2";
+import { IEventStreamConfig, IEventStream } from "./event-stream";
 
 export type Instance<
   TEventId extends string,
@@ -24,14 +24,16 @@ export type Instance<
     };
   };
   /**
-   *
+   * Unique hash of the stream. Used for equality and memoization.
    */
   _hash: string | number;
 };
 
 type EventStreamIndex<TEventId extends string> = {
-  ordering: TEventId[];
-  events: { [eventId in TEventId]?: TEventId };
+  _ordering: TEventId[];
+  _events: {
+    [eventId in TEventId]?: TEventId;
+  };
 };
 
 export const EventStreamInMemory = <
@@ -49,6 +51,7 @@ export const EventStreamInMemory = <
     config(config) {
       return config;
     },
+
     async init(_config) {
       return {
         _events: {},
@@ -57,6 +60,15 @@ export const EventStreamInMemory = <
         _ordering: [],
       };
     },
+    
+    toHash(instance) {
+      return instance._hash;
+    },
+
+    async get(instance, eventId) {
+      return instance._events[eventId] ?? null;
+    },
+
     async append(config, stream, event) {
       if (config.toId(event) in stream._events) {
         return stream;
@@ -99,6 +111,7 @@ export const EventStreamInMemory = <
         _hash: hash(newOrdering),
       };
     },
+
     async mergeLeft(config, left, right) {
       let stream = await this.init(config);
 
@@ -114,23 +127,26 @@ export const EventStreamInMemory = <
 
       return stream;
     },
+
     async has(instance, eventId) {
       return eventId in instance._events;
     },
+
     async equals(left, right) {
       return left._hash === right._hash;
     },
+
     async subset(config, instance, indexName, targetIndexVal) {
       let streamNew = await this.init(config);
 
       const index: EventStreamIndex<TEventId> = instance._indexes[indexName]?.[
         targetIndexVal
       ] ?? {
-        events: {},
-        ordering: [],
+        _events: {},
+        _ordering: [],
       };
 
-      for (const eventId of index.ordering) {
+      for (const eventId of index._ordering) {
         const event = instance._events[eventId as TEventId];
         if (event) {
           streamNew = await this.append(config, streamNew, event);
@@ -139,6 +155,7 @@ export const EventStreamInMemory = <
 
       return streamNew;
     },
+
     async startingAt(_config, instance, eventId) {
       const orderingIndex = instance._ordering.indexOf(eventId);
 
@@ -161,12 +178,13 @@ export const EventStreamInMemory = <
         _ordering: newOrdering,
       };
     },
+
     toIterable(instance) {
       return {
         [Symbol.asyncIterator]() {
-          let currentIndex = 0; // Keeps track of the current position in the ordering array
+          let currentIndex = 0;
           return {
-            next: async () => {
+            async next() {
               if (currentIndex >= instance._ordering.length) {
                 return { done: true, value: undefined };
               }
@@ -179,10 +197,11 @@ export const EventStreamInMemory = <
 
               return { done: false, value: event };
             },
-            // Optional: Implement return and throw if needed for your use case
+
             return() {
               return Promise.resolve({ done: true, value: undefined });
             },
+
             throw(error) {
               throw error;
             },
@@ -190,7 +209,7 @@ export const EventStreamInMemory = <
         },
       };
     },
-    
+
     async fromArray(config, events) {
       let instance = await this.init(config);
 
@@ -200,6 +219,7 @@ export const EventStreamInMemory = <
 
       return instance;
     },
+
     async toArray(instance) {
       const events: TEvent[] = [];
 
@@ -208,7 +228,7 @@ export const EventStreamInMemory = <
       }
 
       return events;
-    }
+    },
   };
 };
 
@@ -217,7 +237,7 @@ const updateIndexes = <
   TEvent,
   TIndexName extends string
 >(
-  config: EventStreamConfig<TEventId, TEvent, TIndexName>,
+  config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
   stream: Instance<TEventId, TEvent, TIndexName>,
   event: TEvent
 ): Instance<TEventId, TEvent, TIndexName> => {
@@ -226,13 +246,12 @@ const updateIndexes = <
   for (let indexName in config.indexes) {
     const indexKey = config.indexes[indexName](event);
     const index = indexesNew[indexName] || {};
-    const indexEvents = index[indexKey] || { ordering: [], events: {} };
+    const indexEvents = index[indexKey] || { _ordering: [], _events: {} };
 
-    // Similar optimized insertion as in the append function
     let inserted = false;
     const newOrdering = [];
-    for (let i = 0; i < indexEvents.ordering.length; i++) {
-      const event = stream._events?.[indexEvents?.ordering?.[i]!]!;
+    for (let i = 0; i < indexEvents._ordering.length; i++) {
+      const event = stream._events?.[indexEvents?._ordering?.[i]!]!;
       if (
         !inserted &&
         (config.toOrdering(event) ?? -Infinity) > config.toOrdering(event)
@@ -240,15 +259,15 @@ const updateIndexes = <
         newOrdering.push(config.toId(event));
         inserted = true;
       }
-      newOrdering.push(indexEvents.ordering[i]!);
+      newOrdering.push(indexEvents._ordering[i]!);
     }
     if (!inserted) {
       newOrdering.push(config.toId(event));
     }
 
-    indexEvents.ordering = newOrdering;
-    indexEvents.events = {
-      ...indexEvents.events,
+    indexEvents._ordering = newOrdering;
+    indexEvents._events = {
+      ...indexEvents._events,
       [config.toId(event)]: config.toId(event),
     };
     index[indexKey] = indexEvents;

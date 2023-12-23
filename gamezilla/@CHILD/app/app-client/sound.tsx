@@ -156,7 +156,7 @@ const updateFromEvt: Module["update"] = ({ model, evt }) => {
   }
 };
 
-export const updateFromCmd: Module["update"] = ({ model, cmd }) => {
+export const updateFromCmd: Module["update"] = async ({ model, cmd }) => {
   if (!cmd) {
     return { model };
   }

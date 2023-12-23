@@ -55,7 +55,7 @@ export const transport = ClientTransport<ToServer, ToClient>({
 //
 //
 
-export const init = ({
+export const init = async ({
   location,
   stored,
   ctx,
@@ -63,10 +63,10 @@ export const init = ({
   stored: ClientModel | null;
   ctx: { now: Posix };
   location: Browser.Location;
-}): {
+}): Promise<{
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-} => {
+}> => {
   const routing = Routing.init({
     location,
     stored: stored?.routing ?? null,
@@ -80,40 +80,40 @@ export const init = ({
     profiles: {},
   };
 
-  const toast = Toast.init({
+  const toast = await Toast.init({
     stored: stored?.toast ?? null,
     ctx: ctx,
   });
 
-  const wire = Wire.init({
+  const wire = await Wire.init({
     stored: stored?.wire ?? null,
   });
 
-  const auth = AuthClient.init({
+  const auth = await AuthClient.init({
     stored: stored?.auth ?? null,
     ctx: appCtx,
   });
 
-  const space = SpaceClient.init({
+  const space = await SpaceClient.init({
     ctx: appCtx,
     stored: stored?.space ?? null,
   });
 
-  const profile = ProfileClient.init({
+  const profile = await ProfileClient.init({
     ctx: { ...appCtx, viewBottomBar: null },
     stored: stored?.profile ?? null,
   });
 
-  const sound = Sound.init({
+  const sound = await Sound.init({
     ctx: null,
     stored: stored?.sound ?? null,
   });
 
-  const platform = Platform.init({
+  const platform = await Platform.init({
     stored: stored?.platform ?? null,
   });
 
-  const statusBar = StatusBar.init({
+  const statusBar = await StatusBar.init({
     stored: stored?.statusBar ?? null,
   });
 
@@ -142,7 +142,7 @@ export const init = ({
     preloadSound(Object.values(APP_SOUND))
   );
 
-  const updated = updateLoop(ctx.now, {
+  const updated = await updateLoop(ctx.now, {
     model: initialModel,
     eff: initialEff,
     cmd: initialCmd,
@@ -163,22 +163,22 @@ export const init = ({
 //
 //
 
-export const update = (input: {
+export const update = async (input: {
   ctx: { now: Posix };
   msg: ClientMsg;
   model: ClientModel;
-}): {
+}): Promise<{
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-} => {
-  const updatedFromMsg = updateChild({
+}> => {
+  const updatedFromMsg = await updateChild({
     now: input.ctx.now,
     model: input.model,
     msg: input.msg,
     fromServer: input.msg.t === "➡️" ? input.msg.c : undefined,
   });
 
-  const updated = updateLoop(input.ctx.now, updatedFromMsg);
+  const updated = await updateLoop(input.ctx.now, updatedFromMsg);
 
   return updated;
 };
@@ -190,11 +190,11 @@ type Output = {
   cmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 };
 
-const updateLoop = (now: Posix, acc: Output): Output => {
+const updateLoop = async (now: Posix, acc: Output): Promise<Output> => {
   const [cmd, ...cmdRest] = acc.cmd;
 
   if (cmd) {
-    const updatedCmd = updateChild({ now, model: acc.model, cmd });
+    const updatedCmd = await updateChild({ now, model: acc.model, cmd });
     return updateLoop(now, {
       model: updatedCmd.model,
       cmd: [...cmdRest, ...updatedCmd.cmd],
@@ -206,7 +206,7 @@ const updateLoop = (now: Posix, acc: Output): Output => {
   const [evt, ...evtRest] = acc.evt;
 
   if (evt) {
-    const updatedEvt = updateChild({ now, model: acc.model, evt });
+    const updatedEvt = await updateChild({ now, model: acc.model, evt });
     return updateLoop(now, {
       model: updatedEvt.model,
       cmd: [...cmdRest, ...updatedEvt.cmd],
@@ -218,7 +218,7 @@ const updateLoop = (now: Posix, acc: Output): Output => {
   return acc;
 };
 
-const updateChild = ({
+const updateChild = async ({
   now,
   model,
   msg,
@@ -232,10 +232,10 @@ const updateChild = ({
   fromServer?: ToClient;
   evt?: ClientEvt;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-}): Output => {
+}): Promise<Output> => {
   const ctx = toCtx({ model, ctx: { now } });
 
-  const space = SpaceClient.update({
+  const space = await SpaceClient.update({
     ctx: ctx,
     model: model.space,
     msg: msg?.t === "space" ? msg.c : null,
@@ -244,7 +244,7 @@ const updateChild = ({
     cmd: null,
   });
 
-  const profile = ProfileClient.update({
+  const profile = await ProfileClient.update({
     ctx: { ...ctx, viewBottomBar: null },
     model: model.profile,
     msg: msg?.t === "profile" ? msg.c : null,
@@ -253,7 +253,7 @@ const updateChild = ({
     cmd: cmd?.t === "profile" ? cmd : null,
   });
 
-  const auth = AuthClient.update({
+  const auth = await AuthClient.update({
     ctx: ctx,
     model: model.auth,
     msg: msg?.t === "auth" ? msg.c : null,
@@ -262,13 +262,13 @@ const updateChild = ({
     cmd: null,
   });
 
-  const routing = Routing.update({
+  const routing = await Routing.update({
     model: model.routing,
     msg: msg?.t === "routing" ? msg.c : null,
     cmd: cmd?.t === "routing" ? cmd : null,
   });
 
-  const wire = Wire.update({
+  const wire = await Wire.update({
     model: model.wire,
     msg: msg?.t === "wire" ? msg.c : null,
     fromServer: fromServer?.t === "wire" ? fromServer.c : null,
@@ -276,25 +276,25 @@ const updateChild = ({
     transport,
   });
 
-  const sound = Sound.update({
+  const sound = await Sound.update({
     model: model.sound,
     msg: msg?.t === "sound" ? msg.c : null,
     cmd: cmd?.t === "sound" ? cmd : null,
     ctx: null,
   });
 
-  const platform = Platform.update({
+  const platform = await Platform.update({
     model: model.platform,
     msg: msg?.t === "platform" ? msg.c : null,
     cmd: cmd?.t === "platform" ? cmd : null,
   });
 
-  const statusBar = StatusBar.update({
+  const statusBar = await StatusBar.update({
     model: model.statusBar,
     msg: msg?.t === "status-bar" ? msg.c : null,
   });
 
-  const toast = Toast.update({
+  const toast = await Toast.update({
     model: model.toast,
     msg: msg?.t === "toast" ? msg.c : null,
     cmd: cmd?.t === "toast" ? cmd : null,
@@ -421,7 +421,7 @@ export const View = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  return (
+  return ( 
     <div class="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
       <StatusBar.View
         model={model.statusBar}

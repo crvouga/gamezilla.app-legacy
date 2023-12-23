@@ -57,8 +57,8 @@ type Client = AppClientModule<{
 //
 //
 
-export const init: Client["init"] = ({ stored, ctx }) => {
-  const sms = AuthClientSMS.init({
+export const init: Client["init"] = async ({ stored, ctx }) => {
+  const sms = await AuthClientSMS.init({
     stored: stored?.sms ?? null,
     ctx,
   });
@@ -103,8 +103,8 @@ export const update: Client["update"] = (input) => {
   );
 };
 
-const updateChild: Client["update"] = (input) => {
-  const updated = AuthClientSMS.update({
+const updateChild: Client["update"] = async (input) => {
+  const updated = await AuthClientSMS.update({
     ctx: input.ctx,
     model: input.model.sms,
     cmd: input.cmd,
@@ -121,7 +121,7 @@ const updateChild: Client["update"] = (input) => {
   };
 };
 
-const updateFromMsg: Client["update"] = (input) => {
+const updateFromMsg: Client["update"] = async (input) => {
   if (!input.msg) {
     return { model: input.model };
   }
@@ -223,11 +223,11 @@ const updateFromServer: Client["update"] = (input) => {
   }
 };
 
-const updateFromEvt: Client["update"] = (input) => {
+const updateFromEvt: Client["update"] = async (input) => {
   return updateRedirect(input);
 };
 
-const updateRedirect: Client["update"] = (input) => {
+const updateRedirect: Client["update"] = async (input) => {
   if (!input.evt) {
     return { model: input.model };
   }

@@ -66,7 +66,7 @@ type Module = AppClientModule<{
 //
 //
 
-export const init: Module["init"] = () => {
+export const init: Module["init"] = async () => {
   return {
     model: {
       codeInput: "",
@@ -106,7 +106,7 @@ const PHONE_NUMBER_INPUT_VIEW_ID = "phoneNumberInput";
 //
 //
 
-export const update: Module["update"] = (input) => {
+export const update: Module["update"] = async (input) => {
   if (input.msg) {
     return updateFromMsg(input);
   }
@@ -116,7 +116,7 @@ export const update: Module["update"] = (input) => {
   return { model: input.model };
 };
 
-const updateFromMsg: Module["update"] = (input) => {
+const updateFromMsg: Module["update"] = async (input) => {
   if (!input.msg) {
     return { model: input.model };
   }
@@ -294,7 +294,7 @@ const updateFromMsg: Module["update"] = (input) => {
   }
 };
 
-const updateFromServer: Module["update"] = (input) => {
+const updateFromServer: Module["update"] = async (input) => {
   if (!input.fromServer) {
     return { model: input.model };
   }

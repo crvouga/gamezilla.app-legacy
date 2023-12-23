@@ -52,7 +52,7 @@ export type Toast = {
   createdAt: Posix;
 };
 
-export const init: Module["init"] = ({ stored }) => {
+export const init: Module["init"] = async ({ stored }) => {
   if (stored) {
     return { model: stored };
   }
@@ -84,7 +84,7 @@ export const update: Module["update"] = (input) => {
   );
 };
 
-const updateFromMsg: Module["update"] = (input) => {
+const updateFromMsg: Module["update"] = async (input) => {
   if (!input.msg) {
     return { model: input.model };
   }
@@ -143,7 +143,7 @@ const updateFromMsg: Module["update"] = (input) => {
   }
 };
 
-const updateFromCmd: Module["update"] = (input) => {
+const updateFromCmd: Module["update"] = async (input) => {
   if (!input.cmd) {
     return { model: input.model };
   }

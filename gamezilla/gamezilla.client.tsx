@@ -22,13 +22,14 @@ const main = async () => {
     subscriptions: AppClient.subscriptions,
   });
 
-  program.subscribe((model, ctx) => {
+  program.subscribe(async (model, ctx) => {
+    const View = await AppClient.View({
+      now: ctx.now,
+        model: model,
+        dispatch: program.dispatch
+    })
     render(
-      <AppClient.View
-        now={ctx.now}
-        model={model}
-        dispatch={program.dispatch}
-      />,
+      View,
       document.body
     );
   });

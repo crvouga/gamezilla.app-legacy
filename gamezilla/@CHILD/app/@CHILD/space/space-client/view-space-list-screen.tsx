@@ -29,7 +29,7 @@ export const ViewSpaceListScreen = ({
 }) => {
   const user = toUserState(model, ctx.currentUserId);
 
-  const spaces = Object.keys(model.events.indexes.indexSpaceId ?? {}).flatMap(
+  const spaces = Object.keys(model.events._indexes.indexSpaceId ?? {}).flatMap(
     (spaceId) => {
       if (!SpaceId.is(spaceId)) {
         return [];

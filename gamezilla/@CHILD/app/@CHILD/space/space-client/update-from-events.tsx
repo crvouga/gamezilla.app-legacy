@@ -12,18 +12,20 @@ import {
   pushRoute,
   sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
-import { Eff, batchMsgs, chain } from "gamezilla/@SHARED/core";
+import { Eff, batchMsgs } from "gamezilla/@SHARED/core";
 import { Game } from "../@CHILD/game/game.client";
 import {
   ClientModel,
   ClientMsg,
   Event,
+  SpaceEvents,
   SpaceStateStarted,
   ToServer,
   appendEvent,
   toStartedSpace,
   toUserState,
 } from "../space.core";
+import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 
 /**
  * Handles merging new events into the client model
@@ -32,11 +34,11 @@ export function updateFromSpaceEvents(input: {
   ctx: ClientCtx | AnonymousClientCtx;
   model: ClientModel;
   events: WithEventId<Event>[];
-}): {
+}): Promise<{
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} {
+}> {
   return loop(input.ctx, input.events, {
     model: input.model,
     cmd: [],
@@ -44,7 +46,7 @@ export function updateFromSpaceEvents(input: {
   });
 }
 
-function loop(
+async function loop(
   ctx: ClientCtx | AnonymousClientCtx,
   events: WithEventId<Event>[],
   acc: {
@@ -52,24 +54,24 @@ function loop(
     cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
     eff?: Eff<ClientMsg>;
   }
-): {
+): Promise<{
   model: ClientModel;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
   eff?: Eff<ClientMsg>;
-} {
+}> {
   const [event, ...rest] = events;
 
   if (!event) {
     return acc;
   }
 
-  if (event.eventId in acc.model.events.events) {
+  if (await SpaceEvents.has(acc.model.events, event.eventId)) {
     return loop(ctx, rest, acc);
   }
 
   const spaceBefore = toStartedSpace(acc.model, event.spaceId);
 
-  const updated = chain(
+  const updated = await AppClientModule.chainUpdates(
     acc,
     (model) => appendEvents({ model, event }),
     (model) => sendEventToServer({ model, eventId: event.eventId }),
@@ -79,7 +81,7 @@ function loop(
 
   const spaceAfter = toStartedSpace(updated.model, event.spaceId);
 
-  const updatedGame = updateGameFromEvent({
+  const updatedGame = await updateGameFromEvent({
     model: updated.model,
     ctx,
     eventId: event.eventId,
@@ -98,17 +100,17 @@ function loop(
   return loop(ctx, eventsNew, accNew);
 }
 
-function sendEventToServer({
+async function sendEventToServer({
   model,
   eventId,
 }: {
   model: ClientModel;
   eventId: EventId;
-}): {
+}): Promise<{
   model: ClientModel;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} {
-  const eventWithMeta = model.events.events[eventId];
+}> {
+  const eventWithMeta = await SpaceEvents.get(model.events, eventId);
 
   if (!eventWithMeta) {
     return { model };
@@ -122,16 +124,16 @@ function sendEventToServer({
   };
 }
 
-function appendEvents({
+async function appendEvents({
   model,
   event,
 }: {
   model: ClientModel;
   event: WithEventId<Event>;
-}): {
+}): Promise<{
   model: ClientModel;
-} {
-  const appended = appendEvent(model, event);
+}> {
+  const appended = await appendEvent(model, event);
   return { model: { ...model, ...appended } };
 }
 
@@ -163,7 +165,7 @@ function redirectWhenSpaceStarted({
   return { model };
 }
 
-const updateGameFromEvent = ({
+const updateGameFromEvent = async ({
   model,
   eventId,
   ctx,
@@ -175,13 +177,13 @@ const updateGameFromEvent = ({
   model: ClientModel;
   eventId: EventId;
   ctx: ClientCtx | AnonymousClientCtx;
-}): {
+}): Promise<{
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
   event?: WithEventId<Event>[];
-} => {
-  const eventWithMeta = model.events.events[eventId];
+}> => {
+  const eventWithMeta = await SpaceEvents.get(model.events, eventId)
 
   if (!after || !after.game || !ctx.currentUserId || !eventWithMeta) {
     return { model };
