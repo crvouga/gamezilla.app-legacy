@@ -4,7 +4,14 @@ import { PubSub } from "gamezilla/@SHARED/core/sub";
 export type ServerTransportMsg =
   | { t: "client-connected"; clientId: ClientId; sessionId: SessionId }
   | { t: "client-disconnected"; clientId: ClientId; sessionId: SessionId }
-  | { t: "server-started" };
+  | { t: "server-started"; port: number }
+  | {
+      t: "got-bad-msgs";
+      reason: "unknown-msg-type" | "codebase-version-id-mismatch";
+      clientId: ClientId;
+      sessionId: SessionId;
+      msgs: unknown[];
+    };
 
 export type IServerTransport<T extends { ToClient: any; ToServer: any }> = {
   toClient: PubSub<{

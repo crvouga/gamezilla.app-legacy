@@ -1,4 +1,4 @@
-import { ServerWebSocket } from "bun";
+import { Server, ServerWebSocket, WebSocketHandler } from "bun";
 import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { ClientToServerMsg, ServerToClientMsg } from "../transport.core";
 import {
@@ -25,6 +25,9 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
   //
   //
   //
+  // Output
+  //
+  //
   //
 
   const transport = initServerTransport<ToServer, ToClient>();
@@ -32,8 +35,11 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
   //
   //
   //
+  // State
   //
   //
+  //
+
   const clients = new Map<ClientId, ServerWebSocket<ServerWebSocketData>>();
   const clientsBySessionId = new Map<SessionId, Set<ClientId>>();
   const addClient = (ws: ServerWebSocket<ServerWebSocketData>) => {
@@ -43,96 +49,131 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
     clientsBySessionId.set(ws.data.sessionId, clientIds);
   };
 
-  const server = Bun.serve({
-    port: impl.serverPort,
+  //
+  //
+  //
+  // Web Server
+  //
+  //
+  //
 
-    fetch(req, server) {
-      const url = new URL(req.url);
+  const onRequest = (req: Request, server: Server) => {
+    const url = new URL(req.url);
 
-      switch (url.pathname) {
-        case impl.endpoint: {
-          const maybeSessionId = url.searchParams.get("session-id");
+    switch (url.pathname) {
+      case impl.endpoint: {
+        const maybeSessionId = url.searchParams.get("session-id");
 
-          const sessionId = SessionId.is(maybeSessionId)
-            ? maybeSessionId
-            : SessionId.generate();
+        const sessionId = SessionId.is(maybeSessionId)
+          ? maybeSessionId
+          : SessionId.generate();
 
-          const clientId = ClientId.generate();
+        const clientId = ClientId.generate();
 
-          const data: ServerWebSocketData = {
-            clientId,
-            sessionId,
-          };
+        const data: ServerWebSocketData = {
+          clientId,
+          sessionId,
+        };
 
-          const didUpgrade = server.upgrade(req, {
-            headers: {
-              "Set-Cookie": `session-id=${sessionId}; SameSite=None; Secure`,
-            },
-            data,
-          });
+        const didUpgrade = server.upgrade(req, {
+          headers: {
+            "Set-Cookie": `session-id=${sessionId}; SameSite=None; Secure`,
+          },
+          data,
+        });
 
-          if (didUpgrade) {
-            return;
+        if (didUpgrade) {
+          return;
+        }
+        return new Response("Upgrade failed :(", { status: 500 });
+      }
+
+      default: {
+        return new Response("Hello from gamezilla server", { status: 404 });
+      }
+    }
+  };
+
+  const websocket: WebSocketHandler<ServerWebSocketData> = {
+    open(ws: ServerWebSocket<ServerWebSocketData>) {
+      addClient(ws);
+      send(ws, {
+        t: "session-id",
+        codebaseVersionId,
+        sessionId: ws.data.sessionId,
+      });
+      transport.wire.publish({
+        t: "client-connected",
+        clientId: ws.data.clientId,
+        sessionId: ws.data.sessionId,
+      });
+    },
+    close(ws: ServerWebSocket<ServerWebSocketData>, _code, _message) {
+      transport.wire.publish({
+        t: "client-disconnected",
+        clientId: ws.data.clientId,
+        sessionId: ws.data.sessionId,
+      });
+    },
+    drain(_ws) {
+      console.log("drain");
+    },
+    message(ws: ServerWebSocket<ServerWebSocketData>, message) {
+      const msg = JSON.parse(message.toString()) as ClientToServerMsg<ToServer>; // leap of faith
+
+      switch (msg.codebaseVersionId) {
+        case codebaseVersionId: {
+          switch (msg.t) {
+            case "to-server": {
+              transport.toServer.publish({
+                clientId: ws.data.clientId,
+                sessionId: ws.data.sessionId,
+                msgs: msg.msgs,
+              });
+              return;
+            }
+            default: {
+              transport.wire.publish({
+                t: "got-bad-msgs",
+                reason: "unknown-msg-type",
+                clientId: ws.data.clientId,
+                sessionId: ws.data.sessionId,
+                msgs: msg.msgs,
+              });
+              return;
+            }
           }
-          return new Response("Upgrade failed :(", { status: 500 });
         }
 
         default: {
-          return new Response("Hello from gamezilla server", { status: 404 });
+          transport.wire.publish({
+            t: "got-bad-msgs",
+            reason: "codebase-version-id-mismatch",
+            clientId: ws.data.clientId,
+            sessionId: ws.data.sessionId,
+            msgs: msg.msgs,
+          });
+          return;
         }
       }
     },
+  };
 
-    websocket: {
-      message(ws: ServerWebSocket<ServerWebSocketData>, message) {
-        const msg = JSON.parse(
-          message.toString()
-        ) as ClientToServerMsg<ToServer>; // leap of faith
-
-        switch (msg.t) {
-          case "to-server": {
-            if (msg.codebaseVersionId !== codebaseVersionId) {
-              console.error(
-                `Client ${ws.data.clientId} is using codebase version ${msg.codebaseVersionId} but server is using ${codebaseVersionId}`
-              );
-              return;
-            }
-
-            transport.toServer.publish({
-              clientId: ws.data.clientId,
-              sessionId: ws.data.sessionId,
-              msgs: msg.msgs,
-            });
-            return;
-          }
-        }
-      },
-      open(ws: ServerWebSocket<ServerWebSocketData>) {
-        addClient(ws);
-        send(ws, {
-          t: "session-id",
-          codebaseVersionId,
-          sessionId: ws.data.sessionId,
-        });
-
-        transport.wire.publish({
-          t: "client-connected",
-          clientId: ws.data.clientId,
-          sessionId: ws.data.sessionId,
-        });
-      },
-      close(ws: ServerWebSocket<ServerWebSocketData>, _code, _message) {
-        transport.wire.publish({
-          t: "client-disconnected",
-          clientId: ws.data.clientId,
-          sessionId: ws.data.sessionId,
-        });
-      },
-      drain(_ws) {
-        console.log("drain");
-      },
-    },
+  const server = Bun.serve({
+    port: impl.serverPort,
+    fetch: onRequest,
+    websocket,
   });
+
+  transport.wire.publish({ t: "server-started", port: impl.serverPort });
+
+  //
+  //
+  //
+  // Hook up topics
+  //
+  //
+  //
 
   transport.topicPublish.subscribe((msg) => {
     for (const topic of msg.topics) {
@@ -150,9 +191,13 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
     }
   });
 
-  transport.wire.publish({ t: "server-started" });
-
-  console.log(`[server] Listening on port ${impl.serverPort}`);
+  //
+  //
+  //
+  // Hook up toClient
+  //
+  //
+  //
 
   const send = (
     ws: ServerWebSocket<ServerWebSocketData>,
@@ -160,9 +205,6 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
   ) => {
     switch (ws.readyState) {
       case 1: {
-        if (msg.t === "to-client" && msg.msgs.length === 0) {
-          return;
-        }
         ws.send(JSON.stringify(msg));
         return;
       }
@@ -180,17 +222,8 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
 
   transport.toClient.subscribe((toClient) => {
     for (const clientId in toClient) {
-      if (!ClientId.is(clientId)) {
-        continue;
-      }
-
-      const toClientSingle = toClient[clientId];
-
-      if (!toClientSingle) {
-        continue;
-      }
-
-      const client = clients.get(clientId);
+      const toClientSingle = toClient[clientId as ClientId]!;
+      const client = clients.get(clientId as ClientId);
 
       if (!client) {
         continue;
@@ -203,6 +236,13 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
       });
     }
   });
+
+  //
+  //
+  //
+  //
+  //
+  //
 
   return transport;
 };
