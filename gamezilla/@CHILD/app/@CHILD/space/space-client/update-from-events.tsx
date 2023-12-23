@@ -308,7 +308,7 @@ const updateSpaceFromEvent = async ({
           if (event.userId === ctx.currentUserId) {
             return {
               model,
-              cmd: [showToast("You ended the space")],
+              cmd: [showToast("Space ended")],
             };
           }
 
@@ -317,13 +317,13 @@ const updateSpaceFromEvent = async ({
           if (!profile) {
             return {
               model,
-              cmd: [showToast("The host ended the space")],
+              cmd: [showToast("Space ended by host")],
             };
           }
 
           return {
             model,
-            cmd: [showToast(`${profile.username} ended the space`)],
+            cmd: [showToast(`Space ended by ${profile.username}`)],
           };
         }
       );
