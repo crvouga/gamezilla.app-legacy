@@ -446,7 +446,7 @@ export const View = ({
         }}
       />
 
-      <div class="flex w-full flex-1 flex-col overflow-hidden ">
+      <div class="flex w-full flex-1 flex-col overflow-hidden">
         <ViewMain model={model} now={now} dispatch={dispatch} />
       </div>
 
