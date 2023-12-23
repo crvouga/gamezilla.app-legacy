@@ -111,7 +111,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
         model,
         evt: [
           {
-            t: "auth/connected-client-authenticated",
+            t: "auth/connected-client-is-logged-in",
             clientId: msg.clientId,
             sessionId: msg.sessionId,
             userId: msg.result.value.userId,

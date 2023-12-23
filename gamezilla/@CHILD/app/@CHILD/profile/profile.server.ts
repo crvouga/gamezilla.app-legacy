@@ -133,7 +133,7 @@ const updateFromEvt: Module["update"] = async ({ evt, model, ctx }) => {
   }
 
   switch (evt.t) {
-    case "auth/connected-client-authenticated": {
+    case "auth/connected-client-is-logged-in": {
       return {
         model,
         eff: async (dispatch) => {

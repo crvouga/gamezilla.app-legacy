@@ -13,14 +13,14 @@ export type ServerEvt =
       sessionId: SessionId;
     }
   | {
-      t: "auth/connected-client-authenticated";
+      t: "auth/connected-client-is-logged-in";
       userId: UserId;
       sessionId: SessionId;
       clientId: ClientId;
       loggedIn?: boolean;
     }
   | {
-      t: "auth/connected-client-unauthenticated";
+      t: "connected-client-is-logged-out";
       sessionId: SessionId;
       clientId: ClientId;
     };

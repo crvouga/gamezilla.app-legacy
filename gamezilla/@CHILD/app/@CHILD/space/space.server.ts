@@ -168,7 +168,7 @@ const updateFromEvt: Module["update"] = async (input) => {
   }
 
   switch (evt.t) {
-    case "auth/connected-client-authenticated": {
+    case "auth/connected-client-is-logged-in": {
       const state = await toState(model);
       const userState = toUserState(state, evt.userId);
 

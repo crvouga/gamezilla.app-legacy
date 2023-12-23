@@ -126,7 +126,7 @@ const updateFromMsg: Module["update"] = async ({ ctx, model, msg }) => {
         model: modelNew,
         evt: [
           {
-            t: "auth/connected-client-authenticated",
+            t: "auth/connected-client-is-logged-in",
             clientId: msg.clientId,
             sessionId: msg.sessionId,
             userId: msg.result.value.userId,
@@ -159,7 +159,7 @@ const updateFromClient: Module["update"] = async ({
         model: modelNew,
         evt: [
           {
-            t: "auth/connected-client-unauthenticated",
+            t: "connected-client-is-logged-out",
             clientId: fromClient.clientId,
             sessionId: fromClient.sessionId,
           },
@@ -190,7 +190,7 @@ const updateFromEvt: typeof update = async ({ evt, model, ctx }) => {
           model: model,
           evt: [
             {
-              t: "auth/connected-client-unauthenticated",
+              t: "connected-client-is-logged-out",
               clientId: evt.clientId,
               sessionId: evt.sessionId,
             },
@@ -203,14 +203,14 @@ const updateFromEvt: typeof update = async ({ evt, model, ctx }) => {
         evt: [
           {
             ...evt,
-            t: "auth/connected-client-authenticated",
+            t: "auth/connected-client-is-logged-in",
             userId,
           },
         ],
       };
     }
 
-    case "auth/connected-client-authenticated": {
+    case "auth/connected-client-is-logged-in": {
       return AppServerModule.chainUpdates(
         { model },
         async (model) => {
@@ -226,7 +226,7 @@ const updateFromEvt: typeof update = async ({ evt, model, ctx }) => {
             model,
             cmd: [
               sendToClient([evt.clientId], {
-                t: "auth/client-authenticated",
+                t: "client-is-logged-in",
                 userId: evt.userId,
                 sessionId: evt.sessionId,
                 loggedIn: true,
@@ -237,12 +237,12 @@ const updateFromEvt: typeof update = async ({ evt, model, ctx }) => {
       );
     }
 
-    case "auth/connected-client-unauthenticated": {
+    case "connected-client-is-logged-out": {
       return {
         model: model,
         cmd: [
           sendToClient([evt.clientId], {
-            t: "auth/client-unauthenticated",
+            t: "client-is-logged-out",
             sessionId: evt.sessionId,
           }),
         ],
