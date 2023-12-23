@@ -35,6 +35,13 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
   //
   //
   const clients = new Map<ClientId, ServerWebSocket<ServerWebSocketData>>();
+  const clientsBySessionId = new Map<SessionId, Set<ClientId>>();
+  const addClient = (ws: ServerWebSocket<ServerWebSocketData>) => {
+    clients.set(ws.data.clientId, ws);
+    const clientIds = clientsBySessionId.get(ws.data.sessionId) ?? new Set();
+    clientIds.add(ws.data.clientId);
+    clientsBySessionId.set(ws.data.sessionId, clientIds);
+  };
 
   const server = Bun.serve({
     port: impl.serverPort,
@@ -101,8 +108,7 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
         }
       },
       open(ws: ServerWebSocket<ServerWebSocketData>) {
-        clients.set(ws.data.clientId, ws);
-
+        addClient(ws);
         send(ws, {
           t: "session-id",
           codebaseVersionId,
@@ -116,7 +122,6 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
         });
       },
       close(ws: ServerWebSocket<ServerWebSocketData>, _code, _message) {
-        clients.delete(ws.data.clientId);
         transport.wire.publish({
           t: "client-disconnected",
           clientId: ws.data.clientId,
