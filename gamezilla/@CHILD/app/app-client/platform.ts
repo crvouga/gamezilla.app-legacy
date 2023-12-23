@@ -25,14 +25,9 @@ export const init = ({
 };
 
 export type Msg =
-  | {
-      t: "document-visibility-change";
-      state: DocumentVisibilityState;
-    }
-  | {
-      t: "element-focused";
-      id: string;
-    };
+  | { t: "document-became-hidden" }
+  | { t: "document-became-visible" }
+  | { t: "element-focused"; id: string };
 
 export const update = <TClientMsg>({
   msg,
@@ -63,12 +58,15 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
     return { model };
   }
   switch (msg.t) {
-    case "document-visibility-change": {
+    case "document-became-hidden": {
       return {
-        model: {
-          ...model,
-          documentVisibilityState: msg.state,
-        },
+        model: { ...model, documentVisibilityState: "hidden" },
+      };
+    }
+
+    case "document-became-visible": {
+      return {
+        model: { ...model, documentVisibilityState: "visible" },
       };
     }
 
@@ -152,8 +150,15 @@ const updateFromCmd: typeof update = ({ cmd, model }) => {
 };
 
 export const subscriptions: Sub<Msg> = Browser.onDocumentVisibilityState<Msg>(
-  (state) => ({
-    t: "document-visibility-change",
-    state,
-  })
+  (state) => {
+    switch (state) {
+      case "hidden": {
+        return { t: "document-became-hidden" };
+      }
+
+      case "visible": {
+        return { t: "document-became-visible" };
+      }
+    }
+  }
 );
