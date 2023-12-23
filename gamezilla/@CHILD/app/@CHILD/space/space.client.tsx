@@ -47,11 +47,8 @@ import {
   ToClient,
   ToServer,
   initCore,
-  mergeModels,
-  toSpaceState,
-  toStartedSpace,
-  toState,
-  toUserState,
+  initState,
+  mergeModels
 } from "./space.core";
 
 //
@@ -96,6 +93,7 @@ export const init: Module["init"] = async ({ stored }) => {
       games: {},
       modal: null,
       previewUserId: null,
+      state: initState(),
     },
   };
 };
@@ -194,6 +192,7 @@ const updateFromServer: Module["update"] = (input) => {
             events: fromServer.events,
             clock: fromServer.clock,
             snapshots: model.snapshots,
+            latestState: model.latestState,
           });
 
           return { model: { ...model, ...merged } };
@@ -265,9 +264,11 @@ const updateGame: Module["update"] = (input) => {
     return { model };
   }
 
-  const space = toStartedSpace(model, spaceId);
+  const space = model.latestState.spaces[spaceId] ?? {
+    type: "initial",
+  };
 
-  if (!space || !space.game || !ctx.currentUserId) {
+  if (space.type !== "started" || !space.game || !ctx.currentUserId) {
     return { model };
   }
 
@@ -328,14 +329,20 @@ export const subscriptions: Module["subscriptions"] = ({ ctx, model }) => {
 
   const subs: Sub<ClientMsg>[] = [];
 
-  const state = toState(model);
+  const state = model.latestState;
 
   for (const spaceId in state.active) {
     if (!SpaceId.is(spaceId)) {
       continue;
     }
 
-    const space = toStartedSpace(model, spaceId);
+    const space = state.spaces[spaceId] ?? {
+      type: "initial",
+    };
+
+    if (space.type !== "started") {
+      continue;
+    }
 
     if (!space?.game) {
       continue;
@@ -419,7 +426,9 @@ const ViewSpaceScreen = ({
   dispatch: (m: ClientMsg) => void;
   spaceId: SpaceId;
 }) => {
-  const space = toSpaceState(model, spaceId);
+  const space = model.latestState.spaces[spaceId] ?? {
+    type: "initial",
+  };
 
   switch (space.type) {
     case "ended": {
@@ -681,9 +690,10 @@ const ViewSpaceScreenMain = ({
   dispatch: (m: ClientMsg) => void;
   dispatchEvent: (m: Event) => void;
 }) => {
-  const user = toUserState(model, ctx.currentUserId);
+  const currentUserSpaceId =
+    model.latestState.spaceIdByUserId[ctx.currentUserId];
 
-  if (user.spaceId !== space.spaceId) {
+  if (currentUserSpaceId !== space.spaceId) {
     return (
       <ViewSpaceJoinScreen
         ctx={ctx}
@@ -889,15 +899,22 @@ export const ViewCurrentSpaceBar = ({
     });
   };
 
-  const userState = toUserState(model, ctx.currentUserId);
+  const userSpaceId = model.latestState.spaceIdByUserId[ctx.currentUserId];
+
+  const userState = {
+    userId: ctx.currentUserId,
+    spaceId: userSpaceId ?? null,
+  };
 
   if (!userState.spaceId) {
     return null;
   }
 
-  const space = toStartedSpace(model, userState.spaceId);
+  const space = model.latestState.spaces[userState.spaceId] ?? {
+    type: "initial",
+  };
 
-  if (!space) {
+  if (space.type !== "started") {
     return null;
   }
 

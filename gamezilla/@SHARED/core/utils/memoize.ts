@@ -43,3 +43,34 @@ export const memoize = <TInput, TOutput>({
     return y;
   };
 };
+
+
+export const memoizeAsync = <TInput, TOutput>({
+  toKey,
+  func,
+  cacheCapacity,
+}: {
+  toKey: (x: TInput) => string | number;
+  func: (x: TInput) => Promise<TOutput>;
+  cacheCapacity: number;
+}) => {
+  const cache = new LRUCache<string | number, TOutput>({
+    capacity: cacheCapacity,
+  });
+
+  return async (x: TInput): Promise<TOutput> => {
+    const key = toKey(x);
+
+    const cached = cache.get(key);
+
+    if (cached) {
+      return cached;
+    }
+
+    const y = await func(x);
+
+    cache.set(key, y);
+
+    return y;
+  };
+};

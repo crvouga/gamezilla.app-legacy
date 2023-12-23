@@ -115,6 +115,7 @@ const updateFromClient: Module["update"] = async (input) => {
             events: fromClient.events,
             clock: model.clock,
             snapshots: model.snapshots,
+            latestState: model.latestState,
           });
           return {
             model: { ...model, ...merged },
@@ -169,7 +170,7 @@ const updateFromEvt: Module["update"] = async (input) => {
 
   switch (evt.t) {
     case "auth/connected-client-authenticated": {
-      const state = toUserState(model, evt.userId);
+      const state = await toUserState(model, evt.userId);
 
       return {
         model,
@@ -206,7 +207,7 @@ const updateGame: Module["update"] = async (input) => {
     return { model };
   }
 
-  const space = toStartedSpace(model, spaceId);
+  const space = await toStartedSpace(model, spaceId);
 
   if (!space || !space.game) {
     return { model };
@@ -253,14 +254,14 @@ export const subscriptions: Module["subscriptions"] = async ({
 }) => {
   const batch: Sub<ServerMsg>[] = [];
 
-  const state = toState(model);
+  const state = await toState(model);
 
   for (const spaceId in state.active) {
     if (!SpaceId.is(spaceId)) {
       continue;
     }
 
-    const space = toStartedSpace(model, spaceId);
+    const space = await toStartedSpace(model, spaceId);
 
     if (!space?.game) {
       continue;

@@ -69,7 +69,7 @@ async function loop(
     return loop(ctx, rest, acc);
   }
 
-  const spaceBefore = toStartedSpace(acc.model, event.spaceId);
+  const spaceBefore = await toStartedSpace(acc.model, event.spaceId);
 
   const updated = await AppClientModule.chainUpdates(
     acc,
@@ -79,7 +79,7 @@ async function loop(
     (model) => redirectWhenSpaceStarted({ model, ctx, event })
   );
 
-  const spaceAfter = toStartedSpace(updated.model, event.spaceId);
+  const spaceAfter = await toStartedSpace(updated.model, event.spaceId);
 
   const updatedGame = await updateGameFromEvent({
     model: updated.model,
@@ -137,7 +137,7 @@ async function appendEvents({
   return { model: { ...model, ...appended } };
 }
 
-function redirectWhenSpaceStarted({
+async function redirectWhenSpaceStarted({
   model,
   ctx,
   event,
@@ -149,7 +149,7 @@ function redirectWhenSpaceStarted({
   if (
     event.t === "user-started-space" &&
     ctx.currentUserId &&
-    toUserState(model, ctx.currentUserId).spaceId === event.spaceId
+    (await toUserState(model, ctx.currentUserId)).spaceId === event.spaceId
   ) {
     return {
       model,
@@ -243,7 +243,7 @@ const updateGameFromEvent = async ({
   };
 };
 
-const updateSoundFromEvent = ({
+const updateSoundFromEvent = async ({
   ctx,
   model,
   event,
@@ -251,15 +251,15 @@ const updateSoundFromEvent = ({
   ctx: ClientCtx | AnonymousClientCtx;
   model: ClientModel;
   event: Event;
-}): {
+}): Promise<{
   model: ClientModel;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-} => {
+}> => {
   if (!ctx.currentUserId) {
     return { model };
   }
 
-  const currentUserState = toUserState(model, ctx.currentUserId);
+  const currentUserState = await toUserState(model, ctx.currentUserId);
 
   if (event.t === "user-joined-space" && event.userId === ctx.currentUserId) {
     return {

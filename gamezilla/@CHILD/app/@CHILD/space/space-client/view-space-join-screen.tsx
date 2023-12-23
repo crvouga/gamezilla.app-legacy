@@ -10,7 +10,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { gameNameToString } from "../@CHILD/game/game.core";
-import { ClientModel, ClientMsg, Event, toSpaceState } from "../space.core";
+import { ClientModel, ClientMsg, Event } from "../space.core";
 
 export const ViewSpaceJoinScreen = ({
   model,
@@ -23,7 +23,9 @@ export const ViewSpaceJoinScreen = ({
   dispatch: (msg: ClientMsg) => void;
   dispatchEvent: (m: Event) => void;
 }) => {
-  const space = toSpaceState(model, ctx.space.spaceId);
+  const space = model.latestState.spaces[ctx.space.spaceId] ?? {
+    type: "initial",
+  }
 
   if (space.type === "ended") {
     return <div>Space ended</div>;

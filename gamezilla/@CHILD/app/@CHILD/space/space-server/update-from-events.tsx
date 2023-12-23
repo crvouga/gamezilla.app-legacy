@@ -105,7 +105,7 @@ async function sendEventToClients({
     return { model };
   }
 
-  const space = toStartedSpace(model, event.spaceId);
+  const space = await toStartedSpace(model, event.spaceId);
 
   const toClient: ToClient = {
     t: "event",
@@ -171,7 +171,7 @@ async function updateGameFromEvent({
     return { model };
   }
 
-  const space = toStartedSpace(model, eventWithMeta.spaceId);
+  const space = await toStartedSpace(model, eventWithMeta.spaceId);
 
   if (
     !space ||

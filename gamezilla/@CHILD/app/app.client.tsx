@@ -421,7 +421,7 @@ export const View = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  return ( 
+  return (
     <div class="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
       <StatusBar.View
         model={model.statusBar}
@@ -501,14 +501,14 @@ const ViewMain = ({
     }
 
     case "loading": {
-      return <SplashScreen />;
+      return <ViewSplashScreen />;
     }
   }
 };
 
-const SplashScreen = () => {
+const ViewSplashScreen = () => {
   return (
-    <div class="flex h-full w-full items-center justify-center text-8xl">
+    <div class="absolute inset-0 flex h-full w-full items-center justify-center text-8xl">
       🦕
     </div>
   );
@@ -534,7 +534,7 @@ const ViewLoggedOut = ({
       );
     }
     default: {
-      return <SplashScreen />;
+      return <ViewSplashScreen />;
     }
   }
 };
@@ -597,7 +597,7 @@ const ViewLoggedIn = ({
     }
 
     case "auth": {
-      return <SplashScreen />;
+      return <ViewSplashScreen />;
     }
   }
 };
@@ -656,7 +656,8 @@ const ViewBottomBar = ({
               class={cn(
                 "flex flex-1 flex-col items-center justify-center pb-2 pt-1",
                 isSelected ? "text-blue-500" : "opacity-80"
-              )}>
+              )}
+            >
               {item.icon}
               <div class="mt-0.5 text-xs">{item.label}</div>
             </button>

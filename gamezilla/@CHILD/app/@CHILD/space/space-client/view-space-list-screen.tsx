@@ -1,21 +1,19 @@
+import { ViewSpaceHostChip } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
+  Avatar,
   Button,
   IconGamepad,
-  Avatar,
   TopBar,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { ViewSpaceHostChip } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { GameName, gameNameToString } from "../@CHILD/game/game.core";
 import {
   ClientModel,
-  ClientMsg,
-  toSpaceState,
-  toUserState,
+  ClientMsg
 } from "../space.core";
 
 export const ViewSpaceListScreen = ({
@@ -27,23 +25,23 @@ export const ViewSpaceListScreen = ({
   ctx: ClientCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  const user = toUserState(model, ctx.currentUserId);
+  const currentUserSpaceId = model.latestState.spaceIdByUserId[ctx.currentUserId];
 
-  const spaces = Object.keys(model.events._indexes.indexSpaceId ?? {}).flatMap(
-    (spaceId) => {
-      if (!SpaceId.is(spaceId)) {
-        return [];
-      }
-
-      const state = toSpaceState(model, spaceId);
-
-      if (state.type !== "started") {
-        return [];
-      }
-
-      return [state];
+  const spaces = Object.keys(model.latestState.active).flatMap((spaceId) => {
+    if (!SpaceId.is(spaceId)) {
+      return [];
     }
-  );
+
+    const space = model.latestState.spaces[spaceId] ?? {
+      type: "initial",
+    };
+
+    if (space.type !== "started") {
+      return [];
+    }
+
+    return [space];
+  });
 
   return (
     <div class="flex w-full flex-1 flex-col overflow-hidden">
@@ -78,7 +76,7 @@ export const ViewSpaceListScreen = ({
                 avatarUrl: host?.avatarUrl,
               }}
               key={state.spaceId}
-              isCurrentSpace={user.spaceId === state.spaceId}
+              isCurrentSpace={currentUserSpaceId === state.spaceId}
               users={users}
               gameName={gameName}
               onClick={() =>
@@ -89,7 +87,7 @@ export const ViewSpaceListScreen = ({
         })}
       </div>
 
-      {!user.spaceId && (
+      {!currentUserSpaceId && (
         <div class="w-full border-t border-neutral-700 p-4">
           <Button
             size="lg"
@@ -147,7 +145,8 @@ const ViewSpaceCard = ({
   return (
     <button
       onClick={onClick}
-      class="flex flex-col gap-3 rounded-md bg-blue-600 p-4 active:opacity-70">
+      class="flex flex-col gap-3 rounded-md bg-blue-600 p-4 active:opacity-70"
+    >
       <div class="flex w-full items-center justify-start">
         <p class="block flex-1 text-left font-bold uppercase">LIVE</p>
         {isCurrentSpace && <p class="block text-xs italic">Current space</p>}

@@ -90,8 +90,8 @@ test("current user starting space", async () => {
     spaceId,
     userId: ctx.currentUserId,
   });
-  const before = SpaceCore.toUserState(initial.model, ctx.currentUserId);
-  const after = SpaceCore.toUserState(started.model, ctx.currentUserId);
+  const before = await SpaceCore.toUserState(initial.model, ctx.currentUserId);
+  const after = await SpaceCore.toUserState(started.model, ctx.currentUserId);
 
   expect(before).toEqual({ spaceId: null, userId: ctx.currentUserId });
   expect(after).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
@@ -137,8 +137,8 @@ test("current user joining started space", async () => {
     userId: ctx.currentUserId,
   });
 
-  const before = SpaceCore.toUserState(started.model, ctx.currentUserId);
-  const after = SpaceCore.toUserState(joined.model, ctx.currentUserId);
+  const before = await SpaceCore.toUserState(started.model, ctx.currentUserId);
+  const after = await SpaceCore.toUserState(joined.model, ctx.currentUserId);
 
   expect(before).toEqual({ spaceId: null, userId: ctx.currentUserId });
   expect(after).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
@@ -168,8 +168,8 @@ test("current user leaving joined space", async () => {
     userId: ctx.currentUserId,
   });
 
-  const before = SpaceCore.toUserState(joined.model, ctx.currentUserId);
-  const after = SpaceCore.toUserState(left.model, ctx.currentUserId);
+  const before = await SpaceCore.toUserState(joined.model, ctx.currentUserId);
+  const after = await SpaceCore.toUserState(left.model, ctx.currentUserId);
 
   expect(before).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
   expect(after).toEqual({ spaceId: null, userId: ctx.currentUserId });
@@ -206,8 +206,8 @@ test("prevent joining a space if already in a space", async () => {
     userId: ctx.currentUserId,
   });
 
-  const before = SpaceCore.toUserState(joinedA.model, ctx.currentUserId);
-  const after = SpaceCore.toUserState(joinedB.model, ctx.currentUserId);
+  const before = await SpaceCore.toUserState(joinedA.model, ctx.currentUserId);
+  const after = await SpaceCore.toUserState(joinedB.model, ctx.currentUserId);
 
   expect(before).toEqual({ spaceId: spaceIdA, userId: ctx.currentUserId });
   expect(after).toEqual({ spaceId: spaceIdA, userId: ctx.currentUserId });
