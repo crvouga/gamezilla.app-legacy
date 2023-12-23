@@ -195,6 +195,16 @@ if (typeof window !== "undefined" && "customElements" in window) {
             prevColumns: this.prevProps?.columns ?? null,
           });
         }
+
+        const root = this.shadowRoot?.querySelector("svg");
+
+        if (root) {
+          if (this.props?.disabled) {
+            root.classList.add("pointer-events-none");
+          } else {
+            root.classList.remove("pointer-events-none");
+          }
+        }
       }
     }
   );

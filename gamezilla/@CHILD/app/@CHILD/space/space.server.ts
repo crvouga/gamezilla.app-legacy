@@ -170,7 +170,7 @@ const updateFromEvt: Module["update"] = async (input) => {
 
   switch (evt.t) {
     case "auth/connected-client-authenticated": {
-      const state = await toUserState(model, evt.userId);
+      const state = toUserState(model.latestState, evt.userId);
 
       return {
         model,
@@ -207,7 +207,7 @@ const updateGame: Module["update"] = async (input) => {
     return { model };
   }
 
-  const space = await toStartedSpace(model, spaceId);
+  const space = toStartedSpace(model.latestState, spaceId);
 
   if (!space || !space.game) {
     return { model };
@@ -261,7 +261,7 @@ export const subscriptions: Module["subscriptions"] = async ({
       continue;
     }
 
-    const space = await toStartedSpace(model, spaceId);
+    const space = toStartedSpace(state, spaceId);
 
     if (!space?.game) {
       continue;

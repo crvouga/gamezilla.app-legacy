@@ -87,6 +87,7 @@ export type VsBotGameProps = VsBotProps & {
     player: PlayerType;
     userId: UserId;
   };
+  isSpectating: boolean;
 };
 
 export type Status =
@@ -109,10 +110,12 @@ export const ViewStatusBar = (props: VsBotProps & { status: Status }) => {
       mode="in-out"
       onEnter={fadeIn({ duration: 300, delay: 0 })}
       onExit={fadeOut({ duration: 300, delay: 0 })}
-      class="relative h-8 w-full">
+      class="relative h-8 w-full"
+    >
       <div
         key={statusToKey(props.status)}
-        class="absolute inset-0 flex items-center justify-center gap-1 text-secondary">
+        class="absolute inset-0 flex items-center justify-center gap-1 text-secondary"
+      >
         <ViewStatusBarContent {...props} />
       </div>
     </Transition>
@@ -181,7 +184,9 @@ const ViewStatusBarContent = (props: VsBotProps & { status: Status }) => {
   }
 };
 
-export const ViewGameOverOverlay = (props: Props) => {
+export const ViewGameOverOverlay = (
+  props: Props & { isSpectating: boolean }
+) => {
   const { gameOver } = props;
 
   return (
@@ -189,16 +194,19 @@ export const ViewGameOverOverlay = (props: Props) => {
       id="game-over-overlay"
       mode="out-in"
       onEnter={fadeIn({ duration: 200, delay: 500 })}
-      onExit={fadeOut({ duration: 200, delay: 0 })}>
+      onExit={fadeOut({ duration: 200, delay: 0 })}
+    >
       {gameOver?.t === "winner" && (
         <button
           class="absolute inset-0 flex flex-col items-center justify-center bg-black/70"
-          onClick={props.onPlayAgain}>
+          disabled={props.isSpectating}
+          onClick={!props.isSpectating ? props.onPlayAgain : undefined}
+        >
           <div class="flex-1"></div>
 
           <Winner {...props} winner={gameOver.winner} />
 
-          {props.onPlayAgain ? (
+          {props.onPlayAgain && !props.isSpectating ? (
             <div class="flex flex-1 items-center justify-center pb-2 text-2xl font-bold">
               Tap to play again
             </div>
@@ -210,12 +218,14 @@ export const ViewGameOverOverlay = (props: Props) => {
       {gameOver?.t === "draw" && (
         <button
           class="absolute inset-0 flex flex-col items-center justify-center bg-black/60"
-          onClick={props.onPlayAgain}>
+          disabled={props.isSpectating}
+          onClick={!props.isSpectating ? props.onPlayAgain : undefined}
+        >
           <div class="flex-1"></div>
 
           <Draw {...props} />
 
-          {props.onPlayAgain ? (
+          {props.onPlayAgain && !props.isSpectating ? (
             <div class="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0">
               Tap to play again
             </div>
@@ -371,7 +381,8 @@ const Slot = ({
       className={cn(
         "flex max-w-full flex-1 items-center gap-2 rounded-md border border-b-2 border-neutral-600 bg-neutral-900 p-2 text-sm transition-colors duration-200 ease-in-out",
         active && "border-b-blue-500"
-      )}>
+      )}
+    >
       {children}
     </div>
   );

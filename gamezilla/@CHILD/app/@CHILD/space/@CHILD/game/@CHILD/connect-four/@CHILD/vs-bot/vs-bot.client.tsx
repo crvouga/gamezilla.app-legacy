@@ -392,6 +392,7 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
       ...vsBotSetupProps.human,
       userId: gameState.playingUserId,
     },
+    isSpectating: ctx.currentUserId !== gameState.playingUserId,
     turn:
       status.type !== "Playing"
         ? null
@@ -400,8 +401,10 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
         : "player-two",
   };
 
+  const isSpectating = ctx.currentUserId !== gameState.playingUserId;
+
   return (
-    <GameLayout isSpectating={ctx.currentUserId !== gameState.playingUserId}>
+    <GameLayout isSpectating={isSpectating}>
       <div class="flex w-full flex-1 flex-col items-center justify-center gap-1">
         <VsBotGame.VsBotPlayerSection {...vsBotGameProps} />
 
@@ -414,10 +417,7 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
           <ViewColumns
             gameId={0}
             columns={gameState.columns}
-            disabled={
-              ctx.currentUserId !== gameState.playingUserId ||
-              status.type !== "Playing"
-            }
+            disabled={isSpectating || status.type !== "Playing"}
             onDropDisc={(columnIndex) => {
               dispatch({
                 t: "user-dropped-disc",

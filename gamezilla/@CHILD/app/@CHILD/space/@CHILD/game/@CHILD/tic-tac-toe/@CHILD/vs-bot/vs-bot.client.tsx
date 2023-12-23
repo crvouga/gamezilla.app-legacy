@@ -215,6 +215,7 @@ export const View = ({
       userId: model.player,
     },
     turn: null,
+    isSpectating: false,
   };
 
   const turn = toTurn(model.board);

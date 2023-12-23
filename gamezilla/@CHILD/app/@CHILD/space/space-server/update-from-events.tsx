@@ -105,7 +105,7 @@ async function sendEventToClients({
     return { model };
   }
 
-  const space = await toStartedSpace(model, event.spaceId);
+  const space = toStartedSpace(model.latestState, event.spaceId);
 
   const toClient: ToClient = {
     t: "event",
@@ -130,7 +130,7 @@ async function syncUserWhenJoined({
   event: WithEventId<Event>;
 }): Promise<Output> {
   if (event.t === "user-joined-space") {
-    const space = toStartedSpace(model, event.spaceId);
+    const space = toStartedSpace(model.latestState, event.spaceId);
 
     if (!space) {
       return { model };
@@ -171,7 +171,7 @@ async function updateGameFromEvent({
     return { model };
   }
 
-  const space = await toStartedSpace(model, eventWithMeta.spaceId);
+  const space = toStartedSpace(model.latestState, eventWithMeta.spaceId);
 
   if (
     !space ||

@@ -55,7 +55,7 @@ export type ClientModel = CoreModel & {
     [spaceId: SpaceId]: Game.ClientModel;
   };
   previewUserId: UserId | null;
-  modal: ModalModel;  
+  modal: ModalModel;
 };
 
 type ModalModel = null | "user-preview" | "users";
@@ -212,28 +212,10 @@ const config = SpaceEvents.config({
   toOrdering: (event) => LamportTimestamp.toNumber(event.happenedAt),
 });
 
-type UserState = {
-  userId: UserId;
-  spaceId: SpaceId | null;
-};
-
-export const toUserState = async (model: CoreModel, userId: UserId): Promise<UserState> => {
-  const state = await toState(model);
-
-  const userSpaceId = state.spaceIdByUserId[userId];
-
-  const stateUser: UserState = {
-    userId,
-    spaceId: userSpaceId ?? null,
-  };
-
-  return stateUser;
-};
-
 //
 //
 //
-// Msg
+//
 //
 //
 //
@@ -291,38 +273,6 @@ export type StateSpace =
   | SpaceStateStarted
   | SpaceStateEnded;
 
-export const toSpaceState = async (
-  model: CoreModel,
-  spaceId: SpaceId
-): Promise<StateSpace> => {
-  const state = await toState(model);
-
-  const spaceState: StateSpace = state.spaces[spaceId] ?? {
-    type: "initial",
-  };
-
-  return spaceState;
-};
-
-export const toStartedSpace = async (
-  model: CoreModel,
-  spaceId: SpaceId
-): Promise<SpaceStateStarted | null> => {
-  const state = await toState(model);
-
-  const spaceState: StateSpace = state.spaces[spaceId] ?? {
-    type: "initial",
-  };
-
-  switch (spaceState.type) {
-    case "initial":
-    case "ended":
-      return null;
-    case "started":
-      return spaceState;
-  }
-};
-
 export type State = {
   spaces: {
     [spaceId: SpaceId]: StateSpace;
@@ -345,6 +295,47 @@ export const initState = (): State => {
     active: {},
     errorsByUserId: {},
   };
+};
+
+export const toSpaceState = (state: State, spaceId: SpaceId): StateSpace => {
+  const spaceState: StateSpace = state.spaces[spaceId] ?? {
+    type: "initial",
+  };
+
+  return spaceState;
+};
+
+export const toStartedSpace = (
+  state: State,
+  spaceId: SpaceId
+): SpaceStateStarted | null => {
+  const spaceState: StateSpace = state.spaces[spaceId] ?? {
+    type: "initial",
+  };
+
+  switch (spaceState.type) {
+    case "initial":
+    case "ended":
+      return null;
+    case "started":
+      return spaceState;
+  }
+};
+
+type UserState = {
+  userId: UserId;
+  spaceId: SpaceId | null;
+};
+
+export const toUserState = (state: State, userId: UserId): UserState => {
+  const userSpaceId = state.spaceIdByUserId[userId];
+
+  const stateUser: UserState = {
+    userId,
+    spaceId: userSpaceId ?? null,
+  };
+
+  return stateUser;
 };
 
 const reducer = ({

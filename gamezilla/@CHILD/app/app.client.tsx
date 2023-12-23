@@ -422,7 +422,7 @@ export const View = ({
   dispatch: (msg: ClientMsg) => void;
 }) => {
   return (
-    <div class="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
+    <div class="relative flpex h-full w-full flex-col items-center justify-center overflow-hidden">
       <StatusBar.View
         model={model.statusBar}
         dispatch={(c) => dispatch({ t: "status-bar", c })}
