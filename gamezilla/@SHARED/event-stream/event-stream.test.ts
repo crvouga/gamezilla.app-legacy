@@ -18,7 +18,7 @@ type EventMeta = {
 const withId = <T>(eventNew: T): T & EventMeta => {
   return {
     ...eventNew,
-    happenedAt: Posix.now$(),
+    happenedAt: Posix.now(),
     eventId: Math.random().toString(),
   };
 };
@@ -153,7 +153,7 @@ export const buildTest = <TInstance>(
   });
 
   test("should be able to merge", async () => {
-    const t0 = Posix.now$();
+    const t0 = Posix.now();
 
     const event1 = withMetaAt(
       {

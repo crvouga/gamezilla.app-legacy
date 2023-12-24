@@ -69,7 +69,7 @@ const onTimeout = (intervalId: string, timeSpan: TimeSpan) => {
   const sub = intervals.get(intervalId);
 
   if (sub && sub.isSubscribed()) {
-    sub.publish(Posix.now$());
+    sub.publish(Posix.now());
 
     setTimeout(() => {
       onTimeout(intervalId, timeSpan);
@@ -89,7 +89,7 @@ const interval = <Msg>(
   const sub = intervals.get(intervalId);
 
   if (sub) {
-    return Sub.map(sub, () => f(Posix.now$()));
+    return Sub.map(sub, () => f(Posix.now()));
   }
 
   const subNew = PubSub.create<Posix>();

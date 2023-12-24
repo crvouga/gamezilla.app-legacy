@@ -1,4 +1,6 @@
 import {
+  DbConnSql,
+  SMS,
   ServerCmd,
   ServerCtx,
   ServerEvt,
@@ -18,7 +20,10 @@ import { toSessionId } from "./@CHILD/auth/auth.core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
 import * as ProfileServer from "./@CHILD/profile/profile.server";
 import * as SpaceServer from "./@CHILD/space/space.server";
-import { ServerTransport } from "./@CHILD/wire/transport-server";
+import {
+  IServerTransport,
+  ServerTransport,
+} from "./@CHILD/wire/transport-server";
 import * as WireServer from "./@CHILD/wire/wire.server";
 import { Logger, LoggerConsole } from "./@SHARED/server/logger";
 import { createDbConn } from "./app-server/db-conn-sql";
@@ -40,14 +45,54 @@ import {
 //
 //
 
-const transport = ServerTransport<ToServer, ToClient>({
-  codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
-  impl: {
-    t: "bun-web-sockets",
-    serverPort: PUBLIC_APP_CONFIG.SERVER_PORT,
-    endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
-  },
-});
+export type Deps = {
+  logger: Logger;
+  dbConn: DbConnSql;
+  sms: SMS;
+  transport: IServerTransport<{
+    ToClient: ToClient;
+    ToServer: ToServer;
+  }>;
+};
+
+export const getDeps = async (): Promise<Result<string, Deps>> => {
+  const logger = LoggerConsole("app");
+
+  const databaseUrl =
+    process.env.NODE_ENV === "production"
+      ? process.env["DATABASE_URL_PROD"]
+      : process.env["DATABASE_URL"];
+
+  if (!databaseUrl) {
+    return err("databaseUrl not found in env vars");
+  }
+
+  const created = await createDbConn({ databaseUrl, logger });
+
+  if (isErr(created)) {
+    return created;
+  }
+
+  const dbConn = created.value;
+
+  const sms = createSMS("twilio");
+
+  const transport = ServerTransport<ToServer, ToClient>({
+    codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
+    impl: {
+      t: "bun-web-sockets",
+      serverPort: PUBLIC_APP_CONFIG.SERVER_PORT,
+      endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
+    },
+  });
+
+  return ok({
+    transport,
+    sms,
+    logger,
+    dbConn,
+  });
+};
 
 //
 //
@@ -57,14 +102,19 @@ const transport = ServerTransport<ToServer, ToClient>({
 //
 //
 
-export const init = async ({
-  ctx,
-}: {
-  ctx: ServerCtx;
+export const init = async (input: {
+  ctx: { now: Posix };
+  deps: Deps;
 }): Promise<{
   model: ServerModel;
   eff?: Eff<ServerMsg>;
 }> => {
+  const ctx: ServerCtx = {
+    dbConn: input.deps.dbConn,
+    logger: input.deps.logger,
+    now: input.ctx.now,
+  };
+
   const wire = await WireServer.init();
 
   const space = await SpaceServer.init({
@@ -103,21 +153,29 @@ export const init = async ({
 export const update = async (input: {
   msg: ServerMsg;
   model: ServerModel;
-  ctx: ServerCtx;
+  ctx: { now: Posix };
+  deps: Deps;
 }): Promise<{
   model: ServerModel;
   eff?: Eff<ServerMsg>;
 }> => {
-  logMsg({ msg: input.msg, logger: input.ctx.logger });
+  logMsg({ msg: input.msg, logger: input.deps.logger });
+
+  const ctx: ServerCtx = {
+    dbConn: input.deps.dbConn,
+    logger: input.deps.logger,
+    now: input.ctx.now,
+  };
 
   const updatedFromMsg = await updateChild({
-    ctx: input.ctx,
+    deps: input.deps,
+    ctx: ctx,
     model: input.model,
     msg: input.msg,
     fromClient: input.msg.t === "➡️" ? { ...input.msg, ...input.msg.c } : null,
   });
 
-  const updated = await updateLoop(input.ctx, updatedFromMsg);
+  const updated = await updateLoop(input.deps, ctx, updatedFromMsg);
 
   return {
     model: updated.model,
@@ -150,11 +208,15 @@ type Output = {
   cmd: ServerCmd<ToClient>[];
 };
 
-const updateLoop = async (ctx: ServerCtx, acc: Output): Promise<Output> => {
+const updateLoop = async (
+  deps: Deps,
+  ctx: ServerCtx,
+  acc: Output
+): Promise<Output> => {
   const [cmd, ...cmdRest] = acc.cmd;
 
   if (cmd) {
-    const updatedCmd = await updateChild({ ctx, model: acc.model, cmd });
+    const updatedCmd = await updateChild({ deps, ctx, model: acc.model, cmd });
 
     const accNew: Output = {
       model: updatedCmd.model,
@@ -163,13 +225,13 @@ const updateLoop = async (ctx: ServerCtx, acc: Output): Promise<Output> => {
       evt: batchMsgs(acc.evt, updatedCmd.evt),
     };
 
-    return updateLoop(ctx, accNew);
+    return updateLoop(deps, ctx, accNew);
   }
 
   const [evt, ...evtRest] = acc.evt;
 
   if (evt) {
-    const updatedEvt = await updateChild({ ctx, model: acc.model, evt });
+    const updatedEvt = await updateChild({ deps, ctx, model: acc.model, evt });
 
     const accNew: Output = {
       model: updatedEvt.model,
@@ -178,7 +240,7 @@ const updateLoop = async (ctx: ServerCtx, acc: Output): Promise<Output> => {
       evt: batchMsgs(evtRest, updatedEvt.evt),
     };
 
-    return updateLoop(ctx, accNew);
+    return updateLoop(deps, ctx, accNew);
   }
 
   return acc;
@@ -191,7 +253,9 @@ export const updateChild = async ({
   evt,
   cmd,
   model,
+  deps,
 }: {
+  deps: Deps;
   ctx: ServerCtx;
   model: ServerModel;
   msg?: ServerMsg;
@@ -234,7 +298,7 @@ export const updateChild = async ({
       fromClient?.t === "wire" ? { ...fromClient, ...fromClient.c } : null,
     msg: msg?.t === "wire" ? msg.c : null,
     toSessionId: (userId) => toSessionId(ctx, model.auth, userId),
-    transport,
+    transport: deps.transport,
   });
 
   const profile = await ProfileServer.update({
@@ -283,22 +347,25 @@ export const updateChild = async ({
 //
 //
 
-export const subscriptions = async ({
-  model,
-  ctx,
-}: {
+export const subscriptions = async (input: {
+  deps: Deps;
   model: ServerModel;
-  ctx: ServerCtx;
+  ctx: { now: Posix };
 }): Promise<Sub<ServerMsg>> => {
+  const ctx: ServerCtx = {
+    dbConn: input.deps.dbConn,
+    logger: input.deps.logger,
+    now: input.ctx.now,
+  }
   return Sub.batch([
     Sub.tag(
       "space",
-      await SpaceServer.subscriptions({ model: model.space, ctx })
+      await SpaceServer.subscriptions({ model: input.model.space, ctx })
     ),
-    Sub.tag("wire", WireServer.subscriptions({ transport })),
+    Sub.tag("wire", WireServer.subscriptions({ transport: input.deps.transport })),
 
     Sub.flat(
-      Sub.map(transport.toServer, ({ sessionId, clientId, msgs }) =>
+      Sub.map(input.deps.transport.toServer, ({ sessionId, clientId, msgs }) =>
         msgs.map(
           (msg: any): ServerMsg => ({
             t: "➡️",
@@ -310,41 +377,4 @@ export const subscriptions = async ({
       )
     ),
   ]);
-};
-
-//
-//
-//
-//
-//
-//
-
-export const createCtx = async (): Promise<Result<string, ServerCtx>> => {
-  const logger = LoggerConsole("app");
-
-  const databaseUrl =
-    process.env.NODE_ENV === "production"
-      ? process.env["DATABASE_URL_PROD"]
-      : process.env["DATABASE_URL"];
-
-  if (!databaseUrl) {
-    return err("databaseUrl not found in env vars");
-  }
-
-  const created = await createDbConn({ databaseUrl, logger });
-
-  if (isErr(created)) {
-    return created;
-  }
-
-  const dbConn = created.value;
-
-  const sms = createSMS("twilio");
-
-  return ok({
-    sms,
-    logger,
-    dbConn,
-    now: Posix.now$(),
-  });
 };

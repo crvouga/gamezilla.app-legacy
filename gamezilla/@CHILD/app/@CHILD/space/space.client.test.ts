@@ -14,7 +14,7 @@ const ctx: ClientCtx = {
     },
   },
   documentVisibilityState: "visible",
-  now: Posix.now$(),
+  now: Posix.now(),
   profiles: {},
   currentUserId: UserId.generate(),
 };

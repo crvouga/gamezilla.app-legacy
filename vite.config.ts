@@ -5,8 +5,8 @@ import preact from "@preact/preset-vite";
 import react from "@vitejs/plugin-react";
 import * as config from "./config";
 
-function getVdomPlugin() {
-  switch (config.vDom) {
+function rendererPlugin() {
+  switch (config.renderer) {
     case "inferno": {
       return inferno();
     }
@@ -19,9 +19,9 @@ function getVdomPlugin() {
   }
 }
 
-// https://vivittejs.dev/config/
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tsconfigPaths(), getVdomPlugin()],
+  plugins: [tsconfigPaths(), rendererPlugin()],
   server: {
     hmr: false,
   },

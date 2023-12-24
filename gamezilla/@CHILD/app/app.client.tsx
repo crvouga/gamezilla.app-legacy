@@ -25,7 +25,7 @@ import {
 import * as AuthClient from "./@CHILD/auth/auth.client";
 import * as ProfileClient from "./@CHILD/profile/profile.client";
 import * as SpaceClient from "./@CHILD/space/space.client";
-import { ClientTransport } from "./@CHILD/wire/transport-client";
+import { ClientTransport, IClientTransport } from "./@CHILD/wire/transport-client";
 import * as Wire from "./@CHILD/wire/wire.client";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import {
@@ -44,14 +44,25 @@ import {
 //
 //
 
-export const transport = ClientTransport<ToServer, ToClient>({
-  impl: {
-    t: "web-sockets",
-    serverUrl: PUBLIC_APP_CONFIG.SERVER_URL,
-    endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
-  },
-  codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
-});
+export type Deps = {
+  transport: IClientTransport<{ToServer: ToServer, ToClient: ToClient}>;
+}
+
+export const getDeps = (): Deps => {
+  const transport = ClientTransport<ToServer, ToClient>({
+    impl: {
+      t: "web-sockets",
+      serverUrl: PUBLIC_APP_CONFIG.SERVER_URL,
+      endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
+    },
+    codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
+  })
+  return {
+    transport,
+  };
+}
+
+
 
 //
 //
@@ -67,7 +78,9 @@ export const init = async ({
   location,
   stored,
   ctx,
+  deps
 }: {
+  deps: Deps,
   stored: ClientModel | null;
   ctx: { now: Posix };
   location: Browser.Location;
@@ -150,7 +163,7 @@ export const init = async ({
     preloadSound(Object.values(APP_SOUND))
   );
 
-  const updated = await updateLoop(ctx.now, {
+  const updated = await updateLoop(deps, ctx.now, {
     model: initialModel,
     eff: initialEff,
     cmd: initialCmd,
@@ -175,6 +188,7 @@ export const update = async (input: {
   ctx: { now: Posix };
   msg: ClientMsg;
   model: ClientModel;
+  deps: Deps;
 }): Promise<{
   model: ClientModel;
   eff?: Eff<ClientMsg>;
@@ -191,9 +205,10 @@ export const update = async (input: {
     model: input.model,
     msg: input.msg,
     fromServer: fromServer,
+    deps: input.deps,
   });
 
-  const updated = await updateLoop(input.ctx.now, updatedFromMsg);
+  const updated = await updateLoop(input.deps, input.ctx.now, updatedFromMsg);
 
   return updated;
 };
@@ -205,13 +220,13 @@ type Output = {
   cmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 };
 
-const updateLoop = async (now: Posix, acc: Output): Promise<Output> => {
+const updateLoop = async (deps: Deps, now: Posix, acc: Output): Promise<Output> => {
   const [cmd, ...cmdRest] = acc.cmd;
 
   if (cmd) {
     console.log("[cmd]", toMsgType(cmd));
-    const updatedCmd = await updateChild({ now, model: acc.model, cmd });
-    return updateLoop(now, {
+    const updatedCmd = await updateChild({deps, now, model: acc.model, cmd });
+    return updateLoop(deps,now, {
       model: updatedCmd.model,
       cmd: [...cmdRest, ...updatedCmd.cmd],
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
@@ -223,8 +238,8 @@ const updateLoop = async (now: Posix, acc: Output): Promise<Output> => {
 
   if (evt) {
     console.log("[evt]", toMsgType(evt));
-    const updatedEvt = await updateChild({ now, model: acc.model, evt });
-    return updateLoop(now, {
+    const updatedEvt = await updateChild({ deps, now, model: acc.model, evt });
+    return updateLoop(deps, now, {
       model: updatedEvt.model,
       cmd: [...cmdRest, ...updatedEvt.cmd],
       eff: Eff.batch([acc.eff, updatedEvt.eff]),
@@ -242,7 +257,9 @@ const updateChild = async ({
   fromServer,
   evt,
   cmd,
+  deps,
 }: {
+  deps: Deps;
   now: Posix;
   model: ClientModel;
   msg?: ClientMsg;
@@ -290,7 +307,7 @@ const updateChild = async ({
     msg: msg?.t === "wire" ? msg.c : null,
     fromServer: fromServer?.t === "wire" ? fromServer.c : null,
     cmd: cmd?.t === "wire" ? cmd : null,
-    transport,
+    transport: deps.transport,
   });
 
   const sound = await Sound.update({
@@ -398,6 +415,7 @@ const toCtx = (input: {
 
 export const subscriptions = (input: {
   ctx: { now: Posix };
+  deps: Deps;
   model: ClientModel;
 }): Sub<ClientMsg> => {
   const { ctx, model } = input;
@@ -405,8 +423,8 @@ export const subscriptions = (input: {
   const ctxApp = toCtx(input);
 
   return Sub.batch<ClientMsg>([
-    Sub.tag("➡️", Sub.flat(transport.toClient)),
-    Sub.tag("wire", Wire.subscriptions({ transport })),
+    Sub.tag("➡️", Sub.flat(input.deps.transport.toClient)),
+    Sub.tag("wire", Wire.subscriptions({ transport: input.deps.transport })),
     Sub.tag("platform", Platform.subscriptions),
     Sub.tag("routing", Routing.subscriptions),
     Sub.tag("toast", Toast.subscriptions({ ctx, model: model.toast })),

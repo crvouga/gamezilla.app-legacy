@@ -32,7 +32,7 @@ const toNumber = (posixTime: Posix): number => {
 /**
  * Impure function that returns the current posix timestamp.
  */
-const now$ = (): Posix => {
+const now = (): Posix => {
   return fromNumber(Date.now());
 };
 
@@ -47,6 +47,6 @@ export const Posix = {
   is,
   fromNumber,
   toNumber,
-  now$,
+  now,
   diff,
 };

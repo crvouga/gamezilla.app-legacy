@@ -1,27 +1,31 @@
 import { Eff } from "./eff";
 import { Sub } from "./sub";
-import { Posix } from "./data";
 
-export type Ctx = { now: Posix };
+// 
+// 
+// 
+// 
+// 
+// 
 
-type Subscriber<Model, Msg> = (
+type Subscriber<Model, Msg, TCtx> = (
   model: Model,
-  ctx: Ctx,
+  ctx: TCtx,
   msg: Msg | null
 ) => Promise<void> | void;
 
-export type Program<Model, Msg> = {
-  dispatch: (msg: Msg) => void;
-  subscribe: (subscriber: Subscriber<Model, Msg>) => () => void;
+export type Program<TModel, TMsg, TCtx> = {
+  dispatch: (msg: TMsg) => void;
+  subscribe: (subscriber: Subscriber<TModel, TMsg, TCtx>) => () => void;
   start: () => Promise<() => void>;
-  getModel: () => Model;
-  setModel: (model: Model) => void;
+  getModel: () => TModel;
+  setModel: (model: TModel) => Promise<void>;
 };
 
 type MaybePromise<T> = T | Promise<T>;
 
-type ProgramConfig<Model, Msg, TCtx = Ctx> = {
-  getCtx?: () => MaybePromise<TCtx>;
+type ProgramConfig<Model, Msg, TCtx> = {
+  getCtx: () => MaybePromise<TCtx>;
   init: (input: {
     ctx: TCtx;
   }) => MaybePromise<{ model: Model; eff?: Eff<Msg> }>;
@@ -37,38 +41,47 @@ type ProgramConfig<Model, Msg, TCtx = Ctx> = {
   }) => MaybePromise<Sub<Msg>>;
 };
 
-export function create<Model, Msg>(
-  input: ProgramConfig<Model, Msg>
-): Program<Model, Msg> {
-  const programId = `program:${Math.random().toString(36).slice(2)}`;
-  const subscribers = new Map<number, Subscriber<Model, Msg>>();
-  let isProcessing = false;
-  const messageQueue: Msg[] = [];
-  let unsubscribe: () => void = () => {};
-  let state: { model: Model; eff?: Eff<Msg> } | null = null;
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
 
-  function publish(model: Model, ctx: Ctx, msg: Msg | null) {
+export function create<TModel, TMsg, TCtx>(
+  config: ProgramConfig<TModel, TMsg, TCtx>
+): Program<TModel, TMsg, TCtx> {
+  const programId = `program:${Math.random().toString(36).slice(2)}`;
+  const subscribers = new Map<number, Subscriber<TModel, TMsg, TCtx>>();
+  let isProcessing = false;
+  const messageQueue: TMsg[] = [];
+  let unsubscribe: () => void = () => {};
+  let state: { model: TModel; eff?: Eff<TMsg> } | null = null;
+
+  function publish(model: TModel, ctx: TCtx, msg: TMsg | null) {
     for (const subscriber of subscribers.values()) {
       subscriber(model, ctx, msg);
     }
   }
 
-  const onMsg = async (msg: Msg) => {
-    const ctx = { now: Posix.now$() };
-    const updated = await input.update({ ctx, msg, model: state!.model });
+  const onMsg = async (msg: TMsg) => {
+    const ctx = await config.getCtx();
+    const updated = await config.update({ ctx, msg, model: state!.model });
     setState(updated, ctx, msg);
   };
 
   const setState = async (
-    newState: { model: Model; eff?: Eff<Msg> },
-    ctx: Ctx,
-    msg: Msg | null
+    newState: { model: TModel; eff?: Eff<TMsg> },
+    ctx: TCtx,
+    msg: TMsg | null
   ) => {
     state = newState;
 
     publish(state.model, ctx, msg);
 
-    const sub = await input.subscriptions({
+    const sub = await config.subscriptions({
       intervalId: programId,
       ctx,
       model: state.model,
@@ -85,7 +98,7 @@ export function create<Model, Msg>(
     }
   };
 
-  const dispatch = (msg: Msg) => {
+  const dispatch = (msg: TMsg) => {
     messageQueue.push(msg);
     processQueue();
   };
@@ -109,7 +122,7 @@ export function create<Model, Msg>(
   //
 
   let runningSubscriberId = 0;
-  const subscribe = (subscriber: Subscriber<Model, Msg>): (() => void) => {
+  const subscribe = (subscriber: Subscriber<TModel, TMsg, TCtx>): (() => void) => {
     subscribers.set(++runningSubscriberId, subscriber);
 
     const unsubscribe = () => {
@@ -120,9 +133,9 @@ export function create<Model, Msg>(
   };
 
   const start = async () => {
-    const ctx = { now: Posix.now$() };
-
-    const init = await input.init({ ctx });
+    const ctx = await config.getCtx();
+    
+    const init = await config.init({ ctx });
 
     setState(init, ctx, null);
 
@@ -146,8 +159,8 @@ export function create<Model, Msg>(
     return state!.model;
   };
 
-  const setModel = (newState: Model) => {
-    const ctx = { now: Posix.now$() };
+  const setModel = async (newState: TModel) => {
+    const ctx = await config.getCtx();
     state = { model: newState };
     publish(state.model, ctx, null);
   };

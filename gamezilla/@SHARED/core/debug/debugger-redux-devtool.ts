@@ -447,8 +447,8 @@ const unsafeCopy = <A>(a: A): A => {
 /**
  * Attaches program to the redux dev tools extension.
  */
-export const attachDebuggerBrowserExtension = <Model, Msg extends object>(
-  program: Program<Model, Msg>,
+export const attachDebuggerBrowserExtension = <Model, Msg extends object, Ctx>(
+  program: Program<Model, Msg, Ctx>,
   global: Global = window
 ) => {
   const connection = getBrowserExtensionConnection<Model, Msg>(global);
@@ -460,8 +460,8 @@ export const attachDebuggerBrowserExtension = <Model, Msg extends object>(
   return null;
 };
 
-export const attachDebugger = <Model, Msg extends object>(
-  program: Program<Model, Msg>,
+export const attachDebugger = <Model, Msg extends object, Ctx>(
+  program: Program<Model, Msg, Ctx>,
   connection: ReduxDevToolsConnection<Model, Msg>
 ) => {
   connection.subscribe((msg) => {

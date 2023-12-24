@@ -1,98 +1,51 @@
 import * as config from "config.ts";
-import { Browser, Ctx, Program } from "gamezilla/@SHARED/core";
+import { Browser, Posix, Program } from "gamezilla/@SHARED/core";
 import * as AppClient from "./@CHILD/app/app.client";
 import * as App from "./@CHILD/app/app.core";
 import { attachDebuggerBrowserExtension } from "./@SHARED/core/debug";
 
-const program = Program.create({
-  init: (input) => {
-    const init = AppClient.init({
-      ...input,
-      location: Browser.getLocation(),
-      stored: null,
-    });
+type Ctx = {
+  now: Posix;
+};
 
-    return init;
-  },
+async function main() {
+  const renderer = await getRenderer();
 
-  update: AppClient.update,
+  const deps = AppClient.getDeps();
 
-  subscriptions: AppClient.subscriptions,
-});
+  const program = Program.create<App.ClientModel, App.ClientMsg, Ctx>({
+    getCtx() {
+      return {
+        now: Posix.now(),
+      };
+    },
+    init: (input) => {
+      const init = AppClient.init({
+        deps,
+        ctx: input.ctx,
+        location: Browser.getLocation(),
+        stored: null,
+      });
 
-async function attachRenderer() {
-  const rootNode = document.getElementById("root")!;
-  console.log(`vDom: ${config.vDom}`);
+      return init;
+    },
 
-  switch (config.vDom) {
-    case "inferno": {
-      const { render } = await import("inferno");
+    update: (input) => AppClient.update({ ...input, deps }),
 
-      function rendererInferno(model: App.ClientModel, ctx: Ctx) {
-        render(
-          <AppClient.View
-            dispatch={program.dispatch}
-            model={model}
-            now={ctx.now}
-          />,
-          rootNode
-        );
-      }
+    subscriptions: (input) => AppClient.subscriptions({ ...input, deps }),
+  });
 
-      program.subscribe(rendererInferno);
-      break;
-    }
+  program.subscribe(renderer(program.dispatch));
 
-    case "react": {
-      const { createRoot } = await import("react-dom/client");
-      await import("react");
-
-      const reactRoot = createRoot(rootNode);
-
-      function rendererReact(model: App.ClientModel, ctx: Ctx) {
-        reactRoot.render(
-          <AppClient.View
-            dispatch={program.dispatch}
-            model={model}
-            now={ctx.now}
-          />
-        );
-      }
-
-      program.subscribe(rendererReact);
-      break;
-    }
-
-    case "preact": {
-      const { render } = await import("preact");
-      await import("preact/compat");
-
-      function rendererPreact(model: App.ClientModel, ctx: Ctx) {
-        render(
-          <AppClient.View
-            dispatch={program.dispatch}
-            model={model}
-            now={ctx.now}
-          />,
-          rootNode
-        );
-      }
-
-      program.subscribe(rendererPreact);
-      break;
-    }
-  }
-}
-
-async function start() {
-  await attachRenderer();
   await program.start();
+
   if (process.env.NODE_ENV === "development") {
     attachDebuggerBrowserExtension(program);
   }
+
 }
 
-start();
+main();
 
 /**
  * Use this to persist state across page refreshes.
@@ -155,3 +108,50 @@ export function renderRuntimeErrors() {
   }
 }
 renderRuntimeErrors();
+
+type Renderer = (
+  dispatch: (m: App.ClientMsg) => void
+) => (model: App.ClientModel, ctx: Ctx) => void;
+
+async function getRenderer(): Promise<Renderer> {
+  const rootNode = document.getElementById("root")!;
+  console.log(`renderer: ${config.renderer}`);
+
+  switch (config.renderer) {
+    case "inferno": {
+      const { render } = await import("inferno");
+
+      return (dispatch) => (model, ctx) => {
+        render(
+          <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />,
+          rootNode
+        );
+      };
+    }
+
+    case "react": {
+      const { createRoot } = await import("react-dom/client");
+      await import("react");
+
+      const reactRoot = createRoot(rootNode);
+
+      return (dispatch) => (model, ctx) => {
+        reactRoot.render(
+          <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />
+        );
+      };
+    }
+
+    case "preact": {
+      const { render } = await import("preact");
+      await import("preact/compat");
+
+      return (dispatch) => (model, ctx) => {
+        render(
+          <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />,
+          rootNode
+        );
+      };
+    }
+  }
+}

@@ -1,20 +1,26 @@
-import { Program, isErr } from "gamezilla/@SHARED/core";
+import { Posix, Program, isErr } from "gamezilla/@SHARED/core";
 import * as AppServer from "./@CHILD/app/app.server";
 
 const main = async () => {
-  const created = await AppServer.createCtx();
+  const got = await AppServer.getDeps();
 
-  if (isErr(created)) {
-    console.error(created.error);
+  if (isErr(got)) {
+    console.error(got.error);
     return;
   }
 
-  const baseCtx = created.value;
+  const deps = got.value;
 
   const program = Program.create({
+    getCtx() {
+      return {
+        now: Posix.now()
+      }
+    },
     init: async ({ ctx }) => {
       const initial = await AppServer.init({
-        ctx: { ...baseCtx, ...ctx },
+        ctx,
+        deps,
       });
 
       return initial;
@@ -22,9 +28,8 @@ const main = async () => {
 
     update: async (input) => {
       const updated = await AppServer.update({
-        ctx: { ...baseCtx, ...input.ctx },
-        model: input.model,
-        msg: input.msg,
+        ...input,
+        deps,
       });
 
       return updated;
@@ -32,8 +37,9 @@ const main = async () => {
 
     subscriptions: async (input) => {
       const sub = await AppServer.subscriptions({
-        ...input,
-        ctx: { ...baseCtx, ...input.ctx },
+        ctx: input.ctx,
+        model: input.model,
+        deps,
       });
 
       return sub;
@@ -42,7 +48,7 @@ const main = async () => {
 
   program.start();
 
-  baseCtx.logger.info("Server started");
+  deps.logger.info("Server started");
 };
 
 main();
