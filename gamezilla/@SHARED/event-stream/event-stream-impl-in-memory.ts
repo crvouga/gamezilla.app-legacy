@@ -156,7 +156,7 @@ export const EventStreamInMemory = <
       return streamNew;
     },
 
-    async startingAt(_config, instance, eventId) {
+    async startingAt(config, instance, eventId) {
       const orderingIndex = instance._ordering.indexOf(eventId);
 
       if (orderingIndex === undefined) {
@@ -166,15 +166,62 @@ export const EventStreamInMemory = <
       const newOrdering = instance._ordering.slice(orderingIndex);
 
       const newEvents: Model["_events"] = {};
+      let newIndexes: Model["_indexes"] = {};
 
       for (const eventId of newOrdering) {
         newEvents[eventId] = instance._events[eventId];
+        const updated = updateIndexes(
+          config,
+          {
+            _events: newEvents,
+            _indexes: newIndexes,
+            _ordering: newOrdering,
+            _hash: 0,
+          },
+          instance._events[eventId]!
+        )
+        newIndexes = updated._indexes;
       }
 
-      return {
+      return  {
         _events: newEvents,
-        _hash: 0,
-        _indexes: instance._indexes,
+        _hash: hash(newOrdering),
+        _indexes: newIndexes,
+        _ordering: newOrdering,
+      };
+    },
+
+    async endingAt(config, instance, eventId) {
+      const orderingIndex = instance._ordering.indexOf(eventId);
+
+      if (orderingIndex === undefined) {
+        return instance;
+      }
+
+      const newOrdering = instance._ordering.slice(0, orderingIndex + 1);
+
+      const newEvents: Model["_events"] = {};
+      let newIndexes: Model["_indexes"] = {};
+
+      for (const eventId of newOrdering) {
+        newEvents[eventId] = instance._events[eventId];
+        const updated = updateIndexes(
+          config,
+          {
+            _events: newEvents,
+            _indexes: newIndexes,
+            _ordering: newOrdering,
+            _hash: 0,
+          },
+          instance._events[eventId]!
+        )
+        newIndexes = updated._indexes;
+      }
+
+      return  {
+        _events: newEvents,
+        _hash: hash(newOrdering),
+        _indexes: newIndexes,
         _ordering: newOrdering,
       };
     },

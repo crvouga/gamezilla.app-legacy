@@ -246,6 +246,7 @@ const updateFromEvt: Module["update"] = (input) => {
             t: "sync",
             events: model.events,
             clock: model.clock,
+            snapshots: model.snapshots,
             profiles: currentUserProfile
               ? {
                   [currentUserProfile.userId]: currentUserProfile,

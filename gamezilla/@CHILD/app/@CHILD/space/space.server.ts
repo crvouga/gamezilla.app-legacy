@@ -5,8 +5,7 @@ import {
   ServerCtx,
   ServerEvt,
   broadcast,
-  sendToClient,
-  topicSubscribe,
+  topicSubscribe
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Sub } from "gamezilla/@SHARED/core";
 import { AppServerModule } from "../../@SHARED/architecture/app-server";
@@ -22,8 +21,9 @@ import {
   initCore,
   mergeModels,
   toStartedSpace,
+  toStartingAt,
   toState,
-  toUserState,
+  toUserState
 } from "./space.core";
 
 //
@@ -120,7 +120,7 @@ const updateFromClient: Module["update"] = async (input) => {
             model: { ...model, ...merged },
           };
         },
-        (model) => {
+        (model) => { 
           return {
             model: {
               ...model,
@@ -131,16 +131,19 @@ const updateFromClient: Module["update"] = async (input) => {
             },
           };
         },
-        (model) => {
+        async (model) => {
+          const starting = await toStartingAt(model, fromClient.clock)
+        
           return {
             model,
             cmd: [
               broadcast<ToClient>({
                 t: "sync",
-                events: model.events,
+                events: starting.events,
+                clock: starting.clock,
+                snapshots: starting.snapshots,
                 causedBy: fromClient,
                 profiles: model.profileCache,
-                clock: model.clock,
               }),
             ],
           };
@@ -175,12 +178,6 @@ const updateFromEvt: Module["update"] = async (input) => {
       return {
         model,
         cmd: [
-          sendToClient([evt.clientId], {
-            t: "sync",
-            causedBy: evt,
-            events: model.events,
-            clock: model.clock,
-          }),
           topicSubscribe([`space/${userState.spaceId}`], [evt.clientId]),
           topicSubscribe([`spaces`], [evt.clientId]),
         ],

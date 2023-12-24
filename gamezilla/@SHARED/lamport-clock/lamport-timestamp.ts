@@ -25,9 +25,49 @@ const max = (
   return fromNumber(Math.max(timestampA._value, timestampB._value));
 };
 
+ const lte = (
+  timestampA: LamportTimestamp,
+  timestampB: LamportTimestamp
+): boolean => {
+  return timestampA._value <= timestampB._value;
+}
+
+const gte = (
+  timestampA: LamportTimestamp,
+  timestampB: LamportTimestamp
+): boolean => {
+  return timestampA._value >= timestampB._value;
+}
+
+const eq = (
+  timestampA: LamportTimestamp,
+  timestampB: LamportTimestamp
+): boolean => {
+  return timestampA._value === timestampB._value;
+}
+
+const lt = (
+  timestampA: LamportTimestamp,
+  timestampB: LamportTimestamp
+): boolean => {
+  return timestampA._value < timestampB._value;
+}
+
+const gt = (
+  timestampA: LamportTimestamp,
+  timestampB: LamportTimestamp
+): boolean => {
+  return timestampA._value > timestampB._value;
+}
+
 export const LamportTimestamp = {
   fromNumber,
   toNumber,
   max,
   increment,
+  lte,
+  lt,
+  eq,
+  gte,
+  gt,
 };

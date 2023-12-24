@@ -10,6 +10,13 @@ export type IEventStreamConfig<
   };
 };
 
+export type IEventStreamInstance<
+  _TEventId extends string,
+  _TEvent,
+  _TIndexName extends string
+> = {
+  _type: 'IEventStreamInstance'
+};
 
 export type IEventStream<
   TEventId extends string,
@@ -20,7 +27,7 @@ export type IEventStream<
   toHash: (instance: TInstance) => string | number;
   config: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>
-  ) => IEventStreamConfig<TEventId, TEvent, TIndexName>
+  ) => IEventStreamConfig<TEventId, TEvent, TIndexName>;
   init: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>
   ) => Promise<TInstance>;
@@ -28,12 +35,15 @@ export type IEventStream<
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
     events: TEvent[]
   ) => Promise<TInstance>;
-  toArray: (
-    instance: TInstance,
-  ) => Promise<TEvent[]>;
+  toArray: (instance: TInstance) => Promise<TEvent[]>;
   equals: (left: TInstance, right: TInstance) => Promise<boolean>;
   get: (instance: TInstance, eventId: TEventId) => Promise<TEvent | null>;
   startingAt: (
+    config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
+    instance: TInstance,
+    eventId: TEventId
+  ) => Promise<TInstance>;
+  endingAt: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
     instance: TInstance,
     eventId: TEventId
@@ -58,5 +68,6 @@ export type IEventStream<
   has: (instance: TInstance, eventId: TEventId) => Promise<boolean>;
 };
 
-
-export type EventStreamInferInstance<T extends IEventStream<any, any, any, any>> = T extends IEventStream<any, any, any, infer TInstance> ? TInstance : never;
+export type EventStreamInferInstance<
+  T extends IEventStream<any, any, any, any>
+> = T extends IEventStream<any, any, any, infer TInstance> ? TInstance : never;

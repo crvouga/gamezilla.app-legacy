@@ -3,7 +3,10 @@ import { AppRoute } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { memoizeAsync } from "gamezilla/@SHARED/core";
 import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
-import { EventStreamInMemory, EventStreamInferInstance } from "gamezilla/@SHARED/event-stream";
+import {
+  EventStreamInMemory,
+  EventStreamInferInstance,
+} from "gamezilla/@SHARED/event-stream";
 import {
   LamportClock,
   LamportTimestamp,
@@ -30,12 +33,13 @@ export const SpaceEvents = EventStreamInMemory<
   Indexes
 >();
 
-export type SpaceEventsInstance = EventStreamInferInstance<typeof SpaceEvents>
+export type SpaceEventsInstance = EventStreamInferInstance<typeof SpaceEvents>;
 
-export type CoreModel= {
+export type CoreModel = {
   clock: LamportClock;
   snapshots: CappedOrderedDict<EventId, State>;
   events: SpaceEventsInstance;
+
 };
 
 export type ServerModel = CoreModel & {
@@ -58,6 +62,50 @@ export type ClientModel = CoreModel & {
 
 type ModalModel = null | "user-preview" | "users";
 
+export const toStartingAt = async (
+  model: CoreModel,
+  clock: LamportClock
+): Promise<CoreModel> => {
+  let eventId: EventId | null = null;
+
+  for (const event of await SpaceEvents.toArray(model.events)) {
+    if (
+      LamportTimestamp.lte(event.happenedAt, LamportClock.toCurrentTime(clock))
+    ) {
+      eventId = event.eventId;
+      break;
+    }
+  }
+
+  if (!eventId) {
+    return model;
+  }
+
+  const endingAt = await SpaceEvents.endingAt(config, model.events, eventId);
+  const newInitialState = await deriveState({
+    clock: model.clock,
+    events: endingAt,
+    snapshots: model.snapshots,
+  });
+  const newSnapshots = CappedOrderedDict.add(
+    CappedOrderedDict.init<EventId, State>({ maxSize: 5 }),
+    eventId,
+    newInitialState
+  );
+
+  const startingAt = await SpaceEvents.startingAt(
+    config,
+    model.events,
+    eventId
+  );
+
+  return {
+    events: startingAt,
+    snapshots: newSnapshots,
+    clock: model.clock,
+  };
+};
+
 //
 //
 //
@@ -76,7 +124,8 @@ export type ToClient = ToClientExtra &
     | {
         t: "sync";
         events: CoreModel["events"];
-        clock: LamportClock;
+        clock: CoreModel["clock"];
+        snapshots: CoreModel["snapshots"];
       }
     | {
         t: "game";
@@ -95,7 +144,8 @@ export type ToServer = ToServerExtra &
     | {
         t: "sync";
         events: CoreModel["events"];
-        clock: LamportClock;
+        clock: CoreModel["clock"];
+        snapshots: CoreModel["snapshots"];
       }
     | {
         t: "game";
@@ -150,7 +200,7 @@ export const appendEvent = async (
 ): Promise<CoreModel> => {
   const eventWithMeta: WithEventMeta<Event> = {
     ...event,
-    happenedAt: LamportClock.toTimestamp(model.clock),
+    happenedAt: LamportClock.toCurrentTime(model.clock),
   };
 
   const appended: CoreModel = {
@@ -159,7 +209,7 @@ export const appendEvent = async (
     events: await SpaceEvents.append(config, model.events, eventWithMeta),
   };
 
-  const stateNew = await deriveStateWithSnapshots(appended);
+  const stateNew = await deriveState(appended);
 
   const added: CoreModel = {
     ...appended,
@@ -564,7 +614,7 @@ const reducer = ({
   }
 };
 
-const deriveStateWithSnapshots = async (model: CoreModel): Promise<State> => {
+const deriveState = async (model: CoreModel): Promise<State> => {
   let derivedState: State = initState();
   const eventIds: EventId[] = [];
 
@@ -605,14 +655,14 @@ const deriveStateWithSnapshots = async (model: CoreModel): Promise<State> => {
 
 export const toStateMemoized = memoizeAsync({
   toKey: (model) => SpaceEvents.toHash(model.events),
-  func: deriveStateWithSnapshots,
+  func: deriveState,
   cacheCapacity: 100,
 });
 
 export const toState = toStateMemoized;
 
 const exposed = {
-  deriveStateWithSnapshots,
+  deriveStateWithSnapshots: deriveState,
   toState,
   toSpaceState,
   SpaceEvents,
