@@ -210,8 +210,8 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
 
       return (
         <GameLayout isSpectating={currentUserPlayerType === null}>
-          <div class="flex w-full flex-1 flex-col items-center justify-center gap-2">
-            <div class="flex w-full items-center gap-2 px-2">
+          <div className="flex w-full flex-1 flex-col items-center justify-center gap-2">
+            <div className="flex w-full items-center gap-2 px-2">
               <PlayerSlot
                 playerType="player-one"
                 gameState={gameState}
@@ -226,7 +226,7 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
 
             <Feedback ctx={ctx} gameState={gameState} />
 
-            <div class="relative w-full">
+            <div className="relative w-full">
               <ViewColumns
                 columns={gameState.columns}
                 gameId={gameState.gameId}
@@ -246,7 +246,7 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
                 }
               />
               {gameState.type === "game-over" && (
-                <div class="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
+                <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
                   <ViewGameOverMessage
                     dispatch={dispatch}
                     ctx={ctx}
@@ -262,7 +262,7 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
               ...(gameState.type === "game"
                 ? [
                     {
-                      icon: <IconFlag class="h-6 w-6" />,
+                      icon: <IconFlag className="h-6 w-6" />,
                       label: "Resign",
                       onClick: () => {
                         dispatch({
@@ -277,7 +277,7 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
               ctx.currentUserId === ctx.space.hostId
                 ? [
                     {
-                      icon: <IconArrowLeftOnRect class="h-6 w-6" />,
+                      icon: <IconArrowLeftOnRect className="h-6 w-6" />,
                       label: "Exit",
                       onClick: () => {
                         dispatch({
@@ -287,7 +287,7 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
                       },
                     },
                     {
-                      icon: <IconArrowRotateLeft class="h-6 w-6" />,
+                      icon: <IconArrowRotateLeft className="h-6 w-6" />,
                       label: "Rematch",
                       onClick: () => {
                         dispatch({
@@ -302,7 +302,7 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
           />
 
           <ConformationDialog
-            headerIcon={<IconFlag class="h-10 w-10" />}
+            headerIcon={<IconFlag className="h-10 w-10" />}
             title="Resign from game?"
             onCancel={() => dispatch({ t: "close-modal" })}
             onClose={() => dispatch({ t: "close-modal" })}
@@ -335,8 +335,8 @@ const ViewGameOverMessage = ({
   ) {
     return (
       <>
-        <p class="mb-4 text-center text-xl">Waiting for response</p>
-        <IconSpinner class="mb-4 h-8 w-8 animate-spin" />
+        <p className="mb-4 text-center text-xl">Waiting for response</p>
+        <IconSpinner className="mb-4 h-8 w-8 animate-spin" />
         <Button
           variant="contained"
           onClick={() =>
@@ -359,7 +359,7 @@ const ViewGameOverMessage = ({
     return (
       <>
         <p>Rematch?</p>
-        <div class="flex w-full items-center justify-center gap-4">
+        <div className="flex w-full items-center justify-center gap-4">
           <Button
             variant="contained"
             onClick={() =>
@@ -369,7 +369,7 @@ const ViewGameOverMessage = ({
                 response: "Decline",
               })
             }
-            start={<IconXMark class="h-6 w-6" />}
+            start={<IconXMark className="h-6 w-6" />}
             text="Decline"
           />
 
@@ -382,7 +382,7 @@ const ViewGameOverMessage = ({
                 response: "Decline",
               })
             }
-            start={<IconCheckmarkCircle class="h-6 w-6" />}
+            start={<IconCheckmarkCircle className="h-6 w-6" />}
             text="Accept"
           />
         </div>
@@ -391,7 +391,7 @@ const ViewGameOverMessage = ({
   }
 
   if (gameState.gameOver.type === "Draw") {
-    return <p class="text-xl">Tie</p>;
+    return <p className="text-xl">Tie</p>;
   }
 
   if (gameState.gameOver.type === "resignation") {
@@ -403,7 +403,7 @@ const ViewGameOverMessage = ({
     if (currentPlayerType === null) {
       return (
         <>
-          <div class="flex w-full items-center justify-center">
+          <div className="flex w-full items-center justify-center">
             <PlayerIcon playerType={winner} />
             <Avatar
               alt=""
@@ -428,11 +428,11 @@ const ViewGameOverMessage = ({
 
     if (currentPlayerType === null) {
       return (
-        <div class="flex w-full flex-col items-center justify-center gap-2">
-          <div class="flex w-full items-center justify-center gap-2">
-            <PlayerIcon playerType={winner} class="h-20 w-20" />
+        <div className="flex w-full flex-col items-center justify-center gap-2">
+          <div className="flex w-full items-center justify-center gap-2">
+            <PlayerIcon playerType={winner} className="h-20 w-20" />
             <Avatar
-              class="h-20 w-20"
+              className="h-20 w-20"
               src={ctx.profiles[gameState.players[winner]]?.avatarUrl}
             />
           </div>
@@ -456,7 +456,7 @@ const Feedback = ({
 }) => {
   if (gameState.type === "game-over") {
     return (
-      <p class="flex items-center justify-center text-secondary">Game Over</p>
+      <p className="flex items-center justify-center text-secondary">Game Over</p>
     );
   }
 
@@ -466,16 +466,16 @@ const Feedback = ({
 
   if (currentUserPlayerType !== turn) {
     return (
-      <p class="flex items-center justify-center gap-2 text-center text-secondary">
-        <PlayerIcon class="h-4 w-4" playerType={turn} />
+      <p className="flex items-center justify-center gap-2 text-center text-secondary">
+        <PlayerIcon className="h-4 w-4" playerType={turn} />
         Turn
       </p>
     );
   }
 
   return (
-    <p class="flex items-center justify-center gap-2 text-center">
-      <PlayerIcon class="h-4 w-4" playerType={turn} />
+    <p className="flex items-center justify-center gap-2 text-center">
+      <PlayerIcon className="h-4 w-4" playerType={turn} />
       Your Turn
     </p>
   );
@@ -491,14 +491,14 @@ const PlayerSlot = ({
   ctx: SpaceClientCtx;
 }) => {
   return (
-    <div class="flex flex-1 items-center gap-2 overflow-hidden rounded border border-neutral-700 p-2">
-      <PlayerIcon class="h-8 w-8" playerType={playerType} />
+    <div className="flex flex-1 items-center gap-2 overflow-hidden rounded border border-neutral-700 p-2">
+      <PlayerIcon className="h-8 w-8" playerType={playerType} />
       <Avatar
-        class="h-8 w-8"
+        className="h-8 w-8"
         alt=""
         src={ctx.profiles[gameState.players[playerType]]?.avatarUrl}
       />
-      <p class="text-secondary">
+      <p className="text-secondary">
         {ctx.profiles[gameState.players[playerType]]?.username ?? "..."}
       </p>
     </div>

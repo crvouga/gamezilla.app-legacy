@@ -527,7 +527,7 @@ const ViewSpaceStarted = ({
       >
         <div>
           <button
-            class="flex w-full flex-col items-center justify-center gap-2 p-4"
+            className="flex w-full flex-col items-center justify-center gap-2 p-4"
             onClick={() => {
               if (model.previewUserId) {
                 dispatch({
@@ -549,14 +549,14 @@ const ViewSpaceStarted = ({
                   ? ctx.profiles[model.previewUserId]?.avatarUrl
                   : undefined
               }
-              class="h-24 w-24"
+              className="h-24 w-24"
             />
-            <p class="text-xl font-semibold">
+            <p className="text-xl font-semibold">
               {model.previewUserId
                 ? ctx.profiles[model.previewUserId]?.username ?? "..."
                 : "..."}
             </p>
-            <div class="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               {spaceCtx.space.hostId === model.previewUserId && (
                 <ViewSpaceHostChip />
               )}
@@ -566,7 +566,7 @@ const ViewSpaceStarted = ({
             </div>
           </button>
 
-          <div class="w-full px-4 pb-8">
+          <div className="w-full px-4 pb-8">
             <Button
               onClick={() => {
                 if (model.previewUserId) {
@@ -582,7 +582,7 @@ const ViewSpaceStarted = ({
                   });
                 }
               }}
-              class="w-full"
+              className="w-full"
               text="See profile"
             />
           </div>
@@ -609,7 +609,7 @@ const ViewFeed = ({
   }
 
   return (
-    <div class="flex h-6 w-full items-center justify-center border-b border-neutral-700 p-1">
+    <div className="flex h-6 w-full items-center justify-center border-b border-neutral-700 p-1">
       <ViewFeedItem ctx={ctx} event={event} state={state} />
     </div>
   );
@@ -723,12 +723,12 @@ const ViewSpaceScreenMain = ({
   }
 
   return (
-    <div class="flex h-full w-full flex-1 flex-col">
+    <div className="flex h-full w-full flex-1 flex-col">
       <ViewTopBar ctx={ctx} dispatch={dispatch} dispatchEvent={dispatchEvent} />
 
       <ViewFeed state={space} ctx={ctx} model={model} dispatch={dispatch} />
 
-      <div class="flex w-full flex-1 flex-col overflow-hidden">
+      <div className="flex w-full flex-1 flex-col overflow-hidden">
         <ViewGame
           ctx={ctx}
           dispatch={dispatch}
@@ -780,7 +780,7 @@ function ViewTopBar({
   const peopleCount = Object.keys(ctx.space.users).length;
 
   return (
-    <nav class="flex h-14 w-full items-center border-b border-neutral-700">
+    <nav className="flex h-14 w-full items-center border-b border-neutral-700">
       <ViewTopButton
         onClick={() =>
           dispatch({
@@ -789,19 +789,19 @@ function ViewTopBar({
           })
         }
         label="Home"
-        icon={<IconHome class="h-6 w-6" />}
+        icon={<IconHome className="h-6 w-6" />}
       />
 
       <ViewTopButton
         onClick={() => dispatch({ t: "clicked-people-button" })}
         label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
-        icon={<IconUserGroup class="h-6 w-6" />}
+        icon={<IconUserGroup className="h-6 w-6" />}
       />
 
-      <div class="flex-1"></div>
+      <div className="flex-1"></div>
 
       {ctx.space.hostId !== ctx.currentUserId && (
-        <div class="p-2">
+        <div className="p-2">
           <Button
             color="danger"
             variant="contained"
@@ -818,7 +818,7 @@ function ViewTopBar({
         </div>
       )}
       {ctx.space.hostId === ctx.currentUserId && (
-        <div class="p-2">
+        <div className="p-2">
           <Button
             color="danger"
             variant="contained"
@@ -848,9 +848,9 @@ function ViewTopButton({
   onClick: () => void;
 }) {
   return (
-    <button class="grid w-20 place-items-center py-1" onClick={onClick}>
+    <button className="grid w-20 place-items-center py-1" onClick={onClick}>
       {icon}
-      <p class="text-xs">{label}</p>
+      <p className="text-xs">{label}</p>
     </button>
   );
 }
@@ -861,8 +861,8 @@ const ViewSpaceNotFound = ({
   dispatch: (m: ClientMsg) => void;
 }) => {
   return (
-    <div class="flex flex-1 flex-col items-center justify-center gap-4">
-      <p class="text-center text-2xl">Space not found</p>
+    <div className="flex flex-1 flex-col items-center justify-center gap-4">
+      <p className="text-center text-2xl">Space not found</p>
       <Button
         onClick={() =>
           dispatch({
@@ -873,7 +873,7 @@ const ViewSpaceNotFound = ({
         size="lg"
         variant="contained"
         color="primary"
-        start={<IconHome class="h-6 w-6" />}
+        start={<IconHome className="h-6 w-6" />}
         text="Go Home"
       />
     </div>
@@ -882,8 +882,8 @@ const ViewSpaceNotFound = ({
 
 const ViewSpaceEnded = ({ dispatch }: { dispatch: (m: ClientMsg) => void }) => {
   return (
-    <div class="flex flex-1 flex-col items-center justify-center gap-4">
-      <p class="text-center text-2xl">Space ended</p>
+    <div className="flex flex-1 flex-col items-center justify-center gap-4">
+      <p className="text-center text-2xl">Space ended</p>
       <Button
         onClick={() =>
           dispatch({
@@ -894,7 +894,7 @@ const ViewSpaceEnded = ({ dispatch }: { dispatch: (m: ClientMsg) => void }) => {
         size="lg"
         variant="contained"
         color="primary"
-        start={<IconHome class="h-6 w-6" />}
+        start={<IconHome className="h-6 w-6" />}
         text="Go Home"
       />
     </div>
@@ -943,9 +943,9 @@ export const ViewCurrentSpaceBar = ({
   const userCount = Object.values(space.users).length;
 
   return (
-    <div class="flex w-full items-center overflow-hidden border-t-2 border-blue-600 text-inherit">
+    <div className="flex w-full items-center overflow-hidden border-t-2 border-blue-600 text-inherit">
       <button
-        class="flex flex-1 items-center overflow-hidden"
+        className="flex flex-1 items-center overflow-hidden"
         onClick={() => {
           dispatch({
             t: "clicked-link",
@@ -956,26 +956,26 @@ export const ViewCurrentSpaceBar = ({
           });
         }}
       >
-        <div class="mr-2 p-2">
+        <div className="mr-2 p-2">
           {!game && (
             <Avatar
               src={hostProfile?.avatarUrl}
               alt="Host Avatar"
-              class="h-12 w-12"
+              className="h-12 w-12"
             />
           )}
           {game && (
-            <div class="h-12 w-12 overflow-hidden rounded border border-neutral-600">
+            <div className="h-12 w-12 overflow-hidden rounded border border-neutral-600">
               <CoverArt gameName={game.t} />
             </div>
           )}
         </div>
 
-        <div class="flex flex-1 flex-col gap-1 overflow-hidden">
-          <p class="text-left">
+        <div className="flex flex-1 flex-col gap-1 overflow-hidden">
+          <p className="text-left">
             {hostProfile ? `${hostProfile.username}'s space` : "..."}
           </p>
-          <p class="text-left text-xs text-neutral-300">{userCount} in space</p>
+          <p className="text-left text-xs text-neutral-300">{userCount} in space</p>
         </div>
       </button>
 
@@ -989,9 +989,9 @@ export const ViewCurrentSpaceBar = ({
               spaceId: space.spaceId,
             });
           }}
-          class="mr-4"
+          className="mr-4"
         >
-          <IconXMark class="h-8 w-8" />
+          <IconXMark className="h-8 w-8" />
         </button>
       )}
 
@@ -1005,9 +1005,9 @@ export const ViewCurrentSpaceBar = ({
               spaceId: space.spaceId,
             });
           }}
-          class="mr-4"
+          className="mr-4"
         >
-          <IconXMark class="h-8 w-8" />
+          <IconXMark className="h-8 w-8" />
         </button>
       )}
     </div>

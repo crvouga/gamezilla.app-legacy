@@ -16,7 +16,7 @@ export type ButtonEvent = {
 export const Button = ({
   type,
   start,
-  class: className = "",
+  className: className = "",
   onClick,
   variant = "contained",
   color = "default",
@@ -28,7 +28,7 @@ export const Button = ({
   text?: string;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
-  class?: string;
+  className?: string;
   onClick?: (event: ButtonEvent) => void;
   start?: VDom | VDom[];
   variant?: ButtonVariant;
@@ -42,7 +42,7 @@ export const Button = ({
     <button
       disabled={disabled || loading}
       type={type}
-      class={cn(
+      className={cn(
         className,
         "relative flex select-none appearance-none flex-nowrap items-center justify-center font-semibold outline-none focus:ring-2",
         combo === "contained-primary" &&
@@ -66,16 +66,16 @@ export const Button = ({
         onClick?.({ stopPropagation: () => event.stopPropagation() });
       }}>
       <div
-        class={cn(
+        className={cn(
           "flex h-full w-full items-center justify-center",
           loading && "text-transparent"
         )}>
-        {start && <div class="mr-2">{start}</div>}
+        {start && <div className="mr-2">{start}</div>}
         {text}
       </div>
       {loading && (
-        <div class="absolute inset-0 flex items-center justify-center">
-          <Spinner class="h-6 w-6" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Spinner className="h-6 w-6" />
         </div>
       )}
     </button>

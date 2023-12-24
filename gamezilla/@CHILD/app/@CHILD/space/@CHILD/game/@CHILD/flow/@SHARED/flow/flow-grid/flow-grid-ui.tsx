@@ -20,14 +20,14 @@ export const View = ({
   onPressDown,
   onPressUp,
   isActive,
-  class: className,
+  className: className,
   autocompleteEdge,
   showCoordinates,
   disabled,
   onLeave,
 }: {
   disabled?: boolean;
-  class?: string;
+  className?: string;
   model: FlowGrid.Model;
   onPressDown?: (nodeId: Flow.NodeId) => void;
   onPressUp?: (nodeId: Flow.NodeId) => void;
@@ -72,7 +72,7 @@ export const View = ({
 
   return (
     <svg
-      class={cn(
+      className={cn(
         "w-full touch-none select-none",
         isDragging && "cursor-grabbing",
         disabled && "pointer-events-none",
@@ -108,7 +108,7 @@ export const View = ({
               width={1}
               height={1}
               fill={fill}
-              fill-opacity={0.2}
+              fillOpacity={0.2}
             />
           );
         })}
@@ -127,7 +127,7 @@ export const View = ({
             d="M 1 0 L 0 0 0 1"
             fill="none"
             stroke="green"
-            stroke-width="0.02"
+            strokeWidth="0.02"
           />
         </pattern>
       </defs>
@@ -139,7 +139,7 @@ export const View = ({
         height={model.bounds.max.y - model.bounds.min.y}
         fill="url(#grid)"
         stroke="green"
-        stroke-width="0.02"
+        strokeWidth="0.02"
       />
 
       {/*
@@ -193,7 +193,7 @@ export const View = ({
                 x2={pipe.target.x}
                 y2={pipe.target.y}
                 stroke={FlowUI.Color.groupIdToHex(pipe.groupId)}
-                stroke-width={EDGE_STROKE_WIDTH}
+                strokeWidth={EDGE_STROKE_WIDTH}
               />
               <circle
                 cx={pipe.target.x}
@@ -221,7 +221,7 @@ export const View = ({
             x2={autocompleteEdge.target.x}
             y2={autocompleteEdge.target.y}
             stroke={FlowUI.Color.groupIdToHex(autocompleteEdge.groupId)}
-            stroke-width={EDGE_STROKE_WIDTH}
+            strokeWidth={EDGE_STROKE_WIDTH}
             strokeOpacity={0.5}
           />
         )}
@@ -232,7 +232,7 @@ export const View = ({
           {map(FlowGrid.yieldNodes(model), (node) => {
             return (
               <text
-                class="pointer-events-none"
+                className="pointer-events-none"
                 key={node.nodeId}
                 x={node.x}
                 y={node.y}
@@ -262,7 +262,7 @@ export const View = ({
               x={node.x}
               y={node.y}
               width={1}
-              class={cn(
+              className={cn(
                 isDragging
                   ? "cursor-grabbing"
                   : groupId

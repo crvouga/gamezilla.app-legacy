@@ -35,7 +35,7 @@ export const ViewColumnsCanvas = ({ onClick }: ViewColumnsProps) => {
   return (
     <canvas
       id="view-columns-canvas"
-      class="w-full cursor-pointer"
+      className="w-full cursor-pointer"
       onClick={(event) => {
         const rect = event.currentTarget.getBoundingClientRect();
         const elementRelativeX = event.clientX - rect.left;

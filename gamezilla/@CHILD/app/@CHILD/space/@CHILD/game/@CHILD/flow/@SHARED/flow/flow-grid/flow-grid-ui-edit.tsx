@@ -80,7 +80,7 @@ export const View = ({
   dispatch: (m: Msg) => void;
 }) => {
   return (
-    <div class="flex w-full flex-col gap-4 overflow-y-auto">
+    <div className="flex w-full flex-col gap-4 overflow-y-auto">
       <FlowGridUI.View
         model={model.grid}
         showCoordinates

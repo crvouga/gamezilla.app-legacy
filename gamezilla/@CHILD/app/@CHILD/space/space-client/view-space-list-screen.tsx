@@ -44,10 +44,10 @@ export const ViewSpaceListScreen = ({
   });
 
   return (
-    <div class="flex w-full flex-1 flex-col overflow-hidden">
+    <div className="flex w-full flex-1 flex-col overflow-hidden">
       <TopBar title="Spaces" />
 
-      <div class="relative flex w-full flex-1 flex-col gap-5 overflow-hidden overflow-y-scroll p-5 pb-8">
+      <div className="relative flex w-full flex-1 flex-col gap-5 overflow-hidden overflow-y-scroll p-5 pb-8">
         {spaces.length === 0 && <EmptyState />}
 
         {spaces.flatMap((state) => {
@@ -88,10 +88,10 @@ export const ViewSpaceListScreen = ({
       </div>
 
       {!currentUserSpaceId && (
-        <div class="w-full border-t border-neutral-700 p-4">
+        <div className="w-full border-t border-neutral-700 p-4">
           <Button
             size="lg"
-            class="w-full"
+            className="w-full"
             color="primary"
             onClick={() =>
               dispatch({
@@ -113,12 +113,12 @@ export const ViewSpaceListScreen = ({
 
 function EmptyState() {
   return (
-    <div class="absolute inset-0 flex h-full w-full flex-1 flex-col items-center justify-center gap-2 px-5 text-center opacity-60">
-      <div class="flex flex-col items-center justify-center gap-3">
-        <p class="text-2xl font-bold ">No active spaces</p>
+    <div className="absolute inset-0 flex h-full w-full flex-1 flex-col items-center justify-center gap-2 px-5 text-center opacity-60">
+      <div className="flex flex-col items-center justify-center gap-3">
+        <p className="text-2xl font-bold ">No active spaces</p>
 
-        <div class="flex aspect-square flex-col items-center justify-center rounded-full bg-neutral-700 p-7">
-          <IconGamepad class="h-14 w-14" />
+        <div className="flex aspect-square flex-col items-center justify-center rounded-full bg-neutral-700 p-7">
+          <IconGamepad className="h-14 w-14" />
         </div>
       </div>
     </div>
@@ -145,27 +145,27 @@ const ViewSpaceCard = ({
   return (
     <button
       onClick={onClick}
-      class="flex flex-col gap-3 rounded-md bg-blue-600 p-4 active:opacity-70"
+      className="flex flex-col gap-3 rounded-md bg-blue-600 p-4 active:opacity-70"
     >
-      <div class="flex w-full items-center justify-start">
-        <p class="block flex-1 text-left font-bold uppercase">LIVE</p>
-        {isCurrentSpace && <p class="block text-xs italic">Current space</p>}
+      <div className="flex w-full items-center justify-start">
+        <p className="block flex-1 text-left font-bold uppercase">LIVE</p>
+        {isCurrentSpace && <p className="block text-xs italic">Current space</p>}
       </div>
 
       {gameName && (
-        <div class="flex items-center justify-start gap-2">
-          <div class="h-12 w-12 overflow-hidden rounded border-2 border-white/40">
+        <div className="flex items-center justify-start gap-2">
+          <div className="h-12 w-12 overflow-hidden rounded border-2 border-white/40">
             <CoverArt gameName={gameName} />
           </div>
-          <p class="text-xl">{gameNameToString(gameName)}</p>
+          <p className="text-xl">{gameNameToString(gameName)}</p>
         </div>
       )}
 
-      <div class="flex items-center justify-start gap-2 overflow-hidden">
-        <Avatar src={host.avatarUrl} alt="avatar" class="h-12 w-12" />
+      <div className="flex items-center justify-start gap-2 overflow-hidden">
+        <Avatar src={host.avatarUrl} alt="avatar" className="h-12 w-12" />
 
-        <div class="flex-1 overflow-hidden">
-          <p class="overflow-hidden text-ellipsis whitespace-nowrap text-xl">
+        <div className="flex-1 overflow-hidden">
+          <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xl">
             {host.username}
           </p>
         </div>
@@ -173,25 +173,25 @@ const ViewSpaceCard = ({
       </div>
 
       {users.length > 1 && (
-        <div class="flex items-center justify-start gap-2">
-          <div class="flex items-center">
+        <div className="flex items-center justify-start gap-2">
+          <div className="flex items-center">
             {users.slice(0, MAX_AVATAR_COUNT).map((user, index) => (
               <Avatar
                 key={user.username}
                 src={user.avatarUrl}
                 alt="avatar"
-                class={cn("h-8 w-8", index !== 0 && "-ml-2")}
+                className={cn("h-8 w-8", index !== 0 && "-ml-2")}
               />
             ))}
             {users.length > MAX_AVATAR_COUNT && (
-              <div class="-ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/30">
-                <p class="text-xs">
+              <div className="-ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/30">
+                <p className="text-xs">
                   +{(users.length - MAX_AVATAR_COUNT).toLocaleString()}
                 </p>
               </div>
             )}
           </div>
-          <p class="text-lg">{users.length} people</p>
+          <p className="text-lg">{users.length} people</p>
         </div>
       )}
     </button>

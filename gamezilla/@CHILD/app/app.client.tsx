@@ -422,7 +422,7 @@ export const View = ({
   dispatch: (msg: ClientMsg) => void;
 }) => {
   return (
-    <div class="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
+    <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
       <StatusBar.View
         model={model.statusBar}
         dispatch={(c) => dispatch({ t: "status-bar", c })}
@@ -446,7 +446,7 @@ export const View = ({
         }}
       />
 
-      <div class="flex w-full flex-1 flex-col overflow-hidden">
+      <div className="flex w-full flex-1 flex-col overflow-hidden">
         <ViewMain model={model} now={now} dispatch={dispatch} />
       </div>
 
@@ -508,7 +508,7 @@ const ViewMain = ({
 
 const ViewSplashScreen = () => {
   return (
-    <div class="absolute inset-0 flex h-full w-full items-center justify-center text-8xl">
+    <div className="absolute inset-0 flex h-full w-full items-center justify-center text-8xl">
       🦕
     </div>
   );
@@ -622,23 +622,23 @@ const ViewBottomBar = ({
         c: { t: "space-list" },
       },
       label: "Spaces",
-      icon: <IconGamepad class="h-6 w-6" />,
+      icon: <IconGamepad className="h-6 w-6" />,
     },
     {
       route: { t: "profile", c: { t: "profile", userId: ctx.currentUserId } },
       label: "Profile",
-      icon: <IconUserCircle class="h-6 w-6" />,
+      icon: <IconUserCircle className="h-6 w-6" />,
     },
   ];
 
   return (
-    <div class="flex w-full flex-col items-center justify-center">
+    <div className="flex w-full flex-col items-center justify-center">
       <SpaceClient.ViewCurrentSpaceBar
         ctx={ctx}
         model={model.space}
         dispatch={(c) => dispatch({ t: "space", c })}
       />
-      <div class="flex w-full items-center justify-center border-t border-neutral-700">
+      <div className="flex w-full items-center justify-center border-t border-neutral-700">
         {items.map((item) => {
           const isSelected = AppRoute.eq(
             model.routing.currentRoute,
@@ -653,13 +653,13 @@ const ViewBottomBar = ({
                   c: { t: "clicked-link", route: item.route },
                 })
               }
-              class={cn(
+              className={cn(
                 "flex flex-1 flex-col items-center justify-center pb-2 pt-1",
                 isSelected ? "text-blue-500" : "opacity-80"
               )}
             >
               {item.icon}
-              <div class="mt-0.5 text-xs">{item.label}</div>
+              <div className="mt-0.5 text-xs">{item.label}</div>
             </button>
           );
         })}

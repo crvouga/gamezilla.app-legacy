@@ -181,24 +181,24 @@ const updateFromCmd: typeof update = ({ cmd, model, transport }) => {
 export const ViewStatusBar = ({ model }: { model: ClientModel }) => {
   switch (model.state.t) {
     case "server-connected": {
-      return <span class="h-2 w-2 rounded-full bg-green-500"></span>;
+      return <span className="h-2 w-2 rounded-full bg-green-500"></span>;
     }
 
     case "server-connecting":
     case "server-connect-error": {
       return (
-        <div class="flex animate-pulse items-center gap-1">
-          <span class="h-2 w-2 rounded-full bg-orange-500"></span>
-          <p class="text-orange-500">Connecting...</p>
+        <div className="flex animate-pulse items-center gap-1">
+          <span className="h-2 w-2 rounded-full bg-orange-500"></span>
+          <p className="text-orange-500">Connecting...</p>
         </div>
       );
     }
 
     case "server-disconnected": {
       return (
-        <div class="flex items-center gap-1">
-          <span class="h-2 w-2 rounded-full bg-red-500"></span>
-          <p class="text-red-500">Offline</p>
+        <div className="flex items-center gap-1">
+          <span className="h-2 w-2 rounded-full bg-red-500"></span>
+          <p className="text-red-500">Offline</p>
         </div>
       );
     }
@@ -215,10 +215,10 @@ export const ViewStatusBarDrawer = ({
   switch (model.state.t) {
     case "server-connected": {
       return (
-        <div class="flex w-full items-center gap-4 p-4">
-          <span class="h-5 w-5 rounded-full bg-green-500"></span>
+        <div className="flex w-full items-center gap-4 p-4">
+          <span className="h-5 w-5 rounded-full bg-green-500"></span>
 
-          <p class="text-green-500">Online</p>
+          <p className="text-green-500">Online</p>
         </div>
       );
     }
@@ -226,21 +226,21 @@ export const ViewStatusBarDrawer = ({
     case "server-connect-error":
     case "server-connecting": {
       return (
-        <div class="flex w-full animate-pulse items-center gap-4 p-4">
-          <span class="h-5 w-5 rounded-full bg-orange-500"></span>
-          <p class="text-orange-500">Connecting...</p>
+        <div className="flex w-full animate-pulse items-center gap-4 p-4">
+          <span className="h-5 w-5 rounded-full bg-orange-500"></span>
+          <p className="text-orange-500">Connecting...</p>
         </div>
       );
     }
 
     case "server-disconnected": {
       return (
-        <div class="flex w-full items-center gap-4 p-4">
-          <span class="h-5 w-5 rounded-full bg-red-500"></span>
-          <p class="flex-1 text-red-500">Offline</p>
+        <div className="flex w-full items-center gap-4 p-4">
+          <span className="h-5 w-5 rounded-full bg-red-500"></span>
+          <p className="flex-1 text-red-500">Offline</p>
           <button
             onClick={() => dispatch({ t: "clicked-try-reconnect" })}
-            class="font-bold text-red-500"
+            className="font-bold text-red-500"
           >
             Try reconnect
           </button>

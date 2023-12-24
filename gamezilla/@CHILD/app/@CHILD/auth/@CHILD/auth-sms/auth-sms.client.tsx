@@ -400,7 +400,7 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
   switch (route.t) {
     case "login-phone": {
       return (
-        <div class="w-full flex-1">
+        <div className="w-full flex-1">
           <TopBar
             left={
               <TopBarBackButton
@@ -410,7 +410,7 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
             title="Login with phone"
           />
 
-          <div class="flex w-full flex-col gap-6 p-4 py-6">
+          <div className="flex w-full flex-col gap-6 p-4 py-6">
             {false && (
               <Select
                 id="countryCode"
@@ -435,7 +435,7 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
               id="phoneNumberInput"
               label="Phone Number"
               type="tel"
-              startIcon={<IconMobilePhone class="h-5 w-5" />}
+              startIcon={<IconMobilePhone className="h-5 w-5" />}
               error={typeof model.phoneNumberError === "string"}
               helperText={model.phoneNumberError}
               onChange={(value) => {
@@ -448,7 +448,7 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
 
             <Button
               text="Send Code"
-              class="w-full"
+              className="w-full"
               variant="contained"
               color="primary"
               size="lg"
@@ -460,7 +460,7 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
           </div>
 
           {isErr(model.sendCode) && (
-            <div class="w-full p-4">
+            <div className="w-full p-4">
               <AlertError>{model.sendCode.error}</AlertError>
             </div>
           )}
@@ -470,7 +470,7 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
 
     case "login-phone-verify": {
       return (
-        <div class="w-full flex-1">
+        <div className="w-full flex-1">
           <TopBar
             left={
               <TopBarBackButton
@@ -480,7 +480,7 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
             title="Login with phone"
           />
 
-          <div class="flex w-full flex-col gap-6 p-4 py-6">
+          <div className="flex w-full flex-col gap-6 p-4 py-6">
             <TextField
               value={model.codeInput}
               id={CODE_INPUT_VIEW_ID}
@@ -499,7 +499,7 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
               }}
             />
             <Button
-              class="w-full"
+              className="w-full"
               text="Verify Code"
               color="primary"
               size="lg"
@@ -516,7 +516,7 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
           </div>
 
           {isErr(model.verifyCode) && (
-            <div class="w-full p-4">
+            <div className="w-full p-4">
               <AlertError>{model.verifyCode.error}</AlertError>
             </div>
           )}

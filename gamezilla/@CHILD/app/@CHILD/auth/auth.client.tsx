@@ -354,21 +354,21 @@ const ViewLoginScreen = ({
   dispatch: (msg: ClientMsg) => void;
 }) => {
   return (
-    <div class="relative flex h-full w-full flex-1 flex-col">
-      <div class="flex flex-1 flex-col items-center justify-center gap-8 p-4">
-        <div class="flex w-full flex-col items-start justify-center">
-          <p class="text-2xl text-neutral-200">Sign in to</p>
-          <h1 class="bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent">
+    <div className="relative flex h-full w-full flex-1 flex-col">
+      <div className="flex flex-1 flex-col items-center justify-center gap-8 p-4">
+        <div className="flex w-full flex-col items-start justify-center">
+          <p className="text-2xl text-neutral-200">Sign in to</p>
+          <h1 className="bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent">
             gamezilla.app
           </h1>
         </div>
 
-        <div class="flex w-full flex-col gap-6">
+        <div className="flex w-full flex-col gap-6">
           <Button
             onClick={() => dispatch({ t: "user-clicked-login-with-phone" })}
             size="lg"
-            class="w-full"
-            start={<IconMobilePhone class="h-6 w-6" />}
+            className="w-full"
+            start={<IconMobilePhone className="h-6 w-6" />}
             text="Continue With Phone"
           />
         </div>
@@ -392,7 +392,7 @@ export const ViewLogoutScreen = ({
   const dispatchLogout = (c: LogoutMsg) => dispatch({ t: "logout", c });
 
   return (
-    <div class="relative h-full w-full flex-1">
+    <div className="relative h-full w-full flex-1">
       <ConformationDialog
         open
         title="Logout of Gamezilla?"

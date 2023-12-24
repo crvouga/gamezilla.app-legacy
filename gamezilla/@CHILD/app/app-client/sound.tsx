@@ -210,10 +210,10 @@ export const updateFromCmd: Module["update"] = async ({ model, cmd }) => {
 
 export const ViewStatusBar = ({ model }: { model: Model }) => {
   if (model.muted) {
-    return <IconVolumeXMark class="h-4 w-4" />;
+    return <IconVolumeXMark className="h-4 w-4" />;
   }
 
-  return <IconVolumeHigh class="h-4 w-4" />;
+  return <IconVolumeHigh className="h-4 w-4" />;
 };
 
 export const ViewStatusBarDrawer = ({
@@ -224,24 +224,24 @@ export const ViewStatusBarDrawer = ({
   dispatch: (m: Msg) => void;
 }) => {
   return (
-    <div class="flex w-full items-center">
+    <div className="flex w-full items-center">
       <button
-        class="flex w-full flex-1 items-center gap-4 p-4"
+        className="flex w-full flex-1 items-center gap-4 p-4"
         tabIndex={-1}
         onClick={() => dispatch({ t: "toggle-mute" })}>
         {model.muted ? (
           <>
-            <IconVolumeXMark class="h-5 w-5" />
+            <IconVolumeXMark className="h-5 w-5" />
             <p>Sound off</p>
           </>
         ) : (
           <>
-            <IconVolumeHigh class="h-5 w-5" />
+            <IconVolumeHigh className="h-5 w-5" />
             <p>Sound on</p>
           </>
         )}
       </button>
-      <div class="flex items-center justify-center p-4">
+      <div className="flex items-center justify-center p-4">
         <ToggleButton
           label="toggle sound"
           onToggle={() => dispatch({ t: "toggle-mute" })}

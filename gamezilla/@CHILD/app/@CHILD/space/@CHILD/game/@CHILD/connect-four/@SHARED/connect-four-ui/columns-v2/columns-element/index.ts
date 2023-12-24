@@ -236,18 +236,18 @@ function createSvgDefs({ ids }: { ids: SvgIds }) {
       </mask>
 
       <linearGradient id="${ids.columnGradient}" gradient-transform="rotate(90)">
-        <stop offset="0%" stop-color="${gameTheme.primary.light}" />
-        <stop offset="100%" stop-color="${gameTheme.primary.dark}" />
+        <stop offset="0%" stopColor="${gameTheme.primary.light}" />
+        <stop offset="100%" stopColor="${gameTheme.primary.dark}" />
       </linearGradient>
 
       <linearGradient id="${ids.playerOneGradient}" gradient-transform="rotate(90)">
-        <stop offset="0%" stop-color="${gameTheme["player-one"].light}" />
-        <stop offset="100%" stop-color="${gameTheme["player-one"].dark}" />
+        <stop offset="0%" stopColor="${gameTheme["player-one"].light}" />
+        <stop offset="100%" stopColor="${gameTheme["player-one"].dark}" />
       </linearGradient>
 
       <linearGradient id="${ids.playerTwoGradient}" gradient-transform="rotate(90)">
-        <stop offset="0%" stop-color="${gameTheme["player-two"].light}" />
-        <stop offset="100%" stop-color="${gameTheme["player-two"].dark}" />
+        <stop offset="0%" stopColor="${gameTheme["player-two"].light}" />
+        <stop offset="100%" stopColor="${gameTheme["player-two"].dark}" />
       </linearGradient>
     </defs>`;
 }

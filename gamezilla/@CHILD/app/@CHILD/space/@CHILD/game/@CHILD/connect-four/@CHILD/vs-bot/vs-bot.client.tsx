@@ -405,7 +405,7 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
 
   return (
     <GameLayout isSpectating={isSpectating}>
-      <div class="flex w-full flex-1 flex-col items-center justify-center gap-1">
+      <div className="flex w-full flex-1 flex-col items-center justify-center gap-1">
         <VsBotGame.VsBotPlayerSection {...vsBotGameProps} />
 
         <VsBotGame.ViewStatusBar
@@ -413,7 +413,7 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
           status={toVsBotStatus(status)}
         />
 
-        <div class="relative flex w-full flex-col items-center justify-center overflow-hidden">
+        <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <ViewColumns
             gameId={0}
             columns={gameState.columns}
@@ -447,7 +447,7 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
           actions={[
             {
               label: "Exit",
-              icon: <IconArrowLeftOnRect class="h-6 w-6" />,
+              icon: <IconArrowLeftOnRect className="h-6 w-6" />,
               onClick: () =>
                 dispatch({
                   t: "user-stopped-game",
@@ -456,7 +456,7 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
             },
             {
               label: "Swap sides",
-              icon: <IconRightLeft class="h-6 w-6" />,
+              icon: <IconRightLeft className="h-6 w-6" />,
               onClick: () =>
                 dispatch({
                   t: "user-swapped-sides",
@@ -465,7 +465,7 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
             },
             {
               label: "Restart",
-              icon: <IconArrowRotateLeft class="h-6 w-6" />,
+              icon: <IconArrowRotateLeft className="h-6 w-6" />,
               onClick: () =>
                 dispatch({
                   t: "user-restarted-game",

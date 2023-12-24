@@ -322,25 +322,25 @@ export const View = ({
   }
 
   const botSlot = (
-    <div class="flex w-full items-center gap-3 p-3">
-      <IconRobot class="h-10 w-10" />
+    <div className="flex w-full items-center gap-3 p-3">
+      <IconRobot className="h-10 w-10" />
 
-      <p class="flex-1 text-lg">
+      <p className="flex-1 text-lg">
         {Chess.botLevelToString(model.coreModel.botLevel)}
       </p>
 
-      {isBotTurn(model.coreModel) && <Spinner class="h-10 w-10" />}
+      {isBotTurn(model.coreModel) && <Spinner className="h-10 w-10" />}
     </div>
   );
 
   const userSlot = (
-    <div class="flex w-full items-center gap-3 p-3">
+    <div className="flex w-full items-center gap-3 p-3">
       <Avatar
-        class="h-10 w-10"
+        className="h-10 w-10"
         src={ctx.profiles[model.coreModel.userId]?.avatarUrl}
       />
 
-      <p class="flex-1 text-lg">
+      <p className="flex-1 text-lg">
         {ctx.profiles[model.coreModel.userId]?.username}
       </p>
     </div>
@@ -358,7 +358,7 @@ export const View = ({
 
   return (
     <GameLayout>
-      <div class="flex w-full flex-1 flex-col items-center justify-center">
+      <div className="flex w-full flex-1 flex-col items-center justify-center">
         {topSlot}
 
         <Chessboard
@@ -387,7 +387,7 @@ export const View = ({
         actions={[
           {
             label: "Exit",
-            icon: <IconArrowLeftOnRect class="h-6 w-6" />,
+            icon: <IconArrowLeftOnRect className="h-6 w-6" />,
             onClick: () => dispatch({ t: "stop-game" }),
           },
         ]}

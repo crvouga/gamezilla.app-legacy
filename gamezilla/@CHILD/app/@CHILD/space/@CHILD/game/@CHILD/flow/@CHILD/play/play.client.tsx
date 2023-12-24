@@ -82,7 +82,7 @@ const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
   const isSpectating = ctx.currentUserId !== ctx.space.hostId;
   return (
     <GameLayout isSpectating={isSpectating}>
-      <div class="flex w-full flex-1 items-center justify-center">
+      <div className="flex w-full flex-1 items-center justify-center">
         {USE_GAME_STATE ? (
           <FlowGridUIPlay.View
             dispatch={(c) => dispatch({ t: "event", c: { t: "grid", c } })}
@@ -98,11 +98,11 @@ const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
         )}
       </div>
       {!isSpectating && (
-        <div class="w-full p-4">
+        <div className="w-full p-4">
           <Button
-            class="w-full"
+            className="w-full"
             onClick={ctx.onExit}
-            start={<IconArrowLeftOnRect class="h-6 w-6" />}
+            start={<IconArrowLeftOnRect className="h-6 w-6" />}
             text="Exit"
           />
         </div>

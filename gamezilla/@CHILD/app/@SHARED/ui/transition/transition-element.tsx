@@ -35,7 +35,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
         id: this.getAttribute("id") || "",
         onEnter: async () => {},
         onExit: async () => {},
-        class: "",
+        className: "",
         mode: "in-out",
       };
     }
@@ -59,7 +59,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
     }
 
     syncUI() {
-      this.className = this.props.class ?? "";
+      this.className = this.props.className ?? "";
     }
 
     disconnectedCallback() {

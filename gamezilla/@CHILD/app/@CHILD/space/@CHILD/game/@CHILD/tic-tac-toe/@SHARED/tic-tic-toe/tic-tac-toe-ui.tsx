@@ -48,7 +48,7 @@ export const ViewBoard = ({
             x2={line.x2 * scale}
             y2={line.y2 * scale}
             stroke={gameTheme.line}
-            stroke-width={0.1 * scale}
+            strokeWidth={0.1 * scale}
           />
         ))}
       </g>
@@ -68,7 +68,7 @@ export const ViewBoard = ({
                 cx={cx}
                 cy={cy}
                 stroke={gameTheme.naught}
-                stroke-width={strokeWidth}
+                strokeWidth={strokeWidth}
                 fill="transparent"
               />
             );
@@ -76,7 +76,7 @@ export const ViewBoard = ({
 
           if (slot === "X") {
             return (
-              <g stroke-width={strokeWidth} stroke={gameTheme.cross}>
+              <g strokeWidth={strokeWidth} stroke={gameTheme.cross}>
                 {/* direction: \ */}
                 <line x1={cx - r} y1={cy - r} x2={cx + r} y2={cy + r} />
                 {/* direction: / */}
@@ -96,7 +96,7 @@ export const ViewBoard = ({
           key={[position.column, position.row, toSlot(board, position)].join(
             " "
           )}
-          class="cursor-pointer"
+          className="cursor-pointer"
           x={Number(position.column) * scale}
           y={Number(position.row) * scale}
           width={1 * scale}
@@ -130,7 +130,7 @@ const ViewWins = ({ board }: { board: Model }) => {
             y1={(leftMost.row + 1 / 2) * scale}
             x2={(rightMost.column + 1 / 2) * scale}
             y2={(rightMost.row + 1 / 2) * scale}
-            stroke-width={strokeWidth}
+            strokeWidth={strokeWidth}
             stroke={gameTheme.cross}></line>
         );
       })}
@@ -294,7 +294,7 @@ const Cross = ({
   strokeWidth?: number;
 }) => {
   return (
-    <g stroke-width={strokeWidth} stroke={color}>
+    <g strokeWidth={strokeWidth} stroke={color}>
       {/* direction: \ */}
       <line x1={cx - r} y1={cy - r} x2={cx + r} y2={cy + r} />
       {/* direction: / */}
@@ -322,7 +322,7 @@ const Naught = ({
       cx={cx}
       cy={cy}
       stroke={color}
-      stroke-width={strokeWidth}
+      strokeWidth={strokeWidth}
       fill="transparent"
     />
   );
@@ -336,7 +336,7 @@ export const PlayerTypeIcon = ({
   className?: string;
 }) => {
   return (
-    <svg viewBox="-1 -1 2 2" fill="currentColor" class={className}>
+    <svg viewBox="-1 -1 2 2" fill="currentColor" className={className}>
       <ViewSlot
         key={playerType}
         cx={0}
@@ -350,7 +350,7 @@ export const PlayerTypeIcon = ({
   );
 };
 
-export const CoverArt = (props: { class?: string }) => {
+export const CoverArt = (props: { className?: string }) => {
   const positions: [Position, Slot][] = [
     [{ row: 0, column: 0 }, "X"],
     [{ row: 0, column: 1 }, Empty],
@@ -372,7 +372,7 @@ export const CoverArt = (props: { class?: string }) => {
           key={index}
           {...line}
           stroke={gameTheme.line}
-          stroke-width={0.1}
+          strokeWidth={0.1}
         />
       ))}
 

@@ -70,13 +70,13 @@ type Props = {
   };
   bot: {
     label: string;
-    renderIcon: (props: { class: string }) => VDom;
+    renderIcon: (props: { className: string }) => VDom;
   };
   playerOne: {
-    renderIcon: (props: { class: string }) => VDom;
+    renderIcon: (props: { className: string }) => VDom;
   };
   playerTwo: {
-    renderIcon: (props: { class: string }) => VDom;
+    renderIcon: (props: { className: string }) => VDom;
   };
   onPlayAgain?: () => void;
 };
@@ -110,11 +110,11 @@ export const ViewStatusBar = (props: VsBotProps & { status: Status }) => {
       mode="in-out"
       onEnter={fadeIn({ duration: 300, delay: 0 })}
       onExit={fadeOut({ duration: 300, delay: 0 })}
-      class="relative h-8 w-full"
+      className="relative h-8 w-full"
     >
       <div
         key={statusToKey(props.status)}
-        class="absolute inset-0 flex items-center justify-center gap-1 text-secondary"
+        className="absolute inset-0 flex items-center justify-center gap-1 text-secondary"
       >
         <ViewStatusBarContent {...props} />
       </div>
@@ -161,7 +161,7 @@ const ViewStatusBarContent = (props: VsBotProps & { status: Status }) => {
         case "player-one": {
           return (
             <>
-              {props.playerOne.renderIcon({ class: "h-5 w-5" })}
+              {props.playerOne.renderIcon({ className: "h-5 w-5" })}
               <p>Turn</p>
             </>
           );
@@ -170,7 +170,7 @@ const ViewStatusBarContent = (props: VsBotProps & { status: Status }) => {
         case "player-two": {
           return (
             <>
-              {props.playerTwo.renderIcon({ class: "h-5 w-5" })}
+              {props.playerTwo.renderIcon({ className: "h-5 w-5" })}
               <p>Turn</p>
             </>
           );
@@ -198,39 +198,39 @@ export const ViewGameOverOverlay = (
     >
       {gameOver?.t === "winner" && (
         <button
-          class="absolute inset-0 flex flex-col items-center justify-center bg-black/70"
+          className="absolute inset-0 flex flex-col items-center justify-center bg-black/70"
           disabled={props.isSpectating}
           onClick={!props.isSpectating ? props.onPlayAgain : undefined}
         >
-          <div class="flex-1"></div>
+          <div className="flex-1"></div>
 
           <Winner {...props} winner={gameOver.winner} />
 
           {props.onPlayAgain && !props.isSpectating ? (
-            <div class="flex flex-1 items-center justify-center pb-2 text-2xl font-bold">
+            <div className="flex flex-1 items-center justify-center pb-2 text-2xl font-bold">
               Tap to play again
             </div>
           ) : (
-            <div class="flex-1"></div>
+            <div className="flex-1"></div>
           )}
         </button>
       )}
       {gameOver?.t === "draw" && (
         <button
-          class="absolute inset-0 flex flex-col items-center justify-center bg-black/60"
+          className="absolute inset-0 flex flex-col items-center justify-center bg-black/60"
           disabled={props.isSpectating}
           onClick={!props.isSpectating ? props.onPlayAgain : undefined}
         >
-          <div class="flex-1"></div>
+          <div className="flex-1"></div>
 
           <Draw {...props} />
 
           {props.onPlayAgain && !props.isSpectating ? (
-            <div class="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0">
+            <div className="flex flex-1 items-center justify-center pb-2 text-2xl font-bold opacity-0">
               Tap to play again
             </div>
           ) : (
-            <div class="flex-1"></div>
+            <div className="flex-1"></div>
           )}
         </button>
       )}
@@ -248,40 +248,40 @@ const Winner = ({
 }: Props & { winner: PlayerType }) => {
   const humanSlot = (
     <>
-      <Avatar class="h-16 w-16" src={ctx.profiles[human.userId]?.avatarUrl} />
+      <Avatar className="h-16 w-16" src={ctx.profiles[human.userId]?.avatarUrl} />
     </>
   );
 
-  const botSlot = <>{bot.renderIcon({ class: "h-16 w-16" })}</>;
+  const botSlot = <>{bot.renderIcon({ className: "h-16 w-16" })}</>;
 
   const playerOneSlot = (
-    <div class="flex flex-col items-center justify-center gap-3">
-      <div class="flex items-center justify-center gap-3">
-        {playerOne.renderIcon({ class: "h-16 w-16" })}
+    <div className="flex flex-col items-center justify-center gap-3">
+      <div className="flex items-center justify-center gap-3">
+        {playerOne.renderIcon({ className: "h-16 w-16" })}
         {human.player === "player-one" ? humanSlot : botSlot}
       </div>
-      <p class="text-center text-4xl font-black">
+      <p className="text-center text-4xl font-black">
         {winner === "player-one" ? "Winner" : "Loser"}
       </p>
     </div>
   );
 
   const playerTwoSlot = (
-    <div class="flex flex-col items-center justify-center gap-3">
-      <div class="flex items-center justify-center gap-3">
-        {playerTwo.renderIcon({ class: "h-16 w-16" })}
+    <div className="flex flex-col items-center justify-center gap-3">
+      <div className="flex items-center justify-center gap-3">
+        {playerTwo.renderIcon({ className: "h-16 w-16" })}
 
         {human.player === "player-two" ? humanSlot : botSlot}
       </div>
 
-      <p class="text-center text-4xl font-black">
+      <p className="text-center text-4xl font-black">
         {winner === "player-two" ? "Winner" : "Loser"}
       </p>
     </div>
   );
 
   return (
-    <div class="grid w-full flex-1 grid-cols-2 items-center">
+    <div className="grid w-full flex-1 grid-cols-2 items-center">
       {playerOneSlot}
       {playerTwoSlot}
     </div>
@@ -297,26 +297,26 @@ const Draw = ({ ctx, playerOne, playerTwo, human }: Props) => {
 
   const botSlot = (
     <>
-      <IconRobot class="h-6 w-6" />
+      <IconRobot className="h-6 w-6" />
     </>
   );
 
   const playerOneSlot = (
     <>
-      {playerOne.renderIcon({ class: "h-5 w-5" })}
+      {playerOne.renderIcon({ className: "h-5 w-5" })}
       {human.player === "player-one" ? humanSlot : botSlot}
     </>
   );
 
   const playerTwoSlot = (
     <>
-      {playerTwo.renderIcon({ class: "h-5 w-5" })}
+      {playerTwo.renderIcon({ className: "h-5 w-5" })}
       {human.player === "player-two" ? humanSlot : botSlot}
     </>
   );
 
   return (
-    <div class="flex h-full w-full flex-1 items-center justify-center">
+    <div className="flex h-full w-full flex-1 items-center justify-center">
       <div>
         {playerOneSlot}
         {playerTwoSlot}
@@ -336,8 +336,8 @@ export const VsBotPlayerSection = ({
 }: VsBotGameProps) => {
   const humanSlot = (
     <>
-      <Avatar class="h-6 w-6 " src={ctx.profiles[human.userId]?.avatarUrl} />
-      <p class="overflow-hidden text-ellipsis whitespace-nowrap">
+      <Avatar className="h-6 w-6 " src={ctx.profiles[human.userId]?.avatarUrl} />
+      <p className="overflow-hidden text-ellipsis whitespace-nowrap">
         {ctx.profiles[human.userId]?.username}
       </p>
     </>
@@ -345,23 +345,23 @@ export const VsBotPlayerSection = ({
 
   const botSlot = (
     <>
-      {bot.renderIcon({ class: "h-6 w-6 flex-shrink-0" })}
-      <p class="overflow-hidden text-ellipsis whitespace-nowrap">{bot.label}</p>
+      {bot.renderIcon({ className: "h-6 w-6 flex-shrink-0" })}
+      <p className="overflow-hidden text-ellipsis whitespace-nowrap">{bot.label}</p>
     </>
   );
 
   return (
-    <section class="flex w-full items-center gap-3 px-3">
-      <div class="flex w-1/2 items-center justify-center overflow-hidden">
+    <section className="flex w-full items-center gap-3 px-3">
+      <div className="flex w-1/2 items-center justify-center overflow-hidden">
         <Slot active={turn === "player-one"}>
-          <div>{playerOne.renderIcon({ class: "h-6 w-6" })}</div>
+          <div>{playerOne.renderIcon({ className: "h-6 w-6" })}</div>
           {human.player === "player-one" ? humanSlot : botSlot}
         </Slot>
       </div>
 
-      <div class="flex w-1/2 items-center justify-center overflow-hidden">
+      <div className="flex w-1/2 items-center justify-center overflow-hidden">
         <Slot active={turn === "player-two"}>
-          {playerTwo.renderIcon({ class: "h-6 w-6" })}
+          {playerTwo.renderIcon({ className: "h-6 w-6" })}
           {human.player === "player-two" ? humanSlot : botSlot}
         </Slot>
       </div>

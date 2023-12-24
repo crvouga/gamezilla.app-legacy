@@ -65,15 +65,15 @@ export const View = ({
   dispatch: (m: Msg) => void;
 }) => {
   return (
-    <div class="w-full">
+    <div className="w-full">
       <button
         aria-label="open status bar"
-        class="flex w-full items-center gap-2 border-b border-neutral-700 p-0.5 px-2 text-xs text-secondary"
+        className="flex w-full items-center gap-2 border-b border-neutral-700 p-0.5 px-2 text-xs text-secondary"
         onClick={() => dispatch({ t: "clicked-status-bar" })}
       >
         {wire.statusBar}
 
-        <div class="flex-1"></div>
+        <div className="flex-1"></div>
 
         {sound.statusBar}
       </button>

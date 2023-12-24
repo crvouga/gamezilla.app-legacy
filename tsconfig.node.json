@@ -2,7 +2,7 @@
   "compilerOptions": {
     "composite": true,
     "allowImportingTsExtensions": true,
-    "noEmit": true,
+    "moduleResolution": "bundler"
   },
   "include": ["vite.config.ts", "tailwind.config.ts"]
 }

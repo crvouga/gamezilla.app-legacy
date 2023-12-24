@@ -15,7 +15,7 @@ export const ViewUpdateAvatarScreen = ({
   dispatch: (msg: ClientMsg) => void;
 }) => {
   return (
-    <div class="flex h-full w-full flex-col items-center">
+    <div className="flex h-full w-full flex-col items-center">
       <TopBar
         left={
           <Button
@@ -34,7 +34,7 @@ export const ViewUpdateAvatarScreen = ({
         right={<Button color="primary" variant="text" text="Done" />}
       />
 
-      <div class="flex w-full flex-1 flex-col gap-8 p-4">
+      <div className="flex w-full flex-1 flex-col gap-8 p-4">
         <Avatar
           src={
             model.draft?.avatarSeed && model.draft?.avatarStyle
@@ -44,10 +44,10 @@ export const ViewUpdateAvatarScreen = ({
                 })
               : undefined
           }
-          class="mx-auto h-32 w-32"
+          className="mx-auto h-32 w-32"
         />
 
-        <div class="flex w-full flex-col gap-4">
+        <div className="flex w-full flex-col gap-4">
           <TextField
             label="Seed"
             value={model.draft?.avatarSeed ?? ""}

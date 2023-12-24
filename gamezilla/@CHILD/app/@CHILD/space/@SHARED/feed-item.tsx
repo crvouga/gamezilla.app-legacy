@@ -1,6 +1,6 @@
 const Info = ({ text }: { text: string }) => {
   return (
-    <div class="flex w-full items-center justify-center text-xs text-secondary">
+    <div className="flex w-full items-center justify-center text-xs text-secondary">
       {text}
     </div>
   );

@@ -40,7 +40,7 @@ export const ViewSpaceJoinScreen = ({
   const hostTitle = ctx.profiles[space.hostId]?.username ?? space.hostId;
 
   return (
-    <div class="flex h-full w-full flex-col">
+    <div className="flex h-full w-full flex-col">
       <TopBar
         left={
           <TopBarBackButton
@@ -52,7 +52,7 @@ export const ViewSpaceJoinScreen = ({
         title="Join space"
       />
 
-      <div class="flex w-full flex-1 flex-col overflow-y-scroll">
+      <div className="flex w-full flex-1 flex-col overflow-y-scroll">
         <ViewGameHeader
           title={game ? gameNameToString(game.t) : hostTitle ?? " "}
           renderCoverArt={
@@ -69,9 +69,9 @@ export const ViewSpaceJoinScreen = ({
         <ViewUsersInSpaceList ctx={ctx} />
       </div>
 
-      <div class="flex border-t border-neutral-700 p-4">
+      <div className="flex border-t border-neutral-700 p-4">
         <Button
-          class="w-full"
+          className="w-full"
           variant="contained"
           color="primary"
           onClick={() => {

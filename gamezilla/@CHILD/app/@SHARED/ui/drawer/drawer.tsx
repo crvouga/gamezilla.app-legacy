@@ -14,7 +14,7 @@ export const Drawer = ({
   drawerSub.publish({ type: "props", id, onClose, open, position });
   return (
     <drawer-element id={id} position={position}>
-      <div class="w-full border border-neutral-700 bg-black">{children}</div>
+      <div className="w-full border border-neutral-700 bg-black">{children}</div>
     </drawer-element>
   );
 };

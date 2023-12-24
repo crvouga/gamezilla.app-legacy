@@ -202,7 +202,7 @@ export const View: Module["View"] = ({ model, dispatch }) => {
   return (
     <Transition
       mode="out-in"
-      class="pointer-events-none absolute left-0 top-0 flex w-full flex-col items-center gap-4 px-4 pt-4"
+      className="pointer-events-none absolute left-0 top-0 flex w-full flex-col items-center gap-4 px-4 pt-4"
       id="toast-root"
       onEnter={onEnter}
       onExit={onExit}>
@@ -249,7 +249,7 @@ function Toast({
   return (
     <div
       id={String(toast.toastId)}
-      class="w-full overflow-visible"
+      className="w-full overflow-visible"
       //
       onMouseDown={() => dispatch({ t: "pressed-down-on-toast", toast })}
       onMouseUp={() => dispatch({ t: "pressed-up-on-toast", toast })}
@@ -261,7 +261,7 @@ function Toast({
         e.preventDefault();
       }}>
       <div
-        class={cn(
+        className={cn(
           "pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden  rounded-lg border p-3 text-lg text-white shadow-2xl",
           toast.variant === "info" && "border-neutral-600 bg-neutral-700",
           toast.variant === "error" && "border-red-400 bg-red-500"

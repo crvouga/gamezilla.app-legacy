@@ -57,8 +57,8 @@
     "allowImportingTsExtensions": true,
     "moduleDetection": "force",
 
-    "types": ["bun-types",  "inferno", "preact"],
-    "jsx": "react", // support JSX
+    "types": ["bun-types",  "inferno", "preact", "react"],
+    "jsx": "preserve", // support JSX
     "allowJs": true, // allow importing `.js` from `.ts`
 
     //

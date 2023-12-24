@@ -7,7 +7,7 @@ export const Transition = ({
   onEnter,
   onExit,
   children,
-  class: className,
+  className: className,
   mode,
 }: TransitionProps & {
   children?: VDom | VDom[];
@@ -17,7 +17,7 @@ export const Transition = ({
     id,
     onEnter,
     onExit,
-    class: className,
+    className: className,
     mode,
   });
   return <transition-element id={id}>{children}</transition-element>;

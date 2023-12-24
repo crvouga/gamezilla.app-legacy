@@ -10,7 +10,7 @@ export const IconButton = ({
   label: string;
 }) => {
   return (
-    <button class="rounded-full p-3" onClick={onClick} aria-label={label}>
+    <button className="rounded-full p-3" onClick={onClick} aria-label={label}>
       {children}
     </button>
   );

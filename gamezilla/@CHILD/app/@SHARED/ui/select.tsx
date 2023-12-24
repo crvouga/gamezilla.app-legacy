@@ -24,17 +24,17 @@ export const Select = <T,>({
 }) => {
   const labelId = `${id}-label`;
   return (
-    <div class="flex w-full flex-col gap-1">
+    <div className="flex w-full flex-col gap-1">
       <label
         id={labelId}
         htmlFor={id}
-        class={cn("text-base", error && "text-red-500")}>
+        className={cn("text-base", error && "text-red-500")}>
         {label}
       </label>
 
       <select
         id={id}
-        class={cn(
+        className={cn(
           "flex appearance-none items-center rounded-md border border-neutral-700 bg-neutral-800 p-3 py-4 text-xl outline-none",
           error && "border border-red-500 text-red-500",
           !error && " ring-blue-600 focus:ring-2"
@@ -59,7 +59,7 @@ export const Select = <T,>({
       </select>
 
       {helperText && (
-        <div class={cn("text-sm", error && "text-red-500")}>{helperText}</div>
+        <div className={cn("text-sm", error && "text-red-500")}>{helperText}</div>
       )}
     </div>
   );

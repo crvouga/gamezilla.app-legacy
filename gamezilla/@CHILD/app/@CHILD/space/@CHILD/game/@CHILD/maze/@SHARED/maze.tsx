@@ -191,7 +191,7 @@ const viewBox = [
 
 export const CoverArt = () => {
   return (
-    <svg viewBox={viewBox} width="100%" class="border border-gray-700">
+    <svg viewBox={viewBox} width="100%" className="border border-gray-700">
       <rect
         x={coverArtMaze.lower.x}
         y={coverArtMaze.lower.y}
@@ -202,7 +202,7 @@ export const CoverArt = () => {
       {coverArtMaze.edges.map(([a, b]) => (
         <g
           key={[a.x, a.y, b.x, b.y].join("-")}
-          stroke-width="0.1"
+          strokeWidth="0.1"
           stroke={"#fff"}>
           <line
             x1={a.x + 1 / 2}

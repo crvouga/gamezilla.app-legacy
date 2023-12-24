@@ -11,7 +11,7 @@ export const LoadingScreen = ({
     <div
       id="loading-screen"
       key="loading-screen"
-      class={cn(
+      className={cn(
         "flex flex-col items-center justify-center",
         absolute && "absolute inset-0",
         !absolute && "h-screen"

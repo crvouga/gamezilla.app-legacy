@@ -11,7 +11,7 @@ export const ButtonVertical = ({
 }) => {
   return (
     <button
-      class={[
+      className={[
         "flex h-14 w-14 flex-col items-center justify-center",
         className ? className : "",
       ].join(" ")}

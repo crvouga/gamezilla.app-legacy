@@ -84,7 +84,7 @@ export const ViewColumnsSvg = ({
 
         {[...new Array(COLUMN_COUNT)].map((_, columnIndex) => (
           <rect
-            class={cn(
+            className={cn(
               disabled || !onClick
                 ? undefined
                 : (columns[columnIndex]?.length ?? 0) >= MAX_COLUMN_HEIGHT
@@ -154,8 +154,8 @@ const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
             rx={n / 2}
             stroke="transparent"
             fill="transparent"
-            stroke-width={n / 8}
-            class="pointer-events-none"
+            strokeWidth={n / 8}
+            className="pointer-events-none"
           />,
         ];
       })}
@@ -190,18 +190,18 @@ const SvgDefs = ({ ids }: { ids: SvgIds }) => {
       </mask>
 
       <linearGradient id={ids.columnGradient} gradientTransform="rotate(90)">
-        <stop offset="0%" stop-color={gameTheme.primary.light} />
-        <stop offset="100%" stop-color={gameTheme.primary.dark} />
+        <stop offset="0%" stopColor={gameTheme.primary.light} />
+        <stop offset="100%" stopColor={gameTheme.primary.dark} />
       </linearGradient>
 
       <linearGradient id={ids.playerOneGradient} gradientTransform="rotate(90)">
-        <stop offset="0%" stop-color={gameTheme["player-one"].light} />
-        <stop offset="100%" stop-color={gameTheme["player-one"].dark} />
+        <stop offset="0%" stopColor={gameTheme["player-one"].light} />
+        <stop offset="100%" stopColor={gameTheme["player-one"].dark} />
       </linearGradient>
 
       <linearGradient id={ids.playerTwoGradient} gradientTransform="rotate(90)">
-        <stop offset="0%" stop-color={gameTheme["player-two"].light} />
-        <stop offset="100%" stop-color={gameTheme["player-two"].dark} />
+        <stop offset="0%" stopColor={gameTheme["player-two"].light} />
+        <stop offset="100%" stopColor={gameTheme["player-two"].dark} />
       </linearGradient>
     </defs>
   );

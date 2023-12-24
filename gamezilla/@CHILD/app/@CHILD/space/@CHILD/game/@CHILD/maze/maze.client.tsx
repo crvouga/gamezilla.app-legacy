@@ -215,7 +215,7 @@ export const View = ({
         {maze.edges.map(([a, b]) => (
           <g
             key={[a.x, a.y, b.x, b.y].join("-")}
-            stroke-width="0.1"
+            strokeWidth="0.1"
             stroke={"#fff"}
           >
             <line
@@ -261,7 +261,7 @@ export const View = ({
           />
           <div>
             <ActionButton
-              icon={<IconArrowLeftOnRect class="h-6 w-6" />}
+              icon={<IconArrowLeftOnRect className="h-6 w-6" />}
               label="Exit"
               onClick={() =>
                 dispatch(["stop-game", { userId: ctx.currentUserId }])
@@ -294,7 +294,7 @@ const ViewJoystick = ({
       <svg
         width="100%"
         viewBox="-1 -1 2 2"
-        class="touch-none select-none overflow-hidden"
+        className="touch-none select-none overflow-hidden"
       >
         <defs>
           <clipPath id="cut-off-bottom">
@@ -302,7 +302,7 @@ const ViewJoystick = ({
           </clipPath>
         </defs>
 
-        <g stroke-width={0.025}>
+        <g strokeWidth={0.025}>
           <g clipPath="url(#cut-off-bottom)" stroke={stroke}>
             {Direction.all.map((direction) => {
               const { x, y } = directionToVector(direction);
@@ -334,14 +334,14 @@ const ViewJoystick = ({
             y="0"
             r={0.5}
             fill={fill}
-            class="pointer-events-none touch-none select-none"
+            className="pointer-events-none touch-none select-none"
             stroke={stroke}
           />
           <circle
             x="0"
             y="0"
             r={0.98}
-            class="pointer-events-none touch-none select-none"
+            className="pointer-events-none touch-none select-none"
             fill="transparent"
             stroke={stroke}
           />
