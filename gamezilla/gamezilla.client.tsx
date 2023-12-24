@@ -4,15 +4,13 @@ import "preact/debug";
 import * as AppClient from "./@CHILD/app/app.client";
 import * as App from "./@CHILD/app/app.core";
 
-const storage = Storage<App.ClientModel>();
-
 const main = async () => {
   const program = await Program.create({
     init: (input) => {
       const init = AppClient.init({
         ...input,
         location: Browser.getLocation(),
-        stored: storage.get() ?? null,
+        stored: null,
       });
 
       return init;
@@ -23,7 +21,7 @@ const main = async () => {
     subscriptions: AppClient.subscriptions,
   });
 
-  function renderProgram(model: App.ClientModel, ctx: Ctx) {
+  function renderer(model: App.ClientModel, ctx: Ctx) {
     render(
       <AppClient.View
         dispatch={program.dispatch}
@@ -34,7 +32,7 @@ const main = async () => {
     );
   }
 
-  program.subscribe(renderProgram);
+  program.subscribe(renderer);
   program.start();
 };
 
