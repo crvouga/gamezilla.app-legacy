@@ -491,13 +491,13 @@ export const attachDebugger = <Model, Msg extends object>(
             return;
           }
           case "__DebugUpdateModel__": {
-            program._debugger.setModel(msg.payload);
+            program.setModel(msg.payload);
             return;
           }
         }
       }
     },
-    init: program._debugger.getModel(),
+    init: program.getModel(),
   });
 
   const started = new Promise<null>((resolve) => {

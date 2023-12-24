@@ -14,24 +14,25 @@ export type Program<Model, Msg> = {
   dispatch: (msg: Msg) => void;
   subscribe: (subscriber: Subscriber<Model, Msg>) => () => void;
   start: () => () => void;
-  _debugger: {
-    getModel: () => Model;
-    setModel: (model: Model) => void;
-  };
+  getModel: () => Model;
+  setModel: (model: Model) => void;
 };
 
 type MaybePromise<T> = T | Promise<T>;
 
-type ProgramConfig<Model, Msg> = {
-  init: (input: { ctx: Ctx }) => MaybePromise<{ model: Model; eff?: Eff<Msg> }>;
-  update: (input: { ctx: Ctx; msg: Msg; model: Model }) => MaybePromise<{
+type ProgramConfig<Model, Msg, TCtx = Ctx> = {
+  getCtx?: () => MaybePromise<TCtx>;
+  init: (input: {
+    ctx: TCtx;
+  }) => MaybePromise<{ model: Model; eff?: Eff<Msg> }>;
+  update: (input: {
+    ctx: TCtx;
+    msg: Msg;
     model: Model;
-    eff?: Eff<Msg>;
-  }>;
-
+  }) => MaybePromise<{ model: Model; eff?: Eff<Msg> }>;
   subscriptions: (input: {
     intervalId: string;
-    ctx: Ctx;
+    ctx: TCtx;
     model: Model;
   }) => MaybePromise<Sub<Msg>>;
 };
@@ -153,10 +154,6 @@ export async function create<Model, Msg>(
     publish(state.model, ctx, null);
   };
 
-  const _debugger = {
-    getModel,
-    setModel,
-  };
 
   //
   //
@@ -168,7 +165,8 @@ export async function create<Model, Msg>(
     start,
     dispatch,
     subscribe,
-    _debugger,
+    setModel,
+    getModel,
   };
 }
 
