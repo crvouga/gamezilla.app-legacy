@@ -2,6 +2,7 @@ import * as config from "config.ts";
 import { Browser, Ctx, Program } from "gamezilla/@SHARED/core";
 import * as AppClient from "./@CHILD/app/app.client";
 import * as App from "./@CHILD/app/app.core";
+import { attachDebuggerBrowserExtension } from "./@SHARED/core/debug";
 
 const program = Program.create({
   init: (input) => {
@@ -81,9 +82,15 @@ async function attachRenderer() {
   }
 }
 
-attachRenderer().then(() => {
-  program.start();
-});
+async function start() {
+  await attachRenderer();
+  await program.start();
+  if (process.env.NODE_ENV === "development") {
+    attachDebuggerBrowserExtension(program);
+  }
+}
+
+start();
 
 /**
  * Use this to persist state across page refreshes.
