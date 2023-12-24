@@ -29,8 +29,7 @@ import {
   IconHome,
   IconUserGroup,
   IconXMark,
-  Spinner,
-  VDom,
+  VDom
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
