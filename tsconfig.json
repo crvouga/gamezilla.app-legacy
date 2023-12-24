@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2015",
-    "lib": ["DOM", "DOM.Iterable", "ESNext", "WebWorker", "es2016", "dom"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext", "WebWorker", "es2016", "dom", "ES2015"],
     "module": "ESNext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

@@ -4,6 +4,9 @@ import inferno from "vite-plugin-inferno";
 
 // https://vivittejs.dev/config/
 export default defineConfig({
-  plugins: [tsconfigPaths(), inferno()],
+  plugins: [
+    inferno(),
+    tsconfigPaths(), 
+  ],
   define: { "process.env": process.env },
 });
