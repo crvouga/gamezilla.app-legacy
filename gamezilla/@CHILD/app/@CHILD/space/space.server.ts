@@ -5,9 +5,10 @@ import {
   ServerCtx,
   ServerEvt,
   broadcast,
-  topicSubscribe
+  topicSubscribe,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Sub } from "gamezilla/@SHARED/core";
+import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
 import { AppServerModule } from "../../@SHARED/architecture/app-server";
 import * as GameServer from "./@CHILD/game/game.server";
 import { updateFromSpaceEvents } from "./space-server/update-from-events";
@@ -16,14 +17,15 @@ import {
   Event,
   ServerModel,
   ServerMsg,
+  SpaceEvents,
   ToClient,
   ToServer,
+  config,
   initCore,
   mergeModels,
   toStartedSpace,
-  toStartingAt,
   toState,
-  toUserState
+  toUserState,
 } from "./space.core";
 
 //
@@ -120,7 +122,7 @@ const updateFromClient: Module["update"] = async (input) => {
             model: { ...model, ...merged },
           };
         },
-        (model) => { 
+        (model) => {
           return {
             model: {
               ...model,
@@ -132,16 +134,25 @@ const updateFromClient: Module["update"] = async (input) => {
           };
         },
         async (model) => {
-          const starting = await toStartingAt(model, fromClient.clock)
-        
+          const latestEvent = await SpaceEvents.latest(config, model.events);
+          if (!latestEvent) {
+            return { model };
+          }
+          const state = await toState(model);
+          const snapshots: ServerModel["snapshots"] = CappedOrderedDict.add(
+            CappedOrderedDict.init({ maxSize: 5 }),
+            latestEvent.eventId,
+            state
+          );
+          const events = await SpaceEvents.startingAt(config, model.events, latestEvent.eventId)
           return {
             model,
             cmd: [
               broadcast<ToClient>({
                 t: "sync",
-                events: starting.events,
-                clock: starting.clock,
-                snapshots: starting.snapshots,
+                events: events,
+                clock: model.clock,
+                snapshots: snapshots,
                 causedBy: fromClient,
                 profiles: model.profileCache,
               }),

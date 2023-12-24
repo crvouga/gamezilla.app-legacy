@@ -29,7 +29,8 @@ import {
   IconHome,
   IconUserGroup,
   IconXMark,
-  VDom
+  LoadingScreen,
+  VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
@@ -193,10 +194,13 @@ const updateFromServer: Module["update"] = (input) => {
   return AppClientModule.chainUpdates(
     { model: input.model },
     (model) => {
-      return {
-        model,
-        cmd: fromServer.profiles ? [addProfiles(fromServer.profiles)] : [],
-      };
+      if (fromServer.profiles) {
+        return {
+          model,
+          cmd: [addProfiles(fromServer.profiles)],
+        };
+      }
+      return { model };
     },
     async (model) => {
       switch (fromServer.t) {
@@ -204,7 +208,7 @@ const updateFromServer: Module["update"] = (input) => {
           const merged = await mergeModels(model, {
             events: fromServer.events,
             clock: fromServer.clock,
-            snapshots: model.snapshots,
+            snapshots: fromServer.snapshots,
           });
 
           return { model: { ...model, ...merged, isSyncing: false } };
@@ -450,10 +454,16 @@ const ViewSpaceScreen = ({
 
   switch (space.type) {
     case "ended": {
+      if(model.isSyncing) {
+        return <LoadingScreen />;
+      }
       return <ViewSpaceEnded dispatch={dispatch} />;
     }
 
     case "initial": {
+      if(model.isSyncing) {
+        return <LoadingScreen />;
+      }
       return <ViewSpaceNotFound dispatch={dispatch} />;
     }
 
@@ -975,7 +985,9 @@ export const ViewCurrentSpaceBar = ({
           <p className="text-left">
             {hostProfile ? `${hostProfile.username}'s space` : "..."}
           </p>
-          <p className="text-left text-xs text-neutral-300">{userCount} in space</p>
+          <p className="text-left text-xs text-neutral-300">
+            {userCount} in space
+          </p>
         </div>
       </button>
 

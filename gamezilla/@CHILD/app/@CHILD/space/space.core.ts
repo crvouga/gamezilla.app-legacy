@@ -1,7 +1,6 @@
 import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { AppRoute } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { memoizeAsync } from "gamezilla/@SHARED/core";
 import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
 import {
   EventStreamInMemory,
@@ -63,49 +62,6 @@ export type ClientModel = CoreModel & {
 
 type ModalModel = null | "user-preview" | "users";
 
-export const toStartingAt = async (
-  model: CoreModel,
-  clock: LamportClock
-): Promise<CoreModel> => {
-  let eventId: EventId | null = null;
-
-  for (const event of await SpaceEvents.toArray(model.events)) {
-    if (
-      LamportTimestamp.lte(event.happenedAt, LamportClock.toCurrentTime(clock))
-    ) {
-      eventId = event.eventId;
-      break;
-    }
-  }
-
-  if (!eventId) {
-    return model;
-  }
-
-  const endingAt = await SpaceEvents.endingAt(config, model.events, eventId);
-  const newInitialState = await deriveState({
-    clock: model.clock,
-    events: endingAt,
-    snapshots: model.snapshots,
-  });
-  const newSnapshots = CappedOrderedDict.add(
-    CappedOrderedDict.init<EventId, State>({ maxSize: 5 }),
-    eventId,
-    newInitialState
-  );
-
-  const startingAt = await SpaceEvents.startingAt(
-    config,
-    model.events,
-    eventId
-  );
-
-  return {
-    events: startingAt,
-    snapshots: newSnapshots,
-    clock: model.clock,
-  };
-};
 
 //
 //
@@ -205,7 +161,7 @@ export const appendEvent = async (
   };
 
   const appended: CoreModel = {
-    ...model,
+    snapshots: model.snapshots,
     clock: LamportClock.increment(model.clock),
     events: await SpaceEvents.append(config, model.events, eventWithMeta),
   };
@@ -213,7 +169,8 @@ export const appendEvent = async (
   const stateNew = await deriveState(appended);
 
   const added: CoreModel = {
-    ...appended,
+    clock: appended.clock,
+    events: appended.events,
     snapshots: CappedOrderedDict.add(
       appended.snapshots,
       eventWithMeta.eventId,
@@ -237,7 +194,7 @@ export const mergeModels = async (
   const modelNew: CoreModel = {
     events: streamNew,
     clock: LamportClock.update(model.clock, otherModel.clock),
-    snapshots: { ...model.snapshots, ...otherModel.snapshots },
+    snapshots: CappedOrderedDict.mergeLeft(otherModel.snapshots, model.snapshots),
   };
 
   return modelNew;
@@ -245,7 +202,7 @@ export const mergeModels = async (
 
 type Indexes = "indexSpaceId" | "indexSpaceIdAndGame";
 
-const config = SpaceEvents.config({
+export const config = SpaceEvents.config({
   indexes: {
     indexSpaceId: (event) => event.spaceId,
     indexSpaceIdAndGame: (event) =>
@@ -619,6 +576,11 @@ const deriveState = async (model: CoreModel): Promise<State> => {
   let derivedState: State = initState();
   const eventIds: EventId[] = [];
 
+  // 
+  // 
+  // Starting at the latest snapshot, walk backwards through the events
+  // 
+  // 
   for (let i = model.events._ordering.length - 1; i >= 0; i--) {
     const eventId = model.events._ordering[i];
 
@@ -627,6 +589,7 @@ const deriveState = async (model: CoreModel): Promise<State> => {
     }
 
     const snapshot = CappedOrderedDict.get(model.snapshots, eventId);
+
     if (snapshot) {
       derivedState = snapshot;
       break;
@@ -635,6 +598,13 @@ const deriveState = async (model: CoreModel): Promise<State> => {
     eventIds.push(eventId);
   }
 
+  // 
+  // 
+  // 
+  // Derive the state from the events
+  // 
+  // 
+  // 
   for (let i = eventIds.length - 1; i >= 0; i--) {
     const eventId = eventIds[i];
 
@@ -642,7 +612,7 @@ const deriveState = async (model: CoreModel): Promise<State> => {
       continue;
     }
 
-    const event = model.events._events[eventId];
+    const event = await SpaceEvents.get(model.events, eventId)
 
     if (!event) {
       continue;
@@ -654,16 +624,10 @@ const deriveState = async (model: CoreModel): Promise<State> => {
   return derivedState;
 };
 
-export const toStateMemoized = memoizeAsync({
-  toKey: (model) => SpaceEvents.toHash(model.events),
-  func: deriveState,
-  cacheCapacity: 100,
-});
-
-export const toState = toStateMemoized;
+export const toState = deriveState;
 
 const exposed = {
-  deriveStateWithSnapshots: deriveState,
+  deriveState,
   toState,
   toSpaceState,
   SpaceEvents,

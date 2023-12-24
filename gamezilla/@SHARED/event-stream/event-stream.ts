@@ -53,6 +53,10 @@ export type IEventStream<
     instance: TInstance,
     event: TEvent
   ) => Promise<TInstance>;
+  latest: (
+    config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
+    instance: TInstance
+  ) => Promise<TEvent | null>;
   mergeLeft: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
     left: TInstance,

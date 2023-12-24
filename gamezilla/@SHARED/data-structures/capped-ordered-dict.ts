@@ -72,9 +72,38 @@ const get = <TKey extends string | number, TValue>(
   return model._valuesByKey[key] ?? null;
 };
 
+const mergeLeft = <TKey extends string | number, TValue>(
+  left: CappedOrderedDict<TKey, TValue>,
+  right: CappedOrderedDict<TKey, TValue>
+): CappedOrderedDict<TKey, TValue> => {
+  const valuesByKeyNew: CappedOrderedDict<TKey, TValue>["_valuesByKey"] = {};
+
+  for (const key of left._orderNewestFirst) {
+    if (key in left._valuesByKey) {
+      const value = left._valuesByKey[key]!;
+      valuesByKeyNew[key] = value;
+    }
+  }
+
+  for (const key of right._orderNewestFirst) {
+    if (key in right._valuesByKey && !(key in valuesByKeyNew)) {
+      const value = right._valuesByKey[key]!;
+      valuesByKeyNew[key] = value;
+    }
+  }
+
+  return {
+    _type: "CappedOrderedDict",
+    _maxSize: left._maxSize,
+    _orderNewestFirst: left._orderNewestFirst,
+    _valuesByKey: valuesByKeyNew,
+  };
+}
+
 export const CappedOrderedDict = {
   add,
   remove,
   init,
   get,
+  mergeLeft
 };

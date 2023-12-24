@@ -60,9 +60,21 @@ export const EventStreamInMemory = <
         _ordering: [],
       };
     },
-    
+
     toHash(instance) {
       return instance._hash;
+    },
+
+    async latest(_config, instance) {
+      const eventId = instance._ordering[instance._ordering.length - 1];
+      if (!eventId) {
+        return null;
+      }
+      const event = instance._events[eventId];
+      if (!event) {
+        return null;
+      }
+      return event;
     },
 
     async get(instance, eventId) {
@@ -179,11 +191,11 @@ export const EventStreamInMemory = <
             _hash: 0,
           },
           instance._events[eventId]!
-        )
+        );
         newIndexes = updated._indexes;
       }
 
-      return  {
+      return {
         _events: newEvents,
         _hash: hash(newOrdering),
         _indexes: newIndexes,
@@ -214,11 +226,11 @@ export const EventStreamInMemory = <
             _hash: 0,
           },
           instance._events[eventId]!
-        )
+        );
         newIndexes = updated._indexes;
       }
 
-      return  {
+      return {
         _events: newEvents,
         _hash: hash(newOrdering),
         _indexes: newIndexes,
