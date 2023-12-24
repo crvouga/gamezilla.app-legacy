@@ -1,15 +1,22 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
-    "lib": ["DOM", "DOM.Iterable", "ESNext", "WebWorker", "es2016", "dom", "ES2015"],
-    "module": "ESNext",
+    "target": "esnext",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "esnext",
+      "WebWorker",
+      "es2016",
+      "dom",
+      "ES2015"
+    ],
+    "module": "esnext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "incremental": true,
     "outDir": "dist",
     /* Linting */
     "strict": true,
-    "moduleResolution": "Node",
 
     // Strict Checks
     "alwaysStrict": true,
@@ -44,13 +51,28 @@
     "suppressImplicitAnyIndexErrors": false,
     "noStrictGenericChecks": false,
 
-    "types": ["vite/client", "bun-types", "inferno"],
-		"jsx": "preserve",
-    // 
+    // if TS 5.x+
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "moduleDetection": "force",
+
+    "types": ["bun-types",  "inferno", "preact"],
+    "jsx": "react", // support JSX
+    "allowJs": true, // allow importing `.js` from `.ts`
+
+    //
     "baseUrl": "./",
-    "skipLibCheck": true,
-    "resolveJsonModule": true
+    "skipLibCheck": true
+    // "resolveJsonModule": true
   },
-  "include": ["gamezilla"],
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "gamezilla",
+    "global.d.ts",
+    "node_modules/inferno/dist/index.d.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

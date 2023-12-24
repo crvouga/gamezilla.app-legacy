@@ -1,4 +1,4 @@
-type FlowRow = {
+export type FlowRow = {
   //
   nodes_json: string;
   edges_json: string;

@@ -1,5 +1,6 @@
 import { Browser, Ctx, Program } from "gamezilla/@SHARED/core";
-import { render } from "inferno";
+import { render as renderInferno } from "inferno";
+import { render as renderPreact } from "preact";
 import * as AppClient from "./@CHILD/app/app.client";
 import * as App from "./@CHILD/app/app.core";
 
@@ -19,14 +20,42 @@ const program = Program.create({
   subscriptions: AppClient.subscriptions,
 });
 
-const renderer = (model: App.ClientModel, ctx: Ctx) => {
-  render(
-    <AppClient.View dispatch={program.dispatch} model={model} now={ctx.now} />,
-    document.getElementById("root")!
-  );
-};
+const vDomImpl = "preact" as string
 
-program.subscribe(renderer);
+switch (vDomImpl) {
+  case "inferno": {
+    const renderer = (model: App.ClientModel, ctx: Ctx) => {
+      renderInferno(
+        <AppClient.View
+          dispatch={program.dispatch}
+          model={model}
+          now={ctx.now}
+        />,
+        document.getElementById("root")!
+      );
+    };
+
+    program.subscribe(renderer);
+    break;
+  }
+
+  case "preact": {
+    const renderer = (model: App.ClientModel, ctx: Ctx) => {
+      renderPreact(
+        <AppClient.View
+          dispatch={program.dispatch}
+          model={model}
+          now={ctx.now}
+        />,
+        document.getElementById("root")!
+      );
+    };
+
+    program.subscribe(renderer);
+    break;
+  }
+}
+
 program.start();
 
 /**

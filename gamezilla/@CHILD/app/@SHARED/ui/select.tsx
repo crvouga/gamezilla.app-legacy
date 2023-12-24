@@ -51,7 +51,7 @@ export const Select = <T,>({
         }}>
         {options.map((option) => {
           return (
-            <option key={option} value={toKey(option)}>
+            <option key={toKey(option)} value={toKey(option)}>
               {toName(option)}
             </option>
           );
