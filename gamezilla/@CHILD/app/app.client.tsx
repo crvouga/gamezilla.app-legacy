@@ -14,7 +14,14 @@ import {
   VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Browser, Eff, Posix, Sub, batchMsgs, toMsgType } from "gamezilla/@SHARED/core";
+import {
+  Browser,
+  Eff,
+  Posix,
+  Sub,
+  batchMsgs,
+  toMsgType,
+} from "gamezilla/@SHARED/core";
 import * as AuthClient from "./@CHILD/auth/auth.client";
 import * as ProfileClient from "./@CHILD/profile/profile.client";
 import * as SpaceClient from "./@CHILD/space/space.client";
@@ -165,19 +172,19 @@ export const init = async ({
 //
 
 export const update = async (input: {
-  ctx: { now: Posix, };
+  ctx: { now: Posix };
   msg: ClientMsg;
   model: ClientModel;
 }): Promise<{
   model: ClientModel;
   eff?: Eff<ClientMsg>;
 }> => {
-  if(input.msg){
-    console.log("[msg]", toMsgType(input.msg))
+  if (input.msg) {
+    console.log("[msg]", toMsgType(input.msg));
   }
-  const fromServer = input.msg.t === "➡️" ? input.msg.c : undefined
-  if(fromServer) {
-    console.log("[➡️]", toMsgType(fromServer))
+  const fromServer = input.msg.t === "➡️" ? input.msg.c : undefined;
+  if (fromServer) {
+    console.log("[➡️]", toMsgType(fromServer));
   }
   const updatedFromMsg = await updateChild({
     now: input.ctx.now,
@@ -202,7 +209,7 @@ const updateLoop = async (now: Posix, acc: Output): Promise<Output> => {
   const [cmd, ...cmdRest] = acc.cmd;
 
   if (cmd) {
-    console.log("[cmd]", toMsgType(cmd))
+    console.log("[cmd]", toMsgType(cmd));
     const updatedCmd = await updateChild({ now, model: acc.model, cmd });
     return updateLoop(now, {
       model: updatedCmd.model,
@@ -215,7 +222,7 @@ const updateLoop = async (now: Posix, acc: Output): Promise<Output> => {
   const [evt, ...evtRest] = acc.evt;
 
   if (evt) {
-    console.log("[evt]", toMsgType(evt))
+    console.log("[evt]", toMsgType(evt));
     const updatedEvt = await updateChild({ now, model: acc.model, evt });
     return updateLoop(now, {
       model: updatedEvt.model,
@@ -431,12 +438,11 @@ export const View = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  // height: 100dvh;
-  // max-height: 915px;
-  // width: 100dvw;
-  // max-width: 520px;
   return (
-    <div className="flex h-[100dvh] w-screen items-center justify-center bg-black text-white">
+    <div
+      className="fixed left-1/2 top-1/2 flex h-[100dvh] w-screen items-center justify-center overflow-hidden bg-black text-white"
+      style={{ transform: "translate(-50%, -50%)" }}
+    >
       <div className="relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-600">
         <StatusBar.View
           model={model.statusBar}

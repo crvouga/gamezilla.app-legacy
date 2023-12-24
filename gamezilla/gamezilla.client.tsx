@@ -45,10 +45,12 @@ async function attachRenderer() {
 
     case "react": {
       const { createRoot } = await import("react-dom/client");
-      const root = createRoot(rootNode);
+      await import("react");
+
+      const reactRoot = createRoot(rootNode);
 
       function rendererReact(model: App.ClientModel, ctx: Ctx) {
-        root.render(
+        reactRoot.render(
           <AppClient.View
             dispatch={program.dispatch}
             model={model}

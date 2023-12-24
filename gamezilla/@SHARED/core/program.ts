@@ -13,7 +13,7 @@ type Subscriber<Model, Msg> = (
 export type Program<Model, Msg> = {
   dispatch: (msg: Msg) => void;
   subscribe: (subscriber: Subscriber<Model, Msg>) => () => void;
-  start: () => MaybePromise<() => void>;
+  start: () => Promise<() => void>;
   getModel: () => Model;
   setModel: (model: Model) => void;
 };
