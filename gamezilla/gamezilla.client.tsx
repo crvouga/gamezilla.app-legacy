@@ -5,13 +5,19 @@ import * as AppClient from "./@CHILD/app/app.client";
 import * as App from "./@CHILD/app/app.core";
 import { attachDebuggerBrowserExtension } from "./@SHARED/core/debug";
 
+
+
 const main = async () => {
+  const storage = ModelStorage<App.ClientModel>();
+
+  
+
   const program = await Program.create({
     init: (input) => {
       const init = AppClient.init({
         ...input,
         location: Browser.getLocation(),
-        stored: null,
+        stored: storage.get() ?? null,
       });
 
       return init;
@@ -21,6 +27,10 @@ const main = async () => {
 
     subscriptions: AppClient.subscriptions,
   });
+
+  program.subscribe(async (model) => {
+    storage.set(model);
+  })
 
   program.subscribe(async (model, ctx) => {
     render(
@@ -38,7 +48,7 @@ const main = async () => {
   program.start();
 };
 
-main();
+
 
 /**
  * Use this to persist state across page refreshes.
@@ -102,3 +112,6 @@ function renderRuntimeErrors() {
 }
 
 renderRuntimeErrors();
+
+
+main();

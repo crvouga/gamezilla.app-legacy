@@ -29,6 +29,7 @@ import {
   IconHome,
   IconUserGroup,
   IconXMark,
+  Spinner,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
@@ -49,7 +50,7 @@ import {
   initCore,
   initState,
   mergeModels,
-  toState
+  toState,
 } from "./space.core";
 
 //
@@ -95,6 +96,7 @@ export const init: Module["init"] = async ({ stored }) => {
       modal: null,
       previewUserId: null,
       latestState: initState(),
+      isSyncing: false,
     },
   };
 };
@@ -114,20 +116,19 @@ export const update: Module["update"] = (input) => {
     (model) => updateFromServer({ ...input, model }),
     (model) => updateFromEvt({ ...input, model }),
     (model) => updateGame({ ...input, model }),
-    (model) => updateLatestState({ ...input, model }),
+    (model) => updateLatestState({ ...input, model })
   );
 };
 
-const updateLatestState: Module["update"] = async ({  model }) => {
+const updateLatestState: Module["update"] = async ({ model }) => {
   const latestState = await toState(model);
   return {
     model: {
       ...model,
-      latestState
+      latestState,
     },
-  }
-
-}
+  };
+};
 
 const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
   if (!msg) {
@@ -207,7 +208,7 @@ const updateFromServer: Module["update"] = (input) => {
             snapshots: model.snapshots,
           });
 
-          return { model: { ...model, ...merged } };
+          return { model: { ...model, ...merged, isSyncing: false } };
         }
 
         case "game": {
@@ -240,7 +241,10 @@ const updateFromEvt: Module["update"] = (input) => {
         ? input.ctx.profiles[currentUserId]
         : null;
       return {
-        model,
+        model: {
+          ...model,
+          isSyncing: true,
+        },
         cmd: [
           sendToServer({
             t: "sync",

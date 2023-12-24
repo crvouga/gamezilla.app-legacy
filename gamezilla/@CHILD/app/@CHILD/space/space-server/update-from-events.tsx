@@ -148,6 +148,7 @@ async function syncUserWhenJoined({
             t: "sync",
             events: model.events,
             causedBy: event,
+            snapshots: model.snapshots,
             clock: model.clock,
           }),
         ],

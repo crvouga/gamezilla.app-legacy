@@ -58,6 +58,7 @@ export type ClientModel = CoreModel & {
   previewUserId: UserId | null;
   modal: ModalModel;
   latestState: State;
+  isSyncing: boolean
 };
 
 type ModalModel = null | "user-preview" | "users";
