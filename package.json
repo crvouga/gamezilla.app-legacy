@@ -26,6 +26,7 @@
   "devDependencies": {
     "@typescript-eslint/parser": "^5.57.1",
     "autoprefixer": "^10.4.14",
+    "babel-plugin-inferno": "^6.7.1",
     "bun-types": "^1.0.11",
     "csv-parser": "^3.0.0",
     "eslint": "^8.38.0",
