@@ -184,6 +184,15 @@ export const init = async ({
 //
 //
 
+
+const SHOULD_LOG = false;
+
+function log(...msg: unknown[]) {
+  if(SHOULD_LOG)  {
+    console.log(...msg);
+  }
+}
+
 export const update = async (input: {
   ctx: { now: Posix };
   msg: ClientMsg;
@@ -194,11 +203,11 @@ export const update = async (input: {
   eff?: Eff<ClientMsg>;
 }> => {
   if (input.msg) {
-    console.log("[msg]", toMsgType(input.msg));
+    log("[msg]", toMsgType(input.msg));
   }
   const fromServer = input.msg.t === "➡️" ? input.msg.c : undefined;
   if (fromServer) {
-    console.log("[➡️]", toMsgType(fromServer));
+    log("[➡️]", toMsgType(fromServer));
   }
   const updatedFromMsg = await updateChild({
     now: input.ctx.now,
@@ -224,7 +233,7 @@ const updateLoop = async (deps: Deps, now: Posix, acc: Output): Promise<Output> 
   const [cmd, ...cmdRest] = acc.cmd;
 
   if (cmd) {
-    console.log("[cmd]", toMsgType(cmd));
+    log("[cmd]", toMsgType(cmd));
     const updatedCmd = await updateChild({deps, now, model: acc.model, cmd });
     return updateLoop(deps,now, {
       model: updatedCmd.model,
@@ -237,7 +246,7 @@ const updateLoop = async (deps: Deps, now: Posix, acc: Output): Promise<Output> 
   const [evt, ...evtRest] = acc.evt;
 
   if (evt) {
-    console.log("[evt]", toMsgType(evt));
+    log("[evt]", toMsgType(evt));
     const updatedEvt = await updateChild({ deps, now, model: acc.model, evt });
     return updateLoop(deps, now, {
       model: updatedEvt.model,
