@@ -21,9 +21,9 @@ function getVdomPlugin() {
 
 // https://vivittejs.dev/config/
 export default defineConfig({
-  plugins: [
-    tsconfigPaths(),
-    getVdomPlugin(),
-  ],
+  plugins: [tsconfigPaths(), getVdomPlugin()],
+  server: {
+    hmr: false,
+  },
   define: { "process.env": process.env },
 });

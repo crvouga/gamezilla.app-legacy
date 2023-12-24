@@ -14,7 +14,7 @@ import {
   VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Browser, Eff, Posix, Sub, batchMsgs } from "gamezilla/@SHARED/core";
+import { Browser, Eff, Posix, Sub, batchMsgs, toMsgType } from "gamezilla/@SHARED/core";
 import * as AuthClient from "./@CHILD/auth/auth.client";
 import * as ProfileClient from "./@CHILD/profile/profile.client";
 import * as SpaceClient from "./@CHILD/space/space.client";
@@ -165,18 +165,25 @@ export const init = async ({
 //
 
 export const update = async (input: {
-  ctx: { now: Posix };
+  ctx: { now: Posix, };
   msg: ClientMsg;
   model: ClientModel;
 }): Promise<{
   model: ClientModel;
   eff?: Eff<ClientMsg>;
 }> => {
+  if(input.msg){
+    console.log("[msg]", toMsgType(input.msg))
+  }
+  const fromServer = input.msg.t === "➡️" ? input.msg.c : undefined
+  if(fromServer) {
+    console.log("[➡️]", toMsgType(fromServer))
+  }
   const updatedFromMsg = await updateChild({
     now: input.ctx.now,
     model: input.model,
     msg: input.msg,
-    fromServer: input.msg.t === "➡️" ? input.msg.c : undefined,
+    fromServer: fromServer,
   });
 
   const updated = await updateLoop(input.ctx.now, updatedFromMsg);
@@ -195,6 +202,7 @@ const updateLoop = async (now: Posix, acc: Output): Promise<Output> => {
   const [cmd, ...cmdRest] = acc.cmd;
 
   if (cmd) {
+    console.log("[cmd]", toMsgType(cmd))
     const updatedCmd = await updateChild({ now, model: acc.model, cmd });
     return updateLoop(now, {
       model: updatedCmd.model,
@@ -207,6 +215,7 @@ const updateLoop = async (now: Posix, acc: Output): Promise<Output> => {
   const [evt, ...evtRest] = acc.evt;
 
   if (evt) {
+    console.log("[evt]", toMsgType(evt))
     const updatedEvt = await updateChild({ now, model: acc.model, evt });
     return updateLoop(now, {
       model: updatedEvt.model,
