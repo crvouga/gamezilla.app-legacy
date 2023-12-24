@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "composite": true
+    "composite": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
   },
   "include": ["vite.config.ts", "tailwind.config.ts"]
 }

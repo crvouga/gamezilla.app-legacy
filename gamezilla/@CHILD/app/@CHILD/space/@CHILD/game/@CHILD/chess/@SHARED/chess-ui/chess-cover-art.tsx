@@ -18,9 +18,7 @@ export const CoverArt = (props: { class?: string }) => {
       <rect x={1} y={0} width={1} height={1} fill={theme.darkSquare} />
 
       <svg x={0} y={0} width="2" height="2" viewBox="0 0 45 45">
-        <g
-          transform="translate(0 -2) scale(0.8)"
-          style="transform-origin: center;">
+        <g transform="translate(0 -2) scale(0.8)">
           <path
             fill={theme.pawn}
             stroke={theme.pawn}

@@ -236,7 +236,7 @@ export const View = ({
                 key={node.nodeId}
                 x={node.x}
                 y={node.y}
-                style={{ fontSize: 0.2 }}
+                fontSize="0.2"
                 fill="#fff">
                 {`${node.x},${node.y}`}
               </text>

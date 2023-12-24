@@ -1,6 +1,5 @@
+import * as config from "config.ts";
 import { Browser, Ctx, Program } from "gamezilla/@SHARED/core";
-import { render as renderInferno } from "inferno";
-import { render as renderPreact } from "preact";
 import * as AppClient from "./@CHILD/app/app.client";
 import * as App from "./@CHILD/app/app.core";
 
@@ -20,43 +19,70 @@ const program = Program.create({
   subscriptions: AppClient.subscriptions,
 });
 
-const vDomImpl = "preact" as string
+async function attachRenderer() {
+  const rootNode = document.getElementById("root")!;
+  console.log(`vDom: ${config.vDom}`);
 
-switch (vDomImpl) {
-  case "inferno": {
-    const renderer = (model: App.ClientModel, ctx: Ctx) => {
-      renderInferno(
-        <AppClient.View
-          dispatch={program.dispatch}
-          model={model}
-          now={ctx.now}
-        />,
-        document.getElementById("root")!
-      );
-    };
+  switch (config.vDom) {
+    case "inferno": {
+      const { render } = await import("inferno");
 
-    program.subscribe(renderer);
-    break;
-  }
+      function rendererInferno(model: App.ClientModel, ctx: Ctx) {
+        render(
+          <AppClient.View
+            dispatch={program.dispatch}
+            model={model}
+            now={ctx.now}
+          />,
+          rootNode
+        );
+      }
 
-  case "preact": {
-    const renderer = (model: App.ClientModel, ctx: Ctx) => {
-      renderPreact(
-        <AppClient.View
-          dispatch={program.dispatch}
-          model={model}
-          now={ctx.now}
-        />,
-        document.getElementById("root")!
-      );
-    };
+      program.subscribe(rendererInferno);
+      break;
+    }
 
-    program.subscribe(renderer);
-    break;
+    case "react": {
+      const { createRoot } = await import("react-dom/client");
+      const root = createRoot(rootNode);
+
+      function rendererReact(model: App.ClientModel, ctx: Ctx) {
+        root.render(
+          <AppClient.View
+            dispatch={program.dispatch}
+            model={model}
+            now={ctx.now}
+          />
+        );
+      }
+
+      program.subscribe(rendererReact);
+      break;
+    }
+
+    case "preact": {
+      const { render } = await import("preact");
+
+      function rendererPreact(model: App.ClientModel, ctx: Ctx) {
+        render(
+          <AppClient.View
+            dispatch={program.dispatch}
+            model={model}
+            now={ctx.now}
+          />,
+          rootNode
+        );
+      }
+
+      program.subscribe(rendererPreact);
+      break;
+    }
   }
 }
 
-program.start();
+attachRenderer().then(() => {
+  program.start();
+});
 
 /**
  * Use this to persist state across page refreshes.
