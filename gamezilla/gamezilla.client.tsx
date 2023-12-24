@@ -62,6 +62,7 @@ async function attachRenderer() {
 
     case "preact": {
       const { render } = await import("preact");
+      await import("preact/compat");
 
       function rendererPreact(model: App.ClientModel, ctx: Ctx) {
         render(
