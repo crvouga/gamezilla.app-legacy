@@ -458,7 +458,7 @@ export const View = ({
 }) => {
   return (
     <div
-      className="fixed left-1/2 top-1/2 flex h-[100dvh] w-screen items-center justify-center overflow-hidden bg-black text-white"
+      className="fixed left-1/2 top-1/2 flex h-[100dvh] w-screen items-center justify-center overflow-hidden bg-black text-white select-none"
       style={{ transform: "translate(-50%, -50%)" }}
     >
       <div className="relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-600">
@@ -549,9 +549,6 @@ const ViewMain = ({
 const ViewSplashScreen = () => {
   return (
     <div className="absolute inset-0 flex h-full w-full flex-col items-center justify-center gap-1">
-      <h1 className="bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent">
-        gamezilla.app
-      </h1>
       <Spinner />
     </div>
   );
