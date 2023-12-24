@@ -1,17 +1,12 @@
-import { Browser, Program } from "gamezilla/@SHARED/core";
-import "preact/debug";
+import { Browser, Ctx, Program } from "gamezilla/@SHARED/core";
 import { render } from "preact";
+import "preact/debug";
 import * as AppClient from "./@CHILD/app/app.client";
 import * as App from "./@CHILD/app/app.core";
-import { attachDebuggerBrowserExtension } from "./@SHARED/core/debug";
 
-
+const storage = Storage<App.ClientModel>();
 
 const main = async () => {
-  const storage = ModelStorage<App.ClientModel>();
-
-  
-
   const program = await Program.create({
     init: (input) => {
       const init = AppClient.init({
@@ -28,11 +23,7 @@ const main = async () => {
     subscriptions: AppClient.subscriptions,
   });
 
-  program.subscribe(async (model) => {
-    storage.set(model);
-  })
-
-  program.subscribe(async (model, ctx) => {
+  function renderProgram(model: App.ClientModel, ctx: Ctx) {
     render(
       <AppClient.View
         dispatch={program.dispatch}
@@ -41,25 +32,22 @@ const main = async () => {
       />,
       document.body
     );
-  });
+  }
 
-  attachDebuggerBrowserExtension(program);
-
+  program.subscribe(renderProgram);
   program.start();
 };
-
-
 
 /**
  * Use this to persist state across page refreshes.
  * It retains type safety by using deployment IDs.
  */
-export const ModelStorage = <TModel,>() => {
+export function Storage<TModel>() {
   const CODEBASE_VERSION_ID_KEY = "gamezilla/codebase-version-id";
   const MODEL_KEY = "gamezilla/model";
 
   return {
-    get: () => {
+    get() {
       const storedId = sessionStorage.getItem(CODEBASE_VERSION_ID_KEY);
 
       if (storedId !== App.PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID) {
@@ -73,7 +61,7 @@ export const ModelStorage = <TModel,>() => {
       return maybeModel;
     },
 
-    set: (model: TModel) => {
+    set(model: TModel) {
       sessionStorage.setItem(
         CODEBASE_VERSION_ID_KEY,
         App.PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID
@@ -81,13 +69,13 @@ export const ModelStorage = <TModel,>() => {
       sessionStorage.setItem(MODEL_KEY, JSON.stringify(model));
     },
   };
-};
+}
 
 /**
  * Use this to render runtime errors to the screen.
  * This is useful for debugging on mobile devices.
  */
-function renderRuntimeErrors() {
+export function renderRuntimeErrors() {
   window.onerror = function (errorMsg, url, lineNumber, column, _errorObj) {
     showError(errorMsg, url, lineNumber, column);
   };
@@ -110,8 +98,6 @@ function renderRuntimeErrors() {
     document.body.appendChild(errorDiv);
   }
 }
-
 renderRuntimeErrors();
-
 
 main();

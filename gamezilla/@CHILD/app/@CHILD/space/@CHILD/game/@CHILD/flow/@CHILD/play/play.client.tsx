@@ -1,8 +1,10 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { SpaceClientEvt } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
+import { GameLayout } from "../../../../@SHARED/game";
 import { FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import {
@@ -13,8 +15,6 @@ import {
   ToClient,
   ToServer,
 } from "./play.core";
-import { GameLayout } from "../../../../@SHARED/game";
-import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 
 type Module = GameClientModule<{
   Model: ClientModel;
@@ -111,8 +111,22 @@ const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
   );
 };
 
-export const ViewFeedItem: Module["ViewFeedItem"] = () => {
-  return null;
+export const ViewFeedItem: Module["ViewFeedItem"] = ({ gameEvent }) => {
+  switch (gameEvent.t) {
+    case "grid": {
+      switch (gameEvent.c.t) {
+        case "dragged-over":
+        case "left":
+        case "pressed-down":
+        case "pressed-up": {
+          return null;
+        }
+        default: {
+          return null;
+        }
+      }
+    }
+  }
 };
 
 export const PlayClient: Module = {

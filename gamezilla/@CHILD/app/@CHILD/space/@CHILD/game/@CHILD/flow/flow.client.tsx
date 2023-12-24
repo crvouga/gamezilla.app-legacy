@@ -13,6 +13,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
 import { withId } from "../../../../@SHARED/event";
+import { PlayClient } from "./@CHILD/play/play.client";
 import { CoverArt } from "./@SHARED/flow-cover-art";
 import { FlowClientCtx } from "./@SHARED/flow-ctx";
 import {
@@ -23,7 +24,14 @@ import {
   ToClient,
   ToServer,
 } from "./flow.core";
-import { PlayClient } from "./@CHILD/play/play.client";
+
+//
+//
+//
+//
+//
+//
+//
 
 type Module = GameClientModule<{
   Model: ClientModel;
@@ -42,6 +50,13 @@ type Module = GameClientModule<{
   InCmd: null;
   OutEvt: null;
 }>;
+
+//
+//
+//
+//
+//
+//
 
 const init: Module["init"] = {
   t: "none",
@@ -252,8 +267,35 @@ const View: Module["View"] = (input) => {
   }
 };
 
-const ViewFeedItem: Module["ViewFeedItem"] = () => {
-  return <div></div>;
+const ViewFeedItem: Module["ViewFeedItem"] = ({
+  ctx,
+  dispatch,
+  gameState,
+  gameEvent,
+}) => {
+  switch (gameEvent.t) {
+    case "play": {
+      switch (gameState.t) {
+        case "play": {
+          return (
+            <PlayClient.ViewFeedItem
+              ctx={ctx}
+              dispatch={(c) => dispatch({ t: "play", c })}
+              gameState={gameState.c}
+              gameEvent={gameEvent.c}
+            />
+          );
+        }
+        default: {
+          return null;
+        }
+      }
+    }
+
+    default: {
+      return <div></div>;
+    }
+  }
 };
 
 export const Flow: Module = {
