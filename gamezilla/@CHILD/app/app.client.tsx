@@ -436,7 +436,7 @@ export const View = ({
   // width: 100dvw;
   // max-width: 520px;
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-black text-white">
+    <div className="flex h-[100dvh] w-screen items-center justify-center bg-black text-white">
       <div className="relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-600">
         <StatusBar.View
           model={model.statusBar}
