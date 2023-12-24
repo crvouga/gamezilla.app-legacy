@@ -11,7 +11,7 @@ const main = async () => {
 
   const baseCtx = created.value;
 
-  const program = await Program.create({
+  const program = Program.create({
     init: async ({ ctx }) => {
       const initial = await AppServer.init({
         ctx: { ...baseCtx, ...ctx },

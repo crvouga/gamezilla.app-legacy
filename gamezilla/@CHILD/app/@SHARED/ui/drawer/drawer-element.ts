@@ -1,7 +1,7 @@
 import { DrawerProps, drawerSub } from "./drawer-shared";
 
 declare global {
-  namespace preact.createElement.JSX {
+  namespace inferno.createElement.JSX {
     interface IntrinsicElements {
       "drawer-element": {
         id: string;

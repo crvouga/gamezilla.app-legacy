@@ -20,11 +20,10 @@
   },
   "dependencies": {
     "chess.js": "^1.0.0-beta.6",
-    "postgres": "^3.4.3",
-    "preact": "^10.19.1"
+    "inferno": "^8.2.3",
+    "postgres": "^3.4.3"
   },
   "devDependencies": {
-    "@preact/preset-vite": "^2.7.0",
     "@typescript-eslint/parser": "^5.57.1",
     "autoprefixer": "^10.4.14",
     "bun-types": "^1.0.11",
@@ -36,7 +35,7 @@
     "tailwindcss": "^3.3.2",
     "typescript": "latest",
     "vite": "^5.0.0",
-    "vite-plugin-pwa": "^0.17.0",
+    "vite-plugin-inferno": "^0.0.1",
     "vite-tsconfig-paths": "^4.2.1"
   },
   "engines": {

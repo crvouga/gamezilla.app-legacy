@@ -13,7 +13,7 @@ type Subscriber<Model, Msg> = (
 export type Program<Model, Msg> = {
   dispatch: (msg: Msg) => void;
   subscribe: (subscriber: Subscriber<Model, Msg>) => () => void;
-  start: () => () => void;
+  start: () => MaybePromise<() => void>;
   getModel: () => Model;
   setModel: (model: Model) => void;
 };
@@ -37,19 +37,15 @@ type ProgramConfig<Model, Msg, TCtx = Ctx> = {
   }) => MaybePromise<Sub<Msg>>;
 };
 
-export async function create<Model, Msg>(
+export function create<Model, Msg>(
   input: ProgramConfig<Model, Msg>
-): Promise<Program<Model, Msg>> {
+): Program<Model, Msg> {
   const programId = `program:${Math.random().toString(36).slice(2)}`;
   const subscribers = new Map<number, Subscriber<Model, Msg>>();
   let isProcessing = false;
   const messageQueue: Msg[] = [];
   let unsubscribe: () => void = () => {};
-  let state = await input.init({
-    ctx: {
-      now: Posix.fromNumber(Date.now()),
-    },
-  });
+  let state: { model: Model; eff?: Eff<Msg> } | null = null;
 
   function publish(model: Model, ctx: Ctx, msg: Msg | null) {
     for (const subscriber of subscribers.values()) {
@@ -59,7 +55,7 @@ export async function create<Model, Msg>(
 
   const onMsg = async (msg: Msg) => {
     const ctx = { now: Posix.now$() };
-    const updated = await input.update({ ctx, msg, model: state.model });
+    const updated = await input.update({ ctx, msg, model: state!.model });
     setState(updated, ctx, msg);
   };
 
@@ -123,10 +119,12 @@ export async function create<Model, Msg>(
     return unsubscribe;
   };
 
-  const start = () => {
+  const start = async () => {
     const ctx = { now: Posix.now$() };
 
-    setState(state, ctx, null);
+    const init = await input.init({ ctx });
+
+    setState(init, ctx, null);
 
     const stop = () => {
       if (unsubscribe) {
@@ -145,7 +143,7 @@ export async function create<Model, Msg>(
   //
 
   const getModel = () => {
-    return state.model;
+    return state!.model;
   };
 
   const setModel = (newState: Model) => {
@@ -153,7 +151,6 @@ export async function create<Model, Msg>(
     state = { model: newState };
     publish(state.model, ctx, null);
   };
-
 
   //
   //

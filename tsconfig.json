@@ -44,17 +44,11 @@
     "suppressImplicitAnyIndexErrors": false,
     "noStrictGenericChecks": false,
 
-    "types": ["vite/client", "preact", "bun-types"],
-
-    "jsxImportSource": "preact",
-    "jsx": "react-jsx",
+    "types": ["vite/client", "bun-types", "inferno"],
+		"jsx": "preserve",
+    // 
     "baseUrl": "./",
     "skipLibCheck": true,
-    "paths": {
-      "react": ["node_modules/preact/compat"],
-      "react-dom": ["./node_modules/preact/compat/"]
-    },
-    // "typeRoots": ["src/types", "./node_modules/@types"]
     "resolveJsonModule": true
   },
   "include": ["gamezilla"],

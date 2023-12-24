@@ -1,40 +1,33 @@
 import { Browser, Ctx, Program } from "gamezilla/@SHARED/core";
-import { render } from "preact";
-import "preact/debug";
+import { render } from "inferno";
 import * as AppClient from "./@CHILD/app/app.client";
 import * as App from "./@CHILD/app/app.core";
 
-const main = async () => {
-  const program = await Program.create({
-    init: (input) => {
-      const init = AppClient.init({
-        ...input,
-        location: Browser.getLocation(),
-        stored: null,
-      });
+const program = Program.create({
+  init: (input) => {
+    const init = AppClient.init({
+      ...input,
+      location: Browser.getLocation(),
+      stored: null,
+    });
 
-      return init;
-    },
+    return init;
+  },
 
-    update: AppClient.update,
+  update: AppClient.update,
 
-    subscriptions: AppClient.subscriptions,
-  });
+  subscriptions: AppClient.subscriptions,
+});
 
-  function renderer(model: App.ClientModel, ctx: Ctx) {
-    render(
-      <AppClient.View
-        dispatch={program.dispatch}
-        model={model}
-        now={ctx.now}
-      />,
-      document.body
-    );
-  }
-
-  program.subscribe(renderer);
-  program.start();
+const renderer = (model: App.ClientModel, ctx: Ctx) => {
+  render(
+    <AppClient.View dispatch={program.dispatch} model={model} now={ctx.now} />,
+    document.getElementById("root")!
+  );
 };
+
+program.subscribe(renderer);
+program.start();
 
 /**
  * Use this to persist state across page refreshes.
@@ -97,5 +90,3 @@ export function renderRuntimeErrors() {
   }
 }
 renderRuntimeErrors();
-
-main();

@@ -1,7 +1,7 @@
 import { transitionSub, TransitionProps } from "./transition-shared";
 
 declare global {
-  namespace preact.createElement.JSX {
+  namespace infero.createElement.JSX {
     interface IntrinsicElements {
       "transition-element": {
         id: string;
