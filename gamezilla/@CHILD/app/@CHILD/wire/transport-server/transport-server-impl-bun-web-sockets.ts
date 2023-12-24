@@ -57,6 +57,18 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
     clientIds.add(ws.data.clientId);
   };
 
+  const removeClient = (ws: ServerWebSocket<ServerWebSocketData>) => {
+    clients.delete(ws.data.clientId);
+
+    const clientIds = clientsBySessionId.get(ws.data.sessionId);
+
+    if (!clientIds) {
+      return;
+    }
+
+    clientIds.delete(ws.data.clientId);
+  };
+
   //
   //
   //
@@ -117,6 +129,7 @@ export const ServerTransportBunWebSockets = <ToServer, ToClient>({
       });
     },
     close(ws: ServerWebSocket<ServerWebSocketData>, _code, _message) {
+      removeClient(ws);
       transport.wire.publish({
         t: "client-disconnected",
         clientId: ws.data.clientId,
