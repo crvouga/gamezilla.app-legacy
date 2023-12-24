@@ -22,6 +22,7 @@ import {
   Event,
   SpaceEvents,
   SpaceStateStarted,
+  State,
   ToServer,
   appendEvent,
   toStartedSpace,
@@ -71,13 +72,14 @@ async function loop(
     return loop(ctx, rest, acc);
   }
 
-  const spaceBefore = toStartedSpace(await toState(acc.model), event.spaceId);
+  const stateBefore = await toState(acc.model);
+  const spaceBefore = toStartedSpace(stateBefore, event.spaceId);
 
   const updated = await AppClientModule.chainUpdates(
     acc,
-    (model) => updateSpaceFromEvent({ model, ctx, event }),
     (model) => appendEvents({ model, event }),
-    (model) => sendEventToServer({ model, eventId: event.eventId }),
+    (model) => updateSpaceFromEvent({ stateBefore, model, ctx, event }),
+    (model) => sendEventToServer({ model, eventId: event.eventId })
   );
 
   const spaceAfter = toStartedSpace(
@@ -223,7 +225,9 @@ const updateSpaceFromEvent = async ({
   ctx,
   model,
   event,
+  stateBefore,
 }: {
+  stateBefore: State;
   ctx: ClientCtx | AnonymousClientCtx;
   model: ClientModel;
   event: Event;
@@ -237,6 +241,7 @@ const updateSpaceFromEvent = async ({
 
   const state = await toState(model);
 
+  const currentUserStateBefore = toUserState(stateBefore, ctx.currentUserId);
   const currentUserState = toUserState(state, ctx.currentUserId);
 
   switch (event.t) {
@@ -277,7 +282,7 @@ const updateSpaceFromEvent = async ({
     }
 
     case "user-ended-space": {
-      if (event.spaceId !== currentUserState.spaceId) {
+      if (event.spaceId !== currentUserStateBefore.spaceId) {
         return { model };
       }
       return AppClientModule.chainUpdates(
