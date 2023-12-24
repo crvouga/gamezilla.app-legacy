@@ -88,7 +88,7 @@ export const ViewSpaceListScreen = ({
       </div>
 
       {!currentUserSpaceId && (
-        <div className="w-full border-t border-neutral-700 p-4">
+        <div className="w-full border-t border-neutral-600 p-4">
           <Button
             size="lg"
             className="w-full"

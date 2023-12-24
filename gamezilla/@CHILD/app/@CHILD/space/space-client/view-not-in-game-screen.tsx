@@ -46,7 +46,7 @@ export const ViewNotInGameScreen = ({
                     game: gameName,
                   })
                 }
-                className="flex overflow-hidden rounded-lg"
+                className="flex overflow-hidden rounded-lg border border-neutral-600"
               >
                 <CoverArt gameName={gameName} />
               </button>

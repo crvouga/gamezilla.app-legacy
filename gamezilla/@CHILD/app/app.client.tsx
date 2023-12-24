@@ -10,6 +10,7 @@ import {
 import {
   IconGamepad,
   IconUserCircle,
+  Spinner,
   VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -421,40 +422,46 @@ export const View = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
+  // height: 100dvh;
+  // max-height: 915px;
+  // width: 100dvw;
+  // max-width: 520px;
   return (
-    <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
-      <StatusBar.View
-        model={model.statusBar}
-        dispatch={(c) => dispatch({ t: "status-bar", c })}
-        wire={{
-          drawer: (
-            <Wire.ViewStatusBarDrawer
-              model={model.wire}
-              dispatch={(c) => dispatch({ t: "wire", c })}
-            />
-          ),
-          statusBar: <Wire.ViewStatusBar model={model.wire} />,
-        }}
-        sound={{
-          drawer: (
-            <Sound.ViewStatusBarDrawer
-              model={model.sound}
-              dispatch={(c) => dispatch({ t: "sound", c })}
-            />
-          ),
-          statusBar: <Sound.ViewStatusBar model={model.sound} />,
-        }}
-      />
+    <div className="flex h-screen w-screen items-center justify-center bg-black text-white">
+      <div className="relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-600">
+        <StatusBar.View
+          model={model.statusBar}
+          dispatch={(c) => dispatch({ t: "status-bar", c })}
+          wire={{
+            drawer: (
+              <Wire.ViewStatusBarDrawer
+                model={model.wire}
+                dispatch={(c) => dispatch({ t: "wire", c })}
+              />
+            ),
+            statusBar: <Wire.ViewStatusBar model={model.wire} />,
+          }}
+          sound={{
+            drawer: (
+              <Sound.ViewStatusBarDrawer
+                model={model.sound}
+                dispatch={(c) => dispatch({ t: "sound", c })}
+              />
+            ),
+            statusBar: <Sound.ViewStatusBar model={model.sound} />,
+          }}
+        />
 
-      <div className="flex w-full flex-1 flex-col overflow-hidden">
-        <ViewMain model={model} now={now} dispatch={dispatch} />
+        <div className="flex w-full flex-1 flex-col overflow-hidden">
+          <ViewMain model={model} now={now} dispatch={dispatch} />
+        </div>
+
+        <Toast.View
+          ctx={{ now }}
+          model={model.toast}
+          dispatch={(c) => dispatch({ t: "toast", c })}
+        />
       </div>
-
-      <Toast.View
-        ctx={{ now }}
-        model={model.toast}
-        dispatch={(c) => dispatch({ t: "toast", c })}
-      />
     </div>
   );
 };
@@ -508,8 +515,11 @@ const ViewMain = ({
 
 const ViewSplashScreen = () => {
   return (
-    <div className="absolute inset-0 flex h-full w-full items-center justify-center text-8xl">
-      🦕
+    <div className="absolute inset-0 flex h-full w-full flex-col items-center justify-center gap-1">
+      <h1 className="bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent">
+        gamezilla.app
+      </h1>
+      <Spinner />
     </div>
   );
 };
@@ -638,12 +648,13 @@ const ViewBottomBar = ({
         model={model.space}
         dispatch={(c) => dispatch({ t: "space", c })}
       />
-      <div className="flex w-full items-center justify-center border-t border-neutral-700">
-        {items.map((item) => {
+      <div className="flex w-full items-center justify-center border-t border-neutral-600">
+        {items.map((item, index) => {
           const isSelected = AppRoute.eq(
             model.routing.currentRoute,
             item.route
           );
+
           return (
             <button
               key={AppRoute.encode(item.route)}
@@ -655,11 +666,12 @@ const ViewBottomBar = ({
               }
               className={cn(
                 "flex flex-1 flex-col items-center justify-center pb-2 pt-1",
-                isSelected ? "text-blue-500" : "opacity-80"
+                isSelected ? "text-blue-500" : "text-opacity-50",
+                index < items.length - 1 ? "border-r border-neutral-600" : ""
               )}
             >
               {item.icon}
-              <div className="mt-0.5 text-xs">{item.label}</div>
+              <div className="mt-0.5 text-xs text-inherit">{item.label}</div>
             </button>
           );
         })}

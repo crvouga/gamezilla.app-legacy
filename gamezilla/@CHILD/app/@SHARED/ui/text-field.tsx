@@ -40,7 +40,7 @@ export const TextField = ({
 
       <div
         className={cn(
-          "flex appearance-none items-center gap-2 rounded-md border border-neutral-700 bg-neutral-800 p-3 py-4 text-xl outline-none",
+          "flex appearance-none items-center gap-2 rounded-md border border-neutral-600 bg-neutral-800 p-3 py-4 text-xl outline-none",
           error && "border border-red-500 text-red-500",
           !error && " ring-blue-600 focus-within:ring-2"
         )}>

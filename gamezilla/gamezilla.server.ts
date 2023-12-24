@@ -41,6 +41,8 @@ const main = async () => {
   });
 
   program.start();
+
+  baseCtx.logger.info("Server started");
 };
 
 main();

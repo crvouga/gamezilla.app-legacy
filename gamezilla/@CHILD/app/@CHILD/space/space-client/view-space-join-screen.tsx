@@ -69,7 +69,7 @@ export const ViewSpaceJoinScreen = ({
         <ViewUsersInSpaceList ctx={ctx} />
       </div>
 
-      <div className="flex border-t border-neutral-700 p-4">
+      <div className="flex border-t border-neutral-600 p-4">
         <Button
           className="w-full"
           variant="contained"

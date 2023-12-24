@@ -609,7 +609,7 @@ const ViewFeed = ({
   }
 
   return (
-    <div className="flex h-6 w-full items-center justify-center border-b border-neutral-700 p-1">
+    <div className="flex h-6 w-full items-center justify-center border-b border-neutral-600 p-1">
       <ViewFeedItem ctx={ctx} event={event} state={state} />
     </div>
   );
@@ -780,7 +780,7 @@ function ViewTopBar({
   const peopleCount = Object.keys(ctx.space.users).length;
 
   return (
-    <nav className="flex h-14 w-full items-center border-b border-neutral-700">
+    <nav className="flex h-14 w-full items-center border-b border-neutral-600">
       <ViewTopButton
         onClick={() =>
           dispatch({

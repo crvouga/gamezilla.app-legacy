@@ -181,7 +181,7 @@ export const VsUserSetupScreen = ({
       </div>
 
       {ctx.currentUserId === ctx.space.hostId && (
-        <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
+        <div className="flex w-full items-center gap-4 border-t border-neutral-600 p-4">
           <Button
             variant="contained"
             color="default"

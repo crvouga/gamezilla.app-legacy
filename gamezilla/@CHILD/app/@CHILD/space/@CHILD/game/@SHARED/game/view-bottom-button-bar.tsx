@@ -14,7 +14,7 @@ export const ViewBottomButtonBar = ({
   actions: BottomBarButtonAction[];
 }) => {
   return (
-    <div className="flex w-full items-center border-t border-neutral-700">
+    <div className="flex w-full items-center border-t border-neutral-600">
       {actions.map(({ label, disabled, icon, onClick, color = "default" }) => (
         <button
           disabled={disabled}
