@@ -6,15 +6,13 @@ import {
   Avatar,
   Button,
   IconGamepad,
+  LoadingScreen,
   TopBar,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { GameName, gameNameToString } from "../@CHILD/game/game.core";
-import {
-  ClientModel,
-  ClientMsg
-} from "../space.core";
+import { ClientModel, ClientMsg } from "../space.core";
 
 export const ViewSpaceListScreen = ({
   ctx,
@@ -25,7 +23,8 @@ export const ViewSpaceListScreen = ({
   ctx: ClientCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  const currentUserSpaceId = model.latestState.spaceIdByUserId[ctx.currentUserId];
+  const currentUserSpaceId =
+    model.latestState.spaceIdByUserId[ctx.currentUserId];
 
   const spaces = Object.keys(model.latestState.active).flatMap((spaceId) => {
     if (!SpaceId.is(spaceId)) {
@@ -48,7 +47,9 @@ export const ViewSpaceListScreen = ({
       <TopBar title="Spaces" />
 
       <div className="relative flex w-full flex-1 flex-col gap-5 overflow-hidden overflow-y-scroll p-5 pb-8">
-        {spaces.length === 0 && <EmptyState />}
+        {spaces.length === 0 && !model.isSyncing && <EmptyState />}
+        
+        {spaces.length === 0 && model.isSyncing && <LoadingScreen />}
 
         {spaces.flatMap((state) => {
           const host = ctx.profiles[state.hostId];
@@ -149,7 +150,9 @@ const ViewSpaceCard = ({
     >
       <div className="flex w-full items-center justify-start">
         <p className="block flex-1 text-left font-bold uppercase">LIVE</p>
-        {isCurrentSpace && <p className="block text-xs italic">Current space</p>}
+        {isCurrentSpace && (
+          <p className="block text-xs italic">Current space</p>
+        )}
       </div>
 
       {gameName && (
