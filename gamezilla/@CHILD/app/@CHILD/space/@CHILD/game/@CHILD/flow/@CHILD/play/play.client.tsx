@@ -2,7 +2,11 @@ import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/arch
 import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { SpaceClientEvt } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
-import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
+import {
+  Avatar,
+  Button,
+  IconArrowLeftOnRect,
+} from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
 import { GameLayout } from "../../../../@SHARED/game";
 import { FlowGridUIPlay } from "../../@SHARED/flow";
@@ -80,9 +84,19 @@ const USE_GAME_STATE = true;
 
 const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
   const isSpectating = ctx.currentUserId !== ctx.space.hostId;
+  const host = ctx.profiles[ctx.space.hostId];
   return (
     <GameLayout isSpectating={isSpectating}>
-      <div className="flex w-full flex-1 items-center justify-center">
+      <div className="flex w-full flex-1 flex-col items-center justify-center">
+        {isSpectating && host && (
+          <div className="flex w-full items-center gap-2 p-2">
+            <Avatar className="h-12 w-12" src={host.avatarUrl} />
+            <div className="flex-1 flex flex-col">
+              <p>{host.username}</p>
+              <p className="text-secondary text-sm">Playing</p>
+            </div>
+          </div>
+        )}
         {USE_GAME_STATE ? (
           <FlowGridUIPlay.View
             dispatch={(c) => dispatch({ t: "event", c: { t: "grid", c } })}
