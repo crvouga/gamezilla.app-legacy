@@ -12,17 +12,22 @@ import {
   sendToUser,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, batchMsgs } from "gamezilla/@SHARED/core";
+import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
 import * as GameServer from "../@CHILD/game/game.server";
 import { SpaceServerCmd } from "../@SHARED/space-server-cmd";
 import {
   Event,
+  toSpaceSubState,
+  toStartedSpace
+} from '../space-state';
+import {
   ServerModel,
   ServerMsg,
   SpaceEvents,
   ToClient,
+  deriveState,
   appendEvent,
-  toStartedSpace,
-  toState,
+  config,
 } from "../space.core";
 import { spaceCmdToCmd } from "./update-shared";
 
@@ -106,7 +111,7 @@ async function sendEventToClients({
     return { model };
   }
 
-  const state = await toState(model);
+  const state = await deriveState(model);
 
   const space = toStartedSpace(state, event.spaceId);
 
@@ -134,21 +139,32 @@ async function syncUserWhenJoined({
 }): Promise<Output> {
   switch (event.t) {
     case "user-joined-space": {
-      const state = await toState(model);
+      const state = await deriveState(model);
+      
       const space = toStartedSpace(state, event.spaceId);
 
       if (!space) {
         return { model };
       }
 
+      const events = await SpaceEvents.subset(config, model.events, "indexSpaceId", event.spaceId)
+      const latestEvent = await SpaceEvents.latest(config, events);
+      if(!latestEvent) {
+        return { model };
+      }
+      const subState = toSpaceSubState(state, event.spaceId);
+      const snapshots: ServerModel['snapshots'] = CappedOrderedDict.add(CappedOrderedDict.init({maxSize: 5}), latestEvent.eventId, subState);
+
+
       return {
         model,
         cmd: [
           sendToUser([event.userId], {
-            t: "sync",
-            events: model.events,
+            t: "sync-space",
+            spaceId: event.spaceId,
+            events: events,
             causedBy: event,
-            snapshots: model.snapshots,
+            snapshots: snapshots,
             clock: model.clock,
           }),
         ],
@@ -181,7 +197,7 @@ async function updateGameFromEvent({
     return { model };
   }
 
-  const state = await toState(model);
+  const state = await deriveState(model);
 
   const space = toStartedSpace(state, eventWithMeta.spaceId);
 

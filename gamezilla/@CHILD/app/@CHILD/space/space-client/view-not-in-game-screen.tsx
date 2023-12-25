@@ -8,7 +8,9 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { gameNameList, gameNameToString } from "../@CHILD/game/game.core";
-import { Event } from "../space.core";
+import {
+  Event
+} from '../space-state';
 
 export const ViewNotInGameScreen = ({
   ctx,

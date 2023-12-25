@@ -244,7 +244,7 @@ export const preloadSound = <T extends ClientCmdTypes>(
 export type RouteCmd = {
   t: "routing";
   c:
-    | { t: "push"; route: AppRoute; reason?: string }
+    | { t: "push"; route: AppRoute; playSound?: boolean }
     | {
         t: "replace";
         route: AppRoute;
@@ -255,11 +255,11 @@ export type RouteCmd = {
 
 export const pushRoute = <T extends ClientCmdTypes>(
   route: AppRoute,
-  reason?: string
+  playSound?: boolean,
 ): ClientCmd<T> => {
   return {
     t: "routing",
-    c: { t: "push", route, reason },
+    c: { t: "push", route, playSound },
   };
 };
 

@@ -5,6 +5,7 @@ import { Posix } from "gamezilla/@SHARED/core";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import * as SpaceClient from "./space.client";
 import * as SpaceCore from "./space.core";
+import { toUserState } from "./space-state";
 
 const ctx: ClientCtx = {
   currentRoute: {
@@ -93,8 +94,8 @@ test("current user starting space", async () => {
     userId: ctx.currentUserId,
   });
   
-  const before = SpaceCore.toUserState(await SpaceCore.toState(initial.model), ctx.currentUserId);
-  const after = SpaceCore.toUserState(await SpaceCore.toState(started.model), ctx.currentUserId);
+  const before = toUserState(await SpaceCore.deriveState(initial.model), ctx.currentUserId);
+  const after = toUserState(await SpaceCore.deriveState(started.model), ctx.currentUserId);
 
   expect(before).toEqual({ spaceId: null, userId: ctx.currentUserId });
   expect(after).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
@@ -140,8 +141,8 @@ test("current user joining started space", async () => {
     userId: ctx.currentUserId,
   });
 
-  const before = SpaceCore.toUserState(started.model.latestState, ctx.currentUserId);
-  const after = SpaceCore.toUserState(joined.model.latestState, ctx.currentUserId);
+  const before = toUserState(started.model.latestState, ctx.currentUserId);
+  const after = toUserState(joined.model.latestState, ctx.currentUserId);
 
   expect(before).toEqual({ spaceId: null, userId: ctx.currentUserId });
   expect(after).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
@@ -171,8 +172,8 @@ test("current user leaving joined space", async () => {
     userId: ctx.currentUserId,
   });
 
-  const before = SpaceCore.toUserState(joined.model.latestState, ctx.currentUserId);
-  const after = SpaceCore.toUserState(left.model.latestState, ctx.currentUserId);
+  const before = toUserState(joined.model.latestState, ctx.currentUserId);
+  const after = toUserState(left.model.latestState, ctx.currentUserId);
 
   expect(before).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
   expect(after).toEqual({ spaceId: null, userId: ctx.currentUserId });
@@ -209,8 +210,8 @@ test("prevent joining a space if already in a space", async () => {
     userId: ctx.currentUserId,
   });
 
-  const before = SpaceCore.toUserState(joinedA.model.latestState, ctx.currentUserId);
-  const after = SpaceCore.toUserState(joinedB.model.latestState, ctx.currentUserId);
+  const before = toUserState(joinedA.model.latestState, ctx.currentUserId);
+  const after = toUserState(joinedB.model.latestState, ctx.currentUserId);
 
   expect(before).toEqual({ spaceId: spaceIdA, userId: ctx.currentUserId });
   expect(after).toEqual({ spaceId: spaceIdA, userId: ctx.currentUserId });

@@ -1,4 +1,3 @@
-import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { AppRoute } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
@@ -17,6 +16,7 @@ import {
   WithEventId,
   WithEventMeta,
 } from "./@SHARED/event";
+import { Event, State, initState, reducer } from "./space-state";
 
 //
 //
@@ -38,7 +38,6 @@ export type CoreModel = {
   clock: LamportClock;
   snapshots: CappedOrderedDict<EventId, State>;
   events: SpaceEventsInstance;
-
 };
 
 export type ServerModel = CoreModel & {
@@ -57,11 +56,10 @@ export type ClientModel = CoreModel & {
   previewUserId: UserId | null;
   modal: ModalModel;
   latestState: State;
-  isSyncing: boolean
+  isSyncing: boolean;
 };
 
 type ModalModel = null | "user-preview" | "users";
-
 
 //
 //
@@ -79,7 +77,8 @@ export type ToClient = ToClientExtra &
         clock: LamportClock;
       }
     | {
-        t: "sync";
+        t: "sync-space";
+        spaceId: SpaceId;
         events: CoreModel["events"];
         clock: CoreModel["clock"];
         snapshots: CoreModel["snapshots"];
@@ -99,7 +98,8 @@ export type ToServer = ToServerExtra &
         clock: LamportClock;
       }
     | {
-        t: "sync";
+        t: "sync-space";
+        spaceId: SpaceId;
         events: CoreModel["events"];
         clock: CoreModel["clock"];
         snapshots: CoreModel["snapshots"];
@@ -194,7 +194,10 @@ export const mergeModels = async (
   const modelNew: CoreModel = {
     events: streamNew,
     clock: LamportClock.update(model.clock, otherModel.clock),
-    snapshots: CappedOrderedDict.mergeLeft(otherModel.snapshots, model.snapshots),
+    snapshots: CappedOrderedDict.mergeLeft(
+      otherModel.snapshots,
+      model.snapshots
+    ),
   };
 
   return modelNew;
@@ -220,381 +223,16 @@ export const config = SpaceEvents.config({
 //
 //
 
-export type Event =
-  | {
-      t: "user-started-space";
-      userId: UserId;
-      spaceId: SpaceId;
-    }
-  | {
-      t: "user-ended-space";
-      userId: UserId;
-      spaceId: SpaceId;
-    }
-  | {
-      t: "user-joined-space";
-      userId: UserId;
-      spaceId: SpaceId;
-    }
-  | {
-      t: "user-left-space";
-      userId: UserId;
-      spaceId: SpaceId;
-    }
-  | {
-      t: "user-inputted-game";
-      userId: UserId;
-      spaceId: SpaceId;
-      game: Game.GameName | null;
-    }
-  | {
-      t: "game";
-      spaceId: SpaceId;
-      c: Game.GameEvent;
-    };
-
-export type SpaceStateInitial = {
-  type: "initial";
-};
-
-export type SpaceStateStarted = Space & {
-  type: "started";
-  game: Game.GameState | null;
-  latestEvent: EventId;
-};
-
-export type SpaceStateEnded = Space & {
-  type: "ended";
-  latestEvent: EventId;
-};
-
-export type StateSpace =
-  | SpaceStateInitial
-  | SpaceStateStarted
-  | SpaceStateEnded;
-
-export type State = {
-  spaces: {
-    [spaceId: SpaceId]: StateSpace;
-  };
-  spaceIdByUserId: {
-    [userId: UserId]: SpaceId;
-  };
-  active: {
-    [spaceId: SpaceId]: SpaceId;
-  };
-  errorsByUserId: {
-    [userId: UserId]: WithEventId<Event> & { error: string };
-  };
-};
-
-export const initState = (): State => {
-  return {
-    spaces: {},
-    spaceIdByUserId: {},
-    active: {},
-    errorsByUserId: {},
-  };
-};
-
-export const toSpaceState = (state: State, spaceId: SpaceId): StateSpace => {
-  const spaceState: StateSpace = state.spaces[spaceId] ?? {
-    type: "initial",
-  };
-
-  return spaceState;
-};
-
-export const toStartedSpace = (
-  state: State,
-  spaceId: SpaceId
-): SpaceStateStarted | null => {
-  const spaceState: StateSpace = state.spaces[spaceId] ?? {
-    type: "initial",
-  };
-
-  switch (spaceState.type) {
-    case "initial":
-    case "ended":
-      return null;
-    case "started":
-      return spaceState;
-  }
-};
-
-type UserState = {
-  userId: UserId;
-  spaceId: SpaceId | null;
-};
-
-export const toUserState = (state: State, userId: UserId): UserState => {
-  const userSpaceId = state.spaceIdByUserId[userId];
-
-  const stateUser: UserState = {
-    userId,
-    spaceId: userSpaceId ?? null,
-  };
-
-  return stateUser;
-};
-
-const reducer = ({
-  state,
-  event,
-}: {
-  state: State;
-  event: WithEventMeta<Event>;
-}): State => {
-  switch (event.t) {
-    case "game": {
-      const space = state.spaces[event.spaceId];
-      if (!space) {
-        return state;
-      }
-
-      if (space.type === "initial") {
-        return state;
-      }
-      if (space.type === "ended") {
-        return state;
-      }
-      const gameState = space.game ?? Game.initState(event.c.t);
-      const gameNew = Game.reducer({
-        ctx: { space },
-        state: gameState,
-        event: { ...event, ...event.c },
-      });
-      return {
-        ...state,
-        spaces: {
-          ...state.spaces,
-          [event.spaceId]: {
-            ...space,
-            latestEvent: event.eventId,
-            game: gameNew,
-          },
-        },
-      };
-    }
-    case "user-ended-space": {
-      const space = state.spaces[event.spaceId];
-
-      if (!space) {
-        return state;
-      }
-
-      if (space.type === "initial") {
-        return state;
-      }
-
-      if (space.type === "ended") {
-        return state;
-      }
-
-      if (event.userId !== space.hostId) {
-        return state;
-      }
-
-      const spaceIdByUserIdNew = { ...state.spaceIdByUserId };
-      for (const userId in space.users) {
-        if (UserId.is(userId)) {
-          delete spaceIdByUserIdNew[userId];
-        }
-      }
-
-      const activeNew = { ...state.active };
-      delete activeNew[event.spaceId];
-
-      return {
-        ...state,
-        spaces: {
-          ...state.spaces,
-          [event.spaceId]: {
-            ...space,
-            latestEvent: event.eventId,
-            type: "ended",
-          },
-        },
-        active: activeNew,
-        spaceIdByUserId: spaceIdByUserIdNew,
-      };
-    }
-
-    case "user-inputted-game": {
-      const space = state.spaces[event.spaceId];
-
-      if (!space) {
-        return state;
-      }
-
-      if (space.type === "initial") {
-        return state;
-      }
-
-      if (space.type === "ended") {
-        return state;
-      }
-
-      if (event.userId !== space.hostId) {
-        return state;
-      }
-
-      return {
-        ...state,
-        spaces: {
-          ...state.spaces,
-          [event.spaceId]: {
-            ...space,
-            latestEvent: event.eventId,
-            game: event.game ? Game.initState(event.game) : null,
-          },
-        },
-      };
-    }
-
-    case "user-joined-space": {
-      const userSpaceId = state.spaceIdByUserId[event.userId];
-      
-      if (userSpaceId) {
-        return {
-          ...state,
-          errorsByUserId: {
-            ...state.errorsByUserId,
-            [event.userId]: {
-              ...event,
-              error: "already-joined-space",
-            },
-          },
-        }
-      }
-
-      const space = state.spaces[event.spaceId];
-
-      if (!space) {
-        return state;
-      }
-      
-      if (space.type === "ended") {
-        return state;
-      }
-
-      if (space.type === "initial") {
-        return state;
-      }
-
-      return {
-        ...state,
-        spaces: {
-          ...state.spaces,
-          [event.spaceId]: {
-            ...space,
-            latestEvent: event.eventId,
-            users: {
-              ...space.users,
-              [event.userId]: event.userId,
-            },
-          },
-        },
-        spaceIdByUserId: {
-          ...state.spaceIdByUserId,
-          [event.userId]: event.spaceId,
-        },
-      };
-    }
-
-    case "user-left-space": {
-      const userSpaceId = state.spaceIdByUserId[event.userId];
-      if (userSpaceId !== event.spaceId) {
-        return state;
-      }
-      const space = state.spaces[userSpaceId];
-      if (!space) {
-        return state;
-      }
-      if (space.type === "ended") {
-        return state;
-      }
-      if (space.type === "initial") {
-        return state;
-      }
-      if (space.hostId === event.userId) {
-        return state;
-      }
-      const usersNew = { ...space.users };
-      delete usersNew[event.userId];
-      const spaceIdByUserIdNew = { ...state.spaceIdByUserId };
-      delete spaceIdByUserIdNew[event.userId];
-      return {
-        ...state,
-        spaces: {
-          ...state.spaces,
-          [userSpaceId]: {
-            ...space,
-            latestEvent: event.eventId,
-            users: usersNew,
-          },
-        },
-        spaceIdByUserId: spaceIdByUserIdNew,
-      };
-    }
-
-    case "user-started-space": {
-      const space = state.spaces[event.spaceId];
-
-      if (space) {
-        return state;
-      }
-
-      const userSpaceId = state.spaceIdByUserId[event.userId];
-
-      if (userSpaceId) {
-        return state;
-      }
-
-      const spaceIdByUserIdNew: State["spaceIdByUserId"] = {
-        ...state.spaceIdByUserId,
-      };
-      spaceIdByUserIdNew[event.userId] = event.spaceId;
-
-      const activeNew: State["active"] = { ...state.active };
-      activeNew[event.spaceId] = event.spaceId;
-
-      const spaceNew: State["spaces"][SpaceId] = {
-        type: "started",
-        spaceId: event.spaceId,
-        hostId: event.userId,
-        visibility: "public",
-        users: {
-          [event.userId]: event.userId,
-        },
-        game: null,
-        latestEvent: event.eventId,
-      };
-
-      const spacesNew: State["spaces"] = {
-        ...state.spaces,
-        [event.spaceId]: spaceNew,
-      };
-
-      return {
-        ...state,
-        active: activeNew,
-        spaces: spacesNew,
-        spaceIdByUserId: spaceIdByUserIdNew,
-      };
-    }
-  }
-};
-
-const deriveState = async (model: CoreModel): Promise<State> => {
-  let derivedState: State = initState();
+export const deriveState = async (model: CoreModel): Promise<State> => {
+  let runningState: State = initState();
+  
   const eventIds: EventId[] = [];
 
-  // 
-  // 
+  //
+  //
   // Starting at the latest snapshot, walk backwards through the events
-  // 
-  // 
+  //
+  //
   for (let i = model.events._ordering.length - 1; i >= 0; i--) {
     const eventId = model.events._ordering[i];
 
@@ -605,20 +243,20 @@ const deriveState = async (model: CoreModel): Promise<State> => {
     const snapshot = CappedOrderedDict.get(model.snapshots, eventId);
 
     if (snapshot) {
-      derivedState = snapshot;
+      runningState = snapshot;
       break;
     }
 
     eventIds.push(eventId);
   }
 
-  // 
-  // 
-  // 
+  //
+  //
+  //
   // Derive the state from the events
-  // 
-  // 
-  // 
+  //
+  //
+  //
   for (let i = eventIds.length - 1; i >= 0; i--) {
     const eventId = eventIds[i];
 
@@ -626,34 +264,14 @@ const deriveState = async (model: CoreModel): Promise<State> => {
       continue;
     }
 
-    const event = await SpaceEvents.get(model.events, eventId)
+    const event = await SpaceEvents.get(model.events, eventId);
 
     if (!event) {
       continue;
     }
 
-    derivedState = reducer({ state: derivedState, event });
+    runningState = reducer({ state: runningState, event });
   }
 
-  return derivedState;
+  return runningState;
 };
-
-export const toState = deriveState;
-
-const exposed = {
-  deriveState,
-  toState,
-  toSpaceState,
-  SpaceEvents,
-  config,
-};
-
-declare global {
-  interface Window {
-    space: typeof exposed;
-  }
-}
-
-if (typeof window !== "undefined") {
-  window.space = exposed;
-}

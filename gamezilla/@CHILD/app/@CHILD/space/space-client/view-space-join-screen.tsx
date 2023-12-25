@@ -10,7 +10,10 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { gameNameToString } from "../@CHILD/game/game.core";
-import { ClientModel, ClientMsg, Event } from "../space.core";
+import {
+  Event
+} from '../space-state';
+import { ClientModel, ClientMsg, } from "../space.core";
 
 export const ViewSpaceJoinScreen = ({
   model,

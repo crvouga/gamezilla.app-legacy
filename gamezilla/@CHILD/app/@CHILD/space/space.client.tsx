@@ -41,16 +41,19 @@ import { ViewNotInGameScreen } from "./space-client/view-not-in-game-screen";
 import { ViewSpaceJoinScreen } from "./space-client/view-space-join-screen";
 import { ViewSpaceListScreen } from "./space-client/view-space-list-screen";
 import {
-  ClientModel,
-  ClientMsg,
   Event,
   SpaceStateStarted,
+  initState,
+  toUserState,
+} from "./space-state";
+import {
+  ClientModel,
+  ClientMsg,
   ToClient,
   ToServer,
   initCore,
-  initState,
   mergeModels,
-  toState,
+  deriveState,
 } from "./space.core";
 
 //
@@ -121,7 +124,7 @@ export const update: Module["update"] = (input) => {
 };
 
 const updateLatestState: Module["update"] = async ({ model }) => {
-  const latestState = await toState(model);
+  const latestState = await deriveState(model);
   return {
     model: {
       ...model,
@@ -204,7 +207,7 @@ const updateFromServer: Module["update"] = (input) => {
     },
     async (model) => {
       switch (fromServer.t) {
-        case "sync": {
+        case "sync-space": {
           const merged = await mergeModels(model, {
             events: fromServer.events,
             clock: fromServer.clock,
@@ -226,7 +229,7 @@ const updateFromServer: Module["update"] = (input) => {
   );
 };
 
-const updateFromEvent: Module["update"] = (input) => {
+const updateFromEvent: Module["update"] = async (input) => {
   if (!input.event) {
     return { model: input.model };
   }
@@ -240,9 +243,22 @@ const updateFromEvent: Module["update"] = (input) => {
 
     case "wire/server-connected": {
       const currentUserId = input.ctx.currentUserId;
+      if(!currentUserId) {
+        return {model}
+      }
+
       const currentUserProfile = currentUserId
         ? input.ctx.profiles[currentUserId]
         : null;
+
+      const state = await deriveState(model);
+      
+      const currentUserSpaceId = toUserState(state, currentUserId).spaceId
+      
+      if(!currentUserSpaceId){
+        return {model}
+      }
+
       return {
         model: {
           ...model,
@@ -250,7 +266,8 @@ const updateFromEvent: Module["update"] = (input) => {
         },
         cmd: [
           sendToServer({
-            t: "sync",
+            t: "sync-space",
+            spaceId: currentUserSpaceId,
             events: model.events,
             clock: model.clock,
             snapshots: model.snapshots,
@@ -284,7 +301,7 @@ const updateGame: Module["update"] = async (input) => {
     return { model };
   }
 
-  const state = await toState(model);
+  const state = await deriveState(model);
 
   const space = state.spaces[spaceId] ?? {
     type: "initial",

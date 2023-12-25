@@ -10,11 +10,15 @@ import {
 import { Sub } from "gamezilla/@SHARED/core";
 import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
 import { AppServerModule } from "../../@SHARED/architecture/app-server";
+import {
+  Event,
+  toStartedSpace,
+  toUserState
+} from './space-state';
 import * as GameServer from "./@CHILD/game/game.server";
 import { updateFromSpaceEvents } from "./space-server/update-from-events";
 import { updateFromGame } from "./space-server/update-from-game";
 import {
-  Event,
   ServerModel,
   ServerMsg,
   SpaceEvents,
@@ -23,9 +27,7 @@ import {
   config,
   initCore,
   mergeModels,
-  toStartedSpace,
-  toState,
-  toUserState,
+  deriveState,
 } from "./space.core";
 
 //
@@ -109,14 +111,14 @@ const updateFromClient: Module["update"] = async (input) => {
       return { model };
     }
 
-    case "sync": {
+    case "sync-space": {
       return AppServerModule.chainUpdates(
         { model },
         async (model) => {
           const merged = await mergeModels(model, {
             events: fromClient.events,
-            clock: model.clock,
-            snapshots: model.snapshots,
+            clock: fromClient.clock,
+            snapshots: fromClient.snapshots,
           });
           return {
             model: { ...model, ...merged },
@@ -138,7 +140,7 @@ const updateFromClient: Module["update"] = async (input) => {
           if (!latestEvent) {
             return { model };
           }
-          const state = await toState(model);
+          const state = await deriveState(model);
           const snapshots: ServerModel["snapshots"] = CappedOrderedDict.add(
             CappedOrderedDict.init({ maxSize: 5 }),
             latestEvent.eventId,
@@ -149,7 +151,8 @@ const updateFromClient: Module["update"] = async (input) => {
             model,
             cmd: [
               broadcast<ToClient>({
-                t: "sync",
+                t: "sync-space",
+                spaceId: fromClient.spaceId,
                 events: events,
                 clock: model.clock,
                 snapshots: snapshots,
@@ -183,7 +186,7 @@ const updateFromEvent: Module["update"] = async (input) => {
 
   switch (event.t) {
     case "auth/connected-client-is-logged-in": {
-      const state = await toState(model);
+      const state = await deriveState(model);
       const userState = toUserState(state, event.userId);
 
       return {
@@ -215,7 +218,7 @@ const updateGame: Module["update"] = async (input) => {
     return { model };
   }
 
-  const state = await toState(model);
+  const state = await deriveState(model);
 
   const space = toStartedSpace(state, spaceId);
 
@@ -264,7 +267,7 @@ export const subscriptions: Module["subscriptions"] = async ({
 }) => {
   const batch: Sub<ServerMsg>[] = [];
 
-  const state = await toState(model);
+  const state = await deriveState(model);
 
   for (const spaceId in state.active) {
     if (!SpaceId.is(spaceId)) {

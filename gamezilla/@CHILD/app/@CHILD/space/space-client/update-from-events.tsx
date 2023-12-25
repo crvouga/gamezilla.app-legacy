@@ -17,17 +17,19 @@ import {
 import { Eff, batchMsgs } from "gamezilla/@SHARED/core";
 import { Game } from "../@CHILD/game/game.client";
 import {
-  ClientModel,
-  ClientMsg,
   Event,
-  SpaceEvents,
   SpaceStateStarted,
   State,
+  toStartedSpace,
+  toUserState,
+} from '../space-state';
+import {
+  ClientModel,
+  ClientMsg,
+  SpaceEvents,
   ToServer,
   appendEvent,
-  toStartedSpace,
-  toState,
-  toUserState,
+  deriveState,
 } from "../space.core";
 
 /**
@@ -72,7 +74,7 @@ async function loop(
     return loop(ctx, rest, acc);
   }
 
-  const stateBefore = await toState(acc.model);
+  const stateBefore = await deriveState(acc.model);
   const spaceBefore = toStartedSpace(stateBefore, event.spaceId);
 
   const updated = await AppClientModule.chainUpdates(
@@ -83,7 +85,7 @@ async function loop(
   );
 
   const spaceAfter = toStartedSpace(
-    await toState(updated.model),
+    await deriveState(updated.model),
     event.spaceId
   );
 
@@ -239,7 +241,7 @@ const updateSpaceFromEvent = async ({
     return { model };
   }
 
-  const state = await toState(model);
+  const state = await deriveState(model);
 
   const currentUserStateBefore = toUserState(stateBefore, ctx.currentUserId);
   const currentUserState = toUserState(state, ctx.currentUserId);

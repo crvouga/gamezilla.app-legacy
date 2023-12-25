@@ -130,6 +130,7 @@ const updateFromCmd: typeof update = ({ cmd, model }) => {
           previousRoute: model.currentRoute,
           currentRoute: routeCmd.route,
         },
+        cmd: [playSound(APP_SOUND.tap)],
         eff: Browser.push(AppRoute.encode(routeCmd.route)),
       };
     }
