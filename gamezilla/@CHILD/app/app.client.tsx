@@ -10,9 +10,9 @@ import {
 import {
   IconGamepad,
   IconUserCircle,
-  Spinner,
+  LoadingScreen,
   VDom,
-  cn,
+  cn
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
   Browser,
@@ -29,9 +29,9 @@ import { ClientTransport, IClientTransport } from "./@CHILD/wire/transport-clien
 import * as Wire from "./@CHILD/wire/wire.client";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import {
-  PUBLIC_APP_CONFIG,
   ClientModel,
   ClientMsg,
+  PUBLIC_APP_CONFIG,
   ToClient,
   ToServer,
 } from "./app.core";
@@ -550,17 +550,9 @@ const ViewMain = ({
     }
 
     case "loading": {
-      return <ViewSplashScreen />;
+      return <LoadingScreen />;
     }
   }
-};
-
-const ViewSplashScreen = () => {
-  return (
-    <div className="absolute inset-0 flex h-full w-full flex-col items-center justify-center gap-1">
-      <Spinner />
-    </div>
-  );
 };
 
 const ViewLoggedOut = ({
@@ -583,7 +575,7 @@ const ViewLoggedOut = ({
       );
     }
     default: {
-      return <ViewSplashScreen />;
+      return <LoadingScreen />;
     }
   }
 };
@@ -646,7 +638,7 @@ const ViewLoggedIn = ({
     }
 
     case "auth": {
-      return <ViewSplashScreen />;
+      return <LoadingScreen />;
     }
   }
 };
