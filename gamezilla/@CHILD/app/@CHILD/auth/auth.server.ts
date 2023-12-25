@@ -3,7 +3,7 @@ import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   ServerCmd,
   ServerCtx,
-  ServerEvt,
+  ServerEvent,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Sub, isErr } from "gamezilla/@SHARED/core";
@@ -26,11 +26,11 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 type Module = AppServerModule<{
   Ctx: ServerCtx;
   InCmd: {};
-  InEvt: ServerEvt;
+  InEvent: ServerEvent;
   Model: ServerModel;
   Msg: ServerMsg;
   OutCmd: ServerCmd<ToClient>;
-  OutEvt: ServerEvt;
+  OutEvent: ServerEvent;
   ToClient: ToClient;
   ToServer: ToServer;
 }>;
@@ -55,7 +55,7 @@ export const init: Module["init"] = async (input) => {
     },
     eff: Eff.tag("sms", sms.eff),
     cmd: ServerCmd.tag("sms", sms.cmd),
-    evt: sms.evt,
+    event: sms.event,
   };
 };
 
@@ -72,7 +72,7 @@ export const update: Module["update"] = async (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),
-    (model) => updateFromEvt({ ...input, model }),
+    (model) => updateFromEvent({ ...input, model }),
     (model) => updateChild({ ...input, model })
   );
 };
@@ -82,7 +82,7 @@ const updateChild: Module["update"] = async (input) => {
     ctx: input.ctx,
     model: input.model.sms,
     cmd: input.cmd,
-    evt: input.evt,
+    event: input.event,
     fromClient:
       input.fromClient?.t === "sms"
         ? { ...input.fromClient, ...input.fromClient.c }
@@ -97,7 +97,7 @@ const updateChild: Module["update"] = async (input) => {
     },
     eff: Eff.tag("sms", sms.eff),
     cmd: ServerCmd.tag("sms", sms.cmd),
-    evt: sms.evt,
+    event: sms.event,
   };
 };
 
@@ -124,7 +124,7 @@ const updateFromMsg: Module["update"] = async ({ ctx, model, msg }) => {
 
       return {
         model: modelNew,
-        evt: [
+        event: [
           {
             t: "auth/connected-client-is-logged-in",
             clientId: msg.clientId,
@@ -157,7 +157,7 @@ const updateFromClient: Module["update"] = async ({
 
       return {
         model: modelNew,
-        evt: [
+        event: [
           {
             t: "connected-client-is-logged-out",
             clientId: fromClient.clientId,
@@ -173,26 +173,26 @@ const updateFromClient: Module["update"] = async ({
   }
 };
 
-const updateFromEvt: typeof update = async ({ evt, model, ctx }) => {
-  if (!evt) {
+const updateFromEvent: typeof update = async ({ event, model, ctx }) => {
+  if (!event) {
     return { model };
   }
 
-  switch (evt.t) {
+  switch (event.t) {
     case "wire/client-connected": {
       const userId = await StoreUserIdBySessionId(ctx).get(
         model.userIdBySessionId,
-        evt.sessionId
+        event.sessionId
       );
 
       if (!userId) {
         return {
           model: model,
-          evt: [
+          event: [
             {
               t: "connected-client-is-logged-out",
-              clientId: evt.clientId,
-              sessionId: evt.sessionId,
+              clientId: event.clientId,
+              sessionId: event.sessionId,
             },
           ],
         };
@@ -200,9 +200,9 @@ const updateFromEvt: typeof update = async ({ evt, model, ctx }) => {
 
       return {
         model: model,
-        evt: [
+        event: [
           {
-            ...evt,
+            ...event,
             t: "auth/connected-client-is-logged-in",
             userId,
           },
@@ -214,9 +214,9 @@ const updateFromEvt: typeof update = async ({ evt, model, ctx }) => {
       return AppServerModule.chainUpdates(
         { model },
         async (model) => {
-          if (evt.loggedIn) {
+          if (event.loggedIn) {
             return {
-              model: await addSession(ctx, model, evt.sessionId, evt.userId),
+              model: await addSession(ctx, model, event.sessionId, event.userId),
             };
           }
           return { model };
@@ -225,10 +225,10 @@ const updateFromEvt: typeof update = async ({ evt, model, ctx }) => {
           return {
             model,
             cmd: [
-              sendToClient([evt.clientId], {
+              sendToClient([event.clientId], {
                 t: "client-is-logged-in",
-                userId: evt.userId,
-                sessionId: evt.sessionId,
+                userId: event.userId,
+                sessionId: event.sessionId,
                 loggedIn: true,
               }),
             ],
@@ -241,9 +241,9 @@ const updateFromEvt: typeof update = async ({ evt, model, ctx }) => {
       return {
         model: model,
         cmd: [
-          sendToClient([evt.clientId], {
+          sendToClient([event.clientId], {
             t: "client-is-logged-out",
-            sessionId: evt.sessionId,
+            sessionId: event.sessionId,
           }),
         ],
       };
@@ -263,7 +263,7 @@ export const updateFromCmd = ({
   model: ServerModel;
 }): {
   model: ServerModel;
-  evt?: ServerEvt[];
+  event?: ServerEvent[];
 } => {
   switch (cmd.t) {
     default: {

@@ -68,7 +68,7 @@ export const update: Server["update"] = async (input) => {
     await init(input),
 
     async (model) => {
-      const { state, msg, clientMsg, evt, gameEvent } = input;
+      const { state, msg, clientMsg, event, gameEvent } = input;
 
       switch (state.t) {
         case "none": {
@@ -82,7 +82,7 @@ export const update: Server["update"] = async (input) => {
             state,
             model: model?.t === "vs-bot" ? model : null,
             clientMsg: clientMsg?.t === "vs-bot" ? clientMsg : null,
-            evt: evt,
+            event: event,
             gameEvent:
               gameEvent?.t === "vs-bot"
                 ? { ...gameEvent, c: { ...gameEvent, ...gameEvent.c } }
@@ -97,7 +97,7 @@ export const update: Server["update"] = async (input) => {
             state,
             model: model?.t === "vs-user" ? model : null,
             clientMsg: clientMsg?.t === "vs-user" ? clientMsg : null,
-            evt: evt,
+            event: event,
             gameEvent:
               gameEvent?.t === "vs-user"
                 ? { ...gameEvent, c: { ...gameEvent, ...gameEvent.c } }

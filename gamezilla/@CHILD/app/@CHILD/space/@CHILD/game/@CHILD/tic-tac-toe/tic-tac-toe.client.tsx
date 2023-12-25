@@ -2,7 +2,7 @@ import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@S
 import { GameClient } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client";
 import {
   SpaceClientCtx,
-  SpaceClientEvt,
+  SpaceClientEvent,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Sub } from "gamezilla/@SHARED/core";
@@ -20,7 +20,7 @@ type Client = GameClient<{
   GameState: null;
   ClientCtx: SpaceClientCtx;
   ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-  ClientEvt: SpaceClientEvt;
+  ClientEvent: SpaceClientEvent;
 }>;
 
 //

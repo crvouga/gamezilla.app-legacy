@@ -6,7 +6,7 @@ import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
 import {
   SpaceClientCtx,
-  SpaceClientEvt,
+  SpaceClientEvent,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd, ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
@@ -53,12 +53,12 @@ type Module = GameClientModule<{
   GameEvent: GameEvent;
   Ctx: SpaceClientCtx & { onQuit: () => void };
   InCmd: null;
-  InEvt: SpaceClientEvt;
+  InEvent: SpaceClientEvent;
   OutCmd: ClientCmd<{
     ClientMsg: ClientMsg;
     ToServer: ToServer;
   }>;
-  OutEvt: null;
+  OutEvent: null;
 }>;
 
 //

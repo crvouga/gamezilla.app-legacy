@@ -1,6 +1,6 @@
 import { Eff, p, Sub } from "gamezilla/@SHARED/core";
 import {
-  SpaceServerEvt,
+  SpaceServerEvent,
   SpaceReqCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-server-cmd";
@@ -109,11 +109,11 @@ const updateFromClientMain: typeof updateFromClient = ({ ctx, msg, model }) => {
   };
 };
 
-export const updateFromEvt = ({
+export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceServerEvt;
+  msg: SpaceServerEvent;
   model: Model;
 }): {
   model: Model;

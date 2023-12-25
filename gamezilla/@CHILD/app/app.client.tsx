@@ -4,7 +4,7 @@ import {
   AppRoute,
   ClientCmd,
   ClientCtx,
-  ClientEvt,
+  ClientEvent,
   preloadSound,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
@@ -167,7 +167,7 @@ export const init = async ({
     model: initialModel,
     eff: initialEff,
     cmd: initialCmd,
-    evt: [],
+    event: [],
   });
 
   return {
@@ -225,7 +225,7 @@ export const update = async (input: {
 type Output = {
   model: ClientModel;
   eff: Eff<ClientMsg>;
-  evt: ClientEvt[];
+  event: ClientEvent[];
   cmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 };
 
@@ -239,20 +239,20 @@ const updateLoop = async (deps: Deps, now: Posix, acc: Output): Promise<Output> 
       model: updatedCmd.model,
       cmd: [...cmdRest, ...updatedCmd.cmd],
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
-      evt: batchMsgs(acc.evt, updatedCmd.evt),
+      event: batchMsgs(acc.event, updatedCmd.event),
     });
   }
 
-  const [evt, ...evtRest] = acc.evt;
+  const [event, ...eventRest] = acc.event;
 
-  if (evt) {
-    log("[evt]", toMsgType(evt));
-    const updatedEvt = await updateChild({ deps, now, model: acc.model, evt });
+  if (event) {
+    log("[event]", toMsgType(event));
+    const updatedEvent = await updateChild({ deps, now, model: acc.model, event });
     return updateLoop(deps, now, {
-      model: updatedEvt.model,
-      cmd: [...cmdRest, ...updatedEvt.cmd],
-      eff: Eff.batch([acc.eff, updatedEvt.eff]),
-      evt: batchMsgs(evtRest, updatedEvt.evt),
+      model: updatedEvent.model,
+      cmd: [...cmdRest, ...updatedEvent.cmd],
+      eff: Eff.batch([acc.eff, updatedEvent.eff]),
+      event: batchMsgs(eventRest, updatedEvent.event),
     });
   }
 
@@ -264,7 +264,7 @@ const updateChild = async ({
   model,
   msg,
   fromServer,
-  evt,
+  event,
   cmd,
   deps,
 }: {
@@ -273,7 +273,7 @@ const updateChild = async ({
   model: ClientModel;
   msg?: ClientMsg;
   fromServer?: ToClient;
-  evt?: ClientEvt;
+  event?: ClientEvent;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
 }): Promise<Output> => {
   const ctx = toCtx({ model, ctx: { now } });
@@ -283,7 +283,7 @@ const updateChild = async ({
     model: model.space,
     msg: msg?.t === "space" ? msg.c : null,
     fromServer: fromServer?.t === "space" ? fromServer.c : null,
-    evt: evt,
+    event: event,
     cmd: null,
   });
 
@@ -292,7 +292,7 @@ const updateChild = async ({
     model: model.profile,
     msg: msg?.t === "profile" ? msg.c : null,
     fromServer: fromServer?.t === "profile" ? fromServer.c : null,
-    evt: evt,
+    event: event,
     cmd: cmd?.t === "profile" ? cmd : null,
   });
 
@@ -301,7 +301,7 @@ const updateChild = async ({
     model: model.auth,
     msg: msg?.t === "auth" ? msg.c : null,
     fromServer: fromServer?.t === "auth" ? fromServer.c : null,
-    evt: evt,
+    event: event,
     cmd: null,
   });
 
@@ -342,7 +342,7 @@ const updateChild = async ({
     msg: msg?.t === "toast" ? msg.c : null,
     cmd: cmd?.t === "toast" ? cmd : null,
     ctx: ctx,
-    evt: null,
+    event: null,
     fromServer: null,
   });
 
@@ -371,14 +371,14 @@ const updateChild = async ({
       Eff.tag("wire", wire.eff),
     ]),
 
-    evt: batchMsgs<ClientEvt>(
-      auth.evt,
-      profile.evt,
-      routing.evt,
-      sound.evt,
-      space.evt,
-      toast.evt,
-      wire.evt
+    event: batchMsgs<ClientEvent>(
+      auth.event,
+      profile.event,
+      routing.event,
+      sound.event,
+      space.event,
+      toast.event,
+      wire.event
     ),
 
     cmd: batchMsgs<ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>>(

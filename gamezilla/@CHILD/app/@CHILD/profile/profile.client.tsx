@@ -4,7 +4,7 @@ import {
   AnonymousClientCtx,
   ClientCmd,
   ClientCtx,
-  ClientEvt,
+  ClientEvent,
   ProfileCmd,
   back,
   playSound,
@@ -48,12 +48,12 @@ type Module = AppClientModule<{
   ToServer: ToServer;
   Ctx: Ctx;
   InCmd: ProfileCmd;
-  InEvt: ClientEvt;
+  InEvent: ClientEvent;
   OutCmd: ClientCmd<{
     ClientMsg: ClientMsg;
     ToServer: ToServer;
   }>;
-  OutEvt: never;
+  OutEvent: never;
 }>;
 
 //
@@ -89,8 +89,8 @@ export const init: Module["init"] = ({ ctx, stored }) => {
 //
 
 export const update: Module["update"] = (input) => {
-  if (input.evt) {
-    return updateFromEvt(input);
+  if (input.event) {
+    return updateFromEvent(input);
   }
 
   if (input.msg) {
@@ -130,17 +130,17 @@ const updateFromCmd: Module["update"] = (input) => {
   }
 };
 
-const updateFromEvt: Module["update"] = (input) => {
-  const { evt, model } = input;
+const updateFromEvent: Module["update"] = (input) => {
+  const { event, model } = input;
 
-  if (!evt) {
+  if (!event) {
     return { model };
   }
 
-  switch (evt.t) {
+  switch (event.t) {
     case "routing/route-changed": {
-      if (evt.route.t === "profile" && evt.route.c.t === "profile") {
-        return loadProfile(evt.route.c.userId, model);
+      if (event.route.t === "profile" && event.route.c.t === "profile") {
+        return loadProfile(event.route.c.userId, model);
       }
       return { model };
     }

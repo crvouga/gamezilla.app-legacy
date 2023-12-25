@@ -1,9 +1,9 @@
-import { ClientCtx, ClientEvt } from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCtx, ClientEvent } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   ReqCtx,
   ServerCtx,
-  ServerEvt,
+  ServerEvent,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 
 //
@@ -24,7 +24,7 @@ export type Space = {
   };
 };
 
-type SpaceEvt =
+type SpaceEvent =
   | { t: "user-left"; userId: UserId }
   | { t: "user-joined"; userId: UserId };
 
@@ -32,13 +32,13 @@ type SpaceEvt =
  * @description
  * Represents outside events that happened in the server app
  */
-export type SpaceServerEvt = ServerEvt | SpaceEvt;
+export type SpaceServerEvent = ServerEvent | SpaceEvent;
 
 /**
  * @description
  * Represents outside events that happened in the client app
  */
-export type SpaceClientEvt = ClientEvt | SpaceEvt;
+export type SpaceClientEvent = ClientEvent | SpaceEvent;
 
 //
 //

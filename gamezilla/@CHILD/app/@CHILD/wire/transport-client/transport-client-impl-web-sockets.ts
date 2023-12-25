@@ -35,7 +35,7 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
 
     ws.onopen = () => {
       reconnectAttempts = 0;
-      transport.evt.publish({ t: "server-connected" });
+      transport.event.publish({ t: "server-connected" });
       for (const msg of queue) {
         send(msg);
       }
@@ -43,7 +43,7 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
     };
 
     ws.onerror = () => {
-      transport.evt.publish({ t: "server-connect-error" });
+      transport.event.publish({ t: "server-connect-error" });
     };
 
     ws.onclose = () => {
@@ -53,7 +53,7 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
       }
 
       if (reconnectAttempts > MAX_RECONNECT_ATTEMPTS) {
-        transport.evt.publish({ t: "server-disconnected" });
+        transport.event.publish({ t: "server-disconnected" });
         return;
       }
       reconnectAttempts++;

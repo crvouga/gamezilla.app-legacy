@@ -3,7 +3,7 @@ import {
   APP_SOUND,
   AnonymousClientCtx,
   ClientCmd,
-  ClientEvt,
+  ClientEvent,
   playSound,
   pushRoute,
   replaceRoute,
@@ -41,12 +41,12 @@ type Client = AppClientModule<{
   ToServer: ToServer;
   Ctx: AnonymousClientCtx;
   InCmd: never;
-  InEvt: ClientEvt;
+  InEvent: ClientEvent;
   OutCmd: ClientCmd<{
     ClientMsg: ClientMsg;
     ToServer: ToServer;
   }>;
-  OutEvt: ClientEvt;
+  OutEvent: ClientEvent;
 }>;
 
 //
@@ -67,7 +67,7 @@ export const init: Client["init"] = async ({ stored, ctx }) => {
     return {
       model: { ...stored, sms: sms.model },
       eff: Eff.tag("sms", sms.eff),
-      evt: sms.evt,
+      event: sms.event,
       cmd: ClientCmd.tag("sms", sms.cmd),
     };
   }
@@ -80,7 +80,7 @@ export const init: Client["init"] = async ({ stored, ctx }) => {
       sms: sms.model,
     },
     eff: Eff.tag("sms", sms.eff),
-    evt: sms.evt,
+    event: sms.event,
     cmd: ClientCmd.tag("sms", sms.cmd),
   };
 };
@@ -98,7 +98,7 @@ export const update: Client["update"] = (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
-    (model) => updateFromEvt({ ...input, model }),
+    (model) => updateFromEvent({ ...input, model }),
     (model) => updateChild({ ...input, model })
   );
 };
@@ -108,7 +108,7 @@ const updateChild: Client["update"] = async (input) => {
     ctx: input.ctx,
     model: input.model.sms,
     cmd: input.cmd,
-    evt: input.evt,
+    event: input.event,
     fromServer: input.fromServer?.t === "sms" ? input.fromServer.c : null,
     msg: input.msg?.t === "sms" ? input.msg.c : null,
   });
@@ -117,7 +117,7 @@ const updateChild: Client["update"] = async (input) => {
     model: { ...input.model, sms: updated.model },
     cmd: ClientCmd.tag("sms", updated.cmd),
     eff: Eff.tag("sms", updated.eff),
-    evt: updated.evt,
+    event: updated.event,
   };
 };
 
@@ -170,7 +170,7 @@ const updateFromLogoutMsg = ({
           currentUser: { t: "logged-out" },
         },
         cmd: [sendToServer({ t: "logout" }), showToast("Logged out")],
-        evt: [{ t: "is-logged-out" }],
+        event: [{ t: "is-logged-out" }],
       };
     }
 
@@ -200,7 +200,7 @@ const updateFromServer: Client["update"] = (input) => {
     case "client-is-logged-out": {
       return {
         model: { ...model, currentUser: { t: "logged-out" } },
-        evt: [{ t: "is-logged-out" }],
+        event: [{ t: "is-logged-out" }],
       };
     }
 
@@ -213,7 +213,7 @@ const updateFromServer: Client["update"] = (input) => {
             userId: fromServer.userId,
           },
         },
-        evt: [{ ...fromServer, t: "is-logged-in" }],
+        event: [{ ...fromServer, t: "is-logged-in" }],
       };
     }
 
@@ -223,18 +223,18 @@ const updateFromServer: Client["update"] = (input) => {
   }
 };
 
-const updateFromEvt: Client["update"] = async (input) => {
+const updateFromEvent: Client["update"] = async (input) => {
   return updateRedirect(input);
 };
 
 const updateRedirect: Client["update"] = async (input) => {
-  if (!input.evt) {
+  if (!input.event) {
     return { model: input.model };
   }
 
-  const { ctx, evt, model } = input;
+  const { ctx, event, model } = input;
 
-  switch (evt.t) {
+  switch (event.t) {
     case "is-logged-in": {
       if (ctx.currentRoute.t === "auth") {
         return {
@@ -270,7 +270,7 @@ const updateRedirect: Client["update"] = async (input) => {
     }
 
     case "routing/route-changed": {
-      if (model.currentUser.t === "logged-in" && evt.route.t === "auth") {
+      if (model.currentUser.t === "logged-in" && event.route.t === "auth") {
         return {
           model,
           cmd: [
@@ -282,7 +282,7 @@ const updateRedirect: Client["update"] = async (input) => {
         };
       }
 
-      if (model.currentUser.t === "logged-out" && evt.route.t !== "auth") {
+      if (model.currentUser.t === "logged-out" && event.route.t !== "auth") {
         return {
           model,
           cmd: [

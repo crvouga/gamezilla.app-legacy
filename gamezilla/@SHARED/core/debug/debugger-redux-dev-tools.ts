@@ -1,7 +1,7 @@
 /**
  * Integration with _Redux DevTool Extension_.
  *
- * Please check the [docs](https://github.com/zalmoxisus/redux-devtools-extension/tree/master/docs/API) fur further information.
+ * Please check the [docs](https://github.com/zalmoxisus/redux-dev-tools-extension/tree/master/docs/API) fur further information.
  *
  * @since 0.5.0
  */

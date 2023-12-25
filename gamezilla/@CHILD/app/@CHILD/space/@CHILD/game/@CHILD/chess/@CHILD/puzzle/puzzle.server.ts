@@ -1,7 +1,7 @@
 import {
   SpaceReqCtx,
   SpaceServerCtx,
-  SpaceServerEvt,
+  SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-server-cmd";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
@@ -407,10 +407,10 @@ export const updateFromGame = ({
   return { model };
 };
 
-export const updateFromEvt = ({
+export const updateFromEvent = ({
   model,
 }: {
-  msg: SpaceServerEvt;
+  msg: SpaceServerEvent;
   model: ServerModel;
 }): {
   model: ServerModel;

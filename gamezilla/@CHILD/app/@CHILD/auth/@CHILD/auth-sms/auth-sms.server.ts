@@ -4,7 +4,7 @@ import {
   DbConnSql,
   ServerCmd,
   ServerCtx,
-  ServerEvt,
+  ServerEvent,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { PhoneNumber, Result, Sub, isErr, ok } from "gamezilla/@SHARED/core";
@@ -23,11 +23,11 @@ import { VerifySMS } from "./server/verify-sms/verify-sms-impl";
 type Module = AppServerModule<{
   Ctx: ServerCtx;
   InCmd: {};
-  InEvt: ServerEvt;
+  InEvent: ServerEvent;
   Model: ServerModel;
   Msg: ServerMsg;
   OutCmd: ServerCmd<ToClient>;
-  OutEvt: ServerEvt;
+  OutEvent: ServerEvent;
   ToClient: ToClient;
   ToServer: ToServer;
 }>;
@@ -109,7 +109,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
       }
       return {
         model,
-        evt: [
+        event: [
           {
             t: "auth/connected-client-is-logged-in",
             clientId: msg.clientId,

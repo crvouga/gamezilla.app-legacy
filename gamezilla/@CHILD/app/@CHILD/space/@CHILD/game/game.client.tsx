@@ -1,6 +1,6 @@
 import {
   SpaceClientCtx,
-  SpaceClientEvt,
+  SpaceClientEvent,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Sub } from "gamezilla/@SHARED/core";
@@ -34,12 +34,12 @@ type Module = GameClientModule<{
   GameEvent: GameEvent;
   Ctx: SpaceClientCtx;
   InCmd: null;
-  InEvt: SpaceClientEvt;
+  InEvent: SpaceClientEvent;
   OutCmd: ClientCmd<{
     ClientMsg: ClientMsg;
     ToServer: ToServer;
   }>;
-  OutEvt: null;
+  OutEvent: null;
 }>;
 
 //
@@ -77,7 +77,7 @@ const init = (gameName: GameName): Module["init"] => {
 //
 
 const update: Module["update"] = (input) => {
-  const { ctx, msg, fromServer, cmd, evt, gameEvent, gameState } = input;
+  const { ctx, msg, fromServer, cmd, event, gameEvent, gameState } = input;
 
   switch (gameState.t) {
     case "connect-four": {
@@ -87,7 +87,7 @@ const update: Module["update"] = (input) => {
         model:
           input.model?.t === "connect-four" ? input.model.c : ConnectFour.init,
         cmd: cmd,
-        evt: evt,
+        event: event,
         fromServer: fromServer?.t === "connect-four" ? fromServer.c : null,
         gameEvent:
           gameEvent?.t === "connect-four"
@@ -111,7 +111,7 @@ const update: Module["update"] = (input) => {
         gameState: gameState.c,
         model: input.model?.t === "flow" ? input.model.c : Flow.init,
         cmd: cmd,
-        evt: evt,
+        event: event,
         fromServer: fromServer?.t === "flow" ? fromServer.c : null,
         gameEvent:
           gameEvent?.t === "flow" ? { ...gameEvent, ...gameEvent.c } : null,

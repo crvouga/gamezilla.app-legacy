@@ -1,7 +1,7 @@
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import {
   APP_SOUND,
-  ClientEvt,
+  ClientEvent,
   SoundCmd,
   playSound,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -29,11 +29,11 @@ import {
 type Module = AppClientModule<{
   Ctx: null;
   InCmd: SoundCmd;
-  InEvt: ClientEvt;
+  InEvent: ClientEvent;
   Model: Model;
   Msg: Msg;
   OutCmd: SoundCmd;
-  OutEvt: never;
+  OutEvent: never;
   ToClient: never;
   ToServer: never;
 }>;
@@ -98,7 +98,7 @@ export const update: Module["update"] = (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
-    (model) => updateFromEvt({ ...input, model })
+    (model) => updateFromEvent({ ...input, model })
   );
 };
 
@@ -138,15 +138,15 @@ const updateFromMsg: Module["update"] = ({ msg, model }) => {
   }
 };
 
-const updateFromEvt: Module["update"] = ({ model, evt }) => {
-  if (!evt) {
+const updateFromEvent: Module["update"] = ({ model, event }) => {
+  if (!event) {
     return { model };
   }
 
-  switch (evt.t) {
+  switch (event.t) {
     case "platform/document-visibility-changed": {
       return {
-        model: { ...model, muted: evt.state === "hidden" },
+        model: { ...model, muted: event.state === "hidden" },
       };
     }
 

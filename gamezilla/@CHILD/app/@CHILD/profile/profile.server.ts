@@ -7,7 +7,7 @@ import {
 import {
   ServerCmd,
   ServerCtx,
-  ServerEvt,
+  ServerEvent,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Result, err, isErr, ok } from "gamezilla/@SHARED/core";
@@ -34,11 +34,11 @@ import {
 type Module = AppServerModule<{
   Ctx: ServerCtx;
   InCmd: null;
-  InEvt: ServerEvt;
+  InEvent: ServerEvent;
   Model: ServerModel;
   Msg: ServerMsg;
   OutCmd: ServerCmd<ToClient>;
-  OutEvt: null;
+  OutEvent: null;
   ToClient: ToClient;
   ToServer: ToServer;
 }>;
@@ -74,8 +74,8 @@ export const update: Module["update"] = async (input) => {
     return updateFromClient(input);
   }
 
-  if (input.evt) {
-    return updateFromEvt(input);
+  if (input.event) {
+    return updateFromEvent(input);
   }
 
   return { model: input.model };
@@ -127,12 +127,12 @@ const updateFromClient: Module["update"] = async ({
   };
 };
 
-const updateFromEvt: Module["update"] = async ({ evt, model, ctx }) => {
-  if (!evt) {
+const updateFromEvent: Module["update"] = async ({ event, model, ctx }) => {
+  if (!event) {
     return { model };
   }
 
-  switch (evt.t) {
+  switch (event.t) {
     case "auth/connected-client-is-logged-in": {
       return {
         model,
@@ -140,16 +140,16 @@ const updateFromEvt: Module["update"] = async ({ evt, model, ctx }) => {
           const ProfileDb = createProfileDb({ dbConn: ctx.dbConn });
           const result = await findElseInsertNew({
             ProfileDb,
-            userId: evt.userId,
+            userId: event.userId,
           });
           dispatch({
             t: "handled",
-            clientId: evt.clientId,
+            clientId: event.clientId,
             msg: {
               t: "current-user-profile",
               result: Result.mapOk(result, profileCoreToProfile),
-              source: evt,
-              loggedIn: evt.loggedIn,
+              source: event,
+              loggedIn: event.loggedIn,
             },
           });
         },

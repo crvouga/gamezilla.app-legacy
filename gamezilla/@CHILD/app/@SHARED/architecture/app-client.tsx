@@ -33,17 +33,17 @@ export type AppClientModuleTypes = {
    */
   InCmd: any;
   /**
-   * `InEvt` is a message to notify other modules. Usually past tense verbs
+   * `InEvent` is a message to notify other modules. Usually past tense verbs
    */
-  InEvt: any;
+  InEvent: any;
   /**
    * `OutCmd` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
    */
   OutCmd: any;
   /**
-   * `OutEvt` is a message that is only produced by this module. Always past tense verbs
+   * `OutEvent` is a message that is only produced by this module. Always past tense verbs
    */
-  OutEvt: any;
+  OutEvent: any;
 };
 
 //
@@ -72,7 +72,7 @@ export type Input<T extends AppClientModuleTypes> = {
   /**
    *
    */
-  evt?: T["InEvt"] | null;
+  event?: T["InEvent"] | null;
   /**
    *
    */
@@ -101,7 +101,7 @@ export type Output<T extends AppClientModuleTypes> = {
   /**
    *
    */
-  evt?: T["OutEvt"][];
+  event?: T["OutEvent"][];
 };
 
 type MaybePromise<T> = T | Promise<T>;
@@ -151,7 +151,7 @@ const chainUpdates = async <T extends AppClientModuleTypes>(
     model: updated.model,
     eff: Eff.batch([acc.eff, updated.eff]),
     cmd: [...(acc.cmd ?? []), ...(updated.cmd ?? [])],
-    evt: [...(acc.evt ?? []), ...(updated.evt ?? [])],
+    event: [...(acc.event ?? []), ...(updated.event ?? [])],
   };
 
   return chainUpdates(accNew, ...rest);

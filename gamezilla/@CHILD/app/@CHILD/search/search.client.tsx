@@ -1,6 +1,6 @@
 import { Browser, Eff, matchSort, p } from "gamezilla/@SHARED/core";
 import {
-  ClientEvt,
+  ClientEvent,
   ClientCmd,
   sendToServer,
   pushRoute,
@@ -62,7 +62,7 @@ export const update = ({
 }): {
   model: ClientModel;
   eff?: Eff<Msg>;
-  evt?: ClientEvt[];
+  event?: ClientEvent[];
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   if (msg.t === "focus-done") {

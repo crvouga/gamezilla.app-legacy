@@ -1,6 +1,6 @@
 import {
   SpaceReqCtx,
-  SpaceServerEvt,
+  SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
@@ -128,18 +128,18 @@ export const updateFromClient = ({
   return { model };
 };
 
-export const updateFromEvt = ({
+export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceServerEvt;
+  msg: SpaceServerEvent;
   model: Model;
 }): {
   model: Model;
   eff?: Eff<Msg>;
 } => {
   if (model.t === "vs-bot") {
-    const updated = VsBot.updateFromEvt({ msg, model: model.c });
+    const updated = VsBot.updateFromEvent({ msg, model: model.c });
     return {
       model: { t: "vs-bot", c: updated.model },
       eff: Eff.tag("vs-bot", updated.eff),
@@ -147,7 +147,7 @@ export const updateFromEvt = ({
   }
 
   if (model.t === "vs-user") {
-    const updated = VsUser.updateFromEvt({ msg, model: model.c });
+    const updated = VsUser.updateFromEvent({ msg, model: model.c });
     return {
       model: { t: "vs-user", c: updated.model },
       eff: Eff.tag("vs-user", updated.eff),

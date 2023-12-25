@@ -4,7 +4,7 @@ import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
 import {
   SpaceClientCtx,
-  SpaceClientEvt,
+  SpaceClientEvent,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   APP_SOUND,
@@ -41,12 +41,12 @@ type Module = GameClientModule<{
   GameEvent: GameEvent;
   Ctx: SpaceClientCtx;
   InCmd: null;
-  InEvt: SpaceClientEvt;
+  InEvent: SpaceClientEvent;
   OutCmd: ClientCmd<{
     ClientMsg: ClientMsg;
     ToServer: ToServer;
   }>;
-  OutEvt: null;
+  OutEvent: null;
 }>;
 
 //
@@ -145,7 +145,7 @@ const updateFromGameEvent =
 const updateChild =
   (model: ClientModel): Module["update"] =>
   (input) => {
-    const { msg, evt, gameEvent, fromServer, gameState } = input;
+    const { msg, event, gameEvent, fromServer, gameState } = input;
 
     switch (gameState.t) {
       case "none": {
@@ -156,7 +156,7 @@ const updateChild =
         const updated = VsBot.update({
           ctx: { ...input.ctx, onQuit: () => {} },
           msg: msg?.t === "vs-bot" ? msg.c : null,
-          evt: evt,
+          event: event,
           cmd: null,
           gameEvent:
             gameEvent?.t === "vs-bot" ? { ...gameEvent, ...gameEvent.c } : null,
@@ -178,7 +178,7 @@ const updateChild =
           model: model.t === "vs-user" ? model.c : VsUser.init,
           msg: msg?.t === "vs-user" ? msg.c : null,
           cmd: null,
-          evt: evt,
+          event: event,
           gameEvent:
             gameEvent?.t === "vs-user"
               ? { ...gameEvent, ...gameEvent.c }

@@ -3,7 +3,7 @@ import {
   SMS,
   ServerCmd,
   ServerCtx,
-  ServerEvt,
+  ServerEvent,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import {
   Eff,
@@ -185,18 +185,18 @@ export const update = async (input: {
 
 function logMsg({
   msg,
-  evt,
+  event,
   cmd,
   logger,
 }: {
   logger: Logger;
   msg?: ServerMsg;
-  evt?: ServerEvt;
+  event?: ServerEvent;
   cmd?: ServerCmd<ToClient>;
 }) {
-  const prefix = msg ? "[msg]" : evt ? "[evt]" : "[cmd]";
+  const prefix = msg ? "[msg]" : event ? "[event]" : "[cmd]";
 
-  const obj = { ...msg, ...evt, ...cmd };
+  const obj = { ...msg, ...event, ...cmd };
 
   logger.info(`${prefix} ${toMsgType(obj)}`);
 }
@@ -204,7 +204,7 @@ function logMsg({
 type Output = {
   model: ServerModel;
   eff: Eff<ServerMsg>;
-  evt: ServerEvt[];
+  event: ServerEvent[];
   cmd: ServerCmd<ToClient>[];
 };
 
@@ -222,22 +222,22 @@ const updateLoop = async (
       model: updatedCmd.model,
       cmd: [...cmdRest, ...updatedCmd.cmd],
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
-      evt: batchMsgs(acc.evt, updatedCmd.evt),
+      event: batchMsgs(acc.event, updatedCmd.event),
     };
 
     return updateLoop(deps, ctx, accNew);
   }
 
-  const [evt, ...evtRest] = acc.evt;
+  const [event, ...eventRest] = acc.event;
 
-  if (evt) {
-    const updatedEvt = await updateChild({ deps, ctx, model: acc.model, evt });
+  if (event) {
+    const updatedEvent = await updateChild({ deps, ctx, model: acc.model, event });
 
     const accNew: Output = {
-      model: updatedEvt.model,
-      cmd: [...cmdRest, ...updatedEvt.cmd],
-      eff: Eff.batch([acc.eff, updatedEvt.eff]),
-      evt: batchMsgs(evtRest, updatedEvt.evt),
+      model: updatedEvent.model,
+      cmd: [...cmdRest, ...updatedEvent.cmd],
+      eff: Eff.batch([acc.eff, updatedEvent.eff]),
+      event: batchMsgs(eventRest, updatedEvent.event),
     };
 
     return updateLoop(deps, ctx, accNew);
@@ -250,7 +250,7 @@ export const updateChild = async ({
   ctx,
   msg,
   fromClient,
-  evt,
+  event,
   cmd,
   model,
   deps,
@@ -260,7 +260,7 @@ export const updateChild = async ({
   model: ServerModel;
   msg?: ServerMsg;
   fromClient?: (ToServer & ToServerMeta) | null;
-  evt?: ServerEvt;
+  event?: ServerEvent;
   cmd?: ServerCmd<ToClient>;
 }): Promise<Output> => {
   //
@@ -273,7 +273,7 @@ export const updateChild = async ({
     model: model.space,
     ctx,
     cmd: null,
-    evt: evt,
+    event: event,
     fromClient:
       fromClient?.t === "space" ? { ...fromClient, ...fromClient.c } : null,
     msg: msg?.t === "space" ? msg.c : null,
@@ -283,7 +283,7 @@ export const updateChild = async ({
     model: model.auth,
     ctx,
     cmd: null,
-    evt: evt,
+    event: event,
     fromClient:
       fromClient?.t === "auth" ? { ...fromClient, ...fromClient.c } : null,
     msg: msg?.t === "auth" ? msg.c : null,
@@ -293,7 +293,7 @@ export const updateChild = async ({
     model: model.wire,
     ctx,
     cmd: cmd,
-    evt: evt,
+    event: event,
     fromClient:
       fromClient?.t === "wire" ? { ...fromClient, ...fromClient.c } : null,
     msg: msg?.t === "wire" ? msg.c : null,
@@ -305,7 +305,7 @@ export const updateChild = async ({
     model: model.profile,
     ctx,
     cmd: null,
-    evt: evt,
+    event: event,
     fromClient:
       fromClient?.t === "profile" ? { ...fromClient, ...fromClient.c } : null,
     msg: msg?.t === "profile" ? msg.c : null,
@@ -335,7 +335,7 @@ export const updateChild = async ({
       Eff.tag("wire", wire.eff),
       Eff.tag("profile", profile.eff),
     ]),
-    evt: batchMsgs<ServerEvt>(auth.evt, space.evt, wire.evt, profile.evt),
+    event: batchMsgs<ServerEvent>(auth.event, space.event, wire.event, profile.event),
   };
 };
 

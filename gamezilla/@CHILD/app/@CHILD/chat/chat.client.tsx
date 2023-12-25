@@ -1,5 +1,5 @@
 import {
-  ClientEvt,
+  ClientEvent,
   RouteChat,
   ClientCtx,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -148,11 +148,11 @@ export const updateFromServer = ({
   return { model };
 };
 
-export const updateFromEvt = ({
+export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: ClientEvt;
+  msg: ClientEvent;
   model: ClientModel;
 }): {
   model: ClientModel;

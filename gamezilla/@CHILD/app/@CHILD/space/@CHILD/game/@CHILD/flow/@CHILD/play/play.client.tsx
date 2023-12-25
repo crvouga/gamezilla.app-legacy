@@ -1,6 +1,6 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
-import { SpaceClientEvt } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientEvent } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Avatar,
@@ -29,8 +29,8 @@ type Module = GameClientModule<{
   GameState: GameState;
   Ctx: FlowClientCtx;
   OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-  InEvt: SpaceClientEvt;
-  OutEvt: null;
+  InEvent: SpaceClientEvent;
+  OutEvent: null;
   InCmd: null;
 }>;
 

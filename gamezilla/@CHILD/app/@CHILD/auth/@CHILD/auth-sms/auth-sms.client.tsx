@@ -2,7 +2,7 @@ import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-c
 import {
   APP_SOUND,
   AnonymousClientCtx,
-  ClientEvt,
+  ClientEvent,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   ClientCmd,
@@ -50,12 +50,12 @@ type Module = AppClientModule<{
   ToServer: ToServer;
   Ctx: AnonymousClientCtx;
   InCmd: null;
-  InEvt: ClientEvt;
+  InEvent: ClientEvent;
   OutCmd: ClientCmd<{
     ClientMsg: ClientMsg;
     ToServer: ToServer;
   }>;
-  OutEvt: ClientEvt;
+  OutEvent: ClientEvent;
 }>;
 
 //

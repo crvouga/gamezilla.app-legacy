@@ -3,7 +3,7 @@ import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   ServerCmd,
   ServerCtx,
-  ServerEvt,
+  ServerEvent,
   broadcast,
   topicSubscribe,
 } from "gamezilla/@CHILD/app/@SHARED/server";
@@ -39,11 +39,11 @@ import {
 type Module = AppServerModule<{
   Ctx: ServerCtx;
   InCmd: null;
-  InEvt: ServerEvt;
+  InEvent: ServerEvent;
   Model: ServerModel;
   Msg: ServerMsg;
   OutCmd: ServerCmd<ToClient>;
-  OutEvt: null;
+  OutEvent: null;
   ToClient: ToClient;
   ToServer: ToServer;
 }>;
@@ -80,7 +80,7 @@ export const update: Module["update"] = async (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),
-    (model) => updateFromEvt({ ...input, model }),
+    (model) => updateFromEvent({ ...input, model }),
     (model) => updateGame({ ...input, model })
   );
 };
@@ -174,23 +174,23 @@ const updateFromClient: Module["update"] = async (input) => {
   }
 };
 
-const updateFromEvt: Module["update"] = async (input) => {
-  const { evt, model } = input;
+const updateFromEvent: Module["update"] = async (input) => {
+  const { event, model } = input;
 
-  if (!evt) {
+  if (!event) {
     return { model };
   }
 
-  switch (evt.t) {
+  switch (event.t) {
     case "auth/connected-client-is-logged-in": {
       const state = await toState(model);
-      const userState = toUserState(state, evt.userId);
+      const userState = toUserState(state, event.userId);
 
       return {
         model,
         cmd: [
-          topicSubscribe([`space/${userState.spaceId}`], [evt.clientId]),
-          topicSubscribe([`spaces`], [evt.clientId]),
+          topicSubscribe([`space/${userState.spaceId}`], [event.clientId]),
+          topicSubscribe([`spaces`], [event.clientId]),
         ],
       };
     }
@@ -202,7 +202,7 @@ const updateFromEvt: Module["update"] = async (input) => {
 };
 
 const updateGame: Module["update"] = async (input) => {
-  const { msg, evt, fromClient, ctx, model } = input;
+  const { msg, event, fromClient, ctx, model } = input;
 
   const spaceId =
     msg && "spaceId" in msg
@@ -233,7 +233,7 @@ const updateGame: Module["update"] = async (input) => {
     model: model.games[spaceId] ?? null,
     msg: msg?.t === "game" ? msg.c : null,
     clientMsg: fromClient?.t === "game" ? fromClient.c : null,
-    evt,
+    event,
     state: space.game,
   });
 

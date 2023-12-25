@@ -34,17 +34,17 @@ export type GameServerModuleTypes = {
    */
   InCmd: any;
   /**
-   * `InEvt` is a message to notify other modules. Usually past tense verbs
+   * `InEvent` is a message to notify other modules. Usually past tense verbs
    */
-  InEvt: any;
+  InEvent: any;
   /**
    * `OutCmd` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
    */
   OutCmd: any;
   /**
-   * `OutEvt` is a message that is only produced by this module. Always past tense verbs
+   * `OutEvent` is a message that is only produced by this module. Always past tense verbs
    */
-  OutEvt: any;
+  OutEvent: any;
   /**
    *
    */
@@ -89,9 +89,9 @@ export type Input<T extends GameServerModuleTypes> = {
     | (T["ToServer"] & { clientId: ClientId; sessionId: SessionId })
     | null;
   /**
-   * `evt`
+   * `event`
    */
-  evt?: T["InEvt"] | null;
+  event?: T["InEvent"] | null;
   /**
    * `cmd`
    */
@@ -118,9 +118,9 @@ export type Output<T extends GameServerModuleTypes> = {
    */
   cmd?: T["OutCmd"][];
   /**
-   * `evt` is a message to many other modules. Always past tense
+   * `event` is a message to many other modules. Always past tense
    */
-  evt?: T["OutEvt"][];
+  event?: T["OutEvent"][];
   /**
    *  `gameEvent` is an event that occurred in the game. Shared with the client side
    */
@@ -176,7 +176,7 @@ const chainUpdates = <T extends GameServerModuleTypes>(
     model: updated.model,
     eff: Eff.batch([acc.eff, updated.eff]),
     cmd: [...(acc.cmd ?? []), ...(updated.cmd ?? [])],
-    evt: [...(acc.evt ?? []), ...(updated.evt ?? [])],
+    event: [...(acc.event ?? []), ...(updated.event ?? [])],
     gameEvent: [...(acc.gameEvent ?? []), ...(updated.gameEvent ?? [])],
   };
 
@@ -202,7 +202,7 @@ const tagOutput = <
   /**
    *
    */
-  evt?: T["OutEvt"][];
+  event?: T["OutEvent"][];
   /**
    *
    */
@@ -215,7 +215,7 @@ const tagOutput = <
     },
     cmd: output.cmd ? tagCmd(output.cmd) : [],
     eff: Eff.tag(tag, output.eff),
-    evt: output.evt,
+    event: output.event,
     gameEvent: output.gameEvent?.map((c) => ({
       eventId: c.eventId,
       c: c,

@@ -14,7 +14,7 @@ import {
   AnonymousClientCtx,
   ClientCmd,
   ClientCtx,
-  ClientEvt,
+  ClientEvent,
   RouteGameSpace,
   addProfiles,
   pushRoute,
@@ -65,11 +65,11 @@ import {
 type Module = AppClientModule<{
   Ctx: AnonymousClientCtx;
   InCmd: never;
-  InEvt: ClientEvt;
+  InEvent: ClientEvent;
   Model: ClientModel;
   Msg: ClientMsg;
   OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-  OutEvt: ClientEvt;
+  OutEvent: ClientEvent;
   ToClient: ToClient;
   ToServer: ToServer;
 }>;
@@ -114,7 +114,7 @@ export const update: Module["update"] = (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
-    (model) => updateFromEvt({ ...input, model }),
+    (model) => updateFromEvent({ ...input, model }),
     (model) => updateGame({ ...input, model }),
     (model) => updateLatestState({ ...input, model })
   );
@@ -226,14 +226,14 @@ const updateFromServer: Module["update"] = (input) => {
   );
 };
 
-const updateFromEvt: Module["update"] = (input) => {
-  if (!input.evt) {
+const updateFromEvent: Module["update"] = (input) => {
+  if (!input.event) {
     return { model: input.model };
   }
 
-  const { model, evt } = input;
+  const { model, event } = input;
 
-  switch (evt.t) {
+  switch (event.t) {
     case "routing/route-changed": {
       return { model: { ...model, modal: null } };
     }
@@ -271,7 +271,7 @@ const updateFromEvt: Module["update"] = (input) => {
 };
 
 const updateGame: Module["update"] = async (input) => {
-  const { ctx, model, fromServer, evt, msg } = input;
+  const { ctx, model, fromServer, event, msg } = input;
 
   const spaceId =
     msg && "spaceId" in msg
@@ -306,7 +306,7 @@ const updateGame: Module["update"] = async (input) => {
     gameState: space.game,
     fromServer: fromServer?.t === "game" ? fromServer.c : null,
     cmd: null,
-    evt,
+    event,
     msg: msg?.t === "game" ? msg.c : null,
   });
 

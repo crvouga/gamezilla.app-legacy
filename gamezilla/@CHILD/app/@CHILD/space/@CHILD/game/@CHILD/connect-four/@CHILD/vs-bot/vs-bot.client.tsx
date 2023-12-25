@@ -17,7 +17,7 @@ import {
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/feed-item";
 import {
   SpaceClientCtx,
-  SpaceClientEvt,
+  SpaceClientEvent,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   APP_SOUND,
@@ -67,9 +67,9 @@ type Module = GameClientModule<{
   GameEvent: GameEvent;
   Ctx: SpaceClientCtx & { onQuit: () => void };
   OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-  InEvt: SpaceClientEvt;
+  InEvent: SpaceClientEvent;
   InCmd: null;
-  OutEvt: null;
+  OutEvent: null;
 }>;
 
 //

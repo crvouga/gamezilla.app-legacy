@@ -1,5 +1,5 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { SpaceReqCtx, SpaceServerCtx, SpaceServerEvt } from "../space";
+import { SpaceReqCtx, SpaceServerCtx, SpaceServerEvent } from "../space";
 import { SpaceServerCmd } from "../space-server-cmd";
 import {
   EventMeta,
@@ -53,7 +53,7 @@ export type GameServer<T extends GameServerTypes> = {
     msg?: T["ServerMsg"] | null;
     clientMsg?: T["ToServer"] | null;
     gameEvent?: WithEventMeta<T["GameEvent"]> | null;
-    evt?: SpaceServerEvt | null;
+    event?: SpaceServerEvent | null;
   }) => Promise<Output<T>>;
 
   subscriptions: (input: {
@@ -93,7 +93,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
 
     update: async (input) => {
       const updated = await server.update({
-        evt: input.evt,
+        event: input.event,
         msg: input.msg?.t === tag ? input.msg?.c : undefined,
         model: input.model?.t === tag ? input.model?.c : undefined,
         gameEvent: input.gameEvent?.t === tag ? input.gameEvent?.c : undefined,
@@ -137,11 +137,11 @@ const tag = <T extends string, Types extends GameServerTypes>(
  * @example
  * const updated = chain(
  * { model: 0 },
- * (model) => ({ model: model + 1, evt: [someEvent] }),
+ * (model) => ({ model: model + 1, event: [someEvent] }),
  * (model) => ({ model: model + 1, eff: someEff }),
  * (model) => ({ model: model + 1, cmd: [someCmd] }),
  * )
- * //=> { model: 3, evt: [someEvt], eff: someEff, cmd: [someCmd] }
+ * //=> { model: 3, event: [someEvent], eff: someEff, cmd: [someCmd] }
  *
  * @param initial - the model to start with
  * @param updaters - a list of update functions to apply to the model

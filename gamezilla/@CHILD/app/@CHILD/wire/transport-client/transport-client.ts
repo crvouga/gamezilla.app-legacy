@@ -10,7 +10,7 @@ type ClientTransportCommand = { t: "try-reconnect" };
 export type IClientTransport<T extends { ToClient: any; ToServer: any }> = {
   toClient: PubSub<T["ToClient"][]>;
   toServer: PubSub<T["ToServer"][]>;
-  evt: PubSub<ClientTransportEvent>;
+  event: PubSub<ClientTransportEvent>;
   cmd: PubSub<ClientTransportCommand>;
 };
 
@@ -21,7 +21,7 @@ export const initClientTransport = <ToServer, ToClient>(): IClientTransport<{
   return {
     toClient: PubSub.create(),
     toServer: PubSub.create(),
-    evt: PubSub.create(),
+    event: PubSub.create(),
     cmd: PubSub.create(),
   };
 };

@@ -3,10 +3,10 @@ import { Eff } from "../eff";
 /**
  *
  */
-type Output<Model, Msg, Evt, Cmd> = {
+type Output<Model, Msg, Event, Cmd> = {
   model: Model;
   eff?: Eff<Msg>;
-  evt?: Evt[];
+  event?: Event[];
   cmd?: Cmd[];
 };
 
@@ -17,20 +17,20 @@ type Output<Model, Msg, Evt, Cmd> = {
  * const updated = p(
  *  andThen((model) => ({ model, eff: () => {} })),
  *  andThen((model) => ({ model, cmd: [] })),
- *  andThen((model) => ({ model, evt: [] })),
+ *  andThen((model) => ({ model, event: [] })),
  * )
  */
 export const andThen =
-  <Model, Msg, Evt, Cmd>(
-    updateStep: (input: Model) => Output<Model, Msg, Evt, Cmd>
+  <Model, Msg, Event, Cmd>(
+    updateStep: (input: Model) => Output<Model, Msg, Event, Cmd>
   ) =>
-  (output: Output<Model, Msg, Evt, Cmd>) => {
+  (output: Output<Model, Msg, Event, Cmd>) => {
     const updated = updateStep(output.model);
 
     return {
       model: updated.model,
       eff: Eff.batch([output.eff, updated.eff]),
-      evt: [...(output.evt ?? []), ...(updated.evt ?? [])],
+      event: [...(output.event ?? []), ...(updated.event ?? [])],
       cmd: [...(output.cmd ?? []), ...(updated.cmd ?? [])],
     };
   };
@@ -66,24 +66,24 @@ export function batchMsgs<T>(...msgs: Array<NullishItems<T>>): Array<T> {
  * @example
  * const updated = chain(
  * { model: 0 },
- * (model) => ({ model: model + 1, evt: [someEvent] }),
+ * (model) => ({ model: model + 1, event: [someEvent] }),
  * (model) => ({ model: model + 1, eff: someEff }),
  * (model) => ({ model: model + 1, cmd: [someCmd] }),
  * )
- * //=> { model: 3, evt: [someEvt], eff: someEff, cmd: [someCmd] }
+ * //=> { model: 3, event: [someEvent], eff: someEff, cmd: [someCmd] }
  *
  * @param initial - the model to start with
  * @param updaters - a list of update functions to apply to the model
  * @returns Accumulated output from all the update functions
  */
-export const chainAwait = async <Model, Msg, Evt, Cmd>(
-  initial: Output<Model, Msg, Evt, Cmd>,
+export const chainAwait = async <Model, Msg, Event, Cmd>(
+  initial: Output<Model, Msg, Event, Cmd>,
   ...updaters: ((
     input: Model
-  ) => Output<Model, Msg, Evt, Cmd> | Promise<Output<Model, Msg, Evt, Cmd>>)[]
-): Promise<Output<Model, Msg, Evt, Cmd>> => {
+  ) => Output<Model, Msg, Event, Cmd> | Promise<Output<Model, Msg, Event, Cmd>>)[]
+): Promise<Output<Model, Msg, Event, Cmd>> => {
   const cmd: Cmd[] = [...(initial.cmd ?? [])];
-  const evt: Evt[] = [...(initial.evt ?? [])];
+  const event: Event[] = [...(initial.event ?? [])];
   const eff: Eff<Msg>[] = initial.eff ? [initial.eff] : [];
   let model: Model = {...initial.model};
 
@@ -95,9 +95,9 @@ export const chainAwait = async <Model, Msg, Evt, Cmd>(
       eff.push(updated.eff);
     }
 
-    if (updated.evt) {
-      for (let j = 0, len = updated.evt.length; j < len; ++j) {
-        evt.push(updated.evt[j]!);
+    if (updated.event) {
+      for (let j = 0, len = updated.event.length; j < len; ++j) {
+        event.push(updated.event[j]!);
       }
     }
 
@@ -111,7 +111,7 @@ export const chainAwait = async <Model, Msg, Evt, Cmd>(
   return {
     model,
     eff: Eff.batch(eff),
-    evt,
+    event,
     cmd,
   };
 };

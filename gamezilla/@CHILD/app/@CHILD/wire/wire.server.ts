@@ -2,7 +2,7 @@ import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   ServerCmd,
   ServerCtx,
-  ServerEvt,
+  ServerEvent,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Posix, TimeSpan } from "gamezilla/@SHARED/core";
@@ -48,7 +48,7 @@ type Input<TToClient, TToServer> = {
   //
   msg?: ServerMsg | null;
   fromClient?: ToServer | null;
-  evt?: ServerEvt | null;
+  event?: ServerEvent | null;
   cmd?: ServerCmd<TToClient> | null;
   //
   transport: IServerTransport<{
@@ -61,7 +61,7 @@ type Input<TToClient, TToServer> = {
 type Output = {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
-  evt?: ServerEvt[];
+  event?: ServerEvent[];
   cmd?: ServerCmd<ToClient>[];
 };
 
@@ -115,7 +115,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
               ...model,
               clientsBySessionId: clientsBySessionIdNew,
             },
-            evt: [
+            event: [
               {
                 t: "wire/client-connected",
                 clientId: msg.clientId,
@@ -147,7 +147,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
     case "client-disconnected": {
       return {
         model,
-        evt: [
+        event: [
           {
             t: "wire/client-disconnected",
             clientId: msg.clientId,

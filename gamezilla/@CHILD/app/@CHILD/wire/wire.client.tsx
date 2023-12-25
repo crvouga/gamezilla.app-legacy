@@ -1,6 +1,6 @@
 import {
   ClientCmd,
-  ClientEvt,
+  ClientEvent,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
@@ -60,7 +60,7 @@ export const update = <TToClient, TToServer>({
   }>;
 }): {
   model: ClientModel;
-  evt?: ClientEvt[];
+  event?: ClientEvent[];
   eff?: Eff<ClientMsg>;
 } => {
   if (msg) {
@@ -111,7 +111,7 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
             t: "server-connected",
           },
         },
-        evt: [{ t: "wire/server-connected" }],
+        event: [{ t: "wire/server-connected" }],
       };
     }
 
@@ -262,5 +262,5 @@ export const subscriptions = <ToServer, ToClient>({
 }: {
   transport: IClientTransport<{ ToServer: ToServer; ToClient: ToClient }>;
 }): Sub<ClientMsg> => {
-  return transport.evt;
+  return transport.event;
 };

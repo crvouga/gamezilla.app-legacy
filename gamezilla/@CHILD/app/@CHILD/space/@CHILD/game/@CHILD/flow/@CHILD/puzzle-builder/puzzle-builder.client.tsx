@@ -1,6 +1,6 @@
 import { ViewBottomButtonBar } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
-import { SpaceClientEvt } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientEvent } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
@@ -28,9 +28,9 @@ type Module = GameClientModule<{
   GameState: null;
   Ctx: FlowClientCtx;
   OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-  InEvt: SpaceClientEvt;
+  InEvent: SpaceClientEvent;
   InCmd: null;
-  OutEvt: null;
+  OutEvent: null;
 }>;
 
 const init: Module["init"] = initCore;

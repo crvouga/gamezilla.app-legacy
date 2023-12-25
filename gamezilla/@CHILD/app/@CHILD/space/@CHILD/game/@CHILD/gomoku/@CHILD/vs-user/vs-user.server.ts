@@ -1,6 +1,6 @@
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import {
-  SpaceServerEvt,
+  SpaceServerEvent,
   SpaceReqCtx,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
@@ -66,11 +66,11 @@ export const updateFromClient = ({
   return { model: res.result.value, eff: Eff.None };
 };
 
-export const updateFromEvt = ({
+export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceServerEvt;
+  msg: SpaceServerEvent;
   model: Model;
 }): {
   model: Model;

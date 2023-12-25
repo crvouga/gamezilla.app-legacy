@@ -1,4 +1,4 @@
-import { SpaceServerEvt } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceServerEvent } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-server-cmd";
 import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
 import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";
@@ -47,11 +47,11 @@ export const updateFromClient = (
   return { model };
 };
 
-export const updateFromEvt = ({
+export const updateFromEvent = ({
   msg,
   model,
 }: {
-  msg: SpaceServerEvt;
+  msg: SpaceServerEvent;
   model: ServerModel;
 }): {
   model: ServerModel;

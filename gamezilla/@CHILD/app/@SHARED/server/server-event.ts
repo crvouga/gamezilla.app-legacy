@@ -1,6 +1,6 @@
 import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
-export type ServerEvt =
+export type ServerEvent =
   | {
       t: "wire/client-connected";
       clientId: ClientId;

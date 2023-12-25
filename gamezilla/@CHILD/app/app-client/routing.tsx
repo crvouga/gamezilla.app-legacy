@@ -1,7 +1,7 @@
 import {
   APP_SOUND,
   AppRoute,
-  ClientEvt,
+  ClientEvent,
   RouteCmd,
   SoundCmd,
   playSound,
@@ -68,7 +68,7 @@ export const update = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  evt?: ClientEvt[];
+  event?: ClientEvent[];
   cmd?: SoundCmd[];
 } => {
   if (msg) {
@@ -110,7 +110,7 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
           previousRoute: model.currentRoute,
           currentRoute: msg.route,
         },
-        evt: [{ t: "routing/route-changed", route: msg.route }],
+        event: [{ t: "routing/route-changed", route: msg.route }],
       };
     }
   }

@@ -24,8 +24,8 @@ type Module = AppClientModule<{
   //
   OutCmd: null;
   //
-  InEvt: null;
-  OutEvt: null;
+  InEvent: null;
+  OutEvent: null;
 }>;
 
 //

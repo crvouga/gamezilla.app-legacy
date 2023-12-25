@@ -2,7 +2,7 @@ import {
   WithEventId,
   WithEventMeta,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/event";
-import { ClientCmd, ClientEvt } from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCmd, ClientEvent } from "gamezilla/@CHILD/app/@SHARED/client";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 
@@ -33,7 +33,7 @@ type Output<T extends GameClientTypes> = {
 export type InMsg<T extends GameClientTypes> =
   | ({ variant: "msg" } & T["ClientMsg"])
   | ({ variant: "to-client" } & T["ToClient"])
-  | ({ variant: "evt" } & ClientEvt);
+  | ({ variant: "event" } & ClientEvent);
 
 export type OutMsg<T extends GameClientTypes> =
   | ({ variant: "cmd" } & ClientCmd<T>)
@@ -54,7 +54,7 @@ export type GameClient<T extends GameClientTypes> = {
     //
     msg?: T["ClientMsg"] | null;
     serverMsg?: T["ToClient"] | null;
-    evt?: ClientEvt | null;
+    event?: ClientEvent | null;
     gameEvent?: WithEventMeta<T["GameEvent"]> | null;
   }) => Output<T>;
 
@@ -110,7 +110,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
 
     update: (input) => {
       const updated = client.update({
-        evt: input.evt,
+        event: input.event,
         msg: input.msg?.t === tag ? input.msg?.c : undefined,
         model: input.model?.t === tag ? input.model?.c : undefined,
         gameEvent: input.gameEvent?.t === tag ? input.gameEvent?.c : undefined,
@@ -187,11 +187,11 @@ export const tag = <T extends string, Types extends GameClientTypes>(
  * @example
  * const updated = chain(
  * { model: 0 },
- * (model) => ({ model: model + 1, evt: [someEvent] }),
+ * (model) => ({ model: model + 1, event: [someEvent] }),
  * (model) => ({ model: model + 1, eff: someEff }),
  * (model) => ({ model: model + 1, cmd: [someCmd] }),
  * )
- * //=> { model: 3, evt: [someEvt], eff: someEff, cmd: [someCmd] }
+ * //=> { model: 3, event: [someEvent], eff: someEff, cmd: [someCmd] }
  *
  * @param initial - the model to start with
  * @param updaters - a list of update functions to apply to the model

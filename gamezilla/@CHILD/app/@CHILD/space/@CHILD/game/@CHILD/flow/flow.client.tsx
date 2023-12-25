@@ -1,6 +1,6 @@
 import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/space/@CHILD/game/@SHARED/game";
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-client-v2";
-import { SpaceClientEvt } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
+import { SpaceClientEvent } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import {
   APP_SOUND,
   ClientCmd,
@@ -46,9 +46,9 @@ type Module = GameClientModule<{
   Ctx: FlowClientCtx;
   //
   OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-  InEvt: SpaceClientEvt;
+  InEvent: SpaceClientEvent;
   InCmd: null;
-  OutEvt: null;
+  OutEvent: null;
 }>;
 
 //
@@ -72,7 +72,7 @@ const update: Module["update"] = (input) => {
 };
 
 const updateChild: Module["update"] = (input) => {
-  const { model, gameState, gameEvent, ctx, cmd, evt, fromServer, msg } = input;
+  const { model, gameState, gameEvent, ctx, cmd, event, fromServer, msg } = input;
 
   switch (gameState.t) {
     case null: {
@@ -85,7 +85,7 @@ const updateChild: Module["update"] = (input) => {
         gameState: gameState.c,
         model: model.t === "play" ? model.c : PlayClient.init,
         cmd: cmd,
-        evt: evt,
+        event: event,
         fromServer: fromServer?.t === "play" ? fromServer.c : null,
         gameEvent:
           gameEvent?.t === "play" ? { ...gameEvent, ...gameEvent.c } : null,

@@ -1,7 +1,7 @@
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { AppRoute } from "./client-route";
 
-export type ClientEvt =
+export type ClientEvent =
   | { t: "is-logged-in"; userId: UserId; loggedIn: boolean }
   | { t: "is-logged-out" }
   | { t: "wire/server-connected" }

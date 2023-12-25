@@ -65,7 +65,7 @@ export const init: Server["init"] = async (input) => {
 //
 
 export const update: Server["update"] = async (input) => {
-  const { msg, state, ctx, gameEvent, clientMsg, evt } = input;
+  const { msg, state, ctx, gameEvent, clientMsg, event } = input;
 
   return GameServer.chain(
     init(input),
@@ -83,7 +83,7 @@ export const update: Server["update"] = async (input) => {
             model: model.t === "connect-four" ? model : null,
             msg: msg?.t === "connect-four" ? msg : null,
             clientMsg: clientMsg?.t === "connect-four" ? clientMsg : null,
-            evt,
+            event,
             gameEvent:
               gameEvent?.t === "connect-four"
                 ? { ...gameEvent, c: { ...gameEvent, ...gameEvent.c } }

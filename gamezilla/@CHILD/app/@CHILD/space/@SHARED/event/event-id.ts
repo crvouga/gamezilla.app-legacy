@@ -22,10 +22,10 @@ const decode = (id: string): Result<Problem, EventId> => {
 const generate = (): EventId => {
   const uuid = Uuid.generate();
 
-  const evtId = `${namespace}${separator}${uuid}`;
+  const eventId = `${namespace}${separator}${uuid}`;
 
-  if (is(evtId)) {
-    return evtId;
+  if (is(eventId)) {
+    return eventId;
   }
 
   throw new Error("impossible condition. generated invalid id");
