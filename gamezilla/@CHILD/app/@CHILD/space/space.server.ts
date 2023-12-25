@@ -111,7 +111,7 @@ const updateFromClient: Module["update"] = async (input) => {
       return { model };
     }
 
-    case "sync-space": {
+    case "sync": {
       return AppServerModule.chainUpdates(
         { model },
         async (model) => {
@@ -151,7 +151,7 @@ const updateFromClient: Module["update"] = async (input) => {
             model,
             cmd: [
               broadcast<ToClient>({
-                t: "sync-space",
+                t: "sync",
                 spaceId: fromClient.spaceId,
                 events: events,
                 clock: model.clock,

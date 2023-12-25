@@ -153,14 +153,18 @@ async function syncUserWhenJoined({
         return { model };
       }
       const subState = toSpaceSubState(state, event.spaceId);
+      if(!subState) {
+        return { model };
+      }
       const snapshots: ServerModel['snapshots'] = CappedOrderedDict.add(CappedOrderedDict.init({maxSize: 5}), latestEvent.eventId, subState);
+      
 
 
       return {
         model,
         cmd: [
           sendToUser([event.userId], {
-            t: "sync-space",
+            t: "sync",
             spaceId: event.spaceId,
             events: events,
             causedBy: event,

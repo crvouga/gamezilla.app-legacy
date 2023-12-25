@@ -372,18 +372,13 @@ export const mergeLeft = (left: State, right: State): State => {
   };
 };
 
-export const toSpaceSubState = (state: State, spaceId: SpaceId): State => {
+export const toSpaceSubState = (state: State, spaceId: SpaceId): State | null => {
   const space = state.spaces[spaceId] ?? {
     type: "initial",
   };
 
   if (space.type !== "started") {
-    return {
-      active: {},
-      errorsByUserId: {},
-      spaceIdByUserId: {},
-      spaces: {},
-    };
+    return null;
   }
 
   const spaceIdByUserId = Object.keys(space.users).reduce(

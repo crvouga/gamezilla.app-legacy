@@ -77,7 +77,7 @@ export type ToClient = ToClientExtra &
         clock: LamportClock;
       }
     | {
-        t: "sync-space";
+        t: "sync";
         spaceId: SpaceId;
         events: CoreModel["events"];
         clock: CoreModel["clock"];
@@ -98,7 +98,7 @@ export type ToServer = ToServerExtra &
         clock: LamportClock;
       }
     | {
-        t: "sync-space";
+        t: "sync";
         spaceId: SpaceId;
         events: CoreModel["events"];
         clock: CoreModel["clock"];
@@ -225,7 +225,7 @@ export const config = SpaceEvents.config({
 
 export const deriveState = async (model: CoreModel): Promise<State> => {
   let runningState: State = initState();
-  
+
   const eventIds: EventId[] = [];
 
   //

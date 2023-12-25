@@ -207,7 +207,7 @@ const updateFromServer: Module["update"] = (input) => {
     },
     async (model) => {
       switch (fromServer.t) {
-        case "sync-space": {
+        case "sync": {
           const merged = await mergeModels(model, {
             events: fromServer.events,
             clock: fromServer.clock,
@@ -216,7 +216,7 @@ const updateFromServer: Module["update"] = (input) => {
 
           return { model: { ...model, ...merged, isSyncing: false } };
         }
-
+        
         case "game": {
           return { model };
         }
@@ -266,7 +266,7 @@ const updateFromEvent: Module["update"] = async (input) => {
         },
         cmd: [
           sendToServer({
-            t: "sync-space",
+            t: "sync",
             spaceId: currentUserSpaceId,
             events: model.events,
             clock: model.clock,
