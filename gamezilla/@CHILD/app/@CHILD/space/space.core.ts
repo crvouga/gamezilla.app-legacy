@@ -454,16 +454,30 @@ const reducer = ({
 
     case "user-joined-space": {
       const userSpaceId = state.spaceIdByUserId[event.userId];
+      
       if (userSpaceId) {
-        return state;
+        return {
+          ...state,
+          errorsByUserId: {
+            ...state.errorsByUserId,
+            [event.userId]: {
+              ...event,
+              error: "already-joined-space",
+            },
+          },
+        }
       }
+
       const space = state.spaces[event.spaceId];
+
       if (!space) {
         return state;
       }
+      
       if (space.type === "ended") {
         return state;
       }
+
       if (space.type === "initial") {
         return state;
       }
