@@ -16,6 +16,7 @@ import {
   ToClient,
   ToServer,
 } from "./wire.core";
+import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
 
 //
 //
@@ -90,11 +91,20 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
       return AppServerModule.chainUpdates(
         { model },
         async (model) => {
+          const existing: Client = model.clientsBySessionId[msg.sessionId] ?? {
+            clientIds: CappedOrderedDict.init({ maxSize: 10 }),
+            sessionId: msg.sessionId,            
+          };
+
           const clientNew: Client = {
             sessionId: msg.sessionId,
-            clientId: msg.clientId,
-            status: "connected",
+            clientIds: CappedOrderedDict.add(
+              existing.clientIds,
+              msg.clientId,
+              msg.clientId
+            ),
           };
+
           const clientsBySessionIdNew: ServerModel["clientsBySessionId"] = {
             ...model.clientsBySessionId,
             [msg.sessionId]: clientNew,
@@ -135,20 +145,8 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
     }
 
     case "client-disconnected": {
-      const clientNew: Client = {
-        sessionId: msg.sessionId,
-        clientId: msg.clientId,
-        status: "disconnected",
-      };
-      const clientsBySessionIdNew: ServerModel["clientsBySessionId"] = {
-        ...model.clientsBySessionId,
-        [msg.sessionId]: clientNew,
-      };
       return {
-        model: {
-          ...model,
-          clientsBySessionId: clientsBySessionIdNew,
-        },
+        model,
         evt: [
           {
             t: "wire/client-disconnected",
@@ -168,11 +166,13 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
       };
     }
 
-    case 'got-bad-msgs': {
-      ctx.logger.info(`Got bad msg from client. reason=${msg.reason}, clientId=${msg.clientId}, sessionId=${msg.sessionId}`)
+    case "got-bad-msgs": {
+      ctx.logger.info(
+        `Got bad msg from client. reason=${msg.reason}, clientId=${msg.clientId}, sessionId=${msg.sessionId}`
+      );
       return {
         model,
-      }
+      };
     }
   }
 };
@@ -248,10 +248,12 @@ const updateFromCmd = async <TToClient, TToServer>({
               continue;
             }
 
-            toClientPayload[client.clientId] = {
-              clientId: client.clientId,
-              msgs: [cmd.msg],
-            };
+            for (const clientId of CappedOrderedDict.values(client.clientIds)) {
+              toClientPayload[clientId] = {
+                clientId,
+                msgs: [...(toClientPayload[clientId]?.msgs ?? []), cmd.msg],
+              };
+            }
           }
 
           transport.toClient.publish(toClientPayload);

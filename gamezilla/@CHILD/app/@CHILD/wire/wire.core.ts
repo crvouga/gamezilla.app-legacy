@@ -2,6 +2,7 @@ import { Posix } from "gamezilla/@SHARED/core";
 import { ClientId, SessionId } from "../../@SHARED/data";
 import { ClientTransportEvent } from "./transport-client";
 import { ServerTransportMsg } from "./transport-server";
+import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
 
 //
 //
@@ -15,8 +16,8 @@ export type ClientModel = {
     | { t: "server-connecting" }
     | { t: "server-connect-error"; errorCount: number }
     | { t: "server-disconnected" }
-    | { t: "server-connected",  }
-    
+    | { t: "server-connected" };
+
   serverTime: {
     serverNow: Posix;
     recordedAt: Posix;
@@ -34,8 +35,7 @@ export type ServerModel = {
 
 export type Client = {
   sessionId: SessionId;
-  clientId: ClientId;
-  status: "connected" | "disconnected";
+  clientIds: CappedOrderedDict<ClientId, ClientId>;
 };
 
 export type ServerMsg = ServerTransportMsg;

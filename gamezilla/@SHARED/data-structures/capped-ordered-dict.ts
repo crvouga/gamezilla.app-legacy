@@ -100,10 +100,17 @@ const mergeLeft = <TKey extends string | number, TValue>(
   };
 }
 
+const values = <TKey extends string | number, TValue>(
+  model: CappedOrderedDict<TKey, TValue>
+): TValue[] => {
+  return model._orderNewestFirst.map((key) => model._valuesByKey[key]!);
+}
+
 export const CappedOrderedDict = {
   add,
   remove,
   init,
   get,
-  mergeLeft
+  mergeLeft,
+  values
 };
