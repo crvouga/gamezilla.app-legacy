@@ -8,26 +8,23 @@ import {
   topicSubscribe,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Sub } from "gamezilla/@SHARED/core";
-import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
 import { AppServerModule } from "../../@SHARED/architecture/app-server";
+import * as GameServer from "./@CHILD/game/game.server";
+import { updateFromSpaceEvents } from "./space-server/update-from-events";
+import { updateFromGame } from "./space-server/update-from-game";
 import {
   Event,
   toStartedSpace,
   toUserState
 } from './space-state';
-import * as GameServer from "./@CHILD/game/game.server";
-import { updateFromSpaceEvents } from "./space-server/update-from-events";
-import { updateFromGame } from "./space-server/update-from-game";
 import {
   ServerModel,
   ServerMsg,
-  SpaceEvents,
   ToClient,
   ToServer,
-  config,
-  initCore,
-  mergeModels,
   deriveState,
+  initCore,
+  mergeModels
 } from "./space.core";
 
 //
@@ -136,26 +133,15 @@ const updateFromClient: Module["update"] = async (input) => {
           };
         },
         async (model) => {
-          const latestEvent = await SpaceEvents.latest(config, model.events);
-          if (!latestEvent) {
-            return { model };
-          }
-          const state = await deriveState(model);
-          const snapshots: ServerModel["snapshots"] = CappedOrderedDict.add(
-            CappedOrderedDict.init({ maxSize: 5 }),
-            latestEvent.eventId,
-            state
-          );
-          const events = await SpaceEvents.startingAt(config, model.events, latestEvent.eventId)
           return {
             model,
             cmd: [
               broadcast<ToClient>({
                 t: "sync",
                 spaceId: fromClient.spaceId,
-                events: events,
+                events: model.events,
                 clock: model.clock,
-                snapshots: snapshots,
+                snapshots: model.snapshots,
                 causedBy: fromClient,
                 profiles: model.profileCache,
               }),
