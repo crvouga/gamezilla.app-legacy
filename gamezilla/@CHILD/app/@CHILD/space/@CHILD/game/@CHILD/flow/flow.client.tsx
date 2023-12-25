@@ -197,7 +197,7 @@ const View: Module["View"] = (input) => {
 
   const ctx: FlowClientCtx = {
     ...input.ctx,
-    onExit: () =>
+    onQuit: () =>
       dispatch({
         t: "event",
         c: {

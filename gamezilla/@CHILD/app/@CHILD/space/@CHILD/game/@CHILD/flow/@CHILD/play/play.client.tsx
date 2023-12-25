@@ -83,7 +83,8 @@ const subscriptions: Module["subscriptions"] = () => {
 const USE_GAME_STATE = true;
 
 const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
-  const isSpectating = ctx.currentUserId !== ctx.space.hostId;
+  const isPlaying = ctx.currentUserId === ctx.space.hostId;
+  const isSpectating = !isPlaying;
   const host = ctx.profiles[ctx.space.hostId];
   return (
     <GameLayout isSpectating={isSpectating}>
@@ -111,13 +112,13 @@ const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
           />
         )}
       </div>
-      {!isSpectating && (
+      {isPlaying && (
         <div className="w-full p-4">
           <Button
             className="w-full"
-            onClick={ctx.onExit}
+            onClick={ctx.onQuit}
             start={<IconArrowLeftOnRect className="h-6 w-6" />}
-            text="Exit"
+            text="Quit"
           />
         </div>
       )}

@@ -102,7 +102,7 @@ const View: Module["View"] = ({ model, dispatch, ctx }) => {
               {
                 label: "Exit Builder",
                 icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-                onClick: ctx.onExit,
+                onClick: ctx.onQuit,
               },
               {
                 label: "Play Mode",
@@ -135,7 +135,7 @@ const View: Module["View"] = ({ model, dispatch, ctx }) => {
               {
                 label: "Exit Builder",
                 icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-                onClick: ctx.onExit,
+                onClick: ctx.onQuit,
               },
               {
                 label: "Edit Mode",
