@@ -39,9 +39,7 @@ async function main() {
 
   await program.start();
 
-  if (process.env.NODE_ENV === "development") {
-    attachDebuggerBrowserExtension(program);
-  }
+  attachDebuggerBrowserExtension(program);
 
 }
 
