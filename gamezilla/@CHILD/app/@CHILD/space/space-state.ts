@@ -1,7 +1,12 @@
 import { Space } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import * as Game from "./@CHILD/game/game.core";
-import { EventId, WithEventId, WithEventMeta } from "./@SHARED/event";
+import {
+  EventId,
+  EventMeta,
+  WithEventId,
+  WithEventMeta,
+} from "./@SHARED/event";
 
 //
 //
@@ -372,7 +377,10 @@ export const mergeLeft = (left: State, right: State): State => {
   };
 };
 
-export const toSpaceSubState = (state: State, spaceId: SpaceId): State | null => {
+export const toSpaceSubState = (
+  state: State,
+  spaceId: SpaceId
+): State | null => {
   const space = state.spaces[spaceId] ?? {
     type: "initial",
   };
@@ -449,3 +457,88 @@ export const toUserState = (state: State, userId: UserId): UserState => {
   return stateUser;
 };
 
+//
+//
+//
+//
+//
+
+export const initStateSpace = (): StateSpace => {
+  return {
+    type: "initial",
+  };
+};
+
+export const reducerSpace = ({
+  state,
+  event,
+}: {
+  state: StateSpace;
+  event: Event & EventMeta;
+}): StateSpace => {
+  switch (event.t) {
+    case "game": {
+      switch (state.type) {
+        case "initial":
+        case "ended": {
+          return state;
+        }
+
+        case "started": {
+          const gameState = state.game ?? Game.initState(event.c.t);
+          const gameNew = Game.reducer({
+            ctx: { space: state },
+            state: gameState,
+            event: { ...event, ...event.c },
+          });
+          return {
+            ...state,
+            game: gameNew,
+          };
+        }
+      }
+    }
+
+    case "user-ended-space": {
+      switch (state.type) {
+        case "initial":
+        case "ended": {
+          return state;
+        }
+        case "started": {
+          if (event.userId !== state.hostId) {
+            return state;
+          }
+          return {
+            ...state,
+            type: "ended",
+          };
+        }
+      }
+    }
+
+    case "user-inputted-game": {
+      switch (state.type) {
+        case "initial":
+        case "ended": {
+          return state;
+        }
+        case "started": {
+          return state;
+        }
+      }
+    }
+
+    case "user-joined-space": {
+      return state;
+    }
+
+    case "user-left-space": {
+      return state;
+    }
+
+    case "user-started-space": {
+      return state;
+    }
+  }
+};
