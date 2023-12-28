@@ -10,7 +10,6 @@ export const ToggleButton = ({
 }) => {
   const onChange = (event: Event) => {
     event.stopPropagation();
-    event.stopImmediatePropagation();
     event.preventDefault();
     if (onToggle) {
       onToggle(event);
