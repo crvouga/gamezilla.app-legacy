@@ -59,6 +59,23 @@ export type ClientModel = CoreModel & {
   isSyncing: boolean;
 };
 
+type SpaceClientModel = {
+  events: SpaceEventsInstance,
+  clock: LamportClock,
+  snapshots: CappedOrderedDict<EventId, State>,
+  game: Game.ClientModel,
+}
+
+export type ClientModelV2 = {
+  spaces: {
+    [spaceId: SpaceId]: SpaceClientModel;
+  },
+  previewUserId: UserId | null;
+  modal: ModalModel;
+  latestState: State;
+  isSyncing: boolean;
+}
+
 type ModalModel = null | "user-preview" | "users";
 
 //
