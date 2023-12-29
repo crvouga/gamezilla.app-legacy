@@ -5,6 +5,7 @@ import {
   ServerCtx,
   ServerEvent,
   broadcast,
+  sendToClient,
   topicSubscribe,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Sub } from "gamezilla/@SHARED/core";
@@ -12,11 +13,7 @@ import { AppServerModule } from "../../@SHARED/architecture/app-server";
 import * as GameServer from "./@CHILD/game/game.server";
 import { updateFromSpaceEvents } from "./space-server/update-from-events";
 import { updateFromGame } from "./space-server/update-from-game";
-import {
-  Event,
-  toStartedSpace,
-  toUserState
-} from './space-state';
+import { Event, toStartedSpace, toUserState } from "./space-state";
 import {
   ServerModel,
   ServerMsg,
@@ -24,7 +21,7 @@ import {
   ToServer,
   deriveState,
   initCore,
-  mergeModels
+  mergeModels,
 } from "./space.core";
 
 //
@@ -136,7 +133,7 @@ const updateFromClient: Module["update"] = async (input) => {
           return {
             model,
             cmd: [
-              broadcast<ToClient>({
+              sendToClient<ToClient>([fromClient.clientId], {
                 t: "sync",
                 spaceId: fromClient.spaceId,
                 events: model.events,
