@@ -3,7 +3,7 @@ import {
   SpaceServerCtx,
   SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
-import { Eff, Sub } from "gamezilla/@SHARED/core";
+import { Sub } from "gamezilla/@SHARED/core";
 import { SpaceServerCmd } from "../../../../@SHARED/space-server-cmd";
 import { PlayServer } from "./@CHILD/play/play.server";
 import {
