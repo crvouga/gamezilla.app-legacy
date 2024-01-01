@@ -17,7 +17,7 @@ export type ClientModel =
 export type ServerModel =
   | { t: "none" }
   | { t: "puzzle-builder"; c: PuzzleBuilder.ServerModel }
-  | { t: "play"; c: Play.ClientModel };
+  | { t: "play"; c: Play.ServerModel };
 
 //
 //

@@ -1,31 +1,50 @@
-import { GameServer } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-server";
-import { ServerModel, ServerMsg, ToClient, ToServer } from "./play.core";
+import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/architecture/game-server-v2";
+import {
+  SpaceServerCtx,
+  SpaceServerEvent,
+} from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space";
 import { Sub } from "gamezilla/@SHARED/core";
+import {
+  GameEvent,
+  GameState,
+  ServerModel,
+  ServerMsg,
+  ToClient,
+  ToServer,
+} from "./play.core";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/space/@SHARED/space-server-cmd";
 
-type Server = GameServer<{
-  ServerModel: ServerModel;
-  ServerMsg: ServerMsg;
+type Module = GameServerModule<{
+  Model: ServerModel;
+  Msg: ServerMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  GameEvent: null;
-  GameState: null;
+  GameEvent: GameEvent;
+  GameState: GameState;
+  Ctx: SpaceServerCtx;
+  InCmd: null;
+  InEvent: SpaceServerEvent;
+  OutCmd: SpaceServerCmd<ToClient>;
+  OutEvent: null;
 }>;
 
-const init: Server["init"] = async () => {
+const init: Module["init"] = async () => {
   return {
     model: {},
   };
 };
 
-const update: Server["update"] = async (input) => {
-  return init(input);
+const update: Module["update"] = async (input) => {
+  return {
+    model: input.model,
+  };
 };
 
-const subscriptions: Server["subscriptions"] = async () => {
+const subscriptions: Module["subscriptions"] = async () => {
   return Sub.None;
 };
 
-export const PlayServer: Server = {
+export const PlayServer: Module = {
   init,
   update,
   subscriptions,

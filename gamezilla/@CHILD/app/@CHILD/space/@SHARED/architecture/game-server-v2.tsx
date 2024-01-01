@@ -86,8 +86,8 @@ export type Input<T extends GameServerModuleTypes> = {
    * `fromServer`
    */
   fromClient?:
-    | (T["ToServer"] & { clientId: ClientId; sessionId: SessionId })
-    | null;
+  | (T["ToServer"] & { clientId: ClientId; sessionId: SessionId })
+  | null;
   /**
    * `event`
    */
@@ -160,17 +160,17 @@ export type GameServerModule<T extends GameServerModuleTypes> = {
 //
 //
 
-const chainUpdates = <T extends GameServerModuleTypes>(
+const chainUpdates = async <T extends GameServerModuleTypes>(
   acc: Output<T>,
-  ...updates: ((model: T["Model"]) => Output<T>)[]
-): Output<T> => {
+  ...updates: ((model: T["Model"]) => Promise<Output<T>>)[]
+): Promise<Output<T>> => {
   const [update, ...rest] = updates;
 
   if (!update) {
     return acc;
   }
 
-  const updated = update(acc.model);
+  const updated = await update(acc.model);
 
   const accNew: Output<T> = {
     model: updated.model,
@@ -183,13 +183,14 @@ const chainUpdates = <T extends GameServerModuleTypes>(
   return chainUpdates(accNew, ...rest);
 };
 
+
 const tagOutput = <
   TTag extends string,
   T extends GameServerModuleTypes,
   TTaggedCmd extends GameServerModuleTypes["OutCmd"]
 >(
   tag: TTag,
-  tagCmd: (cmd: T["OutCmd"][]) => TTaggedCmd[],
+  tagCmd: (cmd: T["OutCmd"][]) => TTaggedCmd[] | null | undefined,
   output: Output<T>
 ): {
   model: { t: TTag; c: T["Model"] };
@@ -213,7 +214,7 @@ const tagOutput = <
       t: tag,
       c: output.model,
     },
-    cmd: output.cmd ? tagCmd(output.cmd) : [],
+    cmd: output.cmd ? tagCmd(output.cmd) ?? [] : [],
     eff: Eff.tag(tag, output.eff),
     event: output.event,
     gameEvent: output.gameEvent?.map((c) => ({
