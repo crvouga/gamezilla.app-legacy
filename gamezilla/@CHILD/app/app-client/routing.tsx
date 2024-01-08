@@ -1,10 +1,8 @@
 import {
-  APP_SOUND,
   AppRoute,
   ClientEvent,
   RouteCmd,
-  SoundCmd,
-  playSound,
+  SoundCmd
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Browser, Eff } from "gamezilla/@SHARED/core";
 
@@ -89,7 +87,6 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
       return {
         model,
         eff: Browser.back,
-        cmd: [playSound(APP_SOUND.tap)],
       };
     }
 
@@ -100,7 +97,6 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
           currentRoute: msg.route,
         },
         eff: Browser.push(AppRoute.encode(msg.route)),
-        cmd: [playSound(APP_SOUND.tap)],
       };
     }
 
@@ -130,7 +126,6 @@ const updateFromCmd: typeof update = ({ cmd, model }) => {
           previousRoute: model.currentRoute,
           currentRoute: routeCmd.route,
         },
-        cmd: [playSound(APP_SOUND.tap)],
         eff: Browser.push(AppRoute.encode(routeCmd.route)),
       };
     }
