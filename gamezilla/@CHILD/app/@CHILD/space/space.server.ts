@@ -76,8 +76,21 @@ export const update: Module["update"] = async (input) => {
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
-    (model) => updateGame({ ...input, model })
+    (model) => updateGame({ ...input, model }),
+    (model) => updateProfileCache({ ...input, model })
   );
+};
+
+const updateProfileCache: Module["update"] = async (input) => {
+  return {
+    model: {
+      ...input.model,
+      profileCache: {
+        ...input.model.profileCache,
+        ...input.fromClient?.profiles,
+      },
+    },
+  };
 };
 
 const updateFromMsg: Module["update"] = async ({ model, msg }) => {
@@ -115,17 +128,6 @@ const updateFromClient: Module["update"] = async (input) => {
           });
           return {
             model: { ...model, ...merged },
-          };
-        },
-        (model) => {
-          return {
-            model: {
-              ...model,
-              profileCache: {
-                ...model.profileCache,
-                ...fromClient.profiles,
-              },
-            },
           };
         },
         async (model) => {
@@ -169,13 +171,23 @@ const updateFromEvent: Module["update"] = async (input) => {
   switch (event.t) {
     case "auth/connected-client-is-logged-in": {
       const state = await deriveState(model);
+
       const userState = toUserState(state, event.userId);
+
+      if (!userState.spaceId) {
+        return { model };
+      }
 
       return {
         model,
         cmd: [
-          topicSubscribe([`space/${userState.spaceId}`], [event.clientId]),
-          topicSubscribe([`spaces`], [event.clientId]),
+          sendToClient<ToClient>([event.clientId], {
+            t: "sync",
+            clock: model.clock,
+            events: model.events,
+            snapshots: model.snapshots,
+            spaceId: userState?.spaceId,
+          }),
         ],
       };
     }
