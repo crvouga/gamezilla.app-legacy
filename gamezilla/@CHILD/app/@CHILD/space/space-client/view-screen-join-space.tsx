@@ -15,7 +15,7 @@ import {
 } from '../space-state';
 import { ClientModel, ClientMsg, } from "../space.core";
 
-export const ViewSpaceJoinScreen = ({
+export const ViewScreenJoinSpace = ({
   model,
   ctx,
   dispatch,

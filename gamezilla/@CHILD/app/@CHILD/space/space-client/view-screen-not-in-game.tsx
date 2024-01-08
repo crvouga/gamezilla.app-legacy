@@ -12,7 +12,7 @@ import {
   Event
 } from '../space-state';
 
-export const ViewNotInGameScreen = ({
+export const ViewScreenNotInGame = ({
   ctx,
 
   dispatchEvent,

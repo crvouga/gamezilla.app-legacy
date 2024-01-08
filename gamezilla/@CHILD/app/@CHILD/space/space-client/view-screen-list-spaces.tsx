@@ -14,7 +14,7 @@ import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { GameName, gameNameToString } from "../@CHILD/game/game.core";
 import { ClientModel, ClientMsg } from "../space.core";
 
-export const ViewSpaceListScreen = ({
+export const ViewScreenListSpaces = ({
   ctx,
   dispatch,
   model,

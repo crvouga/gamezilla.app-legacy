@@ -39,9 +39,9 @@ import {
 import { Eff, Sub, batchMsgs } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import { Game } from "./@CHILD/game/game.client";
-import { ViewNotInGameScreen } from "./space-client/view-not-in-game-screen";
-import { ViewSpaceJoinScreen } from "./space-client/view-space-join-screen";
-import { ViewSpaceListScreen } from "./space-client/view-space-list-screen";
+import { ViewScreenNotInGame } from "./space-client/view-screen-not-in-game";
+import { ViewScreenJoinSpace } from "./space-client/view-screen-join-space";
+import { ViewScreenListSpaces } from "./space-client/view-screen-list-spaces";
 import {
   Event,
   SpaceStateStarted,
@@ -797,7 +797,7 @@ export const View = ({
     case "space-list": {
       return (
         <>
-          <ViewSpaceListScreen dispatch={dispatch} ctx={ctx} model={model} />
+          <ViewScreenListSpaces dispatch={dispatch} ctx={ctx} model={model} />
           {viewBottomBar}
         </>
       );
@@ -1105,7 +1105,7 @@ const ViewSpaceScreenMain = ({
 
   if (currentUserSpaceId !== space.spaceId) {
     return (
-      <ViewSpaceJoinScreen
+      <ViewScreenJoinSpace
         ctx={ctx}
         dispatch={dispatch}
         dispatchEvent={dispatchEvent}
@@ -1157,7 +1157,7 @@ const ViewGame = ({
     );
   }
 
-  return <ViewNotInGameScreen ctx={ctx} dispatchEvent={dispatchEvent} />;
+  return <ViewScreenNotInGame ctx={ctx} dispatchEvent={dispatchEvent} />;
 };
 
 function ViewTopBar({
