@@ -1,5 +1,8 @@
 import { Browser, Eff, RemoteResult, Result } from "gamezilla/@SHARED/core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { ChatId } from "./chat-id";
+import { ChatMessageId } from "./chat-message-id";
+import { ChatUserJoinId } from "./chat-user-join-id";
 
 //
 //
@@ -11,32 +14,32 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 export type ClientModel = {
   chats: {
-    [chatId: string]: {
-      chatId: string;
+    [chatId: ChatId]: {
+      chatId: ChatId;
     };
   };
   chatsUsers: {
-    [chatsUsersId: string]: {
-      chatsUsersId: string;
-      chatId: string;
+    [chatsUsersId: ChatUserJoinId]: {
+      chatsUsersId: ChatUserJoinId;
+      chatId: ChatId;
       userId: UserId;
     };
   };
   users: {
     [userId: UserId]: {
       userId: UserId;
-      chatId: string;
+      chatId: ChatId;
     };
   };
   messages: {
-    [messageId: string]: {
-      messageId: string;
-      chatId: string;
+    [messageId: ChatMessageId]: {
+      messageId: ChatMessageId;
+      chatId: ChatId;
     };
   };
   messageDrafts: {
-    [chatId: string]: {
-      chatId: string;
+    [chatId: ChatId]: {
+      chatId: ChatId;
       text: string;
     };
   };
