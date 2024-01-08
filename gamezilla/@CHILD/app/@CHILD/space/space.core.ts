@@ -16,7 +16,13 @@ import {
   WithEventId,
   WithEventMeta,
 } from "./@SHARED/event";
-import { Event, State, initState, reducer } from "./space-state";
+import {
+  SpaceEvent,
+  State,
+  StateSpace,
+  initState,
+  reducer,
+} from "./space-state";
 
 //
 //
@@ -28,7 +34,7 @@ import { Event, State, initState, reducer } from "./space-state";
 
 export const SpaceEvents = EventStreamInMemory<
   EventId,
-  Event & EventMeta,
+  SpaceEvent & EventMeta,
   Indexes
 >();
 
@@ -54,29 +60,41 @@ export type ClientModel = CoreModel & {
     [spaceId: SpaceId]: Game.ClientModel;
   };
   previewUserId: UserId | null;
-  modal: ModalModel;
+  modal: Modal;
   latestState: State;
   isSyncing: boolean;
 };
 
-type SpaceClientModel = {
-  events: SpaceEventsInstance,
-  clock: LamportClock,
-  snapshots: CappedOrderedDict<EventId, State>,
-  game: Game.ClientModel,
-}
+//
+//
+//
+//
+
+type SpaceModel = {
+  events: SpaceEvent[];
+  clock: LamportClock;
+  snapshots: {
+    [eventId: EventId]: StateSpace;
+  };
+};
 
 export type ClientModelV2 = {
   spaces: {
-    [spaceId: SpaceId]: SpaceClientModel;
-  },
-  previewUserId: UserId | null;
-  modal: ModalModel;
+    [spaceId: SpaceId]: SpaceModel;
+  };
+  spaceIdByUserId: {
+    [userId: UserId]: SpaceId;
+  };
+  games: {
+    [spaceId: SpaceId]: Game.ClientModel;
+  };
   latestState: State;
   isSyncing: boolean;
-}
+  previewUserId: UserId | null;
+  modal: Modal;
+};
 
-type ModalModel = null | "user-preview" | "users";
+type Modal = null | "user-preview" | "users";
 
 //
 //
@@ -90,7 +108,7 @@ export type ToClient = ToClientExtra &
   (
     | {
         t: "event";
-        c: WithEventMeta<Event>;
+        c: WithEventMeta<SpaceEvent>;
         clock: LamportClock;
       }
     | {
@@ -111,7 +129,7 @@ export type ToServer = ToServerExtra &
   (
     | {
         t: "event";
-        c: WithEventMeta<Event>;
+        c: WithEventMeta<SpaceEvent>;
         clock: LamportClock;
       }
     | {
@@ -142,7 +160,7 @@ export type ToServerExtra = {
 export type ServerMsg = { t: "game"; spaceId: SpaceId; c: Game.ServerMsg };
 
 export type ClientMsg =
-  | { t: "event"; c: WithEventId<Event> }
+  | { t: "event"; c: WithEventId<SpaceEvent> }
   | { t: "game"; spaceId: SpaceId; c: Game.ClientMsg }
   | { t: "closed-modal" }
   | { t: "clicked-people-button" }
@@ -170,9 +188,9 @@ export const initCore = async (): Promise<CoreModel> => {
 
 export const appendEvent = async (
   model: CoreModel,
-  event: WithEventId<Event>
+  event: WithEventId<SpaceEvent>
 ): Promise<CoreModel> => {
-  const eventWithMeta: WithEventMeta<Event> = {
+  const eventWithMeta: WithEventMeta<SpaceEvent> = {
     ...event,
     happenedAt: LamportClock.toCurrentTime(model.clock),
   };

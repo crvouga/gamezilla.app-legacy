@@ -20,7 +20,7 @@ import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-orde
 import { AppServerModule } from "../../@SHARED/architecture/app-server";
 import * as GameServer from "./@CHILD/game/game.server";
 import {
-  Event,
+  SpaceEvent,
   toSpaceSubState,
   toStartedSpace,
   toUserState,
@@ -264,7 +264,7 @@ const updateChild: Module["update"] = async (input) => {
   });
 
   const eventsNew = (updated.gameEvent ?? []).map((c) =>
-    withId<Event>({ t: "game", spaceId, c })
+    withId<SpaceEvent>({ t: "game", spaceId, c })
   );
 
   return AppServerModule.chainUpdates(
@@ -310,14 +310,14 @@ type Output = {
 const updateFromSpaceEvents = async (input: {
   ctx: ServerCtx | ReqCtx;
   model: ServerModel;
-  events: WithEventId<Event>[];
+  events: WithEventId<SpaceEvent>[];
 }): Promise<Output> => {
   return loop(input.ctx, input.events, input);
 };
 
 async function loop(
   ctx: ServerCtx | ReqCtx,
-  events: WithEventId<Event>[],
+  events: WithEventId<SpaceEvent>[],
   acc: Output
 ): Promise<Output> {
   const [event, ...rest] = events;
@@ -349,7 +349,10 @@ async function loop(
     eff: Eff.batch([acc.eff, updated.eff, updatedGame.eff]),
   };
 
-  const eventsNew: WithEventId<Event>[] = batchMsgs(rest, updatedGame.events);
+  const eventsNew: WithEventId<SpaceEvent>[] = batchMsgs(
+    rest,
+    updatedGame.events
+  );
 
   return loop(ctx, eventsNew, accNew);
 }
@@ -359,7 +362,7 @@ async function appendNewEvent({
   event,
 }: {
   model: ServerModel;
-  event: WithEventId<Event>;
+  event: WithEventId<SpaceEvent>;
 }) {
   const appended: ServerModel = {
     ...model,
@@ -405,7 +408,7 @@ async function syncUserWhenJoined({
   event,
 }: {
   model: ServerModel;
-  event: WithEventId<Event>;
+  event: WithEventId<SpaceEvent>;
 }): Promise<Output> {
   switch (event.t) {
     case "user-joined-space": {
@@ -470,7 +473,7 @@ async function updateGameFromSpaceEvent({
   model: ServerModel;
   cmd?: ServerCmd<ToClient>[];
   eff?: Eff<ServerMsg>;
-  events?: WithEventId<Event>[];
+  events?: WithEventId<SpaceEvent>[];
 }> {
   const eventWithMeta = model.events._events[eventId];
 
@@ -500,7 +503,7 @@ async function updateGameFromSpaceEvent({
 
   const eventsNew =
     updated.gameEvent?.map((e) =>
-      withId<Event>({
+      withId<SpaceEvent>({
         t: "game",
         spaceId: eventWithMeta.spaceId,
         c: e,

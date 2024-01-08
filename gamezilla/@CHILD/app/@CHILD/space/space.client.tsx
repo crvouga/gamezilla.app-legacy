@@ -43,7 +43,7 @@ import { ViewScreenNotInGame } from "./space-client/view-screen-not-in-game";
 import { ViewScreenJoinSpace } from "./space-client/view-screen-join-space";
 import { ViewScreenListSpaces } from "./space-client/view-screen-list-spaces";
 import {
-  Event,
+  SpaceEvent,
   SpaceStateStarted,
   State,
   initState,
@@ -334,7 +334,7 @@ const updateGame: Module["update"] = async (input) => {
 
   const eventsNew =
     updated.gameEvent?.map(
-      (e): WithEventId<Event> => ({
+      (e): WithEventId<SpaceEvent> => ({
         ...e,
         spaceId: space.spaceId,
         t: "game",
@@ -384,7 +384,7 @@ const mergeUpdatedGame = ({
 const updateFromSpaceEvents = (input: {
   ctx: ClientCtx | AnonymousClientCtx;
   model: ClientModel;
-  events: WithEventId<Event>[];
+  events: WithEventId<SpaceEvent>[];
 }): Promise<{
   model: ClientModel;
   eff?: Eff<ClientMsg>;
@@ -399,7 +399,7 @@ const updateFromSpaceEvents = (input: {
 
 const loop = async (
   ctx: ClientCtx | AnonymousClientCtx,
-  events: WithEventId<Event>[],
+  events: WithEventId<SpaceEvent>[],
   acc: {
     model: ClientModel;
     cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
@@ -483,7 +483,7 @@ const appendEvents = async ({
   event,
 }: {
   model: ClientModel;
-  event: WithEventId<Event>;
+  event: WithEventId<SpaceEvent>;
 }): Promise<{
   model: ClientModel;
 }> => {
@@ -507,7 +507,7 @@ const updateGameFromEvent = async ({
   model: ClientModel;
   eff?: Eff<ClientMsg>;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-  event?: WithEventId<Event>[];
+  event?: WithEventId<SpaceEvent>[];
 }> => {
   const eventWithMeta = await SpaceEvents.get(model.events, eventId);
 
@@ -533,7 +533,7 @@ const updateGameFromEvent = async ({
 
   const eventsNew =
     updatedGame.gameEvent?.map((e) =>
-      withId<Event>({
+      withId<SpaceEvent>({
         t: "game",
         spaceId: eventWithMeta.spaceId,
         c: e,
@@ -578,7 +578,7 @@ const updateSpaceFromEvent = async ({
   stateBefore: State;
   ctx: ClientCtx | AnonymousClientCtx;
   model: ClientModel;
-  event: Event;
+  event: SpaceEvent;
 }): Promise<{
   model: ClientModel;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
@@ -784,7 +784,7 @@ export const View = ({
   route: RouteGameSpace;
   viewBottomBar: VDom;
 }): VDom => {
-  const dispatchEvent = (m: Event) => {
+  const dispatchEvent = (m: SpaceEvent) => {
     dispatch({ t: "event", c: withId(m) });
   };
   switch (route.t) {
@@ -820,7 +820,7 @@ const ViewSpaceScreen = ({
 }: {
   model: ClientModel;
   ctx: ClientCtx;
-  dispatchEvent: (m: Event) => void;
+  dispatchEvent: (m: SpaceEvent) => void;
   dispatch: (m: ClientMsg) => void;
   spaceId: SpaceId;
 }) => {
@@ -866,7 +866,7 @@ const ViewSpaceStarted = ({
 }: {
   model: ClientModel;
   ctx: ClientCtx;
-  dispatchEvent: (m: Event) => void;
+  dispatchEvent: (m: SpaceEvent) => void;
   dispatch: (m: ClientMsg) => void;
   space: SpaceStateStarted;
 }) => {
@@ -1007,7 +1007,7 @@ const ViewFeedItem = ({
   state,
 }: {
   ctx: SpaceClientCtx;
-  event: WithEventId<Event>;
+  event: WithEventId<SpaceEvent>;
   state: SpaceStateStarted;
 }) => {
   switch (event.t) {
@@ -1092,7 +1092,7 @@ const ViewSpaceScreenMain = ({
   model: ClientModel;
   ctx: SpaceClientCtx;
   dispatch: (m: ClientMsg) => void;
-  dispatchEvent: (m: Event) => void;
+  dispatchEvent: (m: SpaceEvent) => void;
 }) => {
   const currentUserSpaceId =
     model.latestState.spaceIdByUserId[ctx.currentUserId];
@@ -1138,7 +1138,7 @@ const ViewGame = ({
   model: ClientModel;
   ctx: SpaceClientCtx;
   dispatch: (m: ClientMsg) => void;
-  dispatchEvent: (m: Event) => void;
+  dispatchEvent: (m: SpaceEvent) => void;
 }) => {
   if (space.game) {
     return (
@@ -1161,7 +1161,7 @@ function ViewTopBar({
 }: {
   ctx: SpaceClientCtx;
   dispatch: (m: ClientMsg) => void;
-  dispatchEvent: (m: Event) => void;
+  dispatchEvent: (m: SpaceEvent) => void;
 }) {
   const peopleCount = Object.keys(ctx.space.users).length;
 
@@ -1296,7 +1296,7 @@ export const ViewCurrentSpaceBar = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  const dispatchEvent = (msg: Event) => {
+  const dispatchEvent = (msg: SpaceEvent) => {
     dispatch({
       t: "event",
       c: withId(msg),

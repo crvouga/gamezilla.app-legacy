@@ -9,7 +9,7 @@ import {
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { gameNameList, gameNameToString } from "../@CHILD/game/game.core";
 import {
-  Event
+  SpaceEvent
 } from '../space-state';
 
 export const ViewScreenNotInGame = ({
@@ -18,7 +18,7 @@ export const ViewScreenNotInGame = ({
   dispatchEvent,
 }: {
   ctx: SpaceClientCtx;
-  dispatchEvent: (m: Event) => void;
+  dispatchEvent: (m: SpaceEvent) => void;
 }) => {
   if (ctx.space.hostId !== ctx.currentUserId) {
     const hostTitle = spaceToHostTitle(ctx, ctx.space);

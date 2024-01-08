@@ -11,7 +11,7 @@ import {
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { gameNameToString } from "../@CHILD/game/game.core";
 import {
-  Event
+  SpaceEvent
 } from '../space-state';
 import { ClientModel, ClientMsg, } from "../space.core";
 
@@ -24,7 +24,7 @@ export const ViewScreenJoinSpace = ({
   ctx: SpaceClientCtx;
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
-  dispatchEvent: (m: Event) => void;
+  dispatchEvent: (m: SpaceEvent) => void;
 }) => {
   const space = model.latestState.spaces[ctx.space.spaceId] ?? {
     type: "initial",

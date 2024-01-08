@@ -27,7 +27,7 @@ export type State = {
     [spaceId: SpaceId]: SpaceId;
   };
   errorsByUserId: {
-    [userId: UserId]: WithEventId<Event> & { error: string };
+    [userId: UserId]: WithEventId<SpaceEvent> & { error: string };
   };
 };
 
@@ -76,7 +76,7 @@ export const initState = (): State => {
 //
 //
 
-export type Event =
+export type SpaceEvent =
   | {
       t: "user-started-space";
       userId: UserId;
@@ -122,7 +122,7 @@ export const reducer = ({
   event,
 }: {
   state: State;
-  event: WithEventMeta<Event>;
+  event: WithEventMeta<SpaceEvent>;
 }): State => {
   switch (event.t) {
     case "game": {
@@ -474,21 +474,39 @@ export const reducerSpace = ({
   event,
 }: {
   state: StateSpace;
-  event: Event & EventMeta;
+  event: SpaceEvent & EventMeta;
 }): StateSpace => {
-  switch (event.t) {
-    case "game": {
-      switch (state.type) {
-        case "initial":
-        case "ended": {
+  switch (state.type) {
+    case "ended": {
+      return state;
+    }
+    case "initial": {
+      switch (event.t) {
+        case "user-started-space": {
+          return {
+            type: "started",
+            game: null,
+            hostId: event.userId,
+            latestEvent: event.eventId,
+            spaceId: event.spaceId,
+            users: {
+              [event.userId]: event.userId,
+            },
+            visibility: "public",
+          };
+        }
+        default: {
           return state;
         }
-
-        case "started": {
-          const gameState = state.game ?? Game.initState(event.c.t);
+      }
+    }
+    case "started": {
+      switch (event.t) {
+        case "game": {
+          const game = state.game ?? Game.initState(event.c.t);
           const gameNew = Game.reducer({
             ctx: { space: state },
-            state: gameState,
+            state: game,
             event: { ...event, ...event.c },
           });
           return {
@@ -496,16 +514,7 @@ export const reducerSpace = ({
             game: gameNew,
           };
         }
-      }
-    }
-
-    case "user-ended-space": {
-      switch (state.type) {
-        case "initial":
-        case "ended": {
-          return state;
-        }
-        case "started": {
+        case "user-ended-space": {
           if (event.userId !== state.hostId) {
             return state;
           }
@@ -514,31 +523,40 @@ export const reducerSpace = ({
             type: "ended",
           };
         }
-      }
-    }
 
-    case "user-inputted-game": {
-      switch (state.type) {
-        case "initial":
-        case "ended": {
+        case "user-inputted-game": {
+          return {
+            ...state,
+            game: event.game ? Game.initState(event.game) : null,
+          };
+        }
+
+        case "user-joined-space": {
+          return {
+            ...state,
+            users: {
+              ...state.users,
+              [event.userId]: event.userId,
+            },
+          };
+        }
+
+        case "user-left-space": {
+          if (event.userId === state.hostId) {
+            return state;
+          }
+          const usersNew = { ...state.users };
+          delete usersNew[event.userId];
+          return {
+            ...state,
+            users: usersNew,
+          };
+        }
+
+        case "user-started-space": {
           return state;
         }
-        case "started": {
-          return state;
-        }
       }
-    }
-
-    case "user-joined-space": {
-      return state;
-    }
-
-    case "user-left-space": {
-      return state;
-    }
-
-    case "user-started-space": {
-      return state;
     }
   }
 };
