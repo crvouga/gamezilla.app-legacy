@@ -216,7 +216,12 @@ const updateFromEvent: typeof update = async ({ event, model, ctx }) => {
         async (model) => {
           if (event.loggedIn) {
             return {
-              model: await addSession(ctx, model, event.sessionId, event.userId),
+              model: await addSession(
+                ctx,
+                model,
+                event.sessionId,
+                event.userId
+              ),
             };
           }
           return { model };

@@ -6,7 +6,6 @@ import {
   RemoteResult,
   Result,
 } from "gamezilla/@SHARED/core";
-import { Account } from "../../auth.core";
 
 export type ServerModel = null;
 
@@ -60,13 +59,7 @@ type VerifiedCode = {
 
 export type ServerMsg =
   | (SentCode & { clientId: ClientId })
-  | (VerifiedCode & { clientId: ClientId; sessionId: SessionId })
-  | {
-      t: "got-user-account";
-      result: Result<string, Account>;
-      clientId: ClientId;
-      sessionId: SessionId;
-    };
+  | (VerifiedCode & { clientId: ClientId; sessionId: SessionId });
 
 export type ToServer =
   | {

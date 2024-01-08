@@ -54,15 +54,11 @@ export const init: Module["init"] = async () => {
 //
 
 export const update: Module["update"] = async (input) => {
-  if (input.msg) {
-    return updateFromMsg(input);
-  }
-
-  if (input.fromClient) {
-    return updateFromClient(input);
-  }
-
-  return { model: input.model };
+  return AppServerModule.chainUpdates(
+    { model: input.model },
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromClient({ ...input, model })
+  );
 };
 
 const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
@@ -79,42 +75,27 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
         };
       }
 
+      const found = await findElseInsertAccount({
+        dbConn: ctx.dbConn,
+        phoneNumber: msg.phoneNumber,
+      });
+
+      if (found.t === "err") {
+        return {
+          model,
+          cmd: [sendToClient([msg.clientId], msg)],
+        };
+      }
+
       return {
         model,
         cmd: [sendToClient([msg.clientId], msg)],
-        eff: async (dispatch) => {
-          const found = await findElseInsertAccount({
-            dbConn: ctx.dbConn,
-            phoneNumber: msg.phoneNumber,
-          });
-
-          dispatch({
-            t: "got-user-account",
-            result: found,
-            clientId: msg.clientId,
-            sessionId: msg.sessionId,
-          });
-        },
-      };
-    }
-
-    case "got-user-account": {
-      if (isErr(msg.result)) {
-        return {
-          model,
-          eff: () => {
-            console.log(msg.result);
-          },
-        };
-      }
-      return {
-        model,
         event: [
           {
             t: "auth/connected-client-is-logged-in",
             clientId: msg.clientId,
             sessionId: msg.sessionId,
-            userId: msg.result.value.userId,
+            userId: found.value.userId,
             loggedIn: true,
           },
         ],
@@ -143,6 +124,7 @@ export const updateFromClient: Module["update"] = async ({
     logger: ctx.logger,
     impl: "test",
   });
+
   switch (fromClient.t) {
     case "send-code": {
       return {
@@ -208,7 +190,6 @@ const findElseInsertAccount = async ({
   const found = await accountDb.findOneByPhoneNumber({ phoneNumber });
 
   if (isErr(found)) {
-    console.error(found);
     return found;
   }
 
