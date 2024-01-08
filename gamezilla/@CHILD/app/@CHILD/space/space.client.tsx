@@ -384,9 +384,6 @@ const mergeUpdatedGame = ({
 };
 
 
-/**
- * Handles merging new events into the client model
- */
 const updateFromSpaceEvents = (input: {
   ctx: ClientCtx | AnonymousClientCtx;
   model: ClientModel;
