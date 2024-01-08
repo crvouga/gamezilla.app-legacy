@@ -126,7 +126,7 @@ const updateFromMsg: Module["update"] = async ({ ctx, model, msg }) => {
         model: modelNew,
         event: [
           {
-            t: "auth/connected-client-is-logged-in",
+            t: "auth/connected-client-authenticated",
             clientId: msg.clientId,
             sessionId: msg.sessionId,
             userId: msg.result.value.userId,
@@ -203,14 +203,14 @@ const updateFromEvent: typeof update = async ({ event, model, ctx }) => {
         event: [
           {
             ...event,
-            t: "auth/connected-client-is-logged-in",
+            t: "auth/connected-client-authenticated",
             userId,
           },
         ],
       };
     }
 
-    case "auth/connected-client-is-logged-in": {
+    case "auth/connected-client-authenticated": {
       return AppServerModule.chainUpdates(
         { model },
         async (model) => {

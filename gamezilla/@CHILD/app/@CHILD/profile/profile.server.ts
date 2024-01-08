@@ -133,7 +133,7 @@ const updateFromEvent: Module["update"] = async ({ event, model, ctx }) => {
   }
 
   switch (event.t) {
-    case "auth/connected-client-is-logged-in": {
+    case "auth/connected-client-authenticated": {
       return {
         model,
         eff: async (dispatch) => {

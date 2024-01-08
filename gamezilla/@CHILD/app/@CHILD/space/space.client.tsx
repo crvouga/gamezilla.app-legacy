@@ -127,9 +127,20 @@ export const update: Module["update"] = (input) => {
     (model) => updateFromServer({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
     (model) => updateGame({ ...input, model }),
-    (model) => updateLatestState({ ...input, model })
+    (model) => updateLatestState({ ...input, model }),
+    (model) => updateProfiles({ ...input, model }),
   );
 };
+
+const updateProfiles: Module["update"] = ({ model, fromServer }) => {
+  if (fromServer?.profiles) {
+    return {
+      model,
+      cmd: [addProfiles(fromServer.profiles)],
+    };
+  }
+  return { model };
+}
 
 const updateLatestState: Module["update"] = async ({ model }) => {
   const latestState = await deriveState(model);
@@ -195,46 +206,32 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
   }
 };
 
-const updateFromServer: Module["update"] = (input) => {
-  const { ctx, fromServer } = input;
+const updateFromServer: Module["update"] = async (input) => {
+  const { ctx, fromServer, model } = input;
 
   if (!fromServer) {
-    return { model: input.model };
+    return { model };
   }
 
-  return AppClientModule.chainUpdates(
-    { model: input.model },
-    (model) => {
-      if (fromServer.profiles) {
-        return {
-          model,
-          cmd: [addProfiles(fromServer.profiles)],
-        };
-      }
-      return { model };
-    },
-    async (model) => {
-      switch (fromServer.t) {
-        case "sync": {
-          const merged = await mergeModels(model, {
-            events: fromServer.events,
-            clock: fromServer.clock,
-            snapshots: fromServer.snapshots,
-          });
+  switch (fromServer.t) {
+    case "sync": {
+      const merged = await mergeModels(model, {
+        events: fromServer.events,
+        clock: fromServer.clock,
+        snapshots: fromServer.snapshots,
+      });
 
-          return { model: { ...model, ...merged, isSyncing: false } };
-        }
-
-        case "game": {
-          return { model };
-        }
-
-        case "event": {
-          return updateFromSpaceEvents({ ctx, events: [fromServer.c], model });
-        }
-      }
+      return { model: { ...model, ...merged, isSyncing: false } };
     }
-  );
+
+    case "game": {
+      return { model };
+    }
+
+    case "event": {
+      return updateFromSpaceEvents({ ctx, events: [fromServer.c], model });
+    }
+  }
 };
 
 const updateFromEvent: Module["update"] = async (input) => {

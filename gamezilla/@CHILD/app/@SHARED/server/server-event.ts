@@ -13,7 +13,7 @@ export type ServerEvent =
       sessionId: SessionId;
     }
   | {
-      t: "auth/connected-client-is-logged-in";
+      t: "auth/connected-client-authenticated";
       userId: UserId;
       sessionId: SessionId;
       clientId: ClientId;

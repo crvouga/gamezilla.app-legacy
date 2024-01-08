@@ -184,7 +184,7 @@ const updateFromEvent: Module["update"] = async (input) => {
   }
 
   switch (event.t) {
-    case "auth/connected-client-is-logged-in": {
+    case "auth/connected-client-authenticated": {
       const state = await deriveState(model);
 
       const userState = toUserState(state, event.userId);

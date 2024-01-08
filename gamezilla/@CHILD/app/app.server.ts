@@ -225,13 +225,20 @@ const updateLoop = async (
       event: batchMsgs(acc.event, updatedCmd.event),
     };
 
+    ctx.logger.info(`[cmd] ${toMsgType(cmd)}`);
+
     return updateLoop(deps, ctx, accNew);
   }
 
   const [event, ...eventRest] = acc.event;
 
   if (event) {
-    const updatedEvent = await updateChild({ deps, ctx, model: acc.model, event });
+    const updatedEvent = await updateChild({
+      deps,
+      ctx,
+      model: acc.model,
+      event,
+    });
 
     const accNew: Output = {
       model: updatedEvent.model,
@@ -239,6 +246,8 @@ const updateLoop = async (
       eff: Eff.batch([acc.eff, updatedEvent.eff]),
       event: batchMsgs(eventRest, updatedEvent.event),
     };
+
+    ctx.logger.info(`[evt] ${toMsgType(event)}`);
 
     return updateLoop(deps, ctx, accNew);
   }
@@ -335,7 +344,12 @@ export const updateChild = async ({
       Eff.tag("wire", wire.eff),
       Eff.tag("profile", profile.eff),
     ]),
-    event: batchMsgs<ServerEvent>(auth.event, space.event, wire.event, profile.event),
+    event: batchMsgs<ServerEvent>(
+      auth.event,
+      space.event,
+      wire.event,
+      profile.event
+    ),
   };
 };
 
@@ -356,13 +370,16 @@ export const subscriptions = async (input: {
     dbConn: input.deps.dbConn,
     logger: input.deps.logger,
     now: input.ctx.now,
-  }
+  };
   return Sub.batch([
     Sub.tag(
       "space",
       await SpaceServer.subscriptions({ model: input.model.space, ctx })
     ),
-    Sub.tag("wire", WireServer.subscriptions({ transport: input.deps.transport })),
+    Sub.tag(
+      "wire",
+      WireServer.subscriptions({ transport: input.deps.transport })
+    ),
 
     Sub.flat(
       Sub.map(input.deps.transport.toServer, ({ sessionId, clientId, msgs }) =>
