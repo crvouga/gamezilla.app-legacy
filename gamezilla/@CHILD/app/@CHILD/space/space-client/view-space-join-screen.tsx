@@ -61,10 +61,10 @@ export const ViewSpaceJoinScreen = ({
           renderCoverArt={
             game
               ? (props) => (
-                  <div {...props}>
-                    <CoverArt gameName={game.t} />
-                  </div>
-                )
+                <div {...props}>
+                  <CoverArt gameName={game.t} />
+                </div>
+              )
               : undefined
           }
         />

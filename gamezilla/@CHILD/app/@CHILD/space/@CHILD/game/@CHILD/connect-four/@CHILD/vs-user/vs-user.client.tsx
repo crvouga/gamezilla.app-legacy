@@ -90,33 +90,33 @@ const update: Module["update"] = (input) => {
 
 const updateFromMsg =
   (model: ClientModel): Module["update"] =>
-  (input) => {
-    const { msg } = input;
+    (input) => {
+      const { msg } = input;
 
-    if (!msg) {
-      return { model };
-    }
-
-    switch (msg.t) {
-      case "clicked-resign": {
-        return { model: { ...model, openedModal: "confirm-resign" } };
+      if (!msg) {
+        return { model };
       }
 
-      case "hovered-over-columns": {
-        return { model: { ...model, ghostIndex: msg.columnIndex } };
-      }
+      switch (msg.t) {
+        case "clicked-resign": {
+          return { model: { ...model, openedModal: "confirm-resign" } };
+        }
 
-      case "close-modal": {
-        return { model: { ...model, openedModal: null } };
-      }
+        case "hovered-over-columns": {
+          return { model: { ...model, ghostIndex: msg.columnIndex } };
+        }
 
-      default: {
-        return {
-          model,
-        };
+        case "close-modal": {
+          return { model: { ...model, openedModal: null } };
+        }
+
+        default: {
+          return {
+            model,
+          };
+        }
       }
-    }
-  };
+    };
 
 //
 //
@@ -261,42 +261,42 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
             actions={[
               ...(gameState.type === "game"
                 ? [
-                    {
-                      icon: <IconFlag className="h-6 w-6" />,
-                      label: "Resign",
-                      onClick: () => {
-                        dispatch({
-                          t: "clicked-resign",
-                          userId: ctx.currentUserId,
-                        });
-                      },
+                  {
+                    icon: <IconFlag className="h-6 w-6" />,
+                    label: "Resign",
+                    onClick: () => {
+                      dispatch({
+                        t: "clicked-resign",
+                        userId: ctx.currentUserId,
+                      });
                     },
-                  ]
+                  },
+                ]
                 : []),
               ...(gameState.type === "game-over" &&
-              ctx.currentUserId === ctx.space.hostId
+                ctx.currentUserId === ctx.space.hostId
                 ? [
-                    {
-                      icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-                      label: "Exit",
-                      onClick: () => {
-                        dispatch({
-                          t: "user-stopped-game",
-                          userId: ctx.currentUserId,
-                        });
-                      },
+                  {
+                    icon: <IconArrowLeftOnRect className="h-6 w-6" />,
+                    label: "Exit",
+                    onClick: () => {
+                      dispatch({
+                        t: "user-stopped-game",
+                        userId: ctx.currentUserId,
+                      });
                     },
-                    {
-                      icon: <IconArrowRotateLeft className="h-6 w-6" />,
-                      label: "Rematch",
-                      onClick: () => {
-                        dispatch({
-                          t: "user-requested-rematch",
-                          userId: ctx.currentUserId,
-                        });
-                      },
+                  },
+                  {
+                    icon: <IconArrowRotateLeft className="h-6 w-6" />,
+                    label: "Rematch",
+                    onClick: () => {
+                      dispatch({
+                        t: "user-requested-rematch",
+                        userId: ctx.currentUserId,
+                      });
                     },
-                  ]
+                  },
+                ]
                 : []),
             ]}
           />

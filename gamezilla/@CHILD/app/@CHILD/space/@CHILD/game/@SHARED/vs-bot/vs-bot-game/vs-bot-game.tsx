@@ -50,15 +50,15 @@ export const update = (model: Model, _msg: Msg): Model => {
 
 export type GameOver =
   | {
-      t: null;
-    }
+    t: null;
+  }
   | {
-      t: "winner";
-      winner: PlayerType;
-    }
+    t: "winner";
+    winner: PlayerType;
+  }
   | {
-      t: "draw";
-    };
+    t: "draw";
+  };
 
 type Props = {
   ctx: SpaceClientCtx;
@@ -92,16 +92,16 @@ export type VsBotGameProps = VsBotProps & {
 
 export type Status =
   | {
-      t: "playing";
-      turn: PlayerType;
-    }
+    t: "playing";
+    turn: PlayerType;
+  }
   | {
-      t: "winner";
-      winner: PlayerType;
-    }
+    t: "winner";
+    winner: PlayerType;
+  }
   | {
-      t: "draw";
-    };
+    t: "draw";
+  };
 
 export const ViewStatusBar = (props: VsBotProps & { status: Status }) => {
   return (
@@ -399,22 +399,22 @@ const Slot = ({
 
 const fadeIn =
   ({ duration, delay }: { delay: number; duration: number }) =>
-  async (node: HTMLElement) => {
-    await node.animate([{ opacity: 0 }, { opacity: 1 }], {
-      duration: duration,
-      delay: delay,
-      easing: "ease-in-out",
-      fill: "both",
-    }).finished;
-  };
+    async (node: HTMLElement) => {
+      await node.animate([{ opacity: 0 }, { opacity: 1 }], {
+        duration: duration,
+        delay: delay,
+        easing: "ease-in-out",
+        fill: "both",
+      }).finished;
+    };
 
 const fadeOut =
   ({ duration, delay }: { delay: number; duration: number }) =>
-  async (node: HTMLElement) => {
-    await node.animate([{ opacity: 1 }, { opacity: 0 }], {
-      duration: duration,
-      delay: delay,
-      easing: "ease-in-out",
-      fill: "both",
-    }).finished;
-  };
+    async (node: HTMLElement) => {
+      await node.animate([{ opacity: 1 }, { opacity: 0 }], {
+        duration: duration,
+        delay: delay,
+        easing: "ease-in-out",
+        fill: "both",
+      }).finished;
+    };

@@ -14,8 +14,8 @@ const main = async () => {
   const program = Program.create({
     getCtx() {
       return {
-        now: Posix.now()
-      }
+        now: Posix.now(),
+      };
     },
     init: async ({ ctx }) => {
       const initial = await AppServer.init({

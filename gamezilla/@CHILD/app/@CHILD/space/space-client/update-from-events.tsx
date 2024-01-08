@@ -174,8 +174,8 @@ const updateGameFromEvent = async ({
       ...ctx,
       currentUserId: ctx.currentUserId,
       space: after,
-      quit() {},
-      viewProfile() {},
+      quit() { },
+      viewProfile() { },
     },
     gameEvent:
       eventWithMeta.t === "game"

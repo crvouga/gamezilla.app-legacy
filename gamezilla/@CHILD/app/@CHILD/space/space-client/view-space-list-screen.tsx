@@ -48,7 +48,7 @@ export const ViewSpaceListScreen = ({
 
       <div className="relative flex w-full flex-1 flex-col gap-5 overflow-hidden overflow-y-scroll p-5 pb-8">
         {spaces.length === 0 && !model.isSyncing && <EmptyState />}
-        
+
         {spaces.length === 0 && model.isSyncing && <LoadingScreen />}
 
         {spaces.flatMap((state) => {

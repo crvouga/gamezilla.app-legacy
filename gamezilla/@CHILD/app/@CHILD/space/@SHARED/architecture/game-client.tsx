@@ -125,22 +125,22 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         cmd: ClientCmd.tag(tag, updated.cmd),
         gameEvent: updated.gameEvent
           ? updated.gameEvent.map(
-              (
-                gameEvent
-              ): WithEventMeta<{
-                t: T;
-                c: WithEventMeta<Types["GameEvent"]>;
-              }> => ({
+            (
+              gameEvent
+            ): WithEventMeta<{
+              t: T;
+              c: WithEventMeta<Types["GameEvent"]>;
+            }> => ({
+              eventId: gameEvent.eventId,
+              happenedAt: gameEvent.happenedAt,
+              t: tag,
+              c: {
+                ...gameEvent,
                 eventId: gameEvent.eventId,
                 happenedAt: gameEvent.happenedAt,
-                t: tag,
-                c: {
-                  ...gameEvent,
-                  eventId: gameEvent.eventId,
-                  happenedAt: gameEvent.happenedAt,
-                },
-              })
-            )
+              },
+            })
+          )
           : undefined,
       };
     },
@@ -267,11 +267,11 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
       : undefined,
     gameEvent: output.gameEvent
       ? output.gameEvent.map((gameEvent) => ({
-          eventId: gameEvent.eventId,
-          happenedAt: gameEvent.happenedAt,
-          t: tag,
-          c: gameEvent,
-        }))
+        eventId: gameEvent.eventId,
+        happenedAt: gameEvent.happenedAt,
+        t: tag,
+        c: gameEvent,
+      }))
       : undefined,
   };
 };

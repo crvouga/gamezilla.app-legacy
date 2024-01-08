@@ -116,23 +116,23 @@ export const toRandomMoveInput = (
 
 export const getBestMove =
   (level: BotLevel, model: Model): Task<BestMoveInputResult> =>
-  async () => {
-    // TODO get this working off main thread
-    // TODO: should not be hardcoded
-    // const path = `${process.cwd()}/libs/game/chess/src/board-worker.ts`;
+    async () => {
+      // TODO get this working off main thread
+      // TODO: should not be hardcoded
+      // const path = `${process.cwd()}/libs/game/chess/src/board-worker.ts`;
 
-    // const worker = new Worker(path);
+      // const worker = new Worker(path);
 
-    // const boardWorker = await spawn<BoardWorker>(worker);
+      // const boardWorker = await spawn<BoardWorker>(worker);
 
-    // const result = await boardWorker.toBestMove(level, model);
+      // const result = await boardWorker.toBestMove(level, model);
 
-    // await Thread.terminate(boardWorker);
+      // await Thread.terminate(boardWorker);
 
-    const result = toBestMoveInput(level, model);
+      const result = toBestMoveInput(level, model);
 
-    return result;
-  };
+      return result;
+    };
 
 //
 //
@@ -476,10 +476,10 @@ export const isColor = (color: unknown): color is Color => {
 export function isPiece(piece: unknown): piece is Piece {
   return Boolean(
     typeof piece === "string" &&
-      piece[0] &&
-      piece[1] &&
-      isColor(piece[0]) &&
-      isPieceType(piece[1])
+    piece[0] &&
+    piece[1] &&
+    isColor(piece[0]) &&
+    isPieceType(piece[1])
   );
 }
 
@@ -726,12 +726,12 @@ export const toTurn = (model: Model): Color => {
 
 export type GameOver =
   | {
-      type: "Checkmate";
-      winner: Color;
-    }
+    type: "Checkmate";
+    winner: Color;
+  }
   | {
-      type: "Stalemate";
-    };
+    type: "Stalemate";
+  };
 
 export const toGameOver = (model: Model): GameOver | { type: "none" } => {
   if (inCheckmate(model)) {

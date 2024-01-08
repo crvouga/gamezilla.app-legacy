@@ -12,7 +12,7 @@ import {
   sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconPuzzlePiece } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Eff, RemoteResult, Sub,  isErr } from "gamezilla/@SHARED/core";
+import { Eff, RemoteResult, Sub, isErr } from "gamezilla/@SHARED/core";
 import * as Puzzle from "./@CHILD/puzzle/puzzle.client";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUser from "./@CHILD/vs-user/vs-user.client";

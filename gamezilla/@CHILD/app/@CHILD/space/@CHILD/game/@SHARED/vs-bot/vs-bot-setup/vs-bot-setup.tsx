@@ -61,23 +61,23 @@ export const update = (model: Model, msg: Msg): Model => {
 
 type PlayerProp =
   | {
-      t: "user";
-      userId: UserId | null;
-      playerLabel: string;
-      renderIcon: (props: { className: string }) => VDom;
-      onStartPlaying: () => void;
-      onStopPlaying: () => void;
-    }
+    t: "user";
+    userId: UserId | null;
+    playerLabel: string;
+    renderIcon: (props: { className: string }) => VDom;
+    onStartPlaying: () => void;
+    onStopPlaying: () => void;
+  }
   | {
-      t: "bot";
+    t: "bot";
 
-      botLabel: string;
-      renderBotIcon: (props: { className: string }) => VDom;
-      playerLabel: string;
-      renderIcon: (props: { className: string }) => VDom;
-      onStartPlaying: () => void;
-      onStopPlaying: () => void;
-    };
+    botLabel: string;
+    renderBotIcon: (props: { className: string }) => VDom;
+    playerLabel: string;
+    renderIcon: (props: { className: string }) => VDom;
+    onStartPlaying: () => void;
+    onStopPlaying: () => void;
+  };
 
 export type VsBotSetupProps = VsBotProps & {
   human: {
@@ -108,34 +108,34 @@ export const View = ({
   const playerOneProp: PlayerProp =
     human.player === "player-one"
       ? {
-          ...playerOne,
-          t: "user",
-          userId: human.userId,
-          playerLabel: playerOne.label,
-        }
+        ...playerOne,
+        t: "user",
+        userId: human.userId,
+        playerLabel: playerOne.label,
+      }
       : {
-          ...playerOne,
-          t: "bot",
-          botLabel: bot.label,
-          playerLabel: playerOne.label,
-          renderBotIcon: bot.renderIcon,
-        };
+        ...playerOne,
+        t: "bot",
+        botLabel: bot.label,
+        playerLabel: playerOne.label,
+        renderBotIcon: bot.renderIcon,
+      };
 
   const playerTwoProp: PlayerProp =
     human.player === "player-two"
       ? {
-          ...playerTwo,
-          t: "user",
-          userId: human.userId,
-          playerLabel: playerTwo.label,
-        }
+        ...playerTwo,
+        t: "user",
+        userId: human.userId,
+        playerLabel: playerTwo.label,
+      }
       : {
-          ...playerTwo,
-          t: "bot",
-          botLabel: bot.label,
-          playerLabel: playerTwo.label,
-          renderBotIcon: bot.renderIcon,
-        };
+        ...playerTwo,
+        t: "bot",
+        botLabel: bot.label,
+        playerLabel: playerTwo.label,
+        renderBotIcon: bot.renderIcon,
+      };
 
   return (
     <div className="flex w-full flex-1 flex-col">
@@ -269,8 +269,8 @@ const PlayerLabels = ({
         {player.t === "bot"
           ? player.botLabel
           : player.userId
-          ? ctx.profiles[player.userId]?.username ?? "..."
-          : "?"}
+            ? ctx.profiles[player.userId]?.username ?? "..."
+            : "?"}
       </p>
 
       <p className="text-center text-sm text-secondary">{player.playerLabel}</p>

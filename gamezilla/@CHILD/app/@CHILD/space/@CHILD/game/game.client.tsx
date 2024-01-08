@@ -107,7 +107,7 @@ const update: Module["update"] = (input) => {
 
     case "flow": {
       const updated = Flow.update({
-        ctx: { ...ctx, onQuit() {} },
+        ctx: { ...ctx, onQuit() { } },
         gameState: gameState.c,
         model: input.model?.t === "flow" ? input.model.c : Flow.init,
         cmd: cmd,
@@ -158,7 +158,7 @@ const subscriptions: Module["subscriptions"] = (input): Sub<ClientMsg> => {
         Flow.subscriptions({
           ctx: {
             ...input.ctx,
-            onQuit() {},
+            onQuit() { },
           },
           gameState: gameState.c,
           model: model.t === "flow" ? model.c : Flow.init,
@@ -194,7 +194,7 @@ const View: Module["View"] = (input) => {
     case "flow": {
       return (
         <Flow.View
-          ctx={{ ...ctx, onQuit() {} }}
+          ctx={{ ...ctx, onQuit() { } }}
           dispatch={(c) => dispatch({ t: "flow", c })}
           gameState={gameState.c}
           model={model.t === "flow" ? model.c : Flow.init}

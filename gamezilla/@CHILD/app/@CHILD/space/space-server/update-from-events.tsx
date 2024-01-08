@@ -140,7 +140,7 @@ async function syncUserWhenJoined({
   switch (event.t) {
     case "user-joined-space": {
       const state = await deriveState(model);
-      
+
       const space = toStartedSpace(state, event.spaceId);
 
       if (!space) {
@@ -149,15 +149,15 @@ async function syncUserWhenJoined({
 
       const events = await SpaceEvents.subset(config, model.events, "indexSpaceId", event.spaceId)
       const latestEvent = await SpaceEvents.latest(config, events);
-      if(!latestEvent) {
+      if (!latestEvent) {
         return { model };
       }
       const subState = toSpaceSubState(state, event.spaceId);
-      if(!subState) {
+      if (!subState) {
         return { model };
       }
-      const snapshots: ServerModel['snapshots'] = CappedOrderedDict.add(CappedOrderedDict.init({maxSize: 5}), latestEvent.eventId, subState);
-      
+      const snapshots: ServerModel['snapshots'] = CappedOrderedDict.add(CappedOrderedDict.init({ maxSize: 5 }), latestEvent.eventId, subState);
+
 
 
       return {

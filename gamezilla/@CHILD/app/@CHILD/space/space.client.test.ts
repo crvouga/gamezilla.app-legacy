@@ -82,20 +82,24 @@ function userLeftSpace(input: {
 }
 
 test("current user starting space", async () => {
-  
-
   const spaceId = SpaceId.generate();
-  
+
   const initial = await init();
-  
+
   const started = await userStartedSpace({
     model: initial.model,
     spaceId,
     userId: ctx.currentUserId,
   });
-  
-  const before = toUserState(await SpaceCore.deriveState(initial.model), ctx.currentUserId);
-  const after = toUserState(await SpaceCore.deriveState(started.model), ctx.currentUserId);
+
+  const before = toUserState(
+    await SpaceCore.deriveState(initial.model),
+    ctx.currentUserId
+  );
+  const after = toUserState(
+    await SpaceCore.deriveState(started.model),
+    ctx.currentUserId
+  );
 
   expect(before).toEqual({ spaceId: null, userId: ctx.currentUserId });
   expect(after).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });

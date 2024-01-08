@@ -216,7 +216,7 @@ const updateFromServer: Module["update"] = (input) => {
 
           return { model: { ...model, ...merged, isSyncing: false } };
         }
-        
+
         case "game": {
           return { model };
         }
@@ -243,8 +243,8 @@ const updateFromEvent: Module["update"] = async (input) => {
 
     case "wire/server-connected": {
       const currentUserId = input.ctx.currentUserId;
-      if(!currentUserId) {
-        return {model}
+      if (!currentUserId) {
+        return { model }
       }
 
       const currentUserProfile = currentUserId
@@ -252,11 +252,11 @@ const updateFromEvent: Module["update"] = async (input) => {
         : null;
 
       const state = await deriveState(model);
-      
+
       const currentUserSpaceId = toUserState(state, currentUserId).spaceId
-      
-      if(!currentUserSpaceId){
-        return {model}
+
+      if (!currentUserSpaceId) {
+        return { model }
       }
 
       return {
@@ -273,8 +273,8 @@ const updateFromEvent: Module["update"] = async (input) => {
             snapshots: model.snapshots,
             profiles: currentUserProfile
               ? {
-                  [currentUserProfile.userId]: currentUserProfile,
-                }
+                [currentUserProfile.userId]: currentUserProfile,
+              }
               : {},
           }),
         ],
@@ -294,8 +294,8 @@ const updateGame: Module["update"] = async (input) => {
     msg && "spaceId" in msg
       ? msg.spaceId
       : fromServer && "spaceId" in fromServer
-      ? fromServer.spaceId
-      : null;
+        ? fromServer.spaceId
+        : null;
 
   if (!spaceId) {
     return { model };
@@ -316,8 +316,8 @@ const updateGame: Module["update"] = async (input) => {
       ...ctx,
       space: space,
       currentUserId: ctx.currentUserId,
-      quit() {},
-      viewProfile() {},
+      quit() { },
+      viewProfile() { },
     },
     model: model.games[space.spaceId] ?? Game.init(space.game.t),
     gameState: space.game,
@@ -389,7 +389,7 @@ export const subscriptions: Module["subscriptions"] = ({ ctx, model }) => {
 
     const sub = Sub.map(
       Game.subscriptions({
-        ctx: { ...clientCtx, space: space, quit() {}, viewProfile() {} },
+        ctx: { ...clientCtx, space: space, quit() { }, viewProfile() { } },
         gameState: space.game,
         model: model.games[spaceId] ?? Game.init(space.game.t),
       }),
@@ -471,14 +471,14 @@ const ViewSpaceScreen = ({
 
   switch (space.type) {
     case "ended": {
-      if(model.isSyncing) {
+      if (model.isSyncing) {
         return <LoadingScreen />;
       }
       return <ViewSpaceEnded dispatch={dispatch} />;
     }
 
     case "initial": {
-      if(model.isSyncing) {
+      if (model.isSyncing) {
         return <LoadingScreen />;
       }
       return <ViewSpaceNotFound dispatch={dispatch} />;
