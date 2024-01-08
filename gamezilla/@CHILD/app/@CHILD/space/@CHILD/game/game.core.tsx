@@ -73,13 +73,13 @@ export const gameNameToString = (gameName: GameName): string => {
 
 export type GameState =
   | {
-      t: "connect-four";
-      c: ConnectFour.GameState;
-    }
+    t: "connect-four";
+    c: ConnectFour.GameState;
+  }
   | {
-      t: "flow";
-      c: Flow.GameState;
-    };
+    t: "flow";
+    c: Flow.GameState;
+  };
 
 export const initState = (gameName: GameName): GameState => {
   switch (gameName) {
