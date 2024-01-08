@@ -1,0 +1,371 @@
+import {
+  VsBotGame,
+  VsBotSetup,
+} from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot";
+import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { Posix, TimeSpan } from "gamezilla/@SHARED/core";
+import {
+  EventMeta,
+  EventId,
+} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
+import * as ConnectFour from "../../@SHARED/connect-four";
+
+//
+//
+// Model
+//
+//
+
+export type ServerModel = {
+  botStartedFindingMoveAt: Posix | null;
+};
+
+export function isBotMoving(now: Posix, model: ServerModel) {
+  if (!model.botStartedFindingMoveAt) {
+    return false;
+  }
+  return TimeSpan.lte(
+    Posix.diff(now, model.botStartedFindingMoveAt),
+    TimeSpan.fromSeconds(5)
+  );
+}
+
+export type ClientModel = {
+  vsBotSetup: VsBotSetup.Model;
+  vsBotGame: VsBotGame.Model;
+};
+
+//
+//
+// Msg
+//
+//
+
+export type ClientMsg =
+  | GameEvent
+  | { t: "vs-bot-setup"; c: VsBotSetup.Msg }
+  | { t: "vs-bot-game"; c: VsBotGame.Msg };
+
+export type ServerMsg =
+  | {
+      t: "bot-found-best-move";
+      found: ConnectFour.BestMoveResult;
+      startedAt: Posix;
+    }
+  | {
+      t: "time-passed";
+    };
+
+export type ToClient = { t: null };
+
+export type ToServer = { t: null };
+
+export type GameEvent =
+  | {
+      t: "user-dropped-disc";
+      columnIndex: ConnectFour.ColumnIndex;
+      userId: UserId;
+    }
+  | { t: "user-left"; userId: UserId }
+  | { t: "bot-dropped-disc"; columnIndex: ConnectFour.ColumnIndex }
+  | {
+      t: "user-started-playing";
+      userId: UserId;
+      playerType: ConnectFour.PlayerType;
+    }
+  | { t: "user-stopped-playing"; userId: UserId }
+  | { t: "user-started-game"; userId: UserId }
+  | { t: "user-stopped-game"; userId: UserId }
+  | { t: "user-swapped-sides"; userId: UserId }
+  | { t: "user-changed-bot-level"; botLevel: BotLevel; userId: UserId }
+  | { t: "time-passed"; now: Posix }
+  | { t: "user-restarted-game"; userId: UserId };
+
+type EventErr =
+  | { t: "not-playing" }
+  | { t: "move"; c: ConnectFour.MoveProblem };
+
+export const eventErrorToString = ({ error }: { error: EventErr }): string => {
+  switch (error.t) {
+    case "not-playing": {
+      return "You're not playing";
+    }
+    case "move": {
+      return ConnectFour.moveProblemToString(error.c);
+    }
+  }
+};
+
+export type GameState = (StateSetup | StateGame) & {
+  errors: {
+    [eventId: EventId]: GameEvent & { error: EventErr };
+  };
+};
+
+export const initState = (input: SpaceCtx): GameState => {
+  return {
+    type: "setup",
+    botLevel: "Medium",
+    userPlayerType: "player-one",
+    playingUserId: input.space.hostId,
+    errors: {},
+  };
+};
+
+export type StateSetup = {
+  type: "setup";
+  userPlayerType: ConnectFour.PlayerType;
+  botLevel: BotLevel;
+  playingUserId: UserId | null;
+};
+
+export type StateGame = {
+  type: "game";
+  userPlayerType: ConnectFour.PlayerType;
+  botLevel: BotLevel;
+  playingUserId: UserId;
+  columns: ConnectFour.Columns;
+};
+
+export const reducer = ({
+  gameState,
+  gameEvent,
+}: {
+  gameState: GameState;
+  gameEvent: GameEvent & EventMeta;
+}): GameState => {
+  switch (gameState.type) {
+    case "setup": {
+      switch (gameEvent.t) {
+        case "user-started-playing": {
+          return {
+            ...gameState,
+            playingUserId: gameEvent.userId,
+            userPlayerType: gameEvent.playerType,
+          };
+        }
+
+        case "user-stopped-playing": {
+          if (gameState.playingUserId !== gameEvent.userId) {
+            return addError(gameState, gameEvent, { t: "not-playing" });
+          }
+
+          return {
+            ...gameState,
+            playingUserId: null,
+          };
+        }
+
+        case "user-swapped-sides": {
+          if (gameState.playingUserId !== gameEvent.userId) {
+            return addError(gameState, gameEvent, { t: "not-playing" });
+          }
+
+          return {
+            ...gameState,
+            userPlayerType: ConnectFour.opposite[gameState.userPlayerType],
+          };
+        }
+
+        case "user-started-game": {
+          if (gameState.playingUserId !== gameEvent.userId) {
+            return addError(gameState, gameEvent, { t: "not-playing" });
+          }
+
+          return {
+            ...gameState,
+            type: "game",
+            playingUserId: gameState.playingUserId,
+            columns: ConnectFour.EMPTY_COLUMNS,
+          };
+        }
+
+        case "user-changed-bot-level": {
+          if (gameState.playingUserId !== gameEvent.userId) {
+            return addError(gameState, gameEvent, { t: "not-playing" });
+          }
+          return {
+            ...gameState,
+            botLevel: gameEvent.botLevel,
+          };
+        }
+
+        case "bot-dropped-disc": {
+          return addError(gameState, gameEvent, { t: "not-playing" });
+        }
+
+        default: {
+          return gameState;
+        }
+      }
+    }
+
+    case "game": {
+      switch (gameEvent.t) {
+        case "bot-dropped-disc": {
+          const moved = ConnectFour.dropDisc(
+            gameState.columns,
+            gameEvent.columnIndex,
+            toBotPlayer(gameState)
+          );
+
+          if (moved.t === "err") {
+            return addError(gameState, gameEvent, {
+              t: "move",
+              c: moved.error,
+            });
+          }
+
+          return { ...gameState, columns: moved.value };
+        }
+
+        case "user-dropped-disc": {
+          if (gameState.playingUserId !== gameEvent.userId) {
+            return addError(gameState, gameEvent, { t: "not-playing" });
+          }
+
+          const moved = ConnectFour.dropDisc(
+            gameState.columns,
+            gameEvent.columnIndex,
+            gameState.userPlayerType
+          );
+
+          if (moved.t === "err") {
+            return addError(gameState, gameEvent, {
+              t: "move",
+              c: moved.error,
+            });
+          }
+
+          return { ...gameState, columns: moved.value };
+        }
+
+        case "user-left": {
+          if (gameEvent.userId === gameState.playingUserId) {
+            return {
+              ...gameState,
+              type: "setup",
+              botLevel: gameState.botLevel,
+              userPlayerType: gameState.userPlayerType,
+              playingUserId: null,
+            };
+          }
+          return gameState;
+        }
+
+        case "user-stopped-game": {
+          if (gameEvent.userId !== gameState.playingUserId) {
+            return addError(gameState, gameEvent, { t: "not-playing" });
+          }
+
+          return {
+            ...gameState,
+            type: "setup",
+            botLevel: gameState.botLevel,
+            userPlayerType: gameState.userPlayerType,
+            playingUserId: gameState.playingUserId,
+          };
+        }
+
+        case "user-swapped-sides": {
+          if (gameEvent.userId !== gameState.playingUserId) {
+            return addError(gameState, gameEvent, { t: "not-playing" });
+          }
+
+          return {
+            ...gameState,
+            userPlayerType: ConnectFour.opposite[gameState.userPlayerType],
+            columns: ConnectFour.EMPTY_COLUMNS,
+          };
+        }
+
+        case "user-restarted-game": {
+          if (gameEvent.userId !== gameState.playingUserId) {
+            return addError(gameState, gameEvent, { t: "not-playing" });
+          }
+
+          return {
+            ...gameState,
+            columns: ConnectFour.EMPTY_COLUMNS,
+          };
+        }
+
+        default: {
+          return gameState;
+        }
+      }
+    }
+  }
+};
+
+const addError = (
+  state: GameState,
+  event: GameEvent & EventMeta,
+  error: EventErr
+): GameState => {
+  return {
+    ...state,
+    errors: {
+      ...state.errors,
+      [event.eventId]: { ...event, error },
+    },
+  };
+};
+
+export const isBotTurn = (state: GameState): boolean => {
+  if (state.type !== "game") {
+    return false;
+  }
+  const status = ConnectFour.toStatus(state.columns);
+  return (
+    status.type === "Playing" &&
+    status.turn === ConnectFour.opposite[state.userPlayerType]
+  );
+};
+
+export const toBotPlayer = (state: GameState): ConnectFour.PlayerType => {
+  return ConnectFour.opposite[state.userPlayerType];
+};
+
+export type GameOver =
+  | { type: "Tie" }
+  | { type: "Winner"; winner: ConnectFour.PlayerType };
+
+export const toGameOver = (model: GameState): GameOver | { type: null } => {
+  switch (model.type) {
+    case "game": {
+      const status = ConnectFour.toStatus(model.columns);
+      switch (status.type) {
+        case "Playing": {
+          return { type: null };
+        }
+        case "Tie": {
+          return { type: "Tie" };
+        }
+
+        case "Winner": {
+          return { type: "Winner", winner: status.winner };
+        }
+
+        default: {
+          return { type: null };
+        }
+      }
+    }
+
+    case "setup": {
+      return { type: null };
+    }
+  }
+};
+
+export type BotLevel = "Easy" | "Medium" | "Hard";
+
+export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
+  Easy: "Easy",
+  Medium: "Medium",
+  Hard: "Hard",
+};
+
+export const allBotLevels: BotLevel[] = ["Easy", "Medium", "Hard"];

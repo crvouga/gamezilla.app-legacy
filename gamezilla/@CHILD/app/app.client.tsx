@@ -24,7 +24,7 @@ import {
 } from "gamezilla/@SHARED/core";
 import * as AuthClient from "./@CHILD/auth/auth.client";
 import * as ProfileClient from "./@CHILD/profile/profile.client";
-import * as SpaceClient from "./@CHILD/space/space.client";
+import * as SpaceClient from "./@CHILD/spaces/spaces.client";
 import { ClientTransport, IClientTransport } from "./@CHILD/wire/transport-client";
 import * as Wire from "./@CHILD/wire/wire.client";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
@@ -45,7 +45,7 @@ import {
 //
 
 export type Deps = {
-  transport: IClientTransport<{ToServer: ToServer, ToClient: ToClient}>;
+  transport: IClientTransport<{ ToServer: ToServer, ToClient: ToClient }>;
 }
 
 export const getDeps = (): Deps => {
@@ -188,7 +188,7 @@ export const init = async ({
 const SHOULD_LOG = false;
 
 function log(...msg: unknown[]) {
-  if(SHOULD_LOG)  {
+  if (SHOULD_LOG) {
     console.log(...msg);
   }
 }
@@ -234,8 +234,8 @@ const updateLoop = async (deps: Deps, now: Posix, acc: Output): Promise<Output> 
 
   if (cmd) {
     log("[cmd]", toMsgType(cmd));
-    const updatedCmd = await updateChild({deps, now, model: acc.model, cmd });
-    return updateLoop(deps,now, {
+    const updatedCmd = await updateChild({ deps, now, model: acc.model, cmd });
+    return updateLoop(deps, now, {
       model: updatedCmd.model,
       cmd: [...cmdRest, ...updatedCmd.cmd],
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
@@ -657,20 +657,20 @@ const ViewBottomBar = ({
     label: string;
     icon: VDom;
   }[] = [
-    {
-      route: {
-        t: "space",
-        c: { t: "space-list" },
+      {
+        route: {
+          t: "space",
+          c: { t: "space-list" },
+        },
+        label: "Spaces",
+        icon: <IconGamepad className="h-6 w-6" />,
       },
-      label: "Spaces",
-      icon: <IconGamepad className="h-6 w-6" />,
-    },
-    {
-      route: { t: "profile", c: { t: "profile", userId: ctx.currentUserId } },
-      label: "Profile",
-      icon: <IconUserCircle className="h-6 w-6" />,
-    },
-  ];
+      {
+        route: { t: "profile", c: { t: "profile", userId: ctx.currentUserId } },
+        label: "Profile",
+        icon: <IconUserCircle className="h-6 w-6" />,
+      },
+    ];
 
   return (
     <div className="flex w-full flex-col items-center justify-center">

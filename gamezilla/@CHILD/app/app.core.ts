@@ -1,6 +1,6 @@
 import * as Auth from "./@CHILD/auth/auth.core";
 import * as Profile from "./@CHILD/profile/profile.core";
-import * as Space from "./@CHILD/space/space.core";
+import * as Space from "./@CHILD/spaces/spaces.core";
 import * as Wire from "./@CHILD/wire/wire.core";
 import { ClientId, SessionId } from "./@SHARED/data";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";

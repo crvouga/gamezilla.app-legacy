@@ -19,7 +19,7 @@ import {
 import { toSessionId } from "./@CHILD/auth/auth.core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
 import * as ProfileServer from "./@CHILD/profile/profile.server";
-import * as SpaceServer from "./@CHILD/space/space.server";
+import * as SpaceServer from "./@CHILD/spaces/spaces.server";
 import {
   IServerTransport,
   ServerTransport,
