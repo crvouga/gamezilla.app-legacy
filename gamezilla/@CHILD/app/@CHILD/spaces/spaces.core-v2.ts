@@ -3,6 +3,13 @@ import { WithEventId } from "./@SHARED/event";
 import * as Space from "./space/space";
 import { SpaceEvent } from "./spaces-state";
 
+//
+//
+//
+//
+//
+//
+
 export type CoreModel = {
   spaces: {
     [spaceId: SpaceId]: Space.Model;
@@ -12,12 +19,19 @@ export type CoreModel = {
   };
 };
 
-type UpdateError = "space-not-found" | "already-in-space";
-
 export const init: CoreModel = {
   spaces: {},
   spaceIdByUserId: {},
 };
+
+//
+//
+//
+//
+//
+//
+
+type UpdateError = "space-not-found" | "already-in-space";
 
 export const updateFromEvent = ({
   model,
