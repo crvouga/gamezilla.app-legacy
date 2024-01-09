@@ -10,6 +10,7 @@ import {
   initStateSpace,
   reducerSpace,
 } from "../spaces-state";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 //
 //
@@ -179,4 +180,14 @@ export const deriveState = (model: Model): StateSpace => {
   }
 
   return running;
+};
+
+export const toUserIds = (model: Model): UserId[] => {
+  const state = deriveState(model);
+
+  if (state.type === "started") {
+    return Object.values(state.users);
+  }
+
+  return [];
 };
