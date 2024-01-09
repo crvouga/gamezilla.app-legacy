@@ -40,6 +40,7 @@ export const reducer = ({
     case "ended": {
       return state;
     }
+
     case "initial": {
       switch (event.t) {
         case "user-started-space": {
@@ -60,6 +61,7 @@ export const reducer = ({
         }
       }
     }
+
     case "started": {
       switch (event.t) {
         case "game": {
