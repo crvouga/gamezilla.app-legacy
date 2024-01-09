@@ -14,11 +14,9 @@ export type CoreModel = {
 
 type UpdateError = "space-not-found" | "already-in-space";
 
-export const init = (): CoreModel => {
-  return {
-    spaces: {},
-    spaceIdByUserId: {},
-  };
+export const init: CoreModel = {
+  spaces: {},
+  spaceIdByUserId: {},
 };
 
 export const updateFromEvent = ({
