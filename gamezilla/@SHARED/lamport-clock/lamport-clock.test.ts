@@ -3,8 +3,8 @@ import { LamportClock } from "./lamport-clock";
 
 describe("Lamport Clock", () => {
   test("should update the Lamport clock when receiving a smaller timestamp", () => {
-    const clockA = LamportClock.init();
-    const clockB = LamportClock.init();
+    const clockA = LamportClock.init;
+    const clockB = LamportClock.init;
 
     const updatedClockA = LamportClock.increment(clockA);
     const updatedClockB = LamportClock.update(clockB, updatedClockA);
@@ -13,8 +13,8 @@ describe("Lamport Clock", () => {
   });
 
   test("should not update the Lamport clock when receiving an equal timestamp", () => {
-    const clockA = LamportClock.init();
-    const clockB = LamportClock.init();
+    const clockA = LamportClock.init;
+    const clockB = LamportClock.init;
 
     const updatedClockA = LamportClock.increment(clockA);
     const updatedClockB = LamportClock.update(clockB, updatedClockA);
@@ -25,8 +25,8 @@ describe("Lamport Clock", () => {
   });
 
   test("should not update the Lamport clock when receiving a larger timestamp", () => {
-    const clockA = LamportClock.init();
-    const clockB = LamportClock.init();
+    const clockA = LamportClock.init;
+    const clockB = LamportClock.init;
 
     const updatedClockB = LamportClock.increment(clockB);
     const updatedClockA = LamportClock.update(clockA, updatedClockB);

@@ -146,7 +146,7 @@ export type ClientMsg =
 export const initCore = async (): Promise<CoreModel> => {
   return {
     events: await SpaceEvents.init(config),
-    clock: LamportClock.init(),
+    clock: LamportClock.init,
     snapshots: CappedOrderedDict.init({ maxSize: 5 }),
   };
 };

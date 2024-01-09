@@ -41,7 +41,29 @@ export const listSpaces = ({
   offset: number;
   sort: "newest" | "oldest";
 }): Space.Model[] => {
-  const spaces = Object.values(model.spaces).slice(offset, offset + limit);
+  const spaces: Space.Model[] = [];
+
+  let i = -1;
+  for (const spaceId in model.spaces) {
+    i += 1;
+
+    if (i < offset) {
+      continue;
+    }
+
+    const space = model.spaces[spaceId as SpaceId];
+
+    if (!space) {
+      continue;
+    }
+
+    spaces.push(space);
+
+    if (spaces.length >= limit) {
+      break;
+    }
+  }
+
   return spaces;
 };
 

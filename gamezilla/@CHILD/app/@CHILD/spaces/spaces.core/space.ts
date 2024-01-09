@@ -28,7 +28,7 @@ export type Model = {
 };
 
 export const init: Model = {
-  clock: LamportClock.init(),
+  clock: LamportClock.init,
   events: [],
   snapshots: {},
 };

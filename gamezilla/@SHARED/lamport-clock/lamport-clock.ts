@@ -6,10 +6,8 @@ export type LamportClock = {
   _currentTime: LamportTimestamp;
 };
 
-const init = (): LamportClock => {
-  return {
-    _currentTime: LamportTimestamp.fromNumber(0),
-  };
+const init: LamportClock = {
+  _currentTime: LamportTimestamp.fromNumber(0),
 };
 
 const increment = (clock: LamportClock): LamportClock => {
@@ -34,7 +32,7 @@ const toCurrentTime = (clock: LamportClock): LamportTimestamp => {
 };
 
 const toNumber = (clock: LamportClock): number => {
-  return LamportTimestamp.toNumber(toCurrentTime(clock))
+  return LamportTimestamp.toNumber(toCurrentTime(clock));
 };
 
 export const LamportClock = {

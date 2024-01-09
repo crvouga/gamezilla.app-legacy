@@ -43,14 +43,11 @@ import { Game } from "./@CHILD/game/game.client";
 import { ViewScreenNotInGame } from "./spaces-client/view-screen-not-in-game";
 import { ViewScreenJoinSpace } from "./spaces-client/view-screen-join-space";
 import { ViewScreenListSpaces } from "./spaces-client/view-screen-list-spaces";
-import {
-  SpaceStateStarted,
-  initState,
-} from './space/space-state';
-import * as Spaces from "./space/spaces";
-import { SpaceEvent } from "./space/space-event";
-import * as GameCore from "./@CHILD/game/game.core"
-import * as Space from "./space/space";
+import { SpaceStateStarted, initState } from "./spaces.core/space-state";
+import * as Spaces from "./spaces.core/spaces";
+import { SpaceEvent } from "./spaces.core/space-event";
+import * as GameCore from "./@CHILD/game/game.core";
+import * as Space from "./spaces.core/space";
 
 //
 //
@@ -67,7 +64,7 @@ type ClientModel = Spaces.Model & {
   previewUserId: UserId | null;
   modal: Modal;
   isSyncing: boolean;
-}
+};
 
 type Module = AppClientModule<{
   Ctx: AnonymousClientCtx;
@@ -88,9 +85,6 @@ type Module = AppClientModule<{
 //
 //
 //
-
-
-
 
 export const init: Module["init"] = async ({ stored }) => {
   if (stored) {
@@ -137,7 +131,7 @@ export const update: Module["update"] = (input) => {
     (model) => updateFromEvent({ ...input, model }),
     (model) => updateGame({ ...input, model }),
     (model) => updateLatestState({ ...input, model }),
-    (model) => updateProfiles({ ...input, model }),
+    (model) => updateProfiles({ ...input, model })
   );
 };
 
@@ -149,7 +143,7 @@ const updateProfiles: Module["update"] = ({ model, fromServer }) => {
     };
   }
   return { model };
-}
+};
 
 const updateLatestState: Module["update"] = async ({ model }) => {
   const latestState = await deriveState(model);
@@ -258,17 +252,20 @@ const updateFromEvent: Module["update"] = async (input) => {
     case "wire/server-connected": {
       const currentUserId = input.ctx.currentUserId;
       if (!currentUserId) {
-        return { model }
+        return { model };
       }
 
       const currentUserProfile = currentUserId
         ? input.ctx.profiles[currentUserId]
         : null;
 
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId({ model, userId: currentUserId })
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId({
+        model,
+        userId: currentUserId,
+      });
 
       if (!currentUserSpaceId) {
-        return { model }
+        return { model };
       }
 
       return {
@@ -285,8 +282,8 @@ const updateFromEvent: Module["update"] = async (input) => {
             snapshots: model.snapshots,
             profiles: currentUserProfile
               ? {
-                [currentUserProfile.userId]: currentUserProfile,
-              }
+                  [currentUserProfile.userId]: currentUserProfile,
+                }
               : {},
           }),
         ],
@@ -306,8 +303,8 @@ const updateGame: Module["update"] = async (input) => {
     msg && "spaceId" in msg
       ? msg.spaceId
       : fromServer && "spaceId" in fromServer
-        ? fromServer.spaceId
-        : null;
+      ? fromServer.spaceId
+      : null;
 
   if (!spaceId) {
     return { model };
@@ -328,8 +325,8 @@ const updateGame: Module["update"] = async (input) => {
       ...ctx,
       space: space,
       currentUserId: ctx.currentUserId,
-      quit() { },
-      viewProfile() { },
+      quit() {},
+      viewProfile() {},
     },
     model: model.games[space.spaceId] ?? Game.init(space.game.t),
     gameState: space.game,
@@ -355,7 +352,6 @@ const updateGame: Module["update"] = async (input) => {
     (model) => updateFromSpaceEvents({ ctx, events: eventsNew, model })
   );
 };
-
 
 const mergeUpdatedGame = ({
   model,
@@ -387,7 +383,6 @@ const mergeUpdatedGame = ({
   };
 };
 
-
 const updateFromSpaceEvents = (input: {
   ctx: ClientCtx | AnonymousClientCtx;
   model: ClientModel;
@@ -402,7 +397,7 @@ const updateFromSpaceEvents = (input: {
     cmd: [],
     eff: Eff.None,
   });
-}
+};
 
 const loop = async (
   ctx: ClientCtx | AnonymousClientCtx,
@@ -459,7 +454,7 @@ const loop = async (
   const eventsNew = batchMsgs(rest, updatedGame.event);
 
   return loop(ctx, eventsNew, accNew);
-}
+};
 
 const sendEventToServer = async ({
   model,
@@ -483,7 +478,7 @@ const sendEventToServer = async ({
       sendToServer({ t: "event", c: { ...eventWithMeta }, clock: model.clock }),
     ],
   };
-}
+};
 
 const appendEvents = async ({
   model,
@@ -496,7 +491,7 @@ const appendEvents = async ({
 }> => {
   const appended = await appendEvent(model, event);
   return { model: { ...model, ...appended } };
-}
+};
 
 const updateGameFromEvent = async ({
   model,
@@ -527,8 +522,8 @@ const updateGameFromEvent = async ({
       ...ctx,
       currentUserId: ctx.currentUserId,
       space: after,
-      quit() { },
-      viewProfile() { },
+      quit() {},
+      viewProfile() {},
     },
     gameEvent:
       eventWithMeta.t === "game"
@@ -709,7 +704,6 @@ const updateSpaceFromEvent = async ({
   }
 };
 
-
 //
 //
 //
@@ -755,7 +749,7 @@ export const subscriptions: Module["subscriptions"] = ({ ctx, model }) => {
 
     const sub = Sub.map(
       Game.subscriptions({
-        ctx: { ...clientCtx, space: space, quit() { }, viewProfile() { } },
+        ctx: { ...clientCtx, space: space, quit() {}, viewProfile() {} },
         gameState: space.game,
         model: model.games[spaceId] ?? Game.init(space.game.t),
       }),

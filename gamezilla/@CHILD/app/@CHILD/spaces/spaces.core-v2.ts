@@ -1,5 +1,5 @@
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import * as Space from "./space/space";
+import * as Space from "./spaces.core/space";
 
 //
 //
