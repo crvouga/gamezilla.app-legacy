@@ -1,7 +1,7 @@
 import { Space } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import * as Game from "../@CHILD/game/game.core";
 import { EventId, EventMeta } from "../@SHARED/event";
-import { SpaceEvent } from "../space-event";
+import { SpaceEvent } from "./space-event";
 
 export type SpaceStateInitial = {
   type: "initial";
