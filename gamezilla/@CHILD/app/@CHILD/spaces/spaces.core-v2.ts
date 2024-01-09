@@ -48,8 +48,19 @@ export const updateFromEvent = ({
     case "user-ended-space": {
       return appendEvent({ model, event });
     }
+    case "user-inputted-game": {
+      return appendEvent({ model, event });
+    }
+    case "user-joined-space": {
+      return appendEvent({ model, event });
+    }
+    case "user-left-space": {
+      return appendEvent({ model, event });
+    }
+    case "user-started-space": {
+      return appendEvent({ model, event });
+    }
   }
-  return { model };
 };
 
 const appendEvent = ({
