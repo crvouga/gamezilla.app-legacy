@@ -1,5 +1,4 @@
-import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import * as Game from "./@CHILD/game/game.core";
+import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { WithEventId } from "./@SHARED/event";
 import * as Space from "./space/space";
 import { SpaceEvent } from "./spaces-state";
@@ -12,25 +11,6 @@ export type CoreModel = {
     [userId: UserId]: SpaceId;
   };
 };
-
-export type ServerModel = CoreModel & {
-  games: {
-    [spaceId: SpaceId]: Game.ServerModel;
-  };
-  profileCache: {
-    [userId: UserId]: Profile;
-  };
-};
-
-export type ClientModel = CoreModel & {
-  games: {
-    [spaceId: SpaceId]: Game.ClientModel;
-  };
-  previewUserId: UserId | null;
-  modal: Modal;
-};
-
-type Modal = null | "user-preview" | "users";
 
 type UpdateError = "space-not-found" | "already-in-space";
 
@@ -56,6 +36,10 @@ export const updateFromEvent = ({
       return appendEvent({ model, event });
     }
 
+    case "user-inputted-game": {
+      return appendEvent({ model, event });
+    }
+
     case "user-ended-space": {
       const userIds = Space.toUserIds(
         model.spaces[event.spaceId] ?? Space.init
@@ -74,10 +58,6 @@ export const updateFromEvent = ({
           spaceIdByUserId: spaceIdByUserIdNew,
         },
       };
-    }
-
-    case "user-inputted-game": {
-      return appendEvent({ model, event });
     }
 
     case "user-joined-space": {
@@ -120,7 +100,19 @@ export const updateFromEvent = ({
     }
 
     case "user-started-space": {
-      return appendEvent({ model, event });
+      const spaceIdByUserIdNew = {
+        ...model.spaceIdByUserId,
+        [event.userId]: event.spaceId,
+      };
+
+      const appended = appendEvent({ model, event });
+
+      return {
+        model: {
+          ...appended.model,
+          spaceIdByUserId: spaceIdByUserIdNew,
+        },
+      };
     }
   }
 };
