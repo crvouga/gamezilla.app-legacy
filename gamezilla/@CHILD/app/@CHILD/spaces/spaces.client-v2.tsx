@@ -40,14 +40,15 @@ import {
 import { Eff, Sub, batchMsgs } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import { Game } from "./@CHILD/game/game.client";
-import { ViewScreenNotInGame } from "./spaces-client/view-screen-not-in-game";
+import * as GameCore from "./@CHILD/game/game.core";
 import { ViewScreenJoinSpace } from "./spaces-client/view-screen-join-space";
 import { ViewScreenListSpaces } from "./spaces-client/view-screen-list-spaces";
-import { SpaceStateStarted, initState } from "./spaces.core/space-state";
-import * as Spaces from "./spaces.core/spaces";
-import { SpaceEvent } from "./spaces.core/space-event";
-import * as GameCore from "./@CHILD/game/game.core";
-import * as Space from "./spaces.core/space";
+import { ViewScreenNotInGame } from "./spaces-client/view-screen-not-in-game";
+import { SpaceEvent } from "./spaces-core/space-event";
+import * as SpaceState from "./spaces-core/space-state"
+import * as Space from "./spaces-core/space"
+import * as Spaces from "./spaces-core/spaces";
+import { ToServer, ToClient } from "./spaces.core-v2";
 
 //
 //
@@ -61,6 +62,9 @@ import * as Space from "./spaces.core/space";
 type Modal = null | "user-preview" | "users";
 
 type ClientModel = Spaces.Model & {
+  games: {
+    [spaceId: string]: GameCore.ClientModel;
+  }
   previewUserId: UserId | null;
   modal: Modal;
   isSyncing: boolean;
@@ -99,7 +103,6 @@ export const init: Module["init"] = async ({ stored }) => {
       games: {},
       modal: null,
       previewUserId: null,
-      latestState: initState(),
       isSyncing: false,
     },
   };
@@ -130,7 +133,6 @@ export const update: Module["update"] = (input) => {
     (model) => updateFromServer({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
     (model) => updateGame({ ...input, model }),
-    (model) => updateLatestState({ ...input, model }),
     (model) => updateProfiles({ ...input, model })
   );
 };
@@ -145,15 +147,6 @@ const updateProfiles: Module["update"] = ({ model, fromServer }) => {
   return { model };
 };
 
-const updateLatestState: Module["update"] = async ({ model }) => {
-  const latestState = await deriveState(model);
-  return {
-    model: {
-      ...model,
-      latestState,
-    },
-  };
-};
 
 const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
   if (!msg) {
@@ -218,22 +211,25 @@ const updateFromServer: Module["update"] = async (input) => {
 
   switch (fromServer.t) {
     case "sync": {
-      const merged = await mergeModels(model, {
-        events: fromServer.events,
-        clock: fromServer.clock,
-        snapshots: fromServer.snapshots,
-      });
-
+      const merged = Spaces.mergeOne({
+        model,
+        space: fromServer.space,
+      })
       return { model: { ...model, ...merged, isSyncing: false } };
+    }
+
+    case "event": {
+      return updateFromSpaceEvents({ ctx, events: [fromServer.c], model });
+    }
+
+    case 'spaces-list': {
+      return { model }
     }
 
     case "game": {
       return { model };
     }
 
-    case "event": {
-      return updateFromSpaceEvents({ ctx, events: [fromServer.c], model });
-    }
   }
 };
 
@@ -251,6 +247,7 @@ const updateFromEvent: Module["update"] = async (input) => {
 
     case "wire/server-connected": {
       const currentUserId = input.ctx.currentUserId;
+
       if (!currentUserId) {
         return { model };
       }
@@ -259,34 +256,23 @@ const updateFromEvent: Module["update"] = async (input) => {
         ? input.ctx.profiles[currentUserId]
         : null;
 
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId({
+      const currentUserSpace = Spaces.toSpaceByUserId({
         model,
         userId: currentUserId,
       });
 
-      if (!currentUserSpaceId) {
+      if (!currentUserSpace) {
         return { model };
       }
 
       return {
         model: {
-          ...model,
-          isSyncing: true,
+          ...model, isSyncing: true,
         },
-        cmd: [
-          sendToServer({
-            t: "sync",
-            spaceId: currentUserSpaceId,
-            events: model.events,
-            clock: model.clock,
-            snapshots: model.snapshots,
-            profiles: currentUserProfile
-              ? {
-                  [currentUserProfile.userId]: currentUserProfile,
-                }
-              : {},
-          }),
-        ],
+        cmd: [sendToServer({
+          t: "sync", space: currentUserSpace,
+          profiles: currentUserProfile ? { [currentUserId]: currentUserProfile, } : {}
+        })],
       };
     }
 
@@ -303,8 +289,8 @@ const updateGame: Module["update"] = async (input) => {
     msg && "spaceId" in msg
       ? msg.spaceId
       : fromServer && "spaceId" in fromServer
-      ? fromServer.spaceId
-      : null;
+        ? fromServer.spaceId
+        : null;
 
   if (!spaceId) {
     return { model };
@@ -325,8 +311,8 @@ const updateGame: Module["update"] = async (input) => {
       ...ctx,
       space: space,
       currentUserId: ctx.currentUserId,
-      quit() {},
-      viewProfile() {},
+      quit() { },
+      viewProfile() { },
     },
     model: model.games[space.spaceId] ?? Game.init(space.game.t),
     gameState: space.game,
@@ -522,8 +508,8 @@ const updateGameFromEvent = async ({
       ...ctx,
       currentUserId: ctx.currentUserId,
       space: after,
-      quit() {},
-      viewProfile() {},
+      quit() { },
+      viewProfile() { },
     },
     gameEvent:
       eventWithMeta.t === "game"
@@ -749,7 +735,7 @@ export const subscriptions: Module["subscriptions"] = ({ ctx, model }) => {
 
     const sub = Sub.map(
       Game.subscriptions({
-        ctx: { ...clientCtx, space: space, quit() {}, viewProfile() {} },
+        ctx: { ...clientCtx, space: space, quit() { }, viewProfile() { } },
         gameState: space.game,
         model: model.games[spaceId] ?? Game.init(space.game.t),
       }),

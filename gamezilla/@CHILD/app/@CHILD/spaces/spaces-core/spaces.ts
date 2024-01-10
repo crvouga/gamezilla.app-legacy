@@ -1,3 +1,9 @@
+/**
+ *
+ *
+ *
+ *
+ */
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { WithEventId } from "../@SHARED/event";
 import * as Space from "./space";
@@ -226,6 +232,42 @@ const appendEvent = ({
         ...model.spaces,
         [spaceId]: spaceNew,
       },
+    },
+  };
+};
+
+export const mergeOne = ({
+  model,
+  space,
+}: {
+  model: Model;
+  space: Space.Model;
+}): Model => {
+  const state = Space.deriveState(space);
+
+  if (state.type !== "started") {
+    return model;
+  }
+
+  const currentSpcae = model.spaces[state.spaceId];
+
+  if (!currentSpcae) {
+    return {
+      ...model,
+      spaces: {
+        ...model.spaces,
+        [state.spaceId]: space,
+      },
+    };
+  }
+
+  const spaceNew = Space.merge(currentSpcae, space);
+
+  return {
+    ...model,
+    spaces: {
+      ...model.spaces,
+      [state.spaceId]: spaceNew,
     },
   };
 };

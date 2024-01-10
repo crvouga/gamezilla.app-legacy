@@ -3,6 +3,12 @@ import * as Game from "../@CHILD/game/game.core";
 import { EventId, EventMeta } from "../@SHARED/event";
 import { SpaceEvent } from "./space-event";
 
+//
+//
+//
+//
+//
+
 export type SpaceStateInitial = {
   type: "initial";
 };
@@ -23,11 +29,15 @@ export type StateSpace =
   | SpaceStateStarted
   | SpaceStateEnded;
 
-export const initState = (): StateSpace => {
-  return {
-    type: "initial",
-  };
+export const initState: StateSpace = {
+  type: "initial",
 };
+
+//
+//
+//
+//
+//
 
 export const reducer = ({
   state,

@@ -191,3 +191,19 @@ export const toUserIds = (model: Model): UserId[] => {
 
   return [];
 };
+
+export const merge = (left: Model, right: Model): Model => {
+  const events = [...left.events, ...right.events].sort(
+    ascend((e) => LamportTimestamp.toNumber(e.happenedAt))
+  );
+
+  const snapshots = { ...left.snapshots, ...right.snapshots };
+
+  const clock = LamportClock.update(left.clock, right.clock);
+
+  return {
+    clock,
+    events,
+    snapshots,
+  };
+};
