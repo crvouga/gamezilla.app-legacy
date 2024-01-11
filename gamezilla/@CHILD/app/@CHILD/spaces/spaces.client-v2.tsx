@@ -431,9 +431,9 @@ const updateFromSpaceEventsLoop = async (
 
   const updated = await AppClientModule.chainUpdates(
     acc,
-    (model) => appendEvents({ model, event }),
+    (model) => appendEvent({ model, event }),
     (model) => updateFromSpaceEvent({ stateBefore: spaceStateBefore, model, ctx, event }),
-    // (model) => sendEventToServer({ model, eventId: event.eventId })
+    (model) => sendEventToServer({ model, eventId: event.eventId })
   );
 
   const spaceModelAfter = updated.model.spaces[event.spaceId];
@@ -483,17 +483,31 @@ const sendEventToServer = async ({
   };
 };
 
-const appendEvents = async ({
+const appendEvent = ({
   model,
   event,
 }: {
   model: ClientModel;
   event: WithEventId<SpaceEvent>;
-}): Promise<{
+}): {
   model: ClientModel;
-}> => {
-  const appended = await appendEvent(model, event);
-  return { model: { ...model, ...appended } };
+} => {
+  const spaceModel = model.spaces[event.spaceId];
+
+  if (!spaceModel) {
+    return { model };
+  }
+
+  const spaceModelNew = Space.appendEvent({ model: spaceModel, event });
+
+  const appended: ClientModel = {
+    ...model,
+    spaces: {
+      ...model.spaces, [event.spaceId]: spaceModelNew,
+    },
+  }
+
+  return { model: appended };
 };
 
 const updateGameFromSpaceEvent = async ({
