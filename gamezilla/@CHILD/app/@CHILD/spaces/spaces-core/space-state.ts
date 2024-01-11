@@ -9,25 +9,25 @@ import { SpaceEvent } from "./space-event";
 //
 //
 
-export type SpaceStateInitial = {
+export type StateSpaceInitial = {
   type: "initial";
 };
 
-export type SpaceStateStarted = Space & {
+export type StateSpaceStarted = Space & {
   type: "started";
   game: Game.GameState | null;
   latestEvent: EventId;
 };
 
-export type SpaceStateEnded = Space & {
+export type StateSpaceEnded = Space & {
   type: "ended";
   latestEvent: EventId;
 };
 
 export type StateSpace =
-  | SpaceStateInitial
-  | SpaceStateStarted
-  | SpaceStateEnded;
+  | StateSpaceInitial
+  | StateSpaceStarted
+  | StateSpaceEnded;
 
 export const initState: StateSpace = {
   type: "initial",

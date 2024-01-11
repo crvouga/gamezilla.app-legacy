@@ -1,16 +1,17 @@
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { ascend } from "gamezilla/@SHARED/core";
 import {
   LamportClock,
   LamportTimestamp,
 } from "gamezilla/@SHARED/lamport-clock";
 import { EventId, WithEventId, WithEventMeta } from "../@SHARED/event";
+import { SpaceEvent } from "./space-event";
 import {
-  SpaceEvent,
   StateSpace,
-  initStateSpace,
-  reducerSpace,
-} from "../spaces-state";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+  StateSpaceStarted,
+  initState,
+  reducer,
+} from "./space-state";
 
 //
 //
@@ -155,7 +156,8 @@ export const deriveState = (model: Model): StateSpace => {
   //
   //
 
-  let running: StateSpace = initStateSpace();
+  let running = initState;
+
   const events: WithEventMeta<SpaceEvent>[] = [];
 
   for (let i = model.events.length - 1; i >= 0; i--) {
@@ -176,10 +178,23 @@ export const deriveState = (model: Model): StateSpace => {
   //
 
   for (const event of events) {
-    running = reducerSpace({ state: running, event });
+    running = reducer({ state: running, event });
   }
 
   return running;
+};
+
+export const toSpaceStarted = (model: Model): StateSpaceStarted | null => {
+  const state = deriveState(model);
+
+  switch (state.type) {
+    case "started": {
+      return state;
+    }
+    default: {
+      return null;
+    }
+  }
 };
 
 export const toUserIds = (model: Model): UserId[] => {
