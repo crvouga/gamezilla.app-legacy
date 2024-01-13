@@ -1,4 +1,4 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { ascend } from "gamezilla/@SHARED/core";
 import {
   LamportClock,
@@ -6,12 +6,7 @@ import {
 } from "gamezilla/@SHARED/lamport-clock";
 import { EventId, WithEventId, WithEventMeta } from "../@SHARED/event";
 import { SpaceEvent } from "./space-event";
-import {
-  StateSpace,
-  StateSpaceStarted,
-  initState,
-  reducer,
-} from "./space-state";
+import * as SpaceState from "./space-state";
 
 //
 //
@@ -24,7 +19,7 @@ export type Model = {
   events: WithEventMeta<SpaceEvent>[];
   clock: LamportClock;
   snapshots: {
-    [eventId: EventId]: StateSpace;
+    [eventId: EventId]: SpaceState.State;
   };
 };
 
@@ -151,12 +146,40 @@ export const appendEvent = ({
   return modelNew;
 };
 
-export const deriveState = (model: Model): StateSpace => {
+export const toEventWithMeta = (model: Model, eventId: EventId) => {
+  const event = model.events.find((e) => e.eventId === eventId);
+
+  if (!event) {
+    return null;
+  }
+
+  return event;
+};
+
+export const hasEvent = (model: Model, eventId: EventId) => {
+  return model.events.some((e) => e.eventId === eventId);
+};
+
+export const toSpaceId = (model: Model): SpaceId | null => {
+  const state = deriveState(model);
+
+  switch (state.type) {
+    case "ended":
+    case "started": {
+      return state.spaceId;
+    }
+    case "initial": {
+      return null;
+    }
+  }
+};
+
+export const deriveState = (model: Model): SpaceState.State => {
   //
   //
   //
 
-  let running = initState;
+  let running = SpaceState.initState;
 
   const events: WithEventMeta<SpaceEvent>[] = [];
 
@@ -178,13 +201,13 @@ export const deriveState = (model: Model): StateSpace => {
   //
 
   for (const event of events) {
-    running = reducer({ state: running, event });
+    running = SpaceState.reducer({ state: running, event });
   }
 
   return running;
 };
 
-export const toSpaceStarted = (model: Model): StateSpaceStarted | null => {
+export const toSpaceStarted = (model: Model): SpaceState.Started | null => {
   const state = deriveState(model);
 
   switch (state.type) {
@@ -198,13 +221,7 @@ export const toSpaceStarted = (model: Model): StateSpaceStarted | null => {
 };
 
 export const toUserIds = (model: Model): UserId[] => {
-  const state = deriveState(model);
-
-  if (state.type === "started") {
-    return Object.values(state.users);
-  }
-
-  return [];
+  return SpaceState.toUserIds(deriveState(model));
 };
 
 export const merge = (left: Model, right: Model): Model => {

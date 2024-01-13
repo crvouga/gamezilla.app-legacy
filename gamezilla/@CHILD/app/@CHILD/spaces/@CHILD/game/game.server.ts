@@ -120,3 +120,9 @@ export const subscriptions: Server["subscriptions"] = async (input) => {
     }
   }
 };
+
+export const Game: Server = {
+  init,
+  update,
+  subscriptions,
+};

@@ -2,6 +2,7 @@ import { Space } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import * as Game from "../@CHILD/game/game.core";
 import { EventId, EventMeta } from "../@SHARED/event";
 import { SpaceEvent } from "./space-event";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 //
 //
@@ -9,30 +10,47 @@ import { SpaceEvent } from "./space-event";
 //
 //
 
-export type StateSpaceInitial = {
+export type Initial = {
   type: "initial";
 };
 
-export type StateSpaceStarted = Space & {
+export type Started = Space & {
   type: "started";
   game: Game.GameState | null;
   latestEvent: EventId;
 };
 
-export type StateSpaceEnded = Space & {
+export type Ended = Space & {
   type: "ended";
   latestEvent: EventId;
 };
 
-export type StateSpace =
-  | StateSpaceInitial
-  | StateSpaceStarted
-  | StateSpaceEnded;
+export type State = Initial | Started | Ended;
 
-export const initState: StateSpace = {
+export const initState: State = {
   type: "initial",
 };
 
+//
+//
+//
+//
+//
+
+export const toUserIds = (state: State): UserId[] => {
+  switch (state.type) {
+    case "initial":
+    case "ended": {
+      return [];
+    }
+
+    case "started": {
+      return Object.values(state.users);
+    }
+  }
+};
+
+//
 //
 //
 //
@@ -43,9 +61,9 @@ export const reducer = ({
   state,
   event,
 }: {
-  state: StateSpace;
+  state: State;
   event: SpaceEvent & EventMeta;
-}): StateSpace => {
+}): State => {
   switch (state.type) {
     case "ended": {
       return state;

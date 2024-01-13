@@ -13,6 +13,7 @@ import {
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { GameName, gameNameToString } from "../@CHILD/game/game.core";
 import { ClientModel, ClientMsg } from "../spaces.core";
+import * as Spaces from "../spaces-core/spaces";
 
 export const ViewScreenListSpaces = ({
   ctx,
@@ -24,21 +25,13 @@ export const ViewScreenListSpaces = ({
   dispatch: (m: ClientMsg) => void;
 }) => {
   const currentUserSpaceId =
-    model.latestState.spaceIdByUserId[ctx.currentUserId];
+    model.spaceIdByUserId[ctx.currentUserId];
 
-  const spaces = Object.keys(model.latestState.active).flatMap((spaceId) => {
-    if (!SpaceId.is(spaceId)) {
+  const spaces = Object.keys(model.spaces).flatMap((spaceId) => {
+    const space = Spaces.toSpaceStarted(model, spaceId as SpaceId)
+    if (!space) {
       return [];
     }
-
-    const space = model.latestState.spaces[spaceId] ?? {
-      type: "initial",
-    };
-
-    if (space.type !== "started") {
-      return [];
-    }
-
     return [space];
   });
 
@@ -112,7 +105,7 @@ export const ViewScreenListSpaces = ({
   );
 };
 
-function EmptyState() {
+const EmptyState = () => {
   return (
     <div className="absolute inset-0 flex h-full w-full flex-1 flex-col items-center justify-center gap-2 px-5 text-center opacity-60">
       <div className="flex flex-col items-center justify-center gap-3">

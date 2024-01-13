@@ -39,7 +39,10 @@ async function main() {
 
   await program.start();
 
-  // attachDebuggerBrowserExtension(program);
+  const SHOULD_USE_DEBUGGER = true
+  if (SHOULD_USE_DEBUGGER) {
+    attachDebuggerBrowserExtension(program);
+  }
 }
 
 main();

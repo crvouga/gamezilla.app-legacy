@@ -50,7 +50,7 @@ const mapOne = <A, B>(
 };
 
 const map = <A, B>(
-  cmd: SpaceServerCmd<A>[],
+  cmd: SpaceServerCmd<A>[] | undefined | null,
   fn: (a: A) => B
 ): SpaceServerCmd<B>[] | undefined => {
   return cmd?.map((m) => mapOne(fn, m));

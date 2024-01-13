@@ -1,11 +1,11 @@
 import { expect, test } from "bun:test";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Posix } from "gamezilla/@SHARED/core";
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
+import * as Spaces from "./spaces-core/spaces";
 import * as SpaceClient from "./spaces.client";
 import * as SpaceCore from "./spaces.core";
-import { toUserState } from "./spaces-state";
 
 const ctx: ClientCtx = {
   currentRoute: {
@@ -92,17 +92,17 @@ test("current user starting space", async () => {
     userId: ctx.currentUserId,
   });
 
-  const before = toUserState(
-    await SpaceCore.deriveState(initial.model),
-    ctx.currentUserId
-  );
-  const after = toUserState(
-    await SpaceCore.deriveState(started.model),
-    ctx.currentUserId
-  );
+  const before = Spaces.toSpaceIdByUserId({
+    model: initial.model,
+    userId: ctx.currentUserId,
+  });
+  const after = Spaces.toSpaceIdByUserId({
+    model: started.model,
+    userId: ctx.currentUserId,
+  });
 
-  expect(before).toEqual({ spaceId: null, userId: ctx.currentUserId });
-  expect(after).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
+  expect(before).toEqual(null);
+  expect(after).toEqual(spaceId);
 });
 
 test("redirecting when starting a space", async () => {
@@ -145,11 +145,17 @@ test("current user joining started space", async () => {
     userId: ctx.currentUserId,
   });
 
-  const before = toUserState(started.model.latestState, ctx.currentUserId);
-  const after = toUserState(joined.model.latestState, ctx.currentUserId);
+  const before = Spaces.toSpaceIdByUserId({
+    model: started.model,
+    userId: ctx.currentUserId,
+  });
+  const after = Spaces.toSpaceIdByUserId({
+    model: joined.model,
+    userId: ctx.currentUserId,
+  });
 
-  expect(before).toEqual({ spaceId: null, userId: ctx.currentUserId });
-  expect(after).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
+  expect(before).toEqual(null);
+  expect(after).toEqual(spaceId);
   //
 });
 
@@ -176,11 +182,17 @@ test("current user leaving joined space", async () => {
     userId: ctx.currentUserId,
   });
 
-  const before = toUserState(joined.model.latestState, ctx.currentUserId);
-  const after = toUserState(left.model.latestState, ctx.currentUserId);
+  const before = Spaces.toSpaceIdByUserId({
+    model: joined.model,
+    userId: ctx.currentUserId,
+  });
+  const after = Spaces.toSpaceIdByUserId({
+    model: left.model,
+    userId: ctx.currentUserId,
+  });
 
-  expect(before).toEqual({ spaceId: spaceId, userId: ctx.currentUserId });
-  expect(after).toEqual({ spaceId: null, userId: ctx.currentUserId });
+  expect(before).toEqual(spaceId);
+  expect(after).toEqual(null);
   //
 });
 
@@ -214,10 +226,16 @@ test("prevent joining a space if already in a space", async () => {
     userId: ctx.currentUserId,
   });
 
-  const before = toUserState(joinedA.model.latestState, ctx.currentUserId);
-  const after = toUserState(joinedB.model.latestState, ctx.currentUserId);
+  const before = Spaces.toSpaceIdByUserId({
+    model: joinedA.model,
+    userId: ctx.currentUserId,
+  });
+  const after = Spaces.toSpaceIdByUserId({
+    model: joinedB.model,
+    userId: ctx.currentUserId,
+  });
 
-  expect(before).toEqual({ spaceId: spaceIdA, userId: ctx.currentUserId });
-  expect(after).toEqual({ spaceId: spaceIdA, userId: ctx.currentUserId });
+  expect(before).toEqual(spaceIdA);
+  expect(after).toEqual(spaceIdA);
   //
 });
