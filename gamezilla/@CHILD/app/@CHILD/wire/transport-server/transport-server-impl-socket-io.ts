@@ -66,8 +66,6 @@ export const ServerTransportSocketIO = <ToServer, ToClient>({
     });
 
     const unsubscribe = transport.toClient.subscribe((msgsByClientId) => {
-      console.log("toClient", Object.keys(msgsByClientId));
-
       const msgs = msgsByClientId[clientId];
 
       if (!msgs) {
