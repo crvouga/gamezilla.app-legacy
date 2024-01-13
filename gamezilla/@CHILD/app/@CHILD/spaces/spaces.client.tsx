@@ -402,9 +402,9 @@ const updateFromSpaceEventsLoop = async (
 
   const updated = await AppClientModule.chainUpdates(
     acc,
+    (model) => updateSpaceFromSpaceEvent({ model, ctx, spaceEvent }),
     (model) => Spaces.updateFromEvent({ model, spaceEvent }),
     (model) => updateGameFromSpaceEvent({ model, ctx, spaceEvent, }),
-    (model) => updateSpaceFromSpaceEvent({ model, ctx, spaceEvent }),
     (model) => sendEventToServer({ model, spaceEvent }),
   );
 
