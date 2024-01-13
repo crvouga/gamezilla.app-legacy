@@ -39,8 +39,7 @@ async function main() {
 
   await program.start();
 
-  attachDebuggerBrowserExtension(program);
-
+  // attachDebuggerBrowserExtension(program);
 }
 
 main();
