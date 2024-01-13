@@ -93,7 +93,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
         async (model) => {
           const existing: Client = model.clientsBySessionId[msg.sessionId] ?? {
             clientIds: CappedOrderedDict.init({ maxSize: 10 }),
-            sessionId: msg.sessionId,            
+            sessionId: msg.sessionId,
           };
 
           const clientNew: Client = {
@@ -145,8 +145,26 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
     }
 
     case "client-disconnected": {
+      const client: Client = model.clientsBySessionId[msg.sessionId] ?? {
+        clientIds: CappedOrderedDict.init({ maxSize: 10 }),
+        sessionId: msg.sessionId,
+      };
+
+      const clientNew: Client = {
+        sessionId: msg.sessionId,
+        clientIds: CappedOrderedDict.remove(client.clientIds, msg.clientId),
+      };
+
+      const clientsBySessionIdNew: ServerModel["clientsBySessionId"] = {
+        ...model.clientsBySessionId,
+        [msg.sessionId]: clientNew,
+      };
+
       return {
-        model,
+        model: {
+          ...model,
+          clientsBySessionId: clientsBySessionIdNew,
+        },
         event: [
           {
             t: "wire/client-disconnected",
