@@ -20,11 +20,13 @@
   },
   "dependencies": {
     "chess.js": "^1.0.0-beta.6",
-    "postgres": "^3.4.3",
     "inferno": "^8.2.3",
+    "postgres": "^3.4.3",
     "preact": "^10.19.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "socket.io": "^4.7.4",
+    "socket.io-client": "^4.7.4"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.7.0",

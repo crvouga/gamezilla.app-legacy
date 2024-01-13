@@ -59,7 +59,7 @@ export const getDeps = async (): Promise<Result<string, Deps>> => {
   const logger = LoggerConsole("app");
 
   const databaseUrl =
-    process.env.NODE_ENV === "production"
+    process.env["NODE_ENV"] === "production"
       ? process.env["DATABASE_URL_PROD"]
       : process.env["DATABASE_URL"];
 
@@ -80,9 +80,9 @@ export const getDeps = async (): Promise<Result<string, Deps>> => {
   const transport = ServerTransport<ToServer, ToClient>({
     codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
     impl: {
-      t: "bun-web-sockets",
+      t: "socket-io",
       serverPort: PUBLIC_APP_CONFIG.SERVER_PORT,
-      endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
+      // endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
     },
   });
 

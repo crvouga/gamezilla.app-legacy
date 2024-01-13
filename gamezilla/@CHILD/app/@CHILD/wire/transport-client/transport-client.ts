@@ -26,10 +26,17 @@ export const initClientTransport = <ToServer, ToClient>(): IClientTransport<{
   };
 };
 
-export type ClientTransportImpl = ClientTransportWebSocketImpl;
+export type ClientTransportImpl =
+  | ClientTransportWebSocketImpl
+  | ClientTransportSocketIOImpl;
 
 export type ClientTransportWebSocketImpl = {
   t: "web-sockets";
   serverUrl: string;
   endpoint: string;
+};
+
+export type ClientTransportSocketIOImpl = {
+  t: "socket-io";
+  serverUrl: string;
 };

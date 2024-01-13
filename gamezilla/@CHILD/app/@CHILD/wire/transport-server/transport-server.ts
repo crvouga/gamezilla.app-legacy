@@ -58,10 +58,17 @@ export const initServerTransport = <ToServer, ToClient>(): IServerTransport<{
 //
 //
 
-export type ServerTransportImpl = ServerTransportWebSocketImpl;
+export type ServerTransportImpl =
+  | ServerTransportWebSocketImpl
+  | ServerTransportSocketIOImpl;
 
 export type ServerTransportWebSocketImpl = {
   t: "bun-web-sockets";
   endpoint: string;
+  serverPort: number;
+};
+
+export type ServerTransportSocketIOImpl = {
+  t: "socket-io";
   serverPort: number;
 };
