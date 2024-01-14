@@ -2,6 +2,7 @@ import * as Auth from "./@CHILD/auth/auth.core";
 import * as Profile from "./@CHILD/profile/profile.core";
 import * as Spaces from "./@CHILD/spaces/spaces.core";
 import * as Wire from "./@CHILD/wire/wire.core";
+import { ClientCmd, ClientEvent } from "./@SHARED/client";
 import { ClientId, SessionId } from "./@SHARED/data";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import config from "config.json";
@@ -71,6 +72,17 @@ export type ToClient =
   | { t: "auth"; c: Auth.ToClient }
   | { t: "profile"; c: Profile.ToClient }
   | { t: "wire"; c: Wire.ToClient };
+
+//
+//
+//
+//
+
+export type ClientMsgFinal =
+  | { t: "msg"; msg: ClientMsg }
+  | { t: "event"; event: ClientEvent }
+  | { t: "from-server"; fromServer: ClientMsg }
+  | { t: "cmd"; cmd: ClientCmd<{ ClientMsg: ClientMsg; ToServer: ToServer }> };
 
 //
 //
