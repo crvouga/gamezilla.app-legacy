@@ -147,7 +147,7 @@ const chainUpdates = async <T extends AppServerModuleTypes>(
   const updated = await update(acc.model);
 
   const accNew: Output<T> = {
-    model: updated.model,
+    model: { ...acc.model, ...updated.model },
     eff: Eff.batch([acc.eff, updated.eff]),
     cmd: [...(acc.cmd ?? []), ...(updated.cmd ?? [])],
     event: [...(acc.event ?? []), ...(updated.event ?? [])],

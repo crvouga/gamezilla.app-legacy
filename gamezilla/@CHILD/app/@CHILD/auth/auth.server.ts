@@ -50,7 +50,7 @@ export const init: Module["init"] = async (input) => {
   return {
     model: {
       userIdBySessionId: StoreUserIdBySessionId(input.ctx).startingAt(ctx.now),
-      sessionIdByUserId: StoreSessionIdByUserId(input.ctx).startingAt(ctx.now),
+      sessionIdsByUserId: StoreSessionIdByUserId(input.ctx).startingAt(ctx.now),
       sms: sms.model,
     },
     eff: Eff.tag("sms", sms.eff),
@@ -299,16 +299,26 @@ async function addSession(
     userId
   );
 
+  const sessionIds = await StoreSessionIdByUserId(ctx).get(
+    model.sessionIdsByUserId,
+    userId
+  );
+
+  const sessionIdsNew = {
+    ...sessionIds,
+    [sessionId]: sessionId,
+  };
+
   const sessionIdByUserIdNew = await StoreSessionIdByUserId(ctx).assoc(
     ctx.now,
-    model.sessionIdByUserId,
+    model.sessionIdsByUserId,
     userId,
-    sessionId
+    sessionIdsNew
   );
 
   return {
     ...model,
-    sessionIdByUserId: sessionIdByUserIdNew,
+    sessionIdsByUserId: sessionIdByUserIdNew,
     userIdBySessionId: userIdBySessionIdNew,
   };
 }
@@ -338,13 +348,13 @@ async function removeSession(
 
   const sessionIdByUserIdNew = await StoreSessionIdByUserId(ctx).dissoc(
     ctx.now,
-    model.sessionIdByUserId,
+    model.sessionIdsByUserId,
     userId
   );
 
   return {
     ...model,
-    sessionIdByUserId: sessionIdByUserIdNew,
+    sessionIdsByUserId: sessionIdByUserIdNew,
     userIdBySessionId: userIdBySessionIdNew,
   };
 }

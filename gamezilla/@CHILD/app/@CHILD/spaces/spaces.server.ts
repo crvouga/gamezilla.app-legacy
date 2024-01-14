@@ -404,8 +404,8 @@ const updateFromManySpaceEventsLoop = async (
 
   const updated = await AppServerModule.chainUpdates(
     acc,
-    (model) => updateFromSpaceEvent({ model, spaceEvent, ctx }),
     (model) => Spaces.updateFromSpaceEvent({ model, spaceEvent }),
+    (model) => updateFromSpaceEvent({ model, spaceEvent, ctx }),
     (model) => sendEventToClients({ model, spaceEvent })
   );
 
@@ -481,12 +481,16 @@ const updateFromSpaceEvent = async ({
   switch (spaceEvent.t) {
     case "user-joined-space": {
       const space = Spaces.toSpace(model, spaceEvent.spaceId);
+      console.log("user-joined-space", spaceEvent.spaceId);
 
       if (!space) {
+        console.log("no space");
         return { model };
       }
 
       const started = Space.startFromLatestSnapshot(space);
+
+      console.log("syncing joined user");
 
       return {
         model,

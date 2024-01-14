@@ -55,7 +55,9 @@ type Input<TToClient, TToServer> = {
     ToClient: TToClient;
     ToServer: TToServer;
   }>;
-  toSessionId: (userId: UserId) => Promise<SessionId | null>;
+  toSessionIds: (
+    userId: UserId
+  ) => Promise<{ [sessionId: SessionId]: SessionId } | null>;
 };
 
 type Output = {
@@ -203,7 +205,8 @@ const updateFromCmd = async <TToClient, TToServer>({
   cmd,
   model,
   transport,
-  toSessionId,
+  toSessionIds,
+  ctx,
 }: Input<TToClient, TToServer>): Promise<Output> => {
   if (!cmd) {
     return { model };
@@ -254,23 +257,33 @@ const updateFromCmd = async <TToClient, TToServer>({
           } = {};
 
           for (const userId of cmd.userIds) {
-            const sessionId = await toSessionId(userId);
+            const sessionIds = await toSessionIds(userId);
 
-            if (!sessionId) {
+            if (!sessionIds) {
+              ctx.logger.warn(
+                `wire/send-to-user failed. no sessionIds for userId=${userId}`
+              );
               continue;
             }
 
-            const client = model.clientsBySessionId[sessionId];
+            for (const sessionId in sessionIds) {
+              const client = model.clientsBySessionId[sessionId as SessionId];
 
-            if (!client) {
-              continue;
-            }
+              if (!client) {
+                ctx.logger.warn(
+                  `wire/send-to-user failed. no client for sessionId=${sessionId} and userId=${userId}`
+                );
+                continue;
+              }
 
-            for (const clientId of CappedOrderedDict.values(client.clientIds)) {
-              toClientPayload[clientId] = {
-                clientId,
-                msgs: [...(toClientPayload[clientId]?.msgs ?? []), cmd.msg],
-              };
+              for (const clientId of CappedOrderedDict.values(
+                client.clientIds
+              )) {
+                toClientPayload[clientId] = {
+                  clientId,
+                  msgs: [...(toClientPayload[clientId]?.msgs ?? []), cmd.msg],
+                };
+              }
             }
           }
 

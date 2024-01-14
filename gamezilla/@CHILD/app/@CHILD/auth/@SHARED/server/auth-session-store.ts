@@ -14,10 +14,28 @@ export const StoreUserIdBySessionId = (_ctx: ServerCtx) => {
 };
 
 export const StoreSessionIdByUserId = (_ctx: ServerCtx) => {
-  return SqliteStore<UserId, SessionId>({
+  return SqliteStore<UserId, { [sessionId: SessionId]: SessionId }>({
     connectionString,
-    keySpace: "auth/session-id-by-user-id",
-    decodeValue: (encoded) => (SessionId.is(encoded) ? encoded : null),
-    encodeValue: (value) => value,
+    keySpace: "auth/session-ids-by-user-id",
+    decodeValue: (encoded) => {
+      try {
+        if (!encoded) {
+          return {};
+        }
+        const decoded = JSON.parse(encoded);
+        const sessionIds: { [sessionId: SessionId]: SessionId } = {};
+        for (const sessionId in decoded) {
+          if (SessionId.is(sessionId)) {
+            sessionIds[sessionId] = sessionId;
+          }
+        }
+        return sessionIds;
+      } catch {
+        return {};
+      }
+    },
+    encodeValue: (value) => {
+      return JSON.stringify(value);
+    },
   });
 };

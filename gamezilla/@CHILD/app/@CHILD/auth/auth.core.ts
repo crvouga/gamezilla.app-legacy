@@ -38,7 +38,7 @@ export type ClientModel = {
 
 export type ServerModel = {
   userIdBySessionId: Store<SessionId, UserId>;
-  sessionIdByUserId: Store<UserId, SessionId>;
+  sessionIdsByUserId: Store<UserId, { [sessionId: SessionId]: SessionId }>;
   sms: AuthSMS.ServerModel;
 };
 
@@ -54,16 +54,16 @@ export const toUserId = async (
   return userId ?? null;
 };
 
-export const toSessionId = async (
+export const toSessionIds = async (
   ctx: ServerCtx,
   model: ServerModel,
   userId: UserId
-): Promise<SessionId | null> => {
-  const sessionId = await StoreSessionIdByUserId(ctx).get(
-    model.sessionIdByUserId,
+): Promise<{ [sessionId: SessionId]: SessionId } | null> => {
+  const sessionIds = await StoreSessionIdByUserId(ctx).get(
+    model.sessionIdsByUserId,
     userId
   );
-  return sessionId ?? null;
+  return sessionIds ?? null;
 };
 
 //

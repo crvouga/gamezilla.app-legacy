@@ -16,7 +16,7 @@ import {
   ok,
   toMsgType,
 } from "gamezilla/@SHARED/core";
-import { toSessionId } from "./@CHILD/auth/auth.core";
+import { toSessionIds } from "./@CHILD/auth/auth.core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
 import * as ProfileServer from "./@CHILD/profile/profile.server";
 import * as SpaceServer from "./@CHILD/spaces/spaces.server";
@@ -312,7 +312,7 @@ export const updateChild = async ({
     fromClient:
       fromClient?.t === "wire" ? { ...fromClient, ...fromClient.c } : null,
     msg: msg?.t === "wire" ? msg.c : null,
-    toSessionId: (userId) => toSessionId(ctx, model.auth, userId),
+    toSessionIds: (userId) => toSessionIds(ctx, model.auth, userId),
     transport: deps.transport,
   });
 
