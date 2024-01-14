@@ -181,7 +181,6 @@ async function draw(win: Win) {
   const node = await Transition.waitForElementById(id, rootId);
 
   if (!(node instanceof SVGRectElement)) {
-    console.log("no node");
     return;
   }
 
@@ -208,7 +207,6 @@ async function undraw(win: Win) {
   const node = await Transition.waitForElementById(id, rootId);
 
   if (!(node instanceof SVGRectElement)) {
-    console.log("no node");
     return;
   }
 

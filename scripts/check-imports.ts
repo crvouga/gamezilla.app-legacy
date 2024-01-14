@@ -50,10 +50,7 @@ async function generateImportList(baseDir: string): Promise<FileImport[]> {
 
 // Replace './src' with your root directory
 generateImportList("./gamezilla")
-  .then((importList) => {
-    console.log("Import list generated", importList.length);
-    // console.log(JSON.stringify(importList, null, 2));
-  })
+  .then((_importList) => {})
   .catch((err) => {
     console.error(err);
   });

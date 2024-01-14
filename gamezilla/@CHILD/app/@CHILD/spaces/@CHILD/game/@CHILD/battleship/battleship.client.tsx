@@ -6,6 +6,5 @@ export const View = (props: {
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  console.log(props);
   return <div>battleship</div>;
 };

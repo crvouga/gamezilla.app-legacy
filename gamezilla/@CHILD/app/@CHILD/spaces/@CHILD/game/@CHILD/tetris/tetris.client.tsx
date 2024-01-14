@@ -274,7 +274,7 @@ export const View = ({
             const x = touch.clientX;
             const y = touch.clientY;
 
-            console.log("MOVE", { x, y });
+
           }}
           onClick={(event) => {
             dispatch(["ClickedBoard", mouseEventToPosition(event)]);
@@ -305,10 +305,9 @@ export const View = ({
               return;
             }
 
-            const x = touch.clientX;
-            const y = touch.clientY;
-
-            console.log("Start", { x, y });
+            // const x = touch.clientX;
+            // const y = touch.clientY;
+            // console.log("Start", { x, y });
           }}
         />
       </div>

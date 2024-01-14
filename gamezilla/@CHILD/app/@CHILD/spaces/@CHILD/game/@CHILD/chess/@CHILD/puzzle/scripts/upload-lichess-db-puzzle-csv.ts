@@ -43,6 +43,10 @@ export const toLichessRow = (x: unknown): LichessRow | null => {
   return null;
 };
 
+const log = (...args: unknown[]) => {
+  console.log(...args);
+};
+
 export const uploadLichessDbPuzzleCsv = async ({
   dbConn,
   lichessDbPuzzleCsvPath,
@@ -54,16 +58,16 @@ export const uploadLichessDbPuzzleCsv = async ({
 }) => {
   if (typeof window !== "undefined") {
     // Code to run in the browser environment
-    console.log("Running in a browser environment");
+    log("Running in a browser environment");
     return;
   }
 
-  console.log(`reading ${lichessDbPuzzleCsvPath}`);
+  log(`reading ${lichessDbPuzzleCsvPath}`);
 
   const file = Bun.file(lichessDbPuzzleCsvPath);
 
   if (await file.exists()) {
-    console.log(`file ${lichessDbPuzzleCsvPath} does not exist`);
+    log(`file ${lichessDbPuzzleCsvPath} does not exist`);
     return;
   }
 
@@ -71,7 +75,7 @@ export const uploadLichessDbPuzzleCsv = async ({
 
   let batch: PuzzleRow[] = [];
 
-  console.log("starting upload");
+  log("starting upload");
   for await (const lichessRow of []) {
     const parsed = toLichessRow(lichessRow);
     if (!parsed) {
@@ -85,19 +89,19 @@ export const uploadLichessDbPuzzleCsv = async ({
       continue;
     }
 
-    console.log("insert started");
+    log("insert started");
 
     const inserted = await PuzzleDb.puzzles.replace({
       dbConn,
       rows: batch,
     });
 
-    console.log(`${inserted.t} - ${batch.length} rows -`);
+    log(`${inserted.t} - ${batch.length} rows -`);
 
     batch = [];
 
     if (inserted.t === "err") {
-      console.log(`insert error ${inserted.error}`);
+      log(`insert error ${inserted.error}`);
       continue;
     }
   }
@@ -109,13 +113,13 @@ export const uploadLichessDbPuzzleCsv = async ({
     });
 
     if (inserted.t === "err") {
-      console.log(`insert error ${inserted.error}`);
+      log(`insert error ${inserted.error}`);
     } else {
-      console.log("inserted batch");
+      log("inserted batch");
     }
   }
 
-  console.log("upload done");
+  log("upload done");
 };
 
 const lichessRowToRow = (lichessRow: LichessRow): PuzzleRow => {
