@@ -3,10 +3,10 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import inferno from "vite-plugin-inferno";
 import preact from "@preact/preset-vite";
 import react from "@vitejs/plugin-react";
-import * as config from "./config";
+import { PUBLIC_APP_CONFIG } from "./config.ts";
 
 function rendererPlugin() {
-  switch (config.renderer) {
+  switch (PUBLIC_APP_CONFIG.RENDERER_IMPL) {
     case "inferno": {
       return inferno();
     }

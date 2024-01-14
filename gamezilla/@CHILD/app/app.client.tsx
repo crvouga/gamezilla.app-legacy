@@ -34,10 +34,11 @@ import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import {
   ClientModel,
   ClientMsg,
-  PUBLIC_APP_CONFIG,
+
   ToClient,
   ToServer,
 } from "./app.core";
+import { PUBLIC_APP_CONFIG, } from "config"
 
 //
 //

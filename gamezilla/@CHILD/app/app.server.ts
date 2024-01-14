@@ -29,13 +29,13 @@ import { Logger, LoggerConsole } from "./@SHARED/server/logger";
 import { createDbConn } from "./app-server/db-conn-sql";
 import { createSMS } from "./app-server/sms";
 import {
-  PUBLIC_APP_CONFIG,
   ServerModel,
   ServerMsg,
   ToClient,
   ToServer,
   ToServerMeta,
 } from "./app.core";
+import { PUBLIC_APP_CONFIG } from "config.ts";
 
 //
 //

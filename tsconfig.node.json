@@ -4,5 +4,5 @@
     "allowImportingTsExtensions": true,
     "moduleResolution": "bundler"
   },
-  "include": ["vite.config.ts", "tailwind.config.ts"]
+  "include": ["vite.config.ts", "tailwind.config.ts", "config.ts"]
 }

@@ -1,4 +1,4 @@
-import * as config from "config.ts";
+import { PUBLIC_APP_CONFIG } from "config.ts";
 import { Browser, Posix, Program } from "gamezilla/@SHARED/core";
 import * as AppClient from "./@CHILD/app/app.client";
 import * as App from "./@CHILD/app/app.core";
@@ -8,13 +8,13 @@ type Ctx = {
   now: Posix;
 };
 
-async function main() {
+const main = async () => {
   const renderer = await getRenderer();
 
   const deps = AppClient.getDeps();
 
   const program = Program.create<App.ClientModel, App.ClientMsg, Ctx>({
-    getCtx() {
+    getCtx: () => {
       return {
         now: Posix.now(),
       };
@@ -43,23 +43,24 @@ async function main() {
   if (SHOULD_USE_DEBUGGER) {
     attachDebuggerBrowserExtension(program);
   }
-}
 
-main();
+  console.log(`Renderer: ${PUBLIC_APP_CONFIG.RENDERER_IMPL}`)
+  console.log(`Transport: ${PUBLIC_APP_CONFIG.TRANSPORT_IMPL}`)
+}
 
 /**
  * Use this to persist state across page refreshes.
  * It retains type safety by using deployment IDs.
  */
-export function Storage<TModel>() {
+export const Storage = <TModel,>() => {
   const CODEBASE_VERSION_ID_KEY = "gamezilla/codebase-version-id";
   const MODEL_KEY = "gamezilla/model";
 
   return {
-    get() {
+    get: () => {
       const storedId = sessionStorage.getItem(CODEBASE_VERSION_ID_KEY);
 
-      if (storedId !== App.PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID) {
+      if (storedId !== PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID) {
         return null;
       }
 
@@ -70,10 +71,10 @@ export function Storage<TModel>() {
       return maybeModel;
     },
 
-    set(model: TModel) {
+    set: (model: TModel) => {
       sessionStorage.setItem(
         CODEBASE_VERSION_ID_KEY,
-        App.PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID
+        PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID
       );
       sessionStorage.setItem(MODEL_KEY, JSON.stringify(model));
     },
@@ -84,7 +85,7 @@ export function Storage<TModel>() {
  * Use this to render runtime errors to the screen.
  * This is useful for debugging on mobile devices.
  */
-export function renderRuntimeErrors() {
+export const renderRuntimeErrors = () => {
   window.onerror = function (errorMsg, url, lineNumber, column, _errorObj) {
     showError(errorMsg, url, lineNumber, column);
   };
@@ -113,11 +114,10 @@ type Renderer = (
   dispatch: (m: App.ClientMsg) => void
 ) => (model: App.ClientModel, ctx: Ctx) => void;
 
-async function getRenderer(): Promise<Renderer> {
+const getRenderer = async (): Promise<Renderer> => {
   const rootNode = document.getElementById("root")!;
-  console.log(`renderer: ${config.renderer}`);
 
-  switch (config.renderer) {
+  switch (PUBLIC_APP_CONFIG.RENDERER_IMPL) {
     case "inferno": {
       const { render } = await import("inferno");
 
@@ -155,3 +155,5 @@ async function getRenderer(): Promise<Renderer> {
     }
   }
 }
+
+main();
