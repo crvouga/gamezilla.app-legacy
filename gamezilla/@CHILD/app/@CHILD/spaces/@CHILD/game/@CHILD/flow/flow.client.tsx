@@ -132,7 +132,7 @@ const updateFromGameEvent: Module["update"] = (input) => {
         case "puzzle-builder": {
           return {
             model: { t: "none" },
-            cmd: [showToast("Not supported")],
+            cmd: [showToast("Not implemented yet")],
           };
         }
 

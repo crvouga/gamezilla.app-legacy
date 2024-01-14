@@ -101,6 +101,7 @@ export const reducer = ({
           });
           return {
             ...state,
+            latestEvent: event.eventId,
             game: gameNew,
           };
         }
@@ -110,6 +111,7 @@ export const reducer = ({
           }
           return {
             ...state,
+            latestEvent: event.eventId,
             type: "ended",
           };
         }
@@ -117,6 +119,7 @@ export const reducer = ({
         case "user-inputted-game": {
           return {
             ...state,
+            latestEvent: event.eventId,
             game: event.game ? Game.initState(event.game) : null,
           };
         }
@@ -124,6 +127,7 @@ export const reducer = ({
         case "user-joined-space": {
           return {
             ...state,
+            latestEvent: event.eventId,
             users: {
               ...state.users,
               [event.userId]: event.userId,
@@ -139,12 +143,13 @@ export const reducer = ({
           delete usersNew[event.userId];
           return {
             ...state,
+            latestEvent: event.eventId,
             users: usersNew,
           };
         }
 
         case "user-started-space": {
-          return state;
+          return { ...state, latestEvent: event.eventId };
         }
       }
     }
