@@ -10,8 +10,8 @@ export const ViewGameHeader = ({
   return (
     <section className="flex min-h-fit w-full">
       <div className="flex h-48 w-full flex-col items-center justify-center gap-4">
-        <p className={cn("text-center", typeof title === 'string' ? 'text-3xl font-bold' : 'text-secondary h-[36px] flex items-center justify-center')}>
-          {title ?? "No game"}
+        <p className={cn("text-center", typeof title === 'string' ? 'text-3xl font-bold' : 'text-secondary h-[36px] font-bold flex items-center justify-center')}>
+          {title ?? "No game selected"}
         </p>
 
         {renderCoverArt({
