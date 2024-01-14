@@ -42,12 +42,26 @@ export const listSpaces = ({
   model,
   limit,
   offset,
+  where,
 }: {
   model: Model;
   limit: number;
   offset: number;
-  sort: "newest" | "oldest";
+  where?: {
+    spaceId?: SpaceId;
+  };
+  sort?: "newest" | "oldest";
 }): Space.Model[] => {
+  if (where && where.spaceId) {
+    const space = model.spaces[where.spaceId];
+
+    if (!space) {
+      return [];
+    }
+
+    return [space];
+  }
+
   const spaces: Space.Model[] = [];
 
   let i = -1;
@@ -58,13 +72,23 @@ export const listSpaces = ({
       continue;
     }
 
-    const space = model.spaces[spaceId as SpaceId];
+    const spaceModel = model.spaces[spaceId as SpaceId];
 
-    if (!space) {
+    if (!spaceModel) {
       continue;
     }
 
-    spaces.push(space);
+    const spaceState = Space.deriveState(spaceModel);
+
+    if (spaceState.type === "initial") {
+      continue;
+    }
+
+    if (spaceState.type === "ended") {
+      continue;
+    }
+
+    spaces.push(spaceModel);
 
     if (spaces.length >= limit) {
       break;
@@ -283,6 +307,19 @@ const appendEvent = ({
       },
     },
   };
+};
+
+export const mergeMany = ({
+  model,
+  spaces,
+}: {
+  model: Model;
+  spaces: Space.Model[];
+}): Model => {
+  return spaces.reduce(
+    (modelNew, space) => mergeOne({ model: modelNew, space }),
+    model
+  );
 };
 
 export const mergeOne = ({

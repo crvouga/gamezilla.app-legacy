@@ -8,12 +8,12 @@ import {
   IconGamepad,
   LoadingScreen,
   TopBar,
-  cn,
+  cn
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { GameName, gameNameToString } from "../@CHILD/game/game.core";
-import { ClientModel, ClientMsg } from "../spaces.core";
 import * as Spaces from "../spaces-core/spaces";
+import { ClientModel, ClientMsg } from "../spaces.core";
 
 export const ViewScreenListSpaces = ({
   ctx,
@@ -37,12 +37,15 @@ export const ViewScreenListSpaces = ({
 
   return (
     <div className="flex w-full flex-1 flex-col overflow-hidden">
-      <TopBar title="Spaces" />
+      <TopBar
+        title="Spaces"
+
+      />
 
       <div className="relative flex w-full flex-1 flex-col gap-5 overflow-hidden overflow-y-scroll p-5 pb-8">
-        {spaces.length === 0 && !model.isSyncing && <EmptyState />}
+        {spaces.length === 0 && !model.isFetchingSpaces && <EmptyState />}
 
-        {spaces.length === 0 && model.isSyncing && <LoadingScreen />}
+        {spaces.length === 0 && model.isFetchingSpaces && <LoadingScreen />}
 
         {spaces.flatMap((state) => {
           const host = ctx.profiles[state.hostId];
@@ -80,6 +83,7 @@ export const ViewScreenListSpaces = ({
           );
         })}
       </div>
+
 
       {!currentUserSpaceId && (
         <div className="w-full border-t border-neutral-600 p-4">

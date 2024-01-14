@@ -29,7 +29,7 @@ export type ClientModel = Spaces.Model & {
   };
   previewUserId: UserId | null;
   modal: null | "user-preview" | "users";
-  isSyncing: boolean;
+  isFetchingSpaces: boolean;
 };
 
 //
@@ -61,11 +61,7 @@ export type ToClient = ToClientExtra &
         c: WithEventMeta<SpaceEvent>;
       }
     | {
-        t: "sync";
-        space: Space.Model;
-      }
-    | {
-        t: "spaces-list";
+        t: "spaces";
         spaces: Space.Model[];
       }
     | {
@@ -82,8 +78,16 @@ export type ToServer = ToServerExtra &
         c: WithEventMeta<SpaceEvent>;
       }
     | {
-        t: "sync";
-        space: Space.Model;
+        t: "spaces";
+        spaces: Space.Model[];
+      }
+    | {
+        t: "list-spaces";
+        limit: number;
+        offset: number;
+        where?: {
+          spaceId?: SpaceId;
+        };
       }
     | {
         t: "game";

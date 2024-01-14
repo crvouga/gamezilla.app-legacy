@@ -81,22 +81,25 @@ type Module = AppClientModule<{
 //
 //
 
-export const init: Module["init"] = async ({ stored }) => {
-  if (stored) {
-    return {
-      model: stored,
-    };
-  }
+const initModel: ClientModel = {
+  ...Spaces.init,
+  games: {},
+  modal: null,
+  previewUserId: null,
+  isFetchingSpaces: false,
+};
 
-  return {
-    model: {
-      ...Spaces.init,
-      games: {},
-      modal: null,
-      previewUserId: null,
-      isSyncing: false,
+export const init: Module["init"] = async ({ stored, ctx }) => {
+  return AppClientModule.chainUpdates(
+    { model: initModel },
+    model => {
+      if (stored) {
+        return { model: stored, };
+      }
+      return { model }
     },
-  };
+    model => fetchSpacesFromRoute({ model, ctx, })
+  )
 };
 
 //
@@ -195,17 +198,22 @@ const updateFromServer: Module["update"] = async (input) => {
   }
 
   switch (fromServer.t) {
-    case "sync": {
-      const merged = Spaces.mergeOne({ model, space: fromServer.space })
-      return { model: { ...model, ...merged, isSyncing: false } };
+    case "spaces": {
+      const merged = Spaces.mergeMany({ model, spaces: fromServer.spaces })
+      return {
+        model: {
+          games: model.games,
+          modal: model.modal,
+          previewUserId: model.previewUserId,
+          spaceIdByUserId: merged.spaceIdByUserId,
+          spaces: merged.spaces,
+          isFetchingSpaces: false
+        },
+      };
     }
 
     case "event": {
       return updateFromSpaceEvents({ ctx, events: [fromServer.c], model });
-    }
-
-    case 'spaces-list': {
-      return { model }
     }
 
     case "game": {
@@ -214,6 +222,33 @@ const updateFromServer: Module["update"] = async (input) => {
 
   }
 };
+
+
+const fetchSpacesFromRoute: Module["update"] = async (input) => {
+  switch (input.ctx.currentRoute.t) {
+    case 'space': {
+      switch (input.ctx.currentRoute.c.t) {
+        case 'space': {
+          return {
+            model: { ...input.model, isFetchingSpaces: true },
+            cmd: [sendToServer({ t: "list-spaces", limit: 100, offset: 0, where: { spaceId: input.ctx.currentRoute.c.spaceId } })],
+          }
+        }
+
+        case 'space-list': {
+          return {
+            model: { ...input.model, isFetchingSpaces: true },
+            cmd: [sendToServer({ t: "list-spaces", limit: 100, offset: 0 })],
+          }
+        }
+      }
+    }
+
+    default: {
+      return { model: input.model }
+    }
+  }
+}
 
 const updateFromEvent: Module["update"] = async (input) => {
   if (!input.event) {
@@ -224,9 +259,14 @@ const updateFromEvent: Module["update"] = async (input) => {
 
   switch (event.t) {
     case "routing/route-changed": {
-      return { model: { ...model, modal: null } };
+      return AppClientModule.chainUpdates(
+        { model },
+        model => {
+          return { model: { ...model, modal: null } };
+        },
+        model => fetchSpacesFromRoute({ ...input, model }),
+      )
     }
-
     case "wire/server-connected": {
       const currentUserId = input.ctx.currentUserId;
 
@@ -253,7 +293,8 @@ const updateFromEvent: Module["update"] = async (input) => {
         },
         cmd: [
           sendToServer({
-            t: "sync", space: currentUserSpace,
+            t: "spaces",
+            spaces: [currentUserSpace],
             profiles: currentUserProfile ? { [currentUserId]: currentUserProfile, } : {}
           })
         ],
@@ -774,14 +815,14 @@ const ViewSpaceScreen = ({
 
   switch (spaceState.type) {
     case "ended": {
-      if (model.isSyncing) {
+      if (model.isFetchingSpaces) {
         return <LoadingScreen />;
       }
       return <ViewSpaceEnded dispatch={dispatch} />;
     }
 
     case "initial": {
-      if (model.isSyncing) {
+      if (model.isFetchingSpaces) {
         return <LoadingScreen />;
       }
       return <ViewSpaceNotFound dispatch={dispatch} />;

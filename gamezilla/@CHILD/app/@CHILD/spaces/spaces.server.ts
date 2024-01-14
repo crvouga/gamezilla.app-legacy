@@ -3,13 +3,14 @@ import {
   withId,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
-import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { Profile, SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   ReqCtx,
   ServerCmd,
   ServerCtx,
   ServerEvent,
   broadcast,
+  sendBack,
   sendToClient,
   sendToUser,
 } from "gamezilla/@CHILD/app/@SHARED/server";
@@ -129,28 +130,62 @@ const updateFromClient: Module["update"] = async (input) => {
       return updated;
     }
 
-    case "sync": {
+    case "list-spaces": {
+      const spaces = Spaces.listSpaces({
+        model,
+        limit: fromClient.limit,
+        offset: fromClient.offset,
+        where: fromClient.where,
+      });
+
+      const profiles: { [userId: string]: Profile } = {};
+      for (const space of spaces) {
+        for (const userId of Space.toUserIds(space)) {
+          const profile = model.profileCache[userId];
+          if (profile) {
+            profiles[userId] = profile;
+          }
+        }
+      }
+
+      return {
+        model,
+        cmd: [sendBack(fromClient, { t: "spaces", spaces, profiles })],
+      };
+    }
+
+    case "spaces": {
       return AppServerModule.chainUpdates(
         { model },
         (model) => {
-          const merged = Spaces.mergeOne({ model, space: fromClient.space });
-          return { model: { ...model, ...merged } };
+          const merged = Spaces.mergeMany({ model, spaces: fromClient.spaces });
+          return {
+            model: {
+              games: model.games,
+              profileCache: model.profileCache,
+              spaceIdByUserId: merged.spaceIdByUserId,
+              spaces: merged.spaces,
+            },
+          };
         },
         (model) => {
-          const spaceId = Space.toSpaceId(fromClient.space);
-          if (!spaceId) {
-            return { model };
-          }
-          const spaceModel = Spaces.toSpace(model, spaceId);
-          if (!spaceModel) {
-            return { model };
-          }
+          const spacesNew = fromClient.spaces.flatMap((space) => {
+            const spaceId = Space.toSpaceId(space);
+            if (!spaceId) {
+              return [];
+            }
+            const spaceNew = Spaces.toSpace(model, spaceId);
+            if (!spaceNew) {
+              return [];
+            }
+            return [spaceNew];
+          });
           return {
             model,
             cmd: [
               sendToClient<ToClient>([fromClient.clientId], {
-                t: "sync",
-                space: spaceModel,
+                t: "spaces",
+                spaces: spacesNew,
                 causedBy: fromClient,
                 profiles: model.profileCache,
               }),
@@ -184,8 +219,8 @@ const updateFromEvent: Module["update"] = async (input) => {
         model,
         cmd: [
           sendToClient<ToClient>([event.clientId], {
-            t: "sync",
-            space,
+            t: "spaces",
+            spaces: [space],
             profiles: model.profileCache,
           }),
         ],
@@ -380,9 +415,13 @@ const sendEventToClients = async ({
 
   const spaceState = Spaces.toSpaceStarted(model, eventWithMeta.spaceId);
 
+  const profile =
+    "userId" in eventWithMeta ? model.profileCache[eventWithMeta.userId] : null;
+
   const toClient: ToClient = {
     t: "event",
     c: eventWithMeta,
+    profiles: profile ? { [profile.userId]: profile } : {},
   };
 
   if (spaceState && eventWithMeta.t === "game") {
@@ -417,8 +456,8 @@ const updateFromSpaceEvent = async ({
         model,
         cmd: [
           sendToUser([spaceEvent.userId], {
-            t: "sync",
-            space,
+            t: "spaces",
+            spaces: [space],
             causedBy: spaceEvent,
           }),
         ],
