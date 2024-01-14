@@ -270,11 +270,6 @@ export const View = ({
             if (!touch) {
               return;
             }
-
-            const x = touch.clientX;
-            const y = touch.clientY;
-
-
           }}
           onClick={(event) => {
             dispatch(["ClickedBoard", mouseEventToPosition(event)]);

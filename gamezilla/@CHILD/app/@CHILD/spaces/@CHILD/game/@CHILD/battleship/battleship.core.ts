@@ -154,6 +154,6 @@ export const toTurn = (model: CoreModel): PlayerType => {
   }
 };
 
-const toTurnRuleCount = (model: CoreModel): PlayerType => {
+const toTurnRuleCount = (_model: CoreModel): PlayerType => {
   return "player-one";
 };
