@@ -6,7 +6,7 @@ const RENDERER_IMPL = "react" as Renderer;
 
 export type Transport = "socket-io" | "web-sockets";
 
-const TRANSPORT_IMPL = "socket-io" as Transport;
+const TRANSPORT_IMPL = "web-sockets" as Transport;
 
 const IS_PROD = process.env["NODE_ENV"] === "production";
 const SERVER_PORT_LOCAL = 5002;
