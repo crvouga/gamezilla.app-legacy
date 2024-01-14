@@ -90,11 +90,11 @@ export const init: Module["init"] = async () => {
 export const update: Module["update"] = async (input) => {
   return AppServerModule.chainUpdates(
     { model: input.model },
+    (model) => updateProfileCache({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
-    (model) => updateChild({ ...input, model }),
-    (model) => updateProfileCache({ ...input, model })
+    (model) => updateChild({ ...input, model })
   );
 };
 
@@ -156,12 +156,16 @@ const updateFromClient: Module["update"] = async (input) => {
 
       const profiles = spacesToProfiles(model, spaces);
 
+      const started = spaces.map((space) =>
+        Space.startFromLatestSnapshot(space)
+      );
+
       return {
         model,
         cmd: [
           sendBack(fromClient, {
             t: "listed-spaces",
-            spaces,
+            spaces: started,
             profiles,
             causedBy: fromClient.t,
           }),
@@ -482,12 +486,14 @@ const updateFromSpaceEvent = async ({
         return { model };
       }
 
+      const started = Space.startFromLatestSnapshot(space);
+
       return {
         model,
         cmd: [
           sendToUser([spaceEvent.userId], {
-            t: "listed-spaces",
-            spaces: [space],
+            t: "synced",
+            space: started,
             causedBy: spaceEvent.t,
           }),
         ],

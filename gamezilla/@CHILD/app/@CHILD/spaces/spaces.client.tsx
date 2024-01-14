@@ -302,6 +302,8 @@ const updateFromEvent: Module["update"] = async (input) => {
         return { model };
       }
 
+      const started = Space.startFromLatestSnapshot(currentUserSpace);
+
       return {
         model: {
           ...model,
@@ -310,7 +312,7 @@ const updateFromEvent: Module["update"] = async (input) => {
         cmd: [
           sendToServer({
             t: "sync",
-            space: currentUserSpace,
+            space: started,
             profiles: currentUserProfile
               ? { [currentUserId]: currentUserProfile }
               : {},
