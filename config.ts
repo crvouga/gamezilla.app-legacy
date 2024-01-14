@@ -2,7 +2,7 @@ import config from "./config.json";
 
 export type Renderer = "inferno" | "preact" | "react";
 
-const RENDERER_IMPL = "react" as Renderer;
+const RENDERER_IMPL = "inferno" as Renderer;
 
 export type Transport = "socket-io" | "web-sockets";
 
