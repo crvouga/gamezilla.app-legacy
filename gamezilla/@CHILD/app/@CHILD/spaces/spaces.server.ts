@@ -242,7 +242,7 @@ const updateFromEvent: Module["update"] = async (input) => {
         model,
         cmd: [
           sendToClient<ToClient>([event.clientId], {
-            t: "synced",
+            t: "current-user-space",
             space,
             profiles,
             causedBy: event.t,

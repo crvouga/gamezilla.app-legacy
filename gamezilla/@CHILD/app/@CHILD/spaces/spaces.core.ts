@@ -69,6 +69,10 @@ export type ToClient = ToClientExtra &
         space: Space.Model;
       }
     | {
+        t: "current-user-space";
+        space: Space.Model;
+      }
+    | {
         t: "game";
         spaceId: SpaceId;
         c: Game.ToClient;

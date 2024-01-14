@@ -212,6 +212,7 @@ const updateFromServer: Module["update"] = async (input) => {
       };
     }
 
+    case 'current-user-space':
     case 'synced': {
       const merged = Spaces.mergeOne({ model, space: fromServer.space })
       return {
@@ -463,7 +464,7 @@ const updateFromSpaceEventsLoop = async (
     (model) => updateSpaceFromSpaceEvent({ model, ctx, spaceEvent }),
     (model) => Spaces.updateFromEvent({ model, spaceEvent }),
     (model) => updateGameFromSpaceEvent({ model, ctx, spaceEvent, }),
-    (model) => sendEventToServer({ model, spaceEvent }),
+    (model) => sendEventToServer({ model, ctx, spaceEvent }),
   );
 
   const accNew: typeof acc = {
@@ -478,9 +479,11 @@ const updateFromSpaceEventsLoop = async (
 };
 
 const sendEventToServer = async ({
+  ctx,
   model,
   spaceEvent: event,
 }: {
+  ctx: ClientCtx | AnonymousClientCtx;
   model: ClientModel;
   spaceEvent: WithEventId<SpaceEvent>;
 }): Promise<{
@@ -493,9 +496,13 @@ const sendEventToServer = async ({
     return { model };
   }
 
+  const profile = 'userId' in eventWithMeta ? ctx.profiles[eventWithMeta.userId] : null
+
+  const profiles = profile ? { [profile.userId]: profile } : {}
+
   return {
     model,
-    cmd: [sendToServer({ t: "event", c: eventWithMeta })],
+    cmd: [sendToServer({ t: "event", c: eventWithMeta, profiles })],
   };
 };
 
