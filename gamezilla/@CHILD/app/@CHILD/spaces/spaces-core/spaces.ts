@@ -187,7 +187,7 @@ export const toSpaceStarted = (
 
 type UpdateError = "space-not-found" | "already-in-space";
 
-export const updateFromEvent = ({
+export const updateFromSpaceEvent = ({
   model,
   spaceEvent,
 }: {

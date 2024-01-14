@@ -185,7 +185,7 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
 
     case "event": {
 
-      return updateFromSpaceEvents({ ctx, events: [msg.c], model });
+      return updateFromManySpaceEvents({ ctx, events: [msg.c], model });
     }
   }
 };
@@ -228,7 +228,7 @@ const updateFromServer: Module["update"] = async (input) => {
     }
 
     case "event": {
-      return updateFromSpaceEvents({ ctx, events: [fromServer.c], model });
+      return updateFromManySpaceEvents({ ctx, events: [fromServer.c], model });
     }
 
     case "game": {
@@ -386,7 +386,7 @@ const updateGame: Module["update"] = async (input) => {
   return AppClientModule.chainUpdates(
     { model },
     (model) => mergeUpdatedGame({ model, spaceId, gameUpdated }),
-    (model) => updateFromSpaceEvents({ ctx, events: eventsNew, model })
+    (model) => updateFromManySpaceEvents({ ctx, events: eventsNew, model })
   );
 };
 
@@ -426,19 +426,19 @@ type Acc = {
   eff?: Eff<ClientMsg>;
 };
 
-const updateFromSpaceEvents = (input: {
+const updateFromManySpaceEvents = (input: {
   ctx: ClientCtx | AnonymousClientCtx;
   model: ClientModel;
   events: WithEventId<SpaceEvent>[];
 }): Promise<Acc> => {
-  return updateFromSpaceEventsLoop(input.ctx, input.events, {
+  return updateFromManySpaceEventsLoop(input.ctx, input.events, {
     model: input.model,
     cmd: [],
     eff: Eff.None,
   });
 };
 
-const updateFromSpaceEventsLoop = async (
+const updateFromManySpaceEventsLoop = async (
   ctx: ClientCtx | AnonymousClientCtx,
   events: WithEventId<SpaceEvent>[],
   acc: Acc
@@ -452,18 +452,18 @@ const updateFromSpaceEventsLoop = async (
   const spaceModelBefore = Spaces.toSpace(acc.model, spaceEvent.spaceId) ?? Space.init
 
   if (!spaceModelBefore) {
-    return updateFromSpaceEventsLoop(ctx, spaceEventsRest, acc);
+    return updateFromManySpaceEventsLoop(ctx, spaceEventsRest, acc);
   }
 
   if (Space.hasEvent(spaceModelBefore, spaceEvent.eventId)) {
-    return updateFromSpaceEventsLoop(ctx, spaceEventsRest, acc);
+    return updateFromManySpaceEventsLoop(ctx, spaceEventsRest, acc);
   }
 
   const updated = await AppClientModule.chainUpdates(
     acc,
-    (model) => updateSpaceFromSpaceEvent({ model, ctx, spaceEvent }),
-    (model) => Spaces.updateFromEvent({ model, spaceEvent }),
-    (model) => sendEventToServer({ model, ctx, spaceEvent }),
+    (model) => updateClientFromSpaceEvent({ model, ctx, spaceEvent }),
+    (model) => Spaces.updateFromSpaceEvent({ model, spaceEvent }),
+    (model) => sendSpaceEventToServer({ model, ctx, spaceEvent }),
   );
 
   const accNew: typeof acc = {
@@ -474,10 +474,10 @@ const updateFromSpaceEventsLoop = async (
 
   const spaceEventsNew = batchMsgs(spaceEventsRest, updated.event);
 
-  return updateFromSpaceEventsLoop(ctx, spaceEventsNew, accNew);
+  return updateFromManySpaceEventsLoop(ctx, spaceEventsNew, accNew);
 };
 
-const sendEventToServer = async ({
+const sendSpaceEventToServer = async ({
   ctx,
   model,
   spaceEvent: event,
@@ -508,7 +508,7 @@ const sendEventToServer = async ({
 
 
 
-const updateSpaceFromSpaceEvent = async ({
+const updateClientFromSpaceEvent = async ({
   ctx,
   model,
   spaceEvent,

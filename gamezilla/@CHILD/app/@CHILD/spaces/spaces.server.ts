@@ -398,7 +398,7 @@ const updateFromSpaceEventsLoop = async (
     acc,
     (model) => updateFromSpaceEvent({ model, spaceEvent }),
     (model) => updateGameFromSpaceEvent({ ctx, model, spaceEvent }),
-    (model) => Spaces.updateFromEvent({ model, spaceEvent }),
+    (model) => Spaces.updateFromSpaceEvent({ model, spaceEvent }),
     (model) => sendEventToClients({ model, spaceEvent })
   );
 
