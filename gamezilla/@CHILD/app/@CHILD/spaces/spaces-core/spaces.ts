@@ -80,15 +80,19 @@ export const listSpaces = ({
 
     const spaceState = Space.deriveState(spaceModel);
 
-    if (spaceState.type === "initial") {
-      continue;
+    switch (spaceState.type) {
+      case "ended": {
+        break;
+      }
+      case "initial": {
+        break;
+      }
+      case "started": {
+        const started = Space.startFromLatestSnapshot(spaceModel);
+        spaces.push(started);
+        break;
+      }
     }
-
-    if (spaceState.type === "ended") {
-      continue;
-    }
-
-    spaces.push(spaceModel);
 
     if (spaces.length >= limit) {
       break;
