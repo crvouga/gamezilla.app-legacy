@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "composite": true,
-    "allowImportingTsExtensions": true,
-    "moduleResolution": "bundler"
+    "allowImportingTsExtensions": false,
+    "moduleResolution": "bundler",
+    "module": "es2015",
+    "noEmit": false
   },
   "include": ["vite.config.ts", "tailwind.config.ts", "config.ts"]
 }

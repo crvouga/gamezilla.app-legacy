@@ -5,7 +5,6 @@ import {
   APP_SOUND,
   ClientCmd,
   playSound,
-  showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconGamepad,
@@ -14,6 +13,7 @@ import {
 import { Sub } from "gamezilla/@SHARED/core";
 import { withId } from "../../../../@SHARED/event";
 import { PlayClient } from "./@CHILD/play/play.client";
+import { PuzzleBuilderClient } from "./@CHILD/puzzle-builder/puzzle-builder.client";
 import { CoverArt } from "./@SHARED/flow-cover-art";
 import { FlowClientCtx } from "./@SHARED/flow-ctx";
 import {
@@ -24,7 +24,6 @@ import {
   ToClient,
   ToServer,
 } from "./flow.core";
-import { PuzzleBuilderClient } from "./@CHILD/puzzle-builder/puzzle-builder.client";
 
 //
 //
@@ -104,7 +103,28 @@ const updateChild: Module["update"] = (input) => {
     }
 
     case "puzzle-builder": {
-      return { model };
+      const updated = PuzzleBuilderClient.update({
+        ctx,
+        gameState: gameState.c,
+        model:
+          model.t === "puzzle-builder" ? model.c : PuzzleBuilderClient.init,
+        cmd: cmd,
+        event: event,
+        fromServer: fromServer?.t === "puzzle-builder" ? fromServer.c : null,
+        gameEvent:
+          gameEvent?.t === "puzzle-builder"
+            ? { ...gameEvent, ...gameEvent.c }
+            : null,
+        msg: msg?.t === "puzzle-builder" ? msg.c : null,
+      });
+
+      const tagged = GameClientModule.tagOutput(
+        "puzzle-builder",
+        (cmd) => ClientCmd.tag("puzzle-builder", cmd),
+        updated
+      );
+
+      return tagged;
     }
   }
 };
@@ -133,11 +153,8 @@ const updateFromGameEvent: Module["update"] = (input) => {
 
         case "puzzle-builder": {
           return {
-            model: { t: "none" },
-            cmd: [
-              showToast("Not implemented yet"),
-              playSound(APP_SOUND.alertErrorSm),
-            ],
+            model: { t: "puzzle-builder", c: PuzzleBuilderClient.init },
+            cmd: [playSound(APP_SOUND.navForwardMin)],
           };
         }
 
@@ -205,7 +222,10 @@ const subscriptions: Module["subscriptions"] = (input) => {
         PuzzleBuilderClient.subscriptions({
           ctx: input.ctx,
           gameState: input.gameState.c,
-          model: input.model.t === "puzzle-builder" ? input.model.c : PuzzleBuilderClient.init,
+          model:
+            input.model.t === "puzzle-builder"
+              ? input.model.c
+              : PuzzleBuilderClient.init,
         })
       );
     }

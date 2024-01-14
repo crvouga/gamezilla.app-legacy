@@ -1,6 +1,7 @@
 import { GameCore } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-core";
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { FlowGridUIPlay } from "../../@SHARED/flow";
+import { samples } from "../../@SHARED/flow/flow-grid/flow-grid-samples";
 
 //
 //
@@ -55,7 +56,9 @@ type Module = GameCore<{
 
 export const initState: Module["initState"] = () => {
   return {
-    grid: FlowGridUIPlay.init(),
+    grid: FlowGridUIPlay.init({
+      grid: samples["8x8"][1],
+    }),
   };
 };
 

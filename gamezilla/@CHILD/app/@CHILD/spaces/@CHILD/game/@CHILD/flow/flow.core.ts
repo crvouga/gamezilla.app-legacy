@@ -2,6 +2,7 @@ import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import * as Play from "./@CHILD/play/play.core";
 import * as PuzzleBuilder from "./@CHILD/puzzle-builder/puzzle-builder.core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { WithEventMeta } from "../../../../@SHARED/event";
 
 //
 //
@@ -64,7 +65,7 @@ export const reducer = ({
   state,
 }: {
   ctx: SpaceCtx;
-  event: GameEvent;
+  event: WithEventMeta<GameEvent>;
   state: GameState;
 }): GameState => {
   switch (event.t) {

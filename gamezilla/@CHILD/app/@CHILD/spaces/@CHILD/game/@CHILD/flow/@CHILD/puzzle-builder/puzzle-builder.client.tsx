@@ -1,7 +1,8 @@
 import { ViewBottomButtonBar } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { SpaceClientEvent } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
-import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconPenToSquare,
@@ -9,7 +10,7 @@ import {
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
-import { FlowGridUI, FlowGridUIPlay, FlowUI } from "../../@SHARED/flow";
+import { FlowGridUI, FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import {
   ClientModel,
@@ -18,7 +19,6 @@ import {
   GameState,
   ToClient,
   ToServer,
-  initCore,
 } from "./puzzle-builder.core";
 
 type Module = GameClientModule<{
@@ -35,7 +35,7 @@ type Module = GameClientModule<{
   OutEvent: null;
 }>;
 
-const init: Module["init"] = initCore;
+const init: Module["init"] = null
 
 const update: Module["update"] = (input) => {
   const { model, msg } = input;
@@ -45,16 +45,12 @@ const update: Module["update"] = (input) => {
   }
 
   switch (msg.t) {
-    case "play-ui": {
-      const updated = FlowGridUIPlay.update({
-        model: model.playUI,
-        msg: msg.c,
-      });
-      return { model: { ...model, playUI: updated } };
-    }
-
     default: {
-      return { model, cmd: [sendToServer(msg)] };
+      const gameEvent = withId(msg);
+      return {
+        model,
+        gameEvent: [gameEvent],
+      };
     }
   }
 };
@@ -63,21 +59,22 @@ const subscriptions: Module["subscriptions"] = () => {
   return Sub.None;
 };
 
-const View: Module["View"] = ({ model, dispatch, ctx }) => {
-  switch (model.mode) {
+const View: Module["View"] = ({ gameState, dispatch, ctx }) => {
+  switch (gameState.mode.t) {
     case "edit": {
       return (
         <div className="flex h-full w-full flex-col items-center justify-center">
+
           <div className="flex w-full items-center justify-center gap-2 bg-yellow-500 p-2 text-xl text-white">
             <IconPenToSquare className="h-6 w-6" />
             Edit Mode
           </div>
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll">
             <FlowGridUI.View
-              model={model.editUI}
+              model={gameState.grid}
               onPressDown={(nodeId) => {
                 dispatch({
-                  t: "pressed-down-node",
+                  t: "user-pressed-down-node",
                   nodeId,
                 });
               }}
@@ -89,13 +86,10 @@ const View: Module["View"] = ({ model, dispatch, ctx }) => {
                   cx={0}
                   cy={0}
                   r={1}
-                  fill={FlowUI.Color.toHex(
-                    FlowUI.Color.groupIdToColor[model.activeGroupId]
-                  )}
                 />
               </svg>
               <p>
-                {capitalize(FlowUI.Color.groupIdToColor[model.activeGroupId])}
+
               </p>
             </div>
           </div>
@@ -109,9 +103,7 @@ const View: Module["View"] = ({ model, dispatch, ctx }) => {
               {
                 label: "Play Mode",
                 icon: <IconPlay className="h-6 w-6" />,
-                onClick: () => {
-                  dispatch({ t: "input-mode", mode: "play" });
-                },
+                onClick: () => dispatch({ t: "user-changed-to-play-mode", userId: ctx.currentUserId }),
               },
             ]}
           />
@@ -128,7 +120,7 @@ const View: Module["View"] = ({ model, dispatch, ctx }) => {
           </div>
           <div className="flex w-full flex-1 flex-col items-center justify-center gap-3">
             <FlowGridUIPlay.View
-              model={model.playUI}
+              model={{ ...gameState.play, grid: gameState.grid }}
               dispatch={(m) => dispatch({ t: "play-ui", c: m })}
             />
           </div>
@@ -142,9 +134,7 @@ const View: Module["View"] = ({ model, dispatch, ctx }) => {
               {
                 label: "Edit Mode",
                 icon: <IconPenToSquare className="h-6 w-6" />,
-                onClick: () => {
-                  dispatch({ t: "input-mode", mode: "edit" });
-                },
+                onClick: () => dispatch({ t: "user-changed-to-edit-mode", userId: ctx.currentUserId }),
               },
             ]}
           />
@@ -158,7 +148,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = () => {
   return <div></div>;
 };
 
-const capitalize = (s: string) => {
+export const capitalize = (s: string) => {
   return `${s.charAt(0).toUpperCase()}${s.slice(1).toLowerCase()}`;
 };
 

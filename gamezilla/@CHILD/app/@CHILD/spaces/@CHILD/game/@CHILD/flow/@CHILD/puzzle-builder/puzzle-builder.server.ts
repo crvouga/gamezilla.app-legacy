@@ -1,7 +1,7 @@
 import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2";
 import {
-  SpaceClientCtx,
-  SpaceClientEvent,
+  SpaceServerCtx,
+  SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { Sub } from "gamezilla/@SHARED/core";
@@ -12,24 +12,23 @@ import {
   ServerMsg,
   ToClient,
   ToServer,
-  initCore,
 } from "./puzzle-builder.core";
 
 type Module = GameServerModule<{
   ToClient: ToClient;
   ToServer: ToServer;
-  GameEvent: GameState;
-  GameState: GameEvent;
-  Ctx: SpaceClientCtx;
+  GameEvent: GameEvent;
+  GameState: GameState;
+  Ctx: SpaceServerCtx;
   InCmd: null;
-  InEvent: SpaceClientEvent;
+  InEvent: SpaceServerEvent;
   Model: ServerModel;
   Msg: ServerMsg;
   OutCmd: SpaceServerCmd<ToClient>;
   OutEvent: null;
 }>;
 
-const init: Module["init"] = initCore;
+const init: Module["init"] = null;
 
 const update: Module["update"] = async (input) => {
   return { model: input.model };

@@ -1,7 +1,6 @@
 import { AlgoDrawPipes } from "../algo";
 import * as Flow from "../flow";
 import * as FlowGrid from "./flow-grid";
-import { samples } from "./flow-grid-samples";
 import * as FlowGridUI from "./flow-grid-ui";
 
 //
@@ -36,24 +35,24 @@ export type Model = {
 
 export type Msg =
   | {
-      t: "pressed-down";
-      nodeId: Flow.NodeId;
-    }
+    t: "pressed-down";
+    nodeId: Flow.NodeId;
+  }
   | {
-      t: "pressed-up";
-      nodeId: Flow.NodeId;
-    }
+    t: "pressed-up";
+    nodeId: Flow.NodeId;
+  }
   | {
-      t: "dragged-over";
-      nodeId: Flow.NodeId;
-    }
+    t: "dragged-over";
+    nodeId: Flow.NodeId;
+  }
   | {
-      t: "left";
-    };
+    t: "left";
+  };
 
-export const init = (): Model => {
+export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
   return {
-    grid: samples["15x15"][1],
+    grid: grid,
     state: { t: "idle" },
   };
 };
@@ -190,9 +189,9 @@ export const View = ({
       autocompleteEdge={
         model.state.t === "dragging" && model.state.autocompleteEdge
           ? {
-              ...model.state.autocompleteEdge,
-              groupId: model.state.activeGroupId,
-            }
+            ...model.state.autocompleteEdge,
+            groupId: model.state.activeGroupId,
+          }
           : null
       }
       isActive={({ groupId }) =>

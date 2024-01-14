@@ -19,6 +19,7 @@ import {
   ToClient,
   ToServer,
 } from "./play.core";
+import { samples } from "../../@SHARED/flow/flow-grid/flow-grid-samples";
 
 type Module = GameClientModule<{
   Model: ClientModel;
@@ -35,7 +36,9 @@ type Module = GameClientModule<{
 }>;
 
 const init: Module["init"] = {
-  grid: FlowGridUIPlay.init(),
+  grid: FlowGridUIPlay.init({
+    grid: samples['8x8'][0]
+  }),
 };
 
 const update: Module["update"] = (input) => {

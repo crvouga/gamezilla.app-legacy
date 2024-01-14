@@ -39,7 +39,7 @@ const main = async () => {
 
   await program.start();
 
-  const SHOULD_USE_DEBUGGER = false
+  const SHOULD_USE_DEBUGGER = !PUBLIC_APP_CONFIG.IS_PROD
   if (SHOULD_USE_DEBUGGER) {
     attachDebuggerBrowserExtension(program);
   }

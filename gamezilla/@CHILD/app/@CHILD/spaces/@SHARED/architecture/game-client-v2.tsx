@@ -234,11 +234,15 @@ const tagOutput = <
     cmd: output.cmd ? tagCmd(output.cmd) : [],
     eff: Eff.tag(tag, output.eff),
     event: output.event,
-    gameEvent: output.gameEvent?.map((c) => ({
-      eventId: c.eventId,
-      c: c,
-      t: tag,
-    })),
+    gameEvent: output.gameEvent?.map((c) => {
+      const child = { ...c }
+      delete child.eventId
+      return ({
+        eventId: c.eventId,
+        c: child,
+        t: tag,
+      })
+    }),
   };
 };
 

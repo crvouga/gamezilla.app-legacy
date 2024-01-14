@@ -57,7 +57,7 @@
     "allowImportingTsExtensions": true,
     "moduleDetection": "force",
 
-    "types": ["bun-types",  "inferno", "preact", "react"],
+    "types": ["bun-types", "inferno", "preact", "react"],
     "jsx": "preserve", // support JSX
     "allowJs": true, // allow importing `.js` from `.ts`
 
@@ -66,10 +66,9 @@
     "skipLibCheck": true
     // "resolveJsonModule": true
   },
-  "exclude": [
-    "node_modules"
-  ],
+  "exclude": ["node_modules"],
   "include": [
+    "config.ts",
     "gamezilla",
     "global.d.ts",
     "node_modules/inferno/dist/index.d.ts"

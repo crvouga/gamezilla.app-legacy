@@ -14,6 +14,7 @@ import {
   ToClient,
   ToServer,
 } from "./flow.core";
+import { PuzzleBuilderServer } from "./@CHILD/puzzle-builder/puzzle-builder.server";
 
 type Module = GameServerModule<{
   Model: ServerModel;
@@ -71,7 +72,33 @@ const updateChild: Module["update"] = async (input) => {
     }
 
     case "puzzle-builder": {
-      return { model: input.model };
+      const updated = await PuzzleBuilderServer.update({
+        ctx: input.ctx,
+        gameState: gameState.c,
+        model:
+          input.model.t === "puzzle-builder"
+            ? input.model.c
+            : PuzzleBuilderServer.init,
+        cmd: input.cmd,
+        event: input.event,
+        fromClient:
+          input.fromClient?.t === "puzzle-builder"
+            ? { ...input.fromClient, ...input.fromClient.c }
+            : null,
+        gameEvent:
+          input.gameEvent?.t === "puzzle-builder"
+            ? { ...input.gameEvent, ...input.gameEvent.c }
+            : null,
+        msg: input.msg?.t === "puzzle-builder" ? input.msg.c : null,
+      });
+
+      const tagged = GameServerModule.tagOutput(
+        "puzzle-builder",
+        (cmd) => SpaceServerCmd.tag("puzzle-builder", cmd),
+        updated
+      );
+
+      return tagged;
     }
 
     case null: {
@@ -80,6 +107,37 @@ const updateChild: Module["update"] = async (input) => {
   }
 };
 
-export const subscriptions: Module["subscriptions"] = async () => {
-  return Sub.None;
+export const subscriptions: Module["subscriptions"] = async (input) => {
+  const { gameState } = input;
+
+  switch (gameState.t) {
+    case "play": {
+      return Sub.tag(
+        "play",
+        await PlayServer.subscriptions({
+          ctx: input.ctx,
+          gameState: gameState.c,
+          model: input.model.t === "play" ? input.model.c : PlayServer.init,
+        })
+      );
+    }
+
+    case "puzzle-builder": {
+      return Sub.tag(
+        "puzzle-builder",
+        await PuzzleBuilderServer.subscriptions({
+          ctx: input.ctx,
+          gameState: gameState.c,
+          model:
+            input.model.t === "puzzle-builder"
+              ? input.model.c
+              : PuzzleBuilderServer.init,
+        })
+      );
+    }
+
+    case null: {
+      return Sub.None;
+    }
+  }
 };
