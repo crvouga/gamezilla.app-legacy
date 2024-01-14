@@ -80,10 +80,10 @@ export const getDeps = async (): Promise<Result<string, Deps>> => {
   const transport = ServerTransport<ToServer, ToClient>({
     codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
     impl: {
-      // t: "socket-io",
-      t: "bun-web-sockets",
       serverPort: PUBLIC_APP_CONFIG.SERVER_PORT,
-      endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
+      t: "socket-io",
+      // t: "bun-web-sockets",
+      // endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
     },
   });
 
