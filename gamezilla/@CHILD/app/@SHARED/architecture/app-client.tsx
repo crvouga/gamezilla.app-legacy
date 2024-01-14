@@ -95,11 +95,11 @@ export type Output<T extends AppClientModuleTypes> = {
    */
   eff?: Eff<T["Msg"]>;
   /**
-   *
+   * `cmd` is a message to send to another module
    */
   cmd?: T["OutCmd"][];
   /**
-   *
+   * `event` is a message to notify other modules
    */
   event?: T["OutEvent"][];
 };

@@ -3,7 +3,7 @@ import {
   withId,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
-import { Profile, SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   ReqCtx,
   ServerCmd,
@@ -42,6 +42,24 @@ type Module = AppServerModule<{
   ToClient: ToClient;
   ToServer: ToServer;
 }>;
+
+const spacesToProfiles = (
+  model: ServerModel,
+  spaces: Space.Model[]
+): ServerModel["profileCache"] => {
+  const profiles: ServerModel["profileCache"] = {};
+
+  for (const space of spaces) {
+    for (const userId of Space.toUserIds(space)) {
+      const profile = model.profileCache[userId];
+      if (profile) {
+        profiles[userId] = profile;
+      }
+    }
+  }
+
+  return profiles;
+};
 
 //
 //
@@ -138,27 +156,27 @@ const updateFromClient: Module["update"] = async (input) => {
         where: fromClient.where,
       });
 
-      const profiles: { [userId: string]: Profile } = {};
-      for (const space of spaces) {
-        for (const userId of Space.toUserIds(space)) {
-          const profile = model.profileCache[userId];
-          if (profile) {
-            profiles[userId] = profile;
-          }
-        }
-      }
+      const profiles = spacesToProfiles(model, spaces);
 
       return {
         model,
-        cmd: [sendBack(fromClient, { t: "spaces", spaces, profiles })],
+        cmd: [
+          sendBack(fromClient, {
+            t: "listed-spaces",
+            spaces,
+            profiles,
+            causedBy: fromClient.t,
+          }),
+        ],
       };
     }
 
-    case "spaces": {
+    case "sync": {
       return AppServerModule.chainUpdates(
         { model },
         (model) => {
-          const merged = Spaces.mergeMany({ model, spaces: fromClient.spaces });
+          const merged = Spaces.mergeOne({ model, space: fromClient.space });
+
           return {
             model: {
               games: model.games,
@@ -169,25 +187,28 @@ const updateFromClient: Module["update"] = async (input) => {
           };
         },
         (model) => {
-          const spacesNew = fromClient.spaces.flatMap((space) => {
-            const spaceId = Space.toSpaceId(space);
-            if (!spaceId) {
-              return [];
-            }
-            const spaceNew = Spaces.toSpace(model, spaceId);
-            if (!spaceNew) {
-              return [];
-            }
-            return [spaceNew];
-          });
+          const spaceId = Space.toSpaceId(fromClient.space);
+
+          if (!spaceId) {
+            return { model };
+          }
+
+          const spaceNew = Spaces.toSpace(model, spaceId);
+
+          if (!spaceNew) {
+            return { model };
+          }
+
+          const profiles = spacesToProfiles(model, [spaceNew]);
+
           return {
             model,
             cmd: [
               sendToClient<ToClient>([fromClient.clientId], {
-                t: "spaces",
-                spaces: spacesNew,
-                causedBy: fromClient,
-                profiles: model.profileCache,
+                t: "synced",
+                causedBy: fromClient.t,
+                space: spaceNew,
+                profiles: profiles,
               }),
             ],
           };
@@ -215,13 +236,16 @@ const updateFromEvent: Module["update"] = async (input) => {
         return { model };
       }
 
+      const profiles = spacesToProfiles(model, [space]);
+
       return {
         model,
         cmd: [
           sendToClient<ToClient>([event.clientId], {
-            t: "spaces",
-            spaces: [space],
-            profiles: model.profileCache,
+            t: "synced",
+            space,
+            profiles,
+            causedBy: event.t,
           }),
         ],
       };
@@ -295,12 +319,8 @@ const updateChild: Module["update"] = async (input) => {
 
   return AppServerModule.chainUpdates(
     { model },
-    (model) => {
-      return mergeUpdatedGame({ model, spaceId, gameUpdated });
-    },
-    (model) => {
-      return updateFromSpaceEvents({ model, ctx, events: eventsNew });
-    }
+    (model) => mergeUpdatedGame({ model, spaceId, gameUpdated }),
+    (model) => updateFromSpaceEvents({ model, ctx, events: eventsNew })
   );
 };
 
@@ -456,9 +476,9 @@ const updateFromSpaceEvent = async ({
         model,
         cmd: [
           sendToUser([spaceEvent.userId], {
-            t: "spaces",
+            t: "listed-spaces",
             spaces: [space],
-            causedBy: spaceEvent,
+            causedBy: spaceEvent.t,
           }),
         ],
       };

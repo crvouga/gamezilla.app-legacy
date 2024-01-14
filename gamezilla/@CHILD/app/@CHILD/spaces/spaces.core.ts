@@ -61,8 +61,12 @@ export type ToClient = ToClientExtra &
         c: WithEventMeta<SpaceEvent>;
       }
     | {
-        t: "spaces";
+        t: "listed-spaces";
         spaces: Space.Model[];
+      }
+    | {
+        t: "synced";
+        space: Space.Model;
       }
     | {
         t: "game";
@@ -78,8 +82,8 @@ export type ToServer = ToServerExtra &
         c: WithEventMeta<SpaceEvent>;
       }
     | {
-        t: "spaces";
-        spaces: Space.Model[];
+        t: "sync";
+        space: Space.Model;
       }
     | {
         t: "list-spaces";
@@ -105,4 +109,5 @@ export type ToClientExtra = {
 export type ToServerExtra = {
   profiles?: { [userId: UserId]: Profile };
   meta?: Record<string, unknown>;
+  causedBy?: unknown;
 };

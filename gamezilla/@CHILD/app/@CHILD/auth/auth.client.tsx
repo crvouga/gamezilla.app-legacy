@@ -278,6 +278,7 @@ const updateRedirect: Client["update"] = async (input) => {
               t: "spaces",
               c: { t: "space-list" },
             }),
+            showToast("Logged in"),
           ],
         };
       }
@@ -290,6 +291,7 @@ const updateRedirect: Client["update"] = async (input) => {
               t: "auth",
               c: { t: "login" },
             }),
+            showToast("Logged out"),
           ],
         };
       }

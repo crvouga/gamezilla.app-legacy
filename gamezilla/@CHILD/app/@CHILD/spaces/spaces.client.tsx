@@ -198,8 +198,22 @@ const updateFromServer: Module["update"] = async (input) => {
   }
 
   switch (fromServer.t) {
-    case "spaces": {
+    case "listed-spaces": {
       const merged = Spaces.mergeMany({ model, spaces: fromServer.spaces })
+      return {
+        model: {
+          games: model.games,
+          modal: model.modal,
+          previewUserId: model.previewUserId,
+          spaceIdByUserId: merged.spaceIdByUserId,
+          spaces: merged.spaces,
+          isFetchingSpaces: false
+        },
+      };
+    }
+
+    case 'synced': {
+      const merged = Spaces.mergeOne({ model, space: fromServer.space })
       return {
         model: {
           games: model.games,
@@ -267,11 +281,12 @@ const updateFromEvent: Module["update"] = async (input) => {
         model => fetchSpacesFromRoute({ ...input, model }),
       )
     }
-    case "wire/server-connected": {
-      const currentUserId = input.ctx.currentUserId;
+
+    case 'wire/server-connected': {
+      const currentUserId = input.ctx.currentUserId
 
       if (!currentUserId) {
-        return { model };
+        return { model }
       }
 
       const currentUserProfile = currentUserId
@@ -284,7 +299,7 @@ const updateFromEvent: Module["update"] = async (input) => {
       });
 
       if (!currentUserSpace) {
-        return { model };
+        return { model }
       }
 
       return {
@@ -293,13 +308,15 @@ const updateFromEvent: Module["update"] = async (input) => {
         },
         cmd: [
           sendToServer({
-            t: "spaces",
-            spaces: [currentUserSpace],
-            profiles: currentUserProfile ? { [currentUserId]: currentUserProfile, } : {}
+            t: "sync",
+            space: currentUserSpace,
+            profiles: currentUserProfile ? { [currentUserId]: currentUserProfile, } : {},
+            causedBy: event.t,
           })
         ],
       };
     }
+
 
     default: {
       return { model: input.model };
