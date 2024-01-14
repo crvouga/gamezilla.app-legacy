@@ -21,6 +21,7 @@ export const ClientTransportSocketIO = <ToServer, ToClient>({
     auth: {
       sessionId: localStorage.getItem(SESSION_ID_KEY) ?? null,
     },
+    transports: ["websocket"],
   });
 
   socket.on("connect", () => {

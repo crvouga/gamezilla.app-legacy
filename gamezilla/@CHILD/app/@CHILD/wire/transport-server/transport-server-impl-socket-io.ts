@@ -24,6 +24,8 @@ export const ServerTransportSocketIO = <ToServer, ToClient>({
       origin: "*",
       methods: ["GET", "POST"],
     },
+    transports: ["websocket"],
+    allowUpgrades: true,
   });
 
   transport.wire.publish({ t: "server-started", port: impl.serverPort });

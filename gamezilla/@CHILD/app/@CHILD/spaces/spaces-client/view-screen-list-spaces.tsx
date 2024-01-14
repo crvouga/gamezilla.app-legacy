@@ -43,9 +43,7 @@ export const ViewScreenListSpaces = ({
       />
 
       <div className="relative flex w-full flex-1 flex-col gap-5 overflow-hidden overflow-y-scroll p-5 pb-8">
-        {spaces.length === 0 && !model.isFetchingSpaces && <EmptyState />}
-
-        {spaces.length === 0 && model.isFetchingSpaces && <LoadingScreen />}
+        {spaces.length === 0 && <EmptyState />}
 
         {spaces.flatMap((state) => {
           const host = ctx.profiles[state.hostId];

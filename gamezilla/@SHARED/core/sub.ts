@@ -12,7 +12,7 @@ export type PubSub<Msg> = Pub<Msg> & Sub<Msg>;
 const create = <Msg>(): PubSub<Msg> => {
   let runningId = 0;
   const subscribers = new Map<number, (msg: Msg) => void>();
-  let queue: Msg[] = [];
+  const queue: Msg[] = [];
 
   return {
     isSubscribed: () => {
@@ -37,7 +37,7 @@ const create = <Msg>(): PubSub<Msg> => {
           subscriber(msg);
         }
       }
-      queue = [];
+      queue.length = 0;
     },
   };
 };
