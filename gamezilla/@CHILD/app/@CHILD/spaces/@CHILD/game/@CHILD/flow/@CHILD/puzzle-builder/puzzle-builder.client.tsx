@@ -63,7 +63,7 @@ const subscriptions: Module["subscriptions"] = () => {
   return Sub.None;
 };
 
-const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
+const View: Module["View"] = ({ model, dispatch, ctx }) => {
   switch (model.mode) {
     case "edit": {
       return (

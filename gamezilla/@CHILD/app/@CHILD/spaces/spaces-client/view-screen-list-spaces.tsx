@@ -6,7 +6,6 @@ import {
   Avatar,
   Button,
   IconGamepad,
-  LoadingScreen,
   TopBar,
   cn
 } from "gamezilla/@CHILD/app/@SHARED/ui";

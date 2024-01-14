@@ -95,13 +95,12 @@ interface DevToolHandlerR<Model, Msg extends object>
 export const getBrowserExtensionConnection = <Model, Msg extends object>(
   global: Global
 ): ReduxDevToolsConnection<Model, Msg> | null => {
-  let composed: unknown;
   if (
     "__REDUX_DEVTOOLS_EXTENSION_COMPOSE__" in global &&
     typeof global.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ === "function"
   ) {
     // https://github.com/reduxjs/redux-devtools/tree/main/packages/redux-devtools-instrument#api
-    composed = global.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+    global.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
       maxAge: 1,
     });
   }
