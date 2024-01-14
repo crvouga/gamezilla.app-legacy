@@ -321,9 +321,32 @@ export type GameEvent =
       c: FlowGridUIPlay.Msg;
     }
   | {
-      t: "edit-ui";
+      t: "user-tapped-node";
+      nodeId: Flow.NodeId;
     };
 
 export type GameState = {
   play: FlowGridUIPlay.Model;
+  editorIds: { [userId: UserId]: UserId };
+  placingGroup: Flow.GroupId | null;
+};
+
+export const initState = ({ ctx }: { ctx: SpaceCtx }): GameState => {
+  return {
+    play: FlowGridUIPlay.init(),
+    placingGroup: null,
+    editorIds: {
+      [ctx.space.hostId]: ctx.space.hostId,
+    },
+  };
+};
+
+export const reducer = ({
+  state,
+}: {
+  ctx: SpaceCtx;
+  event: GameEvent;
+  state: GameState;
+}): GameState => {
+  return state;
 };

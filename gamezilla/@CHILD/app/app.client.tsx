@@ -51,9 +51,9 @@ export type Deps = {
 export const getDeps = (): Deps => {
   const transport = ClientTransport<ToServer, ToClient>({
     impl: {
-      // t: 'web-sockets',
-      // endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
-      t: "socket-io",
+      t: 'web-sockets',
+      endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
+      // t: "socket-io",
       serverUrl: PUBLIC_APP_CONFIG.SERVER_URL,
     },
     codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,

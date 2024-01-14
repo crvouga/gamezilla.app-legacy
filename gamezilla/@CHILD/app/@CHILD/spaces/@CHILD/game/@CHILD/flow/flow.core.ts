@@ -83,7 +83,17 @@ export const reducer = ({
     }
 
     case "puzzle-builder": {
-      return state;
+      switch (state.t) {
+        case "puzzle-builder": {
+          return {
+            t: "puzzle-builder",
+            c: PuzzleBuilder.reducer({ ctx, event: event.c, state: state.c }),
+          };
+        }
+        default: {
+          return state;
+        }
+      }
     }
 
     case "user-changed-mode": {
@@ -104,7 +114,10 @@ export const reducer = ({
         }
 
         case "puzzle-builder": {
-          return state;
+          return {
+            t: "puzzle-builder",
+            c: PuzzleBuilder.initState({ ctx }),
+          };
         }
       }
     }

@@ -24,6 +24,7 @@ import {
   ToClient,
   ToServer,
 } from "./flow.core";
+import { PuzzleBuilderClient } from "./@CHILD/puzzle-builder/puzzle-builder.client";
 
 //
 //
@@ -72,7 +73,8 @@ const update: Module["update"] = (input) => {
 };
 
 const updateChild: Module["update"] = (input) => {
-  const { model, gameState, gameEvent, ctx, cmd, event, fromServer, msg } = input;
+  const { model, gameState, gameEvent, ctx, cmd, event, fromServer, msg } =
+    input;
 
   switch (gameState.t) {
     case null: {
@@ -185,8 +187,33 @@ const updateFromMsg: Module["update"] = (input) => {
 //
 //
 
-const subscriptions: Module["subscriptions"] = (_input) => {
-  return Sub.None;
+const subscriptions: Module["subscriptions"] = (input) => {
+  switch (input.gameState.t) {
+    case "play": {
+      return Sub.tag(
+        "play",
+        PlayClient.subscriptions({
+          ctx: input.ctx,
+          gameState: input.gameState.c,
+          model: input.model.t === "play" ? input.model.c : PlayClient.init,
+        })
+      );
+    }
+    case "puzzle-builder": {
+      return Sub.tag(
+        "puzzle-builder",
+        PuzzleBuilderClient.subscriptions({
+          ctx: input.ctx,
+          gameState: input.gameState.c,
+          model: input.model.t === "puzzle-builder" ? input.model.c : PuzzleBuilderClient.init,
+        })
+      );
+    }
+
+    default: {
+      return Sub.None;
+    }
+  }
 };
 
 //
@@ -254,8 +281,20 @@ const View: Module["View"] = (input) => {
       );
     }
 
-    case "puzzle-builder":
-      return <div></div>;
+    case "puzzle-builder": {
+      return (
+        <PuzzleBuilderClient.View
+          ctx={ctx}
+          dispatch={(c) => dispatch({ t: "puzzle-builder", c })}
+          gameState={gameState.c}
+          model={
+            input.model.t === "puzzle-builder"
+              ? input.model.c
+              : PuzzleBuilderClient.init
+          }
+        />
+      );
+    }
 
     case "play": {
       return (

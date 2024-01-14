@@ -14,6 +14,8 @@ import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import {
   ClientModel,
   ClientMsg,
+  GameEvent,
+  GameState,
   ToClient,
   ToServer,
   initCore,
@@ -24,8 +26,8 @@ type Module = GameClientModule<{
   Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  GameEvent: null;
-  GameState: null;
+  GameEvent: GameEvent;
+  GameState: GameState;
   Ctx: FlowClientCtx;
   OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
   InEvent: SpaceClientEvent;
@@ -61,7 +63,7 @@ const subscriptions: Module["subscriptions"] = () => {
   return Sub.None;
 };
 
-const View: Module["View"] = ({ model, dispatch, ctx }) => {
+const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
   switch (model.mode) {
     case "edit": {
       return (

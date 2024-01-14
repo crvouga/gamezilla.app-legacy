@@ -81,9 +81,9 @@ export const getDeps = async (): Promise<Result<string, Deps>> => {
     codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
     impl: {
       serverPort: PUBLIC_APP_CONFIG.SERVER_PORT,
-      t: "socket-io",
-      // t: "bun-web-sockets",
-      // endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
+      // t: "socket-io",
+      t: "bun-web-sockets",
+      endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
     },
   });
 
