@@ -132,7 +132,10 @@ const updateFromGameEvent: Module["update"] = (input) => {
         case "puzzle-builder": {
           return {
             model: { t: "none" },
-            cmd: [showToast("Not implemented yet")],
+            cmd: [
+              showToast("Not implemented yet"),
+              playSound(APP_SOUND.alertErrorSm),
+            ],
           };
         }
 
