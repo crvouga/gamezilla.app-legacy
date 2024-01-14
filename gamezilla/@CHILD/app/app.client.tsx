@@ -12,7 +12,7 @@ import {
   IconUserCircle,
   LoadingScreen,
   VDom,
-  cn
+  cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
   Browser,
@@ -25,7 +25,10 @@ import {
 import * as AuthClient from "./@CHILD/auth/auth.client";
 import * as ProfileClient from "./@CHILD/profile/profile.client";
 import * as SpaceClient from "./@CHILD/spaces/spaces.client";
-import { ClientTransport, IClientTransport } from "./@CHILD/wire/transport-client";
+import {
+  ClientTransport,
+  IClientTransport,
+} from "./@CHILD/wire/transport-client";
 import * as Wire from "./@CHILD/wire/wire.client";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import {
@@ -45,25 +48,28 @@ import {
 //
 
 export type Deps = {
-  transport: IClientTransport<{ ToServer: ToServer, ToClient: ToClient }>;
-}
+  transport: IClientTransport<{ ToServer: ToServer; ToClient: ToClient }>;
+};
 
 export const getDeps = (): Deps => {
   const transport = ClientTransport<ToServer, ToClient>({
-    impl: {
-      t: 'web-sockets',
-      endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
-      // t: "socket-io",
-      serverUrl: PUBLIC_APP_CONFIG.SERVER_URL,
-    },
+    impl:
+      PUBLIC_APP_CONFIG.TRANSPORT_IMPL === "socket-io"
+        ? {
+          t: "socket-io",
+          serverUrl: PUBLIC_APP_CONFIG.SERVER_URL,
+        }
+        : {
+          t: "web-sockets",
+          endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
+          serverUrl: PUBLIC_APP_CONFIG.SERVER_URL,
+        },
     codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
-  })
+  });
   return {
     transport,
   };
-}
-
-
+};
 
 //
 //
@@ -79,9 +85,9 @@ export const init = async ({
   location,
   stored,
   ctx,
-  deps
+  deps,
 }: {
-  deps: Deps,
+  deps: Deps;
   stored: ClientModel | null;
   ctx: { now: Posix };
   location: Browser.Location;
@@ -185,7 +191,6 @@ export const init = async ({
 //
 //
 
-
 const SHOULD_LOG = false;
 
 function log(...msg: unknown[]) {
@@ -230,7 +235,11 @@ type Output = {
   cmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 };
 
-const updateLoop = async (deps: Deps, now: Posix, acc: Output): Promise<Output> => {
+const updateLoop = async (
+  deps: Deps,
+  now: Posix,
+  acc: Output
+): Promise<Output> => {
   const [cmd, ...cmdRest] = acc.cmd;
 
   if (cmd) {
@@ -248,7 +257,12 @@ const updateLoop = async (deps: Deps, now: Posix, acc: Output): Promise<Output> 
 
   if (event) {
     log("[event]", toMsgType(event));
-    const updatedEvent = await updateChild({ deps, now, model: acc.model, event });
+    const updatedEvent = await updateChild({
+      deps,
+      now,
+      model: acc.model,
+      event,
+    });
     return updateLoop(deps, now, {
       model: updatedEvent.model,
       cmd: [...cmdRest, ...updatedEvent.cmd],
@@ -468,7 +482,7 @@ export const View = ({
 }) => {
   return (
     <div
-      className="fixed left-1/2 top-1/2 flex h-[100dvh] w-screen items-center justify-center overflow-hidden bg-black text-white select-none"
+      className="fixed left-1/2 top-1/2 flex h-[100dvh] w-screen select-none items-center justify-center overflow-hidden bg-black text-white"
       style={{ transform: "translate(-50%, -50%)" }}
     >
       <div className="relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-600">

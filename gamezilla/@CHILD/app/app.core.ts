@@ -100,6 +100,8 @@ export type ToServerMeta = { sessionId: SessionId; clientId: ClientId };
 //
 //
 
+const TRANSPORT_IMPL: "socket-io" | "web-sockets" = "socket-io";
+
 const IS_PROD = process.env["NODE_ENV"] === "production";
 const SERVER_PORT_LOCAL = 5002;
 const SERVER_URL_LOCAL = `http://localhost:${SERVER_PORT_LOCAL}/`;
@@ -127,6 +129,7 @@ if (!CODEBASE_VERSION_ID) {
 }
 
 export const PUBLIC_APP_CONFIG = {
+  TRANSPORT_IMPL,
   SERVER_URL,
   SERVER_PORT,
   WEB_SOCKETS_ENDPOINT,

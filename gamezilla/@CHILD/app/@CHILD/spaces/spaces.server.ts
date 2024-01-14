@@ -199,13 +199,15 @@ const updateFromClient: Module["update"] = async (input) => {
 
           const profiles = spacesToProfiles(model, [spaceNew]);
 
+          const starting = Space.startFromLatestSnapshot(spaceNew);
+
           return {
             model,
             cmd: [
               sendToClient<ToClient>([fromClient.clientId], {
                 t: "synced",
                 causedBy: fromClient.t,
-                space: spaceNew,
+                space: starting,
                 profiles: profiles,
               }),
             ],
@@ -236,12 +238,14 @@ const updateFromEvent: Module["update"] = async (input) => {
 
       const profiles = spacesToProfiles(model, [space]);
 
+      const started = Space.startFromLatestSnapshot(space);
+
       return {
         model,
         cmd: [
           sendToClient<ToClient>([event.clientId], {
             t: "current-user-space",
-            space,
+            space: started,
             profiles,
             causedBy: event.t,
           }),
