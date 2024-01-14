@@ -30,10 +30,11 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
     if (isConnected) {
       return;
     }
-    isConnected = true;
+
     ws = new WebSocket(serverUrl);
 
     ws.onopen = () => {
+      isConnected = true;
       reconnectAttempts = 0;
       transport.event.publish({ t: "server-connected" });
       for (const msg of queue) {
@@ -43,6 +44,7 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
     };
 
     ws.onerror = () => {
+      isConnected = false;
       transport.event.publish({ t: "server-connect-error" });
     };
 
@@ -62,6 +64,7 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
     };
 
     ws.onmessage = (event) => {
+      isConnected = true;
       const msg = JSON.parse(event.data) as ServerToClientMsg<ToClient>; // leap of faith
 
       switch (msg.t) {
@@ -107,7 +110,6 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
   const send = (msg: ClientToServerMsg<ToServer>) => {
     if (!isConnected) {
       queue.push(msg);
-      queue = queue.slice(-100);
       return;
     }
     if (ws.readyState === WebSocket.OPEN) {

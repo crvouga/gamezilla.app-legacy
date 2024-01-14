@@ -20,7 +20,7 @@ export const ViewScreenNotInGame = ({
 }) => {
   if (ctx.space.hostId !== ctx.currentUserId) {
     return (
-      <div className="flex h-full w-full flex-1 flex-col py-4 gap-8">
+      <div className="flex h-full w-full flex-1 flex-col">
         <ViewGameHeader />
         <ViewUsersInSpaceList ctx={ctx} />
       </div>
