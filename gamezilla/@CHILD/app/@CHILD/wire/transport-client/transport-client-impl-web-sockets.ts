@@ -72,9 +72,10 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
 
         case "to-client": {
           if (msg.codebaseVersionId !== codebaseVersionId) {
-            console.error(
-              `[client] Codebase version mismatch. Expected ${codebaseVersionId} but got ${msg.codebaseVersionId}`
-            );
+            transport.event.publish({
+              t: "got-bad-msgs",
+              reason: "codebase-version-mismatch",
+            });
             return;
           }
           transport.toClient.publish(msg.msgs);

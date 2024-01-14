@@ -33,10 +33,9 @@ import {
   IconHome,
   IconUserGroup,
   IconXMark,
-  LoadingScreen,
   TopBar,
   TopBarBackButton,
-  VDom,
+  VDom
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub, batchMsgs } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
@@ -852,16 +851,10 @@ const ViewSpaceScreen = ({
 
   switch (spaceState.type) {
     case "ended": {
-      if (model.isFetchingSpaces) {
-        return <LoadingScreen />;
-      }
       return <ViewSpaceEnded dispatch={dispatch} />;
     }
 
     case "initial": {
-      if (model.isFetchingSpaces) {
-        return <LoadingScreen />;
-      }
       return <ViewSpaceNotFound dispatch={dispatch} />;
     }
 

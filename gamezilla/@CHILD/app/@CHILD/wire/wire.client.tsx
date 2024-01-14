@@ -127,6 +127,16 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
         },
       };
     }
+
+    case 'got-bad-msgs': {
+      switch (msg.reason) {
+        case 'codebase-version-mismatch': {
+          return {
+            model,
+          };
+        }
+      }
+    }
   }
 };
 

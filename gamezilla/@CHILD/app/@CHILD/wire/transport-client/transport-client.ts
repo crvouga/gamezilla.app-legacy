@@ -3,7 +3,8 @@ import { PubSub } from "gamezilla/@SHARED/core/sub";
 export type ClientTransportEvent =
   | { t: "server-connected" }
   | { t: "server-disconnected" }
-  | { t: "server-connect-error" };
+  | { t: "server-connect-error" }
+  | { t: "got-bad-msgs"; reason: "codebase-version-mismatch" };
 
 type ClientTransportCommand = { t: "try-reconnect" };
 
