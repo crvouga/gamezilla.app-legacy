@@ -9,7 +9,7 @@ import * as SpaceCore from "./spaces.core";
 
 const ctx: ClientCtx = {
   currentRoute: {
-    t: "space",
+    t: "spaces",
     c: {
       t: "space-list",
     },
@@ -121,7 +121,7 @@ test("redirecting when starting a space", async () => {
       (cmd) =>
         cmd.t === "routing" &&
         cmd.c.t === "push" &&
-        cmd.c.route.t === "space" &&
+        cmd.c.route.t === "spaces" &&
         cmd.c.route.c.t === "space" &&
         cmd.c.route.c.spaceId === spaceId
     ).length

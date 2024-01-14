@@ -241,7 +241,7 @@ const updateRedirect: Client["update"] = async (input) => {
           model,
           cmd: [
             replaceRoute({
-              t: "space",
+              t: "spaces",
               c: { t: "space-list" },
             }),
             playSound(APP_SOUND.navForward),
@@ -275,7 +275,7 @@ const updateRedirect: Client["update"] = async (input) => {
           model,
           cmd: [
             replaceRoute({
-              t: "space",
+              t: "spaces",
               c: { t: "space-list" },
             }),
           ],

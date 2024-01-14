@@ -1,6 +1,6 @@
 import * as Auth from "./@CHILD/auth/auth.core";
 import * as Profile from "./@CHILD/profile/profile.core";
-import * as Space from "./@CHILD/spaces/spaces.core";
+import * as Spaces from "./@CHILD/spaces/spaces.core";
 import * as Wire from "./@CHILD/wire/wire.core";
 import { ClientId, SessionId } from "./@SHARED/data";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
@@ -16,14 +16,14 @@ import config from "config.json";
 
 export type ServerModel = {
   wire: Wire.ServerModel;
-  space: Space.ServerModel;
+  spaces: Spaces.ServerModel;
   profile: Profile.ServerModel;
   auth: Auth.ServerModel;
 };
 
 export type ClientModel = {
   auth: Auth.ClientModel;
-  space: Space.ClientModel;
+  spaces: Spaces.ClientModel;
   profile: Profile.ClientModel;
   wire: Wire.ClientModel;
   routing: Routing.Model;
@@ -41,18 +41,12 @@ export type ClientModel = {
 //
 //
 
-export type ToServer =
-  | { t: "space"; c: Space.ToServer }
-  | { t: "auth"; c: Auth.ToServer }
-  | { t: "profile"; c: Profile.ToServer }
-  | { t: "auth"; c: Auth.ToServer }
-  | { t: "wire"; c: Wire.ToServer };
-
-export type ToClient =
-  | { t: "space"; c: Space.ToClient }
-  | { t: "profile"; c: Profile.ToClient }
-  | { t: "auth"; c: Auth.ToClient }
-  | { t: "wire"; c: Wire.ToClient };
+export type ServerMsg =
+  | ({ t: "➡️"; c: ToServer } & ToServerMeta)
+  | { t: "wire"; c: Wire.ServerMsg }
+  | { t: "spaces"; c: Spaces.ServerMsg }
+  | { t: "profile"; c: Profile.ServerMsg }
+  | { t: "auth"; c: Auth.ServerMsg };
 
 export type ClientMsg =
   | { t: "➡️"; c: ToClient }
@@ -62,16 +56,21 @@ export type ClientMsg =
   | { t: "platform"; c: Platform.Msg }
   | { t: "status-bar"; c: StatusBar.Msg }
   | { t: "wire"; c: Wire.ClientMsg }
-  | { t: "space"; c: Space.ClientMsg }
+  | { t: "spaces"; c: Spaces.ClientMsg }
   | { t: "auth"; c: Auth.ClientMsg }
   | { t: "profile"; c: Profile.ClientMsg };
 
-export type ServerMsg =
-  | ({ t: "➡️"; c: ToServer } & ToServerMeta)
-  | { t: "wire"; c: Wire.ServerMsg }
-  | { t: "space"; c: Space.ServerMsg }
-  | { t: "profile"; c: Profile.ServerMsg }
-  | { t: "auth"; c: Auth.ServerMsg };
+export type ToServer =
+  | { t: "spaces"; c: Spaces.ToServer }
+  | { t: "auth"; c: Auth.ToServer }
+  | { t: "profile"; c: Profile.ToServer }
+  | { t: "wire"; c: Wire.ToServer };
+
+export type ToClient =
+  | { t: "spaces"; c: Spaces.ToClient }
+  | { t: "auth"; c: Auth.ToClient }
+  | { t: "profile"; c: Profile.ToClient }
+  | { t: "wire"; c: Wire.ToClient };
 
 //
 //

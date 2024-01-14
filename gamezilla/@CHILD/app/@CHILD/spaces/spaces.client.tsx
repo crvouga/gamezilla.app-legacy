@@ -164,7 +164,7 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
         case "join-screen": {
           return {
             model,
-            cmd: [replaceRoute({ t: "space", c: { t: "space-list" } })],
+            cmd: [replaceRoute({ t: "spaces", c: { t: "space-list" } })],
           };
         }
       }
@@ -174,7 +174,7 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
       return {
         model,
         cmd: [
-          pushRoute({ t: "space", c: { t: "space", spaceId: msg.spaceId } }),
+          pushRoute({ t: "spaces", c: { t: "space", spaceId: msg.spaceId } }),
         ],
       };
     }
@@ -226,7 +226,7 @@ const updateFromServer: Module["update"] = async (input) => {
 
 const fetchSpacesFromRoute: Module["update"] = async (input) => {
   switch (input.ctx.currentRoute.t) {
-    case 'space': {
+    case 'spaces': {
       switch (input.ctx.currentRoute.c.t) {
         case 'space': {
           return {
@@ -597,7 +597,7 @@ const updateSpaceFromSpaceEvent = async ({
           cmd: [
             playSound(APP_SOUND.navForward),
             pushRoute({
-              t: "space",
+              t: "spaces",
               c: { t: "space", spaceId: event.spaceId },
             }),
           ],
@@ -621,13 +621,13 @@ const updateSpaceFromSpaceEvent = async ({
         },
         (model) => {
           if (
-            ctx.currentRoute.t === "space" &&
+            ctx.currentRoute.t === "spaces" &&
             ctx.currentRoute.c.t === "space" &&
             ctx.currentRoute.c.spaceId === event.spaceId
           ) {
             return {
               model,
-              cmd: [pushRoute({ t: "space", c: { t: "space-list" } })],
+              cmd: [pushRoute({ t: "spaces", c: { t: "space-list" } })],
             };
           }
           return {
@@ -1234,7 +1234,7 @@ const ViewTopBar = ({
         onClick={() =>
           dispatch({
             t: "clicked-link",
-            route: { t: "space", c: { t: "space-list" } },
+            route: { t: "spaces", c: { t: "space-list" } },
           })
         }
         label="Home"
@@ -1316,7 +1316,7 @@ const ViewSpaceNotFound = ({
         onClick={() =>
           dispatch({
             t: "clicked-link",
-            route: { t: "space", c: { t: "space-list" } },
+            route: { t: "spaces", c: { t: "space-list" } },
           })
         }
         size="lg"
@@ -1337,7 +1337,7 @@ const ViewSpaceEnded = ({ dispatch }: { dispatch: (m: ClientMsg) => void }) => {
         onClick={() =>
           dispatch({
             t: "clicked-link",
-            route: { t: "space", c: { t: "space-list" } },
+            route: { t: "spaces", c: { t: "space-list" } },
           })
         }
         size="lg"
@@ -1385,7 +1385,7 @@ export const ViewCurrentSpaceBar = ({
           dispatch({
             t: "clicked-link",
             route: {
-              t: "space",
+              t: "spaces",
               c: { t: "space", spaceId: space.spaceId },
             },
           });

@@ -135,7 +135,7 @@ export const init = async (input: {
   return {
     model: {
       wire: wire.model,
-      space: space.model,
+      spaces: space.model,
       profile: profile.model,
       auth: auth.model,
     },
@@ -279,13 +279,13 @@ export const updateChild = async ({
   //
 
   const space = await SpaceServer.update({
-    model: model.space,
+    model: model.spaces,
     ctx,
     cmd: null,
     event: event,
     fromClient:
-      fromClient?.t === "space" ? { ...fromClient, ...fromClient.c } : null,
-    msg: msg?.t === "space" ? msg.c : null,
+      fromClient?.t === "spaces" ? { ...fromClient, ...fromClient.c } : null,
+    msg: msg?.t === "spaces" ? msg.c : null,
   });
 
   const auth = await AuthServer.update({
@@ -329,17 +329,17 @@ export const updateChild = async ({
     model: {
       auth: auth.model,
       profile: profile.model,
-      space: space.model,
+      spaces: space.model,
       wire: wire.model,
     },
     cmd: batchMsgs<ServerCmd<ToClient>>(
-      ServerCmd.tag("space", space.cmd),
+      ServerCmd.tag("spaces", space.cmd),
       ServerCmd.tag("auth", auth.cmd),
       ServerCmd.tag("wire", wire.cmd),
       ServerCmd.tag("profile", profile.cmd)
     ),
     eff: Eff.batch<ServerMsg>([
-      Eff.tag("space", space.eff),
+      Eff.tag("spaces", space.eff),
       Eff.tag("auth", auth.eff),
       Eff.tag("wire", wire.eff),
       Eff.tag("profile", profile.eff),
@@ -373,8 +373,8 @@ export const subscriptions = async (input: {
   };
   return Sub.batch([
     Sub.tag(
-      "space",
-      await SpaceServer.subscriptions({ model: input.model.space, ctx })
+      "spaces",
+      await SpaceServer.subscriptions({ model: input.model.spaces, ctx })
     ),
     Sub.tag(
       "wire",

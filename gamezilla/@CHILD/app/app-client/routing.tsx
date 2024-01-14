@@ -19,7 +19,7 @@ export type Model = {
   currentRoute: AppRoute;
 };
 
-const FALLBACK: AppRoute = { t: "space", c: { t: "space-list" } };
+const FALLBACK: AppRoute = { t: "spaces", c: { t: "space-list" } };
 
 export const init = ({
   location,

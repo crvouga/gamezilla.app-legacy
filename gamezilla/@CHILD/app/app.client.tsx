@@ -117,7 +117,7 @@ export const init = async ({
 
   const space = await SpaceClient.init({
     ctx: appCtx,
-    stored: stored?.space ?? null,
+    stored: stored?.spaces ?? null,
   });
 
   const profile = await ProfileClient.init({
@@ -145,7 +145,7 @@ export const init = async ({
     wire: wire.model,
     sound: sound.model,
     platform: platform.model,
-    space: space.model,
+    spaces: space.model,
     auth: auth.model,
     profile: profile.model,
   };
@@ -158,7 +158,7 @@ export const init = async ({
   const initialCmd = batchMsgs<
     ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>
   >(
-    ClientCmd.tag("space", space.cmd),
+    ClientCmd.tag("spaces", space.cmd),
     ClientCmd.tag("profile", profile.cmd),
     preloadSound(Object.values(APP_SOUND))
   );
@@ -280,9 +280,9 @@ const updateChild = async ({
 
   const space = await SpaceClient.update({
     ctx: ctx,
-    model: model.space,
-    msg: msg?.t === "space" ? msg.c : null,
-    fromServer: fromServer?.t === "space" ? fromServer.c : null,
+    model: model.spaces,
+    msg: msg?.t === "spaces" ? msg.c : null,
+    fromServer: fromServer?.t === "spaces" ? fromServer.c : null,
     event: event,
     cmd: null,
   });
@@ -353,7 +353,7 @@ const updateChild = async ({
       profile: profile.model,
       routing: routing.model,
       sound: sound.model,
-      space: space.model,
+      spaces: space.model,
       statusBar: statusBar.model,
       toast: toast.model,
       wire: wire.model,
@@ -365,7 +365,7 @@ const updateChild = async ({
       Eff.tag("profile", profile.eff),
       Eff.tag("routing", routing.eff),
       Eff.tag("sound", sound.eff),
-      Eff.tag("space", space.eff),
+      Eff.tag("spaces", space.eff),
       Eff.tag("status-bar", statusBar.eff),
       Eff.tag("toast", toast.eff),
       Eff.tag("wire", wire.eff),
@@ -384,7 +384,7 @@ const updateChild = async ({
     cmd: batchMsgs<ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>>(
       ClientCmd.tag("auth", auth.cmd),
       ClientCmd.tag("profile", profile.cmd),
-      ClientCmd.tag("space", space.cmd),
+      ClientCmd.tag("spaces", space.cmd),
       routing.cmd,
       sound.cmd,
       toast.cmd
@@ -442,8 +442,8 @@ export const subscriptions = (input: {
       AuthClient.subscriptions({ ctx: ctxApp, model: model.auth })
     ),
     Sub.tag(
-      "space",
-      SpaceClient.subscriptions({ ctx: ctxApp, model: model.space })
+      "spaces",
+      SpaceClient.subscriptions({ ctx: ctxApp, model: model.spaces })
     ),
   ]);
 };
@@ -594,11 +594,11 @@ const ViewLoggedIn = ({
       return null;
     }
 
-    case "space": {
+    case "spaces": {
       return (
         <SpaceClient.View
-          dispatch={(m) => dispatch({ t: "space", c: m })}
-          model={model.space}
+          dispatch={(m) => dispatch({ t: "spaces", c: m })}
+          model={model.spaces}
           ctx={ctx}
           route={model.routing.currentRoute.c}
           viewBottomBar={
@@ -659,7 +659,7 @@ const ViewBottomBar = ({
   }[] = [
       {
         route: {
-          t: "space",
+          t: "spaces",
           c: { t: "space-list" },
         },
         label: "Spaces",
@@ -676,8 +676,8 @@ const ViewBottomBar = ({
     <div className="flex w-full flex-col items-center justify-center">
       <SpaceClient.ViewCurrentSpaceBar
         ctx={ctx}
-        model={model.space}
-        dispatch={(c) => dispatch({ t: "space", c })}
+        model={model.spaces}
+        dispatch={(c) => dispatch({ t: "spaces", c })}
       />
       <div className="flex w-full items-center justify-center border-t border-neutral-600">
         {items.map((item, index) => {

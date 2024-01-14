@@ -19,7 +19,7 @@ export type AppRoute =
   | { t: "auth"; c: RouteAuth; location?: Location }
   | { t: "logout" }
   | { t: "profile"; c: RouteProfile }
-  | { t: "space"; c: RouteGameSpace }
+  | { t: "spaces"; c: RouteGameSpace }
   | { t: "chat"; c: RouteChat }
   | { t: "search" };
 
@@ -31,7 +31,7 @@ const encode = (route: AppRoute): string => {
       return "/logout";
     case "profile":
       return encodeProfile(route.c);
-    case "space":
+    case "spaces":
       return encodeSpace(route.c);
     case "chat":
       return encodeChat(route.c);
@@ -60,7 +60,7 @@ const decode = (pathname: string): AppRoute | null => {
     if (space === null) {
       return null;
     }
-    return { t: "space", c: space };
+    return { t: "spaces", c: space };
   }
   if (pathname.startsWith("/chat")) {
     const chat = decodeChat(pathname);
