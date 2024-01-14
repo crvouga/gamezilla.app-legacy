@@ -994,28 +994,24 @@ const ViewSpaceStarted = ({
 };
 
 const ViewFeed = ({
-  spaceState: spaceState,
+  spaceState,
   ctx,
   model,
 }: {
-  spaceState: SpaceState.Started;
+  spaceState: SpaceState.State;
   dispatch: (m: ClientMsg) => void;
   model: ClientModel;
   ctx: SpaceClientCtx;
 }) => {
-  const event = Spaces.toEventWithMeta(
+  const event = spaceState.type === 'started' ? Spaces.toEventWithMeta(
     model,
     spaceState.spaceId,
     spaceState.latestEvent
-  );
-
-  if (!event) {
-    return null;
-  }
+  ) : null
 
   return (
     <div className="flex h-6 w-full items-center justify-center border-b border-neutral-600 p-1">
-      <ViewFeedItem ctx={ctx} event={event} state={spaceState} />
+      {spaceState.type === 'started' && event ? <ViewFeedItem ctx={ctx} event={event} state={spaceState} /> : null}
     </div>
   );
 };
@@ -1113,33 +1109,58 @@ export const ViewScreenJoinSpace = ({
 }) => {
   const space = Spaces.toSpaceState(model, ctx.space.spaceId);
 
+  const header = (
+    <>
+      <TopBar
+        left={
+          <TopBarBackButton
+            onClick={() =>
+              dispatch({ t: "clicked-back-button", from: "join-screen" })
+            }
+          />
+        }
+        title="Space"
+      />
+      <ViewFeed
+        ctx={ctx}
+        dispatch={dispatch}
+        model={model}
+        spaceState={space}
+      />
+    </>
+  )
+
   switch (space.type) {
     case "ended": {
-      return <div>Space ended</div>;
+      return (
+        <div className="flex h-full w-full flex-col">
+          {header}
+          <div className="w-full flex-1 items-center justify-center">
+            Space not found
+          </div>
+        </div>
+      )
     }
     case "initial": {
-      return <div>Space not started</div>;
+      return (
+        <div className="flex h-full w-full flex-col">
+          {header}
+          <div className="w-full flex-1 items-center justify-center">
+            Space not found
+          </div>
+        </div>
+      )
     }
     case "started": {
       const game = space.game;
 
-      const hostTitle = ctx.profiles[space.hostId]?.username ?? space.hostId;
       return (
         <div className="flex h-full w-full flex-col">
-          <TopBar
-            left={
-              <TopBarBackButton
-                onClick={() =>
-                  dispatch({ t: "clicked-back-button", from: "join-screen" })
-                }
-              />
-            }
-            title="Join space"
-          />
+          {header}
 
           <div className="flex w-full flex-1 flex-col overflow-y-scroll">
             <ViewGameHeader
-              title={game ? gameNameToString(game.t) : hostTitle ?? " "}
+              title={game ? gameNameToString(game.t) : null}
               renderCoverArt={
                 game
                   ? (props) => (
