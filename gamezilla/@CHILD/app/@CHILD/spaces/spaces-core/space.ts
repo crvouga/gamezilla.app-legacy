@@ -44,12 +44,12 @@ export const startFromLatestSnapshot = (model: Model): Model => {
 
     const snapshot = model.snapshots[event.eventId];
 
-    events.push(event);
+    events.unshift(event);
 
     if (snapshot) {
       return {
         clock: model.clock,
-        events: events.reverse(),
+        events: events,
         snapshots: {
           [event.eventId]: snapshot,
         },
@@ -59,7 +59,7 @@ export const startFromLatestSnapshot = (model: Model): Model => {
 
   return {
     clock: model.clock,
-    events: events.reverse(),
+    events: events,
     snapshots: {},
   };
 };
