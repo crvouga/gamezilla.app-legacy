@@ -135,7 +135,7 @@ export const reducer = ({
         ...state,
         play: {
           ...state.play,
-          grid: FlowGridUIEdit.toEmptyGrid(state.edit),
+          grid: FlowGridUIEdit.toGrid(state.edit),
         },
         mode: {
           t: "play",

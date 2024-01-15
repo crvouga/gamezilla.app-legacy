@@ -1,3 +1,4 @@
+import { ActionButton, IconArrowCircle, IconArrowRotateLeft, IconXMark } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { FlowUI } from "..";
 import * as Flow from "../flow";
 import * as FlowGrid from "./flow-grid";
@@ -13,7 +14,7 @@ import * as FlowGridUI from "./flow-grid-ui";
 
 export type Model = {
   grid: FlowGrid.Model;
-  draftTerminals: {
+  draftTerminalsByGroupId: {
     [groupId in Flow.GroupId]?: DraftTerminal;
   };
 };
@@ -26,7 +27,7 @@ type DraftTerminal = {
 
 export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
   return {
-    draftTerminals: grid.flow.terminalsByGroupId,
+    draftTerminalsByGroupId: grid.flow.terminalsByGroupId,
     grid,
   };
 };
@@ -43,7 +44,10 @@ export type Msg =
   | { t: "dragged-over"; nodeId: Flow.NodeId }
   | { t: "pressed-down-node"; nodeId: Flow.NodeId }
   | { t: "pressed-up"; nodeId: Flow.NodeId }
-  | { t: "mouse-leave" };
+  | { t: "mouse-leave" }
+  | { t: "clicked-clear" }
+  | { t: "clicked-undo" }
+  | { t: "clicked-redo" }
 
 export const update = ({
   model,
@@ -65,23 +69,43 @@ export const update = ({
       return model;
     }
 
+    case 'clicked-clear': {
+      return {
+        ...model,
+        draftTerminalsByGroupId: {}
+      }
+    }
+
+    case 'clicked-undo': {
+      return {
+        ...model,
+
+      }
+    }
+
+    case 'clicked-redo': {
+      return {
+        ...model,
+      }
+    }
+
     case "pressed-down-node": {
       const currentPlacingGroupdId = toCurrentPlacingGroupId(model);
       const draftTerminalsNew = updateDraftTerminalsOnPressedDownNode(
-        model.draftTerminals,
+        model.draftTerminalsByGroupId,
         currentPlacingGroupdId,
         msg.nodeId
       );
-      return { ...model, draftTerminals: draftTerminalsNew };
+      return { ...model, draftTerminalsByGroupId: draftTerminalsNew };
     }
   }
 };
 
 export const updateDraftTerminalsOnPressedDownNode = (
-  draftTerminals: Model["draftTerminals"],
+  draftTerminals: Model["draftTerminalsByGroupId"],
   currentPlacingGroupId: Flow.GroupId,
   pressedNodeId: Flow.NodeId
-): Model["draftTerminals"] => {
+): Model["draftTerminalsByGroupId"] => {
   const pressedTerminal = findDraftTerminalByNodeId(
     draftTerminals,
     pressedNodeId
@@ -152,7 +176,7 @@ export const updateDraftTerminalsOnPressedDownNode = (
 };
 
 const findDraftTerminalByNodeId = (
-  draftTerminals: Model["draftTerminals"],
+  draftTerminals: Model["draftTerminalsByGroupId"],
   nodeId: Flow.NodeId
 ): DraftTerminal | null => {
   for (const groupId in draftTerminals) {
@@ -171,7 +195,7 @@ const findDraftTerminalByNodeId = (
 
 export const toCurrentPlacingGroupId = (model: Model): Flow.GroupId => {
   for (const groupId of Flow.GROUP_ID_ORDER) {
-    const draftTerminal = model.draftTerminals[groupId];
+    const draftTerminal = model.draftTerminalsByGroupId[groupId];
 
     if (!draftTerminal) {
       return groupId;
@@ -187,7 +211,7 @@ export const toCurrentPlacingGroupId = (model: Model): Flow.GroupId => {
 
 
 export const filterDraftTerminals = (
-  draftTerminals: Model["draftTerminals"]
+  draftTerminals: Model["draftTerminalsByGroupId"]
 ): Flow.Model['terminalsByGroupId'] => {
   const terminalsByGroupId: Flow.Model['terminalsByGroupId'] = {};
 
@@ -209,15 +233,14 @@ export const filterDraftTerminals = (
   return terminalsByGroupId;
 }
 
-export const toEmptyGrid = (
+export const toGrid = (
   model: Model
 ): FlowGrid.Model => {
-  const terminalsByGroupId = filterDraftTerminals(model.draftTerminals)
   return {
     ...model.grid,
     flow: {
       ...model.grid.flow,
-      terminalsByGroupId,
+      terminalsByGroupId: model.draftTerminalsByGroupId,
     }
   }
 }
@@ -251,11 +274,29 @@ export const View = ({
       </div>
 
       <FlowGridUI.View
-        model={toEmptyGrid(model)}
+        model={toGrid(model)}
         onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
         onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
         onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
       />
+
+      <div className="w-full flex items-center">
+        <ActionButton
+          icon={<IconArrowRotateLeft className="w-6 h-6" />}
+          label="Back"
+          onClick={() => dispatch({ t: 'clicked-undo' })}
+        />
+        <ActionButton
+          icon={<IconArrowRotateLeft className="w-6 h-6" />}
+          label="Forward"
+          onClick={() => dispatch({ t: 'clicked-redo' })}
+        />
+        <ActionButton
+          icon={<IconXMark className="w-6 h-6" />}
+          label="Clear"
+          onClick={() => dispatch({ t: 'clicked-clear' })}
+        />
+      </div>
     </div>
   );
 };
