@@ -108,7 +108,10 @@ export const reducer = ({
       return {
         ...state,
         play: FlowGridUIPlay.update({
-          model: state.play,
+          model: {
+            ...state.play,
+            grid: state.grid,
+          },
           msg: event.c,
         }),
       };

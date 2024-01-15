@@ -7,6 +7,7 @@ import {
   IconArrowLeftOnRect,
   IconPenToSquare,
   IconPlay,
+  VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
@@ -35,7 +36,7 @@ type Module = GameClientModule<{
   OutEvent: null;
 }>;
 
-const init: Module["init"] = null
+const init: Module["init"] = null;
 
 const update: Module["update"] = (input) => {
   const { model, msg } = input;
@@ -64,11 +65,8 @@ const View: Module["View"] = ({ gameState, dispatch, ctx }) => {
     case "edit": {
       return (
         <div className="flex h-full w-full flex-col items-center justify-center">
+          <ViewModeBar icon={(props) => <IconPenToSquare {...props} />} label="Edit Mode" color="yellow" />
 
-          <div className="flex w-full items-center justify-center gap-2 bg-yellow-500 p-2 text-xl text-white">
-            <IconPenToSquare className="h-6 w-6" />
-            Edit Mode
-          </div>
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll">
             <FlowGridUI.View
               model={gameState.grid}
@@ -79,19 +77,6 @@ const View: Module["View"] = ({ gameState, dispatch, ctx }) => {
                 });
               }}
             />
-
-            <div className="flex w-full snap-x flex-col items-center overflow-x-auto px-4">
-              <svg viewBox="-1 -1 2 2" className={cn("h-12 w-12")}>
-                <circle
-                  cx={0}
-                  cy={0}
-                  r={1}
-                />
-              </svg>
-              <p>
-
-              </p>
-            </div>
           </div>
           <ViewBottomButtonBar
             actions={[
@@ -103,7 +88,11 @@ const View: Module["View"] = ({ gameState, dispatch, ctx }) => {
               {
                 label: "Play Mode",
                 icon: <IconPlay className="h-6 w-6" />,
-                onClick: () => dispatch({ t: "user-changed-to-play-mode", userId: ctx.currentUserId }),
+                onClick: () =>
+                  dispatch({
+                    t: "user-changed-to-play-mode",
+                    userId: ctx.currentUserId,
+                  }),
               },
             ]}
           />
@@ -114,10 +103,8 @@ const View: Module["View"] = ({ gameState, dispatch, ctx }) => {
     case "play": {
       return (
         <div className="flex h-full w-full flex-col items-center justify-center">
-          <div className="flex w-full items-center justify-center gap-2 bg-blue-500 p-2 text-xl text-white">
-            <IconPlay className="h-6 w-6" />
-            Play Mode
-          </div>
+          <ViewModeBar icon={(props) => <IconPlay {...props} />} label="Play Mode" color="blue" />
+
           <div className="flex w-full flex-1 flex-col items-center justify-center gap-3">
             <FlowGridUIPlay.View
               model={{ ...gameState.play, grid: gameState.grid }}
@@ -134,7 +121,11 @@ const View: Module["View"] = ({ gameState, dispatch, ctx }) => {
               {
                 label: "Edit Mode",
                 icon: <IconPenToSquare className="h-6 w-6" />,
-                onClick: () => dispatch({ t: "user-changed-to-edit-mode", userId: ctx.currentUserId }),
+                onClick: () =>
+                  dispatch({
+                    t: "user-changed-to-edit-mode",
+                    userId: ctx.currentUserId,
+                  }),
               },
             ]}
           />
@@ -143,6 +134,15 @@ const View: Module["View"] = ({ gameState, dispatch, ctx }) => {
     }
   }
 };
+
+const ViewModeBar = (props: { icon: (props: { className: string }) => VDom, label: string, color: 'blue' | 'yellow' }) => {
+  return (
+    <div className={cn("flex w-full items-center justify-center gap-2 p-1 text-base text-white", props.color === 'blue' ? 'bg-blue-500' : 'bg-amber-500')}>
+      {props.icon({ className: 'h-4 w-4' })}
+      {props.label}
+    </div>
+  )
+}
 
 const ViewFeedItem: Module["ViewFeedItem"] = () => {
   return <div></div>;
