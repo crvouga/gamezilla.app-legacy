@@ -1,4 +1,4 @@
-import { PUBLIC_APP_CONFIG } from "config.ts";
+import { PUBLIC_APP_CONFIG, RendererImpl } from "config.ts";
 import { Browser, Posix, Program } from "gamezilla/@SHARED/core";
 import * as AppClient from "./@CHILD/app/app.client";
 import * as App from "./@CHILD/app/app.core";
@@ -9,7 +9,9 @@ type Ctx = {
 };
 
 const main = async () => {
-  const renderer = await getRenderer();
+  const renderer = await getRenderer({
+    impl: PUBLIC_APP_CONFIG.RENDERER_IMPL
+  });
 
   const deps = AppClient.getDeps();
 
@@ -39,8 +41,8 @@ const main = async () => {
     },
   });
 
-  const render = renderer(program.dispatch)
-  program.subscribe(render);
+
+  program.subscribe(renderer(program.dispatch));
 
   await program.start();
 
@@ -119,10 +121,10 @@ type Renderer = (
   dispatch: (m: App.ClientMsg) => void
 ) => (model: App.ClientModel, ctx: Ctx) => void;
 
-const getRenderer = async (): Promise<Renderer> => {
+const getRenderer = async ({ impl }: { impl: RendererImpl }): Promise<Renderer> => {
   const rootNode = document.getElementById("root")!;
 
-  switch (PUBLIC_APP_CONFIG.RENDERER_IMPL) {
+  switch (impl) {
     case "inferno": {
       const { render } = await import("inferno");
 

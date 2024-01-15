@@ -1,12 +1,12 @@
 import config from "./config.json";
 
-export type Renderer = "inferno" | "preact" | "react";
+export type RendererImpl = "inferno" | "preact" | "react";
 
-const RENDERER_IMPL = "inferno" as Renderer;
+const RENDERER_IMPL: RendererImpl = "inferno";
 
-export type Transport = "socket-io" | "web-sockets";
+export type TransportImpl = "socket-io" | "web-sockets";
 
-const TRANSPORT_IMPL = "socket-io" as Transport;
+const TRANSPORT_IMPL: TransportImpl = "socket-io";
 
 const IS_PROD = process.env["NODE_ENV"] === "production";
 const SERVER_PORT_LOCAL = 5002;

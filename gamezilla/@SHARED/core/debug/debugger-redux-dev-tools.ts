@@ -475,7 +475,7 @@ export const attachDebugger = <Model, Msg extends object, Ctx>(
   program: Program<Model, Msg, Ctx>,
   connection: ReduxDevToolsConnection<Model, Msg>
 ) => {
-  connection.subscribe((msg) => {
+  connection.subscribe(function devToolsConnectionSubscriber(msg: DevToolMsg) {
     switch (msg.type) {
       case "ACTION": {
         return;
@@ -492,7 +492,7 @@ export const attachDebugger = <Model, Msg extends object, Ctx>(
   const Debugger = makeDebugger<Model, Msg>(connection);
 
   const debuggerInstance = Debugger({
-    dispatch: (msg) => {
+    dispatch(msg) {
       if ("type" in msg) {
         switch (msg.type) {
           case "__DebugApplyMsg__": {
@@ -511,7 +511,7 @@ export const attachDebugger = <Model, Msg extends object, Ctx>(
     init: program.getModel(),
   });
 
-  const started = new Promise<null>((resolve) => {
+  const started = new Promise<null>(function waitForDebuggerStart(resolve) {
     const unsubscribe = connection.subscribe((msg) => {
       switch (msg.type) {
         case "START": {
@@ -528,14 +528,14 @@ export const attachDebugger = <Model, Msg extends object, Ctx>(
 
   const sub = PubSub.create<{ msg: Msg; model: Model }>();
 
-  program.subscribe((model, _ctx, msg) => {
+  program.subscribe(function devToolsSubcriber(model, _ctx, msg) {
     if (msg) {
       sub.publish({ msg, model });
     }
   });
 
-  started.then(() => {
-    sub.subscribe(({ model, msg }) => {
+  started.then(function devToolsStartedSubscriber() {
+    sub.subscribe(function devToolsProgramMsgSubscriber({ model, msg }) {
       const action = {
         type: toMsgType(msg),
         payload: toMsgPayload(msg, {}),

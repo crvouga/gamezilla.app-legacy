@@ -3,10 +3,10 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import inferno from "vite-plugin-inferno";
 import preact from "@preact/preset-vite";
 import react from "@vitejs/plugin-react";
-import { PUBLIC_APP_CONFIG } from "./config.ts";
+import { PUBLIC_APP_CONFIG, RendererImpl } from "./config";
 
-function rendererPlugin() {
-  switch (PUBLIC_APP_CONFIG.RENDERER_IMPL) {
+function rendererPlugin({ impl }: { impl: RendererImpl }) {
+  switch (impl) {
     case "inferno": {
       return inferno();
     }
@@ -21,7 +21,12 @@ function rendererPlugin() {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tsconfigPaths(), rendererPlugin()],
+  plugins: [
+    tsconfigPaths(),
+    rendererPlugin({
+      impl: PUBLIC_APP_CONFIG.RENDERER_IMPL,
+    }),
+  ],
   server: {
     hmr: false,
   },

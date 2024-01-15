@@ -19,10 +19,14 @@ const decode = (id: string): Result<Problem, EventId> => {
   return err("invalid_id");
 };
 
-const generate = (): EventId => {
-  const uuid = Uuid.generate();
+const baseId = Uuid.generate();
+let runningId = 0;
 
-  const eventId = `${namespace}${separator}${uuid}`;
+const generate = (): EventId => {
+  runningId++;
+  const id = `${baseId}-${runningId}`;
+
+  const eventId = `${namespace}${separator}${id}`;
 
   if (is(eventId)) {
     return eventId;
