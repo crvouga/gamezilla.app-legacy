@@ -16,26 +16,26 @@ let isCurrentDeviceTouch = false;
 export const View = ({
   model,
   isDragging,
+  className,
+  autocompleteEdge,
+  showCoordinates,
+  disabled,
   onDraggedOver,
   onPressDown,
   onPressUp,
   isActive,
-  className: className,
-  autocompleteEdge,
-  showCoordinates,
-  disabled,
   onLeave,
 }: {
   disabled?: boolean;
   className?: string;
   model: FlowGrid.Model;
+  isDragging?: boolean;
+  autocompleteEdge?: (FlowGrid.Edge & { groupId: Flow.GroupId }) | null;
+  showCoordinates?: boolean;
   onPressDown?: (nodeId: Flow.NodeId) => void;
   onPressUp?: (nodeId: Flow.NodeId) => void;
   onLeave?: () => void;
-  isDragging?: boolean;
   onDraggedOver?: (nodeId: Flow.NodeId) => void;
-  autocompleteEdge?: (FlowGrid.Edge & { groupId: Flow.GroupId }) | null;
-  showCoordinates?: boolean;
   isActive?: ({
     nodeId,
     groupId,
