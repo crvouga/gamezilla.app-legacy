@@ -169,8 +169,12 @@ export const toSpaceState = (
 
 export const toSpaceStarted = (
   model: Model,
-  spaceId: SpaceId
+  spaceId?: SpaceId | null
 ): SpaceState.Started | null => {
+  if (!spaceId) {
+    return null;
+  }
+
   const spaceModel = model.spaces[spaceId];
 
   if (!spaceModel) {

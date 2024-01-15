@@ -7,11 +7,12 @@ import {
   Button,
   IconGamepad,
   TopBar,
-  cn
+  cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { GameName, gameNameToString } from "../@CHILD/game/game.core";
 import * as Spaces from "../spaces-core/spaces";
+import * as SpaceState from "../spaces-core/space-state";
 import { ClientModel, ClientMsg } from "../spaces.core";
 
 export const ViewScreenListSpaces = ({
@@ -23,11 +24,10 @@ export const ViewScreenListSpaces = ({
   ctx: ClientCtx;
   dispatch: (m: ClientMsg) => void;
 }) => {
-  const currentUserSpaceId =
-    model.spaceIdByUserId[ctx.currentUserId];
+  const currentUserSpaceId = model.spaceIdByUserId[ctx.currentUserId];
 
   const spaces = Object.keys(model.spaces).flatMap((spaceId) => {
-    const space = Spaces.toSpaceStarted(model, spaceId as SpaceId)
+    const space = Spaces.toSpaceStarted(model, spaceId as SpaceId);
     if (!space) {
       return [];
     }
@@ -36,51 +36,24 @@ export const ViewScreenListSpaces = ({
 
   return (
     <div className="flex w-full flex-1 flex-col overflow-hidden">
-      <TopBar
-        title="Spaces"
+      <TopBar title="Spaces" />
 
-      />
-
-      <div className="relative flex w-full flex-1 flex-col gap-5 overflow-hidden overflow-y-scroll p-5 pb-8">
+      <div className="relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8">
         {spaces.length === 0 && <EmptyState />}
 
-        {spaces.flatMap((state) => {
-          const host = ctx.profiles[state.hostId];
-          const users = Object.values(state.users).flatMap((userId) => {
-            const profile = ctx.profiles[userId];
-
-            if (!profile) {
-              return [];
-            }
-
-            return [
-              {
-                username: profile.username,
-                avatarUrl: profile.avatarUrl,
-              },
-            ];
-          });
-
-          const gameName = state.game?.t ?? null;
-
-          return (
-            <ViewSpaceCard
-              host={{
-                username: host?.username ?? "...",
-                avatarUrl: host?.avatarUrl,
-              }}
-              key={state.spaceId}
-              isCurrentSpace={currentUserSpaceId === state.spaceId}
-              users={users}
-              gameName={gameName}
-              onClick={() =>
-                dispatch({ t: "clicked-space-card", spaceId: state.spaceId })
-              }
-            />
-          );
-        })}
+        <div className="flex w-full flex-1 flex-col gap-5 p-5">
+          {spaces.flatMap((state) => {
+            return (
+              <ViewSpaceCard
+                key={state.spaceId}
+                ctx={ctx}
+                dispatch={dispatch}
+                state={state}
+              />
+            );
+          })}
+        </div>
       </div>
-
 
       {!currentUserSpaceId && (
         <div className="w-full border-t border-neutral-600 p-4">
@@ -118,10 +91,53 @@ const EmptyState = () => {
       </div>
     </div>
   );
-}
+};
+
+const ViewSpaceCard = ({
+  ctx,
+  state,
+  dispatch,
+}: {
+  ctx: ClientCtx;
+  state: SpaceState.Started;
+  dispatch: (m: ClientMsg) => void;
+}) => {
+  const host = ctx.profiles[state.hostId];
+  const users = Object.values(state.users).flatMap((userId) => {
+    const profile = ctx.profiles[userId];
+
+    if (!profile) {
+      return [];
+    }
+
+    return [
+      {
+        username: profile.username,
+        avatarUrl: profile.avatarUrl,
+      },
+    ];
+  });
+
+  const gameName = state.game?.t ?? null;
+
+  return (
+    <SpaceCard
+      host={{
+        username: host?.username ?? "...",
+        avatarUrl: host?.avatarUrl,
+      }}
+      key={state.spaceId}
+      users={users}
+      gameName={gameName}
+      onClick={() =>
+        dispatch({ t: "clicked-space-card", spaceId: state.spaceId })
+      }
+    />
+  );
+};
 
 const MAX_AVATAR_COUNT = 3;
-const ViewSpaceCard = ({
+const SpaceCard = ({
   gameName,
   onClick,
   isCurrentSpace,
