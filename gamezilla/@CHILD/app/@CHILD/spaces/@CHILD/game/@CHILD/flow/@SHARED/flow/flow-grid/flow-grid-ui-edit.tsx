@@ -169,15 +169,15 @@ const findDraftTerminalByNodeId = (
   return null;
 };
 
-export const toCurrentPlacingGroupId = (state: Model): Flow.GroupId => {
+export const toCurrentPlacingGroupId = (model: Model): Flow.GroupId => {
   for (const groupId of Flow.GROUP_ID_ORDER) {
-    const terminal = Flow.toTerminalByGroupId(state.grid.flow, groupId);
+    const draftTerminal = model.draftTerminals[groupId];
 
-    if (!terminal) {
+    if (!draftTerminal) {
       return groupId;
     }
 
-    if (!terminal.endId) {
+    if (!draftTerminal.endId) {
       return groupId;
     }
   }
