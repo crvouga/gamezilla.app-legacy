@@ -11,7 +11,7 @@ import {
   cn
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
-import { Flow, FlowGridUI, FlowGridUIPlay, FlowUI } from "../../@SHARED/flow";
+import { FlowGridUI, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import { ViewProfileCard } from "../../@SHARED/ui";
 import {
@@ -21,7 +21,7 @@ import {
   GameState,
   ToClient,
   ToServer,
-  toCurrentPlacingGroupId,
+  toCurrentGrid,
 } from "./puzzle-builder.core";
 
 type Module = GameClientModule<{
@@ -81,25 +81,11 @@ const View: Module["View"] = (input) => {
             color="yellow"
           />
 
-          <div className="flex flex-1 flex-col items-center justify-end">
-            <div className="flex w-full items-center justify-center gap-1 pb-2">
-              Placing
-              <ViewTerminal
-                groupId={toCurrentPlacingGroupId(gameState)}
-                className="h-6 w-6"
-              />
-            </div>
-          </div>
 
           <div className="flex w-full flex-col items-center justify-center overflow-y-scroll">
-            <FlowGridUI.View
-              model={gameState.grid}
-              onPressDown={(nodeId) => {
-                dispatch({
-                  t: "user-pressed-down-node",
-                  nodeId,
-                });
-              }}
+            <FlowGridUIEdit.View
+              model={gameState.edit}
+              dispatch={(c) => dispatch({ t: "grid-ui-edit", c })}
             />
           </div>
 
@@ -141,7 +127,7 @@ const View: Module["View"] = (input) => {
           <div className="flex w-full flex-1 flex-col items-center justify-center gap-3">
             <FlowGridUIPlay.View
               model={gameState.play}
-              dispatch={(m) => dispatch({ t: "play-ui", c: m })}
+              dispatch={(c) => dispatch({ t: "grid-ui-play", c })}
             />
           </div>
           {!isSpectating && (
@@ -170,7 +156,7 @@ const View: Module["View"] = (input) => {
   }
 };
 
-const ViewSpectaing: Module["View"] = ({ gameState, dispatch, ctx }) => {
+const ViewSpectaing: Module["View"] = ({ gameState, ctx }) => {
   return (
     <GameLayout isSpectating>
       <div className="flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll">
@@ -179,33 +165,14 @@ const ViewSpectaing: Module["View"] = ({ gameState, dispatch, ctx }) => {
           subtitle="Editor"
         />
         <FlowGridUI.View
-          model={gameState.grid}
-          onPressDown={(nodeId) => {
-            dispatch({
-              t: "user-pressed-down-node",
-              nodeId,
-            });
-          }}
+          disabled
+          model={toCurrentGrid(gameState)}
         />
       </div>
     </GameLayout>
   );
 };
 
-const ViewTerminal = ({
-  groupId,
-  className,
-}: {
-  className: string;
-  groupId: Flow.GroupId;
-}) => {
-  const color = FlowUI.Color.groupIdToHex(groupId);
-  return (
-    <svg className={className} viewBox="-1 -1 2 2">
-      <circle cx="0" cy="0" r="0.8" fill={color} />
-    </svg>
-  );
-};
 
 const ViewModeBar = (props: {
   icon: (props: { className: string }) => VDom;

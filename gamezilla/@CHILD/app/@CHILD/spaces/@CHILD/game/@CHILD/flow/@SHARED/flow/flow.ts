@@ -125,7 +125,7 @@ export const init: Model = {
 export type Terminal = {
   groupId: GroupId;
   startId: NodeId;
-  endId?: NodeId | null;
+  endId: NodeId;
 };
 
 /**
@@ -224,7 +224,7 @@ export const addTerminal = (model: Model, terminal: Terminal): Model => {
     return model;
   }
 
-  if (terminal.endId && !hasNode(model, terminal.endId)) {
+  if (!hasNode(model, terminal.endId)) {
     return model;
   }
 
@@ -561,10 +561,6 @@ export const findGroupIdByNodeId = (
  * Flips the start and end nodes of the inputted terminal.
  */
 export const flipTerminal = (model: Model, terminal: Terminal): Model => {
-  if (!terminal.endId) {
-    return model;
-  }
-
   const terminalNew: Terminal = {
     ...terminal,
     startId: terminal.endId,

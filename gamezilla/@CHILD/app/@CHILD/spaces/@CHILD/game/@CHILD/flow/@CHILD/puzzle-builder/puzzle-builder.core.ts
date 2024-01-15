@@ -1,9 +1,9 @@
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
-  Flow,
   FlowGrid,
   FlowGridPosition,
+  FlowGridUIEdit,
   FlowGridUIPlay,
 } from "../../@SHARED/flow";
 
@@ -47,12 +47,12 @@ export type ToClient = { t: null };
 
 export type GameEvent =
   | {
-      t: "play-ui";
+      t: "grid-ui-play";
       c: FlowGridUIPlay.Msg;
     }
   | {
-      t: "user-pressed-down-node";
-      nodeId: Flow.NodeId;
+      t: "grid-ui-edit";
+      c: FlowGridUIEdit.Msg;
     }
   | {
       t: "user-changed-to-edit-mode";
@@ -73,25 +73,28 @@ type Mode =
 
 export type GameState = {
   play: FlowGridUIPlay.Model;
-  editorIds: { [userId: UserId]: UserId };
-  placingGroup: Flow.GroupId | null;
-  grid: FlowGrid.Model;
+  edit: FlowGridUIEdit.Model;
   mode: Mode;
 };
 
-export const initState = ({ ctx }: { ctx: SpaceCtx }): GameState => {
+export const toCurrentGrid = (state: GameState): FlowGrid.Model => {
+  switch (state.mode.t) {
+    case "edit": {
+      return state.edit.grid;
+    }
+
+    case "play": {
+      return state.play.grid;
+    }
+  }
+};
+
+export const initState = (_input: { ctx: SpaceCtx }): GameState => {
+  const grid = EMPTY_GRID;
   return {
-    grid: EMPTY_GRID,
-    play: FlowGridUIPlay.init({
-      grid: EMPTY_GRID,
-    }),
-    placingGroup: null,
-    editorIds: {
-      [ctx.space.hostId]: ctx.space.hostId,
-    },
-    mode: {
-      t: "edit",
-    },
+    mode: { t: "edit" },
+    play: FlowGridUIPlay.init({ grid }),
+    edit: FlowGridUIEdit.init({ grid }),
   };
 };
 
@@ -104,13 +107,17 @@ export const reducer = ({
   state: GameState;
 }): GameState => {
   switch (event.t) {
-    case "play-ui": {
+    case "grid-ui-play": {
       return {
         ...state,
-        play: FlowGridUIPlay.update({
-          model: state.play,
-          msg: event.c,
-        }),
+        play: FlowGridUIPlay.update({ model: state.play, msg: event.c }),
+      };
+    }
+
+    case "grid-ui-edit": {
+      return {
+        ...state,
+        edit: FlowGridUIEdit.update({ model: state.edit, msg: event.c }),
       };
     }
 
@@ -128,110 +135,12 @@ export const reducer = ({
         ...state,
         play: {
           ...state.play,
-          grid: state.grid,
+          grid: FlowGridUIEdit.toEmptyGrid(state.edit),
         },
         mode: {
           t: "play",
         },
       };
     }
-
-    case "user-pressed-down-node": {
-      const pressedTerminal = Flow.findTerminalByNodeId(
-        state.grid.flow,
-        event.nodeId
-      );
-
-      if (pressedTerminal) {
-        if (pressedTerminal.startId === event.nodeId) {
-          if (!pressedTerminal.endId) {
-            const removed = Flow.removeTerminal(
-              state.grid.flow,
-              pressedTerminal.groupId
-            );
-            return { ...state, grid: { ...state.grid, flow: removed } };
-          }
-          const terminalNew: Flow.Terminal = {
-            groupId: pressedTerminal.groupId,
-            startId: pressedTerminal.endId,
-            endId: null,
-          };
-          const added = Flow.addTerminal(state.grid.flow, terminalNew);
-          return { ...state, grid: { ...state.grid, flow: added } };
-        }
-        const terminalNew: Flow.Terminal = {
-          groupId: pressedTerminal.groupId,
-          startId: pressedTerminal.startId,
-          endId: null,
-        };
-        const added = Flow.addTerminal(state.grid.flow, terminalNew);
-        return { ...state, grid: { ...state.grid, flow: added } };
-      }
-
-      const currentPlacingGroupdId = toCurrentPlacingGroupId(state);
-
-      const currentTerminal = Flow.toTerminalByGroupId(
-        state.grid.flow,
-        currentPlacingGroupdId
-      );
-
-      if (!currentTerminal) {
-        const terminalNew: Flow.Terminal = {
-          groupId: currentPlacingGroupdId,
-          startId: event.nodeId,
-          endId: null,
-        };
-
-        const added = Flow.addTerminal(state.grid.flow, terminalNew);
-
-        return {
-          ...state,
-          grid: {
-            ...state.grid,
-            flow: added,
-          },
-        };
-      }
-
-      if (currentTerminal.groupId !== currentPlacingGroupdId) {
-        return state;
-      }
-
-      if (currentTerminal.startId === event.nodeId) {
-        return state;
-      }
-
-      const terminalNew: Flow.Terminal = {
-        groupId: currentPlacingGroupdId,
-        startId: currentTerminal.startId,
-        endId: event.nodeId,
-      };
-
-      const added = Flow.addTerminal(state.grid.flow, terminalNew);
-
-      return {
-        ...state,
-        grid: {
-          ...state.grid,
-          flow: added,
-        },
-      };
-    }
   }
-};
-
-export const toCurrentPlacingGroupId = (state: GameState): Flow.GroupId => {
-  for (const groupId of Flow.GROUP_ID_ORDER) {
-    const terminal = Flow.toTerminalByGroupId(state.grid.flow, groupId);
-
-    if (!terminal) {
-      return groupId;
-    }
-
-    if (!terminal.endId) {
-      return groupId;
-    }
-  }
-
-  return Flow.GROUP_ID_ORDER[Flow.GROUP_ID_ORDER.length - 1]!;
 };
