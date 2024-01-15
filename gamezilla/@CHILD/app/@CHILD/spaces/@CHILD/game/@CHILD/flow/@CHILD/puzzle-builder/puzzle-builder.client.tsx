@@ -1,4 +1,7 @@
-import { GameLayout, ViewBottomButtonBar } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
+import {
+  GameLayout,
+  ViewBottomButtonBar,
+} from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { SpaceClientEvent } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
@@ -8,7 +11,7 @@ import {
   IconPenToSquare,
   IconPlay,
   VDom,
-  cn
+  cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
 import { FlowGridUI, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
@@ -81,15 +84,12 @@ const View: Module["View"] = (input) => {
             color="yellow"
           />
 
-
-          <div className="flex w-full flex-col items-center justify-center overflow-y-scroll">
+          <div className="flex w-full flex-col items-center justify-center flex-1 overflow-hidden">
             <FlowGridUIEdit.View
               model={gameState.edit}
               dispatch={(c) => dispatch({ t: "grid-ui-edit", c })}
             />
           </div>
-
-          <div className="flex-1"></div>
 
           {!isSpectating && (
             <ViewBottomButtonBar
@@ -164,15 +164,11 @@ const ViewSpectaing: Module["View"] = ({ gameState, ctx }) => {
           profile={ctx.profiles[ctx.space.hostId]}
           subtitle="Editor"
         />
-        <FlowGridUI.View
-          disabled
-          model={toCurrentGrid(gameState)}
-        />
+        <FlowGridUI.View disabled model={toCurrentGrid(gameState)} />
       </div>
     </GameLayout>
   );
 };
-
 
 const ViewModeBar = (props: {
   icon: (props: { className: string }) => VDom;
@@ -182,7 +178,7 @@ const ViewModeBar = (props: {
   return (
     <div
       className={cn(
-        "flex w-full items-center justify-center gap-2 p-1 text-base text-white",
+        "flex w-full items-center justify-center gap-2 p-1 font-bold text-xs text-white",
         props.color === "blue" ? "bg-blue-500" : "bg-amber-500"
       )}
     >
