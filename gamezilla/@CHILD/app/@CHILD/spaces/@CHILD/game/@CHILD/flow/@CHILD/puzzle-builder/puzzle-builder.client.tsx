@@ -143,6 +143,9 @@ const View: Module["View"] = (input) => {
                 },
                 {
                   label: "Play Mode",
+                  classNames: {
+                    button: "text-blue-500"
+                  },
                   icon: <IconPlay className="h-6 w-6" />,
                   onClick: () =>
                     dispatch({
@@ -182,6 +185,9 @@ const View: Module["View"] = (input) => {
                 },
                 {
                   label: "Edit Mode",
+                  classNames: {
+                    button: "text-amber-500"
+                  },
                   icon: <IconPenToSquare className="h-6 w-6" />,
                   onClick: () =>
                     dispatch({
