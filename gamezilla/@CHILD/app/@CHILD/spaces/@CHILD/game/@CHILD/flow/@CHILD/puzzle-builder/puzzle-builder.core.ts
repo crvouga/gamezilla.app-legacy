@@ -108,10 +108,7 @@ export const reducer = ({
       return {
         ...state,
         play: FlowGridUIPlay.update({
-          model: {
-            ...state.play,
-            grid: state.grid,
-          },
+          model: state.play,
           msg: event.c,
         }),
       };
@@ -129,6 +126,10 @@ export const reducer = ({
     case "user-changed-to-play-mode": {
       return {
         ...state,
+        play: {
+          ...state.play,
+          grid: state.grid,
+        },
         mode: {
           t: "play",
         },

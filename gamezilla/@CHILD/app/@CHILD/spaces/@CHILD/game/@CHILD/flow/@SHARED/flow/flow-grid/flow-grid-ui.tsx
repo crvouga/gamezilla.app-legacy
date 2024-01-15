@@ -285,7 +285,7 @@ export const View = ({
                 draggedOver?.(nodeId);
               }}
               onTouchStart={() => {
-                // onPressDown?.(nodeId);
+                onPressDown?.(nodeId);
               }}
               onTouchCancel={() => {
                 onPressUp?.(nodeId);

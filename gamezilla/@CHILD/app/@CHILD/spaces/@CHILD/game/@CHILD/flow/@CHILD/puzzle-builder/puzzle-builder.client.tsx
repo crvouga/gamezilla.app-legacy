@@ -140,7 +140,7 @@ const View: Module["View"] = (input) => {
 
           <div className="flex w-full flex-1 flex-col items-center justify-center gap-3">
             <FlowGridUIPlay.View
-              model={{ ...gameState.play, grid: gameState.grid }}
+              model={gameState.play}
               dispatch={(m) => dispatch({ t: "play-ui", c: m })}
             />
           </div>
