@@ -1,4 +1,4 @@
-import { ActionButton, IconArrowRotateLeft, IconXMark } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { ActionButton, IconArrowRotateLeft, IconArrowRotateRight, IconXMark } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { History } from "gamezilla/@SHARED/history";
 import { FlowUI } from "..";
 import * as Flow from "../flow";
@@ -303,7 +303,7 @@ export const View = ({
             disabled={!History.canUndo(model.draftTerminalsByGroupId)}
           />
           <ActionButton
-            icon={<IconArrowRotateLeft className="w-6 h-6" />}
+            icon={<IconArrowRotateRight className="w-6 h-6" />}
             label="Redo"
             disabled={!History.canRedo(model.draftTerminalsByGroupId)}
             onClick={() => dispatch({ t: 'clicked-redo' })}

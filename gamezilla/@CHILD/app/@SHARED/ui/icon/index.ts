@@ -2,6 +2,7 @@ export * from "./icon-arrow-circle";
 export * from "./icon-arrow-left-on-rect";
 export * from "./icon-arrow-right";
 export * from "./icon-arrow-rotate-left";
+export * from "./icon-arrow-rotate-right";
 export * from "./icon-bars-3";
 export * from "./icon-checkmark-circle";
 export * from "./icon-chevron-left";
@@ -37,4 +38,3 @@ export * from "./icon-users";
 export * from "./icon-volume-high";
 export * from "./icon-volume-x-mark";
 export * from "./icon-x-mark";
-
