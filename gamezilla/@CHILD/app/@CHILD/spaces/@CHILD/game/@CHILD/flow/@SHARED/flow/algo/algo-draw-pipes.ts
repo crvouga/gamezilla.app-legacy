@@ -380,6 +380,10 @@ export const findShortestEmptyPipelineBFS = (
   return nodePath;
 };
 
+//
+// This might cause bugs but it's worth a try for perf
+//
+
 const gScore = new Map<Flow.NodeId, number>();
 const fScore = new Map<Flow.NodeId, number>();
 const cameFrom = new Map<Flow.NodeId, Flow.NodeId>();
