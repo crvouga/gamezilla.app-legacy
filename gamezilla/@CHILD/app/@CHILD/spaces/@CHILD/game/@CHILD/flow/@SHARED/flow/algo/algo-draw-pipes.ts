@@ -380,51 +380,39 @@ export const findShortestEmptyPipelineBFS = (
   return nodePath;
 };
 
+const gScore = new Map<Flow.NodeId, number>();
+const fScore = new Map<Flow.NodeId, number>();
+const cameFrom = new Map<Flow.NodeId, Flow.NodeId>();
+const openSet = new MinHeap<Flow.NodeId>((a, b) => {
+  const fScoreA = fScore.get(a) ?? Infinity;
+  const fScoreB = fScore.get(b) ?? Infinity;
+  return fScoreA - fScoreB;
+});
+
 export const findShortestEmptyPipelineAStar = (
   heuristicScore: (node: Flow.NodeId) => number,
   model: Flow.Model,
   sourceId: Flow.NodeId,
   targetId: Flow.NodeId
 ): Flow.NodeId[] => {
+  gScore.clear();
+  fScore.clear();
+  cameFrom.clear();
+  openSet.clear();
+
   const sourceGroupId = Flow.findGroupIdByNodeId(model, sourceId);
 
   if (!sourceGroupId) {
     return [];
   }
 
-  //
-  //
-  //
-  const gScore = new Map<Flow.NodeId, number>();
   gScore.set(sourceId, 0);
-
-  //
-  //
-  //
-  const fScore = new Map<Flow.NodeId, number>();
   fScore.set(sourceId, heuristicScore(sourceId));
-
-  //
-  //
-  //
-  const cameFrom = new Map<Flow.NodeId, Flow.NodeId>();
-
-  //
-  //
-  //
-  const openSet = new MinHeap<Flow.NodeId>((a, b) => {
-    const fScoreA = fScore.get(a) ?? Infinity;
-    const fScoreB = fScore.get(b) ?? Infinity;
-    return fScoreA - fScoreB;
-  });
-
   openSet.insert(sourceId);
 
-  //
-  //
-  //
-
+  let iterations = 0;
   while (true) {
+    iterations++;
     const current = openSet.extractMin();
 
     if (!current) {
@@ -432,12 +420,14 @@ export const findShortestEmptyPipelineAStar = (
     }
 
     if (current === targetId) {
+      console.log("iterations", iterations);
       return reconstructPath(cameFrom, current);
     }
 
     const currentTerminal = Flow.findTerminalByNodeId(model, current);
 
     if (currentTerminal) {
+      console.log("iterations", iterations);
       return reconstructPath(cameFrom, current);
     }
 

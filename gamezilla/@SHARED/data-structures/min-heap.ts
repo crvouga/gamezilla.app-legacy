@@ -104,4 +104,8 @@ export class MinHeap<T> {
   public has(value: T): boolean {
     return this.heap.some((element) => this.compare(element, value) === 0);
   }
+
+  public clear(): void {
+    this.heap = [];
+  }
 }
