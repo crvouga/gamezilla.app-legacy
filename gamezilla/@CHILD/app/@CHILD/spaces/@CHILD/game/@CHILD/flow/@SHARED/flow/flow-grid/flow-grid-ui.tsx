@@ -9,7 +9,7 @@ const TERMINAL_NODE_RADIUS = 0.33;
 const EDGE_STROKE_WIDTH = 0.3;
 
 let lastDraggedOver: Flow.NodeId | null = null;
-
+let isCurrentDeviceTouch = false;
 /**
  * Renders the Flow Grid UI
  */
@@ -276,6 +276,9 @@ export const View = ({
               height={1}
               fill="transparent"
               onMouseDown={() => {
+                if (isCurrentDeviceTouch) {
+                  return
+                }
                 onPressDown?.(nodeId);
               }}
               onMouseUp={() => {
@@ -285,12 +288,15 @@ export const View = ({
                 draggedOver?.(nodeId);
               }}
               onTouchStart={() => {
+                isCurrentDeviceTouch = true;
                 onPressDown?.(nodeId);
               }}
               onTouchCancel={() => {
+                isCurrentDeviceTouch = true;
                 onPressUp?.(nodeId);
               }}
               onTouchEnd={() => {
+                isCurrentDeviceTouch = true;
                 onPressUp?.(nodeId);
               }}
             />
