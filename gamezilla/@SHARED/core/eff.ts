@@ -4,19 +4,21 @@ import { Task } from "./task";
 export type Eff<Msg = never> = (dispatch: (msg: Msg) => void) => void;
 
 const of = <Msg>(msg: Msg): Eff<Msg> => {
-  return (dispatch) => {
+  const eff: Eff<Msg> = (dispatch) => {
     dispatch(msg);
   };
+  return eff;
 };
 
 const map =
   <A, B>(mapper: (a: A) => B) =>
   (eff: Eff<A>): Eff<B> => {
-    return (dispatch) => {
+    const mappedEff: Eff<B> = (dispatch) => {
       eff((a) => {
         dispatch(mapper(a));
       });
     };
+    return mappedEff;
   };
 
 const map_ = <A, B>(
@@ -61,7 +63,7 @@ const tag = <Tag extends string, Msg>(
 const batch = <Msg>(
   ...effLists: (Eff<Msg> | undefined | null)[][]
 ): Eff<Msg> => {
-  return (dispatch) => {
+  const batchedEff: Eff<Msg> = (dispatch) => {
     for (const effList of effLists) {
       for (const eff of effList) {
         if (eff) {
@@ -70,6 +72,8 @@ const batch = <Msg>(
       }
     }
   };
+
+  return batchedEff;
 };
 
 const None: Eff = () => {

@@ -107,9 +107,9 @@ export const toSpaceIdByUserId = ({
   userId,
 }: {
   model: Model;
-  userId: UserId;
+  userId: UserId | null;
 }): SpaceId | null => {
-  return model.spaceIdByUserId[userId] ?? null;
+  return userId ? model.spaceIdByUserId[userId] ?? null : null;
 };
 
 export const toSpace = (model: Model, spaceId: SpaceId): Space.Model | null => {

@@ -14,12 +14,12 @@ const main = async () => {
   const deps = AppClient.getDeps();
 
   const program = Program.create<App.ClientModel, App.ClientMsg, Ctx>({
-    getCtx: () => {
+    getCtx() {
       return {
         now: Posix.now(),
       };
     },
-    init: (input) => {
+    init(input) {
       const init = AppClient.init({
         deps,
         ctx: input.ctx,
@@ -30,12 +30,17 @@ const main = async () => {
       return init;
     },
 
-    update: (input) => AppClient.update({ ...input, deps }),
+    update(input) {
+      return AppClient.update({ ...input, deps })
+    },
 
-    subscriptions: (input) => AppClient.subscriptions({ ...input, deps }),
+    subscriptions(input) {
+      return AppClient.subscriptions({ ...input, deps })
+    },
   });
 
-  program.subscribe(renderer(program.dispatch));
+  const render = renderer(program.dispatch)
+  program.subscribe(render);
 
   await program.start();
 
@@ -57,7 +62,7 @@ export const Storage = <TModel,>() => {
   const MODEL_KEY = "gamezilla/model";
 
   return {
-    get: () => {
+    get() {
       const storedId = sessionStorage.getItem(CODEBASE_VERSION_ID_KEY);
 
       if (storedId !== PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID) {
@@ -71,7 +76,7 @@ export const Storage = <TModel,>() => {
       return maybeModel;
     },
 
-    set: (model: TModel) => {
+    set(model: TModel) {
       sessionStorage.setItem(
         CODEBASE_VERSION_ID_KEY,
         PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID
@@ -121,12 +126,14 @@ const getRenderer = async (): Promise<Renderer> => {
     case "inferno": {
       const { render } = await import("inferno");
 
-      return (dispatch) => (model, ctx) => {
-        render(
-          <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />,
-          rootNode
-        );
-      };
+      return function renderer(dispatch) {
+        return function renderInferno(model, ctx) {
+          render(
+            <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />,
+            rootNode
+          );
+        }
+      }
     }
 
     case "react": {
@@ -135,23 +142,27 @@ const getRenderer = async (): Promise<Renderer> => {
 
       const reactRoot = createRoot(rootNode);
 
-      return (dispatch) => (model, ctx) => {
-        reactRoot.render(
-          <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />
-        );
-      };
+      return function renderer(dispatch) {
+        return function renderReact(model, ctx) {
+          reactRoot.render(
+            <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />
+          );
+        }
+      }
     }
 
     case "preact": {
       const { render } = await import("preact");
       await import("preact/compat");
 
-      return (dispatch) => (model, ctx) => {
-        render(
-          <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />,
-          rootNode
-        );
-      };
+      return function renderer(dispatch) {
+        return function renderPreact(model, ctx) {
+          render(
+            <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />,
+            rootNode
+          );
+        }
+      }
     }
   }
 }

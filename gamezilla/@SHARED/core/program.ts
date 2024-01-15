@@ -1,12 +1,12 @@
 import { Eff } from "./eff";
 import { Sub } from "./sub";
 
-// 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
+//
 
 type Subscriber<Model, Msg, TCtx> = (
   model: Model,
@@ -41,14 +41,14 @@ type ProgramConfig<Model, Msg, TCtx> = {
   }) => MaybePromise<Sub<Msg>>;
 };
 
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
+//
+//
+//
 
 export function create<TModel, TMsg, TCtx>(
   config: ProgramConfig<TModel, TMsg, TCtx>
@@ -122,7 +122,9 @@ export function create<TModel, TMsg, TCtx>(
   //
 
   let runningSubscriberId = 0;
-  const subscribe = (subscriber: Subscriber<TModel, TMsg, TCtx>): (() => void) => {
+  const subscribe = (
+    subscriber: Subscriber<TModel, TMsg, TCtx>
+  ): (() => void) => {
     subscribers.set(++runningSubscriberId, subscriber);
 
     const unsubscribe = () => {
@@ -134,7 +136,7 @@ export function create<TModel, TMsg, TCtx>(
 
   const start = async () => {
     const ctx = await config.getCtx();
-    
+
     const init = await config.init({ ctx });
 
     setState(init, ctx, null);
