@@ -424,14 +424,12 @@ export const findShortestEmptyPipelineAStar = (
     }
 
     if (current === targetId) {
-      console.log("iterations", iterations);
       return reconstructPath(cameFrom, current);
     }
 
     const currentTerminal = Flow.findTerminalByNodeId(model, current);
 
     if (currentTerminal) {
-      console.log("iterations", iterations);
       return reconstructPath(cameFrom, current);
     }
 
