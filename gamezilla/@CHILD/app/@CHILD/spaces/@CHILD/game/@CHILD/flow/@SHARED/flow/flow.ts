@@ -237,6 +237,15 @@ export const addTerminal = (model: Model, terminal: Terminal): Model => {
   };
 };
 
+export const removeTerminal = (model: Model, groupId: GroupId): Model => {
+  const terminalsByGroupIdNew = { ...model.terminalsByGroupId };
+  delete terminalsByGroupIdNew[groupId];
+  return {
+    ...model,
+    terminalsByGroupId: terminalsByGroupIdNew,
+  };
+};
+
 /**
  * Yields all nodes in the model.
  */

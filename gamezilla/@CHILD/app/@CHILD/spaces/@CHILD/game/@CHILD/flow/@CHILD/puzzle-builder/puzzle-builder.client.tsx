@@ -171,7 +171,6 @@ const View: Module["View"] = (input) => {
 };
 
 const ViewSpectaing: Module["View"] = ({ gameState, dispatch, ctx }) => {
-
   return (
     <GameLayout isSpectating>
       <div className="flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll">

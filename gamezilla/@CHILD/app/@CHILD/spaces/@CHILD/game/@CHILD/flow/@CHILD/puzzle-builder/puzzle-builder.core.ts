@@ -136,7 +136,85 @@ export const reducer = ({
     }
 
     case "user-pressed-down-node": {
-      return state;
+      const pressedTerminal = Flow.findTerminalByNodeId(
+        state.grid.flow,
+        event.nodeId
+      );
+
+      if (pressedTerminal) {
+        if (pressedTerminal.startId === event.nodeId) {
+          if (!pressedTerminal.endId) {
+            const removed = Flow.removeTerminal(
+              state.grid.flow,
+              pressedTerminal.groupId
+            );
+            return { ...state, grid: { ...state.grid, flow: removed } };
+          }
+          const terminalNew: Flow.Terminal = {
+            groupId: pressedTerminal.groupId,
+            startId: pressedTerminal.endId,
+            endId: null,
+          };
+          const added = Flow.addTerminal(state.grid.flow, terminalNew);
+          return { ...state, grid: { ...state.grid, flow: added } };
+        }
+        const terminalNew: Flow.Terminal = {
+          groupId: pressedTerminal.groupId,
+          startId: pressedTerminal.startId,
+          endId: null,
+        };
+        const added = Flow.addTerminal(state.grid.flow, terminalNew);
+        return { ...state, grid: { ...state.grid, flow: added } };
+      }
+
+      const currentPlacingGroupdId = toCurrentPlacingGroupId(state);
+
+      const currentTerminal = Flow.toTerminalByGroupId(
+        state.grid.flow,
+        currentPlacingGroupdId
+      );
+
+      if (!currentTerminal) {
+        const terminalNew: Flow.Terminal = {
+          groupId: currentPlacingGroupdId,
+          startId: event.nodeId,
+          endId: null,
+        };
+
+        const added = Flow.addTerminal(state.grid.flow, terminalNew);
+
+        return {
+          ...state,
+          grid: {
+            ...state.grid,
+            flow: added,
+          },
+        };
+      }
+
+      if (currentTerminal.groupId !== currentPlacingGroupdId) {
+        return state;
+      }
+
+      if (currentTerminal.startId === event.nodeId) {
+        return state;
+      }
+
+      const terminalNew: Flow.Terminal = {
+        groupId: currentPlacingGroupdId,
+        startId: currentTerminal.startId,
+        endId: event.nodeId,
+      };
+
+      const added = Flow.addTerminal(state.grid.flow, terminalNew);
+
+      return {
+        ...state,
+        grid: {
+          ...state.grid,
+          flow: added,
+        },
+      };
     }
   }
 };
