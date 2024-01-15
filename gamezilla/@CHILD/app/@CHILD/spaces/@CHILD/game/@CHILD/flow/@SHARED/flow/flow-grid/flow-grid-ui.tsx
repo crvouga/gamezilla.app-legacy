@@ -84,7 +84,8 @@ export const View = ({
       }}
       viewBox={toViewBox(model)}
       onTouchMove={onTouchMove}
-      onMouseLeave={left}>
+      onMouseLeave={left}
+    >
       {/*
 
 
@@ -98,8 +99,8 @@ export const View = ({
           const fill = !groupId
             ? "transparent"
             : isActive?.({ nodeId: node.nodeId, groupId })
-            ? "transparent"
-            : FlowUI.Color.toHex(FlowUI.GROUP_ID_TO_COLOR[groupId]);
+              ? "transparent"
+              : FlowUI.Color.toHex(FlowUI.GROUP_ID_TO_COLOR[groupId]);
           return (
             <rect
               key={node.nodeId}
@@ -165,18 +166,20 @@ export const View = ({
                   })
                 )}
               />
-              <ViewTerminalNode
-                key={terminal.end.nodeId}
-                groupId={terminal.groupId}
-                x={terminal.end.x}
-                y={terminal.end.y}
-                isActive={Boolean(
-                  isActive?.({
-                    nodeId: terminal.end.nodeId,
-                    groupId: terminal.groupId,
-                  })
-                )}
-              />
+              {terminal.end && (
+                <ViewTerminalNode
+                  key={terminal.end.nodeId}
+                  groupId={terminal.groupId}
+                  x={terminal.end.x}
+                  y={terminal.end.y}
+                  isActive={Boolean(
+                    isActive?.({
+                      nodeId: terminal.end.nodeId,
+                      groupId: terminal.groupId,
+                    })
+                  )}
+                />
+              )}
             </g>
           );
         })}
@@ -237,7 +240,8 @@ export const View = ({
                 x={node.x}
                 y={node.y}
                 fontSize="0.2"
-                fill="#fff">
+                fill="#fff"
+              >
                 {`${node.x},${node.y}`}
               </text>
             );
@@ -266,8 +270,8 @@ export const View = ({
                 isDragging
                   ? "cursor-grabbing"
                   : groupId
-                  ? "cursor-pointer"
-                  : null
+                    ? "cursor-pointer"
+                    : null
               )}
               height={1}
               fill="transparent"

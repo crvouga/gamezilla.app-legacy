@@ -3,6 +3,7 @@ import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { SpaceClientEvent } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
+import { Flow, FlowUI } from '../../@SHARED/flow'
 import {
   IconArrowLeftOnRect,
   IconPenToSquare,
@@ -20,6 +21,7 @@ import {
   GameState,
   ToClient,
   ToServer,
+  toCurrentPlacingGroupId,
 } from "./puzzle-builder.core";
 
 type Module = GameClientModule<{
@@ -67,7 +69,13 @@ const View: Module["View"] = ({ gameState, dispatch, ctx }) => {
         <div className="flex h-full w-full flex-col items-center justify-center">
           <ViewModeBar icon={(props) => <IconPenToSquare {...props} />} label="Edit Mode" color="yellow" />
 
-          <div className="flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll">
+          <div className="flex-1 flex flex-col items-center justify-end">
+            <div className="w-full gap-1 flex items-center justify-center pb-2">
+              Placing <ViewTerminal groupId={toCurrentPlacingGroupId(gameState)} className="w-6 h-6" />
+            </div>
+          </div>
+          <div className="flex w-full flex-col items-center justify-center overflow-y-scroll">
+
             <FlowGridUI.View
               model={gameState.grid}
               onPressDown={(nodeId) => {
@@ -78,6 +86,8 @@ const View: Module["View"] = ({ gameState, dispatch, ctx }) => {
               }}
             />
           </div>
+          <div className="flex-1"></div>
+
           <ViewBottomButtonBar
             actions={[
               {
@@ -134,6 +144,16 @@ const View: Module["View"] = ({ gameState, dispatch, ctx }) => {
     }
   }
 };
+
+const ViewTerminal = ({ groupId, className }: { className: string, groupId: Flow.GroupId }) => {
+  const color = FlowUI.Color.groupIdToHex(groupId)
+  return (
+    <svg className={className} viewBox="-1 -1 2 2">
+      <circle cx="0" cy="0" r="0.8" fill={color} />
+    </svg>
+  )
+
+}
 
 const ViewModeBar = (props: { icon: (props: { className: string }) => VDom, label: string, color: 'blue' | 'yellow' }) => {
   return (

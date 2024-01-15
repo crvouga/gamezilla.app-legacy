@@ -197,7 +197,7 @@ export const yieldNodes = function* (model: Model): Generator<Node> {
 
 export type Terminal = Flow.Terminal & {
   start: Node;
-  end: Node;
+  end?: Node | null;
 };
 
 export const yieldTerminals = function* (model: Model): Generator<Terminal> {
@@ -208,11 +208,7 @@ export const yieldTerminals = function* (model: Model): Generator<Terminal> {
       continue;
     }
 
-    const end = toNode(model, terminal.endId);
-
-    if (!end) {
-      continue;
-    }
+    const end = terminal.endId ? toNode(model, terminal.endId) ?? null : null;
 
     yield { ...terminal, start, end };
   }

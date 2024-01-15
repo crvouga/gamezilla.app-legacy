@@ -21,7 +21,7 @@ export type Model = {
 type DraftTerminal = {
   groupId: Flow.GroupId;
   startId: Flow.NodeId;
-  endId: Flow.NodeId | null;
+  endId?: Flow.NodeId | null;
 };
 
 export const init = (grid: FlowGrid.Model): Model => {

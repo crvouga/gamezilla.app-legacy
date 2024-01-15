@@ -27,7 +27,7 @@ export type GroupId =
   | "P"
   | "Q";
 
-export const PATH_ID_ORDER = [
+export const GROUP_ID_ORDER = [
   "A",
   "B",
   "C",
@@ -48,7 +48,7 @@ export const PATH_ID_ORDER = [
 ] as const;
 
 export const isGroupId = (groupId: string): groupId is GroupId => {
-  return PATH_ID_ORDER.includes(groupId as GroupId);
+  return GROUP_ID_ORDER.includes(groupId as GroupId);
 };
 
 const EDGE_ID_SEPARATOR = "->";
@@ -125,7 +125,7 @@ export const init: Model = {
 export type Terminal = {
   groupId: GroupId;
   startId: NodeId;
-  endId: NodeId;
+  endId?: NodeId | null;
 };
 
 /**
@@ -224,7 +224,7 @@ export const addTerminal = (model: Model, terminal: Terminal): Model => {
     return model;
   }
 
-  if (!hasNode(model, terminal.endId)) {
+  if (terminal.endId && !hasNode(model, terminal.endId)) {
     return model;
   }
 
@@ -552,6 +552,10 @@ export const findGroupIdByNodeId = (
  * Flips the start and end nodes of the inputted terminal.
  */
 export const flipTerminal = (model: Model, terminal: Terminal): Model => {
+  if (!terminal.endId) {
+    return model;
+  }
+
   const terminalNew: Terminal = {
     ...terminal,
     startId: terminal.endId,

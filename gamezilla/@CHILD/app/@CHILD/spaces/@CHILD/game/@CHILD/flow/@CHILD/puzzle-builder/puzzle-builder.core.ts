@@ -140,3 +140,19 @@ export const reducer = ({
     }
   }
 };
+
+export const toCurrentPlacingGroupId = (state: GameState): Flow.GroupId => {
+  for (const groupId of Flow.GROUP_ID_ORDER) {
+    const terminal = Flow.toTerminalByGroupId(state.grid.flow, groupId);
+
+    if (!terminal) {
+      return groupId;
+    }
+
+    if (!terminal.endId) {
+      return groupId;
+    }
+  }
+
+  return Flow.GROUP_ID_ORDER[Flow.GROUP_ID_ORDER.length - 1]!;
+};
