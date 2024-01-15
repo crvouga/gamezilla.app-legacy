@@ -115,9 +115,13 @@ export const reducer = ({
     }
 
     case "grid-ui-edit": {
+      const updated = FlowGridUIEdit.update({
+        model: state.edit,
+        msg: event.c,
+      });
       return {
         ...state,
-        edit: FlowGridUIEdit.update({ model: state.edit, msg: event.c }),
+        edit: updated.model,
       };
     }
 

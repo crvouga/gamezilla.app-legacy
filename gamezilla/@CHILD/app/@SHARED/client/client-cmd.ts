@@ -198,6 +198,7 @@ export const APP_SOUND = {
   navBackward: "./app/nav-backward.wav",
   navForwardMin: "./app/nav-forward-min.wav",
   navBackwardMin: "./app/nav-backward-min.wav",
+  navTransitionLeft: "./app/nav-transition-left.wav",
   stateChangeUp: "./app/state-change-up.wav",
   stateChangeDown: "./app/state-change-down.wav",
 };
@@ -255,7 +256,7 @@ export type RouteCmd = {
 
 export const pushRoute = <T extends ClientCmdTypes>(
   route: AppRoute,
-  playSound?: boolean,
+  playSound?: boolean
 ): ClientCmd<T> => {
   return {
     t: "routing",

@@ -5,7 +5,7 @@ import {
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { SpaceClientEvent } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
-import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
+import { APP_SOUND, ClientCmd, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconPenToSquare,
@@ -44,7 +44,7 @@ type Module = GameClientModule<{
 const init: Module["init"] = null;
 
 const update: Module["update"] = (input) => {
-  const { model, msg } = input;
+  const { model, msg, gameState } = input;
 
   if (!msg) {
     return { model };
@@ -52,11 +52,53 @@ const update: Module["update"] = (input) => {
 
   switch (msg.t) {
     default: {
-      const gameEvent = withId(msg);
-      return {
-        model,
-        gameEvent: [gameEvent],
-      };
+      return GameClientModule.chainUpdates(
+        { model: input.model },
+        (model) => {
+          const gameEvent = withId(msg);
+          return {
+            model,
+            gameEvent: [gameEvent],
+          };
+        },
+        (model) => {
+          switch (msg.t) {
+
+            case 'user-changed-to-edit-mode': {
+              return {
+                model,
+                cmd: [playSound(APP_SOUND.navBackwardMin)]
+              }
+            }
+
+            case 'user-changed-to-play-mode': {
+              return {
+                model,
+                cmd: [playSound(APP_SOUND.navForwardMin)]
+              }
+            }
+
+            case "grid-ui-edit": {
+              const updated = FlowGridUIEdit.update({
+                model: gameState.edit,
+                msg: msg.c,
+              });
+
+              switch (updated.cmd?.t) {
+                case "play-sound": {
+                  return { model, cmd: [playSound(updated.cmd.sourceSrc)] };
+                }
+                default: {
+                  return { model };
+                }
+              }
+            }
+            default: {
+              return { model };
+            }
+          }
+        }
+      );
     }
   }
 };
@@ -84,7 +126,7 @@ const View: Module["View"] = (input) => {
             color="yellow"
           />
 
-          <div className="flex w-full flex-col items-center justify-center flex-1 overflow-hidden">
+          <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
             <FlowGridUIEdit.View
               model={gameState.edit}
               dispatch={(c) => dispatch({ t: "grid-ui-edit", c })}
@@ -178,7 +220,7 @@ const ViewModeBar = (props: {
   return (
     <div
       className={cn(
-        "flex w-full items-center justify-center gap-2 p-1 font-bold text-xs text-white",
+        "flex w-full items-center justify-center gap-2 p-1 text-xs font-bold text-white",
         props.color === "blue" ? "bg-blue-500" : "bg-amber-500"
       )}
     >

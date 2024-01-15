@@ -4,6 +4,7 @@ import { FlowUI } from "..";
 import * as Flow from "../flow";
 import * as FlowGrid from "./flow-grid";
 import * as FlowGridUI from "./flow-grid-ui";
+import { APP_SOUND } from "gamezilla/@CHILD/app/@SHARED/client";
 
 //
 //
@@ -50,12 +51,16 @@ export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
 
 export type Msg =
   | { t: "dragged-over"; nodeId: Flow.NodeId }
+  | { t: "pressed-up-node"; nodeId: Flow.NodeId }
   | { t: "pressed-down-node"; nodeId: Flow.NodeId }
-  | { t: "pressed-up"; nodeId: Flow.NodeId }
-  | { t: "mouse-leave" }
   | { t: "clicked-clear" }
   | { t: "clicked-undo" }
   | { t: "clicked-redo" }
+
+export type Cmd = {
+  t: 'play-sound',
+  sourceSrc: string,
+}
 
 export const update = ({
   model,
@@ -63,38 +68,55 @@ export const update = ({
 }: {
   msg: Msg;
   model: Model;
-}): Model => {
+}): {
+  model: Model
+  cmd?: Cmd
+} => {
   switch (msg.t) {
-    case "dragged-over": {
-      return model;
+    case 'dragged-over': {
+      return { model }
     }
 
-    case "mouse-leave": {
-      return model;
-    }
-
-    case "pressed-up": {
-      return model;
+    case 'pressed-up-node': {
+      return { model }
     }
 
     case 'clicked-clear': {
       return {
-        ...model,
-        draftTerminalsByGroupId: History.push(model.draftTerminalsByGroupId, {}),
+        model: {
+          ...model,
+          draftTerminalsByGroupId: History.push(model.draftTerminalsByGroupId, {}),
+        },
+        cmd: {
+          t: 'play-sound',
+          sourceSrc: APP_SOUND.navTransitionLeft,
+        }
       }
     }
 
     case 'clicked-undo': {
       return {
-        ...model,
-        draftTerminalsByGroupId: History.undo(model.draftTerminalsByGroupId),
+        model: {
+          ...model,
+          draftTerminalsByGroupId: History.undo(model.draftTerminalsByGroupId),
+        },
+        cmd: {
+          t: 'play-sound',
+          sourceSrc: APP_SOUND.navBackwardMin,
+        }
       }
     }
 
     case 'clicked-redo': {
       return {
-        ...model,
-        draftTerminalsByGroupId: History.redo(model.draftTerminalsByGroupId),
+        model: {
+          ...model,
+          draftTerminalsByGroupId: History.redo(model.draftTerminalsByGroupId),
+        },
+        cmd: {
+          t: 'play-sound',
+          sourceSrc: APP_SOUND.navForwardMin,
+        }
       }
     }
 
@@ -105,7 +127,16 @@ export const update = ({
         currentPlacingGroupdId,
         msg.nodeId
       );
-      return { ...model, draftTerminalsByGroupId: History.push(model.draftTerminalsByGroupId, draftTerminalsNew) };
+      return {
+        model: {
+          ...model,
+          draftTerminalsByGroupId: History.push(model.draftTerminalsByGroupId, draftTerminalsNew)
+        },
+        cmd: {
+          t: 'play-sound',
+          sourceSrc: APP_SOUND.tap,
+        }
+      };
     }
   }
 };
@@ -290,7 +321,7 @@ export const View = ({
         model={toGrid(model)}
         onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
         onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
-        onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
+        onPressUp={(nodeId) => dispatch({ t: "pressed-up-node", nodeId })}
       />
 
       <div className="flex-1 flex flex-col justify-end w-full">
