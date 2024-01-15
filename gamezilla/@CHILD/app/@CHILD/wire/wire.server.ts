@@ -147,25 +147,27 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
     }
 
     case "client-disconnected": {
-      const client: Client = model.clientsBySessionId[msg.sessionId] ?? {
-        clientIds: CappedOrderedDict.init({ maxSize: 10 }),
-        sessionId: msg.sessionId,
-      };
+      // remove the client from the clientsBySessionId might be causing bugs
 
-      const clientNew: Client = {
-        sessionId: msg.sessionId,
-        clientIds: CappedOrderedDict.remove(client.clientIds, msg.clientId),
-      };
+      // const client: Client = model.clientsBySessionId[msg.sessionId] ?? {
+      //   clientIds: CappedOrderedDict.init({ maxSize: 10 }),
+      //   sessionId: msg.sessionId,
+      // };
 
-      const clientsBySessionIdNew: ServerModel["clientsBySessionId"] = {
-        ...model.clientsBySessionId,
-        [msg.sessionId]: clientNew,
-      };
+      // const clientNew: Client = {
+      //   sessionId: msg.sessionId,
+      //   clientIds: CappedOrderedDict.remove(client.clientIds, msg.clientId),
+      // };
+
+      // const clientsBySessionIdNew: ServerModel["clientsBySessionId"] = {
+      //   ...model.clientsBySessionId,
+      //   [msg.sessionId]: clientNew,
+      // };
 
       return {
         model: {
           ...model,
-          clientsBySessionId: clientsBySessionIdNew,
+          // clientsBySessionId: clientsBySessionIdNew,
         },
         event: [
           {
