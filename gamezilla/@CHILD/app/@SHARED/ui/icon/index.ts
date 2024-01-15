@@ -12,6 +12,7 @@ export * from "./icon-computer-desktop";
 export * from "./icon-crown";
 export * from "./icon-envelope";
 export * from "./icon-exclamation-circle";
+export * from "./icon-expand";
 export * from "./icon-flag";
 export * from "./icon-gamepad";
 export * from "./icon-gear";

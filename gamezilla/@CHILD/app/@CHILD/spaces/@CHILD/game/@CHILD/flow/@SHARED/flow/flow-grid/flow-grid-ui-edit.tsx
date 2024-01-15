@@ -1,4 +1,4 @@
-import { ActionButton, IconArrowRotateLeft, IconArrowRotateRight, IconXMark } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { ActionButton, Drawer, DrawerHeaher, IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark, Slider } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { History } from "gamezilla/@SHARED/history";
 import { FlowUI } from "..";
 import * as Flow from "../flow";
@@ -15,9 +15,22 @@ import { APP_SOUND } from "gamezilla/@CHILD/app/@SHARED/client";
 //
 
 
+type Form = {
+  width: number
+  height: number
+  terminalsByGroupId: DraftTerminals
+}
+
+export const initForm: Form = {
+  width: 5,
+  height: 5,
+  terminalsByGroupId: {},
+}
+
 export type Model = {
   grid: FlowGrid.Model;
-  draftTerminalsByGroupId: History<DraftTerminals>
+  form: History<Form>
+  opened: "dimensions" | null
 };
 
 type DraftTerminals = {
@@ -25,7 +38,7 @@ type DraftTerminals = {
 };
 
 export const canClear = (model: Model): boolean => {
-  return Object.keys(History.present(model.draftTerminalsByGroupId)).length > 0
+  return Object.keys(History.present(model.form)).length > 0
 }
 
 type DraftTerminal = {
@@ -36,8 +49,13 @@ type DraftTerminal = {
 
 export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
   return {
-    draftTerminalsByGroupId: History.init(grid.flow.terminalsByGroupId),
+    form: History.init({
+      height: grid.bounds.max.y - grid.bounds.min.y,
+      width: grid.bounds.max.x - - grid.bounds.min.x,
+      terminalsByGroupId: grid.flow.terminalsByGroupId,
+    }),
     grid,
+    opened: null,
   };
 };
 
@@ -56,6 +74,8 @@ export type Msg =
   | { t: "clicked-clear" }
   | { t: "clicked-undo" }
   | { t: "clicked-redo" }
+  | { t: 'clicked-dimensions' }
+  | { t: 'closed-dimensions' }
 
 export type Cmd = {
   t: 'play-sound',
@@ -81,11 +101,23 @@ export const update = ({
       return { model }
     }
 
+    case 'clicked-dimensions': {
+      return { model: { ...model, opened: 'dimensions' }, }
+    }
+
+    case 'closed-dimensions': {
+      return { model: { ...model, opened: null }, }
+    }
+
     case 'clicked-clear': {
       return {
         model: {
           ...model,
-          draftTerminalsByGroupId: History.push(model.draftTerminalsByGroupId, {}),
+          form: History.push(model.form, {
+            ...initForm,
+            width: History.present(model.form).width,
+            height: History.present(model.form).height,
+          }),
         },
         cmd: {
           t: 'play-sound',
@@ -98,7 +130,7 @@ export const update = ({
       return {
         model: {
           ...model,
-          draftTerminalsByGroupId: History.undo(model.draftTerminalsByGroupId),
+          form: History.undo(model.form),
         },
         cmd: {
           t: 'play-sound',
@@ -111,7 +143,7 @@ export const update = ({
       return {
         model: {
           ...model,
-          draftTerminalsByGroupId: History.redo(model.draftTerminalsByGroupId),
+          form: History.redo(model.form),
         },
         cmd: {
           t: 'play-sound',
@@ -123,14 +155,17 @@ export const update = ({
     case "pressed-down-node": {
       const currentPlacingGroupdId = toCurrentPlacingGroupId(model);
       const draftTerminalsNew = updateDraftTerminalsOnPressedDownNode(
-        History.present(model.draftTerminalsByGroupId),
+        History.present(model.form).terminalsByGroupId,
         currentPlacingGroupdId,
         msg.nodeId
       );
       return {
         model: {
           ...model,
-          draftTerminalsByGroupId: History.push(model.draftTerminalsByGroupId, draftTerminalsNew)
+          form: History.push(model.form, {
+            ...History.present(model.form),
+            terminalsByGroupId: draftTerminalsNew,
+          })
         },
         cmd: {
           t: 'play-sound',
@@ -235,7 +270,7 @@ const findDraftTerminalByNodeId = (
 
 export const toCurrentPlacingGroupId = (model: Model): Flow.GroupId => {
   for (const groupId of Flow.GROUP_ID_ORDER) {
-    const draftTerminal = History.present(model.draftTerminalsByGroupId)[groupId];
+    const draftTerminal = History.present(model.form).terminalsByGroupId[groupId];
 
     if (!draftTerminal) {
       return groupId;
@@ -280,7 +315,7 @@ export const toGrid = (
     ...model.grid,
     flow: {
       ...model.grid.flow,
-      terminalsByGroupId: History.present(model.draftTerminalsByGroupId)
+      terminalsByGroupId: History.present(model.form).terminalsByGroupId
     }
   }
 }
@@ -331,12 +366,12 @@ export const View = ({
             icon={<IconArrowRotateLeft className="w-6 h-6" />}
             label="Undo"
             onClick={() => dispatch({ t: 'clicked-undo' })}
-            disabled={!History.canUndo(model.draftTerminalsByGroupId)}
+            disabled={!History.canUndo(model.form)}
           />
           <ActionButton
             icon={<IconArrowRotateRight className="w-6 h-6" />}
             label="Redo"
-            disabled={!History.canRedo(model.draftTerminalsByGroupId)}
+            disabled={!History.canRedo(model.form)}
             onClick={() => dispatch({ t: 'clicked-redo' })}
           />
           <ActionButton
@@ -345,8 +380,38 @@ export const View = ({
             disabled={!canClear(model)}
             onClick={() => dispatch({ t: 'clicked-clear' })}
           />
+          <ActionButton
+            icon={<IconExpand className="w-6 h-6" />}
+            label="Dimensions"
+            disabled={!canClear(model)}
+            onClick={() => dispatch({ t: 'clicked-dimensions' })}
+          />
         </div>
       </div>
+      <Drawer
+        open={model.opened === 'dimensions'}
+        onClose={() => dispatch({ t: 'closed-dimensions' })}
+        id="dimensions"
+        position="bottom"
+      >
+        <DrawerHeaher onClose={() => dispatch({ t: 'closed-dimensions' })} />
+
+        <div className="text-4xl text-center font-bold flex items-center justify-center gap-1">
+          <p>
+            {`${History.present(model.form).width}w`}
+          </p>
+          <IconXMark className="w-6 h-6" />
+          <p>
+            {`${History.present(model.form).height}h`}
+          </p>
+        </div>
+
+        <div className="p-4 flex flex-col gap-3 pb-8">
+          <Slider label="Width" min={3} max={15} step={1} />
+          <Slider label="Height" min={3} max={15} step={1} />
+        </div>
+
+      </Drawer>
     </div>
   );
 };
