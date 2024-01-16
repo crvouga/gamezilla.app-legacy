@@ -10,6 +10,7 @@
     "db:migrate:up": "dbmate -e DATABASE_URL up",
     "db:up": "sudo docker-compose -f docker-compose.local.yml up -d",
     "db:down": "sudo docker-compose -f docker-compose.local.yml down",
+    "db:new": "dbmate new",
     "client:build": "vite build",
     "client:serve": "bun x serve -s dist -p 3000",
     "client:preview": "bun client:build && bun client:serve",
