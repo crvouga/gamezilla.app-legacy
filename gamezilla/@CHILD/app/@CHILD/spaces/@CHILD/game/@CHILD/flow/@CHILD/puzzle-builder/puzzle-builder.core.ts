@@ -15,6 +15,7 @@ import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
+import { Result } from "gamezilla/@SHARED/core";
 
 export type ClientModule = GameClientModule<{
   Model: ClientModel;
@@ -40,7 +41,9 @@ export type ClientModule = GameClientModule<{
 
 export type ClientModel = null;
 
-export type ServerModel = null;
+export type ServerModel = {
+  hasListedPuzzles: boolean;
+};
 
 // const EMPTY_GRID = FlowGrid.init({ bounds: FlowGridPosition.bounds8x8 });
 
@@ -52,17 +55,19 @@ export type ServerModel = null;
 //
 //
 
-export type ClientMsg = GameEvent;
+export type ClientMsg = { t: "time-passed" } | GameEvent;
 
-export type ServerMsg = { t: null };
+export type ServerMsg = { t: "time-passed" };
 
 export type ListPuzzlesInput = Parameters<IFlowPuzzleDb["list"]>[0];
 
-export type ListPuzzlesOutput = ReturnType<IFlowPuzzleDb["list"]>;
+export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>;
 
-export type ToServer = { t: "list-puzzles" } & ListPuzzlesInput;
+export type ToServer = { t: "list-puzzles"; input: ListPuzzlesInput };
 
-export type ToClient = { t: "listed-puzzle" } & ListPuzzlesOutput;
+export type ToClient =
+  | { t: "listed-puzzle"; listed: ListPuzzlesOutput }
+  | { t: "put-puzzle"; put: Result<string, null> };
 
 //
 //
@@ -97,6 +102,9 @@ export type GameEvent =
   | {
       t: "user-created-new-puzzle";
       puzzle: FlowPuzzle;
+    }
+  | {
+      t: "time-passed";
     };
 
 type BuildState =
@@ -106,12 +114,6 @@ type BuildState =
   | {
       t: "edit";
     };
-
-type BaseGameState = {
-  puzzles: {
-    [puzzleId: FlowPuzzleId]: FlowPuzzle;
-  };
-};
 
 export type GameStateBuild = {
   t: "build";
@@ -125,7 +127,13 @@ export type GameStateList = {
   t: "list";
 };
 
-export type GameState = BaseGameState & (GameStateList | GameStateBuild);
+export type BaseGameState = {
+  puzzles: {
+    [id: FlowPuzzleId]: FlowPuzzle;
+  };
+};
+
+export type GameState = GameStateList | GameStateBuild;
 
 export const toCurrentGrid = (state: GameStateBuild): FlowGrid.Model => {
   switch (state.mode.t) {
@@ -143,8 +151,6 @@ export const initState = (_input: { ctx: SpaceCtx }): GameState => {
   // const _grid = EMPTY_GRID;
   return {
     t: "list",
-    puzzles: {},
-
     // mode: { t: "edit" },
     // play: FlowGridUIPlay.init({ grid }),
     // edit: FlowGridUIEdit.init({ grid }),
@@ -161,14 +167,43 @@ export const reducer = ({
 }): GameState => {
   switch (state.t) {
     case "build": {
-      const updated = reducerBuildState({ ctx, event, state: state });
-      return {
-        ...updated,
-        puzzles: state.puzzles,
-      };
+      return reducerBuildState({ ctx, event, state: state });
     }
 
     case "list": {
+      return state;
+    }
+  }
+};
+
+const reducerListState = ({
+  state,
+  event,
+}: {
+  ctx: SpaceCtx;
+  event: GameEvent;
+  state: GameStateList;
+}): GameState => {
+  switch (event.t) {
+    case "listed-puzzles": {
+      return state;
+    }
+
+    case "user-created-new-puzzle": {
+      return {
+        t: "build",
+        edit: FlowGridUIEdit.init({ grid: event.puzzle.puzzle.c }),
+        mode: { t: "edit" },
+        play: FlowGridUIPlay.init({ grid: event.puzzle.puzzle.c }),
+        puzzleId: event.puzzle.id,
+      };
+    }
+
+    case "time-passed":
+    case "user-changed-to-edit-mode":
+    case "user-changed-to-play-mode":
+    case "grid-ui-play":
+    case "grid-ui-edit": {
       return state;
     }
   }
@@ -213,6 +248,7 @@ const reducerBuildState = ({
       };
     }
 
+    case "time-passed":
     case "listed-puzzles": {
       return state;
     }

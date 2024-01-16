@@ -4,7 +4,7 @@ import { IFlowPuzzleDb } from "./flow-puzzle-db";
 
 const db = new Map<string, FlowPuzzle>();
 
-export const FlowDb = (): IFlowPuzzleDb => {
+export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
   return {
     async list(input) {
       const puzzles = Array.from(db.values());
