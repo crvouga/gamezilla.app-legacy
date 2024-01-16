@@ -46,7 +46,7 @@ type DraftTerminals = {
 };
 
 export const canClear = (model: Model): boolean => {
-  return Object.keys(History.present(model.form)).length > 0;
+  return Object.keys(History.present(model.form).terminalsByGroupId).length > 0;
 };
 
 type DraftTerminal = {
