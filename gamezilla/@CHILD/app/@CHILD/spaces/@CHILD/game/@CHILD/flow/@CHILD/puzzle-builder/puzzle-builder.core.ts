@@ -126,24 +126,14 @@ export const reducer = ({
     }
 
     case "user-changed-to-edit-mode": {
-      return {
-        ...state,
-        mode: {
-          t: "edit",
-        },
-      };
+      return { ...state, mode: { t: "edit" } };
     }
 
     case "user-changed-to-play-mode": {
       return {
         ...state,
-        play: {
-          ...state.play,
-          grid: FlowGridUIEdit.toGrid(state.edit),
-        },
-        mode: {
-          t: "play",
-        },
+        play: { ...state.play, grid: FlowGridUIEdit.toGrid(state.edit) },
+        mode: { t: "play" },
       };
     }
   }
