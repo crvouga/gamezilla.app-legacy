@@ -171,7 +171,7 @@ export const reducer = ({
     }
 
     case "list": {
-      return state;
+      return reducerListState({ ctx, event, state: state });
     }
   }
 };
