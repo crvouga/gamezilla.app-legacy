@@ -1,12 +1,34 @@
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
+import {
+  SpaceClientEvent,
+  SpaceCtx,
+} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   FlowGrid,
-  FlowGridPosition,
+  // FlowGridPosition,
   FlowGridUIEdit,
   FlowGridUIPlay,
 } from "../../@SHARED/flow";
 import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db";
+import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id";
+import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
+import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
+import { FlowClientCtx } from "../../@SHARED/flow-ctx";
+import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
+
+export type ClientModule = GameClientModule<{
+  Model: ClientModel;
+  Msg: ClientMsg;
+  ToClient: ToClient;
+  ToServer: ToServer;
+  GameEvent: GameEvent;
+  GameState: GameState;
+  Ctx: FlowClientCtx;
+  OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
+  InEvent: SpaceClientEvent;
+  InCmd: null;
+  OutEvent: null;
+}>;
 
 //
 //
@@ -20,7 +42,7 @@ export type ClientModel = null;
 
 export type ServerModel = null;
 
-const EMPTY_GRID = FlowGrid.init({ bounds: FlowGridPosition.bounds8x8 });
+// const EMPTY_GRID = FlowGrid.init({ bounds: FlowGridPosition.bounds8x8 });
 
 //
 //
@@ -66,17 +88,18 @@ export type GameEvent =
   | {
       t: "user-changed-to-play-mode";
       userId: UserId;
-    };
-
-type State =
-  | {
-      t: "list";
     }
   | {
-      t: "build";
+      t: "listed-puzzles";
+      input: ListPuzzlesInput;
+      output: ListPuzzlesOutput;
+    }
+  | {
+      t: "user-created-new-puzzle";
+      puzzle: FlowPuzzle;
     };
 
-type BuildMode =
+type BuildState =
   | {
       t: "play";
     }
@@ -84,13 +107,27 @@ type BuildMode =
       t: "edit";
     };
 
-export type GameState = {
-  play: FlowGridUIPlay.Model;
-  edit: FlowGridUIEdit.Model;
-  mode: BuildMode;
+type BaseGameState = {
+  puzzles: {
+    [puzzleId: FlowPuzzleId]: FlowPuzzle;
+  };
 };
 
-export const toCurrentGrid = (state: GameState): FlowGrid.Model => {
+export type GameStateBuild = {
+  t: "build";
+  puzzleId: FlowPuzzleId;
+  play: FlowGridUIPlay.Model;
+  edit: FlowGridUIEdit.Model;
+  mode: BuildState;
+};
+
+export type GameStateList = {
+  t: "list";
+};
+
+export type GameState = BaseGameState & (GameStateList | GameStateBuild);
+
+export const toCurrentGrid = (state: GameStateBuild): FlowGrid.Model => {
   switch (state.mode.t) {
     case "edit": {
       return state.edit.grid;
@@ -103,22 +140,48 @@ export const toCurrentGrid = (state: GameState): FlowGrid.Model => {
 };
 
 export const initState = (_input: { ctx: SpaceCtx }): GameState => {
-  const grid = EMPTY_GRID;
+  // const _grid = EMPTY_GRID;
   return {
-    mode: { t: "edit" },
-    play: FlowGridUIPlay.init({ grid }),
-    edit: FlowGridUIEdit.init({ grid }),
+    t: "list",
+    puzzles: {},
+
+    // mode: { t: "edit" },
+    // play: FlowGridUIPlay.init({ grid }),
+    // edit: FlowGridUIEdit.init({ grid }),
   };
 };
-
 export const reducer = ({
   state,
   event,
+  ctx,
 }: {
   ctx: SpaceCtx;
   event: GameEvent;
   state: GameState;
 }): GameState => {
+  switch (state.t) {
+    case "build": {
+      const updated = reducerBuildState({ ctx, event, state: state });
+      return {
+        ...updated,
+        puzzles: state.puzzles,
+      };
+    }
+
+    case "list": {
+      return state;
+    }
+  }
+};
+
+const reducerBuildState = ({
+  state,
+  event,
+}: {
+  ctx: SpaceCtx;
+  event: GameEvent;
+  state: GameStateBuild;
+}): GameStateBuild => {
   switch (event.t) {
     case "grid-ui-play": {
       return {
@@ -148,6 +211,14 @@ export const reducer = ({
         play: { ...state.play, grid: FlowGridUIEdit.toGrid(state.edit) },
         mode: { t: "play" },
       };
+    }
+
+    case "listed-puzzles": {
+      return state;
+    }
+
+    case "user-created-new-puzzle": {
+      return state;
     }
   }
 };
