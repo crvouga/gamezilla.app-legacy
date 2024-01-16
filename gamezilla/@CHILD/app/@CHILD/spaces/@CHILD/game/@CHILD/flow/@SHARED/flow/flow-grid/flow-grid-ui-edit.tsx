@@ -1,4 +1,13 @@
-import { ActionButton, Drawer, DrawerHeaher, IconArrowRotateLeft, IconArrowRotateRight, IconExpand, IconXMark, Slider } from "gamezilla/@CHILD/app/@SHARED/ui";
+import {
+  ActionButton,
+  Drawer,
+  DrawerHeaher,
+  IconArrowRotateLeft,
+  IconArrowRotateRight,
+  IconExpand,
+  IconXMark,
+  Slider,
+} from "gamezilla/@CHILD/app/@SHARED/ui";
 import { History } from "gamezilla/@SHARED/history";
 import { FlowUI } from "..";
 import * as Flow from "../flow";
@@ -14,23 +23,22 @@ import { APP_SOUND } from "gamezilla/@CHILD/app/@SHARED/client";
 //
 //
 
-
 type Form = {
-  width: number
-  height: number
-  terminalsByGroupId: DraftTerminals
-}
+  width: number;
+  height: number;
+  terminalsByGroupId: DraftTerminals;
+};
 
 export const initForm: Form = {
   width: 5,
   height: 5,
   terminalsByGroupId: {},
-}
+};
 
 export type Model = {
   grid: FlowGrid.Model;
-  form: History<Form>
-  opened: "dimensions" | null
+  form: History<Form>;
+  opened: "dimensions" | null;
 };
 
 type DraftTerminals = {
@@ -38,8 +46,8 @@ type DraftTerminals = {
 };
 
 export const canClear = (model: Model): boolean => {
-  return Object.keys(History.present(model.form)).length > 0
-}
+  return Object.keys(History.present(model.form)).length > 0;
+};
 
 type DraftTerminal = {
   groupId: Flow.GroupId;
@@ -51,7 +59,7 @@ export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
   return {
     form: History.init({
       height: grid.bounds.max.y - grid.bounds.min.y,
-      width: grid.bounds.max.x - - grid.bounds.min.x,
+      width: grid.bounds.max.x - -grid.bounds.min.x,
       terminalsByGroupId: grid.flow.terminalsByGroupId,
     }),
     grid,
@@ -74,13 +82,13 @@ export type Msg =
   | { t: "clicked-clear" }
   | { t: "clicked-undo" }
   | { t: "clicked-redo" }
-  | { t: 'clicked-dimensions' }
-  | { t: 'closed-dimensions' }
+  | { t: "clicked-dimensions" }
+  | { t: "closed-dimensions" };
 
 export type Cmd = {
-  t: 'play-sound',
-  sourceSrc: string,
-}
+  t: "play-sound";
+  sourceSrc: string;
+};
 
 export const update = ({
   model,
@@ -89,27 +97,27 @@ export const update = ({
   msg: Msg;
   model: Model;
 }): {
-  model: Model
-  cmd?: Cmd
+  model: Model;
+  cmd?: Cmd;
 } => {
   switch (msg.t) {
-    case 'dragged-over': {
-      return { model }
+    case "dragged-over": {
+      return { model };
     }
 
-    case 'pressed-up-node': {
-      return { model }
+    case "pressed-up-node": {
+      return { model };
     }
 
-    case 'clicked-dimensions': {
-      return { model: { ...model, opened: 'dimensions' }, }
+    case "clicked-dimensions": {
+      return { model: { ...model, opened: "dimensions" } };
     }
 
-    case 'closed-dimensions': {
-      return { model: { ...model, opened: null }, }
+    case "closed-dimensions": {
+      return { model: { ...model, opened: null } };
     }
 
-    case 'clicked-clear': {
+    case "clicked-clear": {
       return {
         model: {
           ...model,
@@ -120,36 +128,36 @@ export const update = ({
           }),
         },
         cmd: {
-          t: 'play-sound',
+          t: "play-sound",
           sourceSrc: APP_SOUND.navTransitionLeft,
-        }
-      }
+        },
+      };
     }
 
-    case 'clicked-undo': {
+    case "clicked-undo": {
       return {
         model: {
           ...model,
           form: History.undo(model.form),
         },
         cmd: {
-          t: 'play-sound',
+          t: "play-sound",
           sourceSrc: APP_SOUND.navBackwardMin,
-        }
-      }
+        },
+      };
     }
 
-    case 'clicked-redo': {
+    case "clicked-redo": {
       return {
         model: {
           ...model,
           form: History.redo(model.form),
         },
         cmd: {
-          t: 'play-sound',
+          t: "play-sound",
           sourceSrc: APP_SOUND.navForwardMin,
-        }
-      }
+        },
+      };
     }
 
     case "pressed-down-node": {
@@ -165,12 +173,12 @@ export const update = ({
           form: History.push(model.form, {
             ...History.present(model.form),
             terminalsByGroupId: draftTerminalsNew,
-          })
+          }),
         },
         cmd: {
-          t: 'play-sound',
+          t: "play-sound",
           sourceSrc: APP_SOUND.tap,
-        }
+        },
       };
     }
   }
@@ -191,7 +199,7 @@ export const updateDraftTerminalsOnPressedDownNode = (
       if (!pressedTerminal.endId) {
         const draftTerminalsNew = { ...draftTerminals };
         delete draftTerminalsNew[pressedTerminal.groupId];
-        return draftTerminalsNew
+        return draftTerminalsNew;
       }
       const terminalNew: DraftTerminal = {
         groupId: pressedTerminal.groupId,
@@ -212,7 +220,7 @@ export const updateDraftTerminalsOnPressedDownNode = (
       ...draftTerminals,
       [pressedTerminal.groupId]: terminalNew,
     };
-    return draftTerminalsNew
+    return draftTerminalsNew;
   }
 
   const currentTerminal = draftTerminals[currentPlacingGroupId];
@@ -270,7 +278,9 @@ const findDraftTerminalByNodeId = (
 
 export const toCurrentPlacingGroupId = (model: Model): Flow.GroupId => {
   for (const groupId of Flow.GROUP_ID_ORDER) {
-    const draftTerminal = History.present(model.form).terminalsByGroupId[groupId];
+    const draftTerminal = History.present(model.form).terminalsByGroupId[
+      groupId
+    ];
 
     if (!draftTerminal) {
       return groupId;
@@ -284,41 +294,38 @@ export const toCurrentPlacingGroupId = (model: Model): Flow.GroupId => {
   return Flow.GROUP_ID_ORDER[Flow.GROUP_ID_ORDER.length - 1]!;
 };
 
-
 export const filterDraftTerminals = (
   draftTerminals: DraftTerminals
-): Flow.Model['terminalsByGroupId'] => {
-  const terminalsByGroupId: Flow.Model['terminalsByGroupId'] = {};
+): Flow.Model["terminalsByGroupId"] => {
+  const terminalsByGroupId: Flow.Model["terminalsByGroupId"] = {};
 
   for (const groupId in draftTerminals) {
     const draftTerminal = draftTerminals[groupId as Flow.GroupId];
     if (!draftTerminal) {
-      continue
+      continue;
     }
     if (!draftTerminal.endId) {
-      continue
+      continue;
     }
     const terminal: Flow.Terminal = {
       startId: draftTerminal.startId,
       endId: draftTerminal.endId,
       groupId: draftTerminal.groupId,
-    }
-    terminalsByGroupId[draftTerminal.groupId] = terminal
+    };
+    terminalsByGroupId[draftTerminal.groupId] = terminal;
   }
   return terminalsByGroupId;
-}
+};
 
-export const toGrid = (
-  model: Model
-): FlowGrid.Model => {
+export const toGrid = (model: Model): FlowGrid.Model => {
   return {
     ...model.grid,
     flow: {
       ...model.grid.flow,
-      terminalsByGroupId: History.present(model.form).terminalsByGroupId
-    }
-  }
-}
+      terminalsByGroupId: History.present(model.form).terminalsByGroupId,
+    },
+  };
+};
 
 //
 //
@@ -336,9 +343,8 @@ export const View = ({
   dispatch: (m: Msg) => void;
 }) => {
   return (
-    <div className="flex w-full h-full flex-1 items-center justify-center flex-col overflow-y-auto">
-
-      <div className="flex-1 flex flex-col justify-end">
+    <div className="flex h-full w-full flex-1 flex-col items-center justify-center overflow-y-auto">
+      <div className="flex flex-1 flex-col justify-end">
         <div className="flex flex-col items-center justify-end">
           <div className="flex w-full items-center justify-center gap-1 pb-2">
             Placing
@@ -350,8 +356,6 @@ export const View = ({
         </div>
       </div>
 
-
-
       <FlowGridUI.View
         model={toGrid(model)}
         onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
@@ -359,64 +363,56 @@ export const View = ({
         onPressUp={(nodeId) => dispatch({ t: "pressed-up-node", nodeId })}
       />
 
-      <div className="flex-1 flex flex-col justify-end w-full">
-
-        <div className="w-full flex items-center border-t border-neutral-700 py-0.5">
+      <div className="flex w-full flex-1 flex-col justify-end">
+        <div className="flex w-full items-center border-t border-neutral-700 py-0.5">
           <ActionButton
-            icon={<IconArrowRotateLeft className="w-6 h-6" />}
+            icon={<IconArrowRotateLeft className="h-6 w-6" />}
             label="Undo"
-            onClick={() => dispatch({ t: 'clicked-undo' })}
+            onClick={() => dispatch({ t: "clicked-undo" })}
             disabled={!History.canUndo(model.form)}
           />
           <ActionButton
-            icon={<IconArrowRotateRight className="w-6 h-6" />}
+            icon={<IconArrowRotateRight className="h-6 w-6" />}
             label="Redo"
             disabled={!History.canRedo(model.form)}
-            onClick={() => dispatch({ t: 'clicked-redo' })}
+            onClick={() => dispatch({ t: "clicked-redo" })}
           />
           <ActionButton
-            icon={<IconXMark className="w-6 h-6" />}
+            icon={<IconXMark className="h-6 w-6" />}
             label="Clear"
             disabled={!canClear(model)}
-            onClick={() => dispatch({ t: 'clicked-clear' })}
+            onClick={() => dispatch({ t: "clicked-clear" })}
           />
           <ActionButton
-            icon={<IconExpand className="w-6 h-6" />}
+            icon={<IconExpand className="h-6 w-6" />}
             label="Dimensions"
             disabled={!canClear(model)}
-            onClick={() => dispatch({ t: 'clicked-dimensions' })}
+            onClick={() => dispatch({ t: "clicked-dimensions" })}
           />
         </div>
       </div>
       <Drawer
-        open={model.opened === 'dimensions'}
-        onClose={() => dispatch({ t: 'closed-dimensions' })}
+        open={model.opened === "dimensions"}
+        onClose={() => dispatch({ t: "closed-dimensions" })}
         id="dimensions"
         position="bottom"
       >
-        <DrawerHeaher onClose={() => dispatch({ t: 'closed-dimensions' })} />
+        <DrawerHeaher onClose={() => dispatch({ t: "closed-dimensions" })} />
 
-        <div className="text-4xl text-center font-bold flex items-center justify-center gap-1">
-          <p>
-            {`${History.present(model.form).width}w`}
-          </p>
-          <IconXMark className="w-6 h-6" />
-          <p>
-            {`${History.present(model.form).height}h`}
-          </p>
+        <div className="flex items-center justify-center gap-1 text-center text-4xl font-bold">
+          <p>{`${History.present(model.form).width}w`}</p>
+          <IconXMark className="h-6 w-6" />
+          <p>{`${History.present(model.form).height}h`}</p>
         </div>
 
-        <div className="p-4 flex flex-col gap-3 pb-8">
+        <div className="flex flex-col gap-3 p-4 pb-8">
           <Slider label="Width" min={3} max={15} step={1} />
           <Slider label="Height" min={3} max={15} step={1} />
         </div>
-
       </Drawer>
     </div>
   );
 };
-
-
 
 const ViewTerminal = ({
   groupId,
