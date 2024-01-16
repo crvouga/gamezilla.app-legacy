@@ -5,7 +5,11 @@ import {
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { SpaceClientEvent } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
-import { APP_SOUND, ClientCmd, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  APP_SOUND,
+  ClientCmd,
+  playSound,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconPenToSquare,
@@ -63,19 +67,18 @@ const update: Module["update"] = (input) => {
         },
         (model) => {
           switch (msg.t) {
-
-            case 'user-changed-to-edit-mode': {
+            case "user-changed-to-edit-mode": {
               return {
                 model,
-                cmd: [playSound(APP_SOUND.navBackwardMin)]
-              }
+                cmd: [playSound(APP_SOUND.navBackwardMin)],
+              };
             }
 
-            case 'user-changed-to-play-mode': {
+            case "user-changed-to-play-mode": {
               return {
                 model,
-                cmd: [playSound(APP_SOUND.navForwardMin)]
-              }
+                cmd: [playSound(APP_SOUND.navForwardMin)],
+              };
             }
 
             case "grid-ui-edit": {
@@ -84,12 +87,13 @@ const update: Module["update"] = (input) => {
                 msg: msg.c,
               });
 
-              switch (updated.cmd?.t) {
+              if (!updated.cmd) {
+                return { model };
+              }
+
+              switch (updated.cmd.t) {
                 case "play-sound": {
                   return { model, cmd: [playSound(updated.cmd.sourceSrc)] };
-                }
-                default: {
-                  return { model };
                 }
               }
             }
@@ -144,7 +148,7 @@ const View: Module["View"] = (input) => {
                 {
                   label: "Play Mode",
                   classNames: {
-                    button: "text-blue-500"
+                    button: "text-blue-500",
                   },
                   icon: <IconPlay className="h-6 w-6" />,
                   onClick: () =>
@@ -186,7 +190,7 @@ const View: Module["View"] = (input) => {
                 {
                   label: "Edit Mode",
                   classNames: {
-                    button: "text-amber-500"
+                    button: "text-amber-500",
                   },
                   icon: <IconPenToSquare className="h-6 w-6" />,
                   onClick: () =>

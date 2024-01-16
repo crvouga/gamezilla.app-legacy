@@ -6,6 +6,7 @@ import {
   FlowGridUIEdit,
   FlowGridUIPlay,
 } from "../../@SHARED/flow";
+import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db";
 
 //
 //
@@ -33,9 +34,13 @@ export type ClientMsg = GameEvent;
 
 export type ServerMsg = { t: null };
 
-export type ToServer = { t: null };
+export type ListPuzzlesInput = Parameters<IFlowPuzzleDb["list"]>[0];
 
-export type ToClient = { t: null };
+export type ListPuzzlesOutput = ReturnType<IFlowPuzzleDb["list"]>;
+
+export type ToServer = { t: "list-puzzles" } & ListPuzzlesInput;
+
+export type ToClient = { t: "listed-puzzle" } & ListPuzzlesOutput;
 
 //
 //
@@ -63,7 +68,15 @@ export type GameEvent =
       userId: UserId;
     };
 
-type Mode =
+type State =
+  | {
+      t: "list";
+    }
+  | {
+      t: "build";
+    };
+
+type BuildMode =
   | {
       t: "play";
     }
@@ -74,7 +87,7 @@ type Mode =
 export type GameState = {
   play: FlowGridUIPlay.Model;
   edit: FlowGridUIEdit.Model;
-  mode: Mode;
+  mode: BuildMode;
 };
 
 export const toCurrentGrid = (state: GameState): FlowGrid.Model => {

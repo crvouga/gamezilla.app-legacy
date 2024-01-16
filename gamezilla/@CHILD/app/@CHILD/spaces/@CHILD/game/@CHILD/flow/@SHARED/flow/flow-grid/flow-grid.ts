@@ -10,6 +10,7 @@ import { Bounds, Position, DELTAS, yieldRange } from "./flow-grid-position";
 //
 
 export type Model = {
+  type: "flow-grid";
   flow: Flow.Model;
   bounds: Bounds;
   positions: {
@@ -49,6 +50,7 @@ export const distance =
 
 export const init = ({ bounds }: { bounds: Bounds }): Model => {
   let model: Model = {
+    type: "flow-grid",
     flow: Flow.init,
     bounds,
     positions: {},
