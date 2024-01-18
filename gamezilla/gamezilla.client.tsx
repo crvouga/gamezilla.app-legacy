@@ -54,6 +54,27 @@ const main = async () => {
   console.log(`Transport: ${PUBLIC_APP_CONFIG.TRANSPORT_IMPL}`)
 }
 
+export const DebuggerToggleStorage = () => {
+  const KEY = "gamezilla/should-use-debugger";
+  return {
+    get() {
+      const stored = sessionStorage.getItem(KEY);
+
+      return stored === "true";
+    },
+
+    set(value: boolean) {
+      sessionStorage.setItem(KEY, value.toString());
+    },
+
+    toggle() {
+      const current = this.get();
+
+      this.set(!current);
+    }
+  }
+}
+
 /**
  * Use this to persist state across page refreshes.
  * It retains type safety by using deployment IDs.
