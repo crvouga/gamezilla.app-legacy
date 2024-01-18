@@ -26,6 +26,10 @@
   }
 }
 
+* {
+  touch-action: manipulation;
+}
+
 .transform-origin-center {
   transform-origin: center;
 }
