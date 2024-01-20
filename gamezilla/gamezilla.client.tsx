@@ -54,7 +54,7 @@ const main = async () => {
   console.log(`Transport: ${PUBLIC_APP_CONFIG.TRANSPORT_IMPL}`)
 }
 
-export const DebuggerToggleStorage = () => {
+const DebuggerToggleStorage = () => {
   const KEY = "gamezilla/should-use-debugger";
   return {
     get() {
@@ -75,11 +75,13 @@ export const DebuggerToggleStorage = () => {
   }
 }
 
+DebuggerToggleStorage()
+
 /**
  * Use this to persist state across page refreshes.
  * It retains type safety by using deployment IDs.
  */
-export const Storage = <TModel,>() => {
+const Storage = <TModel,>() => {
   const CODEBASE_VERSION_ID_KEY = "gamezilla/codebase-version-id";
   const MODEL_KEY = "gamezilla/model";
 
@@ -108,11 +110,13 @@ export const Storage = <TModel,>() => {
   };
 }
 
+Storage()
+
 /**
  * Use this to render runtime errors to the screen.
  * This is useful for debugging on mobile devices.
  */
-export const renderRuntimeErrors = () => {
+const renderRuntimeErrors = () => {
   window.onerror = function (errorMsg, url, lineNumber, column, _errorObj) {
     showError(errorMsg, url, lineNumber, column);
   };
@@ -158,6 +162,7 @@ const getRenderer = async ({ impl }: { impl: RendererImpl }): Promise<Renderer> 
       }
     }
 
+    case 'react-with-million':
     case "react": {
       const { createRoot } = await import("react-dom/client");
       await import("react");
