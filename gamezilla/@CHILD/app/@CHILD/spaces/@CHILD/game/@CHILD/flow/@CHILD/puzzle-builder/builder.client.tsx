@@ -22,8 +22,24 @@ import {
   toCurrentGrid
 } from "./puzzle-builder.core";
 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+
 
 const init: ClientModule["init"] = null;
+
+// 
+// 
+// 
+// 
+// 
+// 
+// 
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
@@ -81,15 +97,31 @@ const updateSound: ClientModule["update"] = (input) => {
         }
       }
     }
+
     default: {
       return { model };
     }
   }
 };
 
+// 
+// 
+// 
+// 
+// 
+// 
+
 const subscriptions: ClientModule["subscriptions"] = () => {
   return Sub.None;
 };
+
+// 
+// 
+// 
+// 
+// 
+// 
+// 
 
 const View: ClientModule["View"] = (input) => {
 
@@ -124,9 +156,9 @@ const View: ClientModule["View"] = (input) => {
             <ViewBottomButtonBar
               actions={[
                 {
-                  label: "Exit Builder",
+                  label: "Exit",
                   icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-                  onClick: ctx.onQuit,
+                  onClick: () => dispatch({ t: "user-exited-builder", userId: ctx.currentUserId }),
                 },
                 {
                   label: "Play Mode",

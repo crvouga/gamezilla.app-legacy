@@ -105,6 +105,10 @@ export type GameEvent =
     }
   | {
       t: "time-passed";
+    }
+  | {
+      t: "user-exited-builder";
+      userId: UserId;
     };
 
 type BuildState =
@@ -199,6 +203,7 @@ const reducerListState = ({
       };
     }
 
+    case "user-exited-builder":
     case "time-passed":
     case "user-changed-to-edit-mode":
     case "user-changed-to-play-mode":
@@ -212,11 +217,12 @@ const reducerListState = ({
 const reducerBuildState = ({
   state,
   event,
+  ctx,
 }: {
   ctx: SpaceCtx;
   event: GameEvent;
   state: GameStateBuild;
-}): GameStateBuild => {
+}): GameState => {
   switch (event.t) {
     case "grid-ui-play": {
       return {
@@ -237,6 +243,10 @@ const reducerBuildState = ({
     }
 
     case "user-changed-to-edit-mode": {
+      if (event.userId !== ctx.space.hostId) {
+        return state;
+      }
+
       return { ...state, mode: { t: "edit" } };
     }
 
@@ -248,11 +258,18 @@ const reducerBuildState = ({
       };
     }
 
-    case "time-passed":
-    case "listed-puzzles": {
-      return state;
+    case "user-exited-builder": {
+      if (event.userId !== ctx.space.hostId) {
+        return state;
+      }
+
+      return {
+        t: "list",
+      };
     }
 
+    case "time-passed":
+    case "listed-puzzles":
     case "user-created-new-puzzle": {
       return state;
     }
