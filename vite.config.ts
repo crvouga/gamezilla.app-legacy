@@ -30,7 +30,9 @@ function rendererPlugin({ impl }: { impl: RendererImpl }) {
 export default defineConfig({
   plugins: [
     tsconfigPaths(),
-    ...rendererPlugin({ impl: PUBLIC_APP_CONFIG.RENDERER_IMPL }),
+    ...rendererPlugin({
+      impl: PUBLIC_APP_CONFIG.RENDERER_IMPL,
+    }),
   ],
   server: {
     hmr: false,
