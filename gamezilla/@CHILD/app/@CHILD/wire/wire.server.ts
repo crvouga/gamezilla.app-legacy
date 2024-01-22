@@ -1,12 +1,14 @@
-import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   ServerCmd,
   ServerCtx,
   ServerEvent,
+  WireCmd,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Posix, TimeSpan } from "gamezilla/@SHARED/core";
 import { Sub } from "gamezilla/@SHARED/core/sub";
+import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
 import { AppServerModule } from "../../@SHARED/architecture/app-server";
 import { IServerTransport } from "./transport-server";
 import {
@@ -16,7 +18,6 @@ import {
   ToClient,
   ToServer,
 } from "./wire.core";
-import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
 
 //
 //
@@ -30,6 +31,7 @@ export const init = async (): Promise<{ model: ServerModel }> => {
   return {
     model: {
       clientsBySessionId: {},
+      sessionIdsByUserId: {},
       serverStartedAt: null,
     },
   };
@@ -49,15 +51,12 @@ type Input<TToClient, TToServer> = {
   msg?: ServerMsg | null;
   fromClient?: ToServer | null;
   event?: ServerEvent | null;
-  cmd?: ServerCmd<TToClient> | null;
+  cmd?: WireCmd<TToClient> | null;
   //
   transport: IServerTransport<{
     ToClient: TToClient;
     ToServer: TToServer;
   }>;
-  toSessionIds: (
-    userId: UserId
-  ) => Promise<{ [sessionId: SessionId]: SessionId } | null>;
 };
 
 type Output = {
@@ -79,7 +78,8 @@ export const update = async <TToClient, TToServer>(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),
-    (model) => updateFromCmd({ ...input, model })
+    (model) => updateFromCmd({ ...input, model }),
+    (model) => updateFromEvent({ ...input, model })
   );
 };
 
@@ -112,18 +112,20 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
             [msg.sessionId]: clientNew,
           };
 
+          const event: ServerEvent[] = [
+            {
+              t: "wire/client-connected",
+              clientId: msg.clientId,
+              sessionId: msg.sessionId,
+            },
+          ];
+
           return {
             model: {
               ...model,
               clientsBySessionId: clientsBySessionIdNew,
             },
-            event: [
-              {
-                t: "wire/client-connected",
-                clientId: msg.clientId,
-                sessionId: msg.sessionId,
-              },
-            ],
+            event,
           };
         },
         async (model) => {
@@ -164,18 +166,19 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
       //   [msg.sessionId]: clientNew,
       // };
 
+      const event: ServerEvent[] = [
+        {
+          t: "wire/client-disconnected",
+          clientId: msg.clientId,
+          sessionId: msg.sessionId,
+        },
+      ];
       return {
         model: {
           ...model,
           // clientsBySessionId: clientsBySessionIdNew,
         },
-        event: [
-          {
-            t: "wire/client-disconnected",
-            clientId: msg.clientId,
-            sessionId: msg.sessionId,
-          },
-        ],
+        event: event,
       };
     }
 
@@ -199,6 +202,34 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
   }
 };
 
+const updateFromEvent: typeof update = async ({ event, model }) => {
+  if (!event) {
+    return { model };
+  }
+  switch (event.t) {
+    case "auth/client-authenticated": {
+      const sessionIds = model.sessionIdsByUserId[event.userId] ?? [];
+
+      const sessionIdsNew = [...new Set([...sessionIds, event.sessionId])];
+
+      const sessionIdByUserIdNew: ServerModel["sessionIdsByUserId"] = {
+        ...model.sessionIdsByUserId,
+        [event.userId]: sessionIdsNew,
+      };
+
+      return {
+        model: {
+          ...model,
+          sessionIdsByUserId: sessionIdByUserIdNew,
+        },
+      };
+    }
+    default: {
+      return { model };
+    }
+  }
+};
+
 const updateFromClient: typeof update = async ({ model }) => {
   return { model };
 };
@@ -207,24 +238,25 @@ const updateFromCmd = async <TToClient, TToServer>({
   cmd,
   model,
   transport,
-  toSessionIds,
   ctx,
 }: Input<TToClient, TToServer>): Promise<Output> => {
   if (!cmd) {
     return { model };
   }
 
-  switch (cmd.t) {
-    case "wire/broadcast": {
+  const cmdChild = cmd.c;
+
+  switch (cmdChild.t) {
+    case "broadcast": {
       return {
         model,
         eff: () => {
-          transport.toClientBroadcast.publish([cmd.msg]);
+          transport.toClientBroadcast.publish([cmdChild.msg]);
         },
       };
     }
 
-    case "wire/send-to-client": {
+    case "send-to-client": {
       return {
         model,
         eff: () => {
@@ -235,15 +267,15 @@ const updateFromCmd = async <TToClient, TToServer>({
             };
           } = {};
 
-          if (cmd.clientIds.length === 0) {
-            ctx.logger.warn(`${cmd.t} failed. No client ids provided`);
+          if (cmdChild.clientIds.length === 0) {
+            ctx.logger.warn(`${cmdChild.t} failed. No client ids provided`);
             return;
           }
 
-          for (const clientId of cmd.clientIds) {
+          for (const clientId of cmdChild.clientIds) {
             toClientPayload[clientId] = {
               clientId,
-              msgs: [cmd.msg],
+              msgs: [cmdChild.msg],
             };
           }
 
@@ -252,77 +284,106 @@ const updateFromCmd = async <TToClient, TToServer>({
       };
     }
 
-    case "wire/send-to-user": {
+    case "send-to-user": {
+      const sessionIds: SessionId[] = cmdChild.userIds.flatMap(
+        (userId) => model.sessionIdsByUserId[userId] ?? []
+      );
+
       return {
         model,
-        eff: async () => {
-          const toClientPayload: {
-            [clientId: ClientId]: {
-              clientId: ClientId;
-              msgs: TToClient[];
-            };
-          } = {};
-
-          for (const userId of cmd.userIds) {
-            const sessionIds = await toSessionIds(userId);
-
-            if (!sessionIds || Object.values(sessionIds).length === 0) {
-              ctx.logger.warn(
-                `wire/send-to-user failed. no sessionIds for userId=${userId}`
-              );
-              continue;
-            }
-
-            for (const sessionId in sessionIds) {
-              const client = model.clientsBySessionId[sessionId as SessionId];
-
-              if (!client) {
-                ctx.logger.warn(
-                  `wire/send-to-user failed. no client for sessionId=${sessionId} and userId=${userId}`
-                );
-                continue;
-              }
-
-              const clientIds = CappedOrderedDict.values(client.clientIds);
-
-              if (clientIds.length === 0) {
-                ctx.logger.warn(
-                  `wire/send-to-user failed. no client ids for sessionId=${sessionId} and userId=${userId}`
-                );
-                continue;
-              }
-
-              for (const clientId of clientIds) {
-                toClientPayload[clientId] = {
-                  clientId,
-                  msgs: [...(toClientPayload[clientId]?.msgs ?? []), cmd.msg],
-                };
-              }
-            }
-          }
-
-          console.log("toClientPayload", toClientPayload);
-
-          transport.toClient.publish(toClientPayload);
+        eff: () => {
+          sendToSession({
+            ctx,
+            sessionIds,
+            model,
+            msg: cmdChild.msg,
+            transport,
+          });
         },
       };
     }
 
-    case "wire/topic-publish": {
+    case "send-to-session": {
+      return {
+        model,
+        eff: () => {
+          sendToSession({
+            ctx,
+            sessionIds: cmdChild.sessionIds,
+            model,
+            msg: cmdChild.msg,
+            transport,
+          });
+        },
+      };
+    }
+
+    case "topic-publish": {
       return {
         model,
         eff: () => {},
       };
     }
 
-    case "wire/topic-subscribe": {
-      return { model };
-    }
-
-    default: {
+    case "topic-subscribe": {
       return { model };
     }
   }
+};
+
+const sendToSession = async <TToClient, TToServer>({
+  ctx,
+  sessionIds,
+  transport,
+  model,
+  msg,
+}: {
+  ctx: ServerCtx;
+  model: ServerModel;
+  msg: TToClient;
+  sessionIds: SessionId[];
+  transport: IServerTransport<{ ToClient: TToClient; ToServer: TToServer }>;
+}) => {
+  const toClientPayload: {
+    [clientId: ClientId]: {
+      clientId: ClientId;
+      msgs: TToClient[];
+    };
+  } = {};
+
+  if (sessionIds.length === 0) {
+    ctx.logger.warn(`send to session failed. no sessionIds provided`);
+    return;
+  }
+
+  for (const sessionId of sessionIds) {
+    const client = model.clientsBySessionId[sessionId];
+
+    if (!client) {
+      ctx.logger.warn(
+        `send to session failed. no client associated with sessionId=${sessionId}`
+      );
+      continue;
+    }
+
+    const clientIds = CappedOrderedDict.values(client.clientIds);
+
+    if (clientIds.length === 0) {
+      ctx.logger.warn(
+        `send to session failed. no client ids for sessionId=${sessionId}`
+      );
+      continue;
+    }
+
+    for (const clientId of clientIds) {
+      toClientPayload[clientId] = {
+        clientId,
+        msgs: [...(toClientPayload[clientId]?.msgs ?? []), msg],
+      };
+    }
+  }
+
+  transport.toClient.publish(toClientPayload);
 };
 
 export const subscriptions = <TToServer, TToClient>({

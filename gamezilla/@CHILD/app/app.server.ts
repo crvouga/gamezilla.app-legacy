@@ -1,3 +1,4 @@
+import { PUBLIC_APP_CONFIG } from "config.ts";
 import {
   DbConnSql,
   SMS,
@@ -16,7 +17,6 @@ import {
   ok,
   toMsgType,
 } from "gamezilla/@SHARED/core";
-import { toSessionIds } from "./@CHILD/auth/auth.core";
 import * as AuthServer from "./@CHILD/auth/auth.server";
 import * as ProfileServer from "./@CHILD/profile/profile.server";
 import * as SpaceServer from "./@CHILD/spaces/spaces.server";
@@ -35,7 +35,6 @@ import {
   ToServer,
   ToServerMeta,
 } from "./app.core";
-import { PUBLIC_APP_CONFIG } from "config.ts";
 
 //
 //
@@ -307,12 +306,11 @@ export const updateChild = async ({
   const wire = await WireServer.update({
     model: model.wire,
     ctx,
-    cmd: cmd,
+    cmd: cmd?.t === "wire" ? cmd : null,
     event: event,
     fromClient:
       fromClient?.t === "wire" ? { ...fromClient, ...fromClient.c } : null,
     msg: msg?.t === "wire" ? msg.c : null,
-    toSessionIds: (userId) => toSessionIds(ctx, model.auth, userId),
     transport: deps.transport,
   });
 

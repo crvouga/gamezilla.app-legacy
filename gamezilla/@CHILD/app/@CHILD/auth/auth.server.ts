@@ -25,7 +25,7 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 
 type Module = AppServerModule<{
   Ctx: ServerCtx;
-  InCmd: {};
+  InCmd: null;
   InEvent: ServerEvent;
   Model: ServerModel;
   Msg: ServerMsg;
@@ -124,7 +124,7 @@ const updateFromClient: Module["update"] = async ({
 
   switch (fromClient.t) {
     case "logout": {
-      const modelNew = await removeSession(ctx, model, fromClient.sessionId);
+      const modelNew = await dissocSession(ctx, model, fromClient.sessionId);
 
       return {
         model: modelNew,
@@ -184,7 +184,7 @@ const updateFromEvent: typeof update = async ({ event, model, ctx }) => {
 
     case "auth/client-unauthenticated": {
       return {
-        model: await removeSession(ctx, model, event.sessionId),
+        model: await dissocSession(ctx, model, event.sessionId),
         cmd: [
           sendToClient([event.clientId], {
             t: "client-unauthenticated",
@@ -195,35 +195,17 @@ const updateFromEvent: typeof update = async ({ event, model, ctx }) => {
     }
 
     case "auth/client-authenticated": {
-      return AppServerModule.chainUpdates(
-        { model },
-        async (model) => {
-          if (event.loggedIn) {
-            return {
-              model: await addSession(
-                ctx,
-                model,
-                event.sessionId,
-                event.userId
-              ),
-            };
-          }
-          return { model };
-        },
-        async (model) => {
-          return {
-            model,
-            cmd: [
-              sendToClient([event.clientId], {
-                t: "client-authenticated",
-                userId: event.userId,
-                sessionId: event.sessionId,
-                loggedIn: true,
-              }),
-            ],
-          };
-        }
-      );
+      return {
+        model: await assocSession(ctx, model, event.sessionId, event.userId),
+        cmd: [
+          sendToClient([event.clientId], {
+            t: "client-authenticated",
+            userId: event.userId,
+            sessionId: event.sessionId,
+            loggedIn: true,
+          }),
+        ],
+      };
     }
 
     default: {
@@ -232,23 +214,6 @@ const updateFromEvent: typeof update = async ({ event, model, ctx }) => {
   }
 };
 
-export const updateFromCmd = ({
-  cmd,
-  model,
-}: {
-  cmd: ServerCmd<ToClient>;
-  model: ServerModel;
-}): {
-  model: ServerModel;
-  event?: ServerEvent[];
-} => {
-  switch (cmd.t) {
-    default: {
-      return { model };
-    }
-  }
-};
-
 //
 //
 //
@@ -258,7 +223,7 @@ export const updateFromCmd = ({
 //
 //
 
-async function addSession(
+async function assocSession(
   ctx: ServerCtx,
   model: ServerModel,
   sessionId: SessionId,
@@ -288,17 +253,6 @@ async function addSession(
     sessionIdsNew
   );
 
-  const gotUserId = await StoreUserIdBySessionId(ctx).get(
-    model.userIdBySessionId,
-    sessionId
-  );
-
-  console.log({
-    userIdBySessionIdNew,
-    sessionIdByUserIdNew,
-    gotUserId,
-  });
-
   return {
     ...model,
     sessionIdsByUserId: sessionIdByUserIdNew,
@@ -306,7 +260,7 @@ async function addSession(
   };
 }
 
-async function removeSession(
+async function dissocSession(
   ctx: ServerCtx,
   model: ServerModel,
   sessionId: SessionId

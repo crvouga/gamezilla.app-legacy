@@ -1,5 +1,5 @@
 import { Posix } from "gamezilla/@SHARED/core";
-import { ClientId, SessionId } from "../../@SHARED/data";
+import { ClientId, SessionId, UserId } from "../../@SHARED/data";
 import { ClientTransportEvent } from "./transport-client";
 import { ServerTransportMsg } from "./transport-server";
 import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict";
@@ -29,6 +29,9 @@ export type ClientMsg = ClientTransportEvent | { t: "clicked-try-reconnect" };
 export type ServerModel = {
   clientsBySessionId: {
     [sessionId: SessionId]: Client;
+  };
+  sessionIdsByUserId: {
+    [userId: UserId]: SessionId[];
   };
   serverStartedAt: Posix | null;
 };

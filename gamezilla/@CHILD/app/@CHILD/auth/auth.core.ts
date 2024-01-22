@@ -62,6 +62,7 @@ export const toSessionIds = async (
     model.sessionIdsByUserId,
     userId
   );
+  console.log("model.sessionIdsByUserId", model.sessionIdsByUserId);
   return sessionIds ?? null;
 };
 

@@ -1,4 +1,4 @@
-import { ClientId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 //
 //
@@ -8,31 +8,41 @@ import { ClientId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 //
 //
 
-export type ServerCmd<ToClient> =
-  | {
-      t: "wire/broadcast";
-      msg: ToClient;
-    }
-  | {
-      t: "wire/send-to-client";
-      clientIds: ClientId[];
-      msg: ToClient;
-    }
-  | {
-      t: "wire/send-to-user";
-      userIds: UserId[];
-      msg: ToClient;
-    }
-  | {
-      t: "wire/topic-publish";
-      topics: string[];
-      msg: ToClient;
-    }
-  | {
-      t: "wire/topic-subscribe";
-      topics: string[];
-      clientIds: ClientId[];
-    };
+export type WireCmd<ToClient> = {
+  t: "wire";
+  c:
+    | {
+        t: "send-to-user";
+        userIds: UserId[];
+        msg: ToClient;
+      }
+    | {
+        t: "broadcast";
+        msg: ToClient;
+      }
+    | {
+        t: "send-to-client";
+        clientIds: ClientId[];
+        msg: ToClient;
+      }
+    | {
+        t: "send-to-session";
+        sessionIds: SessionId[];
+        msg: ToClient;
+      }
+    | {
+        t: "topic-publish";
+        topics: string[];
+        msg: ToClient;
+      }
+    | {
+        t: "topic-subscribe";
+        topics: string[];
+        clientIds: ClientId[];
+      };
+};
+
+export type ServerCmd<TToClient> = WireCmd<TToClient>;
 
 export const sendBack = <ToClient>(
   ctx: { clientId: ClientId },
@@ -46,9 +56,12 @@ export const topicPublish = <ToClient>(
   msg: ToClient
 ): ServerCmd<ToClient> => {
   return {
-    t: "wire/topic-publish",
-    topics,
-    msg,
+    t: "wire",
+    c: {
+      t: "topic-publish",
+      topics,
+      msg,
+    },
   };
 };
 
@@ -57,16 +70,22 @@ export const topicSubscribe = <ToClient>(
   clientIds: ClientId[]
 ): ServerCmd<ToClient> => {
   return {
-    t: "wire/topic-subscribe",
-    topics,
-    clientIds,
+    t: "wire",
+    c: {
+      t: "topic-subscribe",
+      topics,
+      clientIds,
+    },
   };
 };
 
 export const broadcast = <ToClient>(msg: ToClient): ServerCmd<ToClient> => {
   return {
-    t: "wire/broadcast",
-    msg,
+    t: "wire",
+    c: {
+      t: "broadcast",
+      msg,
+    },
   };
 };
 
@@ -75,9 +94,26 @@ export const sendToClient = <ToClient>(
   msg: ToClient
 ): ServerCmd<ToClient> => {
   return {
-    t: "wire/send-to-client",
-    clientIds,
-    msg,
+    t: "wire",
+    c: {
+      t: "send-to-client",
+      clientIds,
+      msg,
+    },
+  };
+};
+
+export const sendToSession = <ToClient>(
+  sessionIds: SessionId[],
+  msg: ToClient
+): ServerCmd<ToClient> => {
+  return {
+    t: "wire",
+    c: {
+      t: "send-to-session",
+      sessionIds,
+      msg,
+    },
   };
 };
 
@@ -86,9 +122,12 @@ export const sendToUser = <ToClient>(
   msg: ToClient
 ): ServerCmd<ToClient> => {
   return {
-    t: "wire/send-to-user",
-    userIds,
-    msg,
+    t: "wire",
+    c: {
+      t: "send-to-user",
+      userIds,
+      msg,
+    },
   };
 };
 
@@ -103,14 +142,26 @@ export const sendToUser = <ToClient>(
 
 const mapOne = <A, B>(fn: (a: A) => B, cmd: ServerCmd<A>): ServerCmd<B> => {
   switch (cmd.t) {
-    case "wire/send-to-client":
-    case "wire/send-to-user":
-    case "wire/topic-publish":
-    case "wire/broadcast": {
-      return { ...cmd, msg: fn(cmd.msg) };
-    }
-    case "wire/topic-subscribe": {
-      return cmd;
+    case "wire": {
+      switch (cmd.c.t) {
+        case "send-to-user":
+        case "send-to-session":
+        case "send-to-client":
+        case "topic-publish":
+        case "broadcast": {
+          return { t: "wire", c: { ...cmd.c, msg: fn(cmd.c.msg) } };
+        }
+        case "topic-subscribe": {
+          return {
+            t: "wire",
+            c: {
+              t: "topic-subscribe",
+              clientIds: cmd.c.clientIds,
+              topics: cmd.c.topics,
+            },
+          };
+        }
+      }
     }
   }
 };
