@@ -1,9 +1,9 @@
-import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { ServerCtx } from "gamezilla/@CHILD/app/@SHARED/server";
 import {
   EmailAddress,
   PhoneNumber,
   RemoteResult,
-  Result,
 } from "gamezilla/@SHARED/core";
 import { Store } from "gamezilla/@SHARED/immutable-store";
 import * as AuthSMS from "./@CHILD/auth-sms/auth-sms.core";
@@ -11,7 +11,6 @@ import {
   StoreSessionIdByUserId,
   StoreUserIdBySessionId,
 } from "./@SHARED/server/auth-session-store";
-import { ServerCtx } from "gamezilla/@CHILD/app/@SHARED/server";
 
 //
 //
@@ -82,17 +81,10 @@ export type LogoutMsg =
   | { t: "clicked-cancel" }
   | { t: "closed" };
 
-export type ServerMsg =
-  | {
-      t: "got-user-account";
-      result: Result<string, Account>;
-      sessionId: SessionId;
-      clientId: ClientId;
-    }
-  | {
-      t: "sms";
-      c: AuthSMS.ServerMsg;
-    };
+export type ServerMsg = {
+  t: "sms";
+  c: AuthSMS.ServerMsg;
+};
 
 export type ToServer = { t: "logout" } | { t: "sms"; c: AuthSMS.ToServer };
 

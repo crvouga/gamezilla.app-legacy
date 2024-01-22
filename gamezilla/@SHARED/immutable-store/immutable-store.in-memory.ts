@@ -8,14 +8,66 @@ export type MapEntry<TKey extends string | number, TValue> = Store<
   value: TValue | undefined;
 };
 
+const mapsByNamespace = new Map<
+  string,
+  Map<string | number, MapEntry<string | number, unknown>[]>
+>();
+
 export const InMemoryStore = <TKey extends string | number, TValue>({
+  namespace,
   maxEntryCount,
+  encodeValue,
+  decodeValue,
 }: {
+  namespace: string;
   maxEntryCount: number;
+  encodeValue: (value: TValue) => unknown;
+  decodeValue: (value: unknown) => TValue | null;
 }): StoreModule<TKey, TValue> & {
   toJSON: () => unknown;
 } => {
-  const map = new Map<TKey, MapEntry<TKey, TValue>[]>();
+  const getMap = () => {
+    const map = mapsByNamespace.get(namespace);
+
+    if (map) {
+      return map;
+    }
+
+    const mapNew = new Map<
+      string | number,
+      MapEntry<string | number, unknown>[]
+    >();
+
+    mapsByNamespace.set(namespace, mapNew);
+
+    return mapNew;
+  };
+
+  const setMap = (
+    map: Map<string | number, MapEntry<string | number, unknown>[]>
+  ) => {
+    mapsByNamespace.set(namespace, map);
+  };
+
+  const decodeEntry = (
+    encodedEntry: MapEntry<string | number, unknown>
+  ): MapEntry<TKey, TValue> | null => {
+    const value = encodedEntry.value
+      ? decodeValue(encodedEntry.value)
+      : undefined;
+
+    if (!value) {
+      return null;
+    }
+
+    return {
+      _appendStep: encodedEntry._appendStep,
+      _instanceStep: encodedEntry._instanceStep,
+      _posixTimestamp: encodedEntry._posixTimestamp,
+      key: encodedEntry.key as TKey,
+      value,
+    };
+  };
 
   let runningAppendStep = 1;
 
@@ -31,18 +83,24 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
     };
 
     for (const [key, value] of entries) {
-      const entry: MapEntry<TKey, TValue> = {
+      const entry: MapEntry<string | number, unknown> = {
         ...instanceNew,
         key,
-        value,
+        value: value ? encodeValue(value) : undefined,
       };
 
+      const map = getMap();
+
       const keyEntries = map.get(entry.key) ?? [];
+
       keyEntries.push(entry);
+
       if (keyEntries.length > maxEntryCount) {
         keyEntries.shift();
       }
+
       map.set(entry.key, keyEntries);
+      setMap(map);
     }
 
     return instanceNew;
@@ -51,7 +109,8 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
   return {
     toJSON() {
       const json: { [key: string | number]: MapEntry<TKey, TValue>[] } = {};
-      for (const [key, entries] of map.entries()) {
+      for (const [key, entries] of mapsByNamespace.entries()) {
+        // @ts-expect-error
         json[key] = entries;
       }
       return json;
@@ -85,8 +144,11 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
 
     async listLatest(_from, _to, instance) {
       const latestValues: TValue[] = [];
+
+      const map = getMap();
+
       for (const key of map.keys()) {
-        const value = await this.get(instance, key);
+        const value = await this.get(instance, key as TKey);
 
         if (!value) {
           continue;
@@ -100,7 +162,15 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
     async get(instance, key) {
       let runningEntry: MapEntry<TKey, TValue> | null = null;
 
-      for (const entry of map.get(key) ?? []) {
+      const map = getMap();
+
+      for (const encoded of map.get(key) ?? []) {
+        const entry = decodeEntry(encoded);
+
+        if (!entry) {
+          continue;
+        }
+
         // SKIP entry is from the future
         if (entry._posixTimestamp > instance._posixTimestamp) {
           continue;

@@ -6,7 +6,7 @@ import {
   ServerEvent,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, Sub, isErr } from "gamezilla/@SHARED/core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
 import {
   StoreSessionIdByUserId,
@@ -101,41 +101,12 @@ const updateChild: Module["update"] = async (input) => {
   };
 };
 
-const updateFromMsg: Module["update"] = async ({ ctx, model, msg }) => {
+const updateFromMsg: Module["update"] = async ({ model, msg }) => {
   if (!msg) {
     return { model };
   }
 
   switch (msg.t) {
-    case "got-user-account": {
-      if (isErr(msg.result)) {
-        ctx.logger.error(msg.result.error);
-        return {
-          model,
-        };
-      }
-
-      const modelNew = await addSession(
-        ctx,
-        model,
-        msg.sessionId,
-        msg.result.value.userId
-      );
-
-      return {
-        model: modelNew,
-        event: [
-          {
-            t: "auth/client-authenticated",
-            clientId: msg.clientId,
-            sessionId: msg.sessionId,
-            userId: msg.result.value.userId,
-            loggedIn: true,
-          },
-        ],
-      };
-    }
-
     case "sms": {
       return { model };
     }
@@ -316,6 +287,17 @@ async function addSession(
     userId,
     sessionIdsNew
   );
+
+  const gotUserId = await StoreUserIdBySessionId(ctx).get(
+    model.userIdBySessionId,
+    sessionId
+  );
+
+  console.log({
+    userIdBySessionIdNew,
+    sessionIdByUserIdNew,
+    gotUserId,
+  });
 
   return {
     ...model,
