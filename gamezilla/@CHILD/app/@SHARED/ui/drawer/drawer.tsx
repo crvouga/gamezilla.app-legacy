@@ -22,9 +22,9 @@ export const Drawer = ({
   );
 };
 
-export const DrawerHeaher = ({ onClose }: { onClose?: () => void }) => {
+export const DrawerHeader = ({ onClose }: { onClose?: () => void }) => {
   return (
-    <div className="w-full flex items-center justify-end">
+    <div className="flex w-full items-center justify-end">
       <IconButton label="close drawer" onClick={onClose}>
         <IconXMark className="h-6 w-6" />
       </IconButton>

@@ -1,5 +1,6 @@
 import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { SpaceClientEvent } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import {
   APP_SOUND,
@@ -11,7 +12,6 @@ import {
   IconScrewdriverWrench,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
-import { withId } from "../../../../@SHARED/event";
 import { PlayClient } from "./@CHILD/play/play.client";
 import { PuzzleBuilderClient } from "./@CHILD/puzzle-builder/puzzle-builder.client";
 import { CoverArt } from "./@SHARED/flow-cover-art";

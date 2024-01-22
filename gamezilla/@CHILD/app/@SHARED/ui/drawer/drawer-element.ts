@@ -37,25 +37,18 @@ if (typeof window !== "undefined" && "customElements" in window) {
 
     disconnectedCallback() {
       this.unsubscribe();
+      window.removeEventListener("keydown", this.onKeyDown);
     }
 
     connectedCallback() {
-      this.initUI();
-    }
-
-    onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        this.props?.onClose();
-      }
-    }
-
-    initUI() {
       this.unsubscribe = drawerSub.subscribe((event) => {
         if (event.id === this.getAttribute("id")) {
           this.props = event;
           this.syncUI();
         }
       });
+
+      window.addEventListener("keydown", this.onKeyDown);
 
       if (!this.shadowRoot) {
         return;
@@ -75,25 +68,20 @@ if (typeof window !== "undefined" && "customElements" in window) {
           background-color: rgba(0, 0, 0, 0);
           transition: background-color 0.2s ease-in-out;
         }
-
         .root-top {
           flex-direction: column-reverse;
         }
-
         .root-bottom {
           flex-direction: column;
         }
-
         .content-bottom {
           transition: transform 0.2s ease-in-out;
           transform: translateY(100%);
         }
-
         .content-top {
           transition: transform 0.2s ease-in-out;
           transform: translateY(-100%);
         }
-
         .backdrop {
           flex: 1;
           width: 100%;
@@ -138,6 +126,12 @@ if (typeof window !== "undefined" && "customElements" in window) {
       }
     }
 
+    onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        this.props?.onClose();
+      }
+    }
+
     syncUI() {
       if (!this.props || !this.content || !this.root || !this.backdrop) {
         return;
@@ -145,7 +139,6 @@ if (typeof window !== "undefined" && "customElements" in window) {
 
       if (!this.props.open) {
         this.ariaHidden = "true";
-        this.removeEventListener("keydown", this.onKeyDown);
         this.tabIndex = -1;
         this.root.tabIndex = -1;
         this.backdrop.classList.remove("visible");
@@ -161,7 +154,6 @@ if (typeof window !== "undefined" && "customElements" in window) {
       this.backdrop.classList.add("visible");
       this.root.tabIndex = 0;
       this.tabIndex = 0;
-      this.addEventListener("keydown", this.onKeyDown);
       this.ariaHidden = "false";
 
       switch (this.props.position) {

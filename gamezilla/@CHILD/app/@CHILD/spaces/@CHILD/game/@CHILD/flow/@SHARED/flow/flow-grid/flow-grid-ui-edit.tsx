@@ -1,7 +1,7 @@
 import {
   ActionButton,
   Drawer,
-  DrawerHeaher,
+  DrawerHeader,
   IconArrowRotateLeft,
   IconArrowRotateRight,
   IconExpand,
@@ -397,7 +397,7 @@ export const View = ({
         id="dimensions"
         position="bottom"
       >
-        <DrawerHeaher onClose={() => dispatch({ t: "closed-dimensions" })} />
+        <DrawerHeader onClose={() => dispatch({ t: "closed-dimensions" })} />
 
         <div className="flex items-center justify-center gap-1 text-center text-4xl font-bold">
           <p>{`${History.present(model.form).width}w`}</p>
