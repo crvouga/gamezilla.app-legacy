@@ -312,11 +312,12 @@ const updateChild: Module["update"] = async (input) => {
 
   const gameUpdated = await Game.update({
     ctx: { ...ctx, space: spaceState },
-    model: model.games[spaceId] ?? null,
+    model: model.games[spaceId] ?? Game.init(spaceState.game.t),
     msg: msg?.t === "game" ? msg.c : null,
-    clientMsg: fromClient?.t === "game" ? fromClient.c : null,
+    fromClient:
+      fromClient?.t === "game" ? { ...fromClient, ...fromClient.c } : null,
     event,
-    state: spaceState.game,
+    gameState: spaceState.game,
   });
 
   const merged = mergeUpdatedGame({ model, spaceId, gameUpdated });
@@ -490,8 +491,6 @@ const updateFromSpaceEvent = async ({
 
       const started = Space.startFromLatestSnapshot(space);
 
-      console.log("syncing joined user");
-
       return {
         model,
         cmd: [
@@ -505,10 +504,6 @@ const updateFromSpaceEvent = async ({
     }
 
     case "game": {
-      if (!ctx.currentUserId) {
-        return { model };
-      }
-
       const eventWithMeta = Spaces.toEventWithMeta(
         model,
         spaceEvent.spaceId,
@@ -535,9 +530,10 @@ const updateFromSpaceEvent = async ({
 
       const gameUpdated = await Game.update({
         ctx: { ...ctx, currentUserId: ctx.currentUserId, space: spaceState },
-        model: model.games[eventWithMeta.spaceId],
+        model:
+          model.games[eventWithMeta.spaceId] ?? Game.init(spaceState.game.t),
         gameEvent: { ...eventWithMeta, ...eventWithMeta.c },
-        state: spaceState.game,
+        gameState: spaceState.game,
       });
 
       const merged = mergeUpdatedGame({
@@ -582,9 +578,8 @@ export const subscriptions: Module["subscriptions"] = async ({
 
     const sub = await Game.subscriptions({
       ctx: { ...ctx, space: spaceState },
-      intervalId: spaceId,
-      model: model.games[spaceId as SpaceId],
-      state: spaceState.game,
+      model: model.games[spaceId as SpaceId] ?? Game.init(spaceState.game.t),
+      gameState: spaceState.game,
     });
 
     const mapped = Sub.map(

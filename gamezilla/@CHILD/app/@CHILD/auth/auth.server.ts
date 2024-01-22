@@ -109,7 +109,7 @@ const updateFromMsg: Module["update"] = async ({ ctx, model, msg }) => {
   switch (msg.t) {
     case "got-user-account": {
       if (isErr(msg.result)) {
-        console.error(msg.result.error);
+        ctx.logger.error(msg.result.error);
         return {
           model,
         };
@@ -159,7 +159,7 @@ const updateFromClient: Module["update"] = async ({
         model: modelNew,
         event: [
           {
-            t: "connected-client-is-logged-out",
+            t: "auth/connected-client-unauthenticated",
             clientId: fromClient.clientId,
             sessionId: fromClient.sessionId,
           },
@@ -190,7 +190,7 @@ const updateFromEvent: typeof update = async ({ event, model, ctx }) => {
           model: model,
           event: [
             {
-              t: "connected-client-is-logged-out",
+              t: "auth/connected-client-unauthenticated",
               clientId: event.clientId,
               sessionId: event.sessionId,
             },
@@ -202,10 +202,23 @@ const updateFromEvent: typeof update = async ({ event, model, ctx }) => {
         model: model,
         event: [
           {
-            ...event,
-            t: "auth/connected-client-authenticated",
+            clientId: event.clientId,
+            sessionId: event.sessionId,
             userId,
+            t: "auth/connected-client-authenticated",
           },
+        ],
+      };
+    }
+
+    case "auth/connected-client-unauthenticated": {
+      return {
+        model: await removeSession(ctx, model, event.sessionId),
+        cmd: [
+          sendToClient([event.clientId], {
+            t: "client-unauthenticated",
+            sessionId: event.sessionId,
+          }),
         ],
       };
     }
@@ -231,7 +244,7 @@ const updateFromEvent: typeof update = async ({ event, model, ctx }) => {
             model,
             cmd: [
               sendToClient([event.clientId], {
-                t: "client-is-logged-in",
+                t: "client-authenticated",
                 userId: event.userId,
                 sessionId: event.sessionId,
                 loggedIn: true,
@@ -240,18 +253,6 @@ const updateFromEvent: typeof update = async ({ event, model, ctx }) => {
           };
         }
       );
-    }
-
-    case "connected-client-is-logged-out": {
-      return {
-        model: model,
-        cmd: [
-          sendToClient([event.clientId], {
-            t: "client-is-logged-out",
-            sessionId: event.sessionId,
-          }),
-        ],
-      };
     }
 
     default: {

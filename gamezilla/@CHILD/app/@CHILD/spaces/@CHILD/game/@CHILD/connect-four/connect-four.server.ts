@@ -1,27 +1,37 @@
 import { Sub } from "gamezilla/@SHARED/core";
-import { GameServer } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server";
+import { GameServerModule } from "../../../../@SHARED/architecture/game-server-v2";
+import { SpaceServerCtx, SpaceServerEvent } from "../../../../@SHARED/space";
+import { SpaceServerCmd } from "../../../../@SHARED/space-server-cmd";
 import {
   GameEvent,
+  GameState,
   ServerModel,
   ServerMsg,
-  GameState,
   ToClient,
   ToServer,
 } from "./connect-four.core";
-import * as VsBotServer from "./@CHILD/vs-bot/vs-bot.server";
-import * as VsUserServer from "./@CHILD/vs-user/vs-user.server";
 
-type Server = GameServer<{
-  ServerModel: ServerModel;
-  ServerMsg: ServerMsg;
+//
+//
+//
+//
+//
+//
+//
+
+type Module = GameServerModule<{
+  Model: ServerModel;
+  Msg: ServerMsg;
   ToClient: ToClient;
   ToServer: ToServer;
   GameState: GameState;
   GameEvent: GameEvent;
+  Ctx: SpaceServerCtx;
+  InCmd: null;
+  InEvent: SpaceServerEvent;
+  OutCmd: SpaceServerCmd<ToClient>;
+  OutEvent: null;
 }>;
-
-const VsBot = GameServer.tag("vs-bot", VsBotServer);
-const VsUser = GameServer.tag("vs-user", VsUserServer);
 
 //
 //
@@ -31,26 +41,8 @@ const VsUser = GameServer.tag("vs-user", VsUserServer);
 //
 //
 
-export const init: Server["init"] = async (input) => {
-  if (input.model) {
-    return { model: input.model };
-  }
-
-  const { ctx, state } = input;
-
-  switch (state.t) {
-    case "none": {
-      return { model: { t: null } };
-    }
-
-    case "vs-bot": {
-      return VsBot.init({ ctx, state });
-    }
-
-    case "vs-user": {
-      return VsUser.init({ ctx, state });
-    }
-  }
+const init: Module["init"] = {
+  t: null,
 };
 
 //
@@ -61,52 +53,10 @@ export const init: Server["init"] = async (input) => {
 //
 //
 
-export type Msg = ServerMsg;
-
-export const update: Server["update"] = async (input) => {
-  return GameServer.chain(
-    await init(input),
-
-    async (model) => {
-      const { state, msg, clientMsg, event, gameEvent } = input;
-
-      switch (state.t) {
-        case "none": {
-          return { model };
-        }
-
-        case "vs-bot": {
-          return VsBot.update({
-            ctx: input.ctx,
-            msg: msg?.t === "vs-bot" ? msg : null,
-            state,
-            model: model?.t === "vs-bot" ? model : null,
-            clientMsg: clientMsg?.t === "vs-bot" ? clientMsg : null,
-            event: event,
-            gameEvent:
-              gameEvent?.t === "vs-bot"
-                ? { ...gameEvent, c: { ...gameEvent, ...gameEvent.c } }
-                : null,
-          });
-        }
-
-        case "vs-user": {
-          return VsUser.update({
-            ctx: input.ctx,
-            msg: msg?.t === "vs-user" ? msg : null,
-            state,
-            model: model?.t === "vs-user" ? model : null,
-            clientMsg: clientMsg?.t === "vs-user" ? clientMsg : null,
-            event: event,
-            gameEvent:
-              gameEvent?.t === "vs-user"
-                ? { ...gameEvent, c: { ...gameEvent, ...gameEvent.c } }
-                : null,
-          });
-        }
-      }
-    }
-  );
+const update: Module["update"] = async (input) => {
+  return {
+    model: input.model,
+  };
 };
 
 //
@@ -117,28 +67,12 @@ export const update: Server["update"] = async (input) => {
 //
 //
 
-export const subscriptions: Server["subscriptions"] = async (input) => {
-  const { state, model } = input;
+const subscriptions: Module["subscriptions"] = async (_input) => {
+  return Sub.None;
+};
 
-  switch (state.t) {
-    case "none": {
-      return Sub.None;
-    }
-
-    case "vs-bot": {
-      return VsBot.subscriptions({
-        ...input,
-        state,
-        model: model?.t === "vs-bot" ? model : null,
-      });
-    }
-
-    case "vs-user": {
-      return VsUser.subscriptions({
-        ...input,
-        state,
-        model: model?.t === "vs-user" ? model : null,
-      });
-    }
-  }
+export const ConnectFourServer: Module = {
+  init,
+  update,
+  subscriptions,
 };

@@ -38,8 +38,7 @@ if (!CODEBASE_VERSION_ID) {
   throw new Error("CODEBASE_VERSION_ID not set");
 }
 
-const SHOULD_USE_DEBUGGER = false;
-// !PUBLIC_APP_CONFIG.IS_PROD;
+const SHOULD_USE_DEBUGGER = !IS_PROD;
 
 export const PUBLIC_APP_CONFIG = {
   SHOULD_USE_DEBUGGER,

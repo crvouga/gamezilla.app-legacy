@@ -20,7 +20,7 @@ export type ServerEvent =
       loggedIn?: boolean;
     }
   | {
-      t: "connected-client-is-logged-out";
+      t: "auth/connected-client-unauthenticated";
       sessionId: SessionId;
       clientId: ClientId;
     };

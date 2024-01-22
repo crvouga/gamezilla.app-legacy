@@ -197,14 +197,14 @@ const updateFromServer: Client["update"] = (input) => {
   const { model, fromServer } = input;
 
   switch (fromServer.t) {
-    case "client-is-logged-out": {
+    case "client-unauthenticated": {
       return {
         model: { ...model, currentUser: { t: "logged-out" } },
         event: [{ t: "is-logged-out" }],
       };
     }
 
-    case "client-is-logged-in": {
+    case "client-authenticated": {
       return {
         model: {
           ...model,

@@ -1,14 +1,18 @@
-import { GameServer } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server";
-import * as ConnectFourServer from "./@CHILD/connect-four/connect-four.server";
+import { Sub } from "gamezilla/@SHARED/core";
+import { GameServerModule } from "../../@SHARED/architecture/game-server-v2";
+import { SpaceServerCtx, SpaceServerEvent } from "../../@SHARED/space";
+import { SpaceServerCmd } from "../../@SHARED/space-server-cmd";
+import { FlowServer } from "./@CHILD/flow/flow.server";
 import {
   GameEvent,
+  GameName,
+  GameState,
   ServerModel,
   ServerMsg,
-  GameState,
   ToClient,
   ToServer,
 } from "./game.core";
-import { Sub } from "gamezilla/@SHARED/core";
+import { ConnectFourServer } from "./@CHILD/connect-four/connect-four.server";
 
 //
 //
@@ -18,17 +22,19 @@ import { Sub } from "gamezilla/@SHARED/core";
 //
 //
 
-type Server = GameServer<{
-  ServerModel: ServerModel;
-  ServerMsg: ServerMsg;
+type Module = GameServerModule<{
+  Model: ServerModel;
+  Msg: ServerMsg;
   ToClient: ToClient;
   ToServer: ToServer;
   GameState: GameState;
   GameEvent: GameEvent;
+  Ctx: SpaceServerCtx;
+  InCmd: null;
+  InEvent: SpaceServerEvent;
+  OutCmd: SpaceServerCmd<ToClient>;
+  OutEvent: null;
 }>;
-
-const ConnectFour = GameServer.tag("connect-four", ConnectFourServer);
-// const Chess = GameServer.tag("chess", ChessServer);
 
 //
 //
@@ -38,20 +44,20 @@ const ConnectFour = GameServer.tag("connect-four", ConnectFourServer);
 //
 //
 
-export const init: Server["init"] = async (input) => {
-  const { state, model } = input;
-
-  switch (state.t) {
+const init = (gameName: GameName): Module["init"] => {
+  switch (gameName) {
     case "connect-four": {
-      return ConnectFour.init({
-        state,
-        ctx: input.ctx,
-        model: model?.t === "connect-four" ? model : null,
-      });
+      return {
+        t: "connect-four",
+        c: ConnectFourServer.init,
+      };
     }
 
     case "flow": {
-      return { model: { t: "flow", c: { t: "none" } } };
+      return {
+        t: "flow",
+        c: FlowServer.init,
+      };
     }
   }
 };
@@ -64,35 +70,66 @@ export const init: Server["init"] = async (input) => {
 //
 //
 
-export const update: Server["update"] = async (input) => {
-  const { msg, state, ctx, gameEvent, clientMsg, event } = input;
+export const update: Module["update"] = async (input) => {
+  const { gameState, ctx, model } = input;
 
-  return GameServer.chain(
-    init(input),
+  return GameServerModule.chainUpdates({ model }, async (model) => {
+    switch (gameState.t) {
+      case "flow": {
+        const updated = await FlowServer.update({
+          ctx,
+          gameState: gameState.c,
+          model: model.t === "flow" ? model.c : FlowServer.init,
+          cmd: input.cmd,
+          event: input.event,
+          fromClient:
+            input.fromClient?.t === "flow"
+              ? { ...input.fromClient, ...input.fromClient.c }
+              : null,
+          gameEvent:
+            input.gameEvent?.t === "flow"
+              ? { ...input.gameEvent, ...input.gameEvent.c }
+              : null,
+          msg: input.msg?.t === "flow" ? input.msg.c : null,
+        });
 
-    async (model) => {
-      switch (state.t) {
-        case "flow": {
-          return { model };
-        }
+        const tagged = GameServerModule.tagOutput(
+          "flow",
+          (cmd) => SpaceServerCmd.tag("flow", cmd),
+          updated
+        );
 
-        case "connect-four": {
-          return ConnectFour.update({
-            ctx,
-            state,
-            model: model.t === "connect-four" ? model : null,
-            msg: msg?.t === "connect-four" ? msg : null,
-            clientMsg: clientMsg?.t === "connect-four" ? clientMsg : null,
-            event,
-            gameEvent:
-              gameEvent?.t === "connect-four"
-                ? { ...gameEvent, c: { ...gameEvent, ...gameEvent.c } }
-                : null,
-          });
-        }
+        return tagged;
+      }
+
+      case "connect-four": {
+        const updated = await ConnectFourServer.update({
+          ctx,
+          gameState: gameState.c,
+          model: model.t === "connect-four" ? model.c : ConnectFourServer.init,
+          cmd: input.cmd,
+          event: input.event,
+          fromClient:
+            input.fromClient?.t === "connect-four"
+              ? { ...input.fromClient, ...input.fromClient.c }
+              : null,
+          gameEvent:
+            input.gameEvent?.t === "connect-four"
+              ? { ...input.gameEvent, ...input.gameEvent.c }
+              : null,
+          msg: input.msg?.t === "connect-four" ? input.msg.c : null,
+        });
+
+        const tagged = GameServerModule.tagOutput(
+          "connect-four",
+          (cmd) => SpaceServerCmd.tag("connect-four", cmd),
+          updated
+        );
+
+        return tagged;
       }
     }
-  );
+  });
 };
 
 //
@@ -103,25 +140,35 @@ export const update: Server["update"] = async (input) => {
 //
 //
 
-export const subscriptions: Server["subscriptions"] = async (input) => {
-  const { state, model } = input;
+export const subscriptions: Module["subscriptions"] = async (input) => {
+  const { gameState, model } = input;
 
-  switch (state.t) {
+  switch (gameState.t) {
     case "connect-four": {
-      return await ConnectFour.subscriptions({
-        ...input,
-        state,
-        model: model?.t === "connect-four" ? model : null,
-      });
+      return Sub.tag(
+        "connect-four",
+        await ConnectFourServer.subscriptions({
+          ...input,
+          gameState: gameState.c,
+          model: model?.t === "connect-four" ? model.c : ConnectFourServer.init,
+        })
+      );
     }
 
     case "flow": {
-      return Sub.None;
+      return Sub.tag(
+        "flow",
+        await FlowServer.subscriptions({
+          ...input,
+          gameState: gameState.c,
+          model: model?.t === "flow" ? model.c : FlowServer.init,
+        })
+      );
     }
   }
 };
 
-export const Game: Server = {
+export const Game = {
   init,
   update,
   subscriptions,

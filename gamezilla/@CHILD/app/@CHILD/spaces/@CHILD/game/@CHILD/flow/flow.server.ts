@@ -30,11 +30,11 @@ type Module = GameServerModule<{
   OutEvent: null;
 }>;
 
-export const init: Module["init"] = {
+const init: Module["init"] = {
   t: "none",
 };
 
-export const update: Module["update"] = async (input) => {
+const update: Module["update"] = async (input) => {
   return GameServerModule.chainUpdates({ model: input.model }, (model) =>
     updateChild({ ...input, model })
   );
@@ -107,7 +107,7 @@ const updateChild: Module["update"] = async (input) => {
   }
 };
 
-export const subscriptions: Module["subscriptions"] = async (input) => {
+const subscriptions: Module["subscriptions"] = async (input) => {
   const { gameState } = input;
 
   switch (gameState.t) {
@@ -140,4 +140,10 @@ export const subscriptions: Module["subscriptions"] = async (input) => {
       return Sub.None;
     }
   }
+};
+
+export const FlowServer: Module = {
+  init,
+  subscriptions,
+  update,
 };

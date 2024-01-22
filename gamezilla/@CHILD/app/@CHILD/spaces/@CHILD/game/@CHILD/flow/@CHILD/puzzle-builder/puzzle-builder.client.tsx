@@ -9,7 +9,11 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
 import { FlowGrid } from "../../@SHARED/flow";
-import { APP_SOUND, playSound, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  APP_SOUND,
+  playSound,
+  sendToServer,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 
 const init: ClientModule["init"] = null;
 
@@ -18,34 +22,34 @@ const update: ClientModule["update"] = (input) => {
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => listPuzzles({ ...input, model }),
-    model => updateFromGameEvent({ ...input, model }),
+    (model) => updateFromGameEvent({ ...input, model })
   );
 };
 
 const updateFromGameEvent: ClientModule["update"] = (input) => {
-  const { gameEvent, model } = input
+  const { gameEvent, model } = input;
 
   if (!gameEvent) {
     return { model };
   }
 
   switch (gameEvent.t) {
-    case 'grid-ui-edit':
-    case 'grid-ui-play':
-    case 'listed-puzzles':
-    case 'user-changed-to-play-mode':
-    case 'user-changed-to-edit-mode':
-    case 'time-passed': {
-      return { model }
+    case "grid-ui-edit":
+    case "grid-ui-play":
+    case "listed-puzzles":
+    case "user-changed-to-play-mode":
+    case "user-changed-to-edit-mode":
+    case "time-passed": {
+      return { model };
     }
-    case 'user-created-new-puzzle': {
-      return { model, cmd: [playSound(APP_SOUND.navForwardMin)] }
+    case "user-created-new-puzzle": {
+      return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
     }
-    case 'user-exited-builder': {
-      return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] }
+    case "user-exited-builder": {
+      return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
     }
   }
-}
+};
 
 const listPuzzles: ClientModule["update"] = (input) => {
   const { model, msg, fromServer } = input;
@@ -76,6 +80,7 @@ const listPuzzles: ClientModule["update"] = (input) => {
   if (fromServer?.t === "listed-puzzle") {
     return { model };
   }
+
   return { model };
 };
 

@@ -235,6 +235,11 @@ const updateFromCmd = async <TToClient, TToServer>({
             };
           } = {};
 
+          if (cmd.clientIds.length === 0) {
+            ctx.logger.warn(`${cmd.t} failed. No client ids provided`);
+            return;
+          }
+
           for (const clientId of cmd.clientIds) {
             toClientPayload[clientId] = {
               clientId,
@@ -261,7 +266,7 @@ const updateFromCmd = async <TToClient, TToServer>({
           for (const userId of cmd.userIds) {
             const sessionIds = await toSessionIds(userId);
 
-            if (!sessionIds) {
+            if (!sessionIds || Object.values(sessionIds).length === 0) {
               ctx.logger.warn(
                 `wire/send-to-user failed. no sessionIds for userId=${userId}`
               );
@@ -278,9 +283,16 @@ const updateFromCmd = async <TToClient, TToServer>({
                 continue;
               }
 
-              for (const clientId of CappedOrderedDict.values(
-                client.clientIds
-              )) {
+              const clientIds = CappedOrderedDict.values(client.clientIds);
+
+              if (clientIds.length === 0) {
+                ctx.logger.warn(
+                  `wire/send-to-user failed. no client ids for sessionId=${sessionId} and userId=${userId}`
+                );
+                continue;
+              }
+
+              for (const clientId of clientIds) {
                 toClientPayload[clientId] = {
                   clientId,
                   msgs: [...(toClientPayload[clientId]?.msgs ?? []), cmd.msg],
@@ -288,6 +300,8 @@ const updateFromCmd = async <TToClient, TToServer>({
               }
             }
           }
+
+          console.log("toClientPayload", toClientPayload);
 
           transport.toClient.publish(toClientPayload);
         },
