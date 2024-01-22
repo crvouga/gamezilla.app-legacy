@@ -3,10 +3,7 @@ import {
   ViewBottomButtonBar,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
-import {
-  APP_SOUND,
-  playSound
-} from "gamezilla/@CHILD/app/@SHARED/client";
+import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconPenToSquare,
@@ -17,41 +14,35 @@ import {
 import { Sub } from "gamezilla/@SHARED/core";
 import { FlowGridUI, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { ViewProfileCard } from "../../@SHARED/ui";
-import {
-  ClientModule,
-  toCurrentGrid
-} from "./puzzle-builder.core";
+import { ClientModule, toCurrentGrid } from "./puzzle-builder.core";
 
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-
+//
+//
+//
+//
+//
+//
+//
 
 const init: ClientModule["init"] = null;
 
-// 
-// 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
+//
+//
 
 const update: ClientModule["update"] = (input) => {
-  return GameClientModule.chainUpdates(
-    { model: input.model },
-    model => updateFromMsg({ ...input, model }),
-  )
+  return GameClientModule.chainUpdates({ model: input.model }, (model) =>
+    updateFromMsg({ ...input, model })
+  );
 };
 
 const updateFromMsg: ClientModule["update"] = (input) => {
-  return GameClientModule.chainUpdates(
-    { model: input.model },
-    (model) => updateSound({ ...input, model })
+  return GameClientModule.chainUpdates({ model: input.model }, (model) =>
+    updateSound({ ...input, model })
   );
 };
 
@@ -62,8 +53,8 @@ const updateSound: ClientModule["update"] = (input) => {
     return { model };
   }
 
-  if (gameState.t !== 'build') {
-    return { model }
+  if (gameState.t !== "build") {
+    return { model };
   }
 
   switch (msg.t) {
@@ -104,35 +95,34 @@ const updateSound: ClientModule["update"] = (input) => {
   }
 };
 
-// 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
+//
 
 const subscriptions: ClientModule["subscriptions"] = () => {
   return Sub.None;
 };
 
-// 
-// 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
+//
+//
 
 const View: ClientModule["View"] = (input) => {
-
   const { gameState, dispatch, ctx } = input;
 
-  if (gameState.t !== 'build') return null
+  if (gameState.t !== "build") return null;
 
   const isSpectating = ctx.currentUserId !== ctx.space.hostId;
 
   if (isSpectating) {
-    return <ViewSpectaing {...input} />;
+    return <ViewSpectating {...input} />;
   }
 
   switch (gameState.mode.t) {
@@ -158,7 +148,11 @@ const View: ClientModule["View"] = (input) => {
                 {
                   label: "Exit",
                   icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-                  onClick: () => dispatch({ t: "user-exited-builder", userId: ctx.currentUserId }),
+                  onClick: () =>
+                    dispatch({
+                      t: "user-exited-builder",
+                      userId: ctx.currentUserId,
+                    }),
                 },
                 {
                   label: "Play Mode",
@@ -198,9 +192,13 @@ const View: ClientModule["View"] = (input) => {
             <ViewBottomButtonBar
               actions={[
                 {
-                  label: "Exit Builder",
+                  label: "Exit",
                   icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-                  onClick: ctx.onQuit,
+                  onClick: () =>
+                    dispatch({
+                      t: "user-exited-builder",
+                      userId: ctx.currentUserId,
+                    }),
                 },
                 {
                   label: "Edit Mode",
@@ -223,8 +221,8 @@ const View: ClientModule["View"] = (input) => {
   }
 };
 
-const ViewSpectaing: ClientModule["View"] = ({ gameState, ctx }) => {
-  if (gameState.t !== 'build') return null
+const ViewSpectating: ClientModule["View"] = ({ gameState, ctx }) => {
+  if (gameState.t !== "build") return null;
 
   return (
     <GameLayout isSpectating>
