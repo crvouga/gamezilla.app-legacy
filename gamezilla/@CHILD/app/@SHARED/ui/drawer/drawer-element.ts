@@ -143,40 +143,46 @@ if (typeof window !== "undefined" && "customElements" in window) {
         return;
       }
 
-      if (this.props.open) {
-        this.content.classList.add("open");
-        this.root.classList.remove("pointer-events-none");
-        this.root.classList.add("darken-background");
-        this.backdrop.classList.add("visible");
-        this.root.tabIndex = 0;
-        this.tabIndex = 0;
-        this.addEventListener("keydown", this.onKeyDown);
-        this.ariaHidden = "false";
+      if (!this.props.open) {
+        this.ariaHidden = "true";
+        this.removeEventListener("keydown", this.onKeyDown);
+        this.tabIndex = -1;
+        this.root.tabIndex = -1;
+        this.backdrop.classList.remove("visible");
+        this.content.classList.remove("open");
+        this.root.classList.remove("darken-background");
+        this.root.classList.add("pointer-events-none");
+        return;
+      }
 
-        if (this.props.position === "top") {
-          this.root.style.bottom = "auto";
-          this.root.style.top = "0";
-          this.root.style.flexDirection = "column-reverse";
-          this.content.classList.add("content-top");
-          this.content.classList.remove("content-bottom");
-        } else {
+      this.content.classList.add("open");
+      this.root.classList.remove("pointer-events-none");
+      this.root.classList.add("darken-background");
+      this.backdrop.classList.add("visible");
+      this.root.tabIndex = 0;
+      this.tabIndex = 0;
+      this.addEventListener("keydown", this.onKeyDown);
+      this.ariaHidden = "false";
+
+      switch (this.props.position) {
+        case "bottom": {
           this.root.style.top = "auto";
           this.root.style.bottom = "0";
           this.root.style.flexDirection = "column";
           this.content.classList.add("content-bottom");
           this.content.classList.remove("content-top");
+          break;
         }
-        return;
+        case "top": {
+          this.root.style.bottom = "auto";
+          this.root.style.top = "0";
+          this.root.style.flexDirection = "column-reverse";
+          this.content.classList.add("content-top");
+          this.content.classList.remove("content-bottom");
+          break;
+        }
       }
-
-      this.ariaHidden = "true";
-      this.removeEventListener("keydown", this.onKeyDown);
-      this.tabIndex = -1;
-      this.root.tabIndex = -1;
-      this.backdrop.classList.remove("visible");
-      this.content.classList.remove("open");
-      this.root.classList.remove("darken-background");
-      this.root.classList.add("pointer-events-none");
+      return;
     }
   }
   customElements.define("drawer-element", Drawer);
