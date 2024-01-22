@@ -22,7 +22,7 @@ declare global {
 }
 
 if (typeof window !== "undefined" && "customElements" in window) {
-  class BottomDrawer extends HTMLElement {
+  class Drawer extends HTMLElement {
     private backdrop: HTMLElement | null = null;
     private content: HTMLElement | null = null;
     private root: HTMLElement | null = null;
@@ -153,17 +153,15 @@ if (typeof window !== "undefined" && "customElements" in window) {
         this.addEventListener("keydown", this.onKeyDown);
         this.ariaHidden = "false";
 
-        // Adjust the position of the root element
         if (this.props.position === "top") {
-          this.root.style.bottom = "auto"; // Remove bottom positioning
-          this.root.style.top = "0"; // Position at the top
+          this.root.style.bottom = "auto";
+          this.root.style.top = "0";
           this.root.style.flexDirection = "column-reverse";
           this.content.classList.add("content-top");
           this.content.classList.remove("content-bottom");
         } else {
-          // Default to bottom if not specified or 'bottom'
-          this.root.style.top = "auto"; // Remove top positioning
-          this.root.style.bottom = "0"; // Position at the bottom
+          this.root.style.top = "auto";
+          this.root.style.bottom = "0";
           this.root.style.flexDirection = "column";
           this.content.classList.add("content-bottom");
           this.content.classList.remove("content-top");
@@ -181,6 +179,5 @@ if (typeof window !== "undefined" && "customElements" in window) {
       this.root.classList.add("pointer-events-none");
     }
   }
-
-  customElements.define("drawer-element", BottomDrawer);
+  customElements.define("drawer-element", Drawer);
 }
