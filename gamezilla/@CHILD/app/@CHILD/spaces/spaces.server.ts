@@ -230,7 +230,7 @@ const updateFromEvent: Module["update"] = async (input) => {
   }
 
   switch (event.t) {
-    case "auth/connected-client-authenticated": {
+    case "auth/client-authenticated": {
       const space = Spaces.toSpaceByUserId({
         model,
         userId: event.userId,

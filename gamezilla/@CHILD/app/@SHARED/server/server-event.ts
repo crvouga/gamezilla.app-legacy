@@ -13,14 +13,14 @@ export type ServerEvent =
       sessionId: SessionId;
     }
   | {
-      t: "auth/connected-client-authenticated";
+      t: "auth/client-authenticated";
       userId: UserId;
       sessionId: SessionId;
       clientId: ClientId;
       loggedIn?: boolean;
     }
   | {
-      t: "auth/connected-client-unauthenticated";
+      t: "auth/client-unauthenticated";
       sessionId: SessionId;
       clientId: ClientId;
     };

@@ -126,7 +126,7 @@ const updateFromMsg: Module["update"] = async ({ ctx, model, msg }) => {
         model: modelNew,
         event: [
           {
-            t: "auth/connected-client-authenticated",
+            t: "auth/client-authenticated",
             clientId: msg.clientId,
             sessionId: msg.sessionId,
             userId: msg.result.value.userId,
@@ -159,7 +159,7 @@ const updateFromClient: Module["update"] = async ({
         model: modelNew,
         event: [
           {
-            t: "auth/connected-client-unauthenticated",
+            t: "auth/client-unauthenticated",
             clientId: fromClient.clientId,
             sessionId: fromClient.sessionId,
           },
@@ -190,7 +190,7 @@ const updateFromEvent: typeof update = async ({ event, model, ctx }) => {
           model: model,
           event: [
             {
-              t: "auth/connected-client-unauthenticated",
+              t: "auth/client-unauthenticated",
               clientId: event.clientId,
               sessionId: event.sessionId,
             },
@@ -205,13 +205,13 @@ const updateFromEvent: typeof update = async ({ event, model, ctx }) => {
             clientId: event.clientId,
             sessionId: event.sessionId,
             userId,
-            t: "auth/connected-client-authenticated",
+            t: "auth/client-authenticated",
           },
         ],
       };
     }
 
-    case "auth/connected-client-unauthenticated": {
+    case "auth/client-unauthenticated": {
       return {
         model: await removeSession(ctx, model, event.sessionId),
         cmd: [
@@ -223,7 +223,7 @@ const updateFromEvent: typeof update = async ({ event, model, ctx }) => {
       };
     }
 
-    case "auth/connected-client-authenticated": {
+    case "auth/client-authenticated": {
       return AppServerModule.chainUpdates(
         { model },
         async (model) => {
