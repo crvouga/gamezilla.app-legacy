@@ -1,19 +1,19 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
-import { Builder } from "./builder.client";
-import { ClientModule } from "./puzzle-builder.core";
-import {
-  Button,
-  IconArrowLeftOnRect,
-  Spinner,
-} from "gamezilla/@CHILD/app/@SHARED/ui";
-import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
-import { FlowGrid } from "../../@SHARED/flow";
 import {
   APP_SOUND,
   playSound,
   sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  Button,
+  IconArrowLeftOnRect,
+  Spinner,
+} from "gamezilla/@CHILD/app/@SHARED/ui";
+import { FlowGrid } from "../../@SHARED/flow";
+import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
+import { Builder } from "./builder.client";
+import { ClientModule } from "./puzzle-builder.core";
 
 const init: ClientModule["init"] = null;
 
@@ -149,16 +149,8 @@ const View: ClientModule["View"] = (input) => {
                     puzzle: {
                       t: "grid",
                       c: FlowGrid.init({
-                        bounds: {
-                          max: {
-                            x: 10,
-                            y: 10,
-                          },
-                          min: {
-                            x: 0,
-                            y: 0,
-                          },
-                        },
+                        maxX: 10,
+                        maxY: 10,
                       }),
                     },
                   }),

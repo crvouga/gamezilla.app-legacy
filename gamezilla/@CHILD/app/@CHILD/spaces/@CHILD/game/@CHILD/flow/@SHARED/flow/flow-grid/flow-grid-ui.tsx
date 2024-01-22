@@ -2,7 +2,6 @@ import { cn } from "gamezilla/@CHILD/app/@SHARED/ui";
 import * as Flow from "../flow";
 import * as FlowUI from "../flow-ui";
 import * as FlowGrid from "./flow-grid";
-import * as FlowGridPosition from "./flow-grid-position";
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33;
@@ -99,8 +98,8 @@ export const View = ({
           const fill = !groupId
             ? "transparent"
             : isActive?.({ nodeId: node.nodeId, groupId })
-              ? "transparent"
-              : FlowUI.Color.toHex(FlowUI.GROUP_ID_TO_COLOR[groupId]);
+            ? "transparent"
+            : FlowUI.Color.toHex(FlowUI.GROUP_ID_TO_COLOR[groupId]);
           return (
             <rect
               key={node.nodeId}
@@ -134,10 +133,10 @@ export const View = ({
       </defs>
 
       <rect
-        x={model.bounds.min.x}
-        y={model.bounds.min.y}
-        width={model.bounds.max.x - model.bounds.min.x}
-        height={model.bounds.max.y - model.bounds.min.y}
+        x={0}
+        y={0}
+        width={model.maxX}
+        height={model.maxY}
         fill="url(#grid)"
         stroke="green"
         strokeWidth="0.02"
@@ -270,14 +269,14 @@ export const View = ({
                 isDragging
                   ? "cursor-grabbing"
                   : groupId
-                    ? "cursor-pointer"
-                    : null
+                  ? "cursor-pointer"
+                  : null
               )}
               height={1}
               fill="transparent"
               onMouseDown={() => {
                 if (isCurrentDeviceTouch) {
-                  return
+                  return;
                 }
                 onPressDown?.(nodeId);
               }}
@@ -351,11 +350,8 @@ const touchEventToNodeId = (event: TouchEvent): Flow.NodeId | null => {
   return nodeId;
 };
 
-const toViewBox = ({ bounds }: { bounds: FlowGridPosition.Bounds }) => {
-  const width = bounds.max.x - bounds.min.x;
-  const height = bounds.max.y - bounds.min.y;
-
-  return `${bounds.min.x} ${bounds.min.y} ${width} ${height}`;
+const toViewBox = ({ maxX, maxY }: { maxX: number; maxY: number }) => {
+  return `${0} ${0} ${maxX} ${maxY}`;
 };
 
 const map = <T, TY>(iterable: Iterable<T>, fn: (x: T) => TY): TY[] => {

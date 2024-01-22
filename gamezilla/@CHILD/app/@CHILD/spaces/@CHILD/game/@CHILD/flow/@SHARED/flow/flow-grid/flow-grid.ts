@@ -1,5 +1,5 @@
 import { Flow } from "..";
-import { Bounds, Position, DELTAS, yieldRange } from "./flow-grid-position";
+import { DELTAS, Position } from "./flow-grid-position";
 
 //
 //
@@ -12,7 +12,8 @@ import { Bounds, Position, DELTAS, yieldRange } from "./flow-grid-position";
 export type Model = {
   type: "flow-grid";
   flow: Flow.Model;
-  bounds: Bounds;
+  maxX: number;
+  maxY: number;
   positions: {
     [nodeId: Flow.NodeId]: Position;
   };
@@ -48,16 +49,23 @@ export const distance =
 //
 //
 
-export const init = ({ bounds }: { bounds: Bounds }): Model => {
+export const init = ({ maxX, maxY }: { maxX: number; maxY: number }): Model => {
   let model: Model = {
     type: "flow-grid",
     flow: Flow.init,
-    bounds,
+    maxX,
+    maxY,
     positions: {},
   };
 
-  for (const position of yieldRange({ bounds })) {
-    model = addNode(model, position);
+  for (let x = 0; x <= maxX; x++) {
+    for (let y = 0; y <= maxY; y++) {
+      const position: Position = {
+        x,
+        y,
+      };
+      model = addNode(model, position);
+    }
   }
 
   for (const nodePosition of yieldPositions(model)) {

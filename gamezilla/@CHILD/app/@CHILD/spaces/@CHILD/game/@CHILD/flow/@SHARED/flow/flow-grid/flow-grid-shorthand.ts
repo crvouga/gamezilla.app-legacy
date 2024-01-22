@@ -12,16 +12,8 @@ type DraftTerminal = {
 
 export function fromShorthand(model: Model): FlowGrid.Model {
   let grid = FlowGrid.init({
-    bounds: {
-      min: {
-        x: 0,
-        y: 0,
-      },
-      max: {
-        x: model[0].length,
-        y: model.length,
-      },
-    },
+    maxX: model[0].length,
+    maxY: model.length,
   });
 
   const draftTerminals: {

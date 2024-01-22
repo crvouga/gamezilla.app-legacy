@@ -58,8 +58,8 @@ type DraftTerminal = {
 export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
   return {
     form: History.init({
-      height: grid.bounds.max.y - grid.bounds.min.y,
-      width: grid.bounds.max.x - -grid.bounds.min.x,
+      height: grid.maxY,
+      width: grid.maxY,
       terminalsByGroupId: grid.flow.terminalsByGroupId,
     }),
     grid,
@@ -386,7 +386,6 @@ export const View = ({
           <ActionButton
             icon={<IconExpand className="h-6 w-6" />}
             label="Dimensions"
-            disabled={!canClear(model)}
             onClick={() => dispatch({ t: "clicked-dimensions" })}
           />
         </div>
