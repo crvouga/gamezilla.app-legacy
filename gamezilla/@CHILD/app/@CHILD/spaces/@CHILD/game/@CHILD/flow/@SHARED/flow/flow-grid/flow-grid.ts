@@ -12,8 +12,8 @@ import { DELTAS, Position } from "./flow-grid-position";
 export type Model = {
   type: "flow-grid";
   flow: Flow.Model;
-  maxX: number;
-  maxY: number;
+  width: number;
+  height: number;
   positions: {
     [nodeId: Flow.NodeId]: Position;
   };
@@ -53,8 +53,8 @@ export const init = ({ maxX, maxY }: { maxX: number; maxY: number }): Model => {
   let model: Model = {
     type: "flow-grid",
     flow: Flow.init,
-    maxX,
-    maxY,
+    width: maxX,
+    height: maxY,
     positions: {},
   };
 

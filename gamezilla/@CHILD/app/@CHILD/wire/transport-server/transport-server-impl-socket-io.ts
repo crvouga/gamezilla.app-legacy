@@ -6,6 +6,7 @@ import {
   ServerTransportSocketIOImpl,
   initServerTransport,
 } from "./transport-server";
+import { PUBLIC_APP_CONFIG } from "config";
 
 export const ServerTransportSocketIO = <ToServer, ToClient>({
   impl,
@@ -49,7 +50,10 @@ export const ServerTransportSocketIO = <ToServer, ToClient>({
     transport.wire.publish({ t: "client-connected", clientId, sessionId });
 
     socket.on("to-server", (msg: ClientToServerMsg<ToServer>) => {
-      if (msg.codebaseVersionId !== codebaseVersionId) {
+      if (
+        msg.codebaseVersionId !== codebaseVersionId &&
+        PUBLIC_APP_CONFIG.IS_PROD
+      ) {
         transport.wire.publish({
           t: "got-bad-msgs",
           clientId,

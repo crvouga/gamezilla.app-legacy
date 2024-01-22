@@ -58,8 +58,8 @@ type DraftTerminal = {
 export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
   return {
     form: History.init({
-      height: grid.maxY,
-      width: grid.maxY,
+      height: grid.height,
+      width: grid.height,
       terminalsByGroupId: grid.flow.terminalsByGroupId,
     }),
     grid,

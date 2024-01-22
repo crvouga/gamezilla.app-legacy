@@ -5,6 +5,7 @@ import {
   IClientTransport,
   initClientTransport,
 } from "./transport-client";
+import { PUBLIC_APP_CONFIG } from "config";
 
 const SESSION_ID_KEY = "gamezilla-session-id";
 
@@ -47,7 +48,10 @@ export const ClientTransportSocketIO = <ToServer, ToClient>({
   });
 
   socket.on("to-client", (msg: ServerToClientMsg<ToClient>) => {
-    if (msg.codebaseVersionId !== codebaseVersionId) {
+    if (
+      msg.codebaseVersionId !== codebaseVersionId &&
+      PUBLIC_APP_CONFIG.IS_PROD
+    ) {
       console.error("Codebase version mismatch");
       return;
     }

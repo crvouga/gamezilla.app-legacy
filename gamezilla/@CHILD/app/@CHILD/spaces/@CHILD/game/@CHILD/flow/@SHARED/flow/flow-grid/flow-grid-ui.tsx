@@ -135,8 +135,8 @@ export const View = ({
       <rect
         x={0}
         y={0}
-        width={model.maxX}
-        height={model.maxY}
+        width={model.width}
+        height={model.height}
         fill="url(#grid)"
         stroke="green"
         strokeWidth="0.02"
@@ -350,8 +350,8 @@ const touchEventToNodeId = (event: TouchEvent): Flow.NodeId | null => {
   return nodeId;
 };
 
-const toViewBox = ({ maxX, maxY }: { maxX: number; maxY: number }) => {
-  return `${0} ${0} ${maxX} ${maxY}`;
+const toViewBox = ({ width, height }: { width: number; height: number }) => {
+  return `${0} ${0} ${width} ${height}`;
 };
 
 const map = <T, TY>(iterable: Iterable<T>, fn: (x: T) => TY): TY[] => {
