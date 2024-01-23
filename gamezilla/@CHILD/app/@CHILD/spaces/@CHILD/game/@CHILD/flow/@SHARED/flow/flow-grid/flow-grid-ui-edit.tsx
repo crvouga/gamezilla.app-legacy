@@ -1,3 +1,4 @@
+import { APP_SOUND } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   ActionButton,
   Drawer,
@@ -9,11 +10,10 @@ import {
   Slider,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { History } from "gamezilla/@SHARED/history";
-import { FlowUI } from "..";
 import * as Flow from "../flow";
+import * as FlowUI from "../flow-ui";
 import * as FlowGrid from "./flow-grid";
 import * as FlowGridUI from "./flow-grid-ui";
-import { APP_SOUND } from "gamezilla/@CHILD/app/@SHARED/client";
 
 //
 //
@@ -24,14 +24,10 @@ import { APP_SOUND } from "gamezilla/@CHILD/app/@SHARED/client";
 //
 
 type Form = {
-  width: number;
-  height: number;
   terminalsByGroupId: DraftTerminals;
 };
 
 export const initForm: Form = {
-  width: 5,
-  height: 5,
   terminalsByGroupId: {},
 };
 
@@ -79,6 +75,8 @@ export type Msg =
   | { t: "dragged-over"; nodeId: Flow.NodeId }
   | { t: "pressed-up-node"; nodeId: Flow.NodeId }
   | { t: "pressed-down-node"; nodeId: Flow.NodeId }
+  | { t: "inputted-width"; width: number }
+  | { t: "inputted-height"; height: number }
   | { t: "clicked-clear" }
   | { t: "clicked-undo" }
   | { t: "clicked-redo" }
@@ -121,11 +119,7 @@ export const update = ({
       return {
         model: {
           ...model,
-          form: History.push(model.form, {
-            ...initForm,
-            width: History.present(model.form).width,
-            height: History.present(model.form).height,
-          }),
+          form: History.push(model.form, initForm),
         },
         cmd: {
           t: "play-sound",
@@ -158,6 +152,14 @@ export const update = ({
           sourceSrc: APP_SOUND.navForwardMin,
         },
       };
+    }
+
+    case "inputted-height": {
+      return { model };
+    }
+
+    case "inputted-width": {
+      return { model };
     }
 
     case "pressed-down-node": {
@@ -399,14 +401,30 @@ export const View = ({
         <DrawerHeader onClose={() => dispatch({ t: "closed-dimensions" })} />
 
         <div className="flex items-center justify-center gap-1 text-center text-4xl font-bold">
-          <p>{`${History.present(model.form).width}w`}</p>
+          <p>{`${model.grid.width}w`}</p>
+
           <IconXMark className="h-6 w-6" />
-          <p>{`${History.present(model.form).height}h`}</p>
+
+          <p>{`${model.grid.height}h`}</p>
         </div>
 
         <div className="flex flex-col gap-3 p-4 pb-8">
-          <Slider label="Width" min={3} max={15} step={1} />
-          <Slider label="Height" min={3} max={15} step={1} />
+          <Slider
+            onChange={(width) => dispatch({ t: "inputted-width", width })}
+            value={model.grid.width}
+            label="Width"
+            min={3}
+            max={15}
+            step={1}
+          />
+          <Slider
+            onChange={(height) => dispatch({ t: "inputted-height", height })}
+            value={model.grid.height}
+            label="Height"
+            min={3}
+            max={15}
+            step={1}
+          />
         </div>
       </Drawer>
     </div>

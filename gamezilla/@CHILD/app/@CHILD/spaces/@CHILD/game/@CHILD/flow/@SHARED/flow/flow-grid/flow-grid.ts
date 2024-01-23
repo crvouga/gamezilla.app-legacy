@@ -1,4 +1,4 @@
-import { Flow } from "..";
+import * as Flow from "../flow";
 import { DELTAS, Position } from "./flow-grid-position";
 
 //
