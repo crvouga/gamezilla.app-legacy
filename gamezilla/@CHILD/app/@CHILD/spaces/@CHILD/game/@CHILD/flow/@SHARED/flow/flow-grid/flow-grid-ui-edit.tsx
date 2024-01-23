@@ -155,11 +155,15 @@ export const update = ({
     }
 
     case "inputted-height": {
-      return { model };
+      return {
+        model: { ...model, grid: FlowGrid.setHeight(model.grid, msg.height) },
+      };
     }
 
     case "inputted-width": {
-      return { model };
+      return {
+        model: { ...model, grid: FlowGrid.setWidth(model.grid, msg.width) },
+      };
     }
 
     case "pressed-down-node": {
@@ -410,7 +414,7 @@ export const View = ({
 
         <div className="flex flex-col gap-3 p-4 pb-8">
           <Slider
-            onChange={(width) => dispatch({ t: "inputted-width", width })}
+            onInput={(width) => dispatch({ t: "inputted-width", width })}
             value={model.grid.width}
             label="Width"
             min={3}
@@ -418,7 +422,7 @@ export const View = ({
             step={1}
           />
           <Slider
-            onChange={(height) => dispatch({ t: "inputted-height", height })}
+            onInput={(height) => dispatch({ t: "inputted-height", height })}
             value={model.grid.height}
             label="Height"
             min={3}

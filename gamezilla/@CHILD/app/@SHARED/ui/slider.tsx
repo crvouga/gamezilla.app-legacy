@@ -4,14 +4,14 @@ export const Slider = ({
   min,
   step,
   value,
-  onChange,
+  onInput,
 }: {
   value: number;
   label: string;
   min: number;
   max: number;
   step: number;
-  onChange?: (newValue: number) => void;
+  onInput?: (newValue: number) => void;
 }) => {
   return (
     <div>
@@ -22,13 +22,13 @@ export const Slider = ({
         max={max}
         value={value}
         step={step}
-        onChange={(event) => {
+        onInput={(event) => {
           const val = event.target.value;
           const parsed = parseFloat(val);
           if (isNaN(parsed)) {
             return;
           }
-          onChange?.(parsed);
+          onInput?.(parsed);
         }}
         className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 dark:bg-gray-700"
       />
