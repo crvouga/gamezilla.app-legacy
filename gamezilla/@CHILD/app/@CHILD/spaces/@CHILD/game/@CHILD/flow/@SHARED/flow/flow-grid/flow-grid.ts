@@ -49,17 +49,23 @@ export const distance =
 //
 //
 
-export const init = ({ maxX, maxY }: { maxX: number; maxY: number }): Model => {
+export const init = ({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}): Model => {
   let model: Model = {
     type: "flow-grid",
     flow: Flow.init,
-    width: maxX,
-    height: maxY,
+    width: width,
+    height: height,
     positions: {},
   };
 
-  for (let x = 0; x <= maxX; x++) {
-    for (let y = 0; y <= maxY; y++) {
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
       const position: Position = {
         x,
         y,

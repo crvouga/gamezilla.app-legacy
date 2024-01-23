@@ -149,8 +149,8 @@ const View: ClientModule["View"] = (input) => {
                     puzzle: {
                       t: "grid",
                       c: FlowGrid.init({
-                        maxX: 10,
-                        maxY: 10,
+                        width: 10,
+                        height: 10,
                       }),
                     },
                   }),
