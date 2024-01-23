@@ -113,55 +113,66 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-  const { gameState, dispatch } = input;
+  const { gameState } = input;
 
   switch (gameState.t) {
     case "build": {
       return <Builder.View {...input} />;
     }
-    case "list": {
-      return (
-        <div className="flex w-full flex-1 flex-col gap-2">
-          <div className="flex flex-1 items-center justify-center">
-            <Spinner />
-          </div>
 
-          <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
-            <Button
-              onClick={input.ctx.onQuit}
-              className="flex-1"
-              text="Exit"
-              start={<IconArrowLeftOnRect />}
-              variant="contained"
-              color="default"
-            />
-            <Button
-              className="flex-1"
-              text="Create"
-              variant="contained"
-              color="primary"
-              onClick={() =>
-                dispatch({
-                  t: "user-created-new-puzzle",
-                  puzzle: FlowPuzzle.create({
-                    createdAt: input.ctx.now,
-                    createdBy: input.ctx.currentUserId,
-                    puzzle: {
-                      t: "grid",
-                      c: FlowGrid.init({
-                        width: 10,
-                        height: 10,
-                      }),
-                    },
-                  }),
-                })
-              }
-            />
-          </div>
-        </div>
-      );
+    case "list": {
+      return <ViewList {...input} />;
     }
   }
+};
+
+const ViewList: ClientModule["View"] = (input) => {
+  const { gameState, dispatch } = input;
+
+  if (gameState.t !== "list") {
+    return null;
+  }
+
+  return (
+    <div className="flex w-full flex-1 flex-col gap-2">
+      <div className="flex flex-1 items-center justify-center">
+        <Spinner />
+      </div>
+
+      <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
+        <Button
+          onClick={input.ctx.onQuit}
+          className="flex-1"
+          text="Exit"
+          start={<IconArrowLeftOnRect />}
+          variant="contained"
+          color="default"
+        />
+        <Button
+          className="flex-1"
+          text="Create"
+          variant="contained"
+          color="primary"
+          onClick={() =>
+            dispatch({
+              t: "user-created-new-puzzle",
+              puzzle: FlowPuzzle.create({
+                createdAt: input.ctx.now,
+                createdBy: input.ctx.currentUserId,
+                puzzle: {
+                  t: "grid",
+                  c: FlowGrid.init({
+                    width: 10,
+                    height: 10,
+                  }),
+                },
+              }),
+            })
+          }
+        />
+      </div>
+    </div>
+  );
 };
 
 const ViewFeedItem: ClientModule["ViewFeedItem"] = () => {
