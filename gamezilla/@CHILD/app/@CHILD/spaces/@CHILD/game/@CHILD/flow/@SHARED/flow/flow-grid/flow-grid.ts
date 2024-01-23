@@ -157,6 +157,20 @@ export const toEdge = (model: Model, edgeId: Flow.EdgeId): Edge | null => {
   };
 };
 
+export const setWidth = (model: Model, width: number): Model => {
+  return {
+    ...model,
+    width,
+  };
+};
+
+export const setHeight = (model: Model, height: number): Model => {
+  return {
+    ...model,
+    height,
+  };
+};
+
 /**
  * Adds a node to the puzzle.
  */
