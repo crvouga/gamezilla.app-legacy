@@ -156,23 +156,39 @@ export const update = ({
 
     case "inputted-height": {
       return {
-        model: { ...model, grid: FlowGrid.setHeight(model.grid, msg.height) },
+        model: {
+          ...model,
+          grid: FlowGrid.init({
+            height: msg.height,
+            width: model.grid.width,
+            terminalsByGroupId: model.grid.flow.terminalsByGroupId,
+          }),
+        },
       };
     }
 
     case "inputted-width": {
       return {
-        model: { ...model, grid: FlowGrid.setWidth(model.grid, msg.width) },
+        model: {
+          ...model,
+          grid: FlowGrid.init({
+            height: model.grid.height,
+            width: msg.width,
+            terminalsByGroupId: model.grid.flow.terminalsByGroupId,
+          }),
+        },
       };
     }
 
     case "pressed-down-node": {
-      const currentPlacingGroupdId = toCurrentPlacingGroupId(model);
+      const currentPlacingGroupId = toCurrentPlacingGroupId(model);
+
       const draftTerminalsNew = updateDraftTerminalsOnPressedDownNode(
         History.present(model.form).terminalsByGroupId,
-        currentPlacingGroupdId,
+        currentPlacingGroupId,
         msg.nodeId
       );
+
       return {
         model: {
           ...model,

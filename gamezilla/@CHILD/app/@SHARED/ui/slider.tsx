@@ -30,7 +30,7 @@ export const Slider = ({
           }
           onInput?.(parsed);
         }}
-        className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 dark:bg-gray-700"
+        className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-blue-500"
       />
     </div>
   );

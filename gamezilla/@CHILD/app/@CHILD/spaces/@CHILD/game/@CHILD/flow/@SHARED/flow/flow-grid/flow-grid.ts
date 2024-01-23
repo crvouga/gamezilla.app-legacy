@@ -1,5 +1,6 @@
-import * as Flow from "../flow";
 import { DELTAS, Position } from "./flow-grid-position";
+
+import * as Flow from "../flow";
 
 //
 //
@@ -49,30 +50,33 @@ export const distance =
 //
 //
 
-export const init = ({
-  width,
-  height,
-}: {
+export const init = (input: {
   width: number;
   height: number;
+  terminalsByGroupId?: Flow.Model["terminalsByGroupId"];
 }): Model => {
   let model: Model = {
     type: "flow-grid",
     flow: Flow.init,
-    width: width,
-    height: height,
+    width: input.width,
+    height: input.height,
     positions: {},
   };
 
-  for (let x = 0; x < width; x++) {
-    for (let y = 0; y < height; y++) {
-      const position: Position = {
-        x,
-        y,
-      };
+  //
+  // Add nodes
+  //
+
+  for (let x = 0; x < input.width; x++) {
+    for (let y = 0; y < input.height; y++) {
+      const position: Position = { x, y };
       model = addNode(model, position);
     }
   }
+
+  //
+  // Add edges
+  //
 
   for (const nodePosition of yieldPositions(model)) {
     for (const delta of DELTAS) {
@@ -93,6 +97,45 @@ export const init = ({
       model.flow = Flow.addEdge(model.flow, edge);
     }
   }
+
+  //
+  // Terminals
+  //
+
+  const terminalsByGroupIdNew: Flow.Model["terminalsByGroupId"] = {};
+
+  for (const groupId in input.terminalsByGroupId) {
+    const terminal = input.terminalsByGroupId[groupId as Flow.GroupId];
+
+    if (!terminal) {
+      continue;
+    }
+
+    const start = toNode(model, terminal.startId);
+
+    const end = terminal?.endId ? toNode(model, terminal.endId) : null;
+
+    const startNew = start?.nodeId ?? end?.nodeId;
+    const endNew = end?.nodeId === startNew ? null : end?.nodeId;
+
+    if (!startNew) {
+      continue;
+    }
+
+    const terminalNew: Flow.Terminal = {
+      groupId: terminal.groupId,
+      startId: startNew,
+      endId: endNew,
+    };
+
+    terminalsByGroupIdNew[terminalNew.groupId] = terminalNew;
+  }
+
+  model.flow.terminalsByGroupId = terminalsByGroupIdNew;
+
+  //
+  //
+  //
 
   return model;
 };
@@ -154,20 +197,6 @@ export const toEdge = (model: Model, edgeId: Flow.EdgeId): Edge | null => {
     ...edge,
     source: source,
     target: target,
-  };
-};
-
-export const setWidth = (model: Model, width: number): Model => {
-  return {
-    ...model,
-    width,
-  };
-};
-
-export const setHeight = (model: Model, height: number): Model => {
-  return {
-    ...model,
-    height,
   };
 };
 
