@@ -1,28 +1,29 @@
-import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
-import {
-  APP_SOUND,
-  playSound,
-  sendToServer,
-} from "gamezilla/@CHILD/app/@SHARED/client";
+import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
+import { Builder } from "./builder.client";
 import {
   Button,
   IconArrowLeftOnRect,
   Spinner,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { ClientModule } from "./puzzle-builder.core";
 import { FlowGrid } from "../../@SHARED/flow";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
-import { Builder } from "./builder.client";
-import { ClientModule } from "./puzzle-builder.core";
+import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
+import { IntersectionObserverEmitter } from "gamezilla/@CHILD/app/@SHARED/ui/intersection-observer";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
+import { notAsked } from "gamezilla/@SHARED/core";
 
-const init: ClientModule["init"] = null;
+const init: ClientModule["init"] = {
+  listed: notAsked,
+  puzzles: {},
+};
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
-    (model) => listPuzzles({ ...input, model }),
-    (model) => updateFromGameEvent({ ...input, model })
+    (model) => updateFromGameEvent({ ...input, model }),
+    (model) => Builder.update({ ...input, model })
   );
 };
 
@@ -40,49 +41,14 @@ const updateFromGameEvent: ClientModule["update"] = (input) => {
     case "user-saved-changes":
     case "user-changed-to-play-mode":
     case "user-changed-to-edit-mode":
+    case "user-exited-builder":
     case "time-passed": {
       return { model };
     }
     case "user-created-new-puzzle": {
       return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
     }
-    case "user-exited-builder": {
-      return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
-    }
   }
-};
-
-const listPuzzles: ClientModule["update"] = (input) => {
-  const { model, msg, fromServer } = input;
-
-  if (msg?.t === "time-passed") {
-    return {
-      model,
-      cmd: [
-        sendToServer({
-          t: "list-puzzles",
-          input: {
-            pagination: {
-              limit: 10,
-              offset: 0,
-            },
-            where: {
-              createdBy: input.ctx.currentUserId,
-            },
-            order: {
-              createdAt: "desc",
-            },
-          },
-        }),
-      ],
-    };
-  }
-
-  if (fromServer?.t === "listed-puzzle") {
-    return { model };
-  }
-
-  return { model };
 };
 
 const updateFromMsg: ClientModule["update"] = (input) => {
@@ -95,6 +61,12 @@ const updateFromMsg: ClientModule["update"] = (input) => {
   switch (msg.t) {
     case "time-passed": {
       return { model };
+    }
+
+    case "user-observed-end-of-list": {
+      return {
+        model,
+      };
     }
 
     default: {
@@ -136,8 +108,17 @@ const ViewList: ClientModule["View"] = (input) => {
 
   return (
     <div className="flex w-full flex-1 flex-col gap-2">
-      <div className="flex flex-1 items-center justify-center">
-        <Spinner />
+      <div className="flex w-full flex-1 flex-col items-center overflow-y-scroll">
+        <div className="flex w-full items-center justify-center py-6">
+          <Spinner />
+        </div>
+
+        <IntersectionObserverEmitter
+          id="puzzle-builder-list"
+          onVisible={() => {
+            dispatch({ t: "user-observed-end-of-list" });
+          }}
+        />
       </div>
 
       <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">

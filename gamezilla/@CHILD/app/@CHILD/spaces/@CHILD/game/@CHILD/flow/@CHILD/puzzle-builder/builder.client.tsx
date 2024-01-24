@@ -24,16 +24,6 @@ import { ClientModule, toCurrentGrid } from "./puzzle-builder.core";
 //
 //
 
-const init: ClientModule["init"] = null;
-
-//
-//
-//
-//
-//
-//
-//
-
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates({ model: input.model }, (model) =>
     updateFromMsg({ ...input, model })
@@ -58,6 +48,7 @@ const updateSound: ClientModule["update"] = (input) => {
   }
 
   switch (msg.t) {
+    case "user-exited-builder":
     case "user-changed-to-edit-mode": {
       return {
         model,
@@ -280,8 +271,7 @@ export const capitalize = (s: string) => {
   return `${s.charAt(0).toUpperCase()}${s.slice(1).toLowerCase()}`;
 };
 
-export const Builder: ClientModule = {
-  init,
+export const Builder: Omit<ClientModule, "init"> = {
   update,
   subscriptions,
   View,

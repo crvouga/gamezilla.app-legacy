@@ -5,7 +5,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { Result } from "gamezilla/@SHARED/core";
+import { RemoteResult, Result } from "gamezilla/@SHARED/core";
 import { FlowGrid, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db";
@@ -43,13 +43,16 @@ export type ClientModule = GameClientModule<{
 //
 //
 
-export type ClientModel = null;
+export type ClientModel = {
+  listed: RemoteResult<string, null>;
+  puzzles: {
+    [puzzleId: FlowPuzzleId]: FlowPuzzle;
+  };
+};
 
 export type ServerModel = {
   hasListedPuzzles: boolean;
 };
-
-// const EMPTY_GRID = FlowGrid.init({ bounds: FlowGridPosition.bounds8x8 });
 
 //
 //
@@ -59,7 +62,10 @@ export type ServerModel = {
 //
 //
 
-export type ClientMsg = { t: "time-passed" } | GameEvent;
+export type ClientMsg =
+  | { t: "time-passed" }
+  | GameEvent
+  | { t: "user-observed-end-of-list" };
 
 export type ServerMsg = { t: "time-passed" };
 
