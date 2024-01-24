@@ -1,7 +1,8 @@
 import { SqliteStore } from "./immutable-store.sqlite";
 import { buildTest } from "./immutable-store.test";
 
-if (false) {
+const SHOULD_TEST = false;
+if (SHOULD_TEST) {
   buildTest(async () => {
     return SqliteStore<string, string | null>({
       connectionString: ":memory:",

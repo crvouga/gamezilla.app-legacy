@@ -113,6 +113,12 @@ export type GameEvent =
   | {
       t: "user-exited-builder";
       userId: UserId;
+    }
+  | {
+      t: "user-saved-changes";
+      userId: UserId;
+      puzzleId: FlowPuzzleId;
+      puzzle: FlowPuzzle["puzzle"];
     };
 
 type BuildState =
@@ -126,9 +132,9 @@ type BuildState =
 export type GameStateBuild = {
   t: "build";
   puzzleId: FlowPuzzleId;
-  play: FlowGridUIPlay.Model;
-  edit: FlowGridUIEdit.Model;
   mode: BuildState;
+  gridPlay: FlowGridUIPlay.Model;
+  gridEdit: FlowGridUIEdit.Model;
 };
 
 export type GameStateList = {
@@ -146,11 +152,11 @@ export type GameState = GameStateList | GameStateBuild;
 export const toCurrentGrid = (state: GameStateBuild): FlowGrid.Model => {
   switch (state.mode.t) {
     case "edit": {
-      return state.edit.grid;
+      return state.gridEdit.grid;
     }
 
     case "play": {
-      return state.play.grid;
+      return state.gridPlay.grid;
     }
   }
 };
@@ -200,13 +206,14 @@ const reducerListState = ({
     case "user-created-new-puzzle": {
       return {
         t: "build",
-        edit: FlowGridUIEdit.init({ grid: event.puzzle.puzzle.c }),
+        gridEdit: FlowGridUIEdit.init({ grid: event.puzzle.puzzle.c }),
         mode: { t: "edit" },
-        play: FlowGridUIPlay.init({ grid: event.puzzle.puzzle.c }),
+        gridPlay: FlowGridUIPlay.init({ grid: event.puzzle.puzzle.c }),
         puzzleId: event.puzzle.id,
       };
     }
 
+    case "user-saved-changes":
     case "user-exited-builder":
     case "time-passed":
     case "user-changed-to-edit-mode":
@@ -231,18 +238,21 @@ const reducerBuildState = ({
     case "grid-ui-play": {
       return {
         ...state,
-        play: FlowGridUIPlay.update({ model: state.play, msg: event.c }),
+        gridPlay: FlowGridUIPlay.update({
+          model: state.gridPlay,
+          msg: event.c,
+        }),
       };
     }
 
     case "grid-ui-edit": {
       const updated = FlowGridUIEdit.update({
-        model: state.edit,
+        model: state.gridEdit,
         msg: event.c,
       });
       return {
         ...state,
-        edit: updated.model,
+        gridEdit: updated.model,
       };
     }
 
@@ -257,7 +267,10 @@ const reducerBuildState = ({
     case "user-changed-to-play-mode": {
       return {
         ...state,
-        play: { ...state.play, grid: FlowGridUIEdit.toGrid(state.edit) },
+        gridPlay: {
+          ...state.gridPlay,
+          grid: FlowGridUIEdit.toGrid(state.gridEdit),
+        },
         mode: { t: "play" },
       };
     }
@@ -270,6 +283,10 @@ const reducerBuildState = ({
       return {
         t: "list",
       };
+    }
+
+    case "user-saved-changes": {
+      return state;
     }
 
     case "time-passed":

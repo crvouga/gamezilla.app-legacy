@@ -74,7 +74,7 @@ const updateSound: ClientModule["update"] = (input) => {
 
     case "grid-ui-edit": {
       const updated = FlowGridUIEdit.update({
-        model: gameState.edit,
+        model: gameState.gridEdit,
         msg: msg.c,
       });
 
@@ -137,7 +137,7 @@ const View: ClientModule["View"] = (input) => {
 
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
             <FlowGridUIEdit.View
-              model={gameState.edit}
+              model={gameState.gridEdit}
               dispatch={(c) => dispatch({ t: "grid-ui-edit", c })}
             />
           </div>
@@ -166,6 +166,23 @@ const View: ClientModule["View"] = (input) => {
                       userId: ctx.currentUserId,
                     }),
                 },
+                {
+                  label: "Save",
+                  classNames: {
+                    button: "text-blue-500",
+                  },
+                  icon: <IconPenToSquare className="h-6 w-6" />,
+                  onClick: () =>
+                    dispatch({
+                      t: "user-saved-changes",
+                      userId: ctx.currentUserId,
+                      puzzle: {
+                        t: "grid",
+                        c: gameState.gridEdit.grid,
+                      },
+                      puzzleId: gameState.puzzleId,
+                    }),
+                },
               ]}
             />
           )}
@@ -184,7 +201,7 @@ const View: ClientModule["View"] = (input) => {
 
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
             <FlowGridUIPlay.View
-              model={gameState.play}
+              model={gameState.gridPlay}
               dispatch={(c) => dispatch({ t: "grid-ui-play", c })}
             />
           </div>

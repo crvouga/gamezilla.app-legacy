@@ -2,7 +2,8 @@ import Database from "bun:sqlite";
 import { SqlStore } from "./immutable-store.sql";
 import { buildTest } from "./immutable-store.test";
 
-if (false) {
+const SHOULD_TEST = false;
+if (SHOULD_TEST) {
   buildTest(async () => {
     const db = new Database(":memory:", {
       create: true,

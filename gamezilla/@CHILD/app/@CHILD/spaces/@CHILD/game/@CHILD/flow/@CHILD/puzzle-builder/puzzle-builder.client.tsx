@@ -37,6 +37,7 @@ const updateFromGameEvent: ClientModule["update"] = (input) => {
     case "grid-ui-edit":
     case "grid-ui-play":
     case "listed-puzzles":
+    case "user-saved-changes":
     case "user-changed-to-play-mode":
     case "user-changed-to-edit-mode":
     case "time-passed": {
