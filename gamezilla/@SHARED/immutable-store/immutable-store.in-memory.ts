@@ -14,12 +14,12 @@ const mapsByNamespace = new Map<
 >();
 
 export const InMemoryStore = <TKey extends string | number, TValue>({
-  namespace,
+  keySpace,
   maxEntryCount,
   encodeValue,
   decodeValue,
 }: {
-  namespace: string;
+  keySpace: string;
   maxEntryCount: number;
   encodeValue: (value: TValue) => unknown;
   decodeValue: (value: unknown) => TValue | null;
@@ -27,7 +27,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
   toJSON: () => unknown;
 } => {
   const getMap = () => {
-    const map = mapsByNamespace.get(namespace);
+    const map = mapsByNamespace.get(keySpace);
 
     if (map) {
       return map;
@@ -38,7 +38,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
       MapEntry<string | number, unknown>[]
     >();
 
-    mapsByNamespace.set(namespace, mapNew);
+    mapsByNamespace.set(keySpace, mapNew);
 
     return mapNew;
   };
@@ -46,7 +46,7 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
   const setMap = (
     map: Map<string | number, MapEntry<string | number, unknown>[]>
   ) => {
-    mapsByNamespace.set(namespace, map);
+    mapsByNamespace.set(keySpace, map);
   };
 
   const decodeEntry = (
@@ -82,14 +82,14 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
       _appendStep: runningAppendStep++,
     };
 
+    const map = getMap();
+
     for (const [key, value] of entries) {
       const entry: MapEntry<string | number, unknown> = {
         ...instanceNew,
         key,
         value: value ? encodeValue(value) : undefined,
       };
-
-      const map = getMap();
 
       const keyEntries = map.get(entry.key) ?? [];
 
@@ -100,8 +100,8 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
       }
 
       map.set(entry.key, keyEntries);
-      setMap(map);
     }
+    setMap(map);
 
     return instanceNew;
   };

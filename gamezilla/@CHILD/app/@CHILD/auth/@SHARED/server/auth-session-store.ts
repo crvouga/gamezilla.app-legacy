@@ -1,10 +1,13 @@
 import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { ServerCtx } from "gamezilla/@CHILD/app/@SHARED/server";
-import { InMemoryStore } from "gamezilla/@SHARED/immutable-store";
+import { InMemoryStore, SqliteStore } from "gamezilla/@SHARED/immutable-store";
+
+const connectionString = "data/gamezilla-session.db";
 
 export const StoreUserIdBySessionId = (_ctx: ServerCtx) => {
-  return InMemoryStore<SessionId, UserId>({
-    maxEntryCount: 100,
+  return SqliteStore<SessionId, UserId>({
+    keySpace: "user-id-by-session-id",
+    connectionString,
     decodeValue: (value) => {
       if (UserId.is(value)) {
         return value;
@@ -14,13 +17,13 @@ export const StoreUserIdBySessionId = (_ctx: ServerCtx) => {
     encodeValue: (value) => {
       return String(value);
     },
-    namespace: "user-id-by-session-id",
   });
 };
 
 export const StoreSessionIdByUserId = (_ctx: ServerCtx) => {
-  return InMemoryStore<UserId, { [sessionId: SessionId]: SessionId }>({
-    maxEntryCount: 100,
+  return SqliteStore<UserId, { [sessionId: SessionId]: SessionId }>({
+    keySpace: "session-id-by-user-id",
+    connectionString,
     decodeValue: (value) => {
       if (typeof value === "object" && value !== null) {
         const sessionIds: { [sessionId: SessionId]: SessionId } = {};
@@ -39,6 +42,5 @@ export const StoreSessionIdByUserId = (_ctx: ServerCtx) => {
     encodeValue: (value) => {
       return String(value);
     },
-    namespace: "session-id-by-user-id",
   });
 };

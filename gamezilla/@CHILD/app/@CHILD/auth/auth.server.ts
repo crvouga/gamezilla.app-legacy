@@ -113,21 +113,15 @@ const updateFromMsg: Module["update"] = async ({ model, msg }) => {
   }
 };
 
-const updateFromClient: Module["update"] = async ({
-  ctx,
-  model,
-  fromClient,
-}) => {
+const updateFromClient: Module["update"] = async ({ model, fromClient }) => {
   if (!fromClient) {
     return { model };
   }
 
   switch (fromClient.t) {
     case "logout": {
-      const modelNew = await dissocSession(ctx, model, fromClient.sessionId);
-
       return {
-        model: modelNew,
+        model,
         event: [
           {
             t: "auth/client-unauthenticated",
