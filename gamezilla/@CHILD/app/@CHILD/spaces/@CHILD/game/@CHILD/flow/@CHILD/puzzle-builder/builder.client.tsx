@@ -159,19 +159,18 @@ const View: ClientModule["View"] = (input) => {
                 },
                 {
                   label: "Save",
-                  classNames: {
-                    button: "text-blue-500",
-                  },
                   icon: <IconPenToSquare className="h-6 w-6" />,
                   onClick: () =>
                     dispatch({
                       t: "user-saved-changes",
                       userId: ctx.currentUserId,
                       puzzle: {
-                        t: "grid",
-                        c: gameState.gridEdit.grid,
+                        ...gameState.puzzle,
+                        puzzle: {
+                          t: "grid",
+                          c: FlowGridUIEdit.toGrid(gameState.gridEdit),
+                        },
                       },
-                      puzzleId: gameState.puzzleId,
                     }),
                 },
               ]}

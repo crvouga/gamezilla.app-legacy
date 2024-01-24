@@ -62,6 +62,14 @@ const updateFromGameEvent: Module["update"] = async (input) => {
       };
     }
 
+    case "user-saved-changes": {
+      const put = await FlowPuzzleDb().put(gameEvent.puzzle);
+      return {
+        model: input.model,
+        cmd: [sendToSpace({ t: "put-puzzle", put })],
+      };
+    }
+
     default: {
       return { model };
     }

@@ -29,18 +29,11 @@ const updateFromGameEvent: ClientModule["update"] = (input) => {
   }
 
   switch (gameEvent.t) {
-    case "grid-ui-edit":
-    case "grid-ui-play":
-    case "listed-puzzles":
-    case "user-saved-changes":
-    case "user-changed-to-play-mode":
-    case "user-changed-to-edit-mode":
-    case "user-exited-builder":
-    case "time-passed": {
-      return { model };
-    }
     case "user-created-new-puzzle": {
       return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
+    }
+    default: {
+      return { model };
     }
   }
 };
@@ -54,6 +47,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 
   switch (msg.t) {
     case "time-passed":
+    case "user-clicked-puzzle":
     case "user-observed-end-of-list": {
       return { model };
     }

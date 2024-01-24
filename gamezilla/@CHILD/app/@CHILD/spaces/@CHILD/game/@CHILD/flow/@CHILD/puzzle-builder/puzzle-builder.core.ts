@@ -63,9 +63,10 @@ export type ServerModel = {
 //
 
 export type ClientMsg =
-  | { t: "time-passed" }
   | GameEvent
-  | { t: "user-observed-end-of-list" };
+  | { t: "time-passed" }
+  | { t: "user-observed-end-of-list" }
+  | { t: "user-clicked-puzzle" };
 
 export type ServerMsg = { t: "time-passed" };
 
@@ -123,8 +124,7 @@ export type GameEvent =
   | {
       t: "user-saved-changes";
       userId: UserId;
-      puzzleId: FlowPuzzleId;
-      puzzle: FlowPuzzle["puzzle"];
+      puzzle: FlowPuzzle;
     };
 
 type BuildState =
@@ -137,7 +137,7 @@ type BuildState =
 
 export type GameStateBuild = {
   t: "build";
-  puzzleId: FlowPuzzleId;
+  puzzle: FlowPuzzle;
   mode: BuildState;
   gridPlay: FlowGridUIPlay.Model;
   gridEdit: FlowGridUIEdit.Model;
@@ -168,12 +168,8 @@ export const toCurrentGrid = (state: GameStateBuild): FlowGrid.Model => {
 };
 
 export const initState = (_input: { ctx: SpaceCtx }): GameState => {
-  // const _grid = EMPTY_GRID;
   return {
     t: "list",
-    // mode: { t: "edit" },
-    // play: FlowGridUIPlay.init({ grid }),
-    // edit: FlowGridUIEdit.init({ grid }),
   };
 };
 export const reducer = ({
@@ -215,7 +211,7 @@ const reducerListState = ({
         gridEdit: FlowGridUIEdit.init({ grid: event.puzzle.puzzle.c }),
         mode: { t: "edit" },
         gridPlay: FlowGridUIPlay.init({ grid: event.puzzle.puzzle.c }),
-        puzzleId: event.puzzle.id,
+        puzzle: event.puzzle,
       };
     }
 

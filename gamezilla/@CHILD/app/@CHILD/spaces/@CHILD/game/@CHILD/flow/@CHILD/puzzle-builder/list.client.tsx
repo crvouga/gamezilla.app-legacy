@@ -4,12 +4,13 @@ import {
   Button,
   IconArrowLeftOnRect,
   Spinner,
+  cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { IntersectionObserverEmitter } from "gamezilla/@CHILD/app/@SHARED/ui/intersection-observer";
-import { RemoteResult, Result, Sub, loading } from "gamezilla/@SHARED/core";
-import { FlowGrid } from "../../@SHARED/flow";
+import { Posix, Result, Sub, descend, loading } from "gamezilla/@SHARED/core";
+import { FlowGrid, FlowGridUI } from "../../@SHARED/flow";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
-import { ClientModel, ClientModule } from "./puzzle-builder.core";
+import { ClientModule } from "./puzzle-builder.core";
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates({ model: input.model }, (model) =>
@@ -20,12 +21,15 @@ const update: ClientModule["update"] = (input) => {
 const updatePuzzleList: ClientModule["update"] = (input) => {
   const { model, msg, fromServer, ctx } = input;
 
+  if (msg?.t === "user-clicked-puzzle") {
+    return {
+      model,
+    };
+  }
+
   if (msg?.t === "user-observed-end-of-list") {
     return {
-      model: {
-        ...model,
-        listed: loading,
-      },
+      model: { ...model, listed: loading },
       cmd: [
         sendToServer({
           t: "list-puzzles",
@@ -34,7 +38,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
               createdAt: "desc",
             },
             pagination: {
-              limit: 10,
+              limit: 25,
               offset: 0,
             },
             where: {
@@ -79,15 +83,26 @@ const View: ClientModule["View"] = (input) => {
   }
 
   return (
-    <div className="flex w-full flex-1 flex-col gap-2">
+    <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden">
       <div className="flex w-full flex-1 flex-col items-center overflow-y-scroll">
-        <div className="flex w-full items-center justify-center py-6">
+        {Object.values(model.puzzles)
+          .sort(descend((puzzle) => Posix.toNumber(puzzle.createdAt)))
+          .map((puzzle) => (
+            <FlowPuzzleListItem
+              key={puzzle.id}
+              puzzle={puzzle}
+              onClick={() => dispatch({ t: "user-clicked-puzzle" })}
+            />
+          ))}
+
+        <div
+          className={cn(
+            "flex h-32 w-full items-center justify-center py-6",
+            model.listed.t !== "loading" && "opacity-0"
+          )}
+        >
           <Spinner />
         </div>
-
-        {Object.values(model.puzzles).map((puzzle) => {
-          return <div key={puzzle.id}>{puzzle.id}</div>;
-        })}
 
         <IntersectionObserverEmitter
           id="puzzle-builder-list"
@@ -128,6 +143,27 @@ const View: ClientModule["View"] = (input) => {
         />
       </div>
     </div>
+  );
+};
+
+const FlowPuzzleListItem = ({
+  puzzle,
+  onClick,
+}: {
+  puzzle: FlowPuzzle;
+  onClick: () => void;
+}) => {
+  return (
+    <button
+      key={puzzle.id}
+      className="flex w-full items-center gap-4 border-b border-neutral-700"
+      onClick={onClick}
+    >
+      <div className="aspect-square h-24 w-24 overflow-hidden border-r border-neutral-700">
+        <FlowGridUI.View model={puzzle.puzzle.c} />
+      </div>
+      <div>{puzzle.id}</div>
+    </button>
   );
 };
 

@@ -7,6 +7,8 @@ const db = new Map<string, FlowPuzzle>();
 export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
   return {
     async list(input) {
+      await new Promise((r) => setTimeout(r, 1000));
+
       const puzzles = Array.from(db.values());
 
       const filtered = puzzles.filter((puzzle) => {
