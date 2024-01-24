@@ -1,64 +1,70 @@
+import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
+import { sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
   IconArrowLeftOnRect,
   Spinner,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { ClientModule } from "./puzzle-builder.core";
+import { IntersectionObserverEmitter } from "gamezilla/@CHILD/app/@SHARED/ui/intersection-observer";
+import { RemoteResult, Result, Sub, loading } from "gamezilla/@SHARED/core";
 import { FlowGrid } from "../../@SHARED/flow";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
-import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
-import { IntersectionObserverEmitter } from "gamezilla/@CHILD/app/@SHARED/ui/intersection-observer";
-import { Sub, loading } from "gamezilla/@SHARED/core";
-import { sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientModel, ClientModule } from "./puzzle-builder.core";
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates({ model: input.model }, (model) =>
-    updateFromMsg({ ...input, model })
+    updatePuzzleList({ ...input, model })
   );
 };
 
-const updateFromMsg: ClientModule["update"] = (input) => {
-  const { model, msg, ctx } = input;
+const updatePuzzleList: ClientModule["update"] = (input) => {
+  const { model, msg, fromServer, ctx } = input;
 
-  if (!msg) {
-    return { model };
-  }
-
-  switch (msg.t) {
-    case "time-passed": {
-      return { model };
-    }
-
-    case "user-observed-end-of-list": {
-      return {
-        model: {
-          ...model,
-          listed: loading,
-        },
-        cmd: [
-          sendToServer({
-            t: "list-puzzles",
-            input: {
-              order: {
-                createdAt: "desc",
-              },
-              pagination: {
-                limit: 10,
-                offset: 0,
-              },
-              where: {
-                createdBy: ctx.space.hostId,
-              },
+  if (msg?.t === "user-observed-end-of-list") {
+    return {
+      model: {
+        ...model,
+        listed: loading,
+      },
+      cmd: [
+        sendToServer({
+          t: "list-puzzles",
+          input: {
+            order: {
+              createdAt: "desc",
             },
-          }),
-        ],
-      };
-    }
-
-    default: {
-      return { model };
-    }
+            pagination: {
+              limit: 10,
+              offset: 0,
+            },
+            where: {
+              createdBy: ctx.space.hostId,
+            },
+          },
+        }),
+      ],
+    };
   }
+
+  if (fromServer?.t === "listed-puzzle") {
+    const puzzles =
+      fromServer.listed.t === "ok" ? fromServer.listed.value.items : [];
+
+    const puzzlesNew = puzzles.reduce(
+      (acc, puzzle) => ({ ...acc, [puzzle.id]: puzzle }),
+      model.puzzles
+    );
+
+    return {
+      model: {
+        ...model,
+        listed: Result.mapOk(fromServer.listed, () => null),
+        puzzles: puzzlesNew,
+      },
+    };
+  }
+
+  return { model };
 };
 
 const subscriptions: ClientModule["subscriptions"] = (_input) => {
@@ -66,7 +72,7 @@ const subscriptions: ClientModule["subscriptions"] = (_input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-  const { gameState, dispatch } = input;
+  const { model, gameState, dispatch } = input;
 
   if (gameState.t !== "list") {
     return null;
@@ -79,11 +85,13 @@ const View: ClientModule["View"] = (input) => {
           <Spinner />
         </div>
 
+        {Object.values(model.puzzles).map((puzzle) => {
+          return <div key={puzzle.id}>{puzzle.id}</div>;
+        })}
+
         <IntersectionObserverEmitter
           id="puzzle-builder-list"
-          onVisible={() => {
-            dispatch({ t: "user-observed-end-of-list" });
-          }}
+          onVisible={() => dispatch({ t: "user-observed-end-of-list" })}
         />
       </div>
 
@@ -123,13 +131,8 @@ const View: ClientModule["View"] = (input) => {
   );
 };
 
-const ViewFeedItem: ClientModule["ViewFeedItem"] = () => {
-  return <div></div>;
-};
-
-export const List: Omit<ClientModule, "init"> = {
+export const List: Pick<ClientModule, "update" | "subscriptions" | "View"> = {
   update,
   subscriptions,
   View,
-  ViewFeedItem,
 };

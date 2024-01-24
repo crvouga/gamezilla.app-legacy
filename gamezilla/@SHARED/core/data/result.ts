@@ -145,6 +145,7 @@ export const remoteResultMap = <E, A, B>(
 
 export const RemoteResult = {
   map: remoteResultMap,
+
   loading,
   notAsked,
   err,
