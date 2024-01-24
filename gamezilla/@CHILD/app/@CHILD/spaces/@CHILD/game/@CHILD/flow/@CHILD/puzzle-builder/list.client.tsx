@@ -156,11 +156,11 @@ const FlowPuzzleListItem = ({
   return (
     <button
       key={puzzle.id}
-      className="flex w-full items-center gap-4 border-b border-neutral-700"
+      className="flex w-full items-center gap-4 border-b border-neutral-700 text-left hover:bg-neutral-900"
       onClick={onClick}
     >
       <div className="aspect-square h-24 w-24 overflow-hidden border-r border-neutral-700">
-        <FlowGridUI.View model={puzzle.puzzle.c} />
+        <FlowGridUI.View disabled model={puzzle.puzzle.c} />
       </div>
       <div>{puzzle.id}</div>
     </button>

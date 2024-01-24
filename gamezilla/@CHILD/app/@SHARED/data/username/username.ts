@@ -1,5 +1,4 @@
-import { Result } from "gamezilla/@SHARED/core";
-const { ok: Ok, err: Err } = Result;
+import { Result, ok, err } from "gamezilla/@SHARED/core";
 import { nouns } from "./noun";
 import { adjectives } from "./adjective";
 export type Username = string & { _opaque: "Username" };
@@ -16,9 +15,9 @@ type Problem = "invalid_username";
 
 const decode = (username: unknown): Result<Problem, Username> => {
   if (is(username)) {
-    return Ok(username);
+    return ok(username);
   }
-  return Err("invalid_username");
+  return err("invalid_username");
 };
 
 const fromString = (username: string): Username => {
