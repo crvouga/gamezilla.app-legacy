@@ -182,7 +182,7 @@ const View: ClientModule["View"] = (input) => {
             color="blue"
           />
 
-          <div className="flex w-full flex-1 flex-col items-center justify-center gap-3">
+          <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
             <FlowGridUIPlay.View
               model={gameState.play}
               dispatch={(c) => dispatch({ t: "grid-ui-play", c })}
