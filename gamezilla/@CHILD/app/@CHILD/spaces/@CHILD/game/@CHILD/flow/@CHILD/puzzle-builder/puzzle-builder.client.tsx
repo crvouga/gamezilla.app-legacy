@@ -47,7 +47,6 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 
   switch (msg.t) {
     case "time-passed":
-    case "user-clicked-puzzle":
     case "user-observed-end-of-list": {
       return { model };
     }

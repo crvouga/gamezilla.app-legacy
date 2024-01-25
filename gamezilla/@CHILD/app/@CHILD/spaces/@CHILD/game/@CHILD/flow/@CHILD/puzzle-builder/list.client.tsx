@@ -21,12 +21,6 @@ const update: ClientModule["update"] = (input) => {
 const updatePuzzleList: ClientModule["update"] = (input) => {
   const { model, msg, fromServer, ctx } = input;
 
-  if (msg?.t === "user-clicked-puzzle") {
-    return {
-      model,
-    };
-  }
-
   if (msg?.t === "user-observed-end-of-list") {
     return {
       model: { ...model, listed: loading },
@@ -76,7 +70,7 @@ const subscriptions: ClientModule["subscriptions"] = (_input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-  const { model, gameState, dispatch } = input;
+  const { model, gameState, dispatch, ctx } = input;
 
   if (gameState.t !== "list") {
     return null;
@@ -91,7 +85,13 @@ const View: ClientModule["View"] = (input) => {
             <FlowPuzzleListItem
               key={puzzle.id}
               puzzle={puzzle}
-              onClick={() => dispatch({ t: "user-clicked-puzzle" })}
+              onClick={() =>
+                dispatch({
+                  t: "user-opened-puzzle",
+                  puzzle,
+                  userId: ctx.currentUserId,
+                })
+              }
             />
           ))}
 

@@ -262,17 +262,13 @@ const ViewModeBar = (props: {
   );
 };
 
-const ViewFeedItem: ClientModule["ViewFeedItem"] = () => {
-  return <div></div>;
-};
-
 export const capitalize = (s: string) => {
   return `${s.charAt(0).toUpperCase()}${s.slice(1).toLowerCase()}`;
 };
 
-export const Builder: Omit<ClientModule, "init"> = {
-  update,
-  subscriptions,
-  View,
-  ViewFeedItem,
-};
+export const Builder: Pick<ClientModule, "update" | "subscriptions" | "View"> =
+  {
+    update,
+    subscriptions,
+    View,
+  };

@@ -65,8 +65,7 @@ export type ServerModel = {
 export type ClientMsg =
   | GameEvent
   | { t: "time-passed" }
-  | { t: "user-observed-end-of-list" }
-  | { t: "user-clicked-puzzle" };
+  | { t: "user-observed-end-of-list" };
 
 export type ServerMsg = { t: "time-passed" };
 
@@ -123,6 +122,11 @@ export type GameEvent =
     }
   | {
       t: "user-saved-changes";
+      userId: UserId;
+      puzzle: FlowPuzzle;
+    }
+  | {
+      t: "user-opened-puzzle";
       userId: UserId;
       puzzle: FlowPuzzle;
     };
@@ -201,10 +205,6 @@ const reducerListState = ({
   state: GameStateList;
 }): GameState => {
   switch (event.t) {
-    case "listed-puzzles": {
-      return state;
-    }
-
     case "user-created-new-puzzle": {
       return {
         t: "build",
@@ -215,6 +215,17 @@ const reducerListState = ({
       };
     }
 
+    case "user-opened-puzzle": {
+      return {
+        t: "build",
+        gridEdit: FlowGridUIEdit.init({ grid: event.puzzle.puzzle.c }),
+        gridPlay: FlowGridUIPlay.init({ grid: event.puzzle.puzzle.c }),
+        mode: { t: "edit" },
+        puzzle: event.puzzle,
+      };
+    }
+
+    case "listed-puzzles":
     case "user-saved-changes":
     case "user-exited-builder":
     case "time-passed":
@@ -291,6 +302,7 @@ const reducerBuildState = ({
       return state;
     }
 
+    case "user-opened-puzzle":
     case "time-passed":
     case "listed-puzzles":
     case "user-created-new-puzzle": {
