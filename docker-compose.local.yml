@@ -12,7 +12,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - gamezilla-data:/var/lib/postgresql/data
+      - gamezilla-postgres-data:/var/lib/postgresql/data
 
 volumes:
-  gamezilla-data:
+  gamezilla-postgres-data:
