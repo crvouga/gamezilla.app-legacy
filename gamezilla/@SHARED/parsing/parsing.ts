@@ -2,6 +2,13 @@ export const str = (value: unknown): value is string => {
   return typeof value === "string";
 };
 
+export const literal = <T extends string>(
+  value: unknown,
+  literal: T
+): value is T => {
+  return value === literal;
+};
+
 export const nullish = (value: unknown): value is null | undefined => {
   return value === null || value === undefined;
 };
@@ -27,13 +34,31 @@ export const num = (value: unknown): value is number => {
 export const has = <T extends Record<string, unknown>, K extends keyof T, V>(
   obj: T,
   key: K,
-  checkType: (value: unknown) => value is V
+  isValue: (value: unknown) => value is V
 ): obj is T & Record<K, V> => {
-  return checkType(obj[key]);
+  return isValue(obj[key]);
 };
 
 export const obj = (item: unknown): item is Record<string, unknown> => {
   return typeof item === "object" && item !== null && !Array.isArray(item);
+};
+
+export const dict = <K extends string, V>(
+  item: unknown,
+  isKey: (x: unknown) => x is K,
+  isValue: (x: unknown) => x is V
+): item is Record<K, V> => {
+  if (!obj(item)) {
+    return false;
+  }
+
+  for (const key in item) {
+    if (!isKey(key) || !isValue(item[key])) {
+      return false;
+    }
+  }
+
+  return true;
 };
 
 export const union =

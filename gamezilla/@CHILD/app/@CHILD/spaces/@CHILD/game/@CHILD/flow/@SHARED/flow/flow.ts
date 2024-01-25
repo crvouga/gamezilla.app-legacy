@@ -47,7 +47,7 @@ export const GROUP_ID_ORDER = [
   "Q",
 ] as const;
 
-export const isGroupId = (groupId: string): groupId is GroupId => {
+export const isGroupId = (groupId: unknown): groupId is GroupId => {
   return GROUP_ID_ORDER.includes(groupId as GroupId);
 };
 
@@ -190,6 +190,12 @@ export const addNode = (model: Model, node: Node): Model => {
   };
 };
 
+export const deriveEdgeHash = (
+  model: Pick<Model, "edges">
+): string | number => {
+  return djb2Hash(Object.values(model.edges).sort().join(","));
+};
+
 /**
  * Adds an edge to the puzzle.
  */
@@ -201,7 +207,7 @@ export const addEdge = (model: Model, edge: Edge): Model => {
       [toEdgeId(edge)]: edge,
     },
   };
-  const hashNew = djb2Hash(Object.values(modelNew.edges).sort().join(","));
+  const hashNew = deriveEdgeHash(modelNew);
   return { ...modelNew, edgeHash: hashNew };
 };
 

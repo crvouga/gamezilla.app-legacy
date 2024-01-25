@@ -1,41 +1,105 @@
 import { Parsing as P } from "gamezilla/@SHARED/parsing";
-import { Model, Node, Edge } from "./flow";
+import {
+  Edge,
+  Model,
+  Node,
+  NodeId,
+  Terminal,
+  deriveEdgeHash,
+  isGroupId,
+} from "./flow";
+
+const isEdgeId = (x: unknown): x is string => {
+  return P.str(x);
+};
+
+const toEdge = (x: unknown): Edge | null => {
+  if (
+    P.obj(x) &&
+    P.has(x, "sourceId", isNodeId) &&
+    P.has(x, "targetId", isNodeId)
+  ) {
+    return x;
+  }
+  return null;
+};
+
+const isEdge = P.is(toEdge);
+
+const toEdges = (x: unknown): Model["edges"] | null => {
+  if (P.dict(x, isEdgeId, isEdge)) {
+    return x;
+  }
+  return null;
+};
+
+const isEdges = P.is(toEdges);
+
+const isNodeId = (x: unknown): x is NodeId => {
+  return P.str(x);
+};
+
+export const toNode = (x: unknown): Node | null => {
+  if (P.obj(x) && P.has(x, "nodeId", isNodeId)) {
+    return x;
+  }
+
+  return null;
+};
+
+export const isNode = P.is(toNode);
+
+const toNodes = (x: unknown): Model["nodes"] | null => {
+  if (P.dict(x, isNodeId, isNode)) {
+    return x;
+  }
+  return null;
+};
+
+const isNodes = P.is(toNodes);
+
+const toTerminal = (x: unknown): Terminal | null => {
+  if (
+    P.obj(x) &&
+    P.has(x, "startId", isNodeId) &&
+    P.has(x, "endId", P.or(isNodeId, P.nullish)) &&
+    P.has(x, "groupId", isGroupId)
+  ) {
+    return x;
+  }
+  return null;
+};
+
+const isTerminal = P.is(toTerminal);
+
+const toTerminalsByGroupId = (
+  x: unknown
+): Model["terminalsByGroupId"] | null => {
+  if (P.dict(x, isGroupId, isTerminal)) {
+    return x;
+  }
+  return null;
+};
+
+const isTerminalsByGroupId = P.is(toTerminalsByGroupId);
 
 export const toModel = (x: unknown): Model | null => {
   if (
     P.obj(x) &&
     P.has(x, "nodes", P.obj) &&
-    P.has(x, "edges", P.obj) &&
-    P.has(x, "indexEdgesIn", P.obj) &&
-    P.has(x, "indexEdgesOut", P.obj)
+    P.has(x, "edges", isEdges) &&
+    P.has(x, "nodes", isNodes) &&
+    P.has(x, "terminalsByGroupId", isTerminalsByGroupId)
   ) {
     return {
-      edgeHash: "",
-      edges: {},
-      nodes: {},
+      edges: x.edges,
+      nodes: x.nodes,
+      terminalsByGroupId: x.terminalsByGroupId,
+      edgeHash: deriveEdgeHash(x),
       pipesBySourceId: {},
-      terminalsByGroupId: {},
     };
   }
   return null;
 };
 
-export const isNode = (node: unknown): node is Node => {
-  return (
-    typeof node === "object" &&
-    node !== null &&
-    "nodeId" in node &&
-    typeof node.nodeId === "string"
-  );
-};
-
-export const isEdge = (edge: unknown): edge is Edge => {
-  return (
-    typeof edge === "object" &&
-    edge !== null &&
-    "from" in edge &&
-    "to" in edge &&
-    typeof edge.from === "string" &&
-    typeof edge.to === "string"
-  );
-};
+export const isModel = P.is(toModel);
