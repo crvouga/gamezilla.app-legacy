@@ -1,0 +1,14 @@
+version: "2"
+authtoken: 2AYmOPqm3gC6OXilZuOrcfJdMjI_6LNtFbxVUPNgxguofyV68
+region: us
+tunnels:
+  frontend:
+    proto: http
+    addr: http://localhost:5173
+    subdomain: gamezilla
+    host_header: rewrite
+  backend:
+    proto: http
+    addr: http://localhost:5002
+    subdomain: gamezilla-server
+    host_header: rewrite

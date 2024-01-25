@@ -16,6 +16,7 @@
     "client:preview": "bun client:build && bun client:serve",
     "client": "vite",
     "ngrok": "ngrok start --all",
+    "ngrok:config:edit": "ngrok config edit",
     "tc": "bun x tsc --noEmit --watch",
     "viz-bundle": "bun x vite-bundle-visualizer",
     "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla/gamezilla.client.tsx",
