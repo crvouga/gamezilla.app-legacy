@@ -3,7 +3,9 @@ import { sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
   IconArrowLeftOnRect,
+  IconPenToSquare,
   Spinner,
+  VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { IntersectionObserverEmitter } from "gamezilla/@CHILD/app/@SHARED/ui/intersection-observer";
@@ -76,10 +78,19 @@ const View: ClientModule["View"] = (input) => {
     return null;
   }
 
+  const puzzles = Object.values(model.puzzles);
+  const shouldShowLoadingState = model.listed.t === "loading";
+  const shouldShowEmptyState = !shouldShowLoadingState && puzzles.length === 0;
+
   return (
     <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden">
+      <p className="text-xl font-bold">Your puzzles</p>
+
       <div className="flex w-full flex-1 flex-col items-center overflow-y-scroll">
-        {Object.values(model.puzzles)
+        {shouldShowEmptyState && (
+          <EmptyStateList label="No puzzles" icon={<IconPenToSquare />} />
+        )}
+        {puzzles
           .sort(descend((puzzle) => Posix.toNumber(puzzle.createdAt)))
           .map((puzzle) => (
             <FlowPuzzleListItem
@@ -98,7 +109,7 @@ const View: ClientModule["View"] = (input) => {
         <div
           className={cn(
             "flex h-32 w-full items-center justify-center py-6",
-            model.listed.t !== "loading" && "opacity-0"
+            !shouldShowLoadingState && "opacity-0"
           )}
         >
           <Spinner />
@@ -142,6 +153,15 @@ const View: ClientModule["View"] = (input) => {
           }
         />
       </div>
+    </div>
+  );
+};
+
+const EmptyStateList = ({ label, icon }: { label: string; icon: VDom }) => {
+  return (
+    <div className="flex h-full w-full items-center justify-center gap-3">
+      {icon}
+      <p className="text-xl font-bold">{label}</p>
     </div>
   );
 };
