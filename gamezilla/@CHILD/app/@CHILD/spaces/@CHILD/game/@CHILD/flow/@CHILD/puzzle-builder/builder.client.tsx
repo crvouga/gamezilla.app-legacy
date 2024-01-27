@@ -362,6 +362,7 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
       position="bottom"
     >
       <button className="h-full w-full p-4">Edit Name</button>
+      <button className="h-full w-full p-4">Delete Forever</button>
     </Drawer>
   );
 };
