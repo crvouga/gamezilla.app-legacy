@@ -21,17 +21,18 @@ export const ViewBottomButtonBar = ({
   return (
     <div className={"flex w-full items-center border-t border-neutral-600"}>
       {actions.map((action) => {
+        const isDisabled = action.disabled || action.loading;
         return (
           <button
-            disabled={action.disabled || action.loading}
+            disabled={isDisabled}
             key={action.label}
             onClick={action.onClick}
             className={cn(
-              "relative flex flex-1 flex-col items-center gap-0.5 p-1 text-sm active:opacity-50",
+              "relative flex flex-1 flex-col items-center gap-0.5 p-1 text-sm ",
+              !isDisabled && "active:opacity-50",
               action.disabled && "opacity-50",
               action.color === "danger" && "text-red-500",
               action.color === "success" && "text-green-500",
-              // color === "default" && "text-inherit",
               action.classNames?.button
             )}
           >
