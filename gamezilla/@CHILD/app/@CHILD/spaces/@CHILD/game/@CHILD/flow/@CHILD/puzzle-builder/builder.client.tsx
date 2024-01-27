@@ -10,6 +10,8 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
+  IconEllipsisVertical,
+  IconFloppyDisk,
   IconPenToSquare,
   IconPlay,
   VDom,
@@ -131,6 +133,39 @@ const View: ClientModule["View"] = (input) => {
     return <ViewSpectating {...input} />;
   }
 
+  const exit = {
+    label: "Exit",
+    icon: <IconArrowLeftOnRect className="h-6 w-6" />,
+    onClick: () =>
+      dispatch({
+        t: "user-exited-builder",
+        userId: ctx.currentUserId,
+      }),
+  };
+
+  const save = {
+    label: "Save",
+    icon: <IconFloppyDisk className="h-6 w-6" />,
+    onClick: () =>
+      dispatch({
+        t: "user-saved-changes",
+        userId: ctx.currentUserId,
+        puzzle: {
+          ...gameState.puzzle,
+          puzzle: {
+            t: "grid",
+            c: FlowGridUIEdit.toGrid(gameState.gridEdit),
+          },
+        },
+      }),
+  };
+
+  const more = {
+    label: "More",
+    icon: <IconEllipsisVertical className="h-6 w-6" />,
+    onClick: () => {},
+  };
+
   switch (gameState.mode.t) {
     case "edit": {
       return (
@@ -151,15 +186,7 @@ const View: ClientModule["View"] = (input) => {
           {!isSpectating && (
             <ViewBottomButtonBar
               actions={[
-                {
-                  label: "Exit",
-                  icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-                  onClick: () =>
-                    dispatch({
-                      t: "user-exited-builder",
-                      userId: ctx.currentUserId,
-                    }),
-                },
+                exit,
                 {
                   label: "Play Mode",
                   classNames: {
@@ -172,22 +199,8 @@ const View: ClientModule["View"] = (input) => {
                       userId: ctx.currentUserId,
                     }),
                 },
-                {
-                  label: "Save",
-                  icon: <IconPenToSquare className="h-6 w-6" />,
-                  onClick: () =>
-                    dispatch({
-                      t: "user-saved-changes",
-                      userId: ctx.currentUserId,
-                      puzzle: {
-                        ...gameState.puzzle,
-                        puzzle: {
-                          t: "grid",
-                          c: FlowGridUIEdit.toGrid(gameState.gridEdit),
-                        },
-                      },
-                    }),
-                },
+                save,
+                more,
               ]}
             />
           )}
@@ -210,18 +223,11 @@ const View: ClientModule["View"] = (input) => {
               dispatch={(c) => dispatch({ t: "grid-ui-play", c })}
             />
           </div>
+
           {!isSpectating && (
             <ViewBottomButtonBar
               actions={[
-                {
-                  label: "Exit",
-                  icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-                  onClick: () =>
-                    dispatch({
-                      t: "user-exited-builder",
-                      userId: ctx.currentUserId,
-                    }),
-                },
+                exit,
                 {
                   label: "Edit Mode",
                   classNames: {
@@ -234,6 +240,8 @@ const View: ClientModule["View"] = (input) => {
                       userId: ctx.currentUserId,
                     }),
                 },
+                save,
+                more,
               ]}
             />
           )}
