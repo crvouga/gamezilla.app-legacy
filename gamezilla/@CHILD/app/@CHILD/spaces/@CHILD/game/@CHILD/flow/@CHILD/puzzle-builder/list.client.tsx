@@ -41,7 +41,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
           t: "list-puzzles",
           input: {
             order: {
-              createdAt: "desc",
+              lastUpdatedAt: "desc",
             },
             pagination: {
               limit: 25,
@@ -131,7 +131,7 @@ const View: ClientModule["View"] = (input) => {
         )}
 
         {puzzles
-          .sort(descend((puzzle) => Posix.toNumber(puzzle.createdAt)))
+          .sort(descend((puzzle) => Posix.toNumber(puzzle.lastUpdatedAt)))
           .map((puzzle) => (
             <FlowPuzzleListItem
               now={ctx.now}

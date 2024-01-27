@@ -26,6 +26,19 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
         if (input.order.createdAt === "asc") {
           return a.createdAt - b.createdAt;
         }
+
+        if (input.order.createdAt === "desc") {
+          return b.createdAt - a.createdAt;
+        }
+
+        if (input.order.lastUpdatedAt === "asc") {
+          return a.lastUpdatedAt - b.lastUpdatedAt;
+        }
+
+        if (input.order.lastUpdatedAt === "desc") {
+          return b.lastUpdatedAt - a.lastUpdatedAt;
+        }
+
         return b.createdAt - a.createdAt;
       });
 

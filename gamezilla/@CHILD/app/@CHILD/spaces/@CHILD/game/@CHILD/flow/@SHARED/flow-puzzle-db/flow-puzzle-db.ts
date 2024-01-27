@@ -14,6 +14,7 @@ export type IFlowPuzzleDb = {
     };
     order: {
       createdAt?: "asc" | "desc";
+      lastUpdatedAt?: "asc" | "desc";
     };
   }) => Promise<Result<string, Paginated<FlowPuzzle>>>;
   put: (input: FlowPuzzle) => Promise<Result<string, null>>;
