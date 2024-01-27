@@ -18,10 +18,10 @@ import {
   isPending,
   loading,
 } from "gamezilla/@SHARED/core";
+import { ViewSpaceHostChip } from "../../../../@SHARED/game";
 import { FlowGrid, FlowGridUI } from "../../@SHARED/flow";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
 import { ClientModule } from "./puzzle-builder.core";
-import { ViewSpaceHostChip } from "../../../../@SHARED/game";
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates({ model: input.model }, (model) =>
@@ -166,7 +166,7 @@ const View: ClientModule["View"] = (input) => {
         />
         <Button
           className="flex-1"
-          text="Create"
+          text="Create New"
           variant="contained"
           color="primary"
           onClick={() =>

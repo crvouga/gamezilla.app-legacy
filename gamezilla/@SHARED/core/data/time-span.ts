@@ -30,14 +30,6 @@ const fromWeeks = (durationWeeks: number): TimeSpan => {
   return fromDays(durationWeeks * 7);
 };
 
-const fromMonths = (durationMonths: number): TimeSpan => {
-  return fromWeeks(durationMonths * 4);
-};
-
-const fromYears = (durationYears: number): TimeSpan => {
-  return fromMonths(durationYears * 12);
-};
-
 const toMilliseconds = (timeSpan: TimeSpan): number => {
   return timeSpan._durationMilliseconds;
 };
@@ -60,14 +52,6 @@ const toDays = (timeSpan: TimeSpan): number => {
 
 const toWeeks = (timeSpan: TimeSpan): number => {
   return toDays(timeSpan) / 7;
-};
-
-const toMonths = (timeSpan: TimeSpan): number => {
-  return toWeeks(timeSpan) / 4;
-};
-
-const toYears = (timeSpan: TimeSpan): number => {
-  return toMonths(timeSpan) / 12;
 };
 
 const add = (left: TimeSpan, right: TimeSpan): TimeSpan => {
@@ -130,10 +114,48 @@ const lte = (left: TimeSpan, right: TimeSpan): boolean => {
 };
 
 /**
+ *
+ *
+ *
+ *
+ */
+const humanFriendlyString = (timeSpan: TimeSpan): string => {
+  const seconds = toSeconds(timeSpan);
+  const days = seconds / 86400; // Convert seconds to days
+
+  if (days >= 365) {
+    const years = days / 365;
+    return years >= 2 ? `${Math.floor(years)} years ago` : "1 year ago";
+  }
+
+  if (days >= 30) {
+    const months = days / 30;
+    return months >= 2 ? `${Math.floor(months)} months ago` : "1 month ago";
+  }
+
+  if (days >= 1) {
+    return days >= 2 ? `${Math.floor(days)} days ago` : "1 day ago";
+  }
+
+  const hours = seconds / 3600;
+  if (hours >= 1) {
+    return hours >= 2 ? `${Math.floor(hours)} hours ago` : "1 hour ago";
+  }
+
+  const minutes = seconds / 60;
+  if (minutes >= 1) {
+    return minutes >= 2 ? `${Math.floor(minutes)} minutes ago` : "1 minute ago";
+  }
+
+  return "A moment ago";
+};
+
+/**
  * @description
  * `TimeSpan` represents a duration of time.
  */
 export const TimeSpan = {
+  humanFriendlyString,
   //
   //
   //
@@ -143,8 +165,6 @@ export const TimeSpan = {
   fromHours,
   fromDays,
   fromWeeks,
-  fromMonths,
-  fromYears,
   //
   //
   //
@@ -153,7 +173,7 @@ export const TimeSpan = {
   toMinutes,
   toHours,
   toDays,
-  toYears,
+  toWeeks,
   //
   //
   //
