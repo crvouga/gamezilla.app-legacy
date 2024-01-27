@@ -35,12 +35,19 @@ export const ViewBottomButtonBar = ({
               action.classNames?.button
             )}
           >
-            {action.icon}
-            <p className={cn("text-xs", action.classNames?.label)}>
-              {action.label}
-            </p>
+            <div
+              className={cn(
+                "flex h-full w-full flex-col items-center justify-center gap-0.5",
+                action.loading && "opacity-0"
+              )}
+            >
+              {action.icon}
+              <p className={cn("text-xs", action.classNames?.label)}>
+                {action.label}
+              </p>
+            </div>
             {action.loading && (
-              <div className="absolute inset-0 flex h-full w-full items-center justify-center bg-black/60">
+              <div className="absolute inset-0 flex h-full w-full items-center justify-center ">
                 <Spinner className="h-8 w-8" />
               </div>
             )}
