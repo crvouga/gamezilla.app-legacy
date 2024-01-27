@@ -1,4 +1,4 @@
-import { VDom, cn } from "./utils";
+import { VDom, cn } from "./ui";
 
 export const Select = <T,>({
   onChange,
@@ -28,7 +28,8 @@ export const Select = <T,>({
       <label
         id={labelId}
         htmlFor={id}
-        className={cn("text-base", error && "text-red-500")}>
+        className={cn("text-base", error && "text-red-500")}
+      >
         {label}
       </label>
 
@@ -48,7 +49,8 @@ export const Select = <T,>({
               return;
             }
           }
-        }}>
+        }}
+      >
         {options.map((option) => {
           return (
             <option key={toKey(option)} value={toKey(option)}>
@@ -59,7 +61,9 @@ export const Select = <T,>({
       </select>
 
       {helperText && (
-        <div className={cn("text-sm", error && "text-red-500")}>{helperText}</div>
+        <div className={cn("text-sm", error && "text-red-500")}>
+          {helperText}
+        </div>
       )}
     </div>
   );

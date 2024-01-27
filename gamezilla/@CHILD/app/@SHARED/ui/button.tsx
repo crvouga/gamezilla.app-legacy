@@ -1,5 +1,5 @@
 import { Spinner } from "./spinner";
-import { VDom, cn } from "./utils";
+import { VDom, cn } from "./ui";
 
 export type ButtonVariant = "contained" | "outlined" | "text";
 
@@ -64,12 +64,14 @@ export const Button = ({
       )}
       onClick={(event) => {
         onClick?.({ stopPropagation: () => event.stopPropagation() });
-      }}>
+      }}
+    >
       <div
         className={cn(
           "flex h-full w-full items-center justify-center",
           loading && "text-transparent"
-        )}>
+        )}
+      >
         {start && <div className="mr-2">{start}</div>}
         {text}
       </div>

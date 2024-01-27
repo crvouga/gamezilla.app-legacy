@@ -1,4 +1,4 @@
-import { VDom } from "../utils";
+import { VDom } from "../ui";
 import "./transition-element";
 import { TransitionProps, transitionSub } from "./transition-shared";
 

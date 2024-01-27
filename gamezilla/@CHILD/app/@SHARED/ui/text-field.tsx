@@ -1,5 +1,5 @@
 import { IconXMark } from "./icon";
-import { VDom, cn } from "./utils";
+import { VDom, cn } from "./ui";
 
 export const TextField = ({
   label,
@@ -43,7 +43,8 @@ export const TextField = ({
           "flex appearance-none items-center gap-2 rounded-md border border-neutral-600 bg-neutral-800 p-3 py-4 text-xl outline-none",
           error && "border border-red-500 text-red-500",
           !error && " ring-blue-600 focus-within:ring-2"
-        )}>
+        )}
+      >
         {startIcon}
         <input
           id={id}
@@ -71,14 +72,17 @@ export const TextField = ({
               event.preventDefault();
               document.getElementById(id)?.focus();
               onClear();
-            }}>
+            }}
+          >
             <IconXMark className="h-6 w-6" />
           </button>
         )}
       </div>
 
       {helperText && (
-        <div className={cn("text-sm", error && "text-red-500")}>{helperText}</div>
+        <div className={cn("text-sm", error && "text-red-500")}>
+          {helperText}
+        </div>
       )}
     </div>
   );

@@ -1,6 +1,6 @@
-import { Result, ok, err } from "gamezilla/@SHARED/core";
-import { nouns } from "./noun";
-import { adjectives } from "./adjective";
+import { Result, err, ok } from "gamezilla/@SHARED/core";
+import { adjectives, nouns } from "../words";
+
 export type Username = string & { _opaque: "Username" };
 
 const is = (username: unknown): username is Username => {

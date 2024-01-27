@@ -17,7 +17,7 @@ import { ProfileAvatar, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Button,
   IconChevronRight,
-  LoadingScreen,
+  LoadingState,
   Avatar,
   TextField,
   TopBar,
@@ -421,7 +421,7 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
     }
 
     default: {
-      return <LoadingScreen />;
+      return <LoadingState />;
     }
   }
 };
@@ -493,7 +493,8 @@ const ViewField = ({
 }) => (
   <button
     onClick={onClick}
-    className="flex w-full items-center justify-start px-4 py-2">
+    className="flex w-full items-center justify-start px-4 py-2"
+  >
     <div className="flex flex-1 flex-col items-start">
       <p className="text-sm text-neutral-300">{label}</p>
       {typeof value === "string" ? (

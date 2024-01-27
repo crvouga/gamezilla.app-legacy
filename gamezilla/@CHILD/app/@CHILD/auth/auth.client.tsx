@@ -14,7 +14,7 @@ import {
   Button,
   ConformationDialog,
   IconMobilePhone,
-  LoadingScreen,
+  LoadingState,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub, notAsked } from "gamezilla/@SHARED/core";
 import * as AuthClientSMS from "./@CHILD/auth-sms/auth-sms.client";
@@ -388,7 +388,7 @@ export const ViewLogoutScreen = ({
   dispatch: (msg: ClientMsg) => void;
 }) => {
   if (model.logout?.t === "loading") {
-    return <LoadingScreen />;
+    return <LoadingState />;
   }
 
   const dispatchLogout = (c: LogoutMsg) => dispatch({ t: "logout", c });

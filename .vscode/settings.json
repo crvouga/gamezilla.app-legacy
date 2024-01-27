@@ -28,25 +28,8 @@
     "Unflip",
     "unpartition"
   ],
-  "sqltools.connections": [
-    {
-      "previewLimit": 50,
-      "driver": "SQLite",
-      "database": "${workspaceFolder:gamezilla.app}/data/gamezilla.db",
-      "name": "gamezilla"
-    },
-    {
-      "previewLimit": 50,
-      "driver": "SQLite",
-      "name": "gamezilla-session",
-      "database": "data/gamezilla-session.db"
-    }
-  ],
-  "sqltools.useNodeRuntime": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "docker.languageserver.formatter.ignoreMultilineInstructions": true,
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
-  "notebook.formatOnCellExecution": true,
-  "notebook.formatOnSave.enabled": true
+  "editor.formatOnType": true
 }

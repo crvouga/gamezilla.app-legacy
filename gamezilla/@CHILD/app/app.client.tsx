@@ -10,7 +10,7 @@ import {
 import {
   IconGamepad,
   IconUserCircle,
-  LoadingScreen,
+  LoadingState,
   VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -31,14 +31,8 @@ import {
 } from "./@CHILD/wire/transport-client";
 import * as Wire from "./@CHILD/wire/wire.client";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
-import {
-  ClientModel,
-  ClientMsg,
-
-  ToClient,
-  ToServer,
-} from "./app.core";
-import { PUBLIC_APP_CONFIG, } from "config"
+import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
+import { PUBLIC_APP_CONFIG } from "config";
 
 //
 //
@@ -57,14 +51,14 @@ export const getDeps = (): Deps => {
     impl:
       PUBLIC_APP_CONFIG.TRANSPORT_IMPL === "socket-io"
         ? {
-          t: "socket-io",
-          serverUrl: PUBLIC_APP_CONFIG.SERVER_URL,
-        }
+            t: "socket-io",
+            serverUrl: PUBLIC_APP_CONFIG.SERVER_URL,
+          }
         : {
-          t: "web-sockets",
-          endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
-          serverUrl: PUBLIC_APP_CONFIG.SERVER_URL,
-        },
+            t: "web-sockets",
+            endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
+            serverUrl: PUBLIC_APP_CONFIG.SERVER_URL,
+          },
     codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
   });
   return {
@@ -566,7 +560,7 @@ const ViewMain = ({
     }
 
     case "loading": {
-      return <LoadingScreen />;
+      return <LoadingState />;
     }
   }
 };
@@ -591,7 +585,7 @@ const ViewLoggedOut = ({
       );
     }
     default: {
-      return <LoadingScreen />;
+      return <LoadingState />;
     }
   }
 };
@@ -654,7 +648,7 @@ const ViewLoggedIn = ({
     }
 
     case "auth": {
-      return <LoadingScreen />;
+      return <LoadingState />;
     }
   }
 };
@@ -673,20 +667,20 @@ const ViewBottomBar = ({
     label: string;
     icon: VDom;
   }[] = [
-      {
-        route: {
-          t: "spaces",
-          c: { t: "space-list" },
-        },
-        label: "Spaces",
-        icon: <IconGamepad className="h-6 w-6" />,
+    {
+      route: {
+        t: "spaces",
+        c: { t: "space-list" },
       },
-      {
-        route: { t: "profile", c: { t: "profile", userId: ctx.currentUserId } },
-        label: "Profile",
-        icon: <IconUserCircle className="h-6 w-6" />,
-      },
-    ];
+      label: "Spaces",
+      icon: <IconGamepad className="h-6 w-6" />,
+    },
+    {
+      route: { t: "profile", c: { t: "profile", userId: ctx.currentUserId } },
+      label: "Profile",
+      icon: <IconUserCircle className="h-6 w-6" />,
+    },
+  ];
 
   return (
     <div className="flex w-full flex-col items-center justify-center">

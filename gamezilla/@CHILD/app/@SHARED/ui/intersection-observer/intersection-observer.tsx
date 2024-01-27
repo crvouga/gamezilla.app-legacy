@@ -1,4 +1,4 @@
-import { VDom } from "../utils";
+import { VDom } from "../ui";
 import "./intersection-observer-element";
 import {
   IntersectionObserverEmitterProps,

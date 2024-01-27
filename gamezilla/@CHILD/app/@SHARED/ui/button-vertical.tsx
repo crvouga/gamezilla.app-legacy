@@ -1,4 +1,4 @@
-import { VDomChildren } from "./utils";
+import { VDomChildren } from "./ui";
 
 export const ButtonVertical = ({
   children,
@@ -15,7 +15,8 @@ export const ButtonVertical = ({
         "flex h-14 w-14 flex-col items-center justify-center",
         className ? className : "",
       ].join(" ")}
-      onClick={onClick}>
+      onClick={onClick}
+    >
       {children}
     </button>
   );

@@ -1,4 +1,4 @@
-import { VDom, cn } from "./utils";
+import { VDom, cn } from "./ui";
 
 export const ActionButton = ({
   label,
@@ -23,7 +23,8 @@ export const ActionButton = ({
         disabled && "opacity-50",
         color === "error" && "text-red-500",
         color === "success" && "text-green-500"
-      )}>
+      )}
+    >
       {icon}
       <p className="mt-0.5 text-xs">{label}</p>
     </button>

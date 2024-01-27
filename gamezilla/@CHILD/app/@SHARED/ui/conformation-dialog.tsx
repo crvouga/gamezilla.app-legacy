@@ -1,5 +1,5 @@
 import { Button } from "./button";
-import { VDom, cn } from "./utils";
+import { VDom, cn } from "./ui";
 
 export const ConformationDialog = ({
   open,
@@ -31,7 +31,8 @@ export const ConformationDialog = ({
           return;
         }
         onClose();
-      }}>
+      }}
+    >
       <div className="flex w-80 flex-col gap-6 rounded-lg bg-neutral-900 p-6">
         <p className="text-center text-xl font-semibold">{title}</p>
 

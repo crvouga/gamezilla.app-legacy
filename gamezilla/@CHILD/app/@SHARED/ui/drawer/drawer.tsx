@@ -1,5 +1,5 @@
 import { IconButton, IconXMark } from "..";
-import { VDom } from "../utils";
+import { VDom } from "../ui";
 import "./drawer-element";
 import { DrawerProps, drawerSub } from "./drawer-shared";
 

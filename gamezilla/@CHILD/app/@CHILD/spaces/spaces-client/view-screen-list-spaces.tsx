@@ -14,6 +14,7 @@ import { GameName, gameNameToString } from "../@CHILD/game/game.core";
 import * as Spaces from "../spaces-core/spaces";
 import * as SpaceState from "../spaces-core/space-state";
 import { ClientModel, ClientMsg } from "../spaces.core";
+import { EmptyState } from "gamezilla/@CHILD/app/@SHARED/ui/empty-state";
 
 export const ViewScreenListSpaces = ({
   ctx,
@@ -39,7 +40,12 @@ export const ViewScreenListSpaces = ({
       <TopBar title="Spaces" />
 
       <div className="relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8">
-        {spaces.length === 0 && <EmptyState />}
+        {spaces.length === 0 && (
+          <EmptyState
+            renderIcon={(props) => <IconGamepad {...props} />}
+            label="No active spaces"
+          />
+        )}
 
         <div className="flex w-full flex-1 flex-col gap-5 p-5">
           {spaces.flatMap((state) => {
@@ -75,20 +81,6 @@ export const ViewScreenListSpaces = ({
           />
         </div>
       )}
-    </div>
-  );
-};
-
-const EmptyState = () => {
-  return (
-    <div className="absolute inset-0 flex h-full w-full flex-1 flex-col items-center justify-center gap-2 px-5 text-center opacity-60">
-      <div className="flex flex-col items-center justify-center gap-3">
-        <p className="text-2xl font-bold ">No active spaces</p>
-
-        <div className="flex aspect-square flex-col items-center justify-center rounded-full bg-neutral-700 p-7">
-          <IconGamepad className="h-14 w-14" />
-        </div>
-      </div>
     </div>
   );
 };

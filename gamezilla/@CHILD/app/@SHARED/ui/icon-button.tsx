@@ -1,4 +1,4 @@
-import { VDom } from "./utils";
+import { VDom } from "./ui";
 
 export const IconButton = ({
   children,

@@ -128,6 +128,24 @@ export const notAsked: NotAsked = { t: "not-asked" };
 export type Loading = { t: "loading" };
 export const loading: Loading = { t: "loading" };
 
+export const isLoading = <TError, TValue>(
+  result: RemoteResult<TError, TValue>
+): result is Loading => {
+  return result.t === "loading";
+};
+
+export const isNotAsked = <TError, TValue>(
+  result: RemoteResult<TError, TValue>
+): result is NotAsked => {
+  return result.t === "not-asked";
+};
+
+export const isPending = <TError, TValue>(
+  result: RemoteResult<TError, TValue>
+): result is NotAsked | Loading => {
+  return isNotAsked(result) || isLoading(result);
+};
+
 export const remoteResultMap = <E, A, B>(
   result: RemoteResult<E, A>,
   mapper: (a: A) => B

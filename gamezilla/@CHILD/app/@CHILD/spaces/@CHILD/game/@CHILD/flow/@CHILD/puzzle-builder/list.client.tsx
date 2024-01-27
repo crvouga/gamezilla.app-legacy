@@ -3,13 +3,20 @@ import { sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
   IconArrowLeftOnRect,
-  IconPenToSquare,
+  IconPuzzlePiece,
   Spinner,
-  VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { EmptyState } from "gamezilla/@CHILD/app/@SHARED/ui/empty-state";
 import { IntersectionObserverEmitter } from "gamezilla/@CHILD/app/@SHARED/ui/intersection-observer";
-import { Posix, Result, Sub, descend, loading } from "gamezilla/@SHARED/core";
+import {
+  Posix,
+  Result,
+  Sub,
+  descend,
+  isPending,
+  loading,
+} from "gamezilla/@SHARED/core";
 import { FlowGrid, FlowGridUI } from "../../@SHARED/flow";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
 import { ClientModule } from "./puzzle-builder.core";
@@ -79,17 +86,21 @@ const View: ClientModule["View"] = (input) => {
   }
 
   const puzzles = Object.values(model.puzzles);
-  const shouldShowLoadingState = model.listed.t === "loading";
+  const shouldShowLoadingState = isPending(model.listed);
   const shouldShowEmptyState = !shouldShowLoadingState && puzzles.length === 0;
 
   return (
     <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden">
-      <p className="text-xl font-bold">Your puzzles</p>
+      <div className="relative flex w-full flex-1 flex-col items-center overflow-y-scroll">
+        <p className="w-full p-2 text-left text-3xl font-bold">Your puzzles</p>
 
-      <div className="flex w-full flex-1 flex-col items-center overflow-y-scroll">
         {shouldShowEmptyState && (
-          <EmptyStateList label="No puzzles" icon={<IconPenToSquare />} />
+          <EmptyState
+            label="No puzzles"
+            renderIcon={(props) => <IconPuzzlePiece {...props} />}
+          />
         )}
+
         {puzzles
           .sort(descend((puzzle) => Posix.toNumber(puzzle.createdAt)))
           .map((puzzle) => (
@@ -157,15 +168,6 @@ const View: ClientModule["View"] = (input) => {
   );
 };
 
-const EmptyStateList = ({ label, icon }: { label: string; icon: VDom }) => {
-  return (
-    <div className="flex h-full w-full items-center justify-center gap-3">
-      {icon}
-      <p className="text-xl font-bold">{label}</p>
-    </div>
-  );
-};
-
 const FlowPuzzleListItem = ({
   puzzle,
   onClick,
@@ -176,13 +178,16 @@ const FlowPuzzleListItem = ({
   return (
     <button
       key={puzzle.id}
-      className="flex w-full items-center gap-4 border-b border-neutral-700 text-left hover:bg-neutral-900"
+      className="box-border flex w-full items-center gap-4 border border-neutral-700 text-left hover:bg-neutral-900"
       onClick={onClick}
     >
       <div className="aspect-square h-24 w-24 overflow-hidden border-r border-neutral-700">
         <FlowGridUI.View disabled model={puzzle.puzzle.c} />
       </div>
-      <div>{puzzle.id}</div>
+      <div className="overflow-hidden">
+        <p className="flex-nowrap overflow-hidden text-ellipsis whitespace-nowrap text-xl font-bold"></p>
+        <p className="text-sm">{puzzle.createdAt}</p>
+      </div>
     </button>
   );
 };
