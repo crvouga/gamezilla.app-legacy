@@ -47,19 +47,19 @@ const updateFromMsg: ClientModule["update"] = (input) => {
   }
 
   switch (msg.t) {
+    case "user-clicked-more-button":
+    case "user-closed-more-drawer":
     case "time-passed":
     case "user-observed-end-of-list": {
       return { model };
     }
 
     default: {
-      return GameClientModule.chainUpdates({ model: input.model }, (model) => {
-        const gameEvent = withId(msg);
-        return {
-          model,
-          gameEvent: [gameEvent],
-        };
-      });
+      const gameEvent = withId(msg);
+      return {
+        model,
+        gameEvent: [gameEvent],
+      };
     }
   }
 };

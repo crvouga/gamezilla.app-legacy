@@ -4,7 +4,7 @@ import {
   SpaceCtx,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
-import { Paginated, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { RemoteResult, Result } from "gamezilla/@SHARED/core";
 import { FlowGrid, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";
@@ -49,6 +49,7 @@ export type ClientModel = {
   puzzles: {
     [puzzleId: FlowPuzzleId]: FlowPuzzle;
   };
+  opened?: "more" | null;
 };
 
 export type ServerModel = {
@@ -66,6 +67,8 @@ export type ServerModel = {
 export type ClientMsg =
   | GameEvent
   | { t: "time-passed" }
+  | { t: "user-clicked-more-button" }
+  | { t: "user-closed-more-drawer" }
   | { t: "user-observed-end-of-list" };
 
 export type ServerMsg = { t: "time-passed" };

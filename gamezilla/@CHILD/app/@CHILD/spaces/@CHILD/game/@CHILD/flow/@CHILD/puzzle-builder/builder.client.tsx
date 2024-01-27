@@ -9,6 +9,7 @@ import {
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
+  Drawer,
   IconArrowLeftOnRect,
   IconEllipsisVertical,
   IconFloppyDisk,
@@ -34,7 +35,8 @@ const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateSound({ ...input, model }),
-    (model) => showToastOnSave({ ...input, model })
+    (model) => showToastOnSave({ ...input, model }),
+    (model) => updateMoreDrawer({ ...input, model })
   );
 };
 
@@ -123,7 +125,7 @@ const subscriptions: ClientModule["subscriptions"] = () => {
 //
 
 const View: ClientModule["View"] = (input) => {
-  const { gameState, dispatch, ctx } = input;
+  const { gameState, ctx } = input;
 
   if (gameState.t !== "build") return null;
 
@@ -132,6 +134,19 @@ const View: ClientModule["View"] = (input) => {
   if (isSpectating) {
     return <ViewSpectating {...input} />;
   }
+
+  return (
+    <>
+      <ViewMode {...input} />
+      <ViewMoreDrawer {...input} />
+    </>
+  );
+};
+
+const ViewMode: ClientModule["View"] = (input) => {
+  const { gameState, dispatch, ctx } = input;
+
+  if (gameState.t !== "build") return null;
 
   const exit = {
     label: "Exit",
@@ -163,7 +178,7 @@ const View: ClientModule["View"] = (input) => {
   const more = {
     label: "More",
     icon: <IconEllipsisVertical className="h-6 w-6" />,
-    onClick: () => {},
+    onClick: () => dispatch({ t: "user-clicked-more-button" }),
   };
 
   switch (gameState.mode.t) {
@@ -183,27 +198,25 @@ const View: ClientModule["View"] = (input) => {
             />
           </div>
 
-          {!isSpectating && (
-            <ViewBottomButtonBar
-              actions={[
-                exit,
-                {
-                  label: "Play Mode",
-                  classNames: {
-                    button: "text-blue-500",
-                  },
-                  icon: <IconPlay className="h-6 w-6" />,
-                  onClick: () =>
-                    dispatch({
-                      t: "user-changed-to-play-mode",
-                      userId: ctx.currentUserId,
-                    }),
+          <ViewBottomButtonBar
+            actions={[
+              exit,
+              {
+                label: "Play Mode",
+                classNames: {
+                  button: "text-blue-500",
                 },
-                save,
-                more,
-              ]}
-            />
-          )}
+                icon: <IconPlay className="h-6 w-6" />,
+                onClick: () =>
+                  dispatch({
+                    t: "user-changed-to-play-mode",
+                    userId: ctx.currentUserId,
+                  }),
+              },
+              save,
+              more,
+            ]}
+          />
         </div>
       );
     }
@@ -224,27 +237,25 @@ const View: ClientModule["View"] = (input) => {
             />
           </div>
 
-          {!isSpectating && (
-            <ViewBottomButtonBar
-              actions={[
-                exit,
-                {
-                  label: "Edit Mode",
-                  classNames: {
-                    button: "text-amber-500",
-                  },
-                  icon: <IconPenToSquare className="h-6 w-6" />,
-                  onClick: () =>
-                    dispatch({
-                      t: "user-changed-to-edit-mode",
-                      userId: ctx.currentUserId,
-                    }),
+          <ViewBottomButtonBar
+            actions={[
+              exit,
+              {
+                label: "Edit Mode",
+                classNames: {
+                  button: "text-amber-500",
                 },
-                save,
-                more,
-              ]}
-            />
-          )}
+                icon: <IconPenToSquare className="h-6 w-6" />,
+                onClick: () =>
+                  dispatch({
+                    t: "user-changed-to-edit-mode",
+                    userId: ctx.currentUserId,
+                  }),
+              },
+              save,
+              more,
+            ]}
+          />
         </div>
       );
     }
@@ -288,6 +299,50 @@ const ViewModeBar = (props: {
 export const capitalize = (s: string) => {
   return `${s.charAt(0).toUpperCase()}${s.slice(1).toLowerCase()}`;
 };
+
+//
+//
+//
+//
+//
+//
+//
+
+const updateMoreDrawer: ClientModule["update"] = (input) => {
+  const { msg, model } = input;
+  switch (msg?.t) {
+    case "user-closed-more-drawer": {
+      return { model: { ...model, opened: null } };
+    }
+    case "user-clicked-more-button": {
+      return { model: { ...model, opened: "more" } };
+    }
+    default: {
+      return { model };
+    }
+  }
+};
+
+export const ViewMoreDrawer: ClientModule["View"] = (input) => {
+  const { dispatch } = input;
+  return (
+    <Drawer
+      id="more-drawer"
+      open={input.model.opened === "more"}
+      onClose={() => dispatch({ t: "user-closed-more-drawer" })}
+      position="bottom"
+    >
+      <button className="h-full w-full p-4">Edit Name</button>
+    </Drawer>
+  );
+};
+
+//
+//
+//
+//
+//
+//
 
 export const Builder: Pick<ClientModule, "update" | "subscriptions" | "View"> =
   {
