@@ -14,6 +14,7 @@ import {
   Posix,
   Result,
   Sub,
+  TimeSpan,
   descend,
   isPending,
   loading,
@@ -128,6 +129,7 @@ const View: ClientModule["View"] = (input) => {
           .sort(descend((puzzle) => Posix.toNumber(puzzle.createdAt)))
           .map((puzzle) => (
             <FlowPuzzleListItem
+              now={ctx.now}
               key={puzzle.id}
               puzzle={puzzle}
               onClick={() =>
@@ -192,9 +194,11 @@ const View: ClientModule["View"] = (input) => {
 };
 
 const FlowPuzzleListItem = ({
+  now,
   puzzle,
   onClick,
 }: {
+  now: Posix;
   puzzle: FlowPuzzle;
   onClick: () => void;
 }) => {
@@ -211,7 +215,9 @@ const FlowPuzzleListItem = ({
         <p className="flex-nowrap overflow-hidden text-ellipsis whitespace-nowrap text-xl font-bold">
           {puzzle.name}
         </p>
-        <p className="text-sm">{puzzle.createdAt}</p>
+        <p className="text-sm">
+          {TimeSpan.humanFriendlyString(Posix.diff(puzzle.createdAt, now))}
+        </p>
       </div>
     </button>
   );

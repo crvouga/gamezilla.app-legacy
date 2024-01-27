@@ -3,7 +3,11 @@ import {
   ViewBottomButtonBar,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
-import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  APP_SOUND,
+  playSound,
+  showToast,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconPenToSquare,
@@ -25,15 +29,26 @@ import { ClientModule, toCurrentGrid } from "./puzzle-builder.core";
 //
 
 const update: ClientModule["update"] = (input) => {
-  return GameClientModule.chainUpdates({ model: input.model }, (model) =>
-    updateFromMsg({ ...input, model })
+  return GameClientModule.chainUpdates(
+    { model: input.model },
+    (model) => updateSound({ ...input, model }),
+    (model) => showToastOnSave({ ...input, model })
   );
 };
 
-const updateFromMsg: ClientModule["update"] = (input) => {
-  return GameClientModule.chainUpdates({ model: input.model }, (model) =>
-    updateSound({ ...input, model })
-  );
+const showToastOnSave: ClientModule["update"] = (input) => {
+  const { model, fromServer, ctx } = input;
+  if (
+    fromServer?.t === "put-puzzle" &&
+    fromServer.source === "user-saved-puzzle" &&
+    ctx.currentUserId === ctx.space.hostId
+  ) {
+    return {
+      model,
+      cmd: [showToast("Saved changes"), playSound(APP_SOUND.tap)],
+    };
+  }
+  return { model };
 };
 
 const updateSound: ClientModule["update"] = (input) => {

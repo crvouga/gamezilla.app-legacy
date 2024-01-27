@@ -47,7 +47,7 @@ const update: Module["update"] = async (input) => {
 };
 
 const updateFromGameEvent: Module["update"] = async (input) => {
-  const { gameEvent, model } = input;
+  const { ctx, gameEvent, model } = input;
 
   if (!gameEvent) {
     return { model };
@@ -58,15 +58,23 @@ const updateFromGameEvent: Module["update"] = async (input) => {
       const put = await FlowPuzzleDb().put(gameEvent.puzzle);
       return {
         model: input.model,
-        cmd: [sendToSpace({ t: "put-puzzle", put })],
+        cmd: [
+          sendToSpace({ t: "put-puzzle", put, source: "user-created-puzzle" }),
+        ],
       };
     }
 
     case "user-saved-changes": {
-      const put = await FlowPuzzleDb().put(gameEvent.puzzle);
+      const put = await FlowPuzzleDb().put({
+        ...gameEvent.puzzle,
+        lastUpdatedAt: ctx.now,
+        lastUpdatedBy: gameEvent.userId,
+      });
       return {
         model: input.model,
-        cmd: [sendToSpace({ t: "put-puzzle", put })],
+        cmd: [
+          sendToSpace({ t: "put-puzzle", put, source: "user-saved-puzzle" }),
+        ],
       };
     }
 

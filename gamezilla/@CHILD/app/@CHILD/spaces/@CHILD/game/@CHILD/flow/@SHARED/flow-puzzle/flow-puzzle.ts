@@ -16,8 +16,8 @@ export type FlowPuzzle = {
   puzzle: Puzzle;
   createdAt: Posix;
   createdBy: UserId;
-  lastUpdatedAt?: Posix | null;
-  lastUpdatedBy?: UserId | null;
+  lastUpdatedAt: Posix;
+  lastUpdatedBy: UserId;
 };
 
 const create = (input: {
@@ -31,8 +31,8 @@ const create = (input: {
     puzzle: input.puzzle,
     createdAt: input.createdAt,
     createdBy: input.createdBy,
-    lastUpdatedAt: null,
-    lastUpdatedBy: null,
+    lastUpdatedAt: input.createdAt,
+    lastUpdatedBy: input.createdBy,
   };
 };
 

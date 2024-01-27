@@ -77,7 +77,11 @@ export type ToServer = { t: "list-puzzles"; input: ListPuzzlesInput };
 
 export type ToClient =
   | { t: "listed-puzzle"; listed: ListPuzzlesOutput }
-  | { t: "put-puzzle"; put: Result<string, null> };
+  | {
+      t: "put-puzzle";
+      put: Result<string, null>;
+      source: "user-saved-puzzle" | "user-created-puzzle";
+    };
 
 //
 //
