@@ -9,12 +9,14 @@ import {
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
+  Button,
   Drawer,
   IconArrowLeftOnRect,
   IconEllipsisVertical,
   IconFloppyDisk,
   IconPenToSquare,
   IconPlay,
+  TextField,
   VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -35,30 +37,39 @@ const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateSound({ ...input, model }),
-    (model) => showToastOnSave({ ...input, model }),
-    (model) => updateMoreDrawer({ ...input, model })
+    (model) => updateSaveChanges({ ...input, model }),
+    (model) => updateMoreDrawer({ ...input, model }),
+    (model) => updateEditName({ ...input, model })
   );
 };
 
-const showToastOnSave: ClientModule["update"] = (input) => {
-  const { model, fromServer, ctx } = input;
+const updateSaveChanges: ClientModule["update"] = (input) => {
+  const { model, gameEvent, ctx, fromServer } = input;
+
+  if (gameEvent?.t === "user-saved-changes") {
+    return {
+      model: { ...model, isSavingChanges: true },
+      cmd: [playSound(APP_SOUND.tap)],
+    };
+  }
+
   if (
     fromServer?.t === "put-puzzle" &&
     fromServer.source === "user-saved-puzzle" &&
     ctx.currentUserId === ctx.space.hostId
   ) {
     return {
-      model,
-      cmd: [showToast("Saved changes"), playSound(APP_SOUND.tap)],
+      model: { ...model, isSavingChanges: false },
+      cmd: [showToast("Saved changes"), playSound(APP_SOUND.refreshFeed)],
     };
   }
   return { model };
 };
 
 const updateSound: ClientModule["update"] = (input) => {
-  const { model, msg, gameState } = input;
+  const { model, gameState, gameEvent } = input;
 
-  if (!msg) {
+  if (!gameEvent) {
     return { model };
   }
 
@@ -66,7 +77,7 @@ const updateSound: ClientModule["update"] = (input) => {
     return { model };
   }
 
-  switch (msg.t) {
+  switch (gameEvent.t) {
     case "user-exited-builder":
     case "user-changed-to-edit-mode": {
       return {
@@ -75,6 +86,7 @@ const updateSound: ClientModule["update"] = (input) => {
       };
     }
 
+    case "user-created-new-puzzle":
     case "user-changed-to-play-mode": {
       return {
         model,
@@ -85,7 +97,7 @@ const updateSound: ClientModule["update"] = (input) => {
     case "grid-ui-edit": {
       const updated = FlowGridUIEdit.update({
         model: gameState.gridEdit,
-        msg: msg.c,
+        msg: gameEvent.c,
       });
 
       if (!updated.cmd) {
@@ -144,7 +156,7 @@ const View: ClientModule["View"] = (input) => {
 };
 
 const ViewMode: ClientModule["View"] = (input) => {
-  const { gameState, dispatch, ctx } = input;
+  const { model, gameState, dispatch, ctx } = input;
 
   if (gameState.t !== "build") return null;
 
@@ -153,23 +165,30 @@ const ViewMode: ClientModule["View"] = (input) => {
     icon: <IconArrowLeftOnRect className="h-6 w-6" />,
     onClick: () =>
       dispatch({
-        t: "user-exited-builder",
-        userId: ctx.currentUserId,
+        t: "game-event",
+        c: {
+          t: "user-exited-builder",
+          userId: ctx.currentUserId,
+        },
       }),
   };
 
   const save = {
     label: "Save",
     icon: <IconFloppyDisk className="h-6 w-6" />,
+    loading: model.isSavingChanges,
     onClick: () =>
       dispatch({
-        t: "user-saved-changes",
-        userId: ctx.currentUserId,
-        puzzle: {
-          ...gameState.puzzle,
+        t: "game-event",
+        c: {
+          t: "user-saved-changes",
+          userId: ctx.currentUserId,
           puzzle: {
-            t: "grid",
-            c: FlowGridUIEdit.toGrid(gameState.gridEdit),
+            ...gameState.puzzle,
+            puzzle: {
+              t: "grid",
+              c: FlowGridUIEdit.toGrid(gameState.gridEdit),
+            },
           },
         },
       }),
@@ -194,7 +213,9 @@ const ViewMode: ClientModule["View"] = (input) => {
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
             <FlowGridUIEdit.View
               model={gameState.gridEdit}
-              dispatch={(c) => dispatch({ t: "grid-ui-edit", c })}
+              dispatch={(c) =>
+                dispatch({ t: "game-event", c: { t: "grid-ui-edit", c } })
+              }
             />
           </div>
 
@@ -209,8 +230,11 @@ const ViewMode: ClientModule["View"] = (input) => {
                 icon: <IconPlay className="h-6 w-6" />,
                 onClick: () =>
                   dispatch({
-                    t: "user-changed-to-play-mode",
-                    userId: ctx.currentUserId,
+                    t: "game-event",
+                    c: {
+                      t: "user-changed-to-play-mode",
+                      userId: ctx.currentUserId,
+                    },
                   }),
               },
               save,
@@ -233,7 +257,9 @@ const ViewMode: ClientModule["View"] = (input) => {
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
             <FlowGridUIPlay.View
               model={gameState.gridPlay}
-              dispatch={(c) => dispatch({ t: "grid-ui-play", c })}
+              dispatch={(c) =>
+                dispatch({ t: "game-event", c: { t: "grid-ui-play", c } })
+              }
             />
           </div>
 
@@ -248,8 +274,11 @@ const ViewMode: ClientModule["View"] = (input) => {
                 icon: <IconPenToSquare className="h-6 w-6" />,
                 onClick: () =>
                   dispatch({
-                    t: "user-changed-to-edit-mode",
-                    userId: ctx.currentUserId,
+                    t: "game-event",
+                    c: {
+                      t: "user-changed-to-edit-mode",
+                      userId: ctx.currentUserId,
+                    },
                   }),
               },
               save,
@@ -333,6 +362,42 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
       position="bottom"
     >
       <button className="h-full w-full p-4">Edit Name</button>
+    </Drawer>
+  );
+};
+
+//
+//
+//
+//
+//
+//
+//
+
+const updateEditName: ClientModule["update"] = (input) => {
+  const { msg, model } = input;
+  switch (msg?.t) {
+    default: {
+      return { model };
+    }
+  }
+};
+
+export const ViewEditName: ClientModule["View"] = (input) => {
+  const { dispatch } = input;
+  return (
+    <Drawer
+      id="edit-name-drawer"
+      open={input.model.opened === "edit-name"}
+      onClose={() => dispatch({ t: "user-closed-edit-name-drawer" })}
+      position="bottom"
+    >
+      <p>Edit name</p>
+      <TextField id="edit-name-input" label="Name" onChange={() => {}} />
+      <div className="flex w-full items-center gap-3">
+        <Button text="Cancel" />
+        <Button variant="contained" text="Save" />
+      </div>
     </Drawer>
   );
 };

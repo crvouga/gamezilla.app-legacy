@@ -201,6 +201,7 @@ export const APP_SOUND = {
   navTransitionLeft: "./app/nav-transition-left.wav",
   stateChangeUp: "./app/state-change-up.wav",
   stateChangeDown: "./app/state-change-down.wav",
+  refreshFeed: "./app/refresh-feed.wav",
 };
 
 export const playSound = (

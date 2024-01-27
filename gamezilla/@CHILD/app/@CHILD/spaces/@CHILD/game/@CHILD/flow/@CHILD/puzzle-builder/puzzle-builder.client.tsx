@@ -1,6 +1,5 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
-import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Sub, notAsked } from "gamezilla/@SHARED/core";
 import { Builder } from "./builder.client";
 import { List } from "./list.client";
@@ -15,53 +14,22 @@ const init: ClientModule["init"] = {
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
-    (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromGameEvent({ ...input, model }),
+    (model) => updateGameEvent({ ...input, model }),
     (model) => Builder.update({ ...input, model }),
     (model) => List.update({ ...input, model })
   );
 };
 
-const updateFromGameEvent: ClientModule["update"] = (input) => {
-  const { gameEvent, model } = input;
-
-  if (!gameEvent) {
-    return { model };
-  }
-
-  switch (gameEvent.t) {
-    case "user-created-new-puzzle": {
-      return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
-    }
-    default: {
-      return { model };
-    }
-  }
-};
-
-const updateFromMsg: ClientModule["update"] = (input) => {
+const updateGameEvent: ClientModule["update"] = (input) => {
   const { model, msg } = input;
-
-  if (!msg) {
-    return { model };
+  if (msg?.t === "game-event") {
+    const gameEvent = withId(msg.c);
+    return {
+      model,
+      gameEvent: [gameEvent],
+    };
   }
-
-  switch (msg.t) {
-    case "user-clicked-more-button":
-    case "user-closed-more-drawer":
-    case "time-passed":
-    case "user-observed-end-of-list": {
-      return { model };
-    }
-
-    default: {
-      const gameEvent = withId(msg);
-      return {
-        model,
-        gameEvent: [gameEvent],
-      };
-    }
-  }
+  return { model };
 };
 
 const subscriptions: ClientModule["subscriptions"] = (input) => {

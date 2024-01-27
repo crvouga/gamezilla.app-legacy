@@ -49,7 +49,8 @@ export type ClientModel = {
   puzzles: {
     [puzzleId: FlowPuzzleId]: FlowPuzzle;
   };
-  opened?: "more" | null;
+  opened?: "more" | "edit-name" | null;
+  isSavingChanges?: boolean;
 };
 
 export type ServerModel = {
@@ -65,10 +66,12 @@ export type ServerModel = {
 //
 
 export type ClientMsg =
-  | GameEvent
+  | { t: "game-event"; c: GameEvent }
   | { t: "time-passed" }
   | { t: "user-clicked-more-button" }
   | { t: "user-closed-more-drawer" }
+  | { t: "user-clicked-edit-name-button" }
+  | { t: "user-closed-edit-name-drawer" }
   | { t: "user-observed-end-of-list" };
 
 export type ServerMsg = { t: "time-passed" };

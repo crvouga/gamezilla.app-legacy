@@ -139,9 +139,12 @@ const View: ClientModule["View"] = (input) => {
               puzzle={puzzle}
               onClick={() =>
                 dispatch({
-                  t: "user-opened-puzzle",
-                  puzzle,
-                  userId: ctx.currentUserId,
+                  t: "game-event",
+                  c: {
+                    t: "user-opened-puzzle",
+                    puzzle,
+                    userId: ctx.currentUserId,
+                  },
                 })
               }
             />
@@ -183,19 +186,22 @@ const View: ClientModule["View"] = (input) => {
             }
 
             dispatch({
-              t: "user-created-new-puzzle",
-              puzzle: FlowPuzzle.create({
-                count: model.total + 1,
-                createdAt: input.ctx.now,
-                createdBy: input.ctx.currentUserId,
-                puzzle: {
-                  t: "grid",
-                  c: FlowGrid.init({
-                    width: 10,
-                    height: 10,
-                  }),
-                },
-              }),
+              t: "game-event",
+              c: {
+                t: "user-created-new-puzzle",
+                puzzle: FlowPuzzle.create({
+                  count: model.total + 1,
+                  createdAt: input.ctx.now,
+                  createdBy: input.ctx.currentUserId,
+                  puzzle: {
+                    t: "grid",
+                    c: FlowGrid.init({
+                      width: 10,
+                      height: 10,
+                    }),
+                  },
+                }),
+              },
             });
           }}
         />
