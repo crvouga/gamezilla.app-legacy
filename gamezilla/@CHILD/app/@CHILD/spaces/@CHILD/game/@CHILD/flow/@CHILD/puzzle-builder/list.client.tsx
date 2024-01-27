@@ -92,7 +92,7 @@ const View: ClientModule["View"] = (input) => {
   return (
     <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden">
       <div className="relative flex w-full flex-1 flex-col items-center overflow-y-scroll">
-        <p className="w-full p-2 text-left text-3xl font-bold">Your puzzles</p>
+        <p className="w-full p-4 text-left text-3xl font-bold">Your puzzles</p>
 
         {shouldShowEmptyState && (
           <EmptyState
@@ -185,7 +185,9 @@ const FlowPuzzleListItem = ({
         <FlowGridUI.View disabled model={puzzle.puzzle.c} />
       </div>
       <div className="overflow-hidden">
-        <p className="flex-nowrap overflow-hidden text-ellipsis whitespace-nowrap text-xl font-bold"></p>
+        <p className="flex-nowrap overflow-hidden text-ellipsis whitespace-nowrap text-xl font-bold">
+          {puzzle.name}
+        </p>
         <p className="text-sm">{puzzle.createdAt}</p>
       </div>
     </button>

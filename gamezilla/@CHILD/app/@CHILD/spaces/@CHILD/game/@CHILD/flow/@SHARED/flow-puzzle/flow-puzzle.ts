@@ -1,8 +1,9 @@
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Posix } from "gamezilla/@SHARED/core";
+import { P } from "gamezilla/@SHARED/parsing";
 import { FlowGrid } from "../flow";
 import { FlowPuzzleId } from "./flow-puzzle-id";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { P } from "gamezilla/@SHARED/parsing";
+import { FlowPuzzleName } from "./flow-puzzle-name";
 
 export type Puzzle = {
   t: "grid";
@@ -11,6 +12,7 @@ export type Puzzle = {
 
 export type FlowPuzzle = {
   id: FlowPuzzleId;
+  name: string;
   puzzle: Puzzle;
   createdAt: Posix;
   createdBy: UserId;
@@ -24,6 +26,7 @@ const create = (input: {
   createdBy: UserId;
 }): FlowPuzzle => {
   return {
+    name: FlowPuzzleName.generate(),
     id: FlowPuzzleId.generate(),
     puzzle: input.puzzle,
     createdAt: input.createdAt,
