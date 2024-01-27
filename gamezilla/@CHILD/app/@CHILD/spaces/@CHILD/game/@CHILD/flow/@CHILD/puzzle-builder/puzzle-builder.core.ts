@@ -4,7 +4,7 @@ import {
   SpaceCtx,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { Paginated, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { RemoteResult, Result } from "gamezilla/@SHARED/core";
 import { FlowGrid, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";
@@ -44,6 +44,7 @@ export type ClientModule = GameClientModule<{
 //
 
 export type ClientModel = {
+  total: number | null;
   listed: RemoteResult<string, null>;
   puzzles: {
     [puzzleId: FlowPuzzleId]: FlowPuzzle;

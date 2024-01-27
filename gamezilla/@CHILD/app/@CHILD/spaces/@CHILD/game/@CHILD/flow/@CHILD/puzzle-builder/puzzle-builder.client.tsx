@@ -9,6 +9,7 @@ import { ClientModule } from "./puzzle-builder.core";
 const init: ClientModule["init"] = {
   listed: notAsked,
   puzzles: {},
+  total: null,
 };
 
 const update: ClientModule["update"] = (input) => {
@@ -64,11 +65,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 };
 
 const subscriptions: ClientModule["subscriptions"] = (input) => {
-  return Sub.batch([
-    //
-    Builder.subscriptions(input),
-    List.subscriptions(input),
-  ]);
+  return Sub.batch([Builder.subscriptions(input), List.subscriptions(input)]);
 };
 
 const View: ClientModule["View"] = (input) => {

@@ -21,12 +21,13 @@ export type FlowPuzzle = {
 };
 
 const create = (input: {
+  count: number;
   puzzle: Puzzle;
   createdAt: Posix;
   createdBy: UserId;
 }): FlowPuzzle => {
   return {
-    name: FlowPuzzleName.generate(),
+    name: `Puzzle ${input.count} - ${FlowPuzzleName.generate()}`,
     id: FlowPuzzleId.generate(),
     puzzle: input.puzzle,
     createdAt: input.createdAt,

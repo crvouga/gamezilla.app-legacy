@@ -65,10 +65,15 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
       model.puzzles
     );
 
+    const totalNew =
+      fromServer.listed.t === "ok"
+        ? fromServer.listed.value.total
+        : model.total;
+
     return {
       model: {
-        ...model,
         listed: Result.mapOk(fromServer.listed, () => null),
+        total: totalNew,
         puzzles: puzzlesNew,
       },
     };
@@ -171,10 +176,16 @@ const View: ClientModule["View"] = (input) => {
           text="Create New"
           variant="contained"
           color="primary"
-          onClick={() =>
+          disabled={typeof model.total !== "number"}
+          onClick={() => {
+            if (typeof model.total !== "number") {
+              return;
+            }
+
             dispatch({
               t: "user-created-new-puzzle",
               puzzle: FlowPuzzle.create({
+                count: model.total + 1,
                 createdAt: input.ctx.now,
                 createdBy: input.ctx.currentUserId,
                 puzzle: {
@@ -185,8 +196,8 @@ const View: ClientModule["View"] = (input) => {
                   }),
                 },
               }),
-            })
-          }
+            });
+          }}
         />
       </div>
     </div>
