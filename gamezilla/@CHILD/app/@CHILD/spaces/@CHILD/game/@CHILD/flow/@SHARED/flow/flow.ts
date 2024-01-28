@@ -140,6 +140,9 @@ export const isSameTerminalsByGroupId = (
   a: Model["terminalsByGroupId"],
   b: Model["terminalsByGroupId"]
 ): boolean => {
+  if (Object.keys(a).length !== Object.keys(b).length) {
+    return false;
+  }
   for (const groupId in a) {
     const terminalA = a[groupId as GroupId];
     if (!terminalA) {
