@@ -1,6 +1,7 @@
 import { APP_SOUND } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   ActionButton,
+  Button,
   Drawer,
   DrawerHeader,
   IconArrowRotateLeft,
@@ -9,6 +10,7 @@ import {
   IconXMark,
   Slider,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { eq, memoize } from "gamezilla/@SHARED/core";
 import { History } from "gamezilla/@SHARED/history";
 import * as Flow from "../flow";
 import * as FlowUI from "../flow-ui";
@@ -25,16 +27,23 @@ import * as FlowGridUI from "./flow-grid-ui";
 
 type Form = {
   terminalsByGroupId: DraftTerminals;
+  width: number;
+  height: number;
 };
 
-export const initForm: Form = {
-  terminalsByGroupId: {},
+const toEmptyForm = ({ grid }: { grid: FlowGrid.Model }): Form => {
+  return {
+    terminalsByGroupId: {},
+    height: grid.height,
+    width: grid.width,
+  };
 };
 
 export type Model = {
-  grid: FlowGrid.Model;
   form: History<Form>;
   opened: "dimensions" | null;
+  widthInput: number;
+  heightInput: number;
 };
 
 type DraftTerminals = {
@@ -52,15 +61,32 @@ type DraftTerminal = {
 };
 
 export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
+  const form: Form = {
+    height: grid.height,
+    width: grid.height,
+    terminalsByGroupId: grid.flow.terminalsByGroupId,
+  };
   return {
-    form: History.init({
-      height: grid.height,
-      width: grid.height,
-      terminalsByGroupId: grid.flow.terminalsByGroupId,
-    }),
-    grid,
+    form: History.init(form),
+    heightInput: grid.height,
+    widthInput: grid.width,
     opened: null,
   };
+};
+
+export const isUnsavedChanges = (
+  grid: FlowGrid.Model,
+  model: Model
+): boolean => {
+  const actual: Form = {
+    terminalsByGroupId: grid.flow.terminalsByGroupId,
+    height: grid.height,
+    width: grid.width,
+  };
+
+  const draft: Form = History.present(model.form);
+
+  return !eq(actual, draft);
 };
 
 //
@@ -75,13 +101,16 @@ export type Msg =
   | { t: "dragged-over"; nodeId: Flow.NodeId }
   | { t: "pressed-up-node"; nodeId: Flow.NodeId }
   | { t: "pressed-down-node"; nodeId: Flow.NodeId }
-  | { t: "inputted-width"; width: number }
-  | { t: "inputted-height"; height: number }
   | { t: "clicked-clear" }
   | { t: "clicked-undo" }
   | { t: "clicked-redo" }
-  | { t: "clicked-dimensions" }
-  | { t: "closed-dimensions" };
+  //
+  | { t: "dimensions-form/clicked-open" }
+  | { t: "dimensions-form/closed" }
+  | { t: "dimensions-form/clicked-cancel" }
+  | { t: "dimensions-form/clicked-save" }
+  | { t: "dimensions-form/inputted-width"; width: number }
+  | { t: "dimensions-form/inputted-height"; height: number };
 
 export type Cmd = {
   t: "play-sound";
@@ -89,9 +118,11 @@ export type Cmd = {
 };
 
 export const update = ({
+  grid,
   model,
   msg,
 }: {
+  grid: FlowGrid.Model;
   msg: Msg;
   model: Model;
 }): {
@@ -107,19 +138,11 @@ export const update = ({
       return { model };
     }
 
-    case "clicked-dimensions": {
-      return { model: { ...model, opened: "dimensions" } };
-    }
-
-    case "closed-dimensions": {
-      return { model: { ...model, opened: null } };
-    }
-
     case "clicked-clear": {
       return {
         model: {
           ...model,
-          form: History.push(model.form, initForm),
+          form: History.push(model.form, toEmptyForm({ grid })),
         },
         cmd: {
           t: "play-sound",
@@ -154,32 +177,6 @@ export const update = ({
       };
     }
 
-    case "inputted-height": {
-      return {
-        model: {
-          ...model,
-          grid: FlowGrid.init({
-            height: msg.height,
-            width: model.grid.width,
-            terminalsByGroupId: model.grid.flow.terminalsByGroupId,
-          }),
-        },
-      };
-    }
-
-    case "inputted-width": {
-      return {
-        model: {
-          ...model,
-          grid: FlowGrid.init({
-            height: model.grid.height,
-            width: msg.width,
-            terminalsByGroupId: model.grid.flow.terminalsByGroupId,
-          }),
-        },
-      };
-    }
-
     case "pressed-down-node": {
       const currentPlacingGroupId = toCurrentPlacingGroupId(model);
 
@@ -203,7 +200,56 @@ export const update = ({
         },
       };
     }
+
+    case "dimensions-form/inputted-height": {
+      return { model: { ...model, heightInput: msg.height } };
+    }
+
+    case "dimensions-form/inputted-width": {
+      return { model: { ...model, widthInput: msg.width } };
+    }
+
+    case "dimensions-form/clicked-save": {
+      const formNew: Form = {
+        ...History.present(model.form),
+        width: model.widthInput,
+        height: model.heightInput,
+      };
+      return {
+        model: {
+          ...model,
+          form: History.push(model.form, formNew),
+          opened: null,
+        },
+        cmd: {
+          t: "play-sound",
+          sourceSrc: APP_SOUND.refreshFeed,
+        },
+      };
+    }
+
+    case "dimensions-form/clicked-open": {
+      return {
+        model: resetDimensionsForm(grid, { ...model, opened: "dimensions" }),
+      };
+    }
+
+    case "dimensions-form/closed": {
+      return { model: resetDimensionsForm(grid, { ...model, opened: null }) };
+    }
+
+    case "dimensions-form/clicked-cancel": {
+      return { model: resetDimensionsForm(grid, { ...model, opened: null }) };
+    }
   }
+};
+
+const resetDimensionsForm = (grid: FlowGrid.Model, model: Model): Model => {
+  return {
+    ...model,
+    widthInput: grid.width,
+    heightInput: grid.height,
+  };
 };
 
 export const updateDraftTerminalsOnPressedDownNode = (
@@ -338,16 +384,34 @@ export const filterDraftTerminals = (
   }
   return terminalsByGroupId;
 };
+const deriveCurrentGrid = ({
+  grid,
+  model,
+}: {
+  grid: FlowGrid.Model;
+  model: Model;
+}): FlowGrid.Model => {
+  if (isUnsavedChanges(grid, model)) {
+    const form = History.present(model.form);
+    return FlowGrid.init({
+      height: form.height,
+      width: form.width,
+      terminalsByGroupId: form.terminalsByGroupId,
+    });
+  }
 
-export const toGrid = (model: Model): FlowGrid.Model => {
-  return {
-    ...model.grid,
-    flow: {
-      ...model.grid.flow,
-      terminalsByGroupId: History.present(model.form).terminalsByGroupId,
-    },
-  };
+  return grid;
 };
+
+export const toCurrentGrid = memoize({
+  func: deriveCurrentGrid,
+  toKey(input) {
+    const form = History.present(input.model.form);
+    const key = JSON.stringify(form);
+    return key;
+  },
+  cacheCapacity: 100,
+});
 
 //
 //
@@ -358,9 +422,11 @@ export const toGrid = (model: Model): FlowGrid.Model => {
 //
 
 export const View = ({
+  grid,
   model,
   dispatch,
 }: {
+  grid: FlowGrid.Model;
   model: Model;
   dispatch: (m: Msg) => void;
 }) => {
@@ -379,7 +445,7 @@ export const View = ({
       </div>
 
       <FlowGridUI.View
-        model={toGrid(model)}
+        model={toCurrentGrid({ model, grid })}
         onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
         onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
         onPressUp={(nodeId) => dispatch({ t: "pressed-up-node", nodeId })}
@@ -408,42 +474,62 @@ export const View = ({
           <ActionButton
             icon={<IconExpand className="h-6 w-6" />}
             label="Dimensions"
-            onClick={() => dispatch({ t: "clicked-dimensions" })}
+            onClick={() => dispatch({ t: "dimensions-form/clicked-open" })}
           />
         </div>
       </div>
       <Drawer
         open={model.opened === "dimensions"}
-        onClose={() => dispatch({ t: "closed-dimensions" })}
+        onClose={() => dispatch({ t: "dimensions-form/closed" })}
         id="dimensions"
         position="bottom"
       >
-        <DrawerHeader onClose={() => dispatch({ t: "closed-dimensions" })} />
+        <DrawerHeader
+          onClose={() => dispatch({ t: "dimensions-form/closed" })}
+        />
 
         <div className="flex items-center justify-center gap-1 text-center text-4xl font-bold">
-          <p>{`${model.grid.width}w`}</p>
+          <p>{`${model.widthInput}w`}</p>
 
           <IconXMark className="h-6 w-6" />
 
-          <p>{`${model.grid.height}h`}</p>
+          <p>{`${model.heightInput}h`}</p>
         </div>
 
         <div className="flex flex-col gap-3 p-4 pb-8">
           <Slider
-            onInput={(width) => dispatch({ t: "inputted-width", width })}
-            value={model.grid.width}
+            onInput={(width) =>
+              dispatch({ t: "dimensions-form/inputted-width", width })
+            }
+            value={model.widthInput}
             label="Width"
             min={3}
             max={15}
             step={1}
           />
           <Slider
-            onInput={(height) => dispatch({ t: "inputted-height", height })}
-            value={model.grid.height}
+            onInput={(height) =>
+              dispatch({ t: "dimensions-form/inputted-height", height })
+            }
+            value={model.heightInput}
             label="Height"
             min={3}
             max={15}
             step={1}
+          />
+        </div>
+        <div className="flex w-full items-center gap-4 p-4">
+          <Button
+            text="Cancel"
+            className="flex-1"
+            onClick={() => dispatch({ t: "dimensions-form/clicked-cancel" })}
+          />
+          <Button
+            text="Save"
+            className="flex-1"
+            variant="contained"
+            color="primary"
+            onClick={() => dispatch({ t: "dimensions-form/clicked-save" })}
           />
         </div>
       </Drawer>

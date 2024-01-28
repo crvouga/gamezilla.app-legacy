@@ -23,7 +23,8 @@ import { FlowGridUI, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { ViewProfileCard } from "../../@SHARED/ui";
 import { DeleteForeverClient } from "./delete-forever/delete-forever.client";
 import { EditNameClient } from "./edit-name/edit-name.client";
-import { ClientModule, toCurrentGrid } from "./puzzle-builder.core";
+import { ClientModule, GameEvent, toCurrentGrid } from "./puzzle-builder.core";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 
 //
 //
@@ -54,7 +55,11 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
 
   switch (msg?.t) {
     case "builder/user-clicked-exit-button": {
-      return { model };
+      const gameEvent: GameEvent = {
+        t: "user-exited-builder",
+        userId: input.ctx.currentUserId,
+      };
+      return { model, gameEvent: [withId(gameEvent)] };
     }
     default: {
       break;
@@ -119,6 +124,7 @@ const updateSound: ClientModule["update"] = (input) => {
       const updated = FlowGridUIEdit.update({
         model: gameState.gridEdit,
         msg: gameEvent.c,
+        grid: gameState.puzzle.puzzle.c,
       });
 
       if (!updated.cmd) {
@@ -201,7 +207,10 @@ const ViewMode: ClientModule["View"] = (input) => {
             ...gameState.puzzle,
             puzzle: {
               t: "grid",
-              c: FlowGridUIEdit.toGrid(gameState.gridEdit),
+              c: FlowGridUIEdit.toCurrentGrid({
+                grid: gameState.puzzle.puzzle.c,
+                model: gameState.gridEdit,
+              }),
             },
           },
         },
@@ -227,6 +236,7 @@ const ViewMode: ClientModule["View"] = (input) => {
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
             <FlowGridUIEdit.View
               model={gameState.gridEdit}
+              grid={gameState.puzzle.puzzle.c}
               dispatch={(c) =>
                 dispatch({ t: "game-event", c: { t: "grid-ui-edit", c } })
               }

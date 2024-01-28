@@ -212,7 +212,7 @@ export type GameState = GameStateList | GameStateBuild;
 export const toCurrentGrid = (state: GameStateBuild): FlowGrid.Model => {
   switch (state.mode.t) {
     case "edit": {
-      return state.gridEdit.grid;
+      return state.puzzle.puzzle.c;
     }
 
     case "play": {
@@ -314,6 +314,7 @@ const reducerBuildState = ({
       const updated = FlowGridUIEdit.update({
         model: state.gridEdit,
         msg: event.c,
+        grid: state.puzzle.puzzle.c,
       });
       return {
         ...state,
@@ -334,7 +335,10 @@ const reducerBuildState = ({
         ...state,
         gridPlay: {
           ...state.gridPlay,
-          grid: FlowGridUIEdit.toGrid(state.gridEdit),
+          grid: FlowGridUIEdit.toCurrentGrid({
+            grid: state.puzzle.puzzle.c,
+            model: state.gridEdit,
+          }),
         },
         mode: { t: "play" },
       };
@@ -371,7 +375,16 @@ const reducerBuildState = ({
       };
     }
 
-    case "user-saved-changes":
+    case "user-saved-changes": {
+      return {
+        ...state,
+        puzzle: event.puzzle,
+        gridPlay: {
+          ...state.gridPlay,
+          grid: event.puzzle.puzzle.c,
+        },
+      };
+    }
     case "user-opened-puzzle":
     case "time-passed":
     case "listed-puzzles":
