@@ -1,5 +1,5 @@
 /**
- * A history is a data structure that allows you to keep track of the state of
+ * `History` is a data structure that allows you to keep track of the state of
  * an object over time. It is useful for implementing undo/redo functionality.
  *
  */
@@ -90,10 +90,6 @@ const canUndo = <T>(history: History<T>): boolean => {
   return history._past.length > 0;
 };
 
-/**
- * A history is a data structure that allows you to keep track of the state of
- * an object over time. It is useful for implementing undo/redo functionality.
- */
 export const History = {
   init,
   push,

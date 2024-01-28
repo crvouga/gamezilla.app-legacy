@@ -15,13 +15,13 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Result, isErr, isOk, loading } from "gamezilla/@SHARED/core";
 import { FlowGridUIEdit } from "../../../@SHARED/flow";
+import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 import {
   ClientModel,
   ClientModule,
   ClientMsg,
   GameEvent,
 } from "../puzzle-builder.core";
-import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 
 //
 //
@@ -89,7 +89,10 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
     }
 
     case "save-changes/user-clicked-cancel-exit": {
-      return { model: { ...model, opened: null } };
+      return {
+        model: { ...model, opened: null },
+        cmd: [playSound(APP_SOUND.tap)],
+      };
     }
 
     case "save-changes/user-clicked-discard-and-exit": {
@@ -159,7 +162,10 @@ const exitBuilder: ClientModule["update"] = (input) => {
     userId: input.ctx.currentUserId,
   };
 
-  return { model: input.model, gameEvent: [withId(gameEvent)] };
+  return {
+    model: { ...input.model, opened: null },
+    gameEvent: [withId(gameEvent)],
+  };
 };
 
 const saveChanges: ClientModule["update"] = ({ model, gameState }) => {
@@ -172,7 +178,6 @@ const saveChanges: ClientModule["update"] = ({ model, gameState }) => {
     puzzle: {
       t: "grid",
       c: FlowGridUIEdit.toCurrentGrid({
-        grid: gameState.puzzle.puzzle.c,
         model: gameState.gridEdit,
       }),
     },

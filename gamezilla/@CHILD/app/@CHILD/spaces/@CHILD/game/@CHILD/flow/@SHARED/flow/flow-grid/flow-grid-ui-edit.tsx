@@ -10,7 +10,7 @@ import {
   IconXMark,
   Slider,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { eq, memoize } from "gamezilla/@SHARED/core";
+import { memoize } from "gamezilla/@SHARED/core";
 import { History } from "gamezilla/@SHARED/history";
 import * as Flow from "../flow";
 import * as FlowUI from "../flow-ui";
@@ -89,7 +89,15 @@ export const isUnsavedChanges = ({
 
   const draft: Form = History.present(model.form);
 
-  return !eq(actual, draft);
+  const isEqual =
+    actual.width === draft.width &&
+    actual.height === draft.height &&
+    Flow.isSameTerminalsByGroupId(
+      actual.terminalsByGroupId,
+      draft.terminalsByGroupId
+    );
+
+  return !isEqual;
 };
 
 //
@@ -387,31 +395,19 @@ export const filterDraftTerminals = (
   }
   return terminalsByGroupId;
 };
-const deriveCurrentGrid = ({
-  grid,
-  model,
-}: {
-  grid: FlowGrid.Model;
-  model: Model;
-}): FlowGrid.Model => {
-  if (isUnsavedChanges({ grid, model })) {
-    const form = History.present(model.form);
-    return FlowGrid.init({
-      height: form.height,
-      width: form.width,
-      terminalsByGroupId: form.terminalsByGroupId,
-    });
-  }
-
-  return grid;
+const deriveCurrentGrid = ({ model }: { model: Model }): FlowGrid.Model => {
+  const form = History.present(model.form);
+  return FlowGrid.init({
+    height: form.height,
+    width: form.width,
+    terminalsByGroupId: form.terminalsByGroupId,
+  });
 };
 
 export const toCurrentGrid = memoize({
   func: deriveCurrentGrid,
   toKey(input) {
-    const form = History.present(input.model.form);
-    const key = JSON.stringify(form);
-    return key;
+    return JSON.stringify(History.present(input.model.form));
   },
   cacheCapacity: 100,
 });
@@ -425,11 +421,9 @@ export const toCurrentGrid = memoize({
 //
 
 export const View = ({
-  grid,
   model,
   dispatch,
 }: {
-  grid: FlowGrid.Model;
   model: Model;
   dispatch: (m: Msg) => void;
 }) => {
@@ -448,7 +442,7 @@ export const View = ({
       </div>
 
       <FlowGridUI.View
-        model={toCurrentGrid({ model, grid })}
+        model={toCurrentGrid({ model })}
         onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
         onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
         onPressUp={(nodeId) => dispatch({ t: "pressed-up-node", nodeId })}

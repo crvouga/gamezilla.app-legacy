@@ -167,8 +167,7 @@ export const showToast = <T extends ClientCmdTypes>(
 };
 
 export const showOkToast = <T extends ClientCmdTypes>(
-  text: string,
-  duration?: TimeSpan
+  text: string
 ): ClientCmd<T>[] => {
   return [
     {

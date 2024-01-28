@@ -1,10 +1,12 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
+import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2";
 import {
   SpaceClientEvent,
   SpaceCtx,
   SpaceServerCtx,
   SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { RemoteResult, Result, isErr } from "gamezilla/@SHARED/core";
@@ -14,8 +16,6 @@ import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
 import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id";
 import { DeleteForever } from "./delete-forever";
-import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2";
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { EditName } from "./edit-name";
 import { SaveChanges } from "./save-changes";
 
@@ -207,7 +207,6 @@ export const toCurrentGrid = (state: GameStateBuild): FlowGrid.Model => {
   switch (state.mode.t) {
     case "edit": {
       return FlowGridUIEdit.toCurrentGrid({
-        grid: state.puzzle.puzzle.c,
         model: state.gridEdit,
       });
     }
@@ -215,7 +214,6 @@ export const toCurrentGrid = (state: GameStateBuild): FlowGrid.Model => {
     case "play": {
       return FlowGridUIPlay.toCurrentGrid({
         grid: FlowGridUIEdit.toCurrentGrid({
-          grid: state.puzzle.puzzle.c,
           model: state.gridEdit,
         }),
         model: state.gridPlay,
@@ -304,7 +302,6 @@ const reducerBuildState = ({
   switch (event.t) {
     case "grid-ui-play": {
       const currentGrid = FlowGridUIEdit.toCurrentGrid({
-        grid: state.puzzle.puzzle.c,
         model: state.gridEdit,
       });
 
@@ -344,7 +341,6 @@ const reducerBuildState = ({
     case "user-changed-to-play-mode": {
       const initial = FlowGridUIPlay.init({
         grid: FlowGridUIEdit.toCurrentGrid({
-          grid: state.puzzle.puzzle.c,
           model: state.gridEdit,
         }),
       });

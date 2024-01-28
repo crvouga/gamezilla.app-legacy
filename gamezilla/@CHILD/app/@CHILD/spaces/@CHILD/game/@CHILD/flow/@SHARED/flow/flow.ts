@@ -128,6 +128,34 @@ export type Terminal = {
   endId?: NodeId | null;
 };
 
+export const isSameTerminal = (a: Terminal, b: Terminal): boolean => {
+  return (
+    a.groupId === b.groupId &&
+    ((a.startId === b.startId && a.endId === b.endId) ||
+      (a.endId === b.startId && a.startId === b.endId))
+  );
+};
+
+export const isSameTerminalsByGroupId = (
+  a: Model["terminalsByGroupId"],
+  b: Model["terminalsByGroupId"]
+): boolean => {
+  for (const groupId in a) {
+    const terminalA = a[groupId as GroupId];
+    if (!terminalA) {
+      return false;
+    }
+    const terminalB = b[groupId as GroupId];
+    if (!terminalB) {
+      return false;
+    }
+    if (!isSameTerminal(terminalA, terminalB)) {
+      return false;
+    }
+  }
+  return true;
+};
+
 /**
  * A `Pipe` associates an edge with a group.
  * These are the lines the user draws in the puzzle.

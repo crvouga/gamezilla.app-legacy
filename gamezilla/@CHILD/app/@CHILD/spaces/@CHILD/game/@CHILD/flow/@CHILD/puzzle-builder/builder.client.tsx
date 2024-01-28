@@ -164,7 +164,6 @@ const ViewMode: ClientModule["View"] = (input) => {
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
             <FlowGridUIEdit.View
               model={gameState.gridEdit}
-              grid={gameState.puzzle.puzzle.c}
               dispatch={(c) =>
                 dispatch({ t: "game-event", c: { t: "grid-ui-edit", c } })
               }
