@@ -30,17 +30,17 @@ if (typeof window !== "undefined" && "customElements" in window) {
       super();
 
       this.attachShadow({ mode: "open" });
-      // Initialize the Intersection Observer with your desired options
-      this.intersectionObserver = new IntersectionObserver(this.onIntersection);
+      this.intersectionObserver = new IntersectionObserver(
+        this.onIntersection,
+        {
+          rootMargin: "0px",
+          threshold: 1.0,
+        }
+      );
     }
 
     connectedCallback() {
       this.unsubscribe = sub.subscribe((event) => {
-        console.log(
-          "IntersectionObserverEmitter",
-          event.props.id,
-          this.getAttribute("id")
-        );
         if (event.props.id !== this.getAttribute("id")) {
           return;
         }
