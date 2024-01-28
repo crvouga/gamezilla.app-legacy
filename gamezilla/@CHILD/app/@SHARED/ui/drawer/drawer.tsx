@@ -1,4 +1,4 @@
-import { IconButton, IconXMark } from "..";
+import { IconButton, IconXMark, Portal } from "..";
 import { VDom } from "../ui";
 import "./drawer-element";
 import { PrivateDrawerProps, drawerSub } from "./drawer-shared";
@@ -16,11 +16,13 @@ export const Drawer = ({
 }: DrawerProps) => {
   drawerSub.publish({ type: "props", id, onClose, open, position });
   return (
-    <drawer-element id={id} position={position}>
-      <div className="w-full border border-neutral-600 bg-black">
-        {children}
-      </div>
-    </drawer-element>
+    <Portal.Entrance portalId="modals">
+      <drawer-element id={id} position={position}>
+        <div className="w-full border border-neutral-600 bg-black">
+          {children}
+        </div>
+      </drawer-element>
+    </Portal.Entrance>
   );
 };
 

@@ -10,6 +10,7 @@ export * from "./icon-chevron-right";
 export * from "./icon-clock";
 export * from "./icon-computer-desktop";
 export * from "./icon-crown";
+export * from "./icon-delete-forever";
 export * from "./icon-ellipsis-vertical";
 export * from "./icon-envelope";
 export * from "./icon-exclamation-circle";

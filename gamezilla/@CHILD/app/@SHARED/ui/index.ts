@@ -13,6 +13,7 @@ export * from "./icon-button";
 export * from "./list-item-button";
 export * from "./loading-bar";
 export * from "./loading-state";
+export * from "./portal";
 export * from "./select";
 export * from "./slider";
 export * from "./spinner";

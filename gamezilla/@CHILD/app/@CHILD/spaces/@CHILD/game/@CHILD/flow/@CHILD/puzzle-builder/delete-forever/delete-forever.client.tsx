@@ -5,7 +5,11 @@ import {
   sendToServer,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
-import { ConfirmationDrawer } from "gamezilla/@CHILD/app/@SHARED/ui";
+import {
+  ConfirmationDrawer,
+  IconDeleteForever,
+  ListItemButton,
+} from "gamezilla/@CHILD/app/@SHARED/ui";
 import { RemoteResult, isLoading } from "gamezilla/@SHARED/core";
 import { ClientModule } from "../puzzle-builder.core";
 
@@ -79,19 +83,30 @@ const updateFromGameEvent: ClientModule["update"] = (input) => {
 const View: ClientModule["View"] = (input) => {
   const { model, dispatch } = input;
   return (
-    <ConfirmationDrawer
-      id="delete-forever-drawer"
-      open={input.model.opened === "delete-forever" || isLoading(model.deleted)}
-      onClose={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
-      variant="danger"
-      position="bottom"
-      title="Delete puzzle forever?"
-      body="This action cannot be undone."
-      onCancel={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
-      confirmText="Delete Forever"
-      onConfirm={() => dispatch({ t: "delete-forever/user-confirmed" })}
-      confirming={isLoading(model.deleted)}
-    />
+    <>
+      <ListItemButton
+        icon={(props) => <IconDeleteForever {...props} />}
+        label="Delete Forever"
+        color="danger"
+        onClick={() => dispatch({ t: "delete-forever/user-clicked-button" })}
+      />
+
+      <ConfirmationDrawer
+        id="delete-forever-drawer"
+        open={
+          input.model.opened === "delete-forever" || isLoading(model.deleted)
+        }
+        onClose={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
+        variant="danger"
+        position="bottom"
+        title="Delete puzzle forever?"
+        body="This action cannot be undone."
+        onCancel={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
+        confirmText="Delete Forever"
+        onConfirm={() => dispatch({ t: "delete-forever/user-confirmed" })}
+        confirming={isLoading(model.deleted)}
+      />
+    </>
   );
 };
 

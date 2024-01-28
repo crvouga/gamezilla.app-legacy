@@ -154,7 +154,6 @@ const View: ClientModule["View"] = (input) => {
     <>
       <ViewMode {...input} />
       <ViewMoreDrawer {...input} />
-      <DeleteForeverClient.View {...input} />
     </>
   );
 };
@@ -370,12 +369,9 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
         label="Edit Name"
         onClick={() => dispatch({ t: "user-clicked-edit-name-button" })}
       />
-      <ListItemButton
-        icon={(props) => <IconPenToSquare {...props} />}
-        label="Delete Forever"
-        onClick={() => dispatch({ t: "delete-forever/user-clicked-button" })}
-      />
-      <div className="w-full pb-4"></div>
+      <DeleteForeverClient.View {...input} />
+
+      <div className="w-full pb-2"></div>
     </Drawer>
   );
 };

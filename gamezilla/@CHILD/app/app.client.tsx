@@ -1,3 +1,4 @@
+import { PUBLIC_APP_CONFIG } from "config";
 import {
   APP_SOUND,
   AnonymousClientCtx,
@@ -11,6 +12,7 @@ import {
   IconGamepad,
   IconUserCircle,
   LoadingState,
+  Portal,
   VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -32,7 +34,6 @@ import {
 import * as Wire from "./@CHILD/wire/wire.client";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
-import { PUBLIC_APP_CONFIG } from "config";
 
 //
 //
@@ -507,6 +508,8 @@ export const View = ({
         <div className="flex w-full flex-1 flex-col overflow-hidden">
           <ViewMain model={model} now={now} dispatch={dispatch} />
         </div>
+
+        <Portal.Exit portalId="modals" />
 
         <Toast.View
           ctx={{ now }}
