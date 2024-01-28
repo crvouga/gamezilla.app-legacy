@@ -1,5 +1,7 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
 import {
+  APP_SOUND,
+  playSound,
   sendToServer,
   showErrorToast,
   showOkToast,
@@ -58,7 +60,9 @@ const updateFormButtons: ClientModule["update"] = (input) => {
 
   switch (msg?.t) {
     case "edit-name/user-clicked-cancel-button": {
-      return { model: { ...model, opened: "more" } };
+      return {
+        model: { ...model, opened: "more", editNameValidationError: null },
+      };
     }
 
     case "edit-name/user-clicked-save-button": {
@@ -67,12 +71,18 @@ const updateFormButtons: ClientModule["update"] = (input) => {
       if (newName.length === 0) {
         return {
           model: { ...model, editNameValidationError: "name-cannot-be-empty" },
+          cmd: [playSound(APP_SOUND.alertErrorSm)],
         };
       }
 
       return {
-        model: { ...model, editNameRequest: loading },
+        model: {
+          ...model,
+          editNameRequest: loading,
+          editNameValidationError: null,
+        },
         cmd: [
+          playSound(APP_SOUND.tap),
           sendToServer({
             t: "edit-name/user-clicked-save-button",
             newName,
