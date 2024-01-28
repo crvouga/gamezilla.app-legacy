@@ -1,7 +1,7 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { Sub, notAsked } from "gamezilla/@SHARED/core";
-import { Builder } from "./builder.client";
+import { PuzzleBuilder } from "./puzzle-builder/puzzle-builder.client";
 import { ClientModule } from "./puzzle-builder.core";
 import { PuzzleListClient } from "./puzzle-list/puzzle-list.client";
 
@@ -18,7 +18,7 @@ const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateGameEvent({ ...input, model }),
-    (model) => Builder.update({ ...input, model }),
+    (model) => PuzzleBuilder.update({ ...input, model }),
     (model) => PuzzleListClient.update({ ...input, model })
   );
 };
@@ -37,7 +37,7 @@ const updateGameEvent: ClientModule["update"] = (input) => {
 
 const subscriptions: ClientModule["subscriptions"] = (input) => {
   return Sub.batch([
-    Builder.subscriptions(input),
+    PuzzleBuilder.subscriptions(input),
     PuzzleListClient.subscriptions(input),
   ]);
 };
@@ -47,7 +47,7 @@ const View: ClientModule["View"] = (input) => {
 
   switch (gameState.t) {
     case "build": {
-      return <Builder.View {...input} />;
+      return <PuzzleBuilder.View {...input} />;
     }
 
     case "list": {

@@ -13,12 +13,16 @@ import {
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
-import { FlowGridUI, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
-import { ViewProfileCard } from "../../@SHARED/ui";
-import { PuzzleDeleteForeverClient } from "./puzzle-delete-forever/puzzle-delete-forever.client";
-import { PuzzleEditNameClient } from "./puzzle-edit-name/puzzle-edit-name.client";
-import { ClientModule, toCurrentGrid } from "./puzzle-builder.core";
-import { PuzzleSaveChangesClient } from "./puzzle-save-changes/puzzle-save-changes.client";
+import {
+  FlowGridUI,
+  FlowGridUIEdit,
+  FlowGridUIPlay,
+} from "../../../@SHARED/flow";
+import { ViewProfileCard } from "../../../@SHARED/ui";
+import { ClientModule, toCurrentGrid } from "../puzzle-builder.core";
+import { PuzzleDeleteForeverClient } from "../puzzle-delete-forever/puzzle-delete-forever.client";
+import { PuzzleEditNameClient } from "../puzzle-edit-name/puzzle-edit-name.client";
+import { PuzzleSaveChangesClient } from "../puzzle-save-changes/puzzle-save-changes.client";
 
 //
 //
@@ -327,9 +331,8 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
 //
 //
 
-export const Builder: Pick<ClientModule, "update" | "subscriptions" | "View"> =
-  {
-    update,
-    subscriptions,
-    View,
-  };
+export const PuzzleBuilder = {
+  update,
+  subscriptions,
+  View,
+};
