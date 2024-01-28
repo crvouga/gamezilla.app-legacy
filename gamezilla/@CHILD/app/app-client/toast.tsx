@@ -38,10 +38,11 @@ type Module = AppClientModule<{
 
 export type Model = {
   runningId: number;
-  toast: Toast | null;
+  toast?: Toast | null;
   hold: {
     [toastId: number]: Toast;
   };
+  errorModal?: { errorMsg: string; toastId: number } | null;
 };
 
 export type Toast = {
@@ -50,6 +51,7 @@ export type Toast = {
   duration: TimeSpan;
   variant: "error" | "info";
   createdAt: Posix;
+  errorMsg?: string | null;
 };
 
 export const init: Module["init"] = async ({ stored }) => {
@@ -58,7 +60,7 @@ export const init: Module["init"] = async ({ stored }) => {
   }
 
   return {
-    model: { runningId: 0, toast: null, hold: {} },
+    model: { runningId: 0, hold: {} },
   };
 };
 
@@ -74,7 +76,8 @@ export type Msg =
   | { t: "time-passed" }
   | { t: "pressed-down-on-toast"; toast: Toast }
   | { t: "pressed-up-on-toast"; toast: Toast }
-  | { t: "clicked-dismiss-button"; toastId: number };
+  | { t: "clicked-dismiss-button"; toastId: number }
+  | { t: "clicked-see-error"; errorMsg: string; toastId: number };
 
 export const update: Module["update"] = (input) => {
   return AppClientModule.chainUpdates(
@@ -140,6 +143,18 @@ const updateFromMsg: Module["update"] = async (input) => {
         },
       };
     }
+
+    case "clicked-see-error": {
+      return {
+        model: {
+          ...model,
+          errorModal: {
+            errorMsg: msg.errorMsg,
+            toastId: msg.toastId,
+          },
+        },
+      };
+    }
   }
 };
 
@@ -160,6 +175,7 @@ const updateFromCmd: Module["update"] = async (input) => {
         duration: toastCmd.duration ?? TimeSpan.fromSeconds(2),
         variant: toastCmd.toastVariant ?? "info",
         createdAt: ctx.now,
+        errorMsg: toastCmd.errorMsg ?? null,
       };
 
       return {
@@ -202,10 +218,11 @@ export const View: Module["View"] = ({ model, dispatch }) => {
   return (
     <Transition
       mode="out-in"
-      className="pointer-events-none absolute left-0 top-0 flex w-full flex-col items-center gap-4 px-4 pt-4"
+      className="pointer-events-none absolute left-0 top-0 z-[100] flex w-full flex-col items-center gap-4 px-4 pt-4 "
       id="toast-root"
       onEnter={onEnter}
-      onExit={onExit}>
+      onExit={onExit}
+    >
       {model.toast && (
         <Toast
           key={model.toast.toastId}
@@ -246,6 +263,7 @@ function Toast({
   toast: Toast;
   dispatch: (m: Msg) => void;
 }) {
+  const errorMsg = toast.errorMsg;
   return (
     <div
       id={String(toast.toastId)}
@@ -259,22 +277,41 @@ function Toast({
       //
       onContextMenu={(e) => {
         e.preventDefault();
-      }}>
+      }}
+    >
       <div
         className={cn(
           "pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden  rounded-lg border p-3 text-lg text-white shadow-2xl",
           toast.variant === "info" && "border-neutral-600 bg-neutral-700",
           toast.variant === "error" && "border-red-400 bg-red-500"
         )}
-        key={toast.toastId}>
+        key={toast.toastId}
+      >
         {toast.text}
+        {errorMsg && (
+          <>
+            <button
+              className="font-bold"
+              onClick={() =>
+                dispatch({
+                  t: "clicked-see-error",
+                  errorMsg: errorMsg,
+                  toastId: toast.toastId,
+                })
+              }
+            >
+              See Error
+            </button>
+          </>
+        )}
         <button
           onClick={() =>
             dispatch({
               t: "clicked-dismiss-button",
               toastId: toast.toastId,
             })
-          }>
+          }
+        >
           <IconXMark />
         </button>
       </div>

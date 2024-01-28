@@ -103,13 +103,18 @@ export type ClientMsg =
   | EditName.ClientMsg
   | DeleteForever.ClientMsg;
 
-export type ServerMsg = { t: "time-passed" } | DeleteForever.ServerMsg;
+export type ServerMsg =
+  | { t: "time-passed" }
+  | DeleteForever.ServerMsg
+  | EditName.ServerMsg;
 
 export type ToServer =
   | DeleteForever.ToServer
+  | EditName.ToServer
   | { t: "list-puzzles"; input: ListPuzzlesInput };
 
 export type ToClient =
+  | EditName.ToClient
   | DeleteForever.ToClient
   | { t: "listed-puzzle"; listed: ListPuzzlesOutput }
   | {
@@ -135,6 +140,7 @@ export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>;
 //
 
 export type GameEvent =
+  | EditName.GameEvent
   | DeleteForever.GameEvent
   | {
       t: "grid-ui-play";
@@ -197,12 +203,6 @@ export type GameStateBuild = {
 
 export type GameStateList = {
   t: "list";
-};
-
-export type BaseGameState = {
-  puzzles: {
-    [id: FlowPuzzleId]: FlowPuzzle;
-  };
 };
 
 export type GameState = GameStateList | GameStateBuild;
@@ -273,6 +273,7 @@ const reducerListState = ({
       };
     }
 
+    case "user-edited-puzzle-name":
     case "user-deleted-puzzle":
     case "listed-puzzles":
     case "user-saved-changes":
@@ -349,6 +350,23 @@ const reducerBuildState = ({
 
     case "user-deleted-puzzle": {
       return { t: "list" };
+    }
+
+    case "user-edited-puzzle-name": {
+      if (event.flowPuzzleId !== state.puzzle.id) {
+        return state;
+      }
+      if (event.edited.t === "err") {
+        return state;
+      }
+      const puzzleNew: FlowPuzzle = {
+        ...state.puzzle,
+        name: event.newName,
+      };
+      return {
+        ...state,
+        puzzle: puzzleNew,
+      };
     }
 
     case "user-saved-changes":

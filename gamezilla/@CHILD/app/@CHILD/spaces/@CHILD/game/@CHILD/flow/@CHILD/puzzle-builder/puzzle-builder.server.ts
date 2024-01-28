@@ -4,6 +4,7 @@ import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Sub } from "gamezilla/@SHARED/core";
 import { FlowPuzzleDb } from "../../@SHARED/flow-puzzle-db";
 import { DeleteForeverServer } from "./delete-forever/delete-forever.server";
+import { EditNameServer } from "./edit-name/edit-name.server";
 import { ServerModule } from "./puzzle-builder.core";
 
 const deps: ServerModule["deps"] = async () => {
@@ -22,7 +23,8 @@ const update: ServerModule["update"] = async (input) => {
     //
     (model) => updateFromClient({ ...input, model }),
     (model) => updateFromGameEvent({ ...input, model }),
-    (model) => DeleteForeverServer.update({ ...input, model })
+    (model) => DeleteForeverServer.update({ ...input, model }),
+    (model) => EditNameServer.update({ ...input, model })
   );
 };
 

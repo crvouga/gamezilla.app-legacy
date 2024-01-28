@@ -18,6 +18,7 @@ export type IFlowPuzzleDb = {
       lastUpdatedAt?: "asc" | "desc";
     };
   }) => Promise<Result<string, Paginated<FlowPuzzle>>>;
+  get: (id: FlowPuzzleId) => Promise<Result<string, FlowPuzzle | null>>;
   put: (input: FlowPuzzle) => Promise<Result<string, null>>;
   zap: (id: FlowPuzzleId) => Promise<Result<string, null>>;
 };

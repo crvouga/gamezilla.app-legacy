@@ -146,6 +146,7 @@ export type ToastCmd = {
     text: string;
     toastVariant?: "error" | "info";
     duration?: TimeSpan;
+    errorMsg?: string;
   };
 };
 
@@ -163,6 +164,32 @@ export const showToast = <T extends ClientCmdTypes>(
       duration,
     },
   };
+};
+
+export const showErrorToast = <T extends ClientCmdTypes>(
+  text: string,
+  errorMsg?: string,
+  duration?: TimeSpan
+): ClientCmd<T>[] => {
+  return [
+    {
+      t: "toast",
+      c: {
+        t: "enqueue",
+        text,
+        toastVariant: "error",
+        errorMsg,
+        duration: duration ?? TimeSpan.fromSeconds(5),
+      },
+    },
+    {
+      t: "sound",
+      c: {
+        t: "play",
+        src: APP_SOUND.alertErrorSm,
+      },
+    },
+  ];
 };
 
 //
