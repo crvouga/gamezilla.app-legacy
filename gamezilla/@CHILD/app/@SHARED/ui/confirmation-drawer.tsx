@@ -33,7 +33,7 @@ export const ConfirmationDrawer = (props: Props) => {
       <div className="flex w-full items-center gap-4 p-4">
         <Button
           className="flex-1"
-          onClick={props.onClose}
+          onClick={props.onCancel}
           text={props.cancelText ?? "Cancel"}
           disabled={props.cancelDisabled}
         />

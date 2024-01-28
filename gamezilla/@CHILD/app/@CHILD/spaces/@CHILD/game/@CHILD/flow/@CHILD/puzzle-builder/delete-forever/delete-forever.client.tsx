@@ -3,6 +3,7 @@ import {
   APP_SOUND,
   playSound,
   sendToServer,
+  showOkToast,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
@@ -29,7 +30,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
   }
 
   switch (msg?.t) {
-    case "delete-forever/user-clicked-button": {
+    case "delete-forever/user-clicked-delete-button": {
       return {
         model: { ...model, opened: "delete-forever" },
         cmd: [playSound(APP_SOUND.alertErrorSm)],
@@ -40,7 +41,11 @@ const updateFromMsg: ClientModule["update"] = (input) => {
       return { model: { ...model, opened: null } };
     }
 
-    case "delete-forever/user-confirmed": {
+    case "delete-forever/user-clicked-cancel-button": {
+      return { model: { ...model, opened: "more" } };
+    }
+
+    case "delete-forever/user-clicked-confirm-button": {
       return {
         model: { ...model, deleteForeverRequest: RemoteResult.loading },
         cmd: [
@@ -70,7 +75,7 @@ const updateFromGameEvent: ClientModule["update"] = (input) => {
           deleteForeverRequest: gameEvent.deleted,
           opened: null,
         },
-        cmd: [showToast("Deleted puzzle"), playSound(APP_SOUND.refreshFeed)],
+        cmd: showOkToast("Deleted puzzle"),
       };
     }
 
@@ -88,7 +93,9 @@ const View: ClientModule["View"] = (input) => {
         icon={(props) => <IconDeleteForever {...props} />}
         label="Delete Forever"
         color="danger"
-        onClick={() => dispatch({ t: "delete-forever/user-clicked-button" })}
+        onClick={() =>
+          dispatch({ t: "delete-forever/user-clicked-delete-button" })
+        }
       />
 
       <ConfirmationDrawer
@@ -105,10 +112,14 @@ const View: ClientModule["View"] = (input) => {
         //
         confirmLoading={isLoading(model.deleteForeverRequest)}
         confirmText="Delete Forever"
-        onConfirm={() => dispatch({ t: "delete-forever/user-confirmed" })}
+        onConfirm={() =>
+          dispatch({ t: "delete-forever/user-clicked-confirm-button" })
+        }
         //
         cancelDisabled={isLoading(model.deleteForeverRequest)}
-        onCancel={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
+        onCancel={() =>
+          dispatch({ t: "delete-forever/user-clicked-cancel-button" })
+        }
       />
     </>
   );

@@ -1,5 +1,10 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
 import {
+  sendToServer,
+  showErrorToast,
+  showOkToast,
+} from "gamezilla/@CHILD/app/@SHARED/client";
+import {
   Button,
   Drawer,
   IconPenToSquare,
@@ -7,16 +12,8 @@ import {
   TextField,
   VDomChildren,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { ClientModule } from "../puzzle-builder.core";
 import { isLoading, isOk, loading } from "gamezilla/@SHARED/core";
-import {
-  APP_SOUND,
-  playSound,
-  sendToServer,
-  showErrorToast,
-  showOkToast,
-  showToast,
-} from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientModule } from "../puzzle-builder.core";
 import { editNameValidationErrorToString } from "./edit-name.core";
 
 //
@@ -121,7 +118,11 @@ const updateFormButtons: ClientModule["update"] = (input) => {
   return { model };
 };
 
-const ViewFormButtons: ClientModule["View"] = ({ dispatch, model }) => {
+const ViewFormButtons: ClientModule["View"] = ({
+  dispatch,
+  model,
+  gameState,
+}) => {
   return (
     <div className="flex w-full items-center gap-4 p-4 pb-6">
       <Button
@@ -135,6 +136,10 @@ const ViewFormButtons: ClientModule["View"] = ({ dispatch, model }) => {
         variant="contained"
         text="Save"
         loading={isLoading(model.editNameRequest)}
+        disabled={
+          gameState.t !== "build" ||
+          model.editNameDraft === gameState.puzzle.name
+        }
         onClick={() => dispatch({ t: "edit-name/user-clicked-save-button" })}
       />
     </div>

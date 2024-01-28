@@ -15,9 +15,10 @@ export type ServerModel = {};
 //
 
 export type ClientMsg =
-  | { t: "delete-forever/user-clicked-button" }
+  | { t: "delete-forever/user-clicked-delete-button" }
   | { t: "delete-forever/user-closed-drawer" }
-  | { t: "delete-forever/user-confirmed" };
+  | { t: "delete-forever/user-clicked-confirm-button" }
+  | { t: "delete-forever/user-clicked-cancel-button" };
 
 export type ToServer = { t: "delete-forever/user-confirmed" };
 
