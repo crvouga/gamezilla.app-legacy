@@ -1,7 +1,7 @@
 import { VDomChildren } from "../ui";
 import { createPortal } from "./create-portal";
 
-const Entrance = ({
+const PortalEntrance = ({
   portalId,
   children,
 }: {
@@ -12,14 +12,18 @@ const Entrance = ({
   if (!element) {
     return null;
   }
-  return createPortal(children, element);
+  return (
+    <div data-portal-entrance data-portal-id={portalId}>
+      {createPortal(children, element)}
+    </div>
+  );
 };
 
-const Exit = ({ portalId }: { portalId: string }) => {
-  return <div id={portalId}></div>;
+const PortalExit = ({ portalId }: { portalId: string }) => {
+  return <div id={portalId} data-portal-exit data-portal-id={portalId}></div>;
 };
 
 export const Portal = {
-  Entrance,
-  Exit,
+  Entrance: PortalEntrance,
+  Exit: PortalExit,
 };

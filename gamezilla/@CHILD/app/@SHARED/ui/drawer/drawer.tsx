@@ -17,10 +17,12 @@ export const Drawer = ({
   drawerSub.publish({ type: "props", id, onClose, open, position });
   return (
     <Portal.Entrance portalId="modals">
+      {/* @ts-ignore */}
       <drawer-element id={id} position={position}>
         <div className="w-full border border-neutral-600 bg-black">
           {children}
         </div>
+        {/* @ts-ignore */}
       </drawer-element>
     </Portal.Entrance>
   );

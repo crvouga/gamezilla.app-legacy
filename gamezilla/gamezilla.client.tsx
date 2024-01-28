@@ -10,7 +10,7 @@ type Ctx = {
 
 const main = async () => {
   const renderer = await getRenderer({
-    impl: PUBLIC_APP_CONFIG.RENDERER_IMPL
+    impl: PUBLIC_APP_CONFIG.RENDERER_IMPL,
   });
 
   const deps = AppClient.getDeps();
@@ -33,14 +33,13 @@ const main = async () => {
     },
 
     update(input) {
-      return AppClient.update({ ...input, deps })
+      return AppClient.update({ ...input, deps });
     },
 
     subscriptions(input) {
-      return AppClient.subscriptions({ ...input, deps })
+      return AppClient.subscriptions({ ...input, deps });
     },
   });
-
 
   program.subscribe(renderer(program.dispatch));
 
@@ -50,9 +49,9 @@ const main = async () => {
     attachDebuggerBrowserExtension(program);
   }
 
-  console.log(`Renderer: ${PUBLIC_APP_CONFIG.RENDERER_IMPL}`)
-  console.log(`Transport: ${PUBLIC_APP_CONFIG.TRANSPORT_IMPL}`)
-}
+  console.log(`Renderer: ${PUBLIC_APP_CONFIG.RENDERER_IMPL}`);
+  console.log(`Transport: ${PUBLIC_APP_CONFIG.TRANSPORT_IMPL}`);
+};
 
 const DebuggerToggleStorage = () => {
   const KEY = "gamezilla/should-use-debugger";
@@ -71,11 +70,11 @@ const DebuggerToggleStorage = () => {
       const current = this.get();
 
       this.set(!current);
-    }
-  }
-}
+    },
+  };
+};
 
-DebuggerToggleStorage()
+DebuggerToggleStorage();
 
 /**
  * Use this to persist state across page refreshes.
@@ -108,9 +107,9 @@ const Storage = <TModel,>() => {
       sessionStorage.setItem(MODEL_KEY, JSON.stringify(model));
     },
   };
-}
+};
 
-Storage()
+Storage();
 
 /**
  * Use this to render runtime errors to the screen.
@@ -138,14 +137,18 @@ const renderRuntimeErrors = () => {
       (url ? " - at " + url + ": " + lineNumber + ":" + column : "");
     document.body.appendChild(errorDiv);
   }
-}
+};
 renderRuntimeErrors();
 
 type Renderer = (
   dispatch: (m: App.ClientMsg) => void
 ) => (model: App.ClientModel, ctx: Ctx) => void;
 
-const getRenderer = async ({ impl }: { impl: RendererImpl }): Promise<Renderer> => {
+const getRenderer = async ({
+  impl,
+}: {
+  impl: RendererImpl;
+}): Promise<Renderer> => {
   const rootNode = document.getElementById("root")!;
 
   switch (impl) {
@@ -158,11 +161,11 @@ const getRenderer = async ({ impl }: { impl: RendererImpl }): Promise<Renderer> 
             <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />,
             rootNode
           );
-        }
-      }
+        };
+      };
     }
 
-    case 'react-with-million':
+    case "react-with-million":
     case "react": {
       const { createRoot } = await import("react-dom/client");
       await import("react");
@@ -172,10 +175,11 @@ const getRenderer = async ({ impl }: { impl: RendererImpl }): Promise<Renderer> 
       return function renderer(dispatch) {
         return function renderReact(model, ctx) {
           reactRoot.render(
+            // @ts-ignore
             <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />
           );
-        }
-      }
+        };
+      };
     }
 
     case "preact": {
@@ -188,10 +192,10 @@ const getRenderer = async ({ impl }: { impl: RendererImpl }): Promise<Renderer> 
             <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />,
             rootNode
           );
-        }
-      }
+        };
+      };
     }
   }
-}
+};
 
 main();

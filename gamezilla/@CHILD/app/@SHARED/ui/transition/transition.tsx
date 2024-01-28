@@ -20,5 +20,6 @@ export const Transition = ({
     className: className,
     mode,
   });
+  // @ts-ignore
   return <transition-element id={id}>{children}</transition-element>;
 };

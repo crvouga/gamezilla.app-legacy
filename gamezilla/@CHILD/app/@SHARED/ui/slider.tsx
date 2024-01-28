@@ -23,8 +23,11 @@ export const Slider = ({
         value={value}
         step={step}
         onInput={(event) => {
-          const val = event.target.value;
-          const parsed = parseFloat(val);
+          if (!event.target) {
+            return;
+          }
+          const val = "value" in event.target ? event.target.value : "";
+          const parsed = typeof val === "string" ? parseFloat(val) : NaN;
           if (isNaN(parsed)) {
             return;
           }

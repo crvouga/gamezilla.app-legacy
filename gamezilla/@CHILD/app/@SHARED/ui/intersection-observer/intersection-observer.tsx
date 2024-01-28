@@ -12,5 +12,6 @@ export const IntersectionObserverEmitter = ({
   children?: VDom | VDom[];
 }) => {
   sub.publish({ type: "props", props });
+  // @ts-ignore
   return <intersection-observer-emitter id={props.id} />;
 };
