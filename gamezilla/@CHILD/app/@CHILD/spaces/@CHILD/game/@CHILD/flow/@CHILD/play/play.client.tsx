@@ -2,10 +2,7 @@ import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { SpaceClientEvent } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
-import {
-  Button,
-  IconArrowLeftOnRect
-} from "gamezilla/@CHILD/app/@SHARED/ui";
+import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
 import { GameLayout } from "../../../../@SHARED/game";
 import { FlowGridUIPlay } from "../../@SHARED/flow";
@@ -35,10 +32,10 @@ type Module = GameClientModule<{
   InCmd: null;
 }>;
 
+const grid = samples["8x8"][0];
 const init: Module["init"] = {
-  grid: FlowGridUIPlay.init({
-    grid: samples['8x8'][0]
-  }),
+  gridPlay: FlowGridUIPlay.init({ grid }),
+  grid,
 };
 
 const update: Module["update"] = (input) => {
@@ -58,13 +55,15 @@ const updateFromMsg: Module["update"] = (input) => {
 
   switch (msg.t) {
     case "grid": {
-      const grid = FlowGridUIPlay.update({
+      const gridPlayNew = FlowGridUIPlay.update({
         msg: msg.c,
-        model: model.grid,
+        model: model.gridPlay,
+        grid: model.grid,
       });
       return {
         model: {
-          grid,
+          gridPlay: gridPlayNew,
+          grid: model.grid,
         },
       };
     }
@@ -93,21 +92,20 @@ const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
     <GameLayout isSpectating={isSpectating}>
       <div className="flex w-full flex-1 flex-col items-center justify-center">
         {isSpectating && host && (
-          <ViewProfileCard
-            profile={host}
-            subtitle="Player"
-          />
+          <ViewProfileCard profile={host} subtitle="Player" />
         )}
         {USE_GAME_STATE ? (
           <FlowGridUIPlay.View
             dispatch={(c) => dispatch({ t: "event", c: { t: "grid", c } })}
-            model={gameState.grid}
+            model={gameState.gridPlay}
             disabled={isSpectating}
+            grid={gameState.grid}
           />
         ) : (
           <FlowGridUIPlay.View
             dispatch={(c) => dispatch({ t: "grid", c })}
-            model={model.grid}
+            model={model.gridPlay}
+            grid={model.grid}
             disabled={isSpectating}
           />
         )}

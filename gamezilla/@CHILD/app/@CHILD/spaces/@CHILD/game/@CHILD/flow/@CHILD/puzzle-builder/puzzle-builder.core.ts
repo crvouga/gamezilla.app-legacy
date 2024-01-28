@@ -212,11 +212,20 @@ export type GameState = GameStateList | GameStateBuild;
 export const toCurrentGrid = (state: GameStateBuild): FlowGrid.Model => {
   switch (state.mode.t) {
     case "edit": {
-      return state.puzzle.puzzle.c;
+      return FlowGridUIEdit.toCurrentGrid({
+        grid: state.puzzle.puzzle.c,
+        model: state.gridEdit,
+      });
     }
 
     case "play": {
-      return state.gridPlay.grid;
+      return FlowGridUIPlay.toCurrentGrid({
+        grid: FlowGridUIEdit.toCurrentGrid({
+          grid: state.puzzle.puzzle.c,
+          model: state.gridEdit,
+        }),
+        model: state.gridPlay,
+      });
     }
   }
 };
@@ -301,12 +310,20 @@ const reducerBuildState = ({
 }): GameState => {
   switch (event.t) {
     case "grid-ui-play": {
+      const currentGrid = FlowGridUIEdit.toCurrentGrid({
+        grid: state.puzzle.puzzle.c,
+        model: state.gridEdit,
+      });
+
+      const updated = FlowGridUIPlay.update({
+        model: state.gridPlay,
+        msg: event.c,
+        grid: currentGrid,
+      });
+
       return {
         ...state,
-        gridPlay: FlowGridUIPlay.update({
-          model: state.gridPlay,
-          msg: event.c,
-        }),
+        gridPlay: updated,
       };
     }
 
@@ -316,6 +333,7 @@ const reducerBuildState = ({
         msg: event.c,
         grid: state.puzzle.puzzle.c,
       });
+
       return {
         ...state,
         gridEdit: updated.model,
@@ -331,15 +349,15 @@ const reducerBuildState = ({
     }
 
     case "user-changed-to-play-mode": {
+      const initial = FlowGridUIPlay.init({
+        grid: FlowGridUIEdit.toCurrentGrid({
+          grid: state.puzzle.puzzle.c,
+          model: state.gridEdit,
+        }),
+      });
       return {
         ...state,
-        gridPlay: {
-          ...state.gridPlay,
-          grid: FlowGridUIEdit.toCurrentGrid({
-            grid: state.puzzle.puzzle.c,
-            model: state.gridEdit,
-          }),
-        },
+        gridPlay: initial,
         mode: { t: "play" },
       };
     }
@@ -381,7 +399,7 @@ const reducerBuildState = ({
         puzzle: event.puzzle,
         gridPlay: {
           ...state.gridPlay,
-          grid: event.puzzle.puzzle.c,
+          pipesBySourceId: event.puzzle.puzzle.c,
         },
       };
     }

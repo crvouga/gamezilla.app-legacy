@@ -22,7 +22,8 @@ type Dragging = {
 type State = Idle | Dragging;
 
 export type Model = {
-  grid: FlowGrid.Model;
+  pipesBySourceId: FlowGrid.Model["flow"]["pipesBySourceId"];
+  terminalsByGroupId: FlowGrid.Model["flow"]["terminalsByGroupId"];
   state: State;
 };
 
@@ -35,62 +36,87 @@ export type Model = {
 
 export type Msg =
   | {
-    t: "pressed-down";
-    nodeId: Flow.NodeId;
-  }
+      t: "pressed-down";
+      nodeId: Flow.NodeId;
+    }
   | {
-    t: "pressed-up";
-    nodeId: Flow.NodeId;
-  }
+      t: "pressed-up";
+      nodeId: Flow.NodeId;
+    }
   | {
-    t: "dragged-over";
-    nodeId: Flow.NodeId;
-  }
+      t: "dragged-over";
+      nodeId: Flow.NodeId;
+    }
   | {
-    t: "left";
-  };
+      t: "left";
+    };
 
 export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
   return {
-    grid: grid,
+    pipesBySourceId: grid.flow.pipesBySourceId,
+    terminalsByGroupId: grid.flow.terminalsByGroupId,
     state: { t: "idle" },
   };
 };
 
-export const update = ({ msg, model }: { msg: Msg; model: Model }): Model => {
+export const update = ({
+  msg,
+  model,
+  grid,
+}: {
+  msg: Msg;
+  model: Model;
+  grid: FlowGrid.Model;
+}): Model => {
   switch (model.state.t) {
     case "dragging": {
-      return updateDragging({ msg, model, state: model.state });
+      return updateDragging({ grid, msg, model, state: model.state });
     }
 
     case "idle": {
-      return updateIdle({ msg, model });
+      return updateIdle({ grid, msg, model });
     }
   }
 };
 
-const updateIdle: typeof update = ({ msg, model }) => {
+export const toCurrentGrid = ({
+  model,
+  grid,
+}: {
+  grid: FlowGrid.Model;
+  model: Model;
+}): FlowGrid.Model => {
+  return {
+    ...grid,
+    flow: {
+      ...grid.flow,
+      pipesBySourceId: model.pipesBySourceId,
+      terminalsByGroupId: model.terminalsByGroupId,
+    },
+  };
+};
+
+const updateIdle: typeof update = ({ msg, model, grid }) => {
   switch (msg.t) {
     case "pressed-down": {
-      const groupId = Flow.toGroupId(model.grid.flow, msg.nodeId);
+      const currentGrid = toCurrentGrid({ model, grid });
+
+      const groupId = Flow.toGroupId(currentGrid.flow, msg.nodeId);
 
       if (!groupId) {
         return model;
       }
 
       const started = AlgoDrawPipes.startDrawPipes(
-        FlowGrid.distance(model.grid),
-        model.grid.flow,
+        FlowGrid.distance(currentGrid),
+        currentGrid.flow,
         groupId,
         msg.nodeId
       );
 
       return {
-        ...model,
-        grid: {
-          ...model.grid,
-          flow: started,
-        },
+        terminalsByGroupId: started.terminalsByGroupId,
+        pipesBySourceId: started.pipesBySourceId,
         state: {
           t: "dragging",
           activeGroupId: groupId,
@@ -116,30 +142,30 @@ const updateDragging = ({
   msg,
   state,
   model,
+  grid,
 }: {
   msg: Msg;
   model: Model;
   state: Dragging;
+  grid: FlowGrid.Model;
 }): Model => {
   switch (msg.t) {
     case "dragged-over": {
       const { nodeId } = msg;
 
+      const currentGrid = toCurrentGrid({ model, grid });
+
       const extended = AlgoDrawPipes.drawPipes(
-        FlowGrid.distance(model.grid),
-        model.grid.flow,
+        FlowGrid.distance(currentGrid),
+        currentGrid.flow,
         state.activeGroupId,
         nodeId
       );
 
-      const gridNew: FlowGrid.Model = {
-        ...model.grid,
-        flow: extended,
-      };
-
       const modelNew: Model = {
-        ...model,
-        grid: gridNew,
+        state: model.state,
+        terminalsByGroupId: extended.terminalsByGroupId,
+        pipesBySourceId: extended.pipesBySourceId,
       };
 
       return modelNew;
@@ -171,7 +197,9 @@ export const View = ({
   model,
   dispatch,
   disabled,
+  grid,
 }: {
+  grid: FlowGrid.Model;
   model: Model;
   dispatch: (m: Msg) => void;
   disabled?: boolean;
@@ -179,7 +207,7 @@ export const View = ({
   return (
     <FlowGridUI.View
       disabled={disabled}
-      model={model.grid}
+      model={toCurrentGrid({ model, grid })}
       showCoordinates={false}
       isDragging={model.state.t === "dragging"}
       onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
@@ -189,9 +217,9 @@ export const View = ({
       autocompleteEdge={
         model.state.t === "dragging" && model.state.autocompleteEdge
           ? {
-            ...model.state.autocompleteEdge,
-            groupId: model.state.activeGroupId,
-          }
+              ...model.state.autocompleteEdge,
+              groupId: model.state.activeGroupId,
+            }
           : null
       }
       isActive={({ groupId }) =>

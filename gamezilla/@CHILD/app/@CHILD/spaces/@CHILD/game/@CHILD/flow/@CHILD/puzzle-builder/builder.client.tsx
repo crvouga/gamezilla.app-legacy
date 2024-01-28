@@ -121,6 +121,9 @@ const updateSound: ClientModule["update"] = (input) => {
     }
 
     case "grid-ui-edit": {
+      if (gameState.mode.t !== "edit") {
+        return { model };
+      }
       const updated = FlowGridUIEdit.update({
         model: gameState.gridEdit,
         msg: gameEvent.c,
@@ -207,10 +210,7 @@ const ViewMode: ClientModule["View"] = (input) => {
             ...gameState.puzzle,
             puzzle: {
               t: "grid",
-              c: FlowGridUIEdit.toCurrentGrid({
-                grid: gameState.puzzle.puzzle.c,
-                model: gameState.gridEdit,
-              }),
+              c: toCurrentGrid(gameState),
             },
           },
         },
@@ -281,6 +281,7 @@ const ViewMode: ClientModule["View"] = (input) => {
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
             <FlowGridUIPlay.View
               model={gameState.gridPlay}
+              grid={toCurrentGrid(gameState)}
               dispatch={(c) =>
                 dispatch({ t: "game-event", c: { t: "grid-ui-play", c } })
               }
