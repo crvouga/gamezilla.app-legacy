@@ -11,6 +11,7 @@ export const IntersectionObserverEmitter = ({
 }: IntersectionObserverEmitterProps & {
   children?: VDom | VDom[];
 }) => {
+  // There is some kind of race condition setTimeout fixes
   setTimeout(() => sub.publish({ type: "props", props }), 0);
 
   // @ts-ignore
