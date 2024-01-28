@@ -28,6 +28,7 @@ type Module = GameServerModule<{
   InEvent: SpaceServerEvent;
   OutCmd: SpaceServerCmd<ToClient>;
   OutEvent: null;
+  Deps: null;
 }>;
 
 const init: Module["init"] = {
@@ -60,6 +61,7 @@ const updateChild: Module["update"] = async (input) => {
             ? { ...input.gameEvent, ...input.gameEvent.c }
             : null,
         msg: input.msg?.t === "play" ? input.msg.c : null,
+        deps: null,
       });
 
       const tagged = GameServerModule.tagOutput(
@@ -90,6 +92,7 @@ const updateChild: Module["update"] = async (input) => {
             ? { ...input.gameEvent, ...input.gameEvent.c }
             : null,
         msg: input.msg?.t === "puzzle-builder" ? input.msg.c : null,
+        deps: await PuzzleBuilderServer.deps(),
       });
 
       const tagged = GameServerModule.tagOutput(
@@ -146,4 +149,7 @@ export const FlowServer: Module = {
   init,
   subscriptions,
   update,
+  async deps() {
+    return null;
+  },
 };

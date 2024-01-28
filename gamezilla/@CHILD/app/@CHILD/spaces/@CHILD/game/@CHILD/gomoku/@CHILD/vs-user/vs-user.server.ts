@@ -1,16 +1,9 @@
-import { Eff, Sub } from "gamezilla/@SHARED/core";
 import {
-  SpaceServerEvent,
   SpaceReqCtx,
+  SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
-import {
-  Res,
-  ServerModel,
-  ServerMsg,
-  ToServer,
-  handle,
-  initShared,
-} from "./vs-user.core";
+import { Eff, Sub } from "gamezilla/@SHARED/core";
+import { ServerModel, ServerMsg, ToServer, initShared } from "./vs-user.core";
 
 //
 //
@@ -47,9 +40,7 @@ export const update = ({
 };
 
 export const updateFromClient = ({
-  msg,
   model,
-  ctx,
 }: {
   ctx: SpaceReqCtx;
   msg: ToServer;
@@ -58,12 +49,7 @@ export const updateFromClient = ({
   model: Model;
   eff?: Eff<Msg>;
 } => {
-  const res: Res = { ...msg, result: handle({ msg, model, ctx }) };
-
-  if (res.result.t === "err") {
-    return { model, eff: Eff.None };
-  }
-  return { model: res.result.value, eff: Eff.None };
+  return { model };
 };
 
 export const updateFromEvent = ({

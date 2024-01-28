@@ -1,19 +1,18 @@
-import { Eff, p, Sub } from "gamezilla/@SHARED/core";
 import {
-  SpaceServerEvent,
   SpaceReqCtx,
+  SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
+import { Eff, Sub, p } from "gamezilla/@SHARED/core";
 import { Chess } from "../../@SHARED/chess";
 import {
-  botMoved,
-  updateCore,
-  initServer,
-  isBotTurn,
   ServerModel,
   ServerMsg,
   ToClient,
   ToServer,
+  botMoved,
+  initServer,
+  isBotTurn,
 } from "./vs-bot.core";
 
 //
@@ -98,15 +97,16 @@ const toBotMoveEff = (modelPrev: Model, modelNext: Model): Eff<Msg> => {
   return eff;
 };
 
-const updateFromClientMain: typeof updateFromClient = ({ ctx, msg, model }) => {
-  const handled = updateCore({ msg, model, ctx });
+const updateFromClientMain: typeof updateFromClient = ({ model }) => {
+  // const handled = updateCore({ msg, model });
 
-  const modelNew: Model = handled.t === "err" ? model : handled.value;
+  // const modelNew: Model = handled.t === "err" ? model : handled.value;
 
-  return {
-    model: modelNew,
-    cmd: [{ t: "send-to-space", msg: { ...msg, result: handled } }],
-  };
+  // return {
+  //   model: modelNew,
+  //   cmd: [{ t: "send-to-space", msg: { ...msg, result: handled } }],
+  // };
+  return { model };
 };
 
 export const updateFromEvent = ({

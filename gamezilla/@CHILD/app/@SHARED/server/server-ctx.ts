@@ -1,4 +1,3 @@
-import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Posix } from "gamezilla/@SHARED/core";
 import { DbConnSql } from "./db-conn-sql-interface";
 import { Logger } from "./logger";
@@ -7,15 +6,4 @@ export type ServerCtx = {
   dbConn: DbConnSql;
   now: Posix;
   logger: Logger;
-  currentUserId?: UserId;
-};
-
-export type AnonymousReqCtx = ServerCtx & {
-  sessionId: SessionId;
-  clientId: ClientId;
-  currentUserId?: UserId;
-};
-
-export type ReqCtx = AnonymousReqCtx & {
-  currentUserId: UserId;
 };

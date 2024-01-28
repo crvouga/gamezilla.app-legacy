@@ -1,4 +1,4 @@
-import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { EventMeta, WithEventId } from "../event";
 
@@ -53,6 +53,10 @@ export type GameServerModuleTypes = {
    *
    */
   GameState: any;
+  /**
+   *
+   */
+  Deps: any;
 };
 
 //
@@ -86,8 +90,12 @@ export type Input<T extends GameServerModuleTypes> = {
    * `fromServer`
    */
   fromClient?:
-  | (T["ToServer"] & { clientId: ClientId; sessionId: SessionId })
-  | null;
+    | (T["ToServer"] & {
+        clientId: ClientId;
+        sessionId: SessionId;
+        userId: UserId;
+      })
+    | null;
   /**
    * `event`
    */
@@ -96,6 +104,10 @@ export type Input<T extends GameServerModuleTypes> = {
    * `cmd`
    */
   cmd?: T["InCmd"] | null;
+  /**
+   *
+   */
+  deps: T["Deps"];
 };
 
 //
@@ -131,6 +143,10 @@ export type Output<T extends GameServerModuleTypes> = {
  * `GameServerModule` represents a server side app module
  */
 export type GameServerModule<T extends GameServerModuleTypes> = {
+  /**
+   * `deps` are all of the dependencies you neeed to inject
+   **/
+  deps: () => Promise<T["Deps"]>;
   /**
    * `init` is the initial state of the module
    */
@@ -182,7 +198,6 @@ const chainUpdates = async <T extends GameServerModuleTypes>(
 
   return chainUpdates(accNew, ...rest);
 };
-
 
 const tagOutput = <
   TTag extends string,

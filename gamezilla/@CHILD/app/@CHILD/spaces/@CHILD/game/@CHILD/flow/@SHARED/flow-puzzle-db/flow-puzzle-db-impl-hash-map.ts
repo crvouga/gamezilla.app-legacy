@@ -54,9 +54,16 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
         offset: input.pagination.offset,
       });
     },
+
     async put(input) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       db.set(input.id, input);
+      return ok(null);
+    },
+
+    async zap(id) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      db.delete(id);
       return ok(null);
     },
   };

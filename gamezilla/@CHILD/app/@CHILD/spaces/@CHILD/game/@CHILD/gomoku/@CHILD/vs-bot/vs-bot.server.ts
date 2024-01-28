@@ -4,11 +4,9 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { Eff, Sub, andThen, p } from "gamezilla/@SHARED/core";
 import {
-  Res,
   ServerModel,
   ServerMsg,
   ToServer,
-  handle,
   handleBotMove,
   initShared,
 } from "./vs-bot.core";
@@ -87,14 +85,10 @@ const updateBotMove: updateFromClient = ({ model }) => {
   };
 };
 
-const updateFromClient_: updateFromClient = ({ ctx, msg, model }) => {
+const updateFromClient_: updateFromClient = ({ msg, model }) => {
   switch (msg.t) {
     default: {
-      const res: Res = { ...msg, result: handle({ ctx, msg, model }) };
-      if (res.result.t === "err") {
-        return { model, eff: Eff.None };
-      }
-      return { model: res.result.value, eff: Eff.None };
+      return { model };
     }
   }
 };

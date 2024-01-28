@@ -29,7 +29,6 @@ import {
   ToServer,
   initCore,
   transitionLoadingToStarted,
-  updateCore,
 } from "./puzzle.core";
 
 //
@@ -270,16 +269,16 @@ export const updateFromClient = (input: {
 } => {
   return p(
     input,
-    andThen((model) => updateFromClientMain({ ...input, model })),
-    andThen((model) =>
-      watchPutInteraction({ ...input, modelPrev: input.model, model })
-    ),
-    andThen((model) =>
-      watchPutProfile({ ...input, modelPrev: input.model, model })
-    ),
-    andThen((model) =>
-      watchGetPuzzles({ ...input, modelPrev: input.model, model })
-    )
+    andThen((model) => updateFromClientMain({ ...input, model }))
+    // andThen((model) =>
+    //   watchPutInteraction({ ...input, modelPrev: input.model, model })
+    // ),
+    // andThen((model) =>
+    //   watchPutProfile({ ...input, modelPrev: input.model, model })
+    // ),
+    // andThen((model) =>
+    //   watchGetPuzzles({ ...input, modelPrev: input.model, model })
+    // )
   );
 };
 
@@ -324,7 +323,7 @@ const watchPutInteraction = ({
   return { model };
 };
 
-const watchGetPuzzles = ({
+export const watchGetPuzzles = ({
   model,
   ctx,
 }: {
@@ -361,7 +360,7 @@ const watchGetPuzzles = ({
   return { model };
 };
 
-const watchPutProfile = ({
+export const watchPutProfile = ({
   model,
   modelPrev,
   ctx,
@@ -386,13 +385,14 @@ const watchPutProfile = ({
   return { model };
 };
 
-const updateFromClientMain: typeof updateFromClient = ({ msg, model, ctx }) => {
-  const handled = updateCore({ ctx, msg, model });
+const updateFromClientMain: typeof updateFromClient = ({ model }) => {
+  // const handled = updateCore({ ctx, msg, model });
 
-  return {
-    model: handled.t === "ok" ? { ...model, ...handled.value } : model,
-    cmd: [{ t: "send-to-space", msg: { ...msg, result: handled } }],
-  };
+  // return {
+  //   model: handled.t === "ok" ? { ...model, ...handled.value } : model,
+  //   cmd: [{ t: "send-to-space", msg: { ...msg, result: handled } }],
+  // };
+  return { model };
 };
 
 export const updateFromGame = ({

@@ -3,7 +3,7 @@ import * as Profile from "./@CHILD/profile/profile.core";
 import * as Spaces from "./@CHILD/spaces/spaces.core";
 import * as Wire from "./@CHILD/wire/wire.core";
 import { ClientCmd, ClientEvent } from "./@SHARED/client";
-import { ClientId, SessionId } from "./@SHARED/data";
+import { ClientId, SessionId, UserId } from "./@SHARED/data";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 
 //
@@ -87,4 +87,8 @@ export type ClientMsgFinal =
 //
 //
 
-export type ToServerMeta = { sessionId: SessionId; clientId: ClientId };
+export type ToServerMeta = {
+  sessionId: SessionId;
+  clientId: ClientId;
+  userId?: UserId | null;
+};

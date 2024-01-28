@@ -108,14 +108,17 @@ const updateFromClient: Module["update"] = async ({
   return {
     model,
     eff: async (dispatch) => {
-      if (!ctx.currentUserId) {
+      const userId = fromClient.userId;
+
+      if (!userId) {
         return;
       }
+
       const ProfileDb = createProfileDb({ dbConn: ctx.dbConn });
       const result = await handler({
         ProfileDb,
         msg: fromClient,
-        ctx: { ...ctx, currentUserId: ctx.currentUserId },
+        ctx: { ...ctx, currentUserId: userId },
       });
 
       dispatch({

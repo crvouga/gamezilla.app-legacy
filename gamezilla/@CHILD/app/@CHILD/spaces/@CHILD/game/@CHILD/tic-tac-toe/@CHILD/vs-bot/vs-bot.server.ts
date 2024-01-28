@@ -6,12 +6,10 @@ import { Eff, Sub, andThen, err, ok, p } from "gamezilla/@SHARED/core";
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { TicTacToe } from "../../@SHARED/tic-tic-toe";
 import {
-  Res,
   ServerModel,
   ServerMsg,
   ToClient,
   ToServer,
-  handle,
   initCoreModel,
   isBotTurn,
 } from "./vs-bot.core";
@@ -135,14 +133,15 @@ const watchBotMove = ({
   return { model };
 };
 
-const updateFromClientMain: typeof updateFromClient = ({ msg, model, ctx }) => {
-  const handled = handle({ ctx, model, msg });
-  const res: Res = { ...msg, result: handled };
-  const modelNew: Model = handled.t === "ok" ? handled.value : model;
-  return {
-    model: modelNew,
-    cmd: [{ t: "send-to-space", msg: res }],
-  };
+const updateFromClientMain: typeof updateFromClient = ({ model }) => {
+  // const handled = handle({ ctx, model, msg });
+  return { model };
+  // const res: Res = { ...msg, result: handled };
+  // const modelNew: Model = handled.t === "ok" ? handled.value : model;
+  // return {
+  //   model: modelNew,
+  //   cmd: [{ t: "send-to-space", msg: res }],
+  // };
 };
 
 export const updateFromEvent = ({

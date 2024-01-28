@@ -2,6 +2,8 @@ import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import {
   SpaceClientEvent,
   SpaceCtx,
+  SpaceServerCtx,
+  SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
@@ -11,6 +13,9 @@ import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
 import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id";
+import { DeleteForever } from "./delete-forever";
+import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2";
+import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 
 //
 //
@@ -33,6 +38,23 @@ export type ClientModule = GameClientModule<{
   InEvent: SpaceClientEvent;
   InCmd: null;
   OutEvent: null;
+}>;
+
+export type ServerModule = GameServerModule<{
+  ToClient: ToClient;
+  ToServer: ToServer;
+  GameEvent: GameEvent;
+  GameState: GameState;
+  Ctx: SpaceServerCtx;
+  InCmd: null;
+  InEvent: SpaceServerEvent;
+  Model: ServerModel;
+  Msg: ServerMsg;
+  OutCmd: SpaceServerCmd<ToClient>;
+  OutEvent: null;
+  Deps: {
+    FlowPuzzleDb: IFlowPuzzleDb;
+  };
 }>;
 
 //
@@ -72,19 +94,17 @@ export type ClientMsg =
   | { t: "user-closed-more-drawer" }
   | { t: "user-clicked-edit-name-button" }
   | { t: "user-closed-edit-name-drawer" }
-  | { t: "user-clicked-delete-forever-button" }
-  | { t: "user-closed-delete-forever-drawer" }
-  | { t: "user-observed-end-of-list" };
+  | { t: "user-observed-end-of-list" }
+  | DeleteForever.ClientMsg;
 
-export type ServerMsg = { t: "time-passed" };
+export type ServerMsg = { t: "time-passed" } | DeleteForever.ServerMsg;
 
-export type ListPuzzlesInput = Parameters<IFlowPuzzleDb["list"]>[0];
-
-export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>;
-
-export type ToServer = { t: "list-puzzles"; input: ListPuzzlesInput };
+export type ToServer =
+  | DeleteForever.ToServer
+  | { t: "list-puzzles"; input: ListPuzzlesInput };
 
 export type ToClient =
+  | DeleteForever.ToClient
   | { t: "listed-puzzle"; listed: ListPuzzlesOutput }
   | {
       t: "put-puzzle";
@@ -96,11 +116,20 @@ export type ToClient =
 //
 //
 //
+export type ListPuzzlesInput = Parameters<IFlowPuzzleDb["list"]>[0];
+
+export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>;
+
+//
+//
+//
+//
 //
 //
 //
 
 export type GameEvent =
+  | DeleteForever.GameEvent
   | {
       t: "grid-ui-play";
       c: FlowGridUIPlay.Msg;
@@ -238,6 +267,7 @@ const reducerListState = ({
       };
     }
 
+    case "user-deleted-puzzle":
     case "listed-puzzles":
     case "user-saved-changes":
     case "user-exited-builder":
@@ -311,10 +341,11 @@ const reducerBuildState = ({
       };
     }
 
-    case "user-saved-changes": {
-      return state;
+    case "user-deleted-puzzle": {
+      return { t: "list" };
     }
 
+    case "user-saved-changes":
     case "user-opened-puzzle":
     case "time-passed":
     case "listed-puzzles":

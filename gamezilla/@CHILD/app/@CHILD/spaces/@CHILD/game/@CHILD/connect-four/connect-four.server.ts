@@ -31,6 +31,7 @@ type Module = GameServerModule<{
   InEvent: SpaceServerEvent;
   OutCmd: SpaceServerCmd<ToClient>;
   OutEvent: null;
+  Deps: null;
 }>;
 
 //
@@ -75,4 +76,5 @@ export const ConnectFourServer: Module = {
   init,
   update,
   subscriptions,
+  deps: async () => null,
 };

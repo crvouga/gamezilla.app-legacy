@@ -34,6 +34,7 @@ type Module = GameServerModule<{
   InEvent: SpaceServerEvent;
   OutCmd: SpaceServerCmd<ToClient>;
   OutEvent: null;
+  Deps: null;
 }>;
 
 //
@@ -91,6 +92,7 @@ export const update: Module["update"] = async (input) => {
               ? { ...input.gameEvent, ...input.gameEvent.c }
               : null,
           msg: input.msg?.t === "flow" ? input.msg.c : null,
+          deps: null,
         });
 
         const tagged = GameServerModule.tagOutput(
@@ -118,6 +120,7 @@ export const update: Module["update"] = async (input) => {
               ? { ...input.gameEvent, ...input.gameEvent.c }
               : null,
           msg: input.msg?.t === "connect-four" ? input.msg.c : null,
+          deps: null,
         });
 
         const tagged = GameServerModule.tagOutput(
@@ -172,4 +175,5 @@ export const Game = {
   init,
   update,
   subscriptions,
+  deps: null,
 };

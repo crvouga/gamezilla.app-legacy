@@ -5,7 +5,6 @@ import {
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
-  ReqCtx,
   ServerCmd,
   ServerCtx,
   ServerEvent,
@@ -310,14 +309,21 @@ const updateChild: Module["update"] = async (input) => {
     return { model };
   }
 
+  if (fromClient && !fromClient.userId) {
+    ctx.logger.warn("fromClient is missing userId");
+  }
+
   const gameUpdated = await Game.update({
     ctx: { ...ctx, space: spaceState },
     model: model.games[spaceId] ?? Game.init(spaceState.game.t),
     msg: msg?.t === "game" ? msg.c : null,
     fromClient:
-      fromClient?.t === "game" ? { ...fromClient, ...fromClient.c } : null,
+      fromClient?.t === "game" && fromClient.userId
+        ? { ...fromClient, userId: fromClient.userId, ...fromClient.c }
+        : null,
     event,
     gameState: spaceState.game,
+    deps: null,
   });
 
   const merged = mergeUpdatedGame({ model, spaceId, gameUpdated });
@@ -374,7 +380,7 @@ type Acc = {
 };
 
 const updateFromManySpaceEvents = async (input: {
-  ctx: ServerCtx | ReqCtx;
+  ctx: ServerCtx;
   model: ServerModel;
   events: WithEventId<SpaceEvent>[];
 }): Promise<Acc> => {
@@ -382,7 +388,7 @@ const updateFromManySpaceEvents = async (input: {
 };
 
 const updateFromManySpaceEventsLoop = async (
-  ctx: ServerCtx | ReqCtx,
+  ctx: ServerCtx,
   spaceEvents: WithEventId<SpaceEvent>[],
   acc: Acc
 ): Promise<Acc> => {
@@ -470,7 +476,7 @@ const updateFromSpaceEvent = async ({
   spaceEvent,
   ctx,
 }: {
-  ctx: ServerCtx | ReqCtx;
+  ctx: ServerCtx;
   model: ServerModel;
   spaceEvent: WithEventId<SpaceEvent>;
 }): Promise<{
@@ -529,11 +535,12 @@ const updateFromSpaceEvent = async ({
       }
 
       const gameUpdated = await Game.update({
-        ctx: { ...ctx, currentUserId: ctx.currentUserId, space: spaceState },
+        ctx: { ...ctx, space: spaceState },
         model:
           model.games[eventWithMeta.spaceId] ?? Game.init(spaceState.game.t),
         gameEvent: { ...eventWithMeta, ...eventWithMeta.c },
         gameState: spaceState.game,
+        deps: null,
       });
 
       const merged = mergeUpdatedGame({

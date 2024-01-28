@@ -77,6 +77,14 @@ export const update: Module["update"] = async (input) => {
   );
 };
 
+export const toUserIdFromSessionId = async (
+  ctx: ServerCtx,
+  model: ServerModel,
+  sessionId: SessionId
+): Promise<UserId | null> => {
+  return StoreUserIdBySessionId(ctx).get(model.userIdBySessionId, sessionId);
+};
+
 const updateChild: Module["update"] = async (input) => {
   const sms = await AuthServerSMS.update({
     ctx: input.ctx,

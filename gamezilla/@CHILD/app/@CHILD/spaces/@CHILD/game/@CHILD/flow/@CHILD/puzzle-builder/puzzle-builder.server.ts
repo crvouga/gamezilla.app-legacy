@@ -1,52 +1,32 @@
 import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2";
-import {
-  SpaceServerCtx,
-  SpaceServerEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
-import {
-  SpaceServerCmd,
-  sendToSpace,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
+import { sendToSpace } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Sub } from "gamezilla/@SHARED/core";
 import { FlowPuzzleDb } from "../../@SHARED/flow-puzzle-db";
-import {
-  GameEvent,
-  GameState,
-  ServerModel,
-  ServerMsg,
-  ToClient,
-  ToServer,
-} from "./puzzle-builder.core";
+import { DeleteForeverServer } from "./delete-forever/delete-forever.server";
+import { ServerModule } from "./puzzle-builder.core";
 
-type Module = GameServerModule<{
-  ToClient: ToClient;
-  ToServer: ToServer;
-  GameEvent: GameEvent;
-  GameState: GameState;
-  Ctx: SpaceServerCtx;
-  InCmd: null;
-  InEvent: SpaceServerEvent;
-  Model: ServerModel;
-  Msg: ServerMsg;
-  OutCmd: SpaceServerCmd<ToClient>;
-  OutEvent: null;
-}>;
+const deps: ServerModule["deps"] = async () => {
+  return {
+    FlowPuzzleDb: FlowPuzzleDb(),
+  };
+};
 
-const init: Module["init"] = {
+const init: ServerModule["init"] = {
   hasListedPuzzles: false,
 };
 
-const update: Module["update"] = async (input) => {
+const update: ServerModule["update"] = async (input) => {
   return GameServerModule.chainUpdates(
     { model: input.model },
     //
     (model) => updateFromClient({ ...input, model }),
-    (model) => updateFromGameEvent({ ...input, model })
+    (model) => updateFromGameEvent({ ...input, model }),
+    (model) => DeleteForeverServer.update({ ...input, model })
   );
 };
 
-const updateFromGameEvent: Module["update"] = async (input) => {
+const updateFromGameEvent: ServerModule["update"] = async (input) => {
   const { ctx, gameEvent, model } = input;
 
   if (!gameEvent) {
@@ -84,7 +64,7 @@ const updateFromGameEvent: Module["update"] = async (input) => {
   }
 };
 
-const updateFromClient: Module["update"] = async (input) => {
+const updateFromClient: ServerModule["update"] = async (input) => {
   const { fromClient, model } = input;
   if (!fromClient) {
     return { model };
@@ -99,14 +79,18 @@ const updateFromClient: Module["update"] = async (input) => {
         cmd: [sendBack(fromClient, { t: "listed-puzzle", listed })],
       };
     }
+    default: {
+      return { model };
+    }
   }
 };
 
-const subscriptions: Module["subscriptions"] = async () => {
+const subscriptions: ServerModule["subscriptions"] = async () => {
   return Sub.None;
 };
 
-export const PuzzleBuilderServer: Module = {
+export const PuzzleBuilderServer: ServerModule = {
+  deps,
   init,
   update,
   subscriptions,

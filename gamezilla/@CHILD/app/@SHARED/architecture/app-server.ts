@@ -1,4 +1,4 @@
-import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 
 //
@@ -69,7 +69,11 @@ export type Input<T extends AppServerModuleTypes> = {
    *
    */
   fromClient?:
-    | (T["ToServer"] & { clientId: ClientId; sessionId: SessionId })
+    | (T["ToServer"] & {
+        clientId: ClientId;
+        sessionId: SessionId;
+        userId?: UserId | null;
+      })
     | null;
   /**
    *

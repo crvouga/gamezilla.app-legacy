@@ -283,13 +283,29 @@ export const updateChild = async ({
   //
   //
 
+  const userId = fromClient?.sessionId
+    ? await AuthServer.toUserIdFromSessionId(
+        ctx,
+        model.auth,
+        fromClient.sessionId
+      )
+    : null;
+
+  //
+  //
+  //
+  //
+  //
+
   const space = await SpaceServer.update({
     model: model.spaces,
     ctx,
     cmd: null,
     event: event,
     fromClient:
-      fromClient?.t === "spaces" ? { ...fromClient, ...fromClient.c } : null,
+      fromClient?.t === "spaces"
+        ? { ...fromClient, ...fromClient.c, userId }
+        : null,
     msg: msg?.t === "spaces" ? msg.c : null,
   });
 
@@ -299,7 +315,9 @@ export const updateChild = async ({
     cmd: null,
     event: event,
     fromClient:
-      fromClient?.t === "auth" ? { ...fromClient, ...fromClient.c } : null,
+      fromClient?.t === "auth"
+        ? { ...fromClient, ...fromClient.c, userId }
+        : null,
     msg: msg?.t === "auth" ? msg.c : null,
   });
 

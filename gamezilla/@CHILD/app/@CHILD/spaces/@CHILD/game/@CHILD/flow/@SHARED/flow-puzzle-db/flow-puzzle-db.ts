@@ -5,6 +5,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Result } from "gamezilla/@SHARED/core";
 import { FlowPuzzle } from "../flow-puzzle/flow-puzzle";
+import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id";
 
 export type IFlowPuzzleDb = {
   list: (input: {
@@ -18,4 +19,5 @@ export type IFlowPuzzleDb = {
     };
   }) => Promise<Result<string, Paginated<FlowPuzzle>>>;
   put: (input: FlowPuzzle) => Promise<Result<string, null>>;
+  zap: (id: FlowPuzzleId) => Promise<Result<string, null>>;
 };

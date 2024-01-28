@@ -10,7 +10,6 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
-  ConfirmationDrawer,
   Drawer,
   IconArrowLeftOnRect,
   IconEllipsisVertical,
@@ -25,6 +24,7 @@ import {
 import { Sub } from "gamezilla/@SHARED/core";
 import { FlowGridUI, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { ViewProfileCard } from "../../@SHARED/ui";
+import { DeleteForeverClient } from "./delete-forever/delete-forever.client";
 import { ClientModule, toCurrentGrid } from "./puzzle-builder.core";
 
 //
@@ -42,7 +42,7 @@ const update: ClientModule["update"] = (input) => {
     (model) => updateSaveChanges({ ...input, model }),
     (model) => updateMoreDrawer({ ...input, model }),
     (model) => updateEditName({ ...input, model }),
-    (model) => updateDeleteForever({ ...input, model })
+    (model) => DeleteForeverClient.update({ ...input, model })
   );
 };
 
@@ -154,7 +154,7 @@ const View: ClientModule["View"] = (input) => {
     <>
       <ViewMode {...input} />
       <ViewMoreDrawer {...input} />
-      <ViewDeleteForever {...input} />
+      <DeleteForeverClient.View {...input} />
     </>
   );
 };
@@ -373,53 +373,10 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
       <ListItemButton
         icon={(props) => <IconPenToSquare {...props} />}
         label="Delete Forever"
-        onClick={() => dispatch({ t: "user-clicked-delete-forever-button" })}
+        onClick={() => dispatch({ t: "delete-forever/user-clicked-button" })}
       />
       <div className="w-full pb-4"></div>
     </Drawer>
-  );
-};
-
-//
-//
-//
-//
-//
-//
-
-const updateDeleteForever: ClientModule["update"] = (input) => {
-  const { msg, model } = input;
-  switch (msg?.t) {
-    case "user-clicked-delete-forever-button": {
-      return {
-        model: { ...model, opened: "delete-forever" },
-        cmd: [playSound(APP_SOUND.alertErrorSm)],
-      };
-    }
-    case "user-closed-delete-forever-drawer": {
-      return { model: { ...model, opened: null } };
-    }
-    default: {
-      return { model };
-    }
-  }
-};
-
-const ViewDeleteForever: ClientModule["View"] = (input) => {
-  const { dispatch } = input;
-  return (
-    <ConfirmationDrawer
-      id="delete-forever-drawer"
-      open={input.model.opened === "delete-forever"}
-      onClose={() => dispatch({ t: "user-closed-delete-forever-drawer" })}
-      variant="danger"
-      position="bottom"
-      title="Delete puzzle forever?"
-      body="This action cannot be undone."
-      onCancel={() => dispatch({ t: "user-closed-delete-forever-drawer" })}
-      confirmText="Delete Forever"
-      onConfirm={() => dispatch({ t: "user-closed-delete-forever-drawer" })}
-    />
   );
 };
 

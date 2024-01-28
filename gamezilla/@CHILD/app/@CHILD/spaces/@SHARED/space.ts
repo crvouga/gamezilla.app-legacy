@@ -1,10 +1,12 @@
 import { ClientCtx, ClientEvent } from "gamezilla/@CHILD/app/@SHARED/client";
-import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
-  ReqCtx,
-  ServerCtx,
-  ServerEvent,
-} from "gamezilla/@CHILD/app/@SHARED/server";
+  ClientId,
+  Profile,
+  SessionId,
+  SpaceId,
+  UserId,
+} from "gamezilla/@CHILD/app/@SHARED/data";
+import { ServerCtx, ServerEvent } from "gamezilla/@CHILD/app/@SHARED/server";
 
 //
 //
@@ -48,9 +50,14 @@ export type SpaceClientEvent = ClientEvent | SpaceEvent;
 //
 //
 
-export type SpaceServerCtx = ServerCtx & SpaceCtx;
+export type SpaceServerCtx = ServerCtx & (SpaceCtx | SpaceReqCtx);
 
-export type SpaceReqCtx = ReqCtx & SpaceCtx;
+// DEPRECATED
+export type SpaceReqCtx = SpaceCtx & {
+  sessionId: SessionId;
+  clientId: ClientId;
+  currentUserId?: UserId | null;
+};
 
 export type SpaceCtx = {
   space: Space;
