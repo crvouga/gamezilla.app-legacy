@@ -65,7 +65,7 @@ export type ServerModule = GameServerModule<{
 //
 //
 
-export type ClientModel = {
+export type ClientModel = DeleteForever.ClientModel & {
   total: number | null;
   listed: RemoteResult<string, null>;
   puzzles: {

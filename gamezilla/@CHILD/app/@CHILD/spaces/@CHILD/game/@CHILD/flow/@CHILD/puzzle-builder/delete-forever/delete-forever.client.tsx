@@ -6,6 +6,7 @@ import {
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { ConfirmationDrawer } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { RemoteResult, isLoading } from "gamezilla/@SHARED/core";
 import { ClientModule } from "../puzzle-builder.core";
 
 const update: ClientModule["update"] = (input) => {
@@ -37,8 +38,11 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 
     case "delete-forever/user-confirmed": {
       return {
-        model,
-        cmd: [sendToServer({ t: "delete-forever/user-confirmed" })],
+        model: { ...model, deleted: RemoteResult.loading },
+        cmd: [
+          sendToServer({ t: "delete-forever/user-confirmed" }),
+          playSound(APP_SOUND.tap),
+        ],
       };
     }
 
@@ -56,8 +60,13 @@ const updateFromGameEvent: ClientModule["update"] = (input) => {
       const puzzlesNew = { ...model.puzzles };
       delete puzzlesNew[gameEvent.flowPuzzleId];
       return {
-        model: { ...model, puzzles: puzzlesNew },
-        cmd: [showToast("Deleted puzzle")],
+        model: {
+          ...model,
+          puzzles: puzzlesNew,
+          deleted: gameEvent.deleted,
+          opened: null,
+        },
+        cmd: [showToast("Deleted puzzle"), playSound(APP_SOUND.refreshFeed)],
       };
     }
 
@@ -68,11 +77,11 @@ const updateFromGameEvent: ClientModule["update"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-  const { dispatch } = input;
+  const { model, dispatch } = input;
   return (
     <ConfirmationDrawer
       id="delete-forever-drawer"
-      open={input.model.opened === "delete-forever"}
+      open={input.model.opened === "delete-forever" || isLoading(model.deleted)}
       onClose={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
       variant="danger"
       position="bottom"
@@ -81,6 +90,7 @@ const View: ClientModule["View"] = (input) => {
       onCancel={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
       confirmText="Delete Forever"
       onConfirm={() => dispatch({ t: "delete-forever/user-confirmed" })}
+      confirming={isLoading(model.deleted)}
     />
   );
 };

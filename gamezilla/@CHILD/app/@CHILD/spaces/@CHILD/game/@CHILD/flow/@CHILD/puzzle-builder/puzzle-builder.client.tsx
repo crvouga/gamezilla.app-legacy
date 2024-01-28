@@ -7,6 +7,7 @@ import { ClientModule } from "./puzzle-builder.core";
 
 const init: ClientModule["init"] = {
   listed: notAsked,
+  deleted: notAsked,
   puzzles: {},
   total: null,
 };

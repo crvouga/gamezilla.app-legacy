@@ -72,6 +72,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
 
     return {
       model: {
+        ...model,
         listed: Result.mapOk(fromServer.listed, () => null),
         total: totalNew,
         puzzles: puzzlesNew,

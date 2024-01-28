@@ -10,6 +10,7 @@ type Props = DrawerProps & {
   title: string;
   body: string;
   variant?: "danger";
+  confirming?: boolean;
 };
 
 export const ConfirmationDrawer = (props: Props) => {
@@ -38,6 +39,7 @@ export const ConfirmationDrawer = (props: Props) => {
           onClick={props.onConfirm}
           variant="contained"
           text={props.confirmText}
+          loading={props.confirming}
         />
       </div>
     </Drawer>
