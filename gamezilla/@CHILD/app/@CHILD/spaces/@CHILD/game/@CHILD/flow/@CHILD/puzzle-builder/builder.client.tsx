@@ -210,7 +210,10 @@ const ViewMode: ClientModule["View"] = (input) => {
             ...gameState.puzzle,
             puzzle: {
               t: "grid",
-              c: toCurrentGrid(gameState),
+              c: FlowGridUIEdit.toCurrentGrid({
+                grid: gameState.puzzle.puzzle.c,
+                model: gameState.gridEdit,
+              }),
             },
           },
         },
