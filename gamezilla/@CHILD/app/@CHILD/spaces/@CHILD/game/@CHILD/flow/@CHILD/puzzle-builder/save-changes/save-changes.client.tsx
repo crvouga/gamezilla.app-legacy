@@ -22,6 +22,7 @@ import {
   ClientMsg,
   GameEvent,
 } from "../puzzle-builder.core";
+import { BottomBarButtonAction } from "../../../../../@SHARED/game";
 
 //
 //
@@ -210,13 +211,14 @@ export const viewActionButtons = ({
   model: ClientModel;
   dispatch: (msg: ClientMsg) => void;
 }) => {
-  const exit = {
+  const exit: BottomBarButtonAction = {
     label: "Exit",
+    disabled: model.saveChangesRequest?.t === "loading",
     icon: <IconArrowLeftOnRect className="h-6 w-6" />,
     onClick: () => dispatch({ t: "builder/user-clicked-exit-button" }),
   };
 
-  const save = {
+  const save: BottomBarButtonAction = {
     label: "Save",
     icon: <IconFloppyDisk className="h-6 w-6" />,
     loading: model.saveChangesRequest?.t === "loading",
