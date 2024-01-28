@@ -1,5 +1,5 @@
 import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server";
-import { ServerModule } from "../puzzle-builder.core";
+import { ServerModule } from "../builder.core";
 
 const update: ServerModule["update"] = async (input) => {
   const { fromClient, model, deps } = input;

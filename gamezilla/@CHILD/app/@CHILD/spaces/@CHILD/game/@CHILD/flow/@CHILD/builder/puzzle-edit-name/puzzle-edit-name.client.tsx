@@ -15,7 +15,7 @@ import {
   VDomChildren,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { isLoading, isOk, loading } from "gamezilla/@SHARED/core";
-import { ClientModule } from "../puzzle-builder.core";
+import { ClientModule } from "../builder.core";
 import { editNameValidationErrorToString } from "./puzzle-edit-name.core";
 
 //

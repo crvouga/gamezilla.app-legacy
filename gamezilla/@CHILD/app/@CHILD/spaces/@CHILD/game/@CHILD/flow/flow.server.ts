@@ -5,6 +5,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { Sub } from "gamezilla/@SHARED/core";
 import { SpaceServerCmd } from "../../../../@SHARED/space-server-cmd";
+import { BuilderServer } from "./@CHILD/builder/builder.server";
 import { PlayServer } from "./@CHILD/play/play.server";
 import {
   GameEvent,
@@ -14,7 +15,6 @@ import {
   ToClient,
   ToServer,
 } from "./flow.core";
-import { PuzzleBuilderServer } from "./@CHILD/puzzle-builder/puzzle-builder.server";
 
 type Module = GameServerModule<{
   Model: ServerModel;
@@ -73,31 +73,28 @@ const updateChild: Module["update"] = async (input) => {
       return tagged;
     }
 
-    case "puzzle-builder": {
-      const updated = await PuzzleBuilderServer.update({
+    case "builder": {
+      const updated = await BuilderServer.update({
         ctx: input.ctx,
         gameState: gameState.c,
-        model:
-          input.model.t === "puzzle-builder"
-            ? input.model.c
-            : PuzzleBuilderServer.init,
+        model: input.model.t === "builder" ? input.model.c : BuilderServer.init,
         cmd: input.cmd,
         event: input.event,
         fromClient:
-          input.fromClient?.t === "puzzle-builder"
+          input.fromClient?.t === "builder"
             ? { ...input.fromClient, ...input.fromClient.c }
             : null,
         gameEvent:
-          input.gameEvent?.t === "puzzle-builder"
+          input.gameEvent?.t === "builder"
             ? { ...input.gameEvent, ...input.gameEvent.c }
             : null,
-        msg: input.msg?.t === "puzzle-builder" ? input.msg.c : null,
-        deps: await PuzzleBuilderServer.deps(),
+        msg: input.msg?.t === "builder" ? input.msg.c : null,
+        deps: await BuilderServer.deps(),
       });
 
       const tagged = GameServerModule.tagOutput(
-        "puzzle-builder",
-        (cmd) => SpaceServerCmd.tag("puzzle-builder", cmd),
+        "builder",
+        (cmd) => SpaceServerCmd.tag("builder", cmd),
         updated
       );
 
@@ -125,16 +122,14 @@ const subscriptions: Module["subscriptions"] = async (input) => {
       );
     }
 
-    case "puzzle-builder": {
+    case "builder": {
       return Sub.tag(
-        "puzzle-builder",
-        await PuzzleBuilderServer.subscriptions({
+        "builder",
+        await BuilderServer.subscriptions({
           ctx: input.ctx,
           gameState: gameState.c,
           model:
-            input.model.t === "puzzle-builder"
-              ? input.model.c
-              : PuzzleBuilderServer.init,
+            input.model.t === "builder" ? input.model.c : BuilderServer.init,
         })
       );
     }

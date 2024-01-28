@@ -16,7 +16,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub } from "gamezilla/@SHARED/core";
 import { PlayClient } from "./@CHILD/play/play.client";
-import { PuzzleBuilderClient } from "./@CHILD/puzzle-builder/puzzle-builder.client";
+import { BuilderClient } from "./@CHILD/builder/builder.client";
 import { CoverArt } from "./@SHARED/flow-cover-art";
 import { FlowClientCtx } from "./@SHARED/flow-ctx";
 import {
@@ -106,25 +106,22 @@ const updateChild: Module["update"] = (input) => {
       return { ...tagged, model: { ...tagged.model, puzzles: model.puzzles } };
     }
 
-    case "puzzle-builder": {
-      const updated = PuzzleBuilderClient.update({
+    case "builder": {
+      const updated = BuilderClient.update({
         ctx: { ...ctx, onQuit: () => {}, puzzles: model.puzzles },
         gameState: gameState.c,
-        model:
-          model.t === "puzzle-builder" ? model.c : PuzzleBuilderClient.init,
+        model: model.t === "builder" ? model.c : BuilderClient.init,
         cmd: cmd,
         event: event,
-        fromServer: fromServer?.t === "puzzle-builder" ? fromServer.c : null,
+        fromServer: fromServer?.t === "builder" ? fromServer.c : null,
         gameEvent:
-          gameEvent?.t === "puzzle-builder"
-            ? { ...gameEvent, ...gameEvent.c }
-            : null,
-        msg: msg?.t === "puzzle-builder" ? msg.c : null,
+          gameEvent?.t === "builder" ? { ...gameEvent, ...gameEvent.c } : null,
+        msg: msg?.t === "builder" ? msg.c : null,
       });
 
       const tagged = GameClientModule.tagOutput(
-        "puzzle-builder",
-        (cmd) => ClientCmd.tag("puzzle-builder", cmd),
+        "builder",
+        (cmd) => ClientCmd.tag("builder", cmd),
         updated
       );
 
@@ -141,7 +138,7 @@ const updateFromGameEvent: Module["update"] = (input) => {
   }
 
   switch (gameEvent.t) {
-    case "puzzle-builder":
+    case "builder":
     case "play": {
       return { model };
     }
@@ -155,12 +152,12 @@ const updateFromGameEvent: Module["update"] = (input) => {
           };
         }
 
-        case "puzzle-builder": {
+        case "builder": {
           return {
             model: {
               ...model,
-              t: "puzzle-builder",
-              c: PuzzleBuilderClient.init,
+              t: "builder",
+              c: BuilderClient.init,
             },
             cmd: [playSound(APP_SOUND.navForwardMin)],
           };
@@ -189,7 +186,7 @@ const updateFromMsg: Module["update"] = (input) => {
       return { model };
     }
 
-    case "puzzle-builder": {
+    case "builder": {
       return { model };
     }
 
@@ -224,16 +221,14 @@ const subscriptions: Module["subscriptions"] = (input) => {
         })
       );
     }
-    case "puzzle-builder": {
+    case "builder": {
       return Sub.tag(
-        "puzzle-builder",
-        PuzzleBuilderClient.subscriptions({
+        "builder",
+        BuilderClient.subscriptions({
           ctx: { ...input.ctx, onQuit() {}, puzzles: input.model.puzzles },
           gameState: input.gameState.c,
           model:
-            input.model.t === "puzzle-builder"
-              ? input.model.c
-              : PuzzleBuilderClient.init,
+            input.model.t === "builder" ? input.model.c : BuilderClient.init,
         })
       );
     }
@@ -299,7 +294,7 @@ const View: Module["View"] = (input) => {
                   t: "event",
                   c: {
                     t: "user-changed-mode",
-                    mode: "puzzle-builder",
+                    mode: "builder",
                     userId: input.ctx.currentUserId,
                   },
                 });
@@ -310,16 +305,14 @@ const View: Module["View"] = (input) => {
       );
     }
 
-    case "puzzle-builder": {
+    case "builder": {
       return (
-        <PuzzleBuilderClient.View
+        <BuilderClient.View
           ctx={ctx}
-          dispatch={(c) => dispatch({ t: "puzzle-builder", c })}
+          dispatch={(c) => dispatch({ t: "builder", c })}
           gameState={gameState.c}
           model={
-            input.model.t === "puzzle-builder"
-              ? input.model.c
-              : PuzzleBuilderClient.init
+            input.model.t === "builder" ? input.model.c : BuilderClient.init
           }
         />
       );

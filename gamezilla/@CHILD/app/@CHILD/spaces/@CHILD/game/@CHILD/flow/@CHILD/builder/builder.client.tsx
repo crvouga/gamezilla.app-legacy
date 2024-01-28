@@ -2,7 +2,7 @@ import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { Sub, notAsked } from "gamezilla/@SHARED/core";
 import { PuzzleBuilder } from "./puzzle-builder/puzzle-builder.client";
-import { ClientModule } from "./puzzle-builder.core";
+import { ClientModule } from "./builder.core";
 import { PuzzleListClient } from "./puzzle-list/puzzle-list.client";
 
 const init: ClientModule["init"] = {
@@ -60,7 +60,7 @@ const ViewFeedItem: ClientModule["ViewFeedItem"] = () => {
   return <div></div>;
 };
 
-export const PuzzleBuilderClient: ClientModule = {
+export const BuilderClient: ClientModule = {
   init,
   update,
   subscriptions,

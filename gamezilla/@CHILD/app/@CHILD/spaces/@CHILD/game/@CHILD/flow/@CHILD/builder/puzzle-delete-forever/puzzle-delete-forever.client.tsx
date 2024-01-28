@@ -11,7 +11,7 @@ import {
   ListItemButton,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { RemoteResult, isLoading } from "gamezilla/@SHARED/core";
-import { ClientModule } from "../puzzle-builder.core";
+import { ClientModule } from "../builder.core";
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(

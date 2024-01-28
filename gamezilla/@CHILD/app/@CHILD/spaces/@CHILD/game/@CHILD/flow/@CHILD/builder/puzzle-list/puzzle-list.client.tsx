@@ -22,7 +22,7 @@ import {
 import { ViewSpaceHostChip } from "../../../../../@SHARED/game";
 import { FlowGrid, FlowGridUI } from "../../../@SHARED/flow";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
-import { ClientModule } from "../puzzle-builder.core";
+import { ClientModule } from "../builder.core";
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates({ model: input.model }, (model) =>

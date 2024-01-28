@@ -2,7 +2,7 @@ import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { WithEventMeta } from "../../../../@SHARED/event";
 import * as Play from "./@CHILD/play/play.core";
-import * as PuzzleBuilder from "./@CHILD/puzzle-builder/puzzle-builder.core";
+import * as Builder from "./@CHILD/builder/builder.core";
 import { FlowPuzzle } from "./@SHARED/flow-puzzle/flow-puzzle";
 import { FlowPuzzleId } from "./@SHARED/flow-puzzle/flow-puzzle-id";
 
@@ -20,14 +20,14 @@ export type BaseClientModel = {
 
 export type VariantClientModel =
   | { t: "none" }
-  | { t: "puzzle-builder"; c: PuzzleBuilder.ClientModel }
+  | { t: "builder"; c: Builder.ClientModel }
   | { t: "play"; c: Play.ClientModel };
 
 export type ClientModel = BaseClientModel & VariantClientModel;
 
 export type ServerModel =
   | { t: "none" }
-  | { t: "puzzle-builder"; c: PuzzleBuilder.ServerModel }
+  | { t: "builder"; c: Builder.ServerModel }
   | { t: "play"; c: Play.ServerModel };
 
 //
@@ -38,31 +38,31 @@ export type ServerModel =
 
 export type ClientMsg =
   | { t: "event"; c: GameEvent }
-  | { t: "puzzle-builder"; c: PuzzleBuilder.ClientMsg }
+  | { t: "builder"; c: Builder.ClientMsg }
   | { t: "play"; c: Play.ClientMsg };
 
 export type ServerMsg =
-  | { t: "puzzle-builder"; c: PuzzleBuilder.ServerMsg }
+  | { t: "builder"; c: Builder.ServerMsg }
   | { t: "play"; c: Play.ServerMsg };
 
 export type ToServer =
-  | { t: "puzzle-builder"; c: PuzzleBuilder.ToServer }
+  | { t: "builder"; c: Builder.ToServer }
   | { t: "play"; c: Play.ToServer };
 
 export type ToClient =
-  | { t: "puzzle-builder"; c: PuzzleBuilder.ToClient }
+  | { t: "builder"; c: Builder.ToClient }
   | { t: "play"; c: Play.ToClient };
 
-export type Mode = "puzzle-builder" | "play";
+export type Mode = "builder" | "play";
 
 export type GameEvent =
   | { t: "user-changed-mode"; mode: Mode | null; userId: UserId }
   | { t: "play"; c: Play.GameEvent }
-  | { t: "puzzle-builder"; c: PuzzleBuilder.GameEvent };
+  | { t: "builder"; c: Builder.GameEvent };
 
 export type GameState =
   | { t: null }
-  | { t: "puzzle-builder"; c: PuzzleBuilder.GameState }
+  | { t: "builder"; c: Builder.GameState }
   | { t: "play"; c: Play.GameState };
 
 export const initState = () => {
@@ -93,12 +93,12 @@ export const reducer = ({
       }
     }
 
-    case "puzzle-builder": {
+    case "builder": {
       switch (state.t) {
-        case "puzzle-builder": {
+        case "builder": {
           return {
-            t: "puzzle-builder",
-            c: PuzzleBuilder.reducer({ ctx, event: event.c, state: state.c }),
+            t: "builder",
+            c: Builder.reducer({ ctx, event: event.c, state: state.c }),
           };
         }
         default: {
@@ -124,10 +124,10 @@ export const reducer = ({
           };
         }
 
-        case "puzzle-builder": {
+        case "builder": {
           return {
-            t: "puzzle-builder",
-            c: PuzzleBuilder.initState({ ctx }),
+            t: "builder",
+            c: Builder.initState({ ctx }),
           };
         }
       }

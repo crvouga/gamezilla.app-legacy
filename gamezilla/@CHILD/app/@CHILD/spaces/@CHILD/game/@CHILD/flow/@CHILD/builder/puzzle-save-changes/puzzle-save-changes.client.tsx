@@ -21,7 +21,7 @@ import {
   ClientModule,
   ClientMsg,
   GameEvent,
-} from "../puzzle-builder.core";
+} from "../builder.core";
 import { BottomBarButtonAction } from "../../../../../@SHARED/game";
 
 //

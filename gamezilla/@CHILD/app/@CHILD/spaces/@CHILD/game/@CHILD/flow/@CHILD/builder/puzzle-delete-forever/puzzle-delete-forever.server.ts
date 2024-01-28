@@ -1,8 +1,7 @@
 import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
-import { Result } from "gamezilla/@SHARED/core";
-import { ServerModule } from "../puzzle-builder.core";
-import { GameEvent } from "./puzzle-save-changes.core";
+import { ServerModule } from "../builder.core";
+import { GameEvent } from "./puzzle-delete-forever.core";
 
 const update: ServerModule["update"] = async (input) => {
   return GameServerModule.chainUpdates({ model: input.model }, (model) =>
@@ -11,17 +10,25 @@ const update: ServerModule["update"] = async (input) => {
 };
 
 const updateFromClient: ServerModule["update"] = async (input) => {
-  const { fromClient, model, deps } = input;
+  const { gameState, fromClient, model, deps } = input;
 
-  switch (fromClient?.t) {
-    case "save-changes/user-clicked-save-and-exit":
-    case "save-changes/user-clicked-save-button": {
-      const saved = await deps.FlowPuzzleDb.put(fromClient.puzzle);
+  if (gameState.t !== "build") {
+    return { model };
+  }
+
+  if (!fromClient) {
+    return { model };
+  }
+
+  switch (fromClient.t) {
+    case "delete-forever/user-confirmed": {
+      const deleted = await deps.FlowPuzzleDb.zap(gameState.puzzle.id);
 
       const gameEvent: GameEvent = {
-        t: "user-saved-changes",
-        saved: Result.mapOk(saved, () => fromClient.puzzle),
-        userId: fromClient.puzzle.createdBy,
+        t: "user-deleted-puzzle",
+        flowPuzzleId: gameState.puzzle.id,
+        userId: fromClient.userId,
+        deleted,
       };
 
       return {
@@ -36,6 +43,6 @@ const updateFromClient: ServerModule["update"] = async (input) => {
   }
 };
 
-export const PuzzleSaveChangesServer = {
+export const PuzzleDeleteForeverServer: Pick<ServerModule, "update"> = {
   update,
 };

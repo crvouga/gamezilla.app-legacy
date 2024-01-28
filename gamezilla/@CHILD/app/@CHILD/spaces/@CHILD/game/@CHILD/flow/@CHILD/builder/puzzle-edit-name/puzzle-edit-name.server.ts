@@ -4,7 +4,7 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { err, isErr } from "gamezilla/@SHARED/core";
 import { IFlowPuzzleDb } from "../../../@SHARED/flow-puzzle-db";
 import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id";
-import { ServerModule } from "../puzzle-builder.core";
+import { ServerModule } from "../builder.core";
 import { GameEvent } from "./puzzle-edit-name.core";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 

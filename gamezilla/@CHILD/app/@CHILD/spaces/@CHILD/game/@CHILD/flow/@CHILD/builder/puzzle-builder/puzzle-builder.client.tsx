@@ -19,7 +19,7 @@ import {
   FlowGridUIPlay,
 } from "../../../@SHARED/flow";
 import { ViewProfileCard } from "../../../@SHARED/ui";
-import { ClientModule, toCurrentGrid } from "../puzzle-builder.core";
+import { ClientModule, toCurrentGrid } from "../builder.core";
 import { PuzzleDeleteForeverClient } from "../puzzle-delete-forever/puzzle-delete-forever.client";
 import { PuzzleEditNameClient } from "../puzzle-edit-name/puzzle-edit-name.client";
 import { PuzzleSaveChangesClient } from "../puzzle-save-changes/puzzle-save-changes.client";

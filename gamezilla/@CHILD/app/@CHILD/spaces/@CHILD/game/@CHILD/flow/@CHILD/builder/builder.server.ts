@@ -2,7 +2,7 @@ import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import { sendToSpace } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { Sub } from "gamezilla/@SHARED/core";
 import { FlowPuzzleDb } from "../../@SHARED/flow-puzzle-db";
-import { ServerModule } from "./puzzle-builder.core";
+import { ServerModule } from "./builder.core";
 import { PuzzleDeleteForeverServer } from "./puzzle-delete-forever/puzzle-delete-forever.server";
 import { PuzzleEditNameServer } from "./puzzle-edit-name/puzzle-edit-name.server";
 import { PuzzleListServer } from "./puzzle-list/puzzle-list.server";
@@ -55,7 +55,7 @@ const subscriptions: ServerModule["subscriptions"] = async () => {
   return Sub.None;
 };
 
-export const PuzzleBuilderServer: ServerModule = {
+export const BuilderServer: ServerModule = {
   deps,
   init,
   update,
