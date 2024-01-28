@@ -166,6 +166,29 @@ export const showToast = <T extends ClientCmdTypes>(
   };
 };
 
+export const showOkToast = <T extends ClientCmdTypes>(
+  text: string,
+  duration?: TimeSpan
+): ClientCmd<T>[] => {
+  return [
+    {
+      t: "toast",
+      c: {
+        t: "enqueue",
+        text,
+        duration: duration ?? TimeSpan.fromSeconds(5),
+      },
+    },
+    {
+      t: "sound",
+      c: {
+        t: "play",
+        src: APP_SOUND.refreshFeed,
+      },
+    },
+  ];
+};
+
 export const showErrorToast = <T extends ClientCmdTypes>(
   text: string,
   errorMsg?: string,

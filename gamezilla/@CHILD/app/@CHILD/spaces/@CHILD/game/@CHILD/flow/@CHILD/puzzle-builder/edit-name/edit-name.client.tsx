@@ -14,6 +14,7 @@ import {
   playSound,
   sendToServer,
   showErrorToast,
+  showOkToast,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { editNameValidationErrorToString } from "./edit-name.core";
@@ -107,7 +108,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
           editNameRequest: gameEvent.edited,
         },
         cmd: isOk(gameEvent.edited)
-          ? [showToast("Saved name"), playSound(APP_SOUND.refreshFeed)]
+          ? showOkToast("Saved name")
           : showErrorToast(gameEvent.edited.error),
       };
     }
