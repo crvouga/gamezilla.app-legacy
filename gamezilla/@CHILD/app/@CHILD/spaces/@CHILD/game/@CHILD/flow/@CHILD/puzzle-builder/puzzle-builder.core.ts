@@ -94,13 +94,15 @@ export type ServerModel = {
 
 export type ClientMsg =
   | { t: "game-event"; c: GameEvent }
-  | { t: "time-passed" }
-  | { t: "user-clicked-more-button" }
-  | { t: "user-closed-more-drawer" }
-  | { t: "user-clicked-edit-name-button" }
-  | { t: "user-closed-edit-name-drawer" }
-  | { t: "user-observed-end-of-list" }
+  //
+  | { t: "list/user-observed-end-of-list" }
+  //
+  | { t: "builder/user-clicked-more-button" }
+  | { t: "builder/user-closed-more-drawer" }
+  | { t: "builder/user-clicked-exit-button" }
+  //
   | EditName.ClientMsg
+  //
   | DeleteForever.ClientMsg;
 
 export type ServerMsg =
@@ -120,7 +122,7 @@ export type ToClient =
   | {
       t: "put-puzzle";
       put: Result<string, null>;
-      source: "user-saved-puzzle" | "user-created-puzzle";
+      reason: "user-saved-puzzle" | "user-created-puzzle";
     };
 
 //

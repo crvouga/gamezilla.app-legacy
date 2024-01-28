@@ -39,9 +39,29 @@ const update: ClientModule["update"] = (input) => {
     (model) => updateSound({ ...input, model }),
     (model) => updateSaveChanges({ ...input, model }),
     (model) => updateMoreDrawer({ ...input, model }),
+    (model) => updateExitBuilder({ ...input, model }),
     (model) => EditNameClient.update({ ...input, model }),
     (model) => DeleteForeverClient.update({ ...input, model })
   );
+};
+
+const updateExitBuilder: ClientModule["update"] = (input) => {
+  const { msg, model, gameState } = input;
+
+  if (gameState.t !== "build") {
+    return { model };
+  }
+
+  switch (msg?.t) {
+    case "builder/user-clicked-exit-button": {
+      return { model };
+    }
+    default: {
+      break;
+    }
+  }
+
+  return { model };
 };
 
 const updateSaveChanges: ClientModule["update"] = (input) => {
@@ -56,7 +76,7 @@ const updateSaveChanges: ClientModule["update"] = (input) => {
 
   if (
     fromServer?.t === "put-puzzle" &&
-    fromServer.source === "user-saved-puzzle" &&
+    fromServer.reason === "user-saved-puzzle" &&
     ctx.currentUserId === ctx.space.hostId
   ) {
     return {
@@ -164,14 +184,7 @@ const ViewMode: ClientModule["View"] = (input) => {
   const exit = {
     label: "Exit",
     icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-    onClick: () =>
-      dispatch({
-        t: "game-event",
-        c: {
-          t: "user-exited-builder",
-          userId: ctx.currentUserId,
-        },
-      }),
+    onClick: () => dispatch({ t: "builder/user-clicked-exit-button" }),
   };
 
   const save = {
@@ -198,7 +211,7 @@ const ViewMode: ClientModule["View"] = (input) => {
   const more = {
     label: "More",
     icon: <IconEllipsisVertical className="h-6 w-6" />,
-    onClick: () => dispatch({ t: "user-clicked-more-button" }),
+    onClick: () => dispatch({ t: "builder/user-clicked-more-button" }),
   };
 
   switch (gameState.mode.t) {
@@ -341,10 +354,10 @@ export const capitalize = (s: string) => {
 const updateMoreDrawer: ClientModule["update"] = (input) => {
   const { msg, model } = input;
   switch (msg?.t) {
-    case "user-closed-more-drawer": {
+    case "builder/user-closed-more-drawer": {
       return { model: { ...model, opened: null } };
     }
-    case "user-clicked-more-button": {
+    case "builder/user-clicked-more-button": {
       return { model: { ...model, opened: "more" } };
     }
     default: {
@@ -359,7 +372,7 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
     <Drawer
       id="more-drawer"
       open={input.model.opened === "more"}
-      onClose={() => dispatch({ t: "user-closed-more-drawer" })}
+      onClose={() => dispatch({ t: "builder/user-closed-more-drawer" })}
       position="bottom"
     >
       <EditNameClient.View {...input} />

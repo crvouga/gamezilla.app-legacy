@@ -41,7 +41,7 @@ const updateFromGameEvent: ServerModule["update"] = async (input) => {
       return {
         model: input.model,
         cmd: [
-          sendToSpace({ t: "put-puzzle", put, source: "user-created-puzzle" }),
+          sendToSpace({ t: "put-puzzle", put, reason: "user-created-puzzle" }),
         ],
       };
     }
@@ -55,7 +55,7 @@ const updateFromGameEvent: ServerModule["update"] = async (input) => {
       return {
         model: input.model,
         cmd: [
-          sendToSpace({ t: "put-puzzle", put, source: "user-saved-puzzle" }),
+          sendToSpace({ t: "put-puzzle", put, reason: "user-saved-puzzle" }),
         ],
       };
     }

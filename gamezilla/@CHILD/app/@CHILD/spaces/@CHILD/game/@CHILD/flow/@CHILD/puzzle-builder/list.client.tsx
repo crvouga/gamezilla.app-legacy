@@ -33,7 +33,7 @@ const update: ClientModule["update"] = (input) => {
 const updatePuzzleList: ClientModule["update"] = (input) => {
   const { gameEvent, model, msg, fromServer, ctx } = input;
 
-  if (msg?.t === "user-observed-end-of-list") {
+  if (msg?.t === "list/user-observed-end-of-list") {
     return {
       model: { ...model, listed: loading },
       cmd: [
@@ -186,7 +186,7 @@ const View: ClientModule["View"] = (input) => {
 
         <IntersectionObserverEmitter
           id="puzzle-builder-list"
-          onVisible={() => dispatch({ t: "user-observed-end-of-list" })}
+          onVisible={() => dispatch({ t: "list/user-observed-end-of-list" })}
         />
       </div>
 
