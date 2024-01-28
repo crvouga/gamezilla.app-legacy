@@ -50,7 +50,7 @@ export const Button = ({
         combo === "contained-danger" &&
           "rounded-md bg-red-600 text-white ring-red-500",
         combo === "contained-default" &&
-          "rounded-md border border-neutral-600 bg-neutral-900 text-neutral-300 ring-blue-500",
+          "rounded-md border border-neutral-600 bg-neutral-900 text-blue-500 ring-blue-500",
         combo === "outlined-default" &&
           "rounded-md border border-neutral-800 text-inherit text-neutral-400",
 

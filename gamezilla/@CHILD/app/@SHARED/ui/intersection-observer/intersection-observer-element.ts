@@ -24,33 +24,35 @@ if (typeof window !== "undefined" && "customElements" in window) {
     private unsubscribe: () => void = () => {};
     private props: IntersectionObserverEmitterProps | null = null;
     private intersectionObserver: IntersectionObserver;
+    private queue: IntersectionObserverEntry[] = [];
 
     constructor() {
       super();
 
       this.attachShadow({ mode: "open" });
       // Initialize the Intersection Observer with your desired options
-      this.intersectionObserver = new IntersectionObserver(
-        this.onIntersection,
-        {}
-      );
+      this.intersectionObserver = new IntersectionObserver(this.onIntersection);
     }
 
     connectedCallback() {
       this.unsubscribe = sub.subscribe((event) => {
+        console.log(
+          "IntersectionObserverEmitter",
+          event.props.id,
+          this.getAttribute("id")
+        );
         if (event.props.id !== this.getAttribute("id")) {
           return;
         }
         this.props = event.props;
+
+        if (this.queue.length > 0) {
+          this.onIntersection(this.queue);
+          this.queue = [];
+        }
       });
 
-      if (!this.shadowRoot) {
-        return;
-      }
-
-      const childElement = document.createElement("div");
-      this.shadowRoot.appendChild(childElement);
-      this.intersectionObserver.observe(childElement);
+      this.intersectionObserver.observe(this);
     }
 
     disconnectedCallback() {
@@ -58,8 +60,12 @@ if (typeof window !== "undefined" && "customElements" in window) {
       this.unsubscribe();
     }
 
-    private onIntersection = (_entries: IntersectionObserverEntry[]) => {
-      this.props?.onVisible?.();
+    private onIntersection = (entries: IntersectionObserverEntry[]) => {
+      if (typeof this.props?.onVisible !== "function") {
+        this.queue.push(...entries);
+        return;
+      }
+      this.props.onVisible();
     };
   }
 
