@@ -129,9 +129,9 @@ export type Loading = { t: "loading" };
 export const loading: Loading = { t: "loading" };
 
 export const isLoading = <TError, TValue>(
-  result: RemoteResult<TError, TValue>
+  result?: RemoteResult<TError, TValue>
 ): result is Loading => {
-  return result.t === "loading";
+  return result?.t === "loading";
 };
 
 export const isNotAsked = <TError, TValue>(

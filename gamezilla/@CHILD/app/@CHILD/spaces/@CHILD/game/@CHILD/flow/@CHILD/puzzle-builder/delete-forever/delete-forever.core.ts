@@ -4,7 +4,7 @@ import { IFlowPuzzleDb } from "../../../@SHARED/flow-puzzle-db";
 import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id";
 
 export type ClientModel = {
-  deleted: RemoteResult<string, null>;
+  deleteForeverRequest?: RemoteResult<string, null>;
 };
 
 export type ServerModel = {};

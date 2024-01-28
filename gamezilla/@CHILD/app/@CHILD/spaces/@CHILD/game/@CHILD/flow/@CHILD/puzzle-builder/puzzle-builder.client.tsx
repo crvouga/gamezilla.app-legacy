@@ -7,9 +7,11 @@ import { ClientModule } from "./puzzle-builder.core";
 
 const init: ClientModule["init"] = {
   listed: notAsked,
-  deleted: notAsked,
   puzzles: {},
   total: null,
+  editNameDraft: "",
+  editNameRequest: notAsked,
+  deleteForeverRequest: notAsked,
 };
 
 const update: ClientModule["update"] = (input) => {

@@ -16,6 +16,7 @@ import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id";
 import { DeleteForever } from "./delete-forever";
 import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2";
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
+import { EditName } from "./edit-name";
 
 //
 //
@@ -65,7 +66,7 @@ export type ServerModule = GameServerModule<{
 //
 //
 
-export type ClientModel = DeleteForever.ClientModel & {
+type BaseClientModel = {
   total: number | null;
   listed: RemoteResult<string, null>;
   puzzles: {
@@ -74,6 +75,10 @@ export type ClientModel = DeleteForever.ClientModel & {
   opened?: "more" | "edit-name" | "delete-forever" | null;
   isSavingChanges?: boolean;
 };
+
+export type ClientModel = BaseClientModel &
+  EditName.ClientModel &
+  DeleteForever.ClientModel;
 
 export type ServerModel = {
   hasListedPuzzles: boolean;
@@ -95,6 +100,7 @@ export type ClientMsg =
   | { t: "user-clicked-edit-name-button" }
   | { t: "user-closed-edit-name-drawer" }
   | { t: "user-observed-end-of-list" }
+  | EditName.ClientMsg
   | DeleteForever.ClientMsg;
 
 export type ServerMsg = { t: "time-passed" } | DeleteForever.ServerMsg;

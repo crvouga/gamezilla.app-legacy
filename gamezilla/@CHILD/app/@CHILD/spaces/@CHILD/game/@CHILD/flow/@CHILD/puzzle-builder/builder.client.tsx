@@ -9,15 +9,12 @@ import {
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
-  Button,
   Drawer,
   IconArrowLeftOnRect,
   IconEllipsisVertical,
   IconFloppyDisk,
   IconPenToSquare,
   IconPlay,
-  ListItemButton,
-  TextField,
   VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -25,6 +22,7 @@ import { Sub } from "gamezilla/@SHARED/core";
 import { FlowGridUI, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { ViewProfileCard } from "../../@SHARED/ui";
 import { DeleteForeverClient } from "./delete-forever/delete-forever.client";
+import { EditNameClient } from "./edit-name/edit-name.client";
 import { ClientModule, toCurrentGrid } from "./puzzle-builder.core";
 
 //
@@ -41,7 +39,7 @@ const update: ClientModule["update"] = (input) => {
     (model) => updateSound({ ...input, model }),
     (model) => updateSaveChanges({ ...input, model }),
     (model) => updateMoreDrawer({ ...input, model }),
-    (model) => updateEditName({ ...input, model }),
+    (model) => EditNameClient.update({ ...input, model }),
     (model) => DeleteForeverClient.update({ ...input, model })
   );
 };
@@ -364,50 +362,9 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
       onClose={() => dispatch({ t: "user-closed-more-drawer" })}
       position="bottom"
     >
-      <ListItemButton
-        icon={(props) => <IconPenToSquare {...props} />}
-        label="Edit Name"
-        onClick={() => dispatch({ t: "user-clicked-edit-name-button" })}
-      />
+      <EditNameClient.View {...input} />
       <DeleteForeverClient.View {...input} />
-
       <div className="w-full pb-2"></div>
-    </Drawer>
-  );
-};
-
-//
-//
-//
-//
-//
-//
-//
-
-const updateEditName: ClientModule["update"] = (input) => {
-  const { msg, model } = input;
-  switch (msg?.t) {
-    default: {
-      return { model };
-    }
-  }
-};
-
-export const ViewEditName: ClientModule["View"] = (input) => {
-  const { dispatch } = input;
-  return (
-    <Drawer
-      id="edit-name-drawer"
-      open={input.model.opened === "edit-name"}
-      onClose={() => dispatch({ t: "user-closed-edit-name-drawer" })}
-      position="bottom"
-    >
-      <p>Edit name</p>
-      <TextField id="edit-name-input" label="Name" onChange={() => {}} />
-      <div className="flex w-full items-center gap-3">
-        <Button text="Cancel" />
-        <Button variant="contained" text="Save" />
-      </div>
     </Drawer>
   );
 };

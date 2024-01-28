@@ -42,7 +42,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 
     case "delete-forever/user-confirmed": {
       return {
-        model: { ...model, deleted: RemoteResult.loading },
+        model: { ...model, deleteForeverRequest: RemoteResult.loading },
         cmd: [
           sendToServer({ t: "delete-forever/user-confirmed" }),
           playSound(APP_SOUND.tap),
@@ -67,7 +67,7 @@ const updateFromGameEvent: ClientModule["update"] = (input) => {
         model: {
           ...model,
           puzzles: puzzlesNew,
-          deleted: gameEvent.deleted,
+          deleteForeverRequest: gameEvent.deleted,
           opened: null,
         },
         cmd: [showToast("Deleted puzzle"), playSound(APP_SOUND.refreshFeed)],
@@ -94,7 +94,8 @@ const View: ClientModule["View"] = (input) => {
       <ConfirmationDrawer
         id="delete-forever-drawer"
         open={
-          input.model.opened === "delete-forever" || isLoading(model.deleted)
+          input.model.opened === "delete-forever" ||
+          isLoading(model.deleteForeverRequest)
         }
         onClose={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
         variant="danger"
@@ -102,11 +103,11 @@ const View: ClientModule["View"] = (input) => {
         title="Delete puzzle forever?"
         body="This action cannot be undone."
         //
-        confirmLoading={isLoading(model.deleted)}
+        confirmLoading={isLoading(model.deleteForeverRequest)}
         confirmText="Delete Forever"
         onConfirm={() => dispatch({ t: "delete-forever/user-confirmed" })}
         //
-        cancelDisabled={isLoading(model.deleted)}
+        cancelDisabled={isLoading(model.deleteForeverRequest)}
         onCancel={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
       />
     </>
