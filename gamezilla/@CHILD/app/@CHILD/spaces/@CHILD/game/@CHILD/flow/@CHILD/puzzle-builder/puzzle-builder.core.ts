@@ -96,8 +96,6 @@ export type ServerModel = {};
 export type ClientMsg =
   | { t: "game-event"; c: GameEvent }
   //
-  | { t: "list/user-observed-end-of-list" }
-  //
   | { t: "builder/user-clicked-more-button" }
   | { t: "builder/user-closed-more-drawer" }
   | { t: "builder/user-clicked-exit-button" }
@@ -117,8 +115,7 @@ export type ToServer =
   | PuzzleSaveChanges.ToServer
   | PuzzleDeleteForever.ToServer
   | PuzzleEditName.ToServer
-  | PuzzleList.ToServer
-  | { t: "list-puzzles"; input: ListPuzzlesInput };
+  | PuzzleList.ToServer;
 
 export type ToClient =
   | PuzzleSaveChanges.ToClient

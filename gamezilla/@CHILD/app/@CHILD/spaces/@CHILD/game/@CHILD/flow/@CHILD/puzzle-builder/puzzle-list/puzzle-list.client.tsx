@@ -38,7 +38,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
       model: { ...model, listRequest: loading },
       cmd: [
         sendToServer({
-          t: "list-puzzles",
+          t: "list/list-puzzles",
           input: {
             order: {
               lastUpdatedAt: "desc",
