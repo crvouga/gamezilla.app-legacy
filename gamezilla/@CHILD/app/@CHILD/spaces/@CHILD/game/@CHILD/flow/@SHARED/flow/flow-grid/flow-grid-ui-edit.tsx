@@ -491,7 +491,7 @@ export const View = ({
           onClose={() => dispatch({ t: "dimensions-form/closed" })}
         />
 
-        <div className="flex items-center justify-center gap-1 text-center text-4xl font-bold">
+        <div className="flex items-center justify-center gap-1 text-center text-5xl font-bold">
           <p>{`${model.widthInput}w`}</p>
 
           <IconXMark className="h-6 w-6" />

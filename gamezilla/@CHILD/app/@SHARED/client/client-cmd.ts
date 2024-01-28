@@ -9,7 +9,7 @@ import { AppRoute } from "./client-route";
 //
 //
 
-type ClientCmdTypes = {
+export type ClientCmdTypes = {
   ClientMsg: any;
   ToServer: any;
 };

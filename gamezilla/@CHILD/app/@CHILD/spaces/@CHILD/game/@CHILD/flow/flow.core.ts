@@ -1,8 +1,10 @@
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
-import * as Play from "./@CHILD/play/play.core";
-import * as PuzzleBuilder from "./@CHILD/puzzle-builder/puzzle-builder.core";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { WithEventMeta } from "../../../../@SHARED/event";
+import * as Play from "./@CHILD/play/play.core";
+import * as PuzzleBuilder from "./@CHILD/puzzle-builder/puzzle-builder.core";
+import { FlowPuzzle } from "./@SHARED/flow-puzzle/flow-puzzle";
+import { FlowPuzzleId } from "./@SHARED/flow-puzzle/flow-puzzle-id";
 
 //
 //
@@ -10,10 +12,18 @@ import { WithEventMeta } from "../../../../@SHARED/event";
 //
 //
 
-export type ClientModel =
+export type BaseClientModel = {
+  puzzles: {
+    [flowPuzzleId: FlowPuzzleId]: FlowPuzzle;
+  };
+};
+
+export type VariantClientModel =
   | { t: "none" }
   | { t: "puzzle-builder"; c: PuzzleBuilder.ClientModel }
   | { t: "play"; c: Play.ClientModel };
+
+export type ClientModel = BaseClientModel & VariantClientModel;
 
 export type ServerModel =
   | { t: "none" }

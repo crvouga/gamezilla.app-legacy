@@ -1,7 +1,10 @@
 import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
-import { SpaceClientEvent } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
+import {
+  SpaceClientCtx,
+  SpaceClientEvent,
+} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import {
   APP_SOUND,
   ClientCmd,
@@ -43,7 +46,7 @@ type Module = GameClientModule<{
   GameEvent: GameEvent;
   GameState: GameState;
   //
-  Ctx: FlowClientCtx;
+  Ctx: SpaceClientCtx;
   //
   OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
   InEvent: SpaceClientEvent;
@@ -60,6 +63,7 @@ type Module = GameClientModule<{
 
 const init: Module["init"] = {
   t: "none",
+  puzzles: {},
 };
 
 const update: Module["update"] = (input) => {
@@ -82,7 +86,7 @@ const updateChild: Module["update"] = (input) => {
 
     case "play": {
       const updated = PlayClient.update({
-        ctx,
+        ctx: { ...ctx, onQuit: () => {}, puzzles: model.puzzles },
         gameState: gameState.c,
         model: model.t === "play" ? model.c : PlayClient.init,
         cmd: cmd,
@@ -99,12 +103,12 @@ const updateChild: Module["update"] = (input) => {
         updated
       );
 
-      return tagged;
+      return { ...tagged, model: { ...tagged.model, puzzles: model.puzzles } };
     }
 
     case "puzzle-builder": {
       const updated = PuzzleBuilderClient.update({
-        ctx,
+        ctx: { ...ctx, onQuit: () => {}, puzzles: model.puzzles },
         gameState: gameState.c,
         model:
           model.t === "puzzle-builder" ? model.c : PuzzleBuilderClient.init,
@@ -124,7 +128,7 @@ const updateChild: Module["update"] = (input) => {
         updated
       );
 
-      return tagged;
+      return { ...tagged, model: { ...tagged.model, puzzles: model.puzzles } };
     }
   }
 };
@@ -146,21 +150,25 @@ const updateFromGameEvent: Module["update"] = (input) => {
       switch (gameEvent.mode) {
         case "play": {
           return {
-            model: { t: "play", c: PlayClient.init },
+            model: { ...model, t: "play", c: PlayClient.init },
             cmd: [playSound(APP_SOUND.navForwardMin)],
           };
         }
 
         case "puzzle-builder": {
           return {
-            model: { t: "puzzle-builder", c: PuzzleBuilderClient.init },
+            model: {
+              ...model,
+              t: "puzzle-builder",
+              c: PuzzleBuilderClient.init,
+            },
             cmd: [playSound(APP_SOUND.navForwardMin)],
           };
         }
 
         case null: {
           return {
-            model: { t: "none" },
+            model: { ...model, t: "none" },
             cmd: [playSound(APP_SOUND.navBackwardMin)],
           };
         }
@@ -210,7 +218,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
       return Sub.tag(
         "play",
         PlayClient.subscriptions({
-          ctx: input.ctx,
+          ctx: { ...input.ctx, onQuit() {}, puzzles: input.model.puzzles },
           gameState: input.gameState.c,
           model: input.model.t === "play" ? input.model.c : PlayClient.init,
         })
@@ -220,7 +228,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
       return Sub.tag(
         "puzzle-builder",
         PuzzleBuilderClient.subscriptions({
-          ctx: input.ctx,
+          ctx: { ...input.ctx, onQuit() {}, puzzles: input.model.puzzles },
           gameState: input.gameState.c,
           model:
             input.model.t === "puzzle-builder"
@@ -247,6 +255,7 @@ const View: Module["View"] = (input) => {
 
   const ctx: FlowClientCtx = {
     ...input.ctx,
+    puzzles: input.model.puzzles,
     onQuit: () =>
       dispatch({
         t: "event",
@@ -341,7 +350,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
         case "play": {
           return (
             <PlayClient.ViewFeedItem
-              ctx={ctx}
+              ctx={{ ...ctx, onQuit() {}, puzzles: {} }}
               dispatch={(c) => dispatch({ t: "play", c })}
               gameState={gameState.c}
               gameEvent={gameEvent.c}
