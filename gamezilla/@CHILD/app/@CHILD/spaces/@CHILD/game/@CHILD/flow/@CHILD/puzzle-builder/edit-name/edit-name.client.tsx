@@ -113,6 +113,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
           ...model,
           puzzles: puzzlesNew,
           editNameRequest: gameEvent.edited,
+          opened: null,
         },
         cmd: isOk(gameEvent.edited)
           ? showOkToast("Saved name")
