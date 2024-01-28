@@ -10,7 +10,7 @@ import {
   IconXMark,
   Slider,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { eq, memoize } from "gamezilla/@SHARED/core";
+import { memoize } from "gamezilla/@SHARED/core";
 import { History } from "gamezilla/@SHARED/history";
 import * as Flow from "../flow";
 import * as FlowUI from "../flow-ui";
@@ -89,7 +89,15 @@ export const isUnsavedChanges = ({
 
   const draft: Form = History.present(model.form);
 
-  return !eq(actual, draft);
+  const isEqual =
+    actual.width === draft.width &&
+    actual.height === draft.height &&
+    Flow.isSameTerminalsByGroupId(
+      actual.terminalsByGroupId,
+      draft.terminalsByGroupId
+    );
+
+  return !isEqual;
 };
 
 //
