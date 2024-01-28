@@ -6,6 +6,7 @@ import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import {
   APP_SOUND,
   playSound,
+  showErrorToast,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
@@ -55,10 +56,23 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
 
   switch (msg?.t) {
     case "builder/user-clicked-exit-button": {
+      if (
+        FlowGridUIEdit.isUnsavedChanges({
+          grid: gameState.puzzle.puzzle.c,
+          model: gameState.gridEdit,
+        })
+      ) {
+        return {
+          model,
+          cmd: showErrorToast("Unsaved changes"),
+        };
+      }
+
       const gameEvent: GameEvent = {
         t: "user-exited-builder",
         userId: input.ctx.currentUserId,
       };
+
       return { model, gameEvent: [withId(gameEvent)] };
     }
     default: {

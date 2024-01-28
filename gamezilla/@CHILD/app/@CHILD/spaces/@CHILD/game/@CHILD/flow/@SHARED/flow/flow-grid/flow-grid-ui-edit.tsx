@@ -74,10 +74,13 @@ export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
   };
 };
 
-export const isUnsavedChanges = (
-  grid: FlowGrid.Model,
-  model: Model
-): boolean => {
+export const isUnsavedChanges = ({
+  grid,
+  model,
+}: {
+  grid: FlowGrid.Model;
+  model: Model;
+}): boolean => {
   const actual: Form = {
     terminalsByGroupId: grid.flow.terminalsByGroupId,
     height: grid.height,
@@ -391,7 +394,7 @@ const deriveCurrentGrid = ({
   grid: FlowGrid.Model;
   model: Model;
 }): FlowGrid.Model => {
-  if (isUnsavedChanges(grid, model)) {
+  if (isUnsavedChanges({ grid, model })) {
     const form = History.present(model.form);
     return FlowGrid.init({
       height: form.height,
