@@ -3,14 +3,17 @@ import { Button } from "./button";
 import { Drawer, DrawerProps } from "./drawer";
 
 type Props = DrawerProps & {
-  confirmText: string;
-  onConfirm: () => void;
-  cancelText?: string;
-  onCancel: () => void;
   title: string;
   body: string;
   variant?: "danger";
-  confirming?: boolean;
+  //
+  cancelText?: string;
+  cancelDisabled?: boolean;
+  onCancel: () => void;
+  //
+  confirmText: string;
+  onConfirm: () => void;
+  confirmLoading?: boolean;
 };
 
 export const ConfirmationDrawer = (props: Props) => {
@@ -32,6 +35,7 @@ export const ConfirmationDrawer = (props: Props) => {
           className="flex-1"
           onClick={props.onClose}
           text={props.cancelText ?? "Cancel"}
+          disabled={props.cancelDisabled}
         />
         <Button
           className="flex-1"
@@ -39,7 +43,7 @@ export const ConfirmationDrawer = (props: Props) => {
           onClick={props.onConfirm}
           variant="contained"
           text={props.confirmText}
-          loading={props.confirming}
+          loading={props.confirmLoading}
         />
       </div>
     </Drawer>

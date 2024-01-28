@@ -101,10 +101,13 @@ const View: ClientModule["View"] = (input) => {
         position="bottom"
         title="Delete puzzle forever?"
         body="This action cannot be undone."
-        onCancel={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
+        //
+        confirmLoading={isLoading(model.deleted)}
         confirmText="Delete Forever"
         onConfirm={() => dispatch({ t: "delete-forever/user-confirmed" })}
-        confirming={isLoading(model.deleted)}
+        //
+        cancelDisabled={isLoading(model.deleted)}
+        onCancel={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
       />
     </>
   );
