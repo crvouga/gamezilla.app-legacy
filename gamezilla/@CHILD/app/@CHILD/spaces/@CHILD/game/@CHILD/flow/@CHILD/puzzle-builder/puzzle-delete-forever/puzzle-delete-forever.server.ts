@@ -1,7 +1,7 @@
 import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { ServerModule } from "../puzzle-builder.core";
-import { GameEvent } from "./delete-forever.core";
+import { GameEvent } from "./puzzle-delete-forever.core";
 
 const update: ServerModule["update"] = async (input) => {
   return GameServerModule.chainUpdates({ model: input.model }, (model) =>
@@ -43,6 +43,6 @@ const updateFromClient: ServerModule["update"] = async (input) => {
   }
 };
 
-export const DeleteForeverServer: Pick<ServerModule, "update"> = {
+export const PuzzleDeleteForeverServer: Pick<ServerModule, "update"> = {
   update,
 };

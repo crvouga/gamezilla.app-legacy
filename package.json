@@ -20,7 +20,8 @@
     "tc": "bun x tsc --noEmit --watch",
     "viz-bundle": "bun x vite-bundle-visualizer",
     "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla/gamezilla.client.tsx",
-    "check-imports": "bun scripts/check-imports.ts"
+    "check-imports": "bun scripts/check-imports.ts",
+    "cloc": "bun x cloc gamezilla"
   },
   "dependencies": {
     "chess.js": "^1.0.0-beta.6",

@@ -5,7 +5,7 @@ import { err, isErr } from "gamezilla/@SHARED/core";
 import { IFlowPuzzleDb } from "../../../@SHARED/flow-puzzle-db";
 import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id";
 import { ServerModule } from "../puzzle-builder.core";
-import { GameEvent } from "./edit-name.core";
+import { GameEvent } from "./puzzle-edit-name.core";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 
 const update: ServerModule["update"] = async (input) => {
@@ -82,6 +82,6 @@ const patchName = async (input: {
   return put;
 };
 
-export const EditNameServer: Pick<ServerModule, "update"> = {
+export const PuzzleEditNameServer: Pick<ServerModule, "update"> = {
   update,
 };

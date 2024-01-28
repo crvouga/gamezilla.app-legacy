@@ -15,9 +15,10 @@ import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
 import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id";
-import { DeleteForever } from "./delete-forever";
-import { EditName } from "./edit-name";
-import { SaveChanges } from "./save-changes";
+import { PuzzleDeleteForever } from "./puzzle-delete-forever";
+import { PuzzleEditName } from "./puzzle-edit-name";
+import { PuzzleSaveChanges } from "./puzzle-save-changes";
+import { PuzzleList } from "./puzzle-list";
 
 //
 //
@@ -77,9 +78,10 @@ type BaseClientModel = {
 };
 
 export type ClientModel = BaseClientModel &
-  SaveChanges.ClientModel &
-  EditName.ClientModel &
-  DeleteForever.ClientModel;
+  PuzzleList.ClientModel &
+  PuzzleSaveChanges.ClientModel &
+  PuzzleEditName.ClientModel &
+  PuzzleDeleteForever.ClientModel;
 
 export type ServerModel = {};
 
@@ -100,26 +102,29 @@ export type ClientMsg =
   | { t: "builder/user-closed-more-drawer" }
   | { t: "builder/user-clicked-exit-button" }
   //
-  | EditName.ClientMsg
-  | DeleteForever.ClientMsg
-  | SaveChanges.ClientMsg;
+  | PuzzleEditName.ClientMsg
+  | PuzzleDeleteForever.ClientMsg
+  | PuzzleList.ClientMsg
+  | PuzzleSaveChanges.ClientMsg;
 
 export type ServerMsg =
-  | SaveChanges.ServerMsg
-  | DeleteForever.ServerMsg
-  | EditName.ServerMsg;
+  | PuzzleSaveChanges.ServerMsg
+  | PuzzleDeleteForever.ServerMsg
+  | PuzzleList.ServerMsg
+  | PuzzleEditName.ServerMsg;
 
 export type ToServer =
-  | SaveChanges.ToServer
-  | DeleteForever.ToServer
-  | EditName.ToServer
+  | PuzzleSaveChanges.ToServer
+  | PuzzleDeleteForever.ToServer
+  | PuzzleEditName.ToServer
+  | PuzzleList.ToServer
   | { t: "list-puzzles"; input: ListPuzzlesInput };
 
 export type ToClient =
-  | SaveChanges.ToClient
-  | EditName.ToClient
-  | DeleteForever.ToClient
-  | { t: "listed-puzzle"; listed: ListPuzzlesOutput }
+  | PuzzleSaveChanges.ToClient
+  | PuzzleEditName.ToClient
+  | PuzzleDeleteForever.ToClient
+  | PuzzleList.ToClient
   | {
       t: "put-puzzle";
       put: Result<string, null>;
@@ -143,9 +148,9 @@ export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>;
 //
 
 export type GameEvent =
-  | EditName.GameEvent
-  | DeleteForever.GameEvent
-  | SaveChanges.GameEvent
+  | PuzzleEditName.GameEvent
+  | PuzzleDeleteForever.GameEvent
+  | PuzzleSaveChanges.GameEvent
   | {
       t: "grid-ui-play";
       c: FlowGridUIPlay.Msg;

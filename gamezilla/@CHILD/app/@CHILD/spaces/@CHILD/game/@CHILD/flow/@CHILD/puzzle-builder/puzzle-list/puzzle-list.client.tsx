@@ -19,10 +19,10 @@ import {
   isPending,
   loading,
 } from "gamezilla/@SHARED/core";
-import { ViewSpaceHostChip } from "../../../../@SHARED/game";
-import { FlowGrid, FlowGridUI } from "../../@SHARED/flow";
-import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
-import { ClientModule } from "./puzzle-builder.core";
+import { ViewSpaceHostChip } from "../../../../../@SHARED/game";
+import { FlowGrid, FlowGridUI } from "../../../@SHARED/flow";
+import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
+import { ClientModule } from "../puzzle-builder.core";
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates({ model: input.model }, (model) =>
@@ -56,7 +56,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
     };
   }
 
-  if (fromServer?.t === "listed-puzzle") {
+  if (fromServer?.t === "list/listed-puzzle") {
     const puzzles =
       fromServer.listed.t === "ok" ? fromServer.listed.value.items : [];
 
@@ -253,7 +253,7 @@ const FlowPuzzleListItem = ({
   );
 };
 
-export const List: Pick<ClientModule, "update" | "subscriptions" | "View"> = {
+export const PuzzleListClient = {
   update,
   subscriptions,
   View,

@@ -16,7 +16,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { isLoading, isOk, loading } from "gamezilla/@SHARED/core";
 import { ClientModule } from "../puzzle-builder.core";
-import { editNameValidationErrorToString } from "./edit-name.core";
+import { editNameValidationErrorToString } from "./puzzle-edit-name.core";
 
 //
 //
@@ -261,7 +261,7 @@ const ViewDraftNameInput: ClientModule["View"] = ({ model, dispatch }) => {
 //
 //
 
-export const EditNameClient = {
+export const PuzzleEditNameClient = {
   update,
   View,
 };

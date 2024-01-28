@@ -1,12 +1,12 @@
 import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2";
 import { sendToSpace } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
-import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Sub } from "gamezilla/@SHARED/core";
 import { FlowPuzzleDb } from "../../@SHARED/flow-puzzle-db";
-import { DeleteForeverServer } from "./delete-forever/delete-forever.server";
-import { EditNameServer } from "./edit-name/edit-name.server";
 import { ServerModule } from "./puzzle-builder.core";
-import { SaveChangesServer } from "./save-changes/save-changes.server";
+import { PuzzleDeleteForeverServer } from "./puzzle-delete-forever/puzzle-delete-forever.server";
+import { PuzzleEditNameServer } from "./puzzle-edit-name/puzzle-edit-name.server";
+import { PuzzleListServer } from "./puzzle-list/puzzle-list.server";
+import { PuzzleSaveChangesServer } from "./puzzle-save-changes/puzzle-save-changes.server";
 
 const deps: ServerModule["deps"] = async () => {
   return {
@@ -19,11 +19,11 @@ const init: ServerModule["init"] = {};
 const update: ServerModule["update"] = async (input) => {
   return GameServerModule.chainUpdates(
     { model: input.model },
-    (model) => updateFromClient({ ...input, model }),
     (model) => updateFromGameEvent({ ...input, model }),
-    (model) => DeleteForeverServer.update({ ...input, model }),
-    (model) => EditNameServer.update({ ...input, model }),
-    (model) => SaveChangesServer.update({ ...input, model })
+    (model) => PuzzleListServer.update({ ...input, model }),
+    (model) => PuzzleDeleteForeverServer.update({ ...input, model }),
+    (model) => PuzzleEditNameServer.update({ ...input, model }),
+    (model) => PuzzleSaveChangesServer.update({ ...input, model })
   );
 };
 
@@ -45,27 +45,6 @@ const updateFromGameEvent: ServerModule["update"] = async (input) => {
       };
     }
 
-    default: {
-      return { model };
-    }
-  }
-};
-
-const updateFromClient: ServerModule["update"] = async (input) => {
-  const { fromClient, model } = input;
-  if (!fromClient) {
-    return { model };
-  }
-
-  switch (fromClient.t) {
-    case "list-puzzles": {
-      const listed = await FlowPuzzleDb().list(fromClient.input);
-
-      return {
-        model: input.model,
-        cmd: [sendBack(fromClient, { t: "listed-puzzle", listed })],
-      };
-    }
     default: {
       return { model };
     }

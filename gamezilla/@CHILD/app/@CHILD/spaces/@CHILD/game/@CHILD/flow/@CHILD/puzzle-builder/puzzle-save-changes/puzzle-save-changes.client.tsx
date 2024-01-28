@@ -280,7 +280,7 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
   );
 };
 
-export const SaveChangesClient = {
+export const PuzzleSaveChangesClient = {
   viewActionButtons,
   update,
   ViewUnsavedChangesDrawer,

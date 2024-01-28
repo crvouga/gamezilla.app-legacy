@@ -124,7 +124,8 @@ const View: ClientModule["View"] = (input) => {
   );
 };
 
-export const DeleteForeverClient: Pick<ClientModule, "update" | "View"> = {
-  update,
-  View,
-};
+export const PuzzleDeleteForeverClient: Pick<ClientModule, "update" | "View"> =
+  {
+    update,
+    View,
+  };

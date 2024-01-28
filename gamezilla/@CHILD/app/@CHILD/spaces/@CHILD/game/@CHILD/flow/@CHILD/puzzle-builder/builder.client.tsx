@@ -15,10 +15,10 @@ import {
 import { Sub } from "gamezilla/@SHARED/core";
 import { FlowGridUI, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { ViewProfileCard } from "../../@SHARED/ui";
-import { DeleteForeverClient } from "./delete-forever/delete-forever.client";
-import { EditNameClient } from "./edit-name/edit-name.client";
+import { PuzzleDeleteForeverClient } from "./puzzle-delete-forever/puzzle-delete-forever.client";
+import { PuzzleEditNameClient } from "./puzzle-edit-name/puzzle-edit-name.client";
 import { ClientModule, toCurrentGrid } from "./puzzle-builder.core";
-import { SaveChangesClient } from "./save-changes/save-changes.client";
+import { PuzzleSaveChangesClient } from "./puzzle-save-changes/puzzle-save-changes.client";
 
 //
 //
@@ -33,9 +33,9 @@ const update: ClientModule["update"] = (input) => {
     { model: input.model },
     (model) => updateSound({ ...input, model }),
     (model) => updateMoreDrawer({ ...input, model }),
-    (model) => EditNameClient.update({ ...input, model }),
-    (model) => DeleteForeverClient.update({ ...input, model }),
-    (model) => SaveChangesClient.update({ ...input, model })
+    (model) => PuzzleEditNameClient.update({ ...input, model }),
+    (model) => PuzzleDeleteForeverClient.update({ ...input, model }),
+    (model) => PuzzleSaveChangesClient.update({ ...input, model })
   );
 };
 
@@ -128,7 +128,7 @@ const View: ClientModule["View"] = (input) => {
     <>
       <ViewMode {...input} />
       <ViewMoreDrawer {...input} />
-      <SaveChangesClient.ViewUnsavedChangesDrawer {...input} />
+      <PuzzleSaveChangesClient.ViewUnsavedChangesDrawer {...input} />
     </>
   );
 };
@@ -140,7 +140,7 @@ const ViewMode: ClientModule["View"] = (input) => {
     return null;
   }
 
-  const { exit, save } = SaveChangesClient.viewActionButtons({
+  const { exit, save } = PuzzleSaveChangesClient.viewActionButtons({
     ...input,
     model,
   });
@@ -313,8 +313,8 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
       onClose={() => dispatch({ t: "builder/user-closed-more-drawer" })}
       position="bottom"
     >
-      <EditNameClient.View {...input} />
-      <DeleteForeverClient.View {...input} />
+      <PuzzleEditNameClient.View {...input} />
+      <PuzzleDeleteForeverClient.View {...input} />
       <div className="w-full pb-2"></div>
     </Drawer>
   );

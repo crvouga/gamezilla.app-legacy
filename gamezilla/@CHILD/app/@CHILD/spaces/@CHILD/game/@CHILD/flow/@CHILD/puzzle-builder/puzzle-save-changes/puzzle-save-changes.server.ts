@@ -2,7 +2,7 @@ import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { Result } from "gamezilla/@SHARED/core";
 import { ServerModule } from "../puzzle-builder.core";
-import { GameEvent } from "./save-changes.core";
+import { GameEvent } from "./puzzle-save-changes.core";
 
 const update: ServerModule["update"] = async (input) => {
   return GameServerModule.chainUpdates({ model: input.model }, (model) =>
@@ -36,6 +36,6 @@ const updateFromClient: ServerModule["update"] = async (input) => {
   }
 };
 
-export const SaveChangesServer = {
+export const PuzzleSaveChangesServer = {
   update,
 };
