@@ -31,7 +31,7 @@ const update: ClientModule["update"] = (input) => {
 };
 
 const updatePuzzleList: ClientModule["update"] = (input) => {
-  const { model, msg, fromServer, ctx } = input;
+  const { gameEvent, model, msg, fromServer, ctx } = input;
 
   if (msg?.t === "user-observed-end-of-list") {
     return {
@@ -75,6 +75,30 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
         listed: Result.mapOk(fromServer.listed, () => null),
         total: totalNew,
         puzzles: puzzlesNew,
+      },
+    };
+  }
+
+  if (gameEvent?.t === "user-created-new-puzzle") {
+    return {
+      model: {
+        ...model,
+        puzzles: {
+          ...model.puzzles,
+          [gameEvent.puzzle.id]: gameEvent.puzzle,
+        },
+      },
+    };
+  }
+
+  if (gameEvent?.t === "user-saved-changes") {
+    return {
+      model: {
+        ...model,
+        puzzles: {
+          ...model.puzzles,
+          [gameEvent.puzzle.id]: gameEvent.puzzle,
+        },
       },
     };
   }

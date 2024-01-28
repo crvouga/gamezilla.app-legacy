@@ -11,7 +11,7 @@ import {
 import { ClientCmd, ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
-  ConformationDialog,
+  ConfirmationDialog,
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconCheckmarkCircle,
@@ -90,33 +90,33 @@ const update: Module["update"] = (input) => {
 
 const updateFromMsg =
   (model: ClientModel): Module["update"] =>
-    (input) => {
-      const { msg } = input;
+  (input) => {
+    const { msg } = input;
 
-      if (!msg) {
-        return { model };
+    if (!msg) {
+      return { model };
+    }
+
+    switch (msg.t) {
+      case "clicked-resign": {
+        return { model: { ...model, openedModal: "confirm-resign" } };
       }
 
-      switch (msg.t) {
-        case "clicked-resign": {
-          return { model: { ...model, openedModal: "confirm-resign" } };
-        }
-
-        case "hovered-over-columns": {
-          return { model: { ...model, ghostIndex: msg.columnIndex } };
-        }
-
-        case "close-modal": {
-          return { model: { ...model, openedModal: null } };
-        }
-
-        default: {
-          return {
-            model,
-          };
-        }
+      case "hovered-over-columns": {
+        return { model: { ...model, ghostIndex: msg.columnIndex } };
       }
-    };
+
+      case "close-modal": {
+        return { model: { ...model, openedModal: null } };
+      }
+
+      default: {
+        return {
+          model,
+        };
+      }
+    }
+  };
 
 //
 //
@@ -261,47 +261,47 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
             actions={[
               ...(gameState.type === "game"
                 ? [
-                  {
-                    icon: <IconFlag className="h-6 w-6" />,
-                    label: "Resign",
-                    onClick: () => {
-                      dispatch({
-                        t: "clicked-resign",
-                        userId: ctx.currentUserId,
-                      });
+                    {
+                      icon: <IconFlag className="h-6 w-6" />,
+                      label: "Resign",
+                      onClick: () => {
+                        dispatch({
+                          t: "clicked-resign",
+                          userId: ctx.currentUserId,
+                        });
+                      },
                     },
-                  },
-                ]
+                  ]
                 : []),
               ...(gameState.type === "game-over" &&
-                ctx.currentUserId === ctx.space.hostId
+              ctx.currentUserId === ctx.space.hostId
                 ? [
-                  {
-                    icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-                    label: "Exit",
-                    onClick: () => {
-                      dispatch({
-                        t: "user-stopped-game",
-                        userId: ctx.currentUserId,
-                      });
+                    {
+                      icon: <IconArrowLeftOnRect className="h-6 w-6" />,
+                      label: "Exit",
+                      onClick: () => {
+                        dispatch({
+                          t: "user-stopped-game",
+                          userId: ctx.currentUserId,
+                        });
+                      },
                     },
-                  },
-                  {
-                    icon: <IconArrowRotateLeft className="h-6 w-6" />,
-                    label: "Rematch",
-                    onClick: () => {
-                      dispatch({
-                        t: "user-requested-rematch",
-                        userId: ctx.currentUserId,
-                      });
+                    {
+                      icon: <IconArrowRotateLeft className="h-6 w-6" />,
+                      label: "Rematch",
+                      onClick: () => {
+                        dispatch({
+                          t: "user-requested-rematch",
+                          userId: ctx.currentUserId,
+                        });
+                      },
                     },
-                  },
-                ]
+                  ]
                 : []),
             ]}
           />
 
-          <ConformationDialog
+          <ConfirmationDialog
             headerIcon={<IconFlag className="h-10 w-10" />}
             title="Resign from game?"
             onCancel={() => dispatch({ t: "close-modal" })}
@@ -456,7 +456,9 @@ const Feedback = ({
 }) => {
   if (gameState.type === "game-over") {
     return (
-      <p className="flex items-center justify-center text-secondary">Game Over</p>
+      <p className="flex items-center justify-center text-secondary">
+        Game Over
+      </p>
     );
   }
 

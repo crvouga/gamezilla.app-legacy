@@ -1,7 +1,7 @@
 import { Button } from "./button";
 import { VDom, cn } from "./ui";
 
-export const ConformationDialog = ({
+export const ConfirmationDialog = ({
   open,
   onCancel,
   onClose,

@@ -1,7 +1,11 @@
 import { IconButton, IconXMark } from "..";
 import { VDom } from "../ui";
 import "./drawer-element";
-import { DrawerProps, drawerSub } from "./drawer-shared";
+import { PrivateDrawerProps, drawerSub } from "./drawer-shared";
+
+export type DrawerProps = PrivateDrawerProps & {
+  children?: VDom | VDom[];
+};
 
 export const Drawer = ({
   id,
@@ -9,9 +13,7 @@ export const Drawer = ({
   onClose,
   children,
   position,
-}: DrawerProps & {
-  children?: VDom | VDom[];
-}) => {
+}: DrawerProps) => {
   drawerSub.publish({ type: "props", id, onClose, open, position });
   return (
     <drawer-element id={id} position={position}>

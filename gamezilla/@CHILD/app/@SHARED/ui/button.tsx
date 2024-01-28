@@ -16,7 +16,7 @@ export type ButtonEvent = {
 export const Button = ({
   type,
   start,
-  className: className = "",
+  className = "",
   onClick,
   variant = "contained",
   color = "default",
@@ -44,13 +44,13 @@ export const Button = ({
       type={type}
       className={cn(
         className,
-        "relative flex select-none appearance-none flex-nowrap items-center justify-center font-semibold outline-none focus:ring-2",
+        "relative flex select-none appearance-none flex-nowrap items-center justify-center overflow-hidden font-semibold outline-none focus:ring-2",
         combo === "contained-primary" &&
           "rounded-md bg-blue-600 text-white ring-blue-500",
         combo === "contained-danger" &&
           "rounded-md bg-red-600 text-white ring-red-500",
         combo === "contained-default" &&
-          "rounded-md border border-neutral-600 bg-neutral-900 text-blue-500 ring-blue-500",
+          "rounded-md border border-neutral-600 bg-neutral-900 text-neutral-300 ring-blue-500",
         combo === "outlined-default" &&
           "rounded-md border border-neutral-800 text-inherit text-neutral-400",
 

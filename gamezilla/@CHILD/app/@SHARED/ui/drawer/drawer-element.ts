@@ -1,4 +1,4 @@
-import { DrawerProps, drawerSub } from "./drawer-shared";
+import { PrivateDrawerProps, drawerSub } from "./drawer-shared";
 
 declare global {
   namespace inferno.createElement.JSX {
@@ -28,7 +28,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
     private root: HTMLElement | null = null;
 
     private unsubscribe: () => void = () => {};
-    private props: DrawerProps | null = null;
+    private props: PrivateDrawerProps | null = null;
 
     constructor() {
       super();

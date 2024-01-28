@@ -49,7 +49,7 @@ export type ClientModel = {
   puzzles: {
     [puzzleId: FlowPuzzleId]: FlowPuzzle;
   };
-  opened?: "more" | "edit-name" | null;
+  opened?: "more" | "edit-name" | "delete-forever" | null;
   isSavingChanges?: boolean;
 };
 
@@ -72,6 +72,8 @@ export type ClientMsg =
   | { t: "user-closed-more-drawer" }
   | { t: "user-clicked-edit-name-button" }
   | { t: "user-closed-edit-name-drawer" }
+  | { t: "user-clicked-delete-forever-button" }
+  | { t: "user-closed-delete-forever-drawer" }
   | { t: "user-observed-end-of-list" };
 
 export type ServerMsg = { t: "time-passed" };

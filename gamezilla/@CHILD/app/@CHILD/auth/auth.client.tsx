@@ -12,7 +12,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
-  ConformationDialog,
+  ConfirmationDialog,
   IconMobilePhone,
   LoadingState,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -395,7 +395,7 @@ export const ViewLogoutScreen = ({
 
   return (
     <div className="relative h-full w-full flex-1">
-      <ConformationDialog
+      <ConfirmationDialog
         open
         title="Logout of Gamezilla?"
         confirmTitle="Logout"
