@@ -7,7 +7,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { RemoteResult, Result } from "gamezilla/@SHARED/core";
+import { RemoteResult, Result, isErr } from "gamezilla/@SHARED/core";
 import { FlowGrid, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db";
@@ -17,6 +17,7 @@ import { DeleteForever } from "./delete-forever";
 import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2";
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { EditName } from "./edit-name";
+import { SaveChanges } from "./save-changes";
 
 //
 //
@@ -67,22 +68,20 @@ export type ServerModule = GameServerModule<{
 //
 
 type BaseClientModel = {
-  total: number | null;
-  listed: RemoteResult<string, null>;
   puzzles: {
     [puzzleId: FlowPuzzleId]: FlowPuzzle;
   };
-  opened?: "more" | "edit-name" | "delete-forever" | null;
-  isSavingChanges?: boolean;
+  total: number | null;
+  listRequest: RemoteResult<string, null>;
+  opened?: "more" | "edit-name" | "delete-forever" | "unsaved-changes" | null;
 };
 
 export type ClientModel = BaseClientModel &
+  SaveChanges.ClientModel &
   EditName.ClientModel &
   DeleteForever.ClientModel;
 
-export type ServerModel = {
-  hasListedPuzzles: boolean;
-};
+export type ServerModel = {};
 
 //
 //
@@ -102,20 +101,22 @@ export type ClientMsg =
   | { t: "builder/user-clicked-exit-button" }
   //
   | EditName.ClientMsg
-  //
-  | DeleteForever.ClientMsg;
+  | DeleteForever.ClientMsg
+  | SaveChanges.ClientMsg;
 
 export type ServerMsg =
-  | { t: "time-passed" }
+  | SaveChanges.ServerMsg
   | DeleteForever.ServerMsg
   | EditName.ServerMsg;
 
 export type ToServer =
+  | SaveChanges.ToServer
   | DeleteForever.ToServer
   | EditName.ToServer
   | { t: "list-puzzles"; input: ListPuzzlesInput };
 
 export type ToClient =
+  | SaveChanges.ToClient
   | EditName.ToClient
   | DeleteForever.ToClient
   | { t: "listed-puzzle"; listed: ListPuzzlesOutput }
@@ -144,6 +145,7 @@ export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>;
 export type GameEvent =
   | EditName.GameEvent
   | DeleteForever.GameEvent
+  | SaveChanges.GameEvent
   | {
       t: "grid-ui-play";
       c: FlowGridUIPlay.Msg;
@@ -170,16 +172,8 @@ export type GameEvent =
       puzzle: FlowPuzzle;
     }
   | {
-      t: "time-passed";
-    }
-  | {
       t: "user-exited-builder";
       userId: UserId;
-    }
-  | {
-      t: "user-saved-changes";
-      userId: UserId;
-      puzzle: FlowPuzzle;
     }
   | {
       t: "user-opened-puzzle";
@@ -289,7 +283,6 @@ const reducerListState = ({
     case "listed-puzzles":
     case "user-saved-changes":
     case "user-exited-builder":
-    case "time-passed":
     case "user-changed-to-edit-mode":
     case "user-changed-to-play-mode":
     case "grid-ui-play":
@@ -394,17 +387,12 @@ const reducerBuildState = ({
     }
 
     case "user-saved-changes": {
-      return {
-        ...state,
-        puzzle: event.puzzle,
-        gridPlay: {
-          ...state.gridPlay,
-          pipesBySourceId: event.puzzle.puzzle.c,
-        },
-      };
+      if (isErr(event.saved)) {
+        return state;
+      }
+      return { ...state, puzzle: event.saved.value };
     }
     case "user-opened-puzzle":
-    case "time-passed":
     case "listed-puzzles":
     case "user-created-new-puzzle": {
       return state;

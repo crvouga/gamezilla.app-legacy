@@ -35,7 +35,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
 
   if (msg?.t === "list/user-observed-end-of-list") {
     return {
-      model: { ...model, listed: loading },
+      model: { ...model, listRequest: loading },
       cmd: [
         sendToServer({
           t: "list-puzzles",
@@ -73,7 +73,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
     return {
       model: {
         ...model,
-        listed: Result.mapOk(fromServer.listed, () => null),
+        listRequest: Result.mapOk(fromServer.listed, () => null),
         total: totalNew,
         puzzles: puzzlesNew,
       },
@@ -81,18 +81,6 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
   }
 
   if (gameEvent?.t === "user-created-new-puzzle") {
-    return {
-      model: {
-        ...model,
-        puzzles: {
-          ...model.puzzles,
-          [gameEvent.puzzle.id]: gameEvent.puzzle,
-        },
-      },
-    };
-  }
-
-  if (gameEvent?.t === "user-saved-changes") {
     return {
       model: {
         ...model,
@@ -140,7 +128,7 @@ const View: ClientModule["View"] = (input) => {
   }
 
   const puzzles = Object.values(model.puzzles);
-  const shouldShowLoadingState = isPending(model.listed);
+  const shouldShowLoadingState = isPending(model.listRequest);
   const shouldShowEmptyState = !shouldShowLoadingState && puzzles.length === 0;
 
   return (

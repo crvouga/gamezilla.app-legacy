@@ -3,17 +3,10 @@ import {
   ViewBottomButtonBar,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
-import {
-  APP_SOUND,
-  playSound,
-  showErrorToast,
-  showToast,
-} from "gamezilla/@CHILD/app/@SHARED/client";
+import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Drawer,
-  IconArrowLeftOnRect,
   IconEllipsisVertical,
-  IconFloppyDisk,
   IconPenToSquare,
   IconPlay,
   VDom,
@@ -24,8 +17,8 @@ import { FlowGridUI, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { ViewProfileCard } from "../../@SHARED/ui";
 import { DeleteForeverClient } from "./delete-forever/delete-forever.client";
 import { EditNameClient } from "./edit-name/edit-name.client";
-import { ClientModule, GameEvent, toCurrentGrid } from "./puzzle-builder.core";
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
+import { ClientModule, toCurrentGrid } from "./puzzle-builder.core";
+import { SaveChangesClient } from "./save-changes/save-changes.client";
 
 //
 //
@@ -39,71 +32,11 @@ const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateSound({ ...input, model }),
-    (model) => updateSaveChanges({ ...input, model }),
     (model) => updateMoreDrawer({ ...input, model }),
-    (model) => updateExitBuilder({ ...input, model }),
     (model) => EditNameClient.update({ ...input, model }),
-    (model) => DeleteForeverClient.update({ ...input, model })
+    (model) => DeleteForeverClient.update({ ...input, model }),
+    (model) => SaveChangesClient.update({ ...input, model })
   );
-};
-
-const updateExitBuilder: ClientModule["update"] = (input) => {
-  const { msg, model, gameState } = input;
-
-  if (gameState.t !== "build") {
-    return { model };
-  }
-
-  switch (msg?.t) {
-    case "builder/user-clicked-exit-button": {
-      if (
-        FlowGridUIEdit.isUnsavedChanges({
-          grid: gameState.puzzle.puzzle.c,
-          model: gameState.gridEdit,
-        })
-      ) {
-        return {
-          model,
-          cmd: showErrorToast("Unsaved changes"),
-        };
-      }
-
-      const gameEvent: GameEvent = {
-        t: "user-exited-builder",
-        userId: input.ctx.currentUserId,
-      };
-
-      return { model, gameEvent: [withId(gameEvent)] };
-    }
-    default: {
-      break;
-    }
-  }
-
-  return { model };
-};
-
-const updateSaveChanges: ClientModule["update"] = (input) => {
-  const { model, gameEvent, ctx, fromServer } = input;
-
-  if (gameEvent?.t === "user-saved-changes") {
-    return {
-      model: { ...model, isSavingChanges: true },
-      cmd: [playSound(APP_SOUND.tap)],
-    };
-  }
-
-  if (
-    fromServer?.t === "put-puzzle" &&
-    fromServer.reason === "user-saved-puzzle" &&
-    ctx.currentUserId === ctx.space.hostId
-  ) {
-    return {
-      model: { ...model, isSavingChanges: false },
-      cmd: [showToast("Saved changes"), playSound(APP_SOUND.refreshFeed)],
-    };
-  }
-  return { model };
 };
 
 const updateSound: ClientModule["update"] = (input) => {
@@ -195,6 +128,7 @@ const View: ClientModule["View"] = (input) => {
     <>
       <ViewMode {...input} />
       <ViewMoreDrawer {...input} />
+      <SaveChangesClient.ViewUnsavedChangesDrawer {...input} />
     </>
   );
 };
@@ -202,37 +136,14 @@ const View: ClientModule["View"] = (input) => {
 const ViewMode: ClientModule["View"] = (input) => {
   const { model, gameState, dispatch, ctx } = input;
 
-  if (gameState.t !== "build") return null;
+  if (gameState.t !== "build") {
+    return null;
+  }
 
-  const exit = {
-    label: "Exit",
-    icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-    onClick: () => dispatch({ t: "builder/user-clicked-exit-button" }),
-  };
-
-  const save = {
-    label: "Save",
-    icon: <IconFloppyDisk className="h-6 w-6" />,
-    loading: model.isSavingChanges,
-    onClick: () =>
-      dispatch({
-        t: "game-event",
-        c: {
-          t: "user-saved-changes",
-          userId: ctx.currentUserId,
-          puzzle: {
-            ...gameState.puzzle,
-            puzzle: {
-              t: "grid",
-              c: FlowGridUIEdit.toCurrentGrid({
-                grid: gameState.puzzle.puzzle.c,
-                model: gameState.gridEdit,
-              }),
-            },
-          },
-        },
-      }),
-  };
+  const { exit, save } = SaveChangesClient.viewActionButtons({
+    ...input,
+    model,
+  });
 
   const more = {
     label: "More",

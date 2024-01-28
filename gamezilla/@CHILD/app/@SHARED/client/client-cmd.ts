@@ -176,7 +176,6 @@ export const showOkToast = <T extends ClientCmdTypes>(
       c: {
         t: "enqueue",
         text,
-        duration: duration ?? TimeSpan.fromSeconds(5),
       },
     },
     {
@@ -202,7 +201,7 @@ export const showErrorToast = <T extends ClientCmdTypes>(
         text,
         toastVariant: "error",
         errorMsg,
-        duration: duration ?? TimeSpan.fromSeconds(5),
+        duration: duration ?? TimeSpan.fromSeconds(4),
       },
     },
     {
