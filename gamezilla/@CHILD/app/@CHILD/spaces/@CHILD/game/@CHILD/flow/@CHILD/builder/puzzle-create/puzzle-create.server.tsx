@@ -60,10 +60,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         userId: msgClient.userId,
       };
 
-      return {
-        model: input.model,
-        msgGame: [withId(msgGame)],
-      };
+      return { model, msgGame: [withId(msgGame)] };
     }
 
     default: {
