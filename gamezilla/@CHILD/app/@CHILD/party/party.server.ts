@@ -1,5 +1,5 @@
 import { Eff, exhaustive, isErr } from "gamezilla/@SHARED/core";
-import { Res, ServerModel, MsgServer, MsgToServer, handle } from "./party.core";
+import { Res, ModelServer, MsgServer, MsgToServer, handle } from "./party.core";
 
 //
 //
@@ -9,7 +9,7 @@ import { Res, ServerModel, MsgServer, MsgToServer, handle } from "./party.core";
 //
 //
 
-export type Model = ServerModel;
+export type Model = ModelServer;
 
 export const init: Model = {
   parties: {},

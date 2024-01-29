@@ -1,9 +1,9 @@
 import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, Sub, isErr } from "gamezilla/@SHARED/core";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
-  ServerModel,
+  ModelServer,
   MsgToClient,
   handle,
   initShared,
@@ -17,7 +17,7 @@ import {
 //
 //
 
-export type Model = ClientModel;
+export type Model = ModelClient;
 
 export const init = initShared;
 
@@ -98,9 +98,9 @@ export const mergeWithServer = ({
   clientModel,
 }: {
   ctx: ClientCtx;
-  clientModel: ClientModel;
-  serverModel: ServerModel;
-}): ClientModel => {
+  clientModel: ModelClient;
+  serverModel: ModelServer;
+}): ModelClient => {
   return { ...clientModel, ...serverModel };
 };
 

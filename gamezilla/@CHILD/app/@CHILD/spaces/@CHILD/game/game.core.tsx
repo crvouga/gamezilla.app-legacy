@@ -10,13 +10,13 @@ import * as ConnectFour from "./@CHILD/connect-four/connect-four.core";
 //
 //
 
-export type ClientModel =
-  | { t: "connect-four"; c: ConnectFour.ClientModel }
-  | { t: "flow"; c: Flow.ClientModel };
+export type ModelClient =
+  | { t: "connect-four"; c: ConnectFour.ModelClient }
+  | { t: "flow"; c: Flow.ModelClient };
 
-export type ServerModel =
-  | { t: "connect-four"; c: ConnectFour.ServerModel }
-  | { t: "flow"; c: Flow.ServerModel };
+export type ModelServer =
+  | { t: "connect-four"; c: ConnectFour.ModelServer }
+  | { t: "flow"; c: Flow.ModelServer };
 
 //
 //

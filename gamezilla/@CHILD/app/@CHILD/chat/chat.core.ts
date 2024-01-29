@@ -12,7 +12,7 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 //
 //
 
-export type ClientModel = {
+export type ModelClient = {
   chats: {
     [chatId: ChatId]: {
       chatId: ChatId;
@@ -52,7 +52,7 @@ export type ClientModel = {
   };
 };
 
-export type ServerModel = null;
+export type ModelServer = null;
 
 //
 //
@@ -81,9 +81,9 @@ export type Req =
 
 type Problem = ["database-error", string];
 
-export type Res = [...Req, Result<Problem, Partial<ClientModel>>];
+export type Res = [...Req, Result<Problem, Partial<ModelClient>>];
 
-export const update = ({ msg }: { msg: MsgClient; model: ClientModel }) => {
+export const update = ({ msg }: { msg: MsgClient; model: ModelClient }) => {
   switch (msg[0]) {
     default: {
       return null;
@@ -101,7 +101,7 @@ export const updateFromClient = ({
   msg,
 }: {
   msg: MsgToServer;
-  model: ServerModel;
+  model: ModelServer;
 }): {
   eff: Eff<MsgServer>;
 } => {

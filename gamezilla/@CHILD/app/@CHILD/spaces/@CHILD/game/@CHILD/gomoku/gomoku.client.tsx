@@ -6,9 +6,9 @@ import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUser from "./@CHILD/vs-user/vs-user.client";
 import { CoverArt } from "./@SHARED/gomoku/gomoku-ui";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
-  ServerModel,
+  ModelServer,
   MsgToClient,
 } from "./gomoku.core";
 
@@ -20,7 +20,7 @@ import {
 //
 //
 
-export type Model = ClientModel;
+export type Model = ModelClient;
 
 export const init: Model = {
   t: "none",
@@ -134,9 +134,9 @@ export const mergeWithServer = ({
   serverModel,
 }: {
   ctx: ClientCtx;
-  clientModel: ClientModel;
-  serverModel: ServerModel;
-}): ClientModel => {
+  clientModel: ModelClient;
+  serverModel: ModelServer;
+}): ModelClient => {
   switch (serverModel.t) {
     case "none": {
       return { t: "none" };

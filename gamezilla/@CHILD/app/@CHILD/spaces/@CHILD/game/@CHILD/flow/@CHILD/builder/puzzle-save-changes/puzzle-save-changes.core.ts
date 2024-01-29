@@ -6,12 +6,12 @@ import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 //
 //
 
-export type ClientModel = {
+export type ModelClient = {
   saveChangesRequest?: RemoteResult<string, null>;
   saveChangesIsExiting?: boolean;
 };
 
-export type ServerModel = {};
+export type ModelServer = {};
 
 //
 //

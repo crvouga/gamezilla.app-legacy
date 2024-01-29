@@ -32,9 +32,9 @@ import {
   gameTheme,
 } from "../../@SHARED/tic-tic-toe/tic-tac-toe-ui";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
-  ServerModel,
+  ModelServer,
   MsgToClient,
   MsgToServer,
   handle,
@@ -49,7 +49,7 @@ import {
 //
 //
 
-export type Model = ClientModel;
+export type Model = ModelClient;
 
 export const init = (...input: Parameters<typeof initCoreModel>): Model => {
   return {
@@ -132,9 +132,9 @@ export const mergeWithServer = ({
   client = init({ userId: null }),
 }: {
   now: Posix;
-  client?: ClientModel;
-  server: ServerModel;
-}): ClientModel => {
+  client?: ModelClient;
+  server: ModelServer;
+}): ModelClient => {
   return {
     ...client,
     ...server,

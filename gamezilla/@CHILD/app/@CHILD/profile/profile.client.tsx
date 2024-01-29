@@ -28,7 +28,7 @@ import { Sub, isErr, loading } from "gamezilla/@SHARED/core";
 import { ViewProfileScreen } from "./profile-client/profile-client-view-profile-screen";
 import { ViewUpdateAvatarScreen } from "./profile-client/profile-client-view-update-avatar-screen";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   MsgToClient,
   MsgToServer,
@@ -47,7 +47,7 @@ type Ctx = (ClientCtx | AnonymousClientCtx) & {
 };
 
 type Module = AppClientModule<{
-  Model: ClientModel;
+  Model: ModelClient;
   Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
@@ -70,7 +70,7 @@ type Module = AppClientModule<{
 //
 
 export const init: Module["init"] = ({ ctx, stored }) => {
-  const initialModel: ClientModel = {
+  const initialModel: ModelClient = {
     profiles: {},
     requests: {},
     draft: {},
@@ -171,7 +171,7 @@ const updateFromServer: Module["update"] = (input) => {
 
       const profile = msgServer.result.value;
 
-      const modelNew: ClientModel = {
+      const modelNew: ModelClient = {
         ...model,
         profiles: {
           ...model.profiles,
@@ -200,7 +200,7 @@ const updateFromServer: Module["update"] = (input) => {
       }
 
       const profilesNew = msgServer.result.value.reduce<
-        ClientModel["profiles"]
+        ModelClient["profiles"]
       >((acc, profile) => {
         return {
           ...acc,
@@ -208,7 +208,7 @@ const updateFromServer: Module["update"] = (input) => {
         };
       }, model.profiles);
 
-      const modelNew: ClientModel = {
+      const modelNew: ModelClient = {
         ...model,
         profiles: profilesNew,
       };
@@ -361,7 +361,7 @@ const updateFromMsg: Module["update"] = (input) => {
 
 const loadProfile = (
   userId: UserId,
-  model: ClientModel
+  model: ModelClient
 ): ReturnType<Module["update"]> => {
   return {
     model: {
@@ -526,7 +526,7 @@ const ViewUpdateUsernameScreen = ({
   model,
   dispatch,
 }: {
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (msg: MsgClient) => void;
   ctx: Ctx;
 }) => {

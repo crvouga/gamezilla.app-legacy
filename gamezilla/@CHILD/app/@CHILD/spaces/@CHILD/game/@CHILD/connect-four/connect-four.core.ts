@@ -12,14 +12,14 @@ import * as VsUser from "./@CHILD/vs-user/vs-user.core";
 //
 //
 
-export type ClientModel =
-  | { t: "vs-bot"; c: VsBot.ClientModel }
-  | { t: "vs-user"; c: VsUser.ClientModel }
+export type ModelClient =
+  | { t: "vs-bot"; c: VsBot.ModelClient }
+  | { t: "vs-user"; c: VsUser.ModelClient }
   | { t: null };
 
-export type ServerModel =
-  | { t: "vs-bot"; c: VsBot.ServerModel }
-  | { t: "vs-user"; c: VsUser.ServerModel }
+export type ModelServer =
+  | { t: "vs-bot"; c: VsBot.ModelServer }
+  | { t: "vs-user"; c: VsUser.ModelServer }
   | { t: null };
 
 export type Mode = "none" | "vs-user" | "vs-bot";

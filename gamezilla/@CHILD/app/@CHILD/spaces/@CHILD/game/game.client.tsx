@@ -8,7 +8,7 @@ import { GameClientModule } from "../../@SHARED/architecture/game-client-v2";
 import { ConnectFour } from "./@CHILD/connect-four/connect-four.client";
 import { Flow } from "./@CHILD/flow/flow.client";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   MsgGame,
   GameName,
@@ -26,7 +26,7 @@ import {
 //
 
 type Module = GameClientModule<{
-  Model: ClientModel;
+  Model: ModelClient;
   Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;

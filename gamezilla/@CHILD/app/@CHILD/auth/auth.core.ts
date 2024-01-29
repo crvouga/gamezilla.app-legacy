@@ -25,25 +25,25 @@ export type Account = {
   phoneNumber?: PhoneNumber | null;
 };
 
-export type ClientModel = {
+export type ModelClient = {
   loginWithGoogle: RemoteResult<string, null>;
   logout: RemoteResult<string, null>;
   currentUser:
     | { t: "loading" }
     | { t: "logged-out" }
     | { t: "logged-in"; userId: UserId; name?: string };
-  sms: AuthSMS.ClientModel;
+  sms: AuthSMS.ModelClient;
 };
 
-export type ServerModel = {
+export type ModelServer = {
   userIdBySessionId: Store<SessionId, UserId>;
   sessionIdsByUserId: Store<UserId, { [sessionId: SessionId]: SessionId }>;
-  sms: AuthSMS.ServerModel;
+  sms: AuthSMS.ModelServer;
 };
 
 export const toUserId = async (
   ctx: ServerCtx,
-  model: ServerModel,
+  model: ModelServer,
   sessionId: SessionId
 ): Promise<UserId | null> => {
   const userId = await StoreUserIdBySessionId(ctx).get(
@@ -55,7 +55,7 @@ export const toUserId = async (
 
 export const toSessionIds = async (
   ctx: ServerCtx,
-  model: ServerModel,
+  model: ModelServer,
   userId: UserId
 ): Promise<{ [sessionId: SessionId]: SessionId } | null> => {
   const sessionIds = await StoreSessionIdByUserId(ctx).get(

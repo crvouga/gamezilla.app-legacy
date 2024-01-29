@@ -1,7 +1,7 @@
 import { Eff, Sub, Time, isErr } from "gamezilla/@SHARED/core";
 import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";
 import {
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToServer,
   initShared,
@@ -20,7 +20,7 @@ import {
 //
 //
 
-export type Model = ServerModel;
+export type Model = ModelServer;
 
 export const init: Model = initShared;
 

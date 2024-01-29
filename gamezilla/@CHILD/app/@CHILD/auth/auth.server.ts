@@ -12,7 +12,7 @@ import {
   StoreSessionIdByUserId,
   StoreUserIdBySessionId,
 } from "./@SHARED/server/auth-session-store";
-import { ServerModel, MsgServer, MsgToClient, MsgToServer } from "./auth.core";
+import { ModelServer, MsgServer, MsgToClient, MsgToServer } from "./auth.core";
 
 //
 //
@@ -27,7 +27,7 @@ type Module = AppServerModule<{
   Ctx: ServerCtx;
   MsgInCmd: null;
   MsgInEvent: ServerEvent;
-  Model: ServerModel;
+  Model: ModelServer;
   Msg: MsgServer;
   MsgOutCmd: ServerCmd<MsgToClient>;
   MsgOutEvent: ServerEvent;
@@ -79,7 +79,7 @@ export const update: Module["update"] = async (input) => {
 
 export const toUserIdFromSessionId = async (
   ctx: ServerCtx,
-  model: ServerModel,
+  model: ModelServer,
   sessionId: SessionId
 ): Promise<UserId | null> => {
   return StoreUserIdBySessionId(ctx).get(model.userIdBySessionId, sessionId);
@@ -227,10 +227,10 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
 
 async function assocSession(
   ctx: ServerCtx,
-  model: ServerModel,
+  model: ModelServer,
   sessionId: SessionId,
   userId: UserId
-): Promise<ServerModel> {
+): Promise<ModelServer> {
   const userIdBySessionIdNew = await StoreUserIdBySessionId(ctx).assoc(
     ctx.now,
     model.userIdBySessionId,
@@ -264,9 +264,9 @@ async function assocSession(
 
 async function dissocSession(
   ctx: ServerCtx,
-  model: ServerModel,
+  model: ModelServer,
   sessionId: SessionId
-): Promise<ServerModel> {
+): Promise<ModelServer> {
   const userIdBySessionIdNew = await StoreUserIdBySessionId(ctx).dissoc(
     ctx.now,
     model.userIdBySessionId,

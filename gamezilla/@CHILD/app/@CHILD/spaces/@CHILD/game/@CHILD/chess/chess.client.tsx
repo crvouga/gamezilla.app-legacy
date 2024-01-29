@@ -19,7 +19,7 @@ import * as VsUser from "./@CHILD/vs-user/vs-user.client";
 import { CoverArt } from "./@SHARED/chess-ui";
 import { CHESS_SOUND } from "./@SHARED/chess/chess-sounds";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   MsgGame,
   ModelGame,
@@ -36,7 +36,7 @@ import { GameClientModule } from "../../../../@SHARED/architecture/game-client-v
 //
 
 type Client = GameClient<{
-  ClientModel: ClientModel;
+  ModelClient: ModelClient;
   MsgClient: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
@@ -162,7 +162,7 @@ export const update: Client["update"] = (input) => {
             (model) => {
               const { result } = msgServer;
 
-              const modelNew: ClientModel = {
+              const modelNew: ModelClient = {
                 ...model,
                 requests: {
                   ...model.requests,

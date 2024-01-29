@@ -11,10 +11,10 @@ import {
 } from "../../@SHARED/tic-tic-toe/tic-tac-toe-ui";
 import * as Round from "./vs-user-round";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   Res,
-  ServerModel,
+  ModelServer,
   MsgToClient,
   MsgToServer,
   initCoreModel,
@@ -28,7 +28,7 @@ import {
 //
 //
 
-export const init: ClientModel = {
+export const init: ModelClient = {
   ...initCoreModel({ X: "none", O: "none" }),
   openedModal: "none",
 };
@@ -42,9 +42,9 @@ export const init: ClientModel = {
 
 export const update = (
   msg: MsgClient,
-  model: ClientModel
+  model: ModelClient
 ): {
-  model: ClientModel;
+  model: ModelClient;
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
   switch (msg[0]) {
@@ -93,8 +93,8 @@ export const update = (
 export const updateFromServer = (
   _: { ctx: SpaceClientCtx },
   msg: MsgToClient,
-  model: ClientModel
-): [ClientModel] => {
+  model: ModelClient
+): [ModelClient] => {
   switch (msg[0]) {
     case "player-left": {
       const modelNew = mergeWithServer(model, msg[1]);
@@ -141,9 +141,9 @@ export const updateFromServer = (
 };
 
 export const mergeWithServer = (
-  clientModel: ClientModel,
-  serverModel: ServerModel
-): ClientModel => {
+  clientModel: ModelClient,
+  serverModel: ModelServer
+): ModelClient => {
   return {
     ...serverModel,
     openedModal: clientModel.openedModal,
@@ -165,7 +165,7 @@ export const View = ({
   onCloseGame,
 }: {
   ctx: SpaceClientCtx;
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (msg: MsgClient) => void;
   onCloseGame: () => void;
 }) => {
@@ -235,7 +235,7 @@ export const View = ({
   return <div></div>;
 };
 
-export const toGameText = ({ model }: { model: ClientModel }): string => {
+export const toGameText = ({ model }: { model: ModelClient }): string => {
   switch (model.type) {
     case "setup": {
       return "Setting up";

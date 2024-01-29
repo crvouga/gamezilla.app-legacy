@@ -33,7 +33,7 @@ import {
 } from "./@CHILD/wire/transport-client";
 import * as Wire from "./@CHILD/wire/wire.client";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
-import { ClientModel, MsgClient, MsgToClient, MsgToServer } from "./app.core";
+import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core";
 
 //
 //
@@ -87,11 +87,11 @@ export const init = async ({
   deps,
 }: {
   deps: Deps;
-  stored: ClientModel | null;
+  stored: ModelClient | null;
   ctx: { now: Posix };
   location: Browser.Location;
 }): Promise<{
-  model: ClientModel;
+  model: ModelClient;
   eff?: Eff<MsgClient>;
 }> => {
   const routing = Routing.init({
@@ -144,7 +144,7 @@ export const init = async ({
     stored: stored?.statusBar ?? null,
   });
 
-  const initialModel: ClientModel = {
+  const initialModel: ModelClient = {
     statusBar: statusBar.model,
     routing: routing.model,
     toast: toast.model,
@@ -201,10 +201,10 @@ function log(...msg: unknown[]) {
 export const update = async (input: {
   ctx: { now: Posix };
   msg: MsgClient;
-  model: ClientModel;
+  model: ModelClient;
   deps: Deps;
 }): Promise<{
-  model: ClientModel;
+  model: ModelClient;
   eff?: Eff<MsgClient>;
 }> => {
   if (input.msg) {
@@ -228,7 +228,7 @@ export const update = async (input: {
 };
 
 type Output = {
-  model: ClientModel;
+  model: ModelClient;
   eff: Eff<MsgClient>;
   msgEvt: ClientEvent[];
   msgCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
@@ -289,7 +289,7 @@ const updateChild = async ({
 }: {
   deps: Deps;
   now: Posix;
-  model: ClientModel;
+  model: ModelClient;
   msg?: MsgClient;
   msgServer?: MsgToClient;
   msgEvt?: ClientEvent;
@@ -414,7 +414,7 @@ const updateChild = async ({
 };
 
 const toCtx = (input: {
-  model: ClientModel;
+  model: ModelClient;
   ctx: { now: Posix };
 }): ClientCtx | AnonymousClientCtx => {
   const anonymousCtx: AnonymousClientCtx = {
@@ -446,7 +446,7 @@ const toCtx = (input: {
 export const subscriptions = (input: {
   ctx: { now: Posix };
   deps: Deps;
-  model: ClientModel;
+  model: ModelClient;
 }): Sub<MsgClient> => {
   const { ctx, model } = input;
 
@@ -483,7 +483,7 @@ export const View = ({
   now,
 }: {
   now: Posix;
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (msg: MsgClient) => void;
 }) => {
   return (
@@ -537,7 +537,7 @@ const ViewMain = ({
   now,
 }: {
   now: Posix;
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (msg: MsgClient) => void;
 }) => {
   switch (model.auth.currentUser.t) {
@@ -583,7 +583,7 @@ const ViewLoggedOut = ({
   ctx,
   dispatch,
 }: {
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (m: MsgClient) => void;
   ctx: AnonymousClientCtx;
 }) => {
@@ -609,7 +609,7 @@ const ViewLoggedIn = ({
   dispatch,
 }: {
   ctx: ClientCtx;
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (m: MsgClient) => void;
 }) => {
   switch (model.routing.currentRoute.t) {
@@ -672,7 +672,7 @@ const ViewBottomBar = ({
   ctx,
 }: {
   ctx: ClientCtx;
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (m: MsgClient) => void;
 }) => {
   const items: {

@@ -21,7 +21,7 @@ import { SpaceEvent } from "./spaces-core/space-event";
 import * as SpaceState from "./spaces-core/space-state";
 import * as Spaces from "./spaces-core/spaces";
 import {
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -39,7 +39,7 @@ type Module = AppServerModule<{
   Ctx: ServerCtx;
   MsgInCmd: null;
   MsgInEvent: ServerEvent;
-  Model: ServerModel;
+  Model: ModelServer;
   Msg: MsgServer;
   MsgOutCmd: ServerCmd<MsgToClient>;
   MsgOutEvent: null;
@@ -48,10 +48,10 @@ type Module = AppServerModule<{
 }>;
 
 const spacesToProfiles = (
-  model: ServerModel,
+  model: ModelServer,
   spaces: Space.Model[]
-): ServerModel["profileCache"] => {
-  const profiles: ServerModel["profileCache"] = {};
+): ModelServer["profileCache"] => {
+  const profiles: ModelServer["profileCache"] = {};
 
   for (const space of spaces) {
     for (const userId of Space.toUserIds(space)) {
@@ -344,10 +344,10 @@ const mergeUpdatedGame = ({
   gameUpdated,
 }: {
   spaceId: SpaceId;
-  model: ServerModel;
+  model: ModelServer;
   gameUpdated: Awaited<ReturnType<typeof Game.update>>;
 }): {
-  model: ServerModel;
+  model: ModelServer;
   msgCmd: ServerCmd<MsgToClient>[];
   eff: Eff<MsgServer>;
   spaceEvents: WithEventId<SpaceEvent>[];
@@ -379,14 +379,14 @@ const mergeUpdatedGame = ({
 };
 
 type Acc = {
-  model: ServerModel;
+  model: ModelServer;
   msgCmd?: ServerCmd<MsgToClient>[];
   eff?: Eff<MsgServer>;
 };
 
 const updateFromManySpaceEvents = async (input: {
   ctx: ServerCtx;
-  model: ServerModel;
+  model: ModelServer;
   msgEvts: WithEventId<SpaceEvent>[];
 }): Promise<Acc> => {
   return updateFromManySpaceEventsLoop(input.ctx, input.msgEvts, input);
@@ -439,7 +439,7 @@ const sendEventMsgToClients = async ({
   model,
   spaceEvent,
 }: {
-  model: ServerModel;
+  model: ModelServer;
   spaceEvent: WithEventId<SpaceEvent>;
 }): Promise<Acc> => {
   const msgEvtWithMeta = Spaces.toEventWithMeta(
@@ -486,10 +486,10 @@ const updateFromSpaceEvent = async ({
   ctx,
 }: {
   ctx: ServerCtx;
-  model: ServerModel;
+  model: ModelServer;
   spaceEvent: WithEventId<SpaceEvent>;
 }): Promise<{
-  model: ServerModel;
+  model: ModelServer;
   eff?: Eff<MsgServer>;
   msgCmd?: ServerCmd<MsgToClient>[];
   spaceEvents?: WithEventId<SpaceEvent>[];

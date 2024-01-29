@@ -14,18 +14,18 @@ import * as Spaces from "./spaces-core/spaces";
 //
 //
 
-export type ServerModel = Spaces.Model & {
+export type ModelServer = Spaces.Model & {
   games: {
-    [spaceId: SpaceId]: Game.ServerModel;
+    [spaceId: SpaceId]: Game.ModelServer;
   };
   profileCache: {
     [userId: UserId]: Profile;
   };
 };
 
-export type ClientModel = Spaces.Model & {
+export type ModelClient = Spaces.Model & {
   games: {
-    [spaceId: SpaceId]: Game.ClientModel;
+    [spaceId: SpaceId]: Game.ModelClient;
   };
   previewUserId: UserId | null;
   modal: null | "user-preview" | "users";

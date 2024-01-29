@@ -17,7 +17,7 @@ import {
 
 export type GameServerTypes = {
   //
-  ServerModel: any;
+  ModelServer: any;
   MsgServer: any;
   MsgToClient: any;
   MsgToServer: any;
@@ -28,7 +28,7 @@ export type GameServerTypes = {
 };
 
 type Output<T extends GameServerTypes> = {
-  model: T["ServerModel"];
+  model: T["ModelServer"];
   msgGame?: WithEventId<T["MsgGame"]>[];
   eff?: Eff<T["MsgServer"]>;
   msgCmd?: SpaceServerCmd<T["MsgToClient"]>[];
@@ -38,9 +38,9 @@ export type GameServer<T extends GameServerTypes> = {
   init: (input: {
     ctx: SpaceServerCtx;
     state: T["ModelGame"];
-    model?: T["ServerModel"] | null;
+    model?: T["ModelServer"] | null;
   }) => Promise<{
-    model: T["ServerModel"];
+    model: T["ModelServer"];
     eff?: Eff<T["MsgServer"]>;
     msgCmd?: SpaceServerCmd<T["MsgToClient"]>[];
   }>;
@@ -48,7 +48,7 @@ export type GameServer<T extends GameServerTypes> = {
   update: (input: {
     ctx: SpaceServerCtx | SpaceReqCtx;
     state: T["ModelGame"];
-    model?: T["ServerModel"] | null;
+    model?: T["ModelServer"] | null;
     //
     msg?: T["MsgServer"] | null;
     clientMsg?: T["MsgToServer"] | null;
@@ -57,7 +57,7 @@ export type GameServer<T extends GameServerTypes> = {
   }) => Promise<Output<T>>;
 
   subscriptions: (input: {
-    model?: T["ServerModel"] | null;
+    model?: T["ModelServer"] | null;
     intervalId: string;
     ctx: SpaceServerCtx;
     state: T["ModelGame"];
@@ -71,7 +71,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
   tag: T,
   server: GameServer<Types>
 ): GameServer<{
-  ServerModel: { t: T; c: Types["ServerModel"] };
+  ModelServer: { t: T; c: Types["ModelServer"] };
   MsgServer: { t: T; c: Types["MsgServer"] };
   MsgToClient: { t: T; c: Types["MsgToClient"] };
   MsgToServer: { t: T; c: Types["MsgToServer"] };
@@ -149,7 +149,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
  */
 const chain = async <T extends GameServerTypes>(
   initial: Output<T> | Promise<Output<T>>,
-  ...updaters: ((input: T["ServerModel"]) => Promise<Output<T>>)[]
+  ...updaters: ((input: T["ModelServer"]) => Promise<Output<T>>)[]
 ): Promise<Output<T>> => {
   const msgCmd: SpaceServerCmd<T["MsgToClient"]>[] =
     (await initial).msgCmd ?? [];

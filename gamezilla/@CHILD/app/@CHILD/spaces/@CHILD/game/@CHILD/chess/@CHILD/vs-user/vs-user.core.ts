@@ -13,7 +13,7 @@ const { ok: Ok, err: Err } = Result;
 //
 //
 
-export type ClientModel = {
+export type ModelClient = {
   coreModel: CoreModel;
   openedMenuId: Option<string>;
   openedModal: Modal | "none";
@@ -22,7 +22,7 @@ export type ClientModel = {
 
 export type Modal = "RequestToDraw" | "AskedToDraw" | "resign" | "game-over";
 
-export type ServerModel = CoreModel;
+export type ModelServer = CoreModel;
 
 export type CoreModel =
   | {

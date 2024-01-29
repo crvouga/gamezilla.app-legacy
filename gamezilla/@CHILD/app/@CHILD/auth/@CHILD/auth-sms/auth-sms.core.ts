@@ -7,7 +7,7 @@ import {
   Result,
 } from "gamezilla/@SHARED/core";
 
-export type ServerModel = null;
+export type ModelServer = null;
 
 export type Route =
   | {
@@ -18,7 +18,7 @@ export type Route =
       phoneNumber: PhoneNumber;
     };
 
-export type ClientModel = {
+export type ModelClient = {
   //
   phoneNumberInput: string;
   phoneNumberError: string | null;

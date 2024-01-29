@@ -8,11 +8,11 @@ import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 //
 //
 
-export type ClientModel = {
+export type ModelClient = {
   puzzleCreateRequest: RemoteResult<string, null>;
 };
 
-export type ServerModel = {};
+export type ModelServer = {};
 
 //
 //

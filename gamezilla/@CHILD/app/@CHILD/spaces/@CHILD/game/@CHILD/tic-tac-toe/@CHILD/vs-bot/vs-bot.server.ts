@@ -6,7 +6,7 @@ import { Eff, Sub, andThen, err, ok, p } from "gamezilla/@SHARED/core";
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { TicTacToe } from "../../@SHARED/tic-tic-toe";
 import {
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -22,7 +22,7 @@ import {
 //
 //
 
-export type Model = ServerModel;
+export type Model = ModelServer;
 
 export const init = initCoreModel;
 

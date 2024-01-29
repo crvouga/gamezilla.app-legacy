@@ -3,11 +3,11 @@ import { RemoteResult } from "gamezilla/@SHARED/core";
 import { IFlowPuzzleDb } from "../../../@SHARED/flow-puzzle-db";
 import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id";
 
-export type ClientModel = {
+export type ModelClient = {
   deleteForeverRequest?: RemoteResult<string, null>;
 };
 
-export type ServerModel = {};
+export type ModelServer = {};
 
 //
 //

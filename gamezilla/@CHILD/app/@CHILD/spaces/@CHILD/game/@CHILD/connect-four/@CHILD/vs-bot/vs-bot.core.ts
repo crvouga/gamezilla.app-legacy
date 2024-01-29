@@ -17,11 +17,11 @@ import * as ConnectFour from "../../@SHARED/connect-four";
 //
 //
 
-export type ServerModel = {
+export type ModelServer = {
   botStartedFindingMoveAt: Posix | null;
 };
 
-export function isBotMoving(now: Posix, model: ServerModel) {
+export function isBotMoving(now: Posix, model: ModelServer) {
   if (!model.botStartedFindingMoveAt) {
     return false;
   }
@@ -31,7 +31,7 @@ export function isBotMoving(now: Posix, model: ServerModel) {
   );
 }
 
-export type ClientModel = {
+export type ModelClient = {
   vsBotSetup: VsBotSetup.Model;
   vsBotGame: VsBotGame.Model;
 };

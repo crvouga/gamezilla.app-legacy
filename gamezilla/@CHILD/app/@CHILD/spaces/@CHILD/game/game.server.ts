@@ -7,7 +7,7 @@ import {
   MsgGame,
   GameName,
   ModelGame,
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -23,7 +23,7 @@ import { ConnectFourServer } from "./@CHILD/connect-four/connect-four.server";
 //
 
 type Module = GameServerModule<{
-  Model: ServerModel;
+  Model: ModelServer;
   Msg: MsgServer;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;

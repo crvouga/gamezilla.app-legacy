@@ -8,7 +8,7 @@ import { Sub } from "gamezilla/@SHARED/core";
 import {
   MsgGame,
   ModelGame,
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -21,7 +21,7 @@ import {
 //
 
 type Module = GameServerModule<{
-  Model: ServerModel;
+  Model: ModelServer;
   Msg: MsgServer;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;

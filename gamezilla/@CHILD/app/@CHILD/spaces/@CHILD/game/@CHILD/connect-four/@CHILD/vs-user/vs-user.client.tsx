@@ -25,7 +25,7 @@ import { PlayerType, toTurn } from "../../@SHARED/connect-four";
 import { PlayerIcon, ViewColumns } from "../../@SHARED/connect-four-ui";
 import { CoverArt } from "../../@SHARED/connect-four-ui/connect-four-cover-art";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   MsgGame,
   ModelGame,
@@ -45,7 +45,7 @@ import {
 //
 
 type Module = GameClientModule<{
-  Model: ClientModel;
+  Model: ModelClient;
   Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
@@ -89,7 +89,7 @@ const update: Module["update"] = (input) => {
 };
 
 const updateFromMsg =
-  (model: ClientModel): Module["update"] =>
+  (model: ModelClient): Module["update"] =>
   (input) => {
     const { msg } = input;
 

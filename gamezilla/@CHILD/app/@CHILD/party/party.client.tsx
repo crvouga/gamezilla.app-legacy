@@ -9,7 +9,7 @@ import {
   p,
 } from "gamezilla/@SHARED/core";
 import { Mic } from "./mic";
-import { ClientModel, MsgClient, MsgToClient } from "./party.core";
+import { ModelClient, MsgClient, MsgToClient } from "./party.core";
 
 //
 //
@@ -19,7 +19,7 @@ import { ClientModel, MsgClient, MsgToClient } from "./party.core";
 //
 //
 
-export type Model = ClientModel;
+export type Model = ModelClient;
 
 export const init = (): [Model, Eff<Msg>] => {
   return [

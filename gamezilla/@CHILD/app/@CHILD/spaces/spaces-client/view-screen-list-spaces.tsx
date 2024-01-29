@@ -13,7 +13,7 @@ import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { GameName, gameNameToString } from "../@CHILD/game/game.core";
 import * as Spaces from "../spaces-core/spaces";
 import * as SpaceState from "../spaces-core/space-state";
-import { ClientModel, MsgClient } from "../spaces.core";
+import { ModelClient, MsgClient } from "../spaces.core";
 import { EmptyState } from "gamezilla/@CHILD/app/@SHARED/ui/empty-state";
 
 export const ViewScreenListSpaces = ({
@@ -21,7 +21,7 @@ export const ViewScreenListSpaces = ({
   dispatch,
   model,
 }: {
-  model: ClientModel;
+  model: ModelClient;
   ctx: ClientCtx;
   dispatch: (m: MsgClient) => void;
 }) => {

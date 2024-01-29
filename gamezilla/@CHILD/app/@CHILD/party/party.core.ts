@@ -31,9 +31,9 @@ export type CoreModel = {
   };
 };
 
-export type ServerModel = CoreModel;
+export type ModelServer = CoreModel;
 
-export type ClientModel = CoreModel & {
+export type ModelClient = CoreModel & {
   volume: number;
   requests: {
     [key in Req[0]]?: RemoteResult<Problem, null>;

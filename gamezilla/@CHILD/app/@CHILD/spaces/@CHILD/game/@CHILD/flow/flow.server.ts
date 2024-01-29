@@ -10,14 +10,14 @@ import { PlayServer } from "./@CHILD/play/play.server";
 import {
   MsgGame,
   ModelGame,
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
 } from "./flow.core";
 
 type Module = GameServerModule<{
-  Model: ServerModel;
+  Model: ModelServer;
   Msg: MsgServer;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;

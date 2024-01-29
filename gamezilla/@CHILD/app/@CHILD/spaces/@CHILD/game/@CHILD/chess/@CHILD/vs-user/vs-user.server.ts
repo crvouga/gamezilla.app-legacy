@@ -4,7 +4,7 @@ import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
 import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";
 import * as Board from "../../@SHARED/chess/chess";
 import {
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -31,16 +31,16 @@ export const init = initCore;
 
 export const update = (
   _msg: MsgServer,
-  model: ServerModel
-): { model: ServerModel } => {
+  model: ModelServer
+): { model: ModelServer } => {
   return { model };
 };
 
 export const updateFromClient = (
   _msg: MsgToServer,
-  model: ServerModel
+  model: ModelServer
 ): {
-  model: ServerModel;
+  model: ModelServer;
   eff?: Eff<MsgServer>;
   msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
@@ -52,9 +52,9 @@ export const updateFromEvent = ({
   model,
 }: {
   msg: SpaceServerEvent;
-  model: ServerModel;
+  model: ModelServer;
 }): {
-  model: ServerModel;
+  model: ModelServer;
   eff?: Eff<MsgServer>;
   msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
@@ -69,7 +69,7 @@ export const updateFromEvent = ({
           return { model };
         }
 
-        const modelNew: ServerModel = { ...model, [color]: "none" };
+        const modelNew: ModelServer = { ...model, [color]: "none" };
 
         return {
           model: modelNew,
@@ -90,7 +90,7 @@ export const updateFromEvent = ({
 
         const otherColor = Board.toOppositeColor(color);
 
-        const modelNew: ServerModel = {
+        const modelNew: ModelServer = {
           ...model,
           type: "setup",
           clockPreset: model.clock.preset,
@@ -118,7 +118,7 @@ export const updateFromEvent = ({
 
 export const subscriptions = (
   intervalId: string,
-  model: ServerModel
+  model: ModelServer
 ): Sub<MsgServer> => {
   switch (model.type) {
     case "setup": {

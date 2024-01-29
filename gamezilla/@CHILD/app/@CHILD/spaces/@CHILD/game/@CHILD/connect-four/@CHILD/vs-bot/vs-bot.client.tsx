@@ -40,7 +40,7 @@ import {
 } from "../../@SHARED/connect-four-ui";
 import {
   BotLevel,
-  ClientModel,
+  ModelClient,
   MsgClient,
   MsgGame,
   ModelGame,
@@ -59,7 +59,7 @@ import {
 //
 
 type Module = GameClientModule<{
-  Model: ClientModel;
+  Model: ModelClient;
   Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
@@ -98,7 +98,7 @@ const update: Module["update"] = (input) => {
 };
 
 const watchGameOver =
-  (model: ClientModel): Module["update"] =>
+  (model: ModelClient): Module["update"] =>
   (input) => {
     const { msgGame, modelGame } = input;
 
@@ -156,7 +156,7 @@ const watchGameOver =
   };
 
 const updateFromMsgGame =
-  (model: ClientModel): Module["update"] =>
+  (model: ModelClient): Module["update"] =>
   (input) => {
     const { msgGame, modelGame, ctx } = input;
 
@@ -171,7 +171,7 @@ const updateFromMsgGame =
   };
 
 const updateFromMsg =
-  (model: ClientModel): Module["update"] =>
+  (model: ModelClient): Module["update"] =>
   (input) => {
     const { msg } = input;
 

@@ -5,10 +5,10 @@ import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Option, Sub, exhaustive, isErr } from "gamezilla/@SHARED/core";
 import { Chess } from "../../@SHARED/chess";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   CoreModel,
-  ServerModel,
+  ModelServer,
   MsgToClient,
   initCore,
 } from "./vs-user.core";
@@ -21,14 +21,14 @@ import {
 //
 //
 
-export type Model = ClientModel;
+export type Model = ModelClient;
 
 export const init = ({
   userId,
 }: {
   userId?: UserId | null;
 }): {
-  model: ClientModel;
+  model: ModelClient;
 } => {
   return {
     model: {
@@ -451,9 +451,9 @@ export const mergeWithServer = ({
   client,
   server,
 }: {
-  client?: ClientModel;
-  server: ServerModel;
-}): ClientModel => {
+  client?: ModelClient;
+  server: ModelServer;
+}): ModelClient => {
   const initial = init({ userId: null });
   const clientModel = client ?? initial.model;
   return {

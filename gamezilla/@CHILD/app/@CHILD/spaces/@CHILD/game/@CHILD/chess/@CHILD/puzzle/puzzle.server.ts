@@ -23,7 +23,7 @@ import { EloRating } from "./elo-rating";
 import { PuzzleDb } from "./puzzle-db";
 import {
   PuzzleInteraction,
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -44,7 +44,7 @@ export const init = ({
 }: {
   ctx: SpaceServerCtx;
 }): {
-  model: ServerModel;
+  model: ModelServer;
   eff: Eff<MsgServer>;
 } => {
   return {
@@ -108,10 +108,10 @@ const initialLoad = async ({
 
 export const update = (input: {
   msg: MsgServer;
-  model: ServerModel;
+  model: ModelServer;
   ctx: SpaceServerCtx;
 }): {
-  model: ServerModel;
+  model: ModelServer;
   eff?: Eff<MsgServer>;
   msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
@@ -203,7 +203,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
         };
       }
 
-      const modelNew: ServerModel = {
+      const modelNew: ModelServer = {
         ...model,
         t: "started",
         moves: [],
@@ -263,9 +263,9 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
 export const updateFromClient = (input: {
   ctx: SpaceReqCtx;
   msg: MsgToServer;
-  model: ServerModel;
+  model: ModelServer;
 }): {
-  model: ServerModel;
+  model: ModelServer;
   eff?: Eff<MsgServer>;
   msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
@@ -289,11 +289,11 @@ const watchPutInteraction = ({
   model,
   ctx,
 }: {
-  modelPrev: ServerModel;
-  model: ServerModel;
+  modelPrev: ModelServer;
+  model: ModelServer;
   ctx: SpaceServerCtx;
 }): {
-  model: ServerModel;
+  model: ModelServer;
   eff?: Eff<MsgServer>;
 } => {
   if (model.t === modelPrev.t) {
@@ -329,11 +329,11 @@ export const watchGetPuzzles = ({
   model,
   ctx,
 }: {
-  model: ServerModel;
-  modelPrev: ServerModel;
+  model: ModelServer;
+  modelPrev: ModelServer;
   ctx: SpaceServerCtx;
 }): {
-  model: ServerModel;
+  model: ModelServer;
   eff?: Eff<MsgServer>;
 } => {
   if (
@@ -367,11 +367,11 @@ export const watchPutProfile = ({
   modelPrev,
   ctx,
 }: {
-  model: ServerModel;
-  modelPrev: ServerModel;
+  model: ModelServer;
+  modelPrev: ModelServer;
   ctx: SpaceServerCtx;
 }): {
-  model: ServerModel;
+  model: ModelServer;
   eff?: Eff<MsgServer>;
 } => {
   if (model.profile && !eq(model.profile, modelPrev.profile)) {
@@ -401,9 +401,9 @@ export const updateFromGame = ({
   model,
 }: {
   msg: ChessMsgGame;
-  model: ServerModel;
+  model: ModelServer;
 }): {
-  model: ServerModel;
+  model: ModelServer;
   eff?: Eff;
 } => {
   return { model };
@@ -413,9 +413,9 @@ export const updateFromEvent = ({
   model,
 }: {
   msg: SpaceServerEvent;
-  model: ServerModel;
+  model: ModelServer;
 }): {
-  model: ServerModel;
+  model: ModelServer;
   eff?: Eff;
 } => {
   return { model };
@@ -432,7 +432,7 @@ const TICK_RATE = TimeSpan.fromMilliseconds(500);
 
 export const subscriptions = (
   intervalId: string,
-  model: ServerModel
+  model: ModelServer
 ): Sub<MsgServer> => {
   switch (model.t) {
     case "started": {

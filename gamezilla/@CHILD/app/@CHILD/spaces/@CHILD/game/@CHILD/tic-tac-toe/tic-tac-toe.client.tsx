@@ -10,14 +10,14 @@ import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUser from "./@CHILD/vs-user/vs-user.client";
 import { CoverArt } from "./@SHARED/tic-tic-toe/tic-tac-toe-ui";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   MsgToClient,
   MsgToServer,
 } from "./tic-tac-toe.core";
 
 type Client = GameClient<{
-  ClientModel: ClientModel;
+  ModelClient: ModelClient;
   MsgClient: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
@@ -81,7 +81,7 @@ export const View = ({
   dispatch,
 }: {
   ctx: SpaceClientCtx;
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (msg: MsgClient) => void;
 }) => {
   const onQuit = () => dispatch({ t: "input-mode", mode: "none" });

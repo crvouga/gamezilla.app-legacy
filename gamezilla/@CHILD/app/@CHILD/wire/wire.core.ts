@@ -11,7 +11,7 @@ import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-orde
 //
 //
 
-export type ClientModel = {
+export type ModelClient = {
   state:
     | { t: "server-connecting" }
     | { t: "server-connect-error"; errorCount: number }
@@ -26,7 +26,7 @@ export type ClientModel = {
 
 export type MsgClient = ClientTransportEvent | { t: "clicked-try-reconnect" };
 
-export type ServerModel = {
+export type ModelServer = {
   clientsBySessionId: {
     [sessionId: SessionId]: Client;
   };

@@ -42,9 +42,9 @@ export type Color = "Red" | "Blue" | "Green" | "Purple" | "Cyan" | "Pink";
 
 const colorSeq: NonEmpty<Color> = ["Red", "Blue", "Green", "Purple"];
 
-export type ClientModel = CoreModel;
+export type ModelClient = CoreModel;
 
-export type ServerModel = CoreModel;
+export type ModelServer = CoreModel;
 
 //
 //

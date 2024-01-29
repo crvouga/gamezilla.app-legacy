@@ -10,7 +10,7 @@ import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import { samples } from "../../@SHARED/flow/flow-grid/flow-grid-samples";
 import { ViewProfileCard } from "../../@SHARED/ui";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   MsgGame,
   ModelGame,
@@ -19,7 +19,7 @@ import {
 } from "./play.core";
 
 type Module = GameClientModule<{
-  Model: ClientModel;
+  Model: ModelClient;
   Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;

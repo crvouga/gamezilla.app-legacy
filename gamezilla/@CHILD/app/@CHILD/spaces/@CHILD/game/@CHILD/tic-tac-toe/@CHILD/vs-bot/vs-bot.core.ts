@@ -38,11 +38,11 @@ export type ModelGame = {
   board: Model;
 };
 
-export type ClientModel = CoreModel & {
+export type ModelClient = CoreModel & {
   vsBotSetup: VsBotSetup.Model;
 };
 
-export type ServerModel = CoreModel;
+export type ModelServer = CoreModel;
 
 export const initCoreModel = ({
   userId,

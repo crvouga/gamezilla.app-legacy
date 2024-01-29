@@ -7,7 +7,7 @@ import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 //
 //
 
-export type ClientModel = {
+export type ModelClient = {
   puzzleListRequest: RemoteResult<string, null>;
 };
 

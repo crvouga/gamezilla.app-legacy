@@ -34,7 +34,7 @@ import {
   isErr,
 } from "gamezilla/@SHARED/core";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   MsgToClient,
   MsgToServer,
@@ -49,7 +49,7 @@ import {
 //
 
 type Module = AppClientModule<{
-  Model: ClientModel;
+  Model: ModelClient;
   Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;

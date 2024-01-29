@@ -12,23 +12,23 @@ import { FlowPuzzleId } from "./@SHARED/flow-puzzle/flow-puzzle-id";
 //
 //
 
-export type BaseClientModel = {
+export type BaseModelClient = {
   puzzles: {
     [flowPuzzleId: FlowPuzzleId]: FlowPuzzle;
   };
 };
 
-export type VariantClientModel =
+export type VariantModelClient =
   | { t: "none" }
-  | { t: "builder"; c: Builder.ClientModel }
-  | { t: "play"; c: Play.ClientModel };
+  | { t: "builder"; c: Builder.ModelClient }
+  | { t: "play"; c: Play.ModelClient };
 
-export type ClientModel = BaseClientModel & VariantClientModel;
+export type ModelClient = BaseModelClient & VariantModelClient;
 
-export type ServerModel =
+export type ModelServer =
   | { t: "none" }
-  | { t: "builder"; c: Builder.ServerModel }
-  | { t: "play"; c: Play.ServerModel };
+  | { t: "builder"; c: Builder.ModelServer }
+  | { t: "play"; c: Play.ModelServer };
 
 //
 //

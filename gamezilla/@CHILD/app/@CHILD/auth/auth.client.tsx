@@ -19,7 +19,7 @@ import {
 import { Eff, Sub, notAsked } from "gamezilla/@SHARED/core";
 import * as AuthClientSMS from "./@CHILD/auth-sms/auth-sms.client";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   LogoutMsg,
   MsgToClient,
@@ -35,7 +35,7 @@ import {
 //
 
 type Client = AppClientModule<{
-  Model: ClientModel;
+  Model: ModelClient;
   Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
@@ -153,7 +153,7 @@ const updateFromLogoutMsg = ({
   model,
 }: {
   msg: LogoutMsg;
-  model: ClientModel;
+  model: ModelClient;
 }): ReturnType<Client["update"]> => {
   const currentUserId =
     model.currentUser.t === "logged-in" ? model.currentUser.userId : null;
@@ -384,7 +384,7 @@ export const ViewLogoutScreen = ({
   dispatch,
 }: {
   ctx: AnonymousClientCtx;
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (msg: MsgClient) => void;
 }) => {
   if (model.logout?.t === "loading") {

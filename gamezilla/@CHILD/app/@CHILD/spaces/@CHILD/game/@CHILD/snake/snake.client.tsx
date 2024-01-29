@@ -11,10 +11,10 @@ import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space
 import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Direction } from "./@SHARED/direction";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   CoreModel,
-  ServerModel,
+  ModelServer,
   MsgToClient,
   initCoreModel,
 } from "./snake.core";
@@ -27,7 +27,7 @@ import {
 //
 //
 
-export type Model = ClientModel;
+export type Model = ModelClient;
 
 export const init: Model = {
   ...initCoreModel,
@@ -209,9 +209,9 @@ export const mergeWithServer = ({
   clientModel,
   serverModel,
 }: {
-  clientModel: ClientModel;
-  serverModel: ServerModel;
-}): ClientModel => {
+  clientModel: ModelClient;
+  serverModel: ModelServer;
+}): ModelClient => {
   return {
     ...serverModel,
     openedMenuId: clientModel.openedMenuId,

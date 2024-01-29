@@ -14,12 +14,12 @@ const { err: Err, ok: Ok } = Result;
 //
 //
 
-export type ClientModel = {
+export type ModelClient = {
   touched: Option<Position.Position>;
   coreModel: CoreModel;
 };
 
-export type ServerModel = CoreModel;
+export type ModelServer = CoreModel;
 
 export type CoreModel = {
   board: Board.Board;

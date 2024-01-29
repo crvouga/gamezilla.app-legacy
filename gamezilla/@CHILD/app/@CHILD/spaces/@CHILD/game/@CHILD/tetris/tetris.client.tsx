@@ -11,9 +11,9 @@ import * as Direction from "./@SHARED/direction";
 import * as Piece from "./@SHARED/piece";
 import * as Position from "./@SHARED/position";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
-  ServerModel,
+  ModelServer,
   MsgToClient,
   columnCount,
   initShared,
@@ -30,7 +30,7 @@ import {
 //
 //
 
-export type Model = ClientModel;
+export type Model = ModelClient;
 
 export const init: Model = {
   coreModel: initShared,
@@ -222,9 +222,9 @@ export const mergeWithServer = ({
   clientModel,
   serverModel,
 }: {
-  clientModel: ClientModel;
-  serverModel: ServerModel;
-}): ClientModel => {
+  clientModel: ModelClient;
+  serverModel: ModelServer;
+}): ModelClient => {
   return {
     ...clientModel,
     coreModel: serverModel,

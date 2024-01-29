@@ -20,7 +20,7 @@ import { BuilderClient } from "./@CHILD/builder/builder.client";
 import { CoverArt } from "./@SHARED/flow-cover-art";
 import { FlowClientCtx } from "./@SHARED/flow-ctx";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   MsgGame,
   ModelGame,
@@ -37,7 +37,7 @@ import {
 //
 
 type Module = GameClientModule<{
-  Model: ClientModel;
+  Model: ModelClient;
   Msg: MsgClient;
   //
   MsgToClient: MsgToClient;

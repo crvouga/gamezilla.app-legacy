@@ -10,12 +10,12 @@ import { samples } from "../../@SHARED/flow/flow-grid/flow-grid-samples";
 //
 //
 
-export type ClientModel = {
+export type ModelClient = {
   gridPlay: FlowGridUIPlay.Model;
   grid: FlowGrid.Model;
 };
 
-export type ServerModel = {};
+export type ModelServer = {};
 
 //
 //

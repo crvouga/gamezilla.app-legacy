@@ -29,9 +29,9 @@ export const initShared = {
   },
 };
 
-export type ClientModel = CoreModel;
+export type ModelClient = CoreModel;
 
-export type ServerModel = CoreModel;
+export type ModelServer = CoreModel;
 
 type Shot = {
   from: PlayerType;

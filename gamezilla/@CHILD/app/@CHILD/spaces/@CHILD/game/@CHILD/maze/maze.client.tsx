@@ -7,10 +7,10 @@ import { Eff, Keyboard, Sub, p } from "gamezilla/@SHARED/core";
 import { Maze } from "./@SHARED/maze";
 import { Direction, Position } from "./@SHARED/position";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   Color,
-  ServerModel,
+  ModelServer,
   MsgToClient,
   initShared,
 } from "./maze.core";
@@ -23,7 +23,7 @@ import {
 //
 //
 
-export type Model = ClientModel;
+export type Model = ModelClient;
 
 export const init = initShared;
 
@@ -112,9 +112,9 @@ export const updateFromServer = (
 export const mergeWithServer = ({
   serverModel,
 }: {
-  clientModel: ClientModel;
-  serverModel: ServerModel;
-}): ClientModel => {
+  clientModel: ModelClient;
+  serverModel: ModelServer;
+}): ModelClient => {
   return serverModel;
 };
 

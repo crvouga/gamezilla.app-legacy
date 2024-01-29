@@ -35,7 +35,7 @@ export function profileCoreToProfile(profile: ProfileCore): Profile {
   };
 }
 
-export type ClientModel = {
+export type ModelClient = {
   profiles: {
     [userId: UserId]: Profile;
   };
@@ -49,7 +49,7 @@ export type ClientModel = {
   };
 };
 
-export type ServerModel = null;
+export type ModelServer = null;
 
 //
 //

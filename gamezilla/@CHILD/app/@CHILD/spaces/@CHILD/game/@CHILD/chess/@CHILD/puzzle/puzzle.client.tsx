@@ -28,7 +28,7 @@ import { Chess } from "../../@SHARED/chess";
 import { Chessboard } from "../../@SHARED/chess-ui/chessboard";
 import { CHESS_SOUND } from "../../@SHARED/chess/chess-sounds";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   CoreModel,
   MsgToClient,
@@ -51,7 +51,7 @@ import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 //
 
 export const init = (): {
-  model: ClientModel;
+  model: ModelClient;
 } => {
   return {
     model: initCore,
@@ -66,10 +66,10 @@ export const init = (): {
 
 export const update = (input: {
   msg: MsgClient;
-  model: ClientModel;
+  model: ModelClient;
   ctx: SpaceClientCtx;
 }): {
-  model: ClientModel;
+  model: ModelClient;
   eff?: Eff<MsgClient>;
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
@@ -103,10 +103,10 @@ export const updateMain = ({
   ctx,
 }: {
   msg: MsgClient;
-  model: ClientModel;
+  model: ModelClient;
   ctx: SpaceClientCtx;
 }): {
-  model: ClientModel;
+  model: ModelClient;
   eff?: Eff<MsgClient>;
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
@@ -127,9 +127,9 @@ export const updateMain = ({
 export const updateFromServer = (input: {
   ctx: SpaceClientCtx;
   msg: MsgToClient;
-  model: ClientModel;
+  model: ModelClient;
 }): {
-  model: ClientModel;
+  model: ModelClient;
   eff?: Eff<MsgClient>;
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
@@ -142,9 +142,9 @@ export const updateFromServerMain: typeof updateFromServer = ({
 }: {
   ctx: SpaceClientCtx;
   msg: MsgToClient;
-  model: ClientModel;
+  model: ModelClient;
 }): {
-  model: ClientModel;
+  model: ModelClient;
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
   switch (msg.t) {
@@ -187,17 +187,17 @@ export const mergeWithServer = ({
   client,
   server,
 }: {
-  client?: ClientModel;
+  client?: ModelClient;
   server: CoreModel;
-}): ClientModel => {
+}): ModelClient => {
   return {
     ...client,
     ...server,
   };
 };
 
-function watch(model: ClientModel): {
-  model: ClientModel;
+function watch(model: ModelClient): {
+  model: ModelClient;
   eff?: Eff<MsgClient>;
 } {
   return { model };
@@ -209,7 +209,7 @@ function watch(model: ClientModel): {
 //
 //
 
-const toDurationMs = (ctx: SpaceClientCtx, model: ClientModel) => {
+const toDurationMs = (ctx: SpaceClientCtx, model: ModelClient) => {
   if (model.t === "loading") {
     return null;
   }
@@ -226,7 +226,7 @@ export const View = ({
   dispatch,
 }: {
   ctx: SpaceClientCtx;
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (m: MsgClient) => void;
   onClose: () => void;
 }) => {
@@ -399,7 +399,7 @@ export const toBottomBarActions = ({
   onClose,
   dispatch,
 }: {
-  model: ClientModel;
+  model: ModelClient;
   onClose: () => void;
   dispatch: (m: MsgClient) => void;
 }): BottomBarButtonAction[] => {
@@ -459,7 +459,7 @@ export const toBottomBarActions = ({
   return [];
 };
 
-const ViewStatusBar = ({ model }: { model: ClientModel }) => {
+const ViewStatusBar = ({ model }: { model: ModelClient }) => {
   if (model.t === "loading") {
     return (
       <div className="flex w-full items-center justify-center p-2">

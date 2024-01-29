@@ -31,7 +31,7 @@ import { PuzzleSaveChanges } from "./puzzle-save-changes";
 //
 
 export type ClientModule = GameClientModule<{
-  Model: ClientModel;
+  Model: ModelClient;
   Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
@@ -52,7 +52,7 @@ export type ServerModule = GameServerModule<{
   Ctx: SpaceServerCtx;
   MsgInCmd: null;
   MsgInEvent: SpaceServerEvent;
-  Model: ServerModel;
+  Model: ModelServer;
   Msg: MsgServer;
   MsgOutCmd: SpaceServerCmd<MsgToClient>;
   MsgOutEvent: null;
@@ -73,7 +73,7 @@ export const LIST_TABS = ["puzzles", "packs"] as const;
 
 type ListTab = (typeof LIST_TABS)[number];
 
-type BaseClientModel = {
+type BaseModelClient = {
   listTab: ListTab;
   puzzles: {
     [puzzleId: FlowPuzzleId]: FlowPuzzle;
@@ -81,14 +81,14 @@ type BaseClientModel = {
   opened?: "more" | "edit-name" | "delete-forever" | "unsaved-changes" | null;
 };
 
-export type ClientModel = BaseClientModel &
-  PuzzleCreate.ClientModel &
-  PuzzleList.ClientModel &
-  PuzzleSaveChanges.ClientModel &
-  PuzzleEditName.ClientModel &
-  PuzzleDeleteForever.ClientModel;
+export type ModelClient = BaseModelClient &
+  PuzzleCreate.ModelClient &
+  PuzzleList.ModelClient &
+  PuzzleSaveChanges.ModelClient &
+  PuzzleEditName.ModelClient &
+  PuzzleDeleteForever.ModelClient;
 
-export type ServerModel = {};
+export type ModelServer = {};
 
 //
 //

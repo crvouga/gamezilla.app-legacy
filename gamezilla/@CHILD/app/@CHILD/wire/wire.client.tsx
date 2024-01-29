@@ -5,7 +5,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { IClientTransport } from "./transport-client";
-import { ClientModel, MsgClient, MsgToClient } from "./wire.core";
+import { ModelClient, MsgClient, MsgToClient } from "./wire.core";
 
 //
 //
@@ -18,8 +18,8 @@ import { ClientModel, MsgClient, MsgToClient } from "./wire.core";
 export const init = ({
   stored,
 }: {
-  stored: ClientModel | null;
-}): { model: ClientModel } => {
+  stored: ModelClient | null;
+}): { model: ModelClient } => {
   if (stored) {
     return {
       model: stored,
@@ -56,13 +56,13 @@ export const update = <TMsgToClient, TMsgToServer>({
     MsgClient: MsgClient;
     MsgToServer: TMsgToServer;
   }> | null;
-  model: ClientModel;
+  model: ModelClient;
   transport: IClientTransport<{
     MsgToServer: TMsgToServer;
     MsgToClient: TMsgToClient;
   }>;
 }): {
-  model: ClientModel;
+  model: ModelClient;
   msgEvt?: ClientEvent[];
   eff?: Eff<MsgClient>;
 } => {
@@ -191,7 +191,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
 //
 //
 
-export const ViewStatusBar = ({ model }: { model: ClientModel }) => {
+export const ViewStatusBar = ({ model }: { model: ModelClient }) => {
   switch (model.state.t) {
     case "server-connected": {
       return <span className="h-2 w-2 rounded-full bg-green-500"></span>;
@@ -222,7 +222,7 @@ export const ViewStatusBarDrawer = ({
   model,
   dispatch,
 }: {
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (m: MsgClient) => void;
 }) => {
   switch (model.state.t) {

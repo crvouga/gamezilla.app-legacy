@@ -25,7 +25,7 @@ function init() {
 }
 
 function userStartedSpace(input: {
-  model: SpaceCore.ClientModel;
+  model: SpaceCore.ModelClient;
   userId: UserId;
   spaceId: SpaceId;
 }) {
@@ -44,7 +44,7 @@ function userStartedSpace(input: {
 }
 
 function userJoinedSpace(input: {
-  model: SpaceCore.ClientModel;
+  model: SpaceCore.ModelClient;
   userId: UserId;
   spaceId: SpaceId;
 }) {
@@ -63,7 +63,7 @@ function userJoinedSpace(input: {
 }
 
 function userLeftSpace(input: {
-  model: SpaceCore.ClientModel;
+  model: SpaceCore.ModelClient;
   userId: UserId;
   spaceId: SpaceId;
 }) {

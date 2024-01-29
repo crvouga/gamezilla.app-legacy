@@ -17,7 +17,7 @@ import { createProfileDb } from "./profile-db/profile-db-impl.sql";
 import {
   ProfileCore,
   Req,
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -35,7 +35,7 @@ type Module = AppServerModule<{
   Ctx: ServerCtx;
   MsgInCmd: null;
   MsgInEvent: ServerEvent;
-  Model: ServerModel;
+  Model: ModelServer;
   Msg: MsgServer;
   MsgOutCmd: ServerCmd<MsgToClient>;
   MsgOutEvent: null;

@@ -12,7 +12,7 @@ import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 //
 //
 
-export type ClientModel = {
+export type ModelClient = {
   coreModel: CoreModel;
   openedMenuId: string | null;
   openedModal: null | "game-over";
@@ -20,7 +20,7 @@ export type ClientModel = {
   vsBotSetup: VsBotSetup.Model;
 };
 
-export type ServerModel = CoreModel;
+export type ModelServer = CoreModel;
 
 export type CoreModel = SetupModel | ModelGame | GameOverModel;
 
@@ -61,7 +61,7 @@ export const initServer = ({
   userId,
 }: {
   userId: UserId | null;
-}): ServerModel => {
+}): ModelServer => {
   return {
     type: "setup",
     botLevel: initCore.botLevel,

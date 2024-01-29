@@ -11,33 +11,33 @@ import * as VsUser from "./@CHILD/vs-user/vs-user.core";
 //
 //
 
-export type ClientModel =
+export type ModelClient =
   | {
       t: "none";
     }
   | {
       t: "vs-user";
-      c: VsUser.ClientModel;
+      c: VsUser.ModelClient;
     }
   | {
       t: "vs-bot";
-      c: VsBot.ClientModel;
+      c: VsBot.ModelClient;
     };
 
-export type ServerModel =
+export type ModelServer =
   | {
       t: "none";
     }
   | {
       t: "vs-user";
-      c: VsUser.ServerModel;
+      c: VsUser.ModelServer;
     }
   | {
       t: "vs-bot";
-      c: VsBot.ServerModel;
+      c: VsBot.ModelServer;
     };
 
-export type Mode = ServerModel["t"];
+export type Mode = ModelServer["t"];
 
 //
 //
@@ -69,7 +69,7 @@ export type MsgToServer =
 export type Req = { t: "input-mode"; userId: UserId; mode: Mode };
 
 export type Res = Req & {
-  result: Result<Problem, ServerModel>;
+  result: Result<Problem, ModelServer>;
 };
 
 export type Problem = "must-be-host";

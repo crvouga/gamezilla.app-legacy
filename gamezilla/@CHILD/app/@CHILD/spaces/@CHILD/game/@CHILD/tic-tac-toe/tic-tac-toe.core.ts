@@ -10,17 +10,17 @@ import * as VsUser from "./@CHILD/vs-user/vs-user.core";
 //
 //
 
-export type ClientModel =
+export type ModelClient =
   | { t: "none" }
-  | { t: "vs-user"; c: VsUser.ClientModel }
-  | { t: "vs-bot"; c: VsBot.ClientModel };
+  | { t: "vs-user"; c: VsUser.ModelClient }
+  | { t: "vs-bot"; c: VsBot.ModelClient };
 
-export type ServerModel =
+export type ModelServer =
   | { t: "none" }
-  | { t: "vs-user"; c: VsUser.ServerModel }
-  | { t: "vs-bot"; c: VsBot.ServerModel };
+  | { t: "vs-user"; c: VsUser.ModelServer }
+  | { t: "vs-bot"; c: VsBot.ModelServer };
 
-export const parseModel = (): Result<string, ServerModel> => {
+export const parseModel = (): Result<string, ModelServer> => {
   return err("Unimplemented");
 };
 
@@ -53,11 +53,11 @@ export type MsgToClient =
 
 export type Req = {
   t: "input-mode";
-  mode: ServerModel["t"];
+  mode: ModelServer["t"];
 };
 
 export type Res = Req & {
-  result: Result<Problem, ServerModel>;
+  result: Result<Problem, ModelServer>;
 };
 
 type Problem = "must-be-host";

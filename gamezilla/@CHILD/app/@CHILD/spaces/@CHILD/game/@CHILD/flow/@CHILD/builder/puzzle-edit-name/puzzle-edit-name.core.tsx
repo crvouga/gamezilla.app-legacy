@@ -7,7 +7,7 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 //
 //
 
-export type ClientModel = {
+export type ModelClient = {
   editNameRequest?: RemoteResult<string, null>;
   editNameDraft?: string;
   editNameValidationError?: EditNameValidationError;
@@ -28,7 +28,7 @@ export const editNameValidationErrorToString = (
   }
 };
 
-export type ServerModel = {};
+export type ModelServer = {};
 
 //
 //

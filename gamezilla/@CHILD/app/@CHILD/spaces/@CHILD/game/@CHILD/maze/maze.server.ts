@@ -2,7 +2,7 @@ import { Eff, Sub, Time } from "gamezilla/@SHARED/core";
 import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";
 import {
   Res,
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToServer,
   handle,
@@ -18,7 +18,7 @@ import {
 //
 //
 
-export type Model = ServerModel;
+export type Model = ModelServer;
 
 export const init = initShared;
 
@@ -69,7 +69,7 @@ export const updateFromClient = (
 
 export const subscriptions = (
   intervalId: string,
-  model: ServerModel
+  model: ModelServer
 ): Sub<Msg> => {
   if (model.type === "game") {
     return Time.interval(intervalId, TimeSpan.fromSeconds(1 / 2), () => [

@@ -15,7 +15,7 @@ const main = async () => {
 
   const deps = AppClient.getDeps();
 
-  const program = Program.create<App.ClientModel, App.MsgClient, Ctx>({
+  const program = Program.create<App.ModelClient, App.MsgClient, Ctx>({
     getCtx() {
       return {
         now: Posix.now(),
@@ -142,7 +142,7 @@ renderRuntimeErrors();
 
 type Renderer = (
   dispatch: (m: App.MsgClient) => void
-) => (model: App.ClientModel, ctx: Ctx) => void;
+) => (model: App.ModelClient, ctx: Ctx) => void;
 
 const getRenderer = async ({
   impl,

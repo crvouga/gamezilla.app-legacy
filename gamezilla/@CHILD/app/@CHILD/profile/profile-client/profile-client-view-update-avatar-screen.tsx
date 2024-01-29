@@ -5,13 +5,13 @@ import {
   TextField,
   TopBar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { ClientModel, MsgClient } from "../profile.core";
+import { ModelClient, MsgClient } from "../profile.core";
 
 export const ViewUpdateAvatarScreen = ({
   model,
   dispatch,
 }: {
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (msg: MsgClient) => void;
 }) => {
   return (

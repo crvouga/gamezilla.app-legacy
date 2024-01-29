@@ -5,7 +5,7 @@ import { SpaceServerCmd } from "../../../../@SHARED/space-server-cmd";
 import {
   MsgGame,
   ModelGame,
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -20,7 +20,7 @@ import {
 //
 
 type Module = GameServerModule<{
-  Model: ServerModel;
+  Model: ModelServer;
   Msg: MsgServer;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;

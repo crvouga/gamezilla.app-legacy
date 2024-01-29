@@ -25,10 +25,10 @@ import {
 import { Chess } from "../../@SHARED/chess";
 import { Chessboard, CoverArt, PlayerIcon } from "../../@SHARED/chess-ui";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   CoreModel,
-  ServerModel,
+  ModelServer,
   MsgToClient,
   MsgToServer,
   initCore,
@@ -44,7 +44,7 @@ import {
 //
 //
 
-export const init: ClientModel = {
+export const init: ModelClient = {
   vsBotSetup: VsBotSetup.init,
   coreModel: initCore,
   openedMenuId: null,
@@ -67,13 +67,13 @@ export const update = ({
 }: {
   ctx: SpaceClientCtx;
   msg: MsgClient;
-  model: ClientModel;
+  model: ModelClient;
 }): {
-  model: ClientModel;
+  model: ModelClient;
   eff?: Eff<MsgClient>;
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
-  const model: ClientModel = { ...modelPrev, openedMenuId: null };
+  const model: ModelClient = { ...modelPrev, openedMenuId: null };
 
   switch (msg.t) {
     case "closed-modal": {
@@ -122,9 +122,9 @@ export const update = ({
 
 export const updateFromServer = (input: {
   msg: MsgToClient;
-  model: ClientModel;
+  model: ModelClient;
 }): {
-  model: ClientModel;
+  model: ModelClient;
   eff?: Eff<MsgClient>;
 } => {
   return p(
@@ -221,9 +221,9 @@ export const mergeWithServer = ({
   client = init,
   server,
 }: {
-  client?: ClientModel;
-  server: ServerModel;
-}): ClientModel => {
+  client?: ModelClient;
+  server: ModelServer;
+}): ModelClient => {
   return {
     isFlipped: client.isFlipped,
     openedMenuId: client.openedMenuId,
@@ -241,7 +241,7 @@ export const mergeWithServer = ({
 //
 //
 
-export const subscriptions = (_model: ClientModel): Sub<MsgClient> => {
+export const subscriptions = (_model: ModelClient): Sub<MsgClient> => {
   return Sub.None;
 };
 
@@ -260,7 +260,7 @@ export const View = ({
   onClose,
 }: {
   ctx: SpaceClientCtx;
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (msg: MsgClient) => void;
   onClose: () => void;
 }) => {

@@ -13,7 +13,7 @@ import { AppServerModule } from "../../@SHARED/architecture/app-server";
 import { IServerTransport } from "./transport-server";
 import {
   Client,
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -27,7 +27,7 @@ import {
 //
 //
 
-export const init = async (): Promise<{ model: ServerModel }> => {
+export const init = async (): Promise<{ model: ModelServer }> => {
   return {
     model: {
       clientsBySessionId: {},
@@ -46,7 +46,7 @@ export const init = async (): Promise<{ model: ServerModel }> => {
 
 type Input<TMsgToClient, TMsgToServer> = {
   ctx: ServerCtx;
-  model: ServerModel;
+  model: ModelServer;
   //
   msg?: MsgServer | null;
   msgClient?: MsgToServer | null;
@@ -60,7 +60,7 @@ type Input<TMsgToClient, TMsgToServer> = {
 };
 
 type Output = {
-  model: ServerModel;
+  model: ModelServer;
   eff?: Eff<MsgServer>;
   msgEvt?: ServerEvent[];
   msgCmd?: ServerCmd<MsgToClient>[];
@@ -107,7 +107,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
             ),
           };
 
-          const clientsBySessionIdNew: ServerModel["clientsBySessionId"] = {
+          const clientsBySessionIdNew: ModelServer["clientsBySessionId"] = {
             ...model.clientsBySessionId,
             [msg.sessionId]: clientNew,
           };
@@ -163,7 +163,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
       //   clientIds: CappedOrderedDict.remove(client.clientIds, msg.clientId),
       // };
 
-      // const clientsBySessionIdNew: ServerModel["clientsBySessionId"] = {
+      // const clientsBySessionIdNew: ModelServer["clientsBySessionId"] = {
       //   ...model.clientsBySessionId,
       //   [msg.sessionId]: clientNew,
       // };
@@ -214,7 +214,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model }) => {
 
       const sessionIdsNew = [...new Set([...sessionIds, msgEvt.sessionId])];
 
-      const sessionIdByUserIdNew: ServerModel["sessionIdsByUserId"] = {
+      const sessionIdByUserIdNew: ModelServer["sessionIdsByUserId"] = {
         ...model.sessionIdsByUserId,
         [msgEvt.userId]: sessionIdsNew,
       };
@@ -341,7 +341,7 @@ const sendToSession = async <TMsgToClient, TMsgToServer>({
   msg,
 }: {
   ctx: ServerCtx;
-  model: ServerModel;
+  model: ModelServer;
   msg: TMsgToClient;
   sessionIds: SessionId[];
   transport: IServerTransport<{

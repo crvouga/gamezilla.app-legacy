@@ -9,7 +9,7 @@ import { Eff, Result, Sub } from "gamezilla/@SHARED/core";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.server";
 import * as VsUser from "./@CHILD/vs-user/vs-user.server";
 import {
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -25,7 +25,7 @@ const { err: Err, ok: Ok } = Result;
 //
 //
 
-export type Model = ServerModel;
+export type Model = ModelServer;
 
 export const init: Model = { t: "none" };
 
@@ -99,7 +99,7 @@ export const updateFromClient = ({
       };
     }
 
-    const modelNew: ServerModel = initMode({
+    const modelNew: ModelServer = initMode({
       mode: msg.mode,
       userId: ctx.space.hostId,
     });
@@ -184,9 +184,9 @@ const initMode = ({
   mode,
   userId,
 }: {
-  mode: ServerModel["t"];
+  mode: ModelServer["t"];
   userId: UserId;
-}): ServerModel => {
+}): ModelServer => {
   switch (mode) {
     case "none": {
       return { t: "none" };

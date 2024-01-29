@@ -20,12 +20,12 @@ import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 //
 //
 
-export type ClientModel = {
+export type ModelClient = {
   openedModal: "confirm-resign" | null;
   ghostIndex: ColumnIndex | null;
 };
 
-export type ServerModel = null;
+export type ModelServer = null;
 
 //
 //

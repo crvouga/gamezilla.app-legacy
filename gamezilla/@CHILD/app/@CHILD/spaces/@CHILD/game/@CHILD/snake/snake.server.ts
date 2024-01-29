@@ -7,7 +7,7 @@ import {
   InputPlayer,
   InputPlayer_Done,
   Response,
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToServer,
   ToggleStatus,
@@ -24,7 +24,7 @@ import {
 //
 //
 
-export type Model = ServerModel;
+export type Model = ModelServer;
 
 export const init = initCoreModel;
 

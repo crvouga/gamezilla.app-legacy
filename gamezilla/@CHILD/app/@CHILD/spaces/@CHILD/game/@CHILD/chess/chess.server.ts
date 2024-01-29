@@ -3,7 +3,7 @@ import { Sub } from "gamezilla/@SHARED/core";
 import {
   MsgGame,
   ModelGame,
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -20,7 +20,7 @@ import {
 type Server = GameServer<{
   MsgGame: MsgGame;
   ModelGame: ModelGame;
-  ServerModel: ServerModel;
+  ModelServer: ModelServer;
   MsgServer: MsgServer;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;

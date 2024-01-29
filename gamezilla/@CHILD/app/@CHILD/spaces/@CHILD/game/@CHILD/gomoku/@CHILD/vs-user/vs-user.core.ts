@@ -66,11 +66,11 @@ type GameOver =
       type: "Draw";
     };
 
-export type ClientModel = Model & {
+export type ModelClient = Model & {
   confirming?: MsgClient["t"];
 };
 
-export type ServerModel = Model;
+export type ModelServer = Model;
 
 export const initShared = ({
   white,

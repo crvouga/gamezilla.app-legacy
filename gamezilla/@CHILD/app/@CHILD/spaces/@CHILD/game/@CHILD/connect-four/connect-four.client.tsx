@@ -16,7 +16,7 @@ import { VsBot } from "./@CHILD/vs-bot/vs-bot.client";
 import { VsUser } from "./@CHILD/vs-user/vs-user.client";
 import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   MsgGame,
   ModelGame,
@@ -33,7 +33,7 @@ import {
 //
 
 type Module = GameClientModule<{
-  Model: ClientModel;
+  Model: ModelClient;
   Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
@@ -77,7 +77,7 @@ const update: Module["update"] = (input) => {
 };
 
 const updateFromMsg =
-  (model: ClientModel): Module["update"] =>
+  (model: ModelClient): Module["update"] =>
   (input) => {
     const { msg } = input;
 
@@ -101,7 +101,7 @@ const updateFromMsg =
   };
 
 const updateFromMsgGame =
-  (model: ClientModel): Module["update"] =>
+  (model: ModelClient): Module["update"] =>
   (input) => {
     const { msgGame } = input;
 
@@ -143,7 +143,7 @@ const updateFromMsgGame =
   };
 
 const updateChild =
-  (model: ClientModel): Module["update"] =>
+  (model: ModelClient): Module["update"] =>
   (input) => {
     const { msg, msgEvt, msgGame, msgServer, modelGame } = input;
 

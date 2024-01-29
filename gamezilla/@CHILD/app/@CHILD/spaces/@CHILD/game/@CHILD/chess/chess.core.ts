@@ -5,25 +5,25 @@ import * as Puzzle from "./@CHILD/puzzle/puzzle.core";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.core";
 import * as VsUser from "./@CHILD/vs-user/vs-user.core";
 
-export type ClientModel = {
+export type ModelClient = {
   mode:
     | { t: "none" }
-    | { t: "vs-user"; c: VsUser.ClientModel }
-    | { t: "vs-bot"; c: VsBot.ClientModel }
-    | { t: "puzzle"; c: Puzzle.ClientModel };
+    | { t: "vs-user"; c: VsUser.ModelClient }
+    | { t: "vs-bot"; c: VsBot.ModelClient }
+    | { t: "puzzle"; c: Puzzle.ModelClient };
 
   requests?: {
     [req in Req["t"]]?: RemoteResult<Problem, null>;
   };
 };
 
-export type ServerModel =
+export type ModelServer =
   | { t: "none" }
-  | { t: "vs-user"; c: VsUser.ServerModel }
-  | { t: "vs-bot"; c: VsBot.ServerModel }
-  | { t: "puzzle"; c: Puzzle.ServerModel };
+  | { t: "vs-user"; c: VsUser.ModelServer }
+  | { t: "vs-bot"; c: VsBot.ModelServer }
+  | { t: "puzzle"; c: Puzzle.ModelServer };
 
-type Mode = ServerModel["t"];
+type Mode = ModelServer["t"];
 
 export type MsgClient =
   | Req
@@ -50,7 +50,7 @@ export type MsgToServer =
 
 export type Req = { t: "input-mode"; mode: Mode; userId: UserId };
 export type Res = Req & {
-  result: Result<Problem, ServerModel>;
+  result: Result<Problem, ModelServer>;
 };
 export type Problem = "must_be_the_host";
 

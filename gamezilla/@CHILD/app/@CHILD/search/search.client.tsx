@@ -11,7 +11,7 @@ import {
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   MsgToClient,
   MsgToServer,
@@ -28,9 +28,9 @@ import {
 export const init = ({
   stored,
 }: {
-  stored: ClientModel | null;
+  stored: ModelClient | null;
 }): {
-  model: ClientModel;
+  model: ModelClient;
 } => {
   if (stored) {
     return {
@@ -63,9 +63,9 @@ export const update = ({
   model,
 }: {
   msg: Msg;
-  model: ClientModel;
+  model: ModelClient;
 }): {
-  model: ClientModel;
+  model: ModelClient;
   eff?: Eff<Msg>;
   msgEvt?: ClientEvent[];
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
@@ -109,8 +109,8 @@ export const updateFromServer = ({
   model,
 }: {
   msg: MsgToClient;
-  model: ClientModel;
-}): { model: ClientModel; eff?: Eff<Msg> } => {
+  model: ModelClient;
+}): { model: ModelClient; eff?: Eff<Msg> } => {
   return { model };
 };
 
@@ -127,7 +127,7 @@ export const View = ({
   dispatch,
   viewBottomBar,
 }: {
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (msg: Msg) => void;
   viewBottomBar: VDom;
 }) => {

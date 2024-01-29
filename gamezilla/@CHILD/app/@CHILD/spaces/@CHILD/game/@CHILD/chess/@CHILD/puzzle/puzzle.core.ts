@@ -65,11 +65,11 @@ export type CoreModel =
     }
   | (BaseModel & MainModel);
 
-export type ServerModel = CoreModel & {
+export type ModelServer = CoreModel & {
   requests: { getPuzzles?: RemoteResult<string, null> };
 };
 
-export type ClientModel = CoreModel & {
+export type ModelClient = CoreModel & {
   initializedAt?: number;
   serverNow?: Posix;
 };

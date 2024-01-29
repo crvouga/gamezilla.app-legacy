@@ -121,11 +121,11 @@ export const initCoreModel = ({
   };
 };
 
-export type ClientModel = CoreModel & {
+export type ModelClient = CoreModel & {
   openedModal: "none" | ModalName;
 };
 
-export type ServerModel = CoreModel;
+export type ModelServer = CoreModel;
 
 export const parseModel = (): Result<string, CoreModel> => {
   return Err("unimplemented");

@@ -11,9 +11,9 @@ import * as Snake from "./@SHARED/snake";
 //
 //
 
-export type ServerModel = CoreModel;
+export type ModelServer = CoreModel;
 
-export type ClientModel = CoreModel & {
+export type ModelClient = CoreModel & {
   openedMenuId: Option<string>;
 };
 

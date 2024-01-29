@@ -11,7 +11,7 @@ import { PhoneNumber, Result, Sub, isErr, ok } from "gamezilla/@SHARED/core";
 import { AccountDb } from "../../@SHARED/server/account-db/account-db-impl";
 import { Account } from "../../auth.core";
 import {
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -29,7 +29,7 @@ type Module = AppServerModule<{
   Ctx: ServerCtx;
   MsgInCmd: null;
   MsgInEvent: ServerEvent;
-  Model: ServerModel;
+  Model: ModelServer;
   Msg: MsgServer;
   MsgOutCmd: ServerCmd<MsgToClient>;
   MsgOutEvent: ServerEvent;

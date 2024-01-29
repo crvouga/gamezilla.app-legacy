@@ -15,7 +15,7 @@ import * as Round from "./vs-user-round";
 import {
   NewGame,
   Res,
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -42,7 +42,7 @@ import {
 //
 //
 
-export type Model = ServerModel;
+export type Model = ModelServer;
 
 export const init = initCoreModel;
 

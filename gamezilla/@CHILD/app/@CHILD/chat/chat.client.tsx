@@ -5,7 +5,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Browser, Eff, exhaustive, p } from "gamezilla/@SHARED/core";
-import { ClientModel, MsgClient, MsgToClient } from "./chat.core";
+import { ModelClient, MsgClient, MsgToClient } from "./chat.core";
 
 //
 //
@@ -18,8 +18,8 @@ import { ClientModel, MsgClient, MsgToClient } from "./chat.core";
 export const init = ({
   stored,
 }: {
-  stored: ClientModel | null;
-}): { model: ClientModel } => {
+  stored: ModelClient | null;
+}): { model: ModelClient } => {
   if (stored) {
     return {
       model: stored,
@@ -65,8 +65,8 @@ export const update = ({
   model,
 }: {
   msg: Msg;
-  model: ClientModel;
-}): { model: ClientModel; eff?: Eff<Msg> } => {
+  model: ModelClient;
+}): { model: ModelClient; eff?: Eff<Msg> } => {
   switch (msg[0]) {
     case "clicked-user-search-result": {
       return {
@@ -140,9 +140,9 @@ export const updateFromServer = ({
   model,
 }: {
   msg: MsgToClient;
-  model: ClientModel;
+  model: ModelClient;
 }): {
-  model: ClientModel;
+  model: ModelClient;
   eff?: Eff<Msg>;
 } => {
   return { model };
@@ -153,9 +153,9 @@ export const updateFromEvent = ({
   model,
 }: {
   msg: ClientEvent;
-  model: ClientModel;
+  model: ModelClient;
 }): {
-  model: ClientModel;
+  model: ModelClient;
   eff?: Eff<Msg>;
 } => {
   switch (msg.t) {
@@ -206,7 +206,7 @@ export const View = ({
   userSearch,
   viewBottomBar,
 }: {
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (m: Msg) => void;
   ctx: ClientCtx;
   route: RouteChat;
@@ -248,7 +248,7 @@ export const View = ({
 };
 
 const ViewChat = (_props: {
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (m: Msg) => void;
 }) => {
   return <div>ViewChat</div>;
@@ -256,7 +256,7 @@ const ViewChat = (_props: {
 
 const ViewChatNew = (_props: {
   ctx: ClientCtx;
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (m: Msg) => void;
   userSearch: {
     onInput: (searchText: string) => void;
@@ -268,7 +268,7 @@ const ViewChatNew = (_props: {
 
 const ViewChatList = (_props: {
   ctx: ClientCtx;
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (m: Msg) => void;
 }) => {
   return <div></div>;

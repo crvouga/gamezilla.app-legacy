@@ -8,7 +8,7 @@ import { Eff, Sub } from "gamezilla/@SHARED/core";
 
 export type GameClientTypes = {
   //
-  ClientModel: any;
+  ModelClient: any;
   MsgClient: any;
   //
   MsgToClient: any;
@@ -21,7 +21,7 @@ export type GameClientTypes = {
 };
 
 type Output<T extends GameClientTypes> = {
-  model: T["ClientModel"];
+  model: T["ModelClient"];
   eff?: Eff<T["MsgClient"]>;
   msgCmd?: ClientCmd<{
     MsgClient: T["MsgClient"];
@@ -43,14 +43,14 @@ export type GameClient<T extends GameClientTypes> = {
   init: (input: {
     ctx: T["ClientCtx"];
     modelGame: T["ModelGame"];
-    model?: T["ClientModel"] | null;
+    model?: T["ModelClient"] | null;
   }) => Output<T>;
 
   update: (input: {
     ctx: T["ClientCtx"];
     modelGame: T["ModelGame"];
     modelGameBefore: T["ModelGame"];
-    model?: T["ClientModel"] | null;
+    model?: T["ModelClient"] | null;
     //
     msg?: T["MsgClient"] | null;
     msgServer?: T["MsgToClient"] | null;
@@ -61,7 +61,7 @@ export type GameClient<T extends GameClientTypes> = {
   subscriptions: (input: {
     intervalId: string;
     ctx: T["ClientCtx"];
-    model?: T["ClientModel"] | null;
+    model?: T["ModelClient"] | null;
     modelGame: T["ModelGame"];
   }) => Sub<T["MsgClient"]>;
 
@@ -69,7 +69,7 @@ export type GameClient<T extends GameClientTypes> = {
     ctx: T["ClientCtx"];
     dispatch: (msg: T["MsgClient"]) => void;
     modelGame: T["ModelGame"];
-    model?: T["ClientModel"] | null;
+    model?: T["ModelClient"] | null;
   }) => VDom;
 
   ViewFeedItem: (input: {
@@ -86,7 +86,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
   tag: T,
   client: GameClient<Types>
 ): GameClient<{
-  ClientModel: { t: T; c: Types["ClientModel"] };
+  ModelClient: { t: T; c: Types["ModelClient"] };
   MsgClient: { t: T; c: Types["MsgClient"] };
   MsgToClient: { t: T; c: Types["MsgToClient"] };
   MsgToServer: { t: T; c: Types["MsgToServer"] };
@@ -199,7 +199,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
  */
 const chain = <T extends GameClientTypes>(
   initial: Output<T>,
-  ...updaters: ((input: T["ClientModel"]) => Output<T>)[]
+  ...updaters: ((input: T["ModelClient"]) => Output<T>)[]
 ): Output<T> => {
   const msgCmd: ClientCmd<{
     MsgClient: T["MsgClient"];
@@ -248,7 +248,7 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
   tag: TTag,
   output: Output<TTypes>
 ): Output<{
-  ClientModel: { t: TTag; c: TTypes["ClientModel"] };
+  ModelClient: { t: TTag; c: TTypes["ModelClient"] };
   MsgClient: { t: TTag; c: TTypes["MsgClient"] };
   MsgToClient: { t: TTag; c: TTypes["MsgToClient"] };
   MsgToServer: { t: TTag; c: TTypes["MsgToServer"] };

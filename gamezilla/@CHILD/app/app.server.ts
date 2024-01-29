@@ -29,7 +29,7 @@ import { Logger, LoggerConsole } from "./@SHARED/server/logger";
 import { createDbConn } from "./app-server/db-conn-sql";
 import { createSMS } from "./app-server/sms";
 import {
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -111,7 +111,7 @@ export const init = async (input: {
   ctx: { now: Posix };
   deps: Deps;
 }): Promise<{
-  model: ServerModel;
+  model: ModelServer;
   eff?: Eff<MsgServer>;
 }> => {
   const ctx: ServerCtx = {
@@ -157,11 +157,11 @@ export const init = async (input: {
 
 export const update = async (input: {
   msg: MsgServer;
-  model: ServerModel;
+  model: ModelServer;
   ctx: { now: Posix };
   deps: Deps;
 }): Promise<{
-  model: ServerModel;
+  model: ModelServer;
   eff?: Eff<MsgServer>;
 }> => {
   logMsg({ msg: input.msg, logger: input.deps.logger });
@@ -207,7 +207,7 @@ function logMsg({
 }
 
 type Output = {
-  model: ServerModel;
+  model: ModelServer;
   eff: Eff<MsgServer>;
   msgEvt: ServerEvent[];
   msgCmd: ServerCmd<MsgToClient>[];
@@ -276,7 +276,7 @@ export const updateChild = async ({
 }: {
   deps: Deps;
   ctx: ServerCtx;
-  model: ServerModel;
+  model: ModelServer;
   msg?: MsgServer;
   msgClient?: (MsgToServer & MsgToServerMeta) | null;
   msgEvt?: ServerEvent;
@@ -388,7 +388,7 @@ export const updateChild = async ({
 
 export const subscriptions = async (input: {
   deps: Deps;
-  model: ServerModel;
+  model: ModelServer;
   ctx: { now: Posix };
 }): Promise<Sub<MsgServer>> => {
   const ctx: ServerCtx = {

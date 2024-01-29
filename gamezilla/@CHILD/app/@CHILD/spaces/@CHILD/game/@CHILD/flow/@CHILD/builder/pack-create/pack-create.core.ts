@@ -8,11 +8,11 @@ import { FlowPack } from "../../../@SHARED/flow-pack/flow-pack";
 //
 //
 
-export type ClientModel = {
+export type ModelClient = {
   puzzleCreateRequest: RemoteResult<string, null>;
 };
 
-export type ServerModel = {};
+export type ModelServer = {};
 
 //
 //

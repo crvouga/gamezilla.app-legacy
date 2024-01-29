@@ -9,7 +9,7 @@ type SearchResult = {
   avatarUrl: string;
 };
 
-export type ClientModel = {
+export type ModelClient = {
   searchText: string;
   searchResults: {
     [id: string]: SearchResult;
@@ -19,7 +19,7 @@ export type ClientModel = {
   };
 };
 
-export type ServerModel = null;
+export type ModelServer = null;
 
 export type MsgToServer = Req;
 

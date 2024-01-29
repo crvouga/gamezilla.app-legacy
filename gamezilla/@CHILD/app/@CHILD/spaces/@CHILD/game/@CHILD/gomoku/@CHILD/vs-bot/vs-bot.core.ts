@@ -38,9 +38,9 @@ export type ModelGame = {
   board: Board;
 };
 
-export type ClientModel = Model;
+export type ModelClient = Model;
 
-export type ServerModel = Model;
+export type ModelServer = Model;
 
 export const initShared = ({ userId }: { userId: UserId | null }): Model => {
   return {

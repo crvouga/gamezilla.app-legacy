@@ -6,7 +6,7 @@ import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space
 import { Eff, Sub, p } from "gamezilla/@SHARED/core";
 import { Chess } from "../../@SHARED/chess";
 import {
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -23,7 +23,7 @@ import {
 //
 //
 
-export type Model = ServerModel;
+export type Model = ModelServer;
 
 export const init = initServer;
 

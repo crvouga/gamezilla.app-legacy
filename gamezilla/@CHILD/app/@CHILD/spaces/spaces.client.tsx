@@ -48,7 +48,7 @@ import { SpaceEvent } from "./spaces-core/space-event";
 import * as SpaceState from "./spaces-core/space-state";
 import * as Spaces from "./spaces-core/spaces";
 import {
-  ClientModel,
+  ModelClient,
   MsgClient,
   MsgToClient,
   MsgToServer,
@@ -67,7 +67,7 @@ type Module = AppClientModule<{
   Ctx: AnonymousClientCtx;
   MsgInCmd: never;
   MsgInEvent: ClientEvent;
-  Model: ClientModel;
+  Model: ModelClient;
   Msg: MsgClient;
   MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
   MsgOutEvent: ClientEvent;
@@ -83,7 +83,7 @@ type Module = AppClientModule<{
 //
 //
 
-const initModel: ClientModel = {
+const initModel: ModelClient = {
   ...Spaces.init,
   games: {},
   modal: null,
@@ -410,10 +410,10 @@ const mergeUpdatedGame = ({
   gameUpdated,
 }: {
   spaceId: SpaceId;
-  model: ClientModel;
+  model: ModelClient;
   gameUpdated: ReturnType<typeof Game.update>;
 }): {
-  model: ClientModel;
+  model: ModelClient;
   msgCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
   eff: Eff<MsgClient>;
 } => {
@@ -436,10 +436,10 @@ const mergeUpdatedGame = ({
 
 const updateFromManySpaceEvents = (input: {
   ctx: ClientCtx | AnonymousClientCtx;
-  model: ClientModel;
+  model: ModelClient;
   msgEvts: WithEventId<SpaceEvent>[];
 }): Promise<{
-  model: ClientModel;
+  model: ModelClient;
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
   eff?: Eff<MsgClient>;
 }> => {
@@ -499,10 +499,10 @@ const sendSpaceEventMsgToServer = async ({
   spaceEvent: msgEvt,
 }: {
   ctx: ClientCtx | AnonymousClientCtx;
-  model: ClientModel;
+  model: ModelClient;
   spaceEvent: WithEventId<SpaceEvent>;
 }): Promise<{
-  model: ClientModel;
+  model: ModelClient;
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 }> => {
   const msgEvtWithMeta = Spaces.toEventWithMeta(
@@ -533,11 +533,11 @@ const updateClientFromSpaceEvent = async ({
   spaceEvent,
 }: {
   ctx: ClientCtx | AnonymousClientCtx;
-  modelBefore: ClientModel;
-  model: ClientModel;
+  modelBefore: ModelClient;
+  model: ModelClient;
   spaceEvent: WithEventId<SpaceEvent>;
 }): Promise<{
-  model: ClientModel;
+  model: ModelClient;
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
   msgEvt?: WithEventId<SpaceEvent>[];
 }> => {
@@ -814,7 +814,7 @@ export const View = ({
   route,
   viewBottomBar,
 }: {
-  model: ClientModel;
+  model: ModelClient;
   ctx: ClientCtx;
   dispatch: (m: MsgClient) => void;
   route: RouteGameSpace;
@@ -855,7 +855,7 @@ const ViewSpaceScreen = ({
   model,
   spaceId,
 }: {
-  model: ClientModel;
+  model: ModelClient;
   ctx: ClientCtx;
   dispatchEvent: (m: SpaceEvent) => void;
   dispatch: (m: MsgClient) => void;
@@ -893,7 +893,7 @@ const ViewSpaceStarted = ({
   model,
   spaceState,
 }: {
-  model: ClientModel;
+  model: ModelClient;
   ctx: ClientCtx;
   dispatchEvent: (m: SpaceEvent) => void;
   dispatch: (m: MsgClient) => void;
@@ -1014,7 +1014,7 @@ const ViewFeed = ({
 }: {
   spaceState: SpaceState.State;
   dispatch: (m: MsgClient) => void;
-  model: ClientModel;
+  model: ModelClient;
   ctx: SpaceClientCtx;
 }) => {
   const msgEvt =
@@ -1122,7 +1122,7 @@ export const ViewScreenJoinSpace = ({
   dispatchEvent,
 }: {
   ctx: SpaceClientCtx;
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (msg: MsgClient) => void;
   dispatchEvent: (m: SpaceEvent) => void;
 }) => {
@@ -1223,7 +1223,7 @@ const ViewSpaceScreenMain = ({
   dispatchEvent,
 }: {
   space: SpaceState.Started;
-  model: ClientModel;
+  model: ModelClient;
   ctx: SpaceClientCtx;
   dispatch: (m: MsgClient) => void;
   dispatchEvent: (m: SpaceEvent) => void;
@@ -1276,7 +1276,7 @@ const ViewGame = ({
   dispatchEvent,
 }: {
   space: SpaceState.Started;
-  model: ClientModel;
+  model: ModelClient;
   ctx: SpaceClientCtx;
   dispatch: (m: MsgClient) => void;
   dispatchEvent: (m: SpaceEvent) => void;
@@ -1434,7 +1434,7 @@ export const ViewCurrentSpaceBar = ({
   dispatch,
 }: {
   ctx: ClientCtx;
-  model: ClientModel;
+  model: ModelClient;
   dispatch: (msg: MsgClient) => void;
 }) => {
   const dispatchEvent = (msg: SpaceEvent) =>

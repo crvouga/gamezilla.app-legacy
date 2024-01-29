@@ -4,7 +4,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { Eff, Sub, andThen, p } from "gamezilla/@SHARED/core";
 import {
-  ServerModel,
+  ModelServer,
   MsgServer,
   MsgToServer,
   handleBotMove,
@@ -19,7 +19,7 @@ import {
 //
 //
 
-export type Model = ServerModel;
+export type Model = ModelServer;
 
 export const init = initShared;
 

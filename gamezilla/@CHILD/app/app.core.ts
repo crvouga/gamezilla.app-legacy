@@ -14,18 +14,18 @@ import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 //
 //
 
-export type ServerModel = {
-  wire: Wire.ServerModel;
-  spaces: Spaces.ServerModel;
-  profile: Profile.ServerModel;
-  auth: Auth.ServerModel;
+export type ModelServer = {
+  wire: Wire.ModelServer;
+  spaces: Spaces.ModelServer;
+  profile: Profile.ModelServer;
+  auth: Auth.ModelServer;
 };
 
-export type ClientModel = {
-  auth: Auth.ClientModel;
-  spaces: Spaces.ClientModel;
-  profile: Profile.ClientModel;
-  wire: Wire.ClientModel;
+export type ModelClient = {
+  auth: Auth.ModelClient;
+  spaces: Spaces.ModelClient;
+  profile: Profile.ModelClient;
+  wire: Wire.ModelClient;
   routing: Routing.Model;
   toast: Toast.Model;
   sound: Sound.Model;
