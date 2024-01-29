@@ -62,7 +62,7 @@ const ViewCreateButton: ClientModule["View"] = (input) => {
 
   return (
     <Button
-      text="Create New"
+      text="Create Puzzle"
       variant="contained"
       color="primary"
       loading={model.puzzleCreateRequest.t === "loading"}
