@@ -8,10 +8,6 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Sub, isErr } from "gamezilla/@SHARED/core";
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
-// import {
-//   StoreSessionIdByUserId,
-//   StoreUserIdBySessionId,
-// } from "./@SHARED/server/auth-session-store";
 import { ModelServer, MsgServer, MsgToClient, MsgToServer } from "./auth.core";
 import { SessionDb } from "./@SHARED/server/session-db";
 
@@ -79,11 +75,14 @@ export const update: Module["update"] = async (input) => {
 };
 
 export const toUserIdFromSessionId = async (
-  _ctx: ServerCtx,
+  ctx: ServerCtx,
   _model: ModelServer,
   sessionId: SessionId
 ): Promise<UserId | null> => {
-  const found = await SessionDb().findUserIdBySessionId(sessionId);
+  const found = await SessionDb({
+    t: "postgres",
+    dbConn: ctx.dbConn,
+  }).findUserIdBySessionId(sessionId);
   if (isErr(found)) {
     return null;
   }
@@ -127,14 +126,21 @@ const updateFromMsg: Module["update"] = async ({ model, msg }) => {
   }
 };
 
-const updateFromClient: Module["update"] = async ({ model, msgClient }) => {
+const updateFromClient: Module["update"] = async ({
+  model,
+  msgClient,
+  ctx,
+}) => {
   if (!msgClient) {
     return { model };
   }
 
   switch (msgClient.t) {
     case "logout": {
-      const zapped = await SessionDb().zapBySessionId(msgClient.sessionId);
+      const zapped = await SessionDb({
+        t: "postgres",
+        dbConn: ctx.dbConn,
+      }).zapBySessionId(msgClient.sessionId);
 
       if (zapped.t === "err") {
         return { model };
@@ -158,14 +164,17 @@ const updateFromClient: Module["update"] = async ({ model, msgClient }) => {
   }
 };
 
-const updateFromEvent: typeof update = async ({ msgEvt, model }) => {
+const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
   if (!msgEvt) {
     return { model };
   }
 
   switch (msgEvt.t) {
     case "wire/client-connected": {
-      const found = await SessionDb().findUserIdBySessionId(msgEvt.sessionId);
+      const found = await SessionDb({
+        t: "postgres",
+        dbConn: ctx.dbConn,
+      }).findUserIdBySessionId(msgEvt.sessionId);
 
       if (isErr(found)) {
         return { model };
@@ -225,7 +234,10 @@ const updateFromEvent: typeof update = async ({ msgEvt, model }) => {
         };
       }
 
-      const inserted = await SessionDb().insert({
+      const inserted = await SessionDb({
+        t: "postgres",
+        dbConn: ctx.dbConn,
+      }).insert({
         sessionId: msgEvt.sessionId,
         userId: msgEvt.userId,
       });
