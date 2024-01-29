@@ -9,16 +9,17 @@ import {
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { RemoteResult, Result, isErr } from "gamezilla/@SHARED/core";
+import { RemoteResult, isErr } from "gamezilla/@SHARED/core";
 import { FlowGrid, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
 import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id";
+import { PuzzleCreate } from "./puzzle-create";
 import { PuzzleDeleteForever } from "./puzzle-delete-forever";
 import { PuzzleEditName } from "./puzzle-edit-name";
-import { PuzzleSaveChanges } from "./puzzle-save-changes";
 import { PuzzleList } from "./puzzle-list";
+import { PuzzleSaveChanges } from "./puzzle-save-changes";
 
 //
 //
@@ -68,7 +69,12 @@ export type ServerModule = GameServerModule<{
 //
 //
 
+export const LIST_TABS = ["puzzles", "packs"] as const;
+
+type ListTab = (typeof LIST_TABS)[number];
+
 type BaseClientModel = {
+  listTab: ListTab;
   puzzles: {
     [puzzleId: FlowPuzzleId]: FlowPuzzle;
   };
@@ -95,46 +101,38 @@ export type ServerModel = {};
 
 export type ClientMsg =
   | { t: "game-event"; c: GameEvent }
+  | { t: "user-selected-list-tab"; listTab: ListTab }
   //
   | { t: "builder/user-clicked-more-button" }
   | { t: "builder/user-closed-more-drawer" }
   | { t: "builder/user-clicked-exit-button" }
   //
+  | PuzzleCreate.ClientMsg
   | PuzzleEditName.ClientMsg
   | PuzzleDeleteForever.ClientMsg
   | PuzzleList.ClientMsg
   | PuzzleSaveChanges.ClientMsg;
 
 export type ServerMsg =
+  | PuzzleCreate.ServerMsg
   | PuzzleSaveChanges.ServerMsg
   | PuzzleDeleteForever.ServerMsg
   | PuzzleList.ServerMsg
   | PuzzleEditName.ServerMsg;
 
 export type ToServer =
+  | PuzzleCreate.ToServer
   | PuzzleSaveChanges.ToServer
   | PuzzleDeleteForever.ToServer
   | PuzzleEditName.ToServer
   | PuzzleList.ToServer;
 
 export type ToClient =
+  | PuzzleCreate.ToClient
   | PuzzleSaveChanges.ToClient
   | PuzzleEditName.ToClient
   | PuzzleDeleteForever.ToClient
-  | PuzzleList.ToClient
-  | {
-      t: "put-puzzle";
-      put: Result<string, null>;
-      reason: "user-saved-puzzle" | "user-created-puzzle";
-    };
-
-//
-//
-//
-//
-export type ListPuzzlesInput = Parameters<IFlowPuzzleDb["list"]>[0];
-
-export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>;
+  | PuzzleList.ToClient;
 
 //
 //
@@ -145,6 +143,8 @@ export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>;
 //
 
 export type GameEvent =
+  | PuzzleList.GameEvent
+  | PuzzleCreate.GameEvent
   | PuzzleEditName.GameEvent
   | PuzzleDeleteForever.GameEvent
   | PuzzleSaveChanges.GameEvent
@@ -163,15 +163,6 @@ export type GameEvent =
   | {
       t: "user-changed-to-play-mode";
       userId: UserId;
-    }
-  | {
-      t: "listed-puzzles";
-      input: ListPuzzlesInput;
-      output: ListPuzzlesOutput;
-    }
-  | {
-      t: "user-created-new-puzzle";
-      puzzle: FlowPuzzle;
     }
   | {
       t: "user-exited-builder";
@@ -258,13 +249,17 @@ const reducerListState = ({
   state: GameStateList;
 }): GameState => {
   switch (event.t) {
-    case "user-created-new-puzzle": {
+    case "user-created-puzzle": {
+      if (isErr(event.created)) {
+        return state;
+      }
+      const puzzleNew = event.created.value;
       return {
         t: "build",
-        gridEdit: FlowGridUIEdit.init({ grid: event.puzzle.puzzle.c }),
         mode: { t: "edit" },
-        gridPlay: FlowGridUIPlay.init({ grid: event.puzzle.puzzle.c }),
-        puzzle: event.puzzle,
+        gridEdit: FlowGridUIEdit.init({ grid: puzzleNew.puzzle.c }),
+        gridPlay: FlowGridUIPlay.init({ grid: puzzleNew.puzzle.c }),
+        puzzle: puzzleNew,
       };
     }
 
@@ -391,8 +386,8 @@ const reducerBuildState = ({
       return { ...state, puzzle: event.saved.value };
     }
     case "user-opened-puzzle":
-    case "listed-puzzles":
-    case "user-created-new-puzzle": {
+    case "user-created-puzzle":
+    case "listed-puzzles": {
       return state;
     }
   }

@@ -17,15 +17,31 @@ const init: ClientModule["init"] = {
   editNameDraft: "",
   editNameRequest: notAsked,
   deleteForeverRequest: notAsked,
+  listTab: "puzzles",
 };
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateGameEvent({ ...input, model }),
+    (model) => updateLocation({ ...input, model }),
     (model) => PuzzleBuilder.update({ ...input, model }),
     (model) => PuzzleListClient.update({ ...input, model })
   );
+};
+
+const updateLocation: ClientModule["update"] = (input) => {
+  const { model, msg } = input;
+
+  switch (msg?.t) {
+    case "user-selected-list-tab": {
+      return { model: { ...model, listTab: msg.listTab } };
+    }
+
+    default: {
+      return { model };
+    }
+  }
 };
 
 const updateGameEvent: ClientModule["update"] = (input) => {
@@ -48,7 +64,7 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-  const { gameState } = input;
+  const { gameState, dispatch, model } = input;
 
   switch (gameState.t) {
     case "build": {
@@ -59,13 +75,15 @@ const View: ClientModule["View"] = (input) => {
       return (
         <div className="flex h-full w-full flex-1 flex-col">
           <Tabs
-            tabs={["Puzzles", "Packs"]}
+            tabs={["puzzles", "packs"]}
             labels={{
-              Packs: "Packs",
-              Puzzles: "Puzzles",
+              packs: "Packs",
+              puzzles: "Puzzles",
             }}
-            onSelect={(_tab) => {}}
-            selected="Puzzles"
+            onSelect={(listTab) =>
+              dispatch({ t: "user-selected-list-tab", listTab })
+            }
+            selected={model.listTab}
           />
 
           <PuzzleListClient.View {...input} />

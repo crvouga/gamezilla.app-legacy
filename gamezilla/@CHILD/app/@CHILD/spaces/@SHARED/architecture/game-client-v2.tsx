@@ -71,6 +71,10 @@ export type Input<T extends GameClientModuleTypes> = {
    */
   model: T["Model"];
   /**
+   * `location`
+   */
+  // location: T["Location"];
+  /**
    * `gameState` is the current state of the game. This is shared between client and server.
    */
   gameState: T["GameState"];
@@ -235,13 +239,13 @@ const tagOutput = <
     eff: Eff.tag(tag, output.eff),
     event: output.event,
     gameEvent: output.gameEvent?.map((c) => {
-      const child = { ...c }
-      delete child.eventId
-      return ({
+      const child = { ...c };
+      delete child.eventId;
+      return {
         eventId: c.eventId,
         c: child,
         t: tag,
-      })
+      };
     }),
   };
 };

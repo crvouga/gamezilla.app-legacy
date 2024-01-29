@@ -24,3 +24,14 @@ export type ToClient = { t: "list/listed-puzzle"; listed: ListPuzzlesOutput };
 export type ListPuzzlesInput = Parameters<IFlowPuzzleDb["list"]>[0];
 
 export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>;
+
+//
+//
+//
+//
+
+export type GameEvent = {
+  t: "listed-puzzles";
+  input: ListPuzzlesInput;
+  output: ListPuzzlesOutput;
+};
