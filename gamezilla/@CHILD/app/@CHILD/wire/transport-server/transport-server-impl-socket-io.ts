@@ -1,6 +1,6 @@
 import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Server } from "socket.io";
-import { ClientToServerMsg, ServerToClientMsg } from "../transport.core";
+import { ClientMsgToServerMsg, ServerMsgToClientMsg } from "../transport.core";
 import {
   IServerTransport,
   ServerTransportSocketIOImpl,
@@ -8,17 +8,17 @@ import {
 } from "./transport-server";
 import { PUBLIC_APP_CONFIG } from "config";
 
-export const ServerTransportSocketIO = <ToServer, ToClient>({
+export const ServerTransportSocketIO = <MsgToServer, MsgToClient>({
   impl,
   codebaseVersionId,
 }: {
   codebaseVersionId: string;
   impl: ServerTransportSocketIOImpl;
 }): IServerTransport<{
-  ToClient: ToClient;
-  ToServer: ToServer;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
 }> => {
-  const transport = initServerTransport<ToServer, ToClient>();
+  const transport = initServerTransport<MsgToServer, MsgToClient>();
 
   const io = new Server(impl.serverPort, {
     cors: {
@@ -38,7 +38,7 @@ export const ServerTransportSocketIO = <ToServer, ToClient>({
       ? maybeSessionId
       : SessionId.generate();
 
-    const toClient: ServerToClientMsg<ToClient> = {
+    const toClient: ServerMsgToClientMsg<MsgToClient> = {
       t: "session-id",
       codebaseVersionId,
       sessionId,
@@ -49,7 +49,7 @@ export const ServerTransportSocketIO = <ToServer, ToClient>({
 
     transport.wire.publish({ t: "client-connected", clientId, sessionId });
 
-    socket.on("to-server", (msg: ClientToServerMsg<ToServer>) => {
+    socket.on("to-server", (msg: ClientMsgToServerMsg<MsgToServer>) => {
       if (
         msg.codebaseVersionId !== codebaseVersionId &&
         PUBLIC_APP_CONFIG.IS_PROD
@@ -78,7 +78,7 @@ export const ServerTransportSocketIO = <ToServer, ToClient>({
         return;
       }
 
-      const toClient: ServerToClientMsg<ToClient> = {
+      const toClient: ServerMsgToClientMsg<MsgToClient> = {
         t: "to-client",
         codebaseVersionId,
         msgs: msgs.msgs,
@@ -95,7 +95,7 @@ export const ServerTransportSocketIO = <ToServer, ToClient>({
   });
 
   transport.toClientBroadcast.subscribe((msgs) => {
-    const toClient: ServerToClientMsg<ToClient> = {
+    const toClient: ServerMsgToClientMsg<MsgToClient> = {
       t: "to-client",
       codebaseVersionId,
       msgs: msgs,

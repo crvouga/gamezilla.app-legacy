@@ -79,9 +79,9 @@ export type ClientMsg =
   | { t: "clicked-avatar" }
   | { t: "clicked-update-username-button" };
 
-export type ServerMsg = { t: "handled"; clientId: ClientId; msg: ToClient };
+export type ServerMsg = { t: "handled"; clientId: ClientId; msg: MsgToClient };
 
-export type ToClient =
+export type MsgToClient =
   | {
       t: "current-user-profile";
       result: Result<string, Profile>;
@@ -90,7 +90,7 @@ export type ToClient =
     }
   | Res;
 
-export type ToServer = Req;
+export type MsgToServer = Req;
 
 export type Req =
   | { t: "find-one"; userId: UserId }

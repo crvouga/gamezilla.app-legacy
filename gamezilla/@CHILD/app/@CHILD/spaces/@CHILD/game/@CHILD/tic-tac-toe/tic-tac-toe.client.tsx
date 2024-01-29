@@ -9,17 +9,22 @@ import { Sub } from "gamezilla/@SHARED/core";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUser from "./@CHILD/vs-user/vs-user.client";
 import { CoverArt } from "./@SHARED/tic-tic-toe/tic-tac-toe-ui";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./tic-tac-toe.core";
+import {
+  ClientModel,
+  ClientMsg,
+  MsgToClient,
+  MsgToServer,
+} from "./tic-tac-toe.core";
 
 type Client = GameClient<{
   ClientModel: ClientModel;
   ClientMsg: ClientMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
-  GameMsg: null;
-  GameModel: null;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+  MsgGame: null;
+  ModelGame: null;
   ClientCtx: SpaceClientCtx;
-  ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
+  ClientCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
   ClientEvent: SpaceClientEvent;
 }>;
 

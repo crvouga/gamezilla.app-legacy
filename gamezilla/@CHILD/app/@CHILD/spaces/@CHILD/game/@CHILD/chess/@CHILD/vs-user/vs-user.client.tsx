@@ -9,7 +9,7 @@ import {
   ClientMsg,
   CoreModel,
   ServerModel,
-  ToClient,
+  MsgToClient,
   initCore,
 } from "./vs-user.core";
 
@@ -84,7 +84,7 @@ export const update = (
     //
     //
     //
-    // ToServer
+    // MsgToServer
     //
     //
     //
@@ -97,7 +97,7 @@ export const update = (
 
 export const updateFromServer = (
   { ctx }: { ctx: SpaceClientCtx },
-  msg: ToClient,
+  msg: MsgToClient,
   _model: Model
 ): [Model, Eff<Msg>] => {
   const model: Model = { ..._model, openedMenuId: Option.None };

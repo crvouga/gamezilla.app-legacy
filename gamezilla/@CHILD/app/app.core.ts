@@ -42,14 +42,14 @@ export type ClientModel = {
 //
 
 export type ServerMsg =
-  | ({ t: "➡️"; c: ToServer } & ToServerMeta)
+  | ({ t: "➡️"; c: MsgToServer } & MsgToServerMeta)
   | { t: "wire"; c: Wire.ServerMsg }
   | { t: "spaces"; c: Spaces.ServerMsg }
   | { t: "profile"; c: Profile.ServerMsg }
   | { t: "auth"; c: Auth.ServerMsg };
 
 export type ClientMsg =
-  | { t: "➡️"; c: ToClient }
+  | { t: "➡️"; c: MsgToClient }
   | { t: "routing"; c: Routing.Msg }
   | { t: "toast"; c: Toast.Msg }
   | { t: "sound"; c: Sound.Msg }
@@ -60,17 +60,17 @@ export type ClientMsg =
   | { t: "auth"; c: Auth.ClientMsg }
   | { t: "profile"; c: Profile.ClientMsg };
 
-export type ToServer =
-  | { t: "spaces"; c: Spaces.ToServer }
-  | { t: "auth"; c: Auth.ToServer }
-  | { t: "profile"; c: Profile.ToServer }
-  | { t: "wire"; c: Wire.ToServer };
+export type MsgToServer =
+  | { t: "spaces"; c: Spaces.MsgToServer }
+  | { t: "auth"; c: Auth.MsgToServer }
+  | { t: "profile"; c: Profile.MsgToServer }
+  | { t: "wire"; c: Wire.MsgToServer };
 
-export type ToClient =
-  | { t: "spaces"; c: Spaces.ToClient }
-  | { t: "auth"; c: Auth.ToClient }
-  | { t: "profile"; c: Profile.ToClient }
-  | { t: "wire"; c: Wire.ToClient };
+export type MsgToClient =
+  | { t: "spaces"; c: Spaces.MsgToClient }
+  | { t: "auth"; c: Auth.MsgToClient }
+  | { t: "profile"; c: Profile.MsgToClient }
+  | { t: "wire"; c: Wire.MsgToClient };
 
 //
 //
@@ -79,18 +79,18 @@ export type ToClient =
 
 export type ClientMsgFinal =
   | { t: "msg"; msg: ClientMsg }
-  | { t: "msgEvent"; msgEvent: ClientEvent }
-  | { t: "from-server"; msgFromServer: ClientMsg }
+  | { t: "msgEvt"; msgEvt: ClientEvent }
+  | { t: "from-server"; msgServer: ClientMsg }
   | {
       t: "msgCmd";
-      msgCmd: ClientCmd<{ ClientMsg: ClientMsg; ToServer: ToServer }>;
+      msgCmd: ClientCmd<{ ClientMsg: ClientMsg; MsgToServer: MsgToServer }>;
     };
 
 //
 //
 //
 
-export type ToServerMeta = {
+export type MsgToServerMeta = {
   sessionId: SessionId;
   clientId: ClientId;
   userId?: UserId | null;

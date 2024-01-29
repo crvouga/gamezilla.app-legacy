@@ -37,7 +37,7 @@ export type ServerModel =
 //
 
 export type ClientMsg =
-  | { t: "msgEvent"; c: GameMsg }
+  | { t: "msgEvt"; c: MsgGame }
   | { t: "builder"; c: Builder.ClientMsg }
   | { t: "play"; c: Play.ClientMsg };
 
@@ -45,25 +45,25 @@ export type ServerMsg =
   | { t: "builder"; c: Builder.ServerMsg }
   | { t: "play"; c: Play.ServerMsg };
 
-export type ToServer =
-  | { t: "builder"; c: Builder.ToServer }
-  | { t: "play"; c: Play.ToServer };
+export type MsgToServer =
+  | { t: "builder"; c: Builder.MsgToServer }
+  | { t: "play"; c: Play.MsgToServer };
 
-export type ToClient =
-  | { t: "builder"; c: Builder.ToClient }
-  | { t: "play"; c: Play.ToClient };
+export type MsgToClient =
+  | { t: "builder"; c: Builder.MsgToClient }
+  | { t: "play"; c: Play.MsgToClient };
 
 export type Mode = "builder" | "play";
 
-export type GameMsg =
+export type MsgGame =
   | { t: "user-changed-mode"; mode: Mode | null; userId: UserId }
-  | { t: "play"; c: Play.GameMsg }
-  | { t: "builder"; c: Builder.GameMsg };
+  | { t: "play"; c: Play.MsgGame }
+  | { t: "builder"; c: Builder.MsgGame };
 
-export type GameModel =
+export type ModelGame =
   | { t: null }
-  | { t: "builder"; c: Builder.GameModel }
-  | { t: "play"; c: Play.GameModel };
+  | { t: "builder"; c: Builder.ModelGame }
+  | { t: "play"; c: Play.ModelGame };
 
 export const initGame = () => {
   return { t: null };
@@ -71,14 +71,14 @@ export const initGame = () => {
 
 export const reducer = ({
   ctx,
-  msgEvent,
+  msgEvt,
   modelGame,
 }: {
   ctx: SpaceCtx;
-  msgEvent: WithEventMeta<GameMsg>;
-  modelGame: GameModel;
-}): GameModel => {
-  switch (msgEvent.t) {
+  msgEvt: WithEventMeta<MsgGame>;
+  modelGame: ModelGame;
+}): ModelGame => {
+  switch (msgEvt.t) {
     case "play": {
       switch (modelGame.t) {
         case "play": {
@@ -86,7 +86,7 @@ export const reducer = ({
             t: "play",
             c: Play.reducer({
               ctx,
-              msgEvent: msgEvent.c,
+              msgEvt: msgEvt.c,
               modelGame: modelGame.c,
             }),
           };
@@ -104,7 +104,7 @@ export const reducer = ({
             t: "builder",
             c: Builder.reducer({
               ctx,
-              msgEvent: msgEvent.c,
+              msgEvt: msgEvt.c,
               modelGame: modelGame.c,
             }),
           };
@@ -116,11 +116,11 @@ export const reducer = ({
     }
 
     case "user-changed-mode": {
-      if (msgEvent.userId !== ctx.space.hostId) {
+      if (msgEvt.userId !== ctx.space.hostId) {
         return modelGame;
       }
 
-      switch (msgEvent.mode) {
+      switch (msgEvt.mode) {
         case null: {
           return { t: null };
         }

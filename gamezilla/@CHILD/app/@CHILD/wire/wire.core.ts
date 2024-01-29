@@ -50,6 +50,6 @@ export type ServerMsg = ServerTransportMsg;
 //
 //
 
-export type ToServer = { t: null };
+export type MsgToServer = { t: null };
 
-export type ToClient = { t: "server-restarted" };
+export type MsgToClient = { t: "server-restarted" };

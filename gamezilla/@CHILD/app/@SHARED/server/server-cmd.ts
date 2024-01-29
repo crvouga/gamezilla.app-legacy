@@ -8,32 +8,32 @@ import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 //
 //
 
-export type WireCmd<ToClient> = {
+export type WireCmd<MsgToClient> = {
   t: "wire";
   c:
     | {
         t: "send-to-user";
         userIds: UserId[];
-        msg: ToClient;
+        msg: MsgToClient;
       }
     | {
         t: "broadcast";
-        msg: ToClient;
+        msg: MsgToClient;
       }
     | {
         t: "send-to-client";
         clientIds: ClientId[];
-        msg: ToClient;
+        msg: MsgToClient;
       }
     | {
         t: "send-to-session";
         sessionIds: SessionId[];
-        msg: ToClient;
+        msg: MsgToClient;
       }
     | {
         t: "topic-publish";
         topics: string[];
-        msg: ToClient;
+        msg: MsgToClient;
       }
     | {
         t: "topic-subscribe";
@@ -42,19 +42,19 @@ export type WireCmd<ToClient> = {
       };
 };
 
-export type ServerCmd<TToClient> = WireCmd<TToClient>;
+export type ServerCmd<TMsgToClient> = WireCmd<TMsgToClient>;
 
-export const sendBack = <ToClient>(
+export const sendBack = <MsgToClient>(
   ctx: { clientId: ClientId },
-  msg: ToClient
-): ServerCmd<ToClient> => {
-  return sendToClient([ctx.clientId], msg);
+  msg: MsgToClient
+): ServerCmd<MsgToClient> => {
+  return sendMsgToClient([ctx.clientId], msg);
 };
 
-export const topicPublish = <ToClient>(
+export const topicPublish = <MsgToClient>(
   topics: string[],
-  msg: ToClient
-): ServerCmd<ToClient> => {
+  msg: MsgToClient
+): ServerCmd<MsgToClient> => {
   return {
     t: "wire",
     c: {
@@ -65,10 +65,10 @@ export const topicPublish = <ToClient>(
   };
 };
 
-export const topicSubscribe = <ToClient>(
+export const topicSubscribe = <MsgToClient>(
   topics: string[],
   clientIds: ClientId[]
-): ServerCmd<ToClient> => {
+): ServerCmd<MsgToClient> => {
   return {
     t: "wire",
     c: {
@@ -79,7 +79,9 @@ export const topicSubscribe = <ToClient>(
   };
 };
 
-export const broadcast = <ToClient>(msg: ToClient): ServerCmd<ToClient> => {
+export const broadcast = <MsgToClient>(
+  msg: MsgToClient
+): ServerCmd<MsgToClient> => {
   return {
     t: "wire",
     c: {
@@ -89,10 +91,10 @@ export const broadcast = <ToClient>(msg: ToClient): ServerCmd<ToClient> => {
   };
 };
 
-export const sendToClient = <ToClient>(
+export const sendMsgToClient = <MsgToClient>(
   clientIds: ClientId[],
-  msg: ToClient
-): ServerCmd<ToClient> => {
+  msg: MsgToClient
+): ServerCmd<MsgToClient> => {
   return {
     t: "wire",
     c: {
@@ -103,10 +105,10 @@ export const sendToClient = <ToClient>(
   };
 };
 
-export const sendToSession = <ToClient>(
+export const sendToSession = <MsgToClient>(
   sessionIds: SessionId[],
-  msg: ToClient
-): ServerCmd<ToClient> => {
+  msg: MsgToClient
+): ServerCmd<MsgToClient> => {
   return {
     t: "wire",
     c: {
@@ -117,10 +119,10 @@ export const sendToSession = <ToClient>(
   };
 };
 
-export const sendToUser = <ToClient>(
+export const sendToUser = <MsgToClient>(
   userIds: UserId[],
-  msg: ToClient
-): ServerCmd<ToClient> => {
+  msg: MsgToClient
+): ServerCmd<MsgToClient> => {
   return {
     t: "wire",
     c: {

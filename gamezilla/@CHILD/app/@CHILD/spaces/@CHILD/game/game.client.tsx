@@ -10,11 +10,11 @@ import { Flow } from "./@CHILD/flow/flow.client";
 import {
   ClientModel,
   ClientMsg,
-  GameMsg,
+  MsgGame,
   GameName,
-  GameModel,
-  ToClient,
-  ToServer,
+  ModelGame,
+  MsgToClient,
+  MsgToServer,
 } from "./game.core";
 
 //
@@ -28,18 +28,18 @@ import {
 type Module = GameClientModule<{
   Model: ClientModel;
   Msg: ClientMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
-  GameModel: GameModel;
-  GameMsg: GameMsg;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+  ModelGame: ModelGame;
+  MsgGame: MsgGame;
   Ctx: SpaceClientCtx;
-  InCmd: null;
-  InEvent: SpaceClientEvent;
-  OutCmd: ClientCmd<{
+  MsgInCmd: null;
+  MsgInEvent: SpaceClientEvent;
+  MsgOutCmd: ClientCmd<{
     ClientMsg: ClientMsg;
-    ToServer: ToServer;
+    MsgToServer: MsgToServer;
   }>;
-  OutEvent: null;
+  MsgOutEvent: null;
 }>;
 
 //
@@ -77,8 +77,7 @@ const init = (gameName: GameName): Module["init"] => {
 //
 
 const update: Module["update"] = (input) => {
-  const { ctx, msg, msgFromServer, msgCmd, msgEvent, msgGame, modelGame } =
-    input;
+  const { ctx, msg, msgServer, msgCmd, msgEvt, msgGame, modelGame } = input;
 
   switch (modelGame.t) {
     case "connect-four": {
@@ -88,9 +87,8 @@ const update: Module["update"] = (input) => {
         model:
           input.model?.t === "connect-four" ? input.model.c : ConnectFour.init,
         msgCmd: msgCmd,
-        msgEvent: msgEvent,
-        msgFromServer:
-          msgFromServer?.t === "connect-four" ? msgFromServer.c : null,
+        msgEvt: msgEvt,
+        msgServer: msgServer?.t === "connect-four" ? msgServer.c : null,
         msgGame:
           msgGame?.t === "connect-four" ? { ...msgGame, ...msgGame.c } : null,
         msg: msg?.t === "connect-four" ? msg.c : null,
@@ -111,8 +109,8 @@ const update: Module["update"] = (input) => {
         modelGame: modelGame.c,
         model: input.model?.t === "flow" ? input.model.c : Flow.init,
         msgCmd: msgCmd,
-        msgEvent: msgEvent,
-        msgFromServer: msgFromServer?.t === "flow" ? msgFromServer.c : null,
+        msgEvt: msgEvt,
+        msgServer: msgServer?.t === "flow" ? msgServer.c : null,
         msgGame: msgGame?.t === "flow" ? { ...msgGame, ...msgGame.c } : null,
         msg: msg?.t === "flow" ? msg.c : null,
       });

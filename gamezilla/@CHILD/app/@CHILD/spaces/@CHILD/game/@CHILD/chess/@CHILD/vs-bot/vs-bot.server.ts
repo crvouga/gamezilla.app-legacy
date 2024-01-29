@@ -8,8 +8,8 @@ import { Chess } from "../../@SHARED/chess";
 import {
   ServerModel,
   ServerMsg,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
   botMoved,
   initServer,
   isBotTurn,
@@ -46,7 +46,7 @@ export const update = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  msgCmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   if (msg.t === "bot-moved") {
     const result = botMoved(msg.moved, model);
@@ -63,13 +63,13 @@ export const update = ({
 };
 
 export const updateFromClient = (input: {
-  msg: ToServer;
+  msg: MsgToServer;
   model: Model;
   ctx: SpaceReqCtx;
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  msgCmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   const updated = updateFromClientMain(input);
 
@@ -117,7 +117,7 @@ export const updateFromEvent = ({
   model: Model;
 }): {
   model: Model;
-  msgCmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<MsgToClient>[];
   eff?: Eff;
 } => {
   if (msg.t === "user-left") {

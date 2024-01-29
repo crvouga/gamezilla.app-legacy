@@ -42,10 +42,10 @@ import {
   BotLevel,
   ClientModel,
   ClientMsg,
-  GameMsg,
-  GameModel,
-  ToClient,
-  ToServer,
+  MsgGame,
+  ModelGame,
+  MsgToClient,
+  MsgToServer,
   allBotLevels,
   reducer,
 } from "./vs-bot.core";
@@ -61,15 +61,15 @@ import {
 type Module = GameClientModule<{
   Model: ClientModel;
   Msg: ClientMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
-  GameModel: GameModel;
-  GameMsg: GameMsg;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+  ModelGame: ModelGame;
+  MsgGame: MsgGame;
   Ctx: SpaceClientCtx & { onQuit: () => void };
-  OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-  InEvent: SpaceClientEvent;
-  InCmd: null;
-  OutEvent: null;
+  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
+  MsgInEvent: SpaceClientEvent;
+  MsgInCmd: null;
+  MsgOutEvent: null;
 }>;
 
 //
@@ -92,7 +92,7 @@ const update: Module["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg(model)(input),
-    (model) => updateFromGameMsg(model)(input),
+    (model) => updateFromMsgGame(model)(input),
     (model) => watchGameOver(model)(input)
   );
 };
@@ -155,7 +155,7 @@ const watchGameOver =
     }
   };
 
-const updateFromGameMsg =
+const updateFromMsgGame =
   (model: ClientModel): Module["update"] =>
   (input) => {
     const { msgGame, modelGame, ctx } = input;
@@ -207,17 +207,17 @@ const updateFromMsg =
 
 const updateSound = (
   currentUserId: UserId,
-  modelGame: GameModel,
-  msgGame: GameMsg & EventMeta
+  modelGame: ModelGame,
+  msgGame: MsgGame & EventMeta
 ): ClientCmd<{
-  ToServer: ToServer;
+  MsgToServer: MsgToServer;
   ClientMsg: ClientMsg;
 }>[] => {
   switch (modelGame.type) {
     case "game": {
       switch (msgGame.t) {
         case "user-dropped-disc": {
-          const error = modelGame.errors[msgGame.msgEventId];
+          const error = modelGame.errors[msgGame.msgEvtId];
 
           if (error && msgGame.userId === currentUserId) {
             return [playSound(APP_SOUND.alertErrorSm)];

@@ -27,12 +27,12 @@ import { CoverArt } from "../../@SHARED/connect-four-ui/connect-four-cover-art";
 import {
   ClientModel,
   ClientMsg,
-  GameMsg,
-  GameModel,
+  MsgGame,
+  ModelGame,
   StateGame,
   StateGameOver,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
   toPlayerType,
 } from "./vs-user.core";
 
@@ -47,18 +47,18 @@ import {
 type Module = GameClientModule<{
   Model: ClientModel;
   Msg: ClientMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
-  GameModel: GameModel;
-  GameMsg: GameMsg;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+  ModelGame: ModelGame;
+  MsgGame: MsgGame;
   Ctx: SpaceClientCtx & { onQuit: () => void };
-  InCmd: null;
-  InEvent: SpaceClientEvent;
-  OutCmd: ClientCmd<{
+  MsgInCmd: null;
+  MsgInEvent: SpaceClientEvent;
+  MsgOutCmd: ClientCmd<{
     ClientMsg: ClientMsg;
-    ToServer: ToServer;
+    MsgToServer: MsgToServer;
   }>;
-  OutEvent: null;
+  MsgOutEvent: null;
 }>;
 
 //
@@ -325,7 +325,7 @@ const ViewGameOverMessage = ({
 }: {
   modelGame: StateGameOver;
   ctx: ClientCtx;
-  dispatch: (msg: GameMsg) => void;
+  dispatch: (msg: MsgGame) => void;
 }) => {
   const currentPlayerType = toPlayerType(ctx.currentUserId, modelGame);
 

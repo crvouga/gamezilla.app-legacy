@@ -8,26 +8,26 @@ import { SpaceServerCmd } from "../../../../@SHARED/space-server-cmd";
 import { BuilderServer } from "./@CHILD/builder/builder.server";
 import { PlayServer } from "./@CHILD/play/play.server";
 import {
-  GameMsg,
-  GameModel,
+  MsgGame,
+  ModelGame,
   ServerModel,
   ServerMsg,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
 } from "./flow.core";
 
 type Module = GameServerModule<{
   Model: ServerModel;
   Msg: ServerMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
-  GameMsg: GameMsg;
-  GameModel: GameModel;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+  MsgGame: MsgGame;
+  ModelGame: ModelGame;
   Ctx: SpaceServerCtx;
-  InCmd: null;
-  InEvent: SpaceServerEvent;
-  OutCmd: SpaceServerCmd<ToClient>;
-  OutEvent: null;
+  MsgInCmd: null;
+  MsgInEvent: SpaceServerEvent;
+  MsgOutCmd: SpaceServerCmd<MsgToClient>;
+  MsgOutEvent: null;
   Deps: null;
 }>;
 
@@ -51,7 +51,7 @@ const updateChild: Module["update"] = async (input) => {
         modelGame: modelGame.c,
         model: input.model.t === "play" ? input.model.c : PlayServer.init,
         msgCmd: input.msgCmd,
-        msgEvent: input.msgEvent,
+        msgEvt: input.msgEvt,
         msgFromClient:
           input.msgFromClient?.t === "play"
             ? { ...input.msgFromClient, ...input.msgFromClient.c }
@@ -79,7 +79,7 @@ const updateChild: Module["update"] = async (input) => {
         modelGame: modelGame.c,
         model: input.model.t === "builder" ? input.model.c : BuilderServer.init,
         msgCmd: input.msgCmd,
-        msgEvent: input.msgEvent,
+        msgEvt: input.msgEvt,
         msgFromClient:
           input.msgFromClient?.t === "builder"
             ? { ...input.msgFromClient, ...input.msgFromClient.c }

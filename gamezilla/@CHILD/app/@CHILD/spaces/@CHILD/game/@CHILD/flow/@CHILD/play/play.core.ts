@@ -26,8 +26,8 @@ export type ServerModel = {};
 
 export type ClientMsg =
   | {
-      t: "msgEvent";
-      c: GameMsg;
+      t: "msgEvt";
+      c: MsgGame;
     }
   | {
       t: "grid";
@@ -36,24 +36,24 @@ export type ClientMsg =
 
 export type ServerMsg = { t: null };
 
-export type ToServer = { t: null };
+export type MsgToServer = { t: null };
 
-export type ToClient = { t: null };
+export type MsgToClient = { t: null };
 
-export type GameMsg = {
+export type MsgGame = {
   t: "grid";
   c: FlowGridUIPlay.Msg;
 };
 
-export type GameModel = {
+export type ModelGame = {
   gridPlay: FlowGridUIPlay.Model;
   grid: FlowGrid.Model;
 };
 
 type Module = GameCore<{
   Ctx: SpaceCtx;
-  GameModel: GameModel;
-  GameMsg: GameMsg;
+  ModelGame: ModelGame;
+  MsgGame: MsgGame;
 }>;
 
 export const initGame: Module["initGame"] = () => {
@@ -64,11 +64,11 @@ export const initGame: Module["initGame"] = () => {
   };
 };
 
-export const reducer: Module["reducer"] = ({ modelGame, msgEvent }) => {
-  switch (msgEvent.t) {
+export const reducer: Module["reducer"] = ({ modelGame, msgEvt }) => {
+  switch (msgEvt.t) {
     case "grid": {
       const gridPlayNew = FlowGridUIPlay.update({
-        msg: msgEvent.c,
+        msg: msgEvt.c,
         model: modelGame.gridPlay,
         grid: modelGame.grid,
       });

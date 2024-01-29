@@ -4,7 +4,7 @@ import {
   ServerCmd,
   ServerCtx,
   ServerEvent,
-  sendToClient,
+  sendMsgToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
@@ -12,7 +12,7 @@ import {
   StoreSessionIdByUserId,
   StoreUserIdBySessionId,
 } from "./@SHARED/server/auth-session-store";
-import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
+import { ServerModel, ServerMsg, MsgToClient, MsgToServer } from "./auth.core";
 
 //
 //
@@ -25,14 +25,14 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth.core";
 
 type Module = AppServerModule<{
   Ctx: ServerCtx;
-  InCmd: null;
-  InEvent: ServerEvent;
+  MsgInCmd: null;
+  MsgInEvent: ServerEvent;
   Model: ServerModel;
   Msg: ServerMsg;
-  OutCmd: ServerCmd<ToClient>;
-  OutEvent: ServerEvent;
-  ToClient: ToClient;
-  ToServer: ToServer;
+  MsgOutCmd: ServerCmd<MsgToClient>;
+  MsgOutEvent: ServerEvent;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
 }>;
 
 //
@@ -55,7 +55,7 @@ export const init: Module["init"] = async (input) => {
     },
     eff: Eff.tag("sms", sms.eff),
     msgCmd: ServerCmd.tag("sms", sms.msgCmd),
-    msgEvent: sms.msgEvent,
+    msgEvt: sms.msgEvt,
   };
 };
 
@@ -90,7 +90,7 @@ const updateChild: Module["update"] = async (input) => {
     ctx: input.ctx,
     model: input.model.sms,
     msgCmd: input.msgCmd,
-    msgEvent: input.msgEvent,
+    msgEvt: input.msgEvt,
     msgFromClient:
       input.msgFromClient?.t === "sms"
         ? { ...input.msgFromClient, ...input.msgFromClient.c }
@@ -105,7 +105,7 @@ const updateChild: Module["update"] = async (input) => {
     },
     eff: Eff.tag("sms", sms.eff),
     msgCmd: ServerCmd.tag("sms", sms.msgCmd),
-    msgEvent: sms.msgEvent,
+    msgEvt: sms.msgEvt,
   };
 };
 
@@ -130,7 +130,7 @@ const updateFromClient: Module["update"] = async ({ model, msgFromClient }) => {
     case "logout": {
       return {
         model,
-        msgEvent: [
+        msgEvt: [
           {
             t: "auth/client-unauthenticated",
             clientId: msgFromClient.clientId,
@@ -146,26 +146,26 @@ const updateFromClient: Module["update"] = async ({ model, msgFromClient }) => {
   }
 };
 
-const updateFromEvent: typeof update = async ({ msgEvent, model, ctx }) => {
-  if (!msgEvent) {
+const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
+  if (!msgEvt) {
     return { model };
   }
 
-  switch (msgEvent.t) {
+  switch (msgEvt.t) {
     case "wire/client-connected": {
       const userId = await StoreUserIdBySessionId(ctx).get(
         model.userIdBySessionId,
-        msgEvent.sessionId
+        msgEvt.sessionId
       );
 
       if (!userId) {
         return {
           model: model,
-          msgEvent: [
+          msgEvt: [
             {
               t: "auth/client-unauthenticated",
-              clientId: msgEvent.clientId,
-              sessionId: msgEvent.sessionId,
+              clientId: msgEvt.clientId,
+              sessionId: msgEvt.sessionId,
             },
           ],
         };
@@ -173,10 +173,10 @@ const updateFromEvent: typeof update = async ({ msgEvent, model, ctx }) => {
 
       return {
         model: model,
-        msgEvent: [
+        msgEvt: [
           {
-            clientId: msgEvent.clientId,
-            sessionId: msgEvent.sessionId,
+            clientId: msgEvt.clientId,
+            sessionId: msgEvt.sessionId,
             userId,
             t: "auth/client-authenticated",
           },
@@ -186,11 +186,11 @@ const updateFromEvent: typeof update = async ({ msgEvent, model, ctx }) => {
 
     case "auth/client-unauthenticated": {
       return {
-        model: await dissocSession(ctx, model, msgEvent.sessionId),
+        model: await dissocSession(ctx, model, msgEvt.sessionId),
         msgCmd: [
-          sendToClient([msgEvent.clientId], {
+          sendMsgToClient([msgEvt.clientId], {
             t: "client-unauthenticated",
-            sessionId: msgEvent.sessionId,
+            sessionId: msgEvt.sessionId,
           }),
         ],
       };
@@ -198,17 +198,12 @@ const updateFromEvent: typeof update = async ({ msgEvent, model, ctx }) => {
 
     case "auth/client-authenticated": {
       return {
-        model: await assocSession(
-          ctx,
-          model,
-          msgEvent.sessionId,
-          msgEvent.userId
-        ),
+        model: await assocSession(ctx, model, msgEvt.sessionId, msgEvt.userId),
         msgCmd: [
-          sendToClient([msgEvent.clientId], {
+          sendMsgToClient([msgEvt.clientId], {
             t: "client-authenticated",
-            userId: msgEvent.userId,
-            sessionId: msgEvent.sessionId,
+            userId: msgEvt.userId,
+            sessionId: msgEvt.sessionId,
             loggedIn: true,
           }),
         ],

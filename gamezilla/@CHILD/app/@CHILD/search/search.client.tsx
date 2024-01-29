@@ -2,7 +2,7 @@ import { Browser, Eff, matchSort, p } from "gamezilla/@SHARED/core";
 import {
   ClientEvent,
   ClientCmd,
-  sendToServer,
+  sendMsgToServer,
   pushRoute,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
@@ -10,7 +10,12 @@ import {
   IconXMark,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./search.core";
+import {
+  ClientModel,
+  ClientMsg,
+  MsgToClient,
+  MsgToServer,
+} from "./search.core";
 
 //
 //
@@ -62,8 +67,8 @@ export const update = ({
 }): {
   model: ClientModel;
   eff?: Eff<Msg>;
-  msgEvent?: ClientEvent[];
-  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgEvt?: ClientEvent[];
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
 } => {
   if (msg.t === "focus-done") {
     return { model };
@@ -97,13 +102,13 @@ export const update = ({
     };
   }
 
-  return { model, msgCmd: [sendToServer(msg)] };
+  return { model, msgCmd: [sendMsgToServer(msg)] };
 };
 
 export const updateFromServer = ({
   model,
 }: {
-  msg: ToClient;
+  msg: MsgToClient;
   model: ClientModel;
 }): { model: ClientModel; eff?: Eff<Msg> } => {
   return { model };
@@ -145,10 +150,10 @@ export const View = ({
               className="flex-1 bg-transparent text-lg outline-none"
               placeholder="Search"
               value={model.searchText}
-              onChange={(msgEvent) =>
+              onChange={(msgEvt) =>
                 dispatch({
                   t: "inputted-search-text",
-                  searchText: msgEvent.currentTarget.value,
+                  searchText: msgEvt.currentTarget.value,
                 })
               }
             ></input>

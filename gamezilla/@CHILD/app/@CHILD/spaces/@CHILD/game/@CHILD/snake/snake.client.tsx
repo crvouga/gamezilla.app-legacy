@@ -15,7 +15,7 @@ import {
   ClientMsg,
   CoreModel,
   ServerModel,
-  ToClient,
+  MsgToClient,
   initCoreModel,
 } from "./snake.core";
 
@@ -106,7 +106,7 @@ export const update = (
 };
 
 export const updateFromServer = (
-  msg: ToClient,
+  msg: MsgToClient,
   model: Model
 ): [Model, Eff<Msg>] => {
   switch (msg[0]) {

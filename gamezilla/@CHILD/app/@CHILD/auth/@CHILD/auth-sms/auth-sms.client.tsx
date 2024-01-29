@@ -10,7 +10,7 @@ import {
   playSound,
   pushRoute,
   replaceRoute,
-  sendToServer,
+  sendMsgToServer,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client/client-cmd";
 import {
@@ -33,7 +33,12 @@ import {
   Uuid,
   isErr,
 } from "gamezilla/@SHARED/core";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth-sms.core";
+import {
+  ClientModel,
+  ClientMsg,
+  MsgToClient,
+  MsgToServer,
+} from "./auth-sms.core";
 
 //
 //
@@ -46,16 +51,16 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./auth-sms.core";
 type Module = AppClientModule<{
   Model: ClientModel;
   Msg: ClientMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
   Ctx: AnonymousClientCtx;
-  InCmd: null;
-  InEvent: ClientEvent;
-  OutCmd: ClientCmd<{
+  MsgInCmd: null;
+  MsgInEvent: ClientEvent;
+  MsgOutCmd: ClientCmd<{
     ClientMsg: ClientMsg;
-    ToServer: ToServer;
+    MsgToServer: MsgToServer;
   }>;
-  OutEvent: ClientEvent;
+  MsgOutEvent: ClientEvent;
 }>;
 
 //
@@ -110,7 +115,7 @@ export const update: Module["update"] = async (input) => {
   if (input.msg) {
     return updateFromMsg(input);
   }
-  if (input.msgFromServer) {
+  if (input.msgServer) {
     return updateFromServer(input);
   }
   return { model: input.model };
@@ -191,7 +196,7 @@ const updateFromMsg: Module["update"] = async (input) => {
           sentCodeAt: ctx.now,
         },
         msgCmd: [
-          sendToServer({
+          sendMsgToServer({
             t: "send-code",
             phoneNumber: phoneNumber.value,
           }),
@@ -234,7 +239,7 @@ const updateFromMsg: Module["update"] = async (input) => {
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
-          sendToServer({
+          sendMsgToServer({
             t: "verify-code",
             code: model.codeInput,
             phoneNumber: msg.phoneNumber,
@@ -295,17 +300,17 @@ const updateFromMsg: Module["update"] = async (input) => {
 };
 
 const updateFromServer: Module["update"] = async (input) => {
-  if (!input.msgFromServer) {
+  if (!input.msgServer) {
     return { model: input.model };
   }
 
-  const { model, msgFromServer } = input;
+  const { model, msgServer } = input;
 
-  switch (msgFromServer.t) {
+  switch (msgServer.t) {
     case "sent-code": {
-      if (isErr(msgFromServer.result)) {
+      if (isErr(msgServer.result)) {
         return {
-          model: { ...model, sendCode: msgFromServer.result },
+          model: { ...model, sendCode: msgServer.result },
           msgCmd: [playSound(APP_SOUND.alertErrorMd)],
         };
       }
@@ -313,7 +318,7 @@ const updateFromServer: Module["update"] = async (input) => {
       return {
         model: {
           ...model,
-          sendCode: msgFromServer.result,
+          sendCode: msgServer.result,
           verifyCode: RemoteResult.notAsked,
           codeInput: "",
         },
@@ -322,11 +327,11 @@ const updateFromServer: Module["update"] = async (input) => {
             t: "auth",
             c: {
               t: "login-phone-verify",
-              phoneNumber: msgFromServer.phoneNumber,
+              phoneNumber: msgServer.phoneNumber,
             },
           }),
           showToast(
-            `Sent code to ${PhoneNumber.toString(msgFromServer.phoneNumber)}`,
+            `Sent code to ${PhoneNumber.toString(msgServer.phoneNumber)}`,
             "info",
             TimeSpan.fromSeconds(4)
           ),
@@ -337,16 +342,16 @@ const updateFromServer: Module["update"] = async (input) => {
     }
 
     case "verified-code": {
-      if (isErr(msgFromServer.result)) {
+      if (isErr(msgServer.result)) {
         return {
-          model: { ...model, verifyCode: msgFromServer.result },
+          model: { ...model, verifyCode: msgServer.result },
           msgCmd: [playSound(APP_SOUND.alertErrorMd)],
         };
       }
       return {
         model: {
           ...model,
-          verifyCode: msgFromServer.result,
+          verifyCode: msgServer.result,
         },
       };
     }

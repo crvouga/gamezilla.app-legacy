@@ -7,7 +7,7 @@ import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id";
 import { FlowPuzzleName } from "../../../@SHARED/flow-puzzle/flow-puzzle-name";
 import { ServerModule } from "../builder.core";
-import { GameMsg } from "./puzzle-create.core";
+import { MsgGame } from "./puzzle-create.core";
 
 const update: ServerModule["update"] = async (input) => {
   return GameServerModule.chainUpdates({ model: input.model }, (model) =>
@@ -54,7 +54,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
       const created = await FlowPuzzleDb().put(puzzleNew);
 
-      const msgGame: GameMsg = {
+      const msgGame: MsgGame = {
         t: "user-created-puzzle",
         created: Result.mapOk(created, () => puzzleNew),
         userId: msgFromClient.userId,

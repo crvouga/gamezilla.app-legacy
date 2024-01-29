@@ -7,7 +7,7 @@ import {
   playSound,
   pushRoute,
   replaceRoute,
-  sendToServer,
+  sendMsgToServer,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
@@ -22,8 +22,8 @@ import {
   ClientModel,
   ClientMsg,
   LogoutMsg,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
 } from "./auth.core";
 
 //
@@ -37,16 +37,16 @@ import {
 type Client = AppClientModule<{
   Model: ClientModel;
   Msg: ClientMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
   Ctx: AnonymousClientCtx;
-  InCmd: never;
-  InEvent: ClientEvent;
-  OutCmd: ClientCmd<{
+  MsgInCmd: never;
+  MsgInEvent: ClientEvent;
+  MsgOutCmd: ClientCmd<{
     ClientMsg: ClientMsg;
-    ToServer: ToServer;
+    MsgToServer: MsgToServer;
   }>;
-  OutEvent: ClientEvent;
+  MsgOutEvent: ClientEvent;
 }>;
 
 //
@@ -67,7 +67,7 @@ export const init: Client["init"] = async ({ stored, ctx }) => {
     return {
       model: { ...stored, sms: sms.model },
       eff: Eff.tag("sms", sms.eff),
-      msgEvent: sms.msgEvent,
+      msgEvt: sms.msgEvt,
       msgCmd: ClientCmd.tag("sms", sms.msgCmd),
     };
   }
@@ -80,7 +80,7 @@ export const init: Client["init"] = async ({ stored, ctx }) => {
       sms: sms.model,
     },
     eff: Eff.tag("sms", sms.eff),
-    msgEvent: sms.msgEvent,
+    msgEvt: sms.msgEvt,
     msgCmd: ClientCmd.tag("sms", sms.msgCmd),
   };
 };
@@ -108,9 +108,8 @@ const updateChild: Client["update"] = async (input) => {
     ctx: input.ctx,
     model: input.model.sms,
     msgCmd: input.msgCmd,
-    msgEvent: input.msgEvent,
-    msgFromServer:
-      input.msgFromServer?.t === "sms" ? input.msgFromServer.c : null,
+    msgEvt: input.msgEvt,
+    msgServer: input.msgServer?.t === "sms" ? input.msgServer.c : null,
     msg: input.msg?.t === "sms" ? input.msg.c : null,
   });
 
@@ -118,7 +117,7 @@ const updateChild: Client["update"] = async (input) => {
     model: { ...input.model, sms: updated.model },
     msgCmd: ClientCmd.tag("sms", updated.msgCmd),
     eff: Eff.tag("sms", updated.eff),
-    msgEvent: updated.msgEvent,
+    msgEvt: updated.msgEvt,
   };
 };
 
@@ -170,8 +169,8 @@ const updateFromLogoutMsg = ({
           ...model,
           currentUser: { t: "logged-out" },
         },
-        msgCmd: [sendToServer({ t: "logout" }), showToast("Logged out")],
-        msgEvent: [{ t: "is-logged-out" }],
+        msgCmd: [sendMsgToServer({ t: "logout" }), showToast("Logged out")],
+        msgEvt: [{ t: "is-logged-out" }],
       };
     }
 
@@ -191,17 +190,17 @@ const updateFromLogoutMsg = ({
 };
 
 const updateFromServer: Client["update"] = (input) => {
-  if (!input.msgFromServer) {
+  if (!input.msgServer) {
     return { model: input.model };
   }
 
-  const { model, msgFromServer } = input;
+  const { model, msgServer } = input;
 
-  switch (msgFromServer.t) {
+  switch (msgServer.t) {
     case "client-unauthenticated": {
       return {
         model: { ...model, currentUser: { t: "logged-out" } },
-        msgEvent: [{ t: "is-logged-out" }],
+        msgEvt: [{ t: "is-logged-out" }],
       };
     }
 
@@ -211,10 +210,10 @@ const updateFromServer: Client["update"] = (input) => {
           ...model,
           currentUser: {
             t: "logged-in",
-            userId: msgFromServer.userId,
+            userId: msgServer.userId,
           },
         },
-        msgEvent: [{ ...msgFromServer, t: "is-logged-in" }],
+        msgEvt: [{ ...msgServer, t: "is-logged-in" }],
       };
     }
 
@@ -229,13 +228,13 @@ const updateFromEvent: Client["update"] = async (input) => {
 };
 
 const updateRedirect: Client["update"] = async (input) => {
-  if (!input.msgEvent) {
+  if (!input.msgEvt) {
     return { model: input.model };
   }
 
-  const { ctx, msgEvent, model } = input;
+  const { ctx, msgEvt, model } = input;
 
-  switch (msgEvent.t) {
+  switch (msgEvt.t) {
     case "is-logged-in": {
       if (ctx.currentRoute.t === "auth") {
         return {
@@ -271,7 +270,7 @@ const updateRedirect: Client["update"] = async (input) => {
     }
 
     case "routing/route-changed": {
-      if (model.currentUser.t === "logged-in" && msgEvent.route.t === "auth") {
+      if (model.currentUser.t === "logged-in" && msgEvt.route.t === "auth") {
         return {
           model,
           msgCmd: [
@@ -284,7 +283,7 @@ const updateRedirect: Client["update"] = async (input) => {
         };
       }
 
-      if (model.currentUser.t === "logged-out" && msgEvent.route.t !== "auth") {
+      if (model.currentUser.t === "logged-out" && msgEvt.route.t !== "auth") {
         return {
           model,
           msgCmd: [

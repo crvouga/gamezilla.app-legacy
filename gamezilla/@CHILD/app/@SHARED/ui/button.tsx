@@ -29,7 +29,7 @@ export const Button = ({
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
   className?: string;
-  onClick?: (msgEvent: ButtonEvent) => void;
+  onClick?: (msgEvt: ButtonEvent) => void;
   start?: VDom | VDom[];
   variant?: ButtonVariant;
   color?: ButtonColor;
@@ -62,8 +62,8 @@ export const Button = ({
         !disabled && !loading && " active:opacity-70",
         loading && "cursor-wait opacity-70"
       )}
-      onClick={(msgEvent) => {
-        onClick?.({ stopPropagation: () => msgEvent.stopPropagation() });
+      onClick={(msgEvt) => {
+        onClick?.({ stopPropagation: () => msgEvt.stopPropagation() });
       }}
     >
       <div

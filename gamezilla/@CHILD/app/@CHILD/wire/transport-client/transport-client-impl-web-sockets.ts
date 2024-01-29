@@ -1,4 +1,4 @@
-import { ClientToServerMsg, ServerToClientMsg } from "../transport.core";
+import { ClientMsgToServerMsg, ServerMsgToClientMsg } from "../transport.core";
 import {
   ClientTransportWebSocketImpl,
   IClientTransport,
@@ -9,22 +9,25 @@ const SESSION_ID_KEY = "gamezilla-session-id";
 const RECONNECT_INTERVAL = 2000; // 1 second
 const MAX_RECONNECT_ATTEMPTS = 6; // Adjust as needed
 
-export const ClientTransportWebSockets = <ToServer, ToClient>({
+export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
   codebaseVersionId,
   impl,
 }: {
   codebaseVersionId: string;
   impl: ClientTransportWebSocketImpl;
-}): IClientTransport<{ ToServer: ToServer; ToClient: ToClient }> => {
+}): IClientTransport<{
+  MsgToServer: MsgToServer;
+  MsgToClient: MsgToClient;
+}> => {
   const serverUrl = toWebsocketServerUrl(impl.serverUrl);
 
-  const transport = initClientTransport<ToServer, ToClient>();
+  const transport = initClientTransport<MsgToServer, MsgToClient>();
 
   let reconnectAttempts = 0;
   let ws: WebSocket;
   let isConnected = false;
   let isDocumentHidden = false;
-  let queue: ClientToServerMsg<ToServer>[] = [];
+  let queue: ClientMsgToServerMsg<MsgToServer>[] = [];
 
   const connect = () => {
     if (isConnected) {
@@ -36,7 +39,7 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
     ws.onopen = () => {
       isConnected = true;
       reconnectAttempts = 0;
-      transport.msgEvent.publish({ t: "server-connected" });
+      transport.msgEvt.publish({ t: "server-connected" });
       for (const msg of queue) {
         send(msg);
       }
@@ -45,7 +48,7 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
 
     ws.onerror = () => {
       isConnected = false;
-      transport.msgEvent.publish({ t: "server-connect-error" });
+      transport.msgEvt.publish({ t: "server-connect-error" });
     };
 
     ws.onclose = () => {
@@ -55,7 +58,7 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
       }
 
       if (reconnectAttempts > MAX_RECONNECT_ATTEMPTS) {
-        transport.msgEvent.publish({ t: "server-disconnected" });
+        transport.msgEvt.publish({ t: "server-disconnected" });
         return;
       }
       reconnectAttempts++;
@@ -63,9 +66,9 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
       return;
     };
 
-    ws.onmessage = (msgEvent) => {
+    ws.onmessage = (msgEvt) => {
       isConnected = true;
-      const msg = JSON.parse(msgEvent.data) as ServerToClientMsg<ToClient>; // leap of faith
+      const msg = JSON.parse(msgEvt.data) as ServerMsgToClientMsg<MsgToClient>; // leap of faith
 
       switch (msg.t) {
         case "session-id": {
@@ -75,7 +78,7 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
 
         case "to-client": {
           if (msg.codebaseVersionId !== codebaseVersionId) {
-            transport.msgEvent.publish({
+            transport.msgEvt.publish({
               t: "got-bad-msgs",
               reason: "codebase-version-mismatch",
             });
@@ -107,7 +110,7 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
     }
   });
 
-  const send = (msg: ClientToServerMsg<ToServer>) => {
+  const send = (msg: ClientMsgToServerMsg<MsgToServer>) => {
     if (!isConnected) {
       queue.push(msg);
       return;

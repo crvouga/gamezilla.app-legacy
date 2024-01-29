@@ -8,7 +8,7 @@ import {
   ServerCmd,
   ServerCtx,
   ServerEvent,
-  sendToClient,
+  sendMsgToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Result, err, isErr, ok } from "gamezilla/@SHARED/core";
 import { AppServerModule } from "../../@SHARED/architecture/app-server";
@@ -19,8 +19,8 @@ import {
   Req,
   ServerModel,
   ServerMsg,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
   profileCoreToProfile,
 } from "./profile.core";
 
@@ -33,14 +33,14 @@ import {
 
 type Module = AppServerModule<{
   Ctx: ServerCtx;
-  InCmd: null;
-  InEvent: ServerEvent;
+  MsgInCmd: null;
+  MsgInEvent: ServerEvent;
   Model: ServerModel;
   Msg: ServerMsg;
-  OutCmd: ServerCmd<ToClient>;
-  OutEvent: null;
-  ToClient: ToClient;
-  ToServer: ToServer;
+  MsgOutCmd: ServerCmd<MsgToClient>;
+  MsgOutEvent: null;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
 }>;
 
 //
@@ -74,7 +74,7 @@ export const update: Module["update"] = async (input) => {
     return updateFromClient(input);
   }
 
-  if (input.msgEvent) {
+  if (input.msgEvt) {
     return updateFromEvent(input);
   }
 
@@ -90,7 +90,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model }) => {
     case "handled": {
       return {
         model,
-        msgCmd: [sendToClient([msg.clientId], msg.msg)],
+        msgCmd: [sendMsgToClient([msg.clientId], msg.msg)],
       };
     }
   }
@@ -130,12 +130,12 @@ const updateFromClient: Module["update"] = async ({
   };
 };
 
-const updateFromEvent: Module["update"] = async ({ msgEvent, model, ctx }) => {
-  if (!msgEvent) {
+const updateFromEvent: Module["update"] = async ({ msgEvt, model, ctx }) => {
+  if (!msgEvt) {
     return { model };
   }
 
-  switch (msgEvent.t) {
+  switch (msgEvt.t) {
     case "auth/client-authenticated": {
       return {
         model,
@@ -143,16 +143,16 @@ const updateFromEvent: Module["update"] = async ({ msgEvent, model, ctx }) => {
           const ProfileDb = createProfileDb({ dbConn: ctx.dbConn });
           const result = await findElseInsertNew({
             ProfileDb,
-            userId: msgEvent.userId,
+            userId: msgEvt.userId,
           });
           dispatch({
             t: "handled",
-            clientId: msgEvent.clientId,
+            clientId: msgEvt.clientId,
             msg: {
               t: "current-user-profile",
               result: Result.mapOk(result, profileCoreToProfile),
-              source: msgEvent,
-              loggedIn: msgEvent.loggedIn,
+              source: msgEvt,
+              loggedIn: msgEvt.loggedIn,
             },
           });
         },

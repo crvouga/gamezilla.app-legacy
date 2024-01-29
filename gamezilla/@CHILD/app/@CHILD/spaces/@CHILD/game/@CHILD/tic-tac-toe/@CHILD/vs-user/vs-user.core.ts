@@ -13,7 +13,7 @@ const { err: Err, ok: Ok } = Result;
 //
 //
 
-export type CoreModel = SetupModel | GameModel | GameOverModel;
+export type CoreModel = SetupModel | ModelGame | GameOverModel;
 
 export type SetupModel = {
   type: "setup";
@@ -23,7 +23,7 @@ export type SetupModel = {
   moveTimeLimit: MoveTimeLimit;
 };
 
-export type GameModel = {
+export type ModelGame = {
   type: "game";
   X: UserId;
   O: UserId;
@@ -86,7 +86,7 @@ export const bestOutOfToString = (bestOutOf: BestOutOf): string => {
 
 export const toWinCount = ({
   maxRoundCount,
-}: Pick<GameModel, "maxRoundCount">): number => {
+}: Pick<ModelGame, "maxRoundCount">): number => {
   return Math.floor(maxRoundCount / 2) + 1;
 };
 
@@ -145,15 +145,15 @@ export type ClientMsg = Req | ["OpenModal", ModalName] | ["close-modal"];
 
 export type ServerMsg = RoundCountDown | MoveCountDown;
 
-export type ToServer = Req;
+export type MsgToServer = Req;
 
-export type ToClient =
+export type MsgToClient =
   | Res
   | RoundCountDown_Done
   | MoveCountDown_Done
   | ["player-left", CoreModel];
 
-export type GameMsg = ["ClickedBoard", TicTacToe.Position];
+export type MsgGame = ["ClickedBoard", TicTacToe.Position];
 
 export type Req =
   | InputPlayer

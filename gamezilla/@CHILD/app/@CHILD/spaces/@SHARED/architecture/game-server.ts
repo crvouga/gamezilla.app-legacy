@@ -19,48 +19,48 @@ export type GameServerTypes = {
   //
   ServerModel: any;
   ServerMsg: any;
-  ToClient: any;
-  ToServer: any;
+  MsgToClient: any;
+  MsgToServer: any;
   //
-  GameModel: any;
-  GameMsg: any;
+  ModelGame: any;
+  MsgGame: any;
   //
 };
 
 type Output<T extends GameServerTypes> = {
   model: T["ServerModel"];
-  msgGame?: WithEventId<T["GameMsg"]>[];
+  msgGame?: WithEventId<T["MsgGame"]>[];
   eff?: Eff<T["ServerMsg"]>;
-  msgCmd?: SpaceServerCmd<T["ToClient"]>[];
+  msgCmd?: SpaceServerCmd<T["MsgToClient"]>[];
 };
 
 export type GameServer<T extends GameServerTypes> = {
   init: (input: {
     ctx: SpaceServerCtx;
-    state: T["GameModel"];
+    state: T["ModelGame"];
     model?: T["ServerModel"] | null;
   }) => Promise<{
     model: T["ServerModel"];
     eff?: Eff<T["ServerMsg"]>;
-    msgCmd?: SpaceServerCmd<T["ToClient"]>[];
+    msgCmd?: SpaceServerCmd<T["MsgToClient"]>[];
   }>;
 
   update: (input: {
     ctx: SpaceServerCtx | SpaceReqCtx;
-    state: T["GameModel"];
+    state: T["ModelGame"];
     model?: T["ServerModel"] | null;
     //
     msg?: T["ServerMsg"] | null;
-    clientMsg?: T["ToServer"] | null;
-    msgGame?: WithEventMeta<T["GameMsg"]> | null;
-    msgEvent?: SpaceServerEvent | null;
+    clientMsg?: T["MsgToServer"] | null;
+    msgGame?: WithEventMeta<T["MsgGame"]> | null;
+    msgEvt?: SpaceServerEvent | null;
   }) => Promise<Output<T>>;
 
   subscriptions: (input: {
     model?: T["ServerModel"] | null;
     intervalId: string;
     ctx: SpaceServerCtx;
-    state: T["GameModel"];
+    state: T["ModelGame"];
   }) => Promise<Sub<T["ServerMsg"]>>;
 };
 
@@ -73,10 +73,10 @@ const tag = <T extends string, Types extends GameServerTypes>(
 ): GameServer<{
   ServerModel: { t: T; c: Types["ServerModel"] };
   ServerMsg: { t: T; c: Types["ServerMsg"] };
-  ToClient: { t: T; c: Types["ToClient"] };
-  ToServer: { t: T; c: Types["ToServer"] };
-  GameModel: { t: T; c: Types["GameModel"] };
-  GameMsg: { t: T; c: Types["GameMsg"] & EventMeta };
+  MsgToClient: { t: T; c: Types["MsgToClient"] };
+  MsgToServer: { t: T; c: Types["MsgToServer"] };
+  ModelGame: { t: T; c: Types["ModelGame"] };
+  MsgGame: { t: T; c: Types["MsgGame"] & EventMeta };
 }> => {
   return {
     init: async (input) => {
@@ -93,7 +93,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
 
     update: async (input) => {
       const updated = await server.update({
-        msgEvent: input.msgEvent,
+        msgEvt: input.msgEvt,
         msg: input.msg?.t === tag ? input.msg?.c : undefined,
         model: input.model?.t === tag ? input.model?.c : undefined,
         msgGame: input.msgGame?.t === tag ? input.msgGame?.c : undefined,
@@ -107,8 +107,8 @@ const tag = <T extends string, Types extends GameServerTypes>(
         msgCmd: SpaceServerCmd.tag(tag, updated.msgCmd),
         msgGame: updated.msgGame
           ? updated.msgGame.map(
-              (msgGame): EventMeta & { t: T; c: Types["GameMsg"] } => ({
-                msgEventId: msgGame.msgEventId,
+              (msgGame): EventMeta & { t: T; c: Types["MsgGame"] } => ({
+                msgEvtId: msgGame.msgEvtId,
                 happenedAt: msgGame.happenedAt,
                 t: tag,
                 c: msgGame,
@@ -137,11 +137,11 @@ const tag = <T extends string, Types extends GameServerTypes>(
  * @example
  * const updated = chain(
  * { model: 0 },
- * (model) => ({ model: model + 1, msgEvent: [someEvent] }),
+ * (model) => ({ model: model + 1, msgEvt: [someEvent] }),
  * (model) => ({ model: model + 1, eff: someEff }),
  * (model) => ({ model: model + 1, msgCmd: [someCmd] }),
  * )
- * //=> { model: 3, msgEvent: [someEvent], eff: someEff, msgCmd: [someCmd] }
+ * //=> { model: 3, msgEvt: [someEvent], eff: someEff, msgCmd: [someCmd] }
  *
  * @param initial - the model to start with
  * @param updaters - a list of update functions to apply to the model
@@ -151,8 +151,9 @@ const chain = async <T extends GameServerTypes>(
   initial: Output<T> | Promise<Output<T>>,
   ...updaters: ((input: T["ServerModel"]) => Promise<Output<T>>)[]
 ): Promise<Output<T>> => {
-  const msgCmd: SpaceServerCmd<T["ToClient"]>[] = (await initial).msgCmd ?? [];
-  const msgGames: (T["GameMsg"] & EventMeta)[] = (await initial)?.msgGame ?? [];
+  const msgCmd: SpaceServerCmd<T["MsgToClient"]>[] =
+    (await initial).msgCmd ?? [];
+  const msgGames: (T["MsgGame"] & EventMeta)[] = (await initial)?.msgGame ?? [];
   const eff: Eff<T["ServerMsg"]>[] = (await initial).eff
     ? [(await initial).eff!]
     : [];

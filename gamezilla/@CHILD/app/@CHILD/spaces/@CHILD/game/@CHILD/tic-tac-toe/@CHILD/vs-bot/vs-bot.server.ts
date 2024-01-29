@@ -8,8 +8,8 @@ import { TicTacToe } from "../../@SHARED/tic-tic-toe";
 import {
   ServerModel,
   ServerMsg,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
   initCoreModel,
   isBotTurn,
 } from "./vs-bot.core";
@@ -44,7 +44,7 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  msgCmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   if (msg.t === "bot-moved") {
     if (model.type !== "game") {
@@ -102,13 +102,13 @@ export const update = ({
 //
 
 export const updateFromClient = (input: {
-  msg: ToServer;
+  msg: MsgToServer;
   model: Model;
   ctx: SpaceReqCtx;
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  msgCmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   return p(
     input,
@@ -154,7 +154,7 @@ export const updateFromEvent = ({
   model: Model;
 }): {
   model: Model;
-  msgCmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   if (msg.t === "user-left") {
     if (model.player !== msg.userId) {

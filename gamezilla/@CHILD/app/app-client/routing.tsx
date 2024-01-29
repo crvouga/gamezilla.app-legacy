@@ -66,7 +66,7 @@ export const update = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  msgEvent?: ClientEvent[];
+  msgEvt?: ClientEvent[];
   msgCmd?: SoundCmd[];
 } => {
   if (msg) {
@@ -106,7 +106,7 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
           previousRoute: model.currentRoute,
           currentRoute: msg.route,
         },
-        msgEvent: [{ t: "routing/route-changed", route: msg.route }],
+        msgEvt: [{ t: "routing/route-changed", route: msg.route }],
       };
     }
   }

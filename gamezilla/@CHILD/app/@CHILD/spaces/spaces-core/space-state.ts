@@ -16,7 +16,7 @@ export type Initial = {
 
 export type Started = Space & {
   type: "started";
-  game: Game.GameModel | null;
+  game: Game.ModelGame | null;
   latestEvent: EventId;
 };
 
@@ -59,10 +59,10 @@ export const toUserIds = (state: State): UserId[] => {
 
 export const reducer = ({
   state,
-  msgEvent,
+  msgEvt,
 }: {
   state: State;
-  msgEvent: SpaceEvent & EventMeta;
+  msgEvt: SpaceEvent & EventMeta;
 }): State => {
   switch (state.type) {
     case "ended": {
@@ -70,16 +70,16 @@ export const reducer = ({
     }
 
     case "initial": {
-      switch (msgEvent.t) {
+      switch (msgEvt.t) {
         case "user-started-space": {
           return {
             type: "started",
             game: null,
-            hostId: msgEvent.userId,
-            latestEvent: msgEvent.msgEventId,
-            spaceId: msgEvent.spaceId,
+            hostId: msgEvt.userId,
+            latestEvent: msgEvt.msgEvtId,
+            spaceId: msgEvt.spaceId,
             users: {
-              [msgEvent.userId]: msgEvent.userId,
+              [msgEvt.userId]: msgEvt.userId,
             },
             visibility: "public",
           };
@@ -91,27 +91,27 @@ export const reducer = ({
     }
 
     case "started": {
-      switch (msgEvent.t) {
+      switch (msgEvt.t) {
         case "game": {
-          const game = state.game ?? Game.initGame(msgEvent.c.t);
+          const game = state.game ?? Game.initGame(msgEvt.c.t);
           const gameNew = Game.reducer({
             ctx: { space: state },
             modelGame: game,
-            msgEvent: { ...msgEvent, ...msgEvent.c },
+            msgEvt: { ...msgEvt, ...msgEvt.c },
           });
           return {
             ...state,
-            latestEvent: msgEvent.msgEventId,
+            latestEvent: msgEvt.msgEvtId,
             game: gameNew,
           };
         }
         case "user-ended-space": {
-          if (msgEvent.userId !== state.hostId) {
+          if (msgEvt.userId !== state.hostId) {
             return state;
           }
           return {
             ...state,
-            latestEvent: msgEvent.msgEventId,
+            latestEvent: msgEvt.msgEvtId,
             type: "ended",
           };
         }
@@ -119,37 +119,37 @@ export const reducer = ({
         case "user-inputted-game": {
           return {
             ...state,
-            latestEvent: msgEvent.msgEventId,
-            game: msgEvent.game ? Game.initGame(msgEvent.game) : null,
+            latestEvent: msgEvt.msgEvtId,
+            game: msgEvt.game ? Game.initGame(msgEvt.game) : null,
           };
         }
 
         case "user-joined-space": {
           return {
             ...state,
-            latestEvent: msgEvent.msgEventId,
+            latestEvent: msgEvt.msgEvtId,
             users: {
               ...state.users,
-              [msgEvent.userId]: msgEvent.userId,
+              [msgEvt.userId]: msgEvt.userId,
             },
           };
         }
 
         case "user-left-space": {
-          if (msgEvent.userId === state.hostId) {
+          if (msgEvt.userId === state.hostId) {
             return state;
           }
           const usersNew = { ...state.users };
-          delete usersNew[msgEvent.userId];
+          delete usersNew[msgEvt.userId];
           return {
             ...state,
-            latestEvent: msgEvent.msgEventId,
+            latestEvent: msgEvt.msgEvtId,
             users: usersNew,
           };
         }
 
         case "user-started-space": {
-          return { ...state, latestEvent: msgEvent.msgEventId };
+          return { ...state, latestEvent: msgEvt.msgEvtId };
         }
       }
     }

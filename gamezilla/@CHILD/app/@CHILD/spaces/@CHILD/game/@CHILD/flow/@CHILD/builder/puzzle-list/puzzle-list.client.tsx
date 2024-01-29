@@ -3,7 +3,7 @@ import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import {
   APP_SOUND,
   playSound,
-  sendToServer,
+  sendMsgToServer,
   showErrorToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconPuzzlePiece, Spinner, cn } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -32,7 +32,7 @@ const update: ClientModule["update"] = (input) => {
 };
 
 const updatePuzzleList: ClientModule["update"] = (input) => {
-  const { model, msg, msgFromServer, ctx } = input;
+  const { model, msg, msgServer, ctx } = input;
 
   switch (msg?.t) {
     case "list/user-clicked-puzzle-list-item": {
@@ -53,7 +53,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
       return {
         model: { ...model, puzzleListRequest: loading },
         msgCmd: [
-          sendToServer({
+          sendMsgToServer({
             t: "list/list-puzzles",
             input: {
               order: {
@@ -77,10 +77,10 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
     }
   }
 
-  switch (msgFromServer?.t) {
+  switch (msgServer?.t) {
     case "list/listed-puzzle": {
       const puzzles =
-        msgFromServer.listed.t === "ok" ? msgFromServer.listed.value.items : [];
+        msgServer.listed.t === "ok" ? msgServer.listed.value.items : [];
 
       const puzzlesNew = puzzles.reduce(
         (acc, puzzle) => ({ ...acc, [puzzle.id]: puzzle }),
@@ -90,11 +90,11 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
       return {
         model: {
           ...model,
-          puzzleListRequest: Result.mapOk(msgFromServer.listed, () => null),
+          puzzleListRequest: Result.mapOk(msgServer.listed, () => null),
           puzzles: puzzlesNew,
         },
-        msgCmd: isErr(msgFromServer.listed)
-          ? showErrorToast(msgFromServer.listed.error)
+        msgCmd: isErr(msgServer.listed)
+          ? showErrorToast(msgServer.listed.error)
           : [],
       };
     }

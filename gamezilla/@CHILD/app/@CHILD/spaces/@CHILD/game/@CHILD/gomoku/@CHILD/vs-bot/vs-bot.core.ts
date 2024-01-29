@@ -21,7 +21,7 @@ import { Position } from "../../@SHARED/gomoku/gomoku-position";
 //
 //
 
-export type Model = SetupModel | GameModel;
+export type Model = SetupModel | ModelGame;
 
 export type SetupModel = {
   type: "setup";
@@ -30,7 +30,7 @@ export type SetupModel = {
   botLevel: BotLevel;
 };
 
-export type GameModel = {
+export type ModelGame = {
   type: "game";
   userId: UserId;
   userStone: Stone;
@@ -63,9 +63,11 @@ export type ClientMsg = Req;
 
 export type ServerMsg = { t: "none" };
 
-export type ToServer = Req;
+export type MsgToServer = Req;
 
-export type ToClient = Res | { t: "bot-moved"; result: Result<string, Model> };
+export type MsgToClient =
+  | Res
+  | { t: "bot-moved"; result: Result<string, Model> };
 
 //
 //

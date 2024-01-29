@@ -1,5 +1,5 @@
 import { Eff } from "gamezilla/@SHARED/core";
-import { ServerModel, ServerMsg, ToServer } from "./search.core";
+import { ServerModel, ServerMsg, MsgToServer } from "./search.core";
 
 type Model = ServerModel;
 
@@ -25,7 +25,7 @@ export const updateFromClient = ({
   model,
   msg,
 }: {
-  msg: ToServer;
+  msg: MsgToServer;
   model: Model;
 }): {
   model: Model;

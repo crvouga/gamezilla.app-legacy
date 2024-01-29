@@ -21,7 +21,7 @@ import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 //
 //
 
-export type CoreModel = SetupModel | GameModel;
+export type CoreModel = SetupModel | ModelGame;
 
 export type SetupModel = {
   type: "setup";
@@ -30,7 +30,7 @@ export type SetupModel = {
   botLevel: BotLevel;
 };
 
-export type GameModel = {
+export type ModelGame = {
   type: "game";
   player: UserId;
   userPlayerType: PlayerType;
@@ -57,7 +57,7 @@ export const initCoreModel = ({
   };
 };
 
-export const isBotTurn = (model: CoreModel): model is GameModel => {
+export const isBotTurn = (model: CoreModel): model is ModelGame => {
   if (model.type !== "game") {
     return false;
   }
@@ -81,9 +81,9 @@ export type ClientMsg = Req | { t: "vs-bot-setup"; c: VsBotSetup.Msg };
 
 export type ServerMsg = { t: "bot-moved" };
 
-export type ToServer = Req;
+export type MsgToServer = Req;
 
-export type ToClient =
+export type MsgToClient =
   | Res
   | { t: "bot-moved"; result: Result<string, CoreModel> }
   | { t: "player-left"; result: Result<string, CoreModel> };

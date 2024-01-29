@@ -61,7 +61,7 @@ export type ServerMsg =
   | (SentCode & { clientId: ClientId })
   | (VerifiedCode & { clientId: ClientId; sessionId: SessionId });
 
-export type ToServer =
+export type MsgToServer =
   | {
       t: "send-code";
       phoneNumber: PhoneNumber;
@@ -72,4 +72,4 @@ export type ToServer =
       code: string;
     };
 
-export type ToClient = SentCode | VerifiedCode;
+export type MsgToClient = SentCode | VerifiedCode;

@@ -20,7 +20,7 @@ import { Position } from "../../@SHARED/gomoku/gomoku-position";
 //
 //
 
-export type Model = ModelSetup | ModelPlaying | GameModelOver;
+export type Model = ModelSetup | ModelPlaying | ModelGameOver;
 
 export type ModelSetup = {
   type: "setup";
@@ -35,7 +35,7 @@ export type ModelPlaying = {
   board: Board;
 };
 
-export type GameModelOver = {
+export type ModelGameOver = {
   type: "game-over";
   white: UserId;
   black: UserId;
@@ -92,7 +92,7 @@ const initGameOver = ({
 }: {
   gameOver: GameOver;
   model: ModelPlaying;
-}): GameModelOver => {
+}): ModelGameOver => {
   return {
     type: "game-over",
     black: model.black,
@@ -123,9 +123,9 @@ export type ClientMsg = Req | { t: "clicked-cancel" };
 
 export type ServerMsg = { t: "none" };
 
-export type ToClient = Res;
+export type MsgToClient = Res;
 
-export type ToServer = Req;
+export type MsgToServer = Req;
 
 //
 //

@@ -22,10 +22,10 @@ import { FlowClientCtx } from "./@SHARED/flow-ctx";
 import {
   ClientModel,
   ClientMsg,
-  GameMsg,
-  GameModel,
-  ToClient,
-  ToServer,
+  MsgGame,
+  ModelGame,
+  MsgToClient,
+  MsgToServer,
 } from "./flow.core";
 
 //
@@ -40,18 +40,18 @@ type Module = GameClientModule<{
   Model: ClientModel;
   Msg: ClientMsg;
   //
-  ToClient: ToClient;
-  ToServer: ToServer;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
   //
-  GameMsg: GameMsg;
-  GameModel: GameModel;
+  MsgGame: MsgGame;
+  ModelGame: ModelGame;
   //
   Ctx: SpaceClientCtx;
   //
-  OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-  InEvent: SpaceClientEvent;
-  InCmd: null;
-  OutEvent: null;
+  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
+  MsgInEvent: SpaceClientEvent;
+  MsgInCmd: null;
+  MsgOutEvent: null;
 }>;
 
 //
@@ -70,22 +70,14 @@ const update: Module["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromGameMsg({ ...input, model }),
+    (model) => updateFromMsgGame({ ...input, model }),
     (model) => updateChild({ ...input, model })
   );
 };
 
 const updateChild: Module["update"] = (input) => {
-  const {
-    model,
-    modelGame,
-    msgGame,
-    ctx,
-    msgCmd,
-    msgEvent,
-    msgFromServer,
-    msg,
-  } = input;
+  const { model, modelGame, msgGame, ctx, msgCmd, msgEvt, msgServer, msg } =
+    input;
 
   switch (modelGame.t) {
     case null: {
@@ -98,8 +90,8 @@ const updateChild: Module["update"] = (input) => {
         modelGame: modelGame.c,
         model: model.t === "play" ? model.c : PlayClient.init,
         msgCmd: msgCmd,
-        msgEvent: msgEvent,
-        msgFromServer: msgFromServer?.t === "play" ? msgFromServer.c : null,
+        msgEvt: msgEvt,
+        msgServer: msgServer?.t === "play" ? msgServer.c : null,
         msgGame: msgGame?.t === "play" ? { ...msgGame, ...msgGame.c } : null,
         msg: msg?.t === "play" ? msg.c : null,
       });
@@ -119,8 +111,8 @@ const updateChild: Module["update"] = (input) => {
         modelGame: modelGame.c,
         model: model.t === "builder" ? model.c : BuilderClient.init,
         msgCmd: msgCmd,
-        msgEvent: msgEvent,
-        msgFromServer: msgFromServer?.t === "builder" ? msgFromServer.c : null,
+        msgEvt: msgEvt,
+        msgServer: msgServer?.t === "builder" ? msgServer.c : null,
         msgGame: msgGame?.t === "builder" ? { ...msgGame, ...msgGame.c } : null,
         msg: msg?.t === "builder" ? msg.c : null,
       });
@@ -136,7 +128,7 @@ const updateChild: Module["update"] = (input) => {
   }
 };
 
-const updateFromGameMsg: Module["update"] = (input) => {
+const updateFromMsgGame: Module["update"] = (input) => {
   const { msgGame, model } = input;
 
   if (!msgGame) {
@@ -196,7 +188,7 @@ const updateFromMsg: Module["update"] = (input) => {
       return { model };
     }
 
-    case "msgEvent": {
+    case "msgEvt": {
       const msgGame = withId(msg.c);
       return {
         model,
@@ -259,7 +251,7 @@ const View: Module["View"] = (input) => {
     puzzles: input.model.puzzles,
     onQuit: () =>
       dispatch({
-        t: "msgEvent",
+        t: "msgEvt",
         c: {
           t: "user-changed-mode",
           mode: null,
@@ -282,7 +274,7 @@ const View: Module["View"] = (input) => {
               description: "Start playing puzzles",
               onClick: () => {
                 dispatch({
-                  t: "msgEvent",
+                  t: "msgEvt",
                   c: {
                     t: "user-changed-mode",
                     mode: "play",
@@ -297,7 +289,7 @@ const View: Module["View"] = (input) => {
               description: "Build new puzzles to play",
               onClick: () => {
                 dispatch({
-                  t: "msgEvent",
+                  t: "msgEvt",
                   c: {
                     t: "user-changed-mode",
                     mode: "builder",

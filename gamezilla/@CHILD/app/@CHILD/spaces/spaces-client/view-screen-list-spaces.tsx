@@ -69,7 +69,7 @@ export const ViewScreenListSpaces = ({
             color="primary"
             onClick={() =>
               dispatch({
-                t: "msgEvent",
+                t: "msgEvt",
                 c: withId({
                   t: "user-started-space",
                   spaceId: SpaceId.generate(),

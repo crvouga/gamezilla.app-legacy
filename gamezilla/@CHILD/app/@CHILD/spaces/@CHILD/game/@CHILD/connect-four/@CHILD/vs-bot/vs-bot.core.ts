@@ -43,7 +43,7 @@ export type ClientModel = {
 //
 
 export type ClientMsg =
-  | GameMsg
+  | MsgGame
   | { t: "vs-bot-setup"; c: VsBotSetup.Msg }
   | { t: "vs-bot-game"; c: VsBotGame.Msg };
 
@@ -57,11 +57,11 @@ export type ServerMsg =
       t: "time-passed";
     };
 
-export type ToClient = { t: null };
+export type MsgToClient = { t: null };
 
-export type ToServer = { t: null };
+export type MsgToServer = { t: null };
 
-export type GameMsg =
+export type MsgGame =
   | {
       t: "user-dropped-disc";
       columnIndex: ConnectFour.ColumnIndex;
@@ -86,11 +86,7 @@ type EventErr =
   | { t: "not-playing" }
   | { t: "move"; c: ConnectFour.MoveProblem };
 
-export const msgEventErrorToString = ({
-  error,
-}: {
-  error: EventErr;
-}): string => {
+export const msgEvtErrorToString = ({ error }: { error: EventErr }): string => {
   switch (error.t) {
     case "not-playing": {
       return "You're not playing";
@@ -101,13 +97,13 @@ export const msgEventErrorToString = ({
   }
 };
 
-export type GameModel = (StateSetup | StateGame) & {
+export type ModelGame = (StateSetup | StateGame) & {
   errors: {
-    [msgEventId: EventId]: GameMsg & { error: EventErr };
+    [msgEvtId: EventId]: MsgGame & { error: EventErr };
   };
 };
 
-export const initGame = (input: SpaceCtx): GameModel => {
+export const initGame = (input: SpaceCtx): ModelGame => {
   return {
     type: "setup",
     botLevel: "Medium",
@@ -136,9 +132,9 @@ export const reducer = ({
   modelGame,
   msgGame,
 }: {
-  modelGame: GameModel;
-  msgGame: GameMsg & EventMeta;
-}): GameModel => {
+  modelGame: ModelGame;
+  msgGame: MsgGame & EventMeta;
+}): ModelGame => {
   switch (modelGame.type) {
     case "setup": {
       switch (msgGame.t) {
@@ -304,20 +300,20 @@ export const reducer = ({
 };
 
 const addError = (
-  modelGame: GameModel,
-  msgEvent: GameMsg & EventMeta,
+  modelGame: ModelGame,
+  msgEvt: MsgGame & EventMeta,
   error: EventErr
-): GameModel => {
+): ModelGame => {
   return {
     ...modelGame,
     errors: {
       ...modelGame.errors,
-      [msgEvent.msgEventId]: { ...msgEvent, error },
+      [msgEvt.msgEvtId]: { ...msgEvt, error },
     },
   };
 };
 
-export const isBotTurn = (modelGame: GameModel): boolean => {
+export const isBotTurn = (modelGame: ModelGame): boolean => {
   if (modelGame.type !== "game") {
     return false;
   }
@@ -328,7 +324,7 @@ export const isBotTurn = (modelGame: GameModel): boolean => {
   );
 };
 
-export const toBotPlayer = (modelGame: GameModel): ConnectFour.PlayerType => {
+export const toBotPlayer = (modelGame: ModelGame): ConnectFour.PlayerType => {
   return ConnectFour.opposite[modelGame.userPlayerType];
 };
 
@@ -336,7 +332,7 @@ export type GameOver =
   | { type: "Tie" }
   | { type: "Winner"; winner: ConnectFour.PlayerType };
 
-export const toGameOver = (model: GameModel): GameOver | { type: null } => {
+export const toGameOver = (model: ModelGame): GameOver | { type: null } => {
   switch (model.type) {
     case "game": {
       const status = ConnectFour.toStatus(model.columns);

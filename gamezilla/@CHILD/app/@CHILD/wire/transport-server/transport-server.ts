@@ -13,33 +13,37 @@ export type ServerTransportMsg =
       msgs: unknown[];
     };
 
-export type IServerTransport<T extends { ToClient: any; ToServer: any }> = {
-  toClient: PubSub<{
-    [clientId: ClientId]: {
+export type IServerTransport<T extends { MsgToClient: any; MsgToServer: any }> =
+  {
+    toClient: PubSub<{
+      [clientId: ClientId]: {
+        clientId: ClientId;
+        msgs: T["MsgToClient"][];
+      };
+    }>;
+    toClientBroadcast: PubSub<T["MsgToClient"][]>;
+    toServer: PubSub<{
+      msgs: T["MsgToServer"][];
       clientId: ClientId;
-      msgs: T["ToClient"][];
-    };
-  }>;
-  toClientBroadcast: PubSub<T["ToClient"][]>;
-  toServer: PubSub<{
-    msgs: T["ToServer"][];
-    clientId: ClientId;
-    sessionId: SessionId;
-  }>;
-  topicPublish: PubSub<{
-    topics: string[];
-    msg: T["ToClient"];
-  }>;
-  topicSubscribe: PubSub<{
-    topics: string[];
-    clientId: ClientId;
-  }>;
-  wire: PubSub<ServerTransportMsg>;
-};
+      sessionId: SessionId;
+    }>;
+    topicPublish: PubSub<{
+      topics: string[];
+      msg: T["MsgToClient"];
+    }>;
+    topicSubscribe: PubSub<{
+      topics: string[];
+      clientId: ClientId;
+    }>;
+    wire: PubSub<ServerTransportMsg>;
+  };
 
-export const initServerTransport = <ToServer, ToClient>(): IServerTransport<{
-  ToClient: ToClient;
-  ToServer: ToServer;
+export const initServerTransport = <
+  MsgToServer,
+  MsgToClient
+>(): IServerTransport<{
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
 }> => {
   return {
     toClient: PubSub.create(),

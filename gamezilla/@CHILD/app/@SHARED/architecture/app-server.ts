@@ -17,33 +17,33 @@ export type AppServerModuleTypes = {
    */
   Model: any;
   /**
-   * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvent
+   * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvt
    */
   Msg: any;
   /**
-   * `ToClient` is a message to send to the client component of the module
+   * `MsgToClient` is a message to send to the client component of the module
    */
-  ToClient: any;
+  MsgToClient: any;
   /**
-   * `ToServer` is a message to send to the client component of the module
+   * `MsgToServer` is a message to send to the client component of the module
    */
-  ToServer: any;
+  MsgToServer: any;
   /**
-   * `InCmd` is a message from other modules. Usually verbs
+   * `MsgInCmd` is a message from other modules. Usually verbs
    */
-  InCmd: any;
+  MsgInCmd: any;
   /**
-   * `InEvent` is a message to notify other modules. Usually past tense verbs
+   * `MsgInEvent` is a message to notify other modules. Usually past tense verbs
    */
-  InEvent: any;
+  MsgInEvent: any;
   /**
-   * `OutCmd` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
+   * `MsgOutCmd` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
    */
-  OutCmd: any;
+  MsgOutCmd: any;
   /**
-   * `OutEvent` is a message that is only produced by this module. Always past tense verbs
+   * `MsgOutEvent` is a message that is only produced by this module. Always past tense verbs
    */
-  OutEvent: any;
+  MsgOutEvent: any;
 };
 
 //
@@ -69,7 +69,7 @@ export type Input<T extends AppServerModuleTypes> = {
    *
    */
   msgFromClient?:
-    | (T["ToServer"] & {
+    | (T["MsgToServer"] & {
         clientId: ClientId;
         sessionId: SessionId;
         userId?: UserId | null;
@@ -78,11 +78,11 @@ export type Input<T extends AppServerModuleTypes> = {
   /**
    *
    */
-  msgEvent?: T["InEvent"] | null;
+  msgEvt?: T["MsgInEvent"] | null;
   /**
    *
    */
-  msgCmd?: T["InCmd"] | null;
+  msgCmd?: T["MsgInCmd"] | null;
 };
 
 //
@@ -103,11 +103,11 @@ export type Output<T extends AppServerModuleTypes> = {
   /**
    *
    */
-  msgCmd?: T["OutCmd"][];
+  msgCmd?: T["MsgOutCmd"][];
   /**
    *
    */
-  msgEvent?: T["OutEvent"][];
+  msgEvt?: T["MsgOutEvent"][];
 };
 
 /**
@@ -154,7 +154,7 @@ const chainUpdates = async <T extends AppServerModuleTypes>(
     model: { ...acc.model, ...updated.model },
     eff: Eff.batch([acc.eff, updated.eff]),
     msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
-    msgEvent: [...(acc.msgEvent ?? []), ...(updated.msgEvent ?? [])],
+    msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
   };
 
   return chainUpdates(accNew, ...rest);

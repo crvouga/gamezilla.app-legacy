@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { ClientToServerMsg, ServerToClientMsg } from "../transport.core";
+import { ClientMsgToServerMsg, ServerMsgToClientMsg } from "../transport.core";
 import {
   ClientTransportSocketIOImpl,
   IClientTransport,
@@ -9,14 +9,17 @@ import { PUBLIC_APP_CONFIG } from "config";
 
 const SESSION_ID_KEY = "gamezilla-session-id";
 
-export const ClientTransportSocketIO = <ToServer, ToClient>({
+export const ClientTransportSocketIO = <MsgToServer, MsgToClient>({
   codebaseVersionId,
   impl,
 }: {
   codebaseVersionId: string;
   impl: ClientTransportSocketIOImpl;
-}): IClientTransport<{ ToServer: ToServer; ToClient: ToClient }> => {
-  const transport = initClientTransport<ToServer, ToClient>();
+}): IClientTransport<{
+  MsgToServer: MsgToServer;
+  MsgToClient: MsgToClient;
+}> => {
+  const transport = initClientTransport<MsgToServer, MsgToClient>();
 
   const socket = io(impl.serverUrl, {
     auth: {
@@ -26,19 +29,19 @@ export const ClientTransportSocketIO = <ToServer, ToClient>({
   });
 
   socket.on("connect", () => {
-    transport.msgEvent.publish({ t: "server-connected" });
+    transport.msgEvt.publish({ t: "server-connected" });
   });
 
   socket.on("connect_error", () => {
-    transport.msgEvent.publish({ t: "server-connect-error" });
+    transport.msgEvt.publish({ t: "server-connect-error" });
   });
 
   socket.on("disconnect", () => {
-    transport.msgEvent.publish({ t: "server-disconnected" });
+    transport.msgEvt.publish({ t: "server-disconnected" });
   });
 
   transport.toServer.subscribe((msgs) => {
-    const toServer: ClientToServerMsg<ToServer> = {
+    const toServer: ClientMsgToServerMsg<MsgToServer> = {
       t: "to-server",
       msgs,
       codebaseVersionId,
@@ -47,7 +50,7 @@ export const ClientTransportSocketIO = <ToServer, ToClient>({
     socket.emit("to-server", toServer);
   });
 
-  socket.on("to-client", (msg: ServerToClientMsg<ToClient>) => {
+  socket.on("to-client", (msg: ServerMsgToClientMsg<MsgToClient>) => {
     if (
       msg.codebaseVersionId !== codebaseVersionId &&
       PUBLIC_APP_CONFIG.IS_PROD

@@ -25,9 +25,9 @@ export type ClientMsg = {
 
 export type ServerMsg = { t: "noop" };
 
-export type ToServer = { t: "puzzle-create/user-clicked-create-button" };
+export type MsgToServer = { t: "puzzle-create/user-clicked-create-button" };
 
-export type ToClient = {
+export type MsgToClient = {
   t: "created-puzzle";
   created: Result<string, FlowPuzzle>;
 };
@@ -38,7 +38,7 @@ export type ToClient = {
 //
 //
 
-export type GameMsg = {
+export type MsgGame = {
   t: "user-created-puzzle";
   created: Result<string, FlowPuzzle>;
   userId: UserId;

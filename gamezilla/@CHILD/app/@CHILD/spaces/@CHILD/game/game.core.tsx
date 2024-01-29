@@ -34,13 +34,13 @@ export type ClientMsg =
   | { t: "connect-four"; c: ConnectFour.ClientMsg }
   | { t: "flow"; c: Flow.ClientMsg };
 
-export type ToClient =
-  | { t: "connect-four"; c: ConnectFour.ToClient }
-  | { t: "flow"; c: Flow.ToClient };
+export type MsgToClient =
+  | { t: "connect-four"; c: ConnectFour.MsgToClient }
+  | { t: "flow"; c: Flow.MsgToClient };
 
-export type ToServer =
-  | { t: "connect-four"; c: ConnectFour.ToServer }
-  | { t: "flow"; c: Flow.ToServer };
+export type MsgToServer =
+  | { t: "connect-four"; c: ConnectFour.MsgToServer }
+  | { t: "flow"; c: Flow.MsgToServer };
 
 //
 //
@@ -71,17 +71,17 @@ export const gameNameToString = (gameName: GameName): string => {
   }
 };
 
-export type GameModel =
+export type ModelGame =
   | {
       t: "connect-four";
-      c: ConnectFour.GameModel;
+      c: ConnectFour.ModelGame;
     }
   | {
       t: "flow";
-      c: Flow.GameModel;
+      c: Flow.ModelGame;
     };
 
-export const initGame = (gameName: GameName): GameModel => {
+export const initGame = (gameName: GameName): ModelGame => {
   switch (gameName) {
     case "connect-four": {
       return {
@@ -99,28 +99,28 @@ export const initGame = (gameName: GameName): GameModel => {
   }
 };
 
-export type GameMsg =
-  | { t: "connect-four"; c: ConnectFour.GameMsg }
-  | { t: "flow"; c: Flow.GameMsg };
+export type MsgGame =
+  | { t: "connect-four"; c: ConnectFour.MsgGame }
+  | { t: "flow"; c: Flow.MsgGame };
 
 export const reducer = ({
   ctx,
   modelGame,
-  msgEvent,
+  msgEvt,
 }: {
   ctx: SpaceCtx;
-  modelGame: GameModel;
-  msgEvent: GameMsg & EventMeta;
-}): GameModel => {
+  modelGame: ModelGame;
+  msgEvt: MsgGame & EventMeta;
+}): ModelGame => {
   switch (modelGame.t) {
     case "connect-four": {
-      switch (msgEvent.t) {
+      switch (msgEvt.t) {
         case "connect-four": {
           return {
             t: "connect-four",
             c: ConnectFour.reducer({
               ctx,
-              msgEvent: { ...msgEvent, ...msgEvent.c },
+              msgEvt: { ...msgEvt, ...msgEvt.c },
               modelGame: modelGame.c,
             }),
           };
@@ -132,13 +132,13 @@ export const reducer = ({
     }
 
     case "flow": {
-      switch (msgEvent.t) {
+      switch (msgEvt.t) {
         case "flow": {
           return {
             t: "flow",
             c: Flow.reducer({
               ctx,
-              msgEvent: { ...msgEvent, ...msgEvent.c },
+              msgEvt: { ...msgEvt, ...msgEvt.c },
               modelGame: modelGame.c,
             }),
           };

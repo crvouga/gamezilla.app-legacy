@@ -4,7 +4,7 @@ import {
   ClientModel,
   ClientMsg,
   ServerModel,
-  ToClient,
+  MsgToClient,
   initShared,
 } from "./vs-user.core";
 
@@ -59,7 +59,7 @@ export const updateFromServer = ({
   msg,
   model,
 }: {
-  msg: ToClient;
+  msg: MsgToClient;
   model: Model;
 }): {
   model: Model;

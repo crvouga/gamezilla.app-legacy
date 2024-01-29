@@ -18,10 +18,10 @@ import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art";
 import {
   ClientModel,
   ClientMsg,
-  GameMsg,
-  GameModel,
-  ToClient,
-  ToServer,
+  MsgGame,
+  ModelGame,
+  MsgToClient,
+  MsgToServer,
 } from "./connect-four.core";
 
 //
@@ -35,18 +35,18 @@ import {
 type Module = GameClientModule<{
   Model: ClientModel;
   Msg: ClientMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
-  GameModel: GameModel;
-  GameMsg: GameMsg;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+  ModelGame: ModelGame;
+  MsgGame: MsgGame;
   Ctx: SpaceClientCtx;
-  InCmd: null;
-  InEvent: SpaceClientEvent;
-  OutCmd: ClientCmd<{
+  MsgInCmd: null;
+  MsgInEvent: SpaceClientEvent;
+  MsgOutCmd: ClientCmd<{
     ClientMsg: ClientMsg;
-    ToServer: ToServer;
+    MsgToServer: MsgToServer;
   }>;
-  OutEvent: null;
+  MsgOutEvent: null;
 }>;
 
 //
@@ -72,7 +72,7 @@ const update: Module["update"] = (input) => {
     { model: input.model },
     (model) => updateChild(model)(input),
     (model) => updateFromMsg(model)(input),
-    (model) => updateFromGameMsg(model)(input)
+    (model) => updateFromMsgGame(model)(input)
   );
 };
 
@@ -100,7 +100,7 @@ const updateFromMsg =
     }
   };
 
-const updateFromGameMsg =
+const updateFromMsgGame =
   (model: ClientModel): Module["update"] =>
   (input) => {
     const { msgGame } = input;
@@ -145,7 +145,7 @@ const updateFromGameMsg =
 const updateChild =
   (model: ClientModel): Module["update"] =>
   (input) => {
-    const { msg, msgEvent, msgGame, msgFromServer, modelGame } = input;
+    const { msg, msgEvt, msgGame, msgServer, modelGame } = input;
 
     switch (modelGame.t) {
       case "none": {
@@ -156,11 +156,11 @@ const updateChild =
         const updated = VsBot.update({
           ctx: { ...input.ctx, onQuit: () => {} },
           msg: msg?.t === "vs-bot" ? msg.c : null,
-          msgEvent: msgEvent,
+          msgEvt: msgEvt,
           msgCmd: null,
           msgGame:
             msgGame?.t === "vs-bot" ? { ...msgGame, ...msgGame.c } : null,
-          msgFromServer: msgFromServer?.t === "vs-bot" ? msgFromServer.c : null,
+          msgServer: msgServer?.t === "vs-bot" ? msgServer.c : null,
           model: model.t === "vs-bot" ? model.c : VsBot.init,
           modelGame: modelGame.c,
         });
@@ -178,11 +178,10 @@ const updateChild =
           model: model.t === "vs-user" ? model.c : VsUser.init,
           msg: msg?.t === "vs-user" ? msg.c : null,
           msgCmd: null,
-          msgEvent: msgEvent,
+          msgEvt: msgEvt,
           msgGame:
             msgGame?.t === "vs-user" ? { ...msgGame, ...msgGame.c } : null,
-          msgFromServer:
-            msgFromServer?.t === "vs-user" ? msgFromServer.c : null,
+          msgServer: msgServer?.t === "vs-user" ? msgServer.c : null,
           modelGame: modelGame.c,
         });
 

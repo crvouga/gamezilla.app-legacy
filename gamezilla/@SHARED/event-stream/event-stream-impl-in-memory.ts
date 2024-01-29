@@ -6,17 +6,17 @@ export type Instance<
   TIndexName extends string
 > = {
   /**
-   * Order of msgEvents in the stream
+   * Order of msgEvts in the stream
    */
   _ordering: TEventId[];
   /**
    * Events in the stream
    */
-  _msgEvents: {
-    [msgEventId in TEventId]?: TEvent;
+  _msgEvts: {
+    [msgEvtId in TEventId]?: TEvent;
   };
   /**
-   * Custom indexes of msgEvents in the stream
+   * Custom indexes of msgEvts in the stream
    */
   _indexes: {
     [indexName in TIndexName]?: {
@@ -31,8 +31,8 @@ export type Instance<
 
 type EventStreamIndex<TEventId extends string> = {
   _ordering: TEventId[];
-  _msgEvents: {
-    [msgEventId in TEventId]?: TEventId;
+  _msgEvts: {
+    [msgEvtId in TEventId]?: TEventId;
   };
 };
 
@@ -54,7 +54,7 @@ export const EventStreamInMemory = <
 
     async init(_config) {
       return {
-        _msgEvents: {},
+        _msgEvts: {},
         _hash: 0,
         _indexes: {},
         _ordering: [],
@@ -66,23 +66,23 @@ export const EventStreamInMemory = <
     },
 
     async latest(_config, instance) {
-      const msgEventId = instance._ordering[instance._ordering.length - 1];
-      if (!msgEventId) {
+      const msgEvtId = instance._ordering[instance._ordering.length - 1];
+      if (!msgEvtId) {
         return null;
       }
-      const msgEvent = instance._msgEvents[msgEventId];
-      if (!msgEvent) {
+      const msgEvt = instance._msgEvts[msgEvtId];
+      if (!msgEvt) {
         return null;
       }
-      return msgEvent;
+      return msgEvt;
     },
 
-    async get(instance, msgEventId) {
-      return instance._msgEvents[msgEventId] ?? null;
+    async get(instance, msgEvtId) {
+      return instance._msgEvts[msgEvtId] ?? null;
     },
 
-    async append(config, stream, msgEvent) {
-      if (config.toId(msgEvent) in stream._msgEvents) {
+    async append(config, stream, msgEvt) {
+      if (config.toId(msgEvt) in stream._msgEvts) {
         return stream;
       }
 
@@ -92,36 +92,36 @@ export const EventStreamInMemory = <
       for (let i = 0; i < stream._ordering.length; i++) {
         if (
           !inserted &&
-          config.toOrdering(stream._msgEvents[stream._ordering[i]!]!) >
-            config.toOrdering(msgEvent)
+          config.toOrdering(stream._msgEvts[stream._ordering[i]!]!) >
+            config.toOrdering(msgEvt)
         ) {
-          newOrdering.push(config.toId(msgEvent));
+          newOrdering.push(config.toId(msgEvt));
           inserted = true;
         }
         newOrdering.push(stream._ordering[i]!);
       }
 
       if (!inserted) {
-        newOrdering.push(config.toId(msgEvent));
+        newOrdering.push(config.toId(msgEvt));
       }
 
       const newEvents = {
-        ...stream._msgEvents,
-        [config.toId(msgEvent)]: msgEvent,
+        ...stream._msgEvts,
+        [config.toId(msgEvt)]: msgEvt,
       };
 
       return {
         _ordering: newOrdering,
-        _msgEvents: newEvents,
+        _msgEvts: newEvents,
         _indexes: updateIndexes(
           config,
           {
             _ordering: newOrdering,
-            _msgEvents: newEvents,
+            _msgEvts: newEvents,
             _indexes: stream._indexes,
             _hash: stream._hash,
           },
-          msgEvent
+          msgEvt
         )._indexes,
         _hash: hash(newOrdering),
       };
@@ -130,21 +130,21 @@ export const EventStreamInMemory = <
     async mergeLeft(config, left, right) {
       let stream = await this.init(config);
 
-      for (const msgEventId of left._ordering) {
-        const msgEvent = left._msgEvents[msgEventId]!;
-        stream = await this.append(config, stream, msgEvent);
+      for (const msgEvtId of left._ordering) {
+        const msgEvt = left._msgEvts[msgEvtId]!;
+        stream = await this.append(config, stream, msgEvt);
       }
 
-      for (const msgEventId of right._ordering) {
-        const msgEvent = right._msgEvents[msgEventId]!;
-        stream = await this.append(config, stream, msgEvent);
+      for (const msgEvtId of right._ordering) {
+        const msgEvt = right._msgEvts[msgEvtId]!;
+        stream = await this.append(config, stream, msgEvt);
       }
 
       return stream;
     },
 
-    async has(instance, msgEventId) {
-      return msgEventId in instance._msgEvents;
+    async has(instance, msgEvtId) {
+      return msgEvtId in instance._msgEvts;
     },
 
     async equals(left, right) {
@@ -157,22 +157,22 @@ export const EventStreamInMemory = <
       const index: EventStreamIndex<TEventId> = instance._indexes[indexName]?.[
         targetIndexVal
       ] ?? {
-        _msgEvents: {},
+        _msgEvts: {},
         _ordering: [],
       };
 
-      for (const msgEventId of index._ordering) {
-        const msgEvent = instance._msgEvents[msgEventId as TEventId];
-        if (msgEvent) {
-          streamNew = await this.append(config, streamNew, msgEvent);
+      for (const msgEvtId of index._ordering) {
+        const msgEvt = instance._msgEvts[msgEvtId as TEventId];
+        if (msgEvt) {
+          streamNew = await this.append(config, streamNew, msgEvt);
         }
       }
 
       return streamNew;
     },
 
-    async startingAt(config, instance, msgEventId) {
-      const orderingIndex = instance._ordering.indexOf(msgEventId);
+    async startingAt(config, instance, msgEvtId) {
+      const orderingIndex = instance._ordering.indexOf(msgEvtId);
 
       if (orderingIndex === undefined) {
         return instance;
@@ -180,34 +180,34 @@ export const EventStreamInMemory = <
 
       const newOrdering = instance._ordering.slice(orderingIndex);
 
-      const newEvents: Model["_msgEvents"] = {};
+      const newEvents: Model["_msgEvts"] = {};
       let newIndexes: Model["_indexes"] = {};
 
-      for (const msgEventId of newOrdering) {
-        newEvents[msgEventId] = instance._msgEvents[msgEventId];
+      for (const msgEvtId of newOrdering) {
+        newEvents[msgEvtId] = instance._msgEvts[msgEvtId];
         const updated = updateIndexes(
           config,
           {
-            _msgEvents: newEvents,
+            _msgEvts: newEvents,
             _indexes: newIndexes,
             _ordering: newOrdering,
             _hash: 0,
           },
-          instance._msgEvents[msgEventId]!
+          instance._msgEvts[msgEvtId]!
         );
         newIndexes = updated._indexes;
       }
 
       return {
-        _msgEvents: newEvents,
+        _msgEvts: newEvents,
         _hash: hash(newOrdering),
         _indexes: newIndexes,
         _ordering: newOrdering,
       };
     },
 
-    async endingAt(config, instance, msgEventId) {
-      const orderingIndex = instance._ordering.indexOf(msgEventId);
+    async endingAt(config, instance, msgEvtId) {
+      const orderingIndex = instance._ordering.indexOf(msgEvtId);
 
       if (orderingIndex === undefined) {
         return instance;
@@ -215,26 +215,26 @@ export const EventStreamInMemory = <
 
       const newOrdering = instance._ordering.slice(0, orderingIndex + 1);
 
-      const newEvents: Model["_msgEvents"] = {};
+      const newEvents: Model["_msgEvts"] = {};
       let newIndexes: Model["_indexes"] = {};
 
-      for (const msgEventId of newOrdering) {
-        newEvents[msgEventId] = instance._msgEvents[msgEventId];
+      for (const msgEvtId of newOrdering) {
+        newEvents[msgEvtId] = instance._msgEvts[msgEvtId];
         const updated = updateIndexes(
           config,
           {
-            _msgEvents: newEvents,
+            _msgEvts: newEvents,
             _indexes: newIndexes,
             _ordering: newOrdering,
             _hash: 0,
           },
-          instance._msgEvents[msgEventId]!
+          instance._msgEvts[msgEvtId]!
         );
         newIndexes = updated._indexes;
       }
 
       return {
-        _msgEvents: newEvents,
+        _msgEvts: newEvents,
         _hash: hash(newOrdering),
         _indexes: newIndexes,
         _ordering: newOrdering,
@@ -251,13 +251,13 @@ export const EventStreamInMemory = <
                 return { done: true, value: undefined };
               }
 
-              const msgEventId = instance._ordering[currentIndex]!;
+              const msgEvtId = instance._ordering[currentIndex]!;
 
-              const msgEvent = instance._msgEvents[msgEventId]!;
+              const msgEvt = instance._msgEvts[msgEvtId]!;
 
               currentIndex++;
 
-              return { done: false, value: msgEvent };
+              return { done: false, value: msgEvt };
             },
 
             return() {
@@ -272,24 +272,24 @@ export const EventStreamInMemory = <
       };
     },
 
-    async fromArray(config, msgEvents) {
+    async fromArray(config, msgEvts) {
       let instance = await this.init(config);
 
-      for (const msgEvent of msgEvents) {
-        instance = await this.append(config, instance, msgEvent);
+      for (const msgEvt of msgEvts) {
+        instance = await this.append(config, instance, msgEvt);
       }
 
       return instance;
     },
 
     async toArray(instance) {
-      const msgEvents: TEvent[] = [];
+      const msgEvts: TEvent[] = [];
 
-      for (const msgEventId of instance._ordering) {
-        msgEvents.push(instance._msgEvents[msgEventId]!);
+      for (const msgEvtId of instance._ordering) {
+        msgEvts.push(instance._msgEvts[msgEvtId]!);
       }
 
-      return msgEvents;
+      return msgEvts;
     },
   };
 };
@@ -301,36 +301,36 @@ const updateIndexes = <
 >(
   config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
   stream: Instance<TEventId, TEvent, TIndexName>,
-  msgEvent: TEvent
+  msgEvt: TEvent
 ): Instance<TEventId, TEvent, TIndexName> => {
   const indexesNew = { ...stream._indexes };
 
   for (let indexName in config.indexes) {
-    const indexKey = config.indexes[indexName](msgEvent);
+    const indexKey = config.indexes[indexName](msgEvt);
     const index = indexesNew[indexName] || {};
-    const indexEvents = index[indexKey] || { _ordering: [], _msgEvents: {} };
+    const indexEvents = index[indexKey] || { _ordering: [], _msgEvts: {} };
 
     let inserted = false;
     const newOrdering = [];
     for (let i = 0; i < indexEvents._ordering.length; i++) {
-      const msgEvent = stream._msgEvents?.[indexEvents?._ordering?.[i]!]!;
+      const msgEvt = stream._msgEvts?.[indexEvents?._ordering?.[i]!]!;
       if (
         !inserted &&
-        (config.toOrdering(msgEvent) ?? -Infinity) > config.toOrdering(msgEvent)
+        (config.toOrdering(msgEvt) ?? -Infinity) > config.toOrdering(msgEvt)
       ) {
-        newOrdering.push(config.toId(msgEvent));
+        newOrdering.push(config.toId(msgEvt));
         inserted = true;
       }
       newOrdering.push(indexEvents._ordering[i]!);
     }
     if (!inserted) {
-      newOrdering.push(config.toId(msgEvent));
+      newOrdering.push(config.toId(msgEvt));
     }
 
     indexEvents._ordering = newOrdering;
-    indexEvents._msgEvents = {
-      ...indexEvents._msgEvents,
-      [config.toId(msgEvent)]: config.toId(msgEvent),
+    indexEvents._msgEvts = {
+      ...indexEvents._msgEvts,
+      [config.toId(msgEvt)]: config.toId(msgEvt),
     };
     index[indexKey] = indexEvents;
     indexesNew[indexName] = index;

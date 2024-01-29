@@ -1,5 +1,5 @@
 import { Eff, exhaustive, isErr } from "gamezilla/@SHARED/core";
-import { Res, ServerModel, ServerMsg, ToServer, handle } from "./party.core";
+import { Res, ServerModel, ServerMsg, MsgToServer, handle } from "./party.core";
 
 //
 //
@@ -39,7 +39,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
 };
 
 export const updateFromClient = (
-  msg: ToServer,
+  msg: MsgToServer,
   model: Model
 ): [Model, Eff<Msg>] => {
   switch (msg[0]) {

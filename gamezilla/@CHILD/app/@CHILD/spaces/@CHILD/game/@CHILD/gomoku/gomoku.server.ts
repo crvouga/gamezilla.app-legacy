@@ -6,7 +6,7 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.server";
 import * as VsUser from "./@CHILD/vs-user/vs-user.server";
-import { Mode, ServerModel, ServerMsg, ToServer } from "./gomoku.core";
+import { Mode, ServerModel, ServerMsg, MsgToServer } from "./gomoku.core";
 
 //
 //
@@ -86,7 +86,7 @@ export const updateFromClient = ({
   model,
 }: {
   ctx: SpaceReqCtx;
-  msg: ToServer;
+  msg: MsgToServer;
   model: Model;
 }): {
   model: Model;

@@ -31,9 +31,9 @@ import { createSMS } from "./app-server/sms";
 import {
   ServerModel,
   ServerMsg,
-  ToClient,
-  ToServer,
-  ToServerMeta,
+  MsgToClient,
+  MsgToServer,
+  MsgToServerMeta,
 } from "./app.core";
 
 //
@@ -49,8 +49,8 @@ export type Deps = {
   dbConn: DbConnSql;
   sms: SMS;
   transport: IServerTransport<{
-    ToClient: ToClient;
-    ToServer: ToServer;
+    MsgToClient: MsgToClient;
+    MsgToServer: MsgToServer;
   }>;
 };
 
@@ -76,7 +76,7 @@ export const getDeps = async (): Promise<Result<string, Deps>> => {
 
   const sms = createSMS("twilio");
 
-  const transport = ServerTransport<ToServer, ToClient>({
+  const transport = ServerTransport<MsgToServer, MsgToClient>({
     codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
     impl:
       PUBLIC_APP_CONFIG.TRANSPORT_IMPL === "socket-io"
@@ -191,18 +191,18 @@ export const update = async (input: {
 
 function logMsg({
   msg,
-  msgEvent,
+  msgEvt,
   msgCmd,
   logger,
 }: {
   logger: Logger;
   msg?: ServerMsg;
-  msgEvent?: ServerEvent;
-  msgCmd?: ServerCmd<ToClient>;
+  msgEvt?: ServerEvent;
+  msgCmd?: ServerCmd<MsgToClient>;
 }) {
-  const prefix = msg ? "[msg]" : msgEvent ? "[msgEvent]" : "[msgCmd]";
+  const prefix = msg ? "[msg]" : msgEvt ? "[msgEvt]" : "[msgCmd]";
 
-  const obj = { ...msg, ...msgEvent, ...msgCmd };
+  const obj = { ...msg, ...msgEvt, ...msgCmd };
 
   logger.info(`${prefix} ${toMsgType(obj)}`);
 }
@@ -210,8 +210,8 @@ function logMsg({
 type Output = {
   model: ServerModel;
   eff: Eff<ServerMsg>;
-  msgEvent: ServerEvent[];
-  msgCmd: ServerCmd<ToClient>[];
+  msgEvt: ServerEvent[];
+  msgCmd: ServerCmd<MsgToClient>[];
 };
 
 const updateLoop = async (
@@ -233,7 +233,7 @@ const updateLoop = async (
       model: updatedCmd.model,
       msgCmd: [...msgCmdRest, ...updatedCmd.msgCmd],
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
-      msgEvent: batchMsgs(acc.msgEvent, updatedCmd.msgEvent),
+      msgEvt: batchMsgs(acc.msgEvt, updatedCmd.msgEvt),
     };
 
     ctx.logger.info(`[msgCmd] ${toMsgType(msgCmd)}`);
@@ -241,24 +241,24 @@ const updateLoop = async (
     return updateLoop(deps, ctx, accNew);
   }
 
-  const [msgEvent, ...msgEventRest] = acc.msgEvent;
+  const [msgEvt, ...msgEvtRest] = acc.msgEvt;
 
-  if (msgEvent) {
+  if (msgEvt) {
     const updatedEvent = await updateChild({
       deps,
       ctx,
       model: acc.model,
-      msgEvent,
+      msgEvt,
     });
 
     const accNew: Output = {
       model: updatedEvent.model,
       msgCmd: [...msgCmdRest, ...updatedEvent.msgCmd],
       eff: Eff.batch([acc.eff, updatedEvent.eff]),
-      msgEvent: batchMsgs(msgEventRest, updatedEvent.msgEvent),
+      msgEvt: batchMsgs(msgEvtRest, updatedEvent.msgEvt),
     };
 
-    ctx.logger.info(`[evt] ${toMsgType(msgEvent)}`);
+    ctx.logger.info(`[evt] ${toMsgType(msgEvt)}`);
 
     return updateLoop(deps, ctx, accNew);
   }
@@ -270,7 +270,7 @@ export const updateChild = async ({
   ctx,
   msg,
   msgFromClient,
-  msgEvent,
+  msgEvt,
   msgCmd,
   model,
   deps,
@@ -279,9 +279,9 @@ export const updateChild = async ({
   ctx: ServerCtx;
   model: ServerModel;
   msg?: ServerMsg;
-  msgFromClient?: (ToServer & ToServerMeta) | null;
-  msgEvent?: ServerEvent;
-  msgCmd?: ServerCmd<ToClient>;
+  msgFromClient?: (MsgToServer & MsgToServerMeta) | null;
+  msgEvt?: ServerEvent;
+  msgCmd?: ServerCmd<MsgToClient>;
 }): Promise<Output> => {
   //
   //
@@ -307,7 +307,7 @@ export const updateChild = async ({
     model: model.spaces,
     ctx,
     msgCmd: null,
-    msgEvent: msgEvent,
+    msgEvt: msgEvt,
     msgFromClient:
       msgFromClient?.t === "spaces"
         ? { ...msgFromClient, ...msgFromClient.c, userId }
@@ -319,7 +319,7 @@ export const updateChild = async ({
     model: model.auth,
     ctx,
     msgCmd: null,
-    msgEvent: msgEvent,
+    msgEvt: msgEvt,
     msgFromClient:
       msgFromClient?.t === "auth"
         ? { ...msgFromClient, ...msgFromClient.c, userId }
@@ -331,7 +331,7 @@ export const updateChild = async ({
     model: model.wire,
     ctx,
     msgCmd: msgCmd?.t === "wire" ? msgCmd : null,
-    msgEvent: msgEvent,
+    msgEvt: msgEvt,
     msgFromClient:
       msgFromClient?.t === "wire"
         ? { ...msgFromClient, ...msgFromClient.c }
@@ -344,7 +344,7 @@ export const updateChild = async ({
     model: model.profile,
     ctx,
     msgCmd: null,
-    msgEvent: msgEvent,
+    msgEvt: msgEvt,
     msgFromClient:
       msgFromClient?.t === "profile"
         ? { ...msgFromClient, ...msgFromClient.c }
@@ -364,7 +364,7 @@ export const updateChild = async ({
       spaces: space.model,
       wire: wire.model,
     },
-    msgCmd: batchMsgs<ServerCmd<ToClient>>(
+    msgCmd: batchMsgs<ServerCmd<MsgToClient>>(
       ServerCmd.tag("spaces", space.msgCmd),
       ServerCmd.tag("auth", auth.msgCmd),
       ServerCmd.tag("wire", wire.msgCmd),
@@ -376,11 +376,11 @@ export const updateChild = async ({
       Eff.tag("wire", wire.eff),
       Eff.tag("profile", profile.eff),
     ]),
-    msgEvent: batchMsgs<ServerEvent>(
-      auth.msgEvent,
-      space.msgEvent,
-      wire.msgEvent,
-      profile.msgEvent
+    msgEvt: batchMsgs<ServerEvent>(
+      auth.msgEvt,
+      space.msgEvt,
+      wire.msgEvt,
+      profile.msgEvt
     ),
   };
 };

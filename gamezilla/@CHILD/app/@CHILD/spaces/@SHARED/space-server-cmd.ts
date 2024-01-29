@@ -8,9 +8,9 @@ import { ServerCmd } from "gamezilla/@CHILD/app/@SHARED/server";
 //
 //
 
-export type SpaceServerCmd<ToClient> =
-  | ServerCmd<ToClient>
-  | { t: "send-to-space"; msg: ToClient };
+export type SpaceServerCmd<MsgToClient> =
+  | ServerCmd<MsgToClient>
+  | { t: "send-to-space"; msg: MsgToClient };
 
 //
 //
@@ -21,9 +21,9 @@ export type SpaceServerCmd<ToClient> =
 //
 //
 
-export const sendToSpace = <ToClient>(
-  msg: ToClient
-): SpaceServerCmd<ToClient> => {
+export const sendToSpace = <MsgToClient>(
+  msg: MsgToClient
+): SpaceServerCmd<MsgToClient> => {
   return { t: "send-to-space", msg };
 };
 

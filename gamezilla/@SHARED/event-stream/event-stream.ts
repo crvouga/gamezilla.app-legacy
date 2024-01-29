@@ -3,10 +3,10 @@ export type IEventStreamConfig<
   TEvent,
   TIndexName extends string
 > = {
-  toId: (msgEvent: TEvent) => TEventId;
-  toOrdering: (msgEvent: TEvent) => number;
+  toId: (msgEvt: TEvent) => TEventId;
+  toOrdering: (msgEvt: TEvent) => number;
   indexes: {
-    [indexName in TIndexName]: (msgEvent: TEvent) => string;
+    [indexName in TIndexName]: (msgEvt: TEvent) => string;
   };
 };
 
@@ -33,25 +33,25 @@ export type IEventStream<
   ) => Promise<TInstance>;
   fromArray: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
-    msgEvents: TEvent[]
+    msgEvts: TEvent[]
   ) => Promise<TInstance>;
   toArray: (instance: TInstance) => Promise<TEvent[]>;
   equals: (left: TInstance, right: TInstance) => Promise<boolean>;
-  get: (instance: TInstance, msgEventId: TEventId) => Promise<TEvent | null>;
+  get: (instance: TInstance, msgEvtId: TEventId) => Promise<TEvent | null>;
   startingAt: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
     instance: TInstance,
-    msgEventId: TEventId
+    msgEvtId: TEventId
   ) => Promise<TInstance>;
   endingAt: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
     instance: TInstance,
-    msgEventId: TEventId
+    msgEvtId: TEventId
   ) => Promise<TInstance>;
   append: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
     instance: TInstance,
-    msgEvent: TEvent
+    msgEvt: TEvent
   ) => Promise<TInstance>;
   latest: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
@@ -69,7 +69,7 @@ export type IEventStream<
     targetIndexVal: string
   ) => Promise<TInstance>;
   toIterable: (instance: TInstance) => AsyncIterable<TEvent>;
-  has: (instance: TInstance, msgEventId: TEventId) => Promise<boolean>;
+  has: (instance: TInstance, msgEvtId: TEventId) => Promise<boolean>;
 };
 
 export type EventStreamInferInstance<

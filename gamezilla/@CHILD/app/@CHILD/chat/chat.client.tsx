@@ -5,7 +5,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Browser, Eff, exhaustive, p } from "gamezilla/@SHARED/core";
-import { ClientModel, ClientMsg, ToClient } from "./chat.core";
+import { ClientModel, ClientMsg, MsgToClient } from "./chat.core";
 
 //
 //
@@ -139,7 +139,7 @@ const removeKey = <T extends object>(obj: T, key: keyof T) => {
 export const updateFromServer = ({
   model,
 }: {
-  msg: ToClient;
+  msg: MsgToClient;
   model: ClientModel;
 }): {
   model: ClientModel;

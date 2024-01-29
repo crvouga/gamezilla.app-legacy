@@ -57,9 +57,9 @@ export type ClientMsg =
   | ["MicLoad", MicLoadResult]
   | ["MicUnload", MicUnloadResult];
 
-export type ToServer = Req;
+export type MsgToServer = Req;
 
-export type ToClient = Res;
+export type MsgToClient = Res;
 
 //
 //

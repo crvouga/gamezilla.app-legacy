@@ -33,7 +33,7 @@ function userStartedSpace(input: {
     ctx,
     model: input.model,
     msg: {
-      t: "msgEvent",
+      t: "msgEvt",
       c: withId({
         t: "user-started-space",
         spaceId: input.spaceId,
@@ -52,7 +52,7 @@ function userJoinedSpace(input: {
     ctx,
     model: input.model,
     msg: {
-      t: "msgEvent",
+      t: "msgEvt",
       c: withId({
         t: "user-joined-space",
         spaceId: input.spaceId,
@@ -71,7 +71,7 @@ function userLeftSpace(input: {
     ctx,
     model: input.model,
     msg: {
-      t: "msgEvent",
+      t: "msgEvt",
       c: withId({
         t: "user-left-space",
         spaceId: input.spaceId,
@@ -196,7 +196,7 @@ test("current user leaving joined space", async () => {
   //
 });
 
-test("prmsgEvent joining a space if already in a space", async () => {
+test("prmsgEvt joining a space if already in a space", async () => {
   const spaceIdA = SpaceId.generate();
   const spaceIdB = SpaceId.generate();
 

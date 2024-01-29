@@ -18,15 +18,15 @@ import {
   p,
 } from "gamezilla/@SHARED/core";
 import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";
-import { ChessGameMsg } from "../../@SHARED/chess/chess-shared";
+import { ChessMsgGame } from "../../@SHARED/chess/chess-shared";
 import { EloRating } from "./elo-rating";
 import { PuzzleDb } from "./puzzle-db";
 import {
   PuzzleInteraction,
   ServerModel,
   ServerMsg,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
   initCore,
   transitionLoadingToStarted,
 } from "./puzzle.core";
@@ -113,7 +113,7 @@ export const update = (input: {
 }): {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
-  msgCmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   return p(
     updateMain(input),
@@ -262,12 +262,12 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
 
 export const updateFromClient = (input: {
   ctx: SpaceReqCtx;
-  msg: ToServer;
+  msg: MsgToServer;
   model: ServerModel;
 }): {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
-  msgCmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   return p(
     input,
@@ -400,7 +400,7 @@ const updateFromClientMain: typeof updateFromClient = ({ model }) => {
 export const updateFromGame = ({
   model,
 }: {
-  msg: ChessGameMsg;
+  msg: ChessMsgGame;
   model: ServerModel;
 }): {
   model: ServerModel;

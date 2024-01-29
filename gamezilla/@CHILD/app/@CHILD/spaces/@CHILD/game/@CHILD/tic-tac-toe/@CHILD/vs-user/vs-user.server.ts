@@ -17,8 +17,8 @@ import {
   Res,
   ServerModel,
   ServerMsg,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
   initCoreModel,
   inputBestOutOf,
   inputMove,
@@ -61,7 +61,7 @@ export const update = (
   model: Model
 ): {
   model: Model;
-  msgCmd: SpaceServerCmd<ToClient>[];
+  msgCmd: SpaceServerCmd<MsgToClient>[];
 } => {
   switch (msg[0]) {
     case "RoundCountDown": {
@@ -90,11 +90,11 @@ export const update = (
 
 export const updateFromClient = (
   ctx: SpaceReqCtx,
-  msg: ToServer,
+  msg: MsgToServer,
   model: Model
 ): {
   model: Model;
-  msgCmd: SpaceServerCmd<ToClient>[];
+  msgCmd: SpaceServerCmd<MsgToClient>[];
 } => {
   switch (msg[0]) {
     case "InputPlayer": {
@@ -296,7 +296,7 @@ export const updateFromEvent = ({
   model: Model;
 }): {
   model: Model;
-  msgCmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   if (msg.t === "user-left") {
     const { userId } = msg;

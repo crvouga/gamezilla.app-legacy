@@ -17,9 +17,12 @@ export type ClientMsg =
 
 export type ServerMsg = { t: "noop" };
 
-export type ToServer = { t: "list/list-puzzles"; input: ListPuzzlesInput };
+export type MsgToServer = { t: "list/list-puzzles"; input: ListPuzzlesInput };
 
-export type ToClient = { t: "list/listed-puzzle"; listed: ListPuzzlesOutput };
+export type MsgToClient = {
+  t: "list/listed-puzzle";
+  listed: ListPuzzlesOutput;
+};
 
 //
 //
@@ -36,7 +39,7 @@ export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>;
 //
 //
 
-export type GameMsg = {
+export type MsgGame = {
   t: "listed-puzzles";
   input: ListPuzzlesInput;
   output: ListPuzzlesOutput;

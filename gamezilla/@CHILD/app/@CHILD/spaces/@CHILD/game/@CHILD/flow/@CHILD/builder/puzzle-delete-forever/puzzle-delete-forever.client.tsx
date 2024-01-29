@@ -2,7 +2,7 @@ import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import {
   APP_SOUND,
   playSound,
-  sendToServer,
+  sendMsgToServer,
   showOkToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
@@ -17,7 +17,7 @@ const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromGameMsg({ ...input, model })
+    (model) => updateFromMsgGame({ ...input, model })
   );
 };
 
@@ -48,7 +48,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
       return {
         model: { ...model, deleteForeverRequest: RemoteResult.loading },
         msgCmd: [
-          sendToServer({ t: "delete-forever/user-confirmed" }),
+          sendMsgToServer({ t: "delete-forever/user-confirmed" }),
           playSound(APP_SOUND.tap),
         ],
       };
@@ -60,7 +60,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
   }
 };
 
-const updateFromGameMsg: ClientModule["update"] = (input) => {
+const updateFromMsgGame: ClientModule["update"] = (input) => {
   const { msgGame, model } = input;
 
   switch (msgGame?.t) {

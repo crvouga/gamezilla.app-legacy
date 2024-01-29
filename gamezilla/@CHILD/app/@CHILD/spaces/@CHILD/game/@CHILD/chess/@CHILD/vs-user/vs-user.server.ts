@@ -6,8 +6,8 @@ import * as Board from "../../@SHARED/chess/chess";
 import {
   ServerModel,
   ServerMsg,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
   initCore,
 } from "./vs-user.core";
 
@@ -37,12 +37,12 @@ export const update = (
 };
 
 export const updateFromClient = (
-  _msg: ToServer,
+  _msg: MsgToServer,
   model: ServerModel
 ): {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
-  msgCmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   return { model };
 };
@@ -56,7 +56,7 @@ export const updateFromEvent = ({
 }): {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
-  msgCmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   if (msg.t === "user-left") {
     switch (model.type) {

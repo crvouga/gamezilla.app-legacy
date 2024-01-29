@@ -8,7 +8,7 @@ import {
   APP_SOUND,
   ClientCmd,
   playSound,
-  sendToServer,
+  sendMsgToServer,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
@@ -31,8 +31,8 @@ import {
   ClientModel,
   ClientMsg,
   CoreModel,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
   initCore,
   isIncorrect,
   isNoMoreHints,
@@ -71,7 +71,7 @@ export const update = (input: {
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
 } => {
   return GameClientModule.chainUpdates(
     input,
@@ -108,7 +108,7 @@ export const updateMain = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
 } => {
   const updated = updateCore({ msg, model, ctx });
 
@@ -119,19 +119,19 @@ export const updateMain = ({
 
   return {
     model: modelNew,
-    msgCmd: [sendToServer(msg)],
+    msgCmd: [sendMsgToServer(msg)],
     eff: Eff.None,
   };
 };
 
 export const updateFromServer = (input: {
   ctx: SpaceClientCtx;
-  msg: ToClient;
+  msg: MsgToClient;
   model: ClientModel;
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
 } => {
   return p(updateFromServerMain(input), andThen(watch));
 };
@@ -141,11 +141,11 @@ export const updateFromServerMain: typeof updateFromServer = ({
   model,
 }: {
   ctx: SpaceClientCtx;
-  msg: ToClient;
+  msg: MsgToClient;
   model: ClientModel;
 }): {
   model: ClientModel;
-  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg.t) {
     case "clock-tick": {

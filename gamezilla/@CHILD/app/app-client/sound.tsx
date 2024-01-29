@@ -28,14 +28,14 @@ import {
 
 type Module = AppClientModule<{
   Ctx: null;
-  InCmd: SoundCmd;
-  InEvent: ClientEvent;
+  MsgInCmd: SoundCmd;
+  MsgInEvent: ClientEvent;
   Model: Model;
   Msg: Msg;
-  OutCmd: SoundCmd;
-  OutEvent: never;
-  ToClient: never;
-  ToServer: never;
+  MsgOutCmd: SoundCmd;
+  MsgOutEvent: never;
+  MsgToClient: never;
+  MsgToServer: never;
 }>;
 
 //
@@ -138,15 +138,15 @@ const updateFromMsg: Module["update"] = ({ msg, model }) => {
   }
 };
 
-const updateFromEvent: Module["update"] = ({ model, msgEvent }) => {
-  if (!msgEvent) {
+const updateFromEvent: Module["update"] = ({ model, msgEvt }) => {
+  if (!msgEvt) {
     return { model };
   }
 
-  switch (msgEvent.t) {
+  switch (msgEvt.t) {
     case "platform/document-visibility-changed": {
       return {
-        model: { ...model, muted: msgEvent.state === "hidden" },
+        model: { ...model, muted: msgEvt.state === "hidden" },
       };
     }
 

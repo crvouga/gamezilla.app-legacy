@@ -22,7 +22,7 @@ export type ClientModel = {
 
 export type ServerModel = CoreModel;
 
-export type CoreModel = SetupModel | GameModel | GameOverModel;
+export type CoreModel = SetupModel | ModelGame | GameOverModel;
 
 export type SetupModel = {
   type: "setup";
@@ -31,7 +31,7 @@ export type SetupModel = {
   botLevel: Chess.BotLevel;
 };
 
-export type GameModel = {
+export type ModelGame = {
   type: "game";
   userColor: Chess.Color;
   userId: UserId;
@@ -95,9 +95,9 @@ export type ServerMsg = {
   moved: Chess.BestMoveInputResult;
 };
 
-export type ToServer = Req;
+export type MsgToServer = Req;
 
-export type ToClient =
+export type MsgToClient =
   | Res
   | {
       t: "bot-moved";

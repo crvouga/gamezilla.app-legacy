@@ -54,11 +54,11 @@ const is = (key: unknown): key is Key => {
 export const keyDowns = <T>(callback: (key: Key) => T): Sub<T> => {
   return {
     subscribe: (subscriber: (msg: T) => void) => {
-      const handler = (msgEvent: KeyboardEvent) => {
-        if (msgEvent.repeat) {
+      const handler = (msgEvt: KeyboardEvent) => {
+        if (msgEvt.repeat) {
           return;
         }
-        const key = msgEvent.key;
+        const key = msgEvt.key;
 
         if (is(key)) {
           subscriber(callback(key));
@@ -76,12 +76,12 @@ export const keyDowns = <T>(callback: (key: Key) => T): Sub<T> => {
 export const keyUps = <T>(callback: (key: Key) => T): Sub<T> => {
   return {
     subscribe: (subscriber) => {
-      const handler = (msgEvent: KeyboardEvent) => {
-        if (msgEvent.repeat) {
+      const handler = (msgEvt: KeyboardEvent) => {
+        if (msgEvt.repeat) {
           return;
         }
 
-        const key = msgEvent.key;
+        const key = msgEvt.key;
 
         if (is(key)) {
           subscriber(callback(key));

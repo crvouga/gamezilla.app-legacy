@@ -5,12 +5,17 @@ import {
   ServerCmd,
   ServerCtx,
   ServerEvent,
-  sendToClient,
+  sendMsgToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { PhoneNumber, Result, Sub, isErr, ok } from "gamezilla/@SHARED/core";
 import { AccountDb } from "../../@SHARED/server/account-db/account-db-impl";
 import { Account } from "../../auth.core";
-import { ServerModel, ServerMsg, ToClient, ToServer } from "./auth-sms.core";
+import {
+  ServerModel,
+  ServerMsg,
+  MsgToClient,
+  MsgToServer,
+} from "./auth-sms.core";
 import { VerifySMS } from "./server/verify-sms/verify-sms-impl";
 
 //
@@ -22,14 +27,14 @@ import { VerifySMS } from "./server/verify-sms/verify-sms-impl";
 
 type Module = AppServerModule<{
   Ctx: ServerCtx;
-  InCmd: {};
-  InEvent: ServerEvent;
+  MsgInCmd: {};
+  MsgInEvent: ServerEvent;
   Model: ServerModel;
   Msg: ServerMsg;
-  OutCmd: ServerCmd<ToClient>;
-  OutEvent: ServerEvent;
-  ToClient: ToClient;
-  ToServer: ToServer;
+  MsgOutCmd: ServerCmd<MsgToClient>;
+  MsgOutEvent: ServerEvent;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
 }>;
 
 //
@@ -71,7 +76,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
       if (isErr(msg.result)) {
         return {
           model,
-          msgCmd: [sendToClient([msg.clientId], msg)],
+          msgCmd: [sendMsgToClient([msg.clientId], msg)],
         };
       }
 
@@ -83,14 +88,14 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
       if (found.t === "err") {
         return {
           model,
-          msgCmd: [sendToClient([msg.clientId], msg)],
+          msgCmd: [sendMsgToClient([msg.clientId], msg)],
         };
       }
 
       return {
         model,
-        msgCmd: [sendToClient([msg.clientId], msg)],
-        msgEvent: [
+        msgCmd: [sendMsgToClient([msg.clientId], msg)],
+        msgEvt: [
           {
             t: "auth/client-authenticated",
             clientId: msg.clientId,
@@ -105,7 +110,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
     case "sent-code": {
       return {
         model,
-        msgCmd: [sendToClient([msg.clientId], msg)],
+        msgCmd: [sendMsgToClient([msg.clientId], msg)],
       };
     }
   }

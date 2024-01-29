@@ -3,12 +3,12 @@ import { GameServerModule } from "../../../../@SHARED/architecture/game-server-v
 import { SpaceServerCtx, SpaceServerEvent } from "../../../../@SHARED/space";
 import { SpaceServerCmd } from "../../../../@SHARED/space-server-cmd";
 import {
-  GameMsg,
-  GameModel,
+  MsgGame,
+  ModelGame,
   ServerModel,
   ServerMsg,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
 } from "./connect-four.core";
 
 //
@@ -22,15 +22,15 @@ import {
 type Module = GameServerModule<{
   Model: ServerModel;
   Msg: ServerMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
-  GameModel: GameModel;
-  GameMsg: GameMsg;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+  ModelGame: ModelGame;
+  MsgGame: MsgGame;
   Ctx: SpaceServerCtx;
-  InCmd: null;
-  InEvent: SpaceServerEvent;
-  OutCmd: SpaceServerCmd<ToClient>;
-  OutEvent: null;
+  MsgInCmd: null;
+  MsgInEvent: SpaceServerEvent;
+  MsgOutCmd: SpaceServerCmd<MsgToClient>;
+  MsgOutEvent: null;
   Deps: null;
 }>;
 

@@ -47,7 +47,7 @@ export const drawPipes = (
 ): Flow.Model => {
   const newNodeGroupId = Flow.findGroupIdByNodeId(model, nodeIdNew);
 
-  // PrmsgEvent drawing over other groups
+  // PrmsgEvt drawing over other groups
   if (newNodeGroupId && newNodeGroupId !== groupId) {
     return model;
   }
@@ -58,7 +58,7 @@ export const drawPipes = (
     return model;
   }
 
-  // For UX, prmsgEvent drawing from overshooting after terminals is connected
+  // For UX, prmsgEvt drawing from overshooting after terminals is connected
   if (!newNodeGroupId && isTerminalConnected(model, terminal)) {
     return model;
   }

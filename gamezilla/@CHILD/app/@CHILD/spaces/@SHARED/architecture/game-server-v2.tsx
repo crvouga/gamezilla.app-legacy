@@ -18,41 +18,41 @@ export type GameServerModuleTypes = {
    */
   Model: any;
   /**
-   * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvent
+   * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvt
    */
   Msg: any;
   /**
-   * `ToClient` is a message to send to the client component of the module
+   * `MsgToClient` is a message to send to the client component of the module
    */
-  ToClient: any;
+  MsgToClient: any;
   /**
-   * `ToServer` is a message to send to the client component of the module
+   * `MsgToServer` is a message to send to the client component of the module
    */
-  ToServer: any;
+  MsgToServer: any;
   /**
-   * `InCmd` is a message from other modules. Usually verbs
+   * `MsgInCmd` is a message from other modules. Usually verbs
    */
-  InCmd: any;
+  MsgInCmd: any;
   /**
-   * `InEvent` is a message to notify other modules. Usually past tense verbs
+   * `MsgInEvent` is a message to notify other modules. Usually past tense verbs
    */
-  InEvent: any;
+  MsgInEvent: any;
   /**
-   * `OutCmd` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
+   * `MsgOutCmd` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
    */
-  OutCmd: any;
+  MsgOutCmd: any;
   /**
-   * `OutEvent` is a message that is only produced by this module. Always past tense verbs
+   * `MsgOutEvent` is a message that is only produced by this module. Always past tense verbs
    */
-  OutEvent: any;
-  /**
-   *
-   */
-  GameMsg: any;
+  MsgOutEvent: any;
   /**
    *
    */
-  GameModel: any;
+  MsgGame: any;
+  /**
+   *
+   */
+  ModelGame: any;
   /**
    *
    */
@@ -77,33 +77,33 @@ export type Input<T extends GameServerModuleTypes> = {
   /**
    * `modelGame` is the current state of the game. This is shared between client and server.
    */
-  modelGame: T["GameModel"];
+  modelGame: T["ModelGame"];
   /**
-   * `msgGame` is an msgEvent of game
+   * `msgGame` is an msgEvt of game
    */
-  msgGame?: (T["GameMsg"] & EventMeta) | null;
+  msgGame?: (T["MsgGame"] & EventMeta) | null;
   /**
    * `msg`
    */
   msg?: T["Msg"] | null;
   /**
-   * `msgFromServer`
+   * `msgServer`
    */
   msgFromClient?:
-    | (T["ToServer"] & {
+    | (T["MsgToServer"] & {
         clientId: ClientId;
         sessionId: SessionId;
         userId: UserId;
       })
     | null;
   /**
-   * `msgEvent`
+   * `msgEvt`
    */
-  msgEvent?: T["InEvent"] | null;
+  msgEvt?: T["MsgInEvent"] | null;
   /**
    * `msgCmd`
    */
-  msgCmd?: T["InCmd"] | null;
+  msgCmd?: T["MsgInCmd"] | null;
   /**
    *
    */
@@ -128,15 +128,15 @@ export type Output<T extends GameServerModuleTypes> = {
   /**
    * `msgCmd` is a message to one other module. Always present tense
    */
-  msgCmd?: T["OutCmd"][];
+  msgCmd?: T["MsgOutCmd"][];
   /**
-   * `msgEvent` is a message to many other modules. Always past tense
+   * `msgEvt` is a message to many other modules. Always past tense
    */
-  msgEvent?: T["OutEvent"][];
+  msgEvt?: T["MsgOutEvent"][];
   /**
-   *  `msgGame` is an msgEvent that occurred in the game. Shared with the client side
+   *  `msgGame` is an msgEvt that occurred in the game. Shared with the client side
    */
-  msgGame?: WithEventId<T["GameMsg"]>[];
+  msgGame?: WithEventId<T["MsgGame"]>[];
 };
 
 /**
@@ -162,7 +162,7 @@ export type GameServerModule<T extends GameServerModuleTypes> = {
    */
   subscriptions: (input: {
     ctx: T["Ctx"];
-    modelGame: T["GameModel"];
+    modelGame: T["ModelGame"];
     model: T["Model"];
   }) => Promise<Sub<T["Msg"]>>;
 };
@@ -192,7 +192,7 @@ const chainUpdates = async <T extends GameServerModuleTypes>(
     model: updated.model,
     eff: Eff.batch([acc.eff, updated.eff]),
     msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
-    msgEvent: [...(acc.msgEvent ?? []), ...(updated.msgEvent ?? [])],
+    msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
     msgGame: [...(acc.msgGame ?? []), ...(updated.msgGame ?? [])],
   };
 
@@ -202,10 +202,10 @@ const chainUpdates = async <T extends GameServerModuleTypes>(
 const tagOutput = <
   TTag extends string,
   T extends GameServerModuleTypes,
-  TTaggedCmd extends GameServerModuleTypes["OutCmd"]
+  TTaggedCmd extends GameServerModuleTypes["MsgOutCmd"]
 >(
   tag: TTag,
-  tagCmd: (msgCmd: T["OutCmd"][]) => TTaggedCmd[] | null | undefined,
+  tagCmd: (msgCmd: T["MsgOutCmd"][]) => TTaggedCmd[] | null | undefined,
   output: Output<T>
 ): {
   model: { t: TTag; c: T["Model"] };
@@ -218,11 +218,11 @@ const tagOutput = <
   /**
    *
    */
-  msgEvent?: T["OutEvent"][];
+  msgEvt?: T["MsgOutEvent"][];
   /**
    *
    */
-  msgGame?: WithEventId<{ t: TTag; c: T["GameMsg"] }>[];
+  msgGame?: WithEventId<{ t: TTag; c: T["MsgGame"] }>[];
 } => {
   return {
     model: {
@@ -231,9 +231,9 @@ const tagOutput = <
     },
     msgCmd: output.msgCmd ? tagCmd(output.msgCmd) ?? [] : [],
     eff: Eff.tag(tag, output.eff),
-    msgEvent: output.msgEvent,
+    msgEvt: output.msgEvt,
     msgGame: output.msgGame?.map((c) => ({
-      msgEventId: c.msgEventId,
+      msgEvtId: c.msgEvtId,
       c: c,
       t: tag,
     })),

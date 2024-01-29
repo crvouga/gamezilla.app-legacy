@@ -11,7 +11,7 @@ import { AppRoute } from "./client-route";
 
 export type ClientCmdTypes = {
   ClientMsg: any;
-  ToServer: any;
+  MsgToServer: any;
 };
 
 export type ClientCmd<T extends ClientCmdTypes> =
@@ -113,15 +113,15 @@ export type WireCmd<T extends ClientCmdTypes> = {
   t: "wire";
   c: {
     t: "send-to-server";
-    msg: T["ToServer"] | null;
+    msg: T["MsgToServer"] | null;
   };
 };
 
 /**
  * A msgCmd creator for sending a messages to the server.
  */
-export const sendToServer = <T extends ClientCmdTypes>(
-  msg: T["ToServer"]
+export const sendMsgToServer = <T extends ClientCmdTypes>(
+  msg: T["MsgToServer"]
 ): ClientCmd<T> => {
   return {
     t: "wire",
@@ -353,7 +353,7 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
   msgCmd: ClientCmd<T>
 ): ClientCmd<{
   ClientMsg: { t: Tag; c: T["ClientMsg"] };
-  ToServer: { t: Tag; c: T["ToServer"] };
+  MsgToServer: { t: Tag; c: T["MsgToServer"] };
 }> => {
   switch (msgCmd.t) {
     case "wire": {
@@ -402,14 +402,14 @@ const tag = <Tag extends string, T extends ClientCmdTypes>(
   msgCmd?: (ClientCmd<T> | null | undefined)[] | null | undefined
 ): ClientCmd<{
   ClientMsg: { t: Tag; c: T["ClientMsg"] };
-  ToServer: { t: Tag; c: T["ToServer"] };
+  MsgToServer: { t: Tag; c: T["MsgToServer"] };
 }>[] => {
   return msgCmd?.flatMap((c) => (c ? [tagOne(tag, c)] : [])) ?? [];
 };
 
 const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
   msgCmd: ClientCmd<A>[],
-  toServerMap: (a: A["ToServer"]) => B["ToServer"],
+  toServerMap: (a: A["MsgToServer"]) => B["MsgToServer"],
   clientMsgMap: (b: A["ClientMsg"]) => B["ClientMsg"]
 ): ClientCmd<B>[] => {
   return msgCmd.map((msgCmd) => {

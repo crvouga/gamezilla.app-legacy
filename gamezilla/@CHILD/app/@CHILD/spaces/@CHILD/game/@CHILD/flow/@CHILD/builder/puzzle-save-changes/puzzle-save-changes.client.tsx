@@ -3,7 +3,7 @@ import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import {
   APP_SOUND,
   playSound,
-  sendToServer,
+  sendMsgToServer,
   showErrorToast,
   showOkToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -16,7 +16,7 @@ import {
 import { Result, isErr, isOk, loading } from "gamezilla/@SHARED/core";
 import { FlowGridUIEdit } from "../../../@SHARED/flow";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
-import { ClientModel, ClientModule, ClientMsg, GameMsg } from "../builder.core";
+import { ClientModel, ClientModule, ClientMsg, MsgGame } from "../builder.core";
 import { BottomBarButtonAction } from "../../../../../@SHARED/game";
 
 //
@@ -154,7 +154,7 @@ const updateSaveChangesRequest: ClientModule["update"] = (input) => {
 };
 
 const exitBuilder: ClientModule["update"] = (input) => {
-  const msgGame: GameMsg = {
+  const msgGame: MsgGame = {
     t: "user-exited-builder",
     userId: input.ctx.currentUserId,
   };
@@ -184,7 +184,7 @@ const saveChanges: ClientModule["update"] = ({ model, modelGame }) => {
     model: { ...model, saveChangesRequest: loading },
     msgCmd: [
       playSound(APP_SOUND.tap),
-      sendToServer({
+      sendMsgToServer({
         t: "save-changes/user-clicked-save-button",
         puzzle: puzzleNew,
       }),

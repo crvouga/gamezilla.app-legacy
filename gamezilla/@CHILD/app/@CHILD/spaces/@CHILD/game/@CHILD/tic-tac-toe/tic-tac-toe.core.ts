@@ -41,14 +41,14 @@ export type ServerMsg =
   | { t: "vs-user"; c: VsUser.ServerMsg }
   | { t: "vs-bot"; c: VsBot.ServerMsg };
 
-export type ToServer =
-  | { t: "vs-user"; c: VsUser.ToServer }
-  | { t: "vs-bot"; c: VsBot.ToServer }
+export type MsgToServer =
+  | { t: "vs-user"; c: VsUser.MsgToServer }
+  | { t: "vs-bot"; c: VsBot.MsgToServer }
   | Req;
 
-export type ToClient =
-  | { t: "vs-user"; c: VsUser.ToClient }
-  | { t: "vs-bot"; c: VsBot.ToClient }
+export type MsgToClient =
+  | { t: "vs-user"; c: VsUser.MsgToClient }
+  | { t: "vs-bot"; c: VsBot.MsgToClient }
   | Res;
 
 export type Req = {

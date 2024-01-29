@@ -5,7 +5,7 @@ import { err, isErr } from "gamezilla/@SHARED/core";
 import { IFlowPuzzleDb } from "../../../@SHARED/flow-puzzle-db";
 import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id";
 import { ServerModule } from "../builder.core";
-import { GameMsg } from "./puzzle-edit-name.core";
+import { MsgGame } from "./puzzle-edit-name.core";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 
 const update: ServerModule["update"] = async (input) => {
@@ -26,7 +26,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         userId: msgFromClient.userId,
       });
 
-      const msgGame: GameMsg = {
+      const msgGame: MsgGame = {
         t: "user-edited-puzzle-name",
         edited,
         flowPuzzleId: msgFromClient.flowPuzzleId,

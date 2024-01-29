@@ -38,14 +38,14 @@ export type ServerModel = null;
 export type ServerMsg = { t: null };
 
 export type ClientMsg =
-  | GameMsg
+  | MsgGame
   | { t: "hovered-over-columns"; columnIndex: ColumnIndex }
   | { t: "clicked-resign"; userId: UserId }
   | { t: "close-modal" };
 
-export type ToServer = { t: null };
+export type MsgToServer = { t: null };
 
-export type ToClient = { t: null };
+export type MsgToClient = { t: null };
 
 //
 //
@@ -53,7 +53,7 @@ export type ToClient = { t: null };
 //
 //
 
-export type GameMsg =
+export type MsgGame =
   //
   | { t: "user-stopped-playing"; userId: UserId }
   | { t: "user-started-playing"; userId: UserId; playerType: PlayerType }
@@ -78,9 +78,9 @@ export type GameMsg =
 
 type EventError = { t: "not-playing" } | { t: "move"; c: MoveProblem };
 
-export type GameModel = StateSetup | StateGame | StateGameOver;
+export type ModelGame = StateSetup | StateGame | StateGameOver;
 
-export const initGame = (ctx: SpaceCtx): GameModel => {
+export const initGame = (ctx: SpaceCtx): ModelGame => {
   return {
     type: "setup",
     moveTimeLimit: 5,
@@ -94,20 +94,20 @@ export const initGame = (ctx: SpaceCtx): GameModel => {
 
 type Errors = {
   errors: {
-    [msgEventId: string]: GameMsg & { error: EventError };
+    [msgEvtId: string]: MsgGame & { error: EventError };
   };
 };
 
 const addError = (
-  modelGame: GameModel,
-  msgEvent: GameMsg,
+  modelGame: ModelGame,
+  msgEvt: MsgGame,
   error: EventError
-): GameModel => {
+): ModelGame => {
   return {
     ...modelGame,
     errors: {
       ...modelGame.errors,
-      [JSON.stringify(msgEvent)]: { ...msgEvent, error },
+      [JSON.stringify(msgEvt)]: { ...msgEvt, error },
     },
   };
 };
@@ -165,7 +165,7 @@ export type GameOver =
     };
 
 export const toGameOver = (
-  modelGame: GameModel
+  modelGame: ModelGame
 ): GameOver | { type: "none" } => {
   if (modelGame.type === "setup") {
     return { type: "none" };
@@ -194,29 +194,29 @@ export const allMoveTimeLimit: {
   "9": 9,
 };
 
-export const reducer = (modelGame: GameModel, msgEvent: GameMsg): GameModel => {
+export const reducer = (modelGame: ModelGame, msgEvt: MsgGame): ModelGame => {
   switch (modelGame.type) {
     case "setup": {
-      switch (msgEvent.t) {
+      switch (msgEvt.t) {
         case "user-started-playing": {
-          if (modelGame.players[msgEvent.playerType] !== null) {
-            return addError(modelGame, msgEvent, { t: "not-playing" });
+          if (modelGame.players[msgEvt.playerType] !== null) {
+            return addError(modelGame, msgEvt, { t: "not-playing" });
           }
 
           return {
             ...modelGame,
             players: {
               ...modelGame.players,
-              [msgEvent.playerType]: msgEvent.userId,
+              [msgEvt.playerType]: msgEvt.userId,
             },
           };
         }
 
         case "user-stopped-playing": {
-          const playerType = toPlayerType(msgEvent.userId, modelGame);
+          const playerType = toPlayerType(msgEvt.userId, modelGame);
 
           if (!playerType) {
-            return addError(modelGame, msgEvent, { t: "not-playing" });
+            return addError(modelGame, msgEvt, { t: "not-playing" });
           }
 
           return {
@@ -231,7 +231,7 @@ export const reducer = (modelGame: GameModel, msgEvent: GameMsg): GameModel => {
         case "user-inputted-move-time-limit": {
           return {
             ...modelGame,
-            moveTimeLimit: msgEvent.moveTimeLimit,
+            moveTimeLimit: msgEvt.moveTimeLimit,
           };
         }
 
@@ -240,7 +240,7 @@ export const reducer = (modelGame: GameModel, msgEvent: GameMsg): GameModel => {
           const playerTwo = modelGame.players["player-two"];
 
           if (!playerOne || !playerTwo) {
-            return addError(modelGame, msgEvent, { t: "not-playing" });
+            return addError(modelGame, msgEvt, { t: "not-playing" });
           }
 
           return {
@@ -264,18 +264,14 @@ export const reducer = (modelGame: GameModel, msgEvent: GameMsg): GameModel => {
     }
 
     case "game": {
-      switch (msgEvent.t) {
+      switch (msgEvt.t) {
         case "user-dropped-disc": {
           const turn = toTurn(modelGame.columns);
 
-          const dropped = dropDisc(
-            modelGame.columns,
-            msgEvent.columnIndex,
-            turn
-          );
+          const dropped = dropDisc(modelGame.columns, msgEvt.columnIndex, turn);
 
           if (dropped.t === "err") {
-            return addError(modelGame, msgEvent, {
+            return addError(modelGame, msgEvt, {
               t: "move",
               c: dropped.error,
             });
@@ -284,15 +280,15 @@ export const reducer = (modelGame: GameModel, msgEvent: GameMsg): GameModel => {
           return {
             ...modelGame,
             columns: dropped.value,
-            // lastMoveAt: msgEvent.happenedAt,
+            // lastMoveAt: msgEvt.happenedAt,
           };
         }
 
         case "user-resigned": {
-          const resignedPlayer = toPlayerType(msgEvent.userId, modelGame);
+          const resignedPlayer = toPlayerType(msgEvt.userId, modelGame);
 
           if (!resignedPlayer) {
-            return addError(modelGame, msgEvent, { t: "not-playing" });
+            return addError(modelGame, msgEvt, { t: "not-playing" });
           }
 
           return {
@@ -318,7 +314,7 @@ export const reducer = (modelGame: GameModel, msgEvent: GameMsg): GameModel => {
 
 export const toPlayerType = (
   userId: UserId,
-  modelGame: GameModel
+  modelGame: ModelGame
 ): PlayerType | null => {
   if (modelGame.players["player-one"] === userId) {
     return "player-one";

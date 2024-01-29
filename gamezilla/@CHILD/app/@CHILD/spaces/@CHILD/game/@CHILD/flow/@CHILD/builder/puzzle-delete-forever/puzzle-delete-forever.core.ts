@@ -20,9 +20,9 @@ export type ClientMsg =
   | { t: "delete-forever/user-clicked-confirm-button" }
   | { t: "delete-forever/user-clicked-cancel-button" };
 
-export type ToServer = { t: "delete-forever/user-confirmed" };
+export type MsgToServer = { t: "delete-forever/user-confirmed" };
 
-export type ToClient = { t: "noop" };
+export type MsgToClient = { t: "noop" };
 
 export type ServerMsg = { t: "noop" };
 
@@ -31,7 +31,7 @@ export type ServerMsg = { t: "noop" };
 //
 //
 
-export type GameMsg = {
+export type MsgGame = {
   t: "user-deleted-puzzle";
   deleted: Deleted;
   flowPuzzleId: FlowPuzzleId;

@@ -10,7 +10,7 @@ import {
   ServerEvent,
   broadcast,
   sendBack,
-  sendToClient,
+  sendMsgToClient,
   sendToUser,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Sub, batchMsgs } from "gamezilla/@SHARED/core";
@@ -20,7 +20,12 @@ import * as Space from "./spaces-core/space";
 import { SpaceEvent } from "./spaces-core/space-event";
 import * as SpaceState from "./spaces-core/space-state";
 import * as Spaces from "./spaces-core/spaces";
-import { ServerModel, ServerMsg, ToClient, ToServer } from "./spaces.core";
+import {
+  ServerModel,
+  ServerMsg,
+  MsgToClient,
+  MsgToServer,
+} from "./spaces.core";
 
 //
 //
@@ -32,14 +37,14 @@ import { ServerModel, ServerMsg, ToClient, ToServer } from "./spaces.core";
 
 type Module = AppServerModule<{
   Ctx: ServerCtx;
-  InCmd: null;
-  InEvent: ServerEvent;
+  MsgInCmd: null;
+  MsgInEvent: ServerEvent;
   Model: ServerModel;
   Msg: ServerMsg;
-  OutCmd: ServerCmd<ToClient>;
-  OutEvent: null;
-  ToClient: ToClient;
-  ToServer: ToServer;
+  MsgOutCmd: ServerCmd<MsgToClient>;
+  MsgOutEvent: null;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
 }>;
 
 const spacesToProfiles = (
@@ -119,7 +124,7 @@ const updateFromMsg: Module["update"] = async ({ model, msg }) => {
       return { model };
     }
 
-    case "msgEvent": {
+    case "msgEvt": {
       return { model };
     }
   }
@@ -137,10 +142,10 @@ const updateFromClient: Module["update"] = async (input) => {
       return { model };
     }
 
-    case "msgEvent": {
+    case "msgEvt": {
       return updateFromManySpaceEvents({
         ctx: ctx,
-        msgEvents: [msgFromClient.c],
+        msgEvts: [msgFromClient.c],
         model,
       });
     }
@@ -207,7 +212,7 @@ const updateFromClient: Module["update"] = async (input) => {
           return {
             model,
             msgCmd: [
-              sendToClient<ToClient>([msgFromClient.clientId], {
+              sendMsgToClient<MsgToClient>([msgFromClient.clientId], {
                 t: "synced",
                 causedBy: msgFromClient.t,
                 space: starting,
@@ -222,17 +227,17 @@ const updateFromClient: Module["update"] = async (input) => {
 };
 
 const updateFromEvent: Module["update"] = async (input) => {
-  const { msgEvent, model } = input;
+  const { msgEvt, model } = input;
 
-  if (!msgEvent) {
+  if (!msgEvt) {
     return { model };
   }
 
-  switch (msgEvent.t) {
+  switch (msgEvt.t) {
     case "auth/client-authenticated": {
       const space = Spaces.toSpaceByUserId({
         model,
-        userId: msgEvent.userId,
+        userId: msgEvt.userId,
       });
 
       if (!space) {
@@ -246,11 +251,11 @@ const updateFromEvent: Module["update"] = async (input) => {
       return {
         model,
         msgCmd: [
-          sendToClient<ToClient>([msgEvent.clientId], {
+          sendMsgToClient<MsgToClient>([msgEvt.clientId], {
             t: "current-user-space",
             space: started,
             profiles,
-            causedBy: msgEvent.t,
+            causedBy: msgEvt.t,
           }),
         ],
       };
@@ -264,9 +269,9 @@ const updateFromEvent: Module["update"] = async (input) => {
 
 const spaceCmdToCmd = (
   spaceState: SpaceState.State,
-  msgCmd?: SpaceServerCmd<ToClient>[]
+  msgCmd?: SpaceServerCmd<MsgToClient>[]
 ) => {
-  return msgCmd?.map((msgCmd): ServerCmd<ToClient> => {
+  return msgCmd?.map((msgCmd): ServerCmd<MsgToClient> => {
     switch (msgCmd.t) {
       case "send-to-space": {
         return sendToUser(SpaceState.toUserIds(spaceState), msgCmd.msg);
@@ -291,7 +296,7 @@ const inputToSpaceId = (input: Parameters<Module["update"]>[0]) => {
 };
 
 const updateChild: Module["update"] = async (input) => {
-  const { msg, msgEvent, msgFromClient, ctx, model } = input;
+  const { msg, msgEvt, msgFromClient, ctx, model } = input;
 
   const spaceId = inputToSpaceId(input);
 
@@ -321,7 +326,7 @@ const updateChild: Module["update"] = async (input) => {
       msgFromClient?.t === "game" && msgFromClient.userId
         ? { ...msgFromClient, userId: msgFromClient.userId, ...msgFromClient.c }
         : null,
-    msgEvent,
+    msgEvt,
     modelGame: spaceState.game,
     deps: null,
   });
@@ -329,7 +334,7 @@ const updateChild: Module["update"] = async (input) => {
   const merged = mergeUpdatedGame({ model, spaceId, gameUpdated });
 
   return AppServerModule.chainUpdates(merged, (model) =>
-    updateFromManySpaceEvents({ model, ctx, msgEvents: merged.spaceEvents })
+    updateFromManySpaceEvents({ model, ctx, msgEvts: merged.spaceEvents })
   );
 };
 
@@ -343,7 +348,7 @@ const mergeUpdatedGame = ({
   gameUpdated: Awaited<ReturnType<typeof Game.update>>;
 }): {
   model: ServerModel;
-  msgCmd: ServerCmd<ToClient>[];
+  msgCmd: ServerCmd<MsgToClient>[];
   eff: Eff<ServerMsg>;
   spaceEvents: WithEventId<SpaceEvent>[];
 } => {
@@ -375,16 +380,16 @@ const mergeUpdatedGame = ({
 
 type Acc = {
   model: ServerModel;
-  msgCmd?: ServerCmd<ToClient>[];
+  msgCmd?: ServerCmd<MsgToClient>[];
   eff?: Eff<ServerMsg>;
 };
 
 const updateFromManySpaceEvents = async (input: {
   ctx: ServerCtx;
   model: ServerModel;
-  msgEvents: WithEventId<SpaceEvent>[];
+  msgEvts: WithEventId<SpaceEvent>[];
 }): Promise<Acc> => {
-  return updateFromManySpaceEventsLoop(input.ctx, input.msgEvents, input);
+  return updateFromManySpaceEventsLoop(input.ctx, input.msgEvts, input);
 };
 
 const updateFromManySpaceEventsLoop = async (
@@ -405,7 +410,7 @@ const updateFromManySpaceEventsLoop = async (
     return updateFromManySpaceEventsLoop(ctx, spaceEventsRest, acc);
   }
 
-  if (Space.hasEvent(spaceModel, spaceEvent.msgEventId)) {
+  if (Space.hasEvent(spaceModel, spaceEvent.msgEvtId)) {
     return updateFromManySpaceEventsLoop(ctx, spaceEventsRest, acc);
   }
 
@@ -413,7 +418,7 @@ const updateFromManySpaceEventsLoop = async (
     acc,
     (model) => Spaces.updateFromSpaceEvent({ model, spaceEvent }),
     (model) => updateFromSpaceEvent({ model, spaceEvent, ctx }),
-    (model) => sendEventToClients({ model, spaceEvent })
+    (model) => sendEventMsgToClients({ model, spaceEvent })
   );
 
   const accNew: Acc = {
@@ -422,56 +427,56 @@ const updateFromManySpaceEventsLoop = async (
     eff: Eff.batch([acc.eff, updated.eff]),
   };
 
-  const msgEventsNew: WithEventId<SpaceEvent>[] = batchMsgs(
+  const msgEvtsNew: WithEventId<SpaceEvent>[] = batchMsgs(
     spaceEventsRest,
-    updated.msgEvent ?? []
+    updated.msgEvt ?? []
   );
 
-  return updateFromManySpaceEventsLoop(ctx, msgEventsNew, accNew);
+  return updateFromManySpaceEventsLoop(ctx, msgEvtsNew, accNew);
 };
 
-const sendEventToClients = async ({
+const sendEventMsgToClients = async ({
   model,
   spaceEvent,
 }: {
   model: ServerModel;
   spaceEvent: WithEventId<SpaceEvent>;
 }): Promise<Acc> => {
-  const msgEventWithMeta = Spaces.toEventWithMeta(
+  const msgEvtWithMeta = Spaces.toEventWithMeta(
     model,
     spaceEvent.spaceId,
-    spaceEvent.msgEventId
+    spaceEvent.msgEvtId
   );
 
-  if (!msgEventWithMeta) {
+  if (!msgEvtWithMeta) {
     return { model };
   }
 
-  const spaceState = Spaces.toSpaceStarted(model, msgEventWithMeta.spaceId);
+  const spaceState = Spaces.toSpaceStarted(model, msgEvtWithMeta.spaceId);
 
   const profile =
-    "userId" in msgEventWithMeta
-      ? model.profileCache[msgEventWithMeta.userId]
+    "userId" in msgEvtWithMeta
+      ? model.profileCache[msgEvtWithMeta.userId]
       : null;
 
-  const toClient: ToClient = {
-    t: "msgEvent",
-    c: msgEventWithMeta,
+  const toClient: MsgToClient = {
+    t: "msgEvt",
+    c: msgEvtWithMeta,
     profiles: profile ? { [profile.userId]: profile } : {},
   };
 
-  if (spaceState && msgEventWithMeta.t === "game") {
+  if (spaceState && msgEvtWithMeta.t === "game") {
     return {
       model,
       msgCmd: [
-        sendToUser<ToClient>(SpaceState.toUserIds(spaceState), toClient),
+        sendToUser<MsgToClient>(SpaceState.toUserIds(spaceState), toClient),
       ],
     };
   }
 
   return {
     model,
-    msgCmd: [broadcast<ToClient>(toClient)],
+    msgCmd: [broadcast<MsgToClient>(toClient)],
   };
 };
 
@@ -486,7 +491,7 @@ const updateFromSpaceEvent = async ({
 }): Promise<{
   model: ServerModel;
   eff?: Eff<ServerMsg>;
-  msgCmd?: ServerCmd<ToClient>[];
+  msgCmd?: ServerCmd<MsgToClient>[];
   spaceEvents?: WithEventId<SpaceEvent>[];
 }> => {
   switch (spaceEvent.t) {
@@ -514,21 +519,21 @@ const updateFromSpaceEvent = async ({
     }
 
     case "game": {
-      const msgEventWithMeta = Spaces.toEventWithMeta(
+      const msgEvtWithMeta = Spaces.toEventWithMeta(
         model,
         spaceEvent.spaceId,
-        spaceEvent.msgEventId
+        spaceEvent.msgEvtId
       );
 
-      if (!msgEventWithMeta) {
+      if (!msgEvtWithMeta) {
         return { model };
       }
 
-      if (msgEventWithMeta.t !== "game") {
+      if (msgEvtWithMeta.t !== "game") {
         return { model };
       }
 
-      const spaceState = Spaces.toSpaceStarted(model, msgEventWithMeta.spaceId);
+      const spaceState = Spaces.toSpaceStarted(model, msgEvtWithMeta.spaceId);
 
       if (!spaceState) {
         return { model };
@@ -541,8 +546,8 @@ const updateFromSpaceEvent = async ({
       const gameUpdated = await Game.update({
         ctx: { ...ctx, space: spaceState },
         model:
-          model.games[msgEventWithMeta.spaceId] ?? Game.init(spaceState.game.t),
-        msgGame: { ...msgEventWithMeta, ...msgEventWithMeta.c },
+          model.games[msgEvtWithMeta.spaceId] ?? Game.init(spaceState.game.t),
+        msgGame: { ...msgEvtWithMeta, ...msgEvtWithMeta.c },
         modelGame: spaceState.game,
         deps: null,
       });
@@ -550,7 +555,7 @@ const updateFromSpaceEvent = async ({
       const merged = mergeUpdatedGame({
         gameUpdated,
         model,
-        spaceId: msgEventWithMeta.spaceId,
+        spaceId: msgEvtWithMeta.spaceId,
       });
 
       return merged;

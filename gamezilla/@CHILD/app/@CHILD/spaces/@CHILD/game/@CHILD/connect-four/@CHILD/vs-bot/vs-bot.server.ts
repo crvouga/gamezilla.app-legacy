@@ -10,12 +10,12 @@ import { Sub, Time, TimeSpan, isErr } from "gamezilla/@SHARED/core";
 import { ConnectFourBotWorker } from "../../@SHARED/connect-four";
 import * as ConnectFour from "../../@SHARED/connect-four/connect-four";
 import {
-  GameMsg,
-  GameModel,
+  MsgGame,
+  ModelGame,
   ServerModel,
   ServerMsg,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
   isBotMoving,
   isBotTurn,
   toBotPlayer,
@@ -32,16 +32,16 @@ import {
 type Module = GameServerModule<{
   Model: ServerModel;
   Msg: ServerMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
-  GameModel: GameModel;
-  GameMsg: GameMsg;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+  ModelGame: ModelGame;
+  MsgGame: MsgGame;
   Ctx: SpaceServerCtx;
   Deps: null;
-  InCmd: null;
-  InEvent: SpaceServerEvent;
-  OutCmd: SpaceServerCmd<ToClient>;
-  OutEvent: null;
+  MsgInCmd: null;
+  MsgInEvent: SpaceServerEvent;
+  MsgOutCmd: SpaceServerCmd<MsgToClient>;
+  MsgOutEvent: null;
 }>;
 
 export const init: Module["init"] = {
@@ -106,14 +106,14 @@ const updateFromMsg: Module["update"] = async (input) => {
             return { model };
           }
 
-          const msgEventNew = withId<GameMsg>({
+          const msgEvtNew = withId<MsgGame>({
             t: "bot-dropped-disc",
             columnIndex,
           });
 
           return {
             model,
-            msgGame: [msgEventNew],
+            msgGame: [msgEvtNew],
           };
         },
         async (model) => {

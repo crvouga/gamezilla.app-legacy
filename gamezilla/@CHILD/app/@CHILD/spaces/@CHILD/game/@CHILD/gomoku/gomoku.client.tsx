@@ -5,7 +5,12 @@ import { Eff, Sub } from "gamezilla/@SHARED/core";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.client";
 import * as VsUser from "./@CHILD/vs-user/vs-user.client";
 import { CoverArt } from "./@SHARED/gomoku/gomoku-ui";
-import { ClientModel, ClientMsg, ServerModel, ToClient } from "./gomoku.core";
+import {
+  ClientModel,
+  ClientMsg,
+  ServerModel,
+  MsgToClient,
+} from "./gomoku.core";
 
 //
 //
@@ -79,7 +84,7 @@ export const updateFromServer = ({
   msg,
 }: {
   ctx: SpaceClientCtx;
-  msg: ToClient;
+  msg: MsgToClient;
   model: Model;
 }): {
   model: Model;

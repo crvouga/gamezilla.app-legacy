@@ -61,9 +61,9 @@ export type ClientMsg =
 
 export type ServerMsg = ["tick"];
 
-export type ToServer = Req;
+export type MsgToServer = Req;
 
-export type ToClient = Res | ["tick", CoreModel];
+export type MsgToClient = Res | ["tick", CoreModel];
 
 //
 //

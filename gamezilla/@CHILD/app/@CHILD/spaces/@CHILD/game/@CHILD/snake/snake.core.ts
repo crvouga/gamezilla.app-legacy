@@ -63,9 +63,9 @@ export type ClientMsg =
 
 export type ServerMsg = ["tick"];
 
-export type ToServer = Request;
+export type MsgToServer = Request;
 
-export type ToClient = ["tick", CoreModel] | Response;
+export type MsgToClient = ["tick", CoreModel] | Response;
 
 export type Request = ToggleStatus | InputPlayer | InputDirection | StartGame;
 

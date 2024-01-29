@@ -1,12 +1,12 @@
 import { GameServer } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server";
 import { Sub } from "gamezilla/@SHARED/core";
 import {
-  GameMsg,
-  GameModel,
+  MsgGame,
+  ModelGame,
   ServerModel,
   ServerMsg,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
 } from "./chess.core";
 
 //
@@ -18,12 +18,12 @@ import {
 //
 
 type Server = GameServer<{
-  GameMsg: GameMsg;
-  GameModel: GameModel;
+  MsgGame: MsgGame;
+  ModelGame: ModelGame;
   ServerModel: ServerModel;
   ServerMsg: ServerMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
 }>;
 
 //

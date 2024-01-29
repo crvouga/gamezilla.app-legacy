@@ -33,29 +33,29 @@ import { PuzzleSaveChanges } from "./puzzle-save-changes";
 export type ClientModule = GameClientModule<{
   Model: ClientModel;
   Msg: ClientMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
-  GameMsg: GameMsg;
-  GameModel: GameModel;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+  MsgGame: MsgGame;
+  ModelGame: ModelGame;
   Ctx: FlowClientCtx;
-  OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-  InEvent: SpaceClientEvent;
-  InCmd: null;
-  OutEvent: null;
+  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
+  MsgInEvent: SpaceClientEvent;
+  MsgInCmd: null;
+  MsgOutEvent: null;
 }>;
 
 export type ServerModule = GameServerModule<{
-  ToClient: ToClient;
-  ToServer: ToServer;
-  GameMsg: GameMsg;
-  GameModel: GameModel;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+  MsgGame: MsgGame;
+  ModelGame: ModelGame;
   Ctx: SpaceServerCtx;
-  InCmd: null;
-  InEvent: SpaceServerEvent;
+  MsgInCmd: null;
+  MsgInEvent: SpaceServerEvent;
   Model: ServerModel;
   Msg: ServerMsg;
-  OutCmd: SpaceServerCmd<ToClient>;
-  OutEvent: null;
+  MsgOutCmd: SpaceServerCmd<MsgToClient>;
+  MsgOutEvent: null;
   Deps: {
     FlowPuzzleDb: IFlowPuzzleDb;
   };
@@ -99,7 +99,7 @@ export type ServerModel = {};
 //
 
 export type ClientMsg =
-  // | { t: "game-event"; c: GameMsg }
+  // | { t: "game-event"; c: MsgGame }
   | { t: "user-selected-list-tab"; listTab: ListTab }
   //
   | { t: "puzzle.editor.user-clicked-more-button" }
@@ -123,19 +123,19 @@ export type ServerMsg =
   | PuzzleList.ServerMsg
   | PuzzleEditName.ServerMsg;
 
-export type ToServer =
-  | PuzzleCreate.ToServer
-  | PuzzleSaveChanges.ToServer
-  | PuzzleDeleteForever.ToServer
-  | PuzzleEditName.ToServer
-  | PuzzleList.ToServer;
+export type MsgToServer =
+  | PuzzleCreate.MsgToServer
+  | PuzzleSaveChanges.MsgToServer
+  | PuzzleDeleteForever.MsgToServer
+  | PuzzleEditName.MsgToServer
+  | PuzzleList.MsgToServer;
 
-export type ToClient =
-  | PuzzleCreate.ToClient
-  | PuzzleSaveChanges.ToClient
-  | PuzzleEditName.ToClient
-  | PuzzleDeleteForever.ToClient
-  | PuzzleList.ToClient;
+export type MsgToClient =
+  | PuzzleCreate.MsgToClient
+  | PuzzleSaveChanges.MsgToClient
+  | PuzzleEditName.MsgToClient
+  | PuzzleDeleteForever.MsgToClient
+  | PuzzleList.MsgToClient;
 
 //
 //
@@ -145,12 +145,12 @@ export type ToClient =
 //
 //
 
-export type GameMsg =
-  | PuzzleList.GameMsg
-  | PuzzleCreate.GameMsg
-  | PuzzleEditName.GameMsg
-  | PuzzleDeleteForever.GameMsg
-  | PuzzleSaveChanges.GameMsg
+export type MsgGame =
+  | PuzzleList.MsgGame
+  | PuzzleCreate.MsgGame
+  | PuzzleEditName.MsgGame
+  | PuzzleDeleteForever.MsgGame
+  | PuzzleSaveChanges.MsgGame
   | {
       t: "grid-ui-play";
       c: FlowGridUIPlay.Msg;
@@ -185,7 +185,7 @@ type BuildState =
       t: "edit";
     };
 
-export type GameModelBuild = {
+export type ModelGameBuild = {
   t: "build";
   puzzle: FlowPuzzle;
   mode: BuildState;
@@ -193,13 +193,13 @@ export type GameModelBuild = {
   gridEdit: FlowGridUIEdit.Model;
 };
 
-export type GameModelList = {
+export type ModelGameList = {
   t: "list";
 };
 
-export type GameModel = GameModelList | GameModelBuild;
+export type ModelGame = ModelGameList | ModelGameBuild;
 
-export const toCurrentGrid = (modelGame: GameModelBuild): FlowGrid.Model => {
+export const toCurrentGrid = (modelGame: ModelGameBuild): FlowGrid.Model => {
   switch (modelGame.mode.t) {
     case "edit": {
       return FlowGridUIEdit.toCurrentGrid({
@@ -218,45 +218,45 @@ export const toCurrentGrid = (modelGame: GameModelBuild): FlowGrid.Model => {
   }
 };
 
-export const initGame = (_input: { ctx: SpaceCtx }): GameModel => {
+export const initGame = (_input: { ctx: SpaceCtx }): ModelGame => {
   return {
     t: "list",
   };
 };
 export const reducer = ({
   modelGame,
-  msgEvent,
+  msgEvt,
   ctx,
 }: {
   ctx: SpaceCtx;
-  msgEvent: GameMsg;
-  modelGame: GameModel;
-}): GameModel => {
+  msgEvt: MsgGame;
+  modelGame: ModelGame;
+}): ModelGame => {
   switch (modelGame.t) {
     case "build": {
-      return reducerBuildState({ ctx, msgEvent, modelGame: modelGame });
+      return reducerBuildState({ ctx, msgEvt, modelGame: modelGame });
     }
 
     case "list": {
-      return reducerListState({ ctx, msgEvent, modelGame: modelGame });
+      return reducerListState({ ctx, msgEvt, modelGame: modelGame });
     }
   }
 };
 
 const reducerListState = ({
   modelGame,
-  msgEvent,
+  msgEvt,
 }: {
   ctx: SpaceCtx;
-  msgEvent: GameMsg;
-  modelGame: GameModelList;
-}): GameModel => {
-  switch (msgEvent.t) {
+  msgEvt: MsgGame;
+  modelGame: ModelGameList;
+}): ModelGame => {
+  switch (msgEvt.t) {
     case "user-created-puzzle": {
-      if (isErr(msgEvent.created)) {
+      if (isErr(msgEvt.created)) {
         return modelGame;
       }
-      const puzzleNew = msgEvent.created.value;
+      const puzzleNew = msgEvt.created.value;
       return {
         t: "build",
         mode: { t: "edit" },
@@ -269,10 +269,10 @@ const reducerListState = ({
     case "user-opened-puzzle": {
       return {
         t: "build",
-        gridEdit: FlowGridUIEdit.init({ grid: msgEvent.puzzle.puzzle.c }),
-        gridPlay: FlowGridUIPlay.init({ grid: msgEvent.puzzle.puzzle.c }),
+        gridEdit: FlowGridUIEdit.init({ grid: msgEvt.puzzle.puzzle.c }),
+        gridPlay: FlowGridUIPlay.init({ grid: msgEvt.puzzle.puzzle.c }),
         mode: { t: "edit" },
-        puzzle: msgEvent.puzzle,
+        puzzle: msgEvt.puzzle,
       };
     }
 
@@ -292,14 +292,14 @@ const reducerListState = ({
 
 const reducerBuildState = ({
   modelGame,
-  msgEvent,
+  msgEvt,
   ctx,
 }: {
   ctx: SpaceCtx;
-  msgEvent: GameMsg;
-  modelGame: GameModelBuild;
-}): GameModel => {
-  switch (msgEvent.t) {
+  msgEvt: MsgGame;
+  modelGame: ModelGameBuild;
+}): ModelGame => {
+  switch (msgEvt.t) {
     case "grid-ui-play": {
       const currentGrid = FlowGridUIEdit.toCurrentGrid({
         model: modelGame.gridEdit,
@@ -307,7 +307,7 @@ const reducerBuildState = ({
 
       const updated = FlowGridUIPlay.update({
         model: modelGame.gridPlay,
-        msg: msgEvent.c,
+        msg: msgEvt.c,
         grid: currentGrid,
       });
 
@@ -320,7 +320,7 @@ const reducerBuildState = ({
     case "grid-ui-edit": {
       const updated = FlowGridUIEdit.update({
         model: modelGame.gridEdit,
-        msg: msgEvent.c,
+        msg: msgEvt.c,
         grid: modelGame.puzzle.puzzle.c,
       });
 
@@ -331,7 +331,7 @@ const reducerBuildState = ({
     }
 
     case "user-changed-to-edit-mode": {
-      if (msgEvent.userId !== ctx.space.hostId) {
+      if (msgEvt.userId !== ctx.space.hostId) {
         return modelGame;
       }
 
@@ -352,7 +352,7 @@ const reducerBuildState = ({
     }
 
     case "user-exited-builder": {
-      if (msgEvent.userId !== ctx.space.hostId) {
+      if (msgEvt.userId !== ctx.space.hostId) {
         return modelGame;
       }
 
@@ -366,15 +366,15 @@ const reducerBuildState = ({
     }
 
     case "user-edited-puzzle-name": {
-      if (msgEvent.flowPuzzleId !== modelGame.puzzle.id) {
+      if (msgEvt.flowPuzzleId !== modelGame.puzzle.id) {
         return modelGame;
       }
-      if (msgEvent.edited.t === "err") {
+      if (msgEvt.edited.t === "err") {
         return modelGame;
       }
       const puzzleNew: FlowPuzzle = {
         ...modelGame.puzzle,
-        name: msgEvent.newName,
+        name: msgEvt.newName,
       };
       return {
         ...modelGame,
@@ -383,10 +383,10 @@ const reducerBuildState = ({
     }
 
     case "user-saved-changes": {
-      if (isErr(msgEvent.saved)) {
+      if (isErr(msgEvt.saved)) {
         return modelGame;
       }
-      return { ...modelGame, puzzle: msgEvent.saved.value };
+      return { ...modelGame, puzzle: msgEvt.saved.value };
     }
     case "user-opened-puzzle":
     case "user-created-puzzle":

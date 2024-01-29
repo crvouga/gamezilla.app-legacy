@@ -107,9 +107,9 @@ export type ClientMsg =
 
 export type ServerMsg = Tick;
 
-export type ToServer = InputTranslate | InputRotate | InputDrop | MouseMove;
+export type MsgToServer = InputTranslate | InputRotate | InputDrop | MouseMove;
 
-export type ToClient =
+export type MsgToClient =
   | Tick_Done
   | InputTranslate_Done
   | InputRotate_Done

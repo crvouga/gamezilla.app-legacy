@@ -12,24 +12,24 @@ import { ViewProfileCard } from "../../@SHARED/ui";
 import {
   ClientModel,
   ClientMsg,
-  GameMsg,
-  GameModel,
-  ToClient,
-  ToServer,
+  MsgGame,
+  ModelGame,
+  MsgToClient,
+  MsgToServer,
 } from "./play.core";
 
 type Module = GameClientModule<{
   Model: ClientModel;
   Msg: ClientMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
-  GameMsg: GameMsg;
-  GameModel: GameModel;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+  MsgGame: MsgGame;
+  ModelGame: ModelGame;
   Ctx: FlowClientCtx;
-  OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
-  InEvent: SpaceClientEvent;
-  OutEvent: null;
-  InCmd: null;
+  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
+  MsgInEvent: SpaceClientEvent;
+  MsgOutEvent: null;
+  MsgInCmd: null;
 }>;
 
 const grid = samples["8x8"][0];
@@ -68,7 +68,7 @@ const updateFromMsg: Module["update"] = (input) => {
       };
     }
 
-    case "msgEvent": {
+    case "msgEvt": {
       const msgGame = withId(msg.c);
       return {
         model,
@@ -96,7 +96,7 @@ const View: Module["View"] = ({ model, modelGame, dispatch, ctx }) => {
         )}
         {USE_GAME_STATE ? (
           <FlowGridUIPlay.View
-            dispatch={(c) => dispatch({ t: "msgEvent", c: { t: "grid", c } })}
+            dispatch={(c) => dispatch({ t: "msgEvt", c: { t: "grid", c } })}
             model={modelGame.gridPlay}
             disabled={isSpectating}
             grid={modelGame.grid}

@@ -5,7 +5,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { IClientTransport } from "./transport-client";
-import { ClientModel, ClientMsg, ToClient } from "./wire.core";
+import { ClientModel, ClientMsg, MsgToClient } from "./wire.core";
 
 //
 //
@@ -43,32 +43,35 @@ export const init = ({
 //
 //
 
-export const update = <TToClient, TToServer>({
+export const update = <TMsgToClient, TMsgToServer>({
   msg,
-  msgFromServer,
+  msgServer,
   msgCmd,
   model,
   transport,
 }: {
   msg?: ClientMsg | null;
-  msgFromServer?: ToClient | null;
-  msgCmd?: ClientCmd<{ ClientMsg: ClientMsg; ToServer: TToServer }> | null;
+  msgServer?: MsgToClient | null;
+  msgCmd?: ClientCmd<{
+    ClientMsg: ClientMsg;
+    MsgToServer: TMsgToServer;
+  }> | null;
   model: ClientModel;
   transport: IClientTransport<{
-    ToServer: TToServer;
-    ToClient: TToClient;
+    MsgToServer: TMsgToServer;
+    MsgToClient: TMsgToClient;
   }>;
 }): {
   model: ClientModel;
-  msgEvent?: ClientEvent[];
+  msgEvt?: ClientEvent[];
   eff?: Eff<ClientMsg>;
 } => {
   if (msg) {
     return updateFromMsg({ msg, model, transport });
   }
 
-  if (msgFromServer) {
-    return updateFromServer({ model, msgFromServer, transport });
+  if (msgServer) {
+    return updateFromServer({ model, msgServer, transport });
   }
 
   if (msgCmd) {
@@ -111,7 +114,7 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
             t: "server-connected",
           },
         },
-        msgEvent: [{ t: "wire/server-connected" }],
+        msgEvt: [{ t: "wire/server-connected" }],
       };
     }
 
@@ -140,12 +143,12 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
   }
 };
 
-const updateFromServer: typeof update = ({ model, msgFromServer }) => {
-  if (!msgFromServer) {
+const updateFromServer: typeof update = ({ model, msgServer }) => {
+  if (!msgServer) {
     return { model };
   }
 
-  switch (msgFromServer.t) {
+  switch (msgServer.t) {
     case "server-restarted": {
       return {
         model,
@@ -267,10 +270,13 @@ export const ViewStatusBarDrawer = ({
 //
 //
 
-export const subscriptions = <ToServer, ToClient>({
+export const subscriptions = <MsgToServer, MsgToClient>({
   transport,
 }: {
-  transport: IClientTransport<{ ToServer: ToServer; ToClient: ToClient }>;
+  transport: IClientTransport<{
+    MsgToServer: MsgToServer;
+    MsgToClient: MsgToClient;
+  }>;
 }): Sub<ClientMsg> => {
-  return transport.msgEvent;
+  return transport.msgEvt;
 };

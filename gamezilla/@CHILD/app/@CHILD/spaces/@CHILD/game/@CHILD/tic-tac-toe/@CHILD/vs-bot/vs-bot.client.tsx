@@ -10,7 +10,7 @@ import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space
 import {
   ClientCmd,
   ClientCtx,
-  sendToServer,
+  sendMsgToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
@@ -35,8 +35,8 @@ import {
   ClientModel,
   ClientMsg,
   ServerModel,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
   handle,
   initCoreModel,
 } from "./vs-bot.core";
@@ -80,7 +80,7 @@ export const update = ({
   model: Model;
 
   eff?: Eff<Msg>;
-  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
 } => {
   if (msg.t === "vs-bot-setup") {
     const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
@@ -89,14 +89,14 @@ export const update = ({
 
   const handled = handle({ ctx, msg, model });
   if (handled.t === "err") {
-    return { model, msgCmd: [sendToServer(msg)] };
+    return { model, msgCmd: [sendMsgToServer(msg)] };
   }
   const merged = mergeWithServer({
     ...ctx,
     client: model,
     server: handled.value,
   });
-  return { model: merged, msgCmd: [sendToServer(msg)] };
+  return { model: merged, msgCmd: [sendMsgToServer(msg)] };
 };
 
 export const updateFromServer = ({
@@ -105,7 +105,7 @@ export const updateFromServer = ({
   ctx,
 }: {
   ctx: ClientCtx;
-  msg: ToClient;
+  msg: MsgToClient;
   model: Model;
 }): {
   model: Model;
@@ -261,7 +261,7 @@ export const View = ({
   );
 };
 
-export const ViewMsg = ({ msg }: { msg: Msg | ToClient }) => {
+export const ViewMsg = ({ msg }: { msg: Msg | MsgToClient }) => {
   if ("result" in msg && msg.result.t === "err") {
     return msg.result.error;
   }

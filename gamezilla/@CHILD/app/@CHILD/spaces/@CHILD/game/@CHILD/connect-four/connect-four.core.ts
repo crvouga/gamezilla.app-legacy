@@ -33,7 +33,7 @@ export type Mode = "none" | "vs-user" | "vs-bot";
 //
 
 export type ClientMsg =
-  | GameMsg
+  | MsgGame
   | { t: "vs-user"; c: VsUser.ClientMsg }
   | { t: "vs-bot"; c: VsBot.ClientMsg };
 
@@ -41,13 +41,13 @@ export type ServerMsg =
   | { t: "vs-user"; c: VsUser.ServerMsg }
   | { t: "vs-bot"; c: VsBot.ServerMsg };
 
-export type ToClient =
-  | { t: "vs-user"; c: VsUser.ToClient }
-  | { t: "vs-bot"; c: VsBot.ToClient };
+export type MsgToClient =
+  | { t: "vs-user"; c: VsUser.MsgToClient }
+  | { t: "vs-bot"; c: VsBot.MsgToClient };
 
-export type ToServer =
-  | { t: "vs-user"; c: VsUser.ToServer }
-  | { t: "vs-bot"; c: VsBot.ToServer };
+export type MsgToServer =
+  | { t: "vs-user"; c: VsUser.MsgToServer }
+  | { t: "vs-bot"; c: VsBot.MsgToServer };
 
 //
 //
@@ -55,25 +55,25 @@ export type ToServer =
 //
 //
 
-export type GameMsg =
+export type MsgGame =
   | { t: "user-changed-mode"; mode: Mode; userId: UserId }
-  | { t: "vs-bot"; c: VsBot.GameMsg }
-  | { t: "vs-user"; c: VsUser.GameMsg };
+  | { t: "vs-bot"; c: VsBot.MsgGame }
+  | { t: "vs-user"; c: VsUser.MsgGame };
 
-export type GameModel =
+export type ModelGame =
   | {
       t: "none";
     }
   | {
       t: "vs-user";
-      c: VsUser.GameModel;
+      c: VsUser.ModelGame;
     }
   | {
       t: "vs-bot";
-      c: VsBot.GameModel;
+      c: VsBot.ModelGame;
     };
 
-export const initGame = (): GameModel => {
+export const initGame = (): ModelGame => {
   return {
     t: "none",
   };
@@ -81,16 +81,16 @@ export const initGame = (): GameModel => {
 
 export const reducer = ({
   ctx,
-  msgEvent,
+  msgEvt,
   modelGame,
 }: {
   ctx: SpaceCtx;
-  modelGame: GameModel;
-  msgEvent: WithEventMeta<GameMsg>;
-}): GameModel => {
-  switch (msgEvent.t) {
+  modelGame: ModelGame;
+  msgEvt: WithEventMeta<MsgGame>;
+}): ModelGame => {
+  switch (msgEvt.t) {
     case "user-changed-mode": {
-      switch (msgEvent.mode) {
+      switch (msgEvt.mode) {
         case "none": {
           return {
             t: "none",
@@ -120,7 +120,7 @@ export const reducer = ({
             t: "vs-bot",
             c: VsBot.reducer({
               modelGame: modelGame.c,
-              msgGame: { ...msgEvent, ...msgEvent.c },
+              msgGame: { ...msgEvt, ...msgEvt.c },
             }),
           };
         }
@@ -135,7 +135,7 @@ export const reducer = ({
         case "vs-user": {
           return {
             t: "vs-user",
-            c: VsUser.reducer(modelGame.c, msgEvent.c),
+            c: VsUser.reducer(modelGame.c, msgEvt.c),
           };
         }
 

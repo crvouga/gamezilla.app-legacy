@@ -4,7 +4,10 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
 import { VsBotSetup } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot";
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
-import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  ClientCmd,
+  sendMsgToServer,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconRobot,
@@ -26,8 +29,8 @@ import {
   ClientMsg,
   CoreModel,
   ServerModel,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
   initCore,
   isBotTurn,
   updateCore,
@@ -68,7 +71,7 @@ export const update = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
 } => {
   const model: ClientModel = { ...modelPrev, openedMenuId: null };
 
@@ -102,7 +105,7 @@ export const update = ({
       });
 
       if (handled.t === "err") {
-        return { model, msgCmd: [sendToServer(msg)] };
+        return { model, msgCmd: [sendMsgToServer(msg)] };
       }
 
       const coreModel = handled.value;
@@ -112,13 +115,13 @@ export const update = ({
         server: coreModel,
       });
 
-      return { model: modelNew, msgCmd: [sendToServer(msg)] };
+      return { model: modelNew, msgCmd: [sendMsgToServer(msg)] };
     }
   }
 };
 
 export const updateFromServer = (input: {
-  msg: ToClient;
+  msg: MsgToClient;
   model: ClientModel;
 }): {
   model: ClientModel;

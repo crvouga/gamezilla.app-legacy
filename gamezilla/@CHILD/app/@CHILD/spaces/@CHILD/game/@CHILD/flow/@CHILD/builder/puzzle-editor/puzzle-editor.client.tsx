@@ -35,7 +35,7 @@ import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
-    (model) => updateFromGameMsg({ ...input, model }),
+    (model) => updateFromMsgGame({ ...input, model }),
     (model) => updateMoreDrawer({ ...input, model }),
     (model) => PuzzleEditNameClient.update({ ...input, model }),
     (model) => PuzzleDeleteForeverClient.update({ ...input, model }),
@@ -90,7 +90,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
   }
 };
 
-const updateFromGameMsg: ClientModule["update"] = (input) => {
+const updateFromMsgGame: ClientModule["update"] = (input) => {
   const { model, modelGame, msgGame } = input;
 
   switch (msgGame?.t) {

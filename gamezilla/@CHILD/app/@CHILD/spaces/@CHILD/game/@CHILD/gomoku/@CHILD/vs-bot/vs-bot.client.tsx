@@ -4,7 +4,7 @@ import {
   ClientModel,
   ClientMsg,
   ServerModel,
-  ToClient,
+  MsgToClient,
   handle,
   initShared,
 } from "./vs-bot.core";
@@ -74,7 +74,7 @@ export const updateFromServer = ({
   ctx,
 }: {
   ctx: ClientCtx;
-  msg: ToClient;
+  msg: MsgToClient;
   model: Model;
 }): {
   model: Model;

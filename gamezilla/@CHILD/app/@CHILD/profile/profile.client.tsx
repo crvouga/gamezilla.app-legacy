@@ -10,7 +10,7 @@ import {
   playSound,
   pushRoute,
   replaceRoute,
-  sendToServer,
+  sendMsgToServer,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { ProfileAvatar, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
@@ -27,7 +27,12 @@ import {
 import { Sub, isErr, loading } from "gamezilla/@SHARED/core";
 import { ViewProfileScreen } from "./profile-client/profile-client-view-profile-screen";
 import { ViewUpdateAvatarScreen } from "./profile-client/profile-client-view-update-avatar-screen";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./profile.core";
+import {
+  ClientModel,
+  ClientMsg,
+  MsgToClient,
+  MsgToServer,
+} from "./profile.core";
 
 //
 //
@@ -44,16 +49,16 @@ type Ctx = (ClientCtx | AnonymousClientCtx) & {
 type Module = AppClientModule<{
   Model: ClientModel;
   Msg: ClientMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
   Ctx: Ctx;
-  InCmd: ProfileCmd;
-  InEvent: ClientEvent;
-  OutCmd: ClientCmd<{
+  MsgInCmd: ProfileCmd;
+  MsgInEvent: ClientEvent;
+  MsgOutCmd: ClientCmd<{
     ClientMsg: ClientMsg;
-    ToServer: ToServer;
+    MsgToServer: MsgToServer;
   }>;
-  OutEvent: never;
+  MsgOutEvent: never;
 }>;
 
 //
@@ -89,7 +94,7 @@ export const init: Module["init"] = ({ ctx, stored }) => {
 //
 
 export const update: Module["update"] = (input) => {
-  if (input.msgEvent) {
+  if (input.msgEvt) {
     return updateFromEvent(input);
   }
 
@@ -97,7 +102,7 @@ export const update: Module["update"] = (input) => {
     return updateFromMsg(input);
   }
 
-  if (input.msgFromServer) {
+  if (input.msgServer) {
     return updateFromServer(input);
   }
 
@@ -131,16 +136,16 @@ const updateFromCmd: Module["update"] = (input) => {
 };
 
 const updateFromEvent: Module["update"] = (input) => {
-  const { msgEvent, model } = input;
+  const { msgEvt, model } = input;
 
-  if (!msgEvent) {
+  if (!msgEvt) {
     return { model };
   }
 
-  switch (msgEvent.t) {
+  switch (msgEvt.t) {
     case "routing/route-changed": {
-      if (msgEvent.route.t === "profile" && msgEvent.route.c.t === "profile") {
-        return loadProfile(msgEvent.route.c.userId, model);
+      if (msgEvt.route.t === "profile" && msgEvt.route.c.t === "profile") {
+        return loadProfile(msgEvt.route.c.userId, model);
       }
       return { model };
     }
@@ -152,19 +157,19 @@ const updateFromEvent: Module["update"] = (input) => {
 };
 
 const updateFromServer: Module["update"] = (input) => {
-  const { model, msgFromServer } = input;
+  const { model, msgServer } = input;
 
-  if (!msgFromServer) {
+  if (!msgServer) {
     return { model };
   }
 
-  switch (msgFromServer.t) {
+  switch (msgServer.t) {
     case "current-user-profile": {
-      if (isErr(msgFromServer.result)) {
+      if (isErr(msgServer.result)) {
         return { model };
       }
 
-      const profile = msgFromServer.result.value;
+      const profile = msgServer.result.value;
 
       const modelNew: ClientModel = {
         ...model,
@@ -176,25 +181,25 @@ const updateFromServer: Module["update"] = (input) => {
 
       return {
         model: modelNew,
-        msgCmd: msgFromServer.loggedIn
+        msgCmd: msgServer.loggedIn
           ? [showToast(`Logged in as ${profile.username}`)]
           : [],
       };
     }
     default: {
-      if (isErr(msgFromServer.result)) {
+      if (isErr(msgServer.result)) {
         return {
           model: {
             ...model,
             requests: {
               ...model.requests,
-              [msgFromServer.t]: msgFromServer.result,
+              [msgServer.t]: msgServer.result,
             },
           },
         };
       }
 
-      const profilesNew = msgFromServer.result.value.reduce<
+      const profilesNew = msgServer.result.value.reduce<
         ClientModel["profiles"]
       >((acc, profile) => {
         return {
@@ -363,7 +368,7 @@ const loadProfile = (
       ...model,
       requests: { ...model.requests, "find-one": loading },
     },
-    msgCmd: [sendToServer({ t: "find-one", userId })],
+    msgCmd: [sendMsgToServer({ t: "find-one", userId })],
   };
 };
 

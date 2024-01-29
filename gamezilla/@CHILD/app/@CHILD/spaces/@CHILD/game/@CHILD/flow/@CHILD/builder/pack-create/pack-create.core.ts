@@ -25,9 +25,9 @@ export type ClientMsg = {
 
 export type ServerMsg = { t: "noop" };
 
-export type ToServer = { t: "pack-create/user-clicked-create-button" };
+export type MsgToServer = { t: "pack-create/user-clicked-create-button" };
 
-export type ToClient = {
+export type MsgToClient = {
   t: "created-pack";
   created: Result<string, FlowPack>;
 };
@@ -38,7 +38,7 @@ export type ToClient = {
 //
 //
 
-export type GameMsg = {
+export type MsgGame = {
   t: "user-created-pack";
   created: Result<string, FlowPack>;
   userId: UserId;

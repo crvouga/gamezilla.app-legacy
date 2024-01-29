@@ -1,6 +1,9 @@
 import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-user";
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
-import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  ClientCmd,
+  sendMsgToServer,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import { toTurn } from "../../@SHARED/tic-tic-toe/tic-tac-toe";
 import {
   CoverArt,
@@ -12,8 +15,8 @@ import {
   ClientMsg,
   Res,
   ServerModel,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
   initCoreModel,
 } from "./vs-user.core";
 
@@ -42,7 +45,7 @@ export const update = (
   model: ClientModel
 ): {
   model: ClientModel;
-  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg[0]) {
     //
@@ -78,7 +81,7 @@ export const update = (
     case "stop-playing":
     case "start-game":
     case "NewGame": {
-      return { model, msgCmd: [sendToServer(msg)] };
+      return { model, msgCmd: [sendMsgToServer(msg)] };
     }
 
     default: {
@@ -89,7 +92,7 @@ export const update = (
 
 export const updateFromServer = (
   _: { ctx: SpaceClientCtx },
-  msg: ToClient,
+  msg: MsgToClient,
   model: ClientModel
 ): [ClientModel] => {
   switch (msg[0]) {

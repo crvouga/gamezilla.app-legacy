@@ -4,13 +4,13 @@ import { SpaceServerCtx, SpaceServerEvent } from "../../@SHARED/space";
 import { SpaceServerCmd } from "../../@SHARED/space-server-cmd";
 import { FlowServer } from "./@CHILD/flow/flow.server";
 import {
-  GameMsg,
+  MsgGame,
   GameName,
-  GameModel,
+  ModelGame,
   ServerModel,
   ServerMsg,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
 } from "./game.core";
 import { ConnectFourServer } from "./@CHILD/connect-four/connect-four.server";
 
@@ -25,15 +25,15 @@ import { ConnectFourServer } from "./@CHILD/connect-four/connect-four.server";
 type Module = GameServerModule<{
   Model: ServerModel;
   Msg: ServerMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
-  GameModel: GameModel;
-  GameMsg: GameMsg;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+  ModelGame: ModelGame;
+  MsgGame: MsgGame;
   Ctx: SpaceServerCtx;
-  InCmd: null;
-  InEvent: SpaceServerEvent;
-  OutCmd: SpaceServerCmd<ToClient>;
-  OutEvent: null;
+  MsgInCmd: null;
+  MsgInEvent: SpaceServerEvent;
+  MsgOutCmd: SpaceServerCmd<MsgToClient>;
+  MsgOutEvent: null;
   Deps: null;
 }>;
 
@@ -82,7 +82,7 @@ export const update: Module["update"] = async (input) => {
           modelGame: modelGame.c,
           model: model.t === "flow" ? model.c : FlowServer.init,
           msgCmd: input.msgCmd,
-          msgEvent: input.msgEvent,
+          msgEvt: input.msgEvt,
           msgFromClient:
             input.msgFromClient?.t === "flow"
               ? { ...input.msgFromClient, ...input.msgFromClient.c }
@@ -110,7 +110,7 @@ export const update: Module["update"] = async (input) => {
           modelGame: modelGame.c,
           model: model.t === "connect-four" ? model.c : ConnectFourServer.init,
           msgCmd: input.msgCmd,
-          msgEvent: input.msgEvent,
+          msgEvt: input.msgEvt,
           msgFromClient:
             input.msgFromClient?.t === "connect-four"
               ? { ...input.msgFromClient, ...input.msgFromClient.c }

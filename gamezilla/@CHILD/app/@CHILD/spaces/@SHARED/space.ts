@@ -32,13 +32,13 @@ type SpaceEvent =
 
 /**
  * @description
- * Represents outside msgEvents that happened in the server app
+ * Represents outside msgEvts that happened in the server app
  */
 export type SpaceServerEvent = ServerEvent | SpaceEvent;
 
 /**
  * @description
- * Represents outside msgEvents that happened in the client app
+ * Represents outside msgEvts that happened in the client app
  */
 export type SpaceClientEvent = ClientEvent | SpaceEvent;
 

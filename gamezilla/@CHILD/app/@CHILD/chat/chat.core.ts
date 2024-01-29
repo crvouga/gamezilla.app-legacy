@@ -91,16 +91,16 @@ export const update = ({ msg }: { msg: ClientMsg; model: ClientModel }) => {
   }
 };
 
-export type ToServer = Req;
+export type MsgToServer = Req;
 
 export type ServerMsg = Res;
 
-export type ToClient = Res;
+export type MsgToClient = Res;
 
 export const updateFromClient = ({
   msg,
 }: {
-  msg: ToServer;
+  msg: MsgToServer;
   model: ServerModel;
 }): {
   eff: Eff<ServerMsg>;

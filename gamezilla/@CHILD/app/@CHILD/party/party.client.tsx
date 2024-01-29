@@ -9,7 +9,7 @@ import {
   p,
 } from "gamezilla/@SHARED/core";
 import { Mic } from "./mic";
-import { ClientModel, ClientMsg, ToClient } from "./party.core";
+import { ClientModel, ClientMsg, MsgToClient } from "./party.core";
 
 //
 //
@@ -81,7 +81,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
 
 export const updateFromServer = (
   { currentUserId }: { currentUserId: UserId },
-  msg: ToClient,
+  msg: MsgToClient,
   model: Model
 ): [Model, Eff<Msg>] => {
   switch (msg[0]) {

@@ -25,17 +25,17 @@ export type ClientMsg =
 
 export type ServerMsg = { t: "noop" };
 
-export type ToServer =
+export type MsgToServer =
   | { t: "save-changes/user-clicked-save-button"; puzzle: FlowPuzzle }
   | { t: "save-changes/user-clicked-save-and-exit"; puzzle: FlowPuzzle };
 
-export type ToClient = { t: "noop" };
+export type MsgToClient = { t: "noop" };
 
 //
 //
 //
 
-export type GameMsg = {
+export type MsgGame = {
   t: "user-saved-changes";
   saved: Result<string, FlowPuzzle>;
   userId: UserId;

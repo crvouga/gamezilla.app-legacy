@@ -102,14 +102,14 @@ export type ClientMsg =
 
 export type ServerMsg = ClockTicked;
 
-export type ToClient =
+export type MsgToClient =
   | ["game-over"]
   | ["GameStarted"]
   | ["player-left", CoreModel]
   | ClockTicked_Done
   | Res;
 
-export type ToServer = Req;
+export type MsgToServer = Req;
 
 export type Req =
   | InputPlayer

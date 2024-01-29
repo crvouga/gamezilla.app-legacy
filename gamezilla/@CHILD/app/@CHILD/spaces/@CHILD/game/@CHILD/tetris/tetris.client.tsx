@@ -14,7 +14,7 @@ import {
   ClientModel,
   ClientMsg,
   ServerModel,
-  ToClient,
+  MsgToClient,
   columnCount,
   initShared,
   rowCount,
@@ -159,7 +159,7 @@ const keyToDirection = (key: Keyboard.Key): Direction.Direction | "none" => {
 };
 
 export const updateFromServer = (
-  msg: ToClient,
+  msg: MsgToClient,
   model: Model
 ): [Model, Eff<Msg>] => {
   switch (msg[0]) {
@@ -264,37 +264,37 @@ export const View = ({
     <div>
       <div>
         <canvas
-          onTouchMove={(msgEvent) => {
-            const touch = msgEvent.touches[0];
+          onTouchMove={(msgEvt) => {
+            const touch = msgEvt.touches[0];
 
             if (!touch) {
               return;
             }
           }}
-          onClick={(msgEvent) => {
-            dispatch(["ClickedBoard", mouseEventToPosition(msgEvent)]);
+          onClick={(msgEvt) => {
+            dispatch(["ClickedBoard", mouseEventToPosition(msgEvt)]);
           }}
-          onMouseMove={(msgEvent) => {
+          onMouseMove={(msgEvt) => {
             const x = Math.floor(
               rescale({
-                value: msgEvent.pageX - msgEvent.currentTarget.offsetLeft,
-                from: [0, msgEvent.currentTarget.width],
+                value: msgEvt.pageX - msgEvt.currentTarget.offsetLeft,
+                from: [0, msgEvt.currentTarget.width],
                 to: [0, columnCount],
               })
             );
 
             const y = Math.floor(
               rescale({
-                value: msgEvent.pageY - msgEvent.currentTarget.offsetTop,
-                from: [0, msgEvent.currentTarget.height],
+                value: msgEvt.pageY - msgEvt.currentTarget.offsetTop,
+                from: [0, msgEvt.currentTarget.height],
                 to: [0, rowCount],
               })
             );
 
             dispatch(["MouseMove", { x, y }]);
           }}
-          onTouchStart={(msgEvent) => {
-            const touch = msgEvent.touches[0];
+          onTouchStart={(msgEvt) => {
+            const touch = msgEvt.touches[0];
 
             if (!touch) {
               return;
@@ -347,8 +347,8 @@ export const View = ({
   );
 };
 
-const mouseEventToPosition = (msgEvent: MouseEvent): Position.Position => {
-  if (!(msgEvent.currentTarget instanceof HTMLCanvasElement)) {
+const mouseEventToPosition = (msgEvt: MouseEvent): Position.Position => {
+  if (!(msgEvt.currentTarget instanceof HTMLCanvasElement)) {
     return {
       x: 0,
       y: 0,
@@ -356,16 +356,16 @@ const mouseEventToPosition = (msgEvent: MouseEvent): Position.Position => {
   }
   const x = Math.floor(
     rescale({
-      value: msgEvent.pageX - msgEvent.currentTarget.offsetLeft,
-      from: [0, msgEvent.currentTarget.width],
+      value: msgEvt.pageX - msgEvt.currentTarget.offsetLeft,
+      from: [0, msgEvt.currentTarget.width],
       to: [0, columnCount],
     })
   );
 
   const y = Math.floor(
     rescale({
-      value: msgEvent.pageY - msgEvent.currentTarget.offsetTop,
-      from: [0, msgEvent.currentTarget.height],
+      value: msgEvt.pageY - msgEvt.currentTarget.offsetTop,
+      from: [0, msgEvt.currentTarget.height],
       to: [0, rowCount],
     })
   );

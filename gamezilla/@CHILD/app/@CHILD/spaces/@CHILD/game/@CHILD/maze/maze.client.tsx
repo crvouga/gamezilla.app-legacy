@@ -11,7 +11,7 @@ import {
   ClientMsg,
   Color,
   ServerModel,
-  ToClient,
+  MsgToClient,
   initShared,
 } from "./maze.core";
 
@@ -79,7 +79,7 @@ export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
 };
 
 export const updateFromServer = (
-  msg: ToClient,
+  msg: MsgToClient,
   model: Model
 ): [Model, Eff<Msg>] => {
   switch (msg[0]) {

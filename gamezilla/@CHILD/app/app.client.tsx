@@ -33,7 +33,7 @@ import {
 } from "./@CHILD/wire/transport-client";
 import * as Wire from "./@CHILD/wire/wire.client";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
-import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
+import { ClientModel, ClientMsg, MsgToClient, MsgToServer } from "./app.core";
 
 //
 //
@@ -44,11 +44,14 @@ import { ClientModel, ClientMsg, ToClient, ToServer } from "./app.core";
 //
 
 export type Deps = {
-  transport: IClientTransport<{ ToServer: ToServer; ToClient: ToClient }>;
+  transport: IClientTransport<{
+    MsgToServer: MsgToServer;
+    MsgToClient: MsgToClient;
+  }>;
 };
 
 export const getDeps = (): Deps => {
-  const transport = ClientTransport<ToServer, ToClient>({
+  const transport = ClientTransport<MsgToServer, MsgToClient>({
     impl:
       PUBLIC_APP_CONFIG.TRANSPORT_IMPL === "socket-io"
         ? {
@@ -159,7 +162,7 @@ export const init = async ({
   ]);
 
   const initialCmd = batchMsgs<
-    ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>
+    ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>
   >(
     ClientCmd.tag("spaces", space.msgCmd),
     ClientCmd.tag("profile", profile.msgCmd),
@@ -170,7 +173,7 @@ export const init = async ({
     model: initialModel,
     eff: initialEff,
     msgCmd: initialCmd,
-    msgEvent: [],
+    msgEvt: [],
   });
 
   return {
@@ -207,15 +210,15 @@ export const update = async (input: {
   if (input.msg) {
     log("[msg]", toMsgType(input.msg));
   }
-  const msgFromServer = input.msg.t === "➡️" ? input.msg.c : undefined;
-  if (msgFromServer) {
-    log("[➡️]", toMsgType(msgFromServer));
+  const msgServer = input.msg.t === "➡️" ? input.msg.c : undefined;
+  if (msgServer) {
+    log("[➡️]", toMsgType(msgServer));
   }
   const updatedFromMsg = await updateChild({
     now: input.ctx.now,
     model: input.model,
     msg: input.msg,
-    msgFromServer: msgFromServer,
+    msgServer: msgServer,
     deps: input.deps,
   });
 
@@ -227,8 +230,8 @@ export const update = async (input: {
 type Output = {
   model: ClientModel;
   eff: Eff<ClientMsg>;
-  msgEvent: ClientEvent[];
-  msgCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgEvt: ClientEvent[];
+  msgCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
 };
 
 const updateLoop = async (
@@ -250,25 +253,25 @@ const updateLoop = async (
       model: updatedCmd.model,
       msgCmd: [...msgCmdRest, ...updatedCmd.msgCmd],
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
-      msgEvent: batchMsgs(acc.msgEvent, updatedCmd.msgEvent),
+      msgEvt: batchMsgs(acc.msgEvt, updatedCmd.msgEvt),
     });
   }
 
-  const [msgEvent, ...msgEventRest] = acc.msgEvent;
+  const [msgEvt, ...msgEvtRest] = acc.msgEvt;
 
-  if (msgEvent) {
-    log("[msgEvent]", toMsgType(msgEvent));
+  if (msgEvt) {
+    log("[msgEvt]", toMsgType(msgEvt));
     const updatedEvent = await updateChild({
       deps,
       now,
       model: acc.model,
-      msgEvent,
+      msgEvt,
     });
     return updateLoop(deps, now, {
       model: updatedEvent.model,
       msgCmd: [...msgCmdRest, ...updatedEvent.msgCmd],
       eff: Eff.batch([acc.eff, updatedEvent.eff]),
-      msgEvent: batchMsgs(msgEventRest, updatedEvent.msgEvent),
+      msgEvt: batchMsgs(msgEvtRest, updatedEvent.msgEvt),
     });
   }
 
@@ -279,8 +282,8 @@ const updateChild = async ({
   now,
   model,
   msg,
-  msgFromServer,
-  msgEvent,
+  msgServer,
+  msgEvt,
   msgCmd,
   deps,
 }: {
@@ -288,9 +291,9 @@ const updateChild = async ({
   now: Posix;
   model: ClientModel;
   msg?: ClientMsg;
-  msgFromServer?: ToClient;
-  msgEvent?: ClientEvent;
-  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
+  msgServer?: MsgToClient;
+  msgEvt?: ClientEvent;
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
 }): Promise<Output> => {
   const ctx = toCtx({ model, ctx: { now } });
 
@@ -298,8 +301,8 @@ const updateChild = async ({
     ctx: ctx,
     model: model.spaces,
     msg: msg?.t === "spaces" ? msg.c : null,
-    msgFromServer: msgFromServer?.t === "spaces" ? msgFromServer.c : null,
-    msgEvent: msgEvent,
+    msgServer: msgServer?.t === "spaces" ? msgServer.c : null,
+    msgEvt: msgEvt,
     msgCmd: null,
   });
 
@@ -307,8 +310,8 @@ const updateChild = async ({
     ctx: { ...ctx, viewBottomBar: null },
     model: model.profile,
     msg: msg?.t === "profile" ? msg.c : null,
-    msgFromServer: msgFromServer?.t === "profile" ? msgFromServer.c : null,
-    msgEvent: msgEvent,
+    msgServer: msgServer?.t === "profile" ? msgServer.c : null,
+    msgEvt: msgEvt,
     msgCmd: msgCmd?.t === "profile" ? msgCmd : null,
   });
 
@@ -316,8 +319,8 @@ const updateChild = async ({
     ctx: ctx,
     model: model.auth,
     msg: msg?.t === "auth" ? msg.c : null,
-    msgFromServer: msgFromServer?.t === "auth" ? msgFromServer.c : null,
-    msgEvent: msgEvent,
+    msgServer: msgServer?.t === "auth" ? msgServer.c : null,
+    msgEvt: msgEvt,
     msgCmd: null,
   });
 
@@ -330,7 +333,7 @@ const updateChild = async ({
   const wire = await Wire.update({
     model: model.wire,
     msg: msg?.t === "wire" ? msg.c : null,
-    msgFromServer: msgFromServer?.t === "wire" ? msgFromServer.c : null,
+    msgServer: msgServer?.t === "wire" ? msgServer.c : null,
     msgCmd: msgCmd?.t === "wire" ? msgCmd : null,
     transport: deps.transport,
   });
@@ -358,8 +361,8 @@ const updateChild = async ({
     msg: msg?.t === "toast" ? msg.c : null,
     msgCmd: msgCmd?.t === "toast" ? msgCmd : null,
     ctx: ctx,
-    msgEvent: null,
-    msgFromServer: null,
+    msgEvt: null,
+    msgServer: null,
   });
 
   return {
@@ -387,17 +390,19 @@ const updateChild = async ({
       Eff.tag("wire", wire.eff),
     ]),
 
-    msgEvent: batchMsgs<ClientEvent>(
-      auth.msgEvent,
-      profile.msgEvent,
-      routing.msgEvent,
-      sound.msgEvent,
-      space.msgEvent,
-      toast.msgEvent,
-      wire.msgEvent
+    msgEvt: batchMsgs<ClientEvent>(
+      auth.msgEvt,
+      profile.msgEvt,
+      routing.msgEvt,
+      sound.msgEvt,
+      space.msgEvt,
+      toast.msgEvt,
+      wire.msgEvt
     ),
 
-    msgCmd: batchMsgs<ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>>(
+    msgCmd: batchMsgs<
+      ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>
+    >(
       ClientCmd.tag("auth", auth.msgCmd),
       ClientCmd.tag("profile", profile.msgCmd),
       ClientCmd.tag("spaces", space.msgCmd),

@@ -9,7 +9,7 @@ import {
   ClientCmd,
   playSound,
   preloadSound,
-  sendToServer,
+  sendMsgToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconPuzzlePiece } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, RemoteResult, Sub, isErr } from "gamezilla/@SHARED/core";
@@ -21,10 +21,10 @@ import { CHESS_SOUND } from "./@SHARED/chess/chess-sounds";
 import {
   ClientModel,
   ClientMsg,
-  GameMsg,
-  GameModel,
-  ToClient,
-  ToServer,
+  MsgGame,
+  ModelGame,
+  MsgToClient,
+  MsgToServer,
 } from "./chess.core";
 import { GameClientModule } from "../../../../@SHARED/architecture/game-client-v2";
 
@@ -38,12 +38,12 @@ import { GameClientModule } from "../../../../@SHARED/architecture/game-client-v
 type Client = GameClient<{
   ClientModel: ClientModel;
   ClientMsg: ClientMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
   ClientCtx: SpaceClientCtx;
-  GameMsg: GameMsg;
-  GameModel: GameModel;
-  ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
+  MsgGame: MsgGame;
+  ModelGame: ModelGame;
+  ClientCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
   ClientEvent: SpaceClientEvent;
 }>;
 
@@ -93,7 +93,7 @@ export const update: Client["update"] = (input) => {
               ...model,
               requests: { ...model.requests, [msg.t]: RemoteResult.loading },
             },
-            msgCmd: [sendToServer(msg)],
+            msgCmd: [sendMsgToServer(msg)],
           };
         }
 
@@ -149,24 +149,24 @@ export const update: Client["update"] = (input) => {
       }
     },
     (model) => {
-      const { msgFromServer, ctx } = input;
+      const { msgServer, ctx } = input;
 
-      if (!msgFromServer) {
+      if (!msgServer) {
         return { model };
       }
 
-      switch (msgFromServer.t) {
+      switch (msgServer.t) {
         case "input-mode": {
           return GameClientModule.chainUpdates(
             { model },
             (model) => {
-              const { result } = msgFromServer;
+              const { result } = msgServer;
 
               const modelNew: ClientModel = {
                 ...model,
                 requests: {
                   ...model.requests,
-                  [msgFromServer.t]: RemoteResult.map(result, () => null),
+                  [msgServer.t]: RemoteResult.map(result, () => null),
                 },
               };
 
@@ -190,7 +190,7 @@ export const update: Client["update"] = (input) => {
           if (model?.mode?.t === "vs-user") {
             const [child, eff] = VsUser.updateFromServer(
               { ctx },
-              msgFromServer.c,
+              msgServer.c,
               model.mode.c
             );
 
@@ -206,7 +206,7 @@ export const update: Client["update"] = (input) => {
         case "vs-bot": {
           if (model?.mode?.t === "vs-bot") {
             const updated = VsBot.updateFromServer({
-              msg: msgFromServer.c,
+              msg: msgServer.c,
               model: model.mode.c,
             });
 
@@ -227,7 +227,7 @@ export const update: Client["update"] = (input) => {
           const updated = Puzzle.updateFromServer({
             ctx,
             model: model.mode.c,
-            msg: msgFromServer.c,
+            msg: msgServer.c,
           });
 
           return {

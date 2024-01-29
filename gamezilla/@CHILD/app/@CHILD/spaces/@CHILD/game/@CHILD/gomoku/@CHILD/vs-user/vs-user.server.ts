@@ -3,7 +3,12 @@ import {
   SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { ServerModel, ServerMsg, ToServer, initShared } from "./vs-user.core";
+import {
+  ServerModel,
+  ServerMsg,
+  MsgToServer,
+  initShared,
+} from "./vs-user.core";
 
 //
 //
@@ -43,7 +48,7 @@ export const updateFromClient = ({
   model,
 }: {
   ctx: SpaceReqCtx;
-  msg: ToServer;
+  msg: MsgToServer;
   model: Model;
 }): {
   model: Model;

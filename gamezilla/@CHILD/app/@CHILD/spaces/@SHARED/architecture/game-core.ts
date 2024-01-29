@@ -1,14 +1,14 @@
 export type GameCoreTypes = {
   Ctx: any;
-  GameModel: any;
-  GameMsg: any;
+  ModelGame: any;
+  MsgGame: any;
 };
 
 export type GameCore<T extends GameCoreTypes> = {
-  initGame: (input: { ctx: T["Ctx"] }) => T["GameModel"];
+  initGame: (input: { ctx: T["Ctx"] }) => T["ModelGame"];
   reducer: (input: {
     ctx: T["Ctx"];
-    msgEvent: T["GameMsg"];
-    modelGame: T["GameModel"];
-  }) => T["GameModel"];
+    msgEvt: T["MsgGame"];
+    modelGame: T["ModelGame"];
+  }) => T["ModelGame"];
 };

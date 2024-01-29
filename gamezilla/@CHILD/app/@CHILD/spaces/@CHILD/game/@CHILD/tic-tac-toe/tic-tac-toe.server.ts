@@ -4,11 +4,16 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { sendToClient } from "gamezilla/@CHILD/app/@SHARED/server";
+import { sendMsgToClient } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Result, Sub } from "gamezilla/@SHARED/core";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.server";
 import * as VsUser from "./@CHILD/vs-user/vs-user.server";
-import { ServerModel, ServerMsg, ToClient, ToServer } from "./tic-tac-toe.core";
+import {
+  ServerModel,
+  ServerMsg,
+  MsgToClient,
+  MsgToServer,
+} from "./tic-tac-toe.core";
 
 const { err: Err, ok: Ok } = Result;
 
@@ -43,7 +48,7 @@ export const update = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  msgCmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   if (msg.t === "vs-user" && model.t === "vs-user") {
     const updated = VsUser.update(msg.c, model.c);
@@ -74,19 +79,22 @@ export const updateFromClient = ({
   ctx,
 }: {
   ctx: SpaceReqCtx;
-  msg: ToServer;
+  msg: MsgToServer;
   model: Model;
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  msgCmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   if (msg.t === "input-mode") {
     if (ctx.currentUserId !== ctx.space.hostId) {
       return {
         model,
         msgCmd: [
-          sendToClient([ctx.clientId], { ...msg, result: Err("must-be-host") }),
+          sendMsgToClient([ctx.clientId], {
+            ...msg,
+            result: Err("must-be-host"),
+          }),
         ],
       };
     }
@@ -141,7 +149,7 @@ export const updateFromEvent = ({
   msg: SpaceServerEvent;
 }): {
   model: Model;
-  msgCmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   if (model.t === "none") {
     return { model };

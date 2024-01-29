@@ -21,9 +21,9 @@ export type ClientModel = {
 
 export type ServerModel = null;
 
-export type ToServer = Req;
+export type MsgToServer = Req;
 
-export type ToClient = Res;
+export type MsgToClient = Res;
 
 export type ServerMsg = { t: "none" };
 

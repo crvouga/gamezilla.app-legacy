@@ -56,15 +56,15 @@ export type ServerMsg =
   | { t: "vs-user"; c: VsUser.ServerMsg }
   | { t: "vs-bot"; c: VsBot.ServerMsg };
 
-export type ToClient =
+export type MsgToClient =
   | Res
-  | { t: "vs-user"; c: VsUser.ToClient }
-  | { t: "vs-bot"; c: VsBot.ToClient };
+  | { t: "vs-user"; c: VsUser.MsgToClient }
+  | { t: "vs-bot"; c: VsBot.MsgToClient };
 
-export type ToServer =
+export type MsgToServer =
   | Req
-  | { t: "vs-user"; c: VsUser.ToServer }
-  | { t: "vs-bot"; c: VsBot.ToServer };
+  | { t: "vs-user"; c: VsUser.MsgToServer }
+  | { t: "vs-bot"; c: VsBot.MsgToServer };
 
 export type Req = { t: "input-mode"; userId: UserId; mode: Mode };
 

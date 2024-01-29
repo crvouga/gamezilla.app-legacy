@@ -36,17 +36,17 @@ export type ServerMsg =
   | { t: "vs-bot"; c: VsBot.ServerMsg }
   | { t: "puzzle"; c: Puzzle.ServerMsg };
 
-export type ToClient =
+export type MsgToClient =
   | Res
-  | { t: "vs-user"; c: VsUser.ToClient }
-  | { t: "vs-bot"; c: VsBot.ToClient }
-  | { t: "puzzle"; c: Puzzle.ToClient };
+  | { t: "vs-user"; c: VsUser.MsgToClient }
+  | { t: "vs-bot"; c: VsBot.MsgToClient }
+  | { t: "puzzle"; c: Puzzle.MsgToClient };
 
-export type ToServer =
+export type MsgToServer =
   | Req
-  | { t: "vs-user"; c: VsUser.ToServer }
-  | { t: "vs-bot"; c: VsBot.ToServer }
-  | { t: "puzzle"; c: Puzzle.ToServer };
+  | { t: "vs-user"; c: VsUser.MsgToServer }
+  | { t: "vs-bot"; c: VsBot.MsgToServer }
+  | { t: "puzzle"; c: Puzzle.MsgToServer };
 
 export type Req = { t: "input-mode"; mode: Mode; userId: UserId };
 export type Res = Req & {
@@ -64,9 +64,9 @@ export type Problem = "must_be_the_host";
 //
 //
 
-export type GameMsg = { t: "user-changed-mode"; mode: Mode; userId: UserId };
+export type MsgGame = { t: "user-changed-mode"; mode: Mode; userId: UserId };
 
-export type GameModel =
+export type ModelGame =
   | {
       t: "none";
     }
@@ -80,22 +80,22 @@ export type GameModel =
       t: "puzzle";
     };
 
-export const initGame = (): GameModel => {
+export const initGame = (): ModelGame => {
   return {
     t: "none",
   };
 };
 
 export const reducer = ({
-  msgEvent,
+  msgEvt,
 }: {
   ctx: SpaceCtx;
-  modelGame: GameModel;
-  msgEvent: GameMsg;
-}): GameModel => {
-  switch (msgEvent.t) {
+  modelGame: ModelGame;
+  msgEvt: MsgGame;
+}): ModelGame => {
+  switch (msgEvt.t) {
     case "user-changed-mode": {
-      switch (msgEvent.mode) {
+      switch (msgEvt.mode) {
         case "none": {
           return { t: "none" };
         }

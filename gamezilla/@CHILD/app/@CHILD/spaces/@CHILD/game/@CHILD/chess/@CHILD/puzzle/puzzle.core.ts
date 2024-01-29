@@ -167,9 +167,9 @@ type DbMsg =
 
 export type ClientMsg = Req;
 
-export type ToServer = Req;
+export type MsgToServer = Req;
 
-export type ToClient =
+export type MsgToClient =
   | Res
   | { t: "clock-tick"; now: Posix }
   | (Omit<DbMsg, "result"> & { result: Result<string, CoreModel> });

@@ -4,7 +4,7 @@ import {
   ServerCtx,
   ServerEvent,
   WireCmd,
-  sendToClient,
+  sendMsgToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Posix, TimeSpan } from "gamezilla/@SHARED/core";
 import { Sub } from "gamezilla/@SHARED/core/sub";
@@ -15,8 +15,8 @@ import {
   Client,
   ServerModel,
   ServerMsg,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
 } from "./wire.core";
 
 //
@@ -44,26 +44,26 @@ export const init = async (): Promise<{ model: ServerModel }> => {
 //
 //
 
-type Input<TToClient, TToServer> = {
+type Input<TMsgToClient, TMsgToServer> = {
   ctx: ServerCtx;
   model: ServerModel;
   //
   msg?: ServerMsg | null;
-  msgFromClient?: ToServer | null;
-  msgEvent?: ServerEvent | null;
-  msgCmd?: WireCmd<TToClient> | null;
+  msgFromClient?: MsgToServer | null;
+  msgEvt?: ServerEvent | null;
+  msgCmd?: WireCmd<TMsgToClient> | null;
   //
   transport: IServerTransport<{
-    ToClient: TToClient;
-    ToServer: TToServer;
+    MsgToClient: TMsgToClient;
+    MsgToServer: TMsgToServer;
   }>;
 };
 
 type Output = {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
-  msgEvent?: ServerEvent[];
-  msgCmd?: ServerCmd<ToClient>[];
+  msgEvt?: ServerEvent[];
+  msgCmd?: ServerCmd<MsgToClient>[];
 };
 
 //
@@ -71,8 +71,8 @@ type Output = {
 //
 //
 
-export const update = async <TToClient, TToServer>(
-  input: Input<TToClient, TToServer>
+export const update = async <TMsgToClient, TMsgToServer>(
+  input: Input<TMsgToClient, TMsgToServer>
 ): Promise<Output> => {
   return AppServerModule.chainUpdates(
     { model: input.model },
@@ -112,7 +112,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
             [msg.sessionId]: clientNew,
           };
 
-          const msgEvent: ServerEvent[] = [
+          const msgEvt: ServerEvent[] = [
             {
               t: "wire/client-connected",
               clientId: msg.clientId,
@@ -125,7 +125,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
               ...model,
               clientsBySessionId: clientsBySessionIdNew,
             },
-            msgEvent,
+            msgEvt,
           };
         },
         async (model) => {
@@ -139,7 +139,9 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
           if (didServerRestart) {
             return {
               model,
-              msgCmd: [sendToClient([msg.clientId], { t: "server-restarted" })],
+              msgCmd: [
+                sendMsgToClient([msg.clientId], { t: "server-restarted" }),
+              ],
             };
           }
 
@@ -166,7 +168,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
       //   [msg.sessionId]: clientNew,
       // };
 
-      const msgEvent: ServerEvent[] = [
+      const msgEvt: ServerEvent[] = [
         {
           t: "wire/client-disconnected",
           clientId: msg.clientId,
@@ -178,7 +180,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
           ...model,
           // clientsBySessionId: clientsBySessionIdNew,
         },
-        msgEvent: msgEvent,
+        msgEvt: msgEvt,
       };
     }
 
@@ -202,19 +204,19 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
   }
 };
 
-const updateFromEvent: typeof update = async ({ msgEvent, model }) => {
-  if (!msgEvent) {
+const updateFromEvent: typeof update = async ({ msgEvt, model }) => {
+  if (!msgEvt) {
     return { model };
   }
-  switch (msgEvent.t) {
+  switch (msgEvt.t) {
     case "auth/client-authenticated": {
-      const sessionIds = model.sessionIdsByUserId[msgEvent.userId] ?? [];
+      const sessionIds = model.sessionIdsByUserId[msgEvt.userId] ?? [];
 
-      const sessionIdsNew = [...new Set([...sessionIds, msgEvent.sessionId])];
+      const sessionIdsNew = [...new Set([...sessionIds, msgEvt.sessionId])];
 
       const sessionIdByUserIdNew: ServerModel["sessionIdsByUserId"] = {
         ...model.sessionIdsByUserId,
-        [msgEvent.userId]: sessionIdsNew,
+        [msgEvt.userId]: sessionIdsNew,
       };
 
       return {
@@ -234,12 +236,12 @@ const updateFromClient: typeof update = async ({ model }) => {
   return { model };
 };
 
-const updateFromCmd = async <TToClient, TToServer>({
+const updateFromCmd = async <TMsgToClient, TMsgToServer>({
   msgCmd,
   model,
   transport,
   ctx,
-}: Input<TToClient, TToServer>): Promise<Output> => {
+}: Input<TMsgToClient, TMsgToServer>): Promise<Output> => {
   if (!msgCmd) {
     return { model };
   }
@@ -263,7 +265,7 @@ const updateFromCmd = async <TToClient, TToServer>({
           const toClientPayload: {
             [clientId: ClientId]: {
               clientId: ClientId;
-              msgs: TToClient[];
+              msgs: TMsgToClient[];
             };
           } = {};
 
@@ -331,7 +333,7 @@ const updateFromCmd = async <TToClient, TToServer>({
   }
 };
 
-const sendToSession = async <TToClient, TToServer>({
+const sendToSession = async <TMsgToClient, TMsgToServer>({
   ctx,
   sessionIds,
   transport,
@@ -340,14 +342,17 @@ const sendToSession = async <TToClient, TToServer>({
 }: {
   ctx: ServerCtx;
   model: ServerModel;
-  msg: TToClient;
+  msg: TMsgToClient;
   sessionIds: SessionId[];
-  transport: IServerTransport<{ ToClient: TToClient; ToServer: TToServer }>;
+  transport: IServerTransport<{
+    MsgToClient: TMsgToClient;
+    MsgToServer: TMsgToServer;
+  }>;
 }) => {
   const toClientPayload: {
     [clientId: ClientId]: {
       clientId: ClientId;
-      msgs: TToClient[];
+      msgs: TMsgToClient[];
     };
   } = {};
 
@@ -386,10 +391,13 @@ const sendToSession = async <TToClient, TToServer>({
   transport.toClient.publish(toClientPayload);
 };
 
-export const subscriptions = <TToServer, TToClient>({
+export const subscriptions = <TMsgToServer, TMsgToClient>({
   transport,
 }: {
-  transport: IServerTransport<{ ToClient: TToClient; ToServer: TToServer }>;
+  transport: IServerTransport<{
+    MsgToClient: TMsgToClient;
+    MsgToServer: TMsgToServer;
+  }>;
 }): Sub<ServerMsg> => {
   return transport.wire;
 };

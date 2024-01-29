@@ -6,7 +6,7 @@ import { Eff, Sub, andThen, p } from "gamezilla/@SHARED/core";
 import {
   ServerModel,
   ServerMsg,
-  ToServer,
+  MsgToServer,
   handleBotMove,
   initShared,
 } from "./vs-bot.core";
@@ -53,7 +53,7 @@ export const update = ({
 type updateFromClient = (input: {
   ctx: SpaceReqCtx;
 
-  msg: ToServer;
+  msg: MsgToServer;
   model: Model;
 }) => {
   model: Model;

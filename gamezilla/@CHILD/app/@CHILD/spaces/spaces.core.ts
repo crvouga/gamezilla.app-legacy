@@ -41,11 +41,11 @@ export type ClientModel = Spaces.Model & {
 //
 
 export type ServerMsg =
-  | { t: "msgEvent"; c: WithEventId<SpaceEvent> }
+  | { t: "msgEvt"; c: WithEventId<SpaceEvent> }
   | { t: "game"; spaceId: SpaceId; c: Game.ServerMsg };
 
 export type ClientMsg =
-  | { t: "msgEvent"; c: WithEventId<SpaceEvent> }
+  | { t: "msgEvt"; c: WithEventId<SpaceEvent> }
   | { t: "game"; spaceId: SpaceId; c: Game.ClientMsg }
   | { t: "closed-modal" }
   | { t: "clicked-people-button" }
@@ -54,10 +54,10 @@ export type ClientMsg =
   | { t: "clicked-user"; userId: UserId }
   | { t: "clicked-link"; route: AppRoute };
 
-export type ToClient = ToClientExtra &
+export type MsgToClient = MsgToClientExtra &
   (
     | {
-        t: "msgEvent";
+        t: "msgEvt";
         c: WithEventMeta<SpaceEvent>;
       }
     | {
@@ -75,14 +75,14 @@ export type ToClient = ToClientExtra &
     | {
         t: "game";
         spaceId: SpaceId;
-        c: Game.ToClient;
+        c: Game.MsgToClient;
       }
   );
 
-export type ToServer = ToServerExtra &
+export type MsgToServer = MsgToServerExtra &
   (
     | {
-        t: "msgEvent";
+        t: "msgEvt";
         c: WithEventMeta<SpaceEvent>;
       }
     | {
@@ -100,17 +100,17 @@ export type ToServer = ToServerExtra &
     | {
         t: "game";
         spaceId: SpaceId;
-        c: Game.ToServer;
+        c: Game.MsgToServer;
       }
   );
 
-export type ToClientExtra = {
+export type MsgToClientExtra = {
   profiles?: { [userId: UserId]: Profile };
   causedBy?: unknown;
   meta?: Record<string, unknown>;
 };
 
-export type ToServerExtra = {
+export type MsgToServerExtra = {
   profiles?: { [userId: UserId]: Profile };
   meta?: Record<string, unknown>;
   causedBy?: unknown;

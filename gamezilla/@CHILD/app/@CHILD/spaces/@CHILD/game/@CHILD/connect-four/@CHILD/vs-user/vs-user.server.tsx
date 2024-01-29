@@ -6,12 +6,12 @@ import {
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { Sub } from "gamezilla/@SHARED/core";
 import {
-  GameMsg,
-  GameModel,
+  MsgGame,
+  ModelGame,
   ServerModel,
   ServerMsg,
-  ToClient,
-  ToServer,
+  MsgToClient,
+  MsgToServer,
 } from "./vs-user.core";
 
 //
@@ -23,16 +23,16 @@ import {
 type Module = GameServerModule<{
   Model: ServerModel;
   Msg: ServerMsg;
-  ToClient: ToClient;
-  ToServer: ToServer;
-  GameModel: GameModel;
-  GameMsg: GameMsg;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+  ModelGame: ModelGame;
+  MsgGame: MsgGame;
   Ctx: SpaceServerCtx;
   Deps: null;
-  InCmd: null;
-  InEvent: SpaceServerEvent;
-  OutCmd: SpaceServerCmd<ToClient>;
-  OutEvent: null;
+  MsgInCmd: null;
+  MsgInEvent: SpaceServerEvent;
+  MsgOutCmd: SpaceServerCmd<MsgToClient>;
+  MsgOutEvent: null;
 }>;
 
 export const init: Module["init"] = null;
