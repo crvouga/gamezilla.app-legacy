@@ -153,12 +153,12 @@ export const View = ({
   goBack,
   model,
   ctx,
-  dispatch,
+  emit,
 }: {
   ctx: SpaceClientCtx;
   goBack: () => void;
   model: Model;
-  dispatch: (msg: Msg) => void;
+  emit: (msg: Msg) => void;
 }) => {
   const vsBotProps: VsBotSetup.VsBotSetupProps = {
     bot: {
@@ -166,7 +166,7 @@ export const View = ({
       renderIcon: (props) =>
         renderBotLevel({ level: model.botLevel, ...props }),
     },
-    onSwapSides: () => dispatch({ t: "swap-sides" }),
+    onSwapSides: () => emit({ t: "swap-sides" }),
     canStartGame: Boolean(model.player),
     ctx,
     human: {
@@ -174,24 +174,24 @@ export const View = ({
       userId: model.player ?? null,
     },
     onQuit: goBack,
-    onStartGame: () => dispatch({ t: "start-game" }),
+    onStartGame: () => emit({ t: "start-game" }),
     botVariants: allBotLevels.map((botLevel) => {
       return {
         label: botLevel,
         renderIcon: (props) => renderBotLevel({ level: botLevel, ...props }),
-        onSelect: () => dispatch({ t: "input-bot-level", botLevel }),
+        onSelect: () => emit({ t: "input-bot-level", botLevel }),
       };
     }),
     playerOne: {
       label: "Cross",
-      onStartPlaying: () => dispatch({ t: "start-playing", playerType: "X" }),
-      onStopPlaying: () => dispatch({ t: "stop-playing" }),
+      onStartPlaying: () => emit({ t: "start-playing", playerType: "X" }),
+      onStopPlaying: () => emit({ t: "stop-playing" }),
       renderIcon: (props) => <PlayerTypeIcon {...props} playerType="X" />,
     },
     playerTwo: {
       label: "Naught",
-      onStartPlaying: () => dispatch({ t: "start-playing", playerType: "O" }),
-      onStopPlaying: () => dispatch({ t: "stop-playing" }),
+      onStartPlaying: () => emit({ t: "start-playing", playerType: "O" }),
+      onStopPlaying: () => emit({ t: "stop-playing" }),
       renderIcon: (props) => <PlayerTypeIcon {...props} playerType="O" />,
     },
     renderCoverArt: (props) => <CoverArt {...props} />,
@@ -202,7 +202,7 @@ export const View = ({
     return (
       <VsBotSetup.View
         model={model.vsBotSetup}
-        dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
+        emit={(c) => emit({ t: "vs-bot-setup", c })}
         {...vsBotProps}
       />
     );
@@ -234,7 +234,7 @@ export const View = ({
 
         <ViewBoard
           board={model.board}
-          onClick={(position) => dispatch({ t: "input-move", position })}
+          onClick={(position) => emit({ t: "input-move", position })}
         />
       </div>
 
@@ -243,17 +243,17 @@ export const View = ({
           {
             icon: <IconArrowLeftOnRect className="h-6 w-6" />,
             label: "Exit",
-            onClick: () => dispatch({ t: "stop-game" }),
+            onClick: () => emit({ t: "stop-game" }),
           },
           {
             icon: <IconRightLeft className="h-6 w-6" />,
             label: "Swap sides",
-            onClick: () => dispatch({ t: "swap-sides" }),
+            onClick: () => emit({ t: "swap-sides" }),
           },
           {
             icon: <IconArrowRotateLeft className="h-6 w-6" />,
             label: "Restart",
-            onClick: () => dispatch({ t: "restart" }),
+            onClick: () => emit({ t: "restart" }),
           },
         ]}
       />

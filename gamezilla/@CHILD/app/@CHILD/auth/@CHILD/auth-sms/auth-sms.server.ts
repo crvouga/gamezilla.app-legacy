@@ -129,8 +129,8 @@ export const updateFromClient: Module["update"] = async ({
     case "send-code": {
       return {
         model,
-        eff: async (dispatch) => {
-          dispatch({
+        eff: async (emit) => {
+          emit({
             t: "sent-code",
             phoneNumber: msgFromClient.phoneNumber,
             result: await verifySMS.sendCode(msgFromClient),
@@ -143,8 +143,8 @@ export const updateFromClient: Module["update"] = async ({
     case "verify-code": {
       return {
         model,
-        eff: async (dispatch) => {
-          dispatch({
+        eff: async (emit) => {
+          emit({
             t: "verified-code",
             phoneNumber: msgFromClient.phoneNumber,
             clientId: msgFromClient.clientId,

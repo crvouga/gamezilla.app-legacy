@@ -310,7 +310,7 @@ export function toGameOver(columns: ConnectFour.Columns): VsBotGame.GameOver {
   }
 }
 
-const View: Module["View"] = ({ model, ctx, modelGameState, dispatch }) => {
+const View: Module["View"] = ({ model, ctx, modelGameState, emit }) => {
   const vsBotSetupProps: VsBotSetup.VsBotSetupProps = {
     ctx: ctx,
     onQuit: ctx.onQuit,
@@ -318,15 +318,15 @@ const View: Module["View"] = ({ model, ctx, modelGameState, dispatch }) => {
     renderCoverArt: (props) => <CoverArt {...props} />,
     canStartGame: modelGameState.playingUserId !== null,
     onSwapSides: () =>
-      dispatch({ t: "user-swapped-sides", userId: ctx.currentUserId }),
+      emit({ t: "user-swapped-sides", userId: ctx.currentUserId }),
     onStartGame: () =>
-      dispatch({ t: "user-started-game", userId: ctx.currentUserId }),
+      emit({ t: "user-started-game", userId: ctx.currentUserId }),
     botVariants: allBotLevels.map((botLevel) => {
       return {
         label: botLevel,
         renderIcon: (props) => <ViewBotLevel {...props} level={botLevel} />,
         onSelect: () =>
-          dispatch({
+          emit({
             t: "user-changed-bot-level",
             botLevel,
             userId: ctx.currentUserId,
@@ -350,25 +350,25 @@ const View: Module["View"] = ({ model, ctx, modelGameState, dispatch }) => {
       label: "Red",
       renderIcon: (props) => <PlayerOneIcon {...props} />,
       onStartPlaying: () =>
-        dispatch({
+        emit({
           t: "user-started-playing",
           playerType: "player-one",
           userId: ctx.currentUserId,
         }),
       onStopPlaying: () =>
-        dispatch({ t: "user-stopped-playing", userId: ctx.currentUserId }),
+        emit({ t: "user-stopped-playing", userId: ctx.currentUserId }),
     },
     playerTwo: {
       label: "Yellow",
       renderIcon: (props) => <PlayerTwoIcon {...props} />,
       onStartPlaying: () =>
-        dispatch({
+        emit({
           t: "user-started-playing",
           playerType: "player-two",
           userId: ctx.currentUserId,
         }),
       onStopPlaying: () =>
-        dispatch({ t: "user-stopped-playing", userId: ctx.currentUserId }),
+        emit({ t: "user-stopped-playing", userId: ctx.currentUserId }),
     },
   };
 
@@ -380,7 +380,7 @@ const View: Module["View"] = ({ model, ctx, modelGameState, dispatch }) => {
     return (
       <VsBotSetup.View
         model={model.vsBotSetup}
-        dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
+        emit={(c) => emit({ t: "vs-bot-setup", c })}
         {...vsBotSetupProps}
       />
     );
@@ -421,7 +421,7 @@ const View: Module["View"] = ({ model, ctx, modelGameState, dispatch }) => {
             columns={modelGameState.columns}
             disabled={isSpectating || status.type !== "Playing"}
             onDropDisc={(columnIndex) => {
-              dispatch({
+              emit({
                 t: "user-dropped-disc",
                 columnIndex,
                 userId: ctx.currentUserId,
@@ -433,7 +433,7 @@ const View: Module["View"] = ({ model, ctx, modelGameState, dispatch }) => {
               {...vsBotGameProps}
               model={model.vsBotGame}
               onPlayAgain={() =>
-                dispatch({
+                emit({
                   t: "user-restarted-game",
                   userId: ctx.currentUserId,
                 })
@@ -451,7 +451,7 @@ const View: Module["View"] = ({ model, ctx, modelGameState, dispatch }) => {
               label: "Exit",
               icon: <IconArrowLeftOnRect className="h-6 w-6" />,
               onClick: () =>
-                dispatch({
+                emit({
                   t: "user-stopped-game",
                   userId: ctx.currentUserId,
                 }),
@@ -460,7 +460,7 @@ const View: Module["View"] = ({ model, ctx, modelGameState, dispatch }) => {
               label: "Swap sides",
               icon: <IconRightLeft className="h-6 w-6" />,
               onClick: () =>
-                dispatch({
+                emit({
                   t: "user-swapped-sides",
                   userId: ctx.currentUserId,
                 }),
@@ -469,7 +469,7 @@ const View: Module["View"] = ({ model, ctx, modelGameState, dispatch }) => {
               label: "Restart",
               icon: <IconArrowRotateLeft className="h-6 w-6" />,
               onClick: () =>
-                dispatch({
+                emit({
                   t: "user-restarted-game",
                   userId: ctx.currentUserId,
                 }),

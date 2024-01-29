@@ -253,19 +253,19 @@ export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
 export const View = ({
   ctx,
   model,
-  dispatch,
+  emit,
   onClose,
 }: {
   ctx: SpaceClientCtx;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  emit: (msg: ClientMsg) => void;
   onClose: () => void;
 }) => {
   if (model.coreModel.type === "setup") {
     return (
       <VsBotSetup.View
         model={model.vsBotSetup}
-        dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
+        emit={(c) => emit({ t: "vs-bot-setup", c })}
         title="Chess"
         renderCoverArt={(props) => {
           return <CoverArt {...props} />;
@@ -283,11 +283,11 @@ export const View = ({
             label: Chess.botLevelToString(botLevel),
             renderIcon: (props) =>
               Chess.renderBotLevel({ level: botLevel, ...props }),
-            onSelect: () => dispatch({ t: "input-bot-level", botLevel }),
+            onSelect: () => emit({ t: "input-bot-level", botLevel }),
           };
         })}
         onSwapSides={() =>
-          dispatch({
+          emit({
             t: "start-playing",
             color: model.coreModel.userColor === "w" ? "b" : "w",
           })
@@ -300,19 +300,19 @@ export const View = ({
           userId: model.coreModel.userId,
         }}
         onQuit={onClose}
-        onStartGame={() => dispatch({ t: "start-game" })}
+        onStartGame={() => emit({ t: "start-game" })}
         playerOne={{
           label: "White",
-          onStartPlaying: () => dispatch({ t: "start-playing", color: "w" }),
-          onStopPlaying: () => dispatch({ t: "stop-playing" }),
+          onStartPlaying: () => emit({ t: "start-playing", color: "w" }),
+          onStopPlaying: () => emit({ t: "stop-playing" }),
           renderIcon: (props) => {
             return <PlayerIcon {...props} color="w" />;
           },
         }}
         playerTwo={{
           label: "Black",
-          onStartPlaying: () => dispatch({ t: "start-playing", color: "b" }),
-          onStopPlaying: () => dispatch({ t: "stop-playing" }),
+          onStartPlaying: () => emit({ t: "start-playing", color: "b" }),
+          onStopPlaying: () => emit({ t: "stop-playing" }),
           renderIcon: (props) => {
             return <PlayerIcon {...props} color="b" />;
           },
@@ -375,7 +375,7 @@ export const View = ({
               },
             };
 
-            dispatch(msg);
+            emit(msg);
 
             // return result.t === "ok";
             return true;
@@ -388,7 +388,7 @@ export const View = ({
           {
             label: "Exit",
             icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-            onClick: () => dispatch({ t: "stop-game" }),
+            onClick: () => emit({ t: "stop-game" }),
           },
         ]}
       />

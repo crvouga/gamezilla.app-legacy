@@ -61,23 +61,23 @@ export const update = (model: Model, msg: Msg): Model => {
 
 type PlayerProp =
   | {
-    t: "user";
-    userId: UserId | null;
-    playerLabel: string;
-    renderIcon: (props: { className: string }) => VDom;
-    onStartPlaying: () => void;
-    onStopPlaying: () => void;
-  }
+      t: "user";
+      userId: UserId | null;
+      playerLabel: string;
+      renderIcon: (props: { className: string }) => VDom;
+      onStartPlaying: () => void;
+      onStopPlaying: () => void;
+    }
   | {
-    t: "bot";
+      t: "bot";
 
-    botLabel: string;
-    renderBotIcon: (props: { className: string }) => VDom;
-    playerLabel: string;
-    renderIcon: (props: { className: string }) => VDom;
-    onStartPlaying: () => void;
-    onStopPlaying: () => void;
-  };
+      botLabel: string;
+      renderBotIcon: (props: { className: string }) => VDom;
+      playerLabel: string;
+      renderIcon: (props: { className: string }) => VDom;
+      onStartPlaying: () => void;
+      onStopPlaying: () => void;
+    };
 
 export type VsBotSetupProps = VsBotProps & {
   human: {
@@ -87,10 +87,10 @@ export type VsBotSetupProps = VsBotProps & {
   canStartGame: boolean;
 };
 
-type Props = VsBotSetupProps & { model: Model; dispatch: (m: Msg) => void };
+type Props = VsBotSetupProps & { model: Model; emit: (m: Msg) => void };
 
 export const View = ({
-  dispatch,
+  emit,
   model,
   botVariants,
   title,
@@ -108,34 +108,34 @@ export const View = ({
   const playerOneProp: PlayerProp =
     human.player === "player-one"
       ? {
-        ...playerOne,
-        t: "user",
-        userId: human.userId,
-        playerLabel: playerOne.label,
-      }
+          ...playerOne,
+          t: "user",
+          userId: human.userId,
+          playerLabel: playerOne.label,
+        }
       : {
-        ...playerOne,
-        t: "bot",
-        botLabel: bot.label,
-        playerLabel: playerOne.label,
-        renderBotIcon: bot.renderIcon,
-      };
+          ...playerOne,
+          t: "bot",
+          botLabel: bot.label,
+          playerLabel: playerOne.label,
+          renderBotIcon: bot.renderIcon,
+        };
 
   const playerTwoProp: PlayerProp =
     human.player === "player-two"
       ? {
-        ...playerTwo,
-        t: "user",
-        userId: human.userId,
-        playerLabel: playerTwo.label,
-      }
+          ...playerTwo,
+          t: "user",
+          userId: human.userId,
+          playerLabel: playerTwo.label,
+        }
       : {
-        ...playerTwo,
-        t: "bot",
-        botLabel: bot.label,
-        playerLabel: playerTwo.label,
-        renderBotIcon: bot.renderIcon,
-      };
+          ...playerTwo,
+          t: "bot",
+          botLabel: bot.label,
+          playerLabel: playerTwo.label,
+          renderBotIcon: bot.renderIcon,
+        };
 
   return (
     <div className="flex w-full flex-1 flex-col">
@@ -161,7 +161,7 @@ export const View = ({
         <div className="mt-2 grid w-full grid-cols-7">
           <PlayerButtons
             onSwapSides={onSwapSides}
-            dispatch={dispatch}
+            emit={emit}
             human={human}
             player={playerOneProp}
             ctx={ctx}
@@ -169,7 +169,7 @@ export const View = ({
           <div className="col-span-1"></div>
           <PlayerButtons
             onSwapSides={onSwapSides}
-            dispatch={dispatch}
+            emit={emit}
             human={human}
             player={playerTwoProp}
             ctx={ctx}
@@ -202,20 +202,22 @@ export const View = ({
         position="bottom"
         id="change-bot"
         open={model.opened === "change-bot"}
-        onClose={() => dispatch({ t: "closed-modal" })}>
+        onClose={() => emit({ t: "closed-modal" })}
+      >
         <div className="flex flex-col pb-6">
           <p className="p-4 text-2xl font-bold">Change bot</p>
           <div>
             {botVariants.map((botLevel) => {
               const onClick = () => {
                 botLevel.onSelect();
-                dispatch({ t: "closed-modal" });
+                emit({ t: "closed-modal" });
               };
               return (
                 <button
                   key={botLevel.label}
                   className="flex w-full items-center gap-3 p-4 text-left text-xl font-bold"
-                  onClick={onClick}>
+                  onClick={onClick}
+                >
                   {botLevel.renderIcon({ className: "w-10 h-10" })}
                   {botLevel.label}
                 </button>
@@ -247,7 +249,8 @@ const PlayerIcons = ({
       ) : (
         <div
           role="button"
-          className="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-600">
+          className="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-600"
+        >
           <IconQuestionMark className="h-10 w-10 text-neutral-300" />
         </div>
       )}
@@ -269,8 +272,8 @@ const PlayerLabels = ({
         {player.t === "bot"
           ? player.botLabel
           : player.userId
-            ? ctx.profiles[player.userId]?.username ?? "..."
-            : "?"}
+          ? ctx.profiles[player.userId]?.username ?? "..."
+          : "?"}
       </p>
 
       <p className="text-center text-sm text-secondary">{player.playerLabel}</p>
@@ -283,13 +286,13 @@ const PlayerButtons = ({
   player,
   ctx,
   onSwapSides,
-  dispatch,
+  emit,
 }: {
   onSwapSides: () => void;
   human: { userId: UserId | null };
   ctx: SpaceClientCtx;
   player: PlayerProp;
-  dispatch: (m: Msg) => void;
+  emit: (m: Msg) => void;
 }) => {
   return (
     <div className="col-span-3 flex flex-col gap-2">
@@ -321,7 +324,7 @@ const PlayerButtons = ({
       )}
       {player.t === "bot" && human.userId === ctx.currentUserId && (
         <Button
-          onClick={() => dispatch({ t: "clicked-change-bot" })}
+          onClick={() => emit({ t: "clicked-change-bot" })}
           className="w-full"
           variant="text"
           color="primary"

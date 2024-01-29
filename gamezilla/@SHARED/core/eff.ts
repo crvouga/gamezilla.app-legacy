@@ -1,11 +1,11 @@
 import { p } from "./utils/pipe";
 import { Task } from "./task";
 
-export type Eff<Msg = never> = (dispatch: (msg: Msg) => void) => void;
+export type Eff<Msg = never> = (emit: (msg: Msg) => void) => void;
 
 const of = <Msg>(msg: Msg): Eff<Msg> => {
-  const eff: Eff<Msg> = (dispatch) => {
-    dispatch(msg);
+  const eff: Eff<Msg> = (emit) => {
+    emit(msg);
   };
   return eff;
 };
@@ -13,9 +13,9 @@ const of = <Msg>(msg: Msg): Eff<Msg> => {
 const map =
   <A, B>(mapper: (a: A) => B) =>
   (eff: Eff<A>): Eff<B> => {
-    const mappedEff: Eff<B> = (dispatch) => {
+    const mappedEff: Eff<B> = (emit) => {
       eff((a) => {
-        dispatch(mapper(a));
+        emit(mapper(a));
       });
     };
     return mappedEff;
@@ -28,9 +28,9 @@ const map_ = <A, B>(
   if (!eff) {
     return None;
   }
-  return (dispatch) => {
+  return (emit) => {
     eff((a) => {
-      dispatch(mapper(a));
+      emit(mapper(a));
     });
   };
 };
@@ -38,10 +38,10 @@ const map_ = <A, B>(
 const chain =
   <A, B>(mapper: (a: A) => Eff<B>) =>
   (eff: Eff<A>): Eff<B> => {
-    return (dispatch) => {
+    return (emit) => {
       eff((a) => {
         mapper(a)((b) => {
-          dispatch(b);
+          emit(b);
         });
       });
     };
@@ -63,11 +63,11 @@ const tag = <Tag extends string, Msg>(
 const batch = <Msg>(
   ...effLists: (Eff<Msg> | undefined | null)[][]
 ): Eff<Msg> => {
-  const batchedEff: Eff<Msg> = (dispatch) => {
+  const batchedEff: Eff<Msg> = (emit) => {
     for (const effList of effLists) {
       for (const eff of effList) {
         if (eff) {
-          eff(dispatch);
+          eff(emit);
         }
       }
     }
@@ -83,9 +83,9 @@ const None: Eff = () => {
 const perform =
   <A, Msg>(f: (a: A) => Msg) =>
   (task: Task<A>): Eff<Msg> => {
-    return async (dispatch) => {
+    return async (emit) => {
       const value = await task();
-      dispatch(f(value));
+      emit(f(value));
     };
   };
 

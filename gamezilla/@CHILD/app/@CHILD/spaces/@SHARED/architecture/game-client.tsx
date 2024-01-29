@@ -67,7 +67,7 @@ export type GameClient<T extends GameClientTypes> = {
 
   View: (input: {
     ctx: T["ClientCtx"];
-    dispatch: (msg: T["ClientMsg"]) => void;
+    emit: (msg: T["ClientMsg"]) => void;
     state: T["GameState"];
     model?: T["ClientModel"] | null;
   }) => VDom;
@@ -163,7 +163,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         <client.View
           ctx={input.ctx}
           state={input.state.c}
-          dispatch={(m) => input.dispatch({ t: tag, c: m })}
+          emit={(m) => input.emit({ t: tag, c: m })}
           model={input.model?.c}
         />
       );

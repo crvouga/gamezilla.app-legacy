@@ -107,7 +107,7 @@ const updateFromClient: Module["update"] = async ({
 
   return {
     model,
-    eff: async (dispatch) => {
+    eff: async (emit) => {
       const userId = msgFromClient.userId;
 
       if (!userId) {
@@ -121,7 +121,7 @@ const updateFromClient: Module["update"] = async ({
         ctx: { ...ctx, currentUserId: userId },
       });
 
-      dispatch({
+      emit({
         t: "handled",
         clientId: msgFromClient.clientId,
         msg: { ...msgFromClient, result },
@@ -139,13 +139,13 @@ const updateFromEvent: Module["update"] = async ({ msgEvent, model, ctx }) => {
     case "auth/client-authenticated": {
       return {
         model,
-        eff: async (dispatch) => {
+        eff: async (emit) => {
           const ProfileDb = createProfileDb({ dbConn: ctx.dbConn });
           const result = await findElseInsertNew({
             ProfileDb,
             userId: msgEvent.userId,
           });
-          dispatch({
+          emit({
             t: "handled",
             clientId: msgEvent.clientId,
             msg: {

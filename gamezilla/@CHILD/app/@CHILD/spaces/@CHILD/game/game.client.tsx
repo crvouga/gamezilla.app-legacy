@@ -185,14 +185,14 @@ const subscriptions: Module["subscriptions"] = (input): Sub<ClientMsg> => {
 //
 
 const View: Module["View"] = (input) => {
-  const { model, ctx, modelGameState, dispatch } = input;
+  const { model, ctx, modelGameState, emit } = input;
 
   switch (modelGameState.t) {
     case "connect-four": {
       return (
         <ConnectFour.View
           ctx={ctx}
-          dispatch={(c) => dispatch({ t: "connect-four", c })}
+          emit={(c) => emit({ t: "connect-four", c })}
           modelGameState={modelGameState.c}
           model={model?.t === "connect-four" ? model.c : ConnectFour.init}
         />
@@ -203,7 +203,7 @@ const View: Module["View"] = (input) => {
       return (
         <Flow.View
           ctx={ctx}
-          dispatch={(c) => dispatch({ t: "flow", c })}
+          emit={(c) => emit({ t: "flow", c })}
           modelGameState={modelGameState.c}
           model={model.t === "flow" ? model.c : Flow.init}
         />
@@ -213,7 +213,7 @@ const View: Module["View"] = (input) => {
 };
 
 const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-  const { msgGameEvent, modelGameState, ctx, dispatch } = input;
+  const { msgGameEvent, modelGameState, ctx, emit } = input;
 
   switch (modelGameState.t) {
     case "connect-four": {
@@ -224,7 +224,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
               ctx={ctx}
               msgGameEvent={msgGameEvent.c}
               modelGameState={modelGameState.c}
-              dispatch={(c) => dispatch({ t: "connect-four", c })}
+              emit={(c) => emit({ t: "connect-four", c })}
             />
           );
         }

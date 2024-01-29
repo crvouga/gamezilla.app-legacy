@@ -131,17 +131,15 @@ export const update = ({
 
 export const View = ({
   model,
-  dispatch,
+  emit,
 }: {
   model: Model;
-  dispatch: (msg: Msg) => void;
+  emit: (msg: Msg) => void;
 }) => {
   return (
     <div className="flex h-full w-full flex-col">
       <TopBar
-        left={
-          <TopBarBackButton onClick={() => dispatch({ t: "clicked-back" })} />
-        }
+        left={<TopBarBackButton onClick={() => emit({ t: "clicked-back" })} />}
         title="Login With Email"
       />
 
@@ -149,7 +147,7 @@ export const View = ({
         className="flex flex-col gap-6 p-4"
         onSubmit={(e) => {
           e.preventDefault();
-          dispatch({ t: "clicked-send-login-link" });
+          emit({ t: "clicked-send-login-link" });
         }}
       >
         <TextField
@@ -159,10 +157,10 @@ export const View = ({
           label="Email Address"
           value={model.emailAddress}
           onChange={(emailAddress) => {
-            dispatch({ t: "inputted-email-address", emailAddress });
+            emit({ t: "inputted-email-address", emailAddress });
           }}
           onClear={() =>
-            dispatch({ t: "inputted-email-address", emailAddress: "" })
+            emit({ t: "inputted-email-address", emailAddress: "" })
           }
           error={model.validation === "invalid-email"}
           helperText={

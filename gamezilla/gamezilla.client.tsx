@@ -41,7 +41,7 @@ const main = async () => {
     },
   });
 
-  program.subscribe(renderer(program.dispatch));
+  program.subscribe(renderer(program.emit));
 
   await program.start();
 
@@ -141,7 +141,7 @@ const renderRuntimeErrors = () => {
 renderRuntimeErrors();
 
 type Renderer = (
-  dispatch: (m: App.ClientMsg) => void
+  emit: (m: App.ClientMsg) => void
 ) => (model: App.ClientModel, ctx: Ctx) => void;
 
 const getRenderer = async ({
@@ -155,10 +155,10 @@ const getRenderer = async ({
     case "inferno": {
       const { render } = await import("inferno");
 
-      return function renderer(dispatch) {
+      return function renderer(emit) {
         return function renderInferno(model, ctx) {
           render(
-            <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />,
+            <AppClient.View emit={emit} model={model} now={ctx.now} />,
             rootNode
           );
         };
@@ -172,11 +172,11 @@ const getRenderer = async ({
 
       const reactRoot = createRoot(rootNode);
 
-      return function renderer(dispatch) {
+      return function renderer(emit) {
         return function renderReact(model, ctx) {
           reactRoot.render(
             // @ts-ignore
-            <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />
+            <AppClient.View emit={emit} model={model} now={ctx.now} />
           );
         };
       };
@@ -186,10 +186,10 @@ const getRenderer = async ({
       const { render } = await import("preact");
       await import("preact/compat");
 
-      return function renderer(dispatch) {
+      return function renderer(emit) {
         return function renderPreact(model, ctx) {
           render(
-            <AppClient.View dispatch={dispatch} model={model} now={ctx.now} />,
+            <AppClient.View emit={emit} model={model} now={ctx.now} />,
             rootNode
           );
         };

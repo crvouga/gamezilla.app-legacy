@@ -73,13 +73,13 @@ export const subscriptions: Client["subscriptions"] = () => {
 export const View = ({
   ctx,
   model,
-  dispatch,
+  emit,
 }: {
   ctx: SpaceClientCtx;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  emit: (msg: ClientMsg) => void;
 }) => {
-  const onQuit = () => dispatch({ t: "input-mode", mode: "none" });
+  const onQuit = () => emit({ t: "input-mode", mode: "none" });
 
   if (model.t === "none") {
     return (
@@ -89,10 +89,10 @@ export const View = ({
         renderCoverArt={(props) => <CoverArt {...props} />}
         buttons={[
           MainMenuScreen.buttons.playFriend({
-            onClick: () => dispatch({ t: "input-mode", mode: "vs-user" }),
+            onClick: () => emit({ t: "input-mode", mode: "vs-user" }),
           }),
           MainMenuScreen.buttons.playComputer({
-            onClick: () => dispatch({ t: "input-mode", mode: "vs-bot" }),
+            onClick: () => emit({ t: "input-mode", mode: "vs-bot" }),
           }),
         ]}
       />
@@ -105,7 +105,7 @@ export const View = ({
         onCloseGame={onQuit}
         ctx={ctx}
         model={model.c}
-        dispatch={(c) => dispatch({ t: "vs-user", c })}
+        emit={(c) => emit({ t: "vs-user", c })}
       />
     );
   }
@@ -116,7 +116,7 @@ export const View = ({
         goBack={onQuit}
         ctx={ctx}
         model={model.c}
-        dispatch={(c) => dispatch({ t: "vs-bot", c })}
+        emit={(c) => emit({ t: "vs-bot", c })}
       />
     );
   }

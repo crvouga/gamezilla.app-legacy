@@ -153,7 +153,7 @@ const View: ClientModule["View"] = (input) => {
 };
 
 const ViewMode: ClientModule["View"] = (input) => {
-  const { model, modelGameState, dispatch } = input;
+  const { model, modelGameState, emit } = input;
 
   if (modelGameState.t !== "build") {
     return null;
@@ -167,7 +167,7 @@ const ViewMode: ClientModule["View"] = (input) => {
   const more = {
     label: "More",
     icon: <IconEllipsisVertical className="h-6 w-6" />,
-    onClick: () => dispatch({ t: "puzzle.editor.user-clicked-more-button" }),
+    onClick: () => emit({ t: "puzzle.editor.user-clicked-more-button" }),
   };
 
   switch (modelGameState.mode.t) {
@@ -183,9 +183,7 @@ const ViewMode: ClientModule["View"] = (input) => {
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
             <FlowGridUIEdit.View
               model={modelGameState.gridEdit}
-              dispatch={(c) =>
-                dispatch({ t: "puzzle.editor.flow-grid-ui-edit", c })
-              }
+              emit={(c) => emit({ t: "puzzle.editor.flow-grid-ui-edit", c })}
             />
           </div>
 
@@ -200,7 +198,7 @@ const ViewMode: ClientModule["View"] = (input) => {
                 },
                 icon: <IconPlay className="h-6 w-6" />,
                 onClick: () =>
-                  dispatch({
+                  emit({
                     t: "puzzle.editor.user-clicked-play-mode-button",
                   }),
               },
@@ -225,9 +223,7 @@ const ViewMode: ClientModule["View"] = (input) => {
             <FlowGridUIPlay.View
               model={modelGameState.gridPlay}
               grid={toCurrentGrid(modelGameState)}
-              dispatch={(c) =>
-                dispatch({ t: "puzzle.editor.flow-grid-ui-play", c })
-              }
+              emit={(c) => emit({ t: "puzzle.editor.flow-grid-ui-play", c })}
             />
           </div>
 
@@ -242,7 +238,7 @@ const ViewMode: ClientModule["View"] = (input) => {
                 },
                 icon: <IconPenToSquare className="h-6 w-6" />,
                 onClick: () =>
-                  dispatch({
+                  emit({
                     t: "puzzle.editor.user-clicked-edit-mode-button",
                   }),
               },
@@ -318,12 +314,12 @@ const updateMoreDrawer: ClientModule["update"] = (input) => {
 };
 
 export const ViewMoreDrawer: ClientModule["View"] = (input) => {
-  const { dispatch } = input;
+  const { emit } = input;
   return (
     <Drawer
       id="more-drawer"
       open={input.model.opened === "more"}
-      onClose={() => dispatch({ t: "puzzle.editor.user-closed-more-drawer" })}
+      onClose={() => emit({ t: "puzzle.editor.user-closed-more-drawer" })}
       position="bottom"
     >
       <PuzzleEditNameClient.View {...input} />

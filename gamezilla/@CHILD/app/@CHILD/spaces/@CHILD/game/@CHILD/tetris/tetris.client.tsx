@@ -254,12 +254,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // const gridStroke = "rgba(255, 255, 255, 0.2)"
 // const gridStrokeWidth = 0.025
 
-export const View = ({
-  dispatch,
-}: {
-  model: Model;
-  dispatch: (msg: Msg) => void;
-}) => {
+export const View = ({ emit }: { model: Model; emit: (msg: Msg) => void }) => {
   return (
     <div>
       <div>
@@ -272,7 +267,7 @@ export const View = ({
             }
           }}
           onClick={(msgEvent) => {
-            dispatch(["ClickedBoard", mouseEventToPosition(msgEvent)]);
+            emit(["ClickedBoard", mouseEventToPosition(msgEvent)]);
           }}
           onMouseMove={(msgEvent) => {
             const x = Math.floor(
@@ -291,7 +286,7 @@ export const View = ({
               })
             );
 
-            dispatch(["MouseMove", { x, y }]);
+            emit(["MouseMove", { x, y }]);
           }}
           onTouchStart={(msgEvent) => {
             const touch = msgEvent.touches[0];
@@ -336,9 +331,9 @@ export const View = ({
                     x={x}
                     y={y}
                     fill="transparent"
-                    onTouchStart={() => dispatch(['TouchStart', { x, y }])}
-                    onTouchEnd={() => dispatch(['TouchEnd', { x, y }])}
-                    onTouchMove={() => dispatch(['TouchMove', { x, y }])}
+                    onTouchStart={() => emit(['TouchStart', { x, y }])}
+                    onTouchEnd={() => emit(['TouchEnd', { x, y }])}
+                    onTouchMove={() => emit(['TouchMove', { x, y }])}
                 />
             ))}
 

@@ -107,7 +107,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-  const { model, modelGameState, dispatch, ctx } = input;
+  const { model, modelGameState, emit, ctx } = input;
 
   if (modelGameState.t !== "list") {
     return null;
@@ -135,7 +135,7 @@ const View: ClientModule["View"] = (input) => {
               key={puzzle.id}
               puzzle={puzzle}
               onClick={() =>
-                dispatch({ t: "list/user-clicked-puzzle-list-item", puzzle })
+                emit({ t: "list/user-clicked-puzzle-list-item", puzzle })
               }
             />
           ))}
@@ -151,7 +151,7 @@ const View: ClientModule["View"] = (input) => {
 
         <IntersectionObserverEmitter
           id="puzzle-builder-list"
-          onVisible={() => dispatch({ t: "list/user-observed-end-of-list" })}
+          onVisible={() => emit({ t: "list/user-observed-end-of-list" })}
         />
       </div>
 

@@ -138,7 +138,7 @@ const subscriptions: Module["subscriptions"] = () => {
 //
 //
 
-const View: Module["View"] = ({ ctx, model, modelGameState, dispatch }) => {
+const View: Module["View"] = ({ ctx, model, modelGameState, emit }) => {
   if (!model) {
     return null;
   }
@@ -157,20 +157,20 @@ const View: Module["View"] = ({ ctx, model, modelGameState, dispatch }) => {
             );
           }}
           onStartGame={() => {
-            dispatch({ t: "user-started-game", userId: ctx.currentUserId });
+            emit({ t: "user-started-game", userId: ctx.currentUserId });
           }}
           onQuit={ctx.onQuit}
           playerOne={{
             label: "Red",
             onStartPlaying: () => {
-              dispatch({
+              emit({
                 t: "user-started-playing",
                 playerType: "player-one",
                 userId: ctx.currentUserId,
               });
             },
             onStopPlaying: () => {
-              dispatch({
+              emit({
                 t: "user-stopped-playing",
                 userId: ctx.currentUserId,
               });
@@ -183,14 +183,14 @@ const View: Module["View"] = ({ ctx, model, modelGameState, dispatch }) => {
           playerTwo={{
             label: "Yellow",
             onStartPlaying: () => {
-              dispatch({
+              emit({
                 t: "user-started-playing",
                 userId: ctx.currentUserId,
                 playerType: "player-two",
               });
             },
             onStopPlaying: () => {
-              dispatch({
+              emit({
                 t: "user-stopped-playing",
                 userId: ctx.currentUserId,
               });
@@ -234,14 +234,14 @@ const View: Module["View"] = ({ ctx, model, modelGameState, dispatch }) => {
                 columns={modelGameState.columns}
                 gameId={modelGameState.gameId}
                 onDropDisc={(columnIndex) =>
-                  dispatch({
+                  emit({
                     t: "user-dropped-disc",
                     userId: ctx.currentUserId,
                     columnIndex,
                   })
                 }
                 onHover={(columnIndex) =>
-                  dispatch({ t: "hovered-over-columns", columnIndex })
+                  emit({ t: "hovered-over-columns", columnIndex })
                 }
                 disabled={
                   toTurn(modelGameState.columns) !== currentUserPlayerType ||
@@ -251,7 +251,7 @@ const View: Module["View"] = ({ ctx, model, modelGameState, dispatch }) => {
               {modelGameState.type === "game-over" && (
                 <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
                   <ViewGameOverMessage
-                    dispatch={dispatch}
+                    emit={emit}
                     ctx={ctx}
                     modelGameState={modelGameState}
                   />
@@ -268,7 +268,7 @@ const View: Module["View"] = ({ ctx, model, modelGameState, dispatch }) => {
                       icon: <IconFlag className="h-6 w-6" />,
                       label: "Resign",
                       onClick: () => {
-                        dispatch({
+                        emit({
                           t: "clicked-resign",
                           userId: ctx.currentUserId,
                         });
@@ -283,7 +283,7 @@ const View: Module["View"] = ({ ctx, model, modelGameState, dispatch }) => {
                       icon: <IconArrowLeftOnRect className="h-6 w-6" />,
                       label: "Exit",
                       onClick: () => {
-                        dispatch({
+                        emit({
                           t: "user-stopped-game",
                           userId: ctx.currentUserId,
                         });
@@ -293,7 +293,7 @@ const View: Module["View"] = ({ ctx, model, modelGameState, dispatch }) => {
                       icon: <IconArrowRotateLeft className="h-6 w-6" />,
                       label: "Rematch",
                       onClick: () => {
-                        dispatch({
+                        emit({
                           t: "user-requested-rematch",
                           userId: ctx.currentUserId,
                         });
@@ -307,11 +307,11 @@ const View: Module["View"] = ({ ctx, model, modelGameState, dispatch }) => {
           <ConfirmationDialog
             headerIcon={<IconFlag className="h-10 w-10" />}
             title="Resign from game?"
-            onCancel={() => dispatch({ t: "close-modal" })}
-            onClose={() => dispatch({ t: "close-modal" })}
+            onCancel={() => emit({ t: "close-modal" })}
+            onClose={() => emit({ t: "close-modal" })}
             confirmTitle="Resign"
             onConfirm={() =>
-              dispatch({ t: "user-resigned", userId: ctx.currentUserId })
+              emit({ t: "user-resigned", userId: ctx.currentUserId })
             }
             open={model.openedModal === "confirm-resign"}
           />
@@ -324,11 +324,11 @@ const View: Module["View"] = ({ ctx, model, modelGameState, dispatch }) => {
 const ViewGameOverMessage = ({
   ctx,
   modelGameState,
-  dispatch,
+  emit,
 }: {
   modelGameState: StateGameOver;
   ctx: ClientCtx;
-  dispatch: (msg: GameEvent) => void;
+  emit: (msg: GameEvent) => void;
 }) => {
   const currentPlayerType = toPlayerType(ctx.currentUserId, modelGameState);
 
@@ -343,7 +343,7 @@ const ViewGameOverMessage = ({
         <Button
           variant="contained"
           onClick={() =>
-            dispatch({
+            emit({
               t: "user-cancelled-rematch",
               userId: ctx.currentUserId,
             })
@@ -366,7 +366,7 @@ const ViewGameOverMessage = ({
           <Button
             variant="contained"
             onClick={() =>
-              dispatch({
+              emit({
                 t: "user-responded-to-rematch-request",
                 userId: ctx.currentUserId,
                 response: "Decline",
@@ -379,7 +379,7 @@ const ViewGameOverMessage = ({
           <Button
             variant="contained"
             onClick={() =>
-              dispatch({
+              emit({
                 t: "user-responded-to-rematch-request",
                 userId: ctx.currentUserId,
                 response: "Decline",

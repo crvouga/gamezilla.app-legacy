@@ -180,11 +180,11 @@ const colorMap: { [color in Color]: string } = {
 export const View = ({
   model,
   ctx,
-  dispatch,
+  emit,
 }: {
   ctx: SpaceClientCtx;
   model: Model;
-  dispatch: (msg: Msg) => void;
+  emit: (msg: Msg) => void;
 }) => {
   if (model.type === "setup") {
     return <div></div>;
@@ -244,13 +244,13 @@ export const View = ({
               d === "none" ? undefined : d
             )}
             onChange={(direction) =>
-              dispatch([
+              emit([
                 "input-direction",
                 { direction, userId: ctx.currentUserId },
               ])
             }
             onDone={() =>
-              dispatch([
+              emit([
                 "input-direction",
                 { direction: "none", userId: ctx.currentUserId },
               ])
@@ -263,9 +263,7 @@ export const View = ({
             <ActionButton
               icon={<IconArrowLeftOnRect className="h-6 w-6" />}
               label="Exit"
-              onClick={() =>
-                dispatch(["stop-game", { userId: ctx.currentUserId }])
-              }
+              onClick={() => emit(["stop-game", { userId: ctx.currentUserId }])}
             />
           </div>
         </>

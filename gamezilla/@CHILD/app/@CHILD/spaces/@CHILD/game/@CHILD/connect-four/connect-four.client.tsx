@@ -208,9 +208,9 @@ const updateChild =
 //
 //
 
-const View: Module["View"] = ({ dispatch, ctx, modelGameState, model }) => {
+const View: Module["View"] = ({ emit, ctx, modelGameState, model }) => {
   const onQuit = () => {
-    dispatch({
+    emit({
       t: "user-changed-mode",
       mode: "none",
       userId: ctx.currentUserId,
@@ -227,7 +227,7 @@ const View: Module["View"] = ({ dispatch, ctx, modelGameState, model }) => {
           buttons={[
             MainMenuScreen.buttons.playFriend({
               onClick: () =>
-                dispatch({
+                emit({
                   mode: "vs-user",
                   t: "user-changed-mode",
                   userId: ctx.currentUserId,
@@ -235,7 +235,7 @@ const View: Module["View"] = ({ dispatch, ctx, modelGameState, model }) => {
             }),
             MainMenuScreen.buttons.playComputer({
               onClick: () =>
-                dispatch({
+                emit({
                   mode: "vs-bot",
                   t: "user-changed-mode",
                   userId: ctx.currentUserId,
@@ -250,7 +250,7 @@ const View: Module["View"] = ({ dispatch, ctx, modelGameState, model }) => {
       return (
         <VsBot.View
           ctx={{ ...ctx, onQuit }}
-          dispatch={(c) => dispatch({ t: "vs-bot", c })}
+          emit={(c) => emit({ t: "vs-bot", c })}
           model={model?.t === "vs-bot" ? model.c : VsBot.init}
           modelGameState={modelGameState.c}
         />
@@ -261,7 +261,7 @@ const View: Module["View"] = ({ dispatch, ctx, modelGameState, model }) => {
       return (
         <VsUser.View
           ctx={{ ...ctx, onQuit }}
-          dispatch={(c) => dispatch({ t: "vs-user", c })}
+          emit={(c) => emit({ t: "vs-user", c })}
           model={model?.t === "vs-user" ? model.c : VsUser.init}
           modelGameState={modelGameState.c}
         />
@@ -311,7 +311,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
               ctx={{ ...ctx, onQuit: () => {} }}
               msgGameEvent={msgGameEvent.c}
               modelGameState={modelGameState.c}
-              dispatch={(c) => input.dispatch({ t: "vs-bot", c })}
+              emit={(c) => input.emit({ t: "vs-bot", c })}
             />
           );
         }
@@ -329,7 +329,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
               ctx={{ ...ctx, onQuit: () => {} }}
               msgGameEvent={msgGameEvent.c}
               modelGameState={modelGameState.c}
-              dispatch={(c) => input.dispatch({ t: "vs-user", c })}
+              emit={(c) => input.emit({ t: "vs-user", c })}
             />
           );
         }

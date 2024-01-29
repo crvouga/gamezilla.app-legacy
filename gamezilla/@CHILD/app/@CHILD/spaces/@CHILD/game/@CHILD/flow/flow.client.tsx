@@ -258,13 +258,13 @@ const subscriptions: Module["subscriptions"] = (input) => {
 //
 
 const View: Module["View"] = (input) => {
-  const { modelGameState, dispatch } = input;
+  const { modelGameState, emit } = input;
 
   const ctx: FlowClientCtx = {
     ...input.ctx,
     puzzles: input.model.puzzles,
     onQuit: () =>
-      dispatch({
+      emit({
         t: "msgEvent",
         c: {
           t: "user-changed-mode",
@@ -287,7 +287,7 @@ const View: Module["View"] = (input) => {
               title: "Play",
               description: "Start playing puzzles",
               onClick: () => {
-                dispatch({
+                emit({
                   t: "msgEvent",
                   c: {
                     t: "user-changed-mode",
@@ -302,7 +302,7 @@ const View: Module["View"] = (input) => {
               title: "Puzzle builder",
               description: "Build new puzzles to play",
               onClick: () => {
-                dispatch({
+                emit({
                   t: "msgEvent",
                   c: {
                     t: "user-changed-mode",
@@ -321,7 +321,7 @@ const View: Module["View"] = (input) => {
       return (
         <BuilderClient.View
           ctx={ctx}
-          dispatch={(c) => dispatch({ t: "builder", c })}
+          emit={(c) => emit({ t: "builder", c })}
           modelGameState={modelGameState.c}
           model={
             input.model.t === "builder" ? input.model.c : BuilderClient.init
@@ -334,7 +334,7 @@ const View: Module["View"] = (input) => {
       return (
         <PlayClient.View
           ctx={ctx}
-          dispatch={(c) => dispatch({ t: "play", c })}
+          emit={(c) => emit({ t: "play", c })}
           modelGameState={modelGameState.c}
           model={input.model.t === "play" ? input.model.c : PlayClient.init}
         />
@@ -345,7 +345,7 @@ const View: Module["View"] = (input) => {
 
 const ViewFeedItem: Module["ViewFeedItem"] = ({
   ctx,
-  dispatch,
+  emit,
   modelGameState,
   msgGameEvent,
 }) => {
@@ -356,7 +356,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
           return (
             <PlayClient.ViewFeedItem
               ctx={{ ...ctx, onQuit() {}, puzzles: {} }}
-              dispatch={(c) => dispatch({ t: "play", c })}
+              emit={(c) => emit({ t: "play", c })}
               modelGameState={modelGameState.c}
               msgGameEvent={msgGameEvent.c}
             />
@@ -374,7 +374,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
           return (
             <BuilderClient.ViewFeedItem
               ctx={{ ...ctx, onQuit() {}, puzzles: {} }}
-              dispatch={(c) => dispatch({ t: "builder", c })}
+              emit={(c) => emit({ t: "builder", c })}
               modelGameState={modelGameState.c}
               msgGameEvent={msgGameEvent.c}
             />

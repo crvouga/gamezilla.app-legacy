@@ -324,14 +324,14 @@ export const subscriptions: Client["subscriptions"] = ({ model, ctx }) => {
 //
 //
 
-export const View: Client["View"] = ({ model, ctx, dispatch }) => {
+export const View: Client["View"] = ({ model, ctx, emit }) => {
   if (ctx.currentRoute.t !== "auth") {
     return null;
   }
   const route = ctx.currentRoute.c;
   switch (route.t) {
     case "login": {
-      return <ViewLoginScreen dispatch={dispatch} />;
+      return <ViewLoginScreen emit={emit} />;
     }
 
     case "login-phone-verify":
@@ -339,7 +339,7 @@ export const View: Client["View"] = ({ model, ctx, dispatch }) => {
       return (
         <AuthClientSMS.View
           ctx={ctx}
-          dispatch={(c) => dispatch({ t: "sms", c })}
+          emit={(c) => emit({ t: "sms", c })}
           model={model.sms}
         />
       );
@@ -351,11 +351,7 @@ export const View: Client["View"] = ({ model, ctx, dispatch }) => {
   }
 };
 
-const ViewLoginScreen = ({
-  dispatch,
-}: {
-  dispatch: (msg: ClientMsg) => void;
-}) => {
+const ViewLoginScreen = ({ emit }: { emit: (msg: ClientMsg) => void }) => {
   return (
     <div className="relative flex h-full w-full flex-1 flex-col">
       <div className="flex flex-1 flex-col items-center justify-center gap-8 p-4">
@@ -368,7 +364,7 @@ const ViewLoginScreen = ({
 
         <div className="flex w-full flex-col gap-6">
           <Button
-            onClick={() => dispatch({ t: "user-clicked-login-with-phone" })}
+            onClick={() => emit({ t: "user-clicked-login-with-phone" })}
             size="lg"
             className="w-full"
             start={<IconMobilePhone className="h-6 w-6" />}
@@ -382,17 +378,17 @@ const ViewLoginScreen = ({
 
 export const ViewLogoutScreen = ({
   model,
-  dispatch,
+  emit,
 }: {
   ctx: AnonymousClientCtx;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  emit: (msg: ClientMsg) => void;
 }) => {
   if (model.logout?.t === "loading") {
     return <LoadingState />;
   }
 
-  const dispatchLogout = (c: LogoutMsg) => dispatch({ t: "logout", c });
+  const emitLogout = (c: LogoutMsg) => emit({ t: "logout", c });
 
   return (
     <div className="relative h-full w-full flex-1">
@@ -400,9 +396,9 @@ export const ViewLogoutScreen = ({
         open
         title="Logout of Gamezilla?"
         confirmTitle="Logout"
-        onClose={() => dispatchLogout({ t: "closed" })}
-        onCancel={() => dispatchLogout({ t: "clicked-cancel" })}
-        onConfirm={() => dispatchLogout({ t: "clicked-confirm" })}
+        onClose={() => emitLogout({ t: "closed" })}
+        onCancel={() => emitLogout({ t: "clicked-cancel" })}
+        onConfirm={() => emitLogout({ t: "clicked-confirm" })}
       />
     </div>
   );

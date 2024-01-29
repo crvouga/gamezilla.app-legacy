@@ -167,9 +167,9 @@ export const updateFromCmd: Module["update"] = async ({ model, msgCmd }) => {
     case "preload": {
       return {
         model,
-        eff: async (dispatch) => {
+        eff: async (emit) => {
           const preloaded = await preloadSounds(soundCmd.src);
-          dispatch({
+          emit({
             t: "preloaded-sounds",
             src: soundCmd.src,
             result: preloaded,
@@ -184,7 +184,7 @@ export const updateFromCmd: Module["update"] = async ({ model, msgCmd }) => {
 
       return {
         model,
-        eff: async (dispatch) => {
+        eff: async (emit) => {
           const { delay } = soundCmd;
 
           if (delay) {
@@ -197,7 +197,7 @@ export const updateFromCmd: Module["update"] = async ({ model, msgCmd }) => {
             soundCmd.src,
             soundCmd.volume ?? UnitInterval.init(1)
           );
-          dispatch({
+          emit({
             t: "played-sound",
             src: soundCmd.src,
             result: played,
@@ -218,17 +218,17 @@ export const ViewStatusBar = ({ model }: { model: Model }) => {
 
 export const ViewStatusBarDrawer = ({
   model,
-  dispatch,
+  emit,
 }: {
   model: Model;
-  dispatch: (m: Msg) => void;
+  emit: (m: Msg) => void;
 }) => {
   return (
     <div className="flex w-full items-center">
       <button
         className="flex w-full flex-1 items-center gap-4 p-4"
         tabIndex={-1}
-        onClick={() => dispatch({ t: "toggle-mute" })}
+        onClick={() => emit({ t: "toggle-mute" })}
       >
         {model.muted ? (
           <>
@@ -245,7 +245,7 @@ export const ViewStatusBarDrawer = ({
       <div className="flex items-center justify-center p-4">
         <ToggleButton
           label="toggle sound"
-          onToggle={() => dispatch({ t: "toggle-mute" })}
+          onToggle={() => emit({ t: "toggle-mute" })}
           checked={!model.muted}
           id="sound"
         />

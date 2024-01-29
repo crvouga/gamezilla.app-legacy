@@ -450,10 +450,10 @@ export const toCurrentGrid = memoize({
 
 export const View = ({
   model,
-  dispatch,
+  emit,
 }: {
   model: Model;
-  dispatch: (m: Msg) => void;
+  emit: (m: Msg) => void;
 }) => {
   return (
     <div className="flex h-full w-full flex-1 flex-col items-center justify-center overflow-y-auto">
@@ -471,9 +471,9 @@ export const View = ({
 
       <FlowGridUI.View
         model={toCurrentGrid({ model })}
-        onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
-        onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
-        onPressUp={(nodeId) => dispatch({ t: "pressed-up-node", nodeId })}
+        onDraggedOver={(nodeId) => emit({ t: "dragged-over", nodeId })}
+        onPressDown={(nodeId) => emit({ t: "pressed-down-node", nodeId })}
+        onPressUp={(nodeId) => emit({ t: "pressed-up-node", nodeId })}
       />
 
       <div className="flex w-full flex-1 flex-col justify-end">
@@ -481,37 +481,35 @@ export const View = ({
           <ActionButton
             icon={<IconArrowRotateLeft className="h-6 w-6" />}
             label="Undo"
-            onClick={() => dispatch({ t: "clicked-undo" })}
+            onClick={() => emit({ t: "clicked-undo" })}
             disabled={!History.canUndo(model.form)}
           />
           <ActionButton
             icon={<IconArrowRotateRight className="h-6 w-6" />}
             label="Redo"
             disabled={!History.canRedo(model.form)}
-            onClick={() => dispatch({ t: "clicked-redo" })}
+            onClick={() => emit({ t: "clicked-redo" })}
           />
           <ActionButton
             icon={<IconXMark className="h-6 w-6" />}
             label="Clear"
             disabled={!canClear(model)}
-            onClick={() => dispatch({ t: "clicked-clear" })}
+            onClick={() => emit({ t: "clicked-clear" })}
           />
           <ActionButton
             icon={<IconExpand className="h-6 w-6" />}
             label="Dimensions"
-            onClick={() => dispatch({ t: "dimensions-form/clicked-open" })}
+            onClick={() => emit({ t: "dimensions-form/clicked-open" })}
           />
         </div>
       </div>
       <Drawer
         open={model.opened === "dimensions"}
-        onClose={() => dispatch({ t: "dimensions-form/closed" })}
+        onClose={() => emit({ t: "dimensions-form/closed" })}
         id="dimensions"
         position="bottom"
       >
-        <DrawerHeader
-          onClose={() => dispatch({ t: "dimensions-form/closed" })}
-        />
+        <DrawerHeader onClose={() => emit({ t: "dimensions-form/closed" })} />
 
         <div className="flex items-center justify-center gap-1 text-center text-5xl font-bold">
           <p>{`${model.widthInput}w`}</p>
@@ -524,7 +522,7 @@ export const View = ({
         <div className="flex flex-col gap-3 p-4 pb-8">
           <Slider
             onInput={(width) =>
-              dispatch({ t: "dimensions-form/inputted-width", width })
+              emit({ t: "dimensions-form/inputted-width", width })
             }
             value={model.widthInput}
             label="Width"
@@ -534,7 +532,7 @@ export const View = ({
           />
           <Slider
             onInput={(height) =>
-              dispatch({ t: "dimensions-form/inputted-height", height })
+              emit({ t: "dimensions-form/inputted-height", height })
             }
             value={model.heightInput}
             label="Height"
@@ -547,7 +545,7 @@ export const View = ({
           <Button
             text="Cancel"
             className="flex-1"
-            onClick={() => dispatch({ t: "dimensions-form/clicked-cancel" })}
+            onClick={() => emit({ t: "dimensions-form/clicked-cancel" })}
           />
           <Button
             text="Save"
@@ -555,7 +553,7 @@ export const View = ({
             variant="contained"
             color="primary"
             disabled={!canSubmitDimensionsForm(model)}
-            onClick={() => dispatch({ t: "dimensions-form/clicked-save" })}
+            onClick={() => emit({ t: "dimensions-form/clicked-save" })}
           />
         </div>
       </Drawer>

@@ -119,7 +119,7 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 
 export const View = (_props: {
-  dispatch: (m: Msg) => void;
+  emit: (m: Msg) => void;
   ctx: ClientCtx;
   model: Model;
   onCancel: () => void;

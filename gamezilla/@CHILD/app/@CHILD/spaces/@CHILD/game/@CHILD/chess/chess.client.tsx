@@ -261,7 +261,7 @@ export const subscriptions: Client["subscriptions"] = (_input) => {
 //
 //
 
-export const View: Client["View"] = ({ ctx, state, dispatch }) => {
+export const View: Client["View"] = ({ ctx, state, emit }) => {
   switch (state.t) {
     case "none": {
       return (
@@ -272,7 +272,7 @@ export const View: Client["View"] = ({ ctx, state, dispatch }) => {
           buttons={[
             MainMenuScreen.buttons.playComputer({
               onClick: () =>
-                dispatch({
+                emit({
                   t: "input-mode",
                   mode: "vs-bot",
                   userId: ctx.currentUserId,
@@ -280,7 +280,7 @@ export const View: Client["View"] = ({ ctx, state, dispatch }) => {
             }),
             MainMenuScreen.buttons.playFriend({
               onClick: () =>
-                dispatch({
+                emit({
                   t: "input-mode",
                   mode: "vs-user",
                   userId: ctx.currentUserId,
@@ -291,7 +291,7 @@ export const View: Client["View"] = ({ ctx, state, dispatch }) => {
               description: "Train with more than 3 million puzzles",
               renderIcon: (props) => <IconPuzzlePiece {...props} />,
               onClick: () =>
-                dispatch({
+                emit({
                   t: "input-mode",
                   mode: "puzzle",
                   userId: ctx.currentUserId,
@@ -307,10 +307,10 @@ export const View: Client["View"] = ({ ctx, state, dispatch }) => {
       // return (
       //   <VsBot.View
       //     ctx={ctx}
-      //     dispatch={(c) => dispatch({ t: "vs-bot", c })}
+      //     emit={(c) => emit({ t: "vs-bot", c })}
       //     model={model?.mode.c}
       //     onClose={() => {
-      //       dispatch({
+      //       emit({
       //         t: "input-mode",
       //         mode: "none",
       //         userId: ctx.currentUserId,
@@ -326,9 +326,9 @@ export const View: Client["View"] = ({ ctx, state, dispatch }) => {
       //   <VsUser.View
       //     ctx={ctx}
       //     model={model.mode.c}
-      //     dispatch={(c) => dispatch({ t: "vs-user", c })}
+      //     emit={(c) => emit({ t: "vs-user", c })}
       //     onQuit={() => {
-      //       dispatch({
+      //       emit({
       //         t: "input-mode",
       //         mode: "none",
       //         userId: ctx.currentUserId,
@@ -344,9 +344,9 @@ export const View: Client["View"] = ({ ctx, state, dispatch }) => {
       //   <Puzzle.View
       //     ctx={ctx}
       //     model={model.mode.c}
-      //     dispatch={(c) => dispatch({ t: "puzzle", c })}
+      //     emit={(c) => emit({ t: "puzzle", c })}
       //     onClose={() => {
-      //       dispatch({
+      //       emit({
       //         t: "input-mode",
       //         mode: "none",
       //         userId: ctx.currentUserId,

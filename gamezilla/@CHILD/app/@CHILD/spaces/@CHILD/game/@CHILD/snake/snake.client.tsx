@@ -179,11 +179,11 @@ export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
 
 export const View = ({
   model,
-  dispatch,
+  emit,
 }: {
   ctx: ClientCtx;
   model: Model;
-  dispatch: (msg: Msg) => void;
+  emit: (msg: Msg) => void;
 }) => {
   if (model.gameStatus.type === "GameSetup") {
     return <div></div>;
@@ -191,14 +191,14 @@ export const View = ({
 
   return (
     <div>
-      <ViewBoard model={model} dispatch={dispatch} />
+      <ViewBoard model={model} emit={emit} />
     </div>
   );
 };
 
 export const ViewBoard = (_props: {
   model: Model;
-  dispatch: (msg: Msg) => void;
+  emit: (msg: Msg) => void;
 }) => {
   return (
     <canvas className="pointer-events-none h-full max-h-full min-h-full w-full touch-none select-none" />

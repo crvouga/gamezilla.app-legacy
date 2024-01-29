@@ -170,25 +170,25 @@ const handleSubscription = <Model, Msg extends object>(
  *
  * This is largely inspired by https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
  *
- * **Note:** the monitor can dispatch messages of any shape that will be re-dispatched into the application; these messages **are not validated** and can lead to unexpected behaviours.
+ * **Note:** the monitor can emit messages of any shape that will be re-emited into the application; these messages **are not validated** and can lead to unexpected behaviours.
  * @since 0.5.0
  */
 const handleIncomingMsg = <Model, Msg extends object>({
   connection,
   init,
-  dispatch,
+  emit,
 }: DevToolHandlerR<Model, Msg>): ((
   msg: DevToolMsg
 ) => Result<string, Task<void>>) => {
-  const dispatchToApp =
+  const emitToApp =
     (m: unknown): Task<void> =>
     async () =>
-      dispatch(m as Msg);
+      emit(m as Msg);
 
   const reInit: Task<void> = async () => connection.init(init);
 
   const update = (payload: Model): Task<void> =>
-    dispatchToApp({ type: "__DebugUpdateModel__", payload });
+    emitToApp({ type: "__DebugUpdateModel__", payload });
 
   const restart =
     (model: Model): Task<void> =>
@@ -200,7 +200,7 @@ const handleIncomingMsg = <Model, Msg extends object>({
     async () =>
       connection.send(null, state);
 
-  const toggle = toggleAction(dispatch);
+  const toggle = toggleAction(emit);
 
   return (msg) => {
     switch (msg.type) {
@@ -214,7 +214,7 @@ const handleIncomingMsg = <Model, Msg extends object>({
             return Result.err(result.error.message);
 
           case "ok":
-            return Result.ok(dispatchToApp(result.value));
+            return Result.ok(emitToApp(result.value));
         }
       }
 
@@ -394,9 +394,7 @@ const parseToggleAction = <Model>(
  */
 
 const toggleAction =
-  <Model, Msg extends object>(
-    dispatch: (m: MsgWithDebug<Model, Msg>) => void
-  ) =>
+  <Model, Msg extends object>(emit: (m: MsgWithDebug<Model, Msg>) => void) =>
   (id: number, liftedState: LiftedState<Model>): Task<LiftedState<Model>> =>
   async () => {
     const state = unsafeCopy(liftedState);
@@ -412,7 +410,7 @@ const toggleAction =
       return state;
     }
 
-    dispatch({
+    emit({
       type: "__DebugUpdateModel__",
       // @ts-ignore
       payload: computedStates[actionIndex - 1].state,
@@ -433,7 +431,7 @@ const toggleAction =
       }
 
       if (currentActionId) {
-        dispatch({
+        emit({
           type: "__DebugApplyMsg__",
           // @ts-ignore
           payload: actionsById[currentActionId].action,
@@ -492,7 +490,7 @@ export const attachDebugger = <Model, Msg extends object, Ctx>(
   const Debugger = makeDebugger<Model, Msg>(connection);
 
   const debuggerInstance = Debugger({
-    dispatch(msg) {
+    emit(msg) {
       if ("type" in msg) {
         switch (msg.type) {
           case "__DebugApplyMsg__": {

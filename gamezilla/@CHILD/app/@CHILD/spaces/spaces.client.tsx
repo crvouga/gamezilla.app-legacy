@@ -803,25 +803,25 @@ export const subscriptionsCurrentUserGame: Module["subscriptions"] = ({
 
 export const View = ({
   ctx,
-  dispatch,
+  emit,
   model,
   route,
   viewBottomBar,
 }: {
   model: ClientModel;
   ctx: ClientCtx;
-  dispatch: (m: ClientMsg) => void;
+  emit: (m: ClientMsg) => void;
   route: RouteGameSpace;
   viewBottomBar: VDom;
 }): VDom => {
-  const dispatchEvent = (m: SpaceEvent) => {
-    dispatch({ t: "msgEvent", c: withId(m) });
+  const emitEvent = (m: SpaceEvent) => {
+    emit({ t: "msgEvent", c: withId(m) });
   };
   switch (route.t) {
     case "space-list": {
       return (
         <>
-          <ViewScreenListSpaces dispatch={dispatch} ctx={ctx} model={model} />
+          <ViewScreenListSpaces emit={emit} ctx={ctx} model={model} />
 
           {viewBottomBar}
         </>
@@ -831,10 +831,10 @@ export const View = ({
     case "space": {
       return (
         <ViewSpaceScreen
-          dispatchEvent={dispatchEvent}
+          emitEvent={emitEvent}
           spaceId={route.spaceId}
           ctx={ctx}
-          dispatch={dispatch}
+          emit={emit}
           model={model}
         />
       );
@@ -844,34 +844,34 @@ export const View = ({
 
 const ViewSpaceScreen = ({
   ctx,
-  dispatchEvent,
-  dispatch,
+  emitEvent,
+  emit,
   model,
   spaceId,
 }: {
   model: ClientModel;
   ctx: ClientCtx;
-  dispatchEvent: (m: SpaceEvent) => void;
-  dispatch: (m: ClientMsg) => void;
+  emitEvent: (m: SpaceEvent) => void;
+  emit: (m: ClientMsg) => void;
   spaceId: SpaceId;
 }) => {
   const spaceState = Spaces.toSpaceState(model, spaceId);
 
   switch (spaceState.type) {
     case "ended": {
-      return <ViewSpaceEnded dispatch={dispatch} />;
+      return <ViewSpaceEnded emit={emit} />;
     }
 
     case "initial": {
-      return <ViewSpaceNotFound dispatch={dispatch} />;
+      return <ViewSpaceNotFound emit={emit} />;
     }
 
     case "started": {
       return (
         <ViewSpaceStarted
           ctx={ctx}
-          dispatchEvent={dispatchEvent}
-          dispatch={dispatch}
+          emitEvent={emitEvent}
+          emit={emit}
           model={model}
           spaceState={spaceState}
         />
@@ -882,25 +882,25 @@ const ViewSpaceScreen = ({
 
 const ViewSpaceStarted = ({
   ctx,
-  dispatchEvent,
-  dispatch,
+  emitEvent,
+  emit,
   model,
   spaceState,
 }: {
   model: ClientModel;
   ctx: ClientCtx;
-  dispatchEvent: (m: SpaceEvent) => void;
-  dispatch: (m: ClientMsg) => void;
+  emitEvent: (m: SpaceEvent) => void;
+  emit: (m: ClientMsg) => void;
   spaceState: SpaceState.Started;
 }) => {
   const spaceCtx: SpaceClientCtx = {
     ...ctx,
     space: spaceState,
     viewProfile: (userId) => {
-      dispatch({ t: "clicked-user", userId: userId });
+      emit({ t: "clicked-user", userId: userId });
     },
     quit: () => {
-      dispatchEvent({
+      emitEvent({
         t: "user-inputted-game",
         spaceId: spaceState.spaceId,
         userId: ctx.currentUserId,
@@ -913,8 +913,8 @@ const ViewSpaceStarted = ({
     <>
       <ViewSpaceScreenMain
         space={spaceState}
-        dispatchEvent={dispatchEvent}
-        dispatch={dispatch}
+        emitEvent={emitEvent}
+        emit={emit}
         model={model}
         ctx={spaceCtx}
       />
@@ -923,7 +923,7 @@ const ViewSpaceStarted = ({
         position="bottom"
         id="users"
         open={model.modal === "users"}
-        onClose={() => dispatch({ t: "closed-modal" })}
+        onClose={() => emit({ t: "closed-modal" })}
       >
         <ViewUsersInSpaceList ctx={spaceCtx} />
       </Drawer>
@@ -932,14 +932,14 @@ const ViewSpaceStarted = ({
         position="bottom"
         id="user-preview"
         open={model.modal === "user-preview"}
-        onClose={() => dispatch({ t: "closed-modal" })}
+        onClose={() => emit({ t: "closed-modal" })}
       >
         <div>
           <button
             className="flex w-full flex-col items-center justify-center gap-2 p-4"
             onClick={() => {
               if (model.previewUserId) {
-                dispatch({
+                emit({
                   t: "clicked-link",
                   route: {
                     t: "profile",
@@ -979,7 +979,7 @@ const ViewSpaceStarted = ({
             <Button
               onClick={() => {
                 if (model.previewUserId) {
-                  dispatch({
+                  emit({
                     t: "clicked-link",
                     route: {
                       t: "profile",
@@ -1007,7 +1007,7 @@ const ViewFeed = ({
   model,
 }: {
   spaceState: SpaceState.State;
-  dispatch: (m: ClientMsg) => void;
+  emit: (m: ClientMsg) => void;
   model: ClientModel;
   ctx: SpaceClientCtx;
 }) => {
@@ -1048,7 +1048,7 @@ const ViewFeedItem = ({
           ctx={ctx}
           msgGameEvent={{ ...msgEvent, ...msgEvent.c }}
           modelGameState={state.game}
-          dispatch={(_msg) => {
+          emit={(_msg) => {
             //
           }}
         />
@@ -1112,13 +1112,13 @@ const ViewFeedItem = ({
 export const ViewScreenJoinSpace = ({
   model,
   ctx,
-  dispatch,
-  dispatchEvent,
+  emit,
+  emitEvent,
 }: {
   ctx: SpaceClientCtx;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
-  dispatchEvent: (m: SpaceEvent) => void;
+  emit: (msg: ClientMsg) => void;
+  emitEvent: (m: SpaceEvent) => void;
 }) => {
   const space = Spaces.toSpaceState(model, ctx.space.spaceId);
 
@@ -1128,18 +1128,13 @@ export const ViewScreenJoinSpace = ({
         left={
           <TopBarBackButton
             onClick={() =>
-              dispatch({ t: "clicked-back-button", from: "join-screen" })
+              emit({ t: "clicked-back-button", from: "join-screen" })
             }
           />
         }
         title="Space"
       />
-      <ViewFeed
-        ctx={ctx}
-        dispatch={dispatch}
-        model={model}
-        spaceState={space}
-      />
+      <ViewFeed ctx={ctx} emit={emit} model={model} spaceState={space} />
     </>
   );
 
@@ -1194,7 +1189,7 @@ export const ViewScreenJoinSpace = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                dispatchEvent({
+                emitEvent({
                   t: "user-joined-space",
                   userId: ctx.currentUserId,
                   spaceId: ctx.space.spaceId,
@@ -1213,14 +1208,14 @@ const ViewSpaceScreenMain = ({
   ctx,
   space,
   model,
-  dispatch,
-  dispatchEvent,
+  emit,
+  emitEvent,
 }: {
   space: SpaceState.Started;
   model: ClientModel;
   ctx: SpaceClientCtx;
-  dispatch: (m: ClientMsg) => void;
-  dispatchEvent: (m: SpaceEvent) => void;
+  emit: (m: ClientMsg) => void;
+  emitEvent: (m: SpaceEvent) => void;
 }) => {
   const currentUserSpaceId = Spaces.toSpaceIdByUserId({
     model,
@@ -1231,8 +1226,8 @@ const ViewSpaceScreenMain = ({
     return (
       <ViewScreenJoinSpace
         ctx={ctx}
-        dispatch={dispatch}
-        dispatchEvent={dispatchEvent}
+        emit={emit}
+        emitEvent={emitEvent}
         model={model}
       />
     );
@@ -1240,20 +1235,15 @@ const ViewSpaceScreenMain = ({
 
   return (
     <div className="flex h-full w-full flex-1 flex-col">
-      <ViewTopBar ctx={ctx} dispatch={dispatch} dispatchEvent={dispatchEvent} />
+      <ViewTopBar ctx={ctx} emit={emit} emitEvent={emitEvent} />
 
-      <ViewFeed
-        spaceState={space}
-        ctx={ctx}
-        model={model}
-        dispatch={dispatch}
-      />
+      <ViewFeed spaceState={space} ctx={ctx} model={model} emit={emit} />
 
       <div className="flex w-full flex-1 flex-col overflow-hidden">
         <ViewGame
           ctx={ctx}
-          dispatch={dispatch}
-          dispatchEvent={dispatchEvent}
+          emit={emit}
+          emitEvent={emitEvent}
           model={model}
           space={space}
         />
@@ -1266,37 +1256,37 @@ const ViewGame = ({
   space,
   model,
   ctx,
-  dispatch,
-  dispatchEvent,
+  emit,
+  emitEvent,
 }: {
   space: SpaceState.Started;
   model: ClientModel;
   ctx: SpaceClientCtx;
-  dispatch: (m: ClientMsg) => void;
-  dispatchEvent: (m: SpaceEvent) => void;
+  emit: (m: ClientMsg) => void;
+  emitEvent: (m: SpaceEvent) => void;
 }) => {
   if (space.game) {
     return (
       <Game.View
         modelGameState={space.game}
         ctx={ctx}
-        dispatch={(c) => dispatch({ t: "game", spaceId: ctx.space.spaceId, c })}
+        emit={(c) => emit({ t: "game", spaceId: ctx.space.spaceId, c })}
         model={model.games[ctx.space.spaceId] ?? Game.init(space.game.t)}
       />
     );
   }
 
-  return <ViewScreenNotInGame ctx={ctx} dispatchEvent={dispatchEvent} />;
+  return <ViewScreenNotInGame ctx={ctx} emitEvent={emitEvent} />;
 };
 
 const ViewTopBar = ({
   ctx,
-  dispatch,
-  dispatchEvent,
+  emit,
+  emitEvent,
 }: {
   ctx: SpaceClientCtx;
-  dispatch: (m: ClientMsg) => void;
-  dispatchEvent: (m: SpaceEvent) => void;
+  emit: (m: ClientMsg) => void;
+  emitEvent: (m: SpaceEvent) => void;
 }) => {
   const peopleCount = Object.keys(ctx.space.users).length;
 
@@ -1304,7 +1294,7 @@ const ViewTopBar = ({
     <nav className="flex h-14 w-full items-center border-b border-neutral-600">
       <ViewTopButton
         onClick={() =>
-          dispatch({
+          emit({
             t: "clicked-link",
             route: { t: "spaces", c: { t: "space-list" } },
           })
@@ -1314,7 +1304,7 @@ const ViewTopBar = ({
       />
 
       <ViewTopButton
-        onClick={() => dispatch({ t: "clicked-people-button" })}
+        onClick={() => emit({ t: "clicked-people-button" })}
         label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
         icon={<IconUserGroup className="h-6 w-6" />}
       />
@@ -1329,7 +1319,7 @@ const ViewTopBar = ({
             size="sm"
             text="Leave"
             onClick={() => {
-              dispatchEvent({
+              emitEvent({
                 t: "user-left-space",
                 spaceId: ctx.space.spaceId,
                 userId: ctx.currentUserId,
@@ -1346,7 +1336,7 @@ const ViewTopBar = ({
             size="sm"
             text="End"
             onClick={() => {
-              dispatchEvent({
+              emitEvent({
                 t: "user-ended-space",
                 userId: ctx.currentUserId,
                 spaceId: ctx.space.spaceId,
@@ -1376,17 +1366,13 @@ const ViewTopButton = ({
   );
 };
 
-const ViewSpaceNotFound = ({
-  dispatch,
-}: {
-  dispatch: (m: ClientMsg) => void;
-}) => {
+const ViewSpaceNotFound = ({ emit }: { emit: (m: ClientMsg) => void }) => {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space not found</p>
       <Button
         onClick={() =>
-          dispatch({
+          emit({
             t: "clicked-link",
             route: { t: "spaces", c: { t: "space-list" } },
           })
@@ -1401,13 +1387,13 @@ const ViewSpaceNotFound = ({
   );
 };
 
-const ViewSpaceEnded = ({ dispatch }: { dispatch: (m: ClientMsg) => void }) => {
+const ViewSpaceEnded = ({ emit }: { emit: (m: ClientMsg) => void }) => {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space ended</p>
       <Button
         onClick={() =>
-          dispatch({
+          emit({
             t: "clicked-link",
             route: { t: "spaces", c: { t: "space-list" } },
           })
@@ -1425,14 +1411,14 @@ const ViewSpaceEnded = ({ dispatch }: { dispatch: (m: ClientMsg) => void }) => {
 export const ViewCurrentSpaceBar = ({
   ctx,
   model,
-  dispatch,
+  emit,
 }: {
   ctx: ClientCtx;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  emit: (msg: ClientMsg) => void;
 }) => {
-  const dispatchEvent = (msg: SpaceEvent) =>
-    dispatch({ t: "msgEvent", c: withId(msg) });
+  const emitEvent = (msg: SpaceEvent) =>
+    emit({ t: "msgEvent", c: withId(msg) });
 
   const userSpaceId = model.spaceIdByUserId[ctx.currentUserId];
 
@@ -1455,7 +1441,7 @@ export const ViewCurrentSpaceBar = ({
       <button
         className="flex flex-1 items-center overflow-hidden"
         onClick={() => {
-          dispatch({
+          emit({
             t: "clicked-link",
             route: {
               t: "spaces",
@@ -1492,7 +1478,7 @@ export const ViewCurrentSpaceBar = ({
         <button
           aria-label="end space"
           onClick={() => {
-            dispatchEvent({
+            emitEvent({
               t: "user-ended-space",
               userId: ctx.currentUserId,
               spaceId: space.spaceId,
@@ -1508,7 +1494,7 @@ export const ViewCurrentSpaceBar = ({
         <button
           aria-label="leave space"
           onClick={() => {
-            dispatchEvent({
+            emitEvent({
               t: "user-left-space",
               userId: ctx.currentUserId,
               spaceId: space.spaceId,

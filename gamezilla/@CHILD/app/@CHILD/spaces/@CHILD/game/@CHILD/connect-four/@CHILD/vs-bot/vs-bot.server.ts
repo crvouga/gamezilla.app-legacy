@@ -75,14 +75,14 @@ const updateFromMsg: Module["update"] = async (input) => {
             ...model,
             botStartedFindingMoveAt: ctx.now,
           },
-          eff: async (dispatch) => {
+          eff: async (emit) => {
             await new Promise((r) => setTimeout(r, 1000 / 4));
             const found = ConnectFourBotWorker.findBestMove({
               columns: modelGameState.columns,
               maxDepth: 4,
               maximizingPlayer: toBotPlayer(modelGameState),
             });
-            dispatch({ t: "bot-found-best-move", found, startedAt: ctx.now });
+            emit({ t: "bot-found-best-move", found, startedAt: ctx.now });
           },
         };
       }

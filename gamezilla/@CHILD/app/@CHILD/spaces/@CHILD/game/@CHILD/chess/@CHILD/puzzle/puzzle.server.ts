@@ -52,12 +52,12 @@ export const init = ({
       ...initCore,
       requests: {},
     },
-    eff: async (dispatch) => {
+    eff: async (emit) => {
       const result = await initialLoad({
         dbConn: ctx.dbConn,
         userId: ctx.space.hostId,
       });
-      dispatch({ t: "db-got-initial-load", result });
+      emit({ t: "db-got-initial-load", result });
     },
   };
 };
@@ -313,11 +313,11 @@ const watchPutInteraction = ({
     };
     return {
       model,
-      eff: async (dispatch) => {
+      eff: async (emit) => {
         const result = await PuzzleDb.interactions.insert(ctx.dbConn, [
           interaction,
         ]);
-        dispatch({ t: "db-put-interaction", result });
+        emit({ t: "db-put-interaction", result });
       },
     };
   }
@@ -349,12 +349,12 @@ export const watchGetPuzzles = ({
           getPuzzles: { t: "loading" },
         },
       },
-      eff: async (dispatch) => {
+      eff: async (emit) => {
         const result = await PuzzleDb.puzzles.findForProfile(ctx.dbConn, {
           profile: model.profile,
           omit: [model.puzzle.puzzleId, ...model.queue.map((x) => x.puzzleId)],
         });
-        dispatch({ t: "db-got-puzzles", result });
+        emit({ t: "db-got-puzzles", result });
       },
     };
   }
@@ -378,9 +378,9 @@ export const watchPutProfile = ({
     const profile = model.profile;
     return {
       model,
-      eff: async (dispatch) => {
+      eff: async (emit) => {
         const result = await PuzzleDb.profiles.update(ctx.dbConn, profile);
-        dispatch({ t: "db-put-profile", result });
+        emit({ t: "db-put-profile", result });
       },
     };
   }

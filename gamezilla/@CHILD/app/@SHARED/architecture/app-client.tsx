@@ -134,7 +134,7 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
   View: (input: {
     ctx: T["Ctx"];
     model: T["Model"];
-    dispatch: (msg: T["Msg"]) => void;
+    emit: (msg: T["Msg"]) => void;
   }) => VDom;
 };
 

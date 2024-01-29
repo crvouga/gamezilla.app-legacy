@@ -34,12 +34,12 @@ const startTimeout = <Msg>(
   duration: TimeSpan,
   msg: Msg
 ): Eff<Msg> => {
-  return (dispatch) => {
+  return (emit) => {
     timeouts.set(timeoutId, timeoutId);
 
     setTimeout(() => {
       if (timeouts.has(timeoutId)) {
-        dispatch(msg);
+        emit(msg);
         timeouts.delete(timeoutId);
         return;
       }
@@ -104,9 +104,9 @@ const interval = <Msg>(
     subscribe: (subscriber) => {
       const unsub = subNew.subscribe((msg) => {
         subscriber(f(msg));
-      })
+      });
       return () => {
-        unsub()
+        unsub();
       };
     },
   };

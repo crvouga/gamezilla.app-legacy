@@ -8,7 +8,7 @@ const update: ClientModule["update"] = (input) => {
 };
 
 const ViewCreateButton: ClientModule["View"] = (input) => {
-  const { dispatch } = input;
+  const { emit } = input;
 
   return (
     <Button
@@ -17,9 +17,7 @@ const ViewCreateButton: ClientModule["View"] = (input) => {
       color="primary"
       // loading={model.packCreateLoading.t === "loading"}
       start={<IconPlus className="h-8 w-8" />}
-      onClick={() =>
-        dispatch({ t: "puzzle-create/user-clicked-create-button" })
-      }
+      onClick={() => emit({ t: "puzzle-create/user-clicked-create-button" })}
     />
   );
 };

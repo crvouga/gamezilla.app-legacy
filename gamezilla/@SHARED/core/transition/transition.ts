@@ -118,7 +118,7 @@ export function watch<T>(
   //
   //
 
-  const eff: Eff<Msg> = async (dispatch) => {
+  const eff: Eff<Msg> = async (emit) => {
     const mode = config.mode ?? "out-in";
 
     const promisesIn: Promise<void>[] = [];
@@ -150,14 +150,14 @@ export function watch<T>(
     }
 
     if (exiting.size > 0) {
-      dispatch({
+      emit({
         t: "exited",
         ids: Array.from(exiting.values()).map((x) => x.id),
       });
     }
 
     if (entering.size > 0) {
-      dispatch({
+      emit({
         t: "entered",
         ids: Array.from(entering.values()).map((x) => x.id),
       });

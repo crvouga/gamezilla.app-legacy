@@ -195,13 +195,13 @@ const updateDragging = ({
 
 export const View = ({
   model,
-  dispatch,
+  emit,
   disabled,
   grid,
 }: {
   grid: FlowGrid.Model;
   model: Model;
-  dispatch: (m: Msg) => void;
+  emit: (m: Msg) => void;
   disabled?: boolean;
 }) => {
   return (
@@ -210,10 +210,10 @@ export const View = ({
       model={toCurrentGrid({ model, grid })}
       showCoordinates={false}
       isDragging={model.state.t === "dragging"}
-      onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
-      onPressDown={(nodeId) => dispatch({ t: "pressed-down", nodeId })}
-      onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
-      onLeave={() => dispatch({ t: "left" })}
+      onDraggedOver={(nodeId) => emit({ t: "dragged-over", nodeId })}
+      onPressDown={(nodeId) => emit({ t: "pressed-down", nodeId })}
+      onPressUp={(nodeId) => emit({ t: "pressed-up", nodeId })}
+      onLeave={() => emit({ t: "left" })}
       autocompleteEdge={
         model.state.t === "dragging" && model.state.autocompleteEdge
           ? {

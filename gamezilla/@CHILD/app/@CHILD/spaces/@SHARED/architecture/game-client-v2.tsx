@@ -160,7 +160,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
     ctx: T["Ctx"];
     modelGameState: T["GameState"];
     model: T["Model"];
-    dispatch: (msg: T["Msg"]) => void;
+    emit: (msg: T["Msg"]) => void;
   }) => VDom;
 
   /**
@@ -170,7 +170,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
     ctx: T["Ctx"];
     msgGameEvent: T["GameEvent"];
     modelGameState: T["GameState"];
-    dispatch: (msg: T["Msg"]) => void;
+    emit: (msg: T["Msg"]) => void;
   }) => VDom;
 };
 

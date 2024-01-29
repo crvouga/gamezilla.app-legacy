@@ -15,7 +15,7 @@ type Subscriber<Model, Msg, TCtx> = (
 ) => Promise<void> | void;
 
 export type Program<TModel, TMsg, TCtx> = {
-  dispatch: (msg: TMsg) => void;
+  emit: (msg: TMsg) => void;
   subscribe: (subscriber: Subscriber<TModel, TMsg, TCtx>) => () => void;
   start: () => Promise<() => void>;
   getModel: () => TModel;
@@ -91,14 +91,14 @@ export function create<TModel, TMsg, TCtx>(
       unsubscribe();
     }
 
-    unsubscribe = sub.subscribe(dispatch);
+    unsubscribe = sub.subscribe(emit);
 
     if (state.eff) {
-      state.eff(dispatch);
+      state.eff(emit);
     }
   };
 
-  const dispatch = (msg: TMsg) => {
+  const emit = (msg: TMsg) => {
     messageQueue.push(msg);
     processQueue();
   };
@@ -175,7 +175,7 @@ export function create<TModel, TMsg, TCtx>(
 
   return {
     start,
-    dispatch,
+    emit,
     subscribe,
     setModel,
     getModel,

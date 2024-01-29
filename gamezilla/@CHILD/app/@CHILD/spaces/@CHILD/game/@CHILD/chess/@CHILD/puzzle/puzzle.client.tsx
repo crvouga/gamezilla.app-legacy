@@ -223,11 +223,11 @@ export const View = ({
   model,
   onClose,
   ctx,
-  dispatch,
+  emit,
 }: {
   ctx: SpaceClientCtx;
   model: ClientModel;
-  dispatch: (m: ClientMsg) => void;
+  emit: (m: ClientMsg) => void;
   onClose: () => void;
 }) => {
   const durationMs = toDurationMs(ctx, model);
@@ -307,7 +307,7 @@ export const View = ({
               );
 
               if (moved.t === "ok") {
-                dispatch({
+                emit({
                   t: "input-move",
                   didCapture: moved.value.didCapture,
                   moveInput: {
@@ -347,7 +347,7 @@ export const View = ({
 
       {!isSpectating ? (
         <ViewBottomButtonBar
-          actions={toBottomBarActions({ model, onClose, dispatch })}
+          actions={toBottomBarActions({ model, onClose, emit })}
         />
       ) : (
         <></>
@@ -397,11 +397,11 @@ const formatDuration = (duration: number): string => {
 export const toBottomBarActions = ({
   model,
   onClose,
-  dispatch,
+  emit,
 }: {
   model: ClientModel;
   onClose: () => void;
-  dispatch: (m: ClientMsg) => void;
+  emit: (m: ClientMsg) => void;
 }): BottomBarButtonAction[] => {
   const exit: BottomBarButtonAction = {
     icon: <IconArrowLeftOnRect className="h-6 w-6" />,
@@ -413,27 +413,27 @@ export const toBottomBarActions = ({
     icon: <IconLightbulb className="h-6 w-6" />,
     label: "Hint",
     disabled: isNoMoreHints(model),
-    onClick: () => dispatch({ t: "show-hint" }),
+    onClick: () => emit({ t: "show-hint" }),
   };
 
   const retry: BottomBarButtonAction = {
     icon: <IconArrowRotateLeft className="h-6 w-6" />,
     label: "Retry",
-    onClick: () => dispatch({ t: "retry" }),
+    onClick: () => emit({ t: "retry" }),
     color: "danger",
   };
 
   const skip: BottomBarButtonAction = {
     icon: <IconArrowRight className="h-6 w-6" />,
     label: "Skip",
-    onClick: () => dispatch({ t: "skip" }),
+    onClick: () => emit({ t: "skip" }),
   };
 
   const next: BottomBarButtonAction = {
     icon: <IconArrowCircle className="h-6 w-6" />,
     label: "Next",
     color: "success",
-    onClick: () => dispatch({ t: "next" }),
+    onClick: () => emit({ t: "next" }),
   };
 
   if (model.t === "loading") {

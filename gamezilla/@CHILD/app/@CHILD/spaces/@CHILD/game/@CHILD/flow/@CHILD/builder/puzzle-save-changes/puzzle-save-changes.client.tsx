@@ -207,23 +207,23 @@ const saveChanges: ClientModule["update"] = ({ model, modelGameState }) => {
 
 export const viewActionButtons = ({
   model,
-  dispatch,
+  emit,
 }: {
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  emit: (msg: ClientMsg) => void;
 }) => {
   const exit: BottomBarButtonAction = {
     label: "Exit",
     disabled: model.saveChangesRequest?.t === "loading",
     icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-    onClick: () => dispatch({ t: "puzzle.editor.user-clicked-exit-button" }),
+    onClick: () => emit({ t: "puzzle.editor.user-clicked-exit-button" }),
   };
 
   const save: BottomBarButtonAction = {
     label: "Save",
     icon: <IconFloppyDisk className="h-6 w-6" />,
     loading: model.saveChangesRequest?.t === "loading",
-    onClick: () => dispatch({ t: "save-changes/user-clicked-save-button" }),
+    onClick: () => emit({ t: "save-changes/user-clicked-save-button" }),
   };
 
   return {
@@ -232,14 +232,11 @@ export const viewActionButtons = ({
   };
 };
 
-const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
-  model,
-  dispatch,
-}) => {
+const ViewUnsavedChangesDrawer: ClientModule["View"] = ({ model, emit }) => {
   return (
     <Drawer
       id="unsaved-changes-drawer"
-      onClose={() => dispatch({ t: "save-changes/user-clicked-cancel-exit" })}
+      onClose={() => emit({ t: "save-changes/user-clicked-cancel-exit" })}
       open={model.opened === "unsaved-changes"}
       position="bottom"
     >
@@ -257,24 +254,20 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
           variant="contained"
           color="primary"
           loading={model.saveChangesRequest?.t === "loading"}
-          onClick={() =>
-            dispatch({ t: "save-changes/user-clicked-save-and-exit" })
-          }
+          onClick={() => emit({ t: "save-changes/user-clicked-save-and-exit" })}
         />
         <Button
           className="w-full"
           text="Don't Save"
           onClick={() =>
-            dispatch({ t: "save-changes/user-clicked-discard-and-exit" })
+            emit({ t: "save-changes/user-clicked-discard-and-exit" })
           }
         />
         <div className="w-full"></div>
         <Button
           className="w-full"
           text="Cancel"
-          onClick={() =>
-            dispatch({ t: "save-changes/user-clicked-cancel-exit" })
-          }
+          onClick={() => emit({ t: "save-changes/user-clicked-cancel-exit" })}
         />
       </div>
     </Drawer>

@@ -18,12 +18,12 @@ export const ViewProfileScreen = ({
   model,
   ctx,
   userId,
-  dispatch,
+  emit,
 }: {
   ctx: ClientCtx | AnonymousClientCtx;
   userId: UserId;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  emit: (msg: ClientMsg) => void;
 }) => {
   const profile = model.profiles[userId];
 
@@ -50,12 +50,13 @@ export const ViewProfileScreen = ({
             @{profile.username}
           </p>
           <Button
-            onClick={() => dispatch({ t: "clicked-edit-profile-button" })}
+            onClick={() => emit({ t: "clicked-edit-profile-button" })}
             className="w-full"
             start={<IconUserPen className="h-6 w-6" />}
-            text="Edit Profile"></Button>
+            text="Edit Profile"
+          ></Button>
           <Button
-            onClick={() => dispatch({ t: "clicked-logout-button" })}
+            onClick={() => emit({ t: "clicked-logout-button" })}
             className="w-full"
             start={<IconArrowLeftOnRect className="h-6 w-6" />}
             text="Logout"
@@ -71,7 +72,7 @@ export const ViewProfileScreen = ({
         left={
           <TopBarBackButton
             onClick={() =>
-              dispatch({
+              emit({
                 t: "clicked-back-button",
                 from: { t: "profile", userId: profile.userId },
               })

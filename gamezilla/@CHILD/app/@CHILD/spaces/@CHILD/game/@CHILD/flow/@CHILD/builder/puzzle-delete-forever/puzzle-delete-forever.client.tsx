@@ -85,16 +85,14 @@ const updateFromGameEvent: ClientModule["update"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-  const { model, dispatch } = input;
+  const { model, emit } = input;
   return (
     <>
       <ListItemButton
         icon={(props) => <IconDeleteForever {...props} />}
         label="Delete Forever"
         color="danger"
-        onClick={() =>
-          dispatch({ t: "delete-forever/user-clicked-delete-button" })
-        }
+        onClick={() => emit({ t: "delete-forever/user-clicked-delete-button" })}
       />
 
       <ConfirmationDrawer
@@ -103,7 +101,7 @@ const View: ClientModule["View"] = (input) => {
           input.model.opened === "delete-forever" ||
           isLoading(model.deleteForeverRequest)
         }
-        onClose={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
+        onClose={() => emit({ t: "delete-forever/user-closed-drawer" })}
         variant="danger"
         position="bottom"
         title="Delete puzzle forever?"
@@ -112,12 +110,12 @@ const View: ClientModule["View"] = (input) => {
         confirmLoading={isLoading(model.deleteForeverRequest)}
         confirmText="Delete Forever"
         onConfirm={() =>
-          dispatch({ t: "delete-forever/user-clicked-confirm-button" })
+          emit({ t: "delete-forever/user-clicked-confirm-button" })
         }
         //
         cancelDisabled={isLoading(model.deleteForeverRequest)}
         onCancel={() =>
-          dispatch({ t: "delete-forever/user-clicked-cancel-button" })
+          emit({ t: "delete-forever/user-clicked-cancel-button" })
         }
       />
     </>
