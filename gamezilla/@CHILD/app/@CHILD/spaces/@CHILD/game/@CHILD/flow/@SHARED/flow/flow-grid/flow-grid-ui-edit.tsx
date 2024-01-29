@@ -221,17 +221,30 @@ export const update = ({
     }
 
     case "dimensions-form/clicked-save": {
-      const formNew: Form = {
-        ...History.present(model.form),
-        width: model.widthInput,
+      const present = History.present(model.form);
+
+      const gridNew = FlowGrid.init({
         height: model.heightInput,
+        width: model.widthInput,
+        terminalsByGroupId: present.terminalsByGroupId,
+      });
+
+      const formNew: Form = {
+        terminalsByGroupId: gridNew.flow.terminalsByGroupId,
+        width: gridNew.width,
+        height: gridNew.height,
       };
+
+      const modelNew: Model = {
+        ...model,
+        heightInput: gridNew.height,
+        widthInput: gridNew.width,
+        form: History.push(model.form, formNew),
+        opened: null,
+      };
+
       return {
-        model: {
-          ...model,
-          form: History.push(model.form, formNew),
-          opened: null,
-        },
+        model: modelNew,
         cmd: {
           t: "play-sound",
           sourceSrc: APP_SOUND.refreshFeed,
@@ -240,22 +253,28 @@ export const update = ({
     }
 
     case "dimensions-form/clicked-open": {
-      return {
-        model: resetDimensionsForm(grid, { ...model, opened: "dimensions" }),
-      };
+      return { model: resetDimensionsForm({ ...model, opened: "dimensions" }) };
     }
 
     case "dimensions-form/closed": {
-      return { model: resetDimensionsForm(grid, { ...model, opened: null }) };
+      return { model: resetDimensionsForm({ ...model, opened: null }) };
     }
 
     case "dimensions-form/clicked-cancel": {
-      return { model: resetDimensionsForm(grid, { ...model, opened: null }) };
+      return { model: resetDimensionsForm({ ...model, opened: null }) };
     }
   }
 };
 
-const resetDimensionsForm = (grid: FlowGrid.Model, model: Model): Model => {
+const canSubmitDimensionsForm = (model: Model): boolean => {
+  const present = History.present(model.form);
+  return (
+    present.height !== model.heightInput || present.width !== model.widthInput
+  );
+};
+
+const resetDimensionsForm = (model: Model): Model => {
+  const grid = toCurrentGrid({ model });
   return {
     ...model,
     widthInput: grid.width,
@@ -373,7 +392,7 @@ export const toCurrentPlacingGroupId = (model: Model): Flow.GroupId => {
   return Flow.GROUP_ID_ORDER[Flow.GROUP_ID_ORDER.length - 1]!;
 };
 
-export const filterDraftTerminals = (
+export const removeIncompleteTerminals = (
   draftTerminals: DraftTerminals
 ): Flow.Model["terminalsByGroupId"] => {
   const terminalsByGroupId: Flow.Model["terminalsByGroupId"] = {};
@@ -526,6 +545,7 @@ export const View = ({
             className="flex-1"
             variant="contained"
             color="primary"
+            disabled={!canSubmitDimensionsForm(model)}
             onClick={() => dispatch({ t: "dimensions-form/clicked-save" })}
           />
         </div>
