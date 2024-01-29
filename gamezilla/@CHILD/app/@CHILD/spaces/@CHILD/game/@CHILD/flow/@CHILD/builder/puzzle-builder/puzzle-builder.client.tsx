@@ -12,7 +12,6 @@ import {
   VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Sub } from "gamezilla/@SHARED/core";
 import {
   FlowGridUI,
   FlowGridUIEdit,
@@ -63,7 +62,6 @@ const updateSound: ClientModule["update"] = (input) => {
       };
     }
 
-    case "user-created-new-puzzle":
     case "user-changed-to-play-mode": {
       return {
         model,
@@ -96,17 +94,6 @@ const updateSound: ClientModule["update"] = (input) => {
       return { model };
     }
   }
-};
-
-//
-//
-//
-//
-//
-//
-
-const subscriptions: ClientModule["subscriptions"] = () => {
-  return Sub.None;
 };
 
 //
@@ -333,8 +320,7 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
 //
 //
 
-export const PuzzleBuilder = {
+export const PuzzleBuilderClient = {
   update,
-  subscriptions,
   View,
 };

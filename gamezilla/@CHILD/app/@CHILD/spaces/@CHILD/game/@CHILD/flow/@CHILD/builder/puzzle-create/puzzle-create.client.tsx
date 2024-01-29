@@ -42,7 +42,7 @@ const update: ClientModule["update"] = (input) => {
   return { model };
 };
 
-const ViewButton: ClientModule["View"] = (input) => {
+const ViewCreateButton: ClientModule["View"] = (input) => {
   const { model, dispatch } = input;
 
   return (
@@ -59,7 +59,7 @@ const ViewButton: ClientModule["View"] = (input) => {
   );
 };
 
-export const PuzzleListClient = {
+export const PuzzleCreateClient = {
   update,
-  ViewButton,
+  ViewCreateButton,
 };

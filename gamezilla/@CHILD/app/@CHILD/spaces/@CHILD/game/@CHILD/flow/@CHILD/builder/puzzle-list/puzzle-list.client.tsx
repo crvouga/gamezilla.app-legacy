@@ -2,8 +2,6 @@ import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import { sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Avatar,
-  Button,
-  IconPlus,
   IconPuzzlePiece,
   Spinner,
   cn,
@@ -13,25 +11,27 @@ import { IntersectionObserverEmitter } from "gamezilla/@CHILD/app/@SHARED/ui/int
 import {
   Posix,
   Result,
-  Sub,
   TimeSpan,
   descend,
   isPending,
   loading,
 } from "gamezilla/@SHARED/core";
 import { ViewSpaceHostChip } from "../../../../../@SHARED/game";
-import { FlowGrid, FlowGridUI } from "../../../@SHARED/flow";
+import { FlowGridUI } from "../../../@SHARED/flow";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 import { ClientModule } from "../builder.core";
+import { PuzzleCreateClient } from "../puzzle-create/puzzle-create.client";
 
 const update: ClientModule["update"] = (input) => {
-  return GameClientModule.chainUpdates({ model: input.model }, (model) =>
-    updatePuzzleList({ ...input, model })
+  return GameClientModule.chainUpdates(
+    { model: input.model },
+    (model) => updatePuzzleList({ ...input, model }),
+    (model) => PuzzleCreateClient.update({ ...input, model })
   );
 };
 
 const updatePuzzleList: ClientModule["update"] = (input) => {
-  const { gameEvent, model, msg, fromServer, ctx } = input;
+  const { model, msg, fromServer, ctx } = input;
 
   if (msg?.t === "list/user-observed-end-of-list") {
     return {
@@ -80,23 +80,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
     };
   }
 
-  if (gameEvent?.t === "user-created-new-puzzle") {
-    return {
-      model: {
-        ...model,
-        puzzles: {
-          ...model.puzzles,
-          [gameEvent.puzzle.id]: gameEvent.puzzle,
-        },
-      },
-    };
-  }
-
   return { model };
-};
-
-const subscriptions: ClientModule["subscriptions"] = (_input) => {
-  return Sub.None;
 };
 
 const View: ClientModule["View"] = (input) => {
@@ -176,38 +160,8 @@ const View: ClientModule["View"] = (input) => {
         />
       </div>
 
-      <div className="absolute bottom-4 right-5">
-        <Button
-          text="Create New"
-          variant="contained"
-          color="primary"
-          disabled={typeof model.total !== "number"}
-          start={<IconPlus className="h-8 w-8" />}
-          onClick={() => {
-            if (typeof model.total !== "number") {
-              return;
-            }
-
-            dispatch({
-              t: "game-event",
-              c: {
-                t: "user-created-new-puzzle",
-                puzzle: FlowPuzzle.create({
-                  count: model.total + 1,
-                  createdAt: input.ctx.now,
-                  createdBy: input.ctx.currentUserId,
-                  puzzle: {
-                    t: "grid",
-                    c: FlowGrid.init({
-                      width: 10,
-                      height: 10,
-                    }),
-                  },
-                }),
-              },
-            });
-          }}
-        />
+      <div className="absolute bottom-5 right-5 bg-black">
+        <PuzzleCreateClient.ViewCreateButton {...input} />
       </div>
     </div>
   );
@@ -245,6 +199,5 @@ const FlowPuzzleListItem = ({
 
 export const PuzzleListClient = {
   update,
-  subscriptions,
   View,
 };
