@@ -50,7 +50,7 @@ type Input<TToClient, TToServer> = {
   //
   msg?: ServerMsg | null;
   fromClient?: ToServer | null;
-  event?: ServerEvent | null;
+  msgEvent?: ServerEvent | null;
   cmd?: WireCmd<TToClient> | null;
   //
   transport: IServerTransport<{
@@ -62,7 +62,7 @@ type Input<TToClient, TToServer> = {
 type Output = {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
-  event?: ServerEvent[];
+  msgEvent?: ServerEvent[];
   cmd?: ServerCmd<ToClient>[];
 };
 
@@ -112,7 +112,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
             [msg.sessionId]: clientNew,
           };
 
-          const event: ServerEvent[] = [
+          const msgEvent: ServerEvent[] = [
             {
               t: "wire/client-connected",
               clientId: msg.clientId,
@@ -125,7 +125,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
               ...model,
               clientsBySessionId: clientsBySessionIdNew,
             },
-            event,
+            msgEvent,
           };
         },
         async (model) => {
@@ -166,7 +166,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
       //   [msg.sessionId]: clientNew,
       // };
 
-      const event: ServerEvent[] = [
+      const msgEvent: ServerEvent[] = [
         {
           t: "wire/client-disconnected",
           clientId: msg.clientId,
@@ -178,7 +178,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
           ...model,
           // clientsBySessionId: clientsBySessionIdNew,
         },
-        event: event,
+        msgEvent: msgEvent,
       };
     }
 
@@ -202,19 +202,19 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
   }
 };
 
-const updateFromEvent: typeof update = async ({ event, model }) => {
-  if (!event) {
+const updateFromEvent: typeof update = async ({ msgEvent, model }) => {
+  if (!msgEvent) {
     return { model };
   }
-  switch (event.t) {
+  switch (msgEvent.t) {
     case "auth/client-authenticated": {
-      const sessionIds = model.sessionIdsByUserId[event.userId] ?? [];
+      const sessionIds = model.sessionIdsByUserId[msgEvent.userId] ?? [];
 
-      const sessionIdsNew = [...new Set([...sessionIds, event.sessionId])];
+      const sessionIdsNew = [...new Set([...sessionIds, msgEvent.sessionId])];
 
       const sessionIdByUserIdNew: ServerModel["sessionIdsByUserId"] = {
         ...model.sessionIdsByUserId,
-        [event.userId]: sessionIdsNew,
+        [msgEvent.userId]: sessionIdsNew,
       };
 
       return {

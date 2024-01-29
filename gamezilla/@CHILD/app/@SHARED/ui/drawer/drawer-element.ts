@@ -42,9 +42,9 @@ if (typeof window !== "undefined" && "customElements" in window) {
     }
 
     connectedCallback() {
-      this.unsubscribe = drawerSub.subscribe((event) => {
-        if (event.id === this.getAttribute("id")) {
-          this.props = event;
+      this.unsubscribe = drawerSub.subscribe((msgEvent) => {
+        if (msgEvent.id === this.getAttribute("id")) {
+          this.props = msgEvent;
           this.syncUI();
         }
       });
@@ -127,8 +127,8 @@ if (typeof window !== "undefined" && "customElements" in window) {
       }
     }
 
-    onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
+    onKeyDown(msgEvent: KeyboardEvent) {
+      if (msgEvent.key === "Escape") {
         this.props?.onClose();
       }
     }

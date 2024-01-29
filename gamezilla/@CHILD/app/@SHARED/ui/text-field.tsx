@@ -68,8 +68,8 @@ export const TextField = ({
           <button
             className="rounded-md outline-none ring-blue-600 focus:ring-2"
             aria-label="Clear input"
-            onClick={(event) => {
-              event.preventDefault();
+            onClick={(e) => {
+              e.preventDefault();
               document.getElementById(id)?.focus();
               onClear();
             }}

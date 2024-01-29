@@ -79,8 +79,8 @@ export type ToClient =
 
 export type ClientMsgFinal =
   | { t: "msg"; msg: ClientMsg }
-  | { t: "event"; event: ClientEvent }
-  | { t: "from-server"; fromServer: ClientMsg }
+  | { t: "msgEvent"; msgEvent: ClientEvent }
+  | { t: "from-server"; msgFromServer: ClientMsg }
   | { t: "cmd"; cmd: ClientCmd<{ ClientMsg: ClientMsg; ToServer: ToServer }> };
 
 //

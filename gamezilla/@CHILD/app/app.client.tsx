@@ -170,7 +170,7 @@ export const init = async ({
     model: initialModel,
     eff: initialEff,
     cmd: initialCmd,
-    event: [],
+    msgEvent: [],
   });
 
   return {
@@ -207,15 +207,15 @@ export const update = async (input: {
   if (input.msg) {
     log("[msg]", toMsgType(input.msg));
   }
-  const fromServer = input.msg.t === "➡️" ? input.msg.c : undefined;
-  if (fromServer) {
-    log("[➡️]", toMsgType(fromServer));
+  const msgFromServer = input.msg.t === "➡️" ? input.msg.c : undefined;
+  if (msgFromServer) {
+    log("[➡️]", toMsgType(msgFromServer));
   }
   const updatedFromMsg = await updateChild({
     now: input.ctx.now,
     model: input.model,
     msg: input.msg,
-    fromServer: fromServer,
+    msgFromServer: msgFromServer,
     deps: input.deps,
   });
 
@@ -227,7 +227,7 @@ export const update = async (input: {
 type Output = {
   model: ClientModel;
   eff: Eff<ClientMsg>;
-  event: ClientEvent[];
+  msgEvent: ClientEvent[];
   cmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 };
 
@@ -245,25 +245,25 @@ const updateLoop = async (
       model: updatedCmd.model,
       cmd: [...cmdRest, ...updatedCmd.cmd],
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
-      event: batchMsgs(acc.event, updatedCmd.event),
+      msgEvent: batchMsgs(acc.msgEvent, updatedCmd.msgEvent),
     });
   }
 
-  const [event, ...eventRest] = acc.event;
+  const [msgEvent, ...msgEventRest] = acc.msgEvent;
 
-  if (event) {
-    log("[event]", toMsgType(event));
+  if (msgEvent) {
+    log("[msgEvent]", toMsgType(msgEvent));
     const updatedEvent = await updateChild({
       deps,
       now,
       model: acc.model,
-      event,
+      msgEvent,
     });
     return updateLoop(deps, now, {
       model: updatedEvent.model,
       cmd: [...cmdRest, ...updatedEvent.cmd],
       eff: Eff.batch([acc.eff, updatedEvent.eff]),
-      event: batchMsgs(eventRest, updatedEvent.event),
+      msgEvent: batchMsgs(msgEventRest, updatedEvent.msgEvent),
     });
   }
 
@@ -274,8 +274,8 @@ const updateChild = async ({
   now,
   model,
   msg,
-  fromServer,
-  event,
+  msgFromServer,
+  msgEvent,
   cmd,
   deps,
 }: {
@@ -283,8 +283,8 @@ const updateChild = async ({
   now: Posix;
   model: ClientModel;
   msg?: ClientMsg;
-  fromServer?: ToClient;
-  event?: ClientEvent;
+  msgFromServer?: ToClient;
+  msgEvent?: ClientEvent;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
 }): Promise<Output> => {
   const ctx = toCtx({ model, ctx: { now } });
@@ -293,8 +293,8 @@ const updateChild = async ({
     ctx: ctx,
     model: model.spaces,
     msg: msg?.t === "spaces" ? msg.c : null,
-    fromServer: fromServer?.t === "spaces" ? fromServer.c : null,
-    event: event,
+    msgFromServer: msgFromServer?.t === "spaces" ? msgFromServer.c : null,
+    msgEvent: msgEvent,
     cmd: null,
   });
 
@@ -302,8 +302,8 @@ const updateChild = async ({
     ctx: { ...ctx, viewBottomBar: null },
     model: model.profile,
     msg: msg?.t === "profile" ? msg.c : null,
-    fromServer: fromServer?.t === "profile" ? fromServer.c : null,
-    event: event,
+    msgFromServer: msgFromServer?.t === "profile" ? msgFromServer.c : null,
+    msgEvent: msgEvent,
     cmd: cmd?.t === "profile" ? cmd : null,
   });
 
@@ -311,8 +311,8 @@ const updateChild = async ({
     ctx: ctx,
     model: model.auth,
     msg: msg?.t === "auth" ? msg.c : null,
-    fromServer: fromServer?.t === "auth" ? fromServer.c : null,
-    event: event,
+    msgFromServer: msgFromServer?.t === "auth" ? msgFromServer.c : null,
+    msgEvent: msgEvent,
     cmd: null,
   });
 
@@ -325,7 +325,7 @@ const updateChild = async ({
   const wire = await Wire.update({
     model: model.wire,
     msg: msg?.t === "wire" ? msg.c : null,
-    fromServer: fromServer?.t === "wire" ? fromServer.c : null,
+    msgFromServer: msgFromServer?.t === "wire" ? msgFromServer.c : null,
     cmd: cmd?.t === "wire" ? cmd : null,
     transport: deps.transport,
   });
@@ -353,8 +353,8 @@ const updateChild = async ({
     msg: msg?.t === "toast" ? msg.c : null,
     cmd: cmd?.t === "toast" ? cmd : null,
     ctx: ctx,
-    event: null,
-    fromServer: null,
+    msgEvent: null,
+    msgFromServer: null,
   });
 
   return {
@@ -382,14 +382,14 @@ const updateChild = async ({
       Eff.tag("wire", wire.eff),
     ]),
 
-    event: batchMsgs<ClientEvent>(
-      auth.event,
-      profile.event,
-      routing.event,
-      sound.event,
-      space.event,
-      toast.event,
-      wire.event
+    msgEvent: batchMsgs<ClientEvent>(
+      auth.msgEvent,
+      profile.msgEvent,
+      routing.msgEvent,
+      sound.msgEvent,
+      space.msgEvent,
+      toast.msgEvent,
+      wire.msgEvent
     ),
 
     cmd: batchMsgs<ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>>(

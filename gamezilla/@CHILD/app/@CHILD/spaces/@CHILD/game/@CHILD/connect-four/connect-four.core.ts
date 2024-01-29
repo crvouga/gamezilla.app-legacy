@@ -81,16 +81,16 @@ export const initState = (): GameState => {
 
 export const reducer = ({
   ctx,
-  event,
+  msgEvent,
   state,
 }: {
   ctx: SpaceCtx;
   state: GameState;
-  event: WithEventMeta<GameEvent>;
+  msgEvent: WithEventMeta<GameEvent>;
 }): GameState => {
-  switch (event.t) {
+  switch (msgEvent.t) {
     case "user-changed-mode": {
-      switch (event.mode) {
+      switch (msgEvent.mode) {
         case "none": {
           return {
             t: "none",
@@ -120,7 +120,7 @@ export const reducer = ({
             t: "vs-bot",
             c: VsBot.reducer({
               gameState: state.c,
-              gameEvent: { ...event, ...event.c },
+              msgGameEvent: { ...msgEvent, ...msgEvent.c },
             }),
           };
         }
@@ -135,7 +135,7 @@ export const reducer = ({
         case "vs-user": {
           return {
             t: "vs-user",
-            c: VsUser.reducer(state.c, event.c),
+            c: VsUser.reducer(state.c, msgEvent.c),
           };
         }
 

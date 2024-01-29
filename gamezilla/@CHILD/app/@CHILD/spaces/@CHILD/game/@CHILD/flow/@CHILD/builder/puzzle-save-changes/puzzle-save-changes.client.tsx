@@ -40,13 +40,13 @@ const update: ClientModule["update"] = (input) => {
   );
 };
 
-const updatePuzzles: ClientModule["update"] = ({ gameEvent, model }) => {
-  switch (gameEvent?.t) {
+const updatePuzzles: ClientModule["update"] = ({ msgGameEvent, model }) => {
+  switch (msgGameEvent?.t) {
     case "user-saved-changes": {
-      if (isErr(gameEvent.saved)) {
+      if (isErr(msgGameEvent.saved)) {
         return { model };
       }
-      const puzzleNew = gameEvent.saved.value;
+      const puzzleNew = msgGameEvent.saved.value;
 
       return {
         model: {
@@ -66,7 +66,7 @@ const updatePuzzles: ClientModule["update"] = ({ gameEvent, model }) => {
 };
 
 const updateExitBuilder: ClientModule["update"] = (input) => {
-  const { msg, model, gameState, gameEvent } = input;
+  const { msg, model, gameState, msgGameEvent } = input;
 
   if (gameState.t !== "build") {
     return { model };
@@ -112,12 +112,12 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
     }
   }
 
-  switch (gameEvent?.t) {
+  switch (msgGameEvent?.t) {
     case "user-saved-changes": {
       if (
         model.saveChangesRequest?.t === "loading" &&
         model.saveChangesIsExiting &&
-        isOk(gameEvent.saved)
+        isOk(msgGameEvent.saved)
       ) {
         return exitBuilder({
           ...input,
@@ -135,38 +135,38 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
 };
 
 const updateSaveChangesRequest: ClientModule["update"] = (input) => {
-  const { model, msg, ctx, gameEvent } = input;
+  const { model, msg, ctx, msgGameEvent } = input;
 
   if (msg?.t === "save-changes/user-clicked-save-button") {
     return saveChanges(input);
   }
 
   if (
-    gameEvent?.t === "user-saved-changes" &&
-    gameEvent.userId === ctx.currentUserId
+    msgGameEvent?.t === "user-saved-changes" &&
+    msgGameEvent.userId === ctx.currentUserId
   ) {
     return {
       model: {
         ...model,
-        saveChangesRequest: Result.mapOk(gameEvent.saved, () => null),
+        saveChangesRequest: Result.mapOk(msgGameEvent.saved, () => null),
       },
-      cmd: isOk(gameEvent.saved)
+      cmd: isOk(msgGameEvent.saved)
         ? showOkToast("Saved changes")
-        : showErrorToast(gameEvent.saved.error),
+        : showErrorToast(msgGameEvent.saved.error),
     };
   }
   return { model };
 };
 
 const exitBuilder: ClientModule["update"] = (input) => {
-  const gameEvent: GameEvent = {
+  const msgGameEvent: GameEvent = {
     t: "user-exited-builder",
     userId: input.ctx.currentUserId,
   };
 
   return {
     model: { ...input.model, opened: null },
-    gameEvent: [withId(gameEvent)],
+    msgGameEvent: [withId(msgGameEvent)],
   };
 };
 

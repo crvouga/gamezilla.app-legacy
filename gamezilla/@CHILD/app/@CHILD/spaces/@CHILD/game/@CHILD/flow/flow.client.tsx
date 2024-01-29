@@ -76,8 +76,16 @@ const update: Module["update"] = (input) => {
 };
 
 const updateChild: Module["update"] = (input) => {
-  const { model, gameState, gameEvent, ctx, cmd, event, fromServer, msg } =
-    input;
+  const {
+    model,
+    gameState,
+    msgGameEvent,
+    ctx,
+    cmd,
+    msgEvent,
+    msgFromServer,
+    msg,
+  } = input;
 
   switch (gameState.t) {
     case null: {
@@ -86,14 +94,16 @@ const updateChild: Module["update"] = (input) => {
 
     case "play": {
       const updated = PlayClient.update({
-        ctx: { ...ctx, onQuit: () => { }, puzzles: model.puzzles },
+        ctx: { ...ctx, onQuit: () => {}, puzzles: model.puzzles },
         gameState: gameState.c,
         model: model.t === "play" ? model.c : PlayClient.init,
         cmd: cmd,
-        event: event,
-        fromServer: fromServer?.t === "play" ? fromServer.c : null,
-        gameEvent:
-          gameEvent?.t === "play" ? { ...gameEvent, ...gameEvent.c } : null,
+        msgEvent: msgEvent,
+        msgFromServer: msgFromServer?.t === "play" ? msgFromServer.c : null,
+        msgGameEvent:
+          msgGameEvent?.t === "play"
+            ? { ...msgGameEvent, ...msgGameEvent.c }
+            : null,
         msg: msg?.t === "play" ? msg.c : null,
       });
 
@@ -108,14 +118,16 @@ const updateChild: Module["update"] = (input) => {
 
     case "builder": {
       const updated = BuilderClient.update({
-        ctx: { ...ctx, onQuit: () => { }, puzzles: model.puzzles },
+        ctx: { ...ctx, onQuit: () => {}, puzzles: model.puzzles },
         gameState: gameState.c,
         model: model.t === "builder" ? model.c : BuilderClient.init,
         cmd: cmd,
-        event: event,
-        fromServer: fromServer?.t === "builder" ? fromServer.c : null,
-        gameEvent:
-          gameEvent?.t === "builder" ? { ...gameEvent, ...gameEvent.c } : null,
+        msgEvent: msgEvent,
+        msgFromServer: msgFromServer?.t === "builder" ? msgFromServer.c : null,
+        msgGameEvent:
+          msgGameEvent?.t === "builder"
+            ? { ...msgGameEvent, ...msgGameEvent.c }
+            : null,
         msg: msg?.t === "builder" ? msg.c : null,
       });
 
@@ -131,20 +143,20 @@ const updateChild: Module["update"] = (input) => {
 };
 
 const updateFromGameEvent: Module["update"] = (input) => {
-  const { gameEvent, model } = input;
+  const { msgGameEvent, model } = input;
 
-  if (!gameEvent) {
+  if (!msgGameEvent) {
     return { model };
   }
 
-  switch (gameEvent.t) {
+  switch (msgGameEvent.t) {
     case "builder":
     case "play": {
       return { model };
     }
 
     case "user-changed-mode": {
-      switch (gameEvent.mode) {
+      switch (msgGameEvent.mode) {
         case "play": {
           return {
             model: { ...model, t: "play", c: PlayClient.init },
@@ -190,11 +202,11 @@ const updateFromMsg: Module["update"] = (input) => {
       return { model };
     }
 
-    case "event": {
-      const gameEvent = withId(msg.c);
+    case "msgEvent": {
+      const msgGameEvent = withId(msg.c);
       return {
         model,
-        gameEvent: [gameEvent],
+        msgGameEvent: [msgGameEvent],
       };
     }
   }
@@ -215,7 +227,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
       return Sub.tag(
         "play",
         PlayClient.subscriptions({
-          ctx: { ...input.ctx, onQuit() { }, puzzles: input.model.puzzles },
+          ctx: { ...input.ctx, onQuit() {}, puzzles: input.model.puzzles },
           gameState: input.gameState.c,
           model: input.model.t === "play" ? input.model.c : PlayClient.init,
         })
@@ -225,7 +237,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
       return Sub.tag(
         "builder",
         BuilderClient.subscriptions({
-          ctx: { ...input.ctx, onQuit() { }, puzzles: input.model.puzzles },
+          ctx: { ...input.ctx, onQuit() {}, puzzles: input.model.puzzles },
           gameState: input.gameState.c,
           model:
             input.model.t === "builder" ? input.model.c : BuilderClient.init,
@@ -253,7 +265,7 @@ const View: Module["View"] = (input) => {
     puzzles: input.model.puzzles,
     onQuit: () =>
       dispatch({
-        t: "event",
+        t: "msgEvent",
         c: {
           t: "user-changed-mode",
           mode: null,
@@ -276,7 +288,7 @@ const View: Module["View"] = (input) => {
               description: "Start playing puzzles",
               onClick: () => {
                 dispatch({
-                  t: "event",
+                  t: "msgEvent",
                   c: {
                     t: "user-changed-mode",
                     mode: "play",
@@ -291,7 +303,7 @@ const View: Module["View"] = (input) => {
               description: "Build new puzzles to play",
               onClick: () => {
                 dispatch({
-                  t: "event",
+                  t: "msgEvent",
                   c: {
                     t: "user-changed-mode",
                     mode: "builder",
@@ -335,18 +347,18 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
   ctx,
   dispatch,
   gameState,
-  gameEvent,
+  msgGameEvent,
 }) => {
-  switch (gameEvent.t) {
+  switch (msgGameEvent.t) {
     case "play": {
       switch (gameState.t) {
         case "play": {
           return (
             <PlayClient.ViewFeedItem
-              ctx={{ ...ctx, onQuit() { }, puzzles: {} }}
+              ctx={{ ...ctx, onQuit() {}, puzzles: {} }}
               dispatch={(c) => dispatch({ t: "play", c })}
               gameState={gameState.c}
-              gameEvent={gameEvent.c}
+              msgGameEvent={msgGameEvent.c}
             />
           );
         }
@@ -356,17 +368,17 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
       }
     }
 
-    case 'builder': {
+    case "builder": {
       switch (gameState.t) {
-        case 'builder': {
+        case "builder": {
           return (
             <BuilderClient.ViewFeedItem
-              ctx={{ ...ctx, onQuit() { }, puzzles: {} }}
+              ctx={{ ...ctx, onQuit() {}, puzzles: {} }}
               dispatch={(c) => dispatch({ t: "builder", c })}
               gameState={gameState.c}
-              gameEvent={gameEvent.c}
+              msgGameEvent={msgGameEvent.c}
             />
-          )
+          );
         }
 
         default: {
@@ -376,7 +388,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
     }
 
     default: {
-      return null
+      return null;
     }
   }
 };

@@ -49,15 +49,15 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 
   switch (msg?.t) {
     case "puzzle.editor.flow-grid-ui-edit": {
-      return { model, gameEvent: [withId({ t: "grid-ui-edit", c: msg.c })] };
+      return { model, msgGameEvent: [withId({ t: "grid-ui-edit", c: msg.c })] };
     }
     case "puzzle.editor.flow-grid-ui-play": {
-      return { model, gameEvent: [withId({ t: "grid-ui-play", c: msg.c })] };
+      return { model, msgGameEvent: [withId({ t: "grid-ui-play", c: msg.c })] };
     }
     case "puzzle.editor.user-clicked-edit-mode-button": {
       return {
         model,
-        gameEvent: [
+        msgGameEvent: [
           withId({ t: "user-changed-to-edit-mode", userId: ctx.currentUserId }),
         ],
         cmd: [playSound(APP_SOUND.navBackwardMin)],
@@ -66,7 +66,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
     case "puzzle.editor.user-clicked-play-mode-button": {
       return {
         model,
-        gameEvent: [
+        msgGameEvent: [
           withId({ t: "user-changed-to-play-mode", userId: ctx.currentUserId }),
         ],
         cmd: [playSound(APP_SOUND.navForwardMin)],
@@ -91,9 +91,9 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 };
 
 const updateFromGameEvent: ClientModule["update"] = (input) => {
-  const { model, gameState, gameEvent } = input;
+  const { model, gameState, msgGameEvent } = input;
 
-  switch (gameEvent?.t) {
+  switch (msgGameEvent?.t) {
     case "grid-ui-edit": {
       if (gameState.t !== "build") {
         return { model };
@@ -103,7 +103,7 @@ const updateFromGameEvent: ClientModule["update"] = (input) => {
       }
       const updated = FlowGridUIEdit.update({
         model: gameState.gridEdit,
-        msg: gameEvent.c,
+        msg: msgGameEvent.c,
         grid: gameState.puzzle.puzzle.c,
       });
 

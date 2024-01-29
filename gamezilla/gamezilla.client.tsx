@@ -120,8 +120,8 @@ const renderRuntimeErrors = () => {
     showError(errorMsg, url, lineNumber, column);
   };
 
-  window.addEventListener("unhandledrejection", function (event) {
-    showError(event.reason.toString());
+  window.addEventListener("unhandledrejection", function (msgEvent) {
+    showError(msgEvent.reason.toString());
   });
 
   function showError(errorMsg: any, url?: any, lineNumber?: any, column?: any) {

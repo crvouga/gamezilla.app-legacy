@@ -2,13 +2,10 @@ import {
   ViewGameHeader,
   ViewUsersInSpaceList,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
-import {
-  SpaceClientCtx
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { gameNameList, gameNameToString } from "../@CHILD/game/game.core";
 import { SpaceEvent } from "../spaces-core/space-event";
-
 
 export const ViewScreenNotInGame = ({
   ctx,

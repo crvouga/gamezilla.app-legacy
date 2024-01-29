@@ -17,7 +17,7 @@ export type AppClientModuleTypes = {
    */
   Model: any;
   /**
-   * `Msg` is a message that is local to the module. Should almost always be past tense like an event
+   * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvent
    */
   Msg: any;
   /**
@@ -68,11 +68,11 @@ export type Input<T extends AppClientModuleTypes> = {
   /**
    *
    */
-  fromServer?: T["ToClient"] | null;
+  msgFromServer?: T["ToClient"] | null;
   /**
    *
    */
-  event?: T["InEvent"] | null;
+  msgEvent?: T["InEvent"] | null;
   /**
    *
    */
@@ -99,9 +99,9 @@ export type Output<T extends AppClientModuleTypes> = {
    */
   cmd?: T["OutCmd"][];
   /**
-   * `event` is a message to notify other modules
+   * `msgEvent` is a message to notify other modules
    */
-  event?: T["OutEvent"][];
+  msgEvent?: T["OutEvent"][];
 };
 
 type MaybePromise<T> = T | Promise<T>;
@@ -113,7 +113,10 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
   /**
    * `init` is the initial state of the module
    */
-  init: (input: { ctx: T["Ctx"]; stored: T["Model"] | null }) => MaybePromise<Output<T>>;
+  init: (input: {
+    ctx: T["Ctx"];
+    stored: T["Model"] | null;
+  }) => MaybePromise<Output<T>>;
 
   /**
    * `update` handles all the state transitions and business logic of the module
@@ -150,11 +153,11 @@ const chainUpdates = async <T extends AppClientModuleTypes>(
   const accNew: Output<T> = {
     model: {
       ...acc.model,
-      ...updated.model
+      ...updated.model,
     },
     eff: Eff.batch([acc.eff, updated.eff]),
     cmd: [...(acc.cmd ?? []), ...(updated.cmd ?? [])],
-    event: [...(acc.event ?? []), ...(updated.event ?? [])],
+    msgEvent: [...(acc.msgEvent ?? []), ...(updated.msgEvent ?? [])],
   };
 
   return chainUpdates(accNew, ...rest);

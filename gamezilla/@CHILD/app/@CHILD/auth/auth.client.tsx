@@ -67,7 +67,7 @@ export const init: Client["init"] = async ({ stored, ctx }) => {
     return {
       model: { ...stored, sms: sms.model },
       eff: Eff.tag("sms", sms.eff),
-      event: sms.event,
+      msgEvent: sms.msgEvent,
       cmd: ClientCmd.tag("sms", sms.cmd),
     };
   }
@@ -80,7 +80,7 @@ export const init: Client["init"] = async ({ stored, ctx }) => {
       sms: sms.model,
     },
     eff: Eff.tag("sms", sms.eff),
-    event: sms.event,
+    msgEvent: sms.msgEvent,
     cmd: ClientCmd.tag("sms", sms.cmd),
   };
 };
@@ -108,8 +108,9 @@ const updateChild: Client["update"] = async (input) => {
     ctx: input.ctx,
     model: input.model.sms,
     cmd: input.cmd,
-    event: input.event,
-    fromServer: input.fromServer?.t === "sms" ? input.fromServer.c : null,
+    msgEvent: input.msgEvent,
+    msgFromServer:
+      input.msgFromServer?.t === "sms" ? input.msgFromServer.c : null,
     msg: input.msg?.t === "sms" ? input.msg.c : null,
   });
 
@@ -117,7 +118,7 @@ const updateChild: Client["update"] = async (input) => {
     model: { ...input.model, sms: updated.model },
     cmd: ClientCmd.tag("sms", updated.cmd),
     eff: Eff.tag("sms", updated.eff),
-    event: updated.event,
+    msgEvent: updated.msgEvent,
   };
 };
 
@@ -170,7 +171,7 @@ const updateFromLogoutMsg = ({
           currentUser: { t: "logged-out" },
         },
         cmd: [sendToServer({ t: "logout" }), showToast("Logged out")],
-        event: [{ t: "is-logged-out" }],
+        msgEvent: [{ t: "is-logged-out" }],
       };
     }
 
@@ -190,17 +191,17 @@ const updateFromLogoutMsg = ({
 };
 
 const updateFromServer: Client["update"] = (input) => {
-  if (!input.fromServer) {
+  if (!input.msgFromServer) {
     return { model: input.model };
   }
 
-  const { model, fromServer } = input;
+  const { model, msgFromServer } = input;
 
-  switch (fromServer.t) {
+  switch (msgFromServer.t) {
     case "client-unauthenticated": {
       return {
         model: { ...model, currentUser: { t: "logged-out" } },
-        event: [{ t: "is-logged-out" }],
+        msgEvent: [{ t: "is-logged-out" }],
       };
     }
 
@@ -210,10 +211,10 @@ const updateFromServer: Client["update"] = (input) => {
           ...model,
           currentUser: {
             t: "logged-in",
-            userId: fromServer.userId,
+            userId: msgFromServer.userId,
           },
         },
-        event: [{ ...fromServer, t: "is-logged-in" }],
+        msgEvent: [{ ...msgFromServer, t: "is-logged-in" }],
       };
     }
 
@@ -228,13 +229,13 @@ const updateFromEvent: Client["update"] = async (input) => {
 };
 
 const updateRedirect: Client["update"] = async (input) => {
-  if (!input.event) {
+  if (!input.msgEvent) {
     return { model: input.model };
   }
 
-  const { ctx, event, model } = input;
+  const { ctx, msgEvent, model } = input;
 
-  switch (event.t) {
+  switch (msgEvent.t) {
     case "is-logged-in": {
       if (ctx.currentRoute.t === "auth") {
         return {
@@ -270,7 +271,7 @@ const updateRedirect: Client["update"] = async (input) => {
     }
 
     case "routing/route-changed": {
-      if (model.currentUser.t === "logged-in" && event.route.t === "auth") {
+      if (model.currentUser.t === "logged-in" && msgEvent.route.t === "auth") {
         return {
           model,
           cmd: [
@@ -283,7 +284,7 @@ const updateRedirect: Client["update"] = async (input) => {
         };
       }
 
-      if (model.currentUser.t === "logged-out" && event.route.t !== "auth") {
+      if (model.currentUser.t === "logged-out" && msgEvent.route.t !== "auth") {
         return {
           model,
           cmd: [

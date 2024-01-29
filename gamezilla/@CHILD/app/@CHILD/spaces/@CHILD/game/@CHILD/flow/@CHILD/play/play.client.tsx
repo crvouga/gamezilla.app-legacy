@@ -68,11 +68,11 @@ const updateFromMsg: Module["update"] = (input) => {
       };
     }
 
-    case "event": {
-      const gameEvent = withId(msg.c);
+    case "msgEvent": {
+      const msgGameEvent = withId(msg.c);
       return {
         model,
-        gameEvent: [gameEvent],
+        msgGameEvent: [msgGameEvent],
       };
     }
   }
@@ -96,7 +96,7 @@ const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
         )}
         {USE_GAME_STATE ? (
           <FlowGridUIPlay.View
-            dispatch={(c) => dispatch({ t: "event", c: { t: "grid", c } })}
+            dispatch={(c) => dispatch({ t: "msgEvent", c: { t: "grid", c } })}
             model={gameState.gridPlay}
             disabled={isSpectating}
             grid={gameState.grid}
@@ -124,10 +124,10 @@ const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
   );
 };
 
-export const ViewFeedItem: Module["ViewFeedItem"] = ({ gameEvent }) => {
-  switch (gameEvent.t) {
+export const ViewFeedItem: Module["ViewFeedItem"] = ({ msgGameEvent }) => {
+  switch (msgGameEvent.t) {
     case "grid": {
-      switch (gameEvent.c.t) {
+      switch (msgGameEvent.c.t) {
         case "dragged-over":
         case "left":
         case "pressed-down":

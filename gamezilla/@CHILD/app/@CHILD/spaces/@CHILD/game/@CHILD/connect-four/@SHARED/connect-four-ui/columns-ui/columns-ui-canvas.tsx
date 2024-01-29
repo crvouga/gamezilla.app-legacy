@@ -36,10 +36,10 @@ export const ViewColumnsCanvas = ({ onClick }: ViewColumnsProps) => {
     <canvas
       id="view-columns-canvas"
       className="w-full cursor-pointer"
-      onClick={(event) => {
-        const rect = event.currentTarget.getBoundingClientRect();
-        const elementRelativeX = event.clientX - rect.left;
-        const elementWidth = event.currentTarget.width;
+      onClick={(msgEvent) => {
+        const rect = msgEvent.currentTarget.getBoundingClientRect();
+        const elementRelativeX = msgEvent.clientX - rect.left;
+        const elementWidth = msgEvent.currentTarget.width;
         const canvasRelativeX = (elementRelativeX * elementWidth) / rect.width;
         const columnIndex = Math.floor(
           rescale({
@@ -111,7 +111,7 @@ const paint = ({
     }
   }
 
-  // this is a hack that prevents a bug when creating the holes in board using the evenodd fill method
+  // this is a hack that prmsgEvents a bug when creating the holes in board using the evenodd fill method
   context.beginPath();
   context.arc(
     width + cellWidth,

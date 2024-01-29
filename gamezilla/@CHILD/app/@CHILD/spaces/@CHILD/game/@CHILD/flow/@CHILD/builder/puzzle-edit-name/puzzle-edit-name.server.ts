@@ -26,7 +26,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         userId: fromClient.userId,
       });
 
-      const gameEvent: GameEvent = {
+      const msgGameEvent: GameEvent = {
         t: "user-edited-puzzle-name",
         edited,
         flowPuzzleId: fromClient.flowPuzzleId,
@@ -36,7 +36,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
       return {
         model,
-        gameEvent: [withId(gameEvent)],
+        msgGameEvent: [withId(msgGameEvent)],
       };
     }
 

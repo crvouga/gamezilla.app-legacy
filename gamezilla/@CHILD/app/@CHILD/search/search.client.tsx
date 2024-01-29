@@ -62,7 +62,7 @@ export const update = ({
 }): {
   model: ClientModel;
   eff?: Eff<Msg>;
-  event?: ClientEvent[];
+  msgEvent?: ClientEvent[];
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   if (msg.t === "focus-done") {
@@ -145,12 +145,13 @@ export const View = ({
               className="flex-1 bg-transparent text-lg outline-none"
               placeholder="Search"
               value={model.searchText}
-              onChange={(event) =>
+              onChange={(msgEvent) =>
                 dispatch({
                   t: "inputted-search-text",
-                  searchText: event.currentTarget.value,
+                  searchText: msgEvent.currentTarget.value,
                 })
-              }></input>
+              }
+            ></input>
             <button onClick={() => dispatch({ t: "clicked-clear" })}>
               <IconXMark className="h-6 w-6" />
             </button>
@@ -164,7 +165,8 @@ export const View = ({
                 className="flex w-full items-center gap-4 p-4 hover:bg-neutral-700"
                 onClick={() =>
                   dispatch({ t: "clicked-result", userId: result.userId })
-                }>
+                }
+              >
                 {result.username}
               </button>
             </li>

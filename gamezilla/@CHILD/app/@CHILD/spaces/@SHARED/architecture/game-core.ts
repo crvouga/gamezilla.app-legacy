@@ -8,7 +8,7 @@ export type GameCore<T extends GameCoreTypes> = {
   initState: (input: { ctx: T["Ctx"] }) => T["GameState"];
   reducer: (input: {
     ctx: T["Ctx"];
-    event: T["GameEvent"];
+    msgEvent: T["GameEvent"];
     state: T["GameState"];
   }) => T["GameState"];
 };

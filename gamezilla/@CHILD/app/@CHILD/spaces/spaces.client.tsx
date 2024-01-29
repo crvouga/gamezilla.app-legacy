@@ -35,7 +35,7 @@ import {
   IconXMark,
   TopBar,
   TopBarBackButton,
-  VDom
+  VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub, batchMsgs } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
@@ -118,11 +118,11 @@ export const update: Module["update"] = (input) => {
   );
 };
 
-const updateProfiles: Module["update"] = ({ model, fromServer }) => {
-  if (fromServer?.profiles) {
+const updateProfiles: Module["update"] = ({ model, msgFromServer }) => {
+  if (msgFromServer?.profiles) {
     return {
       model,
-      cmd: [addProfiles(fromServer.profiles)],
+      cmd: [addProfiles(msgFromServer.profiles)],
     };
   }
 
@@ -177,22 +177,22 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
       return { model };
     }
 
-    case "event": {
-      return updateFromManySpaceEvents({ ctx, events: [msg.c], model });
+    case "msgEvent": {
+      return updateFromManySpaceEvents({ ctx, msgEvents: [msg.c], model });
     }
   }
 };
 
 const updateFromServer: Module["update"] = async (input) => {
-  const { ctx, fromServer, model } = input;
+  const { ctx, msgFromServer, model } = input;
 
-  if (!fromServer) {
+  if (!msgFromServer) {
     return { model };
   }
 
-  switch (fromServer.t) {
+  switch (msgFromServer.t) {
     case "listed-spaces": {
-      const merged = Spaces.mergeMany({ model, spaces: fromServer.spaces });
+      const merged = Spaces.mergeMany({ model, spaces: msgFromServer.spaces });
       return {
         model: {
           games: model.games,
@@ -207,7 +207,7 @@ const updateFromServer: Module["update"] = async (input) => {
 
     case "current-user-space":
     case "synced": {
-      const merged = Spaces.mergeOne({ model, space: fromServer.space });
+      const merged = Spaces.mergeOne({ model, space: msgFromServer.space });
       return {
         model: {
           games: model.games,
@@ -220,8 +220,12 @@ const updateFromServer: Module["update"] = async (input) => {
       };
     }
 
-    case "event": {
-      return updateFromManySpaceEvents({ ctx, events: [fromServer.c], model });
+    case "msgEvent": {
+      return updateFromManySpaceEvents({
+        ctx,
+        msgEvents: [msgFromServer.c],
+        model,
+      });
     }
 
     case "game": {
@@ -264,13 +268,13 @@ const fetchSpacesFromRoute: Module["update"] = async (input) => {
 };
 
 const updateFromEvent: Module["update"] = async (input) => {
-  if (!input.event) {
+  if (!input.msgEvent) {
     return { model: input.model };
   }
 
-  const { model, event } = input;
+  const { model, msgEvent } = input;
 
-  switch (event.t) {
+  switch (msgEvent.t) {
     case "routing/route-changed": {
       return AppClientModule.chainUpdates(
         { model },
@@ -315,7 +319,7 @@ const updateFromEvent: Module["update"] = async (input) => {
             profiles: currentUserProfile
               ? { [currentUserId]: currentUserProfile }
               : {},
-            causedBy: event.t,
+            causedBy: msgEvent.t,
           }),
         ],
       };
@@ -332,15 +336,15 @@ const inputToSpaceId = (input: Parameters<Module["update"]>[0]) => {
     return input.msg.spaceId;
   }
 
-  if (input.fromServer && "spaceId" in input.fromServer) {
-    return input.fromServer.spaceId;
+  if (input.msgFromServer && "spaceId" in input.msgFromServer) {
+    return input.msgFromServer.spaceId;
   }
 
   return null;
 };
 
 const updateGame: Module["update"] = async (input) => {
-  const { ctx, model, fromServer, event, msg } = input;
+  const { ctx, model, msgFromServer, msgEvent, msg } = input;
 
   if (!ctx.currentUserId) {
     return { model };
@@ -371,25 +375,26 @@ const updateGame: Module["update"] = async (input) => {
       ...ctx,
       space: spaceState,
       currentUserId: ctx.currentUserId,
-      quit() { },
-      viewProfile() { },
+      quit() {},
+      viewProfile() {},
     },
     model: gameModel,
     gameState: gameState,
-    fromServer: fromServer?.t === "game" ? fromServer.c : null,
+    msgFromServer: msgFromServer?.t === "game" ? msgFromServer.c : null,
     cmd: null,
-    event,
+    msgEvent,
     msg: msg?.t === "game" ? msg.c : null,
   });
 
-  const eventsNew = (gameUpdated.gameEvent ?? []).map(
+  const msgEventsNew = (gameUpdated.msgGameEvent ?? []).map(
     (e): WithEventId<SpaceEvent> => ({ ...e, spaceId, t: "game", c: e })
   );
 
   return AppClientModule.chainUpdates(
     { model },
     (model) => mergeUpdatedGame({ model, spaceId, gameUpdated }),
-    (model) => updateFromManySpaceEvents({ ctx, events: eventsNew, model })
+    (model) =>
+      updateFromManySpaceEvents({ ctx, msgEvents: msgEventsNew, model })
   );
 };
 
@@ -426,13 +431,13 @@ const mergeUpdatedGame = ({
 const updateFromManySpaceEvents = (input: {
   ctx: ClientCtx | AnonymousClientCtx;
   model: ClientModel;
-  events: WithEventId<SpaceEvent>[];
+  msgEvents: WithEventId<SpaceEvent>[];
 }): Promise<{
   model: ClientModel;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
   eff?: Eff<ClientMsg>;
 }> => {
-  return updateFromManySpaceEventsLoop(input.ctx, input.events, {
+  return updateFromManySpaceEventsLoop(input.ctx, input.msgEvents, {
     model: input.model,
     cmd: [],
     eff: Eff.None,
@@ -441,10 +446,10 @@ const updateFromManySpaceEvents = (input: {
 
 const updateFromManySpaceEventsLoop = async (
   ctx: ClientCtx | AnonymousClientCtx,
-  events: WithEventId<SpaceEvent>[],
+  msgEvents: WithEventId<SpaceEvent>[],
   acc: Awaited<ReturnType<typeof updateFromManySpaceEvents>>
 ): ReturnType<typeof updateFromManySpaceEvents> => {
-  const [spaceEvent, ...spaceEventsRest] = events;
+  const [spaceEvent, ...spaceEventsRest] = msgEvents;
 
   if (!spaceEvent) {
     return acc;
@@ -457,7 +462,7 @@ const updateFromManySpaceEventsLoop = async (
     return updateFromManySpaceEventsLoop(ctx, spaceEventsRest, acc);
   }
 
-  if (Space.hasEvent(spaceModelBefore, spaceEvent.eventId)) {
+  if (Space.hasEvent(spaceModelBefore, spaceEvent.msgEventId)) {
     return updateFromManySpaceEventsLoop(ctx, spaceEventsRest, acc);
   }
 
@@ -466,7 +471,8 @@ const updateFromManySpaceEventsLoop = async (
   const updated = await AppClientModule.chainUpdates(
     acc,
     (model) => Spaces.updateFromSpaceEvent({ model, spaceEvent }),
-    (model) => updateClientFromSpaceEvent({ model, modelBefore, ctx, spaceEvent }),
+    (model) =>
+      updateClientFromSpaceEvent({ model, modelBefore, ctx, spaceEvent }),
     (model) => sendSpaceEventToServer({ model, ctx, spaceEvent })
   );
 
@@ -476,7 +482,7 @@ const updateFromManySpaceEventsLoop = async (
     eff: Eff.batch([acc.eff, updated.eff]),
   };
 
-  const spaceEventsNew = batchMsgs(spaceEventsRest, updated.event);
+  const spaceEventsNew = batchMsgs(spaceEventsRest, updated.msgEvent);
 
   return updateFromManySpaceEventsLoop(ctx, spaceEventsNew, accNew);
 };
@@ -484,7 +490,7 @@ const updateFromManySpaceEventsLoop = async (
 const sendSpaceEventToServer = async ({
   ctx,
   model,
-  spaceEvent: event,
+  spaceEvent: msgEvent,
 }: {
   ctx: ClientCtx | AnonymousClientCtx;
   model: ClientModel;
@@ -493,24 +499,24 @@ const sendSpaceEventToServer = async ({
   model: ClientModel;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 }> => {
-  const eventWithMeta = Spaces.toEventWithMeta(
+  const msgEventWithMeta = Spaces.toEventWithMeta(
     model,
-    event.spaceId,
-    event.eventId
+    msgEvent.spaceId,
+    msgEvent.msgEventId
   );
 
-  if (!eventWithMeta) {
+  if (!msgEventWithMeta) {
     return { model };
   }
 
   const profile =
-    "userId" in eventWithMeta ? ctx.profiles[eventWithMeta.userId] : null;
+    "userId" in msgEventWithMeta ? ctx.profiles[msgEventWithMeta.userId] : null;
 
   const profiles = profile ? { [profile.userId]: profile } : {};
 
   return {
     model,
-    cmd: [sendToServer({ t: "event", c: eventWithMeta, profiles })],
+    cmd: [sendToServer({ t: "msgEvent", c: msgEventWithMeta, profiles })],
   };
 };
 
@@ -527,13 +533,11 @@ const updateClientFromSpaceEvent = async ({
 }): Promise<{
   model: ClientModel;
   cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
-  event?: WithEventId<SpaceEvent>[];
+  msgEvent?: WithEventId<SpaceEvent>[];
 }> => {
   if (!ctx.currentUserId) {
     return { model };
   }
-
-
 
   switch (spaceEvent.t) {
     case "user-joined-space": {
@@ -671,17 +675,17 @@ const updateClientFromSpaceEvent = async ({
         return { model };
       }
 
-      const eventWithMeta = Spaces.toEventWithMeta(
+      const msgEventWithMeta = Spaces.toEventWithMeta(
         model,
         spaceEvent.spaceId,
-        spaceEvent.eventId
+        spaceEvent.msgEventId
       );
 
-      if (!eventWithMeta) {
+      if (!msgEventWithMeta) {
         return { model };
       }
 
-      if (eventWithMeta.t !== "game") {
+      if (msgEventWithMeta.t !== "game") {
         return { model };
       }
 
@@ -690,28 +694,32 @@ const updateClientFromSpaceEvent = async ({
           ...ctx,
           currentUserId: ctx.currentUserId,
           space: spaceState,
-          quit() { },
-          viewProfile() { },
+          quit() {},
+          viewProfile() {},
         },
-        gameEvent: { ...eventWithMeta, ...eventWithMeta.c },
+        msgGameEvent: { ...msgEventWithMeta, ...msgEventWithMeta.c },
         model:
-          model.games[eventWithMeta.spaceId] ?? Game.init(spaceState.game.t),
+          model.games[msgEventWithMeta.spaceId] ?? Game.init(spaceState.game.t),
         gameState: spaceState.game,
       });
 
-      const eventsNew = (gameUpdated.gameEvent ?? []).map((e) =>
-        withId<SpaceEvent>({ t: "game", spaceId: eventWithMeta.spaceId, c: e })
+      const msgEventsNew = (gameUpdated.msgGameEvent ?? []).map((e) =>
+        withId<SpaceEvent>({
+          t: "game",
+          spaceId: msgEventWithMeta.spaceId,
+          c: e,
+        })
       );
 
       const merged = mergeUpdatedGame({
         gameUpdated,
         model,
-        spaceId: eventWithMeta.spaceId,
+        spaceId: msgEventWithMeta.spaceId,
       });
 
       return {
         ...merged,
-        event: eventsNew,
+        msgEvent: msgEventsNew,
       };
     }
   }
@@ -773,7 +781,7 @@ export const subscriptionsCurrentUserGame: Module["subscriptions"] = ({
   const gameModel = model.games[spaceId] ?? Game.init(gameState.t);
 
   const gameSub = Game.subscriptions({
-    ctx: { ...clientCtx, space: spaceState, quit() { }, viewProfile() { } },
+    ctx: { ...clientCtx, space: spaceState, quit() {}, viewProfile() {} },
     gameState: gameState,
     model: gameModel,
   });
@@ -807,7 +815,7 @@ export const View = ({
   viewBottomBar: VDom;
 }): VDom => {
   const dispatchEvent = (m: SpaceEvent) => {
-    dispatch({ t: "event", c: withId(m) });
+    dispatch({ t: "msgEvent", c: withId(m) });
   };
   switch (route.t) {
     case "space-list": {
@@ -1003,29 +1011,34 @@ const ViewFeed = ({
   model: ClientModel;
   ctx: SpaceClientCtx;
 }) => {
-  const event = spaceState.type === 'started' ? Spaces.toEventWithMeta(
-    model,
-    spaceState.spaceId,
-    spaceState.latestEvent
-  ) : null
+  const msgEvent =
+    spaceState.type === "started"
+      ? Spaces.toEventWithMeta(
+          model,
+          spaceState.spaceId,
+          spaceState.latestEvent
+        )
+      : null;
 
   return (
     <div className="flex h-6 w-full items-center justify-center border-b border-neutral-600 p-1">
-      {spaceState.type === 'started' && event ? <ViewFeedItem ctx={ctx} event={event} state={spaceState} /> : null}
+      {spaceState.type === "started" && msgEvent ? (
+        <ViewFeedItem ctx={ctx} msgEvent={msgEvent} state={spaceState} />
+      ) : null}
     </div>
   );
 };
 
 const ViewFeedItem = ({
   ctx,
-  event,
+  msgEvent,
   state,
 }: {
   ctx: SpaceClientCtx;
-  event: WithEventId<SpaceEvent>;
+  msgEvent: WithEventId<SpaceEvent>;
   state: SpaceState.Started;
 }) => {
-  switch (event.t) {
+  switch (msgEvent.t) {
     case "game": {
       if (!state.game) {
         return null;
@@ -1033,7 +1046,7 @@ const ViewFeedItem = ({
       return (
         <Game.ViewFeedItem
           ctx={ctx}
-          gameEvent={{ ...event, ...event.c }}
+          msgGameEvent={{ ...msgEvent, ...msgEvent.c }}
           gameState={state.game}
           dispatch={(_msg) => {
             //
@@ -1043,7 +1056,7 @@ const ViewFeedItem = ({
     }
 
     case "user-ended-space": {
-      const profile = ctx.profiles[event.userId];
+      const profile = ctx.profiles[msgEvent.userId];
       return (
         <FeedItem.Info
           text={`${profile?.username ?? "Someone"} ended the space`}
@@ -1052,8 +1065,8 @@ const ViewFeedItem = ({
     }
 
     case "user-inputted-game": {
-      const profile = ctx.profiles[event.userId];
-      if (!event.game) {
+      const profile = ctx.profiles[msgEvent.userId];
+      if (!msgEvent.game) {
         return (
           <FeedItem.Info
             text={`${profile?.username ?? "Someone"} quit the game`}
@@ -1068,7 +1081,7 @@ const ViewFeedItem = ({
     }
 
     case "user-joined-space": {
-      const profile = ctx.profiles[event.userId];
+      const profile = ctx.profiles[msgEvent.userId];
       return (
         <FeedItem.Info
           text={`${profile?.username ?? "Someone"} joined the space`}
@@ -1077,7 +1090,7 @@ const ViewFeedItem = ({
     }
 
     case "user-left-space": {
-      const profile = ctx.profiles[event.userId];
+      const profile = ctx.profiles[msgEvent.userId];
       return (
         <FeedItem.Info
           text={`${profile?.username ?? "Someone"} left the space`}
@@ -1086,7 +1099,7 @@ const ViewFeedItem = ({
     }
 
     case "user-started-space": {
-      const profile = ctx.profiles[event.userId];
+      const profile = ctx.profiles[msgEvent.userId];
       return (
         <FeedItem.Info
           text={`${profile?.username ?? "Someone"} started the space`}
@@ -1128,7 +1141,7 @@ export const ViewScreenJoinSpace = ({
         spaceState={space}
       />
     </>
-  )
+  );
 
   switch (space.type) {
     case "ended": {
@@ -1139,7 +1152,7 @@ export const ViewScreenJoinSpace = ({
             Space not found
           </div>
         </div>
-      )
+      );
     }
     case "initial": {
       return (
@@ -1149,7 +1162,7 @@ export const ViewScreenJoinSpace = ({
             Space not found
           </div>
         </div>
-      )
+      );
     }
     case "started": {
       const game = space.game;
@@ -1164,10 +1177,10 @@ export const ViewScreenJoinSpace = ({
               renderCoverArt={
                 game
                   ? (props) => (
-                    <div {...props}>
-                      <CoverArt gameName={game.t} />
-                    </div>
-                  )
+                      <div {...props}>
+                        <CoverArt gameName={game.t} />
+                      </div>
+                    )
                   : undefined
               }
             />
@@ -1419,7 +1432,7 @@ export const ViewCurrentSpaceBar = ({
   dispatch: (msg: ClientMsg) => void;
 }) => {
   const dispatchEvent = (msg: SpaceEvent) =>
-    dispatch({ t: "event", c: withId(msg) });
+    dispatch({ t: "msgEvent", c: withId(msg) });
 
   const userSpaceId = model.spaceIdByUserId[ctx.currentUserId];
 

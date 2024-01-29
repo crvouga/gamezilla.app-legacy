@@ -74,7 +74,7 @@ export const update: Module["update"] = async (input) => {
     return updateFromClient(input);
   }
 
-  if (input.event) {
+  if (input.msgEvent) {
     return updateFromEvent(input);
   }
 
@@ -130,12 +130,12 @@ const updateFromClient: Module["update"] = async ({
   };
 };
 
-const updateFromEvent: Module["update"] = async ({ event, model, ctx }) => {
-  if (!event) {
+const updateFromEvent: Module["update"] = async ({ msgEvent, model, ctx }) => {
+  if (!msgEvent) {
     return { model };
   }
 
-  switch (event.t) {
+  switch (msgEvent.t) {
     case "auth/client-authenticated": {
       return {
         model,
@@ -143,16 +143,16 @@ const updateFromEvent: Module["update"] = async ({ event, model, ctx }) => {
           const ProfileDb = createProfileDb({ dbConn: ctx.dbConn });
           const result = await findElseInsertNew({
             ProfileDb,
-            userId: event.userId,
+            userId: msgEvent.userId,
           });
           dispatch({
             t: "handled",
-            clientId: event.clientId,
+            clientId: msgEvent.clientId,
             msg: {
               t: "current-user-profile",
               result: Result.mapOk(result, profileCoreToProfile),
-              source: event,
-              loggedIn: event.loggedIn,
+              source: msgEvent,
+              loggedIn: msgEvent.loggedIn,
             },
           });
         },

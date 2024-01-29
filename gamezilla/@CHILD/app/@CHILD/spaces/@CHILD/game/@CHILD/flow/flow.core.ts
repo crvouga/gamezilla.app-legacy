@@ -37,7 +37,7 @@ export type ServerModel =
 //
 
 export type ClientMsg =
-  | { t: "event"; c: GameEvent }
+  | { t: "msgEvent"; c: GameEvent }
   | { t: "builder"; c: Builder.ClientMsg }
   | { t: "play"; c: Play.ClientMsg };
 
@@ -71,20 +71,20 @@ export const initState = () => {
 
 export const reducer = ({
   ctx,
-  event,
+  msgEvent,
   state,
 }: {
   ctx: SpaceCtx;
-  event: WithEventMeta<GameEvent>;
+  msgEvent: WithEventMeta<GameEvent>;
   state: GameState;
 }): GameState => {
-  switch (event.t) {
+  switch (msgEvent.t) {
     case "play": {
       switch (state.t) {
         case "play": {
           return {
             t: "play",
-            c: Play.reducer({ ctx, event: event.c, state: state.c }),
+            c: Play.reducer({ ctx, msgEvent: msgEvent.c, state: state.c }),
           };
         }
         default: {
@@ -98,7 +98,7 @@ export const reducer = ({
         case "builder": {
           return {
             t: "builder",
-            c: Builder.reducer({ ctx, event: event.c, state: state.c }),
+            c: Builder.reducer({ ctx, msgEvent: msgEvent.c, state: state.c }),
           };
         }
         default: {
@@ -108,11 +108,11 @@ export const reducer = ({
     }
 
     case "user-changed-mode": {
-      if (event.userId !== ctx.space.hostId) {
+      if (msgEvent.userId !== ctx.space.hostId) {
         return state;
       }
 
-      switch (event.mode) {
+      switch (msgEvent.mode) {
         case null: {
           return { t: null };
         }

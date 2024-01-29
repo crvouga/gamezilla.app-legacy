@@ -26,10 +26,10 @@ const generate = (): EventId => {
   runningId++;
   const id = `${baseId}-${runningId}`;
 
-  const eventId = `${namespace}${separator}${id}`;
+  const msgEventId = `${namespace}${separator}${id}`;
 
-  if (is(eventId)) {
-    return eventId;
+  if (is(msgEventId)) {
+    return msgEventId;
   }
 
   throw new Error("impossible condition. generated invalid id");

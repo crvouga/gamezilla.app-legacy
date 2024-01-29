@@ -99,127 +99,127 @@ const update: Module["update"] = (input) => {
 
 const watchGameOver =
   (model: ClientModel): Module["update"] =>
-    (input) => {
-      const { gameEvent, gameState } = input;
+  (input) => {
+    const { msgGameEvent, gameState } = input;
 
-      if (!gameEvent) {
+    if (!msgGameEvent) {
+      return { model };
+    }
+
+    const gameStateNext = reducer({
+      msgGameEvent: msgGameEvent,
+      gameState: gameState,
+    });
+
+    if (gameState.type !== "game" || gameStateNext.type !== "game") {
+      return { model };
+    }
+
+    const statusBefore = ConnectFour.toStatus(gameState.columns);
+
+    const status = ConnectFour.toStatus(gameStateNext.columns);
+
+    if (statusBefore.type === status.type) {
+      return { model };
+    }
+
+    switch (status.type) {
+      case "Playing": {
         return { model };
       }
 
-      const gameStateNext = reducer({
-        gameEvent: gameEvent,
-        gameState: gameState,
-      });
-
-      if (gameState.type !== "game" || gameStateNext.type !== "game") {
-        return { model };
+      case "Tie": {
+        return { model, cmd: [playSound(APP_SOUND.alertErrorSm)] };
       }
 
-      const statusBefore = ConnectFour.toStatus(gameState.columns);
-
-      const status = ConnectFour.toStatus(gameStateNext.columns);
-
-      if (statusBefore.type === status.type) {
-        return { model };
-      }
-
-      switch (status.type) {
-        case "Playing": {
-          return { model };
-        }
-
-        case "Tie": {
-          return { model, cmd: [playSound(APP_SOUND.alertErrorSm)] };
-        }
-
-        case "Winner": {
-          if (status.winner === gameStateNext.userPlayerType) {
-            return {
-              model,
-              cmd: [
-                playSound(APP_SOUND.celebration, {
-                  delay: TimeSpan.fromSeconds(1 / 2),
-                }),
-              ],
-            };
-          }
+      case "Winner": {
+        if (status.winner === gameStateNext.userPlayerType) {
           return {
             model,
             cmd: [
-              playSound(APP_SOUND.alertErrorLg, {
+              playSound(APP_SOUND.celebration, {
                 delay: TimeSpan.fromSeconds(1 / 2),
               }),
             ],
           };
         }
+        return {
+          model,
+          cmd: [
+            playSound(APP_SOUND.alertErrorLg, {
+              delay: TimeSpan.fromSeconds(1 / 2),
+            }),
+          ],
+        };
       }
-    };
+    }
+  };
 
 const updateFromGameEvent =
   (model: ClientModel): Module["update"] =>
-    (input) => {
-      const { gameEvent, gameState, ctx } = input;
+  (input) => {
+    const { msgGameEvent, gameState, ctx } = input;
 
-      if (!gameEvent) {
-        return { model };
-      }
+    if (!msgGameEvent) {
+      return { model };
+    }
 
-      return {
-        model,
-        cmd: updateSound(ctx.currentUserId, gameState, gameEvent),
-      };
+    return {
+      model,
+      cmd: updateSound(ctx.currentUserId, gameState, msgGameEvent),
     };
+  };
 
 const updateFromMsg =
   (model: ClientModel): Module["update"] =>
-    (input) => {
-      const { msg } = input;
+  (input) => {
+    const { msg } = input;
 
-      if (!msg) {
-        return { model };
+    if (!msg) {
+      return { model };
+    }
+
+    switch (msg.t) {
+      case "vs-bot-game": {
+        return {
+          model: {
+            ...model,
+            vsBotGame: VsBotGame.update(model.vsBotGame, msg.c),
+          },
+        };
       }
 
-      switch (msg.t) {
-        case "vs-bot-game": {
-          return {
-            model: {
-              ...model,
-              vsBotGame: VsBotGame.update(model.vsBotGame, msg.c),
-            },
-          };
-        }
-
-        case "vs-bot-setup": {
-          return {
-            model: {
-              ...model,
-              vsBotSetup: VsBotSetup.update(model.vsBotSetup, msg.c),
-            },
-          };
-        }
-
-        default: {
-          const gameEvent = withId(msg);
-          return { model, gameEvent: [gameEvent] };
-        }
+      case "vs-bot-setup": {
+        return {
+          model: {
+            ...model,
+            vsBotSetup: VsBotSetup.update(model.vsBotSetup, msg.c),
+          },
+        };
       }
-    };
+
+      default: {
+        const msgGameEvent = withId(msg);
+        return { model, msgGameEvent: [msgGameEvent] };
+      }
+    }
+  };
 
 const updateSound = (
   currentUserId: UserId,
   gameState: GameState,
-  gameEvent: GameEvent & EventMeta
+  msgGameEvent: GameEvent & EventMeta
 ): ClientCmd<{
   ToServer: ToServer;
   ClientMsg: ClientMsg;
 }>[] => {
   switch (gameState.type) {
     case "game": {
-      switch (gameEvent.t) {
+      switch (msgGameEvent.t) {
         case "user-dropped-disc": {
-          const error = gameState.errors[gameEvent.eventId];
+          const error = gameState.errors[msgGameEvent.msgEventId];
 
-          if (error && gameEvent.userId === currentUserId) {
+          if (error && msgGameEvent.userId === currentUserId) {
             return [playSound(APP_SOUND.alertErrorSm)];
           }
 
@@ -247,7 +247,7 @@ const updateSound = (
     }
 
     case "setup": {
-      switch (gameEvent.t) {
+      switch (msgGameEvent.t) {
         case "user-started-playing":
         case "user-stopped-playing":
         case "user-swapped-sides":
@@ -397,8 +397,8 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
       status.type !== "Playing"
         ? null
         : status.turn === "player-one"
-          ? "player-one"
-          : "player-two",
+        ? "player-one"
+        : "player-two",
   };
 
   const isSpectating = ctx.currentUserId !== gameState.playingUserId;
@@ -493,13 +493,13 @@ function toVsBotStatus(status: ConnectFour.Status): VsBotGame.Status {
   }
 }
 
-const ViewFeedItem: Module["ViewFeedItem"] = ({ gameEvent, ctx }) => {
+const ViewFeedItem: Module["ViewFeedItem"] = ({ msgGameEvent, ctx }) => {
   const username =
-    "userId" in gameEvent
-      ? ctx.profiles[gameEvent.userId]?.username ?? null
+    "userId" in msgGameEvent
+      ? ctx.profiles[msgGameEvent.userId]?.username ?? null
       : null;
 
-  switch (gameEvent.t) {
+  switch (msgGameEvent.t) {
     case "bot-dropped-disc": {
       return <FeedItem.Info text="Bot dropped disc" />;
     }
@@ -507,13 +507,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({ gameEvent, ctx }) => {
     case "user-changed-bot-level": {
       return (
         <FeedItem.Info
-          text={`${username} changed bot level to ${gameEvent.botLevel}`}
+          text={`${username} changed bot level to ${msgGameEvent.botLevel}`}
         />
       );
     }
 
     case "user-dropped-disc": {
-      if (gameEvent.userId === ctx.currentUserId) {
+      if (msgGameEvent.userId === ctx.currentUserId) {
         return <FeedItem.Info text={`${username} dropped disc`} />;
       }
 

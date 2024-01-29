@@ -10,7 +10,7 @@ import { Result, isErr, loading } from "gamezilla/@SHARED/core";
 import { ClientModule } from "../builder.core";
 
 const update: ClientModule["update"] = (input) => {
-  const { gameEvent, model, msg } = input;
+  const { msgGameEvent, model, msg } = input;
 
   switch (msg?.t) {
     case "puzzle-create/user-clicked-create-button": {
@@ -28,21 +28,21 @@ const update: ClientModule["update"] = (input) => {
     }
   }
 
-  switch (gameEvent?.t) {
+  switch (msgGameEvent?.t) {
     case "user-created-puzzle": {
-      if (isErr(gameEvent.created)) {
+      if (isErr(msgGameEvent.created)) {
         return {
-          model: { ...model, puzzleCreateRequest: gameEvent.created },
-          cmd: showErrorToast(gameEvent.created.error),
+          model: { ...model, puzzleCreateRequest: msgGameEvent.created },
+          cmd: showErrorToast(msgGameEvent.created.error),
         };
       }
 
-      const puzzleNew = gameEvent.created.value;
+      const puzzleNew = msgGameEvent.created.value;
 
       return {
         model: {
           ...model,
-          puzzleCreateRequest: Result.mapOk(gameEvent.created, () => null),
+          puzzleCreateRequest: Result.mapOk(msgGameEvent.created, () => null),
           puzzles: { ...model.puzzles, [puzzleNew.id]: puzzleNew },
         },
         cmd: showOkToast("Puzzle created"),

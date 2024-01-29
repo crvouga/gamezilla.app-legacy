@@ -42,7 +42,8 @@ export const ViewColumnsSvg = ({
     <svg
       id={id}
       width="100%"
-      viewBox={`0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}`}>
+      viewBox={`0 0 ${COLUMN_COUNT} ${MAX_COLUMN_HEIGHT}`}
+    >
       <SvgDefs ids={ids} />
 
       <g transform={`translate(0, ${MAX_COLUMN_HEIGHT}) scale(1,-1)`}>
@@ -130,7 +131,8 @@ const ViewWins = ({ model }: { model?: Model; columns: Columns }) => {
       y={0}
       width={COLUMN_COUNT}
       height={MAX_COLUMN_HEIGHT}
-      viewBox={`0 0 ${COLUMN_COUNT * n} ${MAX_COLUMN_HEIGHT * n}`}>
+      viewBox={`0 0 ${COLUMN_COUNT * n} ${MAX_COLUMN_HEIGHT * n}`}
+    >
       {model?.wins.flatMap(({ item: win }, i) => {
         const westMost = win[0];
         const eastMost = win[win.length - 1];
@@ -170,7 +172,8 @@ const SvgDefs = ({ ids }: { ids: SvgIds }) => {
         id={ids.holePattern}
         patternUnits="userSpaceOnUse"
         width={1}
-        height={1}>
+        height={1}
+      >
         <circle cx={0.5} cy={0.5} r={0.425} fill="black"></circle>
       </pattern>
 
@@ -180,13 +183,15 @@ const SvgDefs = ({ ids }: { ids: SvgIds }) => {
           y={0}
           width={COLUMN_COUNT}
           height={MAX_COLUMN_HEIGHT}
-          fill="white"></rect>
+          fill="white"
+        ></rect>
         <rect
           x={0}
           y={0}
           width={COLUMN_COUNT}
           height={MAX_COLUMN_HEIGHT}
-          fill={`url(#${ids.holePattern})`}></rect>
+          fill={`url(#${ids.holePattern})`}
+        ></rect>
       </mask>
 
       <linearGradient id={ids.columnGradient} gradientTransform="rotate(90)">

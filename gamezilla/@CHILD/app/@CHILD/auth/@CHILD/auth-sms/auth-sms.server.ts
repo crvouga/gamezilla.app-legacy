@@ -90,7 +90,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
       return {
         model,
         cmd: [sendToClient([msg.clientId], msg)],
-        event: [
+        msgEvent: [
           {
             t: "auth/client-authenticated",
             clientId: msg.clientId,

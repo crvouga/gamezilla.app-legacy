@@ -2,7 +2,7 @@ import {
   AppRoute,
   ClientEvent,
   RouteCmd,
-  SoundCmd
+  SoundCmd,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Browser, Eff } from "gamezilla/@SHARED/core";
 
@@ -66,7 +66,7 @@ export const update = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  event?: ClientEvent[];
+  msgEvent?: ClientEvent[];
   cmd?: SoundCmd[];
 } => {
   if (msg) {
@@ -106,7 +106,7 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
           previousRoute: model.currentRoute,
           currentRoute: msg.route,
         },
-        event: [{ t: "routing/route-changed", route: msg.route }],
+        msgEvent: [{ t: "routing/route-changed", route: msg.route }],
       };
     }
   }

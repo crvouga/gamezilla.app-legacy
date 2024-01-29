@@ -141,7 +141,7 @@ export const toSpaceByUserId = ({
 export const toEventWithMeta = (
   model: Model,
   spaceId: SpaceId,
-  eventId: EventId
+  msgEventId: EventId
 ) => {
   const space = model.spaces[spaceId];
 
@@ -149,7 +149,7 @@ export const toEventWithMeta = (
     return null;
   }
 
-  return Space.toEventWithMeta(space, eventId);
+  return Space.toEventWithMeta(space, msgEventId);
 };
 
 export const toSpaceState = (
@@ -207,11 +207,11 @@ export const updateFromSpaceEvent = ({
 } => {
   switch (spaceEvent.t) {
     case "game": {
-      return appendEvent({ model, event: spaceEvent });
+      return appendEvent({ model, msgEvent: spaceEvent });
     }
 
     case "user-inputted-game": {
-      return appendEvent({ model, event: spaceEvent });
+      return appendEvent({ model, msgEvent: spaceEvent });
     }
 
     case "user-ended-space": {
@@ -224,7 +224,7 @@ export const updateFromSpaceEvent = ({
         delete spaceIdByUserIdNew[userId];
       }
 
-      const appended = appendEvent({ model, event: spaceEvent });
+      const appended = appendEvent({ model, msgEvent: spaceEvent });
 
       return {
         model: {
@@ -246,7 +246,7 @@ export const updateFromSpaceEvent = ({
         [spaceEvent.userId]: spaceEvent.spaceId,
       };
 
-      const appended = appendEvent({ model, event: spaceEvent });
+      const appended = appendEvent({ model, msgEvent: spaceEvent });
 
       return {
         model: {
@@ -263,7 +263,7 @@ export const updateFromSpaceEvent = ({
         delete spaceIdByUserIdNew[spaceEvent.userId];
       }
 
-      const appended = appendEvent({ model, event: spaceEvent });
+      const appended = appendEvent({ model, msgEvent: spaceEvent });
 
       return {
         model: {
@@ -279,7 +279,7 @@ export const updateFromSpaceEvent = ({
         [spaceEvent.userId]: spaceEvent.spaceId,
       };
 
-      const appended = appendEvent({ model, event: spaceEvent });
+      const appended = appendEvent({ model, msgEvent: spaceEvent });
 
       return {
         model: {
@@ -293,18 +293,18 @@ export const updateFromSpaceEvent = ({
 
 const appendEvent = ({
   model,
-  event,
+  msgEvent,
 }: {
   model: Model;
-  event: WithEventId<SpaceEvent>;
+  msgEvent: WithEventId<SpaceEvent>;
 }): {
   model: Model;
 } => {
-  const spaceId = event.spaceId;
+  const spaceId = msgEvent.spaceId;
 
   const space = model.spaces[spaceId] ?? Space.init;
 
-  const spaceNew = Space.appendEvent({ event, model: space });
+  const spaceNew = Space.appendEvent({ msgEvent, model: space });
 
   return {
     model: {

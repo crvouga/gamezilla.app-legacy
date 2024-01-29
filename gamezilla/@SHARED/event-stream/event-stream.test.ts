@@ -12,14 +12,14 @@ type EventId = string;
 
 type EventMeta = {
   happenedAt: Posix;
-  eventId: EventId;
+  msgEventId: EventId;
 };
 
-const withId = <T>(eventNew: T): T & EventMeta => {
+const withId = <T>(msgEventNew: T): T & EventMeta => {
   return {
-    ...eventNew,
+    ...msgEventNew,
     happenedAt: Posix.now(),
-    eventId: Math.random().toString(),
+    msgEventId: Math.random().toString(),
   };
 };
 
@@ -37,9 +37,9 @@ type Event =
 
 type Indexes = "byUserId" | "byCounterId";
 
-const withMetaAt = (event: Event, happenedAt: Posix): Event & EventMeta => {
+const withMetaAt = (msgEvent: Event, happenedAt: Posix): Event & EventMeta => {
   return {
-    ...withId<Event>(event),
+    ...withId<Event>(msgEvent),
     happenedAt,
   };
 };
@@ -56,48 +56,52 @@ export const buildTest = <TInstance>(
 ) => {
   const config = EventStream.config({
     indexes: {
-      byUserId: (event) => event.userId,
-      byCounterId: (event) => event.counterId,
+      byUserId: (msgEvent) => msgEvent.userId,
+      byCounterId: (msgEvent) => msgEvent.counterId,
     },
-    toId: (event) => event.eventId,
-    toOrdering: (event) => event.happenedAt,
+    toId: (msgEvent) => msgEvent.msgEventId,
+    toOrdering: (msgEvent) => msgEvent.happenedAt,
   });
-  test("should be able to append events", async () => {
+  test("should be able to append msgEvents", async () => {
     const before = await EventStream.init(config);
-    const event = withId<Event>({
+    const msgEvent = withId<Event>({
       t: "incremented",
       userId: "1",
       counterId: "1",
     });
-    const after = await EventStream.append(config, before, event);
+    const after = await EventStream.append(config, before, msgEvent);
 
     expect(await EventStream.toArray(before)).toEqual([]);
-    expect(await EventStream.toArray(after)).toEqual([event]);
+    expect(await EventStream.toArray(after)).toEqual([msgEvent]);
   });
 
-  test("should be able to append events", async () => {
-    const event1 = withId<Event>({
+  test("should be able to append msgEvents", async () => {
+    const msgEvent1 = withId<Event>({
       t: "incremented",
       userId: "1",
       counterId: "1",
     });
-    const event2 = withId<Event>({
+    const msgEvent2 = withId<Event>({
       t: "incremented",
       userId: "1",
       counterId: "2",
     });
-    const event3 = withId<Event>({
+    const msgEvent3 = withId<Event>({
       t: "incremented",
       userId: "1",
       counterId: "3",
     });
-    const before = await EventStream.fromArray(config, [event1, event2]);
+    const before = await EventStream.fromArray(config, [msgEvent1, msgEvent2]);
 
-    const after = await EventStream.append(config, before, event3);
+    const after = await EventStream.append(config, before, msgEvent3);
 
-    expect(await EventStream.toArray(before)).toEqual([event1, event2]);
+    expect(await EventStream.toArray(before)).toEqual([msgEvent1, msgEvent2]);
 
-    expect(await EventStream.toArray(after)).toEqual([event1, event2, event3]);
+    expect(await EventStream.toArray(after)).toEqual([
+      msgEvent1,
+      msgEvent2,
+      msgEvent3,
+    ]);
   });
 
   test("should be able get subsets", async () => {
@@ -155,7 +159,7 @@ export const buildTest = <TInstance>(
   test("should be able to merge", async () => {
     const t0 = Posix.now();
 
-    const event1 = withMetaAt(
+    const msgEvent1 = withMetaAt(
       {
         t: "incremented",
         userId: "1",
@@ -164,7 +168,7 @@ export const buildTest = <TInstance>(
       t0
     );
 
-    const event2 = withMetaAt(
+    const msgEvent2 = withMetaAt(
       {
         t: "incremented",
         userId: "1",
@@ -173,7 +177,7 @@ export const buildTest = <TInstance>(
       Posix.fromNumber(t0 + 1000)
     );
 
-    const event3 = withMetaAt(
+    const msgEvent3 = withMetaAt(
       {
         t: "incremented",
         userId: "1",
@@ -182,13 +186,13 @@ export const buildTest = <TInstance>(
       Posix.fromNumber(t0 + 2000)
     );
 
-    const streamA = await EventStream.fromArray(config, [event1, event3]);
-    const streamB = await EventStream.fromArray(config, [event2]);
+    const streamA = await EventStream.fromArray(config, [msgEvent1, msgEvent3]);
+    const streamB = await EventStream.fromArray(config, [msgEvent2]);
     const actual = await EventStream.mergeLeft(config, streamA, streamB);
     const expected = await EventStream.fromArray(config, [
-      event1,
-      event2,
-      event3,
+      msgEvent1,
+      msgEvent2,
+      msgEvent3,
     ]);
 
     expect(await EventStream.toArray(actual)).toEqual(

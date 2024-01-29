@@ -147,8 +147,8 @@ export const View = ({
 
       <form
         className="flex flex-col gap-6 p-4"
-        onSubmit={(event) => {
-          event.preventDefault();
+        onSubmit={(e) => {
+          e.preventDefault();
           dispatch({ t: "clicked-send-login-link" });
         }}
       >

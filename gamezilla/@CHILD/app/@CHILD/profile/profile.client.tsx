@@ -89,7 +89,7 @@ export const init: Module["init"] = ({ ctx, stored }) => {
 //
 
 export const update: Module["update"] = (input) => {
-  if (input.event) {
+  if (input.msgEvent) {
     return updateFromEvent(input);
   }
 
@@ -97,7 +97,7 @@ export const update: Module["update"] = (input) => {
     return updateFromMsg(input);
   }
 
-  if (input.fromServer) {
+  if (input.msgFromServer) {
     return updateFromServer(input);
   }
 
@@ -131,16 +131,16 @@ const updateFromCmd: Module["update"] = (input) => {
 };
 
 const updateFromEvent: Module["update"] = (input) => {
-  const { event, model } = input;
+  const { msgEvent, model } = input;
 
-  if (!event) {
+  if (!msgEvent) {
     return { model };
   }
 
-  switch (event.t) {
+  switch (msgEvent.t) {
     case "routing/route-changed": {
-      if (event.route.t === "profile" && event.route.c.t === "profile") {
-        return loadProfile(event.route.c.userId, model);
+      if (msgEvent.route.t === "profile" && msgEvent.route.c.t === "profile") {
+        return loadProfile(msgEvent.route.c.userId, model);
       }
       return { model };
     }
@@ -152,19 +152,19 @@ const updateFromEvent: Module["update"] = (input) => {
 };
 
 const updateFromServer: Module["update"] = (input) => {
-  const { model, fromServer } = input;
+  const { model, msgFromServer } = input;
 
-  if (!fromServer) {
+  if (!msgFromServer) {
     return { model };
   }
 
-  switch (fromServer.t) {
+  switch (msgFromServer.t) {
     case "current-user-profile": {
-      if (isErr(fromServer.result)) {
+      if (isErr(msgFromServer.result)) {
         return { model };
       }
 
-      const profile = fromServer.result.value;
+      const profile = msgFromServer.result.value;
 
       const modelNew: ClientModel = {
         ...model,
@@ -176,25 +176,25 @@ const updateFromServer: Module["update"] = (input) => {
 
       return {
         model: modelNew,
-        cmd: fromServer.loggedIn
+        cmd: msgFromServer.loggedIn
           ? [showToast(`Logged in as ${profile.username}`)]
           : [],
       };
     }
     default: {
-      if (isErr(fromServer.result)) {
+      if (isErr(msgFromServer.result)) {
         return {
           model: {
             ...model,
             requests: {
               ...model.requests,
-              [fromServer.t]: fromServer.result,
+              [msgFromServer.t]: msgFromServer.result,
             },
           },
         };
       }
 
-      const profilesNew = fromServer.result.value.reduce<
+      const profilesNew = msgFromServer.result.value.reduce<
         ClientModel["profiles"]
       >((acc, profile) => {
         return {

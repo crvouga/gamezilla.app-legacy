@@ -17,7 +17,7 @@ export type AppServerModuleTypes = {
    */
   Model: any;
   /**
-   * `Msg` is a message that is local to the module. Should almost always be past tense like an event
+   * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvent
    */
   Msg: any;
   /**
@@ -78,7 +78,7 @@ export type Input<T extends AppServerModuleTypes> = {
   /**
    *
    */
-  event?: T["InEvent"] | null;
+  msgEvent?: T["InEvent"] | null;
   /**
    *
    */
@@ -107,7 +107,7 @@ export type Output<T extends AppServerModuleTypes> = {
   /**
    *
    */
-  event?: T["OutEvent"][];
+  msgEvent?: T["OutEvent"][];
 };
 
 /**
@@ -154,7 +154,7 @@ const chainUpdates = async <T extends AppServerModuleTypes>(
     model: { ...acc.model, ...updated.model },
     eff: Eff.batch([acc.eff, updated.eff]),
     cmd: [...(acc.cmd ?? []), ...(updated.cmd ?? [])],
-    event: [...(acc.event ?? []), ...(updated.event ?? [])],
+    msgEvent: [...(acc.msgEvent ?? []), ...(updated.msgEvent ?? [])],
   };
 
   return chainUpdates(accNew, ...rest);

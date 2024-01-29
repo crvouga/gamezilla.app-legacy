@@ -131,7 +131,7 @@ const TOUCHED_Y_OFFSET = SCALE;
 
 const onDragStartOrMove =
   (props: ChessboardProps) => (e: MouseEvent | TouchEvent) => {
-    e.preventDefault(); // prevent swipe gestures on iOS
+    e.preventDefault(); // prmsgEvent swipe gestures on iOS
 
     let clientX: number;
     let clientY: number;
@@ -414,7 +414,8 @@ export const Chessboard = (props: ChessboardProps) => {
       onMouseMove={onDragStartOrMove(props)}
       //
       onTouchEnd={onDragEnd(props)}
-      onMouseUp={onDragEnd(props)}>
+      onMouseUp={onDragEnd(props)}
+    >
       <g>
         {CHECKERS.map((checker) => {
           const square = positionToSquare(checker, props.orientation ?? "w");
@@ -495,14 +496,16 @@ export const Chessboard = (props: ChessboardProps) => {
                 piece,
                 source: { x, y },
               })}
-              viewBox="0 0 45 45">
+              viewBox="0 0 45 45"
+            >
               <rect
                 fill="transparent"
                 stroke="transparent"
                 x="0"
                 y="0"
                 width="100%"
-                height="100%"></rect>
+                height="100%"
+              ></rect>
 
               {renderPiece[piece]()}
             </svg>

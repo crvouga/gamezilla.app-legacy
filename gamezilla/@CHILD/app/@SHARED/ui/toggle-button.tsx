@@ -6,13 +6,14 @@ export const ToggleButton = ({
   label: string;
   id: string;
   checked: boolean;
-  onToggle?: (event: Event) => void;
+  onToggle?: (e: Event) => void;
 }) => {
-  const onChange = (event: Event) => {
-    event.stopPropagation();
-    event.preventDefault();
+  const onChange = (e: Event) => {
+    e.stopPropagation();
+    e;
+    e.preventDefault();
     if (onToggle) {
-      onToggle(event);
+      onToggle(e);
     }
   };
 

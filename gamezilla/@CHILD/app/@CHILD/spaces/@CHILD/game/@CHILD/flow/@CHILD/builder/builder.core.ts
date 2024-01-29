@@ -225,38 +225,38 @@ export const initState = (_input: { ctx: SpaceCtx }): GameState => {
 };
 export const reducer = ({
   state,
-  event,
+  msgEvent,
   ctx,
 }: {
   ctx: SpaceCtx;
-  event: GameEvent;
+  msgEvent: GameEvent;
   state: GameState;
 }): GameState => {
   switch (state.t) {
     case "build": {
-      return reducerBuildState({ ctx, event, state: state });
+      return reducerBuildState({ ctx, msgEvent, state: state });
     }
 
     case "list": {
-      return reducerListState({ ctx, event, state: state });
+      return reducerListState({ ctx, msgEvent, state: state });
     }
   }
 };
 
 const reducerListState = ({
   state,
-  event,
+  msgEvent,
 }: {
   ctx: SpaceCtx;
-  event: GameEvent;
+  msgEvent: GameEvent;
   state: GameStateList;
 }): GameState => {
-  switch (event.t) {
+  switch (msgEvent.t) {
     case "user-created-puzzle": {
-      if (isErr(event.created)) {
+      if (isErr(msgEvent.created)) {
         return state;
       }
-      const puzzleNew = event.created.value;
+      const puzzleNew = msgEvent.created.value;
       return {
         t: "build",
         mode: { t: "edit" },
@@ -269,10 +269,10 @@ const reducerListState = ({
     case "user-opened-puzzle": {
       return {
         t: "build",
-        gridEdit: FlowGridUIEdit.init({ grid: event.puzzle.puzzle.c }),
-        gridPlay: FlowGridUIPlay.init({ grid: event.puzzle.puzzle.c }),
+        gridEdit: FlowGridUIEdit.init({ grid: msgEvent.puzzle.puzzle.c }),
+        gridPlay: FlowGridUIPlay.init({ grid: msgEvent.puzzle.puzzle.c }),
         mode: { t: "edit" },
-        puzzle: event.puzzle,
+        puzzle: msgEvent.puzzle,
       };
     }
 
@@ -292,14 +292,14 @@ const reducerListState = ({
 
 const reducerBuildState = ({
   state,
-  event,
+  msgEvent,
   ctx,
 }: {
   ctx: SpaceCtx;
-  event: GameEvent;
+  msgEvent: GameEvent;
   state: GameStateBuild;
 }): GameState => {
-  switch (event.t) {
+  switch (msgEvent.t) {
     case "grid-ui-play": {
       const currentGrid = FlowGridUIEdit.toCurrentGrid({
         model: state.gridEdit,
@@ -307,7 +307,7 @@ const reducerBuildState = ({
 
       const updated = FlowGridUIPlay.update({
         model: state.gridPlay,
-        msg: event.c,
+        msg: msgEvent.c,
         grid: currentGrid,
       });
 
@@ -320,7 +320,7 @@ const reducerBuildState = ({
     case "grid-ui-edit": {
       const updated = FlowGridUIEdit.update({
         model: state.gridEdit,
-        msg: event.c,
+        msg: msgEvent.c,
         grid: state.puzzle.puzzle.c,
       });
 
@@ -331,7 +331,7 @@ const reducerBuildState = ({
     }
 
     case "user-changed-to-edit-mode": {
-      if (event.userId !== ctx.space.hostId) {
+      if (msgEvent.userId !== ctx.space.hostId) {
         return state;
       }
 
@@ -352,7 +352,7 @@ const reducerBuildState = ({
     }
 
     case "user-exited-builder": {
-      if (event.userId !== ctx.space.hostId) {
+      if (msgEvent.userId !== ctx.space.hostId) {
         return state;
       }
 
@@ -366,15 +366,15 @@ const reducerBuildState = ({
     }
 
     case "user-edited-puzzle-name": {
-      if (event.flowPuzzleId !== state.puzzle.id) {
+      if (msgEvent.flowPuzzleId !== state.puzzle.id) {
         return state;
       }
-      if (event.edited.t === "err") {
+      if (msgEvent.edited.t === "err") {
         return state;
       }
       const puzzleNew: FlowPuzzle = {
         ...state.puzzle,
-        name: event.newName,
+        name: msgEvent.newName,
       };
       return {
         ...state,
@@ -383,10 +383,10 @@ const reducerBuildState = ({
     }
 
     case "user-saved-changes": {
-      if (isErr(event.saved)) {
+      if (isErr(msgEvent.saved)) {
         return state;
       }
-      return { ...state, puzzle: event.saved.value };
+      return { ...state, puzzle: msgEvent.saved.value };
     }
     case "user-opened-puzzle":
     case "user-created-puzzle":

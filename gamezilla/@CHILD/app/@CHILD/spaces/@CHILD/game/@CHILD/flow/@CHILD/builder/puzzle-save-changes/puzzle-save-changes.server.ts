@@ -22,7 +22,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         lastUpdatedAt: ctx.now,
       });
 
-      const gameEvent: GameEvent = {
+      const msgGameEvent: GameEvent = {
         t: "user-saved-changes",
         saved: Result.mapOk(saved, () => fromClient.puzzle),
         userId: fromClient.puzzle.createdBy,
@@ -30,7 +30,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
       return {
         model,
-        gameEvent: [withId(gameEvent)],
+        msgGameEvent: [withId(msgGameEvent)],
       };
     }
 

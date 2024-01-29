@@ -24,7 +24,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
     case "delete-forever/user-confirmed": {
       const deleted = await deps.FlowPuzzleDb.zap(gameState.puzzle.id);
 
-      const gameEvent: GameEvent = {
+      const msgGameEvent: GameEvent = {
         t: "user-deleted-puzzle",
         flowPuzzleId: gameState.puzzle.id,
         userId: fromClient.userId,
@@ -33,7 +33,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
       return {
         model,
-        gameEvent: [withId(gameEvent)],
+        msgGameEvent: [withId(msgGameEvent)],
       };
     }
 

@@ -36,7 +36,7 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
     ws.onopen = () => {
       isConnected = true;
       reconnectAttempts = 0;
-      transport.event.publish({ t: "server-connected" });
+      transport.msgEvent.publish({ t: "server-connected" });
       for (const msg of queue) {
         send(msg);
       }
@@ -45,7 +45,7 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
 
     ws.onerror = () => {
       isConnected = false;
-      transport.event.publish({ t: "server-connect-error" });
+      transport.msgEvent.publish({ t: "server-connect-error" });
     };
 
     ws.onclose = () => {
@@ -55,7 +55,7 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
       }
 
       if (reconnectAttempts > MAX_RECONNECT_ATTEMPTS) {
-        transport.event.publish({ t: "server-disconnected" });
+        transport.msgEvent.publish({ t: "server-disconnected" });
         return;
       }
       reconnectAttempts++;
@@ -63,9 +63,9 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
       return;
     };
 
-    ws.onmessage = (event) => {
+    ws.onmessage = (msgEvent) => {
       isConnected = true;
-      const msg = JSON.parse(event.data) as ServerToClientMsg<ToClient>; // leap of faith
+      const msg = JSON.parse(msgEvent.data) as ServerToClientMsg<ToClient>; // leap of faith
 
       switch (msg.t) {
         case "session-id": {
@@ -75,7 +75,7 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
 
         case "to-client": {
           if (msg.codebaseVersionId !== codebaseVersionId) {
-            transport.event.publish({
+            transport.msgEvent.publish({
               t: "got-bad-msgs",
               reason: "codebase-version-mismatch",
             });

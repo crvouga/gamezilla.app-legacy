@@ -61,17 +61,17 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 };
 
 const updateFromGameEvent: ClientModule["update"] = (input) => {
-  const { gameEvent, model } = input;
+  const { msgGameEvent, model } = input;
 
-  switch (gameEvent?.t) {
+  switch (msgGameEvent?.t) {
     case "user-deleted-puzzle": {
       const puzzlesNew = { ...model.puzzles };
-      delete puzzlesNew[gameEvent.flowPuzzleId];
+      delete puzzlesNew[msgGameEvent.flowPuzzleId];
       return {
         model: {
           ...model,
           puzzles: puzzlesNew,
-          deleteForeverRequest: gameEvent.deleted,
+          deleteForeverRequest: msgGameEvent.deleted,
           opened: null,
         },
         cmd: showOkToast("Deleted puzzle"),

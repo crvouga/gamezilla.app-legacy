@@ -86,7 +86,11 @@ type EventErr =
   | { t: "not-playing" }
   | { t: "move"; c: ConnectFour.MoveProblem };
 
-export const eventErrorToString = ({ error }: { error: EventErr }): string => {
+export const msgEventErrorToString = ({
+  error,
+}: {
+  error: EventErr;
+}): string => {
   switch (error.t) {
     case "not-playing": {
       return "You're not playing";
@@ -99,7 +103,7 @@ export const eventErrorToString = ({ error }: { error: EventErr }): string => {
 
 export type GameState = (StateSetup | StateGame) & {
   errors: {
-    [eventId: EventId]: GameEvent & { error: EventErr };
+    [msgEventId: EventId]: GameEvent & { error: EventErr };
   };
 };
 
@@ -130,25 +134,25 @@ export type StateGame = {
 
 export const reducer = ({
   gameState,
-  gameEvent,
+  msgGameEvent,
 }: {
   gameState: GameState;
-  gameEvent: GameEvent & EventMeta;
+  msgGameEvent: GameEvent & EventMeta;
 }): GameState => {
   switch (gameState.type) {
     case "setup": {
-      switch (gameEvent.t) {
+      switch (msgGameEvent.t) {
         case "user-started-playing": {
           return {
             ...gameState,
-            playingUserId: gameEvent.userId,
-            userPlayerType: gameEvent.playerType,
+            playingUserId: msgGameEvent.userId,
+            userPlayerType: msgGameEvent.playerType,
           };
         }
 
         case "user-stopped-playing": {
-          if (gameState.playingUserId !== gameEvent.userId) {
-            return addError(gameState, gameEvent, { t: "not-playing" });
+          if (gameState.playingUserId !== msgGameEvent.userId) {
+            return addError(gameState, msgGameEvent, { t: "not-playing" });
           }
 
           return {
@@ -158,8 +162,8 @@ export const reducer = ({
         }
 
         case "user-swapped-sides": {
-          if (gameState.playingUserId !== gameEvent.userId) {
-            return addError(gameState, gameEvent, { t: "not-playing" });
+          if (gameState.playingUserId !== msgGameEvent.userId) {
+            return addError(gameState, msgGameEvent, { t: "not-playing" });
           }
 
           return {
@@ -169,8 +173,8 @@ export const reducer = ({
         }
 
         case "user-started-game": {
-          if (gameState.playingUserId !== gameEvent.userId) {
-            return addError(gameState, gameEvent, { t: "not-playing" });
+          if (gameState.playingUserId !== msgGameEvent.userId) {
+            return addError(gameState, msgGameEvent, { t: "not-playing" });
           }
 
           return {
@@ -182,17 +186,17 @@ export const reducer = ({
         }
 
         case "user-changed-bot-level": {
-          if (gameState.playingUserId !== gameEvent.userId) {
-            return addError(gameState, gameEvent, { t: "not-playing" });
+          if (gameState.playingUserId !== msgGameEvent.userId) {
+            return addError(gameState, msgGameEvent, { t: "not-playing" });
           }
           return {
             ...gameState,
-            botLevel: gameEvent.botLevel,
+            botLevel: msgGameEvent.botLevel,
           };
         }
 
         case "bot-dropped-disc": {
-          return addError(gameState, gameEvent, { t: "not-playing" });
+          return addError(gameState, msgGameEvent, { t: "not-playing" });
         }
 
         default: {
@@ -202,16 +206,16 @@ export const reducer = ({
     }
 
     case "game": {
-      switch (gameEvent.t) {
+      switch (msgGameEvent.t) {
         case "bot-dropped-disc": {
           const moved = ConnectFour.dropDisc(
             gameState.columns,
-            gameEvent.columnIndex,
+            msgGameEvent.columnIndex,
             toBotPlayer(gameState)
           );
 
           if (moved.t === "err") {
-            return addError(gameState, gameEvent, {
+            return addError(gameState, msgGameEvent, {
               t: "move",
               c: moved.error,
             });
@@ -221,18 +225,18 @@ export const reducer = ({
         }
 
         case "user-dropped-disc": {
-          if (gameState.playingUserId !== gameEvent.userId) {
-            return addError(gameState, gameEvent, { t: "not-playing" });
+          if (gameState.playingUserId !== msgGameEvent.userId) {
+            return addError(gameState, msgGameEvent, { t: "not-playing" });
           }
 
           const moved = ConnectFour.dropDisc(
             gameState.columns,
-            gameEvent.columnIndex,
+            msgGameEvent.columnIndex,
             gameState.userPlayerType
           );
 
           if (moved.t === "err") {
-            return addError(gameState, gameEvent, {
+            return addError(gameState, msgGameEvent, {
               t: "move",
               c: moved.error,
             });
@@ -242,7 +246,7 @@ export const reducer = ({
         }
 
         case "user-left": {
-          if (gameEvent.userId === gameState.playingUserId) {
+          if (msgGameEvent.userId === gameState.playingUserId) {
             return {
               ...gameState,
               type: "setup",
@@ -255,8 +259,8 @@ export const reducer = ({
         }
 
         case "user-stopped-game": {
-          if (gameEvent.userId !== gameState.playingUserId) {
-            return addError(gameState, gameEvent, { t: "not-playing" });
+          if (msgGameEvent.userId !== gameState.playingUserId) {
+            return addError(gameState, msgGameEvent, { t: "not-playing" });
           }
 
           return {
@@ -269,8 +273,8 @@ export const reducer = ({
         }
 
         case "user-swapped-sides": {
-          if (gameEvent.userId !== gameState.playingUserId) {
-            return addError(gameState, gameEvent, { t: "not-playing" });
+          if (msgGameEvent.userId !== gameState.playingUserId) {
+            return addError(gameState, msgGameEvent, { t: "not-playing" });
           }
 
           return {
@@ -281,8 +285,8 @@ export const reducer = ({
         }
 
         case "user-restarted-game": {
-          if (gameEvent.userId !== gameState.playingUserId) {
-            return addError(gameState, gameEvent, { t: "not-playing" });
+          if (msgGameEvent.userId !== gameState.playingUserId) {
+            return addError(gameState, msgGameEvent, { t: "not-playing" });
           }
 
           return {
@@ -301,14 +305,14 @@ export const reducer = ({
 
 const addError = (
   state: GameState,
-  event: GameEvent & EventMeta,
+  msgEvent: GameEvent & EventMeta,
   error: EventErr
 ): GameState => {
   return {
     ...state,
     errors: {
       ...state.errors,
-      [event.eventId]: { ...event, error },
+      [msgEvent.msgEventId]: { ...msgEvent, error },
     },
   };
 };

@@ -59,8 +59,8 @@ export const View = ({
     onLeave?.();
   };
 
-  const onTouchMove = (event: TouchEvent) => {
-    const nodeId = touchEventToNodeId(event);
+  const onTouchMove = (msgEvent: TouchEvent) => {
+    const nodeId = touchEventToNodeId(msgEvent);
 
     if (!nodeId) {
       return;
@@ -77,9 +77,9 @@ export const View = ({
         disabled && "pointer-events-none",
         className
       )}
-      onContextMenu={(event) => {
-        event.stopPropagation();
-        event.preventDefault();
+      onContextMenu={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
       }}
       viewBox={toViewBox(model)}
       onTouchMove={onTouchMove}
@@ -326,12 +326,12 @@ const ViewTerminalNode = ({
   );
 };
 
-const touchEventToNodeId = (event: TouchEvent): Flow.NodeId | null => {
-  const touch = event.touches[0];
+const touchEventToNodeId = (msgEvent: TouchEvent): Flow.NodeId | null => {
+  const touch = msgEvent.touches[0];
   if (!touch) {
     return null;
   }
-  const svg = event.currentTarget;
+  const svg = msgEvent.currentTarget;
   if (!(svg instanceof SVGSVGElement)) {
     return null;
   }

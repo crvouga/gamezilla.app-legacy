@@ -138,15 +138,15 @@ const updateFromMsg: Module["update"] = ({ msg, model }) => {
   }
 };
 
-const updateFromEvent: Module["update"] = ({ model, event }) => {
-  if (!event) {
+const updateFromEvent: Module["update"] = ({ model, msgEvent }) => {
+  if (!msgEvent) {
     return { model };
   }
 
-  switch (event.t) {
+  switch (msgEvent.t) {
     case "platform/document-visibility-changed": {
       return {
-        model: { ...model, muted: event.state === "hidden" },
+        model: { ...model, muted: msgEvent.state === "hidden" },
       };
     }
 
@@ -228,7 +228,8 @@ export const ViewStatusBarDrawer = ({
       <button
         className="flex w-full flex-1 items-center gap-4 p-4"
         tabIndex={-1}
-        onClick={() => dispatch({ t: "toggle-mute" })}>
+        onClick={() => dispatch({ t: "toggle-mute" })}
+      >
         {model.muted ? (
           <>
             <IconVolumeXMark className="h-5 w-5" />

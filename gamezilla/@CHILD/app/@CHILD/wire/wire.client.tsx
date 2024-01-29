@@ -45,13 +45,13 @@ export const init = ({
 
 export const update = <TToClient, TToServer>({
   msg,
-  fromServer,
+  msgFromServer,
   cmd,
   model,
   transport,
 }: {
   msg?: ClientMsg | null;
-  fromServer?: ToClient | null;
+  msgFromServer?: ToClient | null;
   cmd?: ClientCmd<{ ClientMsg: ClientMsg; ToServer: TToServer }> | null;
   model: ClientModel;
   transport: IClientTransport<{
@@ -60,15 +60,15 @@ export const update = <TToClient, TToServer>({
   }>;
 }): {
   model: ClientModel;
-  event?: ClientEvent[];
+  msgEvent?: ClientEvent[];
   eff?: Eff<ClientMsg>;
 } => {
   if (msg) {
     return updateFromMsg({ msg, model, transport });
   }
 
-  if (fromServer) {
-    return updateFromServer({ model, fromServer, transport });
+  if (msgFromServer) {
+    return updateFromServer({ model, msgFromServer, transport });
   }
 
   if (cmd) {
@@ -111,7 +111,7 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
             t: "server-connected",
           },
         },
-        event: [{ t: "wire/server-connected" }],
+        msgEvent: [{ t: "wire/server-connected" }],
       };
     }
 
@@ -128,9 +128,9 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
       };
     }
 
-    case 'got-bad-msgs': {
+    case "got-bad-msgs": {
       switch (msg.reason) {
-        case 'codebase-version-mismatch': {
+        case "codebase-version-mismatch": {
           return {
             model,
           };
@@ -140,12 +140,12 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
   }
 };
 
-const updateFromServer: typeof update = ({ model, fromServer }) => {
-  if (!fromServer) {
+const updateFromServer: typeof update = ({ model, msgFromServer }) => {
+  if (!msgFromServer) {
     return { model };
   }
 
-  switch (fromServer.t) {
+  switch (msgFromServer.t) {
     case "server-restarted": {
       return {
         model,
@@ -272,5 +272,5 @@ export const subscriptions = <ToServer, ToClient>({
 }: {
   transport: IClientTransport<{ ToServer: ToServer; ToClient: ToClient }>;
 }): Sub<ClientMsg> => {
-  return transport.event;
+  return transport.msgEvent;
 };

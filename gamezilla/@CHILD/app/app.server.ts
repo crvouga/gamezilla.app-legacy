@@ -190,18 +190,18 @@ export const update = async (input: {
 
 function logMsg({
   msg,
-  event,
+  msgEvent,
   cmd,
   logger,
 }: {
   logger: Logger;
   msg?: ServerMsg;
-  event?: ServerEvent;
+  msgEvent?: ServerEvent;
   cmd?: ServerCmd<ToClient>;
 }) {
-  const prefix = msg ? "[msg]" : event ? "[event]" : "[cmd]";
+  const prefix = msg ? "[msg]" : msgEvent ? "[msgEvent]" : "[cmd]";
 
-  const obj = { ...msg, ...event, ...cmd };
+  const obj = { ...msg, ...msgEvent, ...cmd };
 
   logger.info(`${prefix} ${toMsgType(obj)}`);
 }
@@ -209,7 +209,7 @@ function logMsg({
 type Output = {
   model: ServerModel;
   eff: Eff<ServerMsg>;
-  event: ServerEvent[];
+  msgEvent: ServerEvent[];
   cmd: ServerCmd<ToClient>[];
 };
 
@@ -227,7 +227,7 @@ const updateLoop = async (
       model: updatedCmd.model,
       cmd: [...cmdRest, ...updatedCmd.cmd],
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
-      event: batchMsgs(acc.event, updatedCmd.event),
+      msgEvent: batchMsgs(acc.msgEvent, updatedCmd.msgEvent),
     };
 
     ctx.logger.info(`[cmd] ${toMsgType(cmd)}`);
@@ -235,24 +235,24 @@ const updateLoop = async (
     return updateLoop(deps, ctx, accNew);
   }
 
-  const [event, ...eventRest] = acc.event;
+  const [msgEvent, ...msgEventRest] = acc.msgEvent;
 
-  if (event) {
+  if (msgEvent) {
     const updatedEvent = await updateChild({
       deps,
       ctx,
       model: acc.model,
-      event,
+      msgEvent,
     });
 
     const accNew: Output = {
       model: updatedEvent.model,
       cmd: [...cmdRest, ...updatedEvent.cmd],
       eff: Eff.batch([acc.eff, updatedEvent.eff]),
-      event: batchMsgs(eventRest, updatedEvent.event),
+      msgEvent: batchMsgs(msgEventRest, updatedEvent.msgEvent),
     };
 
-    ctx.logger.info(`[evt] ${toMsgType(event)}`);
+    ctx.logger.info(`[evt] ${toMsgType(msgEvent)}`);
 
     return updateLoop(deps, ctx, accNew);
   }
@@ -264,7 +264,7 @@ export const updateChild = async ({
   ctx,
   msg,
   fromClient,
-  event,
+  msgEvent,
   cmd,
   model,
   deps,
@@ -274,7 +274,7 @@ export const updateChild = async ({
   model: ServerModel;
   msg?: ServerMsg;
   fromClient?: (ToServer & ToServerMeta) | null;
-  event?: ServerEvent;
+  msgEvent?: ServerEvent;
   cmd?: ServerCmd<ToClient>;
 }): Promise<Output> => {
   //
@@ -301,7 +301,7 @@ export const updateChild = async ({
     model: model.spaces,
     ctx,
     cmd: null,
-    event: event,
+    msgEvent: msgEvent,
     fromClient:
       fromClient?.t === "spaces"
         ? { ...fromClient, ...fromClient.c, userId }
@@ -313,7 +313,7 @@ export const updateChild = async ({
     model: model.auth,
     ctx,
     cmd: null,
-    event: event,
+    msgEvent: msgEvent,
     fromClient:
       fromClient?.t === "auth"
         ? { ...fromClient, ...fromClient.c, userId }
@@ -325,7 +325,7 @@ export const updateChild = async ({
     model: model.wire,
     ctx,
     cmd: cmd?.t === "wire" ? cmd : null,
-    event: event,
+    msgEvent: msgEvent,
     fromClient:
       fromClient?.t === "wire" ? { ...fromClient, ...fromClient.c } : null,
     msg: msg?.t === "wire" ? msg.c : null,
@@ -336,7 +336,7 @@ export const updateChild = async ({
     model: model.profile,
     ctx,
     cmd: null,
-    event: event,
+    msgEvent: msgEvent,
     fromClient:
       fromClient?.t === "profile" ? { ...fromClient, ...fromClient.c } : null,
     msg: msg?.t === "profile" ? msg.c : null,
@@ -366,11 +366,11 @@ export const updateChild = async ({
       Eff.tag("wire", wire.eff),
       Eff.tag("profile", profile.eff),
     ]),
-    event: batchMsgs<ServerEvent>(
-      auth.event,
-      space.event,
-      wire.event,
-      profile.event
+    msgEvent: batchMsgs<ServerEvent>(
+      auth.msgEvent,
+      space.msgEvent,
+      wire.msgEvent,
+      profile.msgEvent
     ),
   };
 };

@@ -87,15 +87,15 @@ export const initState = (): GameState => {
 };
 
 export const reducer = ({
-  event,
+  msgEvent,
 }: {
   ctx: SpaceCtx;
   state: GameState;
-  event: GameEvent;
+  msgEvent: GameEvent;
 }): GameState => {
-  switch (event.t) {
+  switch (msgEvent.t) {
     case "user-changed-mode": {
-      switch (event.mode) {
+      switch (msgEvent.mode) {
         case "none": {
           return { t: "none" };
         }

@@ -78,123 +78,126 @@ const update: Module["update"] = (input) => {
 
 const updateFromMsg =
   (model: ClientModel): Module["update"] =>
-    (input) => {
-      const { msg } = input;
+  (input) => {
+    const { msg } = input;
 
-      if (!msg) {
+    if (!msg) {
+      return { model };
+    }
+
+    switch (msg.t) {
+      case "user-changed-mode": {
+        return {
+          model,
+          msgGameEvent: [withId(msg)],
+        };
+      }
+
+      case "vs-user":
+      case "vs-bot": {
         return { model };
       }
-
-      switch (msg.t) {
-        case "user-changed-mode": {
-          return {
-            model,
-            gameEvent: [withId(msg)],
-          };
-        }
-
-        case "vs-user":
-        case "vs-bot": {
-          return { model };
-        }
-      }
-    };
+    }
+  };
 
 const updateFromGameEvent =
   (model: ClientModel): Module["update"] =>
-    (input) => {
-      const { gameEvent } = input;
+  (input) => {
+    const { msgGameEvent } = input;
 
-      if (!gameEvent) {
-        return { model };
-      }
+    if (!msgGameEvent) {
+      return { model };
+    }
 
-      switch (gameEvent.t) {
-        case "user-changed-mode": {
-          switch (gameEvent.mode) {
-            case "none": {
-              return {
-                model: { t: null },
-                cmd: [playSound(APP_SOUND.navBackwardMin)],
-              };
-            }
+    switch (msgGameEvent.t) {
+      case "user-changed-mode": {
+        switch (msgGameEvent.mode) {
+          case "none": {
+            return {
+              model: { t: null },
+              cmd: [playSound(APP_SOUND.navBackwardMin)],
+            };
+          }
 
-            case "vs-bot": {
-              return {
-                model: { t: "vs-bot", c: VsBot.init },
-                cmd: [playSound(APP_SOUND.navForwardMin)],
-              };
-            }
+          case "vs-bot": {
+            return {
+              model: { t: "vs-bot", c: VsBot.init },
+              cmd: [playSound(APP_SOUND.navForwardMin)],
+            };
+          }
 
-            case "vs-user": {
-              return {
-                model: { t: "vs-user", c: VsUser.init },
-                cmd: [playSound(APP_SOUND.navForwardMin)],
-              };
-            }
+          case "vs-user": {
+            return {
+              model: { t: "vs-user", c: VsUser.init },
+              cmd: [playSound(APP_SOUND.navForwardMin)],
+            };
           }
         }
-
-        case "vs-bot":
-        case "vs-user": {
-          return { model };
-        }
       }
-    };
+
+      case "vs-bot":
+      case "vs-user": {
+        return { model };
+      }
+    }
+  };
 
 const updateChild =
   (model: ClientModel): Module["update"] =>
-    (input) => {
-      const { msg, event, gameEvent, fromServer, gameState } = input;
+  (input) => {
+    const { msg, msgEvent, msgGameEvent, msgFromServer, gameState } = input;
 
-      switch (gameState.t) {
-        case "none": {
-          return { model };
-        }
-
-        case "vs-bot": {
-          const updated = VsBot.update({
-            ctx: { ...input.ctx, onQuit: () => { } },
-            msg: msg?.t === "vs-bot" ? msg.c : null,
-            event: event,
-            cmd: null,
-            gameEvent:
-              gameEvent?.t === "vs-bot" ? { ...gameEvent, ...gameEvent.c } : null,
-            fromServer: fromServer?.t === "vs-bot" ? fromServer.c : null,
-            model: model.t === "vs-bot" ? model.c : VsBot.init,
-            gameState: gameState.c,
-          });
-
-          return GameClientModule.tagOutput(
-            "vs-bot",
-            (cmd) => ClientCmd.tag("vs-bot", cmd),
-            updated
-          );
-        }
-
-        case "vs-user": {
-          const updated = VsUser.update({
-            ctx: { ...input.ctx, onQuit: () => { } },
-            model: model.t === "vs-user" ? model.c : VsUser.init,
-            msg: msg?.t === "vs-user" ? msg.c : null,
-            cmd: null,
-            event: event,
-            gameEvent:
-              gameEvent?.t === "vs-user"
-                ? { ...gameEvent, ...gameEvent.c }
-                : null,
-            fromServer: fromServer?.t === "vs-user" ? fromServer.c : null,
-            gameState: gameState.c,
-          });
-
-          return GameClientModule.tagOutput(
-            "vs-user",
-            (cmd) => ClientCmd.tag("vs-user", cmd),
-            updated
-          );
-        }
+    switch (gameState.t) {
+      case "none": {
+        return { model };
       }
-    };
+
+      case "vs-bot": {
+        const updated = VsBot.update({
+          ctx: { ...input.ctx, onQuit: () => {} },
+          msg: msg?.t === "vs-bot" ? msg.c : null,
+          msgEvent: msgEvent,
+          cmd: null,
+          msgGameEvent:
+            msgGameEvent?.t === "vs-bot"
+              ? { ...msgGameEvent, ...msgGameEvent.c }
+              : null,
+          msgFromServer: msgFromServer?.t === "vs-bot" ? msgFromServer.c : null,
+          model: model.t === "vs-bot" ? model.c : VsBot.init,
+          gameState: gameState.c,
+        });
+
+        return GameClientModule.tagOutput(
+          "vs-bot",
+          (cmd) => ClientCmd.tag("vs-bot", cmd),
+          updated
+        );
+      }
+
+      case "vs-user": {
+        const updated = VsUser.update({
+          ctx: { ...input.ctx, onQuit: () => {} },
+          model: model.t === "vs-user" ? model.c : VsUser.init,
+          msg: msg?.t === "vs-user" ? msg.c : null,
+          cmd: null,
+          msgEvent: msgEvent,
+          msgGameEvent:
+            msgGameEvent?.t === "vs-user"
+              ? { ...msgGameEvent, ...msgGameEvent.c }
+              : null,
+          msgFromServer:
+            msgFromServer?.t === "vs-user" ? msgFromServer.c : null,
+          gameState: gameState.c,
+        });
+
+        return GameClientModule.tagOutput(
+          "vs-user",
+          (cmd) => ClientCmd.tag("vs-user", cmd),
+          updated
+        );
+      }
+    }
+  };
 
 //
 //
@@ -267,10 +270,10 @@ const View: Module["View"] = ({ dispatch, ctx, gameState, model }) => {
 };
 
 const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-  const { gameState, ctx, gameEvent } = input;
-  switch (gameEvent.t) {
+  const { gameState, ctx, msgGameEvent } = input;
+  switch (msgGameEvent.t) {
     case "user-changed-mode": {
-      switch (gameEvent.mode) {
+      switch (msgGameEvent.mode) {
         case "none": {
           const profile = ctx.profiles[ctx.currentUserId];
 
@@ -304,8 +307,8 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
         case "vs-bot": {
           return (
             <VsBot.ViewFeedItem
-              ctx={{ ...ctx, onQuit: () => { } }}
-              gameEvent={gameEvent.c}
+              ctx={{ ...ctx, onQuit: () => {} }}
+              msgGameEvent={msgGameEvent.c}
               gameState={gameState.c}
               dispatch={(c) => input.dispatch({ t: "vs-bot", c })}
             />
@@ -322,8 +325,8 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
         case "vs-user": {
           return (
             <VsUser.ViewFeedItem
-              ctx={{ ...ctx, onQuit: () => { } }}
-              gameEvent={gameEvent.c}
+              ctx={{ ...ctx, onQuit: () => {} }}
+              msgGameEvent={msgGameEvent.c}
               gameState={gameState.c}
               dispatch={(c) => input.dispatch({ t: "vs-user", c })}
             />
@@ -360,7 +363,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
           ...input,
           model: model?.t === "vs-bot" ? model.c : VsBot.init,
           gameState: gameState.c,
-          ctx: { ...input.ctx, onQuit: () => { } },
+          ctx: { ...input.ctx, onQuit: () => {} },
         })
       );
     }
@@ -372,7 +375,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
           ...input,
           model: model?.t === "vs-user" ? model.c : VsUser.init,
           gameState: gameState.c,
-          ctx: { ...input.ctx, onQuit: () => { } },
+          ctx: { ...input.ctx, onQuit: () => {} },
         })
       );
     }

@@ -77,7 +77,8 @@ const init = (gameName: GameName): Module["init"] => {
 //
 
 const update: Module["update"] = (input) => {
-  const { ctx, msg, fromServer, cmd, event, gameEvent, gameState } = input;
+  const { ctx, msg, msgFromServer, cmd, msgEvent, msgGameEvent, gameState } =
+    input;
 
   switch (gameState.t) {
     case "connect-four": {
@@ -87,11 +88,12 @@ const update: Module["update"] = (input) => {
         model:
           input.model?.t === "connect-four" ? input.model.c : ConnectFour.init,
         cmd: cmd,
-        event: event,
-        fromServer: fromServer?.t === "connect-four" ? fromServer.c : null,
-        gameEvent:
-          gameEvent?.t === "connect-four"
-            ? { ...gameEvent, ...gameEvent.c }
+        msgEvent: msgEvent,
+        msgFromServer:
+          msgFromServer?.t === "connect-four" ? msgFromServer.c : null,
+        msgGameEvent:
+          msgGameEvent?.t === "connect-four"
+            ? { ...msgGameEvent, ...msgGameEvent.c }
             : null,
         msg: msg?.t === "connect-four" ? msg.c : null,
       });
@@ -111,10 +113,12 @@ const update: Module["update"] = (input) => {
         gameState: gameState.c,
         model: input.model?.t === "flow" ? input.model.c : Flow.init,
         cmd: cmd,
-        event: event,
-        fromServer: fromServer?.t === "flow" ? fromServer.c : null,
-        gameEvent:
-          gameEvent?.t === "flow" ? { ...gameEvent, ...gameEvent.c } : null,
+        msgEvent: msgEvent,
+        msgFromServer: msgFromServer?.t === "flow" ? msgFromServer.c : null,
+        msgGameEvent:
+          msgGameEvent?.t === "flow"
+            ? { ...msgGameEvent, ...msgGameEvent.c }
+            : null,
         msg: msg?.t === "flow" ? msg.c : null,
       });
 
@@ -202,16 +206,16 @@ const View: Module["View"] = (input) => {
 };
 
 const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-  const { gameEvent, gameState, ctx, dispatch } = input;
+  const { msgGameEvent, gameState, ctx, dispatch } = input;
 
   switch (gameState.t) {
     case "connect-four": {
-      switch (gameEvent.t) {
+      switch (msgGameEvent.t) {
         case "connect-four": {
           return (
             <ConnectFour.ViewFeedItem
               ctx={ctx}
-              gameEvent={gameEvent.c}
+              msgGameEvent={msgGameEvent.c}
               gameState={gameState.c}
               dispatch={(c) => dispatch({ t: "connect-four", c })}
             />

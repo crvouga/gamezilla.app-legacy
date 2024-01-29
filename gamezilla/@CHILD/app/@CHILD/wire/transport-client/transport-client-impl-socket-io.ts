@@ -26,15 +26,15 @@ export const ClientTransportSocketIO = <ToServer, ToClient>({
   });
 
   socket.on("connect", () => {
-    transport.event.publish({ t: "server-connected" });
+    transport.msgEvent.publish({ t: "server-connected" });
   });
 
   socket.on("connect_error", () => {
-    transport.event.publish({ t: "server-connect-error" });
+    transport.msgEvent.publish({ t: "server-connect-error" });
   });
 
   socket.on("disconnect", () => {
-    transport.event.publish({ t: "server-disconnected" });
+    transport.msgEvent.publish({ t: "server-disconnected" });
   });
 
   transport.toServer.subscribe((msgs) => {

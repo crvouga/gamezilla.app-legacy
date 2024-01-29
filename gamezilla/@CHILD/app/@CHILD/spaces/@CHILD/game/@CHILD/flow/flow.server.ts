@@ -51,14 +51,14 @@ const updateChild: Module["update"] = async (input) => {
         gameState: gameState.c,
         model: input.model.t === "play" ? input.model.c : PlayServer.init,
         cmd: input.cmd,
-        event: input.event,
+        msgEvent: input.msgEvent,
         fromClient:
           input.fromClient?.t === "play"
             ? { ...input.fromClient, ...input.fromClient.c }
             : null,
-        gameEvent:
-          input.gameEvent?.t === "play"
-            ? { ...input.gameEvent, ...input.gameEvent.c }
+        msgGameEvent:
+          input.msgGameEvent?.t === "play"
+            ? { ...input.msgGameEvent, ...input.msgGameEvent.c }
             : null,
         msg: input.msg?.t === "play" ? input.msg.c : null,
         deps: null,
@@ -79,14 +79,14 @@ const updateChild: Module["update"] = async (input) => {
         gameState: gameState.c,
         model: input.model.t === "builder" ? input.model.c : BuilderServer.init,
         cmd: input.cmd,
-        event: input.event,
+        msgEvent: input.msgEvent,
         fromClient:
           input.fromClient?.t === "builder"
             ? { ...input.fromClient, ...input.fromClient.c }
             : null,
-        gameEvent:
-          input.gameEvent?.t === "builder"
-            ? { ...input.gameEvent, ...input.gameEvent.c }
+        msgGameEvent:
+          input.msgGameEvent?.t === "builder"
+            ? { ...input.msgGameEvent, ...input.msgGameEvent.c }
             : null,
         msg: input.msg?.t === "builder" ? input.msg.c : null,
         deps: await BuilderServer.deps(),

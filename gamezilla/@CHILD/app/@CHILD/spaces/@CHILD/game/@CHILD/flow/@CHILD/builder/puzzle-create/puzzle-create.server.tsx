@@ -54,7 +54,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
       const created = await FlowPuzzleDb().put(puzzleNew);
 
-      const gameEvent: GameEvent = {
+      const msgGameEvent: GameEvent = {
         t: "user-created-puzzle",
         created: Result.mapOk(created, () => puzzleNew),
         userId: fromClient.userId,
@@ -62,7 +62,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
       return {
         model: input.model,
-        gameEvent: [withId(gameEvent)],
+        msgGameEvent: [withId(msgGameEvent)],
       };
     }
 

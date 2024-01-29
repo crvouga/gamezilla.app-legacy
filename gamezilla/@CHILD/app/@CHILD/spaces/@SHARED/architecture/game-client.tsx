@@ -27,13 +27,13 @@ type Output<T extends GameClientTypes> = {
     ClientMsg: T["ClientMsg"];
     ToServer: T["ToServer"];
   }>[];
-  gameEvent?: WithEventId<T["GameEvent"]>[];
+  msgGameEvent?: WithEventId<T["GameEvent"]>[];
 };
 
 export type InMsg<T extends GameClientTypes> =
   | ({ variant: "msg" } & T["ClientMsg"])
   | ({ variant: "to-client" } & T["ToClient"])
-  | ({ variant: "event" } & ClientEvent);
+  | ({ variant: "msgEvent" } & ClientEvent);
 
 export type OutMsg<T extends GameClientTypes> =
   | ({ variant: "cmd" } & ClientCmd<T>)
@@ -54,8 +54,8 @@ export type GameClient<T extends GameClientTypes> = {
     //
     msg?: T["ClientMsg"] | null;
     serverMsg?: T["ToClient"] | null;
-    event?: ClientEvent | null;
-    gameEvent?: WithEventMeta<T["GameEvent"]> | null;
+    msgEvent?: ClientEvent | null;
+    msgGameEvent?: WithEventMeta<T["GameEvent"]> | null;
   }) => Output<T>;
 
   subscriptions: (input: {
@@ -75,7 +75,7 @@ export type GameClient<T extends GameClientTypes> = {
   ViewFeedItem: (input: {
     ctx: T["ClientCtx"];
     state: T["GameState"];
-    event: T["GameEvent"];
+    msgEvent: T["GameEvent"];
   }) => VDom;
 };
 
@@ -110,10 +110,11 @@ export const tag = <T extends string, Types extends GameClientTypes>(
 
     update: (input) => {
       const updated = client.update({
-        event: input.event,
+        msgEvent: input.msgEvent,
         msg: input.msg?.t === tag ? input.msg?.c : undefined,
         model: input.model?.t === tag ? input.model?.c : undefined,
-        gameEvent: input.gameEvent?.t === tag ? input.gameEvent?.c : undefined,
+        msgGameEvent:
+          input.msgGameEvent?.t === tag ? input.msgGameEvent?.c : undefined,
         serverMsg: input.serverMsg?.t === tag ? input.serverMsg?.c : undefined,
         ctx: input.ctx,
         state: input.state.c,
@@ -123,24 +124,24 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         model: { t: tag, c: updated.model },
         eff: Eff.tag(tag, updated.eff),
         cmd: ClientCmd.tag(tag, updated.cmd),
-        gameEvent: updated.gameEvent
-          ? updated.gameEvent.map(
-            (
-              gameEvent
-            ): WithEventMeta<{
-              t: T;
-              c: WithEventMeta<Types["GameEvent"]>;
-            }> => ({
-              eventId: gameEvent.eventId,
-              happenedAt: gameEvent.happenedAt,
-              t: tag,
-              c: {
-                ...gameEvent,
-                eventId: gameEvent.eventId,
-                happenedAt: gameEvent.happenedAt,
-              },
-            })
-          )
+        msgGameEvent: updated.msgGameEvent
+          ? updated.msgGameEvent.map(
+              (
+                msgGameEvent
+              ): WithEventMeta<{
+                t: T;
+                c: WithEventMeta<Types["GameEvent"]>;
+              }> => ({
+                msgEventId: msgGameEvent.msgEventId,
+                happenedAt: msgGameEvent.happenedAt,
+                t: tag,
+                c: {
+                  ...msgGameEvent,
+                  msgEventId: msgGameEvent.msgEventId,
+                  happenedAt: msgGameEvent.happenedAt,
+                },
+              })
+            )
           : undefined,
       };
     },
@@ -172,7 +173,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
       if (client.ViewFeedItem) {
         return client.ViewFeedItem({
           ctx: input.ctx,
-          event: input.event.c,
+          msgEvent: input.msgEvent.c,
           state: input.state.c,
         });
       }
@@ -187,11 +188,11 @@ export const tag = <T extends string, Types extends GameClientTypes>(
  * @example
  * const updated = chain(
  * { model: 0 },
- * (model) => ({ model: model + 1, event: [someEvent] }),
+ * (model) => ({ model: model + 1, msgEvent: [someEvent] }),
  * (model) => ({ model: model + 1, eff: someEff }),
  * (model) => ({ model: model + 1, cmd: [someCmd] }),
  * )
- * //=> { model: 3, event: [someEvent], eff: someEff, cmd: [someCmd] }
+ * //=> { model: 3, msgEvent: [someEvent], eff: someEff, cmd: [someCmd] }
  *
  * @param initial - the model to start with
  * @param updaters - a list of update functions to apply to the model
@@ -205,7 +206,7 @@ const chain = <T extends GameClientTypes>(
     ClientMsg: T["ClientMsg"];
     ToServer: T["ToServer"];
   }>[] = initial.cmd ?? [];
-  const gameEvents: T["GameEvent"][] = initial?.gameEvent ?? [];
+  const msgGameEvents: T["GameEvent"][] = initial?.msgGameEvent ?? [];
   const eff: Eff<T["ClientMsg"]>[] = initial.eff ? [initial.eff] : [];
 
   let model = initial.model;
@@ -220,11 +221,11 @@ const chain = <T extends GameClientTypes>(
     if (updated.eff) {
       eff.push(updated.eff);
     }
-    if (updated.gameEvent) {
+    if (updated.msgGameEvent) {
       let j = 0;
-      let len = updated.gameEvent.length;
+      let len = updated.msgGameEvent.length;
       for (j = 0; j < len; ++j) {
-        gameEvents.push(updated.gameEvent[j]!);
+        msgGameEvents.push(updated.msgGameEvent[j]!);
       }
     }
     if (updated.cmd) {
@@ -239,7 +240,7 @@ const chain = <T extends GameClientTypes>(
   return {
     model,
     eff: Eff.batch(eff),
-    gameEvent: gameEvents,
+    msgGameEvent: msgGameEvents,
     cmd,
   };
 };
@@ -265,13 +266,13 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
     cmd: output.cmd
       ? output.cmd.map((cmd) => ClientCmd.tagOne(tag, cmd))
       : undefined,
-    gameEvent: output.gameEvent
-      ? output.gameEvent.map((gameEvent) => ({
-        eventId: gameEvent.eventId,
-        happenedAt: gameEvent.happenedAt,
-        t: tag,
-        c: gameEvent,
-      }))
+    msgGameEvent: output.msgGameEvent
+      ? output.msgGameEvent.map((msgGameEvent) => ({
+          msgEventId: msgGameEvent.msgEventId,
+          happenedAt: msgGameEvent.happenedAt,
+          t: tag,
+          c: msgGameEvent,
+        }))
       : undefined,
   };
 };

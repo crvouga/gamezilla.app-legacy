@@ -32,13 +32,13 @@ const update: ClientModule["update"] = (input) => {
 };
 
 const updatePuzzleList: ClientModule["update"] = (input) => {
-  const { model, msg, fromServer, ctx } = input;
+  const { model, msg, msgFromServer, ctx } = input;
 
   switch (msg?.t) {
     case "list/user-clicked-puzzle-list-item": {
       return {
         model,
-        gameEvent: [
+        msgGameEvent: [
           withId({
             t: "user-opened-puzzle",
             puzzle: msg.puzzle,
@@ -77,10 +77,10 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
     }
   }
 
-  switch (fromServer?.t) {
+  switch (msgFromServer?.t) {
     case "list/listed-puzzle": {
       const puzzles =
-        fromServer.listed.t === "ok" ? fromServer.listed.value.items : [];
+        msgFromServer.listed.t === "ok" ? msgFromServer.listed.value.items : [];
 
       const puzzlesNew = puzzles.reduce(
         (acc, puzzle) => ({ ...acc, [puzzle.id]: puzzle }),
@@ -90,11 +90,11 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
       return {
         model: {
           ...model,
-          puzzleListRequest: Result.mapOk(fromServer.listed, () => null),
+          puzzleListRequest: Result.mapOk(msgFromServer.listed, () => null),
           puzzles: puzzlesNew,
         },
-        cmd: isErr(fromServer.listed)
-          ? showErrorToast(fromServer.listed.error)
+        cmd: isErr(msgFromServer.listed)
+          ? showErrorToast(msgFromServer.listed.error)
           : [],
       };
     }

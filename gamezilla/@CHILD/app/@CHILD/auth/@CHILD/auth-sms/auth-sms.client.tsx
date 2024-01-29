@@ -110,7 +110,7 @@ export const update: Module["update"] = async (input) => {
   if (input.msg) {
     return updateFromMsg(input);
   }
-  if (input.fromServer) {
+  if (input.msgFromServer) {
     return updateFromServer(input);
   }
   return { model: input.model };
@@ -295,17 +295,17 @@ const updateFromMsg: Module["update"] = async (input) => {
 };
 
 const updateFromServer: Module["update"] = async (input) => {
-  if (!input.fromServer) {
+  if (!input.msgFromServer) {
     return { model: input.model };
   }
 
-  const { model, fromServer } = input;
+  const { model, msgFromServer } = input;
 
-  switch (fromServer.t) {
+  switch (msgFromServer.t) {
     case "sent-code": {
-      if (isErr(fromServer.result)) {
+      if (isErr(msgFromServer.result)) {
         return {
-          model: { ...model, sendCode: fromServer.result },
+          model: { ...model, sendCode: msgFromServer.result },
           cmd: [playSound(APP_SOUND.alertErrorMd)],
         };
       }
@@ -313,7 +313,7 @@ const updateFromServer: Module["update"] = async (input) => {
       return {
         model: {
           ...model,
-          sendCode: fromServer.result,
+          sendCode: msgFromServer.result,
           verifyCode: RemoteResult.notAsked,
           codeInput: "",
         },
@@ -322,11 +322,11 @@ const updateFromServer: Module["update"] = async (input) => {
             t: "auth",
             c: {
               t: "login-phone-verify",
-              phoneNumber: fromServer.phoneNumber,
+              phoneNumber: msgFromServer.phoneNumber,
             },
           }),
           showToast(
-            `Sent code to ${PhoneNumber.toString(fromServer.phoneNumber)}`,
+            `Sent code to ${PhoneNumber.toString(msgFromServer.phoneNumber)}`,
             "info",
             TimeSpan.fromSeconds(4)
           ),
@@ -337,16 +337,16 @@ const updateFromServer: Module["update"] = async (input) => {
     }
 
     case "verified-code": {
-      if (isErr(fromServer.result)) {
+      if (isErr(msgFromServer.result)) {
         return {
-          model: { ...model, verifyCode: fromServer.result },
+          model: { ...model, verifyCode: msgFromServer.result },
           cmd: [playSound(APP_SOUND.alertErrorMd)],
         };
       }
       return {
         model: {
           ...model,
-          verifyCode: fromServer.result,
+          verifyCode: msgFromServer.result,
         },
       };
     }

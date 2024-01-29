@@ -106,14 +106,14 @@ const updateFromMsg: Module["update"] = async (input) => {
             return { model };
           }
 
-          const eventNew = withId<GameEvent>({
+          const msgEventNew = withId<GameEvent>({
             t: "bot-dropped-disc",
             columnIndex,
           });
 
           return {
             model,
-            gameEvent: [eventNew],
+            msgGameEvent: [msgEventNew],
           };
         },
         async (model) => {

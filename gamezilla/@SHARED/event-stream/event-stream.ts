@@ -3,10 +3,10 @@ export type IEventStreamConfig<
   TEvent,
   TIndexName extends string
 > = {
-  toId: (event: TEvent) => TEventId;
-  toOrdering: (event: TEvent) => number;
+  toId: (msgEvent: TEvent) => TEventId;
+  toOrdering: (msgEvent: TEvent) => number;
   indexes: {
-    [indexName in TIndexName]: (event: TEvent) => string;
+    [indexName in TIndexName]: (msgEvent: TEvent) => string;
   };
 };
 
@@ -15,7 +15,7 @@ export type IEventStreamInstance<
   _TEvent,
   _TIndexName extends string
 > = {
-  _type: 'IEventStreamInstance'
+  _type: "IEventStreamInstance";
 };
 
 export type IEventStream<
@@ -33,25 +33,25 @@ export type IEventStream<
   ) => Promise<TInstance>;
   fromArray: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
-    events: TEvent[]
+    msgEvents: TEvent[]
   ) => Promise<TInstance>;
   toArray: (instance: TInstance) => Promise<TEvent[]>;
   equals: (left: TInstance, right: TInstance) => Promise<boolean>;
-  get: (instance: TInstance, eventId: TEventId) => Promise<TEvent | null>;
+  get: (instance: TInstance, msgEventId: TEventId) => Promise<TEvent | null>;
   startingAt: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
     instance: TInstance,
-    eventId: TEventId
+    msgEventId: TEventId
   ) => Promise<TInstance>;
   endingAt: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
     instance: TInstance,
-    eventId: TEventId
+    msgEventId: TEventId
   ) => Promise<TInstance>;
   append: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
     instance: TInstance,
-    event: TEvent
+    msgEvent: TEvent
   ) => Promise<TInstance>;
   latest: (
     config: IEventStreamConfig<TEventId, TEvent, TIndexName>,
@@ -69,7 +69,7 @@ export type IEventStream<
     targetIndexVal: string
   ) => Promise<TInstance>;
   toIterable: (instance: TInstance) => AsyncIterable<TEvent>;
-  has: (instance: TInstance, eventId: TEventId) => Promise<boolean>;
+  has: (instance: TInstance, msgEventId: TEventId) => Promise<boolean>;
 };
 
 export type EventStreamInferInstance<

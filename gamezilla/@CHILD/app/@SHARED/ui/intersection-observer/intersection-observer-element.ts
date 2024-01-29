@@ -40,11 +40,11 @@ if (typeof window !== "undefined" && "customElements" in window) {
     }
 
     connectedCallback() {
-      this.unsubscribe = sub.subscribe((event) => {
-        if (event.props.id !== this.getAttribute("id")) {
+      this.unsubscribe = sub.subscribe((msgEvent) => {
+        if (msgEvent.props.id !== this.getAttribute("id")) {
           return;
         }
-        this.props = event.props;
+        this.props = msgEvent.props;
 
         if (this.queue.length > 0) {
           this.onIntersection(this.queue);

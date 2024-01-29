@@ -29,7 +29,7 @@ export type GameServerTypes = {
 
 type Output<T extends GameServerTypes> = {
   model: T["ServerModel"];
-  gameEvent?: WithEventId<T["GameEvent"]>[];
+  msgGameEvent?: WithEventId<T["GameEvent"]>[];
   eff?: Eff<T["ServerMsg"]>;
   cmd?: SpaceServerCmd<T["ToClient"]>[];
 };
@@ -52,8 +52,8 @@ export type GameServer<T extends GameServerTypes> = {
     //
     msg?: T["ServerMsg"] | null;
     clientMsg?: T["ToServer"] | null;
-    gameEvent?: WithEventMeta<T["GameEvent"]> | null;
-    event?: SpaceServerEvent | null;
+    msgGameEvent?: WithEventMeta<T["GameEvent"]> | null;
+    msgEvent?: SpaceServerEvent | null;
   }) => Promise<Output<T>>;
 
   subscriptions: (input: {
@@ -93,10 +93,11 @@ const tag = <T extends string, Types extends GameServerTypes>(
 
     update: async (input) => {
       const updated = await server.update({
-        event: input.event,
+        msgEvent: input.msgEvent,
         msg: input.msg?.t === tag ? input.msg?.c : undefined,
         model: input.model?.t === tag ? input.model?.c : undefined,
-        gameEvent: input.gameEvent?.t === tag ? input.gameEvent?.c : undefined,
+        msgGameEvent:
+          input.msgGameEvent?.t === tag ? input.msgGameEvent?.c : undefined,
         clientMsg: input.clientMsg?.t === tag ? input.clientMsg?.c : undefined,
         ctx: input.ctx,
         state: input.state.c,
@@ -105,13 +106,13 @@ const tag = <T extends string, Types extends GameServerTypes>(
         model: { t: tag, c: updated.model },
         eff: Eff.tag(tag, updated.eff),
         cmd: SpaceServerCmd.tag(tag, updated.cmd),
-        gameEvent: updated.gameEvent
-          ? updated.gameEvent.map(
-              (gameEvent): EventMeta & { t: T; c: Types["GameEvent"] } => ({
-                eventId: gameEvent.eventId,
-                happenedAt: gameEvent.happenedAt,
+        msgGameEvent: updated.msgGameEvent
+          ? updated.msgGameEvent.map(
+              (msgGameEvent): EventMeta & { t: T; c: Types["GameEvent"] } => ({
+                msgEventId: msgGameEvent.msgEventId,
+                happenedAt: msgGameEvent.happenedAt,
                 t: tag,
-                c: gameEvent,
+                c: msgGameEvent,
               })
             )
           : undefined,
@@ -137,11 +138,11 @@ const tag = <T extends string, Types extends GameServerTypes>(
  * @example
  * const updated = chain(
  * { model: 0 },
- * (model) => ({ model: model + 1, event: [someEvent] }),
+ * (model) => ({ model: model + 1, msgEvent: [someEvent] }),
  * (model) => ({ model: model + 1, eff: someEff }),
  * (model) => ({ model: model + 1, cmd: [someCmd] }),
  * )
- * //=> { model: 3, event: [someEvent], eff: someEff, cmd: [someCmd] }
+ * //=> { model: 3, msgEvent: [someEvent], eff: someEff, cmd: [someCmd] }
  *
  * @param initial - the model to start with
  * @param updaters - a list of update functions to apply to the model
@@ -152,8 +153,8 @@ const chain = async <T extends GameServerTypes>(
   ...updaters: ((input: T["ServerModel"]) => Promise<Output<T>>)[]
 ): Promise<Output<T>> => {
   const cmd: SpaceServerCmd<T["ToClient"]>[] = (await initial).cmd ?? [];
-  const gameEvents: (T["GameEvent"] & EventMeta)[] =
-    (await initial)?.gameEvent ?? [];
+  const msgGameEvents: (T["GameEvent"] & EventMeta)[] =
+    (await initial)?.msgGameEvent ?? [];
   const eff: Eff<T["ServerMsg"]>[] = (await initial).eff
     ? [(await initial).eff!]
     : [];
@@ -170,11 +171,11 @@ const chain = async <T extends GameServerTypes>(
     if (updated.eff) {
       eff.push(updated.eff);
     }
-    if (updated.gameEvent) {
+    if (updated.msgGameEvent) {
       let j = 0;
-      let len = updated.gameEvent.length;
+      let len = updated.msgGameEvent.length;
       for (j = 0; j < len; ++j) {
-        gameEvents.push(updated.gameEvent[j]!);
+        msgGameEvents.push(updated.msgGameEvent[j]!);
       }
     }
     if (updated.cmd) {
@@ -189,7 +190,7 @@ const chain = async <T extends GameServerTypes>(
   return {
     model,
     eff: Eff.batch(eff),
-    gameEvent: gameEvents,
+    msgGameEvent: msgGameEvents,
     cmd,
   };
 };

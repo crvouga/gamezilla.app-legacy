@@ -264,37 +264,37 @@ export const View = ({
     <div>
       <div>
         <canvas
-          onTouchMove={(event) => {
-            const touch = event.touches[0];
+          onTouchMove={(msgEvent) => {
+            const touch = msgEvent.touches[0];
 
             if (!touch) {
               return;
             }
           }}
-          onClick={(event) => {
-            dispatch(["ClickedBoard", mouseEventToPosition(event)]);
+          onClick={(msgEvent) => {
+            dispatch(["ClickedBoard", mouseEventToPosition(msgEvent)]);
           }}
-          onMouseMove={(event) => {
+          onMouseMove={(msgEvent) => {
             const x = Math.floor(
               rescale({
-                value: event.pageX - event.currentTarget.offsetLeft,
-                from: [0, event.currentTarget.width],
+                value: msgEvent.pageX - msgEvent.currentTarget.offsetLeft,
+                from: [0, msgEvent.currentTarget.width],
                 to: [0, columnCount],
               })
             );
 
             const y = Math.floor(
               rescale({
-                value: event.pageY - event.currentTarget.offsetTop,
-                from: [0, event.currentTarget.height],
+                value: msgEvent.pageY - msgEvent.currentTarget.offsetTop,
+                from: [0, msgEvent.currentTarget.height],
                 to: [0, rowCount],
               })
             );
 
             dispatch(["MouseMove", { x, y }]);
           }}
-          onTouchStart={(event) => {
-            const touch = event.touches[0];
+          onTouchStart={(msgEvent) => {
+            const touch = msgEvent.touches[0];
 
             if (!touch) {
               return;
@@ -347,8 +347,8 @@ export const View = ({
   );
 };
 
-const mouseEventToPosition = (event: MouseEvent): Position.Position => {
-  if (!(event.currentTarget instanceof HTMLCanvasElement)) {
+const mouseEventToPosition = (msgEvent: MouseEvent): Position.Position => {
+  if (!(msgEvent.currentTarget instanceof HTMLCanvasElement)) {
     return {
       x: 0,
       y: 0,
@@ -356,16 +356,16 @@ const mouseEventToPosition = (event: MouseEvent): Position.Position => {
   }
   const x = Math.floor(
     rescale({
-      value: event.pageX - event.currentTarget.offsetLeft,
-      from: [0, event.currentTarget.width],
+      value: msgEvent.pageX - msgEvent.currentTarget.offsetLeft,
+      from: [0, msgEvent.currentTarget.width],
       to: [0, columnCount],
     })
   );
 
   const y = Math.floor(
     rescale({
-      value: event.pageY - event.currentTarget.offsetTop,
-      from: [0, event.currentTarget.height],
+      value: msgEvent.pageY - msgEvent.currentTarget.offsetTop,
+      from: [0, msgEvent.currentTarget.height],
       to: [0, rowCount],
     })
   );

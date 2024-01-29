@@ -82,14 +82,14 @@ export const update: Module["update"] = async (input) => {
           gameState: gameState.c,
           model: model.t === "flow" ? model.c : FlowServer.init,
           cmd: input.cmd,
-          event: input.event,
+          msgEvent: input.msgEvent,
           fromClient:
             input.fromClient?.t === "flow"
               ? { ...input.fromClient, ...input.fromClient.c }
               : null,
-          gameEvent:
-            input.gameEvent?.t === "flow"
-              ? { ...input.gameEvent, ...input.gameEvent.c }
+          msgGameEvent:
+            input.msgGameEvent?.t === "flow"
+              ? { ...input.msgGameEvent, ...input.msgGameEvent.c }
               : null,
           msg: input.msg?.t === "flow" ? input.msg.c : null,
           deps: null,
@@ -110,14 +110,14 @@ export const update: Module["update"] = async (input) => {
           gameState: gameState.c,
           model: model.t === "connect-four" ? model.c : ConnectFourServer.init,
           cmd: input.cmd,
-          event: input.event,
+          msgEvent: input.msgEvent,
           fromClient:
             input.fromClient?.t === "connect-four"
               ? { ...input.fromClient, ...input.fromClient.c }
               : null,
-          gameEvent:
-            input.gameEvent?.t === "connect-four"
-              ? { ...input.gameEvent, ...input.gameEvent.c }
+          msgGameEvent:
+            input.msgGameEvent?.t === "connect-four"
+              ? { ...input.msgGameEvent, ...input.msgGameEvent.c }
               : null,
           msg: input.msg?.t === "connect-four" ? input.msg.c : null,
           deps: null,

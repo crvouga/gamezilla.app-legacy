@@ -52,7 +52,7 @@ const View: ClientModule["View"] = (input) => {
 //
 
 const updateFormButtons: ClientModule["update"] = (input) => {
-  const { gameState, gameEvent, msg, model } = input;
+  const { gameState, msgGameEvent, msg, model } = input;
 
   if (gameState.t !== "build") {
     return { model };
@@ -97,14 +97,14 @@ const updateFormButtons: ClientModule["update"] = (input) => {
     }
   }
 
-  switch (gameEvent?.t) {
+  switch (msgGameEvent?.t) {
     case "user-edited-puzzle-name": {
       const puzzlesNew = { ...model.puzzles };
-      const puzzle = puzzlesNew[gameEvent.flowPuzzleId];
+      const puzzle = puzzlesNew[msgGameEvent.flowPuzzleId];
       if (puzzle) {
-        puzzlesNew[gameEvent.flowPuzzleId] = {
+        puzzlesNew[msgGameEvent.flowPuzzleId] = {
           ...puzzle,
-          name: gameEvent.newName,
+          name: msgGameEvent.newName,
         };
       }
 
@@ -112,12 +112,12 @@ const updateFormButtons: ClientModule["update"] = (input) => {
         model: {
           ...model,
           puzzles: puzzlesNew,
-          editNameRequest: gameEvent.edited,
+          editNameRequest: msgGameEvent.edited,
           opened: null,
         },
-        cmd: isOk(gameEvent.edited)
+        cmd: isOk(msgGameEvent.edited)
           ? showOkToast("Saved name")
-          : showErrorToast(gameEvent.edited.error),
+          : showErrorToast(msgGameEvent.edited.error),
       };
     }
 
