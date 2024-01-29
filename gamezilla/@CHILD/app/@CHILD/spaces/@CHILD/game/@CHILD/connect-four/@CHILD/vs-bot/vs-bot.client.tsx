@@ -217,7 +217,7 @@ const updateSound = (
     case "game": {
       switch (msgGame.t) {
         case "user-dropped-disc": {
-          const error = modelGame.errors[msgGame.msgEvtId];
+          const error = modelGame.errors[msgGame.eventId];
 
           if (error && msgGame.userId === currentUserId) {
             return [playSound(APP_SOUND.alertErrorSm)];

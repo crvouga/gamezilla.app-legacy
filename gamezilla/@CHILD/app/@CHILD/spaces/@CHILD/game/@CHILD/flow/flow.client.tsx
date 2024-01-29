@@ -76,7 +76,7 @@ const update: Module["update"] = (input) => {
 };
 
 const updateChild: Module["update"] = (input) => {
-  const { model, modelGame, msgGame, ctx, msgCmd, msgEvt, msgServer, msg } =
+  const { model, modelGame, msgEvt, ctx, msgCmd, msgGame, msgServer, msg } =
     input;
 
   switch (modelGame.t) {
@@ -188,7 +188,7 @@ const updateFromMsg: Module["update"] = (input) => {
       return { model };
     }
 
-    case "msgEvt": {
+    case "msgGame": {
       const msgGame = withId(msg.c);
       return {
         model,
@@ -251,7 +251,7 @@ const View: Module["View"] = (input) => {
     puzzles: input.model.puzzles,
     onQuit: () =>
       dispatch({
-        t: "msgEvt",
+        t: "msgGame",
         c: {
           t: "user-changed-mode",
           mode: null,
@@ -274,7 +274,7 @@ const View: Module["View"] = (input) => {
               description: "Start playing puzzles",
               onClick: () => {
                 dispatch({
-                  t: "msgEvt",
+                  t: "msgGame",
                   c: {
                     t: "user-changed-mode",
                     mode: "play",
@@ -289,7 +289,7 @@ const View: Module["View"] = (input) => {
               description: "Build new puzzles to play",
               onClick: () => {
                 dispatch({
-                  t: "msgEvt",
+                  t: "msgGame",
                   c: {
                     t: "user-changed-mode",
                     mode: "builder",

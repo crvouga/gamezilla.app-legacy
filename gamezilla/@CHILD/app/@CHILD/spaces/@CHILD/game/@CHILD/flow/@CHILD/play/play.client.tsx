@@ -68,7 +68,7 @@ const updateFromMsg: Module["update"] = (input) => {
       };
     }
 
-    case "msgEvt": {
+    case "msgGame": {
       const msgGame = withId(msg.c);
       return {
         model,
@@ -96,7 +96,7 @@ const View: Module["View"] = ({ model, modelGame, dispatch, ctx }) => {
         )}
         {USE_GAME_STATE ? (
           <FlowGridUIPlay.View
-            dispatch={(c) => dispatch({ t: "msgEvt", c: { t: "grid", c } })}
+            dispatch={(c) => dispatch({ t: "msgGame", c: { t: "grid", c } })}
             model={modelGame.gridPlay}
             disabled={isSpectating}
             grid={modelGame.grid}

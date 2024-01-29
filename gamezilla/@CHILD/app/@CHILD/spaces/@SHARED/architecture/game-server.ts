@@ -108,7 +108,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
         msgGame: updated.msgGame
           ? updated.msgGame.map(
               (msgGame): EventMeta & { t: T; c: Types["MsgGame"] } => ({
-                msgEvtId: msgGame.msgEvtId,
+                eventId: msgGame.msgEvtId,
                 happenedAt: msgGame.happenedAt,
                 t: tag,
                 c: msgGame,

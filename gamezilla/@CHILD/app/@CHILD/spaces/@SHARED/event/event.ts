@@ -3,11 +3,11 @@ import { EventId } from "./event-id";
 
 export type EventMeta = {
   happenedAt: LamportTimestamp;
-  msgEvtId: EventId;
+  eventId: EventId;
 };
 
 export type WithEventId<T> = T & {
-  msgEvtId: EventId;
+  eventId: EventId;
 };
 
 export type WithEventMeta<T> = T & EventMeta;
@@ -15,6 +15,6 @@ export type WithEventMeta<T> = T & EventMeta;
 export const withId = <T>(msgEvtNew: T): WithEventId<T> => {
   return {
     ...msgEvtNew,
-    msgEvtId: EventId.generate(),
+    eventId: EventId.generate(),
   };
 };

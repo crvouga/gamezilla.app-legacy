@@ -131,7 +131,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
                 t: T;
                 c: WithEventMeta<Types["MsgGame"]>;
               }> => ({
-                msgEvtId: msgGame.msgEvtId,
+                eventId: msgGame.msgEvtId,
                 happenedAt: msgGame.happenedAt,
                 t: tag,
                 c: {
@@ -267,7 +267,7 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
       : undefined,
     msgGame: output.msgGame
       ? output.msgGame.map((msgGame) => ({
-          msgEvtId: msgGame.msgEvtId,
+          eventId: msgGame.eventId,
           happenedAt: msgGame.happenedAt,
           t: tag,
           c: msgGame,

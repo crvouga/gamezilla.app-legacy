@@ -94,20 +94,20 @@ export const initGame = (ctx: SpaceCtx): ModelGame => {
 
 type Errors = {
   errors: {
-    [msgEvtId: string]: MsgGame & { error: EventError };
+    [eventId: string]: MsgGame & { error: EventError };
   };
 };
 
 const addError = (
   modelGame: ModelGame,
-  msgEvt: MsgGame,
+  msgGame: MsgGame,
   error: EventError
 ): ModelGame => {
   return {
     ...modelGame,
     errors: {
       ...modelGame.errors,
-      [JSON.stringify(msgEvt)]: { ...msgEvt, error },
+      [JSON.stringify(msgGame)]: { ...msgGame, error },
     },
   };
 };
@@ -194,29 +194,29 @@ export const allMoveTimeLimit: {
   "9": 9,
 };
 
-export const reducer = (modelGame: ModelGame, msgEvt: MsgGame): ModelGame => {
+export const reducer = (modelGame: ModelGame, msgGame: MsgGame): ModelGame => {
   switch (modelGame.type) {
     case "setup": {
-      switch (msgEvt.t) {
+      switch (msgGame.t) {
         case "user-started-playing": {
-          if (modelGame.players[msgEvt.playerType] !== null) {
-            return addError(modelGame, msgEvt, { t: "not-playing" });
+          if (modelGame.players[msgGame.playerType] !== null) {
+            return addError(modelGame, msgGame, { t: "not-playing" });
           }
 
           return {
             ...modelGame,
             players: {
               ...modelGame.players,
-              [msgEvt.playerType]: msgEvt.userId,
+              [msgGame.playerType]: msgGame.userId,
             },
           };
         }
 
         case "user-stopped-playing": {
-          const playerType = toPlayerType(msgEvt.userId, modelGame);
+          const playerType = toPlayerType(msgGame.userId, modelGame);
 
           if (!playerType) {
-            return addError(modelGame, msgEvt, { t: "not-playing" });
+            return addError(modelGame, msgGame, { t: "not-playing" });
           }
 
           return {
@@ -231,7 +231,7 @@ export const reducer = (modelGame: ModelGame, msgEvt: MsgGame): ModelGame => {
         case "user-inputted-move-time-limit": {
           return {
             ...modelGame,
-            moveTimeLimit: msgEvt.moveTimeLimit,
+            moveTimeLimit: msgGame.moveTimeLimit,
           };
         }
 
@@ -240,7 +240,7 @@ export const reducer = (modelGame: ModelGame, msgEvt: MsgGame): ModelGame => {
           const playerTwo = modelGame.players["player-two"];
 
           if (!playerOne || !playerTwo) {
-            return addError(modelGame, msgEvt, { t: "not-playing" });
+            return addError(modelGame, msgGame, { t: "not-playing" });
           }
 
           return {
@@ -264,14 +264,18 @@ export const reducer = (modelGame: ModelGame, msgEvt: MsgGame): ModelGame => {
     }
 
     case "game": {
-      switch (msgEvt.t) {
+      switch (msgGame.t) {
         case "user-dropped-disc": {
           const turn = toTurn(modelGame.columns);
 
-          const dropped = dropDisc(modelGame.columns, msgEvt.columnIndex, turn);
+          const dropped = dropDisc(
+            modelGame.columns,
+            msgGame.columnIndex,
+            turn
+          );
 
           if (dropped.t === "err") {
-            return addError(modelGame, msgEvt, {
+            return addError(modelGame, msgGame, {
               t: "move",
               c: dropped.error,
             });
@@ -280,15 +284,15 @@ export const reducer = (modelGame: ModelGame, msgEvt: MsgGame): ModelGame => {
           return {
             ...modelGame,
             columns: dropped.value,
-            // lastMoveAt: msgEvt.happenedAt,
+            // lastMoveAt: msgGame.happenedAt,
           };
         }
 
         case "user-resigned": {
-          const resignedPlayer = toPlayerType(msgEvt.userId, modelGame);
+          const resignedPlayer = toPlayerType(msgGame.userId, modelGame);
 
           if (!resignedPlayer) {
-            return addError(modelGame, msgEvt, { t: "not-playing" });
+            return addError(modelGame, msgGame, { t: "not-playing" });
           }
 
           return {

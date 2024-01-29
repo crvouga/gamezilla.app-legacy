@@ -86,7 +86,11 @@ type EventErr =
   | { t: "not-playing" }
   | { t: "move"; c: ConnectFour.MoveProblem };
 
-export const msgEvtErrorToString = ({ error }: { error: EventErr }): string => {
+export const msgGameErrorToString = ({
+  error,
+}: {
+  error: EventErr;
+}): string => {
   switch (error.t) {
     case "not-playing": {
       return "You're not playing";
@@ -99,7 +103,7 @@ export const msgEvtErrorToString = ({ error }: { error: EventErr }): string => {
 
 export type ModelGame = (StateSetup | StateGame) & {
   errors: {
-    [msgEvtId: EventId]: MsgGame & { error: EventErr };
+    [eventId: EventId]: MsgGame & { error: EventErr };
   };
 };
 
@@ -301,14 +305,14 @@ export const reducer = ({
 
 const addError = (
   modelGame: ModelGame,
-  msgEvt: MsgGame & EventMeta,
+  msgGame: MsgGame & EventMeta,
   error: EventErr
 ): ModelGame => {
   return {
     ...modelGame,
     errors: {
       ...modelGame.errors,
-      [msgEvt.msgEvtId]: { ...msgEvt, error },
+      [msgGame.eventId]: { ...msgGame, error },
     },
   };
 };

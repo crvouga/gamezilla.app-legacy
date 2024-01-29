@@ -59,8 +59,8 @@ export const View = ({
     onLeave?.();
   };
 
-  const onTouchMove = (msgEvt: TouchEvent) => {
-    const nodeId = touchEventToNodeId(msgEvt);
+  const onTouchMove = (e: TouchEvent) => {
+    const nodeId = touchEventToNodeId(e);
 
     if (!nodeId) {
       return;
@@ -326,12 +326,12 @@ const ViewTerminalNode = ({
   );
 };
 
-const touchEventToNodeId = (msgEvt: TouchEvent): Flow.NodeId | null => {
-  const touch = msgEvt.touches[0];
+const touchEventToNodeId = (msgGame: TouchEvent): Flow.NodeId | null => {
+  const touch = msgGame.touches[0];
   if (!touch) {
     return null;
   }
-  const svg = msgEvt.currentTarget;
+  const svg = msgGame.currentTarget;
   if (!(svg instanceof SVGSVGElement)) {
     return null;
   }

@@ -81,16 +81,16 @@ export const initGame = (): ModelGame => {
 
 export const reducer = ({
   ctx,
-  msgEvt,
+  msgGame,
   modelGame,
 }: {
   ctx: SpaceCtx;
   modelGame: ModelGame;
-  msgEvt: WithEventMeta<MsgGame>;
+  msgGame: WithEventMeta<MsgGame>;
 }): ModelGame => {
-  switch (msgEvt.t) {
+  switch (msgGame.t) {
     case "user-changed-mode": {
-      switch (msgEvt.mode) {
+      switch (msgGame.mode) {
         case "none": {
           return {
             t: "none",
@@ -120,7 +120,7 @@ export const reducer = ({
             t: "vs-bot",
             c: VsBot.reducer({
               modelGame: modelGame.c,
-              msgGame: { ...msgEvt, ...msgEvt.c },
+              msgGame: { ...msgGame, ...msgGame.c },
             }),
           };
         }
@@ -135,7 +135,7 @@ export const reducer = ({
         case "vs-user": {
           return {
             t: "vs-user",
-            c: VsUser.reducer(modelGame.c, msgEvt.c),
+            c: VsUser.reducer(modelGame.c, msgGame.c),
           };
         }
 

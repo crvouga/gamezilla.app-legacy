@@ -26,7 +26,7 @@ export type ServerModel = {};
 
 export type ClientMsg =
   | {
-      t: "msgEvt";
+      t: "msgGame";
       c: MsgGame;
     }
   | {
@@ -64,11 +64,11 @@ export const initGame: Module["initGame"] = () => {
   };
 };
 
-export const reducer: Module["reducer"] = ({ modelGame, msgEvt }) => {
-  switch (msgEvt.t) {
+export const reducer: Module["reducer"] = ({ modelGame, msgGame }) => {
+  switch (msgGame.t) {
     case "grid": {
       const gridPlayNew = FlowGridUIPlay.update({
-        msg: msgEvt.c,
+        msg: msgGame.c,
         model: modelGame.gridPlay,
         grid: modelGame.grid,
       });

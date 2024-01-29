@@ -106,21 +106,21 @@ export type MsgGame =
 export const reducer = ({
   ctx,
   modelGame,
-  msgEvt,
+  msgGame,
 }: {
   ctx: SpaceCtx;
   modelGame: ModelGame;
-  msgEvt: MsgGame & EventMeta;
+  msgGame: MsgGame & EventMeta;
 }): ModelGame => {
   switch (modelGame.t) {
     case "connect-four": {
-      switch (msgEvt.t) {
+      switch (msgGame.t) {
         case "connect-four": {
           return {
             t: "connect-four",
             c: ConnectFour.reducer({
               ctx,
-              msgEvt: { ...msgEvt, ...msgEvt.c },
+              msgGame: { ...msgGame, ...msgGame.c },
               modelGame: modelGame.c,
             }),
           };
@@ -132,13 +132,13 @@ export const reducer = ({
     }
 
     case "flow": {
-      switch (msgEvt.t) {
+      switch (msgGame.t) {
         case "flow": {
           return {
             t: "flow",
             c: Flow.reducer({
               ctx,
-              msgEvt: { ...msgEvt, ...msgEvt.c },
+              msgGame: { ...msgGame, ...msgGame.c },
               modelGame: modelGame.c,
             }),
           };

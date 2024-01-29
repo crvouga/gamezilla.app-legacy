@@ -410,7 +410,7 @@ const updateFromManySpaceEventsLoop = async (
     return updateFromManySpaceEventsLoop(ctx, spaceEventsRest, acc);
   }
 
-  if (Space.hasEvent(spaceModel, spaceEvent.msgEvtId)) {
+  if (Space.hasEvent(spaceModel, spaceEvent.eventId)) {
     return updateFromManySpaceEventsLoop(ctx, spaceEventsRest, acc);
   }
 
@@ -445,7 +445,7 @@ const sendEventMsgToClients = async ({
   const msgEvtWithMeta = Spaces.toEventWithMeta(
     model,
     spaceEvent.spaceId,
-    spaceEvent.msgEvtId
+    spaceEvent.eventId
   );
 
   if (!msgEvtWithMeta) {
@@ -522,7 +522,7 @@ const updateFromSpaceEvent = async ({
       const msgEvtWithMeta = Spaces.toEventWithMeta(
         model,
         spaceEvent.spaceId,
-        spaceEvent.msgEvtId
+        spaceEvent.eventId
       );
 
       if (!msgEvtWithMeta) {

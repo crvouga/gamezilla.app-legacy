@@ -92,7 +92,7 @@ export type Input<T extends GameClientModuleTypes> = {
   msgCmd?: T["MsgInCmd"] | null;
 
   /**
-   * `modelGame` is the current state of the game. This is shared between client and server.
+   * `modelGame` is the current state of the game. This is shared and auto synced between client and server.
    */
   modelGame: T["ModelGame"];
   /**
@@ -125,7 +125,7 @@ export type Output<T extends GameClientModuleTypes> = {
    */
   msgEvt?: T["MsgOutEvent"][];
   /**
-   *  `msgGame` is an msgEvt that occurred in the game. Shared with the server side
+   *  `msgGame` are events that occurred in the game. Shared with the server side
    */
   msgGame?: WithEventId<T["MsgGame"]>[];
 };
@@ -241,9 +241,9 @@ const tagOutput = <
     msgEvt: output.msgEvt,
     msgGame: output.msgGame?.map((c) => {
       const child = { ...c };
-      delete child.msgEvtId;
+      delete child.eventId;
       return {
-        msgEvtId: c.msgEvtId,
+        eventId: c.eventId,
         c: child,
         t: tag,
       };

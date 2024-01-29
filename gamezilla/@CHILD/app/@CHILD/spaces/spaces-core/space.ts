@@ -42,7 +42,7 @@ export const startFromLatestSnapshot = (model: Model): Model => {
   for (let i = model.msgEvts.length - 1; i >= 0; i--) {
     const msgEvt = model.msgEvts[i]!;
 
-    const snapshot = model.snapshots[msgEvt.msgEvtId];
+    const snapshot = model.snapshots[msgEvt.eventId];
 
     msgEvts.unshift(msgEvt);
 
@@ -51,7 +51,7 @@ export const startFromLatestSnapshot = (model: Model): Model => {
         clock: model.clock,
         msgEvts: msgEvts,
         snapshots: {
-          [msgEvt.msgEvtId]: snapshot,
+          [msgEvt.eventId]: snapshot,
         },
       };
     }
@@ -97,7 +97,7 @@ export const appendEvent = ({
   //
 
   const newEventIndex = newEvents.findIndex(
-    (e) => e.msgEvtId === msgEvt.msgEvtId
+    (e) => e.eventId === msgEvt.eventId
   );
 
   if (newEventIndex === -1) {
@@ -109,7 +109,7 @@ export const appendEvent = ({
   }
 
   for (let i = newEventIndex; i < newEvents.length; i++) {
-    const msgEvtId = newEvents[i]!.msgEvtId;
+    const msgEvtId = newEvents[i]!.eventId;
     delete newSnapshots[msgEvtId];
     continue;
   }
@@ -124,7 +124,7 @@ export const appendEvent = ({
     snapshots: newSnapshots,
   });
 
-  newSnapshots[msgEvt.msgEvtId] = snapshot;
+  newSnapshots[msgEvt.eventId] = snapshot;
 
   //
   //
@@ -149,7 +149,7 @@ export const appendEvent = ({
 };
 
 export const toEventWithMeta = (model: Model, msgEvtId: EventId) => {
-  const msgEvt = model.msgEvts.find((e) => e.msgEvtId === msgEvtId);
+  const msgEvt = model.msgEvts.find((e) => e.eventId === msgEvtId);
 
   if (!msgEvt) {
     return null;
@@ -159,7 +159,7 @@ export const toEventWithMeta = (model: Model, msgEvtId: EventId) => {
 };
 
 export const hasEvent = (model: Model, msgEvtId: EventId) => {
-  return model.msgEvts.some((e) => e.msgEvtId === msgEvtId);
+  return model.msgEvts.some((e) => e.eventId === msgEvtId);
 };
 
 export const toSpaceId = (model: Model): SpaceId | null => {
@@ -188,7 +188,7 @@ export const deriveState = (model: Model): SpaceState.State => {
   for (let i = model.msgEvts.length - 1; i >= 0; i--) {
     const msgEvt = model.msgEvts[i]!;
 
-    const snapshot = model.snapshots[msgEvt.msgEvtId];
+    const snapshot = model.snapshots[msgEvt.eventId];
 
     if (snapshot) {
       running = snapshot;
@@ -203,7 +203,7 @@ export const deriveState = (model: Model): SpaceState.State => {
   //
 
   for (const msgEvt of msgEvts) {
-    running = SpaceState.reducer({ state: running, msgEvt });
+    running = SpaceState.reducer({ state: running, msgSpace: msgEvt });
   }
 
   return running;

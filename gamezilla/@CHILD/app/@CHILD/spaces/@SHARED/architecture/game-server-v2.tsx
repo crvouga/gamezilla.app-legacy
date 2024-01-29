@@ -233,7 +233,7 @@ const tagOutput = <
     eff: Eff.tag(tag, output.eff),
     msgEvt: output.msgEvt,
     msgGame: output.msgGame?.map((c) => ({
-      msgEvtId: c.msgEvtId,
+      eventId: c.eventId,
       c: c,
       t: tag,
     })),

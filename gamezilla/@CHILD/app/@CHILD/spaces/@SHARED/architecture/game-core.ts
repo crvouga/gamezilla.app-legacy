@@ -8,7 +8,7 @@ export type GameCore<T extends GameCoreTypes> = {
   initGame: (input: { ctx: T["Ctx"] }) => T["ModelGame"];
   reducer: (input: {
     ctx: T["Ctx"];
-    msgEvt: T["MsgGame"];
+    msgGame: T["MsgGame"];
     modelGame: T["ModelGame"];
   }) => T["ModelGame"];
 };
