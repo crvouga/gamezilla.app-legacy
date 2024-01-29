@@ -30,7 +30,6 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
 
     async count(input) {
       calls.count++;
-      await new Promise((r) => setTimeout(r, 500));
       if (calls.count % ERROR_EVERY === 0) {
         return err("count demo error");
       }
@@ -39,6 +38,7 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
         pagination: { limit: 0, offset: 0 },
         where: input.where,
       });
+
       if (isErr(listed)) {
         return listed;
       }

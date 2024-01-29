@@ -9,6 +9,7 @@ import { Sub, notAsked } from "gamezilla/@SHARED/core";
 import { ClientModule } from "./builder.core";
 import { PuzzleBuilderClient } from "./puzzle-builder/puzzle-builder.client";
 import { PuzzleListClient } from "./puzzle-list/puzzle-list.client";
+import { PackListClient } from "./pack-list/pack-list";
 
 const init: ClientModule["init"] = {
   puzzleListRequest: notAsked,
@@ -27,6 +28,7 @@ const update: ClientModule["update"] = (input) => {
     (model) => updateGameEvent({ ...input, model }),
     (model) => updateLocation({ ...input, model }),
     //
+    (model) => PackListClient.update({ ...input, model }),
     (model) => PuzzleBuilderClient.update({ ...input, model }),
     (model) => PuzzleListClient.update({ ...input, model })
   );
@@ -81,7 +83,9 @@ const View: ClientModule["View"] = (input) => {
             selected={model.listTab}
           />
 
-          <PuzzleListClient.View {...input} />
+          {model.listTab === "puzzles" && <PuzzleListClient.View {...input} />}
+
+          {model.listTab === "packs" && <PackListClient.View {...input} />}
 
           <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
             <Button
