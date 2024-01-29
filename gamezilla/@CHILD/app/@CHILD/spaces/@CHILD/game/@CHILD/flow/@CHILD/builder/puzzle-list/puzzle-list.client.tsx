@@ -1,16 +1,12 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import {
   APP_SOUND,
   playSound,
   sendToServer,
   showErrorToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
-import {
-  Avatar,
-  IconPuzzlePiece,
-  Spinner,
-  cn,
-} from "gamezilla/@CHILD/app/@SHARED/ui";
+import { IconPuzzlePiece, Spinner, cn } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { EmptyState } from "gamezilla/@CHILD/app/@SHARED/ui/empty-state";
 import { IntersectionObserverEmitter } from "gamezilla/@CHILD/app/@SHARED/ui/intersection-observer";
 import {
@@ -26,7 +22,6 @@ import { FlowGridUI } from "../../../@SHARED/flow";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 import { ClientModule } from "../builder.core";
 import { PuzzleCreateClient } from "../puzzle-create/puzzle-create.client";
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
