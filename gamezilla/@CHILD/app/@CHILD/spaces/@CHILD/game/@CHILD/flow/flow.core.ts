@@ -55,6 +55,14 @@ export type MsgToClient =
 
 export type Mode = "builder" | "play";
 
+//
+//
+//
+//
+//
+//
+//
+
 export type MsgGame =
   | { t: "user-changed-mode"; mode: Mode | null; userId: UserId }
   | { t: "play"; c: Play.MsgGame }

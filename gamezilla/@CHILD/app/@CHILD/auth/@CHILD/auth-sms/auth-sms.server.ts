@@ -27,7 +27,7 @@ import { VerifySMS } from "./server/verify-sms/verify-sms-impl";
 
 type Module = AppServerModule<{
   Ctx: ServerCtx;
-  MsgInCmd: {};
+  MsgInCmd: null;
   MsgInEvent: ServerEvent;
   Model: ServerModel;
   Msg: ServerMsg;
