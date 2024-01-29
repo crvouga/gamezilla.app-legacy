@@ -40,62 +40,73 @@ const update: ClientModule["update"] = (input) => {
 const updatePuzzleList: ClientModule["update"] = (input) => {
   const { model, msg, fromServer, ctx } = input;
 
-  if (msg?.t === "list/user-clicked-puzzle-list-item") {
-    return {
-      model,
-      gameEvent: [
-        withId({
-          t: "user-opened-puzzle",
-          puzzle: msg.puzzle,
-          userId: ctx.currentUserId,
-        }),
-      ],
-      cmd: [playSound(APP_SOUND.tap)],
-    };
+  switch (msg?.t) {
+    case "list/user-clicked-puzzle-list-item": {
+      return {
+        model,
+        gameEvent: [
+          withId({
+            t: "user-opened-puzzle",
+            puzzle: msg.puzzle,
+            userId: ctx.currentUserId,
+          }),
+        ],
+        cmd: [playSound(APP_SOUND.tap)],
+      };
+    }
+
+    case "list/user-observed-end-of-list": {
+      return {
+        model: { ...model, puzzleListRequest: loading },
+        cmd: [
+          sendToServer({
+            t: "list/list-puzzles",
+            input: {
+              order: {
+                lastUpdatedAt: "desc",
+              },
+              pagination: {
+                limit: 25,
+                offset: 0,
+              },
+              where: {
+                createdBy: ctx.space.hostId,
+              },
+            },
+          }),
+        ],
+      };
+    }
+
+    default: {
+      break;
+    }
   }
 
-  if (msg?.t === "list/user-observed-end-of-list") {
-    return {
-      model: { ...model, puzzleListRequest: loading },
-      cmd: [
-        sendToServer({
-          t: "list/list-puzzles",
-          input: {
-            order: {
-              lastUpdatedAt: "desc",
-            },
-            pagination: {
-              limit: 25,
-              offset: 0,
-            },
-            where: {
-              createdBy: ctx.space.hostId,
-            },
-          },
-        }),
-      ],
-    };
-  }
+  switch (fromServer?.t) {
+    case "list/listed-puzzle": {
+      const puzzles =
+        fromServer.listed.t === "ok" ? fromServer.listed.value.items : [];
 
-  if (fromServer?.t === "list/listed-puzzle") {
-    const puzzles =
-      fromServer.listed.t === "ok" ? fromServer.listed.value.items : [];
+      const puzzlesNew = puzzles.reduce(
+        (acc, puzzle) => ({ ...acc, [puzzle.id]: puzzle }),
+        model.puzzles
+      );
 
-    const puzzlesNew = puzzles.reduce(
-      (acc, puzzle) => ({ ...acc, [puzzle.id]: puzzle }),
-      model.puzzles
-    );
-
-    return {
-      model: {
-        ...model,
-        puzzleListRequest: Result.mapOk(fromServer.listed, () => null),
-        puzzles: puzzlesNew,
-      },
-      cmd: isErr(fromServer.listed)
-        ? showErrorToast(fromServer.listed.error)
-        : [],
-    };
+      return {
+        model: {
+          ...model,
+          puzzleListRequest: Result.mapOk(fromServer.listed, () => null),
+          puzzles: puzzlesNew,
+        },
+        cmd: isErr(fromServer.listed)
+          ? showErrorToast(fromServer.listed.error)
+          : [],
+      };
+    }
+    default: {
+      break;
+    }
   }
 
   return { model };
