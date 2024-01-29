@@ -6,13 +6,14 @@ import {
   ServerEvent,
   sendMsgToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Eff, Sub } from "gamezilla/@SHARED/core";
+import { Eff, Sub, isErr } from "gamezilla/@SHARED/core";
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
-import {
-  StoreSessionIdByUserId,
-  StoreUserIdBySessionId,
-} from "./@SHARED/server/auth-session-store";
+// import {
+//   StoreSessionIdByUserId,
+//   StoreUserIdBySessionId,
+// } from "./@SHARED/server/auth-session-store";
 import { ModelServer, MsgServer, MsgToClient, MsgToServer } from "./auth.core";
+import { SessionDb } from "./@SHARED/server/session-db";
 
 //
 //
@@ -44,13 +45,13 @@ type Module = AppServerModule<{
 //
 
 export const init: Module["init"] = async (input) => {
-  const { ctx } = input;
+  // const { ctx } = input;
   const sms = await AuthServerSMS.init({ ...input, stored: null });
 
   return {
     model: {
-      userIdBySessionId: StoreUserIdBySessionId(input.ctx).startingAt(ctx.now),
-      sessionIdsByUserId: StoreSessionIdByUserId(input.ctx).startingAt(ctx.now),
+      // userIdBySessionId: StoreUserIdBySessionId(input.ctx).startingAt(ctx.now),
+      // sessionIdsByUserId: StoreSessionIdByUserId(input.ctx).startingAt(ctx.now),
       sms: sms.model,
     },
     eff: Eff.tag("sms", sms.eff),
@@ -78,11 +79,12 @@ export const update: Module["update"] = async (input) => {
 };
 
 export const toUserIdFromSessionId = async (
-  ctx: ServerCtx,
-  model: ModelServer,
-  sessionId: SessionId
+  _ctx: ServerCtx,
+  _model: ModelServer,
+  _sessionId: SessionId
 ): Promise<UserId | null> => {
-  return StoreUserIdBySessionId(ctx).get(model.userIdBySessionId, sessionId);
+  return null;
+  // return StoreUserIdBySessionId(ctx).get(model.userIdBySessionId, sessionId);
 };
 
 const updateChild: Module["update"] = async (input) => {
@@ -128,6 +130,12 @@ const updateFromClient: Module["update"] = async ({ model, msgClient }) => {
 
   switch (msgClient.t) {
     case "logout": {
+      const zapped = await SessionDb().zapBySessionId(msgClient.sessionId);
+
+      if (zapped.t === "err") {
+        return { model };
+      }
+
       return {
         model,
         msgEvt: [
@@ -146,17 +154,20 @@ const updateFromClient: Module["update"] = async ({ model, msgClient }) => {
   }
 };
 
-const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
+const updateFromEvent: typeof update = async ({ msgEvt, model }) => {
   if (!msgEvt) {
     return { model };
   }
 
   switch (msgEvt.t) {
     case "wire/client-connected": {
-      const userId = await StoreUserIdBySessionId(ctx).get(
-        model.userIdBySessionId,
-        msgEvt.sessionId
-      );
+      const found = await SessionDb().findUserIdBySessionId(msgEvt.sessionId);
+
+      if (isErr(found)) {
+        return { model };
+      }
+
+      const userId = found.value;
 
       if (!userId) {
         return {
@@ -186,7 +197,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
 
     case "auth/client-unauthenticated": {
       return {
-        model: await dissocSession(ctx, model, msgEvt.sessionId),
+        model,
         msgCmd: [
           sendMsgToClient([msgEvt.clientId], {
             t: "client-unauthenticated",
@@ -197,16 +208,31 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
     }
 
     case "auth/client-authenticated": {
+      const msgCmd = sendMsgToClient<MsgToClient>([msgEvt.clientId], {
+        t: "client-authenticated",
+        userId: msgEvt.userId,
+        loggedIn: true,
+      });
+
+      if (!msgEvt.loggedIn) {
+        return {
+          model,
+          msgCmd: [msgCmd],
+        };
+      }
+
+      const inserted = await SessionDb().insert({
+        sessionId: msgEvt.sessionId,
+        userId: msgEvt.userId,
+      });
+
+      if (isErr(inserted)) {
+        return { model };
+      }
+
       return {
-        model: await assocSession(ctx, model, msgEvt.sessionId, msgEvt.userId),
-        msgCmd: [
-          sendMsgToClient([msgEvt.clientId], {
-            t: "client-authenticated",
-            userId: msgEvt.userId,
-            sessionId: msgEvt.sessionId,
-            loggedIn: true,
-          }),
-        ],
+        model,
+        msgCmd: [msgCmd],
       };
     }
 
@@ -215,88 +241,6 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
     }
   }
 };
-
-//
-//
-//
-//
-//
-//
-//
-//
-
-async function assocSession(
-  ctx: ServerCtx,
-  model: ModelServer,
-  sessionId: SessionId,
-  userId: UserId
-): Promise<ModelServer> {
-  const userIdBySessionIdNew = await StoreUserIdBySessionId(ctx).assoc(
-    ctx.now,
-    model.userIdBySessionId,
-    sessionId,
-    userId
-  );
-
-  const sessionIds = await StoreSessionIdByUserId(ctx).get(
-    model.sessionIdsByUserId,
-    userId
-  );
-
-  const sessionIdsNew = {
-    ...sessionIds,
-    [sessionId]: sessionId,
-  };
-
-  const sessionIdByUserIdNew = await StoreSessionIdByUserId(ctx).assoc(
-    ctx.now,
-    model.sessionIdsByUserId,
-    userId,
-    sessionIdsNew
-  );
-
-  return {
-    ...model,
-    sessionIdsByUserId: sessionIdByUserIdNew,
-    userIdBySessionId: userIdBySessionIdNew,
-  };
-}
-
-async function dissocSession(
-  ctx: ServerCtx,
-  model: ModelServer,
-  sessionId: SessionId
-): Promise<ModelServer> {
-  const userIdBySessionIdNew = await StoreUserIdBySessionId(ctx).dissoc(
-    ctx.now,
-    model.userIdBySessionId,
-    sessionId
-  );
-
-  const userId = await StoreUserIdBySessionId(ctx).get(
-    model.userIdBySessionId,
-    sessionId
-  );
-
-  if (!userId) {
-    return {
-      ...model,
-      userIdBySessionId: userIdBySessionIdNew,
-    };
-  }
-
-  const sessionIdByUserIdNew = await StoreSessionIdByUserId(ctx).dissoc(
-    ctx.now,
-    model.sessionIdsByUserId,
-    userId
-  );
-
-  return {
-    ...model,
-    sessionIdsByUserId: sessionIdByUserIdNew,
-    userIdBySessionId: userIdBySessionIdNew,
-  };
-}
 
 //
 //

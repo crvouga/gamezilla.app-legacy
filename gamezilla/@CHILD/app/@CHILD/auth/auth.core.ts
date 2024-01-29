@@ -1,16 +1,14 @@
-import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { ServerCtx } from "gamezilla/@CHILD/app/@SHARED/server";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   EmailAddress,
   PhoneNumber,
   RemoteResult,
 } from "gamezilla/@SHARED/core";
-import { Store } from "gamezilla/@SHARED/immutable-store";
 import * as AuthSMS from "./@CHILD/auth-sms/auth-sms.core";
-import {
-  StoreSessionIdByUserId,
-  StoreUserIdBySessionId,
-} from "./@SHARED/server/auth-session-store";
+// import {
+//   StoreSessionIdByUserId,
+//   StoreUserIdBySessionId,
+// } from "./@SHARED/server/auth-session-store";
 
 //
 //
@@ -36,35 +34,35 @@ export type ModelClient = {
 };
 
 export type ModelServer = {
-  userIdBySessionId: Store<SessionId, UserId>;
-  sessionIdsByUserId: Store<UserId, { [sessionId: SessionId]: SessionId }>;
+  // userIdBySessionId: Store<SessionId, UserId>;
+  // sessionIdsByUserId: Store<UserId, { [sessionId: SessionId]: SessionId }>;
   sms: AuthSMS.ModelServer;
 };
 
-export const toUserId = async (
-  ctx: ServerCtx,
-  model: ModelServer,
-  sessionId: SessionId
-): Promise<UserId | null> => {
-  const userId = await StoreUserIdBySessionId(ctx).get(
-    model.userIdBySessionId,
-    sessionId
-  );
-  return userId ?? null;
-};
+// export const toUserId = async (
+//   ctx: ServerCtx,
+//   model: ModelServer,
+//   sessionId: SessionId
+// ): Promise<UserId | null> => {
+//   const userId = await StoreUserIdBySessionId(ctx).get(
+//     model.userIdBySessionId,
+//     sessionId
+//   );
+//   return userId ?? null;
+// };
 
-export const toSessionIds = async (
-  ctx: ServerCtx,
-  model: ModelServer,
-  userId: UserId
-): Promise<{ [sessionId: SessionId]: SessionId } | null> => {
-  const sessionIds = await StoreSessionIdByUserId(ctx).get(
-    model.sessionIdsByUserId,
-    userId
-  );
-  console.log("model.sessionIdsByUserId", model.sessionIdsByUserId);
-  return sessionIds ?? null;
-};
+// export const toSessionIds = async (
+//   ctx: ServerCtx,
+//   model: ModelServer,
+//   userId: UserId
+// ): Promise<{ [sessionId: SessionId]: SessionId } | null> => {
+//   const sessionIds = await StoreSessionIdByUserId(ctx).get(
+//     model.sessionIdsByUserId,
+//     userId
+//   );
+//   console.log("model.sessionIdsByUserId", model.sessionIdsByUserId);
+//   return sessionIds ?? null;
+// };
 
 //
 //

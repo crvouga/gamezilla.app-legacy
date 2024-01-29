@@ -15,5 +15,7 @@ export type ISessionDb = {
     userId: UserId;
   }) => Promise<Result<string, null>>;
 
-  deleteByUserId: (userId: UserId) => Promise<Result<string, null>>;
+  zapByUserId: (userId: UserId) => Promise<Result<string, null>>;
+
+  zapBySessionId: (sessionId: SessionId) => Promise<Result<string, null>>;
 };

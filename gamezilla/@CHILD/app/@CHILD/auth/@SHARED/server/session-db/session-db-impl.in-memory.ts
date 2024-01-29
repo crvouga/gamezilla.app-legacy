@@ -25,13 +25,26 @@ export const SessionDbInMemory = (): ISessionDb => {
       userIdBySessionId.set(sessionId, userId);
       return ok(null);
     },
-    async deleteByUserId(userId: UserId) {
+    async zapByUserId(userId) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       const sessionIds = sessionIdsByUserId.get(userId) ?? [];
       for (const sessionId of sessionIds) {
         userIdBySessionId.delete(sessionId);
       }
       sessionIdsByUserId.delete(userId);
+      return ok(null);
+    },
+    async zapBySessionId(sessionId) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const userId = userIdBySessionId.get(sessionId);
+      if (userId) {
+        const sessionIds = sessionIdsByUserId.get(userId) ?? [];
+        const idx = sessionIds.indexOf(sessionId);
+        if (idx >= 0) {
+          sessionIds.splice(idx, 1);
+        }
+        userIdBySessionId.delete(sessionId);
+      }
       return ok(null);
     },
   };
