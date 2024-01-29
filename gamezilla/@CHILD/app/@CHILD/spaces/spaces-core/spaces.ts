@@ -159,7 +159,7 @@ export const toSpaceState = (
   const spaceModel = model.spaces[spaceId];
 
   if (!spaceModel) {
-    return SpaceState.initState;
+    return SpaceState.initGame;
   }
 
   const spaceState = Space.deriveState(spaceModel);

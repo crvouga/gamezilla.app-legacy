@@ -388,7 +388,7 @@ export const subscriptions: Module["subscriptions"] = ({ model }) => {
 //
 //
 
-export const View: Module["View"] = ({ model, emit, ctx }) => {
+export const View: Module["View"] = ({ model, dispatch, ctx }) => {
   const { currentRoute } = ctx;
 
   if (currentRoute.t !== "auth") {
@@ -404,7 +404,7 @@ export const View: Module["View"] = ({ model, emit, ctx }) => {
           <TopBar
             left={
               <TopBarBackButton
-                onClick={() => emit({ t: "clicked-back-button" })}
+                onClick={() => dispatch({ t: "clicked-back-button" })}
               />
             }
             title="Login with phone"
@@ -416,7 +416,7 @@ export const View: Module["View"] = ({ model, emit, ctx }) => {
                 id="countryCode"
                 label="Country"
                 onChange={(countryCodeNew) => {
-                  emit({
+                  dispatch({
                     t: "inputted-country-code",
                     countryCode: countryCodeNew,
                   });
@@ -439,10 +439,10 @@ export const View: Module["View"] = ({ model, emit, ctx }) => {
               error={typeof model.phoneNumberError === "string"}
               helperText={model.phoneNumberError}
               onChange={(value) => {
-                emit({ t: "inputted-phone-number", phoneNumber: value });
+                dispatch({ t: "inputted-phone-number", phoneNumber: value });
               }}
               onClear={() => {
-                emit({ t: "clicked-phone-number-clear" });
+                dispatch({ t: "clicked-phone-number-clear" });
               }}
             />
 
@@ -454,7 +454,7 @@ export const View: Module["View"] = ({ model, emit, ctx }) => {
               size="lg"
               loading={model.sendCode.t === "loading"}
               onClick={() => {
-                emit({ t: "clicked-send-code" });
+                dispatch({ t: "clicked-send-code" });
               }}
             />
           </div>
@@ -474,7 +474,7 @@ export const View: Module["View"] = ({ model, emit, ctx }) => {
           <TopBar
             left={
               <TopBarBackButton
-                onClick={() => emit({ t: "clicked-back-button" })}
+                onClick={() => dispatch({ t: "clicked-back-button" })}
               />
             }
             title="Login with phone"
@@ -492,10 +492,10 @@ export const View: Module["View"] = ({ model, emit, ctx }) => {
               autoFocus
               type="tel"
               onChange={(value) => {
-                emit({ t: "inputted-code", code: value });
+                dispatch({ t: "inputted-code", code: value });
               }}
               onClear={() => {
-                emit({ t: "clicked-code-clear" });
+                dispatch({ t: "clicked-code-clear" });
               }}
             />
             <Button
@@ -507,7 +507,7 @@ export const View: Module["View"] = ({ model, emit, ctx }) => {
                 model.verifyCode.t === "loading" || model.verifyCode.t === "ok"
               }
               onClick={() => {
-                emit({
+                dispatch({
                   t: "clicked-verify-code",
                   phoneNumber: route.phoneNumber,
                 });

@@ -8,8 +8,8 @@ import { SpaceServerCmd } from "../../../../@SHARED/space-server-cmd";
 import { BuilderServer } from "./@CHILD/builder/builder.server";
 import { PlayServer } from "./@CHILD/play/play.server";
 import {
-  GameEvent,
-  GameState,
+  GameMsg,
+  GameModel,
   ServerModel,
   ServerMsg,
   ToClient,
@@ -21,8 +21,8 @@ type Module = GameServerModule<{
   Msg: ServerMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  GameEvent: GameEvent;
-  GameState: GameState;
+  GameMsg: GameMsg;
+  GameModel: GameModel;
   Ctx: SpaceServerCtx;
   InCmd: null;
   InEvent: SpaceServerEvent;
@@ -42,13 +42,13 @@ const update: Module["update"] = async (input) => {
 };
 
 const updateChild: Module["update"] = async (input) => {
-  const { modelGameState } = input;
+  const { modelGame } = input;
 
-  switch (modelGameState.t) {
+  switch (modelGame.t) {
     case "play": {
       const updated = await PlayServer.update({
         ctx: input.ctx,
-        modelGameState: modelGameState.c,
+        modelGame: modelGame.c,
         model: input.model.t === "play" ? input.model.c : PlayServer.init,
         msgCmd: input.msgCmd,
         msgEvent: input.msgEvent,
@@ -56,9 +56,9 @@ const updateChild: Module["update"] = async (input) => {
           input.msgFromClient?.t === "play"
             ? { ...input.msgFromClient, ...input.msgFromClient.c }
             : null,
-        msgGameEvent:
-          input.msgGameEvent?.t === "play"
-            ? { ...input.msgGameEvent, ...input.msgGameEvent.c }
+        msgGame:
+          input.msgGame?.t === "play"
+            ? { ...input.msgGame, ...input.msgGame.c }
             : null,
         msg: input.msg?.t === "play" ? input.msg.c : null,
         deps: null,
@@ -76,7 +76,7 @@ const updateChild: Module["update"] = async (input) => {
     case "builder": {
       const updated = await BuilderServer.update({
         ctx: input.ctx,
-        modelGameState: modelGameState.c,
+        modelGame: modelGame.c,
         model: input.model.t === "builder" ? input.model.c : BuilderServer.init,
         msgCmd: input.msgCmd,
         msgEvent: input.msgEvent,
@@ -84,9 +84,9 @@ const updateChild: Module["update"] = async (input) => {
           input.msgFromClient?.t === "builder"
             ? { ...input.msgFromClient, ...input.msgFromClient.c }
             : null,
-        msgGameEvent:
-          input.msgGameEvent?.t === "builder"
-            ? { ...input.msgGameEvent, ...input.msgGameEvent.c }
+        msgGame:
+          input.msgGame?.t === "builder"
+            ? { ...input.msgGame, ...input.msgGame.c }
             : null,
         msg: input.msg?.t === "builder" ? input.msg.c : null,
         deps: await BuilderServer.deps(),
@@ -108,15 +108,15 @@ const updateChild: Module["update"] = async (input) => {
 };
 
 const subscriptions: Module["subscriptions"] = async (input) => {
-  const { modelGameState } = input;
+  const { modelGame } = input;
 
-  switch (modelGameState.t) {
+  switch (modelGame.t) {
     case "play": {
       return Sub.tag(
         "play",
         await PlayServer.subscriptions({
           ctx: input.ctx,
-          modelGameState: modelGameState.c,
+          modelGame: modelGame.c,
           model: input.model.t === "play" ? input.model.c : PlayServer.init,
         })
       );
@@ -127,7 +127,7 @@ const subscriptions: Module["subscriptions"] = async (input) => {
         "builder",
         await BuilderServer.subscriptions({
           ctx: input.ctx,
-          modelGameState: modelGameState.c,
+          modelGame: modelGame.c,
           model:
             input.model.t === "builder" ? input.model.c : BuilderServer.init,
         })

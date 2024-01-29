@@ -4,9 +4,9 @@ import { SpaceServerCtx, SpaceServerEvent } from "../../@SHARED/space";
 import { SpaceServerCmd } from "../../@SHARED/space-server-cmd";
 import { FlowServer } from "./@CHILD/flow/flow.server";
 import {
-  GameEvent,
+  GameMsg,
   GameName,
-  GameState,
+  GameModel,
   ServerModel,
   ServerMsg,
   ToClient,
@@ -27,8 +27,8 @@ type Module = GameServerModule<{
   Msg: ServerMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  GameState: GameState;
-  GameEvent: GameEvent;
+  GameModel: GameModel;
+  GameMsg: GameMsg;
   Ctx: SpaceServerCtx;
   InCmd: null;
   InEvent: SpaceServerEvent;
@@ -72,14 +72,14 @@ const init = (gameName: GameName): Module["init"] => {
 //
 
 export const update: Module["update"] = async (input) => {
-  const { modelGameState, ctx, model } = input;
+  const { modelGame, ctx, model } = input;
 
   return GameServerModule.chainUpdates({ model }, async (model) => {
-    switch (modelGameState.t) {
+    switch (modelGame.t) {
       case "flow": {
         const updated = await FlowServer.update({
           ctx,
-          modelGameState: modelGameState.c,
+          modelGame: modelGame.c,
           model: model.t === "flow" ? model.c : FlowServer.init,
           msgCmd: input.msgCmd,
           msgEvent: input.msgEvent,
@@ -87,9 +87,9 @@ export const update: Module["update"] = async (input) => {
             input.msgFromClient?.t === "flow"
               ? { ...input.msgFromClient, ...input.msgFromClient.c }
               : null,
-          msgGameEvent:
-            input.msgGameEvent?.t === "flow"
-              ? { ...input.msgGameEvent, ...input.msgGameEvent.c }
+          msgGame:
+            input.msgGame?.t === "flow"
+              ? { ...input.msgGame, ...input.msgGame.c }
               : null,
           msg: input.msg?.t === "flow" ? input.msg.c : null,
           deps: null,
@@ -107,7 +107,7 @@ export const update: Module["update"] = async (input) => {
       case "connect-four": {
         const updated = await ConnectFourServer.update({
           ctx,
-          modelGameState: modelGameState.c,
+          modelGame: modelGame.c,
           model: model.t === "connect-four" ? model.c : ConnectFourServer.init,
           msgCmd: input.msgCmd,
           msgEvent: input.msgEvent,
@@ -115,9 +115,9 @@ export const update: Module["update"] = async (input) => {
             input.msgFromClient?.t === "connect-four"
               ? { ...input.msgFromClient, ...input.msgFromClient.c }
               : null,
-          msgGameEvent:
-            input.msgGameEvent?.t === "connect-four"
-              ? { ...input.msgGameEvent, ...input.msgGameEvent.c }
+          msgGame:
+            input.msgGame?.t === "connect-four"
+              ? { ...input.msgGame, ...input.msgGame.c }
               : null,
           msg: input.msg?.t === "connect-four" ? input.msg.c : null,
           deps: null,
@@ -144,15 +144,15 @@ export const update: Module["update"] = async (input) => {
 //
 
 export const subscriptions: Module["subscriptions"] = async (input) => {
-  const { modelGameState, model } = input;
+  const { modelGame, model } = input;
 
-  switch (modelGameState.t) {
+  switch (modelGame.t) {
     case "connect-four": {
       return Sub.tag(
         "connect-four",
         await ConnectFourServer.subscriptions({
           ...input,
-          modelGameState: modelGameState.c,
+          modelGame: modelGame.c,
           model: model?.t === "connect-four" ? model.c : ConnectFourServer.init,
         })
       );
@@ -163,7 +163,7 @@ export const subscriptions: Module["subscriptions"] = async (input) => {
         "flow",
         await FlowServer.subscriptions({
           ...input,
-          modelGameState: modelGameState.c,
+          modelGame: modelGame.c,
           model: model?.t === "flow" ? model.c : FlowServer.init,
         })
       );

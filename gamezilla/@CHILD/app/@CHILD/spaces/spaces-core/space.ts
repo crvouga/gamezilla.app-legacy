@@ -181,7 +181,7 @@ export const deriveState = (model: Model): SpaceState.State => {
   //
   //
 
-  let running = SpaceState.initState;
+  let running = SpaceState.initGame;
 
   const msgEvents: WithEventMeta<SpaceEvent>[] = [];
 

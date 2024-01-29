@@ -10,9 +10,9 @@ import { Flow } from "./@CHILD/flow/flow.client";
 import {
   ClientModel,
   ClientMsg,
-  GameEvent,
+  GameMsg,
   GameName,
-  GameState,
+  GameModel,
   ToClient,
   ToServer,
 } from "./game.core";
@@ -30,8 +30,8 @@ type Module = GameClientModule<{
   Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  GameState: GameState;
-  GameEvent: GameEvent;
+  GameModel: GameModel;
+  GameMsg: GameMsg;
   Ctx: SpaceClientCtx;
   InCmd: null;
   InEvent: SpaceClientEvent;
@@ -77,31 +77,22 @@ const init = (gameName: GameName): Module["init"] => {
 //
 
 const update: Module["update"] = (input) => {
-  const {
-    ctx,
-    msg,
-    msgFromServer,
-    msgCmd,
-    msgEvent,
-    msgGameEvent,
-    modelGameState,
-  } = input;
+  const { ctx, msg, msgFromServer, msgCmd, msgEvent, msgGame, modelGame } =
+    input;
 
-  switch (modelGameState.t) {
+  switch (modelGame.t) {
     case "connect-four": {
       const updated = ConnectFour.update({
         ctx,
-        modelGameState: modelGameState.c,
+        modelGame: modelGame.c,
         model:
           input.model?.t === "connect-four" ? input.model.c : ConnectFour.init,
         msgCmd: msgCmd,
         msgEvent: msgEvent,
         msgFromServer:
           msgFromServer?.t === "connect-four" ? msgFromServer.c : null,
-        msgGameEvent:
-          msgGameEvent?.t === "connect-four"
-            ? { ...msgGameEvent, ...msgGameEvent.c }
-            : null,
+        msgGame:
+          msgGame?.t === "connect-four" ? { ...msgGame, ...msgGame.c } : null,
         msg: msg?.t === "connect-four" ? msg.c : null,
       });
 
@@ -117,15 +108,12 @@ const update: Module["update"] = (input) => {
     case "flow": {
       const updated = Flow.update({
         ctx: ctx,
-        modelGameState: modelGameState.c,
+        modelGame: modelGame.c,
         model: input.model?.t === "flow" ? input.model.c : Flow.init,
         msgCmd: msgCmd,
         msgEvent: msgEvent,
         msgFromServer: msgFromServer?.t === "flow" ? msgFromServer.c : null,
-        msgGameEvent:
-          msgGameEvent?.t === "flow"
-            ? { ...msgGameEvent, ...msgGameEvent.c }
-            : null,
+        msgGame: msgGame?.t === "flow" ? { ...msgGame, ...msgGame.c } : null,
         msg: msg?.t === "flow" ? msg.c : null,
       });
 
@@ -149,15 +137,15 @@ const update: Module["update"] = (input) => {
 //
 
 const subscriptions: Module["subscriptions"] = (input): Sub<ClientMsg> => {
-  const { modelGameState, model } = input;
+  const { modelGame, model } = input;
 
-  switch (modelGameState.t) {
+  switch (modelGame.t) {
     case "connect-four": {
       return Sub.tag(
         "connect-four",
         ConnectFour.subscriptions({
           ctx: input.ctx,
-          modelGameState: modelGameState.c,
+          modelGame: modelGame.c,
           model: model.t === "connect-four" ? model.c : ConnectFour.init,
         })
       );
@@ -168,7 +156,7 @@ const subscriptions: Module["subscriptions"] = (input): Sub<ClientMsg> => {
         "flow",
         Flow.subscriptions({
           ctx: input.ctx,
-          modelGameState: modelGameState.c,
+          modelGame: modelGame.c,
           model: model.t === "flow" ? model.c : Flow.init,
         })
       );
@@ -185,15 +173,15 @@ const subscriptions: Module["subscriptions"] = (input): Sub<ClientMsg> => {
 //
 
 const View: Module["View"] = (input) => {
-  const { model, ctx, modelGameState, emit } = input;
+  const { model, ctx, modelGame, dispatch } = input;
 
-  switch (modelGameState.t) {
+  switch (modelGame.t) {
     case "connect-four": {
       return (
         <ConnectFour.View
           ctx={ctx}
-          emit={(c) => emit({ t: "connect-four", c })}
-          modelGameState={modelGameState.c}
+          dispatch={(c) => dispatch({ t: "connect-four", c })}
+          modelGame={modelGame.c}
           model={model?.t === "connect-four" ? model.c : ConnectFour.init}
         />
       );
@@ -203,8 +191,8 @@ const View: Module["View"] = (input) => {
       return (
         <Flow.View
           ctx={ctx}
-          emit={(c) => emit({ t: "flow", c })}
-          modelGameState={modelGameState.c}
+          dispatch={(c) => dispatch({ t: "flow", c })}
+          modelGame={modelGame.c}
           model={model.t === "flow" ? model.c : Flow.init}
         />
       );
@@ -213,18 +201,18 @@ const View: Module["View"] = (input) => {
 };
 
 const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-  const { msgGameEvent, modelGameState, ctx, emit } = input;
+  const { msgGame, modelGame, ctx, dispatch } = input;
 
-  switch (modelGameState.t) {
+  switch (modelGame.t) {
     case "connect-four": {
-      switch (msgGameEvent.t) {
+      switch (msgGame.t) {
         case "connect-four": {
           return (
             <ConnectFour.ViewFeedItem
               ctx={ctx}
-              msgGameEvent={msgGameEvent.c}
-              modelGameState={modelGameState.c}
-              emit={(c) => emit({ t: "connect-four", c })}
+              msgGame={msgGame.c}
+              modelGame={modelGame.c}
+              dispatch={(c) => dispatch({ t: "connect-four", c })}
             />
           );
         }

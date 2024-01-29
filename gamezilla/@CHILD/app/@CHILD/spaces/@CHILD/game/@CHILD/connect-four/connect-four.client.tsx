@@ -18,8 +18,8 @@ import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art";
 import {
   ClientModel,
   ClientMsg,
-  GameEvent,
-  GameState,
+  GameMsg,
+  GameModel,
   ToClient,
   ToServer,
 } from "./connect-four.core";
@@ -37,8 +37,8 @@ type Module = GameClientModule<{
   Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  GameState: GameState;
-  GameEvent: GameEvent;
+  GameModel: GameModel;
+  GameMsg: GameMsg;
   Ctx: SpaceClientCtx;
   InCmd: null;
   InEvent: SpaceClientEvent;
@@ -72,7 +72,7 @@ const update: Module["update"] = (input) => {
     { model: input.model },
     (model) => updateChild(model)(input),
     (model) => updateFromMsg(model)(input),
-    (model) => updateFromGameEvent(model)(input)
+    (model) => updateFromGameMsg(model)(input)
   );
 };
 
@@ -89,7 +89,7 @@ const updateFromMsg =
       case "user-changed-mode": {
         return {
           model,
-          msgGameEvent: [withId(msg)],
+          msgGame: [withId(msg)],
         };
       }
 
@@ -100,18 +100,18 @@ const updateFromMsg =
     }
   };
 
-const updateFromGameEvent =
+const updateFromGameMsg =
   (model: ClientModel): Module["update"] =>
   (input) => {
-    const { msgGameEvent } = input;
+    const { msgGame } = input;
 
-    if (!msgGameEvent) {
+    if (!msgGame) {
       return { model };
     }
 
-    switch (msgGameEvent.t) {
+    switch (msgGame.t) {
       case "user-changed-mode": {
-        switch (msgGameEvent.mode) {
+        switch (msgGame.mode) {
           case "none": {
             return {
               model: { t: null },
@@ -145,10 +145,9 @@ const updateFromGameEvent =
 const updateChild =
   (model: ClientModel): Module["update"] =>
   (input) => {
-    const { msg, msgEvent, msgGameEvent, msgFromServer, modelGameState } =
-      input;
+    const { msg, msgEvent, msgGame, msgFromServer, modelGame } = input;
 
-    switch (modelGameState.t) {
+    switch (modelGame.t) {
       case "none": {
         return { model };
       }
@@ -159,13 +158,11 @@ const updateChild =
           msg: msg?.t === "vs-bot" ? msg.c : null,
           msgEvent: msgEvent,
           msgCmd: null,
-          msgGameEvent:
-            msgGameEvent?.t === "vs-bot"
-              ? { ...msgGameEvent, ...msgGameEvent.c }
-              : null,
+          msgGame:
+            msgGame?.t === "vs-bot" ? { ...msgGame, ...msgGame.c } : null,
           msgFromServer: msgFromServer?.t === "vs-bot" ? msgFromServer.c : null,
           model: model.t === "vs-bot" ? model.c : VsBot.init,
-          modelGameState: modelGameState.c,
+          modelGame: modelGame.c,
         });
 
         return GameClientModule.tagOutput(
@@ -182,13 +179,11 @@ const updateChild =
           msg: msg?.t === "vs-user" ? msg.c : null,
           msgCmd: null,
           msgEvent: msgEvent,
-          msgGameEvent:
-            msgGameEvent?.t === "vs-user"
-              ? { ...msgGameEvent, ...msgGameEvent.c }
-              : null,
+          msgGame:
+            msgGame?.t === "vs-user" ? { ...msgGame, ...msgGame.c } : null,
           msgFromServer:
             msgFromServer?.t === "vs-user" ? msgFromServer.c : null,
-          modelGameState: modelGameState.c,
+          modelGame: modelGame.c,
         });
 
         return GameClientModule.tagOutput(
@@ -208,16 +203,16 @@ const updateChild =
 //
 //
 
-const View: Module["View"] = ({ emit, ctx, modelGameState, model }) => {
+const View: Module["View"] = ({ dispatch, ctx, modelGame, model }) => {
   const onQuit = () => {
-    emit({
+    dispatch({
       t: "user-changed-mode",
       mode: "none",
       userId: ctx.currentUserId,
     });
   };
 
-  switch (modelGameState.t) {
+  switch (modelGame.t) {
     case "none": {
       return (
         <MainMenuScreen.View
@@ -227,7 +222,7 @@ const View: Module["View"] = ({ emit, ctx, modelGameState, model }) => {
           buttons={[
             MainMenuScreen.buttons.playFriend({
               onClick: () =>
-                emit({
+                dispatch({
                   mode: "vs-user",
                   t: "user-changed-mode",
                   userId: ctx.currentUserId,
@@ -235,7 +230,7 @@ const View: Module["View"] = ({ emit, ctx, modelGameState, model }) => {
             }),
             MainMenuScreen.buttons.playComputer({
               onClick: () =>
-                emit({
+                dispatch({
                   mode: "vs-bot",
                   t: "user-changed-mode",
                   userId: ctx.currentUserId,
@@ -250,9 +245,9 @@ const View: Module["View"] = ({ emit, ctx, modelGameState, model }) => {
       return (
         <VsBot.View
           ctx={{ ...ctx, onQuit }}
-          emit={(c) => emit({ t: "vs-bot", c })}
+          dispatch={(c) => dispatch({ t: "vs-bot", c })}
           model={model?.t === "vs-bot" ? model.c : VsBot.init}
-          modelGameState={modelGameState.c}
+          modelGame={modelGame.c}
         />
       );
     }
@@ -261,9 +256,9 @@ const View: Module["View"] = ({ emit, ctx, modelGameState, model }) => {
       return (
         <VsUser.View
           ctx={{ ...ctx, onQuit }}
-          emit={(c) => emit({ t: "vs-user", c })}
+          dispatch={(c) => dispatch({ t: "vs-user", c })}
           model={model?.t === "vs-user" ? model.c : VsUser.init}
-          modelGameState={modelGameState.c}
+          modelGame={modelGame.c}
         />
       );
     }
@@ -271,10 +266,10 @@ const View: Module["View"] = ({ emit, ctx, modelGameState, model }) => {
 };
 
 const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-  const { modelGameState, ctx, msgGameEvent } = input;
-  switch (msgGameEvent.t) {
+  const { modelGame, ctx, msgGame } = input;
+  switch (msgGame.t) {
     case "user-changed-mode": {
-      switch (msgGameEvent.mode) {
+      switch (msgGame.mode) {
         case "none": {
           const profile = ctx.profiles[ctx.currentUserId];
 
@@ -304,14 +299,14 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
     }
 
     case "vs-bot": {
-      switch (modelGameState.t) {
+      switch (modelGame.t) {
         case "vs-bot": {
           return (
             <VsBot.ViewFeedItem
               ctx={{ ...ctx, onQuit: () => {} }}
-              msgGameEvent={msgGameEvent.c}
-              modelGameState={modelGameState.c}
-              emit={(c) => input.emit({ t: "vs-bot", c })}
+              msgGame={msgGame.c}
+              modelGame={modelGame.c}
+              dispatch={(c) => input.dispatch({ t: "vs-bot", c })}
             />
           );
         }
@@ -322,14 +317,14 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
     }
 
     case "vs-user": {
-      switch (modelGameState.t) {
+      switch (modelGame.t) {
         case "vs-user": {
           return (
             <VsUser.ViewFeedItem
               ctx={{ ...ctx, onQuit: () => {} }}
-              msgGameEvent={msgGameEvent.c}
-              modelGameState={modelGameState.c}
-              emit={(c) => input.emit({ t: "vs-user", c })}
+              msgGame={msgGame.c}
+              modelGame={modelGame.c}
+              dispatch={(c) => input.dispatch({ t: "vs-user", c })}
             />
           );
         }
@@ -350,9 +345,9 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
 //
 
 const subscriptions: Module["subscriptions"] = (input) => {
-  const { model, modelGameState } = input;
+  const { model, modelGame } = input;
 
-  switch (modelGameState.t) {
+  switch (modelGame.t) {
     case "none": {
       return Sub.None;
     }
@@ -363,7 +358,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
         VsBot.subscriptions({
           ...input,
           model: model?.t === "vs-bot" ? model.c : VsBot.init,
-          modelGameState: modelGameState.c,
+          modelGame: modelGame.c,
           ctx: { ...input.ctx, onQuit: () => {} },
         })
       );
@@ -375,7 +370,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
         VsUser.subscriptions({
           ...input,
           model: model?.t === "vs-user" ? model.c : VsUser.init,
-          modelGameState: modelGameState.c,
+          modelGame: modelGame.c,
           ctx: { ...input.ctx, onQuit: () => {} },
         })
       );

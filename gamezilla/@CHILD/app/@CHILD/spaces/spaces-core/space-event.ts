@@ -31,5 +31,5 @@ export type SpaceEvent =
   | {
       t: "game";
       spaceId: SpaceId;
-      c: Game.GameEvent;
+      c: Game.GameMsg;
     };

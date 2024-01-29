@@ -87,10 +87,10 @@ export type VsBotSetupProps = VsBotProps & {
   canStartGame: boolean;
 };
 
-type Props = VsBotSetupProps & { model: Model; emit: (m: Msg) => void };
+type Props = VsBotSetupProps & { model: Model; dispatch: (m: Msg) => void };
 
 export const View = ({
-  emit,
+  dispatch,
   model,
   botVariants,
   title,
@@ -161,7 +161,7 @@ export const View = ({
         <div className="mt-2 grid w-full grid-cols-7">
           <PlayerButtons
             onSwapSides={onSwapSides}
-            emit={emit}
+            dispatch={dispatch}
             human={human}
             player={playerOneProp}
             ctx={ctx}
@@ -169,7 +169,7 @@ export const View = ({
           <div className="col-span-1"></div>
           <PlayerButtons
             onSwapSides={onSwapSides}
-            emit={emit}
+            dispatch={dispatch}
             human={human}
             player={playerTwoProp}
             ctx={ctx}
@@ -202,7 +202,7 @@ export const View = ({
         position="bottom"
         id="change-bot"
         open={model.opened === "change-bot"}
-        onClose={() => emit({ t: "closed-modal" })}
+        onClose={() => dispatch({ t: "closed-modal" })}
       >
         <div className="flex flex-col pb-6">
           <p className="p-4 text-2xl font-bold">Change bot</p>
@@ -210,7 +210,7 @@ export const View = ({
             {botVariants.map((botLevel) => {
               const onClick = () => {
                 botLevel.onSelect();
-                emit({ t: "closed-modal" });
+                dispatch({ t: "closed-modal" });
               };
               return (
                 <button
@@ -286,13 +286,13 @@ const PlayerButtons = ({
   player,
   ctx,
   onSwapSides,
-  emit,
+  dispatch,
 }: {
   onSwapSides: () => void;
   human: { userId: UserId | null };
   ctx: SpaceClientCtx;
   player: PlayerProp;
-  emit: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
 }) => {
   return (
     <div className="col-span-3 flex flex-col gap-2">
@@ -324,7 +324,7 @@ const PlayerButtons = ({
       )}
       {player.t === "bot" && human.userId === ctx.currentUserId && (
         <Button
-          onClick={() => emit({ t: "clicked-change-bot" })}
+          onClick={() => dispatch({ t: "clicked-change-bot" })}
           className="w-full"
           variant="text"
           color="primary"

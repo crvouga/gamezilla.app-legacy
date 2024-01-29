@@ -10,7 +10,7 @@ import { Result, isErr, loading } from "gamezilla/@SHARED/core";
 import { ClientModule } from "../builder.core";
 
 const update: ClientModule["update"] = (input) => {
-  const { msgGameEvent, model, msg } = input;
+  const { msgGame, model, msg } = input;
 
   switch (msg?.t) {
     case "puzzle-create/user-clicked-create-button": {
@@ -28,21 +28,21 @@ const update: ClientModule["update"] = (input) => {
     }
   }
 
-  switch (msgGameEvent?.t) {
+  switch (msgGame?.t) {
     case "user-created-puzzle": {
-      if (isErr(msgGameEvent.created)) {
+      if (isErr(msgGame.created)) {
         return {
-          model: { ...model, puzzleCreateRequest: msgGameEvent.created },
-          msgCmd: showErrorToast(msgGameEvent.created.error),
+          model: { ...model, puzzleCreateRequest: msgGame.created },
+          msgCmd: showErrorToast(msgGame.created.error),
         };
       }
 
-      const puzzleNew = msgGameEvent.created.value;
+      const puzzleNew = msgGame.created.value;
 
       return {
         model: {
           ...model,
-          puzzleCreateRequest: Result.mapOk(msgGameEvent.created, () => null),
+          puzzleCreateRequest: Result.mapOk(msgGame.created, () => null),
           puzzles: { ...model.puzzles, [puzzleNew.id]: puzzleNew },
         },
         msgCmd: showOkToast("Puzzle created"),
@@ -58,7 +58,7 @@ const update: ClientModule["update"] = (input) => {
 };
 
 const ViewCreateButton: ClientModule["View"] = (input) => {
-  const { model, emit } = input;
+  const { model, dispatch } = input;
 
   return (
     <Button
@@ -67,7 +67,9 @@ const ViewCreateButton: ClientModule["View"] = (input) => {
       color="primary"
       loading={model.puzzleCreateRequest.t === "loading"}
       start={<IconPlus className="h-8 w-8" />}
-      onClick={() => emit({ t: "puzzle-create/user-clicked-create-button" })}
+      onClick={() =>
+        dispatch({ t: "puzzle-create/user-clicked-create-button" })
+      }
     />
   );
 };

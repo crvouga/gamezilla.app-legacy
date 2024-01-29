@@ -35,7 +35,7 @@ export type ToClient = { t: "noop" };
 //
 //
 
-export type GameEvent = {
+export type GameMsg = {
   t: "user-saved-changes";
   saved: Result<string, FlowPuzzle>;
   userId: UserId;

@@ -71,37 +71,37 @@ export const gameNameToString = (gameName: GameName): string => {
   }
 };
 
-export type GameState =
+export type GameModel =
   | {
       t: "connect-four";
-      c: ConnectFour.GameState;
+      c: ConnectFour.GameModel;
     }
   | {
       t: "flow";
-      c: Flow.GameState;
+      c: Flow.GameModel;
     };
 
-export const initState = (gameName: GameName): GameState => {
+export const initGame = (gameName: GameName): GameModel => {
   switch (gameName) {
     case "connect-four": {
       return {
         t: "connect-four",
-        c: ConnectFour.initState(),
+        c: ConnectFour.initGame(),
       };
     }
 
     case "flow": {
       return {
         t: "flow",
-        c: Flow.initState(),
+        c: Flow.initGame(),
       };
     }
   }
 };
 
-export type GameEvent =
-  | { t: "connect-four"; c: ConnectFour.GameEvent }
-  | { t: "flow"; c: Flow.GameEvent };
+export type GameMsg =
+  | { t: "connect-four"; c: ConnectFour.GameMsg }
+  | { t: "flow"; c: Flow.GameMsg };
 
 export const reducer = ({
   ctx,
@@ -109,9 +109,9 @@ export const reducer = ({
   msgEvent,
 }: {
   ctx: SpaceCtx;
-  state: GameState;
-  msgEvent: GameEvent & EventMeta;
-}): GameState => {
+  state: GameModel;
+  msgEvent: GameMsg & EventMeta;
+}): GameModel => {
   switch (state.t) {
     case "connect-four": {
       switch (msgEvent.t) {

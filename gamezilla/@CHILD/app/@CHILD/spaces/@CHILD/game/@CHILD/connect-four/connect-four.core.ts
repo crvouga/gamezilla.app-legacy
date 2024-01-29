@@ -33,7 +33,7 @@ export type Mode = "none" | "vs-user" | "vs-bot";
 //
 
 export type ClientMsg =
-  | GameEvent
+  | GameMsg
   | { t: "vs-user"; c: VsUser.ClientMsg }
   | { t: "vs-bot"; c: VsBot.ClientMsg };
 
@@ -55,25 +55,25 @@ export type ToServer =
 //
 //
 
-export type GameEvent =
+export type GameMsg =
   | { t: "user-changed-mode"; mode: Mode; userId: UserId }
-  | { t: "vs-bot"; c: VsBot.GameEvent }
-  | { t: "vs-user"; c: VsUser.GameEvent };
+  | { t: "vs-bot"; c: VsBot.GameMsg }
+  | { t: "vs-user"; c: VsUser.GameMsg };
 
-export type GameState =
+export type GameModel =
   | {
       t: "none";
     }
   | {
       t: "vs-user";
-      c: VsUser.GameState;
+      c: VsUser.GameModel;
     }
   | {
       t: "vs-bot";
-      c: VsBot.GameState;
+      c: VsBot.GameModel;
     };
 
-export const initState = (): GameState => {
+export const initGame = (): GameModel => {
   return {
     t: "none",
   };
@@ -85,9 +85,9 @@ export const reducer = ({
   state,
 }: {
   ctx: SpaceCtx;
-  state: GameState;
-  msgEvent: WithEventMeta<GameEvent>;
-}): GameState => {
+  state: GameModel;
+  msgEvent: WithEventMeta<GameMsg>;
+}): GameModel => {
   switch (msgEvent.t) {
     case "user-changed-mode": {
       switch (msgEvent.mode) {
@@ -100,14 +100,14 @@ export const reducer = ({
         case "vs-bot": {
           return {
             t: "vs-bot",
-            c: VsBot.initState(ctx),
+            c: VsBot.initGame(ctx),
           };
         }
 
         case "vs-user": {
           return {
             t: "vs-user",
-            c: VsUser.initState(ctx),
+            c: VsUser.initGame(ctx),
           };
         }
       }
@@ -119,8 +119,8 @@ export const reducer = ({
           return {
             t: "vs-bot",
             c: VsBot.reducer({
-              modelGameState: state.c,
-              msgGameEvent: { ...msgEvent, ...msgEvent.c },
+              modelGame: state.c,
+              msgGame: { ...msgEvent, ...msgEvent.c },
             }),
           };
         }

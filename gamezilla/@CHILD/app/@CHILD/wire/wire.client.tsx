@@ -217,10 +217,10 @@ export const ViewStatusBar = ({ model }: { model: ClientModel }) => {
 
 export const ViewStatusBarDrawer = ({
   model,
-  emit,
+  dispatch,
 }: {
   model: ClientModel;
-  emit: (m: ClientMsg) => void;
+  dispatch: (m: ClientMsg) => void;
 }) => {
   switch (model.state.t) {
     case "server-connected": {
@@ -249,7 +249,7 @@ export const ViewStatusBarDrawer = ({
           <span className="h-5 w-5 rounded-full bg-red-500"></span>
           <p className="flex-1 text-red-500">Offline</p>
           <button
-            onClick={() => emit({ t: "clicked-try-reconnect" })}
+            onClick={() => dispatch({ t: "clicked-try-reconnect" })}
             className="font-bold text-red-500"
           >
             Try reconnect

@@ -52,9 +52,9 @@ const View: ClientModule["View"] = (input) => {
 //
 
 const updateFormButtons: ClientModule["update"] = (input) => {
-  const { modelGameState, msgGameEvent, msg, model } = input;
+  const { modelGame, msgGame, msg, model } = input;
 
-  if (modelGameState.t !== "build") {
+  if (modelGame.t !== "build") {
     return { model };
   }
 
@@ -86,7 +86,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
           sendToServer({
             t: "puzzle.edit-name.user-clicked-save-button",
             newName,
-            flowPuzzleId: modelGameState.puzzle.id,
+            flowPuzzleId: modelGame.puzzle.id,
           }),
         ],
       };
@@ -97,14 +97,14 @@ const updateFormButtons: ClientModule["update"] = (input) => {
     }
   }
 
-  switch (msgGameEvent?.t) {
+  switch (msgGame?.t) {
     case "user-edited-puzzle-name": {
       const puzzlesNew = { ...model.puzzles };
-      const puzzle = puzzlesNew[msgGameEvent.flowPuzzleId];
+      const puzzle = puzzlesNew[msgGame.flowPuzzleId];
       if (puzzle) {
-        puzzlesNew[msgGameEvent.flowPuzzleId] = {
+        puzzlesNew[msgGame.flowPuzzleId] = {
           ...puzzle,
-          name: msgGameEvent.newName,
+          name: msgGame.newName,
         };
       }
 
@@ -112,12 +112,12 @@ const updateFormButtons: ClientModule["update"] = (input) => {
         model: {
           ...model,
           puzzles: puzzlesNew,
-          editNameRequest: msgGameEvent.edited,
+          editNameRequest: msgGame.edited,
           opened: null,
         },
-        msgCmd: isOk(msgGameEvent.edited)
+        msgCmd: isOk(msgGame.edited)
           ? showOkToast("Saved name")
-          : showErrorToast(msgGameEvent.edited.error),
+          : showErrorToast(msgGame.edited.error),
       };
     }
 
@@ -130,9 +130,9 @@ const updateFormButtons: ClientModule["update"] = (input) => {
 };
 
 const ViewFormButtons: ClientModule["View"] = ({
-  emit,
+  dispatch,
   model,
-  modelGameState,
+  modelGame,
 }) => {
   return (
     <div className="flex w-full items-center gap-4 p-4 pb-6">
@@ -140,7 +140,7 @@ const ViewFormButtons: ClientModule["View"] = ({
         className="flex-1"
         text="Cancel"
         onClick={() =>
-          emit({ t: "puzzle.edit-name.user-clicked-cancel-button" })
+          dispatch({ t: "puzzle.edit-name.user-clicked-cancel-button" })
         }
       />
       <Button
@@ -150,10 +150,12 @@ const ViewFormButtons: ClientModule["View"] = ({
         text="Save"
         loading={isLoading(model.editNameRequest)}
         disabled={
-          modelGameState.t !== "build" ||
-          model.editNameDraft === modelGameState.puzzle.name
+          modelGame.t !== "build" ||
+          model.editNameDraft === modelGame.puzzle.name
         }
-        onClick={() => emit({ t: "puzzle.edit-name.user-clicked-save-button" })}
+        onClick={() =>
+          dispatch({ t: "puzzle.edit-name.user-clicked-save-button" })
+        }
       />
     </div>
   );
@@ -166,7 +168,7 @@ const ViewFormButtons: ClientModule["View"] = ({
 //
 
 const updateDrawer: ClientModule["update"] = (input) => {
-  const { msg, model, modelGameState } = input;
+  const { msg, model, modelGame } = input;
 
   switch (msg?.t) {
     case "puzzle.edit-name.user-clicked-button": {
@@ -174,8 +176,7 @@ const updateDrawer: ClientModule["update"] = (input) => {
         model: {
           ...model,
           opened: "edit-name",
-          editNameDraft:
-            modelGameState.t === "build" ? modelGameState.puzzle.name : "",
+          editNameDraft: modelGame.t === "build" ? modelGame.puzzle.name : "",
         },
       };
     }
@@ -193,19 +194,19 @@ const updateDrawer: ClientModule["update"] = (input) => {
 const ViewDrawer = (
   input: Parameters<ClientModule["View"]>[0] & { children: VDomChildren }
 ) => {
-  const { children, emit, model } = input;
+  const { children, dispatch, model } = input;
   return (
     <>
       <ListItemButton
         icon={(props) => <IconPenToSquare {...props} />}
         label="Edit Name"
-        onClick={() => emit({ t: "puzzle.edit-name.user-clicked-button" })}
+        onClick={() => dispatch({ t: "puzzle.edit-name.user-clicked-button" })}
       />
 
       <Drawer
         id="edit-name-drawer"
         open={model.opened === "edit-name"}
-        onClose={() => emit({ t: "puzzle.edit-name.user-closed-drawer" })}
+        onClose={() => dispatch({ t: "puzzle.edit-name.user-closed-drawer" })}
         position="bottom"
       >
         {children}
@@ -238,7 +239,7 @@ const updateDraftNameInput: ClientModule["update"] = ({ model, msg }) => {
   }
 };
 
-const ViewDraftNameInput: ClientModule["View"] = ({ model, emit }) => {
+const ViewDraftNameInput: ClientModule["View"] = ({ model, dispatch }) => {
   return (
     <div className="w-full p-4">
       <TextField
@@ -246,7 +247,7 @@ const ViewDraftNameInput: ClientModule["View"] = ({ model, emit }) => {
         label="Name"
         value={model.editNameDraft}
         onChange={(draftName) =>
-          emit({
+          dispatch({
             t: "puzzle.edit-name.user-inputted-draft-name",
             draftName,
           })

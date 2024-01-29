@@ -15,5 +15,5 @@ export const IntersectionObserverEmitter = ({
   setTimeout(() => sub.publish({ type: "props", props }), 0);
 
   // @ts-ignore
-  return <intersection-observer-emitter id={props.id} />;
+  return <intersection-observer-dispatchter id={props.id} />;
 };

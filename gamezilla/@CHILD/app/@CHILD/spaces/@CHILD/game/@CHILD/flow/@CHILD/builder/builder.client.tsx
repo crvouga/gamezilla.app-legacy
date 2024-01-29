@@ -49,9 +49,9 @@ const updateLocation: ClientModule["update"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-  const { ctx, modelGameState, emit, model } = input;
+  const { ctx, modelGame, dispatch, model } = input;
 
-  switch (modelGameState.t) {
+  switch (modelGame.t) {
     case "build": {
       return <PuzzleEditorClient.View {...input} />;
     }
@@ -87,7 +87,7 @@ const View: ClientModule["View"] = (input) => {
               puzzles: "Puzzles",
             }}
             onSelect={(listTab) =>
-              emit({ t: "user-selected-list-tab", listTab })
+              dispatch({ t: "user-selected-list-tab", listTab })
             }
             selected={model.listTab}
           />

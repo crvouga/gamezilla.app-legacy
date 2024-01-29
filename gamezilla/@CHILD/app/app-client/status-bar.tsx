@@ -49,7 +49,7 @@ export const update = (input: {
 
 export const View = ({
   model,
-  emit,
+  dispatch,
   wire,
   sound,
 }: {
@@ -62,14 +62,14 @@ export const View = ({
     drawer: VDom;
   };
   model: Model;
-  emit: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
 }) => {
   return (
     <div className="w-full">
       <button
         aria-label="open status bar"
         className="flex w-full items-center gap-2 border-b border-neutral-600 p-0.5 px-2 text-xs text-secondary"
-        onClick={() => emit({ t: "clicked-status-bar" })}
+        onClick={() => dispatch({ t: "clicked-status-bar" })}
       >
         {wire.statusBar}
 
@@ -82,7 +82,7 @@ export const View = ({
         position="top"
         id="drawer"
         open={model.isDrawerOpen}
-        onClose={() => emit({ t: "closed-status-bar-drawer" })}
+        onClose={() => dispatch({ t: "closed-status-bar-drawer" })}
       >
         {wire.drawer}
 

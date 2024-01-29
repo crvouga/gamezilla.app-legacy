@@ -161,22 +161,22 @@ const toLifecycleEff = ({
 export const ViewPage = ({
   ctx,
   model,
-  emit,
+  dispatch,
 }: {
   ctx: ClientCtx;
   model: Model;
-  emit: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   const user = model.users[ctx.currentUserId];
 
   if (!user) {
-    return <ViewNotInParty ctx={ctx} model={model} emit={emit} />;
+    return <ViewNotInParty ctx={ctx} model={model} dispatch={dispatch} />;
   }
 
   const party = model.parties[user.partyId];
 
   if (!party) {
-    return <ViewNotInParty ctx={ctx} model={model} emit={emit} />;
+    return <ViewNotInParty ctx={ctx} model={model} dispatch={dispatch} />;
   }
 
   return <div></div>;
@@ -185,7 +185,7 @@ export const ViewPage = ({
 const ViewNotInParty = (_props: {
   ctx: ClientCtx;
   model: Model;
-  emit: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   return <div></div>;
 };
@@ -197,7 +197,7 @@ export const ViewBanner = ({
   ctx: ClientCtx;
   route: AppRoute;
   model: Model;
-  emit: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   const user = model.users[ctx.currentUserId];
 

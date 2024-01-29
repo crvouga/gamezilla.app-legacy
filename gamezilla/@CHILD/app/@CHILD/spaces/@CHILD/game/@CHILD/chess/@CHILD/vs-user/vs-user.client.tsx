@@ -292,12 +292,12 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 
 export const View = ({
   model,
-  emit,
+  dispatch,
   onQuit,
 }: {
   ctx: ClientCtx;
   model: Model;
-  emit: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
   onQuit: () => void;
 }) => {
   if (model.coreModel.type === "setup") {
@@ -360,7 +360,7 @@ export const View = ({
             },
           ];
 
-          emit(msg);
+          dispatch(msg);
 
           const inputted = inputMove(msg[1], model.coreModel);
 
@@ -370,7 +370,7 @@ export const View = ({
 
       <div className="flex-1"></div>
 
-      <ViewGameOverDialog model={model} emit={emit} />
+      <ViewGameOverDialog model={model} dispatch={dispatch} />
     </div>
   );
 };
@@ -379,7 +379,7 @@ const ViewGameOverDialog = ({
   model,
 }: {
   model: Model;
-  emit: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
 }) => {
   if (model.coreModel.type === "setup") {
     return <span>{toGameText(model.coreModel)}</span>;

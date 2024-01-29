@@ -1,8 +1,8 @@
 import { GameServer } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server";
 import { Sub } from "gamezilla/@SHARED/core";
 import {
-  GameEvent,
-  GameState,
+  GameMsg,
+  GameModel,
   ServerModel,
   ServerMsg,
   ToClient,
@@ -18,8 +18,8 @@ import {
 //
 
 type Server = GameServer<{
-  GameEvent: GameEvent;
-  GameState: GameState;
+  GameMsg: GameMsg;
+  GameModel: GameModel;
   ServerModel: ServerModel;
   ServerMsg: ServerMsg;
   ToClient: ToClient;

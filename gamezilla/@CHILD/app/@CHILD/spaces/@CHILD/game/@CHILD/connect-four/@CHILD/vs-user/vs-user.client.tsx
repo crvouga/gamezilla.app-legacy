@@ -27,8 +27,8 @@ import { CoverArt } from "../../@SHARED/connect-four-ui/connect-four-cover-art";
 import {
   ClientModel,
   ClientMsg,
-  GameEvent,
-  GameState,
+  GameMsg,
+  GameModel,
   StateGame,
   StateGameOver,
   ToClient,
@@ -49,8 +49,8 @@ type Module = GameClientModule<{
   Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  GameState: GameState;
-  GameEvent: GameEvent;
+  GameModel: GameModel;
+  GameMsg: GameMsg;
   Ctx: SpaceClientCtx & { onQuit: () => void };
   InCmd: null;
   InEvent: SpaceClientEvent;
@@ -138,12 +138,12 @@ const subscriptions: Module["subscriptions"] = () => {
 //
 //
 
-const View: Module["View"] = ({ ctx, model, modelGameState, emit }) => {
+const View: Module["View"] = ({ ctx, model, modelGame, dispatch }) => {
   if (!model) {
     return null;
   }
 
-  switch (modelGameState.type) {
+  switch (modelGame.type) {
     case "setup": {
       return (
         <VsUserSetupScreen
@@ -157,20 +157,20 @@ const View: Module["View"] = ({ ctx, model, modelGameState, emit }) => {
             );
           }}
           onStartGame={() => {
-            emit({ t: "user-started-game", userId: ctx.currentUserId });
+            dispatch({ t: "user-started-game", userId: ctx.currentUserId });
           }}
           onQuit={ctx.onQuit}
           playerOne={{
             label: "Red",
             onStartPlaying: () => {
-              emit({
+              dispatch({
                 t: "user-started-playing",
                 playerType: "player-one",
                 userId: ctx.currentUserId,
               });
             },
             onStopPlaying: () => {
-              emit({
+              dispatch({
                 t: "user-stopped-playing",
                 userId: ctx.currentUserId,
               });
@@ -178,19 +178,19 @@ const View: Module["View"] = ({ ctx, model, modelGameState, emit }) => {
             renderIcon: (props) => {
               return <PlayerIcon playerType="player-one" {...props} />;
             },
-            userId: modelGameState.players["player-one"],
+            userId: modelGame.players["player-one"],
           }}
           playerTwo={{
             label: "Yellow",
             onStartPlaying: () => {
-              emit({
+              dispatch({
                 t: "user-started-playing",
                 userId: ctx.currentUserId,
                 playerType: "player-two",
               });
             },
             onStopPlaying: () => {
-              emit({
+              dispatch({
                 t: "user-stopped-playing",
                 userId: ctx.currentUserId,
               });
@@ -198,7 +198,7 @@ const View: Module["View"] = ({ ctx, model, modelGameState, emit }) => {
             renderIcon: (props) => {
               return <PlayerIcon playerType="player-two" {...props} />;
             },
-            userId: modelGameState.players["player-two"],
+            userId: modelGame.players["player-two"],
           }}
         />
       );
@@ -206,10 +206,7 @@ const View: Module["View"] = ({ ctx, model, modelGameState, emit }) => {
 
     case "game":
     case "game-over": {
-      const currentUserPlayerType = toPlayerType(
-        ctx.currentUserId,
-        modelGameState
-      );
+      const currentUserPlayerType = toPlayerType(ctx.currentUserId, modelGame);
 
       return (
         <GameLayout isSpectating={currentUserPlayerType === null}>
@@ -217,43 +214,43 @@ const View: Module["View"] = ({ ctx, model, modelGameState, emit }) => {
             <div className="flex w-full items-center gap-2 px-2">
               <PlayerSlot
                 playerType="player-one"
-                modelGameState={modelGameState}
+                modelGame={modelGame}
                 ctx={ctx}
               />
               <PlayerSlot
                 playerType="player-two"
-                modelGameState={modelGameState}
+                modelGame={modelGame}
                 ctx={ctx}
               />
             </div>
 
-            <Feedback ctx={ctx} modelGameState={modelGameState} />
+            <Feedback ctx={ctx} modelGame={modelGame} />
 
             <div className="relative w-full">
               <ViewColumns
-                columns={modelGameState.columns}
-                gameId={modelGameState.gameId}
+                columns={modelGame.columns}
+                gameId={modelGame.gameId}
                 onDropDisc={(columnIndex) =>
-                  emit({
+                  dispatch({
                     t: "user-dropped-disc",
                     userId: ctx.currentUserId,
                     columnIndex,
                   })
                 }
                 onHover={(columnIndex) =>
-                  emit({ t: "hovered-over-columns", columnIndex })
+                  dispatch({ t: "hovered-over-columns", columnIndex })
                 }
                 disabled={
-                  toTurn(modelGameState.columns) !== currentUserPlayerType ||
-                  modelGameState.type === "game-over"
+                  toTurn(modelGame.columns) !== currentUserPlayerType ||
+                  modelGame.type === "game-over"
                 }
               />
-              {modelGameState.type === "game-over" && (
+              {modelGame.type === "game-over" && (
                 <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
                   <ViewGameOverMessage
-                    emit={emit}
+                    dispatch={dispatch}
                     ctx={ctx}
-                    modelGameState={modelGameState}
+                    modelGame={modelGame}
                   />
                 </div>
               )}
@@ -262,13 +259,13 @@ const View: Module["View"] = ({ ctx, model, modelGameState, emit }) => {
 
           <ViewBottomButtonBar
             actions={[
-              ...(modelGameState.type === "game"
+              ...(modelGame.type === "game"
                 ? [
                     {
                       icon: <IconFlag className="h-6 w-6" />,
                       label: "Resign",
                       onClick: () => {
-                        emit({
+                        dispatch({
                           t: "clicked-resign",
                           userId: ctx.currentUserId,
                         });
@@ -276,14 +273,14 @@ const View: Module["View"] = ({ ctx, model, modelGameState, emit }) => {
                     },
                   ]
                 : []),
-              ...(modelGameState.type === "game-over" &&
+              ...(modelGame.type === "game-over" &&
               ctx.currentUserId === ctx.space.hostId
                 ? [
                     {
                       icon: <IconArrowLeftOnRect className="h-6 w-6" />,
                       label: "Exit",
                       onClick: () => {
-                        emit({
+                        dispatch({
                           t: "user-stopped-game",
                           userId: ctx.currentUserId,
                         });
@@ -293,7 +290,7 @@ const View: Module["View"] = ({ ctx, model, modelGameState, emit }) => {
                       icon: <IconArrowRotateLeft className="h-6 w-6" />,
                       label: "Rematch",
                       onClick: () => {
-                        emit({
+                        dispatch({
                           t: "user-requested-rematch",
                           userId: ctx.currentUserId,
                         });
@@ -307,11 +304,11 @@ const View: Module["View"] = ({ ctx, model, modelGameState, emit }) => {
           <ConfirmationDialog
             headerIcon={<IconFlag className="h-10 w-10" />}
             title="Resign from game?"
-            onCancel={() => emit({ t: "close-modal" })}
-            onClose={() => emit({ t: "close-modal" })}
+            onCancel={() => dispatch({ t: "close-modal" })}
+            onClose={() => dispatch({ t: "close-modal" })}
             confirmTitle="Resign"
             onConfirm={() =>
-              emit({ t: "user-resigned", userId: ctx.currentUserId })
+              dispatch({ t: "user-resigned", userId: ctx.currentUserId })
             }
             open={model.openedModal === "confirm-resign"}
           />
@@ -323,18 +320,18 @@ const View: Module["View"] = ({ ctx, model, modelGameState, emit }) => {
 
 const ViewGameOverMessage = ({
   ctx,
-  modelGameState,
-  emit,
+  modelGame,
+  dispatch,
 }: {
-  modelGameState: StateGameOver;
+  modelGame: StateGameOver;
   ctx: ClientCtx;
-  emit: (msg: GameEvent) => void;
+  dispatch: (msg: GameMsg) => void;
 }) => {
-  const currentPlayerType = toPlayerType(ctx.currentUserId, modelGameState);
+  const currentPlayerType = toPlayerType(ctx.currentUserId, modelGame);
 
   if (
-    modelGameState.rematch.type === "Asking" &&
-    modelGameState.rematch.asker === currentPlayerType
+    modelGame.rematch.type === "Asking" &&
+    modelGame.rematch.asker === currentPlayerType
   ) {
     return (
       <>
@@ -343,7 +340,7 @@ const ViewGameOverMessage = ({
         <Button
           variant="contained"
           onClick={() =>
-            emit({
+            dispatch({
               t: "user-cancelled-rematch",
               userId: ctx.currentUserId,
             })
@@ -355,8 +352,8 @@ const ViewGameOverMessage = ({
   }
 
   if (
-    modelGameState.rematch.type === "Asking" &&
-    modelGameState.rematch.asker !== currentPlayerType &&
+    modelGame.rematch.type === "Asking" &&
+    modelGame.rematch.asker !== currentPlayerType &&
     currentPlayerType !== null
   ) {
     return (
@@ -366,7 +363,7 @@ const ViewGameOverMessage = ({
           <Button
             variant="contained"
             onClick={() =>
-              emit({
+              dispatch({
                 t: "user-responded-to-rematch-request",
                 userId: ctx.currentUserId,
                 response: "Decline",
@@ -379,7 +376,7 @@ const ViewGameOverMessage = ({
           <Button
             variant="contained"
             onClick={() =>
-              emit({
+              dispatch({
                 t: "user-responded-to-rematch-request",
                 userId: ctx.currentUserId,
                 response: "Decline",
@@ -393,12 +390,12 @@ const ViewGameOverMessage = ({
     );
   }
 
-  if (modelGameState.gameOver.type === "Draw") {
+  if (modelGame.gameOver.type === "Draw") {
     return <p className="text-xl">Tie</p>;
   }
 
-  if (modelGameState.gameOver.type === "resignation") {
-    const { resigner } = modelGameState.gameOver;
+  if (modelGame.gameOver.type === "resignation") {
+    const { resigner } = modelGame.gameOver;
 
     const winner: PlayerType =
       resigner === "player-one" ? "player-two" : "player-one";
@@ -410,7 +407,7 @@ const ViewGameOverMessage = ({
             <PlayerIcon playerType={winner} />
             <Avatar
               alt=""
-              src={ctx.profiles[modelGameState.players[winner]]?.avatarUrl}
+              src={ctx.profiles[modelGame.players[winner]]?.avatarUrl}
             />
           </div>
           <p>Winner</p>
@@ -426,8 +423,8 @@ const ViewGameOverMessage = ({
     );
   }
 
-  if (modelGameState.gameOver.type === "Winner") {
-    const { winner } = modelGameState.gameOver;
+  if (modelGame.gameOver.type === "Winner") {
+    const { winner } = modelGame.gameOver;
 
     if (currentPlayerType === null) {
       return (
@@ -436,7 +433,7 @@ const ViewGameOverMessage = ({
             <PlayerIcon playerType={winner} className="h-20 w-20" />
             <Avatar
               className="h-20 w-20"
-              src={ctx.profiles[modelGameState.players[winner]]?.avatarUrl}
+              src={ctx.profiles[modelGame.players[winner]]?.avatarUrl}
             />
           </div>
           <p>Winner</p>
@@ -452,12 +449,12 @@ const ViewGameOverMessage = ({
 
 const Feedback = ({
   ctx,
-  modelGameState,
+  modelGame,
 }: {
   ctx: SpaceClientCtx;
-  modelGameState: StateGame | StateGameOver;
+  modelGame: StateGame | StateGameOver;
 }) => {
-  if (modelGameState.type === "game-over") {
+  if (modelGame.type === "game-over") {
     return (
       <p className="flex items-center justify-center text-secondary">
         Game Over
@@ -465,9 +462,9 @@ const Feedback = ({
     );
   }
 
-  const turn = toTurn(modelGameState.columns);
+  const turn = toTurn(modelGame.columns);
 
-  const currentUserPlayerType = toPlayerType(ctx.currentUserId, modelGameState);
+  const currentUserPlayerType = toPlayerType(ctx.currentUserId, modelGame);
 
   if (currentUserPlayerType !== turn) {
     return (
@@ -487,11 +484,11 @@ const Feedback = ({
 };
 
 const PlayerSlot = ({
-  modelGameState,
+  modelGame,
   playerType,
   ctx,
 }: {
-  modelGameState: StateGame | StateGameOver;
+  modelGame: StateGame | StateGameOver;
   playerType: PlayerType;
   ctx: SpaceClientCtx;
 }) => {
@@ -501,10 +498,10 @@ const PlayerSlot = ({
       <Avatar
         className="h-8 w-8"
         alt=""
-        src={ctx.profiles[modelGameState.players[playerType]]?.avatarUrl}
+        src={ctx.profiles[modelGame.players[playerType]]?.avatarUrl}
       />
       <p className="text-secondary">
-        {ctx.profiles[modelGameState.players[playerType]]?.username ?? "..."}
+        {ctx.profiles[modelGame.players[playerType]]?.username ?? "..."}
       </p>
     </div>
   );

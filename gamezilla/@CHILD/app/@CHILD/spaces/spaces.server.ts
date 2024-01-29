@@ -322,7 +322,7 @@ const updateChild: Module["update"] = async (input) => {
         ? { ...msgFromClient, userId: msgFromClient.userId, ...msgFromClient.c }
         : null,
     msgEvent,
-    modelGameState: spaceState.game,
+    modelGame: spaceState.game,
     deps: null,
   });
 
@@ -367,7 +367,7 @@ const mergeUpdatedGame = ({
       ) ?? [],
     eff: Eff.map_((c) => ({ t: "game", c, spaceId }), gameUpdated.eff),
     spaceEvents:
-      gameUpdated.msgGameEvent?.map((c) =>
+      gameUpdated.msgGame?.map((c) =>
         withId<SpaceEvent>({ t: "game", spaceId, c })
       ) ?? [],
   };
@@ -542,8 +542,8 @@ const updateFromSpaceEvent = async ({
         ctx: { ...ctx, space: spaceState },
         model:
           model.games[msgEventWithMeta.spaceId] ?? Game.init(spaceState.game.t),
-        msgGameEvent: { ...msgEventWithMeta, ...msgEventWithMeta.c },
-        modelGameState: spaceState.game,
+        msgGame: { ...msgEventWithMeta, ...msgEventWithMeta.c },
+        modelGame: spaceState.game,
         deps: null,
       });
 
@@ -590,7 +590,7 @@ export const subscriptions: Module["subscriptions"] = async ({
     const sub = await Game.subscriptions({
       ctx: { ...ctx, space: spaceState },
       model: model.games[spaceId as SpaceId] ?? Game.init(spaceState.game.t),
-      modelGameState: spaceState.game,
+      modelGame: spaceState.game,
     });
 
     const mapped = Sub.map(

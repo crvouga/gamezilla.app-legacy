@@ -2984,7 +2984,7 @@ export const adjectives = [
   "carefree",
   "boisterous",
   "coordinated",
-  "anti-Semitic",
+  "anti-Sdispatchic",
   "superfluous",
   "metric",
   "expressed",

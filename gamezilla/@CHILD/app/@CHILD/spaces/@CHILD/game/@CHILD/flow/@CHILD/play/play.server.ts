@@ -5,8 +5,8 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { Sub } from "gamezilla/@SHARED/core";
 import {
-  GameEvent,
-  GameState,
+  GameMsg,
+  GameModel,
   ServerModel,
   ServerMsg,
   ToClient,
@@ -19,8 +19,8 @@ type Module = GameServerModule<{
   Msg: ServerMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  GameEvent: GameEvent;
-  GameState: GameState;
+  GameMsg: GameMsg;
+  GameModel: GameModel;
   Ctx: SpaceServerCtx;
   InCmd: null;
   InEvent: SpaceServerEvent;

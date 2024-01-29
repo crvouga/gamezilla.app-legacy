@@ -16,12 +16,7 @@ import {
 import { Result, isErr, isOk, loading } from "gamezilla/@SHARED/core";
 import { FlowGridUIEdit } from "../../../@SHARED/flow";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
-import {
-  ClientModel,
-  ClientModule,
-  ClientMsg,
-  GameEvent,
-} from "../builder.core";
+import { ClientModel, ClientModule, ClientMsg, GameMsg } from "../builder.core";
 import { BottomBarButtonAction } from "../../../../../@SHARED/game";
 
 //
@@ -40,13 +35,13 @@ const update: ClientModule["update"] = (input) => {
   );
 };
 
-const updatePuzzles: ClientModule["update"] = ({ msgGameEvent, model }) => {
-  switch (msgGameEvent?.t) {
+const updatePuzzles: ClientModule["update"] = ({ msgGame, model }) => {
+  switch (msgGame?.t) {
     case "user-saved-changes": {
-      if (isErr(msgGameEvent.saved)) {
+      if (isErr(msgGame.saved)) {
         return { model };
       }
-      const puzzleNew = msgGameEvent.saved.value;
+      const puzzleNew = msgGame.saved.value;
 
       return {
         model: {
@@ -66,9 +61,9 @@ const updatePuzzles: ClientModule["update"] = ({ msgGameEvent, model }) => {
 };
 
 const updateExitBuilder: ClientModule["update"] = (input) => {
-  const { msg, model, modelGameState, msgGameEvent } = input;
+  const { msg, model, modelGame, msgGame } = input;
 
-  if (modelGameState.t !== "build") {
+  if (modelGame.t !== "build") {
     return { model };
   }
 
@@ -76,8 +71,8 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
     case "puzzle.editor.user-clicked-exit-button": {
       if (
         FlowGridUIEdit.isUnsavedChanges({
-          grid: modelGameState.puzzle.puzzle.c,
-          model: modelGameState.gridEdit,
+          grid: modelGame.puzzle.puzzle.c,
+          model: modelGame.gridEdit,
         })
       ) {
         return {
@@ -112,12 +107,12 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
     }
   }
 
-  switch (msgGameEvent?.t) {
+  switch (msgGame?.t) {
     case "user-saved-changes": {
       if (
         model.saveChangesRequest?.t === "loading" &&
         model.saveChangesIsExiting &&
-        isOk(msgGameEvent.saved)
+        isOk(msgGame.saved)
       ) {
         return exitBuilder({
           ...input,
@@ -135,52 +130,52 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
 };
 
 const updateSaveChangesRequest: ClientModule["update"] = (input) => {
-  const { model, msg, ctx, msgGameEvent } = input;
+  const { model, msg, ctx, msgGame } = input;
 
   if (msg?.t === "save-changes/user-clicked-save-button") {
     return saveChanges(input);
   }
 
   if (
-    msgGameEvent?.t === "user-saved-changes" &&
-    msgGameEvent.userId === ctx.currentUserId
+    msgGame?.t === "user-saved-changes" &&
+    msgGame.userId === ctx.currentUserId
   ) {
     return {
       model: {
         ...model,
-        saveChangesRequest: Result.mapOk(msgGameEvent.saved, () => null),
+        saveChangesRequest: Result.mapOk(msgGame.saved, () => null),
       },
-      msgCmd: isOk(msgGameEvent.saved)
+      msgCmd: isOk(msgGame.saved)
         ? showOkToast("Saved changes")
-        : showErrorToast(msgGameEvent.saved.error),
+        : showErrorToast(msgGame.saved.error),
     };
   }
   return { model };
 };
 
 const exitBuilder: ClientModule["update"] = (input) => {
-  const msgGameEvent: GameEvent = {
+  const msgGame: GameMsg = {
     t: "user-exited-builder",
     userId: input.ctx.currentUserId,
   };
 
   return {
     model: { ...input.model, opened: null },
-    msgGameEvent: [withId(msgGameEvent)],
+    msgGame: [withId(msgGame)],
   };
 };
 
-const saveChanges: ClientModule["update"] = ({ model, modelGameState }) => {
-  if (modelGameState.t !== "build") {
+const saveChanges: ClientModule["update"] = ({ model, modelGame }) => {
+  if (modelGame.t !== "build") {
     return { model };
   }
 
   const puzzleNew: FlowPuzzle = {
-    ...modelGameState.puzzle,
+    ...modelGame.puzzle,
     puzzle: {
       t: "grid",
       c: FlowGridUIEdit.toCurrentGrid({
-        model: modelGameState.gridEdit,
+        model: modelGame.gridEdit,
       }),
     },
   };
@@ -207,23 +202,23 @@ const saveChanges: ClientModule["update"] = ({ model, modelGameState }) => {
 
 export const viewActionButtons = ({
   model,
-  emit,
+  dispatch,
 }: {
   model: ClientModel;
-  emit: (msg: ClientMsg) => void;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   const exit: BottomBarButtonAction = {
     label: "Exit",
     disabled: model.saveChangesRequest?.t === "loading",
     icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-    onClick: () => emit({ t: "puzzle.editor.user-clicked-exit-button" }),
+    onClick: () => dispatch({ t: "puzzle.editor.user-clicked-exit-button" }),
   };
 
   const save: BottomBarButtonAction = {
     label: "Save",
     icon: <IconFloppyDisk className="h-6 w-6" />,
     loading: model.saveChangesRequest?.t === "loading",
-    onClick: () => emit({ t: "save-changes/user-clicked-save-button" }),
+    onClick: () => dispatch({ t: "save-changes/user-clicked-save-button" }),
   };
 
   return {
@@ -232,11 +227,14 @@ export const viewActionButtons = ({
   };
 };
 
-const ViewUnsavedChangesDrawer: ClientModule["View"] = ({ model, emit }) => {
+const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
+  model,
+  dispatch,
+}) => {
   return (
     <Drawer
       id="unsaved-changes-drawer"
-      onClose={() => emit({ t: "save-changes/user-clicked-cancel-exit" })}
+      onClose={() => dispatch({ t: "save-changes/user-clicked-cancel-exit" })}
       open={model.opened === "unsaved-changes"}
       position="bottom"
     >
@@ -254,20 +252,24 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({ model, emit }) => {
           variant="contained"
           color="primary"
           loading={model.saveChangesRequest?.t === "loading"}
-          onClick={() => emit({ t: "save-changes/user-clicked-save-and-exit" })}
+          onClick={() =>
+            dispatch({ t: "save-changes/user-clicked-save-and-exit" })
+          }
         />
         <Button
           className="w-full"
           text="Don't Save"
           onClick={() =>
-            emit({ t: "save-changes/user-clicked-discard-and-exit" })
+            dispatch({ t: "save-changes/user-clicked-discard-and-exit" })
           }
         />
         <div className="w-full"></div>
         <Button
           className="w-full"
           text="Cancel"
-          onClick={() => emit({ t: "save-changes/user-clicked-cancel-exit" })}
+          onClick={() =>
+            dispatch({ t: "save-changes/user-clicked-cancel-exit" })
+          }
         />
       </div>
     </Drawer>

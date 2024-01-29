@@ -3,8 +3,8 @@ import { GameServerModule } from "../../../../@SHARED/architecture/game-server-v
 import { SpaceServerCtx, SpaceServerEvent } from "../../../../@SHARED/space";
 import { SpaceServerCmd } from "../../../../@SHARED/space-server-cmd";
 import {
-  GameEvent,
-  GameState,
+  GameMsg,
+  GameModel,
   ServerModel,
   ServerMsg,
   ToClient,
@@ -24,8 +24,8 @@ type Module = GameServerModule<{
   Msg: ServerMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  GameState: GameState;
-  GameEvent: GameEvent;
+  GameModel: GameModel;
+  GameMsg: GameMsg;
   Ctx: SpaceServerCtx;
   InCmd: null;
   InEvent: SpaceServerEvent;

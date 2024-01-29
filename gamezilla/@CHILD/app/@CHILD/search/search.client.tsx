@@ -119,11 +119,11 @@ export const updateFromServer = ({
 
 export const View = ({
   model,
-  emit,
+  dispatch,
   viewBottomBar,
 }: {
   model: ClientModel;
-  emit: (msg: Msg) => void;
+  dispatch: (msg: Msg) => void;
   viewBottomBar: VDom;
 }) => {
   //   const request = model.requests[model.searchText] ?? { type: 'not-asked' };
@@ -146,13 +146,13 @@ export const View = ({
               placeholder="Search"
               value={model.searchText}
               onChange={(msgEvent) =>
-                emit({
+                dispatch({
                   t: "inputted-search-text",
                   searchText: msgEvent.currentTarget.value,
                 })
               }
             ></input>
-            <button onClick={() => emit({ t: "clicked-clear" })}>
+            <button onClick={() => dispatch({ t: "clicked-clear" })}>
               <IconXMark className="h-6 w-6" />
             </button>
           </div>
@@ -164,7 +164,7 @@ export const View = ({
               <button
                 className="flex w-full items-center gap-4 p-4 hover:bg-neutral-700"
                 onClick={() =>
-                  emit({ t: "clicked-result", userId: result.userId })
+                  dispatch({ t: "clicked-result", userId: result.userId })
                 }
               >
                 {result.username}

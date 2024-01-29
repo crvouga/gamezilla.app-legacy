@@ -20,7 +20,7 @@ import { Position } from "../../@SHARED/gomoku/gomoku-position";
 //
 //
 
-export type Model = ModelSetup | ModelPlaying | ModelGameOver;
+export type Model = ModelSetup | ModelPlaying | GameModelOver;
 
 export type ModelSetup = {
   type: "setup";
@@ -35,7 +35,7 @@ export type ModelPlaying = {
   board: Board;
 };
 
-export type ModelGameOver = {
+export type GameModelOver = {
   type: "game-over";
   white: UserId;
   black: UserId;
@@ -92,7 +92,7 @@ const initGameOver = ({
 }: {
   gameOver: GameOver;
   model: ModelPlaying;
-}): ModelGameOver => {
+}): GameModelOver => {
   return {
     type: "game-over",
     black: model.black,

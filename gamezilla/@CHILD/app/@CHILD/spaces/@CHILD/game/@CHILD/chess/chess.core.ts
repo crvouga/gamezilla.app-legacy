@@ -64,9 +64,9 @@ export type Problem = "must_be_the_host";
 //
 //
 
-export type GameEvent = { t: "user-changed-mode"; mode: Mode; userId: UserId };
+export type GameMsg = { t: "user-changed-mode"; mode: Mode; userId: UserId };
 
-export type GameState =
+export type GameModel =
   | {
       t: "none";
     }
@@ -80,7 +80,7 @@ export type GameState =
       t: "puzzle";
     };
 
-export const initState = (): GameState => {
+export const initGame = (): GameModel => {
   return {
     t: "none",
   };
@@ -90,9 +90,9 @@ export const reducer = ({
   msgEvent,
 }: {
   ctx: SpaceCtx;
-  state: GameState;
-  msgEvent: GameEvent;
-}): GameState => {
+  state: GameModel;
+  msgEvent: GameMsg;
+}): GameModel => {
   switch (msgEvent.t) {
     case "user-changed-mode": {
       switch (msgEvent.mode) {

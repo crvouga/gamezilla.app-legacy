@@ -42,8 +42,8 @@ import {
   BotLevel,
   ClientModel,
   ClientMsg,
-  GameEvent,
-  GameState,
+  GameMsg,
+  GameModel,
   ToClient,
   ToServer,
   allBotLevels,
@@ -63,8 +63,8 @@ type Module = GameClientModule<{
   Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  GameState: GameState;
-  GameEvent: GameEvent;
+  GameModel: GameModel;
+  GameMsg: GameMsg;
   Ctx: SpaceClientCtx & { onQuit: () => void };
   OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
   InEvent: SpaceClientEvent;
@@ -92,7 +92,7 @@ const update: Module["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg(model)(input),
-    (model) => updateFromGameEvent(model)(input),
+    (model) => updateFromGameMsg(model)(input),
     (model) => watchGameOver(model)(input)
   );
 };
@@ -100,24 +100,24 @@ const update: Module["update"] = (input) => {
 const watchGameOver =
   (model: ClientModel): Module["update"] =>
   (input) => {
-    const { msgGameEvent, modelGameState } = input;
+    const { msgGame, modelGame } = input;
 
-    if (!msgGameEvent) {
+    if (!msgGame) {
       return { model };
     }
 
-    const modelGameStateNext = reducer({
-      msgGameEvent: msgGameEvent,
-      modelGameState: modelGameState,
+    const modelGameNext = reducer({
+      msgGame: msgGame,
+      modelGame: modelGame,
     });
 
-    if (modelGameState.type !== "game" || modelGameStateNext.type !== "game") {
+    if (modelGame.type !== "game" || modelGameNext.type !== "game") {
       return { model };
     }
 
-    const statusBefore = ConnectFour.toStatus(modelGameState.columns);
+    const statusBefore = ConnectFour.toStatus(modelGame.columns);
 
-    const status = ConnectFour.toStatus(modelGameStateNext.columns);
+    const status = ConnectFour.toStatus(modelGameNext.columns);
 
     if (statusBefore.type === status.type) {
       return { model };
@@ -133,7 +133,7 @@ const watchGameOver =
       }
 
       case "Winner": {
-        if (status.winner === modelGameStateNext.userPlayerType) {
+        if (status.winner === modelGameNext.userPlayerType) {
           return {
             model,
             msgCmd: [
@@ -155,18 +155,18 @@ const watchGameOver =
     }
   };
 
-const updateFromGameEvent =
+const updateFromGameMsg =
   (model: ClientModel): Module["update"] =>
   (input) => {
-    const { msgGameEvent, modelGameState, ctx } = input;
+    const { msgGame, modelGame, ctx } = input;
 
-    if (!msgGameEvent) {
+    if (!msgGame) {
       return { model };
     }
 
     return {
       model,
-      msgCmd: updateSound(ctx.currentUserId, modelGameState, msgGameEvent),
+      msgCmd: updateSound(ctx.currentUserId, modelGame, msgGame),
     };
   };
 
@@ -199,27 +199,27 @@ const updateFromMsg =
       }
 
       default: {
-        const msgGameEvent = withId(msg);
-        return { model, msgGameEvent: [msgGameEvent] };
+        const msgGame = withId(msg);
+        return { model, msgGame: [msgGame] };
       }
     }
   };
 
 const updateSound = (
   currentUserId: UserId,
-  modelGameState: GameState,
-  msgGameEvent: GameEvent & EventMeta
+  modelGame: GameModel,
+  msgGame: GameMsg & EventMeta
 ): ClientCmd<{
   ToServer: ToServer;
   ClientMsg: ClientMsg;
 }>[] => {
-  switch (modelGameState.type) {
+  switch (modelGame.type) {
     case "game": {
-      switch (msgGameEvent.t) {
+      switch (msgGame.t) {
         case "user-dropped-disc": {
-          const error = modelGameState.errors[msgGameEvent.msgEventId];
+          const error = modelGame.errors[msgGame.msgEventId];
 
-          if (error && msgGameEvent.userId === currentUserId) {
+          if (error && msgGame.userId === currentUserId) {
             return [playSound(APP_SOUND.alertErrorSm)];
           }
 
@@ -247,7 +247,7 @@ const updateSound = (
     }
 
     case "setup": {
-      switch (msgGameEvent.t) {
+      switch (msgGame.t) {
         case "user-started-playing":
         case "user-stopped-playing":
         case "user-swapped-sides":
@@ -310,23 +310,23 @@ export function toGameOver(columns: ConnectFour.Columns): VsBotGame.GameOver {
   }
 }
 
-const View: Module["View"] = ({ model, ctx, modelGameState, emit }) => {
+const View: Module["View"] = ({ model, ctx, modelGame, dispatch }) => {
   const vsBotSetupProps: VsBotSetup.VsBotSetupProps = {
     ctx: ctx,
     onQuit: ctx.onQuit,
     title: "Connect Four",
     renderCoverArt: (props) => <CoverArt {...props} />,
-    canStartGame: modelGameState.playingUserId !== null,
+    canStartGame: modelGame.playingUserId !== null,
     onSwapSides: () =>
-      emit({ t: "user-swapped-sides", userId: ctx.currentUserId }),
+      dispatch({ t: "user-swapped-sides", userId: ctx.currentUserId }),
     onStartGame: () =>
-      emit({ t: "user-started-game", userId: ctx.currentUserId }),
+      dispatch({ t: "user-started-game", userId: ctx.currentUserId }),
     botVariants: allBotLevels.map((botLevel) => {
       return {
         label: botLevel,
         renderIcon: (props) => <ViewBotLevel {...props} level={botLevel} />,
         onSelect: () =>
-          emit({
+          dispatch({
             t: "user-changed-bot-level",
             botLevel,
             userId: ctx.currentUserId,
@@ -335,40 +335,38 @@ const View: Module["View"] = ({ model, ctx, modelGameState, emit }) => {
     }),
     human: {
       player:
-        modelGameState.userPlayerType === "player-one"
-          ? "player-one"
-          : "player-two",
-      userId: modelGameState.playingUserId,
+        modelGame.userPlayerType === "player-one" ? "player-one" : "player-two",
+      userId: modelGame.playingUserId,
     },
     bot: {
-      label: modelGameState.botLevel,
+      label: modelGame.botLevel,
       renderIcon: (props) => (
-        <ViewBotLevel {...props} level={modelGameState.botLevel} />
+        <ViewBotLevel {...props} level={modelGame.botLevel} />
       ),
     },
     playerOne: {
       label: "Red",
       renderIcon: (props) => <PlayerOneIcon {...props} />,
       onStartPlaying: () =>
-        emit({
+        dispatch({
           t: "user-started-playing",
           playerType: "player-one",
           userId: ctx.currentUserId,
         }),
       onStopPlaying: () =>
-        emit({ t: "user-stopped-playing", userId: ctx.currentUserId }),
+        dispatch({ t: "user-stopped-playing", userId: ctx.currentUserId }),
     },
     playerTwo: {
       label: "Yellow",
       renderIcon: (props) => <PlayerTwoIcon {...props} />,
       onStartPlaying: () =>
-        emit({
+        dispatch({
           t: "user-started-playing",
           playerType: "player-two",
           userId: ctx.currentUserId,
         }),
       onStopPlaying: () =>
-        emit({ t: "user-stopped-playing", userId: ctx.currentUserId }),
+        dispatch({ t: "user-stopped-playing", userId: ctx.currentUserId }),
     },
   };
 
@@ -376,25 +374,25 @@ const View: Module["View"] = ({ model, ctx, modelGameState, emit }) => {
     return null;
   }
 
-  if (modelGameState.type === "setup") {
+  if (modelGame.type === "setup") {
     return (
       <VsBotSetup.View
         model={model.vsBotSetup}
-        emit={(c) => emit({ t: "vs-bot-setup", c })}
+        dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
         {...vsBotSetupProps}
       />
     );
   }
 
-  const status = ConnectFour.toStatus(modelGameState.columns);
+  const status = ConnectFour.toStatus(modelGame.columns);
 
   const vsBotGameProps: VsBotGame.VsBotGameProps = {
     ...vsBotSetupProps,
     human: {
       ...vsBotSetupProps.human,
-      userId: modelGameState.playingUserId,
+      userId: modelGame.playingUserId,
     },
-    isSpectating: ctx.currentUserId !== modelGameState.playingUserId,
+    isSpectating: ctx.currentUserId !== modelGame.playingUserId,
     turn:
       status.type !== "Playing"
         ? null
@@ -403,7 +401,7 @@ const View: Module["View"] = ({ model, ctx, modelGameState, emit }) => {
         : "player-two",
   };
 
-  const isSpectating = ctx.currentUserId !== modelGameState.playingUserId;
+  const isSpectating = ctx.currentUserId !== modelGame.playingUserId;
 
   return (
     <GameLayout isSpectating={isSpectating}>
@@ -418,10 +416,10 @@ const View: Module["View"] = ({ model, ctx, modelGameState, emit }) => {
         <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <ViewColumns
             gameId={0}
-            columns={modelGameState.columns}
+            columns={modelGame.columns}
             disabled={isSpectating || status.type !== "Playing"}
             onDropDisc={(columnIndex) => {
-              emit({
+              dispatch({
                 t: "user-dropped-disc",
                 columnIndex,
                 userId: ctx.currentUserId,
@@ -433,25 +431,25 @@ const View: Module["View"] = ({ model, ctx, modelGameState, emit }) => {
               {...vsBotGameProps}
               model={model.vsBotGame}
               onPlayAgain={() =>
-                emit({
+                dispatch({
                   t: "user-restarted-game",
                   userId: ctx.currentUserId,
                 })
               }
-              gameOver={toGameOver(modelGameState.columns)}
+              gameOver={toGameOver(modelGame.columns)}
             />
           )}
         </div>
       </div>
 
-      {ctx.currentUserId === modelGameState.playingUserId && (
+      {ctx.currentUserId === modelGame.playingUserId && (
         <ViewBottomButtonBar
           actions={[
             {
               label: "Exit",
               icon: <IconArrowLeftOnRect className="h-6 w-6" />,
               onClick: () =>
-                emit({
+                dispatch({
                   t: "user-stopped-game",
                   userId: ctx.currentUserId,
                 }),
@@ -460,7 +458,7 @@ const View: Module["View"] = ({ model, ctx, modelGameState, emit }) => {
               label: "Swap sides",
               icon: <IconRightLeft className="h-6 w-6" />,
               onClick: () =>
-                emit({
+                dispatch({
                   t: "user-swapped-sides",
                   userId: ctx.currentUserId,
                 }),
@@ -469,7 +467,7 @@ const View: Module["View"] = ({ model, ctx, modelGameState, emit }) => {
               label: "Restart",
               icon: <IconArrowRotateLeft className="h-6 w-6" />,
               onClick: () =>
-                emit({
+                dispatch({
                   t: "user-restarted-game",
                   userId: ctx.currentUserId,
                 }),
@@ -495,13 +493,11 @@ function toVsBotStatus(status: ConnectFour.Status): VsBotGame.Status {
   }
 }
 
-const ViewFeedItem: Module["ViewFeedItem"] = ({ msgGameEvent, ctx }) => {
+const ViewFeedItem: Module["ViewFeedItem"] = ({ msgGame, ctx }) => {
   const username =
-    "userId" in msgGameEvent
-      ? ctx.profiles[msgGameEvent.userId]?.username ?? null
-      : null;
+    "userId" in msgGame ? ctx.profiles[msgGame.userId]?.username ?? null : null;
 
-  switch (msgGameEvent.t) {
+  switch (msgGame.t) {
     case "bot-dropped-disc": {
       return <FeedItem.Info text="Bot dropped disc" />;
     }
@@ -509,13 +505,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({ msgGameEvent, ctx }) => {
     case "user-changed-bot-level": {
       return (
         <FeedItem.Info
-          text={`${username} changed bot level to ${msgGameEvent.botLevel}`}
+          text={`${username} changed bot level to ${msgGame.botLevel}`}
         />
       );
     }
 
     case "user-dropped-disc": {
-      if (msgGameEvent.userId === ctx.currentUserId) {
+      if (msgGame.userId === ctx.currentUserId) {
         return <FeedItem.Info text={`${username} dropped disc`} />;
       }
 

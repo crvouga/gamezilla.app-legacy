@@ -10,10 +10,10 @@ import { SpaceEvent } from "../spaces-core/space-event";
 export const ViewScreenNotInGame = ({
   ctx,
 
-  emitEvent,
+  dispatchEvent,
 }: {
   ctx: SpaceClientCtx;
-  emitEvent: (m: SpaceEvent) => void;
+  dispatchEvent: (m: SpaceEvent) => void;
 }) => {
   if (ctx.space.hostId !== ctx.currentUserId) {
     return (
@@ -34,7 +34,7 @@ export const ViewScreenNotInGame = ({
             <button
               aria-label={gameName}
               onClick={() =>
-                emitEvent({
+                dispatchEvent({
                   t: "user-inputted-game",
                   spaceId: ctx.space.spaceId,
                   userId: ctx.currentUserId,

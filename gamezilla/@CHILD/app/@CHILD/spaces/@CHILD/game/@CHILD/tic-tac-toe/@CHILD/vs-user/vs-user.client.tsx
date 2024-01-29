@@ -158,12 +158,12 @@ export const mergeWithServer = (
 export const View = ({
   ctx,
   model,
-  emit,
+  dispatch,
   onCloseGame,
 }: {
   ctx: SpaceClientCtx;
   model: ClientModel;
-  emit: (msg: ClientMsg) => void;
+  dispatch: (msg: ClientMsg) => void;
   onCloseGame: () => void;
 }) => {
   if (model.type === "setup") {
@@ -171,7 +171,9 @@ export const View = ({
       <VsUserSetupScreen
         ctx={ctx}
         onQuit={onCloseGame}
-        onStartGame={() => emit(["start-game", { userId: ctx.currentUserId }])}
+        onStartGame={() =>
+          dispatch(["start-game", { userId: ctx.currentUserId }])
+        }
         renderCoverArt={(props) => {
           return (
             <div {...props}>
@@ -188,13 +190,13 @@ export const View = ({
             return <PlayerTypeIcon playerType="X" {...props} />;
           },
           onStartPlaying: () => {
-            emit([
+            dispatch([
               "InputPlayer",
               { playerType: "X", userId: ctx.currentUserId },
             ]);
           },
           onStopPlaying: () => {
-            emit([
+            dispatch([
               "InputPlayer",
               { playerType: "X", userId: ctx.currentUserId },
             ]);
@@ -207,13 +209,13 @@ export const View = ({
             return <PlayerTypeIcon playerType="O" {...props} />;
           },
           onStartPlaying: () => {
-            emit([
+            dispatch([
               "InputPlayer",
               { playerType: "O", userId: ctx.currentUserId },
             ]);
           },
           onStopPlaying: () => {
-            emit([
+            dispatch([
               "InputPlayer",
               { playerType: "O", userId: ctx.currentUserId },
             ]);

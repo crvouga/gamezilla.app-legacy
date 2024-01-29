@@ -40,5 +40,5 @@ export interface Debugger<Model, Msg extends {}> {
 export interface DebuggerDeps<Model, Msg extends {}> {
   init: Model;
 
-  emit: (m: MsgWithDebug<Model, Msg>) => void;
+  dispatch: (m: MsgWithDebug<Model, Msg>) => void;
 }

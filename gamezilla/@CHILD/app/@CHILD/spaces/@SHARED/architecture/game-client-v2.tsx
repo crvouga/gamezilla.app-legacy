@@ -48,11 +48,11 @@ export type GameClientModuleTypes = {
   /**
    *
    */
-  GameEvent: any;
+  GameMsg: any;
   /**
    *
    */
-  GameState: any;
+  GameModel: any;
 };
 
 //
@@ -92,13 +92,13 @@ export type Input<T extends GameClientModuleTypes> = {
   msgCmd?: T["InCmd"] | null;
 
   /**
-   * `modelGameState` is the current state of the game. This is shared between client and server.
+   * `modelGame` is the current state of the game. This is shared between client and server.
    */
-  modelGameState: T["GameState"];
+  modelGame: T["GameModel"];
   /**
-   * `msgGameEvent` is an msgEvent of game
+   * `msgGame` is an msgEvent of game
    */
-  msgGameEvent?: (T["GameEvent"] & EventMeta) | null;
+  msgGame?: (T["GameMsg"] & EventMeta) | null;
 };
 
 //
@@ -113,7 +113,7 @@ export type Output<T extends GameClientModuleTypes> = {
    */
   model: T["Model"];
   /**
-   * `eff` is a side effect to be performed. May emit a message
+   * `eff` is a side effect to be performed. May dispatch a message
    */
   eff?: Eff<T["Msg"]>;
   /**
@@ -125,9 +125,9 @@ export type Output<T extends GameClientModuleTypes> = {
    */
   msgEvent?: T["OutEvent"][];
   /**
-   *  `msgGameEvent` is an msgEvent that occurred in the game. Shared with the server side
+   *  `msgGame` is an msgEvent that occurred in the game. Shared with the server side
    */
-  msgGameEvent?: WithEventId<T["GameEvent"]>[];
+  msgGame?: WithEventId<T["GameMsg"]>[];
 };
 
 /**
@@ -145,11 +145,11 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
   update: (input: Input<T>) => Output<T>;
 
   /**
-   * `subscriptions` is emits msgs specific to the module
+   * `subscriptions` is dispatchs msgs specific to the module
    */
   subscriptions: (input: {
     ctx: T["Ctx"];
-    modelGameState: T["GameState"];
+    modelGame: T["GameModel"];
     model: T["Model"];
   }) => Sub<T["Msg"]>;
 
@@ -158,9 +158,9 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
    */
   View: (input: {
     ctx: T["Ctx"];
-    modelGameState: T["GameState"];
+    modelGame: T["GameModel"];
     model: T["Model"];
-    emit: (msg: T["Msg"]) => void;
+    dispatch: (msg: T["Msg"]) => void;
   }) => VDom;
 
   /**
@@ -168,9 +168,9 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
    */
   ViewFeedItem: (input: {
     ctx: T["Ctx"];
-    msgGameEvent: T["GameEvent"];
-    modelGameState: T["GameState"];
-    emit: (msg: T["Msg"]) => void;
+    msgGame: T["GameMsg"];
+    modelGame: T["GameModel"];
+    dispatch: (msg: T["Msg"]) => void;
   }) => VDom;
 };
 
@@ -200,10 +200,7 @@ const chainUpdates = <T extends GameClientModuleTypes>(
     eff: Eff.batch([acc.eff, updated.eff]),
     msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
     msgEvent: [...(acc.msgEvent ?? []), ...(updated.msgEvent ?? [])],
-    msgGameEvent: [
-      ...(acc.msgGameEvent ?? []),
-      ...(updated.msgGameEvent ?? []),
-    ],
+    msgGame: [...(acc.msgGame ?? []), ...(updated.msgGame ?? [])],
   };
 
   return chainUpdates(accNew, ...rest);
@@ -232,7 +229,7 @@ const tagOutput = <
   /**
    *
    */
-  msgGameEvent?: WithEventId<{ t: TTag; c: T["GameEvent"] }>[];
+  msgGame?: WithEventId<{ t: TTag; c: T["GameMsg"] }>[];
 } => {
   return {
     model: {
@@ -242,7 +239,7 @@ const tagOutput = <
     msgCmd: output.msgCmd ? tagCmd(output.msgCmd) : [],
     eff: Eff.tag(tag, output.eff),
     msgEvent: output.msgEvent,
-    msgGameEvent: output.msgGameEvent?.map((c) => {
+    msgGame: output.msgGame?.map((c) => {
       const child = { ...c };
       delete child.msgEventId;
       return {

@@ -200,14 +200,14 @@ export const updateFromEvent = ({
 
 export const View = ({
   model,
-  emit,
+  dispatch,
   ctx,
   route,
   userSearch,
   viewBottomBar,
 }: {
   model: ClientModel;
-  emit: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
   ctx: ClientCtx;
   route: RouteChat;
   userSearch: {
@@ -218,14 +218,14 @@ export const View = ({
 }) => {
   switch (route.t) {
     case "chat-conversation": {
-      return <ViewChat model={model} emit={emit} />;
+      return <ViewChat model={model} dispatch={dispatch} />;
     }
 
     case "chat-new": {
       return (
         <ViewChatNew
           model={model}
-          emit={emit}
+          dispatch={dispatch}
           ctx={ctx}
           userSearch={userSearch}
         />
@@ -235,7 +235,7 @@ export const View = ({
     case "chat": {
       return (
         <>
-          <ViewChatList model={model} emit={emit} ctx={ctx} />
+          <ViewChatList model={model} dispatch={dispatch} ctx={ctx} />
           {viewBottomBar}
         </>
       );
@@ -247,14 +247,17 @@ export const View = ({
   }
 };
 
-const ViewChat = (_props: { model: ClientModel; emit: (m: Msg) => void }) => {
+const ViewChat = (_props: {
+  model: ClientModel;
+  dispatch: (m: Msg) => void;
+}) => {
   return <div>ViewChat</div>;
 };
 
 const ViewChatNew = (_props: {
   ctx: ClientCtx;
   model: ClientModel;
-  emit: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
   userSearch: {
     onInput: (searchText: string) => void;
     loading: boolean;
@@ -266,7 +269,7 @@ const ViewChatNew = (_props: {
 const ViewChatList = (_props: {
   ctx: ClientCtx;
   model: ClientModel;
-  emit: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
 }) => {
   return <div></div>;
 };

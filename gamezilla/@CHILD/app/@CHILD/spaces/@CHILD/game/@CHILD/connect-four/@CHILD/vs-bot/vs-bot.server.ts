@@ -10,8 +10,8 @@ import { Sub, Time, TimeSpan, isErr } from "gamezilla/@SHARED/core";
 import { ConnectFourBotWorker } from "../../@SHARED/connect-four";
 import * as ConnectFour from "../../@SHARED/connect-four/connect-four";
 import {
-  GameEvent,
-  GameState,
+  GameMsg,
+  GameModel,
   ServerModel,
   ServerMsg,
   ToClient,
@@ -34,8 +34,8 @@ type Module = GameServerModule<{
   Msg: ServerMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  GameState: GameState;
-  GameEvent: GameEvent;
+  GameModel: GameModel;
+  GameMsg: GameMsg;
   Ctx: SpaceServerCtx;
   Deps: null;
   InCmd: null;
@@ -55,7 +55,7 @@ export const update: Module["update"] = async (input) => {
 };
 
 const updateFromMsg: Module["update"] = async (input) => {
-  const { msg, model, modelGameState, ctx } = input;
+  const { msg, model, modelGame, ctx } = input;
 
   if (!msg) {
     return { model };
@@ -64,9 +64,9 @@ const updateFromMsg: Module["update"] = async (input) => {
   switch (msg.t) {
     case "time-passed": {
       const shouldBotMove =
-        isBotTurn(modelGameState) && !isBotMoving(ctx.now, model);
+        isBotTurn(modelGame) && !isBotMoving(ctx.now, model);
       if (
-        modelGameState.type === "game" &&
+        modelGame.type === "game" &&
         shouldBotMove &&
         msg.t === "time-passed"
       ) {
@@ -75,14 +75,14 @@ const updateFromMsg: Module["update"] = async (input) => {
             ...model,
             botStartedFindingMoveAt: ctx.now,
           },
-          eff: async (emit) => {
+          eff: async (dispatch) => {
             await new Promise((r) => setTimeout(r, 1000 / 4));
             const found = ConnectFourBotWorker.findBestMove({
-              columns: modelGameState.columns,
+              columns: modelGame.columns,
               maxDepth: 4,
-              maximizingPlayer: toBotPlayer(modelGameState),
+              maximizingPlayer: toBotPlayer(modelGame),
             });
-            emit({ t: "bot-found-best-move", found, startedAt: ctx.now });
+            dispatch({ t: "bot-found-best-move", found, startedAt: ctx.now });
           },
         };
       }
@@ -106,14 +106,14 @@ const updateFromMsg: Module["update"] = async (input) => {
             return { model };
           }
 
-          const msgEventNew = withId<GameEvent>({
+          const msgEventNew = withId<GameMsg>({
             t: "bot-dropped-disc",
             columnIndex,
           });
 
           return {
             model,
-            msgGameEvent: [msgEventNew],
+            msgGame: [msgEventNew],
           };
         },
         async (model) => {
@@ -125,7 +125,7 @@ const updateFromMsg: Module["update"] = async (input) => {
 };
 
 export const subscriptions: Module["subscriptions"] = async (input) => {
-  if (isBotTurn(input.modelGameState)) {
+  if (isBotTurn(input.modelGame)) {
     return Time.interval(`vs-bot`, TimeSpan.fromSeconds(1 / 2), () => ({
       t: "time-passed",
     }));

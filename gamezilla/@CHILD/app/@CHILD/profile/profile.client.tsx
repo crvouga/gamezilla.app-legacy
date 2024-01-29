@@ -387,7 +387,7 @@ export const subscriptions: Module["subscriptions"] = (_input) => {
 //
 //
 
-export const View: Module["View"] = ({ model, emit, ctx }) => {
+export const View: Module["View"] = ({ model, dispatch, ctx }) => {
   const { currentRoute } = ctx;
 
   if (currentRoute.t !== "profile") {
@@ -403,7 +403,7 @@ export const View: Module["View"] = ({ model, emit, ctx }) => {
           <ViewProfileScreen
             model={model}
             ctx={ctx}
-            emit={emit}
+            dispatch={dispatch}
             userId={route.userId}
           />
 
@@ -413,15 +413,17 @@ export const View: Module["View"] = ({ model, emit, ctx }) => {
     }
 
     case "profile-update": {
-      return <ViewUpdateScreen ctx={ctx} emit={emit} />;
+      return <ViewUpdateScreen ctx={ctx} dispatch={dispatch} />;
     }
 
     case "profile-update-username": {
-      return <ViewUpdateUsernameScreen emit={emit} ctx={ctx} model={model} />;
+      return (
+        <ViewUpdateUsernameScreen dispatch={dispatch} ctx={ctx} model={model} />
+      );
     }
 
     case "profile-update-avatar": {
-      return <ViewUpdateAvatarScreen emit={emit} model={model} />;
+      return <ViewUpdateAvatarScreen dispatch={dispatch} model={model} />;
     }
 
     default: {
@@ -432,10 +434,10 @@ export const View: Module["View"] = ({ model, emit, ctx }) => {
 
 const ViewUpdateScreen = ({
   ctx,
-  emit,
+  dispatch,
 }: {
   ctx: Ctx;
-  emit: (m: ClientMsg) => void;
+  dispatch: (m: ClientMsg) => void;
 }) => {
   if (!ctx.currentUserId) {
     return null;
@@ -449,7 +451,7 @@ const ViewUpdateScreen = ({
         left={
           <TopBarBackButton
             onClick={() =>
-              emit({
+              dispatch({
                 t: "clicked-back-button",
                 from: { t: "profile-update" },
               })
@@ -464,7 +466,7 @@ const ViewUpdateScreen = ({
           src={profile?.avatarUrl}
           className="h-28 w-28"
           alt="profile avatar"
-          onClick={() => emit({ t: "clicked-avatar" })}
+          onClick={() => dispatch({ t: "clicked-avatar" })}
         />
 
         <Button
@@ -472,13 +474,13 @@ const ViewUpdateScreen = ({
           color="primary"
           variant="text"
           className="block"
-          onClick={() => emit({ t: "clicked-change-avatar-button" })}
+          onClick={() => dispatch({ t: "clicked-change-avatar-button" })}
           text=" Change Avatar"
         />
       </div>
 
       <ViewField
-        onClick={() => emit({ t: "clicked-update-username-button" })}
+        onClick={() => dispatch({ t: "clicked-update-username-button" })}
         label="Username"
         value={profile?.username}
       />
@@ -517,10 +519,10 @@ const ViewField = ({
 const ViewUpdateUsernameScreen = ({
   ctx,
   model,
-  emit,
+  dispatch,
 }: {
   model: ClientModel;
-  emit: (msg: ClientMsg) => void;
+  dispatch: (msg: ClientMsg) => void;
   ctx: Ctx;
 }) => {
   const currentUsername = ctx.currentUserId
@@ -536,7 +538,7 @@ const ViewUpdateUsernameScreen = ({
             variant="text"
             color="primary"
             onClick={() =>
-              emit({
+              dispatch({
                 t: "clicked-back-button",
                 from: { t: "profile-update-username" },
               })
@@ -552,7 +554,7 @@ const ViewUpdateUsernameScreen = ({
             onClick={() => {
               const username = model.draft?.username;
               if (username) {
-                emit({ t: "change-username", username });
+                dispatch({ t: "change-username", username });
               }
             }}
             text="Done"
@@ -565,7 +567,9 @@ const ViewUpdateUsernameScreen = ({
           label="Username"
           value={inputVal}
           id={"username"}
-          onChange={(username) => emit({ t: "inputted-username", username })}
+          onChange={(username) =>
+            dispatch({ t: "inputted-username", username })
+          }
         />
       </div>
     </div>

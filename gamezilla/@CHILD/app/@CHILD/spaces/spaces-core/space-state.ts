@@ -16,7 +16,7 @@ export type Initial = {
 
 export type Started = Space & {
   type: "started";
-  game: Game.GameState | null;
+  game: Game.GameModel | null;
   latestEvent: EventId;
 };
 
@@ -27,7 +27,7 @@ export type Ended = Space & {
 
 export type State = Initial | Started | Ended;
 
-export const initState: State = {
+export const initGame: State = {
   type: "initial",
 };
 
@@ -93,7 +93,7 @@ export const reducer = ({
     case "started": {
       switch (msgEvent.t) {
         case "game": {
-          const game = state.game ?? Game.initState(msgEvent.c.t);
+          const game = state.game ?? Game.initGame(msgEvent.c.t);
           const gameNew = Game.reducer({
             ctx: { space: state },
             state: game,
@@ -120,7 +120,7 @@ export const reducer = ({
           return {
             ...state,
             latestEvent: msgEvent.msgEventId,
-            game: msgEvent.game ? Game.initState(msgEvent.game) : null,
+            game: msgEvent.game ? Game.initGame(msgEvent.game) : null,
           };
         }
 

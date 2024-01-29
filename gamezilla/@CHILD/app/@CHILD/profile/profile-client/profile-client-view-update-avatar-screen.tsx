@@ -9,10 +9,10 @@ import { ClientModel, ClientMsg } from "../profile.core";
 
 export const ViewUpdateAvatarScreen = ({
   model,
-  emit,
+  dispatch,
 }: {
   model: ClientModel;
-  emit: (msg: ClientMsg) => void;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   return (
     <div className="flex h-full w-full flex-col items-center">
@@ -22,7 +22,7 @@ export const ViewUpdateAvatarScreen = ({
             color="primary"
             variant="text"
             onClick={() =>
-              emit({
+              dispatch({
                 t: "clicked-back-button",
                 from: { t: "profile-avatar" },
               })
@@ -51,12 +51,14 @@ export const ViewUpdateAvatarScreen = ({
           <TextField
             label="Seed"
             value={model.draft?.avatarSeed ?? ""}
-            onChange={(val) => emit({ t: "inputted-avatar-seed", seed: val })}
+            onChange={(val) =>
+              dispatch({ t: "inputted-avatar-seed", seed: val })
+            }
             id="seed"
           />
 
           <Button
-            onClick={() => emit({ t: "clicked-generate-random-seed" })}
+            onClick={() => dispatch({ t: "clicked-generate-random-seed" })}
             text=" Random seed"
           />
         </div>

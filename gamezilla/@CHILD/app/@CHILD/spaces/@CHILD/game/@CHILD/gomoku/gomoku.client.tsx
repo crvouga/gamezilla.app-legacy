@@ -215,12 +215,12 @@ export const view = ({
   model,
   ctx,
   spaceCtx,
-  emit,
+  dispatch,
 }: {
   model: Model;
   ctx: ClientCtx;
   spaceCtx: SpaceClientCtx;
-  emit: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
 }) => {
   switch (model.t) {
     case "none": {
@@ -232,7 +232,7 @@ export const view = ({
           buttons={[
             MainMenuScreen.buttons.playComputer({
               onClick: () =>
-                emit({
+                dispatch({
                   t: "input-mode",
                   userId: ctx.currentUserId,
                   mode: "vs-bot",
@@ -241,7 +241,7 @@ export const view = ({
 
             MainMenuScreen.buttons.playFriend({
               onClick: () =>
-                emit({
+                dispatch({
                   t: "input-mode",
                   userId: ctx.currentUserId,
                   mode: "vs-user",
@@ -258,13 +258,13 @@ export const view = ({
           model={model.c}
           ctx={ctx}
           onBack={() =>
-            emit({
+            dispatch({
               t: "input-mode",
               mode: "none",
               userId: ctx.currentUserId,
             })
           }
-          emit={(c) => emit({ t: "vs-bot", c })}
+          dispatch={(c) => dispatch({ t: "vs-bot", c })}
         />
       );
     }
@@ -275,13 +275,13 @@ export const view = ({
           model={model.c}
           ctx={ctx}
           onCancel={() =>
-            emit({
+            dispatch({
               t: "input-mode",
               mode: "none",
               userId: ctx.currentUserId,
             })
           }
-          emit={(c) => emit({ t: "vs-user", c })}
+          dispatch={(c) => dispatch({ t: "vs-user", c })}
         />
       );
     }

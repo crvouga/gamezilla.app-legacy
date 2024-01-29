@@ -12,8 +12,8 @@ import { ViewProfileCard } from "../../@SHARED/ui";
 import {
   ClientModel,
   ClientMsg,
-  GameEvent,
-  GameState,
+  GameMsg,
+  GameModel,
   ToClient,
   ToServer,
 } from "./play.core";
@@ -23,8 +23,8 @@ type Module = GameClientModule<{
   Msg: ClientMsg;
   ToClient: ToClient;
   ToServer: ToServer;
-  GameEvent: GameEvent;
-  GameState: GameState;
+  GameMsg: GameMsg;
+  GameModel: GameModel;
   Ctx: FlowClientCtx;
   OutCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
   InEvent: SpaceClientEvent;
@@ -69,10 +69,10 @@ const updateFromMsg: Module["update"] = (input) => {
     }
 
     case "msgEvent": {
-      const msgGameEvent = withId(msg.c);
+      const msgGame = withId(msg.c);
       return {
         model,
-        msgGameEvent: [msgGameEvent],
+        msgGame: [msgGame],
       };
     }
   }
@@ -84,7 +84,7 @@ const subscriptions: Module["subscriptions"] = () => {
 
 const USE_GAME_STATE = true;
 
-const View: Module["View"] = ({ model, modelGameState, emit, ctx }) => {
+const View: Module["View"] = ({ model, modelGame, dispatch, ctx }) => {
   const isPlaying = ctx.currentUserId === ctx.space.hostId;
   const isSpectating = !isPlaying;
   const host = ctx.profiles[ctx.space.hostId];
@@ -96,14 +96,14 @@ const View: Module["View"] = ({ model, modelGameState, emit, ctx }) => {
         )}
         {USE_GAME_STATE ? (
           <FlowGridUIPlay.View
-            emit={(c) => emit({ t: "msgEvent", c: { t: "grid", c } })}
-            model={modelGameState.gridPlay}
+            dispatch={(c) => dispatch({ t: "msgEvent", c: { t: "grid", c } })}
+            model={modelGame.gridPlay}
             disabled={isSpectating}
-            grid={modelGameState.grid}
+            grid={modelGame.grid}
           />
         ) : (
           <FlowGridUIPlay.View
-            emit={(c) => emit({ t: "grid", c })}
+            dispatch={(c) => dispatch({ t: "grid", c })}
             model={model.gridPlay}
             grid={model.grid}
             disabled={isSpectating}
@@ -124,10 +124,10 @@ const View: Module["View"] = ({ model, modelGameState, emit, ctx }) => {
   );
 };
 
-export const ViewFeedItem: Module["ViewFeedItem"] = ({ msgGameEvent }) => {
-  switch (msgGameEvent.t) {
+export const ViewFeedItem: Module["ViewFeedItem"] = ({ msgGame }) => {
+  switch (msgGame.t) {
     case "grid": {
-      switch (msgGameEvent.c.t) {
+      switch (msgGame.c.t) {
         case "dragged-over":
         case "left":
         case "pressed-down":

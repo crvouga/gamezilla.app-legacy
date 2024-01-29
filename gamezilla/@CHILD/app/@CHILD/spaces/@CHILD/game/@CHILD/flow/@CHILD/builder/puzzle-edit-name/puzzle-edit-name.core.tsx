@@ -60,7 +60,7 @@ export type ToClient = {
 //
 //
 
-export type GameEvent = {
+export type GameMsg = {
   t: "user-edited-puzzle-name";
   edited: Result<string, null>;
   flowPuzzleId: FlowPuzzleId;

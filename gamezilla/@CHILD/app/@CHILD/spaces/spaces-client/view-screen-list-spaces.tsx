@@ -18,12 +18,12 @@ import { EmptyState } from "gamezilla/@CHILD/app/@SHARED/ui/empty-state";
 
 export const ViewScreenListSpaces = ({
   ctx,
-  emit,
+  dispatch,
   model,
 }: {
   model: ClientModel;
   ctx: ClientCtx;
-  emit: (m: ClientMsg) => void;
+  dispatch: (m: ClientMsg) => void;
 }) => {
   const currentUserSpaceId = model.spaceIdByUserId[ctx.currentUserId];
 
@@ -53,7 +53,7 @@ export const ViewScreenListSpaces = ({
               <ViewSpaceCard
                 key={state.spaceId}
                 ctx={ctx}
-                emit={emit}
+                dispatch={dispatch}
                 state={state}
               />
             );
@@ -68,7 +68,7 @@ export const ViewScreenListSpaces = ({
             className="w-full"
             color="primary"
             onClick={() =>
-              emit({
+              dispatch({
                 t: "msgEvent",
                 c: withId({
                   t: "user-started-space",
@@ -88,11 +88,11 @@ export const ViewScreenListSpaces = ({
 const ViewSpaceCard = ({
   ctx,
   state,
-  emit,
+  dispatch,
 }: {
   ctx: ClientCtx;
   state: SpaceState.Started;
-  emit: (m: ClientMsg) => void;
+  dispatch: (m: ClientMsg) => void;
 }) => {
   const host = ctx.profiles[state.hostId];
   const users = Object.values(state.users).flatMap((userId) => {
@@ -121,7 +121,9 @@ const ViewSpaceCard = ({
       key={state.spaceId}
       users={users}
       gameName={gameName}
-      onClick={() => emit({ t: "clicked-space-card", spaceId: state.spaceId })}
+      onClick={() =>
+        dispatch({ t: "clicked-space-card", spaceId: state.spaceId })
+      }
     />
   );
 };

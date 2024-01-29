@@ -21,8 +21,8 @@ import { CHESS_SOUND } from "./@SHARED/chess/chess-sounds";
 import {
   ClientModel,
   ClientMsg,
-  GameEvent,
-  GameState,
+  GameMsg,
+  GameModel,
   ToClient,
   ToServer,
 } from "./chess.core";
@@ -41,8 +41,8 @@ type Client = GameClient<{
   ToClient: ToClient;
   ToServer: ToServer;
   ClientCtx: SpaceClientCtx;
-  GameEvent: GameEvent;
-  GameState: GameState;
+  GameMsg: GameMsg;
+  GameModel: GameModel;
   ClientCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
   ClientEvent: SpaceClientEvent;
 }>;
@@ -261,7 +261,7 @@ export const subscriptions: Client["subscriptions"] = (_input) => {
 //
 //
 
-export const View: Client["View"] = ({ ctx, state, emit }) => {
+export const View: Client["View"] = ({ ctx, state, dispatch }) => {
   switch (state.t) {
     case "none": {
       return (
@@ -272,7 +272,7 @@ export const View: Client["View"] = ({ ctx, state, emit }) => {
           buttons={[
             MainMenuScreen.buttons.playComputer({
               onClick: () =>
-                emit({
+                dispatch({
                   t: "input-mode",
                   mode: "vs-bot",
                   userId: ctx.currentUserId,
@@ -280,7 +280,7 @@ export const View: Client["View"] = ({ ctx, state, emit }) => {
             }),
             MainMenuScreen.buttons.playFriend({
               onClick: () =>
-                emit({
+                dispatch({
                   t: "input-mode",
                   mode: "vs-user",
                   userId: ctx.currentUserId,
@@ -291,7 +291,7 @@ export const View: Client["View"] = ({ ctx, state, emit }) => {
               description: "Train with more than 3 million puzzles",
               renderIcon: (props) => <IconPuzzlePiece {...props} />,
               onClick: () =>
-                emit({
+                dispatch({
                   t: "input-mode",
                   mode: "puzzle",
                   userId: ctx.currentUserId,
@@ -307,10 +307,10 @@ export const View: Client["View"] = ({ ctx, state, emit }) => {
       // return (
       //   <VsBot.View
       //     ctx={ctx}
-      //     emit={(c) => emit({ t: "vs-bot", c })}
+      //     dispatch={(c) => dispatch({ t: "vs-bot", c })}
       //     model={model?.mode.c}
       //     onClose={() => {
-      //       emit({
+      //       dispatch({
       //         t: "input-mode",
       //         mode: "none",
       //         userId: ctx.currentUserId,
@@ -326,9 +326,9 @@ export const View: Client["View"] = ({ ctx, state, emit }) => {
       //   <VsUser.View
       //     ctx={ctx}
       //     model={model.mode.c}
-      //     emit={(c) => emit({ t: "vs-user", c })}
+      //     dispatch={(c) => dispatch({ t: "vs-user", c })}
       //     onQuit={() => {
-      //       emit({
+      //       dispatch({
       //         t: "input-mode",
       //         mode: "none",
       //         userId: ctx.currentUserId,
@@ -344,9 +344,9 @@ export const View: Client["View"] = ({ ctx, state, emit }) => {
       //   <Puzzle.View
       //     ctx={ctx}
       //     model={model.mode.c}
-      //     emit={(c) => emit({ t: "puzzle", c })}
+      //     dispatch={(c) => dispatch({ t: "puzzle", c })}
       //     onClose={() => {
-      //       emit({
+      //       dispatch({
       //         t: "input-mode",
       //         mode: "none",
       //         userId: ctx.currentUserId,

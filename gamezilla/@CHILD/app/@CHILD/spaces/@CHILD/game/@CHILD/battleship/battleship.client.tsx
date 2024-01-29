@@ -4,7 +4,7 @@ export const init = initShared;
 
 export const View = (_props: {
   model: ClientModel;
-  emit: (msg: ClientMsg) => void;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   return <div>battleship</div>;
 };

@@ -474,12 +474,12 @@ export const subscriptions = (input: {
 
 export const View = ({
   model,
-  emit,
+  dispatch,
   now,
 }: {
   now: Posix;
   model: ClientModel;
-  emit: (msg: ClientMsg) => void;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   return (
     <div
@@ -489,12 +489,12 @@ export const View = ({
       <div className="relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-600">
         <StatusBar.View
           model={model.statusBar}
-          emit={(c) => emit({ t: "status-bar", c })}
+          dispatch={(c) => dispatch({ t: "status-bar", c })}
           wire={{
             drawer: (
               <Wire.ViewStatusBarDrawer
                 model={model.wire}
-                emit={(c) => emit({ t: "wire", c })}
+                dispatch={(c) => dispatch({ t: "wire", c })}
               />
             ),
             statusBar: <Wire.ViewStatusBar model={model.wire} />,
@@ -503,7 +503,7 @@ export const View = ({
             drawer: (
               <Sound.ViewStatusBarDrawer
                 model={model.sound}
-                emit={(c) => emit({ t: "sound", c })}
+                dispatch={(c) => dispatch({ t: "sound", c })}
               />
             ),
             statusBar: <Sound.ViewStatusBar model={model.sound} />,
@@ -511,7 +511,7 @@ export const View = ({
         />
 
         <div className="flex w-full flex-1 flex-col overflow-hidden">
-          <ViewMain model={model} now={now} emit={emit} />
+          <ViewMain model={model} now={now} dispatch={dispatch} />
         </div>
 
         <Portal.Exit portalId="modals" />
@@ -519,7 +519,7 @@ export const View = ({
         <Toast.View
           ctx={{ now }}
           model={model.toast}
-          emit={(c) => emit({ t: "toast", c })}
+          dispatch={(c) => dispatch({ t: "toast", c })}
         />
       </div>
     </div>
@@ -528,19 +528,19 @@ export const View = ({
 
 const ViewMain = ({
   model,
-  emit,
+  dispatch,
   now,
 }: {
   now: Posix;
   model: ClientModel;
-  emit: (msg: ClientMsg) => void;
+  dispatch: (msg: ClientMsg) => void;
 }) => {
   switch (model.auth.currentUser.t) {
     case "logged-in": {
       return (
         <ViewLoggedIn
           model={model}
-          emit={emit}
+          dispatch={dispatch}
           ctx={{
             now,
             currentRoute: model.routing.currentRoute,
@@ -555,7 +555,7 @@ const ViewMain = ({
     case "logged-out": {
       return (
         <ViewLoggedOut
-          emit={emit}
+          dispatch={dispatch}
           model={model}
           ctx={{
             now,
@@ -576,17 +576,17 @@ const ViewMain = ({
 const ViewLoggedOut = ({
   model,
   ctx,
-  emit,
+  dispatch,
 }: {
   model: ClientModel;
-  emit: (m: ClientMsg) => void;
+  dispatch: (m: ClientMsg) => void;
   ctx: AnonymousClientCtx;
 }) => {
   switch (model.routing.currentRoute.t) {
     case "auth": {
       return (
         <AuthClient.View
-          emit={(m) => emit({ t: "auth", c: m })}
+          dispatch={(m) => dispatch({ t: "auth", c: m })}
           model={model.auth}
           ctx={ctx}
         />
@@ -601,11 +601,11 @@ const ViewLoggedOut = ({
 const ViewLoggedIn = ({
   model,
   ctx,
-  emit,
+  dispatch,
 }: {
   ctx: ClientCtx;
   model: ClientModel;
-  emit: (m: ClientMsg) => void;
+  dispatch: (m: ClientMsg) => void;
 }) => {
   switch (model.routing.currentRoute.t) {
     case "chat": {
@@ -615,11 +615,13 @@ const ViewLoggedIn = ({
     case "spaces": {
       return (
         <SpaceClient.View
-          emit={(m) => emit({ t: "spaces", c: m })}
+          dispatch={(m) => dispatch({ t: "spaces", c: m })}
           model={model.spaces}
           ctx={ctx}
           route={model.routing.currentRoute.c}
-          viewBottomBar={<ViewBottomBar model={model} emit={emit} ctx={ctx} />}
+          viewBottomBar={
+            <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
+          }
         />
       );
     }
@@ -627,12 +629,12 @@ const ViewLoggedIn = ({
     case "profile": {
       return (
         <ProfileClient.View
-          emit={(m) => emit({ t: "profile", c: m })}
+          dispatch={(m) => dispatch({ t: "profile", c: m })}
           model={model.profile}
           ctx={{
             ...ctx,
             viewBottomBar: (
-              <ViewBottomBar model={model} emit={emit} ctx={ctx} />
+              <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
             ),
           }}
         />
@@ -646,7 +648,7 @@ const ViewLoggedIn = ({
     case "logout": {
       return (
         <AuthClient.ViewLogoutScreen
-          emit={(m) => emit({ t: "auth", c: m })}
+          dispatch={(m) => dispatch({ t: "auth", c: m })}
           ctx={ctx}
           model={model.auth}
         />
@@ -661,12 +663,12 @@ const ViewLoggedIn = ({
 
 const ViewBottomBar = ({
   model,
-  emit,
+  dispatch,
   ctx,
 }: {
   ctx: ClientCtx;
   model: ClientModel;
-  emit: (m: ClientMsg) => void;
+  dispatch: (m: ClientMsg) => void;
 }) => {
   const items: {
     route: AppRoute;
@@ -693,7 +695,7 @@ const ViewBottomBar = ({
       <SpaceClient.ViewCurrentSpaceBar
         ctx={ctx}
         model={model.spaces}
-        emit={(c) => emit({ t: "spaces", c })}
+        dispatch={(c) => dispatch({ t: "spaces", c })}
       />
       <div className="flex w-full items-center justify-center border-t border-neutral-600">
         {items.map((item, index) => {
@@ -706,7 +708,7 @@ const ViewBottomBar = ({
             <button
               key={AppRoute.encode(item.route)}
               onClick={() =>
-                emit({
+                dispatch({
                   t: "routing",
                   c: { t: "clicked-link", route: item.route },
                 })

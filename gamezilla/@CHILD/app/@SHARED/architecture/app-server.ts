@@ -97,7 +97,7 @@ export type Output<T extends AppServerModuleTypes> = {
    */
   model: T["Model"];
   /**
-   * `eff` is a side effect to be performed. May emit a message
+   * `eff` is a side effect to be performed. May dispatch a message
    */
   eff?: Eff<T["Msg"]>;
   /**
@@ -128,7 +128,7 @@ export type AppServerModule<T extends AppServerModuleTypes> = {
   update: (input: Input<T>) => Promise<Output<T>>;
 
   /**
-   * `subscriptions` is emits msgs specific to the module
+   * `subscriptions` is dispatchs msgs specific to the module
    */
   subscriptions: (input: {
     ctx: T["Ctx"];

@@ -6,14 +6,14 @@ import {
 declare global {
   namespace inferno.createElement.JSX {
     interface IntrinsicElements {
-      "intersection-observer-emitter": {
+      "intersection-observer-dispatchter": {
         id: string;
       };
     }
   }
   namespace JSX {
     interface IntrinsicElements {
-      "intersection-observer-emitter": {
+      "intersection-observer-dispatchter": {
         id: string;
       };
     }
@@ -70,7 +70,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
   }
 
   customElements.define(
-    "intersection-observer-emitter",
+    "intersection-observer-dispatchter",
     IntersectionObserverEmitter
   );
 }

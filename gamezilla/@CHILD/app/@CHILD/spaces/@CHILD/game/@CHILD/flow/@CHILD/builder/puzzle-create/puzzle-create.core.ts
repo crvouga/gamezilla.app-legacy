@@ -38,7 +38,7 @@ export type ToClient = {
 //
 //
 
-export type GameEvent = {
+export type GameMsg = {
   t: "user-created-puzzle";
   created: Result<string, FlowPuzzle>;
   userId: UserId;

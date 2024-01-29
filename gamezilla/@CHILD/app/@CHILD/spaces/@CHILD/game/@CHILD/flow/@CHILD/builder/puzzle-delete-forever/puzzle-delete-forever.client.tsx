@@ -17,14 +17,14 @@ const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromGameEvent({ ...input, model })
+    (model) => updateFromGameMsg({ ...input, model })
   );
 };
 
 const updateFromMsg: ClientModule["update"] = (input) => {
-  const { msg, model, modelGameState } = input;
+  const { msg, model, modelGame } = input;
 
-  if (modelGameState.t !== "build") {
+  if (modelGame.t !== "build") {
     return { model };
   }
 
@@ -60,18 +60,18 @@ const updateFromMsg: ClientModule["update"] = (input) => {
   }
 };
 
-const updateFromGameEvent: ClientModule["update"] = (input) => {
-  const { msgGameEvent, model } = input;
+const updateFromGameMsg: ClientModule["update"] = (input) => {
+  const { msgGame, model } = input;
 
-  switch (msgGameEvent?.t) {
+  switch (msgGame?.t) {
     case "user-deleted-puzzle": {
       const puzzlesNew = { ...model.puzzles };
-      delete puzzlesNew[msgGameEvent.flowPuzzleId];
+      delete puzzlesNew[msgGame.flowPuzzleId];
       return {
         model: {
           ...model,
           puzzles: puzzlesNew,
-          deleteForeverRequest: msgGameEvent.deleted,
+          deleteForeverRequest: msgGame.deleted,
           opened: null,
         },
         msgCmd: showOkToast("Deleted puzzle"),
@@ -85,14 +85,16 @@ const updateFromGameEvent: ClientModule["update"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-  const { model, emit } = input;
+  const { model, dispatch } = input;
   return (
     <>
       <ListItemButton
         icon={(props) => <IconDeleteForever {...props} />}
         label="Delete Forever"
         color="danger"
-        onClick={() => emit({ t: "delete-forever/user-clicked-delete-button" })}
+        onClick={() =>
+          dispatch({ t: "delete-forever/user-clicked-delete-button" })
+        }
       />
 
       <ConfirmationDrawer
@@ -101,7 +103,7 @@ const View: ClientModule["View"] = (input) => {
           input.model.opened === "delete-forever" ||
           isLoading(model.deleteForeverRequest)
         }
-        onClose={() => emit({ t: "delete-forever/user-closed-drawer" })}
+        onClose={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
         variant="danger"
         position="bottom"
         title="Delete puzzle forever?"
@@ -110,12 +112,12 @@ const View: ClientModule["View"] = (input) => {
         confirmLoading={isLoading(model.deleteForeverRequest)}
         confirmText="Delete Forever"
         onConfirm={() =>
-          emit({ t: "delete-forever/user-clicked-confirm-button" })
+          dispatch({ t: "delete-forever/user-clicked-confirm-button" })
         }
         //
         cancelDisabled={isLoading(model.deleteForeverRequest)}
         onCancel={() =>
-          emit({ t: "delete-forever/user-clicked-cancel-button" })
+          dispatch({ t: "delete-forever/user-clicked-cancel-button" })
         }
       />
     </>

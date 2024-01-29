@@ -38,7 +38,7 @@ export type ServerModel = null;
 export type ServerMsg = { t: null };
 
 export type ClientMsg =
-  | GameEvent
+  | GameMsg
   | { t: "hovered-over-columns"; columnIndex: ColumnIndex }
   | { t: "clicked-resign"; userId: UserId }
   | { t: "close-modal" };
@@ -53,7 +53,7 @@ export type ToClient = { t: null };
 //
 //
 
-export type GameEvent =
+export type GameMsg =
   //
   | { t: "user-stopped-playing"; userId: UserId }
   | { t: "user-started-playing"; userId: UserId; playerType: PlayerType }
@@ -78,9 +78,9 @@ export type GameEvent =
 
 type EventError = { t: "not-playing" } | { t: "move"; c: MoveProblem };
 
-export type GameState = StateSetup | StateGame | StateGameOver;
+export type GameModel = StateSetup | StateGame | StateGameOver;
 
-export const initState = (ctx: SpaceCtx): GameState => {
+export const initGame = (ctx: SpaceCtx): GameModel => {
   return {
     type: "setup",
     moveTimeLimit: 5,
@@ -94,15 +94,15 @@ export const initState = (ctx: SpaceCtx): GameState => {
 
 type Errors = {
   errors: {
-    [msgEventId: string]: GameEvent & { error: EventError };
+    [msgEventId: string]: GameMsg & { error: EventError };
   };
 };
 
 const addError = (
-  state: GameState,
-  msgEvent: GameEvent,
+  state: GameModel,
+  msgEvent: GameMsg,
   error: EventError
-): GameState => {
+): GameModel => {
   return {
     ...state,
     errors: {
@@ -164,7 +164,7 @@ export type GameOver =
       resigner: PlayerType;
     };
 
-export const toGameOver = (state: GameState): GameOver | { type: "none" } => {
+export const toGameOver = (state: GameModel): GameOver | { type: "none" } => {
   if (state.type === "setup") {
     return { type: "none" };
   }
@@ -192,7 +192,7 @@ export const allMoveTimeLimit: {
   "9": 9,
 };
 
-export const reducer = (state: GameState, msgEvent: GameEvent): GameState => {
+export const reducer = (state: GameModel, msgEvent: GameMsg): GameModel => {
   switch (state.type) {
     case "setup": {
       switch (msgEvent.t) {
@@ -309,7 +309,7 @@ export const reducer = (state: GameState, msgEvent: GameEvent): GameState => {
 
 export const toPlayerType = (
   userId: UserId,
-  state: GameState
+  state: GameModel
 ): PlayerType | null => {
   if (state.players["player-one"] === userId) {
     return "player-one";

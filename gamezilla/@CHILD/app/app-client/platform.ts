@@ -89,7 +89,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
     case "focus": {
       return {
         model,
-        eff: async (emit) => {
+        eff: async (dispatch) => {
           const element = document.getElementById(platformCmd.viewId);
 
           if (!element) {
@@ -101,7 +101,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
             const handler = () => {
               focused = true;
               element.removeEventListener("focus", handler);
-              emit({
+              dispatch({
                 t: "element-focused",
                 id: platformCmd.viewId,
               });

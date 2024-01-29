@@ -36,7 +36,7 @@ export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>;
 //
 //
 
-export type GameEvent = {
+export type GameMsg = {
   t: "listed-puzzles";
   input: ListPuzzlesInput;
   output: ListPuzzlesOutput;

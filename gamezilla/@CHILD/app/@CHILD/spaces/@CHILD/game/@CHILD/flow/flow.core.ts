@@ -37,7 +37,7 @@ export type ServerModel =
 //
 
 export type ClientMsg =
-  | { t: "msgEvent"; c: GameEvent }
+  | { t: "msgEvent"; c: GameMsg }
   | { t: "builder"; c: Builder.ClientMsg }
   | { t: "play"; c: Play.ClientMsg };
 
@@ -55,17 +55,17 @@ export type ToClient =
 
 export type Mode = "builder" | "play";
 
-export type GameEvent =
+export type GameMsg =
   | { t: "user-changed-mode"; mode: Mode | null; userId: UserId }
-  | { t: "play"; c: Play.GameEvent }
-  | { t: "builder"; c: Builder.GameEvent };
+  | { t: "play"; c: Play.GameMsg }
+  | { t: "builder"; c: Builder.GameMsg };
 
-export type GameState =
+export type GameModel =
   | { t: null }
-  | { t: "builder"; c: Builder.GameState }
-  | { t: "play"; c: Play.GameState };
+  | { t: "builder"; c: Builder.GameModel }
+  | { t: "play"; c: Play.GameModel };
 
-export const initState = () => {
+export const initGame = () => {
   return { t: null };
 };
 
@@ -75,9 +75,9 @@ export const reducer = ({
   state,
 }: {
   ctx: SpaceCtx;
-  msgEvent: WithEventMeta<GameEvent>;
-  state: GameState;
-}): GameState => {
+  msgEvent: WithEventMeta<GameMsg>;
+  state: GameModel;
+}): GameModel => {
   switch (msgEvent.t) {
     case "play": {
       switch (state.t) {
@@ -120,14 +120,14 @@ export const reducer = ({
         case "play": {
           return {
             t: "play",
-            c: Play.initState({ ctx }),
+            c: Play.initGame({ ctx }),
           };
         }
 
         case "builder": {
           return {
             t: "builder",
-            c: Builder.initState({ ctx }),
+            c: Builder.initGame({ ctx }),
           };
         }
       }

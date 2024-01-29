@@ -135,7 +135,7 @@ export const subscriptions = (_ctx: ClientCtx, model: Model): Sub<Msg> => {
 export const View = (_props: {
   model: Model;
   ctx: ClientCtx;
-  emit: (m: Msg) => void;
+  dispatch: (m: Msg) => void;
   onBack: () => void;
 }) => {
   return <div></div>;

@@ -34,12 +34,12 @@ const startTimeout = <Msg>(
   duration: TimeSpan,
   msg: Msg
 ): Eff<Msg> => {
-  return (emit) => {
+  return (dispatch) => {
     timeouts.set(timeoutId, timeoutId);
 
     setTimeout(() => {
       if (timeouts.has(timeoutId)) {
-        emit(msg);
+        dispatch(msg);
         timeouts.delete(timeoutId);
         return;
       }

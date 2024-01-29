@@ -214,7 +214,7 @@ export const subscriptions: Module["subscriptions"] = ({ model }) => {
 //
 //
 
-export const View: Module["View"] = ({ model, emit }) => {
+export const View: Module["View"] = ({ model, dispatch }) => {
   return (
     <Transition
       mode="out-in"
@@ -224,7 +224,11 @@ export const View: Module["View"] = ({ model, emit }) => {
       onExit={onExit}
     >
       {model.toast && (
-        <Toast key={model.toast.toastId} toast={model.toast} emit={emit} />
+        <Toast
+          key={model.toast.toastId}
+          toast={model.toast}
+          dispatch={dispatch}
+        />
       )}
     </Transition>
   );
@@ -252,18 +256,24 @@ async function onExit(node: HTMLElement) {
   ).finished;
 }
 
-function Toast({ toast, emit }: { toast: Toast; emit: (m: Msg) => void }) {
+function Toast({
+  toast,
+  dispatch,
+}: {
+  toast: Toast;
+  dispatch: (m: Msg) => void;
+}) {
   const errorMsg = toast.errorMsg;
   return (
     <div
       id={String(toast.toastId)}
       className="w-full overflow-visible"
       //
-      onMouseDown={() => emit({ t: "pressed-down-on-toast", toast })}
-      onMouseUp={() => emit({ t: "pressed-up-on-toast", toast })}
+      onMouseDown={() => dispatch({ t: "pressed-down-on-toast", toast })}
+      onMouseUp={() => dispatch({ t: "pressed-up-on-toast", toast })}
       //
-      onTouchStart={() => emit({ t: "pressed-down-on-toast", toast })}
-      onTouchEnd={() => emit({ t: "pressed-up-on-toast", toast })}
+      onTouchStart={() => dispatch({ t: "pressed-down-on-toast", toast })}
+      onTouchEnd={() => dispatch({ t: "pressed-up-on-toast", toast })}
       //
       onContextMenu={(e) => {
         e.preventDefault();
@@ -283,7 +293,7 @@ function Toast({ toast, emit }: { toast: Toast; emit: (m: Msg) => void }) {
             <button
               className="font-bold"
               onClick={() =>
-                emit({
+                dispatch({
                   t: "clicked-see-error",
                   errorMsg: errorMsg,
                   toastId: toast.toastId,
@@ -296,7 +306,7 @@ function Toast({ toast, emit }: { toast: Toast; emit: (m: Msg) => void }) {
         )}
         <button
           onClick={() =>
-            emit({
+            dispatch({
               t: "clicked-dismiss-button",
               toastId: toast.toastId,
             })

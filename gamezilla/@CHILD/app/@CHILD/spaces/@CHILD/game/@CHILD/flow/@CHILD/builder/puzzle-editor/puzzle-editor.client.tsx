@@ -35,7 +35,7 @@ import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
-    (model) => updateFromGameEvent({ ...input, model }),
+    (model) => updateFromGameMsg({ ...input, model }),
     (model) => updateMoreDrawer({ ...input, model }),
     (model) => PuzzleEditNameClient.update({ ...input, model }),
     (model) => PuzzleDeleteForeverClient.update({ ...input, model }),
@@ -49,15 +49,15 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 
   switch (msg?.t) {
     case "puzzle.editor.flow-grid-ui-edit": {
-      return { model, msgGameEvent: [withId({ t: "grid-ui-edit", c: msg.c })] };
+      return { model, msgGame: [withId({ t: "grid-ui-edit", c: msg.c })] };
     }
     case "puzzle.editor.flow-grid-ui-play": {
-      return { model, msgGameEvent: [withId({ t: "grid-ui-play", c: msg.c })] };
+      return { model, msgGame: [withId({ t: "grid-ui-play", c: msg.c })] };
     }
     case "puzzle.editor.user-clicked-edit-mode-button": {
       return {
         model,
-        msgGameEvent: [
+        msgGame: [
           withId({ t: "user-changed-to-edit-mode", userId: ctx.currentUserId }),
         ],
         msgCmd: [playSound(APP_SOUND.navBackwardMin)],
@@ -66,7 +66,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
     case "puzzle.editor.user-clicked-play-mode-button": {
       return {
         model,
-        msgGameEvent: [
+        msgGame: [
           withId({ t: "user-changed-to-play-mode", userId: ctx.currentUserId }),
         ],
         msgCmd: [playSound(APP_SOUND.navForwardMin)],
@@ -90,21 +90,21 @@ const updateFromMsg: ClientModule["update"] = (input) => {
   }
 };
 
-const updateFromGameEvent: ClientModule["update"] = (input) => {
-  const { model, modelGameState, msgGameEvent } = input;
+const updateFromGameMsg: ClientModule["update"] = (input) => {
+  const { model, modelGame, msgGame } = input;
 
-  switch (msgGameEvent?.t) {
+  switch (msgGame?.t) {
     case "grid-ui-edit": {
-      if (modelGameState.t !== "build") {
+      if (modelGame.t !== "build") {
         return { model };
       }
-      if (modelGameState.mode.t !== "edit") {
+      if (modelGame.mode.t !== "edit") {
         return { model };
       }
       const updated = FlowGridUIEdit.update({
-        model: modelGameState.gridEdit,
-        msg: msgGameEvent.c,
-        grid: modelGameState.puzzle.puzzle.c,
+        model: modelGame.gridEdit,
+        msg: msgGame.c,
+        grid: modelGame.puzzle.puzzle.c,
       });
 
       if (!updated.msgCmd) {
@@ -133,9 +133,9 @@ const updateFromGameEvent: ClientModule["update"] = (input) => {
 //
 
 const View: ClientModule["View"] = (input) => {
-  const { modelGameState, ctx } = input;
+  const { modelGame, ctx } = input;
 
-  if (modelGameState.t !== "build") return null;
+  if (modelGame.t !== "build") return null;
 
   const isSpectating = ctx.currentUserId !== ctx.space.hostId;
 
@@ -153,9 +153,9 @@ const View: ClientModule["View"] = (input) => {
 };
 
 const ViewMode: ClientModule["View"] = (input) => {
-  const { model, modelGameState, emit } = input;
+  const { model, modelGame, dispatch } = input;
 
-  if (modelGameState.t !== "build") {
+  if (modelGame.t !== "build") {
     return null;
   }
 
@@ -167,10 +167,10 @@ const ViewMode: ClientModule["View"] = (input) => {
   const more = {
     label: "More",
     icon: <IconEllipsisVertical className="h-6 w-6" />,
-    onClick: () => emit({ t: "puzzle.editor.user-clicked-more-button" }),
+    onClick: () => dispatch({ t: "puzzle.editor.user-clicked-more-button" }),
   };
 
-  switch (modelGameState.mode.t) {
+  switch (modelGame.mode.t) {
     case "edit": {
       return (
         <div className="flex h-full w-full flex-col items-center justify-center">
@@ -182,8 +182,10 @@ const ViewMode: ClientModule["View"] = (input) => {
 
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
             <FlowGridUIEdit.View
-              model={modelGameState.gridEdit}
-              emit={(c) => emit({ t: "puzzle.editor.flow-grid-ui-edit", c })}
+              model={modelGame.gridEdit}
+              dispatch={(c) =>
+                dispatch({ t: "puzzle.editor.flow-grid-ui-edit", c })
+              }
             />
           </div>
 
@@ -198,7 +200,7 @@ const ViewMode: ClientModule["View"] = (input) => {
                 },
                 icon: <IconPlay className="h-6 w-6" />,
                 onClick: () =>
-                  emit({
+                  dispatch({
                     t: "puzzle.editor.user-clicked-play-mode-button",
                   }),
               },
@@ -221,9 +223,11 @@ const ViewMode: ClientModule["View"] = (input) => {
 
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
             <FlowGridUIPlay.View
-              model={modelGameState.gridPlay}
-              grid={toCurrentGrid(modelGameState)}
-              emit={(c) => emit({ t: "puzzle.editor.flow-grid-ui-play", c })}
+              model={modelGame.gridPlay}
+              grid={toCurrentGrid(modelGame)}
+              dispatch={(c) =>
+                dispatch({ t: "puzzle.editor.flow-grid-ui-play", c })
+              }
             />
           </div>
 
@@ -238,7 +242,7 @@ const ViewMode: ClientModule["View"] = (input) => {
                 },
                 icon: <IconPenToSquare className="h-6 w-6" />,
                 onClick: () =>
-                  emit({
+                  dispatch({
                     t: "puzzle.editor.user-clicked-edit-mode-button",
                   }),
               },
@@ -252,8 +256,10 @@ const ViewMode: ClientModule["View"] = (input) => {
   }
 };
 
-const ViewSpectating: ClientModule["View"] = ({ modelGameState, ctx }) => {
-  if (modelGameState.t !== "build") return null;
+const ViewSpectating: ClientModule["View"] = ({ modelGame, ctx }) => {
+  if (modelGame.t !== "build") {
+    return null;
+  }
 
   return (
     <GameLayout isSpectating>
@@ -262,7 +268,7 @@ const ViewSpectating: ClientModule["View"] = ({ modelGameState, ctx }) => {
           profile={ctx.profiles[ctx.space.hostId]}
           subtitle="Editor"
         />
-        <FlowGridUI.View disabled model={toCurrentGrid(modelGameState)} />
+        <FlowGridUI.View disabled model={toCurrentGrid(modelGame)} />
       </div>
     </GameLayout>
   );
@@ -314,12 +320,12 @@ const updateMoreDrawer: ClientModule["update"] = (input) => {
 };
 
 export const ViewMoreDrawer: ClientModule["View"] = (input) => {
-  const { emit } = input;
+  const { dispatch } = input;
   return (
     <Drawer
       id="more-drawer"
       open={input.model.opened === "more"}
-      onClose={() => emit({ t: "puzzle.editor.user-closed-more-drawer" })}
+      onClose={() => dispatch({ t: "puzzle.editor.user-closed-more-drawer" })}
       position="bottom"
     >
       <PuzzleEditNameClient.View {...input} />

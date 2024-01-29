@@ -31,7 +31,7 @@ export type ServerMsg = { t: "noop" };
 //
 //
 
-export type GameEvent = {
+export type GameMsg = {
   t: "user-deleted-puzzle";
   deleted: Deleted;
   flowPuzzleId: FlowPuzzleId;

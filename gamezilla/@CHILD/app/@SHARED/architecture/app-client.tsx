@@ -91,7 +91,7 @@ export type Output<T extends AppClientModuleTypes> = {
    */
   model: T["Model"];
   /**
-   * `eff` is a side effect to be performed. May emit a message
+   * `eff` is a side effect to be performed. May dispatch a message
    */
   eff?: Eff<T["Msg"]>;
   /**
@@ -124,7 +124,7 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
   update: (input: Input<T>) => MaybePromise<Output<T>>;
 
   /**
-   * `subscriptions` is emits msgs specific to the module
+   * `subscriptions` is dispatchs msgs specific to the module
    */
   subscriptions: (input: { ctx: T["Ctx"]; model: T["Model"] }) => Sub<T["Msg"]>;
 
@@ -134,7 +134,7 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
   View: (input: {
     ctx: T["Ctx"];
     model: T["Model"];
-    emit: (msg: T["Msg"]) => void;
+    dispatch: (msg: T["Msg"]) => void;
   }) => VDom;
 };
 
