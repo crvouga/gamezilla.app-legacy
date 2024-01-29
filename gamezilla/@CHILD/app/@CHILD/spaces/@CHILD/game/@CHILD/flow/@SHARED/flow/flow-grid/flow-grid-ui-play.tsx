@@ -70,7 +70,7 @@ export const update = ({
 }): Model => {
   switch (model.status.t) {
     case "dragging": {
-      return updateDragging({ grid, msg, model, state: model.status });
+      return updateDragging({ grid, msg, model, modelGame: model.status });
     }
 
     case "idle": {
@@ -140,13 +140,13 @@ const updateIdle: typeof update = ({ msg, model, grid }) => {
 
 const updateDragging = ({
   msg,
-  state,
+  modelGame,
   model,
   grid,
 }: {
   msg: Msg;
   model: Model;
-  state: Dragging;
+  modelGame: Dragging;
   grid: FlowGrid.Model;
 }): Model => {
   switch (msg.t) {
@@ -158,7 +158,7 @@ const updateDragging = ({
       const extended = AlgoDrawPipes.drawPipes(
         FlowGrid.distance(currentGrid),
         currentGrid.flow,
-        state.activeGroupId,
+        modelGame.activeGroupId,
         nodeId
       );
 

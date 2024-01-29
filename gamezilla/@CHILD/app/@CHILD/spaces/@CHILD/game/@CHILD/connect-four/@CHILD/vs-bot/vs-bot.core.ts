@@ -304,32 +304,32 @@ export const reducer = ({
 };
 
 const addError = (
-  state: GameModel,
+  modelGame: GameModel,
   msgEvent: GameMsg & EventMeta,
   error: EventErr
 ): GameModel => {
   return {
-    ...state,
+    ...modelGame,
     errors: {
-      ...state.errors,
+      ...modelGame.errors,
       [msgEvent.msgEventId]: { ...msgEvent, error },
     },
   };
 };
 
-export const isBotTurn = (state: GameModel): boolean => {
-  if (state.type !== "game") {
+export const isBotTurn = (modelGame: GameModel): boolean => {
+  if (modelGame.type !== "game") {
     return false;
   }
-  const status = ConnectFour.toStatus(state.columns);
+  const status = ConnectFour.toStatus(modelGame.columns);
   return (
     status.type === "Playing" &&
-    status.turn === ConnectFour.opposite[state.userPlayerType]
+    status.turn === ConnectFour.opposite[modelGame.userPlayerType]
   );
 };
 
-export const toBotPlayer = (state: GameModel): ConnectFour.PlayerType => {
-  return ConnectFour.opposite[state.userPlayerType];
+export const toBotPlayer = (modelGame: GameModel): ConnectFour.PlayerType => {
+  return ConnectFour.opposite[modelGame.userPlayerType];
 };
 
 export type GameOver =

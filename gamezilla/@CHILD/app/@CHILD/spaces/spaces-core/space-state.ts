@@ -96,7 +96,7 @@ export const reducer = ({
           const game = state.game ?? Game.initGame(msgEvent.c.t);
           const gameNew = Game.reducer({
             ctx: { space: state },
-            state: game,
+            modelGame: game,
             msgEvent: { ...msgEvent, ...msgEvent.c },
           });
           return {

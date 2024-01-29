@@ -90,7 +90,7 @@ export const reducer = ({
   msgEvent,
 }: {
   ctx: SpaceCtx;
-  state: GameModel;
+  modelGame: GameModel;
   msgEvent: GameMsg;
 }): GameModel => {
   switch (msgEvent.t) {

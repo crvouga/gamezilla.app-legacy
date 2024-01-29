@@ -25,15 +25,12 @@ function alphabeta(node, depth, α, β, maximizingPlayer) is
 
 */
 
-/**
- * The higher the score, the better the state is for the maximizing player.
- */
-export type ScoreFn<TState> = (state: TState, currentDepth: number) => number;
+export type ScoreFn<TState> = (
+  currentState: TState,
+  currentDepth: number
+) => number;
 
-/**
- * Returns all possible states that can be reached from the given state.
- */
-export type ChildrenFn<TState> = (state: TState) => Iterable<TState>;
+export type ChildrenFn<TState> = (currentState: TState) => Iterable<TState>;
 
 const findBestChildState = <TState>({
   scoreFn,
@@ -47,24 +44,24 @@ const findBestChildState = <TState>({
   maxDepth: number;
 }) => {
   const calculateScore = (
-    state: TState,
+    currentState: TState,
     currentDepth: number,
     alpha: number,
     beta: number,
     isMaximizing: boolean
   ): number => {
     if (currentDepth >= maxDepth) {
-      return scoreFn(state, currentDepth);
+      return scoreFn(currentState, currentDepth);
     }
 
-    if (Array.from(childrenFn(state)).length === 0) {
-      return scoreFn(state, currentDepth);
+    if (Array.from(childrenFn(currentState)).length === 0) {
+      return scoreFn(currentState, currentDepth);
     }
 
     if (isMaximizing) {
       let value = -Infinity;
 
-      for (const child of childrenFn(state)) {
+      for (const child of childrenFn(currentState)) {
         value = Math.max(
           value,
           calculateScore(child, currentDepth + 1, alpha, beta, false)
@@ -82,7 +79,7 @@ const findBestChildState = <TState>({
 
     let value = Infinity;
 
-    for (const child of childrenFn(state)) {
+    for (const child of childrenFn(currentState)) {
       value = Math.min(
         value,
         calculateScore(child, currentDepth + 1, alpha, beta, true)

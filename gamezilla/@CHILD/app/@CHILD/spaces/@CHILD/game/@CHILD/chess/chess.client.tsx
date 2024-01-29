@@ -149,24 +149,24 @@ export const update: Client["update"] = (input) => {
       }
     },
     (model) => {
-      const { serverMsg, ctx } = input;
+      const { msgFromServer, ctx } = input;
 
-      if (!serverMsg) {
+      if (!msgFromServer) {
         return { model };
       }
 
-      switch (serverMsg.t) {
+      switch (msgFromServer.t) {
         case "input-mode": {
           return GameClientModule.chainUpdates(
             { model },
             (model) => {
-              const { result } = serverMsg;
+              const { result } = msgFromServer;
 
               const modelNew: ClientModel = {
                 ...model,
                 requests: {
                   ...model.requests,
-                  [serverMsg.t]: RemoteResult.map(result, () => null),
+                  [msgFromServer.t]: RemoteResult.map(result, () => null),
                 },
               };
 
@@ -190,7 +190,7 @@ export const update: Client["update"] = (input) => {
           if (model?.mode?.t === "vs-user") {
             const [child, eff] = VsUser.updateFromServer(
               { ctx },
-              serverMsg.c,
+              msgFromServer.c,
               model.mode.c
             );
 
@@ -206,7 +206,7 @@ export const update: Client["update"] = (input) => {
         case "vs-bot": {
           if (model?.mode?.t === "vs-bot") {
             const updated = VsBot.updateFromServer({
-              msg: serverMsg.c,
+              msg: msgFromServer.c,
               model: model.mode.c,
             });
 
@@ -227,7 +227,7 @@ export const update: Client["update"] = (input) => {
           const updated = Puzzle.updateFromServer({
             ctx,
             model: model.mode.c,
-            msg: serverMsg.c,
+            msg: msgFromServer.c,
           });
 
           return {
@@ -261,8 +261,8 @@ export const subscriptions: Client["subscriptions"] = (_input) => {
 //
 //
 
-export const View: Client["View"] = ({ ctx, state, dispatch }) => {
-  switch (state.t) {
+export const View: Client["View"] = ({ ctx, modelGame, dispatch }) => {
+  switch (modelGame.t) {
     case "none": {
       return (
         <MainMenuScreen.View

@@ -30,7 +30,7 @@ const fromNumber = (n: number): EloRating => {
     return cleaned;
   }
 
-  throw new Error(`Impossible state`);
+  throw new Error(`Impossible condition`);
 };
 
 //

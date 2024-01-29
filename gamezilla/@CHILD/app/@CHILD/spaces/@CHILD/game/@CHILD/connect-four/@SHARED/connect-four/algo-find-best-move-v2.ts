@@ -36,11 +36,11 @@ export const findBestMove = ({
   maximizingPlayer: PlayerType;
   columns: Columns;
 }): BestMoveResult => {
-  const childrenFn: ChildrenFn<State> = (state) => {
+  const childrenFn: ChildrenFn<State> = (modelGame) => {
     const children: State[] = [];
 
     for (const columnIndex of COLUMN_INDEX_ORDER) {
-      const column = state.columns[columnIndex];
+      const column = modelGame.columns[columnIndex];
 
       if (!column) {
         continue;
@@ -50,15 +50,15 @@ export const findBestMove = ({
         continue;
       }
 
-      const columnsNew: Columns = state.columns.map((column) =>
+      const columnsNew: Columns = modelGame.columns.map((column) =>
         column.map((slot) => slot)
       );
 
-      columnsNew[columnIndex] = [...column, state.turn];
+      columnsNew[columnIndex] = [...column, modelGame.turn];
 
       children.push({
         columns: columnsNew,
-        turn: opposite[state.turn],
+        turn: opposite[modelGame.turn],
         lastMoveColumnIndex: columnIndex,
       });
     }
@@ -66,8 +66,8 @@ export const findBestMove = ({
     return children;
   };
 
-  const scoreFn: ScoreFn<State> = (state) => {
-    const status = toStatus(state.columns);
+  const scoreFn: ScoreFn<State> = (modelGame) => {
+    const status = toStatus(modelGame.columns);
 
     if (status.type !== "Winner") {
       return 0;

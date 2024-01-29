@@ -72,44 +72,52 @@ export const initGame = () => {
 export const reducer = ({
   ctx,
   msgEvent,
-  state,
+  modelGame,
 }: {
   ctx: SpaceCtx;
   msgEvent: WithEventMeta<GameMsg>;
-  state: GameModel;
+  modelGame: GameModel;
 }): GameModel => {
   switch (msgEvent.t) {
     case "play": {
-      switch (state.t) {
+      switch (modelGame.t) {
         case "play": {
           return {
             t: "play",
-            c: Play.reducer({ ctx, msgEvent: msgEvent.c, state: state.c }),
+            c: Play.reducer({
+              ctx,
+              msgEvent: msgEvent.c,
+              modelGame: modelGame.c,
+            }),
           };
         }
         default: {
-          return state;
+          return modelGame;
         }
       }
     }
 
     case "builder": {
-      switch (state.t) {
+      switch (modelGame.t) {
         case "builder": {
           return {
             t: "builder",
-            c: Builder.reducer({ ctx, msgEvent: msgEvent.c, state: state.c }),
+            c: Builder.reducer({
+              ctx,
+              msgEvent: msgEvent.c,
+              modelGame: modelGame.c,
+            }),
           };
         }
         default: {
-          return state;
+          return modelGame;
         }
       }
     }
 
     case "user-changed-mode": {
       if (msgEvent.userId !== ctx.space.hostId) {
-        return state;
+        return modelGame;
       }
 
       switch (msgEvent.mode) {

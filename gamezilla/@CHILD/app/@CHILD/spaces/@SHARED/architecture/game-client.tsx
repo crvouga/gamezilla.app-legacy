@@ -42,18 +42,18 @@ export type OutMsg<T extends GameClientTypes> =
 export type GameClient<T extends GameClientTypes> = {
   init: (input: {
     ctx: T["ClientCtx"];
-    state: T["GameModel"];
+    modelGame: T["GameModel"];
     model?: T["ClientModel"] | null;
   }) => Output<T>;
 
   update: (input: {
     ctx: T["ClientCtx"];
-    state: T["GameModel"];
-    stateBefore: T["GameModel"];
+    modelGame: T["GameModel"];
+    modelGameBefore: T["GameModel"];
     model?: T["ClientModel"] | null;
     //
     msg?: T["ClientMsg"] | null;
-    serverMsg?: T["ToClient"] | null;
+    msgFromServer?: T["ToClient"] | null;
     msgEvent?: ClientEvent | null;
     msgGame?: WithEventMeta<T["GameMsg"]> | null;
   }) => Output<T>;
@@ -62,19 +62,19 @@ export type GameClient<T extends GameClientTypes> = {
     intervalId: string;
     ctx: T["ClientCtx"];
     model?: T["ClientModel"] | null;
-    state: T["GameModel"];
+    modelGame: T["GameModel"];
   }) => Sub<T["ClientMsg"]>;
 
   View: (input: {
     ctx: T["ClientCtx"];
     dispatch: (msg: T["ClientMsg"]) => void;
-    state: T["GameModel"];
+    modelGame: T["GameModel"];
     model?: T["ClientModel"] | null;
   }) => VDom;
 
   ViewFeedItem: (input: {
     ctx: T["ClientCtx"];
-    state: T["GameModel"];
+    modelGame: T["GameModel"];
     msgEvent: T["GameMsg"];
   }) => VDom;
 };
@@ -98,7 +98,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
     init: (input) => {
       const initial = client.init({
         ctx: input.ctx,
-        state: input.state.c,
+        modelGame: input.modelGame.c,
         model: input.model?.c,
       });
       return {
@@ -114,10 +114,11 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         msg: input.msg?.t === tag ? input.msg?.c : undefined,
         model: input.model?.t === tag ? input.model?.c : undefined,
         msgGame: input.msgGame?.t === tag ? input.msgGame?.c : undefined,
-        serverMsg: input.serverMsg?.t === tag ? input.serverMsg?.c : undefined,
+        msgFromServer:
+          input.msgFromServer?.t === tag ? input.msgFromServer?.c : undefined,
         ctx: input.ctx,
-        state: input.state.c,
-        stateBefore: input.stateBefore.c,
+        modelGame: input.modelGame.c,
+        modelGameBefore: input.modelGameBefore.c,
       });
       return {
         model: { t: tag, c: updated.model },
@@ -151,7 +152,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         client.subscriptions({
           ctx: input.ctx,
           intervalId: input.intervalId,
-          state: input.state.c,
+          modelGame: input.modelGame.c,
           model: input.model?.c,
         })
       );
@@ -161,7 +162,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
       return (
         <client.View
           ctx={input.ctx}
-          state={input.state.c}
+          modelGame={input.modelGame.c}
           dispatch={(m) => input.dispatch({ t: tag, c: m })}
           model={input.model?.c}
         />
@@ -173,7 +174,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         return client.ViewFeedItem({
           ctx: input.ctx,
           msgEvent: input.msgEvent.c,
-          state: input.state.c,
+          modelGame: input.modelGame.c,
         });
       }
       return null;

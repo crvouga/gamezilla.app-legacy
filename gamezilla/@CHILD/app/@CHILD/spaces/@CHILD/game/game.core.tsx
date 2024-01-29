@@ -105,14 +105,14 @@ export type GameMsg =
 
 export const reducer = ({
   ctx,
-  state,
+  modelGame,
   msgEvent,
 }: {
   ctx: SpaceCtx;
-  state: GameModel;
+  modelGame: GameModel;
   msgEvent: GameMsg & EventMeta;
 }): GameModel => {
-  switch (state.t) {
+  switch (modelGame.t) {
     case "connect-four": {
       switch (msgEvent.t) {
         case "connect-four": {
@@ -121,12 +121,12 @@ export const reducer = ({
             c: ConnectFour.reducer({
               ctx,
               msgEvent: { ...msgEvent, ...msgEvent.c },
-              state: state.c,
+              modelGame: modelGame.c,
             }),
           };
         }
         default: {
-          return state;
+          return modelGame;
         }
       }
     }
@@ -139,13 +139,13 @@ export const reducer = ({
             c: Flow.reducer({
               ctx,
               msgEvent: { ...msgEvent, ...msgEvent.c },
-              state: state.c,
+              modelGame: modelGame.c,
             }),
           };
         }
 
         default: {
-          return state;
+          return modelGame;
         }
       }
     }

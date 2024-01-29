@@ -64,15 +64,15 @@ export const initGame: Module["initGame"] = () => {
   };
 };
 
-export const reducer: Module["reducer"] = ({ state, msgEvent }) => {
+export const reducer: Module["reducer"] = ({ modelGame, msgEvent }) => {
   switch (msgEvent.t) {
     case "grid": {
       const gridPlayNew = FlowGridUIPlay.update({
         msg: msgEvent.c,
-        model: state.gridPlay,
-        grid: state.grid,
+        model: modelGame.gridPlay,
+        grid: modelGame.grid,
       });
-      return { gridPlay: gridPlayNew, grid: state.grid };
+      return { gridPlay: gridPlayNew, grid: modelGame.grid };
     }
   }
 };

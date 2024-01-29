@@ -82,10 +82,10 @@ export const initGame = (): GameModel => {
 export const reducer = ({
   ctx,
   msgEvent,
-  state,
+  modelGame,
 }: {
   ctx: SpaceCtx;
-  state: GameModel;
+  modelGame: GameModel;
   msgEvent: WithEventMeta<GameMsg>;
 }): GameModel => {
   switch (msgEvent.t) {
@@ -114,33 +114,33 @@ export const reducer = ({
     }
 
     case "vs-bot": {
-      switch (state.t) {
+      switch (modelGame.t) {
         case "vs-bot": {
           return {
             t: "vs-bot",
             c: VsBot.reducer({
-              modelGame: state.c,
+              modelGame: modelGame.c,
               msgGame: { ...msgEvent, ...msgEvent.c },
             }),
           };
         }
         default: {
-          return state;
+          return modelGame;
         }
       }
     }
 
     case "vs-user": {
-      switch (state.t) {
+      switch (modelGame.t) {
         case "vs-user": {
           return {
             t: "vs-user",
-            c: VsUser.reducer(state.c, msgEvent.c),
+            c: VsUser.reducer(modelGame.c, msgEvent.c),
           };
         }
 
         default: {
-          return state;
+          return modelGame;
         }
       }
     }

@@ -8,7 +8,9 @@ const last = <T>(xs: NonEmpty<T>): T => {
   const lastEl = xs[xs.length - 1];
 
   if (!lastEl) {
-    throw new Error("Impossible state! NonEmpty array has no last element!");
+    throw new Error(
+      "Impossible condition! NonEmpty array has no last element!"
+    );
   }
 
   return lastEl;

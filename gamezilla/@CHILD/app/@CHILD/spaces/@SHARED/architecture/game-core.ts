@@ -9,6 +9,6 @@ export type GameCore<T extends GameCoreTypes> = {
   reducer: (input: {
     ctx: T["Ctx"];
     msgEvent: T["GameMsg"];
-    state: T["GameModel"];
+    modelGame: T["GameModel"];
   }) => T["GameModel"];
 };

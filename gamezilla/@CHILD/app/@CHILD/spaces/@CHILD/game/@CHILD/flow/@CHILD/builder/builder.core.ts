@@ -199,20 +199,20 @@ export type GameModelList = {
 
 export type GameModel = GameModelList | GameModelBuild;
 
-export const toCurrentGrid = (state: GameModelBuild): FlowGrid.Model => {
-  switch (state.mode.t) {
+export const toCurrentGrid = (modelGame: GameModelBuild): FlowGrid.Model => {
+  switch (modelGame.mode.t) {
     case "edit": {
       return FlowGridUIEdit.toCurrentGrid({
-        model: state.gridEdit,
+        model: modelGame.gridEdit,
       });
     }
 
     case "play": {
       return FlowGridUIPlay.toCurrentGrid({
         grid: FlowGridUIEdit.toCurrentGrid({
-          model: state.gridEdit,
+          model: modelGame.gridEdit,
         }),
-        model: state.gridPlay,
+        model: modelGame.gridPlay,
       });
     }
   }
@@ -224,37 +224,37 @@ export const initGame = (_input: { ctx: SpaceCtx }): GameModel => {
   };
 };
 export const reducer = ({
-  state,
+  modelGame,
   msgEvent,
   ctx,
 }: {
   ctx: SpaceCtx;
   msgEvent: GameMsg;
-  state: GameModel;
+  modelGame: GameModel;
 }): GameModel => {
-  switch (state.t) {
+  switch (modelGame.t) {
     case "build": {
-      return reducerBuildState({ ctx, msgEvent, state: state });
+      return reducerBuildState({ ctx, msgEvent, modelGame: modelGame });
     }
 
     case "list": {
-      return reducerListState({ ctx, msgEvent, state: state });
+      return reducerListState({ ctx, msgEvent, modelGame: modelGame });
     }
   }
 };
 
 const reducerListState = ({
-  state,
+  modelGame,
   msgEvent,
 }: {
   ctx: SpaceCtx;
   msgEvent: GameMsg;
-  state: GameModelList;
+  modelGame: GameModelList;
 }): GameModel => {
   switch (msgEvent.t) {
     case "user-created-puzzle": {
       if (isErr(msgEvent.created)) {
-        return state;
+        return modelGame;
       }
       const puzzleNew = msgEvent.created.value;
       return {
@@ -285,67 +285,67 @@ const reducerListState = ({
     case "user-changed-to-play-mode":
     case "grid-ui-play":
     case "grid-ui-edit": {
-      return state;
+      return modelGame;
     }
   }
 };
 
 const reducerBuildState = ({
-  state,
+  modelGame,
   msgEvent,
   ctx,
 }: {
   ctx: SpaceCtx;
   msgEvent: GameMsg;
-  state: GameModelBuild;
+  modelGame: GameModelBuild;
 }): GameModel => {
   switch (msgEvent.t) {
     case "grid-ui-play": {
       const currentGrid = FlowGridUIEdit.toCurrentGrid({
-        model: state.gridEdit,
+        model: modelGame.gridEdit,
       });
 
       const updated = FlowGridUIPlay.update({
-        model: state.gridPlay,
+        model: modelGame.gridPlay,
         msg: msgEvent.c,
         grid: currentGrid,
       });
 
       return {
-        ...state,
+        ...modelGame,
         gridPlay: updated,
       };
     }
 
     case "grid-ui-edit": {
       const updated = FlowGridUIEdit.update({
-        model: state.gridEdit,
+        model: modelGame.gridEdit,
         msg: msgEvent.c,
-        grid: state.puzzle.puzzle.c,
+        grid: modelGame.puzzle.puzzle.c,
       });
 
       return {
-        ...state,
+        ...modelGame,
         gridEdit: updated.model,
       };
     }
 
     case "user-changed-to-edit-mode": {
       if (msgEvent.userId !== ctx.space.hostId) {
-        return state;
+        return modelGame;
       }
 
-      return { ...state, mode: { t: "edit" } };
+      return { ...modelGame, mode: { t: "edit" } };
     }
 
     case "user-changed-to-play-mode": {
       const initial = FlowGridUIPlay.init({
         grid: FlowGridUIEdit.toCurrentGrid({
-          model: state.gridEdit,
+          model: modelGame.gridEdit,
         }),
       });
       return {
-        ...state,
+        ...modelGame,
         gridPlay: initial,
         mode: { t: "play" },
       };
@@ -353,7 +353,7 @@ const reducerBuildState = ({
 
     case "user-exited-builder": {
       if (msgEvent.userId !== ctx.space.hostId) {
-        return state;
+        return modelGame;
       }
 
       return {
@@ -366,32 +366,32 @@ const reducerBuildState = ({
     }
 
     case "user-edited-puzzle-name": {
-      if (msgEvent.flowPuzzleId !== state.puzzle.id) {
-        return state;
+      if (msgEvent.flowPuzzleId !== modelGame.puzzle.id) {
+        return modelGame;
       }
       if (msgEvent.edited.t === "err") {
-        return state;
+        return modelGame;
       }
       const puzzleNew: FlowPuzzle = {
-        ...state.puzzle,
+        ...modelGame.puzzle,
         name: msgEvent.newName,
       };
       return {
-        ...state,
+        ...modelGame,
         puzzle: puzzleNew,
       };
     }
 
     case "user-saved-changes": {
       if (isErr(msgEvent.saved)) {
-        return state;
+        return modelGame;
       }
-      return { ...state, puzzle: msgEvent.saved.value };
+      return { ...modelGame, puzzle: msgEvent.saved.value };
     }
     case "user-opened-puzzle":
     case "user-created-puzzle":
     case "listed-puzzles": {
-      return state;
+      return modelGame;
     }
   }
 };

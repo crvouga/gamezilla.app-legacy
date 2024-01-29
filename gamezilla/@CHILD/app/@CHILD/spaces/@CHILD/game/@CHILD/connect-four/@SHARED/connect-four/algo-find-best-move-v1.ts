@@ -24,13 +24,13 @@ type State = {
 
 const COLUMN_INDEX_ORDER = [3, 4, 2, 5, 1, 6, 0];
 
-const childrenFn: ChildrenFn<State> = (state) => {
+const childrenFn: ChildrenFn<State> = (modelGame) => {
   const children: State[] = [];
 
-  const turnNew = opposite[state.turn];
+  const turnNew = opposite[modelGame.turn];
 
   for (const columnIndex of COLUMN_INDEX_ORDER) {
-    const column = state.columns[columnIndex];
+    const column = modelGame.columns[columnIndex];
 
     if (!column) {
       continue;
@@ -41,9 +41,9 @@ const childrenFn: ChildrenFn<State> = (state) => {
     }
 
     const copied: Columns = [
-      ...state.columns.slice(0, columnIndex),
-      [...column, state.turn],
-      ...state.columns.slice(columnIndex + 1),
+      ...modelGame.columns.slice(0, columnIndex),
+      [...column, modelGame.turn],
+      ...modelGame.columns.slice(columnIndex + 1),
     ];
 
     children.push({
@@ -67,8 +67,8 @@ export const findBestMove = ({
 }): {
   columnIndex: number | null;
 } => {
-  const scoreFn: ScoreFn<State> = (state) => {
-    const status = toStatus(state.columns);
+  const scoreFn: ScoreFn<State> = (modelGame) => {
+    const status = toStatus(modelGame.columns);
 
     if (status.type !== "Winner") {
       return 0;
