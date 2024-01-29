@@ -3,7 +3,7 @@ import { sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Avatar,
   Button,
-  IconArrowLeftOnRect,
+  IconPlus,
   IconPuzzlePiece,
   Spinner,
   cn,
@@ -132,10 +132,8 @@ const View: ClientModule["View"] = (input) => {
   const shouldShowEmptyState = !shouldShowLoadingState && puzzles.length === 0;
 
   return (
-    <div className="flex w-full flex-1 flex-col gap-2 overflow-hidden">
+    <div className="relative flex w-full flex-1 flex-col gap-2 overflow-hidden">
       <div className="relative flex w-full flex-1 flex-col items-center overflow-y-scroll">
-        <p className="w-full p-4 text-left text-3xl font-bold">Your puzzles</p>
-
         {shouldShowEmptyState && (
           <EmptyState
             label="No puzzles"
@@ -178,21 +176,13 @@ const View: ClientModule["View"] = (input) => {
         />
       </div>
 
-      <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
+      <div className="absolute bottom-4 right-5">
         <Button
-          onClick={input.ctx.onQuit}
-          className="flex-1"
-          text="Exit"
-          start={<IconArrowLeftOnRect />}
-          variant="contained"
-          color="default"
-        />
-        <Button
-          className="flex-1"
           text="Create New"
           variant="contained"
           color="primary"
           disabled={typeof model.total !== "number"}
+          start={<IconPlus className="h-8 w-8" />}
           onClick={() => {
             if (typeof model.total !== "number") {
               return;

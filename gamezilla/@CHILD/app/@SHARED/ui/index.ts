@@ -17,6 +17,7 @@ export * from "./portal";
 export * from "./select";
 export * from "./slider";
 export * from "./spinner";
+export * from "./tabs";
 export * from "./text-field";
 export * from "./toggle-button";
 export * from "./top-bar";

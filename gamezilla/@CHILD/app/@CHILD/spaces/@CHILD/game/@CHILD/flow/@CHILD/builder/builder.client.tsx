@@ -4,6 +4,11 @@ import { Sub, notAsked } from "gamezilla/@SHARED/core";
 import { PuzzleBuilder } from "./puzzle-builder/puzzle-builder.client";
 import { ClientModule } from "./builder.core";
 import { PuzzleListClient } from "./puzzle-list/puzzle-list.client";
+import {
+  Button,
+  IconArrowLeftOnRect,
+  Tabs,
+} from "gamezilla/@CHILD/app/@SHARED/ui";
 
 const init: ClientModule["init"] = {
   listRequest: notAsked,
@@ -51,7 +56,32 @@ const View: ClientModule["View"] = (input) => {
     }
 
     case "list": {
-      return <PuzzleListClient.View {...input} />;
+      return (
+        <div className="flex h-full w-full flex-1 flex-col">
+          <Tabs
+            tabs={["Puzzles", "Packs"]}
+            labels={{
+              Packs: "Packs",
+              Puzzles: "Puzzles",
+            }}
+            onSelect={(_tab) => {}}
+            selected="Puzzles"
+          />
+
+          <PuzzleListClient.View {...input} />
+
+          <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
+            <Button
+              onClick={input.ctx.onQuit}
+              className="flex-1"
+              text="Exit"
+              start={<IconArrowLeftOnRect className="h-8 w-8" />}
+              variant="contained"
+              color="default"
+            />
+          </div>
+        </div>
+      );
     }
   }
 };
