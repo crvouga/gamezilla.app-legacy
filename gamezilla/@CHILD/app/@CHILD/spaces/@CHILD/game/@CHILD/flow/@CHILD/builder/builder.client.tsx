@@ -1,10 +1,12 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
 import {
+  Avatar,
   Button,
   IconArrowLeftOnRect,
   Tabs,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub, notAsked } from "gamezilla/@SHARED/core";
+import { ViewSpaceHostChip } from "../../../../@SHARED/game";
 import { ClientModule } from "./builder.core";
 import { PackListClient } from "./pack-list/pack-list";
 import { PuzzleEditorClient } from "./puzzle-editor/puzzle-editor.client";
@@ -47,7 +49,7 @@ const updateLocation: ClientModule["update"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-  const { gameState, dispatch, model } = input;
+  const { ctx, gameState, dispatch, model } = input;
 
   switch (gameState.t) {
     case "build": {
@@ -55,6 +57,27 @@ const View: ClientModule["View"] = (input) => {
     }
 
     case "list": {
+      const isSpectating = ctx.space.hostId !== ctx.currentUserId;
+
+      if (isSpectating) {
+        const host = ctx.profiles[ctx.space.hostId];
+        const name = host?.username ?? "Host";
+        return (
+          <div className="h-ull flex w-full flex-1 flex-col items-center justify-center gap-4">
+            <div className="flex w-full flex-col items-center justify-center gap-2">
+              <Avatar src={host?.avatarUrl} className="h-20 w-20" />
+              <div className="flex items-center gap-2">
+                <p className="text-xl font-bold">{name}</p>
+                <ViewSpaceHostChip />
+              </div>
+            </div>
+            <p className="text-lg font-bold text-secondary">
+              Choosing a puzzle to build
+            </p>
+          </div>
+        );
+      }
+
       return (
         <div className="flex h-full w-full flex-1 flex-col">
           <Tabs

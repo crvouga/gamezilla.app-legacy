@@ -22,7 +22,6 @@ import {
   isPending,
   loading,
 } from "gamezilla/@SHARED/core";
-import { ViewSpaceHostChip } from "../../../../../@SHARED/game";
 import { FlowGridUI } from "../../../@SHARED/flow";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 import { ClientModule } from "../builder.core";
@@ -117,27 +116,6 @@ const View: ClientModule["View"] = (input) => {
 
   if (gameState.t !== "list") {
     return null;
-  }
-
-  const isSpectating = ctx.space.hostId !== ctx.currentUserId;
-
-  if (isSpectating) {
-    const host = ctx.profiles[ctx.space.hostId];
-    const name = host?.username ?? "Host";
-    return (
-      <div className="h-ull flex w-full flex-1 flex-col items-center justify-center gap-4">
-        <div className="flex w-full flex-col items-center justify-center gap-2">
-          <Avatar src={host?.avatarUrl} className="h-20 w-20" />
-          <div className="flex items-center gap-2">
-            <p className="text-xl font-bold">{name}</p>
-            <ViewSpaceHostChip />
-          </div>
-        </div>
-        <p className="text-lg font-bold text-secondary">
-          Choosing a puzzle to build
-        </p>
-      </div>
-    );
   }
 
   const puzzles = Object.values(model.puzzles);
