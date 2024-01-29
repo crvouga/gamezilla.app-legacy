@@ -62,19 +62,19 @@ export type Input<T extends AppClientModuleTypes> = {
    */
   model: T["Model"];
   /**
-   *
+   * `msg` is an event that happens client side within this module. Like `user-clicked-a-button`
    */
   msg?: T["Msg"] | null;
   /**
-   *
+   * `msgServer` is a message from the server
    */
   msgServer?: T["MsgToClient"] | null;
   /**
-   *
+   * `msgEvt` is an event that happen in another module. Like `user-logged-out`, `route-changed`
    */
   msgEvt?: T["MsgInEvent"] | null;
   /**
-   *
+   * `msgCmd` is a command to sent from another module. Like `show-toast`, `logout`
    */
   msgCmd?: T["MsgInCmd"] | null;
 };
