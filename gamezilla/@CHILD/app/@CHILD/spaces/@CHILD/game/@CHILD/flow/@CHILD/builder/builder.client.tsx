@@ -11,9 +11,9 @@ import { PuzzleBuilderClient } from "./puzzle-builder/puzzle-builder.client";
 import { PuzzleListClient } from "./puzzle-list/puzzle-list.client";
 
 const init: ClientModule["init"] = {
-  listRequest: notAsked,
+  puzzleListRequest: notAsked,
+  puzzleCreateRequest: notAsked,
   puzzles: {},
-  total: null,
   editNameDraft: "",
   editNameRequest: notAsked,
   deleteForeverRequest: notAsked,

@@ -1,3 +1,4 @@
+import { RemoteResult } from "gamezilla/@SHARED/core";
 import { IFlowPuzzleDb } from "../../../@SHARED/flow-puzzle-db";
 
 //
@@ -5,7 +6,9 @@ import { IFlowPuzzleDb } from "../../../@SHARED/flow-puzzle-db";
 //
 //
 
-export type ClientModel = {};
+export type ClientModel = {
+  puzzleListRequest: RemoteResult<string, null>;
+};
 
 export type ClientMsg = { t: "list/user-observed-end-of-list" };
 

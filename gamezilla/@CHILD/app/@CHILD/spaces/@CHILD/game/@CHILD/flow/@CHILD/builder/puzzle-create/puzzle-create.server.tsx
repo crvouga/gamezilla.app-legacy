@@ -59,6 +59,6 @@ const updateFromClient: ServerModule["update"] = async (input) => {
   }
 };
 
-export const BuilderServer = {
+export const PuzzleCreateServer = {
   update,
 };

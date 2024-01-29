@@ -1,7 +1,13 @@
+import {
+  APP_SOUND,
+  playSound,
+  sendToServer,
+  showErrorToast,
+  showOkToast,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import { Button, IconPlus } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { isErr } from "gamezilla/@SHARED/core";
+import { Result, isErr, loading } from "gamezilla/@SHARED/core";
 import { ClientModule } from "../builder.core";
-import { sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 
 const update: ClientModule["update"] = (input) => {
   const { gameEvent, model, msg } = input;
@@ -9,8 +15,11 @@ const update: ClientModule["update"] = (input) => {
   switch (msg?.t) {
     case "puzzle-create/user-clicked-create-button": {
       return {
-        model,
-        cmd: [sendToServer({ t: "puzzle-create/user-clicked-create-button" })],
+        model: { ...model, puzzleCreateRequest: loading },
+        cmd: [
+          playSound(APP_SOUND.tap),
+          sendToServer({ t: "puzzle-create/user-clicked-create-button" }),
+        ],
       };
     }
 
@@ -22,15 +31,21 @@ const update: ClientModule["update"] = (input) => {
   switch (gameEvent?.t) {
     case "user-created-puzzle": {
       if (isErr(gameEvent.created)) {
-        return { model };
+        return {
+          model: { ...model, puzzleCreateRequest: gameEvent.created },
+          cmd: showErrorToast(gameEvent.created.error),
+        };
       }
+
       const puzzleNew = gameEvent.created.value;
 
       return {
         model: {
           ...model,
+          puzzleCreateRequest: Result.mapOk(gameEvent.created, () => null),
           puzzles: { ...model.puzzles, [puzzleNew.id]: puzzleNew },
         },
+        cmd: showOkToast("Puzzle created"),
       };
     }
 
@@ -50,7 +65,7 @@ const ViewCreateButton: ClientModule["View"] = (input) => {
       text="Create New"
       variant="contained"
       color="primary"
-      disabled={typeof model.total !== "number"}
+      loading={model.puzzleCreateRequest.t === "loading"}
       start={<IconPlus className="h-8 w-8" />}
       onClick={() =>
         dispatch({ t: "puzzle-create/user-clicked-create-button" })

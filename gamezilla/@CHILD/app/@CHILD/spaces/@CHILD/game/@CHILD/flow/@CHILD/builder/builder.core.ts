@@ -9,7 +9,7 @@ import {
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { RemoteResult, isErr } from "gamezilla/@SHARED/core";
+import { isErr } from "gamezilla/@SHARED/core";
 import { FlowGrid, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db";
@@ -78,12 +78,11 @@ type BaseClientModel = {
   puzzles: {
     [puzzleId: FlowPuzzleId]: FlowPuzzle;
   };
-  total: number | null;
-  listRequest: RemoteResult<string, null>;
   opened?: "more" | "edit-name" | "delete-forever" | "unsaved-changes" | null;
 };
 
 export type ClientModel = BaseClientModel &
+  PuzzleCreate.ClientModel &
   PuzzleList.ClientModel &
   PuzzleSaveChanges.ClientModel &
   PuzzleEditName.ClientModel &

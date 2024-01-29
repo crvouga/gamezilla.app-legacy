@@ -35,7 +35,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
 
   if (msg?.t === "list/user-observed-end-of-list") {
     return {
-      model: { ...model, listRequest: loading },
+      model: { ...model, puzzleListRequest: loading },
       cmd: [
         sendToServer({
           t: "list/list-puzzles",
@@ -65,16 +65,10 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
       model.puzzles
     );
 
-    const totalNew =
-      fromServer.listed.t === "ok"
-        ? fromServer.listed.value.total
-        : model.total;
-
     return {
       model: {
         ...model,
-        listRequest: Result.mapOk(fromServer.listed, () => null),
-        total: totalNew,
+        puzzleListRequest: Result.mapOk(fromServer.listed, () => null),
         puzzles: puzzlesNew,
       },
     };
@@ -112,7 +106,7 @@ const View: ClientModule["View"] = (input) => {
   }
 
   const puzzles = Object.values(model.puzzles);
-  const shouldShowLoadingState = isPending(model.listRequest);
+  const shouldShowLoadingState = isPending(model.puzzleListRequest);
   const shouldShowEmptyState = !shouldShowLoadingState && puzzles.length === 0;
 
   return (

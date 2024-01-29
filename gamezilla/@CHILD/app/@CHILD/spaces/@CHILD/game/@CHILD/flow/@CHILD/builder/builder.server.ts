@@ -2,6 +2,7 @@ import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import { Sub } from "gamezilla/@SHARED/core";
 import { FlowPuzzleDb } from "../../@SHARED/flow-puzzle-db";
 import { ServerModule } from "./builder.core";
+import { PuzzleCreateServer } from "./puzzle-create/puzzle-create.server";
 import { PuzzleDeleteForeverServer } from "./puzzle-delete-forever/puzzle-delete-forever.server";
 import { PuzzleEditNameServer } from "./puzzle-edit-name/puzzle-edit-name.server";
 import { PuzzleListServer } from "./puzzle-list/puzzle-list.server";
@@ -19,6 +20,7 @@ const update: ServerModule["update"] = async (input) => {
   return GameServerModule.chainUpdates(
     { model: input.model },
     (model) => PuzzleListServer.update({ ...input, model }),
+    (model) => PuzzleCreateServer.update({ ...input, model }),
     (model) => PuzzleDeleteForeverServer.update({ ...input, model }),
     (model) => PuzzleEditNameServer.update({ ...input, model }),
     (model) => PuzzleSaveChangesServer.update({ ...input, model })
