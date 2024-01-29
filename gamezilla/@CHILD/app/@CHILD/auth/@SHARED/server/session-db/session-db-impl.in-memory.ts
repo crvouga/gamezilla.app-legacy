@@ -1,20 +1,38 @@
 import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { ok } from "gamezilla/@SHARED/core";
 import { ISessionDb } from "./session-db";
-import { err } from "gamezilla/@SHARED/core";
+
+const sessionIdsByUserId = new Map<UserId, SessionId[]>();
+const userIdBySessionId = new Map<SessionId, UserId>();
 
 export const SessionDbInMemory = (): ISessionDb => {
   return {
-    async findSessionIdsByUserId(_userId: UserId) {
-      return err("not implemented");
+    async findSessionIdsByUserId(userId: UserId) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const sessionIds = sessionIdsByUserId.get(userId);
+      return ok(sessionIds ?? []);
     },
-    async findUserIdBySessionId(_sessionId: SessionId) {
-      return err("not implemented");
+    async findUserIdBySessionId(sessionId: SessionId) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const userId = userIdBySessionId.get(sessionId);
+      return ok(userId ?? null);
     },
-    async insert(_input) {
-      return err("not implemented");
+    async insert({ sessionId, userId }) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const sessionIds = sessionIdsByUserId.get(userId) ?? [];
+      sessionIds.push(sessionId);
+      sessionIdsByUserId.set(userId, sessionIds);
+      userIdBySessionId.set(sessionId, userId);
+      return ok(null);
     },
-    async deleteByUserId(_userId: UserId) {
-      return err("not implemented");
+    async deleteByUserId(userId: UserId) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const sessionIds = sessionIdsByUserId.get(userId) ?? [];
+      for (const sessionId of sessionIds) {
+        userIdBySessionId.delete(sessionId);
+      }
+      sessionIdsByUserId.delete(userId);
+      return ok(null);
     },
   };
 };
