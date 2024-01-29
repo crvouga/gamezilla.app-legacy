@@ -19,12 +19,12 @@ type Dragging = {
   autocompleteEdge?: FlowGrid.Edge | null;
 };
 
-type State = Idle | Dragging;
+type Status = Idle | Dragging;
 
 export type Model = {
   pipesBySourceId: FlowGrid.Model["flow"]["pipesBySourceId"];
   terminalsByGroupId: FlowGrid.Model["flow"]["terminalsByGroupId"];
-  state: State;
+  status: Status;
 };
 
 //
@@ -55,7 +55,7 @@ export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
   return {
     pipesBySourceId: grid.flow.pipesBySourceId,
     terminalsByGroupId: grid.flow.terminalsByGroupId,
-    state: { t: "idle" },
+    status: { t: "idle" },
   };
 };
 
@@ -68,9 +68,9 @@ export const update = ({
   model: Model;
   grid: FlowGrid.Model;
 }): Model => {
-  switch (model.state.t) {
+  switch (model.status.t) {
     case "dragging": {
-      return updateDragging({ grid, msg, model, state: model.state });
+      return updateDragging({ grid, msg, model, state: model.status });
     }
 
     case "idle": {
@@ -117,7 +117,7 @@ const updateIdle: typeof update = ({ msg, model, grid }) => {
       return {
         terminalsByGroupId: started.terminalsByGroupId,
         pipesBySourceId: started.pipesBySourceId,
-        state: {
+        status: {
           t: "dragging",
           activeGroupId: groupId,
         },
@@ -163,7 +163,7 @@ const updateDragging = ({
       );
 
       const modelNew: Model = {
-        state: model.state,
+        status: model.status,
         terminalsByGroupId: extended.terminalsByGroupId,
         pipesBySourceId: extended.pipesBySourceId,
       };
@@ -176,11 +176,11 @@ const updateDragging = ({
     }
 
     case "pressed-up": {
-      return { ...model, state: { t: "idle" } };
+      return { ...model, status: { t: "idle" } };
     }
 
     case "left": {
-      return { ...model, state: { t: "idle" } };
+      return { ...model, status: { t: "idle" } };
     }
   }
 };
@@ -209,21 +209,21 @@ export const View = ({
       disabled={disabled}
       model={toCurrentGrid({ model, grid })}
       showCoordinates={false}
-      isDragging={model.state.t === "dragging"}
+      isDragging={model.status.t === "dragging"}
       onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
       onPressDown={(nodeId) => dispatch({ t: "pressed-down", nodeId })}
       onPressUp={(nodeId) => dispatch({ t: "pressed-up", nodeId })}
       onLeave={() => dispatch({ t: "left" })}
       autocompleteEdge={
-        model.state.t === "dragging" && model.state.autocompleteEdge
+        model.status.t === "dragging" && model.status.autocompleteEdge
           ? {
-              ...model.state.autocompleteEdge,
-              groupId: model.state.activeGroupId,
+              ...model.status.autocompleteEdge,
+              groupId: model.status.activeGroupId,
             }
           : null
       }
       isActive={({ groupId }) =>
-        model.state.t === "dragging" && model.state.activeGroupId === groupId
+        model.status.t === "dragging" && model.status.activeGroupId === groupId
       }
     />
   );
