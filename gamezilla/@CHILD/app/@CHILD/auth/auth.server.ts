@@ -81,10 +81,14 @@ export const update: Module["update"] = async (input) => {
 export const toUserIdFromSessionId = async (
   _ctx: ServerCtx,
   _model: ModelServer,
-  _sessionId: SessionId
+  sessionId: SessionId
 ): Promise<UserId | null> => {
-  return null;
-  // return StoreUserIdBySessionId(ctx).get(model.userIdBySessionId, sessionId);
+  const found = await SessionDb().findUserIdBySessionId(sessionId);
+  if (isErr(found)) {
+    return null;
+  }
+  const userId = found.value;
+  return userId;
 };
 
 const updateChild: Module["update"] = async (input) => {
