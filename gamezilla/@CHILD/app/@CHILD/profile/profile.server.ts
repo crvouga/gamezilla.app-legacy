@@ -13,7 +13,7 @@ import {
 import { Result, err, isErr, ok } from "gamezilla/@SHARED/core";
 import { AppServerModule } from "../../@SHARED/architecture/app-server";
 import { ProfileDb } from "./profile-db/profile-db";
-import { createProfileDb } from "./profile-db/profile-db-impl.sql";
+import { createProfileDb } from "./profile-db/profile-db-impl.postgres";
 import {
   ProfileCore,
   Req,
