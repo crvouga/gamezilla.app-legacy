@@ -22,6 +22,7 @@ import { ClientModule, toCurrentGrid } from "../builder.core";
 import { PuzzleDeleteForeverClient } from "../puzzle-delete-forever/puzzle-delete-forever.client";
 import { PuzzleEditNameClient } from "../puzzle-edit-name/puzzle-edit-name.client";
 import { PuzzleSaveChangesClient } from "../puzzle-save-changes/puzzle-save-changes.client";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 
 //
 //
@@ -34,42 +35,69 @@ import { PuzzleSaveChangesClient } from "../puzzle-save-changes/puzzle-save-chan
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
-    (model) => updateSound({ ...input, model }),
+    (model) => updateFromGameEvent({ ...input, model }),
     (model) => updateMoreDrawer({ ...input, model }),
     (model) => PuzzleEditNameClient.update({ ...input, model }),
     (model) => PuzzleDeleteForeverClient.update({ ...input, model }),
-    (model) => PuzzleSaveChangesClient.update({ ...input, model })
+    (model) => PuzzleSaveChangesClient.update({ ...input, model }),
+    (model) => updateFromMsg({ ...input, model })
   );
 };
 
-const updateSound: ClientModule["update"] = (input) => {
-  const { model, gameState, gameEvent } = input;
+const updateFromMsg: ClientModule["update"] = (input) => {
+  const { model, msg, ctx } = input;
 
-  if (!gameEvent) {
-    return { model };
-  }
-
-  if (gameState.t !== "build") {
-    return { model };
-  }
-
-  switch (gameEvent.t) {
-    case "user-exited-builder":
-    case "user-changed-to-edit-mode": {
+  switch (msg?.t) {
+    case "puzzle.editor.flow-grid-ui-edit": {
+      return { model, gameEvent: [withId({ t: "grid-ui-edit", c: msg.c })] };
+    }
+    case "puzzle.editor.flow-grid-ui-play": {
+      return { model, gameEvent: [withId({ t: "grid-ui-play", c: msg.c })] };
+    }
+    case "puzzle.editor.user-clicked-edit-mode-button": {
       return {
         model,
+        gameEvent: [
+          withId({ t: "user-changed-to-edit-mode", userId: ctx.currentUserId }),
+        ],
         cmd: [playSound(APP_SOUND.navBackwardMin)],
       };
     }
-
-    case "user-changed-to-play-mode": {
+    case "puzzle.editor.user-clicked-play-mode-button": {
       return {
         model,
+        gameEvent: [
+          withId({ t: "user-changed-to-play-mode", userId: ctx.currentUserId }),
+        ],
         cmd: [playSound(APP_SOUND.navForwardMin)],
       };
     }
+    case "puzzle.editor.user-clicked-more-button": {
+      return {
+        model: { ...model, opened: "more" },
+        cmd: [playSound(APP_SOUND.tap)],
+      };
+    }
+    case "puzzle.editor.user-closed-more-drawer": {
+      return {
+        model: { ...model, opened: null },
+        cmd: [playSound(APP_SOUND.tap)],
+      };
+    }
+    default: {
+      return { model };
+    }
+  }
+};
 
+const updateFromGameEvent: ClientModule["update"] = (input) => {
+  const { model, gameState, gameEvent } = input;
+
+  switch (gameEvent?.t) {
     case "grid-ui-edit": {
+      if (gameState.t !== "build") {
+        return { model };
+      }
       if (gameState.mode.t !== "edit") {
         return { model };
       }
@@ -125,7 +153,7 @@ const View: ClientModule["View"] = (input) => {
 };
 
 const ViewMode: ClientModule["View"] = (input) => {
-  const { model, gameState, dispatch, ctx } = input;
+  const { model, gameState, dispatch } = input;
 
   if (gameState.t !== "build") {
     return null;
@@ -139,7 +167,7 @@ const ViewMode: ClientModule["View"] = (input) => {
   const more = {
     label: "More",
     icon: <IconEllipsisVertical className="h-6 w-6" />,
-    onClick: () => dispatch({ t: "builder/user-clicked-more-button" }),
+    onClick: () => dispatch({ t: "puzzle.editor.user-clicked-more-button" }),
   };
 
   switch (gameState.mode.t) {
@@ -156,7 +184,7 @@ const ViewMode: ClientModule["View"] = (input) => {
             <FlowGridUIEdit.View
               model={gameState.gridEdit}
               dispatch={(c) =>
-                dispatch({ t: "game-event", c: { t: "grid-ui-edit", c } })
+                dispatch({ t: "puzzle.editor.flow-grid-ui-edit", c })
               }
             />
           </div>
@@ -173,11 +201,7 @@ const ViewMode: ClientModule["View"] = (input) => {
                 icon: <IconPlay className="h-6 w-6" />,
                 onClick: () =>
                   dispatch({
-                    t: "game-event",
-                    c: {
-                      t: "user-changed-to-play-mode",
-                      userId: ctx.currentUserId,
-                    },
+                    t: "puzzle.editor.user-clicked-play-mode-button",
                   }),
               },
 
@@ -202,7 +226,7 @@ const ViewMode: ClientModule["View"] = (input) => {
               model={gameState.gridPlay}
               grid={toCurrentGrid(gameState)}
               dispatch={(c) =>
-                dispatch({ t: "game-event", c: { t: "grid-ui-play", c } })
+                dispatch({ t: "puzzle.editor.flow-grid-ui-play", c })
               }
             />
           </div>
@@ -219,11 +243,7 @@ const ViewMode: ClientModule["View"] = (input) => {
                 icon: <IconPenToSquare className="h-6 w-6" />,
                 onClick: () =>
                   dispatch({
-                    t: "game-event",
-                    c: {
-                      t: "user-changed-to-edit-mode",
-                      userId: ctx.currentUserId,
-                    },
+                    t: "puzzle.editor.user-clicked-edit-mode-button",
                   }),
               },
 
@@ -285,10 +305,10 @@ export const capitalize = (s: string) => {
 const updateMoreDrawer: ClientModule["update"] = (input) => {
   const { msg, model } = input;
   switch (msg?.t) {
-    case "builder/user-closed-more-drawer": {
+    case "puzzle.editor.user-closed-more-drawer": {
       return { model: { ...model, opened: null } };
     }
-    case "builder/user-clicked-more-button": {
+    case "puzzle.editor.user-clicked-more-button": {
       return { model: { ...model, opened: "more" } };
     }
     default: {
@@ -303,7 +323,7 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
     <Drawer
       id="more-drawer"
       open={input.model.opened === "more"}
-      onClose={() => dispatch({ t: "builder/user-closed-more-drawer" })}
+      onClose={() => dispatch({ t: "puzzle.editor.user-closed-more-drawer" })}
       position="bottom"
     >
       <PuzzleEditNameClient.View {...input} />
@@ -320,7 +340,7 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
 //
 //
 
-export const PuzzleBuilderClient = {
+export const PuzzleEditorClient = {
   update,
   View,
 };

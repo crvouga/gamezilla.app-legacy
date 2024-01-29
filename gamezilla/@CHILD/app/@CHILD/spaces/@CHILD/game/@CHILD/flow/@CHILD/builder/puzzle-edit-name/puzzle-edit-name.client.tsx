@@ -59,13 +59,13 @@ const updateFormButtons: ClientModule["update"] = (input) => {
   }
 
   switch (msg?.t) {
-    case "edit-name/user-clicked-cancel-button": {
+    case "puzzle.edit-name.user-clicked-cancel-button": {
       return {
         model: { ...model, opened: "more", editNameValidationError: null },
       };
     }
 
-    case "edit-name/user-clicked-save-button": {
+    case "puzzle.edit-name.user-clicked-save-button": {
       const newName = model.editNameDraft ?? "";
 
       if (newName.length === 0) {
@@ -84,7 +84,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
         cmd: [
           playSound(APP_SOUND.tap),
           sendToServer({
-            t: "edit-name/user-clicked-save-button",
+            t: "puzzle.edit-name.user-clicked-save-button",
             newName,
             flowPuzzleId: gameState.puzzle.id,
           }),
@@ -139,7 +139,9 @@ const ViewFormButtons: ClientModule["View"] = ({
       <Button
         className="flex-1"
         text="Cancel"
-        onClick={() => dispatch({ t: "edit-name/user-clicked-cancel-button" })}
+        onClick={() =>
+          dispatch({ t: "puzzle.edit-name.user-clicked-cancel-button" })
+        }
       />
       <Button
         className="flex-1"
@@ -151,7 +153,9 @@ const ViewFormButtons: ClientModule["View"] = ({
           gameState.t !== "build" ||
           model.editNameDraft === gameState.puzzle.name
         }
-        onClick={() => dispatch({ t: "edit-name/user-clicked-save-button" })}
+        onClick={() =>
+          dispatch({ t: "puzzle.edit-name.user-clicked-save-button" })
+        }
       />
     </div>
   );
@@ -167,7 +171,7 @@ const updateDrawer: ClientModule["update"] = (input) => {
   const { msg, model, gameState } = input;
 
   switch (msg?.t) {
-    case "edit-name/user-clicked-button": {
+    case "puzzle.edit-name.user-clicked-button": {
       return {
         model: {
           ...model,
@@ -177,7 +181,7 @@ const updateDrawer: ClientModule["update"] = (input) => {
       };
     }
 
-    case "edit-name/user-closed-drawer": {
+    case "puzzle.edit-name.user-closed-drawer": {
       return { model: { ...model, opened: null } };
     }
 
@@ -196,13 +200,13 @@ const ViewDrawer = (
       <ListItemButton
         icon={(props) => <IconPenToSquare {...props} />}
         label="Edit Name"
-        onClick={() => dispatch({ t: "edit-name/user-clicked-button" })}
+        onClick={() => dispatch({ t: "puzzle.edit-name.user-clicked-button" })}
       />
 
       <Drawer
         id="edit-name-drawer"
         open={model.opened === "edit-name"}
-        onClose={() => dispatch({ t: "edit-name/user-closed-drawer" })}
+        onClose={() => dispatch({ t: "puzzle.edit-name.user-closed-drawer" })}
         position="bottom"
       >
         {children}
@@ -220,7 +224,7 @@ const ViewDrawer = (
 
 const updateDraftNameInput: ClientModule["update"] = ({ model, msg }) => {
   switch (msg?.t) {
-    case "edit-name/user-inputted-draft-name": {
+    case "puzzle.edit-name.user-inputted-draft-name": {
       return {
         model: {
           ...model,
@@ -243,7 +247,10 @@ const ViewDraftNameInput: ClientModule["View"] = ({ model, dispatch }) => {
         label="Name"
         value={model.editNameDraft}
         onChange={(draftName) =>
-          dispatch({ t: "edit-name/user-inputted-draft-name", draftName })
+          dispatch({
+            t: "puzzle.edit-name.user-inputted-draft-name",
+            draftName,
+          })
         }
         error={Boolean(model.editNameValidationError)}
         helperText={editNameValidationErrorToString(

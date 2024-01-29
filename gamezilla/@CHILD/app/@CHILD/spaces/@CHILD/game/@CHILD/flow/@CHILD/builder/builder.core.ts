@@ -99,12 +99,16 @@ export type ServerModel = {};
 //
 
 export type ClientMsg =
-  | { t: "game-event"; c: GameEvent }
+  // | { t: "game-event"; c: GameEvent }
   | { t: "user-selected-list-tab"; listTab: ListTab }
   //
-  | { t: "builder/user-clicked-more-button" }
-  | { t: "builder/user-closed-more-drawer" }
-  | { t: "builder/user-clicked-exit-button" }
+  | { t: "puzzle.editor.user-clicked-more-button" }
+  | { t: "puzzle.editor.user-closed-more-drawer" }
+  | { t: "puzzle.editor.user-clicked-exit-button" }
+  | { t: "puzzle.editor.flow-grid-ui-edit"; c: FlowGridUIEdit.Msg }
+  | { t: "puzzle.editor.flow-grid-ui-play"; c: FlowGridUIPlay.Msg }
+  | { t: "puzzle.editor.user-clicked-edit-mode-button" }
+  | { t: "puzzle.editor.user-clicked-play-mode-button" }
   //
   | PuzzleCreate.ClientMsg
   | PuzzleEditName.ClientMsg

@@ -18,7 +18,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
   const { fromClient, model, deps } = input;
 
   switch (fromClient?.t) {
-    case "edit-name/user-clicked-save-button": {
+    case "puzzle.edit-name.user-clicked-save-button": {
       const edited = await patchName({
         deps,
         flowPuzzleId: fromClient.flowPuzzleId,

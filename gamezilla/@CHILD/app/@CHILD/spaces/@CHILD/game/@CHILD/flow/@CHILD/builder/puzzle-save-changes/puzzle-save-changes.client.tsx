@@ -73,7 +73,7 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
   }
 
   switch (msg?.t) {
-    case "builder/user-clicked-exit-button": {
+    case "puzzle.editor.user-clicked-exit-button": {
       if (
         FlowGridUIEdit.isUnsavedChanges({
           grid: gameState.puzzle.puzzle.c,
@@ -216,7 +216,7 @@ export const viewActionButtons = ({
     label: "Exit",
     disabled: model.saveChangesRequest?.t === "loading",
     icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-    onClick: () => dispatch({ t: "builder/user-clicked-exit-button" }),
+    onClick: () => dispatch({ t: "puzzle.editor.user-clicked-exit-button" }),
   };
 
   const save: BottomBarButtonAction = {

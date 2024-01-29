@@ -1,5 +1,4 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import {
   Button,
   IconArrowLeftOnRect,
@@ -7,9 +6,9 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Sub, notAsked } from "gamezilla/@SHARED/core";
 import { ClientModule } from "./builder.core";
-import { PuzzleBuilderClient } from "./puzzle-builder/puzzle-builder.client";
-import { PuzzleListClient } from "./puzzle-list/puzzle-list.client";
 import { PackListClient } from "./pack-list/pack-list";
+import { PuzzleEditorClient } from "./puzzle-editor/puzzle-editor.client";
+import { PuzzleListClient } from "./puzzle-list/puzzle-list.client";
 
 const init: ClientModule["init"] = {
   puzzleListRequest: notAsked,
@@ -25,11 +24,10 @@ const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     //
-    (model) => updateGameEvent({ ...input, model }),
     (model) => updateLocation({ ...input, model }),
     //
     (model) => PackListClient.update({ ...input, model }),
-    (model) => PuzzleBuilderClient.update({ ...input, model }),
+    (model) => PuzzleEditorClient.update({ ...input, model }),
     (model) => PuzzleListClient.update({ ...input, model })
   );
 };
@@ -48,24 +46,12 @@ const updateLocation: ClientModule["update"] = (input) => {
   }
 };
 
-const updateGameEvent: ClientModule["update"] = (input) => {
-  const { model, msg } = input;
-  if (msg?.t === "game-event") {
-    const gameEvent = withId(msg.c);
-    return {
-      model,
-      gameEvent: [gameEvent],
-    };
-  }
-  return { model };
-};
-
 const View: ClientModule["View"] = (input) => {
   const { gameState, dispatch, model } = input;
 
   switch (gameState.t) {
     case "build": {
-      return <PuzzleBuilderClient.View {...input} />;
+      return <PuzzleEditorClient.View {...input} />;
     }
 
     case "list": {

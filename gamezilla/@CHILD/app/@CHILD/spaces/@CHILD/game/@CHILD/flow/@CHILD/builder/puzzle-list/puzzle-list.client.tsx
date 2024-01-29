@@ -134,14 +134,7 @@ const View: ClientModule["View"] = (input) => {
               key={puzzle.id}
               puzzle={puzzle}
               onClick={() =>
-                dispatch({
-                  t: "game-event",
-                  c: {
-                    t: "user-opened-puzzle",
-                    puzzle,
-                    userId: ctx.currentUserId,
-                  },
-                })
+                dispatch({ t: "list/user-clicked-puzzle-list-item", puzzle })
               }
             />
           ))}
