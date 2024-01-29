@@ -25,6 +25,7 @@ import { FlowGridUI } from "../../../@SHARED/flow";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 import { ClientModule } from "../builder.core";
 import { PuzzleCreateClient } from "../puzzle-create/puzzle-create.client";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
@@ -36,6 +37,19 @@ const update: ClientModule["update"] = (input) => {
 
 const updatePuzzleList: ClientModule["update"] = (input) => {
   const { model, msg, fromServer, ctx } = input;
+
+  if (msg?.t === "list/user-clicked-puzzle-list-item") {
+    return {
+      model,
+      gameEvent: [
+        withId({
+          t: "user-opened-puzzle",
+          puzzle: msg.puzzle,
+          userId: ctx.currentUserId,
+        }),
+      ],
+    };
+  }
 
   if (msg?.t === "list/user-observed-end-of-list") {
     return {
