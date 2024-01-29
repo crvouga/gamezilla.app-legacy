@@ -86,7 +86,7 @@ const updateChild: Module["update"] = (input) => {
 
     case "play": {
       const updated = PlayClient.update({
-        ctx: { ...ctx, onQuit: () => {}, puzzles: model.puzzles },
+        ctx: { ...ctx, onQuit: () => { }, puzzles: model.puzzles },
         gameState: gameState.c,
         model: model.t === "play" ? model.c : PlayClient.init,
         cmd: cmd,
@@ -108,7 +108,7 @@ const updateChild: Module["update"] = (input) => {
 
     case "builder": {
       const updated = BuilderClient.update({
-        ctx: { ...ctx, onQuit: () => {}, puzzles: model.puzzles },
+        ctx: { ...ctx, onQuit: () => { }, puzzles: model.puzzles },
         gameState: gameState.c,
         model: model.t === "builder" ? model.c : BuilderClient.init,
         cmd: cmd,
@@ -215,7 +215,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
       return Sub.tag(
         "play",
         PlayClient.subscriptions({
-          ctx: { ...input.ctx, onQuit() {}, puzzles: input.model.puzzles },
+          ctx: { ...input.ctx, onQuit() { }, puzzles: input.model.puzzles },
           gameState: input.gameState.c,
           model: input.model.t === "play" ? input.model.c : PlayClient.init,
         })
@@ -225,7 +225,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
       return Sub.tag(
         "builder",
         BuilderClient.subscriptions({
-          ctx: { ...input.ctx, onQuit() {}, puzzles: input.model.puzzles },
+          ctx: { ...input.ctx, onQuit() { }, puzzles: input.model.puzzles },
           gameState: input.gameState.c,
           model:
             input.model.t === "builder" ? input.model.c : BuilderClient.init,
@@ -343,7 +343,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
         case "play": {
           return (
             <PlayClient.ViewFeedItem
-              ctx={{ ...ctx, onQuit() {}, puzzles: {} }}
+              ctx={{ ...ctx, onQuit() { }, puzzles: {} }}
               dispatch={(c) => dispatch({ t: "play", c })}
               gameState={gameState.c}
               gameEvent={gameEvent.c}
@@ -356,8 +356,27 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
       }
     }
 
+    case 'builder': {
+      switch (gameState.t) {
+        case 'builder': {
+          return (
+            <BuilderClient.ViewFeedItem
+              ctx={{ ...ctx, onQuit() { }, puzzles: {} }}
+              dispatch={(c) => dispatch({ t: "builder", c })}
+              gameState={gameState.c}
+              gameEvent={gameEvent.c}
+            />
+          )
+        }
+
+        default: {
+          return null;
+        }
+      }
+    }
+
     default: {
-      return <div></div>;
+      return null
     }
   }
 };
