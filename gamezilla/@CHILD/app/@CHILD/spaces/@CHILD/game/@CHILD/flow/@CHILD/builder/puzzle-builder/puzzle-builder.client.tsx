@@ -177,6 +177,7 @@ const ViewMode: ClientModule["View"] = (input) => {
           <ViewBottomButtonBar
             actions={[
               exit,
+              save,
               {
                 label: "Play Mode",
                 classNames: {
@@ -192,7 +193,7 @@ const ViewMode: ClientModule["View"] = (input) => {
                     },
                   }),
               },
-              save,
+
               more,
             ]}
           />
@@ -222,6 +223,7 @@ const ViewMode: ClientModule["View"] = (input) => {
           <ViewBottomButtonBar
             actions={[
               exit,
+              save,
               {
                 label: "Edit Mode",
                 classNames: {
@@ -237,7 +239,7 @@ const ViewMode: ClientModule["View"] = (input) => {
                     },
                   }),
               },
-              save,
+
               more,
             ]}
           />

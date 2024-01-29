@@ -129,11 +129,16 @@ export type Terminal = {
 };
 
 export const isSameTerminal = (a: Terminal, b: Terminal): boolean => {
-  return (
-    a.groupId === b.groupId &&
-    ((a.startId === b.startId && a.endId === b.endId) ||
-      (a.endId === b.startId && a.startId === b.endId))
-  );
+  const startA = a.startId ?? null;
+  const startB = b.startId ?? null;
+  const endA = a.endId ?? null;
+  const endB = b.endId ?? null;
+  const isSameNodes =
+    (startA === startB && endA === endB) ||
+    (endA === startB && startA === endB);
+  const isSameGroup = a.groupId === b.groupId;
+  const isSame = isSameNodes && isSameGroup;
+  return isSame;
 };
 
 export const isSameTerminalsByGroupId = (

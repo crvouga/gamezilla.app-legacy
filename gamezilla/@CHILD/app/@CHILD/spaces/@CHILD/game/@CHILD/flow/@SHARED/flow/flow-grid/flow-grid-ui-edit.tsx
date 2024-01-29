@@ -89,15 +89,24 @@ export const isUnsavedChanges = ({
 
   const draft: Form = History.present(model.form);
 
-  const isEqual =
-    actual.width === draft.width &&
-    actual.height === draft.height &&
-    Flow.isSameTerminalsByGroupId(
+  if (actual.width !== draft.width) {
+    return true;
+  }
+
+  if (actual.height !== draft.height) {
+    return true;
+  }
+
+  if (
+    !Flow.isSameTerminalsByGroupId(
       actual.terminalsByGroupId,
       draft.terminalsByGroupId
-    );
+    )
+  ) {
+    return true;
+  }
 
-  return !isEqual;
+  return false;
 };
 
 //
