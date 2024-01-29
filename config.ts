@@ -6,7 +6,7 @@ export type RendererImpl =
   | "react"
   | "react-with-million";
 
-const RENDERER_IMPL: RendererImpl = "react" as RendererImpl;
+const RENDERER_IMPL: RendererImpl = "inferno" as RendererImpl;
 
 export type TransportImpl = "socket-io" | "web-sockets";
 
