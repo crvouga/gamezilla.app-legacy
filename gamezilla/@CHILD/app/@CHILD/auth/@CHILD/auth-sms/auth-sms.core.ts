@@ -34,7 +34,7 @@ export type ClientModel = {
   verifyCode: RemoteResult<string, null>;
 };
 
-export type ClientMsg =
+export type MsgClient =
   | { t: "clicked-back-button" }
   | { t: "inputted-phone-number"; phoneNumber: string }
   | { t: "inputted-country-code"; countryCode: Iso3166Alpha2Code }
@@ -57,7 +57,7 @@ type VerifiedCode = {
   result: Result<string, null>;
 };
 
-export type ServerMsg =
+export type MsgServer =
   | (SentCode & { clientId: ClientId })
   | (VerifiedCode & { clientId: ClientId; sessionId: SessionId });
 

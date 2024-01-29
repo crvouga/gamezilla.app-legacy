@@ -7,7 +7,7 @@ import * as VsUser from "./@CHILD/vs-user/vs-user.client";
 import { CoverArt } from "./@SHARED/gomoku/gomoku-ui";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   ServerModel,
   MsgToClient,
 } from "./gomoku.core";
@@ -34,7 +34,7 @@ export const init: Model = {
 //
 //
 
-export type Msg = ClientMsg;
+export type Msg = MsgClient;
 
 export const update = ({
   ctx,

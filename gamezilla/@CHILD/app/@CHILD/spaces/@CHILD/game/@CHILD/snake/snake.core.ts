@@ -55,13 +55,13 @@ export const initCoreModel: CoreModel = {
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   | ["PressedKeyDown", Keyboard.Key]
   | ["OpenedMenu", string]
   | ["ClosedMenu"]
   | Request;
 
-export type ServerMsg = ["tick"];
+export type MsgServer = ["tick"];
 
 export type MsgToServer = Request;
 

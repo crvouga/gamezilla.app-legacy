@@ -1,5 +1,5 @@
 import { Eff } from "gamezilla/@SHARED/core";
-import { ServerModel, ServerMsg, MsgToServer } from "./search.core";
+import { ServerModel, MsgServer, MsgToServer } from "./search.core";
 
 type Model = ServerModel;
 
@@ -7,7 +7,7 @@ export const init: { model: Model } = {
   model: null,
 };
 
-type Msg = ServerMsg;
+type Msg = MsgServer;
 
 export const update = ({
   model,

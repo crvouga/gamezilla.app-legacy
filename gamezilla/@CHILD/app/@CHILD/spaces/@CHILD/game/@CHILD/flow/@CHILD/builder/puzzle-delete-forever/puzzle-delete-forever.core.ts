@@ -14,7 +14,7 @@ export type ServerModel = {};
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   | { t: "delete-forever/user-clicked-delete-button" }
   | { t: "delete-forever/user-closed-drawer" }
   | { t: "delete-forever/user-clicked-confirm-button" }
@@ -24,7 +24,7 @@ export type MsgToServer = { t: "delete-forever/user-confirmed" };
 
 export type MsgToClient = { t: "noop" };
 
-export type ServerMsg = { t: "noop" };
+export type MsgServer = { t: "noop" };
 
 //
 //

@@ -9,7 +9,7 @@ import { ConnectFour } from "./@CHILD/connect-four/connect-four.client";
 import { Flow } from "./@CHILD/flow/flow.client";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   MsgGame,
   GameName,
   ModelGame,
@@ -27,7 +27,7 @@ import {
 
 type Module = GameClientModule<{
   Model: ClientModel;
-  Msg: ClientMsg;
+  Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
   ModelGame: ModelGame;
@@ -36,7 +36,7 @@ type Module = GameClientModule<{
   MsgInCmd: null;
   MsgInEvent: SpaceClientEvent;
   MsgOutCmd: ClientCmd<{
-    ClientMsg: ClientMsg;
+    MsgClient: MsgClient;
     MsgToServer: MsgToServer;
   }>;
   MsgOutEvent: null;
@@ -134,7 +134,7 @@ const update: Module["update"] = (input) => {
 //
 //
 
-const subscriptions: Module["subscriptions"] = (input): Sub<ClientMsg> => {
+const subscriptions: Module["subscriptions"] = (input): Sub<MsgClient> => {
   const { modelGame, model } = input;
 
   switch (modelGame.t) {

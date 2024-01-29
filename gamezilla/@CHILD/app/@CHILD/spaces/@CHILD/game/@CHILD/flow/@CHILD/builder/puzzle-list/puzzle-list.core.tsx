@@ -11,11 +11,11 @@ export type ClientModel = {
   puzzleListRequest: RemoteResult<string, null>;
 };
 
-export type ClientMsg =
+export type MsgClient =
   | { t: "list/user-observed-end-of-list" }
   | { t: "list/user-clicked-puzzle-list-item"; puzzle: FlowPuzzle };
 
-export type ServerMsg = { t: "noop" };
+export type MsgServer = { t: "noop" };
 
 export type MsgToServer = { t: "list/list-puzzles"; input: ListPuzzlesInput };
 

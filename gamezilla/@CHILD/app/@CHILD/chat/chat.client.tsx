@@ -5,7 +5,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Browser, Eff, exhaustive, p } from "gamezilla/@SHARED/core";
-import { ClientModel, ClientMsg, MsgToClient } from "./chat.core";
+import { ClientModel, MsgClient, MsgToClient } from "./chat.core";
 
 //
 //
@@ -48,7 +48,7 @@ export const init = ({
 //
 //
 
-export type Msg = ClientMsg;
+export type Msg = MsgClient;
 
 //
 //

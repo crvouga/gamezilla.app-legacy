@@ -29,7 +29,7 @@ import { ViewProfileScreen } from "./profile-client/profile-client-view-profile-
 import { ViewUpdateAvatarScreen } from "./profile-client/profile-client-view-update-avatar-screen";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   MsgToClient,
   MsgToServer,
 } from "./profile.core";
@@ -48,14 +48,14 @@ type Ctx = (ClientCtx | AnonymousClientCtx) & {
 
 type Module = AppClientModule<{
   Model: ClientModel;
-  Msg: ClientMsg;
+  Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
   Ctx: Ctx;
   MsgInCmd: ProfileCmd;
   MsgInEvent: ClientEvent;
   MsgOutCmd: ClientCmd<{
-    ClientMsg: ClientMsg;
+    MsgClient: MsgClient;
     MsgToServer: MsgToServer;
   }>;
   MsgOutEvent: never;
@@ -442,7 +442,7 @@ const ViewUpdateScreen = ({
   dispatch,
 }: {
   ctx: Ctx;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
 }) => {
   if (!ctx.currentUserId) {
     return null;
@@ -527,7 +527,7 @@ const ViewUpdateUsernameScreen = ({
   dispatch,
 }: {
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  dispatch: (msg: MsgClient) => void;
   ctx: Ctx;
 }) => {
   const currentUsername = ctx.currentUserId

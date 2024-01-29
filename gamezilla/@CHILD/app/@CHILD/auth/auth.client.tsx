@@ -20,7 +20,7 @@ import { Eff, Sub, notAsked } from "gamezilla/@SHARED/core";
 import * as AuthClientSMS from "./@CHILD/auth-sms/auth-sms.client";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   LogoutMsg,
   MsgToClient,
   MsgToServer,
@@ -36,14 +36,14 @@ import {
 
 type Client = AppClientModule<{
   Model: ClientModel;
-  Msg: ClientMsg;
+  Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
   Ctx: AnonymousClientCtx;
   MsgInCmd: never;
   MsgInEvent: ClientEvent;
   MsgOutCmd: ClientCmd<{
-    ClientMsg: ClientMsg;
+    MsgClient: MsgClient;
     MsgToServer: MsgToServer;
   }>;
   MsgOutEvent: ClientEvent;
@@ -353,7 +353,7 @@ export const View: Client["View"] = ({ model, ctx, dispatch }) => {
 const ViewLoginScreen = ({
   dispatch,
 }: {
-  dispatch: (msg: ClientMsg) => void;
+  dispatch: (msg: MsgClient) => void;
 }) => {
   return (
     <div className="relative flex h-full w-full flex-1 flex-col">
@@ -385,7 +385,7 @@ export const ViewLogoutScreen = ({
 }: {
   ctx: AnonymousClientCtx;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  dispatch: (msg: MsgClient) => void;
 }) => {
   if (model.logout?.t === "loading") {
     return <LoadingState />;

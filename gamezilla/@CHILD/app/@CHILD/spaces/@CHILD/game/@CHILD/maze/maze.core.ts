@@ -54,12 +54,12 @@ export type ServerModel = CoreModel;
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   | Req
   | ["key-down", Keyboard.Key]
   | ["key-up", Keyboard.Key];
 
-export type ServerMsg = ["tick"];
+export type MsgServer = ["tick"];
 
 export type MsgToServer = Req;
 

@@ -20,7 +20,7 @@ import { CoverArt } from "./@SHARED/chess-ui";
 import { CHESS_SOUND } from "./@SHARED/chess/chess-sounds";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   MsgGame,
   ModelGame,
   MsgToClient,
@@ -37,13 +37,13 @@ import { GameClientModule } from "../../../../@SHARED/architecture/game-client-v
 
 type Client = GameClient<{
   ClientModel: ClientModel;
-  ClientMsg: ClientMsg;
+  MsgClient: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
   ClientCtx: SpaceClientCtx;
   MsgGame: MsgGame;
   ModelGame: ModelGame;
-  ClientCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
+  ClientCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
   ClientEvent: SpaceClientEvent;
 }>;
 

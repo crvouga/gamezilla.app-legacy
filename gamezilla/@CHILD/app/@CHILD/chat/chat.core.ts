@@ -62,7 +62,7 @@ export type ServerModel = null;
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   | ["inputted-user-search", { userSearch: string }]
   | ["clicked-user-search-result", { userId: UserId }]
   | ["clicked-user-selected-delete-button", { userId: UserId }]
@@ -83,7 +83,7 @@ type Problem = ["database-error", string];
 
 export type Res = [...Req, Result<Problem, Partial<ClientModel>>];
 
-export const update = ({ msg }: { msg: ClientMsg; model: ClientModel }) => {
+export const update = ({ msg }: { msg: MsgClient; model: ClientModel }) => {
   switch (msg[0]) {
     default: {
       return null;
@@ -93,7 +93,7 @@ export const update = ({ msg }: { msg: ClientMsg; model: ClientModel }) => {
 
 export type MsgToServer = Req;
 
-export type ServerMsg = Res;
+export type MsgServer = Res;
 
 export type MsgToClient = Res;
 
@@ -103,7 +103,7 @@ export const updateFromClient = ({
   msg: MsgToServer;
   model: ServerModel;
 }): {
-  eff: Eff<ServerMsg>;
+  eff: Eff<MsgServer>;
 } => {
   switch (msg[0]) {
     default: {

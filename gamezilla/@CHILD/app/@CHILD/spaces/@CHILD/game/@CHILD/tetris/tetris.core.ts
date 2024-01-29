@@ -97,7 +97,7 @@ export const toGhostPiece = (model: CoreModel): Piece.Piece => {
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   | ["PressedKey", Keyboard.Key]
   | ["TouchStart", Position.Position]
   | ["TouchMove", Position.Position]
@@ -105,7 +105,7 @@ export type ClientMsg =
   | ["ClickedBoard", Position.Position]
   | MouseMove;
 
-export type ServerMsg = Tick;
+export type MsgServer = Tick;
 
 export type MsgToServer = InputTranslate | InputRotate | InputDrop | MouseMove;
 

@@ -72,19 +72,19 @@ export const toSessionIds = async (
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   | { t: "user-clicked-login-with-phone" }
   | { t: "logout"; c: LogoutMsg }
-  | { t: "sms"; c: AuthSMS.ClientMsg };
+  | { t: "sms"; c: AuthSMS.MsgClient };
 
 export type LogoutMsg =
   | { t: "clicked-confirm" }
   | { t: "clicked-cancel" }
   | { t: "closed" };
 
-export type ServerMsg = {
+export type MsgServer = {
   t: "sms";
-  c: AuthSMS.ServerMsg;
+  c: AuthSMS.MsgServer;
 };
 
 export type MsgToServer =

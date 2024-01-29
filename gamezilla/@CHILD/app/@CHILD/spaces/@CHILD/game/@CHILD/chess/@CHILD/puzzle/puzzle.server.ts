@@ -24,7 +24,7 @@ import { PuzzleDb } from "./puzzle-db";
 import {
   PuzzleInteraction,
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
   initCore,
@@ -45,7 +45,7 @@ export const init = ({
   ctx: SpaceServerCtx;
 }): {
   model: ServerModel;
-  eff: Eff<ServerMsg>;
+  eff: Eff<MsgServer>;
 } => {
   return {
     model: {
@@ -107,12 +107,12 @@ const initialLoad = async ({
 //
 
 export const update = (input: {
-  msg: ServerMsg;
+  msg: MsgServer;
   model: ServerModel;
   ctx: SpaceServerCtx;
 }): {
   model: ServerModel;
-  eff?: Eff<ServerMsg>;
+  eff?: Eff<MsgServer>;
   msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   return p(
@@ -266,7 +266,7 @@ export const updateFromClient = (input: {
   model: ServerModel;
 }): {
   model: ServerModel;
-  eff?: Eff<ServerMsg>;
+  eff?: Eff<MsgServer>;
   msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   return p(
@@ -294,7 +294,7 @@ const watchPutInteraction = ({
   ctx: SpaceServerCtx;
 }): {
   model: ServerModel;
-  eff?: Eff<ServerMsg>;
+  eff?: Eff<MsgServer>;
 } => {
   if (model.t === modelPrev.t) {
     return { model };
@@ -334,7 +334,7 @@ export const watchGetPuzzles = ({
   ctx: SpaceServerCtx;
 }): {
   model: ServerModel;
-  eff?: Eff<ServerMsg>;
+  eff?: Eff<MsgServer>;
 } => {
   if (
     model.t !== "loading" &&
@@ -372,7 +372,7 @@ export const watchPutProfile = ({
   ctx: SpaceServerCtx;
 }): {
   model: ServerModel;
-  eff?: Eff<ServerMsg>;
+  eff?: Eff<MsgServer>;
 } => {
   if (model.profile && !eq(model.profile, modelPrev.profile)) {
     const profile = model.profile;
@@ -433,7 +433,7 @@ const TICK_RATE = TimeSpan.fromMilliseconds(500);
 export const subscriptions = (
   intervalId: string,
   model: ServerModel
-): Sub<ServerMsg> => {
+): Sub<MsgServer> => {
   switch (model.t) {
     case "started": {
       return Time.interval(intervalId, TICK_RATE, () => ({ t: "clock-tick" }));

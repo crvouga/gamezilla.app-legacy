@@ -16,7 +16,7 @@ import {
 import { Result, isErr, isOk, loading } from "gamezilla/@SHARED/core";
 import { FlowGridUIEdit } from "../../../@SHARED/flow";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
-import { ClientModel, ClientModule, ClientMsg, MsgGame } from "../builder.core";
+import { ClientModel, ClientModule, MsgClient, MsgGame } from "../builder.core";
 import { BottomBarButtonAction } from "../../../../../@SHARED/game";
 
 //
@@ -205,7 +205,7 @@ export const viewActionButtons = ({
   dispatch,
 }: {
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  dispatch: (msg: MsgClient) => void;
 }) => {
   const exit: BottomBarButtonAction = {
     label: "Exit",

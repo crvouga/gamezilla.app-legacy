@@ -25,9 +25,9 @@ export type MsgToServer = Req;
 
 export type MsgToClient = Res;
 
-export type ServerMsg = { t: "none" };
+export type MsgServer = { t: "none" };
 
-export type ClientMsg =
+export type MsgClient =
   | Req
   | { t: "clicked-clear" }
   | { t: "focus-done"; result: Browser.FocusResult }

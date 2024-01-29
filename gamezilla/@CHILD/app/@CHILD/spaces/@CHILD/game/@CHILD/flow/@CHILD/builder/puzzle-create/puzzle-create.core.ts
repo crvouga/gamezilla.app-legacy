@@ -19,11 +19,11 @@ export type ServerModel = {};
 //
 //
 
-export type ClientMsg = {
+export type MsgClient = {
   t: "puzzle-create/user-clicked-create-button";
 };
 
-export type ServerMsg = { t: "noop" };
+export type MsgServer = { t: "noop" };
 
 export type MsgToServer = { t: "puzzle-create/user-clicked-create-button" };
 

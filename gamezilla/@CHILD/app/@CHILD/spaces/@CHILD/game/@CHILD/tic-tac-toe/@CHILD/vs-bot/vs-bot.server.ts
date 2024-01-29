@@ -7,7 +7,7 @@ import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space
 import { TicTacToe } from "../../@SHARED/tic-tic-toe";
 import {
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
   initCoreModel,
@@ -34,7 +34,7 @@ export const init = initCoreModel;
 //
 //
 
-export type Msg = ServerMsg;
+export type Msg = MsgServer;
 
 export const update = ({
   msg,

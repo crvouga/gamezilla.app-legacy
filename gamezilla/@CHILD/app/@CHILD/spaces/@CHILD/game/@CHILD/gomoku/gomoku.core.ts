@@ -47,14 +47,14 @@ export type Mode = ServerModel["t"];
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   | Req
-  | { t: "vs-user"; c: VsUser.ClientMsg }
-  | { t: "vs-bot"; c: VsBot.ClientMsg };
+  | { t: "vs-user"; c: VsUser.MsgClient }
+  | { t: "vs-bot"; c: VsBot.MsgClient };
 
-export type ServerMsg =
-  | { t: "vs-user"; c: VsUser.ServerMsg }
-  | { t: "vs-bot"; c: VsBot.ServerMsg };
+export type MsgServer =
+  | { t: "vs-user"; c: VsUser.MsgServer }
+  | { t: "vs-bot"; c: VsBot.MsgServer };
 
 export type MsgToClient =
   | Res

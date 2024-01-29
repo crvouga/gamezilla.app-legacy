@@ -1,6 +1,6 @@
 import { Server, ServerWebSocket, WebSocketHandler } from "bun";
 import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { ClientMsgToServerMsg, ServerMsgToClientMsg } from "../transport.core";
+import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core";
 import {
   IServerTransport,
   ServerTransportWebSocketImpl,
@@ -139,7 +139,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
     message(ws: ServerWebSocket<ServerWebSocketData>, message) {
       const msg = JSON.parse(
         message.toString()
-      ) as ClientMsgToServerMsg<MsgToServer>; // leap of faith
+      ) as MsgClientToMsgServer<MsgToServer>; // leap of faith
 
       switch (msg.codebaseVersionId) {
         case codebaseVersionId: {
@@ -221,7 +221,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 
   const send = (
     ws: ServerWebSocket<ServerWebSocketData>,
-    msg: ServerMsgToClientMsg<MsgToClient>
+    msg: MsgServerToMsgClient<MsgToClient>
   ) => {
     switch (ws.readyState) {
       case 1: {

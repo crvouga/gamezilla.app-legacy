@@ -41,7 +41,7 @@ import {
 import {
   BotLevel,
   ClientModel,
-  ClientMsg,
+  MsgClient,
   MsgGame,
   ModelGame,
   MsgToClient,
@@ -60,13 +60,13 @@ import {
 
 type Module = GameClientModule<{
   Model: ClientModel;
-  Msg: ClientMsg;
+  Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
   ModelGame: ModelGame;
   MsgGame: MsgGame;
   Ctx: SpaceClientCtx & { onQuit: () => void };
-  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
+  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
   MsgInEvent: SpaceClientEvent;
   MsgInCmd: null;
   MsgOutEvent: null;
@@ -211,7 +211,7 @@ const updateSound = (
   msgGame: MsgGame & EventMeta
 ): ClientCmd<{
   MsgToServer: MsgToServer;
-  ClientMsg: ClientMsg;
+  MsgClient: MsgClient;
 }>[] => {
   switch (modelGame.type) {
     case "game": {
@@ -280,7 +280,7 @@ const updateSound = (
 //
 //
 
-const subscriptions: Module["subscriptions"] = (): Sub<ClientMsg> => {
+const subscriptions: Module["subscriptions"] = (): Sub<MsgClient> => {
   return Sub.None;
 };
 

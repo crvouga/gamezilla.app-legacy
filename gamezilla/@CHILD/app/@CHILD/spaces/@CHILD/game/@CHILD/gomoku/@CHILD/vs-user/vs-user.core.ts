@@ -67,7 +67,7 @@ type GameOver =
     };
 
 export type ClientModel = Model & {
-  confirming?: ClientMsg["t"];
+  confirming?: MsgClient["t"];
 };
 
 export type ServerModel = Model;
@@ -119,9 +119,9 @@ const initSetup = (model: Model): ModelSetup => {
 //
 //
 
-export type ClientMsg = Req | { t: "clicked-cancel" };
+export type MsgClient = Req | { t: "clicked-cancel" };
 
-export type ServerMsg = { t: "none" };
+export type MsgServer = { t: "none" };
 
 export type MsgToClient = Res;
 

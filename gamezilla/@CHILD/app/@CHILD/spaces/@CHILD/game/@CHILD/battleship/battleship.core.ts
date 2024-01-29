@@ -78,9 +78,9 @@ type BotLevel = "Easy" | "Medium" | "Hard";
 //
 //
 
-export type ClientMsg = Req;
+export type MsgClient = Req;
 
-export type ServerMsg = { t: null };
+export type MsgServer = { t: null };
 
 export type Req =
   | { t: "start-playing"; team: PlayerType }

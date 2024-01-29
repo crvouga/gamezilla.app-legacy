@@ -11,14 +11,14 @@ import {
   MsgGame,
   ModelGame,
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
 } from "./flow.core";
 
 type Module = GameServerModule<{
   Model: ServerModel;
-  Msg: ServerMsg;
+  Msg: MsgServer;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
   MsgGame: MsgGame;

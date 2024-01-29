@@ -29,17 +29,17 @@ export type Msg =
   | { t: "document-became-visible" }
   | { t: "element-focused"; id: string };
 
-export const update = <TClientMsg>({
+export const update = <TMsgClient>({
   msg,
   model,
   msgCmd,
 }: {
-  msgCmd?: PlatformCmd<TClientMsg> | null;
+  msgCmd?: PlatformCmd<TMsgClient> | null;
   msg?: Msg | null;
   model: Model;
 }): {
   model: Model;
-  parentEff?: Eff<TClientMsg>;
+  parentEff?: Eff<TMsgClient>;
   eff?: Eff<Msg>;
 } => {
   if (msg) {

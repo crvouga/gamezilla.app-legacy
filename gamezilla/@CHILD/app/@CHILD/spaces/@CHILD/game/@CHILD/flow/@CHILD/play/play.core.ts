@@ -24,7 +24,7 @@ export type ServerModel = {};
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   | {
       t: "msgGame";
       c: MsgGame;
@@ -34,7 +34,7 @@ export type ClientMsg =
       c: FlowGridUIPlay.Msg;
     };
 
-export type ServerMsg = { t: null };
+export type MsgServer = { t: null };
 
 export type MsgToServer = { t: null };
 

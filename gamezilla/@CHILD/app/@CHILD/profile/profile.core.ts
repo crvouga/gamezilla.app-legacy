@@ -59,7 +59,7 @@ export type ServerModel = null;
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   | Req
   | {
       t: "clicked-back-button";
@@ -79,7 +79,7 @@ export type ClientMsg =
   | { t: "clicked-avatar" }
   | { t: "clicked-update-username-button" };
 
-export type ServerMsg = { t: "handled"; clientId: ClientId; msg: MsgToClient };
+export type MsgServer = { t: "handled"; clientId: ClientId; msg: MsgToClient };
 
 export type MsgToClient =
   | {

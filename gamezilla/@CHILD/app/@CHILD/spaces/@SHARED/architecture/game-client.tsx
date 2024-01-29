@@ -9,7 +9,7 @@ import { Eff, Sub } from "gamezilla/@SHARED/core";
 export type GameClientTypes = {
   //
   ClientModel: any;
-  ClientMsg: any;
+  MsgClient: any;
   //
   MsgToClient: any;
   MsgToServer: any;
@@ -22,16 +22,16 @@ export type GameClientTypes = {
 
 type Output<T extends GameClientTypes> = {
   model: T["ClientModel"];
-  eff?: Eff<T["ClientMsg"]>;
+  eff?: Eff<T["MsgClient"]>;
   msgCmd?: ClientCmd<{
-    ClientMsg: T["ClientMsg"];
+    MsgClient: T["MsgClient"];
     MsgToServer: T["MsgToServer"];
   }>[];
   msgGame?: WithEventId<T["MsgGame"]>[];
 };
 
 export type InMsg<T extends GameClientTypes> =
-  | ({ variant: "msg" } & T["ClientMsg"])
+  | ({ variant: "msg" } & T["MsgClient"])
   | ({ variant: "to-client" } & T["MsgToClient"])
   | ({ variant: "msgEvt" } & ClientEvent);
 
@@ -52,7 +52,7 @@ export type GameClient<T extends GameClientTypes> = {
     modelGameBefore: T["ModelGame"];
     model?: T["ClientModel"] | null;
     //
-    msg?: T["ClientMsg"] | null;
+    msg?: T["MsgClient"] | null;
     msgServer?: T["MsgToClient"] | null;
     msgEvt?: ClientEvent | null;
     msgGame?: WithEventMeta<T["MsgGame"]> | null;
@@ -63,11 +63,11 @@ export type GameClient<T extends GameClientTypes> = {
     ctx: T["ClientCtx"];
     model?: T["ClientModel"] | null;
     modelGame: T["ModelGame"];
-  }) => Sub<T["ClientMsg"]>;
+  }) => Sub<T["MsgClient"]>;
 
   View: (input: {
     ctx: T["ClientCtx"];
-    dispatch: (msg: T["ClientMsg"]) => void;
+    dispatch: (msg: T["MsgClient"]) => void;
     modelGame: T["ModelGame"];
     model?: T["ClientModel"] | null;
   }) => VDom;
@@ -87,7 +87,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
   client: GameClient<Types>
 ): GameClient<{
   ClientModel: { t: T; c: Types["ClientModel"] };
-  ClientMsg: { t: T; c: Types["ClientMsg"] };
+  MsgClient: { t: T; c: Types["MsgClient"] };
   MsgToClient: { t: T; c: Types["MsgToClient"] };
   MsgToServer: { t: T; c: Types["MsgToServer"] };
   ModelGame: { t: T; c: Types["ModelGame"] };
@@ -202,11 +202,11 @@ const chain = <T extends GameClientTypes>(
   ...updaters: ((input: T["ClientModel"]) => Output<T>)[]
 ): Output<T> => {
   const msgCmd: ClientCmd<{
-    ClientMsg: T["ClientMsg"];
+    MsgClient: T["MsgClient"];
     MsgToServer: T["MsgToServer"];
   }>[] = initial.msgCmd ?? [];
   const msgGames: T["MsgGame"][] = initial?.msgGame ?? [];
-  const eff: Eff<T["ClientMsg"]>[] = initial.eff ? [initial.eff] : [];
+  const eff: Eff<T["MsgClient"]>[] = initial.eff ? [initial.eff] : [];
 
   let model = initial.model;
   let i = 0;
@@ -249,7 +249,7 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
   output: Output<TTypes>
 ): Output<{
   ClientModel: { t: TTag; c: TTypes["ClientModel"] };
-  ClientMsg: { t: TTag; c: TTypes["ClientMsg"] };
+  MsgClient: { t: TTag; c: TTypes["MsgClient"] };
   MsgToClient: { t: TTag; c: TTypes["MsgToClient"] };
   MsgToServer: { t: TTag; c: TTypes["MsgToServer"] };
   ModelGame: { t: TTag; c: TTypes["ModelGame"] };

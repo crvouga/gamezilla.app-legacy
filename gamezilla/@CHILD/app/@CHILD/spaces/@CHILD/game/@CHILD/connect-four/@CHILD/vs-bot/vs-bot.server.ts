@@ -13,7 +13,7 @@ import {
   MsgGame,
   ModelGame,
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
   isBotMoving,
@@ -31,7 +31,7 @@ import {
 
 type Module = GameServerModule<{
   Model: ServerModel;
-  Msg: ServerMsg;
+  Msg: MsgServer;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
   ModelGame: ModelGame;

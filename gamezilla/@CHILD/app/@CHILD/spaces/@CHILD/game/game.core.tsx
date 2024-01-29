@@ -26,13 +26,13 @@ export type ServerModel =
 //
 //
 
-export type ServerMsg =
-  | { t: "connect-four"; c: ConnectFour.ServerMsg }
-  | { t: "flow"; c: Flow.ServerMsg };
+export type MsgServer =
+  | { t: "connect-four"; c: ConnectFour.MsgServer }
+  | { t: "flow"; c: Flow.MsgServer };
 
-export type ClientMsg =
-  | { t: "connect-four"; c: ConnectFour.ClientMsg }
-  | { t: "flow"; c: Flow.ClientMsg };
+export type MsgClient =
+  | { t: "connect-four"; c: ConnectFour.MsgClient }
+  | { t: "flow"; c: Flow.MsgClient };
 
 export type MsgToClient =
   | { t: "connect-four"; c: ConnectFour.MsgToClient }

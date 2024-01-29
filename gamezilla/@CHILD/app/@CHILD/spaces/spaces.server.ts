@@ -22,7 +22,7 @@ import * as SpaceState from "./spaces-core/space-state";
 import * as Spaces from "./spaces-core/spaces";
 import {
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
 } from "./spaces.core";
@@ -40,7 +40,7 @@ type Module = AppServerModule<{
   MsgInCmd: null;
   MsgInEvent: ServerEvent;
   Model: ServerModel;
-  Msg: ServerMsg;
+  Msg: MsgServer;
   MsgOutCmd: ServerCmd<MsgToClient>;
   MsgOutEvent: null;
   MsgToClient: MsgToClient;
@@ -349,7 +349,7 @@ const mergeUpdatedGame = ({
 }): {
   model: ServerModel;
   msgCmd: ServerCmd<MsgToClient>[];
-  eff: Eff<ServerMsg>;
+  eff: Eff<MsgServer>;
   spaceEvents: WithEventId<SpaceEvent>[];
 } => {
   const spaceState = Spaces.toSpaceState(model, spaceId);
@@ -381,7 +381,7 @@ const mergeUpdatedGame = ({
 type Acc = {
   model: ServerModel;
   msgCmd?: ServerCmd<MsgToClient>[];
-  eff?: Eff<ServerMsg>;
+  eff?: Eff<MsgServer>;
 };
 
 const updateFromManySpaceEvents = async (input: {
@@ -490,7 +490,7 @@ const updateFromSpaceEvent = async ({
   spaceEvent: WithEventId<SpaceEvent>;
 }): Promise<{
   model: ServerModel;
-  eff?: Eff<ServerMsg>;
+  eff?: Eff<MsgServer>;
   msgCmd?: ServerCmd<MsgToClient>[];
   spaceEvents?: WithEventId<SpaceEvent>[];
 }> => {
@@ -579,7 +579,7 @@ export const subscriptions: Module["subscriptions"] = async ({
   model,
   ctx,
 }) => {
-  const batch: Sub<ServerMsg>[] = [];
+  const batch: Sub<MsgServer>[] = [];
 
   for (const spaceId in model.spaces) {
     const spaceState = Spaces.toSpaceStarted(model, spaceId as SpaceId);
@@ -600,7 +600,7 @@ export const subscriptions: Module["subscriptions"] = async ({
 
     const mapped = Sub.map(
       sub,
-      (c): ServerMsg => ({ t: "game", c, spaceId: spaceId as SpaceId })
+      (c): MsgServer => ({ t: "game", c, spaceId: spaceId as SpaceId })
     );
 
     batch.push(mapped);

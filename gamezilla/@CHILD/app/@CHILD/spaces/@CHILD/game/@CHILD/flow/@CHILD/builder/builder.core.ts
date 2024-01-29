@@ -32,13 +32,13 @@ import { PuzzleSaveChanges } from "./puzzle-save-changes";
 
 export type ClientModule = GameClientModule<{
   Model: ClientModel;
-  Msg: ClientMsg;
+  Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
   MsgGame: MsgGame;
   ModelGame: ModelGame;
   Ctx: FlowClientCtx;
-  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
+  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
   MsgInEvent: SpaceClientEvent;
   MsgInCmd: null;
   MsgOutEvent: null;
@@ -53,7 +53,7 @@ export type ServerModule = GameServerModule<{
   MsgInCmd: null;
   MsgInEvent: SpaceServerEvent;
   Model: ServerModel;
-  Msg: ServerMsg;
+  Msg: MsgServer;
   MsgOutCmd: SpaceServerCmd<MsgToClient>;
   MsgOutEvent: null;
   Deps: {
@@ -98,7 +98,7 @@ export type ServerModel = {};
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   // | { t: "game-event"; c: MsgGame }
   | { t: "user-selected-list-tab"; listTab: ListTab }
   //
@@ -110,18 +110,18 @@ export type ClientMsg =
   | { t: "puzzle.editor.user-clicked-edit-mode-button" }
   | { t: "puzzle.editor.user-clicked-play-mode-button" }
   //
-  | PuzzleCreate.ClientMsg
-  | PuzzleEditName.ClientMsg
-  | PuzzleDeleteForever.ClientMsg
-  | PuzzleList.ClientMsg
-  | PuzzleSaveChanges.ClientMsg;
+  | PuzzleCreate.MsgClient
+  | PuzzleEditName.MsgClient
+  | PuzzleDeleteForever.MsgClient
+  | PuzzleList.MsgClient
+  | PuzzleSaveChanges.MsgClient;
 
-export type ServerMsg =
-  | PuzzleCreate.ServerMsg
-  | PuzzleSaveChanges.ServerMsg
-  | PuzzleDeleteForever.ServerMsg
-  | PuzzleList.ServerMsg
-  | PuzzleEditName.ServerMsg;
+export type MsgServer =
+  | PuzzleCreate.MsgServer
+  | PuzzleSaveChanges.MsgServer
+  | PuzzleDeleteForever.MsgServer
+  | PuzzleList.MsgServer
+  | PuzzleEditName.MsgServer;
 
 export type MsgToServer =
   | PuzzleCreate.MsgToServer

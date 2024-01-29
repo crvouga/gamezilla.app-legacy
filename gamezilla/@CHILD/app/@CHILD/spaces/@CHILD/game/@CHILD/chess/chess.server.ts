@@ -4,7 +4,7 @@ import {
   MsgGame,
   ModelGame,
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
 } from "./chess.core";
@@ -21,7 +21,7 @@ type Server = GameServer<{
   MsgGame: MsgGame;
   ModelGame: ModelGame;
   ServerModel: ServerModel;
-  ServerMsg: ServerMsg;
+  MsgServer: MsgServer;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
 }>;

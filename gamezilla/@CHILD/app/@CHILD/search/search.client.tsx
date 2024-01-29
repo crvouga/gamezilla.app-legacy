@@ -12,7 +12,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   MsgToClient,
   MsgToServer,
 } from "./search.core";
@@ -54,7 +54,7 @@ export const init = ({
 //
 //
 
-export type Msg = ClientMsg;
+export type Msg = MsgClient;
 
 const searchInputId = "search-input";
 
@@ -68,7 +68,7 @@ export const update = ({
   model: ClientModel;
   eff?: Eff<Msg>;
   msgEvt?: ClientEvent[];
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
   if (msg.t === "focus-done") {
     return { model };

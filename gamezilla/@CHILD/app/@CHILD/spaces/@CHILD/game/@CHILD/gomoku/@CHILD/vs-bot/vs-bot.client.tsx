@@ -2,7 +2,7 @@ import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, Sub, isErr } from "gamezilla/@SHARED/core";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   ServerModel,
   MsgToClient,
   handle,
@@ -29,7 +29,7 @@ export const init = initShared;
 //
 //
 
-export type Msg = ClientMsg;
+export type Msg = MsgClient;
 
 export const update = ({
   ctx,

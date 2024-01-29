@@ -18,7 +18,7 @@ import {
   ProfileCore,
   Req,
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
   profileCoreToProfile,
@@ -36,7 +36,7 @@ type Module = AppServerModule<{
   MsgInCmd: null;
   MsgInEvent: ServerEvent;
   Model: ServerModel;
-  Msg: ServerMsg;
+  Msg: MsgServer;
   MsgOutCmd: ServerCmd<MsgToClient>;
   MsgOutEvent: null;
   MsgToClient: MsgToClient;

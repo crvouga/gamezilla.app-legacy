@@ -92,7 +92,7 @@ export const initCore = ({
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   | ["OpenedMenu", string]
   | ["ClosedMenu"]
   | ["OpenedModal", Modal]
@@ -100,7 +100,7 @@ export type ClientMsg =
   | ["ClickedFlip"]
   | Req;
 
-export type ServerMsg = ClockTicked;
+export type MsgServer = ClockTicked;
 
 export type MsgToClient =
   | ["game-over"]

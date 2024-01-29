@@ -10,7 +10,7 @@ import * as VsBot from "./@CHILD/vs-bot/vs-bot.server";
 import * as VsUser from "./@CHILD/vs-user/vs-user.server";
 import {
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
 } from "./tic-tac-toe.core";
@@ -37,7 +37,7 @@ export const init: Model = { t: "none" };
 //
 //
 
-export type Msg = ServerMsg;
+export type Msg = MsgServer;
 
 export const update = ({
   msg,

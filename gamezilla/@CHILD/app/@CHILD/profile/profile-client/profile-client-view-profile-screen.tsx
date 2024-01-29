@@ -12,7 +12,7 @@ import {
   TopBar,
   TopBarBackButton,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { ClientModel, ClientMsg } from "../profile.core";
+import { ClientModel, MsgClient } from "../profile.core";
 
 export const ViewProfileScreen = ({
   model,
@@ -23,7 +23,7 @@ export const ViewProfileScreen = ({
   ctx: ClientCtx | AnonymousClientCtx;
   userId: UserId;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  dispatch: (msg: MsgClient) => void;
 }) => {
   const profile = model.profiles[userId];
 

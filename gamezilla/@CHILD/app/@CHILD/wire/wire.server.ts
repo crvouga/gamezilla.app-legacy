@@ -14,7 +14,7 @@ import { IServerTransport } from "./transport-server";
 import {
   Client,
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
 } from "./wire.core";
@@ -48,7 +48,7 @@ type Input<TMsgToClient, TMsgToServer> = {
   ctx: ServerCtx;
   model: ServerModel;
   //
-  msg?: ServerMsg | null;
+  msg?: MsgServer | null;
   msgClient?: MsgToServer | null;
   msgEvt?: ServerEvent | null;
   msgCmd?: WireCmd<TMsgToClient> | null;
@@ -61,7 +61,7 @@ type Input<TMsgToClient, TMsgToServer> = {
 
 type Output = {
   model: ServerModel;
-  eff?: Eff<ServerMsg>;
+  eff?: Eff<MsgServer>;
   msgEvt?: ServerEvent[];
   msgCmd?: ServerCmd<MsgToClient>[];
 };
@@ -398,6 +398,6 @@ export const subscriptions = <TMsgToServer, TMsgToClient>({
     MsgToClient: TMsgToClient;
     MsgToServer: TMsgToServer;
   }>;
-}): Sub<ServerMsg> => {
+}): Sub<MsgServer> => {
   return transport.wire;
 };

@@ -18,7 +18,7 @@ import {
 export type GameServerTypes = {
   //
   ServerModel: any;
-  ServerMsg: any;
+  MsgServer: any;
   MsgToClient: any;
   MsgToServer: any;
   //
@@ -30,7 +30,7 @@ export type GameServerTypes = {
 type Output<T extends GameServerTypes> = {
   model: T["ServerModel"];
   msgGame?: WithEventId<T["MsgGame"]>[];
-  eff?: Eff<T["ServerMsg"]>;
+  eff?: Eff<T["MsgServer"]>;
   msgCmd?: SpaceServerCmd<T["MsgToClient"]>[];
 };
 
@@ -41,7 +41,7 @@ export type GameServer<T extends GameServerTypes> = {
     model?: T["ServerModel"] | null;
   }) => Promise<{
     model: T["ServerModel"];
-    eff?: Eff<T["ServerMsg"]>;
+    eff?: Eff<T["MsgServer"]>;
     msgCmd?: SpaceServerCmd<T["MsgToClient"]>[];
   }>;
 
@@ -50,7 +50,7 @@ export type GameServer<T extends GameServerTypes> = {
     state: T["ModelGame"];
     model?: T["ServerModel"] | null;
     //
-    msg?: T["ServerMsg"] | null;
+    msg?: T["MsgServer"] | null;
     clientMsg?: T["MsgToServer"] | null;
     msgGame?: WithEventMeta<T["MsgGame"]> | null;
     msgEvt?: SpaceServerEvent | null;
@@ -61,7 +61,7 @@ export type GameServer<T extends GameServerTypes> = {
     intervalId: string;
     ctx: SpaceServerCtx;
     state: T["ModelGame"];
-  }) => Promise<Sub<T["ServerMsg"]>>;
+  }) => Promise<Sub<T["MsgServer"]>>;
 };
 
 /**
@@ -72,7 +72,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
   server: GameServer<Types>
 ): GameServer<{
   ServerModel: { t: T; c: Types["ServerModel"] };
-  ServerMsg: { t: T; c: Types["ServerMsg"] };
+  MsgServer: { t: T; c: Types["MsgServer"] };
   MsgToClient: { t: T; c: Types["MsgToClient"] };
   MsgToServer: { t: T; c: Types["MsgToServer"] };
   ModelGame: { t: T; c: Types["ModelGame"] };
@@ -154,7 +154,7 @@ const chain = async <T extends GameServerTypes>(
   const msgCmd: SpaceServerCmd<T["MsgToClient"]>[] =
     (await initial).msgCmd ?? [];
   const msgGames: (T["MsgGame"] & EventMeta)[] = (await initial)?.msgGame ?? [];
-  const eff: Eff<T["ServerMsg"]>[] = (await initial).eff
+  const eff: Eff<T["MsgServer"]>[] = (await initial).eff
     ? [(await initial).eff!]
     : [];
 

@@ -16,7 +16,7 @@ import {
   NewGame,
   Res,
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
   initCoreModel,
@@ -54,7 +54,7 @@ export const init = initCoreModel;
 //
 //
 
-export type Msg = ServerMsg;
+export type Msg = MsgServer;
 
 export const update = (
   msg: Msg,

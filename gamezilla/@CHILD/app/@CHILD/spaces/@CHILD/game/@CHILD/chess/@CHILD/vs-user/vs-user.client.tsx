@@ -6,7 +6,7 @@ import { Eff, Option, Sub, exhaustive, isErr } from "gamezilla/@SHARED/core";
 import { Chess } from "../../@SHARED/chess";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   CoreModel,
   ServerModel,
   MsgToClient,
@@ -48,7 +48,7 @@ export const init = ({
 //
 //
 
-export type Msg = ClientMsg;
+export type Msg = MsgClient;
 
 export const update = (
   msg: Msg,
@@ -57,7 +57,7 @@ export const update = (
   switch (msg[0]) {
     //
     //
-    // ClientMsg
+    // MsgClient
     //
     //
 

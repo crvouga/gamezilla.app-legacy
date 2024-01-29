@@ -33,7 +33,7 @@ import {
 } from "../../@SHARED/tic-tic-toe/tic-tac-toe-ui";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   ServerModel,
   MsgToClient,
   MsgToServer,
@@ -66,7 +66,7 @@ export const init = (...input: Parameters<typeof initCoreModel>): Model => {
 //
 //
 
-export type Msg = ClientMsg;
+export type Msg = MsgClient;
 
 export const update = ({
   msg,
@@ -80,7 +80,7 @@ export const update = ({
   model: Model;
 
   eff?: Eff<Msg>;
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
   if (msg.t === "vs-bot-setup") {
     const updated = VsBotSetup.update(model.vsBotSetup, msg.c);

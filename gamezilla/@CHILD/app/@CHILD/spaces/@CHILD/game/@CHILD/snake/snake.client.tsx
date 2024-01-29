@@ -12,7 +12,7 @@ import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Direction } from "./@SHARED/direction";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   CoreModel,
   ServerModel,
   MsgToClient,
@@ -42,7 +42,7 @@ export const init: Model = {
 //
 //
 
-export type Msg = ClientMsg;
+export type Msg = MsgClient;
 
 export const update = (
   {

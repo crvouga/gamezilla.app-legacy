@@ -32,14 +32,14 @@ export const parseModel = (): Result<string, ServerModel> => {
 //
 //
 
-export type ClientMsg =
-  | { t: "vs-user"; c: VsUser.ClientMsg }
-  | { t: "vs-bot"; c: VsBot.ClientMsg }
+export type MsgClient =
+  | { t: "vs-user"; c: VsUser.MsgClient }
+  | { t: "vs-bot"; c: VsBot.MsgClient }
   | Req;
 
-export type ServerMsg =
-  | { t: "vs-user"; c: VsUser.ServerMsg }
-  | { t: "vs-bot"; c: VsBot.ServerMsg };
+export type MsgServer =
+  | { t: "vs-user"; c: VsUser.MsgServer }
+  | { t: "vs-bot"; c: VsBot.MsgServer };
 
 export type MsgToServer =
   | { t: "vs-user"; c: VsUser.MsgToServer }

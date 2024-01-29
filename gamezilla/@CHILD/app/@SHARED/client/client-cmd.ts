@@ -10,7 +10,7 @@ import { AppRoute } from "./client-route";
 //
 
 export type ClientCmdTypes = {
-  ClientMsg: any;
+  MsgClient: any;
   MsgToServer: any;
 };
 
@@ -19,7 +19,7 @@ export type ClientCmd<T extends ClientCmdTypes> =
   | ToastCmd
   | RouteCmd
   | SoundCmd
-  | PlatformCmd<T["ClientMsg"]>
+  | PlatformCmd<T["MsgClient"]>
   | ProfileCmd;
 
 //
@@ -78,7 +78,7 @@ export const focusView = <T extends ClientCmdTypes>(
 export const startTimeout = <T extends ClientCmdTypes>(
   timeoutId: string | number,
   duration: TimeSpan,
-  msg: T["ClientMsg"]
+  msg: T["MsgClient"]
 ): ClientCmd<T> => {
   return {
     t: "platform",
@@ -352,7 +352,7 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
   t: Tag,
   msgCmd: ClientCmd<T>
 ): ClientCmd<{
-  ClientMsg: { t: Tag; c: T["ClientMsg"] };
+  MsgClient: { t: Tag; c: T["MsgClient"] };
   MsgToServer: { t: Tag; c: T["MsgToServer"] };
 }> => {
   switch (msgCmd.t) {
@@ -401,7 +401,7 @@ const tag = <Tag extends string, T extends ClientCmdTypes>(
   tag: Tag,
   msgCmd?: (ClientCmd<T> | null | undefined)[] | null | undefined
 ): ClientCmd<{
-  ClientMsg: { t: Tag; c: T["ClientMsg"] };
+  MsgClient: { t: Tag; c: T["MsgClient"] };
   MsgToServer: { t: Tag; c: T["MsgToServer"] };
 }>[] => {
   return msgCmd?.flatMap((c) => (c ? [tagOne(tag, c)] : [])) ?? [];
@@ -410,7 +410,7 @@ const tag = <Tag extends string, T extends ClientCmdTypes>(
 const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
   msgCmd: ClientCmd<A>[],
   toServerMap: (a: A["MsgToServer"]) => B["MsgToServer"],
-  clientMsgMap: (b: A["ClientMsg"]) => B["ClientMsg"]
+  clientMsgMap: (b: A["MsgClient"]) => B["MsgClient"]
 ): ClientCmd<B>[] => {
   return msgCmd.map((msgCmd) => {
     switch (msgCmd.t) {

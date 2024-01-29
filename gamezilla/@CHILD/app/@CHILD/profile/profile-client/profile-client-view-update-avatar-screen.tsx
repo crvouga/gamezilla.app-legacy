@@ -5,14 +5,14 @@ import {
   TextField,
   TopBar,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { ClientModel, ClientMsg } from "../profile.core";
+import { ClientModel, MsgClient } from "../profile.core";
 
 export const ViewUpdateAvatarScreen = ({
   model,
   dispatch,
 }: {
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  dispatch: (msg: MsgClient) => void;
 }) => {
   return (
     <div className="flex h-full w-full flex-col items-center">

@@ -5,7 +5,7 @@ import {
 import { Eff, Sub, andThen, p } from "gamezilla/@SHARED/core";
 import {
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToServer,
   handleBotMove,
   initShared,
@@ -31,7 +31,7 @@ export const init = initShared;
 //
 //
 
-export type Msg = ServerMsg;
+export type Msg = MsgServer;
 
 export const update = ({
   msg,

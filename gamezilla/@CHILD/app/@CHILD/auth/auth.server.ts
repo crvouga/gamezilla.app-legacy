@@ -12,7 +12,7 @@ import {
   StoreSessionIdByUserId,
   StoreUserIdBySessionId,
 } from "./@SHARED/server/auth-session-store";
-import { ServerModel, ServerMsg, MsgToClient, MsgToServer } from "./auth.core";
+import { ServerModel, MsgServer, MsgToClient, MsgToServer } from "./auth.core";
 
 //
 //
@@ -28,7 +28,7 @@ type Module = AppServerModule<{
   MsgInCmd: null;
   MsgInEvent: ServerEvent;
   Model: ServerModel;
-  Msg: ServerMsg;
+  Msg: MsgServer;
   MsgOutCmd: ServerCmd<MsgToClient>;
   MsgOutEvent: ServerEvent;
   MsgToClient: MsgToClient;

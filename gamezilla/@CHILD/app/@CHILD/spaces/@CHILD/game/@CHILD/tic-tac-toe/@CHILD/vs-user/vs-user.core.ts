@@ -141,9 +141,9 @@ export const parseModel = (): Result<string, CoreModel> => {
 
 type ModalName = "resignation";
 
-export type ClientMsg = Req | ["OpenModal", ModalName] | ["close-modal"];
+export type MsgClient = Req | ["OpenModal", ModalName] | ["close-modal"];
 
-export type ServerMsg = RoundCountDown | MoveCountDown;
+export type MsgServer = RoundCountDown | MoveCountDown;
 
 export type MsgToServer = Req;
 

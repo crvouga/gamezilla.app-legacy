@@ -49,7 +49,7 @@ import * as SpaceState from "./spaces-core/space-state";
 import * as Spaces from "./spaces-core/spaces";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   MsgToClient,
   MsgToServer,
 } from "./spaces.core";
@@ -68,8 +68,8 @@ type Module = AppClientModule<{
   MsgInCmd: never;
   MsgInEvent: ClientEvent;
   Model: ClientModel;
-  Msg: ClientMsg;
-  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
+  Msg: MsgClient;
+  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
   MsgOutEvent: ClientEvent;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
@@ -414,8 +414,8 @@ const mergeUpdatedGame = ({
   gameUpdated: ReturnType<typeof Game.update>;
 }): {
   model: ClientModel;
-  msgCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
-  eff: Eff<ClientMsg>;
+  msgCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
+  eff: Eff<MsgClient>;
 } => {
   return {
     model: {
@@ -440,8 +440,8 @@ const updateFromManySpaceEvents = (input: {
   msgEvts: WithEventId<SpaceEvent>[];
 }): Promise<{
   model: ClientModel;
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
-  eff?: Eff<ClientMsg>;
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
+  eff?: Eff<MsgClient>;
 }> => {
   return updateFromManySpaceEventsLoop(input.ctx, input.msgEvts, {
     model: input.model,
@@ -503,7 +503,7 @@ const sendSpaceEventMsgToServer = async ({
   spaceEvent: WithEventId<SpaceEvent>;
 }): Promise<{
   model: ClientModel;
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 }> => {
   const msgEvtWithMeta = Spaces.toEventWithMeta(
     model,
@@ -538,7 +538,7 @@ const updateClientFromSpaceEvent = async ({
   spaceEvent: WithEventId<SpaceEvent>;
 }): Promise<{
   model: ClientModel;
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
   msgEvt?: WithEventId<SpaceEvent>[];
 }> => {
   if (!ctx.currentUserId) {
@@ -792,7 +792,7 @@ export const subscriptionsCurrentUserGame: Module["subscriptions"] = ({
     model: gameModel,
   });
 
-  const sub = Sub.map(gameSub, (c): ClientMsg => ({ t: "game", c, spaceId }));
+  const sub = Sub.map(gameSub, (c): MsgClient => ({ t: "game", c, spaceId }));
 
   return sub;
 };
@@ -816,7 +816,7 @@ export const View = ({
 }: {
   model: ClientModel;
   ctx: ClientCtx;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
   route: RouteGameSpace;
   viewBottomBar: VDom;
 }): VDom => {
@@ -858,7 +858,7 @@ const ViewSpaceScreen = ({
   model: ClientModel;
   ctx: ClientCtx;
   dispatchEvent: (m: SpaceEvent) => void;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
   spaceId: SpaceId;
 }) => {
   const spaceState = Spaces.toSpaceState(model, spaceId);
@@ -896,7 +896,7 @@ const ViewSpaceStarted = ({
   model: ClientModel;
   ctx: ClientCtx;
   dispatchEvent: (m: SpaceEvent) => void;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
   spaceState: SpaceState.Started;
 }) => {
   const spaceCtx: SpaceClientCtx = {
@@ -1013,7 +1013,7 @@ const ViewFeed = ({
   model,
 }: {
   spaceState: SpaceState.State;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
   model: ClientModel;
   ctx: SpaceClientCtx;
 }) => {
@@ -1123,7 +1123,7 @@ export const ViewScreenJoinSpace = ({
 }: {
   ctx: SpaceClientCtx;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  dispatch: (msg: MsgClient) => void;
   dispatchEvent: (m: SpaceEvent) => void;
 }) => {
   const space = Spaces.toSpaceState(model, ctx.space.spaceId);
@@ -1225,7 +1225,7 @@ const ViewSpaceScreenMain = ({
   space: SpaceState.Started;
   model: ClientModel;
   ctx: SpaceClientCtx;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
   dispatchEvent: (m: SpaceEvent) => void;
 }) => {
   const currentUserSpaceId = Spaces.toSpaceIdByUserId({
@@ -1278,7 +1278,7 @@ const ViewGame = ({
   space: SpaceState.Started;
   model: ClientModel;
   ctx: SpaceClientCtx;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
   dispatchEvent: (m: SpaceEvent) => void;
 }) => {
   if (space.game) {
@@ -1301,7 +1301,7 @@ const ViewTopBar = ({
   dispatchEvent,
 }: {
   ctx: SpaceClientCtx;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
   dispatchEvent: (m: SpaceEvent) => void;
 }) => {
   const peopleCount = Object.keys(ctx.space.users).length;
@@ -1385,7 +1385,7 @@ const ViewTopButton = ({
 const ViewSpaceNotFound = ({
   dispatch,
 }: {
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
 }) => {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
@@ -1407,7 +1407,7 @@ const ViewSpaceNotFound = ({
   );
 };
 
-const ViewSpaceEnded = ({ dispatch }: { dispatch: (m: ClientMsg) => void }) => {
+const ViewSpaceEnded = ({ dispatch }: { dispatch: (m: MsgClient) => void }) => {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space ended</p>
@@ -1435,7 +1435,7 @@ export const ViewCurrentSpaceBar = ({
 }: {
   ctx: ClientCtx;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  dispatch: (msg: MsgClient) => void;
 }) => {
   const dispatchEvent = (msg: SpaceEvent) =>
     dispatch({ t: "msgEvt", c: withId(msg) });

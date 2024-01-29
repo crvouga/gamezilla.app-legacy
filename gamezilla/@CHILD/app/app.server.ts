@@ -30,7 +30,7 @@ import { createDbConn } from "./app-server/db-conn-sql";
 import { createSMS } from "./app-server/sms";
 import {
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
   MsgToServerMeta,
@@ -112,7 +112,7 @@ export const init = async (input: {
   deps: Deps;
 }): Promise<{
   model: ServerModel;
-  eff?: Eff<ServerMsg>;
+  eff?: Eff<MsgServer>;
 }> => {
   const ctx: ServerCtx = {
     dbConn: input.deps.dbConn,
@@ -156,13 +156,13 @@ export const init = async (input: {
 //
 
 export const update = async (input: {
-  msg: ServerMsg;
+  msg: MsgServer;
   model: ServerModel;
   ctx: { now: Posix };
   deps: Deps;
 }): Promise<{
   model: ServerModel;
-  eff?: Eff<ServerMsg>;
+  eff?: Eff<MsgServer>;
 }> => {
   logMsg({ msg: input.msg, logger: input.deps.logger });
 
@@ -195,7 +195,7 @@ function logMsg({
   logger,
 }: {
   logger: Logger;
-  msg?: ServerMsg;
+  msg?: MsgServer;
   msgEvt?: ServerEvent;
   msgCmd?: ServerCmd<MsgToClient>;
 }) {
@@ -208,7 +208,7 @@ function logMsg({
 
 type Output = {
   model: ServerModel;
-  eff: Eff<ServerMsg>;
+  eff: Eff<MsgServer>;
   msgEvt: ServerEvent[];
   msgCmd: ServerCmd<MsgToClient>[];
 };
@@ -277,7 +277,7 @@ export const updateChild = async ({
   deps: Deps;
   ctx: ServerCtx;
   model: ServerModel;
-  msg?: ServerMsg;
+  msg?: MsgServer;
   msgClient?: (MsgToServer & MsgToServerMeta) | null;
   msgEvt?: ServerEvent;
   msgCmd?: ServerCmd<MsgToClient>;
@@ -363,7 +363,7 @@ export const updateChild = async ({
       ServerCmd.tag("wire", wire.msgCmd),
       ServerCmd.tag("profile", profile.msgCmd)
     ),
-    eff: Eff.batch<ServerMsg>([
+    eff: Eff.batch<MsgServer>([
       Eff.tag("spaces", space.eff),
       Eff.tag("auth", auth.eff),
       Eff.tag("wire", wire.eff),
@@ -390,7 +390,7 @@ export const subscriptions = async (input: {
   deps: Deps;
   model: ServerModel;
   ctx: { now: Posix };
-}): Promise<Sub<ServerMsg>> => {
+}): Promise<Sub<MsgServer>> => {
   const ctx: ServerCtx = {
     dbConn: input.deps.dbConn,
     logger: input.deps.logger,
@@ -409,7 +409,7 @@ export const subscriptions = async (input: {
     Sub.flat(
       Sub.map(input.deps.transport.toServer, ({ sessionId, clientId, msgs }) =>
         msgs.map(
-          (msg: any): ServerMsg => ({
+          (msg: any): MsgServer => ({
             t: "➡️",
             sessionId,
             clientId,

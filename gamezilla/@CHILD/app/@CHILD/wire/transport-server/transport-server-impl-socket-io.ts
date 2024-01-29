@@ -1,6 +1,6 @@
 import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Server } from "socket.io";
-import { ClientMsgToServerMsg, ServerMsgToClientMsg } from "../transport.core";
+import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core";
 import {
   IServerTransport,
   ServerTransportSocketIOImpl,
@@ -38,7 +38,7 @@ export const ServerTransportSocketIO = <MsgToServer, MsgToClient>({
       ? maybeSessionId
       : SessionId.generate();
 
-    const toClient: ServerMsgToClientMsg<MsgToClient> = {
+    const toClient: MsgServerToMsgClient<MsgToClient> = {
       t: "session-id",
       codebaseVersionId,
       sessionId,
@@ -49,7 +49,7 @@ export const ServerTransportSocketIO = <MsgToServer, MsgToClient>({
 
     transport.wire.publish({ t: "client-connected", clientId, sessionId });
 
-    socket.on("to-server", (msg: ClientMsgToServerMsg<MsgToServer>) => {
+    socket.on("to-server", (msg: MsgClientToMsgServer<MsgToServer>) => {
       if (
         msg.codebaseVersionId !== codebaseVersionId &&
         PUBLIC_APP_CONFIG.IS_PROD
@@ -78,7 +78,7 @@ export const ServerTransportSocketIO = <MsgToServer, MsgToClient>({
         return;
       }
 
-      const toClient: ServerMsgToClientMsg<MsgToClient> = {
+      const toClient: MsgServerToMsgClient<MsgToClient> = {
         t: "to-client",
         codebaseVersionId,
         msgs: msgs.msgs,
@@ -95,7 +95,7 @@ export const ServerTransportSocketIO = <MsgToServer, MsgToClient>({
   });
 
   transport.toClientBroadcast.subscribe((msgs) => {
-    const toClient: ServerMsgToClientMsg<MsgToClient> = {
+    const toClient: MsgServerToMsgClient<MsgToClient> = {
       t: "to-client",
       codebaseVersionId,
       msgs: msgs,

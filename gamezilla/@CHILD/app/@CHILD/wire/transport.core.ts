@@ -1,6 +1,6 @@
 import { SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
 
-export type ServerMsgToClientMsg<MsgToClient> =
+export type MsgServerToMsgClient<MsgToClient> =
   | {
       t: "to-client";
       msgs: MsgToClient[];
@@ -12,7 +12,7 @@ export type ServerMsgToClientMsg<MsgToClient> =
       codebaseVersionId: string;
     };
 
-export type ClientMsgToServerMsg<MsgToServer> = {
+export type MsgClientToMsgServer<MsgToServer> = {
   t: "to-server";
   msgs: MsgToServer[];
   codebaseVersionId: string;

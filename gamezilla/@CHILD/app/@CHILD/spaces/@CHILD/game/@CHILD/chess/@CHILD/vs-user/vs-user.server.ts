@@ -5,7 +5,7 @@ import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";
 import * as Board from "../../@SHARED/chess/chess";
 import {
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
   initCore,
@@ -30,7 +30,7 @@ export const init = initCore;
 //
 
 export const update = (
-  _msg: ServerMsg,
+  _msg: MsgServer,
   model: ServerModel
 ): { model: ServerModel } => {
   return { model };
@@ -41,7 +41,7 @@ export const updateFromClient = (
   model: ServerModel
 ): {
   model: ServerModel;
-  eff?: Eff<ServerMsg>;
+  eff?: Eff<MsgServer>;
   msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   return { model };
@@ -55,7 +55,7 @@ export const updateFromEvent = ({
   model: ServerModel;
 }): {
   model: ServerModel;
-  eff?: Eff<ServerMsg>;
+  eff?: Eff<MsgServer>;
   msgCmd?: SpaceServerCmd<MsgToClient>[];
 } => {
   if (msg.t === "user-left") {
@@ -119,7 +119,7 @@ export const updateFromEvent = ({
 export const subscriptions = (
   intervalId: string,
   model: ServerModel
-): Sub<ServerMsg> => {
+): Sub<MsgServer> => {
   switch (model.type) {
     case "setup": {
       return Sub.None;

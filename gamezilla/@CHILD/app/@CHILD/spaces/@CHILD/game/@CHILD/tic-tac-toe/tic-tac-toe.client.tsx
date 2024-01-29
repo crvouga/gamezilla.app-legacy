@@ -11,20 +11,20 @@ import * as VsUser from "./@CHILD/vs-user/vs-user.client";
 import { CoverArt } from "./@SHARED/tic-tic-toe/tic-tac-toe-ui";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   MsgToClient,
   MsgToServer,
 } from "./tic-tac-toe.core";
 
 type Client = GameClient<{
   ClientModel: ClientModel;
-  ClientMsg: ClientMsg;
+  MsgClient: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
   MsgGame: null;
   ModelGame: null;
   ClientCtx: SpaceClientCtx;
-  ClientCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
+  ClientCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
   ClientEvent: SpaceClientEvent;
 }>;
 
@@ -82,7 +82,7 @@ export const View = ({
 }: {
   ctx: SpaceClientCtx;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  dispatch: (msg: MsgClient) => void;
 }) => {
   const onQuit = () => dispatch({ t: "input-mode", mode: "none" });
 

@@ -35,9 +35,9 @@ export type ServerModel = null;
 //
 //
 
-export type ServerMsg = { t: null };
+export type MsgServer = { t: null };
 
-export type ClientMsg =
+export type MsgClient =
   | MsgGame
   | { t: "hovered-over-columns"; columnIndex: ColumnIndex }
   | { t: "clicked-resign"; userId: UserId }

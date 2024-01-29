@@ -26,7 +26,7 @@ import { PlayerIcon, ViewColumns } from "../../@SHARED/connect-four-ui";
 import { CoverArt } from "../../@SHARED/connect-four-ui/connect-four-cover-art";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   MsgGame,
   ModelGame,
   StateGame,
@@ -46,7 +46,7 @@ import {
 
 type Module = GameClientModule<{
   Model: ClientModel;
-  Msg: ClientMsg;
+  Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
   ModelGame: ModelGame;
@@ -55,7 +55,7 @@ type Module = GameClientModule<{
   MsgInCmd: null;
   MsgInEvent: SpaceClientEvent;
   MsgOutCmd: ClientCmd<{
-    ClientMsg: ClientMsg;
+    MsgClient: MsgClient;
     MsgToServer: MsgToServer;
   }>;
   MsgOutEvent: null;

@@ -153,7 +153,7 @@ export type Req =
 
 export type Res = Req & { result: Result<string, CoreModel> };
 
-export type ServerMsg = { t: "clock-tick" } | DbMsg;
+export type MsgServer = { t: "clock-tick" } | DbMsg;
 
 type DbMsg =
   | { t: "db-got-puzzles"; result: Result<string, Puzzle[]> }
@@ -165,7 +165,7 @@ type DbMsg =
       result: Result<string, { profile: PuzzleProfile; puzzles: Puzzle[] }>;
     };
 
-export type ClientMsg = Req;
+export type MsgClient = Req;
 
 export type MsgToServer = Req;
 

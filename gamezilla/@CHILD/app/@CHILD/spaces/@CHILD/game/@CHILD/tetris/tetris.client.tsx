@@ -12,7 +12,7 @@ import * as Piece from "./@SHARED/piece";
 import * as Position from "./@SHARED/position";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   ServerModel,
   MsgToClient,
   columnCount,
@@ -45,7 +45,7 @@ export const init: Model = {
 //
 //
 
-export type Msg = ClientMsg;
+export type Msg = MsgClient;
 
 export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {

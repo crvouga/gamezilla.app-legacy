@@ -59,9 +59,9 @@ export const initShared = ({ userId }: { userId: UserId | null }): Model => {
 //
 //
 
-export type ClientMsg = Req;
+export type MsgClient = Req;
 
-export type ServerMsg = { t: "none" };
+export type MsgServer = { t: "none" };
 
 export type MsgToServer = Req;
 

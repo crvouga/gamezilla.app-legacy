@@ -41,24 +41,24 @@ export type ClientModel = {
 //
 //
 
-export type ServerMsg =
+export type MsgServer =
   | ({ t: "➡️"; c: MsgToServer } & MsgToServerMeta)
-  | { t: "wire"; c: Wire.ServerMsg }
-  | { t: "spaces"; c: Spaces.ServerMsg }
-  | { t: "profile"; c: Profile.ServerMsg }
-  | { t: "auth"; c: Auth.ServerMsg };
+  | { t: "wire"; c: Wire.MsgServer }
+  | { t: "spaces"; c: Spaces.MsgServer }
+  | { t: "profile"; c: Profile.MsgServer }
+  | { t: "auth"; c: Auth.MsgServer };
 
-export type ClientMsg =
+export type MsgClient =
   | { t: "➡️"; c: MsgToClient }
   | { t: "routing"; c: Routing.Msg }
   | { t: "toast"; c: Toast.Msg }
   | { t: "sound"; c: Sound.Msg }
   | { t: "platform"; c: Platform.Msg }
   | { t: "status-bar"; c: StatusBar.Msg }
-  | { t: "wire"; c: Wire.ClientMsg }
-  | { t: "spaces"; c: Spaces.ClientMsg }
-  | { t: "auth"; c: Auth.ClientMsg }
-  | { t: "profile"; c: Profile.ClientMsg };
+  | { t: "wire"; c: Wire.MsgClient }
+  | { t: "spaces"; c: Spaces.MsgClient }
+  | { t: "auth"; c: Auth.MsgClient }
+  | { t: "profile"; c: Profile.MsgClient };
 
 export type MsgToServer =
   | { t: "spaces"; c: Spaces.MsgToServer }
@@ -77,13 +77,13 @@ export type MsgToClient =
 //
 //
 
-export type ClientMsgFinal =
-  | { t: "msg"; msg: ClientMsg }
+export type MsgClientFinal =
+  | { t: "msg"; msg: MsgClient }
   | { t: "msgEvt"; msgEvt: ClientEvent }
-  | { t: "from-server"; msgServer: ClientMsg }
+  | { t: "from-server"; msgServer: MsgClient }
   | {
       t: "msgCmd";
-      msgCmd: ClientCmd<{ ClientMsg: ClientMsg; MsgToServer: MsgToServer }>;
+      msgCmd: ClientCmd<{ MsgClient: MsgClient; MsgToServer: MsgToServer }>;
     };
 
 //

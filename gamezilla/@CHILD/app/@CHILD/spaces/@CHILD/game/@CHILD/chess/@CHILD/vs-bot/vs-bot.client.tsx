@@ -26,7 +26,7 @@ import { Chess } from "../../@SHARED/chess";
 import { Chessboard, CoverArt, PlayerIcon } from "../../@SHARED/chess-ui";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   CoreModel,
   ServerModel,
   MsgToClient,
@@ -66,12 +66,12 @@ export const update = ({
   ctx,
 }: {
   ctx: SpaceClientCtx;
-  msg: ClientMsg;
+  msg: MsgClient;
   model: ClientModel;
 }): {
   model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
+  eff?: Eff<MsgClient>;
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
   const model: ClientModel = { ...modelPrev, openedMenuId: null };
 
@@ -125,7 +125,7 @@ export const updateFromServer = (input: {
   model: ClientModel;
 }): {
   model: ClientModel;
-  eff?: Eff<ClientMsg>;
+  eff?: Eff<MsgClient>;
 } => {
   return p(
     updateFromServerMain(input),
@@ -241,7 +241,7 @@ export const mergeWithServer = ({
 //
 //
 
-export const subscriptions = (_model: ClientModel): Sub<ClientMsg> => {
+export const subscriptions = (_model: ClientModel): Sub<MsgClient> => {
   return Sub.None;
 };
 
@@ -261,7 +261,7 @@ export const View = ({
 }: {
   ctx: SpaceClientCtx;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  dispatch: (msg: MsgClient) => void;
   onClose: () => void;
 }) => {
   if (model.coreModel.type === "setup") {
@@ -369,7 +369,7 @@ export const View = ({
           model={model.coreModel.board}
           orientation={boardOrientation}
           onPieceDrop={(move) => {
-            const msg: ClientMsg = {
+            const msg: MsgClient = {
               t: "input-move",
               move: {
                 from: move.source,

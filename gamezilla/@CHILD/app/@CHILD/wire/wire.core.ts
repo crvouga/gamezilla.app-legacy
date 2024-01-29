@@ -24,7 +24,7 @@ export type ClientModel = {
   } | null;
 };
 
-export type ClientMsg = ClientTransportEvent | { t: "clicked-try-reconnect" };
+export type MsgClient = ClientTransportEvent | { t: "clicked-try-reconnect" };
 
 export type ServerModel = {
   clientsBySessionId: {
@@ -41,7 +41,7 @@ export type Client = {
   clientIds: CappedOrderedDict<ClientId, ClientId>;
 };
 
-export type ServerMsg = ServerTransportMsg;
+export type MsgServer = ServerTransportMsg;
 
 //
 //

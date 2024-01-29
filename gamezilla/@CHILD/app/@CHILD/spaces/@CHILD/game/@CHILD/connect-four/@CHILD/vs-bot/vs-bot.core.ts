@@ -42,12 +42,12 @@ export type ClientModel = {
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   | MsgGame
   | { t: "vs-bot-setup"; c: VsBotSetup.Msg }
   | { t: "vs-bot-game"; c: VsBotGame.Msg };
 
-export type ServerMsg =
+export type MsgServer =
   | {
       t: "bot-found-best-move";
       found: ConnectFour.BestMoveResult;

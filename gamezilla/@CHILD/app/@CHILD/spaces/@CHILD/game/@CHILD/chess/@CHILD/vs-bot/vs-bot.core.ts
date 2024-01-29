@@ -82,7 +82,7 @@ export const isBotTurn = (model: CoreModel) => {
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   | Req
   | { t: "opened-menu"; menuId: string }
   | { t: "closed-menu" }
@@ -90,7 +90,7 @@ export type ClientMsg =
   | { t: "closed-modal" }
   | { t: "vs-bot-setup"; c: VsBotSetup.Msg };
 
-export type ServerMsg = {
+export type MsgServer = {
   t: "bot-moved";
   moved: Chess.BestMoveInputResult;
 };

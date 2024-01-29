@@ -29,7 +29,7 @@ import { Chessboard } from "../../@SHARED/chess-ui/chessboard";
 import { CHESS_SOUND } from "../../@SHARED/chess/chess-sounds";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   CoreModel,
   MsgToClient,
   MsgToServer,
@@ -65,13 +65,13 @@ export const init = (): {
 //
 
 export const update = (input: {
-  msg: ClientMsg;
+  msg: MsgClient;
   model: ClientModel;
   ctx: SpaceClientCtx;
 }): {
   model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
+  eff?: Eff<MsgClient>;
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
   return GameClientModule.chainUpdates(
     input,
@@ -102,13 +102,13 @@ export const updateMain = ({
   model,
   ctx,
 }: {
-  msg: ClientMsg;
+  msg: MsgClient;
   model: ClientModel;
   ctx: SpaceClientCtx;
 }): {
   model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
+  eff?: Eff<MsgClient>;
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
   const updated = updateCore({ msg, model, ctx });
 
@@ -130,8 +130,8 @@ export const updateFromServer = (input: {
   model: ClientModel;
 }): {
   model: ClientModel;
-  eff?: Eff<ClientMsg>;
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
+  eff?: Eff<MsgClient>;
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
   return p(updateFromServerMain(input), andThen(watch));
 };
@@ -145,7 +145,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
   model: ClientModel;
 }): {
   model: ClientModel;
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
   switch (msg.t) {
     case "clock-tick": {
@@ -198,7 +198,7 @@ export const mergeWithServer = ({
 
 function watch(model: ClientModel): {
   model: ClientModel;
-  eff?: Eff<ClientMsg>;
+  eff?: Eff<MsgClient>;
 } {
   return { model };
 }
@@ -227,7 +227,7 @@ export const View = ({
 }: {
   ctx: SpaceClientCtx;
   model: ClientModel;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
   onClose: () => void;
 }) => {
   const durationMs = toDurationMs(ctx, model);
@@ -401,7 +401,7 @@ export const toBottomBarActions = ({
 }: {
   model: ClientModel;
   onClose: () => void;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
 }): BottomBarButtonAction[] => {
   const exit: BottomBarButtonAction = {
     icon: <IconArrowLeftOnRect className="h-6 w-6" />,

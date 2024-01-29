@@ -5,7 +5,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import { IClientTransport } from "./transport-client";
-import { ClientModel, ClientMsg, MsgToClient } from "./wire.core";
+import { ClientModel, MsgClient, MsgToClient } from "./wire.core";
 
 //
 //
@@ -50,10 +50,10 @@ export const update = <TMsgToClient, TMsgToServer>({
   model,
   transport,
 }: {
-  msg?: ClientMsg | null;
+  msg?: MsgClient | null;
   msgServer?: MsgToClient | null;
   msgCmd?: ClientCmd<{
-    ClientMsg: ClientMsg;
+    MsgClient: MsgClient;
     MsgToServer: TMsgToServer;
   }> | null;
   model: ClientModel;
@@ -64,7 +64,7 @@ export const update = <TMsgToClient, TMsgToServer>({
 }): {
   model: ClientModel;
   msgEvt?: ClientEvent[];
-  eff?: Eff<ClientMsg>;
+  eff?: Eff<MsgClient>;
 } => {
   if (msg) {
     return updateFromMsg({ msg, model, transport });
@@ -223,7 +223,7 @@ export const ViewStatusBarDrawer = ({
   dispatch,
 }: {
   model: ClientModel;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
 }) => {
   switch (model.state.t) {
     case "server-connected": {
@@ -277,6 +277,6 @@ export const subscriptions = <MsgToServer, MsgToClient>({
     MsgToServer: MsgToServer;
     MsgToClient: MsgToClient;
   }>;
-}): Sub<ClientMsg> => {
+}): Sub<MsgClient> => {
   return transport.msgEvt;
 };

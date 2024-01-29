@@ -77,9 +77,9 @@ export const isBotTurn = (model: CoreModel): model is ModelGame => {
 //
 //
 
-export type ClientMsg = Req | { t: "vs-bot-setup"; c: VsBotSetup.Msg };
+export type MsgClient = Req | { t: "vs-bot-setup"; c: VsBotSetup.Msg };
 
-export type ServerMsg = { t: "bot-moved" };
+export type MsgServer = { t: "bot-moved" };
 
 export type MsgToServer = Req;
 

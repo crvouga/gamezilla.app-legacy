@@ -33,7 +33,7 @@ import {
 } from "./@CHILD/wire/transport-client";
 import * as Wire from "./@CHILD/wire/wire.client";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
-import { ClientModel, ClientMsg, MsgToClient, MsgToServer } from "./app.core";
+import { ClientModel, MsgClient, MsgToClient, MsgToServer } from "./app.core";
 
 //
 //
@@ -92,7 +92,7 @@ export const init = async ({
   location: Browser.Location;
 }): Promise<{
   model: ClientModel;
-  eff?: Eff<ClientMsg>;
+  eff?: Eff<MsgClient>;
 }> => {
   const routing = Routing.init({
     location,
@@ -156,13 +156,13 @@ export const init = async ({
     profile: profile.model,
   };
 
-  const initialEff = Eff.batch<ClientMsg>([
+  const initialEff = Eff.batch<MsgClient>([
     routing.eff,
     Eff.tag("auth", auth.eff),
   ]);
 
   const initialCmd = batchMsgs<
-    ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>
+    ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
   >(
     ClientCmd.tag("spaces", space.msgCmd),
     ClientCmd.tag("profile", profile.msgCmd),
@@ -200,12 +200,12 @@ function log(...msg: unknown[]) {
 
 export const update = async (input: {
   ctx: { now: Posix };
-  msg: ClientMsg;
+  msg: MsgClient;
   model: ClientModel;
   deps: Deps;
 }): Promise<{
   model: ClientModel;
-  eff?: Eff<ClientMsg>;
+  eff?: Eff<MsgClient>;
 }> => {
   if (input.msg) {
     log("[msg]", toMsgType(input.msg));
@@ -229,9 +229,9 @@ export const update = async (input: {
 
 type Output = {
   model: ClientModel;
-  eff: Eff<ClientMsg>;
+  eff: Eff<MsgClient>;
   msgEvt: ClientEvent[];
-  msgCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
+  msgCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 };
 
 const updateLoop = async (
@@ -290,10 +290,10 @@ const updateChild = async ({
   deps: Deps;
   now: Posix;
   model: ClientModel;
-  msg?: ClientMsg;
+  msg?: MsgClient;
   msgServer?: MsgToClient;
   msgEvt?: ClientEvent;
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
 }): Promise<Output> => {
   const ctx = toCtx({ model, ctx: { now } });
 
@@ -378,7 +378,7 @@ const updateChild = async ({
       wire: wire.model,
     },
 
-    eff: Eff.batch<ClientMsg>([
+    eff: Eff.batch<MsgClient>([
       Eff.tag("auth", auth.eff),
       Eff.tag("platform", platform.eff),
       Eff.tag("profile", profile.eff),
@@ -401,7 +401,7 @@ const updateChild = async ({
     ),
 
     msgCmd: batchMsgs<
-      ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>
+      ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
     >(
       ClientCmd.tag("auth", auth.msgCmd),
       ClientCmd.tag("profile", profile.msgCmd),
@@ -447,12 +447,12 @@ export const subscriptions = (input: {
   ctx: { now: Posix };
   deps: Deps;
   model: ClientModel;
-}): Sub<ClientMsg> => {
+}): Sub<MsgClient> => {
   const { ctx, model } = input;
 
   const ctxApp = toCtx(input);
 
-  return Sub.batch<ClientMsg>([
+  return Sub.batch<MsgClient>([
     Sub.tag("➡️", Sub.flat(input.deps.transport.toClient)),
     Sub.tag("wire", Wire.subscriptions({ transport: input.deps.transport })),
     Sub.tag("platform", Platform.subscriptions),
@@ -484,7 +484,7 @@ export const View = ({
 }: {
   now: Posix;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  dispatch: (msg: MsgClient) => void;
 }) => {
   return (
     <div
@@ -538,7 +538,7 @@ const ViewMain = ({
 }: {
   now: Posix;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  dispatch: (msg: MsgClient) => void;
 }) => {
   switch (model.auth.currentUser.t) {
     case "logged-in": {
@@ -584,7 +584,7 @@ const ViewLoggedOut = ({
   dispatch,
 }: {
   model: ClientModel;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
   ctx: AnonymousClientCtx;
 }) => {
   switch (model.routing.currentRoute.t) {
@@ -610,7 +610,7 @@ const ViewLoggedIn = ({
 }: {
   ctx: ClientCtx;
   model: ClientModel;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
 }) => {
   switch (model.routing.currentRoute.t) {
     case "chat": {
@@ -673,7 +673,7 @@ const ViewBottomBar = ({
 }: {
   ctx: ClientCtx;
   model: ClientModel;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
 }) => {
   const items: {
     route: AppRoute;

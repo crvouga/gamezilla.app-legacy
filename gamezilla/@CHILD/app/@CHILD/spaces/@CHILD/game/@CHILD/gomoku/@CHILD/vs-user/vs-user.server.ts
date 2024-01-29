@@ -5,7 +5,7 @@ import {
 import { Eff, Sub } from "gamezilla/@SHARED/core";
 import {
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToServer,
   initShared,
 } from "./vs-user.core";
@@ -30,7 +30,7 @@ export const init = initShared;
 //
 //
 
-export type Msg = ServerMsg;
+export type Msg = MsgServer;
 
 export const update = ({
   model,

@@ -21,7 +21,7 @@ import { CoverArt } from "./@SHARED/flow-cover-art";
 import { FlowClientCtx } from "./@SHARED/flow-ctx";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   MsgGame,
   ModelGame,
   MsgToClient,
@@ -38,7 +38,7 @@ import {
 
 type Module = GameClientModule<{
   Model: ClientModel;
-  Msg: ClientMsg;
+  Msg: MsgClient;
   //
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
@@ -48,7 +48,7 @@ type Module = GameClientModule<{
   //
   Ctx: SpaceClientCtx;
   //
-  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
+  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
   MsgInEvent: SpaceClientEvent;
   MsgInCmd: null;
   MsgOutEvent: null;

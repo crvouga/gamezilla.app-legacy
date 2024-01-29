@@ -2,7 +2,7 @@ import { Eff, Sub, Time, isErr } from "gamezilla/@SHARED/core";
 import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";
 import {
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToServer,
   initShared,
   inputDrop,
@@ -32,7 +32,7 @@ export const init: Model = initShared;
 //
 //
 
-export type Msg = ServerMsg;
+export type Msg = MsgServer;
 
 export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
   switch (msg[0]) {

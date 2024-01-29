@@ -8,7 +8,7 @@ import {
   MsgGame,
   ModelGame,
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
 } from "./play.core";
@@ -16,7 +16,7 @@ import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space
 
 type Module = GameServerModule<{
   Model: ServerModel;
-  Msg: ServerMsg;
+  Msg: MsgServer;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
   MsgGame: MsgGame;

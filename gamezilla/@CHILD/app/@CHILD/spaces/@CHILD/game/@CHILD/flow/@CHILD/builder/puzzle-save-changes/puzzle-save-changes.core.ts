@@ -17,13 +17,13 @@ export type ServerModel = {};
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   | { t: "save-changes/user-clicked-save-button" }
   | { t: "save-changes/user-clicked-cancel-exit" }
   | { t: "save-changes/user-clicked-save-and-exit" }
   | { t: "save-changes/user-clicked-discard-and-exit" };
 
-export type ServerMsg = { t: "noop" };
+export type MsgServer = { t: "noop" };
 
 export type MsgToServer =
   | { t: "save-changes/user-clicked-save-button"; puzzle: FlowPuzzle }

@@ -13,7 +13,7 @@ import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { GameName, gameNameToString } from "../@CHILD/game/game.core";
 import * as Spaces from "../spaces-core/spaces";
 import * as SpaceState from "../spaces-core/space-state";
-import { ClientModel, ClientMsg } from "../spaces.core";
+import { ClientModel, MsgClient } from "../spaces.core";
 import { EmptyState } from "gamezilla/@CHILD/app/@SHARED/ui/empty-state";
 
 export const ViewScreenListSpaces = ({
@@ -23,7 +23,7 @@ export const ViewScreenListSpaces = ({
 }: {
   model: ClientModel;
   ctx: ClientCtx;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
 }) => {
   const currentUserSpaceId = model.spaceIdByUserId[ctx.currentUserId];
 
@@ -92,7 +92,7 @@ const ViewSpaceCard = ({
 }: {
   ctx: ClientCtx;
   state: SpaceState.Started;
-  dispatch: (m: ClientMsg) => void;
+  dispatch: (m: MsgClient) => void;
 }) => {
   const host = ctx.profiles[state.hostId];
   const users = Object.values(state.users).flatMap((userId) => {

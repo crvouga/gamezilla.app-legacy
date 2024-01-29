@@ -48,9 +48,9 @@ export type ClientModel = CoreModel & {
 //
 //
 
-export type ServerMsg = ["none"];
+export type MsgServer = ["none"];
 
-export type ClientMsg =
+export type MsgClient =
   | Req
   | ["clicked-banner"]
   | ["MicSound", { volume: number }]

@@ -36,14 +36,14 @@ export type ServerModel =
 //
 //
 
-export type ClientMsg =
+export type MsgClient =
   | { t: "msgGame"; c: MsgGame }
-  | { t: "builder"; c: Builder.ClientMsg }
-  | { t: "play"; c: Play.ClientMsg };
+  | { t: "builder"; c: Builder.MsgClient }
+  | { t: "play"; c: Play.MsgClient };
 
-export type ServerMsg =
-  | { t: "builder"; c: Builder.ServerMsg }
-  | { t: "play"; c: Play.ServerMsg };
+export type MsgServer =
+  | { t: "builder"; c: Builder.MsgServer }
+  | { t: "play"; c: Play.MsgServer };
 
 export type MsgToServer =
   | { t: "builder"; c: Builder.MsgToServer }

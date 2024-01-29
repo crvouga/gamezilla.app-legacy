@@ -6,7 +6,7 @@ import {
   MsgGame,
   ModelGame,
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
 } from "./connect-four.core";
@@ -21,7 +21,7 @@ import {
 
 type Module = GameServerModule<{
   Model: ServerModel;
-  Msg: ServerMsg;
+  Msg: MsgServer;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
   ModelGame: ModelGame;

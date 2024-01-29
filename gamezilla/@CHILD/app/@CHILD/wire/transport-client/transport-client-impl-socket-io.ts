@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { ClientMsgToServerMsg, ServerMsgToClientMsg } from "../transport.core";
+import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core";
 import {
   ClientTransportSocketIOImpl,
   IClientTransport,
@@ -41,7 +41,7 @@ export const ClientTransportSocketIO = <MsgToServer, MsgToClient>({
   });
 
   transport.toServer.subscribe((msgs) => {
-    const toServer: ClientMsgToServerMsg<MsgToServer> = {
+    const toServer: MsgClientToMsgServer<MsgToServer> = {
       t: "to-server",
       msgs,
       codebaseVersionId,
@@ -50,7 +50,7 @@ export const ClientTransportSocketIO = <MsgToServer, MsgToClient>({
     socket.emit("to-server", toServer);
   });
 
-  socket.on("to-client", (msg: ServerMsgToClientMsg<MsgToClient>) => {
+  socket.on("to-client", (msg: MsgServerToMsgClient<MsgToClient>) => {
     if (
       msg.codebaseVersionId !== codebaseVersionId &&
       PUBLIC_APP_CONFIG.IS_PROD

@@ -1,4 +1,4 @@
-import { ClientMsgToServerMsg, ServerMsgToClientMsg } from "../transport.core";
+import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core";
 import {
   ClientTransportWebSocketImpl,
   IClientTransport,
@@ -27,7 +27,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
   let ws: WebSocket;
   let isConnected = false;
   let isDocumentHidden = false;
-  let queue: ClientMsgToServerMsg<MsgToServer>[] = [];
+  let queue: MsgClientToMsgServer<MsgToServer>[] = [];
 
   const connect = () => {
     if (isConnected) {
@@ -68,7 +68,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 
     ws.onmessage = (msgEvt) => {
       isConnected = true;
-      const msg = JSON.parse(msgEvt.data) as ServerMsgToClientMsg<MsgToClient>; // leap of faith
+      const msg = JSON.parse(msgEvt.data) as MsgServerToMsgClient<MsgToClient>; // leap of faith
 
       switch (msg.t) {
         case "session-id": {
@@ -110,7 +110,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
     }
   });
 
-  const send = (msg: ClientMsgToServerMsg<MsgToServer>) => {
+  const send = (msg: MsgClientToMsgServer<MsgToServer>) => {
     if (!isConnected) {
       queue.push(msg);
       return;

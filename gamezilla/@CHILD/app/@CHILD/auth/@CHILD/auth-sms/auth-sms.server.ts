@@ -12,7 +12,7 @@ import { AccountDb } from "../../@SHARED/server/account-db/account-db-impl";
 import { Account } from "../../auth.core";
 import {
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
 } from "./auth-sms.core";
@@ -30,7 +30,7 @@ type Module = AppServerModule<{
   MsgInCmd: null;
   MsgInEvent: ServerEvent;
   Model: ServerModel;
-  Msg: ServerMsg;
+  Msg: MsgServer;
   MsgOutCmd: ServerCmd<MsgToClient>;
   MsgOutEvent: ServerEvent;
   MsgToClient: MsgToClient;

@@ -35,7 +35,7 @@ import {
 } from "gamezilla/@SHARED/core";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   MsgToClient,
   MsgToServer,
 } from "./auth-sms.core";
@@ -50,14 +50,14 @@ import {
 
 type Module = AppClientModule<{
   Model: ClientModel;
-  Msg: ClientMsg;
+  Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
   Ctx: AnonymousClientCtx;
   MsgInCmd: null;
   MsgInEvent: ClientEvent;
   MsgOutCmd: ClientCmd<{
-    ClientMsg: ClientMsg;
+    MsgClient: MsgClient;
     MsgToServer: MsgToServer;
   }>;
   MsgOutEvent: ClientEvent;

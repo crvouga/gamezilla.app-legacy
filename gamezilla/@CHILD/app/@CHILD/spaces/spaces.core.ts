@@ -40,13 +40,13 @@ export type ClientModel = Spaces.Model & {
 //
 //
 
-export type ServerMsg =
+export type MsgServer =
   | { t: "msgEvt"; c: WithEventId<SpaceEvent> }
-  | { t: "game"; spaceId: SpaceId; c: Game.ServerMsg };
+  | { t: "game"; spaceId: SpaceId; c: Game.MsgServer };
 
-export type ClientMsg =
+export type MsgClient =
   | { t: "msgEvt"; c: WithEventId<SpaceEvent> }
-  | { t: "game"; spaceId: SpaceId; c: Game.ClientMsg }
+  | { t: "game"; spaceId: SpaceId; c: Game.MsgClient }
   | { t: "closed-modal" }
   | { t: "clicked-people-button" }
   | { t: "clicked-back-button"; from: "join-screen" }

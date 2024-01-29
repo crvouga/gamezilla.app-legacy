@@ -1,10 +1,10 @@
-import { ClientMsg, ClientModel, initShared } from "./battleship.core";
+import { MsgClient, ClientModel, initShared } from "./battleship.core";
 
 export const init = initShared;
 
 export const View = (_props: {
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  dispatch: (msg: MsgClient) => void;
 }) => {
   return <div>battleship</div>;
 };

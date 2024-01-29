@@ -11,7 +11,7 @@ import { samples } from "../../@SHARED/flow/flow-grid/flow-grid-samples";
 import { ViewProfileCard } from "../../@SHARED/ui";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   MsgGame,
   ModelGame,
   MsgToClient,
@@ -20,13 +20,13 @@ import {
 
 type Module = GameClientModule<{
   Model: ClientModel;
-  Msg: ClientMsg;
+  Msg: MsgClient;
   MsgToClient: MsgToClient;
   MsgToServer: MsgToServer;
   MsgGame: MsgGame;
   ModelGame: ModelGame;
   Ctx: FlowClientCtx;
-  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>;
+  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
   MsgInEvent: SpaceClientEvent;
   MsgOutEvent: null;
   MsgInCmd: null;

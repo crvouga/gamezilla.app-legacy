@@ -12,7 +12,7 @@ import {
 import * as Round from "./vs-user-round";
 import {
   ClientModel,
-  ClientMsg,
+  MsgClient,
   Res,
   ServerModel,
   MsgToClient,
@@ -41,11 +41,11 @@ export const init: ClientModel = {
 //
 
 export const update = (
-  msg: ClientMsg,
+  msg: MsgClient,
   model: ClientModel
 ): {
   model: ClientModel;
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
   switch (msg[0]) {
     //
@@ -166,7 +166,7 @@ export const View = ({
 }: {
   ctx: SpaceClientCtx;
   model: ClientModel;
-  dispatch: (msg: ClientMsg) => void;
+  dispatch: (msg: MsgClient) => void;
   onCloseGame: () => void;
 }) => {
   if (model.type === "setup") {

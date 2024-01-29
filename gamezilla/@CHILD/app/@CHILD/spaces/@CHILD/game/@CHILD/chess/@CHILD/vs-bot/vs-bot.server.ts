@@ -7,7 +7,7 @@ import { Eff, Sub, p } from "gamezilla/@SHARED/core";
 import { Chess } from "../../@SHARED/chess";
 import {
   ServerModel,
-  ServerMsg,
+  MsgServer,
   MsgToClient,
   MsgToServer,
   botMoved,
@@ -35,7 +35,7 @@ export const init = initServer;
 //
 //
 
-export type Msg = ServerMsg;
+export type Msg = MsgServer;
 
 export const update = ({
   msg,
