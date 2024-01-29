@@ -1,5 +1,7 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
 import {
+  APP_SOUND,
+  playSound,
   sendToServer,
   showErrorToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -48,6 +50,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
           userId: ctx.currentUserId,
         }),
       ],
+      cmd: [playSound(APP_SOUND.tap)],
     };
   }
 
