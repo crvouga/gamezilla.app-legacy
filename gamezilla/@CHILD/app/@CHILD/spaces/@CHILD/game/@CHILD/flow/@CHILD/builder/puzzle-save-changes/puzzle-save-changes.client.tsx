@@ -82,7 +82,7 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
       ) {
         return {
           model: { ...model, opened: "unsaved-changes" },
-          cmd: [playSound(APP_SOUND.alertErrorSm)],
+          msgCmd: [playSound(APP_SOUND.alertErrorSm)],
         };
       }
 
@@ -92,7 +92,7 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
     case "save-changes/user-clicked-cancel-exit": {
       return {
         model: { ...model, opened: null },
-        cmd: [playSound(APP_SOUND.tap)],
+        msgCmd: [playSound(APP_SOUND.tap)],
       };
     }
 
@@ -150,7 +150,7 @@ const updateSaveChangesRequest: ClientModule["update"] = (input) => {
         ...model,
         saveChangesRequest: Result.mapOk(msgGameEvent.saved, () => null),
       },
-      cmd: isOk(msgGameEvent.saved)
+      msgCmd: isOk(msgGameEvent.saved)
         ? showOkToast("Saved changes")
         : showErrorToast(msgGameEvent.saved.error),
     };
@@ -187,7 +187,7 @@ const saveChanges: ClientModule["update"] = ({ model, gameState }) => {
 
   return {
     model: { ...model, saveChangesRequest: loading },
-    cmd: [
+    msgCmd: [
       playSound(APP_SOUND.tap),
       sendToServer({
         t: "save-changes/user-clicked-save-button",

@@ -43,13 +43,13 @@ export const update = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  cmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (msg.t === "vs-user" && model.t === "vs-user") {
     const updated = VsUser.update(msg.c, model.c);
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: SpaceServerCmd.tag("vs-user", updated.cmd),
+      msgCmd: SpaceServerCmd.tag("vs-user", updated.msgCmd),
     };
   }
 
@@ -61,7 +61,7 @@ export const update = ({
 
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: SpaceServerCmd.tag("vs-bot", updated.cmd),
+      msgCmd: SpaceServerCmd.tag("vs-bot", updated.msgCmd),
     };
   }
 
@@ -79,13 +79,13 @@ export const updateFromClient = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  cmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (msg.t === "input-mode") {
     if (ctx.currentUserId !== ctx.space.hostId) {
       return {
         model,
-        cmd: [
+        msgCmd: [
           sendToClient([ctx.clientId], { ...msg, result: Err("must-be-host") }),
         ],
       };
@@ -98,7 +98,7 @@ export const updateFromClient = ({
 
     return {
       model: modelNew,
-      cmd: [
+      msgCmd: [
         {
           t: "send-to-space",
           msg: { t: "input-mode", mode: msg.mode, result: Ok(modelNew) },
@@ -112,7 +112,7 @@ export const updateFromClient = ({
 
     return {
       model: { ...model, c: updated.model },
-      cmd: SpaceServerCmd.tag("vs-user", updated.cmd),
+      msgCmd: SpaceServerCmd.tag("vs-user", updated.msgCmd),
     };
   }
 
@@ -126,7 +126,7 @@ export const updateFromClient = ({
     return {
       model: { ...model, c: updated.model },
       eff: Eff.tag("vs-bot", updated.eff),
-      cmd: SpaceServerCmd.tag("vs-bot", updated.cmd),
+      msgCmd: SpaceServerCmd.tag("vs-bot", updated.msgCmd),
     };
   }
 
@@ -141,7 +141,7 @@ export const updateFromEvent = ({
   msg: SpaceServerEvent;
 }): {
   model: Model;
-  cmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (model.t === "none") {
     return { model };
@@ -154,7 +154,7 @@ export const updateFromEvent = ({
     });
     return {
       model: { t: "vs-bot", c: updated.model },
-      cmd: SpaceServerCmd.tag("vs-bot", updated.cmd),
+      msgCmd: SpaceServerCmd.tag("vs-bot", updated.msgCmd),
     };
   }
 
@@ -165,7 +165,7 @@ export const updateFromEvent = ({
     });
     return {
       model: { t: "vs-user", c: updated.model },
-      cmd: SpaceServerCmd.tag("vs-user", updated.cmd),
+      msgCmd: SpaceServerCmd.tag("vs-user", updated.msgCmd),
     };
   }
 

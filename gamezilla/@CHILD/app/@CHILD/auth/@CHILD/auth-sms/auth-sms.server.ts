@@ -71,7 +71,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
       if (isErr(msg.result)) {
         return {
           model,
-          cmd: [sendToClient([msg.clientId], msg)],
+          msgCmd: [sendToClient([msg.clientId], msg)],
         };
       }
 
@@ -83,13 +83,13 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
       if (found.t === "err") {
         return {
           model,
-          cmd: [sendToClient([msg.clientId], msg)],
+          msgCmd: [sendToClient([msg.clientId], msg)],
         };
       }
 
       return {
         model,
-        cmd: [sendToClient([msg.clientId], msg)],
+        msgCmd: [sendToClient([msg.clientId], msg)],
         msgEvent: [
           {
             t: "auth/client-authenticated",
@@ -105,7 +105,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
     case "sent-code": {
       return {
         model,
-        cmd: [sendToClient([msg.clientId], msg)],
+        msgCmd: [sendToClient([msg.clientId], msg)],
       };
     }
   }

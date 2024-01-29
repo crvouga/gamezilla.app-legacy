@@ -37,30 +37,30 @@ export const sendToSpace = <ToClient>(
 
 const mapOne = <A, B>(
   fn: (a: A) => B,
-  cmd: SpaceServerCmd<A>
+  msgCmd: SpaceServerCmd<A>
 ): SpaceServerCmd<B> => {
-  switch (cmd.t) {
+  switch (msgCmd.t) {
     case "send-to-space": {
-      return { ...cmd, msg: fn(cmd.msg) };
+      return { ...msgCmd, msg: fn(msgCmd.msg) };
     }
     default: {
-      return ServerCmd.mapOne(fn, cmd);
+      return ServerCmd.mapOne(fn, msgCmd);
     }
   }
 };
 
 const map = <A, B>(
-  cmd: SpaceServerCmd<A>[] | undefined | null,
+  msgCmd: SpaceServerCmd<A>[] | undefined | null,
   fn: (a: A) => B
 ): SpaceServerCmd<B>[] | undefined => {
-  return cmd?.map((m) => mapOne(fn, m));
+  return msgCmd?.map((m) => mapOne(fn, m));
 };
 
 const tag = <T extends string, A>(
   tag: T,
-  cmd?: SpaceServerCmd<A>[]
+  msgCmd?: SpaceServerCmd<A>[]
 ): SpaceServerCmd<{ t: T; c: A }>[] | undefined => {
-  return map(cmd ?? [], (c) => ({ t: tag, c }));
+  return map(msgCmd ?? [], (c) => ({ t: tag, c }));
 };
 
 export const SpaceServerCmd = {

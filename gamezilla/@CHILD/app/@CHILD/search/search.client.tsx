@@ -63,7 +63,7 @@ export const update = ({
   model: ClientModel;
   eff?: Eff<Msg>;
   msgEvent?: ClientEvent[];
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   if (msg.t === "focus-done") {
     return { model };
@@ -82,7 +82,7 @@ export const update = ({
   if (msg.t === "clicked-result") {
     return {
       model,
-      cmd: [
+      msgCmd: [
         pushRoute({
           t: "profile",
           c: { t: "profile", userId: msg.userId },
@@ -97,7 +97,7 @@ export const update = ({
     };
   }
 
-  return { model, cmd: [sendToServer(msg)] };
+  return { model, msgCmd: [sendToServer(msg)] };
 };
 
 export const updateFromServer = ({

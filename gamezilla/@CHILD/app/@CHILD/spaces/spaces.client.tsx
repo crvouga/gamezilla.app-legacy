@@ -122,7 +122,7 @@ const updateProfiles: Module["update"] = ({ model, msgFromServer }) => {
   if (msgFromServer?.profiles) {
     return {
       model,
-      cmd: [addProfiles(msgFromServer.profiles)],
+      msgCmd: [addProfiles(msgFromServer.profiles)],
     };
   }
 
@@ -150,7 +150,7 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
     }
 
     case "clicked-link": {
-      return { model, cmd: [pushRoute(msg.route)] };
+      return { model, msgCmd: [pushRoute(msg.route)] };
     }
 
     case "clicked-back-button": {
@@ -158,7 +158,7 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
         case "join-screen": {
           return {
             model,
-            cmd: [replaceRoute({ t: "spaces", c: { t: "space-list" } })],
+            msgCmd: [replaceRoute({ t: "spaces", c: { t: "space-list" } })],
           };
         }
       }
@@ -167,7 +167,7 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
     case "clicked-space-card": {
       return {
         model,
-        cmd: [
+        msgCmd: [
           pushRoute({ t: "spaces", c: { t: "space", spaceId: msg.spaceId } }),
         ],
       };
@@ -241,7 +241,7 @@ const fetchSpacesFromRoute: Module["update"] = async (input) => {
         case "space": {
           return {
             model: { ...input.model, isFetchingSpaces: true },
-            cmd: [
+            msgCmd: [
               sendToServer({
                 t: "list-spaces",
                 limit: 100,
@@ -255,7 +255,7 @@ const fetchSpacesFromRoute: Module["update"] = async (input) => {
         case "space-list": {
           return {
             model: { ...input.model, isFetchingSpaces: true },
-            cmd: [sendToServer({ t: "list-spaces", limit: 100, offset: 0 })],
+            msgCmd: [sendToServer({ t: "list-spaces", limit: 100, offset: 0 })],
           };
         }
       }
@@ -312,7 +312,7 @@ const updateFromEvent: Module["update"] = async (input) => {
           ...model,
           isSyncing: true,
         },
-        cmd: [
+        msgCmd: [
           sendToServer({
             t: "sync",
             space: started,
@@ -381,7 +381,7 @@ const updateGame: Module["update"] = async (input) => {
     model: gameModel,
     gameState: gameState,
     msgFromServer: msgFromServer?.t === "game" ? msgFromServer.c : null,
-    cmd: null,
+    msgCmd: null,
     msgEvent,
     msg: msg?.t === "game" ? msg.c : null,
   });
@@ -408,7 +408,7 @@ const mergeUpdatedGame = ({
   gameUpdated: ReturnType<typeof Game.update>;
 }): {
   model: ClientModel;
-  cmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
   eff: Eff<ClientMsg>;
 } => {
   return {
@@ -419,8 +419,8 @@ const mergeUpdatedGame = ({
         [spaceId]: gameUpdated.model,
       },
     },
-    cmd: ClientCmd.map(
-      gameUpdated.cmd ?? [],
+    msgCmd: ClientCmd.map(
+      gameUpdated.msgCmd ?? [],
       (c) => ({ t: "game", c, spaceId }),
       (c) => ({ t: "game", c, spaceId })
     ),
@@ -434,12 +434,12 @@ const updateFromManySpaceEvents = (input: {
   msgEvents: WithEventId<SpaceEvent>[];
 }): Promise<{
   model: ClientModel;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
   eff?: Eff<ClientMsg>;
 }> => {
   return updateFromManySpaceEventsLoop(input.ctx, input.msgEvents, {
     model: input.model,
-    cmd: [],
+    msgCmd: [],
     eff: Eff.None,
   });
 };
@@ -478,7 +478,7 @@ const updateFromManySpaceEventsLoop = async (
 
   const accNew: typeof acc = {
     model: updated.model,
-    cmd: batchMsgs(acc.cmd, updated.cmd),
+    msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
     eff: Eff.batch([acc.eff, updated.eff]),
   };
 
@@ -497,7 +497,7 @@ const sendSpaceEventToServer = async ({
   spaceEvent: WithEventId<SpaceEvent>;
 }): Promise<{
   model: ClientModel;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 }> => {
   const msgEventWithMeta = Spaces.toEventWithMeta(
     model,
@@ -516,7 +516,7 @@ const sendSpaceEventToServer = async ({
 
   return {
     model,
-    cmd: [sendToServer({ t: "msgEvent", c: msgEventWithMeta, profiles })],
+    msgCmd: [sendToServer({ t: "msgEvent", c: msgEventWithMeta, profiles })],
   };
 };
 
@@ -532,7 +532,7 @@ const updateClientFromSpaceEvent = async ({
   spaceEvent: WithEventId<SpaceEvent>;
 }): Promise<{
   model: ClientModel;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
   msgEvent?: WithEventId<SpaceEvent>[];
 }> => {
   if (!ctx.currentUserId) {
@@ -548,7 +548,7 @@ const updateClientFromSpaceEvent = async ({
       if (spaceEvent.spaceId === currentUserSpaceId) {
         return {
           model,
-          cmd: [playSound(APP_SOUND.navForward)],
+          msgCmd: [playSound(APP_SOUND.navForward)],
         };
       }
       return { model };
@@ -563,7 +563,7 @@ const updateClientFromSpaceEvent = async ({
       if (spaceEvent.spaceId === currentUserSpaceId) {
         return {
           model,
-          cmd: [playSound(APP_SOUND.navBackward)],
+          msgCmd: [playSound(APP_SOUND.navBackward)],
         };
       }
       return { model };
@@ -573,7 +573,7 @@ const updateClientFromSpaceEvent = async ({
       if (spaceEvent.userId === ctx.currentUserId) {
         return {
           model,
-          cmd: [
+          msgCmd: [
             playSound(APP_SOUND.navForward),
             pushRoute({
               t: "spaces",
@@ -600,7 +600,7 @@ const updateClientFromSpaceEvent = async ({
         (model) => {
           return {
             model,
-            cmd: [playSound(APP_SOUND.navBackward)],
+            msgCmd: [playSound(APP_SOUND.navBackward)],
           };
         },
         (model) => {
@@ -611,19 +611,19 @@ const updateClientFromSpaceEvent = async ({
           ) {
             return {
               model,
-              cmd: [pushRoute({ t: "spaces", c: { t: "space-list" } })],
+              msgCmd: [pushRoute({ t: "spaces", c: { t: "space-list" } })],
             };
           }
           return {
             model,
-            cmd: [],
+            msgCmd: [],
           };
         },
         (model) => {
           if (spaceEvent.userId === ctx.currentUserId) {
             return {
               model,
-              cmd: [showToast("Space ended")],
+              msgCmd: [showToast("Space ended")],
             };
           }
 
@@ -632,13 +632,13 @@ const updateClientFromSpaceEvent = async ({
           if (!profile) {
             return {
               model,
-              cmd: [showToast("Space ended by host")],
+              msgCmd: [showToast("Space ended by host")],
             };
           }
 
           return {
             model,
-            cmd: [showToast(`Space ended by ${profile.username}`)],
+            msgCmd: [showToast(`Space ended by ${profile.username}`)],
           };
         }
       );
@@ -652,7 +652,7 @@ const updateClientFromSpaceEvent = async ({
       if (spaceEvent.spaceId === currentUserSpaceId) {
         return {
           model,
-          cmd: [
+          msgCmd: [
             playSound(
               spaceEvent.game
                 ? APP_SOUND.navForwardMin

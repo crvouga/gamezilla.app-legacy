@@ -161,15 +161,15 @@ export const init = async ({
   const initialCmd = batchMsgs<
     ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>
   >(
-    ClientCmd.tag("spaces", space.cmd),
-    ClientCmd.tag("profile", profile.cmd),
+    ClientCmd.tag("spaces", space.msgCmd),
+    ClientCmd.tag("profile", profile.msgCmd),
     preloadSound(Object.values(APP_SOUND))
   );
 
   const updated = await updateLoop(deps, ctx.now, {
     model: initialModel,
     eff: initialEff,
-    cmd: initialCmd,
+    msgCmd: initialCmd,
     msgEvent: [],
   });
 
@@ -228,7 +228,7 @@ type Output = {
   model: ClientModel;
   eff: Eff<ClientMsg>;
   msgEvent: ClientEvent[];
-  cmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 };
 
 const updateLoop = async (
@@ -236,14 +236,19 @@ const updateLoop = async (
   now: Posix,
   acc: Output
 ): Promise<Output> => {
-  const [cmd, ...cmdRest] = acc.cmd;
+  const [msgCmd, ...msgCmdRest] = acc.msgCmd;
 
-  if (cmd) {
-    log("[cmd]", toMsgType(cmd));
-    const updatedCmd = await updateChild({ deps, now, model: acc.model, cmd });
+  if (msgCmd) {
+    log("[msgCmd]", toMsgType(msgCmd));
+    const updatedCmd = await updateChild({
+      deps,
+      now,
+      model: acc.model,
+      msgCmd,
+    });
     return updateLoop(deps, now, {
       model: updatedCmd.model,
-      cmd: [...cmdRest, ...updatedCmd.cmd],
+      msgCmd: [...msgCmdRest, ...updatedCmd.msgCmd],
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
       msgEvent: batchMsgs(acc.msgEvent, updatedCmd.msgEvent),
     });
@@ -261,7 +266,7 @@ const updateLoop = async (
     });
     return updateLoop(deps, now, {
       model: updatedEvent.model,
-      cmd: [...cmdRest, ...updatedEvent.cmd],
+      msgCmd: [...msgCmdRest, ...updatedEvent.msgCmd],
       eff: Eff.batch([acc.eff, updatedEvent.eff]),
       msgEvent: batchMsgs(msgEventRest, updatedEvent.msgEvent),
     });
@@ -276,7 +281,7 @@ const updateChild = async ({
   msg,
   msgFromServer,
   msgEvent,
-  cmd,
+  msgCmd,
   deps,
 }: {
   deps: Deps;
@@ -285,7 +290,7 @@ const updateChild = async ({
   msg?: ClientMsg;
   msgFromServer?: ToClient;
   msgEvent?: ClientEvent;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
+  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>;
 }): Promise<Output> => {
   const ctx = toCtx({ model, ctx: { now } });
 
@@ -295,7 +300,7 @@ const updateChild = async ({
     msg: msg?.t === "spaces" ? msg.c : null,
     msgFromServer: msgFromServer?.t === "spaces" ? msgFromServer.c : null,
     msgEvent: msgEvent,
-    cmd: null,
+    msgCmd: null,
   });
 
   const profile = await ProfileClient.update({
@@ -304,7 +309,7 @@ const updateChild = async ({
     msg: msg?.t === "profile" ? msg.c : null,
     msgFromServer: msgFromServer?.t === "profile" ? msgFromServer.c : null,
     msgEvent: msgEvent,
-    cmd: cmd?.t === "profile" ? cmd : null,
+    msgCmd: msgCmd?.t === "profile" ? msgCmd : null,
   });
 
   const auth = await AuthClient.update({
@@ -313,34 +318,34 @@ const updateChild = async ({
     msg: msg?.t === "auth" ? msg.c : null,
     msgFromServer: msgFromServer?.t === "auth" ? msgFromServer.c : null,
     msgEvent: msgEvent,
-    cmd: null,
+    msgCmd: null,
   });
 
   const routing = await Routing.update({
     model: model.routing,
     msg: msg?.t === "routing" ? msg.c : null,
-    cmd: cmd?.t === "routing" ? cmd : null,
+    msgCmd: msgCmd?.t === "routing" ? msgCmd : null,
   });
 
   const wire = await Wire.update({
     model: model.wire,
     msg: msg?.t === "wire" ? msg.c : null,
     msgFromServer: msgFromServer?.t === "wire" ? msgFromServer.c : null,
-    cmd: cmd?.t === "wire" ? cmd : null,
+    msgCmd: msgCmd?.t === "wire" ? msgCmd : null,
     transport: deps.transport,
   });
 
   const sound = await Sound.update({
     model: model.sound,
     msg: msg?.t === "sound" ? msg.c : null,
-    cmd: cmd?.t === "sound" ? cmd : null,
+    msgCmd: msgCmd?.t === "sound" ? msgCmd : null,
     ctx: null,
   });
 
   const platform = await Platform.update({
     model: model.platform,
     msg: msg?.t === "platform" ? msg.c : null,
-    cmd: cmd?.t === "platform" ? cmd : null,
+    msgCmd: msgCmd?.t === "platform" ? msgCmd : null,
   });
 
   const statusBar = await StatusBar.update({
@@ -351,7 +356,7 @@ const updateChild = async ({
   const toast = await Toast.update({
     model: model.toast,
     msg: msg?.t === "toast" ? msg.c : null,
-    cmd: cmd?.t === "toast" ? cmd : null,
+    msgCmd: msgCmd?.t === "toast" ? msgCmd : null,
     ctx: ctx,
     msgEvent: null,
     msgFromServer: null,
@@ -392,13 +397,13 @@ const updateChild = async ({
       wire.msgEvent
     ),
 
-    cmd: batchMsgs<ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>>(
-      ClientCmd.tag("auth", auth.cmd),
-      ClientCmd.tag("profile", profile.cmd),
-      ClientCmd.tag("spaces", space.cmd),
-      routing.cmd,
-      sound.cmd,
-      toast.cmd
+    msgCmd: batchMsgs<ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>>(
+      ClientCmd.tag("auth", auth.msgCmd),
+      ClientCmd.tag("profile", profile.msgCmd),
+      ClientCmd.tag("spaces", space.msgCmd),
+      routing.msgCmd,
+      sound.msgCmd,
+      toast.msgCmd
     ),
   };
 };

@@ -77,7 +77,7 @@ const init = (gameName: GameName): Module["init"] => {
 //
 
 const update: Module["update"] = (input) => {
-  const { ctx, msg, msgFromServer, cmd, msgEvent, msgGameEvent, gameState } =
+  const { ctx, msg, msgFromServer, msgCmd, msgEvent, msgGameEvent, gameState } =
     input;
 
   switch (gameState.t) {
@@ -87,7 +87,7 @@ const update: Module["update"] = (input) => {
         gameState: gameState.c,
         model:
           input.model?.t === "connect-four" ? input.model.c : ConnectFour.init,
-        cmd: cmd,
+        msgCmd: msgCmd,
         msgEvent: msgEvent,
         msgFromServer:
           msgFromServer?.t === "connect-four" ? msgFromServer.c : null,
@@ -100,7 +100,7 @@ const update: Module["update"] = (input) => {
 
       const tagged = GameClientModule.tagOutput(
         "connect-four",
-        (cmd) => ClientCmd.tag("connect-four", cmd),
+        (msgCmd) => ClientCmd.tag("connect-four", msgCmd),
         updated
       );
 
@@ -112,7 +112,7 @@ const update: Module["update"] = (input) => {
         ctx: ctx,
         gameState: gameState.c,
         model: input.model?.t === "flow" ? input.model.c : Flow.init,
-        cmd: cmd,
+        msgCmd: msgCmd,
         msgEvent: msgEvent,
         msgFromServer: msgFromServer?.t === "flow" ? msgFromServer.c : null,
         msgGameEvent:
@@ -124,7 +124,7 @@ const update: Module["update"] = (input) => {
 
       const tagged = GameClientModule.tagOutput(
         "flow",
-        (cmd) => ClientCmd.tag("flow", cmd),
+        (msgCmd) => ClientCmd.tag("flow", msgCmd),
         updated
       );
 

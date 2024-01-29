@@ -113,7 +113,7 @@ export const update = (input: {
 }): {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
-  cmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<ToClient>[];
 } => {
   return p(
     updateMain(input),
@@ -127,7 +127,9 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
     case "clock-tick": {
       return {
         model,
-        cmd: [{ t: "send-to-space", msg: { t: "clock-tick", now: ctx.now } }],
+        msgCmd: [
+          { t: "send-to-space", msg: { t: "clock-tick", now: ctx.now } },
+        ],
       };
     }
 
@@ -138,7 +140,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
             ...model,
             requests: { ...model.requests, getPuzzles: msg.result },
           },
-          cmd: [
+          msgCmd: [
             {
               t: "send-to-space",
               msg: { t: "db-got-puzzles", result: msg.result },
@@ -160,7 +162,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
           ...modelNew,
           requests: { ...model.requests, getPuzzles: ok(null) },
         },
-        cmd: [
+        msgCmd: [
           {
             t: "send-to-space",
             msg: { t: "db-got-puzzles", result: ok(modelNew) },
@@ -173,7 +175,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
       if (msg.result.t === "err") {
         return {
           model,
-          cmd: [
+          msgCmd: [
             {
               t: "send-to-space",
               msg: { t: "db-got-initial-load", result: msg.result },
@@ -189,7 +191,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
       if (!puzzle) {
         return {
           model,
-          cmd: [
+          msgCmd: [
             {
               t: "send-to-space",
               msg: {
@@ -213,7 +215,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
 
       return {
         model: modelNew,
-        cmd: [
+        msgCmd: [
           {
             t: "send-to-space",
             msg: { t: "db-got-initial-load", result: ok(modelNew) },
@@ -225,7 +227,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
     case "db-put-interaction": {
       return {
         model,
-        cmd: [
+        msgCmd: [
           {
             t: "send-to-space",
             msg: {
@@ -240,7 +242,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
     case "db-put-profile": {
       return {
         model,
-        cmd: [
+        msgCmd: [
           {
             t: "send-to-space",
             msg: {
@@ -265,7 +267,7 @@ export const updateFromClient = (input: {
 }): {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
-  cmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<ToClient>[];
 } => {
   return p(
     input,
@@ -390,7 +392,7 @@ const updateFromClientMain: typeof updateFromClient = ({ model }) => {
 
   // return {
   //   model: handled.t === "ok" ? { ...model, ...handled.value } : model,
-  //   cmd: [{ t: "send-to-space", msg: { ...msg, result: handled } }],
+  //   msgCmd: [{ t: "send-to-space", msg: { ...msg, result: handled } }],
   // };
   return { model };
 };

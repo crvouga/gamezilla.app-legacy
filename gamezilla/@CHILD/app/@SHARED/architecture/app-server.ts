@@ -82,7 +82,7 @@ export type Input<T extends AppServerModuleTypes> = {
   /**
    *
    */
-  cmd?: T["InCmd"] | null;
+  msgCmd?: T["InCmd"] | null;
 };
 
 //
@@ -103,7 +103,7 @@ export type Output<T extends AppServerModuleTypes> = {
   /**
    *
    */
-  cmd?: T["OutCmd"][];
+  msgCmd?: T["OutCmd"][];
   /**
    *
    */
@@ -153,7 +153,7 @@ const chainUpdates = async <T extends AppServerModuleTypes>(
   const accNew: Output<T> = {
     model: { ...acc.model, ...updated.model },
     eff: Eff.batch([acc.eff, updated.eff]),
-    cmd: [...(acc.cmd ?? []), ...(updated.cmd ?? [])],
+    msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
     msgEvent: [...(acc.msgEvent ?? []), ...(updated.msgEvent ?? [])],
   };
 

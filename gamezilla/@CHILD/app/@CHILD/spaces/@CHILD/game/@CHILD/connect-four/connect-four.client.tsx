@@ -115,21 +115,21 @@ const updateFromGameEvent =
           case "none": {
             return {
               model: { t: null },
-              cmd: [playSound(APP_SOUND.navBackwardMin)],
+              msgCmd: [playSound(APP_SOUND.navBackwardMin)],
             };
           }
 
           case "vs-bot": {
             return {
               model: { t: "vs-bot", c: VsBot.init },
-              cmd: [playSound(APP_SOUND.navForwardMin)],
+              msgCmd: [playSound(APP_SOUND.navForwardMin)],
             };
           }
 
           case "vs-user": {
             return {
               model: { t: "vs-user", c: VsUser.init },
-              cmd: [playSound(APP_SOUND.navForwardMin)],
+              msgCmd: [playSound(APP_SOUND.navForwardMin)],
             };
           }
         }
@@ -157,7 +157,7 @@ const updateChild =
           ctx: { ...input.ctx, onQuit: () => {} },
           msg: msg?.t === "vs-bot" ? msg.c : null,
           msgEvent: msgEvent,
-          cmd: null,
+          msgCmd: null,
           msgGameEvent:
             msgGameEvent?.t === "vs-bot"
               ? { ...msgGameEvent, ...msgGameEvent.c }
@@ -169,7 +169,7 @@ const updateChild =
 
         return GameClientModule.tagOutput(
           "vs-bot",
-          (cmd) => ClientCmd.tag("vs-bot", cmd),
+          (msgCmd) => ClientCmd.tag("vs-bot", msgCmd),
           updated
         );
       }
@@ -179,7 +179,7 @@ const updateChild =
           ctx: { ...input.ctx, onQuit: () => {} },
           model: model.t === "vs-user" ? model.c : VsUser.init,
           msg: msg?.t === "vs-user" ? msg.c : null,
-          cmd: null,
+          msgCmd: null,
           msgEvent: msgEvent,
           msgGameEvent:
             msgGameEvent?.t === "vs-user"
@@ -192,7 +192,7 @@ const updateChild =
 
         return GameClientModule.tagOutput(
           "vs-user",
-          (cmd) => ClientCmd.tag("vs-user", cmd),
+          (msgCmd) => ClientCmd.tag("vs-user", msgCmd),
           updated
         );
       }

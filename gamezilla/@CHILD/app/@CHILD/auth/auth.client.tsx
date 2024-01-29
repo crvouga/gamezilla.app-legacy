@@ -68,7 +68,7 @@ export const init: Client["init"] = async ({ stored, ctx }) => {
       model: { ...stored, sms: sms.model },
       eff: Eff.tag("sms", sms.eff),
       msgEvent: sms.msgEvent,
-      cmd: ClientCmd.tag("sms", sms.cmd),
+      msgCmd: ClientCmd.tag("sms", sms.msgCmd),
     };
   }
 
@@ -81,7 +81,7 @@ export const init: Client["init"] = async ({ stored, ctx }) => {
     },
     eff: Eff.tag("sms", sms.eff),
     msgEvent: sms.msgEvent,
-    cmd: ClientCmd.tag("sms", sms.cmd),
+    msgCmd: ClientCmd.tag("sms", sms.msgCmd),
   };
 };
 
@@ -107,7 +107,7 @@ const updateChild: Client["update"] = async (input) => {
   const updated = await AuthClientSMS.update({
     ctx: input.ctx,
     model: input.model.sms,
-    cmd: input.cmd,
+    msgCmd: input.msgCmd,
     msgEvent: input.msgEvent,
     msgFromServer:
       input.msgFromServer?.t === "sms" ? input.msgFromServer.c : null,
@@ -116,7 +116,7 @@ const updateChild: Client["update"] = async (input) => {
 
   return {
     model: { ...input.model, sms: updated.model },
-    cmd: ClientCmd.tag("sms", updated.cmd),
+    msgCmd: ClientCmd.tag("sms", updated.msgCmd),
     eff: Eff.tag("sms", updated.eff),
     msgEvent: updated.msgEvent,
   };
@@ -135,7 +135,7 @@ const updateFromMsg: Client["update"] = async (input) => {
     case "user-clicked-login-with-phone": {
       return {
         model,
-        cmd: [
+        msgCmd: [
           pushRoute({
             t: "auth",
             c: { t: "login-phone", isSelectingCountry: false },
@@ -170,7 +170,7 @@ const updateFromLogoutMsg = ({
           ...model,
           currentUser: { t: "logged-out" },
         },
-        cmd: [sendToServer({ t: "logout" }), showToast("Logged out")],
+        msgCmd: [sendToServer({ t: "logout" }), showToast("Logged out")],
         msgEvent: [{ t: "is-logged-out" }],
       };
     }
@@ -179,7 +179,7 @@ const updateFromLogoutMsg = ({
     case "clicked-cancel": {
       return {
         model: { ...model, logout: notAsked },
-        cmd: [
+        msgCmd: [
           replaceRoute({
             t: "profile",
             c: { t: "profile", userId: currentUserId },
@@ -240,7 +240,7 @@ const updateRedirect: Client["update"] = async (input) => {
       if (ctx.currentRoute.t === "auth") {
         return {
           model,
-          cmd: [
+          msgCmd: [
             replaceRoute({
               t: "spaces",
               c: { t: "space-list" },
@@ -257,7 +257,7 @@ const updateRedirect: Client["update"] = async (input) => {
       if (ctx.currentRoute.t !== "auth") {
         return {
           model,
-          cmd: [
+          msgCmd: [
             replaceRoute({
               t: "auth",
               c: { t: "login" },
@@ -274,7 +274,7 @@ const updateRedirect: Client["update"] = async (input) => {
       if (model.currentUser.t === "logged-in" && msgEvent.route.t === "auth") {
         return {
           model,
-          cmd: [
+          msgCmd: [
             replaceRoute({
               t: "spaces",
               c: { t: "space-list" },
@@ -287,7 +287,7 @@ const updateRedirect: Client["update"] = async (input) => {
       if (model.currentUser.t === "logged-out" && msgEvent.route.t !== "auth") {
         return {
           model,
-          cmd: [
+          msgCmd: [
             replaceRoute({
               t: "auth",
               c: { t: "login" },

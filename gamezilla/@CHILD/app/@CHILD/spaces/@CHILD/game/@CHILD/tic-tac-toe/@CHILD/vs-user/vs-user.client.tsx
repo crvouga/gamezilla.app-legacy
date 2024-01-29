@@ -42,7 +42,7 @@ export const update = (
   model: ClientModel
 ): {
   model: ClientModel;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg[0]) {
     //
@@ -78,7 +78,7 @@ export const update = (
     case "stop-playing":
     case "start-game":
     case "NewGame": {
-      return { model, cmd: [sendToServer(msg)] };
+      return { model, msgCmd: [sendToServer(msg)] };
     }
 
     default: {

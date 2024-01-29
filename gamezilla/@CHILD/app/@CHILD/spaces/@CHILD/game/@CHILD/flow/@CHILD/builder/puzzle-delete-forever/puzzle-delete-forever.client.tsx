@@ -32,7 +32,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
     case "delete-forever/user-clicked-delete-button": {
       return {
         model: { ...model, opened: "delete-forever" },
-        cmd: [playSound(APP_SOUND.alertErrorSm)],
+        msgCmd: [playSound(APP_SOUND.alertErrorSm)],
       };
     }
 
@@ -47,7 +47,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
     case "delete-forever/user-clicked-confirm-button": {
       return {
         model: { ...model, deleteForeverRequest: RemoteResult.loading },
-        cmd: [
+        msgCmd: [
           sendToServer({ t: "delete-forever/user-confirmed" }),
           playSound(APP_SOUND.tap),
         ],
@@ -74,7 +74,7 @@ const updateFromGameEvent: ClientModule["update"] = (input) => {
           deleteForeverRequest: msgGameEvent.deleted,
           opened: null,
         },
-        cmd: showOkToast("Deleted puzzle"),
+        msgCmd: showOkToast("Deleted puzzle"),
       };
     }
 

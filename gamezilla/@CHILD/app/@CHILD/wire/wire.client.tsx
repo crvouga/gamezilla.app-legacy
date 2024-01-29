@@ -46,13 +46,13 @@ export const init = ({
 export const update = <TToClient, TToServer>({
   msg,
   msgFromServer,
-  cmd,
+  msgCmd,
   model,
   transport,
 }: {
   msg?: ClientMsg | null;
   msgFromServer?: ToClient | null;
-  cmd?: ClientCmd<{ ClientMsg: ClientMsg; ToServer: TToServer }> | null;
+  msgCmd?: ClientCmd<{ ClientMsg: ClientMsg; ToServer: TToServer }> | null;
   model: ClientModel;
   transport: IClientTransport<{
     ToServer: TToServer;
@@ -71,9 +71,9 @@ export const update = <TToClient, TToServer>({
     return updateFromServer({ model, msgFromServer, transport });
   }
 
-  if (cmd) {
+  if (msgCmd) {
     return updateFromCmd({
-      cmd,
+      msgCmd,
       model,
       transport,
     });
@@ -123,7 +123,7 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
       return {
         model: { ...model, state: { t: "server-connecting" } },
         eff: () => {
-          transport.cmd.publish({ t: "try-reconnect" });
+          transport.msgCmd.publish({ t: "try-reconnect" });
         },
       };
     }
@@ -149,18 +149,18 @@ const updateFromServer: typeof update = ({ model, msgFromServer }) => {
     case "server-restarted": {
       return {
         model,
-        cmd: [showToast("Server restarted")],
+        msgCmd: [showToast("Server restarted")],
       };
     }
   }
 };
 
-const updateFromCmd: typeof update = ({ cmd, model, transport }) => {
-  if (!cmd) {
+const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
+  if (!msgCmd) {
     return { model };
   }
 
-  const wireCmd = cmd.c;
+  const wireCmd = msgCmd.c;
 
   switch (wireCmd.t) {
     case "send-to-server": {

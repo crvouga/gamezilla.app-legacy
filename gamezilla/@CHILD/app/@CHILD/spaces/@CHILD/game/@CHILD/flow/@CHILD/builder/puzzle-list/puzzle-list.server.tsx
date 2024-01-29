@@ -13,7 +13,7 @@ const update: ServerModule["update"] = async (input) => {
 
       return {
         model: input.model,
-        cmd: [sendBack(fromClient, { t: "list/listed-puzzle", listed })],
+        msgCmd: [sendBack(fromClient, { t: "list/listed-puzzle", listed })],
       };
     }
 

@@ -76,7 +76,7 @@ export type Input<T extends AppClientModuleTypes> = {
   /**
    *
    */
-  cmd?: T["InCmd"] | null;
+  msgCmd?: T["InCmd"] | null;
 };
 
 //
@@ -95,9 +95,9 @@ export type Output<T extends AppClientModuleTypes> = {
    */
   eff?: Eff<T["Msg"]>;
   /**
-   * `cmd` is a message to send to another module
+   * `msgCmd` is a message to send to another module
    */
-  cmd?: T["OutCmd"][];
+  msgCmd?: T["OutCmd"][];
   /**
    * `msgEvent` is a message to notify other modules
    */
@@ -156,7 +156,7 @@ const chainUpdates = async <T extends AppClientModuleTypes>(
       ...updated.model,
     },
     eff: Eff.batch([acc.eff, updated.eff]),
-    cmd: [...(acc.cmd ?? []), ...(updated.cmd ?? [])],
+    msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
     msgEvent: [...(acc.msgEvent ?? []), ...(updated.msgEvent ?? [])],
   };
 

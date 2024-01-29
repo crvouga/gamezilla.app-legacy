@@ -44,13 +44,13 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (msg.t === "bot-moved") {
     if (model.type !== "game") {
       return {
         model,
-        cmd: [
+        msgCmd: [
           {
             t: "send-to-space",
             msg: {
@@ -74,7 +74,9 @@ export const update = ({
     if (moved.t === "err") {
       return {
         model,
-        cmd: [{ t: "send-to-space", msg: { t: "bot-moved", result: moved } }],
+        msgCmd: [
+          { t: "send-to-space", msg: { t: "bot-moved", result: moved } },
+        ],
       };
     }
 
@@ -85,7 +87,7 @@ export const update = ({
 
     return {
       model: modelNew,
-      cmd: [
+      msgCmd: [
         { t: "send-to-space", msg: { t: "bot-moved", result: ok(modelNew) } },
       ],
     };
@@ -106,7 +108,7 @@ export const updateFromClient = (input: {
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  cmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<ToClient>[];
 } => {
   return p(
     input,
@@ -140,7 +142,7 @@ const updateFromClientMain: typeof updateFromClient = ({ model }) => {
   // const modelNew: Model = handled.t === "ok" ? handled.value : model;
   // return {
   //   model: modelNew,
-  //   cmd: [{ t: "send-to-space", msg: res }],
+  //   msgCmd: [{ t: "send-to-space", msg: res }],
   // };
 };
 
@@ -152,7 +154,7 @@ export const updateFromEvent = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (msg.t === "user-left") {
     if (model.player !== msg.userId) {
@@ -168,7 +170,7 @@ export const updateFromEvent = ({
 
     return {
       model: modelNew,
-      cmd: [
+      msgCmd: [
         { t: "send-to-space", msg: { t: "player-left", result: ok(modelNew) } },
       ],
     };

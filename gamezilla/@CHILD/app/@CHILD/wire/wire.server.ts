@@ -51,7 +51,7 @@ type Input<TToClient, TToServer> = {
   msg?: ServerMsg | null;
   fromClient?: ToServer | null;
   msgEvent?: ServerEvent | null;
-  cmd?: WireCmd<TToClient> | null;
+  msgCmd?: WireCmd<TToClient> | null;
   //
   transport: IServerTransport<{
     ToClient: TToClient;
@@ -63,7 +63,7 @@ type Output = {
   model: ServerModel;
   eff?: Eff<ServerMsg>;
   msgEvent?: ServerEvent[];
-  cmd?: ServerCmd<ToClient>[];
+  msgCmd?: ServerCmd<ToClient>[];
 };
 
 //
@@ -139,7 +139,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
           if (didServerRestart) {
             return {
               model,
-              cmd: [sendToClient([msg.clientId], { t: "server-restarted" })],
+              msgCmd: [sendToClient([msg.clientId], { t: "server-restarted" })],
             };
           }
 
@@ -235,23 +235,23 @@ const updateFromClient: typeof update = async ({ model }) => {
 };
 
 const updateFromCmd = async <TToClient, TToServer>({
-  cmd,
+  msgCmd,
   model,
   transport,
   ctx,
 }: Input<TToClient, TToServer>): Promise<Output> => {
-  if (!cmd) {
+  if (!msgCmd) {
     return { model };
   }
 
-  const cmdChild = cmd.c;
+  const msgCmdChild = msgCmd.c;
 
-  switch (cmdChild.t) {
+  switch (msgCmdChild.t) {
     case "broadcast": {
       return {
         model,
         eff: () => {
-          transport.toClientBroadcast.publish([cmdChild.msg]);
+          transport.toClientBroadcast.publish([msgCmdChild.msg]);
         },
       };
     }
@@ -267,15 +267,15 @@ const updateFromCmd = async <TToClient, TToServer>({
             };
           } = {};
 
-          if (cmdChild.clientIds.length === 0) {
-            ctx.logger.warn(`${cmdChild.t} failed. No client ids provided`);
+          if (msgCmdChild.clientIds.length === 0) {
+            ctx.logger.warn(`${msgCmdChild.t} failed. No client ids provided`);
             return;
           }
 
-          for (const clientId of cmdChild.clientIds) {
+          for (const clientId of msgCmdChild.clientIds) {
             toClientPayload[clientId] = {
               clientId,
-              msgs: [cmdChild.msg],
+              msgs: [msgCmdChild.msg],
             };
           }
 
@@ -285,7 +285,7 @@ const updateFromCmd = async <TToClient, TToServer>({
     }
 
     case "send-to-user": {
-      const sessionIds: SessionId[] = cmdChild.userIds.flatMap(
+      const sessionIds: SessionId[] = msgCmdChild.userIds.flatMap(
         (userId) => model.sessionIdsByUserId[userId] ?? []
       );
 
@@ -296,7 +296,7 @@ const updateFromCmd = async <TToClient, TToServer>({
             ctx,
             sessionIds,
             model,
-            msg: cmdChild.msg,
+            msg: msgCmdChild.msg,
             transport,
           });
         },
@@ -309,9 +309,9 @@ const updateFromCmd = async <TToClient, TToServer>({
         eff: () => {
           sendToSession({
             ctx,
-            sessionIds: cmdChild.sessionIds,
+            sessionIds: msgCmdChild.sessionIds,
             model,
-            msg: cmdChild.msg,
+            msg: msgCmdChild.msg,
             transport,
           });
         },

@@ -54,7 +54,7 @@ export const init: Module["init"] = async (input) => {
       sms: sms.model,
     },
     eff: Eff.tag("sms", sms.eff),
-    cmd: ServerCmd.tag("sms", sms.cmd),
+    msgCmd: ServerCmd.tag("sms", sms.msgCmd),
     msgEvent: sms.msgEvent,
   };
 };
@@ -89,7 +89,7 @@ const updateChild: Module["update"] = async (input) => {
   const sms = await AuthServerSMS.update({
     ctx: input.ctx,
     model: input.model.sms,
-    cmd: input.cmd,
+    msgCmd: input.msgCmd,
     msgEvent: input.msgEvent,
     fromClient:
       input.fromClient?.t === "sms"
@@ -104,7 +104,7 @@ const updateChild: Module["update"] = async (input) => {
       sms: sms.model,
     },
     eff: Eff.tag("sms", sms.eff),
-    cmd: ServerCmd.tag("sms", sms.cmd),
+    msgCmd: ServerCmd.tag("sms", sms.msgCmd),
     msgEvent: sms.msgEvent,
   };
 };
@@ -187,7 +187,7 @@ const updateFromEvent: typeof update = async ({ msgEvent, model, ctx }) => {
     case "auth/client-unauthenticated": {
       return {
         model: await dissocSession(ctx, model, msgEvent.sessionId),
-        cmd: [
+        msgCmd: [
           sendToClient([msgEvent.clientId], {
             t: "client-unauthenticated",
             sessionId: msgEvent.sessionId,
@@ -204,7 +204,7 @@ const updateFromEvent: typeof update = async ({ msgEvent, model, ctx }) => {
           msgEvent.sessionId,
           msgEvent.userId
         ),
-        cmd: [
+        msgCmd: [
           sendToClient([msgEvent.clientId], {
             t: "client-authenticated",
             userId: msgEvent.userId,

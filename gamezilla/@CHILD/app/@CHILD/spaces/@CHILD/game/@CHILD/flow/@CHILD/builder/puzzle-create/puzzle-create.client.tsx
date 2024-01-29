@@ -16,7 +16,7 @@ const update: ClientModule["update"] = (input) => {
     case "puzzle-create/user-clicked-create-button": {
       return {
         model: { ...model, puzzleCreateRequest: loading },
-        cmd: [
+        msgCmd: [
           playSound(APP_SOUND.tap),
           sendToServer({ t: "puzzle-create/user-clicked-create-button" }),
         ],
@@ -33,7 +33,7 @@ const update: ClientModule["update"] = (input) => {
       if (isErr(msgGameEvent.created)) {
         return {
           model: { ...model, puzzleCreateRequest: msgGameEvent.created },
-          cmd: showErrorToast(msgGameEvent.created.error),
+          msgCmd: showErrorToast(msgGameEvent.created.error),
         };
       }
 
@@ -45,7 +45,7 @@ const update: ClientModule["update"] = (input) => {
           puzzleCreateRequest: Result.mapOk(msgGameEvent.created, () => null),
           puzzles: { ...model.puzzles, [puzzleNew.id]: puzzleNew },
         },
-        cmd: showOkToast("Puzzle created"),
+        msgCmd: showOkToast("Puzzle created"),
       };
     }
 

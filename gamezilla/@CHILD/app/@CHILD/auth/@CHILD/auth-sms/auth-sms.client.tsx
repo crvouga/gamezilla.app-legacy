@@ -131,7 +131,7 @@ const updateFromMsg: Module["update"] = async (input) => {
       ) {
         return {
           model,
-          cmd: [
+          msgCmd: [
             replaceRoute({
               t: "auth",
               c: { t: "login-phone", isSelectingCountry: false },
@@ -142,7 +142,7 @@ const updateFromMsg: Module["update"] = async (input) => {
 
       return {
         model,
-        cmd: [replaceRoute({ t: "auth", c: { t: "login" } })],
+        msgCmd: [replaceRoute({ t: "auth", c: { t: "login" } })],
       };
     }
 
@@ -177,7 +177,7 @@ const updateFromMsg: Module["update"] = async (input) => {
             ...model,
             phoneNumberError: phoneNumber.error.userMessage,
           },
-          cmd: [
+          msgCmd: [
             playSound(APP_SOUND.alertErrorSm),
             focusView(PHONE_NUMBER_INPUT_VIEW_ID),
           ],
@@ -190,7 +190,7 @@ const updateFromMsg: Module["update"] = async (input) => {
           sendCode: RemoteResult.loading,
           sentCodeAt: ctx.now,
         },
-        cmd: [
+        msgCmd: [
           sendToServer({
             t: "send-code",
             phoneNumber: phoneNumber.value,
@@ -219,7 +219,7 @@ const updateFromMsg: Module["update"] = async (input) => {
             ...model,
             codeError: "Please enter the code",
           },
-          cmd: [
+          msgCmd: [
             playSound(APP_SOUND.alertErrorSm),
             focusView(CODE_INPUT_VIEW_ID),
           ],
@@ -232,7 +232,7 @@ const updateFromMsg: Module["update"] = async (input) => {
           verifiedCodeAt: ctx.now,
           verifyCode: RemoteResult.loading,
         },
-        cmd: [
+        msgCmd: [
           playSound(APP_SOUND.tap),
           sendToServer({
             t: "verify-code",
@@ -262,7 +262,7 @@ const updateFromMsg: Module["update"] = async (input) => {
                   "Timed out. Server took too long to response"
                 ),
               },
-              cmd: [playSound(APP_SOUND.alertErrorMd)],
+              msgCmd: [playSound(APP_SOUND.alertErrorMd)],
             };
           }
           return { model };
@@ -283,7 +283,7 @@ const updateFromMsg: Module["update"] = async (input) => {
                   "Timed out. Server took too long to response"
                 ),
               },
-              cmd: [playSound(APP_SOUND.alertErrorMd)],
+              msgCmd: [playSound(APP_SOUND.alertErrorMd)],
             };
           }
 
@@ -306,7 +306,7 @@ const updateFromServer: Module["update"] = async (input) => {
       if (isErr(msgFromServer.result)) {
         return {
           model: { ...model, sendCode: msgFromServer.result },
-          cmd: [playSound(APP_SOUND.alertErrorMd)],
+          msgCmd: [playSound(APP_SOUND.alertErrorMd)],
         };
       }
 
@@ -317,7 +317,7 @@ const updateFromServer: Module["update"] = async (input) => {
           verifyCode: RemoteResult.notAsked,
           codeInput: "",
         },
-        cmd: [
+        msgCmd: [
           pushRoute({
             t: "auth",
             c: {
@@ -340,7 +340,7 @@ const updateFromServer: Module["update"] = async (input) => {
       if (isErr(msgFromServer.result)) {
         return {
           model: { ...model, verifyCode: msgFromServer.result },
-          cmd: [playSound(APP_SOUND.alertErrorMd)],
+          msgCmd: [playSound(APP_SOUND.alertErrorMd)],
         };
       }
       return {

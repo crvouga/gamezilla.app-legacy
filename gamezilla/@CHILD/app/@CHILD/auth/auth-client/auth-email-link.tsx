@@ -55,7 +55,7 @@ export const update = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  cmd?: RouteCmd[];
+  msgCmd?: RouteCmd[];
 } => {
   if (msg.t === "inputted-email-address") {
     return {
@@ -114,7 +114,7 @@ export const update = ({
   if (msg.t === "clicked-back") {
     return {
       model: model,
-      cmd: [{ t: "routing", c: { t: "back" } }],
+      msgCmd: [{ t: "routing", c: { t: "back" } }],
     };
   }
 

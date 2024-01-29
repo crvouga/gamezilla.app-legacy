@@ -147,7 +147,7 @@ export const update = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: Cmd;
+  msgCmd?: Cmd;
 } => {
   switch (msg.t) {
     case "dragged-over": {
@@ -164,7 +164,7 @@ export const update = ({
           ...model,
           form: History.push(model.form, toEmptyForm({ grid })),
         },
-        cmd: {
+        msgCmd: {
           t: "play-sound",
           sourceSrc: APP_SOUND.navTransitionLeft,
         },
@@ -177,7 +177,7 @@ export const update = ({
           ...model,
           form: History.undo(model.form),
         },
-        cmd: {
+        msgCmd: {
           t: "play-sound",
           sourceSrc: APP_SOUND.navBackwardMin,
         },
@@ -190,7 +190,7 @@ export const update = ({
           ...model,
           form: History.redo(model.form),
         },
-        cmd: {
+        msgCmd: {
           t: "play-sound",
           sourceSrc: APP_SOUND.navForwardMin,
         },
@@ -214,7 +214,7 @@ export const update = ({
             terminalsByGroupId: draftTerminalsNew,
           }),
         },
-        cmd: {
+        msgCmd: {
           t: "play-sound",
           sourceSrc: APP_SOUND.tap,
         },
@@ -254,7 +254,7 @@ export const update = ({
 
       return {
         model: modelNew,
-        cmd: {
+        msgCmd: {
           t: "play-sound",
           sourceSrc: APP_SOUND.refreshFeed,
         },

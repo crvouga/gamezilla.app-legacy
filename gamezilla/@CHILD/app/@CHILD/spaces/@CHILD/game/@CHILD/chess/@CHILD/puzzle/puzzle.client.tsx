@@ -71,7 +71,7 @@ export const update = (input: {
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   return GameClientModule.chainUpdates(
     input,
@@ -79,18 +79,18 @@ export const update = (input: {
     (model) => {
       if (input.msg.t === "input-move") {
         if (input.msg.didCapture) {
-          return { model, cmd: [playSound(CHESS_SOUND.captureSound)] };
+          return { model, msgCmd: [playSound(CHESS_SOUND.captureSound)] };
         }
-        return { model, cmd: [playSound(CHESS_SOUND.moveSound)] };
+        return { model, msgCmd: [playSound(CHESS_SOUND.moveSound)] };
       }
       return { model };
     },
     (model) => {
       if (!isIncorrect(input.model) && isIncorrect(model)) {
-        return { model, cmd: [playSound(APP_SOUND.alertErrorMd)] };
+        return { model, msgCmd: [playSound(APP_SOUND.alertErrorMd)] };
       }
       if (!isSolved(input.model) && isSolved(model)) {
-        return { model, cmd: [playSound(APP_SOUND.celebration)] };
+        return { model, msgCmd: [playSound(APP_SOUND.celebration)] };
       }
       return { model };
     }
@@ -108,7 +108,7 @@ export const updateMain = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   const updated = updateCore({ msg, model, ctx });
 
@@ -119,7 +119,7 @@ export const updateMain = ({
 
   return {
     model: modelNew,
-    cmd: [sendToServer(msg)],
+    msgCmd: [sendToServer(msg)],
     eff: Eff.None,
   };
 };
@@ -131,7 +131,7 @@ export const updateFromServer = (input: {
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   return p(updateFromServerMain(input), andThen(watch));
 };
@@ -145,7 +145,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
   model: ClientModel;
 }): {
   model: ClientModel;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   switch (msg.t) {
     case "clock-tick": {
@@ -159,14 +159,14 @@ export const updateFromServerMain: typeof updateFromServer = ({
         if (msg.t === "db-got-puzzles") {
           return {
             model,
-            cmd: [showToast("Failed to load puzzles")],
+            msgCmd: [showToast("Failed to load puzzles")],
           };
         }
 
         if (msg.t === "db-got-initial-load") {
           return {
             model,
-            cmd: [showToast(`Failed to load puzzles and profile.`, "error")],
+            msgCmd: [showToast(`Failed to load puzzles and profile.`, "error")],
           };
         }
 

@@ -50,7 +50,7 @@ const updateChild: Module["update"] = async (input) => {
         ctx: input.ctx,
         gameState: gameState.c,
         model: input.model.t === "play" ? input.model.c : PlayServer.init,
-        cmd: input.cmd,
+        msgCmd: input.msgCmd,
         msgEvent: input.msgEvent,
         fromClient:
           input.fromClient?.t === "play"
@@ -66,7 +66,7 @@ const updateChild: Module["update"] = async (input) => {
 
       const tagged = GameServerModule.tagOutput(
         "play",
-        (cmd) => SpaceServerCmd.tag("play", cmd),
+        (msgCmd) => SpaceServerCmd.tag("play", msgCmd),
         updated
       );
 
@@ -78,7 +78,7 @@ const updateChild: Module["update"] = async (input) => {
         ctx: input.ctx,
         gameState: gameState.c,
         model: input.model.t === "builder" ? input.model.c : BuilderServer.init,
-        cmd: input.cmd,
+        msgCmd: input.msgCmd,
         msgEvent: input.msgEvent,
         fromClient:
           input.fromClient?.t === "builder"
@@ -94,7 +94,7 @@ const updateChild: Module["update"] = async (input) => {
 
       const tagged = GameServerModule.tagOutput(
         "builder",
-        (cmd) => SpaceServerCmd.tag("builder", cmd),
+        (msgCmd) => SpaceServerCmd.tag("builder", msgCmd),
         updated
       );
 

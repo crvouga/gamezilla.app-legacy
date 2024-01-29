@@ -81,7 +81,7 @@ const updateChild: Module["update"] = (input) => {
     gameState,
     msgGameEvent,
     ctx,
-    cmd,
+    msgCmd,
     msgEvent,
     msgFromServer,
     msg,
@@ -97,7 +97,7 @@ const updateChild: Module["update"] = (input) => {
         ctx: { ...ctx, onQuit: () => {}, puzzles: model.puzzles },
         gameState: gameState.c,
         model: model.t === "play" ? model.c : PlayClient.init,
-        cmd: cmd,
+        msgCmd: msgCmd,
         msgEvent: msgEvent,
         msgFromServer: msgFromServer?.t === "play" ? msgFromServer.c : null,
         msgGameEvent:
@@ -109,7 +109,7 @@ const updateChild: Module["update"] = (input) => {
 
       const tagged = GameClientModule.tagOutput(
         "play",
-        (cmd) => ClientCmd.tag("play", cmd),
+        (msgCmd) => ClientCmd.tag("play", msgCmd),
         updated
       );
 
@@ -121,7 +121,7 @@ const updateChild: Module["update"] = (input) => {
         ctx: { ...ctx, onQuit: () => {}, puzzles: model.puzzles },
         gameState: gameState.c,
         model: model.t === "builder" ? model.c : BuilderClient.init,
-        cmd: cmd,
+        msgCmd: msgCmd,
         msgEvent: msgEvent,
         msgFromServer: msgFromServer?.t === "builder" ? msgFromServer.c : null,
         msgGameEvent:
@@ -133,7 +133,7 @@ const updateChild: Module["update"] = (input) => {
 
       const tagged = GameClientModule.tagOutput(
         "builder",
-        (cmd) => ClientCmd.tag("builder", cmd),
+        (msgCmd) => ClientCmd.tag("builder", msgCmd),
         updated
       );
 
@@ -160,7 +160,7 @@ const updateFromGameEvent: Module["update"] = (input) => {
         case "play": {
           return {
             model: { ...model, t: "play", c: PlayClient.init },
-            cmd: [playSound(APP_SOUND.navForwardMin)],
+            msgCmd: [playSound(APP_SOUND.navForwardMin)],
           };
         }
 
@@ -171,14 +171,14 @@ const updateFromGameEvent: Module["update"] = (input) => {
               t: "builder",
               c: BuilderClient.init,
             },
-            cmd: [playSound(APP_SOUND.navForwardMin)],
+            msgCmd: [playSound(APP_SOUND.navForwardMin)],
           };
         }
 
         case null: {
           return {
             model: { ...model, t: "none" },
-            cmd: [playSound(APP_SOUND.navBackwardMin)],
+            msgCmd: [playSound(APP_SOUND.navBackwardMin)],
           };
         }
       }

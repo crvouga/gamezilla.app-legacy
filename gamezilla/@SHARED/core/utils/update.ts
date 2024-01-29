@@ -7,7 +7,7 @@ type Output<Model, Msg, Event, Cmd> = {
   model: Model;
   eff?: Eff<Msg>;
   msgEvent?: Event[];
-  cmd?: Cmd[];
+  msgCmd?: Cmd[];
 };
 
 /**
@@ -16,7 +16,7 @@ type Output<Model, Msg, Event, Cmd> = {
  * @example
  * const updated = p(
  *  andThen((model) => ({ model, eff: () => {} })),
- *  andThen((model) => ({ model, cmd: [] })),
+ *  andThen((model) => ({ model, msgCmd: [] })),
  *  andThen((model) => ({ model, msgEvent: [] })),
  * )
  */
@@ -31,7 +31,7 @@ export const andThen =
       model: updated.model,
       eff: Eff.batch([output.eff, updated.eff]),
       msgEvent: [...(output.msgEvent ?? []), ...(updated.msgEvent ?? [])],
-      cmd: [...(output.cmd ?? []), ...(updated.cmd ?? [])],
+      msgCmd: [...(output.msgCmd ?? []), ...(updated.msgCmd ?? [])],
     };
   };
 
@@ -67,9 +67,9 @@ export function batchMsgs<T>(...msgs: Array<NullishItems<T>>): Array<T> {
  * { model: 0 },
  * (model) => ({ model: model + 1, msgEvent: [someEvent] }),
  * (model) => ({ model: model + 1, eff: someEff }),
- * (model) => ({ model: model + 1, cmd: [someCmd] }),
+ * (model) => ({ model: model + 1, msgCmd: [someCmd] }),
  * )
- * //=> { model: 3, msgEvent: [someEvent], eff: someEff, cmd: [someCmd] }
+ * //=> { model: 3, msgEvent: [someEvent], eff: someEff, msgCmd: [someCmd] }
  *
  * @param initial - the model to start with
  * @param updaters - a list of update functions to apply to the model
@@ -83,7 +83,7 @@ export const chainAwait = async <Model, Msg, Event, Cmd>(
     | Output<Model, Msg, Event, Cmd>
     | Promise<Output<Model, Msg, Event, Cmd>>)[]
 ): Promise<Output<Model, Msg, Event, Cmd>> => {
-  const cmd: Cmd[] = [...(initial.cmd ?? [])];
+  const msgCmd: Cmd[] = [...(initial.msgCmd ?? [])];
   const msgEvent: Event[] = [...(initial.msgEvent ?? [])];
   const eff: Eff<Msg>[] = initial.eff ? [initial.eff] : [];
   let model: Model = { ...initial.model };
@@ -102,9 +102,9 @@ export const chainAwait = async <Model, Msg, Event, Cmd>(
       }
     }
 
-    if (updated.cmd) {
-      for (let j = 0, len = updated.cmd.length; j < len; ++j) {
-        cmd.push(updated.cmd[j]!);
+    if (updated.msgCmd) {
+      for (let j = 0, len = updated.msgCmd.length; j < len; ++j) {
+        msgCmd.push(updated.msgCmd[j]!);
       }
     }
   }
@@ -113,6 +113,6 @@ export const chainAwait = async <Model, Msg, Event, Cmd>(
     model,
     eff: Eff.batch(eff),
     msgEvent,
-    cmd,
+    msgCmd,
   };
 };

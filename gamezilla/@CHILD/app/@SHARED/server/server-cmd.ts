@@ -140,24 +140,24 @@ export const sendToUser = <ToClient>(
 //
 //
 
-const mapOne = <A, B>(fn: (a: A) => B, cmd: ServerCmd<A>): ServerCmd<B> => {
-  switch (cmd.t) {
+const mapOne = <A, B>(fn: (a: A) => B, msgCmd: ServerCmd<A>): ServerCmd<B> => {
+  switch (msgCmd.t) {
     case "wire": {
-      switch (cmd.c.t) {
+      switch (msgCmd.c.t) {
         case "send-to-user":
         case "send-to-session":
         case "send-to-client":
         case "topic-publish":
         case "broadcast": {
-          return { t: "wire", c: { ...cmd.c, msg: fn(cmd.c.msg) } };
+          return { t: "wire", c: { ...msgCmd.c, msg: fn(msgCmd.c.msg) } };
         }
         case "topic-subscribe": {
           return {
             t: "wire",
             c: {
               t: "topic-subscribe",
-              clientIds: cmd.c.clientIds,
-              topics: cmd.c.topics,
+              clientIds: msgCmd.c.clientIds,
+              topics: msgCmd.c.topics,
             },
           };
         }
@@ -166,8 +166,11 @@ const mapOne = <A, B>(fn: (a: A) => B, cmd: ServerCmd<A>): ServerCmd<B> => {
   }
 };
 
-const map = <A, B>(fn: (a: A) => B, cmd?: ServerCmd<A>[]): ServerCmd<B>[] => {
-  return cmd?.map((m) => mapOne(fn, m)) ?? [];
+const map = <A, B>(
+  fn: (a: A) => B,
+  msgCmd?: ServerCmd<A>[]
+): ServerCmd<B>[] => {
+  return msgCmd?.map((m) => mapOne(fn, m)) ?? [];
 };
 
 const tag = <T extends string, A>(

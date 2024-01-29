@@ -81,7 +81,7 @@ export const update: Module["update"] = async (input) => {
           ctx,
           gameState: gameState.c,
           model: model.t === "flow" ? model.c : FlowServer.init,
-          cmd: input.cmd,
+          msgCmd: input.msgCmd,
           msgEvent: input.msgEvent,
           fromClient:
             input.fromClient?.t === "flow"
@@ -97,7 +97,7 @@ export const update: Module["update"] = async (input) => {
 
         const tagged = GameServerModule.tagOutput(
           "flow",
-          (cmd) => SpaceServerCmd.tag("flow", cmd),
+          (msgCmd) => SpaceServerCmd.tag("flow", msgCmd),
           updated
         );
 
@@ -109,7 +109,7 @@ export const update: Module["update"] = async (input) => {
           ctx,
           gameState: gameState.c,
           model: model.t === "connect-four" ? model.c : ConnectFourServer.init,
-          cmd: input.cmd,
+          msgCmd: input.msgCmd,
           msgEvent: input.msgEvent,
           fromClient:
             input.fromClient?.t === "connect-four"
@@ -125,7 +125,7 @@ export const update: Module["update"] = async (input) => {
 
         const tagged = GameServerModule.tagOutput(
           "connect-four",
-          (cmd) => SpaceServerCmd.tag("connect-four", cmd),
+          (msgCmd) => SpaceServerCmd.tag("connect-four", msgCmd),
           updated
         );
 

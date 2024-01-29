@@ -32,9 +32,9 @@ export type Msg =
 export const update = <TClientMsg>({
   msg,
   model,
-  cmd,
+  msgCmd,
 }: {
-  cmd?: PlatformCmd<TClientMsg> | null;
+  msgCmd?: PlatformCmd<TClientMsg> | null;
   msg?: Msg | null;
   model: Model;
 }): {
@@ -46,8 +46,8 @@ export const update = <TClientMsg>({
     return updateFromMsg({ msg, model });
   }
 
-  if (cmd) {
-    return updateFromCmd({ cmd, model });
+  if (msgCmd) {
+    return updateFromCmd({ msgCmd, model });
   }
 
   return { model };
@@ -78,12 +78,12 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
   }
 };
 
-const updateFromCmd: typeof update = ({ cmd, model }) => {
-  if (!cmd) {
+const updateFromCmd: typeof update = ({ msgCmd, model }) => {
+  if (!msgCmd) {
     return { model };
   }
 
-  const platformCmd = cmd.c;
+  const platformCmd = msgCmd.c;
 
   switch (platformCmd.t) {
     case "focus": {

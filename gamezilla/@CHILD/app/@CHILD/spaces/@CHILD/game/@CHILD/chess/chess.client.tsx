@@ -65,7 +65,7 @@ export const init: Client["init"] = ({ model }) => {
       mode: { t: "none" },
       requests: {},
     },
-    cmd: [preloadSound(Object.values(CHESS_SOUND))],
+    msgCmd: [preloadSound(Object.values(CHESS_SOUND))],
   };
 };
 
@@ -93,7 +93,7 @@ export const update: Client["update"] = (input) => {
               ...model,
               requests: { ...model.requests, [msg.t]: RemoteResult.loading },
             },
-            cmd: [sendToServer(msg)],
+            msgCmd: [sendToServer(msg)],
           };
         }
 
@@ -141,7 +141,7 @@ export const update: Client["update"] = (input) => {
                 mode: { t: "puzzle", c: updated.model },
               },
               eff: Eff.tag("puzzle", updated?.eff ?? Eff.None),
-              cmd: ClientCmd.tag("puzzle", updated.cmd),
+              msgCmd: ClientCmd.tag("puzzle", updated.msgCmd),
             };
           }
           return { model };
@@ -179,9 +179,9 @@ export const update: Client["update"] = (input) => {
 
             (model) => {
               if (model.mode.t === "none") {
-                return { model, cmd: [playSound(APP_SOUND.navBackwardMin)] };
+                return { model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] };
               }
-              return { model, cmd: [playSound(APP_SOUND.navForwardMin)] };
+              return { model, msgCmd: [playSound(APP_SOUND.navForwardMin)] };
             }
           );
         }
@@ -233,7 +233,7 @@ export const update: Client["update"] = (input) => {
           return {
             model: { ...model, mode: { t: "puzzle", c: updated.model } },
             eff: Eff.tag("puzzle", updated?.eff ?? Eff.None),
-            cmd: ClientCmd.tag("puzzle", updated.cmd),
+            msgCmd: ClientCmd.tag("puzzle", updated.msgCmd),
           };
         }
       }

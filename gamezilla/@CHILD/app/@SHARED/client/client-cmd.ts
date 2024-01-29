@@ -118,7 +118,7 @@ export type WireCmd<T extends ClientCmdTypes> = {
 };
 
 /**
- * A cmd creator for sending a messages to the server.
+ * A msgCmd creator for sending a messages to the server.
  */
 export const sendToServer = <T extends ClientCmdTypes>(
   msg: T["ToServer"]
@@ -350,98 +350,104 @@ export const back = <T extends ClientCmdTypes>(
 
 const tagOne = <Tag extends string, T extends ClientCmdTypes>(
   t: Tag,
-  cmd: ClientCmd<T>
+  msgCmd: ClientCmd<T>
 ): ClientCmd<{
   ClientMsg: { t: Tag; c: T["ClientMsg"] };
   ToServer: { t: Tag; c: T["ToServer"] };
 }> => {
-  switch (cmd.t) {
+  switch (msgCmd.t) {
     case "wire": {
-      switch (cmd.c.t) {
+      switch (msgCmd.c.t) {
         case "send-to-server": {
-          if (cmd.c.msg) {
-            return { ...cmd, c: { ...cmd.c, msg: { t, c: cmd.c.msg } } };
+          if (msgCmd.c.msg) {
+            return {
+              ...msgCmd,
+              c: { ...msgCmd.c, msg: { t, c: msgCmd.c.msg } },
+            };
           }
-          return { ...cmd, c: { ...cmd.c, msg: { t, c: null } } };
+          return { ...msgCmd, c: { ...msgCmd.c, msg: { t, c: null } } };
         }
       }
     }
 
     case "platform": {
-      switch (cmd.c.t) {
+      switch (msgCmd.c.t) {
         case "start-timeout": {
           return {
-            ...cmd,
+            ...msgCmd,
             c: {
-              ...cmd.c,
+              ...msgCmd.c,
               msg: {
                 t,
-                c: cmd.c.msg,
+                c: msgCmd.c.msg,
               },
             },
           };
         }
 
         default: {
-          return cmd;
+          return msgCmd;
         }
       }
     }
 
     default: {
-      return cmd;
+      return msgCmd;
     }
   }
 };
 
 const tag = <Tag extends string, T extends ClientCmdTypes>(
   tag: Tag,
-  cmd?: (ClientCmd<T> | null | undefined)[] | null | undefined
+  msgCmd?: (ClientCmd<T> | null | undefined)[] | null | undefined
 ): ClientCmd<{
   ClientMsg: { t: Tag; c: T["ClientMsg"] };
   ToServer: { t: Tag; c: T["ToServer"] };
 }>[] => {
-  return cmd?.flatMap((c) => (c ? [tagOne(tag, c)] : [])) ?? [];
+  return msgCmd?.flatMap((c) => (c ? [tagOne(tag, c)] : [])) ?? [];
 };
 
 const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
-  cmd: ClientCmd<A>[],
+  msgCmd: ClientCmd<A>[],
   toServerMap: (a: A["ToServer"]) => B["ToServer"],
   clientMsgMap: (b: A["ClientMsg"]) => B["ClientMsg"]
 ): ClientCmd<B>[] => {
-  return cmd.map((cmd) => {
-    switch (cmd.t) {
+  return msgCmd.map((msgCmd) => {
+    switch (msgCmd.t) {
       case "wire": {
-        switch (cmd.c.t) {
+        switch (msgCmd.c.t) {
           case "send-to-server": {
-            if (cmd.c.msg) {
-              return { ...cmd, c: { ...cmd.c, msg: toServerMap(cmd.c.msg) } };
+            if (msgCmd.c.msg) {
+              return {
+                ...msgCmd,
+                c: { ...msgCmd.c, msg: toServerMap(msgCmd.c.msg) },
+              };
             }
-            return { ...cmd, c: { ...cmd.c, msg: null } };
+            return { ...msgCmd, c: { ...msgCmd.c, msg: null } };
           }
         }
       }
 
       case "platform": {
-        switch (cmd.c.t) {
+        switch (msgCmd.c.t) {
           case "start-timeout": {
             return {
-              ...cmd,
+              ...msgCmd,
               c: {
-                ...cmd.c,
-                msg: clientMsgMap(cmd.c.msg),
+                ...msgCmd.c,
+                msg: clientMsgMap(msgCmd.c.msg),
               },
             };
           }
 
           default: {
-            return cmd;
+            return msgCmd;
           }
         }
       }
 
       default: {
-        return cmd;
+        return msgCmd;
       }
     }
   });

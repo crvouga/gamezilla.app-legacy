@@ -60,7 +60,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
         msgGameEvent: [
           withId({ t: "user-changed-to-edit-mode", userId: ctx.currentUserId }),
         ],
-        cmd: [playSound(APP_SOUND.navBackwardMin)],
+        msgCmd: [playSound(APP_SOUND.navBackwardMin)],
       };
     }
     case "puzzle.editor.user-clicked-play-mode-button": {
@@ -69,19 +69,19 @@ const updateFromMsg: ClientModule["update"] = (input) => {
         msgGameEvent: [
           withId({ t: "user-changed-to-play-mode", userId: ctx.currentUserId }),
         ],
-        cmd: [playSound(APP_SOUND.navForwardMin)],
+        msgCmd: [playSound(APP_SOUND.navForwardMin)],
       };
     }
     case "puzzle.editor.user-clicked-more-button": {
       return {
         model: { ...model, opened: "more" },
-        cmd: [playSound(APP_SOUND.tap)],
+        msgCmd: [playSound(APP_SOUND.tap)],
       };
     }
     case "puzzle.editor.user-closed-more-drawer": {
       return {
         model: { ...model, opened: null },
-        cmd: [playSound(APP_SOUND.tap)],
+        msgCmd: [playSound(APP_SOUND.tap)],
       };
     }
     default: {
@@ -107,13 +107,13 @@ const updateFromGameEvent: ClientModule["update"] = (input) => {
         grid: gameState.puzzle.puzzle.c,
       });
 
-      if (!updated.cmd) {
+      if (!updated.msgCmd) {
         return { model };
       }
 
-      switch (updated.cmd.t) {
+      switch (updated.msgCmd.t) {
         case "play-sound": {
-          return { model, cmd: [playSound(updated.cmd.sourceSrc)] };
+          return { model, msgCmd: [playSound(updated.msgCmd.sourceSrc)] };
         }
       }
     }

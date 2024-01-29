@@ -80,7 +80,7 @@ export const update = ({
   model: Model;
 
   eff?: Eff<Msg>;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   if (msg.t === "vs-bot-setup") {
     const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
@@ -89,14 +89,14 @@ export const update = ({
 
   const handled = handle({ ctx, msg, model });
   if (handled.t === "err") {
-    return { model, cmd: [sendToServer(msg)] };
+    return { model, msgCmd: [sendToServer(msg)] };
   }
   const merged = mergeWithServer({
     ...ctx,
     client: model,
     server: handled.value,
   });
-  return { model: merged, cmd: [sendToServer(msg)] };
+  return { model: merged, msgCmd: [sendToServer(msg)] };
 };
 
 export const updateFromServer = ({

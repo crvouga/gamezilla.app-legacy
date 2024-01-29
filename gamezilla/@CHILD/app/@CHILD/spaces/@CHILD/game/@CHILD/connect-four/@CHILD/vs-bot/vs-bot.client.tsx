@@ -129,14 +129,14 @@ const watchGameOver =
       }
 
       case "Tie": {
-        return { model, cmd: [playSound(APP_SOUND.alertErrorSm)] };
+        return { model, msgCmd: [playSound(APP_SOUND.alertErrorSm)] };
       }
 
       case "Winner": {
         if (status.winner === gameStateNext.userPlayerType) {
           return {
             model,
-            cmd: [
+            msgCmd: [
               playSound(APP_SOUND.celebration, {
                 delay: TimeSpan.fromSeconds(1 / 2),
               }),
@@ -145,7 +145,7 @@ const watchGameOver =
         }
         return {
           model,
-          cmd: [
+          msgCmd: [
             playSound(APP_SOUND.alertErrorLg, {
               delay: TimeSpan.fromSeconds(1 / 2),
             }),
@@ -166,7 +166,7 @@ const updateFromGameEvent =
 
     return {
       model,
-      cmd: updateSound(ctx.currentUserId, gameState, msgGameEvent),
+      msgCmd: updateSound(ctx.currentUserId, gameState, msgGameEvent),
     };
   };
 

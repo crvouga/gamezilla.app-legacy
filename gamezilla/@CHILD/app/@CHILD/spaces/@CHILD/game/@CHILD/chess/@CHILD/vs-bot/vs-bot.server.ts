@@ -46,7 +46,7 @@ export const update = ({
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  cmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (msg.t === "bot-moved") {
     const result = botMoved(msg.moved, model);
@@ -55,7 +55,7 @@ export const update = ({
 
     return {
       model: modelNew,
-      cmd: [{ t: "send-to-space", msg: { t: "bot-moved", result } }],
+      msgCmd: [{ t: "send-to-space", msg: { t: "bot-moved", result } }],
     };
   }
 
@@ -69,7 +69,7 @@ export const updateFromClient = (input: {
 }): {
   model: Model;
   eff?: Eff<Msg>;
-  cmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<ToClient>[];
 } => {
   const updated = updateFromClientMain(input);
 
@@ -104,7 +104,7 @@ const updateFromClientMain: typeof updateFromClient = ({ model }) => {
 
   // return {
   //   model: modelNew,
-  //   cmd: [{ t: "send-to-space", msg: { ...msg, result: handled } }],
+  //   msgCmd: [{ t: "send-to-space", msg: { ...msg, result: handled } }],
   // };
   return { model };
 };
@@ -117,7 +117,7 @@ export const updateFromEvent = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<ToClient>[];
   eff?: Eff;
 } => {
   if (msg.t === "user-left") {
@@ -130,7 +130,7 @@ export const updateFromEvent = ({
       };
       return {
         model: modelNew,
-        cmd: [
+        msgCmd: [
           { t: "send-to-space", msg: { t: "player-left", model: modelNew } },
         ],
       };

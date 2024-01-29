@@ -69,14 +69,14 @@ export const ClientTransportSocketIO = <ToServer, ToClient>({
     }
   });
 
-  transport.cmd.subscribe((cmd) => {
-    switch (cmd.t) {
+  transport.msgCmd.subscribe((msgCmd) => {
+    switch (msgCmd.t) {
       case "try-reconnect": {
         socket.connect();
         break;
       }
       default: {
-        const _exhaustiveCheck: never = cmd.t;
+        const _exhaustiveCheck: never = msgCmd.t;
         return _exhaustiveCheck;
       }
     }

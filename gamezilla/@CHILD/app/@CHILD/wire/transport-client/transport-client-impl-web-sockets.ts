@@ -126,8 +126,8 @@ export const ClientTransportWebSockets = <ToServer, ToClient>({
     });
   });
 
-  transport.cmd.subscribe((cmd) => {
-    switch (cmd.t) {
+  transport.msgCmd.subscribe((msgCmd) => {
+    switch (msgCmd.t) {
       case "try-reconnect": {
         reconnectAttempts = 0;
         connect();

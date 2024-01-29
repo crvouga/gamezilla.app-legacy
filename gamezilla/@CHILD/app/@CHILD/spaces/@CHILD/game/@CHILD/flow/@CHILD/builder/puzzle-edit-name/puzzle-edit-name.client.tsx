@@ -71,7 +71,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
       if (newName.length === 0) {
         return {
           model: { ...model, editNameValidationError: "name-cannot-be-empty" },
-          cmd: [playSound(APP_SOUND.alertErrorSm)],
+          msgCmd: [playSound(APP_SOUND.alertErrorSm)],
         };
       }
 
@@ -81,7 +81,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
           editNameRequest: loading,
           editNameValidationError: null,
         },
-        cmd: [
+        msgCmd: [
           playSound(APP_SOUND.tap),
           sendToServer({
             t: "puzzle.edit-name.user-clicked-save-button",
@@ -115,7 +115,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
           editNameRequest: msgGameEvent.edited,
           opened: null,
         },
-        cmd: isOk(msgGameEvent.edited)
+        msgCmd: isOk(msgGameEvent.edited)
           ? showOkToast("Saved name")
           : showErrorToast(msgGameEvent.edited.error),
       };

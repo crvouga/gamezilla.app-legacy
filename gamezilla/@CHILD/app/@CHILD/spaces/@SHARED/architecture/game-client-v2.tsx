@@ -95,9 +95,9 @@ export type Input<T extends GameClientModuleTypes> = {
    */
   msgEvent?: T["InEvent"] | null;
   /**
-   * `cmd`
+   * `msgCmd`
    */
-  cmd?: T["InCmd"] | null;
+  msgCmd?: T["InCmd"] | null;
 };
 
 //
@@ -116,9 +116,9 @@ export type Output<T extends GameClientModuleTypes> = {
    */
   eff?: Eff<T["Msg"]>;
   /**
-   * `cmd` is a message to one other module. Always present tense
+   * `msgCmd` is a message to one other module. Always present tense
    */
-  cmd?: T["OutCmd"][];
+  msgCmd?: T["OutCmd"][];
   /**
    * `msgEvent` is a message to many other modules. Always past tense
    */
@@ -197,7 +197,7 @@ const chainUpdates = <T extends GameClientModuleTypes>(
   const accNew: Output<T> = {
     model: updated.model,
     eff: Eff.batch([acc.eff, updated.eff]),
-    cmd: [...(acc.cmd ?? []), ...(updated.cmd ?? [])],
+    msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
     msgEvent: [...(acc.msgEvent ?? []), ...(updated.msgEvent ?? [])],
     msgGameEvent: [
       ...(acc.msgGameEvent ?? []),
@@ -214,7 +214,7 @@ const tagOutput = <
   TTaggedCmd extends GameClientModuleTypes["OutCmd"]
 >(
   tag: TTag,
-  tagCmd: (cmd: T["OutCmd"][]) => TTaggedCmd[],
+  tagCmd: (msgCmd: T["OutCmd"][]) => TTaggedCmd[],
   output: Output<T>
 ): {
   model: { t: TTag; c: T["Model"] };
@@ -223,7 +223,7 @@ const tagOutput = <
   /**
    *
    */
-  cmd?: TTaggedCmd[];
+  msgCmd?: TTaggedCmd[];
   /**
    *
    */
@@ -238,7 +238,7 @@ const tagOutput = <
       t: tag,
       c: output.model,
     },
-    cmd: output.cmd ? tagCmd(output.cmd) : [],
+    msgCmd: output.msgCmd ? tagCmd(output.msgCmd) : [],
     eff: Eff.tag(tag, output.eff),
     msgEvent: output.msgEvent,
     msgGameEvent: output.msgGameEvent?.map((c) => {

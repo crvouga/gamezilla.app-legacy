@@ -12,7 +12,7 @@ export type IClientTransport<T extends { ToClient: any; ToServer: any }> = {
   toClient: PubSub<T["ToClient"][]>;
   toServer: PubSub<T["ToServer"][]>;
   msgEvent: PubSub<ClientTransportEvent>;
-  cmd: PubSub<ClientTransportCommand>;
+  msgCmd: PubSub<ClientTransportCommand>;
 };
 
 export const initClientTransport = <ToServer, ToClient>(): IClientTransport<{
@@ -23,7 +23,7 @@ export const initClientTransport = <ToServer, ToClient>(): IClientTransport<{
     toClient: PubSub.create(),
     toServer: PubSub.create(),
     msgEvent: PubSub.create(),
-    cmd: PubSub.create(),
+    msgCmd: PubSub.create(),
   };
 };
 

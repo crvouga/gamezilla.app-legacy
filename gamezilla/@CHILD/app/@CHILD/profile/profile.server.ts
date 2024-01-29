@@ -90,7 +90,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model }) => {
     case "handled": {
       return {
         model,
-        cmd: [sendToClient([msg.clientId], msg.msg)],
+        msgCmd: [sendToClient([msg.clientId], msg.msg)],
       };
     }
   }

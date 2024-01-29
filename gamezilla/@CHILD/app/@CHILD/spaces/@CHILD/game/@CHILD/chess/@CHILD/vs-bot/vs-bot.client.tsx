@@ -68,7 +68,7 @@ export const update = ({
 }): {
   model: ClientModel;
   eff?: Eff<ClientMsg>;
-  cmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
+  msgCmd?: ClientCmd<{ ToServer: ToServer; ClientMsg: ClientMsg }>[];
 } => {
   const model: ClientModel = { ...modelPrev, openedMenuId: null };
 
@@ -102,7 +102,7 @@ export const update = ({
       });
 
       if (handled.t === "err") {
-        return { model, cmd: [sendToServer(msg)] };
+        return { model, msgCmd: [sendToServer(msg)] };
       }
 
       const coreModel = handled.value;
@@ -112,7 +112,7 @@ export const update = ({
         server: coreModel,
       });
 
-      return { model: modelNew, cmd: [sendToServer(msg)] };
+      return { model: modelNew, msgCmd: [sendToServer(msg)] };
     }
   }
 };

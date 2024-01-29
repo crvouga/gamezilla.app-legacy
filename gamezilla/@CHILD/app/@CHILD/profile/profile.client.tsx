@@ -101,7 +101,7 @@ export const update: Module["update"] = (input) => {
     return updateFromServer(input);
   }
 
-  if (input.cmd) {
+  if (input.msgCmd) {
     return updateFromCmd(input);
   }
 
@@ -109,20 +109,20 @@ export const update: Module["update"] = (input) => {
 };
 
 const updateFromCmd: Module["update"] = (input) => {
-  const { model, cmd } = input;
+  const { model, msgCmd } = input;
 
-  if (!cmd) {
+  if (!msgCmd) {
     return { model };
   }
 
-  switch (cmd.c.t) {
+  switch (msgCmd.c.t) {
     case "add-profiles": {
       return {
         model: {
           ...model,
           profiles: {
             ...model.profiles,
-            ...cmd.c.profiles,
+            ...msgCmd.c.profiles,
           },
         },
       };
@@ -176,7 +176,7 @@ const updateFromServer: Module["update"] = (input) => {
 
       return {
         model: modelNew,
-        cmd: msgFromServer.loggedIn
+        msgCmd: msgFromServer.loggedIn
           ? [showToast(`Logged in as ${profile.username}`)]
           : [],
       };
@@ -271,13 +271,13 @@ const updateFromMsg: Module["update"] = (input) => {
     case "clicked-back-button": {
       switch (msg.from.t) {
         case "profile": {
-          return { model, cmd: [back()] };
+          return { model, msgCmd: [back()] };
         }
 
         case "profile-update": {
           return {
             model,
-            cmd: [
+            msgCmd: [
               replaceRoute({
                 t: "profile",
                 c: { t: "profile", userId: ctx.currentUserId },
@@ -289,7 +289,7 @@ const updateFromMsg: Module["update"] = (input) => {
         case "profile-avatar": {
           return {
             model,
-            cmd: [
+            msgCmd: [
               replaceRoute({ t: "profile", c: { t: "profile-update-avatar" } }),
             ],
           };
@@ -298,7 +298,9 @@ const updateFromMsg: Module["update"] = (input) => {
         case "profile-update-username": {
           return {
             model,
-            cmd: [replaceRoute({ t: "profile", c: { t: "profile-update" } })],
+            msgCmd: [
+              replaceRoute({ t: "profile", c: { t: "profile-update" } }),
+            ],
           };
         }
       }
@@ -307,21 +309,23 @@ const updateFromMsg: Module["update"] = (input) => {
     case "clicked-logout-button": {
       return {
         model,
-        cmd: [pushRoute({ t: "logout" }), playSound(APP_SOUND.tap)],
+        msgCmd: [pushRoute({ t: "logout" }), playSound(APP_SOUND.tap)],
       };
     }
 
     case "clicked-update-username-button": {
       return {
         model,
-        cmd: [pushRoute({ t: "profile", c: { t: "profile-update-username" } })],
+        msgCmd: [
+          pushRoute({ t: "profile", c: { t: "profile-update-username" } }),
+        ],
       };
     }
 
     case "clicked-edit-profile-button": {
       return {
         model,
-        cmd: [pushRoute({ t: "profile", c: { t: "profile-update" } })],
+        msgCmd: [pushRoute({ t: "profile", c: { t: "profile-update" } })],
       };
     }
 
@@ -329,7 +333,9 @@ const updateFromMsg: Module["update"] = (input) => {
     case "clicked-change-avatar-button": {
       return {
         model,
-        cmd: [pushRoute({ t: "profile", c: { t: "profile-update-avatar" } })],
+        msgCmd: [
+          pushRoute({ t: "profile", c: { t: "profile-update-avatar" } }),
+        ],
       };
     }
 
@@ -357,7 +363,7 @@ const loadProfile = (
       ...model,
       requests: { ...model.requests, "find-one": loading },
     },
-    cmd: [sendToServer({ t: "find-one", userId })],
+    msgCmd: [sendToServer({ t: "find-one", userId })],
   };
 };
 

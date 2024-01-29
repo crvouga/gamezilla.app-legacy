@@ -115,7 +115,7 @@ const updateFromMsg: Module["update"] = ({ msg, model }) => {
             ...model,
             muted: false,
           },
-          cmd: [playSound(APP_SOUND.tap)],
+          msgCmd: [playSound(APP_SOUND.tap)],
         };
       }
       return {
@@ -156,12 +156,12 @@ const updateFromEvent: Module["update"] = ({ model, msgEvent }) => {
   }
 };
 
-export const updateFromCmd: Module["update"] = async ({ model, cmd }) => {
-  if (!cmd) {
+export const updateFromCmd: Module["update"] = async ({ model, msgCmd }) => {
+  if (!msgCmd) {
     return { model };
   }
 
-  const soundCmd = cmd.c;
+  const soundCmd = msgCmd.c;
 
   switch (soundCmd.t) {
     case "preload": {

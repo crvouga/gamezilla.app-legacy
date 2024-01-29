@@ -159,13 +159,13 @@ const updateFromMsg: Module["update"] = async (input) => {
 };
 
 const updateFromCmd: Module["update"] = async (input) => {
-  if (!input.cmd) {
+  if (!input.msgCmd) {
     return { model: input.model };
   }
 
-  const { ctx, cmd, model } = input;
+  const { ctx, msgCmd, model } = input;
 
-  const toastCmd = cmd.c;
+  const toastCmd = msgCmd.c;
 
   switch (toastCmd.t) {
     case "enqueue": {

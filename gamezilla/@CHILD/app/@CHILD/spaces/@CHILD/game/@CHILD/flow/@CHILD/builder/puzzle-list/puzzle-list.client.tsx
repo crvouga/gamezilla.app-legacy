@@ -45,14 +45,14 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
             userId: ctx.currentUserId,
           }),
         ],
-        cmd: [playSound(APP_SOUND.tap)],
+        msgCmd: [playSound(APP_SOUND.tap)],
       };
     }
 
     case "list/user-observed-end-of-list": {
       return {
         model: { ...model, puzzleListRequest: loading },
-        cmd: [
+        msgCmd: [
           sendToServer({
             t: "list/list-puzzles",
             input: {
@@ -93,7 +93,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
           puzzleListRequest: Result.mapOk(msgFromServer.listed, () => null),
           puzzles: puzzlesNew,
         },
-        cmd: isErr(msgFromServer.listed)
+        msgCmd: isErr(msgFromServer.listed)
           ? showErrorToast(msgFromServer.listed.error)
           : [],
       };

@@ -58,22 +58,22 @@ export type Msg =
 export const update = ({
   msg,
   model,
-  cmd,
+  msgCmd,
 }: {
-  cmd?: RouteCmd | null;
+  msgCmd?: RouteCmd | null;
   msg?: Msg | null;
   model: Model;
 }): {
   model: Model;
   eff?: Eff<Msg>;
   msgEvent?: ClientEvent[];
-  cmd?: SoundCmd[];
+  msgCmd?: SoundCmd[];
 } => {
   if (msg) {
     return updateFromMsg({ msg, model });
   }
-  if (cmd) {
-    return updateFromCmd({ cmd, model });
+  if (msgCmd) {
+    return updateFromCmd({ msgCmd, model });
   }
   return { model };
 };
@@ -112,12 +112,12 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
   }
 };
 
-const updateFromCmd: typeof update = ({ cmd, model }) => {
-  if (!cmd) {
+const updateFromCmd: typeof update = ({ msgCmd, model }) => {
+  if (!msgCmd) {
     return { model };
   }
 
-  const routeCmd = cmd.c;
+  const routeCmd = msgCmd.c;
 
   switch (routeCmd.t) {
     case "push": {

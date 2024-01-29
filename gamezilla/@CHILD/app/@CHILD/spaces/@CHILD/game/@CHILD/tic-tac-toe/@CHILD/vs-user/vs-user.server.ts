@@ -61,7 +61,7 @@ export const update = (
   model: Model
 ): {
   model: Model;
-  cmd: SpaceServerCmd<ToClient>[];
+  msgCmd: SpaceServerCmd<ToClient>[];
 } => {
   switch (msg[0]) {
     case "RoundCountDown": {
@@ -71,7 +71,7 @@ export const update = (
 
       return {
         model: modelNew,
-        cmd: [{ t: "send-to-space", msg: ["RoundCountDown_Done", result] }],
+        msgCmd: [{ t: "send-to-space", msg: ["RoundCountDown_Done", result] }],
       };
     }
 
@@ -82,7 +82,7 @@ export const update = (
 
       return {
         model: modelNew,
-        cmd: [{ t: "send-to-space", msg: ["MoveCountDown_Done", result] }],
+        msgCmd: [{ t: "send-to-space", msg: ["MoveCountDown_Done", result] }],
       };
     }
   }
@@ -94,7 +94,7 @@ export const updateFromClient = (
   model: Model
 ): {
   model: Model;
-  cmd: SpaceServerCmd<ToClient>[];
+  msgCmd: SpaceServerCmd<ToClient>[];
 } => {
   switch (msg[0]) {
     case "InputPlayer": {
@@ -103,7 +103,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          cmd: [sendBack(ctx, ["InputPlayer_Done", result])],
+          msgCmd: [sendBack(ctx, ["InputPlayer_Done", result])],
         };
       }
 
@@ -111,7 +111,7 @@ export const updateFromClient = (
 
       return {
         model: modelNew,
-        cmd: [{ t: "send-to-space", msg: ["InputPlayer_Done", result] }],
+        msgCmd: [{ t: "send-to-space", msg: ["InputPlayer_Done", result] }],
       };
     }
 
@@ -121,14 +121,14 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          cmd: [sendBack(ctx, ["StopPlaying_Done", result])],
+          msgCmd: [sendBack(ctx, ["StopPlaying_Done", result])],
         };
       }
 
       const modelNew = result.value;
       return {
         model: modelNew,
-        cmd: [{ t: "send-to-space", msg: ["StopPlaying_Done", result] }],
+        msgCmd: [{ t: "send-to-space", msg: ["StopPlaying_Done", result] }],
       };
     }
 
@@ -138,14 +138,14 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          cmd: [sendBack(ctx, ["StartGame_Done", result])],
+          msgCmd: [sendBack(ctx, ["StartGame_Done", result])],
         };
       }
 
       const modelNew = result.value;
       return {
         model: modelNew,
-        cmd: [{ t: "send-to-space", msg: ["StartGame_Done", result] }],
+        msgCmd: [{ t: "send-to-space", msg: ["StartGame_Done", result] }],
       };
     }
 
@@ -155,14 +155,14 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          cmd: [sendBack(ctx, ["resign_Done", result])],
+          msgCmd: [sendBack(ctx, ["resign_Done", result])],
         };
       }
 
       const modelNew = result.value;
       return {
         model: modelNew,
-        cmd: [{ t: "send-to-space", msg: ["resign_Done", result] }],
+        msgCmd: [{ t: "send-to-space", msg: ["resign_Done", result] }],
       };
     }
 
@@ -172,14 +172,14 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          cmd: [sendBack(ctx, ["input-move-done", result])],
+          msgCmd: [sendBack(ctx, ["input-move-done", result])],
         };
       }
 
       const modelNew = result.value;
       return {
         model: modelNew,
-        cmd: [{ t: "send-to-space", msg: ["input-move-done", result] }],
+        msgCmd: [{ t: "send-to-space", msg: ["input-move-done", result] }],
       };
     }
 
@@ -189,7 +189,7 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          cmd: [sendBack(ctx, ["NewGame_Done", result])],
+          msgCmd: [sendBack(ctx, ["NewGame_Done", result])],
         };
       }
 
@@ -197,7 +197,7 @@ export const updateFromClient = (
 
       return {
         model: modelNew,
-        cmd: [{ t: "send-to-space", msg: ["NewGame_Done", result] }],
+        msgCmd: [{ t: "send-to-space", msg: ["NewGame_Done", result] }],
       };
     }
 
@@ -207,14 +207,14 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          cmd: [sendBack(ctx, ["InputBestOutOf_Done", result])],
+          msgCmd: [sendBack(ctx, ["InputBestOutOf_Done", result])],
         };
       }
 
       const modelNew = result.value;
       return {
         model: modelNew,
-        cmd: [{ t: "send-to-space", msg: ["InputBestOutOf_Done", result] }],
+        msgCmd: [{ t: "send-to-space", msg: ["InputBestOutOf_Done", result] }],
       };
     }
 
@@ -225,13 +225,13 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          cmd: [sendBack(ctx, res)],
+          msgCmd: [sendBack(ctx, res)],
         };
       }
 
       return {
         model: result.value,
-        cmd: [{ t: "send-to-space", msg: res }],
+        msgCmd: [{ t: "send-to-space", msg: res }],
       };
     }
 
@@ -242,13 +242,13 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          cmd: [sendBack(ctx, res)],
+          msgCmd: [sendBack(ctx, res)],
         };
       }
 
       return {
         model: result.value,
-        cmd: [{ t: "send-to-space", msg: res }],
+        msgCmd: [{ t: "send-to-space", msg: res }],
       };
     }
 
@@ -259,13 +259,13 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          cmd: [sendBack(ctx, res)],
+          msgCmd: [sendBack(ctx, res)],
         };
       }
 
       return {
         model: result.value,
-        cmd: [{ t: "send-to-space", msg: res }],
+        msgCmd: [{ t: "send-to-space", msg: res }],
       };
     }
 
@@ -276,13 +276,13 @@ export const updateFromClient = (
       if (isErr(result)) {
         return {
           model,
-          cmd: [sendBack(ctx, res)],
+          msgCmd: [sendBack(ctx, res)],
         };
       }
 
       return {
         model: result.value,
-        cmd: [{ t: "send-to-space", msg: res }],
+        msgCmd: [{ t: "send-to-space", msg: res }],
       };
     }
   }
@@ -296,7 +296,7 @@ export const updateFromEvent = ({
   model: Model;
 }): {
   model: Model;
-  cmd?: SpaceServerCmd<ToClient>[];
+  msgCmd?: SpaceServerCmd<ToClient>[];
 } => {
   if (msg.t === "user-left") {
     const { userId } = msg;
@@ -322,7 +322,7 @@ export const updateFromEvent = ({
 
     return {
       model: modelNew,
-      cmd: [{ t: "send-to-space", msg: ["player-left", modelNew] }],
+      msgCmd: [{ t: "send-to-space", msg: ["player-left", modelNew] }],
     };
   }
 

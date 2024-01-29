@@ -191,17 +191,17 @@ export const update = async (input: {
 function logMsg({
   msg,
   msgEvent,
-  cmd,
+  msgCmd,
   logger,
 }: {
   logger: Logger;
   msg?: ServerMsg;
   msgEvent?: ServerEvent;
-  cmd?: ServerCmd<ToClient>;
+  msgCmd?: ServerCmd<ToClient>;
 }) {
-  const prefix = msg ? "[msg]" : msgEvent ? "[msgEvent]" : "[cmd]";
+  const prefix = msg ? "[msg]" : msgEvent ? "[msgEvent]" : "[msgCmd]";
 
-  const obj = { ...msg, ...msgEvent, ...cmd };
+  const obj = { ...msg, ...msgEvent, ...msgCmd };
 
   logger.info(`${prefix} ${toMsgType(obj)}`);
 }
@@ -210,7 +210,7 @@ type Output = {
   model: ServerModel;
   eff: Eff<ServerMsg>;
   msgEvent: ServerEvent[];
-  cmd: ServerCmd<ToClient>[];
+  msgCmd: ServerCmd<ToClient>[];
 };
 
 const updateLoop = async (
@@ -218,19 +218,24 @@ const updateLoop = async (
   ctx: ServerCtx,
   acc: Output
 ): Promise<Output> => {
-  const [cmd, ...cmdRest] = acc.cmd;
+  const [msgCmd, ...msgCmdRest] = acc.msgCmd;
 
-  if (cmd) {
-    const updatedCmd = await updateChild({ deps, ctx, model: acc.model, cmd });
+  if (msgCmd) {
+    const updatedCmd = await updateChild({
+      deps,
+      ctx,
+      model: acc.model,
+      msgCmd,
+    });
 
     const accNew: Output = {
       model: updatedCmd.model,
-      cmd: [...cmdRest, ...updatedCmd.cmd],
+      msgCmd: [...msgCmdRest, ...updatedCmd.msgCmd],
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
       msgEvent: batchMsgs(acc.msgEvent, updatedCmd.msgEvent),
     };
 
-    ctx.logger.info(`[cmd] ${toMsgType(cmd)}`);
+    ctx.logger.info(`[msgCmd] ${toMsgType(msgCmd)}`);
 
     return updateLoop(deps, ctx, accNew);
   }
@@ -247,7 +252,7 @@ const updateLoop = async (
 
     const accNew: Output = {
       model: updatedEvent.model,
-      cmd: [...cmdRest, ...updatedEvent.cmd],
+      msgCmd: [...msgCmdRest, ...updatedEvent.msgCmd],
       eff: Eff.batch([acc.eff, updatedEvent.eff]),
       msgEvent: batchMsgs(msgEventRest, updatedEvent.msgEvent),
     };
@@ -265,7 +270,7 @@ export const updateChild = async ({
   msg,
   fromClient,
   msgEvent,
-  cmd,
+  msgCmd,
   model,
   deps,
 }: {
@@ -275,7 +280,7 @@ export const updateChild = async ({
   msg?: ServerMsg;
   fromClient?: (ToServer & ToServerMeta) | null;
   msgEvent?: ServerEvent;
-  cmd?: ServerCmd<ToClient>;
+  msgCmd?: ServerCmd<ToClient>;
 }): Promise<Output> => {
   //
   //
@@ -300,7 +305,7 @@ export const updateChild = async ({
   const space = await SpaceServer.update({
     model: model.spaces,
     ctx,
-    cmd: null,
+    msgCmd: null,
     msgEvent: msgEvent,
     fromClient:
       fromClient?.t === "spaces"
@@ -312,7 +317,7 @@ export const updateChild = async ({
   const auth = await AuthServer.update({
     model: model.auth,
     ctx,
-    cmd: null,
+    msgCmd: null,
     msgEvent: msgEvent,
     fromClient:
       fromClient?.t === "auth"
@@ -324,7 +329,7 @@ export const updateChild = async ({
   const wire = await WireServer.update({
     model: model.wire,
     ctx,
-    cmd: cmd?.t === "wire" ? cmd : null,
+    msgCmd: msgCmd?.t === "wire" ? msgCmd : null,
     msgEvent: msgEvent,
     fromClient:
       fromClient?.t === "wire" ? { ...fromClient, ...fromClient.c } : null,
@@ -335,7 +340,7 @@ export const updateChild = async ({
   const profile = await ProfileServer.update({
     model: model.profile,
     ctx,
-    cmd: null,
+    msgCmd: null,
     msgEvent: msgEvent,
     fromClient:
       fromClient?.t === "profile" ? { ...fromClient, ...fromClient.c } : null,
@@ -354,11 +359,11 @@ export const updateChild = async ({
       spaces: space.model,
       wire: wire.model,
     },
-    cmd: batchMsgs<ServerCmd<ToClient>>(
-      ServerCmd.tag("spaces", space.cmd),
-      ServerCmd.tag("auth", auth.cmd),
-      ServerCmd.tag("wire", wire.cmd),
-      ServerCmd.tag("profile", profile.cmd)
+    msgCmd: batchMsgs<ServerCmd<ToClient>>(
+      ServerCmd.tag("spaces", space.msgCmd),
+      ServerCmd.tag("auth", auth.msgCmd),
+      ServerCmd.tag("wire", wire.msgCmd),
+      ServerCmd.tag("profile", profile.msgCmd)
     ),
     eff: Eff.batch<ServerMsg>([
       Eff.tag("spaces", space.eff),

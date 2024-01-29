@@ -31,7 +31,7 @@ type Output<T extends GameServerTypes> = {
   model: T["ServerModel"];
   msgGameEvent?: WithEventId<T["GameEvent"]>[];
   eff?: Eff<T["ServerMsg"]>;
-  cmd?: SpaceServerCmd<T["ToClient"]>[];
+  msgCmd?: SpaceServerCmd<T["ToClient"]>[];
 };
 
 export type GameServer<T extends GameServerTypes> = {
@@ -42,7 +42,7 @@ export type GameServer<T extends GameServerTypes> = {
   }) => Promise<{
     model: T["ServerModel"];
     eff?: Eff<T["ServerMsg"]>;
-    cmd?: SpaceServerCmd<T["ToClient"]>[];
+    msgCmd?: SpaceServerCmd<T["ToClient"]>[];
   }>;
 
   update: (input: {
@@ -87,7 +87,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
       return {
         model: { t: tag, c: initial.model },
         eff: Eff.tag(tag, initial.eff),
-        cmd: SpaceServerCmd.tag(tag, initial.cmd),
+        msgCmd: SpaceServerCmd.tag(tag, initial.msgCmd),
       };
     },
 
@@ -105,7 +105,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
       return {
         model: { t: tag, c: updated.model },
         eff: Eff.tag(tag, updated.eff),
-        cmd: SpaceServerCmd.tag(tag, updated.cmd),
+        msgCmd: SpaceServerCmd.tag(tag, updated.msgCmd),
         msgGameEvent: updated.msgGameEvent
           ? updated.msgGameEvent.map(
               (msgGameEvent): EventMeta & { t: T; c: Types["GameEvent"] } => ({
@@ -140,9 +140,9 @@ const tag = <T extends string, Types extends GameServerTypes>(
  * { model: 0 },
  * (model) => ({ model: model + 1, msgEvent: [someEvent] }),
  * (model) => ({ model: model + 1, eff: someEff }),
- * (model) => ({ model: model + 1, cmd: [someCmd] }),
+ * (model) => ({ model: model + 1, msgCmd: [someCmd] }),
  * )
- * //=> { model: 3, msgEvent: [someEvent], eff: someEff, cmd: [someCmd] }
+ * //=> { model: 3, msgEvent: [someEvent], eff: someEff, msgCmd: [someCmd] }
  *
  * @param initial - the model to start with
  * @param updaters - a list of update functions to apply to the model
@@ -152,7 +152,7 @@ const chain = async <T extends GameServerTypes>(
   initial: Output<T> | Promise<Output<T>>,
   ...updaters: ((input: T["ServerModel"]) => Promise<Output<T>>)[]
 ): Promise<Output<T>> => {
-  const cmd: SpaceServerCmd<T["ToClient"]>[] = (await initial).cmd ?? [];
+  const msgCmd: SpaceServerCmd<T["ToClient"]>[] = (await initial).msgCmd ?? [];
   const msgGameEvents: (T["GameEvent"] & EventMeta)[] =
     (await initial)?.msgGameEvent ?? [];
   const eff: Eff<T["ServerMsg"]>[] = (await initial).eff
@@ -178,11 +178,11 @@ const chain = async <T extends GameServerTypes>(
         msgGameEvents.push(updated.msgGameEvent[j]!);
       }
     }
-    if (updated.cmd) {
+    if (updated.msgCmd) {
       let j = 0;
-      let len = updated.cmd.length;
+      let len = updated.msgCmd.length;
       for (j = 0; j < len; ++j) {
-        cmd.push(updated.cmd[j]!);
+        msgCmd.push(updated.msgCmd[j]!);
       }
     }
   }
@@ -191,7 +191,7 @@ const chain = async <T extends GameServerTypes>(
     model,
     eff: Eff.batch(eff),
     msgGameEvent: msgGameEvents,
-    cmd,
+    msgCmd,
   };
 };
 

@@ -117,13 +117,13 @@ test("redirecting when starting a space", async () => {
   });
 
   expect(
-    started.cmd?.filter(
-      (cmd) =>
-        cmd.t === "routing" &&
-        cmd.c.t === "push" &&
-        cmd.c.route.t === "spaces" &&
-        cmd.c.route.c.t === "space" &&
-        cmd.c.route.c.spaceId === spaceId
+    started.msgCmd?.filter(
+      (msgCmd) =>
+        msgCmd.t === "routing" &&
+        msgCmd.c.t === "push" &&
+        msgCmd.c.route.t === "spaces" &&
+        msgCmd.c.route.c.t === "space" &&
+        msgCmd.c.route.c.spaceId === spaceId
     ).length
   ).toBe(1);
 });
