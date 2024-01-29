@@ -20,7 +20,20 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
   switch (fromClient?.t) {
     case "puzzle-create/user-clicked-create-button": {
+      const counted = await FlowPuzzleDb().count({
+        where: {
+          createdBy: fromClient.userId,
+        },
+      });
+
+      const count = counted.t === "ok" ? counted.value : null;
+
       const puzzleName = FlowPuzzleName.generate();
+
+      const puzzleNameFinal =
+        typeof count === "number"
+          ? `Puzzle ${count + 1} - ${puzzleName}`
+          : puzzleName;
 
       const puzzleNew: FlowPuzzle = {
         createdAt: ctx.now,
@@ -28,7 +41,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         id: FlowPuzzleId.generate(),
         lastUpdatedAt: ctx.now,
         lastUpdatedBy: fromClient.userId,
-        name: puzzleName,
+        name: puzzleNameFinal,
         puzzle: {
           t: "grid",
           c: FlowGrid.init({

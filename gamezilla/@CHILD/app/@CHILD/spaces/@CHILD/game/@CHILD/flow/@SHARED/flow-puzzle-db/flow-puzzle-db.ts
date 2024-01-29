@@ -8,6 +8,11 @@ import { FlowPuzzle } from "../flow-puzzle/flow-puzzle";
 import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id";
 
 export type IFlowPuzzleDb = {
+  count: (input: {
+    where: {
+      createdBy?: UserId;
+    };
+  }) => Promise<Result<string, number>>;
   list: (input: {
     pagination: Pagination;
     where: {

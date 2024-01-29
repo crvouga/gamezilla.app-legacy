@@ -116,7 +116,8 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
     case "user-saved-changes": {
       if (
         model.saveChangesRequest?.t === "loading" &&
-        model.saveChangesIsExiting
+        model.saveChangesIsExiting &&
+        isOk(gameEvent.saved)
       ) {
         return exitBuilder({
           ...input,

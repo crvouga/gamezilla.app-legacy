@@ -1,5 +1,8 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2";
-import { sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  sendToServer,
+  showErrorToast,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Avatar,
   IconPuzzlePiece,
@@ -13,6 +16,7 @@ import {
   Result,
   TimeSpan,
   descend,
+  isErr,
   isPending,
   loading,
 } from "gamezilla/@SHARED/core";
@@ -71,6 +75,9 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
         puzzleListRequest: Result.mapOk(fromServer.listed, () => null),
         puzzles: puzzlesNew,
       },
+      cmd: isErr(fromServer.listed)
+        ? showErrorToast(fromServer.listed.error)
+        : [],
     };
   }
 
