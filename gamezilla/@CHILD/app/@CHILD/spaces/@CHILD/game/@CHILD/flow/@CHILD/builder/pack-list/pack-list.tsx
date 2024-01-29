@@ -5,7 +5,11 @@ export const update: ClientModule["update"] = (input) => {
 };
 
 export const View: ClientModule["View"] = (_input) => {
-  return <div>packs</div>;
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center">
+      packs
+    </div>
+  );
 };
 
 export const PackListClient = {
