@@ -52,9 +52,9 @@ const View: ClientModule["View"] = (input) => {
 //
 
 const updateFormButtons: ClientModule["update"] = (input) => {
-  const { gameState, msgGameEvent, msg, model } = input;
+  const { modelGameState, msgGameEvent, msg, model } = input;
 
-  if (gameState.t !== "build") {
+  if (modelGameState.t !== "build") {
     return { model };
   }
 
@@ -86,7 +86,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
           sendToServer({
             t: "puzzle.edit-name.user-clicked-save-button",
             newName,
-            flowPuzzleId: gameState.puzzle.id,
+            flowPuzzleId: modelGameState.puzzle.id,
           }),
         ],
       };
@@ -132,7 +132,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
 const ViewFormButtons: ClientModule["View"] = ({
   dispatch,
   model,
-  gameState,
+  modelGameState,
 }) => {
   return (
     <div className="flex w-full items-center gap-4 p-4 pb-6">
@@ -150,8 +150,8 @@ const ViewFormButtons: ClientModule["View"] = ({
         text="Save"
         loading={isLoading(model.editNameRequest)}
         disabled={
-          gameState.t !== "build" ||
-          model.editNameDraft === gameState.puzzle.name
+          modelGameState.t !== "build" ||
+          model.editNameDraft === modelGameState.puzzle.name
         }
         onClick={() =>
           dispatch({ t: "puzzle.edit-name.user-clicked-save-button" })
@@ -168,7 +168,7 @@ const ViewFormButtons: ClientModule["View"] = ({
 //
 
 const updateDrawer: ClientModule["update"] = (input) => {
-  const { msg, model, gameState } = input;
+  const { msg, model, modelGameState } = input;
 
   switch (msg?.t) {
     case "puzzle.edit-name.user-clicked-button": {
@@ -176,7 +176,8 @@ const updateDrawer: ClientModule["update"] = (input) => {
         model: {
           ...model,
           opened: "edit-name",
-          editNameDraft: gameState.t === "build" ? gameState.puzzle.name : "",
+          editNameDraft:
+            modelGameState.t === "build" ? modelGameState.puzzle.name : "",
         },
       };
     }

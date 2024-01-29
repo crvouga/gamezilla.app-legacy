@@ -68,7 +68,7 @@ export type Input<T extends AppServerModuleTypes> = {
   /**
    *
    */
-  fromClient?:
+  msgFromClient?:
     | (T["ToServer"] & {
         clientId: ClientId;
         sessionId: SessionId;

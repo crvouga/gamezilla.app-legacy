@@ -10,24 +10,24 @@ const update: ServerModule["update"] = async (input) => {
 };
 
 const updateFromClient: ServerModule["update"] = async (input) => {
-  const { gameState, fromClient, model, deps } = input;
+  const { modelGameState, msgFromClient, model, deps } = input;
 
-  if (gameState.t !== "build") {
+  if (modelGameState.t !== "build") {
     return { model };
   }
 
-  if (!fromClient) {
+  if (!msgFromClient) {
     return { model };
   }
 
-  switch (fromClient.t) {
+  switch (msgFromClient.t) {
     case "delete-forever/user-confirmed": {
-      const deleted = await deps.FlowPuzzleDb.zap(gameState.puzzle.id);
+      const deleted = await deps.FlowPuzzleDb.zap(modelGameState.puzzle.id);
 
       const msgGameEvent: GameEvent = {
         t: "user-deleted-puzzle",
-        flowPuzzleId: gameState.puzzle.id,
-        userId: fromClient.userId,
+        flowPuzzleId: modelGameState.puzzle.id,
+        userId: msgFromClient.userId,
         deleted,
       };
 

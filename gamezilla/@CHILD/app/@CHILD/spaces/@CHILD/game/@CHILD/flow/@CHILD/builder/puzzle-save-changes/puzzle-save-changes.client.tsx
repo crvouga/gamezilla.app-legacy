@@ -66,9 +66,9 @@ const updatePuzzles: ClientModule["update"] = ({ msgGameEvent, model }) => {
 };
 
 const updateExitBuilder: ClientModule["update"] = (input) => {
-  const { msg, model, gameState, msgGameEvent } = input;
+  const { msg, model, modelGameState, msgGameEvent } = input;
 
-  if (gameState.t !== "build") {
+  if (modelGameState.t !== "build") {
     return { model };
   }
 
@@ -76,8 +76,8 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
     case "puzzle.editor.user-clicked-exit-button": {
       if (
         FlowGridUIEdit.isUnsavedChanges({
-          grid: gameState.puzzle.puzzle.c,
-          model: gameState.gridEdit,
+          grid: modelGameState.puzzle.puzzle.c,
+          model: modelGameState.gridEdit,
         })
       ) {
         return {
@@ -170,17 +170,17 @@ const exitBuilder: ClientModule["update"] = (input) => {
   };
 };
 
-const saveChanges: ClientModule["update"] = ({ model, gameState }) => {
-  if (gameState.t !== "build") {
+const saveChanges: ClientModule["update"] = ({ model, modelGameState }) => {
+  if (modelGameState.t !== "build") {
     return { model };
   }
 
   const puzzleNew: FlowPuzzle = {
-    ...gameState.puzzle,
+    ...modelGameState.puzzle,
     puzzle: {
       t: "grid",
       c: FlowGridUIEdit.toCurrentGrid({
-        model: gameState.gridEdit,
+        model: modelGameState.gridEdit,
       }),
     },
   };

@@ -138,12 +138,12 @@ const subscriptions: Module["subscriptions"] = () => {
 //
 //
 
-const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
+const View: Module["View"] = ({ ctx, model, modelGameState, dispatch }) => {
   if (!model) {
     return null;
   }
 
-  switch (gameState.type) {
+  switch (modelGameState.type) {
     case "setup": {
       return (
         <VsUserSetupScreen
@@ -178,7 +178,7 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
             renderIcon: (props) => {
               return <PlayerIcon playerType="player-one" {...props} />;
             },
-            userId: gameState.players["player-one"],
+            userId: modelGameState.players["player-one"],
           }}
           playerTwo={{
             label: "Yellow",
@@ -198,7 +198,7 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
             renderIcon: (props) => {
               return <PlayerIcon playerType="player-two" {...props} />;
             },
-            userId: gameState.players["player-two"],
+            userId: modelGameState.players["player-two"],
           }}
         />
       );
@@ -206,7 +206,10 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
 
     case "game":
     case "game-over": {
-      const currentUserPlayerType = toPlayerType(ctx.currentUserId, gameState);
+      const currentUserPlayerType = toPlayerType(
+        ctx.currentUserId,
+        modelGameState
+      );
 
       return (
         <GameLayout isSpectating={currentUserPlayerType === null}>
@@ -214,22 +217,22 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
             <div className="flex w-full items-center gap-2 px-2">
               <PlayerSlot
                 playerType="player-one"
-                gameState={gameState}
+                modelGameState={modelGameState}
                 ctx={ctx}
               />
               <PlayerSlot
                 playerType="player-two"
-                gameState={gameState}
+                modelGameState={modelGameState}
                 ctx={ctx}
               />
             </div>
 
-            <Feedback ctx={ctx} gameState={gameState} />
+            <Feedback ctx={ctx} modelGameState={modelGameState} />
 
             <div className="relative w-full">
               <ViewColumns
-                columns={gameState.columns}
-                gameId={gameState.gameId}
+                columns={modelGameState.columns}
+                gameId={modelGameState.gameId}
                 onDropDisc={(columnIndex) =>
                   dispatch({
                     t: "user-dropped-disc",
@@ -241,16 +244,16 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
                   dispatch({ t: "hovered-over-columns", columnIndex })
                 }
                 disabled={
-                  toTurn(gameState.columns) !== currentUserPlayerType ||
-                  gameState.type === "game-over"
+                  toTurn(modelGameState.columns) !== currentUserPlayerType ||
+                  modelGameState.type === "game-over"
                 }
               />
-              {gameState.type === "game-over" && (
+              {modelGameState.type === "game-over" && (
                 <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
                   <ViewGameOverMessage
                     dispatch={dispatch}
                     ctx={ctx}
-                    gameState={gameState}
+                    modelGameState={modelGameState}
                   />
                 </div>
               )}
@@ -259,7 +262,7 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
 
           <ViewBottomButtonBar
             actions={[
-              ...(gameState.type === "game"
+              ...(modelGameState.type === "game"
                 ? [
                     {
                       icon: <IconFlag className="h-6 w-6" />,
@@ -273,7 +276,7 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
                     },
                   ]
                 : []),
-              ...(gameState.type === "game-over" &&
+              ...(modelGameState.type === "game-over" &&
               ctx.currentUserId === ctx.space.hostId
                 ? [
                     {
@@ -320,18 +323,18 @@ const View: Module["View"] = ({ ctx, model, gameState, dispatch }) => {
 
 const ViewGameOverMessage = ({
   ctx,
-  gameState,
+  modelGameState,
   dispatch,
 }: {
-  gameState: StateGameOver;
+  modelGameState: StateGameOver;
   ctx: ClientCtx;
   dispatch: (msg: GameEvent) => void;
 }) => {
-  const currentPlayerType = toPlayerType(ctx.currentUserId, gameState);
+  const currentPlayerType = toPlayerType(ctx.currentUserId, modelGameState);
 
   if (
-    gameState.rematch.type === "Asking" &&
-    gameState.rematch.asker === currentPlayerType
+    modelGameState.rematch.type === "Asking" &&
+    modelGameState.rematch.asker === currentPlayerType
   ) {
     return (
       <>
@@ -352,8 +355,8 @@ const ViewGameOverMessage = ({
   }
 
   if (
-    gameState.rematch.type === "Asking" &&
-    gameState.rematch.asker !== currentPlayerType &&
+    modelGameState.rematch.type === "Asking" &&
+    modelGameState.rematch.asker !== currentPlayerType &&
     currentPlayerType !== null
   ) {
     return (
@@ -390,12 +393,12 @@ const ViewGameOverMessage = ({
     );
   }
 
-  if (gameState.gameOver.type === "Draw") {
+  if (modelGameState.gameOver.type === "Draw") {
     return <p className="text-xl">Tie</p>;
   }
 
-  if (gameState.gameOver.type === "resignation") {
-    const { resigner } = gameState.gameOver;
+  if (modelGameState.gameOver.type === "resignation") {
+    const { resigner } = modelGameState.gameOver;
 
     const winner: PlayerType =
       resigner === "player-one" ? "player-two" : "player-one";
@@ -407,7 +410,7 @@ const ViewGameOverMessage = ({
             <PlayerIcon playerType={winner} />
             <Avatar
               alt=""
-              src={ctx.profiles[gameState.players[winner]]?.avatarUrl}
+              src={ctx.profiles[modelGameState.players[winner]]?.avatarUrl}
             />
           </div>
           <p>Winner</p>
@@ -423,8 +426,8 @@ const ViewGameOverMessage = ({
     );
   }
 
-  if (gameState.gameOver.type === "Winner") {
-    const { winner } = gameState.gameOver;
+  if (modelGameState.gameOver.type === "Winner") {
+    const { winner } = modelGameState.gameOver;
 
     if (currentPlayerType === null) {
       return (
@@ -433,7 +436,7 @@ const ViewGameOverMessage = ({
             <PlayerIcon playerType={winner} className="h-20 w-20" />
             <Avatar
               className="h-20 w-20"
-              src={ctx.profiles[gameState.players[winner]]?.avatarUrl}
+              src={ctx.profiles[modelGameState.players[winner]]?.avatarUrl}
             />
           </div>
           <p>Winner</p>
@@ -449,12 +452,12 @@ const ViewGameOverMessage = ({
 
 const Feedback = ({
   ctx,
-  gameState,
+  modelGameState,
 }: {
   ctx: SpaceClientCtx;
-  gameState: StateGame | StateGameOver;
+  modelGameState: StateGame | StateGameOver;
 }) => {
-  if (gameState.type === "game-over") {
+  if (modelGameState.type === "game-over") {
     return (
       <p className="flex items-center justify-center text-secondary">
         Game Over
@@ -462,9 +465,9 @@ const Feedback = ({
     );
   }
 
-  const turn = toTurn(gameState.columns);
+  const turn = toTurn(modelGameState.columns);
 
-  const currentUserPlayerType = toPlayerType(ctx.currentUserId, gameState);
+  const currentUserPlayerType = toPlayerType(ctx.currentUserId, modelGameState);
 
   if (currentUserPlayerType !== turn) {
     return (
@@ -484,11 +487,11 @@ const Feedback = ({
 };
 
 const PlayerSlot = ({
-  gameState,
+  modelGameState,
   playerType,
   ctx,
 }: {
-  gameState: StateGame | StateGameOver;
+  modelGameState: StateGame | StateGameOver;
   playerType: PlayerType;
   ctx: SpaceClientCtx;
 }) => {
@@ -498,10 +501,10 @@ const PlayerSlot = ({
       <Avatar
         className="h-8 w-8"
         alt=""
-        src={ctx.profiles[gameState.players[playerType]]?.avatarUrl}
+        src={ctx.profiles[modelGameState.players[playerType]]?.avatarUrl}
       />
       <p className="text-secondary">
-        {ctx.profiles[gameState.players[playerType]]?.username ?? "..."}
+        {ctx.profiles[modelGameState.players[playerType]]?.username ?? "..."}
       </p>
     </div>
   );

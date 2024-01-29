@@ -49,7 +49,7 @@ type Input<TToClient, TToServer> = {
   model: ServerModel;
   //
   msg?: ServerMsg | null;
-  fromClient?: ToServer | null;
+  msgFromClient?: ToServer | null;
   msgEvent?: ServerEvent | null;
   msgCmd?: WireCmd<TToClient> | null;
   //

@@ -177,7 +177,8 @@ export const update = async (input: {
     ctx: ctx,
     model: input.model,
     msg: input.msg,
-    fromClient: input.msg.t === "➡️" ? { ...input.msg, ...input.msg.c } : null,
+    msgFromClient:
+      input.msg.t === "➡️" ? { ...input.msg, ...input.msg.c } : null,
   });
 
   const updated = await updateLoop(input.deps, ctx, updatedFromMsg);
@@ -268,7 +269,7 @@ const updateLoop = async (
 export const updateChild = async ({
   ctx,
   msg,
-  fromClient,
+  msgFromClient,
   msgEvent,
   msgCmd,
   model,
@@ -278,7 +279,7 @@ export const updateChild = async ({
   ctx: ServerCtx;
   model: ServerModel;
   msg?: ServerMsg;
-  fromClient?: (ToServer & ToServerMeta) | null;
+  msgFromClient?: (ToServer & ToServerMeta) | null;
   msgEvent?: ServerEvent;
   msgCmd?: ServerCmd<ToClient>;
 }): Promise<Output> => {
@@ -288,11 +289,11 @@ export const updateChild = async ({
   //
   //
 
-  const userId = fromClient?.sessionId
+  const userId = msgFromClient?.sessionId
     ? await AuthServer.toUserIdFromSessionId(
         ctx,
         model.auth,
-        fromClient.sessionId
+        msgFromClient.sessionId
       )
     : null;
 
@@ -307,9 +308,9 @@ export const updateChild = async ({
     ctx,
     msgCmd: null,
     msgEvent: msgEvent,
-    fromClient:
-      fromClient?.t === "spaces"
-        ? { ...fromClient, ...fromClient.c, userId }
+    msgFromClient:
+      msgFromClient?.t === "spaces"
+        ? { ...msgFromClient, ...msgFromClient.c, userId }
         : null,
     msg: msg?.t === "spaces" ? msg.c : null,
   });
@@ -319,9 +320,9 @@ export const updateChild = async ({
     ctx,
     msgCmd: null,
     msgEvent: msgEvent,
-    fromClient:
-      fromClient?.t === "auth"
-        ? { ...fromClient, ...fromClient.c, userId }
+    msgFromClient:
+      msgFromClient?.t === "auth"
+        ? { ...msgFromClient, ...msgFromClient.c, userId }
         : null,
     msg: msg?.t === "auth" ? msg.c : null,
   });
@@ -331,8 +332,10 @@ export const updateChild = async ({
     ctx,
     msgCmd: msgCmd?.t === "wire" ? msgCmd : null,
     msgEvent: msgEvent,
-    fromClient:
-      fromClient?.t === "wire" ? { ...fromClient, ...fromClient.c } : null,
+    msgFromClient:
+      msgFromClient?.t === "wire"
+        ? { ...msgFromClient, ...msgFromClient.c }
+        : null,
     msg: msg?.t === "wire" ? msg.c : null,
     transport: deps.transport,
   });
@@ -342,8 +345,10 @@ export const updateChild = async ({
     ctx,
     msgCmd: null,
     msgEvent: msgEvent,
-    fromClient:
-      fromClient?.t === "profile" ? { ...fromClient, ...fromClient.c } : null,
+    msgFromClient:
+      msgFromClient?.t === "profile"
+        ? { ...msgFromClient, ...msgFromClient.c }
+        : null,
     msg: msg?.t === "profile" ? msg.c : null,
   });
 

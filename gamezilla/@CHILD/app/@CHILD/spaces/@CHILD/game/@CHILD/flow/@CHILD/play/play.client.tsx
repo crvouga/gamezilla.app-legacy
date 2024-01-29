@@ -84,7 +84,7 @@ const subscriptions: Module["subscriptions"] = () => {
 
 const USE_GAME_STATE = true;
 
-const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
+const View: Module["View"] = ({ model, modelGameState, dispatch, ctx }) => {
   const isPlaying = ctx.currentUserId === ctx.space.hostId;
   const isSpectating = !isPlaying;
   const host = ctx.profiles[ctx.space.hostId];
@@ -97,9 +97,9 @@ const View: Module["View"] = ({ model, gameState, dispatch, ctx }) => {
         {USE_GAME_STATE ? (
           <FlowGridUIPlay.View
             dispatch={(c) => dispatch({ t: "msgEvent", c: { t: "grid", c } })}
-            model={gameState.gridPlay}
+            model={modelGameState.gridPlay}
             disabled={isSpectating}
-            grid={gameState.grid}
+            grid={modelGameState.grid}
           />
         ) : (
           <FlowGridUIPlay.View

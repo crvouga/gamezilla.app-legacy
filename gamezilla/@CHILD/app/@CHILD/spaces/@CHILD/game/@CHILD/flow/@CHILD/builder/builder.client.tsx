@@ -49,9 +49,9 @@ const updateLocation: ClientModule["update"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-  const { ctx, gameState, dispatch, model } = input;
+  const { ctx, modelGameState, dispatch, model } = input;
 
-  switch (gameState.t) {
+  switch (modelGameState.t) {
     case "build": {
       return <PuzzleEditorClient.View {...input} />;
     }

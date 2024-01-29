@@ -42,19 +42,19 @@ const update: Module["update"] = async (input) => {
 };
 
 const updateChild: Module["update"] = async (input) => {
-  const { gameState } = input;
+  const { modelGameState } = input;
 
-  switch (gameState.t) {
+  switch (modelGameState.t) {
     case "play": {
       const updated = await PlayServer.update({
         ctx: input.ctx,
-        gameState: gameState.c,
+        modelGameState: modelGameState.c,
         model: input.model.t === "play" ? input.model.c : PlayServer.init,
         msgCmd: input.msgCmd,
         msgEvent: input.msgEvent,
-        fromClient:
-          input.fromClient?.t === "play"
-            ? { ...input.fromClient, ...input.fromClient.c }
+        msgFromClient:
+          input.msgFromClient?.t === "play"
+            ? { ...input.msgFromClient, ...input.msgFromClient.c }
             : null,
         msgGameEvent:
           input.msgGameEvent?.t === "play"
@@ -76,13 +76,13 @@ const updateChild: Module["update"] = async (input) => {
     case "builder": {
       const updated = await BuilderServer.update({
         ctx: input.ctx,
-        gameState: gameState.c,
+        modelGameState: modelGameState.c,
         model: input.model.t === "builder" ? input.model.c : BuilderServer.init,
         msgCmd: input.msgCmd,
         msgEvent: input.msgEvent,
-        fromClient:
-          input.fromClient?.t === "builder"
-            ? { ...input.fromClient, ...input.fromClient.c }
+        msgFromClient:
+          input.msgFromClient?.t === "builder"
+            ? { ...input.msgFromClient, ...input.msgFromClient.c }
             : null,
         msgGameEvent:
           input.msgGameEvent?.t === "builder"
@@ -108,15 +108,15 @@ const updateChild: Module["update"] = async (input) => {
 };
 
 const subscriptions: Module["subscriptions"] = async (input) => {
-  const { gameState } = input;
+  const { modelGameState } = input;
 
-  switch (gameState.t) {
+  switch (modelGameState.t) {
     case "play": {
       return Sub.tag(
         "play",
         await PlayServer.subscriptions({
           ctx: input.ctx,
-          gameState: gameState.c,
+          modelGameState: modelGameState.c,
           model: input.model.t === "play" ? input.model.c : PlayServer.init,
         })
       );
@@ -127,7 +127,7 @@ const subscriptions: Module["subscriptions"] = async (input) => {
         "builder",
         await BuilderServer.subscriptions({
           ctx: input.ctx,
-          gameState: gameState.c,
+          modelGameState: modelGameState.c,
           model:
             input.model.t === "builder" ? input.model.c : BuilderServer.init,
         })

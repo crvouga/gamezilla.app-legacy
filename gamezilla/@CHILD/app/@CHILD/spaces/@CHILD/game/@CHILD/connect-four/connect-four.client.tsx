@@ -145,9 +145,10 @@ const updateFromGameEvent =
 const updateChild =
   (model: ClientModel): Module["update"] =>
   (input) => {
-    const { msg, msgEvent, msgGameEvent, msgFromServer, gameState } = input;
+    const { msg, msgEvent, msgGameEvent, msgFromServer, modelGameState } =
+      input;
 
-    switch (gameState.t) {
+    switch (modelGameState.t) {
       case "none": {
         return { model };
       }
@@ -164,7 +165,7 @@ const updateChild =
               : null,
           msgFromServer: msgFromServer?.t === "vs-bot" ? msgFromServer.c : null,
           model: model.t === "vs-bot" ? model.c : VsBot.init,
-          gameState: gameState.c,
+          modelGameState: modelGameState.c,
         });
 
         return GameClientModule.tagOutput(
@@ -187,7 +188,7 @@ const updateChild =
               : null,
           msgFromServer:
             msgFromServer?.t === "vs-user" ? msgFromServer.c : null,
-          gameState: gameState.c,
+          modelGameState: modelGameState.c,
         });
 
         return GameClientModule.tagOutput(
@@ -207,7 +208,7 @@ const updateChild =
 //
 //
 
-const View: Module["View"] = ({ dispatch, ctx, gameState, model }) => {
+const View: Module["View"] = ({ dispatch, ctx, modelGameState, model }) => {
   const onQuit = () => {
     dispatch({
       t: "user-changed-mode",
@@ -216,7 +217,7 @@ const View: Module["View"] = ({ dispatch, ctx, gameState, model }) => {
     });
   };
 
-  switch (gameState.t) {
+  switch (modelGameState.t) {
     case "none": {
       return (
         <MainMenuScreen.View
@@ -251,7 +252,7 @@ const View: Module["View"] = ({ dispatch, ctx, gameState, model }) => {
           ctx={{ ...ctx, onQuit }}
           dispatch={(c) => dispatch({ t: "vs-bot", c })}
           model={model?.t === "vs-bot" ? model.c : VsBot.init}
-          gameState={gameState.c}
+          modelGameState={modelGameState.c}
         />
       );
     }
@@ -262,7 +263,7 @@ const View: Module["View"] = ({ dispatch, ctx, gameState, model }) => {
           ctx={{ ...ctx, onQuit }}
           dispatch={(c) => dispatch({ t: "vs-user", c })}
           model={model?.t === "vs-user" ? model.c : VsUser.init}
-          gameState={gameState.c}
+          modelGameState={modelGameState.c}
         />
       );
     }
@@ -270,7 +271,7 @@ const View: Module["View"] = ({ dispatch, ctx, gameState, model }) => {
 };
 
 const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-  const { gameState, ctx, msgGameEvent } = input;
+  const { modelGameState, ctx, msgGameEvent } = input;
   switch (msgGameEvent.t) {
     case "user-changed-mode": {
       switch (msgGameEvent.mode) {
@@ -303,13 +304,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
     }
 
     case "vs-bot": {
-      switch (gameState.t) {
+      switch (modelGameState.t) {
         case "vs-bot": {
           return (
             <VsBot.ViewFeedItem
               ctx={{ ...ctx, onQuit: () => {} }}
               msgGameEvent={msgGameEvent.c}
-              gameState={gameState.c}
+              modelGameState={modelGameState.c}
               dispatch={(c) => input.dispatch({ t: "vs-bot", c })}
             />
           );
@@ -321,13 +322,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
     }
 
     case "vs-user": {
-      switch (gameState.t) {
+      switch (modelGameState.t) {
         case "vs-user": {
           return (
             <VsUser.ViewFeedItem
               ctx={{ ...ctx, onQuit: () => {} }}
               msgGameEvent={msgGameEvent.c}
-              gameState={gameState.c}
+              modelGameState={modelGameState.c}
               dispatch={(c) => input.dispatch({ t: "vs-user", c })}
             />
           );
@@ -349,9 +350,9 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
 //
 
 const subscriptions: Module["subscriptions"] = (input) => {
-  const { model, gameState } = input;
+  const { model, modelGameState } = input;
 
-  switch (gameState.t) {
+  switch (modelGameState.t) {
     case "none": {
       return Sub.None;
     }
@@ -362,7 +363,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
         VsBot.subscriptions({
           ...input,
           model: model?.t === "vs-bot" ? model.c : VsBot.init,
-          gameState: gameState.c,
+          modelGameState: modelGameState.c,
           ctx: { ...input.ctx, onQuit: () => {} },
         })
       );
@@ -374,7 +375,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
         VsUser.subscriptions({
           ...input,
           model: model?.t === "vs-user" ? model.c : VsUser.init,
-          gameState: gameState.c,
+          modelGameState: modelGameState.c,
           ctx: { ...input.ctx, onQuit: () => {} },
         })
       );

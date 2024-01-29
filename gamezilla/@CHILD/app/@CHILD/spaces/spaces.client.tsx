@@ -362,13 +362,13 @@ const updateGame: Module["update"] = async (input) => {
     return { model };
   }
 
-  const gameState = spaceState.game;
+  const modelGameState = spaceState.game;
 
-  if (!gameState) {
+  if (!modelGameState) {
     return { model };
   }
 
-  const gameModel = model.games[spaceId] ?? Game.init(gameState.t);
+  const gameModel = model.games[spaceId] ?? Game.init(modelGameState.t);
 
   const gameUpdated = Game.update({
     ctx: {
@@ -379,7 +379,7 @@ const updateGame: Module["update"] = async (input) => {
       viewProfile() {},
     },
     model: gameModel,
-    gameState: gameState,
+    modelGameState: modelGameState,
     msgFromServer: msgFromServer?.t === "game" ? msgFromServer.c : null,
     msgCmd: null,
     msgEvent,
@@ -700,7 +700,7 @@ const updateClientFromSpaceEvent = async ({
         msgGameEvent: { ...msgEventWithMeta, ...msgEventWithMeta.c },
         model:
           model.games[msgEventWithMeta.spaceId] ?? Game.init(spaceState.game.t),
-        gameState: spaceState.game,
+        modelGameState: spaceState.game,
       });
 
       const msgEventsNew = (gameUpdated.msgGameEvent ?? []).map((e) =>
@@ -772,17 +772,17 @@ export const subscriptionsCurrentUserGame: Module["subscriptions"] = ({
     return Sub.None;
   }
 
-  const gameState = spaceState.game;
+  const modelGameState = spaceState.game;
 
-  if (!gameState) {
+  if (!modelGameState) {
     return Sub.None;
   }
 
-  const gameModel = model.games[spaceId] ?? Game.init(gameState.t);
+  const gameModel = model.games[spaceId] ?? Game.init(modelGameState.t);
 
   const gameSub = Game.subscriptions({
     ctx: { ...clientCtx, space: spaceState, quit() {}, viewProfile() {} },
-    gameState: gameState,
+    modelGameState: modelGameState,
     model: gameModel,
   });
 
@@ -1047,7 +1047,7 @@ const ViewFeedItem = ({
         <Game.ViewFeedItem
           ctx={ctx}
           msgGameEvent={{ ...msgEvent, ...msgEvent.c }}
-          gameState={state.game}
+          modelGameState={state.game}
           dispatch={(_msg) => {
             //
           }}
@@ -1278,7 +1278,7 @@ const ViewGame = ({
   if (space.game) {
     return (
       <Game.View
-        gameState={space.game}
+        modelGameState={space.game}
         ctx={ctx}
         dispatch={(c) => dispatch({ t: "game", spaceId: ctx.space.spaceId, c })}
         model={model.games[ctx.space.spaceId] ?? Game.init(space.game.t)}

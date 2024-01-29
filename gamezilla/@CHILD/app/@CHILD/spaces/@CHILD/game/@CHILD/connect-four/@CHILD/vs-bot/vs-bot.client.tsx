@@ -100,24 +100,24 @@ const update: Module["update"] = (input) => {
 const watchGameOver =
   (model: ClientModel): Module["update"] =>
   (input) => {
-    const { msgGameEvent, gameState } = input;
+    const { msgGameEvent, modelGameState } = input;
 
     if (!msgGameEvent) {
       return { model };
     }
 
-    const gameStateNext = reducer({
+    const modelGameStateNext = reducer({
       msgGameEvent: msgGameEvent,
-      gameState: gameState,
+      modelGameState: modelGameState,
     });
 
-    if (gameState.type !== "game" || gameStateNext.type !== "game") {
+    if (modelGameState.type !== "game" || modelGameStateNext.type !== "game") {
       return { model };
     }
 
-    const statusBefore = ConnectFour.toStatus(gameState.columns);
+    const statusBefore = ConnectFour.toStatus(modelGameState.columns);
 
-    const status = ConnectFour.toStatus(gameStateNext.columns);
+    const status = ConnectFour.toStatus(modelGameStateNext.columns);
 
     if (statusBefore.type === status.type) {
       return { model };
@@ -133,7 +133,7 @@ const watchGameOver =
       }
 
       case "Winner": {
-        if (status.winner === gameStateNext.userPlayerType) {
+        if (status.winner === modelGameStateNext.userPlayerType) {
           return {
             model,
             msgCmd: [
@@ -158,7 +158,7 @@ const watchGameOver =
 const updateFromGameEvent =
   (model: ClientModel): Module["update"] =>
   (input) => {
-    const { msgGameEvent, gameState, ctx } = input;
+    const { msgGameEvent, modelGameState, ctx } = input;
 
     if (!msgGameEvent) {
       return { model };
@@ -166,7 +166,7 @@ const updateFromGameEvent =
 
     return {
       model,
-      msgCmd: updateSound(ctx.currentUserId, gameState, msgGameEvent),
+      msgCmd: updateSound(ctx.currentUserId, modelGameState, msgGameEvent),
     };
   };
 
@@ -207,17 +207,17 @@ const updateFromMsg =
 
 const updateSound = (
   currentUserId: UserId,
-  gameState: GameState,
+  modelGameState: GameState,
   msgGameEvent: GameEvent & EventMeta
 ): ClientCmd<{
   ToServer: ToServer;
   ClientMsg: ClientMsg;
 }>[] => {
-  switch (gameState.type) {
+  switch (modelGameState.type) {
     case "game": {
       switch (msgGameEvent.t) {
         case "user-dropped-disc": {
-          const error = gameState.errors[msgGameEvent.msgEventId];
+          const error = modelGameState.errors[msgGameEvent.msgEventId];
 
           if (error && msgGameEvent.userId === currentUserId) {
             return [playSound(APP_SOUND.alertErrorSm)];
@@ -310,13 +310,13 @@ export function toGameOver(columns: ConnectFour.Columns): VsBotGame.GameOver {
   }
 }
 
-const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
+const View: Module["View"] = ({ model, ctx, modelGameState, dispatch }) => {
   const vsBotSetupProps: VsBotSetup.VsBotSetupProps = {
     ctx: ctx,
     onQuit: ctx.onQuit,
     title: "Connect Four",
     renderCoverArt: (props) => <CoverArt {...props} />,
-    canStartGame: gameState.playingUserId !== null,
+    canStartGame: modelGameState.playingUserId !== null,
     onSwapSides: () =>
       dispatch({ t: "user-swapped-sides", userId: ctx.currentUserId }),
     onStartGame: () =>
@@ -335,13 +335,15 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
     }),
     human: {
       player:
-        gameState.userPlayerType === "player-one" ? "player-one" : "player-two",
-      userId: gameState.playingUserId,
+        modelGameState.userPlayerType === "player-one"
+          ? "player-one"
+          : "player-two",
+      userId: modelGameState.playingUserId,
     },
     bot: {
-      label: gameState.botLevel,
+      label: modelGameState.botLevel,
       renderIcon: (props) => (
-        <ViewBotLevel {...props} level={gameState.botLevel} />
+        <ViewBotLevel {...props} level={modelGameState.botLevel} />
       ),
     },
     playerOne: {
@@ -374,7 +376,7 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
     return null;
   }
 
-  if (gameState.type === "setup") {
+  if (modelGameState.type === "setup") {
     return (
       <VsBotSetup.View
         model={model.vsBotSetup}
@@ -384,15 +386,15 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
     );
   }
 
-  const status = ConnectFour.toStatus(gameState.columns);
+  const status = ConnectFour.toStatus(modelGameState.columns);
 
   const vsBotGameProps: VsBotGame.VsBotGameProps = {
     ...vsBotSetupProps,
     human: {
       ...vsBotSetupProps.human,
-      userId: gameState.playingUserId,
+      userId: modelGameState.playingUserId,
     },
-    isSpectating: ctx.currentUserId !== gameState.playingUserId,
+    isSpectating: ctx.currentUserId !== modelGameState.playingUserId,
     turn:
       status.type !== "Playing"
         ? null
@@ -401,7 +403,7 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
         : "player-two",
   };
 
-  const isSpectating = ctx.currentUserId !== gameState.playingUserId;
+  const isSpectating = ctx.currentUserId !== modelGameState.playingUserId;
 
   return (
     <GameLayout isSpectating={isSpectating}>
@@ -416,7 +418,7 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
         <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <ViewColumns
             gameId={0}
-            columns={gameState.columns}
+            columns={modelGameState.columns}
             disabled={isSpectating || status.type !== "Playing"}
             onDropDisc={(columnIndex) => {
               dispatch({
@@ -436,13 +438,13 @@ const View: Module["View"] = ({ model, ctx, gameState, dispatch }) => {
                   userId: ctx.currentUserId,
                 })
               }
-              gameOver={toGameOver(gameState.columns)}
+              gameOver={toGameOver(modelGameState.columns)}
             />
           )}
         </div>
       </div>
 
-      {ctx.currentUserId === gameState.playingUserId && (
+      {ctx.currentUserId === modelGameState.playingUserId && (
         <ViewBottomButtonBar
           actions={[
             {

@@ -112,11 +112,11 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
 };
 
 export const updateFromClient: Module["update"] = async ({
-  fromClient,
+  msgFromClient,
   model,
   ctx,
 }) => {
-  if (!fromClient) {
+  if (!msgFromClient) {
     return { model };
   }
 
@@ -125,16 +125,16 @@ export const updateFromClient: Module["update"] = async ({
     impl: "test",
   });
 
-  switch (fromClient.t) {
+  switch (msgFromClient.t) {
     case "send-code": {
       return {
         model,
         eff: async (dispatch) => {
           dispatch({
             t: "sent-code",
-            phoneNumber: fromClient.phoneNumber,
-            result: await verifySMS.sendCode(fromClient),
-            clientId: fromClient.clientId,
+            phoneNumber: msgFromClient.phoneNumber,
+            result: await verifySMS.sendCode(msgFromClient),
+            clientId: msgFromClient.clientId,
           });
         },
       };
@@ -146,10 +146,10 @@ export const updateFromClient: Module["update"] = async ({
         eff: async (dispatch) => {
           dispatch({
             t: "verified-code",
-            phoneNumber: fromClient.phoneNumber,
-            clientId: fromClient.clientId,
-            result: await verifySMS.verifyCode(fromClient),
-            sessionId: fromClient.sessionId,
+            phoneNumber: msgFromClient.phoneNumber,
+            clientId: msgFromClient.clientId,
+            result: await verifySMS.verifyCode(msgFromClient),
+            sessionId: msgFromClient.sessionId,
           });
         },
       };

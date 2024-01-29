@@ -75,19 +75,11 @@ export type Input<T extends GameClientModuleTypes> = {
    */
   // location: T["Location"];
   /**
-   * `gameState` is the current state of the game. This is shared between client and server.
-   */
-  gameState: T["GameState"];
-  /**
-   * `msgGameEvent` is an msgEvent of game
-   */
-  msgGameEvent?: (T["GameEvent"] & EventMeta) | null;
-  /**
    * `msg`
    */
   msg?: T["Msg"] | null;
   /**
-   * `msgFromServer`
+   * `msgFromServer` is a message from the server
    */
   msgFromServer?: T["ToClient"] | null;
   /**
@@ -98,6 +90,15 @@ export type Input<T extends GameClientModuleTypes> = {
    * `msgCmd`
    */
   msgCmd?: T["InCmd"] | null;
+
+  /**
+   * `modelGameState` is the current state of the game. This is shared between client and server.
+   */
+  modelGameState: T["GameState"];
+  /**
+   * `msgGameEvent` is an msgEvent of game
+   */
+  msgGameEvent?: (T["GameEvent"] & EventMeta) | null;
 };
 
 //
@@ -148,7 +149,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
    */
   subscriptions: (input: {
     ctx: T["Ctx"];
-    gameState: T["GameState"];
+    modelGameState: T["GameState"];
     model: T["Model"];
   }) => Sub<T["Msg"]>;
 
@@ -157,7 +158,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
    */
   View: (input: {
     ctx: T["Ctx"];
-    gameState: T["GameState"];
+    modelGameState: T["GameState"];
     model: T["Model"];
     dispatch: (msg: T["Msg"]) => void;
   }) => VDom;
@@ -168,7 +169,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
   ViewFeedItem: (input: {
     ctx: T["Ctx"];
     msgGameEvent: T["GameEvent"];
-    gameState: T["GameState"];
+    modelGameState: T["GameState"];
     dispatch: (msg: T["Msg"]) => void;
   }) => VDom;
 };

@@ -75,9 +75,9 @@ export type Input<T extends GameServerModuleTypes> = {
    */
   model: T["Model"];
   /**
-   * `gameState` is the current state of the game. This is shared between client and server.
+   * `modelGameState` is the current state of the game. This is shared between client and server.
    */
-  gameState: T["GameState"];
+  modelGameState: T["GameState"];
   /**
    * `msgGameEvent` is an msgEvent of game
    */
@@ -89,7 +89,7 @@ export type Input<T extends GameServerModuleTypes> = {
   /**
    * `msgFromServer`
    */
-  fromClient?:
+  msgFromClient?:
     | (T["ToServer"] & {
         clientId: ClientId;
         sessionId: SessionId;
@@ -162,7 +162,7 @@ export type GameServerModule<T extends GameServerModuleTypes> = {
    */
   subscriptions: (input: {
     ctx: T["Ctx"];
-    gameState: T["GameState"];
+    modelGameState: T["GameState"];
     model: T["Model"];
   }) => Promise<Sub<T["Msg"]>>;
 };

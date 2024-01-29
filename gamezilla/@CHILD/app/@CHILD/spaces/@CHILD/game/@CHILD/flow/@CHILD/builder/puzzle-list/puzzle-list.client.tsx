@@ -107,9 +107,9 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-  const { model, gameState, dispatch, ctx } = input;
+  const { model, modelGameState, dispatch, ctx } = input;
 
-  if (gameState.t !== "list") {
+  if (modelGameState.t !== "list") {
     return null;
   }
 

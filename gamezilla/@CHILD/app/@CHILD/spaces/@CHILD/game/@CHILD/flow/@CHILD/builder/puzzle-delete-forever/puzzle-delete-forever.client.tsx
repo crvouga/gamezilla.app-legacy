@@ -22,9 +22,9 @@ const update: ClientModule["update"] = (input) => {
 };
 
 const updateFromMsg: ClientModule["update"] = (input) => {
-  const { msg, model, gameState } = input;
+  const { msg, model, modelGameState } = input;
 
-  if (gameState.t !== "build") {
+  if (modelGameState.t !== "build") {
     return { model };
   }
 

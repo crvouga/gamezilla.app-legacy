@@ -119,7 +119,7 @@ export const reducer = ({
           return {
             t: "vs-bot",
             c: VsBot.reducer({
-              gameState: state.c,
+              modelGameState: state.c,
               msgGameEvent: { ...msgEvent, ...msgEvent.c },
             }),
           };

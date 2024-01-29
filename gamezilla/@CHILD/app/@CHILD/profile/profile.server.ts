@@ -70,7 +70,7 @@ export const update: Module["update"] = async (input) => {
     return updateFromMsg(input);
   }
 
-  if (input.fromClient) {
+  if (input.msgFromClient) {
     return updateFromClient(input);
   }
 
@@ -97,18 +97,18 @@ const updateFromMsg: Module["update"] = async ({ msg, model }) => {
 };
 
 const updateFromClient: Module["update"] = async ({
-  fromClient,
+  msgFromClient,
   model,
   ctx,
 }) => {
-  if (!fromClient) {
+  if (!msgFromClient) {
     return { model };
   }
 
   return {
     model,
     eff: async (dispatch) => {
-      const userId = fromClient.userId;
+      const userId = msgFromClient.userId;
 
       if (!userId) {
         return;
@@ -117,14 +117,14 @@ const updateFromClient: Module["update"] = async ({
       const ProfileDb = createProfileDb({ dbConn: ctx.dbConn });
       const result = await handler({
         ProfileDb,
-        msg: fromClient,
+        msg: msgFromClient,
         ctx: { ...ctx, currentUserId: userId },
       });
 
       dispatch({
         t: "handled",
-        clientId: fromClient.clientId,
-        msg: { ...fromClient, result },
+        clientId: msgFromClient.clientId,
+        msg: { ...msgFromClient, result },
       });
     },
   };

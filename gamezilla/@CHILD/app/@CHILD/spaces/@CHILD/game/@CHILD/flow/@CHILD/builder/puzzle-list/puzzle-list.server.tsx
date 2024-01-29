@@ -2,18 +2,18 @@ import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server";
 import { ServerModule } from "../builder.core";
 
 const update: ServerModule["update"] = async (input) => {
-  const { fromClient, model, deps } = input;
-  if (!fromClient) {
+  const { msgFromClient, model, deps } = input;
+  if (!msgFromClient) {
     return { model };
   }
 
-  switch (fromClient.t) {
+  switch (msgFromClient.t) {
     case "list/list-puzzles": {
-      const listed = await deps.FlowPuzzleDb.list(fromClient.input);
+      const listed = await deps.FlowPuzzleDb.list(msgFromClient.input);
 
       return {
         model: input.model,
-        msgCmd: [sendBack(fromClient, { t: "list/listed-puzzle", listed })],
+        msgCmd: [sendBack(msgFromClient, { t: "list/listed-puzzle", listed })],
       };
     }
 
