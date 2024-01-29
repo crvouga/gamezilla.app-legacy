@@ -52,9 +52,9 @@ const updateChild: Module["update"] = async (input) => {
         model: input.model.t === "play" ? input.model.c : PlayServer.init,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
-        msgFromClient:
-          input.msgFromClient?.t === "play"
-            ? { ...input.msgFromClient, ...input.msgFromClient.c }
+        msgClient:
+          input.msgClient?.t === "play"
+            ? { ...input.msgClient, ...input.msgClient.c }
             : null,
         msgGame:
           input.msgGame?.t === "play"
@@ -80,9 +80,9 @@ const updateChild: Module["update"] = async (input) => {
         model: input.model.t === "builder" ? input.model.c : BuilderServer.init,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
-        msgFromClient:
-          input.msgFromClient?.t === "builder"
-            ? { ...input.msgFromClient, ...input.msgFromClient.c }
+        msgClient:
+          input.msgClient?.t === "builder"
+            ? { ...input.msgClient, ...input.msgClient.c }
             : null,
         msgGame:
           input.msgGame?.t === "builder"

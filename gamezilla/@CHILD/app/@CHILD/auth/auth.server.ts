@@ -91,9 +91,9 @@ const updateChild: Module["update"] = async (input) => {
     model: input.model.sms,
     msgCmd: input.msgCmd,
     msgEvt: input.msgEvt,
-    msgFromClient:
-      input.msgFromClient?.t === "sms"
-        ? { ...input.msgFromClient, ...input.msgFromClient.c }
+    msgClient:
+      input.msgClient?.t === "sms"
+        ? { ...input.msgClient, ...input.msgClient.c }
         : null,
     msg: input.msg?.t === "sms" ? input.msg.c : null,
   });
@@ -121,20 +121,20 @@ const updateFromMsg: Module["update"] = async ({ model, msg }) => {
   }
 };
 
-const updateFromClient: Module["update"] = async ({ model, msgFromClient }) => {
-  if (!msgFromClient) {
+const updateFromClient: Module["update"] = async ({ model, msgClient }) => {
+  if (!msgClient) {
     return { model };
   }
 
-  switch (msgFromClient.t) {
+  switch (msgClient.t) {
     case "logout": {
       return {
         model,
         msgEvt: [
           {
             t: "auth/client-unauthenticated",
-            clientId: msgFromClient.clientId,
-            sessionId: msgFromClient.sessionId,
+            clientId: msgClient.clientId,
+            sessionId: msgClient.sessionId,
           },
         ],
       };

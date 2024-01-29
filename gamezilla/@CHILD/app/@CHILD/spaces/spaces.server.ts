@@ -108,7 +108,7 @@ const updateProfileCache: Module["update"] = async (input) => {
       ...input.model,
       profileCache: {
         ...input.model.profileCache,
-        ...input.msgFromClient?.profiles,
+        ...input.msgClient?.profiles,
       },
     },
   };
@@ -131,13 +131,13 @@ const updateFromMsg: Module["update"] = async ({ model, msg }) => {
 };
 
 const updateFromClient: Module["update"] = async (input) => {
-  const { msgFromClient, model, ctx } = input;
+  const { msgClient, model, ctx } = input;
 
-  if (!msgFromClient) {
+  if (!msgClient) {
     return { model };
   }
 
-  switch (msgFromClient.t) {
+  switch (msgClient.t) {
     case "game": {
       return { model };
     }
@@ -145,7 +145,7 @@ const updateFromClient: Module["update"] = async (input) => {
     case "msgEvt": {
       return updateFromManySpaceEvents({
         ctx: ctx,
-        msgEvts: [msgFromClient.c],
+        msgEvts: [msgClient.c],
         model,
       });
     }
@@ -153,9 +153,9 @@ const updateFromClient: Module["update"] = async (input) => {
     case "list-spaces": {
       const spaces = Spaces.listSpaces({
         model,
-        limit: msgFromClient.limit,
-        offset: msgFromClient.offset,
-        where: msgFromClient.where,
+        limit: msgClient.limit,
+        offset: msgClient.offset,
+        where: msgClient.where,
       });
 
       const profiles = spacesToProfiles(model, spaces);
@@ -167,11 +167,11 @@ const updateFromClient: Module["update"] = async (input) => {
       return {
         model,
         msgCmd: [
-          sendBack(msgFromClient, {
+          sendBack(msgClient, {
             t: "listed-spaces",
             spaces: started,
             profiles,
-            causedBy: msgFromClient.t,
+            causedBy: msgClient.t,
           }),
         ],
       };
@@ -181,7 +181,7 @@ const updateFromClient: Module["update"] = async (input) => {
       return AppServerModule.chainUpdates(
         { model },
         (model) => {
-          const merged = Spaces.mergeOne({ model, space: msgFromClient.space });
+          const merged = Spaces.mergeOne({ model, space: msgClient.space });
 
           return {
             model: {
@@ -193,7 +193,7 @@ const updateFromClient: Module["update"] = async (input) => {
           };
         },
         (model) => {
-          const spaceId = Space.toSpaceId(msgFromClient.space);
+          const spaceId = Space.toSpaceId(msgClient.space);
 
           if (!spaceId) {
             return { model };
@@ -212,9 +212,9 @@ const updateFromClient: Module["update"] = async (input) => {
           return {
             model,
             msgCmd: [
-              sendMsgToClient<MsgToClient>([msgFromClient.clientId], {
+              sendMsgToClient<MsgToClient>([msgClient.clientId], {
                 t: "synced",
-                causedBy: msgFromClient.t,
+                causedBy: msgClient.t,
                 space: starting,
                 profiles: profiles,
               }),
@@ -288,15 +288,15 @@ const inputToSpaceId = (input: Parameters<Module["update"]>[0]) => {
   const spaceId =
     input.msg && "spaceId" in input.msg
       ? input.msg.spaceId
-      : input.msgFromClient && "spaceId" in input.msgFromClient
-      ? input.msgFromClient.spaceId
+      : input.msgClient && "spaceId" in input.msgClient
+      ? input.msgClient.spaceId
       : null;
 
   return spaceId;
 };
 
 const updateChild: Module["update"] = async (input) => {
-  const { msg, msgEvt, msgFromClient, ctx, model } = input;
+  const { msg, msgEvt, msgClient, ctx, model } = input;
 
   const spaceId = inputToSpaceId(input);
 
@@ -314,17 +314,17 @@ const updateChild: Module["update"] = async (input) => {
     return { model };
   }
 
-  if (msgFromClient && !msgFromClient.userId) {
-    ctx.logger.warn("msgFromClient is missing userId");
+  if (msgClient && !msgClient.userId) {
+    ctx.logger.warn("msgClient is missing userId");
   }
 
   const gameUpdated = await Game.update({
     ctx: { ...ctx, space: spaceState },
     model: model.games[spaceId] ?? Game.init(spaceState.game.t),
     msg: msg?.t === "game" ? msg.c : null,
-    msgFromClient:
-      msgFromClient?.t === "game" && msgFromClient.userId
-        ? { ...msgFromClient, userId: msgFromClient.userId, ...msgFromClient.c }
+    msgClient:
+      msgClient?.t === "game" && msgClient.userId
+        ? { ...msgClient, userId: msgClient.userId, ...msgClient.c }
         : null,
     msgEvt,
     modelGame: spaceState.game,

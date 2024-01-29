@@ -15,23 +15,23 @@ const update: ServerModule["update"] = async (input) => {
 };
 
 const updateFromClient: ServerModule["update"] = async (input) => {
-  const { msgFromClient, model, deps } = input;
+  const { msgClient, model, deps } = input;
 
-  switch (msgFromClient?.t) {
+  switch (msgClient?.t) {
     case "puzzle.edit-name.user-clicked-save-button": {
       const edited = await patchName({
         deps,
-        flowPuzzleId: msgFromClient.flowPuzzleId,
-        newName: msgFromClient.newName,
-        userId: msgFromClient.userId,
+        flowPuzzleId: msgClient.flowPuzzleId,
+        newName: msgClient.newName,
+        userId: msgClient.userId,
       });
 
       const msgGame: MsgGame = {
         t: "user-edited-puzzle-name",
         edited,
-        flowPuzzleId: msgFromClient.flowPuzzleId,
-        newName: msgFromClient.newName,
-        userId: msgFromClient.userId,
+        flowPuzzleId: msgClient.flowPuzzleId,
+        newName: msgClient.newName,
+        userId: msgClient.userId,
       };
 
       return {

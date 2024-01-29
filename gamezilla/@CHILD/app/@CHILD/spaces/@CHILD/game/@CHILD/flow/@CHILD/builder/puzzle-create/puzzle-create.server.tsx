@@ -16,13 +16,13 @@ const update: ServerModule["update"] = async (input) => {
 };
 
 const updateFromClient: ServerModule["update"] = async (input) => {
-  const { msgFromClient, model, ctx } = input;
+  const { msgClient, model, ctx } = input;
 
-  switch (msgFromClient?.t) {
+  switch (msgClient?.t) {
     case "puzzle-create/user-clicked-create-button": {
       const counted = await FlowPuzzleDb().count({
         where: {
-          createdBy: msgFromClient.userId,
+          createdBy: msgClient.userId,
         },
       });
 
@@ -37,10 +37,10 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
       const puzzleNew: FlowPuzzle = {
         createdAt: ctx.now,
-        createdBy: msgFromClient.userId,
+        createdBy: msgClient.userId,
         id: FlowPuzzleId.generate(),
         lastUpdatedAt: ctx.now,
-        lastUpdatedBy: msgFromClient.userId,
+        lastUpdatedBy: msgClient.userId,
         name: puzzleNameFinal,
         puzzle: {
           t: "grid",
@@ -57,7 +57,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
       const msgGame: MsgGame = {
         t: "user-created-puzzle",
         created: Result.mapOk(created, () => puzzleNew),
-        userId: msgFromClient.userId,
+        userId: msgClient.userId,
       };
 
       return {

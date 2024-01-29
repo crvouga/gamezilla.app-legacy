@@ -89,7 +89,7 @@ export type Input<T extends GameServerModuleTypes> = {
   /**
    * `msgServer`
    */
-  msgFromClient?:
+  msgClient?:
     | (T["MsgToServer"] & {
         clientId: ClientId;
         sessionId: SessionId;

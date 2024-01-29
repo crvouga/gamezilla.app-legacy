@@ -83,9 +83,9 @@ export const update: Module["update"] = async (input) => {
           model: model.t === "flow" ? model.c : FlowServer.init,
           msgCmd: input.msgCmd,
           msgEvt: input.msgEvt,
-          msgFromClient:
-            input.msgFromClient?.t === "flow"
-              ? { ...input.msgFromClient, ...input.msgFromClient.c }
+          msgClient:
+            input.msgClient?.t === "flow"
+              ? { ...input.msgClient, ...input.msgClient.c }
               : null,
           msgGame:
             input.msgGame?.t === "flow"
@@ -111,9 +111,9 @@ export const update: Module["update"] = async (input) => {
           model: model.t === "connect-four" ? model.c : ConnectFourServer.init,
           msgCmd: input.msgCmd,
           msgEvt: input.msgEvt,
-          msgFromClient:
-            input.msgFromClient?.t === "connect-four"
-              ? { ...input.msgFromClient, ...input.msgFromClient.c }
+          msgClient:
+            input.msgClient?.t === "connect-four"
+              ? { ...input.msgClient, ...input.msgClient.c }
               : null,
           msgGame:
             input.msgGame?.t === "connect-four"

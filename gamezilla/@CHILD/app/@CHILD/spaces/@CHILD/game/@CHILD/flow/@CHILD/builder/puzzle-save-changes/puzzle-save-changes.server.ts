@@ -11,21 +11,21 @@ const update: ServerModule["update"] = async (input) => {
 };
 
 const updateFromClient: ServerModule["update"] = async (input) => {
-  const { ctx, msgFromClient, model, deps } = input;
+  const { ctx, msgClient, model, deps } = input;
 
-  switch (msgFromClient?.t) {
+  switch (msgClient?.t) {
     case "save-changes/user-clicked-save-and-exit":
     case "save-changes/user-clicked-save-button": {
       const saved = await deps.FlowPuzzleDb.put({
-        ...msgFromClient.puzzle,
-        lastUpdatedBy: msgFromClient.userId,
+        ...msgClient.puzzle,
+        lastUpdatedBy: msgClient.userId,
         lastUpdatedAt: ctx.now,
       });
 
       const msgGame: MsgGame = {
         t: "user-saved-changes",
-        saved: Result.mapOk(saved, () => msgFromClient.puzzle),
-        userId: msgFromClient.puzzle.createdBy,
+        saved: Result.mapOk(saved, () => msgClient.puzzle),
+        userId: msgClient.puzzle.createdBy,
       };
 
       return {
