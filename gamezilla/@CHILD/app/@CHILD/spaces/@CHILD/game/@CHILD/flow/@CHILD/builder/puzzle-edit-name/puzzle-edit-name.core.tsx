@@ -1,4 +1,4 @@
-import { RemoteResult, Result } from "gamezilla/@SHARED/core";
+import { RemoteResult, Result, notAsked } from "gamezilla/@SHARED/core";
 import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
@@ -8,9 +8,15 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 //
 
 export type ModelClient = {
-  editNameRequest?: RemoteResult<string, null>;
-  editNameDraft?: string;
-  editNameValidationError?: EditNameValidationError;
+  editNameRequest: RemoteResult<string, null>;
+  editNameDraft: string;
+  editNameValidationError: EditNameValidationError;
+};
+
+export const initClient: ModelClient = {
+  editNameDraft: "",
+  editNameRequest: notAsked,
+  editNameValidationError: null,
 };
 
 export type EditNameValidationError = "name-cannot-be-empty" | null;

@@ -1,4 +1,4 @@
-import { RemoteResult } from "gamezilla/@SHARED/core";
+import { RemoteResult, notAsked } from "gamezilla/@SHARED/core";
 import { IFlowPuzzleDb } from "../../../@SHARED/flow-puzzle-db";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 
@@ -9,6 +9,10 @@ import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 
 export type ModelClient = {
   puzzleListRequest: RemoteResult<string, null>;
+};
+
+export const initClient: ModelClient = {
+  puzzleListRequest: notAsked,
 };
 
 export type MsgClient =

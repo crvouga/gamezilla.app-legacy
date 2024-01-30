@@ -1,10 +1,14 @@
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { RemoteResult } from "gamezilla/@SHARED/core";
+import { RemoteResult, notAsked } from "gamezilla/@SHARED/core";
 import { IFlowPuzzleDb } from "../../../@SHARED/flow-puzzle-db";
 import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id";
 
 export type ModelClient = {
-  deleteForeverRequest?: RemoteResult<string, null>;
+  deleteForeverRequest: RemoteResult<string, null>;
+};
+
+export const initClient: ModelClient = {
+  deleteForeverRequest: notAsked,
 };
 
 export type ModelServer = {};

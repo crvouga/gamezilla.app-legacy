@@ -15,6 +15,7 @@ import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
 import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id";
+import { PackCreate } from "./pack-create";
 import { PuzzleCreate } from "./puzzle-create";
 import { PuzzleDeleteForever } from "./puzzle-delete-forever";
 import { PuzzleEditName } from "./puzzle-edit-name";
@@ -82,11 +83,24 @@ type BaseModelClient = {
 };
 
 export type ModelClient = BaseModelClient &
+  //
   PuzzleCreate.ModelClient &
   PuzzleList.ModelClient &
   PuzzleSaveChanges.ModelClient &
   PuzzleEditName.ModelClient &
-  PuzzleDeleteForever.ModelClient;
+  PuzzleDeleteForever.ModelClient &
+  //
+  PackCreate.ModelClient;
+
+export const initClient: ClientModule["init"] = {
+  ...PackCreate.initClient,
+  ...PuzzleCreate.initClient,
+  ...PuzzleList.initClient,
+  ...PuzzleEditName.initClient,
+  ...PuzzleDeleteForever.initClient,
+  puzzles: {},
+  listTab: "puzzles",
+};
 
 export type ModelServer = {};
 
@@ -98,8 +112,7 @@ export type ModelServer = {};
 //
 //
 
-export type MsgClient =
-  // | { t: "game-event"; c: MsgGame }
+type BaseMsgClient =
   | { t: "user-selected-list-tab"; listTab: ListTab }
   //
   | { t: "puzzle.editor.user-clicked-more-button" }
@@ -108,34 +121,45 @@ export type MsgClient =
   | { t: "puzzle.editor.flow-grid-ui-edit"; c: FlowGridUIEdit.Msg }
   | { t: "puzzle.editor.flow-grid-ui-play"; c: FlowGridUIPlay.Msg }
   | { t: "puzzle.editor.user-clicked-edit-mode-button" }
-  | { t: "puzzle.editor.user-clicked-play-mode-button" }
+  | { t: "puzzle.editor.user-clicked-play-mode-button" };
+
+export type MsgClient =
+  | BaseMsgClient
   //
   | PuzzleCreate.MsgClient
   | PuzzleEditName.MsgClient
   | PuzzleDeleteForever.MsgClient
   | PuzzleList.MsgClient
-  | PuzzleSaveChanges.MsgClient;
+  | PuzzleSaveChanges.MsgClient
+  //
+  | PackCreate.MsgClient;
 
 export type MsgServer =
   | PuzzleCreate.MsgServer
   | PuzzleSaveChanges.MsgServer
   | PuzzleDeleteForever.MsgServer
   | PuzzleList.MsgServer
-  | PuzzleEditName.MsgServer;
+  | PuzzleEditName.MsgServer
+  //
+  | PackCreate.MsgServer;
 
 export type MsgToServer =
   | PuzzleCreate.MsgToServer
   | PuzzleSaveChanges.MsgToServer
   | PuzzleDeleteForever.MsgToServer
   | PuzzleEditName.MsgToServer
-  | PuzzleList.MsgToServer;
+  | PuzzleList.MsgToServer
+  //
+  | PackCreate.MsgToServer;
 
 export type MsgToClient =
   | PuzzleCreate.MsgToClient
   | PuzzleSaveChanges.MsgToClient
   | PuzzleEditName.MsgToClient
   | PuzzleDeleteForever.MsgToClient
-  | PuzzleList.MsgToClient;
+  | PuzzleList.MsgToClient
+  //
+  | PackCreate.MsgToClient;
 
 //
 //
@@ -145,12 +169,7 @@ export type MsgToClient =
 //
 //
 
-export type MsgGame =
-  | PuzzleList.MsgGame
-  | PuzzleCreate.MsgGame
-  | PuzzleEditName.MsgGame
-  | PuzzleDeleteForever.MsgGame
-  | PuzzleSaveChanges.MsgGame
+type MsgGameBase =
   | {
       t: "grid-ui-play";
       c: FlowGridUIPlay.Msg;
@@ -176,6 +195,17 @@ export type MsgGame =
       userId: UserId;
       puzzle: FlowPuzzle;
     };
+
+export type MsgGame =
+  | MsgGameBase
+  //
+  | PackCreate.MsgGame
+  //
+  | PuzzleList.MsgGame
+  | PuzzleCreate.MsgGame
+  | PuzzleEditName.MsgGame
+  | PuzzleDeleteForever.MsgGame
+  | PuzzleSaveChanges.MsgGame;
 
 type BuildState =
   | {
@@ -274,6 +304,10 @@ const reducerListState = ({
         mode: { t: "edit" },
         puzzle: msgGame.puzzle,
       };
+    }
+
+    case "user-created-pack": {
+      return modelGame;
     }
 
     case "user-edited-puzzle-name":
@@ -388,6 +422,8 @@ const reducerBuildState = ({
       }
       return { ...modelGame, puzzle: msgGame.saved.value };
     }
+
+    case "user-created-pack":
     case "user-opened-puzzle":
     case "user-created-puzzle":
     case "listed-puzzles": {

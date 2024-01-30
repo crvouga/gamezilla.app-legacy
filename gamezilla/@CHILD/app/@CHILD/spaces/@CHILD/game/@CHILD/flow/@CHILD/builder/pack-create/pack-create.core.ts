@@ -1,5 +1,5 @@
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { RemoteResult, Result } from "gamezilla/@SHARED/core";
+import { RemoteResult, Result, notAsked } from "gamezilla/@SHARED/core";
 import { FlowPack } from "../../../@SHARED/flow-pack/flow-pack";
 
 //
@@ -9,7 +9,11 @@ import { FlowPack } from "../../../@SHARED/flow-pack/flow-pack";
 //
 
 export type ModelClient = {
-  puzzleCreateRequest: RemoteResult<string, null>;
+  packCreateRequest: RemoteResult<string, null>;
+};
+
+export const initClient: ModelClient = {
+  packCreateRequest: notAsked,
 };
 
 export type ModelServer = {};

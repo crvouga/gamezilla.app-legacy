@@ -8,23 +8,21 @@ const update: ClientModule["update"] = (input) => {
 };
 
 const ViewCreateButton: ClientModule["View"] = (input) => {
-  const { dispatch } = input;
+  const { dispatch, model } = input;
 
   return (
     <Button
       text="Create Pack"
       variant="contained"
       color="primary"
-      // loading={model.packCreateLoading.t === "loading"}
+      loading={model.packCreateRequest.t === "loading"}
       start={<IconPlus className="h-8 w-8" />}
-      onClick={() =>
-        dispatch({ t: "puzzle-create/user-clicked-create-button" })
-      }
+      onClick={() => dispatch({ t: "pack-create/user-clicked-create-button" })}
     />
   );
 };
 
-export const PuzzleCreateClient = {
+export const PackCreateClient = {
   update,
   ViewCreateButton,
 };

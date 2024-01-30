@@ -5,22 +5,12 @@ import {
   IconArrowLeftOnRect,
   Tabs,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Sub, notAsked } from "gamezilla/@SHARED/core";
+import { Sub } from "gamezilla/@SHARED/core";
 import { ViewSpaceHostChip } from "../../../../@SHARED/game";
-import { ClientModule } from "./builder.core";
+import { ClientModule, initClient } from "./builder.core";
 import { PackListClient } from "./pack-list/pack-list";
 import { PuzzleEditorClient } from "./puzzle-editor/puzzle-editor.client";
 import { PuzzleListClient } from "./puzzle-list/puzzle-list.client";
-
-const init: ClientModule["init"] = {
-  puzzleListRequest: notAsked,
-  puzzleCreateRequest: notAsked,
-  puzzles: {},
-  editNameDraft: "",
-  editNameRequest: notAsked,
-  deleteForeverRequest: notAsked,
-  listTab: "puzzles",
-};
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
@@ -121,7 +111,7 @@ const subscriptions: ClientModule["subscriptions"] = (_input) => {
 };
 
 export const BuilderClient: ClientModule = {
-  init,
+  init: initClient,
   update,
   subscriptions,
   View,
