@@ -28,9 +28,9 @@ export const ViewBottomButtonBar = ({
             key={action.label}
             onClick={action.onClick}
             className={cn(
-              "relative flex flex-1 flex-col items-center gap-0.5 p-1 text-sm ",
+              "relative flex flex-1 flex-col items-center gap-0.5 p-1 text-sm transition-opacity",
               !isDisabled && "active:opacity-50",
-              action.disabled && "opacity-50",
+              action.disabled && "cursor-not-allowed opacity-50",
               action.color === "danger" && "text-red-500",
               action.color === "success" && "text-green-500",
               action.classNames?.button
@@ -38,8 +38,8 @@ export const ViewBottomButtonBar = ({
           >
             <div
               className={cn(
-                "flex h-full w-full flex-col items-center justify-center gap-0.5",
-                action.loading && "opacity-0"
+                "flex h-full w-full flex-col items-center justify-center gap-0.5 transition-opacity",
+                action.loading ? "opacity-0" : "opacity-100"
               )}
             >
               {action.icon}
@@ -47,11 +47,15 @@ export const ViewBottomButtonBar = ({
                 {action.label}
               </p>
             </div>
-            {action.loading && (
-              <div className="absolute inset-0 flex h-full w-full items-center justify-center ">
-                <Spinner className="h-8 w-8" />
-              </div>
-            )}
+
+            <div
+              className={cn(
+                "absolute inset-0 flex h-full w-full items-center justify-center transition-opacity",
+                action.loading ? "opacity-100" : "opacity-0"
+              )}
+            >
+              <Spinner className="h-8 w-8" />
+            </div>
           </button>
         );
       })}
