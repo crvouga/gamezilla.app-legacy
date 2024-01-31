@@ -81,11 +81,7 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
         };
       }
 
-      return GameClientModule.chainUpdates(
-        { model },
-        (model) => exitBuilder({ ...input, model }),
-        (model) => ({ model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] })
-      );
+      return exitBuilderWithSound(input);
     }
 
     case "save-changes/user-clicked-cancel-exit": {
@@ -96,11 +92,7 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
     }
 
     case "save-changes/user-clicked-discard-and-exit": {
-      return GameClientModule.chainUpdates(
-        { model },
-        (model) => exitBuilder({ ...input, model }),
-        (model) => ({ model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] })
-      );
+      return exitBuilderWithSound(input);
     }
 
     case "save-changes/user-clicked-save-and-exit": {
@@ -159,6 +151,14 @@ const updateSaveChangesRequest: ClientModule["update"] = (input) => {
     };
   }
   return { model };
+};
+
+const exitBuilderWithSound: ClientModule["update"] = (input) => {
+  return GameClientModule.chainUpdates(
+    { model: input.model },
+    (model) => exitBuilder({ ...input, model }),
+    (model) => ({ model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] })
+  );
 };
 
 const exitBuilder: ClientModule["update"] = (input) => {
