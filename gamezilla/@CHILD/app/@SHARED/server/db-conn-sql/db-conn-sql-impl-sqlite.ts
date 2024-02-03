@@ -2,7 +2,7 @@ import { err, ok } from "gamezilla/@SHARED/core";
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
 import { toSql } from "./sql";
 import { Database } from "bun:sqlite";
-import { Logger } from "../../@SHARED/server/logger";
+import { Logger } from "../../../@SHARED/server/logger";
 import { logQuery } from "./shared";
 
 export const createDbConnSqlite = async ({

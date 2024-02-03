@@ -43,10 +43,20 @@ const diff = (a: Posix, b: Posix): TimeSpan => {
   return TimeSpan.fromMilliseconds(Math.abs(a - b));
 };
 
+const fromIsoString = (isoString: string): Posix => {
+  return fromNumber(new Date(isoString).getTime());
+};
+
+const toIsoString = (posix: Posix): string => {
+  return new Date(toNumber(posix)).toISOString();
+};
+
 export const Posix = {
   is,
   fromNumber,
   toNumber,
   now,
   diff,
+  fromIsoString,
+  toIsoString,
 };

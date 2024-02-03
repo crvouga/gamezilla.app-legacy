@@ -22,7 +22,10 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
   switch (msgClient.t) {
     case "delete-forever/user-confirmed": {
-      const deleted = await deps.FlowPuzzleDb.zap(modelGame.puzzle.id);
+      const deleted = await deps.FlowPuzzleDb.zap({
+        id: modelGame.puzzle.id,
+        deletedByUserId: msgClient.userId,
+      });
 
       const msgGame: MsgGame = {
         t: "user-deleted-puzzle",

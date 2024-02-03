@@ -2,10 +2,7 @@ import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { Result } from "gamezilla/@SHARED/core";
 import { FlowGrid } from "../../../@SHARED/flow";
-import { FlowPuzzleDb } from "../../../@SHARED/flow-puzzle-db";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
-import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id";
-import { FlowPuzzleName } from "../../../@SHARED/flow-puzzle/flow-puzzle-name";
 import { ServerModule } from "../builder.core";
 import { MsgGame } from "./puzzle-create.core";
 
@@ -16,32 +13,22 @@ const update: ServerModule["update"] = async (input) => {
 };
 
 const updateFromClient: ServerModule["update"] = async (input) => {
-  const { msgClient, model, ctx } = input;
+  const { msgClient, model, ctx, deps } = input;
 
   switch (msgClient?.t) {
     case "puzzle-create/user-clicked-create-button": {
-      const counted = await FlowPuzzleDb().count({
+      const counted = await deps.FlowPuzzleDb.count({
         where: {
           createdBy: msgClient.userId,
         },
       });
 
-      const count = counted.t === "ok" ? counted.value : null;
+      const count = counted.t === "ok" ? counted.value : 0;
 
-      const puzzleName = FlowPuzzleName.generate();
-
-      const puzzleNameFinal =
-        typeof count === "number"
-          ? `Puzzle ${count + 1} - ${puzzleName}`
-          : puzzleName;
-
-      const puzzleNew: FlowPuzzle = {
+      const puzzleNew = FlowPuzzle.create({
+        count: count,
         createdAt: ctx.now,
         createdBy: msgClient.userId,
-        id: FlowPuzzleId.generate(),
-        lastUpdatedAt: ctx.now,
-        lastUpdatedBy: msgClient.userId,
-        name: puzzleNameFinal,
         puzzle: {
           t: "grid",
           c: FlowGrid.init({
@@ -50,9 +37,9 @@ const updateFromClient: ServerModule["update"] = async (input) => {
             terminalsByGroupId: {},
           }),
         },
-      };
+      });
 
-      const created = await FlowPuzzleDb().put(puzzleNew);
+      const created = await deps.FlowPuzzleDb.put(puzzleNew);
 
       const msgGame: MsgGame = {
         t: "user-created-puzzle",

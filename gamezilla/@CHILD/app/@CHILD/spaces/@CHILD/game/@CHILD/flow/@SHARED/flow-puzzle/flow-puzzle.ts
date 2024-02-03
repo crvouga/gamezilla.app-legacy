@@ -1,6 +1,5 @@
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Posix } from "gamezilla/@SHARED/core";
-import { P } from "gamezilla/@SHARED/parsing";
 import { FlowGrid } from "../flow";
 import { FlowPuzzleId } from "./flow-puzzle-id";
 import { FlowPuzzleName } from "./flow-puzzle-name";
@@ -10,9 +9,14 @@ export type Puzzle = {
   c: FlowGrid.Model;
 };
 
+export const isPuzzle = (x: unknown): x is Puzzle => {
+  // @ts-ignore
+  return x as Puzzle;
+};
+
 export type FlowPuzzle = {
   id: FlowPuzzleId;
-  name: string;
+  name: FlowPuzzleName;
   puzzle: Puzzle;
   createdAt: Posix;
   createdBy: UserId;
@@ -27,7 +31,7 @@ const create = (input: {
   createdBy: UserId;
 }): FlowPuzzle => {
   return {
-    name: `Puzzle ${input.count} - ${FlowPuzzleName.generate()}`,
+    name: FlowPuzzleName.generate({ count: input.count }),
     id: FlowPuzzleId.generate(),
     puzzle: input.puzzle,
     createdAt: input.createdAt,
@@ -37,21 +41,7 @@ const create = (input: {
   };
 };
 
-export const to = (x: unknown): FlowPuzzle | null => {
-  if (
-    P.obj(x) &&
-    P.has(x, "id", FlowPuzzleId.is) &&
-    // P.has(x, "puzzle", isPuzzle) &&
-    P.has(x, "createdAt", Posix.is) &&
-    P.has(x, "createdBy", UserId.is) &&
-    P.has(x, "lastUpdatedAt", P.or(Posix.is, P.nullish)) &&
-    P.has(x, "lastUpdatedBy", P.or(UserId.is, P.nullish))
-  ) {
-    return null;
-  }
-  return null;
-};
-
 export const FlowPuzzle = {
   create,
+  isPuzzle,
 };

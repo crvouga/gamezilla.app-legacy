@@ -21,6 +21,7 @@ import { PuzzleDeleteForever } from "./puzzle-delete-forever";
 import { PuzzleEditName } from "./puzzle-edit-name";
 import { PuzzleList } from "./puzzle-list";
 import { PuzzleSaveChanges } from "./puzzle-save-changes";
+import { FlowPuzzleName } from "../../@SHARED/flow-puzzle/flow-puzzle-name";
 
 //
 //
@@ -404,6 +405,9 @@ const reducerBuildState = ({
         return modelGame;
       }
       if (msgGame.edited.t === "err") {
+        return modelGame;
+      }
+      if (!FlowPuzzleName.is(msgGame.newName)) {
         return modelGame;
       }
       const puzzleNew: FlowPuzzle = {

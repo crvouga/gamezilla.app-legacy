@@ -17,6 +17,7 @@ import {
 import { isLoading, isOk, loading } from "gamezilla/@SHARED/core";
 import { ClientModule } from "../builder.core";
 import { editNameValidationErrorToString } from "./puzzle-edit-name.core";
+import { FlowPuzzleName } from "../../../@SHARED/flow-puzzle/flow-puzzle-name";
 
 //
 //
@@ -101,7 +102,8 @@ const updateFormButtons: ClientModule["update"] = (input) => {
     case "user-edited-puzzle-name": {
       const puzzlesNew = { ...model.puzzles };
       const puzzle = puzzlesNew[msgGame.flowPuzzleId];
-      if (puzzle) {
+
+      if (puzzle && FlowPuzzleName.is(msgGame.newName)) {
         puzzlesNew[msgGame.flowPuzzleId] = {
           ...puzzle,
           name: msgGame.newName,

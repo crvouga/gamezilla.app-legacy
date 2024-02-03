@@ -7,6 +7,7 @@ import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id";
 import { ServerModule } from "../builder.core";
 import { MsgGame } from "./puzzle-edit-name.core";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
+import { FlowPuzzleName } from "../../../@SHARED/flow-puzzle/flow-puzzle-name";
 
 const update: ServerModule["update"] = async (input) => {
   return GameServerModule.chainUpdates({ model: input.model }, (model) =>
@@ -70,10 +71,16 @@ const patchName = async (input: {
     return err("You must be the creator of this puzzle to edit it.");
   }
 
+  const newNameFinal =
+    typeof newName === "string" && newName.length > 0 ? newName : puzzle.name;
+
+  if (!FlowPuzzleName.is(newNameFinal)) {
+    return err("Invalid name");
+  }
+
   const patched: FlowPuzzle = {
     ...puzzle,
-    name:
-      typeof newName === "string" && newName.length > 0 ? newName : puzzle.name,
+    name: newNameFinal,
     lastUpdatedBy: userId,
   };
 

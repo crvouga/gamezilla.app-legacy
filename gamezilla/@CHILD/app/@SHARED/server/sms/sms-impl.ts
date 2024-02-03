@@ -1,4 +1,4 @@
-import { SMS } from "../../@SHARED/server/sms-interface";
+import { SMS } from "./sms";
 import { createSMSTwilio } from "./sms-impl-twilio";
 
 export const createSMS = (_impl: "twilio"): SMS => {

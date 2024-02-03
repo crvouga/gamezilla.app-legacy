@@ -89,7 +89,9 @@ const updateChild: Module["update"] = async (input) => {
             ? { ...input.msgGame, ...input.msgGame.c }
             : null,
         msg: input.msg?.t === "builder" ? input.msg.c : null,
-        deps: await BuilderServer.deps(),
+        deps: await BuilderServer.deps({
+          ctx: input.ctx,
+        }),
       });
 
       const tagged = GameServerModule.tagOutput(

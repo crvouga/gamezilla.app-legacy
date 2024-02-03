@@ -8,9 +8,11 @@ import { PuzzleEditNameServer } from "./puzzle-edit-name/puzzle-edit-name.server
 import { PuzzleListServer } from "./puzzle-list/puzzle-list.server";
 import { PuzzleSaveChangesServer } from "./puzzle-save-changes/puzzle-save-changes.server";
 
-const deps: ServerModule["deps"] = async () => {
+const deps: ServerModule["deps"] = async (_input) => {
   return {
-    FlowPuzzleDb: FlowPuzzleDb(),
+    FlowPuzzleDb: FlowPuzzleDb({
+      t: "hash-map",
+    }),
   };
 };
 

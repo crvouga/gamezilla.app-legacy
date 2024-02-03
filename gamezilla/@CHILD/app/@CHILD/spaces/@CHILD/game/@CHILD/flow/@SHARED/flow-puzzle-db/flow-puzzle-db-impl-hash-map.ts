@@ -110,7 +110,7 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
       return ok(null);
     },
 
-    async zap(id) {
+    async zap({ id }) {
       calls.zap++;
       await new Promise((resolve) => setTimeout(resolve, 1000));
       if (calls.zap % ERROR_EVERY === 0) {

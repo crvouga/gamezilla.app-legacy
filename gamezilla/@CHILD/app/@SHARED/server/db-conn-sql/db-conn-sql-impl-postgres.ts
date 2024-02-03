@@ -2,7 +2,7 @@ import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
 import { err, ok } from "gamezilla/@SHARED/core";
 import postgres from "postgres";
 import { toSql } from "./sql";
-import { Logger } from "../../@SHARED/server/logger";
+import { Logger } from "../../../@SHARED/server/logger";
 import { logQuery } from "./shared";
 
 export const createDbConnPostgres = async ({
@@ -16,9 +16,8 @@ export const createDbConnPostgres = async ({
 
   return {
     query: async (isRow, rawSql, params) => {
+      const sql = toSql(rawSql, params);
       try {
-        const sql = toSql(rawSql, params);
-
         const start = Date.now();
 
         const rows = await database.unsafe(sql);
@@ -38,7 +37,7 @@ export const createDbConnPostgres = async ({
 
         return ok(parsed);
       } catch (error) {
-        logger.error(`[db] ${error}`);
+        logger.error(`[db] ${error} sql=${sql}`);
         return err(String(error));
       }
     },

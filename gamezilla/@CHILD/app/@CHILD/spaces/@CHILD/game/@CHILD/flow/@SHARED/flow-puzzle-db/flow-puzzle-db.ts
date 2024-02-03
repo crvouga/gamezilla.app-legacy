@@ -25,5 +25,8 @@ export type IFlowPuzzleDb = {
   }) => Promise<Result<string, Paginated<FlowPuzzle>>>;
   get: (id: FlowPuzzleId) => Promise<Result<string, FlowPuzzle | null>>;
   put: (input: FlowPuzzle) => Promise<Result<string, null>>;
-  zap: (id: FlowPuzzleId) => Promise<Result<string, null>>;
+  zap: (input: {
+    id: FlowPuzzleId;
+    deletedByUserId: UserId;
+  }) => Promise<Result<string, null>>;
 };

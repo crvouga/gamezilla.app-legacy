@@ -25,9 +25,9 @@ import {
   ServerTransport,
 } from "./@CHILD/wire/transport-server";
 import * as WireServer from "./@CHILD/wire/wire.server";
+import { createDbConn } from "./@SHARED/server/db-conn-sql";
 import { Logger, LoggerConsole } from "./@SHARED/server/logger";
-import { createDbConn } from "./app-server/db-conn-sql";
-import { createSMS } from "./app-server/sms";
+import { createSMS } from "./@SHARED/server/sms";
 import {
   ModelServer,
   MsgServer,

@@ -39,6 +39,24 @@ export const has = <T extends Record<string, unknown>, K extends keyof T, V>(
   return isValue(obj[key]);
 };
 
+export const record = <V>(
+  isValue: (value: unknown) => value is V
+): ((value: unknown) => value is Record<string, V>) => {
+  return (value: unknown): value is Record<string, V> => {
+    if (!obj(value)) {
+      return false;
+    }
+
+    for (const key in value) {
+      if (!isValue(value[key])) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+};
+
 export const obj = (item: unknown): item is Record<string, unknown> => {
   return typeof item === "object" && item !== null && !Array.isArray(item);
 };
@@ -66,6 +84,10 @@ export const union =
   (token: unknown): token is T[number] => {
     return enumeration.includes(token as T[number]);
   };
+
+export const unknown = (_value: unknown): _value is unknown => {
+  return true;
+};
 
 export const tuple =
   <Left, Right>(
