@@ -1,6 +1,6 @@
 import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server";
-import { Result } from "gamezilla/@SHARED/core";
+import { Result, Uuid } from "gamezilla/@SHARED/core";
 import { P } from "gamezilla/@SHARED/parsing";
 import { ISessionDb } from "./session-db";
 
@@ -65,10 +65,13 @@ export const SessionDbPostgres = ({
     },
 
     async insert({ sessionId, userId }) {
+      const userSessionId = `user-session:${Uuid.generate()}`;
+
       const queried = await dbConn.query(
         isRow,
-        `INSERT INTO user_session (session_id, user_id) VALUES (:session_id, :user_id)`,
+        `INSERT INTO user_session (user_session_id, session_id, user_id) VALUES (:user_session_id, :session_id, :user_id)`,
         {
+          user_session_id: userSessionId,
           session_id: sessionId,
           user_id: userId,
         }
