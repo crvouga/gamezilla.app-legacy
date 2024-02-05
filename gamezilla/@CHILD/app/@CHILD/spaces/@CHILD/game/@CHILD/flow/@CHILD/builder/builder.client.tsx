@@ -39,7 +39,7 @@ const updateLocation: ClientModule["update"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-  const { ctx, modelGame, dispatch, model } = input;
+  const { modelGame } = input;
 
   switch (modelGame.t) {
     case "build": {
@@ -47,59 +47,69 @@ const View: ClientModule["View"] = (input) => {
     }
 
     case "list": {
-      const isSpectating = ctx.space.hostId !== ctx.currentUserId;
-
-      if (isSpectating) {
-        const host = ctx.profiles[ctx.space.hostId];
-        const name = host?.username ?? "Host";
-        return (
-          <div className="h-ull flex w-full flex-1 flex-col items-center justify-center gap-4">
-            <div className="flex w-full flex-col items-center justify-center gap-2">
-              <Avatar src={host?.avatarUrl} className="h-20 w-20" />
-              <div className="flex items-center gap-2">
-                <p className="text-xl font-bold">{name}</p>
-                <ViewSpaceHostChip />
-              </div>
-            </div>
-            <p className="text-lg font-bold text-secondary">
-              Choosing a puzzle to build
-            </p>
-          </div>
-        );
-      }
-
-      return (
-        <div className="flex h-full w-full flex-1 flex-col">
-          <Tabs
-            tabs={["puzzles", "packs"]}
-            labels={{
-              packs: "Packs",
-              puzzles: "Puzzles",
-            }}
-            onSelect={(listTab) =>
-              dispatch({ t: "user-selected-list-tab", listTab })
-            }
-            selected={model.listTab}
-          />
-
-          {model.listTab === "puzzles" && <PuzzleListClient.View {...input} />}
-
-          {model.listTab === "packs" && <PackListClient.View {...input} />}
-
-          <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
-            <Button
-              onClick={input.ctx.onQuit}
-              className="flex-1"
-              text="Exit"
-              start={<IconArrowLeftOnRect className="h-8 w-8" />}
-              variant="contained"
-              color="default"
-            />
-          </div>
-        </div>
-      );
+      return <ViewList {...input} />;
     }
   }
+};
+
+const ViewList: ClientModule["View"] = (input) => {
+  const { ctx, modelGame, dispatch, model } = input;
+
+  if (modelGame.t !== "list") {
+    return null;
+  }
+
+  const isSpectating = ctx.space.hostId !== ctx.currentUserId;
+
+  if (isSpectating) {
+    const host = ctx.profiles[ctx.space.hostId];
+    const name = host?.username ?? "Host";
+    return (
+      <div className="h-ull flex w-full flex-1 flex-col items-center justify-center gap-4">
+        <div className="flex w-full flex-col items-center justify-center gap-2">
+          <Avatar src={host?.avatarUrl} className="h-20 w-20" />
+          <div className="flex items-center gap-2">
+            <p className="text-xl font-bold">{name}</p>
+            <ViewSpaceHostChip />
+          </div>
+        </div>
+        <p className="text-lg font-bold text-secondary">
+          Choosing a puzzle to build
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-full w-full flex-1 flex-col">
+      <Tabs
+        tabs={["puzzles", "packs"]}
+        labels={{
+          packs: "Packs",
+          puzzles: "Puzzles",
+        }}
+        onSelect={(listTab) =>
+          dispatch({ t: "user-selected-list-tab", listTab })
+        }
+        selected={model.listTab}
+      />
+
+      {model.listTab === "puzzles" && <PuzzleListClient.View {...input} />}
+
+      {model.listTab === "packs" && <PackListClient.View {...input} />}
+
+      <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
+        <Button
+          onClick={input.ctx.onQuit}
+          className="flex-1"
+          text="Exit"
+          start={<IconArrowLeftOnRect className="h-8 w-8" />}
+          variant="contained"
+          color="default"
+        />
+      </div>
+    </div>
+  );
 };
 
 const ViewFeedItem: ClientModule["ViewFeedItem"] = () => {
