@@ -1,7 +1,7 @@
-import { Button, IconPlus } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { ClientModule } from "../../builder.core";
-import { loading, ok } from "gamezilla/@SHARED/core";
 import { sendMsgToServer } from "gamezilla/@CHILD/app/@SHARED/client";
+import { Button, IconPlus } from "gamezilla/@CHILD/app/@SHARED/ui";
+import { loading, ok } from "gamezilla/@SHARED/core";
+import { ClientModule } from "../../builder.core";
 
 const update: ClientModule["update"] = (input) => {
   const { model, msg, msgGame } = input;
