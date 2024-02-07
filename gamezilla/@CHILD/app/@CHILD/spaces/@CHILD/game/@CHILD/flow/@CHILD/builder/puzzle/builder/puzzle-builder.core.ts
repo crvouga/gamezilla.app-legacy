@@ -1,6 +1,14 @@
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { FlowGridUIEdit, FlowGridUIPlay } from "../../../../@SHARED/flow";
 
+export type ModelClient = {};
+
+export const initClient: ModelClient = {};
+
+export type ModelServer = {};
+
+export type MsgServer = { t: "noop" };
+
 export type MsgClient =
   | { t: "puzzle.editor.flow-grid-ui-edit"; c: FlowGridUIEdit.Msg }
   | { t: "puzzle.editor.flow-grid-ui-play"; c: FlowGridUIPlay.Msg }
@@ -9,6 +17,10 @@ export type MsgClient =
   | { t: "puzzle.editor.user-clicked-exit-button" }
   | { t: "puzzle.editor.user-clicked-edit-mode-button" }
   | { t: "puzzle.editor.user-clicked-play-mode-button" };
+
+export type MsgToClient = { t: "noop" };
+
+export type MsgToServer = { t: "noop" };
 
 export type MsgGame =
   | {

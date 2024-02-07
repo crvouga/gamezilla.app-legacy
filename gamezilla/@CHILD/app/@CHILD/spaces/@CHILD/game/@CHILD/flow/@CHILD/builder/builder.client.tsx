@@ -15,6 +15,8 @@ import { PuzzleEditNameClient } from "./puzzle/edit/puzzle-edit-name.client";
 import { PuzzleDeleteForeverClient } from "./puzzle/delete-forever/puzzle-delete-forever.client";
 import { PuzzleSaveChangesClient } from "./puzzle/save-changes/puzzle-save-changes.client";
 import { PuzzleCreateClient } from "./puzzle/create/puzzle-create.client";
+import { PackCreateClient } from "./pack/create/pack-create.client";
+import { PackBuilderClient } from "./pack/builder/pack-builder.client";
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
@@ -28,7 +30,10 @@ const update: ClientModule["update"] = (input) => {
     (model) => PuzzleEditNameClient.update({ ...input, model }),
     (model) => PuzzleDeleteForeverClient.update({ ...input, model }),
     (model) => PuzzleSaveChangesClient.update({ ...input, model }),
-    (model) => PuzzleCreateClient.update({ ...input, model })
+    (model) => PuzzleCreateClient.update({ ...input, model }),
+    //
+    (model) => PackCreateClient.update({ ...input, model }),
+    (model) => PackBuilderClient.update({ ...input, model })
   );
 };
 
@@ -52,6 +57,10 @@ const View: ClientModule["View"] = (input) => {
   switch (modelGame.t) {
     case "puzzle-builder": {
       return <PuzzleBuilderClient.View {...input} />;
+    }
+
+    case "pack-builder": {
+      return <PackBuilderClient.View {...input} />;
     }
 
     case "list": {

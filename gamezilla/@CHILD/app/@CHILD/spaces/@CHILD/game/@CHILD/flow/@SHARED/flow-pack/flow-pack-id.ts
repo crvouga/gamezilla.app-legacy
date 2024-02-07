@@ -3,7 +3,7 @@ import { Uuid } from "gamezilla/@SHARED/core";
 export type FlowPackId = string & { __brand: "FlowPackId" };
 
 const generate = () => {
-  return `flow-pack:${Uuid.generate()}`;
+  return `flow-pack:${Uuid.generate()}` as FlowPackId;
 };
 
 const is = (flowPackId: unknown): flowPackId is FlowPackId => {

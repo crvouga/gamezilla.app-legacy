@@ -1,7 +1,9 @@
 import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2";
 import { Sub } from "gamezilla/@SHARED/core";
+import { FlowPackDb } from "../../@SHARED/flow-pack-db";
 import { FlowPuzzleDb } from "../../@SHARED/flow-puzzle-db";
 import { ServerModule } from "./builder.core";
+import { PackreateServer } from "./pack/create/pack-create.server";
 import { PuzzleCreateServer } from "./puzzle/create/puzzle-create.server";
 import { PuzzleDeleteForeverServer } from "./puzzle/delete-forever/puzzle-delete-forever.server";
 import { PuzzleEditNameServer } from "./puzzle/edit/puzzle-edit-name.server";
@@ -11,6 +13,9 @@ import { PuzzleSaveChangesServer } from "./puzzle/save-changes/puzzle-save-chang
 const deps: ServerModule["deps"] = async (_input) => {
   return {
     FlowPuzzleDb: FlowPuzzleDb({
+      t: "hash-map",
+    }),
+    FlowPackDb: FlowPackDb({
       t: "hash-map",
     }),
   };
@@ -25,7 +30,10 @@ const update: ServerModule["update"] = async (input) => {
     (model) => PuzzleCreateServer.update({ ...input, model }),
     (model) => PuzzleDeleteForeverServer.update({ ...input, model }),
     (model) => PuzzleEditNameServer.update({ ...input, model }),
-    (model) => PuzzleSaveChangesServer.update({ ...input, model })
+    (model) => PuzzleSaveChangesServer.update({ ...input, model }),
+    //
+    (model) => PackreateServer.update({ ...input, model }),
+    (model) => PuzzleCreateServer.update({ ...input, model })
   );
 };
 

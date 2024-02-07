@@ -24,6 +24,6 @@ export type IFlowPackDb = {
     };
   }) => Promise<Result<string, Paginated<FlowPack>>>;
   get: (id: FlowPuzzleId) => Promise<Result<string, FlowPack | null>>;
-  put: (input: FlowPack) => Promise<Result<string, null>>;
+  put: (input: FlowPack) => Promise<Result<string, FlowPack>>;
   zap: (id: FlowPuzzleId) => Promise<Result<string, null>>;
 };

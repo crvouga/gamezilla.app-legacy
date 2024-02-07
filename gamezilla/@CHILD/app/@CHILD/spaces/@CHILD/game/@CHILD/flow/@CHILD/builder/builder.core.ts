@@ -27,6 +27,10 @@ import { PuzzeListGame } from "./puzzle/list/puzzle-list.game";
 import { PuzzleSaveChanges } from "./puzzle/save-changes";
 import { PuzzleSaveChangesGame } from "./puzzle/save-changes/puzzle-save-changes.game";
 import { PuzzleDeleteForeverGame } from "./puzzle/delete-forever/puzzle-delete-forever.game";
+import { IFlowPackDb } from "../../@SHARED/flow-pack-db";
+import { FlowPack } from "../../@SHARED/flow-pack/flow-pack";
+import { PackCreateGame } from "./pack/create/pack-create.game";
+import { PackBuilder } from "./pack/builder";
 
 //
 //
@@ -65,6 +69,7 @@ export type ServerModule = GameServerModule<{
   MsgOutEvent: null;
   Deps: {
     FlowPuzzleDb: IFlowPuzzleDb;
+    FlowPackDb: IFlowPackDb;
   };
 }>;
 
@@ -96,12 +101,15 @@ export type ModelClient = BaseModelClient &
   PuzzleEditName.ModelClient &
   PuzzleDeleteForever.ModelClient &
   //
-  PackCreate.ModelClient;
+  PackCreate.ModelClient &
+  PackBuilder.ModelClient;
 
 export const initClient: ClientModule["init"] = {
   //
+  ...PackBuilder.initClient,
   ...PackCreate.initClient,
   //
+  ...PuzzleBuilder.initClient,
   ...PuzzleCreate.initClient,
   ...PuzzleList.initClient,
   ...PuzzleEditName.initClient,
@@ -126,15 +134,16 @@ type BaseMsgClient = { t: "user-selected-list-tab"; listTab: ListTab };
 
 export type MsgClient =
   | BaseMsgClient
-  | PuzzleBuilder.MsgClient
   //
+  | PuzzleBuilder.MsgClient
   | PuzzleCreate.MsgClient
   | PuzzleEditName.MsgClient
   | PuzzleDeleteForever.MsgClient
   | PuzzleList.MsgClient
   | PuzzleSaveChanges.MsgClient
   //
-  | PackCreate.MsgClient;
+  | PackCreate.MsgClient
+  | PackBuilder.MsgClient;
 
 export type MsgServer =
   | PuzzleCreate.MsgServer
@@ -143,7 +152,8 @@ export type MsgServer =
   | PuzzleList.MsgServer
   | PuzzleEditName.MsgServer
   //
-  | PackCreate.MsgServer;
+  | PackCreate.MsgServer
+  | PackBuilder.MsgServer;
 
 export type MsgToServer =
   | PuzzleCreate.MsgToServer
@@ -152,7 +162,8 @@ export type MsgToServer =
   | PuzzleEditName.MsgToServer
   | PuzzleList.MsgToServer
   //
-  | PackCreate.MsgToServer;
+  | PackCreate.MsgToServer
+  | PackBuilder.MsgToServer;
 
 export type MsgToClient =
   | PuzzleCreate.MsgToClient
@@ -161,7 +172,8 @@ export type MsgToClient =
   | PuzzleDeleteForever.MsgToClient
   | PuzzleList.MsgToClient
   //
-  | PackCreate.MsgToClient;
+  | PackCreate.MsgToClient
+  | PackBuilder.MsgToClient;
 
 //
 //
@@ -185,10 +197,10 @@ type MsgGameBase =
 export type MsgGame =
   | MsgGameBase
   //
-  | PuzzleBuilder.MsgGame
-  //
   | PackCreate.MsgGame
+  | PackBuilder.MsgGame
   //
+  | PuzzleBuilder.MsgGame
   | PuzzleList.MsgGame
   | PuzzleCreate.MsgGame
   | PuzzleEditName.MsgGame
@@ -211,6 +223,11 @@ export type ModelGamePuzzleBuilder = {
   gridEdit: FlowGridUIEdit.Model;
 };
 
+export type ModelGamePackBuilder = {
+  t: "pack-builder";
+  pack: FlowPack;
+};
+
 export type ModelGameList = {
   t: "list";
 };
@@ -220,7 +237,7 @@ export type ModelGameBase = {
 };
 
 export type ModelGame = ModelGameBase &
-  (ModelGameList | ModelGamePuzzleBuilder);
+  (ModelGameList | ModelGamePuzzleBuilder | ModelGamePackBuilder);
 
 export const initGame = (_input: { ctx: SpaceCtx }): ModelGame => {
   return {
@@ -252,6 +269,7 @@ export const reducer = ({
     PuzzleEditGame.reducer,
     PuzzleSaveChangesGame.reducer,
     //
+    PackCreateGame.reducer,
   ].reduce(
     (acc, reducer) => reducer({ ctx, msgGame, modelGame: acc }),
     modelGame
