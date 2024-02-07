@@ -18,10 +18,12 @@ import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id";
 import { PackCreate } from "./pack-create";
 import { PuzzleCreate } from "./puzzle-create";
 import { PuzzleDeleteForever } from "./puzzle-delete-forever";
-import { PuzzleEditName } from "./puzzle-edit-name";
+import { PuzzleEditName } from "./puzzle-edit";
 import { PuzzleList } from "./puzzle-list";
 import { PuzzleSaveChanges } from "./puzzle-save-changes";
 import { FlowPuzzleName } from "../../@SHARED/flow-puzzle/flow-puzzle-name";
+import { PuzzleEditor } from "./puzzle-editor";
+import { PuzzleEditorGame } from "./puzzle-editor/puzzle-editor.game";
 
 //
 //
@@ -94,11 +96,14 @@ export type ModelClient = BaseModelClient &
   PackCreate.ModelClient;
 
 export const initClient: ClientModule["init"] = {
+  //
   ...PackCreate.initClient,
+  //
   ...PuzzleCreate.initClient,
   ...PuzzleList.initClient,
   ...PuzzleEditName.initClient,
   ...PuzzleDeleteForever.initClient,
+  //
   puzzles: {},
   listTab: "puzzles",
 };
@@ -113,19 +118,12 @@ export type ModelServer = {};
 //
 //
 
-type BaseMsgClient =
-  | { t: "user-selected-list-tab"; listTab: ListTab }
-  //
-  | { t: "puzzle.editor.user-clicked-more-button" }
-  | { t: "puzzle.editor.user-closed-more-drawer" }
-  | { t: "puzzle.editor.user-clicked-exit-button" }
-  | { t: "puzzle.editor.flow-grid-ui-edit"; c: FlowGridUIEdit.Msg }
-  | { t: "puzzle.editor.flow-grid-ui-play"; c: FlowGridUIPlay.Msg }
-  | { t: "puzzle.editor.user-clicked-edit-mode-button" }
-  | { t: "puzzle.editor.user-clicked-play-mode-button" };
+type BaseMsgClient = { t: "user-selected-list-tab"; listTab: ListTab };
+//
 
 export type MsgClient =
   | BaseMsgClient
+  | PuzzleEditor.MsgClient
   //
   | PuzzleCreate.MsgClient
   | PuzzleEditName.MsgClient
@@ -172,33 +170,19 @@ export type MsgToClient =
 
 type MsgGameBase =
   | {
-      t: "grid-ui-play";
-      c: FlowGridUIPlay.Msg;
-    }
-  | {
-      t: "grid-ui-edit";
-      c: FlowGridUIEdit.Msg;
-    }
-  | {
-      t: "user-changed-to-edit-mode";
-      userId: UserId;
-    }
-  | {
-      t: "user-changed-to-play-mode";
-      userId: UserId;
-    }
-  | {
-      t: "user-exited-builder";
-      userId: UserId;
-    }
-  | {
       t: "user-opened-puzzle";
       userId: UserId;
       puzzle: FlowPuzzle;
+    }
+  | {
+      t: "user-changed-tab";
+      tab: ListTab;
     };
 
 export type MsgGame =
   | MsgGameBase
+  //
+  | PuzzleEditor.MsgGame
   //
   | PackCreate.MsgGame
   //
@@ -228,7 +212,11 @@ export type ModelGameList = {
   t: "list";
 };
 
-export type ModelGame = ModelGameList | ModelGameBuild;
+export type ModelGameBase = {
+  tab: ListTab;
+};
+
+export type ModelGame = ModelGameBase & (ModelGameList | ModelGameBuild);
 
 export const toCurrentGrid = (modelGame: ModelGameBuild): FlowGrid.Model => {
   switch (modelGame.mode.t) {
@@ -252,8 +240,10 @@ export const toCurrentGrid = (modelGame: ModelGameBuild): FlowGrid.Model => {
 export const initGame = (_input: { ctx: SpaceCtx }): ModelGame => {
   return {
     t: "list",
+    tab: "puzzles",
   };
 };
+
 export const reducer = ({
   modelGame,
   msgGame,
@@ -263,143 +253,28 @@ export const reducer = ({
   msgGame: MsgGame;
   modelGame: ModelGame;
 }): ModelGame => {
-  switch (modelGame.t) {
-    case "build": {
-      return reducerBuildState({ ctx, msgGame, modelGame: modelGame });
-    }
-
-    case "list": {
-      return reducerListState({ ctx, msgGame, modelGame: modelGame });
-    }
-  }
-};
-
-const reducerListState = ({
-  modelGame,
-  msgGame,
-}: {
-  ctx: SpaceCtx;
-  msgGame: MsgGame;
-  modelGame: ModelGameList;
-}): ModelGame => {
-  switch (msgGame.t) {
-    case "user-created-puzzle": {
-      if (isErr(msgGame.created)) {
-        return modelGame;
-      }
-      const puzzleNew = msgGame.created.value;
-      return {
-        t: "build",
-        mode: { t: "edit" },
-        gridEdit: FlowGridUIEdit.init({ grid: puzzleNew.puzzle.c }),
-        gridPlay: FlowGridUIPlay.init({ grid: puzzleNew.puzzle.c }),
-        puzzle: puzzleNew,
-      };
-    }
-
-    case "user-opened-puzzle": {
-      return {
-        t: "build",
-        gridEdit: FlowGridUIEdit.init({ grid: msgGame.puzzle.puzzle.c }),
-        gridPlay: FlowGridUIPlay.init({ grid: msgGame.puzzle.puzzle.c }),
-        mode: { t: "edit" },
-        puzzle: msgGame.puzzle,
-      };
-    }
-
-    case "user-created-pack": {
-      return modelGame;
-    }
-
-    case "user-edited-puzzle-name":
-    case "user-deleted-puzzle":
-    case "listed-puzzles":
-    case "user-saved-changes":
-    case "user-exited-builder":
-    case "user-changed-to-edit-mode":
-    case "user-changed-to-play-mode":
-    case "grid-ui-play":
-    case "grid-ui-edit": {
-      return modelGame;
-    }
-  }
+  return [
+    PuzzleEditorGame.reducer,
+    reducerBuildState,
+    //
+  ].reduce(
+    (acc, reducer) => reducer({ ctx, msgGame, modelGame: acc }),
+    modelGame
+  );
 };
 
 const reducerBuildState = ({
   modelGame,
   msgGame,
-  ctx,
 }: {
   ctx: SpaceCtx;
   msgGame: MsgGame;
-  modelGame: ModelGameBuild;
+  modelGame: ModelGame;
 }): ModelGame => {
+  if (modelGame.t !== "build") {
+    return modelGame;
+  }
   switch (msgGame.t) {
-    case "grid-ui-play": {
-      const currentGrid = FlowGridUIEdit.toCurrentGrid({
-        model: modelGame.gridEdit,
-      });
-
-      const updated = FlowGridUIPlay.update({
-        model: modelGame.gridPlay,
-        msg: msgGame.c,
-        grid: currentGrid,
-      });
-
-      return {
-        ...modelGame,
-        gridPlay: updated,
-      };
-    }
-
-    case "grid-ui-edit": {
-      const updated = FlowGridUIEdit.update({
-        model: modelGame.gridEdit,
-        msg: msgGame.c,
-        grid: modelGame.puzzle.puzzle.c,
-      });
-
-      return {
-        ...modelGame,
-        gridEdit: updated.model,
-      };
-    }
-
-    case "user-changed-to-edit-mode": {
-      if (msgGame.userId !== ctx.space.hostId) {
-        return modelGame;
-      }
-
-      return { ...modelGame, mode: { t: "edit" } };
-    }
-
-    case "user-changed-to-play-mode": {
-      const initial = FlowGridUIPlay.init({
-        grid: FlowGridUIEdit.toCurrentGrid({
-          model: modelGame.gridEdit,
-        }),
-      });
-      return {
-        ...modelGame,
-        gridPlay: initial,
-        mode: { t: "play" },
-      };
-    }
-
-    case "user-exited-builder": {
-      if (msgGame.userId !== ctx.space.hostId) {
-        return modelGame;
-      }
-
-      return {
-        t: "list",
-      };
-    }
-
-    case "user-deleted-puzzle": {
-      return { t: "list" };
-    }
-
     case "user-edited-puzzle-name": {
       if (msgGame.flowPuzzleId !== modelGame.puzzle.id) {
         return modelGame;
@@ -427,10 +302,7 @@ const reducerBuildState = ({
       return { ...modelGame, puzzle: msgGame.saved.value };
     }
 
-    case "user-created-pack":
-    case "user-opened-puzzle":
-    case "user-created-puzzle":
-    case "listed-puzzles": {
+    default: {
       return modelGame;
     }
   }
