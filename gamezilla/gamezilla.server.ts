@@ -1,8 +1,11 @@
 import { Posix, Program, isErr } from "gamezilla/@SHARED/core";
 import * as AppServer from "./@CHILD/app/app.server";
+import { createStaticFileServer } from "./static-file-server";
 
 const main = async () => {
-  const got = await AppServer.getDeps();
+  const httpServer = await createStaticFileServer();
+
+  const got = await AppServer.getDeps({ httpServer });
 
   if (isErr(got)) {
     console.error(got.error);

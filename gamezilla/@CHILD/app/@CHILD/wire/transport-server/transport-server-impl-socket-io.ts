@@ -20,7 +20,7 @@ export const ServerTransportSocketIO = <MsgToServer, MsgToClient>({
 }> => {
   const transport = initServerTransport<MsgToServer, MsgToClient>();
 
-  const io = new Server(impl.serverPort, {
+  const io = new Server(impl.httpServer, {
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
@@ -28,8 +28,6 @@ export const ServerTransportSocketIO = <MsgToServer, MsgToClient>({
     transports: ["websocket"],
     allowUpgrades: true,
   });
-
-  transport.wire.publish({ t: "server-started", port: impl.serverPort });
 
   io.on("connection", (socket) => {
     const maybeSessionId = socket.handshake.auth["sessionId"];

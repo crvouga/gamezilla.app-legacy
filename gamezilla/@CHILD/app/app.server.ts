@@ -1,3 +1,4 @@
+import http from "http";
 import { PUBLIC_APP_CONFIG } from "config.ts";
 import {
   DbConnSql,
@@ -54,7 +55,11 @@ export type Deps = {
   }>;
 };
 
-export const getDeps = async (): Promise<Result<string, Deps>> => {
+export const getDeps = async ({
+  httpServer,
+}: {
+  httpServer: http.Server;
+}): Promise<Result<string, Deps>> => {
   const logger = LoggerConsole("app");
 
   const databaseUrl =
@@ -82,7 +87,7 @@ export const getDeps = async (): Promise<Result<string, Deps>> => {
       PUBLIC_APP_CONFIG.TRANSPORT_IMPL === "socket-io"
         ? {
             t: "socket-io",
-            serverPort: PUBLIC_APP_CONFIG.SERVER_PORT,
+            httpServer,
           }
         : {
             t: "bun-web-sockets",

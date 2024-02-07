@@ -1,3 +1,4 @@
+import http from "http";
 import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { PubSub } from "gamezilla/@SHARED/core/sub";
 
@@ -74,5 +75,5 @@ export type ServerTransportWebSocketImpl = {
 
 export type ServerTransportSocketIOImpl = {
   t: "socket-io";
-  serverPort: number;
+  httpServer: http.Server;
 };
