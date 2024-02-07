@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "server-prod": "bun run vite build && bun db-prod:migrate:up && bun gamezilla/gamezilla.server.ts",
+    "server-prod": "bun db-prod:migrate:up && bun gamezilla/gamezilla.server.ts",
     "db-prod:migrate:up": "dbmate -e DATABASE_URL_PROD up",
     "db-prod:dump": "dbmate -e DATABASE_URL_PROD dump",
     "server": "bun gamezilla/gamezilla.server.ts",
