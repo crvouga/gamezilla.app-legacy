@@ -8,9 +8,13 @@ import {
 import { Sub } from "gamezilla/@SHARED/core";
 import { ViewSpaceHostChip } from "../../../../@SHARED/game";
 import { ClientModule, initClient } from "./builder.core";
-import { PackListClient } from "./pack-list/pack-list";
-import { PuzzleEditorClient } from "./puzzle-editor/puzzle-editor.client";
-import { PuzzleListClient } from "./puzzle-list/puzzle-list.client";
+import { PackListClient } from "./pack/list/pack-list";
+import { PuzzleBuilderClient } from "./puzzle/builder/puzzle-builder.client";
+import { PuzzleListClient } from "./puzzle/list/puzzle-list.client";
+import { PuzzleEditNameClient } from "./puzzle/edit/puzzle-edit-name.client";
+import { PuzzleDeleteForeverClient } from "./puzzle/delete-forever/puzzle-delete-forever.client";
+import { PuzzleSaveChangesClient } from "./puzzle/save-changes/puzzle-save-changes.client";
+import { PuzzleCreateClient } from "./puzzle/create/puzzle-create.client";
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
@@ -19,8 +23,12 @@ const update: ClientModule["update"] = (input) => {
     (model) => updateLocation({ ...input, model }),
     //
     (model) => PackListClient.update({ ...input, model }),
-    (model) => PuzzleEditorClient.update({ ...input, model }),
-    (model) => PuzzleListClient.update({ ...input, model })
+    (model) => PuzzleBuilderClient.update({ ...input, model }),
+    (model) => PuzzleListClient.update({ ...input, model }),
+    (model) => PuzzleEditNameClient.update({ ...input, model }),
+    (model) => PuzzleDeleteForeverClient.update({ ...input, model }),
+    (model) => PuzzleSaveChangesClient.update({ ...input, model }),
+    (model) => PuzzleCreateClient.update({ ...input, model })
   );
 };
 
@@ -43,7 +51,7 @@ const View: ClientModule["View"] = (input) => {
 
   switch (modelGame.t) {
     case "puzzle-editor": {
-      return <PuzzleEditorClient.View {...input} />;
+      return <PuzzleBuilderClient.View {...input} />;
     }
 
     case "list": {

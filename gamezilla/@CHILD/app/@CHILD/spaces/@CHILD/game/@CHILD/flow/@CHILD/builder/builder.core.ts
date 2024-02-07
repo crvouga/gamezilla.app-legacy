@@ -14,19 +14,19 @@ import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
 import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id";
-import { PackCreate } from "./pack-create";
-import { PuzzleCreate } from "./puzzle-create";
-import { PuzzleCreateGame } from "./puzzle-create/puzzle-create.game";
-import { PuzzleDeleteForever } from "./puzzle-delete-forever";
-import { PuzzleEditName } from "./puzzle-edit";
-import { PuzzleEditGame } from "./puzzle-edit/puzzle-edit.game";
-import { PuzzleEditor } from "./puzzle-editor";
-import { PuzzleEditorGame } from "./puzzle-editor/puzzle-editor.game";
-import { PuzzleList } from "./puzzle-list";
-import { PuzzeListGame } from "./puzzle-list/puzzle-list.game";
-import { PuzzleSaveChanges } from "./puzzle-save-changes";
-import { PuzzleSaveChangesGame } from "./puzzle-save-changes/puzzle-save-changes.game";
-import { PuzzleDeleteForeverGame } from "./puzzle-delete-forever/puzzle-delete-forever.game";
+import { PackCreate } from "./pack/create";
+import { PuzzleCreate } from "./puzzle/create";
+import { PuzzleCreateGame } from "./puzzle/create/puzzle-create.game";
+import { PuzzleDeleteForever } from "./puzzle/delete-forever";
+import { PuzzleEditName } from "./puzzle/edit";
+import { PuzzleEditGame } from "./puzzle/edit/puzzle-edit.game";
+import { PuzzleBuilder } from "./puzzle/builder";
+import { PuzzleBuilderGame } from "./puzzle/builder/puzzle-builder.game";
+import { PuzzleList } from "./puzzle/list";
+import { PuzzeListGame } from "./puzzle/list/puzzle-list.game";
+import { PuzzleSaveChanges } from "./puzzle/save-changes";
+import { PuzzleSaveChangesGame } from "./puzzle/save-changes/puzzle-save-changes.game";
+import { PuzzleDeleteForeverGame } from "./puzzle/delete-forever/puzzle-delete-forever.game";
 
 //
 //
@@ -126,7 +126,7 @@ type BaseMsgClient = { t: "user-selected-list-tab"; listTab: ListTab };
 
 export type MsgClient =
   | BaseMsgClient
-  | PuzzleEditor.MsgClient
+  | PuzzleBuilder.MsgClient
   //
   | PuzzleCreate.MsgClient
   | PuzzleEditName.MsgClient
@@ -185,7 +185,7 @@ type MsgGameBase =
 export type MsgGame =
   | MsgGameBase
   //
-  | PuzzleEditor.MsgGame
+  | PuzzleBuilder.MsgGame
   //
   | PackCreate.MsgGame
   //
@@ -203,7 +203,7 @@ type BuildState =
       t: "edit";
     };
 
-export type ModelGamePuzzleEditor = {
+export type ModelGamePuzzleBuilder = {
   t: "puzzle-editor";
   puzzle: FlowPuzzle;
   mode: BuildState;
@@ -219,7 +219,8 @@ export type ModelGameBase = {
   tab: ListTab;
 };
 
-export type ModelGame = ModelGameBase & (ModelGameList | ModelGamePuzzleEditor);
+export type ModelGame = ModelGameBase &
+  (ModelGameList | ModelGamePuzzleBuilder);
 
 export const initGame = (_input: { ctx: SpaceCtx }): ModelGame => {
   return {
@@ -245,7 +246,7 @@ export const reducer = ({
 }): ModelGame => {
   return [
     PuzzleDeleteForeverGame.reducer,
-    PuzzleEditorGame.reducer,
+    PuzzleBuilderGame.reducer,
     PuzzleCreateGame.reducer,
     PuzzeListGame.reducer,
     PuzzleEditGame.reducer,

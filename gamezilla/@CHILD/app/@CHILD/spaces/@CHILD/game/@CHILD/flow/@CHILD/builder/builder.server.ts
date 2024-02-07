@@ -2,11 +2,11 @@ import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import { Sub } from "gamezilla/@SHARED/core";
 import { FlowPuzzleDb } from "../../@SHARED/flow-puzzle-db";
 import { ServerModule } from "./builder.core";
-import { PuzzleCreateServer } from "./puzzle-create/puzzle-create.server";
-import { PuzzleDeleteForeverServer } from "./puzzle-delete-forever/puzzle-delete-forever.server";
-import { PuzzleEditNameServer } from "./puzzle-edit/puzzle-edit-name.server";
-import { PuzzleListServer } from "./puzzle-list/puzzle-list.server";
-import { PuzzleSaveChangesServer } from "./puzzle-save-changes/puzzle-save-changes.server";
+import { PuzzleCreateServer } from "./puzzle/create/puzzle-create.server";
+import { PuzzleDeleteForeverServer } from "./puzzle/delete-forever/puzzle-delete-forever.server";
+import { PuzzleEditNameServer } from "./puzzle/edit/puzzle-edit-name.server";
+import { PuzzleListServer } from "./puzzle/list/puzzle-list.server";
+import { PuzzleSaveChangesServer } from "./puzzle/save-changes/puzzle-save-changes.server";
 
 const deps: ServerModule["deps"] = async (_input) => {
   return {
