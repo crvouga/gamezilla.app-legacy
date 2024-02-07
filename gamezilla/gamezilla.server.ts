@@ -12,7 +12,7 @@ const main = async () => {
   const deps = got.value;
 
   const program = Program.create({
-    getCtx() {
+    getCtx: () => {
       return {
         now: Posix.now(),
       };
@@ -43,6 +43,10 @@ const main = async () => {
       });
 
       return sub;
+    },
+
+    onCrash: (e) => {
+      console.error("Crashed!", e);
     },
   });
 

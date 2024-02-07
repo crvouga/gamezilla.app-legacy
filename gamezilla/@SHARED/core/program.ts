@@ -39,6 +39,7 @@ type ProgramConfig<Model, Msg, TCtx> = {
     ctx: TCtx;
     model: Model;
   }) => MaybePromise<Sub<Msg>>;
+  onCrash(input: { error: unknown }): void;
 };
 
 //
@@ -99,8 +100,12 @@ export function create<TModel, TMsg, TCtx>(
   };
 
   const dispatch = (msg: TMsg) => {
-    messageQueue.push(msg);
-    processQueue();
+    try {
+      messageQueue.push(msg);
+      processQueue();
+    } catch (error) {
+      config.onCrash({ error });
+    }
   };
 
   const processQueue = async () => {

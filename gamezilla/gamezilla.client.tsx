@@ -16,12 +16,12 @@ const main = async () => {
   const deps = AppClient.getDeps();
 
   const program = Program.create<App.ModelClient, App.MsgClient, Ctx>({
-    getCtx() {
+    getCtx: () => {
       return {
         now: Posix.now(),
       };
     },
-    init(input) {
+    init: (input) => {
       const init = AppClient.init({
         deps,
         ctx: input.ctx,
@@ -32,12 +32,16 @@ const main = async () => {
       return init;
     },
 
-    update(input) {
+    update: (input) => {
       return AppClient.update({ ...input, deps });
     },
 
-    subscriptions(input) {
+    subscriptions: (input) => {
       return AppClient.subscriptions({ ...input, deps });
+    },
+
+    onCrash: (e) => {
+      console.error("Crashed!", e);
     },
   });
 

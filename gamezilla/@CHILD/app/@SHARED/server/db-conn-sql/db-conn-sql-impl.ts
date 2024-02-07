@@ -10,7 +10,7 @@ export const createDbConn = async ({
 }: {
   databaseUrl: string;
   logger: Logger;
-}): Promise<Result<"not-supported", DbConnSql>> => {
+}): Promise<Result<string, DbConnSql>> => {
   const databaseType = connectionStringToDatabaseType(databaseUrl);
 
   switch (databaseType) {
@@ -19,7 +19,7 @@ export const createDbConn = async ({
     }
 
     case "postgres": {
-      return ok(await createDbConnPostgres({ databaseUrl, logger }));
+      return createDbConnPostgres({ databaseUrl, logger });
     }
 
     case null: {
