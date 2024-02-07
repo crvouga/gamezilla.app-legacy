@@ -11,6 +11,10 @@ import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
 import { ModelServer, MsgServer, MsgToClient, MsgToServer } from "./auth.core";
 import { SessionDb } from "./@SHARED/server/session-db";
 
+const sessionDb = (ctx: ServerCtx) => {
+  return SessionDb({ t: "postgres-with-cache", dbConn: ctx.dbConn });
+};
+
 //
 //
 //
@@ -79,10 +83,7 @@ export const toUserIdFromSessionId = async (
   _model: ModelServer,
   sessionId: SessionId
 ): Promise<UserId | null> => {
-  const found = await SessionDb({
-    t: "postgres-with-cache",
-    dbConn: ctx.dbConn,
-  }).findUserIdBySessionId(sessionId);
+  const found = await sessionDb(ctx).findUserIdBySessionId(sessionId);
   if (isErr(found)) {
     return null;
   }
@@ -137,10 +138,7 @@ const updateFromClient: Module["update"] = async ({
 
   switch (msgClient.t) {
     case "logout": {
-      const zapped = await SessionDb({
-        t: "postgres-with-cache",
-        dbConn: ctx.dbConn,
-      }).zapBySessionId(msgClient.sessionId);
+      const zapped = await sessionDb(ctx).zapBySessionId(msgClient.sessionId);
 
       if (zapped.t === "err") {
         return { model };
@@ -171,10 +169,9 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
 
   switch (msgEvt.t) {
     case "wire/client-connected": {
-      const found = await SessionDb({
-        t: "postgres-with-cache",
-        dbConn: ctx.dbConn,
-      }).findUserIdBySessionId(msgEvt.sessionId);
+      const found = await sessionDb(ctx).findUserIdBySessionId(
+        msgEvt.sessionId
+      );
 
       if (isErr(found)) {
         return { model };
@@ -234,10 +231,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
         };
       }
 
-      const inserted = await SessionDb({
-        t: "postgres-with-cache",
-        dbConn: ctx.dbConn,
-      }).insert({
+      const inserted = await sessionDb(ctx).insert({
         sessionId: msgEvt.sessionId,
         userId: msgEvt.userId,
       });
