@@ -1,10 +1,11 @@
+import http from "http";
 import { Posix, Program, isErr } from "gamezilla/@SHARED/core";
 import * as AppServer from "./@CHILD/app/app.server";
-import { createStaticFileServer } from "./static-file-server";
+
 import { PUBLIC_APP_CONFIG } from "config";
 
 const main = async () => {
-  const httpServer = await createStaticFileServer();
+  const httpServer = new http.Server();
 
   await new Promise((resolve) =>
     httpServer.listen(PUBLIC_APP_CONFIG.SERVER_PORT, () => resolve(null))
