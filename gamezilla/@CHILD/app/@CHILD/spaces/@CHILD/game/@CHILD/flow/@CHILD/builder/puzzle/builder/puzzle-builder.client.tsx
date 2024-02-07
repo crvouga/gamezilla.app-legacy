@@ -22,7 +22,7 @@ import { ViewProfileCard } from "../../../../@SHARED/ui";
 import { ClientModule, ModelGamePuzzleBuilder } from "../../builder.core";
 import { PuzzleDeleteForeverClient } from "../delete-forever/puzzle-delete-forever.client";
 import { PuzzleEditNameClient } from "../edit/puzzle-edit-name.client";
-import { PuzzleSaveChangesClient } from "../puzzle-save-changes.puzzle-puzzle-save-changes.client";
+import { PuzzleSaveChangesClient } from "../save-changes/puzzle-save-changes.client";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 
 //

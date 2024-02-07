@@ -9,7 +9,7 @@ import { PuzzleCreateServer } from "./puzzle/create/puzzle-create.server";
 import { PuzzleDeleteForeverServer } from "./puzzle/delete-forever/puzzle-delete-forever.server";
 import { PuzzleEditNameServer } from "./puzzle/edit/puzzle-edit-name.server";
 import { PuzzleListServer } from "./puzzle/list/puzzle-list.server";
-import { PuzzleSaveChangesServer } from "./puzzle/puzzle-save-changes.puzzle-puzzle-save-changes.server";
+import { PuzzleSaveChangesServer } from "./puzzle/save-changes/puzzle-save-changes.server";
 
 const deps: ServerModule["deps"] = async (_input) => {
   return {
