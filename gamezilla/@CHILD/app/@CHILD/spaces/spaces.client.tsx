@@ -182,7 +182,7 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
       return { model };
     }
 
-    case "msgEvt": {
+    case "event": {
       return updateFromManySpaceEvents({ ctx, msgEvts: [msg.c], model });
     }
   }
@@ -225,7 +225,7 @@ const updateFromServer: Module["update"] = async (input) => {
       };
     }
 
-    case "msgEvt": {
+    case "event": {
       return updateFromManySpaceEvents({
         ctx,
         msgEvts: [msgServer.c],
@@ -522,7 +522,7 @@ const sendSpaceEventMsgToServer = async ({
 
   return {
     model,
-    msgCmd: [sendMsgToServer({ t: "msgEvt", c: msgEvtWithMeta, profiles })],
+    msgCmd: [sendMsgToServer({ t: "event", c: msgEvtWithMeta, profiles })],
   };
 };
 
@@ -821,7 +821,7 @@ export const View = ({
   viewBottomBar: VDom;
 }): VDom => {
   const dispatchEvent = (m: SpaceEvent) => {
-    dispatch({ t: "msgEvt", c: withId(m) });
+    dispatch({ t: "event", c: withId(m) });
   };
   switch (route.t) {
     case "space-list": {
@@ -1438,7 +1438,7 @@ export const ViewCurrentSpaceBar = ({
   dispatch: (msg: MsgClient) => void;
 }) => {
   const dispatchEvent = (msg: SpaceEvent) =>
-    dispatch({ t: "msgEvt", c: withId(msg) });
+    dispatch({ t: "event", c: withId(msg) });
 
   const userSpaceId = model.spaceIdByUserId[ctx.currentUserId];
 

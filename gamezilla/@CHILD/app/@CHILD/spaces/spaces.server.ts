@@ -124,7 +124,7 @@ const updateFromMsg: Module["update"] = async ({ model, msg }) => {
       return { model };
     }
 
-    case "msgEvt": {
+    case "event": {
       return { model };
     }
   }
@@ -142,7 +142,7 @@ const updateFromClient: Module["update"] = async (input) => {
       return { model };
     }
 
-    case "msgEvt": {
+    case "event": {
       return updateFromManySpaceEvents({
         ctx: ctx,
         msgEvts: [msgClient.c],
@@ -460,7 +460,7 @@ const sendEventMsgToClients = async ({
       : null;
 
   const toClient: MsgToClient = {
-    t: "msgEvt",
+    t: "event",
     c: msgEvtWithMeta,
     profiles: profile ? { [profile.userId]: profile } : {},
   };

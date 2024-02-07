@@ -41,11 +41,11 @@ export type ModelClient = Spaces.Model & {
 //
 
 export type MsgServer =
-  | { t: "msgEvt"; c: WithEventId<SpaceEvent> }
+  | { t: "event"; c: WithEventId<SpaceEvent> }
   | { t: "game"; spaceId: SpaceId; c: Game.MsgServer };
 
 export type MsgClient =
-  | { t: "msgEvt"; c: WithEventId<SpaceEvent> }
+  | { t: "event"; c: WithEventId<SpaceEvent> }
   | { t: "game"; spaceId: SpaceId; c: Game.MsgClient }
   | { t: "closed-modal" }
   | { t: "clicked-people-button" }
@@ -57,7 +57,7 @@ export type MsgClient =
 export type MsgToClient = MsgToClientExtra &
   (
     | {
-        t: "msgEvt";
+        t: "event";
         c: WithEventMeta<SpaceEvent>;
       }
     | {
@@ -82,7 +82,7 @@ export type MsgToClient = MsgToClientExtra &
 export type MsgToServer = MsgToServerExtra &
   (
     | {
-        t: "msgEvt";
+        t: "event";
         c: WithEventMeta<SpaceEvent>;
       }
     | {

@@ -403,7 +403,7 @@ export const nouns = [
   "note",
   "construction",
   "shape",
-  "msgEvt",
+  "event",
   "screen",
   "faith",
   "safety",

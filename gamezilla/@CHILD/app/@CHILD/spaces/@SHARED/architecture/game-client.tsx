@@ -33,7 +33,7 @@ type Output<T extends GameClientTypes> = {
 export type InMsg<T extends GameClientTypes> =
   | ({ variant: "msg" } & T["MsgClient"])
   | ({ variant: "to-client" } & T["MsgToClient"])
-  | ({ variant: "msgEvt" } & ClientEvent);
+  | ({ variant: "event" } & ClientEvent);
 
 export type OutMsg<T extends GameClientTypes> =
   | ({ variant: "msgCmd" } & ClientCmd<T>)

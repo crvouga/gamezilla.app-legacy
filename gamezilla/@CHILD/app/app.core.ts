@@ -79,7 +79,7 @@ export type MsgToClient =
 
 export type MsgClientFinal =
   | { t: "msg"; msg: MsgClient }
-  | { t: "msgEvt"; msgEvt: ClientEvent }
+  | { t: "event"; msgEvt: ClientEvent }
   | { t: "from-server"; msgServer: MsgClient }
   | {
       t: "msgCmd";
