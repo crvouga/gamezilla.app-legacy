@@ -8,8 +8,8 @@ import { ISessionDb } from "./session-db";
 //
 //
 
-const userIdBySessionIdCache = new Map<SessionId, UserId>();
-const sessionIdsByUserIdCache = new Map<UserId, SessionId[]>();
+const userIdBySessionId = new Map<SessionId, UserId>();
+const sessionIdsByUserId = new Map<UserId, Set<SessionId>>();
 
 export const SessionDbWithCache = ({
   SessionDb,
@@ -18,23 +18,23 @@ export const SessionDbWithCache = ({
 }): ISessionDb => {
   return {
     async findSessionIdsByUserId(userId: UserId) {
-      const cachedSessionIds = sessionIdsByUserIdCache.get(userId);
+      const cachedSessionIds = sessionIdsByUserId.get(userId);
 
-      if (cachedSessionIds && cachedSessionIds.length > 0) {
-        return Result.ok(cachedSessionIds);
+      if (cachedSessionIds && cachedSessionIds.size > 0) {
+        return Result.ok(Array.from(cachedSessionIds));
       }
 
       const queried = await SessionDb.findSessionIdsByUserId(userId);
 
       if (isOk(queried)) {
-        sessionIdsByUserIdCache.set(userId, queried.value);
+        sessionIdsByUserId.set(userId, new Set(queried.value));
       }
 
       return queried;
     },
 
     async findUserIdBySessionId(sessionId: SessionId) {
-      const cachedUserId = userIdBySessionIdCache.get(sessionId);
+      const cachedUserId = userIdBySessionId.get(sessionId);
 
       if (cachedUserId) {
         return Result.ok(cachedUserId);
@@ -43,7 +43,7 @@ export const SessionDbWithCache = ({
       const queried = await SessionDb.findUserIdBySessionId(sessionId);
 
       if (isOk(queried) && queried.value) {
-        userIdBySessionIdCache.set(sessionId, queried.value);
+        userIdBySessionId.set(sessionId, queried.value);
       }
 
       return queried;
@@ -53,10 +53,11 @@ export const SessionDbWithCache = ({
       const queried = await SessionDb.insert({ sessionId, userId });
 
       if (isOk(queried)) {
-        userIdBySessionIdCache.set(sessionId, userId);
-        const cachedSessionIds = sessionIdsByUserIdCache.get(userId);
+        userIdBySessionId.set(sessionId, userId);
+        const cachedSessionIds = sessionIdsByUserId.get(userId);
         if (cachedSessionIds) {
-          sessionIdsByUserIdCache.set(userId, [...cachedSessionIds, sessionId]);
+          cachedSessionIds.add(sessionId);
+          sessionIdsByUserId.set(userId, cachedSessionIds);
         }
       }
 
@@ -67,13 +68,10 @@ export const SessionDbWithCache = ({
       const queried = await SessionDb.zapByUserId(userId);
 
       if (isOk(queried)) {
-        sessionIdsByUserIdCache.delete(userId);
-        for (const [
-          sessionId,
-          cachedUserId,
-        ] of userIdBySessionIdCache.entries()) {
+        sessionIdsByUserId.delete(userId);
+        for (const [sessionId, cachedUserId] of userIdBySessionId.entries()) {
           if (cachedUserId === userId) {
-            userIdBySessionIdCache.delete(sessionId);
+            userIdBySessionId.delete(sessionId);
           }
         }
       }
@@ -85,17 +83,12 @@ export const SessionDbWithCache = ({
       const queried = await SessionDb.zapBySessionId(sessionId);
 
       if (isOk(queried)) {
-        userIdBySessionIdCache.delete(sessionId);
+        userIdBySessionId.delete(sessionId);
 
-        for (const [
-          userId,
-          cachedSessionIds,
-        ] of sessionIdsByUserIdCache.entries()) {
-          if (cachedSessionIds.includes(sessionId)) {
-            sessionIdsByUserIdCache.set(
-              userId,
-              cachedSessionIds.filter((id) => id !== sessionId)
-            );
+        for (const [userId, cachedSessionIds] of sessionIdsByUserId.entries()) {
+          if (cachedSessionIds.has(sessionId)) {
+            cachedSessionIds.delete(sessionId);
+            sessionIdsByUserId.set(userId, cachedSessionIds);
           }
         }
       }
