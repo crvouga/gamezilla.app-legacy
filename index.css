@@ -90,5 +90,6 @@ Scrollbar
 
 * {
   scrollbar-color: #212121 #000;
-  scrollbar-width: thin;
+  scrollbar-width: none;
+  scrollbar-gutter: stable both-edges;
 }
