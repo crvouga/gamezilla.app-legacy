@@ -42,7 +42,7 @@ const View: ClientModule["View"] = (input) => {
   const { modelGame } = input;
 
   switch (modelGame.t) {
-    case "build": {
+    case "puzzle-editor": {
       return <PuzzleEditorClient.View {...input} />;
     }
 

@@ -15,9 +15,9 @@ import {
   VDomChildren,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { isLoading, isOk, loading } from "gamezilla/@SHARED/core";
+import { FlowPuzzleName } from "../../../@SHARED/flow-puzzle/flow-puzzle-name";
 import { ClientModule } from "../builder.core";
 import { editNameValidationErrorToString } from "./puzzle-edit-name.core";
-import { FlowPuzzleName } from "../../../@SHARED/flow-puzzle/flow-puzzle-name";
 
 //
 //
@@ -55,7 +55,7 @@ const View: ClientModule["View"] = (input) => {
 const updateFormButtons: ClientModule["update"] = (input) => {
   const { modelGame, msgGame, msg, model } = input;
 
-  if (modelGame.t !== "build") {
+  if (modelGame.t !== "puzzle-editor") {
     return { model };
   }
 
@@ -152,7 +152,7 @@ const ViewFormButtons: ClientModule["View"] = ({
         text="Save"
         loading={isLoading(model.editNameRequest)}
         disabled={
-          modelGame.t !== "build" ||
+          modelGame.t !== "puzzle-editor" ||
           model.editNameDraft === modelGame.puzzle.name
         }
         onClick={() =>
@@ -178,7 +178,8 @@ const updateDrawer: ClientModule["update"] = (input) => {
         model: {
           ...model,
           opened: "edit-name",
-          editNameDraft: modelGame.t === "build" ? modelGame.puzzle.name : "",
+          editNameDraft:
+            modelGame.t === "puzzle-editor" ? modelGame.puzzle.name : "",
         },
       };
     }

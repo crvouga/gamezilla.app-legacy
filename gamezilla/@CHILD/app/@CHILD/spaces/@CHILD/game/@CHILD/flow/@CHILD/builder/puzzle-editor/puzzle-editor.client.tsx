@@ -13,12 +13,13 @@ import {
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
+  FlowGrid,
   FlowGridUI,
   FlowGridUIEdit,
   FlowGridUIPlay,
 } from "../../../@SHARED/flow";
 import { ViewProfileCard } from "../../../@SHARED/ui";
-import { ClientModule, toCurrentGrid } from "../builder.core";
+import { ClientModule, ModelGamePuzzleEditor } from "../builder.core";
 import { PuzzleDeleteForeverClient } from "../puzzle-delete-forever/puzzle-delete-forever.client";
 import { PuzzleEditNameClient } from "../puzzle-edit/puzzle-edit-name.client";
 import { PuzzleSaveChangesClient } from "../puzzle-save-changes/puzzle-save-changes.client";
@@ -95,7 +96,7 @@ const updateFromMsgGame: ClientModule["update"] = (input) => {
 
   switch (msgGame?.t) {
     case "grid-ui-edit": {
-      if (modelGame.t !== "build") {
+      if (modelGame.t !== "puzzle-editor") {
         return { model };
       }
       if (modelGame.mode.t !== "edit") {
@@ -135,7 +136,7 @@ const updateFromMsgGame: ClientModule["update"] = (input) => {
 const View: ClientModule["View"] = (input) => {
   const { modelGame, ctx } = input;
 
-  if (modelGame.t !== "build") return null;
+  if (modelGame.t !== "puzzle-editor") return null;
 
   const isSpectating = ctx.currentUserId !== ctx.space.hostId;
 
@@ -155,7 +156,7 @@ const View: ClientModule["View"] = (input) => {
 const ViewMode: ClientModule["View"] = (input) => {
   const { model, modelGame, dispatch } = input;
 
-  if (modelGame.t !== "build") {
+  if (modelGame.t !== "puzzle-editor") {
     return null;
   }
 
@@ -256,8 +257,29 @@ const ViewMode: ClientModule["View"] = (input) => {
   }
 };
 
+export const toCurrentGrid = (
+  modelGame: ModelGamePuzzleEditor
+): FlowGrid.Model => {
+  switch (modelGame.mode.t) {
+    case "edit": {
+      return FlowGridUIEdit.toCurrentGrid({
+        model: modelGame.gridEdit,
+      });
+    }
+
+    case "play": {
+      return FlowGridUIPlay.toCurrentGrid({
+        grid: FlowGridUIEdit.toCurrentGrid({
+          model: modelGame.gridEdit,
+        }),
+        model: modelGame.gridPlay,
+      });
+    }
+  }
+};
+
 const ViewSpectating: ClientModule["View"] = ({ modelGame, ctx }) => {
-  if (modelGame.t !== "build") {
+  if (modelGame.t !== "puzzle-editor") {
     return null;
   }
 

@@ -1,5 +1,4 @@
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
-import { isErr } from "gamezilla/@SHARED/core";
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle";
 import { FlowPuzzleName } from "../../../@SHARED/flow-puzzle/flow-puzzle-name";
 import { ModelGame, MsgGame } from "../builder.core";
@@ -12,7 +11,7 @@ const reducer = ({
   msgGame: MsgGame;
   modelGame: ModelGame;
 }): ModelGame => {
-  if (modelGame.t !== "build") {
+  if (modelGame.t !== "puzzle-editor") {
     return modelGame;
   }
   switch (msgGame.t) {
@@ -34,13 +33,6 @@ const reducer = ({
         ...modelGame,
         puzzle: puzzleNew,
       };
-    }
-
-    case "user-saved-changes": {
-      if (isErr(msgGame.saved)) {
-        return modelGame;
-      }
-      return { ...modelGame, puzzle: msgGame.saved.value };
     }
 
     default: {

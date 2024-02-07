@@ -63,7 +63,7 @@ const updatePuzzles: ClientModule["update"] = ({ msgGame, model }) => {
 const updateExitBuilder: ClientModule["update"] = (input) => {
   const { msg, model, modelGame, msgGame } = input;
 
-  if (modelGame.t !== "build") {
+  if (modelGame.t !== "puzzle-editor") {
     return { model };
   }
 
@@ -174,7 +174,7 @@ const exitBuilder: ClientModule["update"] = (input) => {
 };
 
 const saveChanges: ClientModule["update"] = ({ model, modelGame }) => {
-  if (modelGame.t !== "build") {
+  if (modelGame.t !== "puzzle-editor") {
     return { model };
   }
 

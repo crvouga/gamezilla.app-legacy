@@ -9,21 +9,24 @@ import {
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { isErr } from "gamezilla/@SHARED/core";
-import { FlowGrid, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
+import { FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";
 import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
 import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id";
 import { PackCreate } from "./pack-create";
 import { PuzzleCreate } from "./puzzle-create";
+import { PuzzleCreateGame } from "./puzzle-create/puzzle-create.game";
 import { PuzzleDeleteForever } from "./puzzle-delete-forever";
 import { PuzzleEditName } from "./puzzle-edit";
-import { PuzzleList } from "./puzzle-list";
-import { PuzzleSaveChanges } from "./puzzle-save-changes";
-import { FlowPuzzleName } from "../../@SHARED/flow-puzzle/flow-puzzle-name";
+import { PuzzleEditGame } from "./puzzle-edit/puzzle-edit.game";
 import { PuzzleEditor } from "./puzzle-editor";
 import { PuzzleEditorGame } from "./puzzle-editor/puzzle-editor.game";
+import { PuzzleList } from "./puzzle-list";
+import { PuzzeListGame } from "./puzzle-list/puzzle-list.game";
+import { PuzzleSaveChanges } from "./puzzle-save-changes";
+import { PuzzleSaveChangesGame } from "./puzzle-save-changes/puzzle-save-changes.game";
+import { PuzzleDeleteForeverGame } from "./puzzle-delete-forever/puzzle-delete-forever.game";
 
 //
 //
@@ -200,8 +203,8 @@ type BuildState =
       t: "edit";
     };
 
-export type ModelGameBuild = {
-  t: "build";
+export type ModelGamePuzzleEditor = {
+  t: "puzzle-editor";
   puzzle: FlowPuzzle;
   mode: BuildState;
   gridPlay: FlowGridUIPlay.Model;
@@ -216,26 +219,7 @@ export type ModelGameBase = {
   tab: ListTab;
 };
 
-export type ModelGame = ModelGameBase & (ModelGameList | ModelGameBuild);
-
-export const toCurrentGrid = (modelGame: ModelGameBuild): FlowGrid.Model => {
-  switch (modelGame.mode.t) {
-    case "edit": {
-      return FlowGridUIEdit.toCurrentGrid({
-        model: modelGame.gridEdit,
-      });
-    }
-
-    case "play": {
-      return FlowGridUIPlay.toCurrentGrid({
-        grid: FlowGridUIEdit.toCurrentGrid({
-          model: modelGame.gridEdit,
-        }),
-        model: modelGame.gridPlay,
-      });
-    }
-  }
-};
+export type ModelGame = ModelGameBase & (ModelGameList | ModelGamePuzzleEditor);
 
 export const initGame = (_input: { ctx: SpaceCtx }): ModelGame => {
   return {
@@ -243,6 +227,12 @@ export const initGame = (_input: { ctx: SpaceCtx }): ModelGame => {
     tab: "puzzles",
   };
 };
+
+export type GameReducer = (input: {
+  ctx: SpaceCtx;
+  msgGame: MsgGame;
+  modelGame: ModelGame;
+}) => ModelGame;
 
 export const reducer = ({
   modelGame,
@@ -254,56 +244,15 @@ export const reducer = ({
   modelGame: ModelGame;
 }): ModelGame => {
   return [
+    PuzzleDeleteForeverGame.reducer,
     PuzzleEditorGame.reducer,
-    reducerBuildState,
+    PuzzleCreateGame.reducer,
+    PuzzeListGame.reducer,
+    PuzzleEditGame.reducer,
+    PuzzleSaveChangesGame.reducer,
     //
   ].reduce(
     (acc, reducer) => reducer({ ctx, msgGame, modelGame: acc }),
     modelGame
   );
-};
-
-const reducerBuildState = ({
-  modelGame,
-  msgGame,
-}: {
-  ctx: SpaceCtx;
-  msgGame: MsgGame;
-  modelGame: ModelGame;
-}): ModelGame => {
-  if (modelGame.t !== "build") {
-    return modelGame;
-  }
-  switch (msgGame.t) {
-    case "user-edited-puzzle-name": {
-      if (msgGame.flowPuzzleId !== modelGame.puzzle.id) {
-        return modelGame;
-      }
-      if (msgGame.edited.t === "err") {
-        return modelGame;
-      }
-      if (!FlowPuzzleName.is(msgGame.newName)) {
-        return modelGame;
-      }
-      const puzzleNew: FlowPuzzle = {
-        ...modelGame.puzzle,
-        name: msgGame.newName,
-      };
-      return {
-        ...modelGame,
-        puzzle: puzzleNew,
-      };
-    }
-
-    case "user-saved-changes": {
-      if (isErr(msgGame.saved)) {
-        return modelGame;
-      }
-      return { ...modelGame, puzzle: msgGame.saved.value };
-    }
-
-    default: {
-      return modelGame;
-    }
-  }
 };

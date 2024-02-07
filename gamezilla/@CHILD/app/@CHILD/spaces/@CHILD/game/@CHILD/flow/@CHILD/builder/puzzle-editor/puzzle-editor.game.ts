@@ -1,9 +1,8 @@
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
-import { MsgGame, ModelGame } from "../builder.core";
 import { FlowGridUIEdit, FlowGridUIPlay } from "../../../@SHARED/flow";
-import { isErr } from "gamezilla/@SHARED/core";
+import { ModelGame, MsgGame } from "../builder.core";
 
-export const reducer = ({
+const reducer = ({
   modelGame,
   msgGame,
   ctx,
@@ -12,37 +11,11 @@ export const reducer = ({
   msgGame: MsgGame;
   modelGame: ModelGame;
 }): ModelGame => {
-  if (modelGame.t === "list") {
+  if (modelGame.t !== "puzzle-editor") {
     return modelGame;
   }
 
   switch (msgGame.t) {
-    case "user-created-puzzle": {
-      if (isErr(msgGame.created)) {
-        return modelGame;
-      }
-      const puzzleNew = msgGame.created.value;
-      return {
-        tab: "puzzles",
-        t: "build",
-        mode: { t: "edit" },
-        gridEdit: FlowGridUIEdit.init({ grid: puzzleNew.puzzle.c }),
-        gridPlay: FlowGridUIPlay.init({ grid: puzzleNew.puzzle.c }),
-        puzzle: puzzleNew,
-      };
-    }
-
-    case "user-opened-puzzle": {
-      return {
-        tab: "puzzles",
-        t: "build",
-        gridEdit: FlowGridUIEdit.init({ grid: msgGame.puzzle.puzzle.c }),
-        gridPlay: FlowGridUIPlay.init({ grid: msgGame.puzzle.puzzle.c }),
-        mode: { t: "edit" },
-        puzzle: msgGame.puzzle,
-      };
-    }
-
     case "grid-ui-play": {
       const currentGrid = FlowGridUIEdit.toCurrentGrid({
         model: modelGame.gridEdit,
@@ -101,6 +74,7 @@ export const reducer = ({
 
       return { ...modelGame, t: "list" };
     }
+
     default: {
       return modelGame;
     }

@@ -12,7 +12,7 @@ const update: ServerModule["update"] = async (input) => {
 const updateFromClient: ServerModule["update"] = async (input) => {
   const { modelGame, msgClient, model, deps } = input;
 
-  if (modelGame.t !== "build") {
+  if (modelGame.t !== "puzzle-editor") {
     return { model };
   }
 
