@@ -32,7 +32,7 @@ export type MsgServer = { t: "noop" };
 export type MsgToServer = { t: "pack-create/user-clicked-create-button" };
 
 export type MsgToClient = {
-  t: "created-pack";
+  t: "noop";
   created: Result<string, FlowPack>;
 };
 

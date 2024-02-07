@@ -8,9 +8,21 @@ const update: ServerModule["update"] = async (input) => {
 };
 
 const updateFromClient: ServerModule["update"] = async (input) => {
-  const { model } = input;
+  const { model, msgClient } = input;
 
-  return { model };
+  switch (msgClient?.t) {
+    case "pack-create/user-clicked-create-button": {
+      return {
+        model: {
+          ...model,
+        },
+      };
+    }
+
+    default: {
+      return { model };
+    }
+  }
 };
 
 export const PuzzleCreateServer = {

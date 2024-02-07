@@ -1,8 +1,35 @@
 import { Button, IconPlus } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { ClientModule } from "../../builder.core";
+import { loading, ok } from "gamezilla/@SHARED/core";
+import { sendMsgToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 
 const update: ClientModule["update"] = (input) => {
-  const { model } = input;
+  const { model, msg, msgGame } = input;
+
+  switch (msg?.t) {
+    case "pack-create/user-clicked-create-button": {
+      return {
+        model: {
+          ...model,
+          packCreateRequest: loading,
+        },
+        msgCmd: [
+          sendMsgToServer({ t: "pack-create/user-clicked-create-button" }),
+        ],
+      };
+    }
+  }
+
+  switch (msgGame?.t) {
+    case "user-created-pack": {
+      return {
+        model: {
+          ...model,
+          packCreateRequest: ok(null),
+        },
+      };
+    }
+  }
 
   return { model };
 };
