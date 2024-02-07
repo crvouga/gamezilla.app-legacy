@@ -22,7 +22,7 @@ import { ViewProfileCard } from "../../../../@SHARED/ui";
 import { ClientModule, ModelGamePuzzleBuilder } from "../../builder.core";
 import { PuzzleDeleteForeverClient } from "../delete-forever/puzzle-delete-forever.client";
 import { PuzzleEditNameClient } from "../edit/puzzle-edit-name.client";
-import { PuzzleSaveChangesClient } from "../save-changes/puzzle-save-changes.client";
+import { PuzzleSaveChangesClient } from "../puzzle-save-changes.puzzle-puzzle-save-changes.client";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 
 //
@@ -46,13 +46,13 @@ const updateFromMsg: ClientModule["update"] = (input) => {
   const { model, msg, ctx } = input;
 
   switch (msg?.t) {
-    case "puzzle.editor.flow-grid-ui-edit": {
+    case "puzzle-builder.flow-grid-ui-edit": {
       return { model, msgGame: [withId({ t: "grid-ui-edit", c: msg.c })] };
     }
-    case "puzzle.editor.flow-grid-ui-play": {
+    case "puzzle-builder.flow-grid-ui-play": {
       return { model, msgGame: [withId({ t: "grid-ui-play", c: msg.c })] };
     }
-    case "puzzle.editor.user-clicked-edit-mode-button": {
+    case "puzzle-builder.user-clicked-edit-mode-button": {
       return {
         model,
         msgGame: [
@@ -61,7 +61,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
         msgCmd: [playSound(APP_SOUND.navBackwardMin)],
       };
     }
-    case "puzzle.editor.user-clicked-play-mode-button": {
+    case "puzzle-builder.user-clicked-play-mode-button": {
       return {
         model,
         msgGame: [
@@ -70,13 +70,13 @@ const updateFromMsg: ClientModule["update"] = (input) => {
         msgCmd: [playSound(APP_SOUND.navForwardMin)],
       };
     }
-    case "puzzle.editor.user-clicked-more-button": {
+    case "puzzle-builder.user-clicked-more-button": {
       return {
         model: { ...model, opened: "more" },
         msgCmd: [playSound(APP_SOUND.tap)],
       };
     }
-    case "puzzle.editor.user-closed-more-drawer": {
+    case "puzzle-builder.user-closed-more-drawer": {
       return {
         model: { ...model, opened: null },
         msgCmd: [playSound(APP_SOUND.tap)],
@@ -165,7 +165,7 @@ const ViewMode: ClientModule["View"] = (input) => {
   const more = {
     label: "More",
     icon: <IconEllipsisVertical className="h-6 w-6" />,
-    onClick: () => dispatch({ t: "puzzle.editor.user-clicked-more-button" }),
+    onClick: () => dispatch({ t: "puzzle-builder.user-clicked-more-button" }),
   };
 
   switch (modelGame.mode.t) {
@@ -182,7 +182,7 @@ const ViewMode: ClientModule["View"] = (input) => {
             <FlowGridUIEdit.View
               model={modelGame.gridEdit}
               dispatch={(c) =>
-                dispatch({ t: "puzzle.editor.flow-grid-ui-edit", c })
+                dispatch({ t: "puzzle-builder.flow-grid-ui-edit", c })
               }
             />
           </div>
@@ -199,7 +199,7 @@ const ViewMode: ClientModule["View"] = (input) => {
                 icon: <IconPlay className="h-6 w-6" />,
                 onClick: () =>
                   dispatch({
-                    t: "puzzle.editor.user-clicked-play-mode-button",
+                    t: "puzzle-builder.user-clicked-play-mode-button",
                   }),
               },
 
@@ -224,7 +224,7 @@ const ViewMode: ClientModule["View"] = (input) => {
               model={modelGame.gridPlay}
               grid={toCurrentGrid(modelGame)}
               dispatch={(c) =>
-                dispatch({ t: "puzzle.editor.flow-grid-ui-play", c })
+                dispatch({ t: "puzzle-builder.flow-grid-ui-play", c })
               }
             />
           </div>
@@ -241,7 +241,7 @@ const ViewMode: ClientModule["View"] = (input) => {
                 icon: <IconPenToSquare className="h-6 w-6" />,
                 onClick: () =>
                   dispatch({
-                    t: "puzzle.editor.user-clicked-edit-mode-button",
+                    t: "puzzle-builder.user-clicked-edit-mode-button",
                   }),
               },
 
@@ -326,10 +326,10 @@ export const capitalize = (s: string) => {
 const updateMoreDrawer: ClientModule["update"] = (input) => {
   const { msg, model } = input;
   switch (msg?.t) {
-    case "puzzle.editor.user-closed-more-drawer": {
+    case "puzzle-builder.user-closed-more-drawer": {
       return { model: { ...model, opened: null } };
     }
-    case "puzzle.editor.user-clicked-more-button": {
+    case "puzzle-builder.user-clicked-more-button": {
       return { model: { ...model, opened: "more" } };
     }
     default: {
@@ -344,7 +344,7 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
     <Drawer
       id="more-drawer"
       open={input.model.opened === "more"}
-      onClose={() => dispatch({ t: "puzzle.editor.user-closed-more-drawer" })}
+      onClose={() => dispatch({ t: "puzzle-builder.user-closed-more-drawer" })}
       position="bottom"
     >
       <PuzzleEditNameClient.View {...input} />

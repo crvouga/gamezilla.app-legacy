@@ -13,7 +13,7 @@ import { PuzzleBuilderClient } from "./puzzle/builder/puzzle-builder.client";
 import { PuzzleListClient } from "./puzzle/list/puzzle-list.client";
 import { PuzzleEditNameClient } from "./puzzle/edit/puzzle-edit-name.client";
 import { PuzzleDeleteForeverClient } from "./puzzle/delete-forever/puzzle-delete-forever.client";
-import { PuzzleSaveChangesClient } from "./puzzle/save-changes/puzzle-save-changes.client";
+import { PuzzleSaveChangesClient } from "./puzzle/puzzle-save-changes.puzzle-puzzle-save-changes.client";
 import { PuzzleCreateClient } from "./puzzle/create/puzzle-create.client";
 import { PackCreateClient } from "./pack/create/pack-create.client";
 import { PackBuilderClient } from "./pack/builder/pack-builder.client";

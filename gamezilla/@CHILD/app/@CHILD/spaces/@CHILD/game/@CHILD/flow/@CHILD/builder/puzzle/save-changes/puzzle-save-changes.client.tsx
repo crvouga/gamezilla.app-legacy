@@ -73,7 +73,7 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
   }
 
   switch (msg?.t) {
-    case "puzzle.editor.user-clicked-exit-button": {
+    case "puzzle-builder.user-clicked-exit-button": {
       if (
         FlowGridUIEdit.isUnsavedChanges({
           grid: modelGame.puzzle.puzzle.c,
@@ -89,18 +89,18 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
       return exitBuilderWithSound(input);
     }
 
-    case "save-changes/user-clicked-cancel-exit": {
+    case "puzzle-save-changes.user-clicked-cancel-exit": {
       return {
         model: { ...model, opened: null },
         msgCmd: [playSound(APP_SOUND.tap)],
       };
     }
 
-    case "save-changes/user-clicked-discard-and-exit": {
+    case "puzzle-save-changes.user-clicked-discard-and-exit": {
       return exitBuilderWithSound(input);
     }
 
-    case "save-changes/user-clicked-save-and-exit": {
+    case "puzzle-save-changes.user-clicked-save-and-exit": {
       return saveChanges({
         ...input,
         model: { ...model, saveChangesIsExiting: true },
@@ -137,7 +137,7 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
 const updateSaveChangesRequest: ClientModule["update"] = (input) => {
   const { model, msg, ctx, msgGame } = input;
 
-  if (msg?.t === "save-changes/user-clicked-save-button") {
+  if (msg?.t === "puzzle-save-changes.user-clicked-save-button") {
     return saveChanges(input);
   }
 
@@ -198,7 +198,7 @@ const saveChanges: ClientModule["update"] = ({ model, modelGame }) => {
     msgCmd: [
       playSound(APP_SOUND.tap),
       sendMsgToServer({
-        t: "save-changes/user-clicked-save-button",
+        t: "puzzle-save-changes.user-clicked-save-button",
         puzzle: puzzleNew,
       }),
     ],
@@ -224,14 +224,15 @@ export const viewActionButtons = ({
     label: "Exit",
     disabled: model.saveChangesRequest?.t === "loading",
     icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-    onClick: () => dispatch({ t: "puzzle.editor.user-clicked-exit-button" }),
+    onClick: () => dispatch({ t: "puzzle-builder.user-clicked-exit-button" }),
   };
 
   const save: BottomBarButtonAction = {
     label: "Save",
     icon: <IconFloppyDisk className="h-6 w-6" />,
     loading: model.saveChangesRequest?.t === "loading",
-    onClick: () => dispatch({ t: "save-changes/user-clicked-save-button" }),
+    onClick: () =>
+      dispatch({ t: "puzzle-save-changes.user-clicked-save-button" }),
   };
 
   return {
@@ -247,7 +248,9 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
   return (
     <Drawer
       id="unsaved-changes-drawer"
-      onClose={() => dispatch({ t: "save-changes/user-clicked-cancel-exit" })}
+      onClose={() =>
+        dispatch({ t: "puzzle-save-changes.user-clicked-cancel-exit" })
+      }
       open={model.opened === "unsaved-changes"}
       position="bottom"
     >
@@ -263,14 +266,14 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
           color="primary"
           loading={model.saveChangesRequest?.t === "loading"}
           onClick={() =>
-            dispatch({ t: "save-changes/user-clicked-save-and-exit" })
+            dispatch({ t: "puzzle-save-changes.user-clicked-save-and-exit" })
           }
         />
         <Button
           className="w-full"
           text="Don't Save"
           onClick={() =>
-            dispatch({ t: "save-changes/user-clicked-discard-and-exit" })
+            dispatch({ t: "puzzle-save-changes.user-clicked-discard-and-exit" })
           }
         />
         <div className="w-full"></div>
@@ -278,7 +281,7 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
           className="w-full"
           text="Cancel"
           onClick={() =>
-            dispatch({ t: "save-changes/user-clicked-cancel-exit" })
+            dispatch({ t: "puzzle-save-changes.user-clicked-cancel-exit" })
           }
         />
       </div>

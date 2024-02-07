@@ -13,12 +13,12 @@ const update: ClientModule["update"] = (input) => {
   const { msgGame, model, msg } = input;
 
   switch (msg?.t) {
-    case "puzzle-create/user-clicked-create-button": {
+    case "puzzle-create.user-clicked-create-button": {
       return {
         model: { ...model, puzzleCreateRequest: loading },
         msgCmd: [
           playSound(APP_SOUND.tap),
-          sendMsgToServer({ t: "puzzle-create/user-clicked-create-button" }),
+          sendMsgToServer({ t: "puzzle-create.user-clicked-create-button" }),
         ],
       };
     }
@@ -68,7 +68,7 @@ const ViewCreateButton: ClientModule["View"] = (input) => {
       loading={model.puzzleCreateRequest.t === "loading"}
       start={<IconPlus className="h-8 w-8" />}
       onClick={() =>
-        dispatch({ t: "puzzle-create/user-clicked-create-button" })
+        dispatch({ t: "puzzle-create.user-clicked-create-button" })
       }
     />
   );

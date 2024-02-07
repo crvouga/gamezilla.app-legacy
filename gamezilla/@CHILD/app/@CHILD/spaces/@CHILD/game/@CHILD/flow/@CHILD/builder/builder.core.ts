@@ -25,7 +25,7 @@ import { PuzzleBuilderGame } from "./puzzle/builder/puzzle-builder.game";
 import { PuzzleList } from "./puzzle/list";
 import { PuzzeListGame } from "./puzzle/list/puzzle-list.game";
 import { PuzzleSaveChanges } from "./puzzle/save-changes";
-import { PuzzleSaveChangesGame } from "./puzzle/save-changes/puzzle-save-changes.game";
+import { PuzzleSaveChangesGame } from "./puzzle/puzzle-save-changes.puzzle-puzzle-save-changes.game";
 import { PuzzleDeleteForeverGame } from "./puzzle/delete-forever/puzzle-delete-forever.game";
 import { IFlowPackDb } from "../../@SHARED/flow-pack-db";
 import { FlowPack } from "../../@SHARED/flow-pack/flow-pack";

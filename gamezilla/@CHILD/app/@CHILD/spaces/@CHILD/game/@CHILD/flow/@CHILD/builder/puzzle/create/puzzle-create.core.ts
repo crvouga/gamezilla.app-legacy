@@ -24,12 +24,12 @@ export type ModelServer = {};
 //
 
 export type MsgClient = {
-  t: "puzzle-create/user-clicked-create-button";
+  t: "puzzle-create.user-clicked-create-button";
 };
 
 export type MsgServer = { t: "noop" };
 
-export type MsgToServer = { t: "puzzle-create/user-clicked-create-button" };
+export type MsgToServer = { t: "puzzle-create.user-clicked-create-button" };
 
 export type MsgToClient = {
   t: "created-puzzle";

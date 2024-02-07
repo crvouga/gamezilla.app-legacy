@@ -16,7 +16,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
   const { msgClient, model, ctx, deps } = input;
 
   switch (msgClient?.t) {
-    case "puzzle-create/user-clicked-create-button": {
+    case "puzzle-create.user-clicked-create-button": {
       const counted = await deps.FlowPuzzleDb.count({
         where: {
           createdBy: msgClient.userId,
