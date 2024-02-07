@@ -11,7 +11,7 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
       const puzzleNew = msgGame.created.value;
       return {
         ...modelGame,
-        t: "puzzle-editor",
+        t: "puzzle-builder",
         mode: { t: "edit" },
         gridEdit: FlowGridUIEdit.init({ grid: puzzleNew.puzzle.c }),
         gridPlay: FlowGridUIPlay.init({ grid: puzzleNew.puzzle.c }),

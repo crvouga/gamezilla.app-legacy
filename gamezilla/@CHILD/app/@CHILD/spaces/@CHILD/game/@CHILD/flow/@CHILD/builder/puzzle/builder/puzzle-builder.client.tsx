@@ -93,7 +93,7 @@ const updateFromMsgGame: ClientModule["update"] = (input) => {
 
   switch (msgGame?.t) {
     case "grid-ui-edit": {
-      if (modelGame.t !== "puzzle-editor") {
+      if (modelGame.t !== "puzzle-builder") {
         return { model };
       }
       if (modelGame.mode.t !== "edit") {
@@ -133,7 +133,7 @@ const updateFromMsgGame: ClientModule["update"] = (input) => {
 const View: ClientModule["View"] = (input) => {
   const { modelGame, ctx } = input;
 
-  if (modelGame.t !== "puzzle-editor") return null;
+  if (modelGame.t !== "puzzle-builder") return null;
 
   const isSpectating = ctx.currentUserId !== ctx.space.hostId;
 
@@ -153,7 +153,7 @@ const View: ClientModule["View"] = (input) => {
 const ViewMode: ClientModule["View"] = (input) => {
   const { model, modelGame, dispatch } = input;
 
-  if (modelGame.t !== "puzzle-editor") {
+  if (modelGame.t !== "puzzle-builder") {
     return null;
   }
 
@@ -276,7 +276,7 @@ export const toCurrentGrid = (
 };
 
 const ViewSpectating: ClientModule["View"] = ({ modelGame, ctx }) => {
-  if (modelGame.t !== "puzzle-editor") {
+  if (modelGame.t !== "puzzle-builder") {
     return null;
   }
 

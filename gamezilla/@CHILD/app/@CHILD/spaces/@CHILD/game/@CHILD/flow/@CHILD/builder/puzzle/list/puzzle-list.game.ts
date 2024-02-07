@@ -6,7 +6,7 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
     case "user-opened-puzzle": {
       return {
         ...modelGame,
-        t: "puzzle-editor",
+        t: "puzzle-builder",
         gridEdit: FlowGridUIEdit.init({ grid: msgGame.puzzle.puzzle.c }),
         gridPlay: FlowGridUIPlay.init({ grid: msgGame.puzzle.puzzle.c }),
         mode: { t: "edit" },

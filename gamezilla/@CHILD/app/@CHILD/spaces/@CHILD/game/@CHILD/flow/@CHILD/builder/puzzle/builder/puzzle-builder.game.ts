@@ -11,7 +11,7 @@ const reducer = ({
   msgGame: MsgGame;
   modelGame: ModelGame;
 }): ModelGame => {
-  if (modelGame.t !== "puzzle-editor") {
+  if (modelGame.t !== "puzzle-builder") {
     return modelGame;
   }
 

@@ -55,7 +55,7 @@ const View: ClientModule["View"] = (input) => {
 const updateFormButtons: ClientModule["update"] = (input) => {
   const { modelGame, msgGame, msg, model } = input;
 
-  if (modelGame.t !== "puzzle-editor") {
+  if (modelGame.t !== "puzzle-builder") {
     return { model };
   }
 
@@ -152,7 +152,7 @@ const ViewFormButtons: ClientModule["View"] = ({
         text="Save"
         loading={isLoading(model.editNameRequest)}
         disabled={
-          modelGame.t !== "puzzle-editor" ||
+          modelGame.t !== "puzzle-builder" ||
           model.editNameDraft === modelGame.puzzle.name
         }
         onClick={() =>
@@ -179,7 +179,7 @@ const updateDrawer: ClientModule["update"] = (input) => {
           ...model,
           opened: "edit-name",
           editNameDraft:
-            modelGame.t === "puzzle-editor" ? modelGame.puzzle.name : "",
+            modelGame.t === "puzzle-builder" ? modelGame.puzzle.name : "",
         },
       };
     }

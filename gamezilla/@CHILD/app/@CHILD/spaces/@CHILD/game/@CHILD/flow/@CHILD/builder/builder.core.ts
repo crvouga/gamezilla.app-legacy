@@ -204,7 +204,7 @@ type BuildState =
     };
 
 export type ModelGamePuzzleBuilder = {
-  t: "puzzle-editor";
+  t: "puzzle-builder";
   puzzle: FlowPuzzle;
   mode: BuildState;
   gridPlay: FlowGridUIPlay.Model;

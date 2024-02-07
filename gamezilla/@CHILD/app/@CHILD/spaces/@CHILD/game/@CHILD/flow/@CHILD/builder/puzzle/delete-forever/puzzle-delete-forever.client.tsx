@@ -24,7 +24,7 @@ const update: ClientModule["update"] = (input) => {
 const updateFromMsg: ClientModule["update"] = (input) => {
   const { msg, model, modelGame } = input;
 
-  if (modelGame.t !== "puzzle-editor") {
+  if (modelGame.t !== "puzzle-builder") {
     return { model };
   }
 
