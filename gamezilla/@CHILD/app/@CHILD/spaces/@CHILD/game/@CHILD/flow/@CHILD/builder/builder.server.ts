@@ -3,7 +3,8 @@ import { Sub } from "gamezilla/@SHARED/core";
 import { FlowPackDb } from "../../@SHARED/flow-pack-db";
 import { FlowPuzzleDb } from "../../@SHARED/flow-puzzle-db";
 import { ServerModule } from "./builder.core";
-import { PackreateServer } from "./pack/create/pack-create.server";
+import { PackBuilderServer } from "./pack/builder/pack-builder.server";
+import { PackCreateServer } from "./pack/create/pack-create.server";
 import { PuzzleCreateServer } from "./puzzle/create/puzzle-create.server";
 import { PuzzleDeleteForeverServer } from "./puzzle/delete-forever/puzzle-delete-forever.server";
 import { PuzzleEditNameServer } from "./puzzle/edit/puzzle-edit-name.server";
@@ -32,8 +33,8 @@ const update: ServerModule["update"] = async (input) => {
     (model) => PuzzleEditNameServer.update({ ...input, model }),
     (model) => PuzzleSaveChangesServer.update({ ...input, model }),
     //
-    (model) => PackreateServer.update({ ...input, model }),
-    (model) => PuzzleCreateServer.update({ ...input, model })
+    (model) => PackCreateServer.update({ ...input, model }),
+    (model) => PackBuilderServer.update({ ...input, model })
   );
 };
 

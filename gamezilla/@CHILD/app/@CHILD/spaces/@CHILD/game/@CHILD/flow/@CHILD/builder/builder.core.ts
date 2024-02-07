@@ -31,6 +31,7 @@ import { IFlowPackDb } from "../../@SHARED/flow-pack-db";
 import { FlowPack } from "../../@SHARED/flow-pack/flow-pack";
 import { PackCreateGame } from "./pack/create/pack-create.game";
 import { PackBuilder } from "./pack/builder";
+import { PackBuilderGame } from "./pack/builder/pack-builder.game";
 
 //
 //
@@ -270,6 +271,7 @@ export const reducer = ({
     PuzzleSaveChangesGame.reducer,
     //
     PackCreateGame.reducer,
+    PackBuilderGame.reducer,
   ].reduce(
     (acc, reducer) => reducer({ ctx, msgGame, modelGame: acc }),
     modelGame

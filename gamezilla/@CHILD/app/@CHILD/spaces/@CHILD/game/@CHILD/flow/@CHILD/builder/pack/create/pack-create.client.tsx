@@ -1,4 +1,8 @@
-import { sendMsgToServer } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  APP_SOUND,
+  playSound,
+  sendMsgToServer,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import { Button, IconPlus } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { loading, ok } from "gamezilla/@SHARED/core";
 import { ClientModule } from "../../builder.core";
@@ -27,6 +31,7 @@ const update: ClientModule["update"] = (input) => {
           ...model,
           packCreateRequest: ok(null),
         },
+        msgCmd: [playSound(APP_SOUND.refreshFeed)],
       };
     }
   }

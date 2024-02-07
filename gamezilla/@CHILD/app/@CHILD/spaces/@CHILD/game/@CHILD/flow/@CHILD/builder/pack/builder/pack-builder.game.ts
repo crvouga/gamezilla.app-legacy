@@ -14,12 +14,19 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
       };
     }
 
+    case "user-exited-pack-builder": {
+      return {
+        t: "list",
+        tab: "packs",
+      };
+    }
+
     default: {
       return modelGame;
     }
   }
 };
 
-export const PackCreateGame = {
+export const PackBuilderGame = {
   reducer,
 };

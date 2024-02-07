@@ -58,6 +58,6 @@ const updateFromClient: ServerModule["update"] = async (input) => {
   }
 };
 
-export const PackreateServer = {
+export const PackCreateServer = {
   update,
 };
