@@ -80,7 +80,7 @@ export const toUserIdFromSessionId = async (
   sessionId: SessionId
 ): Promise<UserId | null> => {
   const found = await SessionDb({
-    t: "postgres",
+    t: "postgres-with-cache",
     dbConn: ctx.dbConn,
   }).findUserIdBySessionId(sessionId);
   if (isErr(found)) {
@@ -138,7 +138,7 @@ const updateFromClient: Module["update"] = async ({
   switch (msgClient.t) {
     case "logout": {
       const zapped = await SessionDb({
-        t: "postgres",
+        t: "postgres-with-cache",
         dbConn: ctx.dbConn,
       }).zapBySessionId(msgClient.sessionId);
 
@@ -172,7 +172,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
   switch (msgEvt.t) {
     case "wire/client-connected": {
       const found = await SessionDb({
-        t: "postgres",
+        t: "postgres-with-cache",
         dbConn: ctx.dbConn,
       }).findUserIdBySessionId(msgEvt.sessionId);
 
@@ -235,7 +235,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
       }
 
       const inserted = await SessionDb({
-        t: "postgres",
+        t: "postgres-with-cache",
         dbConn: ctx.dbConn,
       }).insert({
         sessionId: msgEvt.sessionId,
