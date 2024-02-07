@@ -251,12 +251,9 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
       open={model.opened === "unsaved-changes"}
       position="bottom"
     >
-      <p className="px-4 pt-4 text-3xl font-bold">
-        Save changes before exiting?
-      </p>
+      <p className="px-4 pt-4 text-3xl font-bold">Save changes?</p>
       <p className="p-4 text-secondary">
-        Your new changes will be lost forever if you don't save them before
-        exiting.
+        Your changes will be lost if you don't save them before exiting.
       </p>
       <div className="flex w-full flex-col gap-4 p-4">
         <Button
