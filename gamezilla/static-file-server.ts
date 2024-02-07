@@ -48,7 +48,5 @@ export const createStaticFileServer = async () => {
     }
   }) as http.Server;
 
-  await new Promise((resolve) => httpServer.listen(3000, () => resolve(null)));
-
   return httpServer;
 };
