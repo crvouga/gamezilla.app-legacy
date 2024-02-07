@@ -1,17 +1,8 @@
-import http from "http";
 import { Posix, Program, isErr } from "gamezilla/@SHARED/core";
 import * as AppServer from "./@CHILD/app/app.server";
 
-import { PUBLIC_APP_CONFIG } from "config";
-
 const main = async () => {
-  const httpServer = new http.Server();
-
-  await new Promise((resolve) =>
-    httpServer.listen(PUBLIC_APP_CONFIG.SERVER_PORT, () => resolve(null))
-  );
-
-  const got = await AppServer.getDeps({ httpServer });
+  const got = await AppServer.getDeps();
 
   if (isErr(got)) {
     console.error(got.error);

@@ -20,7 +20,7 @@ export const ServerTransportSocketIO = <MsgToServer, MsgToClient>({
 }> => {
   const transport = initServerTransport<MsgToServer, MsgToClient>();
 
-  const io = new Server(impl.httpServer, {
+  const io = new Server(impl.serverPort, {
     cors: {
       origin: "*",
       methods: ["GET", "POST"],

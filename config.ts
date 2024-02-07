@@ -8,12 +8,12 @@ export type RendererImpl =
 
 const RENDERER_IMPL: RendererImpl = "inferno" as RendererImpl;
 
-export type TransportImpl = "socket-io" | "web-sockets";
+export type TransportImpl = "socket-io" | "bun-web-sockets";
 
-const TRANSPORT_IMPL: TransportImpl = "socket-io";
+const TRANSPORT_IMPL = "bun-web-sockets" as TransportImpl;
 
 const IS_PROD = process.env["NODE_ENV"] === "production";
-const SERVER_PORT_LOCAL = 5002;
+const SERVER_PORT_LOCAL = 5003;
 const SERVER_URL_LOCAL = `http://localhost:${SERVER_PORT_LOCAL}/`;
 const SERVER_URL_NGROK = "https://gamezilla-server.ngrok.io/";
 const SERVER_URL_PROD = "https://server.gamezilla.app/";
