@@ -16,7 +16,6 @@ import {
   AnonymousClientCtx,
   ClientCmd,
   ClientCtx,
-  ClientEvent,
   RouteGameSpace,
   addProfiles,
   playSound,
@@ -41,7 +40,7 @@ import { Eff, Sub, batchMsgs } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import { Game } from "./@CHILD/game/game.client";
 import { gameNameToString } from "./@CHILD/game/game.core";
-import { ViewScreenListSpaces } from "./spaces-client/view-screen-list-spaces";
+import { ListSpacesClient } from "./list-spaces/list-spaces.client";
 import { ViewScreenNotInGame } from "./spaces-client/view-screen-not-in-game";
 import * as Space from "./spaces-core/space";
 import { SpaceEvent } from "./spaces-core/space-event";
@@ -51,10 +50,8 @@ import {
   ClientModule,
   ModelClient,
   MsgClient,
-  MsgToClient,
   MsgToServer,
 } from "./spaces.core";
-import { ListSpacesClient } from "./list-spaces/list-spaces.client";
 
 //
 //
@@ -178,20 +175,6 @@ const updateFromServer: ClientModule["update"] = async (input) => {
   }
 
   switch (msgServer.t) {
-    case "listed-spaces": {
-      const merged = Spaces.mergeMany({ model, spaces: msgServer.spaces });
-      return {
-        model: {
-          games: model.games,
-          modal: model.modal,
-          previewUserId: model.previewUserId,
-          spaceIdByUserId: merged.spaceIdByUserId,
-          spaces: merged.spaces,
-          isFetchingSpaces: false,
-        },
-      };
-    }
-
     case "current-user-space":
     case "synced": {
       const merged = Spaces.mergeOne({ model, space: msgServer.space });
@@ -215,7 +198,7 @@ const updateFromServer: ClientModule["update"] = async (input) => {
       });
     }
 
-    case "game": {
+    default: {
       return { model };
     }
   }
@@ -227,15 +210,7 @@ const fetchSpacesFromRoute: ClientModule["update"] = async (input) => {
       switch (input.ctx.currentRoute.c.t) {
         case "space": {
           return {
-            model: { ...input.model, isFetchingSpaces: true },
-            msgCmd: [
-              sendToServer({
-                t: "list-spaces",
-                limit: 100,
-                offset: 0,
-                where: { spaceId: input.ctx.currentRoute.c.spaceId },
-              }),
-            ],
+            model: input.model,
           };
         }
 
