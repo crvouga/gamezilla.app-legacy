@@ -13,6 +13,11 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
         puzzle: msgGame.puzzle,
       };
     }
+
+    case "listed-puzzles": {
+      return modelGame;
+    }
+
     default: {
       return modelGame;
     }

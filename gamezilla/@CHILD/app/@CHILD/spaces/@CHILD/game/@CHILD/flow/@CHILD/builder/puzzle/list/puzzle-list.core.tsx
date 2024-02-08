@@ -1,6 +1,7 @@
 import { RemoteResult, notAsked } from "gamezilla/@SHARED/core";
 import { IFlowPuzzleDb } from "../../../../@SHARED/flow-puzzle-db";
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 //
 //
@@ -43,8 +44,14 @@ export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>;
 //
 //
 
-export type MsgGame = {
-  t: "listed-puzzles";
-  input: ListPuzzlesInput;
-  output: ListPuzzlesOutput;
-};
+export type MsgGame =
+  | {
+      t: "listed-puzzles";
+      input: ListPuzzlesInput;
+      output: ListPuzzlesOutput;
+    }
+  | {
+      t: "user-opened-puzzle";
+      userId: UserId;
+      puzzle: FlowPuzzle;
+    };

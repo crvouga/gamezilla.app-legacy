@@ -8,30 +8,29 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow";
 import { FlowClientCtx } from "../../@SHARED/flow-ctx";
+import { IFlowPackDb } from "../../@SHARED/flow-pack-db";
+import { FlowPack } from "../../@SHARED/flow-pack/flow-pack";
 import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
 import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id";
+import { PackBuilder } from "./pack/builder";
+import { PackBuilderGame } from "./pack/builder/pack-builder.game";
 import { PackCreate } from "./pack/create";
+import { PackCreateGame } from "./pack/create/pack-create.game";
+import { PuzzleBuilder } from "./puzzle/builder";
+import { PuzzleBuilderGame } from "./puzzle/builder/puzzle-builder.game";
 import { PuzzleCreate } from "./puzzle/create";
 import { PuzzleCreateGame } from "./puzzle/create/puzzle-create.game";
 import { PuzzleDeleteForever } from "./puzzle/delete-forever";
+import { PuzzleDeleteForeverGame } from "./puzzle/delete-forever/puzzle-delete-forever.game";
 import { PuzzleEditName } from "./puzzle/edit";
 import { PuzzleEditGame } from "./puzzle/edit/puzzle-edit.game";
-import { PuzzleBuilder } from "./puzzle/builder";
-import { PuzzleBuilderGame } from "./puzzle/builder/puzzle-builder.game";
 import { PuzzleList } from "./puzzle/list";
 import { PuzzeListGame } from "./puzzle/list/puzzle-list.game";
 import { PuzzleSaveChanges } from "./puzzle/save-changes";
 import { PuzzleSaveChangesGame } from "./puzzle/save-changes/puzzle-save-changes.game";
-import { PuzzleDeleteForeverGame } from "./puzzle/delete-forever/puzzle-delete-forever.game";
-import { IFlowPackDb } from "../../@SHARED/flow-pack-db";
-import { FlowPack } from "../../@SHARED/flow-pack/flow-pack";
-import { PackCreateGame } from "./pack/create/pack-create.game";
-import { PackBuilder } from "./pack/builder";
-import { PackBuilderGame } from "./pack/builder/pack-builder.game";
 
 //
 //
@@ -87,7 +86,6 @@ export const LIST_TABS = ["puzzles", "packs"] as const;
 type ListTab = (typeof LIST_TABS)[number];
 
 type BaseModelClient = {
-  listTab: ListTab;
   puzzles: {
     [puzzleId: FlowPuzzleId]: FlowPuzzle;
   };
@@ -117,7 +115,6 @@ export const initClient: ClientModule["init"] = {
   ...PuzzleDeleteForever.initClient,
   //
   puzzles: {},
-  listTab: "puzzles",
 };
 
 export type ModelServer = {};
@@ -130,7 +127,7 @@ export type ModelServer = {};
 //
 //
 
-type BaseMsgClient = { t: "user-selected-list-tab"; listTab: ListTab };
+type BaseMsgClient = { t: "user-changed-list-tab"; listTab: ListTab };
 //
 
 export type MsgClient =
@@ -184,16 +181,10 @@ export type MsgToClient =
 //
 //
 
-type MsgGameBase =
-  | {
-      t: "user-opened-puzzle";
-      userId: UserId;
-      puzzle: FlowPuzzle;
-    }
-  | {
-      t: "user-changed-tab";
-      tab: ListTab;
-    };
+type MsgGameBase = {
+  t: "user-changed-list-tab";
+  listTab: ListTab;
+};
 
 export type MsgGame =
   | MsgGameBase
@@ -234,7 +225,7 @@ export type ModelGameList = {
 };
 
 export type ModelGameBase = {
-  tab: ListTab;
+  listTab: ListTab;
 };
 
 export type ModelGame = ModelGameBase &
@@ -243,7 +234,7 @@ export type ModelGame = ModelGameBase &
 export const initGame = (_input: { ctx: SpaceCtx }): ModelGame => {
   return {
     t: "list",
-    tab: "puzzles",
+    listTab: "puzzles",
   };
 };
 
@@ -253,15 +244,7 @@ export type GameReducer = (input: {
   modelGame: ModelGame;
 }) => ModelGame;
 
-export const reducer = ({
-  modelGame,
-  msgGame,
-  ctx,
-}: {
-  ctx: SpaceCtx;
-  msgGame: MsgGame;
-  modelGame: ModelGame;
-}): ModelGame => {
+export const reducer: GameReducer = ({ modelGame, msgGame, ctx }) => {
   return [
     PuzzleDeleteForeverGame.reducer,
     PuzzleBuilderGame.reducer,
@@ -272,8 +255,24 @@ export const reducer = ({
     //
     PackCreateGame.reducer,
     PackBuilderGame.reducer,
+    //
+    listTabReducer,
   ].reduce(
     (acc, reducer) => reducer({ ctx, msgGame, modelGame: acc }),
     modelGame
   );
+};
+
+const listTabReducer: GameReducer = ({ modelGame, msgGame }) => {
+  switch (msgGame.t) {
+    case "user-changed-list-tab": {
+      return {
+        ...modelGame,
+        listTab: msgGame.listTab,
+      };
+    }
+    default: {
+      return modelGame;
+    }
+  }
 };

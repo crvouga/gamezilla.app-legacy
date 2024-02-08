@@ -9,7 +9,7 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
       }
       return {
         t: "pack-builder",
-        tab: "puzzles",
+        listTab: "packs",
         pack: msgGame.created.value,
       };
     }
@@ -17,7 +17,7 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
     case "user-exited-pack-builder": {
       return {
         t: "list",
-        tab: "packs",
+        listTab: "packs",
       };
     }
 

@@ -17,6 +17,7 @@ import { PuzzleDeleteForeverClient } from "./puzzle/delete-forever/puzzle-delete
 import { PuzzleEditNameClient } from "./puzzle/edit/puzzle-edit-name.client";
 import { PuzzleListClient } from "./puzzle/list/puzzle-list.client";
 import { PuzzleSaveChangesClient } from "./puzzle/save-changes/puzzle-save-changes.client";
+import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
@@ -41,8 +42,11 @@ const updateLocation: ClientModule["update"] = (input) => {
   const { model, msg } = input;
 
   switch (msg?.t) {
-    case "user-selected-list-tab": {
-      return { model: { ...model, listTab: msg.listTab } };
+    case "user-changed-list-tab": {
+      return {
+        model: { ...model },
+        msgGame: [withId({ t: "user-changed-list-tab", listTab: msg.listTab })],
+      };
     }
 
     default: {
@@ -70,7 +74,7 @@ const View: ClientModule["View"] = (input) => {
 };
 
 const ViewList: ClientModule["View"] = (input) => {
-  const { ctx, modelGame, dispatch, model } = input;
+  const { ctx, modelGame, dispatch } = input;
 
   if (modelGame.t !== "list") {
     return null;
@@ -106,14 +110,14 @@ const ViewList: ClientModule["View"] = (input) => {
           puzzles: "Puzzles",
         }}
         onSelect={(listTab) =>
-          dispatch({ t: "user-selected-list-tab", listTab })
+          dispatch({ t: "user-changed-list-tab", listTab })
         }
-        selected={model.listTab}
+        selected={modelGame.listTab}
       />
 
-      {model.listTab === "puzzles" && <PuzzleListClient.View {...input} />}
+      {modelGame.listTab === "puzzles" && <PuzzleListClient.View {...input} />}
 
-      {model.listTab === "packs" && <PackListClient.View {...input} />}
+      {modelGame.listTab === "packs" && <PackListClient.View {...input} />}
 
       <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
         <Button

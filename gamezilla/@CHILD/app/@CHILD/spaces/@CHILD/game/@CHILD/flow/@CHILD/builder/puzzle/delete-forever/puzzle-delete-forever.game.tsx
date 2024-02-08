@@ -5,7 +5,7 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
     case "user-deleted-puzzle": {
       return {
         t: "list",
-        tab: "puzzles",
+        listTab: "puzzles",
       };
     }
     default: {
