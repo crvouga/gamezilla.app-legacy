@@ -125,7 +125,9 @@ export type ModelServer = {};
 //
 //
 
-type BaseMsgClient = { t: "user-changed-list-tab"; listTab: ListTab };
+type BaseMsgClient =
+  | { t: "time-passed" }
+  | { t: "user-changed-list-tab"; listTab: ListTab };
 //
 
 export type MsgClient =

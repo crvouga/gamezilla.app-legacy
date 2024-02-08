@@ -6,21 +6,54 @@ import {
   showOkToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Button, IconPlus } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Result, isErr, loading } from "gamezilla/@SHARED/core";
+import {
+  Posix,
+  Result,
+  Sub,
+  Time,
+  TimeSpan,
+  isErr,
+  isLoading,
+  loading,
+} from "gamezilla/@SHARED/core";
 import { ClientModule } from "../../builder.core";
 
 const update: ClientModule["update"] = (input) => {
-  const { msgGame, model, msg } = input;
+  const { msgGame, model, msg, ctx } = input;
 
   switch (msg?.t) {
     case "puzzle-create.user-clicked-create-button": {
       return {
-        model: { ...model, puzzleCreateRequest: loading },
+        model: {
+          ...model,
+          puzzleCreateRequest: loading,
+          puzzleCreateRequestedAt: ctx.now,
+        },
         msgCmd: [
           playSound(APP_SOUND.tap),
           sendToServer({ t: "puzzle-create.user-clicked-create-button" }),
         ],
       };
+    }
+
+    case "time-passed": {
+      if (
+        isLoading(model.puzzleCreateRequest) &&
+        TimeSpan.gte(
+          Posix.diff(model.puzzleCreateRequestedAt, ctx.now),
+          TimeSpan.fromSeconds(5)
+        )
+      ) {
+        const errorMessage = "Request timed out";
+        return {
+          model: {
+            ...model,
+            puzzleCreateRequest: Result.err(errorMessage),
+          },
+          msgCmd: showErrorToast(errorMessage),
+        };
+      }
+      return { model };
     }
 
     default: {
@@ -57,6 +90,21 @@ const update: ClientModule["update"] = (input) => {
   return { model };
 };
 
+const id = "puzzle-create-request";
+
+const subscriptions: ClientModule["subscriptions"] = ({ model }) => {
+  switch (model.puzzleCreateRequest.t) {
+    case "loading": {
+      return Time.interval(id, TimeSpan.fromSeconds(1), () => ({
+        t: "time-passed",
+      }));
+    }
+    default: {
+      return Sub.None;
+    }
+  }
+};
+
 const ViewCreateButton: ClientModule["View"] = (input) => {
   const { model, dispatch } = input;
 
@@ -77,4 +125,5 @@ const ViewCreateButton: ClientModule["View"] = (input) => {
 export const PuzzleCreateClient = {
   update,
   ViewCreateButton,
+  subscriptions,
 };

@@ -137,8 +137,11 @@ const ViewFeedItem: ClientModule["ViewFeedItem"] = () => {
   return <div></div>;
 };
 
-const subscriptions: ClientModule["subscriptions"] = (_input) => {
-  return Sub.None;
+const subscriptions: ClientModule["subscriptions"] = (input) => {
+  return Sub.batch([
+    //
+    PuzzleCreateClient.subscriptions(input),
+  ]);
 };
 
 export const BuilderClient: ClientModule = {
