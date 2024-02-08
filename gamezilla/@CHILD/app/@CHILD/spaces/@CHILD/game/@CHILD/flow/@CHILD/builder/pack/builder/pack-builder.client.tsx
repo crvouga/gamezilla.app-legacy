@@ -1,11 +1,8 @@
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client";
-import {
-  IconArrowLeftOnRect,
-  IconPlus,
-  VDom,
-} from "gamezilla/@CHILD/app/@SHARED/ui";
+import { IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { ViewBottomButtonBar } from "../../../../../../@SHARED/game";
+import { FlowPackUI } from "../../../../@SHARED/flow-pack";
 import { ClientModule } from "../../builder.core";
 
 const update: ClientModule["update"] = (input) => {
@@ -46,13 +43,13 @@ const View: ClientModule["View"] = (input) => {
       <div className="flex w-full flex-1 flex-col">
         <p className="w-full p-3 text-3xl font-bold">{modelGame.pack.name}</p>
         <div className="flex w-full flex-1 flex-col items-center justify-center">
-          <ViewPackPuzzleGrid
-            renderCell={({ x, y }) => {
-              const index = y * COLUMN_COUNT + x;
+          <FlowPackUI.ViewPackPuzzleGrid
+            renderCell={(position) => {
+              const index = FlowPackUI.toIndex(position);
 
               if (index === 0) {
                 return (
-                  <ViewAddCell
+                  <FlowPackUI.ViewAddCell
                     onClick={() => {
                       //
                     }}
@@ -60,7 +57,7 @@ const View: ClientModule["View"] = (input) => {
                 );
               }
 
-              return <ViewEmptyCell />;
+              return <FlowPackUI.ViewEmptyCell />;
             }}
           />
         </div>
@@ -76,55 +73,6 @@ const View: ClientModule["View"] = (input) => {
         ]}
       />
     </div>
-  );
-};
-
-const COLUMN_COUNT = 6;
-const ROW_COUNT = 6;
-
-const ViewPackPuzzleGrid = ({
-  renderCell,
-}: {
-  renderCell: ({ x, y }: { x: number; y: number }) => VDom;
-}) => {
-  const columns: VDom[] = [];
-  for (let y = 0; y < ROW_COUNT; y++) {
-    const row: VDom[] = [];
-    for (let x = 0; x < COLUMN_COUNT; x++) {
-      row.push(
-        <div
-          key={`${y}-${x}`}
-          className="flex aspect-square w-1/6 items-center justify-center p-1"
-        >
-          {renderCell({ x, y })}
-        </div>
-      );
-    }
-
-    columns.push(
-      <div key={y} className="flex w-full justify-between">
-        {row}
-      </div>
-    );
-  }
-
-  return <div className="w-full p-8">{columns}</div>;
-};
-
-const ViewAddCell = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <button
-      onClick={onClick}
-      className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-700 bg-neutral-800 hover:opacity-90 active:opacity-80"
-    >
-      <IconPlus className="h-8 w-8" />
-    </button>
-  );
-};
-
-const ViewEmptyCell = () => {
-  return (
-    <div className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-700 bg-neutral-800 opacity-70"></div>
   );
 };
 
