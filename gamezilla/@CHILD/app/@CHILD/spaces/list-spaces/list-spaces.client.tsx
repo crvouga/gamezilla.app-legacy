@@ -35,6 +35,7 @@ const update: ClientModule["update"] = async (input) => {
           msgCmd: [sendToServer({ t: "list-spaces", limit: 100, offset: 0 })],
         };
       }
+      return { model };
     }
   }
 

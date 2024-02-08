@@ -57,6 +57,23 @@ CREATE TABLE public.game_chess_puzzle_profile (
 
 
 --
+-- Name: game_flow_puzzle; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.game_flow_puzzle (
+    flow_puzzle_id text NOT NULL,
+    flow_puzzle_name text NOT NULL,
+    flow_puzzle json NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by_user_id text NOT NULL,
+    last_updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_updated_by_user_id text NOT NULL,
+    deleted_at timestamp without time zone,
+    deleted_by_user_id text
+);
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -91,6 +108,19 @@ CREATE TABLE public.user_profile (
 
 
 --
+-- Name: user_session; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_session (
+    user_session_id text NOT NULL,
+    user_id text NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    ended_at timestamp with time zone,
+    session_id text
+);
+
+
+--
 -- Name: game_chess_puzzle_interaction game_chess_puzzle_interaction_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -112,6 +142,14 @@ ALTER TABLE ONLY public.game_chess_puzzle
 
 ALTER TABLE ONLY public.game_chess_puzzle_profile
     ADD CONSTRAINT game_chess_puzzle_profile_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: game_flow_puzzle game_flow_puzzle_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.game_flow_puzzle
+    ADD CONSTRAINT game_flow_puzzle_pkey PRIMARY KEY (flow_puzzle_id);
 
 
 --
@@ -155,6 +193,14 @@ ALTER TABLE ONLY public.user_profile
 
 
 --
+-- Name: user_session user_session_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_session
+    ADD CONSTRAINT user_session_pkey PRIMARY KEY (user_session_id);
+
+
+--
 -- Name: game_chess_puzzle_interaction_puzzle_id_idx; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -190,6 +236,20 @@ CREATE INDEX idx_game_chess_puzzle_rating ON public.game_chess_puzzle USING btre
 
 
 --
+-- Name: idx_user_session_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_user_session_created_at ON public.user_session USING btree (created_at);
+
+
+--
+-- Name: idx_user_session_session_id_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_user_session_session_id_created_at ON public.user_session USING btree (user_session_id, created_at);
+
+
+--
 -- Name: idx_username; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -214,4 +274,12 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20231116190003'),
     ('20231116191553'),
     ('20231116192910'),
-    ('20240116044515');
+    ('20240116044515'),
+    ('20240129215712'),
+    ('20240203025639'),
+    ('20240203034127'),
+    ('20240203034632'),
+    ('20240203034900'),
+    ('20240203035440'),
+    ('20240203040136'),
+    ('20240203045837');
