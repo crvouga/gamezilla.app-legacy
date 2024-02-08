@@ -120,7 +120,7 @@ export type WireCmd<T extends ClientCmdTypes> = {
 /**
  * A msgCmd creator for sending a messages to the server.
  */
-export const sendMsgToServer = <T extends ClientCmdTypes>(
+export const sendToServer = <T extends ClientCmdTypes>(
   msg: T["MsgToServer"]
 ): ClientCmd<T> => {
   return {

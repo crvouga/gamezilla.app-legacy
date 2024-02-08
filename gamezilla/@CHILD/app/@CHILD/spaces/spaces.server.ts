@@ -10,7 +10,7 @@ import {
   ServerEvent,
   broadcast,
   sendBack,
-  sendMsgToClient,
+  sendToClient,
   sendToUser,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Sub, batchMsgs } from "gamezilla/@SHARED/core";
@@ -212,7 +212,7 @@ const updateFromClient: Module["update"] = async (input) => {
           return {
             model,
             msgCmd: [
-              sendMsgToClient<MsgToClient>([msgClient.clientId], {
+              sendToClient<MsgToClient>([msgClient.clientId], {
                 t: "synced",
                 causedBy: msgClient.t,
                 space: starting,
@@ -251,7 +251,7 @@ const updateFromEvent: Module["update"] = async (input) => {
       return {
         model,
         msgCmd: [
-          sendMsgToClient<MsgToClient>([msgEvt.clientId], {
+          sendToClient<MsgToClient>([msgEvt.clientId], {
             t: "current-user-space",
             space: started,
             profiles,

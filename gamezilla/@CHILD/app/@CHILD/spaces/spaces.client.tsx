@@ -22,7 +22,7 @@ import {
   playSound,
   pushRoute,
   replaceRoute,
-  sendMsgToServer,
+  sendToServer,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
@@ -228,7 +228,7 @@ const fetchSpacesFromRoute: ClientModule["update"] = async (input) => {
           return {
             model: { ...input.model, isFetchingSpaces: true },
             msgCmd: [
-              sendMsgToServer({
+              sendToServer({
                 t: "list-spaces",
                 limit: 100,
                 offset: 0,
@@ -241,9 +241,7 @@ const fetchSpacesFromRoute: ClientModule["update"] = async (input) => {
         case "space-list": {
           return {
             model: { ...input.model, isFetchingSpaces: true },
-            msgCmd: [
-              sendMsgToServer({ t: "list-spaces", limit: 100, offset: 0 }),
-            ],
+            msgCmd: [sendToServer({ t: "list-spaces", limit: 100, offset: 0 })],
           };
         }
       }
@@ -301,7 +299,7 @@ const updateFromEvent: ClientModule["update"] = async (input) => {
           isSyncing: true,
         },
         msgCmd: [
-          sendMsgToServer({
+          sendToServer({
             t: "sync",
             space: started,
             profiles: currentUserProfile
@@ -503,7 +501,7 @@ const sendSpaceEventMsgToServer = async ({
 
   return {
     model,
-    msgCmd: [sendMsgToServer({ t: "event", c: msgEvtWithMeta, profiles })],
+    msgCmd: [sendToServer({ t: "event", c: msgEvtWithMeta, profiles })],
   };
 };
 

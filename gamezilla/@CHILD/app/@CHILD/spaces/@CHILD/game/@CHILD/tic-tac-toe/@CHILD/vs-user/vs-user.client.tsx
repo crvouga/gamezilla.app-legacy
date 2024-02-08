@@ -1,9 +1,6 @@
 import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-user";
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
-import {
-  ClientCmd,
-  sendMsgToServer,
-} from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import { toTurn } from "../../@SHARED/tic-tic-toe/tic-tac-toe";
 import {
   CoverArt,
@@ -81,7 +78,7 @@ export const update = (
     case "stop-playing":
     case "start-game":
     case "NewGame": {
-      return { model, msgCmd: [sendMsgToServer(msg)] };
+      return { model, msgCmd: [sendToServer(msg)] };
     }
 
     default: {

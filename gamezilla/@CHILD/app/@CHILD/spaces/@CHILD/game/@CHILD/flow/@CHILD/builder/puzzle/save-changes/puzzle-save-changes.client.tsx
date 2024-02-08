@@ -3,7 +3,7 @@ import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import {
   APP_SOUND,
   playSound,
-  sendMsgToServer,
+  sendToServer,
   showErrorToast,
   showOkToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -197,7 +197,7 @@ const saveChanges: ClientModule["update"] = ({ model, modelGame }) => {
     model: { ...model, saveChangesRequest: loading },
     msgCmd: [
       playSound(APP_SOUND.tap),
-      sendMsgToServer({
+      sendToServer({
         t: "puzzle-save-changes.user-clicked-save-button",
         puzzle: puzzleNew,
       }),

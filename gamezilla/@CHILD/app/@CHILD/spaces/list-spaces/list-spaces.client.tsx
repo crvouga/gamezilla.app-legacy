@@ -1,7 +1,4 @@
-import {
-  ClientCtx,
-  sendMsgToServer,
-} from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCtx, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import * as Spaces from "../spaces-core/spaces";
 import { ClientModule, ModelClient, MsgClient } from "../spaces.core";
 import { ViewSpaceHostChip } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
@@ -35,9 +32,7 @@ const update: ClientModule["update"] = async (input) => {
       if (msgEvt.route.t === "spaces" && msgEvt.route.c.t === "space-list") {
         return {
           model: { ...model, isFetchingSpaces: true },
-          msgCmd: [
-            sendMsgToServer({ t: "list-spaces", limit: 100, offset: 0 }),
-          ],
+          msgCmd: [sendToServer({ t: "list-spaces", limit: 100, offset: 0 })],
         };
       }
     }

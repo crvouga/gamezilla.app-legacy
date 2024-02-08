@@ -48,7 +48,7 @@ export const sendBack = <MsgToClient>(
   ctx: { clientId: ClientId },
   msg: MsgToClient
 ): ServerCmd<MsgToClient> => {
-  return sendMsgToClient([ctx.clientId], msg);
+  return sendToClient([ctx.clientId], msg);
 };
 
 export const topicPublish = <MsgToClient>(
@@ -91,7 +91,7 @@ export const broadcast = <MsgToClient>(
   };
 };
 
-export const sendMsgToClient = <MsgToClient>(
+export const sendToClient = <MsgToClient>(
   clientIds: ClientId[],
   msg: MsgToClient
 ): ServerCmd<MsgToClient> => {

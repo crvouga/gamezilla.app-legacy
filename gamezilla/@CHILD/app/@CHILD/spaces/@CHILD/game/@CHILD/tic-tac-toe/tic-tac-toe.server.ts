@@ -4,7 +4,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd";
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { sendMsgToClient } from "gamezilla/@CHILD/app/@SHARED/server";
+import { sendToClient } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Result, Sub } from "gamezilla/@SHARED/core";
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.server";
 import * as VsUser from "./@CHILD/vs-user/vs-user.server";
@@ -91,7 +91,7 @@ export const updateFromClient = ({
       return {
         model,
         msgCmd: [
-          sendMsgToClient([ctx.clientId], {
+          sendToClient([ctx.clientId], {
             ...msg,
             result: Err("must-be-host"),
           }),

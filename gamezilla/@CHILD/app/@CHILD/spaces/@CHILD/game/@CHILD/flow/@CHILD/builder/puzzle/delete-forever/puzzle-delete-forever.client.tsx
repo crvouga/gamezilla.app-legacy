@@ -2,7 +2,7 @@ import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import {
   APP_SOUND,
   playSound,
-  sendMsgToServer,
+  sendToServer,
   showOkToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
@@ -48,7 +48,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
       return {
         model: { ...model, deleteForeverRequest: RemoteResult.loading },
         msgCmd: [
-          sendMsgToServer({ t: "delete-forever/user-confirmed" }),
+          sendToServer({ t: "delete-forever/user-confirmed" }),
           playSound(APP_SOUND.tap),
         ],
       };

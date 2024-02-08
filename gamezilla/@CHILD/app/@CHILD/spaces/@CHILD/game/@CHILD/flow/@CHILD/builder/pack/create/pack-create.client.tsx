@@ -1,7 +1,7 @@
 import {
   APP_SOUND,
   playSound,
-  sendMsgToServer,
+  sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Button, IconPlus } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { loading, ok } from "gamezilla/@SHARED/core";
@@ -17,9 +17,7 @@ const update: ClientModule["update"] = (input) => {
           ...model,
           packCreateRequest: loading,
         },
-        msgCmd: [
-          sendMsgToServer({ t: "pack-create/user-clicked-create-button" }),
-        ],
+        msgCmd: [sendToServer({ t: "pack-create/user-clicked-create-button" })],
       };
     }
   }

@@ -7,7 +7,7 @@ import {
   playSound,
   pushRoute,
   replaceRoute,
-  sendMsgToServer,
+  sendToServer,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
@@ -169,7 +169,7 @@ const updateFromLogoutMsg = ({
           ...model,
           currentUser: { t: "logged-out" },
         },
-        msgCmd: [sendMsgToServer({ t: "logout" }), showToast("Logged out")],
+        msgCmd: [sendToServer({ t: "logout" }), showToast("Logged out")],
         msgEvt: [{ t: "is-logged-out" }],
       };
     }

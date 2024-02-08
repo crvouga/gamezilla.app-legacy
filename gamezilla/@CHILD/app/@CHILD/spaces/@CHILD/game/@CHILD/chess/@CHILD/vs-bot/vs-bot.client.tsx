@@ -4,10 +4,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
 import { VsBotSetup } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot";
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
-import {
-  ClientCmd,
-  sendMsgToServer,
-} from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
   IconRobot,
@@ -105,7 +102,7 @@ export const update = ({
       });
 
       if (handled.t === "err") {
-        return { model, msgCmd: [sendMsgToServer(msg)] };
+        return { model, msgCmd: [sendToServer(msg)] };
       }
 
       const coreModel = handled.value;
@@ -115,7 +112,7 @@ export const update = ({
         server: coreModel,
       });
 
-      return { model: modelNew, msgCmd: [sendMsgToServer(msg)] };
+      return { model: modelNew, msgCmd: [sendToServer(msg)] };
     }
   }
 };

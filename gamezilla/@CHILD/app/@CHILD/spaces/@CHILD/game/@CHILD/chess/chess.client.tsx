@@ -9,7 +9,7 @@ import {
   ClientCmd,
   playSound,
   preloadSound,
-  sendMsgToServer,
+  sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconPuzzlePiece } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, RemoteResult, Sub, isErr } from "gamezilla/@SHARED/core";
@@ -93,7 +93,7 @@ export const update: Client["update"] = (input) => {
               ...model,
               requests: { ...model.requests, [msg.t]: RemoteResult.loading },
             },
-            msgCmd: [sendMsgToServer(msg)],
+            msgCmd: [sendToServer(msg)],
           };
         }
 

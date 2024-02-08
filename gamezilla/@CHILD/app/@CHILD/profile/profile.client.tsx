@@ -10,7 +10,7 @@ import {
   playSound,
   pushRoute,
   replaceRoute,
-  sendMsgToServer,
+  sendToServer,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { ProfileAvatar, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
@@ -368,7 +368,7 @@ const loadProfile = (
       ...model,
       requests: { ...model.requests, "find-one": loading },
     },
-    msgCmd: [sendMsgToServer({ t: "find-one", userId })],
+    msgCmd: [sendToServer({ t: "find-one", userId })],
   };
 };
 

@@ -4,7 +4,7 @@ import {
   ServerCmd,
   ServerCtx,
   ServerEvent,
-  sendMsgToClient,
+  sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Sub, isErr } from "gamezilla/@SHARED/core";
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server";
@@ -209,7 +209,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
       return {
         model,
         msgCmd: [
-          sendMsgToClient([msgEvt.clientId], {
+          sendToClient([msgEvt.clientId], {
             t: "client-unauthenticated",
             sessionId: msgEvt.sessionId,
           }),
@@ -218,7 +218,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
     }
 
     case "auth/client-authenticated": {
-      const msgCmd = sendMsgToClient<MsgToClient>([msgEvt.clientId], {
+      const msgCmd = sendToClient<MsgToClient>([msgEvt.clientId], {
         t: "client-authenticated",
         userId: msgEvt.userId,
         loggedIn: true,

@@ -8,7 +8,7 @@ import {
   ServerCmd,
   ServerCtx,
   ServerEvent,
-  sendMsgToClient,
+  sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Result, err, isErr, ok } from "gamezilla/@SHARED/core";
 import { AppServerModule } from "../../@SHARED/architecture/app-server";
@@ -90,7 +90,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model }) => {
     case "handled": {
       return {
         model,
-        msgCmd: [sendMsgToClient([msg.clientId], msg.msg)],
+        msgCmd: [sendToClient([msg.clientId], msg.msg)],
       };
     }
   }

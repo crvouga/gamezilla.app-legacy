@@ -2,7 +2,7 @@ import { Browser, Eff, matchSort, p } from "gamezilla/@SHARED/core";
 import {
   ClientEvent,
   ClientCmd,
-  sendMsgToServer,
+  sendToServer,
   pushRoute,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
@@ -102,7 +102,7 @@ export const update = ({
     };
   }
 
-  return { model, msgCmd: [sendMsgToServer(msg)] };
+  return { model, msgCmd: [sendToServer(msg)] };
 };
 
 export const updateFromServer = ({

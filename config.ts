@@ -46,12 +46,13 @@ const TRANSPORT_IMPL = "bun-web-sockets" as TransportImpl;
 //
 //
 
-const SERVER_PORT_LOCAL = 5003;
+const SERVER_PORT_LOCAL = 5002;
 const SERVER_URL_LOCAL = `http://localhost:${SERVER_PORT_LOCAL}/`;
 const SERVER_URL_NGROK = "https://gamezilla-server.ngrok.io/";
 const SERVER_URL_PROD = "https://server.gamezilla.app/";
 const WEB_SOCKETS_ENDPOINT = "/ws";
-const USE_NGROK = false;
+
+const USE_NGROK = true;
 
 const SERVER_URL = IS_PROD
   ? SERVER_URL_PROD

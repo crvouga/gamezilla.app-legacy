@@ -3,7 +3,7 @@ import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import {
   APP_SOUND,
   playSound,
-  sendMsgToServer,
+  sendToServer,
   showErrorToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconPuzzlePiece, Spinner, cn } from "gamezilla/@CHILD/app/@SHARED/ui";
@@ -51,7 +51,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
       return {
         model: { ...model, puzzleListRequest: loading },
         msgCmd: [
-          sendMsgToServer({
+          sendToServer({
             t: "list/list-puzzles",
             input: {
               order: {

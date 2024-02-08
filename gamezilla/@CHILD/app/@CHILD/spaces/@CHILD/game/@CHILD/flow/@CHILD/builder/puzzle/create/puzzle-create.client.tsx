@@ -1,7 +1,7 @@
 import {
   APP_SOUND,
   playSound,
-  sendMsgToServer,
+  sendToServer,
   showErrorToast,
   showOkToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -18,7 +18,7 @@ const update: ClientModule["update"] = (input) => {
         model: { ...model, puzzleCreateRequest: loading },
         msgCmd: [
           playSound(APP_SOUND.tap),
-          sendMsgToServer({ t: "puzzle-create.user-clicked-create-button" }),
+          sendToServer({ t: "puzzle-create.user-clicked-create-button" }),
         ],
       };
     }

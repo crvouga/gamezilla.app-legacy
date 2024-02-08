@@ -2,7 +2,7 @@ import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import {
   APP_SOUND,
   playSound,
-  sendMsgToServer,
+  sendToServer,
   showErrorToast,
   showOkToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
@@ -84,7 +84,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
-          sendMsgToServer({
+          sendToServer({
             t: "puzzle.edit-name.user-clicked-save-button",
             newName,
             flowPuzzleId: modelGame.puzzle.id,

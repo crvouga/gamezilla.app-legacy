@@ -10,7 +10,7 @@ import {
   playSound,
   pushRoute,
   replaceRoute,
-  sendMsgToServer,
+  sendToServer,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client/client-cmd";
 import {
@@ -196,7 +196,7 @@ const updateFromMsg: Module["update"] = async (input) => {
           sentCodeAt: ctx.now,
         },
         msgCmd: [
-          sendMsgToServer({
+          sendToServer({
             t: "send-code",
             phoneNumber: phoneNumber.value,
           }),
@@ -239,7 +239,7 @@ const updateFromMsg: Module["update"] = async (input) => {
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
-          sendMsgToServer({
+          sendToServer({
             t: "verify-code",
             code: model.codeInput,
             phoneNumber: msg.phoneNumber,

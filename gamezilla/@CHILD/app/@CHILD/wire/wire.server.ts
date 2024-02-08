@@ -4,7 +4,7 @@ import {
   ServerCtx,
   ServerEvent,
   WireCmd,
-  sendMsgToClient,
+  sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { Eff, Posix, TimeSpan } from "gamezilla/@SHARED/core";
 import { Sub } from "gamezilla/@SHARED/core/sub";
@@ -139,9 +139,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
           if (didServerRestart) {
             return {
               model,
-              msgCmd: [
-                sendMsgToClient([msg.clientId], { t: "server-restarted" }),
-              ],
+              msgCmd: [sendToClient([msg.clientId], { t: "server-restarted" })],
             };
           }
 

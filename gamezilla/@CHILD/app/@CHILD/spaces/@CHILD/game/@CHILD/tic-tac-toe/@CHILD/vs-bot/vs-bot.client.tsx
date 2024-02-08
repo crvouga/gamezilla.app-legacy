@@ -10,7 +10,7 @@ import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space
 import {
   ClientCmd,
   ClientCtx,
-  sendMsgToServer,
+  sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   IconArrowLeftOnRect,
@@ -89,14 +89,14 @@ export const update = ({
 
   const handled = handle({ ctx, msg, model });
   if (handled.t === "err") {
-    return { model, msgCmd: [sendMsgToServer(msg)] };
+    return { model, msgCmd: [sendToServer(msg)] };
   }
   const merged = mergeWithServer({
     ...ctx,
     client: model,
     server: handled.value,
   });
-  return { model: merged, msgCmd: [sendMsgToServer(msg)] };
+  return { model: merged, msgCmd: [sendToServer(msg)] };
 };
 
 export const updateFromServer = ({

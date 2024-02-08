@@ -8,7 +8,7 @@ import {
   APP_SOUND,
   ClientCmd,
   playSound,
-  sendMsgToServer,
+  sendToServer,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
@@ -119,7 +119,7 @@ export const updateMain = ({
 
   return {
     model: modelNew,
-    msgCmd: [sendMsgToServer(msg)],
+    msgCmd: [sendToServer(msg)],
     eff: Eff.None,
   };
 };

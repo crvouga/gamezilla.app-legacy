@@ -5,7 +5,7 @@ import {
   ServerCmd,
   ServerCtx,
   ServerEvent,
-  sendMsgToClient,
+  sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server";
 import { PhoneNumber, Result, Sub, isErr, ok } from "gamezilla/@SHARED/core";
 import { AccountDb } from "../../@SHARED/server/account-db/account-db-impl";
@@ -76,7 +76,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
       if (isErr(msg.result)) {
         return {
           model,
-          msgCmd: [sendMsgToClient([msg.clientId], msg)],
+          msgCmd: [sendToClient([msg.clientId], msg)],
         };
       }
 
@@ -88,13 +88,13 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
       if (found.t === "err") {
         return {
           model,
-          msgCmd: [sendMsgToClient([msg.clientId], msg)],
+          msgCmd: [sendToClient([msg.clientId], msg)],
         };
       }
 
       return {
         model,
-        msgCmd: [sendMsgToClient([msg.clientId], msg)],
+        msgCmd: [sendToClient([msg.clientId], msg)],
         msgEvt: [
           {
             t: "auth/client-authenticated",
@@ -110,7 +110,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
     case "sent-code": {
       return {
         model,
-        msgCmd: [sendMsgToClient([msg.clientId], msg)],
+        msgCmd: [sendToClient([msg.clientId], msg)],
       };
     }
   }
