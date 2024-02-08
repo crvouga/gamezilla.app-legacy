@@ -1,10 +1,51 @@
 import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { AppRoute } from "../../@SHARED/client";
+import {
+  AnonymousClientCtx,
+  AppRoute,
+  ClientCmd,
+  ClientEvent,
+} from "../../@SHARED/client";
 import * as Game from "./@CHILD/game/game.core";
 import { WithEventId, WithEventMeta } from "./@SHARED/event";
 import * as Space from "./spaces-core/space";
 import { SpaceEvent } from "./spaces-core/space-event";
 import * as Spaces from "./spaces-core/spaces";
+import { AppClientModule } from "../../@SHARED/architecture/app-client";
+import { AppServerModule } from "../../@SHARED/architecture/app-server";
+import { ServerCmd, ServerCtx, ServerEvent } from "../../@SHARED/server";
+
+//
+//
+//
+//
+//
+//
+//
+//
+
+export type ClientModule = AppClientModule<{
+  Ctx: AnonymousClientCtx;
+  MsgInCmd: never;
+  MsgInEvent: ClientEvent;
+  Model: ModelClient;
+  Msg: MsgClient;
+  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
+  MsgOutEvent: ClientEvent;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+}>;
+
+export type ServerModule = AppServerModule<{
+  Ctx: ServerCtx;
+  MsgInCmd: null;
+  MsgInEvent: ServerEvent;
+  Model: ModelServer;
+  Msg: MsgServer;
+  MsgOutCmd: ServerCmd<MsgToClient>;
+  MsgOutEvent: null;
+  MsgToClient: MsgToClient;
+  MsgToServer: MsgToServer;
+}>;
 
 //
 //

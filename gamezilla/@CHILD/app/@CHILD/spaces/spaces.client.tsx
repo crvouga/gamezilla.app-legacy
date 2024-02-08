@@ -48,32 +48,13 @@ import { SpaceEvent } from "./spaces-core/space-event";
 import * as SpaceState from "./spaces-core/space-state";
 import * as Spaces from "./spaces-core/spaces";
 import {
+  ClientModule,
   ModelClient,
   MsgClient,
   MsgToClient,
   MsgToServer,
 } from "./spaces.core";
-
-//
-//
-//
-//
-//
-//
-//
-//
-
-type Module = AppClientModule<{
-  Ctx: AnonymousClientCtx;
-  MsgInCmd: never;
-  MsgInEvent: ClientEvent;
-  Model: ModelClient;
-  Msg: MsgClient;
-  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
-  MsgOutEvent: ClientEvent;
-  MsgToClient: MsgToClient;
-  MsgToServer: MsgToServer;
-}>;
+import { ListSpacesClient } from "./list-spaces/list-spaces.client";
 
 //
 //
@@ -91,7 +72,7 @@ const initModel: ModelClient = {
   isFetchingSpaces: false,
 };
 
-export const init: Module["init"] = async ({ stored, ctx }) => {
+export const init: ClientModule["init"] = async ({ stored, ctx }) => {
   return AppClientModule.chainUpdates(
     { model: initModel },
     (model) => {
@@ -112,7 +93,7 @@ export const init: Module["init"] = async ({ stored, ctx }) => {
 //
 //
 
-export const update: Module["update"] = (input) => {
+export const update: ClientModule["update"] = (input) => {
   return AppClientModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
@@ -123,7 +104,7 @@ export const update: Module["update"] = (input) => {
   );
 };
 
-const updateProfiles: Module["update"] = ({ model, msgServer }) => {
+const updateProfiles: ClientModule["update"] = ({ model, msgServer }) => {
   if (msgServer?.profiles) {
     return {
       model,
@@ -134,7 +115,7 @@ const updateProfiles: Module["update"] = ({ model, msgServer }) => {
   return { model };
 };
 
-const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
+const updateFromMsg: ClientModule["update"] = ({ msg, model, ctx }) => {
   if (!msg) {
     return { model };
   }
@@ -188,7 +169,7 @@ const updateFromMsg: Module["update"] = ({ msg, model, ctx }) => {
   }
 };
 
-const updateFromServer: Module["update"] = async (input) => {
+const updateFromServer: ClientModule["update"] = async (input) => {
   const { ctx, msgServer, model } = input;
 
   if (!msgServer) {
@@ -239,7 +220,7 @@ const updateFromServer: Module["update"] = async (input) => {
   }
 };
 
-const fetchSpacesFromRoute: Module["update"] = async (input) => {
+const fetchSpacesFromRoute: ClientModule["update"] = async (input) => {
   switch (input.ctx.currentRoute.t) {
     case "spaces": {
       switch (input.ctx.currentRoute.c.t) {
@@ -274,7 +255,7 @@ const fetchSpacesFromRoute: Module["update"] = async (input) => {
   }
 };
 
-const updateFromEvent: Module["update"] = async (input) => {
+const updateFromEvent: ClientModule["update"] = async (input) => {
   if (!input.msgEvt) {
     return { model: input.model };
   }
@@ -338,7 +319,7 @@ const updateFromEvent: Module["update"] = async (input) => {
   }
 };
 
-const inputToSpaceId = (input: Parameters<Module["update"]>[0]) => {
+const inputToSpaceId = (input: Parameters<ClientModule["update"]>[0]) => {
   if (input.msg && "spaceId" in input.msg) {
     return input.msg.spaceId;
   }
@@ -350,7 +331,7 @@ const inputToSpaceId = (input: Parameters<Module["update"]>[0]) => {
   return null;
 };
 
-const updateGame: Module["update"] = async (input) => {
+const updateGame: ClientModule["update"] = async (input) => {
   const { ctx, model, msgServer, msgEvt, msg } = input;
 
   if (!ctx.currentUserId) {
@@ -741,11 +722,11 @@ const updateClientFromSpaceEvent = async ({
 //
 //
 
-export const subscriptions: Module["subscriptions"] = (input) => {
+export const subscriptions: ClientModule["subscriptions"] = (input) => {
   return subscriptionsCurrentUserGame(input);
 };
 
-export const subscriptionsCurrentUserGame: Module["subscriptions"] = ({
+export const subscriptionsCurrentUserGame: ClientModule["subscriptions"] = ({
   ctx,
   model,
 }) => {
@@ -827,7 +808,7 @@ export const View = ({
     case "space-list": {
       return (
         <>
-          <ViewScreenListSpaces dispatch={dispatch} ctx={ctx} model={model} />
+          <ListSpacesClient.View dispatch={dispatch} ctx={ctx} model={model} />
 
           {viewBottomBar}
         </>
