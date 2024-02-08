@@ -15,22 +15,20 @@ import { FlowPack } from "../../@SHARED/flow-pack/flow-pack";
 import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db";
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle";
 import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id";
-import { PackBuilder } from "./pack/builder";
-import { PackBuilderGame } from "./pack/builder/pack-builder.game";
-import { PackCreate } from "./pack/create";
-import { PackCreateGame } from "./pack/create/pack-create.game";
-import { PuzzleBuilder } from "./puzzle/builder";
-import { PuzzleBuilderGame } from "./puzzle/builder/puzzle-builder.game";
-import { PuzzleCreate } from "./puzzle/create";
-import { PuzzleCreateGame } from "./puzzle/create/puzzle-create.game";
-import { PuzzleDeleteForever } from "./puzzle/delete-forever";
-import { PuzzleDeleteForeverGame } from "./puzzle/delete-forever/puzzle-delete-forever.game";
-import { PuzzleEditName } from "./puzzle/edit";
-import { PuzzleEditGame } from "./puzzle/edit/puzzle-edit.game";
-import { PuzzleList } from "./puzzle/list";
-import { PuzzeListGame } from "./puzzle/list/puzzle-list.game";
-import { PuzzleSaveChanges } from "./puzzle/save-changes";
-import { PuzzleSaveChangesGame } from "./puzzle/save-changes/puzzle-save-changes.game";
+import { PackBuilder, PackBuilderGame } from "./pack/builder";
+import { PackCreate, PackCreateGame } from "./pack/create";
+import { PuzzleBuilder, PuzzleBuilderGame } from "./puzzle/builder";
+import { PuzzleCreate, PuzzleCreateGame } from "./puzzle/create";
+import {
+  PuzzleDeleteForever,
+  PuzzleDeleteForeverGame,
+} from "./puzzle/delete-forever";
+import { PuzzleEditGame, PuzzleEditName } from "./puzzle/edit";
+import { PuzzeListGame, PuzzleList } from "./puzzle/list";
+import {
+  PuzzleSaveChanges,
+  PuzzleSaveChangesGame,
+} from "./puzzle/save-changes";
 
 //
 //
