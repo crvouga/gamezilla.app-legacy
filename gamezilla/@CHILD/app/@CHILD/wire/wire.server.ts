@@ -192,8 +192,8 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
     }
 
     case "got-bad-msgs": {
-      ctx.logger.info(
-        `Got bad msg from client. reason=${msg.reason}, clientId=${msg.clientId}, sessionId=${msg.sessionId}`
+      ctx.logger.warn(
+        `Got bad msg from client. reason=${msg.reason}, client's clientId=${msg.clientId}, client's sessionId=${msg.sessionId}`
       );
       return {
         model,

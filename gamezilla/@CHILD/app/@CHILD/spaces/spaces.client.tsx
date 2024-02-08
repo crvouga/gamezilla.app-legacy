@@ -96,6 +96,7 @@ export const init: ClientModule["init"] = async ({ stored, ctx }) => {
 export const update: ClientModule["update"] = (input) => {
   return AppClientModule.chainUpdates(
     { model: input.model },
+    (model) => ListSpacesClient.update({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
