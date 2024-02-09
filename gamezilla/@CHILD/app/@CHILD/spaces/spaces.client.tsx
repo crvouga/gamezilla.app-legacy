@@ -22,6 +22,7 @@ import {
   pushRoute,
   replaceRoute,
   sendToServer,
+  showErrSm,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
@@ -180,6 +181,7 @@ const updateFromServer: ClientModule["update"] = async (input) => {
       const merged = Spaces.mergeOne({ model, space: msgServer.space });
       return {
         model: {
+          errors: {},
           games: model.games,
           modal: model.modal,
           previewUserId: model.previewUserId,
@@ -502,24 +504,41 @@ const updateClientFromSpaceEvent = async ({
 
   switch (spaceEvent.t) {
     case "user-joined-space": {
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId({
+      const error = Spaces.toErrorByEvenId(model, spaceEvent.eventId);
+
+      switch (error?.t) {
+        case "user-already-in-a-space": {
+          if (error.userId === ctx.currentUserId) {
+            return {
+              model,
+              msgCmd: showErrSm("You are already in a space"),
+            };
+          }
+
+          return { model };
+        }
+      }
+
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
         model,
-        userId: ctx.currentUserId,
-      });
+        ctx.currentUserId
+      );
+
       if (spaceEvent.spaceId === currentUserSpaceId) {
         return {
           model,
           msgCmd: [playSound(APP_SOUND.navForward)],
         };
       }
+
       return { model };
     }
 
     case "user-left-space": {
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId({
-        model: modelBefore,
-        userId: ctx.currentUserId,
-      });
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+        modelBefore,
+        ctx.currentUserId
+      );
 
       if (spaceEvent.spaceId === currentUserSpaceId) {
         return {
@@ -548,10 +567,10 @@ const updateClientFromSpaceEvent = async ({
     }
 
     case "user-ended-space": {
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId({
-        model: modelBefore,
-        userId: ctx.currentUserId,
-      });
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+        modelBefore,
+        ctx.currentUserId
+      );
 
       if (spaceEvent.spaceId !== currentUserSpaceId) {
         return { model };
@@ -606,10 +625,10 @@ const updateClientFromSpaceEvent = async ({
     }
 
     case "user-inputted-game": {
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId({
-        model: model,
-        userId: ctx.currentUserId,
-      });
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+        model,
+        ctx.currentUserId
+      );
       if (spaceEvent.spaceId === currentUserSpaceId) {
         return {
           model,
@@ -712,10 +731,7 @@ export const subscriptionsCurrentUserGame: ClientModule["subscriptions"] = ({
 
   const clientCtx = { ...ctx, currentUserId };
 
-  const spaceId = Spaces.toSpaceIdByUserId({
-    model,
-    userId: currentUserId,
-  });
+  const spaceId = Spaces.toSpaceIdByUserId(model, currentUserId);
 
   if (!spaceId) {
     return Sub.None;
@@ -1183,10 +1199,7 @@ const ViewSpaceScreenMain = ({
   dispatch: (m: MsgClient) => void;
   dispatchEvent: (m: SpaceEvent) => void;
 }) => {
-  const currentUserSpaceId = Spaces.toSpaceIdByUserId({
-    model,
-    userId: ctx.currentUserId,
-  });
+  const currentUserSpaceId = Spaces.toSpaceIdByUserId(model, ctx.currentUserId);
 
   if (currentUserSpaceId !== space.spaceId) {
     return (

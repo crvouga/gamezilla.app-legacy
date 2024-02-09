@@ -166,7 +166,17 @@ export const showToast = <T extends ClientCmdTypes>(
   };
 };
 
-export const showOkToast = <T extends ClientCmdTypes>(
+export const didShowToast = <T extends ClientCmdTypes>({
+  msgCmd,
+}: {
+  msgCmd?: ClientCmd<T>[];
+}): boolean => {
+  return (
+    msgCmd?.some((cmd) => cmd.t === "toast" && cmd.c.t === "enqueue") ?? false
+  );
+};
+
+export const showCreatedSm = <T extends ClientCmdTypes>(
   text: string
 ): ClientCmd<T>[] => {
   return [
@@ -187,7 +197,7 @@ export const showOkToast = <T extends ClientCmdTypes>(
   ];
 };
 
-export const showErrorToast = <T extends ClientCmdTypes>(
+export const showErrSm = <T extends ClientCmdTypes>(
   text: string,
   errorMsg?: string,
   duration?: TimeSpan
@@ -211,6 +221,29 @@ export const showErrorToast = <T extends ClientCmdTypes>(
       },
     },
   ];
+};
+
+export const didShowErrorSm = <T extends ClientCmdTypes>({
+  msgCmd,
+}: {
+  msgCmd?: ClientCmd<T>[];
+}): boolean => {
+  const isSomeErrorToast =
+    msgCmd?.some(
+      (cmd) =>
+        cmd.t === "toast" &&
+        cmd.c.t === "enqueue" &&
+        cmd.c.toastVariant === "error"
+    ) ?? false;
+
+  const isSomeErrorSound =
+    msgCmd?.some(
+      (cmd) =>
+        cmd.t === "sound" &&
+        cmd.c.t === "play" &&
+        cmd.c.src === APP_SOUND.alertErrorSm
+    ) ?? false;
+  return isSomeErrorToast && isSomeErrorSound;
 };
 
 //
@@ -268,6 +301,16 @@ export const playSound = (
       delay: config?.delay,
     },
   };
+};
+
+export const didPlaySound = <T extends ClientCmdTypes>({
+  msgCmd,
+}: {
+  msgCmd?: ClientCmd<T>[];
+}): boolean => {
+  return (
+    msgCmd?.some((cmd) => cmd.t === "sound" && cmd.c.t === "play") ?? false
+  );
 };
 
 export const preloadSound = <T extends ClientCmdTypes>(

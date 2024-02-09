@@ -2,8 +2,8 @@ import {
   APP_SOUND,
   playSound,
   sendToServer,
-  showErrorToast,
-  showOkToast,
+  showErrSm,
+  showCreatedSm,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { Button, IconPlus } from "gamezilla/@CHILD/app/@SHARED/ui";
 import {
@@ -50,7 +50,7 @@ const update: ClientModule["update"] = (input) => {
             ...model,
             puzzleCreateRequest: Result.err(errorMessage),
           },
-          msgCmd: showErrorToast(errorMessage),
+          msgCmd: showErrSm(errorMessage),
         };
       }
       return { model };
@@ -66,7 +66,7 @@ const update: ClientModule["update"] = (input) => {
       if (isErr(msgGame.created)) {
         return {
           model: { ...model, puzzleCreateRequest: msgGame.created },
-          msgCmd: showErrorToast(msgGame.created.error),
+          msgCmd: showErrSm(msgGame.created.error),
         };
       }
 
@@ -78,7 +78,7 @@ const update: ClientModule["update"] = (input) => {
           puzzleCreateRequest: Result.mapOk(msgGame.created, () => null),
           puzzles: { ...model.puzzles, [puzzleNew.id]: puzzleNew },
         },
-        msgCmd: showOkToast("Puzzle created"),
+        msgCmd: showCreatedSm("Puzzle created"),
       };
     }
 

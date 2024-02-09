@@ -185,6 +185,7 @@ const updateFromClient: Module["update"] = async (input) => {
 
           return {
             model: {
+              errors: {},
               games: model.games,
               profileCache: model.profileCache,
               spaceIdByUserId: merged.spaceIdByUserId,
@@ -497,10 +498,8 @@ const updateFromSpaceEvent = async ({
   switch (spaceEvent.t) {
     case "user-joined-space": {
       const space = Spaces.toSpace(model, spaceEvent.spaceId);
-      console.log("user-joined-space", spaceEvent.spaceId);
 
       if (!space) {
-        console.log("no space");
         return { model };
       }
 

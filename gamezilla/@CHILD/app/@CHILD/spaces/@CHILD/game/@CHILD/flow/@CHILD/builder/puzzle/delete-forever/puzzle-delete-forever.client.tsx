@@ -3,7 +3,7 @@ import {
   APP_SOUND,
   playSound,
   sendToServer,
-  showOkToast,
+  showCreatedSm,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   ConfirmationDrawer,
@@ -74,7 +74,7 @@ const updateFromMsgGame: ClientModule["update"] = (input) => {
           deleteForeverRequest: msgGame.deleted,
           opened: null,
         },
-        msgCmd: showOkToast("Deleted puzzle"),
+        msgCmd: showCreatedSm("Deleted puzzle"),
       };
     }
 

@@ -4,7 +4,7 @@ import {
   APP_SOUND,
   playSound,
   sendToServer,
-  showErrorToast,
+  showErrSm,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { IconPuzzlePiece, Spinner, cn } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { EmptyState } from "gamezilla/@CHILD/app/@SHARED/ui/empty-state";
@@ -92,7 +92,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
           puzzles: puzzlesNew,
         },
         msgCmd: isErr(msgServer.listed)
-          ? showErrorToast(msgServer.listed.error)
+          ? showErrSm(msgServer.listed.error)
           : [],
       };
     }

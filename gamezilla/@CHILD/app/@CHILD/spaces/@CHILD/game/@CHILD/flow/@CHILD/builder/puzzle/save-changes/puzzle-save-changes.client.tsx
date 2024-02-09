@@ -4,8 +4,8 @@ import {
   APP_SOUND,
   playSound,
   sendToServer,
-  showErrorToast,
-  showOkToast,
+  showErrSm,
+  showCreatedSm,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
@@ -151,8 +151,8 @@ const updateSaveChangesRequest: ClientModule["update"] = (input) => {
         saveChangesRequest: Result.mapOk(msgGame.saved, () => null),
       },
       msgCmd: isOk(msgGame.saved)
-        ? showOkToast("Saved changes")
-        : showErrorToast(msgGame.saved.error),
+        ? showCreatedSm("Saved changes")
+        : showErrSm(msgGame.saved.error),
     };
   }
   return { model };

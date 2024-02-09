@@ -1,12 +1,12 @@
 import { expect, test } from "bun:test";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
-import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client";
+import { ClientCtx, didShowErrorSm } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Posix } from "gamezilla/@SHARED/core";
+import { AppClientModule } from "../../@SHARED/architecture/app-client";
 import * as Spaces from "./spaces-core/spaces";
 import * as SpaceClient from "./spaces.client";
 import * as SpaceCore from "./spaces.core";
-import { AppClientModule } from "../../@SHARED/architecture/app-client";
 
 const ctx: ClientCtx = {
   currentRoute: {
@@ -93,14 +93,8 @@ test("current user starting space", async () => {
     userId: ctx.currentUserId,
   });
 
-  const before = Spaces.toSpaceIdByUserId({
-    model: initial.model,
-    userId: ctx.currentUserId,
-  });
-  const after = Spaces.toSpaceIdByUserId({
-    model: started.model,
-    userId: ctx.currentUserId,
-  });
+  const before = Spaces.toSpaceIdByUserId(initial.model, ctx.currentUserId);
+  const after = Spaces.toSpaceIdByUserId(started.model, ctx.currentUserId);
 
   expect(before).toEqual(null);
   expect(after).toEqual(spaceId);
@@ -140,15 +134,9 @@ test("current user joining started space", async () => {
     (model) => userJoinedSpace({ model, spaceId, userId: ctx.currentUserId })
   );
 
-  const before = Spaces.toSpaceIdByUserId({
-    model: initial.model,
-    userId: ctx.currentUserId,
-  });
+  const before = Spaces.toSpaceIdByUserId(initial.model, ctx.currentUserId);
 
-  const after = Spaces.toSpaceIdByUserId({
-    model: joined.model,
-    userId: ctx.currentUserId,
-  });
+  const after = Spaces.toSpaceIdByUserId(joined.model, ctx.currentUserId);
 
   expect(before).toEqual(null);
   expect(after).toEqual(spaceId);
@@ -178,14 +166,8 @@ test("current user leaving joined space", async () => {
     userId: ctx.currentUserId,
   });
 
-  const before = Spaces.toSpaceIdByUserId({
-    model: joined.model,
-    userId: ctx.currentUserId,
-  });
-  const after = Spaces.toSpaceIdByUserId({
-    model: left.model,
-    userId: ctx.currentUserId,
-  });
+  const before = Spaces.toSpaceIdByUserId(joined.model, ctx.currentUserId);
+  const after = Spaces.toSpaceIdByUserId(left.model, ctx.currentUserId);
 
   expect(before).toEqual(spaceId);
   expect(after).toEqual(null);
@@ -193,35 +175,28 @@ test("current user leaving joined space", async () => {
 });
 
 test("preventing joining a space if already in a space", async () => {
-  const spaceIdA = SpaceId.generate();
-  const spaceIdB = SpaceId.generate();
+  const SpaceA = SpaceId.generate();
+  const SpaceB = SpaceId.generate();
 
-  const joinedA = await AppClientModule.chainUpdates(
+  const arranged = await AppClientModule.chainUpdates(
     await init(),
     (model) =>
-      userStartedSpace({ model, spaceId: spaceIdA, userId: UserId.generate() }),
+      userStartedSpace({ model, spaceId: SpaceA, userId: UserId.generate() }),
     (model) =>
-      userJoinedSpace({ model, spaceId: spaceIdA, userId: ctx.currentUserId })
+      userJoinedSpace({ model, spaceId: SpaceA, userId: ctx.currentUserId })
   );
 
-  const joinedBAfterA = await AppClientModule.chainUpdates(
-    joinedA,
+  const joined = await AppClientModule.chainUpdates(
+    { model: arranged.model },
     (model) =>
-      userStartedSpace({ model, spaceId: spaceIdB, userId: UserId.generate() }),
+      userStartedSpace({ model, spaceId: SpaceB, userId: UserId.generate() }),
     (model) =>
-      userJoinedSpace({ model, spaceId: spaceIdB, userId: ctx.currentUserId })
+      userJoinedSpace({ model, spaceId: SpaceB, userId: ctx.currentUserId })
   );
 
-  const before = Spaces.toSpaceIdByUserId({
-    model: joinedA.model,
-    userId: ctx.currentUserId,
-  });
+  expect(Spaces.toSpaceIdByUserId(arranged.model, ctx.currentUserId)).toEqual(
+    SpaceA
+  );
 
-  const after = Spaces.toSpaceIdByUserId({
-    model: joinedBAfterA.model,
-    userId: ctx.currentUserId,
-  });
-
-  expect(before).toEqual(spaceIdA);
-  expect(after).toEqual(spaceIdA);
+  expect(didShowErrorSm(joined)).toBeTrue();
 });

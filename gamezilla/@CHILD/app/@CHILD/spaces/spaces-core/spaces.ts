@@ -17,6 +17,11 @@ import { SpaceEvent } from "./space-event";
 //
 //
 
+export type SpaceError = {
+  t: "user-already-in-a-space";
+  userId: UserId;
+};
+
 export type Model = {
   spaces: {
     [spaceId: SpaceId]: Space.Model;
@@ -24,11 +29,15 @@ export type Model = {
   spaceIdByUserId: {
     [userId: UserId]: SpaceId;
   };
+  errors: {
+    [eventId: string]: SpaceError;
+  };
 };
 
 export const init: Model = {
   spaces: {},
   spaceIdByUserId: {},
+  errors: {},
 };
 
 //
@@ -102,18 +111,22 @@ export const listSpaces = ({
   return spaces;
 };
 
-export const toSpaceIdByUserId = ({
-  model,
-  userId,
-}: {
-  model: Model;
-  userId: UserId | null;
-}): SpaceId | null => {
+export const toSpaceIdByUserId = (
+  model: Model,
+  userId: UserId | null
+): SpaceId | null => {
   return userId ? model.spaceIdByUserId[userId] ?? null : null;
 };
 
 export const toSpace = (model: Model, spaceId: SpaceId): Space.Model | null => {
   return model.spaces[spaceId] ?? null;
+};
+
+export const toErrorByEvenId = (
+  model: Model,
+  eventId: EventId
+): SpaceError | null => {
+  return model.errors[eventId] ?? null;
 };
 
 export const toSpaceByUserId = ({
@@ -238,7 +251,18 @@ export const updateFromSpaceEvent = ({
       const spaceId = model.spaceIdByUserId[spaceEvent.userId];
 
       if (spaceId) {
-        return { model };
+        return {
+          model: {
+            ...model,
+            errors: {
+              ...model.errors,
+              [spaceEvent.eventId]: {
+                t: "user-already-in-a-space",
+                userId: spaceEvent.userId,
+              },
+            },
+          },
+        };
       }
 
       const spaceIdByUserIdNew = {

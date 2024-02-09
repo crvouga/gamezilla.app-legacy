@@ -1,8 +1,8 @@
 import { Space } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import * as Game from "../@CHILD/game/game.core";
 import { EventId, EventMeta } from "../@SHARED/event";
 import { SpaceEvent } from "./space-event";
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 
 //
 //

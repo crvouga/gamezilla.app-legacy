@@ -3,8 +3,8 @@ import {
   APP_SOUND,
   playSound,
   sendToServer,
-  showErrorToast,
-  showOkToast,
+  showErrSm,
+  showCreatedSm,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
@@ -118,8 +118,8 @@ const updateFormButtons: ClientModule["update"] = (input) => {
           opened: null,
         },
         msgCmd: isOk(msgGame.edited)
-          ? showOkToast("Saved name")
-          : showErrorToast(msgGame.edited.error),
+          ? showCreatedSm("Saved name")
+          : showErrSm(msgGame.edited.error),
       };
     }
 
