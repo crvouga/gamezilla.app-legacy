@@ -13,6 +13,7 @@ import * as Spaces from "./spaces-core/spaces";
 import { AppClientModule } from "../../@SHARED/architecture/app-client";
 import { AppServerModule } from "../../@SHARED/architecture/app-server";
 import { ServerCmd, ServerCtx, ServerEvent } from "../../@SHARED/server";
+import { Posix, RemoteResult } from "gamezilla/@SHARED/core";
 
 //
 //
@@ -70,7 +71,8 @@ export type ModelClient = Spaces.Model & {
   };
   previewUserId: UserId | null;
   modal: null | "user-preview" | "users";
-  isFetchingSpaces: boolean;
+  listSpacesRequest: RemoteResult<string, null>;
+  listSpacesRequestedAt: Posix;
 };
 
 //
@@ -88,6 +90,7 @@ export type MsgServer =
 export type MsgClient =
   | { t: "event"; c: WithEventId<SpaceEvent> }
   | { t: "game"; spaceId: SpaceId; c: Game.MsgClient }
+  | { t: "time-passed" }
   | { t: "closed-modal" }
   | { t: "clicked-people-button" }
   | { t: "clicked-back-button"; from: "join-screen" }

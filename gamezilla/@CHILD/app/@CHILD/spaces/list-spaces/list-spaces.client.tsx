@@ -15,6 +15,14 @@ import { EmptyState } from "gamezilla/@CHILD/app/@SHARED/ui/empty-state";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { GameName, gameNameToString } from "../@CHILD/game/game.core";
 import * as SpaceState from "../spaces-core/space-state";
+import {
+  Posix,
+  TimeSpan,
+  err,
+  isLoading,
+  loading,
+  ok,
+} from "gamezilla/@SHARED/core";
 
 //
 //
@@ -25,16 +33,41 @@ import * as SpaceState from "../spaces-core/space-state";
 //
 
 const update: ClientModule["update"] = async (input) => {
-  const { msgServer, model, msgEvt } = input;
+  const { ctx, msgServer, model, msgEvt, msg } = input;
 
   switch (msgEvt?.t) {
     case "routing/route-changed": {
       if (msgEvt.route.t === "spaces" && msgEvt.route.c.t === "space-list") {
         return {
-          model: { ...model, isFetchingSpaces: true },
+          model: {
+            ...model,
+            listSpacesRequest: loading,
+          },
           msgCmd: [sendToServer({ t: "list-spaces", limit: 100, offset: 0 })],
         };
       }
+      return { model };
+    }
+  }
+
+  switch (msg?.t) {
+    case "time-passed": {
+      const didTimeout =
+        isLoading(model.listSpacesRequest) &&
+        TimeSpan.gte(
+          Posix.diff(model.listSpacesRequestedAt, ctx.now),
+          TimeSpan.fromSeconds(5)
+        );
+
+      if (didTimeout) {
+        return {
+          model: {
+            ...model,
+            listSpacesRequest: err("Request to list spaces timed out"),
+          },
+        };
+      }
+
       return { model };
     }
   }
@@ -44,12 +77,14 @@ const update: ClientModule["update"] = async (input) => {
       const merged = Spaces.mergeMany({ model, spaces: msgServer.spaces });
       return {
         model: {
+          errors: model.errors,
           games: model.games,
           modal: model.modal,
           previewUserId: model.previewUserId,
           spaceIdByUserId: merged.spaceIdByUserId,
           spaces: merged.spaces,
-          isFetchingSpaces: false,
+          listSpacesRequest: ok(null),
+          listSpacesRequestedAt: Posix.zero,
         },
       };
     }

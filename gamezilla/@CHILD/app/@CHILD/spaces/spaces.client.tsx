@@ -37,7 +37,7 @@ import {
   TopBarBackButton,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
-import { Eff, Sub, batchMsgs } from "gamezilla/@SHARED/core";
+import { Eff, Posix, Sub, batchMsgs, notAsked } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import { Game } from "./@CHILD/game/game.client";
 import { gameNameToString } from "./@CHILD/game/game.core";
@@ -67,7 +67,8 @@ const initModel: ModelClient = {
   games: {},
   modal: null,
   previewUserId: null,
-  isFetchingSpaces: false,
+  listSpacesRequest: notAsked,
+  listSpacesRequestedAt: Posix.zero,
 };
 
 export const init: ClientModule["init"] = async ({ stored, ctx }) => {
@@ -158,12 +159,12 @@ const updateFromMsg: ClientModule["update"] = ({ msg, model, ctx }) => {
       };
     }
 
-    case "game": {
-      return { model };
-    }
-
     case "event": {
       return updateFromManySpaceEvents({ ctx, msgEvts: [msg.c], model });
+    }
+
+    default: {
+      return { model };
     }
   }
 };
@@ -187,7 +188,8 @@ const updateFromServer: ClientModule["update"] = async (input) => {
           previewUserId: model.previewUserId,
           spaceIdByUserId: merged.spaceIdByUserId,
           spaces: merged.spaces,
-          isFetchingSpaces: false,
+          listSpacesRequest: notAsked,
+          listSpacesRequestedAt: Posix.zero,
         },
       };
     }

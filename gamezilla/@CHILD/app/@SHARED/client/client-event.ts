@@ -10,3 +10,7 @@ export type ClientEvent =
       t: "platform/document-visibility-changed";
       state: DocumentVisibilityState;
     };
+
+export const routeChanged = (route: AppRoute): ClientEvent => {
+  return { t: "routing/route-changed", route };
+};
