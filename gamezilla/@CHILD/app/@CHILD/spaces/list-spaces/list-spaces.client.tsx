@@ -77,10 +77,7 @@ const update: ClientModule["update"] = async (input) => {
       const merged = Spaces.mergeMany({ model, spaces: msgServer.spaces });
       return {
         model: {
-          errors: model.errors,
-          games: model.games,
-          modal: model.modal,
-          previewUserId: model.previewUserId,
+          ...model,
           spaceIdByUserId: merged.spaceIdByUserId,
           spaces: merged.spaces,
           listSpacesRequest: ok(null),
