@@ -3,10 +3,10 @@ import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { ClientCtx, didShowErrorSm } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Posix } from "gamezilla/@SHARED/core";
-import { AppClientModule } from "../../@SHARED/architecture/app-client";
-import * as Spaces from "./spaces-core/spaces";
-import * as SpaceClient from "./spaces.client";
-import * as SpaceCore from "./spaces.core";
+import { AppClientModule } from "../../../../@SHARED/architecture/app-client";
+import * as Spaces from "../../spaces-core/spaces";
+import * as SpaceClient from "../../spaces.client";
+import * as SpaceCore from "../../spaces.core";
 
 const ctx: ClientCtx = {
   currentRoute: {

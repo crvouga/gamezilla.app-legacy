@@ -16,7 +16,6 @@ import {
   AnonymousClientCtx,
   ClientCmd,
   ClientCtx,
-  RouteGameSpace,
   addProfiles,
   playSound,
   pushRoute,
@@ -784,39 +783,48 @@ export const View = ({
   ctx,
   dispatch,
   model,
-  route,
   viewBottomBar,
 }: {
   model: ModelClient;
   ctx: ClientCtx;
   dispatch: (m: MsgClient) => void;
-  route: RouteGameSpace;
   viewBottomBar: VDom;
 }): VDom => {
   const dispatchEvent = (m: SpaceEvent) => {
     dispatch({ t: "event", c: withId(m) });
   };
-  switch (route.t) {
-    case "space-list": {
-      return (
-        <>
-          <ListSpacesClient.View dispatch={dispatch} ctx={ctx} model={model} />
+  switch (ctx.currentRoute.t) {
+    case "spaces": {
+      switch (ctx.currentRoute.c.t) {
+        case "space-list": {
+          return (
+            <>
+              <ListSpacesClient.View
+                dispatch={dispatch}
+                ctx={ctx}
+                model={model}
+              />
 
-          {viewBottomBar}
-        </>
-      );
+              {viewBottomBar}
+            </>
+          );
+        }
+
+        case "space": {
+          return (
+            <ViewSpaceScreen
+              dispatchEvent={dispatchEvent}
+              spaceId={ctx.currentRoute.c.spaceId}
+              ctx={ctx}
+              dispatch={dispatch}
+              model={model}
+            />
+          );
+        }
+      }
     }
-
-    case "space": {
-      return (
-        <ViewSpaceScreen
-          dispatchEvent={dispatchEvent}
-          spaceId={route.spaceId}
-          ctx={ctx}
-          dispatch={dispatch}
-          model={model}
-        />
-      );
+    default: {
+      return null;
     }
   }
 };
