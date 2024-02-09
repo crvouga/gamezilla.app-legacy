@@ -1,15 +1,8 @@
 import { expect, test } from "bun:test";
-import { didShowErrorSm } from "gamezilla/@CHILD/app/@SHARED/client";
-import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { AppClientModule } from "../../../../@SHARED/architecture/app-client";
 import { Spaces } from "../../spaces-core";
-import {
-  ctx,
-  init,
-  userJoinedSpace,
-  userLeftSpace,
-  userStartedSpace,
-} from "./shared";
+import { ctx, init, userStartedSpace } from "./shared";
 
 test("current user starting space", async () => {
   const spaceId = SpaceId.generate();
