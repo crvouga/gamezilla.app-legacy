@@ -134,22 +134,17 @@ test("current user joining started space", async () => {
 
   const initial = await init();
 
-  const started = await userStartedSpace({
-    model: initial.model,
-    spaceId,
-    userId: UserId.generate(),
-  });
-
-  const joined = await userJoinedSpace({
-    model: started.model,
-    spaceId,
-    userId: ctx.currentUserId,
-  });
+  const joined = await AppClientModule.chainUpdates(
+    initial,
+    (model) => userStartedSpace({ model, spaceId, userId: UserId.generate() }),
+    (model) => userJoinedSpace({ model, spaceId, userId: ctx.currentUserId })
+  );
 
   const before = Spaces.toSpaceIdByUserId({
-    model: started.model,
+    model: initial.model,
     userId: ctx.currentUserId,
   });
+
   const after = Spaces.toSpaceIdByUserId({
     model: joined.model,
     userId: ctx.currentUserId,
