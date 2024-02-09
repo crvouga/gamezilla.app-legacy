@@ -6,6 +6,7 @@ import { Posix } from "gamezilla/@SHARED/core";
 import * as Spaces from "./spaces-core/spaces";
 import * as SpaceClient from "./spaces.client";
 import * as SpaceCore from "./spaces.core";
+import { AppClientModule } from "../../@SHARED/architecture/app-client";
 
 const ctx: ClientCtx = {
   currentRoute: {
@@ -196,46 +197,36 @@ test("current user leaving joined space", async () => {
   //
 });
 
-test("prmsgEvt joining a space if already in a space", async () => {
+test("preventing joining a space if already in a space", async () => {
   const spaceIdA = SpaceId.generate();
   const spaceIdB = SpaceId.generate();
 
-  const initial = await init();
+  const joinedA = await AppClientModule.chainUpdates(
+    await init(),
+    (model) =>
+      userStartedSpace({ model, spaceId: spaceIdA, userId: UserId.generate() }),
+    (model) =>
+      userJoinedSpace({ model, spaceId: spaceIdA, userId: ctx.currentUserId })
+  );
 
-  const startedA = await userStartedSpace({
-    model: initial.model,
-    spaceId: spaceIdA,
-    userId: UserId.generate(),
-  });
-
-  const joinedA = await userJoinedSpace({
-    model: startedA.model,
-    spaceId: spaceIdA,
-    userId: ctx.currentUserId,
-  });
-
-  const startedB = await userStartedSpace({
-    model: joinedA.model,
-    spaceId: spaceIdB,
-    userId: UserId.generate(),
-  });
-
-  const joinedB = await userLeftSpace({
-    model: startedB.model,
-    spaceId: spaceIdB,
-    userId: ctx.currentUserId,
-  });
+  const joinedBAfterA = await AppClientModule.chainUpdates(
+    joinedA,
+    (model) =>
+      userStartedSpace({ model, spaceId: spaceIdB, userId: UserId.generate() }),
+    (model) =>
+      userJoinedSpace({ model, spaceId: spaceIdB, userId: ctx.currentUserId })
+  );
 
   const before = Spaces.toSpaceIdByUserId({
     model: joinedA.model,
     userId: ctx.currentUserId,
   });
+
   const after = Spaces.toSpaceIdByUserId({
-    model: joinedB.model,
+    model: joinedBAfterA.model,
     userId: ctx.currentUserId,
   });
 
   expect(before).toEqual(spaceIdA);
   expect(after).toEqual(spaceIdA);
-  //
 });
