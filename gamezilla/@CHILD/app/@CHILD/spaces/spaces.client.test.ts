@@ -25,58 +25,58 @@ function init() {
   return SpaceClient.init({ ctx, stored: null });
 }
 
-function userStartedSpace(input: {
-  model: SpaceCore.ModelClient;
-  userId: UserId;
-  spaceId: SpaceId;
-}) {
+function userStartedSpace(
+  model: SpaceCore.ModelClient,
+  userId: UserId,
+  spaceId: SpaceId
+) {
   return SpaceClient.update({
     ctx,
-    model: input.model,
+    model: model,
     msg: {
       t: "event",
       c: withId({
         t: "user-started-space",
-        spaceId: input.spaceId,
-        userId: input.userId,
+        spaceId,
+        userId,
       }),
     },
   });
 }
 
-function userJoinedSpace(input: {
-  model: SpaceCore.ModelClient;
-  userId: UserId;
-  spaceId: SpaceId;
-}) {
+function userJoinedSpace(
+  model: SpaceCore.ModelClient,
+  userId: UserId,
+  spaceId: SpaceId
+) {
   return SpaceClient.update({
     ctx,
-    model: input.model,
+    model: model,
     msg: {
       t: "event",
       c: withId({
         t: "user-joined-space",
-        spaceId: input.spaceId,
-        userId: input.userId,
+        spaceId: spaceId,
+        userId: userId,
       }),
     },
   });
 }
 
-function userLeftSpace(input: {
-  model: SpaceCore.ModelClient;
-  userId: UserId;
-  spaceId: SpaceId;
-}) {
+function userLeftSpace(
+  model: SpaceCore.ModelClient,
+  userId: UserId,
+  spaceId: SpaceId
+) {
   return SpaceClient.update({
     ctx,
-    model: input.model,
+    model: model,
     msg: {
       t: "event",
       c: withId({
         t: "user-left-space",
-        spaceId: input.spaceId,
-        userId: input.userId,
+        spaceId: spaceId,
+        userId: userId,
       }),
     },
   });
@@ -87,11 +87,11 @@ test("current user starting space", async () => {
 
   const initial = await init();
 
-  const started = await userStartedSpace({
-    model: initial.model,
-    spaceId,
-    userId: ctx.currentUserId,
-  });
+  const started = await userStartedSpace(
+    initial.model,
+    ctx.currentUserId,
+    spaceId
+  );
 
   const before = Spaces.toSpaceIdByUserId(initial.model, ctx.currentUserId);
   const after = Spaces.toSpaceIdByUserId(started.model, ctx.currentUserId);
@@ -105,11 +105,11 @@ test("redirecting when starting a space", async () => {
 
   const initial = await init();
 
-  const started = await userStartedSpace({
-    model: initial.model,
-    spaceId,
-    userId: ctx.currentUserId,
-  });
+  const started = await userStartedSpace(
+    initial.model,
+    ctx.currentUserId,
+    spaceId
+  );
 
   expect(
     started.msgCmd?.filter(
@@ -130,8 +130,8 @@ test("current user joining started space", async () => {
 
   const joined = await AppClientModule.chainUpdates(
     initial,
-    (model) => userStartedSpace({ model, spaceId, userId: UserId.generate() }),
-    (model) => userJoinedSpace({ model, spaceId, userId: ctx.currentUserId })
+    (model) => userStartedSpace(model, UserId.generate(), spaceId),
+    (model) => userJoinedSpace(model, ctx.currentUserId, spaceId)
   );
 
   const before = Spaces.toSpaceIdByUserId(initial.model, ctx.currentUserId);
@@ -148,23 +148,19 @@ test("current user leaving joined space", async () => {
 
   const initial = await init();
 
-  const started = await userStartedSpace({
-    model: initial.model,
-    spaceId,
-    userId: UserId.generate(),
-  });
+  const started = await userStartedSpace(
+    initial.model,
+    UserId.generate(),
+    spaceId
+  );
 
-  const joined = await userJoinedSpace({
-    model: started.model,
-    spaceId,
-    userId: ctx.currentUserId,
-  });
+  const joined = await userJoinedSpace(
+    started.model,
+    ctx.currentUserId,
+    spaceId
+  );
 
-  const left = await userLeftSpace({
-    model: joined.model,
-    spaceId,
-    userId: ctx.currentUserId,
-  });
+  const left = await userLeftSpace(joined.model, ctx.currentUserId, spaceId);
 
   const before = Spaces.toSpaceIdByUserId(joined.model, ctx.currentUserId);
   const after = Spaces.toSpaceIdByUserId(left.model, ctx.currentUserId);
@@ -180,18 +176,14 @@ test("preventing joining a space if already in a space", async () => {
 
   const arranged = await AppClientModule.chainUpdates(
     await init(),
-    (model) =>
-      userStartedSpace({ model, spaceId: SpaceA, userId: UserId.generate() }),
-    (model) =>
-      userJoinedSpace({ model, spaceId: SpaceA, userId: ctx.currentUserId })
+    (model) => userStartedSpace(model, UserId.generate(), SpaceA),
+    (model) => userJoinedSpace(model, ctx.currentUserId, SpaceA)
   );
 
   const joined = await AppClientModule.chainUpdates(
     { model: arranged.model },
-    (model) =>
-      userStartedSpace({ model, spaceId: SpaceB, userId: UserId.generate() }),
-    (model) =>
-      userJoinedSpace({ model, spaceId: SpaceB, userId: ctx.currentUserId })
+    (model) => userStartedSpace(model, UserId.generate(), SpaceB),
+    (model) => userJoinedSpace(model, ctx.currentUserId, SpaceB)
   );
 
   expect(Spaces.toSpaceIdByUserId(arranged.model, ctx.currentUserId)).toEqual(
