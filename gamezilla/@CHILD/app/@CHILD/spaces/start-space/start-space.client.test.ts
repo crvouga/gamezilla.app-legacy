@@ -1,5 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { didPushRoute } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  didPlaySound,
+  didPushRoute,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { AppClientModule } from "../../../@SHARED/architecture/app-client";
 import { Spaces } from "../spaces-core";
@@ -28,5 +31,15 @@ describe("start space client", () => {
     expect(
       didPushRoute(started, { t: "spaces", c: { t: "space", spaceId } })
     ).toBeTrue();
+  });
+
+  test("should play sound after starting space", async () => {
+    const spaceId = SpaceId.generate();
+
+    const started = await AppClientModule.chainUpdates(await init(), (model) =>
+      userStartedSpace(model, ctx.currentUserId, spaceId)
+    );
+
+    expect(didPlaySound(started)).toBeTrue();
   });
 });

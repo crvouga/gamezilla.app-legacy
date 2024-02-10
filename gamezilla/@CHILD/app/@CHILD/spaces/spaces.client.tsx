@@ -44,6 +44,7 @@ import * as SpaceState from "./spaces-core/space-state";
 import * as Spaces from "./spaces-core/spaces";
 import { ClientModule, ModelClient, MsgClient } from "./spaces.core";
 import { LeaveSpaceClient } from "./leave-space/leave-space.client";
+import { StartSpaceClient } from "./start-space/start-space.client";
 
 //
 //
@@ -152,6 +153,7 @@ const updateMain: SpaceClientModule["update"] = (input) => {
     (model) => updateSpacesFromSpaceEvent({ ...input, model }),
     //
     (model) => updateFromSpaceEvent({ ...input, model }),
+    (model) => StartSpaceClient.update({ ...input, model }),
     (model) => JoinSpaceClient.update({ ...input, model }),
     (model) => ListSpacesClient.update({ ...input, model }),
     (model) => updateGame({ ...input, model }),
@@ -207,23 +209,6 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = async (input) => {
   }
 
   switch (msgSpaceEvent?.t) {
-    case "user-started-space": {
-      if (msgSpaceEvent.userId === ctx.currentUserId) {
-        return {
-          model,
-          msgCmd: [
-            playSound(APP_SOUND.navForward),
-            pushRoute({
-              t: "spaces",
-              c: { t: "space", spaceId: msgSpaceEvent.spaceId },
-            }),
-          ],
-        };
-      }
-
-      return { model };
-    }
-
     case "user-inputted-game": {
       const currentUserSpaceId = Spaces.toSpaceIdByUserId(
         model,
