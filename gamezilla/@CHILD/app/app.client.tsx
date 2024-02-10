@@ -623,7 +623,6 @@ const ViewLoggedIn = ({
           dispatch={(m) => dispatch({ t: "spaces", c: m })}
           model={model.spaces}
           ctx={ctx}
-          route={model.routing.currentRoute.c}
           viewBottomBar={
             <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
           }

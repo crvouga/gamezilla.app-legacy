@@ -3,6 +3,8 @@ import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { AppClientModule } from "../../../../@SHARED/architecture/app-client";
 import { Spaces } from "../../spaces-core";
 import { ctx, init, userStartedSpace } from "./shared";
+import { pushRoute } from "gamezilla/@CHILD/app/@SHARED/client";
+import { eq } from "gamezilla/@SHARED/core";
 
 test("current user starting space", async () => {
   const spaceId = SpaceId.generate();
@@ -19,22 +21,13 @@ test("current user starting space", async () => {
 test("redirecting when starting a space", async () => {
   const spaceId = SpaceId.generate();
 
-  const initial = await init();
-
-  const started = await userStartedSpace(
-    initial.model,
-    ctx.currentUserId,
-    spaceId
+  const started = await AppClientModule.chainUpdates(await init(), (model) =>
+    userStartedSpace(model, ctx.currentUserId, spaceId)
   );
 
   expect(
-    started.msgCmd?.filter(
-      (msgCmd) =>
-        msgCmd.t === "routing" &&
-        msgCmd.c.t === "push" &&
-        msgCmd.c.route.t === "spaces" &&
-        msgCmd.c.route.c.t === "space" &&
-        msgCmd.c.route.c.spaceId === spaceId
+    started.msgCmd?.some((x) =>
+      eq(x, pushRoute({ t: "spaces", c: { t: "space", spaceId } }))
     )
-  ).toHaveLength(1);
+  ).toBeTrue();
 });

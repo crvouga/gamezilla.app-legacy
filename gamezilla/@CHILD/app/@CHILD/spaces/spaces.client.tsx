@@ -1,11 +1,11 @@
 import {
-  ViewGameHeader,
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
   ViewYouChip,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
 import {
   WithEventId,
+  WithEventMeta,
   withId,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/feed-item";
@@ -16,6 +16,7 @@ import {
   AnonymousClientCtx,
   ClientCmd,
   ClientCtx,
+  ClientEvent,
   addProfiles,
   playSound,
   pushRoute,
@@ -32,14 +33,12 @@ import {
   IconHome,
   IconUserGroup,
   IconXMark,
-  TopBar,
-  TopBarBackButton,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Posix, Sub, batchMsgs, notAsked } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import { Game } from "./@CHILD/game/game.client";
-import { gameNameToString } from "./@CHILD/game/game.core";
+import { JoinSpaceClient } from "./join-space/join-space.client";
 import { ListSpacesClient } from "./list-spaces/list-spaces.client";
 import { ViewScreenNotInGame } from "./spaces-client/view-screen-not-in-game";
 import * as Space from "./spaces-core/space";
@@ -50,8 +49,10 @@ import {
   ClientModule,
   ModelClient,
   MsgClient,
+  MsgToClient,
   MsgToServer,
 } from "./spaces.core";
+import { SpaceClientModule } from "./architechure/space-client";
 
 //
 //
@@ -70,17 +71,11 @@ const initModel: ModelClient = {
   listSpacesRequestedAt: Posix.zero,
 };
 
-export const init: ClientModule["init"] = async ({ stored, ctx }) => {
-  return AppClientModule.chainUpdates(
-    { model: initModel },
-    (model) => {
-      if (stored) {
-        return { model: stored };
-      }
-      return { model };
-    },
-    (model) => fetchSpacesFromRoute({ model, ctx })
-  );
+export const init: ClientModule["init"] = async ({ stored }) => {
+  if (stored) {
+    return { model: stored };
+  }
+  return { model: initModel };
 };
 
 //
@@ -112,6 +107,31 @@ const updateProfiles: ClientModule["update"] = ({ model, msgServer }) => {
   }
 
   return { model };
+};
+
+export const updateSpaceLoop = async (input: {
+  model: ModelClient;
+  ctx: AnonymousClientCtx;
+  msg?: MsgClient | null;
+  msgServer?: MsgToClient;
+  msgEvt?: ClientEvent | null;
+  msgSpaceEvent?: WithEventMeta<SpaceEvent> | null;
+}): ReturnType<ClientModule["update"]> => {
+  const updated = updateSpace({
+    model: input.model,
+    ctx: input.ctx,
+    msg: input.msg,
+    msgSpaceEvent,
+  });
+  return { model: input.mode };
+};
+
+export const updateSpace: SpaceClientModule["update"] = (input) => {
+  return SpaceClientModule.chainUpdates(
+    { model: input.model },
+    //
+    (model) => JoinSpaceClient.update({ ...input, model })
+  );
 };
 
 const updateFromMsg: ClientModule["update"] = ({ msg, model, ctx }) => {
@@ -207,31 +227,6 @@ const updateFromServer: ClientModule["update"] = async (input) => {
   }
 };
 
-const fetchSpacesFromRoute: ClientModule["update"] = async (input) => {
-  switch (input.ctx.currentRoute.t) {
-    case "spaces": {
-      switch (input.ctx.currentRoute.c.t) {
-        case "space": {
-          return {
-            model: input.model,
-          };
-        }
-
-        case "space-list": {
-          return {
-            model: { ...input.model, isFetchingSpaces: true },
-            msgCmd: [sendToServer({ t: "list-spaces", limit: 100, offset: 0 })],
-          };
-        }
-      }
-    }
-
-    default: {
-      return { model: input.model };
-    }
-  }
-};
-
 const updateFromEvent: ClientModule["update"] = async (input) => {
   if (!input.msgEvt) {
     return { model: input.model };
@@ -241,13 +236,9 @@ const updateFromEvent: ClientModule["update"] = async (input) => {
 
   switch (msgEvt.t) {
     case "routing/route-changed": {
-      return AppClientModule.chainUpdates(
-        { model },
-        (model) => {
-          return { model: { ...model, modal: null } };
-        },
-        (model) => fetchSpacesFromRoute({ ...input, model })
-      );
+      return AppClientModule.chainUpdates({ model }, (model) => {
+        return { model: { ...model, modal: null } };
+      });
     }
 
     case "wire/server-connected": {
@@ -437,7 +428,7 @@ const updateFromManySpaceEventsLoop = async (
     (model) => Spaces.updateFromSpaceEvent({ model, spaceEvent }),
     (model) =>
       updateClientFromSpaceEvent({ model, modelBefore, ctx, spaceEvent }),
-    (model) => sendSpaceEventMsgToServer({ model, ctx, spaceEvent })
+    (model) => sendSpaceEventToServer({ model, ctx, spaceEvent })
   );
 
   const accNew: typeof acc = {
@@ -451,7 +442,7 @@ const updateFromManySpaceEventsLoop = async (
   return updateFromManySpaceEventsLoop(ctx, spaceEventsNew, accNew);
 };
 
-const sendSpaceEventMsgToServer = async ({
+const sendSpaceEventToServer = async ({
   ctx,
   model,
   spaceEvent: msgEvt,
@@ -497,7 +488,7 @@ const updateClientFromSpaceEvent = async ({
 }): Promise<{
   model: ModelClient;
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
-  msgEvt?: WithEventId<SpaceEvent>[];
+  spaceEvent?: WithEventId<SpaceEvent>[];
 }> => {
   if (!ctx.currentUserId) {
     return { model };
@@ -700,7 +691,7 @@ const updateClientFromSpaceEvent = async ({
 
       return {
         ...merged,
-        msgEvt: msgEvtsNew,
+        spaceEvent: msgEvtsNew,
       };
     }
   }
@@ -1096,106 +1087,6 @@ const ViewFeedItem = ({
   }
 };
 
-export const ViewScreenJoinSpace = ({
-  model,
-  ctx,
-  dispatch,
-  dispatchEvent,
-}: {
-  ctx: SpaceClientCtx;
-  model: ModelClient;
-  dispatch: (msg: MsgClient) => void;
-  dispatchEvent: (m: SpaceEvent) => void;
-}) => {
-  const space = Spaces.toSpaceState(model, ctx.space.spaceId);
-
-  const header = (
-    <>
-      <TopBar
-        left={
-          <TopBarBackButton
-            onClick={() =>
-              dispatch({ t: "clicked-back-button", from: "join-screen" })
-            }
-          />
-        }
-        title="Space"
-      />
-      <ViewFeed
-        ctx={ctx}
-        dispatch={dispatch}
-        model={model}
-        spaceState={space}
-      />
-    </>
-  );
-
-  switch (space.type) {
-    case "ended": {
-      return (
-        <div className="flex h-full w-full flex-col">
-          {header}
-          <div className="w-full flex-1 items-center justify-center">
-            Space not found
-          </div>
-        </div>
-      );
-    }
-    case "initial": {
-      return (
-        <div className="flex h-full w-full flex-col">
-          {header}
-          <div className="w-full flex-1 items-center justify-center">
-            Space not found
-          </div>
-        </div>
-      );
-    }
-    case "started": {
-      const game = space.game;
-
-      return (
-        <div className="flex h-full w-full flex-col">
-          {header}
-
-          <div className="flex w-full flex-1 flex-col overflow-y-scroll">
-            <ViewGameHeader
-              title={game ? gameNameToString(game.t) : null}
-              renderCoverArt={
-                game
-                  ? (props) => (
-                      <div {...props}>
-                        <CoverArt gameName={game.t} />
-                      </div>
-                    )
-                  : undefined
-              }
-            />
-
-            <ViewUsersInSpaceList ctx={ctx} />
-          </div>
-
-          <div className="flex border-t border-neutral-600 p-4">
-            <Button
-              className="w-full"
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                dispatchEvent({
-                  t: "user-joined-space",
-                  userId: ctx.currentUserId,
-                  spaceId: ctx.space.spaceId,
-                });
-              }}
-              text="Join space"
-            />
-          </div>
-        </div>
-      );
-    }
-  }
-};
-
 const ViewSpaceScreenMain = ({
   ctx,
   space,
@@ -1213,7 +1104,7 @@ const ViewSpaceScreenMain = ({
 
   if (currentUserSpaceId !== space.spaceId) {
     return (
-      <ViewScreenJoinSpace
+      <JoinSpaceClient.ViewScreenJoinSpace
         ctx={ctx}
         dispatch={dispatch}
         dispatchEvent={dispatchEvent}
