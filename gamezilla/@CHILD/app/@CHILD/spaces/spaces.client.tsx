@@ -84,7 +84,6 @@ export const update: ClientModule["update"] = (input) => {
   return AppClientModule.chainUpdates(
     { model: input.model },
 
-    (model) => updateFromServer({ ...input, model }),
     (model) => updateProfiles({ ...input, model }),
     (model) => updateMainLoop({ ...input, model }),
   )
@@ -197,28 +196,6 @@ const updateSpacesFromSpaceEvent: SpaceClientModule["update"] = ({
   })
 
   return { model: { ...model, ...updated.model } }
-}
-
-const updateFromServer: ClientModule["update"] = async (input) => {
-  const { msgServer, model } = input
-
-  if (!msgServer) {
-    return { model }
-  }
-
-  switch (msgServer.t) {
-    case "synced":
-    case "current-user-space": {
-      const merged = Spaces.mergeOne({ model, space: msgServer.space })
-      return {
-        model: { ...model, ...merged },
-      }
-    }
-
-    default: {
-      return { model }
-    }
-  }
 }
 
 const sendSpaceEventToServer: SpaceClientModule["update"] = ({

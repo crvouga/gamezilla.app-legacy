@@ -3,7 +3,7 @@ import { SpaceClientModule } from "../architechure/space-client"
 import { Space, Spaces } from "../spaces-core"
 
 const update: SpaceClientModule["update"] = (input) => {
-  const { model, msgEvt } = input
+  const { model, msgEvt, msgServer } = input
 
   switch (msgEvt?.t) {
     case "wire/server-connected": {
@@ -43,6 +43,16 @@ const update: SpaceClientModule["update"] = (input) => {
             causedBy: msgEvt.t,
           }),
         ],
+      }
+    }
+  }
+
+  switch (msgServer?.t) {
+    case "synced":
+    case "current-user-space": {
+      const merged = Spaces.mergeOne({ model, space: msgServer.space })
+      return {
+        model: { ...model, ...merged },
       }
     }
   }
