@@ -20,7 +20,9 @@ describe("space client", () => {
     const output = await AppClientModule.chainUpdates(
       await init(),
       //
-      (model) => userStartedSpace(model, UserId.generate(), SpaceId.generate())
+      (model) => {
+        return userStartedSpace(model, UserId.generate(), SpaceId.generate());
+      }
     );
 
     expect(

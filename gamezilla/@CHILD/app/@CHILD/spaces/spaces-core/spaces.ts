@@ -129,6 +129,15 @@ export const toErrorByEvenId = (
   return model.errors[eventId] ?? null;
 };
 
+export const hasEvent = (
+  model: Model,
+  spaceId: SpaceId,
+  eventId: EventId
+): boolean => {
+  const space = toSpace(model, spaceId);
+  return Boolean(space && Space.hasEvent(space, eventId));
+};
+
 export const toSpaceByUserId = ({
   model,
   userId,

@@ -91,7 +91,6 @@ export const update: ClientModule["update"] = (input) => {
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
-    (model) => updateGame({ ...input, model }),
     (model) => updateProfiles({ ...input, model }),
     (model) => updateMainLoop({ ...input, model })
   );
@@ -124,6 +123,7 @@ const updateMainLoop: ClientModule["update"] = async (input) => {
       msgSpaceEvent: spaceEvent,
     });
 
+    output.model = updated.model;
     output.msgSpaceEvent = batchMsgs(spaceEventsRest, updated.msgSpaceEvent);
     output.eff = Eff.batch([output.eff, updated.eff]);
     output.msgCmd = batchMsgs(output.msgCmd, updated.msgCmd);
@@ -135,8 +135,20 @@ const updateMainLoop: ClientModule["update"] = async (input) => {
 };
 
 const updateMain: SpaceClientModule["update"] = (input) => {
+  if (
+    input.msgSpaceEvent &&
+    Spaces.hasEvent(
+      input.model,
+      input.msgSpaceEvent.spaceId,
+      input.msgSpaceEvent.eventId
+    )
+  ) {
+    return { model: input.model };
+  }
+
   return SpaceClientModule.chainUpdates(
     { model: input.model },
+
     (model) => {
       if (input.msg?.t === "event") {
         return {
@@ -152,38 +164,158 @@ const updateMain: SpaceClientModule["update"] = (input) => {
       }
       return { model };
     },
-    (model) => {
-      if (input.msgSpaceEvent) {
-        const updated = Spaces.updateFromSpaceEvent({
-          model,
-          spaceEvent: input.msgSpaceEvent,
-        });
-        return { model: { ...model, ...updated.model } };
-      }
-      return { model };
-    },
+    (model) => updateSpacesFromSpaceEvent({ ...input, model }),
+    (model) => updateFromSpaceEvent({ ...input, model }),
+    (model) => sendSpaceEventToServer({ ...input, model }),
     (model) => JoinSpaceClient.update({ ...input, model }),
     (model) => ListSpacesClient.update({ ...input, model }),
-
-    (model) => {
-      if (input.msgSpaceEvent) {
-        return sendSpaceEventToServer({
-          model,
-          ctx: input.ctx,
-          spaceEvent: input.msgSpaceEvent,
-        });
-      }
-      return { model };
-    }
+    (model) => updateGame({ ...input, model })
   );
 };
 
-const updateFromMsg: ClientModule["update"] = ({ msg, model, ctx }) => {
-  if (!msg) {
+const updateSpacesFromSpaceEvent: SpaceClientModule["update"] = ({
+  msgSpaceEvent,
+  model,
+}) => {
+  if (!msgSpaceEvent) {
     return { model };
   }
 
-  switch (msg.t) {
+  const updated = Spaces.updateFromSpaceEvent({
+    model,
+    spaceEvent: msgSpaceEvent,
+  });
+
+  return { model: { ...model, ...updated.model } };
+};
+
+const updateFromSpaceEvent: SpaceClientModule["update"] = async (input) => {
+  const { ctx, model, msgSpaceEvent } = input;
+
+  if (!ctx.currentUserId) {
+    return { model };
+  }
+
+  switch (msgSpaceEvent?.t) {
+    case "user-left-space": {
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+        model,
+        ctx.currentUserId
+      );
+
+      if (msgSpaceEvent.spaceId === currentUserSpaceId) {
+        return {
+          model,
+          msgCmd: [playSound(APP_SOUND.navBackward)],
+        };
+      }
+      return { model };
+    }
+
+    case "user-started-space": {
+      if (msgSpaceEvent.userId === ctx.currentUserId) {
+        return {
+          model,
+          msgCmd: [
+            playSound(APP_SOUND.navForward),
+            pushRoute({
+              t: "spaces",
+              c: { t: "space", spaceId: msgSpaceEvent.spaceId },
+            }),
+          ],
+        };
+      }
+
+      return { model };
+    }
+
+    case "user-ended-space": {
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+        model,
+        ctx.currentUserId
+      );
+
+      if (msgSpaceEvent.spaceId !== currentUserSpaceId) {
+        return { model };
+      }
+
+      return SpaceClientModule.chainUpdates(
+        { model },
+        (model) => {
+          return {
+            model,
+            msgCmd: [playSound(APP_SOUND.navBackward)],
+          };
+        },
+        (model) => {
+          if (
+            ctx.currentRoute.t === "spaces" &&
+            ctx.currentRoute.c.t === "space" &&
+            ctx.currentRoute.c.spaceId === msgSpaceEvent.spaceId
+          ) {
+            return {
+              model,
+              msgCmd: [pushRoute({ t: "spaces", c: { t: "space-list" } })],
+            };
+          }
+          return {
+            model,
+            msgCmd: [],
+          };
+        },
+        (model) => {
+          if (msgSpaceEvent.userId === ctx.currentUserId) {
+            return {
+              model,
+              msgCmd: [showToast("Space ended")],
+            };
+          }
+
+          const profile = ctx.profiles[msgSpaceEvent.userId];
+
+          if (!profile) {
+            return {
+              model,
+              msgCmd: [showToast("Space ended by host")],
+            };
+          }
+
+          return {
+            model,
+            msgCmd: [showToast(`Space ended by ${profile.username}`)],
+          };
+        }
+      );
+    }
+
+    case "user-inputted-game": {
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+        model,
+        ctx.currentUserId
+      );
+      if (msgSpaceEvent.spaceId === currentUserSpaceId) {
+        return {
+          model,
+          msgCmd: [
+            playSound(
+              msgSpaceEvent.game
+                ? APP_SOUND.navForwardMin
+                : APP_SOUND.navBackwardMin
+            ),
+          ],
+        };
+      }
+      return { model };
+    }
+
+    default: {
+      return { model };
+    }
+  }
+};
+
+const updateFromMsg: ClientModule["update"] = ({ msg, model }) => {
+  switch (msg?.t) {
     case "closed-modal": {
       return { model: { ...model, modal: null } };
     }
@@ -202,10 +334,6 @@ const updateFromMsg: ClientModule["update"] = ({ msg, model, ctx }) => {
       return { model, msgCmd: [pushRoute(msg.route)] };
     }
 
-    case "event": {
-      return updateFromManySpaceEvents({ ctx, spaceEvents: [msg.c], model });
-    }
-
     default: {
       return { model };
     }
@@ -213,7 +341,7 @@ const updateFromMsg: ClientModule["update"] = ({ msg, model, ctx }) => {
 };
 
 const updateFromServer: ClientModule["update"] = async (input) => {
-  const { ctx, msgServer, model } = input;
+  const { msgServer, model } = input;
 
   if (!msgServer) {
     return { model };
@@ -235,14 +363,6 @@ const updateFromServer: ClientModule["update"] = async (input) => {
           listSpacesRequestedAt: Posix.zero,
         },
       };
-    }
-
-    case "event": {
-      return updateFromManySpaceEvents({
-        ctx,
-        spaceEvents: [msgServer.c],
-        model,
-      });
     }
 
     default: {
@@ -323,8 +443,8 @@ const inputToSpaceId = (input: Parameters<ClientModule["update"]>[0]) => {
   return null;
 };
 
-const updateGame: ClientModule["update"] = async (input) => {
-  const { ctx, model, msgServer, msgEvt, msg } = input;
+const updateGame: SpaceClientModule["update"] = (input) => {
+  const { ctx, model, msgServer, msgEvt, msg, msgSpaceEvent } = input;
 
   if (!ctx.currentUserId) {
     return { model };
@@ -348,6 +468,10 @@ const updateGame: ClientModule["update"] = async (input) => {
     return { model };
   }
 
+  const msgSpaceEventWithMeta = msgSpaceEvent?.eventId
+    ? Spaces.toEventWithMeta(model, spaceId, msgSpaceEvent?.eventId)
+    : null;
+
   const gameModel = model.games[spaceId] ?? Game.init(modelGame.t);
 
   const gameUpdated = Game.update({
@@ -359,6 +483,10 @@ const updateGame: ClientModule["update"] = async (input) => {
       viewProfile() {},
     },
     model: gameModel,
+    msgGame:
+      msgSpaceEventWithMeta?.t === "game"
+        ? { ...msgSpaceEventWithMeta, ...msgSpaceEventWithMeta.c }
+        : null,
     modelGame: modelGame,
     msgServer: msgServer?.t === "game" ? msgServer.c : null,
     msgCmd: null,
@@ -366,31 +494,10 @@ const updateGame: ClientModule["update"] = async (input) => {
     msg: msg?.t === "game" ? msg.c : null,
   });
 
-  const msgEvtsNew = (gameUpdated.msgGame ?? []).map(
+  const msgSpaceEventNew = (gameUpdated.msgGame ?? []).map(
     (e): WithEventId<SpaceEvent> => ({ ...e, spaceId, t: "game", c: e })
   );
 
-  return AppClientModule.chainUpdates(
-    { model },
-    (model) => mergeUpdatedGame({ model, spaceId, gameUpdated }),
-    (model) =>
-      updateFromManySpaceEvents({ ctx, spaceEvents: msgEvtsNew, model })
-  );
-};
-
-const mergeUpdatedGame = ({
-  model,
-  spaceId,
-  gameUpdated,
-}: {
-  spaceId: SpaceId;
-  model: ModelClient;
-  gameUpdated: ReturnType<typeof Game.update>;
-}): {
-  model: ModelClient;
-  msgCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
-  eff: Eff<MsgClient>;
-} => {
   return {
     model: {
       ...model,
@@ -405,84 +512,24 @@ const mergeUpdatedGame = ({
       (c) => ({ t: "game", c, spaceId })
     ),
     eff: Eff.map_((c) => ({ t: "game", c, spaceId }), gameUpdated.eff),
+    msgEvt: [],
+    msgSpaceEvent: msgSpaceEventNew,
   };
 };
 
-const updateFromManySpaceEvents = (input: {
-  ctx: ClientCtx | AnonymousClientCtx;
-  model: ModelClient;
-  spaceEvents: WithEventId<SpaceEvent>[];
-}): Promise<{
-  model: ModelClient;
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
-  eff?: Eff<MsgClient>;
-}> => {
-  return updateFromManySpaceEventsLoop(input.ctx, input.spaceEvents, {
-    model: input.model,
-    msgCmd: [],
-    eff: Eff.None,
-  });
-};
-
-const updateFromManySpaceEventsLoop = async (
-  ctx: ClientCtx | AnonymousClientCtx,
-  spaceEvents: WithEventId<SpaceEvent>[],
-  acc: Awaited<ReturnType<typeof updateFromManySpaceEvents>>
-): ReturnType<typeof updateFromManySpaceEvents> => {
-  const [spaceEvent, ...spaceEventsRest] = spaceEvents;
-
-  if (!spaceEvent) {
-    return acc;
-  }
-
-  const spaceModelBefore =
-    Spaces.toSpace(acc.model, spaceEvent.spaceId) ?? Space.init;
-
-  if (!spaceModelBefore) {
-    return updateFromManySpaceEventsLoop(ctx, spaceEventsRest, acc);
-  }
-
-  if (Space.hasEvent(spaceModelBefore, spaceEvent.eventId)) {
-    return updateFromManySpaceEventsLoop(ctx, spaceEventsRest, acc);
-  }
-
-  const modelBefore = acc.model;
-
-  const updated = await AppClientModule.chainUpdates(
-    acc,
-    (model) => Spaces.updateFromSpaceEvent({ model, spaceEvent }),
-    (model) =>
-      updateClientFromSpaceEvent({ model, modelBefore, ctx, spaceEvent })
-    // (model) => sendSpaceEventToServer({ model, ctx, spaceEvent })
-  );
-
-  const accNew: typeof acc = {
-    model: updated.model,
-    msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
-    eff: Eff.batch([acc.eff, updated.eff]),
-  };
-
-  const spaceEventsNew = batchMsgs(spaceEventsRest, updated.msgEvt);
-
-  return updateFromManySpaceEventsLoop(ctx, spaceEventsNew, accNew);
-};
-
-const sendSpaceEventToServer = async ({
+const sendSpaceEventToServer: SpaceClientModule["update"] = ({
   ctx,
   model,
-  spaceEvent: msgEvt,
-}: {
-  ctx: ClientCtx | AnonymousClientCtx;
-  model: ModelClient;
-  spaceEvent: WithEventId<SpaceEvent>;
-}): Promise<{
-  model: ModelClient;
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
-}> => {
+  msgSpaceEvent,
+}) => {
+  if (!msgSpaceEvent) {
+    return { model };
+  }
+
   const msgEvtWithMeta = Spaces.toEventWithMeta(
     model,
-    msgEvt.spaceId,
-    msgEvt.eventId
+    msgSpaceEvent.spaceId,
+    msgSpaceEvent.eventId
   );
 
   if (!msgEvtWithMeta) {
@@ -498,201 +545,6 @@ const sendSpaceEventToServer = async ({
     model,
     msgCmd: [sendToServer({ t: "event", c: msgEvtWithMeta, profiles })],
   };
-};
-
-const updateClientFromSpaceEvent = async ({
-  ctx,
-  model,
-  modelBefore,
-  spaceEvent,
-}: {
-  ctx: ClientCtx | AnonymousClientCtx;
-  modelBefore: ModelClient;
-  model: ModelClient;
-  spaceEvent: WithEventId<SpaceEvent>;
-}): Promise<{
-  model: ModelClient;
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
-  spaceEvent?: WithEventId<SpaceEvent>[];
-}> => {
-  if (!ctx.currentUserId) {
-    return { model };
-  }
-
-  switch (spaceEvent.t) {
-    case "user-left-space": {
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
-        modelBefore,
-        ctx.currentUserId
-      );
-
-      if (spaceEvent.spaceId === currentUserSpaceId) {
-        return {
-          model,
-          msgCmd: [playSound(APP_SOUND.navBackward)],
-        };
-      }
-      return { model };
-    }
-
-    case "user-started-space": {
-      if (spaceEvent.userId === ctx.currentUserId) {
-        return {
-          model,
-          msgCmd: [
-            playSound(APP_SOUND.navForward),
-            pushRoute({
-              t: "spaces",
-              c: { t: "space", spaceId: spaceEvent.spaceId },
-            }),
-          ],
-        };
-      }
-
-      return { model };
-    }
-
-    case "user-ended-space": {
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
-        modelBefore,
-        ctx.currentUserId
-      );
-
-      if (spaceEvent.spaceId !== currentUserSpaceId) {
-        return { model };
-      }
-      return AppClientModule.chainUpdates(
-        { model },
-        (model) => {
-          return {
-            model,
-            msgCmd: [playSound(APP_SOUND.navBackward)],
-          };
-        },
-        (model) => {
-          if (
-            ctx.currentRoute.t === "spaces" &&
-            ctx.currentRoute.c.t === "space" &&
-            ctx.currentRoute.c.spaceId === spaceEvent.spaceId
-          ) {
-            return {
-              model,
-              msgCmd: [pushRoute({ t: "spaces", c: { t: "space-list" } })],
-            };
-          }
-          return {
-            model,
-            msgCmd: [],
-          };
-        },
-        (model) => {
-          if (spaceEvent.userId === ctx.currentUserId) {
-            return {
-              model,
-              msgCmd: [showToast("Space ended")],
-            };
-          }
-
-          const profile = ctx.profiles[spaceEvent.userId];
-
-          if (!profile) {
-            return {
-              model,
-              msgCmd: [showToast("Space ended by host")],
-            };
-          }
-
-          return {
-            model,
-            msgCmd: [showToast(`Space ended by ${profile.username}`)],
-          };
-        }
-      );
-    }
-
-    case "user-inputted-game": {
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
-        model,
-        ctx.currentUserId
-      );
-      if (spaceEvent.spaceId === currentUserSpaceId) {
-        return {
-          model,
-          msgCmd: [
-            playSound(
-              spaceEvent.game
-                ? APP_SOUND.navForwardMin
-                : APP_SOUND.navBackwardMin
-            ),
-          ],
-        };
-      }
-      return { model };
-    }
-
-    case "game": {
-      const spaceState = Spaces.toSpaceStarted(model, spaceEvent.spaceId);
-
-      if (!spaceState) {
-        return { model };
-      }
-
-      if (!spaceState.game) {
-        return { model };
-      }
-
-      const msgEvtWithMeta = Spaces.toEventWithMeta(
-        model,
-        spaceEvent.spaceId,
-        spaceEvent.eventId
-      );
-
-      if (!msgEvtWithMeta) {
-        return { model };
-      }
-
-      if (msgEvtWithMeta.t !== "game") {
-        return { model };
-      }
-
-      const gameUpdated = Game.update({
-        ctx: {
-          ...ctx,
-          currentUserId: ctx.currentUserId,
-          space: spaceState,
-          quit() {},
-          viewProfile() {},
-        },
-        msgGame: { ...msgEvtWithMeta, ...msgEvtWithMeta.c },
-        model:
-          model.games[msgEvtWithMeta.spaceId] ?? Game.init(spaceState.game.t),
-        modelGame: spaceState.game,
-      });
-
-      const msgEvtsNew = (gameUpdated.msgGame ?? []).map((e) =>
-        withId<SpaceEvent>({
-          t: "game",
-          spaceId: msgEvtWithMeta.spaceId,
-          c: e,
-        })
-      );
-
-      const merged = mergeUpdatedGame({
-        gameUpdated,
-        model,
-        spaceId: msgEvtWithMeta.spaceId,
-      });
-
-      return {
-        ...merged,
-        spaceEvent: msgEvtsNew,
-      };
-    }
-
-    default: {
-      return { model };
-    }
-  }
 };
 
 //
