@@ -89,7 +89,7 @@ export const update: ClientModule["update"] = (input) => {
   )
 }
 
-const updateProfiles: ClientModule["update"] = ({ model, msgServer }) => {
+const updateProfiles: SpaceClientModule["update"] = ({ model, msgServer }) => {
   if (msgServer?.profiles) {
     return {
       model,

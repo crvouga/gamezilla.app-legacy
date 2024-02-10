@@ -1,18 +1,18 @@
-import { describe, expect, test } from "bun:test"
+import { describe, expect, it } from "bun:test"
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { eq } from "gamezilla/@SHARED/core"
 import {
   clickedStartSpaceButton,
-  makeSpace,
-  init,
-  serverConnected,
+  ctx,
+  gotCurrentUsersSpace,
   gotSpace,
+  init,
+  makeSpace,
+  serverConnected,
   userEndedSpace,
   userJoinedSpace,
   userStartedSpace,
-  ctx,
-  gotCurrentUsersSpace,
 } from "../@TEST/client"
 import { Spaces } from "../spaces-core"
 
@@ -24,7 +24,7 @@ const hasExcatlyOne = <T>(
 }
 
 describe("sync client", () => {
-  test("should merge space recieved from server", async () => {
+  it("should merge space recieved from server", async () => {
     const someStartedSpace = makeSpace(SpaceId.generate(), UserId.generate())
 
     const updated = await AppClientModule.chainUpdates(
@@ -42,7 +42,7 @@ describe("sync client", () => {
     ).toBeTrue()
   })
 
-  test("should merge current user's space when recieved from server", async () => {
+  it("should merge current user's space when recieved from server", async () => {
     const spaceId = SpaceId.generate()
 
     const someStartedSpace = makeSpace(spaceId, ctx.currentUserId)
@@ -58,7 +58,7 @@ describe("sync client", () => {
     ).toBeTrue()
   })
 
-  test("should sync current user's space when server connects if in space", async () => {
+  it("should sync current user's space when server connects if in space", async () => {
     const output = await AppClientModule.chainUpdates(
       await init(),
       //
@@ -76,7 +76,7 @@ describe("sync client", () => {
     ).toBeTrue()
   })
 
-  test("sends event to server like user started space", async () => {
+  it("sends event to server like user started space", async () => {
     const output = await AppClientModule.chainUpdates(
       await init(),
       //
@@ -97,7 +97,7 @@ describe("sync client", () => {
     ).toBeTrue()
   })
 
-  test("sends event to server like user joined space", async () => {
+  it("sends event to server like user joined space", async () => {
     const output = await AppClientModule.chainUpdates(
       await init(),
       //
@@ -116,7 +116,7 @@ describe("sync client", () => {
     ).toBeTrue()
   })
 
-  test("sends event to server like user ended space", async () => {
+  it("sends event to server like user ended space", async () => {
     const output = await AppClientModule.chainUpdates(
       await init(),
       //
