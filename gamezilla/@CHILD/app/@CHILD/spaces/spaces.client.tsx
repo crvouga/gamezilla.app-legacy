@@ -1021,22 +1021,7 @@ const ViewTopBar: SpaceClientModule["View"] = (input) => {
 
       {space.hostId !== ctx.currentUserId && (
         <div className="p-2">
-          <Button
-            color="danger"
-            variant="contained"
-            size="sm"
-            text="Leave"
-            onClick={() => {
-              dispatch({
-                t: "event",
-                c: withId<SpaceEvent>({
-                  t: "user-left-space",
-                  spaceId: space.spaceId,
-                  userId: currentUserId,
-                }),
-              });
-            }}
-          />
+          <LeaveSpaceClient.ViewLeaveSpaceButton {...input} />
         </div>
       )}
 

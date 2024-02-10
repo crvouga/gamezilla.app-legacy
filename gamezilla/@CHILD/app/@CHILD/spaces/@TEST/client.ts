@@ -81,6 +81,19 @@ export const userLeftSpace = (
   });
 };
 
+export const clickedLeaveSpaceButton = (
+  model: SpaceCore.ModelClient,
+  ctxOverride: ClientCtx = ctx
+) => {
+  return SpaceClient.update({
+    ctx: ctxOverride,
+    model: model,
+    msg: {
+      t: "clicked-leave-space-button",
+    },
+  });
+};
+
 export const changeRouteToSpaceList = async (model: SpaceCore.ModelClient) => {
   return SpaceClient.update({
     ctx,

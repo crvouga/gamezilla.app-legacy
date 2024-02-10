@@ -91,6 +91,7 @@ export type MsgClient =
   | { t: "game"; spaceId: SpaceId; c: Game.MsgClient }
   | { t: "time-passed" }
   | { t: "clicked-end-space-button" }
+  | { t: "clicked-leave-space-button" }
   | { t: "closed-modal" }
   | { t: "clicked-people-button" }
   | { t: "clicked-back-button"; from: "join-screen" }

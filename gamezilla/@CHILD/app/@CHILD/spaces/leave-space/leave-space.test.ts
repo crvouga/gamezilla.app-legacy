@@ -3,6 +3,7 @@ import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-c
 import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
+  clickedLeaveSpaceButton,
   ctx,
   init,
   userJoinedSpace,
@@ -18,7 +19,7 @@ describe("leave space", () => {
       await init(),
       (model) => userStartedSpace(model, UserId.generate(), spaceId),
       (model) => userJoinedSpace(model, ctx.currentUserId, spaceId),
-      (model) => userLeftSpace(model, ctx.currentUserId, spaceId)
+      (model) => clickedLeaveSpaceButton(model)
     );
 
     expect(Spaces.toSpaceIdByUserId(updated.model, ctx.currentUserId)).toEqual(
@@ -37,7 +38,7 @@ describe("leave space", () => {
 
     const left = await AppClientModule.chainUpdates(
       { model: joined.model },
-      (model) => userLeftSpace(model, ctx.currentUserId, spaceId)
+      (model) => clickedLeaveSpaceButton(model)
     );
 
     expect(didPlaySound(left)).toBeTrue();
