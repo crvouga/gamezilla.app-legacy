@@ -149,7 +149,6 @@ const updateMain: SpaceClientModule["update"] = (input) => {
 
   return SpaceClientModule.chainUpdates(
     { model: input.model },
-
     (model) => {
       if (input.msg?.t === "event") {
         return {
@@ -168,10 +167,10 @@ const updateMain: SpaceClientModule["update"] = (input) => {
     (model) => EndSpaceClient.update({ ...input, model }),
     (model) => updateSpacesFromSpaceEvent({ ...input, model }),
     (model) => updateFromSpaceEvent({ ...input, model }),
-    (model) => sendSpaceEventToServer({ ...input, model }),
     (model) => JoinSpaceClient.update({ ...input, model }),
     (model) => ListSpacesClient.update({ ...input, model }),
-    (model) => updateGame({ ...input, model })
+    (model) => updateGame({ ...input, model }),
+    (model) => sendSpaceEventToServer({ ...input, model })
   );
 };
 
