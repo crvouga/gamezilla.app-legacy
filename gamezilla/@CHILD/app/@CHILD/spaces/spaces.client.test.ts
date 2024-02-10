@@ -8,6 +8,13 @@ import {
 } from "./@TEST/client";
 import { SpaceId, UserId } from "../../@SHARED/data";
 
+const hasExcatlyOne = <T>(
+  items: T[],
+  predicate: (item: T) => boolean
+): boolean => {
+  return items.filter(predicate).length === 1;
+};
+
 describe("space client", () => {
   test("sends event to server like user started space", async () => {
     const output = await AppClientModule.chainUpdates(
@@ -17,7 +24,8 @@ describe("space client", () => {
     );
 
     expect(
-      output.msgCmd?.some(
+      hasExcatlyOne(
+        output?.msgCmd ?? [],
         (msgCmd) =>
           msgCmd.t === "wire" &&
           msgCmd.c.t === "send-to-server" &&
@@ -35,7 +43,8 @@ describe("space client", () => {
     );
 
     expect(
-      output.msgCmd?.some(
+      hasExcatlyOne(
+        output?.msgCmd ?? [],
         (msgCmd) =>
           msgCmd.t === "wire" &&
           msgCmd.c.t === "send-to-server" &&
@@ -53,7 +62,8 @@ describe("space client", () => {
     );
 
     expect(
-      output.msgCmd?.some(
+      hasExcatlyOne(
+        output.msgCmd ?? [],
         (msgCmd) =>
           msgCmd.t === "wire" &&
           msgCmd.c.t === "send-to-server" &&

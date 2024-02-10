@@ -144,18 +144,24 @@ const updateMain: SpaceClientModule["update"] = (input) => {
           msgSpaceEvent: [input.msg.c],
         };
       }
+      if (input.msgServer?.t === "event") {
+        return {
+          model,
+          msgSpaceEvent: [input.msgServer.c],
+        };
+      }
       return { model };
     },
-    // (model) => {
-    //   if (input.msgSpaceEvent) {
-    //     const updated = Spaces.updateFromSpaceEvent({
-    //       model,
-    //       spaceEvent: input.msgSpaceEvent,
-    //     });
-    //     return { model: { ...model, ...updated.model } };
-    //   }
-    //   return { model };
-    // },
+    (model) => {
+      if (input.msgSpaceEvent) {
+        const updated = Spaces.updateFromSpaceEvent({
+          model,
+          spaceEvent: input.msgSpaceEvent,
+        });
+        return { model: { ...model, ...updated.model } };
+      }
+      return { model };
+    },
     (model) => JoinSpaceClient.update({ ...input, model }),
     (model) => ListSpacesClient.update({ ...input, model }),
 
