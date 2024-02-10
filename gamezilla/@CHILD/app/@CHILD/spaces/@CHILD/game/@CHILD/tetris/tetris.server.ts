@@ -1,16 +1,16 @@
-import { Eff, Sub, Time, isErr } from "gamezilla/@SHARED/core";
-import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span";
+import { Eff, Sub, Time, isErr } from "gamezilla/@SHARED/core"
+import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span"
 import {
-  ModelServer,
-  MsgServer,
-  MsgToServer,
-  initShared,
-  inputDrop,
-  inputRotate,
-  inputTranslate,
-  mouseMove,
-  tick,
-} from "./tetris.core";
+    ModelServer,
+    MsgServer,
+    MsgToServer,
+    initShared,
+    inputDrop,
+    inputRotate,
+    inputTranslate,
+    mouseMove,
+    tick,
+} from "./tetris.core"
 
 //
 //
@@ -20,9 +20,9 @@ import {
 //
 //
 
-export type Model = ModelServer;
+export type Model = ModelServer
 
-export const init: Model = initShared;
+export const init: Model = initShared
 
 //
 //
@@ -32,72 +32,72 @@ export const init: Model = initShared;
 //
 //
 
-export type Msg = MsgServer;
+export type Msg = MsgServer
 
 export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
-  switch (msg[0]) {
-    case "tick": {
-      const modelNext = tick(model);
+    switch (msg[0]) {
+        case "tick": {
+            const modelNext = tick(model)
 
-      return [modelNext, Eff.None];
+            return [modelNext, Eff.None]
+        }
     }
-  }
-};
+}
 
 export const updateFromClient = (
-  msg: MsgToServer,
-  model: Model
+    msg: MsgToServer,
+    model: Model,
 ): [Model, Eff<Msg>] => {
-  switch (msg[0]) {
-    case "MouseMove": {
-      const toClient = mouseMove(msg, model);
+    switch (msg[0]) {
+        case "MouseMove": {
+            const toClient = mouseMove(msg, model)
 
-      if (toClient[1].t === "err") {
-        return [model, Eff.None];
-      }
+            if (toClient[1].t === "err") {
+                return [model, Eff.None]
+            }
 
-      const modelNew = toClient[1].value;
+            const modelNew = toClient[1].value
 
-      return [modelNew, Eff.None];
+            return [modelNew, Eff.None]
+        }
+
+        case "InputDrop": {
+            const result = inputDrop(model)
+
+            if (isErr(result)) {
+                return [model, Eff.None]
+            }
+
+            const modelNew = result.value
+
+            return [modelNew, Eff.None]
+        }
+
+        case "InputTranslate": {
+            const result = inputTranslate(msg[1], model)
+
+            if (isErr(result)) {
+                return [model, Eff.None]
+            }
+
+            const modelNew = result.value
+
+            return [modelNew, Eff.None]
+        }
+
+        case "InputRotate": {
+            const result = inputRotate(model)
+
+            if (isErr(result)) {
+                return [model, Eff.None]
+            }
+
+            const modelNew = result.value
+
+            return [modelNew, Eff.None]
+        }
     }
-
-    case "InputDrop": {
-      const result = inputDrop(model);
-
-      if (isErr(result)) {
-        return [model, Eff.None];
-      }
-
-      const modelNew = result.value;
-
-      return [modelNew, Eff.None];
-    }
-
-    case "InputTranslate": {
-      const result = inputTranslate(msg[1], model);
-
-      if (isErr(result)) {
-        return [model, Eff.None];
-      }
-
-      const modelNew = result.value;
-
-      return [modelNew, Eff.None];
-    }
-
-    case "InputRotate": {
-      const result = inputRotate(model);
-
-      if (isErr(result)) {
-        return [model, Eff.None];
-      }
-
-      const modelNew = result.value;
-
-      return [modelNew, Eff.None];
-    }
-  }
-};
+}
 
 //
 //
@@ -108,9 +108,9 @@ export const updateFromClient = (
 //
 
 export const subscriptions = (intervalId: string, _model: Model): Sub<Msg> => {
-  return Time.interval(
-    intervalId,
-    TimeSpan.fromMilliseconds(500),
-    (): Msg => ["tick"]
-  );
-};
+    return Time.interval(
+        intervalId,
+        TimeSpan.fromMilliseconds(500),
+        (): Msg => ["tick"],
+    )
+}

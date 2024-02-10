@@ -1,14 +1,14 @@
-import { PubSub } from "gamezilla/@SHARED/core";
+import { PubSub } from "gamezilla/@SHARED/core"
 
 export type PrivateDrawerProps = {
-  id: string;
-  onClose: () => void;
-  open: boolean;
-  position: "bottom" | "top";
-};
+    id: string
+    onClose: () => void
+    open: boolean
+    position: "bottom" | "top"
+}
 
 export type DrawerEvent = PrivateDrawerProps & {
-  type: "props";
-};
+    type: "props"
+}
 
-export const drawerSub = PubSub.create<DrawerEvent>();
+export const drawerSub = PubSub.create<DrawerEvent>()

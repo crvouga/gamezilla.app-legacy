@@ -1,1 +1,1 @@
-export * from "./account-db-impl.postgres";
+export * from "./account-db-impl.postgres"

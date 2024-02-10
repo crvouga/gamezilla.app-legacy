@@ -1,21 +1,21 @@
 import {
-  SpaceClientCtx,
-  SpaceClientEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space";
-import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client";
-import { Sub } from "gamezilla/@SHARED/core";
-import { GameClientModule } from "../../@SHARED/architecture/game-client-v2";
-import { ConnectFour } from "./@CHILD/connect-four/connect-four.client";
-import { Flow } from "./@CHILD/flow/flow.client";
+    SpaceClientCtx,
+    SpaceClientEvent,
+} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client"
+import { Sub } from "gamezilla/@SHARED/core"
+import { GameClientModule } from "../../@SHARED/architecture/game-client-v2"
+import { ConnectFour } from "./@CHILD/connect-four/connect-four.client"
+import { Flow } from "./@CHILD/flow/flow.client"
 import {
-  ModelClient,
-  MsgClient,
-  MsgGame,
-  GameName,
-  ModelGame,
-  MsgToClient,
-  MsgToServer,
-} from "./game.core";
+    ModelClient,
+    MsgClient,
+    MsgGame,
+    GameName,
+    ModelGame,
+    MsgToClient,
+    MsgToServer,
+} from "./game.core"
 
 //
 //
@@ -26,21 +26,21 @@ import {
 //
 
 type Module = GameClientModule<{
-  Model: ModelClient;
-  Msg: MsgClient;
-  MsgToClient: MsgToClient;
-  MsgToServer: MsgToServer;
-  ModelGame: ModelGame;
-  MsgGame: MsgGame;
-  Ctx: SpaceClientCtx;
-  MsgInCmd: null;
-  MsgInEvent: SpaceClientEvent;
-  MsgOutCmd: ClientCmd<{
-    MsgClient: MsgClient;
-    MsgToServer: MsgToServer;
-  }>;
-  MsgOutEvent: null;
-}>;
+    Model: ModelClient
+    Msg: MsgClient
+    MsgToClient: MsgToClient
+    MsgToServer: MsgToServer
+    ModelGame: ModelGame
+    MsgGame: MsgGame
+    Ctx: SpaceClientCtx
+    MsgInCmd: null
+    MsgInEvent: SpaceClientEvent
+    MsgOutCmd: ClientCmd<{
+        MsgClient: MsgClient
+        MsgToServer: MsgToServer
+    }>
+    MsgOutEvent: null
+}>
 
 //
 //
@@ -51,22 +51,22 @@ type Module = GameClientModule<{
 //
 
 const init = (gameName: GameName): Module["init"] => {
-  switch (gameName) {
-    case "connect-four": {
-      return {
-        t: "connect-four",
-        c: ConnectFour.init,
-      };
-    }
+    switch (gameName) {
+        case "connect-four": {
+            return {
+                t: "connect-four",
+                c: ConnectFour.init,
+            }
+        }
 
-    case "flow": {
-      return {
-        t: "flow",
-        c: Flow.init,
-      };
+        case "flow": {
+            return {
+                t: "flow",
+                c: Flow.init,
+            }
+        }
     }
-  }
-};
+}
 
 //
 //
@@ -77,54 +77,59 @@ const init = (gameName: GameName): Module["init"] => {
 //
 
 const update: Module["update"] = (input) => {
-  const { ctx, msg, msgServer, msgCmd, msgEvt, msgGame, modelGame } = input;
+    const { ctx, msg, msgServer, msgCmd, msgEvt, msgGame, modelGame } = input
 
-  switch (modelGame.t) {
-    case "connect-four": {
-      const updated = ConnectFour.update({
-        ctx,
-        modelGame: modelGame.c,
-        model:
-          input.model?.t === "connect-four" ? input.model.c : ConnectFour.init,
-        msgCmd: msgCmd,
-        msgEvt: msgEvt,
-        msgServer: msgServer?.t === "connect-four" ? msgServer.c : null,
-        msgGame:
-          msgGame?.t === "connect-four" ? { ...msgGame, ...msgGame.c } : null,
-        msg: msg?.t === "connect-four" ? msg.c : null,
-      });
+    switch (modelGame.t) {
+        case "connect-four": {
+            const updated = ConnectFour.update({
+                ctx,
+                modelGame: modelGame.c,
+                model:
+                    input.model?.t === "connect-four"
+                        ? input.model.c
+                        : ConnectFour.init,
+                msgCmd: msgCmd,
+                msgEvt: msgEvt,
+                msgServer: msgServer?.t === "connect-four" ? msgServer.c : null,
+                msgGame:
+                    msgGame?.t === "connect-four"
+                        ? { ...msgGame, ...msgGame.c }
+                        : null,
+                msg: msg?.t === "connect-four" ? msg.c : null,
+            })
 
-      const tagged = GameClientModule.tagOutput(
-        "connect-four",
-        (msgCmd) => ClientCmd.tag("connect-four", msgCmd),
-        updated
-      );
+            const tagged = GameClientModule.tagOutput(
+                "connect-four",
+                (msgCmd) => ClientCmd.tag("connect-four", msgCmd),
+                updated,
+            )
 
-      return tagged;
+            return tagged
+        }
+
+        case "flow": {
+            const updated = Flow.update({
+                ctx: ctx,
+                modelGame: modelGame.c,
+                model: input.model?.t === "flow" ? input.model.c : Flow.init,
+                msgCmd: msgCmd,
+                msgEvt: msgEvt,
+                msgServer: msgServer?.t === "flow" ? msgServer.c : null,
+                msgGame:
+                    msgGame?.t === "flow" ? { ...msgGame, ...msgGame.c } : null,
+                msg: msg?.t === "flow" ? msg.c : null,
+            })
+
+            const tagged = GameClientModule.tagOutput(
+                "flow",
+                (msgCmd) => ClientCmd.tag("flow", msgCmd),
+                updated,
+            )
+
+            return tagged
+        }
     }
-
-    case "flow": {
-      const updated = Flow.update({
-        ctx: ctx,
-        modelGame: modelGame.c,
-        model: input.model?.t === "flow" ? input.model.c : Flow.init,
-        msgCmd: msgCmd,
-        msgEvt: msgEvt,
-        msgServer: msgServer?.t === "flow" ? msgServer.c : null,
-        msgGame: msgGame?.t === "flow" ? { ...msgGame, ...msgGame.c } : null,
-        msg: msg?.t === "flow" ? msg.c : null,
-      });
-
-      const tagged = GameClientModule.tagOutput(
-        "flow",
-        (msgCmd) => ClientCmd.tag("flow", msgCmd),
-        updated
-      );
-
-      return tagged;
-    }
-  }
-};
+}
 
 //
 //
@@ -135,32 +140,33 @@ const update: Module["update"] = (input) => {
 //
 
 const subscriptions: Module["subscriptions"] = (input): Sub<MsgClient> => {
-  const { modelGame, model } = input;
+    const { modelGame, model } = input
 
-  switch (modelGame.t) {
-    case "connect-four": {
-      return Sub.tag(
-        "connect-four",
-        ConnectFour.subscriptions({
-          ctx: input.ctx,
-          modelGame: modelGame.c,
-          model: model.t === "connect-four" ? model.c : ConnectFour.init,
-        })
-      );
-    }
+    switch (modelGame.t) {
+        case "connect-four": {
+            return Sub.tag(
+                "connect-four",
+                ConnectFour.subscriptions({
+                    ctx: input.ctx,
+                    modelGame: modelGame.c,
+                    model:
+                        model.t === "connect-four" ? model.c : ConnectFour.init,
+                }),
+            )
+        }
 
-    case "flow": {
-      return Sub.tag(
-        "flow",
-        Flow.subscriptions({
-          ctx: input.ctx,
-          modelGame: modelGame.c,
-          model: model.t === "flow" ? model.c : Flow.init,
-        })
-      );
+        case "flow": {
+            return Sub.tag(
+                "flow",
+                Flow.subscriptions({
+                    ctx: input.ctx,
+                    modelGame: modelGame.c,
+                    model: model.t === "flow" ? model.c : Flow.init,
+                }),
+            )
+        }
     }
-  }
-};
+}
 
 //
 //
@@ -171,65 +177,67 @@ const subscriptions: Module["subscriptions"] = (input): Sub<MsgClient> => {
 //
 
 const View: Module["View"] = (input) => {
-  const { model, ctx, modelGame, dispatch } = input;
+    const { model, ctx, modelGame, dispatch } = input
 
-  switch (modelGame.t) {
-    case "connect-four": {
-      return (
-        <ConnectFour.View
-          ctx={ctx}
-          dispatch={(c) => dispatch({ t: "connect-four", c })}
-          modelGame={modelGame.c}
-          model={model?.t === "connect-four" ? model.c : ConnectFour.init}
-        />
-      );
-    }
+    switch (modelGame.t) {
+        case "connect-four": {
+            return (
+                <ConnectFour.View
+                    ctx={ctx}
+                    dispatch={(c) => dispatch({ t: "connect-four", c })}
+                    modelGame={modelGame.c}
+                    model={
+                        model?.t === "connect-four" ? model.c : ConnectFour.init
+                    }
+                />
+            )
+        }
 
-    case "flow": {
-      return (
-        <Flow.View
-          ctx={ctx}
-          dispatch={(c) => dispatch({ t: "flow", c })}
-          modelGame={modelGame.c}
-          model={model.t === "flow" ? model.c : Flow.init}
-        />
-      );
+        case "flow": {
+            return (
+                <Flow.View
+                    ctx={ctx}
+                    dispatch={(c) => dispatch({ t: "flow", c })}
+                    modelGame={modelGame.c}
+                    model={model.t === "flow" ? model.c : Flow.init}
+                />
+            )
+        }
     }
-  }
-};
+}
 
 const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-  const { msgGame, modelGame, ctx, dispatch } = input;
+    const { msgGame, modelGame, ctx, dispatch } = input
 
-  switch (modelGame.t) {
-    case "connect-four": {
-      switch (msgGame.t) {
+    switch (modelGame.t) {
         case "connect-four": {
-          return (
-            <ConnectFour.ViewFeedItem
-              ctx={ctx}
-              msgGame={msgGame.c}
-              modelGame={modelGame.c}
-              dispatch={(c) => dispatch({ t: "connect-four", c })}
-            />
-          );
+            switch (msgGame.t) {
+                case "connect-four": {
+                    return (
+                        <ConnectFour.ViewFeedItem
+                            ctx={ctx}
+                            msgGame={msgGame.c}
+                            modelGame={modelGame.c}
+                            dispatch={(c) => dispatch({ t: "connect-four", c })}
+                        />
+                    )
+                }
+                default: {
+                    return null
+                }
+            }
         }
-        default: {
-          return null;
-        }
-      }
-    }
 
-    default: {
-      return null;
+        default: {
+            return null
+        }
     }
-  }
-};
+}
 
 export const Game = {
-  init,
-  subscriptions,
-  update,
-  View,
-  ViewFeedItem,
-};
+    init,
+    subscriptions,
+    update,
+    View,
+    ViewFeedItem,
+}

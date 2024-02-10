@@ -1,10 +1,10 @@
-import { err } from "gamezilla/@SHARED/core";
-import { SMS } from "./sms";
+import { err } from "gamezilla/@SHARED/core"
+import { SMS } from "./sms"
 
 export const createSMSTwilio = (): SMS => {
-  return {
-    sendMessage: async (_input) => {
-      return err("not-implemented");
-    },
-  };
-};
+    return {
+        sendMessage: async (_input) => {
+            return err("not-implemented")
+        },
+    }
+}

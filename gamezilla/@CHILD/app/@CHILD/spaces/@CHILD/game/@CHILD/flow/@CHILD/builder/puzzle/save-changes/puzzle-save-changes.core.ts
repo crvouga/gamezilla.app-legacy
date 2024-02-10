@@ -1,42 +1,45 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { Result, RemoteResult } from "gamezilla/@SHARED/core";
-import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { Result, RemoteResult } from "gamezilla/@SHARED/core"
+import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 
 //
 //
 //
 
 export type ModelClient = {
-  saveChangesRequest?: RemoteResult<string, null>;
-  saveChangesIsExiting?: boolean;
-};
+    saveChangesRequest?: RemoteResult<string, null>
+    saveChangesIsExiting?: boolean
+}
 
-export type ModelServer = {};
+export type ModelServer = {}
 
 //
 //
 //
 
 export type MsgClient =
-  | { t: "puzzle-save-changes.user-clicked-save-button" }
-  | { t: "puzzle-save-changes.user-clicked-cancel-exit" }
-  | { t: "puzzle-save-changes.user-clicked-save-and-exit" }
-  | { t: "puzzle-save-changes.user-clicked-discard-and-exit" };
+    | { t: "puzzle-save-changes.user-clicked-save-button" }
+    | { t: "puzzle-save-changes.user-clicked-cancel-exit" }
+    | { t: "puzzle-save-changes.user-clicked-save-and-exit" }
+    | { t: "puzzle-save-changes.user-clicked-discard-and-exit" }
 
-export type MsgServer = { t: "noop" };
+export type MsgServer = { t: "noop" }
 
 export type MsgToServer =
-  | { t: "puzzle-save-changes.user-clicked-save-button"; puzzle: FlowPuzzle }
-  | { t: "puzzle-save-changes.user-clicked-save-and-exit"; puzzle: FlowPuzzle };
+    | { t: "puzzle-save-changes.user-clicked-save-button"; puzzle: FlowPuzzle }
+    | {
+          t: "puzzle-save-changes.user-clicked-save-and-exit"
+          puzzle: FlowPuzzle
+      }
 
-export type MsgToClient = { t: "noop" };
+export type MsgToClient = { t: "noop" }
 
 //
 //
 //
 
 export type MsgGame = {
-  t: "user-saved-changes";
-  saved: Result<string, FlowPuzzle>;
-  userId: UserId;
-};
+    t: "user-saved-changes"
+    saved: Result<string, FlowPuzzle>
+    userId: UserId
+}

@@ -1,217 +1,218 @@
-import { StoreModule, Store } from "./immutable-store";
+import { StoreModule, Store } from "./immutable-store"
 
 export type MapEntry<TKey extends string | number, TValue> = Store<
-  TKey,
-  TValue
+    TKey,
+    TValue
 > & {
-  key: TKey;
-  value: TValue | undefined;
-};
+    key: TKey
+    value: TValue | undefined
+}
 
 const mapsByNamespace = new Map<
-  string,
-  Map<string | number, MapEntry<string | number, unknown>[]>
->();
+    string,
+    Map<string | number, MapEntry<string | number, unknown>[]>
+>()
 
 export const InMemoryStore = <TKey extends string | number, TValue>({
-  keySpace,
-  maxEntryCount,
-  encodeValue,
-  decodeValue,
+    keySpace,
+    maxEntryCount,
+    encodeValue,
+    decodeValue,
 }: {
-  keySpace: string;
-  maxEntryCount: number;
-  encodeValue: (value: TValue) => unknown;
-  decodeValue: (value: unknown) => TValue | null;
+    keySpace: string
+    maxEntryCount: number
+    encodeValue: (value: TValue) => unknown
+    decodeValue: (value: unknown) => TValue | null
 }): StoreModule<TKey, TValue> & {
-  toJSON: () => unknown;
+    toJSON: () => unknown
 } => {
-  const getMap = () => {
-    const map = mapsByNamespace.get(keySpace);
+    const getMap = () => {
+        const map = mapsByNamespace.get(keySpace)
 
-    if (map) {
-      return map;
+        if (map) {
+            return map
+        }
+
+        const mapNew = new Map<
+            string | number,
+            MapEntry<string | number, unknown>[]
+        >()
+
+        mapsByNamespace.set(keySpace, mapNew)
+
+        return mapNew
     }
 
-    const mapNew = new Map<
-      string | number,
-      MapEntry<string | number, unknown>[]
-    >();
+    const setMap = (
+        map: Map<string | number, MapEntry<string | number, unknown>[]>,
+    ) => {
+        mapsByNamespace.set(keySpace, map)
+    }
 
-    mapsByNamespace.set(keySpace, mapNew);
+    const decodeEntry = (
+        encodedEntry: MapEntry<string | number, unknown>,
+    ): MapEntry<TKey, TValue> | null => {
+        const value = encodedEntry.value
+            ? decodeValue(encodedEntry.value)
+            : undefined
 
-    return mapNew;
-  };
+        if (!value) {
+            return null
+        }
 
-  const setMap = (
-    map: Map<string | number, MapEntry<string | number, unknown>[]>
-  ) => {
-    mapsByNamespace.set(keySpace, map);
-  };
+        return {
+            _appendStep: encodedEntry._appendStep,
+            _instanceStep: encodedEntry._instanceStep,
+            _posixTimestamp: encodedEntry._posixTimestamp,
+            key: encodedEntry.key as TKey,
+            value,
+        }
+    }
 
-  const decodeEntry = (
-    encodedEntry: MapEntry<string | number, unknown>
-  ): MapEntry<TKey, TValue> | null => {
-    const value = encodedEntry.value
-      ? decodeValue(encodedEntry.value)
-      : undefined;
+    let runningAppendStep = 1
 
-    if (!value) {
-      return null;
+    const append = async (
+        now: number,
+        instance: Store<TKey, TValue>,
+        entries: [TKey, TValue | undefined][],
+    ): Promise<Store<TKey, TValue>> => {
+        const instanceNew: Store<TKey, TValue> = {
+            _posixTimestamp: now,
+            _instanceStep: instance._instanceStep + 1,
+            _appendStep: runningAppendStep++,
+        }
+
+        const map = getMap()
+
+        for (const [key, value] of entries) {
+            const entry: MapEntry<string | number, unknown> = {
+                ...instanceNew,
+                key,
+                value: value ? encodeValue(value) : undefined,
+            }
+
+            const keyEntries = map.get(entry.key) ?? []
+
+            keyEntries.push(entry)
+
+            if (keyEntries.length > maxEntryCount) {
+                keyEntries.shift()
+            }
+
+            map.set(entry.key, keyEntries)
+        }
+        setMap(map)
+
+        return instanceNew
     }
 
     return {
-      _appendStep: encodedEntry._appendStep,
-      _instanceStep: encodedEntry._instanceStep,
-      _posixTimestamp: encodedEntry._posixTimestamp,
-      key: encodedEntry.key as TKey,
-      value,
-    };
-  };
+        toJSON() {
+            const json: { [key: string | number]: MapEntry<TKey, TValue>[] } =
+                {}
+            for (const [key, entries] of mapsByNamespace.entries()) {
+                // @ts-expect-error
+                json[key] = entries
+            }
+            return json
+        },
+        startingAt(now) {
+            return {
+                _posixTimestamp: now,
+                _instanceStep: 0,
+                _appendStep: 0,
+            }
+        },
+        async assoc(now, instance, key, value) {
+            return append(now, instance, [[key, value]])
+        },
 
-  let runningAppendStep = 1;
+        async assocMany(now, instance, entries) {
+            return append(now, instance, entries)
+        },
 
-  const append = async (
-    now: number,
-    instance: Store<TKey, TValue>,
-    entries: [TKey, TValue | undefined][]
-  ): Promise<Store<TKey, TValue>> => {
-    const instanceNew: Store<TKey, TValue> = {
-      _posixTimestamp: now,
-      _instanceStep: instance._instanceStep + 1,
-      _appendStep: runningAppendStep++,
-    };
+        async dissoc(now, instance, key) {
+            return append(now, instance, [[key, undefined]])
+        },
 
-    const map = getMap();
+        async dissocMany(now, instance, keys) {
+            return append(
+                now,
+                instance,
+                keys.map((key) => [key, undefined]),
+            )
+        },
 
-    for (const [key, value] of entries) {
-      const entry: MapEntry<string | number, unknown> = {
-        ...instanceNew,
-        key,
-        value: value ? encodeValue(value) : undefined,
-      };
+        async listLatest(_from, _to, instance) {
+            const latestValues: TValue[] = []
 
-      const keyEntries = map.get(entry.key) ?? [];
+            const map = getMap()
 
-      keyEntries.push(entry);
+            for (const key of map.keys()) {
+                const value = await this.get(instance, key as TKey)
 
-      if (keyEntries.length > maxEntryCount) {
-        keyEntries.shift();
-      }
+                if (!value) {
+                    continue
+                }
 
-      map.set(entry.key, keyEntries);
+                latestValues.push(value)
+            }
+            return latestValues
+        },
+
+        async get(instance, key) {
+            let runningEntry: MapEntry<TKey, TValue> | null = null
+
+            const map = getMap()
+
+            for (const encoded of map.get(key) ?? []) {
+                const entry = decodeEntry(encoded)
+
+                if (!entry) {
+                    continue
+                }
+
+                // SKIP entry is from the future
+                if (entry._posixTimestamp > instance._posixTimestamp) {
+                    continue
+                }
+
+                // SKIP entry is from the future
+                if (entry._instanceStep > instance._instanceStep) {
+                    continue
+                }
+
+                // SKIP entry is from the future
+                if (entry._appendStep > instance._appendStep) {
+                    continue
+                }
+
+                // KEEP entry exists
+                if (!runningEntry) {
+                    runningEntry = entry
+                    continue
+                }
+
+                // KEEP entry is newer
+                if (entry._posixTimestamp > runningEntry._posixTimestamp) {
+                    runningEntry = entry
+                    continue
+                }
+
+                // KEEP entry is newer
+                if (entry._instanceStep > runningEntry._instanceStep) {
+                    runningEntry = entry
+                    continue
+                }
+
+                // KEEP entry is newer
+                if (entry._appendStep > runningEntry._appendStep) {
+                    runningEntry = entry
+                    continue
+                }
+            }
+
+            return runningEntry?.value ?? null
+        },
     }
-    setMap(map);
-
-    return instanceNew;
-  };
-
-  return {
-    toJSON() {
-      const json: { [key: string | number]: MapEntry<TKey, TValue>[] } = {};
-      for (const [key, entries] of mapsByNamespace.entries()) {
-        // @ts-expect-error
-        json[key] = entries;
-      }
-      return json;
-    },
-    startingAt(now) {
-      return {
-        _posixTimestamp: now,
-        _instanceStep: 0,
-        _appendStep: 0,
-      };
-    },
-    async assoc(now, instance, key, value) {
-      return append(now, instance, [[key, value]]);
-    },
-
-    async assocMany(now, instance, entries) {
-      return append(now, instance, entries);
-    },
-
-    async dissoc(now, instance, key) {
-      return append(now, instance, [[key, undefined]]);
-    },
-
-    async dissocMany(now, instance, keys) {
-      return append(
-        now,
-        instance,
-        keys.map((key) => [key, undefined])
-      );
-    },
-
-    async listLatest(_from, _to, instance) {
-      const latestValues: TValue[] = [];
-
-      const map = getMap();
-
-      for (const key of map.keys()) {
-        const value = await this.get(instance, key as TKey);
-
-        if (!value) {
-          continue;
-        }
-
-        latestValues.push(value);
-      }
-      return latestValues;
-    },
-
-    async get(instance, key) {
-      let runningEntry: MapEntry<TKey, TValue> | null = null;
-
-      const map = getMap();
-
-      for (const encoded of map.get(key) ?? []) {
-        const entry = decodeEntry(encoded);
-
-        if (!entry) {
-          continue;
-        }
-
-        // SKIP entry is from the future
-        if (entry._posixTimestamp > instance._posixTimestamp) {
-          continue;
-        }
-
-        // SKIP entry is from the future
-        if (entry._instanceStep > instance._instanceStep) {
-          continue;
-        }
-
-        // SKIP entry is from the future
-        if (entry._appendStep > instance._appendStep) {
-          continue;
-        }
-
-        // KEEP entry exists
-        if (!runningEntry) {
-          runningEntry = entry;
-          continue;
-        }
-
-        // KEEP entry is newer
-        if (entry._posixTimestamp > runningEntry._posixTimestamp) {
-          runningEntry = entry;
-          continue;
-        }
-
-        // KEEP entry is newer
-        if (entry._instanceStep > runningEntry._instanceStep) {
-          runningEntry = entry;
-          continue;
-        }
-
-        // KEEP entry is newer
-        if (entry._appendStep > runningEntry._appendStep) {
-          runningEntry = entry;
-          continue;
-        }
-      }
-
-      return runningEntry?.value ?? null;
-    },
-  };
-};
+}

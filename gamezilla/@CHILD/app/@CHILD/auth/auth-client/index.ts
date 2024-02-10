@@ -1,1 +1,1 @@
-export * as AuthEmailLink from "./auth-email-link";
+export * as AuthEmailLink from "./auth-email-link"

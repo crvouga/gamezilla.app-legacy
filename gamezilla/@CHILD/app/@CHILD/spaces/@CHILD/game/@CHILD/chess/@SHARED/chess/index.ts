@@ -1,3 +1,3 @@
-export * from "./chess";
-export * as Chess from "./chess";
-export * from "./chess-shared";
+export * from "./chess"
+export * as Chess from "./chess"
+export * from "./chess-shared"

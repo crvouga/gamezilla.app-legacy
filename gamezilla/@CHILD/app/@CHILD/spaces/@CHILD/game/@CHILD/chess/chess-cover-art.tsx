@@ -1,1 +1,1 @@
-export { CoverArt } from "./@SHARED/chess-ui/chess-cover-art";
+export { CoverArt } from "./@SHARED/chess-ui/chess-cover-art"

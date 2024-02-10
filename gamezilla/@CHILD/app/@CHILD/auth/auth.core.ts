@@ -1,10 +1,6 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import {
-  EmailAddress,
-  PhoneNumber,
-  RemoteResult,
-} from "gamezilla/@SHARED/core";
-import * as AuthSMS from "./@CHILD/auth-sms/auth-sms.core";
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { EmailAddress, PhoneNumber, RemoteResult } from "gamezilla/@SHARED/core"
+import * as AuthSMS from "./@CHILD/auth-sms/auth-sms.core"
 // import {
 //   StoreSessionIdByUserId,
 //   StoreUserIdBySessionId,
@@ -18,26 +14,26 @@ import * as AuthSMS from "./@CHILD/auth-sms/auth-sms.core";
 //
 
 export type Account = {
-  userId: UserId;
-  emailAddress?: EmailAddress | null;
-  phoneNumber?: PhoneNumber | null;
-};
+    userId: UserId
+    emailAddress?: EmailAddress | null
+    phoneNumber?: PhoneNumber | null
+}
 
 export type ModelClient = {
-  loginWithGoogle: RemoteResult<string, null>;
-  logout: RemoteResult<string, null>;
-  currentUser:
-    | { t: "loading" }
-    | { t: "logged-out" }
-    | { t: "logged-in"; userId: UserId; name?: string };
-  sms: AuthSMS.ModelClient;
-};
+    loginWithGoogle: RemoteResult<string, null>
+    logout: RemoteResult<string, null>
+    currentUser:
+        | { t: "loading" }
+        | { t: "logged-out" }
+        | { t: "logged-in"; userId: UserId; name?: string }
+    sms: AuthSMS.ModelClient
+}
 
 export type ModelServer = {
-  // userIdBySessionId: Store<SessionId, UserId>;
-  // sessionIdsByUserId: Store<UserId, { [sessionId: SessionId]: SessionId }>;
-  sms: AuthSMS.ModelServer;
-};
+    // userIdBySessionId: Store<SessionId, UserId>;
+    // sessionIdsByUserId: Store<UserId, { [sessionId: SessionId]: SessionId }>;
+    sms: AuthSMS.ModelServer
+}
 
 // export const toUserId = async (
 //   ctx: ServerCtx,
@@ -71,25 +67,23 @@ export type ModelServer = {
 //
 
 export type MsgClient =
-  | { t: "user-clicked-login-with-phone" }
-  | { t: "logout"; c: LogoutMsg }
-  | { t: "sms"; c: AuthSMS.MsgClient };
+    | { t: "user-clicked-login-with-phone" }
+    | { t: "logout"; c: LogoutMsg }
+    | { t: "sms"; c: AuthSMS.MsgClient }
 
 export type LogoutMsg =
-  | { t: "clicked-confirm" }
-  | { t: "clicked-cancel" }
-  | { t: "closed" };
+    | { t: "clicked-confirm" }
+    | { t: "clicked-cancel" }
+    | { t: "closed" }
 
 export type MsgServer = {
-  t: "sms";
-  c: AuthSMS.MsgServer;
-};
+    t: "sms"
+    c: AuthSMS.MsgServer
+}
 
-export type MsgToServer =
-  | { t: "logout" }
-  | { t: "sms"; c: AuthSMS.MsgToServer };
+export type MsgToServer = { t: "logout" } | { t: "sms"; c: AuthSMS.MsgToServer }
 
 export type MsgToClient =
-  | { t: "client-authenticated"; userId: UserId; loggedIn: boolean }
-  | { t: "client-unauthenticated" }
-  | { t: "sms"; c: AuthSMS.MsgToClient };
+    | { t: "client-authenticated"; userId: UserId; loggedIn: boolean }
+    | { t: "client-unauthenticated" }
+    | { t: "sms"; c: AuthSMS.MsgToClient }

@@ -1,2 +1,2 @@
-export * as PuzzleBuilder from "./puzzle-builder.core";
-export * from "./puzzle-builder.game";
+export * as PuzzleBuilder from "./puzzle-builder.core"
+export * from "./puzzle-builder.game"

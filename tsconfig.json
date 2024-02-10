@@ -1,77 +1,77 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "esnext",
-      "WebWorker",
-      "es2016",
-      "dom",
-      "ES2015"
+    "compilerOptions": {
+        "target": "esnext",
+        "lib": [
+            "DOM",
+            "DOM.Iterable",
+            "esnext",
+            "WebWorker",
+            "es2016",
+            "dom",
+            "ES2015"
+        ],
+        "module": "esnext",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "incremental": true,
+        "outDir": "dist",
+        /* Linting */
+        "strict": true,
+
+        // Strict Checks
+        "alwaysStrict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "useUnknownInCatchVariables": true,
+        "strictPropertyInitialization": true,
+        "strictFunctionTypes": true,
+        "noImplicitThis": true,
+        "strictBindCallApply": true,
+        "noPropertyAccessFromIndexSignature": true,
+        "noUncheckedIndexedAccess": true,
+        "exactOptionalPropertyTypes": false,
+        // Linter Checks
+        "noImplicitReturns": true,
+        "noImplicitOverride": true,
+        "forceConsistentCasingInFileNames": true,
+        // https://eslint.org/docs/rules/consistent-return ?
+        "noFallthroughCasesInSwitch": true,
+        // https://eslint.org/docs/rules/no-fallthrough
+        "noUnusedLocals": true,
+        // https://eslint.org/docs/rules/no-unused-vars
+        "noUnusedParameters": true,
+        // https://eslint.org/docs/rules/no-unused-vars#args
+        "allowUnreachableCode": false,
+        // https://eslint.org/docs/rules/no-unreachable ?
+        "allowUnusedLabels": false,
+        // https://eslint.org/docs/rules/no-unused-labels
+        // Base Strict Checks
+        "noImplicitUseStrict": false,
+        "suppressExcessPropertyErrors": false,
+        "suppressImplicitAnyIndexErrors": false,
+        "noStrictGenericChecks": false,
+
+        // if TS 5.x+
+        "moduleResolution": "bundler",
+        "noEmit": true,
+        "allowImportingTsExtensions": true,
+        "moduleDetection": "force",
+
+        "types": ["bun-types", "inferno", "preact", "react"],
+        "jsx": "preserve", // support JSX
+        "allowJs": true, // allow importing `.js` from `.ts`
+
+        //
+        "baseUrl": "./",
+        "skipLibCheck": true
+        // "resolveJsonModule": true
+    },
+    "exclude": ["node_modules"],
+    "include": [
+        "config.ts",
+        "gamezilla",
+        "global.d.ts",
+        "node_modules/inferno/dist/index.d.ts"
     ],
-    "module": "esnext",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "incremental": true,
-    "outDir": "dist",
-    /* Linting */
-    "strict": true,
-
-    // Strict Checks
-    "alwaysStrict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "useUnknownInCatchVariables": true,
-    "strictPropertyInitialization": true,
-    "strictFunctionTypes": true,
-    "noImplicitThis": true,
-    "strictBindCallApply": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": false,
-    // Linter Checks
-    "noImplicitReturns": true,
-    "noImplicitOverride": true,
-    "forceConsistentCasingInFileNames": true,
-    // https://eslint.org/docs/rules/consistent-return ?
-    "noFallthroughCasesInSwitch": true,
-    // https://eslint.org/docs/rules/no-fallthrough
-    "noUnusedLocals": true,
-    // https://eslint.org/docs/rules/no-unused-vars
-    "noUnusedParameters": true,
-    // https://eslint.org/docs/rules/no-unused-vars#args
-    "allowUnreachableCode": false,
-    // https://eslint.org/docs/rules/no-unreachable ?
-    "allowUnusedLabels": false,
-    // https://eslint.org/docs/rules/no-unused-labels
-    // Base Strict Checks
-    "noImplicitUseStrict": false,
-    "suppressExcessPropertyErrors": false,
-    "suppressImplicitAnyIndexErrors": false,
-    "noStrictGenericChecks": false,
-
-    // if TS 5.x+
-    "moduleResolution": "bundler",
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "moduleDetection": "force",
-
-    "types": ["bun-types", "inferno", "preact", "react"],
-    "jsx": "preserve", // support JSX
-    "allowJs": true, // allow importing `.js` from `.ts`
-
-    //
-    "baseUrl": "./",
-    "skipLibCheck": true
-    // "resolveJsonModule": true
-  },
-  "exclude": ["node_modules"],
-  "include": [
-    "config.ts",
-    "gamezilla",
-    "global.d.ts",
-    "node_modules/inferno/dist/index.d.ts"
-  ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+    "references": [{ "path": "./tsconfig.node.json" }]
 }

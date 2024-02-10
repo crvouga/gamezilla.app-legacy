@@ -1,10 +1,10 @@
 import {
-  AppRoute,
-  ClientEvent,
-  RouteCmd,
-  SoundCmd,
-} from "gamezilla/@CHILD/app/@SHARED/client";
-import { Browser, Eff } from "gamezilla/@SHARED/core";
+    AppRoute,
+    ClientEvent,
+    RouteCmd,
+    SoundCmd,
+} from "gamezilla/@CHILD/app/@SHARED/client"
+import { Browser, Eff } from "gamezilla/@SHARED/core"
 
 //
 //
@@ -15,32 +15,32 @@ import { Browser, Eff } from "gamezilla/@SHARED/core";
 //
 
 export type Model = {
-  previousRoute: AppRoute;
-  currentRoute: AppRoute;
-};
+    previousRoute: AppRoute
+    currentRoute: AppRoute
+}
 
-const FALLBACK: AppRoute = { t: "spaces", c: { t: "space-list" } };
+const FALLBACK: AppRoute = { t: "spaces", c: { t: "space-list" } }
 
 export const init = ({
-  location,
+    location,
 }: {
-  location: Browser.Location;
-  stored: Model | null;
+    location: Browser.Location
+    stored: Model | null
 }): {
-  model: Model;
-  eff?: Eff;
+    model: Model
+    eff?: Eff
 } => {
-  const decoded = AppRoute.decode(location.pathname);
+    const decoded = AppRoute.decode(location.pathname)
 
-  if (decoded) {
-    return { model: { currentRoute: decoded, previousRoute: decoded } };
-  }
+    if (decoded) {
+        return { model: { currentRoute: decoded, previousRoute: decoded } }
+    }
 
-  return {
-    model: { currentRoute: FALLBACK, previousRoute: FALLBACK },
-    eff: Browser.replace(AppRoute.encode(FALLBACK)),
-  };
-};
+    return {
+        model: { currentRoute: FALLBACK, previousRoute: FALLBACK },
+        eff: Browser.replace(AppRoute.encode(FALLBACK)),
+    }
+}
 
 //
 //
@@ -51,103 +51,103 @@ export const init = ({
 //
 
 export type Msg =
-  | { t: "route-changed"; route: AppRoute }
-  | { t: "clicked-link"; route: AppRoute }
-  | { t: "clicked-back" };
+    | { t: "route-changed"; route: AppRoute }
+    | { t: "clicked-link"; route: AppRoute }
+    | { t: "clicked-back" }
 
 export const update = ({
-  msg,
-  model,
-  msgCmd,
+    msg,
+    model,
+    msgCmd,
 }: {
-  msgCmd?: RouteCmd | null;
-  msg?: Msg | null;
-  model: Model;
+    msgCmd?: RouteCmd | null
+    msg?: Msg | null
+    model: Model
 }): {
-  model: Model;
-  eff?: Eff<Msg>;
-  msgEvt?: ClientEvent[];
-  msgCmd?: SoundCmd[];
+    model: Model
+    eff?: Eff<Msg>
+    msgEvt?: ClientEvent[]
+    msgCmd?: SoundCmd[]
 } => {
-  if (msg) {
-    return updateFromMsg({ msg, model });
-  }
-  if (msgCmd) {
-    return updateFromCmd({ msgCmd, model });
-  }
-  return { model };
-};
+    if (msg) {
+        return updateFromMsg({ msg, model })
+    }
+    if (msgCmd) {
+        return updateFromCmd({ msgCmd, model })
+    }
+    return { model }
+}
 
 const updateFromMsg: typeof update = ({ msg, model }) => {
-  if (!msg) {
-    return { model };
-  }
-  switch (msg.t) {
-    case "clicked-back": {
-      return {
-        model,
-        eff: Browser.back,
-      };
+    if (!msg) {
+        return { model }
     }
+    switch (msg.t) {
+        case "clicked-back": {
+            return {
+                model,
+                eff: Browser.back,
+            }
+        }
 
-    case "clicked-link": {
-      return {
-        model: {
-          previousRoute: model.currentRoute,
-          currentRoute: msg.route,
-        },
-        eff: Browser.push(AppRoute.encode(msg.route)),
-      };
-    }
+        case "clicked-link": {
+            return {
+                model: {
+                    previousRoute: model.currentRoute,
+                    currentRoute: msg.route,
+                },
+                eff: Browser.push(AppRoute.encode(msg.route)),
+            }
+        }
 
-    case "route-changed": {
-      return {
-        model: {
-          previousRoute: model.currentRoute,
-          currentRoute: msg.route,
-        },
-        msgEvt: [{ t: "routing/route-changed", route: msg.route }],
-      };
+        case "route-changed": {
+            return {
+                model: {
+                    previousRoute: model.currentRoute,
+                    currentRoute: msg.route,
+                },
+                msgEvt: [{ t: "routing/route-changed", route: msg.route }],
+            }
+        }
     }
-  }
-};
+}
 
 const updateFromCmd: typeof update = ({ msgCmd, model }) => {
-  if (!msgCmd) {
-    return { model };
-  }
-
-  const routeCmd = msgCmd.c;
-
-  switch (routeCmd.t) {
-    case "push": {
-      return {
-        model: {
-          previousRoute: model.currentRoute,
-          currentRoute: routeCmd.route,
-        },
-        eff: Browser.push(AppRoute.encode(routeCmd.route)),
-      };
+    if (!msgCmd) {
+        return { model }
     }
 
-    case "back": {
-      return {
-        model,
-        eff: Browser.back,
-      };
-    }
+    const routeCmd = msgCmd.c
 
-    case "replace": {
-      return {
-        model: {
-          previousRoute: model.currentRoute,
-          currentRoute: routeCmd.route,
-        },
-        eff: Browser.replace(AppRoute.encode(routeCmd.route)),
-      };
+    switch (routeCmd.t) {
+        case "push": {
+            return {
+                model: {
+                    previousRoute: model.currentRoute,
+                    currentRoute: routeCmd.route,
+                },
+                eff: Browser.push(AppRoute.encode(routeCmd.route)),
+            }
+        }
+
+        case "back": {
+            return {
+                model,
+                eff: Browser.back,
+            }
+        }
+
+        case "replace": {
+            return {
+                model: {
+                    previousRoute: model.currentRoute,
+                    currentRoute: routeCmd.route,
+                },
+                eff: Browser.replace(AppRoute.encode(routeCmd.route)),
+            }
+        }
     }
-  }
-};
+}
 
 //
 //
@@ -158,13 +158,13 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 //
 
 const onLocationChange = (location: Browser.Location): Msg => {
-  const decoded = AppRoute.decode(location.pathname);
+    const decoded = AppRoute.decode(location.pathname)
 
-  if (decoded) {
-    return { t: "route-changed", route: decoded };
-  }
+    if (decoded) {
+        return { t: "route-changed", route: decoded }
+    }
 
-  return { t: "route-changed", route: FALLBACK };
-};
+    return { t: "route-changed", route: FALLBACK }
+}
 
-export const subscriptions = Browser.onLocation(onLocationChange);
+export const subscriptions = Browser.onLocation(onLocationChange)

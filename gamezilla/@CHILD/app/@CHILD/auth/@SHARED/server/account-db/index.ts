@@ -1,2 +1,2 @@
-export * from "./account-db";
-export * from "./account-db-impl";
+export * from "./account-db"
+export * from "./account-db-impl"

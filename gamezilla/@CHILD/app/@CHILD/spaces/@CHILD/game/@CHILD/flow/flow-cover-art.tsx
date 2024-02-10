@@ -1,1 +1,1 @@
-export { CoverArt } from "./@SHARED/flow-cover-art";
+export { CoverArt } from "./@SHARED/flow-cover-art"

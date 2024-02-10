@@ -1,1 +1,1 @@
-export * from "./vs-bot-setup";
+export * from "./vs-bot-setup"

@@ -1,2 +1,2 @@
-export * from "./adjective";
-export * from "./noun";
+export * from "./adjective"
+export * from "./noun"

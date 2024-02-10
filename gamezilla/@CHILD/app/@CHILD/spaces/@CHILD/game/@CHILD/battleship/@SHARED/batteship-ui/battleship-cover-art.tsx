@@ -1,3 +1,3 @@
 export const CoverArt = () => {
-  return <div>hello</div>;
-};
+    return <div>hello</div>
+}

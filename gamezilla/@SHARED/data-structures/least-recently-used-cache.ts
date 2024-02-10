@@ -1,102 +1,102 @@
 export class LRUCache<K, V> implements Map<K, V> {
-  private capacity: number;
-  private map: Map<K, V>;
-  private keysInUse: Array<K>;
+    private capacity: number
+    private map: Map<K, V>
+    private keysInUse: Array<K>
 
-  constructor({ capacity }: { capacity: number }) {
-    this.capacity = capacity;
-    this.map = new Map<K, V>();
-    this.keysInUse = [];
-  }
-
-  get(key: K): V | undefined {
-    if (!this.map.has(key)) {
-      return undefined;
+    constructor({ capacity }: { capacity: number }) {
+        this.capacity = capacity
+        this.map = new Map<K, V>()
+        this.keysInUse = []
     }
 
-    this.refreshKey(key);
-    return this.map.get(key);
-  }
+    get(key: K): V | undefined {
+        if (!this.map.has(key)) {
+            return undefined
+        }
 
-  set(key: K, value: V): this {
-    if (this.map.has(key)) {
-      this.refreshKey(key);
-    } else {
-      if (this.map.size >= this.capacity) {
-        this.evictLeastRecentlyUsed();
-      }
-      this.keysInUse.push(key);
+        this.refreshKey(key)
+        return this.map.get(key)
     }
 
-    this.map.set(key, value);
-    return this;
-  }
+    set(key: K, value: V): this {
+        if (this.map.has(key)) {
+            this.refreshKey(key)
+        } else {
+            if (this.map.size >= this.capacity) {
+                this.evictLeastRecentlyUsed()
+            }
+            this.keysInUse.push(key)
+        }
 
-  delete(key: K): boolean {
-    if (!this.map.has(key)) {
-      return false;
+        this.map.set(key, value)
+        return this
     }
 
-    this.map.delete(key);
-    const index = this.keysInUse.indexOf(key);
-    if (index > -1) {
-      this.keysInUse.splice(index, 1);
+    delete(key: K): boolean {
+        if (!this.map.has(key)) {
+            return false
+        }
+
+        this.map.delete(key)
+        const index = this.keysInUse.indexOf(key)
+        if (index > -1) {
+            this.keysInUse.splice(index, 1)
+        }
+        return true
     }
-    return true;
-  }
 
-  clear(): void {
-    this.map.clear();
-    this.keysInUse = [];
-  }
-
-  private refreshKey(key: K): void {
-    const index = this.keysInUse.indexOf(key);
-    if (index > -1) {
-      this.keysInUse.splice(index, 1);
+    clear(): void {
+        this.map.clear()
+        this.keysInUse = []
     }
-    this.keysInUse.push(key);
-  }
 
-  private evictLeastRecentlyUsed(): void {
-    const keyToEvict = this.keysInUse.shift();
-    if (keyToEvict !== undefined) {
-      this.map.delete(keyToEvict);
+    private refreshKey(key: K): void {
+        const index = this.keysInUse.indexOf(key)
+        if (index > -1) {
+            this.keysInUse.splice(index, 1)
+        }
+        this.keysInUse.push(key)
     }
-  }
 
-  entries(): IterableIterator<[K, V]> {
-    return this.map.entries();
-  }
+    private evictLeastRecentlyUsed(): void {
+        const keyToEvict = this.keysInUse.shift()
+        if (keyToEvict !== undefined) {
+            this.map.delete(keyToEvict)
+        }
+    }
 
-  forEach(
-    callbackfn: (value: V, key: K, map: Map<K, V>) => void,
-    thisArg?: any
-  ): void {
-    this.map.forEach(callbackfn, thisArg);
-  }
+    entries(): IterableIterator<[K, V]> {
+        return this.map.entries()
+    }
 
-  has(key: K): boolean {
-    return this.map.has(key);
-  }
+    forEach(
+        callbackfn: (value: V, key: K, map: Map<K, V>) => void,
+        thisArg?: any,
+    ): void {
+        this.map.forEach(callbackfn, thisArg)
+    }
 
-  keys(): IterableIterator<K> {
-    return this.map.keys();
-  }
+    has(key: K): boolean {
+        return this.map.has(key)
+    }
 
-  get size() {
-    return this.map.size;
-  }
+    keys(): IterableIterator<K> {
+        return this.map.keys()
+    }
 
-  values(): IterableIterator<V> {
-    return this.map.values();
-  }
+    get size() {
+        return this.map.size
+    }
 
-  [Symbol.iterator](): IterableIterator<[K, V]> {
-    return this.map[Symbol.iterator]();
-  }
+    values(): IterableIterator<V> {
+        return this.map.values()
+    }
 
-  get [Symbol.toStringTag]() {
-    return this.map[Symbol.toStringTag];
-  }
+    [Symbol.iterator](): IterableIterator<[K, V]> {
+        return this.map[Symbol.iterator]()
+    }
+
+    get [Symbol.toStringTag]() {
+        return this.map[Symbol.toStringTag]
+    }
 }

@@ -1,5 +1,5 @@
-import { Location } from "gamezilla/@CHILD/app/@SHARED/client";
-import { PhoneNumber, isErr } from "gamezilla/@SHARED/core";
+import { Location } from "gamezilla/@CHILD/app/@SHARED/client"
+import { PhoneNumber, isErr } from "gamezilla/@SHARED/core"
 
 //
 //
@@ -9,41 +9,44 @@ import { PhoneNumber, isErr } from "gamezilla/@SHARED/core";
 //
 //
 
-export type Route = { t: "/" } | { t: "/verify"; phoneNumber: PhoneNumber };
+export type Route = { t: "/" } | { t: "/verify"; phoneNumber: PhoneNumber }
 
 export const toLocation = (route: Route): Location => {
-  switch (route.t) {
-    case "/":
-      return {
-        pathname: "/",
-      };
+    switch (route.t) {
+        case "/":
+            return {
+                pathname: "/",
+            }
 
-    case "/verify":
-      const params = new URLSearchParams();
-      params.append(
-        "phoneNumberCountry",
-        PhoneNumber.toCountry(route.phoneNumber)
-      );
-      params.append("phoneNumber", PhoneNumber.toString(route.phoneNumber));
-      return { pathname: "/verify", searchParams: params };
-  }
-};
+        case "/verify":
+            const params = new URLSearchParams()
+            params.append(
+                "phoneNumberCountry",
+                PhoneNumber.toCountry(route.phoneNumber),
+            )
+            params.append(
+                "phoneNumber",
+                PhoneNumber.toString(route.phoneNumber),
+            )
+            return { pathname: "/verify", searchParams: params }
+    }
+}
 
 export const toRoute = (location: Location): Route => {
-  if (location.pathname.includes("verify")) {
-    const phoneNumber = location.searchParams?.get("phoneNumber");
-    if (typeof phoneNumber !== "string") {
-      return { t: "/" };
+    if (location.pathname.includes("verify")) {
+        const phoneNumber = location.searchParams?.get("phoneNumber")
+        if (typeof phoneNumber !== "string") {
+            return { t: "/" }
+        }
+        const parsed = PhoneNumber.parse(phoneNumber)
+        if (isErr(parsed)) {
+            return { t: "/" }
+        }
+        return {
+            t: "/verify",
+            phoneNumber: parsed.value,
+        }
     }
-    const parsed = PhoneNumber.parse(phoneNumber);
-    if (isErr(parsed)) {
-      return { t: "/" };
-    }
-    return {
-      t: "/verify",
-      phoneNumber: parsed.value,
-    };
-  }
 
-  return { t: "/" };
-};
+    return { t: "/" }
+}

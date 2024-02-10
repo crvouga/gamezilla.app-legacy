@@ -1,129 +1,134 @@
 import {
-  APP_SOUND,
-  playSound,
-  sendToServer,
-  showErrSm,
-  showCreatedSm,
-} from "gamezilla/@CHILD/app/@SHARED/client";
-import { Button, IconPlus } from "gamezilla/@CHILD/app/@SHARED/ui";
+    APP_SOUND,
+    playSound,
+    sendToServer,
+    showErrSm,
+    showCreatedSm,
+} from "gamezilla/@CHILD/app/@SHARED/client"
+import { Button, IconPlus } from "gamezilla/@CHILD/app/@SHARED/ui"
 import {
-  Posix,
-  Result,
-  Sub,
-  Time,
-  TimeSpan,
-  isErr,
-  isLoading,
-  loading,
-} from "gamezilla/@SHARED/core";
-import { ClientModule } from "../../builder.core";
+    Posix,
+    Result,
+    Sub,
+    Time,
+    TimeSpan,
+    isErr,
+    isLoading,
+    loading,
+} from "gamezilla/@SHARED/core"
+import { ClientModule } from "../../builder.core"
 
 const update: ClientModule["update"] = (input) => {
-  const { msgGame, model, msg, ctx } = input;
+    const { msgGame, model, msg, ctx } = input
 
-  switch (msg?.t) {
-    case "puzzle-create.user-clicked-create-button": {
-      return {
-        model: {
-          ...model,
-          puzzleCreateRequest: loading,
-          puzzleCreateRequestedAt: ctx.now,
-        },
-        msgCmd: [
-          playSound(APP_SOUND.tap),
-          sendToServer({ t: "puzzle-create.user-clicked-create-button" }),
-        ],
-      };
+    switch (msg?.t) {
+        case "puzzle-create.user-clicked-create-button": {
+            return {
+                model: {
+                    ...model,
+                    puzzleCreateRequest: loading,
+                    puzzleCreateRequestedAt: ctx.now,
+                },
+                msgCmd: [
+                    playSound(APP_SOUND.tap),
+                    sendToServer({
+                        t: "puzzle-create.user-clicked-create-button",
+                    }),
+                ],
+            }
+        }
+
+        case "time-passed": {
+            if (
+                isLoading(model.puzzleCreateRequest) &&
+                TimeSpan.gte(
+                    Posix.diff(model.puzzleCreateRequestedAt, ctx.now),
+                    TimeSpan.fromSeconds(5),
+                )
+            ) {
+                const errorMessage = "Request timed out"
+                return {
+                    model: {
+                        ...model,
+                        puzzleCreateRequest: Result.err(errorMessage),
+                    },
+                    msgCmd: showErrSm(errorMessage),
+                }
+            }
+            return { model }
+        }
+
+        default: {
+            break
+        }
     }
 
-    case "time-passed": {
-      if (
-        isLoading(model.puzzleCreateRequest) &&
-        TimeSpan.gte(
-          Posix.diff(model.puzzleCreateRequestedAt, ctx.now),
-          TimeSpan.fromSeconds(5)
-        )
-      ) {
-        const errorMessage = "Request timed out";
-        return {
-          model: {
-            ...model,
-            puzzleCreateRequest: Result.err(errorMessage),
-          },
-          msgCmd: showErrSm(errorMessage),
-        };
-      }
-      return { model };
+    switch (msgGame?.t) {
+        case "user-created-puzzle": {
+            if (isErr(msgGame.created)) {
+                return {
+                    model: { ...model, puzzleCreateRequest: msgGame.created },
+                    msgCmd: showErrSm(msgGame.created.error),
+                }
+            }
+
+            const puzzleNew = msgGame.created.value
+
+            return {
+                model: {
+                    ...model,
+                    puzzleCreateRequest: Result.mapOk(
+                        msgGame.created,
+                        () => null,
+                    ),
+                    puzzles: { ...model.puzzles, [puzzleNew.id]: puzzleNew },
+                },
+                msgCmd: showCreatedSm("Puzzle created"),
+            }
+        }
+
+        default: {
+            break
+        }
     }
 
-    default: {
-      break;
-    }
-  }
+    return { model }
+}
 
-  switch (msgGame?.t) {
-    case "user-created-puzzle": {
-      if (isErr(msgGame.created)) {
-        return {
-          model: { ...model, puzzleCreateRequest: msgGame.created },
-          msgCmd: showErrSm(msgGame.created.error),
-        };
-      }
-
-      const puzzleNew = msgGame.created.value;
-
-      return {
-        model: {
-          ...model,
-          puzzleCreateRequest: Result.mapOk(msgGame.created, () => null),
-          puzzles: { ...model.puzzles, [puzzleNew.id]: puzzleNew },
-        },
-        msgCmd: showCreatedSm("Puzzle created"),
-      };
-    }
-
-    default: {
-      break;
-    }
-  }
-
-  return { model };
-};
-
-const id = "puzzle-create-request";
+const id = "puzzle-create-request"
 
 const subscriptions: ClientModule["subscriptions"] = ({ model }) => {
-  switch (model.puzzleCreateRequest.t) {
-    case "loading": {
-      return Time.interval(id, TimeSpan.fromSeconds(1), () => ({
-        t: "time-passed",
-      }));
+    switch (model.puzzleCreateRequest.t) {
+        case "loading": {
+            return Time.interval(id, TimeSpan.fromSeconds(1), () => ({
+                t: "time-passed",
+            }))
+        }
+        default: {
+            return Sub.None
+        }
     }
-    default: {
-      return Sub.None;
-    }
-  }
-};
+}
 
 const ViewCreateButton: ClientModule["View"] = (input) => {
-  const { model, dispatch } = input;
+    const { model, dispatch } = input
 
-  return (
-    <Button
-      text="Create Puzzle"
-      variant="contained"
-      color="primary"
-      loading={model.puzzleCreateRequest.t === "loading"}
-      start={<IconPlus className="h-8 w-8" />}
-      onClick={() =>
-        dispatch({ t: "puzzle-create.user-clicked-create-button" })
-      }
-    />
-  );
-};
+    return (
+        <Button
+            text="Create Puzzle"
+            variant="contained"
+            color="primary"
+            loading={model.puzzleCreateRequest.t === "loading"}
+            start={<IconPlus className="h-8 w-8" />}
+            onClick={() =>
+                dispatch({ t: "puzzle-create.user-clicked-create-button" })
+            }
+        />
+    )
+}
 
 export const PuzzleCreateClient = {
-  update,
-  ViewCreateButton,
-  subscriptions,
-};
+    update,
+    ViewCreateButton,
+    subscriptions,
+}
