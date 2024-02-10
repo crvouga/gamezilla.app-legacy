@@ -2,9 +2,9 @@ import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { ClientCtx, routeChanged } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { Posix, TimeSpan } from "gamezilla/@SHARED/core";
-import * as SpaceClient from "../../spaces.client";
-import * as SpaceCore from "../../spaces.core";
-import { Space } from "../../spaces-core";
+import * as SpaceClient from "../spaces.client";
+import * as SpaceCore from "../spaces.core";
+import { Space, SpaceEvent } from "../spaces-core";
 
 export const ctx: ClientCtx = {
   currentRoute: {
@@ -19,8 +19,8 @@ export const ctx: ClientCtx = {
   currentUserId: UserId.generate(),
 };
 
-export const init = () => {
-  return SpaceClient.init({ ctx, stored: null });
+export const init = (ctxOverride: ClientCtx = ctx) => {
+  return SpaceClient.init({ ctx: ctxOverride, stored: null });
 };
 
 export const userStartedSpace = (
@@ -97,14 +97,51 @@ export const timePassed =
     });
   };
 
-export const serverListedSpaces = async (model: SpaceCore.ModelClient) => {
+const toStartedSpace = (spaceId: SpaceId, startedBy: UserId) => {
+  return [
+    withId<SpaceEvent>({ t: "user-started-space", spaceId, userId: startedBy }),
+  ].reduce((model, msgEvt) => Space.appendEvent({ model, msgEvt }), Space.init);
+};
+
+export const serverListedSpaces = async (
+  model: SpaceCore.ModelClient,
+  spaceIds: SpaceId[] = [
+    SpaceId.generate(),
+    SpaceId.generate(),
+    SpaceId.generate(),
+  ]
+) => {
   return SpaceClient.update({
     ctx,
     model,
     msgServer: {
       t: "listed-spaces",
-      spaces: [Space.init, Space.init, Space.init],
+      spaces: spaceIds.map((spaceId) =>
+        toStartedSpace(spaceId, UserId.generate())
+      ),
       causedBy: "list-spaces",
     },
+  });
+};
+
+export const clickSpaceCard = async (
+  model: SpaceCore.ModelClient,
+  spaceId: SpaceId
+) => {
+  return SpaceClient.update({
+    ctx,
+    model,
+    msg: { t: "clicked-space-card", spaceId },
+  });
+};
+
+export const clickBackButton = async (
+  model: SpaceCore.ModelClient,
+  from: "join-screen"
+) => {
+  return SpaceClient.update({
+    ctx,
+    model,
+    msg: { t: "clicked-back-button", from },
   });
 };

@@ -1,11 +1,11 @@
 import {
-  AnonymousClientCtx,
   ClientCmd,
   ClientEvent,
+  AnonymousClientCtx,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { Eff, Sub } from "gamezilla/@SHARED/core";
-import { EventMeta, WithEventId } from "../@SHARED/event";
+import { WithEventId } from "../@SHARED/event";
 import { SpaceEvent } from "../spaces-core";
 import {
   ModelClient,
@@ -13,16 +13,23 @@ import {
   MsgToClient,
   MsgToServer,
 } from "../spaces.core";
+import { Space } from "../@SHARED/space";
+
+type Ctx = AnonymousClientCtx & {
+  space?: Space;
+};
 
 export type Input = {
-  ctx: AnonymousClientCtx;
+  ctx: Ctx;
   model: ModelClient;
   msg?: MsgClient | null;
   msgServer?: MsgToClient | null;
   msgEvt?: ClientEvent | null;
   msgCmd?: null;
-  msgSpaceEvent?: (SpaceEvent & EventMeta) | null;
+  msgSpaceEvent?: WithEventId<SpaceEvent> | null;
 };
+
+export type MaybePromise<T> = T | Promise<T>;
 
 export type Output = {
   model: ModelClient;
@@ -36,29 +43,27 @@ export type Output = {
 };
 
 export type SpaceClientModule = {
-  update: (input: Input) => Output;
-  subscriptions: (input: {
-    ctx: AnonymousClientCtx;
-    model: ModelClient;
-  }) => Sub<MsgClient>;
+  init: (input: { ctx: Ctx; model: ModelClient }) => MaybePromise<Output>;
+  update: (input: Input) => MaybePromise<Output>;
+  subscriptions: (input: { ctx: Ctx; model: ModelClient }) => Sub<MsgClient>;
   View: (input: {
-    ctx: AnonymousClientCtx;
+    ctx: Ctx;
     model: ModelClient;
     dispatch: (msg: MsgClient) => void;
   }) => VDom;
 };
 
-const chainUpdates = (
+const chainUpdates = async (
   acc: Output,
-  ...updates: ((model: ModelClient) => Output)[]
-): Output => {
+  ...updates: ((model: ModelClient) => MaybePromise<Output>)[]
+): Promise<Output> => {
   const [update, ...rest] = updates;
 
   if (!update) {
     return acc;
   }
 
-  const updated = update(acc.model);
+  const updated = await update(acc.model);
 
   const accNew: Output = {
     model: updated.model,

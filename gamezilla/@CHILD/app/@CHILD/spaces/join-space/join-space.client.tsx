@@ -1,3 +1,4 @@
+import { replaceRoute } from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
   TopBar,
@@ -9,40 +10,30 @@ import {
 } from "../@CHILD/game/@SHARED/game";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { gameNameToString } from "../@CHILD/game/game.core";
-import { SpaceClientCtx } from "../@SHARED/space";
 import { SpaceClientModule } from "../architechure/space-client";
-import { SpaceEvent, Spaces } from "../spaces-core";
-import { ModelClient, MsgClient } from "../spaces.core";
+import { Spaces } from "../spaces-core";
+import { withId } from "../@SHARED/event";
 
 const update: SpaceClientModule["update"] = (input) => {
-  return { model: input.model };
+  return SpaceClientModule.chainUpdates(
+    { model: input.model },
+    //
+    (model) => updateBackButton({ ...input, model })
+  );
 };
 
-const ViewScreenJoinSpace = ({
-  model,
-  ctx,
-  dispatch,
-  dispatchEvent,
-}: {
-  ctx: SpaceClientCtx;
-  model: ModelClient;
-  dispatch: (msg: MsgClient) => void;
-  dispatchEvent: (m: SpaceEvent) => void;
-}) => {
+const View: SpaceClientModule["View"] = (input) => {
+  const { model, ctx, dispatch } = input;
+
+  const currentUserId = ctx.currentUserId;
+  if (!ctx.space || !currentUserId) {
+    return null;
+  }
   const space = Spaces.toSpaceState(model, ctx.space.spaceId);
 
   const header = (
     <>
-      <TopBar
-        left={
-          <TopBarBackButton
-            onClick={() =>
-              dispatch({ t: "clicked-back-button", from: "join-screen" })
-            }
-          />
-        }
-        title="Space"
-      />
+      <TopBar left={<BackButton {...input} />} title="Space" />
       {/* {false && (
         <ViewFeed
           ctx={ctx}
@@ -96,7 +87,15 @@ const ViewScreenJoinSpace = ({
               }
             />
 
-            <ViewUsersInSpaceList ctx={ctx} />
+            <ViewUsersInSpaceList
+              ctx={{
+                ...ctx,
+                currentUserId,
+                space,
+                quit() {},
+                viewProfile() {},
+              }}
+            />
           </div>
 
           <div className="flex border-t border-neutral-600 p-4">
@@ -105,10 +104,13 @@ const ViewScreenJoinSpace = ({
               variant="contained"
               color="primary"
               onClick={() => {
-                dispatchEvent({
-                  t: "user-joined-space",
-                  userId: ctx.currentUserId,
-                  spaceId: ctx.space.spaceId,
+                dispatch({
+                  t: "event",
+                  c: withId({
+                    t: "user-joined-space",
+                    userId: currentUserId,
+                    spaceId: space.spaceId,
+                  }),
                 });
               }}
               text="Join space"
@@ -120,7 +122,53 @@ const ViewScreenJoinSpace = ({
   }
 };
 
+//
+//
+//
+// Back
+//
+//
+//
+
+const updateBackButton: SpaceClientModule["update"] = (input) => {
+  const { msg, model } = input;
+
+  switch (msg?.t) {
+    case "clicked-back-button": {
+      switch (msg.from) {
+        case "join-screen": {
+          return {
+            model,
+            msgCmd: [replaceRoute({ t: "spaces", c: { t: "space-list" } })],
+          };
+        }
+      }
+    }
+    default: {
+      return { model };
+    }
+  }
+};
+
+const BackButton: SpaceClientModule["View"] = ({ dispatch }) => {
+  return (
+    <TopBarBackButton
+      onClick={() =>
+        dispatch({ t: "clicked-back-button", from: "join-screen" })
+      }
+    />
+  );
+};
+
+//
+//
+//
+//
+//
+//
+//
+
 export const JoinSpaceClient = {
-  ViewScreenJoinSpace,
+  View,
   update,
 };

@@ -27,7 +27,7 @@ export type Ended = Space & {
 
 export type State = Initial | Started | Ended;
 
-export const initGame: State = {
+export const init: State = {
   type: "initial",
 };
 

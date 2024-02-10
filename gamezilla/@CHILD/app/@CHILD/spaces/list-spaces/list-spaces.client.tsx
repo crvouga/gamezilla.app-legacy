@@ -1,8 +1,10 @@
-import { ClientCtx, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client";
-import * as Spaces from "../spaces-core/spaces";
-import { ClientModule, ModelClient, MsgClient } from "../spaces.core";
 import { ViewSpaceHostChip } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
+import {
+  ClientCtx,
+  pushRoute,
+  sendToServer,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Avatar,
@@ -12,17 +14,40 @@ import {
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui";
 import { EmptyState } from "gamezilla/@CHILD/app/@SHARED/ui/empty-state";
+import { RequestResponse, ok, requesting } from "gamezilla/@SHARED/core";
 import { CoverArt } from "../@CHILD/game/game-cover-art";
 import { GameName, gameNameToString } from "../@CHILD/game/game.core";
+import { SpaceClientModule } from "../architechure/space-client";
 import * as SpaceState from "../spaces-core/space-state";
-import {
-  Posix,
-  TimeSpan,
-  err,
-  isLoading,
-  loading,
-  ok,
-} from "gamezilla/@SHARED/core";
+import * as Spaces from "../spaces-core/spaces";
+import { ModelClient, MsgClient } from "../spaces.core";
+
+//
+//
+//
+//
+//
+
+const sendListSpacesRequest: SpaceClientModule["update"] = ({ model, ctx }) => {
+  return {
+    model: {
+      ...model,
+      listSpacesRequest: requesting(ctx.now),
+    },
+    msgCmd: [sendToServer({ t: "list-spaces", limit: 100, offset: 0 })],
+  };
+};
+
+//
+//
+//
+//
+//
+//
+
+const init: SpaceClientModule["init"] = ({ model, ctx }) => {
+  return sendListSpacesRequest({ model, ctx });
+};
 
 //
 //
@@ -32,19 +57,13 @@ import {
 //
 //
 
-const update: ClientModule["update"] = async (input) => {
+const update: SpaceClientModule["update"] = (input) => {
   const { ctx, msgServer, model, msgEvt, msg } = input;
 
   switch (msgEvt?.t) {
     case "routing/route-changed": {
       if (msgEvt.route.t === "spaces" && msgEvt.route.c.t === "space-list") {
-        return {
-          model: {
-            ...model,
-            listSpacesRequest: loading,
-          },
-          msgCmd: [sendToServer({ t: "list-spaces", limit: 100, offset: 0 })],
-        };
+        return sendListSpacesRequest({ model, ctx });
       }
       return { model };
     }
@@ -52,23 +71,24 @@ const update: ClientModule["update"] = async (input) => {
 
   switch (msg?.t) {
     case "time-passed": {
-      const didTimeout =
-        isLoading(model.listSpacesRequest) &&
-        TimeSpan.gte(
-          Posix.diff(model.listSpacesRequestedAt, ctx.now),
-          TimeSpan.fromSeconds(5)
-        );
+      return {
+        model: {
+          ...model,
+          listSpacesRequest: RequestResponse.timePassed(
+            model.listSpacesRequest,
+            ctx.now
+          ),
+        },
+      };
+    }
 
-      if (didTimeout) {
-        return {
-          model: {
-            ...model,
-            listSpacesRequest: err("Request to list spaces timed out"),
-          },
-        };
-      }
-
-      return { model };
+    case "clicked-space-card": {
+      return {
+        model,
+        msgCmd: [
+          pushRoute({ t: "spaces", c: { t: "space", spaceId: msg.spaceId } }),
+        ],
+      };
     }
   }
 
@@ -80,8 +100,11 @@ const update: ClientModule["update"] = async (input) => {
           ...model,
           spaceIdByUserId: merged.spaceIdByUserId,
           spaces: merged.spaces,
-          listSpacesRequest: ok(null),
-          listSpacesRequestedAt: Posix.zero,
+          listSpacesRequest: RequestResponse.response(
+            model.listSpacesRequest,
+            ctx.now,
+            ok(null)
+          ),
         },
       };
     }
@@ -286,6 +309,7 @@ const SpaceCard = ({
 };
 
 export const ListSpacesClient = {
+  init,
   update,
   View,
 };

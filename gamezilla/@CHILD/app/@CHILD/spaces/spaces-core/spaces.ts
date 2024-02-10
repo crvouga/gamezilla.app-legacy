@@ -167,12 +167,16 @@ export const toEventWithMeta = (
 
 export const toSpaceState = (
   model: Model,
-  spaceId: SpaceId
+  spaceId?: SpaceId | null | undefined
 ): SpaceState.State => {
+  if (!spaceId) {
+    return SpaceState.init;
+  }
+
   const spaceModel = model.spaces[spaceId];
 
   if (!spaceModel) {
-    return SpaceState.initGame;
+    return SpaceState.init;
   }
 
   const spaceState = Space.deriveState(spaceModel);

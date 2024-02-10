@@ -1,19 +1,19 @@
 import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
+import { RequestResponse } from "gamezilla/@SHARED/core";
+import { AppClientModule } from "../../@SHARED/architecture/app-client";
+import { AppServerModule } from "../../@SHARED/architecture/app-server";
 import {
   AnonymousClientCtx,
   AppRoute,
   ClientCmd,
   ClientEvent,
 } from "../../@SHARED/client";
+import { ServerCmd, ServerCtx, ServerEvent } from "../../@SHARED/server";
 import * as Game from "./@CHILD/game/game.core";
 import { WithEventId, WithEventMeta } from "./@SHARED/event";
 import * as Space from "./spaces-core/space";
 import { SpaceEvent } from "./spaces-core/space-event";
 import * as Spaces from "./spaces-core/spaces";
-import { AppClientModule } from "../../@SHARED/architecture/app-client";
-import { AppServerModule } from "../../@SHARED/architecture/app-server";
-import { ServerCmd, ServerCtx, ServerEvent } from "../../@SHARED/server";
-import { Posix, RemoteResult } from "gamezilla/@SHARED/core";
 
 //
 //
@@ -71,8 +71,7 @@ export type ModelClient = Spaces.Model & {
   };
   previewUserId: UserId | null;
   modal: null | "user-preview" | "users";
-  listSpacesRequest: RemoteResult<string, null>;
-  listSpacesRequestedAt: Posix;
+  listSpacesRequest: RequestResponse<string, null>;
 };
 
 //

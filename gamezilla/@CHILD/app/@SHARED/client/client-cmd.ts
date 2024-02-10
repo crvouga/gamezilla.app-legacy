@@ -1,4 +1,4 @@
-import { TimeSpan, UnitInterval } from "gamezilla/@SHARED/core";
+import { TimeSpan, UnitInterval, eq } from "gamezilla/@SHARED/core";
 import { Profile, UserId } from "../data";
 import { AppRoute } from "./client-route";
 
@@ -356,6 +356,27 @@ export const pushRoute = <T extends ClientCmdTypes>(
   };
 };
 
+export const didPushRoute = <T extends ClientCmdTypes>(
+  {
+    msgCmd,
+  }: {
+    msgCmd?: ClientCmd<T>[];
+  },
+  route?: AppRoute
+): boolean => {
+  return Boolean(
+    msgCmd?.some((cmd) => {
+      if (cmd.t === "routing" && cmd.c.t === "push") {
+        if (route) {
+          return eq(cmd.c.route, route);
+        }
+        return true;
+      }
+      return false;
+    })
+  );
+};
+
 export const replaceRoute = <T extends ClientCmdTypes>(
   route: AppRoute,
   reason?: string
@@ -368,6 +389,27 @@ export const replaceRoute = <T extends ClientCmdTypes>(
       reason,
     },
   };
+};
+
+export const didReplaceRoute = <T extends ClientCmdTypes>(
+  {
+    msgCmd,
+  }: {
+    msgCmd?: ClientCmd<T>[];
+  },
+  route?: AppRoute
+): boolean => {
+  return Boolean(
+    msgCmd?.some((cmd) => {
+      if (cmd.t === "routing" && cmd.c.t === "replace") {
+        if (route) {
+          return eq(cmd.c.route, route);
+        }
+        return true;
+      }
+      return false;
+    })
+  );
 };
 
 export const back = <T extends ClientCmdTypes>(

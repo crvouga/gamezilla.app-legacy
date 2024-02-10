@@ -1,14 +1,14 @@
 import { describe, expect, test } from "bun:test";
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { Spaces } from "../../spaces-core";
+import { Spaces } from "../spaces-core";
 import {
   ctx,
   init,
   userJoinedSpace,
   userLeftSpace,
   userStartedSpace,
-} from "./shared";
+} from "../@TEST/client";
 import { didShowErrorSm } from "gamezilla/@CHILD/app/@SHARED/client";
 
 describe("list spaces client", () => {

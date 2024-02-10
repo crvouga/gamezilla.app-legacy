@@ -5,7 +5,6 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
 import {
   WithEventId,
-  WithEventMeta,
   withId,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/feed-item";
@@ -16,11 +15,9 @@ import {
   AnonymousClientCtx,
   ClientCmd,
   ClientCtx,
-  ClientEvent,
   addProfiles,
   playSound,
   pushRoute,
-  replaceRoute,
   sendToServer,
   showErrSm,
   showToast,
@@ -38,6 +35,7 @@ import {
 import { Eff, Posix, Sub, batchMsgs, notAsked } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import { Game } from "./@CHILD/game/game.client";
+import { SpaceClientModule } from "./architechure/space-client";
 import { JoinSpaceClient } from "./join-space/join-space.client";
 import { ListSpacesClient } from "./list-spaces/list-spaces.client";
 import { ViewScreenNotInGame } from "./spaces-client/view-screen-not-in-game";
@@ -49,10 +47,8 @@ import {
   ClientModule,
   ModelClient,
   MsgClient,
-  MsgToClient,
   MsgToServer,
 } from "./spaces.core";
-import { SpaceClientModule } from "./architechure/space-client";
 
 //
 //
@@ -62,20 +58,24 @@ import { SpaceClientModule } from "./architechure/space-client";
 //
 //
 
-const initModel: ModelClient = {
-  ...Spaces.init,
-  games: {},
-  modal: null,
-  previewUserId: null,
-  listSpacesRequest: notAsked,
-  listSpacesRequestedAt: Posix.zero,
-};
-
-export const init: ClientModule["init"] = async ({ stored }) => {
-  if (stored) {
-    return { model: stored };
-  }
-  return { model: initModel };
+export const init: ClientModule["init"] = async ({ ctx }) => {
+  const model: ModelClient = {
+    ...Spaces.init,
+    games: {},
+    modal: null,
+    previewUserId: null,
+    listSpacesRequest: notAsked,
+  };
+  const listSpaces = await ListSpacesClient.init({ ctx, model });
+  return {
+    model: {
+      ...model,
+      ...listSpaces.model,
+    },
+    eff: Eff.batch([listSpaces.eff]),
+    msgCmd: batchMsgs(listSpaces.msgCmd),
+    msgEvt: batchMsgs(listSpaces.msgEvt),
+  };
 };
 
 //
@@ -89,12 +89,12 @@ export const init: ClientModule["init"] = async ({ stored }) => {
 export const update: ClientModule["update"] = (input) => {
   return AppClientModule.chainUpdates(
     { model: input.model },
-    (model) => ListSpacesClient.update({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
     (model) => updateGame({ ...input, model }),
-    (model) => updateProfiles({ ...input, model })
+    (model) => updateProfiles({ ...input, model }),
+    (model) => updateMainLoop({ ...input, model })
   );
 };
 
@@ -109,28 +109,39 @@ const updateProfiles: ClientModule["update"] = ({ model, msgServer }) => {
   return { model };
 };
 
-export const updateSpaceLoop = async (input: {
-  model: ModelClient;
-  ctx: AnonymousClientCtx;
-  msg?: MsgClient | null;
-  msgServer?: MsgToClient;
-  msgEvt?: ClientEvent | null;
-  msgSpaceEvent?: WithEventMeta<SpaceEvent> | null;
-}): ReturnType<ClientModule["update"]> => {
-  const updated = updateSpace({
-    model: input.model,
-    ctx: input.ctx,
-    msg: input.msg,
-    msgSpaceEvent,
-  });
-  return { model: input.mode };
+const updateMainLoop: ClientModule["update"] = async (input) => {
+  const output = await updateMain(input);
+
+  const msgSpaceEvents = output.msgSpaceEvent ?? [];
+
+  while (true) {
+    const msgSpaceEvent = msgSpaceEvents[0];
+
+    if (!msgSpaceEvent) {
+      return output;
+    }
+
+    const updated = await updateMain({
+      ctx: input.ctx,
+      model: output.model,
+      msgSpaceEvent,
+    });
+
+    msgSpaceEvents.push(...(updated?.msgSpaceEvent ?? []));
+    output.eff = Eff.batch([output.eff, updated.eff]);
+    output.msgCmd = batchMsgs(output.msgCmd, updated.msgCmd);
+    output.msgSpaceEvent = batchMsgs(
+      output.msgSpaceEvent,
+      updated.msgSpaceEvent
+    );
+  }
 };
 
-export const updateSpace: SpaceClientModule["update"] = (input) => {
+const updateMain: SpaceClientModule["update"] = (input) => {
   return SpaceClientModule.chainUpdates(
     { model: input.model },
-    //
-    (model) => JoinSpaceClient.update({ ...input, model })
+    (model) => JoinSpaceClient.update({ ...input, model }),
+    (model) => ListSpacesClient.update({ ...input, model })
   );
 };
 
@@ -156,26 +167,6 @@ const updateFromMsg: ClientModule["update"] = ({ msg, model, ctx }) => {
 
     case "clicked-link": {
       return { model, msgCmd: [pushRoute(msg.route)] };
-    }
-
-    case "clicked-back-button": {
-      switch (msg.from) {
-        case "join-screen": {
-          return {
-            model,
-            msgCmd: [replaceRoute({ t: "spaces", c: { t: "space-list" } })],
-          };
-        }
-      }
-    }
-
-    case "clicked-space-card": {
-      return {
-        model,
-        msgCmd: [
-          pushRoute({ t: "spaces", c: { t: "space", spaceId: msg.spaceId } }),
-        ],
-      };
     }
 
     case "event": {
@@ -1103,14 +1094,7 @@ const ViewSpaceScreenMain = ({
   const currentUserSpaceId = Spaces.toSpaceIdByUserId(model, ctx.currentUserId);
 
   if (currentUserSpaceId !== space.spaceId) {
-    return (
-      <JoinSpaceClient.ViewScreenJoinSpace
-        ctx={ctx}
-        dispatch={dispatch}
-        dispatchEvent={dispatchEvent}
-        model={model}
-      />
-    );
+    return <JoinSpaceClient.View ctx={ctx} dispatch={dispatch} model={model} />;
   }
 
   return (
