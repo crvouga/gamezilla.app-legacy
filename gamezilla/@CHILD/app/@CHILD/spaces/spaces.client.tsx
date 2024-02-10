@@ -239,16 +239,7 @@ const updateFromServer: ClientModule["update"] = async (input) => {
     case "synced": {
       const merged = Spaces.mergeOne({ model, space: msgServer.space });
       return {
-        model: {
-          errors: {},
-          games: model.games,
-          modal: model.modal,
-          previewUserId: model.previewUserId,
-          spaceIdByUserId: merged.spaceIdByUserId,
-          spaces: merged.spaces,
-          listSpacesRequest: notAsked,
-          listSpacesRequestedAt: Posix.zero,
-        },
+        model: { ...model, ...merged },
       };
     }
 

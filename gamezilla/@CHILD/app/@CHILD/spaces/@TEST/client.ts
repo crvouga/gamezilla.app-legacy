@@ -229,3 +229,14 @@ export const userInputtedGame = (
     },
   });
 };
+
+export const spaceSyncFromServer = (
+  model: SpaceCore.ModelClient,
+  space: Space.Model
+) => {
+  return SpaceClient.update({
+    ctx,
+    model,
+    msgServer: { t: "synced", space },
+  });
+};
