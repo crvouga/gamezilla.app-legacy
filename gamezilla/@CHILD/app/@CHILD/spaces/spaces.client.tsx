@@ -48,6 +48,7 @@ import {
   MsgClient,
   MsgToServer,
 } from "./spaces.core";
+import { EndSpaceClient } from "./end-space/end-space.client";
 
 //
 //
@@ -164,6 +165,7 @@ const updateMain: SpaceClientModule["update"] = (input) => {
       }
       return { model };
     },
+    (model) => EndSpaceClient.update({ ...input, model }),
     (model) => updateSpacesFromSpaceEvent({ ...input, model }),
     (model) => updateFromSpaceEvent({ ...input, model }),
     (model) => sendSpaceEventToServer({ ...input, model }),
@@ -227,65 +229,6 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = async (input) => {
       }
 
       return { model };
-    }
-
-    case "user-ended-space": {
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
-        model,
-        ctx.currentUserId
-      );
-
-      if (msgSpaceEvent.spaceId !== currentUserSpaceId) {
-        return { model };
-      }
-
-      return SpaceClientModule.chainUpdates(
-        { model },
-        (model) => {
-          return {
-            model,
-            msgCmd: [playSound(APP_SOUND.navBackward)],
-          };
-        },
-        (model) => {
-          if (
-            ctx.currentRoute.t === "spaces" &&
-            ctx.currentRoute.c.t === "space" &&
-            ctx.currentRoute.c.spaceId === msgSpaceEvent.spaceId
-          ) {
-            return {
-              model,
-              msgCmd: [pushRoute({ t: "spaces", c: { t: "space-list" } })],
-            };
-          }
-          return {
-            model,
-            msgCmd: [],
-          };
-        },
-        (model) => {
-          if (msgSpaceEvent.userId === ctx.currentUserId) {
-            return {
-              model,
-              msgCmd: [showToast("Space ended")],
-            };
-          }
-
-          const profile = ctx.profiles[msgSpaceEvent.userId];
-
-          if (!profile) {
-            return {
-              model,
-              msgCmd: [showToast("Space ended by host")],
-            };
-          }
-
-          return {
-            model,
-            msgCmd: [showToast(`Space ended by ${profile.username}`)],
-          };
-        }
-      );
     }
 
     case "user-inputted-game": {

@@ -149,10 +149,11 @@ export const clickBackButton = async (
 export const userEndedSpace = (
   model: SpaceCore.ModelClient,
   userId: UserId,
-  spaceId: SpaceId
+  spaceId: SpaceId,
+  ctxOverride: ClientCtx = ctx
 ) => {
   return SpaceClient.update({
-    ctx,
+    ctx: ctxOverride,
     model: model,
     msg: {
       t: "event",
