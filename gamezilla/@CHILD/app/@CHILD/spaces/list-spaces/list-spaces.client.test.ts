@@ -12,7 +12,7 @@ import {
   isResponseOk,
 } from "gamezilla/@SHARED/core"
 import {
-  changeRouteToSpaceList,
+  changeRoute,
   clickBackButton,
   clickSpaceCard,
   ctx,
@@ -20,6 +20,11 @@ import {
   serverListedSpaces,
   timePassed,
 } from "../@TEST/client"
+import { ModelClient } from "../spaces.core"
+
+const changeRouteToSpaceList = (model: ModelClient) => {
+  return changeRoute(model, { t: "spaces", c: { t: "space-list" } })
+}
 
 describe("list spaces client", () => {
   test("request spaces on init if on space list route", async () => {

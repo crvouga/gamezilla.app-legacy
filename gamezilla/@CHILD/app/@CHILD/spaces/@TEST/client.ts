@@ -1,7 +1,11 @@
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { ClientCtx, routeChanged } from "gamezilla/@CHILD/app/@SHARED/client"
+import {
+  AppRoute,
+  ClientCtx,
+  routeChanged,
+} from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { Posix, TimeSpan } from "gamezilla/@SHARED/core"
+import { Posix, TimeSpan, p } from "gamezilla/@SHARED/core"
 import * as SpaceClient from "../spaces.client"
 import * as SpaceCore from "../spaces.core"
 import { Space, SpaceEvent } from "../spaces-core"
@@ -22,6 +26,16 @@ export const ctx: ClientCtx = {
 
 export const init = (ctxOverride: ClientCtx = ctx) => {
   return SpaceClient.init({ ctx: ctxOverride, stored: null })
+}
+
+export const serverConnected = async (model: SpaceCore.ModelClient) => {
+  return SpaceClient.update({
+    ctx,
+    model,
+    msgEvt: {
+      t: "wire/server-connected",
+    },
+  })
 }
 
 export const userStartedSpace = (
@@ -110,11 +124,14 @@ export const clickedLeaveSpaceButton = (
   })
 }
 
-export const changeRouteToSpaceList = async (model: SpaceCore.ModelClient) => {
+export const changeRoute = async (
+  model: SpaceCore.ModelClient,
+  route: AppRoute,
+) => {
   return SpaceClient.update({
     ctx,
     model,
-    msgEvt: routeChanged({ t: "spaces", c: { t: "space-list" } }),
+    msgEvt: routeChanged(route),
   })
 }
 
@@ -234,13 +251,64 @@ export const userInputtedGame = (
   })
 }
 
-export const spaceSyncFromServer = (
+export const gotSpace = (model: SpaceCore.ModelClient, space: Space.Model) => {
+  return SpaceClient.update({
+    ctx,
+    model,
+    msgServer: { t: "synced", space },
+  })
+}
+
+export const gotCurrentUsersSpace = (
   model: SpaceCore.ModelClient,
   space: Space.Model,
 ) => {
   return SpaceClient.update({
     ctx,
     model,
-    msgServer: { t: "synced", space },
+    msgServer: { t: "current-user-space", space },
+  })
+}
+export const makeSpace = (spaceId: SpaceId, hostId: UserId) => {
+  return p(
+    Space.init,
+    //
+    (model) =>
+      Space.appendEvent({
+        model,
+        msgEvt: withId({
+          t: "user-started-space",
+          spaceId: spaceId,
+          userId: hostId,
+        }),
+      }),
+  )
+}
+
+export const clickedPeopleButton = (
+  model: SpaceCore.ModelClient,
+  ctxOverride: ClientCtx = ctx,
+) => {
+  return SpaceClient.update({
+    ctx: ctxOverride,
+    model: model,
+    msg: {
+      t: "clicked-people-button",
+    },
+  })
+}
+
+export const clickedUser = (
+  model: SpaceCore.ModelClient,
+  userId: UserId,
+  ctxOverride: ClientCtx = ctx,
+) => {
+  return SpaceClient.update({
+    ctx: ctxOverride,
+    model: model,
+    msg: {
+      t: "clicked-user",
+      userId,
+    },
   })
 }

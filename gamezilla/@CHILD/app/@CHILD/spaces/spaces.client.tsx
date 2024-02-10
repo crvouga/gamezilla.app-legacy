@@ -14,7 +14,6 @@ import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-c
 import {
   ClientCtx,
   addProfiles,
-  pushRoute,
   sendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
@@ -37,12 +36,13 @@ import { GameClient } from "./game/game.client"
 import { JoinSpaceClient } from "./join-space/join-space.client"
 import { LeaveSpaceClient } from "./leave-space/leave-space.client"
 import { ListSpacesClient } from "./list-spaces/list-spaces.client"
-import * as Space from "./spaces-core/space"
+import { Modals } from "./modals/modals"
 import { SpaceEvent } from "./spaces-core/space-event"
 import * as SpaceState from "./spaces-core/space-state"
 import * as Spaces from "./spaces-core/spaces"
 import { ClientModule, ModelClient, MsgClient } from "./spaces.core"
 import { StartSpaceClient } from "./start-space/start-space.client"
+import { SyncClient } from "./sync/sync.client"
 
 //
 //
@@ -57,7 +57,7 @@ export const init: ClientModule["init"] = async ({ ctx }) => {
     ...Spaces.init,
     games: {},
     modal: null,
-    previewUserId: null,
+    modalPreviewUserId: null,
     listSpacesRequest: notAsked,
   }
   const listSpaces = await ListSpacesClient.init({ ctx, model })
@@ -83,9 +83,8 @@ export const init: ClientModule["init"] = async ({ ctx }) => {
 export const update: ClientModule["update"] = (input) => {
   return AppClientModule.chainUpdates(
     { model: input.model },
-    (model) => updateFromMsg({ ...input, model }),
+
     (model) => updateFromServer({ ...input, model }),
-    (model) => updateFromEvent({ ...input, model }),
     (model) => updateProfiles({ ...input, model }),
     (model) => updateMainLoop({ ...input, model }),
   )
@@ -144,6 +143,8 @@ const updateMain: SpaceClientModule["update"] = (input) => {
   return SpaceClientModule.chainUpdates(
     { model: input.model },
     (model) => outputSpaceEvent({ ...input, model }),
+    (model) => SyncClient.update({ ...input, model }),
+    (model) => Modals.update({ ...input, model }),
     //
     (model) => EndSpaceClient.update({ ...input, model }),
     (model) => LeaveSpaceClient.update({ ...input, model }),
@@ -198,36 +199,6 @@ const updateSpacesFromSpaceEvent: SpaceClientModule["update"] = ({
   return { model: { ...model, ...updated.model } }
 }
 
-const updateFromMsg: ClientModule["update"] = ({ msg, model }) => {
-  switch (msg?.t) {
-    case "closed-modal": {
-      return { model: { ...model, modal: null } }
-    }
-
-    case "clicked-people-button": {
-      return { model: { ...model, modal: "users" } }
-    }
-
-    case "clicked-user": {
-      return {
-        model: {
-          ...model,
-          previewUserId: msg.userId,
-          modal: "user-preview",
-        },
-      }
-    }
-
-    case "clicked-link": {
-      return { model, msgCmd: [pushRoute(msg.route)] }
-    }
-
-    default: {
-      return { model }
-    }
-  }
-}
-
 const updateFromServer: ClientModule["update"] = async (input) => {
   const { msgServer, model } = input
 
@@ -236,8 +207,8 @@ const updateFromServer: ClientModule["update"] = async (input) => {
   }
 
   switch (msgServer.t) {
-    case "current-user-space":
-    case "synced": {
+    case "synced":
+    case "current-user-space": {
       const merged = Spaces.mergeOne({ model, space: msgServer.space })
       return {
         model: { ...model, ...merged },
@@ -246,66 +217,6 @@ const updateFromServer: ClientModule["update"] = async (input) => {
 
     default: {
       return { model }
-    }
-  }
-}
-
-const updateFromEvent: ClientModule["update"] = async (input) => {
-  if (!input.msgEvt) {
-    return { model: input.model }
-  }
-
-  const { model, msgEvt } = input
-
-  switch (msgEvt.t) {
-    case "routing/route-changed": {
-      return AppClientModule.chainUpdates({ model }, (model) => {
-        return { model: { ...model, modal: null } }
-      })
-    }
-
-    case "wire/server-connected": {
-      const currentUserId = input.ctx.currentUserId
-
-      if (!currentUserId) {
-        return { model }
-      }
-
-      const currentUserProfile = currentUserId
-        ? input.ctx.profiles[currentUserId]
-        : null
-
-      const currentUserSpace = Spaces.toSpaceByUserId({
-        model,
-        userId: currentUserId,
-      })
-
-      if (!currentUserSpace) {
-        return { model }
-      }
-
-      const started = Space.startFromLatestSnapshot(currentUserSpace)
-
-      return {
-        model: {
-          ...model,
-          isSyncing: true,
-        },
-        msgCmd: [
-          sendToServer({
-            t: "sync",
-            space: started,
-            profiles: currentUserProfile
-              ? { [currentUserId]: currentUserProfile }
-              : {},
-            causedBy: msgEvt.t,
-          }),
-        ],
-      }
-    }
-
-    default: {
-      return { model: input.model }
     }
   }
 }
@@ -351,56 +262,10 @@ const sendSpaceEventToServer: SpaceClientModule["update"] = ({
 //
 
 export const subscriptions: ClientModule["subscriptions"] = (input) => {
-  return subscriptionsCurrentUserGame(input)
-}
-
-export const subscriptionsCurrentUserGame: ClientModule["subscriptions"] = ({
-  ctx,
-  model,
-}) => {
-  const { currentUserId } = ctx
-
-  if (!currentUserId) {
-    return Sub.None
-  }
-
-  const clientCtx = { ...ctx, currentUserId }
-
-  const spaceId = Spaces.toSpaceIdByUserId(model, currentUserId)
-
-  if (!spaceId) {
-    return Sub.None
-  }
-
-  const spaceModel = model.spaces[spaceId]
-
-  if (!spaceModel) {
-    return Sub.None
-  }
-
-  const spaceState = Space.toSpaceStarted(spaceModel)
-
-  if (!spaceState) {
-    return Sub.None
-  }
-
-  const modelGame = spaceState.game
-
-  if (!modelGame) {
-    return Sub.None
-  }
-
-  const gameModel = model.games[spaceId] ?? Game.init(modelGame.t)
-
-  const gameSub = Game.subscriptions({
-    ctx: { ...clientCtx, space: spaceState, quit() {}, viewProfile() {} },
-    modelGame: modelGame,
-    model: gameModel,
-  })
-
-  const sub = Sub.map(gameSub, (c): MsgClient => ({ t: "game", c, spaceId }))
-
-  return sub
+  return Sub.batch([
+    //
+    GameClient.subscriptions(input),
+  ])
 }
 
 //
@@ -559,14 +424,14 @@ const ViewSpaceStarted = ({
           <button
             className="flex w-full flex-col items-center justify-center gap-2 p-4"
             onClick={() => {
-              if (model.previewUserId) {
+              if (model.modalPreviewUserId) {
                 dispatch({
                   t: "clicked-link",
                   route: {
                     t: "profile",
                     c: {
                       t: "profile",
-                      userId: model.previewUserId,
+                      userId: model.modalPreviewUserId,
                     },
                   },
                 })
@@ -575,22 +440,22 @@ const ViewSpaceStarted = ({
           >
             <Avatar
               src={
-                model.previewUserId
-                  ? ctx.profiles[model.previewUserId]?.avatarUrl
+                model.modalPreviewUserId
+                  ? ctx.profiles[model.modalPreviewUserId]?.avatarUrl
                   : undefined
               }
               className="h-24 w-24"
             />
             <p className="text-xl font-semibold">
-              {model.previewUserId
-                ? ctx.profiles[model.previewUserId]?.username ?? "..."
+              {model.modalPreviewUserId
+                ? ctx.profiles[model.modalPreviewUserId]?.username ?? "..."
                 : "..."}
             </p>
             <div className="flex items-center gap-2">
-              {spaceCtx.space.hostId === model.previewUserId && (
+              {spaceCtx.space.hostId === model.modalPreviewUserId && (
                 <ViewSpaceHostChip />
               )}
-              {spaceCtx.currentUserId === model.previewUserId && (
+              {spaceCtx.currentUserId === model.modalPreviewUserId && (
                 <ViewYouChip />
               )}
             </div>
@@ -599,14 +464,14 @@ const ViewSpaceStarted = ({
           <div className="w-full px-4 pb-8">
             <Button
               onClick={() => {
-                if (model.previewUserId) {
+                if (model.modalPreviewUserId) {
                   dispatch({
                     t: "clicked-link",
                     route: {
                       t: "profile",
                       c: {
                         t: "profile",
-                        userId: model.previewUserId,
+                        userId: model.modalPreviewUserId,
                       },
                     },
                   })

@@ -3,11 +3,12 @@ import {
   ClientCmd,
   playSound,
 } from "gamezilla/@CHILD/app/@SHARED/client"
-import { SpaceClientModule } from "../architechure/space-client"
-import { SpaceEvent, Spaces } from "../spaces-core"
+import { Eff, Sub } from "gamezilla/@SHARED/core"
 import { Game } from "../@CHILD/game/game.client"
 import { WithEventId } from "../@SHARED/event"
-import { Eff } from "gamezilla/@SHARED/core"
+import { SpaceClientModule } from "../architechure/space-client"
+import { Space, SpaceEvent, Spaces } from "../spaces-core"
+import { MsgClient } from "../spaces.core"
 
 const update: SpaceClientModule["update"] = (input) => {
   return SpaceClientModule.chainUpdates(
@@ -139,6 +140,62 @@ const updateGame: SpaceClientModule["update"] = (input) => {
   }
 }
 
+const subscriptions: SpaceClientModule["subscriptions"] = (input) => {
+  return subscriptionsCurrentUserGame(input)
+}
+
+const subscriptionsCurrentUserGame: SpaceClientModule["subscriptions"] = ({
+  ctx,
+  model,
+}) => {
+  const { currentUserId } = ctx
+
+  if (!currentUserId) {
+    return Sub.None
+  }
+
+  const clientCtx = { ...ctx, currentUserId }
+
+  const spaceId = Spaces.toSpaceIdByUserId(model, currentUserId)
+
+  if (!spaceId) {
+    return Sub.None
+  }
+
+  const spaceModel = model.spaces[spaceId]
+
+  if (!spaceModel) {
+    return Sub.None
+  }
+
+  const spaceState = Space.toSpaceStarted(spaceModel)
+
+  if (!spaceState) {
+    return Sub.None
+  }
+
+  const modelGame = spaceState.game
+
+  if (!modelGame) {
+    return Sub.None
+  }
+
+  const gameModel = model.games[spaceId] ?? Game.init(modelGame.t)
+
+  const gameSub = Game.subscriptions({
+    ctx: { ...clientCtx, space: spaceState, quit() {}, viewProfile() {} },
+    modelGame: modelGame,
+    model: gameModel,
+  })
+
+  const sub = Sub.map(gameSub, (c): MsgClient => ({ t: "game", c, spaceId }))
+
+  return sub
+}
+
+//
+
 export const GameClient = {
   update,
+  subscriptions,
 }

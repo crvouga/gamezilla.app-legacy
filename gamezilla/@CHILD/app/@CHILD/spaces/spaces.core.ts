@@ -69,7 +69,7 @@ export type ModelClient = Spaces.Model & {
   games: {
     [spaceId: SpaceId]: Game.ModelClient
   }
-  previewUserId: UserId | null
+  modalPreviewUserId: UserId | null
   modal: null | "user-preview" | "users"
   listSpacesRequest: RequestResponse<string, null>
 }

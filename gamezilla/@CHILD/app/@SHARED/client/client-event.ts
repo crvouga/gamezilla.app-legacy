@@ -14,3 +14,7 @@ export type ClientEvent =
 export const routeChanged = (route: AppRoute): ClientEvent => {
   return { t: "routing/route-changed", route }
 }
+
+export const serverConnected = (): ClientEvent => {
+  return { t: "wire/server-connected" }
+}
