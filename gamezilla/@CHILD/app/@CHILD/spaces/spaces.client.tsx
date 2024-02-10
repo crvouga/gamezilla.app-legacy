@@ -43,6 +43,7 @@ import { SpaceEvent } from "./spaces-core/space-event";
 import * as SpaceState from "./spaces-core/space-state";
 import * as Spaces from "./spaces-core/spaces";
 import { ClientModule, ModelClient, MsgClient } from "./spaces.core";
+import { LeaveSpaceClient } from "./leave-space/leave-space.client";
 
 //
 //
@@ -143,29 +144,43 @@ const updateMain: SpaceClientModule["update"] = (input) => {
 
   return SpaceClientModule.chainUpdates(
     { model: input.model },
-    (model) => {
-      if (input.msg?.t === "event") {
-        return {
-          model,
-          msgSpaceEvent: [input.msg.c],
-        };
-      }
-      if (input.msgServer?.t === "event") {
-        return {
-          model,
-          msgSpaceEvent: [input.msgServer.c],
-        };
-      }
-      return { model };
-    },
+    (model) => outputSpaceEvent({ ...input, model }),
+    //
     (model) => EndSpaceClient.update({ ...input, model }),
+    (model) => LeaveSpaceClient.update({ ...input, model }),
+    //
     (model) => updateSpacesFromSpaceEvent({ ...input, model }),
+    //
     (model) => updateFromSpaceEvent({ ...input, model }),
     (model) => JoinSpaceClient.update({ ...input, model }),
     (model) => ListSpacesClient.update({ ...input, model }),
     (model) => updateGame({ ...input, model }),
     (model) => sendSpaceEventToServer({ ...input, model })
   );
+};
+
+const outputSpaceEvent: SpaceClientModule["update"] = (input) => {
+  const { msg, model, msgServer } = input;
+  outputSpaceEvent;
+  switch (msg?.t) {
+    case "event": {
+      return {
+        model,
+        msgSpaceEvent: [msg.c],
+      };
+    }
+  }
+
+  switch (msgServer?.t) {
+    case "event": {
+      return {
+        model,
+        msgSpaceEvent: [msgServer.c],
+      };
+    }
+  }
+
+  return { model };
 };
 
 const updateSpacesFromSpaceEvent: SpaceClientModule["update"] = ({
@@ -192,21 +207,6 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = async (input) => {
   }
 
   switch (msgSpaceEvent?.t) {
-    case "user-left-space": {
-      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
-        model,
-        ctx.currentUserId
-      );
-
-      if (msgSpaceEvent.spaceId === currentUserSpaceId) {
-        return {
-          model,
-          msgCmd: [playSound(APP_SOUND.navBackward)],
-        };
-      }
-      return { model };
-    }
-
     case "user-started-space": {
       if (msgSpaceEvent.userId === ctx.currentUserId) {
         return {
