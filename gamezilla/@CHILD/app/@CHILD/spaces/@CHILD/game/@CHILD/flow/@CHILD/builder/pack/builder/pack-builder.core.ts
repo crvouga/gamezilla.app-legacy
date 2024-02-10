@@ -18,7 +18,7 @@ export type ModelServer = {}
 //
 
 export type MsgClient = {
-    t: "pack-builder/user-clicked-exit-button"
+  t: "pack-builder/user-clicked-exit-button"
 }
 
 export type MsgServer = { t: "noop" }
@@ -34,6 +34,6 @@ export type MsgToClient = { t: "noop" }
 //
 
 export type MsgGame = {
-    t: "user-exited-pack-builder"
-    userId: UserId
+  t: "user-exited-pack-builder"
+  userId: UserId
 }

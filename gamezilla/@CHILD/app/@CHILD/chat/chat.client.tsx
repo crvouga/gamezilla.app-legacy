@@ -1,7 +1,7 @@
 import {
-    ClientEvent,
-    RouteChat,
-    ClientCtx,
+  ClientEvent,
+  RouteChat,
+  ClientCtx,
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Browser, Eff, exhaustive, p } from "gamezilla/@SHARED/core"
@@ -16,28 +16,28 @@ import { ModelClient, MsgClient, MsgToClient } from "./chat.core"
 //
 
 export const init = ({
-    stored,
+  stored,
 }: {
-    stored: ModelClient | null
+  stored: ModelClient | null
 }): { model: ModelClient } => {
-    if (stored) {
-        return {
-            model: stored,
-        }
-    }
-
+  if (stored) {
     return {
-        model: {
-            chats: {},
-            chatsUsers: {},
-            users: {},
-            messageDrafts: {},
-            messages: {},
-            requests: {},
-            userSearch: "",
-            userSelected: {},
-        },
+      model: stored,
     }
+  }
+
+  return {
+    model: {
+      chats: {},
+      chatsUsers: {},
+      users: {},
+      messageDrafts: {},
+      messages: {},
+      requests: {},
+      userSearch: "",
+      userSelected: {},
+    },
+  }
 }
 
 //
@@ -61,133 +61,133 @@ export type Msg = MsgClient
 const userSearchInputId = "user-search-input"
 
 export const update = ({
-    msg,
-    model,
+  msg,
+  model,
 }: {
-    msg: Msg
-    model: ModelClient
+  msg: Msg
+  model: ModelClient
 }): { model: ModelClient; eff?: Eff<Msg> } => {
-    switch (msg[0]) {
-        case "clicked-user-search-result": {
-            return {
-                model: {
-                    ...model,
-                    userSelected: toggleKey(model.userSelected, msg[1].userId),
-                    userSearch: "",
-                },
-            }
-        }
-
-        case "clicked-user-selected-delete-button": {
-            return {
-                model: {
-                    ...model,
-                    userSelected: removeKey(model.userSelected, msg[1].userId),
-                },
-            }
-        }
-
-        case "inputted-user-search": {
-            return {
-                model: {
-                    ...model,
-                    userSearch: msg[1].userSearch,
-                },
-            }
-        }
-
-        case "clicked-user-search-clear-button": {
-            return {
-                model: {
-                    ...model,
-                    userSelected: {},
-                    userSearch: "",
-                },
-                eff: p(
-                    Browser.focus(userSearchInputId),
-                    Eff.perform((result) => ["focused", result]),
-                ),
-            }
-        }
-
-        default: {
-            return {
-                model,
-                eff: Eff.None,
-            }
-        }
+  switch (msg[0]) {
+    case "clicked-user-search-result": {
+      return {
+        model: {
+          ...model,
+          userSelected: toggleKey(model.userSelected, msg[1].userId),
+          userSearch: "",
+        },
+      }
     }
+
+    case "clicked-user-selected-delete-button": {
+      return {
+        model: {
+          ...model,
+          userSelected: removeKey(model.userSelected, msg[1].userId),
+        },
+      }
+    }
+
+    case "inputted-user-search": {
+      return {
+        model: {
+          ...model,
+          userSearch: msg[1].userSearch,
+        },
+      }
+    }
+
+    case "clicked-user-search-clear-button": {
+      return {
+        model: {
+          ...model,
+          userSelected: {},
+          userSearch: "",
+        },
+        eff: p(
+          Browser.focus(userSearchInputId),
+          Eff.perform((result) => ["focused", result]),
+        ),
+      }
+    }
+
+    default: {
+      return {
+        model,
+        eff: Eff.None,
+      }
+    }
+  }
 }
 
 const toggleKey = <T extends object>(obj: T, key: keyof T) => {
-    const newObj: T = { ...obj }
-    if (key in newObj) {
-        delete newObj[key]
-    } else {
-        newObj[key] = key as T[keyof T]
-    }
-    return newObj
+  const newObj: T = { ...obj }
+  if (key in newObj) {
+    delete newObj[key]
+  } else {
+    newObj[key] = key as T[keyof T]
+  }
+  return newObj
 }
 const removeKey = <T extends object>(obj: T, key: keyof T) => {
-    const newObj: T = { ...obj }
-    if (key in newObj) {
-        delete newObj[key]
-    }
-    return newObj
+  const newObj: T = { ...obj }
+  if (key in newObj) {
+    delete newObj[key]
+  }
+  return newObj
 }
 
 export const updateFromServer = ({
-    model,
+  model,
 }: {
-    msg: MsgToClient
-    model: ModelClient
+  msg: MsgToClient
+  model: ModelClient
 }): {
-    model: ModelClient
-    eff?: Eff<Msg>
+  model: ModelClient
+  eff?: Eff<Msg>
 } => {
-    return { model }
+  return { model }
 }
 
 export const updateFromEvent = ({
-    msg,
-    model,
+  msg,
+  model,
 }: {
-    msg: ClientEvent
-    model: ModelClient
+  msg: ClientEvent
+  model: ModelClient
 }): {
-    model: ModelClient
-    eff?: Eff<Msg>
+  model: ModelClient
+  eff?: Eff<Msg>
 } => {
-    switch (msg.t) {
-        case "routing/route-changed": {
-            if (msg.route.t !== "chat") {
-                return { model }
-            }
+  switch (msg.t) {
+    case "routing/route-changed": {
+      if (msg.route.t !== "chat") {
+        return { model }
+      }
 
-            switch (msg.route.c.t) {
-                case "chat-conversation": {
-                    return {
-                        model,
-                    }
-                }
-
-                case "chat-new": {
-                    return {
-                        model,
-                    }
-                }
-
-                default: {
-                    return {
-                        model,
-                    }
-                }
-            }
+      switch (msg.route.c.t) {
+        case "chat-conversation": {
+          return {
+            model,
+          }
         }
+
+        case "chat-new": {
+          return {
+            model,
+          }
+        }
+
         default: {
-            return { model }
+          return {
+            model,
+          }
         }
+      }
     }
+    default: {
+      return { model }
+    }
+  }
 }
 
 //
@@ -199,77 +199,77 @@ export const updateFromEvent = ({
 //
 
 export const View = ({
-    model,
-    dispatch,
-    ctx,
-    route,
-    userSearch,
-    viewBottomBar,
+  model,
+  dispatch,
+  ctx,
+  route,
+  userSearch,
+  viewBottomBar,
 }: {
-    model: ModelClient
-    dispatch: (m: Msg) => void
-    ctx: ClientCtx
-    route: RouteChat
-    userSearch: {
-        onInput: (searchText: string) => void
-        loading: boolean
-    }
-    viewBottomBar: VDom
+  model: ModelClient
+  dispatch: (m: Msg) => void
+  ctx: ClientCtx
+  route: RouteChat
+  userSearch: {
+    onInput: (searchText: string) => void
+    loading: boolean
+  }
+  viewBottomBar: VDom
 }) => {
-    switch (route.t) {
-        case "chat-conversation": {
-            return <ViewChat model={model} dispatch={dispatch} />
-        }
-
-        case "chat-new": {
-            return (
-                <ViewChatNew
-                    model={model}
-                    dispatch={dispatch}
-                    ctx={ctx}
-                    userSearch={userSearch}
-                />
-            )
-        }
-
-        case "chat": {
-            return (
-                <>
-                    <ViewChatList model={model} dispatch={dispatch} ctx={ctx} />
-                    {viewBottomBar}
-                </>
-            )
-        }
-
-        default: {
-            return exhaustive(route)
-        }
+  switch (route.t) {
+    case "chat-conversation": {
+      return <ViewChat model={model} dispatch={dispatch} />
     }
+
+    case "chat-new": {
+      return (
+        <ViewChatNew
+          model={model}
+          dispatch={dispatch}
+          ctx={ctx}
+          userSearch={userSearch}
+        />
+      )
+    }
+
+    case "chat": {
+      return (
+        <>
+          <ViewChatList model={model} dispatch={dispatch} ctx={ctx} />
+          {viewBottomBar}
+        </>
+      )
+    }
+
+    default: {
+      return exhaustive(route)
+    }
+  }
 }
 
 const ViewChat = (_props: {
-    model: ModelClient
-    dispatch: (m: Msg) => void
+  model: ModelClient
+  dispatch: (m: Msg) => void
 }) => {
-    return <div>ViewChat</div>
+  return <div>ViewChat</div>
 }
 
 const ViewChatNew = (_props: {
-    ctx: ClientCtx
-    model: ModelClient
-    dispatch: (m: Msg) => void
-    userSearch: {
-        onInput: (searchText: string) => void
-        loading: boolean
-    }
+  ctx: ClientCtx
+  model: ModelClient
+  dispatch: (m: Msg) => void
+  userSearch: {
+    onInput: (searchText: string) => void
+    loading: boolean
+  }
 }) => {
-    return <div></div>
+  return <div></div>
 }
 
 const ViewChatList = (_props: {
-    ctx: ClientCtx
-    model: ModelClient
-    dispatch: (m: Msg) => void
+  ctx: ClientCtx
+  model: ModelClient
+  dispatch: (m: Msg) => void
 }) => {
-    return <div></div>
+  return <div></div>
 }

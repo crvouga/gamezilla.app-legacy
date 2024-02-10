@@ -9,24 +9,24 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 //
 
 export type ModelClient = {
-    puzzleListRequest: RemoteResult<string, null>
+  puzzleListRequest: RemoteResult<string, null>
 }
 
 export const initClient: ModelClient = {
-    puzzleListRequest: notAsked,
+  puzzleListRequest: notAsked,
 }
 
 export type MsgClient =
-    | { t: "list/user-observed-end-of-list" }
-    | { t: "list/user-clicked-puzzle-list-item"; puzzle: FlowPuzzle }
+  | { t: "list/user-observed-end-of-list" }
+  | { t: "list/user-clicked-puzzle-list-item"; puzzle: FlowPuzzle }
 
 export type MsgServer = { t: "noop" }
 
 export type MsgToServer = { t: "list/list-puzzles"; input: ListPuzzlesInput }
 
 export type MsgToClient = {
-    t: "list/listed-puzzle"
-    listed: ListPuzzlesOutput
+  t: "list/listed-puzzle"
+  listed: ListPuzzlesOutput
 }
 
 //
@@ -45,13 +45,13 @@ export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>
 //
 
 export type MsgGame =
-    | {
-          t: "listed-puzzles"
-          input: ListPuzzlesInput
-          output: ListPuzzlesOutput
-      }
-    | {
-          t: "user-opened-puzzle"
-          userId: UserId
-          puzzle: FlowPuzzle
-      }
+  | {
+      t: "listed-puzzles"
+      input: ListPuzzlesInput
+      output: ListPuzzlesOutput
+    }
+  | {
+      t: "user-opened-puzzle"
+      userId: UserId
+      puzzle: FlowPuzzle
+    }

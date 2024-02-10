@@ -51,15 +51,15 @@ const WEB_SOCKETS_ENDPOINT = "/ws"
 const USE_NGROK = false
 
 const SERVER_URL = IS_PROD
-    ? SERVER_URL_PROD
-    : USE_NGROK
-    ? SERVER_URL_NGROK
-    : SERVER_URL_LOCAL
+  ? SERVER_URL_PROD
+  : USE_NGROK
+  ? SERVER_URL_NGROK
+  : SERVER_URL_LOCAL
 
 const SERVER_PORT = Number(process.env["PORT"] ?? SERVER_PORT_LOCAL)
 
 if (!SERVER_URL) {
-    throw new Error("SERVER_URL not set")
+  throw new Error("SERVER_URL not set")
 }
 
 //
@@ -73,7 +73,7 @@ if (!SERVER_URL) {
 const CODEBASE_VERSION_ID = config["codebase_version_id"]
 
 if (!CODEBASE_VERSION_ID) {
-    throw new Error("CODEBASE_VERSION_ID not set")
+  throw new Error("CODEBASE_VERSION_ID not set")
 }
 
 //
@@ -94,12 +94,12 @@ const SHOULD_USE_DEBUGGER = !IS_PROD || true
 //
 
 export const PUBLIC_APP_CONFIG = {
-    SHOULD_USE_DEBUGGER,
-    IS_PROD,
-    RENDERER_IMPL,
-    TRANSPORT_IMPL,
-    SERVER_URL,
-    SERVER_PORT,
-    WEB_SOCKETS_ENDPOINT,
-    CODEBASE_VERSION_ID,
+  SHOULD_USE_DEBUGGER,
+  IS_PROD,
+  RENDERER_IMPL,
+  TRANSPORT_IMPL,
+  SERVER_URL,
+  SERVER_PORT,
+  WEB_SOCKETS_ENDPOINT,
+  CODEBASE_VERSION_ID,
 }

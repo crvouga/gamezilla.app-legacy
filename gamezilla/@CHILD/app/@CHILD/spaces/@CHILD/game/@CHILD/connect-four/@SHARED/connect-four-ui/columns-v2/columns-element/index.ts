@@ -1,8 +1,8 @@
 import { gameTheme } from "../../shared"
 import {
-    COLUMN_COUNT,
-    ColumnIndex,
-    MAX_COLUMN_HEIGHT,
+  COLUMN_COUNT,
+  ColumnIndex,
+  MAX_COLUMN_HEIGHT,
 } from "../../../connect-four"
 import { ColumnsProps, columnsPropsSub } from "../shared"
 import { initColumns } from "./columns"
@@ -11,77 +11,77 @@ import { SvgIds } from "./shared"
 import { initWins, syncWins } from "./wins"
 
 declare global {
-    namespace inferno.createElement.JSX {
-        interface IntrinsicElements {
-            "connect-four-columns": {
-                "initial-columns-json": string
-            }
-        }
+  namespace inferno.createElement.JSX {
+    interface IntrinsicElements {
+      "connect-four-columns": {
+        "initial-columns-json": string
+      }
     }
-    namespace JSX {
-        interface IntrinsicElements {
-            "connect-four-columns": {
-                "initial-columns-json": string
-            }
-        }
+  }
+  namespace JSX {
+    interface IntrinsicElements {
+      "connect-four-columns": {
+        "initial-columns-json": string
+      }
     }
+  }
 }
 
 const randomId = 123
 const ids: SvgIds = {
-    playerOneGradient: `playerOneGradient${randomId}`,
-    playerTwoGradient: `playerTwoGradient${randomId}`,
-    holePattern: `holePattern${randomId}`,
-    columnGradient: `columnGradient${randomId}`,
-    holeMask: `holeMask${randomId}`,
+  playerOneGradient: `playerOneGradient${randomId}`,
+  playerTwoGradient: `playerTwoGradient${randomId}`,
+  holePattern: `holePattern${randomId}`,
+  columnGradient: `columnGradient${randomId}`,
+  holeMask: `holeMask${randomId}`,
 }
 
 /* Have to increase the viewBox so that the draw animation is smooth >:-{ */
 const N = 1000
 
 if (typeof window !== "undefined" && "customElements" in window) {
-    customElements.define(
-        "connect-four-columns",
-        class extends HTMLElement {
-            private props: ColumnsProps | null = null
-            private prevProps: ColumnsProps | null = null
-            private cleanUps: (() => void)[] = []
+  customElements.define(
+    "connect-four-columns",
+    class extends HTMLElement {
+      private props: ColumnsProps | null = null
+      private prevProps: ColumnsProps | null = null
+      private cleanUps: (() => void)[] = []
 
-            constructor() {
-                super()
-                this.attachShadow({ mode: "open" })
-            }
+      constructor() {
+        super()
+        this.attachShadow({ mode: "open" })
+      }
 
-            disconnectedCallback() {
-                for (const cleanUp of this.cleanUps) {
-                    cleanUp()
-                }
-            }
+      disconnectedCallback() {
+        for (const cleanUp of this.cleanUps) {
+          cleanUp()
+        }
+      }
 
-            connectedCallback() {
-                this.initUI()
-            }
+      connectedCallback() {
+        this.initUI()
+      }
 
-            initUI() {
-                const unsubscribe = columnsPropsSub.subscribe((props) => {
-                    this.prevProps = this.props
-                    this.props = props
-                    this.syncUI()
-                })
-                this.cleanUps.push(unsubscribe)
+      initUI() {
+        const unsubscribe = columnsPropsSub.subscribe((props) => {
+          this.prevProps = this.props
+          this.props = props
+          this.syncUI()
+        })
+        this.cleanUps.push(unsubscribe)
 
-                const initialColumns = this.getAttribute("initial-columns-json")
-                if (initialColumns) {
-                    this.props = {
-                        columns: JSON.parse(initialColumns),
-                    }
-                }
+        const initialColumns = this.getAttribute("initial-columns-json")
+        if (initialColumns) {
+          this.props = {
+            columns: JSON.parse(initialColumns),
+          }
+        }
 
-                if (!this.shadowRoot) {
-                    return
-                }
+        if (!this.shadowRoot) {
+          return
+        }
 
-                this.shadowRoot.innerHTML = `
+        this.shadowRoot.innerHTML = `
         <style>
           :host {
             display: block;
@@ -124,94 +124,94 @@ if (typeof window !== "undefined" && "customElements" in window) {
           </g>
         </svg>`
 
-                const columns = this.getColumnsParentNode()
-                const discs = this.getDiscsParentNode()
-                const wins = this.getWinsParentNode()
+        const columns = this.getColumnsParentNode()
+        const discs = this.getDiscsParentNode()
+        const wins = this.getWinsParentNode()
 
-                if (columns) {
-                    initColumns({
-                        onClick: (columnIndex) => {
-                            this.onColumnClick(columnIndex)
-                        },
-                        parentNode: columns,
-                    })
-                }
+        if (columns) {
+          initColumns({
+            onClick: (columnIndex) => {
+              this.onColumnClick(columnIndex)
+            },
+            parentNode: columns,
+          })
+        }
 
-                if (this.props && discs) {
-                    initDiscs({
-                        columns: this.props.columns,
-                        ids,
-                        parentNode: discs,
-                    })
-                }
+        if (this.props && discs) {
+          initDiscs({
+            columns: this.props.columns,
+            ids,
+            parentNode: discs,
+          })
+        }
 
-                if (this.props && wins) {
-                    initWins({ columns: this.props.columns, parentNode: wins })
-                }
-            }
+        if (this.props && wins) {
+          initWins({ columns: this.props.columns, parentNode: wins })
+        }
+      }
 
-            onColumnClick(columnIndex: ColumnIndex) {
-                this.props?.onDropDisc?.(columnIndex)
-            }
+      onColumnClick(columnIndex: ColumnIndex) {
+        this.props?.onDropDisc?.(columnIndex)
+      }
 
-            getColumnsParentNode() {
-                const columns = this.shadowRoot?.getElementById("columns")!
-                if (columns instanceof SVGGElement) {
-                    return columns
-                }
-                return null
-            }
-            getDiscsParentNode() {
-                const node = this.shadowRoot?.getElementById("discs")
-                if (node instanceof SVGGElement) {
-                    return node
-                }
-                return null
-            }
-            getWinsParentNode() {
-                const node = this.shadowRoot?.getElementById("wins")
+      getColumnsParentNode() {
+        const columns = this.shadowRoot?.getElementById("columns")!
+        if (columns instanceof SVGGElement) {
+          return columns
+        }
+        return null
+      }
+      getDiscsParentNode() {
+        const node = this.shadowRoot?.getElementById("discs")
+        if (node instanceof SVGGElement) {
+          return node
+        }
+        return null
+      }
+      getWinsParentNode() {
+        const node = this.shadowRoot?.getElementById("wins")
 
-                if (node instanceof SVGElement) {
-                    return node
-                }
-                return null
-            }
+        if (node instanceof SVGElement) {
+          return node
+        }
+        return null
+      }
 
-            syncUI() {
-                const discs = this.getDiscsParentNode()
-                const columns = this.props?.columns
-                if (columns && discs) {
-                    syncDiscs({
-                        columns,
-                        ids,
-                        parentNode: discs,
-                    })
-                }
-                const wins = this.getWinsParentNode()
-                if (columns && wins) {
-                    syncWins({
-                        columns,
-                        parentNode: wins,
-                        prevColumns: this.prevProps?.columns ?? null,
-                    })
-                }
+      syncUI() {
+        const discs = this.getDiscsParentNode()
+        const columns = this.props?.columns
+        if (columns && discs) {
+          syncDiscs({
+            columns,
+            ids,
+            parentNode: discs,
+          })
+        }
+        const wins = this.getWinsParentNode()
+        if (columns && wins) {
+          syncWins({
+            columns,
+            parentNode: wins,
+            prevColumns: this.prevProps?.columns ?? null,
+          })
+        }
 
-                const root = this.shadowRoot?.querySelector("svg")
+        const root = this.shadowRoot?.querySelector("svg")
 
-                if (root) {
-                    if (this.props?.disabled) {
-                        root.classList.add("pointer-events-none")
-                    } else {
-                        root.classList.remove("pointer-events-none")
-                    }
-                }
-            }
-        },
-    )
+        if (root) {
+          if (this.props?.disabled) {
+            root.classList.add("pointer-events-none")
+          } else {
+            root.classList.remove("pointer-events-none")
+          }
+        }
+      }
+    },
+  )
 }
 
 function createSvgDefs({ ids }: { ids: SvgIds }) {
-    return `<defs>
+  return `<defs>
       <pattern
         id="${ids.holePattern}"
         patternUnits="userSpaceOnUse"

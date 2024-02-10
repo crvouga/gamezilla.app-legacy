@@ -1,18 +1,18 @@
 import {
-    SpaceReqCtx,
-    SpaceServerEvent,
+  SpaceReqCtx,
+  SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
 import { Eff, Sub, p } from "gamezilla/@SHARED/core"
 import { Chess } from "../../@SHARED/chess"
 import {
-    ModelServer,
-    MsgServer,
-    MsgToClient,
-    MsgToServer,
-    botMoved,
-    initServer,
-    isBotTurn,
+  ModelServer,
+  MsgServer,
+  MsgToClient,
+  MsgToServer,
+  botMoved,
+  initServer,
+  isBotTurn,
 } from "./vs-bot.core"
 
 //
@@ -38,110 +38,110 @@ export const init = initServer
 export type Msg = MsgServer
 
 export const update = ({
-    msg,
-    model,
+  msg,
+  model,
 }: {
-    msg: Msg
-    model: Model
+  msg: Msg
+  model: Model
 }): {
-    model: Model
-    eff?: Eff<Msg>
-    msgCmd?: SpaceServerCmd<MsgToClient>[]
+  model: Model
+  eff?: Eff<Msg>
+  msgCmd?: SpaceServerCmd<MsgToClient>[]
 } => {
-    if (msg.t === "bot-moved") {
-        const result = botMoved(msg.moved, model)
+  if (msg.t === "bot-moved") {
+    const result = botMoved(msg.moved, model)
 
-        const modelNew = result.t === "err" ? model : result.value
+    const modelNew = result.t === "err" ? model : result.value
 
-        return {
-            model: modelNew,
-            msgCmd: [{ t: "send-to-space", msg: { t: "bot-moved", result } }],
-        }
+    return {
+      model: modelNew,
+      msgCmd: [{ t: "send-to-space", msg: { t: "bot-moved", result } }],
     }
+  }
 
-    return { model }
+  return { model }
 }
 
 export const updateFromClient = (input: {
-    msg: MsgToServer
-    model: Model
-    ctx: SpaceReqCtx
+  msg: MsgToServer
+  model: Model
+  ctx: SpaceReqCtx
 }): {
-    model: Model
-    eff?: Eff<Msg>
-    msgCmd?: SpaceServerCmd<MsgToClient>[]
+  model: Model
+  eff?: Eff<Msg>
+  msgCmd?: SpaceServerCmd<MsgToClient>[]
 } => {
-    const updated = updateFromClientMain(input)
+  const updated = updateFromClientMain(input)
 
-    return {
-        ...updated,
-        eff: Eff.batch([updated.eff, toBotMoveEff(input.model, updated.model)]),
-    }
+  return {
+    ...updated,
+    eff: Eff.batch([updated.eff, toBotMoveEff(input.model, updated.model)]),
+  }
 }
 
 const toBotMoveEff = (modelPrev: Model, modelNext: Model): Eff<Msg> => {
-    const didChangeToBotTurn = !isBotTurn(modelPrev) && isBotTurn(modelNext)
+  const didChangeToBotTurn = !isBotTurn(modelPrev) && isBotTurn(modelNext)
 
-    if (!didChangeToBotTurn) {
-        return Eff.None
-    }
-    if (modelNext.type !== "game") {
-        return Eff.None
-    }
+  if (!didChangeToBotTurn) {
+    return Eff.None
+  }
+  if (modelNext.type !== "game") {
+    return Eff.None
+  }
 
-    const eff = p(
-        Chess.getBestMove(modelNext.botLevel, modelNext.board),
-        Eff.perform((moved): Msg => ({ t: "bot-moved", moved })),
-    )
+  const eff = p(
+    Chess.getBestMove(modelNext.botLevel, modelNext.board),
+    Eff.perform((moved): Msg => ({ t: "bot-moved", moved })),
+  )
 
-    return eff
+  return eff
 }
 
 const updateFromClientMain: typeof updateFromClient = ({ model }) => {
-    // const handled = updateCore({ msg, model });
+  // const handled = updateCore({ msg, model });
 
-    // const modelNew: Model = handled.t === "err" ? model : handled.value;
+  // const modelNew: Model = handled.t === "err" ? model : handled.value;
 
-    // return {
-    //   model: modelNew,
-    //   msgCmd: [{ t: "send-to-space", msg: { ...msg, result: handled } }],
-    // };
-    return { model }
+  // return {
+  //   model: modelNew,
+  //   msgCmd: [{ t: "send-to-space", msg: { ...msg, result: handled } }],
+  // };
+  return { model }
 }
 
 export const updateFromEvent = ({
-    msg,
-    model,
+  msg,
+  model,
 }: {
-    msg: SpaceServerEvent
-    model: Model
+  msg: SpaceServerEvent
+  model: Model
 }): {
-    model: Model
-    msgCmd?: SpaceServerCmd<MsgToClient>[]
-    eff?: Eff
+  model: Model
+  msgCmd?: SpaceServerCmd<MsgToClient>[]
+  eff?: Eff
 } => {
-    if (msg.t === "user-left") {
-        if (model.userId === msg.userId) {
-            const modelNew: Model = {
-                type: "setup",
-                botLevel: model.botLevel,
-                userColor: model.userColor,
-                userId: null,
-            }
-            return {
-                model: modelNew,
-                msgCmd: [
-                    {
-                        t: "send-to-space",
-                        msg: { t: "player-left", model: modelNew },
-                    },
-                ],
-            }
-        }
-        return { model }
+  if (msg.t === "user-left") {
+    if (model.userId === msg.userId) {
+      const modelNew: Model = {
+        type: "setup",
+        botLevel: model.botLevel,
+        userColor: model.userColor,
+        userId: null,
+      }
+      return {
+        model: modelNew,
+        msgCmd: [
+          {
+            t: "send-to-space",
+            msg: { t: "player-left", model: modelNew },
+          },
+        ],
+      }
     }
-
     return { model }
+  }
+
+  return { model }
 }
 
 //
@@ -153,5 +153,5 @@ export const updateFromEvent = ({
 //
 
 export const subscriptions = (_intervalId: string, _model: Model): Sub<Msg> => {
-    return Sub.None
+  return Sub.None
 }

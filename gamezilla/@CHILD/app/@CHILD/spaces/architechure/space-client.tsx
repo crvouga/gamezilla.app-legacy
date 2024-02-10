@@ -1,7 +1,7 @@
 import {
-    AnonymousClientCtx,
-    ClientCmd,
-    ClientEvent,
+  AnonymousClientCtx,
+  ClientCmd,
+  ClientEvent,
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Eff, Sub } from "gamezilla/@SHARED/core"
@@ -9,76 +9,76 @@ import { WithEventId } from "../@SHARED/event"
 import { Space } from "../@SHARED/space"
 import { SpaceEvent } from "../spaces-core"
 import {
-    ModelClient,
-    MsgClient,
-    MsgToClient,
-    MsgToServer,
+  ModelClient,
+  MsgClient,
+  MsgToClient,
+  MsgToServer,
 } from "../spaces.core"
 
 type Ctx = AnonymousClientCtx & {
-    space?: Space
+  space?: Space
 }
 
 export type Input = {
-    ctx: Ctx
-    model: ModelClient
-    msg?: MsgClient | null
-    msgServer?: MsgToClient | null
-    msgEvt?: ClientEvent | null
-    msgCmd?: null
-    msgSpaceEvent?: WithEventId<SpaceEvent> | null
+  ctx: Ctx
+  model: ModelClient
+  msg?: MsgClient | null
+  msgServer?: MsgToClient | null
+  msgEvt?: ClientEvent | null
+  msgCmd?: null
+  msgSpaceEvent?: WithEventId<SpaceEvent> | null
 }
 
 export type MaybePromise<T> = T | Promise<T>
 
 export type Output = {
-    model: ModelClient
-    eff?: Eff<MsgClient>
-    msgCmd?: ClientCmd<{
-        MsgClient: MsgClient
-        MsgToServer: MsgToServer
-    }>[]
-    msgEvt?: []
-    msgSpaceEvent?: WithEventId<SpaceEvent>[]
+  model: ModelClient
+  eff?: Eff<MsgClient>
+  msgCmd?: ClientCmd<{
+    MsgClient: MsgClient
+    MsgToServer: MsgToServer
+  }>[]
+  msgEvt?: []
+  msgSpaceEvent?: WithEventId<SpaceEvent>[]
 }
 
 export type SpaceClientModule = {
-    init: (input: { ctx: Ctx; model: ModelClient }) => MaybePromise<Output>
-    update: (input: Input) => MaybePromise<Output>
-    subscriptions: (input: { ctx: Ctx; model: ModelClient }) => Sub<MsgClient>
-    View: (input: {
-        ctx: Ctx
-        model: ModelClient
-        dispatch: (msg: MsgClient) => void
-    }) => VDom
+  init: (input: { ctx: Ctx; model: ModelClient }) => MaybePromise<Output>
+  update: (input: Input) => MaybePromise<Output>
+  subscriptions: (input: { ctx: Ctx; model: ModelClient }) => Sub<MsgClient>
+  View: (input: {
+    ctx: Ctx
+    model: ModelClient
+    dispatch: (msg: MsgClient) => void
+  }) => VDom
 }
 
 const chainUpdates = async (
-    acc: Output,
-    ...updates: ((model: ModelClient) => MaybePromise<Output>)[]
+  acc: Output,
+  ...updates: ((model: ModelClient) => MaybePromise<Output>)[]
 ): Promise<Output> => {
-    const [update, ...rest] = updates
+  const [update, ...rest] = updates
 
-    if (!update) {
-        return acc
-    }
+  if (!update) {
+    return acc
+  }
 
-    const updated = await update(acc.model)
+  const updated = await update(acc.model)
 
-    const accNew: Output = {
-        model: updated.model,
-        eff: Eff.batch([acc.eff, updated.eff]),
-        msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
-        msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
-        msgSpaceEvent: [
-            ...(acc.msgSpaceEvent ?? []),
-            ...(updated.msgSpaceEvent ?? []),
-        ],
-    }
+  const accNew: Output = {
+    model: updated.model,
+    eff: Eff.batch([acc.eff, updated.eff]),
+    msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
+    msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
+    msgSpaceEvent: [
+      ...(acc.msgSpaceEvent ?? []),
+      ...(updated.msgSpaceEvent ?? []),
+    ],
+  }
 
-    return chainUpdates(accNew, ...rest)
+  return chainUpdates(accNew, ...rest)
 }
 
 export const SpaceClientModule = {
-    chainUpdates,
+  chainUpdates,
 }

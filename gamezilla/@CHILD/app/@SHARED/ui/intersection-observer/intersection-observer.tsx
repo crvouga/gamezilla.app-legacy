@@ -1,19 +1,19 @@
 import { VDom } from "../ui"
 import "./intersection-observer-element"
 import {
-    IntersectionObserverEmitterProps,
-    sub,
+  IntersectionObserverEmitterProps,
+  sub,
 } from "./intersection-observer-shared"
 
 export const IntersectionObserverEmitter = ({
-    children,
-    ...props
+  children,
+  ...props
 }: IntersectionObserverEmitterProps & {
-    children?: VDom | VDom[]
+  children?: VDom | VDom[]
 }) => {
-    // There is some kind of race condition setTimeout fixes
-    setTimeout(() => sub.publish({ type: "props", props }), 0)
+  // There is some kind of race condition setTimeout fixes
+  setTimeout(() => sub.publish({ type: "props", props }), 0)
 
-    // @ts-ignore
-    return <intersection-observer-dispatchter id={props.id} />
+  // @ts-ignore
+  return <intersection-observer-dispatchter id={props.id} />
 }

@@ -4,11 +4,11 @@ import { IFlowPuzzleDb } from "../../../../@SHARED/flow-puzzle-db"
 import { FlowPuzzleId } from "../../../../@SHARED/flow-puzzle/flow-puzzle-id"
 
 export type ModelClient = {
-    deleteForeverRequest: RemoteResult<string, null>
+  deleteForeverRequest: RemoteResult<string, null>
 }
 
 export const initClient: ModelClient = {
-    deleteForeverRequest: notAsked,
+  deleteForeverRequest: notAsked,
 }
 
 export type ModelServer = {}
@@ -19,10 +19,10 @@ export type ModelServer = {}
 //
 
 export type MsgClient =
-    | { t: "delete-forever/user-clicked-delete-button" }
-    | { t: "delete-forever/user-closed-drawer" }
-    | { t: "delete-forever/user-clicked-confirm-button" }
-    | { t: "delete-forever/user-clicked-cancel-button" }
+  | { t: "delete-forever/user-clicked-delete-button" }
+  | { t: "delete-forever/user-closed-drawer" }
+  | { t: "delete-forever/user-clicked-confirm-button" }
+  | { t: "delete-forever/user-clicked-cancel-button" }
 
 export type MsgToServer = { t: "delete-forever/user-confirmed" }
 
@@ -36,10 +36,10 @@ export type MsgServer = { t: "noop" }
 //
 
 export type MsgGame = {
-    t: "user-deleted-puzzle"
-    deleted: Deleted
-    flowPuzzleId: FlowPuzzleId
-    userId: UserId
+  t: "user-deleted-puzzle"
+  deleted: Deleted
+  flowPuzzleId: FlowPuzzleId
+  userId: UserId
 }
 
 //

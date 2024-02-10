@@ -12,39 +12,39 @@ import { PuzzleListServer } from "./puzzle/list/puzzle-list.server"
 import { PuzzleSaveChangesServer } from "./puzzle/save-changes/puzzle-save-changes.server"
 
 const deps: ServerModule["deps"] = async (_input) => {
-    return {
-        FlowPuzzleDb: FlowPuzzleDb({
-            t: "hash-map",
-        }),
-        FlowPackDb: FlowPackDb({
-            t: "hash-map",
-        }),
-    }
+  return {
+    FlowPuzzleDb: FlowPuzzleDb({
+      t: "hash-map",
+    }),
+    FlowPackDb: FlowPackDb({
+      t: "hash-map",
+    }),
+  }
 }
 
 const init: ServerModule["init"] = {}
 
 const update: ServerModule["update"] = async (input) => {
-    return GameServerModule.chainUpdates(
-        { model: input.model },
-        (model) => PuzzleListServer.update({ ...input, model }),
-        (model) => PuzzleCreateServer.update({ ...input, model }),
-        (model) => PuzzleDeleteForeverServer.update({ ...input, model }),
-        (model) => PuzzleEditNameServer.update({ ...input, model }),
-        (model) => PuzzleSaveChangesServer.update({ ...input, model }),
-        //
-        (model) => PackCreateServer.update({ ...input, model }),
-        (model) => PackBuilderServer.update({ ...input, model }),
-    )
+  return GameServerModule.chainUpdates(
+    { model: input.model },
+    (model) => PuzzleListServer.update({ ...input, model }),
+    (model) => PuzzleCreateServer.update({ ...input, model }),
+    (model) => PuzzleDeleteForeverServer.update({ ...input, model }),
+    (model) => PuzzleEditNameServer.update({ ...input, model }),
+    (model) => PuzzleSaveChangesServer.update({ ...input, model }),
+    //
+    (model) => PackCreateServer.update({ ...input, model }),
+    (model) => PackBuilderServer.update({ ...input, model }),
+  )
 }
 
 const subscriptions: ServerModule["subscriptions"] = async () => {
-    return Sub.None
+  return Sub.None
 }
 
 export const BuilderServer: ServerModule = {
-    deps,
-    init,
-    update,
-    subscriptions,
+  deps,
+  init,
+  update,
+  subscriptions,
 }

@@ -4,35 +4,35 @@ import { ModelServer, MsgServer, MsgToServer } from "./search.core"
 type Model = ModelServer
 
 export const init: { model: Model } = {
-    model: null,
+  model: null,
 }
 
 type Msg = MsgServer
 
 export const update = ({
-    model,
+  model,
 }: {
-    msg: Msg
-    model: Model
+  msg: Msg
+  model: Model
 }): {
-    model: Model
-    eff?: Eff<Msg>
+  model: Model
+  eff?: Eff<Msg>
 } => {
-    return { model }
+  return { model }
 }
 
 export const updateFromClient = ({
-    model,
-    msg,
+  model,
+  msg,
 }: {
-    msg: MsgToServer
-    model: Model
+  msg: MsgToServer
+  model: Model
 }): {
-    model: Model
-    eff?: Eff<Msg>
+  model: Model
+  eff?: Eff<Msg>
 } => {
-    if (msg.t === "search") {
-        return { model }
-    }
+  if (msg.t === "search") {
     return { model }
+  }
+  return { model }
 }

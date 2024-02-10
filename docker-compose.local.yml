@@ -1,18 +1,18 @@
 version: "3.1"
 
 services:
-    postgres:
-        container_name: gamezilla-app-postgres
-        image: postgres
-        restart: always
-        environment:
-            POSTGRES_USER: gamezilla-app
-            POSTGRES_PASSWORD: gamezilla-app
-            POSTGRES_DB: gamezilla-app
-        ports:
-            - "5433:5432"
-        volumes:
-            - gamezilla-app-postgres-data:/var/lib/postgresql/data
+  postgres:
+    container_name: gamezilla-app-postgres
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: gamezilla-app
+      POSTGRES_PASSWORD: gamezilla-app
+      POSTGRES_DB: gamezilla-app
+    ports:
+      - "5433:5432"
+    volumes:
+      - gamezilla-app-postgres-data:/var/lib/postgresql/data
 
 volumes:
-    gamezilla-app-postgres-data:
+  gamezilla-app-postgres-data:

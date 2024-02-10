@@ -21,97 +21,95 @@ CREATE INDEX IF NOT EXISTS idx_order_by            ON immutable_store (posix_tim
 `
 
 type Row = {
-    key_space: string
-    append_step: number
-    instance_step: number
-    posix_timestamp: number
-    key: string
-    value: string | null
+  key_space: string
+  append_step: number
+  instance_step: number
+  posix_timestamp: number
+  key: string
+  value: string | null
 }
 
 function toRow(row: unknown): Row | null {
-    if (
-        typeof row === "object" &&
-        row !== null &&
-        "value" in row &&
-        (typeof row.value === "string" || row.value === null) &&
-        "key_space" in row &&
-        typeof row.key_space === "string" &&
-        "append_step" in row &&
-        typeof row.append_step === "number" &&
-        "instance_step" in row &&
-        typeof row.instance_step === "number" &&
-        "posix_timestamp" in row &&
-        typeof row.posix_timestamp === "number" &&
-        "key" in row &&
-        typeof row.key === "string"
-    ) {
-        return {
-            key_space: row.key_space,
-            append_step: row.append_step,
-            instance_step: row.instance_step,
-            posix_timestamp: row.posix_timestamp,
-            key: row.key,
-            value: row.value,
-        }
+  if (
+    typeof row === "object" &&
+    row !== null &&
+    "value" in row &&
+    (typeof row.value === "string" || row.value === null) &&
+    "key_space" in row &&
+    typeof row.key_space === "string" &&
+    "append_step" in row &&
+    typeof row.append_step === "number" &&
+    "instance_step" in row &&
+    typeof row.instance_step === "number" &&
+    "posix_timestamp" in row &&
+    typeof row.posix_timestamp === "number" &&
+    "key" in row &&
+    typeof row.key === "string"
+  ) {
+    return {
+      key_space: row.key_space,
+      append_step: row.append_step,
+      instance_step: row.instance_step,
+      posix_timestamp: row.posix_timestamp,
+      key: row.key,
+      value: row.value,
     }
+  }
 
-    return null
+  return null
 }
 
 export const SqliteStore = <TKey extends string | number, TValue>({
-    connectionString,
-    keySpace: keySpace,
-    encodeValue,
-    decodeValue,
+  connectionString,
+  keySpace: keySpace,
+  encodeValue,
+  decodeValue,
 }: {
-    keySpace: string
-    connectionString: string
-    decodeValue: (encoded: string | null) => TValue | null
-    encodeValue: (value: TValue | null) => string | null
+  keySpace: string
+  connectionString: string
+  decodeValue: (encoded: string | null) => TValue | null
+  encodeValue: (value: TValue | null) => string | null
 }): StoreModule<TKey, TValue> => {
-    const cleaned = connectionString.replace("sqlite:", "")
+  const cleaned = connectionString.replace("sqlite:", "")
 
-    const db = new Database(cleaned, {
-        create: true,
-        readwrite: true,
-    })
+  const db = new Database(cleaned, {
+    create: true,
+    readwrite: true,
+  })
 
-    db.query(UPGRADE_SQL).run()
+  db.query(UPGRADE_SQL).run()
 
-    let runningAppendStep = 1
+  let runningAppendStep = 1
 
-    const append = async (
-        now: number,
-        instance: Store<TKey, TValue>,
-        entries: [TKey, TValue | null][],
-    ): Promise<Store<TKey, TValue>> => {
-        const instanceNew: Store<TKey, TValue> = {
-            _posixTimestamp: Math.max(now, 0),
-            _instanceStep: instance._instanceStep + 1,
-            _appendStep: runningAppendStep++,
-        }
+  const append = async (
+    now: number,
+    instance: Store<TKey, TValue>,
+    entries: [TKey, TValue | null][],
+  ): Promise<Store<TKey, TValue>> => {
+    const instanceNew: Store<TKey, TValue> = {
+      _posixTimestamp: Math.max(now, 0),
+      _instanceStep: instance._instanceStep + 1,
+      _appendStep: runningAppendStep++,
+    }
 
-        const sql_values = entries
-            .map(([key, value]) => {
-                const encodedValue = value ? encodeValue(value) : null
-                const valueSql =
-                    typeof encodedValue === "string"
-                        ? quote(encodedValue)
-                        : "NULL"
-                return [
-                    quote(keySpace),
-                    quote(key),
-                    instanceNew._posixTimestamp,
-                    instanceNew._appendStep,
-                    instanceNew._instanceStep,
-                    valueSql,
-                ].join(", ")
-            })
-            .map((values) => `(${values})`)
-            .join(",\n")
+    const sql_values = entries
+      .map(([key, value]) => {
+        const encodedValue = value ? encodeValue(value) : null
+        const valueSql =
+          typeof encodedValue === "string" ? quote(encodedValue) : "NULL"
+        return [
+          quote(keySpace),
+          quote(key),
+          instanceNew._posixTimestamp,
+          instanceNew._appendStep,
+          instanceNew._instanceStep,
+          valueSql,
+        ].join(", ")
+      })
+      .map((values) => `(${values})`)
+      .join(",\n")
 
-        const sql_query = `
+    const sql_query = `
       INSERT INTO immutable_store (
         key_space,
         key,
@@ -123,41 +121,41 @@ export const SqliteStore = <TKey extends string | number, TValue>({
       ${sql_values}
     `
 
-        db.query(sql_query).run()
+    db.query(sql_query).run()
 
-        return instanceNew
-    }
+    return instanceNew
+  }
 
-    return {
-        startingAt(now) {
-            return {
-                _posixTimestamp: Math.max(now, 0),
-                _instanceStep: 0,
-                _appendStep: 0,
-            }
-        },
-        async assoc(now, instance, key, value) {
-            return append(now, instance, [[key, value]])
-        },
+  return {
+    startingAt(now) {
+      return {
+        _posixTimestamp: Math.max(now, 0),
+        _instanceStep: 0,
+        _appendStep: 0,
+      }
+    },
+    async assoc(now, instance, key, value) {
+      return append(now, instance, [[key, value]])
+    },
 
-        async assocMany(now, instance, entries) {
-            return append(now, instance, entries)
-        },
+    async assocMany(now, instance, entries) {
+      return append(now, instance, entries)
+    },
 
-        async dissoc(now, instance, key) {
-            return append(now, instance, [[key, null]])
-        },
+    async dissoc(now, instance, key) {
+      return append(now, instance, [[key, null]])
+    },
 
-        async dissocMany(now, instance, keys) {
-            return append(
-                now,
-                instance,
-                keys.map((key) => [key, null]),
-            )
-        },
+    async dissocMany(now, instance, keys) {
+      return append(
+        now,
+        instance,
+        keys.map((key) => [key, null]),
+      )
+    },
 
-        async listLatest(from, to, instance, _log) {
-            const listLatestQuery = `
+    async listLatest(from, to, instance, _log) {
+      const listLatestQuery = `
           WITH latest_keys AS (
             SELECT
                 key,
@@ -192,25 +190,25 @@ export const SqliteStore = <TKey extends string | number, TValue>({
             immutable_store.append_step ASC
       `
 
-            const rows = db.query(listLatestQuery).all()
+      const rows = db.query(listLatestQuery).all()
 
-            const values = rows.flatMap((row) => {
-                const maybeParsedRow = toRow(row)
-                if (!maybeParsedRow) {
-                    return []
-                }
-                const parsedValue = decodeValue(maybeParsedRow.value)
-                if (!parsedValue) {
-                    return []
-                }
-                return [parsedValue]
-            })
+      const values = rows.flatMap((row) => {
+        const maybeParsedRow = toRow(row)
+        if (!maybeParsedRow) {
+          return []
+        }
+        const parsedValue = decodeValue(maybeParsedRow.value)
+        if (!parsedValue) {
+          return []
+        }
+        return [parsedValue]
+      })
 
-            return values
-        },
+      return values
+    },
 
-        async get(instance, key) {
-            const latestQuery = `
+    async get(instance, key) {
+      const latestQuery = `
         SELECT
             key_space,
             append_step,
@@ -246,24 +244,24 @@ export const SqliteStore = <TKey extends string | number, TValue>({
         LIMIT 1
       `
 
-            const rows = db.query(latestQuery).all()
+      const rows = db.query(latestQuery).all()
 
-            const values = rows.flatMap((row) => {
-                const maybeParsedRow = toRow(row)
-                if (maybeParsedRow) {
-                    const parsedValue = decodeValue(maybeParsedRow.value)
-                    return [parsedValue]
-                }
-                return []
-            })
+      const values = rows.flatMap((row) => {
+        const maybeParsedRow = toRow(row)
+        if (maybeParsedRow) {
+          const parsedValue = decodeValue(maybeParsedRow.value)
+          return [parsedValue]
+        }
+        return []
+      })
 
-            const latestValue = values[0] ?? null
+      const latestValue = values[0] ?? null
 
-            return latestValue
-        },
-    }
+      return latestValue
+    },
+  }
 }
 
 function quote(str: string | number): string {
-    return `'${str}'`
+  return `'${str}'`
 }

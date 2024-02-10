@@ -22,10 +22,7 @@ type Unsubscribe = () => void
  * @since 0.5.0
  */
 export interface ReduxDevToolsBrowserExtension {
-    connect: <Model, Msg extends object>() => ReduxDevToolsConnection<
-        Model,
-        Msg
-    >
+  connect: <Model, Msg extends object>() => ReduxDevToolsConnection<Model, Msg>
 }
 
 /**
@@ -34,54 +31,54 @@ export interface ReduxDevToolsBrowserExtension {
  * @since 0.5.0
  */
 export interface ReduxDevToolsConnection<Model, Msg extends object> {
-    subscribe: (listener?: (m: DevToolMsg) => void) => Unsubscribe
-    send(action: null, state: LiftedState<Model>): void
-    send(action: Msg, state: Model): void
-    init: (state: Model) => void
-    error: (message: unknown) => void
-    unsubscribe: () => void
+  subscribe: (listener?: (m: DevToolMsg) => void) => Unsubscribe
+  send(action: null, state: LiftedState<Model>): void
+  send(action: Msg, state: Model): void
+  init: (state: Model) => void
+  error: (message: unknown) => void
+  unsubscribe: () => void
 }
 
 type DevToolMsg = Start | Action | Monitor
 
 interface Start {
-    type: "START"
+  type: "START"
 }
 
 interface Action {
-    type: "ACTION"
-    payload: unknown
+  type: "ACTION"
+  payload: unknown
 }
 
 interface Monitor {
-    type: "DISPATCH"
-    payload: {
-        type:
-            | "JUMP_TO_STATE"
-            | "JUMP_TO_ACTION"
-            | "RESET"
-            | "ROLLBACK"
-            | "COMMIT"
-            | "IMPORT_STATE"
-            | "TOGGLE_ACTION"
-        [k: string]: unknown
-    }
+  type: "DISPATCH"
+  payload: {
+    type:
+      | "JUMP_TO_STATE"
+      | "JUMP_TO_ACTION"
+      | "RESET"
+      | "ROLLBACK"
+      | "COMMIT"
+      | "IMPORT_STATE"
+      | "TOGGLE_ACTION"
     [k: string]: unknown
+  }
+  [k: string]: unknown
 }
 
 interface LiftedState<Model> {
-    actionsById: Record<string, unknown>
-    computedStates: Array<{ state: Model }>
-    currentStateIndex: number
-    nextActionId: number
-    skippedActionIds: number[]
-    stagedActionIds: number[]
-    isPaused: boolean
+  actionsById: Record<string, unknown>
+  computedStates: Array<{ state: Model }>
+  currentStateIndex: number
+  nextActionId: number
+  skippedActionIds: number[]
+  stagedActionIds: number[]
+  isPaused: boolean
 }
 
 interface DevToolHandlerR<Model, Msg extends object>
-    extends DebuggerDeps<Model, Msg> {
-    connection: ReduxDevToolsConnection<Model, Msg>
+  extends DebuggerDeps<Model, Msg> {
+  connection: ReduxDevToolsConnection<Model, Msg>
 }
 
 /**
@@ -90,22 +87,22 @@ interface DevToolHandlerR<Model, Msg extends object>
  * @since 0.5.0
  */
 export const getBrowserExtensionConnection = <Model, Msg extends object>(
-    global: Global,
+  global: Global,
 ): ReduxDevToolsConnection<Model, Msg> | null => {
-    if (
-        "__REDUX_DEVTOOLS_EXTENSION_COMPOSE__" in global &&
-        typeof global.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ === "function"
-    ) {
-        // https://github.com/reduxjs/redux-devtools/tree/main/packages/redux-devtools-instrument#api
-        global.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-            maxAge: 1,
-        })
-    }
+  if (
+    "__REDUX_DEVTOOLS_EXTENSION_COMPOSE__" in global &&
+    typeof global.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ === "function"
+  ) {
+    // https://github.com/reduxjs/redux-devtools/tree/main/packages/redux-devtools-instrument#api
+    global.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+      maxAge: 1,
+    })
+  }
 
-    return hasExtension(global)
-        ? // @ts-ignore
-          global.__REDUX_DEVTOOLS_EXTENSION__.connect<Model, Msg>()
-        : null
+  return hasExtension(global)
+    ? // @ts-ignore
+      global.__REDUX_DEVTOOLS_EXTENSION__.connect<Model, Msg>()
+    : null
 }
 
 /**
@@ -115,11 +112,11 @@ export const getBrowserExtensionConnection = <Model, Msg extends object>(
  * @since 0.5.0
  */
 const hasExtension = (
-    global: Global,
+  global: Global,
 ): global is Global & {
-    __REDUX_DEVTOOLS_EXTENSION__: ReduxDevToolsBrowserExtension
+  __REDUX_DEVTOOLS_EXTENSION__: ReduxDevToolsBrowserExtension
 } => {
-    return "__REDUX_DEVTOOLS_EXTENSION__" in global
+  return "__REDUX_DEVTOOLS_EXTENSION__" in global
 }
 
 /**
@@ -128,19 +125,19 @@ const hasExtension = (
  * @since 0.5.4
  */
 export const makeDebugger = <Model, Msg extends object>(
-    connection: ReduxDevToolsConnection<Model, Msg>,
+  connection: ReduxDevToolsConnection<Model, Msg>,
 ): Debugger<Model, Msg> => {
-    return (d) => {
-        const deps = { ...d, connection }
+  return (d) => {
+    const deps = { ...d, connection }
 
-        // --- Subscribe to extension in order to receive messages from monitor
-        connection.subscribe(handleSubscription(deps))
+    // --- Subscribe to extension in order to receive messages from monitor
+    connection.subscribe(handleSubscription(deps))
 
-        return {
-            debug: handleActions(deps),
-            stop: connection.unsubscribe,
-        }
+    return {
+      debug: handleActions(deps),
+      stop: connection.unsubscribe,
     }
+  }
 }
 
 /**
@@ -148,18 +145,18 @@ export const makeDebugger = <Model, Msg extends object>(
  * @since 0.5.0
  */
 const handleSubscription = <Model, Msg extends object>(
-    deps: DevToolHandlerR<Model, Msg>,
+  deps: DevToolHandlerR<Model, Msg>,
 ): ((msg: DevToolMsg) => void) => {
-    const handler = handleIncomingMsg(deps)
+  const handler = handleIncomingMsg(deps)
 
-    return (msg) => {
-        const result = handler(msg)
-        if (isErr(result)) {
-            console.warn("[REDUX DEV TOOL]", result.error)
-            return
-        }
-        result.value()
+  return (msg) => {
+    const result = handler(msg)
+    if (isErr(result)) {
+      console.warn("[REDUX DEV TOOL]", result.error)
+      return
     }
+    result.value()
+  }
 }
 
 /**
@@ -171,118 +168,110 @@ const handleSubscription = <Model, Msg extends object>(
  * @since 0.5.0
  */
 const handleIncomingMsg = <Model, Msg extends object>({
-    connection,
-    init,
-    dispatch,
+  connection,
+  init,
+  dispatch,
 }: DevToolHandlerR<Model, Msg>): ((
-    msg: DevToolMsg,
+  msg: DevToolMsg,
 ) => Result<string, Task<void>>) => {
-    const dispatchToApp =
-        (m: unknown): Task<void> =>
-        async () =>
-            dispatch(m as Msg)
+  const dispatchToApp =
+    (m: unknown): Task<void> =>
+    async () =>
+      dispatch(m as Msg)
 
-    const reInit: Task<void> = async () => connection.init(init)
+  const reInit: Task<void> = async () => connection.init(init)
 
-    const update = (payload: Model): Task<void> =>
-        dispatchToApp({ type: "__DebugUpdateModel__", payload })
+  const update = (payload: Model): Task<void> =>
+    dispatchToApp({ type: "__DebugUpdateModel__", payload })
 
-    const restart =
-        (model: Model): Task<void> =>
-        async () =>
-            connection.init(model)
+  const restart =
+    (model: Model): Task<void> =>
+    async () =>
+      connection.init(model)
 
-    const liftState =
-        (state: LiftedState<Model>): Task<void> =>
-        async () =>
-            connection.send(null, state)
+  const liftState =
+    (state: LiftedState<Model>): Task<void> =>
+    async () =>
+      connection.send(null, state)
 
-    const toggle = toggleAction(dispatch)
+  const toggle = toggleAction(dispatch)
 
-    return (msg) => {
-        switch (msg.type) {
-            case "START":
-                return Result.ok(reInit)
+  return (msg) => {
+    switch (msg.type) {
+      case "START":
+        return Result.ok(reInit)
 
-            case "ACTION": {
-                const result = Json.parse(String(msg.payload))
-                switch (result.t) {
-                    case "err":
-                        return Result.err(result.error.message)
+      case "ACTION": {
+        const result = Json.parse(String(msg.payload))
+        switch (result.t) {
+          case "err":
+            return Result.err(result.error.message)
 
-                    case "ok":
-                        return Result.ok(dispatchToApp(result.value))
-                }
-            }
-
-            case "DISPATCH":
-                switch (msg.payload.type) {
-                    case "JUMP_TO_STATE":
-                        return p(parseJump<Model>(msg), (x) =>
-                            Result.mapOk(x, update),
-                        )
-
-                    case "JUMP_TO_ACTION":
-                        return p(parseJump<Model>(msg), (x) =>
-                            Result.mapOk(x, update),
-                        )
-
-                    case "RESET":
-                        return Result.ok(
-                            p(
-                                update(init),
-                                Task.chain(() => reInit),
-                            ),
-                        )
-
-                    case "ROLLBACK":
-                        return p(parseRollback<Model>(msg), (x) =>
-                            Result.mapOk(x, (m) =>
-                                p(
-                                    update(m),
-                                    Task.chain(() => restart(m)),
-                                ),
-                            ),
-                        )
-
-                    case "COMMIT":
-                        // return Result.Ok(restart(debug$.getValue()[1]));
-                        return Result.err("idk")
-
-                    case "IMPORT_STATE":
-                        return p(parseImportState<Model>(msg), (x) =>
-                            Result.mapOk(x, (liftedState) =>
-                                p(
-                                    update(
-                                        // @ts-ignore
-                                        liftedState.computedStates[
-                                            liftedState.computedStates.length -
-                                                1
-                                        ].state,
-                                    ),
-                                    Task.chain(() => liftState(liftedState)),
-                                ),
-                            ),
-                        )
-
-                    case "TOGGLE_ACTION":
-                        return p(parseToggleAction<Model>(msg), (x) =>
-                            Result.mapOk(x, ([id, liftedState]) =>
-                                p(
-                                    toggle(id, liftedState),
-                                    Task.chain(liftState),
-                                ),
-                            ),
-                        )
-
-                    default:
-                        return Result.err(msg.payload.type)
-                }
-
-            default:
-                return Result.err("unhandled case")
+          case "ok":
+            return Result.ok(dispatchToApp(result.value))
         }
+      }
+
+      case "DISPATCH":
+        switch (msg.payload.type) {
+          case "JUMP_TO_STATE":
+            return p(parseJump<Model>(msg), (x) => Result.mapOk(x, update))
+
+          case "JUMP_TO_ACTION":
+            return p(parseJump<Model>(msg), (x) => Result.mapOk(x, update))
+
+          case "RESET":
+            return Result.ok(
+              p(
+                update(init),
+                Task.chain(() => reInit),
+              ),
+            )
+
+          case "ROLLBACK":
+            return p(parseRollback<Model>(msg), (x) =>
+              Result.mapOk(x, (m) =>
+                p(
+                  update(m),
+                  Task.chain(() => restart(m)),
+                ),
+              ),
+            )
+
+          case "COMMIT":
+            // return Result.Ok(restart(debug$.getValue()[1]));
+            return Result.err("idk")
+
+          case "IMPORT_STATE":
+            return p(parseImportState<Model>(msg), (x) =>
+              Result.mapOk(x, (liftedState) =>
+                p(
+                  update(
+                    // @ts-ignore
+                    liftedState.computedStates[
+                      liftedState.computedStates.length - 1
+                    ].state,
+                  ),
+                  Task.chain(() => liftState(liftedState)),
+                ),
+              ),
+            )
+
+          case "TOGGLE_ACTION":
+            return p(parseToggleAction<Model>(msg), (x) =>
+              Result.mapOk(x, ([id, liftedState]) =>
+                p(toggle(id, liftedState), Task.chain(liftState)),
+              ),
+            )
+
+          default:
+            return Result.err(msg.payload.type)
+        }
+
+      default:
+        return Result.err("unhandled case")
     }
+  }
 }
 
 /**
@@ -292,12 +281,12 @@ const handleIncomingMsg = <Model, Msg extends object>({
  * @since 0.5.0
  */
 const handleActions = <Model, Msg extends object>({
-    connection,
+  connection,
 }: DevToolHandlerR<Model, Msg>): Debug<Model, Msg> => {
-    return ([action, model]) =>
-        action.type === "MESSAGE"
-            ? connection.send(action.payload, model)
-            : undefined
+  return ([action, model]) =>
+    action.type === "MESSAGE"
+      ? connection.send(action.payload, model)
+      : undefined
 }
 
 /**
@@ -306,17 +295,17 @@ const handleActions = <Model, Msg extends object>({
  * @since 0.5.0
  */
 const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
-    return p(
-        Json.parse(String(msg["state"])),
-        Result.mapErr((problem) => problem.message),
-        (x) =>
-            Result.mapOk(
-                x,
-                (value) =>
-                    // @ts-ignore
-                    value as Model,
-            ),
-    )
+  return p(
+    Json.parse(String(msg["state"])),
+    Result.mapErr((problem) => problem.message),
+    (x) =>
+      Result.mapOk(
+        x,
+        (value) =>
+          // @ts-ignore
+          value as Model,
+      ),
+  )
 }
 
 /**
@@ -325,17 +314,17 @@ const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
  * @since 0.5.0
  */
 const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
-    return p(
-        Json.parse(String(msg["state"])),
-        Result.mapErr((problem) => problem.message),
-        (x) =>
-            Result.mapOk(
-                x,
-                (u) =>
-                    // @ts-ignore
-                    u as Model,
-            ),
-    )
+  return p(
+    Json.parse(String(msg["state"])),
+    Result.mapErr((problem) => problem.message),
+    (x) =>
+      Result.mapOk(
+        x,
+        (u) =>
+          // @ts-ignore
+          u as Model,
+      ),
+  )
 }
 
 /**
@@ -344,12 +333,12 @@ const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
  * @since 0.5.0
  */
 const parseImportState = <Model>(
-    msg: Monitor,
+  msg: Monitor,
 ): Result<string, LiftedState<Model>> => {
-    return typeof msg.payload["nextLiftedState"] === "object" &&
-        msg.payload["nextLiftedState"] !== null
-        ? Result.ok(msg.payload["nextLiftedState"] as LiftedState<Model>)
-        : Result.err("IMPORT_STATE message has some bad payload...")
+  return typeof msg.payload["nextLiftedState"] === "object" &&
+    msg.payload["nextLiftedState"] !== null
+    ? Result.ok(msg.payload["nextLiftedState"] as LiftedState<Model>)
+    : Result.err("IMPORT_STATE message has some bad payload...")
 }
 
 /**
@@ -358,34 +347,34 @@ const parseImportState = <Model>(
  * @since 0.5.0
  */
 const parseToggleAction = <Model>(
-    msg: Monitor,
+  msg: Monitor,
 ): Result<string, [number, LiftedState<Model>]> => {
-    const getId = p(
-        msg.payload["id"],
-        Result.fromNullable("TOGGLE_ACTION message has some bad payload..."),
-        (_) => Result.mapOk(_, (x) => x as number),
-    )
+  const getId = p(
+    msg.payload["id"],
+    Result.fromNullable("TOGGLE_ACTION message has some bad payload..."),
+    (_) => Result.mapOk(_, (x) => x as number),
+  )
 
-    if (getId.t === "err") {
-        return getId
-    }
+  if (getId.t === "err") {
+    return getId
+  }
 
-    const parseState = p(
-        Json.parse(String(msg["state"])),
-        (_) =>
-            Result.mapOk(
-                _,
-                // @ts-ignore
-                (u) => u as LiftedState<Model>,
-            ),
-        Result.mapErr((problem) => problem.message),
-    )
+  const parseState = p(
+    Json.parse(String(msg["state"])),
+    (_) =>
+      Result.mapOk(
+        _,
+        // @ts-ignore
+        (u) => u as LiftedState<Model>,
+      ),
+    Result.mapErr((problem) => problem.message),
+  )
 
-    if (parseState.t === "err") {
-        return parseState
-    }
+  if (parseState.t === "err") {
+    return parseState
+  }
 
-    return Result.ok([getId.value, parseState.value])
+  return Result.ok([getId.value, parseState.value])
 }
 
 /**
@@ -399,163 +388,157 @@ const parseToggleAction = <Model>(
  */
 
 const toggleAction =
-    <Model, Msg extends object>(
-        dispatch: (m: MsgWithDebug<Model, Msg>) => void,
-    ) =>
-    (id: number, liftedState: LiftedState<Model>): Task<LiftedState<Model>> =>
-    async () => {
-        const state = unsafeCopy(liftedState)
+  <Model, Msg extends object>(
+    dispatch: (m: MsgWithDebug<Model, Msg>) => void,
+  ) =>
+  (id: number, liftedState: LiftedState<Model>): Task<LiftedState<Model>> =>
+  async () => {
+    const state = unsafeCopy(liftedState)
 
-        const {
-            skippedActionIds,
-            stagedActionIds,
-            computedStates,
-            actionsById,
-        } = state
+    const { skippedActionIds, stagedActionIds, computedStates, actionsById } =
+      state
 
-        const skippedIndex = skippedActionIds.indexOf(id)
-        const skipped = skippedIndex !== -1
-        const actionIndex = stagedActionIds.indexOf(id)
+    const skippedIndex = skippedActionIds.indexOf(id)
+    const skipped = skippedIndex !== -1
+    const actionIndex = stagedActionIds.indexOf(id)
 
-        if (actionIndex === -1) {
-            return state
-        }
-
-        dispatch({
-            type: "__DebugUpdateModel__",
-            // @ts-ignore
-            payload: computedStates[actionIndex - 1].state,
-        })
-
-        const start = skipped ? actionIndex : actionIndex + 1
-        const end = stagedActionIds.length
-
-        for (let i = start; i < end; i++) {
-            const currentActionId = stagedActionIds[i]
-
-            if (
-                i !== actionIndex &&
-                currentActionId &&
-                skippedActionIds.indexOf(currentActionId) !== -1
-            ) {
-                continue // it's already skipped
-            }
-
-            if (currentActionId) {
-                dispatch({
-                    type: "__DebugApplyMsg__",
-                    // @ts-ignore
-                    payload: actionsById[currentActionId].action,
-                })
-            }
-        }
-
-        if (skipped) {
-            skippedActionIds.splice(skippedIndex, 1)
-        } else {
-            skippedActionIds.push(id)
-        }
-
-        return state
+    if (actionIndex === -1) {
+      return state
     }
+
+    dispatch({
+      type: "__DebugUpdateModel__",
+      // @ts-ignore
+      payload: computedStates[actionIndex - 1].state,
+    })
+
+    const start = skipped ? actionIndex : actionIndex + 1
+    const end = stagedActionIds.length
+
+    for (let i = start; i < end; i++) {
+      const currentActionId = stagedActionIds[i]
+
+      if (
+        i !== actionIndex &&
+        currentActionId &&
+        skippedActionIds.indexOf(currentActionId) !== -1
+      ) {
+        continue // it's already skipped
+      }
+
+      if (currentActionId) {
+        dispatch({
+          type: "__DebugApplyMsg__",
+          // @ts-ignore
+          payload: actionsById[currentActionId].action,
+        })
+      }
+    }
+
+    if (skipped) {
+      skippedActionIds.splice(skippedIndex, 1)
+    } else {
+      skippedActionIds.push(id)
+    }
+
+    return state
+  }
 
 // poor man deep clone...
 const unsafeCopy = <A>(a: A): A => {
-    return JSON.parse(JSON.stringify(a))
+  return JSON.parse(JSON.stringify(a))
 }
 
 /**
  * Attaches program to the redux dev tools extension.
  */
 export const attachDebuggerBrowserExtension = <Model, Msg extends object, Ctx>(
-    program: Program<Model, Msg, Ctx>,
-    global: Global = window,
+  program: Program<Model, Msg, Ctx>,
+  global: Global = window,
 ) => {
-    const connection = getBrowserExtensionConnection<Model, Msg>(global)
+  const connection = getBrowserExtensionConnection<Model, Msg>(global)
 
-    if (connection) {
-        return attachDebugger(program, connection)
-    }
+  if (connection) {
+    return attachDebugger(program, connection)
+  }
 
-    return null
+  return null
 }
 
 export const attachDebugger = <Model, Msg extends object, Ctx>(
-    program: Program<Model, Msg, Ctx>,
-    connection: ReduxDevToolsConnection<Model, Msg>,
+  program: Program<Model, Msg, Ctx>,
+  connection: ReduxDevToolsConnection<Model, Msg>,
 ) => {
-    connection.subscribe(function devToolsConnectionSubscriber(
-        msg: DevToolMsg,
-    ) {
+  connection.subscribe(function devToolsConnectionSubscriber(msg: DevToolMsg) {
+    switch (msg.type) {
+      case "ACTION": {
+        return
+      }
+      case "DISPATCH": {
+        return
+      }
+      case "START": {
+        return
+      }
+    }
+  })
+
+  const Debugger = makeDebugger<Model, Msg>(connection)
+
+  const debuggerInstance = Debugger({
+    dispatch(msg) {
+      if ("type" in msg) {
         switch (msg.type) {
-            case "ACTION": {
-                return
-            }
-            case "DISPATCH": {
-                return
-            }
-            case "START": {
-                return
-            }
+          case "__DebugApplyMsg__": {
+            return
+          }
+          case "__DebugStarted__": {
+            return
+          }
+          case "__DebugUpdateModel__": {
+            program.setModel(msg.payload)
+            return
+          }
         }
-    })
+      }
+    },
+    init: program.getModel(),
+  })
 
-    const Debugger = makeDebugger<Model, Msg>(connection)
-
-    const debuggerInstance = Debugger({
-        dispatch(msg) {
-            if ("type" in msg) {
-                switch (msg.type) {
-                    case "__DebugApplyMsg__": {
-                        return
-                    }
-                    case "__DebugStarted__": {
-                        return
-                    }
-                    case "__DebugUpdateModel__": {
-                        program.setModel(msg.payload)
-                        return
-                    }
-                }
-            }
-        },
-        init: program.getModel(),
-    })
-
-    const started = new Promise<null>(function waitForDebuggerStart(resolve) {
-        const unsubscribe = connection.subscribe((msg) => {
-            switch (msg.type) {
-                case "START": {
-                    unsubscribe()
-                    resolve(null)
-                    break
-                }
-                default: {
-                    break
-                }
-            }
-        })
-    })
-
-    const sub = PubSub.create<{ msg: Msg; model: Model }>()
-
-    program.subscribe(function devToolsSubcriber(model, _ctx, msg) {
-        if (msg) {
-            sub.publish({ msg, model })
+  const started = new Promise<null>(function waitForDebuggerStart(resolve) {
+    const unsubscribe = connection.subscribe((msg) => {
+      switch (msg.type) {
+        case "START": {
+          unsubscribe()
+          resolve(null)
+          break
         }
+        default: {
+          break
+        }
+      }
     })
+  })
 
-    started.then(function devToolsStartedSubscriber() {
-        sub.subscribe(function devToolsProgramMsgSubscriber({ model, msg }) {
-            const action = {
-                type: toMsgType(msg),
-                payload: toMsgPayload(msg, {}),
-            }
+  const sub = PubSub.create<{ msg: Msg; model: Model }>()
 
-            // @ts-expect-error
-            connection.send(action, model)
-        })
+  program.subscribe(function devToolsSubcriber(model, _ctx, msg) {
+    if (msg) {
+      sub.publish({ msg, model })
+    }
+  })
+
+  started.then(function devToolsStartedSubscriber() {
+    sub.subscribe(function devToolsProgramMsgSubscriber({ model, msg }) {
+      const action = {
+        type: toMsgType(msg),
+        payload: toMsgPayload(msg, {}),
+      }
+
+      // @ts-expect-error
+      connection.send(action, model)
     })
+  })
 
-    return { ...debuggerInstance, started }
+  return { ...debuggerInstance, started }
 }

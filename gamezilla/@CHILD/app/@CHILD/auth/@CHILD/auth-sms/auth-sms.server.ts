@@ -1,20 +1,20 @@
 import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import {
-    DbConnSql,
-    ServerCmd,
-    ServerCtx,
-    ServerEvent,
-    sendToClient,
+  DbConnSql,
+  ServerCmd,
+  ServerCtx,
+  ServerEvent,
+  sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server"
 import { PhoneNumber, Result, Sub, isErr, ok } from "gamezilla/@SHARED/core"
 import { AccountDb } from "../../@SHARED/server/account-db/account-db-impl"
 import { Account } from "../../auth.core"
 import {
-    ModelServer,
-    MsgServer,
-    MsgToClient,
-    MsgToServer,
+  ModelServer,
+  MsgServer,
+  MsgToClient,
+  MsgToServer,
 } from "./auth-sms.core"
 import { VerifySMS } from "./server/verify-sms/verify-sms-impl"
 
@@ -26,15 +26,15 @@ import { VerifySMS } from "./server/verify-sms/verify-sms-impl"
 //
 
 type Module = AppServerModule<{
-    Ctx: ServerCtx
-    MsgInCmd: null
-    MsgInEvent: ServerEvent
-    Model: ModelServer
-    Msg: MsgServer
-    MsgOutCmd: ServerCmd<MsgToClient>
-    MsgOutEvent: ServerEvent
-    MsgToClient: MsgToClient
-    MsgToServer: MsgToServer
+  Ctx: ServerCtx
+  MsgInCmd: null
+  MsgInEvent: ServerEvent
+  Model: ModelServer
+  Msg: MsgServer
+  MsgOutCmd: ServerCmd<MsgToClient>
+  MsgOutEvent: ServerEvent
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
 }>
 
 //
@@ -45,9 +45,9 @@ type Module = AppServerModule<{
 //
 
 export const init: Module["init"] = async () => {
-    return {
-        model: null,
-    }
+  return {
+    model: null,
+  }
 }
 
 //
@@ -59,107 +59,107 @@ export const init: Module["init"] = async () => {
 //
 
 export const update: Module["update"] = async (input) => {
-    return AppServerModule.chainUpdates(
-        { model: input.model },
-        (model) => updateFromMsg({ ...input, model }),
-        (model) => updateFromClient({ ...input, model }),
-    )
+  return AppServerModule.chainUpdates(
+    { model: input.model },
+    (model) => updateFromMsg({ ...input, model }),
+    (model) => updateFromClient({ ...input, model }),
+  )
 }
 
 const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
-    if (!msg) {
-        return { model }
+  if (!msg) {
+    return { model }
+  }
+
+  switch (msg.t) {
+    case "verified-code": {
+      if (isErr(msg.result)) {
+        return {
+          model,
+          msgCmd: [sendToClient([msg.clientId], msg)],
+        }
+      }
+
+      const found = await findElseInsertAccount({
+        dbConn: ctx.dbConn,
+        phoneNumber: msg.phoneNumber,
+      })
+
+      if (found.t === "err") {
+        return {
+          model,
+          msgCmd: [sendToClient([msg.clientId], msg)],
+        }
+      }
+
+      return {
+        model,
+        msgCmd: [sendToClient([msg.clientId], msg)],
+        msgEvt: [
+          {
+            t: "auth/client-authenticated",
+            clientId: msg.clientId,
+            sessionId: msg.sessionId,
+            userId: found.value.userId,
+            loggedIn: true,
+          },
+        ],
+      }
     }
 
-    switch (msg.t) {
-        case "verified-code": {
-            if (isErr(msg.result)) {
-                return {
-                    model,
-                    msgCmd: [sendToClient([msg.clientId], msg)],
-                }
-            }
-
-            const found = await findElseInsertAccount({
-                dbConn: ctx.dbConn,
-                phoneNumber: msg.phoneNumber,
-            })
-
-            if (found.t === "err") {
-                return {
-                    model,
-                    msgCmd: [sendToClient([msg.clientId], msg)],
-                }
-            }
-
-            return {
-                model,
-                msgCmd: [sendToClient([msg.clientId], msg)],
-                msgEvt: [
-                    {
-                        t: "auth/client-authenticated",
-                        clientId: msg.clientId,
-                        sessionId: msg.sessionId,
-                        userId: found.value.userId,
-                        loggedIn: true,
-                    },
-                ],
-            }
-        }
-
-        case "sent-code": {
-            return {
-                model,
-                msgCmd: [sendToClient([msg.clientId], msg)],
-            }
-        }
+    case "sent-code": {
+      return {
+        model,
+        msgCmd: [sendToClient([msg.clientId], msg)],
+      }
     }
+  }
 }
 
 export const updateFromClient: Module["update"] = async ({
-    msgClient,
-    model,
-    ctx,
+  msgClient,
+  model,
+  ctx,
 }) => {
-    if (!msgClient) {
-        return { model }
+  if (!msgClient) {
+    return { model }
+  }
+
+  const verifySMS = VerifySMS({
+    logger: ctx.logger,
+    impl: "test",
+  })
+
+  switch (msgClient.t) {
+    case "send-code": {
+      return {
+        model,
+        eff: async (dispatch) => {
+          dispatch({
+            t: "sent-code",
+            phoneNumber: msgClient.phoneNumber,
+            result: await verifySMS.sendCode(msgClient),
+            clientId: msgClient.clientId,
+          })
+        },
+      }
     }
 
-    const verifySMS = VerifySMS({
-        logger: ctx.logger,
-        impl: "test",
-    })
-
-    switch (msgClient.t) {
-        case "send-code": {
-            return {
-                model,
-                eff: async (dispatch) => {
-                    dispatch({
-                        t: "sent-code",
-                        phoneNumber: msgClient.phoneNumber,
-                        result: await verifySMS.sendCode(msgClient),
-                        clientId: msgClient.clientId,
-                    })
-                },
-            }
-        }
-
-        case "verify-code": {
-            return {
-                model,
-                eff: async (dispatch) => {
-                    dispatch({
-                        t: "verified-code",
-                        phoneNumber: msgClient.phoneNumber,
-                        clientId: msgClient.clientId,
-                        result: await verifySMS.verifyCode(msgClient),
-                        sessionId: msgClient.sessionId,
-                    })
-                },
-            }
-        }
+    case "verify-code": {
+      return {
+        model,
+        eff: async (dispatch) => {
+          dispatch({
+            t: "verified-code",
+            phoneNumber: msgClient.phoneNumber,
+            clientId: msgClient.clientId,
+            result: await verifySMS.verifyCode(msgClient),
+            sessionId: msgClient.sessionId,
+          })
+        },
+      }
     }
+  }
 }
 
 //
@@ -170,7 +170,7 @@ export const updateFromClient: Module["update"] = async ({
 //
 
 export const subscriptions: Module["subscriptions"] = async () => {
-    return Sub.None
+  return Sub.None
 }
 
 //
@@ -184,36 +184,36 @@ export const subscriptions: Module["subscriptions"] = async () => {
 //
 
 const findElseInsertAccount = async ({
-    dbConn,
-    phoneNumber,
+  dbConn,
+  phoneNumber,
 }: {
-    dbConn: DbConnSql
-    phoneNumber: PhoneNumber
+  dbConn: DbConnSql
+  phoneNumber: PhoneNumber
 }): Promise<Result<string, Account>> => {
-    const accountDb = AccountDb({ dbConn })
+  const accountDb = AccountDb({ dbConn })
 
-    const found = await accountDb.findOneByPhoneNumber({ phoneNumber })
+  const found = await accountDb.findOneByPhoneNumber({ phoneNumber })
 
-    if (isErr(found)) {
-        return found
-    }
+  if (isErr(found)) {
+    return found
+  }
 
-    const maybeAccount = found.value
+  const maybeAccount = found.value
 
-    if (maybeAccount) {
-        return ok(maybeAccount)
-    }
+  if (maybeAccount) {
+    return ok(maybeAccount)
+  }
 
-    const accountNew: Account = {
-        userId: UserId.generate(),
-        phoneNumber,
-    }
+  const accountNew: Account = {
+    userId: UserId.generate(),
+    phoneNumber,
+  }
 
-    const inserted = await accountDb.insertOne({ account: accountNew })
+  const inserted = await accountDb.insertOne({ account: accountNew })
 
-    if (isErr(inserted)) {
-        return inserted
-    }
+  if (isErr(inserted)) {
+    return inserted
+  }
 
-    return ok(accountNew)
+  return ok(accountNew)
 }

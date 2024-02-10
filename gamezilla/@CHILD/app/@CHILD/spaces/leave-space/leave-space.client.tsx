@@ -5,94 +5,94 @@ import { Button } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { withId } from "../@SHARED/event"
 
 const update: SpaceClientModule["update"] = (input) => {
-    return SpaceClientModule.chainUpdates(
-        { model: input.model },
-        (model) => updateFromSpaceEvent({ ...input, model }),
-        (model) => updateLeaveSpaceButton({ ...input, model }),
-    )
+  return SpaceClientModule.chainUpdates(
+    { model: input.model },
+    (model) => updateFromSpaceEvent({ ...input, model }),
+    (model) => updateLeaveSpaceButton({ ...input, model }),
+  )
 }
 
 const updateFromSpaceEvent: SpaceClientModule["update"] = ({
-    model,
-    msgSpaceEvent,
-    ctx,
+  model,
+  msgSpaceEvent,
+  ctx,
 }) => {
-    switch (msgSpaceEvent?.t) {
-        case "user-left-space": {
-            if (!ctx.currentUserId) {
-                return { model }
-            }
+  switch (msgSpaceEvent?.t) {
+    case "user-left-space": {
+      if (!ctx.currentUserId) {
+        return { model }
+      }
 
-            const currentUserSpaceId = Spaces.toSpaceIdByUserId(
-                model,
-                ctx.currentUserId,
-            )
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+        model,
+        ctx.currentUserId,
+      )
 
-            if (msgSpaceEvent.spaceId === currentUserSpaceId) {
-                return {
-                    model,
-                    msgCmd: [playSound(APP_SOUND.navBackward)],
-                }
-            }
-            return { model }
+      if (msgSpaceEvent.spaceId === currentUserSpaceId) {
+        return {
+          model,
+          msgCmd: [playSound(APP_SOUND.navBackward)],
         }
-        default: {
-            return { model }
-        }
+      }
+      return { model }
     }
+    default: {
+      return { model }
+    }
+  }
 }
 
 const updateLeaveSpaceButton: SpaceClientModule["update"] = ({
-    ctx,
-    model,
-    msg,
+  ctx,
+  model,
+  msg,
 }) => {
-    switch (msg?.t) {
-        case "clicked-leave-space-button": {
-            if (!ctx.currentUserId) {
-                return { model }
-            }
+  switch (msg?.t) {
+    case "clicked-leave-space-button": {
+      if (!ctx.currentUserId) {
+        return { model }
+      }
 
-            const currentUserSpaceId = Spaces.toSpaceIdByUserId(
-                model,
-                ctx.currentUserId,
-            )
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+        model,
+        ctx.currentUserId,
+      )
 
-            if (!currentUserSpaceId) {
-                return { model }
-            }
+      if (!currentUserSpaceId) {
+        return { model }
+      }
 
-            const spaceEventNew = withId<SpaceEvent>({
-                t: "user-left-space",
-                spaceId: currentUserSpaceId,
-                userId: ctx.currentUserId,
-            })
+      const spaceEventNew = withId<SpaceEvent>({
+        t: "user-left-space",
+        spaceId: currentUserSpaceId,
+        userId: ctx.currentUserId,
+      })
 
-            return {
-                model,
-                msgSpaceEvent: [spaceEventNew],
-            }
-        }
-
-        default: {
-            return { model }
-        }
+      return {
+        model,
+        msgSpaceEvent: [spaceEventNew],
+      }
     }
+
+    default: {
+      return { model }
+    }
+  }
 }
 
 const ViewLeaveSpaceButton: SpaceClientModule["View"] = ({ dispatch }) => {
-    return (
-        <Button
-            color="danger"
-            variant="contained"
-            size="sm"
-            text="Leave"
-            onClick={() => dispatch({ t: "clicked-leave-space-button" })}
-        />
-    )
+  return (
+    <Button
+      color="danger"
+      variant="contained"
+      size="sm"
+      text="Leave"
+      onClick={() => dispatch({ t: "clicked-leave-space-button" })}
+    />
+  )
 }
 
 export const LeaveSpaceClient = {
-    update,
-    ViewLeaveSpaceButton,
+  update,
+  ViewLeaveSpaceButton,
 }

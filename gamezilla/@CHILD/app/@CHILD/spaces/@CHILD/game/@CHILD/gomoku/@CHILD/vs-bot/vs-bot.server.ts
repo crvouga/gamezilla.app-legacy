@@ -1,14 +1,14 @@
 import {
-    SpaceReqCtx,
-    SpaceServerEvent,
+  SpaceReqCtx,
+  SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { Eff, Sub, andThen, p } from "gamezilla/@SHARED/core"
 import {
-    ModelServer,
-    MsgServer,
-    MsgToServer,
-    handleBotMove,
-    initShared,
+  ModelServer,
+  MsgServer,
+  MsgToServer,
+  handleBotMove,
+  initShared,
 } from "./vs-bot.core"
 
 //
@@ -34,82 +34,82 @@ export const init = initShared
 export type Msg = MsgServer
 
 export const update = ({
-    msg,
-    model,
+  msg,
+  model,
 }: {
-    msg: Msg
-    model: Model
+  msg: Msg
+  model: Model
 }): {
-    model: Model
-    eff?: Eff<Msg>
+  model: Model
+  eff?: Eff<Msg>
 } => {
-    switch (msg.t) {
-        case "none": {
-            return { model }
-        }
+  switch (msg.t) {
+    case "none": {
+      return { model }
     }
+  }
 }
 
 type updateFromClient = (input: {
-    ctx: SpaceReqCtx
+  ctx: SpaceReqCtx
 
-    msg: MsgToServer
-    model: Model
+  msg: MsgToServer
+  model: Model
 }) => {
-    model: Model
-    eff?: Eff<Msg>
+  model: Model
+  eff?: Eff<Msg>
 }
 
 export const updateFromClient: updateFromClient = (input) => {
-    return p(
-        input,
-        andThen((model) => updateFromClient_({ ...input, model })),
-        andThen((model) => updateBotMove({ ...input, model })),
-    )
+  return p(
+    input,
+    andThen((model) => updateFromClient_({ ...input, model })),
+    andThen((model) => updateBotMove({ ...input, model })),
+  )
 }
 
 const updateBotMove: updateFromClient = ({ model }) => {
-    const handled = handleBotMove(model)
+  const handled = handleBotMove(model)
 
-    if (handled.t === "err") {
-        return {
-            model,
-            eff: Eff.None,
-        }
-    }
-
-    const modelNew = handled.value
-
+  if (handled.t === "err") {
     return {
-        model: modelNew,
+      model,
+      eff: Eff.None,
     }
+  }
+
+  const modelNew = handled.value
+
+  return {
+    model: modelNew,
+  }
 }
 
 const updateFromClient_: updateFromClient = ({ msg, model }) => {
-    switch (msg.t) {
-        default: {
-            return { model }
-        }
+  switch (msg.t) {
+    default: {
+      return { model }
     }
+  }
 }
 
 export const updateFromEvent = ({
-    msg,
-    model,
+  msg,
+  model,
 }: {
-    msg: SpaceServerEvent
-    model: Model
+  msg: SpaceServerEvent
+  model: Model
 }): {
-    model: Model
-    eff?: Eff<Msg>
+  model: Model
+  eff?: Eff<Msg>
 } => {
-    if (msg.t === "user-joined") {
-        return {
-            model: init({ userId: model.userId }),
-        }
+  if (msg.t === "user-joined") {
+    return {
+      model: init({ userId: model.userId }),
     }
+  }
 
-    return { model }
+  return { model }
 }
 
 //
@@ -121,5 +121,5 @@ export const updateFromEvent = ({
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-    return Sub.None
+  return Sub.None
 }

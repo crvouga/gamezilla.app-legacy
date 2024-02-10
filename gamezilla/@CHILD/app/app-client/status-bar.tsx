@@ -2,92 +2,92 @@ import { Eff } from "gamezilla/@SHARED/core"
 import { Drawer, VDom } from "../@SHARED/ui"
 
 export type Model = {
-    isDrawerOpen: boolean
+  isDrawerOpen: boolean
 }
 
 export const init = ({
-    stored,
+  stored,
 }: {
-    stored: Model | null
+  stored: Model | null
 }): { model: Model } => {
-    if (stored) {
-        return { model: stored }
-    }
+  if (stored) {
+    return { model: stored }
+  }
 
-    return {
-        model: {
-            isDrawerOpen: false,
-        },
-    }
+  return {
+    model: {
+      isDrawerOpen: false,
+    },
+  }
 }
 
 export type Msg =
-    | { t: "clicked-status-bar" }
-    | { t: "closed-status-bar-drawer" }
+  | { t: "clicked-status-bar" }
+  | { t: "closed-status-bar-drawer" }
 
 export const update = (input: {
-    model: Model
-    msg: Msg | null
+  model: Model
+  msg: Msg | null
 }): {
-    model: Model
-    eff?: Eff<Msg>
+  model: Model
+  eff?: Eff<Msg>
 } => {
-    if (!input.msg) {
-        return { model: input.model }
+  if (!input.msg) {
+    return { model: input.model }
+  }
+
+  switch (input.msg.t) {
+    case "clicked-status-bar": {
+      return { model: { ...input.model, isDrawerOpen: true } }
     }
 
-    switch (input.msg.t) {
-        case "clicked-status-bar": {
-            return { model: { ...input.model, isDrawerOpen: true } }
-        }
-
-        case "closed-status-bar-drawer": {
-            return { model: { ...input.model, isDrawerOpen: false } }
-        }
+    case "closed-status-bar-drawer": {
+      return { model: { ...input.model, isDrawerOpen: false } }
     }
+  }
 }
 
 export const View = ({
-    model,
-    dispatch,
-    wire,
-    sound,
+  model,
+  dispatch,
+  wire,
+  sound,
 }: {
-    wire: {
-        statusBar: VDom
-        drawer: VDom
-    }
-    sound: {
-        statusBar: VDom
-        drawer: VDom
-    }
-    model: Model
-    dispatch: (m: Msg) => void
+  wire: {
+    statusBar: VDom
+    drawer: VDom
+  }
+  sound: {
+    statusBar: VDom
+    drawer: VDom
+  }
+  model: Model
+  dispatch: (m: Msg) => void
 }) => {
-    return (
-        <div className="w-full">
-            <button
-                aria-label="open status bar"
-                className="flex w-full items-center gap-2 border-b border-neutral-600 p-0.5 px-2 text-xs text-secondary"
-                onClick={() => dispatch({ t: "clicked-status-bar" })}
-            >
-                {wire.statusBar}
+  return (
+    <div className="w-full">
+      <button
+        aria-label="open status bar"
+        className="flex w-full items-center gap-2 border-b border-neutral-600 p-0.5 px-2 text-xs text-secondary"
+        onClick={() => dispatch({ t: "clicked-status-bar" })}
+      >
+        {wire.statusBar}
 
-                <div className="flex-1"></div>
+        <div className="flex-1"></div>
 
-                {sound.statusBar}
-            </button>
+        {sound.statusBar}
+      </button>
 
-            <Drawer
-                position="top"
-                id="drawer"
-                open={model.isDrawerOpen}
-                onClose={() => dispatch({ t: "closed-status-bar-drawer" })}
-            >
-                {wire.drawer}
+      <Drawer
+        position="top"
+        id="drawer"
+        open={model.isDrawerOpen}
+        onClose={() => dispatch({ t: "closed-status-bar-drawer" })}
+      >
+        {wire.drawer}
 
-                {sound.drawer}
-            </Drawer>
-        </div>
-    )
+        {sound.drawer}
+      </Drawer>
+    </div>
+  )
 }

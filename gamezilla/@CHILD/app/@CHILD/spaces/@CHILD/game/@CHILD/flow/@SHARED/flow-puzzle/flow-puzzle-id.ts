@@ -5,31 +5,31 @@ const namespace = "flow-puzzle"
 const separator = ":"
 
 const is = (flowPuzzleId: unknown): flowPuzzleId is FlowPuzzleId => {
-    return typeof flowPuzzleId === "string"
+  return typeof flowPuzzleId === "string"
 }
 
 type Problem = "invalid_id"
 
 const parse = (id: unknown): Result<Problem, FlowPuzzleId> => {
-    if (is(id)) {
-        return ok(id)
-    }
-    return err("invalid_id")
+  if (is(id)) {
+    return ok(id)
+  }
+  return err("invalid_id")
 }
 
 const generate = () => {
-    const id = Uuid.generate()
-    const flowPuzzleId = `${namespace}${separator}${id}`
+  const id = Uuid.generate()
+  const flowPuzzleId = `${namespace}${separator}${id}`
 
-    if (is(flowPuzzleId)) {
-        return flowPuzzleId
-    }
+  if (is(flowPuzzleId)) {
+    return flowPuzzleId
+  }
 
-    throw new Error("impossible condition. generated invalid id.")
+  throw new Error("impossible condition. generated invalid id.")
 }
 
 export const FlowPuzzleId = {
-    generate,
-    parse,
-    is,
+  generate,
+  parse,
+  is,
 }

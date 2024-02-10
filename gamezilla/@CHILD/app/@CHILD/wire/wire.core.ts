@@ -12,33 +12,33 @@ import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-orde
 //
 
 export type ModelClient = {
-    state:
-        | { t: "server-connecting" }
-        | { t: "server-connect-error"; errorCount: number }
-        | { t: "server-disconnected" }
-        | { t: "server-connected" }
+  state:
+    | { t: "server-connecting" }
+    | { t: "server-connect-error"; errorCount: number }
+    | { t: "server-disconnected" }
+    | { t: "server-connected" }
 
-    serverTime: {
-        serverNow: Posix
-        recordedAt: Posix
-    } | null
+  serverTime: {
+    serverNow: Posix
+    recordedAt: Posix
+  } | null
 }
 
 export type MsgClient = ClientTransportEvent | { t: "clicked-try-reconnect" }
 
 export type ModelServer = {
-    clientsBySessionId: {
-        [sessionId: SessionId]: Client
-    }
-    sessionIdsByUserId: {
-        [userId: UserId]: SessionId[]
-    }
-    serverStartedAt: Posix | null
+  clientsBySessionId: {
+    [sessionId: SessionId]: Client
+  }
+  sessionIdsByUserId: {
+    [userId: UserId]: SessionId[]
+  }
+  serverStartedAt: Posix | null
 }
 
 export type Client = {
-    sessionId: SessionId
-    clientIds: CappedOrderedDict<ClientId, ClientId>
+  sessionId: SessionId
+  clientIds: CappedOrderedDict<ClientId, ClientId>
 }
 
 export type MsgServer = ServerTransportMsg

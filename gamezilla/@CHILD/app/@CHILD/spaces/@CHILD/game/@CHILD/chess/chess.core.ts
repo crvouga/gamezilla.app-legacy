@@ -6,51 +6,51 @@ import * as VsBot from "./@CHILD/vs-bot/vs-bot.core"
 import * as VsUser from "./@CHILD/vs-user/vs-user.core"
 
 export type ModelClient = {
-    mode:
-        | { t: "none" }
-        | { t: "vs-user"; c: VsUser.ModelClient }
-        | { t: "vs-bot"; c: VsBot.ModelClient }
-        | { t: "puzzle"; c: Puzzle.ModelClient }
+  mode:
+    | { t: "none" }
+    | { t: "vs-user"; c: VsUser.ModelClient }
+    | { t: "vs-bot"; c: VsBot.ModelClient }
+    | { t: "puzzle"; c: Puzzle.ModelClient }
 
-    requests?: {
-        [req in Req["t"]]?: RemoteResult<Problem, null>
-    }
+  requests?: {
+    [req in Req["t"]]?: RemoteResult<Problem, null>
+  }
 }
 
 export type ModelServer =
-    | { t: "none" }
-    | { t: "vs-user"; c: VsUser.ModelServer }
-    | { t: "vs-bot"; c: VsBot.ModelServer }
-    | { t: "puzzle"; c: Puzzle.ModelServer }
+  | { t: "none" }
+  | { t: "vs-user"; c: VsUser.ModelServer }
+  | { t: "vs-bot"; c: VsBot.ModelServer }
+  | { t: "puzzle"; c: Puzzle.ModelServer }
 
 type Mode = ModelServer["t"]
 
 export type MsgClient =
-    | Req
-    | { t: "vs-user"; c: VsUser.MsgClient }
-    | { t: "vs-bot"; c: VsBot.MsgClient }
-    | { t: "puzzle"; c: Puzzle.MsgClient }
+  | Req
+  | { t: "vs-user"; c: VsUser.MsgClient }
+  | { t: "vs-bot"; c: VsBot.MsgClient }
+  | { t: "puzzle"; c: Puzzle.MsgClient }
 
 export type MsgServer =
-    | { t: "vs-user"; c: VsUser.MsgServer }
-    | { t: "vs-bot"; c: VsBot.MsgServer }
-    | { t: "puzzle"; c: Puzzle.MsgServer }
+  | { t: "vs-user"; c: VsUser.MsgServer }
+  | { t: "vs-bot"; c: VsBot.MsgServer }
+  | { t: "puzzle"; c: Puzzle.MsgServer }
 
 export type MsgToClient =
-    | Res
-    | { t: "vs-user"; c: VsUser.MsgToClient }
-    | { t: "vs-bot"; c: VsBot.MsgToClient }
-    | { t: "puzzle"; c: Puzzle.MsgToClient }
+  | Res
+  | { t: "vs-user"; c: VsUser.MsgToClient }
+  | { t: "vs-bot"; c: VsBot.MsgToClient }
+  | { t: "puzzle"; c: Puzzle.MsgToClient }
 
 export type MsgToServer =
-    | Req
-    | { t: "vs-user"; c: VsUser.MsgToServer }
-    | { t: "vs-bot"; c: VsBot.MsgToServer }
-    | { t: "puzzle"; c: Puzzle.MsgToServer }
+  | Req
+  | { t: "vs-user"; c: VsUser.MsgToServer }
+  | { t: "vs-bot"; c: VsBot.MsgToServer }
+  | { t: "puzzle"; c: Puzzle.MsgToServer }
 
 export type Req = { t: "input-mode"; mode: Mode; userId: UserId }
 export type Res = Req & {
-    result: Result<Problem, ModelServer>
+  result: Result<Problem, ModelServer>
 }
 export type Problem = "must_be_the_host"
 
@@ -67,48 +67,48 @@ export type Problem = "must_be_the_host"
 export type MsgGame = { t: "user-changed-mode"; mode: Mode; userId: UserId }
 
 export type ModelGame =
-    | {
-          t: "none"
-      }
-    | {
-          t: "vs-user"
-      }
-    | {
-          t: "vs-bot"
-      }
-    | {
-          t: "puzzle"
-      }
+  | {
+      t: "none"
+    }
+  | {
+      t: "vs-user"
+    }
+  | {
+      t: "vs-bot"
+    }
+  | {
+      t: "puzzle"
+    }
 
 export const initGame = (): ModelGame => {
-    return {
-        t: "none",
-    }
+  return {
+    t: "none",
+  }
 }
 
 export const reducer = ({
-    msgGame,
+  msgGame,
 }: {
-    ctx: SpaceCtx
-    modelGame: ModelGame
-    msgGame: MsgGame
+  ctx: SpaceCtx
+  modelGame: ModelGame
+  msgGame: MsgGame
 }): ModelGame => {
-    switch (msgGame.t) {
-        case "user-changed-mode": {
-            switch (msgGame.mode) {
-                case "none": {
-                    return { t: "none" }
-                }
-                case "puzzle": {
-                    return { t: "none" }
-                }
-                case "vs-bot": {
-                    return { t: "none" }
-                }
-                case "vs-user": {
-                    return { t: "none" }
-                }
-            }
+  switch (msgGame.t) {
+    case "user-changed-mode": {
+      switch (msgGame.mode) {
+        case "none": {
+          return { t: "none" }
         }
+        case "puzzle": {
+          return { t: "none" }
+        }
+        case "vs-bot": {
+          return { t: "none" }
+        }
+        case "vs-user": {
+          return { t: "none" }
+        }
+      }
     }
+  }
 }

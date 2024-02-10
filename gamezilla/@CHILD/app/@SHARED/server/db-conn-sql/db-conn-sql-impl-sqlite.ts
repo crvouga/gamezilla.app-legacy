@@ -6,43 +6,43 @@ import { Logger } from "../../../@SHARED/server/logger"
 import { logQuery } from "./shared"
 
 export const createDbConnSqlite = async ({
-    databaseUrl,
-    logger,
+  databaseUrl,
+  logger,
 }: {
-    databaseUrl: string
-    logger: Logger
+  databaseUrl: string
+  logger: Logger
 }): Promise<DbConnSql> => {
-    const cleaned = databaseUrl.replace("sqlite:", "")
+  const cleaned = databaseUrl.replace("sqlite:", "")
 
-    const database = new Database(cleaned)
+  const database = new Database(cleaned)
 
-    return {
-        query: async (isRow, rawSql, params) => {
-            try {
-                const sql = toSql(rawSql, params)
+  return {
+    query: async (isRow, rawSql, params) => {
+      try {
+        const sql = toSql(rawSql, params)
 
-                const start = Date.now()
+        const start = Date.now()
 
-                const rows = database.query(sql).all()
+        const rows = database.query(sql).all()
 
-                const end = Date.now()
+        const end = Date.now()
 
-                logQuery({ logger, start, end, sql })
+        logQuery({ logger, start, end, sql })
 
-                const parsed = Array.isArray(rows)
-                    ? rows.flatMap((row) => {
-                          if (isRow(row)) {
-                              return [row]
-                          }
-                          return []
-                      })
-                    : []
+        const parsed = Array.isArray(rows)
+          ? rows.flatMap((row) => {
+              if (isRow(row)) {
+                return [row]
+              }
+              return []
+            })
+          : []
 
-                return ok(parsed)
-            } catch (error) {
-                logger.error(`[db] ${error}`)
-                return err(String(error))
-            }
-        },
-    }
+        return ok(parsed)
+      } catch (error) {
+        logger.error(`[db] ${error}`)
+        return err(String(error))
+      }
+    },
+  }
 }

@@ -1,11 +1,11 @@
 import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client"
 import { Eff, Sub } from "gamezilla/@SHARED/core"
 import {
-    ModelClient,
-    MsgClient,
-    ModelServer,
-    MsgToClient,
-    initShared,
+  ModelClient,
+  MsgClient,
+  ModelServer,
+  MsgToClient,
+  initShared,
 } from "./vs-user.core"
 
 //
@@ -31,71 +31,71 @@ export const init = initShared
 export type Msg = MsgClient
 
 export const update = ({
-    msg,
-    model,
+  msg,
+  model,
 }: {
-    msg: Msg
-    model: Model
+  msg: Msg
+  model: Model
 }): {
-    model: Model
-    eff?: Eff<Msg>
+  model: Model
+  eff?: Eff<Msg>
 } => {
-    if (msg.t === "clicked-cancel") {
-        return { model: { ...model, confirming: undefined } }
+  if (msg.t === "clicked-cancel") {
+    return { model: { ...model, confirming: undefined } }
+  }
+
+  if (msg.t === "resign") {
+    if (model.confirming === "resign") {
+      return { model, eff: Eff.None }
     }
 
-    if (msg.t === "resign") {
-        if (model.confirming === "resign") {
-            return { model, eff: Eff.None }
-        }
+    return { model: { ...model, confirming: "resign" } }
+  }
 
-        return { model: { ...model, confirming: "resign" } }
-    }
-
-    return { model, eff: Eff.None }
+  return { model, eff: Eff.None }
 }
 
 export const updateFromServer = ({
-    msg,
-    model,
+  msg,
+  model,
 }: {
-    msg: MsgToClient
-    model: Model
+  msg: MsgToClient
+  model: Model
 }): {
-    model: Model
-    eff?: Eff<Msg>
+  model: Model
+  eff?: Eff<Msg>
 } => {
-    if (msg.t === "input-move") {
-        if (msg.result.t === "err") {
-            return { model }
-        }
-        const merged = mergeWithServer({
-            serverModel: msg.result.value,
-            clientModel: model,
-        })
-
-        return { model: merged }
-    }
-
+  if (msg.t === "input-move") {
     if (msg.result.t === "err") {
-        return { model }
+      return { model }
     }
-
     const merged = mergeWithServer({
-        serverModel: msg.result.value,
-        clientModel: model,
+      serverModel: msg.result.value,
+      clientModel: model,
     })
 
     return { model: merged }
+  }
+
+  if (msg.result.t === "err") {
+    return { model }
+  }
+
+  const merged = mergeWithServer({
+    serverModel: msg.result.value,
+    clientModel: model,
+  })
+
+  return { model: merged }
 }
 
 export const mergeWithServer = ({
-    serverModel,
+  serverModel,
 }: {
-    clientModel: ModelClient
-    serverModel: ModelServer
+  clientModel: ModelClient
+  serverModel: ModelServer
 }): ModelClient => {
-    return serverModel
+  return serverModel
 }
 
 //
@@ -107,7 +107,7 @@ export const mergeWithServer = ({
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-    return Sub.None
+  return Sub.None
 }
 
 //
@@ -119,10 +119,10 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 
 export const View = (_props: {
-    dispatch: (m: Msg) => void
-    ctx: ClientCtx
-    model: Model
-    onCancel: () => void
+  dispatch: (m: Msg) => void
+  ctx: ClientCtx
+  model: Model
+  onCancel: () => void
 }) => {
-    return <div></div>
+  return <div></div>
 }

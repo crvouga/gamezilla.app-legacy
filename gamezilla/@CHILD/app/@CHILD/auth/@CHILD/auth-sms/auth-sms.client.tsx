@@ -1,43 +1,43 @@
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
 import {
-    APP_SOUND,
-    AnonymousClientCtx,
-    ClientEvent,
+  APP_SOUND,
+  AnonymousClientCtx,
+  ClientEvent,
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import {
-    ClientCmd,
-    focusView,
-    playSound,
-    pushRoute,
-    replaceRoute,
-    sendToServer,
-    showToast,
+  ClientCmd,
+  focusView,
+  playSound,
+  pushRoute,
+  replaceRoute,
+  sendToServer,
+  showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client/client-cmd"
 import {
-    AlertError,
-    Button,
-    IconMobilePhone,
-    Select,
-    TextField,
-    TopBar,
-    TopBarBackButton,
+  AlertError,
+  Button,
+  IconMobilePhone,
+  Select,
+  TextField,
+  TopBar,
+  TopBarBackButton,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import {
-    Iso3166Alpha2Code,
-    PhoneNumber,
-    Posix,
-    RemoteResult,
-    Sub,
-    Time,
-    TimeSpan,
-    Uuid,
-    isErr,
+  Iso3166Alpha2Code,
+  PhoneNumber,
+  Posix,
+  RemoteResult,
+  Sub,
+  Time,
+  TimeSpan,
+  Uuid,
+  isErr,
 } from "gamezilla/@SHARED/core"
 import {
-    ModelClient,
-    MsgClient,
-    MsgToClient,
-    MsgToServer,
+  ModelClient,
+  MsgClient,
+  MsgToClient,
+  MsgToServer,
 } from "./auth-sms.core"
 
 //
@@ -49,18 +49,18 @@ import {
 //
 
 type Module = AppClientModule<{
-    Model: ModelClient
-    Msg: MsgClient
-    MsgToClient: MsgToClient
+  Model: ModelClient
+  Msg: MsgClient
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
+  Ctx: AnonymousClientCtx
+  MsgInCmd: null
+  MsgInEvent: ClientEvent
+  MsgOutCmd: ClientCmd<{
+    MsgClient: MsgClient
     MsgToServer: MsgToServer
-    Ctx: AnonymousClientCtx
-    MsgInCmd: null
-    MsgInEvent: ClientEvent
-    MsgOutCmd: ClientCmd<{
-        MsgClient: MsgClient
-        MsgToServer: MsgToServer
-    }>
-    MsgOutEvent: ClientEvent
+  }>
+  MsgOutEvent: ClientEvent
 }>
 
 //
@@ -72,23 +72,23 @@ type Module = AppClientModule<{
 //
 
 export const init: Module["init"] = async () => {
-    return {
-        model: {
-            codeInput: "",
-            codeError: null,
-            //
-            phoneNumberInput: "",
-            countryCodeInput: Iso3166Alpha2Code.of("US"),
-            phoneNumberError: null,
-            //
+  return {
+    model: {
+      codeInput: "",
+      codeError: null,
+      //
+      phoneNumberInput: "",
+      countryCodeInput: Iso3166Alpha2Code.of("US"),
+      phoneNumberError: null,
+      //
 
-            sentCodeAt: null,
-            sendCode: RemoteResult.notAsked,
+      sentCodeAt: null,
+      sendCode: RemoteResult.notAsked,
 
-            verifiedCodeAt: null,
-            verifyCode: RemoteResult.notAsked,
-        },
-    }
+      verifiedCodeAt: null,
+      verifyCode: RemoteResult.notAsked,
+    },
+  }
 }
 
 //
@@ -112,256 +112,254 @@ const PHONE_NUMBER_INPUT_VIEW_ID = "phoneNumberInput"
 //
 
 export const update: Module["update"] = async (input) => {
-    if (input.msg) {
-        return updateFromMsg(input)
-    }
-    if (input.msgServer) {
-        return updateFromServer(input)
-    }
-    return { model: input.model }
+  if (input.msg) {
+    return updateFromMsg(input)
+  }
+  if (input.msgServer) {
+    return updateFromServer(input)
+  }
+  return { model: input.model }
 }
 
 const updateFromMsg: Module["update"] = async (input) => {
-    if (!input.msg) {
-        return { model: input.model }
+  if (!input.msg) {
+    return { model: input.model }
+  }
+
+  const { ctx, model, msg } = input
+
+  switch (msg.t) {
+    case "clicked-back-button": {
+      if (
+        ctx.currentRoute.t === "auth" &&
+        ctx.currentRoute.c.t === "login-phone-verify"
+      ) {
+        return {
+          model,
+          msgCmd: [
+            replaceRoute({
+              t: "auth",
+              c: { t: "login-phone", isSelectingCountry: false },
+            }),
+          ],
+        }
+      }
+
+      return {
+        model,
+        msgCmd: [replaceRoute({ t: "auth", c: { t: "login" } })],
+      }
     }
 
-    const { ctx, model, msg } = input
+    case "inputted-phone-number": {
+      return {
+        model: {
+          ...model,
+          phoneNumberInput: msg.phoneNumber,
+          phoneNumberError: null,
+        },
+      }
+    }
 
-    switch (msg.t) {
-        case "clicked-back-button": {
-            if (
-                ctx.currentRoute.t === "auth" &&
-                ctx.currentRoute.c.t === "login-phone-verify"
-            ) {
-                return {
-                    model,
-                    msgCmd: [
-                        replaceRoute({
-                            t: "auth",
-                            c: { t: "login-phone", isSelectingCountry: false },
-                        }),
-                    ],
-                }
-            }
+    case "clicked-phone-number-clear": {
+      return {
+        model: {
+          ...model,
+          phoneNumberInput: "",
+          phoneNumberError: null,
+        },
+      }
+    }
 
-            return {
-                model,
-                msgCmd: [replaceRoute({ t: "auth", c: { t: "login" } })],
-            }
+    case "inputted-country-code": {
+      return {
+        model: { ...model, countryCodeInput: msg.countryCode },
+      }
+    }
+
+    case "clicked-send-code": {
+      const phoneNumber = PhoneNumber.parse(model.phoneNumberInput)
+
+      if (isErr(phoneNumber)) {
+        return {
+          model: {
+            ...model,
+            phoneNumberError: phoneNumber.error.userMessage,
+          },
+          msgCmd: [
+            playSound(APP_SOUND.alertErrorSm),
+            focusView(PHONE_NUMBER_INPUT_VIEW_ID),
+          ],
         }
+      }
 
-        case "inputted-phone-number": {
-            return {
-                model: {
-                    ...model,
-                    phoneNumberInput: msg.phoneNumber,
-                    phoneNumberError: null,
-                },
-            }
+      return {
+        model: {
+          ...model,
+          sendCode: RemoteResult.loading,
+          sentCodeAt: ctx.now,
+        },
+        msgCmd: [
+          sendToServer({
+            t: "send-code",
+            phoneNumber: phoneNumber.value,
+          }),
+          playSound(APP_SOUND.tap),
+        ],
+      }
+    }
+
+    case "inputted-code": {
+      return {
+        model: { ...model, codeInput: msg.code, codeError: null },
+      }
+    }
+
+    case "clicked-code-clear": {
+      return {
+        model: { ...model, codeInput: "", codeError: null },
+      }
+    }
+
+    case "clicked-verify-code": {
+      if (model.codeInput === "") {
+        return {
+          model: {
+            ...model,
+            codeError: "Please enter the code",
+          },
+          msgCmd: [
+            playSound(APP_SOUND.alertErrorSm),
+            focusView(CODE_INPUT_VIEW_ID),
+          ],
         }
+      }
 
-        case "clicked-phone-number-clear": {
-            return {
-                model: {
-                    ...model,
-                    phoneNumberInput: "",
-                    phoneNumberError: null,
-                },
-            }
-        }
+      return {
+        model: {
+          ...model,
+          verifiedCodeAt: ctx.now,
+          verifyCode: RemoteResult.loading,
+        },
+        msgCmd: [
+          playSound(APP_SOUND.tap),
+          sendToServer({
+            t: "verify-code",
+            code: model.codeInput,
+            phoneNumber: msg.phoneNumber,
+          }),
+        ],
+      }
+    }
 
-        case "inputted-country-code": {
-            return {
-                model: { ...model, countryCodeInput: msg.countryCode },
-            }
-        }
-
-        case "clicked-send-code": {
-            const phoneNumber = PhoneNumber.parse(model.phoneNumberInput)
-
-            if (isErr(phoneNumber)) {
-                return {
-                    model: {
-                        ...model,
-                        phoneNumberError: phoneNumber.error.userMessage,
-                    },
-                    msgCmd: [
-                        playSound(APP_SOUND.alertErrorSm),
-                        focusView(PHONE_NUMBER_INPUT_VIEW_ID),
-                    ],
-                }
-            }
-
-            return {
-                model: {
-                    ...model,
-                    sendCode: RemoteResult.loading,
-                    sentCodeAt: ctx.now,
-                },
-                msgCmd: [
-                    sendToServer({
-                        t: "send-code",
-                        phoneNumber: phoneNumber.value,
-                    }),
-                    playSound(APP_SOUND.tap),
-                ],
-            }
-        }
-
-        case "inputted-code": {
-            return {
-                model: { ...model, codeInput: msg.code, codeError: null },
-            }
-        }
-
-        case "clicked-code-clear": {
-            return {
-                model: { ...model, codeInput: "", codeError: null },
-            }
-        }
-
-        case "clicked-verify-code": {
-            if (model.codeInput === "") {
-                return {
-                    model: {
-                        ...model,
-                        codeError: "Please enter the code",
-                    },
-                    msgCmd: [
-                        playSound(APP_SOUND.alertErrorSm),
-                        focusView(CODE_INPUT_VIEW_ID),
-                    ],
-                }
-            }
-
-            return {
-                model: {
-                    ...model,
-                    verifiedCodeAt: ctx.now,
-                    verifyCode: RemoteResult.loading,
-                },
-                msgCmd: [
-                    playSound(APP_SOUND.tap),
-                    sendToServer({
-                        t: "verify-code",
-                        code: model.codeInput,
-                        phoneNumber: msg.phoneNumber,
-                    }),
-                ],
-            }
-        }
-
-        case "time-passed": {
-            return AppClientModule.chainUpdates(
-                { model },
-                (model) => {
-                    if (
-                        model.sentCodeAt &&
-                        model.sendCode.t === "loading" &&
-                        TimeSpan.gte(
-                            Posix.diff(ctx.now, model.sentCodeAt),
-                            TimeSpan.fromSeconds(5),
-                        )
-                    ) {
-                        return {
-                            model: {
-                                ...model,
-                                sendCode: RemoteResult.err(
-                                    "Timed out. Server took too long to response",
-                                ),
-                            },
-                            msgCmd: [playSound(APP_SOUND.alertErrorMd)],
-                        }
-                    }
-                    return { model }
-                },
-                (model) => {
-                    if (
-                        model.verifiedCodeAt &&
-                        model.verifyCode.t === "loading" &&
-                        TimeSpan.gte(
-                            Posix.diff(ctx.now, model.verifiedCodeAt),
-                            TimeSpan.fromSeconds(5),
-                        )
-                    ) {
-                        return {
-                            model: {
-                                ...model,
-                                verifyCode: RemoteResult.err(
-                                    "Timed out. Server took too long to response",
-                                ),
-                            },
-                            msgCmd: [playSound(APP_SOUND.alertErrorMd)],
-                        }
-                    }
-
-                    return { model }
-                },
+    case "time-passed": {
+      return AppClientModule.chainUpdates(
+        { model },
+        (model) => {
+          if (
+            model.sentCodeAt &&
+            model.sendCode.t === "loading" &&
+            TimeSpan.gte(
+              Posix.diff(ctx.now, model.sentCodeAt),
+              TimeSpan.fromSeconds(5),
             )
-        }
+          ) {
+            return {
+              model: {
+                ...model,
+                sendCode: RemoteResult.err(
+                  "Timed out. Server took too long to response",
+                ),
+              },
+              msgCmd: [playSound(APP_SOUND.alertErrorMd)],
+            }
+          }
+          return { model }
+        },
+        (model) => {
+          if (
+            model.verifiedCodeAt &&
+            model.verifyCode.t === "loading" &&
+            TimeSpan.gte(
+              Posix.diff(ctx.now, model.verifiedCodeAt),
+              TimeSpan.fromSeconds(5),
+            )
+          ) {
+            return {
+              model: {
+                ...model,
+                verifyCode: RemoteResult.err(
+                  "Timed out. Server took too long to response",
+                ),
+              },
+              msgCmd: [playSound(APP_SOUND.alertErrorMd)],
+            }
+          }
+
+          return { model }
+        },
+      )
     }
+  }
 }
 
 const updateFromServer: Module["update"] = async (input) => {
-    if (!input.msgServer) {
-        return { model: input.model }
+  if (!input.msgServer) {
+    return { model: input.model }
+  }
+
+  const { model, msgServer } = input
+
+  switch (msgServer.t) {
+    case "sent-code": {
+      if (isErr(msgServer.result)) {
+        return {
+          model: { ...model, sendCode: msgServer.result },
+          msgCmd: [playSound(APP_SOUND.alertErrorMd)],
+        }
+      }
+
+      return {
+        model: {
+          ...model,
+          sendCode: msgServer.result,
+          verifyCode: RemoteResult.notAsked,
+          codeInput: "",
+        },
+        msgCmd: [
+          pushRoute({
+            t: "auth",
+            c: {
+              t: "login-phone-verify",
+              phoneNumber: msgServer.phoneNumber,
+            },
+          }),
+          showToast(
+            `Sent code to ${PhoneNumber.toString(msgServer.phoneNumber)}`,
+            "info",
+            TimeSpan.fromSeconds(4),
+          ),
+          focusView(CODE_INPUT_VIEW_ID),
+          playSound(APP_SOUND.navForwardMin),
+        ],
+      }
     }
 
-    const { model, msgServer } = input
-
-    switch (msgServer.t) {
-        case "sent-code": {
-            if (isErr(msgServer.result)) {
-                return {
-                    model: { ...model, sendCode: msgServer.result },
-                    msgCmd: [playSound(APP_SOUND.alertErrorMd)],
-                }
-            }
-
-            return {
-                model: {
-                    ...model,
-                    sendCode: msgServer.result,
-                    verifyCode: RemoteResult.notAsked,
-                    codeInput: "",
-                },
-                msgCmd: [
-                    pushRoute({
-                        t: "auth",
-                        c: {
-                            t: "login-phone-verify",
-                            phoneNumber: msgServer.phoneNumber,
-                        },
-                    }),
-                    showToast(
-                        `Sent code to ${PhoneNumber.toString(
-                            msgServer.phoneNumber,
-                        )}`,
-                        "info",
-                        TimeSpan.fromSeconds(4),
-                    ),
-                    focusView(CODE_INPUT_VIEW_ID),
-                    playSound(APP_SOUND.navForwardMin),
-                ],
-            }
+    case "verified-code": {
+      if (isErr(msgServer.result)) {
+        return {
+          model: { ...model, verifyCode: msgServer.result },
+          msgCmd: [playSound(APP_SOUND.alertErrorMd)],
         }
-
-        case "verified-code": {
-            if (isErr(msgServer.result)) {
-                return {
-                    model: { ...model, verifyCode: msgServer.result },
-                    msgCmd: [playSound(APP_SOUND.alertErrorMd)],
-                }
-            }
-            return {
-                model: {
-                    ...model,
-                    verifyCode: msgServer.result,
-                },
-            }
-        }
+      }
+      return {
+        model: {
+          ...model,
+          verifyCode: msgServer.result,
+        },
+      }
     }
+  }
 }
 
 //
@@ -375,18 +373,18 @@ const updateFromServer: Module["update"] = async (input) => {
 const INTERVAL_ID = Uuid.generate()
 
 export const subscriptions: Module["subscriptions"] = ({ model }) => {
-    if (model.sendCode.t === "loading" || model.verifyCode.t === "loading") {
-        return Time.interval(
-            INTERVAL_ID,
-            TimeSpan.fromMilliseconds(1000),
-            (now) => ({
-                t: "time-passed",
-                now,
-            }),
-        )
-    }
+  if (model.sendCode.t === "loading" || model.verifyCode.t === "loading") {
+    return Time.interval(
+      INTERVAL_ID,
+      TimeSpan.fromMilliseconds(1000),
+      (now) => ({
+        t: "time-passed",
+        now,
+      }),
+    )
+  }
 
-    return Sub.None
+  return Sub.None
 }
 
 //
@@ -400,155 +398,146 @@ export const subscriptions: Module["subscriptions"] = ({ model }) => {
 //
 
 export const View: Module["View"] = ({ model, dispatch, ctx }) => {
-    const { currentRoute } = ctx
+  const { currentRoute } = ctx
 
-    if (currentRoute.t !== "auth") {
-        return null
+  if (currentRoute.t !== "auth") {
+    return null
+  }
+
+  const route = currentRoute.c
+
+  switch (route.t) {
+    case "login-phone": {
+      return (
+        <div className="w-full flex-1">
+          <TopBar
+            left={
+              <TopBarBackButton
+                onClick={() => dispatch({ t: "clicked-back-button" })}
+              />
+            }
+            title="Login with phone"
+          />
+
+          <div className="flex w-full flex-col gap-6 p-4 py-6">
+            {false && (
+              <Select
+                id="countryCode"
+                label="Country"
+                onChange={(countryCodeNew) => {
+                  dispatch({
+                    t: "inputted-country-code",
+                    countryCode: countryCodeNew,
+                  })
+                }}
+                value={model.countryCodeInput}
+                options={Iso3166Alpha2Code.all}
+                toKey={(countryCode) => countryCode}
+                toName={(countryCode) =>
+                  Iso3166Alpha2Code.toNameWithEmoji(countryCode)
+                }
+              />
+            )}
+
+            <TextField
+              value={model.phoneNumberInput}
+              id="phoneNumberInput"
+              label="Phone Number"
+              type="tel"
+              startIcon={<IconMobilePhone className="h-5 w-5" />}
+              error={typeof model.phoneNumberError === "string"}
+              helperText={model.phoneNumberError}
+              onChange={(value) => {
+                dispatch({
+                  t: "inputted-phone-number",
+                  phoneNumber: value,
+                })
+              }}
+              onClear={() => {
+                dispatch({ t: "clicked-phone-number-clear" })
+              }}
+            />
+
+            <Button
+              text="Send Code"
+              className="w-full"
+              variant="contained"
+              color="primary"
+              size="lg"
+              loading={model.sendCode.t === "loading"}
+              onClick={() => {
+                dispatch({ t: "clicked-send-code" })
+              }}
+            />
+          </div>
+
+          {isErr(model.sendCode) && (
+            <div className="w-full p-4">
+              <AlertError>{model.sendCode.error}</AlertError>
+            </div>
+          )}
+        </div>
+      )
     }
 
-    const route = currentRoute.c
+    case "login-phone-verify": {
+      return (
+        <div className="w-full flex-1">
+          <TopBar
+            left={
+              <TopBarBackButton
+                onClick={() => dispatch({ t: "clicked-back-button" })}
+              />
+            }
+            title="Login with phone"
+          />
 
-    switch (route.t) {
-        case "login-phone": {
-            return (
-                <div className="w-full flex-1">
-                    <TopBar
-                        left={
-                            <TopBarBackButton
-                                onClick={() =>
-                                    dispatch({ t: "clicked-back-button" })
-                                }
-                            />
-                        }
-                        title="Login with phone"
-                    />
+          <div className="flex w-full flex-col gap-6 p-4 py-6">
+            <TextField
+              value={model.codeInput}
+              id={CODE_INPUT_VIEW_ID}
+              label="Code"
+              error={typeof model.codeError === "string"}
+              helperText={
+                typeof model.codeError === "string" ? model.codeError : null
+              }
+              autoFocus
+              type="tel"
+              onChange={(value) => {
+                dispatch({ t: "inputted-code", code: value })
+              }}
+              onClear={() => {
+                dispatch({ t: "clicked-code-clear" })
+              }}
+            />
+            <Button
+              className="w-full"
+              text="Verify Code"
+              color="primary"
+              size="lg"
+              loading={
+                model.verifyCode.t === "loading" || model.verifyCode.t === "ok"
+              }
+              onClick={() => {
+                dispatch({
+                  t: "clicked-verify-code",
+                  phoneNumber: route.phoneNumber,
+                })
+              }}
+            />
+          </div>
 
-                    <div className="flex w-full flex-col gap-6 p-4 py-6">
-                        {false && (
-                            <Select
-                                id="countryCode"
-                                label="Country"
-                                onChange={(countryCodeNew) => {
-                                    dispatch({
-                                        t: "inputted-country-code",
-                                        countryCode: countryCodeNew,
-                                    })
-                                }}
-                                value={model.countryCodeInput}
-                                options={Iso3166Alpha2Code.all}
-                                toKey={(countryCode) => countryCode}
-                                toName={(countryCode) =>
-                                    Iso3166Alpha2Code.toNameWithEmoji(
-                                        countryCode,
-                                    )
-                                }
-                            />
-                        )}
-
-                        <TextField
-                            value={model.phoneNumberInput}
-                            id="phoneNumberInput"
-                            label="Phone Number"
-                            type="tel"
-                            startIcon={<IconMobilePhone className="h-5 w-5" />}
-                            error={typeof model.phoneNumberError === "string"}
-                            helperText={model.phoneNumberError}
-                            onChange={(value) => {
-                                dispatch({
-                                    t: "inputted-phone-number",
-                                    phoneNumber: value,
-                                })
-                            }}
-                            onClear={() => {
-                                dispatch({ t: "clicked-phone-number-clear" })
-                            }}
-                        />
-
-                        <Button
-                            text="Send Code"
-                            className="w-full"
-                            variant="contained"
-                            color="primary"
-                            size="lg"
-                            loading={model.sendCode.t === "loading"}
-                            onClick={() => {
-                                dispatch({ t: "clicked-send-code" })
-                            }}
-                        />
-                    </div>
-
-                    {isErr(model.sendCode) && (
-                        <div className="w-full p-4">
-                            <AlertError>{model.sendCode.error}</AlertError>
-                        </div>
-                    )}
-                </div>
-            )
-        }
-
-        case "login-phone-verify": {
-            return (
-                <div className="w-full flex-1">
-                    <TopBar
-                        left={
-                            <TopBarBackButton
-                                onClick={() =>
-                                    dispatch({ t: "clicked-back-button" })
-                                }
-                            />
-                        }
-                        title="Login with phone"
-                    />
-
-                    <div className="flex w-full flex-col gap-6 p-4 py-6">
-                        <TextField
-                            value={model.codeInput}
-                            id={CODE_INPUT_VIEW_ID}
-                            label="Code"
-                            error={typeof model.codeError === "string"}
-                            helperText={
-                                typeof model.codeError === "string"
-                                    ? model.codeError
-                                    : null
-                            }
-                            autoFocus
-                            type="tel"
-                            onChange={(value) => {
-                                dispatch({ t: "inputted-code", code: value })
-                            }}
-                            onClear={() => {
-                                dispatch({ t: "clicked-code-clear" })
-                            }}
-                        />
-                        <Button
-                            className="w-full"
-                            text="Verify Code"
-                            color="primary"
-                            size="lg"
-                            loading={
-                                model.verifyCode.t === "loading" ||
-                                model.verifyCode.t === "ok"
-                            }
-                            onClick={() => {
-                                dispatch({
-                                    t: "clicked-verify-code",
-                                    phoneNumber: route.phoneNumber,
-                                })
-                            }}
-                        />
-                    </div>
-
-                    {isErr(model.verifyCode) && (
-                        <div className="w-full p-4">
-                            <AlertError>{model.verifyCode.error}</AlertError>
-                        </div>
-                    )}
-                </div>
-            )
-        }
-
-        default: {
-            return null
-        }
+          {isErr(model.verifyCode) && (
+            <div className="w-full p-4">
+              <AlertError>{model.verifyCode.error}</AlertError>
+            </div>
+          )}
+        </div>
+      )
     }
+
+    default: {
+      return null
+    }
+  }
 }

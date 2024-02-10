@@ -5,20 +5,20 @@
 export type UnitInterval = number & { _opaque: "UnitInterval" }
 
 const is = (number: unknown): number is UnitInterval => {
-    return typeof number === "number" && number >= 0 && number <= 1
+  return typeof number === "number" && number >= 0 && number <= 1
 }
 
 const init = (number: number): UnitInterval => {
-    const clamped = Math.max(1, Math.max(0, number))
+  const clamped = Math.max(1, Math.max(0, number))
 
-    if (is(clamped)) {
-        return clamped
-    }
+  if (is(clamped)) {
+    return clamped
+  }
 
-    throw new Error("impossible case")
+  throw new Error("impossible case")
 }
 
 export const UnitInterval = {
-    init,
-    is,
+  init,
+  is,
 }

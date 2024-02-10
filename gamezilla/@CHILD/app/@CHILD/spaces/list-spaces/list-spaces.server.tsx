@@ -12,38 +12,38 @@ import { ServerModule } from "../spaces.core"
 //
 
 const update: ServerModule["update"] = async (input) => {
-    const { msgClient, model } = input
+  const { msgClient, model } = input
 
-    switch (msgClient?.t) {
-        case "list-spaces": {
-            const spaces = Spaces.listSpaces({
-                model,
-                limit: msgClient.limit,
-                offset: msgClient.offset,
-                where: msgClient.where,
-            })
+  switch (msgClient?.t) {
+    case "list-spaces": {
+      const spaces = Spaces.listSpaces({
+        model,
+        limit: msgClient.limit,
+        offset: msgClient.offset,
+        where: msgClient.where,
+      })
 
-            // const profiles = spacesToProfiles(model, spaces);
+      // const profiles = spacesToProfiles(model, spaces);
 
-            const started = spaces.map((space) =>
-                Space.startFromLatestSnapshot(space),
-            )
+      const started = spaces.map((space) =>
+        Space.startFromLatestSnapshot(space),
+      )
 
-            return {
-                model,
-                msgCmd: [
-                    sendBack(msgClient, {
-                        t: "listed-spaces",
-                        spaces: started,
-                        // profiles,
-                        causedBy: msgClient.t,
-                    }),
-                ],
-            }
-        }
+      return {
+        model,
+        msgCmd: [
+          sendBack(msgClient, {
+            t: "listed-spaces",
+            spaces: started,
+            // profiles,
+            causedBy: msgClient.t,
+          }),
+        ],
+      }
     }
+  }
 
-    return { model }
+  return { model }
 }
 
 //
@@ -54,5 +54,5 @@ const update: ServerModule["update"] = async (input) => {
 //
 
 export const ListSpacesServer = {
-    update,
+  update,
 }

@@ -1,83 +1,77 @@
 import { describe, expect, test } from "bun:test"
 import { AppClientModule } from "../../@SHARED/architecture/app-client"
 import {
-    init,
-    userJoinedSpace,
-    userStartedSpace,
-    userEndedSpace,
+  init,
+  userJoinedSpace,
+  userStartedSpace,
+  userEndedSpace,
 } from "./@TEST/client"
 import { SpaceId, UserId } from "../../@SHARED/data"
 
 const hasExcatlyOne = <T>(
-    items: T[],
-    predicate: (item: T) => boolean,
+  items: T[],
+  predicate: (item: T) => boolean,
 ): boolean => {
-    return items.filter(predicate).length === 1
+  return items.filter(predicate).length === 1
 }
 
 describe("space client", () => {
-    test("sends event to server like user started space", async () => {
-        const output = await AppClientModule.chainUpdates(
-            await init(),
-            //
-            (model) => {
-                return userStartedSpace(
-                    model,
-                    UserId.generate(),
-                    SpaceId.generate(),
-                )
-            },
-        )
+  test("sends event to server like user started space", async () => {
+    const output = await AppClientModule.chainUpdates(
+      await init(),
+      //
+      (model) => {
+        return userStartedSpace(model, UserId.generate(), SpaceId.generate())
+      },
+    )
 
-        expect(
-            hasExcatlyOne(
-                output?.msgCmd ?? [],
-                (msgCmd) =>
-                    msgCmd.t === "wire" &&
-                    msgCmd.c.t === "send-to-server" &&
-                    msgCmd.c.msg?.t === "event" &&
-                    msgCmd.c.msg?.c.t === "user-started-space",
-            ),
-        ).toBeTrue()
-    })
+    expect(
+      hasExcatlyOne(
+        output?.msgCmd ?? [],
+        (msgCmd) =>
+          msgCmd.t === "wire" &&
+          msgCmd.c.t === "send-to-server" &&
+          msgCmd.c.msg?.t === "event" &&
+          msgCmd.c.msg?.c.t === "user-started-space",
+      ),
+    ).toBeTrue()
+  })
 
-    test("sends event to server like user joined space", async () => {
-        const output = await AppClientModule.chainUpdates(
-            await init(),
-            //
-            (model) =>
-                userJoinedSpace(model, UserId.generate(), SpaceId.generate()),
-        )
+  test("sends event to server like user joined space", async () => {
+    const output = await AppClientModule.chainUpdates(
+      await init(),
+      //
+      (model) => userJoinedSpace(model, UserId.generate(), SpaceId.generate()),
+    )
 
-        expect(
-            hasExcatlyOne(
-                output?.msgCmd ?? [],
-                (msgCmd) =>
-                    msgCmd.t === "wire" &&
-                    msgCmd.c.t === "send-to-server" &&
-                    msgCmd.c.msg?.t === "event" &&
-                    msgCmd.c.msg?.c.t === "user-joined-space",
-            ),
-        ).toBeTrue()
-    })
+    expect(
+      hasExcatlyOne(
+        output?.msgCmd ?? [],
+        (msgCmd) =>
+          msgCmd.t === "wire" &&
+          msgCmd.c.t === "send-to-server" &&
+          msgCmd.c.msg?.t === "event" &&
+          msgCmd.c.msg?.c.t === "user-joined-space",
+      ),
+    ).toBeTrue()
+  })
 
-    test("sends event to server like user ended space", async () => {
-        const output = await AppClientModule.chainUpdates(
-            await init(),
-            //
-            (model) =>
-                userEndedSpace(model, UserId.generate(), SpaceId.generate()),
-        )
+  test("sends event to server like user ended space", async () => {
+    const output = await AppClientModule.chainUpdates(
+      await init(),
+      //
+      (model) => userEndedSpace(model, UserId.generate(), SpaceId.generate()),
+    )
 
-        expect(
-            hasExcatlyOne(
-                output.msgCmd ?? [],
-                (msgCmd) =>
-                    msgCmd.t === "wire" &&
-                    msgCmd.c.t === "send-to-server" &&
-                    msgCmd.c.msg?.t === "event" &&
-                    msgCmd.c.msg?.c.t === "user-ended-space",
-            ),
-        ).toBeTrue()
-    })
+    expect(
+      hasExcatlyOne(
+        output.msgCmd ?? [],
+        (msgCmd) =>
+          msgCmd.t === "wire" &&
+          msgCmd.c.t === "send-to-server" &&
+          msgCmd.c.msg?.t === "event" &&
+          msgCmd.c.msg?.c.t === "user-ended-space",
+      ),
+    ).toBeTrue()
+  })
 })

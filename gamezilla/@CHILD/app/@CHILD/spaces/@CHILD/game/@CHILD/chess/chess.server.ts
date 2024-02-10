@@ -1,12 +1,12 @@
 import { GameServer } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server"
 import { Sub } from "gamezilla/@SHARED/core"
 import {
-    MsgGame,
-    ModelGame,
-    ModelServer,
-    MsgServer,
-    MsgToClient,
-    MsgToServer,
+  MsgGame,
+  ModelGame,
+  ModelServer,
+  MsgServer,
+  MsgToClient,
+  MsgToServer,
 } from "./chess.core"
 
 //
@@ -18,12 +18,12 @@ import {
 //
 
 type Server = GameServer<{
-    MsgGame: MsgGame
-    ModelGame: ModelGame
-    ModelServer: ModelServer
-    MsgServer: MsgServer
-    MsgToClient: MsgToClient
-    MsgToServer: MsgToServer
+  MsgGame: MsgGame
+  ModelGame: ModelGame
+  ModelServer: ModelServer
+  MsgServer: MsgServer
+  MsgToClient: MsgToClient
+  MsgToServer: MsgToServer
 }>
 
 //
@@ -35,12 +35,12 @@ type Server = GameServer<{
 //
 
 export const init: Server["init"] = async (input) => {
-    if (input.model) {
-        return { model: input.model }
-    }
-    return {
-        model: { t: "none" },
-    }
+  if (input.model) {
+    return { model: input.model }
+  }
+  return {
+    model: { t: "none" },
+  }
 }
 
 //
@@ -52,11 +52,11 @@ export const init: Server["init"] = async (input) => {
 //
 
 export const update: Server["update"] = async (_input) => {
-    return {
-        model: {
-            t: "none",
-        },
-    }
+  return {
+    model: {
+      t: "none",
+    },
+  }
 }
 
 //
@@ -68,5 +68,5 @@ export const update: Server["update"] = async (_input) => {
 //
 
 export const subscriptions: Server["subscriptions"] = async (_input) => {
-    return Sub.None
+  return Sub.None
 }

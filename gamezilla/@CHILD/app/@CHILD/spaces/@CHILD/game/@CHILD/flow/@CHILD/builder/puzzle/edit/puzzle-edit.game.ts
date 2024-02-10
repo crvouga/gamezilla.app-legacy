@@ -4,43 +4,43 @@ import { FlowPuzzleName } from "../../../../@SHARED/flow-puzzle/flow-puzzle-name
 import { ModelGame, MsgGame } from "../../builder.core"
 
 const reducer = ({
-    modelGame,
-    msgGame,
+  modelGame,
+  msgGame,
 }: {
-    ctx: SpaceCtx
-    msgGame: MsgGame
-    modelGame: ModelGame
+  ctx: SpaceCtx
+  msgGame: MsgGame
+  modelGame: ModelGame
 }): ModelGame => {
-    if (modelGame.t !== "puzzle-builder") {
+  if (modelGame.t !== "puzzle-builder") {
+    return modelGame
+  }
+  switch (msgGame.t) {
+    case "user-edited-puzzle-name": {
+      if (msgGame.flowPuzzleId !== modelGame.puzzle.id) {
         return modelGame
+      }
+      if (msgGame.edited.t === "err") {
+        return modelGame
+      }
+      if (!FlowPuzzleName.is(msgGame.newName)) {
+        return modelGame
+      }
+      const puzzleNew: FlowPuzzle = {
+        ...modelGame.puzzle,
+        name: msgGame.newName,
+      }
+      return {
+        ...modelGame,
+        puzzle: puzzleNew,
+      }
     }
-    switch (msgGame.t) {
-        case "user-edited-puzzle-name": {
-            if (msgGame.flowPuzzleId !== modelGame.puzzle.id) {
-                return modelGame
-            }
-            if (msgGame.edited.t === "err") {
-                return modelGame
-            }
-            if (!FlowPuzzleName.is(msgGame.newName)) {
-                return modelGame
-            }
-            const puzzleNew: FlowPuzzle = {
-                ...modelGame.puzzle,
-                name: msgGame.newName,
-            }
-            return {
-                ...modelGame,
-                puzzle: puzzleNew,
-            }
-        }
 
-        default: {
-            return modelGame
-        }
+    default: {
+      return modelGame
     }
+  }
 }
 
 export const PuzzleEditGame = {
-    reducer,
+  reducer,
 }

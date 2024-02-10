@@ -13,43 +13,43 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 //
 
 export type ModelClient = {
-    chats: {
-        [chatId: ChatId]: {
-            chatId: ChatId
-        }
+  chats: {
+    [chatId: ChatId]: {
+      chatId: ChatId
     }
-    chatsUsers: {
-        [chatsUsersId: ChatUserJoinId]: {
-            chatsUsersId: ChatUserJoinId
-            chatId: ChatId
-            userId: UserId
-        }
+  }
+  chatsUsers: {
+    [chatsUsersId: ChatUserJoinId]: {
+      chatsUsersId: ChatUserJoinId
+      chatId: ChatId
+      userId: UserId
     }
-    users: {
-        [userId: UserId]: {
-            userId: UserId
-            chatId: ChatId
-        }
+  }
+  users: {
+    [userId: UserId]: {
+      userId: UserId
+      chatId: ChatId
     }
-    messages: {
-        [messageId: ChatMessageId]: {
-            messageId: ChatMessageId
-            chatId: ChatId
-        }
+  }
+  messages: {
+    [messageId: ChatMessageId]: {
+      messageId: ChatMessageId
+      chatId: ChatId
     }
-    messageDrafts: {
-        [chatId: ChatId]: {
-            chatId: ChatId
-            text: string
-        }
+  }
+  messageDrafts: {
+    [chatId: ChatId]: {
+      chatId: ChatId
+      text: string
     }
-    requests: {
-        [key in Req[0]]?: RemoteResult<Problem, null>
-    }
-    userSearch: string
-    userSelected: {
-        [userId: UserId]: UserId
-    }
+  }
+  requests: {
+    [key in Req[0]]?: RemoteResult<Problem, null>
+  }
+  userSearch: string
+  userSelected: {
+    [userId: UserId]: UserId
+  }
 }
 
 export type ModelServer = null
@@ -63,32 +63,32 @@ export type ModelServer = null
 //
 
 export type MsgClient =
-    | ["inputted-user-search", { userSearch: string }]
-    | ["clicked-user-search-result", { userId: UserId }]
-    | ["clicked-user-selected-delete-button", { userId: UserId }]
-    | ["clicked-user-search-clear-button"]
-    | ["focused", Browser.FocusResult]
-    | Req
+  | ["inputted-user-search", { userSearch: string }]
+  | ["clicked-user-search-result", { userId: UserId }]
+  | ["clicked-user-selected-delete-button", { userId: UserId }]
+  | ["clicked-user-search-clear-button"]
+  | ["focused", Browser.FocusResult]
+  | Req
 
 export type Req =
-    | ["chat-join", { chatId: string }]
-    | ["chat-leave", { chatId: string }]
-    | ["chat-list", { userId: UserId }]
-    | ["chat-start", { userId: UserId[] }]
-    | ["message-send", { chatId: string; text: string }]
-    | ["message-unsend", { chatId: string; text: string }]
-    | ["message-list", { chatId: string }]
+  | ["chat-join", { chatId: string }]
+  | ["chat-leave", { chatId: string }]
+  | ["chat-list", { userId: UserId }]
+  | ["chat-start", { userId: UserId[] }]
+  | ["message-send", { chatId: string; text: string }]
+  | ["message-unsend", { chatId: string; text: string }]
+  | ["message-list", { chatId: string }]
 
 type Problem = ["database-error", string]
 
 export type Res = [...Req, Result<Problem, Partial<ModelClient>>]
 
 export const update = ({ msg }: { msg: MsgClient; model: ModelClient }) => {
-    switch (msg[0]) {
-        default: {
-            return null
-        }
+  switch (msg[0]) {
+    default: {
+      return null
     }
+  }
 }
 
 export type MsgToServer = Req
@@ -98,20 +98,20 @@ export type MsgServer = Res
 export type MsgToClient = Res
 
 export const updateFromClient = ({
-    msg,
+  msg,
 }: {
-    msg: MsgToServer
-    model: ModelServer
+  msg: MsgToServer
+  model: ModelServer
 }): {
-    eff: Eff<MsgServer>
+  eff: Eff<MsgServer>
 } => {
-    switch (msg[0]) {
-        default: {
-            return {
-                eff: () => {
-                    //
-                },
-            }
-        }
+  switch (msg[0]) {
+    default: {
+      return {
+        eff: () => {
+          //
+        },
+      }
     }
+  }
 }
