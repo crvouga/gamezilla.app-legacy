@@ -10,12 +10,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/feed-item"
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
-import {
-  ClientCtx,
-  addProfiles,
-  sendToServer,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+import { ClientCtx, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
 import {
   Avatar,
@@ -80,27 +75,7 @@ export const init: ClientModule["init"] = async ({ ctx }) => {
 //
 //
 
-export const update: ClientModule["update"] = (input) => {
-  return AppClientModule.chainUpdates(
-    { model: input.model },
-
-    (model) => updateProfiles({ ...input, model }),
-    (model) => updateMainLoop({ ...input, model }),
-  )
-}
-
-const updateProfiles: SpaceClientModule["update"] = ({ model, msgServer }) => {
-  if (msgServer?.profiles) {
-    return {
-      model,
-      msgCmd: [addProfiles(msgServer.profiles)],
-    }
-  }
-
-  return { model }
-}
-
-const updateMainLoop: ClientModule["update"] = async (input) => {
+export const update: ClientModule["update"] = async (input) => {
   const output = await updateMain(input)
 
   while (true) {

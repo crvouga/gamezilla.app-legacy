@@ -1,11 +1,17 @@
 import { describe, expect, it } from "bun:test"
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
-import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import {
+  Profile,
+  SpaceId,
+  UserId,
+  Username,
+} from "gamezilla/@CHILD/app/@SHARED/data"
 import { eq } from "gamezilla/@SHARED/core"
 import {
   clickedStartSpaceButton,
   ctx,
   gotCurrentUsersSpace,
+  gotMsgServer,
   gotSpace,
   init,
   makeSpace,
@@ -15,6 +21,7 @@ import {
   userStartedSpace,
 } from "../@TEST/client"
 import { Spaces } from "../spaces-core"
+import { addProfiles } from "gamezilla/@CHILD/app/@SHARED/client"
 
 const hasExcatlyOne = <T>(
   items: T[],
@@ -24,6 +31,35 @@ const hasExcatlyOne = <T>(
 }
 
 describe("sync client", () => {
+  it("should record profiles when recieved from server", async () => {
+    const someProfile: Profile = {
+      userId: UserId.generate(),
+      avatarUrl: "some url",
+      username: Username.generate(),
+    }
+
+    const someProfiles: { [userId: UserId]: Profile } = {
+      [someProfile.userId]: someProfile,
+    }
+
+    const updated = await AppClientModule.chainUpdates(
+      await init(),
+      //
+      (model) =>
+        gotMsgServer(model, {
+          t: "listed-spaces",
+          spaces: [],
+          profiles: someProfiles,
+        }),
+    )
+
+    expect(
+      hasExcatlyOne(updated.msgCmd ?? [], (msgCmd) =>
+        eq(msgCmd, addProfiles(someProfiles)),
+      ),
+    ).toBeTrue()
+  })
+
   it("should merge space recieved from server", async () => {
     const someStartedSpace = makeSpace(SpaceId.generate(), UserId.generate())
 

@@ -1,8 +1,27 @@
-import { sendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
+import { addProfiles, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceClientModule } from "../architechure/space-client"
 import { Space, Spaces } from "../spaces-core"
 
 const update: SpaceClientModule["update"] = (input) => {
+  return SpaceClientModule.chainUpdates(
+    { model: input.model },
+    (model) => updateProfiles({ ...input, model }),
+    (model) => updateSync({ ...input, model }),
+  )
+}
+
+const updateProfiles: SpaceClientModule["update"] = ({ model, msgServer }) => {
+  if (msgServer?.profiles) {
+    return {
+      model,
+      msgCmd: [addProfiles(msgServer.profiles)],
+    }
+  }
+
+  return { model }
+}
+
+const updateSync: SpaceClientModule["update"] = (input) => {
   const { model, msgEvt, msgServer } = input
 
   switch (msgEvt?.t) {

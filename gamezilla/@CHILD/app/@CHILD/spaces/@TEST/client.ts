@@ -251,6 +251,13 @@ export const userInputtedGame = (
   })
 }
 
+export const gotMsgServer = (
+  model: SpaceCore.ModelClient,
+  msgServer: SpaceCore.MsgToClient,
+) => {
+  return SpaceClient.update({ ctx, model, msgServer })
+}
+
 export const gotSpace = (model: SpaceCore.ModelClient, space: Space.Model) => {
   return SpaceClient.update({
     ctx,
