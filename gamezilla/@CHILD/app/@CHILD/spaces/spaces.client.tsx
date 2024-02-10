@@ -12,14 +12,12 @@ import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client";
 import {
   APP_SOUND,
-  AnonymousClientCtx,
   ClientCmd,
   ClientCtx,
   addProfiles,
   playSound,
   pushRoute,
   sendToServer,
-  showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
@@ -35,6 +33,7 @@ import { Eff, Posix, Sub, batchMsgs, notAsked } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import { Game } from "./@CHILD/game/game.client";
 import { SpaceClientModule } from "./architechure/space-client";
+import { EndSpaceClient } from "./end-space/end-space.client";
 import { JoinSpaceClient } from "./join-space/join-space.client";
 import { ListSpacesClient } from "./list-spaces/list-spaces.client";
 import { ViewScreenNotInGame } from "./spaces-client/view-screen-not-in-game";
@@ -42,13 +41,7 @@ import * as Space from "./spaces-core/space";
 import { SpaceEvent } from "./spaces-core/space-event";
 import * as SpaceState from "./spaces-core/space-state";
 import * as Spaces from "./spaces-core/spaces";
-import {
-  ClientModule,
-  ModelClient,
-  MsgClient,
-  MsgToServer,
-} from "./spaces.core";
-import { EndSpaceClient } from "./end-space/end-space.client";
+import { ClientModule, ModelClient, MsgClient } from "./spaces.core";
 
 //
 //
@@ -879,28 +872,24 @@ const ViewFeedItem = ({
   }
 };
 
-const ViewSpaceScreenMain = ({
-  ctx,
-  space,
-  model,
-  dispatch,
-  dispatchEvent,
-}: {
+const ViewSpaceScreenMain = (input: {
   space: SpaceState.Started;
   model: ModelClient;
   ctx: SpaceClientCtx;
   dispatch: (m: MsgClient) => void;
   dispatchEvent: (m: SpaceEvent) => void;
 }) => {
+  const { ctx, space, model, dispatch, dispatchEvent } = input;
+
   const currentUserSpaceId = Spaces.toSpaceIdByUserId(model, ctx.currentUserId);
 
   if (currentUserSpaceId !== space.spaceId) {
-    return <JoinSpaceClient.View ctx={ctx} dispatch={dispatch} model={model} />;
+    return <JoinSpaceClient.View {...input} />;
   }
 
   return (
     <div className="flex h-full w-full flex-1 flex-col">
-      <ViewTopBar ctx={ctx} dispatch={dispatch} dispatchEvent={dispatchEvent} />
+      <ViewTopBar {...input} />
 
       <ViewFeed
         spaceState={space}
@@ -949,16 +938,15 @@ const ViewGame = ({
   return <ViewScreenNotInGame ctx={ctx} dispatchEvent={dispatchEvent} />;
 };
 
-const ViewTopBar = ({
-  ctx,
-  dispatch,
-  dispatchEvent,
-}: {
-  ctx: SpaceClientCtx;
-  dispatch: (m: MsgClient) => void;
-  dispatchEvent: (m: SpaceEvent) => void;
-}) => {
-  const peopleCount = Object.keys(ctx.space.users).length;
+const ViewTopBar: SpaceClientModule["View"] = (input) => {
+  const { ctx, dispatch } = input;
+  const { space, currentUserId } = ctx;
+
+  if (!space || !currentUserId) {
+    return null;
+  }
+
+  const peopleCount = Object.keys(space.users).length;
 
   return (
     <nav className="flex h-14 w-full items-center border-b border-neutral-600">
@@ -981,7 +969,7 @@ const ViewTopBar = ({
 
       <div className="flex-1"></div>
 
-      {ctx.space.hostId !== ctx.currentUserId && (
+      {space.hostId !== ctx.currentUserId && (
         <div className="p-2">
           <Button
             color="danger"
@@ -989,30 +977,22 @@ const ViewTopBar = ({
             size="sm"
             text="Leave"
             onClick={() => {
-              dispatchEvent({
-                t: "user-left-space",
-                spaceId: ctx.space.spaceId,
-                userId: ctx.currentUserId,
+              dispatch({
+                t: "event",
+                c: withId<SpaceEvent>({
+                  t: "user-left-space",
+                  spaceId: space.spaceId,
+                  userId: currentUserId,
+                }),
               });
             }}
           />
         </div>
       )}
-      {ctx.space.hostId === ctx.currentUserId && (
+
+      {space.hostId === ctx.currentUserId && (
         <div className="p-2">
-          <Button
-            color="danger"
-            variant="contained"
-            size="sm"
-            text="End"
-            onClick={() => {
-              dispatchEvent({
-                t: "user-ended-space",
-                userId: ctx.currentUserId,
-                spaceId: ctx.space.spaceId,
-              });
-            }}
-          />
+          <EndSpaceClient.ViewEndSpaceButton {...input} />
         </div>
       )}
     </nav>

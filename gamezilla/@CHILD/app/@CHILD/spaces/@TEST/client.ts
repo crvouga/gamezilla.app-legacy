@@ -165,3 +165,16 @@ export const userEndedSpace = (
     },
   });
 };
+
+export const userClickedEndSpaceButton = (
+  model: SpaceCore.ModelClient,
+  ctxOverride: ClientCtx = ctx
+) => {
+  return SpaceClient.update({
+    ctx: ctxOverride,
+    model: model,
+    msg: {
+      t: "clicked-end-space-button",
+    },
+  });
+};

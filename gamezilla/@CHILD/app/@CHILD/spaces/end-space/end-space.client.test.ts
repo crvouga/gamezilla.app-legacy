@@ -5,7 +5,12 @@ import {
   didPushRoute,
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data";
-import { ctx, init, userEndedSpace, userStartedSpace } from "../@TEST/client";
+import {
+  ctx,
+  init,
+  userClickedEndSpaceButton,
+  userStartedSpace,
+} from "../@TEST/client";
 
 describe("end space client", () => {
   test("should redirect to space list after ending space if on space route", async () => {
@@ -14,7 +19,7 @@ describe("end space client", () => {
       await init(),
       (model) => userStartedSpace(model, ctx.currentUserId, spaceId),
       (model) =>
-        userEndedSpace(model, ctx.currentUserId, spaceId, {
+        userClickedEndSpaceButton(model, {
           ...ctx,
           currentRoute: { t: "spaces", c: { t: "space", spaceId } },
         })
@@ -32,7 +37,7 @@ describe("end space client", () => {
       await init(),
       (model) => userStartedSpace(model, ctx.currentUserId, spaceId),
       (model) =>
-        userEndedSpace(model, ctx.currentUserId, spaceId, {
+        userClickedEndSpaceButton(model, {
           ...ctx,
           currentRoute: {
             t: "profile",
@@ -51,7 +56,7 @@ describe("end space client", () => {
     const updated = await AppClientModule.chainUpdates(
       await init(),
       (model) => userStartedSpace(model, ctx.currentUserId, spaceId),
-      (model) => userEndedSpace(model, ctx.currentUserId, spaceId, ctx)
+      (model) => userClickedEndSpaceButton(model)
     );
     expect(didPlaySound(updated)).toBeTrue();
   });
