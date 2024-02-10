@@ -145,3 +145,22 @@ export const clickBackButton = async (
     msg: { t: "clicked-back-button", from },
   });
 };
+
+export const userEndedSpace = (
+  model: SpaceCore.ModelClient,
+  userId: UserId,
+  spaceId: SpaceId
+) => {
+  return SpaceClient.update({
+    ctx,
+    model: model,
+    msg: {
+      t: "event",
+      c: withId({
+        t: "user-ended-space",
+        spaceId,
+        userId,
+      }),
+    },
+  });
+};

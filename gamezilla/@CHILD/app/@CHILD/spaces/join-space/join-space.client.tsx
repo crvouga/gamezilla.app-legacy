@@ -1,4 +1,9 @@
-import { replaceRoute } from "gamezilla/@CHILD/app/@SHARED/client";
+import {
+  APP_SOUND,
+  playSound,
+  replaceRoute,
+  showErrSm,
+} from "gamezilla/@CHILD/app/@SHARED/client";
 import {
   Button,
   TopBar,
@@ -17,9 +22,54 @@ import { withId } from "../@SHARED/event";
 const update: SpaceClientModule["update"] = (input) => {
   return SpaceClientModule.chainUpdates(
     { model: input.model },
-    //
-    (model) => updateBackButton({ ...input, model })
+    (model) => updateBackButton({ ...input, model }),
+    (model) => updateFromSpaceEvent({ ...input, model })
   );
+};
+
+const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
+  const { msgSpaceEvent, model, ctx } = input;
+
+  if (!ctx.currentUserId) {
+    return { model };
+  }
+
+  switch (msgSpaceEvent?.t) {
+    case "user-joined-space": {
+      const error = Spaces.toErrorByEvenId(model, msgSpaceEvent.eventId);
+
+      switch (error?.t) {
+        case "user-already-in-a-space": {
+          if (error.userId === ctx.currentUserId) {
+            return {
+              model,
+              msgCmd: showErrSm("You are already in a space"),
+            };
+          }
+
+          return { model };
+        }
+      }
+
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+        model,
+        ctx.currentUserId
+      );
+
+      if (msgSpaceEvent.spaceId === currentUserSpaceId) {
+        return {
+          model,
+          msgCmd: [playSound(APP_SOUND.navForward)],
+        };
+      }
+
+      return { model };
+    }
+
+    default: {
+      return { model };
+    }
+  }
 };
 
 const View: SpaceClientModule["View"] = (input) => {
