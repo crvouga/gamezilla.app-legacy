@@ -1,4 +1,5 @@
 import {
+  ViewGameHeader,
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
   ViewYouChip,
@@ -32,11 +33,11 @@ import {
 import { Eff, Posix, Sub, batchMsgs, notAsked } from "gamezilla/@SHARED/core";
 import { CoverArt } from "./@CHILD/game/game-cover-art";
 import { Game } from "./@CHILD/game/game.client";
+import { gameNameList, gameNameToString } from "./@CHILD/game/game.core";
 import { SpaceClientModule } from "./architechure/space-client";
 import { EndSpaceClient } from "./end-space/end-space.client";
 import { JoinSpaceClient } from "./join-space/join-space.client";
 import { ListSpacesClient } from "./list-spaces/list-spaces.client";
-import { ViewScreenNotInGame } from "./spaces-client/view-screen-not-in-game";
 import * as Space from "./spaces-core/space";
 import { SpaceEvent } from "./spaces-core/space-event";
 import * as SpaceState from "./spaces-core/space-state";
@@ -936,6 +937,55 @@ const ViewGame = ({
   }
 
   return <ViewScreenNotInGame ctx={ctx} dispatchEvent={dispatchEvent} />;
+};
+
+export const ViewScreenNotInGame = ({
+  ctx,
+
+  dispatchEvent,
+}: {
+  ctx: SpaceClientCtx;
+  dispatchEvent: (m: SpaceEvent) => void;
+}) => {
+  if (ctx.space.hostId !== ctx.currentUserId) {
+    return (
+      <div className="flex h-full w-full flex-1 flex-col">
+        <ViewGameHeader />
+        <ViewUsersInSpaceList ctx={ctx} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-full w-full flex-1 flex-col gap-4 p-4">
+      <h1 className="text-center text-3xl font-bold">Games</h1>
+
+      <div className="grid grid-cols-3 justify-between gap-8">
+        {gameNameList.map((gameName) => (
+          <div key={gameName}>
+            <button
+              aria-label={gameName}
+              onClick={() =>
+                dispatchEvent({
+                  t: "user-inputted-game",
+                  spaceId: ctx.space.spaceId,
+                  userId: ctx.currentUserId,
+                  game: gameName,
+                })
+              }
+              className="flex overflow-hidden rounded-lg border border-neutral-600"
+            >
+              <CoverArt gameName={gameName} />
+            </button>
+
+            <p className="mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold">
+              {gameNameToString(gameName)}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 const ViewTopBar: SpaceClientModule["View"] = (input) => {
