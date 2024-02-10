@@ -23,15 +23,31 @@ const update: SpaceClientModule["update"] = (input) => {
 };
 
 const View: SpaceClientModule["View"] = (input) => {
-  const { model, ctx, dispatch } = input;
+  const { model, ctx } = input;
 
-  const currentUserId = ctx.currentUserId;
-  if (!ctx.space || !currentUserId) {
+  if (!ctx.space || !ctx.currentUserId) {
     return null;
   }
+
   const space = Spaces.toSpaceState(model, ctx.space.spaceId);
 
-  const header = (
+  switch (space.type) {
+    case "initial": {
+      return <ViewSpaceInitial {...input} />;
+    }
+
+    case "ended": {
+      return <ViewSpaceEnded {...input} />;
+    }
+
+    case "started": {
+      return <ViewSpaceStarted {...input} />;
+    }
+  }
+};
+
+const ViewHeader: SpaceClientModule["View"] = (input) => {
+  return (
     <>
       <TopBar left={<BackButton {...input} />} title="Space" />
       {/* {false && (
@@ -44,82 +60,98 @@ const View: SpaceClientModule["View"] = (input) => {
       )} */}
     </>
   );
+};
 
-  switch (space.type) {
-    case "ended": {
-      return (
-        <div className="flex h-full w-full flex-col">
-          {header}
-          <div className="w-full flex-1 items-center justify-center">
-            Space not found
-          </div>
-        </div>
-      );
-    }
-    case "initial": {
-      return (
-        <div className="flex h-full w-full flex-col">
-          {header}
-          <div className="w-full flex-1 items-center justify-center">
-            Space not found
-          </div>
-        </div>
-      );
-    }
-    case "started": {
-      const game = space.game;
+const ViewSpaceStarted: SpaceClientModule["View"] = (input) => {
+  const { model, ctx, dispatch } = input;
 
-      return (
-        <div className="flex h-full w-full flex-col">
-          {header}
+  const currentUserId = ctx.currentUserId;
 
-          <div className="flex w-full flex-1 flex-col overflow-y-scroll">
-            <ViewGameHeader
-              title={game ? gameNameToString(game.t) : null}
-              renderCoverArt={
-                game
-                  ? (props) => (
-                      <div {...props}>
-                        <CoverArt gameName={game.t} />
-                      </div>
-                    )
-                  : undefined
-              }
-            />
-
-            <ViewUsersInSpaceList
-              ctx={{
-                ...ctx,
-                currentUserId,
-                space,
-                quit() {},
-                viewProfile() {},
-              }}
-            />
-          </div>
-
-          <div className="flex border-t border-neutral-600 p-4">
-            <Button
-              className="w-full"
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                dispatch({
-                  t: "event",
-                  c: withId({
-                    t: "user-joined-space",
-                    userId: currentUserId,
-                    spaceId: space.spaceId,
-                  }),
-                });
-              }}
-              text="Join space"
-            />
-          </div>
-        </div>
-      );
-    }
+  if (!ctx.space || !currentUserId) {
+    return null;
   }
+
+  const space = Spaces.toSpaceState(model, ctx.space.spaceId);
+
+  if (space.type !== "started") {
+    return null;
+  }
+
+  const game = space.game;
+
+  return (
+    <div className="flex h-full w-full flex-col">
+      <ViewHeader {...input} />
+
+      <div className="flex w-full flex-1 flex-col overflow-y-scroll">
+        <ViewGameHeader
+          title={game ? gameNameToString(game.t) : null}
+          renderCoverArt={
+            game
+              ? (props) => (
+                  <div {...props}>
+                    <CoverArt gameName={game.t} />
+                  </div>
+                )
+              : undefined
+          }
+        />
+
+        <ViewUsersInSpaceList
+          ctx={{
+            ...ctx,
+            currentUserId,
+            space,
+            quit() {},
+            viewProfile() {},
+          }}
+        />
+      </div>
+
+      <div className="flex border-t border-neutral-600 p-4">
+        <Button
+          className="w-full"
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            dispatch({
+              t: "event",
+              c: withId({
+                t: "user-joined-space",
+                userId: currentUserId,
+                spaceId: space.spaceId,
+              }),
+            });
+          }}
+          text="Join space"
+        />
+      </div>
+    </div>
+  );
+};
+
+const ViewSpaceInitial: SpaceClientModule["View"] = (input) => {
+  return (
+    <div className="flex h-full w-full flex-col">
+      <ViewHeader {...input} />
+
+      <div className="w-full flex-1 items-center justify-center">
+        Space not found
+      </div>
+    </div>
+  );
+};
+
+const ViewSpaceEnded: SpaceClientModule["View"] = (input) => {
+  return (
+    <div className="flex h-full w-full flex-col">
+      <ViewHeader {...input} />
+
+      <div className="w-full flex-1 items-center justify-center">
+        Space not found
+      </div>
+    </div>
+  );
 };
 
 //

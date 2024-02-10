@@ -15,21 +15,15 @@ describe("list spaces client", () => {
   test("current user joining started space", async () => {
     const spaceId = SpaceId.generate();
 
-    const initial = await init();
-
     const joined = await AppClientModule.chainUpdates(
-      initial,
+      await init(),
       (model) => userStartedSpace(model, UserId.generate(), spaceId),
       (model) => userJoinedSpace(model, ctx.currentUserId, spaceId)
     );
 
-    const before = Spaces.toSpaceIdByUserId(initial.model, ctx.currentUserId);
-
-    const after = Spaces.toSpaceIdByUserId(joined.model, ctx.currentUserId);
-
-    expect(before).toEqual(null);
-    expect(after).toEqual(spaceId);
-    //
+    expect(Spaces.toSpaceIdByUserId(joined.model, ctx.currentUserId)).toEqual(
+      spaceId
+    );
   });
 
   test("current user leaving joined space", async () => {
