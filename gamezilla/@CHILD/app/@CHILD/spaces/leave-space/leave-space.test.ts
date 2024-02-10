@@ -7,7 +7,6 @@ import {
   ctx,
   init,
   userJoinedSpace,
-  userLeftSpace,
   userStartedSpace,
 } from "../@TEST/client";
 import { Spaces } from "../spaces-core";

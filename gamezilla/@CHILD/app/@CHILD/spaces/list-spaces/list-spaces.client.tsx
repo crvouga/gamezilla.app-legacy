@@ -1,5 +1,4 @@
 import { ViewSpaceHostChip } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game";
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event";
 import {
   ClientCtx,
   pushRoute,
@@ -8,7 +7,6 @@ import {
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import {
   Avatar,
-  Button,
   IconGamepad,
   TopBar,
   cn,
@@ -20,7 +18,8 @@ import { GameName, gameNameToString } from "../@CHILD/game/game.core";
 import { SpaceClientModule } from "../architechure/space-client";
 import * as SpaceState from "../spaces-core/space-state";
 import * as Spaces from "../spaces-core/spaces";
-import { ModelClient, MsgClient } from "../spaces.core";
+import { MsgClient } from "../spaces.core";
+import { StartSpaceClient } from "../start-space/start-space.client";
 
 //
 //
@@ -121,16 +120,16 @@ const update: SpaceClientModule["update"] = (input) => {
 //
 //
 
-const View = ({
-  ctx,
-  dispatch,
-  model,
-}: {
-  model: ModelClient;
-  ctx: ClientCtx;
-  dispatch: (m: MsgClient) => void;
-}) => {
-  const currentUserSpaceId = model.spaceIdByUserId[ctx.currentUserId];
+const View: SpaceClientModule["View"] = (input) => {
+  const { ctx, dispatch, model } = input;
+
+  const currentUserId = ctx.currentUserId;
+
+  if (!currentUserId) {
+    return null;
+  }
+
+  const currentUserSpaceId = model.spaceIdByUserId[currentUserId];
 
   const spaces = Object.keys(model.spaces).flatMap((spaceId) => {
     const space = Spaces.toSpaceStarted(model, spaceId as SpaceId);
@@ -157,7 +156,7 @@ const View = ({
             return (
               <ViewSpaceCard
                 key={state.spaceId}
-                ctx={ctx}
+                ctx={{ ...ctx, currentUserId }}
                 dispatch={dispatch}
                 state={state}
               />
@@ -168,22 +167,7 @@ const View = ({
 
       {!currentUserSpaceId && (
         <div className="w-full border-t border-neutral-600 p-4">
-          <Button
-            size="lg"
-            className="w-full"
-            color="primary"
-            onClick={() =>
-              dispatch({
-                t: "event",
-                c: withId({
-                  t: "user-started-space",
-                  spaceId: SpaceId.generate(),
-                  userId: ctx.currentUserId,
-                }),
-              })
-            }
-            text="Start space"
-          />
+          <StartSpaceClient.ViewStartSpaceButton {...input} />
         </div>
       )}
     </div>

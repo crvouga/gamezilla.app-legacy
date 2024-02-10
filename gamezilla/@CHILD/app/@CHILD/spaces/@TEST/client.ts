@@ -42,6 +42,21 @@ export const userStartedSpace = (
   });
 };
 
+export const clickedStartSpaceButton = (
+  model: SpaceCore.ModelClient,
+  spaceId: SpaceId,
+  ctxOverride: ClientCtx = ctx
+) => {
+  return SpaceClient.update({
+    ctx: ctxOverride,
+    model: model,
+    msg: {
+      t: "clicked-start-space-button",
+      spaceId,
+    },
+  });
+};
+
 export const userJoinedSpace = (
   model: SpaceCore.ModelClient,
   userId: UserId,

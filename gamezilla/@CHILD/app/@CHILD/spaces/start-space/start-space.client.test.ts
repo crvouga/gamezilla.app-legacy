@@ -5,15 +5,17 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client";
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data";
 import { AppClientModule } from "../../../@SHARED/architecture/app-client";
+import { clickedStartSpaceButton, ctx, init } from "../@TEST/client";
 import { Spaces } from "../spaces-core";
-import { ctx, init, userStartedSpace } from "../@TEST/client";
 
 describe("start space client", () => {
   test("current user starting space", async () => {
     const spaceId = SpaceId.generate();
 
-    const started = await AppClientModule.chainUpdates(await init(), (model) =>
-      userStartedSpace(model, ctx.currentUserId, spaceId)
+    const started = await AppClientModule.chainUpdates(
+      await init(),
+      //
+      (model) => clickedStartSpaceButton(model, spaceId)
     );
 
     expect(Spaces.toSpaceIdByUserId(started.model, ctx.currentUserId)).toEqual(
@@ -24,8 +26,10 @@ describe("start space client", () => {
   test("redirecting when starting a space", async () => {
     const spaceId = SpaceId.generate();
 
-    const started = await AppClientModule.chainUpdates(await init(), (model) =>
-      userStartedSpace(model, ctx.currentUserId, spaceId)
+    const started = await AppClientModule.chainUpdates(
+      await init(),
+      //
+      (model) => clickedStartSpaceButton(model, spaceId)
     );
 
     expect(
@@ -34,10 +38,10 @@ describe("start space client", () => {
   });
 
   test("should play sound after starting space", async () => {
-    const spaceId = SpaceId.generate();
-
-    const started = await AppClientModule.chainUpdates(await init(), (model) =>
-      userStartedSpace(model, ctx.currentUserId, spaceId)
+    const started = await AppClientModule.chainUpdates(
+      await init(),
+      //
+      (model) => clickedStartSpaceButton(model, SpaceId.generate())
     );
 
     expect(didPlaySound(started)).toBeTrue();
