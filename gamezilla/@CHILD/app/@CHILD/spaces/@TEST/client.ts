@@ -5,6 +5,7 @@ import { Posix, TimeSpan } from "gamezilla/@SHARED/core";
 import * as SpaceClient from "../spaces.client";
 import * as SpaceCore from "../spaces.core";
 import { Space, SpaceEvent } from "../spaces-core";
+import { GameName } from "../@CHILD/game/game.core";
 
 export const ctx: ClientCtx = {
   currentRoute: {
@@ -207,10 +208,24 @@ export const userClickedEndSpaceButton = (
     },
   });
 };
-export const removeOutputs = (
-  output: Awaited<ReturnType<typeof SpaceClient.update>>
-): Awaited<ReturnType<typeof SpaceClient.update>> => {
-  return {
-    model: output.model,
-  };
+
+export const userInputtedGame = (
+  model: SpaceCore.ModelClient,
+  userId: UserId,
+  spaceId: SpaceId,
+  game: GameName | null
+) => {
+  return SpaceClient.update({
+    ctx,
+    model: model,
+    msg: {
+      t: "event",
+      c: withId({
+        t: "user-inputted-game",
+        game,
+        spaceId,
+        userId,
+      }),
+    },
+  });
 };
