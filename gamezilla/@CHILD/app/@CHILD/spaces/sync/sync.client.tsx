@@ -36,24 +36,26 @@ const sendSpaceEventToServer: SpaceClientModule["update"] = ({
     return { model }
   }
 
-  const msgEvtWithMeta = Spaces.toEventWithMeta(
+  const spaceEventWithMeta = Spaces.toEventWithMeta(
     model,
     msgSpaceEvent.spaceId,
     msgSpaceEvent.eventId,
   )
 
-  if (!msgEvtWithMeta) {
+  if (!spaceEventWithMeta) {
     return { model }
   }
 
   const profile =
-    "userId" in msgEvtWithMeta ? ctx.profiles[msgEvtWithMeta.userId] : null
+    "userId" in spaceEventWithMeta
+      ? ctx.profiles[spaceEventWithMeta.userId]
+      : null
 
   const profiles = profile ? { [profile.userId]: profile } : {}
 
   return {
     model,
-    msgCmd: [sendToServer({ t: "event", c: msgEvtWithMeta, profiles })],
+    msgCmd: [sendToServer({ t: "event", c: spaceEventWithMeta, profiles })],
   }
 }
 
