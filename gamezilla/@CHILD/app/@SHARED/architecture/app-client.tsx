@@ -115,7 +115,7 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
    */
   init: (input: {
     ctx: T["Ctx"]
-    stored: T["Model"] | null
+    stored?: T["Model"] | null | undefined
   }) => MaybePromise<Output<T>>
 
   /**
@@ -139,14 +139,16 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
 }
 
 const chainUpdates = async <T extends AppClientModuleTypes>(
-  acc: Output<T>,
+  accPromise: MaybePromise<Output<T>>,
   ...updates: ((model: T["Model"]) => Output<T> | Promise<Output<T>>)[]
 ): Promise<Output<T>> => {
   const [update, ...rest] = updates
 
   if (!update) {
-    return acc
+    return accPromise
   }
+
+  const acc = await accPromise
 
   const updated = await update(acc.model)
 

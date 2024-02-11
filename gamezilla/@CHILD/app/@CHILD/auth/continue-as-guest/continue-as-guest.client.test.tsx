@@ -1,0 +1,95 @@
+import { describe, expect, it } from "bun:test"
+import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
+import {
+  AnonymousClientCtx,
+  didSendToServer,
+} from "gamezilla/@CHILD/app/@SHARED/client"
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import {
+  Posix,
+  err,
+  isRequesting,
+  isResponseErr,
+  isResponseOk,
+  ok,
+} from "gamezilla/@SHARED/core"
+import * as AuthClient from "../auth.client"
+import { ModelClient } from "../auth.core"
+
+const ctx: AnonymousClientCtx = {
+  currentRoute: { t: "auth", c: { t: "login" } },
+  documentVisibilityState: "visible",
+  now: Posix.now(),
+  profiles: {},
+  currentUserId: null,
+}
+
+const clickedContinueAsGuestButton = (model: ModelClient) =>
+  AuthClient.update({
+    model,
+    ctx,
+    msg: { t: "guest.clicked-continue-as-guest-button" },
+  })
+
+const continueAsGuestResultedOk = (userId: UserId) => (model: ModelClient) =>
+  AuthClient.update({
+    model,
+    ctx,
+    msgServer: {
+      t: "guest.continue-as-guest-result",
+      result: ok(userId),
+    },
+  })
+
+const continueAsGuestResultedErr = () => (model: ModelClient) =>
+  AuthClient.update({
+    model,
+    ctx,
+    msgServer: {
+      t: "guest.continue-as-guest-result",
+      result: err("some error happened"),
+    },
+  })
+
+describe("auth continue as guest client", () => {
+  it("should request to continue as guest when button is clicked", async () => {
+    const output = await AppClientModule.chainUpdates(
+      AuthClient.init({ ctx }),
+      clickedContinueAsGuestButton,
+    )
+
+    expect(
+      isRequesting(output.model.guestRequest) &&
+        output.model.guestRequest.requestedAt === ctx.now,
+    ).toBeTrue()
+  })
+
+  it("should request to continue as guest when button is clicked", async () => {
+    const output = await AppClientModule.chainUpdates(
+      AuthClient.init({ ctx }),
+      clickedContinueAsGuestButton,
+    )
+
+    expect(
+      didSendToServer(output, { t: "guest.clicked-continue-as-guest-button" }),
+    ).toBeTrue()
+  })
+
+  it("should resolve request as ok when resulted in ok", async () => {
+    const output = await AppClientModule.chainUpdates(
+      AuthClient.init({ ctx }),
+      clickedContinueAsGuestButton,
+      continueAsGuestResultedOk(UserId.generate()),
+    )
+    expect(isResponseOk(output.model.guestRequest)).toBeTrue()
+  })
+
+  it("should resolve request as err when resulted in err", async () => {
+    const output = await AppClientModule.chainUpdates(
+      AuthClient.init({ ctx }),
+      clickedContinueAsGuestButton,
+      continueAsGuestResultedErr(),
+    )
+    expect(isResponseErr(output.model.guestRequest)).toBeTrue()
+  })
+})

@@ -132,6 +132,24 @@ export const sendToServer = <T extends ClientCmdTypes>(
   }
 }
 
+export const didSendToServer = <T extends ClientCmdTypes>(
+  {
+    msgCmd,
+  }: {
+    msgCmd?: ClientCmd<T>[]
+  },
+  msgToServer?: T["MsgToServer"],
+): boolean => {
+  return (
+    msgCmd?.some(
+      (cmd) =>
+        cmd.t === "wire" &&
+        cmd.c.t === "send-to-server" &&
+        (msgToServer ? eq(cmd.c.msg, msgToServer) : true),
+    ) ?? false
+  )
+}
+
 //
 //
 //

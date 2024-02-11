@@ -3,38 +3,16 @@ import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import {
   ServerCmd,
   ServerCtx,
-  ServerEvent,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server"
 import { Eff, Sub, isErr } from "gamezilla/@SHARED/core"
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server"
-import { ModelServer, MsgServer, MsgToClient, MsgToServer } from "./auth.core"
 import { SessionDb } from "./@SHARED/server/session-db"
+import { ModelServer, MsgToClient, ServerModule } from "./auth.core"
 
 const sessionDb = (ctx: ServerCtx) => {
   return SessionDb({ t: "postgres-with-cache", dbConn: ctx.dbConn })
 }
-
-//
-//
-//
-//
-//
-//
-//
-//
-
-type Module = AppServerModule<{
-  Ctx: ServerCtx
-  MsgInCmd: null
-  MsgInEvent: ServerEvent
-  Model: ModelServer
-  Msg: MsgServer
-  MsgOutCmd: ServerCmd<MsgToClient>
-  MsgOutEvent: ServerEvent
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-}>
 
 //
 //
@@ -44,14 +22,11 @@ type Module = AppServerModule<{
 //
 //
 
-export const init: Module["init"] = async (input) => {
-  // const { ctx } = input;
+export const init: ServerModule["init"] = async (input) => {
   const sms = await AuthServerSMS.init({ ...input, stored: null })
 
   return {
     model: {
-      // userIdBySessionId: StoreUserIdBySessionId(input.ctx).startingAt(ctx.now),
-      // sessionIdsByUserId: StoreSessionIdByUserId(input.ctx).startingAt(ctx.now),
       sms: sms.model,
     },
     eff: Eff.tag("sms", sms.eff),
@@ -68,7 +43,7 @@ export const init: Module["init"] = async (input) => {
 //
 //
 
-export const update: Module["update"] = async (input) => {
+export const update: ServerModule["update"] = async (input) => {
   return AppServerModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
@@ -91,7 +66,7 @@ export const toUserIdFromSessionId = async (
   return userId
 }
 
-const updateChild: Module["update"] = async (input) => {
+const updateChild: ServerModule["update"] = async (input) => {
   const sms = await AuthServerSMS.update({
     ctx: input.ctx,
     model: input.model.sms,
@@ -115,28 +90,16 @@ const updateChild: Module["update"] = async (input) => {
   }
 }
 
-const updateFromMsg: Module["update"] = async ({ model, msg }) => {
-  if (!msg) {
-    return { model }
-  }
-
-  switch (msg.t) {
-    case "sms": {
-      return { model }
-    }
-  }
+const updateFromMsg: ServerModule["update"] = async ({ model }) => {
+  return { model }
 }
 
-const updateFromClient: Module["update"] = async ({
+const updateFromClient: ServerModule["update"] = async ({
   model,
   msgClient,
   ctx,
 }) => {
-  if (!msgClient) {
-    return { model }
-  }
-
-  switch (msgClient.t) {
+  switch (msgClient?.t) {
     case "logout": {
       const zapped = await sessionDb(ctx).zapBySessionId(msgClient.sessionId)
 
@@ -156,7 +119,7 @@ const updateFromClient: Module["update"] = async ({
       }
     }
 
-    case "sms": {
+    default: {
       return { model }
     }
   }
@@ -259,7 +222,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
 //
 //
 
-export const subscriptions: Module["subscriptions"] = async (input) => {
+export const subscriptions: ServerModule["subscriptions"] = async (input) => {
   return Sub.batch([
     Sub.tag(
       "sms",

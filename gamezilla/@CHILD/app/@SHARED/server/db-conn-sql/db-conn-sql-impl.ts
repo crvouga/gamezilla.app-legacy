@@ -4,6 +4,12 @@ import { DbConnSql } from "../db-conn-sql"
 import { createDbConnPostgres } from "./db-conn-sql-impl-postgres"
 import { createDbConnSqlite } from "./db-conn-sql-impl-sqlite"
 
+export const dbConnNoop: DbConnSql = {
+  query: async () => {
+    return ok([])
+  },
+}
+
 export const createDbConn = async ({
   databaseUrl,
   logger,

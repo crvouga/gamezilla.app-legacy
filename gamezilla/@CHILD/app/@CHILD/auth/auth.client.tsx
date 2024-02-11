@@ -3,7 +3,6 @@ import {
   APP_SOUND,
   AnonymousClientCtx,
   ClientCmd,
-  ClientEvent,
   playSound,
   pushRoute,
   replaceRoute,
@@ -16,38 +15,10 @@ import {
   IconMobilePhone,
   LoadingState,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Eff, Sub, notAsked } from "gamezilla/@SHARED/core"
+import { Eff, Sub, batchMsgs, notAsked } from "gamezilla/@SHARED/core"
 import * as AuthClientSMS from "./@CHILD/auth-sms/auth-sms.client"
-import {
-  ModelClient,
-  MsgClient,
-  LogoutMsg,
-  MsgToClient,
-  MsgToServer,
-} from "./auth.core"
-
-//
-//
-//
-//
-//
-//
-//
-
-type Client = AppClientModule<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  Ctx: AnonymousClientCtx
-  MsgInCmd: never
-  MsgInEvent: ClientEvent
-  MsgOutCmd: ClientCmd<{
-    MsgClient: MsgClient
-    MsgToServer: MsgToServer
-  }>
-  MsgOutEvent: ClientEvent
-}>
+import { ContinueAsGuestClient } from "./continue-as-guest"
+import { ClientModule, LogoutMsg, ModelClient, MsgClient } from "./auth.core"
 
 //
 //
@@ -57,31 +28,23 @@ type Client = AppClientModule<{
 //
 //
 
-export const init: Client["init"] = async ({ stored, ctx }) => {
+export const init: ClientModule["init"] = async (input) => {
   const sms = await AuthClientSMS.init({
-    stored: stored?.sms ?? null,
-    ctx,
+    ...input,
+    stored: input.stored?.sms ?? null,
   })
-
-  if (stored) {
-    return {
-      model: { ...stored, sms: sms.model },
-      eff: Eff.tag("sms", sms.eff),
-      msgEvt: sms.msgEvt,
-      msgCmd: ClientCmd.tag("sms", sms.msgCmd),
-    }
-  }
 
   return {
     model: {
+      ...ContinueAsGuestClient.initModel,
       currentUser: { t: "loading" },
       loginWithGoogle: notAsked,
       logout: notAsked,
       sms: sms.model,
     },
-    eff: Eff.tag("sms", sms.eff),
-    msgEvt: sms.msgEvt,
-    msgCmd: ClientCmd.tag("sms", sms.msgCmd),
+    eff: Eff.batch([Eff.tag("sms", sms.eff)]),
+    msgEvt: batchMsgs(sms.msgEvt),
+    msgCmd: batchMsgs(ClientCmd.tag("sms", sms.msgCmd)),
   }
 }
 
@@ -93,17 +56,18 @@ export const init: Client["init"] = async ({ stored, ctx }) => {
 //
 //
 
-export const update: Client["update"] = (input) => {
+export const update: ClientModule["update"] = (input) => {
   return AppClientModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
     (model) => updateChild({ ...input, model }),
+    (model) => ContinueAsGuestClient.update({ ...input, model }),
   )
 }
 
-const updateChild: Client["update"] = async (input) => {
+const updateChild: ClientModule["update"] = async (input) => {
   const updated = await AuthClientSMS.update({
     ctx: input.ctx,
     model: input.model.sms,
@@ -121,7 +85,7 @@ const updateChild: Client["update"] = async (input) => {
   }
 }
 
-const updateFromMsg: Client["update"] = async (input) => {
+const updateFromMsg: ClientModule["update"] = async (input) => {
   if (!input.msg) {
     return { model: input.model }
   }
@@ -142,7 +106,8 @@ const updateFromMsg: Client["update"] = async (input) => {
         ],
       }
     }
-    case "sms": {
+
+    default: {
       return { model }
     }
   }
@@ -154,7 +119,7 @@ const updateFromLogoutMsg = ({
 }: {
   msg: LogoutMsg
   model: ModelClient
-}): ReturnType<Client["update"]> => {
+}): ReturnType<ClientModule["update"]> => {
   const currentUserId =
     model.currentUser.t === "logged-in" ? model.currentUser.userId : null
 
@@ -189,14 +154,10 @@ const updateFromLogoutMsg = ({
   }
 }
 
-const updateFromServer: Client["update"] = (input) => {
-  if (!input.msgServer) {
-    return { model: input.model }
-  }
-
+const updateFromServer: ClientModule["update"] = (input) => {
   const { model, msgServer } = input
 
-  switch (msgServer.t) {
+  switch (msgServer?.t) {
     case "client-unauthenticated": {
       return {
         model: { ...model, currentUser: { t: "logged-out" } },
@@ -217,17 +178,17 @@ const updateFromServer: Client["update"] = (input) => {
       }
     }
 
-    case "sms": {
+    default: {
       return { model }
     }
   }
 }
 
-const updateFromEvent: Client["update"] = async (input) => {
+const updateFromEvent: ClientModule["update"] = async (input) => {
   return updateRedirect(input)
 }
 
-const updateRedirect: Client["update"] = async (input) => {
+const updateRedirect: ClientModule["update"] = async (input) => {
   if (!input.msgEvt) {
     return { model: input.model }
   }
@@ -311,7 +272,10 @@ const updateRedirect: Client["update"] = async (input) => {
 //
 //
 
-export const subscriptions: Client["subscriptions"] = ({ model, ctx }) => {
+export const subscriptions: ClientModule["subscriptions"] = ({
+  model,
+  ctx,
+}) => {
   return Sub.tag("sms", AuthClientSMS.subscriptions({ model: model.sms, ctx }))
 }
 
@@ -323,14 +287,15 @@ export const subscriptions: Client["subscriptions"] = ({ model, ctx }) => {
 //
 //
 
-export const View: Client["View"] = ({ model, ctx, dispatch }) => {
+export const View: ClientModule["View"] = (input) => {
+  const { model, ctx, dispatch } = input
   if (ctx.currentRoute.t !== "auth") {
     return null
   }
   const route = ctx.currentRoute.c
   switch (route.t) {
     case "login": {
-      return <ViewLoginScreen dispatch={dispatch} />
+      return <ViewLoginScreen {...input} />
     }
 
     case "login-phone-verify":
@@ -350,11 +315,8 @@ export const View: Client["View"] = ({ model, ctx, dispatch }) => {
   }
 }
 
-const ViewLoginScreen = ({
-  dispatch,
-}: {
-  dispatch: (msg: MsgClient) => void
-}) => {
+const ViewLoginScreen: ClientModule["View"] = (input) => {
+  const { dispatch } = input
   return (
     <div className="relative flex h-full w-full flex-1 flex-col">
       <div className="flex flex-1 flex-col items-center justify-center gap-8 p-4">
@@ -373,6 +335,7 @@ const ViewLoginScreen = ({
             start={<IconMobilePhone className="h-6 w-6" />}
             text="Continue With Phone"
           />
+          <ContinueAsGuestClient.ViewContinueAsGuestButton {...input} />
         </div>
       </div>
     </div>

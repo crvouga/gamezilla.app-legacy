@@ -254,6 +254,12 @@ export const isResponseOk = <TError, TValue>(
   return request.t === "ok"
 }
 
+export const isResponseErr = <TError, TValue>(
+  request: RequestResponse<TError, TValue>,
+): request is ResponseErr<TError> => {
+  return request.t === "err"
+}
+
 export const response = <TError, TValue>(
   request: RequestResponse<TError, TValue>,
   responsedAt: Posix,
