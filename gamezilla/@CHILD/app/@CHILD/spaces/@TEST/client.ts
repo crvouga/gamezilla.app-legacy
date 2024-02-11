@@ -459,3 +459,29 @@ export const clickedGoHomeButton = (
     },
   })
 }
+
+export const clickedCurrentSpaceBottomBar = (
+  model: SpaceCore.ModelClient,
+  ctxOverride: ClientCtx = ctx,
+) => {
+  return SpaceClient.update({
+    ctx: ctxOverride,
+    model: model,
+    msg: {
+      t: "clicked-current-space-bottom-bar",
+    },
+  })
+}
+
+export const clickedUserPreviewLink = (
+  model: SpaceCore.ModelClient,
+  ctxOverride: ClientCtx = ctx,
+) => {
+  return SpaceClient.update({
+    ctx: ctxOverride,
+    model: model,
+    msg: {
+      t: "clicked-preview-user-link",
+    },
+  })
+}

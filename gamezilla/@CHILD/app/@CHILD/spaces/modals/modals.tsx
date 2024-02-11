@@ -1,5 +1,3 @@
-import { pushRoute } from "gamezilla/@CHILD/app/@SHARED/client"
-import { SpaceClientModule } from "../architechure/space-client"
 import { Avatar, Button, Drawer } from "gamezilla/@CHILD/app/@SHARED/ui"
 import {
   ViewSpaceHostChip,
@@ -7,6 +5,7 @@ import {
   ViewYouChip,
 } from "../@CHILD/game/@SHARED/game"
 import { SpaceClientCtx } from "../@SHARED/space"
+import { SpaceClientModule } from "../architechure/space-client"
 
 const update: SpaceClientModule["update"] = ({
   msg,
@@ -50,13 +49,6 @@ const update: SpaceClientModule["update"] = ({
         },
       }
     }
-
-    case "clicked-link": {
-      return {
-        model,
-        msgCmd: [pushRoute(msg.route)],
-      }
-    }
   }
 
   return { model }
@@ -96,20 +88,7 @@ const View: SpaceClientModule["View"] = ({ ctx, dispatch, model }) => {
         <div>
           <button
             className="flex w-full flex-col items-center justify-center gap-2 p-4"
-            onClick={() => {
-              if (model.modalPreviewUserId) {
-                dispatch({
-                  t: "clicked-link",
-                  route: {
-                    t: "profile",
-                    c: {
-                      t: "profile",
-                      userId: model.modalPreviewUserId,
-                    },
-                  },
-                })
-              }
-            }}
+            onClick={() => dispatch({ t: "clicked-preview-user-link" })}
           >
             <Avatar
               src={
@@ -136,20 +115,7 @@ const View: SpaceClientModule["View"] = ({ ctx, dispatch, model }) => {
 
           <div className="w-full px-4 pb-8">
             <Button
-              onClick={() => {
-                if (model.modalPreviewUserId) {
-                  dispatch({
-                    t: "clicked-link",
-                    route: {
-                      t: "profile",
-                      c: {
-                        t: "profile",
-                        userId: model.modalPreviewUserId,
-                      },
-                    },
-                  })
-                }
-              }}
+              onClick={() => dispatch({ t: "clicked-preview-user-link" })}
               className="w-full"
               text="See profile"
             />

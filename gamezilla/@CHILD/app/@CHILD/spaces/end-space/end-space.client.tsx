@@ -179,12 +179,7 @@ const ViewSpaceEnded: SpaceClientModule["View"] = ({ dispatch }) => {
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space ended</p>
       <Button
-        onClick={() =>
-          dispatch({
-            t: "clicked-link",
-            route: { t: "spaces", c: { t: "space-list" } },
-          })
-        }
+        onClick={() => dispatch({ t: "clicked-go-home-button" })}
         size="lg"
         variant="contained"
         color="primary"

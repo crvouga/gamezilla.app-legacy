@@ -2,11 +2,9 @@ import { describe, expect, it } from "bun:test"
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
 import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { eq } from "gamezilla/@SHARED/core"
 import { exitGame } from "../@SHARED/space-client-cmd"
 import {
   clickedGameTile,
-  clickedGoHomeButton,
   clickedStartSpaceButton,
   ctx,
   init,

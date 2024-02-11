@@ -4,7 +4,6 @@ import { AppClientModule } from "../../@SHARED/architecture/app-client"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import {
   AnonymousClientCtx,
-  AppRoute,
   ClientCmd,
   ClientEvent,
 } from "../../@SHARED/client"
@@ -101,7 +100,8 @@ export type MsgClient =
   | { t: "clicked-back-button"; from: "join-screen" }
   | { t: "clicked-space-card"; spaceId: SpaceId }
   | { t: "clicked-user"; userId: UserId }
-  | { t: "clicked-link"; route: AppRoute }
+  | { t: "clicked-preview-user-link" }
+  | { t: "clicked-current-space-bottom-bar" }
 
 export type MsgToClient = MsgToClientExtra &
   (

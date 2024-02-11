@@ -9,18 +9,16 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
 import {
-  Avatar,
   Button,
   IconHome,
   IconUserGroup,
-  IconXMark,
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Eff, Sub, batchMsgs, notAsked } from "gamezilla/@SHARED/core"
-import { CoverArt } from "./@CHILD/game/game-cover-art"
 import { Game } from "./@CHILD/game/game.client"
 import { SpaceClientCmd } from "./@SHARED/space-client-cmd"
 import { Input, Output, SpaceClientModule } from "./architechure/space-client"
+import { CurrentSpaceBottomBar } from "./current-space-bottom-bar/current-space-bottom-bar"
 import { EndSpaceClient } from "./end-space/end-space.client"
 import { GameClient } from "./game/game.client"
 import { JoinSpaceClient } from "./join-space/join-space.client"
@@ -148,6 +146,7 @@ const updateChild: SpaceClientModule["update"] = (input) => {
     (model) => JoinSpaceClient.update({ ...input, model }),
     (model) => ListSpacesClient.update({ ...input, model }),
     (model) => updateGoHomeButton({ ...input, model }),
+    (model) => CurrentSpaceBottomBar.update({ ...input, model }),
   )
 }
 
@@ -380,12 +379,7 @@ const ViewSpaceNotFound = ({
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space not found</p>
       <Button
-        onClick={() =>
-          dispatch({
-            t: "clicked-link",
-            route: { t: "spaces", c: { t: "space-list" } },
-          })
-        }
+        onClick={() => dispatch({ t: "clicked-go-home-button" })}
         size="lg"
         variant="contained"
         color="primary"
@@ -504,88 +498,4 @@ const ViewFeedItem = ({
   }
 }
 
-export const ViewCurrentSpaceBar = ({
-  ctx,
-  model,
-  dispatch,
-}: {
-  ctx: ClientCtx
-  model: ModelClient
-  dispatch: (msg: MsgClient) => void
-}) => {
-  const userSpaceId = model.spaceIdByUserId[ctx.currentUserId]
-
-  if (!userSpaceId) {
-    return null
-  }
-
-  const space = Spaces.toSpaceStarted(model, userSpaceId)
-
-  if (!space) {
-    return null
-  }
-
-  const hostProfile = ctx.profiles[space.hostId]
-
-  const userCount = Object.values(space.users).length
-
-  return (
-    <div className="flex w-full items-center overflow-hidden border-t-2 border-blue-600 text-inherit">
-      <button
-        className="flex flex-1 items-center overflow-hidden"
-        onClick={() => {
-          dispatch({
-            t: "clicked-link",
-            route: {
-              t: "spaces",
-              c: { t: "space", spaceId: space.spaceId },
-            },
-          })
-        }}
-      >
-        <div className="mr-2 p-2">
-          {!space.game ? (
-            <Avatar
-              src={hostProfile?.avatarUrl}
-              alt="Host Avatar"
-              className="h-12 w-12"
-            />
-          ) : (
-            <div className="h-12 w-12 overflow-hidden rounded border border-neutral-600">
-              <CoverArt gameName={space.game.t} />
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-1 flex-col gap-1 overflow-hidden">
-          <p className="text-left">
-            {hostProfile ? `${hostProfile.username}'s space` : "..."}
-          </p>
-          <p className="text-left text-xs text-neutral-300">
-            {userCount} in space
-          </p>
-        </div>
-      </button>
-
-      {ctx.currentUserId === space.hostId && (
-        <button
-          aria-label="end space"
-          onClick={() => dispatch({ t: "clicked-end-space-button" })}
-          className="mr-4"
-        >
-          <IconXMark className="h-8 w-8" />
-        </button>
-      )}
-
-      {ctx.currentUserId !== space.hostId && (
-        <button
-          aria-label="leave space"
-          onClick={() => dispatch({ t: "clicked-leave-space-button" })}
-          className="mr-4"
-        >
-          <IconXMark className="h-8 w-8" />
-        </button>
-      )}
-    </div>
-  )
-}
+export const ViewCurrentSpaceBar = CurrentSpaceBottomBar.View

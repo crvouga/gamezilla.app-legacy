@@ -57,10 +57,12 @@ export type SpaceClientModule = {
 }
 
 const chainUpdates = async (
-  acc: Output,
+  accPromise: MaybePromise<Output>,
   ...updates: ((model: ModelClient) => MaybePromise<Output>)[]
 ): Promise<Output> => {
   const [update, ...rest] = updates
+
+  const acc = await accPromise
 
   if (!update) {
     return acc
