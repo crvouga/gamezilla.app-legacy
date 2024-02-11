@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test"
+import { describe, expect, it } from "bun:test"
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
 import {
   didPushRoute,
@@ -27,7 +27,7 @@ const changeRouteToSpaceList = (model: ModelClient) => {
 }
 
 describe("list spaces client", () => {
-  test("request spaces on init if on space list route", async () => {
+  it("shoudld request spaces on init if on space list route", async () => {
     const updated = await init({
       ...ctx,
       currentRoute: { t: "spaces", c: { t: "space-list" } },
@@ -38,7 +38,7 @@ describe("list spaces client", () => {
     ).toBeTrue()
   })
 
-  test("should request spaces on space list route change", async () => {
+  it("should request spaces on space list route change", async () => {
     const updated = await AppClientModule.chainUpdates(
       await init(),
       changeRouteToSpaceList,
@@ -46,7 +46,7 @@ describe("list spaces client", () => {
     expect(updated.model.listSpacesRequest.t === "loading").toBeTrue()
   })
 
-  test("should timeout the request after some time", async () => {
+  it("should timeout the request after some time", async () => {
     const updated = await AppClientModule.chainUpdates(
       await init(),
       changeRouteToSpaceList,
@@ -58,7 +58,7 @@ describe("list spaces client", () => {
     ).toBeTrue()
   })
 
-  test("should be ok when server responds with a list of spaces", async () => {
+  it("should be ok when server responds with a list of spaces", async () => {
     const updated = await AppClientModule.chainUpdates(
       await init(),
       changeRouteToSpaceList,
@@ -67,7 +67,7 @@ describe("list spaces client", () => {
     expect(isResponseOk(updated.model.listSpacesRequest)).toBeTrue()
   })
 
-  test("should be ok when server responds with a list of spaces even when it timed out", async () => {
+  it("should be ok when server responds with a list of spaces even when it timed out", async () => {
     const updated = await AppClientModule.chainUpdates(
       await init(),
       changeRouteToSpaceList,
@@ -78,7 +78,7 @@ describe("list spaces client", () => {
     expect(isResponseOk(updated.model.listSpacesRequest)).toBeTrue()
   })
 
-  test("clicked a space card show navigate to space page", async () => {
+  it("shoild navigate to space screen after clicking a space card", async () => {
     const SpaceA = SpaceId.generate()
     const updated = await AppClientModule.chainUpdates(
       await init(),
@@ -94,7 +94,7 @@ describe("list spaces client", () => {
     ).toBeTrue()
   })
 
-  test("clicking back button from join screen should navigate back to list", async () => {
+  it("should go back to list screen when clicking back button in join screen", async () => {
     const SpaceA = SpaceId.generate()
 
     const updated = await AppClientModule.chainUpdates(
