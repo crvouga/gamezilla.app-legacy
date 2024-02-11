@@ -3,8 +3,15 @@ import {
   SpaceClientCtx,
   spaceToProfiles,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 
-export const ViewUsersInSpaceList = ({ ctx }: { ctx: SpaceClientCtx }) => {
+export const ViewUsersInSpaceList = ({
+  ctx,
+  onOpenUserDetails,
+}: {
+  ctx: SpaceClientCtx
+  onOpenUserDetails: (userId: UserId) => void
+}) => {
   const profiles = spaceToProfiles(ctx, ctx.space)
   return (
     <section className="flex w-full flex-col gap-2 py-4">
@@ -15,7 +22,7 @@ export const ViewUsersInSpaceList = ({ ctx }: { ctx: SpaceClientCtx }) => {
           return (
             <button
               key={profile.userId}
-              onClick={() => ctx.viewProfile(profile.userId)}
+              onClick={() => onOpenUserDetails(profile.userId)}
               className="flex w-full items-center gap-2 p-2 px-4 active:opacity-60"
             >
               <Avatar src={profile.avatarUrl} />

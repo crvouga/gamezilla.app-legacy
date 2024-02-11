@@ -115,13 +115,10 @@ const View: SpaceClientModule["View"] = (input) => {
         />
 
         <ViewUsersInSpaceList
-          ctx={{
-            ...ctx,
-            currentUserId,
-            space,
-            quit() {},
-            viewProfile() {},
-          }}
+          ctx={{ ...ctx, currentUserId, space }}
+          onOpenUserDetails={(userId) =>
+            dispatch({ t: "clicked-user", userId })
+          }
         />
       </div>
 

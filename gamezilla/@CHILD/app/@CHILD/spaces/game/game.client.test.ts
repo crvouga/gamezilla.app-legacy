@@ -1,16 +1,20 @@
-import { describe, expect, test } from "bun:test"
+import { describe, expect, it } from "bun:test"
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
+import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
+import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { exitGame } from "../@SHARED/space-client-cmd"
 import {
-  userInputtedGame,
-  init,
   clickedStartSpaceButton,
   ctx,
+  init,
+  userInputtedGame,
 } from "../@TEST/client"
-import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
+import { SpaceClientModule } from "../architechure/space-client"
+import { Spaces } from "../spaces-core"
+import * as SpacesClient from "../spaces.client"
 
 describe("game client", () => {
-  test("should play a sound after inputting a game", async () => {
+  it("should play a sound after inputting a game", async () => {
     const spaceId = SpaceId.generate()
     const started = await AppClientModule.chainUpdates(await init(), (model) =>
       clickedStartSpaceButton(model, spaceId),
@@ -21,5 +25,40 @@ describe("game client", () => {
         userInputtedGame(model, ctx.currentUserId, spaceId, "connect-four"),
     )
     expect(didPlaySound(output)).toBeTrue()
+  })
+
+  it("should be able to start game", async () => {
+    const initial = await init()
+    const spaceId = SpaceId.generate()
+
+    const output = await SpaceClientModule.chainUpdates(
+      { model: initial.model },
+      //
+      (model) => clickedStartSpaceButton(model, spaceId),
+      (model) =>
+        userInputtedGame(model, ctx.currentUserId, spaceId, "connect-four"),
+    )
+
+    const gameName = Spaces.toSpaceStarted(output.model, spaceId)?.game?.t
+    expect(gameName).toBe("connect-four")
+  })
+
+  it("should exit game for corresponding cmd", async () => {
+    const initial = await init()
+    const spaceId = SpaceId.generate()
+
+    const output = await SpaceClientModule.chainUpdates(
+      { model: initial.model },
+      //
+      (model) => clickedStartSpaceButton(model, spaceId),
+      (model) =>
+        userInputtedGame(model, ctx.currentUserId, spaceId, "connect-four"),
+      (model) => SpacesClient.updateMain({ model, ctx, msgCmd: exitGame() }),
+    )
+
+    const gameName =
+      Spaces.toSpaceStarted(output.model, spaceId)?.game?.t ?? null
+
+    expect(gameName).toBeNull()
   })
 })

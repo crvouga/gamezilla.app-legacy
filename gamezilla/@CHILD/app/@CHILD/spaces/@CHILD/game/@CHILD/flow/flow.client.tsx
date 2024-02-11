@@ -1,4 +1,4 @@
-import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+import { GameMainMenu } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import {
@@ -15,15 +15,16 @@ import {
   IconScrewdriverWrench,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Sub } from "gamezilla/@SHARED/core"
-import { PlayClient } from "./@CHILD/play/play.client"
+import { SpaceClientCmd } from "../../../../@SHARED/space-client-cmd"
 import { BuilderClient } from "./@CHILD/builder/builder.client"
+import { PlayClient } from "./@CHILD/play/play.client"
 import { CoverArt } from "./@SHARED/flow-cover-art"
 import { FlowClientCtx } from "./@SHARED/flow-ctx"
 import {
   ModelClient,
+  ModelGame,
   MsgClient,
   MsgGame,
-  ModelGame,
   MsgToClient,
   MsgToServer,
 } from "./flow.core"
@@ -48,7 +49,7 @@ type Module = GameClientModule<{
   //
   Ctx: SpaceClientCtx
   //
-  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
+  MsgOutCmd: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
   MsgInEvent: SpaceClientEvent
   MsgInCmd: null
   MsgOutEvent: null
@@ -69,6 +70,7 @@ const init: Module["init"] = {
 const update: Module["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
+    (model) => GameMainMenu.update({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromMsgGame({ ...input, model }),
     (model) => updateChild({ ...input, model }),
@@ -181,25 +183,17 @@ const updateFromMsgGame: Module["update"] = (input) => {
 const updateFromMsg: Module["update"] = (input) => {
   const { msg, model } = input
 
-  if (!msg) {
-    return { model }
-  }
-
-  switch (msg.t) {
-    case "play": {
-      return { model }
-    }
-
-    case "builder": {
-      return { model }
-    }
-
+  switch (msg?.t) {
     case "msgGame": {
       const msgGame = withId(msg.c)
       return {
         model,
         msgGame: [msgGame],
       }
+    }
+
+    default: {
+      return { model }
     }
   }
 }
@@ -277,10 +271,11 @@ const View: Module["View"] = (input) => {
   switch (modelGame.t) {
     case null: {
       return (
-        <MainMenuScreen.View
+        <GameMainMenu.View
           renderCoverArt={(props) => <CoverArt {...props} />}
           ctx={ctx}
           title="Flow"
+          dispatch={dispatch}
           buttons={[
             {
               renderIcon: (props) => <IconGamepad {...props} />,

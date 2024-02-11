@@ -17,7 +17,7 @@ import {
 import { Eff, Sub, batchMsgs, notAsked } from "gamezilla/@SHARED/core"
 import { CoverArt } from "./@CHILD/game/game-cover-art"
 import { Game } from "./@CHILD/game/game.client"
-import { SpaceClientModule } from "./architechure/space-client"
+import { Input, Output, SpaceClientModule } from "./architechure/space-client"
 import { EndSpaceClient } from "./end-space/end-space.client"
 import { GameClient } from "./game/game.client"
 import { JoinSpaceClient } from "./join-space/join-space.client"
@@ -28,6 +28,7 @@ import { SpaceEvent, SpaceState, Spaces } from "./spaces-core"
 import { ClientModule, ModelClient, MsgClient } from "./spaces.core"
 import { StartSpaceClient } from "./start-space/start-space.client"
 import { SyncClient } from "./sync/sync.client"
+import { SpaceClientCmd } from "./@SHARED/space-client-cmd"
 
 //
 //
@@ -52,8 +53,7 @@ export const init: ClientModule["init"] = async ({ ctx }) => {
       ...listSpaces.model,
     },
     eff: Eff.batch([listSpaces.eff]),
-    msgCmd: batchMsgs(listSpaces.msgCmd),
-    msgEvt: batchMsgs(listSpaces.msgEvt),
+    // msgCmd: batchMsgs(listSpaces.msgCmd),
   }
 }
 
@@ -66,33 +66,63 @@ export const init: ClientModule["init"] = async ({ ctx }) => {
 //
 
 export const update: ClientModule["update"] = async (input) => {
-  const output = await updateMain(input)
+  const updated = await updateMain(input)
 
-  while (true) {
-    const [spaceEvent, ...spaceEventsRest] = output.msgSpaceEvent ?? []
-
-    if (!spaceEvent) {
-      return output
-    }
-
-    const updated = await updateMain({
-      ctx: input.ctx,
-      model: output.model,
-      msgSpaceEvent: spaceEvent,
-    })
-
-    output.model = updated.model
-    output.msgSpaceEvent = batchMsgs(spaceEventsRest, updated.msgSpaceEvent)
-    output.eff = Eff.batch([output.eff, updated.eff])
-    output.msgCmd = batchMsgs(output.msgCmd, updated.msgCmd)
-    output.msgSpaceEvent = batchMsgs(
-      output.msgSpaceEvent,
-      updated.msgSpaceEvent,
-    )
+  return {
+    model: updated.model,
+    eff: updated.eff,
+    msgCmd: SpaceClientCmd.toClientCmd(updated.msgCmd),
   }
 }
 
-const updateMain: SpaceClientModule["update"] = (input) => {
+export const updateMain = async (
+  input: Input,
+  acc?: Output,
+): Promise<Output> => {
+  acc = acc ?? (await updateChild(input))
+
+  const [spaceEvent, ...spaceEventsRest] = acc.msgSpaceEvent ?? []
+
+  if (spaceEvent) {
+    const updated = await updateChild({
+      ctx: input.ctx,
+      model: acc.model,
+      msgSpaceEvent: spaceEvent,
+    })
+
+    return updateMain(input, {
+      model: updated.model,
+      eff: Eff.batch([acc.eff, updated.eff]),
+      msgSpaceEvent: batchMsgs(spaceEventsRest, updated.msgSpaceEvent),
+      msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
+      msgEvt: [],
+    })
+  }
+
+  const [spaceCmd, ...spaceCmdsRest] = SpaceClientCmd.toSpaceClientCmd(
+    acc.msgCmd,
+  )
+
+  if (spaceCmd) {
+    const updated = await updateChild({
+      ctx: input.ctx,
+      model: acc.model,
+      msgCmd: spaceCmd,
+    })
+
+    return updateMain(input, {
+      model: updated.model,
+      eff: Eff.batch([acc.eff, updated.eff]),
+      msgSpaceEvent: batchMsgs(acc.msgSpaceEvent, updated.msgSpaceEvent),
+      msgCmd: batchMsgs(spaceCmdsRest, updated.msgCmd),
+      msgEvt: [],
+    })
+  }
+
+  return acc
+}
+
+const updateChild: SpaceClientModule["update"] = (input) => {
   if (
     input.msgSpaceEvent &&
     Spaces.hasEvent(
@@ -257,30 +287,6 @@ const ViewSpaceScreen = (input: {
         ...input.ctx,
         currentUserId: input.ctx.currentUserId,
         space: spaceState,
-        quit() {
-          input.dispatch({
-            t: "event",
-            c: withId({
-              t: "user-inputted-game",
-              userId: input.ctx.currentUserId,
-              spaceId: spaceState.spaceId,
-              game: null,
-            }),
-          })
-        },
-        viewProfile(userId) {
-          //
-          input.dispatch({
-            t: "clicked-link",
-            route: {
-              t: "profile",
-              c: {
-                t: "profile",
-                userId,
-              },
-            },
-          })
-        },
       }
 
       const currentUserSpaceId = Spaces.toSpaceIdByUserId(

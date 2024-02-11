@@ -1,12 +1,12 @@
 import {
   AnonymousClientCtx,
-  ClientCmd,
   ClientEvent,
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Eff, Sub } from "gamezilla/@SHARED/core"
 import { WithEventId } from "../@SHARED/event"
 import { Space } from "../@SHARED/space"
+import { SpaceClientCmd } from "../@SHARED/space-client-cmd"
 import { SpaceEvent } from "../spaces-core"
 import {
   ModelClient,
@@ -25,7 +25,10 @@ export type Input = {
   msg?: MsgClient | null
   msgServer?: MsgToClient | null
   msgEvt?: ClientEvent | null
-  msgCmd?: null
+  msgCmd?: SpaceClientCmd<{
+    MsgClient: MsgClient
+    MsgToServer: MsgToServer
+  }> | null
   msgSpaceEvent?: WithEventId<SpaceEvent> | null
 }
 
@@ -34,11 +37,11 @@ export type MaybePromise<T> = T | Promise<T>
 export type Output = {
   model: ModelClient
   eff?: Eff<MsgClient>
-  msgCmd?: ClientCmd<{
+  msgCmd?: SpaceClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>[]
-  msgEvt?: []
+  msgEvt?: unknown[]
   msgSpaceEvent?: WithEventId<SpaceEvent>[]
 }
 

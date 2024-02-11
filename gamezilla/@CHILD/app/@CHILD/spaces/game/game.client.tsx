@@ -1,8 +1,4 @@
-import {
-  APP_SOUND,
-  ClientCmd,
-  playSound,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
 import { Eff, Sub } from "gamezilla/@SHARED/core"
 import {
   ViewGameHeader,
@@ -12,6 +8,7 @@ import { CoverArt } from "../@CHILD/game/game-cover-art"
 import { Game } from "../@CHILD/game/game.client"
 import { gameNameList, gameNameToString } from "../@CHILD/game/game.core"
 import { WithEventId, withId } from "../@SHARED/event"
+import { SpaceClientCmd } from "../@SHARED/space-client-cmd"
 import { SpaceClientModule } from "../architechure/space-client"
 import { Space, SpaceEvent, Spaces } from "../spaces-core"
 import { MsgClient } from "../spaces.core"
@@ -22,7 +19,35 @@ const update: SpaceClientModule["update"] = (input) => {
     //
     (model) => updateFromSpaceEvent({ ...input, model }),
     (model) => updateGame({ ...input, model }),
+    (model) => updateFromCmd({ ...input, model }),
   )
+}
+
+const updateFromCmd: SpaceClientModule["update"] = ({ msgCmd, model, ctx }) => {
+  switch (msgCmd?.t) {
+    case "space/exit-game": {
+      const currentUserId = ctx.currentUserId
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(model, currentUserId)
+      if (!currentUserSpaceId || !currentUserId) {
+        return { model }
+      }
+      return {
+        model,
+        msgSpaceEvent: [
+          withId({
+            t: "user-inputted-game",
+            game: null,
+            spaceId: currentUserSpaceId,
+            userId: currentUserId,
+          }),
+        ],
+      }
+    }
+
+    default: {
+      return { model }
+    }
+  }
 }
 
 const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
@@ -108,8 +133,6 @@ const updateGame: SpaceClientModule["update"] = (input) => {
       ...ctx,
       space: spaceState,
       currentUserId: ctx.currentUserId,
-      quit() {},
-      viewProfile() {},
     },
     model: gameModel,
     msgGame:
@@ -135,7 +158,7 @@ const updateGame: SpaceClientModule["update"] = (input) => {
         [spaceId]: gameUpdated.model,
       },
     },
-    msgCmd: ClientCmd.map(
+    msgCmd: SpaceClientCmd.map(
       gameUpdated.msgCmd ?? [],
       (c) => ({ t: "game", c, spaceId }),
       (c) => ({ t: "game", c, spaceId }),
@@ -197,7 +220,7 @@ const subscriptionsCurrentUserGame: SpaceClientModule["subscriptions"] = ({
   const gameModel = model.games[spaceId] ?? Game.init(modelGame.t)
 
   const gameSub = Game.subscriptions({
-    ctx: { ...clientCtx, space: spaceState, quit() {}, viewProfile() {} },
+    ctx: { ...clientCtx, space: spaceState },
     modelGame: modelGame,
     model: gameModel,
   })
@@ -232,13 +255,7 @@ const View: SpaceClientModule["View"] = (input) => {
     return (
       <Game.View
         modelGame={space.game}
-        ctx={{
-          ...ctx,
-          space: space,
-          currentUserId: ctx.currentUserId,
-          quit() {},
-          viewProfile() {},
-        }}
+        ctx={{ ...ctx, space: space, currentUserId: ctx.currentUserId }}
         dispatch={(c) => dispatch({ t: "game", spaceId: space.spaceId, c })}
         model={model.games[ctx.space.spaceId] ?? Game.init(space.game.t)}
       />
@@ -259,14 +276,13 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
       <div className="flex h-full w-full flex-1 flex-col">
         <ViewGameHeader />
         <ViewUsersInSpaceList
+          onOpenUserDetails={(userId) =>
+            dispatch({ t: "clicked-user", userId })
+          }
           ctx={{
             ...ctx,
             space,
             currentUserId,
-            quit() {},
-            viewProfile(_userId) {
-              //
-            },
           }}
         />
       </div>

@@ -1,6 +1,7 @@
 import { err, Result } from "gamezilla/@SHARED/core"
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.core"
 import * as VsUser from "./@CHILD/vs-user/vs-user.core"
+import { GameMainMenu } from "../../@SHARED/game"
 
 //
 //
@@ -33,6 +34,7 @@ export const parseModel = (): Result<string, ModelServer> => {
 //
 
 export type MsgClient =
+  | GameMainMenu.Msg
   | { t: "vs-user"; c: VsUser.MsgClient }
   | { t: "vs-bot"; c: VsBot.MsgClient }
   | Req

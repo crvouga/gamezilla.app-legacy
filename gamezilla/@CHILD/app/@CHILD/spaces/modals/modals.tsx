@@ -8,10 +8,27 @@ import {
 } from "../@CHILD/game/@SHARED/game"
 import { SpaceClientCtx } from "../@SHARED/space"
 
-const update: SpaceClientModule["update"] = ({ msg, msgEvt, model }) => {
+const update: SpaceClientModule["update"] = ({
+  msg,
+  msgEvt,
+  msgCmd,
+  model,
+}) => {
   switch (msgEvt?.t) {
     case "routing/route-changed": {
       return { model: { ...model, modal: null } }
+    }
+  }
+
+  switch (msgCmd?.t) {
+    case "space/open-user-details": {
+      return {
+        model: {
+          ...model,
+          modalPreviewUserId: msgCmd.userId,
+          modal: "user-preview",
+        },
+      }
     }
   }
 
@@ -54,8 +71,6 @@ const View: SpaceClientModule["View"] = ({ ctx, dispatch, model }) => {
     ...ctx,
     currentUserId: ctx.currentUserId,
     space: ctx.space,
-    quit() {},
-    viewProfile() {},
   }
   return (
     <>
@@ -65,7 +80,12 @@ const View: SpaceClientModule["View"] = ({ ctx, dispatch, model }) => {
         open={model.modal === "users"}
         onClose={() => dispatch({ t: "closed-modal" })}
       >
-        <ViewUsersInSpaceList ctx={spaceCtx} />
+        <ViewUsersInSpaceList
+          onOpenUserDetails={(userId) =>
+            dispatch({ t: "clicked-user", userId })
+          }
+          ctx={spaceCtx}
+        />
       </Drawer>
 
       <Drawer

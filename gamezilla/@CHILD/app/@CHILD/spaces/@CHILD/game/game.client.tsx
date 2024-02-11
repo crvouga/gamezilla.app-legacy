@@ -2,17 +2,17 @@ import {
   SpaceClientCtx,
   SpaceClientEvent,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client"
 import { Sub } from "gamezilla/@SHARED/core"
 import { GameClientModule } from "../../@SHARED/architecture/game-client-v2"
+import { SpaceClientCmd } from "../../@SHARED/space-client-cmd"
 import { ConnectFour } from "./@CHILD/connect-four/connect-four.client"
 import { Flow } from "./@CHILD/flow/flow.client"
 import {
+  GameName,
   ModelClient,
+  ModelGame,
   MsgClient,
   MsgGame,
-  GameName,
-  ModelGame,
   MsgToClient,
   MsgToServer,
 } from "./game.core"
@@ -35,7 +35,7 @@ type Module = GameClientModule<{
   Ctx: SpaceClientCtx
   MsgInCmd: null
   MsgInEvent: SpaceClientEvent
-  MsgOutCmd: ClientCmd<{
+  MsgOutCmd: SpaceClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>
@@ -96,7 +96,7 @@ const update: Module["update"] = (input) => {
 
       const tagged = GameClientModule.tagOutput(
         "connect-four",
-        (msgCmd) => ClientCmd.tag("connect-four", msgCmd),
+        (msgCmd) => SpaceClientCmd.tag("connect-four", msgCmd),
         updated,
       )
 
@@ -117,7 +117,7 @@ const update: Module["update"] = (input) => {
 
       const tagged = GameClientModule.tagOutput(
         "flow",
-        (msgCmd) => ClientCmd.tag("flow", msgCmd),
+        (msgCmd) => SpaceClientCmd.tag("flow", msgCmd),
         updated,
       )
 

@@ -1,6 +1,7 @@
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { RemoteResult, Result } from "gamezilla/@SHARED/core"
+import { GameMainMenu } from "../../@SHARED/game"
 import * as Puzzle from "./@CHILD/puzzle/puzzle.core"
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.core"
 import * as VsUser from "./@CHILD/vs-user/vs-user.core"
@@ -26,6 +27,7 @@ export type ModelServer =
 type Mode = ModelServer["t"]
 
 export type MsgClient =
+  | GameMainMenu.Msg
   | Req
   | { t: "vs-user"; c: VsUser.MsgClient }
   | { t: "vs-bot"; c: VsBot.MsgClient }

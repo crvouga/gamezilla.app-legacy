@@ -1,4 +1,4 @@
-import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+import { GameMainMenu } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
 import { GameClient } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client"
 import {
   SpaceClientCtx,
@@ -88,15 +88,16 @@ export const View = ({
 
   if (model.t === "none") {
     return (
-      <MainMenuScreen.View
+      <GameMainMenu.View
+        dispatch={dispatch}
         title="Tic-Tac-Toe"
         ctx={ctx}
         renderCoverArt={(props) => <CoverArt {...props} />}
         buttons={[
-          MainMenuScreen.buttons.playFriend({
+          GameMainMenu.buttons.playFriend({
             onClick: () => dispatch({ t: "input-mode", mode: "vs-user" }),
           }),
-          MainMenuScreen.buttons.playComputer({
+          GameMainMenu.buttons.playComputer({
             onClick: () => dispatch({ t: "input-mode", mode: "vs-bot" }),
           }),
         ]}

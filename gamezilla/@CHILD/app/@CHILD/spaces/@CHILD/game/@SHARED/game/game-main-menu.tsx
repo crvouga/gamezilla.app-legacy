@@ -8,6 +8,65 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { ViewGameHeader } from "./view-game-header"
 import { ViewUsersInSpaceList } from "./view-users-in-space-list"
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import {
+  SpaceClientCmd,
+  SpaceClientCmdTypes,
+  exitGame,
+  openUserDetails,
+} from "../../../../@SHARED/space-client-cmd"
+
+//
+//
+//
+//
+//
+//
+
+export type Msg =
+  | {
+      t: "game-main-menu/clicked-open-user-details-button"
+      userId: UserId
+    }
+  | {
+      t: "game-main-menu/clicked-exit-game-button"
+    }
+
+export const update = <TModel, TMsg, T extends SpaceClientCmdTypes>({
+  msg,
+  model,
+}: {
+  model: TModel
+  msg?: Msg | TMsg | null
+}): {
+  model: TModel
+  msgCmd: SpaceClientCmd<T>[]
+} => {
+  if (typeof msg !== "object" || !msg || !("t" in msg)) {
+    return { model, msgCmd: [] }
+  }
+
+  switch (msg?.t) {
+    case "game-main-menu/clicked-exit-game-button": {
+      return { model, msgCmd: [exitGame()] }
+    }
+
+    case "game-main-menu/clicked-open-user-details-button": {
+      return { model, msgCmd: [openUserDetails(msg.userId)] }
+    }
+
+    default: {
+      return { model, msgCmd: [] }
+    }
+  }
+}
+
+//
+//
+//
+//
+//
+//
 
 type MainMenuButton = {
   renderIcon: (input: { className: string }) => VDom
@@ -16,14 +75,16 @@ type MainMenuButton = {
   onClick: () => void
 }
 
-const View = ({
+export const View = ({
   title,
   renderCoverArt,
   buttons,
   ctx,
+  dispatch,
 }: {
   ctx: SpaceClientCtx
   title: string
+  dispatch: (msg: Msg) => void
   renderCoverArt: (props: { className: string }) => VDom
   buttons: MainMenuButton[]
 }) => {
@@ -31,7 +92,15 @@ const View = ({
     return (
       <div className="flex h-full w-full flex-col">
         <ViewGameHeader title={title} renderCoverArt={renderCoverArt} />
-        <ViewUsersInSpaceList ctx={ctx} />
+        <ViewUsersInSpaceList
+          onOpenUserDetails={(userId) =>
+            dispatch({
+              t: "game-main-menu/clicked-open-user-details-button",
+              userId,
+            })
+          }
+          ctx={ctx}
+        />
       </div>
     )
   }
@@ -65,17 +134,19 @@ const View = ({
 
       <div className="flex justify-center border-t border-neutral-600 p-4">
         <Button
-          onClick={ctx.quit}
+          onClick={() =>
+            dispatch({ t: "game-main-menu/clicked-exit-game-button" })
+          }
           className="w-full"
           start={<IconArrowLeftOnRect className="h-6 w-6" />}
-          text="Quit"
+          text="Exit"
         />
       </div>
     </div>
   )
 }
 
-const buttons = {
+export const buttons = {
   playFriend: (input: { onClick: () => void }): MainMenuButton => {
     return {
       ...input,
@@ -93,9 +164,4 @@ const buttons = {
       description: "Play against a computer",
     }
   },
-}
-
-export const MainMenuScreen = {
-  buttons,
-  View,
 }

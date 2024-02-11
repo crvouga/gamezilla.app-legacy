@@ -1,4 +1,4 @@
-import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+import { GameMainMenu } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/feed-item"
@@ -12,14 +12,15 @@ import {
   playSound,
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { Sub } from "gamezilla/@SHARED/core"
+import { SpaceClientCmd } from "../../../../@SHARED/space-client-cmd"
 import { VsBot } from "./@CHILD/vs-bot/vs-bot.client"
 import { VsUser } from "./@CHILD/vs-user/vs-user.client"
 import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art"
 import {
   ModelClient,
+  ModelGame,
   MsgClient,
   MsgGame,
-  ModelGame,
   MsgToClient,
   MsgToServer,
 } from "./connect-four.core"
@@ -42,7 +43,7 @@ type Module = GameClientModule<{
   Ctx: SpaceClientCtx
   MsgInCmd: null
   MsgInEvent: SpaceClientEvent
-  MsgOutCmd: ClientCmd<{
+  MsgOutCmd: SpaceClientCmd<{
     MsgClient: MsgClient
     MsgToServer: MsgToServer
   }>
@@ -70,6 +71,7 @@ const init: Module["init"] = { t: null }
 const update: Module["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
+    (model) => GameMainMenu.update({ ...input, model }),
     (model) => updateChild(model)(input),
     (model) => updateFromMsg(model)(input),
     (model) => updateFromMsgGame(model)(input),
@@ -81,20 +83,12 @@ const updateFromMsg =
   (input) => {
     const { msg } = input
 
-    if (!msg) {
-      return { model }
-    }
-
-    switch (msg.t) {
+    switch (msg?.t) {
       case "user-changed-mode": {
-        return {
-          model,
-          msgGame: [withId(msg)],
-        }
+        return { model, msgGame: [withId(msg)] }
       }
 
-      case "vs-user":
-      case "vs-bot": {
+      default: {
         return { model }
       }
     }
@@ -214,12 +208,13 @@ const View: Module["View"] = ({ dispatch, ctx, modelGame, model }) => {
   switch (modelGame.t) {
     case "none": {
       return (
-        <MainMenuScreen.View
+        <GameMainMenu.View
           ctx={ctx}
           title="Connect Four"
           renderCoverArt={(props) => <CoverArt {...props} />}
+          dispatch={dispatch}
           buttons={[
-            MainMenuScreen.buttons.playFriend({
+            GameMainMenu.buttons.playFriend({
               onClick: () =>
                 dispatch({
                   mode: "vs-user",
@@ -227,7 +222,7 @@ const View: Module["View"] = ({ dispatch, ctx, modelGame, model }) => {
                   userId: ctx.currentUserId,
                 }),
             }),
-            MainMenuScreen.buttons.playComputer({
+            GameMainMenu.buttons.playComputer({
               onClick: () =>
                 dispatch({
                   mode: "vs-bot",

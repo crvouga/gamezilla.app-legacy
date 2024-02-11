@@ -1,6 +1,7 @@
 import { WithEventMeta } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { GameMainMenu } from "../../@SHARED/game"
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.core"
 import * as VsUser from "./@CHILD/vs-user/vs-user.core"
 
@@ -33,6 +34,7 @@ export type Mode = "none" | "vs-user" | "vs-bot"
 //
 
 export type MsgClient =
+  | GameMainMenu.Msg
   | MsgGame
   | { t: "vs-user"; c: VsUser.MsgClient }
   | { t: "vs-bot"; c: VsBot.MsgClient }

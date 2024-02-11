@@ -63,11 +63,7 @@ export type SpaceCtx = {
   space: Space
 }
 
-export type SpaceClientCtx = ClientCtx &
-  SpaceCtx & {
-    quit: () => void
-    viewProfile: (userId: UserId) => void
-  }
+export type SpaceClientCtx = ClientCtx & SpaceCtx
 
 //
 //

@@ -1,4 +1,4 @@
-import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+import { GameMainMenu } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
 import { GameClient } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client"
 import {
   SpaceClientCtx,
@@ -13,6 +13,8 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { IconPuzzlePiece } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Eff, RemoteResult, Sub, isErr } from "gamezilla/@SHARED/core"
+import { GameClientModule } from "../../../../@SHARED/architecture/game-client-v2"
+import { SpaceClientCmd } from "../../../../@SHARED/space-client-cmd"
 import * as Puzzle from "./@CHILD/puzzle/puzzle.client"
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.client"
 import * as VsUser from "./@CHILD/vs-user/vs-user.client"
@@ -20,13 +22,12 @@ import { CoverArt } from "./@SHARED/chess-ui"
 import { CHESS_SOUND } from "./@SHARED/chess/chess-sounds"
 import {
   ModelClient,
+  ModelGame,
   MsgClient,
   MsgGame,
-  ModelGame,
   MsgToClient,
   MsgToServer,
 } from "./chess.core"
-import { GameClientModule } from "../../../../@SHARED/architecture/game-client-v2"
 
 //
 //
@@ -43,7 +44,7 @@ type Client = GameClient<{
   ClientCtx: SpaceClientCtx
   MsgGame: MsgGame
   ModelGame: ModelGame
-  ClientCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
+  ClientCmd: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
   ClientEvent: SpaceClientEvent
 }>
 
@@ -80,13 +81,11 @@ export const init: Client["init"] = ({ model }) => {
 export const update: Client["update"] = (input) => {
   return GameClientModule.chainUpdates(
     init(input),
-    //
+    (model) => GameMainMenu.update({ msg: input.msg, model }),
     (model) => {
       const { msg, ctx } = input
-      if (!msg) {
-        return { model }
-      }
-      switch (msg.t) {
+
+      switch (msg?.t) {
         case "input-mode": {
           return {
             model: {
@@ -153,6 +152,10 @@ export const update: Client["update"] = (input) => {
               msgCmd: ClientCmd.tag("puzzle", updated.msgCmd),
             }
           }
+          return { model }
+        }
+
+        default: {
           return { model }
         }
       }
@@ -289,12 +292,13 @@ export const View: Client["View"] = ({ ctx, modelGame, dispatch }) => {
   switch (modelGame.t) {
     case "none": {
       return (
-        <MainMenuScreen.View
+        <GameMainMenu.View
           title="Chess"
           ctx={ctx}
           renderCoverArt={(props) => <CoverArt {...props} />}
+          dispatch={dispatch}
           buttons={[
-            MainMenuScreen.buttons.playComputer({
+            GameMainMenu.buttons.playComputer({
               onClick: () =>
                 dispatch({
                   t: "input-mode",
@@ -302,7 +306,7 @@ export const View: Client["View"] = ({ ctx, modelGame, dispatch }) => {
                   userId: ctx.currentUserId,
                 }),
             }),
-            MainMenuScreen.buttons.playFriend({
+            GameMainMenu.buttons.playFriend({
               onClick: () =>
                 dispatch({
                   t: "input-mode",

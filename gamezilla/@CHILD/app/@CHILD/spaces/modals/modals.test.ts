@@ -5,8 +5,12 @@ import {
   init,
   clickedUser,
   changeRoute,
+  ctx,
 } from "../@TEST/client.ts"
 import { UserId } from "../../../@SHARED/data/user-id.ts"
+import { Modals } from "./modals.tsx"
+import { SpaceClientModule } from "../architechure/space-client.tsx"
+import { openUserDetails } from "../@SHARED/space-client-cmd.ts"
 
 describe("space client modals", () => {
   it("should start with no modals open", async () => {
@@ -48,5 +52,20 @@ describe("space client modals", () => {
       (model) => changeRoute(model, { t: "spaces", c: { t: "space-list" } }),
     )
     expect(output.model.modal === null).toBeTrue()
+  })
+
+  it("should open user details corresponding cmd", async () => {
+    const someUserId = UserId.generate()
+    const initial = await init()
+    const output = await SpaceClientModule.chainUpdates(
+      { model: initial.model },
+      //
+      (model) =>
+        Modals.update({ model, ctx, msgCmd: openUserDetails(someUserId) }),
+    )
+    expect(
+      output.model.modal === "user-preview" &&
+        output.model.modalPreviewUserId === someUserId,
+    ).toBeTrue()
   })
 })

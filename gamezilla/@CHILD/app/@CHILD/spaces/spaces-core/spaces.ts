@@ -113,7 +113,7 @@ export const listSpaces = ({
 
 export const toSpaceIdByUserId = (
   model: Model,
-  userId: UserId | null,
+  userId: UserId | null | undefined,
 ): SpaceId | null => {
   return userId ? model.spaceIdByUserId[userId] ?? null : null
 }

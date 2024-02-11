@@ -5,6 +5,7 @@ import * as Play from "./@CHILD/play/play.core"
 import * as Builder from "./@CHILD/builder/builder.core"
 import { FlowPuzzle } from "./@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "./@SHARED/flow-puzzle/flow-puzzle-id"
+import { GameMainMenu } from "../../@SHARED/game"
 
 //
 //
@@ -37,6 +38,7 @@ export type ModelServer =
 //
 
 export type MsgClient =
+  | GameMainMenu.Msg
   | { t: "msgGame"; c: MsgGame }
   | { t: "builder"; c: Builder.MsgClient }
   | { t: "play"; c: Play.MsgClient }

@@ -1,4 +1,4 @@
-import { MainMenuScreen } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+import { GameMainMenu } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client"
 import { Eff, Sub } from "gamezilla/@SHARED/core"
@@ -225,12 +225,15 @@ export const view = ({
   switch (model.t) {
     case "none": {
       return (
-        <MainMenuScreen.View
+        <GameMainMenu.View
           title="Gomoku"
           renderCoverArt={(props) => <CoverArt {...props} />}
           ctx={spaceCtx}
+          dispatch={() => {
+            //
+          }}
           buttons={[
-            MainMenuScreen.buttons.playComputer({
+            GameMainMenu.buttons.playComputer({
               onClick: () =>
                 dispatch({
                   t: "input-mode",
@@ -239,7 +242,7 @@ export const view = ({
                 }),
             }),
 
-            MainMenuScreen.buttons.playFriend({
+            GameMainMenu.buttons.playFriend({
               onClick: () =>
                 dispatch({
                   t: "input-mode",
