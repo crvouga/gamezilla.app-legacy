@@ -58,6 +58,15 @@ export const update: ServerModule["update"] = async ({
             result: ok(newGuestAccount.userId),
           }),
         ],
+        msgEvt: [
+          {
+            t: "auth/client-authenticated",
+            clientId: msgClient.clientId,
+            userId: newGuestAccount.userId,
+            sessionId: msgClient.sessionId,
+            loggedIn: true,
+          },
+        ],
       }
     }
   }

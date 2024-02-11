@@ -290,8 +290,7 @@ export const updateChild = async ({
 
   const userId = msgClient?.sessionId
     ? await AuthServer.toUserIdFromSessionId(
-        ctx,
-        model.auth,
+        AuthServer.getDeps({ ctx }),
         msgClient.sessionId,
       )
     : null

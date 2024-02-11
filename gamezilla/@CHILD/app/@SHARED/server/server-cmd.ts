@@ -105,6 +105,22 @@ export const sendToClient = <MsgToClient>(
   }
 }
 
+export const didSendToClient = <MsgToClient>(
+  output: { msgCmd?: ServerCmd<MsgToClient>[] | null },
+  clientId: ClientId,
+  predicate: (msg: MsgToClient) => boolean,
+): boolean => {
+  return (
+    output.msgCmd?.some(
+      (cmd) =>
+        cmd.t === "wire" &&
+        cmd.c.t === "send-to-client" &&
+        cmd.c.clientIds.includes(clientId) &&
+        predicate(cmd.c.msg),
+    ) ?? false
+  )
+}
+
 export const sendToSession = <MsgToClient>(
   sessionIds: SessionId[],
   msg: MsgToClient,

@@ -1,4 +1,4 @@
-import { describe, it } from "bun:test"
+import { describe, expect, it } from "bun:test"
 import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
 import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { ServerCtx } from "gamezilla/@CHILD/app/@SHARED/server"
@@ -7,7 +7,7 @@ import { LoggerConsole } from "gamezilla/@CHILD/app/@SHARED/server/logger"
 import { Posix } from "gamezilla/@SHARED/core"
 import { AccountDb } from "../@SHARED/server/account-db"
 import { SessionDb } from "../@SHARED/server/session-db"
-import { ModelServer, ServerModule } from "../auth.core"
+import { ModelServer, ServerDeps, ServerModule } from "../auth.core"
 import * as AuthServer from "../auth.server"
 
 const ctx: ServerCtx = {
@@ -23,31 +23,78 @@ const getDeps: ServerModule["getDeps"] = () => {
   }
 }
 
-const userClickedContinueAsGuestButton = async (model: ModelServer) => {
-  return AuthServer.update({
-    model,
-    ctx,
-    msgClient: {
-      t: "guest.clicked-continue-as-guest-button",
-      clientId: ClientId.generate(),
-      sessionId: SessionId.generate(),
-    },
-    deps: getDeps({ ctx }),
-  })
-}
+const clientClickedContinueAsGuestButton =
+  (deps: ServerDeps, clientId: ClientId, sessionId: SessionId) =>
+  async (model: ModelServer) => {
+    return AuthServer.update({
+      model,
+      ctx,
+      msgClient: {
+        t: "guest.clicked-continue-as-guest-button",
+        clientId,
+        sessionId,
+      },
+      deps,
+    })
+  }
 
-describe("auth continue as guest client", () => {
-  it("should request to continue as guest when button is clicked", async () => {
-    await AppServerModule.chainUpdates(
+describe("auth continue as guest server", () => {
+  it("should be able to handle request", async () => {
+    const deps = getDeps({ ctx })
+
+    const clientId = ClientId.generate()
+
+    const output = await AppServerModule.chainUpdates(
       AuthServer.init({ ctx }),
-      userClickedContinueAsGuestButton,
+      clientClickedContinueAsGuestButton(deps, clientId, SessionId.generate()),
     )
 
-    // expect(
-    //   didSendToClient(output, {
-    //     t: "guest.clicked-continue-as-guest-button",
-    //     result: ok(userId),
-    //   }),
-    // ).toBeTrue()
+    expect(
+      output.msgCmd?.some(
+        (msgCmd) =>
+          msgCmd.t === "wire" &&
+          msgCmd.c.t === "send-to-client" &&
+          msgCmd.c.clientIds.includes(clientId) &&
+          msgCmd.c.msg.t === "guest.continue-as-guest-result",
+      ),
+    ).toBeTrue()
+  })
+
+  it("should output a client authenitcated event", async () => {
+    const deps = getDeps({ ctx })
+
+    const clientId = ClientId.generate()
+    const sessionId = SessionId.generate()
+
+    const output = await AppServerModule.chainUpdates(
+      AuthServer.init({ ctx }),
+      clientClickedContinueAsGuestButton(deps, clientId, sessionId),
+    )
+
+    expect(
+      output.msgEvt?.some(
+        (msgEvt) =>
+          msgEvt.t === "auth/client-authenticated" &&
+          msgEvt.clientId === clientId &&
+          msgEvt.sessionId === sessionId &&
+          msgEvt.loggedIn,
+      ),
+    ).toBeTrue()
+  })
+
+  it("should login client", async () => {
+    const deps = getDeps({ ctx })
+
+    const clientId = ClientId.generate()
+    const sessionId = SessionId.generate()
+
+    await AppServerModule.chainUpdates(
+      AuthServer.init({ ctx }),
+      clientClickedContinueAsGuestButton(deps, clientId, sessionId),
+    )
+
+    const userId = await AuthServer.toUserIdFromSessionId(deps, sessionId)
+
+    expect(userId !== null).toBeTrue()
   })
 })

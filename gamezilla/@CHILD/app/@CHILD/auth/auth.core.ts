@@ -45,11 +45,13 @@ export type ServerModule = AppServerModule<{
   MsgOutEvent: ServerEvent
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  Deps: {
-    AccountDb: IAccountDb
-    SessionDb: ISessionDb
-  }
+  Deps: ServerDeps
 }>
+
+export type ServerDeps = {
+  AccountDb: IAccountDb
+  SessionDb: ISessionDb
+}
 
 //
 //

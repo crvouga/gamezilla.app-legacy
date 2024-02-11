@@ -1,15 +1,12 @@
 import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
 import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import {
-  ServerCmd,
-  ServerCtx,
-  sendToClient,
-} from "gamezilla/@CHILD/app/@SHARED/server"
+import { ServerCmd, sendToClient } from "gamezilla/@CHILD/app/@SHARED/server"
 import { Eff, Sub, isErr } from "gamezilla/@SHARED/core"
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server"
-import { SessionDb } from "./@SHARED/server/session-db"
-import { ModelServer, MsgToClient, ServerModule } from "./auth.core"
 import { AccountDb } from "./@SHARED/server/account-db"
+import { SessionDb } from "./@SHARED/server/session-db"
+import { MsgToClient, ServerDeps, ServerModule } from "./auth.core"
+import { ContinueAsGuestServer } from "./continue-as-guest"
 
 //
 //
@@ -60,17 +57,15 @@ export const update: ServerModule["update"] = async (input) => {
     (model) => updateFromClient({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
     (model) => updateChild({ ...input, model }),
+    (model) => ContinueAsGuestServer.update({ ...input, model }),
   )
 }
 
 export const toUserIdFromSessionId = async (
-  ctx: ServerCtx,
-  _model: ModelServer,
+  deps: ServerDeps,
   sessionId: SessionId,
 ): Promise<UserId | null> => {
-  const found = await getDeps({ ctx }).SessionDb.findUserIdBySessionId(
-    sessionId,
-  )
+  const found = await deps.SessionDb.findUserIdBySessionId(sessionId)
 
   if (isErr(found)) {
     return null
