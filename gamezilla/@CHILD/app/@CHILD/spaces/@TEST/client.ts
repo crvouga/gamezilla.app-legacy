@@ -12,6 +12,13 @@ import { Space, SpaceEvent } from "../spaces-core"
 import * as SpaceClient from "../spaces.client"
 import * as SpaceCore from "../spaces.core"
 
+//
+//
+//
+//
+//
+//
+
 export const ctx: ClientCtx = {
   currentRoute: {
     t: "spaces",
@@ -29,6 +36,13 @@ export const init = (ctxOverride: ClientCtx = ctx) => {
   return SpaceClient.init({ ctx: ctxOverride, stored: null })
 }
 
+//
+//
+//
+//
+//
+//
+
 export const serverConnected = async (model: SpaceCore.ModelClient) => {
   return SpaceClient.update({
     ctx,
@@ -38,6 +52,13 @@ export const serverConnected = async (model: SpaceCore.ModelClient) => {
     },
   })
 }
+
+//
+//
+//
+//
+//
+//
 
 export const userStartedSpace = (
   model: SpaceCore.ModelClient,
@@ -75,6 +96,13 @@ export const clickedStartSpaceButton = (
     },
   })
 }
+
+//
+//
+//
+//
+//
+//
 
 export const userJoinedSpace = (
   model: SpaceCore.ModelClient,
@@ -122,6 +150,14 @@ export const clickedJoinSpaceButton = (
   })
 }
 
+//
+//
+//
+//
+//
+//
+//
+
 export const userLeftSpace = (
   model: SpaceCore.ModelClient,
   userId: UserId,
@@ -167,6 +203,14 @@ export const clickedLeaveSpaceButton = (
     },
   })
 }
+
+//
+//
+//
+//
+//
+//
+//
 
 export const changeRoute = async (
   model: SpaceCore.ModelClient,

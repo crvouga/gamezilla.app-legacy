@@ -112,7 +112,7 @@ describe("sync client", () => {
     ).toBeTrue()
   })
 
-  it("sends event to server like user started space", async () => {
+  it("should send events to the server like user started space", async () => {
     const output = await AppClientModule.chainUpdates(
       await init(),
       //
@@ -131,7 +131,7 @@ describe("sync client", () => {
     ).toBeTrue()
   })
 
-  it("sends event to server like user joined space", async () => {
+  it("should send events to the server like user joined space", async () => {
     const spaceId = SpaceId.generate()
     const output = await AppClientModule.chainUpdates(
       await init(),
@@ -152,7 +152,7 @@ describe("sync client", () => {
     ).toBeTrue()
   })
 
-  it("sends event to server like user ended space", async () => {
+  it("should send events to the server like user ended space", async () => {
     const output = await AppClientModule.chainUpdates(
       await init(),
       //
