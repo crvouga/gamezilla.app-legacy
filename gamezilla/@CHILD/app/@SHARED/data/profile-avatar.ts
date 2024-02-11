@@ -18,8 +18,11 @@ export type ProfileAvatarStyle =
   | "personas"
   | "pixel-art"
   | "pixel-art-neutral"
+  | "fun-emoji"
+  | "thumbs"
 
 const STYLES: { [style in ProfileAvatarStyle]: ProfileAvatarStyle } = {
+  thumbs: "thumbs",
   adventurer: "adventurer",
   "adventurer-neutral": "adventurer-neutral",
   avataaars: "avataaars",
@@ -39,6 +42,7 @@ const STYLES: { [style in ProfileAvatarStyle]: ProfileAvatarStyle } = {
   personas: "personas",
   "pixel-art": "pixel-art",
   "pixel-art-neutral": "pixel-art-neutral",
+  "fun-emoji": "fun-emoji",
 }
 
 const ALL_STYLES = Object.keys(STYLES) as ProfileAvatarStyle[]

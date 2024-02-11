@@ -231,7 +231,7 @@ const findElseInsertNew = async ({
     userId,
     username: randomUsername,
     avatarSeed: randomSeed,
-    avatarStyle: "adventurer-neutral",
+    avatarStyle: "thumbs",
   }
 
   const inserted = await ProfileDb.insertOne(profileNew)

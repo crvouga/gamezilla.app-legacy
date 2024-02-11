@@ -1,5 +1,3 @@
-import { WithEventId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/feed-item"
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
@@ -10,18 +8,18 @@ import {
   VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Eff, Sub, batchMsgs, notAsked } from "gamezilla/@SHARED/core"
-import { Game } from "./@CHILD/game/game.client"
 import { SpaceClientCmd } from "./@SHARED/space-client-cmd"
 import { Input, Output, SpaceClientModule } from "./architechure/space-client"
 import { CurrentSpaceBottomBar } from "./current-space-bottom-bar/current-space-bottom-bar"
 import { EndSpaceClient } from "./end-space/end-space.client"
+import { Feed } from "./feed/feed"
 import { GameClient } from "./game/game.client"
 import { GoHome } from "./go-home/go-home"
 import { JoinSpaceClient } from "./join-space/join-space.client"
 import { LeaveSpaceClient } from "./leave-space/leave-space.client"
 import { ListSpacesClient } from "./list-spaces/list-spaces.client"
 import { Modals } from "./modals/modals"
-import { SpaceEvent, SpaceState, Spaces } from "./spaces-core"
+import { Spaces } from "./spaces-core"
 import { ClientModule, ModelClient, MsgClient } from "./spaces.core"
 import { StartSpaceClient } from "./start-space/start-space.client"
 import { SyncClient } from "./sync/sync.client"
@@ -280,7 +278,7 @@ const ViewSpaceScreen = (input: {
 
           <ViewTopBar {...input} ctx={spaceCtx} />
 
-          <ViewFeed
+          <Feed.View
             spaceState={spaceState}
             ctx={spaceCtx}
             model={model}
@@ -372,114 +370,6 @@ const ViewSpaceNotFound = ({
       />
     </div>
   )
-}
-
-const ViewFeed = ({
-  spaceState,
-  ctx,
-  model,
-}: {
-  spaceState: SpaceState.State
-  dispatch: (m: MsgClient) => void
-  model: ModelClient
-  ctx: SpaceClientCtx
-}) => {
-  const msgEvt =
-    spaceState.type === "started"
-      ? Spaces.toEventWithMeta(
-          model,
-          spaceState.spaceId,
-          spaceState.latestEvent,
-        )
-      : null
-
-  return (
-    <div className="flex h-6 w-full items-center justify-center border-b border-neutral-600 p-1">
-      {spaceState.type === "started" && msgEvt ? (
-        <ViewFeedItem ctx={ctx} msgEvt={msgEvt} state={spaceState} />
-      ) : null}
-    </div>
-  )
-}
-
-const ViewFeedItem = ({
-  ctx,
-  msgEvt,
-  state,
-}: {
-  ctx: SpaceClientCtx
-  msgEvt: WithEventId<SpaceEvent>
-  state: SpaceState.Started
-}) => {
-  switch (msgEvt.t) {
-    case "game": {
-      if (!state.game) {
-        return null
-      }
-      return (
-        <Game.ViewFeedItem
-          ctx={ctx}
-          msgGame={{ ...msgEvt, ...msgEvt.c }}
-          modelGame={state.game}
-          dispatch={(_msg) => {
-            //
-          }}
-        />
-      )
-    }
-
-    case "user-ended-space": {
-      const profile = ctx.profiles[msgEvt.userId]
-      return (
-        <FeedItem.Info
-          text={`${profile?.username ?? "Someone"} ended the space`}
-        />
-      )
-    }
-
-    case "user-inputted-game": {
-      const profile = ctx.profiles[msgEvt.userId]
-      if (!msgEvt.game) {
-        return (
-          <FeedItem.Info
-            text={`${profile?.username ?? "Someone"} quit the game`}
-          />
-        )
-      }
-      return (
-        <FeedItem.Info
-          text={`${profile?.username ?? "Someone"} started a game`}
-        />
-      )
-    }
-
-    case "user-joined-space": {
-      const profile = ctx.profiles[msgEvt.userId]
-      return (
-        <FeedItem.Info
-          text={`${profile?.username ?? "Someone"} joined the space`}
-        />
-      )
-    }
-
-    case "user-left-space": {
-      const profile = ctx.profiles[msgEvt.userId]
-      return (
-        <FeedItem.Info
-          text={`${profile?.username ?? "Someone"} left the space`}
-        />
-      )
-    }
-
-    case "user-started-space": {
-      const profile = ctx.profiles[msgEvt.userId]
-      return (
-        <FeedItem.Info
-          text={`${profile?.username ?? "Someone"} started the space`}
-        />
-      )
-    }
-  }
 }
 
 export const ViewCurrentSpaceBar = CurrentSpaceBottomBar.View

@@ -84,6 +84,7 @@ const ViewStartSpaceButton: SpaceClientModule["View"] = ({ dispatch }) => {
     <Button
       size="lg"
       color="primary"
+      className="w-full"
       onClick={() =>
         dispatch({
           t: "clicked-start-space-button",

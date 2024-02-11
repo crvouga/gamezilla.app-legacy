@@ -18,6 +18,7 @@ import { gameNameToString } from "../@CHILD/game/game.core"
 import { withId } from "../@SHARED/event"
 import { SpaceClientModule } from "../architechure/space-client"
 import { SpaceEvent, Spaces } from "../spaces-core"
+import { Feed } from "../feed/feed"
 
 const update: SpaceClientModule["update"] = (input) => {
   return SpaceClientModule.chainUpdates(
@@ -119,6 +120,17 @@ const View: SpaceClientModule["View"] = (input) => {
   return (
     <div className="flex h-full w-full flex-col">
       <TopBar left={<BackButton {...input} />} title="Space" />
+
+      <Feed.View
+        spaceState={spaceState}
+        ctx={{
+          ...ctx,
+          currentUserId,
+          space,
+        }}
+        model={model}
+        dispatch={dispatch}
+      />
 
       <div className="flex w-full flex-1 flex-col overflow-y-scroll">
         <ViewGameHeader
