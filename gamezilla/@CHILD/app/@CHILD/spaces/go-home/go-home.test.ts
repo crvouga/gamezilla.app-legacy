@@ -1,20 +1,24 @@
 import { describe, expect, it } from "bun:test"
-import { SpaceId } from "../../@SHARED/data"
+import { SpaceId } from "../../../@SHARED/data"
 import {
   clickedGoHomeButton,
   clickedStartSpaceButton,
   init,
-} from "./@TEST/client"
-import { SpaceClientModule } from "./architechure/space-client"
+} from "../@TEST/client"
+import { SpaceClientModule } from "../architechure/space-client"
 
-describe("spaces client", () => {
+describe("spaces go home", () => {
   it("should go to list screen when clicking go home button", async () => {
-    const initial = await init()
     const spaceId = SpaceId.generate()
 
-    const output = await SpaceClientModule.chainUpdates(
-      { model: initial.model },
+    const started = await SpaceClientModule.chainUpdates(
+      init(),
       (model) => clickedStartSpaceButton(model, spaceId),
+      //
+    )
+
+    const output = await SpaceClientModule.chainUpdates(
+      { model: started.model },
       (model) => clickedGoHomeButton(model),
       //
     )
@@ -31,11 +35,10 @@ describe("spaces client", () => {
   })
 
   it("should play a sound when clicking go home button", async () => {
-    const initial = await init()
     const spaceId = SpaceId.generate()
 
     const startedSpace = await SpaceClientModule.chainUpdates(
-      { model: initial.model },
+      init(),
       (model) => clickedStartSpaceButton(model, spaceId),
       //
     )

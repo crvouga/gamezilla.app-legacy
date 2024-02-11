@@ -29,6 +29,7 @@ import { SpaceEvent, SpaceState, Spaces } from "./spaces-core"
 import { ClientModule, ModelClient, MsgClient } from "./spaces.core"
 import { StartSpaceClient } from "./start-space/start-space.client"
 import { SyncClient } from "./sync/sync.client"
+import { GoHome } from "./go-home/go-home"
 
 //
 //
@@ -145,26 +146,9 @@ const updateChild: SpaceClientModule["update"] = (input) => {
     (model) => StartSpaceClient.update({ ...input, model }),
     (model) => JoinSpaceClient.update({ ...input, model }),
     (model) => ListSpacesClient.update({ ...input, model }),
-    (model) => updateGoHomeButton({ ...input, model }),
+    (model) => GoHome.update({ ...input, model }),
     (model) => CurrentSpaceBottomBar.update({ ...input, model }),
   )
-}
-
-const updateGoHomeButton: SpaceClientModule["update"] = ({ msg, model }) => {
-  switch (msg?.t) {
-    case "clicked-go-home-button": {
-      return {
-        model,
-        msgCmd: [
-          pushRoute({ t: "spaces", c: { t: "space-list" } }),
-          playSound(APP_SOUND.navBackwardMin),
-        ],
-      }
-    }
-    default: {
-      return { model }
-    }
-  }
 }
 
 const updateSpacesFromSpaceEvent: SpaceClientModule["update"] = ({
