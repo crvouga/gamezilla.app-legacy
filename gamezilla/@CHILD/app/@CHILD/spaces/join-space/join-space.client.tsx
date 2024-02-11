@@ -73,32 +73,23 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
 }
 
 const View: SpaceClientModule["View"] = (input) => {
-  const { model, ctx } = input
+  const { model, ctx, dispatch } = input
+  const { currentUserId, space } = ctx
 
-  if (!ctx.space || !ctx.currentUserId) {
+  if (!space || !currentUserId) {
     return null
   }
 
-  const space = Spaces.toSpaceState(model, ctx.space.spaceId)
+  const spaceState = Spaces.toSpaceState(model, space.spaceId)
 
-  switch (space.type) {
-    case "initial": {
-      return <ViewSpaceInitial {...input} />
-    }
-
-    case "ended": {
-      return <ViewSpaceEnded {...input} />
-    }
-
-    case "started": {
-      return <ViewSpaceStarted {...input} />
-    }
+  if (spaceState.type !== "started") {
+    return null
   }
-}
 
-const ViewHeader: SpaceClientModule["View"] = (input) => {
+  const game = spaceState.game
+
   return (
-    <>
+    <div className="flex h-full w-full flex-col">
       <TopBar left={<BackButton {...input} />} title="Space" />
       {/* {false && (
         <ViewFeed
@@ -108,30 +99,6 @@ const ViewHeader: SpaceClientModule["View"] = (input) => {
           spaceState={space}
         />
       )} */}
-    </>
-  )
-}
-
-const ViewSpaceStarted: SpaceClientModule["View"] = (input) => {
-  const { model, ctx, dispatch } = input
-
-  const currentUserId = ctx.currentUserId
-
-  if (!ctx.space || !currentUserId) {
-    return null
-  }
-
-  const space = Spaces.toSpaceState(model, ctx.space.spaceId)
-
-  if (space.type !== "started") {
-    return null
-  }
-
-  const game = space.game
-
-  return (
-    <div className="flex h-full w-full flex-col">
-      <ViewHeader {...input} />
 
       <div className="flex w-full flex-1 flex-col overflow-y-scroll">
         <ViewGameHeader
@@ -175,30 +142,6 @@ const ViewSpaceStarted: SpaceClientModule["View"] = (input) => {
           }}
           text="Join space"
         />
-      </div>
-    </div>
-  )
-}
-
-const ViewSpaceInitial: SpaceClientModule["View"] = (input) => {
-  return (
-    <div className="flex h-full w-full flex-col">
-      <ViewHeader {...input} />
-
-      <div className="w-full flex-1 items-center justify-center">
-        Space not found
-      </div>
-    </div>
-  )
-}
-
-const ViewSpaceEnded: SpaceClientModule["View"] = (input) => {
-  return (
-    <div className="flex h-full w-full flex-col">
-      <ViewHeader {...input} />
-
-      <div className="w-full flex-1 items-center justify-center">
-        Space not found
       </div>
     </div>
   )
