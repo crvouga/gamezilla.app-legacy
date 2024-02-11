@@ -78,7 +78,7 @@ describe("list spaces client", () => {
     expect(isResponseOk(updated.model.listSpacesRequest)).toBeTrue()
   })
 
-  it("shoild navigate to space screen after clicking a space card", async () => {
+  it("should navigate to space screen after clicking a space card", async () => {
     const SpaceA = SpaceId.generate()
     const updated = await AppClientModule.chainUpdates(
       await init(),
