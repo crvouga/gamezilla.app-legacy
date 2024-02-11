@@ -1,8 +1,4 @@
-import {
-  APP_SOUND,
-  playSound,
-  pushRoute,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
 import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Eff, Sub } from "gamezilla/@SHARED/core"
 import {
@@ -26,22 +22,7 @@ const update: SpaceClientModule["update"] = (input) => {
     (model) => updateGame({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
-    (model) => updateGoHomeButton({ ...input, model }),
   )
-}
-
-const updateGoHomeButton: SpaceClientModule["update"] = ({ msg, model }) => {
-  switch (msg?.t) {
-    case "clicked-go-home-button": {
-      return {
-        model,
-        msgCmd: [pushRoute({ t: "spaces", c: { t: "space-list" } })],
-      }
-    }
-    default: {
-      return { model }
-    }
-  }
 }
 
 const updateFromMsg: SpaceClientModule["update"] = ({ msg, model, ctx }) => {

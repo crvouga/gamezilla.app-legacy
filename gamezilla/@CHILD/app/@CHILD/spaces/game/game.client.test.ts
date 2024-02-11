@@ -60,28 +60,4 @@ describe("game client", () => {
 
     expect(gameName).toBeNull()
   })
-
-  it("should go to list screen when clicking go home button", async () => {
-    const initial = await init()
-    const spaceId = SpaceId.generate()
-
-    const output = await SpaceClientModule.chainUpdates(
-      { model: initial.model },
-      //
-      (model) => clickedStartSpaceButton(model, spaceId),
-      (model) => clickedGoHomeButton(model),
-    )
-
-    expect(
-      output.msgCmd?.some(
-        (msgCmd) =>
-          msgCmd.t === "routing" &&
-          msgCmd.c.t === "push" &&
-          eq(msgCmd.c.route, {
-            t: "spaces",
-            c: { t: "space-list" },
-          }),
-      ),
-    ).toBeTrue()
-  })
 })

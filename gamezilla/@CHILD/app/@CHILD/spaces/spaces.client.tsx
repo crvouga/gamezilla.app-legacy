@@ -1,7 +1,12 @@
 import { WithEventId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/feed-item"
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client"
+import {
+  APP_SOUND,
+  ClientCtx,
+  playSound,
+  pushRoute,
+} from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
 import {
   Avatar,
@@ -142,7 +147,25 @@ const updateChild: SpaceClientModule["update"] = (input) => {
     (model) => StartSpaceClient.update({ ...input, model }),
     (model) => JoinSpaceClient.update({ ...input, model }),
     (model) => ListSpacesClient.update({ ...input, model }),
+    (model) => updateGoHomeButton({ ...input, model }),
   )
+}
+
+const updateGoHomeButton: SpaceClientModule["update"] = ({ msg, model }) => {
+  switch (msg?.t) {
+    case "clicked-go-home-button": {
+      return {
+        model,
+        msgCmd: [
+          pushRoute({ t: "spaces", c: { t: "space-list" } }),
+          playSound(APP_SOUND.navBackwardMin),
+        ],
+      }
+    }
+    default: {
+      return { model }
+    }
+  }
 }
 
 const updateSpacesFromSpaceEvent: SpaceClientModule["update"] = ({
@@ -303,12 +326,7 @@ const ViewTopBar: SpaceClientModule["View"] = (input) => {
   return (
     <nav className="flex h-14 w-full items-center border-b border-neutral-600">
       <ViewTopBarButton
-        onClick={() =>
-          dispatch({
-            t: "clicked-link",
-            route: { t: "spaces", c: { t: "space-list" } },
-          })
-        }
+        onClick={() => dispatch({ t: "clicked-go-home-button" })}
         label="Home"
         icon={<IconHome className="h-6 w-6" />}
       />
