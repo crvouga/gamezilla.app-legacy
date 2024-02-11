@@ -1,8 +1,4 @@
 import {
-  ViewGameHeader,
-  ViewUsersInSpaceList,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
-import {
   WithEventId,
   withId,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
@@ -21,7 +17,6 @@ import {
 import { Eff, Sub, batchMsgs, notAsked } from "gamezilla/@SHARED/core"
 import { CoverArt } from "./@CHILD/game/game-cover-art"
 import { Game } from "./@CHILD/game/game.client"
-import { gameNameList, gameNameToString } from "./@CHILD/game/game.core"
 import { SpaceClientModule } from "./architechure/space-client"
 import { EndSpaceClient } from "./end-space/end-space.client"
 import { GameClient } from "./game/game.client"
@@ -336,34 +331,6 @@ const ViewSpaceStarted: SpaceClientModule["View"] = (input) => {
   )
 }
 
-const ViewFeed = ({
-  spaceState,
-  ctx,
-  model,
-}: {
-  spaceState: SpaceState.State
-  dispatch: (m: MsgClient) => void
-  model: ModelClient
-  ctx: SpaceClientCtx
-}) => {
-  const msgEvt =
-    spaceState.type === "started"
-      ? Spaces.toEventWithMeta(
-          model,
-          spaceState.spaceId,
-          spaceState.latestEvent,
-        )
-      : null
-
-  return (
-    <div className="flex h-6 w-full items-center justify-center border-b border-neutral-600 p-1">
-      {spaceState.type === "started" && msgEvt ? (
-        <ViewFeedItem ctx={ctx} msgEvt={msgEvt} state={spaceState} />
-      ) : null}
-    </div>
-  )
-}
-
 const ViewSpaceScreenMain = (input: {
   space: SpaceState.Started
   model: ModelClient
@@ -391,89 +358,13 @@ const ViewSpaceScreenMain = (input: {
       />
 
       <div className="flex w-full flex-1 flex-col overflow-hidden">
-        <ViewGame
+        <GameClient.View
           ctx={ctx}
           dispatch={dispatch}
           dispatchEvent={dispatchEvent}
           model={model}
           space={space}
         />
-      </div>
-    </div>
-  )
-}
-
-const ViewGame = ({
-  space,
-  model,
-  ctx,
-  dispatch,
-  dispatchEvent,
-}: {
-  space: SpaceState.Started
-  model: ModelClient
-  ctx: SpaceClientCtx
-  dispatch: (m: MsgClient) => void
-  dispatchEvent: (m: SpaceEvent) => void
-}) => {
-  if (space.game) {
-    return (
-      <Game.View
-        modelGame={space.game}
-        ctx={ctx}
-        dispatch={(c) => dispatch({ t: "game", spaceId: ctx.space.spaceId, c })}
-        model={model.games[ctx.space.spaceId] ?? Game.init(space.game.t)}
-      />
-    )
-  }
-
-  return <ViewScreenNotInGame ctx={ctx} dispatchEvent={dispatchEvent} />
-}
-
-export const ViewScreenNotInGame = ({
-  ctx,
-
-  dispatchEvent,
-}: {
-  ctx: SpaceClientCtx
-  dispatchEvent: (m: SpaceEvent) => void
-}) => {
-  if (ctx.space.hostId !== ctx.currentUserId) {
-    return (
-      <div className="flex h-full w-full flex-1 flex-col">
-        <ViewGameHeader />
-        <ViewUsersInSpaceList ctx={ctx} />
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex h-full w-full flex-1 flex-col gap-4 p-4">
-      <h1 className="text-center text-3xl font-bold">Games</h1>
-
-      <div className="grid grid-cols-3 justify-between gap-8">
-        {gameNameList.map((gameName) => (
-          <div key={gameName}>
-            <button
-              aria-label={gameName}
-              onClick={() =>
-                dispatchEvent({
-                  t: "user-inputted-game",
-                  spaceId: ctx.space.spaceId,
-                  userId: ctx.currentUserId,
-                  game: gameName,
-                })
-              }
-              className="flex overflow-hidden rounded-lg border border-neutral-600"
-            >
-              <CoverArt gameName={gameName} />
-            </button>
-
-            <p className="mt-2 w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-semibold">
-              {gameNameToString(gameName)}
-            </p>
-          </div>
-        ))}
       </div>
     </div>
   )
@@ -491,7 +382,7 @@ const ViewTopBar: SpaceClientModule["View"] = (input) => {
 
   return (
     <nav className="flex h-14 w-full items-center border-b border-neutral-600">
-      <ViewTopButton
+      <ViewTopBarButton
         onClick={() =>
           dispatch({
             t: "clicked-link",
@@ -502,7 +393,7 @@ const ViewTopBar: SpaceClientModule["View"] = (input) => {
         icon={<IconHome className="h-6 w-6" />}
       />
 
-      <ViewTopButton
+      <ViewTopBarButton
         onClick={() => dispatch({ t: "clicked-people-button" })}
         label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
         icon={<IconUserGroup className="h-6 w-6" />}
@@ -525,7 +416,7 @@ const ViewTopBar: SpaceClientModule["View"] = (input) => {
   )
 }
 
-const ViewTopButton = ({
+const ViewTopBarButton = ({
   icon,
   label,
   onClick,
@@ -584,6 +475,34 @@ const ViewSpaceEnded = ({ dispatch }: { dispatch: (m: MsgClient) => void }) => {
         start={<IconHome className="h-6 w-6" />}
         text="Go Home"
       />
+    </div>
+  )
+}
+
+const ViewFeed = ({
+  spaceState,
+  ctx,
+  model,
+}: {
+  spaceState: SpaceState.State
+  dispatch: (m: MsgClient) => void
+  model: ModelClient
+  ctx: SpaceClientCtx
+}) => {
+  const msgEvt =
+    spaceState.type === "started"
+      ? Spaces.toEventWithMeta(
+          model,
+          spaceState.spaceId,
+          spaceState.latestEvent,
+        )
+      : null
+
+  return (
+    <div className="flex h-6 w-full items-center justify-center border-b border-neutral-600 p-1">
+      {spaceState.type === "started" && msgEvt ? (
+        <ViewFeedItem ctx={ctx} msgEvt={msgEvt} state={spaceState} />
+      ) : null}
     </div>
   )
 }
