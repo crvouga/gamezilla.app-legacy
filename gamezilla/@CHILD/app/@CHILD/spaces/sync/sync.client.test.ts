@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test"
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
+import { addProfiles } from "gamezilla/@CHILD/app/@SHARED/client"
 import {
   Profile,
   SpaceId,
@@ -8,6 +9,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/data"
 import { eq } from "gamezilla/@SHARED/core"
 import {
+  clickedJoinSpaceButton,
   clickedStartSpaceButton,
   ctx,
   gotCurrentUsersSpace,
@@ -17,11 +19,9 @@ import {
   makeSpace,
   serverConnected,
   userEndedSpace,
-  userJoinedSpace,
   userStartedSpace,
 } from "../@TEST/client"
 import { Spaces } from "../spaces-core"
-import { addProfiles } from "gamezilla/@CHILD/app/@SHARED/client"
 
 const hasExcatlyOne = <T>(
   items: T[],
@@ -116,9 +116,7 @@ describe("sync client", () => {
     const output = await AppClientModule.chainUpdates(
       await init(),
       //
-      (model) => {
-        return userStartedSpace(model, UserId.generate(), SpaceId.generate())
-      },
+      (model) => clickedStartSpaceButton(model, SpaceId.generate()),
     )
 
     expect(
@@ -134,10 +132,12 @@ describe("sync client", () => {
   })
 
   it("sends event to server like user joined space", async () => {
+    const spaceId = SpaceId.generate()
     const output = await AppClientModule.chainUpdates(
       await init(),
       //
-      (model) => userJoinedSpace(model, UserId.generate(), SpaceId.generate()),
+      (model) => userStartedSpace(model, UserId.generate(), spaceId),
+      (model) => clickedJoinSpaceButton(model, spaceId),
     )
 
     expect(

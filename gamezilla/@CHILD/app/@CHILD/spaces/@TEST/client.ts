@@ -6,10 +6,11 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { Posix, TimeSpan, p } from "gamezilla/@SHARED/core"
+import { LamportClock, LamportTimestamp } from "gamezilla/@SHARED/lamport-clock"
+import { GameName } from "../@CHILD/game/game.core"
+import { Space, SpaceEvent } from "../spaces-core"
 import * as SpaceClient from "../spaces.client"
 import * as SpaceCore from "../spaces.core"
-import { Space, SpaceEvent } from "../spaces-core"
-import { GameName } from "../@CHILD/game/game.core"
 
 export const ctx: ClientCtx = {
   currentRoute: {
@@ -46,13 +47,16 @@ export const userStartedSpace = (
   return SpaceClient.update({
     ctx,
     model: model,
-    msg: {
+    msgServer: {
       t: "event",
-      c: withId({
-        t: "user-started-space",
-        spaceId,
-        userId,
-      }),
+      c: {
+        ...withId({
+          t: "user-started-space",
+          spaceId,
+          userId,
+        }),
+        happenedAt: LamportTimestamp.fromNumber(0),
+      },
     },
   })
 }
@@ -77,16 +81,43 @@ export const userJoinedSpace = (
   userId: UserId,
   spaceId: SpaceId,
 ) => {
+  const space = model.spaces[spaceId]
+  if (!space) {
+    return { model }
+  }
+
   return SpaceClient.update({
     ctx,
     model: model,
-    msg: {
+    msgServer: {
       t: "event",
-      c: withId({
-        t: "user-joined-space",
-        spaceId: spaceId,
-        userId: userId,
-      }),
+      c: {
+        ...withId({
+          t: "user-joined-space",
+          spaceId: spaceId,
+          userId: userId,
+        }),
+        happenedAt: p(
+          space.clock,
+          LamportClock.increment,
+          LamportClock.toCurrentTime,
+        ),
+      },
+    },
+  })
+}
+
+export const clickedJoinSpaceButton = (
+  model: SpaceCore.ModelClient,
+  spaceId: SpaceId,
+  ctxOverride: ClientCtx = ctx,
+) => {
+  return SpaceClient.update({
+    ctx: ctxOverride,
+    model: model,
+    msg: {
+      t: "clicked-join-space-button",
+      spaceId,
     },
   })
 }
@@ -97,16 +128,29 @@ export const userLeftSpace = (
   spaceId: SpaceId,
   ctxOverride: ClientCtx = ctx,
 ) => {
+  const space = model.spaces[spaceId]
+
+  if (!space) {
+    return { model }
+  }
+
   return SpaceClient.update({
     ctx: ctxOverride,
     model: model,
-    msg: {
+    msgServer: {
       t: "event",
-      c: withId({
-        t: "user-left-space",
-        spaceId: spaceId,
-        userId: userId,
-      }),
+      c: {
+        ...withId({
+          t: "user-left-space",
+          spaceId: spaceId,
+          userId: userId,
+        }),
+        happenedAt: p(
+          space.clock,
+          LamportClock.increment,
+          LamportClock.toCurrentTime,
+        ),
+      },
     },
   })
 }
@@ -206,13 +250,16 @@ export const userEndedSpace = (
   return SpaceClient.update({
     ctx: ctxOverride,
     model: model,
-    msg: {
+    msgServer: {
       t: "event",
-      c: withId({
-        t: "user-ended-space",
-        spaceId,
-        userId,
-      }),
+      c: {
+        ...withId({
+          t: "user-ended-space",
+          spaceId,
+          userId,
+        }),
+        happenedAt: LamportTimestamp.fromNumber(0),
+      },
     },
   })
 }
@@ -236,17 +283,29 @@ export const userInputtedGame = (
   spaceId: SpaceId,
   game: GameName | null,
 ) => {
+  const space = model.spaces[spaceId]
+  if (!space) {
+    return { model }
+  }
+
   return SpaceClient.update({
     ctx,
     model: model,
-    msg: {
+    msgServer: {
       t: "event",
-      c: withId({
-        t: "user-inputted-game",
-        game,
-        spaceId,
-        userId,
-      }),
+      c: {
+        ...withId({
+          t: "user-inputted-game",
+          game,
+          spaceId,
+          userId,
+        }),
+        happenedAt: p(
+          space.clock,
+          LamportClock.increment,
+          LamportClock.toCurrentTime,
+        ),
+      },
     },
   })
 }
