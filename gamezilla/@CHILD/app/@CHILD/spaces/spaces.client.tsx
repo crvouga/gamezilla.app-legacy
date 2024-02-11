@@ -50,7 +50,7 @@ export const init: ClientModule["init"] = async ({ ctx }) => {
       ...listSpaces.model,
     },
     eff: Eff.batch([listSpaces.eff]),
-    // msgCmd: batchMsgs(listSpaces.msgCmd),
+    msgCmd: SpaceClientCmd.toClientCmd(batchMsgs(listSpaces.msgCmd)),
   }
 }
 

@@ -1,5 +1,5 @@
 import { sendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
-import { Button } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { Button, IconUserCircle } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { RequestResponse, isRequesting, notAsked } from "gamezilla/@SHARED/core"
 import { ClientModule } from "../auth.core"
 import { ModelClient } from "./continue-as-guest.core"
@@ -53,7 +53,8 @@ export const ViewContinueAsGuestButton: ClientModule["View"] = ({
   return (
     <Button
       onClick={() => dispatch({ t: "guest.clicked-continue-as-guest-button" })}
-      text="Continue as guest"
+      start={<IconUserCircle className="h-6 w-6" />}
+      text="Continue as Guest"
       loading={isRequesting(model.guestRequest)}
     />
   )
