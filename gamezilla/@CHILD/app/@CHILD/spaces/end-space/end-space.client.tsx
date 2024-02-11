@@ -6,7 +6,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceClientModule } from "../architechure/space-client"
 import { SpaceEvent, Spaces } from "../spaces-core"
-import { Button } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { Button, IconHome } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { withId } from "../@SHARED/event"
 
 const update: SpaceClientModule["update"] = async (input) => {
@@ -144,7 +144,29 @@ export const ViewEndSpaceButton: SpaceClientModule["View"] = ({ dispatch }) => {
   )
 }
 
+const ViewSpaceEnded: SpaceClientModule["View"] = ({ dispatch }) => {
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center gap-4">
+      <p className="text-center text-2xl">Space ended</p>
+      <Button
+        onClick={() =>
+          dispatch({
+            t: "clicked-link",
+            route: { t: "spaces", c: { t: "space-list" } },
+          })
+        }
+        size="lg"
+        variant="contained"
+        color="primary"
+        start={<IconHome className="h-6 w-6" />}
+        text="Go Home"
+      />
+    </div>
+  )
+}
+
 export const EndSpaceClient = {
+  ViewSpaceEnded,
   ViewEndSpaceButton,
   update,
 }

@@ -4,18 +4,17 @@ import {
   playSound,
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { Eff, Sub } from "gamezilla/@SHARED/core"
-import { Game } from "../@CHILD/game/game.client"
-import { WithEventId } from "../@SHARED/event"
-import { SpaceClientModule } from "../architechure/space-client"
-import { Space, SpaceEvent, SpaceState, Spaces } from "../spaces-core"
-import { ModelClient, MsgClient } from "../spaces.core"
-import { gameNameList, gameNameToString } from "../@CHILD/game/game.core"
 import {
   ViewGameHeader,
   ViewUsersInSpaceList,
 } from "../@CHILD/game/@SHARED/game"
-import { SpaceClientCtx } from "../@SHARED/space"
 import { CoverArt } from "../@CHILD/game/game-cover-art"
+import { Game } from "../@CHILD/game/game.client"
+import { gameNameList, gameNameToString } from "../@CHILD/game/game.core"
+import { WithEventId, withId } from "../@SHARED/event"
+import { SpaceClientModule } from "../architechure/space-client"
+import { Space, SpaceEvent, Spaces } from "../spaces-core"
+import { MsgClient } from "../spaces.core"
 
 const update: SpaceClientModule["update"] = (input) => {
   return SpaceClientModule.chainUpdates(
@@ -216,45 +215,60 @@ const subscriptionsCurrentUserGame: SpaceClientModule["subscriptions"] = ({
 //
 //
 
-const View = ({
-  space,
-  model,
-  ctx,
-  dispatch,
-  dispatchEvent,
-}: {
-  space: SpaceState.Started
-  model: ModelClient
-  ctx: SpaceClientCtx
-  dispatch: (m: MsgClient) => void
-  dispatchEvent: (m: SpaceEvent) => void
-}) => {
+const View: SpaceClientModule["View"] = (input) => {
+  const { model, ctx, dispatch } = input
+
+  if (!ctx.space || !ctx.currentUserId) {
+    return null
+  }
+
+  const space = Spaces.toSpaceStarted(model, ctx.space?.spaceId)
+
+  if (!space) {
+    return null
+  }
+
   if (space.game) {
     return (
       <Game.View
         modelGame={space.game}
-        ctx={ctx}
-        dispatch={(c) => dispatch({ t: "game", spaceId: ctx.space.spaceId, c })}
+        ctx={{
+          ...ctx,
+          space: space,
+          currentUserId: ctx.currentUserId,
+          quit() {},
+          viewProfile() {},
+        }}
+        dispatch={(c) => dispatch({ t: "game", spaceId: space.spaceId, c })}
         model={model.games[ctx.space.spaceId] ?? Game.init(space.game.t)}
       />
     )
   }
 
-  return <ViewScreenNotInGame ctx={ctx} dispatchEvent={dispatchEvent} />
+  return <ViewScreenNotInGame {...input} />
 }
 
-export const ViewScreenNotInGame = ({
-  ctx,
-  dispatchEvent,
-}: {
-  ctx: SpaceClientCtx
-  dispatchEvent: (m: SpaceEvent) => void
-}) => {
-  if (ctx.space.hostId !== ctx.currentUserId) {
+const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
+  const { space, currentUserId } = ctx
+  if (!space || !currentUserId) {
+    return null
+  }
+
+  if (space.hostId !== ctx.currentUserId) {
     return (
       <div className="flex h-full w-full flex-1 flex-col">
         <ViewGameHeader />
-        <ViewUsersInSpaceList ctx={ctx} />
+        <ViewUsersInSpaceList
+          ctx={{
+            ...ctx,
+            space,
+            currentUserId,
+            quit() {},
+            viewProfile(_userId) {
+              //
+            },
+          }}
+        />
       </div>
     )
   }
@@ -269,11 +283,14 @@ export const ViewScreenNotInGame = ({
             <button
               aria-label={gameName}
               onClick={() =>
-                dispatchEvent({
-                  t: "user-inputted-game",
-                  spaceId: ctx.space.spaceId,
-                  userId: ctx.currentUserId,
-                  game: gameName,
+                dispatch({
+                  t: "event",
+                  c: withId({
+                    t: "user-inputted-game",
+                    spaceId: space.spaceId,
+                    userId: currentUserId,
+                    game: gameName,
+                  }),
                 })
               }
               className="flex overflow-hidden rounded-lg border border-neutral-600"

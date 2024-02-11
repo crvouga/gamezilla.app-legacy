@@ -7,7 +7,38 @@ const update: SpaceClientModule["update"] = (input) => {
     { model: input.model },
     (model) => updateProfiles({ ...input, model }),
     (model) => updateSync({ ...input, model }),
+    (model) => sendSpaceEventToServer({ ...input, model }),
   )
+}
+
+const sendSpaceEventToServer: SpaceClientModule["update"] = ({
+  ctx,
+  model,
+  msgSpaceEvent,
+}) => {
+  if (!msgSpaceEvent) {
+    return { model }
+  }
+
+  const msgEvtWithMeta = Spaces.toEventWithMeta(
+    model,
+    msgSpaceEvent.spaceId,
+    msgSpaceEvent.eventId,
+  )
+
+  if (!msgEvtWithMeta) {
+    return { model }
+  }
+
+  const profile =
+    "userId" in msgEvtWithMeta ? ctx.profiles[msgEvtWithMeta.userId] : null
+
+  const profiles = profile ? { [profile.userId]: profile } : {}
+
+  return {
+    model,
+    msgCmd: [sendToServer({ t: "event", c: msgEvtWithMeta, profiles })],
+  }
 }
 
 const updateProfiles: SpaceClientModule["update"] = ({ model, msgServer }) => {

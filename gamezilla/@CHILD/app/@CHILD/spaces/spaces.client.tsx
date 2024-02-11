@@ -4,7 +4,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/feed-item"
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { ClientCtx, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
+import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
 import {
   Avatar,
@@ -109,19 +109,15 @@ const updateMain: SpaceClientModule["update"] = (input) => {
   return SpaceClientModule.chainUpdates(
     { model: input.model },
     (model) => outputSpaceEvent({ ...input, model }),
-    (model) => SyncClient.update({ ...input, model }),
     (model) => Modals.update({ ...input, model }),
-    //
     (model) => EndSpaceClient.update({ ...input, model }),
     (model) => LeaveSpaceClient.update({ ...input, model }),
-    //
     (model) => updateSpacesFromSpaceEvent({ ...input, model }),
-    //
+    (model) => SyncClient.update({ ...input, model }),
     (model) => GameClient.update({ ...input, model }),
     (model) => StartSpaceClient.update({ ...input, model }),
     (model) => JoinSpaceClient.update({ ...input, model }),
     (model) => ListSpacesClient.update({ ...input, model }),
-    (model) => sendSpaceEventToServer({ ...input, model }),
   )
 }
 
@@ -163,36 +159,6 @@ const updateSpacesFromSpaceEvent: SpaceClientModule["update"] = ({
   })
 
   return { model: { ...model, ...updated.model } }
-}
-
-const sendSpaceEventToServer: SpaceClientModule["update"] = ({
-  ctx,
-  model,
-  msgSpaceEvent,
-}) => {
-  if (!msgSpaceEvent) {
-    return { model }
-  }
-
-  const msgEvtWithMeta = Spaces.toEventWithMeta(
-    model,
-    msgSpaceEvent.spaceId,
-    msgSpaceEvent.eventId,
-  )
-
-  if (!msgEvtWithMeta) {
-    return { model }
-  }
-
-  const profile =
-    "userId" in msgEvtWithMeta ? ctx.profiles[msgEvtWithMeta.userId] : null
-
-  const profiles = profile ? { [profile.userId]: profile } : {}
-
-  return {
-    model,
-    msgCmd: [sendToServer({ t: "event", c: msgEvtWithMeta, profiles })],
-  }
 }
 
 //
@@ -252,12 +218,15 @@ export const View = ({
 
         case "space": {
           return (
-            <ViewSpaceScreen
-              spaceId={ctx.currentRoute.c.spaceId}
-              ctx={ctx}
-              dispatch={dispatch}
-              model={model}
-            />
+            <>
+              <ViewSpaceScreen
+                spaceId={ctx.currentRoute.c.spaceId}
+                ctx={ctx}
+                dispatch={dispatch}
+                model={model}
+              />
+              <Modals.View ctx={ctx} dispatch={dispatch} model={model} />
+            </>
           )
         }
       }
@@ -268,106 +237,81 @@ export const View = ({
   }
 }
 
-const ViewSpaceScreen = ({
-  ctx,
-  dispatch,
-  model,
-  spaceId,
-}: {
+const ViewSpaceScreen = (input: {
   model: ModelClient
   ctx: ClientCtx
   dispatch: (m: MsgClient) => void
   spaceId: SpaceId
 }) => {
-  const spaceState = Spaces.toSpaceState(model, spaceId)
+  const spaceState = Spaces.toSpaceState(input.model, input.spaceId)
 
   switch (spaceState.type) {
-    case "ended": {
-      return <ViewSpaceEnded dispatch={dispatch} />
+    case "initial": {
+      return <ViewSpaceNotFound {...input} />
     }
 
-    case "initial": {
-      return <ViewSpaceNotFound dispatch={dispatch} />
+    case "ended": {
+      return <EndSpaceClient.ViewSpaceEnded {...input} />
     }
 
     case "started": {
-      return <ViewSpaceStarted ctx={ctx} dispatch={dispatch} model={model} />
+      const spaceCtx: SpaceClientCtx = {
+        ...input.ctx,
+        currentUserId: input.ctx.currentUserId,
+        space: spaceState,
+        quit() {
+          input.dispatch({
+            t: "event",
+            c: withId({
+              t: "user-inputted-game",
+              userId: input.ctx.currentUserId,
+              spaceId: spaceState.spaceId,
+              game: null,
+            }),
+          })
+        },
+        viewProfile(userId) {
+          //
+          input.dispatch({
+            t: "clicked-link",
+            route: {
+              t: "profile",
+              c: {
+                t: "profile",
+                userId,
+              },
+            },
+          })
+        },
+      }
+
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+        input.model,
+        input.ctx.currentUserId,
+      )
+
+      if (currentUserSpaceId !== spaceCtx.space.spaceId) {
+        return <JoinSpaceClient.View {...input} />
+      }
+
+      return (
+        <div className="flex h-full w-full flex-1 flex-col">
+          <ViewTopBar {...input} />
+
+          <ViewFeed
+            spaceState={spaceState}
+            ctx={spaceCtx}
+            model={input.model}
+            dispatch={input.dispatch}
+          />
+
+          <div className="flex w-full flex-1 flex-col overflow-hidden">
+            <GameClient.View {...input} />
+          </div>
+        </div>
+      )
     }
   }
-}
-
-const ViewSpaceStarted: SpaceClientModule["View"] = (input) => {
-  const { ctx, dispatch, model } = input
-
-  if (!ctx.space || !ctx.currentUserId) {
-    return null
-  }
-
-  const spaceStarted = Spaces.toSpaceStarted(model, ctx.space.spaceId)
-
-  if (!spaceStarted) {
-    return null
-  }
-
-  const spaceCtx: SpaceClientCtx = {
-    ...ctx,
-    currentUserId: ctx.currentUserId,
-    space: ctx.space,
-    quit() {},
-    viewProfile() {},
-  }
-
-  return (
-    <>
-      <ViewSpaceScreenMain
-        space={spaceStarted}
-        dispatch={dispatch}
-        model={model}
-        ctx={spaceCtx}
-        dispatchEvent={(event) => dispatch({ t: "event", c: withId(event) })}
-      />
-      <Modals.View {...input} />
-    </>
-  )
-}
-
-const ViewSpaceScreenMain = (input: {
-  space: SpaceState.Started
-  model: ModelClient
-  ctx: SpaceClientCtx
-  dispatch: (m: MsgClient) => void
-  dispatchEvent: (m: SpaceEvent) => void
-}) => {
-  const { ctx, space, model, dispatch, dispatchEvent } = input
-
-  const currentUserSpaceId = Spaces.toSpaceIdByUserId(model, ctx.currentUserId)
-
-  if (currentUserSpaceId !== space.spaceId) {
-    return <JoinSpaceClient.View {...input} />
-  }
-
-  return (
-    <div className="flex h-full w-full flex-1 flex-col">
-      <ViewTopBar {...input} />
-
-      <ViewFeed
-        spaceState={space}
-        ctx={ctx}
-        model={model}
-        dispatch={dispatch}
-      />
-
-      <div className="flex w-full flex-1 flex-col overflow-hidden">
-        <GameClient.View
-          ctx={ctx}
-          dispatch={dispatch}
-          dispatchEvent={dispatchEvent}
-          model={model}
-          space={space}
-        />
-      </div>
-    </div>
-  )
 }
 
 const ViewTopBar: SpaceClientModule["View"] = (input) => {
@@ -441,27 +385,6 @@ const ViewSpaceNotFound = ({
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space not found</p>
-      <Button
-        onClick={() =>
-          dispatch({
-            t: "clicked-link",
-            route: { t: "spaces", c: { t: "space-list" } },
-          })
-        }
-        size="lg"
-        variant="contained"
-        color="primary"
-        start={<IconHome className="h-6 w-6" />}
-        text="Go Home"
-      />
-    </div>
-  )
-}
-
-const ViewSpaceEnded = ({ dispatch }: { dispatch: (m: MsgClient) => void }) => {
-  return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4">
-      <p className="text-center text-2xl">Space ended</p>
       <Button
         onClick={() =>
           dispatch({
