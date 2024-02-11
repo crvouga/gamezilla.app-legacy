@@ -116,7 +116,7 @@ const View: Module["View"] = ({ model, modelGame, dispatch, ctx }) => {
             className="w-full"
             onClick={ctx.onQuit}
             start={<IconArrowLeftOnRect className="h-6 w-6" />}
-            text="Quit"
+            text="Exit"
           />
         </div>
       )}

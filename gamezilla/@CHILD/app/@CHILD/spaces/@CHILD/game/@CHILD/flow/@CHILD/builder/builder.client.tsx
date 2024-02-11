@@ -129,7 +129,7 @@ const ViewList: ClientModule["View"] = (input) => {
           onClick={input.ctx.onQuit}
           className="flex-1"
           text="Exit"
-          start={<IconArrowLeftOnRect className="h-8 w-8" />}
+          start={<IconArrowLeftOnRect className="h-6 w-6" />}
           variant="contained"
           color="default"
         />
