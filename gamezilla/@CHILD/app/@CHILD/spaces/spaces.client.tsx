@@ -24,9 +24,7 @@ import { JoinSpaceClient } from "./join-space/join-space.client"
 import { LeaveSpaceClient } from "./leave-space/leave-space.client"
 import { ListSpacesClient } from "./list-spaces/list-spaces.client"
 import { Modals } from "./modals/modals"
-import { SpaceEvent } from "./spaces-core/space-event"
-import * as SpaceState from "./spaces-core/space-state"
-import * as Spaces from "./spaces-core/spaces"
+import { SpaceEvent, SpaceState, Spaces } from "./spaces-core"
 import { ClientModule, ModelClient, MsgClient } from "./spaces.core"
 import { StartSpaceClient } from "./start-space/start-space.client"
 import { SyncClient } from "./sync/sync.client"
@@ -291,12 +289,12 @@ const ViewSpaceScreen = (input: {
       )
 
       if (currentUserSpaceId !== spaceCtx.space.spaceId) {
-        return <JoinSpaceClient.View {...input} />
+        return <JoinSpaceClient.View {...input} ctx={spaceCtx} />
       }
 
       return (
         <div className="flex h-full w-full flex-1 flex-col">
-          <ViewTopBar {...input} />
+          <ViewTopBar {...input} ctx={spaceCtx} />
 
           <ViewFeed
             spaceState={spaceState}
@@ -306,7 +304,7 @@ const ViewSpaceScreen = (input: {
           />
 
           <div className="flex w-full flex-1 flex-col overflow-hidden">
-            <GameClient.View {...input} />
+            <GameClient.View {...input} ctx={spaceCtx} />
           </div>
         </div>
       )
