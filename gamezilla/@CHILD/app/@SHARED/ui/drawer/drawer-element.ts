@@ -42,9 +42,9 @@ if (typeof window !== "undefined" && "customElements" in window) {
     }
 
     connectedCallback() {
-      this.unsubscribe = drawerSub.subscribe((msgEvt) => {
-        if (msgEvt.id === this.getAttribute("id")) {
-          this.props = msgEvt
+      this.unsubscribe = drawerSub.subscribe((drawerEvent) => {
+        if (drawerEvent.id === this.getAttribute("id")) {
+          this.props = drawerEvent
           this.syncUI()
         }
       })
@@ -118,12 +118,39 @@ if (typeof window !== "undefined" && "customElements" in window) {
       })
 
       this.root?.classList.add("pointer-events-none")
-      if (this.getAttribute("position")?.toLowerCase().trim().includes("top")) {
-        this.root?.classList.add("root-top")
-        this.content?.classList.add("content-top")
-      } else {
-        this.root?.classList.add("root-bottom")
-        this.content?.classList.add("content-bottom")
+
+      const position = this.getAttribute("position")
+
+      this.setupPosition(position)
+    }
+
+    static get observedAttributes() {
+      return ["position"]
+    }
+
+    setupPosition(position: string | null | undefined) {
+      switch (position) {
+        case "bottom":
+          this.root?.classList.add("root-bottom")
+          this.content?.classList.add("content-bottom")
+          break
+        case "top":
+          this.root?.classList.add("root-top")
+          this.content?.classList.add("content-top")
+          break
+        default: {
+          break
+        }
+      }
+    }
+
+    attributeChangedCallback(
+      name: string,
+      _oldValue: string,
+      newValue: string,
+    ) {
+      if (name === "position") {
+        this.setupPosition(newValue)
       }
     }
 
@@ -138,24 +165,28 @@ if (typeof window !== "undefined" && "customElements" in window) {
         return
       }
 
-      if (!this.props.open) {
-        this.ariaHidden = "true"
-        this.tabIndex = -1
-        this.root.tabIndex = -1
-        this.backdrop.classList.remove("visible")
-        this.content.classList.remove("open")
-        this.root.classList.remove("darken-background")
-        this.root.classList.add("pointer-events-none")
-        return
+      switch (this.props.open) {
+        case true: {
+          this.content.classList.add("open")
+          this.root.classList.remove("pointer-events-none")
+          this.root.classList.add("darken-background")
+          this.backdrop.classList.add("visible")
+          this.root.tabIndex = 0
+          this.tabIndex = 0
+          this.ariaHidden = "false"
+          break
+        }
+        case false: {
+          this.ariaHidden = "true"
+          this.tabIndex = -1
+          this.root.tabIndex = -1
+          this.backdrop.classList.remove("visible")
+          this.content.classList.remove("open")
+          this.root.classList.remove("darken-background")
+          this.root.classList.add("pointer-events-none")
+          break
+        }
       }
-
-      this.content.classList.add("open")
-      this.root.classList.remove("pointer-events-none")
-      this.root.classList.add("darken-background")
-      this.backdrop.classList.add("visible")
-      this.root.tabIndex = 0
-      this.tabIndex = 0
-      this.ariaHidden = "false"
 
       switch (this.props.position) {
         case "bottom": {
@@ -175,7 +206,6 @@ if (typeof window !== "undefined" && "customElements" in window) {
           break
         }
       }
-      return
     }
   }
   customElements.define("drawer-element", Drawer)
