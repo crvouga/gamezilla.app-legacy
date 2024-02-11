@@ -3,10 +3,10 @@ import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-c
 import { didPlaySound, didPushRoute } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import {
+  clickedStartSpaceButton,
   ctx,
   init,
   userClickedEndSpaceButton,
-  userStartedSpace,
 } from "../@TEST/client"
 
 describe("end space client", () => {
@@ -14,7 +14,7 @@ describe("end space client", () => {
     const spaceId = SpaceId.generate()
     const updated = await AppClientModule.chainUpdates(
       await init(),
-      (model) => userStartedSpace(model, ctx.currentUserId, spaceId),
+      (model) => clickedStartSpaceButton(model, spaceId),
       (model) =>
         userClickedEndSpaceButton(model, {
           ...ctx,
@@ -32,7 +32,7 @@ describe("end space client", () => {
 
     const updated = await AppClientModule.chainUpdates(
       await init(),
-      (model) => userStartedSpace(model, ctx.currentUserId, spaceId),
+      (model) => clickedStartSpaceButton(model, spaceId),
       (model) =>
         userClickedEndSpaceButton(model, {
           ...ctx,
@@ -52,7 +52,7 @@ describe("end space client", () => {
     const spaceId = SpaceId.generate()
     const updated = await AppClientModule.chainUpdates(
       await init(),
-      (model) => userStartedSpace(model, ctx.currentUserId, spaceId),
+      (model) => clickedStartSpaceButton(model, spaceId),
       (model) => userClickedEndSpaceButton(model),
     )
     expect(didPlaySound(updated)).toBeTrue()

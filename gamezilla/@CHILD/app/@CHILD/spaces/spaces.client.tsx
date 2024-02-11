@@ -137,8 +137,8 @@ const updateChild: SpaceClientModule["update"] = (input) => {
   return SpaceClientModule.chainUpdates(
     { model: input.model },
     (model) => outputSpaceEvent({ ...input, model }),
-    (model) => Modals.update({ ...input, model }),
     (model) => EndSpaceClient.update({ ...input, model }),
+    (model) => Modals.update({ ...input, model }),
     (model) => LeaveSpaceClient.update({ ...input, model }),
     (model) => updateSpacesFromSpaceEvent({ ...input, model }),
     (model) => SyncClient.update({ ...input, model }),

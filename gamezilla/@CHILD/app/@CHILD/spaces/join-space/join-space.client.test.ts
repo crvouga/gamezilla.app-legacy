@@ -29,27 +29,16 @@ describe("list spaces client", () => {
   test("current user leaving joined space", async () => {
     const spaceId = SpaceId.generate()
 
-    const initial = await init()
-
-    const started = await userStartedSpace(
-      initial.model,
-      UserId.generate(),
-      spaceId,
+    const left = await AppClientModule.chainUpdates(
+      await init(),
+      (model) => userStartedSpace(model, UserId.generate(), spaceId),
+      (model) => userJoinedSpace(model, ctx.currentUserId, spaceId),
+      (model) => userLeftSpace(model, ctx.currentUserId, spaceId),
     )
 
-    const joined = await userJoinedSpace(
-      started.model,
-      ctx.currentUserId,
-      spaceId,
+    expect(Spaces.toSpaceIdByUserId(left.model, ctx.currentUserId)).toEqual(
+      null,
     )
-
-    const left = await userLeftSpace(joined.model, ctx.currentUserId, spaceId)
-
-    const before = Spaces.toSpaceIdByUserId(joined.model, ctx.currentUserId)
-    const after = Spaces.toSpaceIdByUserId(left.model, ctx.currentUserId)
-
-    expect(before).toEqual(spaceId)
-    expect(after).toEqual(null)
     //
   })
 
