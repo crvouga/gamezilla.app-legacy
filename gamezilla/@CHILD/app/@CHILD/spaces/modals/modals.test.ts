@@ -32,8 +32,9 @@ describe("space client modals", () => {
     expect(output.model.modal === "users").toBeTrue()
   })
 
-  it("should open user details when click user", async () => {
+  it("should open user details modal after clicking user", async () => {
     const someUserId = UserId.generate()
+
     const output = await AppClientModule.chainUpdates(
       await init(),
       (model) => clickedUser(model, someUserId),

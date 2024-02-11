@@ -83,7 +83,6 @@ const ViewStartSpaceButton: SpaceClientModule["View"] = ({ dispatch }) => {
   return (
     <Button
       size="lg"
-      className="w-full"
       color="primary"
       onClick={() =>
         dispatch({
@@ -91,7 +90,7 @@ const ViewStartSpaceButton: SpaceClientModule["View"] = ({ dispatch }) => {
           spaceId: SpaceId.generate(),
         })
       }
-      text="Start space"
+      text="Start new space"
     />
   )
 }

@@ -93,3 +93,13 @@ Scrollbar
   scrollbar-width: none;
   scrollbar-gutter: stable both-edges;
 }
+
+/*
+
+*/
+
+@media only screen and (max-width: 320px) {
+  * {
+    font-size: 75%;
+  }
+}

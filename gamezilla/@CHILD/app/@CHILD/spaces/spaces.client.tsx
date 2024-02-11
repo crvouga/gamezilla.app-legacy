@@ -266,12 +266,17 @@ const ViewSpaceScreen = (input: {
       )
 
       if (currentUserSpaceId !== spaceCtx.space.spaceId) {
-        return <JoinSpaceClient.View {...input} ctx={spaceCtx} />
+        return (
+          <>
+            <JoinSpaceClient.View {...input} ctx={spaceCtx} />
+            <Modals.View {...input} ctx={spaceCtx} />
+          </>
+        )
       }
 
       return (
         <div className="flex h-full w-full flex-1 flex-col">
-          <Modals.View ctx={spaceCtx} dispatch={dispatch} model={model} />
+          <Modals.View {...input} ctx={spaceCtx} />
 
           <ViewTopBar {...input} ctx={spaceCtx} />
 
