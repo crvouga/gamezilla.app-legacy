@@ -6,7 +6,11 @@ import {
 } from "../@CHILD/game/@SHARED/game"
 import { SpaceClientCtx } from "../@SHARED/space"
 import { SpaceClientModule } from "../architechure/space-client"
-import { pushRoute } from "gamezilla/@CHILD/app/@SHARED/client"
+import {
+  APP_SOUND,
+  playSound,
+  pushRoute,
+} from "gamezilla/@CHILD/app/@SHARED/client"
 
 const update: SpaceClientModule["update"] = (input) => {
   const { model } = input
@@ -29,6 +33,7 @@ const updateUserPreview: SpaceClientModule["update"] = ({ msg, model }) => {
       return {
         model,
         msgCmd: [
+          playSound(APP_SOUND.tap),
           pushRoute({
             t: "profile",
             c: { t: "profile", userId: model.modalPreviewUserId },

@@ -87,4 +87,38 @@ describe("space client modals", () => {
       ),
     ).toBeTrue()
   })
+
+  it("should play sound when clicking preview user link", async () => {
+    const someUserId = UserId.generate()
+    const output = await SpaceClientModule.chainUpdates(
+      init(),
+      (model) => clickedUser(model, someUserId),
+      clickedUserPreviewLink,
+    )
+
+    expect(
+      output.msgCmd?.some(
+        (msgCmd) => msgCmd.t === "sound" && msgCmd.c.t === "play",
+      ),
+    ).toBeTrue()
+  })
+
+  it("should not navigate after clicking preview user link if preview is not open", async () => {
+    const someUserId = UserId.generate()
+    const output = await SpaceClientModule.chainUpdates(
+      init(),
+      clickedUserPreviewLink,
+    )
+
+    expect(
+      output.msgCmd?.some(
+        (msgCmd) =>
+          msgCmd.t === "routing" &&
+          msgCmd.c.t === "push" &&
+          msgCmd.c.route.t === "profile" &&
+          msgCmd.c.route.c.t === "profile" &&
+          msgCmd.c.route.c.userId === someUserId,
+      ),
+    ).toBeFalse()
+  })
 })
