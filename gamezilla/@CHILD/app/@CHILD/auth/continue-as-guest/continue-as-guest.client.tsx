@@ -54,7 +54,7 @@ export const ViewContinueAsGuestButton: ClientModule["View"] = ({
     <Button
       onClick={() => dispatch({ t: "guest.clicked-continue-as-guest-button" })}
       start={<IconUserCircle className="h-6 w-6" />}
-      text="Continue as Guest"
+      text="Continue as guest"
       loading={isRequesting(model.guestRequest)}
     />
   )

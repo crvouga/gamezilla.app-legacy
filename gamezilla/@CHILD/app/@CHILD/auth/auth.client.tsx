@@ -333,11 +333,11 @@ const ViewLoginScreen: ClientModule["View"] = (input) => {
             size="lg"
             className="w-full"
             start={<IconMobilePhone className="h-6 w-6" />}
-            text="Continue With Phone"
+            text="Continue with phone"
           />
 
-          <div className="flex w-full items-center justify-center py-2">
-            <p className="text-base text-neutral-600">OR</p>
+          <div className="flex w-full items-center justify-center py-1">
+            <p className="text-base text-neutral-500">OR</p>
           </div>
 
           <ContinueAsGuestClient.ViewContinueAsGuestButton {...input} />
