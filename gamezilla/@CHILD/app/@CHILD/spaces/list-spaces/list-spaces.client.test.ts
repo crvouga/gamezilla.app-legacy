@@ -27,14 +27,26 @@ const changeRouteToSpaceList = (model: ModelClient) => {
 }
 
 describe("list spaces client", () => {
-  it("shoudld request spaces on init if on space list route", async () => {
-    const updated = await init({
+  it("should request spaces on init if on space list route", async () => {
+    const output = await init({
       ...ctx,
       currentRoute: { t: "spaces", c: { t: "space-list" } },
     })
     expect(
-      isRequesting(updated.model.listSpacesRequest) &&
-        updated.model.listSpacesRequest.requestedAt === ctx.now,
+      isRequesting(output.model.listSpacesRequest) &&
+        output.model.listSpacesRequest.requestedAt === ctx.now,
+    ).toBeTrue()
+  })
+
+  it("should send list space request to server initially", async () => {
+    const output = await init({
+      ...ctx,
+      currentRoute: { t: "spaces", c: { t: "space-list" } },
+    })
+    expect(
+      output.msgCmd?.some(
+        (msgCmd) => msgCmd.t === "wire" && msgCmd.c.msg?.t === "list-spaces",
+      ),
     ).toBeTrue()
   })
 

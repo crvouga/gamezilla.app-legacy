@@ -1,12 +1,7 @@
 import { WithEventId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/feed-item"
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import {
-  APP_SOUND,
-  ClientCtx,
-  playSound,
-  pushRoute,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
 import {
   Button,
@@ -21,6 +16,7 @@ import { Input, Output, SpaceClientModule } from "./architechure/space-client"
 import { CurrentSpaceBottomBar } from "./current-space-bottom-bar/current-space-bottom-bar"
 import { EndSpaceClient } from "./end-space/end-space.client"
 import { GameClient } from "./game/game.client"
+import { GoHome } from "./go-home/go-home"
 import { JoinSpaceClient } from "./join-space/join-space.client"
 import { LeaveSpaceClient } from "./leave-space/leave-space.client"
 import { ListSpacesClient } from "./list-spaces/list-spaces.client"
@@ -29,7 +25,6 @@ import { SpaceEvent, SpaceState, Spaces } from "./spaces-core"
 import { ClientModule, ModelClient, MsgClient } from "./spaces.core"
 import { StartSpaceClient } from "./start-space/start-space.client"
 import { SyncClient } from "./sync/sync.client"
-import { GoHome } from "./go-home/go-home"
 
 //
 //

@@ -372,17 +372,23 @@ export const pushRoute = <T extends ClientCmdTypes>(
   }
 }
 
-export const didPushRoute = <T extends ClientCmdTypes>(
+export const didPushRoute = <T>(
   {
     msgCmd,
   }: {
-    msgCmd?: ClientCmd<T>[]
+    msgCmd?: (RouteCmd | T)[]
   },
   route?: AppRoute,
 ): boolean => {
   return Boolean(
     msgCmd?.some((cmd) => {
-      if (cmd.t === "routing" && cmd.c.t === "push") {
+      if (
+        typeof cmd === "object" &&
+        cmd &&
+        "t" in cmd &&
+        cmd.t === "routing" &&
+        cmd.c.t === "push"
+      ) {
         if (route) {
           return eq(cmd.c.route, route)
         }
