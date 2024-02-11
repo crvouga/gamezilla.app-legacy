@@ -8,7 +8,23 @@ const update: SpaceClientModule["update"] = (input) => {
     (model) => updateProfiles({ ...input, model }),
     (model) => updateSync({ ...input, model }),
     (model) => sendSpaceEventToServer({ ...input, model }),
+    (model) => outputSpaceEventsFromServer({ ...input, model }),
   )
+}
+
+const outputSpaceEventsFromServer: SpaceClientModule["update"] = (input) => {
+  const { model, msgServer } = input
+
+  switch (msgServer?.t) {
+    case "event": {
+      return {
+        model,
+        msgSpaceEvent: [msgServer.c],
+      }
+    }
+  }
+
+  return { model }
 }
 
 const sendSpaceEventToServer: SpaceClientModule["update"] = ({

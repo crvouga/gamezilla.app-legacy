@@ -133,7 +133,6 @@ const updateChild: SpaceClientModule["update"] = (input) => {
 
   return SpaceClientModule.chainUpdates(
     { model: input.model },
-    (model) => outputSpaceEvent({ ...input, model }),
     (model) => EndSpaceClient.update({ ...input, model }),
     (model) => Modals.update({ ...input, model }),
     (model) => LeaveSpaceClient.update({ ...input, model }),
@@ -144,21 +143,6 @@ const updateChild: SpaceClientModule["update"] = (input) => {
     (model) => JoinSpaceClient.update({ ...input, model }),
     (model) => ListSpacesClient.update({ ...input, model }),
   )
-}
-
-const outputSpaceEvent: SpaceClientModule["update"] = (input) => {
-  const { model, msgServer } = input
-
-  switch (msgServer?.t) {
-    case "event": {
-      return {
-        model,
-        msgSpaceEvent: [msgServer.c],
-      }
-    }
-  }
-
-  return { model }
 }
 
 const updateSpacesFromSpaceEvent: SpaceClientModule["update"] = ({
