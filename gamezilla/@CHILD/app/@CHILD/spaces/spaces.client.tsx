@@ -246,15 +246,12 @@ export const View = ({
 
         case "space": {
           return (
-            <>
-              <ViewSpaceScreen
-                spaceId={ctx.currentRoute.c.spaceId}
-                ctx={ctx}
-                dispatch={dispatch}
-                model={model}
-              />
-              <Modals.View ctx={ctx} dispatch={dispatch} model={model} />
-            </>
+            <ViewSpaceScreen
+              spaceId={ctx.currentRoute.c.spaceId}
+              ctx={ctx}
+              dispatch={dispatch}
+              model={model}
+            />
           )
         }
       }
@@ -271,6 +268,7 @@ const ViewSpaceScreen = (input: {
   dispatch: (m: MsgClient) => void
   spaceId: SpaceId
 }) => {
+  const { model, ctx, dispatch } = input
   const spaceState = Spaces.toSpaceState(input.model, input.spaceId)
 
   switch (spaceState.type) {
@@ -284,8 +282,8 @@ const ViewSpaceScreen = (input: {
 
     case "started": {
       const spaceCtx: SpaceClientCtx = {
-        ...input.ctx,
-        currentUserId: input.ctx.currentUserId,
+        ...ctx,
+        currentUserId: ctx.currentUserId,
         space: spaceState,
       }
 
@@ -300,13 +298,15 @@ const ViewSpaceScreen = (input: {
 
       return (
         <div className="flex h-full w-full flex-1 flex-col">
+          <Modals.View ctx={spaceCtx} dispatch={dispatch} model={model} />
+
           <ViewTopBar {...input} ctx={spaceCtx} />
 
           <ViewFeed
             spaceState={spaceState}
             ctx={spaceCtx}
-            model={input.model}
-            dispatch={input.dispatch}
+            model={model}
+            dispatch={dispatch}
           />
 
           <div className="flex w-full flex-1 flex-col overflow-hidden">

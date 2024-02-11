@@ -87,7 +87,6 @@ const View: SpaceClientModule["View"] = ({ ctx, dispatch, model }) => {
           ctx={spaceCtx}
         />
       </Drawer>
-
       <Drawer
         position="bottom"
         id="user-preview"

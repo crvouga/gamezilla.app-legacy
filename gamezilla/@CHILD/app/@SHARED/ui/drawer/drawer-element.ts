@@ -167,8 +167,8 @@ if (typeof window !== "undefined" && "customElements" in window) {
           break
         }
         case "top": {
-          this.root.style.bottom = "auto"
           this.root.style.top = "0"
+          this.root.style.bottom = "auto"
           this.root.style.flexDirection = "column-reverse"
           this.content.classList.add("content-top")
           this.content.classList.remove("content-bottom")
