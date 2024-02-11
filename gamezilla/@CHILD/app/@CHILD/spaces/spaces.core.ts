@@ -46,6 +46,7 @@ export type ServerModule = AppServerModule<{
   MsgOutEvent: null
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
+  Deps: {}
 }>
 
 //

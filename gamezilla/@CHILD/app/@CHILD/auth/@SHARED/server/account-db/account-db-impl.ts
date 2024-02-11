@@ -1,1 +1,25 @@
-export * from "./account-db-impl.postgres"
+import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server"
+import { IAccountDb } from "./account-db"
+import { AccountDbInMemory } from "./account-db-impl.in-memory"
+import { AccountDbPostgres } from "./account-db-impl.postgres"
+
+export type Impl =
+  | {
+      t: "postgres"
+      dbConn: DbConnSql
+    }
+  | {
+      t: "in-memory"
+    }
+
+export const AccountDb = (impl: Impl): IAccountDb => {
+  switch (impl.t) {
+    case "in-memory": {
+      return AccountDbInMemory()
+    }
+
+    case "postgres": {
+      return AccountDbPostgres({ dbConn: impl.dbConn })
+    }
+  }
+}

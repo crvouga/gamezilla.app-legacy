@@ -303,6 +303,7 @@ export const updateChild = async ({
   //
 
   const space = await SpaceServer.update({
+    deps: SpaceServer.getDeps({ ctx }),
     model: model.spaces,
     ctx,
     msgCmd: null,
@@ -315,6 +316,7 @@ export const updateChild = async ({
   })
 
   const auth = await AuthServer.update({
+    deps: AuthServer.getDeps({ ctx }),
     model: model.auth,
     ctx,
     msgCmd: null,
@@ -336,6 +338,7 @@ export const updateChild = async ({
   })
 
   const profile = await ProfileServer.update({
+    deps: ProfileServer.getDeps({ ctx }),
     model: model.profile,
     ctx,
     msgCmd: null,

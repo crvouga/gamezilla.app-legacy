@@ -77,7 +77,11 @@ const accountToRow = (account: Account): AccountRow => {
   }
 }
 
-export const AccountDb = ({ dbConn }: { dbConn: DbConnSql }): IAccountDb => {
+export const AccountDbPostgres = ({
+  dbConn,
+}: {
+  dbConn: DbConnSql
+}): IAccountDb => {
   return {
     async findOneByEmail(input) {
       const queried = await dbConn.query(
@@ -132,8 +136,8 @@ export const AccountDb = ({ dbConn }: { dbConn: DbConnSql }): IAccountDb => {
 
       return account
     },
-    async insertOne(input) {
-      const rowNew = accountToRow(input.account)
+    async insert(account) {
+      const rowNew = accountToRow(account)
 
       const queried = await dbConn.query(
         P.is(toAccountRow),

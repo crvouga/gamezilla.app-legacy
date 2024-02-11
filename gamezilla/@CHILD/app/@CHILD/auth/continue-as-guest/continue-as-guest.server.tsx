@@ -1,41 +1,63 @@
-import { sendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
-import { RequestResponse, notAsked } from "gamezilla/@SHARED/core"
-import { ClientModule } from "../auth.core"
+import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server"
+import { isErr, notAsked, ok } from "gamezilla/@SHARED/core"
+import { Account, ServerModule } from "../auth.core"
 import { ModelClient } from "./continue-as-guest.core"
 
 export const initModel: ModelClient = {
   guestRequest: notAsked,
 }
 
-export const update: ClientModule["update"] = async ({
-  ctx,
+export const update: ServerModule["update"] = async ({
   model,
-  msg,
-  msgServer,
+  msgClient,
+  deps,
 }) => {
-  switch (msg?.t) {
+  switch (msgClient?.t) {
     case "guest.clicked-continue-as-guest-button": {
-      return {
-        model: {
-          ...model,
-          guestRequest: RequestResponse.requesting(ctx.now),
-        },
-        msgCmd: [sendToServer({ t: "guest.clicked-continue-as-guest-button" })],
+      const newGuestAccount: Account = {
+        userId: UserId.generate(),
       }
-    }
-  }
 
-  switch (msgServer?.t) {
-    case "guest.continue-as-guest-result": {
+      const insertedAccount = await deps.AccountDb.insert(newGuestAccount)
+
+      if (isErr(insertedAccount)) {
+        return {
+          model,
+          msgCmd: [
+            sendBack(msgClient, {
+              t: "guest.continue-as-guest-result",
+              result: insertedAccount,
+            }),
+          ],
+        }
+      }
+
+      const insertedSession = await deps.SessionDb.insert({
+        userId: newGuestAccount.userId,
+        sessionId: msgClient.sessionId,
+      })
+
+      if (isErr(insertedSession)) {
+        return {
+          model,
+          msgCmd: [
+            sendBack(msgClient, {
+              t: "guest.continue-as-guest-result",
+              result: insertedSession,
+            }),
+          ],
+        }
+      }
+
       return {
-        model: {
-          ...model,
-          guestRequest: RequestResponse.response(
-            model.guestRequest,
-            ctx.now,
-            msgServer.result,
-          ),
-        },
+        model,
+        msgCmd: [
+          sendBack(msgClient, {
+            t: "guest.continue-as-guest-result",
+            result: ok(newGuestAccount.userId),
+          }),
+        ],
       }
     }
   }

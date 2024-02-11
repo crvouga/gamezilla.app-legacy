@@ -9,9 +9,19 @@ import { Eff, Sub, isErr } from "gamezilla/@SHARED/core"
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server"
 import { SessionDb } from "./@SHARED/server/session-db"
 import { ModelServer, MsgToClient, ServerModule } from "./auth.core"
+import { AccountDb } from "./@SHARED/server/account-db"
 
-const sessionDb = (ctx: ServerCtx) => {
-  return SessionDb({ t: "postgres-with-cache", dbConn: ctx.dbConn })
+//
+//
+//
+//
+//
+
+export const getDeps: ServerModule["getDeps"] = ({ ctx }) => {
+  return {
+    AccountDb: AccountDb({ t: "postgres", dbConn: ctx.dbConn }),
+    SessionDb: SessionDb({ t: "postgres-with-cache", dbConn: ctx.dbConn }),
+  }
 }
 
 //
@@ -58,16 +68,22 @@ export const toUserIdFromSessionId = async (
   _model: ModelServer,
   sessionId: SessionId,
 ): Promise<UserId | null> => {
-  const found = await sessionDb(ctx).findUserIdBySessionId(sessionId)
+  const found = await getDeps({ ctx }).SessionDb.findUserIdBySessionId(
+    sessionId,
+  )
+
   if (isErr(found)) {
     return null
   }
+
   const userId = found.value
+
   return userId
 }
 
 const updateChild: ServerModule["update"] = async (input) => {
   const sms = await AuthServerSMS.update({
+    deps: AuthServerSMS.getDeps(input),
     ctx: input.ctx,
     model: input.model.sms,
     msgCmd: input.msgCmd,
@@ -97,11 +113,12 @@ const updateFromMsg: ServerModule["update"] = async ({ model }) => {
 const updateFromClient: ServerModule["update"] = async ({
   model,
   msgClient,
-  ctx,
+
+  deps,
 }) => {
   switch (msgClient?.t) {
     case "logout": {
-      const zapped = await sessionDb(ctx).zapBySessionId(msgClient.sessionId)
+      const zapped = await deps.SessionDb.zapBySessionId(msgClient.sessionId)
 
       if (zapped.t === "err") {
         return { model }
@@ -125,14 +142,14 @@ const updateFromClient: ServerModule["update"] = async ({
   }
 }
 
-const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
+const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
   if (!msgEvt) {
     return { model }
   }
 
   switch (msgEvt.t) {
     case "wire/client-connected": {
-      const found = await sessionDb(ctx).findUserIdBySessionId(msgEvt.sessionId)
+      const found = await deps.SessionDb.findUserIdBySessionId(msgEvt.sessionId)
 
       if (isErr(found)) {
         return { model }
@@ -192,7 +209,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, ctx }) => {
         }
       }
 
-      const inserted = await sessionDb(ctx).insert({
+      const inserted = await deps.SessionDb.insert({
         sessionId: msgEvt.sessionId,
         userId: msgEvt.userId,
       })

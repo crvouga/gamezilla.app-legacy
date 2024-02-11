@@ -1,13 +1,13 @@
 import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import {
-  DbConnSql,
   ServerCmd,
   ServerCtx,
   ServerEvent,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server"
 import { PhoneNumber, Result, Sub, isErr, ok } from "gamezilla/@SHARED/core"
+import { IAccountDb } from "../../@SHARED/server/account-db"
 import { AccountDb } from "../../@SHARED/server/account-db/account-db-impl"
 import { Account } from "../../auth.core"
 import {
@@ -35,7 +35,23 @@ type Module = AppServerModule<{
   MsgOutEvent: ServerEvent
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
+  Deps: {
+    AccountDb: IAccountDb
+  }
 }>
+
+//
+//
+//
+//
+//
+//
+
+export const getDeps: Module["getDeps"] = ({ ctx }) => {
+  return {
+    AccountDb: AccountDb({ t: "postgres", dbConn: ctx.dbConn }),
+  }
+}
 
 //
 //
@@ -66,7 +82,7 @@ export const update: Module["update"] = async (input) => {
   )
 }
 
-const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
+const updateFromMsg: Module["update"] = async ({ msg, model, deps }) => {
   if (!msg) {
     return { model }
   }
@@ -81,7 +97,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model, ctx }) => {
       }
 
       const found = await findElseInsertAccount({
-        dbConn: ctx.dbConn,
+        accountDb: deps.AccountDb,
         phoneNumber: msg.phoneNumber,
       })
 
@@ -184,14 +200,12 @@ export const subscriptions: Module["subscriptions"] = async () => {
 //
 
 const findElseInsertAccount = async ({
-  dbConn,
+  accountDb,
   phoneNumber,
 }: {
-  dbConn: DbConnSql
+  accountDb: IAccountDb
   phoneNumber: PhoneNumber
 }): Promise<Result<string, Account>> => {
-  const accountDb = AccountDb({ dbConn })
-
   const found = await accountDb.findOneByPhoneNumber({ phoneNumber })
 
   if (isErr(found)) {
@@ -209,7 +223,7 @@ const findElseInsertAccount = async ({
     phoneNumber,
   }
 
-  const inserted = await accountDb.insertOne({ account: accountNew })
+  const inserted = await accountDb.insert(accountNew)
 
   if (isErr(inserted)) {
     return inserted

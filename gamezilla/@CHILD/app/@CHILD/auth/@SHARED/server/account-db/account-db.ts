@@ -8,5 +8,5 @@ export type IAccountDb = {
   findOneByPhoneNumber: (input: {
     phoneNumber: PhoneNumber
   }) => Promise<Result<string, Account | null>>
-  insertOne: (input: { account: Account }) => Promise<Result<string, null>>
+  insert: (input: Account) => Promise<Result<string, null>>
 }

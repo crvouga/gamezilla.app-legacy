@@ -41,7 +41,18 @@ type Module = AppServerModule<{
   MsgOutEvent: null
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
+  Deps: {}
 }>
+//
+//
+//
+//
+//
+//
+
+export const getDeps: Module["getDeps"] = () => {
+  return {}
+}
 
 //
 //

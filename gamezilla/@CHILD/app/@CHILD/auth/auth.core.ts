@@ -10,6 +10,8 @@ import { AppClientModule } from "../../@SHARED/architecture/app-client"
 import { ContinueAsGuest } from "./continue-as-guest"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import { ServerCmd, ServerCtx, ServerEvent } from "../../@SHARED/server"
+import { IAccountDb } from "./@SHARED/server/account-db"
+import { ISessionDb } from "./@SHARED/server/session-db"
 
 //
 //
@@ -43,6 +45,10 @@ export type ServerModule = AppServerModule<{
   MsgOutEvent: ServerEvent
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
+  Deps: {
+    AccountDb: IAccountDb
+    SessionDb: ISessionDb
+  }
 }>
 
 //

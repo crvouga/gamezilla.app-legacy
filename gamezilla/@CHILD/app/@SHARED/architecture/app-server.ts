@@ -9,6 +9,10 @@ import { Eff, Sub } from "gamezilla/@SHARED/core"
 
 export type AppServerModuleTypes = {
   /**
+   * `Deps` is the dependencies of the module
+   */
+  Deps: any
+  /**
    * `Ctx` is data passed down from parent modules
    */
   Ctx: any
@@ -53,6 +57,10 @@ export type AppServerModuleTypes = {
 //
 
 export type Input<T extends AppServerModuleTypes> = {
+  /**
+   * `deps` are the dependencies of the module
+   */
+  deps: T["Deps"]
   /**
    * `ctx` is data passed down from parent modules
    */
@@ -114,12 +122,13 @@ export type Output<T extends AppServerModuleTypes> = {
  * `AppServerModule` represents a server side app module
  */
 export type AppServerModule<T extends AppServerModuleTypes> = {
+  getDeps: (input: { ctx: T["Ctx"] }) => T["Deps"]
   /**
    * `init` is the initial state of the module
    */
   init: (input: {
     ctx: T["Ctx"]
-    stored: T["Model"] | null
+    stored?: T["Model"] | null
   }) => Promise<Output<T>>
 
   /**
@@ -139,10 +148,12 @@ export type AppServerModule<T extends AppServerModuleTypes> = {
 type MaybePromise<T> = T | Promise<T>
 
 const chainUpdates = async <T extends AppServerModuleTypes>(
-  acc: Output<T>,
+  accPromise: MaybePromise<Output<T>>,
   ...updates: ((model: T["Model"]) => MaybePromise<Output<T>>)[]
 ): Promise<Output<T>> => {
   const [update, ...rest] = updates
+
+  const acc = await accPromise
 
   if (!update) {
     return acc

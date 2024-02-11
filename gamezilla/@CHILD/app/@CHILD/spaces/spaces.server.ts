@@ -7,7 +7,6 @@ import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
 import {
   ServerCmd,
   ServerCtx,
-  ServerEvent,
   broadcast,
   sendBack,
   sendToClient,
@@ -20,7 +19,12 @@ import * as Space from "./spaces-core/space"
 import { SpaceEvent } from "./spaces-core/space-event"
 import * as SpaceState from "./spaces-core/space-state"
 import * as Spaces from "./spaces-core/spaces"
-import { ModelServer, MsgServer, MsgToClient, MsgToServer } from "./spaces.core"
+import {
+  ModelServer,
+  MsgServer,
+  MsgToClient,
+  ServerModule,
+} from "./spaces.core"
 
 //
 //
@@ -29,18 +33,6 @@ import { ModelServer, MsgServer, MsgToClient, MsgToServer } from "./spaces.core"
 //
 //
 //
-
-type Module = AppServerModule<{
-  Ctx: ServerCtx
-  MsgInCmd: null
-  MsgInEvent: ServerEvent
-  Model: ModelServer
-  Msg: MsgServer
-  MsgOutCmd: ServerCmd<MsgToClient>
-  MsgOutEvent: null
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-}>
 
 const spacesToProfiles = (
   model: ModelServer,
@@ -63,12 +55,23 @@ const spacesToProfiles = (
 //
 //
 //
+//
+//
+//
+
+export const getDeps: ServerModule["getDeps"] = () => {
+  return {}
+}
+
+//
+//
+//
 // Model
 //
 //
 //
 
-export const init: Module["init"] = async () => {
+export const init: ServerModule["init"] = async () => {
   return {
     model: {
       ...Spaces.init,
@@ -86,7 +89,7 @@ export const init: Module["init"] = async () => {
 //
 //
 
-export const update: Module["update"] = async (input) => {
+export const update: ServerModule["update"] = async (input) => {
   return AppServerModule.chainUpdates(
     { model: input.model },
     (model) => updateProfileCache({ ...input, model }),
@@ -97,7 +100,7 @@ export const update: Module["update"] = async (input) => {
   )
 }
 
-const updateProfileCache: Module["update"] = async (input) => {
+const updateProfileCache: ServerModule["update"] = async (input) => {
   return {
     model: {
       ...input.model,
@@ -109,7 +112,7 @@ const updateProfileCache: Module["update"] = async (input) => {
   }
 }
 
-const updateFromMsg: Module["update"] = async ({ model, msg }) => {
+const updateFromMsg: ServerModule["update"] = async ({ model, msg }) => {
   if (!msg) {
     return { model }
   }
@@ -125,7 +128,7 @@ const updateFromMsg: Module["update"] = async ({ model, msg }) => {
   }
 }
 
-const updateFromClient: Module["update"] = async (input) => {
+const updateFromClient: ServerModule["update"] = async (input) => {
   const { msgClient, model, ctx } = input
 
   if (!msgClient) {
@@ -225,7 +228,7 @@ const updateFromClient: Module["update"] = async (input) => {
   }
 }
 
-const updateFromEvent: Module["update"] = async (input) => {
+const updateFromEvent: ServerModule["update"] = async (input) => {
   const { msgEvt, model } = input
 
   if (!msgEvt) {
@@ -283,7 +286,7 @@ const spaceCmdToCmd = (
   })
 }
 
-const inputToSpaceId = (input: Parameters<Module["update"]>[0]) => {
+const inputToSpaceId = (input: Parameters<ServerModule["update"]>[0]) => {
   const spaceId =
     input.msg && "spaceId" in input.msg
       ? input.msg.spaceId
@@ -294,7 +297,7 @@ const inputToSpaceId = (input: Parameters<Module["update"]>[0]) => {
   return spaceId
 }
 
-const updateChild: Module["update"] = async (input) => {
+const updateChild: ServerModule["update"] = async (input) => {
   const { msg, msgEvt, msgClient, ctx, model } = input
 
   const spaceId = inputToSpaceId(input)
@@ -571,7 +574,7 @@ const updateFromSpaceEvent = async ({
 //
 //
 
-export const subscriptions: Module["subscriptions"] = async ({
+export const subscriptions: ServerModule["subscriptions"] = async ({
   model,
   ctx,
 }) => {

@@ -3,7 +3,7 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { Account } from "../../../auth.core"
 import { IAccountDb } from "./account-db"
 
-export const AccountDb = (): IAccountDb => {
+export const AccountDbInMemory = (): IAccountDb => {
   const accounts = new Map<UserId, Account>()
   return {
     async findOneByEmail(input) {
@@ -22,8 +22,8 @@ export const AccountDb = (): IAccountDb => {
       }
       return ok(null)
     },
-    async insertOne(input) {
-      accounts.set(input.account.userId, input.account)
+    async insert(input) {
+      accounts.set(input.userId, input)
       return ok(null)
     },
   }
