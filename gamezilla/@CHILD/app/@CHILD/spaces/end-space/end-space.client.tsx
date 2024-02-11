@@ -14,7 +14,37 @@ const update: SpaceClientModule["update"] = async (input) => {
     { model: input.model },
     (model) => updateEndSpaceButton({ ...input, model }),
     (model) => updateFromSpaceEvent({ ...input, model }),
+    (model) => updateFromAppEvent({ ...input, model }),
   )
+}
+
+const updateFromAppEvent: SpaceClientModule["update"] = async (input) => {
+  const { ctx, model, msgEvt } = input
+
+  switch (msgEvt?.t) {
+    case "is-logged-out": {
+      const { currentUserId } = ctx
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(model, currentUserId)
+      if (!currentUserId || !currentUserSpaceId) {
+        return { model }
+      }
+
+      return {
+        model,
+        msgSpaceEvent: [
+          withId({
+            t: "user-ended-space",
+            spaceId: currentUserSpaceId,
+            userId: currentUserId,
+          }),
+        ],
+      }
+    }
+
+    default: {
+      return { model }
+    }
+  }
 }
 
 const updateFromSpaceEvent: SpaceClientModule["update"] = async (input) => {

@@ -433,3 +433,16 @@ export const clickedUser = (
     },
   })
 }
+
+export const loggedOut = (
+  model: SpaceCore.ModelClient,
+  ctxOverride: ClientCtx = ctx,
+) => {
+  return SpaceClient.update({
+    ctx: ctxOverride,
+    model: model,
+    msgEvt: {
+      t: "is-logged-out",
+    },
+  })
+}
