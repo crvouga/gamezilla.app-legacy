@@ -6,6 +6,7 @@ import {
   clickedUser,
   changeRoute,
   ctx,
+  clickedUserPreviewLink,
 } from "../@TEST/client.ts"
 import { UserId } from "../../../@SHARED/data/user-id.ts"
 import { Modals } from "./modals.tsx"
@@ -46,7 +47,7 @@ describe("space client modals", () => {
   it("should close modal when the current route changes", async () => {
     const someUserId = UserId.generate()
     const output = await AppClientModule.chainUpdates(
-      await init(),
+      init(),
       (model) => clickedUser(model, someUserId),
       (model) => changeRoute(model, { t: "spaces", c: { t: "space-list" } }),
     )
@@ -64,6 +65,26 @@ describe("space client modals", () => {
     expect(
       output.model.modal === "user-preview" &&
         output.model.modalPreviewUserId === someUserId,
+    ).toBeTrue()
+  })
+
+  it("should navigate to preview users profile page when clicked", async () => {
+    const someUserId = UserId.generate()
+    const output = await SpaceClientModule.chainUpdates(
+      init(),
+      (model) => clickedUser(model, someUserId),
+      clickedUserPreviewLink,
+    )
+
+    expect(
+      output.msgCmd?.some(
+        (msgCmd) =>
+          msgCmd.t === "routing" &&
+          msgCmd.c.t === "push" &&
+          msgCmd.c.route.t === "profile" &&
+          msgCmd.c.route.c.t === "profile" &&
+          msgCmd.c.route.c.userId === someUserId,
+      ),
     ).toBeTrue()
   })
 })

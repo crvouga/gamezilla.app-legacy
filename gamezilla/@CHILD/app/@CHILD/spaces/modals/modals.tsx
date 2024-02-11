@@ -6,31 +6,44 @@ import {
 } from "../@CHILD/game/@SHARED/game"
 import { SpaceClientCtx } from "../@SHARED/space"
 import { SpaceClientModule } from "../architechure/space-client"
+import { pushRoute } from "gamezilla/@CHILD/app/@SHARED/client"
 
-const update: SpaceClientModule["update"] = ({
-  msg,
-  msgEvt,
-  msgCmd,
-  model,
-}) => {
-  switch (msgEvt?.t) {
-    case "routing/route-changed": {
-      return { model: { ...model, modal: null } }
-    }
-  }
+const update: SpaceClientModule["update"] = (input) => {
+  const { model } = input
+  return SpaceClientModule.chainUpdates(
+    { model },
+    (model) => updateModals({ ...input, model }),
+    (model) => updateFromCmd({ ...input, model }),
+    (model) => updateFromEvent({ ...input, model }),
+    (model) => updateUserPreview({ ...input, model }),
+  )
+}
 
-  switch (msgCmd?.t) {
-    case "space/open-user-details": {
+const updateUserPreview: SpaceClientModule["update"] = ({ msg, model }) => {
+  switch (msg?.t) {
+    case "clicked-preview-user-link": {
+      if (!model.modalPreviewUserId) {
+        return { model }
+      }
+
       return {
-        model: {
-          ...model,
-          modalPreviewUserId: msgCmd.userId,
-          modal: "user-preview",
-        },
+        model,
+        msgCmd: [
+          pushRoute({
+            t: "profile",
+            c: { t: "profile", userId: model.modalPreviewUserId },
+          }),
+        ],
       }
     }
-  }
 
+    default: {
+      return { model }
+    }
+  }
+}
+
+const updateModals: SpaceClientModule["update"] = ({ msg, model }) => {
   switch (msg?.t) {
     case "closed-modal": {
       return { model: { ...model, modal: null } }
@@ -49,9 +62,38 @@ const update: SpaceClientModule["update"] = ({
         },
       }
     }
+    default: {
+      return { model }
+    }
   }
+}
 
-  return { model }
+const updateFromCmd: SpaceClientModule["update"] = ({ msgCmd, model }) => {
+  switch (msgCmd?.t) {
+    case "space/open-user-details": {
+      return {
+        model: {
+          ...model,
+          modalPreviewUserId: msgCmd.userId,
+          modal: "user-preview",
+        },
+      }
+    }
+    default: {
+      return { model }
+    }
+  }
+}
+
+const updateFromEvent: SpaceClientModule["update"] = ({ msgEvt, model }) => {
+  switch (msgEvt?.t) {
+    case "routing/route-changed": {
+      return { model: { ...model, modal: null } }
+    }
+    default: {
+      return { model }
+    }
+  }
 }
 
 const View: SpaceClientModule["View"] = ({ ctx, dispatch, model }) => {
