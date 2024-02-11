@@ -87,9 +87,9 @@ export type MsgServer =
   | { t: "game"; spaceId: SpaceId; c: Game.MsgServer }
 
 export type MsgClient =
-  | { t: "event"; c: WithEventId<SpaceEvent> }
   | { t: "game"; spaceId: SpaceId; c: Game.MsgClient }
   | { t: "time-passed" }
+  | { t: "clicked-game-tile"; gameName: Game.GameName }
   | { t: "clicked-join-space-button"; spaceId: SpaceId }
   | { t: "clicked-end-space-button" }
   | { t: "clicked-leave-space-button" }

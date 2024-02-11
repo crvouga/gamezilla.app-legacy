@@ -310,6 +310,17 @@ export const userInputtedGame = (
   })
 }
 
+export const clickedGameTile = (
+  model: SpaceCore.ModelClient,
+  gameName: GameName,
+) => {
+  return SpaceClient.update({
+    ctx,
+    model: model,
+    msg: { t: "clicked-game-tile", gameName },
+  })
+}
+
 export const gotMsgServer = (
   model: SpaceCore.ModelClient,
   msgServer: SpaceCore.MsgToClient,

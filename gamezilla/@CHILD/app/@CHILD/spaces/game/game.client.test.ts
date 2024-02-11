@@ -4,10 +4,10 @@ import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { exitGame } from "../@SHARED/space-client-cmd"
 import {
+  clickedGameTile,
   clickedStartSpaceButton,
   ctx,
   init,
-  userInputtedGame,
 } from "../@TEST/client"
 import { SpaceClientModule } from "../architechure/space-client"
 import { Spaces } from "../spaces-core"
@@ -21,8 +21,7 @@ describe("game client", () => {
     )
     const output = await AppClientModule.chainUpdates(
       { model: started.model },
-      (model) =>
-        userInputtedGame(model, ctx.currentUserId, spaceId, "connect-four"),
+      (model) => clickedGameTile(model, "connect-four"),
     )
     expect(didPlaySound(output)).toBeTrue()
   })
@@ -35,8 +34,7 @@ describe("game client", () => {
       { model: initial.model },
       //
       (model) => clickedStartSpaceButton(model, spaceId),
-      (model) =>
-        userInputtedGame(model, ctx.currentUserId, spaceId, "connect-four"),
+      (model) => clickedGameTile(model, "connect-four"),
     )
 
     const gameName = Spaces.toSpaceStarted(output.model, spaceId)?.game?.t
@@ -51,8 +49,7 @@ describe("game client", () => {
       { model: initial.model },
       //
       (model) => clickedStartSpaceButton(model, spaceId),
-      (model) =>
-        userInputtedGame(model, ctx.currentUserId, spaceId, "connect-four"),
+      (model) => clickedGameTile(model, "connect-four"),
       (model) => SpacesClient.updateMain({ model, ctx, msgCmd: exitGame() }),
     )
 

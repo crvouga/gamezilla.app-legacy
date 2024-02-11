@@ -19,10 +19,40 @@ const update: SpaceClientModule["update"] = (input) => {
     //
     (model) => updateFromSpaceEvent({ ...input, model }),
     (model) => updateGame({ ...input, model }),
+    (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
   )
 }
 
+const updateFromMsg: SpaceClientModule["update"] = ({ msg, model, ctx }) => {
+  switch (msg?.t) {
+    case "clicked-game-tile": {
+      const currentUserId = ctx.currentUserId
+
+      const currentUserSpaceId = Spaces.toSpaceIdByUserId(model, currentUserId)
+
+      if (!currentUserId || !currentUserSpaceId) {
+        return { model }
+      }
+
+      const spaceEventNew = withId<SpaceEvent>({
+        t: "user-inputted-game",
+        game: msg.gameName,
+        spaceId: currentUserSpaceId,
+        userId: currentUserId,
+      })
+
+      return {
+        model,
+        msgSpaceEvent: [spaceEventNew],
+      }
+    }
+
+    default: {
+      return { model }
+    }
+  }
+}
 const updateFromCmd: SpaceClientModule["update"] = ({ msgCmd, model, ctx }) => {
   switch (msgCmd?.t) {
     case "space/exit-game": {
@@ -298,17 +328,7 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
           <div key={gameName}>
             <button
               aria-label={gameName}
-              onClick={() =>
-                dispatch({
-                  t: "event",
-                  c: withId({
-                    t: "user-inputted-game",
-                    spaceId: space.spaceId,
-                    userId: currentUserId,
-                    game: gameName,
-                  }),
-                })
-              }
+              onClick={() => dispatch({ t: "clicked-game-tile", gameName })}
               className="flex overflow-hidden rounded-lg border border-neutral-600"
             >
               <CoverArt gameName={gameName} />

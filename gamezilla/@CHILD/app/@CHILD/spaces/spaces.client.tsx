@@ -1,7 +1,4 @@
-import {
-  WithEventId,
-  withId,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { WithEventId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/feed-item"
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client"
@@ -17,6 +14,7 @@ import {
 import { Eff, Sub, batchMsgs, notAsked } from "gamezilla/@SHARED/core"
 import { CoverArt } from "./@CHILD/game/game-cover-art"
 import { Game } from "./@CHILD/game/game.client"
+import { SpaceClientCmd } from "./@SHARED/space-client-cmd"
 import { Input, Output, SpaceClientModule } from "./architechure/space-client"
 import { EndSpaceClient } from "./end-space/end-space.client"
 import { GameClient } from "./game/game.client"
@@ -28,7 +26,6 @@ import { SpaceEvent, SpaceState, Spaces } from "./spaces-core"
 import { ClientModule, ModelClient, MsgClient } from "./spaces.core"
 import { StartSpaceClient } from "./start-space/start-space.client"
 import { SyncClient } from "./sync/sync.client"
-import { SpaceClientCmd } from "./@SHARED/space-client-cmd"
 
 //
 //
@@ -150,16 +147,7 @@ const updateChild: SpaceClientModule["update"] = (input) => {
 }
 
 const outputSpaceEvent: SpaceClientModule["update"] = (input) => {
-  const { msg, model, msgServer } = input
-
-  switch (msg?.t) {
-    case "event": {
-      return {
-        model,
-        msgSpaceEvent: [msg.c],
-      }
-    }
-  }
+  const { model, msgServer } = input
 
   switch (msgServer?.t) {
     case "event": {
@@ -523,9 +511,6 @@ export const ViewCurrentSpaceBar = ({
   model: ModelClient
   dispatch: (msg: MsgClient) => void
 }) => {
-  const dispatchEvent = (msg: SpaceEvent) =>
-    dispatch({ t: "event", c: withId(msg) })
-
   const userSpaceId = model.spaceIdByUserId[ctx.currentUserId]
 
   if (!userSpaceId) {
@@ -583,13 +568,7 @@ export const ViewCurrentSpaceBar = ({
       {ctx.currentUserId === space.hostId && (
         <button
           aria-label="end space"
-          onClick={() => {
-            dispatchEvent({
-              t: "user-ended-space",
-              userId: ctx.currentUserId,
-              spaceId: space.spaceId,
-            })
-          }}
+          onClick={() => dispatch({ t: "clicked-end-space-button" })}
           className="mr-4"
         >
           <IconXMark className="h-8 w-8" />
@@ -599,13 +578,7 @@ export const ViewCurrentSpaceBar = ({
       {ctx.currentUserId !== space.hostId && (
         <button
           aria-label="leave space"
-          onClick={() => {
-            dispatchEvent({
-              t: "user-left-space",
-              userId: ctx.currentUserId,
-              spaceId: space.spaceId,
-            })
-          }}
+          onClick={() => dispatch({ t: "clicked-leave-space-button" })}
           className="mr-4"
         >
           <IconXMark className="h-8 w-8" />
