@@ -38,6 +38,17 @@ const clientClickedContinueAsGuestButton =
     })
   }
 
+const clientConnected =
+  (deps: ServerDeps, clientId: ClientId, sessionId: SessionId) =>
+  async (model: ModelServer) => {
+    return AuthServer.update({
+      model,
+      ctx,
+      msgEvt: { t: "wire/client-connected", clientId, sessionId },
+      deps,
+    })
+  }
+
 describe("auth continue as guest server", () => {
   it("should be able to handle request", async () => {
     const deps = getDeps({ ctx })
@@ -82,7 +93,7 @@ describe("auth continue as guest server", () => {
     ).toBeTrue()
   })
 
-  it("should login client", async () => {
+  it("should be able to find user id from session id after continuing as guest", async () => {
     const deps = getDeps({ ctx })
 
     const clientId = ClientId.generate()

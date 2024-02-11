@@ -1,5 +1,5 @@
 import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { Eff, Sub } from "gamezilla/@SHARED/core"
+import { Eff, Sub, batchMsgs } from "gamezilla/@SHARED/core"
 
 //
 //
@@ -171,6 +171,54 @@ const chainUpdates = async <T extends AppServerModuleTypes>(
   return chainUpdates(accNew, ...rest)
 }
 
+const updateLoop = async <T extends AppServerModuleTypes>(
+  deps: T["Deps"],
+  ctx: T["Ctx"],
+  update: (input: Input<T>) => MaybePromise<Output<T>>,
+  accPromise: MaybePromise<Output<T>>,
+): Promise<Output<T>> => {
+  const acc = await accPromise
+
+  const [msgEvt, ...msgEvtRest] = acc.msgEvt ?? []
+
+  if (msgEvt) {
+    const updated = await update({
+      deps,
+      ctx,
+      model: acc.model,
+      msgEvt: msgEvt,
+    })
+
+    return updateLoop(deps, ctx, update, {
+      model: updated.model,
+      eff: Eff.batch([acc.eff, updated.eff]),
+      msgCmd: batchMsgs(updated.msgCmd, acc.msgCmd),
+      msgEvt: batchMsgs(updated.msgEvt, msgEvtRest),
+    })
+  }
+
+  const [msgCmd, ...msgCmdRest] = acc.msgCmd ?? []
+
+  if (msgCmd) {
+    const updated = await update({
+      deps,
+      ctx,
+      model: acc.model,
+      msgCmd: msgCmd,
+    })
+
+    return updateLoop(deps, ctx, update, {
+      model: updated.model,
+      eff: Eff.batch([acc.eff, updated.eff]),
+      msgCmd: batchMsgs(updated.msgCmd, msgCmdRest),
+      msgEvt: batchMsgs(updated.msgEvt, acc.msgEvt),
+    })
+  }
+
+  return acc
+}
+
 export const AppServerModule = {
   chainUpdates,
+  updateLoop,
 }

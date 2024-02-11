@@ -107,6 +107,7 @@ export type MsgServer =
 export type MsgToServer =
   | ContinueAsGuest.MsgToServer
   | { t: "logout" }
+  | { t: "client-checked-auth" }
   | { t: "sms"; c: AuthSMS.MsgToServer }
 
 export type MsgToClient =
