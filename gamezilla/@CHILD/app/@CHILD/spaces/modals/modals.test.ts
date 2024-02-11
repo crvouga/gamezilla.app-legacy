@@ -24,8 +24,8 @@ describe("space client modals", () => {
   it("should open users modal when user clicks on users button", async () => {
     const output = await AppClientModule.chainUpdates(
       await init(),
-      //
       clickedPeopleButton,
+      //
     )
     expect(output.model.modal === "users").toBeTrue()
   })
@@ -34,8 +34,8 @@ describe("space client modals", () => {
     const someUserId = UserId.generate()
     const output = await AppClientModule.chainUpdates(
       await init(),
-      //
       (model) => clickedUser(model, someUserId),
+      //
     )
     expect(
       output.model.modal === "user-preview" &&
@@ -47,7 +47,6 @@ describe("space client modals", () => {
     const someUserId = UserId.generate()
     const output = await AppClientModule.chainUpdates(
       await init(),
-      //
       (model) => clickedUser(model, someUserId),
       (model) => changeRoute(model, { t: "spaces", c: { t: "space-list" } }),
     )
@@ -59,7 +58,6 @@ describe("space client modals", () => {
     const initial = await init()
     const output = await SpaceClientModule.chainUpdates(
       { model: initial.model },
-      //
       (model) =>
         Modals.update({ model, ctx, msgCmd: openUserDetails(someUserId) }),
     )
