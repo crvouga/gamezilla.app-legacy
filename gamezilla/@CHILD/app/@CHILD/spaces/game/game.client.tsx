@@ -1,4 +1,9 @@
-import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
+import {
+  APP_SOUND,
+  playSound,
+  pushRoute,
+} from "gamezilla/@CHILD/app/@SHARED/client"
+import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Eff, Sub } from "gamezilla/@SHARED/core"
 import {
   ViewGameHeader,
@@ -21,7 +26,22 @@ const update: SpaceClientModule["update"] = (input) => {
     (model) => updateGame({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),
+    (model) => updateGoHomeButton({ ...input, model }),
   )
+}
+
+const updateGoHomeButton: SpaceClientModule["update"] = ({ msg, model }) => {
+  switch (msg?.t) {
+    case "clicked-go-home-button": {
+      return {
+        model,
+        msgCmd: [pushRoute({ t: "spaces", c: { t: "space-list" } })],
+      }
+    }
+    default: {
+      return { model }
+    }
+  }
 }
 
 const updateFromMsg: SpaceClientModule["update"] = ({ msg, model, ctx }) => {
@@ -320,10 +340,10 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
   }
 
   return (
-    <div className="flex h-full w-full flex-1 flex-col gap-4 p-4">
-      <h1 className="text-center text-3xl font-bold">Games</h1>
+    <div className="flex h-full w-full flex-1 flex-col">
+      <h1 className="p-4 text-center text-3xl font-bold">Games</h1>
 
-      <div className="grid grid-cols-3 justify-between gap-8">
+      <div className="grid flex-1 grid-cols-3 justify-between gap-8 px-4">
         {gameNameList.map((gameName) => (
           <div key={gameName}>
             <button
@@ -339,6 +359,15 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
             </p>
           </div>
         ))}
+      </div>
+
+      <div className="flex w-full items-center justify-center border-t border-neutral-600 p-4">
+        <Button
+          className="w-full"
+          onClick={() => dispatch({ t: "clicked-go-home-button" })}
+          text="Exit"
+          start={<IconArrowLeftOnRect className="h-6 w-6" />}
+        />
       </div>
     </div>
   )

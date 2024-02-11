@@ -90,6 +90,7 @@ export type MsgServer =
 export type MsgClient =
   | { t: "game"; spaceId: SpaceId; c: Game.MsgClient }
   | { t: "time-passed" }
+  | { t: "clicked-go-home-button" }
   | { t: "clicked-game-tile"; gameName: Game.GameName }
   | { t: "clicked-join-space-button"; spaceId: SpaceId }
   | { t: "clicked-end-space-button" }
