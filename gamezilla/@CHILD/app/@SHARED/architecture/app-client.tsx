@@ -17,6 +17,10 @@ export type AppClientModuleTypes = {
    */
   Model: any
   /**
+   * `ModelLocation` is the state of the module that lives in the location state like the URL
+   */
+  ModelLocation?: any
+  /**
    * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvt
    */
   Msg: any
@@ -62,6 +66,10 @@ export type Input<T extends AppClientModuleTypes> = {
    */
   model: T["Model"]
   /**
+   *
+   */
+  modelLocation?: T["ModelLocation"]
+  /**
    * `msg` is an event that happens client side within this module. Like `user-clicked-a-button`
    */
   msg?: T["Msg"] | null
@@ -85,11 +93,20 @@ export type Input<T extends AppClientModuleTypes> = {
 //
 //
 
+export type OutputModelLocation<T extends AppClientModuleTypes> = {
+  t: "push" | "replace"
+  c: T["ModelLocation"]
+}
+
 export type Output<T extends AppClientModuleTypes> = {
   /**
    * `model` will be the new state of the module
    */
   model: T["Model"]
+  /**
+   * `modelLocation` is a location to navigate to
+   */
+  modelLocation?: OutputModelLocation<T>
   /**
    * `eff` is a side effect to be performed. May dispatch a message
    */
@@ -157,6 +174,7 @@ const chainUpdates = async <T extends AppClientModuleTypes>(
       ...acc.model,
       ...updated.model,
     },
+    modelLocation: updated.modelLocation ?? acc.modelLocation,
     eff: Eff.batch([acc.eff, updated.eff]),
     msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
     msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],

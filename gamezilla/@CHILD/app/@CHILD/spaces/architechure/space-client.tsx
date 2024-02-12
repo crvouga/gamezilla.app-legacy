@@ -10,6 +10,7 @@ import { SpaceClientCmd } from "../@SHARED/space-client-cmd"
 import { SpaceEvent } from "../spaces-core"
 import {
   ModelClient,
+  ModelLocation,
   MsgClient,
   MsgToClient,
   MsgToServer,
@@ -22,6 +23,7 @@ type Ctx = AnonymousClientCtx & {
 export type Input = {
   ctx: Ctx
   model: ModelClient
+  modelLocation?: ModelLocation
   msg?: MsgClient | null
   msgServer?: MsgToClient | null
   msgEvt?: ClientEvent | null
@@ -36,6 +38,10 @@ export type MaybePromise<T> = T | Promise<T>
 
 export type Output = {
   model: ModelClient
+  modelLocation?: {
+    t: "replace" | "push"
+    c: ModelLocation
+  }
   eff?: Eff<MsgClient>
   msgCmd?: SpaceClientCmd<{
     MsgClient: MsgClient

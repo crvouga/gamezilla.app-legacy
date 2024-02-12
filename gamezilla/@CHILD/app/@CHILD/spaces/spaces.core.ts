@@ -24,6 +24,7 @@ import * as Spaces from "./spaces-core/spaces"
 //
 
 export type ClientModule = AppClientModule<{
+  ModelLocation: ModelLocation
   Ctx: AnonymousClientCtx
   MsgInCmd: never
   MsgInEvent: ClientEvent
@@ -74,6 +75,31 @@ export type ModelClient = Spaces.Model & {
   modalPreviewUserId: UserId | null
   modal: null | "user-preview" | "users"
   listSpacesRequest: RequestResponse<string, null>
+}
+
+export type ModelLocation = {
+  filters: {
+    limit: number
+    offset: number
+  }
+  screen:
+    | {
+        t: "list"
+      }
+    | {
+        t: "space"
+        spaceId: SpaceId
+      }
+}
+
+export const initLocation: ModelLocation = {
+  filters: {
+    limit: 100,
+    offset: 0,
+  },
+  screen: {
+    t: "list",
+  },
 }
 
 //

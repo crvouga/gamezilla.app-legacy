@@ -71,6 +71,19 @@ const update: SpaceClientModule["update"] = (input) => {
     case "clicked-space-card": {
       return {
         model,
+        modelLocation: {
+          t: "push",
+          c: {
+            filters: {
+              limit: 100,
+              offset: 0,
+            },
+            screen: {
+              t: "space",
+              spaceId: msg.spaceId,
+            },
+          },
+        },
         msgCmd: [
           pushRoute({
             t: "spaces",

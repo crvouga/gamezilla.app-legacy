@@ -82,10 +82,12 @@ export const updateMain = async (
       ctx: input.ctx,
       model: acc.model,
       msgSpaceEvent: spaceEvent,
+      modelLocation: input.modelLocation,
     })
 
     return updateMain(input, {
       model: updated.model,
+      modelLocation: updated.modelLocation ?? acc.modelLocation,
       eff: Eff.batch([acc.eff, updated.eff]),
       msgSpaceEvent: batchMsgs(spaceEventsRest, updated.msgSpaceEvent),
       msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
