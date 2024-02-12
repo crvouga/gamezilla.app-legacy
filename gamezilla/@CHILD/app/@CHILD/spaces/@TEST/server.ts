@@ -13,7 +13,7 @@ import { EventId } from "../@SHARED/event"
 import { ModelServer, ServerDeps } from "../spaces.core"
 import * as SpacesServer from "../spaces.server"
 
-const ctx: ServerCtx = {
+export const ctx: ServerCtx = {
   dbConn: dbConnNoop,
   logger: LoggerConsole("test"),
   now: Posix.now(),
@@ -59,6 +59,21 @@ export const userStartedSpace =
           spaceId,
           userId: client.userId,
         },
+      },
+    })
+  }
+
+export const clientAuthenticated =
+  (deps: ServerDeps, client: AuthenticatedClient) => (model: ModelServer) => {
+    return SpacesServer.update({
+      ctx,
+      deps,
+      model,
+      msgEvt: {
+        t: "auth/client-authenticated",
+        clientId: client.clientId,
+        sessionId: client.sessionId,
+        userId: client.userId,
       },
     })
   }
