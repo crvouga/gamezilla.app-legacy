@@ -2,6 +2,7 @@ import { describe, expect, it } from "bun:test"
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
 import {
   AnonymousClientCtx,
+  didPlaySound,
   didSendToServer,
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
@@ -94,5 +95,13 @@ describe("auth continue as guest client", () => {
       continueAsGuestResultedErr(),
     )
     expect(isResponseErr(output.model.guestRequest)).toBeTrue()
+  })
+
+  it("should play sound after continuing as guest", async () => {
+    const output = await AppClientModule.chainUpdates(
+      AuthClient.init({ ctx }),
+      clickedContinueAsGuestButton,
+    )
+    expect(didPlaySound(output)).toBeTrue()
   })
 })

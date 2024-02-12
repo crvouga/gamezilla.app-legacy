@@ -2,6 +2,7 @@ import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server"
 import { IAccountDb } from "./account-db"
 import { AccountDbInMemory } from "./account-db-impl.in-memory"
 import { AccountDbPostgres } from "./account-db-impl.postgres"
+import { TimeSpan } from "gamezilla/@SHARED/core"
 
 export type Impl =
   | {
@@ -10,16 +11,17 @@ export type Impl =
     }
   | {
       t: "in-memory"
+      delay: TimeSpan
     }
 
 export const AccountDb = (impl: Impl): IAccountDb => {
   switch (impl.t) {
     case "in-memory": {
-      return AccountDbInMemory()
+      return AccountDbInMemory(impl)
     }
 
     case "postgres": {
-      return AccountDbPostgres({ dbConn: impl.dbConn })
+      return AccountDbPostgres(impl)
     }
   }
 }

@@ -1,4 +1,8 @@
-import { sendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
+import {
+  APP_SOUND,
+  playSound,
+  sendToServer,
+} from "gamezilla/@CHILD/app/@SHARED/client"
 import { Button, IconUserCircle } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { RequestResponse, isRequesting, notAsked } from "gamezilla/@SHARED/core"
 import { ClientModule } from "../auth.core"
@@ -21,7 +25,10 @@ export const update: ClientModule["update"] = async ({
           ...model,
           guestRequest: RequestResponse.requesting(ctx.now),
         },
-        msgCmd: [sendToServer({ t: "guest.clicked-continue-as-guest-button" })],
+        msgCmd: [
+          playSound(APP_SOUND.tap),
+          sendToServer({ t: "guest.clicked-continue-as-guest-button" }),
+        ],
       }
     }
   }
