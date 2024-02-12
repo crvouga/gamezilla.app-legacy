@@ -71,7 +71,10 @@ describe("auth continue as guest client", () => {
     )
 
     expect(
-      didSendToServer(output, { t: "guest.clicked-continue-as-guest-button" }),
+      didSendToServer(
+        output,
+        (msg) => msg.t === "guest.clicked-continue-as-guest-button",
+      ),
     ).toBeTrue()
   })
 

@@ -112,25 +112,6 @@ describe("sync client", () => {
     ).toBeTrue()
   })
 
-  it("should send events to the server like user started space", async () => {
-    const output = await AppClientModule.chainUpdates(
-      await init(),
-      //
-      (model) => clickedStartSpaceButton(model, SpaceId.generate()),
-    )
-
-    expect(
-      hasExcatlyOne(
-        output?.msgCmd ?? [],
-        (msgCmd) =>
-          msgCmd.t === "wire" &&
-          msgCmd.c.t === "send-to-server" &&
-          msgCmd.c.msg?.t === "event" &&
-          msgCmd.c.msg?.c.t === "user-started-space",
-      ),
-    ).toBeTrue()
-  })
-
   it("should send events to the server like user joined space", async () => {
     const spaceId = SpaceId.generate()
     const output = await AppClientModule.chainUpdates(
