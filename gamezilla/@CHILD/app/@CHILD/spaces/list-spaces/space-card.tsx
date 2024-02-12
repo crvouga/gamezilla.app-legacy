@@ -43,7 +43,7 @@ export const ViewSpaceCard = ({
       onClick={onClick}
       disabled={!onClick}
       className={cn(
-        "flex flex-col gap-3 rounded-md bg-gradient-to-tr from-blue-700 via-blue-500  to-sky-500 p-4",
+        "flex flex-col gap-3 rounded-md bg-gradient-to-tr from-blue-700 via-blue-600  to-sky-500 p-4",
         onClick && "hover:opacity-90 active:opacity-70",
       )}
     >
