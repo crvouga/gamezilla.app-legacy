@@ -192,3 +192,29 @@ export type MsgToServerExtra = {
   meta?: Record<string, unknown>
   causedBy?: unknown
 }
+
+//
+//
+//
+//
+//
+//
+//
+
+export const spacesToProfiles = (
+  model: ModelServer,
+  spaces: Space.Model[],
+): ModelServer["profileCache"] => {
+  const profiles: ModelServer["profileCache"] = {}
+
+  for (const space of spaces) {
+    for (const userId of Space.toUserIds(space)) {
+      const profile = model.profileCache[userId]
+      if (profile) {
+        profiles[userId] = profile
+      }
+    }
+  }
+
+  return profiles
+}

@@ -11,6 +11,7 @@ import {
   MsgToClient,
   MsgToServer,
 } from "../spaces.core"
+import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 
 type Ctx = ServerCtx & {
   space?: Space
@@ -20,7 +21,13 @@ export type Input = {
   ctx: Ctx
   model: ModelServer
   msg?: MsgServer | null
-  msgClient?: MsgToServer | null
+  msgClient?:
+    | (MsgToServer & {
+        clientId: ClientId
+        sessionId: SessionId
+        userId?: UserId | null
+      })
+    | null
   msgEvt?: ServerEvent | null
   msgCmd?: SpaceServerCmd<MsgToClient> | null
   msgSpaceEvent?: WithEventId<SpaceEvent> | null
@@ -70,6 +77,6 @@ const chainUpdates = async (
   return chainUpdates(accNew, ...rest)
 }
 
-export const SpaceClientModule = {
+export const SpaceServerModule = {
   chainUpdates,
 }

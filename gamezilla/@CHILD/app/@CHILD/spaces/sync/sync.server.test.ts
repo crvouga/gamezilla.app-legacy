@@ -38,4 +38,21 @@ describe("space server sync", () => {
 
     expect(didSendMsgToClient(output, (msg) => msg.t === "synced")).toBeTrue()
   })
+
+  it("should broacast space events recieved from clients to other clients", async () => {
+    const deps = getDeps()
+    const client = generateAuthClient()
+    const spaceId = SpaceId.generate()
+    const output = await AppServerModule.chainUpdates(
+      init(),
+      userStartedSpace(deps, client, spaceId),
+    )
+
+    expect(
+      didSendMsgToClient(
+        output,
+        (msg) => msg.t === "event" && msg.c.t === "user-started-space",
+      ),
+    ).toBeTrue()
+  })
 })
