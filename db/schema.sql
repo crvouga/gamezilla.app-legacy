@@ -9,6 +9,17 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: user_role; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.user_role AS ENUM (
+    'super',
+    'normal',
+    'guest'
+);
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -66,10 +77,10 @@ CREATE TABLE public.game_flow_puzzle (
     flow_puzzle json NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by_user_id text NOT NULL,
-    last_updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    last_updated_by_user_id text NOT NULL,
     deleted_at timestamp without time zone,
-    deleted_by_user_id text
+    deleted_by_user_id text,
+    last_updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    last_updated_by_user_id text NOT NULL
 );
 
 
@@ -90,8 +101,9 @@ CREATE TABLE public.user_account (
     user_id text NOT NULL,
     email_address text,
     phone_number text,
-    created_at timestamp without time zone,
-    last_logged_in_at timestamp without time zone
+    created_at timestamp without time zone NOT NULL,
+    user_role public.user_role NOT NULL,
+    CONSTRAINT non_guest_users_must_have_email_address_or_phone_number CHECK ((((user_role)::text = 'guest'::text) OR ((email_address IS NOT NULL) OR (phone_number IS NOT NULL))))
 );
 
 
@@ -279,7 +291,10 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240203025639'),
     ('20240203034127'),
     ('20240203034632'),
+    ('20240203034815'),
     ('20240203034900'),
     ('20240203035440'),
     ('20240203040136'),
-    ('20240203045837');
+    ('20240203045837'),
+    ('20240214195501'),
+    ('20240214202304');
