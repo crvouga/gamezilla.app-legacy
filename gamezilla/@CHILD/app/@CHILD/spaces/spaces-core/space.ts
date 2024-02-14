@@ -1,5 +1,5 @@
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { ascend } from "gamezilla/@SHARED/core"
+import { ascend, eq } from "gamezilla/@SHARED/core"
 import { LamportClock, LamportTimestamp } from "gamezilla/@SHARED/lamport-clock"
 import { EventId, WithEventId, WithEventMeta } from "../@SHARED/event"
 import { SpaceEvent } from "./space-event"
@@ -24,6 +24,10 @@ export const init: Model = {
   clock: LamportClock.init,
   msgEvts: [],
   snapshots: {},
+}
+
+export const isEqual = (left: Model, right: Model) => {
+  return eq(deriveState(left), deriveState(right))
 }
 
 //

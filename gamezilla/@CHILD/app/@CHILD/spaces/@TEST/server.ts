@@ -12,6 +12,7 @@ import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock"
 import { EventId } from "../@SHARED/event"
 import { ModelServer, ServerDeps } from "../spaces.core"
 import * as SpacesServer from "../spaces.server"
+import { Space } from "../spaces-core"
 
 export const ctx: ServerCtx = {
   dbConn: dbConnNoop,
@@ -63,7 +64,7 @@ export const userStartedSpace =
     })
   }
 
-export const clientAuthenticated =
+export const authenticatedClientConncted =
   (deps: ServerDeps, client: AuthenticatedClient) => (model: ModelServer) => {
     return SpacesServer.update({
       ctx,
@@ -74,6 +75,22 @@ export const clientAuthenticated =
         clientId: client.clientId,
         sessionId: client.sessionId,
         userId: client.userId,
+      },
+    })
+  }
+
+export const clientSync =
+  (deps: ServerDeps, client: AuthenticatedClient, space: Space.Model) =>
+  (model: ModelServer) => {
+    return SpacesServer.update({
+      ctx,
+      deps,
+      model,
+      msgClient: {
+        t: "sync",
+        clientId: client.clientId,
+        sessionId: client.sessionId,
+        space,
       },
     })
   }

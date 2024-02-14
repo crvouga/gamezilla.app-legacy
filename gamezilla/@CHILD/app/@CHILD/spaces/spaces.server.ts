@@ -225,6 +225,9 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         },
       )
     }
+    default: {
+      return { model }
+    }
   }
 }
 

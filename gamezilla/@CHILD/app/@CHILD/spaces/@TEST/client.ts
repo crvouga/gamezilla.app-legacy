@@ -390,21 +390,6 @@ export const gotCurrentUsersSpace = (
     msgServer: { t: "current-user-space", space },
   })
 }
-export const makeSpace = (spaceId: SpaceId, hostId: UserId) => {
-  return p(
-    Space.init,
-    //
-    (model) =>
-      Space.appendEvent({
-        model,
-        msgEvt: withId({
-          t: "user-started-space",
-          spaceId: spaceId,
-          userId: hostId,
-        }),
-      }),
-  )
-}
 
 export const clickedPeopleButton = (
   model: SpaceCore.ModelClient,

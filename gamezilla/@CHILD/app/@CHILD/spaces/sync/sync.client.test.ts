@@ -16,12 +16,12 @@ import {
   gotMsgServer,
   gotSpace,
   init,
-  makeSpace,
   serverConnected,
   userEndedSpace,
   userStartedSpace,
 } from "../@TEST/client"
-import { Spaces } from "../spaces-core"
+import { Space, Spaces } from "../spaces-core"
+import { makeSpace } from "../@TEST/shared"
 
 const hasExcatlyOne = <T>(
   items: T[],
@@ -61,21 +61,21 @@ describe("sync client", () => {
   })
 
   it("should merge space recieved from server", async () => {
-    const someStartedSpace = makeSpace(SpaceId.generate(), UserId.generate())
+    const someSpace = makeSpace(SpaceId.generate(), UserId.generate())
 
-    const updated = await AppClientModule.chainUpdates(
+    const output = await AppClientModule.chainUpdates(
       await init(),
       //
-      (model) => gotSpace(model, someStartedSpace),
+      (model) => gotSpace(model, someSpace),
     )
 
-    expect(
-      Spaces.listSpaces({
-        model: updated.model,
-        offset: 0,
-        limit: Infinity,
-      }).some((space) => eq(space, someStartedSpace)),
-    ).toBeTrue()
+    const listed = Spaces.listSpaces({
+      model: output.model,
+      offset: 0,
+      limit: Infinity,
+    })
+
+    expect(listed.some((space) => Space.isEqual(space, someSpace))).toBeTrue()
   })
 
   it("should merge current user's space when recieved from server", async () => {
