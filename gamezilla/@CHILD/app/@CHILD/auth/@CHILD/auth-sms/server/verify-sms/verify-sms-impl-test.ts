@@ -4,10 +4,16 @@ import { Logger } from "gamezilla/@CHILD/app/@SHARED/server/logger"
 
 const CODE = "123"
 
-export const VerifySMS = ({ logger }: { logger: Logger }): IVerifySMS => {
+export const VerifySMS = ({
+  logger,
+  delay,
+}: {
+  logger: Logger
+  delay: () => Promise<void>
+}): IVerifySMS => {
   return {
     async sendCode(input) {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await delay()
 
       const phoneNumberStr = PhoneNumber.toString(input.phoneNumber)
 
@@ -18,7 +24,7 @@ export const VerifySMS = ({ logger }: { logger: Logger }): IVerifySMS => {
       return ok(null)
     },
     async verifyCode(input) {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await delay()
 
       if (input.code === CODE) {
         return ok(null)

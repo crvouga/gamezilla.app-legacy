@@ -7,6 +7,7 @@ import { SessionDbWithCache } from "./session-db-impl.with-cache"
 export type Impl =
   | {
       t: "in-memory"
+      delay: () => Promise<void>
     }
   | {
       t: "postgres"
@@ -20,16 +21,16 @@ export type Impl =
 export const SessionDb = (impl: Impl): ISessionDb => {
   switch (impl.t) {
     case "in-memory": {
-      return SessionDbInMemory()
+      return SessionDbInMemory(impl)
     }
 
     case "postgres": {
-      return SessionDbPostgres({ dbConn: impl.dbConn })
+      return SessionDbPostgres(impl)
     }
 
     case "postgres-with-cache": {
       return SessionDbWithCache({
-        SessionDb: SessionDbPostgres({ dbConn: impl.dbConn }),
+        SessionDb: SessionDbPostgres(impl),
       })
     }
   }

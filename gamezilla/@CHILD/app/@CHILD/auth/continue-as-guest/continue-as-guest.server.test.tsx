@@ -24,6 +24,7 @@ const getDeps: ServerModule["getDeps"] = () => {
     }),
     SessionDb: SessionDb({
       t: "in-memory",
+      delay: async () => {},
     }),
   }
 }

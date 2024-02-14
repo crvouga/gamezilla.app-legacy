@@ -23,6 +23,7 @@ import {
   MsgToClient,
   MsgToServer,
 } from "./auth-sms.core"
+import { IVerifySMS } from "./server/verify-sms/verify-sms"
 import { VerifySMS } from "./server/verify-sms/verify-sms-impl"
 
 //
@@ -44,6 +45,7 @@ type Module = AppServerModule<{
   MsgToServer: MsgToServer
   Deps: {
     AccountDb: IAccountDb
+    VerifySMS: IVerifySMS
   }
 }>
 
@@ -56,7 +58,15 @@ type Module = AppServerModule<{
 
 export const getDeps: Module["getDeps"] = ({ ctx }) => {
   return {
-    AccountDb: AccountDb({ t: "postgres", dbConn: ctx.dbConn }),
+    AccountDb: AccountDb({
+      t: "postgres",
+      dbConn: ctx.dbConn,
+    }),
+    VerifySMS: VerifySMS({
+      t: "fake",
+      delay: () => new Promise((resolve) => setTimeout(resolve, 1000)),
+      logger: ctx.logger,
+    }),
   }
 }
 
@@ -143,16 +153,12 @@ const updateFromMsg: Module["update"] = async ({ msg, model, deps, ctx }) => {
 export const updateFromClient: Module["update"] = async ({
   msgClient,
   model,
-  ctx,
+
+  deps,
 }) => {
   if (!msgClient) {
     return { model }
   }
-
-  const verifySMS = VerifySMS({
-    logger: ctx.logger,
-    impl: "test",
-  })
 
   switch (msgClient.t) {
     case "send-code": {
@@ -162,7 +168,7 @@ export const updateFromClient: Module["update"] = async ({
           dispatch({
             t: "sent-code",
             phoneNumber: msgClient.phoneNumber,
-            result: await verifySMS.sendCode(msgClient),
+            result: await deps.VerifySMS.sendCode(msgClient),
             clientId: msgClient.clientId,
           })
         },
@@ -177,7 +183,7 @@ export const updateFromClient: Module["update"] = async ({
             t: "verified-code",
             phoneNumber: msgClient.phoneNumber,
             clientId: msgClient.clientId,
-            result: await verifySMS.verifyCode(msgClient),
+            result: await deps.VerifySMS.verifyCode(msgClient),
             sessionId: msgClient.sessionId,
           })
         },

@@ -5,9 +5,11 @@ import { ISessionDb } from "./session-db"
 const sessionIdsByUserId = new Map<UserId, SessionId[]>()
 const userIdBySessionId = new Map<SessionId, UserId>()
 
-const delay = () => new Promise((resolve) => setTimeout(resolve, 200))
-
-export const SessionDbInMemory = (): ISessionDb => {
+export const SessionDbInMemory = ({
+  delay,
+}: {
+  delay: () => Promise<void>
+}): ISessionDb => {
   return {
     async findSessionIdsByUserId(userId: UserId) {
       await delay()
