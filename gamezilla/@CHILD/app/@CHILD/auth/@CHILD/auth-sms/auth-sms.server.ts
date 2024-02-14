@@ -6,7 +6,14 @@ import {
   ServerEvent,
   sendToClient,
 } from "gamezilla/@CHILD/app/@SHARED/server"
-import { PhoneNumber, Result, Sub, isErr, ok } from "gamezilla/@SHARED/core"
+import {
+  PhoneNumber,
+  Posix,
+  Result,
+  Sub,
+  isErr,
+  ok,
+} from "gamezilla/@SHARED/core"
 import { IAccountDb } from "../../@SHARED/server/account-db"
 import { AccountDb } from "../../@SHARED/server/account-db/account-db-impl"
 import { Account } from "../../auth.core"
@@ -82,7 +89,7 @@ export const update: Module["update"] = async (input) => {
   )
 }
 
-const updateFromMsg: Module["update"] = async ({ msg, model, deps }) => {
+const updateFromMsg: Module["update"] = async ({ msg, model, deps, ctx }) => {
   if (!msg) {
     return { model }
   }
@@ -99,6 +106,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model, deps }) => {
       const found = await findElseInsertAccount({
         accountDb: deps.AccountDb,
         phoneNumber: msg.phoneNumber,
+        now: ctx.now,
       })
 
       if (found.t === "err") {
@@ -202,9 +210,11 @@ export const subscriptions: Module["subscriptions"] = async () => {
 const findElseInsertAccount = async ({
   accountDb,
   phoneNumber,
+  now,
 }: {
   accountDb: IAccountDb
   phoneNumber: PhoneNumber
+  now: Posix
 }): Promise<Result<string, Account>> => {
   const found = await accountDb.findOneByPhoneNumber({ phoneNumber })
 
@@ -219,8 +229,10 @@ const findElseInsertAccount = async ({
   }
 
   const accountNew: Account = {
+    role: "normal",
     userId: UserId.generate(),
     phoneNumber,
+    createdAt: now,
   }
 
   const inserted = await accountDb.insert(accountNew)

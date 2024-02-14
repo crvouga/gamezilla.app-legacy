@@ -12,11 +12,14 @@ export const update: ServerModule["update"] = async ({
   model,
   msgClient,
   deps,
+  ctx,
 }) => {
   switch (msgClient?.t) {
     case "guest.clicked-continue-as-guest-button": {
       const newGuestAccount: Account = {
+        role: "guest",
         userId: UserId.generate(),
+        createdAt: ctx.now,
       }
 
       const insertedAccount = await deps.AccountDb.insert(newGuestAccount)

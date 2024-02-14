@@ -9,6 +9,7 @@
     "db-prod:dump": "dbmate -e DATABASE_URL_PROD dump",
     "server": "bun gamezilla/gamezilla.server.ts",
     "db:migrate:up": "dbmate -e DATABASE_URL up",
+    "db:migrate:down": "dbmate -e DATABASE_URL down",
     "db:up": "docker-compose -f docker-compose.local.yml up -d",
     "db:down": "docker-compose -f docker-compose.local.yml down",
     "db:new": "dbmate new",

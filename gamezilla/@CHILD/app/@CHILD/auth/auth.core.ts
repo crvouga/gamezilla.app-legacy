@@ -1,17 +1,22 @@
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { EmailAddress, PhoneNumber, RemoteResult } from "gamezilla/@SHARED/core"
-import * as AuthSMS from "./@CHILD/auth-sms/auth-sms.core"
+import {
+  EmailAddress,
+  PhoneNumber,
+  Posix,
+  RemoteResult,
+} from "gamezilla/@SHARED/core"
+import { AppClientModule } from "../../@SHARED/architecture/app-client"
+import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import {
   AnonymousClientCtx,
   ClientCmd,
   ClientEvent,
 } from "../../@SHARED/client"
-import { AppClientModule } from "../../@SHARED/architecture/app-client"
-import { ContinueAsGuest } from "./continue-as-guest"
-import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import { ServerCmd, ServerCtx, ServerEvent } from "../../@SHARED/server"
+import * as AuthSMS from "./@CHILD/auth-sms/auth-sms.core"
 import { IAccountDb } from "./@SHARED/server/account-db"
 import { ISessionDb } from "./@SHARED/server/session-db"
+import { ContinueAsGuest } from "./continue-as-guest"
 
 //
 //
@@ -60,11 +65,42 @@ export type ServerDeps = {
 //
 //
 
-export type Account = {
-  userId: UserId
-  emailAddress?: EmailAddress | null
+type PhoneNumberOrEmail =
+  | {
+      phoneNumber?: PhoneNumber | null
+      emailAddress: EmailAddress
+    }
+  | {
+      phoneNumber: PhoneNumber
+      emailAddress?: EmailAddress | null
+    }
+  | {
+      phoneNumber: PhoneNumber
+      emailAddress: EmailAddress
+    }
+
+type GuestAccount = {
+  role: "guest"
   phoneNumber?: PhoneNumber | null
+  emailAddress?: EmailAddress | null
 }
+
+type NormalAccount = PhoneNumberOrEmail & {
+  role: "normal"
+}
+
+type SuperAccount = PhoneNumberOrEmail & {
+  role: "super"
+}
+
+type AccountVariant = GuestAccount | NormalAccount | SuperAccount
+
+type AccountBase = {
+  userId: UserId
+  createdAt: Posix
+}
+
+export type Account = AccountBase & AccountVariant
 
 export type ModelClient = ContinueAsGuest.ModelClient & {
   loginWithGoogle: RemoteResult<string, null>

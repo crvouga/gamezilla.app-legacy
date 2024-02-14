@@ -1,9 +1,11 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { UserId, UserRole } from "gamezilla/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server"
 import {
   EmailAddress,
   PhoneNumber,
+  Posix,
   Result,
+  err,
   isErr,
   ok,
 } from "gamezilla/@SHARED/core"
@@ -15,19 +17,25 @@ type AccountRow = {
   user_id: string
   email_address?: string | null
   phone_number?: string | null
+  created_at: string
+  user_role: UserRole
 }
 
-export const toAccountRow = (x: unknown): AccountRow | null => {
+export const toAccountRow = (row: unknown): AccountRow | null => {
   if (
-    P.obj(x) &&
-    P.has(x, "user_id", P.str) &&
-    P.has(x, "email_address", P.or(P.str, P.nullish)) &&
-    P.has(x, "phone_number", P.or(P.str, P.nullish))
+    P.obj(row) &&
+    P.has(row, "user_id", P.str) &&
+    P.has(row, "email_address", P.or(P.str, P.nullish)) &&
+    P.has(row, "phone_number", P.or(P.str, P.nullish)) &&
+    P.has(row, "created_at", P.str) &&
+    P.has(row, "role", UserRole.is)
   ) {
     return {
-      user_id: x.user_id,
-      email_address: x.email_address,
-      phone_number: x.phone_number,
+      user_id: row.user_id,
+      email_address: row.email_address,
+      phone_number: row.phone_number,
+      created_at: row.created_at,
+      user_role: row.role,
     }
   }
   return null
@@ -40,31 +48,68 @@ const rowToAccount = (row: AccountRow): Result<string, Account> => {
     return parsedUserId
   }
 
+  const userId = parsedUserId.value
+
+  const createdAt = postgresTimestampToPosix(row.created_at)
+
   const parsedEmailAddress = row.email_address
     ? EmailAddress.parse(row.email_address)
     : null
-
-  if (parsedEmailAddress && isErr(parsedEmailAddress)) {
-    console.error(parsedEmailAddress)
-  }
 
   const parsedPhoneNumber = row.phone_number
     ? PhoneNumber.parse(row.phone_number)
     : null
 
-  const account: Account = {
-    userId: parsedUserId.value,
-    emailAddress:
-      parsedEmailAddress && parsedEmailAddress.t === "ok"
-        ? parsedEmailAddress.value
-        : null,
-    phoneNumber:
-      parsedPhoneNumber && parsedPhoneNumber.t === "ok"
-        ? parsedPhoneNumber.value
-        : null,
-  }
+  const emailAddress =
+    parsedEmailAddress && parsedEmailAddress.t === "ok"
+      ? parsedEmailAddress.value
+      : null
 
-  return ok(account)
+  const phoneNumber =
+    parsedPhoneNumber && parsedPhoneNumber.t === "ok"
+      ? parsedPhoneNumber.value
+      : null
+
+  switch (row.user_role) {
+    case "guest": {
+      return ok({
+        role: "guest",
+        createdAt,
+        userId,
+      })
+    }
+
+    case "normal": {
+      if (!emailAddress || !phoneNumber) {
+        return err("invalid_account")
+      }
+
+      return ok({
+        role: "normal",
+        createdAt,
+        userId,
+        emailAddress,
+        phoneNumber,
+      })
+    }
+
+    case "super": {
+      if (!emailAddress || !phoneNumber) {
+        return err("invalid_account")
+      }
+      return ok({
+        role: "super",
+        createdAt,
+        userId,
+        emailAddress,
+        phoneNumber,
+      })
+    }
+  }
+}
+
+const postgresTimestampToPosix = (postgresTimestamp: string) => {
+  return Posix.fromNumber(new Date(postgresTimestamp).getTime())
 }
 
 const accountToRow = (account: Account): AccountRow => {
@@ -74,6 +119,8 @@ const accountToRow = (account: Account): AccountRow => {
     phone_number: account.phoneNumber
       ? PhoneNumber.toString(account.phoneNumber)
       : null,
+    created_at: Posix.toIsoString(account.createdAt),
+    user_role: account.role,
   }
 }
 
@@ -142,14 +189,18 @@ export const AccountDbPostgres = ({
       const queried = await dbConn.query(
         P.is(toAccountRow),
         `INSERT INTO user_account (
+            user_role,
             user_id,
             email_address,
-            phone_number
+            phone_number,
+            created_at
           )
           VALUES (
+            :user_role,
             :user_id,
             :email_address,
-            :phone_number
+            :phone_number,
+            :created_at
           )`,
         rowNew,
       )
