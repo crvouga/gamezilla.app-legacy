@@ -81,7 +81,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
     const url = new URL(req.url)
 
     switch (url.pathname) {
-      case impl.endpoint: {
+      case impl.webSocketEndpoint: {
         const maybeSessionId = url.searchParams.get("session-id")
 
         const sessionId = SessionId.is(maybeSessionId)
@@ -109,9 +109,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
       }
 
       default: {
-        return new Response("Hello from gamezilla server", {
-          status: 404,
-        })
+        return null
       }
     }
   }
@@ -181,13 +179,10 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
     },
   }
 
-  const server = Bun.serve({
-    port: impl.serverPort,
-    fetch: onRequest,
-    websocket,
-  })
+  impl.serverBun.registerFetchHandler(onRequest)
+  impl.serverBun.setWebSocketHandler(websocket)
 
-  transport.wire.publish({ t: "server-started", port: impl.serverPort })
+  transport.wire.publish({ t: "server-started", port: NaN })
 
   //
   //
@@ -199,7 +194,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 
   transport.topicPublish.subscribe((msg) => {
     for (const topic of msg.topics) {
-      server.publish(topic, JSON.stringify(msg.msg))
+      impl.serverBun.publish(topic, JSON.stringify(msg.msg))
     }
   })
 

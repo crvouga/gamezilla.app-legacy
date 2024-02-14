@@ -1,4 +1,5 @@
 import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { ServerBun } from "gamezilla/@SHARED/server-bun/server-bun"
 import { PubSub } from "gamezilla/@SHARED/core/sub"
 
 export type ServerTransportMsg =
@@ -68,8 +69,8 @@ export type ServerTransportImpl =
 
 export type ServerTransportWebSocketImpl = {
   t: "bun-web-sockets"
-  endpoint: string
-  serverPort: number
+  webSocketEndpoint: string
+  serverBun: ServerBun
 }
 
 export type ServerTransportSocketIOImpl = {

@@ -23,10 +23,11 @@ import * as SpaceServer from "./@CHILD/spaces/spaces.server"
 import {
   IServerTransport,
   ServerTransport,
+  ServerTransportImpl,
 } from "./@CHILD/wire/transport-server"
 import * as WireServer from "./@CHILD/wire/wire.server"
 import { createDbConn } from "./@SHARED/server/db-conn-sql"
-import { Logger, LoggerConsole } from "./@SHARED/server/logger"
+import { Logger } from "./@SHARED/server/logger"
 import { createSMS } from "./@SHARED/server/sms"
 import {
   ModelServer,
@@ -54,9 +55,13 @@ export type Deps = {
   }>
 }
 
-export const getDeps = async (): Promise<Result<string, Deps>> => {
-  const logger = LoggerConsole("app")
-
+export const getDeps = async ({
+  logger,
+  transportImpl,
+}: {
+  logger: Logger
+  transportImpl: ServerTransportImpl
+}): Promise<Result<string, Deps>> => {
   const databaseUrl =
     process.env["NODE_ENV"] === "production"
       ? process.env["DATABASE_URL_PROD"]
@@ -78,17 +83,7 @@ export const getDeps = async (): Promise<Result<string, Deps>> => {
 
   const transport = ServerTransport<MsgToServer, MsgToClient>({
     codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
-    impl:
-      PUBLIC_APP_CONFIG.TRANSPORT_IMPL === "socket-io"
-        ? {
-            t: "socket-io",
-            serverPort: PUBLIC_APP_CONFIG.SERVER_PORT,
-          }
-        : {
-            t: "bun-web-sockets",
-            serverPort: PUBLIC_APP_CONFIG.SERVER_PORT,
-            endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
-          },
+    impl: transportImpl,
   })
 
   return ok({

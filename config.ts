@@ -37,6 +37,15 @@ const TRANSPORT_IMPL = "bun-web-sockets" as TransportImpl
 //
 //
 //
+//
+
+export type ServerImpl = "bun" | "node-and-socket-io"
+
+const SERVER_IMPL = "bun" as ServerImpl
+
+//
+//
+//
 // Server URLs
 //
 //
@@ -102,4 +111,5 @@ export const PUBLIC_APP_CONFIG = {
   SERVER_PORT,
   WEB_SOCKETS_ENDPOINT,
   CODEBASE_VERSION_ID,
+  SERVER_IMPL,
 }
