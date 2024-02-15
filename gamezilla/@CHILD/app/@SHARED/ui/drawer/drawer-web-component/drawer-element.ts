@@ -1,4 +1,5 @@
-import { PrivateDrawerProps, drawerSub } from "./drawer-shared"
+import { PrivateDrawerProps } from "../drawer-shared"
+import { drawerSub } from "./drawer-shared"
 
 declare global {
   namespace inferno.createElement.JSX {

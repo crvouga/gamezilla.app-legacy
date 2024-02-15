@@ -1,4 +1,4 @@
-import { PubSub } from "gamezilla/@SHARED/core"
+import { VDomChildren } from "gamezilla/@SHARED/vdom"
 
 export type PrivateDrawerProps = {
   id: string
@@ -7,8 +7,6 @@ export type PrivateDrawerProps = {
   position: "bottom" | "top"
 }
 
-export type DrawerEvent = PrivateDrawerProps & {
-  type: "props"
+export type DrawerProps = PrivateDrawerProps & {
+  children?: VDomChildren
 }
-
-export const drawerSub = PubSub.create<DrawerEvent>()
