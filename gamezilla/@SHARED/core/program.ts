@@ -161,7 +161,13 @@ export function create<TModel, TMsg, TCtx>(
   //
 
   const getModel = () => {
-    return state!.model
+    const model = state?.model
+
+    if (!model) {
+      throw new Error("Program has not been started yet.")
+    }
+
+    return model
   }
 
   const setModel = async (newState: TModel) => {
