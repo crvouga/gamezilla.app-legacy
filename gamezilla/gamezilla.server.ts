@@ -4,27 +4,31 @@ import { LoggerConsole } from "./@CHILD/app/@SHARED/server/logger"
 import * as AppServer from "./@CHILD/app/app.server"
 import { Server } from "./@SHARED/server"
 
-const server = Server(SERVER_IMPL)
+const main = async () => {
+  const server = Server(SERVER_IMPL)
 
-const logger = LoggerConsole("app")
+  const logger = LoggerConsole("app")
 
-const deps = await AppServer.getDeps({
-  server,
-  logger,
-})
+  const deps = await AppServer.getDeps({
+    server,
+    logger,
+  })
 
-const program = Program.create({
-  ctx: () => ({ now: Posix.now() }),
+  const program = Program.create({
+    ctx: () => ({ now: Posix.now() }),
 
-  init: (input) => AppServer.init({ ...input, deps }),
+    init: (input) => AppServer.init({ ...input, deps }),
 
-  update: (input) => AppServer.update({ ...input, deps }),
+    update: (input) => AppServer.update({ ...input, deps }),
 
-  subscriptions: (input) => AppServer.subscriptions({ ...input, deps }),
-})
+    subscriptions: (input) => AppServer.subscriptions({ ...input, deps }),
+  })
 
-await program.start()
+  await program.start()
 
-await server.start(SERVER_PORT)
+  await server.start(SERVER_PORT)
 
-logger.info("Server started")
+  logger.info("Server started")
+}
+
+main()
