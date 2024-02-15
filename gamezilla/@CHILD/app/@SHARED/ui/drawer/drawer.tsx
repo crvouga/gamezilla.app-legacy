@@ -11,7 +11,11 @@ export type DrawerProps = PrivateDrawerProps & {
 export const Drawer = (props: DrawerProps): VDom => {
   switch (VDOM_IMPL) {
     case "react": {
-      return <DrawerReact {...props} />
+      const USE_THIRD_PARTY = false
+      if (USE_THIRD_PARTY) {
+        return <DrawerReact {...props} />
+      }
+      return <DrawerWebComponent {...props} />
     }
 
     default: {

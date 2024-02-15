@@ -54,7 +54,7 @@ export const ViewProfileScreen = ({
             className="w-full"
             start={<IconUserPen className="h-6 w-6" />}
             text="Edit Profile"
-          ></Button>
+          />
           <Button
             onClick={() => dispatch({ t: "clicked-logout-button" })}
             className="w-full"

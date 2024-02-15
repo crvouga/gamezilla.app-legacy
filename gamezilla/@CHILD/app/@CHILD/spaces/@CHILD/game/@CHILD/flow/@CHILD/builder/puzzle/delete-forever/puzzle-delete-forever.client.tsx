@@ -110,7 +110,7 @@ const View: ClientModule["View"] = (input) => {
         body="This action cannot be undone."
         //
         confirmLoading={isLoading(model.deleteForeverRequest)}
-        confirmText="Delete Forever"
+        confirmText="Delete"
         onConfirm={() =>
           dispatch({
             t: "delete-forever/user-clicked-confirm-button",
