@@ -43,7 +43,7 @@ export const ViewSpaceCard = ({
       onClick={onClick}
       disabled={!onClick}
       className={cn(
-        "flex flex-col gap-3 rounded-md bg-gradient-to-tr from-blue-700 via-blue-600  to-sky-500 p-4",
+        "flex flex-col gap-3 overflow-hidden rounded-md bg-gradient-to-tr from-blue-700  via-blue-600 to-sky-500 p-4",
         onClick && "hover:opacity-90 active:opacity-70",
       )}
     >
@@ -60,7 +60,7 @@ export const ViewSpaceCard = ({
         </div>
       )}
 
-      <div className="flex items-center justify-start gap-2 overflow-hidden">
+      <div className="flex max-w-full items-center justify-start gap-2 overflow-hidden">
         <Avatar src={host.avatarUrl} alt="avatar" className="h-12 w-12" />
 
         <div className="flex-1 overflow-hidden">

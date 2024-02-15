@@ -97,9 +97,3 @@ Scrollbar
 /*
 
 */
-
-@media only screen and (max-width: 320px) {
-  * {
-    font-size: 75%;
-  }
-}

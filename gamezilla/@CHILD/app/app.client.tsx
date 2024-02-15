@@ -698,7 +698,7 @@ const ViewBottomBar = ({
   ]
 
   return (
-    <div className="flex w-full flex-col items-center justify-center">
+    <div className="flex w-full shrink-0 flex-col items-center justify-center">
       <SpaceClient.ViewCurrentSpaceBar
         ctx={ctx}
         model={model.spaces}

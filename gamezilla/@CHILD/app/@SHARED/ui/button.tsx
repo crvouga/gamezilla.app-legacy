@@ -45,7 +45,7 @@ export const Button = ({
       type={type}
       className={cn(
         className,
-        "relative flex select-none appearance-none flex-nowrap items-center justify-center overflow-hidden font-semibold outline-none focus:ring-2",
+        "relative flex shrink-0 select-none appearance-none flex-nowrap items-center justify-center overflow-hidden font-semibold outline-none focus:ring-2",
 
         combo === "contained-primary" &&
           "rounded-md bg-blue-600 text-white ring-blue-500",
