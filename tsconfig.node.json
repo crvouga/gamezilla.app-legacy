@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "importHelpers": true,
     "composite": true,
     "allowImportingTsExtensions": false,
     "moduleResolution": "bundler",
