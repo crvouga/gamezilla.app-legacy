@@ -1,6 +1,5 @@
 import { VDom, VDomChildren } from "gamezilla/@SHARED/vdom"
 import { VDOM_IMPL } from "gamezilla/public-config"
-import "./drawer-element"
 import { DrawerReact } from "./drawer-react"
 import { PrivateDrawerProps } from "./drawer-shared"
 import { DrawerWebComponent } from "./drawer-web-component"

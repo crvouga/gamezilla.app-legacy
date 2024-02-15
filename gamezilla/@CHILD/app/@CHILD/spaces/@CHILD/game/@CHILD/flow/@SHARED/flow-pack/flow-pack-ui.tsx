@@ -50,6 +50,6 @@ export const ViewAddCell = ({ onClick }: { onClick: () => void }) => {
 
 export const ViewEmptyCell = () => {
   return (
-    <div className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-800 bg-neutral-900 opacity-70"></div>
+    <div className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-800 bg-black opacity-70"></div>
   )
 }

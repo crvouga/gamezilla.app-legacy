@@ -1,5 +1,11 @@
 import { createPortal, VDomChildren } from "gamezilla/@SHARED/vdom"
 
+const getExit = (portalId: string): HTMLElement => {
+  return document.querySelector(
+    `[data-portal-exit][data-portal-id="${portalId}"]`,
+  ) as HTMLElement
+}
+
 const PortalEntrance = ({
   portalId,
   children,
@@ -7,7 +13,7 @@ const PortalEntrance = ({
   portalId: string
   children: VDomChildren
 }) => {
-  const element = document.getElementById(portalId)
+  const element = getExit(portalId)
   if (!element) {
     return null
   }
@@ -23,6 +29,7 @@ const PortalExit = ({ portalId }: { portalId: string }) => {
 }
 
 export const Portal = {
+  getExit,
   Entrance: PortalEntrance,
   Exit: PortalExit,
 }

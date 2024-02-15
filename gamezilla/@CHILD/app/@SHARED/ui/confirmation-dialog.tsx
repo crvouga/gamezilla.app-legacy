@@ -34,7 +34,7 @@ export const ConfirmationDialog = ({
         onClose()
       }}
     >
-      <div className="flex w-80 flex-col gap-6 rounded-lg bg-neutral-900 p-6">
+      <div className="flex w-80 flex-col gap-6 rounded-lg bg-black p-6">
         <p className="text-center text-xl font-semibold">{title}</p>
 
         <div className="flex w-full items-center gap-4">

@@ -175,7 +175,7 @@ const FlowPuzzleListItem = ({
   return (
     <button
       key={puzzle.id}
-      className="box-border flex w-full items-center gap-4 border border-neutral-700 text-left hover:bg-neutral-900"
+      className="box-border flex w-full items-center gap-4 border border-neutral-700 text-left hover:bg-black"
       onClick={onClick}
     >
       <div className="aspect-square h-24 w-24 flex-shrink-0 overflow-hidden border-r border-neutral-700">

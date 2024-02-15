@@ -36,7 +36,7 @@ export const Avatar = ({
           )}
         >
           <svg
-            className="h-full w-full text-gray-300"
+            className="h-full w-full text-neutral-300"
             fill="currentColor"
             viewBox="0 0 24 24"
           >
