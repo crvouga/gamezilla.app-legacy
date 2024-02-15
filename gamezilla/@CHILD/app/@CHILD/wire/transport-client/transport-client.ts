@@ -14,6 +14,7 @@ export type IClientTransport<T extends { MsgToClient: any; MsgToServer: any }> =
     toServer: PubSub<T["MsgToServer"][]>
     msgEvt: PubSub<ClientTransportEvent>
     msgCmd: PubSub<ClientTransportCommand>
+    start: () => Promise<void>
   }
 
 export const initClientTransport = <
@@ -28,6 +29,7 @@ export const initClientTransport = <
     toServer: PubSub.create(),
     msgEvt: PubSub.create(),
     msgCmd: PubSub.create(),
+    start: async () => {},
   }
 }
 

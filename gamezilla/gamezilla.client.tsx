@@ -1,7 +1,7 @@
-import { VDOM_IMPL, TRANSPORT_IMPL } from "gamezilla/public-config"
 import { Browser, Posix, Program } from "gamezilla/@SHARED/core"
-import { Render } from "./@SHARED/vdom/render"
+import { TRANSPORT_IMPL, VDOM_IMPL } from "gamezilla/public-config"
 import * as AppClient from "./@CHILD/app/app.client"
+import { Render } from "./@SHARED/vdom/render"
 import { attachDebuggerBrowserExtension } from "./@SHARED/core/debug"
 
 const deps = AppClient.getDeps()
@@ -23,6 +23,8 @@ program.subscribe((model, ctx) => {
 })
 
 await program.start()
+
+await deps.transport.start()
 
 attachDebuggerBrowserExtension(program)
 

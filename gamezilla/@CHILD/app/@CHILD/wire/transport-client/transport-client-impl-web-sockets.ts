@@ -29,7 +29,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
   let isDocumentHidden = false
   let queue: MsgClientToMsgServer<MsgToServer>[] = []
 
-  const connect = () => {
+  const connect = async () => {
     if (isConnected) {
       return
     }
@@ -91,8 +91,6 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
     }
   }
 
-  connect()
-
   let closeTimeout: ReturnType<typeof setTimeout> | null = null
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
@@ -139,7 +137,10 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
     }
   })
 
-  return transport
+  return {
+    ...transport,
+    start: connect,
+  }
 }
 
 function toWebsocketServerUrl(baseServerUrl: string) {
