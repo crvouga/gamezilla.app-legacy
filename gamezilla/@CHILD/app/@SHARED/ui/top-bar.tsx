@@ -1,7 +1,7 @@
+import { VDomChildren } from "gamezilla/@SHARED/vdom"
 import { IconChevronLeft } from "./icon"
 import { IconButton } from "./icon-button"
 import { Spinner } from "./spinner"
-import { VDomChildren } from "./ui"
 
 export const TopBar = (input: {
   left?: VDomChildren

@@ -1,5 +1,6 @@
+import { VDomChildren } from "gamezilla/@SHARED/vdom"
 import { Spinner } from "./spinner"
-import { VDom, cn } from "./ui"
+import { cn } from "./ui"
 
 export type ButtonVariant = "contained" | "outlined" | "text"
 
@@ -30,7 +31,7 @@ export const Button = ({
   type?: "button" | "submit" | "reset"
   className?: string
   onClick?: (msgEvt: ButtonEvent) => void
-  start?: VDom | VDom[]
+  start?: VDomChildren
   variant?: ButtonVariant
   color?: ButtonColor
   size?: ButtonSize

@@ -3,9 +3,10 @@ import {
   RouteChat,
   ClientCtx,
 } from "gamezilla/@CHILD/app/@SHARED/client"
-import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui"
+
 import { Browser, Eff, exhaustive, p } from "gamezilla/@SHARED/core"
 import { ModelClient, MsgClient, MsgToClient } from "./chat.core"
+import { VDom } from "gamezilla/@SHARED/vdom"
 
 //
 //

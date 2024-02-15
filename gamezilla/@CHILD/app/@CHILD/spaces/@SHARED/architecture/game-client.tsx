@@ -3,8 +3,8 @@ import {
   WithEventMeta,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { ClientCmd, ClientEvent } from "gamezilla/@CHILD/app/@SHARED/client"
-import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Eff, Sub } from "gamezilla/@SHARED/core"
+import { VDom } from "gamezilla/@SHARED/vdom"
 
 export type GameClientTypes = {
   //

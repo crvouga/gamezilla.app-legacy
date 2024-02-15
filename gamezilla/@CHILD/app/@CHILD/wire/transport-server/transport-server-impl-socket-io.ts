@@ -1,26 +1,22 @@
 import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { ServerNode } from "gamezilla/@SHARED/server/server-impl-node"
 import { Server } from "socket.io"
 import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core"
-import {
-  IServerTransport,
-  ServerTransportSocketIOImpl,
-  initServerTransport,
-} from "./transport-server"
-import { PUBLIC_APP_CONFIG } from "config"
+import { IServerTransport, initServerTransport } from "./transport-server"
 
 export const ServerTransportSocketIO = <MsgToServer, MsgToClient>({
-  impl,
+  server,
   codebaseVersionId,
 }: {
   codebaseVersionId: string
-  impl: ServerTransportSocketIOImpl
+  server: ServerNode
 }): IServerTransport<{
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
 }> => {
   const transport = initServerTransport<MsgToServer, MsgToClient>()
 
-  const io = new Server(impl.serverPort, {
+  const io = new Server(server.httpServer, {
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
@@ -48,10 +44,7 @@ export const ServerTransportSocketIO = <MsgToServer, MsgToClient>({
     transport.wire.publish({ t: "client-connected", clientId, sessionId })
 
     socket.on("to-server", (msg: MsgClientToMsgServer<MsgToServer>) => {
-      if (
-        msg.codebaseVersionId !== codebaseVersionId &&
-        PUBLIC_APP_CONFIG.IS_PROD
-      ) {
+      if (msg.codebaseVersionId !== codebaseVersionId) {
         transport.wire.publish({
           t: "got-bad-msgs",
           clientId,
@@ -59,7 +52,6 @@ export const ServerTransportSocketIO = <MsgToServer, MsgToClient>({
           reason: "codebase-version-id-mismatch",
           sessionId,
         })
-        return
       }
 
       transport.toServer.publish({

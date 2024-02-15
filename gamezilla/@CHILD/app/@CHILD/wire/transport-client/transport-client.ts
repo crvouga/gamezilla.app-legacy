@@ -38,7 +38,6 @@ export type ClientTransportImpl =
 export type ClientTransportWebSocketImpl = {
   t: "web-sockets"
   serverUrl: string
-  endpoint: string
 }
 
 export type ClientTransportSocketIOImpl = {

@@ -1,4 +1,4 @@
-import { VDom } from "./ui"
+import { VDomChildren } from "gamezilla/@SHARED/vdom"
 
 export const IconButton = ({
   children,
@@ -6,7 +6,7 @@ export const IconButton = ({
   label,
 }: {
   onClick?: () => void
-  children: VDom
+  children: VDomChildren
   label: string
 }) => {
   return (

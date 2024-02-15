@@ -1,4 +1,4 @@
-import { VDom } from "../ui"
+import { VDomChildren } from "gamezilla/@SHARED/vdom"
 import "./transition-element"
 import { TransitionProps, transitionSub } from "./transition-shared"
 
@@ -10,7 +10,7 @@ export const Transition = ({
   className: className,
   mode,
 }: TransitionProps & {
-  children?: VDom | VDom[]
+  children?: VDomChildren
 }) => {
   transitionSub.publish({
     type: "props",

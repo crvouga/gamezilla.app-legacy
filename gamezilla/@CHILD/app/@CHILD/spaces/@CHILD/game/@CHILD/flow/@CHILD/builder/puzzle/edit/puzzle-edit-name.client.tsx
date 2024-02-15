@@ -12,12 +12,12 @@ import {
   IconPenToSquare,
   ListItemButton,
   TextField,
-  VDomChildren,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { isLoading, isOk, loading } from "gamezilla/@SHARED/core"
 import { FlowPuzzleName } from "../../../../@SHARED/flow-puzzle/flow-puzzle-name"
 import { ClientModule } from "../../builder.core"
 import { editNameValidationErrorToString } from "./puzzle-edit-name.core"
+import { VDomChildren } from "gamezilla/@SHARED/vdom"
 
 //
 //

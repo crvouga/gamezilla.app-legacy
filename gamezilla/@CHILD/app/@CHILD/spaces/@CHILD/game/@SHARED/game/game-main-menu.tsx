@@ -4,7 +4,6 @@ import {
   IconArrowLeftOnRect,
   IconRobot,
   IconUsers,
-  VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { ViewGameHeader } from "./view-game-header"
 import { ViewUsersInSpaceList } from "./view-users-in-space-list"
@@ -15,6 +14,7 @@ import {
   exitGame,
   openUserDetails,
 } from "../../../../@SHARED/space-client-cmd"
+import { VDom } from "gamezilla/@SHARED/vdom"
 
 //
 //

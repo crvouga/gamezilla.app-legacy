@@ -1,4 +1,3 @@
-import { PUBLIC_APP_CONFIG } from "config"
 import {
   APP_SOUND,
   AnonymousClientCtx,
@@ -13,7 +12,6 @@ import {
   IconUserCircle,
   LoadingState,
   Portal,
-  VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import {
@@ -24,6 +22,11 @@ import {
   batchMsgs,
   toMsgType,
 } from "gamezilla/@SHARED/core"
+import {
+  CODEBASE_VERSION_ID,
+  SERVER_IMPL,
+  SERVER_URL,
+} from "gamezilla/public-config"
 import * as AuthClient from "./@CHILD/auth/auth.client"
 import * as ProfileClient from "./@CHILD/profile/profile.client"
 import * as SpaceClient from "./@CHILD/spaces/spaces.client"
@@ -34,6 +37,7 @@ import {
 import * as Wire from "./@CHILD/wire/wire.client"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core"
+import { VDom } from "gamezilla/@SHARED/vdom"
 
 //
 //
@@ -53,17 +57,17 @@ export type Deps = {
 export const getDeps = (): Deps => {
   const transport = ClientTransport<MsgToServer, MsgToClient>({
     impl:
-      PUBLIC_APP_CONFIG.TRANSPORT_IMPL === "socket-io"
+      SERVER_IMPL === "node"
         ? {
             t: "socket-io",
-            serverUrl: PUBLIC_APP_CONFIG.SERVER_URL,
+            serverUrl: SERVER_URL,
           }
         : {
             t: "web-sockets",
-            endpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
-            serverUrl: PUBLIC_APP_CONFIG.SERVER_URL,
+
+            serverUrl: SERVER_URL,
           },
-    codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
+    codebaseVersionId: CODEBASE_VERSION_ID,
   })
   return {
     transport,
@@ -81,22 +85,18 @@ export const getDeps = (): Deps => {
 //
 
 export const init = async ({
-  location,
-  stored,
   ctx,
   deps,
 }: {
   deps: Deps
-  stored: ModelClient | null
-  ctx: { now: Posix }
-  location: Browser.Location
+  ctx: { now: Posix; location: Browser.Location }
 }): Promise<{
   model: ModelClient
   eff?: Eff<MsgClient>
 }> => {
   const routing = Routing.init({
-    location,
-    stored: stored?.routing ?? null,
+    location: ctx.location,
+    stored: null,
   })
 
   const appCtx: ClientCtx | AnonymousClientCtx = {
@@ -108,40 +108,40 @@ export const init = async ({
   }
 
   const toast = await Toast.init({
-    stored: stored?.toast ?? null,
+    stored: null,
     ctx: ctx,
   })
 
   const wire = await Wire.init({
-    stored: stored?.wire ?? null,
+    stored: null,
   })
 
   const auth = await AuthClient.init({
-    stored: stored?.auth ?? null,
+    stored: null,
     ctx: appCtx,
   })
 
   const space = await SpaceClient.init({
     ctx: appCtx,
-    stored: stored?.spaces ?? null,
+    stored: null,
   })
 
   const profile = await ProfileClient.init({
     ctx: { ...appCtx, viewBottomBar: null },
-    stored: stored?.profile ?? null,
+    stored: null,
   })
 
   const sound = await Sound.init({
     ctx: null,
-    stored: stored?.sound ?? null,
+    stored: null,
   })
 
   const platform = await Platform.init({
-    stored: stored?.platform ?? null,
+    stored: null,
   })
 
   const statusBar = await StatusBar.init({
-    stored: stored?.statusBar ?? null,
+    stored: null,
   })
 
   const initialModel: ModelClient = {
@@ -480,9 +480,9 @@ export const subscriptions = (input: {
 export const View = ({
   model,
   dispatch,
-  now,
+  ctx,
 }: {
-  now: Posix
+  ctx: { now: Posix }
   model: ModelClient
   dispatch: (msg: MsgClient) => void
 }) => {
@@ -516,13 +516,13 @@ export const View = ({
         />
 
         <div className="flex w-full flex-1 flex-col overflow-hidden">
-          <ViewMain model={model} now={now} dispatch={dispatch} />
+          <ViewMain model={model} now={ctx.now} dispatch={dispatch} />
         </div>
 
         <Portal.Exit portalId="modals" />
 
         <Toast.View
-          ctx={{ now }}
+          ctx={ctx}
           model={model.toast}
           dispatch={(c) => dispatch({ t: "toast", c })}
         />

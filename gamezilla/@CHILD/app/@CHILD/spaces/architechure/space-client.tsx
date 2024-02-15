@@ -2,7 +2,7 @@ import {
   AnonymousClientCtx,
   ClientEvent,
 } from "gamezilla/@CHILD/app/@SHARED/client"
-import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui"
+
 import { Eff, Sub } from "gamezilla/@SHARED/core"
 import { WithEventId } from "../@SHARED/event"
 import { Space } from "../@SHARED/space"
@@ -15,6 +15,7 @@ import {
   MsgToClient,
   MsgToServer,
 } from "../spaces.core"
+import { VDom } from "gamezilla/@SHARED/vdom"
 
 type Ctx = AnonymousClientCtx & {
   space?: Space

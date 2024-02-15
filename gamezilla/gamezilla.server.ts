@@ -1,145 +1,30 @@
-import { Posix, Program, isErr } from "gamezilla/@SHARED/core"
-import * as AppServer from "./@CHILD/app/app.server"
-import { ServerBun } from "./@SHARED/server-bun/server-bun"
-import { PUBLIC_APP_CONFIG } from "config"
-import { ServerTransportImpl } from "./@CHILD/app/@CHILD/wire/transport-server"
-import http from "node:http"
+import { SERVER_IMPL, SERVER_PORT } from "gamezilla/public-config"
+import { Posix, Program } from "gamezilla/@SHARED/core"
 import { LoggerConsole } from "./@CHILD/app/@SHARED/server/logger"
+import * as AppServer from "./@CHILD/app/app.server"
+import { Server } from "./@SHARED/server"
 
-export type ServerImpl =
-  | {
-      t: "bun"
-      serverBun: ServerBun
-    }
-  | {
-      t: "node"
-      httpServer: http.Server
-    }
+const server = Server(SERVER_IMPL)
 
-const ServerImpl = (): ServerImpl => {
-  switch (PUBLIC_APP_CONFIG.SERVER_IMPL) {
-    case "bun": {
-      const serverBun = ServerBun()
-      return {
-        t: "bun",
-        serverBun,
-      }
-    }
-    case "node-and-socket-io": {
-      const httpServer = new http.Server()
-      return {
-        t: "node",
-        httpServer,
-      }
-    }
-  }
-}
+const logger = LoggerConsole("app")
 
-const startServer = async ({
-  serverImpl,
-  port,
-}: {
-  port: number
-  serverImpl: ServerImpl
-}) => {
-  switch (serverImpl.t) {
-    case "bun": {
-      serverImpl.serverBun.serve(port)
-      break
-    }
-    case "node": {
-      await new Promise((resolve) => {
-        serverImpl.httpServer.listen(port, undefined, undefined, () => {
-          resolve(null)
-        })
-      })
-      break
-    }
-  }
-}
+const deps = await AppServer.getDeps({
+  server,
+  logger,
+})
 
-const TransportImpl = ({
-  serverImpl,
-}: {
-  serverImpl: ServerImpl
-}): ServerTransportImpl => {
-  switch (serverImpl.t) {
-    case "bun": {
-      return {
-        t: "bun-web-sockets",
-        serverBun: serverImpl.serverBun,
-        webSocketEndpoint: PUBLIC_APP_CONFIG.WEB_SOCKETS_ENDPOINT,
-      }
-    }
-    case "node": {
-      return {
-        t: "socket-io",
-        serverPort: PUBLIC_APP_CONFIG.SERVER_PORT,
-      }
-    }
-  }
-}
+const program = Program.create({
+  ctx: () => ({ now: Posix.now() }),
 
-const main = async () => {
-  const serverImpl = ServerImpl()
+  init: (input) => AppServer.init({ ...input, deps }),
 
-  const transportImpl = TransportImpl({ serverImpl: serverImpl })
+  update: (input) => AppServer.update({ ...input, deps }),
 
-  const logger = LoggerConsole("app")
+  subscriptions: (input) => AppServer.subscriptions({ ...input, deps }),
+})
 
-  const got = await AppServer.getDeps({ transportImpl, logger })
+await program.start()
 
-  if (isErr(got)) {
-    logger.error(got.error)
-    return
-  }
+await server.start(SERVER_PORT)
 
-  const deps = got.value
-
-  const program = Program.create({
-    getCtx: () => {
-      return {
-        now: Posix.now(),
-      }
-    },
-    init: async ({ ctx }) => {
-      const initial = await AppServer.init({
-        ctx,
-        deps,
-      })
-
-      return initial
-    },
-
-    update: async (input) => {
-      const updated = await AppServer.update({
-        ...input,
-        deps,
-      })
-
-      return updated
-    },
-
-    subscriptions: async (input) => {
-      const sub = await AppServer.subscriptions({
-        ctx: input.ctx,
-        model: input.model,
-        deps,
-      })
-
-      return sub
-    },
-
-    onCrash: (e) => {
-      console.error("Crashed!", e)
-    },
-  })
-
-  program.start()
-
-  await startServer({ serverImpl, port: PUBLIC_APP_CONFIG.SERVER_PORT })
-
-  logger.info("Server started")
-}
-
-main()
+logger.info("Server started")

@@ -18,7 +18,7 @@ export type Location = {
 
 const locationSub = PubSub.create<Location>()
 const handler = () => {
-  locationSub.publish(getLocation())
+  locationSub.publish(location())
 }
 if (typeof window !== "undefined") {
   window.addEventListener("popstate", handler)
@@ -28,7 +28,7 @@ export const onLocation = <Msg>(fn: (location: Location) => Msg): Sub<Msg> => {
   return Sub.map(locationSub, fn)
 }
 
-export const getLocation = (): Location => {
+export const location = (): Location => {
   return {
     pathname: window.location.pathname,
     query: Object.fromEntries(

@@ -4,10 +4,10 @@ import {
   IconQuestionMark,
   Avatar,
   Button,
-  VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { ViewGameHeader } from "../game/view-game-header"
+import { VDom } from "gamezilla/@SHARED/vdom"
 
 type IconProps = { className: string }
 

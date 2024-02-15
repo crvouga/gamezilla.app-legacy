@@ -6,10 +6,10 @@ import {
   IconArrowLeftOnRect,
   IconQuestionMark,
   Avatar,
-  VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { ViewGameHeader } from "../../game/view-game-header"
 import { PlayerType, VsBotProps } from "../vs-bot"
+import { VDom } from "gamezilla/@SHARED/vdom"
 
 //
 //

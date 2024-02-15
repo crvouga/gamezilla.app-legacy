@@ -1,6 +1,7 @@
+import { VDomChildren } from "gamezilla/@SHARED/vdom"
 import { IconExclamationCircle, IconInfoCircle } from "./icon"
 import { IconCheckmarkCircle } from "./icon/icon-checkmark-circle"
-import { VDomChildren, cn } from "./ui"
+import { cn } from "./ui"
 
 export const AlertError = ({
   className,

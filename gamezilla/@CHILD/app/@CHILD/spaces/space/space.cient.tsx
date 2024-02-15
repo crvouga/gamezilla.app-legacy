@@ -5,7 +5,6 @@ import {
   Button,
   IconHome,
   IconUserGroup,
-  VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { SpaceClientModule } from "../architechure/space-client"
 import { EndSpaceClient } from "../end-space/end-space.client"
@@ -16,6 +15,7 @@ import { LeaveSpaceClient } from "../leave-space/leave-space.client"
 import { Modals } from "../modals/modals"
 import { Spaces } from "../spaces-core"
 import { ModelClient, MsgClient } from "../spaces.core"
+import { VDom } from "gamezilla/@SHARED/vdom"
 
 const View = (input: {
   model: ModelClient

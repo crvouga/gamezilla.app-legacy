@@ -1,29 +1,30 @@
-import { IServerTransport, ServerTransportImpl } from "./transport-server"
+import { ServerInstance } from "gamezilla/@SHARED/server"
+import { IServerTransport } from "./transport-server"
 import { ServerTransportBunWebSockets } from "./transport-server-impl-bun-web-sockets"
 import { ServerTransportSocketIO } from "./transport-server-impl-socket-io"
 
 export const ServerTransport = <MsgToServer, MsgToClient>({
-  impl,
+  server,
   codebaseVersionId,
 }: {
-  impl: ServerTransportImpl
+  server: ServerInstance
   codebaseVersionId: string
 }): IServerTransport<{
   MsgToServer: MsgToServer
   MsgToClient: MsgToClient
 }> => {
-  switch (impl.t) {
-    case "bun-web-sockets": {
+  switch (server.t) {
+    case "bun": {
       return ServerTransportBunWebSockets<MsgToServer, MsgToClient>({
         codebaseVersionId,
-        impl,
+        server,
       })
     }
 
-    case "socket-io": {
+    case "node": {
       return ServerTransportSocketIO<MsgToServer, MsgToClient>({
         codebaseVersionId,
-        impl,
+        server,
       })
     }
   }

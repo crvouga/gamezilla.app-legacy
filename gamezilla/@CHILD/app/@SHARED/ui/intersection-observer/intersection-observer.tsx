@@ -1,4 +1,4 @@
-import { VDom } from "../ui"
+import { VDomChildren } from "gamezilla/@SHARED/vdom"
 import "./intersection-observer-element"
 import {
   IntersectionObserverEmitterProps,
@@ -9,7 +9,7 @@ export const IntersectionObserverEmitter = ({
   children,
   ...props
 }: IntersectionObserverEmitterProps & {
-  children?: VDom | VDom[]
+  children?: VDomChildren
 }) => {
   // There is some kind of race condition setTimeout fixes
   setTimeout(() => sub.publish({ type: "props", props }), 0)

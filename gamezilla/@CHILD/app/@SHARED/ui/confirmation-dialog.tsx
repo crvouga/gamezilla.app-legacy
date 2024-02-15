@@ -1,5 +1,6 @@
+import { VDom } from "gamezilla/@SHARED/vdom"
 import { Button } from "./button"
-import { VDom, cn } from "./ui"
+import { cn } from "./ui"
 
 export const ConfirmationDialog = ({
   open,

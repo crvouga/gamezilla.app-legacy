@@ -4,11 +4,10 @@ import {
   IconRobot,
   Avatar,
   Transition,
-  VDom,
-  VDomChildren,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { PlayerType, VsBotProps } from "../vs-bot"
+import { VDom, VDomChildren } from "gamezilla/@SHARED/vdom"
 
 //
 //

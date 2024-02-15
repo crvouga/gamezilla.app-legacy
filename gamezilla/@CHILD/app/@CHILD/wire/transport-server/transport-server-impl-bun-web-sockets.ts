@@ -1,11 +1,8 @@
 import { Server, ServerWebSocket, WebSocketHandler } from "bun"
 import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { ServerBun } from "gamezilla/@SHARED/server/server-impl-bun"
 import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core"
-import {
-  IServerTransport,
-  ServerTransportWebSocketImpl,
-  initServerTransport,
-} from "./transport-server"
+import { IServerTransport, initServerTransport } from "./transport-server"
 
 type ServerWebSocketData = {
   clientId: ClientId
@@ -13,11 +10,11 @@ type ServerWebSocketData = {
 }
 
 export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
-  impl,
+  server,
   codebaseVersionId,
 }: {
   codebaseVersionId: string
-  impl: ServerTransportWebSocketImpl
+  server: ServerBun
 }): IServerTransport<{
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
@@ -81,7 +78,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
     const url = new URL(req.url)
 
     switch (url.pathname) {
-      case impl.webSocketEndpoint: {
+      case "/ws": {
         const maybeSessionId = url.searchParams.get("session-id")
 
         const sessionId = SessionId.is(maybeSessionId)
@@ -179,8 +176,8 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
     },
   }
 
-  impl.serverBun.registerFetchHandler(onRequest)
-  impl.serverBun.setWebSocketHandler(websocket)
+  server.registerFetchHandler(onRequest)
+  server.setWebSocketHandler(websocket)
 
   transport.wire.publish({ t: "server-started", port: NaN })
 
@@ -194,7 +191,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 
   transport.topicPublish.subscribe((msg) => {
     for (const topic of msg.topics) {
-      impl.serverBun.publish(topic, JSON.stringify(msg.msg))
+      server.publish(topic, JSON.stringify(msg.msg))
     }
   })
 

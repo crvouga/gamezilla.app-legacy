@@ -1,4 +1,4 @@
-import { VDomChildren } from "./ui"
+import { VDomChildren } from "gamezilla/@SHARED/vdom"
 
 export const ButtonVertical = ({
   children,

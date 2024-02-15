@@ -1,4 +1,4 @@
-import { PUBLIC_APP_CONFIG } from "config.ts"
+import { CODEBASE_VERSION_ID, IS_PROD } from "gamezilla/public-config"
 import {
   DbConnSql,
   SMS,
@@ -6,24 +6,14 @@ import {
   ServerCtx,
   ServerEvent,
 } from "gamezilla/@CHILD/app/@SHARED/server"
-import {
-  Eff,
-  Posix,
-  Result,
-  Sub,
-  batchMsgs,
-  err,
-  isErr,
-  ok,
-  toMsgType,
-} from "gamezilla/@SHARED/core"
+import { Eff, Posix, Sub, batchMsgs, toMsgType } from "gamezilla/@SHARED/core"
+import { ServerInstance } from "gamezilla/@SHARED/server"
 import * as AuthServer from "./@CHILD/auth/auth.server"
 import * as ProfileServer from "./@CHILD/profile/profile.server"
 import * as SpaceServer from "./@CHILD/spaces/spaces.server"
 import {
   IServerTransport,
   ServerTransport,
-  ServerTransportImpl,
 } from "./@CHILD/wire/transport-server"
 import * as WireServer from "./@CHILD/wire/wire.server"
 import { createDbConn } from "./@SHARED/server/db-conn-sql"
@@ -57,41 +47,34 @@ export type Deps = {
 
 export const getDeps = async ({
   logger,
-  transportImpl,
+  server,
 }: {
   logger: Logger
-  transportImpl: ServerTransportImpl
-}): Promise<Result<string, Deps>> => {
-  const databaseUrl =
-    process.env["NODE_ENV"] === "production"
-      ? process.env["DATABASE_URL_PROD"]
-      : process.env["DATABASE_URL"]
+  server: ServerInstance
+}): Promise<Deps> => {
+  const databaseUrl = IS_PROD
+    ? process.env["DATABASE_URL_PROD"]
+    : process.env["DATABASE_URL"]
 
   if (!databaseUrl) {
-    return err("databaseUrl not found in env vars")
+    throw new Error(`[deps] DATABASE_URL not set`)
   }
 
-  const created = await createDbConn({ databaseUrl, logger })
-
-  if (isErr(created)) {
-    return created
-  }
-
-  const dbConn = created.value
+  const dbConn = await createDbConn({ databaseUrl, logger })
 
   const sms = createSMS("twilio")
 
   const transport = ServerTransport<MsgToServer, MsgToClient>({
-    codebaseVersionId: PUBLIC_APP_CONFIG.CODEBASE_VERSION_ID,
-    impl: transportImpl,
+    codebaseVersionId: CODEBASE_VERSION_ID,
+    server,
   })
 
-  return ok({
+  return {
     transport,
     sms,
     logger,
     dbConn,
-  })
+  }
 }
 
 //

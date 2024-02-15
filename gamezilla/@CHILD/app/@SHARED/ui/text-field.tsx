@@ -1,5 +1,6 @@
+import { VDom } from "gamezilla/@SHARED/vdom"
 import { IconXMark } from "./icon"
-import { VDom, cn } from "./ui"
+import { cn } from "./ui"
 
 export const TextField = ({
   label,

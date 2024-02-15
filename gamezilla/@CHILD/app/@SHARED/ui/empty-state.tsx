@@ -1,4 +1,4 @@
-import { VDom } from "./ui"
+import { VDom } from "gamezilla/@SHARED/vdom"
 
 export const EmptyState = ({
   renderIcon,

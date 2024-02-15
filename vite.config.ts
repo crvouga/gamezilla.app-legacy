@@ -4,10 +4,10 @@ import million from "million/compiler"
 import { defineConfig } from "vite"
 import inferno from "vite-plugin-inferno"
 import tsconfigPaths from "vite-tsconfig-paths"
-import { PUBLIC_APP_CONFIG, RendererImpl } from "./config"
+import { VDOM_IMPL } from "./gamezilla/public-config"
 
-function rendererPlugin({ impl }: { impl: RendererImpl }) {
-  switch (impl) {
+function vDomPlugin() {
+  switch (VDOM_IMPL) {
     case "inferno": {
       return [inferno()]
     }
@@ -28,12 +28,7 @@ function rendererPlugin({ impl }: { impl: RendererImpl }) {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    tsconfigPaths(),
-    ...rendererPlugin({
-      impl: PUBLIC_APP_CONFIG.RENDERER_IMPL,
-    }),
-  ],
+  plugins: [tsconfigPaths(), ...vDomPlugin()],
   server: {
     hmr: false,
   },

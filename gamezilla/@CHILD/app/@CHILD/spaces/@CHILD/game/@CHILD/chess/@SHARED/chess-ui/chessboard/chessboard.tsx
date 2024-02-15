@@ -1,5 +1,5 @@
 import { Chess } from "chess.js"
-import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui"
+
 import {
   Color,
   Model,
@@ -11,6 +11,7 @@ import {
   squareToChecker,
   toLowercaseSquare,
 } from "../../chess"
+import { VDom } from "gamezilla/@SHARED/vdom"
 
 //
 //

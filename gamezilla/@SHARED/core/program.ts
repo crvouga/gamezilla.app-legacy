@@ -25,7 +25,7 @@ export type Program<TModel, TMsg, TCtx> = {
 type MaybePromise<T> = T | Promise<T>
 
 type ProgramConfig<Model, Msg, TCtx> = {
-  getCtx: () => MaybePromise<TCtx>
+  ctx: () => MaybePromise<TCtx>
   init: (input: { ctx: TCtx }) => MaybePromise<{ model: Model; eff?: Eff<Msg> }>
   update: (input: {
     ctx: TCtx
@@ -37,7 +37,7 @@ type ProgramConfig<Model, Msg, TCtx> = {
     ctx: TCtx
     model: Model
   }) => MaybePromise<Sub<Msg>>
-  onCrash(input: { error: unknown }): void
+  onCrash?(input: { error: unknown }): void
 }
 
 //
@@ -66,7 +66,7 @@ export function create<TModel, TMsg, TCtx>(
   }
 
   const onMsg = async (msg: TMsg) => {
-    const ctx = await config.getCtx()
+    const ctx = await config.ctx()
     const updated = await config.update({ ctx, msg, model: state!.model })
     setState(updated, ctx, msg)
   }
@@ -102,7 +102,7 @@ export function create<TModel, TMsg, TCtx>(
       messageQueue.push(msg)
       processQueue()
     } catch (error) {
-      config.onCrash({ error })
+      console.error("Program crashed!", error)
     }
   }
 
@@ -138,7 +138,7 @@ export function create<TModel, TMsg, TCtx>(
   }
 
   const start = async () => {
-    const ctx = await config.getCtx()
+    const ctx = await config.ctx()
 
     const init = await config.init({ ctx })
 
@@ -165,7 +165,7 @@ export function create<TModel, TMsg, TCtx>(
   }
 
   const setModel = async (newState: TModel) => {
-    const ctx = await config.getCtx()
+    const ctx = await config.ctx()
     state = { model: newState }
     publish(state.model, ctx, null)
   }

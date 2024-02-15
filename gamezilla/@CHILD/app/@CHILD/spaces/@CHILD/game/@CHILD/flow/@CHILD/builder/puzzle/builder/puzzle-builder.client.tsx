@@ -9,7 +9,6 @@ import {
   IconEllipsisVertical,
   IconPenToSquare,
   IconPlay,
-  VDom,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import {
@@ -24,6 +23,7 @@ import { PuzzleDeleteForeverClient } from "../delete-forever/puzzle-delete-forev
 import { PuzzleEditNameClient } from "../edit/puzzle-edit-name.client"
 import { PuzzleSaveChangesClient } from "../save-changes/puzzle-save-changes.client"
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { VDom } from "gamezilla/@SHARED/vdom"
 
 //
 //

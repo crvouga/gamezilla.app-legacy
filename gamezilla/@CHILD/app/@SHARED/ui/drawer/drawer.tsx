@@ -1,10 +1,11 @@
+import { VDomChildren } from "gamezilla/@SHARED/vdom"
 import { IconButton, IconXMark, Portal } from ".."
-import { VDom, cn } from "../ui"
+import { cn } from "../ui"
 import "./drawer-element"
 import { PrivateDrawerProps, drawerSub } from "./drawer-shared"
 
 export type DrawerProps = PrivateDrawerProps & {
-  children?: VDom | VDom[]
+  children?: VDomChildren
 }
 
 export const Drawer = ({

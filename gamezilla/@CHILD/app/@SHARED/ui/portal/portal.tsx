@@ -1,5 +1,4 @@
-import { VDomChildren } from "../ui"
-import { createPortal } from "./create-portal"
+import { createPortal, VDomChildren } from "gamezilla/@SHARED/vdom"
 
 const PortalEntrance = ({
   portalId,

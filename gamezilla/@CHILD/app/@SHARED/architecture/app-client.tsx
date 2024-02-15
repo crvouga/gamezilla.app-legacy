@@ -1,5 +1,5 @@
-import { VDom } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Eff, Sub } from "gamezilla/@SHARED/core"
+import { VDom } from "gamezilla/@SHARED/vdom"
 
 //
 //

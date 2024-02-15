@@ -1,4 +1,5 @@
-import { VDom, cn } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { cn } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { VDomChildren } from "gamezilla/@SHARED/vdom"
 
 export const GameLayout = ({
   children,
@@ -7,7 +8,7 @@ export const GameLayout = ({
 }: {
   className?: string
   isSpectating?: boolean
-  children?: VDom | VDom[]
+  children?: VDomChildren
 }) => {
   return (
     <div

@@ -22,7 +22,6 @@ import {
   TextField,
   TopBar,
   TopBarBackButton,
-  VDom,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Sub, isErr, loading } from "gamezilla/@SHARED/core"
 import { ViewProfileScreen } from "./profile-client/profile-client-view-profile-screen"
@@ -33,6 +32,7 @@ import {
   MsgToClient,
   MsgToServer,
 } from "./profile.core"
+import { VDom } from "gamezilla/@SHARED/vdom"
 
 //
 //

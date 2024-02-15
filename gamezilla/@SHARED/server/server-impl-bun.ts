@@ -1,4 +1,5 @@
 import { Server, WebSocketHandler } from "bun"
+import { IServer } from "./server"
 
 type FetchHandler = (
   req: Request,
@@ -11,14 +12,8 @@ export const ServerBun = <T>() => {
   const fetchHandlers: FetchHandler[] = []
   let webSocketHandler: WebSocketHandler<T>
   let server: Server
-  return {
-    registerFetchHandler(fetch: FetchHandler) {
-      fetchHandlers.push(fetch)
-    },
-    setWebSocketHandler(handler: WebSocketHandler<T>) {
-      webSocketHandler = handler
-    },
-    serve(port: number) {
+  const base: IServer = {
+    async start(port) {
       server = Bun.serve({
         port: port,
         async fetch(req, server) {
@@ -32,13 +27,21 @@ export const ServerBun = <T>() => {
         },
         websocket: webSocketHandler,
       })
-      return server
     },
-
+  }
+  return {
+    ...base,
+    registerFetchHandler(fetch: FetchHandler) {
+      fetchHandlers.push(fetch)
+    },
+    setWebSocketHandler(handler: WebSocketHandler<T>) {
+      webSocketHandler = handler
+    },
     publish(topic: string, data: string) {
       server.publish(topic, data)
     },
-  }
+    t: "bun",
+  } as const
 }
 
 export type ServerBun = ReturnType<typeof ServerBun>

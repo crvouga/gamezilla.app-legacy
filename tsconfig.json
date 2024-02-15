@@ -68,10 +68,9 @@
   },
   "exclude": ["node_modules"],
   "include": [
-    "config.ts",
-    "gamezilla",
     "global.d.ts",
-    "node_modules/inferno/dist/index.d.ts"
+    "node_modules/inferno/dist/index.d.ts",
+    "gamezilla"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

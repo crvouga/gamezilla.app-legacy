@@ -1,4 +1,4 @@
-import { Result, err, ok } from "gamezilla/@SHARED/core"
+import { ok } from "gamezilla/@SHARED/core"
 import { Logger } from "../../../@SHARED/server/logger"
 import { DbConnSql } from "../db-conn-sql"
 import { createDbConnPostgres } from "./db-conn-sql-impl-postgres"
@@ -16,12 +16,12 @@ export const createDbConn = async ({
 }: {
   databaseUrl: string
   logger: Logger
-}): Promise<Result<string, DbConnSql>> => {
+}): Promise<DbConnSql> => {
   const databaseType = connectionStringToDatabaseType(databaseUrl)
 
   switch (databaseType) {
     case "sqlite": {
-      return ok(await createDbConnSqlite({ databaseUrl, logger }))
+      return createDbConnSqlite({ databaseUrl, logger })
     }
 
     case "postgres": {
@@ -29,7 +29,7 @@ export const createDbConn = async ({
     }
 
     case null: {
-      return err("not-supported")
+      throw new Error(`[db] unknown database type for ${databaseUrl}`)
     }
   }
 }

@@ -1,4 +1,5 @@
-import { VDom, cn } from "./ui"
+import { VDom } from "gamezilla/@SHARED/vdom"
+import { cn } from "./ui"
 
 export const ListItemButton = ({
   label,

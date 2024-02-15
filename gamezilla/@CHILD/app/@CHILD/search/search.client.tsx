@@ -5,12 +5,9 @@ import {
   sendToServer,
   pushRoute,
 } from "gamezilla/@CHILD/app/@SHARED/client"
-import {
-  IconMagnifyingGlass,
-  IconXMark,
-  VDom,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
+import { IconMagnifyingGlass, IconXMark } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./search.core"
+import { VDom } from "gamezilla/@SHARED/vdom"
 
 //
 //
