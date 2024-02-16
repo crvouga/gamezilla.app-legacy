@@ -1,4 +1,4 @@
-import { premieter, area, Shape } from "./shape"
+import { perimeter, area, Shape } from "./shape"
 
 export type Circle = {
   tag: "circle"
@@ -7,16 +7,11 @@ export type Circle = {
 
 const isCircle = (shape: Shape): shape is Circle => shape.tag === "circle"
 
-area.implement(
-  isCircle,
-  (shape): number =>
-    // @ts-ignore
-    Math.PI * shape.radius ** 2,
-)
+area.implement(isCircle, (shape) => Math.PI * shape.radius ** 2)
 
-premieter.implement(
-  isCircle,
-  (shape) =>
-    // @ts-ignore
-    2 * Math.PI * shape.radius,
-)
+perimeter.implement(isCircle, (shape) => 2 * Math.PI * shape.radius)
+
+export const Circle = (radius: number): Circle => ({
+  tag: "circle",
+  radius,
+})

@@ -4,6 +4,6 @@ export type Shape = {
   tag: string
 }
 
-export const area = definePolymorphicFunction<(shape: Shape) => number>()
+export const area = definePolymorphicFunction<Shape, number>()
 
-export const premieter = definePolymorphicFunction<(shape: Shape) => number>()
+export const perimeter = definePolymorphicFunction<Shape, number>()
