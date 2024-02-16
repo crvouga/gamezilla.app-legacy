@@ -1,10 +1,11 @@
+import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
 import { Drawer, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { ViewBottomButtonBar } from "../../../../../../@SHARED/game"
 import { FlowPackUI } from "../../../../@SHARED/flow-pack"
 import { ClientModule } from "../../builder.core"
-import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { PuzzleListClient } from "../../puzzle/list/puzzle-list.client"
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
@@ -130,7 +131,7 @@ const PuzzlePickerDrawer: Pick<ClientModule, "update" | "View"> = {
           dispatch({ t: "pack-builder.closed-puzzle-picker-drawer" })
         }
       >
-        hello
+        <PuzzleListClient.View {...input} />
       </Drawer>
     )
   },

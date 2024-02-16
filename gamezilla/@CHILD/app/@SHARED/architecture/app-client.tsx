@@ -48,6 +48,10 @@ export type AppClientModuleTypes = {
    * `MsgOutEvent` is a message that is only produced by this module. Always past tense verbs
    */
   MsgOutEvent: any
+  /**
+   *  `ModelGame` is the state of the module that is only relevant to the server
+   */
+  ViewSlot?: any
 }
 
 //
@@ -152,6 +156,9 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
     ctx: T["Ctx"]
     model: T["Model"]
     dispatch: (msg: T["Msg"]) => void
+    slots?: {
+      [slot in T["ViewSlot"]]: VDom
+    }
   }) => VDom
 }
 

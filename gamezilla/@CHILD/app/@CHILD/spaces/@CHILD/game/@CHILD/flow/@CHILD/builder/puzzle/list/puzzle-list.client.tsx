@@ -105,11 +105,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
 }
 
 const View: ClientModule["View"] = (input) => {
-  const { model, modelGame, dispatch, ctx } = input
-
-  if (modelGame.t !== "list") {
-    return null
-  }
+  const { model, dispatch, ctx } = input
 
   const puzzles = Object.values(model.puzzles)
   const shouldShowLoadingState = isPending(model.puzzleListRequest)
