@@ -1,7 +1,3 @@
-//
-//
-//
-
 import { Shape, area, perimeter } from "./shape"
 
 export type Rect = {
@@ -16,8 +12,7 @@ area.implement(isRect, (shape) => shape.width * shape.height)
 
 perimeter.implement(isRect, (shape) => 2 * (shape.width + shape.height))
 
-export const Rect = (width: number, height: number): Rect => ({
+export const Rect = (input: { width: number; height: number }): Rect => ({
+  ...input,
   tag: "rect",
-  width,
-  height,
 })

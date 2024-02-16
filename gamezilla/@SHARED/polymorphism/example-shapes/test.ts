@@ -2,7 +2,12 @@ import { area, perimeter } from "./shape"
 import { Circle } from "./shape-circle"
 import { Rect } from "./shape-rect"
 
-const shapes = [Circle(5), Circle(10), Rect(5, 10), Rect(10, 20)]
+const shapes = [
+  Circle({ radius: 5 }),
+  Circle({ radius: 10 }),
+  Rect({ width: 5, height: 20 }),
+  Rect({ width: 10, height: 20 }),
+]
 
 for (const shape of shapes) {
   console.log(shape)

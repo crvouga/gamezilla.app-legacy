@@ -4,26 +4,26 @@
 //
 //
 
-type Implementation<TBaseType, TType extends TBaseType, TOutput> = {
-  predicate: (baseType: TBaseType) => baseType is TType
-  implementation: (...input: any[]) => TOutput
+type Implementation<TInput, TInputVariant extends TInput, TOutput> = {
+  predicate: (input: TInput) => input is TInputVariant
+  implementation: (input: TInputVariant) => TOutput
 }
 
-export const definePolymorphicFunction = <TBaseType, TOutput>() => {
-  const implementations: Implementation<TBaseType, TBaseType, TOutput>[] = []
+export const definePolymorphicFunction = <TInput, TOutput>() => {
+  const implementations: Implementation<TInput, any, TOutput>[] = []
 
-  function run(baseType: TBaseType) {
+  function run(baseType: TInput) {
     for (const implementation of implementations) {
       if (implementation.predicate(baseType)) {
         return implementation.implementation(baseType)
       }
     }
-    throw new Error(`No implementation for ${baseType}`)
+    throw new Error(`Missing implementation for ${JSON.stringify(baseType)}`)
   }
 
-  run.implement = <TType extends TBaseType>(
-    predicate: (baseType: TBaseType) => baseType is TType,
-    implementation: (type: TType) => TOutput,
+  run.implement = <TInputVariant extends TInput>(
+    predicate: (input: TInput) => input is TInputVariant,
+    implementation: (input: TInputVariant) => TOutput,
   ) => {
     implementations.push({
       predicate,

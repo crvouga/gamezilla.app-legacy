@@ -11,7 +11,7 @@ area.implement(isCircle, (shape) => Math.PI * shape.radius ** 2)
 
 perimeter.implement(isCircle, (shape) => 2 * Math.PI * shape.radius)
 
-export const Circle = (radius: number): Circle => ({
+export const Circle = (input: { radius: number }): Circle => ({
   tag: "circle",
-  radius,
+  ...input,
 })
