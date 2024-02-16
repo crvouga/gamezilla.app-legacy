@@ -1,0 +1,21 @@
+import { Result } from "gamezilla/@SHARED/core"
+import { AuthProvider, signUpWithEmailAndPassword } from "./auth"
+
+type CustomAuthProvider = {
+  Auth: "custom"
+}
+
+const isCustomAuthProvider = (auth: AuthProvider): auth is CustomAuthProvider =>
+  auth.Auth === "custom"
+
+signUpWithEmailAndPassword.implement(
+  isCustomAuthProvider,
+  () => async (input) => {
+    console.log(input)
+    return Result.err("Not implemented")
+  },
+)
+
+export const CustomAuthProvider = (): CustomAuthProvider => ({
+  Auth: "custom",
+})
