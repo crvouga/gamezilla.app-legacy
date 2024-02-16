@@ -1,7 +1,7 @@
 import { definePolymorphicFunction } from "../polymorphic-function"
 
 export type Shape = {
-  tag: string
+  shape: string
 }
 
 export const area = definePolymorphicFunction<Shape, number>()
