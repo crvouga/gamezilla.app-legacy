@@ -1,5 +1,9 @@
 import { Browser, Posix, Program } from "gamezilla/@SHARED/core"
-import { TRANSPORT_IMPL, VDOM_IMPL } from "gamezilla/public-config"
+import {
+  SHOULD_USE_DEBUGGER,
+  TRANSPORT_IMPL,
+  VDOM_IMPL,
+} from "gamezilla/public-config"
 import * as AppClient from "./@CHILD/app/app.client"
 import { Render } from "./@SHARED/vdom/render"
 import { attachDebuggerBrowserExtension } from "./@SHARED/core/debug"
@@ -17,11 +21,14 @@ const main = async () => {
     subscriptions: (input) => AppClient.subscriptions({ ...input, deps }),
   })
 
-  const render = await Render(VDOM_IMPL, document.getElementById("root")!)
+  const render = await Render(VDOM_IMPL)
+
+  const root = document.getElementById("root")!
 
   program.subscribe((model, ctx) => {
     render(
       <AppClient.View dispatch={program.dispatch} model={model} ctx={ctx} />,
+      root,
     )
   })
 
@@ -29,7 +36,9 @@ const main = async () => {
 
   await deps.transport.start()
 
-  attachDebuggerBrowserExtension(program)
+  if (SHOULD_USE_DEBUGGER) {
+    attachDebuggerBrowserExtension(program)
+  }
 
   console.log(`Renderer: ${VDOM_IMPL}`)
   console.log(`Transport: ${TRANSPORT_IMPL}`)

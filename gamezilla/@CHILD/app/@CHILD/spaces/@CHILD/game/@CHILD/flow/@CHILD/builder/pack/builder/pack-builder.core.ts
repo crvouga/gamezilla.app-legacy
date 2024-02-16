@@ -6,7 +6,9 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 //
 //
 
-export type ModelClient = {}
+export type ModelClient = {
+  packBuilderOpen?: "puzzle-picker" | null
+}
 
 export const initClient: ModelClient = {}
 
@@ -17,9 +19,16 @@ export type ModelServer = {}
 //
 //
 
-export type MsgClient = {
-  t: "pack-builder/user-clicked-exit-button"
-}
+export type MsgClient =
+  | {
+      t: "pack-builder.user-clicked-exit-button"
+    }
+  | {
+      t: "pack-builder.clicked-add-puzzle-button"
+    }
+  | {
+      t: "pack-builder.closed-puzzle-picker-drawer"
+    }
 
 export type MsgServer = { t: "noop" }
 

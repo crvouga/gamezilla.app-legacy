@@ -183,7 +183,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
 //
 //
 
-const chainUpdates = <T extends GameClientModuleTypes>(
+export const chainUpdates = <T extends GameClientModuleTypes>(
   acc: Output<T>,
   ...updates: ((model: T["Model"]) => Output<T>)[]
 ): Output<T> => {

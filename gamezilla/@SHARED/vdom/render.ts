@@ -1,24 +1,22 @@
+import { VDOM_IMPL } from "gamezilla/public-config"
 import { VDom } from "./vdom"
 
 export type VDomImpl = "inferno" | "preact" | "react" | "react-with-million"
 
 export type Render = {
-  (vDom: VDom): void
+  (vDom: VDom, root: HTMLElement): Promise<void>
 }
 
 export type CreatePortal = (vDom: VDom, container: Element) => VDom
 
 export let createPortal: CreatePortal
 
-export const Render = async (
-  vDomImpl: VDomImpl,
-  root: HTMLElement,
-): Promise<Render> => {
+export const Render = async (vDomImpl: VDomImpl): Promise<Render> => {
   switch (vDomImpl) {
     case "inferno": {
       const Inferno = await import("inferno")
       createPortal = Inferno.createPortal
-      return (vDom) => {
+      return async (vDom, root) => {
         Inferno.render(vDom, root)
       }
     }
@@ -30,11 +28,14 @@ export const Render = async (
 
       await import("react")
 
-      const reactRoot = ReactDOMClient.createRoot(root)
+      let reactRoot: ReturnType<typeof ReactDOMClient.createRoot>
 
       createPortal = ReactDOM.createPortal
 
-      return (vDom) => {
+      return async (vDom, root) => {
+        if (!reactRoot) {
+          reactRoot = ReactDOMClient.createRoot(root)
+        }
         reactRoot.render(vDom)
       }
     }
@@ -45,9 +46,11 @@ export const Render = async (
 
       createPortal = PreactCompat.createPortal
 
-      return (vDom) => {
+      return async (vDom, root) => {
         Preact.render(vDom, root)
       }
     }
   }
 }
+
+export const render = await Render(VDOM_IMPL)

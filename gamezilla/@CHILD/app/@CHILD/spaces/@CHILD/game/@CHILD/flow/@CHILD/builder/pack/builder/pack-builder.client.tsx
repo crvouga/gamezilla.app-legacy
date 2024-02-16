@@ -1,15 +1,24 @@
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
-import { IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { Drawer, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { ViewBottomButtonBar } from "../../../../../../@SHARED/game"
 import { FlowPackUI } from "../../../../@SHARED/flow-pack"
 import { ClientModule } from "../../builder.core"
+import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 
 const update: ClientModule["update"] = (input) => {
+  return GameClientModule.chainUpdates(
+    { model: input.model },
+    (model) => updateExit({ ...input, model }),
+    (model) => PuzzlePickerDrawer.update({ ...input, model }),
+  )
+}
+
+const updateExit: ClientModule["update"] = (input) => {
   const { model, msg, ctx, msgGame } = input
 
   switch (msg?.t) {
-    case "pack-builder/user-clicked-exit-button": {
+    case "pack-builder.user-clicked-exit-button": {
       return {
         model,
         msgGame: [
@@ -53,9 +62,11 @@ const View: ClientModule["View"] = (input) => {
               if (index === 0) {
                 return (
                   <FlowPackUI.ViewAddCell
-                    onClick={() => {
-                      //
-                    }}
+                    onClick={() =>
+                      dispatch({
+                        t: "pack-builder.clicked-add-puzzle-button",
+                      })
+                    }
                   />
                 )
               }
@@ -65,6 +76,9 @@ const View: ClientModule["View"] = (input) => {
           />
         </div>
       </div>
+
+      <PuzzlePickerDrawer.View {...input} />
+
       <ViewBottomButtonBar
         actions={[
           {
@@ -72,7 +86,7 @@ const View: ClientModule["View"] = (input) => {
             label: "Exit",
             onClick: () =>
               dispatch({
-                t: "pack-builder/user-clicked-exit-button",
+                t: "pack-builder.user-clicked-exit-button",
               }),
           },
         ]}
@@ -80,6 +94,54 @@ const View: ClientModule["View"] = (input) => {
     </div>
   )
 }
+
+//
+//
+//
+//
+//
+//
+
+const PuzzlePickerDrawer: Pick<ClientModule, "update" | "View"> = {
+  update(input) {
+    const { model, msg } = input
+
+    switch (msg?.t) {
+      case "pack-builder.clicked-add-puzzle-button": {
+        return { model: { ...model, packBuilderOpen: "puzzle-picker" } }
+      }
+
+      case "pack-builder.closed-puzzle-picker-drawer": {
+        return { model: { ...model, packBuilderOpen: null } }
+      }
+    }
+
+    return { model }
+  },
+
+  View(input) {
+    const { dispatch, model } = input
+    return (
+      <Drawer
+        id="puzzle-picker"
+        position="bottom"
+        open={model.packBuilderOpen === "puzzle-picker"}
+        onClose={() =>
+          dispatch({ t: "pack-builder.closed-puzzle-picker-drawer" })
+        }
+      >
+        hello
+      </Drawer>
+    )
+  },
+}
+
+//
+//
+//
+//
+//
+//
 
 export const PackBuilderClient = {
   update,
