@@ -9,7 +9,9 @@ type Implementation<TInput, TInputVariant extends TInput, TOutput> = {
   implementation: (input: TInputVariant) => TOutput
 }
 
-export const definePolymorphicFunction = <TInput, TOutput>() => {
+export const definePolymorphicFunction = <TInput, TOutput>(
+  handleNotImplemented: (input: TInput) => TOutput,
+) => {
   const implementations: Implementation<TInput, any, TOutput>[] = []
 
   function run(baseType: TInput) {
@@ -18,7 +20,7 @@ export const definePolymorphicFunction = <TInput, TOutput>() => {
         return implementation.implementation(baseType)
       }
     }
-    throw new Error(`Missing implementation for ${JSON.stringify(baseType)}`)
+    return handleNotImplemented(baseType)
   }
 
   run.implement = <TInputVariant extends TInput>(

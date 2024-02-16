@@ -1,17 +1,19 @@
-import { perimeter, area, Shape } from "./shape"
+import { perimeter, area, Shape2D } from "./shape"
 
 export type Circle = {
-  shape: "circle"
+  Shape: "circle"
+  Shape2D: "circle"
   radius: number
 }
 
-const isCircle = (shape: Shape): shape is Circle => shape.shape === "circle"
+const isCircle = (shape: Shape2D): shape is Circle => shape.Shape2D === "circle"
 
 area.implement(isCircle, (shape) => Math.PI * shape.radius ** 2)
 
 perimeter.implement(isCircle, (shape) => 2 * Math.PI * shape.radius)
 
 export const Circle = (input: { radius: number }): Circle => ({
-  shape: "circle",
   ...input,
+  Shape2D: "circle",
+  Shape: "circle",
 })
