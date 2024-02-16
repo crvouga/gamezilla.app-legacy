@@ -7,7 +7,7 @@ import { Sphere } from "./shape-sphere"
 
 const shapes3D = [Sphere({ radius: 5 })]
 
-const shapes = [
+const shapes2D = [
   Circle({ radius: 5 }),
   Circle({ radius: 10 }),
   Octagon({ side: 5 }),
@@ -16,14 +16,14 @@ const shapes = [
 ]
 
 test("area", () => {
-  for (const shape of shapes) {
+  for (const shape of shapes2D) {
     console.log(shape)
     console.log("Area:", area(shape))
   }
 })
 
 test("perimeter", () => {
-  for (const shape of shapes) {
+  for (const shape of shapes2D) {
     console.log(shape)
     console.log("Perimeter:", perimeter(shape))
   }
