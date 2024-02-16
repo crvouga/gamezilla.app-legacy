@@ -4,7 +4,7 @@ import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { ServerCtx } from "gamezilla/@CHILD/app/@SHARED/server"
 import { dbConnNoop } from "gamezilla/@CHILD/app/@SHARED/server/db-conn-sql"
 import { LoggerConsole } from "gamezilla/@CHILD/app/@SHARED/server/logger"
-import { Posix, TimeSpan } from "gamezilla/@SHARED/core"
+import { Posix } from "gamezilla/@SHARED/core"
 import { AccountDb } from "../@SHARED/server/account-db"
 import { SessionDb } from "../@SHARED/server/session-db"
 import { ModelServer, ServerDeps, ServerModule } from "../auth.core"
@@ -20,7 +20,7 @@ const getDeps: ServerModule["getDeps"] = () => {
   return {
     AccountDb: AccountDb({
       t: "in-memory",
-      delay: TimeSpan.fromMilliseconds(0),
+      delay: async () => {},
     }),
     SessionDb: SessionDb({
       t: "in-memory",
