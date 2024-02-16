@@ -1,6 +1,7 @@
 import {
   GameLayout,
   ViewBottomButtonBar,
+  ViewBottomButtonBarAction,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
 import {
   IconBotHappy,
@@ -449,37 +450,40 @@ const View: Module["View"] = ({ model, ctx, modelGame, dispatch }) => {
       </div>
 
       {ctx.currentUserId === modelGame.playingUserId && (
-        <ViewBottomButtonBar
-          actions={[
-            {
-              label: "Exit",
-              icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-              onClick: () =>
-                dispatch({
-                  t: "user-stopped-game",
-                  userId: ctx.currentUserId,
-                }),
-            },
-            {
-              label: "Swap sides",
-              icon: <IconRightLeft className="h-6 w-6" />,
-              onClick: () =>
-                dispatch({
-                  t: "user-swapped-sides",
-                  userId: ctx.currentUserId,
-                }),
-            },
-            {
-              label: "Restart",
-              icon: <IconArrowRotateLeft className="h-6 w-6" />,
-              onClick: () =>
-                dispatch({
-                  t: "user-restarted-game",
-                  userId: ctx.currentUserId,
-                }),
-            },
-          ]}
-        />
+        <ViewBottomButtonBar>
+          <ViewBottomButtonBarAction
+            icon={<IconArrowLeftOnRect className="h-6 w-6" />}
+            label="Exit"
+            onClick={() =>
+              dispatch({
+                t: "user-stopped-game",
+                userId: ctx.currentUserId,
+              })
+            }
+          />
+
+          <ViewBottomButtonBarAction
+            icon={<IconRightLeft className="h-6 w-6" />}
+            label="Swap sides"
+            onClick={() =>
+              dispatch({
+                t: "user-swapped-sides",
+                userId: ctx.currentUserId,
+              })
+            }
+          />
+
+          <ViewBottomButtonBarAction
+            icon={<IconArrowRotateLeft className="h-6 w-6" />}
+            label="Restart"
+            onClick={() =>
+              dispatch({
+                t: "user-restarted-game",
+                userId: ctx.currentUserId,
+              })
+            }
+          />
+        </ViewBottomButtonBar>
       )}
     </GameLayout>
   )

@@ -2,7 +2,10 @@ import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
 import { Drawer, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { ViewBottomButtonBar } from "../../../../../../@SHARED/game"
+import {
+  ViewBottomButtonBar,
+  ViewBottomButtonBarAction,
+} from "../../../../../../@SHARED/game"
 import { FlowPackUI } from "../../../../@SHARED/flow-pack"
 import { ClientModule } from "../../builder.core"
 import { PuzzleListClient } from "../../puzzle/list/puzzle-list.client"
@@ -80,18 +83,17 @@ const View: ClientModule["View"] = (input) => {
 
       <PuzzlePickerDrawer.View {...input} />
 
-      <ViewBottomButtonBar
-        actions={[
-          {
-            icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-            label: "Exit",
-            onClick: () =>
-              dispatch({
-                t: "pack-builder.user-clicked-exit-button",
-              }),
-          },
-        ]}
-      />
+      <ViewBottomButtonBar>
+        <ViewBottomButtonBarAction
+          icon={<IconArrowLeftOnRect className="h-6 w-6" />}
+          label="Exit"
+          onClick={() =>
+            dispatch({
+              t: "pack-builder.user-clicked-exit-button",
+            })
+          }
+        />
+      </ViewBottomButtonBar>
     </div>
   )
 }

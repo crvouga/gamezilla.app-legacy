@@ -1,8 +1,9 @@
 import {
-  BottomBarButtonAction,
   GameLayout,
   ViewBottomButtonBar,
+  ViewBottomButtonBarAction,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import {
   APP_SOUND,
@@ -24,13 +25,14 @@ import {
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Eff, andThen, isErr, p } from "gamezilla/@SHARED/core"
+import { VDomChildren } from "gamezilla/@SHARED/vdom"
 import { Chess } from "../../@SHARED/chess"
 import { Chessboard } from "../../@SHARED/chess-ui/chessboard"
 import { CHESS_SOUND } from "../../@SHARED/chess/chess-sounds"
 import {
+  CoreModel,
   ModelClient,
   MsgClient,
-  CoreModel,
   MsgToClient,
   MsgToServer,
   initCore,
@@ -42,7 +44,6 @@ import {
   toPlayerColor,
   updateCore,
 } from "./puzzle.core"
-import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 
 //
 //
@@ -349,9 +350,13 @@ export const View = ({
       </div>
 
       {!isSpectating ? (
-        <ViewBottomButtonBar
-          actions={toBottomBarActions({ model, onClose, dispatch })}
-        />
+        <ViewBottomButtonBar>
+          <BottomBarActions
+            model={model}
+            onClose={onClose}
+            dispatch={dispatch}
+          />
+        </ViewBottomButtonBar>
       ) : (
         <></>
       )}
@@ -397,7 +402,7 @@ const formatDuration = (duration: number): string => {
     .padStart(2, "0")}`
 }
 
-export const toBottomBarActions = ({
+export const BottomBarActions = ({
   model,
   onClose,
   dispatch,
@@ -405,42 +410,52 @@ export const toBottomBarActions = ({
   model: ModelClient
   onClose: () => void
   dispatch: (m: MsgClient) => void
-}): BottomBarButtonAction[] => {
-  const exit: BottomBarButtonAction = {
-    icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-    label: "Exit",
-    onClick: onClose,
-  }
+}): VDomChildren => {
+  const exit = (
+    <ViewBottomButtonBarAction
+      icon={<IconArrowLeftOnRect className="h-6 w-6" />}
+      label="Exit"
+      onClick={onClose}
+    />
+  )
 
-  const hint: BottomBarButtonAction = {
-    icon: <IconLightbulb className="h-6 w-6" />,
-    label: "Hint",
-    disabled: isNoMoreHints(model),
-    onClick: () => dispatch({ t: "show-hint" }),
-  }
+  const hint = (
+    <ViewBottomButtonBarAction
+      icon={<IconLightbulb className="h-6 w-6" />}
+      label="Hint"
+      disabled={isNoMoreHints(model) || model.t === "loading"}
+      onClick={() => dispatch({ t: "show-hint" })}
+    />
+  )
 
-  const retry: BottomBarButtonAction = {
-    icon: <IconArrowRotateLeft className="h-6 w-6" />,
-    label: "Retry",
-    onClick: () => dispatch({ t: "retry" }),
-    color: "danger",
-  }
+  const retry = (
+    <ViewBottomButtonBarAction
+      icon={<IconArrowRotateLeft className="h-6 w-6" />}
+      label="Retry"
+      onClick={() => dispatch({ t: "retry" })}
+      color="danger"
+    />
+  )
 
-  const skip: BottomBarButtonAction = {
-    icon: <IconArrowRight className="h-6 w-6" />,
-    label: "Skip",
-    onClick: () => dispatch({ t: "skip" }),
-  }
+  const skip = (
+    <ViewBottomButtonBarAction
+      icon={<IconArrowRight className="h-6 w-6" />}
+      label="Skip"
+      onClick={() => dispatch({ t: "skip" })}
+    />
+  )
 
-  const next: BottomBarButtonAction = {
-    icon: <IconArrowCircle className="h-6 w-6" />,
-    label: "Next",
-    color: "success",
-    onClick: () => dispatch({ t: "next" }),
-  }
+  const next = (
+    <ViewBottomButtonBarAction
+      icon={<IconArrowCircle className="h-6 w-6" />}
+      label="Next"
+      color="success"
+      onClick={() => dispatch({ t: "next" })}
+    />
+  )
 
   if (model.t === "loading") {
-    return [exit, { ...hint, disabled: true }]
+    return [exit, hint]
   }
 
   if (model.t === "started") {

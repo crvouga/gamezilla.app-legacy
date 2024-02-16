@@ -22,7 +22,7 @@ import {
   MsgClient,
   MsgGame,
 } from "../../builder.core"
-import { BottomBarButtonAction } from "../../../../../../@SHARED/game"
+import { ViewBottomButtonBarAction } from "../../../../../../@SHARED/game"
 
 //
 //
@@ -217,32 +217,33 @@ const saveChanges: ClientModule["update"] = ({ model, modelGame }) => {
 //
 //
 
-export const viewActionButtons = ({
+export const ViewActionButtons = ({
   model,
   dispatch,
 }: {
   model: ModelClient
   dispatch: (msg: MsgClient) => void
 }) => {
-  const exit: BottomBarButtonAction = {
-    label: "Exit",
-    disabled: model.saveChangesRequest?.t === "loading",
-    icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-    onClick: () => dispatch({ t: "puzzle-builder.user-clicked-exit-button" }),
-  }
-
-  const save: BottomBarButtonAction = {
-    label: "Save",
-    icon: <IconFloppyDisk className="h-6 w-6" />,
-    loading: model.saveChangesRequest?.t === "loading",
-    onClick: () =>
-      dispatch({ t: "puzzle-save-changes.user-clicked-save-button" }),
-  }
-
-  return {
-    exit,
-    save,
-  }
+  return (
+    <>
+      <ViewBottomButtonBarAction
+        icon={<IconArrowLeftOnRect className="h-6 w-6" />}
+        label="Exit"
+        onClick={() =>
+          dispatch({ t: "puzzle-builder.user-clicked-exit-button" })
+        }
+        disabled={model.saveChangesRequest?.t === "loading"}
+      />
+      <ViewBottomButtonBarAction
+        icon={<IconFloppyDisk className="h-6 w-6" />}
+        label="Save"
+        onClick={() =>
+          dispatch({ t: "puzzle-save-changes.user-clicked-save-button" })
+        }
+        loading={model.saveChangesRequest?.t === "loading"}
+      />
+    </>
+  )
 }
 
 const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
@@ -300,7 +301,7 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
 }
 
 export const PuzzleSaveChangesClient = {
-  viewActionButtons,
+  ViewActionButtons: ViewActionButtons,
   update,
   ViewUnsavedChangesDrawer,
 }

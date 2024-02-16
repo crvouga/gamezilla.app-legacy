@@ -1,7 +1,7 @@
 import { Spinner, cn } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { VDom } from "gamezilla/@SHARED/vdom"
+import { VDom, VDomChildren } from "gamezilla/@SHARED/vdom"
 
-export type BottomBarButtonAction = {
+type BottomBarButtonAction = {
   label: string
   disabled?: boolean
   icon: VDom
@@ -15,20 +15,18 @@ export type BottomBarButtonAction = {
 }
 
 export const ViewBottomButtonBar = ({
-  actions,
+  children,
 }: {
-  actions: BottomBarButtonAction[]
+  children: VDomChildren
 }) => {
   return (
     <div className={"flex w-full items-center border-t border-neutral-600"}>
-      {actions.map((action) => (
-        <ViewBottomBarAction {...action} />
-      ))}
+      {children}
     </div>
   )
 }
 
-const ViewBottomBarAction = (props: BottomBarButtonAction) => {
+export const ViewBottomButtonBarAction = (props: BottomBarButtonAction) => {
   const isDisabled = props.disabled || props.loading
   return (
     <button

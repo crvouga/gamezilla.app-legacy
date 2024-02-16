@@ -1,6 +1,7 @@
 import {
   GameLayout,
   ViewBottomButtonBar,
+  ViewBottomButtonBarAction,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
 import { VsBotSetup } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot"
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
@@ -376,15 +377,13 @@ export const View = ({
         />
         {bottomSlot}
       </div>
-      <ViewBottomButtonBar
-        actions={[
-          {
-            label: "Exit",
-            icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-            onClick: () => dispatch({ t: "stop-game" }),
-          },
-        ]}
-      />
+      <ViewBottomButtonBar>
+        <ViewBottomButtonBarAction
+          icon={<IconArrowLeftOnRect className="h-6 w-6" />}
+          label="Exit"
+          onClick={onClose}
+        />
+      </ViewBottomButtonBar>
     </GameLayout>
   )
 }

@@ -1,6 +1,7 @@
 import {
   GameLayout,
   ViewBottomButtonBar,
+  ViewBottomButtonBarAction,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
 import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-user"
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
@@ -263,49 +264,47 @@ const View: Module["View"] = ({ ctx, model, modelGame, dispatch }) => {
             </div>
           </div>
 
-          <ViewBottomButtonBar
-            actions={[
-              ...(modelGame.type === "game"
-                ? [
-                    {
-                      icon: <IconFlag className="h-6 w-6" />,
-                      label: "Resign",
-                      onClick: () => {
-                        dispatch({
-                          t: "clicked-resign",
-                          userId: ctx.currentUserId,
-                        })
-                      },
-                    },
-                  ]
-                : []),
-              ...(modelGame.type === "game-over" &&
-              ctx.currentUserId === ctx.space.hostId
-                ? [
-                    {
-                      icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-                      label: "Exit",
-                      onClick: () => {
-                        dispatch({
-                          t: "user-stopped-game",
-                          userId: ctx.currentUserId,
-                        })
-                      },
-                    },
-                    {
-                      icon: <IconArrowRotateLeft className="h-6 w-6" />,
-                      label: "Rematch",
-                      onClick: () => {
-                        dispatch({
-                          t: "user-requested-rematch",
-                          userId: ctx.currentUserId,
-                        })
-                      },
-                    },
-                  ]
-                : []),
-            ]}
-          />
+          <ViewBottomButtonBar>
+            {modelGame.type === "game" && (
+              <ViewBottomButtonBarAction
+                icon={<IconFlag className="h-6 w-6" />}
+                label="Resign"
+                onClick={() => {
+                  dispatch({
+                    t: "clicked-resign",
+                    userId: ctx.currentUserId,
+                  })
+                }}
+              />
+            )}
+
+            {modelGame.type === "game-over" &&
+              ctx.currentUserId === ctx.space.hostId && (
+                <>
+                  <ViewBottomButtonBarAction
+                    icon={<IconArrowLeftOnRect className="h-6 w-6" />}
+                    label="Exit"
+                    onClick={() => {
+                      dispatch({
+                        t: "user-stopped-game",
+                        userId: ctx.currentUserId,
+                      })
+                    }}
+                  />
+
+                  <ViewBottomButtonBarAction
+                    icon={<IconArrowRotateLeft className="h-6 w-6" />}
+                    label="Rematch"
+                    onClick={() => {
+                      dispatch({
+                        t: "user-requested-rematch",
+                        userId: ctx.currentUserId,
+                      })
+                    }}
+                  />
+                </>
+              )}
+          </ViewBottomButtonBar>
 
           <ConfirmationDialog
             headerIcon={<IconFlag className="h-10 w-10" />}

@@ -1,6 +1,7 @@
 import {
   GameLayout,
   ViewBottomButtonBar,
+  ViewBottomButtonBarAction,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
@@ -166,16 +167,13 @@ const ViewMode: ClientModule["View"] = (input) => {
     return null
   }
 
-  const { exit, save } = PuzzleSaveChangesClient.viewActionButtons({
-    ...input,
-    model,
-  })
-
-  const more = {
-    label: "More",
-    icon: <IconEllipsisVertical className="h-6 w-6" />,
-    onClick: () => dispatch({ t: "puzzle-builder.user-clicked-more-button" }),
-  }
+  const more = (
+    <ViewBottomButtonBarAction
+      icon={<IconEllipsisVertical className="h-6 w-6" />}
+      label="More"
+      onClick={() => dispatch({ t: "puzzle-builder.user-clicked-more-button" })}
+    />
+  )
 
   switch (modelGame.mode.t) {
     case "edit": {
@@ -199,25 +197,26 @@ const ViewMode: ClientModule["View"] = (input) => {
             />
           </div>
 
-          <ViewBottomButtonBar
-            actions={[
-              exit,
-              save,
-              {
-                label: "Play Mode",
-                classNames: {
-                  button: "text-blue-500",
-                },
-                icon: <IconPlay className="h-6 w-6" />,
-                onClick: () =>
-                  dispatch({
-                    t: "puzzle-builder.user-clicked-play-mode-button",
-                  }),
-              },
+          <ViewBottomButtonBar>
+            <PuzzleSaveChangesClient.ViewActionButtons
+              {...input}
+              model={model}
+            />
 
-              more,
-            ]}
-          />
+            <ViewBottomButtonBarAction
+              icon={<IconPlay className="h-6 w-6" />}
+              label="Play Mode"
+              classNames={{
+                button: "text-blue-500",
+              }}
+              onClick={() =>
+                dispatch({
+                  t: "puzzle-builder.user-clicked-play-mode-button",
+                })
+              }
+            />
+            {more}
+          </ViewBottomButtonBar>
         </div>
       )
     }
@@ -244,25 +243,26 @@ const ViewMode: ClientModule["View"] = (input) => {
             />
           </div>
 
-          <ViewBottomButtonBar
-            actions={[
-              exit,
-              save,
-              {
-                label: "Edit Mode",
-                classNames: {
-                  button: "text-amber-500",
-                },
-                icon: <IconPenToSquare className="h-6 w-6" />,
-                onClick: () =>
-                  dispatch({
-                    t: "puzzle-builder.user-clicked-edit-mode-button",
-                  }),
-              },
+          <ViewBottomButtonBar>
+            <PuzzleSaveChangesClient.ViewActionButtons
+              {...input}
+              model={model}
+            />
 
-              more,
-            ]}
-          />
+            <ViewBottomButtonBarAction
+              icon={<IconPenToSquare className="h-6 w-6" />}
+              label="Edit Mode"
+              classNames={{
+                button: "text-amber-500",
+              }}
+              onClick={() =>
+                dispatch({
+                  t: "puzzle-builder.user-clicked-edit-mode-button",
+                })
+              }
+            />
+            {more}
+          </ViewBottomButtonBar>
         </div>
       )
     }

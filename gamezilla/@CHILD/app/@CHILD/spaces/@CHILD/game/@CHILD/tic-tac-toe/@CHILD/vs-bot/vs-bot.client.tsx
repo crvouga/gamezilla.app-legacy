@@ -1,4 +1,7 @@
-import { ViewBottomButtonBar } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+import {
+  ViewBottomButtonBar,
+  ViewBottomButtonBarAction,
+} from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
 import {
   IconBotCute,
   IconBotLevel1,
@@ -238,25 +241,23 @@ export const View = ({
         />
       </div>
 
-      <ViewBottomButtonBar
-        actions={[
-          {
-            icon: <IconArrowLeftOnRect className="h-6 w-6" />,
-            label: "Exit",
-            onClick: () => dispatch({ t: "stop-game" }),
-          },
-          {
-            icon: <IconRightLeft className="h-6 w-6" />,
-            label: "Swap sides",
-            onClick: () => dispatch({ t: "swap-sides" }),
-          },
-          {
-            icon: <IconArrowRotateLeft className="h-6 w-6" />,
-            label: "Restart",
-            onClick: () => dispatch({ t: "restart" }),
-          },
-        ]}
-      />
+      <ViewBottomButtonBar>
+        <ViewBottomButtonBarAction
+          icon={<IconArrowLeftOnRect className="h-6 w-6" />}
+          label="Exit"
+          onClick={() => dispatch({ t: "stop-game" })}
+        />
+        <ViewBottomButtonBarAction
+          icon={<IconRightLeft className="h-6 w-6" />}
+          label="Swap sides"
+          onClick={() => dispatch({ t: "swap-sides" })}
+        />
+        <ViewBottomButtonBarAction
+          icon={<IconArrowRotateLeft className="h-6 w-6" />}
+          label="Restart"
+          onClick={() => dispatch({ t: "restart" })}
+        />
+      </ViewBottomButtonBar>
     </div>
   )
 }
