@@ -21,45 +21,47 @@ export const ViewBottomButtonBar = ({
 }) => {
   return (
     <div className={"flex w-full items-center border-t border-neutral-600"}>
-      {actions.map((action) => {
-        const isDisabled = action.disabled || action.loading
-        return (
-          <button
-            disabled={isDisabled}
-            key={action.label}
-            onClick={action.onClick}
-            className={cn(
-              "relative flex flex-1 flex-col items-center gap-0.5 p-1 text-sm transition-opacity",
-              !isDisabled && "active:opacity-50",
-              action.disabled && "cursor-not-allowed opacity-50",
-              action.color === "danger" && "text-red-500",
-              action.color === "success" && "text-green-500",
-              action.classNames?.button,
-            )}
-          >
-            <div
-              className={cn(
-                "flex h-full w-full flex-col items-center justify-center gap-0.5 transition-opacity",
-                action.loading ? "opacity-0" : "opacity-100",
-              )}
-            >
-              {action.icon}
-              <p className={cn("text-xs", action.classNames?.label)}>
-                {action.label}
-              </p>
-            </div>
-
-            <div
-              className={cn(
-                "absolute inset-0 flex h-full w-full items-center justify-center transition-opacity",
-                action.loading ? "opacity-100" : "opacity-0",
-              )}
-            >
-              <Spinner className="h-8 w-8" />
-            </div>
-          </button>
-        )
-      })}
+      {actions.map((action) => (
+        <ViewBottomBarAction {...action} />
+      ))}
     </div>
+  )
+}
+
+const ViewBottomBarAction = (props: BottomBarButtonAction) => {
+  const isDisabled = props.disabled || props.loading
+  return (
+    <button
+      disabled={isDisabled}
+      key={props.label}
+      onClick={props.onClick}
+      className={cn(
+        "relative flex flex-1 flex-col items-center gap-0.5 p-1 text-sm transition-opacity",
+        !isDisabled && "active:opacity-50",
+        props.disabled && "cursor-not-allowed opacity-50",
+        props.color === "danger" && "text-red-500",
+        props.color === "success" && "text-green-500",
+        props.classNames?.button,
+      )}
+    >
+      <div
+        className={cn(
+          "flex h-full w-full flex-col items-center justify-center gap-0.5 transition-opacity",
+          props.loading ? "opacity-0" : "opacity-100",
+        )}
+      >
+        {props.icon}
+        <p className={cn("text-xs", props.classNames?.label)}>{props.label}</p>
+      </div>
+
+      <div
+        className={cn(
+          "absolute inset-0 flex h-full w-full items-center justify-center transition-opacity",
+          props.loading ? "opacity-100" : "opacity-0",
+        )}
+      >
+        <Spinner className="h-8 w-8" />
+      </div>
+    </button>
   )
 }
