@@ -321,12 +321,21 @@ export const playSound = (
   }
 }
 
-export const didPlaySound = <T extends ClientCmdTypes>({
+export const didPlaySound = <T>({
   msgCmd,
 }: {
-  msgCmd?: ClientCmd<T>[]
+  msgCmd?: (SoundCmd | T)[]
 }): boolean => {
-  return msgCmd?.some((cmd) => cmd.t === "sound" && cmd.c.t === "play") ?? false
+  return (
+    msgCmd?.some(
+      (cmd) =>
+        typeof cmd === "object" &&
+        cmd &&
+        "t" in cmd &&
+        cmd.t === "sound" &&
+        cmd.c.t === "play",
+    ) ?? false
+  )
 }
 
 export const preloadSound = <T extends ClientCmdTypes>(

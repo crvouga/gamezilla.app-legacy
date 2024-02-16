@@ -3,7 +3,7 @@ import {
   ClientEvent,
 } from "gamezilla/@CHILD/app/@SHARED/client"
 
-import { Eff, Sub } from "gamezilla/@SHARED/core"
+import { Eff, Sub, batchMsgs } from "gamezilla/@SHARED/core"
 import { WithEventId } from "../@SHARED/event"
 import { Space } from "../@SHARED/space"
 import { SpaceClientCmd } from "../@SHARED/space-client-cmd"
@@ -80,12 +80,9 @@ const chainUpdates = async (
   const accNew: Output = {
     model: updated.model,
     eff: Eff.batch([acc.eff, updated.eff]),
-    msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
-    msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
-    msgSpaceEvent: [
-      ...(acc.msgSpaceEvent ?? []),
-      ...(updated.msgSpaceEvent ?? []),
-    ],
+    msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
+    msgEvt: batchMsgs(acc.msgEvt, updated.msgEvt),
+    msgSpaceEvent: batchMsgs(acc.msgSpaceEvent, updated.msgSpaceEvent),
   }
 
   return chainUpdates(accNew, ...rest)

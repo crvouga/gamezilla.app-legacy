@@ -125,8 +125,7 @@ const parseUrl = (
   }
 }
 
-const generateRandomSeed = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 100))
+const generateRandomSeed = () => {
   return toSeed(String(Math.floor(Math.random() * 10000)))
 }
 

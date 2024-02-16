@@ -125,6 +125,10 @@ const inputToSpaceId = (input: Parameters<SpaceClientModule["update"]>[0]) => {
     return input.msgServer.spaceId
   }
 
+  if (input.msgSpaceEvent && "spaceId" in input.msgSpaceEvent) {
+    return input.msgSpaceEvent.spaceId
+  }
+
   return null
 }
 

@@ -6,7 +6,7 @@ import { Sub } from "gamezilla/@SHARED/core"
 import { GameClientModule } from "../../@SHARED/architecture/game-client-v2"
 import { SpaceClientCmd } from "../../@SHARED/space-client-cmd"
 import { ConnectFour } from "./@CHILD/connect-four/connect-four.client"
-import { Flow } from "./@CHILD/flow/flow.client"
+import { FlowClient } from "./@CHILD/flow/flow.client"
 import {
   GameName,
   ModelClient,
@@ -62,7 +62,7 @@ const init = (gameName: GameName): Module["init"] => {
     case "flow": {
       return {
         t: "flow",
-        c: Flow.init,
+        c: FlowClient.init,
       }
     }
   }
@@ -104,10 +104,10 @@ const update: Module["update"] = (input) => {
     }
 
     case "flow": {
-      const updated = Flow.update({
+      const updated = FlowClient.update({
         ctx: ctx,
         modelGame: modelGame.c,
-        model: input.model?.t === "flow" ? input.model.c : Flow.init,
+        model: input.model?.t === "flow" ? input.model.c : FlowClient.init,
         msgCmd: msgCmd,
         msgEvt: msgEvt,
         msgServer: msgServer?.t === "flow" ? msgServer.c : null,
@@ -152,10 +152,10 @@ const subscriptions: Module["subscriptions"] = (input): Sub<MsgClient> => {
     case "flow": {
       return Sub.tag(
         "flow",
-        Flow.subscriptions({
+        FlowClient.subscriptions({
           ctx: input.ctx,
           modelGame: modelGame.c,
-          model: model.t === "flow" ? model.c : Flow.init,
+          model: model.t === "flow" ? model.c : FlowClient.init,
         }),
       )
     }
@@ -187,11 +187,11 @@ const View: Module["View"] = (input) => {
 
     case "flow": {
       return (
-        <Flow.View
+        <FlowClient.View
           ctx={ctx}
           dispatch={(c) => dispatch({ t: "flow", c })}
           modelGame={modelGame.c}
-          model={model.t === "flow" ? model.c : Flow.init}
+          model={model.t === "flow" ? model.c : FlowClient.init}
         />
       )
     }

@@ -139,16 +139,7 @@ const updateChild: Module["update"] = (input) => {
 const updateFromMsgGame: Module["update"] = (input) => {
   const { msgGame, model } = input
 
-  if (!msgGame) {
-    return { model }
-  }
-
-  switch (msgGame.t) {
-    case "builder":
-    case "play": {
-      return { model }
-    }
-
+  switch (msgGame?.t) {
     case "user-changed-mode": {
       switch (msgGame.mode) {
         case "play": {
@@ -176,6 +167,10 @@ const updateFromMsgGame: Module["update"] = (input) => {
           }
         }
       }
+    }
+
+    default: {
+      return { model }
     }
   }
 }
@@ -388,7 +383,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
   }
 }
 
-export const Flow: Module = {
+export const FlowClient: Module = {
   init,
   subscriptions,
   update,
