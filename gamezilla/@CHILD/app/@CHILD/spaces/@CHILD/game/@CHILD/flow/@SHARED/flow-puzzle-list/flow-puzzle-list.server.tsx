@@ -1,0 +1,34 @@
+import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server"
+import { ServerModule } from "./flow-puzzle-list.core"
+import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
+
+const update: ServerModule["update"] = async (input) => {
+  return AppServerModule.chainUpdates(
+    { model: input.model },
+    (model) => updateListPuzzles({ ...input, model }),
+    //
+  )
+}
+
+const updateListPuzzles: ServerModule["update"] = async (input) => {
+  const { msgClient, model, deps } = input
+
+  switch (msgClient?.t) {
+    case "list-puzzles": {
+      const listed = await deps.FlowPuzzleDb.list(msgClient.input)
+
+      return {
+        model: input.model,
+        msgCmd: [sendBack(msgClient, { t: "listed-puzzle", listed })],
+      }
+    }
+
+    default: {
+      return { model }
+    }
+  }
+}
+
+export const PuzzleListServer = {
+  update,
+}

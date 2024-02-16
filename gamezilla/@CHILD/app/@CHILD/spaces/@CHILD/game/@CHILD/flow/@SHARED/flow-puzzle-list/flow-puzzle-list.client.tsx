@@ -1,8 +1,3 @@
-import {
-  SpaceClientCtx,
-  SpaceClientEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { SpaceClientCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
 import { sendToServer, showErrSm } from "gamezilla/@CHILD/app/@SHARED/client"
 import { IconPuzzlePiece, Spinner, cn } from "gamezilla/@CHILD/app/@SHARED/ui"
@@ -18,30 +13,9 @@ import {
   loading,
 } from "gamezilla/@SHARED/core"
 import { spaceClientCtx } from "../../../../@SHARED/testing/client"
-import {
-  ModelClient,
-  MsgClient,
-  MsgToClient,
-  MsgToServer,
-} from "./puzzle-list.core"
-import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
 import { FlowGridUI } from "../flow"
-
-type ClientModule = AppClientModule<{
-  Model: ModelClient
-  Msg: MsgClient
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  Ctx: SpaceClientCtx
-  MsgInCmd: never
-  MsgInEvent: SpaceClientEvent
-  MsgOutCmd: SpaceClientCmd<{
-    MsgClient: MsgClient
-    MsgToServer: MsgToServer
-  }>
-  MsgOutEvent: SpaceClientEvent
-  ViewSlot: "fab"
-}>
+import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
+import { ClientModule } from "./flow-puzzle-list.core"
 
 const update: ClientModule["update"] = (input) => {
   return AppClientModule.chainUpdates(
