@@ -1,4 +1,4 @@
-import { Shape3D, volume } from "./shape"
+import { Shape3D, surfaceArea, volume } from "./shape"
 
 export type Sphere = {
   Shape: "sphere"
@@ -9,6 +9,11 @@ export type Sphere = {
 const isSphere = (shape: Shape3D): shape is Sphere => shape.Shape3D === "sphere"
 
 volume.implement(isSphere, (shape) => 4 * Math.PI * shape.radius ** 2)
+
+surfaceArea.implement(
+  isSphere,
+  (shape) => (4 / 3) * Math.PI * shape.radius ** 3,
+)
 
 export const Sphere = (input: { radius: number }): Sphere => ({
   ...input,

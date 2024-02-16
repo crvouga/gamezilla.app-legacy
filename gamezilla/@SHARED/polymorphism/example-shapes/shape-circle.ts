@@ -1,4 +1,4 @@
-import { perimeter, area, Shape2D } from "./shape"
+import { Shape2D, area, perimeter } from "./shape"
 
 export type Circle = {
   Shape: "circle"
