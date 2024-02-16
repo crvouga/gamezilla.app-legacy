@@ -18,6 +18,7 @@ const update: ClientModule["update"] = (input) => {
           packCreateRequest: loading,
         },
         msgCmd: [
+          playSound(APP_SOUND.tap),
           sendToServer({
             t: "pack-create/user-clicked-create-button",
           }),
