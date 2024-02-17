@@ -104,7 +104,7 @@ const View: ClientModule["View"] = (input) => {
 
   return (
     <div className="relative flex w-full flex-1 flex-col gap-2 overflow-hidden">
-      <div className="relative flex w-full flex-1 flex-col items-center overflow-y-scroll">
+      <div className="relative flex max-h-full w-full flex-1 flex-col items-center overflow-hidden overflow-y-scroll">
         {shouldShowEmptyState && (
           <EmptyState
             label="No packs"
@@ -112,15 +112,17 @@ const View: ClientModule["View"] = (input) => {
           />
         )}
 
-        {packs
-          .sort(descend((pack) => Posix.toNumber(pack.lastUpdatedAt)))
-          .map((pack) => (
-            <FlowPackListItem
-              key={pack.id}
-              pack={pack}
-              onClick={() => input.emits?.clickedPackItem(pack)}
-            />
-          ))}
+        <div className="w-full divide-y divide-neutral-600">
+          {packs
+            .sort(descend((pack) => Posix.toNumber(pack.lastUpdatedAt)))
+            .map((pack) => (
+              <FlowPackListItem
+                key={pack.id}
+                pack={pack}
+                onClick={() => input.emits?.clickedPackItem(pack)}
+              />
+            ))}
+        </div>
 
         <div
           className={cn(
@@ -132,7 +134,7 @@ const View: ClientModule["View"] = (input) => {
         </div>
 
         <IntersectionObserverEmitter
-          id="puzzle-builder-list"
+          id="flow-pack-list"
           onVisible={() => dispatch({ t: "user-observed-end-of-list" })}
         />
       </div>
@@ -152,11 +154,23 @@ const FlowPackListItem = ({
   onClick: () => void
 }) => {
   return (
-    <button className="w-full items-center justify-start p-4" onClick={onClick}>
-      {pack.name}
+    <button
+      className="flex w-full max-w-full items-center justify-between gap-4 overflow-hidden p-4"
+      onClick={onClick}
+    >
+      <IconBox className="h-8 w-8 shrink-0" />
+      <div className="flex flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-left text-lg font-bold">
+        <p className="w-full">{pack.name}</p>
+      </div>
+      <p className="flex shrink-0 text-sm text-secondary">
+        {plural(pack.puzzleIds, "puzzle", "puzzles")}
+      </p>
     </button>
   )
 }
+
+const plural = (arr: unknown[], singular: string, plural: string) =>
+  `${arr.length} ${arr.length === 1 ? singular : plural}`
 
 const subscriptions: ClientModule["subscriptions"] = (input) => {
   return RequestResponse.subscriptions(

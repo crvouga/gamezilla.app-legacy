@@ -57,7 +57,10 @@ export const gameNames: { [gameName in GameName]: GameName } = {
   flow: "flow",
 }
 
-export const gameNameList: GameName[] = ["connect-four", "flow"]
+export const gameNameList: GameName[] = [
+  // "connect-four",
+  "flow",
+]
 
 export const gameNameToString = (gameName: GameName): string => {
   switch (gameName) {
