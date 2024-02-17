@@ -20,6 +20,7 @@ import { ClientModule } from "./flow-puzzle-list.core"
 const update: ClientModule["update"] = (input) => {
   return AppClientModule.chainUpdates(
     { model: input.model },
+    //
     (model) => updatePuzzleList({ ...input, model }),
     //
   )
@@ -29,15 +30,15 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
   const { model, msg, msgServer } = input
 
   switch (msg?.t) {
-    case "user-observed-end-of-list": {
+    case "flow-puzzle-list.user-observed-end-of-list": {
       return {
         model: {
           ...model,
-          puzzleListRequest: loading,
+          request: loading,
         },
         msgCmd: [
           sendToServer({
-            t: "list-puzzles",
+            t: "flow-puzzle-list.list-puzzles",
             input: {
               order: {
                 lastUpdatedAt: "desc",
@@ -57,7 +58,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
   }
 
   switch (msgServer?.t) {
-    case "listed-puzzle": {
+    case "flow-puzzle-list.listed-puzzle": {
       const puzzles =
         msgServer.listed.t === "ok" ? msgServer.listed.value.items : []
 
@@ -69,7 +70,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
       return {
         model: {
           ...model,
-          puzzleListRequest: Result.mapOk(msgServer.listed, () => null),
+          request: Result.mapOk(msgServer.listed, () => null),
           puzzles: puzzlesNew,
         },
         msgCmd: isErr(msgServer.listed)
@@ -89,7 +90,7 @@ const View: ClientModule["View"] = (input) => {
   const { model, dispatch, ctx } = input
 
   const puzzles = Object.values(model.puzzles)
-  const shouldShowLoadingState = isPending(model.puzzleListRequest)
+  const shouldShowLoadingState = isPending(model.request)
   const shouldShowEmptyState = !shouldShowLoadingState && puzzles.length === 0
 
   return (
@@ -109,7 +110,9 @@ const View: ClientModule["View"] = (input) => {
               now={ctx.now}
               key={puzzle.id}
               puzzle={puzzle}
-              onClick={() => dispatch({ t: "user-observed-end-of-list" })}
+              onClick={() =>
+                dispatch({ t: "flow-puzzle-list.user-observed-end-of-list" })
+              }
             />
           ))}
 
@@ -124,7 +127,9 @@ const View: ClientModule["View"] = (input) => {
 
         <IntersectionObserverEmitter
           id="puzzle-builder-list"
-          onVisible={() => dispatch({ t: "user-observed-end-of-list" })}
+          onVisible={() =>
+            dispatch({ t: "flow-puzzle-list.user-observed-end-of-list" })
+          }
         />
       </div>
 
@@ -165,7 +170,7 @@ const FlowPuzzleListItem = ({
   )
 }
 
-export const PuzzleListClient = {
+export const FlowPuzzleListClient = {
   update,
   View,
 }

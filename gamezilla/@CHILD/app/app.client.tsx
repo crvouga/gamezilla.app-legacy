@@ -443,11 +443,11 @@ const toCtx = (input: {
 //
 //
 
-export const subscriptions = (input: {
+export const subscriptions = async (input: {
   ctx: { now: Posix }
   deps: Deps
   model: ModelClient
-}): Sub<MsgClient> => {
+}) => {
   const { ctx, model } = input
 
   const ctxApp = toCtx(input)
@@ -457,14 +457,14 @@ export const subscriptions = (input: {
     Sub.tag("wire", Wire.subscriptions({ transport: input.deps.transport })),
     Sub.tag("platform", Platform.subscriptions),
     Sub.tag("routing", Routing.subscriptions),
-    Sub.tag("toast", Toast.subscriptions({ ctx, model: model.toast })),
+    Sub.tag("toast", await Toast.subscriptions({ ctx, model: model.toast })),
     Sub.tag(
       "auth",
-      AuthClient.subscriptions({ ctx: ctxApp, model: model.auth }),
+      await AuthClient.subscriptions({ ctx: ctxApp, model: model.auth }),
     ),
     Sub.tag(
       "spaces",
-      SpaceClient.subscriptions({ ctx: ctxApp, model: model.spaces }),
+      await SpaceClient.subscriptions({ ctx: ctxApp, model: model.spaces }),
     ),
   ])
 }

@@ -29,12 +29,12 @@ const initial = { model: initClient }
 
 describe("pack builder client", () => {
   it("should open puzzle picker when user clicks add puzzle button", async () => {
-    const output = chainUpdates(initial, userClickedAddPuzzleButton)
+    const output = await chainUpdates(initial, userClickedAddPuzzleButton)
     expect(output.model.packBuilderOpen === "puzzle-picker").toBeTrue()
   })
 
   it("should close puzzle picker when user clicks closes", async () => {
-    const output = chainUpdates(
+    const output = await chainUpdates(
       initial,
       userClickedAddPuzzleButton,
       userClosedPuzzlePickerDrawer,

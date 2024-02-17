@@ -2,6 +2,7 @@ import { RemoteResult, notAsked } from "gamezilla/@SHARED/core"
 import { IFlowPuzzleDb } from "../../../../@SHARED/flow-puzzle-db"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { FlowPuzzleList } from "../../../../@SHARED/flow-puzzle-list"
 
 //
 //
@@ -17,17 +18,25 @@ export const initClient: ModelClient = {
 }
 
 export type MsgClient =
+  | FlowPuzzleList.MsgClient
   | { t: "list/user-observed-end-of-list" }
   | { t: "list/user-clicked-puzzle-list-item"; puzzle: FlowPuzzle }
 
-export type MsgServer = { t: "noop" }
+export type MsgServer =
+  | FlowPuzzleList.MsgServer
+  //
+  | { t: "noop" }
 
-export type MsgToServer = { t: "list/list-puzzles"; input: ListPuzzlesInput }
+export type MsgToServer =
+  | FlowPuzzleList.MsgToServer
+  | { t: "list/list-puzzles"; input: ListPuzzlesInput }
 
-export type MsgToClient = {
-  t: "list/listed-puzzle"
-  listed: ListPuzzlesOutput
-}
+export type MsgToClient =
+  | FlowPuzzleList.MsgToClient
+  | {
+      t: "list/listed-puzzle"
+      listed: ListPuzzlesOutput
+    }
 
 //
 //

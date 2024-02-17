@@ -34,7 +34,7 @@ const useSelectedMode =
 
 describe("flow client", () => {
   it("should play a sound when selecting play mode", async () => {
-    const output = GameClientModule.chainUpdates(
+    const output = await GameClientModule.chainUpdates(
       init,
       useSelectedMode(ctx.currentUserId, "play"),
     )
@@ -42,7 +42,7 @@ describe("flow client", () => {
   })
 
   it("should play a sound when selecting builder mode", async () => {
-    const output = GameClientModule.chainUpdates(
+    const output = await GameClientModule.chainUpdates(
       init,
       useSelectedMode(ctx.currentUserId, "builder"),
     )
@@ -50,7 +50,7 @@ describe("flow client", () => {
   })
 
   it("should not play a sound when selecting no mode", async () => {
-    const output = GameClientModule.chainUpdates(
+    const output = await GameClientModule.chainUpdates(
       init,
       useSelectedMode(ctx.currentUserId, null),
     )

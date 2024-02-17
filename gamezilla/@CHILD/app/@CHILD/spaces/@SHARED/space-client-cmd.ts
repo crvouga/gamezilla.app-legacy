@@ -46,21 +46,23 @@ const tag = <T extends SpaceClientCmdTypes, Tag extends string>(
 }
 
 const map = <A extends SpaceClientCmdTypes, B extends SpaceClientCmdTypes>(
-  msgCmd: SpaceClientCmd<A>[],
-  toServerMap: (a: A["MsgToServer"]) => B["MsgToServer"],
-  clientMsgMap: (b: A["MsgClient"]) => B["MsgClient"],
+  msgCmd: SpaceClientCmd<A>[] | undefined | null,
+  msgToServer: (a: A["MsgToServer"]) => B["MsgToServer"],
+  msgClient: (b: A["MsgClient"]) => B["MsgClient"],
 ): SpaceClientCmd<B>[] => {
-  return msgCmd.flatMap((msgCmd): SpaceClientCmd<B>[] => {
-    switch (msgCmd.t) {
-      case "space/open-user-details":
-      case "space/exit-game": {
-        return [msgCmd]
+  return (
+    msgCmd?.flatMap((msgCmd): SpaceClientCmd<B>[] => {
+      switch (msgCmd.t) {
+        case "space/open-user-details":
+        case "space/exit-game": {
+          return [msgCmd]
+        }
+        default: {
+          return ClientCmd.map([msgCmd], msgToServer, msgClient)
+        }
       }
-      default: {
-        return ClientCmd.map([msgCmd], toServerMap, clientMsgMap)
-      }
-    }
-  })
+    }) ?? []
+  )
 }
 
 const toClientCmd = <T extends SpaceClientCmdTypes>(

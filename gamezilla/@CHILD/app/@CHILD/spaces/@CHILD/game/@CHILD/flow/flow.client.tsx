@@ -77,7 +77,7 @@ const update: Module["update"] = (input) => {
   )
 }
 
-const updateChild: Module["update"] = (input) => {
+const updateChild: Module["update"] = async (input) => {
   const { model, modelGame, msgEvt, ctx, msgCmd, msgGame, msgServer, msg } =
     input
 
@@ -87,7 +87,7 @@ const updateChild: Module["update"] = (input) => {
     }
 
     case "play": {
-      const updated = PlayClient.update({
+      const updated = await PlayClient.update({
         ctx: { ...ctx, onQuit: () => {}, puzzles: model.puzzles },
         modelGame: modelGame.c,
         model: model.t === "play" ? model.c : PlayClient.init,
@@ -98,7 +98,7 @@ const updateChild: Module["update"] = (input) => {
         msg: msg?.t === "play" ? msg.c : null,
       })
 
-      const tagged = GameClientModule.tagOutput(
+      const tagged = await GameClientModule.tagOutput(
         "play",
         (msgCmd) => ClientCmd.tag("play", msgCmd),
         updated,
@@ -111,7 +111,7 @@ const updateChild: Module["update"] = (input) => {
     }
 
     case "builder": {
-      const updated = BuilderClient.update({
+      const updated = await BuilderClient.update({
         ctx: { ...ctx, onQuit: () => {}, puzzles: model.puzzles },
         modelGame: modelGame.c,
         model: model.t === "builder" ? model.c : BuilderClient.init,
@@ -122,9 +122,9 @@ const updateChild: Module["update"] = (input) => {
         msg: msg?.t === "builder" ? msg.c : null,
       })
 
-      const tagged = GameClientModule.tagOutput(
+      const tagged = await GameClientModule.tagOutput(
         "builder",
-        (msgCmd) => ClientCmd.tag("builder", msgCmd),
+        (msgCmd) => SpaceClientCmd.tag("builder", msgCmd),
         updated,
       )
 
@@ -202,12 +202,12 @@ const updateFromMsg: Module["update"] = (input) => {
 //
 //
 
-const subscriptions: Module["subscriptions"] = (input) => {
+const subscriptions: Module["subscriptions"] = async (input) => {
   switch (input.modelGame.t) {
     case "play": {
       return Sub.tag(
         "play",
-        PlayClient.subscriptions({
+        await PlayClient.subscriptions({
           ctx: {
             ...input.ctx,
             onQuit() {},
@@ -221,7 +221,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
     case "builder": {
       return Sub.tag(
         "builder",
-        BuilderClient.subscriptions({
+        await BuilderClient.subscriptions({
           ctx: {
             ...input.ctx,
             onQuit() {},

@@ -55,7 +55,10 @@ export type Output = {
 export type SpaceClientModule = {
   init: (input: { ctx: Ctx; model: ModelClient }) => MaybePromise<Output>
   update: (input: Input) => MaybePromise<Output>
-  subscriptions: (input: { ctx: Ctx; model: ModelClient }) => Sub<MsgClient>
+  subscriptions: (input: {
+    ctx: Ctx
+    model: ModelClient
+  }) => MaybePromise<Sub<MsgClient>>
   View: (input: {
     ctx: Ctx
     model: ModelClient

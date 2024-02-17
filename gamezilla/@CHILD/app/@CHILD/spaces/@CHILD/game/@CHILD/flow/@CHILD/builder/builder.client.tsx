@@ -1,12 +1,15 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { SpaceClientCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
 import {
   Avatar,
   Button,
   IconArrowLeftOnRect,
   Tabs,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Sub } from "gamezilla/@SHARED/core"
+import { Eff, Sub } from "gamezilla/@SHARED/core"
 import { ViewSpaceHostChip } from "../../../../@SHARED/game"
+import { FlowPuzzleListClient } from "../../@SHARED/flow-puzzle-list"
 import { ClientModule, initClient } from "./builder.core"
 import { PackBuilderClient } from "./pack/builder/pack-builder.client"
 import { PackCreateClient } from "./pack/create/pack-create.client"
@@ -17,13 +20,14 @@ import { PuzzleDeleteForeverClient } from "./puzzle/delete-forever/puzzle-delete
 import { PuzzleEditNameClient } from "./puzzle/edit/puzzle-edit-name.client"
 import { PuzzleListClient } from "./puzzle/list/puzzle-list.client"
 import { PuzzleSaveChangesClient } from "./puzzle/save-changes/puzzle-save-changes.client"
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     //
     (model) => updateLocation({ ...input, model }),
+    //
+    (model) => updateFlowPuzzleList({ ...input, model }),
     //
     (model) => PackListClient.update({ ...input, model }),
     (model) => PuzzleBuilderClient.update({ ...input, model }),
@@ -36,6 +40,30 @@ const update: ClientModule["update"] = (input) => {
     (model) => PackCreateClient.update({ ...input, model }),
     (model) => PackBuilderClient.update({ ...input, model }),
   )
+}
+
+const updateFlowPuzzleList: ClientModule["update"] = async (input) => {
+  const updated = await FlowPuzzleListClient.update({
+    ctx: input.ctx,
+    model: { ...input.model.flowPuzzleList, puzzles: input.model.puzzles },
+    msg: input.msg?.t === "flow-puzzle-list" ? input.msg.c : undefined,
+    msgServer:
+      input.msgServer?.t === "flow-puzzle-list" ? input.msgServer.c : undefined,
+    msgEvt: input.msgEvt,
+    msgCmd: input.msgCmd,
+    modelLocation: null,
+  })
+  return {
+    model: { ...input.model, flowPuzzleList: updated.model },
+    eff: Eff.tag("flow-puzzle-list", updated.eff),
+    msgEvt: [],
+    msgGame: [],
+    msgCmd: SpaceClientCmd.map(
+      updated.msgCmd,
+      (c) => ({ t: "flow-puzzle-list", c }),
+      (c) => ({ t: "flow-puzzle-list", c }),
+    ),
+  }
 }
 
 const updateLocation: ClientModule["update"] = (input) => {
@@ -142,10 +170,10 @@ const ViewFeedItem: ClientModule["ViewFeedItem"] = () => {
   return <div></div>
 }
 
-const subscriptions: ClientModule["subscriptions"] = (input) => {
+const subscriptions: ClientModule["subscriptions"] = async (input) => {
   return Sub.batch([
     //
-    PuzzleCreateClient.subscriptions(input),
+    await PuzzleCreateClient.subscriptions(input),
   ])
 }
 

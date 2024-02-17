@@ -15,8 +15,8 @@ const userClickedCreateButton = (model: ModelClient) => {
 }
 
 describe("flow pack create", () => {
-  it("should make a sound when the user clicks the create button", () => {
-    const output = GameClientModule.chainUpdates(
+  it("should make a sound when the user clicks the create button", async () => {
+    const output = await GameClientModule.chainUpdates(
       { model: initClient },
       userClickedCreateButton,
     )

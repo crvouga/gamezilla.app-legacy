@@ -78,11 +78,12 @@ export const init: Client["init"] = ({ model }) => {
 //
 //
 
-export const update: Client["update"] = (input) => {
+// @ts-ignore
+export const update: Client["update"] = async (input) => {
   return GameClientModule.chainUpdates(
     init(input),
     (model) => GameMainMenu.update({ msg: input.msg, model }),
-    (model) => {
+    async (model) => {
       const { msg, ctx } = input
 
       switch (msg?.t) {
@@ -137,7 +138,7 @@ export const update: Client["update"] = (input) => {
 
         case "puzzle": {
           if (model.mode?.t === "puzzle") {
-            const updated = Puzzle.update({
+            const updated = await Puzzle.update({
               ctx,
               model: model.mode.c,
               msg: msg.c,

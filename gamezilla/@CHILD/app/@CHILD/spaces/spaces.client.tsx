@@ -166,10 +166,10 @@ const updateSpacesFromSpaceEvent: SpaceClientModule["update"] = ({
 //
 //
 
-export const subscriptions: ClientModule["subscriptions"] = (input) => {
+export const subscriptions: ClientModule["subscriptions"] = async (input) => {
   return Sub.batch([
     //
-    GameClient.subscriptions(input),
+    await GameClient.subscriptions(input),
   ])
 }
 

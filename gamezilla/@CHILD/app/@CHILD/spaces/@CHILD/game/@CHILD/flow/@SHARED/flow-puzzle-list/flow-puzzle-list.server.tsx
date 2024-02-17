@@ -14,12 +14,14 @@ const updateListPuzzles: ServerModule["update"] = async (input) => {
   const { msgClient, model, deps } = input
 
   switch (msgClient?.t) {
-    case "list-puzzles": {
+    case "flow-puzzle-list.list-puzzles": {
       const listed = await deps.FlowPuzzleDb.list(msgClient.input)
 
       return {
         model: input.model,
-        msgCmd: [sendBack(msgClient, { t: "listed-puzzle", listed })],
+        msgCmd: [
+          sendBack(msgClient, { t: "flow-puzzle-list.listed-puzzle", listed }),
+        ],
       }
     }
 
@@ -29,6 +31,6 @@ const updateListPuzzles: ServerModule["update"] = async (input) => {
   }
 }
 
-export const PuzzleListServer = {
+export const FlowPuzzleListServer = {
   update,
 }

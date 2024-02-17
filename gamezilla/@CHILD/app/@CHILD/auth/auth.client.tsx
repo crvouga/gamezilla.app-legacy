@@ -272,11 +272,14 @@ const updateRedirect: ClientModule["update"] = async (input) => {
 //
 //
 
-export const subscriptions: ClientModule["subscriptions"] = ({
+export const subscriptions: ClientModule["subscriptions"] = async ({
   model,
   ctx,
 }) => {
-  return Sub.tag("sms", AuthClientSMS.subscriptions({ model: model.sms, ctx }))
+  return Sub.tag(
+    "sms",
+    await AuthClientSMS.subscriptions({ model: model.sms, ctx }),
+  )
 }
 
 //

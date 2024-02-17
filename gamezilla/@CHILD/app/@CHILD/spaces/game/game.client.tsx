@@ -132,7 +132,7 @@ const inputToSpaceId = (input: Parameters<SpaceClientModule["update"]>[0]) => {
   return null
 }
 
-const updateGame: SpaceClientModule["update"] = (input) => {
+const updateGame: SpaceClientModule["update"] = async (input) => {
   const { ctx, model, msgServer, msgEvt, msg, msgSpaceEvent } = input
 
   if (!ctx.currentUserId) {
@@ -163,7 +163,7 @@ const updateGame: SpaceClientModule["update"] = (input) => {
 
   const gameModel = model.games[spaceId] ?? Game.init(modelGame.t)
 
-  const gameUpdated = Game.update({
+  const gameUpdated = await Game.update({
     ctx: {
       ...ctx,
       space: spaceState,
@@ -216,54 +216,52 @@ const subscriptions: SpaceClientModule["subscriptions"] = (input) => {
   return subscriptionsCurrentUserGame(input)
 }
 
-const subscriptionsCurrentUserGame: SpaceClientModule["subscriptions"] = ({
-  ctx,
-  model,
-}) => {
-  const { currentUserId } = ctx
+const subscriptionsCurrentUserGame: SpaceClientModule["subscriptions"] =
+  async ({ ctx, model }) => {
+    const { currentUserId } = ctx
 
-  if (!currentUserId) {
-    return Sub.None
+    if (!currentUserId) {
+      return Sub.None
+    }
+
+    const clientCtx = { ...ctx, currentUserId }
+
+    const spaceId = Spaces.toSpaceIdByUserId(model, currentUserId)
+
+    if (!spaceId) {
+      return Sub.None
+    }
+
+    const spaceModel = model.spaces[spaceId]
+
+    if (!spaceModel) {
+      return Sub.None
+    }
+
+    const spaceState = Space.toSpaceStarted(spaceModel)
+
+    if (!spaceState) {
+      return Sub.None
+    }
+
+    const modelGame = spaceState.game
+
+    if (!modelGame) {
+      return Sub.None
+    }
+
+    const gameModel = model.games[spaceId] ?? Game.init(modelGame.t)
+
+    const gameSub = await Game.subscriptions({
+      ctx: { ...clientCtx, space: spaceState },
+      modelGame: modelGame,
+      model: gameModel,
+    })
+
+    const sub = Sub.map(gameSub, (c): MsgClient => ({ t: "game", c, spaceId }))
+
+    return sub
   }
-
-  const clientCtx = { ...ctx, currentUserId }
-
-  const spaceId = Spaces.toSpaceIdByUserId(model, currentUserId)
-
-  if (!spaceId) {
-    return Sub.None
-  }
-
-  const spaceModel = model.spaces[spaceId]
-
-  if (!spaceModel) {
-    return Sub.None
-  }
-
-  const spaceState = Space.toSpaceStarted(spaceModel)
-
-  if (!spaceState) {
-    return Sub.None
-  }
-
-  const modelGame = spaceState.game
-
-  if (!modelGame) {
-    return Sub.None
-  }
-
-  const gameModel = model.games[spaceId] ?? Game.init(modelGame.t)
-
-  const gameSub = Game.subscriptions({
-    ctx: { ...clientCtx, space: spaceState },
-    modelGame: modelGame,
-    model: gameModel,
-  })
-
-  const sub = Sub.map(gameSub, (c): MsgClient => ({ t: "game", c, spaceId }))
-
-  return sub
-}
 
 //
 //

@@ -54,33 +54,30 @@ export type ServerModule = AppServerModule<{
 //
 
 export type ModelClient = {
-  puzzleListRequest: RemoteResult<string, null>
+  request: RemoteResult<string, null>
   puzzles: { [id: FlowPuzzleId]: FlowPuzzle }
 }
 
 export const initClient: ModelClient = {
-  puzzleListRequest: RemoteResult.notAsked,
+  request: RemoteResult.notAsked,
   puzzles: {},
 }
 
 export type ModelServer = {}
 
-export type MsgClient = { t: "user-observed-end-of-list" }
+export type MsgClient = { t: "flow-puzzle-list.user-observed-end-of-list" }
 
-export type MsgServer = { t: "noop" }
+export type MsgServer = { t: "flow-puzzle-list.noop" }
 
-export type MsgToServer = { t: "list-puzzles"; input: ListPuzzlesInput }
-
-export type MsgToClient = {
-  t: "listed-puzzle"
-  listed: ListPuzzlesOutput
+export type MsgToServer = {
+  t: "flow-puzzle-list.list-puzzles"
+  input: ListPuzzlesInput
 }
 
-//
-//
-//
-//
-//
+export type MsgToClient = {
+  t: "flow-puzzle-list.listed-puzzle"
+  listed: ListPuzzlesOutput
+}
 
 export type ListPuzzlesInput = Parameters<IFlowPuzzleDb["list"]>[0]
 

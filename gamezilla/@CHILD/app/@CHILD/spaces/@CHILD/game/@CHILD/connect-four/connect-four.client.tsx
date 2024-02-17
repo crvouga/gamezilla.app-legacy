@@ -338,7 +338,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
 //
 //
 
-const subscriptions: Module["subscriptions"] = (input) => {
+const subscriptions: Module["subscriptions"] = async (input) => {
   const { model, modelGame } = input
 
   switch (modelGame.t) {
@@ -349,7 +349,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
     case "vs-bot": {
       return Sub.tag(
         "vs-bot",
-        VsBot.subscriptions({
+        await VsBot.subscriptions({
           ...input,
           model: model?.t === "vs-bot" ? model.c : VsBot.init,
           modelGame: modelGame.c,
@@ -361,7 +361,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
     case "vs-user": {
       return Sub.tag(
         "vs-user",
-        VsUser.subscriptions({
+        await VsUser.subscriptions({
           ...input,
           model: model?.t === "vs-user" ? model.c : VsUser.init,
           modelGame: modelGame.c,

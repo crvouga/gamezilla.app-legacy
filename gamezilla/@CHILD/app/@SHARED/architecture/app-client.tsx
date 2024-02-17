@@ -147,7 +147,10 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
   /**
    * `subscriptions` is dispatchs msgs specific to the module
    */
-  subscriptions: (input: { ctx: T["Ctx"]; model: T["Model"] }) => Sub<T["Msg"]>
+  subscriptions: (input: {
+    ctx: T["Ctx"]
+    model: T["Model"]
+  }) => MaybePromise<Sub<T["Msg"]>>
 
   /**
    * `View` is for rendering the UI for the module

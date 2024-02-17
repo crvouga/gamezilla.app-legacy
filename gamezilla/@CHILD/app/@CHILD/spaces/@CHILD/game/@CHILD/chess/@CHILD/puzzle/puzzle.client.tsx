@@ -69,11 +69,11 @@ export const update = (input: {
   msg: MsgClient
   model: ModelClient
   ctx: SpaceClientCtx
-}): {
+}): Promise<{
   model: ModelClient
   eff?: Eff<MsgClient>
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[]
-} => {
+}> => {
   return GameClientModule.chainUpdates(
     input,
     (model) => updateMain({ ...input, model }),

@@ -6,13 +6,14 @@ import {
   SpaceServerCtx,
   SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceClientCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
-import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client"
 import { FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow"
 import { FlowClientCtx } from "../../@SHARED/flow-ctx"
 import { IFlowPackDb } from "../../@SHARED/flow-pack-db"
 import { FlowPack } from "../../@SHARED/flow-pack/flow-pack"
 import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db"
+import { FlowPuzzleList } from "../../@SHARED/flow-puzzle-list"
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id"
 import { PackBuilder, PackBuilderGame } from "./pack/builder"
@@ -44,7 +45,7 @@ export type ClientModule = GameClientModule<{
   MsgGame: MsgGame
   ModelGame: ModelGame
   Ctx: FlowClientCtx
-  MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
+  MsgOutCmd: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
   MsgInEvent: SpaceClientEvent
   MsgInCmd: null
   MsgOutEvent: null
@@ -84,6 +85,7 @@ type BaseModelClient = {
   puzzles: {
     [puzzleId: FlowPuzzleId]: FlowPuzzle
   }
+  flowPuzzleList: FlowPuzzleList.ModelClient
   opened?: "more" | "edit-name" | "delete-forever" | "unsaved-changes" | null
 }
 
@@ -99,6 +101,9 @@ export type ModelClient = BaseModelClient &
   PackBuilder.ModelClient
 
 export const initClient: ClientModule["init"] = {
+  flowPuzzleList: FlowPuzzleList.initClient,
+  //
+  puzzles: {},
   //
   ...PackBuilder.initClient,
   ...PackCreate.initClient,
@@ -108,8 +113,6 @@ export const initClient: ClientModule["init"] = {
   ...PuzzleList.initClient,
   ...PuzzleEditName.initClient,
   ...PuzzleDeleteForever.initClient,
-  //
-  puzzles: {},
 }
 
 export type ModelServer = {}
@@ -130,6 +133,8 @@ type BaseMsgClient =
 export type MsgClient =
   | BaseMsgClient
   //
+  | { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgClient }
+  //
   | PuzzleBuilder.MsgClient
   | PuzzleCreate.MsgClient
   | PuzzleEditName.MsgClient
@@ -141,6 +146,9 @@ export type MsgClient =
   | PackBuilder.MsgClient
 
 export type MsgServer =
+  //
+  | { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgServer }
+  //
   | PuzzleCreate.MsgServer
   | PuzzleSaveChanges.MsgServer
   | PuzzleDeleteForever.MsgServer
@@ -151,6 +159,9 @@ export type MsgServer =
   | PackBuilder.MsgServer
 
 export type MsgToServer =
+  //
+  | { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgToServer }
+  //
   | PuzzleCreate.MsgToServer
   | PuzzleSaveChanges.MsgToServer
   | PuzzleDeleteForever.MsgToServer
@@ -161,6 +172,9 @@ export type MsgToServer =
   | PackBuilder.MsgToServer
 
 export type MsgToClient =
+  //
+  | { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgToClient }
+  //
   | PuzzleCreate.MsgToClient
   | PuzzleSaveChanges.MsgToClient
   | PuzzleEditName.MsgToClient
