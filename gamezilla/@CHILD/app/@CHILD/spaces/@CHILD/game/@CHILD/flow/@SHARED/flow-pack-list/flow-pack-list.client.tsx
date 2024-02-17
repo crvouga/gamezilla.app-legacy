@@ -7,6 +7,7 @@ import {
   Posix,
   RequestResponse,
   Result,
+  TimeSpan,
   descend,
   isErr,
 } from "gamezilla/@SHARED/core"
@@ -96,7 +97,7 @@ const updateList: ClientModule["update"] = (input) => {
 }
 
 const View: ClientModule["View"] = (input) => {
-  const { model, dispatch } = input
+  const { model, dispatch, ctx } = input
 
   const packs = Object.values(model.packs)
   const shouldShowLoadingState = RequestResponse.isRequesting(model.request)
@@ -117,6 +118,7 @@ const View: ClientModule["View"] = (input) => {
             .sort(descend((pack) => Posix.toNumber(pack.lastUpdatedAt)))
             .map((pack) => (
               <FlowPackListItem
+                ctx={ctx}
                 key={pack.id}
                 pack={pack}
                 onClick={() => input.emits?.clickedPackItem(pack)}
@@ -149,18 +151,29 @@ const View: ClientModule["View"] = (input) => {
 const FlowPackListItem = ({
   pack,
   onClick,
+  ctx,
 }: {
+  ctx: {
+    now: Posix
+  }
   pack: FlowPack
   onClick: () => void
 }) => {
   return (
     <button
-      className="flex w-full max-w-full items-center justify-between gap-4 overflow-hidden p-4"
+      className="flex w-full max-w-full items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left hover:bg-neutral-900 active:opacity-50"
       onClick={onClick}
     >
-      <IconBox className="h-8 w-8 shrink-0" />
-      <div className="flex flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-left text-lg font-bold">
-        <p className="w-full">{pack.name}</p>
+      <IconBox className="h-12 w-12 shrink-0" />
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <p className="overflow-hidden text-ellipsis whitespace-nowrap text-lg font-bold">
+          {pack.name}
+        </p>
+        <p className="text-sm text-secondary">
+          {TimeSpan.humanFriendlyString(
+            Posix.diff(pack.lastUpdatedAt, ctx.now),
+          )}
+        </p>
       </div>
       <p className="flex shrink-0 text-sm text-secondary">
         {plural(pack.puzzleIds, "puzzle", "puzzles")}

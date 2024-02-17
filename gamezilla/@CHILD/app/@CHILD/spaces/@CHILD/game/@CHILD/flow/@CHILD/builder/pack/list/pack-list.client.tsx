@@ -12,7 +12,7 @@ export const update: ClientModule["update"] = (input) => {
 
 export const View: ClientModule["View"] = (input) => {
   return (
-    <div className="relative flex h-full w-full flex-col items-center justify-center">
+    <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
       <FlowPackListClient.View
         {...input}
         dispatch={(c) => input.dispatch({ t: "flow-pack-list", c })}
