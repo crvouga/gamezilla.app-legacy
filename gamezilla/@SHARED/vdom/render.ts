@@ -1,6 +1,6 @@
 import { VDom } from "./vdom"
 
-export type VDomImpl = "inferno" | "preact" | "react" | "react-with-million"
+export type VDomImpl = "inferno" | "preact" | "react"
 
 export type Render = {
   (vDom: VDom, root: HTMLElement): Promise<void>
@@ -20,7 +20,6 @@ export const Render = async (vDomImpl: VDomImpl): Promise<Render> => {
       }
     }
 
-    case "react-with-million":
     case "react": {
       const ReactDOMClient = await import("react-dom/client")
       const ReactDOM = await import("react-dom")

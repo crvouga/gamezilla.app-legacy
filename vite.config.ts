@@ -1,6 +1,5 @@
 import preact from "@preact/preset-vite"
 import react from "@vitejs/plugin-react"
-import million from "million/compiler"
 import { defineConfig } from "vite"
 import inferno from "vite-plugin-inferno"
 import tsconfigPaths from "vite-tsconfig-paths"
@@ -19,10 +18,6 @@ function vDomPlugin() {
 
     case "react": {
       return [react()]
-    }
-
-    case "react-with-million": {
-      return [million.vite({ auto: true }), react()]
     }
   }
 }
