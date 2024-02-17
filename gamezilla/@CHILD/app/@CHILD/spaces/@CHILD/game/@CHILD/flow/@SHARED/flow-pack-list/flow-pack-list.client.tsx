@@ -1,6 +1,6 @@
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
 import { sendToServer, showErrSm } from "gamezilla/@CHILD/app/@SHARED/client"
-import { IconPuzzlePiece, Spinner, cn } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { IconBox, Spinner, cn } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { EmptyState } from "gamezilla/@CHILD/app/@SHARED/ui/empty-state"
 import { IntersectionObserverEmitter } from "gamezilla/@CHILD/app/@SHARED/ui/intersection-observer"
 import {
@@ -107,8 +107,8 @@ const View: ClientModule["View"] = (input) => {
       <div className="relative flex w-full flex-1 flex-col items-center overflow-y-scroll">
         {shouldShowEmptyState && (
           <EmptyState
-            label="No puzzles"
-            renderIcon={(props) => <IconPuzzlePiece {...props} />}
+            label="No packs"
+            renderIcon={(props) => <IconBox {...props} />}
           />
         )}
 

@@ -29,6 +29,6 @@ const updateListPacks: ServerModule["update"] = async (input) => {
   }
 }
 
-export const FlowPuzzleListServer = {
+export const FlowPackListServer = {
   update,
 }

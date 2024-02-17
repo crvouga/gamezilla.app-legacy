@@ -20,6 +20,7 @@ import { PuzzleDeleteForeverClient } from "./puzzle/delete-forever/puzzle-delete
 import { PuzzleEditNameClient } from "./puzzle/edit/puzzle-edit-name.client"
 import { PuzzleListClient } from "./puzzle/list/puzzle-list.client"
 import { PuzzleSaveChangesClient } from "./puzzle/save-changes/puzzle-save-changes.client"
+import { FlowPackListClient } from "../../@SHARED/flow-pack-list"
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
@@ -28,6 +29,7 @@ const update: ClientModule["update"] = (input) => {
     (model) => updateLocation({ ...input, model }),
     //
     (model) => updateFlowPuzzleList({ ...input, model }),
+    (model) => updateFlowPackList({ ...input, model }),
     //
     (model) => PackListClient.update({ ...input, model }),
     (model) => PuzzleBuilderClient.update({ ...input, model }),
@@ -42,6 +44,34 @@ const update: ClientModule["update"] = (input) => {
   )
 }
 
+const updateFlowPackList: ClientModule["update"] = async (input) => {
+  const updated = await FlowPackListClient.update({
+    ctx: input.ctx,
+    model: { ...input.model.flowPackList, packs: input.model.packs },
+    msg: input.msg?.t === "flow-pack-list" ? input.msg.c : undefined,
+    msgServer:
+      input.msgServer?.t === "flow-pack-list" ? input.msgServer.c : undefined,
+    msgEvt: input.msgEvt,
+    msgCmd: input.msgCmd,
+    modelLocation: null,
+  })
+  return {
+    model: {
+      ...input.model,
+      flowPackList: updated.model,
+      packs: updated.model.packs,
+    },
+    eff: Eff.tag("flow-pack-list", updated.eff),
+    msgEvt: [],
+    msgGame: [],
+    msgCmd: SpaceClientCmd.map(
+      updated.msgCmd,
+      (c) => ({ t: "flow-pack-list", c }),
+      (c) => ({ t: "flow-pack-list", c }),
+    ),
+  }
+}
+
 const updateFlowPuzzleList: ClientModule["update"] = async (input) => {
   const updated = await FlowPuzzleListClient.update({
     ctx: input.ctx,
@@ -54,7 +84,11 @@ const updateFlowPuzzleList: ClientModule["update"] = async (input) => {
     modelLocation: null,
   })
   return {
-    model: { ...input.model, flowPuzzleList: updated.model },
+    model: {
+      ...input.model,
+      flowPuzzleList: updated.model,
+      puzzles: updated.model.puzzles,
+    },
     eff: Eff.tag("flow-puzzle-list", updated.eff),
     msgEvt: [],
     msgGame: [],
@@ -174,6 +208,13 @@ const subscriptions: ClientModule["subscriptions"] = async (input) => {
   return Sub.batch([
     //
     await PuzzleCreateClient.subscriptions(input),
+    Sub.tag(
+      "flow-pack-list",
+      await FlowPackListClient.subscriptions({
+        ctx: input.ctx,
+        model: input.model.flowPackList,
+      }),
+    ),
   ])
 }
 

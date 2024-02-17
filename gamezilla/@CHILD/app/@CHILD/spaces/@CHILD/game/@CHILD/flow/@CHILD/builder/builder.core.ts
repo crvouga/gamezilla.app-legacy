@@ -26,6 +26,7 @@ import {
 import { PuzzleEditGame, PuzzleEditName } from "./puzzle/edit"
 import { PuzzeListGame, PuzzleList } from "./puzzle/list"
 import { PuzzleSaveChanges, PuzzleSaveChangesGame } from "./puzzle/save-changes"
+import { FlowPackList } from "../../@SHARED/flow-pack-list"
 
 //
 //
@@ -84,7 +85,11 @@ type BaseModelClient = {
   puzzles: {
     [puzzleId: FlowPuzzleId]: FlowPuzzle
   }
+  packs: {
+    [packId: string]: FlowPack
+  }
   flowPuzzleList: FlowPuzzleList.ModelClient
+  flowPackList: FlowPackList.ModelClient
   opened?: "more" | "edit-name" | "delete-forever" | "unsaved-changes" | null
 }
 
@@ -100,7 +105,9 @@ export type ModelClient = BaseModelClient &
 
 export const initClient: ClientModule["init"] = {
   flowPuzzleList: FlowPuzzleList.initClient,
+  flowPackList: FlowPackList.initClient,
   //
+  packs: {},
   puzzles: {},
   //
   ...Pack.initClient,
@@ -112,7 +119,13 @@ export const initClient: ClientModule["init"] = {
   ...PuzzleDeleteForever.initClient,
 }
 
-export type ModelServer = {}
+export type ModelServer = {
+  flowPackList: FlowPackList.ModelServer
+}
+
+export const initServer: ServerModule["init"] = {
+  flowPackList: FlowPackList.initServer,
+}
 
 //
 //
@@ -130,6 +143,7 @@ type BaseMsgClient =
 export type MsgClient =
   | BaseMsgClient
   //
+  | { t: "flow-pack-list"; c: FlowPackList.MsgClient }
   | { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgClient }
   //
   | PuzzleBuilder.MsgClient
@@ -143,6 +157,7 @@ export type MsgClient =
 
 export type MsgServer =
   //
+  | { t: "flow-pack-list"; c: FlowPackList.MsgServer }
   | { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgServer }
   //
   | PuzzleCreate.MsgServer
@@ -155,6 +170,7 @@ export type MsgServer =
 
 export type MsgToServer =
   //
+  | { t: "flow-pack-list"; c: FlowPackList.MsgToServer }
   | { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgToServer }
   //
   | PuzzleCreate.MsgToServer
@@ -167,6 +183,7 @@ export type MsgToServer =
 
 export type MsgToClient =
   //
+  | { t: "flow-pack-list"; c: FlowPackList.MsgToClient }
   | { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgToClient }
   //
   | PuzzleCreate.MsgToClient

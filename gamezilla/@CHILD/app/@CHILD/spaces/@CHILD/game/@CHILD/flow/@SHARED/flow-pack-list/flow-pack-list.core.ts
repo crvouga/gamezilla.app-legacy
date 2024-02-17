@@ -1,6 +1,8 @@
 import {
   SpaceClientCtx,
   SpaceClientEvent,
+  SpaceServerCtx,
+  SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { SpaceClientCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
@@ -43,9 +45,9 @@ export type ServerModule = AppServerModule<{
   MsgOutEvent: never
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  Ctx: SpaceClientCtx
+  Ctx: SpaceServerCtx
   MsgInCmd: never
-  MsgInEvent: SpaceClientEvent
+  MsgInEvent: SpaceServerEvent
 }>
 
 //
@@ -64,6 +66,8 @@ export const initClient: ModelClient = {
 }
 
 export type ModelServer = {}
+
+export const initServer: ModelServer = {}
 
 export type MsgClient = { t: "user-observed-end-of-list" } | { t: "elapsed" }
 

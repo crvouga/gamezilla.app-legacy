@@ -3,6 +3,7 @@ import { ClientModule } from "../../builder.core"
 import { PackCreateClient } from "../create/pack-create.client"
 import { RequestResponse } from "gamezilla/@SHARED/core"
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { FlowPackListClient } from "../../../../@SHARED/flow-pack-list"
 
 const UserObsertvedEndOfList: Pick<ClientModule, "update" | "View"> = {
   update(input) {
@@ -41,7 +42,11 @@ export const update: ClientModule["update"] = (input) => {
 export const View: ClientModule["View"] = (input) => {
   return (
     <div className="relative flex h-full w-full flex-col items-center justify-center">
-      <UserObsertvedEndOfList.View {...input} />
+      <FlowPackListClient.View
+        {...input}
+        dispatch={(c) => input.dispatch({ t: "flow-pack-list", c })}
+        model={input.model.flowPackList}
+      />
       <div className="absolute bottom-5 right-5 bg-black">
         <PackCreateClient.ViewCreateButton {...input} />
       </div>
