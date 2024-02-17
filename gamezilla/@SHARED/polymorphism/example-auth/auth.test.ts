@@ -3,11 +3,7 @@ import { CustomAuthProvider } from "./auth-custom"
 
 const AuthProvider = CustomAuthProvider()
 
-const signedUp = await signUpWithEmailAndPassword(AuthProvider)({
+await signUpWithEmailAndPassword(AuthProvider)({
   email: "",
   password: "",
 })
-
-if (signedUp.t === "err") {
-  console.error(signedUp.error)
-}

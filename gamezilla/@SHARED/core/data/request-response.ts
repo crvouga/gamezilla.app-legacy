@@ -1,0 +1,136 @@
+import { Sub, Time, Uuid } from ".."
+import { Posix } from "./posix"
+import { Err, Loading, NotAsked, Ok, Result, err, notAsked, ok } from "./result"
+import { TimeSpan } from "./time-span"
+
+//
+//
+//
+//
+//
+//
+//
+
+export type Requesting = Loading & {
+  requestedAt: Posix
+  lifeSpan: TimeSpan
+  requestId: string
+}
+
+export type RequestTimedOut = {
+  t: "request-failed"
+  reason: "timed-out"
+  lifeSpan: TimeSpan
+  requestId: string
+}
+
+export type RequestFailed = RequestTimedOut
+
+export type ResponseErr<TError> = Err<TError> & {
+  requestedAt: Posix
+  respondedAt: Posix
+  lifeSpan: TimeSpan
+  requestId: string
+}
+
+export type ResponseOk<TValue> = Ok<TValue> & {
+  requestedAt: Posix
+  respondedAt: Posix
+  lifeSpan: TimeSpan
+  requestId: string
+}
+
+export type RequestResponse<TError, TValue> =
+  | NotAsked
+  | Requesting
+  | RequestFailed
+  | ResponseErr<TError>
+  | ResponseOk<TValue>
+
+export const requesting = (
+  requestedAt: Posix,
+  lifeSpan: TimeSpan = TimeSpan.fromSeconds(10),
+): Requesting => {
+  return { t: "loading", requestedAt, lifeSpan, requestId: Uuid.generate() }
+}
+
+export const isRequesting = <TError, TValue>(
+  request: RequestResponse<TError, TValue>,
+): request is Requesting => {
+  return request.t === "loading"
+}
+
+export const didRequestTimeout = <TError, TValue>(
+  request: RequestResponse<TError, TValue>,
+): request is RequestFailed => {
+  return request.t === "request-failed" && request.reason === "timed-out"
+}
+
+export const isResponseOk = <TError, TValue>(
+  request: RequestResponse<TError, TValue>,
+): request is ResponseOk<TValue> => {
+  return request.t === "ok"
+}
+
+export const isResponseErr = <TError, TValue>(
+  request: RequestResponse<TError, TValue>,
+): request is ResponseErr<TError> => {
+  return request.t === "err"
+}
+
+export const response = <TError, TValue>(
+  request: RequestResponse<TError, TValue>,
+  responsedAt: Posix,
+  result: Result<TError, TValue>,
+): RequestResponse<TError, TValue> => {
+  if (request.t === "not-asked") {
+    return request
+  }
+  return {
+    ...result,
+    requestedAt: responsedAt,
+    respondedAt: responsedAt,
+    lifeSpan: request.lifeSpan,
+    requestId: request.requestId,
+  }
+}
+
+export const timePassed = <TError, TValue>(
+  request: RequestResponse<TError, TValue>,
+  now: Posix,
+): RequestResponse<TError, TValue> => {
+  if (
+    isRequesting(request) &&
+    TimeSpan.gte(request.lifeSpan, Posix.diff(now, request.requestedAt))
+  ) {
+    return {
+      t: "request-failed",
+      reason: "timed-out",
+      lifeSpan: request.lifeSpan,
+      requestId: request.requestId,
+    }
+  }
+  return request
+}
+
+const subscriptions = <TError, TValue, TMsg>(
+  request: RequestResponse<TError, TValue>,
+  elasped: () => TMsg,
+): Sub<TMsg> => {
+  if (isRequesting(request)) {
+    return Time.interval("", TimeSpan.fromSeconds(1), elasped)
+  }
+  return Sub.None
+}
+
+export const RequestResponse = {
+  isRequesting,
+  requesting,
+  response,
+  err,
+  ok,
+  timePassed,
+  didRequestTimeout,
+  subscriptions,
+  notAsked,
+}

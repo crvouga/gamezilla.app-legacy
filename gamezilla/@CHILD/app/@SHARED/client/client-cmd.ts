@@ -132,17 +132,20 @@ export const sendToServer = <T extends ClientCmdTypes>(
   }
 }
 
-export const didSendToServer = <T extends ClientCmdTypes>(
+export const didSendToServer = <T extends ClientCmdTypes, TCmd>(
   {
     msgCmd,
   }: {
-    msgCmd?: ClientCmd<T>[]
+    msgCmd?: (WireCmd<T> | TCmd)[]
   },
   predicate: (msg: T["MsgToServer"]) => boolean,
 ): boolean => {
   return (
     msgCmd?.some(
       (cmd) =>
+        typeof cmd === "object" &&
+        cmd &&
+        "t" in cmd &&
         cmd.t === "wire" &&
         cmd.c.t === "send-to-server" &&
         predicate(cmd.c.msg),
