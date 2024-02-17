@@ -3,7 +3,7 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock"
 import { GameClientModule } from "../../../../@SHARED/architecture/game-client-v2"
 import { EventId } from "../../../../@SHARED/event"
-import { spaceClientCtx } from "../../@SHARED/testing/client"
+import { testSpaceClientCtx } from "../../@SHARED/testing/client"
 import { FlowClient } from "./flow.client"
 import { ModelClient } from "./flow.core"
 import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
@@ -12,7 +12,7 @@ const init = {
   model: FlowClient.init,
 }
 
-const ctx = spaceClientCtx
+const ctx = testSpaceClientCtx
 
 const useSelectedMode =
   (userId: UserId, mode: "builder" | "play" | null) => (model: ModelClient) => {

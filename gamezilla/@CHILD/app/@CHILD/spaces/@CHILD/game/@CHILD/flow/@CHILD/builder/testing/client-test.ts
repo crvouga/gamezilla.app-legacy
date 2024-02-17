@@ -1,4 +1,4 @@
-import { spaceClientCtx } from "../../../../../@SHARED/testing/client"
+import { testSpaceClientCtx } from "../../../../../@SHARED/testing/client"
 import { FlowClientCtx } from "../../../@SHARED/flow-ctx"
 import { BuilderClient } from "../builder.client"
 import { ModelClient, initClient, initGame } from "../builder.core"
@@ -8,7 +8,7 @@ export const initial = {
 }
 
 const ctx: FlowClientCtx = {
-  ...spaceClientCtx,
+  ...testSpaceClientCtx,
   onQuit() {},
 }
 const modelGame = initGame({

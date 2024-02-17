@@ -22,7 +22,7 @@ export const FlowPackDbHashMap = (): IFlowPackDb => {
     },
 
     async list(input) {
-      await new Promise((r) => setTimeout(r, 500))
+      // await new Promise((r) => setTimeout(r, 500))
       const all = Array.from(db.values())
       const filtered = all.filter((pack) =>
         input.where.createdBy ? pack.createdBy === input.where.createdBy : true,

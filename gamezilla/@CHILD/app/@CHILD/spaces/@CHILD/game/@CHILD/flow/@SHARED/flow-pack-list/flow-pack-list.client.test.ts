@@ -12,7 +12,7 @@ import {
   ok,
 } from "gamezilla/@SHARED/core"
 import { FlowPackListClient } from "."
-import { spaceClientCtx } from "../../../../@SHARED/testing/client"
+import { testSpaceClientCtx } from "../../../../@SHARED/testing/client"
 import { FlowPack } from "../flow-pack/flow-pack"
 import { ModelClient, initClient } from "./flow-pack-list.core"
 
@@ -22,7 +22,7 @@ const initial = {
 
 const observedEndOfList = (model: ModelClient) => {
   return FlowPackListClient.update({
-    ctx: spaceClientCtx,
+    ctx: testSpaceClientCtx,
     model,
     msg: {
       t: "user-observed-end-of-list",
@@ -32,7 +32,10 @@ const observedEndOfList = (model: ModelClient) => {
 
 const elasped = (timeSpan: TimeSpan) => (model: ModelClient) => {
   return FlowPackListClient.update({
-    ctx: { ...spaceClientCtx, now: Posix.add(spaceClientCtx.now, timeSpan) },
+    ctx: {
+      ...testSpaceClientCtx,
+      now: Posix.add(testSpaceClientCtx.now, timeSpan),
+    },
     model,
     msg: { t: "elapsed" },
   })
@@ -42,7 +45,7 @@ const serverListedPacksOk =
   (...packs: FlowPack[]) =>
   (model: ModelClient) => {
     return FlowPackListClient.update({
-      ctx: spaceClientCtx,
+      ctx: testSpaceClientCtx,
       model,
       msgServer: {
         t: "listed-packs",
@@ -58,7 +61,7 @@ const serverListedPacksOk =
 
 const serverListedPacksErr = (errorMessage: string) => (model: ModelClient) => {
   return FlowPackListClient.update({
-    ctx: spaceClientCtx,
+    ctx: testSpaceClientCtx,
     model,
     msgServer: {
       t: "listed-packs",
@@ -95,8 +98,8 @@ describe("flow puzzle list client", () => {
 
   it("should add packs listed from server", async () => {
     const pack = FlowPack.create({
-      createdBy: spaceClientCtx.currentUserId,
-      now: spaceClientCtx.now,
+      createdBy: testSpaceClientCtx.currentUserId,
+      now: testSpaceClientCtx.now,
       puzzleIds: [],
     })
     const output = await AppClientModule.chainUpdates(

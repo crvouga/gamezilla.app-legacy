@@ -10,7 +10,6 @@ import {
   descend,
   isErr,
 } from "gamezilla/@SHARED/core"
-import { spaceClientCtx } from "../../../../@SHARED/testing/client"
 import { ClientModule, ModelClient } from "./flow-pack-list.core"
 
 const update: ClientModule["update"] = (input) => {
@@ -44,7 +43,7 @@ const updateList: ClientModule["update"] = (input) => {
                 offset: 0,
               },
               where: {
-                createdBy: spaceClientCtx.space.hostId,
+                createdBy: ctx.currentUserId,
               },
             },
           }),

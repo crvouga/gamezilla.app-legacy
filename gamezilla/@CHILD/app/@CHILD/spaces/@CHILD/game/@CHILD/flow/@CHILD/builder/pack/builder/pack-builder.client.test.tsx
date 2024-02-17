@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test"
 import { chainUpdates } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
-import { spaceClientCtx } from "../../../../../../@SHARED/testing/client"
+import { testSpaceClientCtx } from "../../../../../../@SHARED/testing/client"
 import { ModelClient, initClient, initGame } from "../../builder.core"
 import { PackBuilderClient } from "./pack-builder.client"
 
-const ctx = { ...spaceClientCtx, onQuit() {}, puzzles: {} }
-const modelGame = initGame({ ctx: spaceClientCtx })
+const ctx = { ...testSpaceClientCtx, onQuit() {}, puzzles: {} }
+const modelGame = initGame({ ctx: testSpaceClientCtx })
 
 const userClickedAddPuzzleButton = (model: ModelClient) => {
   return PackBuilderClient.update({

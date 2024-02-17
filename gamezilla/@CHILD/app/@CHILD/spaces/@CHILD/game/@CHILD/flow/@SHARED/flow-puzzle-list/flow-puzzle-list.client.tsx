@@ -12,7 +12,7 @@ import {
   isPending,
   loading,
 } from "gamezilla/@SHARED/core"
-import { spaceClientCtx } from "../../../../@SHARED/testing/client"
+import { testSpaceClientCtx } from "../../../../@SHARED/testing/client"
 import { FlowGridUI } from "../flow"
 import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
 import { ClientModule } from "./flow-puzzle-list.core"
@@ -48,7 +48,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
                 offset: 0,
               },
               where: {
-                createdBy: spaceClientCtx.space.hostId,
+                createdBy: testSpaceClientCtx.space.hostId,
               },
             },
           }),

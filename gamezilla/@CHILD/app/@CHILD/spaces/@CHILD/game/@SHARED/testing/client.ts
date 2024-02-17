@@ -4,14 +4,14 @@ import {
   UserId,
   Username,
 } from "gamezilla/@CHILD/app/@SHARED/data"
-import { SpaceClientCtx } from "../../../../@SHARED/space"
 import { Posix } from "gamezilla/@SHARED/core"
+import { SpaceClientCtx } from "../../../../@SHARED/space"
 
-const currentUserId = UserId.generate()
+const currentUserId = "test-user-id" as UserId
 
-const currentSpaceId = SpaceId.generate()
+const currentSpaceId = "test-space-id" as SpaceId
 
-export const spaceClientCtx: SpaceClientCtx = {
+export const testSpaceClientCtx: SpaceClientCtx = {
   currentRoute: {
     t: "spaces",
     c: {
