@@ -13,15 +13,15 @@ export type AppClientModuleTypes = {
    */
   Ctx: any
   /**
-   * `Model` is the state of the module
+   * `Model` is the state of the module that lives in memory
    */
   Model: any
   /**
-   * `ModelLocation` is the state of the module that lives in the location state like the URL
+   * `ModelLocation` is the state of the module that lives in the web browser's location
    */
   ModelLocation?: any
   /**
-   * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvt
+   * `Msg` is a message that is local to the module. Should always be an event that happens in the module. Like `user-clicked-a-button`
    */
   Msg: any
   /**
@@ -49,11 +49,30 @@ export type AppClientModuleTypes = {
    */
   MsgOutEvent: any
   /**
-   *  `ModelGame` is the state of the module that is only relevant to the server
+   *  `ViewSlot` is a slot that the module can fill with a view
    */
-  ViewSlot?: any
+  ViewSlot?: SlotInputTypes
+  /**
+   * `ViewEmits` is a slot that the module can fill with a view
+   */
+  ViewEmit?: EmitInputTypes
 }
 
+// Define a more flexible structure for slots and emits
+type SlotInputTypes = {
+  [key: string]: any
+}
+
+type EmitInputTypes = {
+  [key: string]: any
+}
+type SlotRenderFunctions<Slots> = Slots extends SlotInputTypes
+  ? { [K in keyof Slots]: (input: Slots[K]) => VDom }
+  : {}
+
+type EmitFunctions<Emits> = Emits extends EmitInputTypes
+  ? { [K in keyof Emits]: (input: Emits[K]) => void }
+  : {}
 //
 //
 // Input
@@ -159,9 +178,8 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
     ctx: T["Ctx"]
     model: T["Model"]
     dispatch: (msg: T["Msg"]) => void
-    slots?: {
-      [slot in T["ViewSlot"]]: VDom
-    }
+    slots?: SlotRenderFunctions<T["ViewSlot"]>
+    emits?: EmitFunctions<T["ViewEmit"]>
   }) => VDom
 }
 

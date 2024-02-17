@@ -591,7 +591,6 @@ const ViewLoggedOut = ({
     case "auth": {
       return (
         <AuthClient.View
-          slots={{}}
           dispatch={(m) => dispatch({ t: "auth", c: m })}
           model={model.auth}
           ctx={ctx}
@@ -634,7 +633,6 @@ const ViewLoggedIn = ({
     case "profile": {
       return (
         <ProfileClient.View
-          slots={{}}
           dispatch={(m) => dispatch({ t: "profile", c: m })}
           model={model.profile}
           ctx={{

@@ -30,7 +30,9 @@ export type ClientModule = AppClientModule<{
     MsgToServer: MsgToServer
   }>
   MsgOutEvent: SpaceClientEvent
-  ViewSlot: "fab"
+  ViewSlot: {
+    fab: null
+  }
 }>
 
 export type ServerModule = AppServerModule<{

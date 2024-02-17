@@ -10,7 +10,8 @@ import {
   descend,
   isErr,
 } from "gamezilla/@SHARED/core"
-import { ClientModule, ModelClient } from "./flow-pack-list.core"
+import { ClientModule } from "./flow-pack-list.core"
+import { FlowPack } from "../flow-pack/flow-pack"
 
 const update: ClientModule["update"] = (input) => {
   return AppClientModule.chainUpdates(
@@ -114,7 +115,11 @@ const View: ClientModule["View"] = (input) => {
         {packs
           .sort(descend((pack) => Posix.toNumber(pack.lastUpdatedAt)))
           .map((pack) => (
-            <>{pack.name}</>
+            <FlowPackListItem
+              key={pack.id}
+              pack={pack}
+              onClick={() => input.emits?.clickedPackItem(pack)}
+            />
           ))}
 
         <div
@@ -133,9 +138,23 @@ const View: ClientModule["View"] = (input) => {
       </div>
 
       <div className="absolute bottom-5 right-5 bg-black">
-        {input.slots?.fab}
+        {input.slots?.fab?.(null)}
       </div>
     </div>
+  )
+}
+
+const FlowPackListItem = ({
+  pack,
+  onClick,
+}: {
+  pack: FlowPack
+  onClick: () => void
+}) => {
+  return (
+    <button className="w-full items-center justify-start p-4" onClick={onClick}>
+      {pack.name}
+    </button>
   )
 }
 
@@ -147,12 +166,7 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
   )
 }
 
-const listPacks = (model: ModelClient) => {
-  return Object.values(model.packs)
-}
-
 export const FlowPackListClient = {
-  listPacks,
   update,
   View,
   subscriptions,

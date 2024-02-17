@@ -106,7 +106,7 @@ describe("flow puzzle list client", () => {
       initial,
       serverListedPacksOk(pack),
     )
-    expect(FlowPackListClient.listPacks(output.model)).toEqual([pack])
+    expect(Object.values(output.model.packs)).toEqual([pack])
   })
 
   it("should show error when packs listed from server errors", async () => {

@@ -15,17 +15,6 @@ const modelGame = initGame({
   ctx,
 })
 
-export const observedEndOfPackList = (model: ModelClient) => {
-  return BuilderClient.update({
-    model,
-    ctx,
-    modelGame: modelGame,
-    msg: {
-      t: "pack-list.user-observed-end-of-list",
-    },
-  })
-}
-
 export const clickedPackCreateButton = (model: ModelClient) => {
   return BuilderClient.update({
     model,

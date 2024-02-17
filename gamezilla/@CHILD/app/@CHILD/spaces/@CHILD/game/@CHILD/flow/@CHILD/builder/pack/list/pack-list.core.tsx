@@ -1,15 +1,12 @@
-import { RequestResponse } from "gamezilla/@SHARED/core"
+import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 
-export type ModelClient = {
-  packListRequest: RequestResponse<string, null>
-}
+export type ModelClient = {}
 
-export const initClient: ModelClient = {
-  packListRequest: RequestResponse.notAsked,
-}
+export const initClient: ModelClient = {}
 
 export type MsgClient = {
-  t: "pack-list.user-observed-end-of-list"
+  t: "pack-list.clicked-pack-item"
+  pack: FlowPack
 }
 
 export type MsgServer = {
