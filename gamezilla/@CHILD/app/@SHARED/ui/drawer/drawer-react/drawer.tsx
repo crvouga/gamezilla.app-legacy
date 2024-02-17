@@ -1,9 +1,10 @@
 import { VDom } from "gamezilla/@SHARED/vdom"
+import React from "react"
 import { Drawer } from "vaul"
-import { DrawerProps } from ".."
-import { cn } from "../.."
+import { DrawerProps } from "../drawer-shared"
+import { cn } from "../../ui"
 
-export const DrawerReact = (props: DrawerProps): VDom => {
+const DrawerReact = (props: DrawerProps): VDom => {
   return (
     <Drawer.Root
       open={props.open}
@@ -45,3 +46,5 @@ export const DrawerReact = (props: DrawerProps): VDom => {
     </Drawer.Root>
   )
 }
+
+export default DrawerReact

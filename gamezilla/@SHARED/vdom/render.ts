@@ -1,4 +1,3 @@
-import { VDOM_IMPL } from "gamezilla/public-config"
 import { VDom } from "./vdom"
 
 export type VDomImpl = "inferno" | "preact" | "react" | "react-with-million"
@@ -52,5 +51,3 @@ export const Render = async (vDomImpl: VDomImpl): Promise<Render> => {
     }
   }
 }
-
-export const render = await Render(VDOM_IMPL)
