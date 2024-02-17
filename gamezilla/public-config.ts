@@ -19,7 +19,7 @@ export const IS_PROD = process.env["NODE_ENV"] === "production"
 //
 //
 
-export const VDOM_IMPL: VDomImpl = "react" as VDomImpl
+export const VDOM_IMPL: VDomImpl = "inferno" as VDomImpl
 
 //
 //

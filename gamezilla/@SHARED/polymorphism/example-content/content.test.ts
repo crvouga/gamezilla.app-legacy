@@ -1,3 +1,4 @@
+import { expect, test } from "bun:test"
 import { renderHTML } from "./content"
 import { Announcement } from "./content-announcement"
 import { BlogPost } from "./content-blog-post"
@@ -11,6 +12,8 @@ const feed = [
   }),
 ]
 
-feed.forEach((content) => {
-  console.log(renderHTML(content))
+test("render html", () => {
+  feed.forEach((content) => {
+    expect(renderHTML(content)).toBeString()
+  })
 })

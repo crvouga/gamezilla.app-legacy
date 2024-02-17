@@ -15,7 +15,7 @@ describe("leave space", () => {
   test("user is not in space after leaving", async () => {
     const spaceId = SpaceId.generate()
     const updated = await AppClientModule.chainUpdates(
-      await init(),
+      init(),
       (model) => userStartedSpace(model, UserId.generate(), spaceId),
       (model) => userJoinedSpace(model, ctx.currentUserId, spaceId),
       (model) => clickedLeaveSpaceButton(model),
@@ -30,7 +30,7 @@ describe("leave space", () => {
     const spaceId = SpaceId.generate()
 
     const joined = await AppClientModule.chainUpdates(
-      await init(),
+      init(),
       (model) => userStartedSpace(model, UserId.generate(), spaceId),
       (model) => userJoinedSpace(model, ctx.currentUserId, spaceId),
     )

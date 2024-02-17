@@ -1,4 +1,4 @@
-import { test } from "bun:test"
+import { expect, test } from "bun:test"
 import { area, perimeter, volume } from "./shape"
 import { Circle } from "./shape-circle"
 import { Rect } from "./shape-rect"
@@ -17,21 +17,18 @@ const shapes2D = [
 
 test("area", () => {
   for (const shape of shapes2D) {
-    console.log(shape)
-    console.log("Area:", area(shape))
+    expect(area(shape)).toBeNumber()
   }
 })
 
 test("perimeter", () => {
   for (const shape of shapes2D) {
-    console.log(shape)
-    console.log("Perimeter:", perimeter(shape))
+    expect(perimeter(shape)).toBeNumber()
   }
 })
 
 test("volume", () => {
   for (const shape of shapes3D) {
-    console.log(shape)
-    console.log("Volume:", volume(shape))
+    expect(volume(shape)).toBeNumber()
   }
 })

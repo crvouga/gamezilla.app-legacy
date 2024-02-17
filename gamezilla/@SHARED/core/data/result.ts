@@ -300,4 +300,5 @@ export const RequestResponse = {
   ok,
   timePassed,
   didRequestTimeout,
+  notAsked,
 }

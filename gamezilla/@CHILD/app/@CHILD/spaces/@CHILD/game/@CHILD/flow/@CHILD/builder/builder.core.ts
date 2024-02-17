@@ -16,8 +16,7 @@ import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db"
 import { FlowPuzzleList } from "../../@SHARED/flow-puzzle-list"
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id"
-import { PackBuilder, PackBuilderGame } from "./pack/builder"
-import { PackCreate, PackCreateGame } from "./pack/create"
+import { Pack } from "./pack"
 import { PuzzleBuilder, PuzzleBuilderGame } from "./puzzle/builder"
 import { PuzzleCreate, PuzzleCreateGame } from "./puzzle/create"
 import {
@@ -97,16 +96,14 @@ export type ModelClient = BaseModelClient &
   PuzzleEditName.ModelClient &
   PuzzleDeleteForever.ModelClient &
   //
-  PackCreate.ModelClient &
-  PackBuilder.ModelClient
+  Pack.ModelClient
 
 export const initClient: ClientModule["init"] = {
   flowPuzzleList: FlowPuzzleList.initClient,
   //
   puzzles: {},
   //
-  ...PackBuilder.initClient,
-  ...PackCreate.initClient,
+  ...Pack.initClient,
   //
   ...PuzzleBuilder.initClient,
   ...PuzzleCreate.initClient,
@@ -142,8 +139,7 @@ export type MsgClient =
   | PuzzleList.MsgClient
   | PuzzleSaveChanges.MsgClient
   //
-  | PackCreate.MsgClient
-  | PackBuilder.MsgClient
+  | Pack.MsgClient
 
 export type MsgServer =
   //
@@ -155,8 +151,7 @@ export type MsgServer =
   | PuzzleList.MsgServer
   | PuzzleEditName.MsgServer
   //
-  | PackCreate.MsgServer
-  | PackBuilder.MsgServer
+  | Pack.MsgServer
 
 export type MsgToServer =
   //
@@ -168,8 +163,7 @@ export type MsgToServer =
   | PuzzleEditName.MsgToServer
   | PuzzleList.MsgToServer
   //
-  | PackCreate.MsgToServer
-  | PackBuilder.MsgToServer
+  | Pack.MsgToServer
 
 export type MsgToClient =
   //
@@ -181,8 +175,7 @@ export type MsgToClient =
   | PuzzleDeleteForever.MsgToClient
   | PuzzleList.MsgToClient
   //
-  | PackCreate.MsgToClient
-  | PackBuilder.MsgToClient
+  | Pack.MsgToClient
 
 //
 //
@@ -200,8 +193,7 @@ type MsgGameBase = {
 export type MsgGame =
   | MsgGameBase
   //
-  | PackCreate.MsgGame
-  | PackBuilder.MsgGame
+  | Pack.MsgGame
   //
   | PuzzleBuilder.MsgGame
   | PuzzleList.MsgGame
@@ -264,8 +256,7 @@ export const reducer: GameReducer = ({ modelGame, msgGame, ctx }) => {
     PuzzleEditGame.reducer,
     PuzzleSaveChangesGame.reducer,
     //
-    PackCreateGame.reducer,
-    PackBuilderGame.reducer,
+    ...Pack.reducers,
     //
     listTabReducer,
   ].reduce(

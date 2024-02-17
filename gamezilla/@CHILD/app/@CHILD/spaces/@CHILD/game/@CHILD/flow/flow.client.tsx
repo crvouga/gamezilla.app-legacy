@@ -88,7 +88,7 @@ const updateChild: Module["update"] = async (input) => {
 
     case "play": {
       const updated = await PlayClient.update({
-        ctx: { ...ctx, onQuit: () => {}, puzzles: model.puzzles },
+        ctx: { ...ctx, onQuit: () => {} },
         modelGame: modelGame.c,
         model: model.t === "play" ? model.c : PlayClient.init,
         msgCmd: msgCmd,
@@ -112,7 +112,7 @@ const updateChild: Module["update"] = async (input) => {
 
     case "builder": {
       const updated = await BuilderClient.update({
-        ctx: { ...ctx, onQuit: () => {}, puzzles: model.puzzles },
+        ctx: { ...ctx, onQuit: () => {} },
         modelGame: modelGame.c,
         model: model.t === "builder" ? model.c : BuilderClient.init,
         msgCmd: msgCmd,
@@ -211,7 +211,6 @@ const subscriptions: Module["subscriptions"] = async (input) => {
           ctx: {
             ...input.ctx,
             onQuit() {},
-            puzzles: input.model.puzzles,
           },
           modelGame: input.modelGame.c,
           model: input.model.t === "play" ? input.model.c : PlayClient.init,
@@ -225,7 +224,6 @@ const subscriptions: Module["subscriptions"] = async (input) => {
           ctx: {
             ...input.ctx,
             onQuit() {},
-            puzzles: input.model.puzzles,
           },
           modelGame: input.modelGame.c,
           model:
@@ -251,7 +249,6 @@ const View: Module["View"] = (input) => {
 
   const ctx: FlowClientCtx = {
     ...input.ctx,
-    puzzles: input.model.puzzles,
     onQuit: () =>
       dispatch({
         t: "msgGame",
@@ -345,7 +342,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
         case "play": {
           return (
             <PlayClient.ViewFeedItem
-              ctx={{ ...ctx, onQuit() {}, puzzles: {} }}
+              ctx={{ ...ctx, onQuit() {} }}
               dispatch={(c) => dispatch({ t: "play", c })}
               modelGame={modelGame.c}
               msgGame={msgGame.c}
@@ -363,7 +360,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
         case "builder": {
           return (
             <BuilderClient.ViewFeedItem
-              ctx={{ ...ctx, onQuit() {}, puzzles: {} }}
+              ctx={{ ...ctx, onQuit() {} }}
               dispatch={(c) => dispatch({ t: "builder", c })}
               modelGame={modelGame.c}
               msgGame={msgGame.c}
