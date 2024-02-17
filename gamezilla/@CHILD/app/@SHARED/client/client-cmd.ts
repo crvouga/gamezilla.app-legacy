@@ -244,14 +244,17 @@ export const showErrSm = <T extends ClientCmdTypes>(
   ]
 }
 
-export const didShowErrorSm = <T extends ClientCmdTypes>({
+export const didShowErrorSm = <TCmd>({
   msgCmd,
 }: {
-  msgCmd?: ClientCmd<T>[]
+  msgCmd?: (ToastCmd | SoundCmd | TCmd)[]
 }): boolean => {
   const isSomeErrorToast =
     msgCmd?.some(
       (cmd) =>
+        typeof cmd === "object" &&
+        cmd &&
+        "t" in cmd &&
         cmd.t === "toast" &&
         cmd.c.t === "enqueue" &&
         cmd.c.toastVariant === "error",
@@ -260,6 +263,9 @@ export const didShowErrorSm = <T extends ClientCmdTypes>({
   const isSomeErrorSound =
     msgCmd?.some(
       (cmd) =>
+        typeof cmd === "object" &&
+        cmd &&
+        "t" in cmd &&
         cmd.t === "sound" &&
         cmd.c.t === "play" &&
         cmd.c.src === APP_SOUND.alertErrorSm,

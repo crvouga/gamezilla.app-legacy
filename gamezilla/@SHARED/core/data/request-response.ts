@@ -123,7 +123,14 @@ const subscriptions = <TError, TValue, TMsg>(
   return Sub.None
 }
 
+const isErr = <TError, TValue>(
+  request: RequestResponse<TError, TValue>,
+): request is ResponseErr<TError> => {
+  return request.t === "err"
+}
+
 export const RequestResponse = {
+  isErr,
   isRequesting,
   requesting,
   response,

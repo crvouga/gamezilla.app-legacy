@@ -1,10 +1,20 @@
 import { describe, expect, it } from "bun:test"
-import { FlowPackListClient } from "."
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
-import { ModelClient, initClient } from "./flow-pack-list.core"
+import {
+  didSendToServer,
+  didShowErrorSm,
+} from "gamezilla/@CHILD/app/@SHARED/client"
+import {
+  Posix,
+  RequestResponse,
+  TimeSpan,
+  err,
+  ok,
+} from "gamezilla/@SHARED/core"
+import { FlowPackListClient } from "."
 import { spaceClientCtx } from "../../../../@SHARED/testing/client"
-import { Posix, RequestResponse, TimeSpan } from "gamezilla/@SHARED/core"
-import { didSendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
+import { FlowPack } from "../flow-pack/flow-pack"
+import { ModelClient, initClient } from "./flow-pack-list.core"
 
 const initial = {
   model: initClient,
@@ -25,6 +35,35 @@ const elasped = (timeSpan: TimeSpan) => (model: ModelClient) => {
     ctx: { ...spaceClientCtx, now: Posix.add(spaceClientCtx.now, timeSpan) },
     model,
     msg: { t: "elapsed" },
+  })
+}
+
+const serverListedPacksOk =
+  (...packs: FlowPack[]) =>
+  (model: ModelClient) => {
+    return FlowPackListClient.update({
+      ctx: spaceClientCtx,
+      model,
+      msgServer: {
+        t: "listed-packs",
+        listed: ok({
+          items: packs,
+          limit: 25,
+          offset: 0,
+          total: packs.length,
+        }),
+      },
+    })
+  }
+
+const serverListedPacksErr = (errorMessage: string) => (model: ModelClient) => {
+  return FlowPackListClient.update({
+    ctx: spaceClientCtx,
+    model,
+    msgServer: {
+      t: "listed-packs",
+      listed: err(errorMessage),
+    },
   })
 }
 
@@ -52,5 +91,26 @@ describe("flow puzzle list client", () => {
       elasped(TimeSpan.fromSeconds(10)),
     )
     expect(RequestResponse.didRequestTimeout(output.model.request)).toBeTrue()
+  })
+
+  it("should add packs listed from server", async () => {
+    const pack = FlowPack.create({
+      createdBy: spaceClientCtx.currentUserId,
+      now: spaceClientCtx.now,
+      puzzleIds: [],
+    })
+    const output = await AppClientModule.chainUpdates(
+      initial,
+      serverListedPacksOk(pack),
+    )
+    expect(FlowPackListClient.listPacks(output.model)).toEqual([pack])
+  })
+
+  it("should show error when packs listed from server errors", async () => {
+    const output = await AppClientModule.chainUpdates(
+      initial,
+      serverListedPacksErr("Something went wrong"),
+    )
+    expect(didShowErrorSm(output)).toBeTrue()
   })
 })

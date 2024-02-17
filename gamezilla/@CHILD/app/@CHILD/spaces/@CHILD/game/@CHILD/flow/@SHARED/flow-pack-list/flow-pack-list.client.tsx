@@ -11,7 +11,7 @@ import {
   isErr,
 } from "gamezilla/@SHARED/core"
 import { spaceClientCtx } from "../../../../@SHARED/testing/client"
-import { ClientModule } from "./flow-pack-list.core"
+import { ClientModule, ModelClient } from "./flow-pack-list.core"
 
 const update: ClientModule["update"] = (input) => {
   return AppClientModule.chainUpdates(
@@ -98,9 +98,9 @@ const updateList: ClientModule["update"] = (input) => {
 const View: ClientModule["View"] = (input) => {
   const { model, dispatch } = input
 
-  const puzzles = Object.values(model.packs)
+  const packs = Object.values(model.packs)
   const shouldShowLoadingState = RequestResponse.isRequesting(model.request)
-  const shouldShowEmptyState = !shouldShowLoadingState && puzzles.length === 0
+  const shouldShowEmptyState = !shouldShowLoadingState && packs.length === 0
 
   return (
     <div className="relative flex w-full flex-1 flex-col gap-2 overflow-hidden">
@@ -112,7 +112,7 @@ const View: ClientModule["View"] = (input) => {
           />
         )}
 
-        {puzzles
+        {packs
           .sort(descend((pack) => Posix.toNumber(pack.lastUpdatedAt)))
           .map((pack) => (
             <>{pack.name}</>
@@ -148,7 +148,12 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
   )
 }
 
+const listPacks = (model: ModelClient) => {
+  return Object.values(model.packs)
+}
+
 export const FlowPackListClient = {
+  listPacks,
   update,
   View,
   subscriptions,
