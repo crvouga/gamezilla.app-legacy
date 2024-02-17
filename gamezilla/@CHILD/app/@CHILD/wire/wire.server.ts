@@ -277,11 +277,6 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>({
           }
 
           for (const clientId of msgCmdChild.clientIds) {
-            ctx.logger.debug(
-              `sending to client. clientId=${clientId} msg=${JSON.stringify(
-                msgCmdChild.msg,
-              )}`,
-            )
             toClientPayload[clientId] = {
               clientId,
               msgs: [msgCmdChild.msg],
