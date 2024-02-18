@@ -3,7 +3,7 @@ import { GameReducer } from "../../builder.core"
 
 const reducer: GameReducer = ({ modelGame, msgGame }) => {
   switch (msgGame.t) {
-    case "user-opened-puzzle": {
+    case "puzzle-list.clicked-puzzle-list-item": {
       return {
         ...modelGame,
         t: "puzzle-builder",
@@ -16,10 +16,6 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
         mode: { t: "edit" },
         puzzle: msgGame.puzzle,
       }
-    }
-
-    case "listed-puzzles": {
-      return modelGame
     }
 
     default: {

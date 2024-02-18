@@ -1,5 +1,5 @@
 import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2"
-import { Sub } from "gamezilla/@SHARED/core"
+import { Eff, Sub } from "gamezilla/@SHARED/core"
 import { FlowPackDb } from "../../@SHARED/flow-pack-db"
 import { FlowPuzzleDb } from "../../@SHARED/flow-puzzle-db"
 import { ServerModule, initServer } from "./builder.core"
@@ -62,7 +62,7 @@ const updateFlowPuzzleList: ServerModule["update"] = async (input) => {
       flowPackList: updated.model,
     },
     msgCmd: SpaceServerCmd.tag("flow-puzzle-list", updated.msgCmd),
-    eff: updated.eff,
+    eff: Eff.tag("flow-puzzle-list", updated.eff),
     msgEvt: updated.msgEvt,
   }
 }

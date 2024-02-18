@@ -19,7 +19,7 @@ export const testFlowClientCtx: FlowClientCtx = {
   onQuit() {},
 }
 
-const modelGame = initGame({
+export const modelGame = initGame({
   ctx: testFlowClientCtx,
 })
 

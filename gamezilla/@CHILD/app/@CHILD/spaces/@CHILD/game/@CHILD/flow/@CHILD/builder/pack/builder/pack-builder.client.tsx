@@ -1,7 +1,11 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
-import { Drawer, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
+import {
+  Button,
+  Drawer,
+  IconArrowLeftOnRect,
+} from "gamezilla/@CHILD/app/@SHARED/ui"
 import {
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
@@ -9,7 +13,6 @@ import {
 import { FlowPackUI } from "../../../../@SHARED/flow-pack"
 import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
 import { ClientModule } from "../../builder.core"
-import { Flow } from "../../../../@SHARED/flow"
 
 //
 //
@@ -130,6 +133,9 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
     const { dispatch, model } = input
     return (
       <>
+        <div className="flex w-full items-center p-4 text-2xl font-bold">
+          Add puzzle
+        </div>
         <FlowPuzzleListClient.View
           ctx={input.ctx}
           dispatch={(c) => input.dispatch({ t: "flow-puzzle-list", c })}
@@ -142,6 +148,15 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
               }),
           }}
         />
+        <div className="flex w-full items-center justify-center p-4">
+          <Button
+            text="Close"
+            className="w-full"
+            onClick={() =>
+              dispatch({ t: "pack-builder.closed-puzzle-picker-drawer" })
+            }
+          />
+        </div>
       </>
     )
   },
@@ -165,7 +180,7 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
   },
 
   View(input) {
-    const { dispatch, modelGame, model } = input
+    const { dispatch, modelGame } = input
 
     if (modelGame.t !== "pack-builder") {
       return null
