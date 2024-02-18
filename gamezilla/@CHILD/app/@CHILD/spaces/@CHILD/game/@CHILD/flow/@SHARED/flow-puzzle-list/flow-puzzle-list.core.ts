@@ -1,15 +1,15 @@
-import { RemoteResult } from "gamezilla/@SHARED/core"
-import { IFlowPuzzleDb } from "../flow-puzzle-db"
-import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
-import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id"
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
 import {
   SpaceClientCtx,
   SpaceClientEvent,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { SpaceClientCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
-import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
+import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
+import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
+import { RequestResponse } from "gamezilla/@SHARED/core"
+import { IFlowPuzzleDb } from "../flow-puzzle-db"
+import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
+import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id"
 
 //
 //
@@ -56,18 +56,20 @@ export type ServerModule = AppServerModule<{
 //
 
 export type ModelClient = {
-  request: RemoteResult<string, null>
+  request: RequestResponse<string, null>
   puzzles: { [id: FlowPuzzleId]: FlowPuzzle }
 }
 
 export const initClient: ModelClient = {
-  request: RemoteResult.notAsked,
+  request: RequestResponse.notAsked,
   puzzles: {},
 }
 
 export type ModelServer = {}
 
-export type MsgClient = { t: "flow-puzzle-list.user-observed-end-of-list" }
+export type MsgClient =
+  | { t: "flow-puzzle-list.user-observed-end-of-list" }
+  | { t: "flow-puzzle-list.elasped" }
 
 export type MsgServer = { t: "flow-puzzle-list.noop" }
 

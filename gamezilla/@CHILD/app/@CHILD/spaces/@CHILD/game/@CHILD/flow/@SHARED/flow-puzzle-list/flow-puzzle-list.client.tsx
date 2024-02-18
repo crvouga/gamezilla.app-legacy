@@ -5,14 +5,13 @@ import { EmptyState } from "gamezilla/@CHILD/app/@SHARED/ui/empty-state"
 import { IntersectionObserverEmitter } from "gamezilla/@CHILD/app/@SHARED/ui/intersection-observer"
 import {
   Posix,
+  RequestResponse,
   Result,
   TimeSpan,
   descend,
   isErr,
-  isPending,
-  loading,
+  isRequesting,
 } from "gamezilla/@SHARED/core"
-import { testSpaceClientCtx } from "../../../../@SHARED/testing/client"
 import { FlowGridUI } from "../flow"
 import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
 import { ClientModule } from "./flow-puzzle-list.core"
@@ -27,14 +26,14 @@ const update: ClientModule["update"] = (input) => {
 }
 
 const updatePuzzleList: ClientModule["update"] = (input) => {
-  const { model, msg, msgServer } = input
+  const { model, msg, msgServer, ctx } = input
 
   switch (msg?.t) {
     case "flow-puzzle-list.user-observed-end-of-list": {
       return {
         model: {
           ...model,
-          request: loading,
+          request: RequestResponse.requesting(input.ctx.now),
         },
         msgCmd: [
           sendToServer({
@@ -48,11 +47,21 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
                 offset: 0,
               },
               where: {
-                createdBy: testSpaceClientCtx.space.hostId,
+                createdBy: ctx.space.hostId,
               },
             },
           }),
         ],
+      }
+    }
+
+    case "flow-puzzle-list.elasped": {
+      const requestNew = RequestResponse.timePassed(model.request, ctx.now)
+      return {
+        model: {
+          ...model,
+          request: requestNew,
+        },
       }
     }
   }
@@ -70,7 +79,11 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
       return {
         model: {
           ...model,
-          request: Result.mapOk(msgServer.listed, () => null),
+          request: RequestResponse.response(
+            model.request,
+            ctx.now,
+            Result.mapOk(msgServer.listed, () => null),
+          ),
           puzzles: puzzlesNew,
         },
         msgCmd: isErr(msgServer.listed)
@@ -90,7 +103,7 @@ const View: ClientModule["View"] = (input) => {
   const { model, dispatch, ctx } = input
 
   const puzzles = Object.values(model.puzzles)
-  const shouldShowLoadingState = isPending(model.request)
+  const shouldShowLoadingState = isRequesting(model.request)
   const shouldShowEmptyState = !shouldShowLoadingState && puzzles.length === 0
 
   return (
