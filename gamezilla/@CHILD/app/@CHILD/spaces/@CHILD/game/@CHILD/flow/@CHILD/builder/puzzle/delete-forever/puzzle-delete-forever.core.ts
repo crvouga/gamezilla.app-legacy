@@ -4,11 +4,11 @@ import { IFlowPuzzleDb } from "../../../../@SHARED/flow-puzzle-db"
 import { FlowPuzzleId } from "../../../../@SHARED/flow-puzzle/flow-puzzle-id"
 
 export type ModelClient = {
-  deleteForeverRequest: RemoteResult<string, null>
+  puzzleDeleteForeverRequest: RemoteResult<string, null>
 }
 
 export const initClient: ModelClient = {
-  deleteForeverRequest: notAsked,
+  puzzleDeleteForeverRequest: notAsked,
 }
 
 export type ModelServer = {}

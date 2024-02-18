@@ -8,15 +8,15 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 //
 
 export type ModelClient = {
-  editNameRequest: RemoteResult<string, null>
-  editNameDraft: string
-  editNameValidationError: EditNameValidationError
+  puzzleEditNameRequest: RemoteResult<string, null>
+  puzzleEditNameDraft: string
+  puzzleEditNameValidationError: EditNameValidationError
 }
 
 export const initClient: ModelClient = {
-  editNameDraft: "",
-  editNameRequest: notAsked,
-  editNameValidationError: null,
+  puzzleEditNameDraft: "",
+  puzzleEditNameRequest: notAsked,
+  puzzleEditNameValidationError: null,
 }
 
 export type EditNameValidationError = "name-cannot-be-empty" | null

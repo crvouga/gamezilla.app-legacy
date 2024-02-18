@@ -11,7 +11,7 @@ const update: ClientModule["update"] = (input) => {
   const { model, msg, msgGame } = input
 
   switch (msg?.t) {
-    case "pack-create/user-clicked-create-button": {
+    case "pack-create.clicked-create-button": {
       return {
         model: {
           ...model,
@@ -20,7 +20,7 @@ const update: ClientModule["update"] = (input) => {
         msgCmd: [
           playSound(APP_SOUND.tap),
           sendToServer({
-            t: "pack-create/user-clicked-create-button",
+            t: "pack-create.clicked-create-button",
           }),
         ],
       }
@@ -52,7 +52,7 @@ const ViewCreateButton: ClientModule["View"] = (input) => {
       color="primary"
       loading={model.packCreateRequest.t === "loading"}
       start={<IconPlus className="h-8 w-8" />}
-      onClick={() => dispatch({ t: "pack-create/user-clicked-create-button" })}
+      onClick={() => dispatch({ t: "pack-create.clicked-create-button" })}
     />
   )
 }

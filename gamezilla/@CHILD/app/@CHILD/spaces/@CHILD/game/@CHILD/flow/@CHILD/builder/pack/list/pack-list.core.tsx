@@ -22,5 +22,6 @@ export type MsgToClient = {
 }
 
 export type MsgGame = {
-  t: "noop"
+  t: "pack-list.user-clicked-pack-item"
+  pack: FlowPack
 }

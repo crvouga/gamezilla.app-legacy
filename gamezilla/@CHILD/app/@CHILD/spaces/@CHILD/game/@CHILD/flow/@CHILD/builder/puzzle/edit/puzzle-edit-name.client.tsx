@@ -65,19 +65,19 @@ const updateFormButtons: ClientModule["update"] = (input) => {
         model: {
           ...model,
           opened: "more",
-          editNameValidationError: null,
+          puzzleEditNameValidationError: null,
         },
       }
     }
 
     case "puzzle.edit-name.user-clicked-save-button": {
-      const newName = model.editNameDraft ?? ""
+      const newName = model.puzzleEditNameDraft ?? ""
 
       if (newName.length === 0) {
         return {
           model: {
             ...model,
-            editNameValidationError: "name-cannot-be-empty",
+            puzzleEditNameValidationError: "name-cannot-be-empty",
           },
           msgCmd: [playSound(APP_SOUND.alertErrorSm)],
         }
@@ -86,8 +86,8 @@ const updateFormButtons: ClientModule["update"] = (input) => {
       return {
         model: {
           ...model,
-          editNameRequest: loading,
-          editNameValidationError: null,
+          puzzleEditNameRequest: loading,
+          puzzleEditNameValidationError: null,
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
@@ -121,7 +121,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
         model: {
           ...model,
           puzzles: puzzlesNew,
-          editNameRequest: msgGame.edited,
+          puzzleEditNameRequest: msgGame.edited,
           opened: null,
         },
         msgCmd: isOk(msgGame.edited)
@@ -159,10 +159,10 @@ const ViewFormButtons: ClientModule["View"] = ({
         color="primary"
         variant="contained"
         text="Save"
-        loading={isLoading(model.editNameRequest)}
+        loading={isLoading(model.puzzleEditNameRequest)}
         disabled={
           modelGame.t !== "puzzle-builder" ||
-          model.editNameDraft === modelGame.puzzle.name
+          model.puzzleEditNameDraft === modelGame.puzzle.name
         }
         onClick={() =>
           dispatch({ t: "puzzle.edit-name.user-clicked-save-button" })
@@ -187,7 +187,7 @@ const updateDrawer: ClientModule["update"] = (input) => {
         model: {
           ...model,
           opened: "edit-name",
-          editNameDraft:
+          puzzleEditNameDraft:
             modelGame.t === "puzzle-builder" ? modelGame.puzzle.name : "",
         },
       }
@@ -240,8 +240,8 @@ const updateDraftNameInput: ClientModule["update"] = ({ model, msg }) => {
       return {
         model: {
           ...model,
-          editNameDraft: msg.draftName,
-          editNameValidationError: null,
+          puzzleEditNameDraft: msg.draftName,
+          puzzleEditNameValidationError: null,
         },
       }
     }
@@ -257,16 +257,16 @@ const ViewDraftNameInput: ClientModule["View"] = ({ model, dispatch }) => {
       <TextField
         id="edit-name-input"
         label="Name"
-        value={model.editNameDraft}
+        value={model.puzzleEditNameDraft}
         onChange={(draftName) =>
           dispatch({
             t: "puzzle.edit-name.user-inputted-draft-name",
             draftName,
           })
         }
-        error={Boolean(model.editNameValidationError)}
+        error={Boolean(model.puzzleEditNameValidationError)}
         helperText={editNameValidationErrorToString(
-          model.editNameValidationError,
+          model.puzzleEditNameValidationError,
         )}
       />
     </div>

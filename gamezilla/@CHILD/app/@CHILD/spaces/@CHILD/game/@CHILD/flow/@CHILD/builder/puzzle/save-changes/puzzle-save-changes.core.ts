@@ -7,8 +7,8 @@ import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 //
 
 export type ModelClient = {
-  saveChangesRequest?: RemoteResult<string, null>
-  saveChangesIsExiting?: boolean
+  puzzleSaveChangesRequest?: RemoteResult<string, null>
+  puzzleSaveChangesIsExiting?: boolean
 }
 
 export type ModelServer = {}

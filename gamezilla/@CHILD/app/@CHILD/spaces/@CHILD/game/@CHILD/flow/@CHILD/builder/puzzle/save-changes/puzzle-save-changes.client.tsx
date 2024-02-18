@@ -103,7 +103,7 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
     case "puzzle-save-changes.user-clicked-save-and-exit": {
       return saveChanges({
         ...input,
-        model: { ...model, saveChangesIsExiting: true },
+        model: { ...model, puzzleSaveChangesIsExiting: true },
       })
     }
 
@@ -115,15 +115,15 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
   switch (msgGame?.t) {
     case "user-saved-changes": {
       if (
-        model.saveChangesRequest?.t === "loading" &&
-        model.saveChangesIsExiting &&
+        model.puzzleSaveChangesRequest?.t === "loading" &&
+        model.puzzleSaveChangesIsExiting &&
         isOk(msgGame.saved)
       ) {
         return exitBuilder({
           ...input,
           model: {
             ...model,
-            saveChangesIsExiting: false,
+            puzzleSaveChangesIsExiting: false,
             opened: null,
           },
         })
@@ -152,7 +152,7 @@ const updateSaveChangesRequest: ClientModule["update"] = (input) => {
     return {
       model: {
         ...model,
-        saveChangesRequest: Result.mapOk(msgGame.saved, () => null),
+        puzzleSaveChangesRequest: Result.mapOk(msgGame.saved, () => null),
       },
       msgCmd: isOk(msgGame.saved)
         ? showCreatedSm("Saved changes")
@@ -198,7 +198,7 @@ const saveChanges: ClientModule["update"] = ({ model, modelGame }) => {
   }
 
   return {
-    model: { ...model, saveChangesRequest: loading },
+    model: { ...model, puzzleSaveChangesRequest: loading },
     msgCmd: [
       playSound(APP_SOUND.tap),
       sendToServer({
@@ -232,7 +232,7 @@ export const ViewActionButtons = ({
         onClick={() =>
           dispatch({ t: "puzzle-builder.user-clicked-exit-button" })
         }
-        disabled={model.saveChangesRequest?.t === "loading"}
+        disabled={model.puzzleSaveChangesRequest?.t === "loading"}
       />
       <ViewBottomButtonBarAction
         icon={<IconFloppyDisk className="h-6 w-6" />}
@@ -240,7 +240,7 @@ export const ViewActionButtons = ({
         onClick={() =>
           dispatch({ t: "puzzle-save-changes.user-clicked-save-button" })
         }
-        loading={model.saveChangesRequest?.t === "loading"}
+        loading={model.puzzleSaveChangesRequest?.t === "loading"}
       />
     </>
   )
@@ -269,7 +269,7 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
           text="Save"
           variant="contained"
           color="primary"
-          loading={model.saveChangesRequest?.t === "loading"}
+          loading={model.puzzleSaveChangesRequest?.t === "loading"}
           onClick={() =>
             dispatch({
               t: "puzzle-save-changes.user-clicked-save-and-exit",

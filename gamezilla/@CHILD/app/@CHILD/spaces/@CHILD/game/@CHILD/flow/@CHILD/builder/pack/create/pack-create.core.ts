@@ -24,12 +24,12 @@ export type ModelServer = {}
 //
 
 export type MsgClient = {
-  t: "pack-create/user-clicked-create-button"
+  t: "pack-create.clicked-create-button"
 }
 
 export type MsgServer = { t: "noop" }
 
-export type MsgToServer = { t: "pack-create/user-clicked-create-button" }
+export type MsgToServer = { t: "pack-create.clicked-create-button" }
 
 export type MsgToClient = {
   t: "noop"

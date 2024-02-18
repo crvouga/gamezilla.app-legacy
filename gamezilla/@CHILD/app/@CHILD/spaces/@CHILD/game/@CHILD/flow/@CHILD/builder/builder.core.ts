@@ -16,7 +16,7 @@ import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle-db/flow-puzzle-db"
 import { FlowPuzzleList } from "../../@SHARED/flow-puzzle-list"
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id"
-import { Pack } from "./pack"
+import { Pack, PackGame } from "./pack"
 import { PuzzleBuilder, PuzzleBuilderGame } from "./puzzle/builder"
 import { PuzzleCreate, PuzzleCreateGame } from "./puzzle/create"
 import {
@@ -273,7 +273,7 @@ export const reducer: GameReducer = ({ modelGame, msgGame, ctx }) => {
     PuzzleEditGame.reducer,
     PuzzleSaveChangesGame.reducer,
     //
-    ...Pack.reducers,
+    PackGame.reducer,
     //
     listTabReducer,
   ].reduce(

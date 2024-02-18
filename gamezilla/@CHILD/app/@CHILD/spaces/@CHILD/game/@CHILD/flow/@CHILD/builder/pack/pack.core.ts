@@ -1,6 +1,6 @@
-import { PackBuilder, PackBuilderGame } from "./builder"
+import { PackBuilder } from "./builder"
+import { PackCreate } from "./create"
 import { PackList } from "./list"
-import { PackCreate, PackCreateGame } from "./create"
 
 //
 //
@@ -62,5 +62,3 @@ export type MsgGame =
   | PackCreate.MsgGame
   | PackBuilder.MsgGame
   | PackList.MsgGame
-
-export const reducers = [PackCreateGame.reducer, PackBuilderGame.reducer]
