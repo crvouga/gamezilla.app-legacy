@@ -1,7 +1,7 @@
 import { IconPlus } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { VDom } from "gamezilla/@SHARED/vdom"
 
-const COLUMN_COUNT = 6
+const COLUMN_COUNT = 5
 const ROW_COUNT = 6
 
 export const toIndex = ({ x, y }: { x: number; y: number }) => {
@@ -20,7 +20,7 @@ export const ViewPackPuzzleGrid = ({
       row.push(
         <div
           key={`${y}-${x}`}
-          className="flex aspect-square w-1/6 items-center justify-center p-1"
+          className="flex aspect-square w-1/5 items-center justify-center p-1"
         >
           {renderCell({ x, y })}
         </div>,
@@ -34,7 +34,7 @@ export const ViewPackPuzzleGrid = ({
     )
   }
 
-  return <div className="w-full p-8">{columns}</div>
+  return <div className="w-full max-w-md p-8">{columns}</div>
 }
 
 export const ViewAddCell = ({ onClick }: { onClick: () => void }) => {
@@ -44,6 +44,23 @@ export const ViewAddCell = ({ onClick }: { onClick: () => void }) => {
       className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-700 bg-neutral-800 hover:opacity-90 active:opacity-80"
     >
       <IconPlus className="h-8 w-8" />
+    </button>
+  )
+}
+
+export const ViewPuzzleCell = ({
+  onClick,
+  index,
+}: {
+  onClick: () => void
+  index: number
+}) => {
+  return (
+    <button
+      onClick={onClick}
+      className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-700 bg-neutral-800 text-xl font-bold hover:opacity-90 active:opacity-80"
+    >
+      {index + 1}
     </button>
   )
 }

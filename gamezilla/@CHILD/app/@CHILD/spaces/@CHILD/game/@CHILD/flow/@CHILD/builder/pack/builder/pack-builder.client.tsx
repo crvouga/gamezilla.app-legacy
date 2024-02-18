@@ -9,6 +9,7 @@ import {
 import { FlowPackUI } from "../../../../@SHARED/flow-pack"
 import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
 import { ClientModule } from "../../builder.core"
+import { Flow } from "../../../../@SHARED/flow"
 
 //
 //
@@ -164,7 +165,7 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
   },
 
   View(input) {
-    const { dispatch, modelGame } = input
+    const { dispatch, modelGame, model } = input
 
     if (modelGame.t !== "pack-builder") {
       return null
@@ -179,7 +180,22 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
               renderCell={(position) => {
                 const index = FlowPackUI.toIndex(position)
 
-                if (index === 0) {
+                const puzzleId = modelGame.pack.puzzleIds[index]
+
+                if (puzzleId) {
+                  return (
+                    <FlowPackUI.ViewPuzzleCell
+                      onClick={() => {}}
+                      index={index}
+                    />
+                  )
+                }
+
+                //
+                //
+                //
+
+                if (index === modelGame.pack.puzzleIds.length) {
                   return (
                     <FlowPackUI.ViewAddCell
                       onClick={() =>
