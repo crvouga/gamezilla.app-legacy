@@ -45,7 +45,8 @@ if (typeof window !== "undefined" && "customElements" in window) {
     connectedCallback() {
       this.unsubscribe = drawerSub.subscribe((drawerEvent) => {
         if (drawerEvent.id === this.getAttribute("id")) {
-          this.props = drawerEvent
+          this.props = { ...drawerEvent }
+
           this.syncUI()
         }
       })
@@ -83,6 +84,11 @@ if (typeof window !== "undefined" && "customElements" in window) {
         .content-top {
           transition: transform 0.2s ease-in-out;
           transform: translateY(-100%);
+        }
+        .content {
+          width: 100%;
+          max-height: 100%;
+          overflow: hidden;
         }
         .backdrop {
           flex: 1;
@@ -155,8 +161,8 @@ if (typeof window !== "undefined" && "customElements" in window) {
       }
     }
 
-    onKeyDown(msgEvt: KeyboardEvent) {
-      if (msgEvt.key === "Escape") {
+    onKeyDown(keyboardEvent: KeyboardEvent) {
+      if (keyboardEvent.key === "Escape") {
         this.props?.onClose()
       }
     }

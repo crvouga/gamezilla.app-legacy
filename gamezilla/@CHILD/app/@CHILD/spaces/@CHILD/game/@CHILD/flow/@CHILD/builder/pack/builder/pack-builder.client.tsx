@@ -132,23 +132,25 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
   View(input) {
     const { dispatch, model } = input
     return (
-      <>
-        <div className="flex w-full items-center p-4 text-2xl font-bold">
+      <div className="flex max-h-full w-full flex-1 flex-col overflow-hidden">
+        <div className="flex w-full shrink-0 items-center p-4 text-2xl font-bold">
           Add puzzle
         </div>
-        <FlowPuzzleListClient.View
-          ctx={input.ctx}
-          dispatch={(c) => input.dispatch({ t: "flow-puzzle-list", c })}
-          model={model.flowPuzzleList}
-          emits={{
-            clickedPuzzleItem: (puzzle) =>
-              dispatch({
-                t: "pack-builder.clicked-puzzle-picker-item",
-                puzzle,
-              }),
-          }}
-        />
-        <div className="flex w-full items-center justify-center p-4">
+        <div className="w-full flex-1 overflow-hidden overflow-y-scroll">
+          <FlowPuzzleListClient.View
+            ctx={input.ctx}
+            dispatch={(c) => input.dispatch({ t: "flow-puzzle-list", c })}
+            model={model.flowPuzzleList}
+            emits={{
+              clickedPuzzleItem: (puzzle) =>
+                dispatch({
+                  t: "pack-builder.clicked-puzzle-picker-item",
+                  puzzle,
+                }),
+            }}
+          />
+        </div>
+        <div className="flex w-full shrink-0 items-center justify-center p-4">
           <Button
             text="Close"
             className="w-full"
@@ -157,7 +159,7 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
             }
           />
         </div>
-      </>
+      </div>
     )
   },
 }

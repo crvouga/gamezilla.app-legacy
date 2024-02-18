@@ -14,17 +14,15 @@ export const DrawerWebComponent = ({
   drawerSub.publish({ type: "props", id, onClose, open, position })
   return (
     <Portal.Entrance portalId="modals">
-      {/* @ts-ignore */}
       <drawer-element id={id} position={position}>
         <div
           className={cn(
-            "w-full border border-neutral-600 bg-black",
+            "max-h-[100dvh] w-full overflow-hidden rounded-2xl border border-neutral-600 bg-black",
             position === "bottom" ? "rounded-t-2xl" : "rounded-b-2xl",
           )}
         >
           {children}
         </div>
-        {/* @ts-ignore */}
       </drawer-element>
     </Portal.Entrance>
   )

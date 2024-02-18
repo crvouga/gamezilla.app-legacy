@@ -34,7 +34,7 @@ export const ViewPackPuzzleGrid = ({
     )
   }
 
-  return <div className="w-full max-w-md p-8">{columns}</div>
+  return <div className="w-3/4 max-w-sm p-8">{columns}</div>
 }
 
 export const ViewAddCell = ({ onClick }: { onClick: () => void }) => {
