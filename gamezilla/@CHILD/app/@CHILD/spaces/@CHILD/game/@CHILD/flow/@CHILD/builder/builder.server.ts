@@ -12,6 +12,7 @@ import { PuzzleListServer } from "./puzzle/list/puzzle-list.server"
 import { PuzzleSaveChangesServer } from "./puzzle/save-changes/puzzle-save-changes.server"
 import { FlowPackListServer } from "../../@SHARED/flow-pack-list"
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
+import { FlowPuzzleListServer } from "../../@SHARED/flow-puzzle-list"
 
 const deps: ServerModule["deps"] = async (_input) => {
   return {
@@ -38,7 +39,32 @@ const update: ServerModule["update"] = async (input) => {
     (model) => PackBuilderServer.update({ ...input, model }),
     //
     (model) => updateFlowPackList({ ...input, model }),
+    (model) => updateFlowPuzzleList({ ...input, model }),
   )
+}
+
+const updateFlowPuzzleList: ServerModule["update"] = async (input) => {
+  const updated = await FlowPuzzleListServer.update({
+    ctx: { ...input.ctx },
+    model: { ...input.model.flowPackList },
+    msg: input.msg?.t === "flow-puzzle-list" ? input.msg.c : undefined,
+    msgClient:
+      input.msgClient?.t === "flow-puzzle-list"
+        ? { ...input.msgClient, ...input.msgClient.c }
+        : undefined,
+    msgEvt: input.msgEvt,
+    msgCmd: input.msgCmd,
+    deps: input.deps,
+  })
+  return {
+    model: {
+      ...input.model,
+      flowPackList: updated.model,
+    },
+    msgCmd: SpaceServerCmd.tag("flow-puzzle-list", updated.msgCmd),
+    eff: updated.eff,
+    msgEvt: updated.msgEvt,
+  }
 }
 
 const updateFlowPackList: ServerModule["update"] = async (input) => {

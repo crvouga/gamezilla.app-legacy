@@ -1,5 +1,5 @@
 import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2"
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import { FlowPackId } from "../../../../@SHARED/flow-pack/flow-pack-id"
 import { FlowPackName } from "../../../../@SHARED/flow-pack/flow-pack-name"
@@ -42,11 +42,10 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         model: {
           ...model,
         },
-        msgGame: [
-          withId({
-            t: "user-created-pack",
+        msgCmd: [
+          sendBack(msgClient, {
+            t: "pack-create.created-pack",
             created: put,
-            userId: msgClient.userId,
           }),
         ],
       }

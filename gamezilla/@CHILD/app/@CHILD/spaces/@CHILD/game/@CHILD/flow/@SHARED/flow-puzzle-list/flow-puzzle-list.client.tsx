@@ -123,9 +123,7 @@ const View: ClientModule["View"] = (input) => {
               now={ctx.now}
               key={puzzle.id}
               puzzle={puzzle}
-              onClick={() =>
-                dispatch({ t: "flow-puzzle-list.user-observed-end-of-list" })
-              }
+              onClick={() => input.emits?.clickedPuzzleItem(puzzle)}
             />
           ))}
 

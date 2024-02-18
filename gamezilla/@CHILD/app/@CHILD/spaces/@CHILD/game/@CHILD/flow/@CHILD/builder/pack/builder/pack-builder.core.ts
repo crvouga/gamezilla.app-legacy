@@ -1,4 +1,5 @@
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 
 //
 //
@@ -29,6 +30,10 @@ export type MsgClient =
   | {
       t: "pack-builder.closed-puzzle-picker-drawer"
     }
+  | {
+      t: "pack-builder.clicked-puzzle-picker-item"
+      puzzle: FlowPuzzle
+    }
 
 export type MsgServer = { t: "noop" }
 
@@ -42,7 +47,12 @@ export type MsgToClient = { t: "noop" }
 //
 //
 
-export type MsgGame = {
-  t: "user-exited-pack-builder"
-  userId: UserId
-}
+export type MsgGame =
+  | {
+      t: "user-exited-pack-builder"
+      userId: UserId
+    }
+  | {
+      t: "pack-builder.user-clicked-puzzle-picker-item"
+      puzzle: FlowPuzzle
+    }

@@ -6,9 +6,10 @@ import {
 import { Button, IconPlus } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { loading, ok } from "gamezilla/@SHARED/core"
 import { ClientModule } from "../../builder.core"
+import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 
 const update: ClientModule["update"] = (input) => {
-  const { model, msg, msgGame } = input
+  const { model, msg, msgGame, msgServer } = input
 
   switch (msg?.t) {
     case "pack-create.clicked-create-button": {
@@ -21,6 +22,21 @@ const update: ClientModule["update"] = (input) => {
           playSound(APP_SOUND.tap),
           sendToServer({
             t: "pack-create.clicked-create-button",
+          }),
+        ],
+      }
+    }
+  }
+
+  switch (msgServer?.t) {
+    case "pack-create.created-pack": {
+      return {
+        model,
+        msgGame: [
+          withId({
+            t: "user-created-pack",
+            created: msgServer.created,
+            userId: input.ctx.currentUserId,
           }),
         ],
       }

@@ -7,8 +7,8 @@ import {
   ViewBottomButtonBarAction,
 } from "../../../../../../@SHARED/game"
 import { FlowPackUI } from "../../../../@SHARED/flow-pack"
+import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
 import { ClientModule } from "../../builder.core"
-import { PuzzleListClient } from "../../puzzle/list/puzzle-list.client"
 
 //
 //
@@ -95,8 +95,53 @@ const PuzzlePickerDrawer: Pick<ClientModule, "update" | "View"> = {
           dispatch({ t: "pack-builder.closed-puzzle-picker-drawer" })
         }
       >
-        <PuzzleListClient.View {...input} />
+        <PuzzlePicker.View {...input} />
       </Drawer>
+    )
+  },
+}
+
+const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
+  update(input) {
+    const { model, msg } = input
+
+    switch (msg?.t) {
+      case "pack-builder.clicked-puzzle-picker-item": {
+        return {
+          model: {
+            ...model,
+            packBuilderOpen: null,
+          },
+          msgGame: [
+            withId({
+              puzzle: msg.puzzle,
+              t: "pack-builder.user-clicked-puzzle-picker-item",
+            }),
+          ],
+        }
+      }
+    }
+
+    return { model }
+  },
+
+  View(input) {
+    const { dispatch, model } = input
+    return (
+      <>
+        <FlowPuzzleListClient.View
+          ctx={input.ctx}
+          dispatch={(c) => input.dispatch({ t: "flow-puzzle-list", c })}
+          model={model.flowPuzzleList}
+          emits={{
+            clickedPuzzleItem: (puzzle) =>
+              dispatch({
+                t: "pack-builder.clicked-puzzle-picker-item",
+                puzzle,
+              }),
+          }}
+        />
+      </>
     )
   },
 }
@@ -114,6 +159,7 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
       { model: input.model },
       (model) => ExitButton.update({ ...input, model }),
       (model) => PuzzlePickerDrawer.update({ ...input, model }),
+      (model) => PuzzlePicker.update({ ...input, model }),
     )
   },
 

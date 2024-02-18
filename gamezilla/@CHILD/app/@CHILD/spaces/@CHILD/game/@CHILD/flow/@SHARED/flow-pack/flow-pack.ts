@@ -33,6 +33,19 @@ const create = (input: {
   }
 }
 
+const includes = (pack: FlowPack, puzzleId: FlowPuzzleId): boolean => {
+  return pack.puzzleIds.includes(puzzleId)
+}
+
+const add = (pack: FlowPack, puzzleId: FlowPuzzleId): FlowPack => {
+  return {
+    ...pack,
+    puzzleIds: [...pack.puzzleIds, puzzleId],
+  }
+}
+
 export const FlowPack = {
   create,
+  add,
+  includes,
 }

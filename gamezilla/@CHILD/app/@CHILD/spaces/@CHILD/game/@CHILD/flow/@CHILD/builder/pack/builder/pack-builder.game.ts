@@ -1,5 +1,6 @@
 import { isErr } from "gamezilla/@SHARED/core"
 import { GameReducer } from "../../builder.core"
+import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 
 const reducer: GameReducer = ({ modelGame, msgGame }) => {
   switch (msgGame.t) {
@@ -18,6 +19,21 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
       return {
         t: "list",
         listTab: "packs",
+      }
+    }
+
+    case "pack-builder.user-clicked-puzzle-picker-item": {
+      switch (modelGame.t) {
+        case "pack-builder": {
+          return {
+            ...modelGame,
+            pack: FlowPack.add(modelGame.pack, msgGame.puzzle.id),
+          }
+        }
+
+        default: {
+          return modelGame
+        }
       }
     }
 

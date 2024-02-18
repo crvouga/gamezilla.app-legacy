@@ -1,6 +1,8 @@
 import {
   SpaceClientCtx,
   SpaceClientEvent,
+  SpaceServerCtx,
+  SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { SpaceClientCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
@@ -33,6 +35,9 @@ export type ClientModule = AppClientModule<{
   ViewSlot: {
     fab: null
   }
+  ViewEmit: {
+    clickedPuzzleItem: FlowPuzzle
+  }
 }>
 
 export type ServerModule = AppServerModule<{
@@ -45,9 +50,9 @@ export type ServerModule = AppServerModule<{
   MsgOutEvent: never
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  Ctx: SpaceClientCtx
+  Ctx: SpaceServerCtx
   MsgInCmd: never
-  MsgInEvent: SpaceClientEvent
+  MsgInEvent: SpaceServerEvent
 }>
 
 //

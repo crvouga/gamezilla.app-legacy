@@ -27,12 +27,14 @@ export type MsgClient = {
   t: "pack-create.clicked-create-button"
 }
 
-export type MsgServer = { t: "noop" }
-
 export type MsgToServer = { t: "pack-create.clicked-create-button" }
 
-export type MsgToClient = {
+export type MsgServer = {
   t: "noop"
+}
+
+export type MsgToClient = {
+  t: "pack-create.created-pack"
   created: Result<string, FlowPack>
 }
 
