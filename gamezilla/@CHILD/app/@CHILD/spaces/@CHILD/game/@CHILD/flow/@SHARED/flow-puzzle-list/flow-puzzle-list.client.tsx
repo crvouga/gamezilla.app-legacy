@@ -108,7 +108,7 @@ const View: ClientModule["View"] = (input) => {
 
   return (
     <div className="relative flex w-full flex-1 flex-col gap-2 overflow-hidden">
-      <div className="relative flex w-full flex-1 flex-col items-center overflow-y-scroll">
+      <div className="border-1 relative flex w-full flex-1 flex-col items-center overflow-y-scroll border-t border-neutral-700">
         {shouldShowEmptyState && (
           <EmptyState
             label="No puzzles"
@@ -163,7 +163,7 @@ const FlowPuzzleListItem = ({
   return (
     <button
       key={puzzle.id}
-      className="box-border flex w-full items-center gap-4 border border-neutral-700 text-left hover:bg-black"
+      className="box-border flex w-full items-center gap-4 border-b border-b-neutral-700 text-left hover:bg-neutral-900 active:opacity-50"
       onClick={onClick}
     >
       <div className="aspect-square h-24 w-24 flex-shrink-0 overflow-hidden border-r border-neutral-700">

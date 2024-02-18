@@ -105,7 +105,7 @@ const View: ClientModule["View"] = (input) => {
 
   return (
     <div className="relative flex w-full flex-1 flex-col gap-2 overflow-hidden">
-      <div className="relative flex max-h-full w-full flex-1 flex-col items-center overflow-hidden overflow-y-scroll">
+      <div className="relative flex max-h-full w-full flex-1 flex-col items-center overflow-hidden overflow-y-scroll border-t border-t-neutral-700">
         {shouldShowEmptyState && (
           <EmptyState
             label="No packs"
@@ -113,18 +113,16 @@ const View: ClientModule["View"] = (input) => {
           />
         )}
 
-        <div className="w-full divide-y divide-neutral-600">
-          {packs
-            .sort(descend((pack) => Posix.toNumber(pack.lastUpdatedAt)))
-            .map((pack) => (
-              <FlowPackListItem
-                ctx={ctx}
-                key={pack.id}
-                pack={pack}
-                onClick={() => input.emits?.clickedPackItem(pack)}
-              />
-            ))}
-        </div>
+        {packs
+          .sort(descend((pack) => Posix.toNumber(pack.lastUpdatedAt)))
+          .map((pack) => (
+            <FlowPackListItem
+              ctx={ctx}
+              key={pack.id}
+              pack={pack}
+              onClick={() => input.emits?.clickedPackItem(pack)}
+            />
+          ))}
 
         <div
           className={cn(
@@ -161,10 +159,10 @@ const FlowPackListItem = ({
 }) => {
   return (
     <button
-      className="flex w-full max-w-full items-center justify-between gap-6 overflow-hidden px-4 py-6 text-left hover:bg-neutral-900 active:opacity-50"
+      className="flex w-full max-w-full items-center justify-between gap-6 overflow-hidden border-b border-b-neutral-700 px-4 py-6 text-left hover:bg-neutral-900 active:opacity-50"
       onClick={onClick}
     >
-      <IconBox className="h-12 w-12 shrink-0" />
+      <IconBox className="h-9 w-9 shrink-0" />
       <div className="flex flex-1 flex-col overflow-hidden">
         <p className="overflow-hidden text-ellipsis whitespace-nowrap text-lg font-bold">
           {pack.name}
