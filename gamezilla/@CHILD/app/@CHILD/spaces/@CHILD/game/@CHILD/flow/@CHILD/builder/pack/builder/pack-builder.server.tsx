@@ -13,7 +13,7 @@ const update: ServerModule["update"] = async (input) => {
 const updateSavePackOnChange: ServerModule["update"] = async (input) => {
   const { deps, model, modelGame, msgGame } = input
   switch (msgGame?.t) {
-    case "pack-builder.user-clicked-puzzle-picker-item": {
+    case "pack-builder.user-clicked-add-puzzle-item": {
       if (!modelGame.packBuilder) {
         return { model }
       }

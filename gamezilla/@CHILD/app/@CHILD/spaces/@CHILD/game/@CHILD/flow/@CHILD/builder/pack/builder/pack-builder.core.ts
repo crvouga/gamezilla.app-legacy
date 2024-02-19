@@ -45,19 +45,20 @@ export type MsgGame =
       saved: Result<string, FlowPack>
     }
   | {
-      t: "pack-builder.user-clicked-open-puzzle-picker-button"
+      t: "pack-builder.user-clicked-open-add-puzzle-button"
       userId: UserId
     }
   | {
-      t: "pack-builder.user-closed-puzzle-picker"
+      t: "pack-builder.user-closed-add-puzzle"
     }
   | {
-      t: "pack-builder.user-clicked-puzzle-picker-item"
+      t: "pack-builder.user-clicked-add-puzzle-item"
       puzzle: FlowPuzzle
       userId: UserId
     }
   | {
-      t: "pack-builder.user-clicked-puzzle-grid-item"
+      t: "pack-builder.user-clicked-pack-item"
+      puzzle: FlowPuzzle
       index: number
     }
   | {

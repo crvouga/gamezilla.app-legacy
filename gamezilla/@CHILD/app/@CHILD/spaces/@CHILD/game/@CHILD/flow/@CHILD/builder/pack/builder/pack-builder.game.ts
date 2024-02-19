@@ -1,8 +1,9 @@
 import { isErr } from "gamezilla/@SHARED/core"
-import { GameReducer } from "../../builder.core"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
+import { GameReducer } from "../../builder.core"
+import { FlowGridUIPlay } from "../../../../@SHARED/flow"
 
-const reducer: GameReducer = ({ modelGame, msgGame }) => {
+const userCreatedPack: GameReducer = ({ modelGame, msgGame }) => {
   switch (msgGame.t) {
     case "user-created-pack": {
       if (isErr(msgGame.created)) {
@@ -15,14 +16,21 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
         packBuilder: {
           t: "pack-builder",
           opened: {
-            t: "puzzle-grid",
+            t: "pack",
             pageIndex: 0,
           },
           pack: msgGame.created.value,
         },
       }
     }
+    default: {
+      return modelGame
+    }
+  }
+}
 
+const mainReducer: GameReducer = ({ modelGame, msgGame }) => {
+  switch (msgGame.t) {
     case "pack-builder.user-clicked-exit-button": {
       return {
         puzzleBuilder: modelGame.puzzleBuilder,
@@ -32,7 +40,7 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
       }
     }
 
-    case "pack-builder.user-clicked-puzzle-picker-item": {
+    case "pack-builder.user-clicked-add-puzzle-item": {
       if (!modelGame.packBuilder) {
         return modelGame
       }
@@ -41,43 +49,15 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
         packBuilder: {
           ...modelGame.packBuilder,
           pack: FlowPack.add(modelGame.packBuilder.pack, msgGame.puzzle.id),
-          opened: { t: "puzzle-grid", pageIndex: 0 },
-        },
-      }
-    }
-
-    case "pack-builder.user-clicked-open-puzzle-picker-button": {
-      if (!modelGame.packBuilder) {
-        return modelGame
-      }
-      return {
-        ...modelGame,
-        packBuilder: {
-          ...modelGame.packBuilder,
           opened: {
-            t: "puzzle-picker",
-          },
-        },
-      }
-    }
-
-    case "pack-builder.user-closed-puzzle-picker": {
-      if (!modelGame.packBuilder) {
-        return modelGame
-      }
-      return {
-        ...modelGame,
-        packBuilder: {
-          ...modelGame.packBuilder,
-          opened: {
-            t: "puzzle-grid",
+            t: "pack",
             pageIndex: 0,
           },
         },
       }
     }
 
-    case "pack-builder.user-clicked-puzzle-grid-item": {
+    case "pack-builder.user-clicked-open-add-puzzle-button": {
       if (!modelGame.packBuilder) {
         return modelGame
       }
@@ -86,8 +66,47 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
         packBuilder: {
           ...modelGame.packBuilder,
           opened: {
+            t: "add-puzzle",
+          },
+        },
+      }
+    }
+
+    case "pack-builder.user-closed-add-puzzle": {
+      if (!modelGame.packBuilder) {
+        return modelGame
+      }
+      return {
+        ...modelGame,
+        packBuilder: {
+          ...modelGame.packBuilder,
+          opened: {
+            t: "pack",
+            pageIndex: 0,
+          },
+        },
+      }
+    }
+
+    case "pack-builder.user-clicked-pack-item": {
+      if (!modelGame.packBuilder) {
+        return modelGame
+      }
+
+      return {
+        ...modelGame,
+        packBuilder: {
+          ...modelGame.packBuilder,
+          opened: {
             t: "puzzle",
-            index: msgGame.index,
+            puzzleIndex: msgGame.index,
+            puzzle: {
+              t: "grid",
+              flowGrid: msgGame.puzzle.puzzle.c,
+              flowGridUIPlay: FlowGridUIPlay.init({
+                grid: msgGame.puzzle.puzzle.c,
+              }),
+            },
           },
         },
       }
@@ -103,7 +122,7 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
         packBuilder: {
           ...modelGame.packBuilder,
           opened: {
-            t: "puzzle-grid",
+            t: "pack",
             pageIndex: 0,
           },
         },
@@ -114,6 +133,17 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
       return modelGame
     }
   }
+}
+
+const reducer: GameReducer = (input) => {
+  return [
+    userCreatedPack,
+    mainReducer,
+    //
+  ].reduce(
+    (modelGame, reducer) => reducer({ ...input, modelGame }),
+    input.modelGame,
+  )
 }
 
 export const PackBuilderGame = {

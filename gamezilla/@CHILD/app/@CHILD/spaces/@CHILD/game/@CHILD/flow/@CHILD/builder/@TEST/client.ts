@@ -1,14 +1,14 @@
+import { EventId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { ok } from "gamezilla/@SHARED/core"
+import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock"
 import { testSpaceClientCtx } from "../../../../../@SHARED/testing/client"
 import { FlowClientCtx } from "../../../@SHARED/flow-ctx"
 import { FlowPack } from "../../../@SHARED/flow-pack/flow-pack"
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle"
+import { samples } from "../../../@SHARED/flow/flow-grid/flow-grid-samples"
 import { BuilderClient } from "../builder.client"
 import { ModelClient, initClient, initGame } from "../builder.core"
-import { FlowGrid } from "../../../@SHARED/flow"
-import { ok } from "gamezilla/@SHARED/core"
-import { EventId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock"
 
 export const initial = {
   model: initClient,
@@ -62,7 +62,7 @@ export const clickedOpenPuzzlePickerButton = (model: ModelClient) => {
   return BuilderClient.update({
     model,
     msg: {
-      t: "pack-builder.user-clicked-open-puzzle-picker-button",
+      t: "pack-builder.user-clicked-open-add-puzzle-button",
       userId: ctx.currentUserId,
     },
     ctx,
@@ -73,7 +73,7 @@ export const clickedOpenPuzzlePickerButton = (model: ModelClient) => {
 export const closedPuzzlePickerDrawer = (model: ModelClient) => {
   return BuilderClient.update({
     model,
-    msg: { t: "pack-builder.user-closed-puzzle-picker" },
+    msg: { t: "pack-builder.user-closed-add-puzzle" },
     ctx,
     modelGame,
   })
@@ -84,7 +84,7 @@ export const clickedPuzzlePickerItem =
     return BuilderClient.update({
       model,
       msg: {
-        t: "pack-builder.user-clicked-puzzle-picker-item",
+        t: "pack-builder.user-clicked-add-puzzle-item",
         puzzle,
         userId: ctx.currentUserId,
       },
@@ -106,10 +106,10 @@ export const clickedExitPuzzleButton = () => (model: ModelClient) => {
 }
 
 export const clickedPuzzleGridItem =
-  (index: number) => (model: ModelClient) => {
+  (puzzle: FlowPuzzle, index: number) => (model: ModelClient) => {
     return BuilderClient.update({
       model,
-      msg: { t: "pack-builder.user-clicked-puzzle-grid-item", index },
+      msg: { t: "pack-builder.user-clicked-pack-item", puzzle, index },
       ctx,
       modelGame,
     })
@@ -134,7 +134,7 @@ export const createFlowPuzzle = (ctx: SpaceClientCtx) => {
     createdBy: ctx.currentUserId,
     puzzle: {
       t: "grid",
-      c: FlowGrid.init({ height: 5, width: 5 }),
+      c: samples["5x5"]["1"],
     },
   })
 }

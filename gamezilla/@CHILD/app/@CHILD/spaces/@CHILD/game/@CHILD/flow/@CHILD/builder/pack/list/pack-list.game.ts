@@ -9,7 +9,7 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
         packBuilder: {
           t: "pack-builder",
           pack: msgGame.pack,
-          opened: { t: "puzzle-grid", pageIndex: 0 },
+          opened: { t: "pack", pageIndex: 0 },
         },
       }
     }

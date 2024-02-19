@@ -8,7 +8,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { SpaceClientCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
-import { FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow"
+import { FlowGrid, FlowGridUIEdit, FlowGridUIPlay } from "../../@SHARED/flow"
 import { FlowClientCtx } from "../../@SHARED/flow-ctx"
 import { IFlowPackDb } from "../../@SHARED/flow-pack-db"
 import { FlowPack } from "../../@SHARED/flow-pack/flow-pack"
@@ -239,9 +239,17 @@ export type ModelGamePackBuilder = {
   t: "pack-builder"
   pack: FlowPack
   opened:
-    | { t: "puzzle-picker" }
-    | { t: "puzzle"; index: number }
-    | { t: "puzzle-grid"; pageIndex: number }
+    | { t: "add-puzzle" }
+    | {
+        t: "puzzle"
+        puzzleIndex: number
+        puzzle: {
+          t: "grid"
+          flowGrid: FlowGrid.Model
+          flowGridUIPlay: FlowGridUIPlay.Model
+        }
+      }
+    | { t: "pack"; pageIndex: number }
 }
 
 export type ModelGame = {

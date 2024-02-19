@@ -2,13 +2,14 @@ import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
 import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { FlowPackUI } from "../../../../@SHARED/flow-pack"
-import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
-import { ClientModule } from "../../builder.core"
 import {
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
 } from "../../../../../../@SHARED/game"
+import { FlowPackUI } from "../../../../@SHARED/flow-pack"
+import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
+import { ClientModule } from "../../builder.core"
+import { FlowGridUIPlay } from "../../../../@SHARED/flow"
 
 //
 //
@@ -70,7 +71,7 @@ const AddPuzzleButton: Pick<ClientModule, "update" | "View"> = {
     const { model, msg } = input
 
     switch (msg?.t) {
-      case "pack-builder.user-clicked-open-puzzle-picker-button": {
+      case "pack-builder.user-clicked-open-add-puzzle-button": {
         return { model, msgGame: [withId(msg)] }
       }
     }
@@ -82,7 +83,7 @@ const AddPuzzleButton: Pick<ClientModule, "update" | "View"> = {
       <FlowPackUI.ViewAddCell
         onClick={() =>
           input.dispatch({
-            t: "pack-builder.user-clicked-open-puzzle-picker-button",
+            t: "pack-builder.user-clicked-open-add-puzzle-button",
             userId: input.ctx.currentUserId,
           })
         }
@@ -103,11 +104,11 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
     const { model, msg } = input
 
     switch (msg?.t) {
-      case "pack-builder.user-clicked-puzzle-picker-item": {
+      case "pack-builder.user-clicked-add-puzzle-item": {
         return { model, msgGame: [withId(msg)] }
       }
 
-      case "pack-builder.user-closed-puzzle-picker": {
+      case "pack-builder.user-closed-add-puzzle": {
         return { model, msgGame: [withId(msg)] }
       }
     }
@@ -130,7 +131,7 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
             emits={{
               clickedPuzzleItem: (puzzle) =>
                 dispatch({
-                  t: "pack-builder.user-clicked-puzzle-picker-item",
+                  t: "pack-builder.user-clicked-add-puzzle-item",
                   puzzle,
                   userId: input.ctx.currentUserId,
                 }),
@@ -142,7 +143,7 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
             text="Close"
             className="w-full"
             onClick={() =>
-              dispatch({ t: "pack-builder.user-closed-puzzle-picker" })
+              dispatch({ t: "pack-builder.user-closed-add-puzzle" })
             }
           />
         </div>
@@ -163,7 +164,7 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
     const { model, msg } = input
 
     switch (msg?.t) {
-      case "pack-builder.user-clicked-puzzle-grid-item": {
+      case "pack-builder.user-clicked-pack-item": {
         return { model, msgGame: [withId(msg)] }
       }
     }
@@ -171,7 +172,7 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
     return { model }
   },
   View(input) {
-    const { modelGame } = input
+    const { modelGame, model } = input
 
     const packBuilder = modelGame.packBuilder
 
@@ -192,11 +193,18 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
                 const puzzleId = packBuilder.pack.puzzleIds[index]
 
                 if (puzzleId) {
+                  const puzzle = puzzleId ? model.puzzles[puzzleId] : null
+
+                  if (!puzzle) {
+                    return <FlowPackUI.ViewEmptyCell />
+                  }
+
                   return (
                     <FlowPackUI.ViewPuzzleCell
                       onClick={() =>
                         input.dispatch({
-                          t: "pack-builder.user-clicked-puzzle-grid-item",
+                          t: "pack-builder.user-clicked-pack-item",
+                          puzzle,
                           index,
                         })
                       }
@@ -245,18 +253,28 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
   },
 
   View(input) {
-    const { modelGame } = input
-
-    if (!modelGame.packBuilder) {
+    if (!input.modelGame.packBuilder) {
       return null
     }
 
-    if (modelGame.packBuilder.opened.t !== "puzzle") {
+    if (input.modelGame.packBuilder.opened.t !== "puzzle") {
       return null
     }
+
+    const { flowGridUIPlay, flowGrid } =
+      input.modelGame.packBuilder.opened.puzzle
 
     return (
-      <div>
+      <div className="flex h-full w-full flex-col ">
+        <div>
+          <FlowGridUIPlay.View
+            dispatch={() => {
+              // input.dispatch({ t: "flow-grid-ui-play", c })
+            }}
+            grid={flowGrid}
+            model={flowGridUIPlay}
+          />
+        </div>
         <ViewBottomButtonBar>
           <ViewBottomButtonBarAction
             icon={<IconArrowLeftOnRect />}
@@ -300,7 +318,7 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
       return null
     }
     switch (modelGame.packBuilder.opened.t) {
-      case "puzzle-picker": {
+      case "add-puzzle": {
         return <PuzzlePicker.View {...input} />
       }
 
@@ -308,7 +326,7 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
         return <Puzzle.View {...input} />
       }
 
-      case "puzzle-grid": {
+      case "pack": {
         return <PuzzleGrid.View {...input} />
       }
     }
