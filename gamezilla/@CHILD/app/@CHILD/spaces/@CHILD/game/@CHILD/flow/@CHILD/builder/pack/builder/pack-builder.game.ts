@@ -46,7 +46,7 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
       }
     }
 
-    case "pack-builder.user-clicked-add-puzzle-button": {
+    case "pack-builder.user-clicked-open-puzzle-picker-button": {
       if (!modelGame.packBuilder) {
         return modelGame
       }
@@ -72,6 +72,22 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
           opened: {
             t: "puzzle-grid",
             pageIndex: 0,
+          },
+        },
+      }
+    }
+
+    case "pack-builder.user-clicked-puzzle-grid-item": {
+      if (!modelGame.packBuilder) {
+        return modelGame
+      }
+      return {
+        ...modelGame,
+        packBuilder: {
+          ...modelGame.packBuilder,
+          opened: {
+            t: "puzzle",
+            index: msgGame.index,
           },
         },
       }

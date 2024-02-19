@@ -71,12 +71,12 @@ const AddPuzzleButton: Pick<ClientModule, "update" | "View"> = {
     const { model, msg, ctx } = input
 
     switch (msg?.t) {
-      case "pack-builder.user-clicked-add-puzzle-button": {
+      case "pack-builder.user-clicked-open-puzzle-picker-button": {
         return {
           model,
           msgGame: [
             withId({
-              t: "pack-builder.user-clicked-add-puzzle-button",
+              t: "pack-builder.user-clicked-open-puzzle-picker-button",
               userId: ctx.currentUserId,
             }),
           ],
@@ -91,7 +91,7 @@ const AddPuzzleButton: Pick<ClientModule, "update" | "View"> = {
       <FlowPackUI.ViewAddCell
         onClick={() =>
           input.dispatch({
-            t: "pack-builder.user-clicked-add-puzzle-button",
+            t: "pack-builder.user-clicked-open-puzzle-picker-button",
           })
         }
       />
@@ -182,6 +182,87 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
 //
 //
 
+const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
+  update(input) {
+    const { model, msg } = input
+
+    switch (msg?.t) {
+      case "pack-builder.user-clicked-puzzle-grid-item": {
+        return {
+          model,
+          msgGame: [
+            withId({
+              t: "pack-builder.user-clicked-puzzle-grid-item",
+              userId: input.ctx.currentUserId,
+              index: msg.index,
+            }),
+          ],
+        }
+      }
+    }
+
+    return { model }
+  },
+  View(input) {
+    const { modelGame } = input
+
+    const packBuilder = modelGame.packBuilder
+
+    if (!packBuilder) {
+      return null
+    }
+    return (
+      <div className="flex w-full flex-1 flex-col items-center justify-center">
+        <div className="flex w-full flex-1 flex-col">
+          <p className="w-full p-3 text-3xl font-bold">
+            {packBuilder.pack.name}
+          </p>
+          <div className="flex w-full flex-1 flex-col items-center justify-center">
+            <FlowPackUI.ViewPackPuzzleGrid
+              renderCell={(position) => {
+                const index = FlowPackUI.toIndex(position)
+
+                const puzzleId = packBuilder.pack.puzzleIds[index]
+
+                if (puzzleId) {
+                  return (
+                    <FlowPackUI.ViewPuzzleCell
+                      onClick={() =>
+                        input.dispatch({
+                          t: "pack-builder.user-clicked-puzzle-grid-item",
+                          index,
+                        })
+                      }
+                      index={index}
+                    />
+                  )
+                }
+
+                if (index === packBuilder.pack.puzzleIds.length) {
+                  return <AddPuzzleButton.View {...input} />
+                }
+
+                return <FlowPackUI.ViewEmptyCell />
+              }}
+            />
+          </div>
+        </div>
+
+        <div className="w-full border-t border-neutral-700 p-4">
+          <ExitButton.View {...input} />
+        </div>
+      </div>
+    )
+  },
+}
+
+//
+//
+//
+//
+//
+//
+
 export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
   update(input) {
     return GameClientModule.chainUpdates(
@@ -189,6 +270,7 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
       (model) => ExitButton.update({ ...input, model }),
       (model) => PuzzlePicker.update({ ...input, model }),
       (model) => AddPuzzleButton.update({ ...input, model }),
+      (model) => PuzzleGrid.update({ ...input, model }),
     )
   },
 
@@ -202,54 +284,14 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
       case "puzzle-picker": {
         return <PuzzlePicker.View {...input} />
       }
+
       case "puzzle": {
-        return null
+        return <div>puzzle</div>
       }
+
       case "puzzle-grid": {
-        return <ViewPuzzleGrid {...input} />
+        return <PuzzleGrid.View {...input} />
       }
     }
   },
-}
-
-const ViewPuzzleGrid: ClientModule["View"] = (input) => {
-  const { modelGame } = input
-
-  const packBuilder = modelGame.packBuilder
-
-  if (!packBuilder) {
-    return null
-  }
-  return (
-    <div className="flex w-full flex-1 flex-col items-center justify-center">
-      <div className="flex w-full flex-1 flex-col">
-        <p className="w-full p-3 text-3xl font-bold">{packBuilder.pack.name}</p>
-        <div className="flex w-full flex-1 flex-col items-center justify-center">
-          <FlowPackUI.ViewPackPuzzleGrid
-            renderCell={(position) => {
-              const index = FlowPackUI.toIndex(position)
-
-              const puzzleId = packBuilder.pack.puzzleIds[index]
-
-              if (puzzleId) {
-                return (
-                  <FlowPackUI.ViewPuzzleCell onClick={() => {}} index={index} />
-                )
-              }
-
-              if (index === packBuilder.pack.puzzleIds.length) {
-                return <AddPuzzleButton.View {...input} />
-              }
-
-              return <FlowPackUI.ViewEmptyCell />
-            }}
-          />
-        </div>
-      </div>
-
-      <div className="w-full border-t border-neutral-700 p-4">
-        <ExitButton.View {...input} />
-      </div>
-    </div>
-  )
 }

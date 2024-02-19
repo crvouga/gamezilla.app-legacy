@@ -3,7 +3,8 @@ import { chainUpdates } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/archite
 import { testSpaceClientCtx } from "../../../../../../@SHARED/testing/client"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import {
-  clickedAddPuzzleButton,
+  clickedOpenPuzzlePickerButton,
+  clickedPuzzleGridItem,
   clickedPuzzlePickerItem,
   closedPuzzlePickerDrawer,
   createFlowPack,
@@ -14,11 +15,28 @@ import {
 import { deriveModelGame } from "../../@TEST/game"
 
 describe("pack builder client", () => {
+  it("should open puzzle when user clickes puzzle grid item", async () => {
+    const puzzle = createFlowPuzzle(testSpaceClientCtx)
+
+    const output = await chainUpdates(
+      initial,
+      serverCreatedPack(createFlowPack(testSpaceClientCtx)),
+      clickedOpenPuzzlePickerButton,
+      clickedPuzzlePickerItem(puzzle),
+      clickedPuzzleGridItem(0),
+    )
+    const modelGame = deriveModelGame(output)
+    expect(
+      modelGame.packBuilder?.opened.t === "puzzle" &&
+        modelGame.packBuilder.opened.index === 0,
+    ).toBeTrue()
+  })
+
   it("should open puzzle picker when user clicks add puzzle button", async () => {
     const output = await chainUpdates(
       initial,
       serverCreatedPack(createFlowPack(testSpaceClientCtx)),
-      clickedAddPuzzleButton,
+      clickedOpenPuzzlePickerButton,
     )
     const modelGame = deriveModelGame(output)
     expect(modelGame.packBuilder?.opened.t === "puzzle-picker").toBeTrue()
@@ -28,7 +46,7 @@ describe("pack builder client", () => {
     const output = await chainUpdates(
       initial,
       serverCreatedPack(createFlowPack(testSpaceClientCtx)),
-      clickedAddPuzzleButton,
+      clickedOpenPuzzlePickerButton,
       closedPuzzlePickerDrawer,
     )
     const modelGame = deriveModelGame(output)
@@ -54,7 +72,7 @@ describe("pack builder client", () => {
     const output = await chainUpdates(
       initial,
       serverCreatedPack(createFlowPack(testSpaceClientCtx)),
-      clickedAddPuzzleButton,
+      clickedOpenPuzzlePickerButton,
       clickedPuzzlePickerItem(puzzle),
     )
     const modelGame = deriveModelGame(output)
