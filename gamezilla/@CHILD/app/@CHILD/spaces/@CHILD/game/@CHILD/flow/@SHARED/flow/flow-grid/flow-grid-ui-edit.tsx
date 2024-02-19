@@ -125,12 +125,12 @@ export type Msg =
   | { t: "clicked-undo" }
   | { t: "clicked-redo" }
   //
-  | { t: "dimensions-form/clicked-open" }
-  | { t: "dimensions-form/closed" }
-  | { t: "dimensions-form/clicked-cancel" }
-  | { t: "dimensions-form/clicked-save" }
-  | { t: "dimensions-form/inputted-width"; width: number }
-  | { t: "dimensions-form/inputted-height"; height: number }
+  | { t: "dimensions-form.clicked-open" }
+  | { t: "dimensions-form.closed" }
+  | { t: "dimensions-form.clicked-cancel" }
+  | { t: "dimensions-form.clicked-save" }
+  | { t: "dimensions-form.inputted-width"; width: number }
+  | { t: "dimensions-form.inputted-height"; height: number }
 
 export type Cmd = {
   t: "play-sound"
@@ -221,15 +221,15 @@ export const update = ({
       }
     }
 
-    case "dimensions-form/inputted-height": {
+    case "dimensions-form.inputted-height": {
       return { model: { ...model, heightInput: msg.height } }
     }
 
-    case "dimensions-form/inputted-width": {
+    case "dimensions-form.inputted-width": {
       return { model: { ...model, widthInput: msg.width } }
     }
 
-    case "dimensions-form/clicked-save": {
+    case "dimensions-form.clicked-save": {
       const present = History.present(model.form)
 
       const gridNew = FlowGrid.init({
@@ -261,17 +261,17 @@ export const update = ({
       }
     }
 
-    case "dimensions-form/clicked-open": {
+    case "dimensions-form.clicked-open": {
       return {
         model: resetDimensionsForm({ ...model, opened: "dimensions" }),
       }
     }
 
-    case "dimensions-form/closed": {
+    case "dimensions-form.closed": {
       return { model: resetDimensionsForm({ ...model, opened: null }) }
     }
 
-    case "dimensions-form/clicked-cancel": {
+    case "dimensions-form.clicked-cancel": {
       return { model: resetDimensionsForm({ ...model, opened: null }) }
     }
   }
@@ -501,18 +501,18 @@ export const View = ({
           <ActionButton
             icon={<IconExpand className="h-6 w-6" />}
             label="Dimensions"
-            onClick={() => dispatch({ t: "dimensions-form/clicked-open" })}
+            onClick={() => dispatch({ t: "dimensions-form.clicked-open" })}
           />
         </div>
       </div>
       <Drawer
         open={model.opened === "dimensions"}
-        onClose={() => dispatch({ t: "dimensions-form/closed" })}
+        onClose={() => dispatch({ t: "dimensions-form.closed" })}
         id="dimensions"
         position="bottom"
       >
         <DrawerHeader
-          onClose={() => dispatch({ t: "dimensions-form/closed" })}
+          onClose={() => dispatch({ t: "dimensions-form.closed" })}
         />
 
         <div className="flex items-center justify-center gap-1 text-center text-5xl font-bold">
@@ -527,7 +527,7 @@ export const View = ({
           <Slider
             onInput={(width) =>
               dispatch({
-                t: "dimensions-form/inputted-width",
+                t: "dimensions-form.inputted-width",
                 width,
               })
             }
@@ -540,7 +540,7 @@ export const View = ({
           <Slider
             onInput={(height) =>
               dispatch({
-                t: "dimensions-form/inputted-height",
+                t: "dimensions-form.inputted-height",
                 height,
               })
             }
@@ -555,7 +555,7 @@ export const View = ({
           <Button
             text="Cancel"
             className="flex-1"
-            onClick={() => dispatch({ t: "dimensions-form/clicked-cancel" })}
+            onClick={() => dispatch({ t: "dimensions-form.clicked-cancel" })}
           />
           <Button
             text="Save"
@@ -563,7 +563,7 @@ export const View = ({
             variant="contained"
             color="primary"
             disabled={!canSubmitDimensionsForm(model)}
-            onClick={() => dispatch({ t: "dimensions-form/clicked-save" })}
+            onClick={() => dispatch({ t: "dimensions-form.clicked-save" })}
           />
         </div>
       </Drawer>
