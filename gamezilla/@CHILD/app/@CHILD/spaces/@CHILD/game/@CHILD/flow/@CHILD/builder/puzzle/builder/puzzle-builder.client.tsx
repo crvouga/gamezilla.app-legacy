@@ -48,17 +48,25 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 
   switch (msg?.t) {
     case "puzzle-builder.flow-grid-ui-edit": {
-      return { model, msgGame: [withId({ t: "grid-ui-edit", c: msg.c })] }
+      return {
+        model,
+        msgGame: [withId({ t: "puzzle-builder.grid-ui-edit", c: msg.c })],
+      }
     }
+
     case "puzzle-builder.flow-grid-ui-play": {
-      return { model, msgGame: [withId({ t: "grid-ui-play", c: msg.c })] }
+      return {
+        model,
+        msgGame: [withId({ t: "puzzle-builder.grid-ui-play", c: msg.c })],
+      }
     }
+
     case "puzzle-builder.user-clicked-edit-mode-button": {
       return {
         model,
         msgGame: [
           withId({
-            t: "user-changed-to-edit-mode",
+            t: "puzzle-builder.user-clicked-edit-mode-button",
             userId: ctx.currentUserId,
           }),
         ],
@@ -70,7 +78,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
         model,
         msgGame: [
           withId({
-            t: "user-changed-to-play-mode",
+            t: "puzzle-builder.user-clicked-play-mode-button",
             userId: ctx.currentUserId,
           }),
         ],
@@ -99,7 +107,7 @@ const updateFromMsgGame: ClientModule["update"] = (input) => {
   const { model, modelGame, msgGame } = input
 
   switch (msgGame?.t) {
-    case "grid-ui-edit": {
+    case "puzzle-builder.grid-ui-edit": {
       if (!modelGame.puzzleBuilder) {
         return { model }
       }

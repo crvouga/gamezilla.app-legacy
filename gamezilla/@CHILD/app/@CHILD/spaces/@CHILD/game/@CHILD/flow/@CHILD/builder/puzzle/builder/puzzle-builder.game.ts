@@ -12,7 +12,7 @@ const reducer = ({
   modelGame: ModelGame
 }): ModelGame => {
   switch (msgGame.t) {
-    case "grid-ui-play": {
+    case "puzzle-builder.grid-ui-play": {
       if (!modelGame.puzzleBuilder) {
         return modelGame
       }
@@ -36,7 +36,7 @@ const reducer = ({
       }
     }
 
-    case "grid-ui-edit": {
+    case "puzzle-builder.grid-ui-edit": {
       if (!modelGame.puzzleBuilder) {
         return modelGame
       }
@@ -56,7 +56,7 @@ const reducer = ({
       }
     }
 
-    case "user-changed-to-edit-mode": {
+    case "puzzle-builder.user-clicked-edit-mode-button": {
       if (!modelGame.puzzleBuilder) {
         return modelGame
       }
@@ -74,7 +74,7 @@ const reducer = ({
       }
     }
 
-    case "user-changed-to-play-mode": {
+    case "puzzle-builder.user-clicked-play-mode-button": {
       if (!modelGame.puzzleBuilder) {
         return modelGame
       }
@@ -93,7 +93,7 @@ const reducer = ({
       }
     }
 
-    case "user-exited-editor": {
+    case "puzzle-builder.user-clicked-exit-button": {
       if (msgGame.userId !== ctx.space.hostId) {
         return modelGame
       }

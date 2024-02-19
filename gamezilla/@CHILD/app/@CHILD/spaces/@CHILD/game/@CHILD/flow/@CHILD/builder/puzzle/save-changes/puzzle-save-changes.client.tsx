@@ -174,7 +174,7 @@ const exitBuilderWithSound: ClientModule["update"] = (input) => {
 
 const exitBuilder: ClientModule["update"] = (input) => {
   const msgGame: MsgGame = {
-    t: "user-exited-editor",
+    t: "puzzle-builder.user-clicked-exit-button",
     userId: input.ctx.currentUserId,
   }
 

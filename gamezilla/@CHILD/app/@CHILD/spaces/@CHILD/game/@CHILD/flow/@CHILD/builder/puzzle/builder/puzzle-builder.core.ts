@@ -24,22 +24,22 @@ export type MsgToServer = { t: "noop" }
 
 export type MsgGame =
   | {
-      t: "grid-ui-play"
+      t: "puzzle-builder.grid-ui-play"
       c: FlowGridUIPlay.Msg
     }
   | {
-      t: "grid-ui-edit"
+      t: "puzzle-builder.grid-ui-edit"
       c: FlowGridUIEdit.Msg
     }
   | {
-      t: "user-changed-to-edit-mode"
+      t: "puzzle-builder.user-clicked-edit-mode-button"
       userId: UserId
     }
   | {
-      t: "user-changed-to-play-mode"
+      t: "puzzle-builder.user-clicked-play-mode-button"
       userId: UserId
     }
   | {
-      t: "user-exited-editor"
+      t: "puzzle-builder.user-clicked-exit-button"
       userId: UserId
     }

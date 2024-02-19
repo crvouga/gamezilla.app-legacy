@@ -174,8 +174,52 @@ const userClickedExitPuzzleButton: GameReducer = ({ modelGame, msgGame }) => {
   }
 }
 
+const flowGridUIPlay: GameReducer = ({ modelGame, msgGame }) => {
+  switch (msgGame.t) {
+    case "pack-builder.flow-play-grid-ui": {
+      if (!modelGame.packBuilder) {
+        return modelGame
+      }
+
+      if (modelGame.packBuilder.opened.t !== "puzzle") {
+        return modelGame
+      }
+
+      const openedPuzzle = modelGame.packBuilder.opened.puzzle
+
+      const updated = FlowGridUIPlay.update({
+        grid: openedPuzzle.flowGrid,
+        model: openedPuzzle.flowGridUIPlay,
+        msg: msgGame.c,
+      })
+
+      console.log("updated", updated)
+
+      return {
+        ...modelGame,
+        packBuilder: {
+          ...modelGame.packBuilder,
+          opened: {
+            t: "puzzle",
+            puzzleIndex: modelGame.packBuilder.opened.puzzleIndex,
+            puzzle: {
+              t: "grid",
+              flowGrid: openedPuzzle.flowGrid,
+              flowGridUIPlay: updated,
+            },
+          },
+        },
+      }
+    }
+    default: {
+      return modelGame
+    }
+  }
+}
+
 const reducer: GameReducer = (input) => {
   return [
+    flowGridUIPlay,
     userClosedAddPuzzle,
     userClickedOpenAddPuzzleButton,
     useClickedAddPuzzleItem,

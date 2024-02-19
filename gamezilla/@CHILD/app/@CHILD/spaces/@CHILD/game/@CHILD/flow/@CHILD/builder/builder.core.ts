@@ -239,7 +239,13 @@ export type ModelGamePackBuilder = {
   t: "pack-builder"
   pack: FlowPack
   opened:
-    | { t: "add-puzzle" }
+    | {
+        t: "add-puzzle"
+      }
+    | {
+        t: "pack"
+        pageIndex: number
+      }
     | {
         t: "puzzle"
         puzzleIndex: number
@@ -249,7 +255,6 @@ export type ModelGamePackBuilder = {
           flowGridUIPlay: FlowGridUIPlay.Model
         }
       }
-    | { t: "pack"; pageIndex: number }
 }
 
 export type ModelGame = {

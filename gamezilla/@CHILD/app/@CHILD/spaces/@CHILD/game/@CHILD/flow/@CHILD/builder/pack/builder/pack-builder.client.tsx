@@ -247,6 +247,10 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
       case "pack-builder.user-clicked-exit-puzzle-button": {
         return { model, msgGame: [withId(msg)] }
       }
+
+      case "pack-builder.flow-play-grid-ui": {
+        return { model, msgGame: [withId(msg)] }
+      }
     }
 
     return { model }
@@ -268,9 +272,9 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
       <div className="flex h-full w-full flex-col ">
         <div>
           <FlowGridUIPlay.View
-            dispatch={() => {
-              // input.dispatch({ t: "flow-grid-ui-play", c })
-            }}
+            dispatch={(c) =>
+              input.dispatch({ t: "pack-builder.flow-play-grid-ui", c })
+            }
             grid={flowGrid}
             model={flowGridUIPlay}
           />
