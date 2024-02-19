@@ -50,7 +50,10 @@ const ExitButton: Pick<ClientModule, "update" | "View"> = {
         className="w-full"
         text="Exit"
         onClick={() =>
-          input.dispatch({ t: "pack-builder.user-clicked-exit-button" })
+          input.dispatch({
+            t: "pack-builder.user-clicked-exit-button",
+            userId: input.ctx.currentUserId,
+          })
         }
       />
     )
@@ -92,6 +95,7 @@ const AddPuzzleButton: Pick<ClientModule, "update" | "View"> = {
         onClick={() =>
           input.dispatch({
             t: "pack-builder.user-clicked-open-puzzle-picker-button",
+            userId: input.ctx.currentUserId,
           })
         }
       />
@@ -157,6 +161,7 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
                 dispatch({
                   t: "pack-builder.user-clicked-puzzle-picker-item",
                   puzzle,
+                  userId: input.ctx.currentUserId,
                 }),
             }}
           />
@@ -253,6 +258,42 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
         </div>
       </div>
     )
+  },
+}
+
+//
+//
+//
+//
+//
+//
+//
+
+export const Puzzle: Pick<ClientModule, "update" | "View"> = {
+  update(input) {
+    const { model } = input
+    return { model }
+  },
+
+  View(input) {
+    const { modelGame } = input
+
+    if (!modelGame.packBuilder) {
+      return null
+    }
+    switch (modelGame.packBuilder.opened.t) {
+      case "puzzle-picker": {
+        return <PuzzlePicker.View {...input} />
+      }
+
+      case "puzzle": {
+        return <div>puzzle</div>
+      }
+
+      case "puzzle-grid": {
+        return <PuzzleGrid.View {...input} />
+      }
+    }
   },
 }
 
