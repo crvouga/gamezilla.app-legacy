@@ -193,8 +193,6 @@ const flowGridUIPlay: GameReducer = ({ modelGame, msgGame }) => {
         msg: msgGame.c,
       })
 
-      console.log("updated", updated)
-
       return {
         ...modelGame,
         packBuilder: {
