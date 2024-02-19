@@ -15,17 +15,24 @@ import { deriveModelGame } from "../../@TEST/game"
 
 describe("pack builder client", () => {
   it("should open puzzle picker when user clicks add puzzle button", async () => {
-    const output = await chainUpdates(initial, clickedAddPuzzleButton)
-    expect(output.model.packBuilderOpen === "puzzle-picker").toBeTrue()
+    const output = await chainUpdates(
+      initial,
+      serverCreatedPack(createFlowPack(testSpaceClientCtx)),
+      clickedAddPuzzleButton,
+    )
+    const modelGame = deriveModelGame(output)
+    expect(modelGame.packBuilder?.opened.t === "puzzle-picker").toBeTrue()
   })
 
   it("should close puzzle picker when user clicks closes", async () => {
     const output = await chainUpdates(
       initial,
+      serverCreatedPack(createFlowPack(testSpaceClientCtx)),
       clickedAddPuzzleButton,
       closedPuzzlePickerDrawer,
     )
-    expect(output.model.packBuilderOpen === null).toBeTrue()
+    const modelGame = deriveModelGame(output)
+    expect(modelGame.packBuilder?.opened.t === "puzzle-grid").toBeTrue()
   })
 
   it("should add puzzle to the pack after clicking a puzzle in the picker", async () => {
@@ -37,8 +44,8 @@ describe("pack builder client", () => {
     )
     const modelGame = deriveModelGame(output)
     expect(
-      modelGame.t === "pack-builder" &&
-        FlowPack.includes(modelGame.pack, puzzle.id),
+      modelGame.packBuilder &&
+        FlowPack.includes(modelGame.packBuilder.pack, puzzle.id),
     ).toBeTrue()
   })
 
@@ -46,9 +53,11 @@ describe("pack builder client", () => {
     const puzzle = createFlowPuzzle(testSpaceClientCtx)
     const output = await chainUpdates(
       initial,
+      serverCreatedPack(createFlowPack(testSpaceClientCtx)),
       clickedAddPuzzleButton,
       clickedPuzzlePickerItem(puzzle),
     )
-    expect(output.model.packBuilderOpen === null).toBeTrue()
+    const modelGame = deriveModelGame(output)
+    expect(modelGame.packBuilder?.opened.t === "puzzle-grid").toBeTrue()
   })
 })

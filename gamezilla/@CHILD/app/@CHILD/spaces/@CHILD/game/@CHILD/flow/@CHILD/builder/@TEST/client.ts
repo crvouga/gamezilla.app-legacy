@@ -61,7 +61,7 @@ export const clickedPackItem = (pack: FlowPack) => (model: ModelClient) => {
 export const clickedAddPuzzleButton = (model: ModelClient) => {
   return BuilderClient.update({
     model,
-    msg: { t: "pack-builder.clicked-add-puzzle-button" },
+    msg: { t: "pack-builder.user-clicked-add-puzzle-button" },
     ctx,
     modelGame,
   })
@@ -70,7 +70,7 @@ export const clickedAddPuzzleButton = (model: ModelClient) => {
 export const closedPuzzlePickerDrawer = (model: ModelClient) => {
   return BuilderClient.update({
     model,
-    msg: { t: "pack-builder.closed-puzzle-picker-drawer" },
+    msg: { t: "pack-builder.user-closed-puzzle-picker" },
     ctx,
     modelGame,
   })
@@ -80,7 +80,7 @@ export const clickedPuzzlePickerItem =
   (puzzle: FlowPuzzle) => (model: ModelClient) => {
     return BuilderClient.update({
       model,
-      msg: { t: "pack-builder.clicked-puzzle-picker-item", puzzle },
+      msg: { t: "pack-builder.user-clicked-puzzle-picker-item", puzzle },
       ctx,
       modelGame,
     })

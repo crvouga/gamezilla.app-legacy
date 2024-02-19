@@ -36,7 +36,8 @@ describe("puzzle list client", () => {
     const modelGame = deriveModelGame(output)
 
     expect(
-      modelGame.t === "puzzle-builder" && modelGame.puzzle.id === puzzle.id,
+      modelGame.opened.t === "puzzle-builder" &&
+        modelGame.puzzleBuilder?.puzzle.id === puzzle.id,
     ).toBeTrue()
   })
 })

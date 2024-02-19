@@ -4,7 +4,9 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
   switch (msgGame.t) {
     case "user-deleted-puzzle": {
       return {
-        t: "list",
+        ...modelGame,
+        puzzleBuilder: null,
+        opened: { t: "list" },
         listTab: "puzzles",
       }
     }

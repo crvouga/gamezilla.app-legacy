@@ -11,12 +11,14 @@ const reducer = ({
   msgGame: MsgGame
   modelGame: ModelGame
 }): ModelGame => {
-  if (modelGame.t !== "puzzle-builder") {
-    return modelGame
-  }
   switch (msgGame.t) {
     case "user-edited-puzzle-name": {
-      if (msgGame.flowPuzzleId !== modelGame.puzzle.id) {
+      const puzzleBuilder = modelGame.puzzleBuilder
+      if (!puzzleBuilder) {
+        return modelGame
+      }
+
+      if (msgGame.flowPuzzleId !== puzzleBuilder.puzzle.id) {
         return modelGame
       }
       if (msgGame.edited.t === "err") {
@@ -26,12 +28,15 @@ const reducer = ({
         return modelGame
       }
       const puzzleNew: FlowPuzzle = {
-        ...modelGame.puzzle,
+        ...puzzleBuilder.puzzle,
         name: msgGame.newName,
       }
       return {
         ...modelGame,
-        puzzle: puzzleNew,
+        puzzleBuilder: {
+          ...puzzleBuilder,
+          puzzle: puzzleNew,
+        },
       }
     }
 

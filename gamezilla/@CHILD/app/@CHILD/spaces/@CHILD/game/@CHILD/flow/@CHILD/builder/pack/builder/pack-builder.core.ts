@@ -25,13 +25,13 @@ export type MsgClient =
       t: "pack-builder.user-clicked-exit-button"
     }
   | {
-      t: "pack-builder.clicked-add-puzzle-button"
+      t: "pack-builder.user-clicked-add-puzzle-button"
     }
   | {
-      t: "pack-builder.closed-puzzle-picker-drawer"
+      t: "pack-builder.user-closed-puzzle-picker"
     }
   | {
-      t: "pack-builder.clicked-puzzle-picker-item"
+      t: "pack-builder.user-clicked-puzzle-picker-item"
       puzzle: FlowPuzzle
     }
 
@@ -53,10 +53,18 @@ export type MsgGame =
       userId: UserId
     }
   | {
-      t: "pack-builder.user-clicked-puzzle-picker-item"
-      puzzle: FlowPuzzle
-    }
-  | {
       t: "pack-builder.saved-pack"
       saved: Result<string, FlowPack>
+    }
+  | {
+      t: "pack-builder.user-clicked-add-puzzle-button"
+      userId: UserId
+    }
+  | {
+      t: "pack-builder.user-closed-puzzle-picker"
+    }
+  | {
+      t: "pack-builder.user-clicked-puzzle-picker-item"
+      puzzle: FlowPuzzle
+      userId: UserId
     }

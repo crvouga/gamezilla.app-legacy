@@ -238,23 +238,27 @@ export type ModelGamePuzzleBuilder = {
 export type ModelGamePackBuilder = {
   t: "pack-builder"
   pack: FlowPack
+  opened:
+    | { t: "puzzle-picker" }
+    | { t: "puzzle"; index: number }
+    | { t: "puzzle-grid"; pageIndex: number }
 }
 
-export type ModelGameList = {
-  t: "list"
-}
-
-export type ModelGameBase = {
+export type ModelGame = {
+  opened: { t: "list" } | { t: "puzzle-builder" } | { t: "pack-builder" }
   listTab: ListTab
+  //
+  packBuilder: ModelGamePackBuilder | null
+  //
+  puzzleBuilder: ModelGamePuzzleBuilder | null
 }
-
-export type ModelGame = ModelGameBase &
-  (ModelGameList | ModelGamePuzzleBuilder | ModelGamePackBuilder)
 
 export const initGame = (_input: { ctx: SpaceCtx }): ModelGame => {
   return {
-    t: "list",
+    opened: { t: "list" },
     listTab: "puzzles",
+    packBuilder: null,
+    puzzleBuilder: null,
   }
 }
 

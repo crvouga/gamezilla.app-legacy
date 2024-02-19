@@ -18,8 +18,6 @@ describe("pack list client", () => {
 
     const modelGame = deriveModelGame(output)
 
-    expect(
-      modelGame.t === "pack-builder" && modelGame.pack.id === pack.id,
-    ).toBeTrue()
+    expect(modelGame.packBuilder?.pack.id === pack.id).toBeTrue()
   })
 })

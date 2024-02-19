@@ -8,32 +8,72 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
       if (isErr(msgGame.created)) {
         return modelGame
       }
+
       return {
-        t: "pack-builder",
-        listTab: "packs",
-        pack: msgGame.created.value,
+        ...modelGame,
+        opened: { t: "pack-builder" },
+        packBuilder: {
+          t: "pack-builder",
+          opened: {
+            t: "puzzle-grid",
+            pageIndex: 0,
+          },
+          pack: msgGame.created.value,
+        },
       }
     }
 
     case "pack-builder.user-clicked-exit-button": {
       return {
-        t: "list",
+        puzzleBuilder: modelGame.puzzleBuilder,
+        packBuilder: modelGame.packBuilder,
+        opened: { t: "list" },
         listTab: "packs",
       }
     }
 
     case "pack-builder.user-clicked-puzzle-picker-item": {
-      switch (modelGame.t) {
-        case "pack-builder": {
-          return {
-            ...modelGame,
-            pack: FlowPack.add(modelGame.pack, msgGame.puzzle.id),
-          }
-        }
+      if (!modelGame.packBuilder) {
+        return modelGame
+      }
+      return {
+        ...modelGame,
+        packBuilder: {
+          ...modelGame.packBuilder,
+          pack: FlowPack.add(modelGame.packBuilder.pack, msgGame.puzzle.id),
+          opened: { t: "puzzle-grid", pageIndex: 0 },
+        },
+      }
+    }
 
-        default: {
-          return modelGame
-        }
+    case "pack-builder.user-clicked-add-puzzle-button": {
+      if (!modelGame.packBuilder) {
+        return modelGame
+      }
+      return {
+        ...modelGame,
+        packBuilder: {
+          ...modelGame.packBuilder,
+          opened: {
+            t: "puzzle-picker",
+          },
+        },
+      }
+    }
+
+    case "pack-builder.user-closed-puzzle-picker": {
+      if (!modelGame.packBuilder) {
+        return modelGame
+      }
+      return {
+        ...modelGame,
+        packBuilder: {
+          ...modelGame.packBuilder,
+          opened: {
+            t: "puzzle-grid",
+            pageIndex: 0,
+          },
+        },
       }
     }
 

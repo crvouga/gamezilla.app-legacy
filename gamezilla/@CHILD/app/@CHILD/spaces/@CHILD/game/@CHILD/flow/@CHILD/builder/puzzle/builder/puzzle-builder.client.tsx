@@ -100,16 +100,16 @@ const updateFromMsgGame: ClientModule["update"] = (input) => {
 
   switch (msgGame?.t) {
     case "grid-ui-edit": {
-      if (modelGame.t !== "puzzle-builder") {
+      if (!modelGame.puzzleBuilder) {
         return { model }
       }
-      if (modelGame.mode.t !== "edit") {
+      if (modelGame.puzzleBuilder.mode.t !== "edit") {
         return { model }
       }
       const updated = FlowGridUIEdit.update({
-        model: modelGame.gridEdit,
+        model: modelGame.puzzleBuilder.gridEdit,
         msg: msgGame.c,
-        grid: modelGame.puzzle.puzzle.c,
+        grid: modelGame.puzzleBuilder.puzzle.puzzle.c,
       })
 
       if (!updated.msgCmd) {
@@ -141,9 +141,7 @@ const updateFromMsgGame: ClientModule["update"] = (input) => {
 //
 
 const View: ClientModule["View"] = (input) => {
-  const { modelGame, ctx } = input
-
-  if (modelGame.t !== "puzzle-builder") return null
+  const { ctx } = input
 
   const isSpectating = ctx.currentUserId !== ctx.space.hostId
 
@@ -163,7 +161,9 @@ const View: ClientModule["View"] = (input) => {
 const ViewMode: ClientModule["View"] = (input) => {
   const { model, modelGame, dispatch } = input
 
-  if (modelGame.t !== "puzzle-builder") {
+  const puzzleBuilder = modelGame.puzzleBuilder
+
+  if (!puzzleBuilder) {
     return null
   }
 
@@ -175,7 +175,7 @@ const ViewMode: ClientModule["View"] = (input) => {
     />
   )
 
-  switch (modelGame.mode.t) {
+  switch (puzzleBuilder.mode.t) {
     case "edit": {
       return (
         <div className="flex h-full w-full flex-col items-center justify-center">
@@ -187,7 +187,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
             <FlowGridUIEdit.View
-              model={modelGame.gridEdit}
+              model={puzzleBuilder.gridEdit}
               dispatch={(c) =>
                 dispatch({
                   t: "puzzle-builder.flow-grid-ui-edit",
@@ -232,8 +232,8 @@ const ViewMode: ClientModule["View"] = (input) => {
 
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
             <FlowGridUIPlay.View
-              model={modelGame.gridPlay}
-              grid={toCurrentGrid(modelGame)}
+              model={puzzleBuilder.gridPlay}
+              grid={toCurrentGrid(puzzleBuilder)}
               dispatch={(c) =>
                 dispatch({
                   t: "puzzle-builder.flow-grid-ui-play",
@@ -291,7 +291,7 @@ export const toCurrentGrid = (
 }
 
 const ViewSpectating: ClientModule["View"] = ({ modelGame, ctx }) => {
-  if (modelGame.t !== "puzzle-builder") {
+  if (!modelGame.puzzleBuilder) {
     return null
   }
 
@@ -302,7 +302,10 @@ const ViewSpectating: ClientModule["View"] = ({ modelGame, ctx }) => {
           profile={ctx.profiles[ctx.space.hostId]}
           subtitle="Editor"
         />
-        <FlowGridUI.View disabled model={toCurrentGrid(modelGame)} />
+        <FlowGridUI.View
+          disabled
+          model={toCurrentGrid(modelGame.puzzleBuilder)}
+        />
       </div>
     </GameLayout>
   )

@@ -11,59 +11,85 @@ const reducer = ({
   msgGame: MsgGame
   modelGame: ModelGame
 }): ModelGame => {
-  if (modelGame.t !== "puzzle-builder") {
-    return modelGame
-  }
-
   switch (msgGame.t) {
     case "grid-ui-play": {
+      if (!modelGame.puzzleBuilder) {
+        return modelGame
+      }
+
       const currentGrid = FlowGridUIEdit.toCurrentGrid({
-        model: modelGame.gridEdit,
+        model: modelGame.puzzleBuilder.gridEdit,
       })
 
       const updated = FlowGridUIPlay.update({
-        model: modelGame.gridPlay,
+        model: modelGame.puzzleBuilder.gridPlay,
         msg: msgGame.c,
         grid: currentGrid,
       })
 
       return {
         ...modelGame,
-        gridPlay: updated,
+        puzzleBuilder: {
+          ...modelGame.puzzleBuilder,
+          gridPlay: updated,
+        },
       }
     }
 
     case "grid-ui-edit": {
+      if (!modelGame.puzzleBuilder) {
+        return modelGame
+      }
+
       const updated = FlowGridUIEdit.update({
-        model: modelGame.gridEdit,
+        model: modelGame.puzzleBuilder.gridEdit,
         msg: msgGame.c,
-        grid: modelGame.puzzle.puzzle.c,
+        grid: modelGame.puzzleBuilder.puzzle.puzzle.c,
       })
 
       return {
         ...modelGame,
-        gridEdit: updated.model,
+        puzzleBuilder: {
+          ...modelGame.puzzleBuilder,
+          gridEdit: updated.model,
+        },
       }
     }
 
     case "user-changed-to-edit-mode": {
+      if (!modelGame.puzzleBuilder) {
+        return modelGame
+      }
+
       if (msgGame.userId !== ctx.space.hostId) {
         return modelGame
       }
 
-      return { ...modelGame, mode: { t: "edit" } }
+      return {
+        ...modelGame,
+        puzzleBuilder: {
+          ...modelGame.puzzleBuilder,
+          mode: { t: "edit" },
+        },
+      }
     }
 
     case "user-changed-to-play-mode": {
+      if (!modelGame.puzzleBuilder) {
+        return modelGame
+      }
       const initial = FlowGridUIPlay.init({
         grid: FlowGridUIEdit.toCurrentGrid({
-          model: modelGame.gridEdit,
+          model: modelGame.puzzleBuilder.gridEdit,
         }),
       })
       return {
         ...modelGame,
-        gridPlay: initial,
-        mode: { t: "play" },
+        puzzleBuilder: {
+          ...modelGame.puzzleBuilder,
+          mode: { t: "play" },
+          gridPlay: initial,
+        },
       }
     }
 
@@ -72,7 +98,7 @@ const reducer = ({
         return modelGame
       }
 
-      return { ...modelGame, t: "list" }
+      return { ...modelGame, opened: { t: "list" }, listTab: "puzzles" }
     }
 
     default: {

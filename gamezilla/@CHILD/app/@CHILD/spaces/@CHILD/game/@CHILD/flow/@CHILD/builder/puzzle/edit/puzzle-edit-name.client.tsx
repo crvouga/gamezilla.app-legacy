@@ -55,7 +55,9 @@ const View: ClientModule["View"] = (input) => {
 const updateFormButtons: ClientModule["update"] = (input) => {
   const { modelGame, msgGame, msg, model } = input
 
-  if (modelGame.t !== "puzzle-builder") {
+  const puzzleBuilder = modelGame.puzzleBuilder
+
+  if (!puzzleBuilder) {
     return { model }
   }
 
@@ -94,7 +96,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
           sendToServer({
             t: "puzzle.edit-name.user-clicked-save-button",
             newName,
-            flowPuzzleId: modelGame.puzzle.id,
+            flowPuzzleId: puzzleBuilder.puzzle.id,
           }),
         ],
       }
@@ -161,8 +163,8 @@ const ViewFormButtons: ClientModule["View"] = ({
         text="Save"
         loading={isLoading(model.puzzleEditNameRequest)}
         disabled={
-          modelGame.t !== "puzzle-builder" ||
-          model.puzzleEditNameDraft === modelGame.puzzle.name
+          modelGame.opened.t !== "puzzle-builder" ||
+          model.puzzleEditNameDraft === modelGame.puzzleBuilder?.puzzle.name
         }
         onClick={() =>
           dispatch({ t: "puzzle.edit-name.user-clicked-save-button" })
@@ -187,8 +189,7 @@ const updateDrawer: ClientModule["update"] = (input) => {
         model: {
           ...model,
           opened: "edit-name",
-          puzzleEditNameDraft:
-            modelGame.t === "puzzle-builder" ? modelGame.puzzle.name : "",
+          puzzleEditNameDraft: modelGame.puzzleBuilder?.puzzle.name ?? "",
         },
       }
     }

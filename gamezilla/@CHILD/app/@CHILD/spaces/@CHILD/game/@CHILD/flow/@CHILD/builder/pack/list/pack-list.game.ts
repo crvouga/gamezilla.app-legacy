@@ -5,8 +5,12 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
     case "pack-list.user-clicked-pack-item": {
       return {
         ...modelGame,
-        t: "pack-builder",
-        pack: msgGame.pack,
+        opened: { t: "pack-builder" },
+        packBuilder: {
+          t: "pack-builder",
+          pack: msgGame.pack,
+          opened: { t: "puzzle-grid", pageIndex: 0 },
+        },
       }
     }
 

@@ -125,7 +125,7 @@ const updateLocation: ClientModule["update"] = (input) => {
 const View: ClientModule["View"] = (input) => {
   const { modelGame } = input
 
-  switch (modelGame.t) {
+  switch (modelGame.opened.t) {
     case "puzzle-builder": {
       return <PuzzleBuilderClient.View {...input} />
     }
@@ -142,10 +142,6 @@ const View: ClientModule["View"] = (input) => {
 
 const ViewList: ClientModule["View"] = (input) => {
   const { ctx, modelGame, dispatch } = input
-
-  if (modelGame.t !== "list") {
-    return null
-  }
 
   const isSpectating = ctx.space.hostId !== ctx.currentUserId
 
