@@ -11,14 +11,14 @@ const update: ServerModule["update"] = async (input) => {
 }
 
 const updateSavePackOnChange: ServerModule["update"] = async (input) => {
-  const { deps, model, modelGame, msgSync } = input
+  const { deps, model, modelSync, msgSync } = input
   switch (msgSync?.t) {
     case "pack-builder.user-clicked-add-puzzle-item": {
-      if (!modelGame.packBuilder) {
+      if (!modelSync.packBuilder) {
         return { model }
       }
 
-      const saved = await deps.FlowPackDb.put(modelGame.packBuilder.pack)
+      const saved = await deps.FlowPackDb.put(modelSync.packBuilder.pack)
 
       return {
         model,

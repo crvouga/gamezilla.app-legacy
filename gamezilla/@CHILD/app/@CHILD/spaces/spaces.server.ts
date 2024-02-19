@@ -332,7 +332,7 @@ const updateChild: ServerModule["update"] = async (input) => {
         ? { ...msgClient, userId: msgClient.userId, ...msgClient.c }
         : null,
     msgEvt,
-    modelGame: spaceState.game,
+    modelSync: spaceState.game,
     deps: null,
   })
 
@@ -550,7 +550,7 @@ const updateFromSpaceEvent = async ({
         model:
           model.games[msgEvtWithMeta.spaceId] ?? Game.init(spaceState.game.t),
         msgSync: { ...msgEvtWithMeta, ...msgEvtWithMeta.c },
-        modelGame: spaceState.game,
+        modelSync: spaceState.game,
         deps: null,
       })
 
@@ -597,7 +597,7 @@ export const subscriptions: ServerModule["subscriptions"] = async ({
     const sub = await Game.subscriptions({
       ctx: { ...ctx, space: spaceState },
       model: model.games[spaceId as SpaceId] ?? Game.init(spaceState.game.t),
-      modelGame: spaceState.game,
+      modelSync: spaceState.game,
     })
 
     const mapped = Sub.map(

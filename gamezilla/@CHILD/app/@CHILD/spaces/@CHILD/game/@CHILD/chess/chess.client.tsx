@@ -289,8 +289,8 @@ export const subscriptions: Client["subscriptions"] = (_input) => {
 //
 //
 
-export const View: Client["View"] = ({ ctx, modelGame, dispatch }) => {
-  switch (modelGame.t) {
+export const View: Client["View"] = ({ ctx, modelSync, dispatch }) => {
+  switch (modelSync.t) {
     case "none": {
       return (
         <GameMainMenu.View

@@ -84,10 +84,10 @@ export const initSync = (): ModelSync => {
 export const reducer = ({
   ctx,
   msgSync,
-  modelGame,
+  modelSync,
 }: {
   ctx: SpaceCtx
-  modelGame: ModelSync
+  modelSync: ModelSync
   msgSync: WithEventMeta<MsgSync>
 }): ModelSync => {
   switch (msgSync.t) {
@@ -116,33 +116,33 @@ export const reducer = ({
     }
 
     case "vs-bot": {
-      switch (modelGame.t) {
+      switch (modelSync.t) {
         case "vs-bot": {
           return {
             t: "vs-bot",
             c: VsBot.reducer({
-              modelGame: modelGame.c,
+              modelSync: modelSync.c,
               msgSync: { ...msgSync, ...msgSync.c },
             }),
           }
         }
         default: {
-          return modelGame
+          return modelSync
         }
       }
     }
 
     case "vs-user": {
-      switch (modelGame.t) {
+      switch (modelSync.t) {
         case "vs-user": {
           return {
             t: "vs-user",
-            c: VsUser.reducer(modelGame.c, msgSync.c),
+            c: VsUser.reducer(modelSync.c, msgSync.c),
           }
         }
 
         default: {
-          return modelGame
+          return modelSync
         }
       }
     }

@@ -55,7 +55,7 @@ export const update: Module["update"] = async (input) => {
 }
 
 const updateFromMsg: Module["update"] = async (input) => {
-  const { msg, model, modelGame, ctx } = input
+  const { msg, model, modelSync, ctx } = input
 
   if (!msg) {
     return { model }
@@ -63,9 +63,9 @@ const updateFromMsg: Module["update"] = async (input) => {
 
   switch (msg.t) {
     case "time-passed": {
-      const shouldBotMove = isBotTurn(modelGame) && !isBotMoving(ctx.now, model)
+      const shouldBotMove = isBotTurn(modelSync) && !isBotMoving(ctx.now, model)
       if (
-        modelGame.type === "game" &&
+        modelSync.type === "game" &&
         shouldBotMove &&
         msg.t === "time-passed"
       ) {
@@ -77,9 +77,9 @@ const updateFromMsg: Module["update"] = async (input) => {
           eff: async (dispatch) => {
             await new Promise((r) => setTimeout(r, 1000 / 4))
             const found = ConnectFourBotWorker.findBestMove({
-              columns: modelGame.columns,
+              columns: modelSync.columns,
               maxDepth: 4,
-              maximizingPlayer: toBotPlayer(modelGame),
+              maximizingPlayer: toBotPlayer(modelSync),
             })
             dispatch({
               t: "bot-found-best-move",
@@ -130,7 +130,7 @@ const updateFromMsg: Module["update"] = async (input) => {
 }
 
 export const subscriptions: Module["subscriptions"] = async (input) => {
-  if (isBotTurn(input.modelGame)) {
+  if (isBotTurn(input.modelSync)) {
     return Time.interval(`vs-bot`, TimeSpan.fromSeconds(1 / 2), () => ({
       t: "time-passed",
     }))

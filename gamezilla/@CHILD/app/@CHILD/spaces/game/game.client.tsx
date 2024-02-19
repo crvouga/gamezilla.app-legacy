@@ -151,9 +151,9 @@ const updateGame: SpaceClientModule["update"] = async (input) => {
     return { model }
   }
 
-  const modelGame = spaceState.game
+  const modelSync = spaceState.game
 
-  if (!modelGame) {
+  if (!modelSync) {
     return { model }
   }
 
@@ -161,7 +161,7 @@ const updateGame: SpaceClientModule["update"] = async (input) => {
     ? Spaces.toEventWithMeta(model, spaceId, msgSpaceEvent?.eventId)
     : null
 
-  const gameModel = model.games[spaceId] ?? Game.init(modelGame.t)
+  const gameModel = model.games[spaceId] ?? Game.init(modelSync.t)
 
   const gameUpdated = await Game.update({
     ctx: {
@@ -174,7 +174,7 @@ const updateGame: SpaceClientModule["update"] = async (input) => {
       msgSpaceEventWithMeta?.t === "game"
         ? { ...msgSpaceEventWithMeta, ...msgSpaceEventWithMeta.c }
         : null,
-    modelGame: modelGame,
+    modelSync: modelSync,
     msgServer: msgServer?.t === "game" ? msgServer.c : null,
     msgCmd: null,
     msgEvt,
@@ -244,17 +244,17 @@ const subscriptionsCurrentUserGame: SpaceClientModule["subscriptions"] =
       return Sub.None
     }
 
-    const modelGame = spaceState.game
+    const modelSync = spaceState.game
 
-    if (!modelGame) {
+    if (!modelSync) {
       return Sub.None
     }
 
-    const gameModel = model.games[spaceId] ?? Game.init(modelGame.t)
+    const gameModel = model.games[spaceId] ?? Game.init(modelSync.t)
 
     const gameSub = await Game.subscriptions({
       ctx: { ...clientCtx, space: spaceState },
-      modelGame: modelGame,
+      modelSync: modelSync,
       model: gameModel,
     })
 
@@ -287,7 +287,7 @@ const View: SpaceClientModule["View"] = (input) => {
   if (space.game) {
     return (
       <Game.View
-        modelGame={space.game}
+        modelSync={space.game}
         ctx={{ ...ctx, space: space, currentUserId: ctx.currentUserId }}
         dispatch={(c) => dispatch({ t: "game", spaceId: space.spaceId, c })}
         model={model.games[ctx.space.spaceId] ?? Game.init(space.game.t)}

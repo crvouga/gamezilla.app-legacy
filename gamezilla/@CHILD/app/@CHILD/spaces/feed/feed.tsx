@@ -51,7 +51,7 @@ const ViewFeedItem = ({
         <Game.ViewFeedItem
           ctx={ctx}
           msgSync={{ ...msgEvt, ...msgEvt.c }}
-          modelGame={state.game}
+          modelSync={state.game}
           dispatch={(_msg) => {
             //
           }}

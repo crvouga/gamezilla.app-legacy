@@ -3,90 +3,90 @@ import { FlowGridUIEdit, FlowGridUIPlay } from "../../../../@SHARED/flow"
 import { ModelSync, MsgSync } from "../../builder.core"
 
 const reducer = ({
-  modelGame,
+  modelSync,
   msgSync,
   ctx,
 }: {
   ctx: SpaceCtx
   msgSync: MsgSync
-  modelGame: ModelSync
+  modelSync: ModelSync
 }): ModelSync => {
   switch (msgSync.t) {
     case "puzzle-builder.grid-ui-play": {
-      if (!modelGame.puzzleBuilder) {
-        return modelGame
+      if (!modelSync.puzzleBuilder) {
+        return modelSync
       }
 
       const currentGrid = FlowGridUIEdit.toCurrentGrid({
-        model: modelGame.puzzleBuilder.gridEdit,
+        model: modelSync.puzzleBuilder.gridEdit,
       })
 
       const updated = FlowGridUIPlay.update({
-        model: modelGame.puzzleBuilder.gridPlay,
+        model: modelSync.puzzleBuilder.gridPlay,
         msg: msgSync.c,
         grid: currentGrid,
       })
 
       return {
-        ...modelGame,
+        ...modelSync,
         puzzleBuilder: {
-          ...modelGame.puzzleBuilder,
+          ...modelSync.puzzleBuilder,
           gridPlay: updated,
         },
       }
     }
 
     case "puzzle-builder.grid-ui-edit": {
-      if (!modelGame.puzzleBuilder) {
-        return modelGame
+      if (!modelSync.puzzleBuilder) {
+        return modelSync
       }
 
       const updated = FlowGridUIEdit.update({
-        model: modelGame.puzzleBuilder.gridEdit,
+        model: modelSync.puzzleBuilder.gridEdit,
         msg: msgSync.c,
-        grid: modelGame.puzzleBuilder.puzzle.puzzle.c,
+        grid: modelSync.puzzleBuilder.puzzle.puzzle.c,
       })
 
       return {
-        ...modelGame,
+        ...modelSync,
         puzzleBuilder: {
-          ...modelGame.puzzleBuilder,
+          ...modelSync.puzzleBuilder,
           gridEdit: updated.model,
         },
       }
     }
 
     case "puzzle-builder.user-clicked-edit-mode-button": {
-      if (!modelGame.puzzleBuilder) {
-        return modelGame
+      if (!modelSync.puzzleBuilder) {
+        return modelSync
       }
 
       if (msgSync.userId !== ctx.space.hostId) {
-        return modelGame
+        return modelSync
       }
 
       return {
-        ...modelGame,
+        ...modelSync,
         puzzleBuilder: {
-          ...modelGame.puzzleBuilder,
+          ...modelSync.puzzleBuilder,
           mode: { t: "edit" },
         },
       }
     }
 
     case "puzzle-builder.user-clicked-play-mode-button": {
-      if (!modelGame.puzzleBuilder) {
-        return modelGame
+      if (!modelSync.puzzleBuilder) {
+        return modelSync
       }
       const initial = FlowGridUIPlay.init({
         grid: FlowGridUIEdit.toCurrentGrid({
-          model: modelGame.puzzleBuilder.gridEdit,
+          model: modelSync.puzzleBuilder.gridEdit,
         }),
       })
       return {
-        ...modelGame,
+        ...modelSync,
         puzzleBuilder: {
-          ...modelGame.puzzleBuilder,
+          ...modelSync.puzzleBuilder,
           mode: { t: "play" },
           gridPlay: initial,
         },
@@ -95,14 +95,14 @@ const reducer = ({
 
     case "puzzle-builder.user-clicked-exit-button": {
       if (msgSync.userId !== ctx.space.hostId) {
-        return modelGame
+        return modelSync
       }
 
-      return { ...modelGame, opened: { t: "list" }, listTab: "puzzles" }
+      return { ...modelSync, opened: { t: "list" }, listTab: "puzzles" }
     }
 
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }

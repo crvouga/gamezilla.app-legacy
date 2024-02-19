@@ -78,10 +78,10 @@ const update: Module["update"] = (input) => {
 }
 
 const updateChild: Module["update"] = async (input) => {
-  const { model, modelGame, msgEvt, ctx, msgCmd, msgSync, msgServer, msg } =
+  const { model, modelSync, msgEvt, ctx, msgCmd, msgSync, msgServer, msg } =
     input
 
-  switch (modelGame.t) {
+  switch (modelSync.t) {
     case null: {
       return { model }
     }
@@ -89,7 +89,7 @@ const updateChild: Module["update"] = async (input) => {
     case "play": {
       const updated = await PlayClient.update({
         ctx: { ...ctx, onQuit: () => {} },
-        modelGame: modelGame.c,
+        modelSync: modelSync.c,
         model: model.t === "play" ? model.c : PlayClient.init,
         msgCmd: msgCmd,
         msgEvt: msgEvt,
@@ -113,7 +113,7 @@ const updateChild: Module["update"] = async (input) => {
     case "builder": {
       const updated = await BuilderClient.update({
         ctx: { ...ctx, onQuit: () => {} },
-        modelGame: modelGame.c,
+        modelSync: modelSync.c,
         model: model.t === "builder" ? model.c : BuilderClient.init,
         msgCmd: msgCmd,
         msgEvt: msgEvt,
@@ -203,7 +203,7 @@ const updateFromMsg: Module["update"] = (input) => {
 //
 
 const subscriptions: Module["subscriptions"] = async (input) => {
-  switch (input.modelGame.t) {
+  switch (input.modelSync.t) {
     case "play": {
       return Sub.tag(
         "play",
@@ -212,7 +212,7 @@ const subscriptions: Module["subscriptions"] = async (input) => {
             ...input.ctx,
             onQuit() {},
           },
-          modelGame: input.modelGame.c,
+          modelSync: input.modelSync.c,
           model: input.model.t === "play" ? input.model.c : PlayClient.init,
         }),
       )
@@ -225,7 +225,7 @@ const subscriptions: Module["subscriptions"] = async (input) => {
             ...input.ctx,
             onQuit() {},
           },
-          modelGame: input.modelGame.c,
+          modelSync: input.modelSync.c,
           model:
             input.model.t === "builder" ? input.model.c : BuilderClient.init,
         }),
@@ -245,7 +245,7 @@ const subscriptions: Module["subscriptions"] = async (input) => {
 //
 
 const View: Module["View"] = (input) => {
-  const { modelGame, dispatch } = input
+  const { modelSync, dispatch } = input
 
   const ctx: FlowClientCtx = {
     ...input.ctx,
@@ -260,7 +260,7 @@ const View: Module["View"] = (input) => {
       }),
   }
 
-  switch (modelGame.t) {
+  switch (modelSync.t) {
     case null: {
       return (
         <GameMainMenu.View
@@ -309,7 +309,7 @@ const View: Module["View"] = (input) => {
         <BuilderClient.View
           ctx={ctx}
           dispatch={(c) => dispatch({ t: "builder", c })}
-          modelGame={modelGame.c}
+          modelSync={modelSync.c}
           model={
             input.model.t === "builder" ? input.model.c : BuilderClient.init
           }
@@ -322,7 +322,7 @@ const View: Module["View"] = (input) => {
         <PlayClient.View
           ctx={ctx}
           dispatch={(c) => dispatch({ t: "play", c })}
-          modelGame={modelGame.c}
+          modelSync={modelSync.c}
           model={input.model.t === "play" ? input.model.c : PlayClient.init}
         />
       )
@@ -333,18 +333,18 @@ const View: Module["View"] = (input) => {
 const ViewFeedItem: Module["ViewFeedItem"] = ({
   ctx,
   dispatch,
-  modelGame,
+  modelSync,
   msgSync,
 }) => {
   switch (msgSync.t) {
     case "play": {
-      switch (modelGame.t) {
+      switch (modelSync.t) {
         case "play": {
           return (
             <PlayClient.ViewFeedItem
               ctx={{ ...ctx, onQuit() {} }}
               dispatch={(c) => dispatch({ t: "play", c })}
-              modelGame={modelGame.c}
+              modelSync={modelSync.c}
               msgSync={msgSync.c}
             />
           )
@@ -356,13 +356,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
     }
 
     case "builder": {
-      switch (modelGame.t) {
+      switch (modelSync.t) {
         case "builder": {
           return (
             <BuilderClient.ViewFeedItem
               ctx={{ ...ctx, onQuit() {} }}
               dispatch={(c) => dispatch({ t: "builder", c })}
-              modelGame={modelGame.c}
+              modelSync={modelSync.c}
               msgSync={msgSync.c}
             />
           )

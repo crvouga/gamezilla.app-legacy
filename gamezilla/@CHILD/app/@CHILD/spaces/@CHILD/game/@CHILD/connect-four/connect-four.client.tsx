@@ -139,9 +139,9 @@ const updateFromMsgSync =
 const updateChild =
   (model: ModelClient): Module["update"] =>
   (input) => {
-    const { msg, msgEvt, msgSync, msgServer, modelGame } = input
+    const { msg, msgEvt, msgSync, msgServer, modelSync } = input
 
-    switch (modelGame.t) {
+    switch (modelSync.t) {
       case "none": {
         return { model }
       }
@@ -156,7 +156,7 @@ const updateChild =
             msgSync?.t === "vs-bot" ? { ...msgSync, ...msgSync.c } : null,
           msgServer: msgServer?.t === "vs-bot" ? msgServer.c : null,
           model: model.t === "vs-bot" ? model.c : VsBot.init,
-          modelGame: modelGame.c,
+          modelSync: modelSync.c,
         })
 
         return GameClientModule.tagOutput(
@@ -176,7 +176,7 @@ const updateChild =
           msgSync:
             msgSync?.t === "vs-user" ? { ...msgSync, ...msgSync.c } : null,
           msgServer: msgServer?.t === "vs-user" ? msgServer.c : null,
-          modelGame: modelGame.c,
+          modelSync: modelSync.c,
         })
 
         return GameClientModule.tagOutput(
@@ -196,7 +196,7 @@ const updateChild =
 //
 //
 
-const View: Module["View"] = ({ dispatch, ctx, modelGame, model }) => {
+const View: Module["View"] = ({ dispatch, ctx, modelSync, model }) => {
   const onQuit = () => {
     dispatch({
       t: "user-changed-mode",
@@ -205,7 +205,7 @@ const View: Module["View"] = ({ dispatch, ctx, modelGame, model }) => {
     })
   }
 
-  switch (modelGame.t) {
+  switch (modelSync.t) {
     case "none": {
       return (
         <GameMainMenu.View
@@ -241,7 +241,7 @@ const View: Module["View"] = ({ dispatch, ctx, modelGame, model }) => {
           ctx={{ ...ctx, onQuit }}
           dispatch={(c) => dispatch({ t: "vs-bot", c })}
           model={model?.t === "vs-bot" ? model.c : VsBot.init}
-          modelGame={modelGame.c}
+          modelSync={modelSync.c}
         />
       )
     }
@@ -252,7 +252,7 @@ const View: Module["View"] = ({ dispatch, ctx, modelGame, model }) => {
           ctx={{ ...ctx, onQuit }}
           dispatch={(c) => dispatch({ t: "vs-user", c })}
           model={model?.t === "vs-user" ? model.c : VsUser.init}
-          modelGame={modelGame.c}
+          modelSync={modelSync.c}
         />
       )
     }
@@ -260,7 +260,7 @@ const View: Module["View"] = ({ dispatch, ctx, modelGame, model }) => {
 }
 
 const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-  const { modelGame, ctx, msgSync } = input
+  const { modelSync, ctx, msgSync } = input
   switch (msgSync.t) {
     case "user-changed-mode": {
       switch (msgSync.mode) {
@@ -293,13 +293,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
     }
 
     case "vs-bot": {
-      switch (modelGame.t) {
+      switch (modelSync.t) {
         case "vs-bot": {
           return (
             <VsBot.ViewFeedItem
               ctx={{ ...ctx, onQuit: () => {} }}
               msgSync={msgSync.c}
-              modelGame={modelGame.c}
+              modelSync={modelSync.c}
               dispatch={(c) => input.dispatch({ t: "vs-bot", c })}
             />
           )
@@ -311,13 +311,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
     }
 
     case "vs-user": {
-      switch (modelGame.t) {
+      switch (modelSync.t) {
         case "vs-user": {
           return (
             <VsUser.ViewFeedItem
               ctx={{ ...ctx, onQuit: () => {} }}
               msgSync={msgSync.c}
-              modelGame={modelGame.c}
+              modelSync={modelSync.c}
               dispatch={(c) => input.dispatch({ t: "vs-user", c })}
             />
           )
@@ -339,9 +339,9 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
 //
 
 const subscriptions: Module["subscriptions"] = async (input) => {
-  const { model, modelGame } = input
+  const { model, modelSync } = input
 
-  switch (modelGame.t) {
+  switch (modelSync.t) {
     case "none": {
       return Sub.None
     }
@@ -352,7 +352,7 @@ const subscriptions: Module["subscriptions"] = async (input) => {
         await VsBot.subscriptions({
           ...input,
           model: model?.t === "vs-bot" ? model.c : VsBot.init,
-          modelGame: modelGame.c,
+          modelSync: modelSync.c,
           ctx: { ...input.ctx, onQuit: () => {} },
         }),
       )
@@ -364,7 +364,7 @@ const subscriptions: Module["subscriptions"] = async (input) => {
         await VsUser.subscriptions({
           ...input,
           model: model?.t === "vs-user" ? model.c : VsUser.init,
-          modelGame: modelGame.c,
+          modelSync: modelSync.c,
           ctx: { ...input.ctx, onQuit: () => {} },
         }),
       )

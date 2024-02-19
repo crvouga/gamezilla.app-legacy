@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test"
 import { chainUpdates } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import {
-  modelGame,
+  modelSync,
   initial,
   testFlowClientCtx,
   createFlowPuzzle,
@@ -15,7 +15,7 @@ const clickedPuzzleListItem = (puzzle: FlowPuzzle) => (model: ModelClient) => {
   return BuilderClient.update({
     ctx: testFlowClientCtx,
     model,
-    modelGame: modelGame,
+    modelSync: modelSync,
     msg: {
       t: "puzzle-list.clicked-puzzle-list-item",
       puzzle,
@@ -33,11 +33,11 @@ describe("puzzle list client", () => {
       //
     )
 
-    const modelGame = deriveModelSync(output)
+    const modelSync = deriveModelSync(output)
 
     expect(
-      modelGame.opened.t === "puzzle-builder" &&
-        modelGame.puzzleBuilder?.puzzle.id === puzzle.id,
+      modelSync.opened.t === "puzzle-builder" &&
+        modelSync.puzzleBuilder?.puzzle.id === puzzle.id,
     ).toBeTrue()
   })
 })

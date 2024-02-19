@@ -123,9 +123,9 @@ const updateLocation: ClientModule["update"] = (input) => {
 }
 
 const View: ClientModule["View"] = (input) => {
-  const { modelGame } = input
+  const { modelSync } = input
 
-  switch (modelGame.opened.t) {
+  switch (modelSync.opened.t) {
     case "puzzle-builder": {
       return <PuzzleBuilderClient.View {...input} />
     }
@@ -141,7 +141,7 @@ const View: ClientModule["View"] = (input) => {
 }
 
 const ViewList: ClientModule["View"] = (input) => {
-  const { ctx, modelGame, dispatch } = input
+  const { ctx, modelSync, dispatch } = input
 
   const isSpectating = ctx.space.hostId !== ctx.currentUserId
 
@@ -175,12 +175,12 @@ const ViewList: ClientModule["View"] = (input) => {
         onSelect={(listTab) =>
           dispatch({ t: "user-changed-list-tab", listTab })
         }
-        selected={modelGame.listTab}
+        selected={modelSync.listTab}
       />
 
-      {modelGame.listTab === "puzzles" && <PuzzleListClient.View {...input} />}
+      {modelSync.listTab === "puzzles" && <PuzzleListClient.View {...input} />}
 
-      {modelGame.listTab === "packs" && <PackListClient.View {...input} />}
+      {modelSync.listTab === "packs" && <PackListClient.View {...input} />}
 
       <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
         <Button

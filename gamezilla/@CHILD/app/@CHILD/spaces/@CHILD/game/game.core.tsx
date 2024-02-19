@@ -108,14 +108,14 @@ export type MsgSync =
 
 export const reducer = ({
   ctx,
-  modelGame,
+  modelSync,
   msgSync,
 }: {
   ctx: SpaceCtx
-  modelGame: ModelSync
+  modelSync: ModelSync
   msgSync: MsgSync & EventMeta
 }): ModelSync => {
-  switch (modelGame.t) {
+  switch (modelSync.t) {
     case "connect-four": {
       switch (msgSync.t) {
         case "connect-four": {
@@ -124,12 +124,12 @@ export const reducer = ({
             c: ConnectFour.reducer({
               ctx,
               msgSync: { ...msgSync, ...msgSync.c },
-              modelGame: modelGame.c,
+              modelSync: modelSync.c,
             }),
           }
         }
         default: {
-          return modelGame
+          return modelSync
         }
       }
     }
@@ -142,13 +142,13 @@ export const reducer = ({
             c: Flow.reducer({
               ctx,
               msgSync: { ...msgSync, ...msgSync.c },
-              modelGame: modelGame.c,
+              modelSync: modelSync.c,
             }),
           }
         }
 
         default: {
-          return modelGame
+          return modelSync
         }
       }
     }

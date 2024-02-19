@@ -26,10 +26,10 @@ describe("pack builder client", () => {
       clickedPuzzlePickerItem(puzzle),
       clickedPuzzleGridItem(puzzle, 0),
     )
-    const modelGame = deriveModelSync(output)
+    const modelSync = deriveModelSync(output)
     expect(
-      modelGame.packBuilder?.opened.t === "puzzle" &&
-        modelGame.packBuilder.opened.puzzleIndex === 0,
+      modelSync.packBuilder?.opened.t === "puzzle" &&
+        modelSync.packBuilder.opened.puzzleIndex === 0,
     ).toBeTrue()
   })
 
@@ -39,8 +39,8 @@ describe("pack builder client", () => {
       serverCreatedPack(createFlowPack(testSpaceClientCtx)),
       clickedOpenPuzzlePickerButton,
     )
-    const modelGame = deriveModelSync(output)
-    expect(modelGame.packBuilder?.opened.t === "add-puzzle").toBeTrue()
+    const modelSync = deriveModelSync(output)
+    expect(modelSync.packBuilder?.opened.t === "add-puzzle").toBeTrue()
   })
 
   it("should close puzzle picker when user clicks closes", async () => {
@@ -50,8 +50,8 @@ describe("pack builder client", () => {
       clickedOpenPuzzlePickerButton,
       closedPuzzlePickerDrawer,
     )
-    const modelGame = deriveModelSync(output)
-    expect(modelGame.packBuilder?.opened.t === "pack").toBeTrue()
+    const modelSync = deriveModelSync(output)
+    expect(modelSync.packBuilder?.opened.t === "pack").toBeTrue()
   })
 
   it("should add puzzle to the pack after clicking a puzzle in the picker", async () => {
@@ -61,10 +61,10 @@ describe("pack builder client", () => {
       serverCreatedPack(createFlowPack(testSpaceClientCtx)),
       clickedPuzzlePickerItem(puzzle),
     )
-    const modelGame = deriveModelSync(output)
+    const modelSync = deriveModelSync(output)
     expect(
-      modelGame.packBuilder &&
-        FlowPack.includes(modelGame.packBuilder.pack, puzzle.id),
+      modelSync.packBuilder &&
+        FlowPack.includes(modelSync.packBuilder.pack, puzzle.id),
     ).toBeTrue()
   })
 
@@ -76,8 +76,8 @@ describe("pack builder client", () => {
       clickedOpenPuzzlePickerButton,
       clickedPuzzlePickerItem(puzzle),
     )
-    const modelGame = deriveModelSync(output)
-    expect(modelGame.packBuilder?.opened.t === "pack").toBeTrue()
+    const modelSync = deriveModelSync(output)
+    expect(modelSync.packBuilder?.opened.t === "pack").toBeTrue()
   })
 
   it("should go back to grid after exiting puzzle", async () => {
@@ -90,7 +90,7 @@ describe("pack builder client", () => {
       clickedPuzzleGridItem(puzzle, 0),
       clickedExitPuzzleButton(),
     )
-    const modelGame = deriveModelSync(output)
-    expect(modelGame.packBuilder?.opened.t === "pack").toBeTrue()
+    const modelSync = deriveModelSync(output)
+    expect(modelSync.packBuilder?.opened.t === "pack").toBeTrue()
   })
 })

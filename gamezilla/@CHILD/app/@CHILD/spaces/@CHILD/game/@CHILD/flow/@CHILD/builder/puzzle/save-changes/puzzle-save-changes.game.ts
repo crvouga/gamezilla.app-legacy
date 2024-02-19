@@ -1,17 +1,17 @@
 import { isErr } from "gamezilla/@SHARED/core"
 import { SyncReducer } from "../../builder.core"
 
-const reducer: SyncReducer = ({ modelGame, msgSync }) => {
+const reducer: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "user-saved-changes": {
       if (isErr(msgSync.saved)) {
-        return modelGame
+        return modelSync
       }
-      return { ...modelGame, puzzle: msgSync.saved.value }
+      return { ...modelSync, puzzle: msgSync.saved.value }
     }
 
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }

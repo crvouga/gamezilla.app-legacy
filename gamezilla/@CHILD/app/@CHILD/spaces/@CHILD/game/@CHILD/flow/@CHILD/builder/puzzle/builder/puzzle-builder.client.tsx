@@ -104,20 +104,20 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 }
 
 const updateFromMsgSync: ClientModule["update"] = (input) => {
-  const { model, modelGame, msgSync } = input
+  const { model, modelSync, msgSync } = input
 
   switch (msgSync?.t) {
     case "puzzle-builder.grid-ui-edit": {
-      if (!modelGame.puzzleBuilder) {
+      if (!modelSync.puzzleBuilder) {
         return { model }
       }
-      if (modelGame.puzzleBuilder.mode.t !== "edit") {
+      if (modelSync.puzzleBuilder.mode.t !== "edit") {
         return { model }
       }
       const updated = FlowGridUIEdit.update({
-        model: modelGame.puzzleBuilder.gridEdit,
+        model: modelSync.puzzleBuilder.gridEdit,
         msg: msgSync.c,
-        grid: modelGame.puzzleBuilder.puzzle.puzzle.c,
+        grid: modelSync.puzzleBuilder.puzzle.puzzle.c,
       })
 
       if (!updated.msgCmd) {
@@ -167,9 +167,9 @@ const View: ClientModule["View"] = (input) => {
 }
 
 const ViewMode: ClientModule["View"] = (input) => {
-  const { model, modelGame, dispatch } = input
+  const { model, modelSync, dispatch } = input
 
-  const puzzleBuilder = modelGame.puzzleBuilder
+  const puzzleBuilder = modelSync.puzzleBuilder
 
   if (!puzzleBuilder) {
     return null
@@ -278,28 +278,28 @@ const ViewMode: ClientModule["View"] = (input) => {
 }
 
 export const toCurrentGrid = (
-  modelGame: ModelSyncPuzzleBuilder,
+  modelSync: ModelSyncPuzzleBuilder,
 ): FlowGrid.Model => {
-  switch (modelGame.mode.t) {
+  switch (modelSync.mode.t) {
     case "edit": {
       return FlowGridUIEdit.toCurrentGrid({
-        model: modelGame.gridEdit,
+        model: modelSync.gridEdit,
       })
     }
 
     case "play": {
       return FlowGridUIPlay.toCurrentGrid({
         grid: FlowGridUIEdit.toCurrentGrid({
-          model: modelGame.gridEdit,
+          model: modelSync.gridEdit,
         }),
-        model: modelGame.gridPlay,
+        model: modelSync.gridPlay,
       })
     }
   }
 }
 
-const ViewSpectating: ClientModule["View"] = ({ modelGame, ctx }) => {
-  if (!modelGame.puzzleBuilder) {
+const ViewSpectating: ClientModule["View"] = ({ modelSync, ctx }) => {
+  if (!modelSync.puzzleBuilder) {
     return null
   }
 
@@ -312,7 +312,7 @@ const ViewSpectating: ClientModule["View"] = ({ modelGame, ctx }) => {
         />
         <FlowGridUI.View
           disabled
-          model={toCurrentGrid(modelGame.puzzleBuilder)}
+          model={toCurrentGrid(modelSync.puzzleBuilder)}
         />
       </div>
     </GameLayout>

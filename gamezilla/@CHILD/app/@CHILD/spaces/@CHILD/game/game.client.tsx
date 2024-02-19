@@ -77,13 +77,13 @@ const init = (gameName: GameName): Module["init"] => {
 //
 
 const update: Module["update"] = (input) => {
-  const { ctx, msg, msgServer, msgCmd, msgEvt, msgSync, modelGame } = input
+  const { ctx, msg, msgServer, msgCmd, msgEvt, msgSync, modelSync } = input
 
-  switch (modelGame.t) {
+  switch (modelSync.t) {
     case "connect-four": {
       const updated = ConnectFour.update({
         ctx,
-        modelGame: modelGame.c,
+        modelSync: modelSync.c,
         model:
           input.model?.t === "connect-four" ? input.model.c : ConnectFour.init,
         msgCmd: msgCmd,
@@ -106,7 +106,7 @@ const update: Module["update"] = (input) => {
     case "flow": {
       const updated = FlowClient.update({
         ctx: ctx,
-        modelGame: modelGame.c,
+        modelSync: modelSync.c,
         model: input.model?.t === "flow" ? input.model.c : FlowClient.init,
         msgCmd: msgCmd,
         msgEvt: msgEvt,
@@ -135,15 +135,15 @@ const update: Module["update"] = (input) => {
 //
 
 const subscriptions: Module["subscriptions"] = async (input) => {
-  const { modelGame, model } = input
+  const { modelSync, model } = input
 
-  switch (modelGame.t) {
+  switch (modelSync.t) {
     case "connect-four": {
       return Sub.tag(
         "connect-four",
         await ConnectFour.subscriptions({
           ctx: input.ctx,
-          modelGame: modelGame.c,
+          modelSync: modelSync.c,
           model: model.t === "connect-four" ? model.c : ConnectFour.init,
         }),
       )
@@ -154,7 +154,7 @@ const subscriptions: Module["subscriptions"] = async (input) => {
         "flow",
         await FlowClient.subscriptions({
           ctx: input.ctx,
-          modelGame: modelGame.c,
+          modelSync: modelSync.c,
           model: model.t === "flow" ? model.c : FlowClient.init,
         }),
       )
@@ -171,15 +171,15 @@ const subscriptions: Module["subscriptions"] = async (input) => {
 //
 
 const View: Module["View"] = (input) => {
-  const { model, ctx, modelGame, dispatch } = input
+  const { model, ctx, modelSync, dispatch } = input
 
-  switch (modelGame.t) {
+  switch (modelSync.t) {
     case "connect-four": {
       return (
         <ConnectFour.View
           ctx={ctx}
           dispatch={(c) => dispatch({ t: "connect-four", c })}
-          modelGame={modelGame.c}
+          modelSync={modelSync.c}
           model={model?.t === "connect-four" ? model.c : ConnectFour.init}
         />
       )
@@ -190,7 +190,7 @@ const View: Module["View"] = (input) => {
         <FlowClient.View
           ctx={ctx}
           dispatch={(c) => dispatch({ t: "flow", c })}
-          modelGame={modelGame.c}
+          modelSync={modelSync.c}
           model={model.t === "flow" ? model.c : FlowClient.init}
         />
       )
@@ -199,9 +199,9 @@ const View: Module["View"] = (input) => {
 }
 
 const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-  const { msgSync, modelGame, ctx, dispatch } = input
+  const { msgSync, modelSync, ctx, dispatch } = input
 
-  switch (modelGame.t) {
+  switch (modelSync.t) {
     case "connect-four": {
       switch (msgSync.t) {
         case "connect-four": {
@@ -209,7 +209,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
             <ConnectFour.ViewFeedItem
               ctx={ctx}
               msgSync={msgSync.c}
-              modelGame={modelGame.c}
+              modelSync={modelSync.c}
               dispatch={(c) => dispatch({ t: "connect-four", c })}
             />
           )

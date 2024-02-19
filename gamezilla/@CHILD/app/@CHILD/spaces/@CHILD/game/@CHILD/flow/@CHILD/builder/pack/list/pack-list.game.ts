@@ -1,10 +1,10 @@
 import { SyncReducer } from "../../builder.core"
 
-const reducer: SyncReducer = ({ modelGame, msgSync }) => {
+const reducer: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "pack-list.user-clicked-pack-item": {
       return {
-        ...modelGame,
+        ...modelSync,
         opened: { t: "pack-builder" },
         packBuilder: {
           t: "pack-builder",
@@ -15,7 +15,7 @@ const reducer: SyncReducer = ({ modelGame, msgSync }) => {
     }
 
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }

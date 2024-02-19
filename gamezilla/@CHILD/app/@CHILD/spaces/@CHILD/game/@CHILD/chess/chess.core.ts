@@ -92,7 +92,7 @@ export const reducer = ({
   msgSync,
 }: {
   ctx: SpaceCtx
-  modelGame: ModelSync
+  modelSync: ModelSync
   msgSync: MsgSync
 }): ModelSync => {
   switch (msgSync.t) {

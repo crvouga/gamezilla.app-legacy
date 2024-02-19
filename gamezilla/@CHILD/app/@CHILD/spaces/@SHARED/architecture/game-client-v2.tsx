@@ -92,9 +92,9 @@ export type Input<T extends GameClientModuleTypes> = {
   msgCmd?: T["MsgInCmd"] | null
 
   /**
-   * `modelGame` is the current state of the game. This is shared and auto synced between client and server.
+   * `modelSync` is the current state of the game. This is shared and auto synced between client and server.
    */
-  modelGame: T["ModelSync"]
+  modelSync: T["ModelSync"]
   /**
    * `msgSync` is an msgEvt of game
    */
@@ -151,7 +151,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
    */
   subscriptions: (input: {
     ctx: T["Ctx"]
-    modelGame: T["ModelSync"]
+    modelSync: T["ModelSync"]
     model: T["Model"]
   }) => MaybePromise<Sub<T["Msg"]>>
 
@@ -160,7 +160,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
    */
   View: (input: {
     ctx: T["Ctx"]
-    modelGame: T["ModelSync"]
+    modelSync: T["ModelSync"]
     model: T["Model"]
     dispatch: (msg: T["Msg"]) => void
   }) => VDom
@@ -171,7 +171,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
   ViewFeedItem: (input: {
     ctx: T["Ctx"]
     msgSync: T["MsgSync"]
-    modelGame: T["ModelSync"]
+    modelSync: T["ModelSync"]
     dispatch: (msg: T["Msg"]) => void
   }) => VDom
 }

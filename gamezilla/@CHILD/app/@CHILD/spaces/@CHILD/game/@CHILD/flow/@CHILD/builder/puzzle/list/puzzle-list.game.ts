@@ -1,12 +1,12 @@
 import { FlowGridUIEdit, FlowGridUIPlay } from "../../../../@SHARED/flow"
 import { SyncReducer } from "../../builder.core"
 
-const reducer: SyncReducer = ({ modelGame, msgSync }) => {
+const reducer: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "puzzle-list.clicked-puzzle-list-item": {
       return {
         listTab: "puzzles",
-        packBuilder: modelGame.packBuilder,
+        packBuilder: modelSync.packBuilder,
         opened: { t: "puzzle-builder" },
         puzzleBuilder: {
           t: "puzzle-builder",
@@ -23,7 +23,7 @@ const reducer: SyncReducer = ({ modelGame, msgSync }) => {
     }
 
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }

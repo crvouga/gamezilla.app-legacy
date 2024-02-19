@@ -10,11 +10,11 @@ const update: ServerModule["update"] = async (input) => {
 }
 
 const updateFromClient: ServerModule["update"] = async (input) => {
-  const { modelGame, msgClient, model, deps } = input
+  const { modelSync, msgClient, model, deps } = input
 
   switch (msgClient?.t) {
     case "delete-forever/user-confirmed": {
-      const puzzleBuilder = modelGame.puzzleBuilder
+      const puzzleBuilder = modelSync.puzzleBuilder
 
       if (!puzzleBuilder) {
         return { model }

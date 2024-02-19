@@ -1,9 +1,9 @@
 import { SyncReducer } from "../../builder.core"
 
-const reducer: SyncReducer = ({ modelGame, msgSync }) => {
+const reducer: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }

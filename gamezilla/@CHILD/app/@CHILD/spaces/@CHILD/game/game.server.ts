@@ -72,14 +72,14 @@ const init = (gameName: GameName): Module["init"] => {
 //
 
 export const update: Module["update"] = async (input) => {
-  const { modelGame, ctx, model } = input
+  const { modelSync, ctx, model } = input
 
   return GameServerModule.chainUpdates({ model }, async (model) => {
-    switch (modelGame.t) {
+    switch (modelSync.t) {
       case "flow": {
         const updated = await FlowServer.update({
           ctx,
-          modelGame: modelGame.c,
+          modelSync: modelSync.c,
           model: model.t === "flow" ? model.c : FlowServer.init,
           msgCmd: input.msgCmd,
           msgEvt: input.msgEvt,
@@ -107,7 +107,7 @@ export const update: Module["update"] = async (input) => {
       case "connect-four": {
         const updated = await ConnectFourServer.update({
           ctx,
-          modelGame: modelGame.c,
+          modelSync: modelSync.c,
           model: model.t === "connect-four" ? model.c : ConnectFourServer.init,
           msgCmd: input.msgCmd,
           msgEvt: input.msgEvt,
@@ -144,15 +144,15 @@ export const update: Module["update"] = async (input) => {
 //
 
 export const subscriptions: Module["subscriptions"] = async (input) => {
-  const { modelGame, model } = input
+  const { modelSync, model } = input
 
-  switch (modelGame.t) {
+  switch (modelSync.t) {
     case "connect-four": {
       return Sub.tag(
         "connect-four",
         await ConnectFourServer.subscriptions({
           ...input,
-          modelGame: modelGame.c,
+          modelSync: modelSync.c,
           model: model?.t === "connect-four" ? model.c : ConnectFourServer.init,
         }),
       )
@@ -163,7 +163,7 @@ export const subscriptions: Module["subscriptions"] = async (input) => {
         "flow",
         await FlowServer.subscriptions({
           ...input,
-          modelGame: modelGame.c,
+          modelSync: modelSync.c,
           model: model?.t === "flow" ? model.c : FlowServer.init,
         }),
       )

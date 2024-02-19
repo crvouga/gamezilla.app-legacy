@@ -96,7 +96,7 @@ export const reducer = ({
           const game = state.game ?? Game.initSync(msgSpace.c.t)
           const gameNew = Game.reducer({
             ctx: { space: state },
-            modelGame: game,
+            modelSync: game,
             msgSync: { ...msgSpace, ...msgSpace.c },
           })
           return {

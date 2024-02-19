@@ -19,7 +19,7 @@ export const testFlowClientCtx: FlowClientCtx = {
   onQuit() {},
 }
 
-export const modelGame = initSync({
+export const modelSync = initSync({
   ctx: testFlowClientCtx,
 })
 
@@ -29,7 +29,7 @@ export const clickedPackCreateButton = (model: ModelClient) => {
   return BuilderClient.update({
     model,
     ctx: testFlowClientCtx,
-    modelGame,
+    modelSync,
     msg: { t: "pack-create.clicked-create-button" },
   })
 }
@@ -38,7 +38,7 @@ export const userCreatedPack = (pack: FlowPack) => (model: ModelClient) => {
   return BuilderClient.update({
     model,
     ctx: testFlowClientCtx,
-    modelGame,
+    modelSync,
     msgSync: {
       t: "user-created-pack",
       created: ok(pack),
@@ -53,7 +53,7 @@ export const clickedPackItem = (pack: FlowPack) => (model: ModelClient) => {
   return BuilderClient.update({
     model,
     ctx: testFlowClientCtx,
-    modelGame,
+    modelSync,
     msg: { t: "pack-list.clicked-pack-item", pack },
   })
 }
@@ -66,7 +66,7 @@ export const clickedOpenPuzzlePickerButton = (model: ModelClient) => {
       userId: ctx.currentUserId,
     },
     ctx,
-    modelGame,
+    modelSync,
   })
 }
 
@@ -75,7 +75,7 @@ export const closedPuzzlePickerDrawer = (model: ModelClient) => {
     model,
     msg: { t: "pack-builder.user-closed-add-puzzle" },
     ctx,
-    modelGame,
+    modelSync,
   })
 }
 
@@ -89,7 +89,7 @@ export const clickedPuzzlePickerItem =
         userId: ctx.currentUserId,
       },
       ctx,
-      modelGame,
+      modelSync,
     })
   }
 
@@ -101,7 +101,7 @@ export const clickedExitPuzzleButton = () => (model: ModelClient) => {
       userId: ctx.currentUserId,
     },
     ctx,
-    modelGame,
+    modelSync,
   })
 }
 
@@ -111,7 +111,7 @@ export const clickedPuzzleGridItem =
       model,
       msg: { t: "pack-builder.user-clicked-pack-item", puzzle, index },
       ctx,
-      modelGame,
+      modelSync,
     })
   }
 
@@ -119,7 +119,7 @@ export const serverCreatedPack = (pack: FlowPack) => (model: ModelClient) => {
   return BuilderClient.update({
     model,
     ctx: testFlowClientCtx,
-    modelGame,
+    modelSync,
     msgServer: {
       t: "pack-create.created-pack",
       created: ok(pack),

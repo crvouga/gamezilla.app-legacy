@@ -278,10 +278,10 @@ export const initSync = (_input: { ctx: SpaceCtx }): ModelSync => {
 export type SyncReducer = (input: {
   ctx: SpaceCtx
   msgSync: MsgSync
-  modelGame: ModelSync
+  modelSync: ModelSync
 }) => ModelSync
 
-export const reducer: SyncReducer = ({ modelGame, msgSync, ctx }) => {
+export const reducer: SyncReducer = ({ modelSync, msgSync, ctx }) => {
   return [
     PuzzleDeleteForeverGame.reducer,
     PuzzleBuilderGame.reducer,
@@ -294,21 +294,21 @@ export const reducer: SyncReducer = ({ modelGame, msgSync, ctx }) => {
     //
     listTabReducer,
   ].reduce(
-    (acc, reducer) => reducer({ ctx, msgSync, modelGame: acc }),
-    modelGame,
+    (acc, reducer) => reducer({ ctx, msgSync, modelSync: acc }),
+    modelSync,
   )
 }
 
-const listTabReducer: SyncReducer = ({ modelGame, msgSync }) => {
+const listTabReducer: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "user-changed-list-tab": {
       return {
-        ...modelGame,
+        ...modelSync,
         listTab: msgSync.listTab,
       }
     }
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }

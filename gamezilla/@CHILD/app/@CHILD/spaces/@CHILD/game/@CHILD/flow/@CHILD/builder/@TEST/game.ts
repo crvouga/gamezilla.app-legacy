@@ -6,8 +6,8 @@ export const deriveModelSync = (input: {
   msgSync?: WithEventId<MsgSync>[]
 }) => {
   return (input.msgSync ?? []).reduce(
-    (modelGame, msgSync) =>
-      reducer({ modelGame, msgSync, ctx: testSpaceClientCtx }),
+    (modelSync, msgSync) =>
+      reducer({ modelSync, msgSync, ctx: testSpaceClientCtx }),
     initSync({ ctx: testSpaceClientCtx }),
   )
 }

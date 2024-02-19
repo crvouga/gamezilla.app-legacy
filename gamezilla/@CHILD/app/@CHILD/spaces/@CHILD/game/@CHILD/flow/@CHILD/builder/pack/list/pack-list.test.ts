@@ -16,8 +16,8 @@ describe("pack list client", () => {
 
     const output = await chainUpdates(initial, clickedPackItem(pack))
 
-    const modelGame = deriveModelSync(output)
+    const modelSync = deriveModelSync(output)
 
-    expect(modelGame.packBuilder?.pack.id === pack.id).toBeTrue()
+    expect(modelSync.packBuilder?.pack.id === pack.id).toBeTrue()
   })
 })

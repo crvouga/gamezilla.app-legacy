@@ -9,8 +9,8 @@ const reducer: SyncReducer = (input) => {
     PackBuilderGame.reducer,
     PackListGame.reducer,
   ].reduce(
-    (modelGame, reducer) => reducer({ ...input, modelGame }),
-    input.modelGame,
+    (modelSync, reducer) => reducer({ ...input, modelSync }),
+    input.modelSync,
   )
 }
 

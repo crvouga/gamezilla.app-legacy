@@ -64,15 +64,15 @@ export const initSync: Module["initSync"] = () => {
   }
 }
 
-export const reducer: Module["reducer"] = ({ modelGame, msgSync }) => {
+export const reducer: Module["reducer"] = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "grid": {
       const gridPlayNew = FlowGridUIPlay.update({
         msg: msgSync.c,
-        model: modelGame.gridPlay,
-        grid: modelGame.grid,
+        model: modelSync.gridPlay,
+        grid: modelSync.grid,
       })
-      return { gridPlay: gridPlayNew, grid: modelGame.grid }
+      return { gridPlay: gridPlayNew, grid: modelSync.grid }
     }
   }
 }

@@ -172,9 +172,9 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
     return { model }
   },
   View(input) {
-    const { modelGame, model } = input
+    const { modelSync, model } = input
 
-    const packBuilder = modelGame.packBuilder
+    const packBuilder = modelSync.packBuilder
 
     if (!packBuilder) {
       return null
@@ -257,16 +257,16 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
   },
 
   View(input) {
-    if (!input.modelGame.packBuilder) {
+    if (!input.modelSync.packBuilder) {
       return null
     }
 
-    if (input.modelGame.packBuilder.opened.t !== "puzzle") {
+    if (input.modelSync.packBuilder.opened.t !== "puzzle") {
       return null
     }
 
     const { flowGridUIPlay, flowGrid } =
-      input.modelGame.packBuilder.opened.puzzle
+      input.modelSync.packBuilder.opened.puzzle
 
     return (
       <div className="flex h-full w-full flex-col ">
@@ -316,12 +316,12 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
   },
 
   View(input) {
-    const { modelGame } = input
+    const { modelSync } = input
 
-    if (!modelGame.packBuilder) {
+    if (!modelSync.packBuilder) {
       return null
     }
-    switch (modelGame.packBuilder.opened.t) {
+    switch (modelSync.packBuilder.opened.t) {
       case "add-puzzle": {
         return <PuzzlePicker.View {...input} />
       }

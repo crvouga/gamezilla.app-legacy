@@ -66,9 +66,9 @@ const updatePuzzles: ClientModule["update"] = ({ msgSync, model }) => {
 }
 
 const updateExitBuilder: ClientModule["update"] = (input) => {
-  const { msg, model, modelGame, msgSync } = input
+  const { msg, model, modelSync, msgSync } = input
 
-  const puzzleBuilder = modelGame.puzzleBuilder
+  const puzzleBuilder = modelSync.puzzleBuilder
 
   if (!puzzleBuilder) {
     return { model }
@@ -184,8 +184,8 @@ const exitBuilder: ClientModule["update"] = (input) => {
   }
 }
 
-const saveChanges: ClientModule["update"] = ({ model, modelGame }) => {
-  const puzzleBuilder = modelGame.puzzleBuilder
+const saveChanges: ClientModule["update"] = ({ model, modelSync }) => {
+  const puzzleBuilder = modelSync.puzzleBuilder
 
   if (!puzzleBuilder) {
     return { model }

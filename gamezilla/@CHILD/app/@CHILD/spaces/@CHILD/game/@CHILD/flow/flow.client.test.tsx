@@ -19,7 +19,7 @@ const useSelectedMode =
     return FlowClient.update({
       ctx,
       model,
-      modelGame: {
+      modelSync: {
         t: null,
       },
       msgSync: {

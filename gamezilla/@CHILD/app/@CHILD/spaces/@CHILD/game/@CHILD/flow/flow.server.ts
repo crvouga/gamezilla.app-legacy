@@ -42,13 +42,13 @@ const update: Module["update"] = async (input) => {
 }
 
 const updateChild: Module["update"] = async (input) => {
-  const { modelGame } = input
+  const { modelSync } = input
 
-  switch (modelGame.t) {
+  switch (modelSync.t) {
     case "play": {
       const updated = await PlayServer.update({
         ctx: input.ctx,
-        modelGame: modelGame.c,
+        modelSync: modelSync.c,
         model: input.model.t === "play" ? input.model.c : PlayServer.init,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
@@ -76,7 +76,7 @@ const updateChild: Module["update"] = async (input) => {
     case "builder": {
       const updated = await BuilderServer.update({
         ctx: input.ctx,
-        modelGame: modelGame.c,
+        modelSync: modelSync.c,
         model: input.model.t === "builder" ? input.model.c : BuilderServer.init,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
@@ -110,15 +110,15 @@ const updateChild: Module["update"] = async (input) => {
 }
 
 const subscriptions: Module["subscriptions"] = async (input) => {
-  const { modelGame } = input
+  const { modelSync } = input
 
-  switch (modelGame.t) {
+  switch (modelSync.t) {
     case "play": {
       return Sub.tag(
         "play",
         await PlayServer.subscriptions({
           ctx: input.ctx,
-          modelGame: modelGame.c,
+          modelSync: modelSync.c,
           model: input.model.t === "play" ? input.model.c : PlayServer.init,
         }),
       )
@@ -129,7 +129,7 @@ const subscriptions: Module["subscriptions"] = async (input) => {
         "builder",
         await BuilderServer.subscriptions({
           ctx: input.ctx,
-          modelGame: modelGame.c,
+          modelSync: modelSync.c,
           model:
             input.model.t === "builder" ? input.model.c : BuilderServer.init,
         }),

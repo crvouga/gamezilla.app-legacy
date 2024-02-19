@@ -1,17 +1,17 @@
 import { SyncReducer } from "../../builder.core"
 
-const reducer: SyncReducer = ({ modelGame, msgSync }) => {
+const reducer: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "user-deleted-puzzle": {
       return {
-        ...modelGame,
+        ...modelSync,
         puzzleBuilder: null,
         opened: { t: "list" },
         listTab: "puzzles",
       }
     }
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }

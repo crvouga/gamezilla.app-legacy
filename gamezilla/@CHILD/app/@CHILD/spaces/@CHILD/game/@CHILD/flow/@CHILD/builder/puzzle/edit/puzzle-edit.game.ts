@@ -4,35 +4,35 @@ import { FlowPuzzleName } from "../../../../@SHARED/flow-puzzle/flow-puzzle-name
 import { ModelSync, MsgSync } from "../../builder.core"
 
 const reducer = ({
-  modelGame,
+  modelSync,
   msgSync,
 }: {
   ctx: SpaceCtx
   msgSync: MsgSync
-  modelGame: ModelSync
+  modelSync: ModelSync
 }): ModelSync => {
   switch (msgSync.t) {
     case "user-edited-puzzle-name": {
-      const puzzleBuilder = modelGame.puzzleBuilder
+      const puzzleBuilder = modelSync.puzzleBuilder
       if (!puzzleBuilder) {
-        return modelGame
+        return modelSync
       }
 
       if (msgSync.flowPuzzleId !== puzzleBuilder.puzzle.id) {
-        return modelGame
+        return modelSync
       }
       if (msgSync.edited.t === "err") {
-        return modelGame
+        return modelSync
       }
       if (!FlowPuzzleName.is(msgSync.newName)) {
-        return modelGame
+        return modelSync
       }
       const puzzleNew: FlowPuzzle = {
         ...puzzleBuilder.puzzle,
         name: msgSync.newName,
       }
       return {
-        ...modelGame,
+        ...modelSync,
         puzzleBuilder: {
           ...puzzleBuilder,
           puzzle: puzzleNew,
@@ -41,7 +41,7 @@ const reducer = ({
     }
 
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }

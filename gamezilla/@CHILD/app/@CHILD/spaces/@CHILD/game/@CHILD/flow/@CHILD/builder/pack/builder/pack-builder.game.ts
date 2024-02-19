@@ -3,15 +3,15 @@ import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import { SyncReducer } from "../../builder.core"
 import { FlowGridUIPlay } from "../../../../@SHARED/flow"
 
-const userCreatedPack: SyncReducer = ({ modelGame, msgSync }) => {
+const userCreatedPack: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "user-created-pack": {
       if (isErr(msgSync.created)) {
-        return modelGame
+        return modelSync
       }
 
       return {
-        ...modelGame,
+        ...modelSync,
         opened: { t: "pack-builder" },
         packBuilder: {
           t: "pack-builder",
@@ -24,38 +24,38 @@ const userCreatedPack: SyncReducer = ({ modelGame, msgSync }) => {
       }
     }
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }
 
-const userClickedExitButton: SyncReducer = ({ modelGame, msgSync }) => {
+const userClickedExitButton: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "pack-builder.user-clicked-exit-button": {
       return {
-        puzzleBuilder: modelGame.puzzleBuilder,
-        packBuilder: modelGame.packBuilder,
+        puzzleBuilder: modelSync.puzzleBuilder,
+        packBuilder: modelSync.packBuilder,
         opened: { t: "list" },
         listTab: "packs",
       }
     }
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }
 
-const useClickedAddPuzzleItem: SyncReducer = ({ modelGame, msgSync }) => {
+const useClickedAddPuzzleItem: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "pack-builder.user-clicked-add-puzzle-item": {
-      if (!modelGame.packBuilder) {
-        return modelGame
+      if (!modelSync.packBuilder) {
+        return modelSync
       }
       return {
-        ...modelGame,
+        ...modelSync,
         packBuilder: {
-          ...modelGame.packBuilder,
-          pack: FlowPack.add(modelGame.packBuilder.pack, msgSync.puzzle.id),
+          ...modelSync.packBuilder,
+          pack: FlowPack.add(modelSync.packBuilder.pack, msgSync.puzzle.id),
           opened: {
             t: "pack",
             pageIndex: 0,
@@ -64,24 +64,24 @@ const useClickedAddPuzzleItem: SyncReducer = ({ modelGame, msgSync }) => {
       }
     }
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }
 
 const userClickedOpenAddPuzzleButton: SyncReducer = ({
-  modelGame,
+  modelSync,
   msgSync,
 }) => {
   switch (msgSync.t) {
     case "pack-builder.user-clicked-open-add-puzzle-button": {
-      if (!modelGame.packBuilder) {
-        return modelGame
+      if (!modelSync.packBuilder) {
+        return modelSync
       }
       return {
-        ...modelGame,
+        ...modelSync,
         packBuilder: {
-          ...modelGame.packBuilder,
+          ...modelSync.packBuilder,
           opened: {
             t: "add-puzzle",
           },
@@ -89,21 +89,21 @@ const userClickedOpenAddPuzzleButton: SyncReducer = ({
       }
     }
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }
 
-const userClosedAddPuzzle: SyncReducer = ({ modelGame, msgSync }) => {
+const userClosedAddPuzzle: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "pack-builder.user-closed-add-puzzle": {
-      if (!modelGame.packBuilder) {
-        return modelGame
+      if (!modelSync.packBuilder) {
+        return modelSync
       }
       return {
-        ...modelGame,
+        ...modelSync,
         packBuilder: {
-          ...modelGame.packBuilder,
+          ...modelSync.packBuilder,
           opened: {
             t: "pack",
             pageIndex: 0,
@@ -112,22 +112,22 @@ const userClosedAddPuzzle: SyncReducer = ({ modelGame, msgSync }) => {
       }
     }
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }
 
-const userClickedPackItem: SyncReducer = ({ modelGame, msgSync }) => {
+const userClickedPackItem: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "pack-builder.user-clicked-pack-item": {
-      if (!modelGame.packBuilder) {
-        return modelGame
+      if (!modelSync.packBuilder) {
+        return modelSync
       }
 
       return {
-        ...modelGame,
+        ...modelSync,
         packBuilder: {
-          ...modelGame.packBuilder,
+          ...modelSync.packBuilder,
           opened: {
             t: "puzzle",
             puzzleIndex: msgSync.index,
@@ -144,22 +144,22 @@ const userClickedPackItem: SyncReducer = ({ modelGame, msgSync }) => {
     }
 
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }
 
-const userClickedExitPuzzleButton: SyncReducer = ({ modelGame, msgSync }) => {
+const userClickedExitPuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "pack-builder.user-clicked-exit-puzzle-button": {
-      if (!modelGame.packBuilder) {
-        return modelGame
+      if (!modelSync.packBuilder) {
+        return modelSync
       }
 
       return {
-        ...modelGame,
+        ...modelSync,
         packBuilder: {
-          ...modelGame.packBuilder,
+          ...modelSync.packBuilder,
           opened: {
             t: "pack",
             pageIndex: 0,
@@ -169,23 +169,23 @@ const userClickedExitPuzzleButton: SyncReducer = ({ modelGame, msgSync }) => {
     }
 
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }
 
-const flowGridUIPlay: SyncReducer = ({ modelGame, msgSync }) => {
+const flowGridUIPlay: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "pack-builder.flow-play-grid-ui": {
-      if (!modelGame.packBuilder) {
-        return modelGame
+      if (!modelSync.packBuilder) {
+        return modelSync
       }
 
-      if (modelGame.packBuilder.opened.t !== "puzzle") {
-        return modelGame
+      if (modelSync.packBuilder.opened.t !== "puzzle") {
+        return modelSync
       }
 
-      const openedPuzzle = modelGame.packBuilder.opened.puzzle
+      const openedPuzzle = modelSync.packBuilder.opened.puzzle
 
       const updated = FlowGridUIPlay.update({
         grid: openedPuzzle.flowGrid,
@@ -194,12 +194,12 @@ const flowGridUIPlay: SyncReducer = ({ modelGame, msgSync }) => {
       })
 
       return {
-        ...modelGame,
+        ...modelSync,
         packBuilder: {
-          ...modelGame.packBuilder,
+          ...modelSync.packBuilder,
           opened: {
             t: "puzzle",
-            puzzleIndex: modelGame.packBuilder.opened.puzzleIndex,
+            puzzleIndex: modelSync.packBuilder.opened.puzzleIndex,
             puzzle: {
               t: "grid",
               flowGrid: openedPuzzle.flowGrid,
@@ -210,7 +210,7 @@ const flowGridUIPlay: SyncReducer = ({ modelGame, msgSync }) => {
       }
     }
     default: {
-      return modelGame
+      return modelSync
     }
   }
 }
@@ -227,8 +227,8 @@ const reducer: SyncReducer = (input) => {
     userClickedExitPuzzleButton,
     //
   ].reduce(
-    (modelGame, reducer) => reducer({ ...input, modelGame }),
-    input.modelGame,
+    (modelSync, reducer) => reducer({ ...input, modelSync }),
+    input.modelSync,
   )
 }
 

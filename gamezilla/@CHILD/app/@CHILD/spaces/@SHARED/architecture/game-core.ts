@@ -9,6 +9,6 @@ export type GameCore<T extends GameCoreTypes> = {
   reducer: (input: {
     ctx: T["Ctx"]
     msgSync: T["MsgSync"]
-    modelGame: T["ModelSync"]
+    modelSync: T["ModelSync"]
   }) => T["ModelSync"]
 }

@@ -139,12 +139,12 @@ const subscriptions: Module["subscriptions"] = () => {
 //
 //
 
-const View: Module["View"] = ({ ctx, model, modelGame, dispatch }) => {
+const View: Module["View"] = ({ ctx, model, modelSync, dispatch }) => {
   if (!model) {
     return null
   }
 
-  switch (modelGame.type) {
+  switch (modelSync.type) {
     case "setup": {
       return (
         <VsUserSetupScreen
@@ -182,7 +182,7 @@ const View: Module["View"] = ({ ctx, model, modelGame, dispatch }) => {
             renderIcon: (props) => {
               return <PlayerIcon playerType="player-one" {...props} />
             },
-            userId: modelGame.players["player-one"],
+            userId: modelSync.players["player-one"],
           }}
           playerTwo={{
             label: "Yellow",
@@ -202,7 +202,7 @@ const View: Module["View"] = ({ ctx, model, modelGame, dispatch }) => {
             renderIcon: (props) => {
               return <PlayerIcon playerType="player-two" {...props} />
             },
-            userId: modelGame.players["player-two"],
+            userId: modelSync.players["player-two"],
           }}
         />
       )
@@ -210,7 +210,7 @@ const View: Module["View"] = ({ ctx, model, modelGame, dispatch }) => {
 
     case "game":
     case "game-over": {
-      const currentUserPlayerType = toPlayerType(ctx.currentUserId, modelGame)
+      const currentUserPlayerType = toPlayerType(ctx.currentUserId, modelSync)
 
       return (
         <GameLayout isSpectating={currentUserPlayerType === null}>
@@ -218,22 +218,22 @@ const View: Module["View"] = ({ ctx, model, modelGame, dispatch }) => {
             <div className="flex w-full items-center gap-2 px-2">
               <PlayerSlot
                 playerType="player-one"
-                modelGame={modelGame}
+                modelSync={modelSync}
                 ctx={ctx}
               />
               <PlayerSlot
                 playerType="player-two"
-                modelGame={modelGame}
+                modelSync={modelSync}
                 ctx={ctx}
               />
             </div>
 
-            <Feedback ctx={ctx} modelGame={modelGame} />
+            <Feedback ctx={ctx} modelSync={modelSync} />
 
             <div className="relative w-full">
               <ViewColumns
-                columns={modelGame.columns}
-                gameId={modelGame.gameId}
+                columns={modelSync.columns}
+                gameId={modelSync.gameId}
                 onDropDisc={(columnIndex) =>
                   dispatch({
                     t: "user-dropped-disc",
@@ -248,16 +248,16 @@ const View: Module["View"] = ({ ctx, model, modelGame, dispatch }) => {
                   })
                 }
                 disabled={
-                  toTurn(modelGame.columns) !== currentUserPlayerType ||
-                  modelGame.type === "game-over"
+                  toTurn(modelSync.columns) !== currentUserPlayerType ||
+                  modelSync.type === "game-over"
                 }
               />
-              {modelGame.type === "game-over" && (
+              {modelSync.type === "game-over" && (
                 <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
                   <ViewGameOverMessage
                     dispatch={dispatch}
                     ctx={ctx}
-                    modelGame={modelGame}
+                    modelSync={modelSync}
                   />
                 </div>
               )}
@@ -265,7 +265,7 @@ const View: Module["View"] = ({ ctx, model, modelGame, dispatch }) => {
           </div>
 
           <ViewBottomButtonBar>
-            {modelGame.type === "game" && (
+            {modelSync.type === "game" && (
               <ViewBottomButtonBarAction
                 icon={<IconFlag className="h-6 w-6" />}
                 label="Resign"
@@ -278,7 +278,7 @@ const View: Module["View"] = ({ ctx, model, modelGame, dispatch }) => {
               />
             )}
 
-            {modelGame.type === "game-over" &&
+            {modelSync.type === "game-over" &&
               ctx.currentUserId === ctx.space.hostId && (
                 <>
                   <ViewBottomButtonBarAction
@@ -328,18 +328,18 @@ const View: Module["View"] = ({ ctx, model, modelGame, dispatch }) => {
 
 const ViewGameOverMessage = ({
   ctx,
-  modelGame,
+  modelSync,
   dispatch,
 }: {
-  modelGame: StateGameOver
+  modelSync: StateGameOver
   ctx: ClientCtx
   dispatch: (msg: MsgSync) => void
 }) => {
-  const currentPlayerType = toPlayerType(ctx.currentUserId, modelGame)
+  const currentPlayerType = toPlayerType(ctx.currentUserId, modelSync)
 
   if (
-    modelGame.rematch.type === "Asking" &&
-    modelGame.rematch.asker === currentPlayerType
+    modelSync.rematch.type === "Asking" &&
+    modelSync.rematch.asker === currentPlayerType
   ) {
     return (
       <>
@@ -360,8 +360,8 @@ const ViewGameOverMessage = ({
   }
 
   if (
-    modelGame.rematch.type === "Asking" &&
-    modelGame.rematch.asker !== currentPlayerType &&
+    modelSync.rematch.type === "Asking" &&
+    modelSync.rematch.asker !== currentPlayerType &&
     currentPlayerType !== null
   ) {
     return (
@@ -398,12 +398,12 @@ const ViewGameOverMessage = ({
     )
   }
 
-  if (modelGame.gameOver.type === "Draw") {
+  if (modelSync.gameOver.type === "Draw") {
     return <p className="text-xl">Tie</p>
   }
 
-  if (modelGame.gameOver.type === "resignation") {
-    const { resigner } = modelGame.gameOver
+  if (modelSync.gameOver.type === "resignation") {
+    const { resigner } = modelSync.gameOver
 
     const winner: PlayerType =
       resigner === "player-one" ? "player-two" : "player-one"
@@ -415,7 +415,7 @@ const ViewGameOverMessage = ({
             <PlayerIcon playerType={winner} />
             <Avatar
               alt=""
-              src={ctx.profiles[modelGame.players[winner]]?.avatarUrl}
+              src={ctx.profiles[modelSync.players[winner]]?.avatarUrl}
             />
           </div>
           <p>Winner</p>
@@ -431,8 +431,8 @@ const ViewGameOverMessage = ({
     )
   }
 
-  if (modelGame.gameOver.type === "Winner") {
-    const { winner } = modelGame.gameOver
+  if (modelSync.gameOver.type === "Winner") {
+    const { winner } = modelSync.gameOver
 
     if (currentPlayerType === null) {
       return (
@@ -441,7 +441,7 @@ const ViewGameOverMessage = ({
             <PlayerIcon playerType={winner} className="h-20 w-20" />
             <Avatar
               className="h-20 w-20"
-              src={ctx.profiles[modelGame.players[winner]]?.avatarUrl}
+              src={ctx.profiles[modelSync.players[winner]]?.avatarUrl}
             />
           </div>
           <p>Winner</p>
@@ -457,12 +457,12 @@ const ViewGameOverMessage = ({
 
 const Feedback = ({
   ctx,
-  modelGame,
+  modelSync,
 }: {
   ctx: SpaceClientCtx
-  modelGame: StateGame | StateGameOver
+  modelSync: StateGame | StateGameOver
 }) => {
-  if (modelGame.type === "game-over") {
+  if (modelSync.type === "game-over") {
     return (
       <p className="flex items-center justify-center text-secondary">
         Game Over
@@ -470,9 +470,9 @@ const Feedback = ({
     )
   }
 
-  const turn = toTurn(modelGame.columns)
+  const turn = toTurn(modelSync.columns)
 
-  const currentUserPlayerType = toPlayerType(ctx.currentUserId, modelGame)
+  const currentUserPlayerType = toPlayerType(ctx.currentUserId, modelSync)
 
   if (currentUserPlayerType !== turn) {
     return (
@@ -492,11 +492,11 @@ const Feedback = ({
 }
 
 const PlayerSlot = ({
-  modelGame,
+  modelSync,
   playerType,
   ctx,
 }: {
-  modelGame: StateGame | StateGameOver
+  modelSync: StateGame | StateGameOver
   playerType: PlayerType
   ctx: SpaceClientCtx
 }) => {
@@ -506,10 +506,10 @@ const PlayerSlot = ({
       <Avatar
         className="h-8 w-8"
         alt=""
-        src={ctx.profiles[modelGame.players[playerType]]?.avatarUrl}
+        src={ctx.profiles[modelSync.players[playerType]]?.avatarUrl}
       />
       <p className="text-secondary">
-        {ctx.profiles[modelGame.players[playerType]]?.username ?? "..."}
+        {ctx.profiles[modelSync.players[playerType]]?.username ?? "..."}
       </p>
     </div>
   )

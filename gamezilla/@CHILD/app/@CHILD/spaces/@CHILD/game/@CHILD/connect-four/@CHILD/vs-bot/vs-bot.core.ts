@@ -131,82 +131,82 @@ export type StateGame = {
 }
 
 export const reducer = ({
-  modelGame,
+  modelSync,
   msgSync,
 }: {
-  modelGame: ModelSync
+  modelSync: ModelSync
   msgSync: MsgSync & EventMeta
 }): ModelSync => {
-  switch (modelGame.type) {
+  switch (modelSync.type) {
     case "setup": {
       switch (msgSync.t) {
         case "user-started-playing": {
           return {
-            ...modelGame,
+            ...modelSync,
             playingUserId: msgSync.userId,
             userPlayerType: msgSync.playerType,
           }
         }
 
         case "user-stopped-playing": {
-          if (modelGame.playingUserId !== msgSync.userId) {
-            return addError(modelGame, msgSync, {
+          if (modelSync.playingUserId !== msgSync.userId) {
+            return addError(modelSync, msgSync, {
               t: "not-playing",
             })
           }
 
           return {
-            ...modelGame,
+            ...modelSync,
             playingUserId: null,
           }
         }
 
         case "user-swapped-sides": {
-          if (modelGame.playingUserId !== msgSync.userId) {
-            return addError(modelGame, msgSync, {
+          if (modelSync.playingUserId !== msgSync.userId) {
+            return addError(modelSync, msgSync, {
               t: "not-playing",
             })
           }
 
           return {
-            ...modelGame,
-            userPlayerType: ConnectFour.opposite[modelGame.userPlayerType],
+            ...modelSync,
+            userPlayerType: ConnectFour.opposite[modelSync.userPlayerType],
           }
         }
 
         case "user-started-game": {
-          if (modelGame.playingUserId !== msgSync.userId) {
-            return addError(modelGame, msgSync, {
+          if (modelSync.playingUserId !== msgSync.userId) {
+            return addError(modelSync, msgSync, {
               t: "not-playing",
             })
           }
 
           return {
-            ...modelGame,
+            ...modelSync,
             type: "game",
-            playingUserId: modelGame.playingUserId,
+            playingUserId: modelSync.playingUserId,
             columns: ConnectFour.EMPTY_COLUMNS,
           }
         }
 
         case "user-changed-bot-level": {
-          if (modelGame.playingUserId !== msgSync.userId) {
-            return addError(modelGame, msgSync, {
+          if (modelSync.playingUserId !== msgSync.userId) {
+            return addError(modelSync, msgSync, {
               t: "not-playing",
             })
           }
           return {
-            ...modelGame,
+            ...modelSync,
             botLevel: msgSync.botLevel,
           }
         }
 
         case "bot-dropped-disc": {
-          return addError(modelGame, msgSync, { t: "not-playing" })
+          return addError(modelSync, msgSync, { t: "not-playing" })
         }
 
         default: {
-          return modelGame
+          return modelSync
         }
       }
     }
@@ -215,102 +215,102 @@ export const reducer = ({
       switch (msgSync.t) {
         case "bot-dropped-disc": {
           const moved = ConnectFour.dropDisc(
-            modelGame.columns,
+            modelSync.columns,
             msgSync.columnIndex,
-            toBotPlayer(modelGame),
+            toBotPlayer(modelSync),
           )
 
           if (moved.t === "err") {
-            return addError(modelGame, msgSync, {
+            return addError(modelSync, msgSync, {
               t: "move",
               c: moved.error,
             })
           }
 
-          return { ...modelGame, columns: moved.value }
+          return { ...modelSync, columns: moved.value }
         }
 
         case "user-dropped-disc": {
-          if (modelGame.playingUserId !== msgSync.userId) {
-            return addError(modelGame, msgSync, {
+          if (modelSync.playingUserId !== msgSync.userId) {
+            return addError(modelSync, msgSync, {
               t: "not-playing",
             })
           }
 
           const moved = ConnectFour.dropDisc(
-            modelGame.columns,
+            modelSync.columns,
             msgSync.columnIndex,
-            modelGame.userPlayerType,
+            modelSync.userPlayerType,
           )
 
           if (moved.t === "err") {
-            return addError(modelGame, msgSync, {
+            return addError(modelSync, msgSync, {
               t: "move",
               c: moved.error,
             })
           }
 
-          return { ...modelGame, columns: moved.value }
+          return { ...modelSync, columns: moved.value }
         }
 
         case "user-left": {
-          if (msgSync.userId === modelGame.playingUserId) {
+          if (msgSync.userId === modelSync.playingUserId) {
             return {
-              ...modelGame,
+              ...modelSync,
               type: "setup",
-              botLevel: modelGame.botLevel,
-              userPlayerType: modelGame.userPlayerType,
+              botLevel: modelSync.botLevel,
+              userPlayerType: modelSync.userPlayerType,
               playingUserId: null,
             }
           }
-          return modelGame
+          return modelSync
         }
 
         case "user-stopped-game": {
-          if (msgSync.userId !== modelGame.playingUserId) {
-            return addError(modelGame, msgSync, {
+          if (msgSync.userId !== modelSync.playingUserId) {
+            return addError(modelSync, msgSync, {
               t: "not-playing",
             })
           }
 
           return {
-            ...modelGame,
+            ...modelSync,
             type: "setup",
-            botLevel: modelGame.botLevel,
-            userPlayerType: modelGame.userPlayerType,
-            playingUserId: modelGame.playingUserId,
+            botLevel: modelSync.botLevel,
+            userPlayerType: modelSync.userPlayerType,
+            playingUserId: modelSync.playingUserId,
           }
         }
 
         case "user-swapped-sides": {
-          if (msgSync.userId !== modelGame.playingUserId) {
-            return addError(modelGame, msgSync, {
+          if (msgSync.userId !== modelSync.playingUserId) {
+            return addError(modelSync, msgSync, {
               t: "not-playing",
             })
           }
 
           return {
-            ...modelGame,
-            userPlayerType: ConnectFour.opposite[modelGame.userPlayerType],
+            ...modelSync,
+            userPlayerType: ConnectFour.opposite[modelSync.userPlayerType],
             columns: ConnectFour.EMPTY_COLUMNS,
           }
         }
 
         case "user-restarted-game": {
-          if (msgSync.userId !== modelGame.playingUserId) {
-            return addError(modelGame, msgSync, {
+          if (msgSync.userId !== modelSync.playingUserId) {
+            return addError(modelSync, msgSync, {
               t: "not-playing",
             })
           }
 
           return {
-            ...modelGame,
+            ...modelSync,
             columns: ConnectFour.EMPTY_COLUMNS,
           }
         }
 
         default: {
-          return modelGame
+          return modelSync
         }
       }
     }
@@ -318,32 +318,32 @@ export const reducer = ({
 }
 
 const addError = (
-  modelGame: ModelSync,
+  modelSync: ModelSync,
   msgSync: MsgSync & EventMeta,
   error: EventErr,
 ): ModelSync => {
   return {
-    ...modelGame,
+    ...modelSync,
     errors: {
-      ...modelGame.errors,
+      ...modelSync.errors,
       [msgSync.eventId]: { ...msgSync, error },
     },
   }
 }
 
-export const isBotTurn = (modelGame: ModelSync): boolean => {
-  if (modelGame.type !== "game") {
+export const isBotTurn = (modelSync: ModelSync): boolean => {
+  if (modelSync.type !== "game") {
     return false
   }
-  const status = ConnectFour.toStatus(modelGame.columns)
+  const status = ConnectFour.toStatus(modelSync.columns)
   return (
     status.type === "Playing" &&
-    status.turn === ConnectFour.opposite[modelGame.userPlayerType]
+    status.turn === ConnectFour.opposite[modelSync.userPlayerType]
   )
 }
 
-export const toBotPlayer = (modelGame: ModelSync): ConnectFour.PlayerType => {
-  return ConnectFour.opposite[modelGame.userPlayerType]
+export const toBotPlayer = (modelSync: ModelSync): ConnectFour.PlayerType => {
+  return ConnectFour.opposite[modelSync.userPlayerType]
 }
 
 export type GameOver =

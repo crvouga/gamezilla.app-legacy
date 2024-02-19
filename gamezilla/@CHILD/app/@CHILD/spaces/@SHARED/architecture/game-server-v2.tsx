@@ -75,9 +75,9 @@ export type Input<T extends GameServerModuleTypes> = {
    */
   model: T["Model"]
   /**
-   * `modelGame` is the current state of the game. This is shared between client and server.
+   * `modelSync` is the current state of the game. This is shared between client and server.
    */
-  modelGame: T["ModelSync"]
+  modelSync: T["ModelSync"]
   /**
    * `msgSync` is an msgEvt of game
    */
@@ -162,7 +162,7 @@ export type GameServerModule<T extends GameServerModuleTypes> = {
    */
   subscriptions: (input: {
     ctx: T["Ctx"]
-    modelGame: T["ModelSync"]
+    modelSync: T["ModelSync"]
     model: T["Model"]
   }) => Promise<Sub<T["Msg"]>>
 }

@@ -82,52 +82,52 @@ export const initSync = () => {
 export const reducer = ({
   ctx,
   msgSync,
-  modelGame,
+  modelSync,
 }: {
   ctx: SpaceCtx
   msgSync: WithEventMeta<MsgSync>
-  modelGame: ModelSync
+  modelSync: ModelSync
 }): ModelSync => {
   switch (msgSync.t) {
     case "play": {
-      switch (modelGame.t) {
+      switch (modelSync.t) {
         case "play": {
           return {
             t: "play",
             c: Play.reducer({
               ctx,
               msgSync: msgSync.c,
-              modelGame: modelGame.c,
+              modelSync: modelSync.c,
             }),
           }
         }
         default: {
-          return modelGame
+          return modelSync
         }
       }
     }
 
     case "builder": {
-      switch (modelGame.t) {
+      switch (modelSync.t) {
         case "builder": {
           return {
             t: "builder",
             c: Builder.reducer({
               ctx,
               msgSync: msgSync.c,
-              modelGame: modelGame.c,
+              modelSync: modelSync.c,
             }),
           }
         }
         default: {
-          return modelGame
+          return modelSync
         }
       }
     }
 
     case "user-changed-mode": {
       if (msgSync.userId !== ctx.space.hostId) {
-        return modelGame
+        return modelSync
       }
 
       switch (msgSync.mode) {
