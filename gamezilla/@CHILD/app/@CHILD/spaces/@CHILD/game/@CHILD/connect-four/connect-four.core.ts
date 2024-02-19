@@ -35,7 +35,7 @@ export type Mode = "none" | "vs-user" | "vs-bot"
 
 export type MsgClient =
   | GameMainMenu.Msg
-  | MsgGame
+  | MsgSync
   | { t: "vs-user"; c: VsUser.MsgClient }
   | { t: "vs-bot"; c: VsBot.MsgClient }
 
@@ -57,25 +57,25 @@ export type MsgToServer =
 //
 //
 
-export type MsgGame =
+export type MsgSync =
   | { t: "user-changed-mode"; mode: Mode; userId: UserId }
-  | { t: "vs-bot"; c: VsBot.MsgGame }
-  | { t: "vs-user"; c: VsUser.MsgGame }
+  | { t: "vs-bot"; c: VsBot.MsgSync }
+  | { t: "vs-user"; c: VsUser.MsgSync }
 
-export type ModelGame =
+export type ModelSync =
   | {
       t: "none"
     }
   | {
       t: "vs-user"
-      c: VsUser.ModelGame
+      c: VsUser.ModelSync
     }
   | {
       t: "vs-bot"
-      c: VsBot.ModelGame
+      c: VsBot.ModelSync
     }
 
-export const initGame = (): ModelGame => {
+export const initSync = (): ModelSync => {
   return {
     t: "none",
   }
@@ -83,16 +83,16 @@ export const initGame = (): ModelGame => {
 
 export const reducer = ({
   ctx,
-  msgGame,
+  msgSync,
   modelGame,
 }: {
   ctx: SpaceCtx
-  modelGame: ModelGame
-  msgGame: WithEventMeta<MsgGame>
-}): ModelGame => {
-  switch (msgGame.t) {
+  modelGame: ModelSync
+  msgSync: WithEventMeta<MsgSync>
+}): ModelSync => {
+  switch (msgSync.t) {
     case "user-changed-mode": {
-      switch (msgGame.mode) {
+      switch (msgSync.mode) {
         case "none": {
           return {
             t: "none",
@@ -102,14 +102,14 @@ export const reducer = ({
         case "vs-bot": {
           return {
             t: "vs-bot",
-            c: VsBot.initGame(ctx),
+            c: VsBot.initSync(ctx),
           }
         }
 
         case "vs-user": {
           return {
             t: "vs-user",
-            c: VsUser.initGame(ctx),
+            c: VsUser.initSync(ctx),
           }
         }
       }
@@ -122,7 +122,7 @@ export const reducer = ({
             t: "vs-bot",
             c: VsBot.reducer({
               modelGame: modelGame.c,
-              msgGame: { ...msgGame, ...msgGame.c },
+              msgSync: { ...msgSync, ...msgSync.c },
             }),
           }
         }
@@ -137,7 +137,7 @@ export const reducer = ({
         case "vs-user": {
           return {
             t: "vs-user",
-            c: VsUser.reducer(modelGame.c, msgGame.c),
+            c: VsUser.reducer(modelGame.c, msgSync.c),
           }
         }
 

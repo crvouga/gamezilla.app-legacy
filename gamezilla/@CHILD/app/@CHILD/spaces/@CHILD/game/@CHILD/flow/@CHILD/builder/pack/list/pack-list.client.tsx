@@ -20,7 +20,7 @@ export const updateClickedPackItem: ClientModule["update"] = ({
     case "pack-list.clicked-pack-item": {
       return {
         model,
-        msgGame: [
+        msgSync: [
           withId({ t: "pack-list.user-clicked-pack-item", pack: msg.pack }),
         ],
       }

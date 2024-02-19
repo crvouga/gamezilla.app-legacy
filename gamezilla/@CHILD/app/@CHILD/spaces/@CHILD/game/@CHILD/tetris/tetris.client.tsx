@@ -347,8 +347,8 @@ export const View = ({
   )
 }
 
-const mouseEventToPosition = (msgGame: MouseEvent): Position.Position => {
-  if (!(msgGame.currentTarget instanceof HTMLCanvasElement)) {
+const mouseEventToPosition = (msgSync: MouseEvent): Position.Position => {
+  if (!(msgSync.currentTarget instanceof HTMLCanvasElement)) {
     return {
       x: 0,
       y: 0,
@@ -356,16 +356,16 @@ const mouseEventToPosition = (msgGame: MouseEvent): Position.Position => {
   }
   const x = Math.floor(
     rescale({
-      value: msgGame.pageX - msgGame.currentTarget.offsetLeft,
-      from: [0, msgGame.currentTarget.width],
+      value: msgSync.pageX - msgSync.currentTarget.offsetLeft,
+      from: [0, msgSync.currentTarget.width],
       to: [0, columnCount],
     }),
   )
 
   const y = Math.floor(
     rescale({
-      value: msgGame.pageY - msgGame.currentTarget.offsetTop,
-      from: [0, msgGame.currentTarget.height],
+      value: msgSync.pageY - msgSync.currentTarget.offsetTop,
+      from: [0, msgSync.currentTarget.height],
       to: [0, rowCount],
     }),
   )

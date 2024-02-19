@@ -13,7 +13,7 @@ import {
   initial,
   serverCreatedPack,
 } from "../../@TEST/client"
-import { deriveModelGame } from "../../@TEST/game"
+import { deriveModelSync } from "../../@TEST/game"
 
 describe("pack builder client", () => {
   it("should open puzzle when user clickes puzzle grid item", async () => {
@@ -26,7 +26,7 @@ describe("pack builder client", () => {
       clickedPuzzlePickerItem(puzzle),
       clickedPuzzleGridItem(puzzle, 0),
     )
-    const modelGame = deriveModelGame(output)
+    const modelGame = deriveModelSync(output)
     expect(
       modelGame.packBuilder?.opened.t === "puzzle" &&
         modelGame.packBuilder.opened.puzzleIndex === 0,
@@ -39,7 +39,7 @@ describe("pack builder client", () => {
       serverCreatedPack(createFlowPack(testSpaceClientCtx)),
       clickedOpenPuzzlePickerButton,
     )
-    const modelGame = deriveModelGame(output)
+    const modelGame = deriveModelSync(output)
     expect(modelGame.packBuilder?.opened.t === "add-puzzle").toBeTrue()
   })
 
@@ -50,7 +50,7 @@ describe("pack builder client", () => {
       clickedOpenPuzzlePickerButton,
       closedPuzzlePickerDrawer,
     )
-    const modelGame = deriveModelGame(output)
+    const modelGame = deriveModelSync(output)
     expect(modelGame.packBuilder?.opened.t === "pack").toBeTrue()
   })
 
@@ -61,7 +61,7 @@ describe("pack builder client", () => {
       serverCreatedPack(createFlowPack(testSpaceClientCtx)),
       clickedPuzzlePickerItem(puzzle),
     )
-    const modelGame = deriveModelGame(output)
+    const modelGame = deriveModelSync(output)
     expect(
       modelGame.packBuilder &&
         FlowPack.includes(modelGame.packBuilder.pack, puzzle.id),
@@ -76,7 +76,7 @@ describe("pack builder client", () => {
       clickedOpenPuzzlePickerButton,
       clickedPuzzlePickerItem(puzzle),
     )
-    const modelGame = deriveModelGame(output)
+    const modelGame = deriveModelSync(output)
     expect(modelGame.packBuilder?.opened.t === "pack").toBeTrue()
   })
 
@@ -90,7 +90,7 @@ describe("pack builder client", () => {
       clickedPuzzleGridItem(puzzle, 0),
       clickedExitPuzzleButton(),
     )
-    const modelGame = deriveModelGame(output)
+    const modelGame = deriveModelSync(output)
     expect(modelGame.packBuilder?.opened.t === "pack").toBeTrue()
   })
 })

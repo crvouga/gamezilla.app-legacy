@@ -9,7 +9,7 @@ import { ClientModule } from "../../builder.core"
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 
 const update: ClientModule["update"] = (input) => {
-  const { model, msg, msgGame, msgServer } = input
+  const { model, msg, msgSync, msgServer } = input
 
   switch (msg?.t) {
     case "pack-create.clicked-create-button": {
@@ -32,7 +32,7 @@ const update: ClientModule["update"] = (input) => {
     case "pack-create.created-pack": {
       return {
         model,
-        msgGame: [
+        msgSync: [
           withId({
             t: "user-created-pack",
             created: msgServer.created,
@@ -43,7 +43,7 @@ const update: ClientModule["update"] = (input) => {
     }
   }
 
-  switch (msgGame?.t) {
+  switch (msgSync?.t) {
     case "user-created-pack": {
       return {
         model: {

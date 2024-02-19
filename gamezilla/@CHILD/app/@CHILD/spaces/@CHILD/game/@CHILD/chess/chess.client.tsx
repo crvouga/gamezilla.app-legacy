@@ -22,9 +22,9 @@ import { CoverArt } from "./@SHARED/chess-ui"
 import { CHESS_SOUND } from "./@SHARED/chess/chess-sounds"
 import {
   ModelClient,
-  ModelGame,
+  ModelSync,
   MsgClient,
-  MsgGame,
+  MsgSync,
   MsgToClient,
   MsgToServer,
 } from "./chess.core"
@@ -42,8 +42,8 @@ type Client = GameClient<{
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
   ClientCtx: SpaceClientCtx
-  MsgGame: MsgGame
-  ModelGame: ModelGame
+  MsgSync: MsgSync
+  ModelSync: ModelSync
   ClientCmd: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
   ClientEvent: SpaceClientEvent
 }>

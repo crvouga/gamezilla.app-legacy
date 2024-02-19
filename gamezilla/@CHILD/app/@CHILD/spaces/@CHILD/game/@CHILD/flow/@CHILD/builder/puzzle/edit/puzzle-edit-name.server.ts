@@ -5,7 +5,7 @@ import { err, isErr } from "gamezilla/@SHARED/core"
 import { IFlowPuzzleDb } from "../../../../@SHARED/flow-puzzle-db"
 import { FlowPuzzleId } from "../../../../@SHARED/flow-puzzle/flow-puzzle-id"
 import { ServerModule } from "../../builder.core"
-import { MsgGame } from "./puzzle-edit-name.core"
+import { MsgSync } from "./puzzle-edit-name.core"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPuzzleName } from "../../../../@SHARED/flow-puzzle/flow-puzzle-name"
 
@@ -27,7 +27,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         userId: msgClient.userId,
       })
 
-      const msgGame: MsgGame = {
+      const msgSync: MsgSync = {
         t: "user-edited-puzzle-name",
         edited,
         flowPuzzleId: msgClient.flowPuzzleId,
@@ -37,7 +37,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
       return {
         model,
-        msgGame: [withId(msgGame)],
+        msgSync: [withId(msgSync)],
       }
     }
 

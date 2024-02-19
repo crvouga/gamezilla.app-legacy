@@ -12,8 +12,8 @@ import { ViewProfileCard } from "../../@SHARED/ui"
 import {
   ModelClient,
   MsgClient,
-  MsgGame,
-  ModelGame,
+  MsgSync,
+  ModelSync,
   MsgToClient,
   MsgToServer,
 } from "./play.core"
@@ -23,8 +23,8 @@ type Module = GameClientModule<{
   Msg: MsgClient
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  MsgGame: MsgGame
-  ModelGame: ModelGame
+  MsgSync: MsgSync
+  ModelSync: ModelSync
   Ctx: FlowClientCtx
   MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
   MsgInEvent: SpaceClientEvent
@@ -68,11 +68,11 @@ const updateFromMsg: Module["update"] = (input) => {
       }
     }
 
-    case "msgGame": {
-      const msgGame = withId(msg.c)
+    case "msgSync": {
+      const msgSync = withId(msg.c)
       return {
         model,
-        msgGame: [msgGame],
+        msgSync: [msgSync],
       }
     }
   }
@@ -96,7 +96,7 @@ const View: Module["View"] = ({ model, modelGame, dispatch, ctx }) => {
         )}
         {USE_GAME_STATE ? (
           <FlowGridUIPlay.View
-            dispatch={(c) => dispatch({ t: "msgGame", c: { t: "grid", c } })}
+            dispatch={(c) => dispatch({ t: "msgSync", c: { t: "grid", c } })}
             model={modelGame.gridPlay}
             disabled={isSpectating}
             grid={modelGame.grid}
@@ -124,10 +124,10 @@ const View: Module["View"] = ({ model, modelGame, dispatch, ctx }) => {
   )
 }
 
-export const ViewFeedItem: Module["ViewFeedItem"] = ({ msgGame }) => {
-  switch (msgGame.t) {
+export const ViewFeedItem: Module["ViewFeedItem"] = ({ msgSync }) => {
+  switch (msgSync.t) {
     case "grid": {
-      switch (msgGame.c.t) {
+      switch (msgSync.c.t) {
         case "dragged-over":
         case "left":
         case "pressed-down":

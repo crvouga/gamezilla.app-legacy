@@ -1,9 +1,9 @@
-import { GameReducer } from "../builder.core"
+import { SyncReducer } from "../builder.core"
 import { PackBuilderGame } from "./builder"
 import { PackCreateGame } from "./create"
 import { PackListGame } from "./list/pack-list.game"
 
-const reducer: GameReducer = (input) => {
+const reducer: SyncReducer = (input) => {
   return [
     PackCreateGame.reducer,
     PackBuilderGame.reducer,

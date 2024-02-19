@@ -1,13 +1,13 @@
 import { isErr } from "gamezilla/@SHARED/core"
-import { GameReducer } from "../../builder.core"
+import { SyncReducer } from "../../builder.core"
 
-const reducer: GameReducer = ({ modelGame, msgGame }) => {
-  switch (msgGame.t) {
+const reducer: SyncReducer = ({ modelGame, msgSync }) => {
+  switch (msgSync.t) {
     case "user-saved-changes": {
-      if (isErr(msgGame.saved)) {
+      if (isErr(msgSync.saved)) {
         return modelGame
       }
-      return { ...modelGame, puzzle: msgGame.saved.value }
+      return { ...modelGame, puzzle: msgSync.saved.value }
     }
 
     default: {

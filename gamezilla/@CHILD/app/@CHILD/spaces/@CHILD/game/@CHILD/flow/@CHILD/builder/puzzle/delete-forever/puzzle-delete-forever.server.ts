@@ -1,7 +1,7 @@
 import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2"
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { ServerModule } from "../../builder.core"
-import { MsgGame } from "./puzzle-delete-forever.core"
+import { MsgSync } from "./puzzle-delete-forever.core"
 
 const update: ServerModule["update"] = async (input) => {
   return GameServerModule.chainUpdates({ model: input.model }, (model) =>
@@ -25,7 +25,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         deletedByUserId: msgClient.userId,
       })
 
-      const msgGame: MsgGame = {
+      const msgSync: MsgSync = {
         t: "user-deleted-puzzle",
         flowPuzzleId: puzzleBuilder.puzzle.id,
         userId: msgClient.userId,
@@ -34,7 +34,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
       return {
         model,
-        msgGame: [withId(msgGame)],
+        msgSync: [withId(msgSync)],
       }
     }
 

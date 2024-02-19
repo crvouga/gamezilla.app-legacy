@@ -21,7 +21,7 @@ import { Position } from "../../@SHARED/gomoku/gomoku-position"
 //
 //
 
-export type Model = SetupModel | ModelGame
+export type Model = SetupModel | ModelSync
 
 export type SetupModel = {
   type: "setup"
@@ -30,7 +30,7 @@ export type SetupModel = {
   botLevel: BotLevel
 }
 
-export type ModelGame = {
+export type ModelSync = {
   type: "game"
   userId: UserId
   userStone: Stone

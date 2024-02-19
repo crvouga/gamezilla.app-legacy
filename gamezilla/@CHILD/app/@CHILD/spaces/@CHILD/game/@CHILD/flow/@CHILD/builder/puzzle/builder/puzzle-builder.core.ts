@@ -22,7 +22,7 @@ export type MsgToClient = { t: "noop" }
 
 export type MsgToServer = { t: "noop" }
 
-export type MsgGame =
+export type MsgSync =
   | {
       t: "puzzle-builder.grid-ui-play"
       c: FlowGridUIPlay.Msg

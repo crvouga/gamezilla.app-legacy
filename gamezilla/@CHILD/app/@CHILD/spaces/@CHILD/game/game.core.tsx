@@ -74,56 +74,56 @@ export const gameNameToString = (gameName: GameName): string => {
   }
 }
 
-export type ModelGame =
+export type ModelSync =
   | {
       t: "connect-four"
-      c: ConnectFour.ModelGame
+      c: ConnectFour.ModelSync
     }
   | {
       t: "flow"
-      c: Flow.ModelGame
+      c: Flow.ModelSync
     }
 
-export const initGame = (gameName: GameName): ModelGame => {
+export const initSync = (gameName: GameName): ModelSync => {
   switch (gameName) {
     case "connect-four": {
       return {
         t: "connect-four",
-        c: ConnectFour.initGame(),
+        c: ConnectFour.initSync(),
       }
     }
 
     case "flow": {
       return {
         t: "flow",
-        c: Flow.initGame(),
+        c: Flow.initSync(),
       }
     }
   }
 }
 
-export type MsgGame =
-  | { t: "connect-four"; c: ConnectFour.MsgGame }
-  | { t: "flow"; c: Flow.MsgGame }
+export type MsgSync =
+  | { t: "connect-four"; c: ConnectFour.MsgSync }
+  | { t: "flow"; c: Flow.MsgSync }
 
 export const reducer = ({
   ctx,
   modelGame,
-  msgGame,
+  msgSync,
 }: {
   ctx: SpaceCtx
-  modelGame: ModelGame
-  msgGame: MsgGame & EventMeta
-}): ModelGame => {
+  modelGame: ModelSync
+  msgSync: MsgSync & EventMeta
+}): ModelSync => {
   switch (modelGame.t) {
     case "connect-four": {
-      switch (msgGame.t) {
+      switch (msgSync.t) {
         case "connect-four": {
           return {
             t: "connect-four",
             c: ConnectFour.reducer({
               ctx,
-              msgGame: { ...msgGame, ...msgGame.c },
+              msgSync: { ...msgSync, ...msgSync.c },
               modelGame: modelGame.c,
             }),
           }
@@ -135,13 +135,13 @@ export const reducer = ({
     }
 
     case "flow": {
-      switch (msgGame.t) {
+      switch (msgSync.t) {
         case "flow": {
           return {
             t: "flow",
             c: Flow.reducer({
               ctx,
-              msgGame: { ...msgGame, ...msgGame.c },
+              msgSync: { ...msgSync, ...msgSync.c },
               modelGame: modelGame.c,
             }),
           }

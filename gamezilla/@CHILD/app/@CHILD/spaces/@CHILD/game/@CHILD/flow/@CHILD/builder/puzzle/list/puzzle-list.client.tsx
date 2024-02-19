@@ -17,7 +17,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
     case "puzzle-list.clicked-puzzle-list-item": {
       return {
         model,
-        msgGame: [
+        msgSync: [
           withId({
             t: "puzzle-list.clicked-puzzle-list-item",
             puzzle: msg.puzzle,

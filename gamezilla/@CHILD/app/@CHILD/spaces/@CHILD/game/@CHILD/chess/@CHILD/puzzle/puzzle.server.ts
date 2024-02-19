@@ -18,7 +18,7 @@ import {
   p,
 } from "gamezilla/@SHARED/core"
 import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span"
-import { ChessMsgGame } from "../../@SHARED/chess/chess-shared"
+import { ChessMsgSync } from "../../@SHARED/chess/chess-shared"
 import { EloRating } from "./elo-rating"
 import { PuzzleDb } from "./puzzle-db"
 import {
@@ -410,7 +410,7 @@ const updateFromClientMain: typeof updateFromClient = ({ model }) => {
 export const updateFromGame = ({
   model,
 }: {
-  msg: ChessMsgGame
+  msg: ChessMsgSync
   model: ModelServer
 }): {
   model: ModelServer

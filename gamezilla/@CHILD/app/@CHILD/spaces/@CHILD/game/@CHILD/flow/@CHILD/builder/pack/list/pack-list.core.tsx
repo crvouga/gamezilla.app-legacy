@@ -21,7 +21,7 @@ export type MsgToClient = {
   t: "noop"
 }
 
-export type MsgGame = {
+export type MsgSync = {
   t: "pack-list.user-clicked-pack-item"
   pack: FlowPack
 }

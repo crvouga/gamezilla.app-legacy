@@ -14,8 +14,8 @@ export type GameClientTypes = {
   MsgToClient: any
   MsgToServer: any
   //
-  ModelGame: any
-  MsgGame: any
+  ModelSync: any
+  MsgSync: any
   //
   ClientCtx: any
 }
@@ -27,7 +27,7 @@ type Output<T extends GameClientTypes> = {
     MsgClient: T["MsgClient"]
     MsgToServer: T["MsgToServer"]
   }>[]
-  msgGame?: WithEventId<T["MsgGame"]>[]
+  msgSync?: WithEventId<T["MsgSync"]>[]
 }
 
 export type InMsg<T extends GameClientTypes> =
@@ -37,45 +37,45 @@ export type InMsg<T extends GameClientTypes> =
 
 export type OutMsg<T extends GameClientTypes> =
   | ({ variant: "msgCmd" } & ClientCmd<T>)
-  | ({ variant: "game-event" } & WithEventId<T["MsgGame"]>)
+  | ({ variant: "game-event" } & WithEventId<T["MsgSync"]>)
 
 export type GameClient<T extends GameClientTypes> = {
   init: (input: {
     ctx: T["ClientCtx"]
-    modelGame: T["ModelGame"]
+    modelGame: T["ModelSync"]
     model?: T["ModelClient"] | null
   }) => Output<T>
 
   update: (input: {
     ctx: T["ClientCtx"]
-    modelGame: T["ModelGame"]
-    modelGameBefore: T["ModelGame"]
+    modelGame: T["ModelSync"]
+    modelGameBefore: T["ModelSync"]
     model?: T["ModelClient"] | null
     //
     msg?: T["MsgClient"] | null
     msgServer?: T["MsgToClient"] | null
     msgEvt?: ClientEvent | null
-    msgGame?: WithEventMeta<T["MsgGame"]> | null
+    msgSync?: WithEventMeta<T["MsgSync"]> | null
   }) => Output<T>
 
   subscriptions: (input: {
     intervalId: string
     ctx: T["ClientCtx"]
     model?: T["ModelClient"] | null
-    modelGame: T["ModelGame"]
+    modelGame: T["ModelSync"]
   }) => Sub<T["MsgClient"]>
 
   View: (input: {
     ctx: T["ClientCtx"]
     dispatch: (msg: T["MsgClient"]) => void
-    modelGame: T["ModelGame"]
+    modelGame: T["ModelSync"]
     model?: T["ModelClient"] | null
   }) => VDom
 
   ViewFeedItem: (input: {
     ctx: T["ClientCtx"]
-    modelGame: T["ModelGame"]
-    msgEvt: T["MsgGame"]
+    modelGame: T["ModelSync"]
+    msgEvt: T["MsgSync"]
   }) => VDom
 }
 
@@ -90,8 +90,8 @@ export const tag = <T extends string, Types extends GameClientTypes>(
   MsgClient: { t: T; c: Types["MsgClient"] }
   MsgToClient: { t: T; c: Types["MsgToClient"] }
   MsgToServer: { t: T; c: Types["MsgToServer"] }
-  ModelGame: { t: T; c: Types["ModelGame"] }
-  MsgGame: { t: T; c: Types["MsgGame"] }
+  ModelSync: { t: T; c: Types["ModelSync"] }
+  MsgSync: { t: T; c: Types["MsgSync"] }
   ClientCtx: Types["ClientCtx"]
 }> => {
   return {
@@ -113,7 +113,7 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         msgEvt: input.msgEvt,
         msg: input.msg?.t === tag ? input.msg?.c : undefined,
         model: input.model?.t === tag ? input.model?.c : undefined,
-        msgGame: input.msgGame?.t === tag ? input.msgGame?.c : undefined,
+        msgSync: input.msgSync?.t === tag ? input.msgSync?.c : undefined,
         msgServer: input.msgServer?.t === tag ? input.msgServer?.c : undefined,
         ctx: input.ctx,
         modelGame: input.modelGame.c,
@@ -123,21 +123,21 @@ export const tag = <T extends string, Types extends GameClientTypes>(
         model: { t: tag, c: updated.model },
         eff: Eff.tag(tag, updated.eff),
         msgCmd: ClientCmd.tag(tag, updated.msgCmd),
-        msgGame: updated.msgGame
-          ? updated.msgGame.map(
+        msgSync: updated.msgSync
+          ? updated.msgSync.map(
               (
-                msgGame,
+                msgSync,
               ): WithEventMeta<{
                 t: T
-                c: WithEventMeta<Types["MsgGame"]>
+                c: WithEventMeta<Types["MsgSync"]>
               }> => ({
-                eventId: msgGame.msgEvtId,
-                happenedAt: msgGame.happenedAt,
+                eventId: msgSync.msgEvtId,
+                happenedAt: msgSync.happenedAt,
                 t: tag,
                 c: {
-                  ...msgGame,
-                  msgEvtId: msgGame.msgEvtId,
-                  happenedAt: msgGame.happenedAt,
+                  ...msgSync,
+                  msgEvtId: msgSync.msgEvtId,
+                  happenedAt: msgSync.happenedAt,
                 },
               }),
             )
@@ -205,7 +205,7 @@ const chain = <T extends GameClientTypes>(
     MsgClient: T["MsgClient"]
     MsgToServer: T["MsgToServer"]
   }>[] = initial.msgCmd ?? []
-  const msgGames: T["MsgGame"][] = initial?.msgGame ?? []
+  const msgSyncs: T["MsgSync"][] = initial?.msgSync ?? []
   const eff: Eff<T["MsgClient"]>[] = initial.eff ? [initial.eff] : []
 
   let model = initial.model
@@ -220,11 +220,11 @@ const chain = <T extends GameClientTypes>(
     if (updated.eff) {
       eff.push(updated.eff)
     }
-    if (updated.msgGame) {
+    if (updated.msgSync) {
       let j = 0
-      let len = updated.msgGame.length
+      let len = updated.msgSync.length
       for (j = 0; j < len; ++j) {
-        msgGames.push(updated.msgGame[j]!)
+        msgSyncs.push(updated.msgSync[j]!)
       }
     }
     if (updated.msgCmd) {
@@ -239,7 +239,7 @@ const chain = <T extends GameClientTypes>(
   return {
     model,
     eff: Eff.batch(eff),
-    msgGame: msgGames,
+    msgSync: msgSyncs,
     msgCmd,
   }
 }
@@ -252,8 +252,8 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
   MsgClient: { t: TTag; c: TTypes["MsgClient"] }
   MsgToClient: { t: TTag; c: TTypes["MsgToClient"] }
   MsgToServer: { t: TTag; c: TTypes["MsgToServer"] }
-  ModelGame: { t: TTag; c: TTypes["ModelGame"] }
-  MsgGame: { t: TTag; c: TTypes["MsgGame"] }
+  ModelSync: { t: TTag; c: TTypes["ModelSync"] }
+  MsgSync: { t: TTag; c: TTypes["MsgSync"] }
   ClientCtx: TTypes["ClientCtx"]
 }> => {
   return {
@@ -265,12 +265,12 @@ const tagOutput = <TTag extends string, TTypes extends GameClientTypes>(
     msgCmd: output.msgCmd
       ? output.msgCmd.map((msgCmd) => ClientCmd.tagOne(tag, msgCmd))
       : undefined,
-    msgGame: output.msgGame
-      ? output.msgGame.map((msgGame) => ({
-          eventId: msgGame.eventId,
-          happenedAt: msgGame.happenedAt,
+    msgSync: output.msgSync
+      ? output.msgSync.map((msgSync) => ({
+          eventId: msgSync.eventId,
+          happenedAt: msgSync.happenedAt,
           t: tag,
-          c: msgGame,
+          c: msgSync,
         }))
       : undefined,
   }

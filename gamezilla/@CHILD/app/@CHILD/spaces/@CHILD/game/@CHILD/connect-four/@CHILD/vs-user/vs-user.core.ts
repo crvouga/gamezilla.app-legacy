@@ -38,7 +38,7 @@ export type ModelServer = null
 export type MsgServer = { t: null }
 
 export type MsgClient =
-  | MsgGame
+  | MsgSync
   | { t: "hovered-over-columns"; columnIndex: ColumnIndex }
   | { t: "clicked-resign"; userId: UserId }
   | { t: "close-modal" }
@@ -53,7 +53,7 @@ export type MsgToClient = { t: null }
 //
 //
 
-export type MsgGame =
+export type MsgSync =
   //
   | { t: "user-stopped-playing"; userId: UserId }
   | { t: "user-started-playing"; userId: UserId; playerType: PlayerType }
@@ -78,9 +78,9 @@ export type MsgGame =
 
 type EventError = { t: "not-playing" } | { t: "move"; c: MoveProblem }
 
-export type ModelGame = StateSetup | StateGame | StateGameOver
+export type ModelSync = StateSetup | StateGame | StateGameOver
 
-export const initGame = (ctx: SpaceCtx): ModelGame => {
+export const initSync = (ctx: SpaceCtx): ModelSync => {
   return {
     type: "setup",
     moveTimeLimit: 5,
@@ -94,20 +94,20 @@ export const initGame = (ctx: SpaceCtx): ModelGame => {
 
 type Errors = {
   errors: {
-    [eventId: string]: MsgGame & { error: EventError }
+    [eventId: string]: MsgSync & { error: EventError }
   }
 }
 
 const addError = (
-  modelGame: ModelGame,
-  msgGame: MsgGame,
+  modelGame: ModelSync,
+  msgSync: MsgSync,
   error: EventError,
-): ModelGame => {
+): ModelSync => {
   return {
     ...modelGame,
     errors: {
       ...modelGame.errors,
-      [JSON.stringify(msgGame)]: { ...msgGame, error },
+      [JSON.stringify(msgSync)]: { ...msgSync, error },
     },
   }
 }
@@ -165,7 +165,7 @@ export type GameOver =
     }
 
 export const toGameOver = (
-  modelGame: ModelGame,
+  modelGame: ModelSync,
 ): GameOver | { type: "none" } => {
   if (modelGame.type === "setup") {
     return { type: "none" }
@@ -194,13 +194,13 @@ export const allMoveTimeLimit: {
   "9": 9,
 }
 
-export const reducer = (modelGame: ModelGame, msgGame: MsgGame): ModelGame => {
+export const reducer = (modelGame: ModelSync, msgSync: MsgSync): ModelSync => {
   switch (modelGame.type) {
     case "setup": {
-      switch (msgGame.t) {
+      switch (msgSync.t) {
         case "user-started-playing": {
-          if (modelGame.players[msgGame.playerType] !== null) {
-            return addError(modelGame, msgGame, {
+          if (modelGame.players[msgSync.playerType] !== null) {
+            return addError(modelGame, msgSync, {
               t: "not-playing",
             })
           }
@@ -209,16 +209,16 @@ export const reducer = (modelGame: ModelGame, msgGame: MsgGame): ModelGame => {
             ...modelGame,
             players: {
               ...modelGame.players,
-              [msgGame.playerType]: msgGame.userId,
+              [msgSync.playerType]: msgSync.userId,
             },
           }
         }
 
         case "user-stopped-playing": {
-          const playerType = toPlayerType(msgGame.userId, modelGame)
+          const playerType = toPlayerType(msgSync.userId, modelGame)
 
           if (!playerType) {
-            return addError(modelGame, msgGame, {
+            return addError(modelGame, msgSync, {
               t: "not-playing",
             })
           }
@@ -235,7 +235,7 @@ export const reducer = (modelGame: ModelGame, msgGame: MsgGame): ModelGame => {
         case "user-inputted-move-time-limit": {
           return {
             ...modelGame,
-            moveTimeLimit: msgGame.moveTimeLimit,
+            moveTimeLimit: msgSync.moveTimeLimit,
           }
         }
 
@@ -244,7 +244,7 @@ export const reducer = (modelGame: ModelGame, msgGame: MsgGame): ModelGame => {
           const playerTwo = modelGame.players["player-two"]
 
           if (!playerOne || !playerTwo) {
-            return addError(modelGame, msgGame, {
+            return addError(modelGame, msgSync, {
               t: "not-playing",
             })
           }
@@ -270,14 +270,14 @@ export const reducer = (modelGame: ModelGame, msgGame: MsgGame): ModelGame => {
     }
 
     case "game": {
-      switch (msgGame.t) {
+      switch (msgSync.t) {
         case "user-dropped-disc": {
           const turn = toTurn(modelGame.columns)
 
-          const dropped = dropDisc(modelGame.columns, msgGame.columnIndex, turn)
+          const dropped = dropDisc(modelGame.columns, msgSync.columnIndex, turn)
 
           if (dropped.t === "err") {
-            return addError(modelGame, msgGame, {
+            return addError(modelGame, msgSync, {
               t: "move",
               c: dropped.error,
             })
@@ -286,15 +286,15 @@ export const reducer = (modelGame: ModelGame, msgGame: MsgGame): ModelGame => {
           return {
             ...modelGame,
             columns: dropped.value,
-            // lastMoveAt: msgGame.happenedAt,
+            // lastMoveAt: msgSync.happenedAt,
           }
         }
 
         case "user-resigned": {
-          const resignedPlayer = toPlayerType(msgGame.userId, modelGame)
+          const resignedPlayer = toPlayerType(msgSync.userId, modelGame)
 
           if (!resignedPlayer) {
-            return addError(modelGame, msgGame, {
+            return addError(modelGame, msgSync, {
               t: "not-playing",
             })
           }
@@ -325,7 +325,7 @@ export const reducer = (modelGame: ModelGame, msgGame: MsgGame): ModelGame => {
 
 export const toPlayerType = (
   userId: UserId,
-  modelGame: ModelGame,
+  modelGame: ModelSync,
 ): PlayerType | null => {
   if (modelGame.players["player-one"] === userId) {
     return "player-one"

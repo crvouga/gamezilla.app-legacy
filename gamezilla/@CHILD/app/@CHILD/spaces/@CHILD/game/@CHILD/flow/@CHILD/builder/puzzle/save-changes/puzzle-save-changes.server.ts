@@ -2,7 +2,7 @@ import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { Result } from "gamezilla/@SHARED/core"
 import { ServerModule } from "../../builder.core"
-import { MsgGame } from "./puzzle-save-changes.core"
+import { MsgSync } from "./puzzle-save-changes.core"
 
 const update: ServerModule["update"] = async (input) => {
   return GameServerModule.chainUpdates({ model: input.model }, (model) =>
@@ -22,7 +22,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         lastUpdatedAt: ctx.now,
       })
 
-      const msgGame: MsgGame = {
+      const msgSync: MsgSync = {
         t: "user-saved-changes",
         saved: Result.mapOk(saved, () => msgClient.puzzle),
         userId: msgClient.puzzle.createdBy,
@@ -30,7 +30,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
       return {
         model,
-        msgGame: [withId(msgGame)],
+        msgSync: [withId(msgSync)],
       }
     }
 

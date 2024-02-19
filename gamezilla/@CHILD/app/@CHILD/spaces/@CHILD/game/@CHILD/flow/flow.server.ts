@@ -8,8 +8,8 @@ import { SpaceServerCmd } from "../../../../@SHARED/space-server-cmd"
 import { BuilderServer } from "./@CHILD/builder/builder.server"
 import { PlayServer } from "./@CHILD/play/play.server"
 import {
-  MsgGame,
-  ModelGame,
+  MsgSync,
+  ModelSync,
   ModelServer,
   MsgServer,
   MsgToClient,
@@ -21,8 +21,8 @@ type Module = GameServerModule<{
   Msg: MsgServer
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  MsgGame: MsgGame
-  ModelGame: ModelGame
+  MsgSync: MsgSync
+  ModelSync: ModelSync
   Ctx: SpaceServerCtx
   MsgInCmd: null
   MsgInEvent: SpaceServerEvent
@@ -56,9 +56,9 @@ const updateChild: Module["update"] = async (input) => {
           input.msgClient?.t === "play"
             ? { ...input.msgClient, ...input.msgClient.c }
             : null,
-        msgGame:
-          input.msgGame?.t === "play"
-            ? { ...input.msgGame, ...input.msgGame.c }
+        msgSync:
+          input.msgSync?.t === "play"
+            ? { ...input.msgSync, ...input.msgSync.c }
             : null,
         msg: input.msg?.t === "play" ? input.msg.c : null,
         deps: null,
@@ -84,9 +84,9 @@ const updateChild: Module["update"] = async (input) => {
           input.msgClient?.t === "builder"
             ? { ...input.msgClient, ...input.msgClient.c }
             : null,
-        msgGame:
-          input.msgGame?.t === "builder"
-            ? { ...input.msgGame, ...input.msgGame.c }
+        msgSync:
+          input.msgSync?.t === "builder"
+            ? { ...input.msgSync, ...input.msgSync.c }
             : null,
         msg: input.msg?.t === "builder" ? input.msg.c : null,
         deps: await BuilderServer.deps({

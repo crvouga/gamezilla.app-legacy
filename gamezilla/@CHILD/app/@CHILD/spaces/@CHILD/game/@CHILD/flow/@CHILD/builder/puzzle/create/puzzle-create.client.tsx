@@ -19,7 +19,7 @@ import {
 import { ClientModule } from "../../builder.core"
 
 const update: ClientModule["update"] = (input) => {
-  const { msgGame, model, msg, ctx } = input
+  const { msgSync, model, msg, ctx } = input
 
   switch (msg?.t) {
     case "puzzle-create.user-clicked-create-button": {
@@ -63,21 +63,21 @@ const update: ClientModule["update"] = (input) => {
     }
   }
 
-  switch (msgGame?.t) {
+  switch (msgSync?.t) {
     case "user-created-puzzle": {
-      if (isErr(msgGame.created)) {
+      if (isErr(msgSync.created)) {
         return {
-          model: { ...model, puzzleCreateRequest: msgGame.created },
-          msgCmd: showErrSm(msgGame.created.error),
+          model: { ...model, puzzleCreateRequest: msgSync.created },
+          msgCmd: showErrSm(msgSync.created.error),
         }
       }
 
-      const puzzleNew = msgGame.created.value
+      const puzzleNew = msgSync.created.value
 
       return {
         model: {
           ...model,
-          puzzleCreateRequest: Result.mapOk(msgGame.created, () => null),
+          puzzleCreateRequest: Result.mapOk(msgSync.created, () => null),
           puzzles: { ...model.puzzles, [puzzleNew.id]: puzzleNew },
         },
         msgCmd: showCreatedSm("Puzzle created"),

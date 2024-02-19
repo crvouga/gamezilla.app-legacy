@@ -10,9 +10,9 @@ import { FlowClient } from "./@CHILD/flow/flow.client"
 import {
   GameName,
   ModelClient,
-  ModelGame,
+  ModelSync,
   MsgClient,
-  MsgGame,
+  MsgSync,
   MsgToClient,
   MsgToServer,
 } from "./game.core"
@@ -30,8 +30,8 @@ type Module = GameClientModule<{
   Msg: MsgClient
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  ModelGame: ModelGame
-  MsgGame: MsgGame
+  ModelSync: ModelSync
+  MsgSync: MsgSync
   Ctx: SpaceClientCtx
   MsgInCmd: null
   MsgInEvent: SpaceClientEvent
@@ -77,7 +77,7 @@ const init = (gameName: GameName): Module["init"] => {
 //
 
 const update: Module["update"] = (input) => {
-  const { ctx, msg, msgServer, msgCmd, msgEvt, msgGame, modelGame } = input
+  const { ctx, msg, msgServer, msgCmd, msgEvt, msgSync, modelGame } = input
 
   switch (modelGame.t) {
     case "connect-four": {
@@ -89,8 +89,8 @@ const update: Module["update"] = (input) => {
         msgCmd: msgCmd,
         msgEvt: msgEvt,
         msgServer: msgServer?.t === "connect-four" ? msgServer.c : null,
-        msgGame:
-          msgGame?.t === "connect-four" ? { ...msgGame, ...msgGame.c } : null,
+        msgSync:
+          msgSync?.t === "connect-four" ? { ...msgSync, ...msgSync.c } : null,
         msg: msg?.t === "connect-four" ? msg.c : null,
       })
 
@@ -111,7 +111,7 @@ const update: Module["update"] = (input) => {
         msgCmd: msgCmd,
         msgEvt: msgEvt,
         msgServer: msgServer?.t === "flow" ? msgServer.c : null,
-        msgGame: msgGame?.t === "flow" ? { ...msgGame, ...msgGame.c } : null,
+        msgSync: msgSync?.t === "flow" ? { ...msgSync, ...msgSync.c } : null,
         msg: msg?.t === "flow" ? msg.c : null,
       })
 
@@ -199,16 +199,16 @@ const View: Module["View"] = (input) => {
 }
 
 const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-  const { msgGame, modelGame, ctx, dispatch } = input
+  const { msgSync, modelGame, ctx, dispatch } = input
 
   switch (modelGame.t) {
     case "connect-four": {
-      switch (msgGame.t) {
+      switch (msgSync.t) {
         case "connect-four": {
           return (
             <ConnectFour.ViewFeedItem
               ctx={ctx}
-              msgGame={msgGame.c}
+              msgSync={msgSync.c}
               modelGame={modelGame.c}
               dispatch={(c) => dispatch({ t: "connect-four", c })}
             />

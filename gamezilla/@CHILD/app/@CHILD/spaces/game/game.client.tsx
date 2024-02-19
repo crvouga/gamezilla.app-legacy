@@ -170,7 +170,7 @@ const updateGame: SpaceClientModule["update"] = async (input) => {
       currentUserId: ctx.currentUserId,
     },
     model: gameModel,
-    msgGame:
+    msgSync:
       msgSpaceEventWithMeta?.t === "game"
         ? { ...msgSpaceEventWithMeta, ...msgSpaceEventWithMeta.c }
         : null,
@@ -181,7 +181,7 @@ const updateGame: SpaceClientModule["update"] = async (input) => {
     msg: msg?.t === "game" ? msg.c : null,
   })
 
-  const msgSpaceEventNew = (gameUpdated.msgGame ?? []).map(
+  const msgSpaceEventNew = (gameUpdated.msgSync ?? []).map(
     (e): WithEventId<SpaceEvent> => ({ ...e, spaceId, t: "game", c: e }),
   )
 

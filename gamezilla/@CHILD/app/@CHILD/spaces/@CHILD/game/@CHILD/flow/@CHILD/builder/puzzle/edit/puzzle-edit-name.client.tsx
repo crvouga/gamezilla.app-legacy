@@ -53,7 +53,7 @@ const View: ClientModule["View"] = (input) => {
 //
 
 const updateFormButtons: ClientModule["update"] = (input) => {
-  const { modelGame, msgGame, msg, model } = input
+  const { modelGame, msgSync, msg, model } = input
 
   const puzzleBuilder = modelGame.puzzleBuilder
 
@@ -107,15 +107,15 @@ const updateFormButtons: ClientModule["update"] = (input) => {
     }
   }
 
-  switch (msgGame?.t) {
+  switch (msgSync?.t) {
     case "user-edited-puzzle-name": {
       const puzzlesNew = { ...model.puzzles }
-      const puzzle = puzzlesNew[msgGame.flowPuzzleId]
+      const puzzle = puzzlesNew[msgSync.flowPuzzleId]
 
-      if (puzzle && FlowPuzzleName.is(msgGame.newName)) {
-        puzzlesNew[msgGame.flowPuzzleId] = {
+      if (puzzle && FlowPuzzleName.is(msgSync.newName)) {
+        puzzlesNew[msgSync.flowPuzzleId] = {
           ...puzzle,
-          name: msgGame.newName,
+          name: msgSync.newName,
         }
       }
 
@@ -123,12 +123,12 @@ const updateFormButtons: ClientModule["update"] = (input) => {
         model: {
           ...model,
           puzzles: puzzlesNew,
-          puzzleEditNameRequest: msgGame.edited,
+          puzzleEditNameRequest: msgSync.edited,
           opened: null,
         },
-        msgCmd: isOk(msgGame.edited)
+        msgCmd: isOk(msgSync.edited)
           ? showCreatedSm("Saved name")
-          : showErrSm(msgGame.edited.error),
+          : showErrSm(msgSync.edited.error),
       }
     }
 

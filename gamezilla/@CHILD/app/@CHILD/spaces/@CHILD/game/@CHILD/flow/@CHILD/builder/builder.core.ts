@@ -42,8 +42,8 @@ export type ClientModule = GameClientModule<{
   Msg: MsgClient
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  MsgGame: MsgGame
-  ModelGame: ModelGame
+  MsgSync: MsgSync
+  ModelSync: ModelSync
   Ctx: FlowClientCtx
   MsgOutCmd: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
   MsgInEvent: SpaceClientEvent
@@ -54,8 +54,8 @@ export type ClientModule = GameClientModule<{
 export type ServerModule = GameServerModule<{
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  MsgGame: MsgGame
-  ModelGame: ModelGame
+  MsgSync: MsgSync
+  ModelSync: ModelSync
   Ctx: SpaceServerCtx
   MsgInCmd: null
   MsgInEvent: SpaceServerEvent
@@ -202,22 +202,22 @@ export type MsgToClient =
 //
 //
 
-type MsgGameBase = {
+type MsgSyncBase = {
   t: "user-changed-list-tab"
   listTab: ListTab
 }
 
-export type MsgGame =
-  | MsgGameBase
+export type MsgSync =
+  | MsgSyncBase
   //
-  | Pack.MsgGame
+  | Pack.MsgSync
   //
-  | PuzzleBuilder.MsgGame
-  | PuzzleList.MsgGame
-  | PuzzleCreate.MsgGame
-  | PuzzleEditName.MsgGame
-  | PuzzleDeleteForever.MsgGame
-  | PuzzleSaveChanges.MsgGame
+  | PuzzleBuilder.MsgSync
+  | PuzzleList.MsgSync
+  | PuzzleCreate.MsgSync
+  | PuzzleEditName.MsgSync
+  | PuzzleDeleteForever.MsgSync
+  | PuzzleSaveChanges.MsgSync
 
 type BuildState =
   | {
@@ -227,7 +227,7 @@ type BuildState =
       t: "edit"
     }
 
-export type ModelGamePuzzleBuilder = {
+export type ModelSyncPuzzleBuilder = {
   t: "puzzle-builder"
   puzzle: FlowPuzzle
   mode: BuildState
@@ -235,7 +235,7 @@ export type ModelGamePuzzleBuilder = {
   gridEdit: FlowGridUIEdit.Model
 }
 
-export type ModelGamePackBuilder = {
+export type ModelSyncPackBuilder = {
   t: "pack-builder"
   pack: FlowPack
   opened:
@@ -257,16 +257,16 @@ export type ModelGamePackBuilder = {
       }
 }
 
-export type ModelGame = {
+export type ModelSync = {
   opened: { t: "list" } | { t: "puzzle-builder" } | { t: "pack-builder" }
   listTab: ListTab
   //
-  packBuilder: ModelGamePackBuilder | null
+  packBuilder: ModelSyncPackBuilder | null
   //
-  puzzleBuilder: ModelGamePuzzleBuilder | null
+  puzzleBuilder: ModelSyncPuzzleBuilder | null
 }
 
-export const initGame = (_input: { ctx: SpaceCtx }): ModelGame => {
+export const initSync = (_input: { ctx: SpaceCtx }): ModelSync => {
   return {
     opened: { t: "list" },
     listTab: "puzzles",
@@ -275,13 +275,13 @@ export const initGame = (_input: { ctx: SpaceCtx }): ModelGame => {
   }
 }
 
-export type GameReducer = (input: {
+export type SyncReducer = (input: {
   ctx: SpaceCtx
-  msgGame: MsgGame
-  modelGame: ModelGame
-}) => ModelGame
+  msgSync: MsgSync
+  modelGame: ModelSync
+}) => ModelSync
 
-export const reducer: GameReducer = ({ modelGame, msgGame, ctx }) => {
+export const reducer: SyncReducer = ({ modelGame, msgSync, ctx }) => {
   return [
     PuzzleDeleteForeverGame.reducer,
     PuzzleBuilderGame.reducer,
@@ -294,17 +294,17 @@ export const reducer: GameReducer = ({ modelGame, msgGame, ctx }) => {
     //
     listTabReducer,
   ].reduce(
-    (acc, reducer) => reducer({ ctx, msgGame, modelGame: acc }),
+    (acc, reducer) => reducer({ ctx, msgSync, modelGame: acc }),
     modelGame,
   )
 }
 
-const listTabReducer: GameReducer = ({ modelGame, msgGame }) => {
-  switch (msgGame.t) {
+const listTabReducer: SyncReducer = ({ modelGame, msgSync }) => {
+  switch (msgSync.t) {
     case "user-changed-list-tab": {
       return {
         ...modelGame,
-        listTab: msgGame.listTab,
+        listTab: msgSync.listTab,
       }
     }
     default: {

@@ -16,7 +16,7 @@ export type Initial = {
 
 export type Started = Space & {
   type: "started"
-  game: Game.ModelGame | null
+  game: Game.ModelSync | null
   latestEvent: EventId
 }
 
@@ -93,11 +93,11 @@ export const reducer = ({
     case "started": {
       switch (msgSpace.t) {
         case "game": {
-          const game = state.game ?? Game.initGame(msgSpace.c.t)
+          const game = state.game ?? Game.initSync(msgSpace.c.t)
           const gameNew = Game.reducer({
             ctx: { space: state },
             modelGame: game,
-            msgGame: { ...msgSpace, ...msgSpace.c },
+            msgSync: { ...msgSpace, ...msgSpace.c },
           })
           return {
             ...state,
@@ -120,7 +120,7 @@ export const reducer = ({
           return {
             ...state,
             latestEvent: msgSpace.eventId,
-            game: msgSpace.game ? Game.initGame(msgSpace.game) : null,
+            game: msgSpace.game ? Game.initSync(msgSpace.game) : null,
           }
         }
 

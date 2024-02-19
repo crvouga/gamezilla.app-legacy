@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test"
 import { chainUpdates } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import { clickedPackItem, initial, testFlowClientCtx } from "../../@TEST/client"
-import { deriveModelGame } from "../../@TEST/game"
+import { deriveModelSync } from "../../@TEST/game"
 
 describe("pack list client", () => {
   //
@@ -16,7 +16,7 @@ describe("pack list client", () => {
 
     const output = await chainUpdates(initial, clickedPackItem(pack))
 
-    const modelGame = deriveModelGame(output)
+    const modelGame = deriveModelSync(output)
 
     expect(modelGame.packBuilder?.pack.id === pack.id).toBeTrue()
   })

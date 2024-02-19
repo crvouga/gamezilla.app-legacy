@@ -10,8 +10,8 @@ import { Sub, Time, TimeSpan, isErr } from "gamezilla/@SHARED/core"
 import { ConnectFourBotWorker } from "../../@SHARED/connect-four"
 import * as ConnectFour from "../../@SHARED/connect-four/connect-four"
 import {
-  MsgGame,
-  ModelGame,
+  MsgSync,
+  ModelSync,
   ModelServer,
   MsgServer,
   MsgToClient,
@@ -34,8 +34,8 @@ type Module = GameServerModule<{
   Msg: MsgServer
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  ModelGame: ModelGame
-  MsgGame: MsgGame
+  ModelSync: ModelSync
+  MsgSync: MsgSync
   Ctx: SpaceServerCtx
   Deps: null
   MsgInCmd: null
@@ -109,14 +109,14 @@ const updateFromMsg: Module["update"] = async (input) => {
             return { model }
           }
 
-          const msgGameNew = withId<MsgGame>({
+          const msgSyncNew = withId<MsgSync>({
             t: "bot-dropped-disc",
             columnIndex,
           })
 
           return {
             model,
-            msgGame: [msgGameNew],
+            msgSync: [msgSyncNew],
           }
         },
         async (model) => {

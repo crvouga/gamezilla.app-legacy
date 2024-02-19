@@ -17,7 +17,7 @@ const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromMsgGame({ ...input, model }),
+    (model) => updateFromMsgSync({ ...input, model }),
   )
 }
 
@@ -56,18 +56,18 @@ const updateFromMsg: ClientModule["update"] = (input) => {
   }
 }
 
-const updateFromMsgGame: ClientModule["update"] = (input) => {
-  const { msgGame, model } = input
+const updateFromMsgSync: ClientModule["update"] = (input) => {
+  const { msgSync, model } = input
 
-  switch (msgGame?.t) {
+  switch (msgSync?.t) {
     case "user-deleted-puzzle": {
       const puzzlesNew = { ...model.puzzles }
-      delete puzzlesNew[msgGame.flowPuzzleId]
+      delete puzzlesNew[msgSync.flowPuzzleId]
       return {
         model: {
           ...model,
           puzzles: puzzlesNew,
-          puzzleDeleteForeverRequest: msgGame.deleted,
+          puzzleDeleteForeverRequest: msgSync.deleted,
           opened: null,
         },
         msgCmd: showCreatedSm("Deleted puzzle"),

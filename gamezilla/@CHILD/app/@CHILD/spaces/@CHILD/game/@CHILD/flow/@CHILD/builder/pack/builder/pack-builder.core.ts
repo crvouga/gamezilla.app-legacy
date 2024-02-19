@@ -21,7 +21,7 @@ export type ModelServer = {}
 //
 //
 
-export type MsgClient = MsgGame
+export type MsgClient = MsgSync
 
 export type MsgServer = { t: "noop" }
 
@@ -35,7 +35,7 @@ export type MsgToClient = { t: "noop" }
 //
 //
 
-export type MsgGame =
+export type MsgSync =
   | {
       t: "pack-builder.user-clicked-exit-button"
       userId: UserId

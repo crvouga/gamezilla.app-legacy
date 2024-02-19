@@ -1,8 +1,8 @@
 import { GameServer } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server"
 import { Sub } from "gamezilla/@SHARED/core"
 import {
-  MsgGame,
-  ModelGame,
+  MsgSync,
+  ModelSync,
   ModelServer,
   MsgServer,
   MsgToClient,
@@ -18,8 +18,8 @@ import {
 //
 
 type Server = GameServer<{
-  MsgGame: MsgGame
-  ModelGame: ModelGame
+  MsgSync: MsgSync
+  ModelSync: ModelSync
   ModelServer: ModelServer
   MsgServer: MsgServer
   MsgToClient: MsgToClient

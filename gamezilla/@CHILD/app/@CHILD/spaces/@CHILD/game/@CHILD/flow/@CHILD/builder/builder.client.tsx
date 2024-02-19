@@ -63,7 +63,7 @@ const updateFlowPackList: ClientModule["update"] = async (input) => {
     },
     eff: Eff.tag("flow-pack-list", updated.eff),
     msgEvt: [],
-    msgGame: [],
+    msgSync: [],
     msgCmd: SpaceClientCmd.map(
       updated.msgCmd,
       (c) => ({ t: "flow-pack-list", c }),
@@ -91,7 +91,7 @@ const updateFlowPuzzleList: ClientModule["update"] = async (input) => {
     },
     eff: Eff.tag("flow-puzzle-list", updated.eff),
     msgEvt: [],
-    msgGame: [],
+    msgSync: [],
     msgCmd: SpaceClientCmd.map(
       updated.msgCmd,
       (c) => ({ t: "flow-puzzle-list", c }),
@@ -107,7 +107,7 @@ const updateLocation: ClientModule["update"] = (input) => {
     case "user-changed-list-tab": {
       return {
         model: { ...model },
-        msgGame: [
+        msgSync: [
           withId({
             t: "user-changed-list-tab",
             listTab: msg.listTab,

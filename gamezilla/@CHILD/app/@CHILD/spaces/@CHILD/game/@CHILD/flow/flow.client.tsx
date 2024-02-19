@@ -22,9 +22,9 @@ import { CoverArt } from "./@SHARED/flow-cover-art"
 import { FlowClientCtx } from "./@SHARED/flow-ctx"
 import {
   ModelClient,
-  ModelGame,
+  ModelSync,
   MsgClient,
-  MsgGame,
+  MsgSync,
   MsgToClient,
   MsgToServer,
 } from "./flow.core"
@@ -44,8 +44,8 @@ type Module = GameClientModule<{
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
   //
-  MsgGame: MsgGame
-  ModelGame: ModelGame
+  MsgSync: MsgSync
+  ModelSync: ModelSync
   //
   Ctx: SpaceClientCtx
   //
@@ -72,13 +72,13 @@ const update: Module["update"] = (input) => {
     { model: input.model },
     (model) => GameMainMenu.update({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromMsgGame({ ...input, model }),
+    (model) => updateFromMsgSync({ ...input, model }),
     (model) => updateChild({ ...input, model }),
   )
 }
 
 const updateChild: Module["update"] = async (input) => {
-  const { model, modelGame, msgEvt, ctx, msgCmd, msgGame, msgServer, msg } =
+  const { model, modelGame, msgEvt, ctx, msgCmd, msgSync, msgServer, msg } =
     input
 
   switch (modelGame.t) {
@@ -94,7 +94,7 @@ const updateChild: Module["update"] = async (input) => {
         msgCmd: msgCmd,
         msgEvt: msgEvt,
         msgServer: msgServer?.t === "play" ? msgServer.c : null,
-        msgGame: msgGame?.t === "play" ? { ...msgGame, ...msgGame.c } : null,
+        msgSync: msgSync?.t === "play" ? { ...msgSync, ...msgSync.c } : null,
         msg: msg?.t === "play" ? msg.c : null,
       })
 
@@ -118,7 +118,7 @@ const updateChild: Module["update"] = async (input) => {
         msgCmd: msgCmd,
         msgEvt: msgEvt,
         msgServer: msgServer?.t === "builder" ? msgServer.c : null,
-        msgGame: msgGame?.t === "builder" ? { ...msgGame, ...msgGame.c } : null,
+        msgSync: msgSync?.t === "builder" ? { ...msgSync, ...msgSync.c } : null,
         msg: msg?.t === "builder" ? msg.c : null,
       })
 
@@ -136,12 +136,12 @@ const updateChild: Module["update"] = async (input) => {
   }
 }
 
-const updateFromMsgGame: Module["update"] = (input) => {
-  const { msgGame, model } = input
+const updateFromMsgSync: Module["update"] = (input) => {
+  const { msgSync, model } = input
 
-  switch (msgGame?.t) {
+  switch (msgSync?.t) {
     case "user-changed-mode": {
-      switch (msgGame.mode) {
+      switch (msgSync.mode) {
         case "play": {
           return {
             model: { ...model, t: "play", c: PlayClient.init },
@@ -179,11 +179,11 @@ const updateFromMsg: Module["update"] = (input) => {
   const { msg, model } = input
 
   switch (msg?.t) {
-    case "msgGame": {
-      const msgGame = withId(msg.c)
+    case "msgSync": {
+      const msgSync = withId(msg.c)
       return {
         model,
-        msgGame: [msgGame],
+        msgSync: [msgSync],
       }
     }
 
@@ -251,7 +251,7 @@ const View: Module["View"] = (input) => {
     ...input.ctx,
     onQuit: () =>
       dispatch({
-        t: "msgGame",
+        t: "msgSync",
         c: {
           t: "user-changed-mode",
           mode: null,
@@ -275,7 +275,7 @@ const View: Module["View"] = (input) => {
               description: "Start playing puzzles",
               onClick: () => {
                 dispatch({
-                  t: "msgGame",
+                  t: "msgSync",
                   c: {
                     t: "user-changed-mode",
                     mode: "play",
@@ -290,7 +290,7 @@ const View: Module["View"] = (input) => {
               description: "Build new puzzles to play",
               onClick: () => {
                 dispatch({
-                  t: "msgGame",
+                  t: "msgSync",
                   c: {
                     t: "user-changed-mode",
                     mode: "builder",
@@ -334,9 +334,9 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
   ctx,
   dispatch,
   modelGame,
-  msgGame,
+  msgSync,
 }) => {
-  switch (msgGame.t) {
+  switch (msgSync.t) {
     case "play": {
       switch (modelGame.t) {
         case "play": {
@@ -345,7 +345,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
               ctx={{ ...ctx, onQuit() {} }}
               dispatch={(c) => dispatch({ t: "play", c })}
               modelGame={modelGame.c}
-              msgGame={msgGame.c}
+              msgSync={msgSync.c}
             />
           )
         }
@@ -363,7 +363,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
               ctx={{ ...ctx, onQuit() {} }}
               dispatch={(c) => dispatch({ t: "builder", c })}
               modelGame={modelGame.c}
-              msgGame={msgGame.c}
+              msgSync={msgSync.c}
             />
           )
         }

@@ -22,7 +22,7 @@ export type ModelClient = {
 
 export type ModelServer = CoreModel
 
-export type CoreModel = SetupModel | ModelGame | GameOverModel
+export type CoreModel = SetupModel | ModelSync | GameOverModel
 
 export type SetupModel = {
   type: "setup"
@@ -31,7 +31,7 @@ export type SetupModel = {
   botLevel: Chess.BotLevel
 }
 
-export type ModelGame = {
+export type ModelSync = {
   type: "game"
   userColor: Chess.Color
   userId: UserId

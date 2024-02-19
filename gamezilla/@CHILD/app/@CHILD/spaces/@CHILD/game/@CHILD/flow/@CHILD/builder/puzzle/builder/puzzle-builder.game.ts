@@ -1,17 +1,17 @@
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { FlowGridUIEdit, FlowGridUIPlay } from "../../../../@SHARED/flow"
-import { ModelGame, MsgGame } from "../../builder.core"
+import { ModelSync, MsgSync } from "../../builder.core"
 
 const reducer = ({
   modelGame,
-  msgGame,
+  msgSync,
   ctx,
 }: {
   ctx: SpaceCtx
-  msgGame: MsgGame
-  modelGame: ModelGame
-}): ModelGame => {
-  switch (msgGame.t) {
+  msgSync: MsgSync
+  modelGame: ModelSync
+}): ModelSync => {
+  switch (msgSync.t) {
     case "puzzle-builder.grid-ui-play": {
       if (!modelGame.puzzleBuilder) {
         return modelGame
@@ -23,7 +23,7 @@ const reducer = ({
 
       const updated = FlowGridUIPlay.update({
         model: modelGame.puzzleBuilder.gridPlay,
-        msg: msgGame.c,
+        msg: msgSync.c,
         grid: currentGrid,
       })
 
@@ -43,7 +43,7 @@ const reducer = ({
 
       const updated = FlowGridUIEdit.update({
         model: modelGame.puzzleBuilder.gridEdit,
-        msg: msgGame.c,
+        msg: msgSync.c,
         grid: modelGame.puzzleBuilder.puzzle.puzzle.c,
       })
 
@@ -61,7 +61,7 @@ const reducer = ({
         return modelGame
       }
 
-      if (msgGame.userId !== ctx.space.hostId) {
+      if (msgSync.userId !== ctx.space.hostId) {
         return modelGame
       }
 
@@ -94,7 +94,7 @@ const reducer = ({
     }
 
     case "puzzle-builder.user-clicked-exit-button": {
-      if (msgGame.userId !== ctx.space.hostId) {
+      if (msgSync.userId !== ctx.space.hostId) {
         return modelGame
       }
 

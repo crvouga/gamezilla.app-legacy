@@ -8,7 +8,7 @@ import { FlowPack } from "../../../@SHARED/flow-pack/flow-pack"
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle"
 import { samples } from "../../../@SHARED/flow/flow-grid/flow-grid-samples"
 import { BuilderClient } from "../builder.client"
-import { ModelClient, initClient, initGame } from "../builder.core"
+import { ModelClient, initClient, initSync } from "../builder.core"
 
 export const initial = {
   model: initClient,
@@ -19,7 +19,7 @@ export const testFlowClientCtx: FlowClientCtx = {
   onQuit() {},
 }
 
-export const modelGame = initGame({
+export const modelGame = initSync({
   ctx: testFlowClientCtx,
 })
 
@@ -39,7 +39,7 @@ export const userCreatedPack = (pack: FlowPack) => (model: ModelClient) => {
     model,
     ctx: testFlowClientCtx,
     modelGame,
-    msgGame: {
+    msgSync: {
       t: "user-created-pack",
       created: ok(pack),
       eventId: EventId.generate(),

@@ -66,9 +66,9 @@ export type Problem = "must_be_the_host"
 //
 //
 
-export type MsgGame = { t: "user-changed-mode"; mode: Mode; userId: UserId }
+export type MsgSync = { t: "user-changed-mode"; mode: Mode; userId: UserId }
 
-export type ModelGame =
+export type ModelSync =
   | {
       t: "none"
     }
@@ -82,22 +82,22 @@ export type ModelGame =
       t: "puzzle"
     }
 
-export const initGame = (): ModelGame => {
+export const initSync = (): ModelSync => {
   return {
     t: "none",
   }
 }
 
 export const reducer = ({
-  msgGame,
+  msgSync,
 }: {
   ctx: SpaceCtx
-  modelGame: ModelGame
-  msgGame: MsgGame
-}): ModelGame => {
-  switch (msgGame.t) {
+  modelGame: ModelSync
+  msgSync: MsgSync
+}): ModelSync => {
+  switch (msgSync.t) {
     case "user-changed-mode": {
-      switch (msgGame.mode) {
+      switch (msgSync.mode) {
         case "none": {
           return { t: "none" }
         }

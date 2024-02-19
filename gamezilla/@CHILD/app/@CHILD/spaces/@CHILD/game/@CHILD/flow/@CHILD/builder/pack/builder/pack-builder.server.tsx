@@ -11,8 +11,8 @@ const update: ServerModule["update"] = async (input) => {
 }
 
 const updateSavePackOnChange: ServerModule["update"] = async (input) => {
-  const { deps, model, modelGame, msgGame } = input
-  switch (msgGame?.t) {
+  const { deps, model, modelGame, msgSync } = input
+  switch (msgSync?.t) {
     case "pack-builder.user-clicked-add-puzzle-item": {
       if (!modelGame.packBuilder) {
         return { model }
@@ -22,7 +22,7 @@ const updateSavePackOnChange: ServerModule["update"] = async (input) => {
 
       return {
         model,
-        msgGame: [withId({ t: "pack-builder.saved-pack", saved })],
+        msgSync: [withId({ t: "pack-builder.saved-pack", saved })],
       }
     }
     default: {

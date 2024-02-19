@@ -21,7 +21,7 @@ import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 //
 //
 
-export type CoreModel = SetupModel | ModelGame
+export type CoreModel = SetupModel | ModelSync
 
 export type SetupModel = {
   type: "setup"
@@ -30,7 +30,7 @@ export type SetupModel = {
   botLevel: BotLevel
 }
 
-export type ModelGame = {
+export type ModelSync = {
   type: "game"
   player: UserId
   userPlayerType: PlayerType
@@ -57,7 +57,7 @@ export const initCoreModel = ({
   }
 }
 
-export const isBotTurn = (model: CoreModel): model is ModelGame => {
+export const isBotTurn = (model: CoreModel): model is ModelSync => {
   if (model.type !== "game") {
     return false
   }

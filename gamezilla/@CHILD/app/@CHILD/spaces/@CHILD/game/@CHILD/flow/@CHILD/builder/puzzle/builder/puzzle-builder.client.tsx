@@ -19,7 +19,7 @@ import {
   FlowGridUIPlay,
 } from "../../../../@SHARED/flow"
 import { ViewProfileCard } from "../../../../@SHARED/ui"
-import { ClientModule, ModelGamePuzzleBuilder } from "../../builder.core"
+import { ClientModule, ModelSyncPuzzleBuilder } from "../../builder.core"
 import { PuzzleDeleteForeverClient } from "../delete-forever/puzzle-delete-forever.client"
 import { PuzzleEditNameClient } from "../edit/puzzle-edit-name.client"
 import { PuzzleSaveChangesClient } from "../save-changes/puzzle-save-changes.client"
@@ -37,7 +37,7 @@ import { VDom } from "gamezilla/@SHARED/vdom"
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
-    (model) => updateFromMsgGame({ ...input, model }),
+    (model) => updateFromMsgSync({ ...input, model }),
     (model) => updateMoreDrawer({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
   )
@@ -50,21 +50,21 @@ const updateFromMsg: ClientModule["update"] = (input) => {
     case "puzzle-builder.flow-grid-ui-edit": {
       return {
         model,
-        msgGame: [withId({ t: "puzzle-builder.grid-ui-edit", c: msg.c })],
+        msgSync: [withId({ t: "puzzle-builder.grid-ui-edit", c: msg.c })],
       }
     }
 
     case "puzzle-builder.flow-grid-ui-play": {
       return {
         model,
-        msgGame: [withId({ t: "puzzle-builder.grid-ui-play", c: msg.c })],
+        msgSync: [withId({ t: "puzzle-builder.grid-ui-play", c: msg.c })],
       }
     }
 
     case "puzzle-builder.user-clicked-edit-mode-button": {
       return {
         model,
-        msgGame: [
+        msgSync: [
           withId({
             t: "puzzle-builder.user-clicked-edit-mode-button",
             userId: ctx.currentUserId,
@@ -76,7 +76,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
     case "puzzle-builder.user-clicked-play-mode-button": {
       return {
         model,
-        msgGame: [
+        msgSync: [
           withId({
             t: "puzzle-builder.user-clicked-play-mode-button",
             userId: ctx.currentUserId,
@@ -103,10 +103,10 @@ const updateFromMsg: ClientModule["update"] = (input) => {
   }
 }
 
-const updateFromMsgGame: ClientModule["update"] = (input) => {
-  const { model, modelGame, msgGame } = input
+const updateFromMsgSync: ClientModule["update"] = (input) => {
+  const { model, modelGame, msgSync } = input
 
-  switch (msgGame?.t) {
+  switch (msgSync?.t) {
     case "puzzle-builder.grid-ui-edit": {
       if (!modelGame.puzzleBuilder) {
         return { model }
@@ -116,7 +116,7 @@ const updateFromMsgGame: ClientModule["update"] = (input) => {
       }
       const updated = FlowGridUIEdit.update({
         model: modelGame.puzzleBuilder.gridEdit,
-        msg: msgGame.c,
+        msg: msgSync.c,
         grid: modelGame.puzzleBuilder.puzzle.puzzle.c,
       })
 
@@ -278,7 +278,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 }
 
 export const toCurrentGrid = (
-  modelGame: ModelGamePuzzleBuilder,
+  modelGame: ModelSyncPuzzleBuilder,
 ): FlowGrid.Model => {
   switch (modelGame.mode.t) {
     case "edit": {

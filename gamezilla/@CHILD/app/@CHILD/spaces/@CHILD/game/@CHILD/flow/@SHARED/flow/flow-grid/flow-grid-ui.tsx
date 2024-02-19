@@ -326,12 +326,12 @@ const ViewTerminalNode = ({
   )
 }
 
-const touchEventToNodeId = (msgGame: TouchEvent): Flow.NodeId | null => {
-  const touch = msgGame.touches[0]
+const touchEventToNodeId = (msgSync: TouchEvent): Flow.NodeId | null => {
+  const touch = msgSync.touches[0]
   if (!touch) {
     return null
   }
-  const svg = msgGame.currentTarget
+  const svg = msgSync.currentTarget
   if (!(svg instanceof SVGSVGElement)) {
     return null
   }

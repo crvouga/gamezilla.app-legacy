@@ -4,9 +4,9 @@ import { SpaceServerCtx, SpaceServerEvent } from "../../@SHARED/space"
 import { SpaceServerCmd } from "../../@SHARED/space-server-cmd"
 import { FlowServer } from "./@CHILD/flow/flow.server"
 import {
-  MsgGame,
+  MsgSync,
   GameName,
-  ModelGame,
+  ModelSync,
   ModelServer,
   MsgServer,
   MsgToClient,
@@ -27,8 +27,8 @@ type Module = GameServerModule<{
   Msg: MsgServer
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  ModelGame: ModelGame
-  MsgGame: MsgGame
+  ModelSync: ModelSync
+  MsgSync: MsgSync
   Ctx: SpaceServerCtx
   MsgInCmd: null
   MsgInEvent: SpaceServerEvent
@@ -87,9 +87,9 @@ export const update: Module["update"] = async (input) => {
             input.msgClient?.t === "flow"
               ? { ...input.msgClient, ...input.msgClient.c }
               : null,
-          msgGame:
-            input.msgGame?.t === "flow"
-              ? { ...input.msgGame, ...input.msgGame.c }
+          msgSync:
+            input.msgSync?.t === "flow"
+              ? { ...input.msgSync, ...input.msgSync.c }
               : null,
           msg: input.msg?.t === "flow" ? input.msg.c : null,
           deps: null,
@@ -115,9 +115,9 @@ export const update: Module["update"] = async (input) => {
             input.msgClient?.t === "connect-four"
               ? { ...input.msgClient, ...input.msgClient.c }
               : null,
-          msgGame:
-            input.msgGame?.t === "connect-four"
-              ? { ...input.msgGame, ...input.msgGame.c }
+          msgSync:
+            input.msgSync?.t === "connect-four"
+              ? { ...input.msgSync, ...input.msgSync.c }
               : null,
           msg: input.msg?.t === "connect-four" ? input.msg.c : null,
           deps: null,

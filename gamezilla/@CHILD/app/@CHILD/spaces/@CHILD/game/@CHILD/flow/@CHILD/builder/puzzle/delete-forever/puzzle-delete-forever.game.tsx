@@ -1,7 +1,7 @@
-import { GameReducer } from "../../builder.core"
+import { SyncReducer } from "../../builder.core"
 
-const reducer: GameReducer = ({ modelGame, msgGame }) => {
-  switch (msgGame.t) {
+const reducer: SyncReducer = ({ modelGame, msgSync }) => {
+  switch (msgSync.t) {
     case "user-deleted-puzzle": {
       return {
         ...modelGame,

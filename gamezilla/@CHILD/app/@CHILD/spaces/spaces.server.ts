@@ -377,7 +377,7 @@ const mergeUpdatedGame = ({
       ) ?? [],
     eff: Eff.map_((c) => ({ t: "game", c, spaceId }), gameUpdated.eff),
     spaceEvents:
-      gameUpdated.msgGame?.map((c) =>
+      gameUpdated.msgSync?.map((c) =>
         withId<SpaceEvent>({ t: "game", spaceId, c }),
       ) ?? [],
   }
@@ -549,7 +549,7 @@ const updateFromSpaceEvent = async ({
         ctx: { ...ctx, space: spaceState },
         model:
           model.games[msgEvtWithMeta.spaceId] ?? Game.init(spaceState.game.t),
-        msgGame: { ...msgEvtWithMeta, ...msgEvtWithMeta.c },
+        msgSync: { ...msgEvtWithMeta, ...msgEvtWithMeta.c },
         modelGame: spaceState.game,
         deps: null,
       })

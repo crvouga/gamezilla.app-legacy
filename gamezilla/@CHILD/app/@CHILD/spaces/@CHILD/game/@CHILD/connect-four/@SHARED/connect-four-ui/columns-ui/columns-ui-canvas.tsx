@@ -111,7 +111,7 @@ const paint = ({
     }
   }
 
-  // this is a hack that prmsgGames a bug when creating the holes in board using the evenodd fill method
+  // this is a hack that prmsgSyncs a bug when creating the holes in board using the evenodd fill method
   context.beginPath()
   context.arc(
     width + cellWidth,

@@ -48,11 +48,11 @@ export type GameClientModuleTypes = {
   /**
    *
    */
-  MsgGame: any
+  MsgSync: any
   /**
    *
    */
-  ModelGame: any
+  ModelSync: any
 }
 
 //
@@ -94,11 +94,11 @@ export type Input<T extends GameClientModuleTypes> = {
   /**
    * `modelGame` is the current state of the game. This is shared and auto synced between client and server.
    */
-  modelGame: T["ModelGame"]
+  modelGame: T["ModelSync"]
   /**
-   * `msgGame` is an msgEvt of game
+   * `msgSync` is an msgEvt of game
    */
-  msgGame?: (T["MsgGame"] & EventMeta) | null
+  msgSync?: (T["MsgSync"] & EventMeta) | null
 }
 
 //
@@ -125,9 +125,9 @@ export type Output<T extends GameClientModuleTypes> = {
    */
   msgEvt?: T["MsgOutEvent"][]
   /**
-   *  `msgGame` are events that occurred in the game. Shared with the server side
+   *  `msgSync` are events that occurred in the game. Shared with the server side
    */
-  msgGame?: WithEventId<T["MsgGame"]>[]
+  msgSync?: WithEventId<T["MsgSync"]>[]
 }
 
 type MaybePromise<T> = T | Promise<T>
@@ -151,7 +151,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
    */
   subscriptions: (input: {
     ctx: T["Ctx"]
-    modelGame: T["ModelGame"]
+    modelGame: T["ModelSync"]
     model: T["Model"]
   }) => MaybePromise<Sub<T["Msg"]>>
 
@@ -160,7 +160,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
    */
   View: (input: {
     ctx: T["Ctx"]
-    modelGame: T["ModelGame"]
+    modelGame: T["ModelSync"]
     model: T["Model"]
     dispatch: (msg: T["Msg"]) => void
   }) => VDom
@@ -170,8 +170,8 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
    */
   ViewFeedItem: (input: {
     ctx: T["Ctx"]
-    msgGame: T["MsgGame"]
-    modelGame: T["ModelGame"]
+    msgSync: T["MsgSync"]
+    modelGame: T["ModelSync"]
     dispatch: (msg: T["Msg"]) => void
   }) => VDom
 }
@@ -203,7 +203,7 @@ export const chainUpdates = async <T extends GameClientModuleTypes>(
     eff: Eff.batch([acc.eff, updated.eff]),
     msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
     msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
-    msgGame: [...(acc.msgGame ?? []), ...(updated.msgGame ?? [])],
+    msgSync: [...(acc.msgSync ?? []), ...(updated.msgSync ?? [])],
   }
 
   return chainUpdates(accNew, ...rest)
@@ -232,7 +232,7 @@ const tagOutput = async <
   /**
    *
    */
-  msgGame?: WithEventId<{ t: TTag; c: T["MsgGame"] }>[]
+  msgSync?: WithEventId<{ t: TTag; c: T["MsgSync"] }>[]
 }> => {
   const output = await outputPromise
   return {
@@ -243,7 +243,7 @@ const tagOutput = async <
     msgCmd: output.msgCmd ? tagCmd(output.msgCmd) : [],
     eff: Eff.tag(tag, output.eff),
     msgEvt: output.msgEvt,
-    msgGame: output.msgGame?.map((c) => {
+    msgSync: output.msgSync?.map((c) => {
       const child = { ...c }
       delete child.eventId
       return {

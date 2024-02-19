@@ -9,7 +9,7 @@ import {
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { BuilderClient } from "../../builder.client"
 import { ModelClient } from "../../builder.core"
-import { deriveModelGame } from "../../@TEST/game"
+import { deriveModelSync } from "../../@TEST/game"
 
 const clickedPuzzleListItem = (puzzle: FlowPuzzle) => (model: ModelClient) => {
   return BuilderClient.update({
@@ -33,7 +33,7 @@ describe("puzzle list client", () => {
       //
     )
 
-    const modelGame = deriveModelGame(output)
+    const modelGame = deriveModelSync(output)
 
     expect(
       modelGame.opened.t === "puzzle-builder" &&

@@ -43,8 +43,8 @@ import {
   BotLevel,
   ModelClient,
   MsgClient,
-  MsgGame,
-  ModelGame,
+  MsgSync,
+  ModelSync,
   MsgToClient,
   MsgToServer,
   allBotLevels,
@@ -64,8 +64,8 @@ type Module = GameClientModule<{
   Msg: MsgClient
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  ModelGame: ModelGame
-  MsgGame: MsgGame
+  ModelSync: ModelSync
+  MsgSync: MsgSync
   Ctx: SpaceClientCtx & { onQuit: () => void }
   MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
   MsgInEvent: SpaceClientEvent
@@ -93,7 +93,7 @@ const update: Module["update"] = (input) => {
   return GameClientModule.chainUpdates(
     { model: input.model },
     (model) => updateFromMsg(model)(input),
-    (model) => updateFromMsgGame(model)(input),
+    (model) => updateFromMsgSync(model)(input),
     (model) => watchGameOver(model)(input),
   )
 }
@@ -101,14 +101,14 @@ const update: Module["update"] = (input) => {
 const watchGameOver =
   (model: ModelClient): Module["update"] =>
   (input) => {
-    const { msgGame, modelGame } = input
+    const { msgSync, modelGame } = input
 
-    if (!msgGame) {
+    if (!msgSync) {
       return { model }
     }
 
     const modelGameNext = reducer({
-      msgGame: msgGame,
+      msgSync: msgSync,
       modelGame: modelGame,
     })
 
@@ -156,18 +156,18 @@ const watchGameOver =
     }
   }
 
-const updateFromMsgGame =
+const updateFromMsgSync =
   (model: ModelClient): Module["update"] =>
   (input) => {
-    const { msgGame, modelGame, ctx } = input
+    const { msgSync, modelGame, ctx } = input
 
-    if (!msgGame) {
+    if (!msgSync) {
       return { model }
     }
 
     return {
       model,
-      msgCmd: updateSound(ctx.currentUserId, modelGame, msgGame),
+      msgCmd: updateSound(ctx.currentUserId, modelGame, msgSync),
     }
   }
 
@@ -200,27 +200,27 @@ const updateFromMsg =
       }
 
       default: {
-        const msgGame = withId(msg)
-        return { model, msgGame: [msgGame] }
+        const msgSync = withId(msg)
+        return { model, msgSync: [msgSync] }
       }
     }
   }
 
 const updateSound = (
   currentUserId: UserId,
-  modelGame: ModelGame,
-  msgGame: MsgGame & EventMeta,
+  modelGame: ModelSync,
+  msgSync: MsgSync & EventMeta,
 ): ClientCmd<{
   MsgToServer: MsgToServer
   MsgClient: MsgClient
 }>[] => {
   switch (modelGame.type) {
     case "game": {
-      switch (msgGame.t) {
+      switch (msgSync.t) {
         case "user-dropped-disc": {
-          const error = modelGame.errors[msgGame.eventId]
+          const error = modelGame.errors[msgSync.eventId]
 
-          if (error && msgGame.userId === currentUserId) {
+          if (error && msgSync.userId === currentUserId) {
             return [playSound(APP_SOUND.alertErrorSm)]
           }
 
@@ -248,7 +248,7 @@ const updateSound = (
     }
 
     case "setup": {
-      switch (msgGame.t) {
+      switch (msgSync.t) {
         case "user-started-playing":
         case "user-stopped-playing":
         case "user-swapped-sides":
@@ -503,11 +503,11 @@ function toVsBotStatus(status: ConnectFour.Status): VsBotGame.Status {
   }
 }
 
-const ViewFeedItem: Module["ViewFeedItem"] = ({ msgGame, ctx }) => {
+const ViewFeedItem: Module["ViewFeedItem"] = ({ msgSync, ctx }) => {
   const username =
-    "userId" in msgGame ? ctx.profiles[msgGame.userId]?.username ?? null : null
+    "userId" in msgSync ? ctx.profiles[msgSync.userId]?.username ?? null : null
 
-  switch (msgGame.t) {
+  switch (msgSync.t) {
     case "bot-dropped-disc": {
       return <FeedItem.Info text="Bot dropped disc" />
     }
@@ -515,13 +515,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({ msgGame, ctx }) => {
     case "user-changed-bot-level": {
       return (
         <FeedItem.Info
-          text={`${username} changed bot level to ${msgGame.botLevel}`}
+          text={`${username} changed bot level to ${msgSync.botLevel}`}
         />
       )
     }
 
     case "user-dropped-disc": {
-      if (msgGame.userId === ctx.currentUserId) {
+      if (msgSync.userId === ctx.currentUserId) {
         return <FeedItem.Info text={`${username} dropped disc`} />
       }
 

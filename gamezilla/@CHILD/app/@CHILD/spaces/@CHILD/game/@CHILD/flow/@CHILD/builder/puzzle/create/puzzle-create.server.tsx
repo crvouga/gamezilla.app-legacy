@@ -4,7 +4,7 @@ import { Result } from "gamezilla/@SHARED/core"
 import { FlowGrid } from "../../../../@SHARED/flow"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { ServerModule } from "../../builder.core"
-import { MsgGame } from "./puzzle-create.core"
+import { MsgSync } from "./puzzle-create.core"
 
 const update: ServerModule["update"] = async (input) => {
   return GameServerModule.chainUpdates({ model: input.model }, (model) =>
@@ -41,7 +41,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
       const created = await deps.FlowPuzzleDb.put(puzzleNew)
 
-      const msgGame: MsgGame = {
+      const msgSync: MsgSync = {
         t: "user-created-puzzle",
         created: Result.mapOk(created, () => puzzleNew),
         userId: msgClient.userId,
@@ -49,7 +49,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
       return {
         model,
-        msgGame: [withId(msgGame)],
+        msgSync: [withId(msgSync)],
       }
     }
 

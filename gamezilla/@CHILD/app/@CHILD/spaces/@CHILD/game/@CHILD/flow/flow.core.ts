@@ -39,7 +39,7 @@ export type ModelServer =
 
 export type MsgClient =
   | GameMainMenu.Msg
-  | { t: "msgGame"; c: MsgGame }
+  | { t: "msgSync"; c: MsgSync }
   | { t: "builder"; c: Builder.MsgClient }
   | { t: "play"; c: Play.MsgClient }
 
@@ -65,30 +65,30 @@ export type Mode = "builder" | "play"
 //
 //
 
-export type MsgGame =
+export type MsgSync =
   | { t: "user-changed-mode"; mode: Mode | null; userId: UserId }
-  | { t: "play"; c: Play.MsgGame }
-  | { t: "builder"; c: Builder.MsgGame }
+  | { t: "play"; c: Play.MsgSync }
+  | { t: "builder"; c: Builder.MsgSync }
 
-export type ModelGame =
+export type ModelSync =
   | { t: null }
-  | { t: "builder"; c: Builder.ModelGame }
-  | { t: "play"; c: Play.ModelGame }
+  | { t: "builder"; c: Builder.ModelSync }
+  | { t: "play"; c: Play.ModelSync }
 
-export const initGame = () => {
+export const initSync = () => {
   return { t: null }
 }
 
 export const reducer = ({
   ctx,
-  msgGame,
+  msgSync,
   modelGame,
 }: {
   ctx: SpaceCtx
-  msgGame: WithEventMeta<MsgGame>
-  modelGame: ModelGame
-}): ModelGame => {
-  switch (msgGame.t) {
+  msgSync: WithEventMeta<MsgSync>
+  modelGame: ModelSync
+}): ModelSync => {
+  switch (msgSync.t) {
     case "play": {
       switch (modelGame.t) {
         case "play": {
@@ -96,7 +96,7 @@ export const reducer = ({
             t: "play",
             c: Play.reducer({
               ctx,
-              msgGame: msgGame.c,
+              msgSync: msgSync.c,
               modelGame: modelGame.c,
             }),
           }
@@ -114,7 +114,7 @@ export const reducer = ({
             t: "builder",
             c: Builder.reducer({
               ctx,
-              msgGame: msgGame.c,
+              msgSync: msgSync.c,
               modelGame: modelGame.c,
             }),
           }
@@ -126,11 +126,11 @@ export const reducer = ({
     }
 
     case "user-changed-mode": {
-      if (msgGame.userId !== ctx.space.hostId) {
+      if (msgSync.userId !== ctx.space.hostId) {
         return modelGame
       }
 
-      switch (msgGame.mode) {
+      switch (msgSync.mode) {
         case null: {
           return { t: null }
         }
@@ -138,14 +138,14 @@ export const reducer = ({
         case "play": {
           return {
             t: "play",
-            c: Play.initGame({ ctx }),
+            c: Play.initSync({ ctx }),
           }
         }
 
         case "builder": {
           return {
             t: "builder",
-            c: Builder.initGame({ ctx }),
+            c: Builder.initSync({ ctx }),
           }
         }
       }

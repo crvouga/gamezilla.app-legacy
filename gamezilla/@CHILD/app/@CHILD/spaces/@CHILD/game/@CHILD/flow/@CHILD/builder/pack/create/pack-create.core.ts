@@ -44,7 +44,7 @@ export type MsgToClient = {
 //
 //
 
-export type MsgGame = {
+export type MsgSync = {
   t: "user-created-pack"
   created: Result<string, FlowPack>
   userId: UserId

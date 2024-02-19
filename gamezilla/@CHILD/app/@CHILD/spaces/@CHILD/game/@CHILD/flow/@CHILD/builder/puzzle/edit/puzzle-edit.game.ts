@@ -1,35 +1,35 @@
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPuzzleName } from "../../../../@SHARED/flow-puzzle/flow-puzzle-name"
-import { ModelGame, MsgGame } from "../../builder.core"
+import { ModelSync, MsgSync } from "../../builder.core"
 
 const reducer = ({
   modelGame,
-  msgGame,
+  msgSync,
 }: {
   ctx: SpaceCtx
-  msgGame: MsgGame
-  modelGame: ModelGame
-}): ModelGame => {
-  switch (msgGame.t) {
+  msgSync: MsgSync
+  modelGame: ModelSync
+}): ModelSync => {
+  switch (msgSync.t) {
     case "user-edited-puzzle-name": {
       const puzzleBuilder = modelGame.puzzleBuilder
       if (!puzzleBuilder) {
         return modelGame
       }
 
-      if (msgGame.flowPuzzleId !== puzzleBuilder.puzzle.id) {
+      if (msgSync.flowPuzzleId !== puzzleBuilder.puzzle.id) {
         return modelGame
       }
-      if (msgGame.edited.t === "err") {
+      if (msgSync.edited.t === "err") {
         return modelGame
       }
-      if (!FlowPuzzleName.is(msgGame.newName)) {
+      if (!FlowPuzzleName.is(msgSync.newName)) {
         return modelGame
       }
       const puzzleNew: FlowPuzzle = {
         ...puzzleBuilder.puzzle,
-        name: msgGame.newName,
+        name: msgSync.newName,
       }
       return {
         ...modelGame,

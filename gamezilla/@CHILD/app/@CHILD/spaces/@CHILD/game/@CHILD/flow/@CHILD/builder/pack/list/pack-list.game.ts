@@ -1,14 +1,14 @@
-import { GameReducer } from "../../builder.core"
+import { SyncReducer } from "../../builder.core"
 
-const reducer: GameReducer = ({ modelGame, msgGame }) => {
-  switch (msgGame.t) {
+const reducer: SyncReducer = ({ modelGame, msgSync }) => {
+  switch (msgSync.t) {
     case "pack-list.user-clicked-pack-item": {
       return {
         ...modelGame,
         opened: { t: "pack-builder" },
         packBuilder: {
           t: "pack-builder",
-          pack: msgGame.pack,
+          pack: msgSync.pack,
           opened: { t: "pack", pageIndex: 0 },
         },
       }

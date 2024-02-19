@@ -1,13 +1,13 @@
 import { WithEventId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { MsgGame, initGame, reducer } from "../builder.core"
+import { MsgSync, initSync, reducer } from "../builder.core"
 import { testSpaceClientCtx } from "../../../../../@SHARED/testing/client"
 
-export const deriveModelGame = (input: {
-  msgGame?: WithEventId<MsgGame>[]
+export const deriveModelSync = (input: {
+  msgSync?: WithEventId<MsgSync>[]
 }) => {
-  return (input.msgGame ?? []).reduce(
-    (modelGame, msgGame) =>
-      reducer({ modelGame, msgGame, ctx: testSpaceClientCtx }),
-    initGame({ ctx: testSpaceClientCtx }),
+  return (input.msgSync ?? []).reduce(
+    (modelGame, msgSync) =>
+      reducer({ modelGame, msgSync, ctx: testSpaceClientCtx }),
+    initSync({ ctx: testSpaceClientCtx }),
   )
 }

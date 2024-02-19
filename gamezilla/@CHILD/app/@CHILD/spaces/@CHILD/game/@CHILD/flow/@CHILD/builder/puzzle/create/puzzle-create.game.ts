@@ -1,14 +1,14 @@
 import { isErr } from "gamezilla/@SHARED/core"
 import { FlowGridUIEdit, FlowGridUIPlay } from "../../../../@SHARED/flow"
-import { GameReducer } from "../../builder.core"
+import { SyncReducer } from "../../builder.core"
 
-const reducer: GameReducer = ({ modelGame, msgGame }) => {
-  switch (msgGame.t) {
+const reducer: SyncReducer = ({ modelGame, msgSync }) => {
+  switch (msgSync.t) {
     case "user-created-puzzle": {
-      if (isErr(msgGame.created)) {
+      if (isErr(msgSync.created)) {
         return modelGame
       }
-      const puzzleNew = msgGame.created.value
+      const puzzleNew = msgSync.created.value
       return {
         listTab: modelGame.listTab,
         opened: { t: "puzzle-builder" },

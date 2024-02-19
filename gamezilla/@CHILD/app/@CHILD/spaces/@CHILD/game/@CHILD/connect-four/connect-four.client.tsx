@@ -18,9 +18,9 @@ import { VsUser } from "./@CHILD/vs-user/vs-user.client"
 import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art"
 import {
   ModelClient,
-  ModelGame,
+  ModelSync,
   MsgClient,
-  MsgGame,
+  MsgSync,
   MsgToClient,
   MsgToServer,
 } from "./connect-four.core"
@@ -38,8 +38,8 @@ type Module = GameClientModule<{
   Msg: MsgClient
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  ModelGame: ModelGame
-  MsgGame: MsgGame
+  ModelSync: ModelSync
+  MsgSync: MsgSync
   Ctx: SpaceClientCtx
   MsgInCmd: null
   MsgInEvent: SpaceClientEvent
@@ -74,7 +74,7 @@ const update: Module["update"] = (input) => {
     (model) => GameMainMenu.update({ ...input, model }),
     (model) => updateChild(model)(input),
     (model) => updateFromMsg(model)(input),
-    (model) => updateFromMsgGame(model)(input),
+    (model) => updateFromMsgSync(model)(input),
   )
 }
 
@@ -85,7 +85,7 @@ const updateFromMsg =
 
     switch (msg?.t) {
       case "user-changed-mode": {
-        return { model, msgGame: [withId(msg)] }
+        return { model, msgSync: [withId(msg)] }
       }
 
       default: {
@@ -94,18 +94,18 @@ const updateFromMsg =
     }
   }
 
-const updateFromMsgGame =
+const updateFromMsgSync =
   (model: ModelClient): Module["update"] =>
   (input) => {
-    const { msgGame } = input
+    const { msgSync } = input
 
-    if (!msgGame) {
+    if (!msgSync) {
       return { model }
     }
 
-    switch (msgGame.t) {
+    switch (msgSync.t) {
       case "user-changed-mode": {
-        switch (msgGame.mode) {
+        switch (msgSync.mode) {
           case "none": {
             return {
               model: { t: null },
@@ -139,7 +139,7 @@ const updateFromMsgGame =
 const updateChild =
   (model: ModelClient): Module["update"] =>
   (input) => {
-    const { msg, msgEvt, msgGame, msgServer, modelGame } = input
+    const { msg, msgEvt, msgSync, msgServer, modelGame } = input
 
     switch (modelGame.t) {
       case "none": {
@@ -152,8 +152,8 @@ const updateChild =
           msg: msg?.t === "vs-bot" ? msg.c : null,
           msgEvt: msgEvt,
           msgCmd: null,
-          msgGame:
-            msgGame?.t === "vs-bot" ? { ...msgGame, ...msgGame.c } : null,
+          msgSync:
+            msgSync?.t === "vs-bot" ? { ...msgSync, ...msgSync.c } : null,
           msgServer: msgServer?.t === "vs-bot" ? msgServer.c : null,
           model: model.t === "vs-bot" ? model.c : VsBot.init,
           modelGame: modelGame.c,
@@ -173,8 +173,8 @@ const updateChild =
           msg: msg?.t === "vs-user" ? msg.c : null,
           msgCmd: null,
           msgEvt: msgEvt,
-          msgGame:
-            msgGame?.t === "vs-user" ? { ...msgGame, ...msgGame.c } : null,
+          msgSync:
+            msgSync?.t === "vs-user" ? { ...msgSync, ...msgSync.c } : null,
           msgServer: msgServer?.t === "vs-user" ? msgServer.c : null,
           modelGame: modelGame.c,
         })
@@ -260,10 +260,10 @@ const View: Module["View"] = ({ dispatch, ctx, modelGame, model }) => {
 }
 
 const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-  const { modelGame, ctx, msgGame } = input
-  switch (msgGame.t) {
+  const { modelGame, ctx, msgSync } = input
+  switch (msgSync.t) {
     case "user-changed-mode": {
-      switch (msgGame.mode) {
+      switch (msgSync.mode) {
         case "none": {
           const profile = ctx.profiles[ctx.currentUserId]
 
@@ -298,7 +298,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
           return (
             <VsBot.ViewFeedItem
               ctx={{ ...ctx, onQuit: () => {} }}
-              msgGame={msgGame.c}
+              msgSync={msgSync.c}
               modelGame={modelGame.c}
               dispatch={(c) => input.dispatch({ t: "vs-bot", c })}
             />
@@ -316,7 +316,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
           return (
             <VsUser.ViewFeedItem
               ctx={{ ...ctx, onQuit: () => {} }}
-              msgGame={msgGame.c}
+              msgSync={msgSync.c}
               modelGame={modelGame.c}
               dispatch={(c) => input.dispatch({ t: "vs-user", c })}
             />

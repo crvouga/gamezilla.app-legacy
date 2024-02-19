@@ -35,7 +35,7 @@ export type MsgServer = { t: "noop" }
 //
 //
 
-export type MsgGame = {
+export type MsgSync = {
   t: "user-deleted-puzzle"
   deleted: Deleted
   flowPuzzleId: FlowPuzzleId

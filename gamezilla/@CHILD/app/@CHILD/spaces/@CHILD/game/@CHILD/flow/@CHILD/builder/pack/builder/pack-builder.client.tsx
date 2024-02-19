@@ -20,15 +20,15 @@ import { FlowGridUIPlay } from "../../../../@SHARED/flow"
 
 const ExitButton: Pick<ClientModule, "update" | "View"> = {
   update(input) {
-    const { model, msg, msgGame } = input
+    const { model, msg, msgSync } = input
 
     switch (msg?.t) {
       case "pack-builder.user-clicked-exit-button": {
-        return { model, msgGame: [withId(msg)] }
+        return { model, msgSync: [withId(msg)] }
       }
     }
 
-    switch (msgGame?.t) {
+    switch (msgSync?.t) {
       case "pack-builder.user-clicked-exit-button": {
         return {
           model,
@@ -72,7 +72,7 @@ const AddPuzzleButton: Pick<ClientModule, "update" | "View"> = {
 
     switch (msg?.t) {
       case "pack-builder.user-clicked-open-add-puzzle-button": {
-        return { model, msgGame: [withId(msg)] }
+        return { model, msgSync: [withId(msg)] }
       }
     }
     return { model }
@@ -105,11 +105,11 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
 
     switch (msg?.t) {
       case "pack-builder.user-clicked-add-puzzle-item": {
-        return { model, msgGame: [withId(msg)] }
+        return { model, msgSync: [withId(msg)] }
       }
 
       case "pack-builder.user-closed-add-puzzle": {
-        return { model, msgGame: [withId(msg)] }
+        return { model, msgSync: [withId(msg)] }
       }
     }
 
@@ -165,7 +165,7 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 
     switch (msg?.t) {
       case "pack-builder.user-clicked-pack-item": {
-        return { model, msgGame: [withId(msg)] }
+        return { model, msgSync: [withId(msg)] }
       }
     }
 
@@ -245,11 +245,11 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
 
     switch (msg?.t) {
       case "pack-builder.user-clicked-exit-puzzle-button": {
-        return { model, msgGame: [withId(msg)] }
+        return { model, msgSync: [withId(msg)] }
       }
 
       case "pack-builder.flow-play-grid-ui": {
-        return { model, msgGame: [withId(msg)] }
+        return { model, msgSync: [withId(msg)] }
       }
     }
 

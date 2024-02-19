@@ -1,8 +1,8 @@
 import { FlowGridUIEdit, FlowGridUIPlay } from "../../../../@SHARED/flow"
-import { GameReducer } from "../../builder.core"
+import { SyncReducer } from "../../builder.core"
 
-const reducer: GameReducer = ({ modelGame, msgGame }) => {
-  switch (msgGame.t) {
+const reducer: SyncReducer = ({ modelGame, msgSync }) => {
+  switch (msgSync.t) {
     case "puzzle-list.clicked-puzzle-list-item": {
       return {
         listTab: "puzzles",
@@ -11,13 +11,13 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
         puzzleBuilder: {
           t: "puzzle-builder",
           gridEdit: FlowGridUIEdit.init({
-            grid: msgGame.puzzle.puzzle.c,
+            grid: msgSync.puzzle.puzzle.c,
           }),
           gridPlay: FlowGridUIPlay.init({
-            grid: msgGame.puzzle.puzzle.c,
+            grid: msgSync.puzzle.puzzle.c,
           }),
           mode: { t: "edit" },
-          puzzle: msgGame.puzzle,
+          puzzle: msgSync.puzzle,
         },
       }
     }

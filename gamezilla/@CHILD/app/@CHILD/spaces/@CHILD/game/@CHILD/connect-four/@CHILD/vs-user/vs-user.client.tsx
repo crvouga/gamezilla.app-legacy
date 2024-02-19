@@ -28,8 +28,8 @@ import { CoverArt } from "../../@SHARED/connect-four-ui/connect-four-cover-art"
 import {
   ModelClient,
   MsgClient,
-  MsgGame,
-  ModelGame,
+  MsgSync,
+  ModelSync,
   StateGame,
   StateGameOver,
   MsgToClient,
@@ -50,8 +50,8 @@ type Module = GameClientModule<{
   Msg: MsgClient
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  ModelGame: ModelGame
-  MsgGame: MsgGame
+  ModelSync: ModelSync
+  MsgSync: MsgSync
   Ctx: SpaceClientCtx & { onQuit: () => void }
   MsgInCmd: null
   MsgInEvent: SpaceClientEvent
@@ -333,7 +333,7 @@ const ViewGameOverMessage = ({
 }: {
   modelGame: StateGameOver
   ctx: ClientCtx
-  dispatch: (msg: MsgGame) => void
+  dispatch: (msg: MsgSync) => void
 }) => {
   const currentPlayerType = toPlayerType(ctx.currentUserId, modelGame)
 

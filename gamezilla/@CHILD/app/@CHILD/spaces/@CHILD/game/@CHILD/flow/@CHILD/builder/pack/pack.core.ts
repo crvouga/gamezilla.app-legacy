@@ -58,7 +58,7 @@ export type MsgToClient =
 //
 //
 
-export type MsgGame =
-  | PackCreate.MsgGame
-  | PackBuilder.MsgGame
-  | PackList.MsgGame
+export type MsgSync =
+  | PackCreate.MsgSync
+  | PackBuilder.MsgSync
+  | PackList.MsgSync

@@ -22,7 +22,7 @@ const useSelectedMode =
       modelGame: {
         t: null,
       },
-      msgGame: {
+      msgSync: {
         t: "user-changed-mode",
         userId: userId,
         mode,
