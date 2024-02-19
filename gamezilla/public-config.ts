@@ -59,7 +59,7 @@ const SERVER_URL_LOCAL = `http://localhost:${SERVER_PORT_LOCAL}/`
 const SERVER_URL_NGROK = "https://gamezilla-server.ngrok.io/"
 const SERVER_URL_PROD = "https://server.gamezilla.app/"
 
-const USE_NGROK = true
+const USE_NGROK = false
 
 export const SERVER_URL = IS_PROD
   ? SERVER_URL_PROD
