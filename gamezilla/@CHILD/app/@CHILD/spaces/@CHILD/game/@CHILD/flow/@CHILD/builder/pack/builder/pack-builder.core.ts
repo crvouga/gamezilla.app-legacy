@@ -1,5 +1,7 @@
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
+import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
+import { Result } from "gamezilla/@SHARED/core"
 
 //
 //
@@ -55,4 +57,8 @@ export type MsgGame =
   | {
       t: "pack-builder.user-clicked-puzzle-picker-item"
       puzzle: FlowPuzzle
+    }
+  | {
+      t: "pack-builder.saved-pack"
+      saved: Result<string, FlowPack>
     }

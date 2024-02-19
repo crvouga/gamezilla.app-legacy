@@ -6,10 +6,6 @@ import {
   Drawer,
   IconArrowLeftOnRect,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
-import {
-  ViewBottomButtonBar,
-  ViewBottomButtonBarAction,
-} from "../../../../../../@SHARED/game"
 import { FlowPackUI } from "../../../../@SHARED/flow-pack"
 import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
 import { ClientModule } from "../../builder.core"
@@ -53,9 +49,10 @@ const ExitButton: Pick<ClientModule, "update" | "View"> = {
 
   View(input) {
     return (
-      <ViewBottomButtonBarAction
-        icon={<IconArrowLeftOnRect className="h-6 w-6" />}
-        label="Exit"
+      <Button
+        start={<IconArrowLeftOnRect className="h-6 w-6" />}
+        className="w-full"
+        text="Exit"
         onClick={() =>
           input.dispatch({ t: "pack-builder.user-clicked-exit-button" })
         }
@@ -132,11 +129,11 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
   View(input) {
     const { dispatch, model } = input
     return (
-      <div className="flex max-h-full w-full flex-1 flex-col overflow-hidden">
-        <div className="flex w-full shrink-0 items-center p-4 text-2xl font-bold">
-          Add puzzle
+      <div className="flex h-full max-h-full w-full flex-col overflow-hidden">
+        <div className="flex w-full shrink-0 items-center border-b border-neutral-700 px-4 py-2 text-2xl font-bold">
+          <p className="flex-1">Add puzzle</p>
         </div>
-        <div className="w-full flex-1 overflow-hidden overflow-y-scroll">
+        <div className="h-full max-h-full w-full max-w-full flex-1 overflow-hidden overflow-y-scroll">
           <FlowPuzzleListClient.View
             ctx={input.ctx}
             dispatch={(c) => input.dispatch({ t: "flow-puzzle-list", c })}
@@ -182,10 +179,14 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
   },
 
   View(input) {
-    const { dispatch, modelGame } = input
+    const { dispatch, modelGame, model } = input
 
     if (modelGame.t !== "pack-builder") {
       return null
+    }
+
+    if (model.packBuilderOpen === "puzzle-picker") {
+      return <PuzzlePicker.View {...input} />
     }
 
     return (
@@ -208,10 +209,6 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
                   )
                 }
 
-                //
-                //
-                //
-
                 if (index === modelGame.pack.puzzleIds.length) {
                   return (
                     <FlowPackUI.ViewAddCell
@@ -232,9 +229,9 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
 
         <PuzzlePickerDrawer.View {...input} />
 
-        <ViewBottomButtonBar>
+        <div className="w-full border-t border-neutral-700 p-4">
           <ExitButton.View {...input} />
-        </ViewBottomButtonBar>
+        </div>
       </div>
     )
   },

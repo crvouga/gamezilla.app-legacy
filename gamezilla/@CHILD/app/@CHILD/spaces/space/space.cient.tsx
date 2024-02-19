@@ -62,12 +62,14 @@ const View = (input: {
 
           <ViewTopBar {...input} ctx={spaceCtx} />
 
-          <Feed.View
-            spaceState={spaceState}
-            ctx={spaceCtx}
-            model={model}
-            dispatch={dispatch}
-          />
+          {false && (
+            <Feed.View
+              spaceState={spaceState}
+              ctx={spaceCtx}
+              model={model}
+              dispatch={dispatch}
+            />
+          )}
 
           <div className="flex w-full flex-1 flex-col overflow-hidden">
             <GameClient.View {...input} ctx={spaceCtx} />

@@ -1,18 +1,30 @@
 import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2"
 import { ServerModule } from "../../builder.core"
+import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 
 const update: ServerModule["update"] = async (input) => {
   return GameServerModule.chainUpdates(
     { model: input.model },
-    (model) => updateFromClient({ ...input, model }),
+    (model) => updateSavePackOnChange({ ...input, model }),
     //
   )
 }
 
-const updateFromClient: ServerModule["update"] = async (input) => {
-  const { model, msgClient } = input
+const updateSavePackOnChange: ServerModule["update"] = async (input) => {
+  const { deps, model, modelGame, msgGame } = input
+  switch (msgGame?.t) {
+    case "pack-builder.user-clicked-puzzle-picker-item": {
+      if (modelGame.t !== "pack-builder") {
+        return { model }
+      }
 
-  switch (msgClient?.t) {
+      const saved = await deps.FlowPackDb.put(modelGame.pack)
+
+      return {
+        model,
+        msgGame: [withId({ t: "pack-builder.saved-pack", saved })],
+      }
+    }
     default: {
       return { model }
     }

@@ -63,7 +63,9 @@ if (typeof window !== "undefined" && "customElements" in window) {
           position: absolute;
           inset: 0;
           width: 100%;
-          height: 100vh;
+          max-width: 100%;
+          height: 100%;
+          max-height: 100%;
           overflow: hidden;
           display: flex;
           flex-direction: column;
@@ -87,6 +89,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
         }
         .content {
           width: 100%;
+          max-width: 100%;
           max-height: 100%;
           overflow: hidden;
         }
