@@ -10,7 +10,6 @@ import {
   TimeSpan,
   descend,
   isErr,
-  isRequesting,
 } from "gamezilla/@SHARED/core"
 import { FlowGridUI } from "../flow"
 import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
@@ -103,11 +102,12 @@ const View: ClientModule["View"] = (input) => {
   const { model, dispatch, ctx } = input
 
   const puzzles = Object.values(model.puzzles)
-  const shouldShowLoadingState = isRequesting(model.request)
+  const shouldShowLoadingState =
+    model.request.t === "not-asked" || model.request.t === "loading"
   const shouldShowEmptyState = !shouldShowLoadingState && puzzles.length === 0
 
   return (
-    <div className="relative flex w-full flex-1 flex-col gap-2 overflow-hidden">
+    <div className="relative flex h-full w-full flex-col gap-2 overflow-hidden">
       <div className="border-1 relative flex w-full flex-1 flex-col items-center overflow-y-scroll border-t border-neutral-700">
         {shouldShowEmptyState && (
           <EmptyState

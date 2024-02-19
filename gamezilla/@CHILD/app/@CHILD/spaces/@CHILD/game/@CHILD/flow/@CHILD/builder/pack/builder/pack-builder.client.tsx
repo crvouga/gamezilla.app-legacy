@@ -147,7 +147,7 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
             }}
           />
         </div>
-        <div className="flex w-full shrink-0 items-center justify-center p-4">
+        <div className="flex w-full shrink-0 items-center justify-center border-t border-neutral-700 p-4">
           <Button
             text="Close"
             className="w-full"
