@@ -3,6 +3,7 @@ import { chainUpdates } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/archite
 import { testSpaceClientCtx } from "../../../../../../@SHARED/testing/client"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import {
+  clickedExitPuzzleButton,
   clickedOpenPuzzlePickerButton,
   clickedPuzzleGridItem,
   clickedPuzzlePickerItem,
@@ -74,6 +75,20 @@ describe("pack builder client", () => {
       serverCreatedPack(createFlowPack(testSpaceClientCtx)),
       clickedOpenPuzzlePickerButton,
       clickedPuzzlePickerItem(puzzle),
+    )
+    const modelGame = deriveModelGame(output)
+    expect(modelGame.packBuilder?.opened.t === "puzzle-grid").toBeTrue()
+  })
+
+  it("should go back to grid after exiting puzzle", async () => {
+    const puzzle = createFlowPuzzle(testSpaceClientCtx)
+    const output = await chainUpdates(
+      initial,
+      serverCreatedPack(createFlowPack(testSpaceClientCtx)),
+      clickedOpenPuzzlePickerButton,
+      clickedPuzzlePickerItem(puzzle),
+      clickedPuzzleGridItem(0),
+      clickedExitPuzzleButton(),
     )
     const modelGame = deriveModelGame(output)
     expect(modelGame.packBuilder?.opened.t === "puzzle-grid").toBeTrue()

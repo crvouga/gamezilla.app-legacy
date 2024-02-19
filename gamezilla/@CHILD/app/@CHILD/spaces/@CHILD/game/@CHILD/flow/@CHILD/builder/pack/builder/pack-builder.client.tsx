@@ -5,6 +5,10 @@ import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { FlowPackUI } from "../../../../@SHARED/flow-pack"
 import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
 import { ClientModule } from "../../builder.core"
+import {
+  ViewBottomButtonBar,
+  ViewBottomButtonBarAction,
+} from "../../../../../../@SHARED/game"
 
 //
 //
@@ -15,19 +19,11 @@ import { ClientModule } from "../../builder.core"
 
 const ExitButton: Pick<ClientModule, "update" | "View"> = {
   update(input) {
-    const { model, msg, ctx, msgGame } = input
+    const { model, msg, msgGame } = input
 
     switch (msg?.t) {
       case "pack-builder.user-clicked-exit-button": {
-        return {
-          model,
-          msgGame: [
-            withId({
-              t: "pack-builder.user-clicked-exit-button",
-              userId: ctx.currentUserId,
-            }),
-          ],
-        }
+        return { model, msgGame: [withId(msg)] }
       }
     }
 
@@ -71,19 +67,11 @@ const ExitButton: Pick<ClientModule, "update" | "View"> = {
 
 const AddPuzzleButton: Pick<ClientModule, "update" | "View"> = {
   update(input) {
-    const { model, msg, ctx } = input
+    const { model, msg } = input
 
     switch (msg?.t) {
       case "pack-builder.user-clicked-open-puzzle-picker-button": {
-        return {
-          model,
-          msgGame: [
-            withId({
-              t: "pack-builder.user-clicked-open-puzzle-picker-button",
-              userId: ctx.currentUserId,
-            }),
-          ],
-        }
+        return { model, msgGame: [withId(msg)] }
       }
     }
     return { model }
@@ -116,28 +104,11 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
 
     switch (msg?.t) {
       case "pack-builder.user-clicked-puzzle-picker-item": {
-        return {
-          model,
-          msgGame: [
-            withId({
-              puzzle: msg.puzzle,
-              t: "pack-builder.user-clicked-puzzle-picker-item",
-              userId: input.ctx.currentUserId,
-            }),
-          ],
-        }
+        return { model, msgGame: [withId(msg)] }
       }
 
       case "pack-builder.user-closed-puzzle-picker": {
-        return {
-          model,
-          msgGame: [
-            withId({
-              t: "pack-builder.user-closed-puzzle-picker",
-              userId: input.ctx.currentUserId,
-            }),
-          ],
-        }
+        return { model, msgGame: [withId(msg)] }
       }
     }
 
@@ -193,16 +164,7 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 
     switch (msg?.t) {
       case "pack-builder.user-clicked-puzzle-grid-item": {
-        return {
-          model,
-          msgGame: [
-            withId({
-              t: "pack-builder.user-clicked-puzzle-grid-item",
-              userId: input.ctx.currentUserId,
-              index: msg.index,
-            }),
-          ],
-        }
+        return { model, msgGame: [withId(msg)] }
       }
     }
 
@@ -271,7 +233,14 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 
 export const Puzzle: Pick<ClientModule, "update" | "View"> = {
   update(input) {
-    const { model } = input
+    const { model, msg } = input
+
+    switch (msg?.t) {
+      case "pack-builder.user-clicked-exit-puzzle-button": {
+        return { model, msgGame: [withId(msg)] }
+      }
+    }
+
     return { model }
   },
 
@@ -281,19 +250,27 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
     if (!modelGame.packBuilder) {
       return null
     }
-    switch (modelGame.packBuilder.opened.t) {
-      case "puzzle-picker": {
-        return <PuzzlePicker.View {...input} />
-      }
 
-      case "puzzle": {
-        return <div>puzzle</div>
-      }
-
-      case "puzzle-grid": {
-        return <PuzzleGrid.View {...input} />
-      }
+    if (modelGame.packBuilder.opened.t !== "puzzle") {
+      return null
     }
+
+    return (
+      <div>
+        <ViewBottomButtonBar>
+          <ViewBottomButtonBarAction
+            icon={<IconArrowLeftOnRect />}
+            label="Exit"
+            onClick={() =>
+              input.dispatch({
+                t: "pack-builder.user-clicked-exit-puzzle-button",
+                userId: input.ctx.currentUserId,
+              })
+            }
+          />
+        </ViewBottomButtonBar>
+      </div>
+    )
   },
 }
 
@@ -312,6 +289,7 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
       (model) => PuzzlePicker.update({ ...input, model }),
       (model) => AddPuzzleButton.update({ ...input, model }),
       (model) => PuzzleGrid.update({ ...input, model }),
+      (model) => Puzzle.update({ ...input, model }),
     )
   },
 
@@ -327,7 +305,7 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
       }
 
       case "puzzle": {
-        return <div>puzzle</div>
+        return <Puzzle.View {...input} />
       }
 
       case "puzzle-grid": {

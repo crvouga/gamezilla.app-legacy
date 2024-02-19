@@ -61,7 +61,10 @@ export const clickedPackItem = (pack: FlowPack) => (model: ModelClient) => {
 export const clickedOpenPuzzlePickerButton = (model: ModelClient) => {
   return BuilderClient.update({
     model,
-    msg: { t: "pack-builder.user-clicked-open-puzzle-picker-button" },
+    msg: {
+      t: "pack-builder.user-clicked-open-puzzle-picker-button",
+      userId: ctx.currentUserId,
+    },
     ctx,
     modelGame,
   })
@@ -80,11 +83,27 @@ export const clickedPuzzlePickerItem =
   (puzzle: FlowPuzzle) => (model: ModelClient) => {
     return BuilderClient.update({
       model,
-      msg: { t: "pack-builder.user-clicked-puzzle-picker-item", puzzle },
+      msg: {
+        t: "pack-builder.user-clicked-puzzle-picker-item",
+        puzzle,
+        userId: ctx.currentUserId,
+      },
       ctx,
       modelGame,
     })
   }
+
+export const clickedExitPuzzleButton = () => (model: ModelClient) => {
+  return BuilderClient.update({
+    model,
+    msg: {
+      t: "pack-builder.user-clicked-exit-puzzle-button",
+      userId: ctx.currentUserId,
+    },
+    ctx,
+    modelGame,
+  })
+}
 
 export const clickedPuzzleGridItem =
   (index: number) => (model: ModelClient) => {

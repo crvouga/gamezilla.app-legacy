@@ -64,3 +64,7 @@ export type MsgGame =
       t: "pack-builder.flow-play-grid-ui"
       c: FlowGridUIPlay.Msg
     }
+  | {
+      t: "pack-builder.user-clicked-exit-puzzle-button"
+      userId: UserId
+    }

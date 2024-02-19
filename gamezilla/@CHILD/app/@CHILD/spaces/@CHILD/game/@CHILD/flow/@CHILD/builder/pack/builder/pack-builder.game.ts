@@ -93,6 +93,23 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
       }
     }
 
+    case "pack-builder.user-clicked-exit-puzzle-button": {
+      if (!modelGame.packBuilder) {
+        return modelGame
+      }
+
+      return {
+        ...modelGame,
+        packBuilder: {
+          ...modelGame.packBuilder,
+          opened: {
+            t: "puzzle-grid",
+            pageIndex: 0,
+          },
+        },
+      }
+    }
+
     default: {
       return modelGame
     }
