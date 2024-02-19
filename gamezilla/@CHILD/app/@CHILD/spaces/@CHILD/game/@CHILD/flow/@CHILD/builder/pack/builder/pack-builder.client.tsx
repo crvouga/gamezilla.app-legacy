@@ -27,7 +27,7 @@ const ExitButton: Pick<ClientModule, "update" | "View"> = {
           model,
           msgGame: [
             withId({
-              t: "user-exited-pack-builder",
+              t: "pack-builder.user-clicked-exit-button",
               userId: ctx.currentUserId,
             }),
           ],
@@ -36,7 +36,7 @@ const ExitButton: Pick<ClientModule, "update" | "View"> = {
     }
 
     switch (msgGame?.t) {
-      case "user-exited-pack-builder": {
+      case "pack-builder.user-clicked-exit-button": {
         return {
           model,
           msgCmd: [playSound(APP_SOUND.navBackwardMin)],
@@ -179,13 +179,13 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
   },
 
   View(input) {
-    const { dispatch, modelGame, model } = input
+    const { dispatch, modelGame } = input
 
     if (modelGame.t !== "pack-builder") {
       return null
     }
 
-    if (model.packBuilderOpen === "puzzle-picker") {
+    if (modelGame.packBuilderOpen === "puzzle-picker") {
       return <PuzzlePicker.View {...input} />
     }
 

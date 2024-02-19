@@ -9,9 +9,7 @@ import { Result } from "gamezilla/@SHARED/core"
 //
 //
 
-export type ModelClient = {
-  packBuilderOpen?: "puzzle-picker" | null
-}
+export type ModelClient = {}
 
 export const initClient: ModelClient = {}
 
@@ -51,7 +49,7 @@ export type MsgToClient = { t: "noop" }
 
 export type MsgGame =
   | {
-      t: "user-exited-pack-builder"
+      t: "pack-builder.user-clicked-exit-button"
       userId: UserId
     }
   | {

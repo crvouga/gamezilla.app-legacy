@@ -15,7 +15,7 @@ const reducer: GameReducer = ({ modelGame, msgGame }) => {
       }
     }
 
-    case "user-exited-pack-builder": {
+    case "pack-builder.user-clicked-exit-button": {
       return {
         t: "list",
         listTab: "packs",
