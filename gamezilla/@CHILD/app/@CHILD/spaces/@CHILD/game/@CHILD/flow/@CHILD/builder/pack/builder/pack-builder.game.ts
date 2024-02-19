@@ -29,7 +29,7 @@ const userCreatedPack: GameReducer = ({ modelGame, msgGame }) => {
   }
 }
 
-const mainReducer: GameReducer = ({ modelGame, msgGame }) => {
+const userClickedExitButton: GameReducer = ({ modelGame, msgGame }) => {
   switch (msgGame.t) {
     case "pack-builder.user-clicked-exit-button": {
       return {
@@ -39,7 +39,14 @@ const mainReducer: GameReducer = ({ modelGame, msgGame }) => {
         listTab: "packs",
       }
     }
+    default: {
+      return modelGame
+    }
+  }
+}
 
+const useClickedAddPuzzleItem: GameReducer = ({ modelGame, msgGame }) => {
+  switch (msgGame.t) {
     case "pack-builder.user-clicked-add-puzzle-item": {
       if (!modelGame.packBuilder) {
         return modelGame
@@ -56,7 +63,17 @@ const mainReducer: GameReducer = ({ modelGame, msgGame }) => {
         },
       }
     }
+    default: {
+      return modelGame
+    }
+  }
+}
 
+const userClickedOpenAddPuzzleButton: GameReducer = ({
+  modelGame,
+  msgGame,
+}) => {
+  switch (msgGame.t) {
     case "pack-builder.user-clicked-open-add-puzzle-button": {
       if (!modelGame.packBuilder) {
         return modelGame
@@ -71,7 +88,14 @@ const mainReducer: GameReducer = ({ modelGame, msgGame }) => {
         },
       }
     }
+    default: {
+      return modelGame
+    }
+  }
+}
 
+const userClosedAddPuzzle: GameReducer = ({ modelGame, msgGame }) => {
+  switch (msgGame.t) {
     case "pack-builder.user-closed-add-puzzle": {
       if (!modelGame.packBuilder) {
         return modelGame
@@ -87,7 +111,14 @@ const mainReducer: GameReducer = ({ modelGame, msgGame }) => {
         },
       }
     }
+    default: {
+      return modelGame
+    }
+  }
+}
 
+const userClickedPackItem: GameReducer = ({ modelGame, msgGame }) => {
+  switch (msgGame.t) {
     case "pack-builder.user-clicked-pack-item": {
       if (!modelGame.packBuilder) {
         return modelGame
@@ -112,6 +143,14 @@ const mainReducer: GameReducer = ({ modelGame, msgGame }) => {
       }
     }
 
+    default: {
+      return modelGame
+    }
+  }
+}
+
+const userClickedExitPuzzleButton: GameReducer = ({ modelGame, msgGame }) => {
+  switch (msgGame.t) {
     case "pack-builder.user-clicked-exit-puzzle-button": {
       if (!modelGame.packBuilder) {
         return modelGame
@@ -137,8 +176,13 @@ const mainReducer: GameReducer = ({ modelGame, msgGame }) => {
 
 const reducer: GameReducer = (input) => {
   return [
+    userClosedAddPuzzle,
+    userClickedOpenAddPuzzleButton,
+    useClickedAddPuzzleItem,
     userCreatedPack,
-    mainReducer,
+    userClickedExitButton,
+    userClickedPackItem,
+    userClickedExitPuzzleButton,
     //
   ].reduce(
     (modelGame, reducer) => reducer({ ...input, modelGame }),
