@@ -63,11 +63,13 @@ export type ServerModule = GameServerModule<{
   Msg: MsgServer
   MsgOutCmd: SpaceServerCmd<MsgToClient>
   MsgOutEvent: null
-  Deps: {
-    FlowPuzzleDb: IFlowPuzzleDb
-    FlowPackDb: IFlowPackDb
-  }
+  Deps: FlowServerDeps
 }>
+
+export type FlowServerDeps = {
+  FlowPuzzleDb: IFlowPuzzleDb
+  FlowPackDb: IFlowPackDb
+}
 
 //
 //

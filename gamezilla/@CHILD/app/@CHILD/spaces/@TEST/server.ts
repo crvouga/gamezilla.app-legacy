@@ -36,7 +36,7 @@ export const generateAuthClient = (): AuthenticatedClient => {
   }
 }
 
-type AuthenticatedClient = {
+export type AuthenticatedClient = {
   clientId: ClientId
   sessionId: SessionId
   userId: UserId

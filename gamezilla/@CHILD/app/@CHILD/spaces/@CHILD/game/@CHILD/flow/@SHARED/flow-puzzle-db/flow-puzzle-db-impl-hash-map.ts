@@ -58,7 +58,16 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
       const filtered = puzzles.filter((puzzle) => {
         if (
           input.where.createdBy &&
-          puzzle.createdBy !== input.where.createdBy
+          input.where.createdBy["equals"] &&
+          puzzle.createdBy !== input.where.createdBy["equals"]
+        ) {
+          return false
+        }
+
+        if (
+          input.where.puzzleId &&
+          input.where.puzzleId["in"] &&
+          !input.where.puzzleId["in"].includes(puzzle.id)
         ) {
           return false
         }

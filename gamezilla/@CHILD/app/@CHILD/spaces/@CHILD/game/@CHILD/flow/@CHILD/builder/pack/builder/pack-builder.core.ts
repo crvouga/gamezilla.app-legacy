@@ -22,7 +22,7 @@ export type ModelServer = {}
 //
 //
 
-export type MsgClient = MsgSync
+export type MsgClient = MsgSync | { t: "puzzle-builder.elapsed" }
 
 export type MsgServer = { t: "noop" }
 
@@ -33,7 +33,7 @@ export type MsgToServer = {
 
 export type MsgToClient = {
   t: "pack-builder.list-puzzles-by-id"
-  puzzles: FlowPuzzle[]
+  listed: Result<string, FlowPuzzle[]>
 }
 
 //

@@ -7,17 +7,19 @@ import { Result } from "gamezilla/@SHARED/core"
 import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id"
 
+type WhereClause = {
+  createdBy?: {
+    equals: UserId
+  }
+  puzzleId?: {
+    in: FlowPuzzleId[]
+  }
+}
 export type IFlowPuzzleDb = {
-  count: (input: {
-    where: {
-      createdBy?: UserId
-    }
-  }) => Promise<Result<string, number>>
+  count: (input: { where: WhereClause }) => Promise<Result<string, number>>
   list: (input: {
     pagination: Pagination
-    where: {
-      createdBy?: UserId
-    }
+    where: WhereClause
     order: {
       createdAt?: "asc" | "desc"
       lastUpdatedAt?: "asc" | "desc"

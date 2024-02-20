@@ -10,6 +10,7 @@ import {
   closedPuzzlePickerDrawer,
   createFlowPack,
   createFlowPuzzle,
+  serverListedPuzzlesByIdOk,
   initial,
   serverCreatedPack,
 } from "../../@TEST/client"
@@ -115,5 +116,21 @@ describe("pack builder client", () => {
           msg.puzzleIds.includes(puzzle.id),
       ),
     ).toBeTrue()
+  })
+
+  it("should record puzzles sent back from server", async () => {
+    const puzzle = createFlowPuzzle(testSpaceClientCtx)
+    const openedPackBuilder = await chainUpdates(
+      initial,
+      serverCreatedPack(createFlowPack(testSpaceClientCtx, [puzzle.id])),
+    )
+
+    const output = await chainUpdates(
+      openedPackBuilder,
+      clickedOpenPuzzlePickerButton(deriveModelSync(openedPackBuilder)),
+      serverListedPuzzlesByIdOk([puzzle]),
+    )
+
+    expect(output.model.puzzles[puzzle.id]?.id === puzzle.id).toBeTrue()
   })
 })

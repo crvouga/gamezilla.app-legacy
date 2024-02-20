@@ -19,7 +19,9 @@ const updateFromClient: ServerModule["update"] = async (input) => {
     case "puzzle-create.user-clicked-create-button": {
       const counted = await deps.FlowPuzzleDb.count({
         where: {
-          createdBy: msgClient.userId,
+          createdBy: {
+            equals: msgClient.userId,
+          },
         },
       })
 

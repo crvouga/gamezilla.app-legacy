@@ -46,7 +46,9 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
                 offset: 0,
               },
               where: {
-                createdBy: ctx.space.hostId,
+                createdBy: {
+                  equals: ctx.space.hostId,
+                },
               },
             },
           }),

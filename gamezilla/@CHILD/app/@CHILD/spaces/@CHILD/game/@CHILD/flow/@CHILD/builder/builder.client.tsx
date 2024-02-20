@@ -204,6 +204,7 @@ const subscriptions: ClientModule["subscriptions"] = async (input) => {
   return Sub.batch([
     //
     await PuzzleCreateClient.subscriptions(input),
+    await PackBuilderClient.subscriptions(input),
     Sub.tag(
       "flow-pack-list",
       await FlowPackListClient.subscriptions({

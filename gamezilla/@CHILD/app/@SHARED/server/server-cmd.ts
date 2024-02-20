@@ -105,19 +105,24 @@ export const sendToClient = <MsgToClient>(
   }
 }
 
-export const didSendToClient = <MsgToClient>(
-  output: { msgCmd?: ServerCmd<MsgToClient>[] | null },
+export const didSendToClient = <MsgToClient, TCmd>(
+  output: { msgCmd?: (WireCmd<MsgToClient> | TCmd)[] | null },
   clientId: ClientId,
   predicate: (msg: MsgToClient) => boolean,
 ): boolean => {
   return (
-    output.msgCmd?.some(
-      (cmd) =>
-        cmd.t === "wire" &&
-        cmd.c.t === "send-to-client" &&
-        cmd.c.clientIds.includes(clientId) &&
-        predicate(cmd.c.msg),
-    ) ?? false
+    ((output.msgCmd?.length ?? 0) > 0 &&
+      output.msgCmd?.some(
+        (cmd) =>
+          typeof cmd === "object" &&
+          cmd &&
+          "t" in cmd &&
+          cmd.t === "wire" &&
+          cmd.c.t === "send-to-client" &&
+          cmd.c.clientIds.includes(clientId) &&
+          predicate(cmd.c.msg),
+      )) ??
+    false
   )
 }
 

@@ -4,6 +4,7 @@ import {
   APP_SOUND,
   playSound,
   sendToServer,
+  showErrSm,
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
 import {
@@ -14,6 +15,7 @@ import { FlowGridUIPlay } from "../../../../@SHARED/flow"
 import { FlowPackUI } from "../../../../@SHARED/flow-pack"
 import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
 import { ClientModule } from "../../builder.core"
+import { Sub, Time, TimeSpan } from "gamezilla/@SHARED/core"
 
 //
 //
@@ -307,6 +309,30 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
 //
 //
 
+const updateServerListedPuzzles: ClientModule["update"] = (input) => {
+  const { model, msgServer } = input
+
+  switch (msgServer?.t) {
+    case "pack-builder.list-puzzles-by-id": {
+      if (msgServer.listed.t === "err") {
+        return {
+          model,
+          msgCmd: showErrSm(msgServer.listed.error),
+        }
+      }
+
+      const byId = msgServer.listed.value.reduce(
+        (acc, puzzle) => ({ ...acc, [puzzle.id]: puzzle }),
+        {},
+      )
+      return { model: { ...model, puzzles: { ...model.puzzles, ...byId } } }
+    }
+    default: {
+      return { model }
+    }
+  }
+}
+
 const fetchMissingPuzzles: ClientModule["update"] = (input) => {
   const missingPuzzleIds =
     input.modelSync.packBuilder?.pack.puzzleIds.filter(
@@ -328,6 +354,28 @@ const fetchMissingPuzzles: ClientModule["update"] = (input) => {
   }
 }
 
+const updateMissingPuzzles: ClientModule["update"] = (input) => {
+  return GameClientModule.chainUpdates(
+    { model: input.model },
+    (model) => fetchMissingPuzzles({ ...input, model }),
+    (model) => updateServerListedPuzzles({ ...input, model }),
+  )
+}
+
+const subscriptionsMissingPuzzles: ClientModule["subscriptions"] = (input) => {
+  const isMissingPuzzles = input.modelSync.packBuilder?.pack.puzzleIds.some(
+    (puzzleId) => !input.model.puzzles[puzzleId],
+  )
+  if (isMissingPuzzles) {
+    return Time.interval(
+      "fetch-missing-puzzles",
+      TimeSpan.fromSeconds(1),
+      () => ({ t: "puzzle-builder.elapsed" }),
+    )
+  }
+  return Sub.None
+}
+
 //
 //
 //
@@ -335,7 +383,10 @@ const fetchMissingPuzzles: ClientModule["update"] = (input) => {
 //
 //
 
-export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
+export const PackBuilderClient: Pick<
+  ClientModule,
+  "update" | "View" | "subscriptions"
+> = {
   update(input) {
     return GameClientModule.chainUpdates(
       { model: input.model },
@@ -344,7 +395,7 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
       (model) => AddPuzzleButton.update({ ...input, model }),
       (model) => PuzzleGrid.update({ ...input, model }),
       (model) => Puzzle.update({ ...input, model }),
-      (model) => fetchMissingPuzzles({ ...input, model }),
+      (model) => updateMissingPuzzles({ ...input, model }),
     )
   },
 
@@ -367,5 +418,12 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
         return <PuzzleGrid.View {...input} />
       }
     }
+  },
+
+  async subscriptions(input) {
+    return Sub.batch([
+      //
+      await subscriptionsMissingPuzzles(input),
+    ])
   },
 }
