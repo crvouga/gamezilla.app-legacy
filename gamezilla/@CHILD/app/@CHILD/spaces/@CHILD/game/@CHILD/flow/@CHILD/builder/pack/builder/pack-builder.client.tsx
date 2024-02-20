@@ -7,15 +7,15 @@ import {
   showErrSm,
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { Sub, Time, TimeSpan } from "gamezilla/@SHARED/core"
 import {
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
 } from "../../../../../../@SHARED/game"
 import { FlowGridUIPlay } from "../../../../@SHARED/flow"
-import { FlowPackUI } from "../../../../@SHARED/flow-pack"
+import { FlowPackUI } from "../../../../@SHARED/flow-pack-ui"
 import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
 import { ClientModule } from "../../builder.core"
-import { Sub, Time, TimeSpan } from "gamezilla/@SHARED/core"
 
 //
 //
