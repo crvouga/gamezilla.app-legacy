@@ -1,15 +1,19 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
+import {
+  APP_SOUND,
+  playSound,
+  sendToServer,
+} from "gamezilla/@CHILD/app/@SHARED/client"
 import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
 import {
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
 } from "../../../../../../@SHARED/game"
+import { FlowGridUIPlay } from "../../../../@SHARED/flow"
 import { FlowPackUI } from "../../../../@SHARED/flow-pack"
 import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
 import { ClientModule } from "../../builder.core"
-import { FlowGridUIPlay } from "../../../../@SHARED/flow"
 
 //
 //
@@ -303,6 +307,34 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
 //
 //
 
+const fetchMissingPuzzles: ClientModule["update"] = (input) => {
+  const missingPuzzleIds =
+    input.modelSync.packBuilder?.pack.puzzleIds.filter(
+      (puzzleId) => !input.model.puzzles[puzzleId],
+    ) ?? []
+
+  if (missingPuzzleIds.length === 0) {
+    return { model: input.model }
+  }
+
+  return {
+    model: input.model,
+    msgCmd: [
+      sendToServer({
+        t: "pack-builder.list-puzzles-by-id",
+        puzzleIds: missingPuzzleIds,
+      }),
+    ],
+  }
+}
+
+//
+//
+//
+//
+//
+//
+
 export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
   update(input) {
     return GameClientModule.chainUpdates(
@@ -312,6 +344,7 @@ export const PackBuilderClient: Pick<ClientModule, "update" | "View"> = {
       (model) => AddPuzzleButton.update({ ...input, model }),
       (model) => PuzzleGrid.update({ ...input, model }),
       (model) => Puzzle.update({ ...input, model }),
+      (model) => fetchMissingPuzzles({ ...input, model }),
     )
   },
 

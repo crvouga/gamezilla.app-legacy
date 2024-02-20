@@ -7,6 +7,7 @@ import { Flow } from "../../../@SHARED/flow"
 import { FlowClientCtx } from "../../../@SHARED/flow-ctx"
 import { FlowPack } from "../../../@SHARED/flow-pack/flow-pack"
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle"
+import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id"
 import { samples } from "../../../@SHARED/flow/flow-grid/flow-grid-samples"
 import { BuilderClient } from "../builder.client"
 import { ModelClient, ModelSync, initClient, initSync } from "../builder.core"
@@ -59,17 +60,19 @@ export const clickedPackItem = (pack: FlowPack) => (model: ModelClient) => {
   })
 }
 
-export const clickedOpenPuzzlePickerButton = (model: ModelClient) => {
-  return BuilderClient.update({
-    model,
-    msg: {
-      t: "pack-builder.user-clicked-open-add-puzzle-button",
-      userId: ctx.currentUserId,
-    },
-    ctx,
-    modelSync: defaultModelSync,
-  })
-}
+export const clickedOpenPuzzlePickerButton =
+  (modelSync: ModelSync = defaultModelSync) =>
+  (model: ModelClient) => {
+    return BuilderClient.update({
+      model,
+      msg: {
+        t: "pack-builder.user-clicked-open-add-puzzle-button",
+        userId: ctx.currentUserId,
+      },
+      ctx,
+      modelSync,
+    })
+  }
 
 export const closedPuzzlePickerDrawer = (model: ModelClient) => {
   return BuilderClient.update({
@@ -230,10 +233,13 @@ export const createFlowPuzzle = (ctx: SpaceClientCtx) => {
   })
 }
 
-export const createFlowPack = (ctx: SpaceClientCtx) => {
+export const createFlowPack = (
+  ctx: SpaceClientCtx,
+  puzzleIds: FlowPuzzleId[] = [],
+) => {
   return FlowPack.create({
     now: ctx.now,
-    puzzleIds: [],
+    puzzleIds,
     count: 1,
     createdBy: ctx.currentUserId,
   })

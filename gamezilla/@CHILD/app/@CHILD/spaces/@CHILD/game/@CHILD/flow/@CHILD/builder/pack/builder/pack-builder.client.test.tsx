@@ -14,6 +14,7 @@ import {
   serverCreatedPack,
 } from "../../@TEST/client"
 import { deriveModelSync } from "../../@TEST/game"
+import { didSendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
 
 describe("pack builder client", () => {
   it("should open puzzle when user clickes puzzle grid item", async () => {
@@ -22,7 +23,7 @@ describe("pack builder client", () => {
     const output = await chainUpdates(
       initial,
       serverCreatedPack(createFlowPack(testSpaceClientCtx)),
-      clickedOpenPuzzlePickerButton,
+      clickedOpenPuzzlePickerButton(),
       clickedPuzzlePickerItem(puzzle),
       clickedPuzzleGridItem(puzzle, 0),
     )
@@ -37,7 +38,7 @@ describe("pack builder client", () => {
     const output = await chainUpdates(
       initial,
       serverCreatedPack(createFlowPack(testSpaceClientCtx)),
-      clickedOpenPuzzlePickerButton,
+      clickedOpenPuzzlePickerButton(),
     )
     const modelSync = deriveModelSync(output)
     expect(modelSync.packBuilder?.opened.t === "add-puzzle").toBeTrue()
@@ -47,7 +48,7 @@ describe("pack builder client", () => {
     const output = await chainUpdates(
       initial,
       serverCreatedPack(createFlowPack(testSpaceClientCtx)),
-      clickedOpenPuzzlePickerButton,
+      clickedOpenPuzzlePickerButton(),
       closedPuzzlePickerDrawer,
     )
     const modelSync = deriveModelSync(output)
@@ -73,7 +74,7 @@ describe("pack builder client", () => {
     const output = await chainUpdates(
       initial,
       serverCreatedPack(createFlowPack(testSpaceClientCtx)),
-      clickedOpenPuzzlePickerButton,
+      clickedOpenPuzzlePickerButton(),
       clickedPuzzlePickerItem(puzzle),
     )
     const modelSync = deriveModelSync(output)
@@ -85,12 +86,34 @@ describe("pack builder client", () => {
     const output = await chainUpdates(
       initial,
       serverCreatedPack(createFlowPack(testSpaceClientCtx)),
-      clickedOpenPuzzlePickerButton,
+      clickedOpenPuzzlePickerButton(),
       clickedPuzzlePickerItem(puzzle),
       clickedPuzzleGridItem(puzzle, 0),
       clickedExitPuzzleButton(),
     )
     const modelSync = deriveModelSync(output)
     expect(modelSync.packBuilder?.opened.t === "pack").toBeTrue()
+  })
+
+  it("should request missing puzzles from the server", async () => {
+    const puzzle = createFlowPuzzle(testSpaceClientCtx)
+    const openedPackBuilder = await chainUpdates(
+      initial,
+      serverCreatedPack(createFlowPack(testSpaceClientCtx, [puzzle.id])),
+    )
+
+    const output = await chainUpdates(
+      openedPackBuilder,
+      clickedOpenPuzzlePickerButton(deriveModelSync(openedPackBuilder)),
+    )
+
+    expect(
+      didSendToServer(
+        output,
+        (msg) =>
+          msg.t === "pack-builder.list-puzzles-by-id" &&
+          msg.puzzleIds.includes(puzzle.id),
+      ),
+    ).toBeTrue()
   })
 })

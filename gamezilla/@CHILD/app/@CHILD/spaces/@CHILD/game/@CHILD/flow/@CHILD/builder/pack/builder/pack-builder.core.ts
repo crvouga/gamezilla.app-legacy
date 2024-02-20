@@ -3,6 +3,7 @@ import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import { Result } from "gamezilla/@SHARED/core"
 import { FlowGridUIPlay } from "../../../../@SHARED/flow"
+import { FlowPuzzleId } from "../../../../@SHARED/flow-puzzle/flow-puzzle-id"
 
 //
 //
@@ -25,9 +26,15 @@ export type MsgClient = MsgSync
 
 export type MsgServer = { t: "noop" }
 
-export type MsgToServer = { t: "noop" }
+export type MsgToServer = {
+  t: "pack-builder.list-puzzles-by-id"
+  puzzleIds: FlowPuzzleId[]
+}
 
-export type MsgToClient = { t: "noop" }
+export type MsgToClient = {
+  t: "pack-builder.list-puzzles-by-id"
+  puzzles: FlowPuzzle[]
+}
 
 //
 //
