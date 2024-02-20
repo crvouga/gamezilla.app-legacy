@@ -87,13 +87,13 @@ const updateFromMsg: ClientModule["update"] = (input) => {
     }
     case "puzzle-builder.user-clicked-more-button": {
       return {
-        model: { ...model, opened: "more" },
+        model: { ...model, puzzleBuilderOpened: "more" },
         msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
     case "puzzle-builder.user-closed-more-drawer": {
       return {
-        model: { ...model, opened: null },
+        model: { ...model, puzzleBuilderOpened: null },
         msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
@@ -353,10 +353,10 @@ const updateMoreDrawer: ClientModule["update"] = (input) => {
   const { msg, model } = input
   switch (msg?.t) {
     case "puzzle-builder.user-closed-more-drawer": {
-      return { model: { ...model, opened: null } }
+      return { model: { ...model, puzzleBuilderOpened: null } }
     }
     case "puzzle-builder.user-clicked-more-button": {
-      return { model: { ...model, opened: "more" } }
+      return { model: { ...model, puzzleBuilderOpened: "more" } }
     }
     default: {
       return { model }
@@ -369,7 +369,7 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
   return (
     <Drawer
       id="more-drawer"
-      open={input.model.opened === "more"}
+      open={input.model.puzzleBuilderOpened === "more"}
       onClose={() => dispatch({ t: "puzzle-builder.user-closed-more-drawer" })}
       position="bottom"
     >

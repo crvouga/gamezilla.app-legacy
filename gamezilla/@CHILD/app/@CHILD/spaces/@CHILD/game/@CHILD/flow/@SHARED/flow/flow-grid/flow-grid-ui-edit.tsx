@@ -74,20 +74,17 @@ export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
   }
 }
 
-export const isUnsavedChanges = ({
-  grid,
-  model,
-}: {
-  grid: FlowGrid.Model
-  model: Model
-}): boolean => {
+export const isUnsavedChanges = (
+  model: Model,
+  grid: FlowGrid.Model,
+): boolean => {
+  const draft: Form = History.present(model.form)
+
   const actual: Form = {
     terminalsByGroupId: grid.flow.terminalsByGroupId,
     height: grid.height,
     width: grid.width,
   }
-
-  const draft: Form = History.present(model.form)
 
   if (actual.width !== draft.width) {
     return true

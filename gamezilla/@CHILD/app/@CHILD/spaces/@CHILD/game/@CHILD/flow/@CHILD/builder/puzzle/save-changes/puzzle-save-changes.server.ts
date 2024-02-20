@@ -23,7 +23,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
       })
 
       const msgSync: MsgSync = {
-        t: "user-saved-changes",
+        t: "puzzle-builder.saved-puzzle",
         saved: Result.mapOk(saved, () => msgClient.puzzle),
         userId: msgClient.puzzle.createdBy,
       }

@@ -3,11 +3,24 @@ import { SyncReducer } from "../../builder.core"
 
 const reducer: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
-    case "user-saved-changes": {
+    case "puzzle-builder.saved-puzzle": {
       if (isErr(msgSync.saved)) {
         return modelSync
       }
-      return { ...modelSync, puzzle: msgSync.saved.value }
+
+      if (!modelSync.puzzleBuilder) {
+        return modelSync
+      }
+
+      return {
+        listTab: modelSync.listTab,
+        opened: modelSync.opened,
+        packBuilder: modelSync.packBuilder,
+        puzzleBuilder: {
+          ...modelSync.puzzleBuilder,
+          puzzle: msgSync.saved.value,
+        },
+      }
     }
 
     default: {

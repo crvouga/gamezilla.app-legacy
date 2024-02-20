@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test"
 import { chainUpdates } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import {
-  modelSync,
+  defaultModelSync,
   initial,
   testFlowClientCtx,
   createFlowPuzzle,
@@ -15,7 +15,7 @@ const clickedPuzzleListItem = (puzzle: FlowPuzzle) => (model: ModelClient) => {
   return BuilderClient.update({
     ctx: testFlowClientCtx,
     model,
-    modelSync: modelSync,
+    modelSync: defaultModelSync,
     msg: {
       t: "puzzle-list.clicked-puzzle-list-item",
       puzzle,

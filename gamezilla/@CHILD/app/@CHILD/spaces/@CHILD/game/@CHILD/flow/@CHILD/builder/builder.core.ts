@@ -90,7 +90,12 @@ type BaseModelClient = {
   }
   flowPuzzleList: FlowPuzzleList.ModelClient
   flowPackList: FlowPackList.ModelClient
-  opened?: "more" | "edit-name" | "delete-forever" | "unsaved-changes" | null
+  puzzleBuilderOpened?:
+    | "more"
+    | "edit-name"
+    | "delete-forever"
+    | "unsaved-changes"
+    | null
 }
 
 export type ModelClient = BaseModelClient &

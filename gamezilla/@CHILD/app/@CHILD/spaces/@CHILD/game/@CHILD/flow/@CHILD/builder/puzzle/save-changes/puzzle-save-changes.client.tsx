@@ -42,7 +42,7 @@ const update: ClientModule["update"] = (input) => {
 
 const updatePuzzles: ClientModule["update"] = ({ msgSync, model }) => {
   switch (msgSync?.t) {
-    case "user-saved-changes": {
+    case "puzzle-builder.saved-puzzle": {
       if (isErr(msgSync.saved)) {
         return { model }
       }
@@ -68,22 +68,20 @@ const updatePuzzles: ClientModule["update"] = ({ msgSync, model }) => {
 const updateExitBuilder: ClientModule["update"] = (input) => {
   const { msg, model, modelSync, msgSync } = input
 
-  const puzzleBuilder = modelSync.puzzleBuilder
-
-  if (!puzzleBuilder) {
-    return { model }
-  }
-
   switch (msg?.t) {
     case "puzzle-builder.user-clicked-exit-button": {
+      if (!modelSync.puzzleBuilder) {
+        return exitBuilderWithSound(input)
+      }
+
       if (
-        FlowGridUIEdit.isUnsavedChanges({
-          grid: puzzleBuilder.puzzle.puzzle.c,
-          model: puzzleBuilder.gridEdit,
-        })
+        FlowGridUIEdit.isUnsavedChanges(
+          modelSync.puzzleBuilder.gridEdit,
+          modelSync.puzzleBuilder.puzzle.puzzle.c,
+        )
       ) {
         return {
-          model: { ...model, opened: "unsaved-changes" },
+          model: { ...model, puzzleBuilderOpened: "unsaved-changes" },
           msgCmd: [playSound(APP_SOUND.alertErrorSm)],
         }
       }
@@ -93,7 +91,7 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
 
     case "puzzle-save-changes.user-clicked-cancel-exit": {
       return {
-        model: { ...model, opened: null },
+        model: { ...model, puzzleBuilderOpened: null },
         msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
@@ -115,7 +113,7 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
   }
 
   switch (msgSync?.t) {
-    case "user-saved-changes": {
+    case "puzzle-builder.saved-puzzle": {
       if (
         model.puzzleSaveChangesRequest?.t === "loading" &&
         model.puzzleSaveChangesIsExiting &&
@@ -126,7 +124,7 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
           model: {
             ...model,
             puzzleSaveChangesIsExiting: false,
-            opened: null,
+            puzzleBuilderOpened: null,
           },
         })
       }
@@ -148,7 +146,7 @@ const updateSaveChangesRequest: ClientModule["update"] = (input) => {
   }
 
   if (
-    msgSync?.t === "user-saved-changes" &&
+    msgSync?.t === "puzzle-builder.saved-puzzle" &&
     msgSync.userId === ctx.currentUserId
   ) {
     return {
@@ -179,7 +177,7 @@ const exitBuilder: ClientModule["update"] = (input) => {
   }
 
   return {
-    model: { ...input.model, opened: null },
+    model: { ...input.model, puzzleBuilderOpened: null },
     msgSync: [withId(msgSync)],
   }
 }
@@ -260,7 +258,7 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
       onClose={() =>
         dispatch({ t: "puzzle-save-changes.user-clicked-cancel-exit" })
       }
-      open={model.opened === "unsaved-changes"}
+      open={model.puzzleBuilderOpened === "unsaved-changes"}
       position="bottom"
     >
       <p className="px-4 pt-4 text-3xl font-bold">Save changes?</p>

@@ -66,7 +66,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
       return {
         model: {
           ...model,
-          opened: "more",
+          puzzleBuilderOpened: "more",
           puzzleEditNameValidationError: null,
         },
       }
@@ -124,7 +124,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
           ...model,
           puzzles: puzzlesNew,
           puzzleEditNameRequest: msgSync.edited,
-          opened: null,
+          puzzleBuilderOpened: null,
         },
         msgCmd: isOk(msgSync.edited)
           ? showCreatedSm("Saved name")
@@ -188,14 +188,14 @@ const updateDrawer: ClientModule["update"] = (input) => {
       return {
         model: {
           ...model,
-          opened: "edit-name",
+          puzzleBuilderOpened: "edit-name",
           puzzleEditNameDraft: modelSync.puzzleBuilder?.puzzle.name ?? "",
         },
       }
     }
 
     case "puzzle.edit-name.user-closed-drawer": {
-      return { model: { ...model, opened: null } }
+      return { model: { ...model, puzzleBuilderOpened: null } }
     }
 
     default: {
@@ -218,7 +218,7 @@ const ViewDrawer = (
 
       <Drawer
         id="edit-name-drawer"
-        open={model.opened === "edit-name"}
+        open={model.puzzleBuilderOpened === "edit-name"}
         onClose={() => dispatch({ t: "puzzle.edit-name.user-closed-drawer" })}
         position="bottom"
       >

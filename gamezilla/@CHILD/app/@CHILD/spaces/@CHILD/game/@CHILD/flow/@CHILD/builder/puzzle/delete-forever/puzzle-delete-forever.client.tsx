@@ -27,17 +27,17 @@ const updateFromMsg: ClientModule["update"] = (input) => {
   switch (msg?.t) {
     case "delete-forever/user-clicked-delete-button": {
       return {
-        model: { ...model, opened: "delete-forever" },
+        model: { ...model, puzzleBuilderOpened: "delete-forever" },
         msgCmd: [playSound(APP_SOUND.alertErrorSm)],
       }
     }
 
     case "delete-forever/user-closed-drawer": {
-      return { model: { ...model, opened: null } }
+      return { model: { ...model, puzzleBuilderOpened: null } }
     }
 
     case "delete-forever/user-clicked-cancel-button": {
-      return { model: { ...model, opened: "more" } }
+      return { model: { ...model, puzzleBuilderOpened: "more" } }
     }
 
     case "delete-forever/user-clicked-confirm-button": {
@@ -68,7 +68,7 @@ const updateFromMsgSync: ClientModule["update"] = (input) => {
           ...model,
           puzzles: puzzlesNew,
           puzzleDeleteForeverRequest: msgSync.deleted,
-          opened: null,
+          puzzleBuilderOpened: null,
         },
         msgCmd: showCreatedSm("Deleted puzzle"),
       }
@@ -96,7 +96,7 @@ const View: ClientModule["View"] = (input) => {
       <ConfirmationDrawer
         id="delete-forever-drawer"
         open={
-          input.model.opened === "delete-forever" ||
+          input.model.puzzleBuilderOpened === "delete-forever" ||
           isLoading(model.puzzleDeleteForeverRequest)
         }
         onClose={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
