@@ -20,7 +20,7 @@ export const ViewPackPuzzleGrid = ({
       row.push(
         <div
           key={`${y}-${x}`}
-          className="flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1"
+          className="flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16"
         >
           {renderCell({ x, y })}
         </div>,
