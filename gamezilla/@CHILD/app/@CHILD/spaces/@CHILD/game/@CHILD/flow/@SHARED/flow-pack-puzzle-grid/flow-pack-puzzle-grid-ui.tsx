@@ -70,3 +70,9 @@ export const ViewEmptyCell = () => {
     <div className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-800 bg-black opacity-70"></div>
   )
 }
+
+export const ViewLoadingCell = () => {
+  return (
+    <div className="flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded  border-2 bg-neutral-600 opacity-70"></div>
+  )
+}

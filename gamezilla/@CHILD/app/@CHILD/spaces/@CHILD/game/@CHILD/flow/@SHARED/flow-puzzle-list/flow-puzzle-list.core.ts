@@ -9,7 +9,11 @@ import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
 import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
 import { RequestResponse } from "gamezilla/@SHARED/core"
-import { IFlowPuzzleDb } from "../flow-puzzle-db"
+import {
+  IFlowPuzzleDb,
+  ListPuzzlesInput,
+  ListPuzzlesOutput,
+} from "../flow-puzzle-db"
 import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id"
 
@@ -87,7 +91,3 @@ export type MsgToClient = {
   t: "flow-puzzle-list.listed-puzzle"
   listed: ListPuzzlesOutput
 }
-
-export type ListPuzzlesInput = Parameters<IFlowPuzzleDb["list"]>[0]
-
-export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>

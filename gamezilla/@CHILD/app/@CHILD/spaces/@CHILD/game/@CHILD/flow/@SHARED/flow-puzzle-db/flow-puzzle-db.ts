@@ -32,3 +32,7 @@ export type IFlowPuzzleDb = {
     deletedByUserId: UserId
   }) => Promise<Result<string, null>>
 }
+
+export type ListPuzzlesInput = Parameters<IFlowPuzzleDb["list"]>[0]
+
+export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>

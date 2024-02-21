@@ -13,7 +13,7 @@ import {
   ViewBottomButtonBarAction,
 } from "../../../../../../@SHARED/game"
 import { FlowGridUIPlay } from "../../../../@SHARED/flow"
-import { FlowPackUI } from "../../../../@SHARED/flow-pack-ui"
+import { FlowPackPuzzleGridUI } from "../../../../@SHARED/flow-pack-puzzle-grid"
 import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
 import { ClientModule } from "../../builder.core"
 
@@ -86,7 +86,7 @@ const AddPuzzleButton: Pick<ClientModule, "update" | "View"> = {
 
   View(input) {
     return (
-      <FlowPackUI.ViewAddCell
+      <FlowPackPuzzleGridUI.ViewAddCell
         onClick={() =>
           input.dispatch({
             t: "pack-builder.user-clicked-open-add-puzzle-button",
@@ -191,9 +191,9 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
             {packBuilder.pack.name}
           </p>
           <div className="flex w-full flex-1 flex-col items-center justify-center">
-            <FlowPackUI.ViewPackPuzzleGrid
+            <FlowPackPuzzleGridUI.ViewPackPuzzleGrid
               renderCell={(position) => {
-                const index = FlowPackUI.toIndex(position)
+                const index = FlowPackPuzzleGridUI.toIndex(position)
 
                 const puzzleId = packBuilder.pack.puzzleIds[index]
 
@@ -201,11 +201,11 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
                   const puzzle = puzzleId ? model.puzzles[puzzleId] : null
 
                   if (!puzzle) {
-                    return <FlowPackUI.ViewEmptyCell />
+                    return <FlowPackPuzzleGridUI.ViewEmptyCell />
                   }
 
                   return (
-                    <FlowPackUI.ViewPuzzleCell
+                    <FlowPackPuzzleGridUI.ViewPuzzleCell
                       onClick={() =>
                         input.dispatch({
                           t: "pack-builder.user-clicked-pack-item",
@@ -222,7 +222,7 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
                   return <AddPuzzleButton.View {...input} />
                 }
 
-                return <FlowPackUI.ViewEmptyCell />
+                return <FlowPackPuzzleGridUI.ViewEmptyCell />
               }}
             />
           </div>
