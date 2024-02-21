@@ -6,11 +6,7 @@ import {
   sendToServer,
   showErrSm,
 } from "gamezilla/@CHILD/app/@SHARED/client"
-import {
-  Button,
-  Drawer,
-  IconArrowLeftOnRect,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
+import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Sub, Time, TimeSpan } from "gamezilla/@SHARED/core"
 import {
   ViewBottomButtonBar,
@@ -128,44 +124,35 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
 
   View(input) {
     return (
-      <Drawer
-        id="pack-builder-puzzle-picker"
-        open={input.modelSync.packBuilder?.opened.t === "add-puzzle"}
-        onClose={() =>
-          input.dispatch({ t: "pack-builder.user-closed-add-puzzle" })
-        }
-        position="bottom"
-      >
-        <div className="flex h-full max-h-full w-full flex-col overflow-hidden">
-          <div className="flex w-full shrink-0 items-center border-b border-neutral-700 px-4 py-2 text-2xl font-bold">
-            <p className="flex-1">Add puzzle</p>
-          </div>
-          <div className="h-full max-h-full w-full max-w-full flex-1 overflow-hidden overflow-y-scroll">
-            <FlowPuzzleListClient.View
-              ctx={input.ctx}
-              dispatch={(c) => input.dispatch({ t: "flow-puzzle-list", c })}
-              model={input.model.flowPuzzleList}
-              emits={{
-                clickedPuzzleItem: (puzzle) =>
-                  input.dispatch({
-                    t: "pack-builder.user-clicked-add-puzzle-item",
-                    puzzle,
-                    userId: input.ctx.currentUserId,
-                  }),
-              }}
-            />
-          </div>
-          <div className="flex w-full shrink-0 items-center justify-center border-t border-neutral-700 p-4">
-            <Button
-              text="Close"
-              className="w-full"
-              onClick={() =>
-                input.dispatch({ t: "pack-builder.user-closed-add-puzzle" })
-              }
-            />
-          </div>
+      <div className="flex h-full max-h-full w-full flex-col overflow-hidden">
+        <div className="flex w-full shrink-0 items-center border-b border-neutral-700 p-4 text-3xl font-bold">
+          <p className="flex-1">Add puzzle</p>
         </div>
-      </Drawer>
+        <div className="h-full max-h-full w-full max-w-full flex-1 overflow-hidden overflow-y-scroll">
+          <FlowPuzzleListClient.View
+            ctx={input.ctx}
+            dispatch={(c) => input.dispatch({ t: "flow-puzzle-list", c })}
+            model={input.model.flowPuzzleList}
+            emits={{
+              clickedPuzzleItem: (puzzle) =>
+                input.dispatch({
+                  t: "pack-builder.user-clicked-add-puzzle-item",
+                  puzzle,
+                  userId: input.ctx.currentUserId,
+                }),
+            }}
+          />
+        </div>
+        <div className="flex w-full shrink-0 items-center justify-center border-t border-neutral-700 p-4">
+          <Button
+            text="Close"
+            className="w-full"
+            onClick={() =>
+              input.dispatch({ t: "pack-builder.user-closed-add-puzzle" })
+            }
+          />
+        </div>
+      </div>
     )
   },
 }
@@ -412,12 +399,10 @@ export const PackBuilderClient: Pick<
   },
 
   View(input) {
-    return (
-      <>
-        <CurrentScreen.View {...input} />
-        <PuzzlePicker.View {...input} />
-      </>
-    )
+    if (input.modelSync.packBuilder?.opened.t === "add-puzzle") {
+      return <PuzzlePicker.View {...input} />
+    }
+    return <CurrentScreen.View {...input} />
   },
 
   async subscriptions(input) {

@@ -61,6 +61,9 @@ const useClickedAddPuzzleItem: SyncReducer = ({ modelSync, msgSync }) => {
             t: "pack",
             pageIndex: 0,
           },
+          opened: {
+            t: null,
+          },
         },
       }
     }
