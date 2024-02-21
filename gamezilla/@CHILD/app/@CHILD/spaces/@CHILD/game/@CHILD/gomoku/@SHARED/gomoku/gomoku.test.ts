@@ -1,5 +1,5 @@
 import { Board, setStone, Stone, toWins } from "./gomoku"
-import { describe, expect, test } from "bun:test"
+import { describe, expect, it, test } from "bun:test"
 
 type Matrix = (" " | "b" | "w")[][]
 const _ = " "
@@ -25,8 +25,8 @@ const toBoard = (matrix: Matrix): Board => {
   return board
 }
 
-describe(__filename, () => {
-  test("detects one horizontal win", () => {
+describe(import.meta.file, () => {
+  it("should detect one horizontal win", () => {
     const matrix: Matrix = [
       [w, w, w, w, w],
       [b, b, b, b, _],
@@ -39,7 +39,7 @@ describe(__filename, () => {
     expect(wins.length).toBe(1)
   })
 
-  test("detects one vertical win", () => {
+  it("should detect one vertical win", () => {
     const matrix: Matrix = [
       [w, b, _, _, _],
       [w, b, _, _, _],
@@ -52,7 +52,7 @@ describe(__filename, () => {
     expect(wins.length).toBe(1)
   })
 
-  test("detects one left diagonal win", () => {
+  it("should detect one left diagonal win", () => {
     const matrix: Matrix = [
       [w, _, _, _, _],
       [b, w, _, _, _],
@@ -64,7 +64,8 @@ describe(__filename, () => {
     const wins = toWins(board)
     expect(wins.length).toBe(1)
   })
-  test("detects one right diagonal win", () => {
+
+  it("should detect one right diagonal win", () => {
     const matrix: Matrix = [
       [_, _, _, _, w],
       [_, _, _, w, b],

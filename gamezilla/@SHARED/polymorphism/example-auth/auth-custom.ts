@@ -10,8 +10,7 @@ const isCustomAuthProvider = (auth: AuthProvider): auth is CustomAuthProvider =>
 
 signUpWithEmailAndPassword.implement(
   isCustomAuthProvider,
-  () => async (input) => {
-    console.log(input)
+  () => async (_input) => {
     return Result.err("Not implemented")
   },
 )

@@ -248,17 +248,17 @@ export type Win = {
   positions: Position[]
 }
 
-export const toWins = (board: Board): Win[] => {
-  const toKey = ({
-    position,
-    direction,
-  }: {
-    position: Position
-    direction: Direction
-  }): string => {
-    return [position.x, position.y, direction].join("-")
-  }
+const toKey = ({
+  position,
+  direction,
+}: {
+  position: Position
+  direction: Direction
+}): string => {
+  return [position.x, position.y, direction].join("-")
+}
 
+export const toWins = (board: Board): Win[] => {
   const wins: Win[] = []
   const visited = new Set<string>()
 
@@ -274,7 +274,6 @@ export const toWins = (board: Board): Win[] => {
 
       const vector = Direction.toVector(direction)
 
-      // eslint-disable-next-line no-constant-condition
       while (true) {
         const next = Position.add(vector, current)
         const nextStone = toStone(next, board)
@@ -293,7 +292,7 @@ export const toWins = (board: Board): Win[] => {
         center: { x: 0, y: 0 },
         position: vector,
       })
-      // eslint-disable-next-line no-constant-condition
+
       while (true) {
         const next = Position.add(oppositeVector, current)
         const nextStone = toStone(next, board)
