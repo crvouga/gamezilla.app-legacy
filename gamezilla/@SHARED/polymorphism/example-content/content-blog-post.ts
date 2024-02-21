@@ -1,4 +1,4 @@
-import { RenderableContent, renderHTML } from "./content"
+import { Content, renderHTML } from "./content"
 
 export type BlogPost = {
   Content: "blog-post"
@@ -6,7 +6,7 @@ export type BlogPost = {
   body: string
 }
 
-const isBlogPost = (content: RenderableContent): content is BlogPost =>
+const isBlogPost = (content: Content): content is BlogPost =>
   content.Content === "blog-post"
 
 renderHTML.implement(isBlogPost, (blogPost) => {

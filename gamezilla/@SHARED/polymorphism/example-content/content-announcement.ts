@@ -1,4 +1,4 @@
-import { RenderableContent, renderHTML } from "./content"
+import { Content, renderHTML } from "./content"
 
 export type Announcement = {
   Content: "announcement"
@@ -6,7 +6,7 @@ export type Announcement = {
   message: string
 }
 
-const isAnnouncement = (content: RenderableContent): content is Announcement =>
+const isAnnouncement = (content: Content): content is Announcement =>
   content.Content === "announcement"
 
 renderHTML.implement(isAnnouncement, (announcement) => {

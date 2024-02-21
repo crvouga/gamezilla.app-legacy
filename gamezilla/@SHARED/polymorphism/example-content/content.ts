@@ -1,9 +1,7 @@
 import { definePolymorphicFunction } from "../polymorphic-function"
 
-export type RenderableContent = {
+export type Content = {
   Content: string
 }
 
-export const renderHTML = definePolymorphicFunction<RenderableContent, string>(
-  () => "",
-)
+export const renderHTML = definePolymorphicFunction<Content, string>(() => "")

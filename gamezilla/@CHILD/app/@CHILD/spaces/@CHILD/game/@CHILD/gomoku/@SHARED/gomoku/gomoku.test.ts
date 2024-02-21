@@ -1,5 +1,5 @@
+import { describe, expect, it } from "bun:test"
 import { Board, setStone, Stone, toWins } from "./gomoku"
-import { describe, expect, it, test } from "bun:test"
 
 type Matrix = (" " | "b" | "w")[][]
 const _ = " "
