@@ -5,7 +5,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { Sub } from "gamezilla/@SHARED/core"
 import { SpaceServerCmd } from "../../../../@SHARED/space-server-cmd"
-import { BuilderServer } from "./@CHILD/builder/builder.server"
+import { BuildServer } from "./@CHILD/build/build.server"
 import { PlayServer } from "./@CHILD/play/play.server"
 import {
   MsgSync,
@@ -73,30 +73,30 @@ const updateChild: Module["update"] = async (input) => {
       return tagged
     }
 
-    case "builder": {
-      const updated = await BuilderServer.update({
+    case "build": {
+      const updated = await BuildServer.update({
         ctx: input.ctx,
         modelSync: modelSync.c,
-        model: input.model.t === "builder" ? input.model.c : BuilderServer.init,
+        model: input.model.t === "build" ? input.model.c : BuildServer.init,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
         msgClient:
-          input.msgClient?.t === "builder"
+          input.msgClient?.t === "build"
             ? { ...input.msgClient, ...input.msgClient.c }
             : null,
         msgSync:
-          input.msgSync?.t === "builder"
+          input.msgSync?.t === "build"
             ? { ...input.msgSync, ...input.msgSync.c }
             : null,
-        msg: input.msg?.t === "builder" ? input.msg.c : null,
-        deps: await BuilderServer.deps({
+        msg: input.msg?.t === "build" ? input.msg.c : null,
+        deps: await BuildServer.deps({
           ctx: input.ctx,
         }),
       })
 
       const tagged = GameServerModule.tagOutput(
-        "builder",
-        (msgCmd) => SpaceServerCmd.tag("builder", msgCmd),
+        "build",
+        (msgCmd) => SpaceServerCmd.tag("build", msgCmd),
         updated,
       )
 
@@ -124,14 +124,13 @@ const subscriptions: Module["subscriptions"] = async (input) => {
       )
     }
 
-    case "builder": {
+    case "build": {
       return Sub.tag(
-        "builder",
-        await BuilderServer.subscriptions({
+        "build",
+        await BuildServer.subscriptions({
           ctx: input.ctx,
           modelSync: modelSync.c,
-          model:
-            input.model.t === "builder" ? input.model.c : BuilderServer.init,
+          model: input.model.t === "build" ? input.model.c : BuildServer.init,
         }),
       )
     }

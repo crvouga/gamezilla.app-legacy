@@ -16,7 +16,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Sub } from "gamezilla/@SHARED/core"
 import { SpaceClientCmd } from "../../../../@SHARED/space-client-cmd"
-import { BuilderClient } from "./@CHILD/builder/builder.client"
+import { BuildClient } from "./@CHILD/build/build.client"
 import { PlayClient } from "./@CHILD/play/play.client"
 import { CoverArt } from "./@SHARED/flow-cover-art"
 import { FlowClientCtx } from "./@SHARED/flow-ctx"
@@ -110,21 +110,21 @@ const updateChild: Module["update"] = async (input) => {
       }
     }
 
-    case "builder": {
-      const updated = await BuilderClient.update({
+    case "build": {
+      const updated = await BuildClient.update({
         ctx: { ...ctx, onQuit: () => {} },
         modelSync: modelSync.c,
-        model: model.t === "builder" ? model.c : BuilderClient.init,
+        model: model.t === "build" ? model.c : BuildClient.init,
         msgCmd: msgCmd,
         msgEvt: msgEvt,
-        msgServer: msgServer?.t === "builder" ? msgServer.c : null,
-        msgSync: msgSync?.t === "builder" ? { ...msgSync, ...msgSync.c } : null,
-        msg: msg?.t === "builder" ? msg.c : null,
+        msgServer: msgServer?.t === "build" ? msgServer.c : null,
+        msgSync: msgSync?.t === "build" ? { ...msgSync, ...msgSync.c } : null,
+        msg: msg?.t === "build" ? msg.c : null,
       })
 
       const tagged = await GameClientModule.tagOutput(
-        "builder",
-        (msgCmd) => SpaceClientCmd.tag("builder", msgCmd),
+        "build",
+        (msgCmd) => SpaceClientCmd.tag("build", msgCmd),
         updated,
       )
 
@@ -149,12 +149,12 @@ const updateFromMsgSync: Module["update"] = (input) => {
           }
         }
 
-        case "builder": {
+        case "build": {
           return {
             model: {
               ...model,
-              t: "builder",
-              c: BuilderClient.init,
+              t: "build",
+              c: BuildClient.init,
             },
             msgCmd: [playSound(APP_SOUND.navForwardMin)],
           }
@@ -217,17 +217,16 @@ const subscriptions: Module["subscriptions"] = async (input) => {
         }),
       )
     }
-    case "builder": {
+    case "build": {
       return Sub.tag(
-        "builder",
-        await BuilderClient.subscriptions({
+        "build",
+        await BuildClient.subscriptions({
           ctx: {
             ...input.ctx,
             onQuit() {},
           },
           modelSync: input.modelSync.c,
-          model:
-            input.model.t === "builder" ? input.model.c : BuilderClient.init,
+          model: input.model.t === "build" ? input.model.c : BuildClient.init,
         }),
       )
     }
@@ -293,7 +292,7 @@ const View: Module["View"] = (input) => {
                   t: "msgSync",
                   c: {
                     t: "user-changed-mode",
-                    mode: "builder",
+                    mode: "build",
                     userId: input.ctx.currentUserId,
                   },
                 })
@@ -304,15 +303,13 @@ const View: Module["View"] = (input) => {
       )
     }
 
-    case "builder": {
+    case "build": {
       return (
-        <BuilderClient.View
+        <BuildClient.View
           ctx={ctx}
-          dispatch={(c) => dispatch({ t: "builder", c })}
+          dispatch={(c) => dispatch({ t: "build", c })}
           modelSync={modelSync.c}
-          model={
-            input.model.t === "builder" ? input.model.c : BuilderClient.init
-          }
+          model={input.model.t === "build" ? input.model.c : BuildClient.init}
         />
       )
     }
@@ -355,13 +352,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
       }
     }
 
-    case "builder": {
+    case "build": {
       switch (modelSync.t) {
-        case "builder": {
+        case "build": {
           return (
-            <BuilderClient.ViewFeedItem
+            <BuildClient.ViewFeedItem
               ctx={{ ...ctx, onQuit() {} }}
-              dispatch={(c) => dispatch({ t: "builder", c })}
+              dispatch={(c) => dispatch({ t: "build", c })}
               modelSync={modelSync.c}
               msgSync={msgSync.c}
             />

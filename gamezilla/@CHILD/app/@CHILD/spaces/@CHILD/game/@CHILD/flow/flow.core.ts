@@ -1,11 +1,11 @@
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { WithEventMeta } from "../../../../@SHARED/event"
+import { GameMainMenu } from "../../@SHARED/game"
+import * as Build from "./@CHILD/build/build.core"
 import * as Play from "./@CHILD/play/play.core"
-import * as Builder from "./@CHILD/builder/builder.core"
 import { FlowPuzzle } from "./@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "./@SHARED/flow-puzzle/flow-puzzle-id"
-import { GameMainMenu } from "../../@SHARED/game"
 
 //
 //
@@ -21,14 +21,14 @@ export type BaseModelClient = {
 
 export type VariantModelClient =
   | { t: "none" }
-  | { t: "builder"; c: Builder.ModelClient }
+  | { t: "build"; c: Build.ModelClient }
   | { t: "play"; c: Play.ModelClient }
 
 export type ModelClient = BaseModelClient & VariantModelClient
 
 export type ModelServer =
   | { t: "none" }
-  | { t: "builder"; c: Builder.ModelServer }
+  | { t: "build"; c: Build.ModelServer }
   | { t: "play"; c: Play.ModelServer }
 
 //
@@ -40,22 +40,22 @@ export type ModelServer =
 export type MsgClient =
   | GameMainMenu.Msg
   | { t: "msgSync"; c: MsgSync }
-  | { t: "builder"; c: Builder.MsgClient }
+  | { t: "build"; c: Build.MsgClient }
   | { t: "play"; c: Play.MsgClient }
 
 export type MsgServer =
-  | { t: "builder"; c: Builder.MsgServer }
+  | { t: "build"; c: Build.MsgServer }
   | { t: "play"; c: Play.MsgServer }
 
 export type MsgToServer =
-  | { t: "builder"; c: Builder.MsgToServer }
+  | { t: "build"; c: Build.MsgToServer }
   | { t: "play"; c: Play.MsgToServer }
 
 export type MsgToClient =
-  | { t: "builder"; c: Builder.MsgToClient }
+  | { t: "build"; c: Build.MsgToClient }
   | { t: "play"; c: Play.MsgToClient }
 
-export type Mode = "builder" | "play"
+export type Mode = "build" | "play"
 
 //
 //
@@ -68,11 +68,11 @@ export type Mode = "builder" | "play"
 export type MsgSync =
   | { t: "user-changed-mode"; mode: Mode | null; userId: UserId }
   | { t: "play"; c: Play.MsgSync }
-  | { t: "builder"; c: Builder.MsgSync }
+  | { t: "build"; c: Build.MsgSync }
 
 export type ModelSync =
   | { t: null }
-  | { t: "builder"; c: Builder.ModelSync }
+  | { t: "build"; c: Build.ModelSync }
   | { t: "play"; c: Play.ModelSync }
 
 export const initSync = () => {
@@ -107,12 +107,12 @@ export const reducer = ({
       }
     }
 
-    case "builder": {
+    case "build": {
       switch (modelSync.t) {
-        case "builder": {
+        case "build": {
           return {
-            t: "builder",
-            c: Builder.reducer({
+            t: "build",
+            c: Build.reducer({
               ctx,
               msgSync: msgSync.c,
               modelSync: modelSync.c,
@@ -142,10 +142,10 @@ export const reducer = ({
           }
         }
 
-        case "builder": {
+        case "build": {
           return {
-            t: "builder",
-            c: Builder.initSync({ ctx }),
+            t: "build",
+            c: Build.initSync({ ctx }),
           }
         }
       }

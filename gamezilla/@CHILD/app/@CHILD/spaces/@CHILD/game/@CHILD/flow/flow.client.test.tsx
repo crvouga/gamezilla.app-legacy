@@ -15,7 +15,7 @@ const init = {
 const ctx = testSpaceClientCtx
 
 const useSelectedMode =
-  (userId: UserId, mode: "builder" | "play" | null) => (model: ModelClient) => {
+  (userId: UserId, mode: "build" | "play" | null) => (model: ModelClient) => {
     return FlowClient.update({
       ctx,
       model,
@@ -41,10 +41,10 @@ describe("flow client", () => {
     expect(didPlaySound(output)).toBe(true)
   })
 
-  it("should play a sound when selecting builder mode", async () => {
+  it("should play a sound when selecting build mode", async () => {
     const output = await GameClientModule.chainUpdates(
       init,
-      useSelectedMode(ctx.currentUserId, "builder"),
+      useSelectedMode(ctx.currentUserId, "build"),
     )
     expect(didPlaySound(output)).toBe(true)
   })
