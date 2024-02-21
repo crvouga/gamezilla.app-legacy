@@ -30,8 +30,8 @@ describe("pack builder client", () => {
     )
     const modelSync = deriveModelSync(output)
     expect(
-      modelSync.packBuilder?.opened.t === "puzzle" &&
-        modelSync.packBuilder.opened.puzzleIndex === 0,
+      modelSync.packBuilder?.screen.t === "puzzle" &&
+        modelSync.packBuilder.screen.puzzleIndex === 0,
     ).toBeTrue()
   })
 
@@ -53,7 +53,7 @@ describe("pack builder client", () => {
       closedPuzzlePickerDrawer,
     )
     const modelSync = deriveModelSync(output)
-    expect(modelSync.packBuilder?.opened.t === "pack").toBeTrue()
+    expect(modelSync.packBuilder?.screen.t === "pack").toBeTrue()
   })
 
   it("should add puzzle to the pack after clicking a puzzle in the picker", async () => {
@@ -79,7 +79,7 @@ describe("pack builder client", () => {
       clickedPuzzlePickerItem(puzzle),
     )
     const modelSync = deriveModelSync(output)
-    expect(modelSync.packBuilder?.opened.t === "pack").toBeTrue()
+    expect(modelSync.packBuilder?.screen.t === "pack").toBeTrue()
   })
 
   it("should go back to grid after exiting puzzle", async () => {
@@ -93,7 +93,7 @@ describe("pack builder client", () => {
       clickedExitPuzzleButton(),
     )
     const modelSync = deriveModelSync(output)
-    expect(modelSync.packBuilder?.opened.t === "pack").toBeTrue()
+    expect(modelSync.packBuilder?.screen.t === "pack").toBeTrue()
   })
 
   it("should request missing puzzles from the server", async () => {

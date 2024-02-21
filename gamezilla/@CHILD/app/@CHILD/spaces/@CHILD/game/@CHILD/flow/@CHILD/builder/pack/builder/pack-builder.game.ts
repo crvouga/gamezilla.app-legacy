@@ -15,7 +15,8 @@ const userCreatedPack: SyncReducer = ({ modelSync, msgSync }) => {
         opened: { t: "pack-builder" },
         packBuilder: {
           t: "pack-builder",
-          opened: {
+          opened: { t: null },
+          screen: {
             t: "pack",
             pageIndex: 0,
           },
@@ -56,7 +57,7 @@ const useClickedAddPuzzleItem: SyncReducer = ({ modelSync, msgSync }) => {
         packBuilder: {
           ...modelSync.packBuilder,
           pack: FlowPack.add(modelSync.packBuilder.pack, msgSync.puzzle.id),
-          opened: {
+          screen: {
             t: "pack",
             pageIndex: 0,
           },
@@ -105,6 +106,9 @@ const userClosedAddPuzzle: SyncReducer = ({ modelSync, msgSync }) => {
         packBuilder: {
           ...modelSync.packBuilder,
           opened: {
+            t: null,
+          },
+          screen: {
             t: "pack",
             pageIndex: 0,
           },
@@ -128,7 +132,7 @@ const userClickedPackItem: SyncReducer = ({ modelSync, msgSync }) => {
         ...modelSync,
         packBuilder: {
           ...modelSync.packBuilder,
-          opened: {
+          screen: {
             t: "puzzle",
             puzzleIndex: msgSync.index,
             puzzle: {
@@ -160,7 +164,7 @@ const userClickedExitPuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
         ...modelSync,
         packBuilder: {
           ...modelSync.packBuilder,
-          opened: {
+          screen: {
             t: "pack",
             pageIndex: 0,
           },
@@ -181,11 +185,11 @@ const flowGridUIPlay: SyncReducer = ({ modelSync, msgSync }) => {
         return modelSync
       }
 
-      if (modelSync.packBuilder.opened.t !== "puzzle") {
+      if (modelSync.packBuilder.screen.t !== "puzzle") {
         return modelSync
       }
 
-      const openedPuzzle = modelSync.packBuilder.opened.puzzle
+      const openedPuzzle = modelSync.packBuilder.screen.puzzle
 
       const updated = FlowGridUIPlay.update({
         grid: openedPuzzle.flowGrid,
@@ -197,9 +201,9 @@ const flowGridUIPlay: SyncReducer = ({ modelSync, msgSync }) => {
         ...modelSync,
         packBuilder: {
           ...modelSync.packBuilder,
-          opened: {
+          screen: {
             t: "puzzle",
-            puzzleIndex: modelSync.packBuilder.opened.puzzleIndex,
+            puzzleIndex: modelSync.packBuilder.screen.puzzleIndex,
             puzzle: {
               t: "grid",
               flowGrid: openedPuzzle.flowGrid,

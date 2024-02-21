@@ -250,6 +250,10 @@ export type ModelSyncPackBuilder = {
         t: "add-puzzle"
       }
     | {
+        t: null
+      }
+  screen:
+    | {
         t: "pack"
         pageIndex: number
       }

@@ -9,7 +9,8 @@ const reducer: SyncReducer = ({ modelSync, msgSync }) => {
         packBuilder: {
           t: "pack-builder",
           pack: msgSync.pack,
-          opened: { t: "pack", pageIndex: 0 },
+          opened: { t: null },
+          screen: { t: "pack", pageIndex: 0 },
         },
       }
     }
