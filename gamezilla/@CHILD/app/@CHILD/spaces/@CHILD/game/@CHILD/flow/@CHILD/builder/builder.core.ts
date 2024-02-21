@@ -27,6 +27,7 @@ import { PuzzleEditGame, PuzzleEditName } from "./puzzle/edit"
 import { PuzzeListGame, PuzzleList } from "./puzzle/list"
 import { PuzzleSaveChanges, PuzzleSaveChangesGame } from "./puzzle/save-changes"
 import { FlowPackList } from "../../@SHARED/flow-pack-list"
+import { ListTabs, ListTabsGame } from "./list-tabs"
 
 //
 //
@@ -78,10 +79,6 @@ export type FlowServerDeps = {
 //
 //
 //
-
-export const LIST_TABS = ["puzzles", "packs"] as const
-
-type ListTab = (typeof LIST_TABS)[number]
 
 type BaseModelClient = {
   puzzles: {
@@ -142,16 +139,16 @@ export const initServer: ServerModule["init"] = {
 //
 //
 
-type BaseMsgClient =
-  | { t: "time-passed" }
-  | { t: "user-changed-list-tab"; listTab: ListTab }
+type BaseMsgClient = { t: "time-passed" }
+
 //
 
 export type MsgClient =
-  | BaseMsgClient
-  //
   | { t: "flow-pack-list"; c: FlowPackList.MsgClient }
   | { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgClient }
+  //
+  | BaseMsgClient
+  | ListTabs.MsgClient
   //
   | PuzzleBuilder.MsgClient
   | PuzzleCreate.MsgClient
@@ -209,13 +206,8 @@ export type MsgToClient =
 //
 //
 
-type MsgSyncBase = {
-  t: "user-changed-list-tab"
-  listTab: ListTab
-}
-
 export type MsgSync =
-  | MsgSyncBase
+  | ListTabs.MsgSync
   //
   | Pack.MsgSync
   //
@@ -226,7 +218,7 @@ export type MsgSync =
   | PuzzleDeleteForever.MsgSync
   | PuzzleSaveChanges.MsgSync
 
-type BuildState =
+type PuzzleBuilderState =
   | {
       t: "play"
     }
@@ -237,7 +229,7 @@ type BuildState =
 export type ModelSyncPuzzleBuilder = {
   t: "puzzle-builder"
   puzzle: FlowPuzzle
-  mode: BuildState
+  mode: PuzzleBuilderState
   gridPlay: FlowGridUIPlay.Model
   gridEdit: FlowGridUIEdit.Model
 }
@@ -268,9 +260,8 @@ export type ModelSyncPackBuilder = {
       }
 }
 
-export type ModelSync = {
+export type ModelSync = ListTabs.ModelSync & {
   opened: { t: "list" } | { t: "puzzle-builder" } | { t: "pack-builder" }
-  listTab: ListTab
   //
   packBuilder: ModelSyncPackBuilder | null
   //
@@ -279,8 +270,8 @@ export type ModelSync = {
 
 export const initSync = (_input: { ctx: SpaceCtx }): ModelSync => {
   return {
+    ...ListTabs.initSync,
     opened: { t: "list" },
-    listTab: "puzzles",
     packBuilder: null,
     puzzleBuilder: null,
   }
@@ -303,23 +294,9 @@ export const reducer: SyncReducer = ({ modelSync, msgSync, ctx }) => {
     //
     PackGame.reducer,
     //
-    listTabReducer,
+    ListTabsGame.reducer,
   ].reduce(
     (acc, reducer) => reducer({ ctx, msgSync, modelSync: acc }),
     modelSync,
   )
-}
-
-const listTabReducer: SyncReducer = ({ modelSync, msgSync }) => {
-  switch (msgSync.t) {
-    case "user-changed-list-tab": {
-      return {
-        ...modelSync,
-        listTab: msgSync.listTab,
-      }
-    }
-    default: {
-      return modelSync
-    }
-  }
 }

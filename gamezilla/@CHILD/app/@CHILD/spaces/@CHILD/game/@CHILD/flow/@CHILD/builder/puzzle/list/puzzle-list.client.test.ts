@@ -10,6 +10,9 @@ import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { BuilderClient } from "../../builder.client"
 import { ModelClient } from "../../builder.core"
 import { deriveModelSync } from "../../@TEST/game"
+import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
+import { EventId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock"
 
 const clickedPuzzleListItem = (puzzle: FlowPuzzle) => (model: ModelClient) => {
   return BuilderClient.update({
@@ -22,6 +25,21 @@ const clickedPuzzleListItem = (puzzle: FlowPuzzle) => (model: ModelClient) => {
     },
   })
 }
+
+const userClickedPuzzleListItem =
+  (puzzle: FlowPuzzle) => (model: ModelClient) => {
+    return BuilderClient.update({
+      ctx: testFlowClientCtx,
+      model,
+      modelSync: defaultModelSync,
+      msgSync: {
+        t: "puzzle-list.clicked-puzzle-list-item",
+        puzzle,
+        eventId: EventId.generate(),
+        happenedAt: LamportTimestamp.fromNumber(0),
+      },
+    })
+  }
 
 describe("puzzle list client", () => {
   it("should open puzzle builder after clicking a puzzle in the list", async () => {
@@ -39,5 +57,17 @@ describe("puzzle list client", () => {
       modelSync.opened.t === "puzzle-builder" &&
         modelSync.puzzleBuilder?.puzzle.id === puzzle.id,
     ).toBeTrue()
+  })
+
+  it("should play a sound when clicking a puzzle in the list", async () => {
+    const puzzle = createFlowPuzzle(testFlowClientCtx)
+
+    const output = await chainUpdates(
+      initial,
+      userClickedPuzzleListItem(puzzle),
+      //
+    )
+
+    expect(didPlaySound(output)).toBeTrue()
   })
 })

@@ -11,6 +11,7 @@ import {
   MsgToServer,
 } from "./flow-pack-puzzle-grid.core"
 import { RequestResponse } from "gamezilla/@SHARED/core"
+import { IntersectionObserverEmitter } from "gamezilla/@CHILD/app/@SHARED/ui/intersection-observer"
 
 type ClientModule = AppClientModule<{
   Ctx: SpaceClientCtx
@@ -43,6 +44,12 @@ export const FlowPackPuzzleGridClient: Pick<ClientModule, "View" | "update"> = {
         {input.slots?.grid({
           request: input.model.request,
         })}
+        <IntersectionObserverEmitter
+          id="flow-pack-puzzle-grid"
+          onVisible={() => {
+            //
+          }}
+        />
       </>
     )
   },

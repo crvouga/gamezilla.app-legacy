@@ -3,14 +3,17 @@ import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
 import { ClientModule } from "../../builder.core"
 import { PuzzleCreateClient } from "../create/puzzle-create.client"
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
 
 const update: ClientModule["update"] = (input) => {
-  return GameClientModule.chainUpdates({ model: input.model }, (model) =>
-    updatePuzzleList({ ...input, model }),
+  return GameClientModule.chainUpdates(
+    { model: input.model },
+    (model) => updatePuzzleListItem({ ...input, model }),
+    (model) => updateUserClickedListItem({ ...input, model }),
   )
 }
 
-const updatePuzzleList: ClientModule["update"] = (input) => {
+const updatePuzzleListItem: ClientModule["update"] = (input) => {
   const { model, msg } = input
 
   switch (msg?.t) {
@@ -23,6 +26,21 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
             puzzle: msg.puzzle,
           }),
         ],
+      }
+    }
+  }
+
+  return { model }
+}
+
+const updateUserClickedListItem: ClientModule["update"] = (input) => {
+  const { model, msgSync } = input
+
+  switch (msgSync?.t) {
+    case "puzzle-list.clicked-puzzle-list-item": {
+      return {
+        model,
+        msgCmd: [playSound(APP_SOUND.navForwardMin)],
       }
     }
   }

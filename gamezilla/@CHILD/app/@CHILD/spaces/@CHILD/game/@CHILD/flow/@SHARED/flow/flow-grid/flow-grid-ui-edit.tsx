@@ -400,6 +400,26 @@ export const toCurrentPlacingGroupId = (model: Model): Flow.GroupId => {
   return Flow.GROUP_ID_ORDER[Flow.GROUP_ID_ORDER.length - 1]!
 }
 
+export const toCurrentPlacingTerminalPosition = (
+  model: Model,
+): "start" | "end" => {
+  for (const groupId of Flow.GROUP_ID_ORDER) {
+    const draftTerminal = History.present(model.form).terminalsByGroupId[
+      groupId
+    ]
+
+    if (!draftTerminal) {
+      return "start"
+    }
+
+    if (!draftTerminal.endId) {
+      return "end"
+    }
+  }
+
+  return "start"
+}
+
 export const removeIncompleteTerminals = (
   draftTerminals: DraftTerminals,
 ): Flow.Model["terminalsByGroupId"] => {
@@ -447,24 +467,13 @@ export const toCurrentGrid = memoize({
 //
 //
 
-export const View = ({
-  model,
-  dispatch,
-}: {
-  model: Model
-  dispatch: (m: Msg) => void
-}) => {
+export const View = (input: { model: Model; dispatch: (m: Msg) => void }) => {
+  const { model, dispatch } = input
   return (
     <div className="flex h-full w-full flex-1 flex-col items-center justify-center overflow-y-auto">
       <div className="flex flex-1 flex-col justify-end">
         <div className="flex flex-col items-center justify-end">
-          <div className="flex w-full items-center justify-center gap-1 pb-2">
-            Placing
-            <ViewTerminal
-              groupId={toCurrentPlacingGroupId(model)}
-              className="h-6 w-6"
-            />
-          </div>
+          <ViewStatus {...input} />
         </div>
       </div>
 
@@ -564,6 +573,20 @@ export const View = ({
           />
         </div>
       </Drawer>
+    </div>
+  )
+}
+
+const ViewStatus: typeof View = ({ model }) => {
+  const position =
+    toCurrentPlacingTerminalPosition(model) === "start" ? "first" : "last"
+  return (
+    <div className="flex w-full items-center justify-center gap-1 pb-2">
+      {`Placing ${position}`}
+      <ViewTerminal
+        groupId={toCurrentPlacingGroupId(model)}
+        className="h-6 w-6"
+      />
     </div>
   )
 }
