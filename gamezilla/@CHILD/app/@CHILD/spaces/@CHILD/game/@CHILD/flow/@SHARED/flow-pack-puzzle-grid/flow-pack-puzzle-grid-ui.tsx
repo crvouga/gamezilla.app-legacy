@@ -58,7 +58,7 @@ export const ViewPuzzleCell = ({
   return (
     <button
       onClick={onClick}
-      className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-700 bg-neutral-800 text-xl font-bold hover:opacity-90 active:opacity-80"
+      className="flex h-full w-full items-center justify-center overflow-hidden rounded  bg-neutral-800 text-xl font-bold hover:opacity-90 active:opacity-80"
     >
       {index + 1}
     </button>
@@ -67,12 +67,12 @@ export const ViewPuzzleCell = ({
 
 export const ViewEmptyCell = () => {
   return (
-    <div className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-800 bg-black opacity-70"></div>
+    <div className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-800 bg-neutral-950 opacity-70"></div>
   )
 }
 
 export const ViewLoadingCell = () => {
   return (
-    <div className="flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded  border-2 bg-neutral-600 opacity-70"></div>
+    <div className="flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded bg-neutral-600 opacity-70"></div>
   )
 }

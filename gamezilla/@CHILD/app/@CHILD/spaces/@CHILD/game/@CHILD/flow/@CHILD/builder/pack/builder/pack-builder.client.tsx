@@ -201,7 +201,7 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
                   const puzzle = puzzleId ? model.puzzles[puzzleId] : null
 
                   if (!puzzle) {
-                    return <FlowPackPuzzleGridUI.ViewEmptyCell />
+                    return <FlowPackPuzzleGridUI.ViewLoadingCell />
                   }
 
                   return (
