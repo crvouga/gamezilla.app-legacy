@@ -64,7 +64,7 @@ export const userStartedSpace =
     })
   }
 
-export const authenticatedClientConncted =
+export const authenticatedClientConnected =
   (deps: ServerDeps, client: AuthenticatedClient) => (model: ModelServer) => {
     return SpacesServer.update({
       ctx,

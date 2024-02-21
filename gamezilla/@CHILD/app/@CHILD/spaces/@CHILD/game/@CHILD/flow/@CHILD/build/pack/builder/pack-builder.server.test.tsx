@@ -7,7 +7,7 @@ import { initial } from "../../@TEST/client"
 import { clientListPuzzlesById, getDeps } from "../../@TEST/server"
 import { createFlowPuzzle } from "../../@TEST/shared"
 
-describe("pack builder server", () => {
+describe(import.meta.file, () => {
   it("should list puzzles when requested by client", async () => {
     const deps = getDeps()
     const client = generateAuthClient()

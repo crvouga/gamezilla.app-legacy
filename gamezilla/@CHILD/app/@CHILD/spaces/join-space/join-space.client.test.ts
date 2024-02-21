@@ -11,7 +11,7 @@ import {
 } from "../@TEST/client"
 import { Spaces } from "../spaces-core"
 
-describe("list spaces client", () => {
+describe(import.meta.file, () => {
   it("should join space when clicking join space button", async () => {
     const spaceId = SpaceId.generate()
 

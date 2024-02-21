@@ -52,7 +52,7 @@ const continueAsGuestResultedErr = () => (model: ModelClient) =>
     },
   })
 
-describe("auth continue as guest client", () => {
+describe(import.meta.file, () => {
   it("should request to continue as guest when button is clicked", async () => {
     const output = await AppClientModule.chainUpdates(
       AuthClient.init({ ctx }),

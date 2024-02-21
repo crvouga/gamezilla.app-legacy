@@ -26,7 +26,7 @@ const changeRouteToSpaceList = (model: ModelClient) => {
   return changeRoute(model, { t: "spaces", c: { t: "space-list" } })
 }
 
-describe("list spaces client", () => {
+describe(import.meta.file, () => {
   it("should request spaces on init if on space list route", async () => {
     const output = await init({
       ...ctx,

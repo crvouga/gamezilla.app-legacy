@@ -1,5 +1,5 @@
 import { describe, it } from "bun:test"
 
-describe("flow puzzle create client", () => {
+describe(import.meta.file, () => {
   it("request to create a puzzle on button client", () => {})
 })

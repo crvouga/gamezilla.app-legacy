@@ -1,18 +1,18 @@
 import { describe, expect, it } from "bun:test"
-import {
-  authenticatedClientConncted,
-  init,
-  getDeps,
-  generateAuthClient,
-  userStartedSpace,
-  clientSync,
-} from "../@TEST/server"
 import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
-import { didSendMsgToClient } from "gamezilla/@CHILD/app/@SHARED/server"
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { didSendMsgToClient } from "gamezilla/@CHILD/app/@SHARED/server"
+import {
+  authenticatedClientConnected,
+  clientSync,
+  generateAuthClient,
+  getDeps,
+  init,
+  userStartedSpace,
+} from "../@TEST/server"
 import { makeSpace } from "../@TEST/shared"
 
-describe("space server sync", () => {
+describe(import.meta.file, () => {
   it("should send user's space when they connect to the server", async () => {
     const deps = getDeps()
     const client = generateAuthClient()
@@ -20,7 +20,7 @@ describe("space server sync", () => {
     const output = await AppServerModule.chainUpdates(
       init(),
       userStartedSpace(deps, client, spaceId),
-      authenticatedClientConncted(deps, client),
+      authenticatedClientConnected(deps, client),
     )
     expect(
       didSendMsgToClient(output, (msg) => msg.t === "current-user-space"),
@@ -39,7 +39,7 @@ describe("space server sync", () => {
     expect(didSendMsgToClient(output, (msg) => msg.t === "synced")).toBeTrue()
   })
 
-  it("should broacast space events recieved from clients to other clients", async () => {
+  it("should broadcast space events received from clients to other clients", async () => {
     const deps = getDeps()
     const client = generateAuthClient()
     const spaceId = SpaceId.generate()

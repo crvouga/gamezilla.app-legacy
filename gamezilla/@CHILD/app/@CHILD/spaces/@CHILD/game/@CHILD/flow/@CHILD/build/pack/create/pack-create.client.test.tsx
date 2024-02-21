@@ -4,7 +4,7 @@ import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
 import { initClient } from "../../build.core"
 import { clickedPackCreateButton } from "../../@TEST/client"
 
-describe("flow pack create", () => {
+describe(import.meta.file, () => {
   it("should make a sound when the user clicks the create button", async () => {
     const output = await GameClientModule.chainUpdates(
       { model: initClient },

@@ -1,7 +1,7 @@
-import { describe, test, expect } from "bun:test"
+import { describe, expect, test } from "bun:test"
 import { TimeSpan } from "./time-span"
 
-describe("TimeSpan", () => {
+describe(import.meta.file, () => {
   test("should return 'X year(s) ago' for year intervals", () => {
     expect(TimeSpan.humanFriendlyString(TimeSpan.fromDays(365))).toBe(
       "1 year ago",

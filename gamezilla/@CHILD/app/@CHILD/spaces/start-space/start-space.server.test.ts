@@ -10,7 +10,7 @@ import {
 } from "../@TEST/server"
 import { Spaces } from "../spaces-core"
 
-describe("start space server", () => {
+describe(import.meta.file, () => {
   it("should add a new space when recieving a user started space event", async () => {
     const deps = getDeps()
     const spaceId = SpaceId.generate()

@@ -11,7 +11,7 @@ import {
 } from "../../@TEST/client"
 import { deriveModelSync } from "../../@TEST/game"
 
-describe("flow puzzle builder client", () => {
+describe(import.meta.file, () => {
   it("should open puzzle builder on list item click", async () => {
     const puzzle = createFlowPuzzle(testFlowClientCtx)
     const output = await GameClientModule.chainUpdates(

@@ -3,7 +3,7 @@ import {
   playSound,
   pushRoute,
 } from "gamezilla/@CHILD/app/@SHARED/client"
-import { SpaceClientModule } from "../architechure/space-client"
+import { SpaceClientModule } from "../architecture/architecture"
 import { Button } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { withId } from "../@SHARED/event"

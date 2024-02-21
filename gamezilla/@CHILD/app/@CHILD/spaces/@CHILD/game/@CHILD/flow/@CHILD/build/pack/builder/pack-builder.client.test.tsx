@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test"
 import { chainUpdates } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { didSendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
 import { testSpaceClientCtx } from "../../../../../../@SHARED/testing/client"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import {
@@ -10,14 +11,13 @@ import {
   closedPuzzlePickerDrawer,
   createFlowPack,
   createFlowPuzzle,
-  serverListedPuzzlesByIdOk,
   initial,
   serverCreatedPack,
+  serverListedPuzzlesByIdOk,
 } from "../../@TEST/client"
 import { deriveModelSync } from "../../@TEST/game"
-import { didSendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
 
-describe("pack builder client", () => {
+describe(import.meta.file, () => {
   it("should open puzzle when user clickes puzzle grid item", async () => {
     const puzzle = createFlowPuzzle(testSpaceClientCtx)
 

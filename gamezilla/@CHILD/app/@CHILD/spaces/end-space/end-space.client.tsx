@@ -4,7 +4,7 @@ import {
   pushRoute,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client"
-import { SpaceClientModule } from "../architechure/space-client"
+import { SpaceClientModule } from "../architecture/architecture"
 import { SpaceEvent, Spaces } from "../spaces-core"
 import { Button, IconHome } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { withId } from "../@SHARED/event"

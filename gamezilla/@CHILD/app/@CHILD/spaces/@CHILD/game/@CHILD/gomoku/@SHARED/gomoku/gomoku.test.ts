@@ -1,5 +1,5 @@
 import { Board, setStone, Stone, toWins } from "./gomoku"
-import { expect, test } from "bun:test"
+import { describe, expect, test } from "bun:test"
 
 type Matrix = (" " | "b" | "w")[][]
 const _ = " "
@@ -25,53 +25,55 @@ const toBoard = (matrix: Matrix): Board => {
   return board
 }
 
-test("detects one horizontal win", () => {
-  const matrix: Matrix = [
-    [w, w, w, w, w],
-    [b, b, b, b, _],
-    [_, _, _, _, _],
-    [_, _, _, _, _],
-    [_, _, _, _, _],
-  ]
-  const board = toBoard(matrix)
-  const wins = toWins(board)
-  expect(wins.length).toBe(1)
-})
+describe(__filename, () => {
+  test("detects one horizontal win", () => {
+    const matrix: Matrix = [
+      [w, w, w, w, w],
+      [b, b, b, b, _],
+      [_, _, _, _, _],
+      [_, _, _, _, _],
+      [_, _, _, _, _],
+    ]
+    const board = toBoard(matrix)
+    const wins = toWins(board)
+    expect(wins.length).toBe(1)
+  })
 
-test("detects one vertical win", () => {
-  const matrix: Matrix = [
-    [w, b, _, _, _],
-    [w, b, _, _, _],
-    [w, b, _, _, _],
-    [w, b, _, _, _],
-    [w, _, _, _, _],
-  ]
-  const board = toBoard(matrix)
-  const wins = toWins(board)
-  expect(wins.length).toBe(1)
-})
+  test("detects one vertical win", () => {
+    const matrix: Matrix = [
+      [w, b, _, _, _],
+      [w, b, _, _, _],
+      [w, b, _, _, _],
+      [w, b, _, _, _],
+      [w, _, _, _, _],
+    ]
+    const board = toBoard(matrix)
+    const wins = toWins(board)
+    expect(wins.length).toBe(1)
+  })
 
-test("detects one left diagonal win", () => {
-  const matrix: Matrix = [
-    [w, _, _, _, _],
-    [b, w, _, _, _],
-    [_, b, w, _, _],
-    [_, _, b, w, _],
-    [_, _, _, b, w],
-  ]
-  const board = toBoard(matrix)
-  const wins = toWins(board)
-  expect(wins.length).toBe(1)
-})
-test("detects one right diagonal win", () => {
-  const matrix: Matrix = [
-    [_, _, _, _, w],
-    [_, _, _, w, b],
-    [_, _, w, b, _],
-    [_, w, b, _, _],
-    [w, b, _, _, _],
-  ]
-  const board = toBoard(matrix)
-  const wins = toWins(board)
-  expect(wins.length).toBe(1)
+  test("detects one left diagonal win", () => {
+    const matrix: Matrix = [
+      [w, _, _, _, _],
+      [b, w, _, _, _],
+      [_, b, w, _, _],
+      [_, _, b, w, _],
+      [_, _, _, b, w],
+    ]
+    const board = toBoard(matrix)
+    const wins = toWins(board)
+    expect(wins.length).toBe(1)
+  })
+  test("detects one right diagonal win", () => {
+    const matrix: Matrix = [
+      [_, _, _, _, w],
+      [_, _, _, w, b],
+      [_, _, w, b, _],
+      [_, w, b, _, _],
+      [w, b, _, _, _],
+    ]
+    const board = toBoard(matrix)
+    const wins = toWins(board)
+    expect(wins.length).toBe(1)
+  })
 })

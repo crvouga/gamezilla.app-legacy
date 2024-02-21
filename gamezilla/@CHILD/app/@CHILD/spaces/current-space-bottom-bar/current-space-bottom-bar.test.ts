@@ -6,10 +6,10 @@ import {
   ctx,
   init,
 } from "../@TEST/client"
-import { SpaceClientModule } from "../architechure/space-client"
+import { SpaceClientModule } from "../architecture/space-client"
 import { Spaces } from "../spaces-core"
 
-describe("current space bottom bar", () => {
+describe(import.meta.file, () => {
   it("should open current space when clicking current space bottom bar", async () => {
     const spaceId = SpaceId.generate()
 

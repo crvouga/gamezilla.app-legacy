@@ -10,11 +10,11 @@ import {
 } from "../@TEST/client.ts"
 import { UserId } from "../../../@SHARED/data/user-id.ts"
 import { Modals } from "./modals.tsx"
-import { SpaceClientModule } from "../architechure/space-client.tsx"
+import { SpaceClientModule } from "../architecture/architecture.tsx"
 import { openUserDetails } from "../@SHARED/space-client-cmd.ts"
 import { didPushRoute } from "gamezilla/@CHILD/app/@SHARED/client/client-cmd.ts"
 
-describe("space client modals", () => {
+describe(import.meta.file, () => {
   it("should start with no modals open", async () => {
     const output = await AppClientModule.chainUpdates(
       await init(),

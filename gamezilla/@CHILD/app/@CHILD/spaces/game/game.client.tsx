@@ -10,7 +10,7 @@ import { Game } from "../@CHILD/game/game.client"
 import { gameNameList, gameNameToString } from "../@CHILD/game/game.core"
 import { WithEventId, withId } from "../@SHARED/event"
 import { SpaceClientCmd } from "../@SHARED/space-client-cmd"
-import { SpaceClientModule } from "../architechure/space-client"
+import { SpaceClientModule } from "../architecture/architecture"
 import { Space, SpaceEvent, Spaces } from "../spaces-core"
 import { MsgClient } from "../spaces.core"
 

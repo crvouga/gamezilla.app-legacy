@@ -9,7 +9,7 @@ import { AppClientModule } from "../../../@SHARED/architecture/app-client"
 import { clickedStartSpaceButton, ctx, init } from "../@TEST/client"
 import { Spaces } from "../spaces-core"
 
-describe("start space client", () => {
+describe(import.meta.file, () => {
   it("should start a space for current user after clicking start button", async () => {
     const spaceId = SpaceId.generate()
 

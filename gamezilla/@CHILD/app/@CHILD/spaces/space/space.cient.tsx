@@ -6,7 +6,7 @@ import {
   IconHome,
   IconUserGroup,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { SpaceClientModule } from "../architechure/space-client"
+import { SpaceClientModule } from "../architecture/architecture"
 import { EndSpaceClient } from "../end-space/end-space.client"
 import { Feed } from "../feed/feed"
 import { GameClient } from "../game/game.client"

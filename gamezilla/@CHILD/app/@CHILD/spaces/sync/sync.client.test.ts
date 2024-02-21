@@ -30,7 +30,7 @@ const hasExcatlyOne = <T>(
   return items.filter(predicate).length === 1
 }
 
-describe("space sync client", () => {
+describe(import.meta.file, () => {
   it("should record profiles when recieved from server", async () => {
     const someProfile: Profile = {
       userId: UserId.generate(),

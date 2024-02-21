@@ -72,7 +72,7 @@ const elapsed = (timeSpan: TimeSpan) => (model: ModelClient) => {
   })
 }
 
-describe("flow puzzle list client", () => {
+describe(import.meta.file, () => {
   it("should it be requesting when the user observes the end of the list", async () => {
     const output = await chainUpdates(initial, userObservedEndOfList)
     expect(isRequesting(output.model.request)).toBeTrue()

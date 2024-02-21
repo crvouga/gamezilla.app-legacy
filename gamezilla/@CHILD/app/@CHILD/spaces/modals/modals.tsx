@@ -5,7 +5,7 @@ import {
   ViewYouChip,
 } from "../@CHILD/game/@SHARED/game"
 import { SpaceClientCtx } from "../@SHARED/space"
-import { SpaceClientModule } from "../architechure/space-client"
+import { SpaceClientModule } from "../architecture/architecture"
 import {
   APP_SOUND,
   playSound,

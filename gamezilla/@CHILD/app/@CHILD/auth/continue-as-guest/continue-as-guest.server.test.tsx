@@ -44,7 +44,7 @@ const clientClickedContinueAsGuestButton =
     })
   }
 
-describe("auth continue as guest server", () => {
+describe(import.meta.file, () => {
   it("should be able to handle request", async () => {
     const deps = getDeps({ ctx })
 

@@ -9,11 +9,11 @@ import {
   ctx,
   init,
 } from "../@TEST/client"
-import { SpaceClientModule } from "../architechure/space-client"
+import { SpaceClientModule } from "../architecture/architecture"
 import { Spaces } from "../spaces-core"
 import * as SpacesClient from "../spaces.client"
 
-describe("game client", () => {
+describe(import.meta.file, () => {
   it("should play a sound after inputting a game", async () => {
     const spaceId = SpaceId.generate()
     const started = await AppClientModule.chainUpdates(await init(), (model) =>

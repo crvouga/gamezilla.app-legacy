@@ -1,7 +1,7 @@
-import { toSql } from "./sql"
 import { describe, expect, test } from "bun:test"
+import { toSql } from "./sql"
 
-describe("toSql", () => {
+describe(import.meta.file, () => {
   test("replaces named parameter with number", () => {
     expect(toSql("SELECT * FROM users WHERE id = :id", { id: 1 })).toBe(
       "SELECT * FROM users WHERE id = 1",

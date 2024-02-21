@@ -8,10 +8,10 @@ import {
   init,
   userClickedEndSpaceButton,
 } from "../@TEST/client"
-import { SpaceClientModule } from "../architechure/space-client"
+import { SpaceClientModule } from "../architecture/architecture"
 import { EndSpaceClient } from "./end-space.client"
 
-describe("end space client", () => {
+describe(import.meta.file, () => {
   it("should redirect to space list after ending space if on space route", async () => {
     const spaceId = SpaceId.generate()
     const updated = await AppClientModule.chainUpdates(

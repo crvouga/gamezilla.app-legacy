@@ -11,7 +11,7 @@ import {
 } from "../@TEST/client"
 import { Spaces } from "../spaces-core"
 
-describe("leave space", () => {
+describe(import.meta.file, () => {
   test("user is not in space after leaving", async () => {
     const spaceId = SpaceId.generate()
     const updated = await AppClientModule.chainUpdates(

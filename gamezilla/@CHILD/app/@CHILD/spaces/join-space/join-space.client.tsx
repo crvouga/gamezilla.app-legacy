@@ -16,7 +16,7 @@ import {
 import { CoverArt } from "../@CHILD/game/game-cover-art"
 import { gameNameToString } from "../@CHILD/game/game.core"
 import { withId } from "../@SHARED/event"
-import { SpaceClientModule } from "../architechure/space-client"
+import { SpaceClientModule } from "../architecture/architecture"
 import { SpaceEvent, Spaces } from "../spaces-core"
 import { Feed } from "../feed/feed"
 

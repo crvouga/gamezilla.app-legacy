@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test"
+import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock"
 import { GameClientModule } from "../../../../@SHARED/architecture/game-client-v2"
@@ -6,7 +7,6 @@ import { EventId } from "../../../../@SHARED/event"
 import { testSpaceClientCtx } from "../../@SHARED/testing/client"
 import { FlowClient } from "./flow.client"
 import { ModelClient } from "./flow.core"
-import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
 
 const init = {
   model: FlowClient.init,
@@ -32,7 +32,7 @@ const useSelectedMode =
     })
   }
 
-describe("flow client", () => {
+describe(import.meta.file, () => {
   it("should play a sound when selecting play mode", async () => {
     const output = await GameClientModule.chainUpdates(
       init,

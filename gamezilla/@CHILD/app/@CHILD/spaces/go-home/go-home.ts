@@ -3,7 +3,7 @@ import {
   playSound,
   pushRoute,
 } from "gamezilla/@CHILD/app/@SHARED/client"
-import { SpaceClientModule } from "../architechure/space-client"
+import { SpaceClientModule } from "../architecture/architecture"
 
 const update: SpaceClientModule["update"] = ({ msg, model }) => {
   switch (msg?.t) {

@@ -1,8 +1,8 @@
-import { describe, expect, test } from "bun:test"
+import { describe, expect, it } from "bun:test"
 import { LamportClock } from "./lamport-clock"
 
-describe("Lamport Clock", () => {
-  test("should update the Lamport clock when receiving a smaller timestamp", () => {
+describe(import.meta.file, () => {
+  it("should update the Lamport clock when receiving a smaller timestamp", () => {
     const clockA = LamportClock.init
     const clockB = LamportClock.init
 
@@ -12,7 +12,7 @@ describe("Lamport Clock", () => {
     expect(LamportClock.toNumber(updatedClockB)).toBe(2)
   })
 
-  test("should not update the Lamport clock when receiving an equal timestamp", () => {
+  it("should not update the Lamport clock when receiving an equal timestamp", () => {
     const clockA = LamportClock.init
     const clockB = LamportClock.init
 
@@ -24,7 +24,7 @@ describe("Lamport Clock", () => {
     expect(LamportClock.toNumber(updatedClockB2)).toBe(3)
   })
 
-  test("should not update the Lamport clock when receiving a larger timestamp", () => {
+  it("should not update the Lamport clock when receiving a larger timestamp", () => {
     const clockA = LamportClock.init
     const clockB = LamportClock.init
 

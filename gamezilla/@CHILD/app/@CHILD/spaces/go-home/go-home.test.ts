@@ -5,9 +5,9 @@ import {
   clickedStartSpaceButton,
   init,
 } from "../@TEST/client"
-import { SpaceClientModule } from "../architechure/space-client"
+import { SpaceClientModule } from "../architecture/architecture"
 
-describe("spaces go home", () => {
+describe(import.meta.file, () => {
   it("should go to list screen when clicking go home button", async () => {
     const spaceId = SpaceId.generate()
 

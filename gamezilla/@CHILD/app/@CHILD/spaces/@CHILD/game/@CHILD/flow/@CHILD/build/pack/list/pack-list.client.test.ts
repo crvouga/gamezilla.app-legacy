@@ -4,7 +4,7 @@ import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import { clickedPackItem, initial, testFlowClientCtx } from "../../@TEST/client"
 import { deriveModelSync } from "../../@TEST/game"
 
-describe("pack list client", () => {
+describe(import.meta.file, () => {
   //
 
   it("should open pack builder when clicked pack list item", async () => {

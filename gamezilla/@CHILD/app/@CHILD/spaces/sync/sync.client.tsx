@@ -1,5 +1,5 @@
 import { addProfiles, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
-import { SpaceClientModule } from "../architechure/space-client"
+import { SpaceClientModule } from "../architecture/architecture"
 import { Space, Spaces } from "../spaces-core"
 
 const update: SpaceClientModule["update"] = (input) => {

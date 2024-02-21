@@ -1,6 +1,6 @@
 import { sendToClient } from "gamezilla/@CHILD/app/@SHARED/server"
 import { AppServerModule } from "../../../@SHARED/architecture/app-server"
-import { SpaceServerModule } from "../architechure/space-server"
+import { SpaceServerModule } from "../architecture/space-server"
 import * as Space from "../spaces-core/space"
 import * as Spaces from "../spaces-core/spaces"
 import { MsgToClient, spacesToProfiles } from "../spaces.core"

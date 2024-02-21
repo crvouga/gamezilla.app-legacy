@@ -1,5 +1,5 @@
 import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
-import { SpaceClientModule } from "../architechure/space-client"
+import { SpaceClientModule } from "../architecture/architecture"
 import { SpaceEvent, Spaces } from "../spaces-core"
 import { Button } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { withId } from "../@SHARED/event"

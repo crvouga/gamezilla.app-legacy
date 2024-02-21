@@ -70,7 +70,7 @@ const serverListedPacksErr = (errorMessage: string) => (model: ModelClient) => {
   })
 }
 
-describe("flow puzzle list client", () => {
+describe(import.meta.file, () => {
   it("should be request when user observes end of list", async () => {
     const output = await AppClientModule.chainUpdates(
       initial,

@@ -41,7 +41,7 @@ const userClickedPuzzleListItem =
     })
   }
 
-describe("puzzle list client", () => {
+describe(import.meta.file, () => {
   it("should open puzzle builder after clicking a puzzle in the list", async () => {
     const puzzle = createFlowPuzzle(testFlowClientCtx)
 
