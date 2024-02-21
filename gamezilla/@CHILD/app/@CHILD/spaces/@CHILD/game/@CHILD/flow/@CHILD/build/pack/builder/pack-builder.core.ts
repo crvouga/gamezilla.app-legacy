@@ -2,7 +2,7 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import { Result } from "gamezilla/@SHARED/core"
-import { FlowGridUIPlay } from "../../../../@SHARED/flow"
+import { FlowGrid, FlowGridUIPlay } from "../../../../@SHARED/flow"
 import { FlowPuzzleId } from "../../../../@SHARED/flow-puzzle/flow-puzzle-id"
 
 //
@@ -41,6 +41,32 @@ export type MsgToClient = {
 //
 //
 //
+
+export type ModelSync = {
+  t: "pack-builder"
+  pack: FlowPack
+  opened:
+    | {
+        t: "add-puzzle"
+      }
+    | {
+        t: null
+      }
+  screen:
+    | {
+        t: "pack"
+        pageIndex: number
+      }
+    | {
+        t: "puzzle"
+        puzzleIndex: number
+        puzzle: {
+          t: "grid"
+          flowGrid: FlowGrid.Model
+          flowGridUIPlay: FlowGridUIPlay.Model
+        }
+      }
+}
 
 export type MsgSync =
   | {

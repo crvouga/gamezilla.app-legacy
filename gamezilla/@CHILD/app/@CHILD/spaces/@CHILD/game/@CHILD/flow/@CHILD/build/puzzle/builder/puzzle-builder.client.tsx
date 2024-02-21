@@ -4,6 +4,7 @@ import {
   ViewBottomButtonBarAction,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
 import {
   Drawer,
@@ -12,19 +13,18 @@ import {
   IconPlay,
   cn,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { VDom } from "gamezilla/@SHARED/vdom"
 import {
-  FlowGrid,
   FlowGridUI,
   FlowGridUIEdit,
   FlowGridUIPlay,
 } from "../../../../@SHARED/flow"
 import { ViewProfileCard } from "../../../../@SHARED/ui"
-import { ClientModule, ModelSyncPuzzleBuilder } from "../../build.core"
+import { ClientModule } from "../../build.core"
 import { PuzzleDeleteForeverClient } from "../delete-forever/puzzle-delete-forever.client"
 import { PuzzleEditNameClient } from "../edit/puzzle-edit-name.client"
 import { PuzzleSaveChangesClient } from "../save-changes/puzzle-save-changes.client"
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { VDom } from "gamezilla/@SHARED/vdom"
+import { toCurrentGrid } from "./puzzle-builder.core"
 
 //
 //
@@ -273,27 +273,6 @@ const ViewMode: ClientModule["View"] = (input) => {
           </ViewBottomButtonBar>
         </div>
       )
-    }
-  }
-}
-
-export const toCurrentGrid = (
-  modelSync: ModelSyncPuzzleBuilder,
-): FlowGrid.Model => {
-  switch (modelSync.mode.t) {
-    case "edit": {
-      return FlowGridUIEdit.toCurrentGrid({
-        model: modelSync.gridEdit,
-      })
-    }
-
-    case "play": {
-      return FlowGridUIPlay.toCurrentGrid({
-        grid: FlowGridUIEdit.toCurrentGrid({
-          model: modelSync.gridEdit,
-        }),
-        model: modelSync.gridPlay,
-      })
     }
   }
 }
