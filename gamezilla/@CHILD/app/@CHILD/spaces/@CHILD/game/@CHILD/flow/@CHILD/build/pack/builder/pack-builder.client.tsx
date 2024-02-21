@@ -78,7 +78,11 @@ const AddPuzzleButton: Pick<ClientModule, "update" | "View"> = {
 
     switch (msg?.t) {
       case "pack-builder.user-clicked-open-add-puzzle-button": {
-        return { model, msgSync: [withId(msg)] }
+        return {
+          model,
+          msgSync: [withId(msg)],
+          msgCmd: [playSound(APP_SOUND.tap)],
+        }
       }
     }
     return { model }
@@ -111,11 +115,19 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
 
     switch (msg?.t) {
       case "pack-builder.user-clicked-add-puzzle-item": {
-        return { model, msgSync: [withId(msg)] }
+        return {
+          model,
+          msgSync: [withId(msg)],
+          msgCmd: [playSound(APP_SOUND.tap)],
+        }
       }
 
       case "pack-builder.user-closed-add-puzzle": {
-        return { model, msgSync: [withId(msg)] }
+        return {
+          model,
+          msgSync: [withId(msg)],
+          msgCmd: [playSound(APP_SOUND.tap)],
+        }
       }
     }
 
@@ -170,7 +182,11 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 
     switch (msg?.t) {
       case "pack-builder.user-clicked-pack-item": {
-        return { model, msgSync: [withId(msg)] }
+        return {
+          model,
+          msgSync: [withId(msg)],
+          msgCmd: [playSound(APP_SOUND.tap)],
+        }
       }
     }
 
@@ -250,7 +266,11 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
 
     switch (msg?.t) {
       case "pack-builder.user-clicked-exit-puzzle-button": {
-        return { model, msgSync: [withId(msg)] }
+        return {
+          model,
+          msgSync: [withId(msg)],
+          msgCmd: [playSound(APP_SOUND.tap)],
+        }
       }
 
       case "pack-builder.flow-play-grid-ui": {
