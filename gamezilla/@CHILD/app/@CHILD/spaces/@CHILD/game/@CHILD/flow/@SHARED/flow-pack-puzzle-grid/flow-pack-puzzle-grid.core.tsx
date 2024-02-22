@@ -6,7 +6,9 @@ import { FlowPack } from "../flow-pack/flow-pack"
 export type ModelClient = {
   request: RequestResponse<string, null>
   pack: FlowPack
-  puzzles: { [puzzleId: FlowPuzzleId]: FlowPuzzle }
+  puzzles: {
+    [puzzleId: FlowPuzzleId]: FlowPuzzle
+  }
 }
 
 export const initClient = (pack: FlowPack): ModelClient => {
