@@ -65,12 +65,6 @@ export function create<TModel, TMsg, TCtx>(
     }
   }
 
-  const onMsg = async (msg: TMsg) => {
-    const ctx = await config.ctx()
-    const updated = await config.update({ ctx, msg, model: state!.model })
-    setState(updated, ctx, msg)
-  }
-
   const setState = async (
     newState: { model: TModel; eff?: Eff<TMsg> },
     ctx: TCtx,
@@ -111,10 +105,10 @@ export function create<TModel, TMsg, TCtx>(
       return
     }
     isProcessing = true
-    const msg = messageQueue.shift()
-    if (msg) {
-      await onMsg(msg)
-    }
+    const msg = messageQueue.shift()!
+    const ctx = await config.ctx()
+    const updated = await config.update({ ctx, msg, model: state!.model })
+    setState(updated, ctx, msg)
     isProcessing = false
     processQueue()
   }
