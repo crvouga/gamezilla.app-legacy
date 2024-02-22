@@ -95,4 +95,4 @@ if (!CODEBASE_VERSION_ID) {
 //
 //
 
-export const SHOULD_USE_DEBUGGER = !IS_PROD || true
+export const SHOULD_USE_DEBUGGER = !IS_PROD
