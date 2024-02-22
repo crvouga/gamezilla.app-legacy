@@ -1,5 +1,5 @@
 import { Server, WebSocketHandler } from "bun"
-import { IServer } from "./server"
+import { IServer } from "../server"
 
 type FetchHandler = (
   req: Request,

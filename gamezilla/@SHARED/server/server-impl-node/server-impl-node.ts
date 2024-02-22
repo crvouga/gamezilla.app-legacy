@@ -1,5 +1,5 @@
 import * as http from "node:http"
-import { IServer } from "./server"
+import { IServer } from "../server"
 
 export const ServerNode = () => {
   const httpServer = new http.Server()

@@ -1,7 +1,7 @@
 import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { PubSub } from "gamezilla/@SHARED/core/sub"
-import { ServerBun } from "gamezilla/@SHARED/server/server-impl-bun"
-import { ServerNode } from "gamezilla/@SHARED/server/server-impl-node"
+import { ServerBun } from "gamezilla/@SHARED/server/server-impl-bun/server-impl-bun"
+import { ServerNode } from "gamezilla/@SHARED/server/server-impl-node/server-impl-node"
 
 export type ServerTransportMsg =
   | { t: "client-connected"; clientId: ClientId; sessionId: SessionId }
