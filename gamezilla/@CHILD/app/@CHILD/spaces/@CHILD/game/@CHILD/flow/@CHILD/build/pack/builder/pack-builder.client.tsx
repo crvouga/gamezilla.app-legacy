@@ -10,7 +10,8 @@ import {
 import {
   Button,
   IconArrowLeftOnRect,
-  IconArrowRight,
+  IconChevronLeft,
+  IconChevronRight,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Sub, Time, TimeSpan } from "gamezilla/@SHARED/core"
 import {
@@ -321,7 +322,12 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
             }
           />
           <ViewBottomButtonBarAction
-            icon={(props) => <IconArrowRight {...props} />}
+            icon={(props) => <IconChevronLeft {...props} />}
+            label="Previous"
+            onClick={() => {}}
+          />
+          <ViewBottomButtonBarAction
+            icon={(props) => <IconChevronRight {...props} />}
             label="Next"
             onClick={() => {}}
           />

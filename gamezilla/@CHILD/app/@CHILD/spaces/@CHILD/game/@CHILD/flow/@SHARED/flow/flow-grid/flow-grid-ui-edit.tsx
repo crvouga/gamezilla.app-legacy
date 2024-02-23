@@ -1,6 +1,5 @@
 import { APP_SOUND } from "gamezilla/@CHILD/app/@SHARED/client"
 import {
-  ActionButton,
   Button,
   Drawer,
   DrawerHeader,
@@ -12,6 +11,10 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { memoize } from "gamezilla/@SHARED/core"
 import { History } from "gamezilla/@SHARED/history"
+import {
+  ViewBottomButtonBar,
+  ViewBottomButtonBarAction,
+} from "../../../../../@SHARED/game"
 import * as Flow from "../flow"
 import * as FlowUI from "../flow-ui"
 import * as FlowGrid from "./flow-grid"
@@ -485,31 +488,31 @@ export const View = (input: { model: Model; dispatch: (m: Msg) => void }) => {
       />
 
       <div className="flex w-full flex-1 flex-col justify-end">
-        <div className="flex w-full items-center border-t border-neutral-700 py-0.5">
-          <ActionButton
-            icon={<IconArrowRotateLeft className="h-6 w-6" />}
+        <ViewBottomButtonBar>
+          <ViewBottomButtonBarAction
+            icon={(props) => <IconArrowRotateLeft {...props} />}
             label="Undo"
             onClick={() => dispatch({ t: "clicked-undo" })}
             disabled={!History.canUndo(model.form)}
           />
-          <ActionButton
-            icon={<IconArrowRotateRight className="h-6 w-6" />}
+          <ViewBottomButtonBarAction
+            icon={(props) => <IconArrowRotateRight {...props} />}
             label="Redo"
             disabled={!History.canRedo(model.form)}
             onClick={() => dispatch({ t: "clicked-redo" })}
           />
-          <ActionButton
-            icon={<IconXMark className="h-6 w-6" />}
+          <ViewBottomButtonBarAction
+            icon={(props) => <IconXMark {...props} />}
             label="Clear"
             disabled={!canClear(model)}
             onClick={() => dispatch({ t: "clicked-clear" })}
           />
-          <ActionButton
-            icon={<IconExpand className="h-6 w-6" />}
+          <ViewBottomButtonBarAction
+            icon={(props) => <IconExpand {...props} />}
             label="Dimensions"
             onClick={() => dispatch({ t: "dimensions-form.clicked-open" })}
           />
-        </div>
+        </ViewBottomButtonBar>
       </div>
       <Drawer
         open={model.opened === "dimensions"}

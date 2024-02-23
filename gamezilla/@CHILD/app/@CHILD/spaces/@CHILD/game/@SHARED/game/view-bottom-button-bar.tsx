@@ -20,7 +20,7 @@ export const ViewBottomButtonBar = ({
   children: VDomChildren
 }) => {
   return (
-    <div className={"flex w-full items-center border-t border-neutral-600"}>
+    <div className="flex w-full items-center border-t border-neutral-600">
       {children}
     </div>
   )
@@ -34,7 +34,7 @@ export const ViewBottomButtonBarAction = (props: BottomBarButtonAction) => {
       key={props.label}
       onClick={props.onClick}
       className={cn(
-        "relative flex flex-1 flex-col items-center gap-0.5 p-1 text-sm transition-opacity",
+        "relative flex flex-1 flex-col items-center gap-0.5 p-2 text-sm transition-opacity",
         !isDisabled && "active:opacity-50",
         props.disabled && "cursor-not-allowed opacity-50",
         props.color === "danger" && "text-red-500",
