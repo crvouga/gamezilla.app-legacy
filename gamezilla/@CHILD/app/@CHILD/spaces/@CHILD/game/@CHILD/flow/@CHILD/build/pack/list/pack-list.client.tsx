@@ -3,6 +3,7 @@ import { FlowPackListClient } from "../../../../@SHARED/flow-pack-list"
 import { ClientModule } from "../../build.core"
 import { PackCreateClient } from "../create/pack-create.client"
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(
@@ -23,6 +24,7 @@ export const updateClickedPackItem: ClientModule["update"] = ({
         msgSync: [
           withId({ t: "pack-list.user-clicked-pack-item", pack: msg.pack }),
         ],
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
     default: {
