@@ -4,7 +4,7 @@ import { VDom, VDomChildren } from "gamezilla/@SHARED/vdom"
 type BottomBarButtonAction = {
   label: string
   disabled?: boolean
-  icon: VDom
+  icon: (props: { className: string }) => VDom
   classNames?: {
     button?: string
     label?: string
@@ -48,7 +48,7 @@ export const ViewBottomButtonBarAction = (props: BottomBarButtonAction) => {
           props.loading ? "opacity-0" : "opacity-100",
         )}
       >
-        {props.icon}
+        {props.icon({ className: "h-7 w-7" })}
         <p className={cn("text-xs", props.classNames?.label)}>{props.label}</p>
       </div>
 

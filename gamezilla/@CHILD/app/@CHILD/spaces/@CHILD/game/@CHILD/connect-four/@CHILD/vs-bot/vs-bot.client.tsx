@@ -452,7 +452,7 @@ const View: Module["View"] = ({ model, ctx, modelSync, dispatch }) => {
       {ctx.currentUserId === modelSync.playingUserId && (
         <ViewBottomButtonBar>
           <ViewBottomButtonBarAction
-            icon={<IconArrowLeftOnRect className="h-6 w-6" />}
+            icon={(props) => <IconArrowLeftOnRect {...props} />}
             label="Exit"
             onClick={() =>
               dispatch({
@@ -463,7 +463,7 @@ const View: Module["View"] = ({ model, ctx, modelSync, dispatch }) => {
           />
 
           <ViewBottomButtonBarAction
-            icon={<IconRightLeft className="h-6 w-6" />}
+            icon={(props) => <IconRightLeft {...props} />}
             label="Swap sides"
             onClick={() =>
               dispatch({
@@ -474,7 +474,7 @@ const View: Module["View"] = ({ model, ctx, modelSync, dispatch }) => {
           />
 
           <ViewBottomButtonBarAction
-            icon={<IconArrowRotateLeft className="h-6 w-6" />}
+            icon={(props) => <IconArrowRotateLeft {...props} />}
             label="Restart"
             onClick={() =>
               dispatch({

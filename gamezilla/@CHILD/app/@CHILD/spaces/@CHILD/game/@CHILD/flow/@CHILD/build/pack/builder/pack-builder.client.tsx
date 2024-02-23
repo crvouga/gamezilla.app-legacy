@@ -5,8 +5,13 @@ import {
   playSound,
   sendToServer,
   showErrSm,
+  showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client"
-import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
+import {
+  Button,
+  IconArrowLeftOnRect,
+  IconArrowRight,
+} from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Sub, Time, TimeSpan } from "gamezilla/@SHARED/core"
 import {
   ViewBottomButtonBar,
@@ -118,7 +123,7 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
         return {
           model,
           msgSync: [withId(msg)],
-          msgCmd: [playSound(APP_SOUND.tap)],
+          msgCmd: [playSound(APP_SOUND.refreshFeed), showToast("Puzzle added")],
         }
       }
 
@@ -295,7 +300,7 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
 
     return (
       <div className="flex h-full w-full flex-col ">
-        <div>
+        <div className="flex w-full flex-1 items-center justify-center">
           <FlowGridUIPlay.View
             dispatch={(c) =>
               input.dispatch({ t: "pack-builder.flow-play-grid-ui", c })
@@ -306,7 +311,7 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
         </div>
         <ViewBottomButtonBar>
           <ViewBottomButtonBarAction
-            icon={<IconArrowLeftOnRect />}
+            icon={(props) => <IconArrowLeftOnRect {...props} />}
             label="Exit"
             onClick={() =>
               input.dispatch({
@@ -314,6 +319,11 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
                 userId: input.ctx.currentUserId,
               })
             }
+          />
+          <ViewBottomButtonBarAction
+            icon={(props) => <IconArrowRight {...props} />}
+            label="Next"
+            onClick={() => {}}
           />
         </ViewBottomButtonBar>
       </div>

@@ -224,7 +224,7 @@ export const ViewActionButtons = ({
   return (
     <>
       <ViewBottomButtonBarAction
-        icon={<IconArrowLeftOnRect className="h-6 w-6" />}
+        icon={(props) => <IconArrowLeftOnRect {...props} />}
         label="Exit"
         onClick={() =>
           dispatch({ t: "puzzle-builder.user-clicked-exit-button" })
@@ -232,7 +232,7 @@ export const ViewActionButtons = ({
         disabled={model.puzzleSaveChangesRequest?.t === "loading"}
       />
       <ViewBottomButtonBarAction
-        icon={<IconFloppyDisk className="h-6 w-6" />}
+        icon={(props) => <IconFloppyDisk {...props} />}
         label="Save"
         onClick={() =>
           dispatch({ t: "puzzle-save-changes.user-clicked-save-button" })

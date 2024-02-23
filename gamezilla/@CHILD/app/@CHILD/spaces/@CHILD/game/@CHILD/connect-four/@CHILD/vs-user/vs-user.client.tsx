@@ -267,7 +267,7 @@ const View: Module["View"] = ({ ctx, model, modelSync, dispatch }) => {
           <ViewBottomButtonBar>
             {modelSync.type === "game" && (
               <ViewBottomButtonBarAction
-                icon={<IconFlag className="h-6 w-6" />}
+                icon={(props) => <IconFlag {...props} />}
                 label="Resign"
                 onClick={() => {
                   dispatch({
@@ -282,7 +282,7 @@ const View: Module["View"] = ({ ctx, model, modelSync, dispatch }) => {
               ctx.currentUserId === ctx.space.hostId && (
                 <>
                   <ViewBottomButtonBarAction
-                    icon={<IconArrowLeftOnRect className="h-6 w-6" />}
+                    icon={(props) => <IconArrowLeftOnRect {...props} />}
                     label="Exit"
                     onClick={() => {
                       dispatch({
@@ -293,7 +293,7 @@ const View: Module["View"] = ({ ctx, model, modelSync, dispatch }) => {
                   />
 
                   <ViewBottomButtonBarAction
-                    icon={<IconArrowRotateLeft className="h-6 w-6" />}
+                    icon={(props) => <IconArrowRotateLeft {...props} />}
                     label="Rematch"
                     onClick={() => {
                       dispatch({

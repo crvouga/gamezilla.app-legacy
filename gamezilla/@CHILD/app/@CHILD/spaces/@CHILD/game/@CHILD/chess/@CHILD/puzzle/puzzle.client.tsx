@@ -413,7 +413,7 @@ export const BottomBarActions = ({
 }): VDomChildren => {
   const exit = (
     <ViewBottomButtonBarAction
-      icon={<IconArrowLeftOnRect className="h-6 w-6" />}
+      icon={(props) => <IconArrowLeftOnRect {...props} />}
       label="Exit"
       onClick={onClose}
     />
@@ -421,7 +421,7 @@ export const BottomBarActions = ({
 
   const hint = (
     <ViewBottomButtonBarAction
-      icon={<IconLightbulb className="h-6 w-6" />}
+      icon={(props) => <IconLightbulb {...props} />}
       label="Hint"
       disabled={isNoMoreHints(model) || model.t === "loading"}
       onClick={() => dispatch({ t: "show-hint" })}
@@ -430,7 +430,7 @@ export const BottomBarActions = ({
 
   const retry = (
     <ViewBottomButtonBarAction
-      icon={<IconArrowRotateLeft className="h-6 w-6" />}
+      icon={(props) => <IconArrowRotateLeft {...props} />}
       label="Retry"
       onClick={() => dispatch({ t: "retry" })}
       color="danger"
@@ -439,7 +439,7 @@ export const BottomBarActions = ({
 
   const skip = (
     <ViewBottomButtonBarAction
-      icon={<IconArrowRight className="h-6 w-6" />}
+      icon={(props) => <IconArrowRight {...props} />}
       label="Skip"
       onClick={() => dispatch({ t: "skip" })}
     />
@@ -447,7 +447,7 @@ export const BottomBarActions = ({
 
   const next = (
     <ViewBottomButtonBarAction
-      icon={<IconArrowCircle className="h-6 w-6" />}
+      icon={(props) => <IconArrowCircle {...props} />}
       label="Next"
       color="success"
       onClick={() => dispatch({ t: "next" })}

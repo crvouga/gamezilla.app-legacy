@@ -379,7 +379,7 @@ export const View = ({
       </div>
       <ViewBottomButtonBar>
         <ViewBottomButtonBarAction
-          icon={<IconArrowLeftOnRect className="h-6 w-6" />}
+          icon={(props) => <IconArrowLeftOnRect {...props} />}
           label="Exit"
           onClick={onClose}
         />

@@ -177,7 +177,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 
   const more = (
     <ViewBottomButtonBarAction
-      icon={<IconEllipsisVertical className="h-6 w-6" />}
+      icon={(props) => <IconEllipsisVertical {...props} />}
       label="More"
       onClick={() => dispatch({ t: "puzzle-builder.user-clicked-more-button" })}
     />
@@ -212,7 +212,7 @@ const ViewMode: ClientModule["View"] = (input) => {
             />
 
             <ViewBottomButtonBarAction
-              icon={<IconPlay className="h-6 w-6" />}
+              icon={(props) => <IconPlay {...props} />}
               label="Play Mode"
               classNames={{
                 button: "text-blue-500",
@@ -258,7 +258,7 @@ const ViewMode: ClientModule["View"] = (input) => {
             />
 
             <ViewBottomButtonBarAction
-              icon={<IconPenToSquare className="h-6 w-6" />}
+              icon={(props) => <IconPenToSquare {...props} />}
               label="Edit Mode"
               classNames={{
                 button: "text-amber-500",
