@@ -68,7 +68,7 @@ export const ViewProfileScreen = ({
   }
 
   return (
-    <div className="flex w-full flex-1 grow-0 flex-col">
+    <div className="flex w-full flex-1 flex-col">
       <TopBar
         left={
           <TopBarBackButton
