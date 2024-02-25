@@ -88,7 +88,7 @@ const ButtonAddPuzzle: Pick<ClientModule, "update" | "View"> = {
         return {
           model,
           msgSync: [withId(msg)],
-          msgCmd: [playSound(APP_SOUND.tap)],
+          msgCmd: [playSound(APP_SOUND.navForwardMin)],
         }
       }
     }
@@ -133,7 +133,7 @@ const ScreenAddPuzzle: Pick<ClientModule, "update" | "View"> = {
         return {
           model,
           msgSync: [withId(msg)],
-          msgCmd: [playSound(APP_SOUND.tap)],
+          msgCmd: [playSound(APP_SOUND.navBackwardMin)],
         }
       }
     }
