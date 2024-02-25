@@ -1,58 +1,53 @@
 export const definePolymorphicFunction = <
-  TFunction extends (dataType: any, ...args: any[]) => any,
->(
-  handleNotImplemented: TFunction,
-) => {
-  type DataType = Parameters<TFunction>[0]
+  TFunction extends (variant: any, ...args: any[]) => any,
+>() => {
+  type Variant = Parameters<TFunction>[0]
   type RestParameters = Parameters<TFunction> extends [any, ...infer Rest]
     ? Rest
     : never
   type TOutput = ReturnType<TFunction>
 
   type Implementation<
-    TVariant extends DataType,
-    TImplOutput extends TOutput | DataType,
+    TVariant extends Variant,
+    TImplOutput extends TOutput | Variant,
   > = {
-    predicate: (dataType: DataType) => dataType is TVariant
-    implementation: (dataType: TVariant, ...args: RestParameters) => TImplOutput
+    predicate: (variant: Variant) => variant is TVariant
+    implementation: (variant: TVariant, ...args: RestParameters) => TImplOutput
   }
+
+  let handleNotImplemented: TFunction | undefined
 
   const implementations: Implementation<any, any>[] = []
 
-  function run(dataType: DataType, ...args: RestParameters): TOutput {
+  function run(variant: Variant, ...args: RestParameters): TOutput {
     for (const implementation of implementations) {
-      if (implementation.predicate(dataType)) {
-        return implementation.implementation(dataType, ...args) as TOutput
+      if (implementation.predicate(variant)) {
+        return implementation.implementation(variant, ...args) as TOutput
       }
     }
-    return handleNotImplemented(dataType, ...args)
+
+    if (!handleNotImplemented) {
+      throw new Error("No implementation for variant")
+    }
+
+    const handled = handleNotImplemented(variant, ...args)
+
+    return handled
   }
 
   run.implement = <
-    TVariant extends DataType,
-    TImplOutput extends TOutput | DataType,
+    TVariant extends Variant,
+    TImplOutput extends TOutput | Variant,
   >(
-    predicate: (dataType: DataType) => dataType is TVariant,
-    implementation: (
-      dataType: TVariant,
-      ...args: RestParameters
-    ) => TImplOutput,
+    predicate: (variant: Variant) => variant is TVariant,
+    implementation: (variant: TVariant, ...args: RestParameters) => TImplOutput,
   ) => {
     implementations.push({ predicate, implementation })
   }
 
-  return Object.assign(run, {
-    implement: run.implement,
-  }) as typeof run & {
-    implement: <
-      TVariant extends DataType,
-      TImplOutput extends TOutput | DataType,
-    >(
-      predicate: (dataType: DataType) => dataType is TVariant,
-      implementation: (
-        dataType: TVariant,
-        ...args: RestParameters
-      ) => TImplOutput,
-    ) => void
+  run.implementDefault = (implementation: TFunction) => {
+    handleNotImplemented = implementation
   }
+
+  return run
 }

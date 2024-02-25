@@ -13,15 +13,18 @@ export const signUpWithEmailAndPassword = definePolymorphicFunction<
       password: string
     },
   ) => Promise<Result<string, null>>
->(async () => {
-  return Result.err("Not implemented")
-})
+>()
 
-export const logout = definePolymorphicFunction<
-  (auth: AuthProvider) => Promise<Result<string, null>>
->(async () => {
-  return Result.err("Not implemented")
-})
+signUpWithEmailAndPassword.implementDefault(async () =>
+  Result.err("Not implemented"),
+)
+
+export const logout =
+  definePolymorphicFunction<
+    (auth: AuthProvider) => Promise<Result<string, null>>
+  >()
+
+logout.implementDefault(async () => Result.err("Not implemented"))
 
 export const loginWithEmailAndPassword = definePolymorphicFunction<
   (
@@ -31,12 +34,15 @@ export const loginWithEmailAndPassword = definePolymorphicFunction<
       password: string
     },
   ) => Promise<Result<string, null>>
->(async () => {
-  return Result.err("Not implemented")
-})
+>()
 
-export const loginWithGoogle = definePolymorphicFunction<
-  (auth: AuthProvider) => Promise<Result<string, null>>
->(async () => {
-  return Result.err("Not implemented")
-})
+loginWithEmailAndPassword.implementDefault(async () =>
+  Result.err("Not implemented"),
+)
+
+export const loginWithGoogle =
+  definePolymorphicFunction<
+    (auth: AuthProvider) => Promise<Result<string, null>>
+  >()
+
+loginWithGoogle.implementDefault(async () => Result.err("Not implemented"))

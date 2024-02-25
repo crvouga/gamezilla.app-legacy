@@ -136,20 +136,20 @@ const updateDragging = ({
   msg: Msg
   model: Model
   modelSync: Dragging
-  flow: Flow.Model
+  flow: FlowVariant.Model
 }): Model => {
   switch (msg.t) {
     case "dragged-over": {
       const { nodeId } = msg
 
-      const current = {
+      const current: FlowVariant.Model = {
         ...flow,
         pipesBySourceId: model.pipesBySourceId,
         terminalsByGroupId: model.terminalsByGroupId,
       }
 
       const extended = AlgoDrawPipes.drawPipes(
-        Flow.distance(current),
+        FlowVariant.distance(current),
         current,
         modelSync.activeGroupId,
         nodeId,
