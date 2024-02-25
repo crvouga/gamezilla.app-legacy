@@ -280,7 +280,10 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
       }
 
       case "pack-builder.flow-play-grid-ui": {
-        return { model, msgSync: [withId(msg)] }
+        return {
+          model,
+          msgSync: [withId(msg)],
+        }
       }
     }
 
