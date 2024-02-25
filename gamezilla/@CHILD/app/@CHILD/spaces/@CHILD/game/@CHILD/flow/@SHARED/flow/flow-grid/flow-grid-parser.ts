@@ -22,7 +22,7 @@ export const toModel = (x: unknown): Model | null => {
   ) {
     return {
       ...x,
-      type: "flow-grid",
+      FlowGrid: true,
       height: x.height,
       positions: x.positions,
       width: x.width,

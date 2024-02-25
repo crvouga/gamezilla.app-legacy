@@ -74,6 +74,7 @@ export const isNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
  * The puzzle is a directed graph
  */
 export type Model = {
+  Flow: true
   /**
    * The set of all valid nodes in the puzzle.
    */
@@ -111,6 +112,7 @@ export type Model = {
  *
  */
 export const init: Model = {
+  Flow: true,
   nodes: {},
   edges: {},
   terminalsByGroupId: {},

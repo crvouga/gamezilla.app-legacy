@@ -11,7 +11,7 @@ import * as Flow from "../flow"
 //
 
 export type Model = Flow.Model & {
-  type: "flow-grid"
+  FlowGrid: true
   width: number
   height: number
   positions: {
@@ -56,7 +56,7 @@ export const init = (input: {
 }): Model => {
   let model: Model = {
     ...Flow.init,
-    type: "flow-grid",
+    FlowGrid: true,
     width: input.width,
     height: input.height,
     positions: {},

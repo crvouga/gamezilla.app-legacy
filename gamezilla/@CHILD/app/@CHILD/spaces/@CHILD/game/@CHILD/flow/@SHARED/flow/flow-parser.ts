@@ -92,6 +92,7 @@ export const toModel = (x: unknown): Model | null => {
     P.has(x, "terminalsByGroupId", isTerminalsByGroupId)
   ) {
     return {
+      Flow: true,
       edges: x.edges,
       nodes: x.nodes,
       terminalsByGroupId: x.terminalsByGroupId,
