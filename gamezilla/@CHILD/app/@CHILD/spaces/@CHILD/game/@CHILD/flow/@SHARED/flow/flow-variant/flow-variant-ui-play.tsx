@@ -11,7 +11,9 @@ import * as FlowVariant from "./flow-variant"
 //
 //
 
-type Idle = { t: "idle" }
+type Idle = {
+  t: "idle"
+}
 
 type Dragging = {
   t: "dragging"
