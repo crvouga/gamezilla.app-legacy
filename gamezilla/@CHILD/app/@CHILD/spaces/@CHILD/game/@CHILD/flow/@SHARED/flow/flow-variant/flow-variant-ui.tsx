@@ -1,6 +1,7 @@
+import { FlowViewProps } from "../flow/flow-ui"
 import { FlowGridUI } from "./flow-grid"
 import { FlowHexUI } from "./flow-hex"
-import { FlowViewProps } from "../flow/flow-ui"
+import { FlowTriUI } from "./flow-tri"
 import { Model } from "./flow-variant"
 
 export const View = (props: FlowViewProps<Model>) => {
@@ -11,6 +12,10 @@ export const View = (props: FlowViewProps<Model>) => {
 
     case "flow-hex": {
       return <FlowHexUI.View {...props} model={props.model} />
+    }
+
+    case "flow-tri": {
+      return <FlowTriUI.View {...props} model={props.model} />
     }
   }
 }

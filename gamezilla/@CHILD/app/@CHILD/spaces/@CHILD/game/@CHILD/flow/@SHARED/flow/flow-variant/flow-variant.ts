@@ -2,8 +2,9 @@ import { Flow } from "../flow"
 import * as FlowVariantDimensions from "./flow-variant-dimensions"
 import { FlowGrid } from "./flow-grid"
 import { FlowHex } from "./flow-hex"
+import { FlowTri } from "./flow-tri"
 
-export type Model = FlowGrid.Model | FlowHex.Model
+export type Model = FlowGrid.Model | FlowHex.Model | FlowTri.Model
 
 export const distance = (
   flow: Model,
@@ -15,6 +16,10 @@ export const distance = (
 
     case "flow-hex": {
       return FlowHex.distance(flow)
+    }
+
+    case "flow-tri": {
+      return FlowTri.distance(flow)
     }
   }
 }
@@ -30,6 +35,10 @@ export const init = (input: {
 
     case "flow-hex": {
       return FlowHex.init({ ...input, dimensions: input.dimensions })
+    }
+
+    case "flow-tri": {
+      return FlowTri.init({ ...input, dimensions: input.dimensions })
     }
   }
 }

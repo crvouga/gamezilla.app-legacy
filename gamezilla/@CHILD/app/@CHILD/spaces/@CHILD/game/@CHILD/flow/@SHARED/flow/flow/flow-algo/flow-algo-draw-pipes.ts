@@ -97,11 +97,6 @@ export const drawPipes = (
         nodeIdNew,
       )
 
-      const MAX_AUTO_CONNECT_LENGTH = 10
-      if (shortest.length > MAX_AUTO_CONNECT_LENGTH) {
-        return pipeline
-      }
-
       const pipelineNew = [...pipeline, ...shortest.slice(1)]
 
       return pipelineNew
