@@ -136,9 +136,7 @@ export const puzzleBuilderPressDownRandomNode =
       return { model }
     }
 
-    const nodes = Object.values(
-      Flow.toNodes(puzzleBuilder.puzzle.puzzle.c.flow),
-    )
+    const nodes = Object.values(Flow.toNodes(puzzleBuilder.puzzle.puzzle.c))
 
     const randomNode = nodes[Math.floor(Math.random() * nodes.length)]
 

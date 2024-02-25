@@ -10,9 +10,8 @@ import * as Flow from "../flow"
 //
 //
 
-export type Model = {
+export type Model = Flow.Model & {
   type: "flow-grid"
-  flow: Flow.Model
   width: number
   height: number
   positions: {
@@ -56,8 +55,8 @@ export const init = (input: {
   terminalsByGroupId?: Flow.Model["terminalsByGroupId"]
 }): Model => {
   let model: Model = {
+    ...Flow.init,
     type: "flow-grid",
-    flow: Flow.init,
     width: input.width,
     height: input.height,
     positions: {},
@@ -85,7 +84,7 @@ export const init = (input: {
         y: nodePosition.y + delta.y,
       }
 
-      if (!model.flow.nodes[positionToNodeId(to)]) {
+      if (!model.nodes[positionToNodeId(to)]) {
         continue
       }
 
@@ -94,7 +93,7 @@ export const init = (input: {
         targetId: positionToNodeId(to),
       }
 
-      model.flow = Flow.addEdge(model.flow, edge)
+      model = { ...model, ...Flow.addEdge(model, edge) }
     }
   }
 
@@ -131,7 +130,7 @@ export const init = (input: {
     terminalsByGroupIdNew[terminalNew.groupId] = terminalNew
   }
 
-  model.flow.terminalsByGroupId = terminalsByGroupIdNew
+  model.terminalsByGroupId = terminalsByGroupIdNew
 
   //
   //
@@ -156,7 +155,7 @@ export type Edge = Flow.Edge & {
 }
 
 export const toNode = (model: Model, nodeId: Flow.NodeId): Node | null => {
-  const node = Flow.toNode(model.flow, nodeId)
+  const node = Flow.toNode(model, nodeId)
 
   if (!node) {
     return null
@@ -175,7 +174,7 @@ export const toNode = (model: Model, nodeId: Flow.NodeId): Node | null => {
 }
 
 export const toEdge = (model: Model, edgeId: Flow.EdgeId): Edge | null => {
-  const edge = Flow.toEdge(model.flow, edgeId)
+  const edge = Flow.toEdge(model, edgeId)
 
   if (!edge) {
     return null
@@ -205,10 +204,10 @@ export const toEdge = (model: Model, edgeId: Flow.EdgeId): Edge | null => {
  */
 export const addNode = (model: Model, position: Position): Model => {
   const nodeId = positionToNodeId(position)
-  const added = Flow.addNode(model.flow, { nodeId })
+  const added = Flow.addNode(model, { nodeId })
   return {
     ...model,
-    flow: added,
+    ...added,
     positions: {
       ...model.positions,
       [nodeId]: position,
@@ -217,7 +216,7 @@ export const addNode = (model: Model, position: Position): Model => {
 }
 
 export const yieldPositions = function* (model: Model): Generator<Position> {
-  for (const node of Flow.yieldNodes(model.flow)) {
+  for (const node of Flow.yieldNodes(model)) {
     const position = model.positions[node.nodeId]
     if (!position) {
       continue
@@ -227,7 +226,7 @@ export const yieldPositions = function* (model: Model): Generator<Position> {
 }
 
 export const yieldEdges = function* (model: Model): Generator<Edge> {
-  for (const edge of Flow.yieldEdges(model.flow)) {
+  for (const edge of Flow.yieldEdges(model)) {
     const source = toNode(model, edge.sourceId)
 
     if (!source) {
@@ -245,7 +244,7 @@ export const yieldEdges = function* (model: Model): Generator<Edge> {
 }
 
 export const yieldNodes = function* (model: Model): Generator<Node> {
-  for (const node of Flow.yieldNodes(model.flow)) {
+  for (const node of Flow.yieldNodes(model)) {
     const position = model.positions[node.nodeId]
     if (!position) {
       continue
@@ -260,7 +259,7 @@ export type Terminal = Flow.Terminal & {
 }
 
 export const yieldTerminals = function* (model: Model): Generator<Terminal> {
-  for (const terminal of Flow.yieldTerminals(model.flow)) {
+  for (const terminal of Flow.yieldTerminals(model)) {
     const start = toNode(model, terminal.startId)
 
     if (!start) {
@@ -279,7 +278,7 @@ type PipeJoined = Flow.PipeJoined & {
 }
 
 export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
-  for (const pipe of Flow.yieldPipes(model.flow)) {
+  for (const pipe of Flow.yieldPipes(model)) {
     const source = toNode(model, pipe.edge.sourceId)
 
     if (!source) {

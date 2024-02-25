@@ -94,7 +94,7 @@ export const View = ({
       */}
       <g>
         {map(FlowGrid.yieldNodes(model), (node) => {
-          const groupId = Flow.toGroupId(model.flow, node.nodeId)
+          const groupId = Flow.toGroupId(model, node.nodeId)
           const fill = !groupId
             ? "transparent"
             : isActive?.({ nodeId: node.nodeId, groupId })
@@ -258,7 +258,7 @@ export const View = ({
       <g>
         {map(FlowGrid.yieldNodes(model), (node) => {
           const nodeId = node.nodeId
-          const groupId = Flow.toGroupId(model.flow, node.nodeId)
+          const groupId = Flow.toGroupId(model, node.nodeId)
           return (
             <rect
               key={node.nodeId}

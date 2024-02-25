@@ -15,14 +15,14 @@ const isPositions = P.is(toPositions)
 export const toModel = (x: unknown): Model | null => {
   if (
     P.obj(x) &&
-    P.has(x, "flow", FlowParser.isModel) &&
     P.has(x, "width", P.num) &&
     P.has(x, "height", P.num) &&
-    P.has(x, "positions", isPositions)
+    P.has(x, "positions", isPositions) &&
+    FlowParser.isModel(x)
   ) {
     return {
+      ...x,
       type: "flow-grid",
-      flow: x.flow,
       height: x.height,
       positions: x.positions,
       width: x.width,

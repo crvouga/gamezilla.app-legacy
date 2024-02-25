@@ -67,7 +67,7 @@ export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
   const form: Form = {
     height: grid.height,
     width: grid.width,
-    terminalsByGroupId: grid.flow.terminalsByGroupId,
+    terminalsByGroupId: grid.terminalsByGroupId,
   }
   return {
     form: History.init(form),
@@ -84,7 +84,7 @@ export const isUnsavedChanges = (
   const draft: Form = History.present(model.form)
 
   const actual: Form = {
-    terminalsByGroupId: grid.flow.terminalsByGroupId,
+    terminalsByGroupId: grid.terminalsByGroupId,
     height: grid.height,
     width: grid.width,
   }
@@ -239,7 +239,7 @@ export const update = ({
       })
 
       const formNew: Form = {
-        terminalsByGroupId: gridNew.flow.terminalsByGroupId,
+        terminalsByGroupId: gridNew.terminalsByGroupId,
         width: gridNew.width,
         height: gridNew.height,
       }

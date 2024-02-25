@@ -46,7 +46,7 @@ const userClickedExitButton: SyncReducer = ({ modelSync, msgSync }) => {
   }
 }
 
-const useClickedAddPuzzleItem: SyncReducer = ({ modelSync, msgSync }) => {
+const userClickedAddPuzzleItem: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "pack-builder.user-clicked-add-puzzle-item": {
       if (!modelSync.packBuilder) {
@@ -222,12 +222,60 @@ const flowGridUIPlay: SyncReducer = ({ modelSync, msgSync }) => {
   }
 }
 
+const userClickedNextPuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
+  if (modelSync.packBuilder?.screen.t !== "screen-puzzle") {
+    return modelSync
+  }
+
+  switch (msgSync.t) {
+    case "pack-builder.user-clicked-next-puzzle-button": {
+      return {
+        ...modelSync,
+        packBuilder: {
+          ...modelSync.packBuilder,
+          screen: {
+            t: "screen-puzzle",
+            puzzleIndex: modelSync.packBuilder.screen.puzzleIndex + 1,
+            puzzle: {
+              t: "grid",
+              flowGrid: modelSync.packBuilder.screen.puzzle.flowGrid,
+              flowGridUIPlay: FlowGridUIPlay.init({
+                grid: modelSync.packBuilder.screen.puzzle.flowGrid,
+              }),
+            },
+          },
+        },
+      }
+    }
+
+    default: {
+      return modelSync
+    }
+  }
+}
+
+const userClickedPreviousPuzzleButton: SyncReducer = ({
+  modelSync,
+  msgSync,
+}) => {
+  switch (msgSync.t) {
+    case "pack-builder.user-clicked-previous-puzzle-button": {
+      return modelSync
+    }
+    default: {
+      return modelSync
+    }
+  }
+}
+
 const reducer: SyncReducer = (input) => {
   return [
     flowGridUIPlay,
+    userClickedPreviousPuzzleButton,
+    userClickedNextPuzzleButton,
     userClosedAddPuzzle,
     userClickedOpenAddPuzzleButton,
-    useClickedAddPuzzleItem,
+    userClickedAddPuzzleItem,
     userCreatedPack,
     userClickedExitButton,
     userClickedPackItem,

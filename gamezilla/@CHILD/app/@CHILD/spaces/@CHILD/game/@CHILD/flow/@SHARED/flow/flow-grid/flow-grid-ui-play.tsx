@@ -22,8 +22,8 @@ type Dragging = {
 type Status = Idle | Dragging
 
 export type Model = {
-  pipesBySourceId: FlowGrid.Model["flow"]["pipesBySourceId"]
-  terminalsByGroupId: FlowGrid.Model["flow"]["terminalsByGroupId"]
+  pipesBySourceId: FlowGrid.Model["pipesBySourceId"]
+  terminalsByGroupId: FlowGrid.Model["terminalsByGroupId"]
   status: Status
 }
 
@@ -53,8 +53,8 @@ export type Msg =
 
 export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
   return {
-    pipesBySourceId: grid.flow.pipesBySourceId,
-    terminalsByGroupId: grid.flow.terminalsByGroupId,
+    pipesBySourceId: grid.pipesBySourceId,
+    terminalsByGroupId: grid.terminalsByGroupId,
     status: { t: "idle" },
   }
 }
@@ -88,11 +88,8 @@ export const toCurrentGrid = ({
 }): FlowGrid.Model => {
   return {
     ...grid,
-    flow: {
-      ...grid.flow,
-      pipesBySourceId: model.pipesBySourceId,
-      terminalsByGroupId: model.terminalsByGroupId,
-    },
+    pipesBySourceId: model.pipesBySourceId,
+    terminalsByGroupId: model.terminalsByGroupId,
   }
 }
 
@@ -101,7 +98,7 @@ const updateIdle: typeof update = ({ msg, model, grid }) => {
     case "pressed-down": {
       const currentGrid = toCurrentGrid({ model, grid })
 
-      const groupId = Flow.toGroupId(currentGrid.flow, msg.nodeId)
+      const groupId = Flow.toGroupId(currentGrid, msg.nodeId)
 
       if (!groupId) {
         return model
@@ -109,7 +106,7 @@ const updateIdle: typeof update = ({ msg, model, grid }) => {
 
       const started = AlgoDrawPipes.startDrawPipes(
         FlowGrid.distance(currentGrid),
-        currentGrid.flow,
+        currentGrid,
         groupId,
         msg.nodeId,
       )
@@ -157,7 +154,7 @@ const updateDragging = ({
 
       const extended = AlgoDrawPipes.drawPipes(
         FlowGrid.distance(currentGrid),
-        currentGrid.flow,
+        currentGrid,
         modelSync.activeGroupId,
         nodeId,
       )

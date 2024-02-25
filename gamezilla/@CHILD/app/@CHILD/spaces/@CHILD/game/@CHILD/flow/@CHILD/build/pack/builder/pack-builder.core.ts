@@ -102,3 +102,11 @@ export type MsgSync =
       t: "pack-builder.user-clicked-exit-puzzle-button"
       userId: UserId
     }
+  | {
+      t: "pack-builder.user-clicked-next-puzzle-button"
+      userId: UserId
+    }
+  | {
+      t: "pack-builder.user-clicked-previous-puzzle-button"
+      userId: UserId
+    }

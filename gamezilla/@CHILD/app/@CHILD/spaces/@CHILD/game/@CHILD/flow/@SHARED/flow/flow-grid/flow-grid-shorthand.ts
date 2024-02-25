@@ -55,7 +55,7 @@ export function fromShorthand(model: Model): FlowGrid.Model {
         continue
       }
 
-      const added = Flow.addTerminal(grid.flow, {
+      const added = Flow.addTerminal(grid, {
         groupId: draftTerminal.groupId,
         startId: draftTerminal.startId,
         endId: nodeId,
@@ -63,7 +63,7 @@ export function fromShorthand(model: Model): FlowGrid.Model {
 
       grid = {
         ...grid,
-        flow: added,
+        ...added,
       }
     }
   }

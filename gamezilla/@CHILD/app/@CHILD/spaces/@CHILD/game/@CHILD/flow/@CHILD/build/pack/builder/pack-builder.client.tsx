@@ -20,6 +20,7 @@ import {
 } from "../../../../../../@SHARED/game"
 import { FlowGridUIPlay } from "../../../../@SHARED/flow"
 import { FlowPackPuzzleGridUI } from "../../../../@SHARED/flow-pack-puzzle-grid"
+import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
 import { ClientModule } from "../../build.core"
 
@@ -275,7 +276,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
         return {
           model,
           msgSync: [withId(msg)],
-          msgCmd: [playSound(APP_SOUND.tap)],
+          msgCmd: [playSound(APP_SOUND.navBackwardMin)],
         }
       }
 
@@ -283,6 +284,22 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
         return {
           model,
           msgSync: [withId(msg)],
+        }
+      }
+
+      case "pack-builder.user-clicked-previous-puzzle-button": {
+        return {
+          model,
+          msgSync: [withId(msg)],
+          msgCmd: [playSound(APP_SOUND.tap)],
+        }
+      }
+
+      case "pack-builder.user-clicked-next-puzzle-button": {
+        return {
+          model,
+          msgSync: [withId(msg)],
+          msgCmd: [playSound(APP_SOUND.tap)],
         }
       }
     }
@@ -299,6 +316,8 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
       return null
     }
 
+    const pack = input.modelSync.packBuilder.pack
+    const puzzleIndex = input.modelSync.packBuilder.screen.puzzleIndex
     const { flowGridUIPlay, flowGrid } =
       input.modelSync.packBuilder.screen.puzzle
 
@@ -327,12 +346,24 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
           <ViewBottomButtonBarAction
             icon={(props) => <IconChevronLeft {...props} />}
             label="Previous"
-            onClick={() => {}}
+            disabled={!FlowPack.canGoPrevious(pack, puzzleIndex)}
+            onClick={() =>
+              input.dispatch({
+                t: "pack-builder.user-clicked-previous-puzzle-button",
+                userId: input.ctx.currentUserId,
+              })
+            }
           />
           <ViewBottomButtonBarAction
             icon={(props) => <IconChevronRight {...props} />}
             label="Next"
-            onClick={() => {}}
+            disabled={FlowPack.canGoNext(pack, puzzleIndex)}
+            onClick={() =>
+              input.dispatch({
+                t: "pack-builder.user-clicked-next-puzzle-button",
+                userId: input.ctx.currentUserId,
+              })
+            }
           />
         </ViewBottomButtonBar>
       </div>
