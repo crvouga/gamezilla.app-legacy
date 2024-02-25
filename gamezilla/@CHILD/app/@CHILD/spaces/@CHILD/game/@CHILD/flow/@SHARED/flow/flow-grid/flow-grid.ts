@@ -1,6 +1,6 @@
 import { DELTAS, Position } from "./flow-grid-position"
 
-import * as Flow from "../flow"
+import * as Flow from "../flow/flow"
 
 //
 //

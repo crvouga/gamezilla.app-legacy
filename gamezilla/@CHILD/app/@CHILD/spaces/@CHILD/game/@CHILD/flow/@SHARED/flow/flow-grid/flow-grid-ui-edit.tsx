@@ -15,8 +15,8 @@ import {
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
 } from "../../../../../@SHARED/game"
-import * as Flow from "../flow"
-import * as FlowUI from "../flow-ui"
+import * as Flow from "../flow/flow"
+import * as FlowUI from "../flow/flow-ui"
 import * as FlowGrid from "./flow-grid"
 import * as FlowGridUI from "./flow-grid-ui"
 

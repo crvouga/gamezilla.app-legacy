@@ -1,6 +1,6 @@
 import { cn } from "gamezilla/@CHILD/app/@SHARED/ui"
-import * as Flow from "../flow"
-import * as FlowUI from "../flow-ui"
+import * as Flow from "../flow/flow"
+import * as FlowUI from "../flow/flow-ui"
 import * as FlowGrid from "./flow-grid"
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;

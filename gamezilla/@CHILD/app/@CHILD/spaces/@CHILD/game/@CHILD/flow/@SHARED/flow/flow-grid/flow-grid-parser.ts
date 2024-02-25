@@ -1,6 +1,6 @@
 import { P } from "gamezilla/@SHARED/parsing"
 import { Model } from "./flow-grid"
-import * as FlowParser from "../flow-parser"
+import * as FlowParser from "../flow/flow-parser"
 import { Position } from "./flow-grid-position"
 
 const toPositions = (x: unknown): Model["positions"] | null => {

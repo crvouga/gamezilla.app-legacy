@@ -1,5 +1,5 @@
 import { NonEmpty } from "gamezilla/@SHARED/core"
-import * as Flow from "../flow"
+import * as Flow from "../flow/flow"
 import * as FlowGrid from "./flow-grid"
 
 export type Model = NonEmpty<NonEmpty<Flow.GroupId | null>>

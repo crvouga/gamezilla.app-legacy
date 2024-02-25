@@ -1,5 +1,5 @@
-import { AlgoDrawPipes } from "../algo"
-import * as Flow from "../flow"
+import { AlgoDrawPipes } from "../flow/flow-algo"
+import * as Flow from "../flow/flow"
 import * as FlowGrid from "./flow-grid"
 import * as FlowGridUI from "./flow-grid-ui"
 
