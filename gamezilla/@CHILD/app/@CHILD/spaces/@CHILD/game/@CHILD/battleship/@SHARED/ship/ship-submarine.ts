@@ -1,0 +1,19 @@
+import { Ship, placeShip } from "./ship"
+
+export type ShipSubmarine = {
+  Ship: "Submarine"
+  size: 3
+  airLevel: number
+}
+
+const is = (ship: Ship): ship is ShipSubmarine => {
+  return ship.Ship === "Submarine"
+}
+
+placeShip.implement(is, (_submarine, model) => {
+  return model
+})
+
+export const ShipSubmarine = {
+  is,
+}

@@ -20,19 +20,19 @@ type Submarine = {
 
 type Ship = Battleship | Submarine
 
-function isTorpedo(ammo: Ammo): ammo is Torpedo {
+const isTorpedo = (ammo: Ammo): ammo is Torpedo => {
   return ammo.type === "Torpedo"
 }
 
-function isCannonball(ammo: Ammo): ammo is Cannonball {
+const isCannonball = (ammo: Ammo): ammo is Cannonball => {
   return ammo.type === "Cannonball"
 }
 
-function isBattleship(ship: Ship): ship is Battleship {
+const isBattleship = (ship: Ship): ship is Battleship => {
   return ship.type === "Battleship"
 }
 
-function isSubmarine(ship: Ship): ship is Submarine {
+const isSubmarine = (ship: Ship): ship is Submarine => {
   return ship.type === "Submarine"
 }
 
