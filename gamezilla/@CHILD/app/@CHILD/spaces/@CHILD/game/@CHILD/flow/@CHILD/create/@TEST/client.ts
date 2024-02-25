@@ -8,7 +8,7 @@ import { FlowClientCtx } from "../../../@SHARED/flow-ctx"
 import { FlowPack } from "../../../@SHARED/flow-pack/flow-pack"
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id"
-import { samples } from "../../../@SHARED/flow/flow-variant-grid/flow-grid-samples"
+import { samples } from "../../../@SHARED/flow/flow-variant/flow-grid/flow-grid-samples"
 import { CreateClient } from "../create.client"
 import { ModelClient, ModelSync, initClient, initSync } from "../create.core"
 

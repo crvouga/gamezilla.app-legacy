@@ -1,8 +1,6 @@
 import { cn } from "gamezilla/@CHILD/app/@SHARED/ui"
-import * as Flow from "../flow/flow"
-import * as FlowUI from "../flow/flow-ui"
+import { Flow, FlowUI } from "../../flow"
 import * as FlowGrid from "./flow-grid"
-import { FlowViewProps } from "../flow/flow-ui"
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33
@@ -26,7 +24,7 @@ export const View = ({
   onPressUp,
   isActive,
   onLeave,
-}: FlowViewProps<FlowGrid.Model>) => {
+}: FlowUI.FlowViewProps<FlowGrid.Model>) => {
   const draggedOver = (nodeId: Flow.NodeId) => {
     if (!isDragging || lastDraggedOver === nodeId) {
       return

@@ -7,13 +7,13 @@ import { Sub } from "gamezilla/@SHARED/core"
 import { GameLayout } from "../../../../@SHARED/game"
 import { FlowVariantUIPlay } from "../../@SHARED/flow"
 import { FlowClientCtx } from "../../@SHARED/flow-ctx"
-import { samples } from "../../@SHARED/flow/flow-variant-grid/flow-grid-samples"
+import { samples } from "../../@SHARED/flow/flow-variant/flow-grid/flow-grid-samples"
 import { ViewProfileCard } from "../../@SHARED/ui"
 import {
   ModelClient,
+  ModelSync,
   MsgClient,
   MsgSync,
-  ModelSync,
   MsgToClient,
   MsgToServer,
 } from "./play.core"

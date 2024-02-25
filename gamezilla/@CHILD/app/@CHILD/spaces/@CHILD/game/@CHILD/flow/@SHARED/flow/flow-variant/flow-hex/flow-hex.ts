@@ -1,4 +1,4 @@
-import { Flow } from "../flow"
+import { Flow } from "../../flow"
 import * as FlowHexDimensions from "./flow-hex-dimensions"
 
 type HexPosition = {

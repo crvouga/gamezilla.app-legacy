@@ -1,5 +1,5 @@
-import { FlowHexDimensions } from "../flow-variant-hex"
-import { FlowGridDimensions } from "../flow-variant-grid"
+import { FlowHexDimensions } from "./flow-hex"
+import { FlowGridDimensions } from "./flow-grid"
 
 export type Model = FlowGridDimensions.Model | FlowHexDimensions.Model
 

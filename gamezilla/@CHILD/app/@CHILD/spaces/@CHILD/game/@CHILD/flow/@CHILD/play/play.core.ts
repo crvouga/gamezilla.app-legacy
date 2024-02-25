@@ -1,7 +1,7 @@
 import { GameCore } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-core"
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { FlowVariant, FlowVariantUIPlay } from "../../@SHARED/flow"
-import { samples } from "../../@SHARED/flow/flow-variant-grid/flow-grid-samples"
+import { samples } from "../../@SHARED/flow/flow-variant/flow-grid/flow-grid-samples"
 
 //
 //

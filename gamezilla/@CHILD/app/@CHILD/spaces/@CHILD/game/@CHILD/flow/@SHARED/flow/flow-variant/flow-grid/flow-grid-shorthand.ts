@@ -1,5 +1,5 @@
 import { NonEmpty } from "gamezilla/@SHARED/core"
-import * as Flow from "../flow/flow"
+import { Flow } from "../../flow"
 import * as FlowGrid from "./flow-grid"
 import * as FlowGridDimensions from "./flow-grid-dimensions"
 

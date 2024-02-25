@@ -1,5 +1,5 @@
 import { DELTAS, Position } from "./flow-grid-position"
-import { Flow } from "../flow"
+import { Flow } from "../../flow"
 import * as FlowGridDimensions from "./flow-grid-dimensions"
 
 //

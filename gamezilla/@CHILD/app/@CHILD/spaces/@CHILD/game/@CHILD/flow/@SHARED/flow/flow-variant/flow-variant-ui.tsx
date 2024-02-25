@@ -1,5 +1,5 @@
-import { FlowGridUI } from "../flow-variant-grid"
-import { FlowHexUI } from "../flow-variant-hex"
+import { FlowGridUI } from "./flow-grid"
+import { FlowHexUI } from "./flow-hex"
 import { FlowViewProps } from "../flow/flow-ui"
 import { Model } from "./flow-variant"
 

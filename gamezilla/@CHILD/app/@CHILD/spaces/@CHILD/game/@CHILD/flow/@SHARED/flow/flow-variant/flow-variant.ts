@@ -1,7 +1,7 @@
 import { Flow } from "../flow"
-import { FlowGrid } from "../flow-variant-grid"
-import { FlowHex } from "../flow-variant-hex"
 import * as FlowVariantDimensions from "./flow-variant-dimensions"
+import { FlowGrid } from "./flow-grid"
+import { FlowHex } from "./flow-hex"
 
 export type Model = FlowGrid.Model | FlowHex.Model
 
