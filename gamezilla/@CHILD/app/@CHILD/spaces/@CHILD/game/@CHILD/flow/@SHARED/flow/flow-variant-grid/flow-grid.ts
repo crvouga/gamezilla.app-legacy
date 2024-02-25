@@ -1,6 +1,6 @@
 import { DELTAS, Position } from "./flow-grid-position"
-
-import * as Flow from "../flow/flow"
+import { Flow } from "../flow"
+import * as FlowGridDimensions from "./flow-grid-dimensions"
 
 //
 //
@@ -10,14 +10,14 @@ import * as Flow from "../flow/flow"
 //
 //
 
-export type Model = Flow.Model & {
-  FlowGrid: true
-  width: number
-  height: number
-  positions: {
-    [nodeId: Flow.NodeId]: Position
+export type Model = Flow.Model &
+  FlowGridDimensions.Model & {
+    t: "flow-grid"
+    FlowGrid: true
+    positions: {
+      [nodeId: Flow.NodeId]: Position
+    }
   }
-}
 
 export const positionToNodeId = (position: Position): Flow.NodeId => {
   return Flow.createNodeId(`${position.x},${position.y}`)
@@ -50,15 +50,15 @@ export const distance =
 //
 
 export const init = (input: {
-  width: number
-  height: number
+  dimensions: FlowGridDimensions.Model
   terminalsByGroupId?: Flow.Model["terminalsByGroupId"]
 }): Model => {
   let model: Model = {
     ...Flow.init,
+    t: "flow-grid",
     FlowGrid: true,
-    width: input.width,
-    height: input.height,
+    width: input.dimensions.width,
+    height: input.dimensions.height,
     positions: {},
   }
 
@@ -66,8 +66,8 @@ export const init = (input: {
   // Add nodes
   //
 
-  for (let x = 0; x < input.width; x++) {
-    for (let y = 0; y < input.height; y++) {
+  for (let x = 0; x < input.dimensions.width; x++) {
+    for (let y = 0; y < input.dimensions.height; y++) {
       const position: Position = { x, y }
       model = addNode(model, position)
     }

@@ -13,7 +13,7 @@ area.implement(isOctagon, (shape) => 2 * (1 + Math.SQRT2) * shape.side ** 2)
 
 perimeter.implement(isOctagon, (shape) => 8 * shape.side)
 
-scale.implement(isOctagon, (shape) => (scaleBy) => ({
+scale.implement(isOctagon, (shape, scaleBy) => ({
   ...shape,
   side: shape.side * scaleBy,
 }))

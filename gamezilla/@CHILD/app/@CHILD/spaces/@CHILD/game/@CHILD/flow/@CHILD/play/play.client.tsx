@@ -5,9 +5,9 @@ import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client"
 import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Sub } from "gamezilla/@SHARED/core"
 import { GameLayout } from "../../../../@SHARED/game"
-import { FlowGridUIPlay } from "../../@SHARED/flow"
+import { FlowVariantUIPlay } from "../../@SHARED/flow"
 import { FlowClientCtx } from "../../@SHARED/flow-ctx"
-import { samples } from "../../@SHARED/flow/flow-grid/flow-grid-samples"
+import { samples } from "../../@SHARED/flow/flow-variant-grid/flow-grid-samples"
 import { ViewProfileCard } from "../../@SHARED/ui"
 import {
   ModelClient,
@@ -32,10 +32,10 @@ type Module = GameClientModule<{
   MsgInCmd: null
 }>
 
-const grid = samples["8x8"][0]
+const flow = samples["8x8"][0]
 const init: Module["init"] = {
-  gridPlay: FlowGridUIPlay.init({ grid }),
-  grid,
+  play: FlowVariantUIPlay.init({ flow }),
+  flow,
 }
 
 const update: Module["update"] = (input) => {
@@ -55,15 +55,15 @@ const updateFromMsg: Module["update"] = (input) => {
 
   switch (msg.t) {
     case "grid": {
-      const gridPlayNew = FlowGridUIPlay.update({
+      const updated = FlowVariantUIPlay.update({
         msg: msg.c,
-        model: model.gridPlay,
-        grid: model.grid,
+        model: model.play,
+        flow: model.flow,
       })
       return {
         model: {
-          gridPlay: gridPlayNew,
-          grid: model.grid,
+          play: updated,
+          flow: model.flow,
         },
       }
     }
@@ -95,17 +95,17 @@ const View: Module["View"] = ({ model, modelSync, dispatch, ctx }) => {
           <ViewProfileCard profile={host} subtitle="Player" />
         )}
         {USE_GAME_STATE ? (
-          <FlowGridUIPlay.View
+          <FlowVariantUIPlay.View
             dispatch={(c) => dispatch({ t: "msgSync", c: { t: "grid", c } })}
-            model={modelSync.gridPlay}
+            model={modelSync.play}
             disabled={isSpectating}
-            grid={modelSync.grid}
+            flow={modelSync.flow}
           />
         ) : (
-          <FlowGridUIPlay.View
+          <FlowVariantUIPlay.View
             dispatch={(c) => dispatch({ t: "grid", c })}
-            model={model.gridPlay}
-            grid={model.grid}
+            model={model.play}
+            flow={model.flow}
             disabled={isSpectating}
           />
         )}

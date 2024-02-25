@@ -1,10 +1,10 @@
 import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2"
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { Result } from "gamezilla/@SHARED/core"
-import { FlowGrid } from "../../../../@SHARED/flow"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { ServerModule } from "../../create.core"
 import { MsgSync } from "./puzzle-create.core"
+import { FlowVariant, FlowVariantDimensions } from "../../../../@SHARED/flow"
 
 const update: ServerModule["update"] = async (input) => {
   return GameServerModule.chainUpdates({ model: input.model }, (model) =>
@@ -31,14 +31,14 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         count: count,
         createdAt: ctx.now,
         createdBy: msgClient.userId,
-        puzzle: {
-          t: "grid",
-          c: FlowGrid.init({
+        flow: FlowVariant.init({
+          terminalsByGroupId: {},
+          dimensions: FlowVariantDimensions.init({
+            t: "flow-grid",
             height: 8,
             width: 8,
-            terminalsByGroupId: {},
           }),
-        },
+        }),
       })
 
       const created = await deps.FlowPuzzleDb.put(puzzleNew)

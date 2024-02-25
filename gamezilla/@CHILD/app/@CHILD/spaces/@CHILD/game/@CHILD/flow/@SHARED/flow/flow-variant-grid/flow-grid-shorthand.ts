@@ -1,6 +1,7 @@
 import { NonEmpty } from "gamezilla/@SHARED/core"
 import * as Flow from "../flow/flow"
 import * as FlowGrid from "./flow-grid"
+import * as FlowGridDimensions from "./flow-grid-dimensions"
 
 export type Model = NonEmpty<NonEmpty<Flow.GroupId | null>>
 
@@ -12,8 +13,10 @@ type DraftTerminal = {
 
 export function fromShorthand(model: Model): FlowGrid.Model {
   let grid = FlowGrid.init({
-    width: model[0].length,
-    height: model.length,
+    dimensions: FlowGridDimensions.init({
+      width: model[0].length,
+      height: model.length,
+    }),
   })
 
   const draftTerminals: {

@@ -1,7 +1,7 @@
 import { GameCore } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-core"
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { FlowGrid, FlowGridUIPlay } from "../../@SHARED/flow"
-import { samples } from "../../@SHARED/flow/flow-grid/flow-grid-samples"
+import { FlowVariant, FlowVariantUIPlay } from "../../@SHARED/flow"
+import { samples } from "../../@SHARED/flow/flow-variant-grid/flow-grid-samples"
 
 //
 //
@@ -11,8 +11,8 @@ import { samples } from "../../@SHARED/flow/flow-grid/flow-grid-samples"
 //
 
 export type ModelClient = {
-  gridPlay: FlowGridUIPlay.Model
-  grid: FlowGrid.Model
+  play: FlowVariantUIPlay.Model
+  flow: FlowVariant.Model
 }
 
 export type ModelServer = {}
@@ -31,7 +31,7 @@ export type MsgClient =
     }
   | {
       t: "grid"
-      c: FlowGridUIPlay.Msg
+      c: FlowVariantUIPlay.Msg
     }
 
 export type MsgServer = { t: null }
@@ -42,12 +42,12 @@ export type MsgToClient = { t: null }
 
 export type MsgSync = {
   t: "grid"
-  c: FlowGridUIPlay.Msg
+  c: FlowVariantUIPlay.Msg
 }
 
 export type ModelSync = {
-  gridPlay: FlowGridUIPlay.Model
-  grid: FlowGrid.Model
+  play: FlowVariantUIPlay.Model
+  flow: FlowVariant.Model
 }
 
 type Module = GameCore<{
@@ -57,22 +57,24 @@ type Module = GameCore<{
 }>
 
 export const initSync: Module["initSync"] = () => {
-  const grid = samples["8x8"][1]
+  const flow = samples["8x8"][1]
   return {
-    gridPlay: FlowGridUIPlay.init({ grid }),
-    grid,
+    play: FlowVariantUIPlay.init({
+      flow,
+    }),
+    flow,
   }
 }
 
 export const reducer: Module["reducer"] = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "grid": {
-      const gridPlayNew = FlowGridUIPlay.update({
+      const gridPlayNew = FlowVariantUIPlay.update({
         msg: msgSync.c,
-        model: modelSync.gridPlay,
-        grid: modelSync.grid,
+        model: modelSync.play,
+        flow: modelSync.flow,
       })
-      return { gridPlay: gridPlayNew, grid: modelSync.grid }
+      return { play: gridPlayNew, flow: modelSync.flow }
     }
   }
 }

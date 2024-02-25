@@ -1,8 +1,9 @@
 import { describe, expect, it } from "bun:test"
 import { chainUpdates } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
-import { ModelClient, initClient } from "./flow-puzzle-list.core"
-import { FlowPuzzleListClient } from "./flow-puzzle-list.client"
-import { testSpaceClientCtx } from "../../../../@SHARED/testing/client"
+import {
+  didSendToServer,
+  didShowErrorSm,
+} from "gamezilla/@CHILD/app/@SHARED/client"
 import {
   Posix,
   RequestResponse,
@@ -11,13 +12,12 @@ import {
   isRequesting,
   ok,
 } from "gamezilla/@SHARED/core"
-import {
-  didSendToServer,
-  didShowErrorSm,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
+import { testSpaceClientCtx } from "../../../../@SHARED/testing/client"
 import { testFlowClientCtx } from "../../@CHILD/create/@TEST/client"
-import { FlowGrid } from "../flow"
+import { FlowVariant, FlowVariantDimensions } from "../flow"
+import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
+import { FlowPuzzleListClient } from "./flow-puzzle-list.client"
+import { ModelClient, initClient } from "./flow-puzzle-list.core"
 
 const initial = {
   model: initClient,
@@ -93,13 +93,14 @@ describe(import.meta.file, () => {
       count: 1,
       createdAt: testFlowClientCtx.now,
       createdBy: testFlowClientCtx.currentUserId,
-      puzzle: {
-        t: "grid",
-        c: FlowGrid.init({
+      flow: FlowVariant.init({
+        dimensions: FlowVariantDimensions.init({
+          t: "flow-grid",
           height: 5,
           width: 5,
         }),
-      },
+        terminalsByGroupId: {},
+      }),
     })
 
     const output = await chainUpdates(initial, serverListedPuzzlesOk([puzzle]))

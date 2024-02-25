@@ -1,7 +1,7 @@
 import { AlgoDrawPipes } from "../flow/flow-algo"
 import * as Flow from "../flow/flow"
-import * as FlowGrid from "./flow-grid"
-import * as FlowGridUI from "./flow-grid-ui"
+import * as FlowVariantUI from "./flow-variant-ui"
+import * as FlowVariant from "./flow-variant"
 
 //
 //
@@ -16,14 +16,14 @@ type Idle = { t: "idle" }
 type Dragging = {
   t: "dragging"
   activeGroupId: Flow.GroupId
-  autocompleteEdge?: FlowGrid.Edge | null
+  autocompleteEdge?: Flow.Edge | null
 }
 
 type Status = Idle | Dragging
 
 export type Model = {
-  pipesBySourceId: FlowGrid.Model["pipesBySourceId"]
-  terminalsByGroupId: FlowGrid.Model["terminalsByGroupId"]
+  pipesBySourceId: Flow.Model["pipesBySourceId"]
+  terminalsByGroupId: Flow.Model["terminalsByGroupId"]
   status: Status
 }
 
@@ -51,10 +51,10 @@ export type Msg =
       t: "left"
     }
 
-export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
+export const init = ({ flow }: { flow: Flow.Model }): Model => {
   return {
-    pipesBySourceId: grid.pipesBySourceId,
-    terminalsByGroupId: grid.terminalsByGroupId,
+    pipesBySourceId: flow.pipesBySourceId,
+    terminalsByGroupId: flow.terminalsByGroupId,
     status: { t: "idle" },
   }
 }
@@ -62,51 +62,41 @@ export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
 export const update = ({
   msg,
   model,
-  grid,
+  flow,
 }: {
   msg: Msg
   model: Model
-  grid: FlowGrid.Model
+  flow: FlowVariant.Model
 }): Model => {
   switch (model.status.t) {
     case "dragging": {
-      return updateDragging({ grid, msg, model, modelSync: model.status })
+      return updateDragging({ flow, msg, model, modelSync: model.status })
     }
 
     case "idle": {
-      return updateIdle({ grid, msg, model })
+      return updateIdle({ flow, msg, model })
     }
   }
 }
 
-export const toCurrentGrid = ({
-  model,
-  grid,
-}: {
-  grid: FlowGrid.Model
-  model: Model
-}): FlowGrid.Model => {
-  return {
-    ...grid,
-    pipesBySourceId: model.pipesBySourceId,
-    terminalsByGroupId: model.terminalsByGroupId,
-  }
-}
-
-const updateIdle: typeof update = ({ msg, model, grid }) => {
+const updateIdle: typeof update = ({ msg, model, flow }) => {
   switch (msg.t) {
     case "pressed-down": {
-      const currentGrid = toCurrentGrid({ model, grid })
+      const current = {
+        ...flow,
+        pipesBySourceId: model.pipesBySourceId,
+        terminalsByGroupId: model.terminalsByGroupId,
+      }
 
-      const groupId = Flow.toGroupId(currentGrid, msg.nodeId)
+      const groupId = Flow.toGroupId(current, msg.nodeId)
 
       if (!groupId) {
         return model
       }
 
       const started = AlgoDrawPipes.startDrawPipes(
-        FlowGrid.distance(currentGrid),
-        currentGrid,
+        FlowVariant.distance(current),
+        current,
         groupId,
         msg.nodeId,
       )
@@ -139,22 +129,26 @@ const updateDragging = ({
   msg,
   modelSync,
   model,
-  grid,
+  flow,
 }: {
   msg: Msg
   model: Model
   modelSync: Dragging
-  grid: FlowGrid.Model
+  flow: Flow.Model
 }): Model => {
   switch (msg.t) {
     case "dragged-over": {
       const { nodeId } = msg
 
-      const currentGrid = toCurrentGrid({ model, grid })
+      const current = {
+        ...flow,
+        pipesBySourceId: model.pipesBySourceId,
+        terminalsByGroupId: model.terminalsByGroupId,
+      }
 
       const extended = AlgoDrawPipes.drawPipes(
-        FlowGrid.distance(currentGrid),
-        currentGrid,
+        Flow.distance(current),
+        current,
         modelSync.activeGroupId,
         nodeId,
       )
@@ -182,6 +176,20 @@ const updateDragging = ({
   }
 }
 
+export const toCurrentFlow = ({
+  model,
+  flow,
+}: {
+  flow: FlowVariant.Model
+  model: Model
+}): FlowVariant.Model => {
+  return {
+    ...flow,
+    pipesBySourceId: model.pipesBySourceId,
+    terminalsByGroupId: model.terminalsByGroupId,
+  }
+}
+
 //
 //
 //
@@ -194,17 +202,21 @@ export const View = ({
   model,
   dispatch,
   disabled,
-  grid,
+  flow,
 }: {
-  grid: FlowGrid.Model
+  flow: FlowVariant.Model
   model: Model
   dispatch: (m: Msg) => void
   disabled?: boolean
 }) => {
   return (
-    <FlowGridUI.View
+    <FlowVariantUI.View
       disabled={disabled}
-      model={toCurrentGrid({ model, grid })}
+      model={{
+        ...flow,
+        pipesBySourceId: model.pipesBySourceId,
+        terminalsByGroupId: model.terminalsByGroupId,
+      }}
       showCoordinates={false}
       isDragging={model.status.t === "dragging"}
       onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}

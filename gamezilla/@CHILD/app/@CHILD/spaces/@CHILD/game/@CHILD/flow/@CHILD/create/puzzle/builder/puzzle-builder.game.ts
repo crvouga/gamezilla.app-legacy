@@ -1,5 +1,5 @@
 import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { FlowGridUIEdit, FlowGridUIPlay } from "../../../../@SHARED/flow"
+import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../../@SHARED/flow"
 import { ModelSync, MsgSync } from "../../create.core"
 
 const reducer = ({
@@ -12,46 +12,46 @@ const reducer = ({
   modelSync: ModelSync
 }): ModelSync => {
   switch (msgSync.t) {
-    case "puzzle-builder.grid-ui-play": {
+    case "puzzle-builder.flow-ui-play": {
       if (!modelSync.puzzleBuilder) {
         return modelSync
       }
 
-      const currentGrid = FlowGridUIEdit.toCurrentGrid({
-        model: modelSync.puzzleBuilder.gridEdit,
+      const currentFlow = FlowVariantUIEdit.toCurrentFlow({
+        model: modelSync.puzzleBuilder.edit,
       })
 
-      const updated = FlowGridUIPlay.update({
-        model: modelSync.puzzleBuilder.gridPlay,
+      const updated = FlowVariantUIPlay.update({
+        model: modelSync.puzzleBuilder.play,
         msg: msgSync.c,
-        grid: currentGrid,
+        flow: currentFlow,
       })
 
       return {
         ...modelSync,
         puzzleBuilder: {
           ...modelSync.puzzleBuilder,
-          gridPlay: updated,
+          play: updated,
         },
       }
     }
 
-    case "puzzle-builder.grid-ui-edit": {
+    case "puzzle-builder.flow-ui-edit": {
       if (!modelSync.puzzleBuilder) {
         return modelSync
       }
 
-      const updated = FlowGridUIEdit.update({
-        model: modelSync.puzzleBuilder.gridEdit,
+      const updated = FlowVariantUIEdit.update({
+        model: modelSync.puzzleBuilder.edit,
         msg: msgSync.c,
-        grid: modelSync.puzzleBuilder.puzzle.puzzle.c,
+        flow: modelSync.puzzleBuilder.puzzle.flow,
       })
 
       return {
         ...modelSync,
         puzzleBuilder: {
           ...modelSync.puzzleBuilder,
-          gridEdit: updated.model,
+          edit: updated.model,
         },
       }
     }
@@ -78,9 +78,9 @@ const reducer = ({
       if (!modelSync.puzzleBuilder) {
         return modelSync
       }
-      const initial = FlowGridUIPlay.init({
-        grid: FlowGridUIEdit.toCurrentGrid({
-          model: modelSync.puzzleBuilder.gridEdit,
+      const initial = FlowVariantUIPlay.init({
+        flow: FlowVariantUIEdit.toCurrentFlow({
+          model: modelSync.puzzleBuilder.edit,
         }),
       })
       return {
@@ -88,7 +88,7 @@ const reducer = ({
         puzzleBuilder: {
           ...modelSync.puzzleBuilder,
           mode: { t: "play" },
-          gridPlay: initial,
+          play: initial,
         },
       }
     }

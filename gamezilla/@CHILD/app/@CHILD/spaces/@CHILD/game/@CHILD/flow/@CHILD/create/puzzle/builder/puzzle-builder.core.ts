@@ -1,8 +1,8 @@
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import {
-  FlowGrid,
-  FlowGridUIEdit,
-  FlowGridUIPlay,
+  FlowVariant,
+  FlowVariantUIEdit,
+  FlowVariantUIPlay,
 } from "../../../../@SHARED/flow"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 
@@ -15,8 +15,8 @@ export type ModelServer = {}
 export type MsgServer = { t: "noop" }
 
 export type MsgClient =
-  | { t: "puzzle-builder.flow-grid-ui-edit"; c: FlowGridUIEdit.Msg }
-  | { t: "puzzle-builder.flow-grid-ui-play"; c: FlowGridUIPlay.Msg }
+  | { t: "puzzle-builder.flow-ui-edit"; c: FlowVariantUIEdit.Msg }
+  | { t: "puzzle-builder.flow-ui-play"; c: FlowVariantUIPlay.Msg }
   | { t: "puzzle-builder.user-clicked-more-button" }
   | { t: "puzzle-builder.user-closed-more-drawer" }
   | { t: "puzzle-builder.user-clicked-exit-button" }
@@ -46,24 +46,24 @@ export type ModelSync = {
   t: "puzzle-builder"
   puzzle: FlowPuzzle
   mode: Mode
-  gridPlay: FlowGridUIPlay.Model
-  gridEdit: FlowGridUIEdit.Model
+  play: FlowVariantUIPlay.Model
+  edit: FlowVariantUIEdit.Model
 }
 
-export const toCurrentGrid = (modelSync: ModelSync): FlowGrid.Model => {
+export const toCurrentFlow = (modelSync: ModelSync): FlowVariant.Model => {
   switch (modelSync.mode.t) {
     case "edit": {
-      return FlowGridUIEdit.toCurrentGrid({
-        model: modelSync.gridEdit,
+      return FlowVariantUIEdit.toCurrentFlow({
+        model: modelSync.edit,
       })
     }
 
     case "play": {
-      return FlowGridUIPlay.toCurrentGrid({
-        grid: FlowGridUIEdit.toCurrentGrid({
-          model: modelSync.gridEdit,
+      return FlowVariantUIPlay.toCurrentFlow({
+        flow: FlowVariantUIEdit.toCurrentFlow({
+          model: modelSync.edit,
         }),
-        model: modelSync.gridPlay,
+        model: modelSync.play,
       })
     }
   }
@@ -71,12 +71,12 @@ export const toCurrentGrid = (modelSync: ModelSync): FlowGrid.Model => {
 
 export type MsgSync =
   | {
-      t: "puzzle-builder.grid-ui-play"
-      c: FlowGridUIPlay.Msg
+      t: "puzzle-builder.flow-ui-play"
+      c: FlowVariantUIPlay.Msg
     }
   | {
-      t: "puzzle-builder.grid-ui-edit"
-      c: FlowGridUIEdit.Msg
+      t: "puzzle-builder.flow-ui-edit"
+      c: FlowVariantUIEdit.Msg
     }
   | {
       t: "puzzle-builder.user-clicked-edit-mode-button"

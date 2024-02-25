@@ -4,4 +4,6 @@ export type Content = {
   Content: string
 }
 
-export const renderHTML = definePolymorphicFunction<Content, string>(() => "")
+export const renderHTML = definePolymorphicFunction<
+  (content: Content) => string
+>(() => "")

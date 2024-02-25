@@ -42,7 +42,7 @@ describe(import.meta.file, () => {
       clickedOpenPuzzlePickerButton(),
     )
     const modelSync = deriveModelSync(output)
-    expect(modelSync.packBuilder?.opened.t === "add-puzzle").toBeTrue()
+    expect(modelSync.packBuilder?.screen.t === "add-puzzle").toBeTrue()
   })
 
   it("should close puzzle picker when user clicks closes", async () => {

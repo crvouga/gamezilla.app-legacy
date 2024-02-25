@@ -1,5 +1,5 @@
 import { isErr } from "gamezilla/@SHARED/core"
-import { FlowGridUIEdit, FlowGridUIPlay } from "../../../../@SHARED/flow"
+import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../../@SHARED/flow"
 import { SyncReducer } from "../../create.core"
 
 const reducer: SyncReducer = ({ modelSync, msgSync }) => {
@@ -16,8 +16,8 @@ const reducer: SyncReducer = ({ modelSync, msgSync }) => {
         puzzleBuilder: {
           t: "puzzle-builder",
           mode: { t: "edit" },
-          gridEdit: FlowGridUIEdit.init({ grid: puzzleNew.puzzle.c }),
-          gridPlay: FlowGridUIPlay.init({ grid: puzzleNew.puzzle.c }),
+          edit: FlowVariantUIEdit.init({ flow: puzzleNew.flow }),
+          play: FlowVariantUIPlay.init({ flow: puzzleNew.flow }),
           puzzle: puzzleNew,
         },
       }

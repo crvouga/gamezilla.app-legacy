@@ -1,4 +1,5 @@
 import { memoize } from "gamezilla/@SHARED/core"
+import { definePolymorphicFunction } from "gamezilla/@SHARED/polymorphism/polymorphic-function"
 
 export type NodeId = string & { readonly __brand: unique symbol }
 
@@ -107,6 +108,10 @@ export type Model = {
     [sourceId: NodeId]: Pipe
   }
 }
+
+export const distance = definePolymorphicFunction<
+  (model: Model) => (a: NodeId, b: NodeId) => number
+>(() => () => Infinity)
 
 /**
  *

@@ -6,6 +6,7 @@ import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id"
 import { FlowPuzzleName } from "../flow-puzzle/flow-puzzle-name"
 import { IFlowPuzzleDb } from "./flow-puzzle-db"
+import { FlowVariantParser } from "../flow"
 
 //
 //
@@ -54,7 +55,7 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
   const flowPuzzleName = FlowPuzzleName.is(row.flow_puzzle_name)
     ? row.flow_puzzle_name
     : null
-  const puzzle = FlowPuzzle.isPuzzle(row.flow_puzzle) ? row.flow_puzzle : null
+  const flow = FlowVariantParser.is(row.flow_puzzle) ? row.flow_puzzle : null
   const createdAt = postgresTimestampToPosix(row.created_at)
   const createdBy = UserId.is(row.created_by_user_id)
     ? row.created_by_user_id
@@ -66,7 +67,7 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
   if (
     flowPuzzleId &&
     flowPuzzleName &&
-    puzzle &&
+    flow &&
     createdAt &&
     createdBy &&
     lastUpdatedAt &&
@@ -75,7 +76,7 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
     return {
       id: flowPuzzleId,
       name: flowPuzzleName,
-      puzzle,
+      flow: flow,
       createdAt,
       createdBy,
       lastUpdatedAt,
@@ -89,7 +90,7 @@ const puzzleToRow = (puzzle: FlowPuzzle): Row => {
   return {
     flow_puzzle_id: puzzle.id,
     flow_puzzle_name: puzzle.name,
-    flow_puzzle: puzzle.puzzle,
+    flow_puzzle: puzzle.flow,
     created_at: Posix.toIsoString(puzzle.createdAt),
     created_by_user_id: puzzle.createdBy,
     last_updated_at: Posix.toIsoString(puzzle.lastUpdatedAt),

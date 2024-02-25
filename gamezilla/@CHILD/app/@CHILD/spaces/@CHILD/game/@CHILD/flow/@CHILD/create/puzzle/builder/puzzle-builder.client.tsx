@@ -15,16 +15,16 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { VDom } from "gamezilla/@SHARED/vdom"
 import {
-  FlowGridUI,
-  FlowGridUIEdit,
-  FlowGridUIPlay,
+  FlowVariantUI,
+  FlowVariantUIEdit,
+  FlowVariantUIPlay,
 } from "../../../../@SHARED/flow"
 import { ViewProfileCard } from "../../../../@SHARED/ui"
 import { ClientModule } from "../../create.core"
 import { PuzzleDeleteForeverClient } from "../delete-forever/puzzle-delete-forever.client"
 import { PuzzleEditNameClient } from "../edit/puzzle-edit-name.client"
 import { PuzzleSaveChangesClient } from "../save-changes/puzzle-save-changes.client"
-import { toCurrentGrid } from "./puzzle-builder.core"
+import { toCurrentFlow } from "./puzzle-builder.core"
 
 //
 //
@@ -47,17 +47,17 @@ const updateFromMsg: ClientModule["update"] = (input) => {
   const { model, msg, ctx } = input
 
   switch (msg?.t) {
-    case "puzzle-builder.flow-grid-ui-edit": {
+    case "puzzle-builder.flow-ui-edit": {
       return {
         model,
-        msgSync: [withId({ t: "puzzle-builder.grid-ui-edit", c: msg.c })],
+        msgSync: [withId({ t: "puzzle-builder.flow-ui-edit", c: msg.c })],
       }
     }
 
-    case "puzzle-builder.flow-grid-ui-play": {
+    case "puzzle-builder.flow-ui-play": {
       return {
         model,
-        msgSync: [withId({ t: "puzzle-builder.grid-ui-play", c: msg.c })],
+        msgSync: [withId({ t: "puzzle-builder.flow-ui-play", c: msg.c })],
       }
     }
 
@@ -107,17 +107,17 @@ const updateFromMsgSync: ClientModule["update"] = (input) => {
   const { model, modelSync, msgSync } = input
 
   switch (msgSync?.t) {
-    case "puzzle-builder.grid-ui-edit": {
+    case "puzzle-builder.flow-ui-edit": {
       if (!modelSync.puzzleBuilder) {
         return { model }
       }
       if (modelSync.puzzleBuilder.mode.t !== "edit") {
         return { model }
       }
-      const updated = FlowGridUIEdit.update({
-        model: modelSync.puzzleBuilder.gridEdit,
+      const updated = FlowVariantUIEdit.update({
+        model: modelSync.puzzleBuilder.edit,
         msg: msgSync.c,
-        grid: modelSync.puzzleBuilder.puzzle.puzzle.c,
+        flow: modelSync.puzzleBuilder.puzzle.flow,
       })
 
       if (!updated.msgCmd) {
@@ -194,11 +194,11 @@ const ViewMode: ClientModule["View"] = (input) => {
           />
 
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
-            <FlowGridUIEdit.View
-              model={puzzleBuilder.gridEdit}
+            <FlowVariantUIEdit.View
+              model={puzzleBuilder.edit}
               dispatch={(c) =>
                 dispatch({
-                  t: "puzzle-builder.flow-grid-ui-edit",
+                  t: "puzzle-builder.flow-ui-edit",
                   c,
                 })
               }
@@ -239,12 +239,12 @@ const ViewMode: ClientModule["View"] = (input) => {
           />
 
           <div className="flex w-full flex-1 flex-col items-center justify-center overflow-hidden">
-            <FlowGridUIPlay.View
-              model={puzzleBuilder.gridPlay}
-              grid={toCurrentGrid(puzzleBuilder)}
+            <FlowVariantUIPlay.View
+              model={puzzleBuilder.play}
+              flow={toCurrentFlow(puzzleBuilder)}
               dispatch={(c) =>
                 dispatch({
-                  t: "puzzle-builder.flow-grid-ui-play",
+                  t: "puzzle-builder.flow-ui-play",
                   c,
                 })
               }
@@ -289,9 +289,9 @@ const ViewSpectating: ClientModule["View"] = ({ modelSync, ctx }) => {
           profile={ctx.profiles[ctx.space.hostId]}
           subtitle="Editor"
         />
-        <FlowGridUI.View
+        <FlowVariantUI.View
           disabled
-          model={toCurrentGrid(modelSync.puzzleBuilder)}
+          model={toCurrentFlow(modelSync.puzzleBuilder)}
         />
       </div>
     </GameLayout>

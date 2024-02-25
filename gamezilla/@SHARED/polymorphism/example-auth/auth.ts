@@ -6,29 +6,37 @@ export type AuthProvider = {
 }
 
 export const signUpWithEmailAndPassword = definePolymorphicFunction<
-  AuthProvider,
-  (input: { email: string; password: string }) => Promise<Result<string, null>>
->(() => async () => {
+  (
+    auth: AuthProvider,
+    input: {
+      email: string
+      password: string
+    },
+  ) => Promise<Result<string, null>>
+>(async () => {
   return Result.err("Not implemented")
 })
 
 export const logout = definePolymorphicFunction<
-  AuthProvider,
-  () => Promise<Result<string, null>>
->(() => async () => {
+  (auth: AuthProvider) => Promise<Result<string, null>>
+>(async () => {
   return Result.err("Not implemented")
 })
 
 export const loginWithEmailAndPassword = definePolymorphicFunction<
-  AuthProvider,
-  (input: { email: string; password: string }) => Promise<Result<string, null>>
->(() => async () => {
+  (
+    auth: AuthProvider,
+    input: {
+      email: string
+      password: string
+    },
+  ) => Promise<Result<string, null>>
+>(async () => {
   return Result.err("Not implemented")
 })
 
 export const loginWithGoogle = definePolymorphicFunction<
-  AuthProvider,
-  () => Promise<Result<string, null>>
->(() => async () => {
+  (auth: AuthProvider) => Promise<Result<string, null>>
+>(async () => {
   return Result.err("Not implemented")
 })

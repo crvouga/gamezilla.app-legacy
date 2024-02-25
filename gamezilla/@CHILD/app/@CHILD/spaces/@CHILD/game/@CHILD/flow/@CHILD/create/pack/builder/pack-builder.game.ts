@@ -1,7 +1,7 @@
 import { isErr } from "gamezilla/@SHARED/core"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import { SyncReducer } from "../../create.core"
-import { FlowGridUIPlay } from "../../../../@SHARED/flow"
+import { FlowVariantUIPlay } from "../../../../@SHARED/flow"
 
 const userCreatedPack: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
@@ -86,7 +86,7 @@ const userClickedOpenAddPuzzleButton: SyncReducer = ({
         ...modelSync,
         packBuilder: {
           ...modelSync.packBuilder,
-          opened: {
+          screen: {
             t: "add-puzzle",
           },
         },
@@ -138,13 +138,10 @@ const userClickedPackItem: SyncReducer = ({ modelSync, msgSync }) => {
           screen: {
             t: "screen-puzzle",
             puzzleIndex: msgSync.index,
-            puzzle: {
-              t: "grid",
-              flowGrid: msgSync.puzzle.puzzle.c,
-              flowGridUIPlay: FlowGridUIPlay.init({
-                grid: msgSync.puzzle.puzzle.c,
-              }),
-            },
+            puzzle: msgSync.puzzle,
+            playUI: FlowVariantUIPlay.init({
+              flow: msgSync.puzzle.flow,
+            }),
           },
         },
       }
@@ -183,7 +180,7 @@ const userClickedExitPuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
 
 const flowGridUIPlay: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
-    case "pack-builder.flow-play-grid-ui": {
+    case "pack-builder.flow-play-ui": {
       if (!modelSync.packBuilder) {
         return modelSync
       }
@@ -192,11 +189,11 @@ const flowGridUIPlay: SyncReducer = ({ modelSync, msgSync }) => {
         return modelSync
       }
 
-      const openedPuzzle = modelSync.packBuilder.screen.puzzle
+      const screen = modelSync.packBuilder.screen
 
-      const updated = FlowGridUIPlay.update({
-        grid: openedPuzzle.flowGrid,
-        model: openedPuzzle.flowGridUIPlay,
+      const updated = FlowVariantUIPlay.update({
+        flow: screen.puzzle.flow,
+        model: screen.playUI,
         msg: msgSync.c,
       })
 
@@ -207,11 +204,8 @@ const flowGridUIPlay: SyncReducer = ({ modelSync, msgSync }) => {
           screen: {
             t: "screen-puzzle",
             puzzleIndex: modelSync.packBuilder.screen.puzzleIndex,
-            puzzle: {
-              t: "grid",
-              flowGrid: openedPuzzle.flowGrid,
-              flowGridUIPlay: updated,
-            },
+            puzzle: modelSync.packBuilder.screen.puzzle,
+            playUI: updated,
           },
         },
       }
@@ -236,13 +230,10 @@ const userClickedNextPuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
           screen: {
             t: "screen-puzzle",
             puzzleIndex: modelSync.packBuilder.screen.puzzleIndex + 1,
-            puzzle: {
-              t: "grid",
-              flowGrid: modelSync.packBuilder.screen.puzzle.flowGrid,
-              flowGridUIPlay: FlowGridUIPlay.init({
-                grid: modelSync.packBuilder.screen.puzzle.flowGrid,
-              }),
-            },
+            playUI: FlowVariantUIPlay.init({
+              flow: modelSync.packBuilder.screen.puzzle.flow,
+            }),
+            puzzle: modelSync.packBuilder.screen.puzzle,
           },
         },
       }

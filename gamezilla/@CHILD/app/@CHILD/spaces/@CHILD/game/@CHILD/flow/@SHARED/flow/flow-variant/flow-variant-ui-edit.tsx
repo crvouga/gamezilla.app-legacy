@@ -7,9 +7,8 @@ import {
   IconArrowRotateRight,
   IconExpand,
   IconXMark,
-  Slider,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { memoize } from "gamezilla/@SHARED/core"
+import { eq, memoize } from "gamezilla/@SHARED/core"
 import { History } from "gamezilla/@SHARED/history"
 import {
   ViewBottomButtonBar,
@@ -17,8 +16,9 @@ import {
 } from "../../../../../@SHARED/game"
 import * as Flow from "../flow/flow"
 import * as FlowUI from "../flow/flow-ui"
-import * as FlowGrid from "./flow-grid"
-import * as FlowGridUI from "./flow-grid-ui"
+import * as FlowVariant from "./flow-variant"
+import * as FlowVariantDimensions from "./flow-variant-dimensions"
+import * as FlowVariantUI from "./flow-variant-ui"
 
 //
 //
@@ -30,23 +30,20 @@ import * as FlowGridUI from "./flow-grid-ui"
 
 type Form = {
   terminalsByGroupId: DraftTerminals
-  width: number
-  height: number
+  dimensions: FlowVariantDimensions.Model
 }
 
-const toEmptyForm = ({ grid }: { grid: FlowGrid.Model }): Form => {
+const toEmptyForm = ({ flow }: { flow: FlowVariant.Model }): Form => {
   return {
     terminalsByGroupId: {},
-    height: grid.height,
-    width: grid.width,
+    dimensions: FlowVariantDimensions.init(flow),
   }
 }
 
 export type Model = {
   form: History<Form>
   opened: "dimensions" | null
-  widthInput: number
-  heightInput: number
+  dimensions: FlowVariantDimensions.Model
 }
 
 type DraftTerminals = {
@@ -63,50 +60,36 @@ type DraftTerminal = {
   endId?: Flow.NodeId | null
 }
 
-export const init = ({ grid }: { grid: FlowGrid.Model }): Model => {
+export const init = ({ flow }: { flow: FlowVariant.Model }): Model => {
   const form: Form = {
-    height: grid.height,
-    width: grid.width,
-    terminalsByGroupId: grid.terminalsByGroupId,
+    dimensions: FlowVariantDimensions.init(flow),
+    terminalsByGroupId: flow.terminalsByGroupId,
   }
   return {
     form: History.init(form),
-    heightInput: grid.height,
-    widthInput: grid.width,
+    dimensions: FlowVariantDimensions.init(flow),
     opened: null,
   }
 }
 
 export const isUnsavedChanges = (
   model: Model,
-  grid: FlowGrid.Model,
+  flow: FlowVariant.Model,
 ): boolean => {
   const draft: Form = History.present(model.form)
 
   const actual: Form = {
-    terminalsByGroupId: grid.terminalsByGroupId,
-    height: grid.height,
-    width: grid.width,
+    terminalsByGroupId: flow.terminalsByGroupId,
+    dimensions: FlowVariantDimensions.init(flow),
   }
 
-  if (actual.width !== draft.width) {
-    return true
-  }
+  const areTerminalsDifferent = !Flow.isSameTerminalsByGroupId(
+    actual.terminalsByGroupId,
+    draft.terminalsByGroupId,
+  )
+  const areDimensionsDifferent = !eq(actual.dimensions, draft.dimensions)
 
-  if (actual.height !== draft.height) {
-    return true
-  }
-
-  if (
-    !Flow.isSameTerminalsByGroupId(
-      actual.terminalsByGroupId,
-      draft.terminalsByGroupId,
-    )
-  ) {
-    return true
-  }
-
-  return false
+  return areTerminalsDifferent || areDimensionsDifferent
 }
 
 //
@@ -129,8 +112,7 @@ export type Msg =
   | { t: "dimensions-form.closed" }
   | { t: "dimensions-form.clicked-cancel" }
   | { t: "dimensions-form.clicked-save" }
-  | { t: "dimensions-form.inputted-width"; width: number }
-  | { t: "dimensions-form.inputted-height"; height: number }
+  | { t: "dimensions-form.inputted"; dimensions: FlowVariantDimensions.Model }
 
 export type Cmd = {
   t: "play-sound"
@@ -138,11 +120,11 @@ export type Cmd = {
 }
 
 export const update = ({
-  grid,
+  flow,
   model,
   msg,
 }: {
-  grid: FlowGrid.Model
+  flow: FlowVariant.Model
   msg: Msg
   model: Model
 }): {
@@ -162,7 +144,7 @@ export const update = ({
       return {
         model: {
           ...model,
-          form: History.push(model.form, toEmptyForm({ grid })),
+          form: History.push(model.form, toEmptyForm({ flow })),
         },
         msgCmd: {
           t: "play-sound",
@@ -221,33 +203,26 @@ export const update = ({
       }
     }
 
-    case "dimensions-form.inputted-height": {
-      return { model: { ...model, heightInput: msg.height } }
-    }
-
-    case "dimensions-form.inputted-width": {
-      return { model: { ...model, widthInput: msg.width } }
+    case "dimensions-form.inputted": {
+      return { model: { ...model, dimensions: msg.dimensions } }
     }
 
     case "dimensions-form.clicked-save": {
       const present = History.present(model.form)
 
-      const gridNew = FlowGrid.init({
-        height: model.heightInput,
-        width: model.widthInput,
+      const flowNew = FlowVariant.init({
+        dimensions: model.dimensions,
         terminalsByGroupId: present.terminalsByGroupId,
       })
 
       const formNew: Form = {
-        terminalsByGroupId: gridNew.terminalsByGroupId,
-        width: gridNew.width,
-        height: gridNew.height,
+        terminalsByGroupId: flowNew.terminalsByGroupId,
+        dimensions: FlowVariantDimensions.init(flowNew),
       }
 
       const modelNew: Model = {
         ...model,
-        heightInput: gridNew.height,
-        widthInput: gridNew.width,
+        dimensions: FlowVariantDimensions.init(flowNew),
         form: History.push(model.form, formNew),
         opened: null,
       }
@@ -279,17 +254,14 @@ export const update = ({
 
 const canSubmitDimensionsForm = (model: Model): boolean => {
   const present = History.present(model.form)
-  return (
-    present.height !== model.heightInput || present.width !== model.widthInput
-  )
+  return !eq(present.dimensions, model.dimensions)
 }
 
 const resetDimensionsForm = (model: Model): Model => {
-  const grid = toCurrentGrid({ model })
+  const flow = toCurrentFlow({ model })
   return {
     ...model,
-    widthInput: grid.width,
-    heightInput: grid.height,
+    dimensions: FlowVariantDimensions.init(flow),
   }
 }
 
@@ -445,17 +417,16 @@ export const removeIncompleteTerminals = (
   }
   return terminalsByGroupId
 }
-const deriveCurrentGrid = ({ model }: { model: Model }): FlowGrid.Model => {
+const deriveCurrentFlow = ({ model }: { model: Model }): FlowVariant.Model => {
   const form = History.present(model.form)
-  return FlowGrid.init({
-    height: form.height,
-    width: form.width,
+  return FlowVariant.init({
+    dimensions: model.dimensions,
     terminalsByGroupId: form.terminalsByGroupId,
   })
 }
 
-export const toCurrentGrid = memoize({
-  func: deriveCurrentGrid,
+export const toCurrentFlow = memoize({
+  func: deriveCurrentFlow,
   toKey(input) {
     return JSON.stringify(History.present(input.model.form))
   },
@@ -480,8 +451,8 @@ export const View = (input: { model: Model; dispatch: (m: Msg) => void }) => {
         </div>
       </div>
 
-      <FlowGridUI.View
-        model={toCurrentGrid({ model })}
+      <FlowVariantUI.View
+        model={toCurrentFlow({ model })}
         onDraggedOver={(nodeId) => dispatch({ t: "dragged-over", nodeId })}
         onPressDown={(nodeId) => dispatch({ t: "pressed-down-node", nodeId })}
         onPressUp={(nodeId) => dispatch({ t: "pressed-up-node", nodeId })}
@@ -524,42 +495,13 @@ export const View = (input: { model: Model; dispatch: (m: Msg) => void }) => {
           onClose={() => dispatch({ t: "dimensions-form.closed" })}
         />
 
-        <div className="flex items-center justify-center gap-1 text-center text-5xl font-bold">
-          <p>{`${model.widthInput}w`}</p>
+        <FlowVariantDimensions.ViewForm
+          form={model.dimensions}
+          onInput={(dimensions) =>
+            dispatch({ t: "dimensions-form.inputted", dimensions })
+          }
+        />
 
-          <IconXMark className="h-6 w-6" />
-
-          <p>{`${model.heightInput}h`}</p>
-        </div>
-
-        <div className="flex flex-col gap-3 p-4 pb-8">
-          <Slider
-            onInput={(width) =>
-              dispatch({
-                t: "dimensions-form.inputted-width",
-                width,
-              })
-            }
-            value={model.widthInput}
-            label="Width"
-            min={3}
-            max={15}
-            step={1}
-          />
-          <Slider
-            onInput={(height) =>
-              dispatch({
-                t: "dimensions-form.inputted-height",
-                height,
-              })
-            }
-            value={model.heightInput}
-            label="Height"
-            min={3}
-            max={15}
-            step={1}
-          />
-        </div>
         <div className="flex w-full items-center gap-4 p-4">
           <Button
             text="Cancel"

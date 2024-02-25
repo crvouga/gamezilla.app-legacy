@@ -18,7 +18,7 @@ import {
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
 } from "../../../../../../@SHARED/game"
-import { FlowGridUIPlay } from "../../../../@SHARED/flow"
+import { FlowVariantUIPlay } from "../../../../@SHARED/flow"
 import { FlowPackPuzzleGridUI } from "../../../../@SHARED/flow-pack-puzzle-grid"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
@@ -280,7 +280,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
         }
       }
 
-      case "pack-builder.flow-play-grid-ui": {
+      case "pack-builder.flow-play-ui": {
         return {
           model,
           msgSync: [withId(msg)],
@@ -317,21 +317,22 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
     }
 
     const pack = input.modelSync.packBuilder.pack
-    const puzzleIndex = input.modelSync.packBuilder.screen.puzzleIndex
-    const { flowGridUIPlay, flowGrid } =
-      input.modelSync.packBuilder.screen.puzzle
+    const screen = input.modelSync.packBuilder.screen
 
     return (
-      <div className="flex h-full w-full flex-col ">
-        <div className="flex w-full flex-1 items-center justify-center">
-          <FlowGridUIPlay.View
-            dispatch={(c) =>
-              input.dispatch({ t: "pack-builder.flow-play-grid-ui", c })
-            }
-            grid={flowGrid}
-            model={flowGridUIPlay}
-          />
+      <div className="flex h-full w-full flex-col">
+        <div className="flex-1 px-4 py-4">
+          <p className="text-3xl font-bold">Level {screen.puzzleIndex + 1}</p>
+          <p className="text-lg text-secondary"></p>
         </div>
+        <FlowVariantUIPlay.View
+          dispatch={(c) =>
+            input.dispatch({ t: "pack-builder.flow-play-ui", c })
+          }
+          flow={screen.puzzle.flow}
+          model={screen.playUI}
+        />
+        <div className="flex-1"></div>
         <ViewBottomButtonBar>
           <ViewBottomButtonBarAction
             icon={(props) => <IconArrowLeftOnRect {...props} />}
@@ -346,7 +347,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
           <ViewBottomButtonBarAction
             icon={(props) => <IconChevronLeft {...props} />}
             label="Previous"
-            disabled={!FlowPack.canGoPrevious(pack, puzzleIndex)}
+            disabled={!FlowPack.canGoPrevious(pack, screen.puzzleIndex)}
             onClick={() =>
               input.dispatch({
                 t: "pack-builder.user-clicked-previous-puzzle-button",
@@ -357,7 +358,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
           <ViewBottomButtonBarAction
             icon={(props) => <IconChevronRight {...props} />}
             label="Next"
-            disabled={FlowPack.canGoNext(pack, puzzleIndex)}
+            disabled={FlowPack.canGoNext(pack, screen.puzzleIndex)}
             onClick={() =>
               input.dispatch({
                 t: "pack-builder.user-clicked-next-puzzle-button",
@@ -469,12 +470,13 @@ export const PackBuilderClient: Pick<
   },
 
   View(input) {
-    if (input.modelSync.packBuilder?.opened.t === "add-puzzle") {
-      return <ScreenAddPuzzle.View {...input} />
-    }
     const { modelSync } = input
 
     switch (modelSync.packBuilder?.screen.t) {
+      case "add-puzzle": {
+        return <ScreenAddPuzzle.View {...input} />
+      }
+
       case "screen-puzzle-grid": {
         return <ScreenPuzzleGrid.View {...input} />
       }

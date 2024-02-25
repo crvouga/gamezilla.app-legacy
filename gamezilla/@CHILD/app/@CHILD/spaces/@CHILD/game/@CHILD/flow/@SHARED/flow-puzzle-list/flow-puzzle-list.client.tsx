@@ -11,7 +11,7 @@ import {
   descend,
   isErr,
 } from "gamezilla/@SHARED/core"
-import { FlowGridUI } from "../flow"
+import { FlowVariantUI } from "../flow"
 import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
 import { ClientModule } from "./flow-puzzle-list.core"
 
@@ -169,7 +169,7 @@ const FlowPuzzleListItem = ({
       onClick={onClick}
     >
       <div className="flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden border-r border-neutral-700">
-        <FlowGridUI.View disabled model={puzzle.puzzle.c} />
+        <FlowVariantUI.View disabled model={puzzle.flow} />
       </div>
       <div className="overflow-hidden">
         <p className="flex-nowrap overflow-hidden text-ellipsis whitespace-nowrap text-base font-bold">

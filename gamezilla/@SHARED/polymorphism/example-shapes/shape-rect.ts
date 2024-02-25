@@ -14,10 +14,11 @@ area.implement(isRect, (shape) => shape.width * shape.height)
 
 perimeter.implement(isRect, (shape) => 2 * (shape.width + shape.height))
 
-scale.implement(
-  isRect,
-  (shape) => (scaleBy) =>
-    Rect({ width: shape.width * scaleBy, height: shape.height * scaleBy }),
+scale.implement(isRect, (shape, scaleBy) =>
+  Rect({
+    width: shape.width * scaleBy,
+    height: shape.height * scaleBy,
+  }),
 )
 
 export const Rect = (input: { width: number; height: number }): Rect => ({

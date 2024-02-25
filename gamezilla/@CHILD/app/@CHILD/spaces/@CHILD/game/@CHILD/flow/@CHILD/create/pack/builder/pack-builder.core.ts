@@ -1,8 +1,8 @@
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
-import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import { Result } from "gamezilla/@SHARED/core"
-import { FlowGrid, FlowGridUIPlay } from "../../../../@SHARED/flow"
+import { FlowVariantUIPlay } from "../../../../@SHARED/flow"
+import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
+import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "../../../../@SHARED/flow-puzzle/flow-puzzle-id"
 
 //
@@ -45,14 +45,10 @@ export type MsgToClient = {
 export type ModelSync = {
   t: "pack-builder"
   pack: FlowPack
-  opened:
+  screen:
     | {
         t: "add-puzzle"
       }
-    | {
-        t: null
-      }
-  screen:
     | {
         t: "screen-puzzle-grid"
         pageIndex: number
@@ -60,11 +56,8 @@ export type ModelSync = {
     | {
         t: "screen-puzzle"
         puzzleIndex: number
-        puzzle: {
-          t: "grid"
-          flowGrid: FlowGrid.Model
-          flowGridUIPlay: FlowGridUIPlay.Model
-        }
+        puzzle: FlowPuzzle
+        playUI: FlowVariantUIPlay.Model
       }
 }
 
@@ -95,8 +88,8 @@ export type MsgSync =
       index: number
     }
   | {
-      t: "pack-builder.flow-play-grid-ui"
-      c: FlowGridUIPlay.Msg
+      t: "pack-builder.flow-play-ui"
+      c: FlowVariantUIPlay.Msg
     }
   | {
       t: "pack-builder.user-clicked-exit-puzzle-button"

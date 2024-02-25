@@ -1,4 +1,4 @@
-import { FlowGridUIEdit, FlowGridUIPlay } from "../../../../@SHARED/flow"
+import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../../@SHARED/flow"
 import { SyncReducer } from "../../create.core"
 
 const reducer: SyncReducer = ({ modelSync, msgSync }) => {
@@ -10,11 +10,11 @@ const reducer: SyncReducer = ({ modelSync, msgSync }) => {
         opened: { t: "puzzle-builder" },
         puzzleBuilder: {
           t: "puzzle-builder",
-          gridEdit: FlowGridUIEdit.init({
-            grid: msgSync.puzzle.puzzle.c,
+          edit: FlowVariantUIEdit.init({
+            flow: msgSync.puzzle.flow,
           }),
-          gridPlay: FlowGridUIPlay.init({
-            grid: msgSync.puzzle.puzzle.c,
+          play: FlowVariantUIPlay.init({
+            flow: msgSync.puzzle.flow,
           }),
           mode: { t: "edit" },
           puzzle: msgSync.puzzle,

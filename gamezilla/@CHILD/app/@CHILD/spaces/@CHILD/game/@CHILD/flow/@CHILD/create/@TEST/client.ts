@@ -8,7 +8,7 @@ import { FlowClientCtx } from "../../../@SHARED/flow-ctx"
 import { FlowPack } from "../../../@SHARED/flow-pack/flow-pack"
 import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id"
-import { samples } from "../../../@SHARED/flow/flow-grid/flow-grid-samples"
+import { samples } from "../../../@SHARED/flow/flow-variant-grid/flow-grid-samples"
 import { CreateClient } from "../create.client"
 import { ModelClient, ModelSync, initClient, initSync } from "../create.core"
 
@@ -136,7 +136,7 @@ export const puzzleBuilderPressDownRandomNode =
       return { model }
     }
 
-    const nodes = Object.values(Flow.toNodes(puzzleBuilder.puzzle.puzzle.c))
+    const nodes = Object.values(Flow.toNodes(puzzleBuilder.puzzle.flow))
 
     const randomNode = nodes[Math.floor(Math.random() * nodes.length)]
 
@@ -147,7 +147,7 @@ export const puzzleBuilderPressDownRandomNode =
     return CreateClient.update({
       model,
       msg: {
-        t: "puzzle-builder.flow-grid-ui-edit",
+        t: "puzzle-builder.flow-ui-edit",
         c: { t: "pressed-down-node", nodeId: randomNode.nodeId },
       },
       ctx,
@@ -224,10 +224,7 @@ export const createFlowPuzzle = (ctx: SpaceClientCtx) => {
     count: 1,
     createdAt: ctx.now,
     createdBy: ctx.currentUserId,
-    puzzle: {
-      t: "grid",
-      c: samples["5x5"]["1"],
-    },
+    flow: samples["5x5"]["1"],
   })
 }
 

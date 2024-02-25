@@ -2,6 +2,7 @@ import { cn } from "gamezilla/@CHILD/app/@SHARED/ui"
 import * as Flow from "../flow/flow"
 import * as FlowUI from "../flow/flow-ui"
 import * as FlowGrid from "./flow-grid"
+import { FlowViewProps } from "../flow/flow-ui"
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33
@@ -9,6 +10,7 @@ const EDGE_STROKE_WIDTH = 0.3
 
 let lastDraggedOver: Flow.NodeId | null = null
 let isCurrentDeviceTouch = false
+
 /**
  * Renders the Flow Grid UI
  */
@@ -24,25 +26,7 @@ export const View = ({
   onPressUp,
   isActive,
   onLeave,
-}: {
-  disabled?: boolean
-  className?: string
-  model: FlowGrid.Model
-  isDragging?: boolean
-  autocompleteEdge?: (FlowGrid.Edge & { groupId: Flow.GroupId }) | null
-  showCoordinates?: boolean
-  onPressDown?: (nodeId: Flow.NodeId) => void
-  onPressUp?: (nodeId: Flow.NodeId) => void
-  onLeave?: () => void
-  onDraggedOver?: (nodeId: Flow.NodeId) => void
-  isActive?: ({
-    nodeId,
-    groupId,
-  }: {
-    groupId: Flow.GroupId
-    nodeId: Flow.NodeId
-  }) => boolean
-}) => {
+}: FlowViewProps<FlowGrid.Model>) => {
   const draggedOver = (nodeId: Flow.NodeId) => {
     if (!isDragging || lastDraggedOver === nodeId) {
       return
@@ -218,10 +202,10 @@ export const View = ({
       <g transform="translate(0.5, 0.5)">
         {autocompleteEdge && (
           <line
-            x1={autocompleteEdge.source.x}
-            y1={autocompleteEdge.source.y}
-            x2={autocompleteEdge.target.x}
-            y2={autocompleteEdge.target.y}
+            x1={model.positions[autocompleteEdge.sourceId]?.x}
+            y1={model.positions[autocompleteEdge.sourceId]?.y}
+            x2={model.positions[autocompleteEdge.targetId]?.x}
+            y2={model.positions[autocompleteEdge.targetId]?.y}
             stroke={FlowUI.Color.groupIdToHex(autocompleteEdge.groupId)}
             strokeWidth={EDGE_STROKE_WIDTH}
             strokeOpacity={0.5}

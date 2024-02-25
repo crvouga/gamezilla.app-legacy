@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { area, perimeter, volume } from "./shape"
+import { area, perimeter, scale, volume } from "./shape"
 import { Circle } from "./shape-circle"
 import { Rect } from "./shape-rect"
 import { Octagon } from "./shape-octagon"
@@ -14,6 +14,12 @@ const shapes2D = [
   Rect({ width: 5, height: 20 }),
   Rect({ width: 10, height: 20 }),
 ]
+
+const shapes = [...shapes2D, ...shapes3D]
+
+test("scale", () => {
+  shapes.map((shape) => scale(shape, 2))
+})
 
 test("area", () => {
   for (const shape of shapes2D) {
