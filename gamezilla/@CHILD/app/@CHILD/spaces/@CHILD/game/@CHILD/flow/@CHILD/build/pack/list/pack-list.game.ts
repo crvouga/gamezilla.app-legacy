@@ -5,12 +5,19 @@ const reducer: SyncReducer = ({ modelSync, msgSync }) => {
     case "pack-list.user-clicked-pack-item": {
       return {
         ...modelSync,
-        opened: { t: "pack-builder" },
+        opened: {
+          t: "pack-builder",
+        },
         packBuilder: {
           t: "pack-builder",
           pack: msgSync.pack,
-          opened: { t: null },
-          screen: { t: "pack", pageIndex: 0 },
+          opened: {
+            t: null,
+          },
+          screen: {
+            t: "screen-puzzle-grid",
+            pageIndex: 0,
+          },
         },
       }
     }

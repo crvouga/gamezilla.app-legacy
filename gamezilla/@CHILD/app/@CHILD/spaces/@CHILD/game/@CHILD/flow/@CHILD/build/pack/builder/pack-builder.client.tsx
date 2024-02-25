@@ -30,7 +30,7 @@ import { ClientModule } from "../../build.core"
 //
 //
 
-const ExitButton: Pick<ClientModule, "update" | "View"> = {
+const ButtonExitBuilder: Pick<ClientModule, "update" | "View"> = {
   update(input) {
     const { model, msg, msgSync } = input
 
@@ -78,7 +78,7 @@ const ExitButton: Pick<ClientModule, "update" | "View"> = {
 //
 //
 
-const AddPuzzleButton: Pick<ClientModule, "update" | "View"> = {
+const ButtonAddPuzzle: Pick<ClientModule, "update" | "View"> = {
   update(input) {
     const { model, msg } = input
 
@@ -115,7 +115,7 @@ const AddPuzzleButton: Pick<ClientModule, "update" | "View"> = {
 //
 //
 
-const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
+const ScreenAddPuzzle: Pick<ClientModule, "update" | "View"> = {
   update(input) {
     const { model, msg } = input
 
@@ -182,7 +182,7 @@ const PuzzlePicker: Pick<ClientModule, "update" | "View"> = {
 //
 //
 
-const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
+const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
   update(input) {
     const { model, msg } = input
 
@@ -191,7 +191,7 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
         return {
           model,
           msgSync: [withId(msg)],
-          msgCmd: [playSound(APP_SOUND.tap)],
+          msgCmd: [playSound(APP_SOUND.navForwardMin)],
         }
       }
     }
@@ -241,7 +241,7 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
                 }
 
                 if (index === packBuilder.pack.puzzleIds.length) {
-                  return <AddPuzzleButton.View {...input} />
+                  return <ButtonAddPuzzle.View {...input} />
                 }
 
                 return <FlowPackPuzzleGridUI.ViewEmptyCell />
@@ -251,7 +251,7 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
         </div>
 
         <div className="w-full border-t border-neutral-700 p-4">
-          <ExitButton.View {...input} />
+          <ButtonExitBuilder.View {...input} />
         </div>
       </div>
     )
@@ -266,7 +266,7 @@ const PuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 //
 //
 
-export const Puzzle: Pick<ClientModule, "update" | "View"> = {
+export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
   update(input) {
     const { model, msg } = input
 
@@ -295,7 +295,7 @@ export const Puzzle: Pick<ClientModule, "update" | "View"> = {
       return null
     }
 
-    if (input.modelSync.packBuilder.screen.t !== "puzzle") {
+    if (input.modelSync.packBuilder.screen.t !== "screen-puzzle") {
       return null
     }
 
@@ -428,20 +428,34 @@ export const PackBuilderClient: Pick<
   update(input) {
     return GameClientModule.chainUpdates(
       { model: input.model },
-      (model) => ExitButton.update({ ...input, model }),
-      (model) => PuzzlePicker.update({ ...input, model }),
-      (model) => AddPuzzleButton.update({ ...input, model }),
-      (model) => PuzzleGrid.update({ ...input, model }),
-      (model) => Puzzle.update({ ...input, model }),
+      (model) => ButtonExitBuilder.update({ ...input, model }),
+      (model) => ScreenAddPuzzle.update({ ...input, model }),
+      (model) => ButtonAddPuzzle.update({ ...input, model }),
+      (model) => ScreenPuzzleGrid.update({ ...input, model }),
+      (model) => ScreenPuzzle.update({ ...input, model }),
       (model) => updateMissingPuzzles({ ...input, model }),
     )
   },
 
   View(input) {
     if (input.modelSync.packBuilder?.opened.t === "add-puzzle") {
-      return <PuzzlePicker.View {...input} />
+      return <ScreenAddPuzzle.View {...input} />
     }
-    return <CurrentScreen.View {...input} />
+    const { modelSync } = input
+
+    switch (modelSync.packBuilder?.screen.t) {
+      case "screen-puzzle-grid": {
+        return <ScreenPuzzleGrid.View {...input} />
+      }
+
+      case "screen-puzzle": {
+        return <ScreenPuzzle.View {...input} />
+      }
+
+      default: {
+        return null
+      }
+    }
   },
 
   async subscriptions(input) {
@@ -449,25 +463,5 @@ export const PackBuilderClient: Pick<
       //
       await subscriptionsMissingPuzzles(input),
     ])
-  },
-}
-
-const CurrentScreen: Pick<ClientModule, "View"> = {
-  View(input) {
-    const { modelSync } = input
-
-    switch (modelSync.packBuilder?.screen.t) {
-      case "pack": {
-        return <PuzzleGrid.View {...input} />
-      }
-
-      case "puzzle": {
-        return <Puzzle.View {...input} />
-      }
-
-      default: {
-        return null
-      }
-    }
   },
 }

@@ -54,11 +54,11 @@ export type ModelSync = {
       }
   screen:
     | {
-        t: "pack"
+        t: "screen-puzzle-grid"
         pageIndex: number
       }
     | {
-        t: "puzzle"
+        t: "screen-puzzle"
         puzzleIndex: number
         puzzle: {
           t: "grid"

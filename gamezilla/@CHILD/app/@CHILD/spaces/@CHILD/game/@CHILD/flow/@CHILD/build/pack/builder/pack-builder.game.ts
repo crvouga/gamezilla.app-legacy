@@ -17,7 +17,7 @@ const userCreatedPack: SyncReducer = ({ modelSync, msgSync }) => {
           t: "pack-builder",
           opened: { t: null },
           screen: {
-            t: "pack",
+            t: "screen-puzzle-grid",
             pageIndex: 0,
           },
           pack: msgSync.created.value,
@@ -58,7 +58,7 @@ const useClickedAddPuzzleItem: SyncReducer = ({ modelSync, msgSync }) => {
           ...modelSync.packBuilder,
           pack: FlowPack.add(modelSync.packBuilder.pack, msgSync.puzzle.id),
           screen: {
-            t: "pack",
+            t: "screen-puzzle-grid",
             pageIndex: 0,
           },
           opened: {
@@ -112,7 +112,7 @@ const userClosedAddPuzzle: SyncReducer = ({ modelSync, msgSync }) => {
             t: null,
           },
           screen: {
-            t: "pack",
+            t: "screen-puzzle-grid",
             pageIndex: 0,
           },
         },
@@ -136,7 +136,7 @@ const userClickedPackItem: SyncReducer = ({ modelSync, msgSync }) => {
         packBuilder: {
           ...modelSync.packBuilder,
           screen: {
-            t: "puzzle",
+            t: "screen-puzzle",
             puzzleIndex: msgSync.index,
             puzzle: {
               t: "grid",
@@ -168,7 +168,7 @@ const userClickedExitPuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
         packBuilder: {
           ...modelSync.packBuilder,
           screen: {
-            t: "pack",
+            t: "screen-puzzle-grid",
             pageIndex: 0,
           },
         },
@@ -188,7 +188,7 @@ const flowGridUIPlay: SyncReducer = ({ modelSync, msgSync }) => {
         return modelSync
       }
 
-      if (modelSync.packBuilder.screen.t !== "puzzle") {
+      if (modelSync.packBuilder.screen.t !== "screen-puzzle") {
         return modelSync
       }
 
@@ -205,7 +205,7 @@ const flowGridUIPlay: SyncReducer = ({ modelSync, msgSync }) => {
         packBuilder: {
           ...modelSync.packBuilder,
           screen: {
-            t: "puzzle",
+            t: "screen-puzzle",
             puzzleIndex: modelSync.packBuilder.screen.puzzleIndex,
             puzzle: {
               t: "grid",
