@@ -21,10 +21,10 @@ export const initClient = (pack: FlowPack): ModelClient => {
 
 export type ModelServer = {}
 
-export type MsgClient = { t: "noop" }
+export type MsgClient = { t: "user-observed-grid" }
 
 export type MsgServer = { t: "noop" }
 
 export type MsgToClient = { t: "noop" }
 
-export type MsgToServer = { t: "noop" }
+export type MsgToServer = { t: "user-observed-grid" }
