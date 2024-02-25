@@ -35,7 +35,7 @@ type ClientModule = AppClientModule<{
   }
 }>
 
-export const FlowPackPuzzleGridClient: Pick<ClientModule, "View" | "update"> = {
+const ObserveGrid: Pick<ClientModule, "View" | "update"> = {
   update(input) {
     switch (input.msg?.t) {
       case "user-observed-grid": {
@@ -49,16 +49,29 @@ export const FlowPackPuzzleGridClient: Pick<ClientModule, "View" | "update"> = {
   },
   View(input) {
     return (
+      <IntersectionObserverEmitter
+        id="flow-pack-puzzle-grid"
+        onVisible={() => input.dispatch({ t: "user-observed-grid" })}
+      />
+    )
+  },
+}
+
+export const FlowPackPuzzleGridClient: Pick<ClientModule, "View" | "update"> = {
+  update(input) {
+    return AppClientModule.chainUpdates(
+      { model: input.model },
+      (model) => ObserveGrid.update({ ...input, model }),
+      //
+    )
+  },
+  View(input) {
+    return (
       <>
         {input.slots?.grid({
           request: input.model.request,
         })}
-        <IntersectionObserverEmitter
-          id="flow-pack-puzzle-grid"
-          onVisible={() => {
-            //
-          }}
-        />
+        <ObserveGrid.View {...input} />
       </>
     )
   },
