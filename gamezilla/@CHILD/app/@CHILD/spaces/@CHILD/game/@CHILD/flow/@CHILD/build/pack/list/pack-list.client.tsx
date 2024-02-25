@@ -24,7 +24,7 @@ export const updateClickedPackItem: ClientModule["update"] = ({
         msgSync: [
           withId({ t: "pack-list.user-clicked-pack-item", pack: msg.pack }),
         ],
-        msgCmd: [playSound(APP_SOUND.tap)],
+        msgCmd: [playSound(APP_SOUND.navForwardMin)],
       }
     }
     default: {
