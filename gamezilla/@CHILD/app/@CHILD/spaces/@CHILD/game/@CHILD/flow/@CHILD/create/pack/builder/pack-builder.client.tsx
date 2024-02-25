@@ -19,9 +19,9 @@ import {
   ViewBottomButtonBarAction,
 } from "../../../../../../@SHARED/game"
 import { FlowVariantUIPlay } from "../../../../@SHARED/flow"
-import { FlowPackPuzzleGridUI } from "../../../../@SHARED/flow-pack-puzzle-grid"
+import { FlowPackPuzzleGridUI } from "../../../../@SHARED/flow-pack/flow-pack-puzzle-grid"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
-import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
+import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle/flow-puzzle-list"
 import { ClientModule } from "../../create.core"
 
 //

@@ -1,5 +1,5 @@
 import { err, isErr, ok } from "gamezilla/@SHARED/core"
-import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
+import { FlowPuzzle } from "../flow-puzzle"
 import { IFlowPuzzleDb } from "./flow-puzzle-db"
 
 const db = new Map<string, FlowPuzzle>()

@@ -4,8 +4,8 @@ import {
   UserId,
 } from "gamezilla/@CHILD/app/@SHARED/data"
 import { Result } from "gamezilla/@SHARED/core"
-import { FlowPack } from "../flow-pack/flow-pack"
-import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id"
+import { FlowPack } from "../flow-pack"
+import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id"
 
 export type IFlowPackDb = {
   count: (input: {

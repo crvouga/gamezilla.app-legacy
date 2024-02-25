@@ -12,10 +12,10 @@ import {
   isRequesting,
   ok,
 } from "gamezilla/@SHARED/core"
-import { testSpaceClientCtx } from "../../../../@SHARED/testing/client"
-import { testFlowClientCtx } from "../../@CHILD/create/@TEST/client"
-import { FlowVariant, FlowVariantDimensions } from "../flow"
-import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
+import { testSpaceClientCtx } from "../../../../../@SHARED/testing/client"
+import { testFlowClientCtx } from "../../../@CHILD/create/@TEST/client"
+import { FlowVariant, FlowVariantDimensions } from "../../flow"
+import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleListClient } from "./flow-puzzle-list.client"
 import { ModelClient, initClient } from "./flow-puzzle-list.core"
 

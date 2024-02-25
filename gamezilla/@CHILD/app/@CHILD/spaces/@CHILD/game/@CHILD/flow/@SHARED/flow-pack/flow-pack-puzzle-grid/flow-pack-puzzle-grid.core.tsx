@@ -1,7 +1,7 @@
 import { RequestResponse } from "gamezilla/@SHARED/core"
-import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
-import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id"
-import { FlowPack } from "../flow-pack/flow-pack"
+import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle"
+import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id"
+import { FlowPack } from "../flow-pack"
 
 export type ModelClient = {
   request: RequestResponse<string, null>

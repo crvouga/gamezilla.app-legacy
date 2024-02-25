@@ -4,7 +4,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
 import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
-import { FlowServerDeps } from "../../@CHILD/create/create.core"
+import { FlowServerDeps } from "../../../@CHILD/create/create.core"
 import {
   ModelServer,
   MsgServer,

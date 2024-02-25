@@ -12,8 +12,8 @@ import {
   ok,
 } from "gamezilla/@SHARED/core"
 import { FlowPackListClient } from "."
-import { testSpaceClientCtx } from "../../../../@SHARED/testing/client"
-import { FlowPack } from "../flow-pack/flow-pack"
+import { testSpaceClientCtx } from "../../../../../@SHARED/testing/client"
+import { FlowPack } from "../flow-pack"
 import { ModelClient, initClient } from "./flow-pack-list.core"
 
 const initial = {

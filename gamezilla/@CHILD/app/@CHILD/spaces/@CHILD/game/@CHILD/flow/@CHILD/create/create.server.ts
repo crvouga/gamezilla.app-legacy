@@ -1,7 +1,7 @@
 import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2"
 import { Eff, Sub } from "gamezilla/@SHARED/core"
-import { FlowPackDb } from "../../@SHARED/flow-pack-db"
-import { FlowPuzzleDb } from "../../@SHARED/flow-puzzle-db"
+import { FlowPackDb } from "../../@SHARED/flow-pack/flow-pack-db"
+import { FlowPuzzleDb } from "../../@SHARED/flow-puzzle/flow-puzzle-db"
 import { ServerModule, initServer } from "./create.core"
 import { PackBuilderServer } from "./pack/builder/pack-builder.server"
 import { PackCreateServer } from "./pack/create/pack-create.server"
@@ -10,9 +10,9 @@ import { PuzzleDeleteForeverServer } from "./puzzle/delete-forever/puzzle-delete
 import { PuzzleEditNameServer } from "./puzzle/edit/puzzle-edit-name.server"
 import { PuzzleListServer } from "./puzzle/list/puzzle-list.server"
 import { PuzzleSaveChangesServer } from "./puzzle/save-changes/puzzle-save-changes.server"
-import { FlowPackListServer } from "../../@SHARED/flow-pack-list"
+import { FlowPackListServer } from "../../@SHARED/flow-pack/flow-pack-list"
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
-import { FlowPuzzleListServer } from "../../@SHARED/flow-puzzle-list"
+import { FlowPuzzleListServer } from "../../@SHARED/flow-puzzle/flow-puzzle-list"
 
 const deps: ServerModule["deps"] = async (_input) => {
   return {

@@ -2,7 +2,7 @@ import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/arc
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { err, isErr } from "gamezilla/@SHARED/core"
-import { IFlowPuzzleDb } from "../../../../@SHARED/flow-puzzle-db"
+import { IFlowPuzzleDb } from "../../../../@SHARED/flow-puzzle/flow-puzzle-db"
 import { FlowPuzzleId } from "../../../../@SHARED/flow-puzzle/flow-puzzle-id"
 import { ServerModule } from "../../create.core"
 import { MsgSync } from "./puzzle-edit-name.core"

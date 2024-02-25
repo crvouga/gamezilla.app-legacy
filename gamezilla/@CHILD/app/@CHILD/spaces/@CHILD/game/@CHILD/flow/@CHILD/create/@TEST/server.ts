@@ -1,7 +1,7 @@
 import { AuthenticatedClient } from "gamezilla/@CHILD/app/@CHILD/spaces/@TEST/server"
 import { testSpaceServerCtx } from "../../../../../@SHARED/testing/server"
-import { FlowPackDb } from "../../../@SHARED/flow-pack-db"
-import { FlowPuzzleDb } from "../../../@SHARED/flow-puzzle-db"
+import { FlowPackDb } from "../../../@SHARED/flow-pack/flow-pack-db"
+import { FlowPuzzleDb } from "../../../@SHARED/flow-puzzle/flow-puzzle-db"
 import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id"
 import {
   FlowServerDeps,

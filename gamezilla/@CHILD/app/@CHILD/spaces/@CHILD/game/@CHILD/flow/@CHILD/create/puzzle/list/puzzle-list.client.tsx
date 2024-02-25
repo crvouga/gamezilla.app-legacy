@@ -1,5 +1,5 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
-import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle-list"
+import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle/flow-puzzle-list"
 import { ClientModule } from "../../create.core"
 import { PuzzleCreateClient } from "../create/puzzle-create.client"
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"

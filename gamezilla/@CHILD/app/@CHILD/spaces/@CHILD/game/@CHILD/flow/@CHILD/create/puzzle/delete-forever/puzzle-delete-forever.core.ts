@@ -1,6 +1,6 @@
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { RemoteResult, notAsked } from "gamezilla/@SHARED/core"
-import { IFlowPuzzleDb } from "../../../../@SHARED/flow-puzzle-db"
+import { IFlowPuzzleDb } from "../../../../@SHARED/flow-puzzle/flow-puzzle-db"
 import { FlowPuzzleId } from "../../../../@SHARED/flow-puzzle/flow-puzzle-id"
 
 export type ModelClient = {

@@ -14,8 +14,8 @@ import {
   ListPuzzlesInput,
   ListPuzzlesOutput,
 } from "../flow-puzzle-db"
-import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
-import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id"
+import { FlowPuzzle } from "../flow-puzzle"
+import { FlowPuzzleId } from "../flow-puzzle-id"
 
 //
 //

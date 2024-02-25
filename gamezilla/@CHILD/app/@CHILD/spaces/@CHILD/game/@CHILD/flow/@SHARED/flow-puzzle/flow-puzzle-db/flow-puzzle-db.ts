@@ -4,8 +4,8 @@ import {
   UserId,
 } from "gamezilla/@CHILD/app/@SHARED/data"
 import { Result } from "gamezilla/@SHARED/core"
-import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
-import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id"
+import { FlowPuzzle } from "../flow-puzzle"
+import { FlowPuzzleId } from "../flow-puzzle-id"
 
 type WhereClause = {
   createdBy?: {

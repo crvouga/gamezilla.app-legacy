@@ -10,8 +10,8 @@ import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-c
 import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
 import { RemoteResult, RequestResponse } from "gamezilla/@SHARED/core"
 import { IFlowPackDb } from "../flow-pack-db"
-import { FlowPackId } from "../flow-pack/flow-pack-id"
-import { FlowPack } from "../flow-pack/flow-pack"
+import { FlowPackId } from "../flow-pack-id"
+import { FlowPack } from "../flow-pack"
 
 //
 //

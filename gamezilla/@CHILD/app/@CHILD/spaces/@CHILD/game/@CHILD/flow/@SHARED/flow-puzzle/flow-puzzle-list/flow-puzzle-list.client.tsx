@@ -11,8 +11,8 @@ import {
   descend,
   isErr,
 } from "gamezilla/@SHARED/core"
-import { FlowVariantUI } from "../flow"
-import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
+import { FlowVariantUI } from "../../flow"
+import { FlowPuzzle } from "../flow-puzzle"
 import { ClientModule } from "./flow-puzzle-list.core"
 
 const update: ClientModule["update"] = (input) => {

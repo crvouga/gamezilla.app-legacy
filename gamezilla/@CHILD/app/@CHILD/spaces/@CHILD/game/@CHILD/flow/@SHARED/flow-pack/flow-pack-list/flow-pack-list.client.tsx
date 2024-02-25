@@ -12,7 +12,7 @@ import {
   isErr,
 } from "gamezilla/@SHARED/core"
 import { ClientModule } from "./flow-pack-list.core"
-import { FlowPack } from "../flow-pack/flow-pack"
+import { FlowPack } from "../flow-pack"
 
 const update: ClientModule["update"] = (input) => {
   return AppClientModule.chainUpdates(

@@ -2,11 +2,11 @@ import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server"
 import { Posix, Result, isErr, ok } from "gamezilla/@SHARED/core"
 import { P } from "gamezilla/@SHARED/parsing"
-import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
-import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id"
-import { FlowPuzzleName } from "../flow-puzzle/flow-puzzle-name"
+import { FlowPuzzle } from "../flow-puzzle"
+import { FlowPuzzleId } from "../flow-puzzle-id"
+import { FlowPuzzleName } from "../flow-puzzle-name"
 import { IFlowPuzzleDb } from "./flow-puzzle-db"
-import { FlowVariantParser } from "../flow"
+import { FlowVariantParser } from "../../flow"
 
 //
 //

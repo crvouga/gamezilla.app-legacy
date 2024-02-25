@@ -1,5 +1,5 @@
 import { Result, ok } from "gamezilla/@SHARED/core"
-import { FlowPack } from "../flow-pack/flow-pack"
+import { FlowPack } from "../flow-pack"
 import { IFlowPackDb } from "./flow-pack-db"
 
 const db = new Map<string, FlowPack>()
