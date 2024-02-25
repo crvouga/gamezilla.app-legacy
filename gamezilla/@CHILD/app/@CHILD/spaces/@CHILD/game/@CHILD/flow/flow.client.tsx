@@ -16,7 +16,7 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 import { Sub } from "gamezilla/@SHARED/core"
 import { SpaceClientCmd } from "../../../../@SHARED/space-client-cmd"
-import { BuildClient } from "./@CHILD/build/build.client"
+import { CreateClient } from "./@CHILD/create/create.client"
 import { PlayClient } from "./@CHILD/play/play.client"
 import { CoverArt } from "./@SHARED/flow-cover-art"
 import { FlowClientCtx } from "./@SHARED/flow-ctx"
@@ -110,21 +110,21 @@ const updateChild: Module["update"] = async (input) => {
       }
     }
 
-    case "build": {
-      const updated = await BuildClient.update({
+    case "create": {
+      const updated = await CreateClient.update({
         ctx: { ...ctx, onQuit: () => {} },
         modelSync: modelSync.c,
-        model: model.t === "build" ? model.c : BuildClient.init,
+        model: model.t === "create" ? model.c : CreateClient.init,
         msgCmd: msgCmd,
         msgEvt: msgEvt,
-        msgServer: msgServer?.t === "build" ? msgServer.c : null,
-        msgSync: msgSync?.t === "build" ? { ...msgSync, ...msgSync.c } : null,
-        msg: msg?.t === "build" ? msg.c : null,
+        msgServer: msgServer?.t === "create" ? msgServer.c : null,
+        msgSync: msgSync?.t === "create" ? { ...msgSync, ...msgSync.c } : null,
+        msg: msg?.t === "create" ? msg.c : null,
       })
 
       const tagged = await GameClientModule.tagOutput(
-        "build",
-        (msgCmd) => SpaceClientCmd.tag("build", msgCmd),
+        "create",
+        (msgCmd) => SpaceClientCmd.tag("create", msgCmd),
         updated,
       )
 
@@ -149,12 +149,12 @@ const updateFromMsgSync: Module["update"] = (input) => {
           }
         }
 
-        case "build": {
+        case "create": {
           return {
             model: {
               ...model,
-              t: "build",
-              c: BuildClient.init,
+              t: "create",
+              c: CreateClient.init,
             },
             msgCmd: [playSound(APP_SOUND.navForwardMin)],
           }
@@ -217,16 +217,16 @@ const subscriptions: Module["subscriptions"] = async (input) => {
         }),
       )
     }
-    case "build": {
+    case "create": {
       return Sub.tag(
-        "build",
-        await BuildClient.subscriptions({
+        "create",
+        await CreateClient.subscriptions({
           ctx: {
             ...input.ctx,
             onQuit() {},
           },
           modelSync: input.modelSync.c,
-          model: input.model.t === "build" ? input.model.c : BuildClient.init,
+          model: input.model.t === "create" ? input.model.c : CreateClient.init,
         }),
       )
     }
@@ -285,14 +285,14 @@ const View: Module["View"] = (input) => {
             },
             {
               renderIcon: (props) => <IconScrewdriverWrench {...props} />,
-              title: "Puzzle builder",
+              title: "Puzzle createer",
               description: "Build new puzzles to play",
               onClick: () => {
                 dispatch({
                   t: "msgSync",
                   c: {
                     t: "user-changed-mode",
-                    mode: "build",
+                    mode: "create",
                     userId: input.ctx.currentUserId,
                   },
                 })
@@ -303,13 +303,13 @@ const View: Module["View"] = (input) => {
       )
     }
 
-    case "build": {
+    case "create": {
       return (
-        <BuildClient.View
+        <CreateClient.View
           ctx={ctx}
-          dispatch={(c) => dispatch({ t: "build", c })}
+          dispatch={(c) => dispatch({ t: "create", c })}
           modelSync={modelSync.c}
-          model={input.model.t === "build" ? input.model.c : BuildClient.init}
+          model={input.model.t === "create" ? input.model.c : CreateClient.init}
         />
       )
     }
@@ -352,13 +352,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
       }
     }
 
-    case "build": {
+    case "create": {
       switch (modelSync.t) {
-        case "build": {
+        case "create": {
           return (
-            <BuildClient.ViewFeedItem
+            <CreateClient.ViewFeedItem
               ctx={{ ...ctx, onQuit() {} }}
-              dispatch={(c) => dispatch({ t: "build", c })}
+              dispatch={(c) => dispatch({ t: "create", c })}
               modelSync={modelSync.c}
               msgSync={msgSync.c}
             />

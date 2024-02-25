@@ -5,7 +5,7 @@ import {
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { Sub } from "gamezilla/@SHARED/core"
 import { SpaceServerCmd } from "../../../../@SHARED/space-server-cmd"
-import { BuildServer } from "./@CHILD/build/build.server"
+import { CreateServer } from "./@CHILD/create/create.server"
 import { PlayServer } from "./@CHILD/play/play.server"
 import {
   MsgSync,
@@ -73,30 +73,30 @@ const updateChild: Module["update"] = async (input) => {
       return tagged
     }
 
-    case "build": {
-      const updated = await BuildServer.update({
+    case "create": {
+      const updated = await CreateServer.update({
         ctx: input.ctx,
         modelSync: modelSync.c,
-        model: input.model.t === "build" ? input.model.c : BuildServer.init,
+        model: input.model.t === "create" ? input.model.c : CreateServer.init,
         msgCmd: input.msgCmd,
         msgEvt: input.msgEvt,
         msgClient:
-          input.msgClient?.t === "build"
+          input.msgClient?.t === "create"
             ? { ...input.msgClient, ...input.msgClient.c }
             : null,
         msgSync:
-          input.msgSync?.t === "build"
+          input.msgSync?.t === "create"
             ? { ...input.msgSync, ...input.msgSync.c }
             : null,
-        msg: input.msg?.t === "build" ? input.msg.c : null,
-        deps: await BuildServer.deps({
+        msg: input.msg?.t === "create" ? input.msg.c : null,
+        deps: await CreateServer.deps({
           ctx: input.ctx,
         }),
       })
 
       const tagged = GameServerModule.tagOutput(
-        "build",
-        (msgCmd) => SpaceServerCmd.tag("build", msgCmd),
+        "create",
+        (msgCmd) => SpaceServerCmd.tag("create", msgCmd),
         updated,
       )
 
@@ -124,13 +124,13 @@ const subscriptions: Module["subscriptions"] = async (input) => {
       )
     }
 
-    case "build": {
+    case "create": {
       return Sub.tag(
-        "build",
-        await BuildServer.subscriptions({
+        "create",
+        await CreateServer.subscriptions({
           ctx: input.ctx,
           modelSync: modelSync.c,
-          model: input.model.t === "build" ? input.model.c : BuildServer.init,
+          model: input.model.t === "create" ? input.model.c : CreateServer.init,
         }),
       )
     }

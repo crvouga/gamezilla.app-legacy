@@ -16,7 +16,7 @@ import {
   didShowErrorSm,
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { FlowPuzzle } from "../flow-puzzle/flow-puzzle"
-import { testFlowClientCtx } from "../../@CHILD/build/@TEST/client"
+import { testFlowClientCtx } from "../../@CHILD/create/@TEST/client"
 import { FlowGrid } from "../flow"
 
 const initial = {
