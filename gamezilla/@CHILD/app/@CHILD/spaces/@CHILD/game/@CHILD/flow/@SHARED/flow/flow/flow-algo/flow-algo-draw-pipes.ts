@@ -58,7 +58,7 @@ export const drawPipes = (
     return model
   }
 
-  // For UX, prmsgSync drawing from overshooting after terminals is connected
+  // For UX, prevent drawing from overshooting after terminals is connected
   if (!newNodeGroupId && isTerminalConnected(model, terminal)) {
     return model
   }
@@ -96,6 +96,11 @@ export const drawPipes = (
         startNodeId,
         nodeIdNew,
       )
+
+      const MAX_AUTO_CONNECT_LENGTH = 10
+      if (shortest.length > MAX_AUTO_CONNECT_LENGTH) {
+        return pipeline
+      }
 
       const pipelineNew = [...pipeline, ...shortest.slice(1)]
 
