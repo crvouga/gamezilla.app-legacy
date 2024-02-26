@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test"
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { chainUpdates } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
 import {
-  ClientCtx,
   didSendToServer,
   didShowErrorSm,
 } from "gamezilla/@CHILD/app/@SHARED/client"
@@ -16,11 +16,10 @@ import {
 import { testSpaceClientCtx } from "../../../../../@SHARED/testing/client"
 import { testFlowClientCtx } from "../../../@CHILD/create/@TEST/client"
 import { FlowVariant, FlowVariantDimensions } from "../../flow"
+import { FlowClientCtx } from "../../flow-ctx"
 import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleListClient } from "./flow-puzzle-list.client"
 import { ModelClient, initClient } from "./flow-puzzle-list.core"
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { FlowClientCtx } from "../../flow-ctx"
 
 const initial = {
   model: initClient,
