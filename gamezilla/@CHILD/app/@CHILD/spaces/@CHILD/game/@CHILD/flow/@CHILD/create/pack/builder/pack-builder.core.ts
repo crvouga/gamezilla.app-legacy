@@ -23,17 +23,9 @@ export const initClient: ModelClient = {
   },
 }
 
-export type ModelServer = {
-  packBuilder: {
-    flowPackPuzzleGrid: FlowPackPuzzleGrid.ModelServer
-  }
-}
+export type ModelServer = {}
 
-export const initServer: ModelServer = {
-  packBuilder: {
-    flowPackPuzzleGrid: FlowPackPuzzleGrid.initServer,
-  },
-}
+export const initServer: ModelServer = {}
 
 //
 //

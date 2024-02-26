@@ -15,10 +15,6 @@ export const initClient: ModelClient = {
   puzzles: {},
 }
 
-export type ModelServer = {}
-
-export const initServer: ModelServer = {}
-
 export type MsgClient =
   | {
       t: "user-observed-grid"
