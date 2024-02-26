@@ -8,11 +8,11 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import {
   Button,
+  Drawer,
   IconArrowLeftOnRect,
   IconChevronLeft,
   IconChevronRight,
   IconEllipsisVertical,
-  Transition,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
 
 import { Eff, Sub } from "gamezilla/@SHARED/core"
@@ -270,6 +270,47 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 //
 //
 //
+
+export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
+  update(input) {
+    const { model, msg } = input
+
+    switch (msg?.t) {
+      case "pack-builder.puzzle-screen.user-clicked-more-button": {
+        return {
+          model,
+          msgSync: [withId(msg)],
+          msgCmd: [playSound(APP_SOUND.tap)],
+        }
+      }
+    }
+
+    return { model }
+  },
+
+  View(input) {
+    const { modelSync } = input
+
+    if (!modelSync.packBuilder) {
+      return null
+    }
+
+    if (modelSync.packBuilder.screen.t !== "screen-puzzle") {
+      return null
+    }
+
+    return (
+      <Drawer
+        id="screen-puzzle-more"
+        open={modelSync.packBuilder.screen.opened === "more"}
+        onClose={() => {}}
+        position="bottom"
+      >
+        Hello
+      </Drawer>
+    )
+  },
+}
 
 export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
   update(input) {

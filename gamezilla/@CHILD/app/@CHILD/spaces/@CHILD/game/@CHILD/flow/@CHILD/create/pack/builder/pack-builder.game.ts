@@ -136,6 +136,7 @@ const userClickedPackItem: SyncReducer = ({ modelSync, msgSync }) => {
         packBuilder: {
           ...modelSync.packBuilder,
           screen: {
+            opened: null,
             t: "screen-puzzle",
             puzzleIndex: msgSync.index,
             puzzle: msgSync.puzzle,
@@ -202,6 +203,7 @@ const flowGridUIPlay: SyncReducer = ({ modelSync, msgSync }) => {
         packBuilder: {
           ...modelSync.packBuilder,
           screen: {
+            opened: null,
             t: "screen-puzzle",
             puzzleIndex: modelSync.packBuilder.screen.puzzleIndex,
             puzzle: modelSync.packBuilder.screen.puzzle,
@@ -229,6 +231,7 @@ const userClickedNextPuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
           ...modelSync.packBuilder,
           screen: {
             t: "screen-puzzle",
+            opened: null,
             puzzleIndex: clamp(
               modelSync.packBuilder.screen.puzzleIndex + 1,
               0,
@@ -256,6 +259,7 @@ const userClickedPreviousPuzzleButton: SyncReducer = ({
   if (modelSync.packBuilder?.screen.t !== "screen-puzzle") {
     return modelSync
   }
+
   switch (msgSync.t) {
     case "pack-builder.user-clicked-previous-puzzle-button": {
       return {
@@ -264,6 +268,7 @@ const userClickedPreviousPuzzleButton: SyncReducer = ({
           ...modelSync.packBuilder,
           screen: {
             t: "screen-puzzle",
+            opened: null,
             puzzleIndex: clamp(
               modelSync.packBuilder.screen.puzzleIndex - 1,
               0,
@@ -283,6 +288,32 @@ const userClickedPreviousPuzzleButton: SyncReducer = ({
   }
 }
 
+const userClickedPuzzleScreenMoreButton: SyncReducer = ({
+  modelSync,
+  msgSync,
+}) => {
+  switch (msgSync.t) {
+    case "pack-builder.puzzle-screen.user-clicked-more-button": {
+      if (!modelSync.packBuilder) {
+        return modelSync
+      }
+      return {
+        ...modelSync,
+        packBuilder: {
+          ...modelSync.packBuilder,
+          screen: {
+            ...modelSync.packBuilder.screen,
+            opened: "more",
+          },
+        },
+      }
+    }
+    default: {
+      return modelSync
+    }
+  }
+}
+
 const clamp = (value: number, min: number, max: number): number => {
   return Math.max(min, Math.min(max, value))
 }
@@ -290,6 +321,7 @@ const clamp = (value: number, min: number, max: number): number => {
 const reducer: SyncReducer = (input) => {
   return [
     flowGridUIPlay,
+    userClickedPuzzleScreenMoreButton,
     userClickedPreviousPuzzleButton,
     userClickedNextPuzzleButton,
     userClosedAddPuzzle,

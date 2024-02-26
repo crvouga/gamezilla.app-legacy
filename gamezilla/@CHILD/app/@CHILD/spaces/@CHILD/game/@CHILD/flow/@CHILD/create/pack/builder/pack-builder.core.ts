@@ -76,6 +76,7 @@ export type ModelSync = {
         puzzleIndex: number
         puzzle: FlowPuzzle
         playUI: FlowVariantUIPlay.Model
+        opened: "more" | null
       }
 }
 
@@ -122,4 +123,8 @@ export type MsgSync =
       t: "pack-builder.user-clicked-previous-puzzle-button"
       userId: UserId
       previousPuzzle: FlowPuzzle
+    }
+  | {
+      t: "pack-builder.puzzle-screen.user-clicked-more-button"
+      userId: UserId
     }
