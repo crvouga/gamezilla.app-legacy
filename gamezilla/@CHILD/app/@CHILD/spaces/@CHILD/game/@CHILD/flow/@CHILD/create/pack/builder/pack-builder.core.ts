@@ -1,9 +1,9 @@
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { Result } from "gamezilla/@SHARED/core"
 import { FlowVariantUIPlay } from "../../../../@SHARED/flow"
+import { FlowPackPuzzleGrid } from "../../../../@SHARED/flow-pack"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
-import { FlowPuzzleId } from "../../../../@SHARED/flow-puzzle/flow-puzzle-id"
 
 //
 //
@@ -11,29 +11,55 @@ import { FlowPuzzleId } from "../../../../@SHARED/flow-puzzle/flow-puzzle-id"
 //
 //
 
-export type ModelClient = {}
+export type ModelClient = {
+  packBuilder: {
+    flowPackPuzzleGrid: FlowPackPuzzleGrid.ModelClient
+  }
+}
 
-export const initClient: ModelClient = {}
+export const initClient: ModelClient = {
+  packBuilder: {
+    flowPackPuzzleGrid: FlowPackPuzzleGrid.initClient,
+  },
+}
 
-export type ModelServer = {}
+export type ModelServer = {
+  packBuilder: {
+    flowPackPuzzleGrid: FlowPackPuzzleGrid.ModelServer
+  }
+}
+
+export const initServer: ModelServer = {
+  packBuilder: {
+    flowPackPuzzleGrid: FlowPackPuzzleGrid.initServer,
+  },
+}
 
 //
 //
 //
 //
 
-export type MsgClient = MsgSync | { t: "puzzle-builder.elapsed" }
+export type MsgClient =
+  | MsgSync
+  | {
+      t: "pack-builder.flow-pack-puzzle-grid"
+      c: FlowPackPuzzleGrid.MsgClient
+    }
 
-export type MsgServer = { t: "noop" }
+export type MsgServer = {
+  t: "pack-builder.flow-pack-puzzle-grid"
+  c: FlowPackPuzzleGrid.MsgServer
+}
 
 export type MsgToServer = {
-  t: "pack-builder.list-puzzles-by-id"
-  puzzleIds: FlowPuzzleId[]
+  t: "pack-builder.flow-pack-puzzle-grid"
+  c: FlowPackPuzzleGrid.MsgToServer
 }
 
 export type MsgToClient = {
-  t: "pack-builder.list-puzzles-by-id"
-  listed: Result<string, FlowPuzzle[]>
+  t: "pack-builder.flow-pack-puzzle-grid"
+  c: FlowPackPuzzleGrid.MsgToClient
 }
 
 //

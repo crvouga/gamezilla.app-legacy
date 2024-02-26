@@ -1,10 +1,9 @@
 import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { SpaceClientCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
 import {
   APP_SOUND,
   playSound,
-  sendToServer,
-  showErrSm,
   showToast,
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import {
@@ -13,14 +12,17 @@ import {
   IconChevronLeft,
   IconChevronRight,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Sub, Time, TimeSpan } from "gamezilla/@SHARED/core"
+import { Eff, Sub } from "gamezilla/@SHARED/core"
 import {
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
 } from "../../../../../../@SHARED/game"
 import { FlowVariantUIPlay } from "../../../../@SHARED/flow"
-import { FlowPackPuzzleGridUI } from "../../../../@SHARED/flow-pack/flow-pack-puzzle-grid"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
+import {
+  FlowPackPuzzleGridClient,
+  FlowPackPuzzleGridUI,
+} from "../../../../@SHARED/flow-pack/flow-pack-puzzle-grid"
 import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle/flow-puzzle-list"
 import { ClientModule } from "../../create.core"
 
@@ -379,71 +381,65 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 //
 //
 
-const updateServerListedPuzzles: ClientModule["update"] = (input) => {
-  const { model, msgServer } = input
+const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
+  async update(input) {
+    const pack = input.modelSync.packBuilder?.pack
 
-  switch (msgServer?.t) {
-    case "pack-builder.list-puzzles-by-id": {
-      if (msgServer.listed.t === "err") {
-        return {
-          model,
-          msgCmd: showErrSm(msgServer.listed.error),
-        }
-      }
-
-      const byId = msgServer.listed.value.reduce(
-        (acc, puzzle) => ({ ...acc, [puzzle.id]: puzzle }),
-        {},
-      )
-      return { model: { ...model, puzzles: { ...model.puzzles, ...byId } } }
+    if (!pack) {
+      return { model: input.model }
     }
-    default: {
-      return { model }
+
+    const ctx = { ...input.ctx, pack }
+
+    const initial = await FlowPackPuzzleGridClient.init({ ctx })
+
+    const model = input.model.packBuilder.flowPackPuzzleGrid ?? initial.model
+
+    const updated = await FlowPackPuzzleGridClient.update({
+      ctx,
+      model: { ...model, puzzles: input.model.puzzles },
+      msg:
+        input.msg?.t === "pack-builder.flow-pack-puzzle-grid"
+          ? input.msg.c
+          : null,
+      msgCmd: input.msgCmd,
+      msgEvt: input.msgEvt,
+      msgServer:
+        input.msgServer?.t === "pack-builder.flow-pack-puzzle-grid"
+          ? input.msgServer.c
+          : null,
+    })
+
+    return {
+      model: {
+        ...input.model,
+        puzzles: {
+          ...input.model.puzzles,
+          ...updated.model.puzzles,
+        },
+        packBuilder: {
+          ...input.model.packBuilder,
+          flowPackPuzzleGrid: updated.model,
+        },
+      },
+      eff: Eff.tag("pack-builder.flow-pack-puzzle-grid", updated.eff),
+      msgCmd: SpaceClientCmd.tag(
+        "pack-builder.flow-pack-puzzle-grid",
+        updated.msgCmd,
+      ),
+      msgEvt: updated.msgEvt,
     }
-  }
-}
-
-const fetchMissingPuzzles: ClientModule["update"] = (input) => {
-  const missingPuzzleIds =
-    input.modelSync.packBuilder?.pack.puzzleIds.filter(
-      (puzzleId) => !input.model.puzzles[puzzleId],
-    ) ?? []
-
-  if (missingPuzzleIds.length === 0) {
-    return { model: input.model }
-  }
-
-  return {
-    model: input.model,
-    msgCmd: [
-      sendToServer({
-        t: "pack-builder.list-puzzles-by-id",
-        puzzleIds: missingPuzzleIds,
+  },
+  async subscriptions(input) {
+    const pack = input.modelSync.packBuilder?.pack
+    return Sub.tag(
+      "pack-builder.flow-pack-puzzle-grid",
+      await FlowPackPuzzleGridClient.subscriptions({
+        ctx: { ...input.ctx, pack },
+        model: input.model.packBuilder.flowPackPuzzleGrid,
       }),
-    ],
-  }
-}
-
-const updateMissingPuzzles: ClientModule["update"] = (input) => {
-  return GameClientModule.chainUpdates(
-    { model: input.model },
-    (model) => fetchMissingPuzzles({ ...input, model }),
-    (model) => updateServerListedPuzzles({ ...input, model }),
-  )
-}
-
-const subscriptionsMissingPuzzles: ClientModule["subscriptions"] = (input) => {
-  const isMissingPuzzles = input.modelSync.packBuilder?.pack.puzzleIds.some(
-    (puzzleId) => !input.model.puzzles[puzzleId],
-  )
-  if (isMissingPuzzles) {
-    return Time.interval(
-      "fetch-missing-puzzles",
-      TimeSpan.fromSeconds(1),
-      () => ({ t: "puzzle-builder.elapsed" }),
     )
-  }
-  return Sub.None
+  },
 }
 
 //
@@ -465,7 +461,7 @@ export const PackBuilderClient: Pick<
       (model) => ButtonAddPuzzle.update({ ...input, model }),
       (model) => ScreenPuzzleGrid.update({ ...input, model }),
       (model) => ScreenPuzzle.update({ ...input, model }),
-      (model) => updateMissingPuzzles({ ...input, model }),
+      (model) => PuzzleGrid.update({ ...input, model }),
     )
   },
 
@@ -492,9 +488,6 @@ export const PackBuilderClient: Pick<
   },
 
   async subscriptions(input) {
-    return Sub.batch([
-      //
-      await subscriptionsMissingPuzzles(input),
-    ])
+    return PuzzleGrid.subscriptions(input)
   },
 }

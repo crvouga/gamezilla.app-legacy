@@ -7,6 +7,7 @@ import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-c
 import { sendToServer, showErrSm } from "gamezilla/@CHILD/app/@SHARED/client"
 import { IntersectionObserverEmitter } from "gamezilla/@CHILD/app/@SHARED/ui/intersection-observer"
 import { RequestResponse, Result, isErr } from "gamezilla/@SHARED/core"
+import { FlowPack } from ".."
 import {
   ModelClient,
   MsgClient,
@@ -14,8 +15,12 @@ import {
   MsgToServer,
 } from "./flow-pack-puzzle-grid.core"
 
+type Ctx = SpaceClientCtx & {
+  pack?: FlowPack | null
+}
+
 type ClientModule = AppClientModule<{
-  Ctx: SpaceClientCtx
+  Ctx: Ctx
   Model: ModelClient
   ModelLocation: null
   Msg: MsgClient
@@ -39,7 +44,11 @@ const ObserveGrid: Pick<ClientModule, "View" | "update"> = {
   update(input) {
     switch (input.msg?.t) {
       case "user-observed-grid": {
-        const isMissingPuzzles = input.model.pack.puzzleIds.some(
+        if (!input.ctx.pack) {
+          return { model: input.model }
+        }
+
+        const isMissingPuzzles = input.ctx.pack.puzzleIds.some(
           (puzzleId) => !input.model.puzzles[puzzleId],
         )
 
@@ -55,7 +64,7 @@ const ObserveGrid: Pick<ClientModule, "View" | "update"> = {
           msgCmd: [
             sendToServer({
               t: "list-puzzles-by-id",
-              puzzleIds: input.model.pack.puzzleIds,
+              puzzleIds: input.ctx.pack.puzzleIds,
             }),
           ],
         }
@@ -143,8 +152,16 @@ const RequestTimeout: Pick<ClientModule, "update" | "subscriptions"> = {
 
 export const FlowPackPuzzleGridClient: Pick<
   ClientModule,
-  "View" | "update" | "subscriptions"
+  "View" | "update" | "subscriptions" | "init"
 > = {
+  init() {
+    return {
+      model: {
+        puzzles: {},
+        request: RequestResponse.notAsked,
+      },
+    }
+  },
   update(input) {
     return AppClientModule.chainUpdates(
       { model: input.model },

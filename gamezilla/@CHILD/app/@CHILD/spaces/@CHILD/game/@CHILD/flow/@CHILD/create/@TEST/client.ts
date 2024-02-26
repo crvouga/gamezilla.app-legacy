@@ -241,16 +241,3 @@ export const createFlowPack = (
     createdBy: ctx.currentUserId,
   })
 }
-
-export const serverListedPuzzlesByIdOk =
-  (puzzles: FlowPuzzle[]) => (model: ModelClient) => {
-    return CreateClient.update({
-      model,
-      ctx: ctx,
-      modelSync: defaultModelSync,
-      msgServer: {
-        t: "pack-builder.list-puzzles-by-id",
-        listed: ok(puzzles),
-      },
-    })
-  }

@@ -12,9 +12,9 @@ import { FlowVariant, FlowVariantDimensions } from "../../flow"
 import { FlowPuzzle } from "../../flow-puzzle"
 import { ModelClient, initClient } from "./flow-pack-puzzle-grid.core"
 
-const initial = (pack: FlowPack) => {
+const initial = (_pack: FlowPack) => {
   return {
-    model: initClient(pack),
+    model: initClient,
   }
 }
 
@@ -91,7 +91,14 @@ const setup = (ctx: SpaceClientCtx) => {
     now: ctx.now,
     puzzleIds: [puzzle.id],
   })
-  return { pack, puzzle }
+  return {
+    pack,
+    puzzle,
+    ctx: {
+      ...ctx,
+      pack,
+    },
+  }
 }
 
 const isSubset = <T,>(subArray: T[], superArray: T[]): boolean => {
@@ -104,8 +111,7 @@ const hasSameElements = <T,>(a: T[], b: T[]): boolean => {
 
 describe(import.meta.file, () => {
   it("should send a request to list puzzles when grid is visible", async () => {
-    const ctx = testFlowClientCtx()
-    const { pack } = setup(ctx)
+    const { pack, ctx } = setup(testFlowClientCtx())
     const output = await AppClientModule.chainUpdates(
       initial(pack),
       userObversedGrid(ctx),
@@ -117,8 +123,7 @@ describe(import.meta.file, () => {
   })
 
   it("should have missing puzzle ids in list request", async () => {
-    const ctx = testFlowClientCtx()
-    const { pack } = setup(ctx)
+    const { pack, ctx } = setup(testFlowClientCtx())
     const output = await AppClientModule.chainUpdates(
       initial(pack),
       userObversedGrid(ctx),
@@ -135,8 +140,7 @@ describe(import.meta.file, () => {
   })
 
   it("should record puzzles listed by server", async () => {
-    const ctx = testFlowClientCtx()
-    const { pack, puzzle } = setup(ctx)
+    const { pack, ctx, puzzle } = setup(testFlowClientCtx())
     const output = await AppClientModule.chainUpdates(
       initial(pack),
       serverListedPuzzlesByIdOk(ctx, [puzzle]),
@@ -145,8 +149,7 @@ describe(import.meta.file, () => {
   })
 
   it("should show an error when server sends an error while listing puzzles", async () => {
-    const ctx = testFlowClientCtx()
-    const { pack } = setup(ctx)
+    const { pack, ctx } = setup(testFlowClientCtx())
     const error = "Something went wrong"
     const output = await AppClientModule.chainUpdates(
       initial(pack),
@@ -156,8 +159,7 @@ describe(import.meta.file, () => {
   })
 
   it("should in a loading state after requesting to list puzzles", async () => {
-    const ctx = testFlowClientCtx()
-    const { pack } = setup(ctx)
+    const { pack, ctx } = setup(testFlowClientCtx())
     const output = await AppClientModule.chainUpdates(
       initial(pack),
       userObversedGrid(ctx),
@@ -166,8 +168,7 @@ describe(import.meta.file, () => {
   })
 
   it("should in an ok state after server listed puzzles", async () => {
-    const ctx = testFlowClientCtx()
-    const { pack, puzzle } = setup(ctx)
+    const { puzzle, pack, ctx } = setup(testFlowClientCtx())
     const output = await AppClientModule.chainUpdates(
       initial(pack),
       userObversedGrid(ctx),
@@ -177,8 +178,7 @@ describe(import.meta.file, () => {
   })
 
   it("should timeout request after too much time", async () => {
-    const ctx = testFlowClientCtx()
-    const { pack } = setup(ctx)
+    const { pack, ctx } = setup(testFlowClientCtx())
     const output = await AppClientModule.chainUpdates(
       initial(pack),
       userObversedGrid(ctx),

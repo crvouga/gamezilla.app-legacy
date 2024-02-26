@@ -73,7 +73,7 @@ const createDeps = async (
 }
 
 describe(import.meta.file, () => {
-  it("should send back puzzles listed", async () => {
+  it("should send back listed puzzles", async () => {
     const client = generateAuthClient()
     const deps = await createDeps(client)
     const output = await AppServerModule.chainUpdates(

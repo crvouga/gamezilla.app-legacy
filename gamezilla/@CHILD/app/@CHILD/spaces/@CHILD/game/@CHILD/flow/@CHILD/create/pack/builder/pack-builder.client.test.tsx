@@ -1,6 +1,5 @@
 import { describe, expect, it } from "bun:test"
 import { chainUpdates } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
-import { didSendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
 import { testSpaceClientCtx } from "../../../../../../@SHARED/testing/client"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import {
@@ -13,7 +12,6 @@ import {
   createFlowPuzzle,
   initial,
   serverCreatedPack,
-  serverListedPuzzlesByIdOk,
 } from "../../@TEST/client"
 import { deriveModelSync } from "../../@TEST/game"
 
@@ -100,45 +98,5 @@ describe(import.meta.file, () => {
     )
     const modelSync = deriveModelSync(output)
     expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBeTrue()
-  })
-
-  it("should request missing puzzles from the server", async () => {
-    const ctx = testSpaceClientCtx()
-    const puzzle = createFlowPuzzle(ctx)
-    const openedPackBuilder = await chainUpdates(
-      initial,
-      serverCreatedPack(createFlowPack(ctx, [puzzle.id])),
-    )
-
-    const output = await chainUpdates(
-      openedPackBuilder,
-      clickedOpenPuzzlePickerButton(deriveModelSync(openedPackBuilder)),
-    )
-
-    expect(
-      didSendToServer(
-        output,
-        (msg) =>
-          msg.t === "pack-builder.list-puzzles-by-id" &&
-          msg.puzzleIds.includes(puzzle.id),
-      ),
-    ).toBeTrue()
-  })
-
-  it("should record puzzles sent back from server", async () => {
-    const ctx = testSpaceClientCtx()
-    const puzzle = createFlowPuzzle(ctx)
-    const openedPackBuilder = await chainUpdates(
-      initial,
-      serverCreatedPack(createFlowPack(ctx, [puzzle.id])),
-    )
-
-    const output = await chainUpdates(
-      openedPackBuilder,
-      clickedOpenPuzzlePickerButton(deriveModelSync(openedPackBuilder)),
-      serverListedPuzzlesByIdOk([puzzle]),
-    )
-
-    expect(output.model.puzzles[puzzle.id]?.id === puzzle.id).toBeTrue()
   })
 })
