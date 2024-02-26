@@ -229,11 +229,15 @@ const userClickedNextPuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
           ...modelSync.packBuilder,
           screen: {
             t: "screen-puzzle",
-            puzzleIndex: modelSync.packBuilder.screen.puzzleIndex + 1,
+            puzzleIndex: clamp(
+              modelSync.packBuilder.screen.puzzleIndex + 1,
+              0,
+              modelSync.packBuilder.pack.puzzleIds.length - 1,
+            ),
             playUI: FlowVariantUIPlay.init({
-              flow: modelSync.packBuilder.screen.puzzle.flow,
+              flow: msgSync.nextPuzzle.flow,
             }),
-            puzzle: modelSync.packBuilder.screen.puzzle,
+            puzzle: msgSync.nextPuzzle,
           },
         },
       }
@@ -249,14 +253,38 @@ const userClickedPreviousPuzzleButton: SyncReducer = ({
   modelSync,
   msgSync,
 }) => {
+  if (modelSync.packBuilder?.screen.t !== "screen-puzzle") {
+    return modelSync
+  }
   switch (msgSync.t) {
     case "pack-builder.user-clicked-previous-puzzle-button": {
-      return modelSync
+      return {
+        ...modelSync,
+        packBuilder: {
+          ...modelSync.packBuilder,
+          screen: {
+            t: "screen-puzzle",
+            puzzleIndex: clamp(
+              modelSync.packBuilder.screen.puzzleIndex - 1,
+              0,
+              modelSync.packBuilder.pack.puzzleIds.length - 1,
+            ),
+            playUI: FlowVariantUIPlay.init({
+              flow: msgSync.previousPuzzle.flow,
+            }),
+            puzzle: msgSync.previousPuzzle,
+          },
+        },
+      }
     }
     default: {
       return modelSync
     }
   }
+}
+
+const clamp = (value: number, min: number, max: number): number => {
+  return Math.max(min, Math.min(max, value))
 }
 
 const reducer: SyncReducer = (input) => {

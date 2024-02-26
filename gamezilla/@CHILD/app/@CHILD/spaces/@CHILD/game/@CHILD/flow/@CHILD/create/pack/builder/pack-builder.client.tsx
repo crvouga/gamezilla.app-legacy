@@ -18,7 +18,6 @@ import {
   ViewBottomButtonBarAction,
 } from "../../../../../../@SHARED/game"
 import { FlowVariantUIPlay } from "../../../../@SHARED/flow"
-import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import {
   FlowPackPuzzleGridClient,
   FlowPackPuzzleGridUI,
@@ -216,56 +215,38 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
             {packBuilder.pack.name}
           </p>
           <div className="flex w-full flex-1 flex-col items-center justify-center">
-            <FlowPackPuzzleGridClient.View
-              ctx={{
-                ...input.ctx,
-                pack: packBuilder.pack,
-              }}
-              model={model.packBuilder.flowPackPuzzleGrid}
-              dispatch={(c) =>
-                input.dispatch({ t: "pack-builder.flow-pack-puzzle-grid", c })
-              }
-              slots={{
-                grid() {
+            <FlowPackPuzzleGridUI.ViewPackPuzzleGrid
+              renderCell={(position) => {
+                const index = FlowPackPuzzleGridUI.toIndex(position)
+
+                const puzzleId = packBuilder.pack.puzzleIds[index]
+
+                if (puzzleId) {
+                  const puzzle = puzzleId ? model.puzzles[puzzleId] : null
+
+                  if (!puzzle) {
+                    return <FlowPackPuzzleGridUI.ViewLoadingCell />
+                  }
+
                   return (
-                    <FlowPackPuzzleGridUI.ViewPackPuzzleGrid
-                      renderCell={(position) => {
-                        const index = FlowPackPuzzleGridUI.toIndex(position)
-
-                        const puzzleId = packBuilder.pack.puzzleIds[index]
-
-                        if (puzzleId) {
-                          const puzzle = puzzleId
-                            ? model.puzzles[puzzleId]
-                            : null
-
-                          if (!puzzle) {
-                            return <FlowPackPuzzleGridUI.ViewLoadingCell />
-                          }
-
-                          return (
-                            <FlowPackPuzzleGridUI.ViewPuzzleCell
-                              onClick={() =>
-                                input.dispatch({
-                                  t: "pack-builder.user-clicked-pack-item",
-                                  puzzle,
-                                  index,
-                                })
-                              }
-                              index={index}
-                            />
-                          )
-                        }
-
-                        if (index === packBuilder.pack.puzzleIds.length) {
-                          return <ButtonAddPuzzle.View {...input} />
-                        }
-
-                        return <FlowPackPuzzleGridUI.ViewEmptyCell />
-                      }}
+                    <FlowPackPuzzleGridUI.ViewPuzzleCell
+                      onClick={() =>
+                        input.dispatch({
+                          t: "pack-builder.user-clicked-pack-item",
+                          puzzle,
+                          index,
+                        })
+                      }
+                      index={index}
                     />
                   )
-                },
+                }
+
+                if (index === packBuilder.pack.puzzleIds.length) {
+                  return <ButtonAddPuzzle.View {...input} />
+                }
+
+                return <FlowPackPuzzleGridUI.ViewEmptyCell />
               }}
             />
           </div>
@@ -339,11 +320,21 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
     const pack = input.modelSync.packBuilder.pack
     const screen = input.modelSync.packBuilder.screen
 
+    const previousPuzzleId = pack.puzzleIds[screen.puzzleIndex - 1]
+    const previousPuzzle = previousPuzzleId
+      ? input.model.puzzles[previousPuzzleId]
+      : null
+    const canGoPrevious = Boolean(previousPuzzle)
+
+    const nextPuzzleId = pack.puzzleIds[screen.puzzleIndex + 1]
+    const nextPuzzle = nextPuzzleId ? input.model.puzzles[nextPuzzleId] : null
+    const canGoNext = Boolean(nextPuzzle)
+
     return (
       <div className="flex h-full w-full flex-col">
-        <div className="flex-1 px-4 py-4">
+        <div className="flex flex-1 flex-col gap-1 px-4 py-4">
           <p className="text-3xl font-bold">Level {screen.puzzleIndex + 1}</p>
-          <p className="text-lg text-secondary"></p>
+          <p className="text-xs text-secondary">{screen.puzzle.name}</p>
         </div>
         <FlowVariantUIPlay.View
           dispatch={(c) =>
@@ -353,6 +344,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
           model={screen.playUI}
         />
         <div className="flex-1"></div>
+
         <ViewBottomButtonBar>
           <ViewBottomButtonBarAction
             icon={(props) => <IconArrowLeftOnRect {...props} />}
@@ -364,27 +356,34 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
               })
             }
           />
+
           <ViewBottomButtonBarAction
             icon={(props) => <IconChevronLeft {...props} />}
             label="Previous"
-            disabled={!FlowPack.canGoPrevious(pack, screen.puzzleIndex)}
-            onClick={() =>
-              input.dispatch({
-                t: "pack-builder.user-clicked-previous-puzzle-button",
-                userId: input.ctx.currentUserId,
-              })
-            }
+            disabled={!canGoPrevious}
+            onClick={() => {
+              if (previousPuzzle) {
+                input.dispatch({
+                  t: "pack-builder.user-clicked-previous-puzzle-button",
+                  userId: input.ctx.currentUserId,
+                  previousPuzzle,
+                })
+              }
+            }}
           />
           <ViewBottomButtonBarAction
             icon={(props) => <IconChevronRight {...props} />}
             label="Next"
-            disabled={FlowPack.canGoNext(pack, screen.puzzleIndex)}
-            onClick={() =>
-              input.dispatch({
-                t: "pack-builder.user-clicked-next-puzzle-button",
-                userId: input.ctx.currentUserId,
-              })
-            }
+            disabled={!canGoNext}
+            onClick={() => {
+              if (nextPuzzle) {
+                input.dispatch({
+                  t: "pack-builder.user-clicked-next-puzzle-button",
+                  userId: input.ctx.currentUserId,
+                  nextPuzzle,
+                })
+              }
+            }}
           />
         </ViewBottomButtonBar>
       </div>
@@ -484,25 +483,38 @@ export const PackBuilderClient: Pick<
   },
 
   View(input) {
-    const { modelSync } = input
+    const { modelSync, model } = input
 
-    switch (modelSync.packBuilder?.screen.t) {
-      case "add-puzzle": {
-        return <ScreenAddPuzzle.View {...input} />
-      }
+    return (
+      <FlowPackPuzzleGridClient.View
+        ctx={{ ...input.ctx, pack: modelSync.packBuilder?.pack }}
+        model={model.packBuilder.flowPackPuzzleGrid}
+        dispatch={(c) =>
+          input.dispatch({ t: "pack-builder.flow-pack-puzzle-grid", c })
+        }
+        slots={{
+          grid() {
+            switch (modelSync.packBuilder?.screen.t) {
+              case "add-puzzle": {
+                return <ScreenAddPuzzle.View {...input} />
+              }
 
-      case "screen-puzzle-grid": {
-        return <ScreenPuzzleGrid.View {...input} />
-      }
+              case "screen-puzzle-grid": {
+                return <ScreenPuzzleGrid.View {...input} />
+              }
 
-      case "screen-puzzle": {
-        return <ScreenPuzzle.View {...input} />
-      }
+              case "screen-puzzle": {
+                return <ScreenPuzzle.View {...input} />
+              }
 
-      default: {
-        return null
-      }
-    }
+              default: {
+                return null
+              }
+            }
+          },
+        }}
+      />
+    )
   },
 
   async subscriptions(input) {

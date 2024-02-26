@@ -45,11 +45,11 @@ const add = (pack: FlowPack, puzzleId: FlowPuzzleId): FlowPack => {
 }
 
 const canGoPrevious = (_pack: FlowPack, puzzleIndex: number): boolean => {
-  return puzzleIndex >= 0
+  return puzzleIndex > 0
 }
 
 const canGoNext = (pack: FlowPack, puzzleIndex: number): boolean => {
-  return puzzleIndex <= pack.puzzleIds.length - 1
+  return puzzleIndex < pack.puzzleIds.length - 1
 }
 
 export const FlowPack = {
