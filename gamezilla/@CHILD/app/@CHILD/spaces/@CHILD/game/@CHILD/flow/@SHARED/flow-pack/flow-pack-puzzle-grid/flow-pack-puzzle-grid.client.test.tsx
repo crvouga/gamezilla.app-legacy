@@ -1,9 +1,15 @@
 import { describe, expect, it } from "bun:test"
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
-import { didSendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
+import {
+  didSendToServer,
+  didShowErrorSm,
+} from "gamezilla/@CHILD/app/@SHARED/client"
+import { Posix, RequestResponse, TimeSpan } from "gamezilla/@SHARED/core"
 import { FlowPack, FlowPackPuzzleGridClient } from ".."
 import { testFlowClientCtx } from "../../../@CHILD/create/@TEST/client"
-import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id"
+import { FlowVariant, FlowVariantDimensions } from "../../flow"
+import { FlowPuzzle } from "../../flow-puzzle"
 import { ModelClient, initClient } from "./flow-pack-puzzle-grid.core"
 
 const initial = (pack: FlowPack) => {
@@ -12,9 +18,9 @@ const initial = (pack: FlowPack) => {
   }
 }
 
-const userObversedGrid = () => (model: ModelClient) => {
+const userObversedGrid = (ctx: SpaceClientCtx) => (model: ModelClient) => {
   return FlowPackPuzzleGridClient.update({
-    ctx: testFlowClientCtx,
+    ctx,
     model,
     msg: {
       t: "user-observed-grid",
@@ -22,21 +28,162 @@ const userObversedGrid = () => (model: ModelClient) => {
   })
 }
 
-const somePack = FlowPack.create({
-  createdBy: testFlowClientCtx.currentUserId,
-  now: testFlowClientCtx.now,
-  puzzleIds: [FlowPuzzleId.generate()],
-})
+const serverListedPuzzlesByIdErr =
+  (ctx: SpaceClientCtx, error: string) => (model: ModelClient) => {
+    return FlowPackPuzzleGridClient.update({
+      ctx,
+      model,
+      msgServer: {
+        t: "listed-puzzles-by-id",
+        listed: {
+          t: "err",
+          error,
+        },
+      },
+    })
+  }
+
+const serverListedPuzzlesByIdOk =
+  (ctx: SpaceClientCtx, puzzles: FlowPuzzle[]) => (model: ModelClient) => {
+    return FlowPackPuzzleGridClient.update({
+      ctx,
+      model,
+      msgServer: {
+        t: "listed-puzzles-by-id",
+        listed: {
+          t: "ok",
+          value: {
+            items: puzzles,
+            limit: puzzles.length,
+            offset: 0,
+            total: puzzles.length,
+          },
+        },
+      },
+    })
+  }
+
+const elapsed =
+  (ctx: SpaceClientCtx, timeSpan: TimeSpan) => (model: ModelClient) => {
+    return FlowPackPuzzleGridClient.update({
+      ctx: { ...ctx, now: Posix.add(ctx.now, timeSpan) },
+      model,
+      msg: { t: "elapsed" },
+    })
+  }
+
+const setup = (ctx: SpaceClientCtx) => {
+  const puzzle = FlowPuzzle.create({
+    count: 1,
+    createdAt: ctx.now,
+    createdBy: ctx.currentUserId,
+    flow: FlowVariant.init({
+      dimensions: FlowVariantDimensions.init({
+        t: "flow-grid",
+        height: 5,
+        width: 5,
+      }),
+      terminalsByGroupId: {},
+    }),
+  })
+  const pack = FlowPack.create({
+    createdBy: ctx.currentUserId,
+    now: ctx.now,
+    puzzleIds: [puzzle.id],
+  })
+  return { pack, puzzle }
+}
+
+const isSubset = <T,>(subArray: T[], superArray: T[]): boolean => {
+  return subArray.every((item) => superArray.includes(item))
+}
+
+const hasSameElements = <T,>(a: T[], b: T[]): boolean => {
+  return isSubset(a, b) && isSubset(b, a)
+}
 
 describe(import.meta.file, () => {
-  it("should send a request for puzzles when grid is visible", async () => {
+  it("should send a request to list puzzles when grid is visible", async () => {
+    const ctx = testFlowClientCtx()
+    const { pack } = setup(ctx)
     const output = await AppClientModule.chainUpdates(
-      initial(somePack),
-      userObversedGrid(),
+      initial(pack),
+      userObversedGrid(ctx),
     )
 
     expect(
-      didSendToServer(output, (msg) => msg.t === "user-observed-grid"),
+      didSendToServer(output, (msg) => msg.t === "list-puzzles-by-id"),
     ).toBeTrue()
+  })
+
+  it("should have missing puzzle ids in list request", async () => {
+    const ctx = testFlowClientCtx()
+    const { pack } = setup(ctx)
+    const output = await AppClientModule.chainUpdates(
+      initial(pack),
+      userObversedGrid(ctx),
+    )
+
+    expect(
+      didSendToServer(
+        output,
+        (msg) =>
+          msg.t === "list-puzzles-by-id" &&
+          hasSameElements(msg.puzzleIds, pack.puzzleIds),
+      ),
+    ).toBeTrue()
+  })
+
+  it("should record puzzles listed by server", async () => {
+    const ctx = testFlowClientCtx()
+    const { pack, puzzle } = setup(ctx)
+    const output = await AppClientModule.chainUpdates(
+      initial(pack),
+      serverListedPuzzlesByIdOk(ctx, [puzzle]),
+    )
+    expect(output.model.puzzles[puzzle.id]).toEqual(puzzle)
+  })
+
+  it("should show an error when server sends an error while listing puzzles", async () => {
+    const ctx = testFlowClientCtx()
+    const { pack } = setup(ctx)
+    const error = "Something went wrong"
+    const output = await AppClientModule.chainUpdates(
+      initial(pack),
+      serverListedPuzzlesByIdErr(ctx, error),
+    )
+    expect(didShowErrorSm(output, error)).toBeTrue()
+  })
+
+  it("should in a loading state after requesting to list puzzles", async () => {
+    const ctx = testFlowClientCtx()
+    const { pack } = setup(ctx)
+    const output = await AppClientModule.chainUpdates(
+      initial(pack),
+      userObversedGrid(ctx),
+    )
+    expect(RequestResponse.isRequesting(output.model.request)).toBeTrue()
+  })
+
+  it("should in an ok state after server listed puzzles", async () => {
+    const ctx = testFlowClientCtx()
+    const { pack, puzzle } = setup(ctx)
+    const output = await AppClientModule.chainUpdates(
+      initial(pack),
+      userObversedGrid(ctx),
+      serverListedPuzzlesByIdOk(ctx, [puzzle]),
+    )
+    expect(RequestResponse.isOk(output.model.request)).toBeTrue()
+  })
+
+  it("should timeout request after too much time", async () => {
+    const ctx = testFlowClientCtx()
+    const { pack } = setup(ctx)
+    const output = await AppClientModule.chainUpdates(
+      initial(pack),
+      userObversedGrid(ctx),
+      elapsed(ctx, TimeSpan.fromMinutes(5)),
+    )
+    expect(RequestResponse.isTimedOut(output.model.request)).toBeTrue()
   })
 })

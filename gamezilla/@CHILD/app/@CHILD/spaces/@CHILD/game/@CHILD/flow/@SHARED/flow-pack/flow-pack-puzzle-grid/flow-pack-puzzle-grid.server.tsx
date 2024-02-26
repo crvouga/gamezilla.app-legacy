@@ -11,6 +11,7 @@ import {
   MsgToClient,
   MsgToServer,
 } from "./flow-pack-puzzle-grid.core"
+import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server"
 
 type ServerModule = AppServerModule<{
   Ctx: SpaceServerCtx
@@ -25,8 +26,45 @@ type ServerModule = AppServerModule<{
   Deps: FlowServerDeps
 }>
 
+const ListPuzzlesById: Pick<ServerModule, "update"> = {
+  async update(input) {
+    switch (input.msgClient?.t) {
+      case "list-puzzles-by-id": {
+        const listed = await input.deps.FlowPuzzleDb.list({
+          pagination: {
+            limit: Infinity,
+            offset: 0,
+          },
+          order: {
+            createdAt: "asc",
+          },
+          where: {
+            puzzleId: {
+              in: [],
+            },
+          },
+        })
+        return {
+          model: input.model,
+          msgCmd: [
+            sendBack(input.msgClient, {
+              t: "listed-puzzles-by-id",
+              listed,
+            }),
+          ],
+        }
+      }
+    }
+    return { model: input.model }
+  },
+}
+
 export const FlowPackPuzzleGridServer: Pick<ServerModule, "update"> = {
   async update(input) {
-    return { model: input.model }
+    return AppServerModule.chainUpdates(
+      { model: input.model },
+      (model) => ListPuzzlesById.update({ ...input, model }),
+      //
+    )
   },
 }

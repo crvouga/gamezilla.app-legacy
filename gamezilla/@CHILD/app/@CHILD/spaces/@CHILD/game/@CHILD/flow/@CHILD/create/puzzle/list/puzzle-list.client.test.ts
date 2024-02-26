@@ -14,9 +14,11 @@ import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
 import { EventId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock"
 
+const ctx = testFlowClientCtx()
+
 const clickedPuzzleListItem = (puzzle: FlowPuzzle) => (model: ModelClient) => {
   return CreateClient.update({
-    ctx: testFlowClientCtx,
+    ctx: ctx,
     model,
     modelSync: defaultModelSync,
     msg: {
@@ -29,7 +31,7 @@ const clickedPuzzleListItem = (puzzle: FlowPuzzle) => (model: ModelClient) => {
 const userClickedPuzzleListItem =
   (puzzle: FlowPuzzle) => (model: ModelClient) => {
     return CreateClient.update({
-      ctx: testFlowClientCtx,
+      ctx: ctx,
       model,
       modelSync: defaultModelSync,
       msgSync: {
@@ -43,7 +45,7 @@ const userClickedPuzzleListItem =
 
 describe(import.meta.file, () => {
   it("should open puzzle builder after clicking a puzzle in the list", async () => {
-    const puzzle = createFlowPuzzle(testFlowClientCtx)
+    const puzzle = createFlowPuzzle(ctx)
 
     const output = await chainUpdates(
       initial,
@@ -60,7 +62,7 @@ describe(import.meta.file, () => {
   })
 
   it("should play a sound when clicking a puzzle in the list", async () => {
-    const puzzle = createFlowPuzzle(testFlowClientCtx)
+    const puzzle = createFlowPuzzle(ctx)
 
     const output = await chainUpdates(
       initial,

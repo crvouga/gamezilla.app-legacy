@@ -4,7 +4,7 @@ import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import {
   clickedLeaveSpaceButton,
-  ctx,
+  createCtx,
   init,
   userJoinedSpace,
   userStartedSpace,
@@ -13,12 +13,13 @@ import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {
   test("user is not in space after leaving", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
     const updated = await AppClientModule.chainUpdates(
-      init(),
-      (model) => userStartedSpace(model, UserId.generate(), spaceId),
-      (model) => userJoinedSpace(model, ctx.currentUserId, spaceId),
-      (model) => clickedLeaveSpaceButton(model),
+      init(ctx),
+      userStartedSpace(ctx, UserId.generate(), spaceId),
+      userJoinedSpace(ctx, ctx.currentUserId, spaceId),
+      clickedLeaveSpaceButton(ctx),
     )
 
     expect(Spaces.toSpaceIdByUserId(updated.model, ctx.currentUserId)).toEqual(
@@ -27,17 +28,18 @@ describe(import.meta.file, () => {
   })
 
   test("should play sound after leaving", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
     const joined = await AppClientModule.chainUpdates(
-      init(),
-      (model) => userStartedSpace(model, UserId.generate(), spaceId),
-      (model) => userJoinedSpace(model, ctx.currentUserId, spaceId),
+      init(ctx),
+      userStartedSpace(ctx, UserId.generate(), spaceId),
+      userJoinedSpace(ctx, ctx.currentUserId, spaceId),
     )
 
     const left = await AppClientModule.chainUpdates(
       { model: joined.model },
-      (model) => clickedLeaveSpaceButton(model),
+      clickedLeaveSpaceButton(ctx),
     )
 
     expect(didPlaySound(left)).toBeTrue()

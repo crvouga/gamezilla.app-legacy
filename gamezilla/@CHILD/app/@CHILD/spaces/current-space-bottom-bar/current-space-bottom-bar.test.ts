@@ -3,7 +3,7 @@ import { SpaceId } from "../../../@SHARED/data"
 import {
   clickedCurrentSpaceBottomBar,
   clickedStartSpaceButton,
-  ctx,
+  createCtx,
   init,
 } from "../@TEST/client"
 import { SpaceClientModule } from "../architecture/space-client"
@@ -11,15 +11,17 @@ import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {
   it("should open current space when clicking current space bottom bar", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const started = await SpaceClientModule.chainUpdates(init(), (model) =>
-      clickedStartSpaceButton(model, spaceId),
+    const started = await SpaceClientModule.chainUpdates(
+      init(ctx),
+      clickedStartSpaceButton(ctx, spaceId),
     )
 
     const output = await SpaceClientModule.chainUpdates(
       { model: started.model },
-      clickedCurrentSpaceBottomBar,
+      clickedCurrentSpaceBottomBar(ctx),
     )
     const currentUsersSpaceId = Spaces.toSpaceIdByUserId(
       output.model,
@@ -39,15 +41,17 @@ describe(import.meta.file, () => {
   })
 
   it("should play a sound when clicking current space bottom bar", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const started = await SpaceClientModule.chainUpdates(init(), (model) =>
-      clickedStartSpaceButton(model, spaceId),
+    const started = await SpaceClientModule.chainUpdates(
+      init(ctx),
+      clickedStartSpaceButton(ctx, spaceId),
     )
 
     const output = await SpaceClientModule.chainUpdates(
       { model: started.model },
-      clickedCurrentSpaceBottomBar,
+      clickedCurrentSpaceBottomBar(ctx),
     )
 
     expect(

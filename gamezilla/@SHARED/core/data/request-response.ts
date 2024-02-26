@@ -49,7 +49,7 @@ export type RequestResponse<TError, TValue> =
 
 export const requesting = (
   requestedAt: Posix,
-  lifeSpan: TimeSpan = TimeSpan.fromSeconds(10),
+  lifeSpan: TimeSpan = TimeSpan.fromMinutes(1),
 ): Requesting => {
   return { t: "loading", requestedAt, lifeSpan, requestId: Uuid.generate() }
 }
@@ -95,13 +95,13 @@ export const response = <TError, TValue>(
   }
 }
 
-export const timePassed = <TError, TValue>(
+export const elapsed = <TError, TValue>(
   request: RequestResponse<TError, TValue>,
   now: Posix,
 ): RequestResponse<TError, TValue> => {
   if (
     isRequesting(request) &&
-    TimeSpan.gte(request.lifeSpan, Posix.diff(now, request.requestedAt))
+    TimeSpan.gte(Posix.diff(now, request.requestedAt), request.lifeSpan)
   ) {
     return {
       t: "request-failed",
@@ -129,14 +129,28 @@ const isErr = <TError, TValue>(
   return request.t === "err"
 }
 
+const isOk = <TError, TValue>(
+  request: RequestResponse<TError, TValue>,
+): request is ResponseOk<TValue> => {
+  return request.t === "ok"
+}
+
+const isTimedOut = <TError, TValue>(
+  request: RequestResponse<TError, TValue>,
+): request is RequestFailed => {
+  return request.t === "request-failed" && request.reason === "timed-out"
+}
+
 export const RequestResponse = {
+  isTimedOut,
+  isOk,
   isErr,
   isRequesting,
   requesting,
   response,
   err,
   ok,
-  timePassed,
+  elapsed,
   didRequestTimeout,
   subscriptions,
   notAsked,

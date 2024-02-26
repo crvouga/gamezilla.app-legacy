@@ -16,21 +16,23 @@ export const initial = {
   model: initClient,
 }
 
-export const testFlowClientCtx: FlowClientCtx = {
-  ...testSpaceClientCtx,
-  onQuit() {},
+export const testFlowClientCtx = (): FlowClientCtx => {
+  return {
+    ...testSpaceClientCtx(),
+    onQuit() {},
+  }
 }
 
-export const defaultModelSync = initSync({
-  ctx: testFlowClientCtx,
-})
+const ctx = testFlowClientCtx()
 
-const ctx = testFlowClientCtx
+export const defaultModelSync = initSync({
+  ctx,
+})
 
 export const clickedPackCreateButton = (model: ModelClient) => {
   return CreateClient.update({
     model,
-    ctx: testFlowClientCtx,
+    ctx: ctx,
     modelSync: defaultModelSync,
     msg: { t: "pack-create.clicked-create-button" },
   })
@@ -39,14 +41,14 @@ export const clickedPackCreateButton = (model: ModelClient) => {
 export const userCreatedPack = (pack: FlowPack) => (model: ModelClient) => {
   return CreateClient.update({
     model,
-    ctx: testFlowClientCtx,
+    ctx: ctx,
     modelSync: defaultModelSync,
     msgSync: {
       t: "user-created-pack",
       created: ok(pack),
       eventId: EventId.generate(),
       happenedAt: LamportTimestamp.fromNumber(0),
-      userId: testFlowClientCtx.currentUserId,
+      userId: ctx.currentUserId,
     },
   })
 }
@@ -54,7 +56,7 @@ export const userCreatedPack = (pack: FlowPack) => (model: ModelClient) => {
 export const clickedPackItem = (pack: FlowPack) => (model: ModelClient) => {
   return CreateClient.update({
     model,
-    ctx: testFlowClientCtx,
+    ctx: ctx,
     modelSync: defaultModelSync,
     msg: { t: "pack-list.clicked-pack-item", pack },
   })
@@ -110,7 +112,7 @@ export const clickedExitPuzzleBuilderButton =
 export const serverListedPuzzlesOk =
   (puzzles: FlowPuzzle[]) => (model: ModelClient) => {
     return CreateClient.update({
-      ctx: testFlowClientCtx,
+      ctx: ctx,
       model,
       modelSync: defaultModelSync,
       msgServer: {
@@ -210,7 +212,7 @@ export const clickedPuzzleGridItem =
 export const serverCreatedPack = (pack: FlowPack) => (model: ModelClient) => {
   return CreateClient.update({
     model,
-    ctx: testFlowClientCtx,
+    ctx: ctx,
     modelSync: defaultModelSync,
     msgServer: {
       t: "pack-create.created-pack",
@@ -244,7 +246,7 @@ export const serverListedPuzzlesByIdOk =
   (puzzles: FlowPuzzle[]) => (model: ModelClient) => {
     return CreateClient.update({
       model,
-      ctx: testFlowClientCtx,
+      ctx: ctx,
       modelSync: defaultModelSync,
       msgServer: {
         t: "pack-builder.list-puzzles-by-id",

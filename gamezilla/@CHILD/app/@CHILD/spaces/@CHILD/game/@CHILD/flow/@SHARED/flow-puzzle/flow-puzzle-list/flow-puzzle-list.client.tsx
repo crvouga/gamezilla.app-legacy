@@ -57,7 +57,7 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
     }
 
     case "flow-puzzle-list.elasped": {
-      const requestNew = RequestResponse.timePassed(model.request, ctx.now)
+      const requestNew = RequestResponse.elapsed(model.request, ctx.now)
       return {
         model: {
           ...model,

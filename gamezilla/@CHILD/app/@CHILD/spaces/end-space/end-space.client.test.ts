@@ -4,7 +4,7 @@ import { didPlaySound, didPushRoute } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import {
   clickedStartSpaceButton,
-  ctx,
+  createCtx,
   init,
   userClickedEndSpaceButton,
 } from "../@TEST/client"
@@ -13,15 +13,15 @@ import { EndSpaceClient } from "./end-space.client"
 
 describe(import.meta.file, () => {
   it("should redirect to space list after ending space if on space route", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
     const updated = await AppClientModule.chainUpdates(
-      await init(),
-      (model) => clickedStartSpaceButton(model, spaceId),
-      (model) =>
-        userClickedEndSpaceButton(model, {
-          ...ctx,
-          currentRoute: { t: "spaces", c: { t: "space", spaceId } },
-        }),
+      init(ctx),
+      clickedStartSpaceButton(ctx, spaceId),
+      userClickedEndSpaceButton({
+        ...ctx,
+        currentRoute: { t: "spaces", c: { t: "space", spaceId } },
+      }),
     )
 
     expect(
@@ -30,19 +30,19 @@ describe(import.meta.file, () => {
   })
 
   it("should not redirect to space list after ending space if not on space route", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
     const updated = await AppClientModule.chainUpdates(
-      await init(),
-      (model) => clickedStartSpaceButton(model, spaceId),
-      (model) =>
-        userClickedEndSpaceButton(model, {
-          ...ctx,
-          currentRoute: {
-            t: "profile",
-            c: { t: "profile", userId: UserId.generate() },
-          },
-        }),
+      init(ctx),
+      clickedStartSpaceButton(ctx, spaceId),
+      userClickedEndSpaceButton({
+        ...ctx,
+        currentRoute: {
+          t: "profile",
+          c: { t: "profile", userId: UserId.generate() },
+        },
+      }),
     )
 
     expect(
@@ -51,22 +51,28 @@ describe(import.meta.file, () => {
   })
 
   it("should play sound after ending space", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
     const updated = await AppClientModule.chainUpdates(
-      await init(),
-      (model) => clickedStartSpaceButton(model, spaceId),
-      (model) => userClickedEndSpaceButton(model),
+      init(ctx),
+      clickedStartSpaceButton(ctx, spaceId),
+      userClickedEndSpaceButton(ctx),
     )
     expect(didPlaySound(updated)).toBeTrue()
   })
 
   it("should end space when host logs out", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
     const updated = await SpaceClientModule.chainUpdates(
-      await init(),
-      (model) => clickedStartSpaceButton(model, spaceId),
+      init(ctx),
+      clickedStartSpaceButton(ctx, spaceId),
       (model) =>
-        EndSpaceClient.update({ model, ctx, msgEvt: { t: "is-logged-out" } }),
+        EndSpaceClient.update({
+          model,
+          ctx,
+          msgEvt: { t: "is-logged-out" },
+        }),
     )
     expect(
       updated.msgSpaceEvent?.some(

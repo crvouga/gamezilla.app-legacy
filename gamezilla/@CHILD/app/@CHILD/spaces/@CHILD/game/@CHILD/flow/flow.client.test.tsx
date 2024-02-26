@@ -12,7 +12,7 @@ const init = {
   model: FlowClient.init,
 }
 
-const ctx = testSpaceClientCtx
+const ctx = testSpaceClientCtx()
 
 const useSelectedMode =
   (userId: UserId, mode: "create" | "play" | null) => (model: ModelClient) => {

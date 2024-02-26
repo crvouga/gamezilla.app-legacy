@@ -25,7 +25,7 @@ const initial = {
 
 const userObservedEndOfList = (model: ModelClient) => {
   return FlowPuzzleListClient.update({
-    ctx: testSpaceClientCtx,
+    ctx: testSpaceClientCtx(),
     model,
     msg: {
       t: "flow-puzzle-list.user-observed-end-of-list",
@@ -36,7 +36,7 @@ const userObservedEndOfList = (model: ModelClient) => {
 const serverListedPuzzlesOk =
   (puzzles: FlowPuzzle[]) => (model: ModelClient) => {
     return FlowPuzzleListClient.update({
-      ctx: testSpaceClientCtx,
+      ctx: testSpaceClientCtx(),
       model,
       msgServer: {
         t: "flow-puzzle-list.listed-puzzle",
@@ -51,8 +51,9 @@ const serverListedPuzzlesOk =
   }
 
 const serverListedPuzzlesErr = (error: string) => (model: ModelClient) => {
+  const ctx = testSpaceClientCtx()
   return FlowPuzzleListClient.update({
-    ctx: testSpaceClientCtx,
+    ctx: ctx,
     model,
     msgServer: {
       t: "flow-puzzle-list.listed-puzzle",
@@ -62,10 +63,11 @@ const serverListedPuzzlesErr = (error: string) => (model: ModelClient) => {
 }
 
 const elapsed = (timeSpan: TimeSpan) => (model: ModelClient) => {
+  const ctx = testSpaceClientCtx()
   return FlowPuzzleListClient.update({
     ctx: {
-      ...testSpaceClientCtx,
-      now: Posix.add(testSpaceClientCtx.now, timeSpan),
+      ...ctx,
+      now: Posix.add(ctx.now, timeSpan),
     },
     model,
     msg: { t: "flow-puzzle-list.elasped" },
@@ -89,10 +91,11 @@ describe(import.meta.file, () => {
   })
 
   it("should record puzzles recieved from server", async () => {
+    const ctx = testFlowClientCtx()
     const puzzle = FlowPuzzle.create({
       count: 1,
-      createdAt: testFlowClientCtx.now,
-      createdBy: testFlowClientCtx.currentUserId,
+      createdAt: ctx.now,
+      createdBy: ctx.currentUserId,
       flow: FlowVariant.init({
         dimensions: FlowVariantDimensions.init({
           t: "flow-grid",

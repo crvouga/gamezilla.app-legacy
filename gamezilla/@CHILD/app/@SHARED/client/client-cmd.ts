@@ -244,11 +244,14 @@ export const showErrSm = <T extends ClientCmdTypes>(
   ]
 }
 
-export const didShowErrorSm = <TCmd>({
-  msgCmd,
-}: {
-  msgCmd?: (ToastCmd | SoundCmd | TCmd)[]
-}): boolean => {
+export const didShowErrorSm = <TCmd>(
+  {
+    msgCmd,
+  }: {
+    msgCmd?: (ToastCmd | SoundCmd | TCmd)[]
+  },
+  errorMessage?: string,
+): boolean => {
   const isSomeErrorToast =
     msgCmd?.some(
       (cmd) =>
@@ -257,7 +260,8 @@ export const didShowErrorSm = <TCmd>({
         "t" in cmd &&
         cmd.t === "toast" &&
         cmd.c.t === "enqueue" &&
-        cmd.c.toastVariant === "error",
+        cmd.c.toastVariant === "error" &&
+        (errorMessage ? cmd.c.text === errorMessage : true),
     ) ?? false
 
   const isSomeErrorSound =

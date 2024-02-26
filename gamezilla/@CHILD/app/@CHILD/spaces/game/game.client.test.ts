@@ -6,7 +6,7 @@ import { exitGame } from "../@SHARED/space-client-cmd"
 import {
   clickedGameTile,
   clickedStartSpaceButton,
-  ctx,
+  createCtx,
   init,
 } from "../@TEST/client"
 import { SpaceClientModule } from "../architecture/architecture"
@@ -15,26 +15,27 @@ import * as SpacesClient from "../spaces.client"
 
 describe(import.meta.file, () => {
   it("should play a sound after inputting a game", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
-    const started = await AppClientModule.chainUpdates(await init(), (model) =>
-      clickedStartSpaceButton(model, spaceId),
+    const started = await AppClientModule.chainUpdates(
+      init(ctx),
+      clickedStartSpaceButton(ctx, spaceId),
     )
     const output = await AppClientModule.chainUpdates(
       { model: started.model },
-      (model) => clickedGameTile(model, "connect-four"),
+      clickedGameTile(ctx, "connect-four"),
     )
     expect(didPlaySound(output)).toBeTrue()
   })
 
   it("should be able to start game", async () => {
-    const initial = await init()
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
     const output = await SpaceClientModule.chainUpdates(
-      { model: initial.model },
-      //
-      (model) => clickedStartSpaceButton(model, spaceId),
-      (model) => clickedGameTile(model, "connect-four"),
+      init(ctx),
+      clickedStartSpaceButton(ctx, spaceId),
+      clickedGameTile(ctx, "connect-four"),
     )
 
     const gameName = Spaces.toSpaceStarted(output.model, spaceId)?.game?.t
@@ -42,14 +43,13 @@ describe(import.meta.file, () => {
   })
 
   it("should exit game for corresponding cmd", async () => {
-    const initial = await init()
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
     const output = await SpaceClientModule.chainUpdates(
-      { model: initial.model },
-      //
-      (model) => clickedStartSpaceButton(model, spaceId),
-      (model) => clickedGameTile(model, "connect-four"),
+      init(ctx),
+      clickedStartSpaceButton(ctx, spaceId),
+      clickedGameTile(ctx, "connect-four"),
       (model) => SpacesClient.updateMain({ model, ctx, msgCmd: exitGame() }),
     )
 

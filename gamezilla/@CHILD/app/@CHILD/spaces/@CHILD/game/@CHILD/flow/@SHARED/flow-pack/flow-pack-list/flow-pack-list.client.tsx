@@ -57,7 +57,7 @@ const updateList: ClientModule["update"] = (input) => {
       return {
         model: {
           ...model,
-          request: RequestResponse.timePassed(model.request, ctx.now),
+          request: RequestResponse.elapsed(model.request, ctx.now),
         },
       }
     }

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test"
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
 import {
+  ClientCtx,
   didPushRoute,
   didReplaceRoute,
 } from "gamezilla/@CHILD/app/@SHARED/client"
@@ -15,19 +16,19 @@ import {
   changeRoute,
   clickBackButton,
   clickSpaceCard,
-  ctx,
+  createCtx,
   init,
   serverListedSpaces,
   timePassed,
 } from "../@TEST/client"
-import { ModelClient } from "../spaces.core"
 
-const changeRouteToSpaceList = (model: ModelClient) => {
-  return changeRoute(model, { t: "spaces", c: { t: "space-list" } })
+const changeRouteToSpaceList = (ctx: ClientCtx) => {
+  return changeRoute(ctx, { t: "spaces", c: { t: "space-list" } })
 }
 
 describe(import.meta.file, () => {
   it("should request spaces on init if on space list route", async () => {
+    const ctx = createCtx()
     const output = await init({
       ...ctx,
       currentRoute: { t: "spaces", c: { t: "space-list" } },
@@ -39,6 +40,7 @@ describe(import.meta.file, () => {
   })
 
   it("should send list space request to server initially", async () => {
+    const ctx = createCtx()
     const output = await init({
       ...ctx,
       currentRoute: { t: "spaces", c: { t: "space-list" } },
@@ -51,18 +53,20 @@ describe(import.meta.file, () => {
   })
 
   it("should request spaces on space list route change", async () => {
+    const ctx = createCtx()
     const updated = await AppClientModule.chainUpdates(
-      await init(),
-      changeRouteToSpaceList,
+      init(ctx),
+      changeRouteToSpaceList(ctx),
     )
     expect(updated.model.listSpacesRequest.t === "loading").toBeTrue()
   })
 
   it("should timeout the request after some time", async () => {
+    const ctx = createCtx()
     const updated = await AppClientModule.chainUpdates(
-      await init(),
-      changeRouteToSpaceList,
-      timePassed(TimeSpan.fromSeconds(10)),
+      init(ctx),
+      changeRouteToSpaceList(ctx),
+      timePassed(ctx, TimeSpan.fromSeconds(10)),
     )
 
     expect(
@@ -71,20 +75,22 @@ describe(import.meta.file, () => {
   })
 
   it("should be ok when server responds with a list of spaces", async () => {
+    const ctx = createCtx()
     const updated = await AppClientModule.chainUpdates(
-      await init(),
-      changeRouteToSpaceList,
-      serverListedSpaces,
+      init(ctx),
+      changeRouteToSpaceList(ctx),
+      serverListedSpaces(ctx),
     )
     expect(isResponseOk(updated.model.listSpacesRequest)).toBeTrue()
   })
 
   it("should be ok when server responds with a list of spaces even when it timed out", async () => {
+    const ctx = createCtx()
     const updated = await AppClientModule.chainUpdates(
-      await init(),
-      changeRouteToSpaceList,
-      timePassed(TimeSpan.fromSeconds(10)),
-      serverListedSpaces,
+      init(ctx),
+      changeRouteToSpaceList(ctx),
+      timePassed(ctx, TimeSpan.fromSeconds(10)),
+      serverListedSpaces(ctx),
     )
 
     expect(isResponseOk(updated.model.listSpacesRequest)).toBeTrue()
@@ -92,10 +98,11 @@ describe(import.meta.file, () => {
 
   it("should navigate to space screen after clicking a space card", async () => {
     const SpaceA = SpaceId.generate()
+    const ctx = createCtx()
     const updated = await AppClientModule.chainUpdates(
-      await init(),
-      (model) => serverListedSpaces(model, [SpaceA]),
-      (model) => clickSpaceCard(model, SpaceA),
+      init(ctx),
+      serverListedSpaces(ctx, [SpaceA]),
+      clickSpaceCard(ctx, SpaceA),
     )
 
     expect(
@@ -108,12 +115,12 @@ describe(import.meta.file, () => {
 
   it("should go back to list screen when clicking back button in join screen", async () => {
     const SpaceA = SpaceId.generate()
-
+    const ctx = createCtx()
     const updated = await AppClientModule.chainUpdates(
-      await init(),
-      (model) => serverListedSpaces(model, [SpaceA]),
-      (model) => clickSpaceCard(model, SpaceA),
-      (model) => clickBackButton(model, "join-screen"),
+      init(ctx),
+      serverListedSpaces(ctx, [SpaceA]),
+      clickSpaceCard(ctx, SpaceA),
+      clickBackButton(ctx, "join-screen"),
     )
 
     expect(

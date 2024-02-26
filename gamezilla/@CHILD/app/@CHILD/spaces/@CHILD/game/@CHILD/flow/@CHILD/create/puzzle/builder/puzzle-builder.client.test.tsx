@@ -11,9 +11,11 @@ import {
 } from "../../@TEST/client"
 import { deriveModelSync } from "../../@TEST/game"
 
+const ctx = testFlowClientCtx()
+
 describe(import.meta.file, () => {
   it("should open puzzle builder on list item click", async () => {
-    const puzzle = createFlowPuzzle(testFlowClientCtx)
+    const puzzle = createFlowPuzzle(ctx)
     const output = await GameClientModule.chainUpdates(
       initial,
       serverListedPuzzlesOk([puzzle]),
@@ -27,7 +29,7 @@ describe(import.meta.file, () => {
   })
 
   it("should exit puzzle builder after clicking exit button", async () => {
-    const puzzle = createFlowPuzzle(testFlowClientCtx)
+    const puzzle = createFlowPuzzle(ctx)
     const openedBuilder = await GameClientModule.chainUpdates(
       initial,
       serverListedPuzzlesOk([puzzle]),
@@ -45,7 +47,7 @@ describe(import.meta.file, () => {
   })
 
   it("should open save prompt when exiting with unsaved changes", async () => {
-    const puzzle = createFlowPuzzle(testFlowClientCtx)
+    const puzzle = createFlowPuzzle(ctx)
 
     const openedBuilder = await GameClientModule.chainUpdates(
       initial,

@@ -3,23 +3,25 @@ import { SpaceId } from "../../../@SHARED/data"
 import {
   clickedGoHomeButton,
   clickedStartSpaceButton,
+  createCtx,
   init,
 } from "../@TEST/client"
 import { SpaceClientModule } from "../architecture/architecture"
 
 describe(import.meta.file, () => {
   it("should go to list screen when clicking go home button", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
     const started = await SpaceClientModule.chainUpdates(
-      init(),
-      (model) => clickedStartSpaceButton(model, spaceId),
+      init(ctx),
+      clickedStartSpaceButton(ctx, spaceId),
       //
     )
 
     const output = await SpaceClientModule.chainUpdates(
       { model: started.model },
-      (model) => clickedGoHomeButton(model),
+      clickedGoHomeButton(ctx),
       //
     )
 
@@ -35,16 +37,17 @@ describe(import.meta.file, () => {
   })
 
   it("should play a sound when clicking go home button", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
     const startedSpace = await SpaceClientModule.chainUpdates(
-      init(),
-      (model) => clickedStartSpaceButton(model, spaceId),
+      init(ctx),
+      clickedStartSpaceButton(ctx, spaceId),
       //
     )
     const output = await SpaceClientModule.chainUpdates(
       { model: startedSpace.model },
-      (model) => clickedGoHomeButton(model),
+      clickedGoHomeButton(ctx),
       //
     )
 

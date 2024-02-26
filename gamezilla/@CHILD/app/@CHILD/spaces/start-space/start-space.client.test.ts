@@ -6,15 +6,17 @@ import {
 } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { chainUpdates } from "../../../@SHARED/architecture/app-client"
-import { clickedStartSpaceButton, ctx, init } from "../@TEST/client"
+import { clickedStartSpaceButton, createCtx, init } from "../@TEST/client"
 import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {
   it("should start a space for current user after clicking start button", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const started = await chainUpdates(init(), (model) =>
-      clickedStartSpaceButton(model, spaceId),
+    const started = await chainUpdates(
+      init(ctx),
+      clickedStartSpaceButton(ctx, spaceId),
     )
 
     expect(Spaces.toSpaceIdByUserId(started.model, ctx.currentUserId)).toEqual(
@@ -23,10 +25,12 @@ describe(import.meta.file, () => {
   })
 
   it("should redirect after starting a space", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const started = await chainUpdates(init(), (model) =>
-      clickedStartSpaceButton(model, spaceId),
+    const started = await chainUpdates(
+      init(ctx),
+      clickedStartSpaceButton(ctx, spaceId),
     )
 
     expect(
@@ -35,16 +39,20 @@ describe(import.meta.file, () => {
   })
 
   it("should play sound after starting space", async () => {
-    const started = await chainUpdates(init(), (model) =>
-      clickedStartSpaceButton(model, SpaceId.generate()),
+    const ctx = createCtx()
+    const started = await chainUpdates(
+      init(ctx),
+      clickedStartSpaceButton(ctx, SpaceId.generate()),
     )
 
     expect(didPlaySound(started)).toBeTrue()
   })
 
   it("should send events to the server like user started space", async () => {
-    const output = await chainUpdates(init(), (model) =>
-      clickedStartSpaceButton(model, SpaceId.generate()),
+    const ctx = createCtx()
+    const output = await chainUpdates(
+      init(ctx),
+      clickedStartSpaceButton(ctx, SpaceId.generate()),
     )
 
     expect(

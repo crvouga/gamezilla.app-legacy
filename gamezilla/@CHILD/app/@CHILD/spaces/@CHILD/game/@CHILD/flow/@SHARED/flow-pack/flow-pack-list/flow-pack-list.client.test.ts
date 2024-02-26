@@ -20,9 +20,11 @@ const initial = {
   model: initClient,
 }
 
+const ctx = testSpaceClientCtx()
+
 const observedEndOfList = (model: ModelClient) => {
   return FlowPackListClient.update({
-    ctx: testSpaceClientCtx,
+    ctx: ctx,
     model,
     msg: {
       t: "user-observed-end-of-list",
@@ -33,8 +35,8 @@ const observedEndOfList = (model: ModelClient) => {
 const elasped = (timeSpan: TimeSpan) => (model: ModelClient) => {
   return FlowPackListClient.update({
     ctx: {
-      ...testSpaceClientCtx,
-      now: Posix.add(testSpaceClientCtx.now, timeSpan),
+      ...ctx,
+      now: Posix.add(ctx.now, timeSpan),
     },
     model,
     msg: { t: "elapsed" },
@@ -45,7 +47,7 @@ const serverListedPacksOk =
   (...packs: FlowPack[]) =>
   (model: ModelClient) => {
     return FlowPackListClient.update({
-      ctx: testSpaceClientCtx,
+      ctx: ctx,
       model,
       msgServer: {
         t: "listed-packs",
@@ -61,7 +63,7 @@ const serverListedPacksOk =
 
 const serverListedPacksErr = (errorMessage: string) => (model: ModelClient) => {
   return FlowPackListClient.update({
-    ctx: testSpaceClientCtx,
+    ctx: ctx,
     model,
     msgServer: {
       t: "listed-packs",
@@ -98,8 +100,8 @@ describe(import.meta.file, () => {
 
   it("should add packs listed from server", async () => {
     const pack = FlowPack.create({
-      createdBy: testSpaceClientCtx.currentUserId,
-      now: testSpaceClientCtx.now,
+      createdBy: ctx.currentUserId,
+      now: ctx.now,
       puzzleIds: [],
     })
     const output = await AppClientModule.chainUpdates(

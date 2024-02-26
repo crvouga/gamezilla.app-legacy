@@ -11,7 +11,7 @@ import { eq } from "gamezilla/@SHARED/core"
 import {
   clickedJoinSpaceButton,
   clickedStartSpaceButton,
-  ctx,
+  createCtx,
   gotCurrentUsersSpace,
   gotMsgServer,
   gotSpace,
@@ -42,15 +42,16 @@ describe(import.meta.file, () => {
       [someProfile.userId]: someProfile,
     }
 
+    const ctx = createCtx()
+
     const updated = await AppClientModule.chainUpdates(
-      await init(),
+      init(ctx),
       //
-      (model) =>
-        gotMsgServer(model, {
-          t: "listed-spaces",
-          spaces: [],
-          profiles: someProfiles,
-        }),
+      gotMsgServer(ctx, {
+        t: "listed-spaces",
+        spaces: [],
+        profiles: someProfiles,
+      }),
     )
 
     expect(
@@ -62,11 +63,11 @@ describe(import.meta.file, () => {
 
   it("should merge space recieved from server", async () => {
     const someSpace = makeSpace(SpaceId.generate(), UserId.generate())
+    const ctx = createCtx()
 
     const output = await AppClientModule.chainUpdates(
-      await init(),
-      //
-      (model) => gotSpace(model, someSpace),
+      init(ctx),
+      gotSpace(ctx, someSpace),
     )
 
     const listed = Spaces.listSpaces({
@@ -79,14 +80,14 @@ describe(import.meta.file, () => {
   })
 
   it("should merge current user's space when recieved from server", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
     const someStartedSpace = makeSpace(spaceId, ctx.currentUserId)
 
     const updated = await AppClientModule.chainUpdates(
-      await init(),
-      //
-      (model) => gotCurrentUsersSpace(model, someStartedSpace),
+      init(ctx),
+      gotCurrentUsersSpace(ctx, someStartedSpace),
     )
 
     expect(
@@ -95,11 +96,11 @@ describe(import.meta.file, () => {
   })
 
   it("should sync current user's space when server connects if in space", async () => {
+    const ctx = createCtx()
     const output = await AppClientModule.chainUpdates(
-      await init(),
-      //
-      (model) => clickedStartSpaceButton(model, SpaceId.generate()),
-      serverConnected,
+      init(ctx),
+      clickedStartSpaceButton(ctx, SpaceId.generate()),
+      serverConnected(ctx),
     )
     expect(
       hasExcatlyOne(
@@ -114,11 +115,12 @@ describe(import.meta.file, () => {
 
   it("should send events to the server like user joined space", async () => {
     const spaceId = SpaceId.generate()
+    const ctx = createCtx()
     const output = await AppClientModule.chainUpdates(
-      await init(),
+      init(ctx),
       //
-      (model) => userStartedSpace(model, UserId.generate(), spaceId),
-      (model) => clickedJoinSpaceButton(model, spaceId),
+      userStartedSpace(ctx, UserId.generate(), spaceId),
+      clickedJoinSpaceButton(ctx, spaceId),
     )
 
     expect(
@@ -134,10 +136,10 @@ describe(import.meta.file, () => {
   })
 
   it("should send events to the server like user ended space", async () => {
+    const ctx = createCtx()
     const output = await AppClientModule.chainUpdates(
-      await init(),
-      //
-      (model) => userEndedSpace(model, UserId.generate(), SpaceId.generate()),
+      init(ctx),
+      userEndedSpace(ctx, UserId.generate(), SpaceId.generate()),
     )
 
     expect(

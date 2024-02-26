@@ -19,11 +19,12 @@ import { deriveModelSync } from "../../@TEST/game"
 
 describe(import.meta.file, () => {
   it("should open puzzle when user clickes puzzle grid item", async () => {
-    const puzzle = createFlowPuzzle(testSpaceClientCtx)
+    const ctx = testSpaceClientCtx()
+    const puzzle = createFlowPuzzle(ctx)
 
     const output = await chainUpdates(
       initial,
-      serverCreatedPack(createFlowPack(testSpaceClientCtx)),
+      serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
       clickedPuzzlePickerItem(puzzle),
       clickedPuzzleGridItem(puzzle, 0),
@@ -36,9 +37,10 @@ describe(import.meta.file, () => {
   })
 
   it("should open puzzle picker when user clicks add puzzle button", async () => {
+    const ctx = testSpaceClientCtx()
     const output = await chainUpdates(
       initial,
-      serverCreatedPack(createFlowPack(testSpaceClientCtx)),
+      serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
     )
     const modelSync = deriveModelSync(output)
@@ -46,9 +48,10 @@ describe(import.meta.file, () => {
   })
 
   it("should close puzzle picker when user clicks closes", async () => {
+    const ctx = testSpaceClientCtx()
     const output = await chainUpdates(
       initial,
-      serverCreatedPack(createFlowPack(testSpaceClientCtx)),
+      serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
       closedPuzzlePickerDrawer,
     )
@@ -57,10 +60,11 @@ describe(import.meta.file, () => {
   })
 
   it("should add puzzle to the pack after clicking a puzzle in the picker", async () => {
-    const puzzle = createFlowPuzzle(testSpaceClientCtx)
+    const ctx = testSpaceClientCtx()
+    const puzzle = createFlowPuzzle(ctx)
     const output = await chainUpdates(
       initial,
-      serverCreatedPack(createFlowPack(testSpaceClientCtx)),
+      serverCreatedPack(createFlowPack(ctx)),
       clickedPuzzlePickerItem(puzzle),
     )
     const modelSync = deriveModelSync(output)
@@ -71,10 +75,11 @@ describe(import.meta.file, () => {
   })
 
   it("should close puzzle picker after adding a puzzle to the pack", async () => {
-    const puzzle = createFlowPuzzle(testSpaceClientCtx)
+    const ctx = testSpaceClientCtx()
+    const puzzle = createFlowPuzzle(ctx)
     const output = await chainUpdates(
       initial,
-      serverCreatedPack(createFlowPack(testSpaceClientCtx)),
+      serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
       clickedPuzzlePickerItem(puzzle),
     )
@@ -83,10 +88,11 @@ describe(import.meta.file, () => {
   })
 
   it("should go back to grid after exiting puzzle", async () => {
-    const puzzle = createFlowPuzzle(testSpaceClientCtx)
+    const ctx = testSpaceClientCtx()
+    const puzzle = createFlowPuzzle(ctx)
     const output = await chainUpdates(
       initial,
-      serverCreatedPack(createFlowPack(testSpaceClientCtx)),
+      serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
       clickedPuzzlePickerItem(puzzle),
       clickedPuzzleGridItem(puzzle, 0),
@@ -97,10 +103,11 @@ describe(import.meta.file, () => {
   })
 
   it("should request missing puzzles from the server", async () => {
-    const puzzle = createFlowPuzzle(testSpaceClientCtx)
+    const ctx = testSpaceClientCtx()
+    const puzzle = createFlowPuzzle(ctx)
     const openedPackBuilder = await chainUpdates(
       initial,
-      serverCreatedPack(createFlowPack(testSpaceClientCtx, [puzzle.id])),
+      serverCreatedPack(createFlowPack(ctx, [puzzle.id])),
     )
 
     const output = await chainUpdates(
@@ -119,10 +126,11 @@ describe(import.meta.file, () => {
   })
 
   it("should record puzzles sent back from server", async () => {
-    const puzzle = createFlowPuzzle(testSpaceClientCtx)
+    const ctx = testSpaceClientCtx()
+    const puzzle = createFlowPuzzle(ctx)
     const openedPackBuilder = await chainUpdates(
       initial,
-      serverCreatedPack(createFlowPack(testSpaceClientCtx, [puzzle.id])),
+      serverCreatedPack(createFlowPack(ctx, [puzzle.id])),
     )
 
     const output = await chainUpdates(

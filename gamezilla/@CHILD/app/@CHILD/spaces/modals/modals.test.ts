@@ -5,7 +5,7 @@ import {
   init,
   clickedUser,
   changeRoute,
-  ctx,
+  createCtx,
   clickedUserPreviewLink,
 } from "../@TEST/client.ts"
 import { UserId } from "../../../@SHARED/data/user-id.ts"
@@ -16,29 +16,29 @@ import { didPushRoute } from "gamezilla/@CHILD/app/@SHARED/client/client-cmd.ts"
 
 describe(import.meta.file, () => {
   it("should start with no modals open", async () => {
-    const output = await AppClientModule.chainUpdates(
-      await init(),
-      //
-    )
+    const ctx = createCtx()
+    const output = await AppClientModule.chainUpdates(init(ctx))
     expect(output.model.modal === null).toBeTrue()
   })
 
   it("should open users modal when user clicks on users button", async () => {
+    const ctx = createCtx()
     const output = await AppClientModule.chainUpdates(
-      await init(),
-      clickedPeopleButton,
+      init(ctx),
+      clickedPeopleButton(ctx),
       //
     )
     expect(output.model.modal === "users").toBeTrue()
   })
 
   it("should open user details modal after clicking user", async () => {
+    const ctx = createCtx()
+
     const someUserId = UserId.generate()
 
     const output = await AppClientModule.chainUpdates(
-      await init(),
-      (model) => clickedUser(model, someUserId),
-      //
+      init(ctx),
+      clickedUser(ctx, someUserId),
     )
     expect(
       output.model.modal === "user-preview" &&
@@ -48,21 +48,25 @@ describe(import.meta.file, () => {
 
   it("should close modal when the current route changes", async () => {
     const someUserId = UserId.generate()
+    const ctx = createCtx()
     const output = await AppClientModule.chainUpdates(
-      init(),
-      (model) => clickedUser(model, someUserId),
-      (model) => changeRoute(model, { t: "spaces", c: { t: "space-list" } }),
+      init(ctx),
+      clickedUser(ctx, someUserId),
+      changeRoute(ctx, { t: "spaces", c: { t: "space-list" } }),
     )
     expect(output.model.modal === null).toBeTrue()
   })
 
   it("should open user details corresponding cmd", async () => {
+    const ctx = createCtx()
     const someUserId = UserId.generate()
-    const initial = await init()
-    const output = await SpaceClientModule.chainUpdates(
-      { model: initial.model },
-      (model) =>
-        Modals.update({ model, ctx, msgCmd: openUserDetails(someUserId) }),
+
+    const output = await SpaceClientModule.chainUpdates(init(ctx), (model) =>
+      Modals.update({
+        model,
+        ctx,
+        msgCmd: openUserDetails(someUserId),
+      }),
     )
     expect(
       output.model.modal === "user-preview" &&
@@ -71,11 +75,12 @@ describe(import.meta.file, () => {
   })
 
   it("should navigate to preview users profile page when clicked", async () => {
+    const ctx = createCtx()
     const someUserId = UserId.generate()
     const output = await SpaceClientModule.chainUpdates(
-      init(),
-      (model) => clickedUser(model, someUserId),
-      clickedUserPreviewLink,
+      init(ctx),
+      clickedUser(ctx, someUserId),
+      clickedUserPreviewLink(ctx),
     )
 
     expect(
@@ -87,11 +92,12 @@ describe(import.meta.file, () => {
   })
 
   it("should play sound when clicking preview user link", async () => {
+    const ctx = createCtx()
     const someUserId = UserId.generate()
     const output = await SpaceClientModule.chainUpdates(
-      init(),
-      (model) => clickedUser(model, someUserId),
-      clickedUserPreviewLink,
+      init(ctx),
+      clickedUser(ctx, someUserId),
+      clickedUserPreviewLink(ctx),
     )
 
     expect(
@@ -102,10 +108,11 @@ describe(import.meta.file, () => {
   })
 
   it("should not navigate after clicking preview user link if preview is not open", async () => {
+    const ctx = createCtx()
     const someUserId = UserId.generate()
     const output = await SpaceClientModule.chainUpdates(
-      init(),
-      clickedUserPreviewLink,
+      init(ctx),
+      clickedUserPreviewLink(ctx),
     )
 
     expect(

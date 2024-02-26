@@ -19,82 +19,23 @@ import * as SpaceCore from "../spaces.core"
 //
 //
 
-export const ctx: ClientCtx = {
-  currentRoute: {
-    t: "spaces",
-    c: {
-      t: "space-list",
-    },
-  },
-  documentVisibilityState: "visible",
-  now: Posix.now(),
-  profiles: {},
-  currentUserId: UserId.generate(),
-}
-
-export const init = (ctxOverride: ClientCtx = ctx) => {
-  return SpaceClient.init({ ctx: ctxOverride, stored: null })
-}
-
-//
-//
-//
-//
-//
-//
-
-export const serverConnected = async (model: SpaceCore.ModelClient) => {
-  return SpaceClient.update({
-    ctx,
-    model,
-    msgEvt: {
-      t: "wire/server-connected",
-    },
-  })
-}
-
-//
-//
-//
-//
-//
-//
-
-export const userStartedSpace = (
-  model: SpaceCore.ModelClient,
-  userId: UserId,
-  spaceId: SpaceId,
-) => {
-  return SpaceClient.update({
-    ctx,
-    model: model,
-    msgServer: {
-      t: "event",
+export const createCtx = (): ClientCtx => {
+  return {
+    currentRoute: {
+      t: "spaces",
       c: {
-        ...withId({
-          t: "user-started-space",
-          spaceId,
-          userId,
-        }),
-        happenedAt: LamportTimestamp.fromNumber(0),
+        t: "space-list",
       },
     },
-  })
+    documentVisibilityState: "visible",
+    now: Posix.now(),
+    profiles: {},
+    currentUserId: UserId.generate(),
+  }
 }
 
-export const clickedStartSpaceButton = (
-  model: SpaceCore.ModelClient,
-  spaceId: SpaceId,
-  ctxOverride: ClientCtx = ctx,
-) => {
-  return SpaceClient.update({
-    ctx: ctxOverride,
-    model: model,
-    msg: {
-      t: "clicked-start-space-button",
-      spaceId,
-    },
-  })
+export const init = (ctx: ClientCtx) => {
+  return SpaceClient.init({ ctx, stored: null })
 }
 
 //
@@ -104,105 +45,55 @@ export const clickedStartSpaceButton = (
 //
 //
 
-export const userJoinedSpace = (
-  model: SpaceCore.ModelClient,
-  userId: UserId,
-  spaceId: SpaceId,
-) => {
-  const space = model.spaces[spaceId]
-  if (!space) {
-    return { model }
+export const serverConnected =
+  (ctx: ClientCtx) => async (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msgEvt: {
+        t: "wire/server-connected",
+      },
+    })
   }
 
-  return SpaceClient.update({
-    ctx,
-    model: model,
-    msgServer: {
-      t: "event",
-      c: {
-        ...withId({
-          t: "user-joined-space",
-          spaceId: spaceId,
-          userId: userId,
-        }),
-        happenedAt: p(
-          space.clock,
-          LamportClock.increment,
-          LamportClock.toCurrentTime,
-        ),
+//
+//
+//
+//
+//
+//
+
+export const userStartedSpace =
+  (ctx: ClientCtx, userId: UserId, spaceId: SpaceId) =>
+  (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msgServer: {
+        t: "event",
+        c: {
+          ...withId({
+            t: "user-started-space",
+            spaceId,
+            userId,
+          }),
+          happenedAt: LamportTimestamp.fromNumber(0),
+        },
       },
-    },
-  })
-}
-
-export const clickedJoinSpaceButton = (
-  model: SpaceCore.ModelClient,
-  spaceId: SpaceId,
-  ctxOverride: ClientCtx = ctx,
-) => {
-  return SpaceClient.update({
-    ctx: ctxOverride,
-    model: model,
-    msg: {
-      t: "clicked-join-space-button",
-      spaceId,
-    },
-  })
-}
-
-//
-//
-//
-//
-//
-//
-//
-
-export const userLeftSpace = (
-  model: SpaceCore.ModelClient,
-  userId: UserId,
-  spaceId: SpaceId,
-  ctxOverride: ClientCtx = ctx,
-) => {
-  const space = model.spaces[spaceId]
-
-  if (!space) {
-    return { model }
+    })
   }
 
-  return SpaceClient.update({
-    ctx: ctxOverride,
-    model: model,
-    msgServer: {
-      t: "event",
-      c: {
-        ...withId({
-          t: "user-left-space",
-          spaceId: spaceId,
-          userId: userId,
-        }),
-        happenedAt: p(
-          space.clock,
-          LamportClock.increment,
-          LamportClock.toCurrentTime,
-        ),
+export const clickedStartSpaceButton =
+  (ctx: ClientCtx, spaceId: SpaceId) => (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msg: {
+        t: "clicked-start-space-button",
+        spaceId,
       },
-    },
-  })
-}
-
-export const clickedLeaveSpaceButton = (
-  model: SpaceCore.ModelClient,
-  ctxOverride: ClientCtx = ctx,
-) => {
-  return SpaceClient.update({
-    ctx: ctxOverride,
-    model: model,
-    msg: {
-      t: "clicked-leave-space-button",
-    },
-  })
-}
+    })
+  }
 
 //
 //
@@ -210,21 +101,116 @@ export const clickedLeaveSpaceButton = (
 //
 //
 //
+
+export const userJoinedSpace =
+  (ctx: ClientCtx, userId: UserId, spaceId: SpaceId) =>
+  (model: SpaceCore.ModelClient) => {
+    const space = model.spaces[spaceId]
+    if (!space) {
+      return { model }
+    }
+
+    return SpaceClient.update({
+      ctx,
+      model,
+      msgServer: {
+        t: "event",
+        c: {
+          ...withId({
+            t: "user-joined-space",
+            spaceId: spaceId,
+            userId: userId,
+          }),
+          happenedAt: p(
+            space.clock,
+            LamportClock.increment,
+            LamportClock.toCurrentTime,
+          ),
+        },
+      },
+    })
+  }
+
+export const clickedJoinSpaceButton =
+  (ctx: ClientCtx, spaceId: SpaceId) => (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msg: {
+        t: "clicked-join-space-button",
+        spaceId,
+      },
+    })
+  }
+
+//
+//
+//
+//
+//
+//
 //
 
-export const changeRoute = async (
-  model: SpaceCore.ModelClient,
-  route: AppRoute,
-) => {
-  return SpaceClient.update({
-    ctx,
-    model,
-    msgEvt: routeChanged(route),
-  })
-}
+export const userLeftSpace =
+  (ctx: ClientCtx, userId: UserId, spaceId: SpaceId) =>
+  (model: SpaceCore.ModelClient) => {
+    const space = model.spaces[spaceId]
+
+    if (!space) {
+      return { model }
+    }
+
+    return SpaceClient.update({
+      ctx,
+      model,
+      msgServer: {
+        t: "event",
+        c: {
+          ...withId({
+            t: "user-left-space",
+            spaceId: spaceId,
+            userId: userId,
+          }),
+          happenedAt: p(
+            space.clock,
+            LamportClock.increment,
+            LamportClock.toCurrentTime,
+          ),
+        },
+      },
+    })
+  }
+
+export const clickedLeaveSpaceButton =
+  (ctx: ClientCtx) => (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msg: {
+        t: "clicked-leave-space-button",
+      },
+    })
+  }
+
+//
+//
+//
+//
+//
+//
+//
+
+export const changeRoute =
+  (ctx: ClientCtx, route: AppRoute) => async (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msgEvt: routeChanged(route),
+    })
+  }
 
 export const timePassed =
-  (timeSpan: TimeSpan) => (model: SpaceCore.ModelClient) => {
+  (ctx: ClientCtx, timeSpan: TimeSpan) => (model: SpaceCore.ModelClient) => {
     return SpaceClient.update({
       ctx: { ...ctx, now: Posix.add(ctx.now, timeSpan) },
       model,
@@ -242,231 +228,205 @@ const toStartedSpace = (spaceId: SpaceId, startedBy: UserId) => {
   ].reduce((model, msgEvt) => Space.appendEvent({ model, msgEvt }), Space.init)
 }
 
-export const serverListedSpaces = async (
-  model: SpaceCore.ModelClient,
-  spaceIds: SpaceId[] = [
-    SpaceId.generate(),
-    SpaceId.generate(),
-    SpaceId.generate(),
-  ],
-) => {
-  return SpaceClient.update({
-    ctx,
-    model,
-    msgServer: {
-      t: "listed-spaces",
-      spaces: spaceIds.map((spaceId) =>
-        toStartedSpace(spaceId, UserId.generate()),
-      ),
-      causedBy: "list-spaces",
-    },
-  })
-}
-
-export const clickSpaceCard = async (
-  model: SpaceCore.ModelClient,
-  spaceId: SpaceId,
-) => {
-  return SpaceClient.update({
-    ctx,
-    model,
-    msg: { t: "clicked-space-card", spaceId },
-  })
-}
-
-export const clickBackButton = async (
-  model: SpaceCore.ModelClient,
-  from: "join-screen",
-) => {
-  return SpaceClient.update({
-    ctx,
-    model,
-    msg: { t: "clicked-back-button", from },
-  })
-}
-
-export const userEndedSpace = (
-  model: SpaceCore.ModelClient,
-  userId: UserId,
-  spaceId: SpaceId,
-  ctxOverride: ClientCtx = ctx,
-) => {
-  return SpaceClient.update({
-    ctx: ctxOverride,
-    model: model,
-    msgServer: {
-      t: "event",
-      c: {
-        ...withId({
-          t: "user-ended-space",
-          spaceId,
-          userId,
-        }),
-        happenedAt: LamportTimestamp.fromNumber(0),
+export const serverListedSpaces =
+  (
+    ctx: ClientCtx,
+    spaceIds: SpaceId[] = [
+      SpaceId.generate(),
+      SpaceId.generate(),
+      SpaceId.generate(),
+    ],
+  ) =>
+  async (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msgServer: {
+        t: "listed-spaces",
+        spaces: spaceIds.map((spaceId) =>
+          toStartedSpace(spaceId, UserId.generate()),
+        ),
+        causedBy: "list-spaces",
       },
-    },
-  })
-}
-
-export const userClickedEndSpaceButton = (
-  model: SpaceCore.ModelClient,
-  ctxOverride: ClientCtx = ctx,
-) => {
-  return SpaceClient.update({
-    ctx: ctxOverride,
-    model: model,
-    msg: {
-      t: "clicked-end-space-button",
-    },
-  })
-}
-
-export const userInputtedGame = (
-  model: SpaceCore.ModelClient,
-  userId: UserId,
-  spaceId: SpaceId,
-  game: GameName | null,
-) => {
-  const space = model.spaces[spaceId]
-  if (!space) {
-    return { model }
+    })
   }
 
-  return SpaceClient.update({
-    ctx,
-    model: model,
-    msgServer: {
-      t: "event",
-      c: {
-        ...withId({
-          t: "user-inputted-game",
-          game,
-          spaceId,
-          userId,
-        }),
-        happenedAt: p(
-          space.clock,
-          LamportClock.increment,
-          LamportClock.toCurrentTime,
-        ),
+export const clickSpaceCard =
+  (ctx: ClientCtx, spaceId: SpaceId) =>
+  async (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msg: { t: "clicked-space-card", spaceId },
+    })
+  }
+
+export const clickBackButton =
+  (ctx: ClientCtx, from: "join-screen") =>
+  async (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msg: { t: "clicked-back-button", from },
+    })
+  }
+
+export const userEndedSpace =
+  (ctx: ClientCtx, userId: UserId, spaceId: SpaceId) =>
+  (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msgServer: {
+        t: "event",
+        c: {
+          ...withId({
+            t: "user-ended-space",
+            spaceId,
+            userId,
+          }),
+          happenedAt: LamportTimestamp.fromNumber(0),
+        },
       },
-    },
-  })
-}
+    })
+  }
 
-export const clickedGameTile = (
-  model: SpaceCore.ModelClient,
-  gameName: GameName,
-) => {
-  return SpaceClient.update({
-    ctx,
-    model: model,
-    msg: { t: "clicked-game-tile", gameName },
-  })
-}
+export const userClickedEndSpaceButton =
+  (ctx: ClientCtx) => (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msg: {
+        t: "clicked-end-space-button",
+      },
+    })
+  }
 
-export const gotMsgServer = (
-  model: SpaceCore.ModelClient,
-  msgServer: SpaceCore.MsgToClient,
-) => {
-  return SpaceClient.update({ ctx, model, msgServer })
-}
+export const userInputtedGame =
+  (ctx: ClientCtx, userId: UserId, spaceId: SpaceId, game: GameName | null) =>
+  (model: SpaceCore.ModelClient) => {
+    const space = model.spaces[spaceId]
+    if (!space) {
+      return { model }
+    }
 
-export const gotSpace = (model: SpaceCore.ModelClient, space: Space.Model) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msgServer: {
+        t: "event",
+        c: {
+          ...withId({
+            t: "user-inputted-game",
+            game,
+            spaceId,
+            userId,
+          }),
+          happenedAt: p(
+            space.clock,
+            LamportClock.increment,
+            LamportClock.toCurrentTime,
+          ),
+        },
+      },
+    })
+  }
+
+export const clickedGameTile =
+  (ctx: ClientCtx, gameName: GameName) => (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msg: { t: "clicked-game-tile", gameName },
+    })
+  }
+
+export const gotMsgServer =
+  (ctx: ClientCtx, msgServer: SpaceCore.MsgToClient) =>
+  (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({ ctx, model, msgServer })
+  }
+
+export const gotSpace =
+  (ctx: ClientCtx, space: Space.Model) => (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msgServer: { t: "synced", space },
+    })
+  }
+
+export const gotCurrentUsersSpace =
+  (ctx: ClientCtx, space: Space.Model) => (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msgServer: { t: "current-user-space", space },
+    })
+  }
+
+export const clickedPeopleButton =
+  (ctx: ClientCtx) => (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msg: {
+        t: "clicked-people-button",
+      },
+    })
+  }
+
+export const clickedUser =
+  (ctx: ClientCtx, userId: UserId) => (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msg: {
+        t: "clicked-user",
+        userId,
+      },
+    })
+  }
+
+export const loggedOut = (ctx: ClientCtx) => (model: SpaceCore.ModelClient) => {
   return SpaceClient.update({
     ctx,
     model,
-    msgServer: { t: "synced", space },
-  })
-}
-
-export const gotCurrentUsersSpace = (
-  model: SpaceCore.ModelClient,
-  space: Space.Model,
-) => {
-  return SpaceClient.update({
-    ctx,
-    model,
-    msgServer: { t: "current-user-space", space },
-  })
-}
-
-export const clickedPeopleButton = (
-  model: SpaceCore.ModelClient,
-  ctxOverride: ClientCtx = ctx,
-) => {
-  return SpaceClient.update({
-    ctx: ctxOverride,
-    model: model,
-    msg: {
-      t: "clicked-people-button",
-    },
-  })
-}
-
-export const clickedUser = (
-  model: SpaceCore.ModelClient,
-  userId: UserId,
-  ctxOverride: ClientCtx = ctx,
-) => {
-  return SpaceClient.update({
-    ctx: ctxOverride,
-    model: model,
-    msg: {
-      t: "clicked-user",
-      userId,
-    },
-  })
-}
-
-export const loggedOut = (
-  model: SpaceCore.ModelClient,
-  ctxOverride: ClientCtx = ctx,
-) => {
-  return SpaceClient.update({
-    ctx: ctxOverride,
-    model: model,
     msgEvt: {
       t: "is-logged-out",
     },
   })
 }
 
-export const clickedGoHomeButton = (
-  model: SpaceCore.ModelClient,
-  ctxOverride: ClientCtx = ctx,
-) => {
-  return SpaceClient.update({
-    ctx: ctxOverride,
-    model: model,
-    msg: {
-      t: "clicked-go-home-button",
-    },
-  })
-}
+export const clickedGoHomeButton =
+  (ctx: ClientCtx) => (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msg: {
+        t: "clicked-go-home-button",
+      },
+    })
+  }
 
-export const clickedCurrentSpaceBottomBar = (
-  model: SpaceCore.ModelClient,
-  ctxOverride: ClientCtx = ctx,
-) => {
-  return SpaceClient.update({
-    ctx: ctxOverride,
-    model: model,
-    msg: {
-      t: "clicked-current-space-bottom-bar",
-    },
-  })
-}
+export const clickedCurrentSpaceBottomBar =
+  (ctx: ClientCtx) => (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msg: {
+        t: "clicked-current-space-bottom-bar",
+      },
+    })
+  }
 
-export const clickedUserPreviewLink = (
-  model: SpaceCore.ModelClient,
-  ctxOverride: ClientCtx = ctx,
-) => {
-  return SpaceClient.update({
-    ctx: ctxOverride,
-    model: model,
-    msg: {
-      t: "clicked-preview-user-link",
-    },
-  })
-}
+export const clickedUserPreviewLink =
+  (ctx: ClientCtx) => (model: SpaceCore.ModelClient) => {
+    return SpaceClient.update({
+      ctx,
+      model,
+      msg: {
+        t: "clicked-preview-user-link",
+      },
+    })
+  }

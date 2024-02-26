@@ -10,7 +10,7 @@ import { ListTab } from "./list-tabs.core"
 
 const userChangedListTab = (listTab: ListTab) => (model: ModelClient) => {
   return CreateClient.update({
-    ctx: testFlowClientCtx,
+    ctx: testFlowClientCtx(),
     model,
     modelSync: defaultModelSync,
     msgSync: {

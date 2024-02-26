@@ -60,7 +60,7 @@ const update: SpaceClientModule["update"] = (input) => {
       return {
         model: {
           ...model,
-          listSpacesRequest: RequestResponse.timePassed(
+          listSpacesRequest: RequestResponse.elapsed(
             model.listSpacesRequest,
             ctx.now,
           ),

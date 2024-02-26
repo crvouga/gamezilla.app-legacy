@@ -5,7 +5,7 @@ import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import {
   clickedJoinSpaceButton,
   clickedLeaveSpaceButton,
-  ctx,
+  createCtx,
   init,
   userStartedSpace,
 } from "../@TEST/client"
@@ -13,12 +13,13 @@ import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {
   it("should join space when clicking join space button", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
     const joined = await AppClientModule.chainUpdates(
-      await init(),
-      (model) => userStartedSpace(model, UserId.generate(), spaceId),
-      (model) => clickedJoinSpaceButton(model, spaceId),
+      init(ctx),
+      userStartedSpace(ctx, UserId.generate(), spaceId),
+      clickedJoinSpaceButton(ctx, spaceId),
     )
 
     expect(Spaces.toSpaceIdByUserId(joined.model, ctx.currentUserId)).toEqual(
@@ -27,13 +28,14 @@ describe(import.meta.file, () => {
   })
 
   it("current user leaving joined space", async () => {
+    const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
     const left = await AppClientModule.chainUpdates(
-      await init(),
-      (model) => userStartedSpace(model, UserId.generate(), spaceId),
-      (model) => clickedJoinSpaceButton(model, spaceId),
-      (model) => clickedLeaveSpaceButton(model),
+      init(ctx),
+      userStartedSpace(ctx, UserId.generate(), spaceId),
+      clickedJoinSpaceButton(ctx, spaceId),
+      clickedLeaveSpaceButton(ctx),
     )
 
     expect(Spaces.toSpaceIdByUserId(left.model, ctx.currentUserId)).toEqual(
@@ -43,19 +45,20 @@ describe(import.meta.file, () => {
   })
 
   it("preventing joining a space if already in a space", async () => {
+    const ctx = createCtx()
     const SpaceA = SpaceId.generate()
     const SpaceB = SpaceId.generate()
 
     const arranged = await AppClientModule.chainUpdates(
-      await init(),
-      (model) => userStartedSpace(model, UserId.generate(), SpaceA),
-      (model) => clickedJoinSpaceButton(model, SpaceA),
+      init(ctx),
+      userStartedSpace(ctx, UserId.generate(), SpaceA),
+      clickedJoinSpaceButton(ctx, SpaceA),
     )
 
     const joined = await AppClientModule.chainUpdates(
       { model: arranged.model },
-      (model) => userStartedSpace(model, UserId.generate(), SpaceB),
-      (model) => clickedJoinSpaceButton(model, SpaceB),
+      userStartedSpace(ctx, UserId.generate(), SpaceB),
+      clickedJoinSpaceButton(ctx, SpaceB),
     )
 
     expect(Spaces.toSpaceIdByUserId(arranged.model, ctx.currentUserId)).toEqual(
