@@ -209,7 +209,7 @@ export const changeRoute =
     })
   }
 
-export const timePassed =
+export const elapsed =
   (ctx: ClientCtx, timeSpan: TimeSpan) => (model: SpaceCore.ModelClient) => {
     return SpaceClient.update({
       ctx: { ...ctx, now: Posix.add(ctx.now, timeSpan) },

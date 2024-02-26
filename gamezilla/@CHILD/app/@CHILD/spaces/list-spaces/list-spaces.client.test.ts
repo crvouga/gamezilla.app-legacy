@@ -19,7 +19,7 @@ import {
   createCtx,
   init,
   serverListedSpaces,
-  timePassed,
+  elapsed,
 } from "../@TEST/client"
 
 const changeRouteToSpaceList = (ctx: ClientCtx) => {
@@ -66,7 +66,7 @@ describe(import.meta.file, () => {
     const updated = await AppClientModule.chainUpdates(
       init(ctx),
       changeRouteToSpaceList(ctx),
-      timePassed(ctx, TimeSpan.fromMinutes(5)),
+      elapsed(ctx, TimeSpan.fromMinutes(5)),
     )
 
     expect(
@@ -89,7 +89,7 @@ describe(import.meta.file, () => {
     const updated = await AppClientModule.chainUpdates(
       init(ctx),
       changeRouteToSpaceList(ctx),
-      timePassed(ctx, TimeSpan.fromSeconds(10)),
+      elapsed(ctx, TimeSpan.fromSeconds(10)),
       serverListedSpaces(ctx),
     )
 
