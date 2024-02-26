@@ -11,7 +11,10 @@ import {
   IconArrowLeftOnRect,
   IconChevronLeft,
   IconChevronRight,
+  IconEllipsisVertical,
+  Transition,
 } from "gamezilla/@CHILD/app/@SHARED/ui"
+
 import { Eff, Sub } from "gamezilla/@SHARED/core"
 import {
   ViewBottomButtonBar,
@@ -336,6 +339,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
           <p className="text-3xl font-bold">Level {screen.puzzleIndex + 1}</p>
           <p className="text-xs text-secondary">{screen.puzzle.name}</p>
         </div>
+
         <FlowVariantUIPlay.View
           dispatch={(c) =>
             input.dispatch({ t: "pack-builder.flow-play-ui", c })
@@ -343,6 +347,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
           flow={screen.puzzle.flow}
           model={screen.playUI}
         />
+
         <div className="flex-1"></div>
 
         <ViewBottomButtonBar>
@@ -371,6 +376,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
               }
             }}
           />
+
           <ViewBottomButtonBarAction
             icon={(props) => <IconChevronRight {...props} />}
             label="Next"
@@ -384,6 +390,12 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
                 })
               }
             }}
+          />
+
+          <ViewBottomButtonBarAction
+            icon={(props) => <IconEllipsisVertical {...props} />}
+            label="More"
+            onClick={() => {}}
           />
         </ViewBottomButtonBar>
       </div>
