@@ -93,7 +93,7 @@ describe(import.meta.file, () => {
     const output = await AppClientModule.chainUpdates(
       initial,
       observedEndOfList,
-      elasped(TimeSpan.fromSeconds(10)),
+      elasped(TimeSpan.fromMinutes(5)),
     )
     expect(RequestResponse.didRequestTimeout(output.model.request)).toBeTrue()
   })

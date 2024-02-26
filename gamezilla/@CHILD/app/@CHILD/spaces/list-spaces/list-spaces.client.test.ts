@@ -61,12 +61,12 @@ describe(import.meta.file, () => {
     expect(updated.model.listSpacesRequest.t === "loading").toBeTrue()
   })
 
-  it("should timeout the request after some time", async () => {
+  it("should timeout request", async () => {
     const ctx = createCtx()
     const updated = await AppClientModule.chainUpdates(
       init(ctx),
       changeRouteToSpaceList(ctx),
-      timePassed(ctx, TimeSpan.fromSeconds(10)),
+      timePassed(ctx, TimeSpan.fromMinutes(5)),
     )
 
     expect(

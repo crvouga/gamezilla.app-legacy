@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test"
 import { chainUpdates } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
 import {
+  ClientCtx,
   didSendToServer,
   didShowErrorSm,
 } from "gamezilla/@CHILD/app/@SHARED/client"
@@ -18,14 +19,16 @@ import { FlowVariant, FlowVariantDimensions } from "../../flow"
 import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleListClient } from "./flow-puzzle-list.client"
 import { ModelClient, initClient } from "./flow-puzzle-list.core"
+import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { FlowClientCtx } from "../../flow-ctx"
 
 const initial = {
   model: initClient,
 }
 
-const userObservedEndOfList = (model: ModelClient) => {
+const userObservedEndOfList = (ctx: SpaceClientCtx) => (model: ModelClient) => {
   return FlowPuzzleListClient.update({
-    ctx: testSpaceClientCtx(),
+    ctx,
     model,
     msg: {
       t: "flow-puzzle-list.user-observed-end-of-list",
@@ -34,9 +37,9 @@ const userObservedEndOfList = (model: ModelClient) => {
 }
 
 const serverListedPuzzlesOk =
-  (puzzles: FlowPuzzle[]) => (model: ModelClient) => {
+  (ctx: FlowClientCtx, puzzles: FlowPuzzle[]) => (model: ModelClient) => {
     return FlowPuzzleListClient.update({
-      ctx: testSpaceClientCtx(),
+      ctx,
       model,
       msgServer: {
         t: "flow-puzzle-list.listed-puzzle",
@@ -50,17 +53,17 @@ const serverListedPuzzlesOk =
     })
   }
 
-const serverListedPuzzlesErr = (error: string) => (model: ModelClient) => {
-  const ctx = testSpaceClientCtx()
-  return FlowPuzzleListClient.update({
-    ctx: ctx,
-    model,
-    msgServer: {
-      t: "flow-puzzle-list.listed-puzzle",
-      listed: err(error),
-    },
-  })
-}
+const serverListedPuzzlesErr =
+  (ctx: FlowClientCtx, error: string) => (model: ModelClient) => {
+    return FlowPuzzleListClient.update({
+      ctx,
+      model,
+      msgServer: {
+        t: "flow-puzzle-list.listed-puzzle",
+        listed: err(error),
+      },
+    })
+  }
 
 const elapsed = (timeSpan: TimeSpan) => (model: ModelClient) => {
   const ctx = testSpaceClientCtx()
@@ -76,12 +79,14 @@ const elapsed = (timeSpan: TimeSpan) => (model: ModelClient) => {
 
 describe(import.meta.file, () => {
   it("should it be requesting when the user observes the end of the list", async () => {
-    const output = await chainUpdates(initial, userObservedEndOfList)
+    const ctx = testSpaceClientCtx()
+    const output = await chainUpdates(initial, userObservedEndOfList(ctx))
     expect(isRequesting(output.model.request)).toBeTrue()
   })
 
   it("should send a list puzzles message to server when the user observes the end of the list", async () => {
-    const output = await chainUpdates(initial, userObservedEndOfList)
+    const ctx = testSpaceClientCtx()
+    const output = await chainUpdates(initial, userObservedEndOfList(ctx))
     expect(
       didSendToServer(
         output,
@@ -106,22 +111,30 @@ describe(import.meta.file, () => {
       }),
     })
 
-    const output = await chainUpdates(initial, serverListedPuzzlesOk([puzzle]))
+    const output = await chainUpdates(
+      initial,
+      serverListedPuzzlesOk(ctx, [puzzle]),
+    )
 
     expect(Object.values(output.model.puzzles)).not.toBeEmpty()
   })
 
   it("should show error when recieving list error fro server", async () => {
+    const ctx = testFlowClientCtx()
     const error = "Something went wrong"
-    const output = await chainUpdates(initial, serverListedPuzzlesErr(error))
+    const output = await chainUpdates(
+      initial,
+      serverListedPuzzlesErr(ctx, error),
+    )
     expect(didShowErrorSm(output)).toBeTrue()
   })
 
   it("should show error after no server response", async () => {
+    const ctx = testFlowClientCtx()
     const output = await chainUpdates(
       initial,
-      userObservedEndOfList,
-      elapsed(TimeSpan.fromSeconds(10)),
+      userObservedEndOfList(ctx),
+      elapsed(TimeSpan.fromMinutes(5)),
     )
     expect(RequestResponse.didRequestTimeout(output.model.request)).toBeTrue()
   })
