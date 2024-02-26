@@ -1,9 +1,10 @@
 import {
-  SpaceClientEvent,
   SpaceServerCtx,
+  SpaceServerEvent,
 } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
 import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
+import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server"
 import { FlowServerDeps } from "../../../@CHILD/create/create.core"
 import {
   ModelServer,
@@ -11,14 +12,13 @@ import {
   MsgToClient,
   MsgToServer,
 } from "./flow-pack-puzzle-grid.core"
-import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server"
 
 type ServerModule = AppServerModule<{
   Ctx: SpaceServerCtx
   Model: ModelServer
   Msg: MsgServer
   MsgInCmd: null
-  MsgInEvent: SpaceClientEvent
+  MsgInEvent: SpaceServerEvent
   MsgOutCmd: SpaceServerCmd<MsgToClient>
   MsgOutEvent: null
   MsgToClient: MsgToClient
@@ -40,7 +40,7 @@ const ListPuzzlesById: Pick<ServerModule, "update"> = {
           },
           where: {
             puzzleId: {
-              in: [],
+              in: input.msgClient.puzzleIds,
             },
           },
         })

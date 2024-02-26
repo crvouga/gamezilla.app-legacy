@@ -216,38 +216,56 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
             {packBuilder.pack.name}
           </p>
           <div className="flex w-full flex-1 flex-col items-center justify-center">
-            <FlowPackPuzzleGridUI.ViewPackPuzzleGrid
-              renderCell={(position) => {
-                const index = FlowPackPuzzleGridUI.toIndex(position)
-
-                const puzzleId = packBuilder.pack.puzzleIds[index]
-
-                if (puzzleId) {
-                  const puzzle = puzzleId ? model.puzzles[puzzleId] : null
-
-                  if (!puzzle) {
-                    return <FlowPackPuzzleGridUI.ViewLoadingCell />
-                  }
-
+            <FlowPackPuzzleGridClient.View
+              ctx={{
+                ...input.ctx,
+                pack: packBuilder.pack,
+              }}
+              model={model.packBuilder.flowPackPuzzleGrid}
+              dispatch={(c) =>
+                input.dispatch({ t: "pack-builder.flow-pack-puzzle-grid", c })
+              }
+              slots={{
+                grid() {
                   return (
-                    <FlowPackPuzzleGridUI.ViewPuzzleCell
-                      onClick={() =>
-                        input.dispatch({
-                          t: "pack-builder.user-clicked-pack-item",
-                          puzzle,
-                          index,
-                        })
-                      }
-                      index={index}
+                    <FlowPackPuzzleGridUI.ViewPackPuzzleGrid
+                      renderCell={(position) => {
+                        const index = FlowPackPuzzleGridUI.toIndex(position)
+
+                        const puzzleId = packBuilder.pack.puzzleIds[index]
+
+                        if (puzzleId) {
+                          const puzzle = puzzleId
+                            ? model.puzzles[puzzleId]
+                            : null
+
+                          if (!puzzle) {
+                            return <FlowPackPuzzleGridUI.ViewLoadingCell />
+                          }
+
+                          return (
+                            <FlowPackPuzzleGridUI.ViewPuzzleCell
+                              onClick={() =>
+                                input.dispatch({
+                                  t: "pack-builder.user-clicked-pack-item",
+                                  puzzle,
+                                  index,
+                                })
+                              }
+                              index={index}
+                            />
+                          )
+                        }
+
+                        if (index === packBuilder.pack.puzzleIds.length) {
+                          return <ButtonAddPuzzle.View {...input} />
+                        }
+
+                        return <FlowPackPuzzleGridUI.ViewEmptyCell />
+                      }}
                     />
                   )
-                }
-
-                if (index === packBuilder.pack.puzzleIds.length) {
-                  return <ButtonAddPuzzle.View {...input} />
-                }
-
-                return <FlowPackPuzzleGridUI.ViewEmptyCell />
+                },
               }}
             />
           </div>

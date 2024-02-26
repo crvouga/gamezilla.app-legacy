@@ -1,4 +1,4 @@
-export class MapFileSystem extends Map {
+export class MapFileSystem<TKey, TValue> extends Map<TKey, TValue> {
   private directory: string
 
   constructor({ directory }: { directory: string; filename: string }) {
@@ -7,7 +7,7 @@ export class MapFileSystem extends Map {
   }
 
   private writeFile() {
-    console.log(this.directory)
+    console.log("writeFile", this.directory)
   }
 
   override clear(): void {
@@ -15,46 +15,46 @@ export class MapFileSystem extends Map {
     this.writeFile()
   }
 
-  override delete(key: any): boolean {
+  override delete(key: TKey) {
     const deleted = super.delete(key)
     this.writeFile()
     return deleted
   }
 
-  override get(key: any): any {
+  override get(key: TKey) {
     return super.get(key)
   }
 
-  override has(key: any): boolean {
+  override has(key: TKey) {
     return super.has(key)
   }
 
-  override set(key: any, value: any): this {
+  override set(key: TKey, value: TValue) {
     const set = super.set(key, value)
     this.writeFile()
     return set
   }
 
-  override entries(): IterableIterator<[any, any]> {
+  override entries() {
     return super.entries()
   }
 
   override forEach(
-    callbackfn: (value: any, key: any, map: Map<any, any>) => void,
+    callbackfn: (value: TValue, key: TKey, map: Map<TKey, TValue>) => void,
     thisArg?: any,
-  ): void {
-    super.forEach(callbackfn, thisArg)
+  ) {
+    return super.forEach(callbackfn, thisArg)
   }
 
-  override keys(): IterableIterator<any> {
+  override keys() {
     return super.keys()
   }
 
-  override get size(): number {
+  override get size() {
     return super.size
   }
 
-  override values(): IterableIterator<any> {
+  override values() {
     return super.values()
   }
 }
