@@ -24,7 +24,7 @@ function vDomPlugin() {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tsconfigPaths(), ...vDomPlugin()],
+  plugins: [tsconfigPaths()].concat(vDomPlugin()),
   server: {
     hmr: false,
   },
