@@ -1,11 +1,11 @@
 import { Result } from "gamezilla/@SHARED/core"
-import { definePolymorphicFunction } from "../polymorphic-function"
+import { Polymorphic } from "../polymorphic-function"
 
 export type AuthProvider = {
   Auth: string
 }
 
-export const signUpWithEmailAndPassword = definePolymorphicFunction<
+export const signUpWithEmailAndPassword = Polymorphic<
   (
     auth: AuthProvider,
     input: {
@@ -20,13 +20,11 @@ signUpWithEmailAndPassword.implementDefault(async () =>
 )
 
 export const logout =
-  definePolymorphicFunction<
-    (auth: AuthProvider) => Promise<Result<string, null>>
-  >()
+  Polymorphic<(auth: AuthProvider) => Promise<Result<string, null>>>()
 
 logout.implementDefault(async () => Result.err("Not implemented"))
 
-export const loginWithEmailAndPassword = definePolymorphicFunction<
+export const loginWithEmailAndPassword = Polymorphic<
   (
     auth: AuthProvider,
     input: {
@@ -41,8 +39,6 @@ loginWithEmailAndPassword.implementDefault(async () =>
 )
 
 export const loginWithGoogle =
-  definePolymorphicFunction<
-    (auth: AuthProvider) => Promise<Result<string, null>>
-  >()
+  Polymorphic<(auth: AuthProvider) => Promise<Result<string, null>>>()
 
 loginWithGoogle.implementDefault(async () => Result.err("Not implemented"))

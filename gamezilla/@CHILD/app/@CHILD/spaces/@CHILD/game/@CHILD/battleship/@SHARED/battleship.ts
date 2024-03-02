@@ -1,4 +1,4 @@
-import { definePolymorphicFunction } from "gamezilla/@SHARED/polymorphism/polymorphic-function"
+import { Polymorphic } from "gamezilla/@SHARED/polymorphism/polymorphic-function"
 
 type Torpedo = {
   type: "Torpedo"
@@ -56,8 +56,7 @@ type Model = {
 
 type ShootInput = { ammo: Ammo; target: Ship; shotCount: number }
 
-const shoot =
-  definePolymorphicFunction<(input: ShootInput, model: Model) => Model>()
+const shoot = Polymorphic<(input: ShootInput, model: Model) => Model>()
 
 shoot.implementDefault((_input, model) => {
   return model

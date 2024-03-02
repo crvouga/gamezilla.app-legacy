@@ -1,12 +1,11 @@
-import { definePolymorphicFunction } from "gamezilla/@SHARED/polymorphism/polymorphic-function"
+import { Polymorphic } from "gamezilla/@SHARED/polymorphism/polymorphic-function"
 
 export type ShotRule =
   | { t: "hitting-streak" }
   | { t: "chain-fire" }
   | { t: "count"; count: 1 | 2 | 3 | 4 | 5 | 6 }
 
-export const toDescription_ =
-  definePolymorphicFunction<(rule: ShotRule) => string>()
+export const toDescription_ = Polymorphic<(rule: ShotRule) => string>()
 
 toDescription_.implementDefault((rule) => rule.t)
 

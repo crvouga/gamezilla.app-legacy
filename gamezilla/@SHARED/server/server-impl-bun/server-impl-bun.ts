@@ -28,6 +28,11 @@ export const ServerBun = <T>() => {
         websocket: webSocketHandler,
       })
     },
+    serveSinglePageApp(_input) {
+      throw new Error(
+        "serveSinglePageApp not implemented for bun server. Will not work when deployed",
+      )
+    },
   }
   return {
     ...base,

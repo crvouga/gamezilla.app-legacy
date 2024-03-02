@@ -7,6 +7,11 @@ import { Server } from "./@SHARED/server"
 const main = async () => {
   const server = Server(SERVER_IMPL)
 
+  server.serveSinglePageApp({
+    directory: "dist",
+    file: "index.html",
+  })
+
   const logger = LoggerConsole("app")
 
   const deps = await AppServer.getDeps({
@@ -28,7 +33,7 @@ const main = async () => {
 
   await server.start(SERVER_PORT)
 
-  logger.info("Server started")
+  logger.info(`Server started. Listening on port ${SERVER_PORT}`)
 }
 
 main()

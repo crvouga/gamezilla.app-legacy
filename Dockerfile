@@ -38,13 +38,8 @@ COPY --from=build /app /app
 # Copy dbmate binary from the dbmate image
 COPY --from=dbmate /usr/local/bin/dbmate /usr/local/bin/dbmate
 
-# Define the volume for SQLite data
-# defined in deployment platform
-# VOLUME /data
-
 # Expose the application port
 EXPOSE 5000
-
 
 # Modify the CMD instruction to run the script before starting the server
 CMD  bun run server-prod

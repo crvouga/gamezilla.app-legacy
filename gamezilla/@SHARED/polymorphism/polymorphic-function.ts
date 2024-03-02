@@ -1,5 +1,5 @@
-export const definePolymorphicFunction = <
-  TFunction extends (variant: any, ...args: any[]) => any,
+export const Polymorphic = <
+  TFunction extends (variant: any, ...args: any[]) => any | (() => void),
 >() => {
   type Variant = Parameters<TFunction>[0]
   type RestParameters = Parameters<TFunction> extends [any, ...infer Rest]
