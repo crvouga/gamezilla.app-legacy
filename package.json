@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "npx vite build && npx dbmate --no-dump-schema -e DATABASE_URL_PROD up && npx tsx gamezilla-app/gamezilla-app.server.ts",
+    "start": "npx dbmate --no-dump-schema -e DATABASE_URL_PROD up && npx tsx gamezilla-app/gamezilla-app.server.ts",
+    "build": "vite build",
     "db-prod:migrate:up": "dbmate -e DATABASE_URL_PROD up",
     "db-prod:dump": "dbmate -e DATABASE_URL_PROD dump",
     "server": "bun gamezilla-app/gamezilla-app.server.ts",
