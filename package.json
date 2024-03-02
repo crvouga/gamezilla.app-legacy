@@ -4,8 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "npx dbmate --no-dump-schema -e DATABASE_URL_PROD up && npx tsx gamezilla-app/gamezilla-app.server.ts",
-    "build": "vite build",
+    "server-prod": "vite build && dbmate --no-dump-schema -e DATABASE_URL_PROD up && bun gamezilla-app/gamezilla-app.server.ts",
     "db-prod:migrate:up": "dbmate -e DATABASE_URL_PROD up",
     "db-prod:dump": "dbmate -e DATABASE_URL_PROD dump",
     "server": "bun gamezilla-app/gamezilla-app.server.ts",
@@ -43,7 +42,6 @@
   "devDependencies": {
     "@happy-dom/global-registrator": "^13.3.8",
     "@preact/preset-vite": "^2.7.0",
-    "@rollup/rollup-linux-x64-gnu": "^4.12.0",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "@typescript-eslint/parser": "^5.57.1",
