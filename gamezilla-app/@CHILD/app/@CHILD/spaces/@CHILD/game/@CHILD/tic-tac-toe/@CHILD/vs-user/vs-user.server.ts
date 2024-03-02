@@ -1,11 +1,11 @@
 import {
   SpaceReqCtx,
   SpaceServerEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
-import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server"
-import { Sub, Time, isErr } from "gamezilla/@SHARED/core"
-import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
+import { sendBack } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { Sub, Time, isErr } from "gamezilla-app/@SHARED/core"
+import { TimeSpan } from "gamezilla-app/@SHARED/core/data/time-span"
 import {
   PlayerType,
   toOpposite,

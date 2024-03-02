@@ -3,8 +3,8 @@ import {
   SpaceId,
   UserId,
   Username,
-} from "gamezilla/@CHILD/app/@SHARED/data"
-import { Posix } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Posix } from "gamezilla-app/@SHARED/core"
 import { SpaceClientCtx } from "../../../../@SHARED/space"
 
 const currentUserId = "test-user-id" as UserId

@@ -2,17 +2,27 @@ import {
   GameLayout,
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
-import { VsBotSetup } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot"
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+import { VsBotSetup } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot"
+import { SpaceClientCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import {
+  ClientCmd,
+  sendToServer,
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   IconArrowLeftOnRect,
   IconRobot,
   Avatar,
   Spinner,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Eff, Sub, andThen, exhaustive, isErr, p } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import {
+  Eff,
+  Sub,
+  andThen,
+  exhaustive,
+  isErr,
+  p,
+} from "gamezilla-app/@SHARED/core"
 import { Chess } from "../../@SHARED/chess"
 import { Chessboard, CoverArt, PlayerIcon } from "../../@SHARED/chess-ui"
 import {

@@ -1,4 +1,4 @@
-import { PubSub } from "gamezilla/@SHARED/core"
+import { PubSub } from "gamezilla-app/@SHARED/core"
 
 export type IntersectionObserverEmitterProps = {
   onVisible?: () => void

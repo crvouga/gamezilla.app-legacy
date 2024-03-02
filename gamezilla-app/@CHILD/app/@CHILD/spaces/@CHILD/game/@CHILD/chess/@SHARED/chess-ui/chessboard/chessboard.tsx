@@ -11,7 +11,7 @@ import {
   squareToChecker,
   toLowercaseSquare,
 } from "../../chess"
-import { VDom } from "gamezilla/@SHARED/vdom"
+import { VDom } from "gamezilla-app/@SHARED/vdom"
 
 //
 //

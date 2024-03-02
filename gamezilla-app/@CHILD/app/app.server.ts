@@ -1,13 +1,19 @@
-import { CODEBASE_VERSION_ID, IS_PROD } from "gamezilla/public-config"
+import { CODEBASE_VERSION_ID, IS_PROD } from "gamezilla-app/public-config"
 import {
   DbConnSql,
   SMS,
   ServerCmd,
   ServerCtx,
   ServerEvent,
-} from "gamezilla/@CHILD/app/@SHARED/server"
-import { Eff, Posix, Sub, batchMsgs, toMsgType } from "gamezilla/@SHARED/core"
-import { ServerInstance } from "gamezilla/@SHARED/server"
+} from "gamezilla-app/@CHILD/app/@SHARED/server"
+import {
+  Eff,
+  Posix,
+  Sub,
+  batchMsgs,
+  toMsgType,
+} from "gamezilla-app/@SHARED/core"
+import { ServerInstance } from "gamezilla-app/@SHARED/server"
 import * as AuthServer from "./@CHILD/auth/auth.server"
 import * as ProfileServer from "./@CHILD/profile/profile.server"
 import * as SpaceServer from "./@CHILD/spaces/spaces.server"

@@ -1,5 +1,5 @@
-import { AppRoute, ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { AppRoute, ClientCtx } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   Eff,
   RemoteResult,
@@ -7,7 +7,7 @@ import {
   exhaustive,
   isErr,
   p,
-} from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@SHARED/core"
 import { Mic } from "./mic"
 import { ModelClient, MsgClient, MsgToClient } from "./party.core"
 

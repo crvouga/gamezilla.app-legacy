@@ -1,5 +1,5 @@
-import { Profile } from "gamezilla/@CHILD/app/@SHARED/data"
-import { Avatar } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { Profile } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Avatar } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 
 export const ViewProfileCard = ({
   profile,

@@ -1,5 +1,5 @@
-// import { err, ok } from "gamezilla/@SHARED/core"
-// import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server"
+// import { err, ok } from "gamezilla-app/@SHARED/core"
+// import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 // import { toSql } from "./sql"
 // import { Database } from "bun:sqlite"
 // import { Logger } from "../../../@SHARED/server/logger"

@@ -1,7 +1,7 @@
 import { Config } from "tailwindcss"
 
 const config: Config = {
-  content: ["./index.html", "./gamezilla/**/*.{js,ts,jsx,tsx}"],
+  content: ["./index.html", "./gamezilla-app/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       textColor: {

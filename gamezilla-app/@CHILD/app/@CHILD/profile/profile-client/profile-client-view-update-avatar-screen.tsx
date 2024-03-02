@@ -1,10 +1,10 @@
-import { ProfileAvatar } from "gamezilla/@CHILD/app/@SHARED/data"
+import { ProfileAvatar } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   Button,
   Avatar,
   TextField,
   TopBar,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { ModelClient, MsgClient } from "../profile.core"
 
 export const ViewUpdateAvatarScreen = ({

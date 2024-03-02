@@ -3,10 +3,10 @@ import {
   playSound,
   pushRoute,
   showToast,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { SpaceClientModule } from "../architecture/architecture"
 import { SpaceEvent, Spaces } from "../spaces-core"
-import { Button, IconHome } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { Button, IconHome } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { withId } from "../@SHARED/event"
 
 const update: SpaceClientModule["update"] = async (input) => {

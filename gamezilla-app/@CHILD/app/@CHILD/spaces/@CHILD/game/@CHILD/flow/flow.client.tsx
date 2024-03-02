@@ -1,20 +1,20 @@
-import { GameMainMenu } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
-import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { GameMainMenu } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+import { GameClientModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import {
   SpaceClientCtx,
   SpaceClientEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import {
   APP_SOUND,
   ClientCmd,
   playSound,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   IconGamepad,
   IconScrewdriverWrench,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Sub } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Sub } from "gamezilla-app/@SHARED/core"
 import { SpaceClientCmd } from "../../../../@SHARED/space-client-cmd"
 import { CreateClient } from "./@CHILD/create/create.client"
 import { PlayClient } from "./@CHILD/play/play.client"

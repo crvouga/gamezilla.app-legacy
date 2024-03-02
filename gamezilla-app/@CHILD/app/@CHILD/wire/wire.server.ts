@@ -1,14 +1,14 @@
-import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { ClientId, SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   ServerCmd,
   ServerCtx,
   ServerEvent,
   WireCmd,
   sendToClient,
-} from "gamezilla/@CHILD/app/@SHARED/server"
-import { Eff, Posix, TimeSpan } from "gamezilla/@SHARED/core"
-import { Sub } from "gamezilla/@SHARED/core/sub"
-import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict"
+} from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { Eff, Posix, TimeSpan } from "gamezilla-app/@SHARED/core"
+import { Sub } from "gamezilla-app/@SHARED/core/sub"
+import { CappedOrderedDict } from "gamezilla-app/@SHARED/data-structures/capped-ordered-dict"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import { IServerTransport } from "./transport-server"
 import {

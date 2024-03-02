@@ -1,4 +1,4 @@
-import { Avatar, Button, Drawer } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { Avatar, Button, Drawer } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
@@ -10,7 +10,7 @@ import {
   APP_SOUND,
   playSound,
   pushRoute,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 
 const update: SpaceClientModule["update"] = (input) => {
   const { model } = input

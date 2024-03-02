@@ -1,4 +1,4 @@
-import { Sub } from "gamezilla/@SHARED/core"
+import { Sub } from "gamezilla-app/@SHARED/core"
 import { GameServerModule } from "../../../../@SHARED/architecture/game-server-v2"
 import { SpaceServerCtx, SpaceServerEvent } from "../../../../@SHARED/space"
 import { SpaceServerCmd } from "../../../../@SHARED/space-server-cmd"

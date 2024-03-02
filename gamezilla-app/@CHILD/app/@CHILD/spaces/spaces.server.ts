@@ -1,9 +1,9 @@
 import {
   WithEventId,
   withId,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
-import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
+import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   ServerCmd,
   ServerCtx,
@@ -11,8 +11,8 @@ import {
   sendBack,
   sendToClient,
   sendToUser,
-} from "gamezilla/@CHILD/app/@SHARED/server"
-import { Eff, Sub, batchMsgs } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { Eff, Sub, batchMsgs } from "gamezilla-app/@SHARED/core"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import { Game } from "./@CHILD/game/game.server"
 import * as Space from "./spaces-core/space"

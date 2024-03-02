@@ -1,4 +1,4 @@
-import { memoize } from "gamezilla/@SHARED/core"
+import { memoize } from "gamezilla-app/@SHARED/core"
 
 export type NodeId = string & { readonly __brand: unique symbol }
 

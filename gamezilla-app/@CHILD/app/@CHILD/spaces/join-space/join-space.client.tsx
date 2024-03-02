@@ -3,12 +3,12 @@ import {
   playSound,
   replaceRoute,
   showErrSm,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   Button,
   TopBar,
   TopBarBackButton,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
   ViewGameHeader,
   ViewUsersInSpaceList,

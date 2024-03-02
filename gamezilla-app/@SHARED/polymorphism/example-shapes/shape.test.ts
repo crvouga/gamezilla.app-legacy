@@ -1,4 +1,4 @@
-import { expect, test } from "test"
+import { expect, it, describe } from "bun:test"
 import { area, perimeter, volume } from "./shape"
 import { Circle } from "./shape-circle"
 import { Octagon } from "./shape-octagon"
@@ -15,20 +15,22 @@ const shapes2D = [
   Rect({ width: 10, height: 20 }),
 ]
 
-test("area", () => {
-  for (const shape of shapes2D) {
-    expect(area(shape)).toBeNumber()
-  }
-})
+describe(import.meta.file, () => {
+  it("area", () => {
+    for (const shape of shapes2D) {
+      expect(area(shape)).toBeNumber()
+    }
+  })
 
-test("perimeter", () => {
-  for (const shape of shapes2D) {
-    expect(perimeter(shape)).toBeNumber()
-  }
-})
+  it("perimeter", () => {
+    for (const shape of shapes2D) {
+      expect(perimeter(shape)).toBeNumber()
+    }
+  })
 
-test("volume", () => {
-  for (const shape of shapes3D) {
-    expect(volume(shape)).toBeNumber()
-  }
+  it("volume", () => {
+    for (const shape of shapes3D) {
+      expect(volume(shape)).toBeNumber()
+    }
+  })
 })

@@ -6,14 +6,14 @@ import {
   ClientCtx,
   ClientEvent,
   preloadSound,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   IconGamepad,
   IconUserCircle,
   LoadingState,
   Portal,
   cn,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
   Browser,
   Eff,
@@ -21,12 +21,13 @@ import {
   Sub,
   batchMsgs,
   toMsgType,
-} from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@SHARED/core"
+import { VDom } from "gamezilla-app/@SHARED/vdom"
 import {
   CODEBASE_VERSION_ID,
   SERVER_IMPL,
   SERVER_URL,
-} from "gamezilla/public-config"
+} from "gamezilla-app/public-config"
 import * as AuthClient from "./@CHILD/auth/auth.client"
 import * as ProfileClient from "./@CHILD/profile/profile.client"
 import * as SpaceClient from "./@CHILD/spaces/spaces.client"
@@ -37,7 +38,6 @@ import {
 import * as Wire from "./@CHILD/wire/wire.client"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core"
-import { VDom } from "gamezilla/@SHARED/vdom"
 
 //
 //

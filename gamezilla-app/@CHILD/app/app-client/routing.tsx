@@ -3,8 +3,8 @@ import {
   ClientEvent,
   RouteCmd,
   SoundCmd,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { Browser, Eff } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { Browser, Eff } from "gamezilla-app/@SHARED/core"
 
 //
 //

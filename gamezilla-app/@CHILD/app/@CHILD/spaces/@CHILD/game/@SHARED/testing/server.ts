@@ -1,7 +1,11 @@
-import { SessionId, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { dbConnNoop } from "gamezilla/@CHILD/app/@SHARED/server/db-conn-sql"
-import { LoggerConsole } from "gamezilla/@CHILD/app/@SHARED/server/logger"
-import { Posix } from "gamezilla/@SHARED/core"
+import {
+  SessionId,
+  SpaceId,
+  UserId,
+} from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { dbConnNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
+import { LoggerConsole } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
+import { Posix } from "gamezilla-app/@SHARED/core"
 import { SpaceServerCtx } from "../../../../@SHARED/space"
 
 const hostUserId = "test-user-id" as UserId

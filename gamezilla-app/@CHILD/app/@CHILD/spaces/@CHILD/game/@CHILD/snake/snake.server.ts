@@ -1,4 +1,4 @@
-import { Eff, Result, Sub, Time } from "gamezilla/@SHARED/core"
+import { Eff, Result, Sub, Time } from "gamezilla-app/@SHARED/core"
 import * as Snake from "./@SHARED/snake"
 import {
   CoreModel,

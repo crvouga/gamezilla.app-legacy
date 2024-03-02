@@ -1,4 +1,4 @@
-import { Eff, exhaustive, isErr } from "gamezilla/@SHARED/core"
+import { Eff, exhaustive, isErr } from "gamezilla-app/@SHARED/core"
 import { Res, ModelServer, MsgServer, MsgToServer, handle } from "./party.core"
 
 //

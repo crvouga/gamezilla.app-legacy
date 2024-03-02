@@ -1,4 +1,4 @@
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../../@SHARED/flow"
 import { ModelSync, MsgSync } from "../../create.core"
 

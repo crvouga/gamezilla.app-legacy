@@ -1,7 +1,7 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server"
-import { NonEmpty, Result, Uuid, err, ok } from "gamezilla/@SHARED/core"
-import { Parsing as P } from "gamezilla/@SHARED/parsing"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { NonEmpty, Result, Uuid, err, ok } from "gamezilla-app/@SHARED/core"
+import { Parsing as P } from "gamezilla-app/@SHARED/parsing"
 import { MoveInput, uciMoveToMoveInput } from "../../../@SHARED/chess"
 import { EloRating } from "../elo-rating"
 import {

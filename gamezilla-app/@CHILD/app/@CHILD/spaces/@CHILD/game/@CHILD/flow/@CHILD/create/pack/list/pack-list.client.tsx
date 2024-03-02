@@ -1,9 +1,9 @@
-import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { GameClientModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { FlowPackListClient } from "../../../../@SHARED/flow-pack/flow-pack-list"
 import { ClientModule } from "../../create.core"
 import { PackCreateClient } from "../create/pack-create.client"
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
+import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { APP_SOUND, playSound } from "gamezilla-app/@CHILD/app/@SHARED/client"
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.chainUpdates(

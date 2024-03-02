@@ -2,8 +2,8 @@ import {
   Paginated,
   Pagination,
   UserId,
-} from "gamezilla/@CHILD/app/@SHARED/data"
-import { Result } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Result } from "gamezilla-app/@SHARED/core"
 import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle-id"
 

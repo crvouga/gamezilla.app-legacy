@@ -1,8 +1,8 @@
-import { Browser, Eff, RemoteResult, Result } from "gamezilla/@SHARED/core"
+import { Browser, Eff, RemoteResult, Result } from "gamezilla-app/@SHARED/core"
 import { ChatId } from "./chat-id"
 import { ChatMessageId } from "./chat-message-id"
 import { ChatUserJoinId } from "./chat-user-join-id"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 
 //
 //

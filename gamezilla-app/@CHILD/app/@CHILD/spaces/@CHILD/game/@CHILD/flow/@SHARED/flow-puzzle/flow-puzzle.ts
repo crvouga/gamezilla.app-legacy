@@ -1,5 +1,5 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { Posix } from "gamezilla/@SHARED/core"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Posix } from "gamezilla-app/@SHARED/core"
 import { FlowVariant } from "../flow"
 import { FlowPuzzleId } from "./flow-puzzle-id"
 import { FlowPuzzleName } from "./flow-puzzle-name"

@@ -1,14 +1,14 @@
 import {
   VsBotGame,
   VsBotSetup,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot"
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { Posix, TimeSpan } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot"
+import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Posix, TimeSpan } from "gamezilla-app/@SHARED/core"
 import {
   EventMeta,
   EventId,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import * as ConnectFour from "../../@SHARED/connect-four"
 
 //

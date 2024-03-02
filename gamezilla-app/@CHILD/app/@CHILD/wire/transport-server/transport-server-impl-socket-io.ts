@@ -1,5 +1,5 @@
-import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { ServerNode } from "gamezilla/@SHARED/server/server-impl-node/server-impl-node"
+import { ClientId, SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { ServerNode } from "gamezilla-app/@SHARED/server/server-impl-node/server-impl-node"
 import { Server } from "socket.io"
 import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core"
 import { IServerTransport, initServerTransport } from "./transport-server"

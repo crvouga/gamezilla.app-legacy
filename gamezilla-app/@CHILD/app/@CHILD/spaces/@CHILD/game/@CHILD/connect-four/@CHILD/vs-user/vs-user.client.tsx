@@ -2,14 +2,14 @@ import {
   GameLayout,
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
-import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-user"
-import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+import { VsUserSetupScreen } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-user"
+import { GameClientModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import {
   SpaceClientCtx,
   SpaceClientEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { ClientCmd, ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { ClientCmd, ClientCtx } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   Button,
   ConfirmationDialog,
@@ -20,8 +20,8 @@ import {
   IconSpinner,
   IconXMark,
   Avatar,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Sub } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Sub } from "gamezilla-app/@SHARED/core"
 import { PlayerType, toTurn } from "../../@SHARED/connect-four"
 import { PlayerIcon, ViewColumns } from "../../@SHARED/connect-four-ui"
 import { CoverArt } from "../../@SHARED/connect-four-ui/connect-four-cover-art"

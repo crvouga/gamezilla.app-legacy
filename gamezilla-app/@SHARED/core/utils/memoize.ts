@@ -1,4 +1,4 @@
-import { LRUCache } from "gamezilla/@SHARED/data-structures/least-recently-used-cache"
+import { LRUCache } from "gamezilla-app/@SHARED/data-structures/least-recently-used-cache"
 
 /**
  * @description

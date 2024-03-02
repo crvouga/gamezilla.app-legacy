@@ -1,4 +1,4 @@
-import { Uuid } from "gamezilla/@SHARED/core"
+import { Uuid } from "gamezilla-app/@SHARED/core"
 
 export type ChatMessageId = string & { readonly ChatMessageId: unique symbol }
 

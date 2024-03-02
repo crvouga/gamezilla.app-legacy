@@ -1,7 +1,7 @@
-import { p } from "gamezilla/@SHARED/core"
+import { p } from "gamezilla-app/@SHARED/core"
 import * as Flow from "../flow"
 import { takeWhile } from "./utils"
-import { MinHeap } from "gamezilla/@SHARED/data-structures/min-heap"
+import { MinHeap } from "gamezilla-app/@SHARED/data-structures/min-heap"
 
 /**
  * A `Pipeline` represents the sequence of nodes the user draws when connecting terminals.

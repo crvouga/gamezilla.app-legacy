@@ -4,7 +4,7 @@
  *
  *
  */
-import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { EventId, WithEventId } from "../@SHARED/event"
 import * as SpaceState from "./space-state"
 import * as Space from "./space"

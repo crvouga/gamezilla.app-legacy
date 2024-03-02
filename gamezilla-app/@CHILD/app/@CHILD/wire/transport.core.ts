@@ -1,4 +1,4 @@
-import { SessionId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 
 export type MsgServerToMsgClient<MsgToClient> =
   | {

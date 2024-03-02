@@ -1,4 +1,4 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   FlowVariant,
   FlowVariantUIEdit,

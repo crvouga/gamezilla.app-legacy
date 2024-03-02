@@ -1,13 +1,13 @@
-import { describe, expect, it } from "test"
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
-import { addProfiles } from "gamezilla/@CHILD/app/@SHARED/client"
+import { describe, expect, it } from "bun:test"
+import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
+import { addProfiles } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   Profile,
   SpaceId,
   UserId,
   Username,
-} from "gamezilla/@CHILD/app/@SHARED/data"
-import { eq } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { eq } from "gamezilla-app/@SHARED/core"
 import {
   clickedJoinSpaceButton,
   clickedStartSpaceButton,

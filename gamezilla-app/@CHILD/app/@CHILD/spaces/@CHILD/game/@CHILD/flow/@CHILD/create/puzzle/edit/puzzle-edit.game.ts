@@ -1,4 +1,4 @@
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPuzzleName } from "../../../../@SHARED/flow-puzzle/flow-puzzle-name"
 import { ModelSync, MsgSync } from "../../create.core"

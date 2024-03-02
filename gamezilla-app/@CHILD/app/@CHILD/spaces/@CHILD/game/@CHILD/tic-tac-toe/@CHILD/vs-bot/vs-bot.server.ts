@@ -1,9 +1,9 @@
 import {
   SpaceReqCtx,
   SpaceServerEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { Eff, Sub, andThen, err, ok, p } from "gamezilla/@SHARED/core"
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { Eff, Sub, andThen, err, ok, p } from "gamezilla-app/@SHARED/core"
+import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
 import { TicTacToe } from "../../@SHARED/tic-tic-toe"
 import {
   ModelServer,

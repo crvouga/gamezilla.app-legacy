@@ -1,5 +1,5 @@
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { WithEventMeta } from "../../../../@SHARED/event"
 import { GameMainMenu } from "../../@SHARED/game"
 import * as Create from "./@CHILD/create/create.core"

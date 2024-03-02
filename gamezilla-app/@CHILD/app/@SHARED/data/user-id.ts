@@ -1,4 +1,4 @@
-import { err, ok, Result, Uuid } from "gamezilla/@SHARED/core"
+import { err, ok, Result, Uuid } from "gamezilla-app/@SHARED/core"
 
 export type UserId = string & { _opaque: "UserId" }
 const namespace = "user"

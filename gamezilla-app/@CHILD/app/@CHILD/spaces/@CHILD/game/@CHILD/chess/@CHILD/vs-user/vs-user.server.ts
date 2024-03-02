@@ -1,7 +1,7 @@
-import { SpaceServerEvent } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
-import { Eff, Sub, Time } from "gamezilla/@SHARED/core"
-import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span"
+import { SpaceServerEvent } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
+import { Eff, Sub, Time } from "gamezilla-app/@SHARED/core"
+import { TimeSpan } from "gamezilla-app/@SHARED/core/data/time-span"
 import * as Board from "../../@SHARED/chess/chess"
 import {
   ModelServer,

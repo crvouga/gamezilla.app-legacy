@@ -2,16 +2,16 @@ import {
   GameLayout,
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
-import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+import { GameClientModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { SpaceClientCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import {
   APP_SOUND,
   ClientCmd,
   playSound,
   sendToServer,
   showToast,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   Avatar,
   IconArrowCircle,
@@ -23,9 +23,9 @@ import {
   IconXMark,
   Spinner,
   cn,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Eff, andThen, isErr, p } from "gamezilla/@SHARED/core"
-import { VDomChildren } from "gamezilla/@SHARED/vdom"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Eff, andThen, isErr, p } from "gamezilla-app/@SHARED/core"
+import { VDomChildren } from "gamezilla-app/@SHARED/vdom"
 import { Chess } from "../../@SHARED/chess"
 import { Chessboard } from "../../@SHARED/chess-ui/chessboard"
 import { CHESS_SOUND } from "../../@SHARED/chess/chess-sounds"

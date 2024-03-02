@@ -1,9 +1,9 @@
 import {
   SpaceReqCtx,
   SpaceServerEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
-import { Eff, Sub, p } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
+import { Eff, Sub, p } from "gamezilla-app/@SHARED/core"
 import { Chess } from "../../@SHARED/chess"
 import {
   ModelServer,

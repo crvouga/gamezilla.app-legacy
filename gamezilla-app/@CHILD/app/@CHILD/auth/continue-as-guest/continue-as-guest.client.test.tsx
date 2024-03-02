@@ -1,11 +1,11 @@
-import { describe, expect, it } from "test"
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
+import { describe, expect, it } from "bun:test"
+import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
 import {
   AnonymousClientCtx,
   didPlaySound,
   didSendToServer,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   Posix,
   err,
@@ -13,7 +13,7 @@ import {
   isResponseErr,
   isResponseOk,
   ok,
-} from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@SHARED/core"
 import * as AuthClient from "../auth.client"
 import { ModelClient } from "../auth.core"
 

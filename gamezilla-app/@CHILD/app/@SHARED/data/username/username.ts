@@ -1,4 +1,4 @@
-import { Result, err, ok } from "gamezilla/@SHARED/core"
+import { Result, err, ok } from "gamezilla-app/@SHARED/core"
 import { adjectives, nouns } from "../words"
 
 export type Username = string & { _opaque: "Username" }

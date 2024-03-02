@@ -1,6 +1,6 @@
-import { Eff } from "gamezilla/@SHARED/core"
+import { Eff } from "gamezilla-app/@SHARED/core"
 import { Drawer } from "../@SHARED/ui"
-import { VDom } from "gamezilla/@SHARED/vdom"
+import { VDom } from "gamezilla-app/@SHARED/vdom"
 
 export type Model = {
   isDrawerOpen: boolean

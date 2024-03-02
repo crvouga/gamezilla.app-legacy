@@ -1,5 +1,5 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { err, NonEmpty, ok, Result } from "gamezilla/@SHARED/core"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { err, NonEmpty, ok, Result } from "gamezilla-app/@SHARED/core"
 import {
   Board,
   MoveProblem,

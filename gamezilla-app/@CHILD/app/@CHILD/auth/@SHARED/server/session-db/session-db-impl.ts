@@ -1,4 +1,4 @@
-import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server"
+import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { ISessionDb } from "./session-db"
 import { SessionDbInMemory } from "./session-db-impl.in-memory"
 import { SessionDbPostgres } from "./session-db-impl.postgres"

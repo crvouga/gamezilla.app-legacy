@@ -1,17 +1,17 @@
-import { describe, expect, it } from "test"
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
+import { describe, expect, it } from "bun:test"
+import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
 import {
   ClientCtx,
   didPushRoute,
   didReplaceRoute,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   RequestResponse,
   TimeSpan,
   isRequesting,
   isResponseOk,
-} from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@SHARED/core"
 import {
   changeRoute,
   clickBackButton,

@@ -1,11 +1,11 @@
-import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { AppServerModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-server"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   ServerCmd,
   ServerCtx,
   ServerEvent,
   sendToClient,
-} from "gamezilla/@CHILD/app/@SHARED/server"
+} from "gamezilla-app/@CHILD/app/@SHARED/server"
 import {
   PhoneNumber,
   Posix,
@@ -13,7 +13,7 @@ import {
   Sub,
   isErr,
   ok,
-} from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@SHARED/core"
 import { IAccountDb } from "../../@SHARED/server/account-db"
 import { AccountDb } from "../../@SHARED/server/account-db/account-db-impl"
 import { Account } from "../../auth.core"

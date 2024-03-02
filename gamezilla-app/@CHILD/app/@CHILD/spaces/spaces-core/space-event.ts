@@ -1,4 +1,4 @@
-import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import * as Game from "../@CHILD/game/game.core"
 
 export type SpaceEvent =

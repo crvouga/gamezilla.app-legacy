@@ -1,16 +1,22 @@
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
+import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
 import {
   APP_SOUND,
   ClientEvent,
   SoundCmd,
   playSound,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   IconVolumeHigh,
   IconVolumeXMark,
   ToggleButton,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Result, TimeSpan, UnitInterval, err, ok } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import {
+  Result,
+  TimeSpan,
+  UnitInterval,
+  err,
+  ok,
+} from "gamezilla-app/@SHARED/core"
 
 //
 //

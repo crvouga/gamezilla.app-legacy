@@ -1,5 +1,5 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { RequestResponse, Result } from "gamezilla/@SHARED/core"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { RequestResponse, Result } from "gamezilla-app/@SHARED/core"
 
 //
 //

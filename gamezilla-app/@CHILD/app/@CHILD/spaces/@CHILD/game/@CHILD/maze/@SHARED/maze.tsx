@@ -1,5 +1,5 @@
 /* eslint-disable no-constant-condition */
-import { eq, memoize, Random } from "gamezilla/@SHARED/core"
+import { eq, memoize, Random } from "gamezilla-app/@SHARED/core"
 import { Direction, Position } from "./position"
 
 //

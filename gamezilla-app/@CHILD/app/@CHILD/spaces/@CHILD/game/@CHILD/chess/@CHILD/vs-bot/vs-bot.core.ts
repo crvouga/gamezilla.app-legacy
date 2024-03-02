@@ -1,8 +1,8 @@
-import { err, isErr, ok, Result } from "gamezilla/@SHARED/core"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { VsBotSetup } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot"
+import { err, isErr, ok, Result } from "gamezilla-app/@SHARED/core"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { VsBotSetup } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot"
 import { Chess } from "../../@SHARED/chess"
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 
 //
 //

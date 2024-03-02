@@ -4,12 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "server-prod": "vite build && npx dbmate --no-dump-schema -e DATABASE_URL_PROD up && npx tsx gamezilla/gamezilla.server.ts",
+    "server-prod": "vite build && npx dbmate --no-dump-schema -e DATABASE_URL_PROD up && npx tsx gamezilla-app/gamezilla-app.server.ts",
     "app:up": "docker build -t gamezilla-prod . && docker run -d -p 5000:5000 --name gamezilla-container gamezilla-prod",
     "app:down": "docker stop gamezilla-container && docker rm gamezilla-container",
     "db-prod:migrate:up": "dbmate -e DATABASE_URL_PROD up",
     "db-prod:dump": "dbmate -e DATABASE_URL_PROD dump",
-    "server": "bun gamezilla/gamezilla.server.ts",
+    "server": "bun gamezilla-app/gamezilla-app.server.ts",
     "db:migrate:up": "dbmate -e DATABASE_URL up",
     "db:migrate:down": "dbmate -e DATABASE_URL down",
     "db:up": "docker-compose -f docker-compose.local.yml up -d",
@@ -24,12 +24,10 @@
     "ngrok:config:edit": "ngrok config edit",
     "tc": "bun x tsc --noEmit --watch",
     "viz-bundle": "bun x vite-bundle-visualizer",
-    "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla/gamezilla.client.tsx",
+    "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla-app/gamezilla.client.tsx",
     "check-imports": "bun scripts/check-imports.ts",
     "cloc": "bun x cloc gamezilla",
-    "pretty": "bun x prettier --write .",
-    "test:use-bun": "bun add test@bun:test",
-    "test:use-vitest": "bun add test@npm:vitest"
+    "pretty": "bun x prettier --write ."
   },
   "dependencies": {
     "chess.js": "^1.0.0-beta.6",
@@ -41,8 +39,7 @@
     "react-dom": "^18.2.0",
     "redis": "^4.6.12",
     "socket.io": "^4.7.4",
-    "socket.io-client": "^4.7.4",
-    "test": "npm:vitest"
+    "socket.io-client": "^4.7.4"
   },
   "devDependencies": {
     "@happy-dom/global-registrator": "^13.3.8",
@@ -65,8 +62,7 @@
     "typescript": "latest",
     "vite": "^5.0.0",
     "vite-plugin-inferno": "^0.0.1",
-    "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^1.3.1"
+    "vite-tsconfig-paths": "^4.2.1"
   },
   "engines": {
     "node": "18.x"

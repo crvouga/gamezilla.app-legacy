@@ -1,4 +1,4 @@
-import { adjectives, nouns } from "gamezilla/@CHILD/app/@SHARED/data/words"
+import { adjectives, nouns } from "gamezilla-app/@CHILD/app/@SHARED/data/words"
 
 export type FlowPackName = string & { __brand: "FlowPackName" }
 

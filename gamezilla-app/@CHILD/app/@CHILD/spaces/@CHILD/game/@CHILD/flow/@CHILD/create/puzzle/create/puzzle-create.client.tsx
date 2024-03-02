@@ -4,8 +4,8 @@ import {
   sendToServer,
   showErrSm,
   showCreatedSm,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { Button, IconPlus } from "gamezilla/@CHILD/app/@SHARED/ui"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { Button, IconPlus } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
   Posix,
   Result,
@@ -15,7 +15,7 @@ import {
   isErr,
   isLoading,
   loading,
-} from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@SHARED/core"
 import { ClientModule } from "../../create.core"
 
 const update: ClientModule["update"] = (input) => {

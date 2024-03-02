@@ -1,4 +1,4 @@
-import { err, ok, Result, memoize } from "gamezilla/@SHARED/core"
+import { err, ok, Result, memoize } from "gamezilla-app/@SHARED/core"
 
 //
 //

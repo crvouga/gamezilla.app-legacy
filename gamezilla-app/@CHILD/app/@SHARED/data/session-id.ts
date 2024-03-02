@@ -1,4 +1,4 @@
-import { Result } from "gamezilla/@SHARED/core/data/result"
+import { Result } from "gamezilla-app/@SHARED/core/data/result"
 
 export type SessionId = string & { _opaque: "SessionId" }
 

@@ -1,12 +1,15 @@
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import {
   AppRoute,
   ClientCtx,
   routeChanged,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { Posix, TimeSpan, p } from "gamezilla/@SHARED/core"
-import { LamportClock, LamportTimestamp } from "gamezilla/@SHARED/lamport-clock"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Posix, TimeSpan, p } from "gamezilla-app/@SHARED/core"
+import {
+  LamportClock,
+  LamportTimestamp,
+} from "gamezilla-app/@SHARED/lamport-clock"
 import { GameName } from "../@CHILD/game/game.core"
 import { Space, SpaceEvent } from "../spaces-core"
 import * as SpaceClient from "../spaces.client"

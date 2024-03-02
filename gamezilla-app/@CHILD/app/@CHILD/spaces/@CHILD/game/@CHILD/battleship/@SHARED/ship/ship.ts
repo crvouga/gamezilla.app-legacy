@@ -1,4 +1,4 @@
-import { Polymorphic } from "gamezilla/@SHARED/polymorphism/polymorphic-function"
+import { Polymorphic } from "gamezilla-app/@SHARED/polymorphism/polymorphic-function"
 
 export type Ship = {
   Ship: string

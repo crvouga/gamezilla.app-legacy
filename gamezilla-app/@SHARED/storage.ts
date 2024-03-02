@@ -3,8 +3,8 @@
  * It retains type safety by using deployment IDs.
  */
 export const Storage = <TModel>(codebaseVersionId: string) => {
-  const CODEBASE_VERSION_ID_KEY = "gamezilla/codebase-version-id"
-  const MODEL_KEY = "gamezilla/model"
+  const CODEBASE_VERSION_ID_KEY = "gamezilla-app/codebase-version-id"
+  const MODEL_KEY = "gamezilla-app/model"
 
   return {
     get() {

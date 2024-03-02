@@ -1,6 +1,6 @@
-import { describe, expect, it } from "test"
-import { chainUpdates } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
-import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
+import { describe, expect, it } from "bun:test"
+import { chainUpdates } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { didPlaySound } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   clickedPackItem,
   createFlowPack,

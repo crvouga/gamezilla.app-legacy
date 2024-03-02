@@ -1,12 +1,15 @@
 import {
   SpaceClientCtx,
   SpaceClientEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { SpaceClientCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
-import { sendToServer, showErrSm } from "gamezilla/@CHILD/app/@SHARED/client"
-import { IntersectionObserverEmitter } from "gamezilla/@CHILD/app/@SHARED/ui/intersection-observer"
-import { RequestResponse, Result, isErr } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceClientCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
+import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
+import {
+  sendToServer,
+  showErrSm,
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { IntersectionObserverEmitter } from "gamezilla-app/@CHILD/app/@SHARED/ui/intersection-observer"
+import { RequestResponse, Result, isErr } from "gamezilla-app/@SHARED/core"
 import { FlowPack } from ".."
 import {
   ModelClient,

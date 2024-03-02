@@ -2,36 +2,36 @@ import {
   GameLayout,
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
 import {
   IconBotHappy,
   IconBotLevel1,
   IconBotLevel4,
   VsBotGame,
   VsBotSetup,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot"
-import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot"
+import { GameClientModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import {
   EventMeta,
   withId,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { FeedItem } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/feed-item"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { FeedItem } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/feed-item"
 import {
   SpaceClientCtx,
   SpaceClientEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import {
   APP_SOUND,
   ClientCmd,
   playSound,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Sub, TimeSpan } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Sub, TimeSpan } from "gamezilla-app/@SHARED/core"
 import * as ConnectFour from "../../@SHARED/connect-four"
 import {
   CoverArt,

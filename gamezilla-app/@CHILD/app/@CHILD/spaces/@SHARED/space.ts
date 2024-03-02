@@ -1,12 +1,12 @@
-import { ClientCtx, ClientEvent } from "gamezilla/@CHILD/app/@SHARED/client"
+import { ClientCtx, ClientEvent } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   ClientId,
   Profile,
   SessionId,
   SpaceId,
   UserId,
-} from "gamezilla/@CHILD/app/@SHARED/data"
-import { ServerCtx, ServerEvent } from "gamezilla/@CHILD/app/@SHARED/server"
+} from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { ServerCtx, ServerEvent } from "gamezilla-app/@CHILD/app/@SHARED/server"
 
 //
 //

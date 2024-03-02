@@ -1,7 +1,7 @@
-import { describe, expect, it } from "test"
-import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
-import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { didSendMsgToClient } from "gamezilla/@CHILD/app/@SHARED/server"
+import { describe, expect, it } from "bun:test"
+import { AppServerModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-server"
+import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { didSendMsgToClient } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import {
   authenticatedClientConnected,
   clientSync,

@@ -1,4 +1,4 @@
-import { Uuid } from "gamezilla/@SHARED/core"
+import { Uuid } from "gamezilla-app/@SHARED/core"
 import { COLUMN_COUNT, MAX_COLUMN_HEIGHT } from "../connect-four"
 import { gameTheme } from "./shared"
 

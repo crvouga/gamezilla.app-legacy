@@ -1,7 +1,7 @@
-import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server"
-import { Result, Uuid } from "gamezilla/@SHARED/core"
-import { P } from "gamezilla/@SHARED/parsing"
+import { SessionId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { Result, Uuid } from "gamezilla-app/@SHARED/core"
+import { P } from "gamezilla-app/@SHARED/parsing"
 import { ISessionDb } from "./session-db"
 
 //

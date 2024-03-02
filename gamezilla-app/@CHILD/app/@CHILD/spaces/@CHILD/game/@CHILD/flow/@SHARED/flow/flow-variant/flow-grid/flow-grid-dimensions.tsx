@@ -1,4 +1,4 @@
-import { IconXMark, Slider } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { IconXMark, Slider } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 
 export type Model = {
   t: "flow-grid"

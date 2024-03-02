@@ -2,10 +2,10 @@ import {
   SpaceReqCtx,
   SpaceServerCtx,
   SpaceServerEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import {
   Eff,
   Result,
@@ -16,8 +16,8 @@ import {
   err,
   ok,
   p,
-} from "gamezilla/@SHARED/core"
-import { TimeSpan } from "gamezilla/@SHARED/core/data/time-span"
+} from "gamezilla-app/@SHARED/core"
+import { TimeSpan } from "gamezilla-app/@SHARED/core/data/time-span"
 import { ChessMsgSync } from "../../@SHARED/chess/chess-shared"
 import { EloRating } from "./elo-rating"
 import { PuzzleDb } from "./puzzle-db"

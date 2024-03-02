@@ -6,7 +6,7 @@
 //
 //
 
-import { Location } from "gamezilla/@CHILD/app/@SHARED/client"
+import { Location } from "gamezilla-app/@CHILD/app/@SHARED/client"
 
 export type AuthRoute =
   | {

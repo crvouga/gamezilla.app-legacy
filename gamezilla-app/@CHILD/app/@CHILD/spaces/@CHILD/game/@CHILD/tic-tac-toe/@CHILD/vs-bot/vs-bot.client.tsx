@@ -1,27 +1,27 @@
 import {
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
 import {
   IconBotCute,
   IconBotLevel1,
   IconBotScary,
   VsBotGame,
   VsBotSetup,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot"
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot"
+import { SpaceClientCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import {
   ClientCmd,
   ClientCtx,
   sendToServer,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
   LoadingBar,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Eff, Posix } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Eff, Posix } from "gamezilla-app/@SHARED/core"
 import {
   BotLevel,
   allBotLevels,

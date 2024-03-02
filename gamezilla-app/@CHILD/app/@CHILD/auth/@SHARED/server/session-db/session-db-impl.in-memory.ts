@@ -1,5 +1,5 @@
-import { SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { ok } from "gamezilla/@SHARED/core"
+import { SessionId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { ok } from "gamezilla-app/@SHARED/core"
 import { ISessionDb } from "./session-db"
 
 const sessionIdsByUserId = new Map<UserId, SessionId[]>()

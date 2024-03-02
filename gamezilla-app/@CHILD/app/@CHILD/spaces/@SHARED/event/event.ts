@@ -1,4 +1,4 @@
-import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock/lamport-timestamp"
+import { LamportTimestamp } from "gamezilla-app/@SHARED/lamport-clock/lamport-timestamp"
 import { EventId } from "./event-id"
 
 export type EventMeta = {

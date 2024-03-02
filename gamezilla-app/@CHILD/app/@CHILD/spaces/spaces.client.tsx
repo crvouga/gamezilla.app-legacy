@@ -1,7 +1,7 @@
-import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client"
+import { ClientCtx } from "gamezilla-app/@CHILD/app/@SHARED/client"
 
-import { Eff, Sub, batchMsgs, notAsked } from "gamezilla/@SHARED/core"
-import { VDom } from "gamezilla/@SHARED/vdom"
+import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@SHARED/core"
+import { VDom } from "gamezilla-app/@SHARED/vdom"
 import { SpaceClientCmd } from "./@SHARED/space-client-cmd"
 import { Input, Output, SpaceClientModule } from "./architecture/architecture"
 import { CurrentSpaceBottomBar } from "./current-space-bottom-bar/current-space-bottom-bar"

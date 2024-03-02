@@ -3,14 +3,14 @@ import {
   ProfileAvatar,
   UserId,
   Username,
-} from "gamezilla/@CHILD/app/@SHARED/data"
+} from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   ServerCmd,
   ServerCtx,
   ServerEvent,
   sendToClient,
-} from "gamezilla/@CHILD/app/@SHARED/server"
-import { Result, err, isErr, ok } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { Result, err, isErr, ok } from "gamezilla-app/@SHARED/core"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import { ProfileDb } from "./profile-db/profile-db"
 import { createProfileDb } from "./profile-db/profile-db-impl.postgres"

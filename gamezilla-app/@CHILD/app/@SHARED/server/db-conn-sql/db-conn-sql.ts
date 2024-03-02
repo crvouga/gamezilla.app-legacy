@@ -1,4 +1,4 @@
-import { Result } from "gamezilla/@SHARED/core"
+import { Result } from "gamezilla-app/@SHARED/core"
 
 export type DbConnSql = {
   query: <TRow>(

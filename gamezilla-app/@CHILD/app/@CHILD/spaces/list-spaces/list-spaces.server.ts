@@ -1,4 +1,4 @@
-import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server"
+import { sendBack } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import * as Space from "../spaces-core/space"
 import * as Spaces from "../spaces-core/spaces"
 import { ServerModule } from "../spaces.core"

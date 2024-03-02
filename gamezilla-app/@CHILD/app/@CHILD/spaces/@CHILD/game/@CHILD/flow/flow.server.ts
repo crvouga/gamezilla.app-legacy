@@ -1,9 +1,9 @@
-import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2"
+import { GameServerModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2"
 import {
   SpaceServerCtx,
   SpaceServerEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { Sub } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { Sub } from "gamezilla-app/@SHARED/core"
 import { SpaceServerCmd } from "../../../../@SHARED/space-server-cmd"
 import { CreateServer } from "./@CHILD/create/create.server"
 import { PlayServer } from "./@CHILD/play/play.server"

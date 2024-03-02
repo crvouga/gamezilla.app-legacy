@@ -1,4 +1,4 @@
-import { err, NonEmpty, ok, Result, Random } from "gamezilla/@SHARED/core"
+import { err, NonEmpty, ok, Result, Random } from "gamezilla-app/@SHARED/core"
 import { Direction, Position } from "./gomoku-position"
 
 export type Board = {

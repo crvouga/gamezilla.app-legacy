@@ -1,5 +1,5 @@
-import { Posix } from "gamezilla/@SHARED/core"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { Posix } from "gamezilla-app/@SHARED/core"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   ColumnIndex,
   Columns,
@@ -10,7 +10,7 @@ import {
   toStatus,
   toTurn,
 } from "../../@SHARED/connect-four/connect-four"
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 
 //
 //

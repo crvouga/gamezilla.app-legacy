@@ -2,7 +2,7 @@ import * as Board from "./@SHARED/board"
 import * as Direction from "./@SHARED/direction"
 import * as Piece from "./@SHARED/piece"
 import * as Position from "./@SHARED/position"
-import { Keyboard, Option, Result } from "gamezilla/@SHARED/core"
+import { Keyboard, Option, Result } from "gamezilla-app/@SHARED/core"
 
 const { err: Err, ok: Ok } = Result
 

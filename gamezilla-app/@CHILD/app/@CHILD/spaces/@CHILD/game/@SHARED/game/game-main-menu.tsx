@@ -1,20 +1,20 @@
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceClientCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import {
   Button,
   IconArrowLeftOnRect,
   IconRobot,
   IconUsers,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { ViewGameHeader } from "./view-game-header"
 import { ViewUsersInSpaceList } from "./view-users-in-space-list"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   SpaceClientCmd,
   SpaceClientCmdTypes,
   exitGame,
   openUserDetails,
 } from "../../../../@SHARED/space-client-cmd"
-import { VDom } from "gamezilla/@SHARED/vdom"
+import { VDom } from "gamezilla-app/@SHARED/vdom"
 
 //
 //

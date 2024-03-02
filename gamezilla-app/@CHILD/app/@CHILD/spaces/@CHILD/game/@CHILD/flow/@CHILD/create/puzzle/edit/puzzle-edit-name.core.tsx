@@ -1,6 +1,6 @@
-import { RemoteResult, Result, notAsked } from "gamezilla/@SHARED/core"
+import { RemoteResult, Result, notAsked } from "gamezilla-app/@SHARED/core"
 import { FlowPuzzleId } from "../../../../@SHARED/flow-puzzle/flow-puzzle-id"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 
 //
 //

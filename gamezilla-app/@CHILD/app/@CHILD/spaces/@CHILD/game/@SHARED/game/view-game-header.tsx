@@ -1,5 +1,5 @@
-import { cn } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { VDom } from "gamezilla/@SHARED/vdom"
+import { cn } from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { VDom } from "gamezilla-app/@SHARED/vdom"
 
 export const ViewGameHeader = ({
   title,

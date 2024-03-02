@@ -1,10 +1,10 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   EmailAddress,
   PhoneNumber,
   Posix,
   RemoteResult,
-} from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@SHARED/core"
 import { AppClientModule } from "../../@SHARED/architecture/app-client"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import {

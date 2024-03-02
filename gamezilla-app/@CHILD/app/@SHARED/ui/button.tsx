@@ -1,4 +1,4 @@
-import { VDomChildren } from "gamezilla/@SHARED/vdom"
+import { VDomChildren } from "gamezilla-app/@SHARED/vdom"
 import { Spinner } from "./spinner"
 import { cn } from "./ui"
 

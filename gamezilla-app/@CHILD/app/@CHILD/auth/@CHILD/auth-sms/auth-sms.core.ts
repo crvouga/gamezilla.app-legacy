@@ -1,11 +1,11 @@
-import { ClientId, SessionId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { ClientId, SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   Iso3166Alpha2Code,
   PhoneNumber,
   Posix,
   RemoteResult,
   Result,
-} from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@SHARED/core"
 
 export type ModelServer = null
 

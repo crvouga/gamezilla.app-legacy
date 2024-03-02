@@ -1,4 +1,4 @@
-import { err, Result } from "gamezilla/@SHARED/core"
+import { err, Result } from "gamezilla-app/@SHARED/core"
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.core"
 import * as VsUser from "./@CHILD/vs-user/vs-user.core"
 import { GameMainMenu } from "../../@SHARED/game"

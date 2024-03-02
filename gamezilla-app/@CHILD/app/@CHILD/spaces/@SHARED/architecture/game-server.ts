@@ -1,11 +1,11 @@
-import { Eff, Sub } from "gamezilla/@SHARED/core"
+import { Eff, Sub } from "gamezilla-app/@SHARED/core"
 import { SpaceReqCtx, SpaceServerCtx, SpaceServerEvent } from "../space"
 import { SpaceServerCmd } from "../space-server-cmd"
 import {
   EventMeta,
   WithEventId,
   WithEventMeta,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 
 //
 //

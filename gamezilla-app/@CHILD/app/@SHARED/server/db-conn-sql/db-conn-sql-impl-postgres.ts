@@ -1,7 +1,7 @@
-import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server"
-import { err, ok } from "gamezilla/@SHARED/core"
+import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { err, ok } from "gamezilla-app/@SHARED/core"
 import postgres from "postgres"
-import { Logger } from "../../../@SHARED/server/logger"
+import { Logger } from "../logger"
 import { logQuery } from "./shared"
 import { toSql } from "./sql"
 

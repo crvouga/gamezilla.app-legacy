@@ -1,9 +1,9 @@
-import { IconCrown, Avatar } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { IconCrown, Avatar } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
   SpaceClientCtx,
   spaceToProfiles,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 
 export const ViewUsersInSpaceList = ({
   ctx,

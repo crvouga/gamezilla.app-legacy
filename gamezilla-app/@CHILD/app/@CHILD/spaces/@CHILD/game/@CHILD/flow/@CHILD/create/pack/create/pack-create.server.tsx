@@ -1,5 +1,5 @@
-import { GameServerModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2"
-import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server"
+import { GameServerModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2"
+import { sendBack } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import { FlowPackId } from "../../../../@SHARED/flow-pack/flow-pack-id"
 import { FlowPackName } from "../../../../@SHARED/flow-pack/flow-pack-name"

@@ -1,4 +1,4 @@
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
+import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
 import {
   APP_SOUND,
   AnonymousClientCtx,
@@ -12,8 +12,8 @@ import {
   replaceRoute,
   sendToServer,
   showToast,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { ProfileAvatar, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { ProfileAvatar, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   Button,
   IconChevronRight,
@@ -22,8 +22,8 @@ import {
   TextField,
   TopBar,
   TopBarBackButton,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Sub, isErr, loading } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Sub, isErr, loading } from "gamezilla-app/@SHARED/core"
 import { ViewProfileScreen } from "./profile-client/profile-client-view-profile-screen"
 import { ViewUpdateAvatarScreen } from "./profile-client/profile-client-view-update-avatar-screen"
 import {
@@ -32,7 +32,7 @@ import {
   MsgToClient,
   MsgToServer,
 } from "./profile.core"
-import { VDom } from "gamezilla/@SHARED/vdom"
+import { VDom } from "gamezilla-app/@SHARED/vdom"
 
 //
 //

@@ -1,11 +1,11 @@
 import {
   SpaceReqCtx,
   SpaceServerEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { sendToClient } from "gamezilla/@CHILD/app/@SHARED/server"
-import { Eff, Result, Sub } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { sendToClient } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { Eff, Result, Sub } from "gamezilla-app/@SHARED/core"
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.server"
 import * as VsUser from "./@CHILD/vs-user/vs-user.server"
 import {

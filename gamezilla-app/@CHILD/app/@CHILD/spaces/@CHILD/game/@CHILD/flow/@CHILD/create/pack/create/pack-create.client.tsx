@@ -2,11 +2,11 @@ import {
   APP_SOUND,
   playSound,
   sendToServer,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { Button, IconPlus } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { loading, ok } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { Button, IconPlus } from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { loading, ok } from "gamezilla-app/@SHARED/core"
 import { ClientModule } from "../../create.core"
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 
 const update: ClientModule["update"] = (input) => {
   const { model, msg, msgSync, msgServer } = input

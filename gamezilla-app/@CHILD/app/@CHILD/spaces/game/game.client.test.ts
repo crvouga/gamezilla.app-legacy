@@ -1,7 +1,7 @@
-import { describe, expect, it } from "test"
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
-import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
-import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { describe, expect, it } from "bun:test"
+import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
+import { didPlaySound } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { exitGame } from "../@SHARED/space-client-cmd"
 import {
   clickedGameTile,

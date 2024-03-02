@@ -1,5 +1,5 @@
-import { AnonymousClientCtx } from "gamezilla/@CHILD/app/@SHARED/client"
-import { Avatar, cn } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { AnonymousClientCtx } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { Avatar, cn } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { ViewSpaceHostChip, ViewYouChip } from "../@CHILD/game/@SHARED/game"
 import { CoverArt } from "../@CHILD/game/game-cover-art"
 import { gameNameToString } from "../@CHILD/game/game.core"

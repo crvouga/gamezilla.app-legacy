@@ -1,10 +1,10 @@
-import { describe, expect, it } from "test"
+import { describe, expect, it } from "bun:test"
 import {
   didPlaySound,
   didPushRoute,
   didSendToServer,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { chainUpdates } from "../../../@SHARED/architecture/app-client"
 import { clickedStartSpaceButton, createCtx, init } from "../@TEST/client"
 import { Spaces } from "../spaces-core"

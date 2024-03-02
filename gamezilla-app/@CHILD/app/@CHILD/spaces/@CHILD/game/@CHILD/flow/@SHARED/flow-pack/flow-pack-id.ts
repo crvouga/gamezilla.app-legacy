@@ -1,4 +1,4 @@
-import { Uuid } from "gamezilla/@SHARED/core"
+import { Uuid } from "gamezilla-app/@SHARED/core"
 
 export type FlowPackId = string & { __brand: "FlowPackId" }
 

@@ -1,5 +1,5 @@
-import { UserId, UserRole } from "gamezilla/@CHILD/app/@SHARED/data"
-import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server"
+import { UserId, UserRole } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import {
   EmailAddress,
   PhoneNumber,
@@ -8,8 +8,8 @@ import {
   err,
   isErr,
   ok,
-} from "gamezilla/@SHARED/core"
-import { Parsing as P } from "gamezilla/@SHARED/parsing"
+} from "gamezilla-app/@SHARED/core"
+import { Parsing as P } from "gamezilla-app/@SHARED/parsing"
 import { Account } from "../../../auth.core"
 import { IAccountDb } from "./account-db"
 

@@ -1,6 +1,6 @@
-import { Result } from "gamezilla/@SHARED/core"
+import { Result } from "gamezilla-app/@SHARED/core"
 import { Puzzle, PuzzleInteraction } from "../puzzle.core"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 
 export type PuzzleDb = {
   interactions: {

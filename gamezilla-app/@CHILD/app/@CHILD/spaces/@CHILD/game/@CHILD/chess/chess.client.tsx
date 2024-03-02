@@ -1,18 +1,18 @@
-import { GameMainMenu } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client"
+import { GameMainMenu } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+import { GameClient } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client"
 import {
   SpaceClientCtx,
   SpaceClientEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import {
   APP_SOUND,
   ClientCmd,
   playSound,
   preloadSound,
   sendToServer,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { IconPuzzlePiece } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Eff, RemoteResult, Sub, isErr } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { IconPuzzlePiece } from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Eff, RemoteResult, Sub, isErr } from "gamezilla-app/@SHARED/core"
 import { GameClientModule } from "../../../../@SHARED/architecture/game-client-v2"
 import { SpaceClientCmd } from "../../../../@SHARED/space-client-cmd"
 import * as Puzzle from "./@CHILD/puzzle/puzzle.client"

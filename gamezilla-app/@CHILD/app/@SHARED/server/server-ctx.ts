@@ -1,4 +1,4 @@
-import { Posix } from "gamezilla/@SHARED/core"
+import { Posix } from "gamezilla-app/@SHARED/core"
 import { DbConnSql } from "./db-conn-sql/db-conn-sql"
 import { Logger } from "./logger"
 

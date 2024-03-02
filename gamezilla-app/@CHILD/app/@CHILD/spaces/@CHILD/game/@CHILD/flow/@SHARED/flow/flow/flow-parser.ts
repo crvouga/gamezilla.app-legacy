@@ -1,4 +1,4 @@
-import { Parsing as P } from "gamezilla/@SHARED/parsing"
+import { Parsing as P } from "gamezilla-app/@SHARED/parsing"
 import {
   Edge,
   Model,

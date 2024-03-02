@@ -1,5 +1,8 @@
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { ClientCmd, ClientCmdTypes } from "gamezilla/@CHILD/app/@SHARED/client"
+import { SpaceClientCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import {
+  ClientCmd,
+  ClientCmdTypes,
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { FlowPuzzle } from "./flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "./flow-puzzle/flow-puzzle-id"
 

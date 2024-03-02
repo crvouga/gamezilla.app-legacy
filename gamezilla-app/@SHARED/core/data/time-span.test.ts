@@ -1,4 +1,4 @@
-import { describe, expect, test } from "test"
+import { describe, expect, test } from "bun:test"
 import { TimeSpan } from "./time-span"
 
 describe(import.meta.file, () => {

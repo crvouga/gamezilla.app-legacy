@@ -2,10 +2,10 @@ import {
   ProfileAvatar,
   UserId,
   Username,
-} from "gamezilla/@CHILD/app/@SHARED/data"
-import { DbConnSql } from "gamezilla/@CHILD/app/@SHARED/server"
-import { err, isErr, ok, Result } from "gamezilla/@SHARED/core"
-import { Parsing as P } from "gamezilla/@SHARED/parsing"
+} from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { err, isErr, ok, Result } from "gamezilla-app/@SHARED/core"
+import { Parsing as P } from "gamezilla-app/@SHARED/parsing"
 import { ProfileCore } from "../profile.core"
 import { ProfileDb } from "./profile-db"
 

@@ -1,9 +1,12 @@
-import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { SpaceClientEvent } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client"
-import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Sub } from "gamezilla/@SHARED/core"
+import { GameClientModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { SpaceClientEvent } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { ClientCmd } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import {
+  Button,
+  IconArrowLeftOnRect,
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Sub } from "gamezilla-app/@SHARED/core"
 import { GameLayout } from "../../../../@SHARED/game"
 import { FlowVariantUIPlay } from "../../@SHARED/flow"
 import { FlowClientCtx } from "../../@SHARED/flow-ctx"

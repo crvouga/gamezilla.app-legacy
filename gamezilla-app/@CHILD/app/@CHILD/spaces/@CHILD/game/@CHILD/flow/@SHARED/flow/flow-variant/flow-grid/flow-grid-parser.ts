@@ -1,4 +1,4 @@
-import { P } from "gamezilla/@SHARED/parsing"
+import { P } from "gamezilla-app/@SHARED/parsing"
 import { FlowParser } from "../../flow"
 import * as FlowGrid from "./flow-grid"
 import { Position } from "./flow-grid-position"

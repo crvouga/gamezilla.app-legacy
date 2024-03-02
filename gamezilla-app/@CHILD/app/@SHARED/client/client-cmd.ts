@@ -1,4 +1,4 @@
-import { TimeSpan, UnitInterval, eq } from "gamezilla/@SHARED/core"
+import { TimeSpan, UnitInterval, eq } from "gamezilla-app/@SHARED/core"
 import { Profile, UserId } from "../data"
 import { AppRoute } from "./client-route"
 

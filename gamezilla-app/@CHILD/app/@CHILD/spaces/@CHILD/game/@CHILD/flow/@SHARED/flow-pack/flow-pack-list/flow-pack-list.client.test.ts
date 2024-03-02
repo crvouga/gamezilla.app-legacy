@@ -1,16 +1,16 @@
-import { describe, expect, it } from "test"
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
+import { describe, expect, it } from "bun:test"
+import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
 import {
   didSendToServer,
   didShowErrorSm,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   Posix,
   RequestResponse,
   TimeSpan,
   err,
   ok,
-} from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@SHARED/core"
 import { FlowPackListClient } from "."
 import { testSpaceClientCtx } from "../../../../../@SHARED/testing/client"
 import { FlowPack } from "../flow-pack"

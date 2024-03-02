@@ -1,7 +1,7 @@
 import dotenv from "dotenv"
 dotenv.config()
-import { SERVER_IMPL, SERVER_PORT } from "gamezilla/public-config"
-import { Posix, Program } from "gamezilla/@SHARED/core"
+import { SERVER_IMPL, SERVER_PORT } from "gamezilla-app/public-config"
+import { Posix, Program } from "gamezilla-app/@SHARED/core"
 import { LoggerConsole } from "./@CHILD/app/@SHARED/server/logger"
 import * as AppServer from "./@CHILD/app/app.server"
 import { Server } from "./@SHARED/server"

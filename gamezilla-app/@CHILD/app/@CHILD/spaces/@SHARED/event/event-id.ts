@@ -1,4 +1,4 @@
-import { Result, Uuid, err, ok } from "gamezilla/@SHARED/core"
+import { Result, Uuid, err, ok } from "gamezilla-app/@SHARED/core"
 
 export type EventId = string & { _opaque: "EventId" }
 

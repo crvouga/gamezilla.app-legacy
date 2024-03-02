@@ -1,13 +1,16 @@
-import { Browser, Eff, matchSort, p } from "gamezilla/@SHARED/core"
+import { Browser, Eff, matchSort, p } from "gamezilla-app/@SHARED/core"
 import {
   ClientEvent,
   ClientCmd,
   sendToServer,
   pushRoute,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { IconMagnifyingGlass, IconXMark } from "gamezilla/@CHILD/app/@SHARED/ui"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import {
+  IconMagnifyingGlass,
+  IconXMark,
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./search.core"
-import { VDom } from "gamezilla/@SHARED/vdom"
+import { VDom } from "gamezilla-app/@SHARED/vdom"
 
 //
 //

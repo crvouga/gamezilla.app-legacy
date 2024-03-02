@@ -1,4 +1,4 @@
-import { Logger } from "gamezilla/@CHILD/app/@SHARED/server/logger"
+import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { IVerifySMS } from "./verify-sms"
 import * as ImplTest from "./verify-sms-impl-test"
 import * as ImplTwilio from "./verify-sms-impl-twilio"

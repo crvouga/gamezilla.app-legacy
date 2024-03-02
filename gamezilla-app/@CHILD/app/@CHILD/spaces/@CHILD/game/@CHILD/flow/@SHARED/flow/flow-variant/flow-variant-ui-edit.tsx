@@ -1,4 +1,4 @@
-import { APP_SOUND } from "gamezilla/@CHILD/app/@SHARED/client"
+import { APP_SOUND } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   Button,
   Drawer,
@@ -7,9 +7,9 @@ import {
   IconArrowRotateRight,
   IconExpand,
   IconXMark,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
-import { eq, memoize } from "gamezilla/@SHARED/core"
-import { History } from "gamezilla/@SHARED/history"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { eq, memoize } from "gamezilla-app/@SHARED/core"
+import { History } from "gamezilla-app/@SHARED/history"
 import {
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,

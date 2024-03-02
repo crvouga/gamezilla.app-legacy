@@ -2,8 +2,8 @@ import {
   ClientCmd,
   ClientEvent,
   showToast,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { Eff, Sub } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { Eff, Sub } from "gamezilla-app/@SHARED/core"
 import { IClientTransport } from "./transport-client"
 import { ModelClient, MsgClient, MsgToClient } from "./wire.core"
 

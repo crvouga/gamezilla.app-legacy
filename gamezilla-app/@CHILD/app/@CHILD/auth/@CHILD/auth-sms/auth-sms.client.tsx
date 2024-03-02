@@ -1,9 +1,9 @@
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
+import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
 import {
   APP_SOUND,
   AnonymousClientCtx,
   ClientEvent,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   ClientCmd,
   focusView,
@@ -12,7 +12,7 @@ import {
   replaceRoute,
   sendToServer,
   showToast,
-} from "gamezilla/@CHILD/app/@SHARED/client/client-cmd"
+} from "gamezilla-app/@CHILD/app/@SHARED/client/client-cmd"
 import {
   AlertError,
   Button,
@@ -21,7 +21,7 @@ import {
   TextField,
   TopBar,
   TopBarBackButton,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
   Iso3166Alpha2Code,
   PhoneNumber,
@@ -32,7 +32,7 @@ import {
   TimeSpan,
   Uuid,
   isErr,
-} from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@SHARED/core"
 import {
   ModelClient,
   MsgClient,

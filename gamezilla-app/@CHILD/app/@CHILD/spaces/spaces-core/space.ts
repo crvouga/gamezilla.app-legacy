@@ -1,6 +1,9 @@
-import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { ascend, eq } from "gamezilla/@SHARED/core"
-import { LamportClock, LamportTimestamp } from "gamezilla/@SHARED/lamport-clock"
+import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { ascend, eq } from "gamezilla-app/@SHARED/core"
+import {
+  LamportClock,
+  LamportTimestamp,
+} from "gamezilla-app/@SHARED/lamport-clock"
 import { EventId, WithEventId, WithEventMeta } from "../@SHARED/event"
 import { SpaceEvent } from "./space-event"
 import * as SpaceState from "./space-state"

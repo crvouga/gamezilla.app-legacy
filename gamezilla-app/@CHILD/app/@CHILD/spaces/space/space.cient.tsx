@@ -1,11 +1,11 @@
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client"
-import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { SpaceClientCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { ClientCtx } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   Button,
   IconHome,
   IconUserGroup,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { SpaceClientModule } from "../architecture/architecture"
 import { EndSpaceClient } from "../end-space/end-space.client"
 import { Feed } from "../feed/feed"
@@ -15,7 +15,7 @@ import { LeaveSpaceClient } from "../leave-space/leave-space.client"
 import { Modals } from "../modals/modals"
 import { Spaces } from "../spaces-core"
 import { ModelClient, MsgClient } from "../spaces.core"
-import { VDom } from "gamezilla/@SHARED/vdom"
+import { VDom } from "gamezilla-app/@SHARED/vdom"
 
 const View = (input: {
   model: ModelClient

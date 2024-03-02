@@ -1,11 +1,11 @@
-import { GameMainMenu } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
-import { GameClient } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client"
+import { GameMainMenu } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/game"
+import { GameClient } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client"
 import {
   SpaceClientCtx,
   SpaceClientEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { ClientCmd } from "gamezilla/@CHILD/app/@SHARED/client"
-import { Sub } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { ClientCmd } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { Sub } from "gamezilla-app/@SHARED/core"
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.client"
 import * as VsUser from "./@CHILD/vs-user/vs-user.client"
 import { CoverArt } from "./@SHARED/tic-tic-toe/tic-tac-toe-ui"

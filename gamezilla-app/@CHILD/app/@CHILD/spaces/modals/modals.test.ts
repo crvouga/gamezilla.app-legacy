@@ -1,5 +1,5 @@
-import { describe, expect, it } from "test"
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
+import { describe, expect, it } from "bun:test"
+import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
 import {
   clickedPeopleButton,
   init,
@@ -12,7 +12,7 @@ import { UserId } from "../../../@SHARED/data/user-id.ts"
 import { Modals } from "./modals.tsx"
 import { SpaceClientModule } from "../architecture/architecture.tsx"
 import { openUserDetails } from "../@SHARED/space-client-cmd.ts"
-import { didPushRoute } from "gamezilla/@CHILD/app/@SHARED/client/client-cmd.ts"
+import { didPushRoute } from "gamezilla-app/@CHILD/app/@SHARED/client/client-cmd.ts"
 
 describe(import.meta.file, () => {
   it("should start with no modals open", async () => {

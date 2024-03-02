@@ -1,4 +1,4 @@
-import { VDomChildren } from "gamezilla/@SHARED/vdom"
+import { VDomChildren } from "gamezilla-app/@SHARED/vdom"
 import { IconChevronLeft } from "./icon"
 import { IconButton } from "./icon-button"
 import { Spinner } from "./spinner"

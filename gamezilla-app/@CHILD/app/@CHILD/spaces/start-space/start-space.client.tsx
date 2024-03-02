@@ -2,10 +2,10 @@ import {
   APP_SOUND,
   playSound,
   pushRoute,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { SpaceClientModule } from "../architecture/architecture"
-import { Button } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { Button } from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { withId } from "../@SHARED/event"
 import { SpaceEvent } from "../spaces-core"
 

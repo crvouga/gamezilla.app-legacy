@@ -1,8 +1,8 @@
 import {
   SpaceReqCtx,
   SpaceServerEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { Eff, Sub, andThen, p } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { Eff, Sub, andThen, p } from "gamezilla-app/@SHARED/core"
 import {
   ModelServer,
   MsgServer,

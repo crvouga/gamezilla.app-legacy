@@ -1,4 +1,4 @@
-import { P } from "gamezilla/@SHARED/parsing"
+import { P } from "gamezilla-app/@SHARED/parsing"
 
 export type Position = { x: number; y: number }
 

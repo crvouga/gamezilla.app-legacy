@@ -3,12 +3,12 @@ import {
   SpaceClientEvent,
   SpaceServerCtx,
   SpaceServerEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { SpaceClientCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
-import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
-import { RequestResponse } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceClientCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
+import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
+import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
+import { AppServerModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-server"
+import { RequestResponse } from "gamezilla-app/@SHARED/core"
 import {
   IFlowPuzzleDb,
   ListPuzzlesInput,

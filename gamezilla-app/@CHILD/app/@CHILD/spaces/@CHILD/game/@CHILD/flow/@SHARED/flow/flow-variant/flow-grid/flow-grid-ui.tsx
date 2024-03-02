@@ -1,4 +1,4 @@
-import { cn } from "gamezilla/@CHILD/app/@SHARED/ui"
+import { cn } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { Flow, FlowUI } from "../../flow"
 import * as FlowGrid from "./flow-grid"
 

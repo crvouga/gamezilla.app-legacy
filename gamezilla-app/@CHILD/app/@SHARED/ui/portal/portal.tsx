@@ -1,4 +1,4 @@
-import { createPortal, VDomChildren } from "gamezilla/@SHARED/vdom"
+import { createPortal, VDomChildren } from "gamezilla-app/@SHARED/vdom"
 
 const getExit = (portalId: string): HTMLElement => {
   return document.querySelector(

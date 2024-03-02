@@ -1,5 +1,5 @@
-import { Profile, SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { RequestResponse } from "gamezilla/@SHARED/core"
+import { Profile, SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { RequestResponse } from "gamezilla-app/@SHARED/core"
 import { AppClientModule } from "../../@SHARED/architecture/app-client"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import {

@@ -1,5 +1,5 @@
-import { Result, isErr } from "gamezilla/@SHARED/core"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { Result, isErr } from "gamezilla-app/@SHARED/core"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import * as TicTacToe from "../../@SHARED/tic-tic-toe/tic-tac-toe"
 import * as Round from "./vs-user-round"
 

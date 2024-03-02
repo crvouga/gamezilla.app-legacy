@@ -1,10 +1,10 @@
 import {
   SpaceServerCtx,
   SpaceServerEvent,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { SpaceServerCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
-import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
-import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
+import { AppServerModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-server"
+import { sendBack } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { FlowServerDeps } from "../../../@CHILD/create/create.core"
 import {
   ModelServer,

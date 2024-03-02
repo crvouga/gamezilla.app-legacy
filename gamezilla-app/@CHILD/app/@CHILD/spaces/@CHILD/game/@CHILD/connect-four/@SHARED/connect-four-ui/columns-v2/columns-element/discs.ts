@@ -1,4 +1,4 @@
-import { easeAttrs } from "gamezilla/@SHARED/core"
+import { easeAttrs } from "gamezilla-app/@SHARED/core"
 import { COLUMN_COUNT, Columns, MAX_COLUMN_HEIGHT } from "../../../connect-four"
 import { SvgIds } from "./shared"
 

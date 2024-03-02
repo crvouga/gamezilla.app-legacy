@@ -1,4 +1,4 @@
-import { describe, it } from "test"
+import { describe, it } from "bun:test"
 import { signUpWithEmailAndPassword } from "./auth"
 import { CustomAuthProvider } from "./auth-custom"
 

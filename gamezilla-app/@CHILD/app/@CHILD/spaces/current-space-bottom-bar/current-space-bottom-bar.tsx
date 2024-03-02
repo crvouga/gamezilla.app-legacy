@@ -3,8 +3,8 @@ import {
   ClientCtx,
   playSound,
   pushRoute,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { Avatar, IconXMark } from "gamezilla/@CHILD/app/@SHARED/ui"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { Avatar, IconXMark } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { CoverArt } from "../@CHILD/game/game-cover-art"
 import { SpaceClientModule } from "../architecture/architecture"
 import { Spaces } from "../spaces-core"

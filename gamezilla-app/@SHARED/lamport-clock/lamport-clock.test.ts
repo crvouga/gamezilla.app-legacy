@@ -1,4 +1,4 @@
-import { describe, expect, it } from "test"
+import { describe, expect, it } from "bun:test"
 import { LamportClock } from "./lamport-clock"
 
 describe(import.meta.file, () => {

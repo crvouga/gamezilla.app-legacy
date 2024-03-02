@@ -1,8 +1,11 @@
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Eff, Option, Sub, exhaustive, isErr } from "gamezilla/@SHARED/core"
+import { SpaceClientCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { ClientCtx } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import {
+  Button,
+  IconArrowLeftOnRect,
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Eff, Option, Sub, exhaustive, isErr } from "gamezilla-app/@SHARED/core"
 import { Chess } from "../../@SHARED/chess"
 import {
   ModelClient,

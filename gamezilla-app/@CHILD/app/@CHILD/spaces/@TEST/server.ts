@@ -3,12 +3,12 @@ import {
   SessionId,
   SpaceId,
   UserId,
-} from "gamezilla/@CHILD/app/@SHARED/data"
-import { ServerCtx } from "gamezilla/@CHILD/app/@SHARED/server"
-import { dbConnNoop } from "gamezilla/@CHILD/app/@SHARED/server/db-conn-sql"
-import { LoggerConsole } from "gamezilla/@CHILD/app/@SHARED/server/logger"
-import { Posix } from "gamezilla/@SHARED/core"
-import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock"
+} from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { ServerCtx } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { dbConnNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
+import { LoggerConsole } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
+import { Posix } from "gamezilla-app/@SHARED/core"
+import { LamportTimestamp } from "gamezilla-app/@SHARED/lamport-clock"
 import { EventId } from "../@SHARED/event"
 import { ModelServer, ServerDeps } from "../spaces.core"
 import * as SpacesServer from "../spaces.server"

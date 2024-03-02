@@ -1,7 +1,10 @@
-import { describe, expect, it } from "test"
-import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
-import { didPlaySound, didPushRoute } from "gamezilla/@CHILD/app/@SHARED/client"
-import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { describe, expect, it } from "bun:test"
+import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
+import {
+  didPlaySound,
+  didPushRoute,
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   clickedStartSpaceButton,
   createCtx,

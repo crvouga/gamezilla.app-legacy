@@ -1,4 +1,4 @@
-import { err, ok, Result, Task } from "gamezilla/@SHARED/core"
+import { err, ok, Result, Task } from "gamezilla-app/@SHARED/core"
 
 export type MicLoadResult = Result<string, null>
 

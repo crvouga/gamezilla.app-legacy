@@ -1,6 +1,9 @@
-import { VsUserSetupScreen } from "gamezilla/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-user"
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { ClientCmd, sendToServer } from "gamezilla/@CHILD/app/@SHARED/client"
+import { VsUserSetupScreen } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-user"
+import { SpaceClientCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import {
+  ClientCmd,
+  sendToServer,
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { toTurn } from "../../@SHARED/tic-tic-toe/tic-tac-toe"
 import {
   CoverArt,

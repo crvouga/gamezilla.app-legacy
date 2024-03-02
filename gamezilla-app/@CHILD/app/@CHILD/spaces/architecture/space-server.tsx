@@ -1,5 +1,5 @@
-import { ServerCtx, ServerEvent } from "gamezilla/@CHILD/app/@SHARED/server"
-import { Eff, Sub } from "gamezilla/@SHARED/core"
+import { ServerCtx, ServerEvent } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { Eff, Sub } from "gamezilla-app/@SHARED/core"
 import { WithEventId } from "../@SHARED/event"
 import { Space } from "../@SHARED/space"
 import { SpaceServerCmd } from "../@SHARED/space-server-cmd"
@@ -11,7 +11,11 @@ import {
   MsgToClient,
   MsgToServer,
 } from "../spaces.core"
-import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import {
+  ClientId,
+  SessionId,
+  UserId,
+} from "gamezilla-app/@CHILD/app/@SHARED/data"
 
 type Ctx = ServerCtx & {
   space?: Space

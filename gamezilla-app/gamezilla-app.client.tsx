@@ -1,9 +1,9 @@
-import { Browser, Posix, Program } from "gamezilla/@SHARED/core"
+import { Browser, Posix, Program } from "gamezilla-app/@SHARED/core"
 import {
   SHOULD_USE_DEBUGGER,
   TRANSPORT_IMPL,
   VDOM_IMPL,
-} from "gamezilla/public-config"
+} from "gamezilla-app/public-config"
 import * as AppClient from "./@CHILD/app/app.client"
 import { Render } from "./@SHARED/vdom/render"
 import { attachDebuggerBrowserExtension } from "./@SHARED/core/debug"

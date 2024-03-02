@@ -2,9 +2,13 @@ import {
   APP_SOUND,
   playSound,
   sendToServer,
-} from "gamezilla/@CHILD/app/@SHARED/client"
-import { Button, IconUserCircle } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { RequestResponse, isRequesting, notAsked } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { Button, IconUserCircle } from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import {
+  RequestResponse,
+  isRequesting,
+  notAsked,
+} from "gamezilla-app/@SHARED/core"
 import { ClientModule } from "../auth.core"
 import { ModelClient } from "./continue-as-guest.core"
 

@@ -1,4 +1,4 @@
-import { err, ok, Result, Uuid } from "gamezilla/@SHARED/core"
+import { err, ok, Result, Uuid } from "gamezilla-app/@SHARED/core"
 
 export type FlowPuzzleId = string & { _opaque: "FlowPuzzleId" }
 const namespace = "flow-puzzle"

@@ -1,4 +1,4 @@
-import { EmailAddress, PhoneNumber, Result } from "gamezilla/@SHARED/core"
+import { EmailAddress, PhoneNumber, Result } from "gamezilla-app/@SHARED/core"
 import { Account } from "../../../auth.core"
 
 export type IAccountDb = {

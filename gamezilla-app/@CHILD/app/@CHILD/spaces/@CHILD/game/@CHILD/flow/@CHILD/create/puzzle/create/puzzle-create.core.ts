@@ -1,5 +1,10 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { Result, RemoteResult, notAsked, Posix } from "gamezilla/@SHARED/core"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import {
+  Result,
+  RemoteResult,
+  notAsked,
+  Posix,
+} from "gamezilla-app/@SHARED/core"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 
 //

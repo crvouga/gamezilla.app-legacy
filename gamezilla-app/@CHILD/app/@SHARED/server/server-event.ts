@@ -1,4 +1,8 @@
-import { ClientId, SessionId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import {
+  ClientId,
+  SessionId,
+  UserId,
+} from "gamezilla-app/@CHILD/app/@SHARED/data"
 
 export type ServerEvent =
   | {

@@ -6,9 +6,9 @@ import {
   Sub,
   exhaustive,
   isErr,
-} from "gamezilla/@SHARED/core"
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { ClientCtx } from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@SHARED/core"
+import { SpaceClientCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { ClientCtx } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Direction } from "./@SHARED/direction"
 import {
   ModelClient,

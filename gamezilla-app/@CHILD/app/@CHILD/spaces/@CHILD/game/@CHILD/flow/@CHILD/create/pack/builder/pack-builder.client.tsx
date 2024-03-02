@@ -1,11 +1,11 @@
-import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { SpaceClientCmd } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
+import { GameClientModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { SpaceClientCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
 import {
   APP_SOUND,
   playSound,
   showToast,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   Button,
   Drawer,
@@ -13,9 +13,9 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconEllipsisVertical,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
 
-import { Eff, Sub } from "gamezilla/@SHARED/core"
+import { Eff, Sub } from "gamezilla-app/@SHARED/core"
 import {
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,

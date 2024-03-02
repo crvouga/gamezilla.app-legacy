@@ -5,12 +5,12 @@ import {
   Posix,
   RemoteResult,
   Result,
-} from "gamezilla/@SHARED/core"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+} from "gamezilla-app/@SHARED/core"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Chess } from "../../@SHARED/chess"
 import { EloRating } from "./elo-rating"
 import { zip } from "./utils"
-import { SpaceCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 
 export const maxRating = 3212
 export const minRating = 545

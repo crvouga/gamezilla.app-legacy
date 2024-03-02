@@ -1,6 +1,9 @@
-import { APP_SOUND, playSound } from "gamezilla/@CHILD/app/@SHARED/client"
-import { Button, IconArrowLeftOnRect } from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Eff, Sub } from "gamezilla/@SHARED/core"
+import { APP_SOUND, playSound } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import {
+  Button,
+  IconArrowLeftOnRect,
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Eff, Sub } from "gamezilla-app/@SHARED/core"
 import {
   ViewGameHeader,
   ViewUsersInSpaceList,

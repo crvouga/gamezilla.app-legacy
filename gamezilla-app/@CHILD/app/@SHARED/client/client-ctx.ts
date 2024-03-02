@@ -1,5 +1,5 @@
-import { UserId, Username } from "gamezilla/@CHILD/app/@SHARED/data"
-import { Posix } from "gamezilla/@SHARED/core"
+import { UserId, Username } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Posix } from "gamezilla-app/@SHARED/core"
 import * as Route from "./client-route"
 
 type Profile = {

@@ -1,4 +1,4 @@
-import { RequestResponse } from "gamezilla/@SHARED/core"
+import { RequestResponse } from "gamezilla-app/@SHARED/core"
 import { ListPuzzlesOutput } from "../../flow-puzzle"
 import { FlowPuzzle } from "../../flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id"

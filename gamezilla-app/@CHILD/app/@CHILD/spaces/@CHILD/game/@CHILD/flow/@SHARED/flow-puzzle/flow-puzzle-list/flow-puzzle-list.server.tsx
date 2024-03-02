@@ -1,6 +1,6 @@
-import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server"
+import { sendBack } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { ServerModule } from "./flow-puzzle-list.core"
-import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
+import { AppServerModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-server"
 
 const update: ServerModule["update"] = async (input) => {
   return AppServerModule.chainUpdates(

@@ -3,8 +3,8 @@ import {
   RemoteResult,
   dissoc,
   Result,
-} from "gamezilla/@SHARED/core"
-import { PartyId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+} from "gamezilla-app/@SHARED/core"
+import { PartyId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { MicLoadResult, MicUnloadResult } from "./mic"
 const { err: Err, ok: Ok } = Result
 

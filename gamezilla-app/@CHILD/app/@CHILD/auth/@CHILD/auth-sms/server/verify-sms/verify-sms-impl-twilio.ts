@@ -1,4 +1,4 @@
-import { err } from "gamezilla/@SHARED/core"
+import { err } from "gamezilla-app/@SHARED/core"
 import { IVerifySMS } from "./verify-sms"
 
 export const VerifySMS = (): IVerifySMS => {

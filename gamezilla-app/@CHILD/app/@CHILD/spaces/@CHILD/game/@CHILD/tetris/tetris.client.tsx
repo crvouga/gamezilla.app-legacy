@@ -5,7 +5,7 @@ import {
   Sub,
   exhaustive,
   isErr,
-} from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@SHARED/core"
 import * as Board from "./@SHARED/board"
 import * as Direction from "./@SHARED/direction"
 import * as Piece from "./@SHARED/piece"

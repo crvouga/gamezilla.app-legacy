@@ -1,10 +1,10 @@
-import { describe, expect, it } from "test"
+import { describe, expect, it } from "bun:test"
 import {
   AuthenticatedClient,
   generateAuthClient,
-} from "gamezilla/@CHILD/app/@CHILD/spaces/@TEST/server"
-import { AppServerModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-server"
-import { didSendToClient } from "gamezilla/@CHILD/app/@SHARED/server"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@TEST/server"
+import { AppServerModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-server"
+import { didSendToClient } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { FlowPack, FlowPackDb, FlowPackPuzzleGridServer } from ".."
 import { testSpaceServerCtx } from "../../../../../@SHARED/testing/server"
 import { FlowServerDeps } from "../../../@CHILD/create/create.core"

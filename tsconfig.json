@@ -71,7 +71,7 @@
   "include": [
     "global.d.ts",
     "node_modules/inferno/dist/index.d.ts",
-    "gamezilla"
+    "gamezilla-app/**/*"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

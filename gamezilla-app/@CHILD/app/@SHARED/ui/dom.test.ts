@@ -1,4 +1,4 @@
-import { test, expect, describe } from "test"
+import { test, expect, describe } from "bun:test"
 
 describe(import.meta.file, () => {
   test("dom test", () => {

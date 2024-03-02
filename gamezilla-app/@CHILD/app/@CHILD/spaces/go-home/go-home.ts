@@ -2,7 +2,7 @@ import {
   APP_SOUND,
   playSound,
   pushRoute,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { SpaceClientModule } from "../architecture/architecture"
 
 const update: SpaceClientModule["update"] = ({ msg, model }) => {

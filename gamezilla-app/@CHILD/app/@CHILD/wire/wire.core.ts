@@ -1,8 +1,8 @@
-import { Posix } from "gamezilla/@SHARED/core"
+import { Posix } from "gamezilla-app/@SHARED/core"
 import { ClientId, SessionId, UserId } from "../../@SHARED/data"
 import { ClientTransportEvent } from "./transport-client"
 import { ServerTransportMsg } from "./transport-server"
-import { CappedOrderedDict } from "gamezilla/@SHARED/data-structures/capped-ordered-dict"
+import { CappedOrderedDict } from "gamezilla-app/@SHARED/data-structures/capped-ordered-dict"
 
 //
 //

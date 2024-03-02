@@ -1,4 +1,4 @@
-import { Logger } from "../../../@SHARED/server/logger"
+import { Logger } from "../logger"
 
 export function logQuery({
   sql,

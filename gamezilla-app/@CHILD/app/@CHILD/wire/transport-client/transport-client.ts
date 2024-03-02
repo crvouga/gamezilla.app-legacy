@@ -1,4 +1,4 @@
-import { PubSub } from "gamezilla/@SHARED/core/sub"
+import { PubSub } from "gamezilla-app/@SHARED/core/sub"
 
 export type ClientTransportEvent =
   | { t: "server-connected" }

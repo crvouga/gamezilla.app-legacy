@@ -1,5 +1,5 @@
-import { Eff, Result, exhaustive, isErr } from "gamezilla/@SHARED/core"
-import { RouteCmd } from "gamezilla/@CHILD/app/@SHARED/client"
+import { Eff, Result, exhaustive, isErr } from "gamezilla-app/@SHARED/core"
+import { RouteCmd } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   AlertError,
   AlertSuccess,
@@ -7,7 +7,7 @@ import {
   TextField,
   TopBar,
   TopBarBackButton,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
 
 //
 //

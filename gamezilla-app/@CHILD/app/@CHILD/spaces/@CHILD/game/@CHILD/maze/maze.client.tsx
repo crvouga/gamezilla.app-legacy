@@ -1,9 +1,9 @@
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { SpaceClientCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import {
   ActionButton,
   IconArrowLeftOnRect,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Eff, Keyboard, Sub, p } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Eff, Keyboard, Sub, p } from "gamezilla-app/@SHARED/core"
 import { Maze } from "./@SHARED/maze"
 import { Direction, Position } from "./@SHARED/position"
 import {

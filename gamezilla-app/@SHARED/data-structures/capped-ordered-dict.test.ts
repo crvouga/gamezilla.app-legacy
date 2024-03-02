@@ -1,8 +1,8 @@
-import { describe, expect, test } from "test"
+import { describe, expect, it } from "bun:test"
 import { CappedOrderedDict } from "./capped-ordered-dict"
 
 describe(import.meta.file, () => {
-  test("adding stuff", () => {
+  it("adding stuff", () => {
     const initial = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })
@@ -15,7 +15,7 @@ describe(import.meta.file, () => {
     expect(after).toBe("1")
   })
 
-  test("adding stuff then removing stuff", () => {
+  it("adding stuff then removing stuff", () => {
     const initial = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })
@@ -29,7 +29,7 @@ describe(import.meta.file, () => {
     expect(CappedOrderedDict.get(removed, "1")).toBe(null)
   })
 
-  test("remove oldest on max capacity", () => {
+  it("remove oldest on max capacity", () => {
     const initial = CappedOrderedDict.init<string, string>({
       maxSize: 3,
     })

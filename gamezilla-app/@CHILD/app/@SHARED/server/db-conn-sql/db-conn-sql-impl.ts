@@ -1,6 +1,6 @@
-import { ok } from "gamezilla/@SHARED/core"
-import { Logger } from "../../../@SHARED/server/logger"
-import { DbConnSql } from "../db-conn-sql"
+import { ok } from "gamezilla-app/@SHARED/core"
+import { Logger } from "../logger"
+import { DbConnSql } from "."
 import { createDbConnPostgres } from "./db-conn-sql-impl-postgres"
 // import { createDbConnSqlite } from "./db-conn-sql-impl-sqlite"
 

@@ -1,5 +1,5 @@
-import { describe, expect, it } from "test"
-import { chainUpdates } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { describe, expect, it } from "bun:test"
+import { chainUpdates } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import {
   defaultModelSync,
   initial,
@@ -10,9 +10,9 @@ import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { CreateClient } from "../../create.client"
 import { ModelClient } from "../../create.core"
 import { deriveModelSync } from "../../@TEST/game"
-import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
-import { EventId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock"
+import { didPlaySound } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { EventId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { LamportTimestamp } from "gamezilla-app/@SHARED/lamport-clock"
 
 const ctx = testFlowClientCtx()
 

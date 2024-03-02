@@ -1,4 +1,4 @@
-import { Browser, Eff, Sub, Time } from "gamezilla/@SHARED/core"
+import { Browser, Eff, Sub, Time } from "gamezilla-app/@SHARED/core"
 import { PlatformCmd } from "../@SHARED/client"
 
 export type Model = {

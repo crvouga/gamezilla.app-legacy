@@ -1,6 +1,6 @@
-import { PhoneNumber, err, ok } from "gamezilla/@SHARED/core"
+import { PhoneNumber, err, ok } from "gamezilla-app/@SHARED/core"
 import { IVerifySMS } from "./verify-sms"
-import { Logger } from "gamezilla/@CHILD/app/@SHARED/server/logger"
+import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 
 const CODE = "123"
 

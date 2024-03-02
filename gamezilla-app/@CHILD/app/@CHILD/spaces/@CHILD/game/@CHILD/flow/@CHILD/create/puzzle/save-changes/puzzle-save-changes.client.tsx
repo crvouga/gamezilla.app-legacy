@@ -1,19 +1,19 @@
-import { GameClientModule } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
-import { withId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { GameClientModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import {
   APP_SOUND,
   playSound,
   sendToServer,
   showErrSm,
   showCreatedSm,
-} from "gamezilla/@CHILD/app/@SHARED/client"
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   Button,
   Drawer,
   IconArrowLeftOnRect,
   IconFloppyDisk,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
-import { Result, isErr, isOk, loading } from "gamezilla/@SHARED/core"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Result, isErr, isOk, loading } from "gamezilla-app/@SHARED/core"
 import { FlowVariantUIEdit } from "../../../../@SHARED/flow"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import {

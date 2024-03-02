@@ -1,13 +1,13 @@
-import { SpaceClientCtx } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
+import { SpaceClientCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   IconRobot,
   Avatar,
   Transition,
   cn,
-} from "gamezilla/@CHILD/app/@SHARED/ui"
+} from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { PlayerType, VsBotProps } from "../vs-bot"
-import { VDom, VDomChildren } from "gamezilla/@SHARED/vdom"
+import { VDom, VDomChildren } from "gamezilla-app/@SHARED/vdom"
 
 //
 //

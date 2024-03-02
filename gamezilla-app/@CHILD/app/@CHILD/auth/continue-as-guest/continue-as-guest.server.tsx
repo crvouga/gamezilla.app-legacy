@@ -1,6 +1,6 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { sendBack } from "gamezilla/@CHILD/app/@SHARED/server"
-import { isErr, notAsked, ok } from "gamezilla/@SHARED/core"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { sendBack } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { isErr, notAsked, ok } from "gamezilla-app/@SHARED/core"
 import { Account, ServerModule } from "../auth.core"
 import { ModelClient } from "./continue-as-guest.core"
 

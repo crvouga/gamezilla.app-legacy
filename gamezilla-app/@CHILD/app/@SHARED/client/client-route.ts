@@ -1,6 +1,6 @@
-import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
-import { SpaceId } from "gamezilla/@CHILD/app/@SHARED/data/space-id"
-import { PhoneNumber } from "gamezilla/@SHARED/core"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data/space-id"
+import { PhoneNumber } from "gamezilla-app/@SHARED/core"
 
 //
 //
