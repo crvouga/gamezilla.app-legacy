@@ -285,8 +285,8 @@ const View: Module["View"] = (input) => {
             },
             {
               renderIcon: (props) => <IconScrewdriverWrench {...props} />,
-              title: "Puzzle createer",
-              description: "Build new puzzles to play",
+              title: "Create",
+              description: "Create new puzzles and packs",
               onClick: () => {
                 dispatch({
                   t: "msgSync",
