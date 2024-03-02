@@ -5,8 +5,6 @@
   "type": "module",
   "scripts": {
     "server-prod": "vite build && npx dbmate --no-dump-schema -e DATABASE_URL_PROD up && npx tsx gamezilla-app/gamezilla-app.server.ts",
-    "app:up": "docker build -t gamezilla-prod . && docker run -d -p 5000:5000 --name gamezilla-container gamezilla-prod",
-    "app:down": "docker stop gamezilla-container && docker rm gamezilla-container",
     "db-prod:migrate:up": "dbmate -e DATABASE_URL_PROD up",
     "db-prod:dump": "dbmate -e DATABASE_URL_PROD dump",
     "server": "bun gamezilla-app/gamezilla-app.server.ts",
