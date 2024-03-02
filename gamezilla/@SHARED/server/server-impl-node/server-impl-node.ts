@@ -44,17 +44,12 @@ const fileExtensionToContentType = (ext: string) => {
 const serveSinglePageApp =
   (httpServer: http.Server): IServer["serveSinglePageApp"] =>
   (input) => {
+    console.log("serveSinglePageApp", input)
     httpServer.on("request", (req, res) => {
-      let filePath = path.join(
+      const filePath = path.join(
         input.directory,
         req.url === "/" ? input.file : req.url ?? "",
       )
-
-      const ext = path.extname(filePath)
-
-      if (!ext) {
-        filePath = path.join(input.directory, input.file)
-      }
 
       fs.readFile(filePath, (err, content) => {
         if (err) {
@@ -62,6 +57,7 @@ const serveSinglePageApp =
           res.end("Not Found")
           return
         }
+        const ext = path.extname(filePath)
 
         const contentType = fileExtensionToContentType(ext)
 
