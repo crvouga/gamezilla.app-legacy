@@ -51,6 +51,8 @@ const serveSinglePageApp =
           req.url === "/" ? input.file : req.url ?? "",
         )
 
+        console.log("filePath", filePath)
+
         const ext = path.extname(filePath)
 
         if (!ext) {
