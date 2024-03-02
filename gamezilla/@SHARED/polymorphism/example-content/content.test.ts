@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test"
+import { describe, expect, it } from "test"
 import { renderHTML } from "./content"
 import { Announcement } from "./content-announcement"
 import { BlogPost } from "./content-blog-post"

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test"
+import { describe, expect, it } from "test"
 import { AppClientModule } from "gamezilla/@CHILD/app/@SHARED/architecture/app-client"
 import { didPlaySound, didPushRoute } from "gamezilla/@CHILD/app/@SHARED/client"
 import { SpaceId, UserId } from "gamezilla/@CHILD/app/@SHARED/data"

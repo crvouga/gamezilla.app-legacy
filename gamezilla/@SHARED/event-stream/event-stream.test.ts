@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test"
+import { expect, test } from "test"
 import { Posix } from "../core"
 import { IEventStream } from "./event-stream"
 

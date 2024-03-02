@@ -1,3 +1,3 @@
-import { describe } from "bun:test"
+import { describe } from "test"
 
 describe(import.meta.file, () => {})

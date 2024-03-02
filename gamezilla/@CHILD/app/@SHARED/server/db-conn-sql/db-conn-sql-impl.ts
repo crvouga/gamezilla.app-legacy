@@ -2,7 +2,7 @@ import { ok } from "gamezilla/@SHARED/core"
 import { Logger } from "../../../@SHARED/server/logger"
 import { DbConnSql } from "../db-conn-sql"
 import { createDbConnPostgres } from "./db-conn-sql-impl-postgres"
-import { createDbConnSqlite } from "./db-conn-sql-impl-sqlite"
+// import { createDbConnSqlite } from "./db-conn-sql-impl-sqlite"
 
 export const dbConnNoop: DbConnSql = {
   query: async () => {
@@ -20,15 +20,15 @@ export const createDbConn = async ({
   const databaseType = connectionStringToDatabaseType(databaseUrl)
 
   switch (databaseType) {
-    case "sqlite": {
-      return createDbConnSqlite({ databaseUrl, logger })
-    }
+    // case "sqlite": {
+    //   return createDbConnSqlite({ databaseUrl, logger })
+    // }
 
     case "postgres": {
       return createDbConnPostgres({ databaseUrl, logger })
     }
 
-    case null: {
+    default: {
       throw new Error(`[db] unknown database type for ${databaseUrl}`)
     }
   }

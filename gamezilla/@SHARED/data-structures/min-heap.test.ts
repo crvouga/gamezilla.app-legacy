@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test"
+import { describe, expect, test } from "test"
 import { MinHeap } from "./min-heap"
 
 const comparator = (a: number, b: number) => a - b

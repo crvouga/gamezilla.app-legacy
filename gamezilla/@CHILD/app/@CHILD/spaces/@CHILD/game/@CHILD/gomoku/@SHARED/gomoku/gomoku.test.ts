@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test"
+import { describe, expect, it } from "test"
 import { Board, setStone, Stone, toWins } from "./gomoku"
 
 type Matrix = (" " | "b" | "w")[][]

@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test"
+import { expect, test } from "test"
 import { unique } from "./unique"
 
 const strEq = (s1: unknown, s2: unknown) => String(s1) === String(s2)

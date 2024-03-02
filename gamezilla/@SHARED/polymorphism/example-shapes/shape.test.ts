@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test"
+import { expect, test } from "test"
 import { area, perimeter, volume } from "./shape"
 import { Circle } from "./shape-circle"
 import { Octagon } from "./shape-octagon"

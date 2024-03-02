@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test"
+import { describe, expect, it } from "test"
 import { chainUpdates } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { EventId } from "gamezilla/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"

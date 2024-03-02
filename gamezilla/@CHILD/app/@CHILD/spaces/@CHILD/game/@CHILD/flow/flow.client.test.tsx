@@ -1,4 +1,4 @@
-import { describe, expect, it } from "bun:test"
+import { describe, expect, it } from "test"
 import { didPlaySound } from "gamezilla/@CHILD/app/@SHARED/client"
 import { UserId } from "gamezilla/@CHILD/app/@SHARED/data"
 import { LamportTimestamp } from "gamezilla/@SHARED/lamport-clock"
