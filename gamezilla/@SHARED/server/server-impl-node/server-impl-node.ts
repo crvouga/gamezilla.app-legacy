@@ -44,25 +44,36 @@ const fileExtensionToContentType = (ext: string) => {
 const serveSinglePageApp =
   (httpServer: http.Server): IServer["serveSinglePageApp"] =>
   (input) => {
-    console.log("serveSinglePageApp", input)
     httpServer.on("request", (req, res) => {
-      const filePath = path.join(
-        input.directory,
-        req.url === "/" ? input.file : req.url ?? "",
-      )
+      try {
+        let filePath = path.join(
+          input.directory,
+          req.url === "/" ? input.file : req.url ?? "",
+        )
 
-      fs.readFile(filePath, (err, content) => {
-        if (err) {
-          res.writeHead(404)
-          res.end("Not Found")
-          return
-        }
         const ext = path.extname(filePath)
 
-        const contentType = fileExtensionToContentType(ext)
+        if (!ext) {
+          filePath = path.join(input.directory, input.file)
+        }
 
-        res.writeHead(200, { "Content-Type": contentType })
-        res.end(content, "utf-8")
-      })
+        fs.readFile(filePath, (err, content) => {
+          if (err) {
+            res.writeHead(404)
+            res.end("Not Found")
+            return
+          }
+
+          const ext = path.extname(filePath)
+
+          const contentType = fileExtensionToContentType(ext)
+
+          res.writeHead(200, { "Content-Type": contentType })
+          res.end(content, "utf-8")
+        })
+      } catch (e) {
+        res.writeHead(500)
+        res.end(`Server Error. ${String(e)}`)
+      }
     })
   }
