@@ -22,7 +22,7 @@
     "ngrok:config:edit": "ngrok config edit",
     "tc": "bun x tsc --noEmit --watch",
     "viz-bundle": "bun x vite-bundle-visualizer",
-    "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla-app/gamezilla.client.tsx",
+    "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla-app/gamezilla-app.client.tsx",
     "check-imports": "bun scripts/check-imports.ts",
     "cloc": "bun x cloc gamezilla",
     "pretty": "bun x prettier --write ."
