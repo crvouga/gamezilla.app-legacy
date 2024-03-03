@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "chess.js": "^1.0.0-beta.6",
-    "dotenv": "^16.4.5",
     "inferno": "^8.2.3",
     "postgres": "^3.4.3",
     "preact": "^10.19.3",
