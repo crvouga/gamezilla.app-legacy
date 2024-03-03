@@ -64,17 +64,20 @@ const initPlayer = <TPlayerType extends string>(
 
 export const placeShip = <TPlayerType extends string>(
   model: Model<TPlayerType>,
-  player: TPlayerType,
-  ship: Ship,
+  _player: TPlayerType,
+  _ship: Ship,
 ): Model<TPlayerType> => {
   return {
     ...model,
     players: {
       ...model.players,
-      [player]: {
-        ...model.players[player],
-        ships: [...model.players[player].ships, ship],
-      },
     },
   }
+}
+
+export const listShips = <TPlayerType extends string>(
+  _model: Model<TPlayerType>,
+  _player: TPlayerType,
+): Ship[] => {
+  return []
 }
