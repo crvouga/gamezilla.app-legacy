@@ -3,6 +3,7 @@ import {
   didPlaySound,
   didPushRoute,
   didSendToServer,
+  didShowToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { andThen } from "../../../@SHARED/architecture/app-client"
@@ -10,6 +11,18 @@ import { clickedStartSpaceButton, createCtx, init } from "../@TEST/client"
 import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {
+  it("should show toast when current user starts a space", async () => {
+    const ctx = createCtx()
+    const spaceId = SpaceId.generate()
+
+    const started = await andThen(
+      init(ctx),
+      clickedStartSpaceButton(ctx, spaceId),
+    )
+
+    expect(didShowToast(started)).toBeTrue()
+  })
+
   it("should start a space for current user after clicking start button", async () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()

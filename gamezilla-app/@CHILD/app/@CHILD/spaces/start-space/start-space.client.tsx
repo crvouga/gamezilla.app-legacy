@@ -2,6 +2,7 @@ import {
   APP_SOUND,
   playSound,
   pushRoute,
+  showToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { SpaceClientModule } from "../architecture/architecture"
 import { Button } from "gamezilla-app/@CHILD/app/@SHARED/ui"
@@ -34,6 +35,7 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = ({
               t: "spaces",
               c: { t: "space", spaceId: msgSpaceEvent.spaceId },
             }),
+            showToast("Started space"),
           ],
         }
       }
