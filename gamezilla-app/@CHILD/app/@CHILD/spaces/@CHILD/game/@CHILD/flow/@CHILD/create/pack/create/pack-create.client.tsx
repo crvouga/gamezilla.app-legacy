@@ -2,6 +2,7 @@ import {
   APP_SOUND,
   playSound,
   sendToServer,
+  showToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Button, IconPlus } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { loading, ok } from "gamezilla-app/@SHARED/core"
@@ -50,7 +51,7 @@ const update: ClientModule["update"] = (input) => {
           ...model,
           packCreateRequest: ok(null),
         },
-        msgCmd: [playSound(APP_SOUND.refreshFeed)],
+        msgCmd: [playSound(APP_SOUND.refreshFeed), showToast("Pack created")],
       }
     }
   }
