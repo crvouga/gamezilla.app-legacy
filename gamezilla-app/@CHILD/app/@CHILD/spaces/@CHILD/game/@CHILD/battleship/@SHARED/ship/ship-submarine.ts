@@ -1,6 +1,6 @@
 import { Ship, placeShip } from "./ship"
 
-export type ShipSubmarine = {
+export type ShipSubmarine = Ship & {
   Ship: "Submarine"
   size: 3
   airLevel: number

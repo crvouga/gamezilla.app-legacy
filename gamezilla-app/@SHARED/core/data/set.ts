@@ -129,4 +129,5 @@ export const Set = {
   isEmpty,
   isMember,
   eq,
+  empty,
 }
