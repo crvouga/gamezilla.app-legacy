@@ -41,7 +41,7 @@ export type Output = {
   model: ModelClient
   modelLocation?: {
     t: "replace" | "push"
-    c: ModelLocation
+    location: ModelLocation
   }
   eff?: Eff<MsgClient>
   msgCmd?: SpaceClientCmd<{

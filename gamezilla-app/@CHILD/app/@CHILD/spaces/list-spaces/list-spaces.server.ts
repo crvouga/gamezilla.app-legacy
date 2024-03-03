@@ -23,11 +23,7 @@ const update: ServerModule["update"] = async (input) => {
         where: msgClient.where,
       })
 
-      // const profiles = spacesToProfiles(model, spaces);
-
-      const started = spaces.map((space) =>
-        Space.startFromLatestSnapshot(space),
-      )
+      const started = spaces.map(Space.startFromLatestSnapshot)
 
       return {
         model,
@@ -35,7 +31,6 @@ const update: ServerModule["update"] = async (input) => {
           sendBack(msgClient, {
             t: "listed-spaces",
             spaces: started,
-            // profiles,
             causedBy: msgClient.t,
           }),
         ],

@@ -334,11 +334,14 @@ export const playSound = (
   }
 }
 
-export const didPlaySound = <T>({
-  msgCmd,
-}: {
-  msgCmd?: (SoundCmd | T)[]
-}): boolean => {
+export const didPlaySound = <T>(
+  {
+    msgCmd,
+  }: {
+    msgCmd?: (SoundCmd | T)[]
+  },
+  src?: string,
+): boolean => {
   return (
     msgCmd?.some(
       (cmd) =>
@@ -346,7 +349,8 @@ export const didPlaySound = <T>({
         cmd &&
         "t" in cmd &&
         cmd.t === "sound" &&
-        cmd.c.t === "play",
+        cmd.c.t === "play" &&
+        (src ? cmd.c.src === src : true),
     ) ?? false
   )
 }

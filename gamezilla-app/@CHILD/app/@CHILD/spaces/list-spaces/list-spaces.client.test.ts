@@ -1,7 +1,9 @@
 import { describe, expect, it } from "bun:test"
 import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
 import {
+  APP_SOUND,
   ClientCtx,
+  didPlaySound,
   didPushRoute,
   didReplaceRoute,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
@@ -20,6 +22,7 @@ import {
   init,
   serverListedSpaces,
   elapsed,
+  clickedGoHomeButton,
 } from "../@TEST/client"
 
 const changeRouteToSpaceList = (ctx: ClientCtx) => {
@@ -126,5 +129,28 @@ describe(import.meta.file, () => {
     expect(
       didReplaceRoute(updated, { t: "spaces", c: { t: "space-list" } }),
     ).toBeTrue()
+  })
+
+  it("should make a nav forward sound when opening a space screen", async () => {
+    const SpaceA = SpaceId.generate()
+    const ctx = createCtx()
+    const updated = await AppClientModule.chainUpdates(
+      init(ctx),
+      serverListedSpaces(ctx, [SpaceA]),
+      clickSpaceCard(ctx, SpaceA),
+    )
+    expect(didPlaySound(updated, APP_SOUND.navForwardMin)).toBeTrue()
+  })
+
+  it("should make a sound when closing room screen", async () => {
+    const SpaceA = SpaceId.generate()
+    const ctx = createCtx()
+    const updated = await AppClientModule.chainUpdates(
+      init(ctx),
+      serverListedSpaces(ctx, [SpaceA]),
+      clickSpaceCard(ctx, SpaceA),
+      clickedGoHomeButton(ctx),
+    )
+    expect(didPlaySound(updated, APP_SOUND.navBackwardMin)).toBeTrue()
   })
 })

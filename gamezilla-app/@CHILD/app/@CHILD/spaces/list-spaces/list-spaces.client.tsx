@@ -1,4 +1,6 @@
 import {
+  APP_SOUND,
+  playSound,
   pushRoute,
   sendToServer,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
@@ -76,7 +78,7 @@ const update: SpaceClientModule["update"] = (input) => {
         model,
         modelLocation: {
           t: "push",
-          c: {
+          location: {
             filters: {
               limit: 100,
               offset: 0,
@@ -92,6 +94,7 @@ const update: SpaceClientModule["update"] = (input) => {
             t: "spaces",
             c: { t: "space", spaceId: msg.spaceId },
           }),
+          playSound(APP_SOUND.navForwardMin),
         ],
       }
     }
