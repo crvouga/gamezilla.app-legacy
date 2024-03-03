@@ -5,6 +5,7 @@ const reducer: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "puzzle-list.clicked-puzzle-list-item": {
       return {
+        ...modelSync,
         listTab: "puzzles",
         packBuilder: modelSync.packBuilder,
         opened: { t: "puzzle-builder" },

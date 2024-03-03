@@ -108,19 +108,20 @@ export type ModelClient = BaseModelClient &
   Pack.ModelClient
 
 export const initClient: ClientModule["init"] = {
-  flowPuzzleList: FlowPuzzleList.initClient,
-  flowPackList: FlowPackList.initClient,
-  //
-  packs: {},
-  puzzles: {},
-  //
-  ...Pack.initClient,
+  ...Pack.initClient({}),
   //
   ...PuzzleBuilder.initClient,
   ...PuzzleCreate.initClient,
   ...PuzzleList.initClient,
   ...PuzzleEditName.initClient,
   ...PuzzleDeleteForever.initClient,
+  //
+  flowPuzzleList: FlowPuzzleList.initClient,
+  flowPackList: FlowPackList.initClient,
+  //
+  packs: {},
+  puzzles: {},
+  //
 }
 
 export type ModelServer = {
@@ -218,17 +219,19 @@ export type MsgSync =
   | PuzzleDeleteForever.MsgSync
   | PuzzleSaveChanges.MsgSync
 
-export type ModelSync = ListTabs.ModelSync & {
-  opened: { t: "list" } | { t: "puzzle-builder" } | { t: "pack-builder" }
-  //
-  packBuilder: PackBuilder.ModelSync | null
-  //
-  puzzleBuilder: PuzzleBuilder.ModelSync | null
-}
+export type ModelSync = Pack.ModelSync &
+  ListTabs.ModelSync & {
+    opened: { t: "list" } | { t: "puzzle-builder" } | { t: "pack-builder" }
+    //
+    packBuilder: PackBuilder.ModelSync | null
+    //
+    puzzleBuilder: PuzzleBuilder.ModelSync | null
+  }
 
 export const initSync = (_input: { ctx: SpaceCtx }): ModelSync => {
   return {
     ...ListTabs.initSync,
+    ...Pack.initSync,
     opened: { t: "list" },
     packBuilder: null,
     puzzleBuilder: null,

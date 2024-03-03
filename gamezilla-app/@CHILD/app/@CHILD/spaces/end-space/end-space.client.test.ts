@@ -74,7 +74,7 @@ describe(import.meta.file, () => {
         EndSpaceClient.update({
           model,
           ctx,
-          msgEvt: { t: "is-logged-out" },
+          msgEvt: { t: "auth/unauthenticated" },
         }),
     )
     expect(

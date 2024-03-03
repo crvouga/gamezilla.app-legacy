@@ -10,6 +10,7 @@ const reducer: SyncReducer = ({ modelSync, msgSync }) => {
       }
       const puzzleNew = msgSync.created.value
       return {
+        ...modelSync,
         listTab: modelSync.listTab,
         opened: { t: "puzzle-builder" },
         packBuilder: modelSync.packBuilder,

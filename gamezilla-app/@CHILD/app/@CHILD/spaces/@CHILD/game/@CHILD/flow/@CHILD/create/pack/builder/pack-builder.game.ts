@@ -34,6 +34,7 @@ const userClickedExitButton: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "pack-builder.user-clicked-exit-button": {
       return {
+        ...modelSync,
         puzzleBuilder: modelSync.puzzleBuilder,
         packBuilder: modelSync.packBuilder,
         opened: { t: "list" },

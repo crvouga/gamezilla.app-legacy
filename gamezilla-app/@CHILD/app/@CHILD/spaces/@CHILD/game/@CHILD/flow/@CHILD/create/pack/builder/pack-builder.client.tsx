@@ -27,7 +27,7 @@ import {
 } from "../../../../@SHARED/flow-pack/flow-pack-puzzle-grid"
 import { FlowPuzzleListClient } from "../../../../@SHARED/flow-puzzle/flow-puzzle-list"
 import { ClientModule } from "../../create.core"
-import { RemoveFromPackClient } from "./remove-from-pack/remove-from-pack.client"
+import { RemovePuzzleClient } from "../remove-puzzle/remove-puzzle.client"
 
 //
 //
@@ -324,7 +324,15 @@ export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
           }
           position="bottom"
         >
-          <RemoveFromPackClient.ViewListItem {...input} />
+          <RemovePuzzleClient.ViewListItem
+            {...input}
+            ctx={{
+              ...input.ctx,
+              pack: modelSync.packBuilder.pack,
+              puzzle: modelSync.packBuilder.screen.puzzle,
+              packPuzzleIndex: modelSync.packBuilder.screen.puzzleIndex,
+            }}
+          />
           <div className="w-full p-2"></div>
         </Drawer>
       </>

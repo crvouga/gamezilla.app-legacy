@@ -7,15 +7,15 @@ import {
 import {
   clickedPackCreateButton,
   createFlowPack,
+  initial,
   testFlowClientCtx,
   userCreatedPack,
 } from "../../@TEST/client"
-import { initClient } from "../../create.core"
 
 describe(import.meta.file, () => {
   it("should make a sound when the user clicks the create button", async () => {
     const output = await GameClientModule.andThen(
-      { model: initClient },
+      initial,
       clickedPackCreateButton,
     )
 
@@ -25,7 +25,7 @@ describe(import.meta.file, () => {
   it("should play a sound after user created a pack", async () => {
     const pack = createFlowPack(testFlowClientCtx())
     const output = await GameClientModule.andThen(
-      { model: initClient },
+      initial,
       userCreatedPack(pack),
     )
 
@@ -35,7 +35,7 @@ describe(import.meta.file, () => {
   it("should show toast after server created current users pack", async () => {
     const pack = createFlowPack(testFlowClientCtx())
     const output = await GameClientModule.andThen(
-      { model: initClient },
+      initial,
       userCreatedPack(pack),
     )
     expect(didShowToast(output)).toBeTrue()

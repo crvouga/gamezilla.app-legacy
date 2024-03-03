@@ -135,7 +135,7 @@ const updateFromLogoutMsg = ({
           currentUser: { t: "logged-out" },
         },
         msgCmd: [sendToServer({ t: "logout" }), showToast("Logged out")],
-        msgEvt: [{ t: "is-logged-out" }],
+        msgEvt: [{ t: "auth/unauthenticated" }],
       }
     }
 
@@ -161,7 +161,7 @@ const updateFromServer: ClientModule["update"] = (input) => {
     case "client-unauthenticated": {
       return {
         model: { ...model, currentUser: { t: "logged-out" } },
-        msgEvt: [{ t: "is-logged-out" }],
+        msgEvt: [{ t: "auth/unauthenticated" }],
       }
     }
 
@@ -174,7 +174,7 @@ const updateFromServer: ClientModule["update"] = (input) => {
             userId: msgServer.userId,
           },
         },
-        msgEvt: [{ ...msgServer, t: "is-logged-in" }],
+        msgEvt: [{ ...msgServer, t: "auth/authenticated" }],
       }
     }
 
@@ -196,7 +196,7 @@ const updateRedirect: ClientModule["update"] = async (input) => {
   const { ctx, msgEvt, model } = input
 
   switch (msgEvt.t) {
-    case "is-logged-in": {
+    case "auth/authenticated": {
       if (ctx.currentRoute.t === "auth") {
         return {
           model,
@@ -213,7 +213,7 @@ const updateRedirect: ClientModule["update"] = async (input) => {
       return { model }
     }
 
-    case "is-logged-out": {
+    case "auth/unauthenticated": {
       if (ctx.currentRoute.t !== "auth") {
         return {
           model,

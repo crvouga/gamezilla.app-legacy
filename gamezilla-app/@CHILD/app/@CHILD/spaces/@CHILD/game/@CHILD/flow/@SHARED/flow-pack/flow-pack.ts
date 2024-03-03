@@ -44,6 +44,16 @@ const add = (pack: FlowPack, puzzleId: FlowPuzzleId): FlowPack => {
   }
 }
 
+const removePuzzleAtIndex = (pack: FlowPack, index: number): FlowPack => {
+  return {
+    ...pack,
+    puzzleIds: [
+      ...pack.puzzleIds.slice(0, index),
+      ...pack.puzzleIds.slice(index + 1),
+    ],
+  }
+}
+
 const canGoPrevious = (_pack: FlowPack, puzzleIndex: number): boolean => {
   return puzzleIndex > 0
 }
@@ -58,4 +68,5 @@ export const FlowPack = {
   includes,
   canGoPrevious,
   canGoNext,
+  removePuzzleAtIndex,
 }

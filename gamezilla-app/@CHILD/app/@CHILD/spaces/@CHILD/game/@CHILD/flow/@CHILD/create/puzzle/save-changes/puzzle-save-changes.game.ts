@@ -13,6 +13,7 @@ const reducer: SyncReducer = ({ modelSync, msgSync }) => {
       }
 
       return {
+        ...modelSync,
         listTab: modelSync.listTab,
         opened: modelSync.opened,
         packBuilder: modelSync.packBuilder,

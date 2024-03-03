@@ -22,7 +22,7 @@ const updateFromAppEvent: SpaceClientModule["update"] = async (input) => {
   const { ctx, model, msgEvt } = input
 
   switch (msgEvt?.t) {
-    case "is-logged-out": {
+    case "auth/unauthenticated": {
       const { currentUserId } = ctx
       const currentUserSpaceId = Spaces.toSpaceIdByUserId(model, currentUserId)
       if (!currentUserId || !currentUserSpaceId) {

@@ -386,7 +386,7 @@ export const loggedOut = (ctx: ClientCtx) => (model: SpaceCore.ModelClient) => {
     ctx,
     model,
     msgEvt: {
-      t: "is-logged-out",
+      t: "auth/unauthenticated",
     },
   })
 }
