@@ -276,6 +276,7 @@ export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
     const { model, msg } = input
 
     switch (msg?.t) {
+      case "pack-builder.puzzle-screen.user-closed-more-drawer":
       case "pack-builder.puzzle-screen.user-clicked-more-button": {
         return {
           model,
@@ -314,7 +315,12 @@ export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
         <Drawer
           id="screen-puzzle-more"
           open={modelSync.packBuilder.screen.opened === "more"}
-          onClose={() => {}}
+          onClose={() =>
+            dispatch({
+              t: "pack-builder.puzzle-screen.user-closed-more-drawer",
+              userId: ctx.currentUserId,
+            })
+          }
           position="bottom"
         >
           Hello

@@ -20,6 +20,30 @@ import { deriveModelSync } from "../../@TEST/game"
 import { ModelClient } from "../../create.core"
 import { PackBuilderClient } from "./pack-builder.client"
 
+const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
+  return PackBuilderClient.update({
+    ctx,
+    model,
+    modelSync: defaultModelSync,
+    msg: {
+      t: "pack-builder.puzzle-screen.user-clicked-more-button",
+      userId: ctx.currentUserId,
+    },
+  })
+}
+
+const closedMoreDrawer = (ctx: FlowClientCtx) => (model: ModelClient) => {
+  return PackBuilderClient.update({
+    ctx,
+    model,
+    modelSync: defaultModelSync,
+    msg: {
+      t: "pack-builder.puzzle-screen.user-closed-more-drawer",
+      userId: ctx.currentUserId,
+    },
+  })
+}
+
 describe(import.meta.file, () => {
   it("should open puzzle when user clickes puzzle grid item", async () => {
     const ctx = testSpaceClientCtx()
@@ -122,16 +146,23 @@ describe(import.meta.file, () => {
         modelSync.packBuilder?.screen.opened === "more",
     ).toBeTrue()
   })
-})
 
-const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
-  return PackBuilderClient.update({
-    ctx,
-    model,
-    modelSync: defaultModelSync,
-    msg: {
-      t: "pack-builder.puzzle-screen.user-clicked-more-button",
-      userId: ctx.currentUserId,
-    },
+  it("should close the more drawer", async () => {
+    const ctx = testFlowClientCtx()
+    const puzzle = createFlowPuzzle(ctx)
+    const output = await andThen(
+      initial,
+      serverCreatedPack(createFlowPack(ctx)),
+      clickedOpenPuzzlePickerButton(),
+      clickedPuzzlePickerItem(puzzle),
+      clickedPuzzleGridItem(puzzle, 0),
+      clickedMoreButton(ctx),
+      closedMoreDrawer(ctx),
+    )
+    const modelSync = deriveModelSync(output)
+    expect(
+      modelSync.packBuilder?.screen.t === "screen-puzzle" &&
+        modelSync.packBuilder?.screen.opened === null,
+    ).toBeTrue()
   })
-}
+})

@@ -128,3 +128,7 @@ export type MsgSync =
       t: "pack-builder.puzzle-screen.user-clicked-more-button"
       userId: UserId
     }
+  | {
+      t: "pack-builder.puzzle-screen.user-closed-more-drawer"
+      userId: UserId
+    }

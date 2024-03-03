@@ -288,10 +288,7 @@ const userClickedPreviousPuzzleButton: SyncReducer = ({
   }
 }
 
-const userClickedPuzzleScreenMoreButton: SyncReducer = ({
-  modelSync,
-  msgSync,
-}) => {
+const moreDrawer: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
     case "pack-builder.puzzle-screen.user-clicked-more-button": {
       if (!modelSync.packBuilder) {
@@ -304,6 +301,21 @@ const userClickedPuzzleScreenMoreButton: SyncReducer = ({
           screen: {
             ...modelSync.packBuilder.screen,
             opened: "more",
+          },
+        },
+      }
+    }
+    case "pack-builder.puzzle-screen.user-closed-more-drawer": {
+      if (!modelSync.packBuilder) {
+        return modelSync
+      }
+      return {
+        ...modelSync,
+        packBuilder: {
+          ...modelSync.packBuilder,
+          screen: {
+            ...modelSync.packBuilder.screen,
+            opened: null,
           },
         },
       }
@@ -321,7 +333,7 @@ const clamp = (value: number, min: number, max: number): number => {
 const reducer: SyncReducer = (input) => {
   return [
     flowGridUIPlay,
-    userClickedPuzzleScreenMoreButton,
+    moreDrawer,
     userClickedPreviousPuzzleButton,
     userClickedNextPuzzleButton,
     userClosedAddPuzzle,
