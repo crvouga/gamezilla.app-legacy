@@ -5,7 +5,6 @@ import {
   ClientCtx,
   didPlaySound,
   didPushRoute,
-  didReplaceRoute,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
@@ -16,13 +15,12 @@ import {
 } from "gamezilla-app/@SHARED/core"
 import {
   changeRoute,
-  clickBackButton,
   clickSpaceCard,
+  clickedGoHomeButton,
   createCtx,
+  elapsed,
   init,
   serverListedSpaces,
-  elapsed,
-  clickedGoHomeButton,
 } from "../@TEST/client"
 
 const changeRouteToSpaceList = (ctx: ClientCtx) => {
@@ -113,21 +111,6 @@ describe(import.meta.file, () => {
         t: "spaces",
         c: { t: "space", spaceId: SpaceA },
       }),
-    ).toBeTrue()
-  })
-
-  it("should go back to list screen when clicking back button in join screen", async () => {
-    const SpaceA = SpaceId.generate()
-    const ctx = createCtx()
-    const updated = await AppClientModule.chainUpdates(
-      init(ctx),
-      serverListedSpaces(ctx, [SpaceA]),
-      clickSpaceCard(ctx, SpaceA),
-      clickBackButton(ctx, "join-screen"),
-    )
-
-    expect(
-      didReplaceRoute(updated, { t: "spaces", c: { t: "space-list" } }),
     ).toBeTrue()
   })
 

@@ -125,7 +125,6 @@ export type MsgClient =
   | { t: "clicked-start-space-button"; spaceId: SpaceId }
   | { t: "closed-modal" }
   | { t: "clicked-people-button" }
-  | { t: "clicked-back-button"; from: "join-screen" }
   | { t: "clicked-space-card"; spaceId: SpaceId }
   | { t: "clicked-user"; userId: UserId }
   | { t: "clicked-preview-user-link" }

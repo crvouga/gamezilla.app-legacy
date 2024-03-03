@@ -264,16 +264,6 @@ export const clickSpaceCard =
     })
   }
 
-export const clickBackButton =
-  (ctx: ClientCtx, from: "join-screen") =>
-  async (model: SpaceCore.ModelClient) => {
-    return SpaceClient.update({
-      ctx,
-      model,
-      msg: { t: "clicked-back-button", from },
-    })
-  }
-
 export const userEndedSpace =
   (ctx: ClientCtx, userId: UserId, spaceId: SpaceId) =>
   (model: SpaceCore.ModelClient) => {

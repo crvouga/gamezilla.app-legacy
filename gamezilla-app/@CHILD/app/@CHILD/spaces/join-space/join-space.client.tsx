@@ -1,14 +1,9 @@
 import {
   APP_SOUND,
   playSound,
-  replaceRoute,
   showErrSm,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
-import {
-  Button,
-  TopBar,
-  TopBarBackButton,
-} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Button, TopBar } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
   ViewGameHeader,
   ViewUsersInSpaceList,
@@ -18,12 +13,10 @@ import { gameNameToString } from "../@CHILD/game/game.core"
 import { withId } from "../@SHARED/event"
 import { SpaceClientModule } from "../architecture/architecture"
 import { SpaceEvent, Spaces } from "../spaces-core"
-import { Feed } from "../feed/feed"
 
 const update: SpaceClientModule["update"] = (input) => {
   return SpaceClientModule.chainUpdates(
     { model: input.model },
-    (model) => updateBackButton({ ...input, model }),
     (model) => updateFromSpaceEvent({ ...input, model }),
     (model) => updateFromJoinSpaceButton({ ...input, model }),
   )
@@ -119,18 +112,7 @@ const View: SpaceClientModule["View"] = (input) => {
 
   return (
     <div className="flex h-full w-full flex-col">
-      <TopBar left={<BackButton {...input} />} title="Space" />
-
-      <Feed.View
-        spaceState={spaceState}
-        ctx={{
-          ...ctx,
-          currentUserId,
-          space,
-        }}
-        model={model}
-        dispatch={dispatch}
-      />
+      <TopBar title="Space" />
 
       <div className="flex w-full flex-1 flex-col overflow-y-scroll">
         <ViewGameHeader
@@ -154,7 +136,7 @@ const View: SpaceClientModule["View"] = (input) => {
         />
       </div>
 
-      <div className="flex border-t border-neutral-600 p-4">
+      <div className="flex flex-col gap-4 border-t border-neutral-600 p-4">
         <Button
           className="w-full"
           variant="contained"
@@ -164,52 +146,15 @@ const View: SpaceClientModule["View"] = (input) => {
           }}
           text="Join space"
         />
+        <Button
+          className="w-full"
+          onClick={() => {
+            dispatch({ t: "clicked-go-home-button" })
+          }}
+          text="Go Home"
+        />
       </div>
     </div>
-  )
-}
-
-//
-//
-//
-//
-//
-//
-//
-//
-
-const updateBackButton: SpaceClientModule["update"] = (input) => {
-  const { msg, model } = input
-
-  switch (msg?.t) {
-    case "clicked-back-button": {
-      switch (msg.from) {
-        case "join-screen": {
-          return {
-            model,
-            msgCmd: [
-              replaceRoute({
-                t: "spaces",
-                c: { t: "space-list" },
-              }),
-            ],
-          }
-        }
-      }
-    }
-    default: {
-      return { model }
-    }
-  }
-}
-
-const BackButton: SpaceClientModule["View"] = ({ dispatch }) => {
-  return (
-    <TopBarBackButton
-      onClick={() =>
-        dispatch({ t: "clicked-back-button", from: "join-screen" })
-      }
-    />
   )
 }
 

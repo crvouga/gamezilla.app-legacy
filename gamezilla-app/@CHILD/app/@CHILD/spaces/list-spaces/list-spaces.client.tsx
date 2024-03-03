@@ -78,7 +78,7 @@ const update: SpaceClientModule["update"] = (input) => {
         model,
         modelLocation: {
           t: "push",
-          location: {
+          c: {
             filters: {
               limit: 100,
               offset: 0,
