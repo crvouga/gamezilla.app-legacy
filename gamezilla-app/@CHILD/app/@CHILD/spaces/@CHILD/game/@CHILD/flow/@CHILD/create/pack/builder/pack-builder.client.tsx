@@ -289,7 +289,7 @@ export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
   },
 
   View(input) {
-    const { modelSync } = input
+    const { dispatch, ctx, modelSync } = input
 
     if (!modelSync.packBuilder) {
       return null
@@ -300,14 +300,26 @@ export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
     }
 
     return (
-      <Drawer
-        id="screen-puzzle-more"
-        open={modelSync.packBuilder.screen.opened === "more"}
-        onClose={() => {}}
-        position="bottom"
-      >
-        Hello
-      </Drawer>
+      <>
+        <ViewBottomButtonBarAction
+          icon={(props) => <IconEllipsisVertical {...props} />}
+          label="More"
+          onClick={() =>
+            dispatch({
+              t: "pack-builder.puzzle-screen.user-clicked-more-button",
+              userId: ctx.currentUserId,
+            })
+          }
+        />
+        <Drawer
+          id="screen-puzzle-more"
+          open={modelSync.packBuilder.screen.opened === "more"}
+          onClose={() => {}}
+          position="bottom"
+        >
+          Hello
+        </Drawer>
+      </>
     )
   },
 }
@@ -433,11 +445,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
             }}
           />
 
-          <ViewBottomButtonBarAction
-            icon={(props) => <IconEllipsisVertical {...props} />}
-            label="More"
-            onClick={() => {}}
-          />
+          <ScreenPuzzleMore.View {...input} />
         </ViewBottomButtonBar>
       </div>
     )
@@ -532,6 +540,7 @@ export const PackBuilderClient: Pick<
       (model) => ScreenPuzzleGrid.update({ ...input, model }),
       (model) => ScreenPuzzle.update({ ...input, model }),
       (model) => PuzzleGrid.update({ ...input, model }),
+      (model) => ScreenPuzzleMore.update({ ...input, model }),
     )
   },
 
