@@ -4,7 +4,7 @@ import { ServerModule } from "../../create.core"
 import { MsgSync } from "./puzzle-delete-forever.core"
 
 const update: ServerModule["update"] = async (input) => {
-  return GameServerModule.chainUpdates({ model: input.model }, (model) =>
+  return GameServerModule.andThen({ model: input.model }, (model) =>
     updateFromClient({ ...input, model }),
   )
 }

@@ -18,7 +18,7 @@ import { ClientModule } from "./flow-pack-list.core"
 import { FlowPack } from "../flow-pack"
 
 const update: ClientModule["update"] = (input) => {
-  return AppClientModule.chainUpdates(
+  return AppClientModule.andThen(
     { model: input.model },
     //
     (model) => updateList({ ...input, model }),

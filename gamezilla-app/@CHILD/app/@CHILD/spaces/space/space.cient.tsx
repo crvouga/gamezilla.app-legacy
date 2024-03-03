@@ -6,6 +6,7 @@ import {
   IconHome,
   IconUserGroup,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { VDom } from "gamezilla-app/@SHARED/vdom"
 import { SpaceClientModule } from "../architecture/architecture"
 import { EndSpaceClient } from "../end-space/end-space.client"
 import { Feed } from "../feed/feed"
@@ -15,7 +16,6 @@ import { LeaveSpaceClient } from "../leave-space/leave-space.client"
 import { Modals } from "../modals/modals"
 import { Spaces } from "../spaces-core"
 import { ModelClient, MsgClient } from "../spaces.core"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
 
 const View = (input: {
   model: ModelClient
@@ -151,7 +151,6 @@ const ViewSpaceNotFound = ({
         size="lg"
         variant="contained"
         color="primary"
-        start={<IconHome className="h-6 w-6" />}
         text="Go Home"
       />
     </div>

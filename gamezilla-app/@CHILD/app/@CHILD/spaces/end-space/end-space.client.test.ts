@@ -18,7 +18,7 @@ describe(import.meta.file, () => {
   it("should redirect to space list after ending space if on space route", async () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
-    const updated = await AppClientModule.chainUpdates(
+    const updated = await AppClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
       userClickedEndSpaceButton({
@@ -36,7 +36,7 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const updated = await AppClientModule.chainUpdates(
+    const updated = await AppClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
       userClickedEndSpaceButton({
@@ -56,7 +56,7 @@ describe(import.meta.file, () => {
   it("should play sound after ending space", async () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
-    const updated = await AppClientModule.chainUpdates(
+    const updated = await AppClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
       userClickedEndSpaceButton(ctx),
@@ -67,7 +67,7 @@ describe(import.meta.file, () => {
   it("should end space when host logs out", async () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
-    const updated = await SpaceClientModule.chainUpdates(
+    const updated = await SpaceClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
       (model) =>

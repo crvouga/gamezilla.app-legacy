@@ -54,7 +54,7 @@ const continueAsGuestResultedErr = () => (model: ModelClient) =>
 
 describe(import.meta.file, () => {
   it("should request to continue as guest when button is clicked", async () => {
-    const output = await AppClientModule.chainUpdates(
+    const output = await AppClientModule.andThen(
       AuthClient.init({ ctx }),
       clickedContinueAsGuestButton,
     )
@@ -66,7 +66,7 @@ describe(import.meta.file, () => {
   })
 
   it("should request to continue as guest when button is clicked", async () => {
-    const output = await AppClientModule.chainUpdates(
+    const output = await AppClientModule.andThen(
       AuthClient.init({ ctx }),
       clickedContinueAsGuestButton,
     )
@@ -80,7 +80,7 @@ describe(import.meta.file, () => {
   })
 
   it("should resolve request as ok when resulted in ok", async () => {
-    const output = await AppClientModule.chainUpdates(
+    const output = await AppClientModule.andThen(
       AuthClient.init({ ctx }),
       clickedContinueAsGuestButton,
       continueAsGuestResultedOk(UserId.generate()),
@@ -89,7 +89,7 @@ describe(import.meta.file, () => {
   })
 
   it("should resolve request as err when resulted in err", async () => {
-    const output = await AppClientModule.chainUpdates(
+    const output = await AppClientModule.andThen(
       AuthClient.init({ ctx }),
       clickedContinueAsGuestButton,
       continueAsGuestResultedErr(),
@@ -98,7 +98,7 @@ describe(import.meta.file, () => {
   })
 
   it("should play sound after continuing as guest", async () => {
-    const output = await AppClientModule.chainUpdates(
+    const output = await AppClientModule.andThen(
       AuthClient.init({ ctx }),
       clickedContinueAsGuestButton,
     )

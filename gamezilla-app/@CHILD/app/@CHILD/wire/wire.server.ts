@@ -74,7 +74,7 @@ type Output = {
 export const update = async <TMsgToClient, TMsgToServer>(
   input: Input<TMsgToClient, TMsgToServer>,
 ): Promise<Output> => {
-  return AppServerModule.chainUpdates(
+  return AppServerModule.andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),
@@ -90,7 +90,7 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
 
   switch (msg.t) {
     case "client-connected": {
-      return AppServerModule.chainUpdates(
+      return AppServerModule.andThen(
         { model },
         async (model) => {
           const existing: Client = model.clientsBySessionId[msg.sessionId] ?? {

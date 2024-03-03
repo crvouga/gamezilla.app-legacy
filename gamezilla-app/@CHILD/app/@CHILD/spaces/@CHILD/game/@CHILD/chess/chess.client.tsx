@@ -80,7 +80,7 @@ export const init: Client["init"] = ({ model }) => {
 
 // @ts-ignore
 export const update: Client["update"] = async (input) => {
-  return GameClientModule.chainUpdates(
+  return GameClientModule.andThen(
     init(input),
     (model) => GameMainMenu.update({ msg: input.msg, model }),
     async (model) => {
@@ -170,7 +170,7 @@ export const update: Client["update"] = async (input) => {
 
       switch (msgServer.t) {
         case "input-mode": {
-          return GameClientModule.chainUpdates(
+          return GameClientModule.andThen(
             { model },
             (model) => {
               const { result } = msgServer

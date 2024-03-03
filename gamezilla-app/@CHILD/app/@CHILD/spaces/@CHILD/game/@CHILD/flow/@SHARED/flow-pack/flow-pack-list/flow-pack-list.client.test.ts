@@ -74,23 +74,17 @@ const serverListedPacksErr = (errorMessage: string) => (model: ModelClient) => {
 
 describe(import.meta.file, () => {
   it("should be request when user observes end of list", async () => {
-    const output = await AppClientModule.chainUpdates(
-      initial,
-      observedEndOfList,
-    )
+    const output = await AppClientModule.andThen(initial, observedEndOfList)
     expect(RequestResponse.isRequesting(output.model.request)).toBeTrue()
   })
 
   it("should send request to server when user observes end of list", async () => {
-    const output = await AppClientModule.chainUpdates(
-      initial,
-      observedEndOfList,
-    )
+    const output = await AppClientModule.andThen(initial, observedEndOfList)
     expect(didSendToServer(output, (msg) => msg.t === "list-packs")).toBeTrue()
   })
 
   it("should timeout request", async () => {
-    const output = await AppClientModule.chainUpdates(
+    const output = await AppClientModule.andThen(
       initial,
       observedEndOfList,
       elasped(TimeSpan.fromMinutes(5)),
@@ -104,7 +98,7 @@ describe(import.meta.file, () => {
       now: ctx.now,
       puzzleIds: [],
     })
-    const output = await AppClientModule.chainUpdates(
+    const output = await AppClientModule.andThen(
       initial,
       serverListedPacksOk(pack),
     )
@@ -112,7 +106,7 @@ describe(import.meta.file, () => {
   })
 
   it("should show error when packs listed from server errors", async () => {
-    const output = await AppClientModule.chainUpdates(
+    const output = await AppClientModule.andThen(
       initial,
       serverListedPacksErr("Something went wrong"),
     )

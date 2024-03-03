@@ -1,8 +1,5 @@
 import { APP_SOUND, playSound } from "gamezilla-app/@CHILD/app/@SHARED/client"
-import {
-  Button,
-  IconArrowLeftOnRect,
-} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Button } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { Eff, Sub } from "gamezilla-app/@SHARED/core"
 import {
   ViewGameHeader,
@@ -18,7 +15,7 @@ import { Space, SpaceEvent, Spaces } from "../spaces-core"
 import { MsgClient } from "../spaces.core"
 
 const update: SpaceClientModule["update"] = (input) => {
-  return SpaceClientModule.chainUpdates(
+  return SpaceClientModule.andThen(
     { model: input.model },
     //
     (model) => updateFromSpaceEvent({ ...input, model }),
@@ -311,16 +308,27 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
     return (
       <div className="flex h-full w-full flex-1 flex-col">
         <ViewGameHeader />
-        <ViewUsersInSpaceList
-          onOpenUserDetails={(userId) =>
-            dispatch({ t: "clicked-user", userId })
-          }
-          ctx={{
-            ...ctx,
-            space,
-            currentUserId,
-          }}
-        />
+
+        <div className="w-full flex-1">
+          <ViewUsersInSpaceList
+            onOpenUserDetails={(userId) =>
+              dispatch({ t: "clicked-user", userId })
+            }
+            ctx={{
+              ...ctx,
+              space,
+              currentUserId,
+            }}
+          />
+        </div>
+
+        <div className="flex w-full items-center justify-center border-t border-neutral-600 p-4">
+          <Button
+            className="w-full"
+            onClick={() => dispatch({ t: "clicked-go-home-button" })}
+            text="Go Home"
+          />
+        </div>
       </div>
     )
   }
@@ -351,8 +359,7 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
         <Button
           className="w-full"
           onClick={() => dispatch({ t: "clicked-go-home-button" })}
-          text="Exit"
-          start={<IconArrowLeftOnRect className="h-6 w-6" />}
+          text="Go Home"
         />
       </div>
     </div>

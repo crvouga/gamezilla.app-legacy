@@ -6,7 +6,7 @@ import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { APP_SOUND, playSound } from "gamezilla-app/@CHILD/app/@SHARED/client"
 
 const update: ClientModule["update"] = (input) => {
-  return GameClientModule.chainUpdates(
+  return GameClientModule.andThen(
     { model: input.model },
     //
     (model) => updateClickedPackItem({ ...input, model }),

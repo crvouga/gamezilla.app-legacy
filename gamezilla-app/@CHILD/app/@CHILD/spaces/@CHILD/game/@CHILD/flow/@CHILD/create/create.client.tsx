@@ -16,7 +16,7 @@ import { PuzzleListClient } from "./puzzle/list/puzzle-list.client"
 import { PuzzleSaveChangesClient } from "./puzzle/save-changes/puzzle-save-changes.client"
 
 const update: ClientModule["update"] = (input) => {
-  return GameClientModule.chainUpdates(
+  return GameClientModule.andThen(
     { model: input.model },
     //
     (model) => updateFlowPuzzleList({ ...input, model }),

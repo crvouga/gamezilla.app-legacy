@@ -180,7 +180,7 @@ export type GameServerModule<T extends GameServerModuleTypes> = {
 //
 //
 
-const chainUpdates = async <T extends GameServerModuleTypes>(
+const andThen = async <T extends GameServerModuleTypes>(
   acc: Output<T>,
   ...updates: ((model: T["Model"]) => Promise<Output<T>>)[]
 ): Promise<Output<T>> => {
@@ -200,7 +200,7 @@ const chainUpdates = async <T extends GameServerModuleTypes>(
     msgSync: [...(acc.msgSync ?? []), ...(updated.msgSync ?? [])],
   }
 
-  return chainUpdates(accNew, ...rest)
+  return andThen(accNew, ...rest)
 }
 
 const tagOutput = <
@@ -245,6 +245,6 @@ const tagOutput = <
 }
 
 export const GameServerModule = {
-  chainUpdates,
+  andThen,
   tagOutput,
 }

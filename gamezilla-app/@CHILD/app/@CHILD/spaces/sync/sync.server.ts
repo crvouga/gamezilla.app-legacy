@@ -30,7 +30,7 @@ const updateSync: SpaceServerModule["update"] = async (input) => {
 
   switch (msgClient?.t) {
     case "sync": {
-      return AppServerModule.chainUpdates(
+      return AppServerModule.andThen(
         { model },
         (model) => {
           const merged = Spaces.mergeOne({
@@ -123,7 +123,7 @@ const updateCurrentUserSpace: SpaceServerModule["update"] = async (input) => {
 }
 
 const update: SpaceServerModule["update"] = async (input) => {
-  return SpaceServerModule.chainUpdates(
+  return SpaceServerModule.andThen(
     { model: input.model },
     (model) => updateSync({ ...input, model }),
     (model) => updateCurrentUserSpace({ ...input, model }),

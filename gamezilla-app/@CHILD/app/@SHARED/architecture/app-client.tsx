@@ -183,7 +183,7 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
   }) => VDom
 }
 
-export const chainUpdates = async <T extends AppClientModuleTypes>(
+export const andThen = async <T extends AppClientModuleTypes>(
   accPromise: MaybePromise<Output<T>>,
   ...updates: ((model: T["Model"]) => Output<T> | Promise<Output<T>>)[]
 ): Promise<Output<T>> => {
@@ -208,9 +208,9 @@ export const chainUpdates = async <T extends AppClientModuleTypes>(
     msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
   }
 
-  return chainUpdates(accNew, ...rest)
+  return andThen(accNew, ...rest)
 }
 
 export const AppClientModule = {
-  chainUpdates,
+  andThen,
 }

@@ -16,7 +16,7 @@ const ctx = testFlowClientCtx()
 describe(import.meta.file, () => {
   it("should open puzzle builder on list item click", async () => {
     const puzzle = createFlowPuzzle(ctx)
-    const output = await GameClientModule.chainUpdates(
+    const output = await GameClientModule.andThen(
       initial,
       serverListedPuzzlesOk([puzzle]),
       clickedPuzzleListItem(puzzle),
@@ -30,13 +30,13 @@ describe(import.meta.file, () => {
 
   it("should exit puzzle builder after clicking exit button", async () => {
     const puzzle = createFlowPuzzle(ctx)
-    const openedBuilder = await GameClientModule.chainUpdates(
+    const openedBuilder = await GameClientModule.andThen(
       initial,
       serverListedPuzzlesOk([puzzle]),
       clickedPuzzleListItem(puzzle),
     )
 
-    const output = await GameClientModule.chainUpdates(
+    const output = await GameClientModule.andThen(
       openedBuilder,
       clickedExitPuzzleBuilderButton(deriveModelSync(openedBuilder)),
     )
@@ -49,18 +49,18 @@ describe(import.meta.file, () => {
   it("should open save prompt when exiting with unsaved changes", async () => {
     const puzzle = createFlowPuzzle(ctx)
 
-    const openedBuilder = await GameClientModule.chainUpdates(
+    const openedBuilder = await GameClientModule.andThen(
       initial,
       serverListedPuzzlesOk([puzzle]),
       clickedPuzzleListItem(puzzle),
     )
 
-    const madeEdit = await GameClientModule.chainUpdates(
+    const madeEdit = await GameClientModule.andThen(
       openedBuilder,
       puzzleBuilderPressDownRandomNode(deriveModelSync(openedBuilder)),
     )
 
-    const output = await GameClientModule.chainUpdates(
+    const output = await GameClientModule.andThen(
       madeEdit,
       clickedExitPuzzleBuilderButton(deriveModelSync(madeEdit)),
     )

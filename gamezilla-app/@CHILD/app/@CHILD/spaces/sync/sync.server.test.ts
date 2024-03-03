@@ -17,7 +17,7 @@ describe(import.meta.file, () => {
     const deps = getDeps()
     const client = generateAuthClient()
     const spaceId = SpaceId.generate()
-    const output = await AppServerModule.chainUpdates(
+    const output = await AppServerModule.andThen(
       init(),
       userStartedSpace(deps, client, spaceId),
       authenticatedClientConnected(deps, client),
@@ -31,7 +31,7 @@ describe(import.meta.file, () => {
     const deps = getDeps()
     const client = generateAuthClient()
     const clientsSpace = makeSpace(SpaceId.generate(), client.userId)
-    const output = await AppServerModule.chainUpdates(
+    const output = await AppServerModule.andThen(
       init(),
       clientSync(deps, client, clientsSpace),
     )
@@ -43,7 +43,7 @@ describe(import.meta.file, () => {
     const deps = getDeps()
     const client = generateAuthClient()
     const spaceId = SpaceId.generate()
-    const output = await AppServerModule.chainUpdates(
+    const output = await AppServerModule.andThen(
       init(),
       userStartedSpace(deps, client, spaceId),
     )

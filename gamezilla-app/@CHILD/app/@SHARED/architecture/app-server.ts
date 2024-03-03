@@ -151,7 +151,7 @@ export type AppServerModule<T extends AppServerModuleTypes> = {
 
 type MaybePromise<T> = T | Promise<T>
 
-const chainUpdates = async <T extends AppServerModuleTypes>(
+const andThen = async <T extends AppServerModuleTypes>(
   accPromise: MaybePromise<Output<T>>,
   ...updates: ((model: T["Model"]) => MaybePromise<Output<T>>)[]
 ): Promise<Output<T>> => {
@@ -172,7 +172,7 @@ const chainUpdates = async <T extends AppServerModuleTypes>(
     msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
   }
 
-  return chainUpdates(accNew, ...rest)
+  return andThen(accNew, ...rest)
 }
 
 const updateLoop = async <T extends AppServerModuleTypes>(
@@ -223,6 +223,6 @@ const updateLoop = async <T extends AppServerModuleTypes>(
 }
 
 export const AppServerModule = {
-  chainUpdates,
+  andThen,
   updateLoop,
 }

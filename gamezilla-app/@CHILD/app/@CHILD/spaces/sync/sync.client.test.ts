@@ -44,7 +44,7 @@ describe(import.meta.file, () => {
 
     const ctx = createCtx()
 
-    const updated = await AppClientModule.chainUpdates(
+    const updated = await AppClientModule.andThen(
       init(ctx),
       //
       gotMsgServer(ctx, {
@@ -65,7 +65,7 @@ describe(import.meta.file, () => {
     const someSpace = makeSpace(SpaceId.generate(), UserId.generate())
     const ctx = createCtx()
 
-    const output = await AppClientModule.chainUpdates(
+    const output = await AppClientModule.andThen(
       init(ctx),
       gotSpace(ctx, someSpace),
     )
@@ -85,7 +85,7 @@ describe(import.meta.file, () => {
 
     const someStartedSpace = makeSpace(spaceId, ctx.currentUserId)
 
-    const updated = await AppClientModule.chainUpdates(
+    const updated = await AppClientModule.andThen(
       init(ctx),
       gotCurrentUsersSpace(ctx, someStartedSpace),
     )
@@ -97,7 +97,7 @@ describe(import.meta.file, () => {
 
   it("should sync current user's space when server connects if in space", async () => {
     const ctx = createCtx()
-    const output = await AppClientModule.chainUpdates(
+    const output = await AppClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, SpaceId.generate()),
       serverConnected(ctx),
@@ -116,7 +116,7 @@ describe(import.meta.file, () => {
   it("should send events to the server like user joined space", async () => {
     const spaceId = SpaceId.generate()
     const ctx = createCtx()
-    const output = await AppClientModule.chainUpdates(
+    const output = await AppClientModule.andThen(
       init(ctx),
       //
       userStartedSpace(ctx, UserId.generate(), spaceId),
@@ -137,7 +137,7 @@ describe(import.meta.file, () => {
 
   it("should send events to the server like user ended space", async () => {
     const ctx = createCtx()
-    const output = await AppClientModule.chainUpdates(
+    const output = await AppClientModule.andThen(
       init(ctx),
       userEndedSpace(ctx, UserId.generate(), SpaceId.generate()),
     )

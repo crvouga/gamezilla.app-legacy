@@ -124,7 +124,7 @@ const updateChild: SpaceClientModule["update"] = (input) => {
     return { model: input.model }
   }
 
-  return SpaceClientModule.chainUpdates(
+  return SpaceClientModule.andThen(
     { model: input.model },
     (model) => EndSpaceClient.update({ ...input, model }),
     (model) => Modals.update({ ...input, model }),

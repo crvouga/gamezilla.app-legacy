@@ -19,7 +19,7 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const joined = await AppClientModule.chainUpdates(
+    const joined = await AppClientModule.andThen(
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), spaceId),
       clickedJoinSpaceButton(ctx, spaceId),
@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const joined = await AppClientModule.chainUpdates(
+    const joined = await AppClientModule.andThen(
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), spaceId),
       clickedJoinSpaceButton(ctx, spaceId),
@@ -47,7 +47,7 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const left = await AppClientModule.chainUpdates(
+    const left = await AppClientModule.andThen(
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), spaceId),
       clickedJoinSpaceButton(ctx, spaceId),
@@ -65,13 +65,13 @@ describe(import.meta.file, () => {
     const SpaceA = SpaceId.generate()
     const SpaceB = SpaceId.generate()
 
-    const arranged = await AppClientModule.chainUpdates(
+    const arranged = await AppClientModule.andThen(
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), SpaceA),
       clickedJoinSpaceButton(ctx, SpaceA),
     )
 
-    const joined = await AppClientModule.chainUpdates(
+    const joined = await AppClientModule.andThen(
       { model: arranged.model },
       userStartedSpace(ctx, UserId.generate(), SpaceB),
       clickedJoinSpaceButton(ctx, SpaceB),

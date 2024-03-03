@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import { chainUpdates } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { andThen } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { EventId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { didPlaySound } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { LamportTimestamp } from "gamezilla-app/@SHARED/lamport-clock"
@@ -24,7 +24,7 @@ const userChangedListTab = (listTab: ListTab) => (model: ModelClient) => {
 
 describe(import.meta.file, () => {
   it("play a sound when changing list tabs", async () => {
-    const output = await chainUpdates(initial, userChangedListTab("packs"))
+    const output = await andThen(initial, userChangedListTab("packs"))
     expect(didPlaySound(output)).toBeTrue()
   })
 })

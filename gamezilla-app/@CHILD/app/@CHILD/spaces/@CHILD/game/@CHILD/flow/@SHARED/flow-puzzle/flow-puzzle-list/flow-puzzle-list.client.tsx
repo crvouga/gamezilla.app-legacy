@@ -23,7 +23,7 @@ import { FlowPuzzle } from "../flow-puzzle"
 import { ClientModule } from "./flow-puzzle-list.core"
 
 const update: ClientModule["update"] = (input) => {
-  return AppClientModule.chainUpdates(
+  return AppClientModule.andThen(
     { model: input.model },
     //
     (model) => updatePuzzleList({ ...input, model }),

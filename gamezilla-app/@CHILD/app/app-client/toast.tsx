@@ -80,7 +80,7 @@ export type Msg =
   | { t: "clicked-see-error"; errorMsg: string; toastId: number }
 
 export const update: Module["update"] = (input) => {
-  return AppClientModule.chainUpdates(
+  return AppClientModule.andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),

@@ -17,11 +17,11 @@ describe(import.meta.file, () => {
   it("should play a sound after inputting a game", async () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
-    const started = await AppClientModule.chainUpdates(
+    const started = await AppClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
     )
-    const output = await AppClientModule.chainUpdates(
+    const output = await AppClientModule.andThen(
       { model: started.model },
       clickedGameTile(ctx, "connect-four"),
     )
@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const output = await SpaceClientModule.chainUpdates(
+    const output = await SpaceClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
       clickedGameTile(ctx, "connect-four"),
@@ -46,7 +46,7 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const output = await SpaceClientModule.chainUpdates(
+    const output = await SpaceClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
       clickedGameTile(ctx, "connect-four"),

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import { chainUpdates } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { andThen } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import {
   defaultModelSync,
   initial,
@@ -47,7 +47,7 @@ describe(import.meta.file, () => {
   it("should open puzzle builder after clicking a puzzle in the list", async () => {
     const puzzle = createFlowPuzzle(ctx)
 
-    const output = await chainUpdates(
+    const output = await andThen(
       initial,
       clickedPuzzleListItem(puzzle),
       //
@@ -64,7 +64,7 @@ describe(import.meta.file, () => {
   it("should play a sound when clicking a puzzle in the list", async () => {
     const puzzle = createFlowPuzzle(ctx)
 
-    const output = await chainUpdates(
+    const output = await andThen(
       initial,
       userClickedPuzzleListItem(puzzle),
       //

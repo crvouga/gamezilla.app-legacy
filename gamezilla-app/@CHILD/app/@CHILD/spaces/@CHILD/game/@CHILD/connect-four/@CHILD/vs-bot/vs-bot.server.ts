@@ -49,7 +49,7 @@ export const init: Module["init"] = {
 }
 
 export const update: Module["update"] = async (input) => {
-  return GameServerModule.chainUpdates({ model: input.model }, (model) =>
+  return GameServerModule.andThen({ model: input.model }, (model) =>
     updateFromMsg({ ...input, model }),
   )
 }

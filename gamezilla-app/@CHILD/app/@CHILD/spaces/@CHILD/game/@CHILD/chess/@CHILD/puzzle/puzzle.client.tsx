@@ -74,7 +74,7 @@ export const update = (input: {
   eff?: Eff<MsgClient>
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[]
 }> => {
-  return GameClientModule.chainUpdates(
+  return GameClientModule.andThen(
     input,
     (model) => updateMain({ ...input, model }),
     (model) => {

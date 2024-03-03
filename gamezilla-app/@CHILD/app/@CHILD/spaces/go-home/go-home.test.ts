@@ -13,13 +13,13 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const started = await SpaceClientModule.chainUpdates(
+    const started = await SpaceClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
       //
     )
 
-    const output = await SpaceClientModule.chainUpdates(
+    const output = await SpaceClientModule.andThen(
       { model: started.model },
       clickedGoHomeButton(ctx),
       //
@@ -40,12 +40,12 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const startedSpace = await SpaceClientModule.chainUpdates(
+    const startedSpace = await SpaceClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
       //
     )
-    const output = await SpaceClientModule.chainUpdates(
+    const output = await SpaceClientModule.andThen(
       { model: startedSpace.model },
       clickedGoHomeButton(ctx),
       //

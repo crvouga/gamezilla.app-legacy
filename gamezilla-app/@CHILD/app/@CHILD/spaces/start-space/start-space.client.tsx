@@ -10,7 +10,7 @@ import { withId } from "../@SHARED/event"
 import { SpaceEvent } from "../spaces-core"
 
 const update: SpaceClientModule["update"] = (input) => {
-  return SpaceClientModule.chainUpdates(
+  return SpaceClientModule.andThen(
     { model: input.model },
     //
     (model) => updateFromSpaceEvent({ ...input, model }),

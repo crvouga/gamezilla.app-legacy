@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import { chainUpdates } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { andThen } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { testSpaceClientCtx } from "../../../../../../@SHARED/testing/client"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import {
@@ -20,7 +20,7 @@ describe(import.meta.file, () => {
     const ctx = testSpaceClientCtx()
     const puzzle = createFlowPuzzle(ctx)
 
-    const output = await chainUpdates(
+    const output = await andThen(
       initial,
       serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
@@ -36,7 +36,7 @@ describe(import.meta.file, () => {
 
   it("should open puzzle picker when user clicks add puzzle button", async () => {
     const ctx = testSpaceClientCtx()
-    const output = await chainUpdates(
+    const output = await andThen(
       initial,
       serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
@@ -47,7 +47,7 @@ describe(import.meta.file, () => {
 
   it("should close puzzle picker when user clicks closes", async () => {
     const ctx = testSpaceClientCtx()
-    const output = await chainUpdates(
+    const output = await andThen(
       initial,
       serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
@@ -60,7 +60,7 @@ describe(import.meta.file, () => {
   it("should add puzzle to the pack after clicking a puzzle in the picker", async () => {
     const ctx = testSpaceClientCtx()
     const puzzle = createFlowPuzzle(ctx)
-    const output = await chainUpdates(
+    const output = await andThen(
       initial,
       serverCreatedPack(createFlowPack(ctx)),
       clickedPuzzlePickerItem(puzzle),
@@ -75,7 +75,7 @@ describe(import.meta.file, () => {
   it("should close puzzle picker after adding a puzzle to the pack", async () => {
     const ctx = testSpaceClientCtx()
     const puzzle = createFlowPuzzle(ctx)
-    const output = await chainUpdates(
+    const output = await andThen(
       initial,
       serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
@@ -88,7 +88,7 @@ describe(import.meta.file, () => {
   it("should go back to grid after exiting puzzle", async () => {
     const ctx = testSpaceClientCtx()
     const puzzle = createFlowPuzzle(ctx)
-    const output = await chainUpdates(
+    const output = await andThen(
       initial,
       serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),

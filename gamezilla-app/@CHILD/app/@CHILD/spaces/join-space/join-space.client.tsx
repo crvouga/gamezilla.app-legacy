@@ -16,7 +16,7 @@ import { SpaceClientModule } from "../architecture/architecture"
 import { SpaceEvent, Spaces } from "../spaces-core"
 
 const update: SpaceClientModule["update"] = (input) => {
-  return SpaceClientModule.chainUpdates(
+  return SpaceClientModule.andThen(
     { model: input.model },
     (model) => updateFromSpaceEvent({ ...input, model }),
     (model) => updateFromJoinSpaceButton({ ...input, model }),
@@ -137,22 +137,23 @@ const View: SpaceClientModule["View"] = (input) => {
         />
       </div>
 
-      <div className="flex flex-col gap-4 border-t border-neutral-600 p-4">
+      <div className="flex flex-row gap-4 border-t border-neutral-600 p-4">
         <Button
-          className="w-full"
+          className="flex-1"
+          onClick={() => {
+            dispatch({ t: "clicked-go-home-button" })
+          }}
+          text="Go Home"
+        />
+
+        <Button
+          className="flex-1"
           variant="contained"
           color="primary"
           onClick={() => {
             dispatch({ t: "clicked-join-space-button", spaceId: space.spaceId })
           }}
           text="Join space"
-        />
-        <Button
-          className="w-full"
-          onClick={() => {
-            dispatch({ t: "clicked-go-home-button" })
-          }}
-          text="Go Home"
         />
       </div>
     </div>

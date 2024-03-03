@@ -1,21 +1,64 @@
-import { describe, expect, test } from "bun:test"
-import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
-import { didPlaySound } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { describe, expect, it } from "bun:test"
+import { andThen } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
+import {
+  didPlaySound,
+  didPushRoute,
+  didShowToast,
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   clickedLeaveSpaceButton,
   createCtx,
   init,
   userJoinedSpace,
+  userLeftSpace,
   userStartedSpace,
 } from "../@TEST/client"
 import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {
-  test("user is not in space after leaving", async () => {
+  it("should navigate to list screen after leaving space", async () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
-    const updated = await AppClientModule.chainUpdates(
+
+    const joined = await andThen(
+      init(ctx),
+      userStartedSpace(ctx, UserId.generate(), spaceId),
+      userJoinedSpace(ctx, ctx.currentUserId, spaceId),
+    )
+
+    const output = await andThen(
+      { model: joined.model },
+      userLeftSpace(ctx, ctx.currentUserId, spaceId),
+    )
+
+    expect(
+      didPushRoute(output, { t: "spaces", c: { t: "space-list" } }),
+    ).toBeTrue()
+  })
+
+  it("should show some toast after leaving a space", async () => {
+    const ctx = createCtx()
+    const spaceId = SpaceId.generate()
+
+    const joined = await andThen(
+      init(ctx),
+      userStartedSpace(ctx, UserId.generate(), spaceId),
+      userJoinedSpace(ctx, ctx.currentUserId, spaceId),
+    )
+
+    const output = await andThen(
+      { model: joined.model },
+      userLeftSpace(ctx, ctx.currentUserId, spaceId),
+    )
+
+    expect(didShowToast(output)).toBeTrue()
+  })
+
+  it("user is not in space after leaving", async () => {
+    const ctx = createCtx()
+    const spaceId = SpaceId.generate()
+    const updated = await andThen(
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), spaceId),
       userJoinedSpace(ctx, ctx.currentUserId, spaceId),
@@ -27,17 +70,17 @@ describe(import.meta.file, () => {
     )
   })
 
-  test("should play sound after leaving", async () => {
+  it("should play sound after leaving", async () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const joined = await AppClientModule.chainUpdates(
+    const joined = await andThen(
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), spaceId),
       userJoinedSpace(ctx, ctx.currentUserId, spaceId),
     )
 
-    const left = await AppClientModule.chainUpdates(
+    const left = await andThen(
       { model: joined.model },
       clickedLeaveSpaceButton(ctx),
     )

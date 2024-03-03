@@ -10,7 +10,7 @@ import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPuzzleName } from "../../../../@SHARED/flow-puzzle/flow-puzzle-name"
 
 const update: ServerModule["update"] = async (input) => {
-  return GameServerModule.chainUpdates({ model: input.model }, (model) =>
+  return GameServerModule.andThen({ model: input.model }, (model) =>
     updateFromClient({ ...input, model }),
   )
 }

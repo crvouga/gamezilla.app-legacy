@@ -28,7 +28,7 @@ import { VDomChildren } from "gamezilla-app/@SHARED/vdom"
 
 const update: ClientModule["update"] = (input) => {
   const { model } = input
-  return GameClientModule.chainUpdates(
+  return GameClientModule.andThen(
     { model },
     (model) => updateDraftNameInput({ ...input, model }),
     (model) => updateDrawer({ ...input, model }),

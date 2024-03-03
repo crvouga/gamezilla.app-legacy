@@ -253,7 +253,7 @@ const updateFromMsg: Module["update"] = async (input) => {
     }
 
     case "time-passed": {
-      return AppClientModule.chainUpdates(
+      return AppClientModule.andThen(
         { model },
         (model) => {
           if (

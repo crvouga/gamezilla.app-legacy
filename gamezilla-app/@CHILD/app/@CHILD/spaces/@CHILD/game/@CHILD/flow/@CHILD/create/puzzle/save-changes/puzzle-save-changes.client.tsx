@@ -32,7 +32,7 @@ import { ViewBottomButtonBarAction } from "../../../../../../@SHARED/game"
 
 const update: ClientModule["update"] = (input) => {
   const { model } = input
-  return GameClientModule.chainUpdates(
+  return GameClientModule.andThen(
     { model },
     (model) => updateExitBuilder({ ...input, model }),
     (model) => updateSaveChangesRequest({ ...input, model }),
@@ -163,7 +163,7 @@ const updateSaveChangesRequest: ClientModule["update"] = (input) => {
 }
 
 const exitBuilderWithSound: ClientModule["update"] = (input) => {
-  return GameClientModule.chainUpdates(
+  return GameClientModule.andThen(
     { model: input.model },
     (model) => exitBuilder({ ...input, model }),
     (model) => ({ model, msgCmd: [playSound(APP_SOUND.navBackwardMin)] }),

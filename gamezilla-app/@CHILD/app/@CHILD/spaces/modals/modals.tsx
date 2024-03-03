@@ -14,7 +14,7 @@ import {
 
 const update: SpaceClientModule["update"] = (input) => {
   const { model } = input
-  return SpaceClientModule.chainUpdates(
+  return SpaceClientModule.andThen(
     { model },
     (model) => updateModals({ ...input, model }),
     (model) => updateFromCmd({ ...input, model }),

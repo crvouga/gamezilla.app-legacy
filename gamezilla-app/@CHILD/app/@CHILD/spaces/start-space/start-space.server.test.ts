@@ -16,7 +16,7 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const client = generateAuthClient()
 
-    const started = await AppServerModule.chainUpdates(
+    const started = await AppServerModule.andThen(
       init(),
       userStartedSpace(deps, client, spaceId),
     )
@@ -29,7 +29,7 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const client = generateAuthClient()
 
-    const started = await AppServerModule.chainUpdates(
+    const started = await AppServerModule.andThen(
       init(),
       userStartedSpace(deps, client, spaceId),
     )

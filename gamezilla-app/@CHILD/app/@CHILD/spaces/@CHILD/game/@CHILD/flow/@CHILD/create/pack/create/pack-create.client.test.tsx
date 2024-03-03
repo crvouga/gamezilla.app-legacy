@@ -6,7 +6,7 @@ import { clickedPackCreateButton } from "../../@TEST/client"
 
 describe(import.meta.file, () => {
   it("should make a sound when the user clicks the create button", async () => {
-    const output = await GameClientModule.chainUpdates(
+    const output = await GameClientModule.andThen(
       { model: initClient },
       clickedPackCreateButton,
     )

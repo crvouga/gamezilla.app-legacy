@@ -14,7 +14,7 @@ import { RemoteResult, isLoading } from "gamezilla-app/@SHARED/core"
 import { ClientModule } from "../../create.core"
 
 const update: ClientModule["update"] = (input) => {
-  return GameClientModule.chainUpdates(
+  return GameClientModule.andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromMsgSync({ ...input, model }),

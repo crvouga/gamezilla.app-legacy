@@ -53,7 +53,7 @@ export type SpaceServerModule = {
   subscriptions: (input: { ctx: Ctx; model: ModelServer }) => Sub<MsgClient>
 }
 
-const chainUpdates = async (
+const andThen = async (
   accPromise: MaybePromise<Output>,
   ...updates: ((model: ModelServer) => MaybePromise<Output>)[]
 ): Promise<Output> => {
@@ -78,9 +78,9 @@ const chainUpdates = async (
     ],
   }
 
-  return chainUpdates(accNew, ...rest)
+  return andThen(accNew, ...rest)
 }
 
 export const SpaceServerModule = {
-  chainUpdates,
+  andThen,
 }

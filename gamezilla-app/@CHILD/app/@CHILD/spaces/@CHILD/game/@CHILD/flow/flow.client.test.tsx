@@ -34,7 +34,7 @@ const useSelectedMode =
 
 describe(import.meta.file, () => {
   it("should play a sound when selecting play mode", async () => {
-    const output = await GameClientModule.chainUpdates(
+    const output = await GameClientModule.andThen(
       init,
       useSelectedMode(ctx.currentUserId, "play"),
     )
@@ -42,7 +42,7 @@ describe(import.meta.file, () => {
   })
 
   it("should play a sound when selecting create mode", async () => {
-    const output = await GameClientModule.chainUpdates(
+    const output = await GameClientModule.andThen(
       init,
       useSelectedMode(ctx.currentUserId, "create"),
     )
@@ -50,7 +50,7 @@ describe(import.meta.file, () => {
   })
 
   it("should not play a sound when selecting no mode", async () => {
-    const output = await GameClientModule.chainUpdates(
+    const output = await GameClientModule.andThen(
       init,
       useSelectedMode(ctx.currentUserId, null),
     )

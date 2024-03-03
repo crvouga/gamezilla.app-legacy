@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test"
 import { SpaceClientCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { chainUpdates } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
+import { andThen } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
 import {
   didSendToServer,
   didShowErrorSm,
@@ -79,13 +79,13 @@ const elapsed = (timeSpan: TimeSpan) => (model: ModelClient) => {
 describe(import.meta.file, () => {
   it("should it be requesting when the user observes the end of the list", async () => {
     const ctx = testSpaceClientCtx()
-    const output = await chainUpdates(initial, userObservedEndOfList(ctx))
+    const output = await andThen(initial, userObservedEndOfList(ctx))
     expect(isRequesting(output.model.request)).toBeTrue()
   })
 
   it("should send a list puzzles message to server when the user observes the end of the list", async () => {
     const ctx = testSpaceClientCtx()
-    const output = await chainUpdates(initial, userObservedEndOfList(ctx))
+    const output = await andThen(initial, userObservedEndOfList(ctx))
     expect(
       didSendToServer(
         output,
@@ -110,10 +110,7 @@ describe(import.meta.file, () => {
       }),
     })
 
-    const output = await chainUpdates(
-      initial,
-      serverListedPuzzlesOk(ctx, [puzzle]),
-    )
+    const output = await andThen(initial, serverListedPuzzlesOk(ctx, [puzzle]))
 
     expect(Object.values(output.model.puzzles)).not.toBeEmpty()
   })
@@ -121,16 +118,13 @@ describe(import.meta.file, () => {
   it("should show error when recieving list error fro server", async () => {
     const ctx = testFlowClientCtx()
     const error = "Something went wrong"
-    const output = await chainUpdates(
-      initial,
-      serverListedPuzzlesErr(ctx, error),
-    )
+    const output = await andThen(initial, serverListedPuzzlesErr(ctx, error))
     expect(didShowErrorSm(output)).toBeTrue()
   })
 
   it("should show error after no server response", async () => {
     const ctx = testFlowClientCtx()
-    const output = await chainUpdates(
+    const output = await andThen(
       initial,
       userObservedEndOfList(ctx),
       elapsed(TimeSpan.fromMinutes(5)),

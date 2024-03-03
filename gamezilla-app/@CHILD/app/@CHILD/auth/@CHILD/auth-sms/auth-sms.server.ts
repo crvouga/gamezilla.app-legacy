@@ -92,7 +92,7 @@ export const init: Module["init"] = async () => {
 //
 
 export const update: Module["update"] = async (input) => {
-  return AppServerModule.chainUpdates(
+  return AppServerModule.andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),

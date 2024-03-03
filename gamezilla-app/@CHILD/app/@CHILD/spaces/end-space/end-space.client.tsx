@@ -4,13 +4,13 @@ import {
   pushRoute,
   showToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { Button } from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { withId } from "../@SHARED/event"
 import { SpaceClientModule } from "../architecture/architecture"
 import { SpaceEvent, Spaces } from "../spaces-core"
-import { Button, IconHome } from "gamezilla-app/@CHILD/app/@SHARED/ui"
-import { withId } from "../@SHARED/event"
 
 const update: SpaceClientModule["update"] = async (input) => {
-  return SpaceClientModule.chainUpdates(
+  return SpaceClientModule.andThen(
     { model: input.model },
     (model) => updateEndSpaceButton({ ...input, model }),
     (model) => updateFromSpaceEvent({ ...input, model }),
@@ -65,7 +65,7 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = async (input) => {
         return { model }
       }
 
-      return SpaceClientModule.chainUpdates(
+      return SpaceClientModule.andThen(
         { model },
         (model) => {
           return {
@@ -183,7 +183,6 @@ const ViewSpaceEnded: SpaceClientModule["View"] = ({ dispatch }) => {
         size="lg"
         variant="contained"
         color="primary"
-        start={<IconHome className="h-6 w-6" />}
         text="Go Home"
       />
     </div>

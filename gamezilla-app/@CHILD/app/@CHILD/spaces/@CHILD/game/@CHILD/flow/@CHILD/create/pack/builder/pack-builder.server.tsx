@@ -68,7 +68,7 @@ const PuzzleGrid: Pick<ServerModule, "update"> = {
 
 export const PackBuilderServer: Pick<ServerModule, "update"> = {
   async update(input) {
-    return GameServerModule.chainUpdates(
+    return GameServerModule.andThen(
       { model: input.model },
       (model) => SavePack.update({ ...input, model }),
       (model) => PuzzleGrid.update({ ...input, model }),

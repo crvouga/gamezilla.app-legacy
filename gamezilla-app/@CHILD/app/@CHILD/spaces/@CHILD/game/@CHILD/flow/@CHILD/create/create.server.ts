@@ -26,7 +26,7 @@ const deps: ServerModule["deps"] = async (_input) => {
 }
 
 const update: ServerModule["update"] = async (input) => {
-  return GameServerModule.chainUpdates(
+  return GameServerModule.andThen(
     { model: input.model },
     //
     (model) => PuzzleListServer.update({ ...input, model }),

@@ -35,7 +35,7 @@ import { toCurrentFlow } from "./puzzle-builder.core"
 //
 
 const update: ClientModule["update"] = (input) => {
-  return GameClientModule.chainUpdates(
+  return GameClientModule.andThen(
     { model: input.model },
     (model) => updateFromMsgSync({ ...input, model }),
     (model) => updateMoreDrawer({ ...input, model }),

@@ -50,7 +50,7 @@ describe(import.meta.file, () => {
 
     const clientId = ClientId.generate()
 
-    const output = await AppServerModule.chainUpdates(
+    const output = await AppServerModule.andThen(
       AuthServer.init({ ctx }),
       clientClickedContinueAsGuestButton(deps, clientId, SessionId.generate()),
     )
@@ -72,7 +72,7 @@ describe(import.meta.file, () => {
     const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
 
-    const output = await AppServerModule.chainUpdates(
+    const output = await AppServerModule.andThen(
       AuthServer.init({ ctx }),
       clientClickedContinueAsGuestButton(deps, clientId, sessionId),
     )
@@ -94,7 +94,7 @@ describe(import.meta.file, () => {
     const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
 
-    await AppServerModule.chainUpdates(
+    await AppServerModule.andThen(
       AuthServer.init({ ctx }),
       clientClickedContinueAsGuestButton(deps, clientId, sessionId),
     )

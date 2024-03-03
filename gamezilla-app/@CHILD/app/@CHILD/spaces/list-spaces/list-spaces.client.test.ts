@@ -55,7 +55,7 @@ describe(import.meta.file, () => {
 
   it("should request spaces on space list route change", async () => {
     const ctx = createCtx()
-    const updated = await AppClientModule.chainUpdates(
+    const updated = await AppClientModule.andThen(
       init(ctx),
       changeRouteToSpaceList(ctx),
     )
@@ -64,7 +64,7 @@ describe(import.meta.file, () => {
 
   it("should timeout request", async () => {
     const ctx = createCtx()
-    const updated = await AppClientModule.chainUpdates(
+    const updated = await AppClientModule.andThen(
       init(ctx),
       changeRouteToSpaceList(ctx),
       elapsed(ctx, TimeSpan.fromMinutes(5)),
@@ -77,7 +77,7 @@ describe(import.meta.file, () => {
 
   it("should be ok when server responds with a list of spaces", async () => {
     const ctx = createCtx()
-    const updated = await AppClientModule.chainUpdates(
+    const updated = await AppClientModule.andThen(
       init(ctx),
       changeRouteToSpaceList(ctx),
       serverListedSpaces(ctx),
@@ -87,7 +87,7 @@ describe(import.meta.file, () => {
 
   it("should be ok when server responds with a list of spaces even when it timed out", async () => {
     const ctx = createCtx()
-    const updated = await AppClientModule.chainUpdates(
+    const updated = await AppClientModule.andThen(
       init(ctx),
       changeRouteToSpaceList(ctx),
       elapsed(ctx, TimeSpan.fromSeconds(10)),
@@ -100,7 +100,7 @@ describe(import.meta.file, () => {
   it("should navigate to space screen after clicking a space card", async () => {
     const SpaceA = SpaceId.generate()
     const ctx = createCtx()
-    const updated = await AppClientModule.chainUpdates(
+    const updated = await AppClientModule.andThen(
       init(ctx),
       serverListedSpaces(ctx, [SpaceA]),
       clickSpaceCard(ctx, SpaceA),
@@ -117,7 +117,7 @@ describe(import.meta.file, () => {
   it("should make a nav forward sound when opening a space screen", async () => {
     const SpaceA = SpaceId.generate()
     const ctx = createCtx()
-    const updated = await AppClientModule.chainUpdates(
+    const updated = await AppClientModule.andThen(
       init(ctx),
       serverListedSpaces(ctx, [SpaceA]),
       clickSpaceCard(ctx, SpaceA),
@@ -128,7 +128,7 @@ describe(import.meta.file, () => {
   it("should make a sound when closing room screen", async () => {
     const SpaceA = SpaceId.generate()
     const ctx = createCtx()
-    const updated = await AppClientModule.chainUpdates(
+    const updated = await AppClientModule.andThen(
       init(ctx),
       serverListedSpaces(ctx, [SpaceA]),
       clickSpaceCard(ctx, SpaceA),

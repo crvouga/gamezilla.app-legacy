@@ -91,7 +91,7 @@ const ServerListedPuzzles: Pick<ClientModule, "update"> = {
     const { model, msgServer } = input
     switch (msgServer?.t) {
       case "listed-puzzles-by-id": {
-        return AppClientModule.chainUpdates(
+        return AppClientModule.andThen(
           { model },
           //
           (model) => {
@@ -166,7 +166,7 @@ export const FlowPackPuzzleGridClient: Pick<
     }
   },
   update(input) {
-    return AppClientModule.chainUpdates(
+    return AppClientModule.andThen(
       { model: input.model },
       (model) => ObserveGrid.update({ ...input, model }),
       (model) => ServerListedPuzzles.update({ ...input, model }),

@@ -3,7 +3,7 @@ import { ServerModule } from "./flow-pack-list.core"
 import { AppServerModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-server"
 
 const update: ServerModule["update"] = async (input) => {
-  return AppServerModule.chainUpdates(
+  return AppServerModule.andThen(
     { model: input.model },
     (model) => updateListPacks({ ...input, model }),
     //

@@ -524,7 +524,7 @@ export const PackBuilderClient: Pick<
   "update" | "View" | "subscriptions"
 > = {
   update(input) {
-    return GameClientModule.chainUpdates(
+    return GameClientModule.andThen(
       { model: input.model },
       (model) => ButtonExitBuilder.update({ ...input, model }),
       (model) => ScreenAddPuzzle.update({ ...input, model }),

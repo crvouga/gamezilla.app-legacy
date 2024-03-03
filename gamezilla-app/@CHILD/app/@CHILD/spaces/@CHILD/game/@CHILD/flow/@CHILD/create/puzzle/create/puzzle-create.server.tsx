@@ -7,7 +7,7 @@ import { MsgSync } from "./puzzle-create.core"
 import { FlowVariant, FlowVariantDimensions } from "../../../../@SHARED/flow"
 
 const update: ServerModule["update"] = async (input) => {
-  return GameServerModule.chainUpdates({ model: input.model }, (model) =>
+  return GameServerModule.andThen({ model: input.model }, (model) =>
     updateFromClient({ ...input, model }),
   )
 }

@@ -61,7 +61,7 @@ const ListPuzzlesById: Pick<ServerModule, "update"> = {
 
 export const FlowPackPuzzleGridServer: Pick<ServerModule, "update"> = {
   async update(input) {
-    return AppServerModule.chainUpdates(
+    return AppServerModule.andThen(
       { model: input.model },
       (model) => ListPuzzlesById.update({ ...input, model }),
       //

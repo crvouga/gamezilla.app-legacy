@@ -69,7 +69,7 @@ const init: Module["init"] = { t: null }
 //
 
 const update: Module["update"] = (input) => {
-  return GameClientModule.chainUpdates(
+  return GameClientModule.andThen(
     { model: input.model },
     (model) => GameMainMenu.update({ ...input, model }),
     (model) => updateChild(model)(input),

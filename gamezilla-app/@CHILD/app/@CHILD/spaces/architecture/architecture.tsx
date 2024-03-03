@@ -66,7 +66,7 @@ export type SpaceClientModule = {
   }) => VDom
 }
 
-const chainUpdates = async (
+const andThen = async (
   accPromise: MaybePromise<Output>,
   ...updates: ((model: ModelClient) => MaybePromise<Output>)[]
 ): Promise<Output> => {
@@ -88,9 +88,9 @@ const chainUpdates = async (
     msgSpaceEvent: batchMsgs(acc.msgSpaceEvent, updated.msgSpaceEvent),
   }
 
-  return chainUpdates(accNew, ...rest)
+  return andThen(accNew, ...rest)
 }
 
 export const SpaceClientModule = {
-  chainUpdates,
+  andThen,
 }

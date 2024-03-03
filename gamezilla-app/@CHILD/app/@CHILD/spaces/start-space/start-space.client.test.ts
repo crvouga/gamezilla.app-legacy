@@ -5,7 +5,7 @@ import {
   didSendToServer,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { chainUpdates } from "../../../@SHARED/architecture/app-client"
+import { andThen } from "../../../@SHARED/architecture/app-client"
 import { clickedStartSpaceButton, createCtx, init } from "../@TEST/client"
 import { Spaces } from "../spaces-core"
 
@@ -14,7 +14,7 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const started = await chainUpdates(
+    const started = await andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
     )
@@ -28,7 +28,7 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const started = await chainUpdates(
+    const started = await andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
     )
@@ -40,7 +40,7 @@ describe(import.meta.file, () => {
 
   it("should play sound after starting space", async () => {
     const ctx = createCtx()
-    const started = await chainUpdates(
+    const started = await andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, SpaceId.generate()),
     )
@@ -50,7 +50,7 @@ describe(import.meta.file, () => {
 
   it("should send events to the server like user started space", async () => {
     const ctx = createCtx()
-    const output = await chainUpdates(
+    const output = await andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, SpaceId.generate()),
     )

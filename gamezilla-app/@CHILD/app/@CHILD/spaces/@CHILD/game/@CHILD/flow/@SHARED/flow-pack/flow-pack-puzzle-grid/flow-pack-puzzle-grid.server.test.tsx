@@ -76,7 +76,7 @@ describe(import.meta.file, () => {
   it("should send back listed puzzles", async () => {
     const client = generateAuthClient()
     const deps = await createDeps(client)
-    const output = await AppServerModule.chainUpdates(
+    const output = await AppServerModule.andThen(
       initial(),
       userObversedGrid(deps, client, []),
     )

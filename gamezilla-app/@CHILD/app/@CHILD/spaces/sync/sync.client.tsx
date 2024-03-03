@@ -6,7 +6,7 @@ import { SpaceClientModule } from "../architecture/architecture"
 import { Space, Spaces } from "../spaces-core"
 
 const update: SpaceClientModule["update"] = (input) => {
-  return SpaceClientModule.chainUpdates(
+  return SpaceClientModule.andThen(
     { model: input.model },
     (model) => updateProfiles({ ...input, model }),
     (model) => updateSync({ ...input, model }),

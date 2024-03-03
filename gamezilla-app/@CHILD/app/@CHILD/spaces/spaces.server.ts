@@ -90,7 +90,7 @@ export const init: ServerModule["init"] = async () => {
 //
 
 export const update: ServerModule["update"] = async (input) => {
-  return AppServerModule.chainUpdates(
+  return AppServerModule.andThen(
     { model: input.model },
     (model) => updateProfileCache({ ...input, model }),
     (model) => updateFromMsg({ ...input, model }),
@@ -176,7 +176,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
     }
 
     case "sync": {
-      return AppServerModule.chainUpdates(
+      return AppServerModule.andThen(
         { model },
         (model) => {
           const merged = Spaces.mergeOne({
@@ -338,7 +338,7 @@ const updateChild: ServerModule["update"] = async (input) => {
 
   const merged = mergeUpdatedGame({ model, spaceId, gameUpdated })
 
-  return AppServerModule.chainUpdates(merged, (model) =>
+  return AppServerModule.andThen(merged, (model) =>
     updateFromManySpaceEvents({ model, ctx, msgEvts: merged.spaceEvents }),
   )
 }
@@ -418,7 +418,7 @@ const updateFromManySpaceEventsLoop = async (
     return updateFromManySpaceEventsLoop(ctx, spaceEventsRest, acc)
   }
 
-  const updated = await AppServerModule.chainUpdates(
+  const updated = await AppServerModule.andThen(
     acc,
     (model) => Spaces.updateFromSpaceEvent({ model, spaceEvent }),
     (model) => updateFromSpaceEvent({ model, spaceEvent, ctx }),

@@ -1,11 +1,16 @@
-import { APP_SOUND, playSound } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import {
+  APP_SOUND,
+  playSound,
+  pushRoute,
+  showToast,
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { SpaceClientModule } from "../architecture/architecture"
 import { SpaceEvent, Spaces } from "../spaces-core"
 import { Button } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { withId } from "../@SHARED/event"
 
 const update: SpaceClientModule["update"] = (input) => {
-  return SpaceClientModule.chainUpdates(
+  return SpaceClientModule.andThen(
     { model: input.model },
     (model) => updateFromSpaceEvent({ ...input, model }),
     (model) => updateLeaveSpaceButton({ ...input, model }),
@@ -31,7 +36,11 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = ({
       if (msgSpaceEvent.spaceId === currentUserSpaceId) {
         return {
           model,
-          msgCmd: [playSound(APP_SOUND.navBackward)],
+          msgCmd: [
+            playSound(APP_SOUND.navBackward),
+            pushRoute({ t: "spaces", c: { t: "space-list" } }),
+            showToast("Left space"),
+          ],
         }
       }
       return { model }

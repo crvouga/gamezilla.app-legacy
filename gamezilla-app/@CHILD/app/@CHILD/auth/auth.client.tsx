@@ -57,7 +57,7 @@ export const init: ClientModule["init"] = async (input) => {
 //
 
 export const update: ClientModule["update"] = (input) => {
-  return AppClientModule.chainUpdates(
+  return AppClientModule.andThen(
     { model: input.model },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromServer({ ...input, model }),

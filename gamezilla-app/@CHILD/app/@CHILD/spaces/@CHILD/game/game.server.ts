@@ -74,7 +74,7 @@ const init = (gameName: GameName): Module["init"] => {
 export const update: Module["update"] = async (input) => {
   const { modelSync, ctx, model } = input
 
-  return GameServerModule.chainUpdates({ model }, async (model) => {
+  return GameServerModule.andThen({ model }, async (model) => {
     switch (modelSync.t) {
       case "flow": {
         const updated = await FlowServer.update({

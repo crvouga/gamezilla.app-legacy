@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import { chainUpdates } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
+import { andThen } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { didPlaySound } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   clickedPackItem,
@@ -16,14 +16,14 @@ describe(import.meta.file, () => {
 
   it("should open pack builder when clicked pack list item", async () => {
     const pack = createFlowPack(ctx)
-    const output = await chainUpdates(initial, clickedPackItem(pack))
+    const output = await andThen(initial, clickedPackItem(pack))
     const modelSync = deriveModelSync(output)
     expect(modelSync.packBuilder?.pack.id === pack.id).toBeTrue()
   })
 
   it("should play sound when clicked pack list item", async () => {
     const pack = createFlowPack(ctx)
-    const output = await chainUpdates(initial, clickedPackItem(pack))
+    const output = await andThen(initial, clickedPackItem(pack))
     expect(didPlaySound(output)).toBeTrue()
   })
 })
