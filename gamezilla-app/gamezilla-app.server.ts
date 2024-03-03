@@ -9,11 +9,6 @@ import { Server } from "./@SHARED/server"
 const main = async () => {
   const server = Server(SERVER_IMPL)
 
-  server.serveSinglePageApp({
-    directory: "dist",
-    file: "index.html",
-  })
-
   const logger = LoggerConsole("app")
 
   const deps = await AppServer.getDeps({
