@@ -1,6 +1,9 @@
 import { describe, expect, it } from "bun:test"
 import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
-import { didShowErrorSm } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import {
+  didShowErrorSm,
+  didShowToast,
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   clickedJoinSpaceButton,
@@ -12,6 +15,19 @@ import {
 import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {
+  it("should show some toast after joining space", async () => {
+    const ctx = createCtx()
+    const spaceId = SpaceId.generate()
+
+    const joined = await AppClientModule.chainUpdates(
+      init(ctx),
+      userStartedSpace(ctx, UserId.generate(), spaceId),
+      clickedJoinSpaceButton(ctx, spaceId),
+    )
+
+    expect(didShowToast(joined)).toBeTrue()
+  })
+
   it("should join space when clicking join space button", async () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()

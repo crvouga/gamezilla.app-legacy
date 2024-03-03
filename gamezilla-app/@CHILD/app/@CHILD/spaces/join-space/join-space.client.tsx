@@ -2,6 +2,7 @@ import {
   APP_SOUND,
   playSound,
   showErrSm,
+  showToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Button, TopBar } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
@@ -81,7 +82,7 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
       if (msgSpaceEvent.spaceId === currentUserSpaceId) {
         return {
           model,
-          msgCmd: [playSound(APP_SOUND.navForward)],
+          msgCmd: [playSound(APP_SOUND.navForward), showToast("Joined space")],
         }
       }
 
