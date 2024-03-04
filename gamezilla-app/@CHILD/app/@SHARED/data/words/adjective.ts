@@ -2977,8 +2977,6 @@ export const adjectives = [
   "severed",
   "debilitating",
   "widowed",
-  "horny",
-  "sallow",
   "up-to-date",
   "self-contained",
   "carefree",
