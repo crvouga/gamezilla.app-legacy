@@ -340,7 +340,7 @@ const ViewLoginScreen: ClientModule["View"] = (input) => {
           />
 
           <div className="flex w-full items-center justify-center py-1">
-            <p className="text-base font-bold text-neutral-400">OR</p>
+            <p className="text-base font-bold text-neutral-300">OR</p>
           </div>
 
           <ContinueAsGuestClient.ViewContinueAsGuestButton {...input} />

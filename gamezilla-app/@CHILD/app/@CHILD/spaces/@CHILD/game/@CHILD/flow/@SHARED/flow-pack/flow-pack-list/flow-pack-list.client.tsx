@@ -170,13 +170,13 @@ const FlowPackListItem = ({
         <p className="overflow-hidden text-ellipsis whitespace-nowrap text-lg font-bold">
           {pack.name}
         </p>
-        <p className="text-sm text-secondary">
+        <p className="text-sm text-neutral-300">
           {TimeSpan.humanFriendlyString(
             Posix.diff(pack.lastUpdatedAt, ctx.now),
           )}
         </p>
       </div>
-      <p className="flex shrink-0 text-sm text-secondary">
+      <p className="flex shrink-0 text-sm text-neutral-300">
         {plural(pack.puzzleIds, "puzzle", "puzzles")}
       </p>
     </button>

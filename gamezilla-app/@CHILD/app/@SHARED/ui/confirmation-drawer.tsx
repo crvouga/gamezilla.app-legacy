@@ -27,7 +27,7 @@ export const ConfirmationDrawer = (props: Props) => {
       >
         {props.title}
       </p>
-      <p className="w-full p-4 text-left text-lg text-secondary">
+      <p className="w-full p-4 text-left text-lg text-neutral-300">
         {props.body}
       </p>
       <div className="flex w-full items-center gap-4 p-4">

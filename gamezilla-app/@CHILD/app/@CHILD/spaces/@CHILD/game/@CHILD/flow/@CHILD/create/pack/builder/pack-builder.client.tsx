@@ -406,7 +406,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
       <div className="flex h-full w-full flex-col">
         <div className="flex flex-1 flex-col gap-1 px-4 py-4">
           <p className="text-3xl font-bold">Level {screen.puzzleIndex + 1}</p>
-          <p className="text-xs text-secondary">{screen.puzzle.name}</p>
+          <p className="text-xs text-neutral-300">{screen.puzzle.name}</p>
         </div>
 
         <FlowVariantUIPlay.View

@@ -113,7 +113,7 @@ export const ViewStatusBar = (props: VsBotProps & { status: Status }) => {
     >
       <div
         key={statusToKey(props.status)}
-        className="absolute inset-0 flex items-center justify-center gap-1 text-secondary"
+        className="absolute inset-0 flex items-center justify-center gap-1 text-neutral-300"
       >
         <ViewStatusBarContent {...props} />
       </div>

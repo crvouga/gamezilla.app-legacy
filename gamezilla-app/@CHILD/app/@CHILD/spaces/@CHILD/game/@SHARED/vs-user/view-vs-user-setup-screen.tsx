@@ -143,7 +143,7 @@ const PlayerLabels = ({
   player: PlayerProp
 }) => {
   return (
-    <div className="col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm text-secondary">
+    <div className="col-span-3 grid w-full grid-cols-2 place-items-center text-center text-sm text-neutral-300">
       <p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center">
         {player.userId ? ctx.profiles[player.userId]?.username ?? "..." : "?"}
       </p>

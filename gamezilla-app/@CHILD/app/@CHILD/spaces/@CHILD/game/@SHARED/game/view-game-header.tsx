@@ -16,7 +16,7 @@ export const ViewGameHeader = ({
             "text-center",
             typeof title === "string"
               ? "text-3xl font-bold"
-              : "flex h-[36px] items-center justify-center font-bold text-secondary",
+              : "flex h-[36px] items-center justify-center font-bold text-neutral-300",
           )}
         >
           {title ?? "No game selected"}
@@ -37,7 +37,7 @@ const renderDefaultCoverArt = (props: { key: string; className: string }) => {
     <div
       key={props.key}
       className={cn(
-        "flex items-center justify-center overflow-hidden rounded-lg border border-white/20 bg-neutral-800 p-4 text-secondary",
+        "flex items-center justify-center overflow-hidden rounded-lg border border-white/20 bg-neutral-800 p-4 text-neutral-300",
         props.className,
       )}
     >

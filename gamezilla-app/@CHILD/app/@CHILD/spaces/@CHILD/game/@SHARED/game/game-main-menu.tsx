@@ -124,7 +124,7 @@ export const View = ({
                 <p className="text-2xl font-bold">{title}</p>
 
                 {description && (
-                  <p className="text-sm text-secondary">{description}</p>
+                  <p className="text-sm text-neutral-300">{description}</p>
                 )}
               </div>
             </button>

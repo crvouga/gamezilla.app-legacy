@@ -56,6 +56,36 @@ export type MsgToServer = {
   t: "remove-puzzle.clicked-remove-from-pack-button"
 }
 
+export type ReqRes =
+  | {
+      t: "remove-puzzle-from-pack"
+      req: {
+        userId: UserId
+        puzzleId: FlowPuzzleId
+        packId: FlowPackId
+      }
+      res: {
+        result: Result<string, null>
+        puzzleId: FlowPuzzleId
+        packId: FlowPackId
+        packPuzzleIndex: number
+      }
+    }
+  | {
+      t: "remove-puzzle-from-pack"
+      req: {
+        userId: UserId
+        puzzleId: FlowPuzzleId
+        packId: FlowPackId
+      }
+      res: {
+        result: Result<string, null>
+        puzzleId: FlowPuzzleId
+        packId: FlowPackId
+        packPuzzleIndex: number
+      }
+    }
+
 export type MsgToClient = {
   t: "remove-puzzle.removed"
   result: Result<string, null>

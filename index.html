@@ -10,18 +10,93 @@
     />
     <meta
       name="description"
-      content="gamezilla.app is a multiplayer gaming app. Play games online with your friends."
+      content="gamezilla.app is a multiplayer gaming app. Play games online with your friends. No download required. No sign up required. Just play. Play games like Flow, Chess, Battleship, and more."
     />
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
     <link rel="mask-icon" href="/mask-icon.png" color="#000000" />
     <meta name="theme-color" content="#000000" />
-    <link rel="stylesheet" href="./index.css" />
     <style>
+      @tailwind base;
+      @tailwind components;
+      @tailwind utilities;
+
       html {
         background-color: black;
         color: white;
       }
+
+      * {
+        touch-action: manipulation;
+      }
+
+      .transform-origin-center {
+        transform-origin: center;
+      }
+
+      /*
+
+      Remove arrows from number input
+      https://stackoverflow.com/questions/26024771/styling-an-input-type-number
+
+      */
+      input[type="number"] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+        margin: 0;
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      /*
+
+      Remove autofill background color
+
+      */
+
+      /* https://stackoverflow.com/questions/2781549/removing-input-background-colour-for-chrome-autocomplete */
+      input:-webkit-autofill,
+      input:-webkit-autofill:hover,
+      input:-webkit-autofill:focus,
+      input:-webkit-autofill:active {
+        transition: background-color 600000s 0s, color 600000s 0s;
+      }
+      input[data-autocompleted] {
+        background-color: transparent !important;
+      }
+
+      /*
+
+      Scrollbar
+
+      */
+
+      ::-webkit-scrollbar {
+        width: 0px;
+        background: #000;
+      }
+      ::-webkit-scrollbar-track {
+        background: #000;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #000;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+
+      * {
+        scrollbar-color: #212121 #000;
+        scrollbar-width: none;
+        scrollbar-gutter: stable both-edges;
+      }
+
+      /*
+
+*/
     </style>
   </head>
 

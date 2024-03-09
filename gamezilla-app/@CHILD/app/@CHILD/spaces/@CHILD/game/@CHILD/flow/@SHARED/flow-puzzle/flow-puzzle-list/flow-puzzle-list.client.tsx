@@ -182,7 +182,7 @@ const FlowPuzzleListItem = ({
         <p className="flex-nowrap overflow-hidden text-ellipsis whitespace-nowrap text-base font-bold">
           {puzzle.name}
         </p>
-        <p className="text-xs text-secondary">
+        <p className="text-xs text-neutral-300">
           {TimeSpan.humanFriendlyString(Posix.diff(puzzle.createdAt, now))}
         </p>
       </div>

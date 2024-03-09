@@ -77,7 +77,7 @@ const View: ClientModule["View"] = (input) => {
             <ViewSpaceHostChip />
           </div>
         </div>
-        <p className="text-lg font-bold text-secondary">
+        <p className="text-lg font-bold text-neutral-300">
           Browsing puzzles and packs
         </p>
       </div>

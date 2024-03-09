@@ -59,6 +59,7 @@
     "typescript": "latest",
     "vite": "^5.0.0",
     "vite-plugin-inferno": "^0.0.1",
+    "vite-plugin-prerender": "^1.0.8",
     "vite-tsconfig-paths": "^4.2.1"
   },
   "engines": {

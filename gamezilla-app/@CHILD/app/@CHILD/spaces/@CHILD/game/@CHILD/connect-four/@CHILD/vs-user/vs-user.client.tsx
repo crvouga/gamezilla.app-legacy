@@ -464,7 +464,7 @@ const Feedback = ({
 }) => {
   if (modelSync.type === "game-over") {
     return (
-      <p className="flex items-center justify-center text-secondary">
+      <p className="flex items-center justify-center text-neutral-300">
         Game Over
       </p>
     )
@@ -476,7 +476,7 @@ const Feedback = ({
 
   if (currentUserPlayerType !== turn) {
     return (
-      <p className="flex items-center justify-center gap-2 text-center text-secondary">
+      <p className="flex items-center justify-center gap-2 text-center text-neutral-300">
         <PlayerIcon className="h-4 w-4" playerType={turn} />
         Turn
       </p>
@@ -508,7 +508,7 @@ const PlayerSlot = ({
         alt=""
         src={ctx.profiles[modelSync.players[playerType]]?.avatarUrl}
       />
-      <p className="text-secondary">
+      <p className="text-neutral-300">
         {ctx.profiles[modelSync.players[playerType]]?.username ?? "..."}
       </p>
     </div>

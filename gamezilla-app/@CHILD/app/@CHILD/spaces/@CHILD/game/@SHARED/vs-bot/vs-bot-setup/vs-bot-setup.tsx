@@ -270,7 +270,7 @@ const PlayerLabels = ({
 }) => {
   return (
     <div className="col-span-3 grid grid-cols-2 place-items-center">
-      <p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm text-secondary">
+      <p className="w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm text-neutral-300">
         {player.t === "bot"
           ? player.botLabel
           : player.userId
@@ -278,7 +278,9 @@ const PlayerLabels = ({
           : "?"}
       </p>
 
-      <p className="text-center text-sm text-secondary">{player.playerLabel}</p>
+      <p className="text-center text-sm text-neutral-300">
+        {player.playerLabel}
+      </p>
     </div>
   )
 }

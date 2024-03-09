@@ -24,7 +24,7 @@ export const Tabs = <TTab extends string>({
                 index !== tabs.length - 1 && "border-r-2 border-r-neutral-700",
                 selected === tab
                   ? "border-b-blue-500 text-blue-500"
-                  : "border-b-neutral-700 text-neutral-600",
+                  : "border-b-neutral-700 text-neutral-300",
               )}
             >
               {labels[tab]}

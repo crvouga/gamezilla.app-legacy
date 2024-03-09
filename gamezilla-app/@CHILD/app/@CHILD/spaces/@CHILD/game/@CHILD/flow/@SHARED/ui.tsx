@@ -15,7 +15,7 @@ export const ViewProfileCard = ({
         <p>{profile?.username ?? "..."}</p>
 
         {typeof subtitle === "string" && (
-          <p className="text-sm text-secondary">{subtitle}</p>
+          <p className="text-sm text-neutral-300">{subtitle}</p>
         )}
       </div>
     </div>

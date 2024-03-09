@@ -2,12 +2,11 @@ export const str = (value: unknown): value is string => {
   return typeof value === "string"
 }
 
-export const literal = <T extends string>(
-  value: unknown,
-  literal: T,
-): value is T => {
-  return value === literal
-}
+export const literal =
+  <T extends string>(literal: T) =>
+  (value: unknown): value is T => {
+    return value === literal
+  }
 
 export const nullish = (value: unknown): value is null | undefined => {
   return value === null || value === undefined

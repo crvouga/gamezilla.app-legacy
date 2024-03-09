@@ -13,7 +13,6 @@ import * as FlowGridDimensions from "./flow-grid-dimensions"
 export type Model = Flow.Model &
   FlowGridDimensions.Model & {
     t: "flow-grid"
-    FlowGrid: true
     positions: {
       [nodeId: Flow.NodeId]: Position
     }
@@ -56,7 +55,6 @@ export const init = (input: {
   let model: Model = {
     ...Flow.init,
     t: "flow-grid",
-    FlowGrid: true,
     width: input.dimensions.width,
     height: input.dimensions.height,
     positions: {},
