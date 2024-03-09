@@ -9,7 +9,7 @@ import config from "../config.json"
 //
 //
 
-export const IS_PROD = import.meta.env?.PROD
+export const IS_PROD = Boolean(import.meta.env?.PROD)
 
 //
 //

@@ -1,4 +1,4 @@
-import { SERVER_IMPL, SERVER_PORT } from "gamezilla-app/public-config"
+import { IS_PROD, SERVER_IMPL, SERVER_PORT } from "gamezilla-app/public-config"
 import { Posix, Program } from "gamezilla-app/@SHARED/core"
 import { LoggerConsole } from "./@CHILD/app/@SHARED/server/logger"
 import * as AppServer from "./@CHILD/app/app.server"
@@ -28,7 +28,9 @@ const main = async () => {
 
   await server.start(SERVER_PORT)
 
-  logger.info(`Server started. Listening on port ${SERVER_PORT}`)
+  logger.info(
+    `Server started. Listening on port ${SERVER_PORT}. IS_PROD=${IS_PROD}`,
+  )
 }
 
 main()
