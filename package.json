@@ -24,7 +24,7 @@
     "viz-bundle": "bun x vite-bundle-visualizer",
     "cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla-app/gamezilla-app.client.tsx",
     "check-imports": "bun scripts/check-imports.ts",
-    "cloc": "bun x cloc gamezilla",
+    "cloc": "bun x cloc gamezilla-app",
     "pretty": "bun x prettier --write ."
   },
   "dependencies": {
