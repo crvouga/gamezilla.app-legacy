@@ -79,14 +79,18 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
         ctx.currentUserId,
       )
 
-      if (msgSpaceEvent.spaceId === currentUserSpaceId) {
-        return {
-          model,
-          msgCmd: [playSound(APP_SOUND.navForward), showToast("Joined space")],
-        }
+      if (msgSpaceEvent.spaceId !== currentUserSpaceId) {
+        return { model }
       }
 
-      return { model }
+      if (msgSpaceEvent.userId !== ctx.currentUserId) {
+        return { model }
+      }
+
+      return {
+        model,
+        msgCmd: [playSound(APP_SOUND.navForward), showToast("Joined space")],
+      }
     }
 
     default: {
