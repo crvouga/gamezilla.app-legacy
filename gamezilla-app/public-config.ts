@@ -9,7 +9,7 @@ import config from "../config.json"
 //
 //
 
-export const IS_PROD = Boolean(import.meta.env?.PROD)
+export const IS_PROD = process.env["NODE_ENV"] === "production"
 
 //
 //
@@ -67,9 +67,7 @@ export const SERVER_URL = IS_PROD
   ? SERVER_URL_NGROK
   : SERVER_URL_LOCAL
 
-export const SERVER_PORT = Number(
-  import.meta.env?.["PORT"] ?? SERVER_PORT_LOCAL,
-)
+export const SERVER_PORT = Number(process.env?.["PORT"] ?? SERVER_PORT_LOCAL)
 
 //
 //
@@ -80,10 +78,6 @@ export const SERVER_PORT = Number(
 //
 
 export const CODEBASE_VERSION_ID = config["codebase_version_id"]
-
-if (!CODEBASE_VERSION_ID) {
-  throw new Error("CODEBASE_VERSION_ID not set")
-}
 
 //
 //
