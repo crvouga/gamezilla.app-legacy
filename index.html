@@ -16,88 +16,12 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
     <link rel="mask-icon" href="/mask-icon.png" color="#000000" />
     <meta name="theme-color" content="#000000" />
-    <style>
-      @tailwind base;
-      @tailwind components;
-      @tailwind utilities;
-
-      * {
-        touch-action: manipulation;
-      }
-
-      .transform-origin-center {
-        transform-origin: center;
-      }
-
-      /*
-
-      Remove arrows from number input
-      https://stackoverflow.com/questions/26024771/styling-an-input-type-number
-
-      */
-      input[type="number"] {
-        -moz-appearance: textfield;
-        appearance: textfield;
-        margin: 0;
-      }
-      input[type="number"]::-webkit-inner-spin-button,
-      input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
-
-      /*
-
-      Remove autofill background color
-
-      */
-
-      /* https://stackoverflow.com/questions/2781549/removing-input-background-colour-for-chrome-autocomplete */
-      input:-webkit-autofill,
-      input:-webkit-autofill:hover,
-      input:-webkit-autofill:focus,
-      input:-webkit-autofill:active {
-        transition: background-color 600000s 0s, color 600000s 0s;
-      }
-      input[data-autocompleted] {
-        background-color: transparent !important;
-      }
-
-      /*
-
-      Scrollbar
-
-      */
-
-      ::-webkit-scrollbar {
-        width: 0px;
-        background: #000;
-      }
-      ::-webkit-scrollbar-track {
-        background: #000;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #000;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #555;
-      }
-
-      * {
-        scrollbar-color: #212121 #000;
-        scrollbar-width: none;
-        scrollbar-gutter: stable both-edges;
-      }
-
-      /*
-
-*/
-    </style>
+    <link rel="stylesheet" href="./index.css" />
   </head>
 
   <body>
     <div id="root"></div>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>Downloading...</noscript>
     <script
       type="module"
       src="./gamezilla-app/gamezilla-app.client.tsx"
