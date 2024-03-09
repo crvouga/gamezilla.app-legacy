@@ -9,7 +9,7 @@ import { Render } from "./@SHARED/vdom/render"
 import { attachDebuggerBrowserExtension } from "./@SHARED/core/debug"
 
 const main = async () => {
-  const deps = AppClient.getDeps()
+  const deps = await AppClient.getDeps()
 
   const program = Program.create({
     ctx: () => ({ now: Posix.now(), location: Browser.location() }),

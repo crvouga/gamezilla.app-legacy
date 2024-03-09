@@ -5,8 +5,6 @@ import inferno from "vite-plugin-inferno"
 import tsconfigPaths from "vite-tsconfig-paths"
 // @ts-ignore
 import { VDOM_IMPL } from "./gamezilla-app/public-config"
-import vitePrerender from "vite-plugin-prerender"
-import path from "path"
 
 const vDomPlugin = () => {
   switch (VDOM_IMPL) {
@@ -27,8 +25,5 @@ const vDomPlugin = () => {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [tsconfigPaths(), vDomPlugin()],
-  server: {
-    hmr: false,
-  },
-  define: { "process.env": process.env },
+  // define: { "process.env": process.env },
 })

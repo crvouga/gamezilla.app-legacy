@@ -9,7 +9,7 @@ import config from "../config.json"
 //
 //
 
-export const IS_PROD = process.env["NODE_ENV"] === "production"
+export const IS_PROD = import.meta.env?.["NODE_ENV"] === "production"
 
 //
 //
@@ -67,11 +67,9 @@ export const SERVER_URL = IS_PROD
   ? SERVER_URL_NGROK
   : SERVER_URL_LOCAL
 
-export const SERVER_PORT = Number(process.env["PORT"] ?? SERVER_PORT_LOCAL)
-
-if (!SERVER_URL) {
-  throw new Error("SERVER_URL not set")
-}
+export const SERVER_PORT = Number(
+  import.meta.env?.["PORT"] ?? SERVER_PORT_LOCAL,
+)
 
 //
 //

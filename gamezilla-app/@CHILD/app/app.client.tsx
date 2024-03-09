@@ -54,8 +54,8 @@ export type Deps = {
   }>
 }
 
-export const getDeps = (): Deps => {
-  const transport = ClientTransport<MsgToServer, MsgToClient>({
+export const getDeps = async (): Promise<Deps> => {
+  const transport = await ClientTransport<MsgToServer, MsgToClient>({
     impl:
       SERVER_IMPL === "node"
         ? {

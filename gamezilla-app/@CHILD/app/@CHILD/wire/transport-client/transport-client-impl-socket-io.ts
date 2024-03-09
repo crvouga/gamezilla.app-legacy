@@ -1,4 +1,3 @@
-import { io } from "socket.io-client"
 import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core"
 import {
   ClientTransportSocketIOImpl,
@@ -8,16 +7,20 @@ import {
 
 const SESSION_ID_KEY = "gamezilla-session-id"
 
-export const ClientTransportSocketIO = <MsgToServer, MsgToClient>({
+export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
   codebaseVersionId,
   impl,
 }: {
   codebaseVersionId: string
   impl: ClientTransportSocketIOImpl
-}): IClientTransport<{
-  MsgToServer: MsgToServer
-  MsgToClient: MsgToClient
-}> => {
+}): Promise<
+  IClientTransport<{
+    MsgToServer: MsgToServer
+    MsgToClient: MsgToClient
+  }>
+> => {
+  const { io } = await import("socket.io-client")
+
   const transport = initClientTransport<MsgToServer, MsgToClient>()
 
   const start = async () => {
