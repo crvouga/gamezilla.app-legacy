@@ -31,6 +31,7 @@ import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translato
 
 export const createCtx = (): ClientCtx => {
   return {
+    navigatorLanguage: "en",
     t: getTranslator("en"),
     currentRoute: {
       t: "spaces",
@@ -60,6 +61,7 @@ export const createFixture = () => {
   const userC = randomProfile()
 
   const ctx: ClientCtx = {
+    navigatorLanguage: "en",
     t: getTranslator("en"),
     currentRoute: {
       t: "spaces",

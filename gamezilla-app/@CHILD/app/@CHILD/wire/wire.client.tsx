@@ -16,16 +16,9 @@ import { ModelClient, MsgClient, MsgToClient } from "./wire.core"
 //
 //
 
-export const init = ({
-  stored,
-}: {
-  stored: ModelClient | null
+export const init = (_input: {
+  stored: Record<string, unknown> | null
 }): { model: ModelClient } => {
-  if (stored) {
-    return {
-      model: stored,
-    }
-  }
   return {
     model: {
       state: {

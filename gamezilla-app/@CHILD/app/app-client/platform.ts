@@ -5,18 +5,11 @@ export type Model = {
   documentVisibilityState: DocumentVisibilityState
 }
 
-export const init = ({
-  stored,
-}: {
-  stored: Model | null
+export const init = (_input: {
+  stored: Record<string, unknown> | null
 }): {
   model: Model
 } => {
-  if (stored) {
-    return {
-      model: stored,
-    }
-  }
   return {
     model: {
       documentVisibilityState: document.visibilityState,

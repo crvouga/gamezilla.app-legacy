@@ -14,6 +14,7 @@ const currentSpaceId = "test-space-id" as SpaceId
 
 export const testSpaceClientCtx = (): SpaceClientCtx => {
   return {
+    navigatorLanguage: "en",
     t: getTranslator("en"),
     currentRoute: {
       t: "spaces",

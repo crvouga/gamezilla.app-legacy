@@ -28,6 +28,7 @@ import {
   MsgToServer,
   TranslationLoading,
 } from "./lang.core"
+import { LocalStorage } from "gamezilla-app/@SHARED/core"
 
 //
 //
@@ -57,10 +58,18 @@ type Module = AppClientModule<{
 //
 //
 
-export const init: Module["init"] = () => {
+const LANG_STORAGE_KEY = "lang"
+
+export const init: Module["init"] = ({ stored, ctx }) => {
+  const storedLang = stored?.[LANG_STORAGE_KEY]
+
+  const initialLang = LanguageCodeISO_639_1.is(storedLang)
+    ? storedLang
+    : ctx.navigatorLanguage
+
   return {
     model: {
-      lang: "en",
+      lang: initialLang,
       loading: {},
     },
   }
@@ -124,18 +133,22 @@ export const update: Module["update"] = ({ model, ctx, msg }) => {
         ],
       }
     }
+
     case "choose-lang.clicked-done": {
       return {
         model,
         msgCmd: [playSound(APP_SOUND.navBackwardMin), back()],
       }
     }
+
     case "choose-lang.clicked-lang": {
       return {
         model: { ...model, lang: msg.lang },
         msgCmd: [playSound(APP_SOUND.tap)],
+        eff: LocalStorage.put(LANG_STORAGE_KEY, msg.lang),
       }
     }
+
     default: {
       return { model }
     }

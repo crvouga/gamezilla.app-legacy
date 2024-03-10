@@ -25,7 +25,6 @@ export const init = ({
   location,
 }: {
   location: Browser.Location
-  stored: Model | null
 }): {
   model: Model
   eff?: Eff

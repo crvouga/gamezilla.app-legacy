@@ -55,6 +55,7 @@ export type Deps = {
     MsgToServer: MsgToServer
     MsgToClient: MsgToClient
   }>
+  stored: Record<string, unknown>
 }
 
 export const getDeps = async (): Promise<Deps> => {
@@ -72,8 +73,25 @@ export const getDeps = async (): Promise<Deps> => {
           },
     codebaseVersionId: CODEBASE_VERSION_ID,
   })
+
+  const stored: Record<string, unknown> = {}
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (!key) {
+      continue
+    }
+    const value = localStorage.getItem(key)
+    try {
+      stored[key] = value ? JSON.parse(value) : value
+    } catch (error) {
+      stored[key] = value
+    }
+  }
+
   return {
     transport,
+    stored,
   }
 }
 
@@ -90,14 +108,14 @@ export const getDeps = async (): Promise<Deps> => {
 type Ctx = {
   now: Posix
   location: Browser.Location
-  navigatorLang: LanguageCodeISO_639_1
+  navigatorLanguage: LanguageCodeISO_639_1
 }
 
 export const getCtx = (): Ctx => {
   return {
     now: Posix.now(),
     location: Browser.location(),
-    navigatorLang: LanguageCodeISO_639_1.getLangFromNavigator() ?? "en",
+    navigatorLanguage: LanguageCodeISO_639_1.getLangFromNavigator() ?? "en",
   }
 }
 
@@ -110,12 +128,11 @@ export const init = async (input: {
 }> => {
   const routing = Routing.init({
     location: input.ctx.location,
-    stored: null,
   })
 
   const ctx: ClientCtx | AnonymousClientCtx = {
     ...input.ctx,
-    t: getTranslator(input.ctx.navigatorLang),
+    t: getTranslator(input.ctx.navigatorLanguage),
     currentRoute: routing.model.currentRoute,
     currentUserId: null,
     documentVisibilityState: "visible",
@@ -124,44 +141,44 @@ export const init = async (input: {
 
   const lang = await LangClient.init({
     ctx,
-    stored: null,
+    stored: input.deps.stored,
   })
 
   const toast = await Toast.init({
-    stored: null,
+    stored: input.deps.stored,
     ctx,
   })
 
   const wire = await Wire.init({
-    stored: null,
+    stored: input.deps.stored,
   })
 
   const auth = await AuthClient.init({
-    stored: null,
+    stored: input.deps.stored,
     ctx,
   })
 
   const space = await SpaceClient.init({
     ctx,
-    stored: null,
+    stored: input.deps.stored,
   })
 
   const profile = await ProfileClient.init({
     ctx: { ...ctx, viewBottomBar: null },
-    stored: null,
+    stored: input.deps.stored,
   })
 
   const sound = await Sound.init({
     ctx: null,
-    stored: null,
+    stored: input.deps.stored,
   })
 
   const platform = await Platform.init({
-    stored: null,
+    stored: input.deps.stored,
   })
 
   const statusBar = await StatusBar.init({
-    stored: null,
+    stored: input.deps.stored,
   })
 
   const initialModel: ModelClient = {

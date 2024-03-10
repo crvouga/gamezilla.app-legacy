@@ -15,8 +15,8 @@ const ALL = [
 
 export type LanguageCodeISO_639_1 = (typeof ALL)[number]
 
-const is = (code: string): code is LanguageCodeISO_639_1 =>
-  ALL.includes(code as LanguageCodeISO_639_1)
+const is = (code: unknown): code is LanguageCodeISO_639_1 =>
+  typeof code === "string" && ALL.includes(code as LanguageCodeISO_639_1)
 
 const getLangFromNavigator = (): LanguageCodeISO_639_1 | null => {
   const lang = navigator.language.split("-")[0]
