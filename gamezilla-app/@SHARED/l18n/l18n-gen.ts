@@ -118,6 +118,19 @@ export const translations: Text = ${translationsForLanguageString};`
   )
 }
 
+async function generateImportFile() {
+  const content = `${DISCLAIMER}
+import type { Text } from './text';
+import type { LanguageCodeISO_639_1 } from '../lang-code-iso-639-1';  
+
+export const getTranslations = async (languageCode: LanguageCodeISO_639_1): Promise<Text> => {
+  const translations = await import(\`./translations/\${languageCode}.ts\`);
+  return translations.translations;
+}`
+  await fs.writeFile(path.join(OUTPUT_DIR, "index.ts"), content)
+  console.log(`Generated index file in: ${OUTPUT_DIR}`)
+}
+
 async function runPrettierOnDirectory(directoryPath: string) {
   return new Promise((resolve, reject) => {
     const command = `npx prettier --loglevel silent --write "${path.join(
@@ -131,8 +144,7 @@ async function runPrettierOnDirectory(directoryPath: string) {
         reject(error)
         return
       }
-      console.log("Prettier has formatted the files in:", directoryPath)
-      console.log(stdout)
+      console.log("Formatted generated files with Prettier")
       resolve(stdout)
     })
   })
@@ -143,8 +155,9 @@ async function main() {
     dir: DIR_PATH,
     targetFileSuffix: TARGET_FILE_SUFFIX,
   })
-  await generateTextTypeFile(files)
   await generateLanguageFiles(files)
+  await generateTextTypeFile(files)
+  await generateImportFile()
   await runPrettierOnDirectory(OUTPUT_DIR)
 }
 
