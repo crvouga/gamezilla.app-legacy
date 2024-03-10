@@ -1,24 +1,4 @@
-export const LANGUAGE_CODE_ISO_639_1 = [
-  "en",
-  "es",
-  "fr",
-  "de",
-  "it",
-  "ja",
-  "ko",
-  "pt",
-  "ru",
-  "zh",
-  "hi",
-  "ar",
-] as const
-
-export type LanguageCodeISO_639_1 = (typeof LANGUAGE_CODE_ISO_639_1)[number]
-
-export const isLanguageCodeISO_639_1 = (
-  code: string,
-): code is LanguageCodeISO_639_1 =>
-  LANGUAGE_CODE_ISO_639_1.includes(code as LanguageCodeISO_639_1)
+import { LanguageCodeISO_639_1 } from "./lang-code-iso-639-1"
 
 export type TranslationText = {
   [key: string]: string | ((...args: any[]) => string)
