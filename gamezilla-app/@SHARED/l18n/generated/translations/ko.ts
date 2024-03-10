@@ -28,5 +28,8 @@ export const translations: Text = {
     username
       ? `${username}\uAC00 \uACF5\uAC04\uC744 \uC885\uB8CC\uD588\uC2B5\uB2C8\uB2E4`
       : "\uACF5\uAC04 \uC885\uB8CC",
-  Language: "언어",
+  "lang.language": "언어",
+  "lang.choose-language": "언어 선택",
+  "lang.done": "완료",
+  "lang.loaded-translations": "번역이 로드되었습니다",
 }

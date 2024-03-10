@@ -1,6 +1,7 @@
 import { Eff } from "gamezilla-app/@SHARED/core"
-import { Drawer } from "../@SHARED/ui"
 import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { Drawer } from "../@SHARED/ui"
+import { StatusBarCmd } from "../@SHARED/client"
 
 export type Model = {
   isDrawerOpen: boolean
@@ -28,16 +29,13 @@ export type Msg =
 
 export const update = (input: {
   model: Model
-  msg: Msg | null
+  msg?: Msg | null
+  msgCmd?: StatusBarCmd | null
 }): {
   model: Model
   eff?: Eff<Msg>
 } => {
-  if (!input.msg) {
-    return { model: input.model }
-  }
-
-  switch (input.msg.t) {
+  switch (input.msg?.t) {
     case "clicked-status-bar": {
       return { model: { ...input.model, isDrawerOpen: true } }
     }
@@ -46,6 +44,18 @@ export const update = (input: {
       return { model: { ...input.model, isDrawerOpen: false } }
     }
   }
+
+  switch (input.msgCmd?.t) {
+    case "status-bar": {
+      switch (input.msgCmd.c.t) {
+        case "close": {
+          return { model: { ...input.model, isDrawerOpen: false } }
+        }
+      }
+    }
+  }
+
+  return { model: input.model }
 }
 
 export const View = ({

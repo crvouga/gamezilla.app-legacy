@@ -1,44 +1,83 @@
 import { Translations } from "gamezilla-app/@SHARED/l18n"
 
 export type Text = {
-  Language: string
+  "lang.language": string
+  "lang.choose-language": string
+  "lang.done": string
+  "lang.loaded-translations": string
 }
 
 export const translations: Translations<Text> = {
   en: {
-    Language: "Language",
+    "lang.language": "Language",
+    "lang.choose-language": "Choose Language",
+    "lang.done": "Done",
+    "lang.loaded-translations": "Loaded translations",
   },
   ar: {
-    Language: "اللغة",
+    "lang.language": "اللغة",
+    "lang.choose-language": "اختر اللغة",
+    "lang.done": "تم",
+    "lang.loaded-translations": "تم تحميل الترجمات",
   },
   de: {
-    Language: "Sprache",
+    "lang.language": "Sprache",
+    "lang.choose-language": "Sprache wählen",
+    "lang.done": "Fertig",
+    "lang.loaded-translations": "Übersetzungen geladen",
   },
   es: {
-    Language: "Idioma",
+    "lang.language": "Idioma",
+    "lang.choose-language": "Elegir idioma",
+    "lang.done": "Hecho",
+    "lang.loaded-translations": "Traducciones cargadas",
   },
   fr: {
-    Language: "Langue",
+    "lang.language": "Langue",
+    "lang.choose-language": "Choisir la langue",
+    "lang.done": "Terminé",
+    "lang.loaded-translations": "Traductions chargées",
   },
   hi: {
-    Language: "भाषा",
+    "lang.language": "भाषा",
+    "lang.choose-language": "भाषा चुनें",
+    "lang.done": "किया",
+    "lang.loaded-translations": "लोड की गई अनुवाद",
   },
   it: {
-    Language: "Lingua",
+    "lang.language": "Lingua",
+    "lang.choose-language": "Scegli la lingua",
+    "lang.done": "Fatto",
+    "lang.loaded-translations": "Traduzioni caricate",
   },
   ja: {
-    Language: "言語",
+    "lang.language": "言語",
+    "lang.choose-language": "言語を選択",
+    "lang.done": "完了",
+    "lang.loaded-translations": "翻訳が読み込まれました",
   },
   ko: {
-    Language: "언어",
+    "lang.language": "언어",
+    "lang.choose-language": "언어 선택",
+    "lang.done": "완료",
+    "lang.loaded-translations": "번역이 로드되었습니다",
   },
   pt: {
-    Language: "Língua",
+    "lang.language": "Língua",
+    "lang.choose-language": "Escolha o idioma",
+    "lang.done": "Feito",
+    "lang.loaded-translations": "Traduções carregadas",
   },
   ru: {
-    Language: "Язык",
+    "lang.language": "Язык",
+    "lang.choose-language": "Выберите",
+    "lang.done": "Готово",
+    "lang.loaded-translations": "Загруженные переводы",
   },
   zh: {
-    Language: "语言",
+    "lang.language": "语言",
+    "lang.choose-language": "选择语言",
+    "lang.done": "完成",
+    "lang.loaded-translations": "已加载翻译",
   },
 }

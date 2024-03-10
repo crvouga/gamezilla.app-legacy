@@ -3,7 +3,9 @@ import { TranslatorMsg } from "../../@SHARED/client/translator"
 
 export type ModelClient = {
   lang: LanguageCodeISO_639_1
-  isLoadingTranslator: boolean
+  loading: {
+    [lang in LanguageCodeISO_639_1]?: boolean
+  }
 }
 
 export type ModelServer = {}
@@ -14,4 +16,8 @@ export type MsgToClient = { t: "noop" }
 
 export type MsgServer = { t: "noop" }
 
-export type MsgClient = TranslatorMsg
+export type MsgClient =
+  | TranslatorMsg
+  | { t: "clicked-change-lang" }
+  | { t: "choose-lang.clicked-done" }
+  | { t: "choose-lang.clicked-lang"; lang: LanguageCodeISO_639_1 }

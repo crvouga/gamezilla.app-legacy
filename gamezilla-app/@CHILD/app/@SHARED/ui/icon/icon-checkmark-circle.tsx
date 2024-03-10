@@ -16,3 +16,13 @@ export const IconCheckmarkCircle = (props: IconProps) => {
     </svg>
   )
 }
+
+export const IconCheckmarkCircleEmpty = (props: IconProps) => {
+  return (
+    <div {...props}>
+      <div className="p-0.5">
+        <div className="aspect-square h-full w-full rounded-full border border-current"></div>
+      </div>
+    </div>
+  )
+}

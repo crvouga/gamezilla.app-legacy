@@ -5,7 +5,22 @@ import {
   loadTranslator,
 } from "gamezilla-app/@SHARED/l18n/generated"
 
-let t: Translator | null = null
+const state: {
+  lastLoaded: LanguageCodeISO_639_1 | null
+  translators: {
+    [lang in LanguageCodeISO_639_1]?: {
+      t: Translator
+      lang: LanguageCodeISO_639_1
+    }
+  }
+  loading: {
+    [lang in LanguageCodeISO_639_1]?: boolean
+  }
+} = {
+  lastLoaded: null,
+  translators: {},
+  loading: {},
+}
 
 export type TranslatorMsg =
   | {
@@ -17,18 +32,60 @@ export type TranslatorMsg =
       lang: LanguageCodeISO_639_1
     }
 
-export const translatorSub = PubSub.create<TranslatorMsg>()
+export const translatorSubscriptions = PubSub.create<TranslatorMsg>()
+
+translatorSubscriptions.subscribe((msg) => {
+  switch (msg.t) {
+    case "translator.loaded": {
+      state.loading[msg.lang] = false
+      break
+    }
+    case "translator.loading": {
+      state.loading[msg.lang] = true
+      break
+    }
+  }
+})
+
+const noop: Translator = () => "..."
 
 export const getTranslator = (
   languageCode: LanguageCodeISO_639_1,
 ): Translator => {
-  if (!t) {
-    translatorSub.publish({ t: "translator.loading", lang: languageCode })
-    loadTranslator(languageCode).then((loaded) => {
-      t = loaded
-      translatorSub.publish({ t: "translator.loaded", lang: languageCode })
-    })
-    return () => ""
+  const translator = state.translators[languageCode]
+
+  if (translator && translator.lang === languageCode) {
+    state.lastLoaded = languageCode
+    return translator.t
   }
-  return t
+
+  if (state.loading[languageCode]) {
+    const lastLoadedTranslator = state.lastLoaded
+      ? state.translators[state.lastLoaded]
+      : null
+
+    return lastLoadedTranslator?.t ?? noop
+  }
+
+  translatorSubscriptions.publish({
+    t: "translator.loading",
+    lang: languageCode,
+  })
+
+  Promise.all([
+    loadTranslator(languageCode),
+    new Promise((r) => setTimeout(r, 3000)),
+  ]).then(([loaded]) => {
+    state.translators[languageCode] = {
+      t: loaded,
+      lang: languageCode,
+    }
+
+    translatorSubscriptions.publish({
+      t: "translator.loaded",
+      lang: languageCode,
+    })
+  })
+
+  return noop
 }

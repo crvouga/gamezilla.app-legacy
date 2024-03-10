@@ -378,6 +378,7 @@ const updateChild = async ({
   const statusBar = await StatusBar.update({
     model: model.statusBar,
     msg: msg?.t === "status-bar" ? msg.c : null,
+    msgCmd: msgCmd?.t === "status-bar" ? msgCmd : null,
   })
 
   const toast = await Toast.update({
@@ -495,6 +496,10 @@ export const subscriptions = async (input: {
     Sub.tag("platform", Platform.subscriptions),
     Sub.tag("routing", Routing.subscriptions),
     Sub.tag(
+      "lang",
+      await LangClient.subscriptions({ ctx, model: input.model.lang }),
+    ),
+    Sub.tag(
       "toast",
       await Toast.subscriptions({ ctx, model: input.model.toast }),
     ),
@@ -604,10 +609,6 @@ const ViewMain = ({
   model: ModelClient
   dispatch: (msg: MsgClient) => void
 }) => {
-  if (model.lang.isLoadingTranslator) {
-    return <LoadingState />
-  }
-
   switch (model.auth.currentUser.t) {
     case "logged-in": {
       return (
@@ -667,9 +668,23 @@ const ViewLoggedOut = ({
         />
       )
     }
-    default: {
-      return <LoadingState />
+
+    case "lang": {
+      return (
+        <LangClient.View
+          ctx={ctx}
+          model={model.lang}
+          dispatch={(m) => dispatch({ t: "lang", c: m })}
+        />
+      )
     }
+
+    case "logout":
+    case "profile":
+    case "search":
+    case "spaces":
+    case "chat":
+      return <LoadingState />
   }
 }
 
@@ -731,6 +746,16 @@ const ViewLoggedIn = ({
 
     case "auth": {
       return <LoadingState />
+    }
+
+    case "lang": {
+      return (
+        <LangClient.View
+          ctx={ctx}
+          model={model.lang}
+          dispatch={(m) => dispatch({ t: "lang", c: m })}
+        />
+      )
     }
   }
 }

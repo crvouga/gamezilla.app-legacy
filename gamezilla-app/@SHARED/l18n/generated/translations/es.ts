@@ -24,5 +24,8 @@ export const translations: Text = {
   "spaces.current-user-ended-space": "Espacio terminado",
   "spaces.other-user-ended-space": (username) =>
     username ? `${username} termin\xF3 el espacio` : "Espacio terminado",
-  Language: "Idioma",
+  "lang.language": "Idioma",
+  "lang.choose-language": "Elegir idioma",
+  "lang.done": "Hecho",
+  "lang.loaded-translations": "Traducciones cargadas",
 }

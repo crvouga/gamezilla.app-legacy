@@ -22,6 +22,7 @@ export type AppRoute =
   | { t: "spaces"; c: RouteGameSpace }
   | { t: "chat"; c: RouteChat }
   | { t: "search" }
+  | { t: "lang"; c: RouteLang }
 
 const encode = (route: AppRoute): string => {
   switch (route.t) {
@@ -35,6 +36,8 @@ const encode = (route: AppRoute): string => {
       return encodeSpace(route.c)
     case "chat":
       return encodeChat(route.c)
+    case "lang":
+      return encodeLang(route.c)
     case "search":
       return "/search"
   }
@@ -74,6 +77,35 @@ const decode = (pathname: string): AppRoute | null => {
   }
   if (pathname.startsWith("/logout")) {
     return { t: "logout" }
+  }
+  if (pathname.startsWith("/lang")) {
+    const lang = decodeLang(pathname)
+    if (lang === null) {
+      return null
+    }
+    return { t: "lang", c: lang }
+  }
+  return null
+}
+
+//
+//
+// Lang
+//
+//
+
+type RouteLang = { t: "choose" }
+
+export const encodeLang = (route: RouteLang): string => {
+  switch (route.t) {
+    case "choose":
+      return "/lang/choose"
+  }
+}
+
+export const decodeLang = (pathname: string): RouteLang | null => {
+  if (pathname === "/lang/choose") {
+    return { t: "choose" }
   }
   return null
 }

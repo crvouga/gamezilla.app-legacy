@@ -28,5 +28,8 @@ export const translations: Text = {
     username
       ? `${username}\u7ED3\u675F\u7A7A\u95F4`
       : "\u7ED3\u675F\u7A7A\u95F4",
-  Language: "语言",
+  "lang.language": "语言",
+  "lang.choose-language": "选择语言",
+  "lang.done": "完成",
+  "lang.loaded-translations": "已加载翻译",
 }

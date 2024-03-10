@@ -1,11 +1,27 @@
 import {
+  APP_SOUND,
   AnonymousClientCtx,
   ClientCmd,
   ClientEvent,
+  back,
+  closeStatusBar,
+  playSound,
+  pushRoute,
+  showToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n"
+import { translations } from "gamezilla-app/@SHARED/l18n/lang-code-iso-639-1/l18n"
 import { AppClientModule } from "../../@SHARED/architecture/app-client"
-import { translatorSub } from "../../@SHARED/client/translator"
-import { IconLanguage, ListItemButton } from "../../@SHARED/ui"
+import { translatorSubscriptions } from "../../@SHARED/client/translator"
+import {
+  Button,
+  IconCheckmarkCircle,
+  IconCheckmarkCircleEmpty,
+  IconLanguage,
+  ListItemButton,
+  Spinner,
+  TopBar,
+} from "../../@SHARED/ui"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./lang.core"
 
 //
@@ -40,7 +56,7 @@ export const init: Module["init"] = () => {
   return {
     model: {
       lang: "en",
-      isLoadingTranslator: false,
+      loading: {},
     },
   }
 }
@@ -53,13 +69,58 @@ export const init: Module["init"] = () => {
 //
 //
 
-export const update: Module["update"] = ({ model, msg }) => {
+export const update: Module["update"] = ({ model, ctx, msg }) => {
   switch (msg?.t) {
     case "translator.loaded": {
-      return { model: { ...model, isLoadingTranslator: false } }
+      return {
+        model: {
+          ...model,
+          loading: { ...model.loading, [msg.lang]: false },
+        },
+        msgCmd:
+          model.lang === msg.lang
+            ? [
+                playSound(APP_SOUND.refreshFeed),
+                showToast(ctx.t("lang.loaded-translations")),
+              ]
+            : [],
+      }
     }
+
     case "translator.loading": {
-      return { model: { ...model, isLoadingTranslator: true } }
+      return {
+        model: { ...model, loading: { ...model.loading, [msg.lang]: true } },
+      }
+    }
+
+    case "clicked-change-lang": {
+      if (ctx.currentRoute.t === "lang" && ctx.currentRoute.c.t === "choose") {
+        return {
+          model,
+          msgCmd: [playSound(APP_SOUND.navForwardMin), closeStatusBar()],
+        }
+      }
+
+      return {
+        model,
+        msgCmd: [
+          playSound(APP_SOUND.navForwardMin),
+          pushRoute({ t: "lang", c: { t: "choose" } }),
+          closeStatusBar(),
+        ],
+      }
+    }
+    case "choose-lang.clicked-done": {
+      return {
+        model,
+        msgCmd: [playSound(APP_SOUND.navBackwardMin), back()],
+      }
+    }
+    case "choose-lang.clicked-lang": {
+      return {
+        model: { ...model, lang: msg.lang },
+        msgCmd: [playSound(APP_SOUND.tap)],
+      }
     }
     default: {
       return { model }
@@ -76,7 +137,7 @@ export const update: Module["update"] = ({ model, msg }) => {
 //
 
 export const subscriptions: Module["subscriptions"] = () => {
-  return translatorSub
+  return translatorSubscriptions
 }
 
 //
@@ -87,12 +148,56 @@ export const subscriptions: Module["subscriptions"] = () => {
 //
 //
 
-export const ViewStatusBarDrawer: Module["View"] = ({ model, ctx }) => {
+export const ViewStatusBarDrawer: Module["View"] = ({
+  model,
+  ctx,
+  dispatch,
+}) => {
   return (
     <ListItemButton
       icon={(props) => <IconLanguage {...props} />}
-      label={ctx.t("Language")}
+      label={ctx.t("lang.language")}
       end={() => ctx.t(model.lang)}
+      onClick={() => dispatch({ t: "clicked-change-lang" })}
     />
+  )
+}
+
+export const View: Module["View"] = ({ ctx, dispatch, model }) => {
+  return (
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
+      <TopBar title={ctx.t("lang.choose-language")} />
+      <div className="flex flex-1 flex-col divide-y divide-neutral-600 overflow-y-scroll">
+        {LanguageCodeISO_639_1.ALL.map((code) => {
+          return (
+            <ListItemButton
+              label={translations[code][code]}
+              icon={(props) => {
+                if (model.loading[code]) {
+                  return <Spinner {...props} />
+                }
+
+                if (model.lang === code) {
+                  return <IconCheckmarkCircle {...props} />
+                }
+                return <IconCheckmarkCircleEmpty {...props} />
+              }}
+              end={() => <p>{ctx.t(code)}</p>}
+              onClick={() =>
+                dispatch({ t: "choose-lang.clicked-lang", lang: code })
+              }
+            />
+          )
+        })}
+        <div className="w-full p-8"></div>
+      </div>
+      <div className="w-full border-t border-t-neutral-600 p-4">
+        <Button
+          onClick={() => dispatch({ t: "choose-lang.clicked-done" })}
+          text={ctx.t("lang.done")}
+          className="w-full"
+        />
+      </div>
+    </div>
   )
 }

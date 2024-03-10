@@ -21,6 +21,28 @@ export type ClientCmd<T extends ClientCmdTypes> =
   | SoundCmd
   | PlatformCmd<T["MsgClient"]>
   | ProfileCmd
+  | StatusBarCmd
+
+//
+//
+//
+//
+
+export type StatusBarCmd = {
+  t: "status-bar"
+  c: {
+    t: "close"
+  }
+}
+
+export const closeStatusBar = <T extends ClientCmdTypes>(): ClientCmd<T> => {
+  return {
+    t: "status-bar",
+    c: {
+      t: "close",
+    },
+  }
+}
 
 //
 //
