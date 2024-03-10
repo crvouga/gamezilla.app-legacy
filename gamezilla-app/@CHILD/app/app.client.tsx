@@ -593,6 +593,7 @@ export const View = ({
                   dispatch={(c) => dispatch({ t: "lang", c })}
                   model={model.lang}
                 />
+
                 <Sound.ViewStatusBarDrawer
                   model={model.sound}
                   dispatch={(c) => dispatch({ t: "sound", c })}
