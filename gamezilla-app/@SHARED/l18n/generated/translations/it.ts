@@ -12,4 +12,17 @@ export const translations: Text = {
   "spaces.current-user-ended-space": "Spazio terminato",
   "spaces.other-user-ended-space": (username) =>
     username ? `${username} ha terminato lo spazio` : "Spazio terminato",
+  en: "Italian",
+  es: "Italiano",
+  ar: "الإيطالية",
+  de: "Italienisch",
+  fr: "italien",
+  hi: "इतालवी",
+  it: "italiano",
+  ja: "イタリア語",
+  ko: "이탈리아어",
+  pt: "italiano",
+  ru: "итальянский",
+  zh: "意大利语",
+  Language: "Lingua",
 }

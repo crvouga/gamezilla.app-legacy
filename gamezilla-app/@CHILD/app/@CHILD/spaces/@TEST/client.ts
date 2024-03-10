@@ -20,6 +20,7 @@ import { GameName } from "../@CHILD/game/game.core"
 import { Space, SpaceEvent } from "../spaces-core"
 import * as SpaceClient from "../spaces.client"
 import * as SpaceCore from "../spaces.core"
+import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translator"
 
 //
 //
@@ -30,7 +31,7 @@ import * as SpaceCore from "../spaces.core"
 
 export const createCtx = (): ClientCtx => {
   return {
-    lang: "en",
+    t: getTranslator("en"),
     currentRoute: {
       t: "spaces",
       c: {
@@ -59,7 +60,7 @@ export const createFixture = () => {
   const userC = randomProfile()
 
   const ctx: ClientCtx = {
-    lang: "en",
+    t: getTranslator("en"),
     currentRoute: {
       t: "spaces",
       c: {

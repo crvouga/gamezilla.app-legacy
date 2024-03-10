@@ -118,15 +118,25 @@ export const translations: Text = ${translationsForLanguageString};`
   )
 }
 
-async function generateImportFile() {
+async function generateIndexFile() {
   const content = `${DISCLAIMER}
 import type { Text } from './text';
 import type { LanguageCodeISO_639_1 } from '../lang-code-iso-639-1';  
+import { createTranslator } from '../translations';
 
-export const getTranslations = async (languageCode: LanguageCodeISO_639_1): Promise<Text> => {
+export const loadTranslations = async (languageCode: LanguageCodeISO_639_1): Promise<Text> => {
   const translations = await import(\`./translations/\${languageCode}.ts\`);
   return translations.translations;
-}`
+}
+
+export const loadTranslator = async (languageCode: LanguageCodeISO_639_1) => {
+  const translations = await loadTranslations(languageCode)
+  const t = createTranslator(translations)
+  return t
+}
+
+export type Translator = Awaited<ReturnType<typeof loadTranslator>>;
+`
   await fs.writeFile(path.join(OUTPUT_DIR, "index.ts"), content)
   console.log(`Generated index file in: ${OUTPUT_DIR}`)
 }
@@ -157,7 +167,7 @@ async function main() {
   })
   await generateLanguageFiles(files)
   await generateTextTypeFile(files)
-  await generateImportFile()
+  await generateIndexFile()
   await runPrettierOnDirectory(OUTPUT_DIR)
 }
 

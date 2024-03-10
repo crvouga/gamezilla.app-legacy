@@ -16,4 +16,17 @@ export const translations: Text = {
     username
       ? `${username}\u7ED3\u675F\u7A7A\u95F4`
       : "\u7ED3\u675F\u7A7A\u95F4",
+  en: "Chinese",
+  es: "Chino",
+  ar: "الصينية",
+  de: "Chinesisch",
+  fr: "chinois",
+  hi: "चीनी",
+  it: "cinese",
+  ja: "中国語",
+  ko: "중국어",
+  pt: "chinês",
+  ru: "китайский",
+  zh: "中文",
+  Language: "语言",
 }

@@ -29,14 +29,15 @@ import {
   SERVER_URL,
 } from "gamezilla-app/public-config"
 import * as AuthClient from "./@CHILD/auth/auth.client"
+import * as LangClient from "./@CHILD/lang/lang.client"
 import * as ProfileClient from "./@CHILD/profile/profile.client"
 import * as SpaceClient from "./@CHILD/spaces/spaces.client"
-import * as LangClient from "./@CHILD/lang/lang.client"
 import {
   ClientTransport,
   IClientTransport,
 } from "./@CHILD/wire/transport-client"
 import * as Wire from "./@CHILD/wire/wire.client"
+import { getTranslator } from "./@SHARED/client/translator"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core"
 
@@ -85,33 +86,38 @@ export const getDeps = async (): Promise<Deps> => {
 //
 //
 
-export const init = async ({
-  ctx,
-  deps,
-}: {
+export const init = async (input: {
   deps: Deps
-  ctx: { now: Posix; location: Browser.Location }
+  ctx: {
+    now: Posix
+    location: Browser.Location
+  }
 }): Promise<{
   model: ModelClient
   eff?: Eff<MsgClient>
 }> => {
   const routing = Routing.init({
-    location: ctx.location,
+    location: input.ctx.location,
     stored: null,
   })
 
-  const appCtx: ClientCtx | AnonymousClientCtx = {
-    lang: "en",
+  const ctx: ClientCtx | AnonymousClientCtx = {
+    ...input.ctx,
+    t: getTranslator("en"),
     currentRoute: routing.model.currentRoute,
     currentUserId: null,
     documentVisibilityState: "visible",
-    now: ctx.now,
     profiles: {},
   }
 
+  const lang = await LangClient.init({
+    ctx,
+    stored: null,
+  })
+
   const toast = await Toast.init({
     stored: null,
-    ctx: ctx,
+    ctx,
   })
 
   const wire = await Wire.init({
@@ -120,16 +126,16 @@ export const init = async ({
 
   const auth = await AuthClient.init({
     stored: null,
-    ctx: appCtx,
+    ctx,
   })
 
   const space = await SpaceClient.init({
-    ctx: appCtx,
+    ctx,
     stored: null,
   })
 
   const profile = await ProfileClient.init({
-    ctx: { ...appCtx, viewBottomBar: null },
+    ctx: { ...ctx, viewBottomBar: null },
     stored: null,
   })
 
@@ -143,11 +149,6 @@ export const init = async ({
   })
 
   const statusBar = await StatusBar.init({
-    stored: null,
-  })
-
-  const lang = await LangClient.init({
-    ctx: appCtx,
     stored: null,
   })
 
@@ -180,7 +181,7 @@ export const init = async ({
     preloadSound(Object.values(APP_SOUND)),
   )
 
-  const updated = await updateLoop(deps, ctx.now, {
+  const updated = await updateLoop(input.deps, ctx.now, {
     model: initialModel,
     eff: initialEff,
     msgCmd: initialCmd,
@@ -309,7 +310,7 @@ const updateChild = async ({
   const ctx = toCtx({ model, ctx: { now } })
 
   const space = await SpaceClient.update({
-    ctx: ctx,
+    ctx,
     model: model.spaces,
     msg: msg?.t === "spaces" ? msg.c : null,
     msgServer: msgServer?.t === "spaces" ? msgServer.c : null,
@@ -327,7 +328,7 @@ const updateChild = async ({
   })
 
   const auth = await AuthClient.update({
-    ctx: ctx,
+    ctx,
     model: model.auth,
     msg: msg?.t === "auth" ? msg.c : null,
     msgServer: msgServer?.t === "auth" ? msgServer.c : null,
@@ -371,7 +372,7 @@ const updateChild = async ({
     model: model.toast,
     msg: msg?.t === "toast" ? msg.c : null,
     msgCmd: msgCmd?.t === "toast" ? msgCmd : null,
-    ctx: ctx,
+    ctx,
     msgEvt: null,
     msgServer: null,
   })
@@ -382,7 +383,7 @@ const updateChild = async ({
     msgCmd: null,
     msgServer: msgServer?.t === "lang" ? msgServer.c : null,
     msgEvt: msgEvt,
-    ctx: ctx,
+    ctx,
   })
 
   return {
@@ -442,7 +443,8 @@ const toCtx = (input: {
   ctx: { now: Posix }
 }): ClientCtx | AnonymousClientCtx => {
   const anonymousCtx: AnonymousClientCtx = {
-    lang: input.model.lang.lang,
+    ...input.ctx,
+    t: getTranslator(input.model.lang.lang),
     profiles: input.model.profile.profiles,
     now: input.ctx.now,
     documentVisibilityState: input.model.platform.documentVisibilityState,
@@ -473,23 +475,24 @@ export const subscriptions = async (input: {
   deps: Deps
   model: ModelClient
 }) => {
-  const { ctx, model } = input
-
-  const ctxApp = toCtx(input)
+  const ctx = toCtx(input)
 
   return Sub.batch<MsgClient>([
     Sub.tag("➡️", Sub.flat(input.deps.transport.toClient)),
     Sub.tag("wire", Wire.subscriptions({ transport: input.deps.transport })),
     Sub.tag("platform", Platform.subscriptions),
     Sub.tag("routing", Routing.subscriptions),
-    Sub.tag("toast", await Toast.subscriptions({ ctx, model: model.toast })),
+    Sub.tag(
+      "toast",
+      await Toast.subscriptions({ ctx, model: input.model.toast }),
+    ),
     Sub.tag(
       "auth",
-      await AuthClient.subscriptions({ ctx: ctxApp, model: model.auth }),
+      await AuthClient.subscriptions({ ctx, model: input.model.auth }),
     ),
     Sub.tag(
       "spaces",
-      await SpaceClient.subscriptions({ ctx: ctxApp, model: model.spaces }),
+      await SpaceClient.subscriptions({ ctx, model: input.model.spaces }),
     ),
   ])
 }
@@ -540,7 +543,18 @@ export const View = ({
                   dispatch={(c) => dispatch({ t: "wire", c })}
                 />
                 <LangClient.ViewStatusBarDrawer
-                  ctx={ctx}
+                  ctx={{
+                    ...ctx,
+                    currentRoute: model.routing.currentRoute,
+                    documentVisibilityState:
+                      model.platform.documentVisibilityState,
+                    profiles: model.profile.profiles,
+                    t: getTranslator(model.lang.lang),
+                    currentUserId:
+                      model.auth.currentUser.t === "logged-in"
+                        ? model.auth.currentUser.userId
+                        : null,
+                  }}
                   dispatch={(c) => dispatch({ t: "lang", c })}
                   model={model.lang}
                 />
@@ -554,7 +568,7 @@ export const View = ({
         />
 
         <div className="flex w-full flex-1 flex-col overflow-hidden">
-          <ViewMain model={model} now={ctx.now} dispatch={dispatch} />
+          <ViewMain model={model} ctx={ctx} dispatch={dispatch} />
         </div>
 
         <Portal.Exit portalId="modals" />
@@ -572,12 +586,16 @@ export const View = ({
 const ViewMain = ({
   model,
   dispatch,
-  now,
+  ctx,
 }: {
-  now: Posix
+  ctx: { now: Posix }
   model: ModelClient
   dispatch: (msg: MsgClient) => void
 }) => {
+  if (model.lang.isLoadingTranslator) {
+    return <LoadingState />
+  }
+
   switch (model.auth.currentUser.t) {
     case "logged-in": {
       return (
@@ -585,8 +603,8 @@ const ViewMain = ({
           model={model}
           dispatch={dispatch}
           ctx={{
-            lang: "en",
-            now,
+            ...ctx,
+            t: getTranslator(model.lang.lang),
             currentRoute: model.routing.currentRoute,
             currentUserId: model.auth.currentUser.userId,
             profiles: model.profile.profiles,
@@ -602,8 +620,8 @@ const ViewMain = ({
           dispatch={dispatch}
           model={model}
           ctx={{
-            lang: "en",
-            now,
+            ...ctx,
+            t: getTranslator(model.lang.lang),
             currentRoute: model.routing.currentRoute,
             profiles: model.profile.profiles,
             documentVisibilityState: model.platform.documentVisibilityState,

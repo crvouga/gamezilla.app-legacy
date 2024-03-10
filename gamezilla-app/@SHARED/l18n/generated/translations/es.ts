@@ -12,4 +12,17 @@ export const translations: Text = {
   "spaces.current-user-ended-space": "Espacio terminado",
   "spaces.other-user-ended-space": (username) =>
     username ? `${username} termin\xF3 el espacio` : "Espacio terminado",
+  en: "Español",
+  es: "Español",
+  ar: "الإسبانية",
+  de: "Spanisch",
+  fr: "espagnol",
+  hi: "स्पेनिश",
+  it: "spagnolo",
+  ja: "スペイン語",
+  ko: "스페인어",
+  pt: "espanhol",
+  ru: "испанский",
+  zh: "西班牙语",
+  Language: "Idioma",
 }

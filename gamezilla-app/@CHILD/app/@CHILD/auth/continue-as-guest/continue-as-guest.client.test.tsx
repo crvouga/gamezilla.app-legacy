@@ -16,9 +16,10 @@ import {
 } from "gamezilla-app/@SHARED/core"
 import * as AuthClient from "../auth.client"
 import { ModelClient } from "../auth.core"
+import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translator"
 
 const ctx: AnonymousClientCtx = {
-  lang: "en",
+  t: getTranslator("en"),
   currentRoute: { t: "auth", c: { t: "login" } },
   documentVisibilityState: "visible",
   now: Posix.now(),

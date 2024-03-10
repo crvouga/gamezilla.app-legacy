@@ -26,7 +26,8 @@
     "check-imports": "bun scripts/check-imports.ts",
     "cloc": "bun x cloc gamezilla-app",
     "pretty": "bun x prettier --write .",
-    "gen-l18n": "bun gamezilla-app/@SHARED/l18n/l18n-gen.ts"
+    "gen-l18n": "bun gamezilla-app/@SHARED/l18n/l18n-gen.ts",
+    "cg": "bun gen-l18n"
   },
   "dependencies": {
     "chess.js": "^1.0.0-beta.6",

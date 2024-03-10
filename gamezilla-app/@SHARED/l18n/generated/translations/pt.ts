@@ -12,4 +12,17 @@ export const translations: Text = {
   "spaces.current-user-ended-space": "Espaço terminado",
   "spaces.other-user-ended-space": (username) =>
     username ? `${username} terminou o espa\xE7o` : "Espa\xE7o terminado",
+  en: "Portuguese",
+  es: "Portugués",
+  ar: "البرتغالية",
+  de: "Portugiesisch",
+  fr: "portugais",
+  hi: "पुर्तगाली",
+  it: "portoghese",
+  ja: "ポルトガル語",
+  pt: "português",
+  ko: "포르투갈어",
+  ru: "португальский",
+  zh: "葡萄牙语",
+  Language: "Língua",
 }

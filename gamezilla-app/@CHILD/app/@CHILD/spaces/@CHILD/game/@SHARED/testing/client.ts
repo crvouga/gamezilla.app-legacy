@@ -6,6 +6,7 @@ import {
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Posix } from "gamezilla-app/@SHARED/core"
 import { SpaceClientCtx } from "../../../../@SHARED/space"
+import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translator"
 
 const currentUserId = "test-user-id" as UserId
 
@@ -13,7 +14,7 @@ const currentSpaceId = "test-space-id" as SpaceId
 
 export const testSpaceClientCtx = (): SpaceClientCtx => {
   return {
-    lang: "en",
+    t: getTranslator("en"),
     currentRoute: {
       t: "spaces",
       c: {

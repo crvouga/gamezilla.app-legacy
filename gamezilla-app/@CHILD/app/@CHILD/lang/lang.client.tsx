@@ -1,6 +1,10 @@
-import { ClientCmd, ClientEvent } from "gamezilla-app/@CHILD/app/@SHARED/client"
-import { Posix, Sub } from "gamezilla-app/@SHARED/core"
+import {
+  AnonymousClientCtx,
+  ClientCmd,
+  ClientEvent,
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { AppClientModule } from "../../@SHARED/architecture/app-client"
+import { translatorSub } from "../../@SHARED/client/translator"
 import { IconLanguage, ListItemButton } from "../../@SHARED/ui"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./lang.core"
 
@@ -13,7 +17,7 @@ import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./lang.core"
 //
 
 type Module = AppClientModule<{
-  Ctx: { now: Posix }
+  Ctx: AnonymousClientCtx
   Model: ModelClient
   MsgToServer: MsgToServer
   MsgToClient: MsgToClient
@@ -36,6 +40,7 @@ export const init: Module["init"] = () => {
   return {
     model: {
       lang: "en",
+      isLoadingTranslator: false,
     },
   }
 }
@@ -48,8 +53,18 @@ export const init: Module["init"] = () => {
 //
 //
 
-export const update: Module["update"] = ({ model }) => {
-  return { model }
+export const update: Module["update"] = ({ model, msg }) => {
+  switch (msg?.t) {
+    case "translator.loaded": {
+      return { model: { ...model, isLoadingTranslator: false } }
+    }
+    case "translator.loading": {
+      return { model: { ...model, isLoadingTranslator: true } }
+    }
+    default: {
+      return { model }
+    }
+  }
 }
 
 //
@@ -61,7 +76,7 @@ export const update: Module["update"] = ({ model }) => {
 //
 
 export const subscriptions: Module["subscriptions"] = () => {
-  return Sub.None
+  return translatorSub
 }
 
 //
@@ -72,12 +87,12 @@ export const subscriptions: Module["subscriptions"] = () => {
 //
 //
 
-export const ViewStatusBarDrawer: Module["View"] = ({ model }) => {
+export const ViewStatusBarDrawer: Module["View"] = ({ model, ctx }) => {
   return (
     <ListItemButton
       icon={(props) => <IconLanguage {...props} />}
-      label="Language"
-      end={() => model.lang}
+      label={ctx.t("Language")}
+      end={() => ctx.t(model.lang)}
     />
   )
 }
