@@ -775,9 +775,18 @@ const ViewLoggedIn = ({
     }
 
     case "chat":
-    case "search":
+    case "search": {
+      return null
+    }
+
     case "auth": {
-      return <LoadingState />
+      return (
+        <AuthClient.View
+          dispatch={(m) => dispatch({ t: "auth", c: m })}
+          model={model.auth}
+          ctx={ctx}
+        />
+      )
     }
   }
 }
