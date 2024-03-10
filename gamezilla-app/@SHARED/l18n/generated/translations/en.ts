@@ -1,0 +1,11 @@
+import { type Text } from '../text';
+export const translations: Text = {
+  "auth.current-user-logged-out": "Logged out",
+"auth.current-user-logged-in": "Logged in",
+"spaces.current-user-joined-space": "Joined space",
+"spaces.other-user-joined-space": (username) => username ? `${username} joined space` : "Joined space",
+"spaces.space-not-found": "Space not found",
+"spaces.go-home": "Go home",
+"spaces.current-user-ended-space": "Ended space",
+"spaces.other-user-ended-space": (username) => username ? `${username} ended space` : "Ended space"
+};

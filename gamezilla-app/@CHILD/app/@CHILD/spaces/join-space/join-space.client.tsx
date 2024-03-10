@@ -84,7 +84,14 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
       }
 
       if (msgSpaceEvent.userId !== ctx.currentUserId) {
-        return { model }
+        const username = ctx.profiles[msgSpaceEvent.userId]?.username ?? null
+        return {
+          model,
+          msgCmd: [
+            playSound(APP_SOUND.navForward),
+            showToast(username ? `${username} joined space` : "Joined space"),
+          ],
+        }
       }
 
       return {

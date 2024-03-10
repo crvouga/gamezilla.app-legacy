@@ -1,0 +1,11 @@
+import { type Text } from '../text';
+export const translations: Text = {
+  "auth.current-user-logged-out": "ユーザー",
+"auth.current-user-logged-in": "ユーザー",
+"spaces.current-user-joined-space": "スペースに参加しました",
+"spaces.other-user-joined-space": (username) => username ? `${username}\u304C\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F` : "\u30B9\u30DA\u30FC\u30B9\u306B\u53C2\u52A0\u3057\u307E\u3057\u305F",
+"spaces.space-not-found": "スペースが見つかりません",
+"spaces.go-home": "家に帰る",
+"spaces.current-user-ended-space": "スペース終了",
+"spaces.other-user-ended-space": (username) => username ? `${username}\u304C\u30B9\u30DA\u30FC\u30B9\u3092\u7D42\u4E86\u3057\u307E\u3057\u305F` : "\u30B9\u30DA\u30FC\u30B9\u7D42\u4E86"
+};

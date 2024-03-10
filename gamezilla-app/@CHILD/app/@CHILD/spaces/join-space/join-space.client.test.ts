@@ -9,6 +9,7 @@ import {
   clickedJoinSpaceButton,
   clickedLeaveSpaceButton,
   createCtx,
+  createFixture,
   init,
   userJoinedSpace,
   userStartedSpace,
@@ -20,34 +21,34 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()
 
-    const started = await andThen(
+    const output = await andThen(
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), spaceId),
-    )
-
-    const joined = await andThen(
-      { model: started.model },
       clickedJoinSpaceButton(ctx, spaceId),
     )
 
-    expect(didShowToast(joined)).toBeTrue()
+    expect(
+      didShowToast(output, (toast) =>
+        toast.message.toLowerCase().includes("join"),
+      ),
+    ).toBeTrue()
   })
 
-  it("should not show a toast when other user joins current user's space", async () => {
-    const ctx = createCtx()
+  it("should should toast of other user leaving space", async () => {
+    const f = createFixture()
     const spaceId = SpaceId.generate()
 
     const started = await andThen(
-      init(ctx),
-      userStartedSpace(ctx, ctx.currentUserId, spaceId),
+      f.initial,
+      userStartedSpace(f.ctx, f.ctx.currentUserId, spaceId),
     )
 
     const output = await andThen(
       { model: started.model },
-      userJoinedSpace(ctx, UserId.generate(), spaceId),
+      userJoinedSpace(f.ctx, f.userA.userId, spaceId),
     )
 
-    expect(didShowToast(output)).toBeFalse()
+    expect(didShowToast(output)).toBeTrue()
   })
 
   it("should join space when clicking join space button", async () => {

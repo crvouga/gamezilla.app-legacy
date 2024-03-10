@@ -18,6 +18,7 @@ import * as AuthClient from "../auth.client"
 import { ModelClient } from "../auth.core"
 
 const ctx: AnonymousClientCtx = {
+  lang: "en",
   currentRoute: { t: "auth", c: { t: "login" } },
   documentVisibilityState: "visible",
   now: Posix.now(),

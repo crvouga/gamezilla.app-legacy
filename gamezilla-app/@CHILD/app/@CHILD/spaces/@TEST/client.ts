@@ -4,7 +4,13 @@ import {
   ClientCtx,
   routeChanged,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
-import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import {
+  Profile,
+  ProfileAvatar,
+  SpaceId,
+  UserId,
+  Username,
+} from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Posix, TimeSpan, p } from "gamezilla-app/@SHARED/core"
 import {
   LamportClock,
@@ -24,6 +30,7 @@ import * as SpaceCore from "../spaces.core"
 
 export const createCtx = (): ClientCtx => {
   return {
+    lang: "en",
     currentRoute: {
       t: "spaces",
       c: {
@@ -34,6 +41,48 @@ export const createCtx = (): ClientCtx => {
     now: Posix.now(),
     profiles: {},
     currentUserId: UserId.generate(),
+  }
+}
+
+const randomProfile = (): Profile => {
+  return {
+    avatarUrl: ProfileAvatar.random(),
+    userId: UserId.generate(),
+    username: Username.generate(),
+  }
+}
+
+export const createFixture = () => {
+  const currentUser = randomProfile()
+  const userA = randomProfile()
+  const userB = randomProfile()
+  const userC = randomProfile()
+
+  const ctx: ClientCtx = {
+    lang: "en",
+    currentRoute: {
+      t: "spaces",
+      c: {
+        t: "space-list",
+      },
+    },
+    currentUserId: currentUser.userId,
+    documentVisibilityState: "visible",
+    now: Posix.now(),
+    profiles: {
+      [currentUser.userId]: currentUser,
+      [userA.userId]: userA,
+      [userB.userId]: userB,
+      [userC.userId]: userC,
+    },
+  }
+  return {
+    ctx,
+    initial: init(ctx),
+    currentUser,
+    userA,
+    userB,
+    userC,
   }
 }
 

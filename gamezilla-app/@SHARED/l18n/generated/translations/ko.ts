@@ -1,0 +1,11 @@
+import { type Text } from '../text';
+export const translations: Text = {
+  "auth.current-user-logged-out": "사용자",
+"auth.current-user-logged-in": "사용자",
+"spaces.current-user-joined-space": "공간에 참여했습니다",
+"spaces.other-user-joined-space": (username) => username ? `${username}\uAC00 \uACF5\uAC04\uC5D0 \uCC38\uC5EC\uD588\uC2B5\uB2C8\uB2E4` : "\uACF5\uAC04\uC5D0 \uCC38\uC5EC\uD588\uC2B5\uB2C8\uB2E4",
+"spaces.space-not-found": "공간을 찾을 수 없습니다",
+"spaces.go-home": "집으로 가기",
+"spaces.current-user-ended-space": "공간 종료",
+"spaces.other-user-ended-space": (username) => username ? `${username}\uAC00 \uACF5\uAC04\uC744 \uC885\uB8CC\uD588\uC2B5\uB2C8\uB2E4` : "\uACF5\uAC04 \uC885\uB8CC"
+};

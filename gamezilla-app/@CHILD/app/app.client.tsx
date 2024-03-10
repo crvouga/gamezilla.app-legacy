@@ -100,6 +100,7 @@ export const init = async ({
   })
 
   const appCtx: ClientCtx | AnonymousClientCtx = {
+    lang: "en",
     currentRoute: routing.model.currentRoute,
     currentUserId: null,
     documentVisibilityState: "visible",
@@ -418,6 +419,7 @@ const toCtx = (input: {
   ctx: { now: Posix }
 }): ClientCtx | AnonymousClientCtx => {
   const anonymousCtx: AnonymousClientCtx = {
+    lang: "en",
     profiles: input.model.profile.profiles,
     now: input.ctx.now,
     documentVisibilityState: input.model.platform.documentVisibilityState,
@@ -547,6 +549,7 @@ const ViewMain = ({
           model={model}
           dispatch={dispatch}
           ctx={{
+            lang: "en",
             now,
             currentRoute: model.routing.currentRoute,
             currentUserId: model.auth.currentUser.userId,
@@ -563,6 +566,7 @@ const ViewMain = ({
           dispatch={dispatch}
           model={model}
           ctx={{
+            lang: "en",
             now,
             currentRoute: model.routing.currentRoute,
             profiles: model.profile.profiles,

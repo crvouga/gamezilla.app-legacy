@@ -187,20 +187,25 @@ export const showToast = <T extends ClientCmdTypes>(
   }
 }
 
-export const didShowToast = <T>({
-  msgCmd,
-}: {
-  msgCmd?: (ToastCmd | T)[]
-}): boolean => {
+export const didShowToast = <T>(
+  {
+    msgCmd,
+  }: {
+    msgCmd?: (ToastCmd | T)[]
+  },
+  predicate?: (toast: { message: string }) => boolean,
+): boolean => {
   return (
-    msgCmd?.some(
-      (cmd) =>
+    msgCmd?.some((cmd) => {
+      return (
         typeof cmd === "object" &&
         cmd !== null &&
         "t" in cmd &&
         cmd.t === "toast" &&
-        cmd.c.t === "enqueue",
-    ) ?? false
+        cmd.c.t === "enqueue" &&
+        (predicate ? predicate({ message: cmd.c.text }) : true)
+      )
+    }) ?? false
   )
 }
 

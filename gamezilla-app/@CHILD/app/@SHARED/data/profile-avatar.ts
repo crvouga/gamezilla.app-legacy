@@ -142,7 +142,14 @@ const shuffle = <T>(xs: T[]): T[] => {
   return ys
 }
 
+const random = () => {
+  const style = randomStyle()
+  const seed = generateRandomSeed()
+
+  return toUrl({ style, seed })
+}
 export const ProfileAvatar = {
+  random,
   randomStyle,
   generateRandomSeed,
   parseUrl,

@@ -33,17 +33,29 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = ({
         ctx.currentUserId,
       )
 
-      if (msgSpaceEvent.spaceId === currentUserSpaceId) {
+      if (msgSpaceEvent.spaceId !== currentUserSpaceId) {
+        return { model }
+      }
+
+      if (msgSpaceEvent.userId !== ctx.currentUserId) {
+        const username = ctx.profiles[msgSpaceEvent.userId]?.username
         return {
           model,
           msgCmd: [
             playSound(APP_SOUND.navBackward),
-            pushRoute({ t: "spaces", c: { t: "space-list" } }),
-            showToast("Left space"),
+            showToast(username ? `${username} left space` : "Left space"),
           ],
         }
       }
-      return { model }
+
+      return {
+        model,
+        msgCmd: [
+          playSound(APP_SOUND.navBackward),
+          showToast("Left space"),
+          pushRoute({ t: "spaces", c: { t: "space-list" } }),
+        ],
+      }
     }
     default: {
       return { model }

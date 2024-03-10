@@ -37,6 +37,25 @@ describe(import.meta.file, () => {
     ).toBeTrue()
   })
 
+  it("should only redirect to list screen for the user leaving the space", async () => {
+    const ctx = createCtx()
+    const spaceId = SpaceId.generate()
+    const userId = UserId.generate()
+
+    const joined = await andThen(
+      init(ctx),
+      userStartedSpace(ctx, ctx.currentUserId, spaceId),
+      userJoinedSpace(ctx, userId, spaceId),
+    )
+
+    const output = await andThen(
+      { model: joined.model },
+      userLeftSpace(ctx, userId, spaceId),
+    )
+
+    expect(didPushRoute(output)).toBeFalse()
+  })
+
   it("should show some toast after leaving a space", async () => {
     const ctx = createCtx()
     const spaceId = SpaceId.generate()

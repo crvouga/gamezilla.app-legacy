@@ -1,0 +1,11 @@
+import { type Text } from '../text';
+export const translations: Text = {
+  "auth.current-user-logged-out": "उपयोगकर्ता",
+"auth.current-user-logged-in": "उपयोगकर्ता",
+"spaces.current-user-joined-space": "स्थान जुड़ गया",
+"spaces.other-user-joined-space": (username) => username ? `${username} \u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E` : "\u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E",
+"spaces.space-not-found": "स्थान नहीं मिला",
+"spaces.go-home": "घर जा",
+"spaces.current-user-ended-space": "स्थान समाप्त",
+"spaces.other-user-ended-space": (username) => username ? `${username} \u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924` : "\u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924"
+};

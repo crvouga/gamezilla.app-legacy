@@ -1,0 +1,161 @@
+import fs from "fs"
+import path from "path"
+import { promisify } from "util"
+import { exec } from "child_process"
+import {
+  LANGUAGE_CODE_ISO_639_1,
+  LanguageCodeISO_639_1,
+  isLanguageCodeISO_639_1,
+} from "."
+
+const readDir = promisify(fs.readdir)
+const writeFile = promisify(fs.writeFile)
+
+const directoryPath = path.join(__dirname, "..", "..")
+
+const outputDirectory = path.join(__dirname, "generated")
+const outputTranslations = path.join(outputDirectory, "translations")
+const outputTranslationsTypes = outputDirectory
+
+async function scanDirectory(dir: string): Promise<string[]> {
+  let files: string[] = []
+  try {
+    const filesAndDirectories = await readDir(dir, { withFileTypes: true })
+
+    for (const file of filesAndDirectories) {
+      const res = path.resolve(dir, file.name)
+      if (file.isDirectory()) {
+        files = [...files, ...(await scanDirectory(res))]
+      } else if (file.name.endsWith("l18n.ts")) {
+        files.push(res)
+      }
+    }
+  } catch (err) {
+    console.error("Error reading directory:", err)
+  }
+  return files
+}
+
+const serialize = (obj: object) => {
+  const keyValuePairs = Object.entries(obj).map(([key, value]) => {
+    if (typeof value === "function") {
+      return `${JSON.stringify(key)}: ${value.toString()}`
+    } else {
+      return `${JSON.stringify(key)}: ${JSON.stringify(value)}`
+    }
+  })
+
+  return `{
+  ${keyValuePairs.join(",\n")}
+}`
+}
+
+async function generateTextTypeFile(files: string[]) {
+  const imports: string[] = []
+  const typeRefs: string[] = []
+
+  files.forEach((file, index) => {
+    const importPath = path
+      .relative(path.dirname(__dirname), file)
+      .replace(/\\/g, "/")
+    imports.push(
+      `import { Text as Text${index} } from "../../${importPath.replace(
+        ".ts",
+        "",
+      )}";`,
+    )
+    typeRefs.push(`Text${index}`)
+  })
+
+  const content = `
+${imports.join("\n")}
+export type Text = ${typeRefs.join(" & ")};
+`
+
+  await writeFile(path.join(outputTranslationsTypes, "text.ts"), content)
+}
+
+async function generateLanguageFiles(files: string[]) {
+  // Initialize an object to hold translations for each language
+  let translationsAll: { [code in LanguageCodeISO_639_1]?: {} } = {}
+
+  for (const file of files) {
+    try {
+      const relativePath = path.relative(path.dirname(directoryPath), file)
+
+      const importPath = relativePath.replace(/\\/g, "/")
+
+      const translationsModule = await import(importPath)
+
+      const translations = translationsModule.translations
+
+      for (const code in translations) {
+        if (!isLanguageCodeISO_639_1(code)) {
+          console.warn(
+            `Skipping non-ISO 639-1 language code: ${code} in ${file}`,
+          )
+          continue
+        }
+
+        const translationsForLanguage = translations[code]
+
+        translationsAll = {
+          ...translationsAll,
+          [code]: {
+            ...translationsAll?.[code],
+            ...translationsForLanguage,
+          },
+        }
+      }
+    } catch (error) {
+      console.error(`Error importing ${file}:`, error)
+    }
+  }
+
+  if (!fs.existsSync(outputTranslations)) {
+    fs.mkdirSync(outputTranslations, { recursive: true })
+  }
+
+  await Promise.all(
+    LANGUAGE_CODE_ISO_639_1.map(async (langCode) => {
+      const translationsForLanguage = translationsAll[langCode] ?? {}
+      const translationsForLanguageString = serialize(translationsForLanguage)
+
+      const content = `import { type Text } from '../text';
+export const translations: Text = ${translationsForLanguageString};`
+
+      await writeFile(path.join(outputTranslations, `${langCode}.ts`), content)
+    }),
+  )
+
+  console.log(
+    `Generated language-specific translation files in: ${outputTranslations}`,
+  )
+}
+
+function runPrettierOnDirectory(directoryPath: string) {
+  return new Promise((resolve, reject) => {
+    // Constructs the command to run Prettier on all TypeScript files in the directory
+    const command = `npx prettier --write "${path.join(directoryPath, "*.ts")}"`
+
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        console.error("Error running Prettier:", stderr)
+        reject(error)
+        return
+      }
+      console.log("Prettier has formatted the files in:", directoryPath)
+      console.log(stdout)
+      resolve(stdout)
+    })
+  })
+}
+
+async function main() {
+  const files = await scanDirectory(directoryPath)
+  await generateTextTypeFile(files)
+  await generateLanguageFiles(files)
+  await runPrettierOnDirectory(outputDirectory)
+}
+
+main().catch(console.error)

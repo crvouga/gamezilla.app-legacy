@@ -9,6 +9,7 @@ type Profile = {
 }
 
 export type AnonymousClientCtx = {
+  lang: "en" | "es"
   currentRoute: Route.AppRoute
   now: Posix
   currentUserId?: UserId | null

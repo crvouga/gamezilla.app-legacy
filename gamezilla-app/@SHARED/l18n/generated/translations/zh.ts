@@ -1,0 +1,11 @@
+import { type Text } from '../text';
+export const translations: Text = {
+  "auth.current-user-logged-out": "用户",
+"auth.current-user-logged-in": "用户",
+"spaces.current-user-joined-space": "加入空间",
+"spaces.other-user-joined-space": (username) => username ? `${username}\u52A0\u5165\u7A7A\u95F4` : "\u52A0\u5165\u7A7A\u95F4",
+"spaces.space-not-found": "找不到空间",
+"spaces.go-home": "回家",
+"spaces.current-user-ended-space": "结束空间",
+"spaces.other-user-ended-space": (username) => username ? `${username}\u7ED3\u675F\u7A7A\u95F4` : "\u7ED3\u675F\u7A7A\u95F4"
+};
