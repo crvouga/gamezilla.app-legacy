@@ -20,7 +20,10 @@ export type MsgToServer = { t: "noop" }
 
 export type MsgToClient = { t: "noop" }
 
-export type MsgServer = { t: "noop" }
+export type MsgServer = {
+  t: "user-changed-language"
+  lang: LanguageCodeISO_639_1
+}
 
 export type MsgClient =
   | TranslatorMsg

@@ -29,10 +29,7 @@ import { ClientModule, LogoutMsg, ModelClient, MsgClient } from "./auth.core"
 //
 
 export const init: ClientModule["init"] = async (input) => {
-  const sms = await AuthClientSMS.init({
-    ...input,
-    stored: input.stored?.sms ?? null,
-  })
+  const sms = await AuthClientSMS.init(input)
 
   return {
     model: {

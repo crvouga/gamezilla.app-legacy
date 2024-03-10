@@ -155,7 +155,7 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
    */
   init: (input: {
     ctx: T["Ctx"]
-    stored?: T["Model"] | null | undefined
+    stored?: Record<string, unknown> | null
   }) => MaybePromise<Output<T>>
 
   /**

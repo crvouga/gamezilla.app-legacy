@@ -54,13 +54,7 @@ export type Model = {
   isDocumentVisible: boolean
 }
 
-export const init: Module["init"] = ({ stored }) => {
-  if (stored) {
-    return {
-      model: stored,
-    }
-  }
-
+export const init: Module["init"] = () => {
   return {
     model: {
       muted: false,

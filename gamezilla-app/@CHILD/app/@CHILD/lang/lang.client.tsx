@@ -8,7 +8,6 @@ import {
   playSound,
   pushRoute,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
-import { Posix, TimeSpan } from "gamezilla-app/@SHARED/core"
 import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n"
 import { translations } from "gamezilla-app/@SHARED/l18n/lang-code-iso-639-1/l18n"
 import { AppClientModule } from "../../@SHARED/architecture/app-client"
@@ -90,15 +89,6 @@ export const update: Module["update"] = ({ model, ctx, msg }) => {
             [msg.lang]: loadingNew,
           },
         },
-        msgCmd:
-          model.lang === msg.lang &&
-          loadingNew.endedAt &&
-          TimeSpan.gte(
-            Posix.diff(loadingNew.startedAt, loadingNew.endedAt),
-            TimeSpan.fromSeconds(1),
-          )
-            ? [playSound(APP_SOUND.refreshFeed)]
-            : [],
       }
     }
 

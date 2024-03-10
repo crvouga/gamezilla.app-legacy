@@ -69,14 +69,14 @@ type Module = AppClientModule<{
 //
 //
 
-export const init: Module["init"] = ({ ctx, stored }) => {
+export const init: Module["init"] = ({ ctx }) => {
   const initialModel: ModelClient = {
     profiles: {},
     requests: {},
     draft: {},
   }
 
-  const model = stored ? stored : initialModel
+  const model = initialModel
 
   if (ctx.currentRoute.t === "profile" && ctx.currentRoute.c.t === "profile") {
     return loadProfile(ctx.currentRoute.c.userId, model)

@@ -54,11 +54,7 @@ export type Toast = {
   errorMsg?: string | null
 }
 
-export const init: Module["init"] = async ({ stored }) => {
-  if (stored) {
-    return { model: stored }
-  }
-
+export const init: Module["init"] = async () => {
   return {
     model: { runningId: 0, hold: {} },
   }
