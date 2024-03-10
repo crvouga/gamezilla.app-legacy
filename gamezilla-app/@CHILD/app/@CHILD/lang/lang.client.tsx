@@ -78,7 +78,7 @@ export const update: Module["update"] = ({ model, ctx, msg }) => {
           loading: { ...model.loading, [msg.lang]: false },
         },
         msgCmd:
-          model.lang === msg.lang
+          model.lang === msg.lang && model.loading[model.lang]
             ? [
                 playSound(APP_SOUND.refreshFeed),
                 showToast(ctx.t("lang.loaded-translations")),
