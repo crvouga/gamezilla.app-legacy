@@ -22,6 +22,7 @@ import {
   batchMsgs,
   toMsgType,
 } from "gamezilla-app/@SHARED/core"
+import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n"
 import { VDom } from "gamezilla-app/@SHARED/vdom"
 import {
   CODEBASE_VERSION_ID,
@@ -38,9 +39,9 @@ import {
 } from "./@CHILD/wire/transport-client"
 import * as Wire from "./@CHILD/wire/wire.client"
 import { getTranslator } from "./@SHARED/client/translator"
+import { IntersectionObserverEmitter } from "./@SHARED/ui/intersection-observer"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core"
-import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n"
 
 //
 //
@@ -701,7 +702,17 @@ const ViewLoggedOut = ({
     case "search":
     case "spaces":
     case "chat":
-      return <LoadingState />
+      return (
+        <IntersectionObserverEmitter
+          id="logged-out-redirect"
+          onVisible={() =>
+            dispatch({
+              t: "routing",
+              c: { t: "clicked-link", route: { t: "auth", c: { t: "login" } } },
+            })
+          }
+        />
+      )
   }
 }
 
@@ -715,10 +726,6 @@ const ViewLoggedIn = ({
   dispatch: (m: MsgClient) => void
 }) => {
   switch (model.routing.currentRoute.t) {
-    case "chat": {
-      return null
-    }
-
     case "spaces": {
       return (
         <SpaceClient.View
@@ -747,10 +754,6 @@ const ViewLoggedIn = ({
       )
     }
 
-    case "search": {
-      return null
-    }
-
     case "logout": {
       return (
         <AuthClient.ViewLogoutScreen
@@ -761,10 +764,6 @@ const ViewLoggedIn = ({
       )
     }
 
-    case "auth": {
-      return <LoadingState />
-    }
-
     case "lang": {
       return (
         <LangClient.View
@@ -773,6 +772,12 @@ const ViewLoggedIn = ({
           dispatch={(m) => dispatch({ t: "lang", c: m })}
         />
       )
+    }
+
+    case "chat":
+    case "search":
+    case "auth": {
+      return <LoadingState />
     }
   }
 }

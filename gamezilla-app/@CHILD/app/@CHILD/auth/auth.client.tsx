@@ -241,19 +241,6 @@ const updateRedirect: ClientModule["update"] = async (input) => {
         }
       }
 
-      if (model.currentUser.t === "logged-out" && msgEvt.route.t !== "auth") {
-        return {
-          model,
-          msgCmd: [
-            replaceRoute({
-              t: "auth",
-              c: { t: "login" },
-            }),
-            showToast("Logged out"),
-          ],
-        }
-      }
-
       return { model }
     }
 
