@@ -1,4 +1,4 @@
-import { LanguageCodeISO_639_1 } from "./lang-code-iso-639-1"
+import { LanguageCodeISO_639_1 } from "./lang-code-iso-639-1/lang-code-iso-639-1"
 
 export type TranslationText = {
   [key: string]: string | ((...args: any[]) => string)

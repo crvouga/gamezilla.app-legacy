@@ -116,7 +116,7 @@ const updateFromMsg: Module["update"] = ({ msg, model }) => {
             ...model,
             muted: false,
           },
-          msgCmd: [playSound(APP_SOUND.tap)],
+          msgCmd: [playSound(APP_SOUND.stateChangeUp)],
         }
       }
       return {
@@ -243,23 +243,6 @@ export const ViewStatusBarDrawer = ({
         />
       )}
     />
-    // <div className="flex w-full items-center">
-    //   <button
-    //     className="flex w-full flex-1 items-center gap-4 p-4"
-    //     tabIndex={-1}
-    //     onClick={() => dispatch({ t: "toggle-mute" })}
-    //   >
-    //     {}
-    //   </button>
-    //   <div className="flex items-center justify-center p-4">
-    //     <ToggleButton
-    //       label="toggle sound"
-    //       onToggle={() => dispatch({ t: "toggle-mute" })}
-    //       checked={!model.muted}
-    //       id="sound"
-    //     />
-    //   </div>
-    // </div>
   )
 }
 

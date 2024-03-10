@@ -2,6 +2,18 @@
 import type { Text } from "../text"
 
 export const translations: Text = {
+  en: "Hindi",
+  es: "Hindi",
+  ar: "الهندية",
+  de: "Hindi",
+  fr: "hindi",
+  hi: "हिंदी",
+  it: "hindi",
+  ja: "ヒンディー語",
+  ko: "힌디어",
+  pt: "hindi",
+  ru: "хинди",
+  zh: "印地语",
   "auth.current-user-logged-out": "उपयोगकर्ता",
   "auth.current-user-logged-in": "उपयोगकर्ता",
   "spaces.current-user-joined-space": "स्थान जुड़ गया",
@@ -16,17 +28,5 @@ export const translations: Text = {
     username
       ? `${username} \u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924`
       : "\u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924",
-  en: "Hindi",
-  es: "Hindi",
-  ar: "الهندية",
-  de: "Hindi",
-  fr: "hindi",
-  hi: "हिंदी",
-  it: "hindi",
-  ja: "ヒンディー語",
-  ko: "힌디어",
-  pt: "hindi",
-  ru: "хинди",
-  zh: "印地语",
   Language: "भाषा",
 }

@@ -1,4 +1,4 @@
-import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n/lang-code-iso-639-1"
+import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n/lang-code-iso-639-1/lang-code-iso-639-1"
 import { TranslatorMsg } from "../../@SHARED/client/translator"
 
 export type ModelClient = {

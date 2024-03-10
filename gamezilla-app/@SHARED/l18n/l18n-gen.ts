@@ -1,7 +1,7 @@
 import { exec } from "child_process"
 import fs from "fs/promises"
 import path from "path"
-import { LanguageCodeISO_639_1 } from "./lang-code-iso-639-1"
+import { LanguageCodeISO_639_1 } from "./lang-code-iso-639-1/lang-code-iso-639-1"
 import { Translations, TranslationText } from "./translations"
 
 //

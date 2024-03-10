@@ -2,6 +2,18 @@
 import type { Text } from "../text"
 
 export const translations: Text = {
+  en: "Chinese",
+  es: "Chino",
+  ar: "الصينية",
+  de: "Chinesisch",
+  fr: "chinois",
+  hi: "चीनी",
+  it: "cinese",
+  ja: "中国語",
+  ko: "중국어",
+  pt: "chinês",
+  ru: "китайский",
+  zh: "中文",
   "auth.current-user-logged-out": "用户",
   "auth.current-user-logged-in": "用户",
   "spaces.current-user-joined-space": "加入空间",
@@ -16,17 +28,5 @@ export const translations: Text = {
     username
       ? `${username}\u7ED3\u675F\u7A7A\u95F4`
       : "\u7ED3\u675F\u7A7A\u95F4",
-  en: "Chinese",
-  es: "Chino",
-  ar: "الصينية",
-  de: "Chinesisch",
-  fr: "chinois",
-  hi: "चीनी",
-  it: "cinese",
-  ja: "中国語",
-  ko: "중국어",
-  pt: "chinês",
-  ru: "китайский",
-  zh: "中文",
   Language: "语言",
 }

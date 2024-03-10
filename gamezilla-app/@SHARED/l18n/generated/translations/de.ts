@@ -2,16 +2,6 @@
 import type { Text } from "../text"
 
 export const translations: Text = {
-  "auth.current-user-logged-out": "Benutzer",
-  "auth.current-user-logged-in": "Benutzer",
-  "spaces.current-user-joined-space": "Raum beigetreten",
-  "spaces.other-user-joined-space": (username) =>
-    username ? `${username} beigetreten` : "Raum beigetreten",
-  "spaces.space-not-found": "Raum nicht gefunden",
-  "spaces.go-home": "Geh nach Hause",
-  "spaces.current-user-ended-space": "Raum be",
-  "spaces.other-user-ended-space": (username) =>
-    username ? `${username} beendet` : "Raum beendet",
   en: "German",
   es: "Alemán",
   ar: "الألمانية",
@@ -24,5 +14,15 @@ export const translations: Text = {
   pt: "alemão",
   ru: "немецкий",
   zh: "德语",
+  "auth.current-user-logged-out": "Benutzer",
+  "auth.current-user-logged-in": "Benutzer",
+  "spaces.current-user-joined-space": "Raum beigetreten",
+  "spaces.other-user-joined-space": (username) =>
+    username ? `${username} beigetreten` : "Raum beigetreten",
+  "spaces.space-not-found": "Raum nicht gefunden",
+  "spaces.go-home": "Geh nach Hause",
+  "spaces.current-user-ended-space": "Raum be",
+  "spaces.other-user-ended-space": (username) =>
+    username ? `${username} beendet` : "Raum beendet",
   Language: "Sprache",
 }

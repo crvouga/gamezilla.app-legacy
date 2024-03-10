@@ -2,6 +2,18 @@
 import type { Text } from "../text"
 
 export const translations: Text = {
+  en: "Arabic",
+  es: "Árabe",
+  ar: "العربية",
+  de: "Arabisch",
+  fr: "arabe",
+  hi: "अरबी",
+  it: "arabo",
+  ja: "アラビア語",
+  ko: "아랍어",
+  pt: "árabe",
+  ru: "арабский",
+  zh: "阿拉伯语",
   "auth.current-user-logged-out": "مستخدم",
   "auth.current-user-logged-in": "مستخدم",
   "spaces.current-user-joined-space": "انضم إلى الفضاء",
@@ -16,17 +28,5 @@ export const translations: Text = {
     username
       ? `${username} \u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
       : "\u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621",
-  en: "Arabic",
-  es: "Árabe",
-  ar: "العربية",
-  de: "Arabisch",
-  fr: "arabe",
-  hi: "अरबी",
-  it: "arabo",
-  ja: "アラビア語",
-  ko: "아랍어",
-  pt: "árabe",
-  ru: "арабский",
-  zh: "阿拉伯语",
   Language: "اللغة",
 }

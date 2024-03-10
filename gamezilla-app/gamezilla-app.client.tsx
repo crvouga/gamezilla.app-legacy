@@ -1,18 +1,18 @@
-import { Browser, Posix, Program } from "gamezilla-app/@SHARED/core"
+import { Program } from "gamezilla-app/@SHARED/core"
 import {
   SHOULD_USE_DEBUGGER,
   TRANSPORT_IMPL,
   VDOM_IMPL,
 } from "gamezilla-app/public-config"
 import * as AppClient from "./@CHILD/app/app.client"
-import { Render } from "./@SHARED/vdom/render"
 import { attachDebuggerBrowserExtension } from "./@SHARED/core/debug"
+import { Render } from "./@SHARED/vdom/render"
 
 const main = async () => {
   const deps = await AppClient.getDeps()
 
   const program = Program.create({
-    ctx: () => ({ now: Posix.now(), location: Browser.location() }),
+    ctx: AppClient.getCtx,
 
     init: (input) => AppClient.init({ ...input, deps }),
 

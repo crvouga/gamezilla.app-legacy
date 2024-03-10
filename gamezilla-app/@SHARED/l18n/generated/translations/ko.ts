@@ -2,6 +2,18 @@
 import type { Text } from "../text"
 
 export const translations: Text = {
+  en: "Korean",
+  es: "Coreano",
+  ar: "الكورية",
+  de: "Koreanisch",
+  fr: "coréen",
+  hi: "कोरियाई",
+  it: "coreano",
+  ja: "韓国語",
+  ko: "한국어",
+  pt: "coreano",
+  ru: "корейский",
+  zh: "韩语",
   "auth.current-user-logged-out": "사용자",
   "auth.current-user-logged-in": "사용자",
   "spaces.current-user-joined-space": "공간에 참여했습니다",
@@ -16,17 +28,5 @@ export const translations: Text = {
     username
       ? `${username}\uAC00 \uACF5\uAC04\uC744 \uC885\uB8CC\uD588\uC2B5\uB2C8\uB2E4`
       : "\uACF5\uAC04 \uC885\uB8CC",
-  en: "Korean",
-  es: "Coreano",
-  ar: "الكورية",
-  de: "Koreanisch",
-  fr: "coréen",
-  hi: "कोरियाई",
-  it: "coreano",
-  ja: "韓国語",
-  ko: "한국어",
-  pt: "coreano",
-  ru: "корейский",
-  zh: "韩语",
   Language: "언어",
 }

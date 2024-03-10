@@ -2,6 +2,18 @@
 import type { Text } from "../text"
 
 export const translations: Text = {
+  en: "Russian",
+  es: "Ruso",
+  ar: "الروسية",
+  de: "Russisch",
+  fr: "russe",
+  hi: "रूसी",
+  it: "russo",
+  ja: "ロシア語",
+  ko: "러시아어",
+  pt: "russo",
+  ru: "русский",
+  zh: "俄语",
   "auth.current-user-logged-out": "пользователь",
   "auth.current-user-logged-in": "пользователь",
   "spaces.current-user-joined-space": "Присоединился к пространству",
@@ -16,17 +28,5 @@ export const translations: Text = {
     username
       ? `${username} \u0437\u0430\u043A\u043E\u043D\u0447\u0438\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`
       : "\u041F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E \u0437\u0430\u043A\u043E\u043D\u0447\u0435\u043D\u043E",
-  en: "Russian",
-  es: "Ruso",
-  ar: "الروسية",
-  de: "Russisch",
-  fr: "russe",
-  hi: "रूसी",
-  it: "russo",
-  ja: "ロシア語",
-  ko: "러시아어",
-  pt: "russo",
-  ru: "русский",
-  zh: "俄语",
   Language: "Язык",
 }

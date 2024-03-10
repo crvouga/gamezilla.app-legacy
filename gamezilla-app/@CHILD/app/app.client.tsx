@@ -40,6 +40,7 @@ import * as Wire from "./@CHILD/wire/wire.client"
 import { getTranslator } from "./@SHARED/client/translator"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core"
+import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n"
 
 //
 //
@@ -86,12 +87,23 @@ export const getDeps = async (): Promise<Deps> => {
 //
 //
 
+type Ctx = {
+  now: Posix
+  location: Browser.Location
+  navigatorLang: LanguageCodeISO_639_1
+}
+
+export const getCtx = (): Ctx => {
+  return {
+    now: Posix.now(),
+    location: Browser.location(),
+    navigatorLang: LanguageCodeISO_639_1.getLangFromNavigator() ?? "en",
+  }
+}
+
 export const init = async (input: {
   deps: Deps
-  ctx: {
-    now: Posix
-    location: Browser.Location
-  }
+  ctx: Ctx
 }): Promise<{
   model: ModelClient
   eff?: Eff<MsgClient>
@@ -103,7 +115,7 @@ export const init = async (input: {
 
   const ctx: ClientCtx | AnonymousClientCtx = {
     ...input.ctx,
-    t: getTranslator("en"),
+    t: getTranslator(input.ctx.navigatorLang),
     currentRoute: routing.model.currentRoute,
     currentUserId: null,
     documentVisibilityState: "visible",
@@ -181,7 +193,7 @@ export const init = async (input: {
     preloadSound(Object.values(APP_SOUND)),
   )
 
-  const updated = await updateLoop(input.deps, ctx.now, {
+  const updated = await updateLoop(input.deps, input.ctx, {
     model: initialModel,
     eff: initialEff,
     msgCmd: initialCmd,
@@ -211,7 +223,7 @@ function log(...msg: unknown[]) {
 }
 
 export const update = async (input: {
-  ctx: { now: Posix }
+  ctx: Ctx
   msg: MsgClient
   model: ModelClient
   deps: Deps
@@ -227,14 +239,14 @@ export const update = async (input: {
     log("[➡️]", toMsgType(msgServer))
   }
   const updatedFromMsg = await updateChild({
-    now: input.ctx.now,
+    ctx: input.ctx,
     model: input.model,
     msg: input.msg,
     msgServer: msgServer,
     deps: input.deps,
   })
 
-  const updated = await updateLoop(input.deps, input.ctx.now, updatedFromMsg)
+  const updated = await updateLoop(input.deps, input.ctx, updatedFromMsg)
 
   return updated
 }
@@ -248,7 +260,7 @@ type Output = {
 
 const updateLoop = async (
   deps: Deps,
-  now: Posix,
+  ctx: Ctx,
   acc: Output,
 ): Promise<Output> => {
   const [msgCmd, ...msgCmdRest] = acc.msgCmd
@@ -257,11 +269,11 @@ const updateLoop = async (
     log("[msgCmd]", toMsgType(msgCmd))
     const updatedCmd = await updateChild({
       deps,
-      now,
+      ctx,
       model: acc.model,
       msgCmd,
     })
-    return updateLoop(deps, now, {
+    return updateLoop(deps, ctx, {
       model: updatedCmd.model,
       msgCmd: [...msgCmdRest, ...updatedCmd.msgCmd],
       eff: Eff.batch([acc.eff, updatedCmd.eff]),
@@ -275,11 +287,11 @@ const updateLoop = async (
     log("[msgEvt]", toMsgType(msgEvt))
     const updatedEvent = await updateChild({
       deps,
-      now,
+      ctx,
       model: acc.model,
       msgEvt,
     })
-    return updateLoop(deps, now, {
+    return updateLoop(deps, ctx, {
       model: updatedEvent.model,
       msgCmd: [...msgCmdRest, ...updatedEvent.msgCmd],
       eff: Eff.batch([acc.eff, updatedEvent.eff]),
@@ -291,7 +303,7 @@ const updateLoop = async (
 }
 
 const updateChild = async ({
-  now,
+  ctx,
   model,
   msg,
   msgServer,
@@ -300,17 +312,17 @@ const updateChild = async ({
   deps,
 }: {
   deps: Deps
-  now: Posix
+  ctx: Ctx
   model: ModelClient
   msg?: MsgClient
   msgServer?: MsgToClient
   msgEvt?: ClientEvent
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
 }): Promise<Output> => {
-  const ctx = toCtx({ model, ctx: { now } })
+  const clientClient = toClientCtx({ model, ctx })
 
   const space = await SpaceClient.update({
-    ctx,
+    ctx: clientClient,
     model: model.spaces,
     msg: msg?.t === "spaces" ? msg.c : null,
     msgServer: msgServer?.t === "spaces" ? msgServer.c : null,
@@ -319,7 +331,7 @@ const updateChild = async ({
   })
 
   const profile = await ProfileClient.update({
-    ctx: { ...ctx, viewBottomBar: null },
+    ctx: { ...clientClient, viewBottomBar: null },
     model: model.profile,
     msg: msg?.t === "profile" ? msg.c : null,
     msgServer: msgServer?.t === "profile" ? msgServer.c : null,
@@ -328,7 +340,7 @@ const updateChild = async ({
   })
 
   const auth = await AuthClient.update({
-    ctx,
+    ctx: clientClient,
     model: model.auth,
     msg: msg?.t === "auth" ? msg.c : null,
     msgServer: msgServer?.t === "auth" ? msgServer.c : null,
@@ -383,7 +395,7 @@ const updateChild = async ({
     msgCmd: null,
     msgServer: msgServer?.t === "lang" ? msgServer.c : null,
     msgEvt: msgEvt,
-    ctx,
+    ctx: clientClient,
   })
 
   return {
@@ -438,9 +450,9 @@ const updateChild = async ({
   }
 }
 
-const toCtx = (input: {
+const toClientCtx = (input: {
   model: ModelClient
-  ctx: { now: Posix }
+  ctx: Ctx
 }): ClientCtx | AnonymousClientCtx => {
   const anonymousCtx: AnonymousClientCtx = {
     ...input.ctx,
@@ -471,11 +483,11 @@ const toCtx = (input: {
 //
 
 export const subscriptions = async (input: {
-  ctx: { now: Posix }
+  ctx: Ctx
   deps: Deps
   model: ModelClient
 }) => {
-  const ctx = toCtx(input)
+  const ctx = toClientCtx(input)
 
   return Sub.batch<MsgClient>([
     Sub.tag("➡️", Sub.flat(input.deps.transport.toClient)),
@@ -510,7 +522,7 @@ export const View = ({
   dispatch,
   ctx,
 }: {
-  ctx: { now: Posix }
+  ctx: Ctx
   model: ModelClient
   dispatch: (msg: MsgClient) => void
 }) => {
@@ -588,7 +600,7 @@ const ViewMain = ({
   dispatch,
   ctx,
 }: {
-  ctx: { now: Posix }
+  ctx: Ctx
   model: ModelClient
   dispatch: (msg: MsgClient) => void
 }) => {
