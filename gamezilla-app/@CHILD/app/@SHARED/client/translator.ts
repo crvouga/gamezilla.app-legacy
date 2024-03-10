@@ -74,9 +74,7 @@ export const getTranslator = (
 
   Promise.all([
     loadTranslator(languageCode),
-    state.lastLoaded
-      ? new Promise((r) => setTimeout(r, 3000))
-      : Promise.resolve(),
+    state.lastLoaded ? new Promise((r) => setTimeout(r, 0)) : Promise.resolve(),
   ]).then(([loaded]) => {
     state.translators[languageCode] = {
       t: loaded,

@@ -7,8 +7,8 @@ import {
   closeStatusBar,
   playSound,
   pushRoute,
-  showToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { Posix, TimeSpan } from "gamezilla-app/@SHARED/core"
 import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n"
 import { translations } from "gamezilla-app/@SHARED/l18n/lang-code-iso-639-1/l18n"
 import { AppClientModule } from "../../@SHARED/architecture/app-client"
@@ -22,7 +22,13 @@ import {
   Spinner,
   TopBar,
 } from "../../@SHARED/ui"
-import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./lang.core"
+import {
+  ModelClient,
+  MsgClient,
+  MsgToClient,
+  MsgToServer,
+  TranslationLoading,
+} from "./lang.core"
 
 //
 //
@@ -72,24 +78,42 @@ export const init: Module["init"] = () => {
 export const update: Module["update"] = ({ model, ctx, msg }) => {
   switch (msg?.t) {
     case "translator.loaded": {
+      const loadingNew: TranslationLoading = {
+        startedAt: model.loading?.[msg.lang]?.startedAt ?? ctx.now,
+        endedAt: ctx.now,
+      }
       return {
         model: {
           ...model,
-          loading: { ...model.loading, [msg.lang]: false },
+          loading: {
+            ...model.loading,
+            [msg.lang]: loadingNew,
+          },
         },
         msgCmd:
-          model.lang === msg.lang && model.loading[model.lang]
-            ? [
-                playSound(APP_SOUND.refreshFeed),
-                showToast(ctx.t("lang.loaded-translations")),
-              ]
+          model.lang === msg.lang &&
+          loadingNew.endedAt &&
+          TimeSpan.gte(
+            Posix.diff(loadingNew.startedAt, loadingNew.endedAt),
+            TimeSpan.fromSeconds(1),
+          )
+            ? [playSound(APP_SOUND.refreshFeed)]
             : [],
       }
     }
 
     case "translator.loading": {
       return {
-        model: { ...model, loading: { ...model.loading, [msg.lang]: true } },
+        model: {
+          ...model,
+          loading: {
+            ...model.loading,
+            [msg.lang]: {
+              startedAt: ctx.now,
+              endedAt: null,
+            },
+          },
+        },
       }
     }
 
@@ -173,7 +197,7 @@ export const View: Module["View"] = ({ ctx, dispatch, model }) => {
             <ListItemButton
               label={translations[code][code]}
               icon={(props) => {
-                if (model.loading[code]) {
+                if (model.loading[code]?.endedAt === null) {
                   return <Spinner {...props} />
                 }
 
