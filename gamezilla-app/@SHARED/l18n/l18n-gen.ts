@@ -143,7 +143,10 @@ export const translations: Text = ${translationsForLanguageString};`
 function runPrettierOnDirectory(directoryPath: string) {
   return new Promise((resolve, reject) => {
     // Constructs the command to run Prettier on all TypeScript files in the directory
-    const command = `npx prettier --write "${path.join(directoryPath, "*.ts")}"`
+    const command = `npx prettier --write "${path.join(
+      directoryPath,
+      "**/*.ts",
+    )}"`
 
     exec(command, (error, stdout, stderr) => {
       if (error) {
