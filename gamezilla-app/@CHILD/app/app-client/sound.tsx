@@ -8,6 +8,7 @@ import {
 import {
   IconVolumeHigh,
   IconVolumeXMark,
+  ListItemButton,
   ToggleButton,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
@@ -224,33 +225,41 @@ export const ViewStatusBarDrawer = ({
   dispatch: (m: Msg) => void
 }) => {
   return (
-    <div className="flex w-full items-center">
-      <button
-        className="flex w-full flex-1 items-center gap-4 p-4"
-        tabIndex={-1}
-        onClick={() => dispatch({ t: "toggle-mute" })}
-      >
-        {model.muted ? (
-          <>
-            <IconVolumeXMark className="h-5 w-5" />
-            <p>Sound off</p>
-          </>
+    <ListItemButton
+      onClick={() => dispatch({ t: "toggle-mute" })}
+      icon={(props) =>
+        model.muted ? (
+          <IconVolumeXMark {...props} />
         ) : (
-          <>
-            <IconVolumeHigh className="h-5 w-5" />
-            <p>Sound on</p>
-          </>
-        )}
-      </button>
-      <div className="flex items-center justify-center p-4">
+          <IconVolumeHigh {...props} />
+        )
+      }
+      label={model.muted ? "Sound off" : "Sound on"}
+      end={() => (
         <ToggleButton
           label="toggle sound"
-          onToggle={() => dispatch({ t: "toggle-mute" })}
           checked={!model.muted}
-          id="sound"
+          id="toggle-sound"
         />
-      </div>
-    </div>
+      )}
+    />
+    // <div className="flex w-full items-center">
+    //   <button
+    //     className="flex w-full flex-1 items-center gap-4 p-4"
+    //     tabIndex={-1}
+    //     onClick={() => dispatch({ t: "toggle-mute" })}
+    //   >
+    //     {}
+    //   </button>
+    //   <div className="flex items-center justify-center p-4">
+    //     <ToggleButton
+    //       label="toggle sound"
+    //       onToggle={() => dispatch({ t: "toggle-mute" })}
+    //       checked={!model.muted}
+    //       id="sound"
+    //     />
+    //   </div>
+    // </div>
   )
 }
 

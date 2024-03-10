@@ -4,6 +4,7 @@ import {
   showToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Eff, Sub } from "gamezilla-app/@SHARED/core"
+import { ListItemButton, cn } from "../../@SHARED/ui"
 import { IClientTransport } from "./transport-client"
 import { ModelClient, MsgClient, MsgToClient } from "./wire.core"
 
@@ -228,36 +229,52 @@ export const ViewStatusBarDrawer = ({
   switch (model.state.t) {
     case "server-connected": {
       return (
-        <div className="flex w-full items-center gap-4 p-4">
-          <span className="h-5 w-5 rounded-full bg-green-500"></span>
-
-          <p className="text-green-500">Online</p>
-        </div>
+        <ListItemButton
+          icon={(props) => (
+            <span
+              className={cn(props.className, "rounded-full bg-green-500")}
+            />
+          )}
+          className="text-green-500"
+          label="Online"
+        />
       )
     }
 
     case "server-connect-error":
     case "server-connecting": {
       return (
-        <div className="flex w-full animate-pulse items-center gap-4 p-4">
-          <span className="h-5 w-5 rounded-full bg-orange-500"></span>
-          <p className="text-orange-500">Connecting...</p>
-        </div>
+        <ListItemButton
+          icon={(props) => (
+            <span
+              className={cn(props.className, "rounded-full bg-orange-500")}
+            />
+          )}
+          color="warning"
+          label="Connecting..."
+        />
       )
     }
 
     case "server-disconnected": {
       return (
-        <div className="flex w-full items-center gap-4 p-4">
-          <span className="h-5 w-5 rounded-full bg-red-500"></span>
-          <p className="flex-1 text-red-500">Offline</p>
-          <button
-            onClick={() => dispatch({ t: "clicked-try-reconnect" })}
-            className="font-bold text-red-500"
-          >
-            Try reconnect
-          </button>
-        </div>
+        <ListItemButton
+          icon={(props) => (
+            <span className={cn(props.className, "rounded-full bg-red-500")} />
+          )}
+          color="danger"
+          label="Offline"
+          end={() => {
+            return (
+              <button
+                onClick={() => dispatch({ t: "clicked-try-reconnect" })}
+                className="font-bold text-red-500"
+              >
+                Try reconnect
+              </button>
+            )
+          }}
+        />
       )
     }
   }

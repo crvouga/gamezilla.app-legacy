@@ -17,6 +17,7 @@ import { ServerInstance } from "gamezilla-app/@SHARED/server"
 import * as AuthServer from "./@CHILD/auth/auth.server"
 import * as ProfileServer from "./@CHILD/profile/profile.server"
 import * as SpaceServer from "./@CHILD/spaces/spaces.server"
+import * as LangServer from "./@CHILD/lang/lang.server"
 import {
   IServerTransport,
   ServerTransport,
@@ -121,12 +122,18 @@ export const init = async (input: {
     stored: null,
   })
 
+  const lang = await LangServer.init({
+    ctx,
+    stored: null,
+  })
+
   return {
     model: {
       wire: wire.model,
       spaces: space.model,
       profile: profile.model,
       auth: auth.model,
+      lang: lang.model,
     },
   }
 }
@@ -331,6 +338,17 @@ export const updateChild = async ({
     msg: msg?.t === "profile" ? msg.c : null,
   })
 
+  const lang = await LangServer.update({
+    deps: LangServer.getDeps({ ctx }),
+    model: model.lang,
+    ctx,
+    msgCmd: null,
+    msgEvt: msgEvt,
+    msgClient:
+      msgClient?.t === "lang" ? { ...msgClient, ...msgClient.c } : null,
+    msg: msg?.t === "lang" ? msg.c : null,
+  })
+
   //
   //
   //
@@ -342,24 +360,28 @@ export const updateChild = async ({
       profile: profile.model,
       spaces: space.model,
       wire: wire.model,
+      lang: lang.model,
     },
     msgCmd: batchMsgs<ServerCmd<MsgToClient>>(
       ServerCmd.tag("spaces", space.msgCmd),
       ServerCmd.tag("auth", auth.msgCmd),
       ServerCmd.tag("wire", wire.msgCmd),
       ServerCmd.tag("profile", profile.msgCmd),
+      ServerCmd.tag("lang", lang.msgCmd),
     ),
     eff: Eff.batch<MsgServer>([
       Eff.tag("spaces", space.eff),
       Eff.tag("auth", auth.eff),
       Eff.tag("wire", wire.eff),
       Eff.tag("profile", profile.eff),
+      Eff.tag("lang", lang.eff),
     ]),
     msgEvt: batchMsgs<ServerEvent>(
       auth.msgEvt,
       space.msgEvt,
       wire.msgEvt,
       profile.msgEvt,
+      lang.msgEvt,
     ),
   }
 }
@@ -391,7 +413,10 @@ export const subscriptions = async (input: {
       "wire",
       WireServer.subscriptions({ transport: input.deps.transport }),
     ),
-
+    Sub.tag(
+      "lang",
+      await LangServer.subscriptions({ model: input.model.lang, ctx }),
+    ),
     Sub.flat(
       Sub.map(input.deps.transport.toServer, ({ sessionId, clientId, msgs }) =>
         msgs.map(

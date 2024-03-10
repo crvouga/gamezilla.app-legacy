@@ -31,6 +31,7 @@ import {
 import * as AuthClient from "./@CHILD/auth/auth.client"
 import * as ProfileClient from "./@CHILD/profile/profile.client"
 import * as SpaceClient from "./@CHILD/spaces/spaces.client"
+import * as LangClient from "./@CHILD/lang/lang.client"
 import {
   ClientTransport,
   IClientTransport,
@@ -145,6 +146,11 @@ export const init = async ({
     stored: null,
   })
 
+  const lang = await LangClient.init({
+    ctx: appCtx,
+    stored: null,
+  })
+
   const initialModel: ModelClient = {
     statusBar: statusBar.model,
     routing: routing.model,
@@ -155,11 +161,13 @@ export const init = async ({
     spaces: space.model,
     auth: auth.model,
     profile: profile.model,
+    lang: lang.model,
   }
 
   const initialEff = Eff.batch<MsgClient>([
     routing.eff,
     Eff.tag("auth", auth.eff),
+    Eff.tag("lang", lang.eff),
   ])
 
   const initialCmd = batchMsgs<
@@ -167,6 +175,8 @@ export const init = async ({
   >(
     ClientCmd.tag("spaces", space.msgCmd),
     ClientCmd.tag("profile", profile.msgCmd),
+    ClientCmd.tag("auth", auth.msgCmd),
+    ClientCmd.tag("lang", lang.msgCmd),
     preloadSound(Object.values(APP_SOUND)),
   )
 
@@ -366,6 +376,15 @@ const updateChild = async ({
     msgServer: null,
   })
 
+  const lang = await LangClient.update({
+    model: model.lang,
+    msg: msg?.t === "lang" ? msg.c : null,
+    msgCmd: null,
+    msgServer: msgServer?.t === "lang" ? msgServer.c : null,
+    msgEvt: msgEvt,
+    ctx: ctx,
+  })
+
   return {
     model: {
       auth: auth.model,
@@ -377,6 +396,7 @@ const updateChild = async ({
       statusBar: statusBar.model,
       toast: toast.model,
       wire: wire.model,
+      lang: lang.model,
     },
 
     eff: Eff.batch<MsgClient>([
@@ -389,6 +409,7 @@ const updateChild = async ({
       Eff.tag("status-bar", statusBar.eff),
       Eff.tag("toast", toast.eff),
       Eff.tag("wire", wire.eff),
+      Eff.tag("lang", lang.eff),
     ]),
 
     msgEvt: batchMsgs<ClientEvent>(
@@ -399,6 +420,7 @@ const updateChild = async ({
       space.msgEvt,
       toast.msgEvt,
       wire.msgEvt,
+      lang.msgEvt,
     ),
 
     msgCmd: batchMsgs<
@@ -407,6 +429,7 @@ const updateChild = async ({
       ClientCmd.tag("auth", auth.msgCmd),
       ClientCmd.tag("profile", profile.msgCmd),
       ClientCmd.tag("spaces", space.msgCmd),
+      ClientCmd.tag("lang", lang.msgCmd),
       routing.msgCmd,
       sound.msgCmd,
       toast.msgCmd,
@@ -419,7 +442,7 @@ const toCtx = (input: {
   ctx: { now: Posix }
 }): ClientCtx | AnonymousClientCtx => {
   const anonymousCtx: AnonymousClientCtx = {
-    lang: "en",
+    lang: input.model.lang.lang,
     profiles: input.model.profile.profiles,
     now: input.ctx.now,
     documentVisibilityState: input.model.platform.documentVisibilityState,
@@ -497,23 +520,36 @@ export const View = ({
         <StatusBar.View
           model={model.statusBar}
           dispatch={(c) => dispatch({ t: "status-bar", c })}
-          wire={{
-            drawer: (
-              <Wire.ViewStatusBarDrawer
-                model={model.wire}
-                dispatch={(c) => dispatch({ t: "wire", c })}
-              />
+          slots={{
+            barLeft: (
+              <>
+                <Wire.ViewStatusBar model={model.wire} />
+              </>
             ),
-            statusBar: <Wire.ViewStatusBar model={model.wire} />,
-          }}
-          sound={{
-            drawer: (
-              <Sound.ViewStatusBarDrawer
-                model={model.sound}
-                dispatch={(c) => dispatch({ t: "sound", c })}
-              />
+
+            barRight: (
+              <>
+                <Sound.ViewStatusBar model={model.sound} />
+              </>
             ),
-            statusBar: <Sound.ViewStatusBar model={model.sound} />,
+
+            drawerContent: (
+              <>
+                <Wire.ViewStatusBarDrawer
+                  model={model.wire}
+                  dispatch={(c) => dispatch({ t: "wire", c })}
+                />
+                <LangClient.ViewStatusBarDrawer
+                  ctx={ctx}
+                  dispatch={(c) => dispatch({ t: "lang", c })}
+                  model={model.lang}
+                />
+                <Sound.ViewStatusBarDrawer
+                  model={model.sound}
+                  dispatch={(c) => dispatch({ t: "sound", c })}
+                />
+              </>
+            ),
           }}
         />
 

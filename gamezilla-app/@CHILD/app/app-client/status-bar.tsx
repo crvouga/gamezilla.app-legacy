@@ -51,16 +51,12 @@ export const update = (input: {
 export const View = ({
   model,
   dispatch,
-  wire,
-  sound,
+  slots,
 }: {
-  wire: {
-    statusBar: VDom
-    drawer: VDom
-  }
-  sound: {
-    statusBar: VDom
-    drawer: VDom
+  slots: {
+    barLeft: VDom
+    barRight: VDom
+    drawerContent: VDom
   }
   model: Model
   dispatch: (m: Msg) => void
@@ -72,11 +68,11 @@ export const View = ({
         className="flex w-full items-center gap-2 border-b border-neutral-600 p-0.5 px-2 text-xs text-neutral-300"
         onClick={() => dispatch({ t: "clicked-status-bar" })}
       >
-        {wire.statusBar}
+        {slots.barLeft}
 
         <div className="flex-1"></div>
 
-        {sound.statusBar}
+        {slots.barRight}
       </button>
 
       <Drawer
@@ -85,9 +81,7 @@ export const View = ({
         open={model.isDrawerOpen}
         onClose={() => dispatch({ t: "closed-status-bar-drawer" })}
       >
-        {wire.drawer}
-
-        {sound.drawer}
+        {slots.drawerContent}
       </Drawer>
     </div>
   )
