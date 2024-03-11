@@ -165,7 +165,7 @@ export const init = async (input: {
   })
 
   const profile = await ProfileClient.init({
-    ctx: { ...ctx, viewBottomBar: null },
+    ctx,
     stored: input.deps.stored,
   })
 
@@ -349,7 +349,7 @@ const updateChild = async ({
   })
 
   const profile = await ProfileClient.update({
-    ctx: { ...clientClient, viewBottomBar: null },
+    ctx: clientClient,
     model: model.profile,
     msg: msg?.t === "profile" ? msg.c : null,
     msgServer: msgServer?.t === "profile" ? msgServer.c : null,
@@ -560,9 +560,9 @@ export const View = (input: {
           <ProfileClient.View
             dispatch={(m) => dispatch({ t: "profile", c: m })}
             model={model.profile}
-            ctx={{
-              ...clientCtx,
-              viewBottomBar: (
+            ctx={clientCtx}
+            slots={{
+              bottomBar: () => (
                 <ViewBottomNavBar
                   model={model}
                   dispatch={dispatch}
@@ -577,15 +577,13 @@ export const View = (input: {
             model={model.spaces}
             ctx={clientCtx}
             slots={{
-              bottomBar() {
-                return (
-                  <ViewBottomNavBar
-                    model={model}
-                    dispatch={dispatch}
-                    ctx={clientCtx}
-                  />
-                )
-              },
+              bottomBar: () => (
+                <ViewBottomNavBar
+                  model={model}
+                  dispatch={dispatch}
+                  ctx={clientCtx}
+                />
+              ),
             }}
           />
 

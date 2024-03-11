@@ -23,7 +23,6 @@ import {
   TopBarBackButton,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { Sub, isErr, loading } from "gamezilla-app/@SHARED/core"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
 import { AuthRoutes } from "../auth/@SHARED/auth-routes"
 import { ViewProfileScreen } from "./profile-client/profile-client-view-profile-screen"
 import { ViewUpdateAvatarScreen } from "./profile-client/profile-client-view-update-avatar-screen"
@@ -43,11 +42,9 @@ import {
 //
 //
 
-type Ctx = (ClientCtx | AnonymousClientCtx) & {
-  viewBottomBar: VDom
-}
+type Ctx = ClientCtx | AnonymousClientCtx
 
-type Module = AppClientModule<{
+type ClientModule = AppClientModule<{
   Model: ModelClient
   Msg: MsgClient
   MsgToClient: MsgToClient
@@ -60,6 +57,9 @@ type Module = AppClientModule<{
     MsgToServer: MsgToServer
   }>
   MsgOutEvent: never
+  ViewSlot: {
+    bottomBar: null
+  }
 }>
 
 //
@@ -70,7 +70,7 @@ type Module = AppClientModule<{
 //
 //
 
-export const init: Module["init"] = ({ ctx }) => {
+export const init: ClientModule["init"] = ({ ctx }) => {
   const initialModel: ModelClient = {
     profiles: {},
     requests: {},
@@ -94,7 +94,7 @@ export const init: Module["init"] = ({ ctx }) => {
 //
 //
 
-export const update: Module["update"] = (input) => {
+export const update: ClientModule["update"] = (input) => {
   if (input.msgEvt) {
     return updateFromEvent(input)
   }
@@ -114,7 +114,7 @@ export const update: Module["update"] = (input) => {
   return { model: input.model }
 }
 
-const updateFromCmd: Module["update"] = (input) => {
+const updateFromCmd: ClientModule["update"] = (input) => {
   const { model, msgCmd } = input
 
   if (!msgCmd) {
@@ -148,7 +148,7 @@ const updateFromCmd: Module["update"] = (input) => {
   }
 }
 
-const updateFromEvent: Module["update"] = (input) => {
+const updateFromEvent: ClientModule["update"] = (input) => {
   const { msgEvt, model } = input
 
   if (!msgEvt) {
@@ -169,7 +169,7 @@ const updateFromEvent: Module["update"] = (input) => {
   }
 }
 
-const updateFromServer: Module["update"] = (input) => {
+const updateFromServer: ClientModule["update"] = (input) => {
   const { model, msgServer } = input
 
   if (!msgServer) {
@@ -233,7 +233,7 @@ const updateFromServer: Module["update"] = (input) => {
   }
 }
 
-const updateFromMsg: Module["update"] = (input) => {
+const updateFromMsg: ClientModule["update"] = (input) => {
   const { msg, model, ctx } = input
 
   if (!msg) {
@@ -370,7 +370,7 @@ const updateFromMsg: Module["update"] = (input) => {
 const loadProfile = (
   userId: UserId,
   model: ModelClient,
-): ReturnType<Module["update"]> => {
+): ReturnType<ClientModule["update"]> => {
   return {
     model: {
       ...model,
@@ -388,7 +388,7 @@ const loadProfile = (
 //
 //
 
-export const subscriptions: Module["subscriptions"] = (_input) => {
+export const subscriptions: ClientModule["subscriptions"] = (_input) => {
   return Sub.None
 }
 
@@ -400,7 +400,7 @@ export const subscriptions: Module["subscriptions"] = (_input) => {
 //
 //
 
-export const View: Module["View"] = ({ model, dispatch, ctx }) => {
+export const View: ClientModule["View"] = ({ model, dispatch, ctx, slots }) => {
   if (ProfileRoutes.Profile.is(ctx.currentRouteV2)) {
     return (
       <div className="relative flex h-full w-full flex-col">
@@ -411,7 +411,7 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
           userId={ctx.currentRouteV2.payload.userId}
         />
 
-        {ctx.viewBottomBar}
+        {slots?.bottomBar(null)}
       </div>
     )
   }
