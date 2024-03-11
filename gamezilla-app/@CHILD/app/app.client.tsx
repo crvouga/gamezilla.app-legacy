@@ -559,47 +559,7 @@ export const View = (input: {
         <ViewStatusBar model={model} dispatch={dispatch} ctx={ctx} />
 
         <div className="relative flex w-full flex-1 flex-col overflow-hidden">
-          <ProfileClient.View
-            dispatch={(m) => dispatch({ t: "profile", c: m })}
-            model={model.profile}
-            ctx={clientCtx}
-            slots={{
-              bottomBar: () => (
-                <ViewBottomNavBar
-                  model={model}
-                  dispatch={dispatch}
-                  ctx={clientCtx}
-                />
-              ),
-            }}
-          />
-
-          <SpaceClient.View
-            dispatch={(m) => dispatch({ t: "spaces", c: m })}
-            model={model.spaces}
-            ctx={clientCtx}
-            slots={{
-              bottomBar: () => (
-                <ViewBottomNavBar
-                  model={model}
-                  dispatch={dispatch}
-                  ctx={clientCtx}
-                />
-              ),
-            }}
-          />
-
-          <AuthClient.View
-            dispatch={(c) => dispatch({ t: "auth", c })}
-            model={model.auth}
-            ctx={clientCtx}
-          />
-
-          <LangClient.View
-            ctx={clientCtx}
-            model={model.lang}
-            dispatch={(c) => dispatch({ t: "lang", c })}
-          />
+          <ViewRoute model={model} dispatch={dispatch} ctx={clientCtx} />
         </div>
 
         <Portal.Exit portalId="modals" />
@@ -677,7 +637,10 @@ const ViewRouteLoggedOut: typeof ViewRoute = ({ ctx, dispatch, model }) => {
           onVisible={() =>
             dispatch({
               t: "routing",
-              c: { t: "clicked-link", route: { n: "auth-login", t: "login" } },
+              c: {
+                t: "clicked-link",
+                route: { n: "auth-login", t: "login" },
+              },
             })
           }
         />
