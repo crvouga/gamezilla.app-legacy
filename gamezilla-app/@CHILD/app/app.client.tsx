@@ -10,6 +10,7 @@ import {
 import {
   IconGamepad,
   IconUserCircle,
+  LoadingState,
   Portal,
   cn,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
@@ -607,6 +608,8 @@ export const View = (input: {
           model={model.toast}
           dispatch={(c) => dispatch({ t: "toast", c })}
         />
+
+        {model.auth.currentUser.t === "loading" && <LoadingState />}
       </div>
     </div>
   )
