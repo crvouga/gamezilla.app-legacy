@@ -41,6 +41,7 @@ import {
 } from "./@CHILD/wire/transport-client"
 import * as Wire from "./@CHILD/wire/wire.client"
 import { getTranslator } from "./@SHARED/client/translator"
+import { IntersectionObserverEmitter } from "./@SHARED/ui/intersection-observer"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core"
 
@@ -615,7 +616,136 @@ export const View = (input: {
   )
 }
 
-export const ViewStatusBar: typeof View = ({ ctx, dispatch, model }) => {
+const ViewRoute = ({
+  model,
+  dispatch,
+  ctx,
+}: {
+  ctx: ClientCtx | AnonymousClientCtx
+  model: ModelClient
+  dispatch: (m: MsgClient) => void
+}) => {
+  switch (model.routing.currentRoute.n) {
+    case "lang": {
+      return (
+        <LangClient.View
+          ctx={ctx}
+          dispatch={(c) => dispatch({ t: "lang", c })}
+          model={model.lang}
+        />
+      )
+    }
+
+    default: {
+      switch (model.auth.currentUser.t) {
+        case "loading": {
+          return <LoadingState />
+        }
+        case "logged-in": {
+          return (
+            <ViewRouteLoggedIn model={model} dispatch={dispatch} ctx={ctx} />
+          )
+        }
+        case "logged-out": {
+          return (
+            <ViewRouteLoggedOut model={model} dispatch={dispatch} ctx={ctx} />
+          )
+        }
+      }
+    }
+  }
+}
+
+const ViewRouteLoggedOut: typeof ViewRoute = ({ ctx, dispatch, model }) => {
+  switch (ctx.currentRoute.n) {
+    case "auth-login": {
+      return (
+        <AuthClient.View
+          model={model.auth}
+          ctx={ctx}
+          dispatch={(c) => dispatch({ t: "auth", c })}
+        />
+      )
+    }
+    case "spaces":
+    case "profile":
+    case "lang":
+    case "auth-logout": {
+      return (
+        <IntersectionObserverEmitter
+          id="logged-out-redirect"
+          onVisible={() =>
+            dispatch({
+              t: "routing",
+              c: { t: "clicked-link", route: { n: "auth-login", t: "login" } },
+            })
+          }
+        />
+      )
+    }
+  }
+}
+
+const ViewRouteLoggedIn: typeof ViewRoute = ({ ctx, dispatch, model }) => {
+  switch (ctx.currentRoute.n) {
+    case "auth-logout": {
+      return (
+        <AuthClient.ViewLogoutScreen
+          model={model.auth}
+          ctx={ctx}
+          dispatch={(c) => dispatch({ t: "auth", c })}
+        />
+      )
+    }
+
+    case "profile": {
+      return (
+        <ProfileClient.View
+          dispatch={(m) => dispatch({ t: "profile", c: m })}
+          model={model.profile}
+          ctx={ctx}
+          slots={{
+            bottomBar: () => (
+              <ViewBottomNavBar model={model} dispatch={dispatch} ctx={ctx} />
+            ),
+          }}
+        />
+      )
+    }
+
+    case "spaces": {
+      return (
+        <SpaceClient.View
+          dispatch={(m) => dispatch({ t: "spaces", c: m })}
+          model={model.spaces}
+          ctx={ctx}
+          slots={{
+            bottomBar: () => (
+              <ViewBottomNavBar model={model} dispatch={dispatch} ctx={ctx} />
+            ),
+          }}
+        />
+      )
+    }
+
+    case "lang":
+    case "auth-login": {
+      return (
+        <IntersectionObserverEmitter
+          id="logged-in-redirect"
+          onVisible={() =>
+            dispatch({
+              t: "routing",
+              c: { t: "clicked-link", route: { n: "spaces", t: "space-list" } },
+            })
+          }
+        />
+      )
+    }
+  }
+}
+
+const ViewStatusBar: typeof View = ({ ctx, dispatch, model }) => {
   const clientCtx = toClientCtx({ model, ctx })
 
   return (
