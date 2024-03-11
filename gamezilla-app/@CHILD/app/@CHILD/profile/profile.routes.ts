@@ -1,6 +1,6 @@
 import { Namespace } from "gamezilla-app/@SHARED/msg"
-import { UserId } from "../../@SHARED/data"
 import { P } from "gamezilla-app/@SHARED/parsing"
+import { UserId } from "../../@SHARED/data"
 
 const Msg = Namespace("profile")
 

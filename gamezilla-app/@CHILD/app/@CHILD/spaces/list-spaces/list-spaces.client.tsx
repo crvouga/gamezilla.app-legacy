@@ -8,11 +8,11 @@ import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { IconGamepad, TopBar } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { EmptyState } from "gamezilla-app/@CHILD/app/@SHARED/ui/empty-state"
 import { RequestResponse, ok, requesting } from "gamezilla-app/@SHARED/core"
+import { SpacesRoutes } from "../@SHARED/space.routes"
 import { SpaceClientModule } from "../architecture/architecture"
 import * as Spaces from "../spaces-core/spaces"
 import { StartSpaceClient } from "../start-space/start-space.client"
 import { ViewSpaceCard } from "./space-card"
-import { SpacesRoutes } from "../@SHARED/space-routes"
 
 //
 //

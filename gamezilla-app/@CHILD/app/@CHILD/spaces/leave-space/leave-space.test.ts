@@ -6,6 +6,7 @@ import {
   didShowToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { SpacesRoutes } from "../@SHARED/space.routes"
 import {
   clickedLeaveSpaceButton,
   createCtx,
@@ -15,7 +16,6 @@ import {
   userStartedSpace,
 } from "../@TEST/client"
 import { Spaces } from "../spaces-core"
-import { SpacesRoutes } from "../@SHARED/space-routes"
 
 describe(import.meta.file, () => {
   it("should navigate to list screen after leaving space", async () => {

@@ -17,7 +17,7 @@ import {
   LamportTimestamp,
 } from "gamezilla-app/@SHARED/lamport-clock"
 import { GameName } from "../@CHILD/game/game.core"
-import { SpacesRoutes } from "../@SHARED/space-routes"
+import { SpacesRoutes } from "../@SHARED/space.routes"
 import { Space, SpaceEvent } from "../spaces-core"
 import * as SpaceClient from "../spaces.client"
 import * as SpaceCore from "../spaces.core"

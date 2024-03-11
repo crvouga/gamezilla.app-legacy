@@ -4,12 +4,12 @@ import {
   pushRoute,
   showToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
-import { SpaceClientModule } from "../architecture/architecture"
-import { Button } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Button } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { withId } from "../@SHARED/event"
+import { SpacesRoutes } from "../@SHARED/space.routes"
+import { SpaceClientModule } from "../architecture/architecture"
 import { SpaceEvent } from "../spaces-core"
-import { SpacesRoutes } from "../@SHARED/space-routes"
 
 const update: SpaceClientModule["update"] = (input) => {
   return SpaceClientModule.andThen(

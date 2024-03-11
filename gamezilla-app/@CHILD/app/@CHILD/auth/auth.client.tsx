@@ -16,10 +16,10 @@ import {
   LoadingState,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@SHARED/core"
-import { ProfileRoutes } from "../profile/profile-routes"
-import { SpacesRoutes } from "../spaces/@SHARED/space-routes"
+import { ProfileRoutes } from "../profile/profile.routes"
+import { SpacesRoutes } from "../spaces/@SHARED/space.routes"
 import * as AuthClientSMS from "./@CHILD/auth-sms/auth-sms.client"
-import { AuthRoutes } from "./@SHARED/auth-routes"
+import { AuthRoutes } from "./@SHARED/auth.routes"
 import { ClientModule, LogoutMsg, ModelClient, MsgClient } from "./auth.core"
 import { ContinueAsGuestClient } from "./continue-as-guest"
 

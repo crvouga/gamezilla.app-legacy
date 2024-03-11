@@ -13,6 +13,7 @@ import {
   isRequesting,
   isResponseOk,
 } from "gamezilla-app/@SHARED/core"
+import { SpacesRoutes } from "../@SHARED/space.routes"
 import {
   changeRoute,
   clickSpaceCard,
@@ -22,7 +23,6 @@ import {
   init,
   serverListedSpaces,
 } from "../@TEST/client"
-import { SpacesRoutes } from "../@SHARED/space-routes"
 
 const changeRouteToSpaceList = (ctx: ClientCtx) => {
   return changeRoute(ctx, SpacesRoutes.SpaceList())

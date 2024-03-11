@@ -32,6 +32,8 @@ import {
 import * as AuthClient from "./@CHILD/auth/auth.client"
 import * as LangClient from "./@CHILD/lang/lang.client"
 import * as ProfileClient from "./@CHILD/profile/profile.client"
+import { ProfileRoutes } from "./@CHILD/profile/profile.routes"
+import { SpacesRoutes } from "./@CHILD/spaces/@SHARED/space.routes"
 import * as SpaceClient from "./@CHILD/spaces/spaces.client"
 import {
   ClientTransport,
@@ -41,8 +43,6 @@ import * as Wire from "./@CHILD/wire/wire.client"
 import { getTranslator } from "./@SHARED/client/translator"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core"
-import { SpacesRoutes } from "./@CHILD/spaces/@SHARED/space-routes"
-import { ProfileRoutes } from "./@CHILD/profile/profile-routes"
 
 //
 //

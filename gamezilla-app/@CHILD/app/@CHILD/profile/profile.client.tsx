@@ -23,16 +23,16 @@ import {
   TopBarBackButton,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { Sub, isErr, loading } from "gamezilla-app/@SHARED/core"
-import { AuthRoutes } from "../auth/@SHARED/auth-routes"
+import { AuthRoutes } from "../auth/@SHARED/auth.routes"
 import { ViewProfileScreen } from "./profile-client/profile-client-view-profile-screen"
 import { ViewUpdateAvatarScreen } from "./profile-client/profile-client-view-update-avatar-screen"
-import { ProfileRoutes } from "./profile-routes"
 import {
   ModelClient,
   MsgClient,
   MsgToClient,
   MsgToServer,
 } from "./profile.core"
+import { ProfileRoutes } from "./profile.routes"
 
 //
 //

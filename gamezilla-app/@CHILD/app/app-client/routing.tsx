@@ -4,7 +4,7 @@ import {
   SoundCmd,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Browser, Eff } from "gamezilla-app/@SHARED/core"
-import { SpacesRoutes } from "../@CHILD/spaces/@SHARED/space-routes"
+import { SpacesRoutes } from "../@CHILD/spaces/@SHARED/space.routes"
 
 //
 //

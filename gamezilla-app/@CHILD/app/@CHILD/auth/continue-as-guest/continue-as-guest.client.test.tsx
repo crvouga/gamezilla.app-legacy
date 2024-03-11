@@ -5,6 +5,7 @@ import {
   didPlaySound,
   didSendToServer,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translator"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   Posix,
@@ -14,10 +15,9 @@ import {
   isResponseOk,
   ok,
 } from "gamezilla-app/@SHARED/core"
+import { AuthRoutes } from "../@SHARED/auth.routes"
 import * as AuthClient from "../auth.client"
 import { ModelClient } from "../auth.core"
-import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translator"
-import { AuthRoutes } from "../@SHARED/auth-routes"
 
 const ctx: AnonymousClientCtx = {
   currentRouteV2: AuthRoutes.Login(),

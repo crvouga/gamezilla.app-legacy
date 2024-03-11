@@ -6,10 +6,10 @@ import {
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Avatar, IconXMark } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { CoverArt } from "../@CHILD/game/game-cover-art"
+import { SpacesRoutes } from "../@SHARED/space.routes"
 import { SpaceClientModule } from "../architecture/architecture"
 import { Spaces } from "../spaces-core"
 import { ModelClient, MsgClient } from "../spaces.core"
-import { SpacesRoutes } from "../@SHARED/space-routes"
 
 const update: SpaceClientModule["update"] = ({ model, msg, ctx }) => {
   switch (msg?.t) {

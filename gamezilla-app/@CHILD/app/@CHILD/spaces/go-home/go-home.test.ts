@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test"
 import { SpaceId } from "../../../@SHARED/data"
+import { SpacesRoutes } from "../@SHARED/space.routes"
 import {
   clickedGoHomeButton,
   clickedStartSpaceButton,
@@ -7,7 +8,6 @@ import {
   init,
 } from "../@TEST/client"
 import { SpaceClientModule } from "../architecture/architecture"
-import { SpacesRoutes } from "../@SHARED/space-routes"
 
 describe(import.meta.file, () => {
   it("should go to list screen when clicking go home button", async () => {

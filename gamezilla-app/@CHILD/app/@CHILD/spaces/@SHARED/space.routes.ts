@@ -1,5 +1,5 @@
-import { Namespace } from "gamezilla-app/@SHARED/msg"
 import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Namespace } from "gamezilla-app/@SHARED/msg"
 import { P } from "gamezilla-app/@SHARED/parsing"
 
 const Msg = Namespace("spaces")

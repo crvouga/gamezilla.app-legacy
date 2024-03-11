@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test"
 import { SpaceId } from "../../../@SHARED/data"
+import { SpacesRoutes } from "../@SHARED/space.routes"
 import {
   clickedCurrentSpaceBottomBar,
   clickedStartSpaceButton,
@@ -8,7 +9,6 @@ import {
 } from "../@TEST/client"
 import { SpaceClientModule } from "../architecture/space-client"
 import { Spaces } from "../spaces-core"
-import { SpacesRoutes } from "../@SHARED/space-routes"
 
 describe(import.meta.file, () => {
   it("should open current space when clicking current space bottom bar", async () => {

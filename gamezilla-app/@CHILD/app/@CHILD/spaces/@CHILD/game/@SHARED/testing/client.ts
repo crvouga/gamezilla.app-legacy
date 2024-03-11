@@ -1,3 +1,4 @@
+import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translator"
 import {
   ProfileAvatar,
   SpaceId,
@@ -6,8 +7,7 @@ import {
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Posix } from "gamezilla-app/@SHARED/core"
 import { SpaceClientCtx } from "../../../../@SHARED/space"
-import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translator"
-import { SpacesRoutes } from "../../../../@SHARED/space-routes"
+import { SpacesRoutes } from "../../../../@SHARED/space.routes"
 
 const currentUserId = "test-user-id" as UserId
 

@@ -33,7 +33,7 @@ import {
   Uuid,
   isErr,
 } from "gamezilla-app/@SHARED/core"
-import { AuthRoutes } from "../../@SHARED/auth-routes"
+import { AuthRoutes } from "../../@SHARED/auth.routes"
 import {
   ModelClient,
   MsgClient,
