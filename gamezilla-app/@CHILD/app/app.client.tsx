@@ -132,6 +132,7 @@ export const init = async (input: {
 
   const ctx: AnonymousClientCtx = {
     ...input.ctx,
+    currentRouteV2: routing.model.currentRouteV2,
     t: getTranslator(input.ctx.navigatorLanguage),
     currentRoute: routing.model.currentRoute,
     currentUserId: null,
@@ -479,6 +480,7 @@ const toClientCtx = (input: {
     now: input.ctx.now,
     documentVisibilityState: input.model.platform.documentVisibilityState,
     currentRoute: input.model.routing.currentRoute,
+    currentRouteV2: input.model.routing.currentRouteV2,
     currentUserId: null,
   }
   if (input.model.auth.currentUser.t === "logged-in") {

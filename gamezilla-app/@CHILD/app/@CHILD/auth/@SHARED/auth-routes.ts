@@ -7,6 +7,18 @@
 //
 
 import { Location } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { Namespace } from "gamezilla-app/@SHARED/msg"
+
+const Msg = Namespace("auth")
+
+export const AuthRoutes = {
+  Login: Msg("Login"),
+  LoginSMS: {
+    Request: Msg("LoginSMS-Request"),
+    Verify: Msg("LoginSMS-Verify"),
+  },
+  Logout: Msg("Logout"),
+}
 
 export type AuthRoute =
   | {

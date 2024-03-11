@@ -21,6 +21,7 @@ import { Space, SpaceEvent } from "../spaces-core"
 import * as SpaceClient from "../spaces.client"
 import * as SpaceCore from "../spaces.core"
 import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translator"
+import { SpacesRoutes } from "../@SHARED/space-routes"
 
 //
 //
@@ -39,6 +40,7 @@ export const createCtx = (): ClientCtx => {
         t: "space-list",
       },
     },
+    currentRouteV2: SpacesRoutes.SpaceList(),
     documentVisibilityState: "visible",
     now: Posix.now(),
     profiles: {},
@@ -63,6 +65,7 @@ export const createFixture = () => {
   const ctx: ClientCtx = {
     navigatorLanguage: "en",
     t: getTranslator("en"),
+    currentRouteV2: SpacesRoutes.SpaceList(),
     currentRoute: {
       t: "spaces",
       c: {

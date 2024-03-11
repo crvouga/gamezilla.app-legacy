@@ -17,8 +17,10 @@ import {
 import * as AuthClient from "../auth.client"
 import { ModelClient } from "../auth.core"
 import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translator"
+import { AuthRoutes } from "../@SHARED/auth-routes"
 
 const ctx: AnonymousClientCtx = {
+  currentRouteV2: AuthRoutes.Login(),
   navigatorLanguage: "en",
   t: getTranslator("en"),
   currentRoute: { t: "auth", c: { t: "login" } },

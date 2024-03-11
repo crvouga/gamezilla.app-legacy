@@ -17,6 +17,7 @@ import { Browser, Eff } from "gamezilla-app/@SHARED/core"
 export type Model = {
   previousRoute: AppRoute
   currentRoute: AppRoute
+  currentRouteV2: Record<string, unknown>
 }
 
 const FALLBACK: AppRoute = { t: "spaces", c: { t: "space-list" } }
@@ -32,11 +33,21 @@ export const init = ({
   const decoded = AppRoute.decode(location.pathname)
 
   if (decoded) {
-    return { model: { currentRoute: decoded, previousRoute: decoded } }
+    return {
+      model: {
+        currentRoute: decoded,
+        previousRoute: decoded,
+        currentRouteV2: {},
+      },
+    }
   }
 
   return {
-    model: { currentRoute: FALLBACK, previousRoute: FALLBACK },
+    model: {
+      currentRoute: FALLBACK,
+      previousRoute: FALLBACK,
+      currentRouteV2: {},
+    },
     eff: Browser.replace(AppRoute.encode(FALLBACK)),
   }
 }
@@ -94,6 +105,7 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
         model: {
           previousRoute: model.currentRoute,
           currentRoute: msg.route,
+          currentRouteV2: {},
         },
         eff: Browser.push(AppRoute.encode(msg.route)),
       }
@@ -104,6 +116,7 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
         model: {
           previousRoute: model.currentRoute,
           currentRoute: msg.route,
+          currentRouteV2: {},
         },
         msgEvt: [{ t: "routing/route-changed", route: msg.route }],
       }
@@ -124,6 +137,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
         model: {
           previousRoute: model.currentRoute,
           currentRoute: routeCmd.route,
+          currentRouteV2: {},
         },
         eff: Browser.push(AppRoute.encode(routeCmd.route)),
       }
@@ -141,6 +155,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
         model: {
           previousRoute: model.currentRoute,
           currentRoute: routeCmd.route,
+          currentRouteV2: {},
         },
         eff: Browser.replace(AppRoute.encode(routeCmd.route)),
       }

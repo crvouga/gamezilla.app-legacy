@@ -14,6 +14,7 @@ export type BaseClientCtx = {
   navigatorLanguage: LanguageCodeISO_639_1
   t: Translator
   currentRoute: Route.AppRoute
+  currentRouteV2: Record<string, unknown>
   now: Posix
   currentUserId?: UserId | null
   profiles: { [userId: UserId]: Profile }
