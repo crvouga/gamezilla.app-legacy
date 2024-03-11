@@ -569,8 +569,6 @@ export const View = (input: {
           model={model.toast}
           dispatch={(c) => dispatch({ t: "toast", c })}
         />
-
-        {model.auth.currentUser.t === "loading" && <LoadingState />}
       </div>
     </div>
   )
@@ -632,17 +630,9 @@ const ViewRouteLoggedOut: typeof ViewRoute = ({ ctx, dispatch, model }) => {
     case "lang":
     case "auth-logout": {
       return (
-        <IntersectionObserverEmitter
-          id="logged-out-redirect"
-          onVisible={() =>
-            dispatch({
-              t: "routing",
-              c: {
-                t: "clicked-link",
-                route: { n: "auth-login", t: "login" },
-              },
-            })
-          }
+        <ViewRedirect
+          dispatch={dispatch}
+          route={{ n: "auth-login", t: "login" }}
         />
       )
     }
@@ -694,18 +684,33 @@ const ViewRouteLoggedIn: typeof ViewRoute = ({ ctx, dispatch, model }) => {
     case "lang":
     case "auth-login": {
       return (
-        <IntersectionObserverEmitter
-          id="logged-in-redirect"
-          onVisible={() =>
-            dispatch({
-              t: "routing",
-              c: { t: "clicked-link", route: { n: "spaces", t: "space-list" } },
-            })
-          }
+        <ViewRedirect
+          dispatch={dispatch}
+          route={{ n: "spaces", t: "space-list" }}
         />
       )
     }
   }
+}
+
+const ViewRedirect = ({
+  route,
+  dispatch,
+}: {
+  route: Route
+  dispatch: (m: MsgClient) => void
+}) => {
+  return (
+    <IntersectionObserverEmitter
+      id="redirect"
+      onVisible={() =>
+        dispatch({
+          t: "routing",
+          c: { t: "clicked-link", route },
+        })
+      }
+    />
+  )
 }
 
 const ViewStatusBar: typeof View = ({ ctx, dispatch, model }) => {
