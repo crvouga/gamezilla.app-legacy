@@ -1,4 +1,4 @@
-import { AnonymousClientCtx } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { BaseClientCtx } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Avatar, cn } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { ViewSpaceHostChip, ViewYouChip } from "../@CHILD/game/@SHARED/game"
 import { CoverArt } from "../@CHILD/game/game-cover-art"
@@ -12,7 +12,7 @@ export const ViewSpaceCard = ({
   state,
   onClick,
 }: {
-  ctx: AnonymousClientCtx
+  ctx: BaseClientCtx
   state: SpaceState.Started
   onClick?: () => void
 }) => {

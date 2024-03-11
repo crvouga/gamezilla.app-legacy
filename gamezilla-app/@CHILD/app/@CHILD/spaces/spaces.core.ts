@@ -5,6 +5,7 @@ import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import {
   AnonymousClientCtx,
   ClientCmd,
+  ClientCtx,
   ClientEvent,
 } from "../../@SHARED/client"
 import { ServerCmd, ServerCtx, ServerEvent } from "../../@SHARED/server"
@@ -25,7 +26,7 @@ import * as Spaces from "./spaces-core/spaces"
 
 export type ClientModule = AppClientModule<{
   ModelLocation: ModelLocation
-  Ctx: AnonymousClientCtx
+  Ctx: AnonymousClientCtx | ClientCtx
   MsgInCmd: never
   MsgInEvent: ClientEvent
   Model: ModelClient
@@ -34,6 +35,9 @@ export type ClientModule = AppClientModule<{
   MsgOutEvent: ClientEvent
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
+  ViewSlot: {
+    bottomBar: null
+  }
 }>
 
 export type ServerModule = AppServerModule<{

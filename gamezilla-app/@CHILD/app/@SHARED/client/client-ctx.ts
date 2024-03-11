@@ -10,7 +10,7 @@ type Profile = {
   avatarUrl: string
 }
 
-export type AnonymousClientCtx = {
+export type BaseClientCtx = {
   navigatorLanguage: LanguageCodeISO_639_1
   t: Translator
   currentRoute: Route.AppRoute
@@ -20,6 +20,14 @@ export type AnonymousClientCtx = {
   documentVisibilityState: DocumentVisibilityState
 }
 
-export type ClientCtx = AnonymousClientCtx & {
+export type AnonymousClientCtx = BaseClientCtx & {
+  currentUserId: null
+}
+
+export const isAnonymous = (ctx: BaseClientCtx): ctx is AnonymousClientCtx => {
+  return ctx.currentUserId === null
+}
+
+export type ClientCtx = BaseClientCtx & {
   currentUserId: UserId
 }

@@ -5,12 +5,12 @@ import {
   ClientCmd,
   ClientCtx,
   ClientEvent,
+  isAnonymous,
   preloadSound,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   IconGamepad,
   IconUserCircle,
-  LoadingState,
   Portal,
   cn,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
@@ -39,7 +39,6 @@ import {
 } from "./@CHILD/wire/transport-client"
 import * as Wire from "./@CHILD/wire/wire.client"
 import { getTranslator } from "./@SHARED/client/translator"
-import { IntersectionObserverEmitter } from "./@SHARED/ui/intersection-observer"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core"
 
@@ -131,7 +130,7 @@ export const init = async (input: {
     location: input.ctx.location,
   })
 
-  const ctx: ClientCtx | AnonymousClientCtx = {
+  const ctx: AnonymousClientCtx = {
     ...input.ctx,
     t: getTranslator(input.ctx.navigatorLanguage),
     currentRoute: routing.model.currentRoute,
@@ -540,71 +539,66 @@ export const subscriptions = async (input: {
 //
 //
 
-export const View = ({
-  model,
-  dispatch,
-  ctx,
-}: {
+export const View = (input: {
   ctx: Ctx
   model: ModelClient
   dispatch: (msg: MsgClient) => void
 }) => {
+  const { ctx, dispatch, model } = input
+  const clientCtx = toClientCtx({ model, ctx })
+
   return (
     <div
       className="fixed left-1/2 top-1/2 flex h-[100dvh] w-screen select-none items-center justify-center overflow-hidden bg-black text-white"
       style={{ transform: "translate(-50%, -50%)" }}
     >
       <div className="relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-600">
-        <StatusBar.View
-          model={model.statusBar}
-          dispatch={(c) => dispatch({ t: "status-bar", c })}
-          slots={{
-            barLeft: (
-              <>
-                <Wire.ViewStatusBar model={model.wire} />
-              </>
-            ),
-
-            barRight: (
-              <>
-                <Sound.ViewStatusBar model={model.sound} />
-              </>
-            ),
-
-            drawerContent: (
-              <>
-                <Wire.ViewStatusBarDrawer
-                  model={model.wire}
-                  dispatch={(c) => dispatch({ t: "wire", c })}
-                />
-                <LangClient.ViewStatusBarDrawer
-                  ctx={{
-                    ...ctx,
-                    currentRoute: model.routing.currentRoute,
-                    documentVisibilityState:
-                      model.platform.documentVisibilityState,
-                    profiles: model.profile.profiles,
-                    t: getTranslator(model.lang.lang),
-                    currentUserId:
-                      model.auth.currentUser.t === "logged-in"
-                        ? model.auth.currentUser.userId
-                        : null,
-                  }}
-                  dispatch={(c) => dispatch({ t: "lang", c })}
-                  model={model.lang}
-                />
-
-                <Sound.ViewStatusBarDrawer
-                  model={model.sound}
-                  dispatch={(c) => dispatch({ t: "sound", c })}
-                />
-              </>
-            ),
-          }}
-        />
+        <ViewStatusBar model={model} dispatch={dispatch} ctx={ctx} />
 
         <div className="flex w-full flex-1 flex-col overflow-hidden">
-          <ViewMain model={model} ctx={ctx} dispatch={dispatch} />
+          <ProfileClient.View
+            dispatch={(m) => dispatch({ t: "profile", c: m })}
+            model={model.profile}
+            ctx={{
+              ...clientCtx,
+              viewBottomBar: (
+                <ViewBottomNavBar
+                  model={model}
+                  dispatch={dispatch}
+                  ctx={clientCtx}
+                />
+              ),
+            }}
+          />
+
+          <SpaceClient.View
+            dispatch={(m) => dispatch({ t: "spaces", c: m })}
+            model={model.spaces}
+            ctx={clientCtx}
+            slots={{
+              bottomBar() {
+                return (
+                  <ViewBottomNavBar
+                    model={model}
+                    dispatch={dispatch}
+                    ctx={clientCtx}
+                  />
+                )
+              },
+            }}
+          />
+
+          <AuthClient.View
+            dispatch={(c) => dispatch({ t: "auth", c })}
+            model={model.auth}
+            ctx={clientCtx}
+          />
+
+          <LangClient.View
+            ctx={clientCtx}
+            model={model.lang}
+            dispatch={(c) => dispatch({ t: "lang", c })}
+          />
         </div>
 
         <Portal.Exit portalId="modals" />
@@ -619,188 +613,62 @@ export const View = ({
   )
 }
 
-const ViewMain = ({
-  model,
-  dispatch,
-  ctx,
-}: {
-  ctx: Ctx
-  model: ModelClient
-  dispatch: (msg: MsgClient) => void
-}) => {
-  switch (model.auth.currentUser.t) {
-    case "logged-in": {
-      return (
-        <ViewLoggedIn
-          model={model}
-          dispatch={dispatch}
-          ctx={{
-            ...ctx,
-            t: getTranslator(model.lang.lang),
-            currentRoute: model.routing.currentRoute,
-            currentUserId: model.auth.currentUser.userId,
-            profiles: model.profile.profiles,
-            documentVisibilityState: model.platform.documentVisibilityState,
-          }}
-        />
-      )
-    }
+export const ViewStatusBar: typeof View = ({ ctx, dispatch, model }) => {
+  const clientCtx = toClientCtx({ model, ctx })
 
-    case "logged-out": {
-      return (
-        <ViewLoggedOut
-          dispatch={dispatch}
-          model={model}
-          ctx={{
-            ...ctx,
-            t: getTranslator(model.lang.lang),
-            currentRoute: model.routing.currentRoute,
-            profiles: model.profile.profiles,
-            documentVisibilityState: model.platform.documentVisibilityState,
-          }}
-        />
-      )
-    }
+  return (
+    <StatusBar.View
+      model={model.statusBar}
+      dispatch={(c) => dispatch({ t: "status-bar", c })}
+      slots={{
+        barLeft: (
+          <>
+            <Wire.ViewStatusBar model={model.wire} />
+          </>
+        ),
 
-    case "loading": {
-      return <LoadingState />
-    }
-  }
+        barRight: (
+          <>
+            <Sound.ViewStatusBar model={model.sound} />
+          </>
+        ),
+
+        drawerContent: (
+          <>
+            <Wire.ViewStatusBarDrawer
+              model={model.wire}
+              dispatch={(c) => dispatch({ t: "wire", c })}
+            />
+
+            <LangClient.ViewStatusBarDrawer
+              ctx={clientCtx}
+              dispatch={(c) => dispatch({ t: "lang", c })}
+              model={model.lang}
+            />
+
+            <Sound.ViewStatusBarDrawer
+              model={model.sound}
+              dispatch={(c) => dispatch({ t: "sound", c })}
+            />
+          </>
+        ),
+      }}
+    />
+  )
 }
 
-const ViewLoggedOut = ({
+const ViewBottomNavBar = ({
   model,
-  ctx,
   dispatch,
-}: {
-  model: ModelClient
-  dispatch: (m: MsgClient) => void
-  ctx: AnonymousClientCtx
-}) => {
-  switch (model.routing.currentRoute.t) {
-    case "auth": {
-      return (
-        <AuthClient.View
-          dispatch={(m) => dispatch({ t: "auth", c: m })}
-          model={model.auth}
-          ctx={ctx}
-        />
-      )
-    }
-
-    case "lang": {
-      return (
-        <LangClient.View
-          ctx={ctx}
-          model={model.lang}
-          dispatch={(m) => dispatch({ t: "lang", c: m })}
-        />
-      )
-    }
-
-    case "logout":
-    case "profile":
-    case "search":
-    case "spaces":
-    case "chat":
-      return (
-        <IntersectionObserverEmitter
-          id="logged-out-redirect"
-          onVisible={() =>
-            dispatch({
-              t: "routing",
-              c: { t: "clicked-link", route: { t: "auth", c: { t: "login" } } },
-            })
-          }
-        />
-      )
-  }
-}
-
-const ViewLoggedIn = ({
-  model,
   ctx,
-  dispatch,
 }: {
-  ctx: ClientCtx
+  ctx: ClientCtx | AnonymousClientCtx
   model: ModelClient
   dispatch: (m: MsgClient) => void
 }) => {
-  switch (model.routing.currentRoute.t) {
-    case "spaces": {
-      return (
-        <SpaceClient.View
-          dispatch={(m) => dispatch({ t: "spaces", c: m })}
-          model={model.spaces}
-          ctx={ctx}
-          viewBottomBar={
-            <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
-          }
-        />
-      )
-    }
-
-    case "profile": {
-      return (
-        <ProfileClient.View
-          dispatch={(m) => dispatch({ t: "profile", c: m })}
-          model={model.profile}
-          ctx={{
-            ...ctx,
-            viewBottomBar: (
-              <ViewBottomBar model={model} dispatch={dispatch} ctx={ctx} />
-            ),
-          }}
-        />
-      )
-    }
-
-    case "logout": {
-      return (
-        <AuthClient.ViewLogoutScreen
-          dispatch={(m) => dispatch({ t: "auth", c: m })}
-          ctx={ctx}
-          model={model.auth}
-        />
-      )
-    }
-
-    case "lang": {
-      return (
-        <LangClient.View
-          ctx={ctx}
-          model={model.lang}
-          dispatch={(m) => dispatch({ t: "lang", c: m })}
-        />
-      )
-    }
-
-    case "chat":
-    case "search": {
-      return null
-    }
-
-    case "auth": {
-      return (
-        <AuthClient.View
-          dispatch={(m) => dispatch({ t: "auth", c: m })}
-          model={model.auth}
-          ctx={ctx}
-        />
-      )
-    }
+  if (isAnonymous(ctx)) {
+    return null
   }
-}
-
-const ViewBottomBar = ({
-  model,
-  dispatch,
-  ctx,
-}: {
-  ctx: ClientCtx
-  model: ModelClient
-  dispatch: (m: MsgClient) => void
-}) => {
   const items: {
     route: AppRoute
     label: string

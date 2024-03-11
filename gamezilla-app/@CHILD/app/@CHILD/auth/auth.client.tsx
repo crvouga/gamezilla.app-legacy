@@ -1,7 +1,7 @@
 import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
 import {
   APP_SOUND,
-  AnonymousClientCtx,
+  BaseClientCtx,
   ClientCmd,
   playSound,
   pushRoute,
@@ -276,6 +276,11 @@ export const subscriptions: ClientModule["subscriptions"] = async ({
 
 export const View: ClientModule["View"] = (input) => {
   const { model, ctx, dispatch } = input
+
+  if (ctx.currentRoute.t === "logout") {
+    return <ViewLogoutScreen {...input} />
+  }
+
   if (ctx.currentRoute.t !== "auth") {
     return null
   }
@@ -338,7 +343,7 @@ export const ViewLogoutScreen = ({
   model,
   dispatch,
 }: {
-  ctx: AnonymousClientCtx
+  ctx: BaseClientCtx
   model: ModelClient
   dispatch: (msg: MsgClient) => void
 }) => {

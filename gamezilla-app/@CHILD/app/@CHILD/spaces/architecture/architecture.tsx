@@ -1,9 +1,10 @@
 import {
-  AnonymousClientCtx,
+  BaseClientCtx,
   ClientEvent,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 
 import { Eff, Sub, batchMsgs } from "gamezilla-app/@SHARED/core"
+import { VDom } from "gamezilla-app/@SHARED/vdom"
 import { WithEventId } from "../@SHARED/event"
 import { Space } from "../@SHARED/space"
 import { SpaceClientCmd } from "../@SHARED/space-client-cmd"
@@ -15,9 +16,8 @@ import {
   MsgToClient,
   MsgToServer,
 } from "../spaces.core"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
 
-type Ctx = AnonymousClientCtx & {
+type Ctx = BaseClientCtx & {
   space?: Space
 }
 

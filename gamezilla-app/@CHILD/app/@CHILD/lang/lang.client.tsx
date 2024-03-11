@@ -2,6 +2,7 @@ import {
   APP_SOUND,
   AnonymousClientCtx,
   ClientCmd,
+  ClientCtx,
   ClientEvent,
   back,
   closeStatusBar,
@@ -39,7 +40,7 @@ import { LocalStorage } from "gamezilla-app/@SHARED/core"
 //
 
 type Module = AppClientModule<{
-  Ctx: AnonymousClientCtx
+  Ctx: AnonymousClientCtx | ClientCtx
   Model: ModelClient
   MsgToServer: MsgToServer
   MsgToClient: MsgToClient
@@ -191,6 +192,10 @@ export const ViewStatusBarDrawer: Module["View"] = ({
 }
 
 export const View: Module["View"] = ({ ctx, dispatch, model }) => {
+  if (ctx.currentRoute.t !== "lang" || ctx.currentRoute.c.t !== "choose") {
+    return null
+  }
+
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <TopBar title={ctx.t("lang.choose-language")} />

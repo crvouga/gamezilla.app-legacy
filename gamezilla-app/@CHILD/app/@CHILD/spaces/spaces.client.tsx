@@ -1,4 +1,4 @@
-import { ClientCtx } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { isAnonymous } from "gamezilla-app/@CHILD/app/@SHARED/client"
 
 import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@SHARED/core"
 import { VDom } from "gamezilla-app/@SHARED/vdom"
@@ -14,7 +14,7 @@ import { ListSpacesClient } from "./list-spaces/list-spaces.client"
 import { Modals } from "./modals/modals"
 import { SpaceClient } from "./space/space.cient"
 import { Spaces } from "./spaces-core"
-import { ClientModule, ModelClient, MsgClient } from "./spaces.core"
+import { ClientModule, ModelClient } from "./spaces.core"
 import { StartSpaceClient } from "./start-space/start-space.client"
 import { SyncClient } from "./sync/sync.client"
 
@@ -183,17 +183,16 @@ export const subscriptions: ClientModule["subscriptions"] = async (input) => {
 //
 //
 
-export const View = ({
+export const View: ClientModule["View"] = ({
   ctx,
   dispatch,
   model,
-  viewBottomBar,
-}: {
-  model: ModelClient
-  ctx: ClientCtx
-  dispatch: (m: MsgClient) => void
-  viewBottomBar: VDom
+  slots,
 }): VDom => {
+  if (isAnonymous(ctx)) {
+    return null
+  }
+
   switch (ctx.currentRoute.t) {
     case "spaces": {
       switch (ctx.currentRoute.c.t) {
@@ -206,7 +205,7 @@ export const View = ({
                 model={model}
               />
 
-              {viewBottomBar}
+              {slots?.bottomBar(null)}
             </>
           )
         }

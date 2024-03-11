@@ -10,6 +10,7 @@ import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import {
   AnonymousClientCtx,
   ClientCmd,
+  ClientCtx,
   ClientEvent,
 } from "../../@SHARED/client"
 import { ServerCmd, ServerCtx, ServerEvent } from "../../@SHARED/server"
@@ -30,7 +31,7 @@ export type ClientModule = AppClientModule<{
   Msg: MsgClient
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  Ctx: AnonymousClientCtx
+  Ctx: AnonymousClientCtx | ClientCtx
   MsgInCmd: never
   MsgInEvent: ClientEvent
   MsgOutCmd: ClientCmd<{
