@@ -11,7 +11,7 @@ import {
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { LocalStorage } from "gamezilla-app/@SHARED/core"
 import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n"
-import { translations } from "gamezilla-app/@SHARED/l18n/lang-code-iso-639-1/l18n"
+import { translations } from "gamezilla-app/@SHARED/l18n/lang-code-iso-639-1/lang-code-iso-639-1.l18n"
 import { AppClientModule } from "../../@SHARED/architecture/app-client"
 import { translatorSubscriptions } from "../../@SHARED/client/translator"
 import {
