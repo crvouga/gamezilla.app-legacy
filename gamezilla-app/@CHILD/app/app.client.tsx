@@ -1,7 +1,6 @@
 import {
   APP_SOUND,
   AnonymousClientCtx,
-  AppRoute,
   ClientCmd,
   ClientCtx,
   ClientEvent,
@@ -41,6 +40,8 @@ import * as Wire from "./@CHILD/wire/wire.client"
 import { getTranslator } from "./@SHARED/client/translator"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core"
+import { SpacesRoutes } from "./@CHILD/spaces/@SHARED/space-routes"
+import { ProfileRoutes } from "./@CHILD/profile/profile-routes"
 
 //
 //
@@ -134,7 +135,6 @@ export const init = async (input: {
     ...input.ctx,
     currentRouteV2: routing.model.currentRouteV2,
     t: getTranslator(input.ctx.navigatorLanguage),
-    currentRoute: routing.model.currentRoute,
     currentUserId: null,
     documentVisibilityState: "visible",
     profiles: {},
@@ -479,7 +479,6 @@ const toClientCtx = (input: {
     profiles: input.model.profile.profiles,
     now: input.ctx.now,
     documentVisibilityState: input.model.platform.documentVisibilityState,
-    currentRoute: input.model.routing.currentRoute,
     currentRouteV2: input.model.routing.currentRouteV2,
     currentUserId: null,
   }
@@ -557,7 +556,7 @@ export const View = (input: {
       <div className="relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-600">
         <ViewStatusBar model={model} dispatch={dispatch} ctx={ctx} />
 
-        <div className="flex w-full flex-1 flex-col overflow-hidden">
+        <div className="relative flex w-full flex-1 flex-col overflow-hidden">
           <ProfileClient.View
             dispatch={(m) => dispatch({ t: "profile", c: m })}
             model={model.profile}
@@ -672,23 +671,24 @@ const ViewBottomNavBar = ({
     return null
   }
   const items: {
-    route: AppRoute
+    route: Record<string, unknown>
+    isSelected: boolean
     label: string
     icon: VDom
   }[] = [
     {
-      route: {
-        t: "spaces",
-        c: { t: "space-list" },
-      },
+      route: SpacesRoutes.SpaceList(),
+      isSelected: SpacesRoutes.SpaceList.is(ctx.currentRouteV2),
       label: "Spaces",
       icon: <IconGamepad className="h-6 w-6" />,
     },
     {
-      route: {
-        t: "profile",
-        c: { t: "profile", userId: ctx.currentUserId },
-      },
+      route: ProfileRoutes.Profile({
+        userId: ctx.currentUserId,
+      }),
+      isSelected:
+        ProfileRoutes.Profile.is(ctx.currentRouteV2) &&
+        ctx.currentRouteV2.payload.userId === ctx.currentUserId,
       label: "Profile",
       icon: <IconUserCircle className="h-6 w-6" />,
     },
@@ -703,11 +703,9 @@ const ViewBottomNavBar = ({
       />
       <div className="flex w-full items-center justify-center border-t border-neutral-600">
         {items.map((item, index) => {
-          const isSelected = AppRoute.eq(model.routing.currentRoute, item.route)
-
           return (
             <button
-              key={AppRoute.encode(item.route)}
+              key={index}
               onClick={() =>
                 dispatch({
                   t: "routing",
@@ -716,7 +714,7 @@ const ViewBottomNavBar = ({
               }
               className={cn(
                 "flex flex-1 flex-col items-center justify-center pb-2 pt-1",
-                isSelected ? "text-blue-500" : "text-opacity-50",
+                item.isSelected ? "text-blue-500" : "text-opacity-50",
                 index < items.length - 1 ? "border-r border-neutral-600" : "",
               )}
             >

@@ -1,6 +1,5 @@
 import { TimeSpan, UnitInterval, eq } from "gamezilla-app/@SHARED/core"
 import { Profile, UserId } from "../data"
-import { AppRoute } from "./client-route"
 
 //
 //
@@ -50,20 +49,55 @@ export const closeStatusBar = <T extends ClientCmdTypes>(): ClientCmd<T> => {
 //
 //
 
-export type ProfileCmd = {
-  t: "profile"
-  c: {
-    t: "add-profiles"
-    profiles: {
-      [userId: UserId]: Profile
+export type ProfileCmd =
+  | {
+      t: "profile"
+      c: {
+        t: "add-profiles"
+        profiles: {
+          [userId: UserId]: Profile
+        }
+      }
     }
-  }
-}
+  | {
+      t: "profile"
+      c: {
+        t: "open-profile"
+        userId: UserId
+      }
+    }
 
 export const addProfiles = <T extends ClientCmdTypes>(profiles: {
   [userId: UserId]: Profile
 }): ClientCmd<T> => {
   return { t: "profile", c: { t: "add-profiles", profiles } }
+}
+
+export const openProfile = <T extends ClientCmdTypes>(
+  userId: UserId,
+): ClientCmd<T> => {
+  return { t: "profile", c: { t: "open-profile", userId } }
+}
+
+export const didOpenProfile = <T>(
+  {
+    msgCmd,
+  }: {
+    msgCmd?: (ProfileCmd | T)[]
+  },
+  userId: UserId,
+): boolean => {
+  return (
+    msgCmd?.some(
+      (cmd) =>
+        typeof cmd === "object" &&
+        cmd &&
+        "t" in cmd &&
+        cmd.t === "profile" &&
+        cmd.c.t === "open-profile" &&
+        cmd.c.userId === userId,
+    ) ?? false
+  )
 }
 
 //
@@ -413,17 +447,24 @@ export const preloadSound = <T extends ClientCmdTypes>(
 export type RouteCmd = {
   t: "routing"
   c:
-    | { t: "push"; route: AppRoute; playSound?: boolean }
+    | {
+        t: "push"
+        route: Record<string, unknown>
+        playSound?: boolean
+      }
     | {
         t: "replace"
-        route: AppRoute
+        route: Record<string, unknown>
         reason?: string
       }
-    | { t: "back"; reason?: string }
+    | {
+        t: "back"
+        reason?: string
+      }
 }
 
 export const pushRoute = <T extends ClientCmdTypes>(
-  route: AppRoute,
+  route: Record<string, unknown>,
   playSound?: boolean,
 ): ClientCmd<T> => {
   return {
@@ -438,7 +479,7 @@ export const didPushRoute = <T>(
   }: {
     msgCmd?: (RouteCmd | T)[]
   },
-  route?: AppRoute,
+  predicate?: (route: Record<string, unknown>) => boolean,
 ): boolean => {
   return Boolean(
     msgCmd?.some((cmd) => {
@@ -449,8 +490,8 @@ export const didPushRoute = <T>(
         cmd.t === "routing" &&
         cmd.c.t === "push"
       ) {
-        if (route) {
-          return eq(cmd.c.route, route)
+        if (predicate) {
+          return predicate(cmd.c.route)
         }
         return true
       }
@@ -460,7 +501,7 @@ export const didPushRoute = <T>(
 }
 
 export const replaceRoute = <T extends ClientCmdTypes>(
-  route: AppRoute,
+  route: Record<string, unknown>,
   reason?: string,
 ): ClientCmd<T> => {
   return {
@@ -479,7 +520,7 @@ export const didReplaceRoute = <T extends ClientCmdTypes>(
   }: {
     msgCmd?: ClientCmd<T>[]
   },
-  route?: AppRoute,
+  route?: Record<string, unknown>,
 ): boolean => {
   return Boolean(
     msgCmd?.some((cmd) => {

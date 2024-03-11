@@ -48,6 +48,32 @@ export const push = (url: string): Eff => {
   }
 }
 
+export const pushQueryParam = (key: string, value: string): Eff => {
+  return () => {
+    setTimeout(() => {
+      const url = new URL(window.location.href)
+      url.searchParams.set(key, value)
+      window.history.pushState(null, "", url.toString())
+      window.dispatchEvent(new Event("popstate"))
+    }, 0)
+  }
+}
+
+export const replaceQueryParam = (key: string, value: string): Eff => {
+  return () => {
+    setTimeout(() => {
+      const searchParams = new URLSearchParams(window.location.search)
+      searchParams.set(key, value)
+      window.history.replaceState(
+        null,
+        "",
+        window.location.pathname + "?" + searchParams.toString(),
+      )
+      window.dispatchEvent(new Event("popstate"))
+    }, 0)
+  }
+}
+
 export const replace = (url: string): Eff => {
   return () => {
     setTimeout(() => {

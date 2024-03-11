@@ -22,9 +22,10 @@ import {
   init,
   serverListedSpaces,
 } from "../@TEST/client"
+import { SpacesRoutes } from "../@SHARED/space-routes"
 
 const changeRouteToSpaceList = (ctx: ClientCtx) => {
-  return changeRoute(ctx, { t: "spaces", c: { t: "space-list" } })
+  return changeRoute(ctx, SpacesRoutes.SpaceList())
 }
 
 describe(import.meta.file, () => {
@@ -32,7 +33,7 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const output = await init({
       ...ctx,
-      currentRoute: { t: "spaces", c: { t: "space-list" } },
+      currentRouteV2: SpacesRoutes.SpaceList(),
     })
     expect(
       isRequesting(output.model.listSpacesRequest) &&
@@ -44,7 +45,7 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const output = await init({
       ...ctx,
-      currentRoute: { t: "spaces", c: { t: "space-list" } },
+      currentRouteV2: SpacesRoutes.SpaceList(),
     })
     expect(
       output.msgCmd?.some(
@@ -106,12 +107,7 @@ describe(import.meta.file, () => {
       clickSpaceCard(ctx, SpaceA),
     )
 
-    expect(
-      didPushRoute(updated, {
-        t: "spaces",
-        c: { t: "space", spaceId: SpaceA },
-      }),
-    ).toBeTrue()
+    expect(didPushRoute(updated)).toBeTrue()
   })
 
   it("should make a nav forward sound when opening a space screen", async () => {

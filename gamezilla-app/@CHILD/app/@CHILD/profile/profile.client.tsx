@@ -15,24 +15,25 @@ import {
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { ProfileAvatar, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
+  Avatar,
   Button,
   IconChevronRight,
-  LoadingState,
-  Avatar,
   TextField,
   TopBar,
   TopBarBackButton,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { Sub, isErr, loading } from "gamezilla-app/@SHARED/core"
+import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { AuthRoutes } from "../auth/@SHARED/auth-routes"
 import { ViewProfileScreen } from "./profile-client/profile-client-view-profile-screen"
 import { ViewUpdateAvatarScreen } from "./profile-client/profile-client-view-update-avatar-screen"
+import { ProfileRoutes } from "./profile-routes"
 import {
   ModelClient,
   MsgClient,
   MsgToClient,
   MsgToServer,
 } from "./profile.core"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
 
 //
 //
@@ -78,8 +79,8 @@ export const init: Module["init"] = ({ ctx }) => {
 
   const model = initialModel
 
-  if (ctx.currentRoute.t === "profile" && ctx.currentRoute.c.t === "profile") {
-    return loadProfile(ctx.currentRoute.c.userId, model)
+  if (ProfileRoutes.Profile.is(ctx.currentRouteV2)) {
+    return loadProfile(ctx.currentRouteV2.payload.userId, model)
   }
 
   return { model }
@@ -132,6 +133,18 @@ const updateFromCmd: Module["update"] = (input) => {
         },
       }
     }
+    case "open-profile": {
+      return {
+        model,
+        msgCmd: [
+          pushRoute(
+            ProfileRoutes.Profile({
+              userId: msgCmd.c.userId,
+            }),
+          ),
+        ],
+      }
+    }
   }
 }
 
@@ -144,8 +157,8 @@ const updateFromEvent: Module["update"] = (input) => {
 
   switch (msgEvt.t) {
     case "routing/route-changed": {
-      if (msgEvt.route.t === "profile" && msgEvt.route.c.t === "profile") {
-        return loadProfile(msgEvt.route.c.userId, model)
+      if (ProfileRoutes.Profile.is(msgEvt.route)) {
+        return loadProfile(msgEvt.route.payload.userId, model)
       }
       return { model }
     }
@@ -283,10 +296,9 @@ const updateFromMsg: Module["update"] = (input) => {
           return {
             model,
             msgCmd: [
-              replaceRoute({
-                t: "profile",
-                c: { t: "profile", userId: ctx.currentUserId },
-              }),
+              replaceRoute(
+                ProfileRoutes.Profile({ userId: ctx.currentUserId }),
+              ),
             ],
           }
         }
@@ -294,12 +306,7 @@ const updateFromMsg: Module["update"] = (input) => {
         case "profile-avatar": {
           return {
             model,
-            msgCmd: [
-              replaceRoute({
-                t: "profile",
-                c: { t: "profile-update-avatar" },
-              }),
-            ],
+            msgCmd: [replaceRoute(ProfileRoutes.ProfileEditAvatar())],
           }
         }
 
@@ -307,10 +314,9 @@ const updateFromMsg: Module["update"] = (input) => {
           return {
             model,
             msgCmd: [
-              replaceRoute({
-                t: "profile",
-                c: { t: "profile-update" },
-              }),
+              replaceRoute(
+                ProfileRoutes.Profile({ userId: ctx.currentUserId }),
+              ),
             ],
           }
         }
@@ -320,26 +326,21 @@ const updateFromMsg: Module["update"] = (input) => {
     case "clicked-logout-button": {
       return {
         model,
-        msgCmd: [pushRoute({ t: "logout" }), playSound(APP_SOUND.tap)],
+        msgCmd: [pushRoute(AuthRoutes.Logout()), playSound(APP_SOUND.tap)],
       }
     }
 
     case "clicked-update-username-button": {
       return {
         model,
-        msgCmd: [
-          pushRoute({
-            t: "profile",
-            c: { t: "profile-update-username" },
-          }),
-        ],
+        msgCmd: [pushRoute(ProfileRoutes.ProfileEditUsername())],
       }
     }
 
     case "clicked-edit-profile-button": {
       return {
         model,
-        msgCmd: [pushRoute({ t: "profile", c: { t: "profile-update" } })],
+        msgCmd: [pushRoute(ProfileRoutes.ProfileEdit())],
       }
     }
 
@@ -347,12 +348,7 @@ const updateFromMsg: Module["update"] = (input) => {
     case "clicked-change-avatar-button": {
       return {
         model,
-        msgCmd: [
-          pushRoute({
-            t: "profile",
-            c: { t: "profile-update-avatar" },
-          }),
-        ],
+        msgCmd: [pushRoute(ProfileRoutes.ProfileEditAvatar())],
       }
     }
 
@@ -405,48 +401,36 @@ export const subscriptions: Module["subscriptions"] = (_input) => {
 //
 
 export const View: Module["View"] = ({ model, dispatch, ctx }) => {
-  const { currentRoute } = ctx
+  if (ProfileRoutes.Profile.is(ctx.currentRouteV2)) {
+    return (
+      <div className="relative flex h-full w-full flex-col">
+        <ViewProfileScreen
+          model={model}
+          ctx={ctx}
+          dispatch={dispatch}
+          userId={ctx.currentRouteV2.payload.userId}
+        />
 
-  if (currentRoute.t !== "profile") {
-    return null
+        {ctx.viewBottomBar}
+      </div>
+    )
   }
 
-  const route = currentRoute.c
-
-  switch (route.t) {
-    case "profile": {
-      return (
-        <div className="relative flex h-full w-full flex-col">
-          <ViewProfileScreen
-            model={model}
-            ctx={ctx}
-            dispatch={dispatch}
-            userId={route.userId}
-          />
-
-          {ctx.viewBottomBar}
-        </div>
-      )
-    }
-
-    case "profile-update": {
-      return <ViewUpdateScreen ctx={ctx} dispatch={dispatch} />
-    }
-
-    case "profile-update-username": {
-      return (
-        <ViewUpdateUsernameScreen dispatch={dispatch} ctx={ctx} model={model} />
-      )
-    }
-
-    case "profile-update-avatar": {
-      return <ViewUpdateAvatarScreen dispatch={dispatch} model={model} />
-    }
-
-    default: {
-      return <LoadingState />
-    }
+  if (ProfileRoutes.ProfileEdit.is(ctx.currentRouteV2)) {
+    return <ViewUpdateScreen ctx={ctx} dispatch={dispatch} />
   }
+
+  if (ProfileRoutes.ProfileEditAvatar.is(ctx.currentRouteV2)) {
+    return <ViewUpdateAvatarScreen model={model} dispatch={dispatch} />
+  }
+
+  if (ProfileRoutes.ProfileEditUsername.is(ctx.currentRouteV2)) {
+    return (
+      <ViewUpdateUsernameScreen ctx={ctx} model={model} dispatch={dispatch} />
+    )
+  }
+
+  return null
 }
 
 const ViewUpdateScreen = ({

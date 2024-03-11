@@ -18,13 +18,6 @@ export const testSpaceClientCtx = (): SpaceClientCtx => {
     navigatorLanguage: "en",
     t: getTranslator("en"),
     currentRouteV2: SpacesRoutes.Space({ spaceId: currentSpaceId }),
-    currentRoute: {
-      t: "spaces",
-      c: {
-        t: "space",
-        spaceId: currentSpaceId,
-      },
-    },
     currentUserId,
     documentVisibilityState: "visible",
     now: Posix.now(),

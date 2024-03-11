@@ -1,18 +1,18 @@
 import { describe, expect, it } from "bun:test"
 import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
-import {
-  clickedPeopleButton,
-  init,
-  clickedUser,
-  changeRoute,
-  createCtx,
-  clickedUserPreviewLink,
-} from "../@TEST/client.ts"
+import { didOpenProfile } from "gamezilla-app/@CHILD/app/@SHARED/client/client-cmd.ts"
 import { UserId } from "../../../@SHARED/data/user-id.ts"
-import { Modals } from "./modals.tsx"
-import { SpaceClientModule } from "../architecture/architecture.tsx"
 import { openUserDetails } from "../@SHARED/space-client-cmd.ts"
-import { didPushRoute } from "gamezilla-app/@CHILD/app/@SHARED/client/client-cmd.ts"
+import {
+  changeRoute,
+  clickedPeopleButton,
+  clickedUser,
+  clickedUserPreviewLink,
+  createCtx,
+  init,
+} from "../@TEST/client.ts"
+import { SpaceClientModule } from "../architecture/architecture.tsx"
+import { Modals } from "./modals.tsx"
 
 describe(import.meta.file, () => {
   it("should start with no modals open", async () => {
@@ -83,12 +83,7 @@ describe(import.meta.file, () => {
       clickedUserPreviewLink(ctx),
     )
 
-    expect(
-      didPushRoute(output, {
-        t: "profile",
-        c: { t: "profile", userId: someUserId },
-      }),
-    ).toBeTrue()
+    expect(didOpenProfile(output, someUserId)).toBeTrue()
   })
 
   it("should play sound when clicking preview user link", async () => {
@@ -118,11 +113,9 @@ describe(import.meta.file, () => {
     expect(
       output.msgCmd?.some(
         (msgCmd) =>
-          msgCmd.t === "routing" &&
-          msgCmd.c.t === "push" &&
-          msgCmd.c.route.t === "profile" &&
-          msgCmd.c.route.c.t === "profile" &&
-          msgCmd.c.route.c.userId === someUserId,
+          msgCmd.t === "profile" &&
+          msgCmd.c.t === "open-profile" &&
+          msgCmd.c.userId === someUserId,
       ),
     ).toBeFalse()
   })

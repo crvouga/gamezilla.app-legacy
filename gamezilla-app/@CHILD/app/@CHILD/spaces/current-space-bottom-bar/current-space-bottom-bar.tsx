@@ -9,6 +9,7 @@ import { CoverArt } from "../@CHILD/game/game-cover-art"
 import { SpaceClientModule } from "../architecture/architecture"
 import { Spaces } from "../spaces-core"
 import { ModelClient, MsgClient } from "../spaces.core"
+import { SpacesRoutes } from "../@SHARED/space-routes"
 
 const update: SpaceClientModule["update"] = ({ model, msg, ctx }) => {
   switch (msg?.t) {
@@ -24,10 +25,11 @@ const update: SpaceClientModule["update"] = ({ model, msg, ctx }) => {
         model,
         msgCmd: [
           playSound(APP_SOUND.navForwardMin),
-          pushRoute({
-            t: "spaces",
-            c: { t: "space", spaceId: currentUsersSpaceId },
-          }),
+          pushRoute(
+            SpacesRoutes.Space({
+              spaceId: currentUsersSpaceId,
+            }),
+          ),
         ],
       }
     }

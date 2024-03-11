@@ -1,16 +1,15 @@
-import { Browser, Eff, matchSort, p } from "gamezilla-app/@SHARED/core"
 import {
-  ClientEvent,
   ClientCmd,
+  ClientEvent,
   sendToServer,
-  pushRoute,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   IconMagnifyingGlass,
   IconXMark,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
-import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./search.core"
+import { Browser, Eff, matchSort, p } from "gamezilla-app/@SHARED/core"
 import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./search.core"
 
 //
 //
@@ -79,22 +78,14 @@ export const update = ({
     }
   }
 
-  if (msg.t === "clicked-result") {
-    return {
-      model,
-      msgCmd: [
-        pushRoute({
-          t: "profile",
-          c: { t: "profile", userId: msg.userId },
-        }),
-      ],
-    }
-  }
-
   if (msg.t === "inputted-search-text") {
     return {
       model: { ...model, searchText: msg.searchText },
     }
+  }
+
+  if (msg.t === "clicked-result") {
+    return { model }
   }
 
   return { model, msgCmd: [sendToServer(msg)] }

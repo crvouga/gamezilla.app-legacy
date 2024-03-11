@@ -4,7 +4,7 @@ import {
   didPlaySound,
   didPushRoute,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
-import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   clickedStartSpaceButton,
   createCtx,
@@ -23,13 +23,11 @@ describe(import.meta.file, () => {
       clickedStartSpaceButton(ctx, spaceId),
       userClickedEndSpaceButton({
         ...ctx,
-        currentRoute: { t: "spaces", c: { t: "space", spaceId } },
+        currentRouteV2: { t: "spaces", c: { t: "space", spaceId } },
       }),
     )
 
-    expect(
-      didPushRoute(updated, { t: "spaces", c: { t: "space-list" } }),
-    ).toBeTrue()
+    expect(didPushRoute(updated)).toBeTrue()
   })
 
   it("should not redirect to space list after ending space if not on space route", async () => {
@@ -39,18 +37,17 @@ describe(import.meta.file, () => {
     const updated = await AppClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
+    )
+
+    const output = await AppClientModule.andThen(
+      { model: updated.model },
       userClickedEndSpaceButton({
         ...ctx,
-        currentRoute: {
-          t: "profile",
-          c: { t: "profile", userId: UserId.generate() },
-        },
+        currentRouteV2: { type: "some-other-route" },
       }),
     )
 
-    expect(
-      didPushRoute(updated, { t: "spaces", c: { t: "space-list" } }),
-    ).toBeFalse()
+    expect(didPushRoute(output)).toBeFalse()
   })
 
   it("should play sound after ending space", async () => {

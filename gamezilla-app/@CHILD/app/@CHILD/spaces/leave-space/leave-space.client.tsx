@@ -8,6 +8,7 @@ import { SpaceClientModule } from "../architecture/architecture"
 import { SpaceEvent, Spaces } from "../spaces-core"
 import { Button } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { withId } from "../@SHARED/event"
+import { SpacesRoutes } from "../@SHARED/space-routes"
 
 const update: SpaceClientModule["update"] = (input) => {
   return SpaceClientModule.andThen(
@@ -53,7 +54,7 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = ({
         msgCmd: [
           playSound(APP_SOUND.navBackward),
           showToast("Left space"),
-          pushRoute({ t: "spaces", c: { t: "space-list" } }),
+          pushRoute(SpacesRoutes.SpaceList()),
         ],
       }
     }

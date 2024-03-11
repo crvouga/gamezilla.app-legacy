@@ -12,6 +12,7 @@ import { SpaceClientModule } from "../architecture/architecture"
 import * as Spaces from "../spaces-core/spaces"
 import { StartSpaceClient } from "../start-space/start-space.client"
 import { ViewSpaceCard } from "./space-card"
+import { SpacesRoutes } from "../@SHARED/space-routes"
 
 //
 //
@@ -53,7 +54,7 @@ const update: SpaceClientModule["update"] = (input) => {
 
   switch (msgEvt?.t) {
     case "routing/route-changed": {
-      if (msgEvt.route.t === "spaces" && msgEvt.route.c.t === "space-list") {
+      if (SpacesRoutes.SpaceList.is(msgEvt.route)) {
         return sendListSpacesRequest({ model, ctx })
       }
       return { model }
@@ -90,10 +91,7 @@ const update: SpaceClientModule["update"] = (input) => {
           },
         },
         msgCmd: [
-          pushRoute({
-            t: "spaces",
-            c: { t: "space", spaceId: msg.spaceId },
-          }),
+          pushRoute(SpacesRoutes.Space({ spaceId: msg.spaceId })),
           playSound(APP_SOUND.navForwardMin),
         ],
       }

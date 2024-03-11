@@ -23,7 +23,6 @@ const ctx: AnonymousClientCtx = {
   currentRouteV2: AuthRoutes.Login(),
   navigatorLanguage: "en",
   t: getTranslator("en"),
-  currentRoute: { t: "auth", c: { t: "login" } },
   documentVisibilityState: "visible",
   now: Posix.now(),
   profiles: {},

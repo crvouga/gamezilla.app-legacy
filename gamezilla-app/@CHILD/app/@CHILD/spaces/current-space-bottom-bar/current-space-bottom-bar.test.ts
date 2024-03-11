@@ -8,6 +8,7 @@ import {
 } from "../@TEST/client"
 import { SpaceClientModule } from "../architecture/space-client"
 import { Spaces } from "../spaces-core"
+import { SpacesRoutes } from "../@SHARED/space-routes"
 
 describe(import.meta.file, () => {
   it("should open current space when clicking current space bottom bar", async () => {
@@ -33,9 +34,8 @@ describe(import.meta.file, () => {
         (msgCmd) =>
           msgCmd.t === "routing" &&
           msgCmd.c.t === "push" &&
-          msgCmd.c.route.t === "spaces" &&
-          msgCmd.c.route.c.t === "space" &&
-          msgCmd.c.route.c.spaceId === currentUsersSpaceId,
+          SpacesRoutes.Space.is(msgCmd.c.route) &&
+          msgCmd.c.route.payload.spaceId === currentUsersSpaceId,
       ),
     ).toBeTrue()
   })

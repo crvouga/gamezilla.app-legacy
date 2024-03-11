@@ -1,3 +1,8 @@
+import {
+  APP_SOUND,
+  openProfile,
+  playSound,
+} from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Avatar, Button, Drawer } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
   ViewSpaceHostChip,
@@ -6,11 +11,6 @@ import {
 } from "../@CHILD/game/@SHARED/game"
 import { SpaceClientCtx } from "../@SHARED/space"
 import { SpaceClientModule } from "../architecture/architecture"
-import {
-  APP_SOUND,
-  playSound,
-  pushRoute,
-} from "gamezilla-app/@CHILD/app/@SHARED/client"
 
 const update: SpaceClientModule["update"] = (input) => {
   const { model } = input
@@ -34,10 +34,7 @@ const updateUserPreview: SpaceClientModule["update"] = ({ msg, model }) => {
         model,
         msgCmd: [
           playSound(APP_SOUND.tap),
-          pushRoute({
-            t: "profile",
-            c: { t: "profile", userId: model.modalPreviewUserId },
-          }),
+          openProfile(model.modalPreviewUserId),
         ],
       }
     }

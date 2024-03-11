@@ -7,6 +7,7 @@ import {
   init,
 } from "../@TEST/client"
 import { SpaceClientModule } from "../architecture/architecture"
+import { SpacesRoutes } from "../@SHARED/space-routes"
 
 describe(import.meta.file, () => {
   it("should go to list screen when clicking go home button", async () => {
@@ -30,8 +31,7 @@ describe(import.meta.file, () => {
         (msgCmd) =>
           msgCmd.t === "routing" &&
           msgCmd.c.t === "push" &&
-          msgCmd.c.route.t === "spaces" &&
-          msgCmd.c.route.c.t === "space-list",
+          SpacesRoutes.SpaceList.is(msgCmd.c.route),
       ),
     ).toBeTrue()
   })

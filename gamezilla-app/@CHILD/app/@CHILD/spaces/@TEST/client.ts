@@ -1,9 +1,9 @@
 import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import {
-  AppRoute,
   ClientCtx,
   routeChanged,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translator"
 import {
   Profile,
   ProfileAvatar,
@@ -17,11 +17,10 @@ import {
   LamportTimestamp,
 } from "gamezilla-app/@SHARED/lamport-clock"
 import { GameName } from "../@CHILD/game/game.core"
+import { SpacesRoutes } from "../@SHARED/space-routes"
 import { Space, SpaceEvent } from "../spaces-core"
 import * as SpaceClient from "../spaces.client"
 import * as SpaceCore from "../spaces.core"
-import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translator"
-import { SpacesRoutes } from "../@SHARED/space-routes"
 
 //
 //
@@ -34,12 +33,6 @@ export const createCtx = (): ClientCtx => {
   return {
     navigatorLanguage: "en",
     t: getTranslator("en"),
-    currentRoute: {
-      t: "spaces",
-      c: {
-        t: "space-list",
-      },
-    },
     currentRouteV2: SpacesRoutes.SpaceList(),
     documentVisibilityState: "visible",
     now: Posix.now(),
@@ -66,12 +59,6 @@ export const createFixture = () => {
     navigatorLanguage: "en",
     t: getTranslator("en"),
     currentRouteV2: SpacesRoutes.SpaceList(),
-    currentRoute: {
-      t: "spaces",
-      c: {
-        t: "space-list",
-      },
-    },
     currentUserId: currentUser.userId,
     documentVisibilityState: "visible",
     now: Posix.now(),
@@ -259,7 +246,8 @@ export const clickedLeaveSpaceButton =
 //
 
 export const changeRoute =
-  (ctx: ClientCtx, route: AppRoute) => async (model: SpaceCore.ModelClient) => {
+  (ctx: ClientCtx, route: Record<string, unknown>) =>
+  async (model: SpaceCore.ModelClient) => {
     return SpaceClient.update({
       ctx,
       model,

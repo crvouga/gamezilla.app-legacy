@@ -1,12 +1,7 @@
-import {
-  ClientEvent,
-  RouteChat,
-  ClientCtx,
-} from "gamezilla-app/@CHILD/app/@SHARED/client"
-
-import { Browser, Eff, exhaustive, p } from "gamezilla-app/@SHARED/core"
-import { ModelClient, MsgClient, MsgToClient } from "./chat.core"
+import { ClientCtx, ClientEvent } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import { Browser, Eff, p } from "gamezilla-app/@SHARED/core"
 import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { ModelClient, MsgClient, MsgToClient } from "./chat.core"
 
 //
 //
@@ -160,31 +155,6 @@ export const updateFromEvent = ({
   eff?: Eff<Msg>
 } => {
   switch (msg.t) {
-    case "routing/route-changed": {
-      if (msg.route.t !== "chat") {
-        return { model }
-      }
-
-      switch (msg.route.c.t) {
-        case "chat-conversation": {
-          return {
-            model,
-          }
-        }
-
-        case "chat-new": {
-          return {
-            model,
-          }
-        }
-
-        default: {
-          return {
-            model,
-          }
-        }
-      }
-    }
     default: {
       return { model }
     }
@@ -199,63 +169,27 @@ export const updateFromEvent = ({
 //
 //
 
-export const View = ({
-  model,
-  dispatch,
-  ctx,
-  route,
-  userSearch,
-  viewBottomBar,
-}: {
+export const View = (_input: {
   model: ModelClient
   dispatch: (m: Msg) => void
   ctx: ClientCtx
-  route: RouteChat
   userSearch: {
     onInput: (searchText: string) => void
     loading: boolean
   }
   viewBottomBar: VDom
 }) => {
-  switch (route.t) {
-    case "chat-conversation": {
-      return <ViewChat model={model} dispatch={dispatch} />
-    }
-
-    case "chat-new": {
-      return (
-        <ViewChatNew
-          model={model}
-          dispatch={dispatch}
-          ctx={ctx}
-          userSearch={userSearch}
-        />
-      )
-    }
-
-    case "chat": {
-      return (
-        <>
-          <ViewChatList model={model} dispatch={dispatch} ctx={ctx} />
-          {viewBottomBar}
-        </>
-      )
-    }
-
-    default: {
-      return exhaustive(route)
-    }
-  }
+  return null
 }
 
-const ViewChat = (_props: {
+export const ViewChat = (_props: {
   model: ModelClient
   dispatch: (m: Msg) => void
 }) => {
   return <div>ViewChat</div>
 }
 
-const ViewChatNew = (_props: {
+export const ViewChatNew = (_props: {
   ctx: ClientCtx
   model: ModelClient
   dispatch: (m: Msg) => void
@@ -267,7 +201,7 @@ const ViewChatNew = (_props: {
   return <div></div>
 }
 
-const ViewChatList = (_props: {
+export const ViewChatList = (_props: {
   ctx: ClientCtx
   model: ModelClient
   dispatch: (m: Msg) => void

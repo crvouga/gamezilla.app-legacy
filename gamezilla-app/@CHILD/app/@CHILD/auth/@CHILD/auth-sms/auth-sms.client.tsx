@@ -33,6 +33,7 @@ import {
   Uuid,
   isErr,
 } from "gamezilla-app/@SHARED/core"
+import { AuthRoutes } from "../../@SHARED/auth-routes"
 import {
   ModelClient,
   MsgClient,
@@ -130,24 +131,16 @@ const updateFromMsg: Module["update"] = async (input) => {
 
   switch (msg.t) {
     case "clicked-back-button": {
-      if (
-        ctx.currentRoute.t === "auth" &&
-        ctx.currentRoute.c.t === "login-phone-verify"
-      ) {
+      if (AuthRoutes.LoginSMSVerify.is(ctx.currentRouteV2)) {
         return {
           model,
-          msgCmd: [
-            replaceRoute({
-              t: "auth",
-              c: { t: "login-phone", isSelectingCountry: false },
-            }),
-          ],
+          msgCmd: [replaceRoute(AuthRoutes.LoginSMSRequest())],
         }
       }
 
       return {
         model,
-        msgCmd: [replaceRoute({ t: "auth", c: { t: "login" } })],
+        msgCmd: [replaceRoute(AuthRoutes.Login())],
       }
     }
 
@@ -327,13 +320,11 @@ const updateFromServer: Module["update"] = async (input) => {
           codeInput: "",
         },
         msgCmd: [
-          pushRoute({
-            t: "auth",
-            c: {
-              t: "login-phone-verify",
+          pushRoute(
+            AuthRoutes.LoginSMSVerify({
               phoneNumber: msgServer.phoneNumber,
-            },
-          }),
+            }),
+          ),
           showToast(
             `Sent code to ${PhoneNumber.toString(msgServer.phoneNumber)}`,
             "info",
@@ -398,146 +389,135 @@ export const subscriptions: Module["subscriptions"] = ({ model }) => {
 //
 
 export const View: Module["View"] = ({ model, dispatch, ctx }) => {
-  const { currentRoute } = ctx
+  if (AuthRoutes.LoginSMSRequest.is(ctx.currentRouteV2)) {
+    return (
+      <div className="w-full flex-1">
+        <TopBar
+          left={
+            <TopBarBackButton
+              onClick={() => dispatch({ t: "clicked-back-button" })}
+            />
+          }
+          title="Login with phone"
+        />
 
-  if (currentRoute.t !== "auth") {
-    return null
-  }
-
-  const route = currentRoute.c
-
-  switch (route.t) {
-    case "login-phone": {
-      return (
-        <div className="w-full flex-1">
-          <TopBar
-            left={
-              <TopBarBackButton
-                onClick={() => dispatch({ t: "clicked-back-button" })}
-              />
-            }
-            title="Login with phone"
-          />
-
-          <div className="flex w-full flex-col gap-6 p-4 py-6">
-            {false && (
-              <Select
-                id="countryCode"
-                label="Country"
-                onChange={(countryCodeNew) => {
-                  dispatch({
-                    t: "inputted-country-code",
-                    countryCode: countryCodeNew,
-                  })
-                }}
-                value={model.countryCodeInput}
-                options={Iso3166Alpha2Code.all}
-                toKey={(countryCode) => countryCode}
-                toName={(countryCode) =>
-                  Iso3166Alpha2Code.toNameWithEmoji(countryCode)
-                }
-              />
-            )}
-
-            <TextField
-              value={model.phoneNumberInput}
-              id="phoneNumberInput"
-              label="Phone Number"
-              type="tel"
-              startIcon={<IconMobilePhone className="h-5 w-5" />}
-              error={typeof model.phoneNumberError === "string"}
-              helperText={model.phoneNumberError}
-              onChange={(value) => {
+        <div className="flex w-full flex-col gap-6 p-4 py-6">
+          {false && (
+            <Select
+              id="countryCode"
+              label="Country"
+              onChange={(countryCodeNew) => {
                 dispatch({
-                  t: "inputted-phone-number",
-                  phoneNumber: value,
+                  t: "inputted-country-code",
+                  countryCode: countryCodeNew,
                 })
               }}
-              onClear={() => {
-                dispatch({ t: "clicked-phone-number-clear" })
-              }}
+              value={model.countryCodeInput}
+              options={Iso3166Alpha2Code.all}
+              toKey={(countryCode) => countryCode}
+              toName={(countryCode) =>
+                Iso3166Alpha2Code.toNameWithEmoji(countryCode)
+              }
             />
-
-            <Button
-              text="Send Code"
-              className="w-full"
-              variant="contained"
-              color="primary"
-              size="lg"
-              loading={model.sendCode.t === "loading"}
-              onClick={() => {
-                dispatch({ t: "clicked-send-code" })
-              }}
-            />
-          </div>
-
-          {isErr(model.sendCode) && (
-            <div className="w-full p-4">
-              <AlertError>{model.sendCode.error}</AlertError>
-            </div>
           )}
-        </div>
-      )
-    }
 
-    case "login-phone-verify": {
-      return (
-        <div className="w-full flex-1">
-          <TopBar
-            left={
-              <TopBarBackButton
-                onClick={() => dispatch({ t: "clicked-back-button" })}
-              />
-            }
-            title="Login with phone"
+          <TextField
+            value={model.phoneNumberInput}
+            id="phoneNumberInput"
+            label="Phone Number"
+            type="tel"
+            startIcon={<IconMobilePhone className="h-5 w-5" />}
+            error={typeof model.phoneNumberError === "string"}
+            helperText={model.phoneNumberError}
+            onChange={(value) => {
+              dispatch({
+                t: "inputted-phone-number",
+                phoneNumber: value,
+              })
+            }}
+            onClear={() => {
+              dispatch({ t: "clicked-phone-number-clear" })
+            }}
           />
 
-          <div className="flex w-full flex-col gap-6 p-4 py-6">
-            <TextField
-              value={model.codeInput}
-              id={CODE_INPUT_VIEW_ID}
-              label="Code"
-              error={typeof model.codeError === "string"}
-              helperText={
-                typeof model.codeError === "string" ? model.codeError : null
-              }
-              autoFocus
-              type="tel"
-              onChange={(value) => {
-                dispatch({ t: "inputted-code", code: value })
-              }}
-              onClear={() => {
-                dispatch({ t: "clicked-code-clear" })
-              }}
-            />
-            <Button
-              className="w-full"
-              text="Verify Code"
-              color="primary"
-              size="lg"
-              loading={
-                model.verifyCode.t === "loading" || model.verifyCode.t === "ok"
-              }
-              onClick={() => {
-                dispatch({
-                  t: "clicked-verify-code",
-                  phoneNumber: route.phoneNumber,
-                })
-              }}
-            />
-          </div>
-
-          {isErr(model.verifyCode) && (
-            <div className="w-full p-4">
-              <AlertError>{model.verifyCode.error}</AlertError>
-            </div>
-          )}
+          <Button
+            text="Send Code"
+            className="w-full"
+            variant="contained"
+            color="primary"
+            size="lg"
+            loading={model.sendCode.t === "loading"}
+            onClick={() => {
+              dispatch({ t: "clicked-send-code" })
+            }}
+          />
         </div>
-      )
-    }
 
-    default: {
-      return null
-    }
+        {isErr(model.sendCode) && (
+          <div className="w-full p-4">
+            <AlertError>{model.sendCode.error}</AlertError>
+          </div>
+        )}
+      </div>
+    )
   }
+
+  if (AuthRoutes.LoginSMSVerify.is(ctx.currentRouteV2)) {
+    const phoneNumber = ctx.currentRouteV2.payload.phoneNumber
+    return (
+      <div className="w-full flex-1">
+        <TopBar
+          left={
+            <TopBarBackButton
+              onClick={() => dispatch({ t: "clicked-back-button" })}
+            />
+          }
+          title="Login with phone"
+        />
+
+        <div className="flex w-full flex-col gap-6 p-4 py-6">
+          <TextField
+            value={model.codeInput}
+            id={CODE_INPUT_VIEW_ID}
+            label="Code"
+            error={typeof model.codeError === "string"}
+            helperText={
+              typeof model.codeError === "string" ? model.codeError : null
+            }
+            autoFocus
+            type="tel"
+            onChange={(value) => {
+              dispatch({ t: "inputted-code", code: value })
+            }}
+            onClear={() => {
+              dispatch({ t: "clicked-code-clear" })
+            }}
+          />
+          <Button
+            className="w-full"
+            text="Verify Code"
+            color="primary"
+            size="lg"
+            loading={
+              model.verifyCode.t === "loading" || model.verifyCode.t === "ok"
+            }
+            onClick={() => {
+              dispatch({
+                t: "clicked-verify-code",
+                phoneNumber,
+              })
+            }}
+          />
+        </div>
+
+        {isErr(model.verifyCode) && (
+          <div className="w-full p-4">
+            <AlertError>{model.verifyCode.error}</AlertError>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  return null
 }

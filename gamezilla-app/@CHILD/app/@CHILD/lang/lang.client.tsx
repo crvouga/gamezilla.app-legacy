@@ -30,6 +30,7 @@ import {
   TranslationLoading,
 } from "./lang.core"
 import { LocalStorage } from "gamezilla-app/@SHARED/core"
+import { LangRoutes } from "./lang-routes"
 
 //
 //
@@ -118,7 +119,7 @@ export const update: Module["update"] = ({ model, ctx, msg }) => {
     }
 
     case "clicked-change-lang": {
-      if (ctx.currentRoute.t === "lang" && ctx.currentRoute.c.t === "choose") {
+      if (LangRoutes.ChooseLang.is(ctx.currentRouteV2)) {
         return {
           model,
           msgCmd: [playSound(APP_SOUND.navForwardMin), closeStatusBar()],
@@ -129,7 +130,7 @@ export const update: Module["update"] = ({ model, ctx, msg }) => {
         model,
         msgCmd: [
           playSound(APP_SOUND.navForwardMin),
-          pushRoute({ t: "lang", c: { t: "choose" } }),
+          pushRoute(LangRoutes.ChooseLang()),
           closeStatusBar(),
         ],
       }
@@ -192,7 +193,7 @@ export const ViewStatusBarDrawer: Module["View"] = ({
 }
 
 export const View: Module["View"] = ({ ctx, dispatch, model }) => {
-  if (ctx.currentRoute.t !== "lang" || ctx.currentRoute.c.t !== "choose") {
+  if (!LangRoutes.ChooseLang.is(ctx.currentRouteV2)) {
     return null
   }
 

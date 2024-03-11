@@ -3,6 +3,7 @@ import { isAnonymous } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@SHARED/core"
 import { VDom } from "gamezilla-app/@SHARED/vdom"
 import { SpaceClientCmd } from "./@SHARED/space-client-cmd"
+import { SpacesRoutes } from "./@SHARED/space-routes"
 import { Input, Output, SpaceClientModule } from "./architecture/architecture"
 import { CurrentSpaceBottomBar } from "./current-space-bottom-bar/current-space-bottom-bar"
 import { EndSpaceClient } from "./end-space/end-space.client"
@@ -193,39 +194,28 @@ export const View: ClientModule["View"] = ({
     return null
   }
 
-  switch (ctx.currentRoute.t) {
-    case "spaces": {
-      switch (ctx.currentRoute.c.t) {
-        case "space-list": {
-          return (
-            <>
-              <ListSpacesClient.View
-                dispatch={dispatch}
-                ctx={ctx}
-                model={model}
-              />
+  if (SpacesRoutes.SpaceList.is(ctx.currentRouteV2)) {
+    return (
+      <>
+        <ListSpacesClient.View dispatch={dispatch} ctx={ctx} model={model} />
 
-              {slots?.bottomBar(null)}
-            </>
-          )
-        }
-
-        case "space": {
-          return (
-            <SpaceClient.View
-              spaceId={ctx.currentRoute.c.spaceId}
-              ctx={ctx}
-              dispatch={dispatch}
-              model={model}
-            />
-          )
-        }
-      }
-    }
-    default: {
-      return null
-    }
+        {slots?.bottomBar(null)}
+      </>
+    )
   }
+
+  if (SpacesRoutes.Space.is(ctx.currentRouteV2)) {
+    return (
+      <SpaceClient.View
+        spaceId={ctx.currentRouteV2.payload.spaceId}
+        ctx={ctx}
+        dispatch={dispatch}
+        model={model}
+      />
+    )
+  }
+
+  return null
 }
 
 export const ViewCurrentSpaceBar = CurrentSpaceBottomBar.View

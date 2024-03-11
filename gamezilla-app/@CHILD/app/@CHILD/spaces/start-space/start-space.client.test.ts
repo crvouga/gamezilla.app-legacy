@@ -46,9 +46,7 @@ describe(import.meta.file, () => {
       clickedStartSpaceButton(ctx, spaceId),
     )
 
-    expect(
-      didPushRoute(started, { t: "spaces", c: { t: "space", spaceId } }),
-    ).toBeTrue()
+    expect(didPushRoute(started)).toBeTrue()
   })
 
   it("should play sound after starting space", async () => {

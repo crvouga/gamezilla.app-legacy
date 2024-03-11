@@ -6,6 +6,7 @@ import {
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Button } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { withId } from "../@SHARED/event"
+import { SpacesRoutes } from "../@SHARED/space-routes"
 import { SpaceClientModule } from "../architecture/architecture"
 import { SpaceEvent, Spaces } from "../spaces-core"
 
@@ -75,18 +76,12 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = async (input) => {
         },
         (model) => {
           if (
-            ctx.currentRoute.t === "spaces" &&
-            ctx.currentRoute.c.t === "space" &&
-            ctx.currentRoute.c.spaceId === msgSpaceEvent.spaceId
+            SpacesRoutes.Space.is(ctx.currentRouteV2) &&
+            ctx.currentRouteV2.payload.spaceId === msgSpaceEvent.spaceId
           ) {
             return {
               model,
-              msgCmd: [
-                pushRoute({
-                  t: "spaces",
-                  c: { t: "space-list" },
-                }),
-              ],
+              msgCmd: [pushRoute(SpacesRoutes.SpaceList())],
             }
           }
           return {

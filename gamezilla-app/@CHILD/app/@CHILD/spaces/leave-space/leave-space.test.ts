@@ -15,6 +15,7 @@ import {
   userStartedSpace,
 } from "../@TEST/client"
 import { Spaces } from "../spaces-core"
+import { SpacesRoutes } from "../@SHARED/space-routes"
 
 describe(import.meta.file, () => {
   it("should navigate to list screen after leaving space", async () => {
@@ -32,9 +33,7 @@ describe(import.meta.file, () => {
       userLeftSpace(ctx, ctx.currentUserId, spaceId),
     )
 
-    expect(
-      didPushRoute(output, { t: "spaces", c: { t: "space-list" } }),
-    ).toBeTrue()
+    expect(didPushRoute(output, SpacesRoutes.SpaceList.is)).toBeTrue()
   })
 
   it("should only redirect to list screen for the user leaving the space", async () => {

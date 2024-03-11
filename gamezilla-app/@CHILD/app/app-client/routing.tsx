@@ -1,10 +1,10 @@
 import {
-  AppRoute,
   ClientEvent,
   RouteCmd,
   SoundCmd,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Browser, Eff } from "gamezilla-app/@SHARED/core"
+import { SpacesRoutes } from "../@CHILD/spaces/@SHARED/space-routes"
 
 //
 //
@@ -15,12 +15,10 @@ import { Browser, Eff } from "gamezilla-app/@SHARED/core"
 //
 
 export type Model = {
-  previousRoute: AppRoute
-  currentRoute: AppRoute
   currentRouteV2: Record<string, unknown>
 }
 
-const FALLBACK: AppRoute = { t: "spaces", c: { t: "space-list" } }
+const FALLBACK = SpacesRoutes.SpaceList()
 
 export const init = ({
   location,
@@ -30,25 +28,12 @@ export const init = ({
   model: Model
   eff?: Eff
 } => {
-  const decoded = AppRoute.decode(location.pathname)
-
-  if (decoded) {
-    return {
-      model: {
-        currentRoute: decoded,
-        previousRoute: decoded,
-        currentRouteV2: {},
-      },
-    }
-  }
-
   return {
     model: {
-      currentRoute: FALLBACK,
-      previousRoute: FALLBACK,
-      currentRouteV2: {},
+      currentRouteV2: location.query["route"]
+        ? RouteCodec.decode(location.query["route"])
+        : FALLBACK,
     },
-    eff: Browser.replace(AppRoute.encode(FALLBACK)),
   }
 }
 
@@ -61,8 +46,8 @@ export const init = ({
 //
 
 export type Msg =
-  | { t: "route-changed"; route: AppRoute }
-  | { t: "clicked-link"; route: AppRoute }
+  | { t: "route-changed"; route: Record<string, unknown> }
+  | { t: "clicked-link"; route: Record<string, unknown> }
   | { t: "clicked-back" }
 
 export const update = ({
@@ -103,25 +88,34 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
     case "clicked-link": {
       return {
         model: {
-          previousRoute: model.currentRoute,
-          currentRoute: msg.route,
-          currentRouteV2: {},
+          currentRouteV2: msg.route,
         },
-        eff: Browser.push(AppRoute.encode(msg.route)),
+        eff: Browser.pushQueryParam("route", RouteCodec.encode(msg.route)),
       }
     }
 
     case "route-changed": {
       return {
         model: {
-          previousRoute: model.currentRoute,
-          currentRoute: msg.route,
-          currentRouteV2: {},
+          currentRouteV2: msg.route,
         },
         msgEvt: [{ t: "routing/route-changed", route: msg.route }],
       }
     }
   }
+}
+
+const RouteCodec = {
+  encode: (route: Record<string, unknown>): string => {
+    return btoa(JSON.stringify(route))
+  },
+  decode: (route: string): Record<string, unknown> => {
+    try {
+      return JSON.parse(atob(route))
+    } catch {
+      return {}
+    }
+  },
 }
 
 const updateFromCmd: typeof update = ({ msgCmd, model }) => {
@@ -135,11 +129,9 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
     case "push": {
       return {
         model: {
-          previousRoute: model.currentRoute,
-          currentRoute: routeCmd.route,
-          currentRouteV2: {},
+          currentRouteV2: routeCmd.route,
         },
-        eff: Browser.push(AppRoute.encode(routeCmd.route)),
+        eff: Browser.pushQueryParam("route", RouteCodec.encode(routeCmd.route)),
       }
     }
 
@@ -153,11 +145,12 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
     case "replace": {
       return {
         model: {
-          previousRoute: model.currentRoute,
-          currentRoute: routeCmd.route,
-          currentRouteV2: {},
+          currentRouteV2: routeCmd.route,
         },
-        eff: Browser.replace(AppRoute.encode(routeCmd.route)),
+        eff: Browser.replaceQueryParam(
+          "route",
+          RouteCodec.encode(routeCmd.route),
+        ),
       }
     }
   }
@@ -172,10 +165,10 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 //
 
 const onLocationChange = (location: Browser.Location): Msg => {
-  const decoded = AppRoute.decode(location.pathname)
+  const route = RouteCodec.decode(location.query["route"] ?? "")
 
-  if (decoded) {
-    return { t: "route-changed", route: decoded }
+  if (route) {
+    return { t: "route-changed", route }
   }
 
   return { t: "route-changed", route: FALLBACK }
