@@ -2,20 +2,20 @@
 import type { Text } from "../text"
 
 export const translations: Text = {
-  en: "Korean",
-  es: "Coreano",
-  ar: "الكورية",
-  de: "Koreanisch",
-  fr: "coréen",
-  hi: "कोरियाई",
-  it: "coreano",
-  ja: "韓国語",
+  en: "영어",
+  es: "스페인어",
+  ar: "아랍어",
+  de: "독일어",
+  fr: "프랑스어",
+  hi: "힌디어",
+  it: "이탈리아어",
+  ja: "일본어",
   ko: "한국어",
-  pt: "coreano",
-  ru: "корейский",
-  zh: "韩语",
-  "auth.current-user-logged-out": "사용자",
-  "auth.current-user-logged-in": "사용자",
+  pt: "포르투갈어",
+  ru: "러시아어",
+  zh: "중국어",
+  "auth.current-user-logged-out": "로그아웃됨",
+  "auth.current-user-logged-in": "로그인됨",
   "spaces.current-user-joined-space": "공간에 참여했습니다",
   "spaces.other-user-joined-space": (username) =>
     username

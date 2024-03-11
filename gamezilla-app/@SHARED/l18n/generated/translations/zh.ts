@@ -2,20 +2,20 @@
 import type { Text } from "../text"
 
 export const translations: Text = {
-  en: "Chinese",
-  es: "Chino",
-  ar: "الصينية",
-  de: "Chinesisch",
-  fr: "chinois",
-  hi: "चीनी",
-  it: "cinese",
-  ja: "中国語",
-  ko: "중국어",
-  pt: "chinês",
-  ru: "китайский",
+  en: "英语",
+  es: "西班牙语",
+  ar: "阿拉伯语",
+  de: "德语",
+  fr: "法语",
+  hi: "印地语",
+  it: "意大利语",
+  ja: "日语",
+  ko: "韩语",
+  pt: "葡萄牙语",
+  ru: "俄语",
   zh: "中文",
-  "auth.current-user-logged-out": "用户",
-  "auth.current-user-logged-in": "用户",
+  "auth.current-user-logged-out": "已登出",
+  "auth.current-user-logged-in": "已登录",
   "spaces.current-user-joined-space": "加入空间",
   "spaces.other-user-joined-space": (username) =>
     username

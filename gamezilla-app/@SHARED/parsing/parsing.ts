@@ -78,7 +78,7 @@ export const dict = <K extends string, V>(
   return true
 }
 
-export const union =
+export const enumeration =
   <T extends readonly string[]>(enumeration: T) =>
   (token: unknown): token is T[number] => {
     return enumeration.includes(token as T[number])
@@ -119,4 +119,28 @@ export const to =
 
 export const bool = (value: unknown): value is boolean => {
   return typeof value === "boolean"
+}
+
+export const union = <T>(parsers: ((x: unknown) => T | null)[]) => {
+  return (x: unknown): T | null => {
+    for (const parse of parsers) {
+      const result = parse(x)
+      if (result !== null) {
+        return result
+      }
+    }
+    return null
+  }
+}
+
+export const tag = <
+  T extends Record<string, unknown>,
+  K extends keyof T,
+  TV extends string,
+>(
+  x: T,
+  tag: K,
+  tagValue: TV,
+): x is T & { [tag in K]: TV } => {
+  return obj(x) && has(x, tag, literal(tagValue))
 }

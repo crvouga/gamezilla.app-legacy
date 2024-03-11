@@ -106,7 +106,7 @@ export const toPuzzleInteractionRow = (
     P.has(x, "id", P.str) &&
     P.has(x, "puzzle_id", P.str) &&
     P.has(x, "user_id", P.str) &&
-    P.has(x, "type", P.union(types))
+    P.has(x, "type", P.enumeration(types))
   ) {
     return x
   }

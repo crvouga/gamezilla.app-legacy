@@ -2,20 +2,20 @@
 import type { Text } from "../text"
 
 export const translations: Text = {
-  en: "Hindi",
-  es: "Hindi",
-  ar: "الهندية",
-  de: "Hindi",
-  fr: "hindi",
+  en: "अंग्रेज़ी",
+  es: "स्पेनिश",
+  ar: "अरबी",
+  de: "जर्मन",
+  fr: "फ्रेंच",
   hi: "हिंदी",
-  it: "hindi",
-  ja: "ヒンディー語",
-  ko: "힌디어",
-  pt: "hindi",
-  ru: "хинди",
-  zh: "印地语",
-  "auth.current-user-logged-out": "उपयोगकर्ता",
-  "auth.current-user-logged-in": "उपयोगकर्ता",
+  it: "इतालवी",
+  ja: "जापानी",
+  ko: "कोरियाई",
+  pt: "पुर्तगाली",
+  ru: "रूसी",
+  zh: "चीनी",
+  "auth.current-user-logged-out": "लॉग आउट",
+  "auth.current-user-logged-in": "लॉग इन",
   "spaces.current-user-joined-space": "स्थान जुड़ गया",
   "spaces.other-user-joined-space": (username) =>
     username
