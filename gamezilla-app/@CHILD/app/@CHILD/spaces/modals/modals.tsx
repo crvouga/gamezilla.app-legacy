@@ -149,10 +149,10 @@ const View: SpaceClientModule["View"] = ({ ctx, dispatch, model }) => {
             </p>
             <div className="flex items-center gap-2">
               {spaceCtx.space.hostId === model.modalPreviewUserId && (
-                <ViewSpaceHostChip />
+                <ViewSpaceHostChip ctx={ctx} />
               )}
               {spaceCtx.currentUserId === model.modalPreviewUserId && (
-                <ViewYouChip />
+                <ViewYouChip ctx={ctx} />
               )}
             </div>
           </button>
@@ -161,7 +161,7 @@ const View: SpaceClientModule["View"] = ({ ctx, dispatch, model }) => {
             <Button
               onClick={() => dispatch({ t: "clicked-preview-user-link" })}
               className="w-full"
-              text="See profile"
+              text={ctx.t("spaces.see-profile")}
             />
           </div>
         </div>

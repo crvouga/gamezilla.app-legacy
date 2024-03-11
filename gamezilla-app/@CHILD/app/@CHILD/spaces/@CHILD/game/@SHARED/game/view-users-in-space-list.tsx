@@ -1,9 +1,10 @@
-import { IconCrown, Avatar } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
   SpaceClientCtx,
   spaceToProfiles,
 } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { BaseClientCtx } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Avatar, IconCrown } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 
 export const ViewUsersInSpaceList = ({
   ctx,
@@ -27,8 +28,12 @@ export const ViewUsersInSpaceList = ({
             >
               <Avatar src={profile.avatarUrl} />
               <p>{profile.username}</p>
-              {profile.userId === ctx.space.hostId && <ViewSpaceHostChip />}
-              {profile.userId === ctx.currentUserId && <ViewYouChip />}
+              {profile.userId === ctx.space.hostId && (
+                <ViewSpaceHostChip ctx={ctx} />
+              )}
+              {profile.userId === ctx.currentUserId && (
+                <ViewYouChip ctx={ctx} />
+              )}
             </button>
           )
         })}
@@ -37,19 +42,19 @@ export const ViewUsersInSpaceList = ({
   )
 }
 
-export const ViewSpaceHostChip = () => {
+export const ViewSpaceHostChip = ({ ctx }: { ctx: BaseClientCtx }) => {
   return (
     <div className="flex items-center gap-1 rounded-xl border border-white/20 bg-white/20 px-2 py-1 text-xs font-semibold">
       <IconCrown className="h-4 w-4 text-yellow-300" />
-      Host
+      {ctx.t("host")}
     </div>
   )
 }
 
-export const ViewYouChip = () => {
+export const ViewYouChip = ({ ctx }: { ctx: BaseClientCtx }) => {
   return (
     <div className="rounded-xl border border-white/20 bg-white/20 px-2 py-1 text-xs">
-      You
+      {ctx.t("you")}
     </div>
   )
 }

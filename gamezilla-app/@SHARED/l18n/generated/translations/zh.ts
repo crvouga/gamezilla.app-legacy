@@ -28,6 +28,9 @@ export const translations: Text = {
     username
       ? `${username}\u7ED3\u675F\u7A7A\u95F4`
       : "\u7ED3\u675F\u7A7A\u95F4",
+  "spaces.see-profile": "查看个人资料",
+  host: "主持人",
+  you: "你",
   "lang.language": "语言",
   "lang.choose-language": "选择语言",
   "lang.done": "完成",

@@ -24,6 +24,9 @@ export const translations: Text = {
   "spaces.current-user-ended-space": "Espaço terminado",
   "spaces.other-user-ended-space": (username) =>
     username ? `${username} terminou o espa\xE7o` : "Espa\xE7o terminado",
+  "spaces.see-profile": "Ver perfil",
+  host: "Anfitrião",
+  you: "Você",
   "lang.language": "Língua",
   "lang.choose-language": "Escolha o idioma",
   "lang.done": "Feito",

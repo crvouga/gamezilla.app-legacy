@@ -1,5 +1,6 @@
 import { GameClientModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { APP_SOUND, playSound } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   Avatar,
   Button,
@@ -10,7 +11,6 @@ import { ViewSpaceHostChip } from "../../../../../@SHARED/game"
 import { ClientModule } from "../create.core"
 import { PackListClient } from "../pack/list/pack-list.client"
 import { PuzzleListClient } from "../puzzle/list/puzzle-list.client"
-import { APP_SOUND, playSound } from "gamezilla-app/@CHILD/app/@SHARED/client"
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.andThen(
@@ -74,7 +74,7 @@ const View: ClientModule["View"] = (input) => {
           <Avatar src={host?.avatarUrl} className="h-20 w-20" />
           <div className="flex items-center gap-2">
             <p className="text-xl font-bold">{name}</p>
-            <ViewSpaceHostChip />
+            <ViewSpaceHostChip ctx={ctx} />
           </div>
         </div>
         <p className="text-lg font-bold text-neutral-300">

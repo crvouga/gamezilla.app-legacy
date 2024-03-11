@@ -68,8 +68,8 @@ export const ViewSpaceCard = ({
             {host.username}
           </p>
         </div>
-        <ViewSpaceHostChip />
-        {ctx.currentUserId === host.userId && <ViewYouChip />}
+        <ViewSpaceHostChip ctx={ctx} />
+        {ctx.currentUserId === host.userId && <ViewYouChip ctx={ctx} />}
       </div>
 
       {users.length > 1 && (
