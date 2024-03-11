@@ -34,12 +34,12 @@ export const translations: Translations<Text> = {
   de: {
     "spaces.current-user-joined-space": "Raum beigetreten",
     "spaces.other-user-joined-space": (username) =>
-      username ? `${username} beigetreten` : "Raum beigetreten",
+      username ? `${username} ist dem Raum beigetreten` : "Raum beigetreten",
     "spaces.space-not-found": "Raum nicht gefunden",
-    "spaces.go-home": "Geh nach Hause",
-    "spaces.current-user-ended-space": "Raum be",
+    "spaces.go-home": "Nach Hause gehen",
+    "spaces.current-user-ended-space": "Raum beendet",
     "spaces.other-user-ended-space": (username) =>
-      username ? `${username} beendet` : "Raum beendet",
+      username ? `${username} hat den Raum beendet` : "Raum beendet",
   },
   fr: {
     "spaces.current-user-joined-space": "Espace rejoint",
