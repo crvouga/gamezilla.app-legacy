@@ -3,7 +3,6 @@ import {
   playSound,
   pushRoute,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
-import { SpacesRoutes } from "../@SHARED/space.routes"
 import { SpaceClientModule } from "../architecture/architecture"
 
 const update: SpaceClientModule["update"] = ({ msg, model }) => {
@@ -12,7 +11,10 @@ const update: SpaceClientModule["update"] = ({ msg, model }) => {
       return {
         model,
         msgCmd: [
-          pushRoute(SpacesRoutes.SpaceList()),
+          pushRoute({
+            n: "spaces",
+            t: "space-list",
+          }),
           playSound(APP_SOUND.navBackwardMin),
         ],
       }

@@ -1,7 +1,4 @@
-import { Namespace } from "gamezilla-app/@SHARED/msg"
 import { P } from "gamezilla-app/@SHARED/parsing"
-
-export const Msg = Namespace("lang")
 
 export type Route = {
   n: "lang"
@@ -14,7 +11,3 @@ export const toRoute = P.union<Route>([
       ? x
       : null,
 ])
-
-export const LangRoutes = {
-  ChooseLang: Msg("choose-lang"),
-}

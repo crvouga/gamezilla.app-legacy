@@ -16,8 +16,8 @@ import {
   LamportClock,
   LamportTimestamp,
 } from "gamezilla-app/@SHARED/lamport-clock"
+import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
 import { GameName } from "../@CHILD/game/game.core"
-import { SpacesRoutes } from "../@SHARED/space.routes"
 import { Space, SpaceEvent } from "../spaces-core"
 import * as SpaceClient from "../spaces.client"
 import * as SpaceCore from "../spaces.core"
@@ -33,7 +33,7 @@ export const createCtx = (): ClientCtx => {
   return {
     navigatorLanguage: "en",
     t: getTranslator("en"),
-    currentRouteV2: SpacesRoutes.SpaceList(),
+    currentRoute: { n: "spaces", t: "space-list" },
     documentVisibilityState: "visible",
     now: Posix.now(),
     profiles: {},
@@ -58,7 +58,7 @@ export const createFixture = () => {
   const ctx: ClientCtx = {
     navigatorLanguage: "en",
     t: getTranslator("en"),
-    currentRouteV2: SpacesRoutes.SpaceList(),
+    currentRoute: { n: "spaces", t: "space-list" },
     currentUserId: currentUser.userId,
     documentVisibilityState: "visible",
     now: Posix.now(),
@@ -246,8 +246,7 @@ export const clickedLeaveSpaceButton =
 //
 
 export const changeRoute =
-  (ctx: ClientCtx, route: Record<string, unknown>) =>
-  async (model: SpaceCore.ModelClient) => {
+  (ctx: ClientCtx, route: Route) => async (model: SpaceCore.ModelClient) => {
     return SpaceClient.update({
       ctx,
       model,

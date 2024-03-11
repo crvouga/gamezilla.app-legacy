@@ -1,9 +1,6 @@
-import { isAnonymous } from "gamezilla-app/@CHILD/app/@SHARED/client"
-
 import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@SHARED/core"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { isAnonymous } from "../../@SHARED/client"
 import { SpaceClientCmd } from "./@SHARED/space-client-cmd"
-import { SpacesRoutes } from "./@SHARED/space.routes"
 import { Input, Output, SpaceClientModule } from "./architecture/architecture"
 import { CurrentSpaceBottomBar } from "./current-space-bottom-bar/current-space-bottom-bar"
 import { EndSpaceClient } from "./end-space/end-space.client"
@@ -184,38 +181,43 @@ export const subscriptions: ClientModule["subscriptions"] = async (input) => {
 //
 //
 
-export const View: ClientModule["View"] = ({
-  ctx,
-  dispatch,
-  model,
-  slots,
-}): VDom => {
-  if (isAnonymous(ctx)) {
-    return null
+export const View: ClientModule["View"] = ({ ctx, dispatch, model, slots }) => {
+  switch (ctx.currentRoute.n) {
+    case "spaces": {
+      switch (ctx.currentRoute.t) {
+        case "space-list": {
+          return (
+            <>
+              <ListSpacesClient.View
+                dispatch={dispatch}
+                ctx={ctx}
+                model={model}
+              />
+
+              {slots?.bottomBar(null)}
+            </>
+          )
+        }
+        case "space": {
+          if (isAnonymous(ctx)) {
+            return null
+          }
+
+          return (
+            <SpaceClient.View
+              spaceId={ctx.currentRoute.spaceId}
+              ctx={ctx}
+              dispatch={dispatch}
+              model={model}
+            />
+          )
+        }
+      }
+    }
+    default: {
+      return null
+    }
   }
-
-  if (SpacesRoutes.SpaceList.is(ctx.currentRouteV2)) {
-    return (
-      <>
-        <ListSpacesClient.View dispatch={dispatch} ctx={ctx} model={model} />
-
-        {slots?.bottomBar(null)}
-      </>
-    )
-  }
-
-  if (SpacesRoutes.Space.is(ctx.currentRouteV2)) {
-    return (
-      <SpaceClient.View
-        spaceId={ctx.currentRouteV2.payload.spaceId}
-        ctx={ctx}
-        dispatch={dispatch}
-        model={model}
-      />
-    )
-  }
-
-  return null
 }
 
 export const ViewCurrentSpaceBar = CurrentSpaceBottomBar.View

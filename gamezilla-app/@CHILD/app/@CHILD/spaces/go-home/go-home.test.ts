@@ -1,6 +1,5 @@
 import { describe, expect, it } from "bun:test"
 import { SpaceId } from "../../../@SHARED/data"
-import { SpacesRoutes } from "../@SHARED/space.routes"
 import {
   clickedGoHomeButton,
   clickedStartSpaceButton,
@@ -31,7 +30,7 @@ describe(import.meta.file, () => {
         (msgCmd) =>
           msgCmd.t === "routing" &&
           msgCmd.c.t === "push" &&
-          SpacesRoutes.SpaceList.is(msgCmd.c.route),
+          msgCmd.c.route.t === "space-list",
       ),
     ).toBeTrue()
   })

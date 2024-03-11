@@ -7,7 +7,6 @@ import {
 import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Button } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { withId } from "../@SHARED/event"
-import { SpacesRoutes } from "../@SHARED/space.routes"
 import { SpaceClientModule } from "../architecture/architecture"
 import { SpaceEvent } from "../spaces-core"
 
@@ -32,8 +31,11 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = ({
           model,
           msgCmd: [
             playSound(APP_SOUND.navForward),
-
-            pushRoute(SpacesRoutes.Space({ spaceId: msgSpaceEvent.spaceId })),
+            pushRoute({
+              n: "spaces",
+              t: "space",
+              spaceId: msgSpaceEvent.spaceId,
+            }),
             showToast("Started space"),
           ],
         }

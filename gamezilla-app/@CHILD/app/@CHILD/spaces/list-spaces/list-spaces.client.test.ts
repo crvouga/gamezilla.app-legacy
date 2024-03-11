@@ -13,7 +13,6 @@ import {
   isRequesting,
   isResponseOk,
 } from "gamezilla-app/@SHARED/core"
-import { SpacesRoutes } from "../@SHARED/space.routes"
 import {
   changeRoute,
   clickSpaceCard,
@@ -25,7 +24,7 @@ import {
 } from "../@TEST/client"
 
 const changeRouteToSpaceList = (ctx: ClientCtx) => {
-  return changeRoute(ctx, SpacesRoutes.SpaceList())
+  return changeRoute(ctx, { n: "spaces", t: "space-list" })
 }
 
 describe(import.meta.file, () => {
@@ -33,7 +32,7 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const output = await init({
       ...ctx,
-      currentRouteV2: SpacesRoutes.SpaceList(),
+      currentRoute: { n: "spaces", t: "space-list" },
     })
     expect(
       isRequesting(output.model.listSpacesRequest) &&
@@ -45,7 +44,7 @@ describe(import.meta.file, () => {
     const ctx = createCtx()
     const output = await init({
       ...ctx,
-      currentRouteV2: SpacesRoutes.SpaceList(),
+      currentRoute: { n: "spaces", t: "space-list" },
     })
     expect(
       output.msgCmd?.some(

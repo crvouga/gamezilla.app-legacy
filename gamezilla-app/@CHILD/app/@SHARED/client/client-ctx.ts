@@ -2,6 +2,7 @@ import { UserId, Username } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Posix } from "gamezilla-app/@SHARED/core"
 import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n"
 import { Translator } from "gamezilla-app/@SHARED/l18n/generated"
+import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
 
 type Profile = {
   userId: UserId
@@ -12,7 +13,7 @@ type Profile = {
 export type BaseClientCtx = {
   navigatorLanguage: LanguageCodeISO_639_1
   t: Translator
-  currentRouteV2: Record<string, unknown>
+  currentRoute: Route
   now: Posix
   currentUserId?: UserId | null
   profiles: { [userId: UserId]: Profile }

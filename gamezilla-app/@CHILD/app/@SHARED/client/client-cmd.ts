@@ -1,4 +1,5 @@
 import { TimeSpan, UnitInterval, eq } from "gamezilla-app/@SHARED/core"
+import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
 import { Profile, UserId } from "../data"
 
 //
@@ -449,12 +450,12 @@ export type RouteCmd = {
   c:
     | {
         t: "push"
-        route: Record<string, unknown>
+        route: Route
         playSound?: boolean
       }
     | {
         t: "replace"
-        route: Record<string, unknown>
+        route: Route
         reason?: string
       }
     | {
@@ -464,7 +465,7 @@ export type RouteCmd = {
 }
 
 export const pushRoute = <T extends ClientCmdTypes>(
-  route: Record<string, unknown>,
+  route: Route,
   playSound?: boolean,
 ): ClientCmd<T> => {
   return {
@@ -479,7 +480,7 @@ export const didPushRoute = <T>(
   }: {
     msgCmd?: (RouteCmd | T)[]
   },
-  predicate?: (route: Record<string, unknown>) => boolean,
+  predicate?: (route: Route) => boolean,
 ): boolean => {
   return Boolean(
     msgCmd?.some((cmd) => {
@@ -501,7 +502,7 @@ export const didPushRoute = <T>(
 }
 
 export const replaceRoute = <T extends ClientCmdTypes>(
-  route: Record<string, unknown>,
+  route: Route,
   reason?: string,
 ): ClientCmd<T> => {
   return {
@@ -520,7 +521,7 @@ export const didReplaceRoute = <T extends ClientCmdTypes>(
   }: {
     msgCmd?: ClientCmd<T>[]
   },
-  route?: Record<string, unknown>,
+  route?: Route,
 ): boolean => {
   return Boolean(
     msgCmd?.some((cmd) => {

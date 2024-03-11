@@ -7,7 +7,6 @@ import {
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Posix } from "gamezilla-app/@SHARED/core"
 import { SpaceClientCtx } from "../../../../@SHARED/space"
-import { SpacesRoutes } from "../../../../@SHARED/space.routes"
 
 const currentUserId = "test-user-id" as UserId
 
@@ -17,7 +16,11 @@ export const testSpaceClientCtx = (): SpaceClientCtx => {
   return {
     navigatorLanguage: "en",
     t: getTranslator("en"),
-    currentRouteV2: SpacesRoutes.Space({ spaceId: currentSpaceId }),
+    currentRoute: {
+      n: "spaces",
+      t: "space",
+      spaceId: currentSpaceId,
+    },
     currentUserId,
     documentVisibilityState: "visible",
     now: Posix.now(),

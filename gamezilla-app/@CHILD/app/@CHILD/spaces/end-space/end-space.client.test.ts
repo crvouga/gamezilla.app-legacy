@@ -23,7 +23,7 @@ describe(import.meta.file, () => {
       clickedStartSpaceButton(ctx, spaceId),
       userClickedEndSpaceButton({
         ...ctx,
-        currentRouteV2: { t: "spaces", c: { t: "space", spaceId } },
+        currentRoute: { n: "spaces", t: "space", spaceId },
       }),
     )
 
@@ -43,7 +43,7 @@ describe(import.meta.file, () => {
       { model: updated.model },
       userClickedEndSpaceButton({
         ...ctx,
-        currentRouteV2: { type: "some-other-route" },
+        currentRoute: { n: "spaces", t: "space-list" },
       }),
     )
 

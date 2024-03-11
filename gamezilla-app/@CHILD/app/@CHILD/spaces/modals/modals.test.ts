@@ -52,7 +52,7 @@ describe(import.meta.file, () => {
     const output = await AppClientModule.andThen(
       init(ctx),
       clickedUser(ctx, someUserId),
-      changeRoute(ctx, { t: "spaces", c: { t: "space-list" } }),
+      changeRoute(ctx, { n: "spaces", t: "space-list" }),
     )
     expect(output.model.modal === null).toBeTrue()
   })

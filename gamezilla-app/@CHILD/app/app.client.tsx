@@ -20,9 +20,11 @@ import {
   Posix,
   Sub,
   batchMsgs,
+  eq,
   toMsgType,
 } from "gamezilla-app/@SHARED/core"
 import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n"
+import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
 import { VDom } from "gamezilla-app/@SHARED/vdom"
 import {
   CODEBASE_VERSION_ID,
@@ -32,8 +34,6 @@ import {
 import * as AuthClient from "./@CHILD/auth/auth.client"
 import * as LangClient from "./@CHILD/lang/lang.client"
 import * as ProfileClient from "./@CHILD/profile/profile.client"
-import { ProfileRoutes } from "./@CHILD/profile/profile.routes"
-import { SpacesRoutes } from "./@CHILD/spaces/@SHARED/space.routes"
 import * as SpaceClient from "./@CHILD/spaces/spaces.client"
 import {
   ClientTransport,
@@ -134,7 +134,7 @@ export const init = async (input: {
 
   const ctx: AnonymousClientCtx = {
     ...input.ctx,
-    currentRouteV2: routing.model.currentRouteV2,
+    currentRoute: routing.model.currentRoute,
     t: getTranslator(input.ctx.navigatorLanguage),
     currentUserId: null,
     documentVisibilityState: "visible",
@@ -480,7 +480,7 @@ const toClientCtx = (input: {
     profiles: input.model.profile.profiles,
     now: input.ctx.now,
     documentVisibilityState: input.model.platform.documentVisibilityState,
-    currentRouteV2: input.model.routing.currentRouteV2,
+    currentRoute: input.model.routing.currentRoute,
     currentUserId: null,
   }
   if (input.model.auth.currentUser.t === "logged-in") {
@@ -672,24 +672,24 @@ const ViewBottomNavBar = ({
     return null
   }
   const items: {
-    route: Record<string, unknown>
-    isSelected: boolean
+    route: Route
     label: string
     icon: VDom
   }[] = [
     {
-      route: SpacesRoutes.SpaceList(),
-      isSelected: SpacesRoutes.SpaceList.is(ctx.currentRouteV2),
+      route: {
+        n: "spaces",
+        t: "space-list",
+      },
       label: "Spaces",
       icon: <IconGamepad className="h-6 w-6" />,
     },
     {
-      route: ProfileRoutes.Profile({
+      route: {
+        n: "profile",
+        t: "profile",
         userId: ctx.currentUserId,
-      }),
-      isSelected:
-        ProfileRoutes.Profile.is(ctx.currentRouteV2) &&
-        ctx.currentRouteV2.payload.userId === ctx.currentUserId,
+      },
       label: "Profile",
       icon: <IconUserCircle className="h-6 w-6" />,
     },
@@ -704,6 +704,7 @@ const ViewBottomNavBar = ({
       />
       <div className="flex w-full items-center justify-center border-t border-neutral-600">
         {items.map((item, index) => {
+          const isSelected = eq(item.route, model.routing.currentRoute)
           return (
             <button
               key={index}
@@ -715,7 +716,7 @@ const ViewBottomNavBar = ({
               }
               className={cn(
                 "flex flex-1 flex-col items-center justify-center pb-2 pt-1",
-                item.isSelected ? "text-blue-500" : "text-opacity-50",
+                isSelected ? "text-blue-500" : "text-opacity-50",
                 index < items.length - 1 ? "border-r border-neutral-600" : "",
               )}
             >

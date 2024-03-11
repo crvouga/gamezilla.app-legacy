@@ -15,12 +15,14 @@ import {
   isResponseOk,
   ok,
 } from "gamezilla-app/@SHARED/core"
-import { AuthRoutes } from "../@SHARED/auth.routes"
 import * as AuthClient from "../auth.client"
 import { ModelClient } from "../auth.core"
 
 const ctx: AnonymousClientCtx = {
-  currentRouteV2: AuthRoutes.Login(),
+  currentRoute: {
+    n: "auth-login",
+    t: "login",
+  },
   navigatorLanguage: "en",
   t: getTranslator("en"),
   documentVisibilityState: "visible",

@@ -16,10 +16,7 @@ import {
   LoadingState,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@SHARED/core"
-import { ProfileRoutes } from "../profile/profile.routes"
-import { SpacesRoutes } from "../spaces/@SHARED/space.routes"
 import * as AuthClientSMS from "./@CHILD/auth-sms/auth-sms.client"
-import { AuthRoutes } from "./@SHARED/auth.routes"
 import { ClientModule, LogoutMsg, ModelClient, MsgClient } from "./auth.core"
 import { ContinueAsGuestClient } from "./continue-as-guest"
 
@@ -98,7 +95,12 @@ const updateFromMsg: ClientModule["update"] = async (input) => {
     case "user-clicked-login-with-phone": {
       return {
         model,
-        msgCmd: [pushRoute(AuthRoutes.LoginSMSRequest())],
+        msgCmd: [
+          pushRoute({
+            n: "auth-login",
+            t: "login-sms-request",
+          }),
+        ],
       }
     }
 
@@ -143,7 +145,11 @@ const updateFromLogoutMsg = ({
       return {
         model: { ...model, logout: notAsked },
         msgCmd: [
-          replaceRoute(ProfileRoutes.Profile({ userId: currentUserId })),
+          replaceRoute({
+            n: "profile",
+            t: "profile",
+            userId: currentUserId,
+          }),
         ],
       }
     }
@@ -193,11 +199,11 @@ const updateRedirect: ClientModule["update"] = async (input) => {
 
   switch (msgEvt.t) {
     case "auth/authenticated": {
-      if (AuthRoutes.is(ctx.currentRouteV2)) {
+      if (ctx.currentRoute.n === "auth-login") {
         return {
           model,
           msgCmd: [
-            replaceRoute(SpacesRoutes.SpaceList()),
+            replaceRoute({ n: "spaces", t: "space-list" }),
             playSound(APP_SOUND.navForward),
           ],
         }
@@ -209,20 +215,24 @@ const updateRedirect: ClientModule["update"] = async (input) => {
     case "auth/unauthenticated": {
       return {
         model,
-        msgCmd: [replaceRoute(AuthRoutes.Login())],
+        msgCmd: [
+          replaceRoute({
+            n: "auth-login",
+            t: "login",
+          }),
+        ],
       }
     }
 
     case "routing/route-changed": {
       if (
         model.currentUser.t === "logged-in" &&
-        AuthRoutes.is(ctx.currentRouteV2) &&
-        !AuthRoutes.Logout.is(ctx.currentRouteV2)
+        ctx.currentRoute.n === "auth-login"
       ) {
         return {
           model,
           msgCmd: [
-            replaceRoute(SpacesRoutes.SpaceList()),
+            replaceRoute({ n: "spaces", t: "space-list" }),
             showToast("Logged in"),
           ],
         }
@@ -264,28 +274,35 @@ export const subscriptions: ClientModule["subscriptions"] = async ({
 export const View: ClientModule["View"] = (input) => {
   const { model, ctx, dispatch } = input
 
-  if (AuthRoutes.Logout.is(ctx.currentRouteV2)) {
-    return <ViewLogoutScreen {...input} />
+  switch (ctx.currentRoute.n) {
+    case "auth-logout": {
+      switch (ctx.currentRoute.t) {
+        case "logout": {
+          return <ViewLogoutScreen {...input} />
+        }
+      }
+    }
+    case "auth-login": {
+      switch (ctx.currentRoute.t) {
+        case "login": {
+          return <ViewLoginScreen {...input} />
+        }
+        case "login-sms-request":
+        case "login-sms-verify": {
+          return (
+            <AuthClientSMS.View
+              ctx={ctx}
+              dispatch={(c) => dispatch({ t: "sms", c })}
+              model={model.sms}
+            />
+          )
+        }
+      }
+    }
+    default: {
+      return null
+    }
   }
-
-  if (AuthRoutes.Login.is(ctx.currentRouteV2)) {
-    return <ViewLoginScreen {...input} />
-  }
-
-  if (
-    AuthRoutes.LoginSMSRequest.is(ctx.currentRouteV2) ||
-    AuthRoutes.LoginSMSVerify.is(ctx.currentRouteV2)
-  ) {
-    return (
-      <AuthClientSMS.View
-        ctx={ctx}
-        dispatch={(c) => dispatch({ t: "sms", c })}
-        model={model.sms}
-      />
-    )
-  }
-
-  return null
 }
 
 const ViewLoginScreen: ClientModule["View"] = (input) => {

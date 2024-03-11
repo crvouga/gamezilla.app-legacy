@@ -6,7 +6,6 @@ import {
   didShowToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { SpacesRoutes } from "../@SHARED/space.routes"
 import {
   clickedLeaveSpaceButton,
   createCtx,
@@ -33,7 +32,7 @@ describe(import.meta.file, () => {
       userLeftSpace(ctx, ctx.currentUserId, spaceId),
     )
 
-    expect(didPushRoute(output, SpacesRoutes.SpaceList.is)).toBeTrue()
+    expect(didPushRoute(output, (x) => x.t === "space-list")).toBeTrue()
   })
 
   it("should only redirect to list screen for the user leaving the space", async () => {

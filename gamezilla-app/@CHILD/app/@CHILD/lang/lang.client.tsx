@@ -30,7 +30,6 @@ import {
   MsgToServer,
   TranslationLoading,
 } from "./lang.core"
-import { LangRoutes } from "./lang.routes"
 
 //
 //
@@ -119,7 +118,10 @@ export const update: Module["update"] = ({ model, ctx, msg }) => {
     }
 
     case "clicked-change-lang": {
-      if (LangRoutes.ChooseLang.is(ctx.currentRouteV2)) {
+      if (
+        ctx.currentRoute.n === "lang" &&
+        ctx.currentRoute.t === "choose-lang"
+      ) {
         return {
           model,
           msgCmd: [playSound(APP_SOUND.navForwardMin), closeStatusBar()],
@@ -130,7 +132,10 @@ export const update: Module["update"] = ({ model, ctx, msg }) => {
         model,
         msgCmd: [
           playSound(APP_SOUND.navForwardMin),
-          pushRoute(LangRoutes.ChooseLang()),
+          pushRoute({
+            t: "choose-lang",
+            n: "lang",
+          }),
           closeStatusBar(),
         ],
       }
@@ -193,10 +198,21 @@ export const ViewStatusBarDrawer: Module["View"] = ({
 }
 
 export const View: Module["View"] = ({ ctx, dispatch, model }) => {
-  if (!LangRoutes.ChooseLang.is(ctx.currentRouteV2)) {
-    return null
+  switch (ctx.currentRoute.n) {
+    case "lang": {
+      switch (ctx.currentRoute.t) {
+        case "choose-lang": {
+          return <ViewChooseLang ctx={ctx} dispatch={dispatch} model={model} />
+        }
+      }
+    }
+    default: {
+      return null
+    }
   }
+}
 
+const ViewChooseLang: Module["View"] = ({ ctx, dispatch, model }) => {
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <TopBar title={ctx.t("lang.choose-language")} />

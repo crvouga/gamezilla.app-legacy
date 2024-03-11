@@ -8,7 +8,6 @@ import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { IconGamepad, TopBar } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { EmptyState } from "gamezilla-app/@CHILD/app/@SHARED/ui/empty-state"
 import { RequestResponse, ok, requesting } from "gamezilla-app/@SHARED/core"
-import { SpacesRoutes } from "../@SHARED/space.routes"
 import { SpaceClientModule } from "../architecture/architecture"
 import * as Spaces from "../spaces-core/spaces"
 import { StartSpaceClient } from "../start-space/start-space.client"
@@ -54,7 +53,7 @@ const update: SpaceClientModule["update"] = (input) => {
 
   switch (msgEvt?.t) {
     case "routing/route-changed": {
-      if (SpacesRoutes.SpaceList.is(msgEvt.route)) {
+      if (msgEvt.route.t === "space-list") {
         return sendListSpacesRequest({ model, ctx })
       }
       return { model }
@@ -91,7 +90,11 @@ const update: SpaceClientModule["update"] = (input) => {
           },
         },
         msgCmd: [
-          pushRoute(SpacesRoutes.Space({ spaceId: msg.spaceId })),
+          pushRoute({
+            n: "spaces",
+            t: "space",
+            spaceId: msg.spaceId,
+          }),
           playSound(APP_SOUND.navForwardMin),
         ],
       }

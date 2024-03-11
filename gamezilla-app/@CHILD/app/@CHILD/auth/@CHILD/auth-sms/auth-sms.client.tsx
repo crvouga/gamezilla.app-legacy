@@ -33,7 +33,6 @@ import {
   Uuid,
   isErr,
 } from "gamezilla-app/@SHARED/core"
-import { AuthRoutes } from "../../@SHARED/auth.routes"
 import {
   ModelClient,
   MsgClient,
@@ -131,16 +130,26 @@ const updateFromMsg: Module["update"] = async (input) => {
 
   switch (msg.t) {
     case "clicked-back-button": {
-      if (AuthRoutes.LoginSMSVerify.is(ctx.currentRouteV2)) {
+      if (ctx.currentRoute.t === "login-sms-verify") {
         return {
           model,
-          msgCmd: [replaceRoute(AuthRoutes.LoginSMSRequest())],
+          msgCmd: [
+            replaceRoute({
+              n: "auth-login",
+              t: "login-sms-request",
+            }),
+          ],
         }
       }
 
       return {
         model,
-        msgCmd: [replaceRoute(AuthRoutes.Login())],
+        msgCmd: [
+          replaceRoute({
+            n: "auth-login",
+            t: "login",
+          }),
+        ],
       }
     }
 
@@ -320,11 +329,11 @@ const updateFromServer: Module["update"] = async (input) => {
           codeInput: "",
         },
         msgCmd: [
-          pushRoute(
-            AuthRoutes.LoginSMSVerify({
-              phoneNumber: msgServer.phoneNumber,
-            }),
-          ),
+          pushRoute({
+            n: "auth-login",
+            t: "login-sms-verify",
+            phoneNumber: msgServer.phoneNumber,
+          }),
           showToast(
             `Sent code to ${PhoneNumber.toString(msgServer.phoneNumber)}`,
             "info",
@@ -389,135 +398,145 @@ export const subscriptions: Module["subscriptions"] = ({ model }) => {
 //
 
 export const View: Module["View"] = ({ model, dispatch, ctx }) => {
-  if (AuthRoutes.LoginSMSRequest.is(ctx.currentRouteV2)) {
-    return (
-      <div className="w-full flex-1">
-        <TopBar
-          left={
-            <TopBarBackButton
-              onClick={() => dispatch({ t: "clicked-back-button" })}
-            />
-          }
-          title="Login with phone"
-        />
+  switch (ctx.currentRoute.n) {
+    case "auth-login": {
+      switch (ctx.currentRoute.t) {
+        case "login-sms-request": {
+          return (
+            <div className="w-full flex-1">
+              <TopBar
+                left={
+                  <TopBarBackButton
+                    onClick={() => dispatch({ t: "clicked-back-button" })}
+                  />
+                }
+                title="Login with phone"
+              />
 
-        <div className="flex w-full flex-col gap-6 p-4 py-6">
-          {false && (
-            <Select
-              id="countryCode"
-              label="Country"
-              onChange={(countryCodeNew) => {
-                dispatch({
-                  t: "inputted-country-code",
-                  countryCode: countryCodeNew,
-                })
-              }}
-              value={model.countryCodeInput}
-              options={Iso3166Alpha2Code.all}
-              toKey={(countryCode) => countryCode}
-              toName={(countryCode) =>
-                Iso3166Alpha2Code.toNameWithEmoji(countryCode)
-              }
-            />
-          )}
+              <div className="flex w-full flex-col gap-6 p-4 py-6">
+                {false && (
+                  <Select
+                    id="countryCode"
+                    label="Country"
+                    onChange={(countryCodeNew) => {
+                      dispatch({
+                        t: "inputted-country-code",
+                        countryCode: countryCodeNew,
+                      })
+                    }}
+                    value={model.countryCodeInput}
+                    options={Iso3166Alpha2Code.all}
+                    toKey={(countryCode) => countryCode}
+                    toName={(countryCode) =>
+                      Iso3166Alpha2Code.toNameWithEmoji(countryCode)
+                    }
+                  />
+                )}
 
-          <TextField
-            value={model.phoneNumberInput}
-            id="phoneNumberInput"
-            label="Phone Number"
-            type="tel"
-            startIcon={<IconMobilePhone className="h-5 w-5" />}
-            error={typeof model.phoneNumberError === "string"}
-            helperText={model.phoneNumberError}
-            onChange={(value) => {
-              dispatch({
-                t: "inputted-phone-number",
-                phoneNumber: value,
-              })
-            }}
-            onClear={() => {
-              dispatch({ t: "clicked-phone-number-clear" })
-            }}
-          />
+                <TextField
+                  value={model.phoneNumberInput}
+                  id="phoneNumberInput"
+                  label="Phone Number"
+                  type="tel"
+                  startIcon={<IconMobilePhone className="h-5 w-5" />}
+                  error={typeof model.phoneNumberError === "string"}
+                  helperText={model.phoneNumberError}
+                  onChange={(value) => {
+                    dispatch({
+                      t: "inputted-phone-number",
+                      phoneNumber: value,
+                    })
+                  }}
+                  onClear={() => {
+                    dispatch({ t: "clicked-phone-number-clear" })
+                  }}
+                />
 
-          <Button
-            text="Send Code"
-            className="w-full"
-            variant="contained"
-            color="primary"
-            size="lg"
-            loading={model.sendCode.t === "loading"}
-            onClick={() => {
-              dispatch({ t: "clicked-send-code" })
-            }}
-          />
-        </div>
+                <Button
+                  text="Send Code"
+                  className="w-full"
+                  variant="contained"
+                  color="primary"
+                  size="lg"
+                  loading={model.sendCode.t === "loading"}
+                  onClick={() => {
+                    dispatch({ t: "clicked-send-code" })
+                  }}
+                />
+              </div>
 
-        {isErr(model.sendCode) && (
-          <div className="w-full p-4">
-            <AlertError>{model.sendCode.error}</AlertError>
-          </div>
-        )}
-      </div>
-    )
+              {isErr(model.sendCode) && (
+                <div className="w-full p-4">
+                  <AlertError>{model.sendCode.error}</AlertError>
+                </div>
+              )}
+            </div>
+          )
+        }
+        case "login-sms-verify": {
+          const phoneNumber = ctx.currentRoute.phoneNumber
+          return (
+            <div className="w-full flex-1">
+              <TopBar
+                left={
+                  <TopBarBackButton
+                    onClick={() => dispatch({ t: "clicked-back-button" })}
+                  />
+                }
+                title="Login with phone"
+              />
+
+              <div className="flex w-full flex-col gap-6 p-4 py-6">
+                <TextField
+                  value={model.codeInput}
+                  id={CODE_INPUT_VIEW_ID}
+                  label="Code"
+                  error={typeof model.codeError === "string"}
+                  helperText={
+                    typeof model.codeError === "string" ? model.codeError : null
+                  }
+                  autoFocus
+                  type="tel"
+                  onChange={(value) => {
+                    dispatch({ t: "inputted-code", code: value })
+                  }}
+                  onClear={() => {
+                    dispatch({ t: "clicked-code-clear" })
+                  }}
+                />
+                <Button
+                  className="w-full"
+                  text="Verify Code"
+                  color="primary"
+                  size="lg"
+                  loading={
+                    model.verifyCode.t === "loading" ||
+                    model.verifyCode.t === "ok"
+                  }
+                  onClick={() => {
+                    dispatch({
+                      t: "clicked-verify-code",
+                      phoneNumber,
+                    })
+                  }}
+                />
+              </div>
+
+              {isErr(model.verifyCode) && (
+                <div className="w-full p-4">
+                  <AlertError>{model.verifyCode.error}</AlertError>
+                </div>
+              )}
+            </div>
+          )
+        }
+        default: {
+          return null
+        }
+      }
+    }
+    default: {
+      return null
+    }
   }
-
-  if (AuthRoutes.LoginSMSVerify.is(ctx.currentRouteV2)) {
-    const phoneNumber = ctx.currentRouteV2.payload.phoneNumber
-    return (
-      <div className="w-full flex-1">
-        <TopBar
-          left={
-            <TopBarBackButton
-              onClick={() => dispatch({ t: "clicked-back-button" })}
-            />
-          }
-          title="Login with phone"
-        />
-
-        <div className="flex w-full flex-col gap-6 p-4 py-6">
-          <TextField
-            value={model.codeInput}
-            id={CODE_INPUT_VIEW_ID}
-            label="Code"
-            error={typeof model.codeError === "string"}
-            helperText={
-              typeof model.codeError === "string" ? model.codeError : null
-            }
-            autoFocus
-            type="tel"
-            onChange={(value) => {
-              dispatch({ t: "inputted-code", code: value })
-            }}
-            onClear={() => {
-              dispatch({ t: "clicked-code-clear" })
-            }}
-          />
-          <Button
-            className="w-full"
-            text="Verify Code"
-            color="primary"
-            size="lg"
-            loading={
-              model.verifyCode.t === "loading" || model.verifyCode.t === "ok"
-            }
-            onClick={() => {
-              dispatch({
-                t: "clicked-verify-code",
-                phoneNumber,
-              })
-            }}
-          />
-        </div>
-
-        {isErr(model.verifyCode) && (
-          <div className="w-full p-4">
-            <AlertError>{model.verifyCode.error}</AlertError>
-          </div>
-        )}
-      </div>
-    )
-  }
-
-  return null
 }

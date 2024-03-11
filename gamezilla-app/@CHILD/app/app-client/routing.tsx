@@ -4,7 +4,7 @@ import {
   SoundCmd,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Browser, Eff } from "gamezilla-app/@SHARED/core"
-import { SpacesRoutes } from "../@CHILD/spaces/@SHARED/space.routes"
+import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
 
 //
 //
@@ -15,10 +15,17 @@ import { SpacesRoutes } from "../@CHILD/spaces/@SHARED/space.routes"
 //
 
 export type Model = {
-  currentRouteV2: Record<string, unknown>
+  currentRoute: Route
 }
 
-const FALLBACK = SpacesRoutes.SpaceList()
+const FALLBACK: Route = {
+  n: "spaces",
+  t: "space-list",
+}
+
+const locationToRoute = (location: Browser.Location): Route => {
+  return RouteCodec.decode(location.query["route"]) ?? FALLBACK
+}
 
 export const init = ({
   location,
@@ -30,9 +37,7 @@ export const init = ({
 } => {
   return {
     model: {
-      currentRouteV2: location.query["route"]
-        ? RouteCodec.decode(location.query["route"])
-        : FALLBACK,
+      currentRoute: locationToRoute(location),
     },
   }
 }
@@ -46,8 +51,8 @@ export const init = ({
 //
 
 export type Msg =
-  | { t: "route-changed"; route: Record<string, unknown> }
-  | { t: "clicked-link"; route: Record<string, unknown> }
+  | { t: "route-changed"; route: Route }
+  | { t: "clicked-link"; route: Route }
   | { t: "clicked-back" }
 
 export const update = ({
@@ -88,7 +93,7 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
     case "clicked-link": {
       return {
         model: {
-          currentRouteV2: msg.route,
+          currentRoute: msg.route,
         },
         eff: Browser.pushQueryParam("route", RouteCodec.encode(msg.route)),
       }
@@ -97,7 +102,7 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
     case "route-changed": {
       return {
         model: {
-          currentRouteV2: msg.route,
+          currentRoute: msg.route,
         },
         msgEvt: [{ t: "routing/route-changed", route: msg.route }],
       }
@@ -106,14 +111,17 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
 }
 
 const RouteCodec = {
-  encode: (route: Record<string, unknown>): string => {
+  encode: (route: Route): string => {
     return btoa(JSON.stringify(route))
   },
-  decode: (route: string): Record<string, unknown> => {
+  decode: (route: string | undefined): Route => {
+    if (!route) {
+      return FALLBACK
+    }
     try {
       return JSON.parse(atob(route))
     } catch {
-      return {}
+      return FALLBACK
     }
   },
 }
@@ -129,7 +137,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
     case "push": {
       return {
         model: {
-          currentRouteV2: routeCmd.route,
+          currentRoute: routeCmd.route,
         },
         eff: Browser.pushQueryParam("route", RouteCodec.encode(routeCmd.route)),
       }
@@ -145,7 +153,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
     case "replace": {
       return {
         model: {
-          currentRouteV2: routeCmd.route,
+          currentRoute: routeCmd.route,
         },
         eff: Browser.replaceQueryParam(
           "route",
@@ -165,7 +173,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 //
 
 const onLocationChange = (location: Browser.Location): Msg => {
-  const route = RouteCodec.decode(location.query["route"] ?? "")
+  const route = locationToRoute(location)
 
   if (route) {
     return { t: "route-changed", route }

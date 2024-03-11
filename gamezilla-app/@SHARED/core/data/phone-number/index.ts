@@ -1,5 +1,5 @@
-import { Result } from "../result"
 import { Iso3166Alpha2Code } from "../Iso-3166-alpha-2-code"
+import { Result } from "../result"
 import { phone } from "./phone"
 
 export type PhoneNumber = {
@@ -85,7 +85,11 @@ const format = (phoneNumber: PhoneNumber): string => {
   )}-${localNumber.slice(3)}`
 }
 
+const is = (phoneNumber: unknown): phoneNumber is PhoneNumber => {
+  return parse(phoneNumber).t === "ok"
+}
 export const PhoneNumber = {
+  is,
   toString,
   eq,
   toCountry,
