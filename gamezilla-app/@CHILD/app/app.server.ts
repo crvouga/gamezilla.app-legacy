@@ -59,9 +59,7 @@ export const getDeps = async ({
   logger: Logger
   server: ServerInstance
 }): Promise<Deps> => {
-  const databaseUrl = IS_PROD
-    ? process.env["DATABASE_URL_PROD"]
-    : process.env["DATABASE_URL"]
+  const databaseUrl = process.env["DATABASE_URL"]
 
   if (!databaseUrl) {
     throw new Error(`[deps] DATABASE_URL not set`)
