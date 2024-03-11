@@ -20,7 +20,6 @@ export const translations: Translations<Text> = {
     "spaces.other-user-ended-space": (username) =>
       username ? `${username} ended space` : "Ended space",
   },
-
   es: {
     "spaces.current-user-joined-space": "Espacio unido",
     "spaces.other-user-joined-space": (username) =>

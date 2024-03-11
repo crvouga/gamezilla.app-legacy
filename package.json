@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "server-prod": "bun x dbmate --no-dump-schema -e DATABASE_URL_PROD up && bun gamezilla-app/gamezilla-app.server.ts",
-    "db-prod:migrate:up": "dbmate -e DATABASE_URL_PROD up",
-    "db-prod:dump": "dbmate -e DATABASE_URL_PROD dump",
+    "server-prod": "bun x dbmate --no-dump-schema -e DATABASE_URL up && bun gamezilla-app/gamezilla-app.server.ts",
+    "db-prod:migrate:up": "dbmate -e DATABASE_URL up",
+    "db-prod:dump": "dbmate -e DATABASE_URL dump",
     "server": "bun gamezilla-app/gamezilla-app.server.ts",
     "db:migrate:up": "dbmate -e DATABASE_URL up",
     "db:migrate:down": "dbmate -e DATABASE_URL down",
