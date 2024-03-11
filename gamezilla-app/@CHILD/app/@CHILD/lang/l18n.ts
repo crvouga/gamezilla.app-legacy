@@ -70,7 +70,7 @@ export const translations: Translations<Text> = {
   },
   ru: {
     "lang.language": "Язык",
-    "lang.choose-language": "Выберите",
+    "lang.choose-language": "Выберите язык",
     "lang.done": "Готово",
     "lang.loaded-translations": "Загруженные переводы",
   },
