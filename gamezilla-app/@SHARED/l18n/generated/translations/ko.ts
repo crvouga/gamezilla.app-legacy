@@ -16,6 +16,13 @@ export const translations: Text = {
   zh: "중국어",
   "auth.current-user-logged-out": "로그아웃됨",
   "auth.current-user-logged-in": "로그인됨",
+  "auth.continue-as-guest": "손님으로 계속",
+  "auth.continue-with-phone": "전화로 계속",
+  "auth.or": "또는",
+  "auth.sign-in-to": "로그인",
+  "auth-sms.login-with-phone": "전화로 로그인",
+  "auth-sms.phone-number": "전화 번호",
+  "auth-sms.send-code": "코드 보내기",
   "spaces.current-user-joined-space": "공간에 참여했습니다",
   "spaces.other-user-joined-space": (username) =>
     username

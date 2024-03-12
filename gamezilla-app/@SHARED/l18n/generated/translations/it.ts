@@ -16,6 +16,13 @@ export const translations: Text = {
   zh: "Cinese",
   "auth.current-user-logged-out": "Disconnesso",
   "auth.current-user-logged-in": "Connesso",
+  "auth.continue-as-guest": "Continua come ospite",
+  "auth.continue-with-phone": "Continua con il telefono",
+  "auth.or": "o",
+  "auth.sign-in-to": "Accedi a",
+  "auth-sms.login-with-phone": "Accedi con il telefono",
+  "auth-sms.phone-number": "Numero di telefono",
+  "auth-sms.send-code": "Invia codice",
   "spaces.current-user-joined-space": "Spazio unito",
   "spaces.other-user-joined-space": (username) =>
     username ? `${username} unito allo spazio` : "Spazio unito",

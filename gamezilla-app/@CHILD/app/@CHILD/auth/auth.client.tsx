@@ -306,12 +306,14 @@ export const View: ClientModule["View"] = (input) => {
 }
 
 const ViewLoginScreen: ClientModule["View"] = (input) => {
-  const { dispatch } = input
+  const { dispatch, ctx } = input
   return (
     <div className="relative flex h-full w-full flex-1 flex-col">
       <div className="flex flex-1 flex-col items-center justify-center gap-8 p-4">
         <div className="flex w-full flex-col items-start justify-center">
-          <p className="text-2xl text-neutral-200">Sign in to</p>
+          <p className="text-2xl text-neutral-200">
+            {ctx.t("auth.sign-in-to")}
+          </p>
           <h1 className="bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent">
             gamezilla.app
           </h1>
@@ -323,11 +325,13 @@ const ViewLoginScreen: ClientModule["View"] = (input) => {
             size="lg"
             className="w-full"
             start={<IconMobilePhone className="h-6 w-6" />}
-            text="Continue with phone"
+            text={ctx.t("auth.continue-with-phone")}
           />
 
           <div className="flex w-full items-center justify-center py-1">
-            <p className="text-base font-bold text-neutral-300">OR</p>
+            <p className="text-base font-bold text-neutral-300">
+              {ctx.t("auth.or")}
+            </p>
           </div>
 
           <ContinueAsGuestClient.ViewContinueAsGuestButton {...input} />

@@ -60,12 +60,13 @@ export const update: ClientModule["update"] = async ({
 export const ViewContinueAsGuestButton: ClientModule["View"] = ({
   dispatch,
   model,
+  ctx,
 }) => {
   return (
     <Button
       onClick={() => dispatch({ t: "guest.clicked-continue-as-guest-button" })}
       start={<IconUserCircle className="h-6 w-6" />}
-      text="Continue as guest"
+      text={ctx.t("auth.continue-as-guest")}
       loading={isRequesting(model.guestRequest)}
     />
   )

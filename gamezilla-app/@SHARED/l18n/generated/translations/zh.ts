@@ -16,6 +16,13 @@ export const translations: Text = {
   zh: "中文",
   "auth.current-user-logged-out": "已登出",
   "auth.current-user-logged-in": "已登录",
+  "auth.continue-as-guest": "继续以访客身份",
+  "auth.continue-with-phone": "继续使用电话",
+  "auth.or": "要么",
+  "auth.sign-in-to": "登录到",
+  "auth-sms.login-with-phone": "使用电话登录",
+  "auth-sms.phone-number": "电话号码",
+  "auth-sms.send-code": "发送代码",
   "spaces.current-user-joined-space": "加入空间",
   "spaces.other-user-joined-space": (username) =>
     username
