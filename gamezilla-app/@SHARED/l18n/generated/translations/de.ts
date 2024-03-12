@@ -23,6 +23,10 @@ export const translations: Text = {
   "auth-sms.login-with-phone": "Mit Telefonnummer anmelden",
   "auth-sms.phone-number": "Telefonnummer",
   "auth-sms.send-code": "Code senden",
+  "auth-sms.country": "Land",
+  "auth-sms.code": "Code",
+  "auth-sms.verify-code": "Code überprüfen",
+  "auth-sms.invalid-phone-number": "Ungültige Telefonnummer",
   "spaces.current-user-joined-space": "Raum beigetreten",
   "spaces.other-user-joined-space": (username) =>
     username ? `${username} ist dem Raum beigetreten` : "Raum beigetreten",

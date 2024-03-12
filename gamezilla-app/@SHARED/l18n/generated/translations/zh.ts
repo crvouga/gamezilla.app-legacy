@@ -23,6 +23,10 @@ export const translations: Text = {
   "auth-sms.login-with-phone": "使用电话登录",
   "auth-sms.phone-number": "电话号码",
   "auth-sms.send-code": "发送代码",
+  "auth-sms.country": "国家",
+  "auth-sms.code": "代码",
+  "auth-sms.verify-code": "验证",
+  "auth-sms.invalid-phone-number": "无效的电话号码",
   "spaces.current-user-joined-space": "加入空间",
   "spaces.other-user-joined-space": (username) =>
     username

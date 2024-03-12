@@ -212,18 +212,6 @@ const updateRedirect: ClientModule["update"] = async (input) => {
       return { model }
     }
 
-    case "auth/unauthenticated": {
-      return {
-        model,
-        msgCmd: [
-          replaceRoute({
-            n: "auth-login",
-            t: "login",
-          }),
-        ],
-      }
-    }
-
     case "routing/route-changed": {
       if (
         model.currentUser.t === "logged-in" &&

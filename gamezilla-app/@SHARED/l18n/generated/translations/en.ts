@@ -23,6 +23,10 @@ export const translations: Text = {
   "auth-sms.login-with-phone": "Login with phone",
   "auth-sms.phone-number": "Phone number",
   "auth-sms.send-code": "Send code",
+  "auth-sms.country": "Country",
+  "auth-sms.code": "Code",
+  "auth-sms.verify-code": "Verify Code",
+  "auth-sms.invalid-phone-number": "Invalid phone number",
   "spaces.current-user-joined-space": "Joined space",
   "spaces.other-user-joined-space": (username) =>
     username ? `${username} joined space` : "Joined space",

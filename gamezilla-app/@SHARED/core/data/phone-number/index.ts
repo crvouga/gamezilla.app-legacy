@@ -10,23 +10,15 @@ export type PhoneNumber = {
 
 type Problem = "invalid_phone_number"
 
-const parse = (
-  phoneNumber: unknown,
-): Result<{ code: Problem; userMessage: string }, PhoneNumber> => {
+const parse = (phoneNumber: unknown): Result<Problem, PhoneNumber> => {
   if (typeof phoneNumber !== "string") {
-    return Result.err({
-      code: "invalid_phone_number",
-      userMessage: `Invalid phone number`,
-    })
+    return Result.err("invalid_phone_number")
   }
 
   const result = phone(phoneNumber)
 
   if (!result.isValid) {
-    return Result.err({
-      code: "invalid_phone_number",
-      userMessage: `Invalid phone number`,
-    })
+    return Result.err("invalid_phone_number")
   }
 
   const country = Iso3166Alpha2Code.is(result.countryCode)
@@ -38,10 +30,7 @@ const parse = (
     : null
 
   if (!country) {
-    return Result.err({
-      code: "invalid_phone_number",
-      userMessage: `Invalid phone number`,
-    })
+    return Result.err("invalid_phone_number")
   }
 
   return Result.ok({

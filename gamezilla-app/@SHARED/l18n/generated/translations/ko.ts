@@ -23,6 +23,10 @@ export const translations: Text = {
   "auth-sms.login-with-phone": "전화로 로그인",
   "auth-sms.phone-number": "전화 번호",
   "auth-sms.send-code": "코드 보내기",
+  "auth-sms.country": "국가",
+  "auth-sms.code": "코드",
+  "auth-sms.verify-code": "확인",
+  "auth-sms.invalid-phone-number": "유효하지 않은 전화 번호",
   "spaces.current-user-joined-space": "공간에 참여했습니다",
   "spaces.other-user-joined-space": (username) =>
     username

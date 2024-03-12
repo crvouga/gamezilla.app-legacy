@@ -78,7 +78,9 @@ export const init: Module["init"] = async () => {
       codeError: null,
       //
       phoneNumberInput: "",
-      countryCodeInput: Iso3166Alpha2Code.of("US"),
+      countryCodeInput:
+        (await Iso3166Alpha2Code.getNavigatorCountry()) ??
+        Iso3166Alpha2Code.of("US"),
       phoneNumberError: null,
       //
 
@@ -186,7 +188,7 @@ const updateFromMsg: Module["update"] = async (input) => {
         return {
           model: {
             ...model,
-            phoneNumberError: phoneNumber.error.userMessage,
+            phoneNumberError: ctx.t("auth-sms.invalid-phone-number"),
           },
           msgCmd: [
             playSound(APP_SOUND.alertErrorSm),
@@ -410,14 +412,14 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
                     onClick={() => dispatch({ t: "clicked-back-button" })}
                   />
                 }
-                title="Login with phone"
+                title={ctx.t("auth-sms.login-with-phone")}
               />
 
               <div className="flex w-full flex-col gap-6 p-4 py-6">
                 {false && (
                   <Select
                     id="countryCode"
-                    label="Country"
+                    label={ctx.t("auth-sms.country")}
                     onChange={(countryCodeNew) => {
                       dispatch({
                         t: "inputted-country-code",
@@ -436,7 +438,7 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
                 <TextField
                   value={model.phoneNumberInput}
                   id="phoneNumberInput"
-                  label="Phone Number"
+                  label={ctx.t("auth-sms.phone-number")}
                   type="tel"
                   startIcon={<IconMobilePhone className="h-5 w-5" />}
                   error={typeof model.phoneNumberError === "string"}
@@ -453,7 +455,7 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
                 />
 
                 <Button
-                  text="Send Code"
+                  text={ctx.t("auth-sms.send-code")}
                   className="w-full"
                   variant="contained"
                   color="primary"
@@ -483,14 +485,14 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
                     onClick={() => dispatch({ t: "clicked-back-button" })}
                   />
                 }
-                title="Login with phone"
+                title={ctx.t("auth-sms.login-with-phone")}
               />
 
               <div className="flex w-full flex-col gap-6 p-4 py-6">
                 <TextField
                   value={model.codeInput}
                   id={CODE_INPUT_VIEW_ID}
-                  label="Code"
+                  label={ctx.t("auth-sms.code")}
                   error={typeof model.codeError === "string"}
                   helperText={
                     typeof model.codeError === "string" ? model.codeError : null
@@ -506,7 +508,7 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
                 />
                 <Button
                   className="w-full"
-                  text="Verify Code"
+                  text={ctx.t("auth-sms.verify-code")}
                   color="primary"
                   size="lg"
                   loading={

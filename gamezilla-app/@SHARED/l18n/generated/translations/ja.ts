@@ -23,6 +23,10 @@ export const translations: Text = {
   "auth-sms.login-with-phone": "電話でログイン",
   "auth-sms.phone-number": "電話番号",
   "auth-sms.send-code": "コードを送信",
+  "auth-sms.country": "国",
+  "auth-sms.code": "コード",
+  "auth-sms.verify-code": "確認",
+  "auth-sms.invalid-phone-number": "無効な電話番号",
   "spaces.current-user-joined-space": "スペースに参加しました",
   "spaces.other-user-joined-space": (username) =>
     username

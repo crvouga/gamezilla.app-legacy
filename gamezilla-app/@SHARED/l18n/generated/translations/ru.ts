@@ -23,6 +23,10 @@ export const translations: Text = {
   "auth-sms.login-with-phone": "Войти с телефона",
   "auth-sms.phone-number": "Номер телефона",
   "auth-sms.send-code": "Отправить код",
+  "auth-sms.country": "Страна",
+  "auth-sms.code": "Код",
+  "auth-sms.verify-code": "Проверить",
+  "auth-sms.invalid-phone-number": "Неверный номер телефона",
   "spaces.current-user-joined-space": "Присоединился к пространству",
   "spaces.other-user-joined-space": (username) =>
     username

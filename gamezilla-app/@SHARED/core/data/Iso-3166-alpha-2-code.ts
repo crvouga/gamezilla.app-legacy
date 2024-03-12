@@ -308,11 +308,26 @@ const toNameWithEmoji = (code: Iso3166Alpha2Code): string => {
   return toName(code)
 }
 
+const getNavigatorCountry = async (): Promise<
+  Iso3166Alpha2Code | undefined
+> => {
+  const locale = navigator.language
+
+  const countryCode = locale.split("-")[1]
+
+  if (countryCode && Iso3166Alpha2Code.is(countryCode.toUpperCase())) {
+    return countryCode.toUpperCase() as Iso3166Alpha2Code
+  }
+
+  return undefined
+}
+
 export const Iso3166Alpha2Code = {
   of,
   toEmoji,
   toName,
   is,
   toNameWithEmoji,
+  getNavigatorCountry,
   all,
 }

@@ -23,6 +23,10 @@ export const translations: Text = {
   "auth-sms.login-with-phone": "Accedi con il telefono",
   "auth-sms.phone-number": "Numero di telefono",
   "auth-sms.send-code": "Invia codice",
+  "auth-sms.country": "Paese",
+  "auth-sms.code": "Codice",
+  "auth-sms.verify-code": "Verifica",
+  "auth-sms.invalid-phone-number": "Numero di telefono non valido",
   "spaces.current-user-joined-space": "Spazio unito",
   "spaces.other-user-joined-space": (username) =>
     username ? `${username} unito allo spazio` : "Spazio unito",

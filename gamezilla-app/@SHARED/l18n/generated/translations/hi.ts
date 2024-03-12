@@ -23,6 +23,10 @@ export const translations: Text = {
   "auth-sms.login-with-phone": "फोन से लॉगिन करें",
   "auth-sms.phone-number": "फ़ोन नंबर",
   "auth-sms.send-code": "कोड भेजें",
+  "auth-sms.country": "देश",
+  "auth-sms.code": "कोड",
+  "auth-sms.verify-code": "सत्यापित करें",
+  "auth-sms.invalid-phone-number": "अमान्य फोन नंबर",
   "spaces.current-user-joined-space": "स्थान जुड़ गया",
   "spaces.other-user-joined-space": (username) =>
     username
