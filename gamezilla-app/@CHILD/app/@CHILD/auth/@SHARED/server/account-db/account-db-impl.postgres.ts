@@ -28,15 +28,15 @@ export const toAccountRow = (row: unknown): AccountRow | null => {
     P.has(row, "user_id", P.str) &&
     P.has(row, "email_address", P.or(P.str, P.nullish)) &&
     P.has(row, "phone_number", P.or(P.str, P.nullish)) &&
-    P.has(row, "created_at", P.str) &&
-    P.has(row, "role", UserRole.is)
+    P.has(row, "created_at", P.or(P.str, P.date)) &&
+    P.has(row, "user_role", UserRole.is)
   ) {
     return {
       user_id: row.user_id,
       email_address: row.email_address,
       phone_number: row.phone_number,
-      created_at: row.created_at,
-      user_role: row.role,
+      created_at: new Date(row.created_at).toISOString(),
+      user_role: row.user_role,
     }
   }
   return null

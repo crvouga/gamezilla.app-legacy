@@ -2,6 +2,10 @@ export const str = (value: unknown): value is string => {
   return typeof value === "string"
 }
 
+export const date = (value: unknown): value is Date => {
+  return value instanceof Date
+}
+
 export const literal =
   <T extends string>(literal: T) =>
   (value: unknown): value is T => {

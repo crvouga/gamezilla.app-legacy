@@ -203,7 +203,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
       const msgCmd = sendToClient<MsgToClient>([msgEvt.clientId], {
         t: "client-authenticated",
         account: msgEvt.account,
-        loggedIn: true,
+        loggedIn: msgEvt.loggedIn ?? false,
       })
 
       if (!msgEvt.loggedIn) {
