@@ -1,6 +1,6 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { sendBack } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { isErr, notAsked, ok } from "gamezilla-app/@SHARED/core"
+import { TimeSpan, isErr, notAsked, ok } from "gamezilla-app/@SHARED/core"
 import { Account, ServerModule } from "../auth.core"
 import { ModelClient } from "./continue-as-guest.core"
 
@@ -16,6 +16,8 @@ export const update: ServerModule["update"] = async ({
 }) => {
   switch (msgClient?.t) {
     case "guest.clicked-continue-as-guest-button": {
+      await deps.timeout(TimeSpan.fromSeconds(1))
+
       const newGuestAccount: Account = {
         role: "guest",
         userId: UserId.generate(),

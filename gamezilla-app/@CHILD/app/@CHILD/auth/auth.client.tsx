@@ -134,7 +134,7 @@ const updateFromLogoutMsg = ({
         msgCmd: [
           sendToServer({ t: "logout" }),
           showToast("Logged out"),
-          playSound(APP_SOUND.navBackward),
+          playSound(APP_SOUND.navBackwardMin),
         ],
         msgEvt: [{ t: "auth/unauthenticated" }],
       }
@@ -204,7 +204,7 @@ const updateRedirect: ClientModule["update"] = async (input) => {
           model,
           msgCmd: [
             replaceRoute({ n: "spaces", t: "space-list" }),
-            playSound(APP_SOUND.navForward),
+            playSound(APP_SOUND.celebration),
           ],
         }
       }
@@ -317,7 +317,7 @@ const ViewLoginScreen: ClientModule["View"] = (input) => {
           />
 
           <div className="flex w-full items-center justify-center py-1">
-            <p className="text-base font-bold text-neutral-300">
+            <p className="text-base font-bold uppercase text-neutral-300">
               {ctx.t("auth.or")}
             </p>
           </div>

@@ -375,6 +375,7 @@ export const APP_SOUND = {
   alertErrorMd: "./app/alert-error-md.wav",
   alertErrorSm: "./app/alert-error-sm.wav",
   celebration: "./app/celebration.wav",
+  celebrationDecorative: "./app/celebration-decorative.wav",
   navForward: "./app/nav-forward.wav",
   navBackward: "./app/nav-backward.wav",
   navForwardMin: "./app/nav-forward-min.wav",
@@ -457,10 +458,12 @@ export type RouteCmd = {
         t: "replace"
         route: Route
         reason?: string
+        playSound?: boolean
       }
     | {
         t: "back"
         reason?: string
+        playSound?: boolean
       }
 }
 
@@ -511,6 +514,7 @@ export const replaceRoute = <T extends ClientCmdTypes>(
       t: "replace",
       route,
       reason,
+      playSound: true,
     },
   }
 }
@@ -544,6 +548,7 @@ export const back = <T extends ClientCmdTypes>(
     c: {
       t: "back",
       reason,
+      playSound: true,
     },
   }
 }

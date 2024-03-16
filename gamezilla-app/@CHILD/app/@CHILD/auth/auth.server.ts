@@ -4,7 +4,7 @@ import {
   ServerCmd,
   sendToClient,
 } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { Eff, Sub, isErr } from "gamezilla-app/@SHARED/core"
+import { Eff, Sub, TimeSpan, isErr } from "gamezilla-app/@SHARED/core"
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server"
 import { AccountDb } from "./@SHARED/server/account-db"
 import { SessionDb } from "./@SHARED/server/session-db"
@@ -21,6 +21,10 @@ export const getDeps: ServerModule["getDeps"] = ({ ctx }) => {
   return {
     AccountDb: AccountDb({ t: "postgres", dbConn: ctx.dbConn }),
     SessionDb: SessionDb({ t: "postgres-with-cache", dbConn: ctx.dbConn }),
+    timeout: (timeSpan) =>
+      new Promise((resolve) =>
+        setTimeout(resolve, TimeSpan.toMilliseconds(timeSpan)),
+      ),
   }
 }
 

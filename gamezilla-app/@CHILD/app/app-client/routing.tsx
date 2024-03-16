@@ -1,7 +1,9 @@
 import {
+  APP_SOUND,
   ClientEvent,
   RouteCmd,
   SoundCmd,
+  playSound,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Browser, Eff } from "gamezilla-app/@SHARED/core"
 import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
@@ -96,6 +98,7 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
           currentRoute: msg.route,
         },
         eff: Browser.pushQueryParam("route", RouteCodec.encode(msg.route)),
+        msgCmd: [playSound(APP_SOUND.tap)],
       }
     }
 
@@ -140,6 +143,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
           currentRoute: routeCmd.route,
         },
         eff: Browser.pushQueryParam("route", RouteCodec.encode(routeCmd.route)),
+        msgCmd: routeCmd.playSound ? [playSound(APP_SOUND.navForwardMin)] : [],
       }
     }
 
@@ -147,6 +151,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
       return {
         model,
         eff: Browser.back,
+        msgCmd: routeCmd.playSound ? [playSound(APP_SOUND.navBackwardMin)] : [],
       }
     }
 
@@ -159,6 +164,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
           "route",
           RouteCodec.encode(routeCmd.route),
         ),
+        msgCmd: routeCmd.playSound ? [playSound(APP_SOUND.navBackwardMin)] : [],
       }
     }
   }

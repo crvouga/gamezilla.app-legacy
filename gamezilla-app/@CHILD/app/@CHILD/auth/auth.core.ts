@@ -4,6 +4,7 @@ import {
   PhoneNumber,
   Posix,
   RemoteResult,
+  TimeSpan,
 } from "gamezilla-app/@SHARED/core"
 import { AppClientModule } from "../../@SHARED/architecture/app-client"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
@@ -57,6 +58,7 @@ export type ServerModule = AppServerModule<{
 export type ServerDeps = {
   AccountDb: IAccountDb
   SessionDb: ISessionDb
+  timeout: (timeSpan: TimeSpan) => Promise<void>
 }
 
 //

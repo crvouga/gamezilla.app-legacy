@@ -26,6 +26,7 @@ const getDeps: ServerModule["getDeps"] = () => {
       t: "in-memory",
       delay: async () => {},
     }),
+    timeout: () => new Promise((resolve) => setTimeout(resolve, 0)),
   }
 }
 

@@ -311,7 +311,11 @@ const toNameWithEmoji = (code: Iso3166Alpha2Code): string => {
 const getNavigatorCountry = async (): Promise<
   Iso3166Alpha2Code | undefined
 > => {
-  const locale = navigator.language
+  const locale: unknown = navigator.language
+
+  if (typeof locale !== "string") {
+    return undefined
+  }
 
   const countryCode = locale.split("-")[1]
 

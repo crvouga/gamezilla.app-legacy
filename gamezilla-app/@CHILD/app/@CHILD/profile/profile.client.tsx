@@ -1,13 +1,11 @@
 import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
 import {
-  APP_SOUND,
   AnonymousClientCtx,
   ClientCmd,
   ClientCtx,
   ClientEvent,
   ProfileCmd,
   back,
-  playSound,
   pushRoute,
   replaceRoute,
   sendToServer,
@@ -309,7 +307,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
             msgCmd: [
               replaceRoute({
                 n: "profile",
-                t: "profile-edit-avatar",
+                t: "profile-edit",
               }),
             ],
           }
@@ -321,8 +319,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
             msgCmd: [
               replaceRoute({
                 n: "profile",
-                t: "profile",
-                userId: ctx.currentUserId,
+                t: "profile-edit",
               }),
             ],
           }
@@ -334,11 +331,13 @@ const updateFromMsg: ClientModule["update"] = (input) => {
       return {
         model,
         msgCmd: [
-          pushRoute({
-            n: "auth-logout",
-            t: "logout",
-          }),
-          playSound(APP_SOUND.tap),
+          pushRoute(
+            {
+              n: "auth-logout",
+              t: "logout",
+            },
+            true,
+          ),
         ],
       }
     }
@@ -347,10 +346,13 @@ const updateFromMsg: ClientModule["update"] = (input) => {
       return {
         model,
         msgCmd: [
-          pushRoute({
-            n: "profile",
-            t: "profile-edit-username",
-          }),
+          pushRoute(
+            {
+              n: "profile",
+              t: "profile-edit-username",
+            },
+            true,
+          ),
         ],
       }
     }
@@ -359,10 +361,13 @@ const updateFromMsg: ClientModule["update"] = (input) => {
       return {
         model,
         msgCmd: [
-          pushRoute({
-            n: "profile",
-            t: "profile-edit",
-          }),
+          pushRoute(
+            {
+              n: "profile",
+              t: "profile-edit",
+            },
+            true,
+          ),
         ],
       }
     }
@@ -372,10 +377,13 @@ const updateFromMsg: ClientModule["update"] = (input) => {
       return {
         model,
         msgCmd: [
-          pushRoute({
-            n: "profile",
-            t: "profile-edit-avatar",
-          }),
+          pushRoute(
+            {
+              n: "profile",
+              t: "profile-edit-avatar",
+            },
+            true,
+          ),
         ],
       }
     }
