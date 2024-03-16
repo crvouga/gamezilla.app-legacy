@@ -506,15 +506,14 @@ export const didPushRoute = <T>(
 
 export const replaceRoute = <T extends ClientCmdTypes>(
   route: Route,
-  reason?: string,
+  playSound?: boolean,
 ): ClientCmd<T> => {
   return {
     t: "routing",
     c: {
       t: "replace",
       route,
-      reason,
-      playSound: true,
+      playSound: playSound ?? true,
     },
   }
 }

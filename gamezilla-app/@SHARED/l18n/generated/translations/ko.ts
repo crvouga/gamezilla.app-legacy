@@ -14,6 +14,8 @@ export const translations: Text = {
   pt: "포르투갈어",
   ru: "러시아어",
   zh: "중국어",
+  "auth.logged-in-as-guest": "손님으로 로그인됨",
+  "auth.logged-in-with-phone": "전화로 로그인됨",
   "auth.current-user-logged-out": "로그아웃됨",
   "auth.current-user-logged-in": "로그인됨",
   "auth.continue-as-guest": "손님으로 계속",

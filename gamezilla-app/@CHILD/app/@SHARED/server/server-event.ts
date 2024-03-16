@@ -3,6 +3,7 @@ import {
   SessionId,
   UserId,
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Account } from "../data/account"
 
 export type ServerEvent =
   | {
@@ -18,7 +19,7 @@ export type ServerEvent =
     }
   | {
       t: "auth/client-authenticated"
-      userId: UserId
+      account: Account
       sessionId: SessionId
       clientId: ClientId
       loggedIn?: boolean

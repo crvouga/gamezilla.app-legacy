@@ -154,7 +154,7 @@ const updateFromEvent: Module["update"] = async ({ msgEvt, model, ctx }) => {
           const ProfileDb = createProfileDb({ dbConn: ctx.dbConn })
           const result = await findElseInsertNew({
             ProfileDb,
-            userId: msgEvt.userId,
+            userId: msgEvt.account.userId,
           })
           dispatch({
             t: "handled",

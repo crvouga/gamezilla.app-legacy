@@ -14,6 +14,8 @@ export const translations: Text = {
   pt: "برتغالي",
   ru: "روسي",
   zh: "صيني",
+  "auth.logged-in-as-guest": "تم تسجيل الدخول كضيف",
+  "auth.logged-in-with-phone": "تم تسجيل الدخول بالهاتف",
   "auth.current-user-logged-out": "تسجيل الخروج",
   "auth.current-user-logged-in": "تسجيل الدخول",
   "auth.continue-as-guest": "المتابعة كضيف",

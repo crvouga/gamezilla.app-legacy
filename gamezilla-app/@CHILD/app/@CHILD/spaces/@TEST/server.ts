@@ -74,7 +74,11 @@ export const authenticatedClientConnected =
         t: "auth/client-authenticated",
         clientId: client.clientId,
         sessionId: client.sessionId,
-        userId: client.userId,
+        account: {
+          createdAt: Posix.now(),
+          role: "guest",
+          userId: client.userId,
+        },
       },
     })
   }

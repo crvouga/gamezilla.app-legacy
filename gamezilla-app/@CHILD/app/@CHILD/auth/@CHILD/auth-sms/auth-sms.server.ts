@@ -16,7 +16,6 @@ import {
 } from "gamezilla-app/@SHARED/core"
 import { IAccountDb } from "../../@SHARED/server/account-db"
 import { AccountDb } from "../../@SHARED/server/account-db/account-db-impl"
-import { Account } from "../../auth.core"
 import {
   ModelServer,
   MsgServer,
@@ -25,6 +24,7 @@ import {
 } from "./auth-sms.core"
 import { IVerifySMS } from "./server/verify-sms/verify-sms"
 import { VerifySMS } from "./server/verify-sms/verify-sms-impl"
+import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
 
 //
 //
@@ -134,7 +134,7 @@ const updateFromMsg: Module["update"] = async ({ msg, model, deps, ctx }) => {
             t: "auth/client-authenticated",
             clientId: msg.clientId,
             sessionId: msg.sessionId,
-            userId: found.value.userId,
+            account: found.value,
             loggedIn: true,
           },
         ],

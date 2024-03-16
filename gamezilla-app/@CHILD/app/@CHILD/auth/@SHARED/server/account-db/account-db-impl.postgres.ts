@@ -10,8 +10,9 @@ import {
   ok,
 } from "gamezilla-app/@SHARED/core"
 import { Parsing as P } from "gamezilla-app/@SHARED/parsing"
-import { Account } from "../../../auth.core"
+
 import { IAccountDb } from "./account-db"
+import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
 
 type AccountRow = {
   user_id: string
@@ -130,6 +131,39 @@ export const AccountDbPostgres = ({
   dbConn: DbConnSql
 }): IAccountDb => {
   return {
+    async findOneByUserId(input) {
+      const queried = await dbConn.query(
+        P.is(toAccountRow),
+        `SELECT
+          user_id,
+          email_address,
+          phone_number,
+          created_at,
+          user_role
+        FROM
+          user_account
+        WHERE
+          user_id = :user_id`,
+        {
+          user_id: input.userId,
+        },
+      )
+
+      if (isErr(queried)) {
+        return queried
+      }
+
+      const row = queried.value[0] ?? null
+
+      if (!row) {
+        return ok(null)
+      }
+
+      const account = rowToAccount(row)
+
+      return account
+    },
+
     async findOneByEmail(input) {
       const queried = await dbConn.query(
         P.is(toAccountRow),

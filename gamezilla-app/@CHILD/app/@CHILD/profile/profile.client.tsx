@@ -9,7 +9,6 @@ import {
   pushRoute,
   replaceRoute,
   sendToServer,
-  showToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { ProfileAvatar, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
@@ -190,9 +189,6 @@ const updateFromServer: ClientModule["update"] = (input) => {
 
       return {
         model: modelNew,
-        msgCmd: msgServer.loggedIn
-          ? [showToast(`Logged in as ${profile.username}`)]
-          : [],
       }
     }
     default: {

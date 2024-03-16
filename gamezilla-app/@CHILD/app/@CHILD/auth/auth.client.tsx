@@ -118,7 +118,9 @@ const updateFromLogoutMsg = ({
   model: ModelClient
 }): ReturnType<ClientModule["update"]> => {
   const currentUserId =
-    model.currentUser.t === "logged-in" ? model.currentUser.userId : null
+    model.currentUser.t === "logged-in"
+      ? model.currentUser.account.userId
+      : null
 
   if (!currentUserId) {
     return { model }
@@ -173,10 +175,12 @@ const updateFromServer: ClientModule["update"] = (input) => {
           ...model,
           currentUser: {
             t: "logged-in",
-            userId: msgServer.userId,
+            account: msgServer.account,
           },
         },
-        msgEvt: [{ ...msgServer, t: "auth/authenticated" }],
+        msgEvt: [
+          { ...msgServer, account: msgServer.account, t: "auth/authenticated" },
+        ],
       }
     }
 
@@ -199,17 +203,25 @@ const updateRedirect: ClientModule["update"] = async (input) => {
 
   switch (msgEvt.t) {
     case "auth/authenticated": {
-      if (ctx.currentRoute.n === "auth-login") {
-        return {
-          model,
-          msgCmd: [
-            replaceRoute({ n: "spaces", t: "space-list" }),
-            playSound(APP_SOUND.celebration),
-          ],
-        }
+      if (!msgEvt.loggedIn) {
+        return { model }
       }
 
-      return { model }
+      const toastMessage =
+        msgEvt.account.role === "guest"
+          ? ctx.t("auth.logged-in-as-guest")
+          : msgEvt.account.phoneNumber
+          ? ctx.t("auth.logged-in-with-phone")
+          : ctx.t("auth.logged-in")
+
+      return {
+        model,
+        msgCmd: [
+          replaceRoute({ n: "spaces", t: "space-list" }, false),
+          playSound(APP_SOUND.celebration),
+          showToast(toastMessage),
+        ],
+      }
     }
 
     case "routing/route-changed": {

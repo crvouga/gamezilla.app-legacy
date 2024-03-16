@@ -14,6 +14,8 @@ export const translations: Text = {
   pt: "Portugais",
   ru: "Russe",
   zh: "Chinois",
+  "auth.logged-in-as-guest": "Connecté en tant qu'invité",
+  "auth.logged-in-with-phone": "Connecté avec le téléphone",
   "auth.current-user-logged-out": "Déconnecté",
   "auth.current-user-logged-in": "Connecté",
   "auth.continue-as-guest": "Continuer en tant qu'invité",

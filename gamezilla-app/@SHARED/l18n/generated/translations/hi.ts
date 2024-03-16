@@ -14,6 +14,8 @@ export const translations: Text = {
   pt: "पुर्तगाली",
   ru: "रूसी",
   zh: "चीनी",
+  "auth.logged-in-as-guest": "मेहमान के रूप में लॉग इन",
+  "auth.logged-in-with-phone": "फोन के साथ लॉग इन",
   "auth.current-user-logged-out": "लॉग आउट",
   "auth.current-user-logged-in": "लॉग इन",
   "auth.continue-as-guest": "मेहमान के रूप में जारी रखें",

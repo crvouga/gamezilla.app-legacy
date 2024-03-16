@@ -212,13 +212,13 @@ const updateFromEvent: typeof update = async ({ msgEvt, model }) => {
   }
   switch (msgEvt.t) {
     case "auth/client-authenticated": {
-      const sessionIds = model.sessionIdsByUserId[msgEvt.userId] ?? []
+      const sessionIds = model.sessionIdsByUserId[msgEvt.account.userId] ?? []
 
       const sessionIdsNew = [...new Set([...sessionIds, msgEvt.sessionId])]
 
       const sessionIdByUserIdNew: ModelServer["sessionIdsByUserId"] = {
         ...model.sessionIdsByUserId,
-        [msgEvt.userId]: sessionIdsNew,
+        [msgEvt.account.userId]: sessionIdsNew,
       }
 
       return {

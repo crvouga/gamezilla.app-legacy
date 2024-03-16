@@ -1,13 +1,17 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { ok } from "gamezilla-app/@SHARED/core"
-import { Account } from "../../../auth.core"
 import { IAccountDb } from "./account-db"
+import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
 
 export const AccountDbInMemory = (deps: {
   delay: () => Promise<void>
 }): IAccountDb => {
   const accounts = new Map<UserId, Account>()
   return {
+    async findOneByUserId(input) {
+      await deps.delay()
+      return ok(input.userId ? accounts.get(input.userId) ?? null : null)
+    },
     async findOneByEmail(input) {
       await deps.delay()
       for (const account of accounts.values()) {

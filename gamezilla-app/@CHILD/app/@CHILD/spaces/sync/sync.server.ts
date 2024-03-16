@@ -92,7 +92,7 @@ const updateCurrentUserSpace: SpaceServerModule["update"] = async (input) => {
     case "auth/client-authenticated": {
       const space = Spaces.toSpaceByUserId({
         model,
-        userId: msgEvt.userId,
+        userId: msgEvt.account.userId,
       })
 
       if (!space) {

@@ -1,11 +1,4 @@
-import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import {
-  EmailAddress,
-  PhoneNumber,
-  Posix,
-  RemoteResult,
-  TimeSpan,
-} from "gamezilla-app/@SHARED/core"
+import { RemoteResult, TimeSpan } from "gamezilla-app/@SHARED/core"
 import { AppClientModule } from "../../@SHARED/architecture/app-client"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import {
@@ -14,6 +7,7 @@ import {
   ClientCtx,
   ClientEvent,
 } from "../../@SHARED/client"
+import { Account } from "../../@SHARED/data/account"
 import { ServerCmd, ServerCtx, ServerEvent } from "../../@SHARED/server"
 import * as AuthSMS from "./@CHILD/auth-sms/auth-sms.core"
 import { IAccountDb } from "./@SHARED/server/account-db"
@@ -68,50 +62,13 @@ export type ServerDeps = {
 //
 //
 
-type PhoneNumberOrEmail =
-  | {
-      phoneNumber?: PhoneNumber | null
-      emailAddress: EmailAddress
-    }
-  | {
-      phoneNumber: PhoneNumber
-      emailAddress?: EmailAddress | null
-    }
-  | {
-      phoneNumber: PhoneNumber
-      emailAddress: EmailAddress
-    }
-
-type GuestAccount = {
-  role: "guest"
-  phoneNumber?: PhoneNumber | null
-  emailAddress?: EmailAddress | null
-}
-
-type NormalAccount = PhoneNumberOrEmail & {
-  role: "normal"
-}
-
-type SuperAccount = PhoneNumberOrEmail & {
-  role: "super"
-}
-
-type AccountVariant = GuestAccount | NormalAccount | SuperAccount
-
-type AccountBase = {
-  userId: UserId
-  createdAt: Posix
-}
-
-export type Account = AccountBase & AccountVariant
-
 export type ModelClient = ContinueAsGuest.ModelClient & {
   loginWithGoogle: RemoteResult<string, null>
   logout: RemoteResult<string, null>
   currentUser:
     | { t: "loading" }
     | { t: "logged-out" }
-    | { t: "logged-in"; userId: UserId; name?: string }
+    | { t: "logged-in"; account: Account }
   sms: AuthSMS.ModelClient
 }
 
@@ -151,6 +108,6 @@ export type MsgToServer =
 
 export type MsgToClient =
   | ContinueAsGuest.MsgToClient
-  | { t: "client-authenticated"; userId: UserId; loggedIn: boolean }
+  | { t: "client-authenticated"; account: Account; loggedIn: boolean }
   | { t: "client-unauthenticated" }
   | { t: "sms"; c: AuthSMS.MsgToClient }

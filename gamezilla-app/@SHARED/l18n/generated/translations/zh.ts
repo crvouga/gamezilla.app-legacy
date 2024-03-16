@@ -14,6 +14,8 @@ export const translations: Text = {
   pt: "葡萄牙语",
   ru: "俄语",
   zh: "中文",
+  "auth.logged-in-as-guest": "以访客身份登录",
+  "auth.logged-in-with-phone": "使用电话登录",
   "auth.current-user-logged-out": "已登出",
   "auth.current-user-logged-in": "已登录",
   "auth.continue-as-guest": "继续以访客身份",

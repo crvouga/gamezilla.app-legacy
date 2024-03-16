@@ -487,7 +487,7 @@ const toClientCtx = (input: {
   if (input.model.auth.currentUser.t === "logged-in") {
     return {
       ...anonymousCtx,
-      currentUserId: input.model.auth.currentUser.userId,
+      currentUserId: input.model.auth.currentUser.account.userId,
     }
   }
   return anonymousCtx

@@ -1,8 +1,9 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { sendBack } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { TimeSpan, isErr, notAsked, ok } from "gamezilla-app/@SHARED/core"
-import { Account, ServerModule } from "../auth.core"
+import { ServerModule } from "../auth.core"
 import { ModelClient } from "./continue-as-guest.core"
+import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
 
 export const initModel: ModelClient = {
   guestRequest: notAsked,
@@ -67,7 +68,7 @@ export const update: ServerModule["update"] = async ({
           {
             t: "auth/client-authenticated",
             clientId: msgClient.clientId,
-            userId: newGuestAccount.userId,
+            account: newGuestAccount,
             sessionId: msgClient.sessionId,
             loggedIn: true,
           },

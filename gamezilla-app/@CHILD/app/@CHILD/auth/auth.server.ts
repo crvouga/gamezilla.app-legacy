@@ -4,7 +4,7 @@ import {
   ServerCmd,
   sendToClient,
 } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { Eff, Sub, TimeSpan, isErr } from "gamezilla-app/@SHARED/core"
+import { Eff, Sub, TimeSpan, isErr, isOk } from "gamezilla-app/@SHARED/core"
 import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server"
 import { AccountDb } from "./@SHARED/server/account-db"
 import { SessionDb } from "./@SHARED/server/session-db"
@@ -151,17 +151,19 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
 
   switch (msgEvt.t) {
     case "wire/client-connected": {
-      const found = await deps.SessionDb.findUserIdBySessionId(msgEvt.sessionId)
+      const foundUserId = await deps.SessionDb.findUserIdBySessionId(
+        msgEvt.sessionId,
+      )
 
-      if (isErr(found)) {
-        return { model }
-      }
+      const userId = isOk(foundUserId) ? foundUserId.value : null
 
-      const userId = found.value
+      const foundAccount = await deps.AccountDb.findOneByUserId({ userId })
 
-      if (!userId) {
+      const account = isOk(foundAccount) ? foundAccount.value : null
+
+      if (!account) {
         return {
-          model: model,
+          model,
           msgEvt: [
             {
               t: "auth/client-unauthenticated",
@@ -178,7 +180,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
           {
             clientId: msgEvt.clientId,
             sessionId: msgEvt.sessionId,
-            userId,
+            account: account,
             t: "auth/client-authenticated",
           },
         ],
@@ -200,7 +202,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
     case "auth/client-authenticated": {
       const msgCmd = sendToClient<MsgToClient>([msgEvt.clientId], {
         t: "client-authenticated",
-        userId: msgEvt.userId,
+        account: msgEvt.account,
         loggedIn: true,
       })
 
@@ -213,7 +215,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
 
       const inserted = await deps.SessionDb.insert({
         sessionId: msgEvt.sessionId,
-        userId: msgEvt.userId,
+        userId: msgEvt.account.userId,
       })
 
       if (isErr(inserted)) {
