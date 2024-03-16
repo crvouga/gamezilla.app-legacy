@@ -78,13 +78,3 @@ export const SERVER_PORT = Number(process.env?.["PORT"] ?? SERVER_PORT_LOCAL)
 //
 
 export const CODEBASE_VERSION_ID = config["codebase_version_id"]
-
-//
-//
-//
-//
-//
-//
-//
-
-export const SHOULD_USE_DEBUGGER = !IS_PROD

@@ -34,19 +34,6 @@ export type TranslatorMsg =
 
 export const translatorSubscriptions = PubSub.create<TranslatorMsg>()
 
-translatorSubscriptions.subscribe((msg) => {
-  switch (msg.t) {
-    case "translator.loaded": {
-      state.loading[msg.lang] = false
-      break
-    }
-    case "translator.loading": {
-      state.loading[msg.lang] = true
-      break
-    }
-  }
-})
-
 const noop: Translator = () => "..."
 
 export const getTranslator = (
@@ -67,6 +54,7 @@ export const getTranslator = (
     return lastLoadedTranslator?.t ?? noop
   }
 
+  state.loading[languageCode] = true
   translatorSubscriptions.publish({
     t: "translator.loading",
     lang: languageCode,
@@ -80,6 +68,8 @@ export const getTranslator = (
       t: loaded,
       lang: languageCode,
     }
+
+    state.loading[languageCode] = false
 
     translatorSubscriptions.publish({
       t: "translator.loaded",

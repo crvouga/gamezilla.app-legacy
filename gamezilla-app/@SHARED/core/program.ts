@@ -8,36 +8,40 @@ import { Sub } from "./sub"
 //
 //
 
-type Subscriber<Model, Msg, TCtx> = (
-  model: Model,
-  ctx: TCtx,
-  msg: Msg | null,
-) => Promise<void> | void
-
-export type Program<TModel, TMsg, TCtx> = {
-  dispatch: (msg: TMsg) => void
-  subscribe: (subscriber: Subscriber<TModel, TMsg, TCtx>) => () => void
-  start: () => Promise<() => void>
-  getModel: () => TModel
-  setModel: (model: TModel) => Promise<void>
-}
-
 type MaybePromise<T> = T | Promise<T>
 
-type ProgramConfig<Model, Msg, TCtx> = {
+export type Program<TModel, TMsg, TCtx> = {
   ctx: () => MaybePromise<TCtx>
-  init: (input: { ctx: TCtx }) => MaybePromise<{ model: Model; eff?: Eff<Msg> }>
+
+  init: (input: {
+    ctx: TCtx
+  }) => MaybePromise<{ model: TModel; eff?: Eff<TMsg> }>
+
   update: (input: {
     ctx: TCtx
-    msg: Msg
-    model: Model
-  }) => MaybePromise<{ model: Model; eff?: Eff<Msg> }>
+    msg: TMsg
+    model: TModel
+  }) => MaybePromise<{ model: TModel; eff?: Eff<TMsg> }>
+
   subscriptions: (input: {
     intervalId: string
     ctx: TCtx
-    model: Model
-  }) => MaybePromise<Sub<Msg>>
-  onCrash?(input: { error: unknown }): void
+    model: TModel
+  }) => MaybePromise<Sub<TMsg>>
+
+  debugger?: ProgramDebugger
+
+  crash?: (input: { error: unknown }) => void
+
+  render?: (input: {
+    model: TModel
+    ctx: TCtx
+    dispatch: (msg: TMsg) => void
+  }) => void
+}
+
+function generateProgramId() {
+  return `program:${Math.random().toString(36).slice(2)}`
 }
 
 //
@@ -49,142 +53,88 @@ type ProgramConfig<Model, Msg, TCtx> = {
 //
 //
 
-export function create<TModel, TMsg, TCtx>(
-  config: ProgramConfig<TModel, TMsg, TCtx>,
-): Program<TModel, TMsg, TCtx> {
-  const programId = `program:${Math.random().toString(36).slice(2)}`
-  const subscribers = new Map<number, Subscriber<TModel, TMsg, TCtx>>()
-  let isProcessing = false
-  const messageQueue: TMsg[] = []
-  let unsubscribe: () => void = () => {}
-  let state: { model: TModel; eff?: Eff<TMsg> } | null = null
+export type ProgramDebugger = (
+  initialModel: any,
+  setModel: (model: any, msg?: any) => MaybePromise<void>,
+) => MaybePromise<(model: any, msg?: any) => void>
 
-  function publish(model: TModel, ctx: TCtx, msg: TMsg | null) {
-    for (const subscriber of subscribers.values()) {
-      subscriber(model, ctx, msg)
+export async function run<TModel, TMsg, TCtx>(
+  program: Program<TModel, TMsg, TCtx> & {},
+) {
+  let model: TModel | null = null
+
+  //
+  //
+  //
+  //
+  //
+  //
+
+  function updateUI(model: TModel, ctx: TCtx) {
+    program.render?.({ model, ctx, dispatch })
+  }
+
+  function updateEff(eff?: Eff<TMsg> | null) {
+    if (eff) {
+      Promise.resolve().then(function runEffect() {
+        eff(dispatch)
+      })
     }
   }
 
-  const setState = async (
-    newState: { model: TModel; eff?: Eff<TMsg> },
-    ctx: TCtx,
-    msg: TMsg | null,
-  ) => {
-    state = newState
-
-    publish(state.model, ctx, msg)
-
-    const sub = await config.subscriptions({
-      intervalId: programId,
+  const intervalId = generateProgramId()
+  let cleanUpSubscriptions = () => {}
+  async function updateSubscriptions(model: TModel, ctx: TCtx) {
+    const sub = await program.subscriptions({
+      intervalId,
       ctx,
-      model: state.model,
+      model,
     })
-
-    if (unsubscribe) {
-      unsubscribe()
-    }
-
-    unsubscribe = sub.subscribe(dispatch)
-
-    if (state.eff) {
-      state.eff(dispatch)
-    }
+    cleanUpSubscriptions()
+    cleanUpSubscriptions = sub.subscribe(dispatch)
   }
 
-  const dispatch = (msg: TMsg) => {
+  async function dispatch(msg: TMsg) {
     try {
-      messageQueue.push(msg)
-      processQueue()
+      const ctx = await program.ctx()
+
+      const updated = await program.update({
+        ctx,
+        msg,
+        model: model!,
+      })
+
+      model = updated.model
+      updateUI(model, ctx)
+      updateEff(updated.eff)
+      updateSubscriptions(model, ctx)
+      updateDebugger?.(model, msg)
     } catch (error) {
-      console.error("Program crashed!", error)
+      program.crash?.({ error })
     }
   }
 
-  const processQueue = async () => {
-    if (isProcessing || messageQueue.length === 0) {
-      return
-    }
-    isProcessing = true
-    const msg = messageQueue.shift()!
-    const ctx = await config.ctx()
-    const updated = await config.update({ ctx, msg, model: state!.model })
-    setState(updated, ctx, msg)
-    isProcessing = false
-    processQueue()
-  }
+  const ctx = await program.ctx()
 
-  //
-  //
-  //
-  //
+  const init = await program.init({ ctx })
 
-  let runningSubscriberId = 0
-  const subscribe = (
-    subscriber: Subscriber<TModel, TMsg, TCtx>,
-  ): (() => void) => {
-    subscribers.set(++runningSubscriberId, subscriber)
+  model = init.model
+  updateUI(model, ctx)
+  updateEff(init.eff)
+  updateSubscriptions(model, ctx)
 
-    const unsubscribe = () => {
-      subscribers.delete(runningSubscriberId)
-    }
+  const updateDebugger = await program.debugger?.(
+    model,
+    async function debuggerSetModel(modelNew) {
+      const ctx = await program.ctx()
 
-    return unsubscribe
-  }
+      model = modelNew
 
-  const start = async () => {
-    const ctx = await config.ctx()
-
-    const init = await config.init({ ctx })
-
-    setState(init, ctx, null)
-
-    const stop = () => {
-      if (unsubscribe) {
-        unsubscribe()
-      }
-      subscribers.clear()
-    }
-
-    return stop
-  }
-
-  //
-  //
-  //
-  //
-  //
-
-  const getModel = () => {
-    const model = state?.model
-
-    if (!model) {
-      throw new Error("Program has not been started yet.")
-    }
-
-    return model
-  }
-
-  const setModel = async (newState: TModel) => {
-    const ctx = await config.ctx()
-    state = { model: newState }
-    publish(state.model, ctx, null)
-  }
-
-  //
-  //
-  //
-  //
-  //
-
-  return {
-    start,
-    dispatch,
-    subscribe,
-    setModel,
-    getModel,
-  }
+      program.render?.({ model: model!, ctx, dispatch })
+    },
+  )
 }
 
 export const Program = {
-  create,
+  run,
 }

@@ -1,17 +1,17 @@
 import { Program } from "gamezilla-app/@SHARED/core"
-import {
-  SHOULD_USE_DEBUGGER,
-  TRANSPORT_IMPL,
-  VDOM_IMPL,
-} from "gamezilla-app/public-config"
+import { DebuggerReduxDevTools } from "gamezilla-app/@SHARED/core/debug"
+import { Render } from "gamezilla-app/@SHARED/vdom/render"
+import { TRANSPORT_IMPL, VDOM_IMPL } from "gamezilla-app/public-config"
 import * as AppClient from "./@CHILD/app/app.client"
-import { attachDebuggerBrowserExtension } from "./@SHARED/core/debug"
-import { Render } from "./@SHARED/vdom/render"
 
 const main = async () => {
   const deps = await AppClient.getDeps()
 
-  const program = Program.create({
+  const render = await Render(VDOM_IMPL)
+
+  const root = document.getElementById("root")!
+
+  await Program.run({
     ctx: AppClient.getCtx,
 
     init: (input) => AppClient.init({ ...input, deps }),
@@ -19,26 +19,13 @@ const main = async () => {
     update: (input) => AppClient.update({ ...input, deps }),
 
     subscriptions: (input) => AppClient.subscriptions({ ...input, deps }),
+
+    render: (input) => render(<AppClient.View {...input} />, root),
+
+    debugger: DebuggerReduxDevTools,
   })
-
-  const render = await Render(VDOM_IMPL)
-
-  const root = document.getElementById("root")!
-
-  program.subscribe((model, ctx) => {
-    render(
-      <AppClient.View dispatch={program.dispatch} model={model} ctx={ctx} />,
-      root,
-    )
-  })
-
-  await program.start()
 
   await deps.transport.start()
-
-  if (SHOULD_USE_DEBUGGER) {
-    attachDebuggerBrowserExtension(program)
-  }
 
   console.log(`Renderer: ${VDOM_IMPL}`)
   console.log(`Transport: ${TRANSPORT_IMPL}`)

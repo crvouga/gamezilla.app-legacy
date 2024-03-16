@@ -1,5 +1,5 @@
+import { Program } from "gamezilla-app/@SHARED/core"
 import { IS_PROD, SERVER_IMPL, SERVER_PORT } from "gamezilla-app/public-config"
-import { Posix, Program } from "gamezilla-app/@SHARED/core"
 import { LoggerConsole } from "./@CHILD/app/@SHARED/server/logger"
 import * as AppServer from "./@CHILD/app/app.server"
 import { Server } from "./@SHARED/server"
@@ -14,8 +14,8 @@ const main = async () => {
     logger,
   })
 
-  const program = Program.create({
-    ctx: () => ({ now: Posix.now() }),
+  await Program.run({
+    ctx: AppServer.getCtx,
 
     init: (input) => AppServer.init({ ...input, deps }),
 
@@ -23,8 +23,6 @@ const main = async () => {
 
     subscriptions: (input) => AppServer.subscriptions({ ...input, deps }),
   })
-
-  await program.start()
 
   await server.start(SERVER_PORT)
 

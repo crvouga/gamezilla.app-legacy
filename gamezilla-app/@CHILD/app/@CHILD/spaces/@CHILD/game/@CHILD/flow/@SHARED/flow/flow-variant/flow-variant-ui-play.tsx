@@ -1,7 +1,7 @@
-import { AlgoDrawPipes } from "../flow/flow-algo"
 import * as Flow from "../flow/flow"
-import * as FlowVariantUI from "./flow-variant-ui"
+import { AlgoDrawPipes } from "../flow/flow-algo"
 import * as FlowVariant from "./flow-variant"
+import * as FlowVariantUI from "./flow-variant-ui"
 
 //
 //

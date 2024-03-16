@@ -5,10 +5,9 @@
  *
  * @since 0.5.0
  */
+import { ProgramDebugger } from ".."
 import * as Json from "../data/json"
 import { Result, isErr } from "../data/result"
-import { Program } from "../program"
-import { PubSub } from "../sub"
 import { Task } from "../task"
 import { toMsgPayload, toMsgType } from "../utils"
 import { p } from "../utils/pipe"
@@ -30,7 +29,10 @@ export interface ReduxDevToolsBrowserExtension {
  * @category model
  * @since 0.5.0
  */
-export interface ReduxDevToolsConnection<Model, Msg extends object> {
+export interface ReduxDevToolsConnection<
+  Model,
+  Msg extends Record<string, any>,
+> {
   subscribe: (listener?: (m: DevToolMsg) => void) => Unsubscribe
   send(action: null, state: LiftedState<Model>): void
   send(action: Msg, state: Model): void
@@ -449,26 +451,19 @@ const unsafeCopy = <A>(a: A): A => {
   return JSON.parse(JSON.stringify(a))
 }
 
-/**
- * Attaches program to the redux dev tools extension.
- */
-export const attachDebuggerBrowserExtension = <Model, Msg extends object, Ctx>(
-  program: Program<Model, Msg, Ctx>,
-  global: Global = window,
+export const DebuggerReduxDevTools: ProgramDebugger = async (
+  initialModel,
+  setModel,
 ) => {
-  const connection = getBrowserExtensionConnection<Model, Msg>(global)
+  const connection = getBrowserExtensionConnection<any, any>(window)
 
-  if (connection) {
-    return attachDebugger(program, connection)
+  if (!connection) {
+    console.warn("No Redux DevTools extension found")
+    return function updateDebugger(_model: any, _msg: any) {
+      return
+    }
   }
 
-  return null
-}
-
-export const attachDebugger = <Model, Msg extends object, Ctx>(
-  program: Program<Model, Msg, Ctx>,
-  connection: ReduxDevToolsConnection<Model, Msg>,
-) => {
   connection.subscribe(function devToolsConnectionSubscriber(msg: DevToolMsg) {
     switch (msg.type) {
       case "ACTION": {
@@ -483,29 +478,7 @@ export const attachDebugger = <Model, Msg extends object, Ctx>(
     }
   })
 
-  const Debugger = makeDebugger<Model, Msg>(connection)
-
-  const debuggerInstance = Debugger({
-    dispatch(msg) {
-      if ("type" in msg) {
-        switch (msg.type) {
-          case "__DebugApplyMsg__": {
-            return
-          }
-          case "__DebugStarted__": {
-            return
-          }
-          case "__DebugUpdateModel__": {
-            program.setModel(msg.payload)
-            return
-          }
-        }
-      }
-    },
-    init: program.getModel(),
-  })
-
-  const started = new Promise<null>(function waitForDebuggerStart(resolve) {
+  await new Promise<null>((resolve) => {
     const unsubscribe = connection.subscribe((msg) => {
       switch (msg.type) {
         case "START": {
@@ -520,25 +493,32 @@ export const attachDebugger = <Model, Msg extends object, Ctx>(
     })
   })
 
-  const sub = PubSub.create<{ msg: Msg; model: Model }>()
+  const Debugger = makeDebugger<any, any>(connection)
 
-  program.subscribe(function devToolsSubcriber(model, _ctx, msg) {
-    if (msg) {
-      sub.publish({ msg, model })
-    }
-  })
-
-  started.then(function devToolsStartedSubscriber() {
-    sub.subscribe(function devToolsProgramMsgSubscriber({ model, msg }) {
-      const action = {
-        type: toMsgType(msg),
-        payload: toMsgPayload(msg, {}),
+  Debugger({
+    init: initialModel,
+    dispatch(msg) {
+      switch (msg["type"]) {
+        case "__DebugApplyMsg__": {
+          return
+        }
+        case "__DebugStarted__": {
+          return
+        }
+        case "__DebugUpdateModel__": {
+          setModel(msg["payload"])
+          return
+        }
       }
-
-      // @ts-expect-error
-      connection.send(action, model)
-    })
+    },
   })
 
-  return { ...debuggerInstance, started }
+  return function updateDebugger(model: any, msg: any) {
+    const action = {
+      type: toMsgType(msg),
+      payload: toMsgPayload(msg, {}),
+    }
+
+    connection.send(action, model)
+  }
 }

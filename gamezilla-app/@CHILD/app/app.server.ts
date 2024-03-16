@@ -82,6 +82,10 @@ export const getDeps = async ({
   }
 }
 
+export const getCtx = () => {
+  return { now: Posix.now() }
+}
+
 //
 //
 //
