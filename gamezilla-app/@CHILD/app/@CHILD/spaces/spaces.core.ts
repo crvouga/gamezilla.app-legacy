@@ -1,5 +1,5 @@
 import { Profile, SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { RequestResponse } from "gamezilla-app/@SHARED/core"
+import { RequestResponse, Result } from "gamezilla-app/@SHARED/core"
 import { AppClientModule } from "../../@SHARED/architecture/app-client"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import {
@@ -11,6 +11,7 @@ import {
 import { ServerCmd, ServerCtx, ServerEvent } from "../../@SHARED/server"
 import * as Game from "./@CHILD/game/game.core"
 import { WithEventId, WithEventMeta } from "./@SHARED/event"
+import { IProfileCache } from "./profile-cache"
 import * as Space from "./spaces-core/space"
 import { SpaceEvent } from "./spaces-core/space-event"
 import * as Spaces from "./spaces-core/spaces"
@@ -53,7 +54,9 @@ export type ServerModule = AppServerModule<{
   Deps: ServerDeps
 }>
 
-export type ServerDeps = {}
+export type ServerDeps = {
+  ProfileCache: IProfileCache
+}
 
 //
 //
@@ -66,9 +69,6 @@ export type ServerDeps = {}
 export type ModelServer = Spaces.Model & {
   games: {
     [spaceId: SpaceId]: Game.ModelServer
-  }
-  profileCache: {
-    [userId: UserId]: Profile
   }
 }
 
@@ -202,22 +202,20 @@ export type MsgToServerExtra = {
 //
 //
 //
-//
 
-export const spacesToProfiles = (
-  model: ModelServer,
+export const spacesToProfiles = async (
+  deps: ServerDeps,
   spaces: Space.Model[],
-): ModelServer["profileCache"] => {
-  const profiles: ModelServer["profileCache"] = {}
-
-  for (const space of spaces) {
-    for (const userId of Space.toUserIds(space)) {
-      const profile = model.profileCache[userId]
-      if (profile) {
-        profiles[userId] = profile
-      }
+) => {
+  const userIds = spaces.flatMap((space) => {
+    const state = Space.deriveState(space)
+    if (state.type === "started") {
+      return Object.values(state.users)
     }
-  }
+    return []
+  })
+
+  const profiles = Result.withDefault(await deps.ProfileCache.get(userIds), {})
 
   return profiles
 }

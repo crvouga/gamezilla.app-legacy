@@ -4,6 +4,7 @@ import { SpaceServerModule } from "../architecture/space-server"
 import * as Space from "../spaces-core/space"
 import * as Spaces from "../spaces-core/spaces"
 import { MsgToClient, spacesToProfiles } from "../spaces.core"
+import { isErr } from "gamezilla-app/@SHARED/core"
 
 //
 //
@@ -14,15 +15,15 @@ import { MsgToClient, spacesToProfiles } from "../spaces.core"
 //
 
 const updateProfileCache: SpaceServerModule["update"] = async (input) => {
-  return {
-    model: {
-      ...input.model,
-      profileCache: {
-        ...input.model.profileCache,
-        ...input.msgClient?.profiles,
-      },
-    },
+  const added = await input.deps.ProfileCache.add(
+    input.msgClient?.profiles ?? {},
+  )
+  if (isErr(added)) {
+    input.ctx.logger.error(`Error adding to profile cache. ${added.error}`)
+    return { model: input.model }
   }
+
+  return { model: input.model }
 }
 
 const updateSync: SpaceServerModule["update"] = async (input) => {
@@ -42,13 +43,12 @@ const updateSync: SpaceServerModule["update"] = async (input) => {
             model: {
               errors: {},
               games: model.games,
-              profileCache: model.profileCache,
               spaceIdByUserId: merged.spaceIdByUserId,
               spaces: merged.spaces,
             },
           }
         },
-        (model) => {
+        async (model) => {
           const spaceId = Space.toSpaceId(msgClient.space)
 
           if (!spaceId) {
@@ -61,7 +61,7 @@ const updateSync: SpaceServerModule["update"] = async (input) => {
             return { model }
           }
 
-          const profiles = spacesToProfiles(model, [spaceNew])
+          const profiles = await spacesToProfiles(model, [spaceNew])
 
           const starting = Space.startFromLatestSnapshot(spaceNew)
 
@@ -99,7 +99,7 @@ const updateCurrentUserSpace: SpaceServerModule["update"] = async (input) => {
         return { model }
       }
 
-      const profiles = spacesToProfiles(model, [space])
+      const profiles = await spacesToProfiles(input.deps, [space])
 
       const started = Space.startFromLatestSnapshot(space)
 

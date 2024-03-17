@@ -1,13 +1,13 @@
-import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
-import { ProfileCache } from "./profile-cache"
 import { Profile, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { Result, ok } from "gamezilla-app/@SHARED/core"
+import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
+import { ok } from "gamezilla-app/@SHARED/core"
+import { IProfileCache } from "./profile-cache"
 
 export const ProfileCacheDbKv = ({
   dbConnKv,
 }: {
   dbConnKv: DbConnKv
-}): ProfileCache => {
+}): IProfileCache => {
   const profilesKv = DbConnKv.instance(
     dbConnKv,
     ["spaces", "profile-cache"],
@@ -15,22 +15,26 @@ export const ProfileCacheDbKv = ({
   )
   return {
     async add(profiles) {
-      for (const userId in profiles) {
-        const profile = profiles[userId as UserId]
-        if (!profile) {
-          continue
-        }
-        await profilesKv.set(userId, profile)
-      }
+      await Promise.all(
+        Object.entries(profiles).map(([userId, profile]) =>
+          profilesKv.set(userId, profile),
+        ),
+      )
       return ok(null)
     },
     async get(userIds) {
       const profiles: { [userId: UserId]: Profile } = {}
 
-      for (const userId of userIds) {
-        const profile = Result.withDefault(await profilesKv.get(userId), null)
-        if (profile) {
-          profiles[userId] = profile
+      const all = await Promise.all(
+        userIds.map((userId) => profilesKv.get(userId)),
+      )
+
+      for (const result of all) {
+        if (result.t === "ok") {
+          const profile = result.value
+          if (profile) {
+            profiles[profile.userId] = profile
+          }
         }
       }
 

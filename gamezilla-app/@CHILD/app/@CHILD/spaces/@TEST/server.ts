@@ -14,6 +14,7 @@ import { EventId } from "../@SHARED/event"
 import { Space } from "../spaces-core"
 import { ModelServer, ServerDeps } from "../spaces.core"
 import * as SpacesServer from "../spaces.server"
+import { ProfileCache } from "../profile-cache"
 
 export const ctx: ServerCtx = {
   dbConnSql: dbConnSqlNoop,
@@ -27,7 +28,12 @@ export const init = () => {
 }
 
 export const getDeps = (): ServerDeps => {
-  return {}
+  return {
+    ProfileCache: ProfileCache({
+      t: "db-kv",
+      dbConnKv: createDbConnKvHashMap(),
+    }),
+  }
 }
 
 export const generateAuthClient = (): AuthenticatedClient => {

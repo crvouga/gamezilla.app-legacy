@@ -1,7 +1,12 @@
-import { Profile, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { Task } from "gamezilla-app/@SHARED/core"
+import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
+import { ProfileCacheDbKv } from "./profile-cache-impl-db-kv"
+import { IProfileCache } from "./profile-cache"
 
-export type ProfileCache = {
-  add: (profiles: { [userId: UserId]: Profile }) => Task<string, null>
-  get: (userIds: UserId[]) => Task<string, { [userId: UserId]: Profile }>
+export type Impl = { t: "db-kv"; dbConnKv: DbConnKv }
+
+export const ProfileCache = (impl: Impl): IProfileCache => {
+  switch (impl.t) {
+    case "db-kv":
+      return ProfileCacheDbKv(impl)
+  }
 }

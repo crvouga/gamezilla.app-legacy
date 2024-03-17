@@ -10,6 +10,7 @@ import {
   MsgServer,
   MsgToClient,
   MsgToServer,
+  ServerDeps,
 } from "../spaces.core"
 import {
   ClientId,
@@ -22,6 +23,7 @@ type Ctx = ServerCtx & {
 }
 
 export type Input = {
+  deps: ServerDeps
   ctx: Ctx
   model: ModelServer
   msg?: MsgServer | null
@@ -48,7 +50,11 @@ export type Output = {
 }
 
 export type SpaceServerModule = {
-  init: (input: { ctx: Ctx; model: ModelServer }) => MaybePromise<Output>
+  init: (input: {
+    ctx: Ctx
+    model: ModelServer
+    deps: ServerDeps
+  }) => MaybePromise<Output>
   update: (input: Input) => MaybePromise<Output>
   subscriptions: (input: { ctx: Ctx; model: ModelServer }) => Sub<MsgClient>
 }
