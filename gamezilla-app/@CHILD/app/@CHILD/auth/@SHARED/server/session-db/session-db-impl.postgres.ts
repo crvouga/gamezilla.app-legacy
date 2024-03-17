@@ -11,12 +11,16 @@ import { ISessionDb } from "./session-db"
 //
 
 type Row = {
-  session_id: string
-  user_id: string
+  session_id: SessionId
+  user_id: UserId
 }
 
 const toRow = (x: unknown): Row | null => {
-  if (P.obj(x) && P.has(x, "session_id", P.str) && P.has(x, "user_id", P.str)) {
+  if (
+    P.obj(x) &&
+    P.has(x, "session_id", SessionId.is) &&
+    P.has(x, "user_id", UserId.is)
+  ) {
     return x
   }
   return null
@@ -43,11 +47,7 @@ export const SessionDbPostgres = ({
         { user_id: userId },
       )
 
-      return Result.mapOk(queried, (rows) =>
-        rows.flatMap((row): SessionId[] =>
-          SessionId.is(row.session_id) ? [row.session_id] : [],
-        ),
-      )
+      return Result.mapOk(queried, (rows) => rows.map((row) => row.session_id))
     },
 
     async findUserIdBySessionId(sessionId: SessionId) {
@@ -57,11 +57,9 @@ export const SessionDbPostgres = ({
         { session_id: sessionId },
       )
 
-      return Result.mapOk(queried, (rows) =>
-        rows.length === 1 && UserId.is(rows[0]?.user_id)
-          ? rows[0].user_id
-          : null,
-      )
+      return Result.mapOk(queried, (rows) => {
+        return rows[0]?.user_id ?? null
+      })
     },
 
     async insert({ sessionId, userId }) {
