@@ -2,7 +2,7 @@ import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { ISessionDb } from "./session-db"
 import { SessionDbInMemory } from "./session-db-impl.in-memory"
 import { SessionDbPostgres } from "./session-db-impl.postgres"
-import { SessionDbWithCache } from "./session-db-impl.with-cache"
+import { SessionDbWithCache } from "./session-db-impl.with-hash-map-cache"
 
 export type Impl =
   | {
