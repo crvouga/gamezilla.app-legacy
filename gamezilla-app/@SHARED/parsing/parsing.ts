@@ -2,6 +2,12 @@ export const str = (value: unknown): value is string => {
   return typeof value === "string"
 }
 
+export const arr = <T>(is: (x: unknown) => x is T) => {
+  return (value: unknown): value is T[] => {
+    return Array.isArray(value) && value.every(is)
+  }
+}
+
 export const date = (value: unknown): value is Date => {
   return value instanceof Date
 }
@@ -64,23 +70,24 @@ export const obj = (item: unknown): item is Record<string, unknown> => {
   return typeof item === "object" && item !== null && !Array.isArray(item)
 }
 
-export const dict = <K extends string, V>(
-  item: unknown,
-  isKey: (x: unknown) => x is K,
-  isValue: (x: unknown) => x is V,
-): item is Record<K, V> => {
-  if (!obj(item)) {
-    return false
-  }
-
-  for (const key in item) {
-    if (!isKey(key) || !isValue(item[key])) {
+export const dict =
+  <K extends string | number, V>(
+    isKey: (x: unknown) => x is K,
+    isValue: (x: unknown) => x is V,
+  ) =>
+  (item: unknown): item is Record<K, V> => {
+    if (!obj(item)) {
       return false
     }
-  }
 
-  return true
-}
+    for (const key in item) {
+      if (!isKey(key) || !isValue(item[key])) {
+        return false
+      }
+    }
+
+    return true
+  }
 
 export const enumeration =
   <T extends readonly string[]>(enumeration: T) =>

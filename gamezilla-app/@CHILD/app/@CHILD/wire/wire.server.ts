@@ -4,13 +4,14 @@ import {
   ServerCtx,
   ServerEvent,
   WireCmd,
-  sendToClient,
 } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { Eff, Posix, TimeSpan } from "gamezilla-app/@SHARED/core"
+import { Eff, isErr } from "gamezilla-app/@SHARED/core"
 import { Sub } from "gamezilla-app/@SHARED/core/sub"
 import { CappedOrderedDict } from "gamezilla-app/@SHARED/data-structures/capped-ordered-dict"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
+import { DbConnKv } from "../../@SHARED/server/db-conn-kv"
 import { IServerTransport } from "./transport-server"
+import { IWireSessionDb, WireSessionDb } from "./wire-session-db"
 import {
   Client,
   ModelServer,
@@ -25,15 +26,39 @@ import {
 //
 //
 //
+
+export type Deps<TMsgToClient, TMsgToServer> = {
+  WireSessionDb: IWireSessionDb
+  transport: IServerTransport<{
+    MsgToClient: TMsgToClient
+    MsgToServer: TMsgToServer
+  }>
+}
+
+export const getDeps = async <TMsgToClient, TMsgToServer>(input: {
+  transport: IServerTransport<{
+    MsgToClient: TMsgToClient
+    MsgToServer: TMsgToServer
+  }>
+  dbConnKv: DbConnKv
+}): Promise<Deps<TMsgToClient, TMsgToServer>> => {
+  return {
+    transport: input.transport,
+    WireSessionDb: WireSessionDb({ t: "db-conn-kv", dbConnKv: input.dbConnKv }),
+  }
+}
+
+//
+//
+//
+//
+//
+//
 //
 
 export const init = async (): Promise<{ model: ModelServer }> => {
   return {
-    model: {
-      clientsBySessionId: {},
-      sessionIdsByUserId: {},
-      serverStartedAt: null,
-    },
+    model: null,
   }
 }
 
@@ -53,10 +78,7 @@ type Input<TMsgToClient, TMsgToServer> = {
   msgEvt?: ServerEvent | null
   msgCmd?: WireCmd<TMsgToClient> | null
   //
-  transport: IServerTransport<{
-    MsgToClient: TMsgToClient
-    MsgToServer: TMsgToServer
-  }>
+  deps: Deps<TMsgToClient, TMsgToServer>
 }
 
 type Output = {
@@ -83,73 +105,57 @@ export const update = async <TMsgToClient, TMsgToServer>(
   )
 }
 
-const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
+const updateFromMsg: typeof update = async ({ msg, model, ctx, deps }) => {
   if (!msg) {
     return { model }
   }
 
   switch (msg.t) {
     case "client-connected": {
-      return AppServerModule.andThen(
-        { model },
-        async (model) => {
-          const existing: Client = model.clientsBySessionId[msg.sessionId] ?? {
-            clientIds: CappedOrderedDict.init({ maxSize: 10 }),
-            sessionId: msg.sessionId,
-          }
+      return AppServerModule.andThen({ model }, async (model) => {
+        const gotExisiting = await deps.WireSessionDb.clients.findBySessionIds([
+          msg.sessionId,
+        ])
 
-          const clientNew: Client = {
-            sessionId: msg.sessionId,
-            clientIds: CappedOrderedDict.add(
-              existing.clientIds,
-              msg.clientId,
-              msg.clientId,
-            ),
-          }
+        const maybeExisting: Client | null =
+          gotExisiting.t === "ok" ? gotExisiting.value[0] ?? null : null
 
-          const clientsBySessionIdNew: ModelServer["clientsBySessionId"] = {
-            ...model.clientsBySessionId,
-            [msg.sessionId]: clientNew,
-          }
+        const existing: Client = maybeExisting ?? {
+          clientIds: CappedOrderedDict.init({ maxSize: 10 }),
+          sessionId: msg.sessionId,
+        }
 
-          const msgEvt: ServerEvent[] = [
-            {
-              t: "wire/client-connected",
-              clientId: msg.clientId,
-              sessionId: msg.sessionId,
-            },
-          ]
+        const clientNew: Client = {
+          sessionId: msg.sessionId,
+          clientIds: CappedOrderedDict.add(
+            existing.clientIds,
+            msg.clientId,
+            msg.clientId,
+          ),
+        }
 
-          return {
-            model: {
-              ...model,
-              clientsBySessionId: clientsBySessionIdNew,
-            },
-            msgEvt,
-          }
-        },
-        async (model) => {
-          const didServerRestart =
-            model.serverStartedAt &&
-            TimeSpan.lte(
-              Posix.diff(ctx.now, model.serverStartedAt),
-              TimeSpan.fromSeconds(3),
-            )
+        const set = await deps.WireSessionDb.clients.set(
+          msg.sessionId,
+          clientNew,
+        )
 
-          if (didServerRestart) {
-            return {
-              model,
-              msgCmd: [
-                sendToClient([msg.clientId], {
-                  t: "server-restarted",
-                }),
-              ],
-            }
-          }
-
+        if (isErr(set)) {
           return { model }
-        },
-      )
+        }
+
+        const msgEvt: ServerEvent[] = [
+          {
+            t: "wire/client-connected",
+            clientId: msg.clientId,
+            sessionId: msg.sessionId,
+          },
+        ]
+
+        return {
+          model,
+          msgEvt,
+        }
+      })
     }
 
     case "client-disconnected": {
@@ -161,20 +167,14 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
         },
       ]
       return {
-        model: {
-          ...model,
-          // clientsBySessionId: clientsBySessionIdNew,
-        },
+        model,
         msgEvt: msgEvt,
       }
     }
 
     case "server-started": {
       return {
-        model: {
-          ...model,
-          serverStartedAt: ctx.now,
-        },
+        model,
       }
     }
 
@@ -189,27 +189,25 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx }) => {
   }
 }
 
-const updateFromEvent: typeof update = async ({ msgEvt, model }) => {
+const updateFromEvent: typeof update = async ({ deps, msgEvt, model }) => {
   if (!msgEvt) {
     return { model }
   }
   switch (msgEvt.t) {
     case "auth/client-authenticated": {
-      const sessionIds = model.sessionIdsByUserId[msgEvt.account.userId] ?? []
+      const foundSessionIds = await deps.WireSessionDb.sessionIds.findByUserIds(
+        [msgEvt.account.userId],
+      )
+      const sessionIds = foundSessionIds.t === "ok" ? foundSessionIds.value : []
 
       const sessionIdsNew = [...new Set([...sessionIds, msgEvt.sessionId])]
 
-      const sessionIdByUserIdNew: ModelServer["sessionIdsByUserId"] = {
-        ...model.sessionIdsByUserId,
-        [msgEvt.account.userId]: sessionIdsNew,
-      }
+      await deps.WireSessionDb.sessionIds.set(
+        msgEvt.account.userId,
+        sessionIdsNew,
+      )
 
-      return {
-        model: {
-          ...model,
-          sessionIdsByUserId: sessionIdByUserIdNew,
-        },
-      }
+      return { model }
     }
     default: {
       return { model }
@@ -224,7 +222,7 @@ const updateFromClient: typeof update = async ({ model }) => {
 const updateFromCmd = async <TMsgToClient, TMsgToServer>({
   msgCmd,
   model,
-  transport,
+  deps,
   ctx,
 }: Input<TMsgToClient, TMsgToServer>): Promise<Output> => {
   if (!msgCmd) {
@@ -238,7 +236,7 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>({
       return {
         model,
         eff: () => {
-          transport.toClientBroadcast.publish([msgCmdChild.msg])
+          deps.transport.toClientBroadcast.publish([msgCmdChild.msg])
         },
       }
     }
@@ -266,15 +264,17 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>({
             }
           }
 
-          transport.toClient.publish(toClientPayload)
+          deps.transport.toClient.publish(toClientPayload)
         },
       }
     }
 
     case "send-to-user": {
-      const sessionIds: SessionId[] = msgCmdChild.userIds.flatMap(
-        (userId) => model.sessionIdsByUserId[userId] ?? [],
+      const gotSessionIds = await deps.WireSessionDb.sessionIds.findByUserIds(
+        msgCmdChild.userIds,
       )
+
+      const sessionIds = gotSessionIds.t === "ok" ? gotSessionIds.value : []
 
       return {
         model,
@@ -282,9 +282,8 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>({
           sendToSession({
             ctx,
             sessionIds,
-            model,
             msg: msgCmdChild.msg,
-            transport,
+            deps,
           })
         },
       }
@@ -297,9 +296,8 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>({
           sendToSession({
             ctx,
             sessionIds: msgCmdChild.sessionIds,
-            model,
             msg: msgCmdChild.msg,
-            transport,
+            deps,
           })
         },
       }
@@ -321,18 +319,13 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>({
 const sendToSession = async <TMsgToClient, TMsgToServer>({
   ctx,
   sessionIds,
-  transport,
-  model,
+  deps,
   msg,
 }: {
   ctx: ServerCtx
-  model: ModelServer
   msg: TMsgToClient
   sessionIds: SessionId[]
-  transport: IServerTransport<{
-    MsgToClient: TMsgToClient
-    MsgToServer: TMsgToServer
-  }>
+  deps: Deps<TMsgToClient, TMsgToServer>
 }) => {
   const toClientPayload: {
     [clientId: ClientId]: {
@@ -346,21 +339,18 @@ const sendToSession = async <TMsgToClient, TMsgToServer>({
     return
   }
 
-  for (const sessionId of sessionIds) {
-    const client = model.clientsBySessionId[sessionId]
+  const gotClients = await deps.WireSessionDb.clients.findBySessionIds(
+    sessionIds,
+  )
 
-    if (!client) {
-      ctx.logger.warn(
-        `send to session failed. no client associated with sessionId=${sessionId}`,
-      )
-      continue
-    }
+  const clients = gotClients.t === "ok" ? gotClients.value : []
 
+  for (const client of clients) {
     const clientIds = CappedOrderedDict.values(client.clientIds)
 
     if (clientIds.length === 0) {
       ctx.logger.warn(
-        `send to session failed. no client ids for sessionId=${sessionId}`,
+        `send to session failed. no client ids for sessionId=${client.sessionId}`,
       )
       continue
     }
@@ -373,7 +363,7 @@ const sendToSession = async <TMsgToClient, TMsgToServer>({
     }
   }
 
-  transport.toClient.publish(toClientPayload)
+  deps.transport.toClient.publish(toClientPayload)
 }
 
 export const subscriptions = <TMsgToServer, TMsgToClient>({

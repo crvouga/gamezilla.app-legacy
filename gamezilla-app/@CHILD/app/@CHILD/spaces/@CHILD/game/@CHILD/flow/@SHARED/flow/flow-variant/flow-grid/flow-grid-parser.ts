@@ -4,7 +4,7 @@ import * as FlowGrid from "./flow-grid"
 import { Position } from "./flow-grid-position"
 
 const toPositions = (x: unknown): FlowGrid.Model["positions"] | null => {
-  if (P.dict(x, P.str, Position.is)) {
+  if (P.dict(P.str, Position.is)(x)) {
     return x
   }
   return null

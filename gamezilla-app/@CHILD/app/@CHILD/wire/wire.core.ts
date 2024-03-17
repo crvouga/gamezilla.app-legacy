@@ -1,8 +1,9 @@
 import { Posix } from "gamezilla-app/@SHARED/core"
-import { ClientId, SessionId, UserId } from "../../@SHARED/data"
+import { CappedOrderedDict } from "gamezilla-app/@SHARED/data-structures/capped-ordered-dict"
+import { P } from "gamezilla-app/@SHARED/parsing"
+import { ClientId, SessionId } from "../../@SHARED/data"
 import { ClientTransportEvent } from "./transport-client"
 import { ServerTransportMsg } from "./transport-server"
-import { CappedOrderedDict } from "gamezilla-app/@SHARED/data-structures/capped-ordered-dict"
 
 //
 //
@@ -26,20 +27,25 @@ export type ModelClient = {
 
 export type MsgClient = ClientTransportEvent | { t: "clicked-try-reconnect" }
 
-export type ModelServer = {
-  clientsBySessionId: {
-    [sessionId: SessionId]: Client
-  }
-  sessionIdsByUserId: {
-    [userId: UserId]: SessionId[]
-  }
-  serverStartedAt: Posix | null
-}
+export type ModelServer = null
 
 export type Client = {
   sessionId: SessionId
   clientIds: CappedOrderedDict<ClientId, ClientId>
 }
+
+export const toClient = (x: unknown): Client | null => {
+  if (
+    P.obj(x) &&
+    P.has(x, "sessionId", SessionId.is) &&
+    P.has(x, "clientIds", CappedOrderedDict.is(ClientId.is, ClientId.is))
+  ) {
+    return x
+  }
+  return null
+}
+
+export const isClient = P.is(toClient)
 
 export type MsgServer = ServerTransportMsg
 

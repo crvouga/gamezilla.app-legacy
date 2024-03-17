@@ -1,3 +1,5 @@
+import { P } from "../parsing"
+
 export type CappedOrderedDict<TKey extends string | number, TValue> = {
   _type: "CappedOrderedDict"
   _valuesByKey: {
@@ -105,6 +107,28 @@ const values = <TKey extends string | number, TValue>(
 ): TValue[] => {
   return model._orderNewestFirst.map((key) => model._valuesByKey[key]!)
 }
+const to =
+  <TKey extends string | number, TValue>(
+    isKey: (k: unknown) => k is TKey,
+    isValue: (v: unknown) => v is TValue,
+  ) =>
+  (x: unknown): CappedOrderedDict<TKey, TValue> | null => {
+    if (
+      P.obj(x) &&
+      P.has(x, "_type", P.literal("CappedOrderedDict")) &&
+      P.has(x, "_valuesByKey", P.dict(isKey, isValue)) &&
+      P.has(x, "_orderNewestFirst", P.arr(isKey)) &&
+      P.has(x, "_maxSize", P.num)
+    ) {
+      return x
+    }
+    return null
+  }
+
+const is = <TKey extends string | number, TValue>(
+  isKey: (k: unknown) => k is TKey,
+  isValue: (v: unknown) => v is TValue,
+) => P.is(to(isKey, isValue))
 
 export const CappedOrderedDict = {
   add,
@@ -113,4 +137,6 @@ export const CappedOrderedDict = {
   get,
   mergeLeft,
   values,
+  to,
+  is,
 }

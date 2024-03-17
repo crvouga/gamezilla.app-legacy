@@ -27,7 +27,7 @@ const toEdge = (x: unknown): Edge | null => {
 const isEdge = P.is(toEdge)
 
 const toEdges = (x: unknown): Model["edges"] | null => {
-  if (P.dict(x, isEdgeId, isEdge)) {
+  if (P.dict(isEdgeId, isEdge)(x)) {
     return x
   }
   return null
@@ -50,7 +50,7 @@ export const toNode = (x: unknown): Node | null => {
 export const isNode = P.is(toNode)
 
 const toNodes = (x: unknown): Model["nodes"] | null => {
-  if (P.dict(x, isNodeId, isNode)) {
+  if (P.dict(isNodeId, isNode)(x)) {
     return x
   }
   return null
@@ -75,7 +75,7 @@ const isTerminal = P.is(toTerminal)
 const toTerminalsByGroupId = (
   x: unknown,
 ): Model["terminalsByGroupId"] | null => {
-  if (P.dict(x, isGroupId, isTerminal)) {
+  if (P.dict(isGroupId, isTerminal)(x)) {
     return x
   }
   return null

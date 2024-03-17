@@ -52,6 +52,7 @@ export type Deps = {
     MsgToClient: MsgToClient
     MsgToServer: MsgToServer
   }>
+  wire: WireServer.Deps<MsgToClient, MsgToServer>
 }
 
 export const getDeps = async ({
@@ -88,7 +89,13 @@ export const getDeps = async ({
     server,
   })
 
+  const wire = await WireServer.getDeps({
+    transport,
+    dbConnKv,
+  })
+
   return {
+    wire,
     transport,
     sms,
     logger,
@@ -343,7 +350,7 @@ export const updateChild = async ({
     msgClient:
       msgClient?.t === "wire" ? { ...msgClient, ...msgClient.c } : null,
     msg: msg?.t === "wire" ? msg.c : null,
-    transport: deps.transport,
+    deps: deps.wire,
   })
 
   const profile = await ProfileServer.update({
