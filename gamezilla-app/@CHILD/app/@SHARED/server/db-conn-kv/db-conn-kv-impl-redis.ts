@@ -18,7 +18,7 @@ export const createDbConnKvRedis = async ({
   logger.info(`[db-conn-kv-redis] connected`)
 
   return {
-    async get(isValue, key) {
+    async get(key, isValue) {
       try {
         const got = await client.get(key)
 
@@ -31,6 +31,8 @@ export const createDbConnKvRedis = async ({
         if (isValue(parsed)) {
           return ok(parsed)
         }
+
+        logger.error(`[db-conn-kv-redis] get: not a value: ${key} value=${got}`)
 
         return ok(null)
       } catch (e) {

@@ -5,7 +5,7 @@ const hashMap = new Map<string, unknown>()
 
 export const createDbConnKvHashMap = (): DbConnKv => {
   return {
-    async get(isValue, key) {
+    async get(key, isValue) {
       const got = hashMap.get(key)
 
       if (isValue(got)) {
