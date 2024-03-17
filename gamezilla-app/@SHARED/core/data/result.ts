@@ -69,17 +69,15 @@ const fromNullable =
     return ok(value)
   }
 
-const withDefault =
-  <T>(fallback: T) =>
-  (result: Result<unknown, T>): T => {
-    switch (result.t) {
-      case "err":
-        return fallback
+const withDefault = <T>(result: Result<unknown, T>, fallback: T) => {
+  switch (result.t) {
+    case "err":
+      return fallback
 
-      case "ok":
-        return result.value
-    }
+    case "ok":
+      return result.value
   }
+}
 
 /**
  * Combines an array of results into a single result.

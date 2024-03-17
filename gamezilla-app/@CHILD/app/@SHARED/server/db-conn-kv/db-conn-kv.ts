@@ -9,24 +9,24 @@ export type DbConnKv = {
   zap: (key: string) => Task<string, null>
 }
 
-const instance = <TValue>(
+const instance = <TKey extends string = string, TValue = unknown>(
   dbConnKv: DbConnKv,
   namespace: string[],
   isValue: (row: unknown) => row is TValue,
 ): {
-  get: (key: string) => Task<string, TValue | null>
-  set: (key: string, value: TValue) => Task<string, null>
-  zap: (key: string) => Task<string, null>
+  get: (key: TKey) => Task<string, TValue | null>
+  set: (key: TKey, value: TValue) => Task<string, null>
+  zap: (key: TKey) => Task<string, null>
 } => {
   const toKey = (key: string) => [...namespace, key].join(":")
   return {
-    get: (key: string) => {
+    get: (key) => {
       return dbConnKv.get(toKey(key), isValue)
     },
-    set: (key: string, value: TValue) => {
+    set: (key, value: TValue) => {
       return dbConnKv.set(toKey(key), value)
     },
-    zap: (key: string) => {
+    zap: (key) => {
       return dbConnKv.zap(toKey(key))
     },
   }

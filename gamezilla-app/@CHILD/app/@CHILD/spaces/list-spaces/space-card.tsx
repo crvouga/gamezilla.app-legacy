@@ -34,10 +34,6 @@ export const ViewSpaceCard = ({
 
   const gameName = state.game?.t ?? null
 
-  if (!host) {
-    return null
-  }
-
   return (
     <button
       onClick={onClick}
@@ -61,15 +57,15 @@ export const ViewSpaceCard = ({
       )}
 
       <div className="flex max-w-full items-center justify-start gap-2 overflow-hidden">
-        <Avatar src={host.avatarUrl} alt="avatar" className="h-12 w-12" />
+        <Avatar src={host?.avatarUrl} alt="avatar" className="h-12 w-12" />
 
         <div className="flex-1 overflow-hidden">
           <p className="overflow-hidden text-ellipsis whitespace-nowrap text-xl">
-            {host.username}
+            {host?.username}
           </p>
         </div>
         <ViewSpaceHostChip ctx={ctx} />
-        {ctx.currentUserId === host.userId && <ViewYouChip ctx={ctx} />}
+        {ctx.currentUserId === host?.userId && <ViewYouChip ctx={ctx} />}
       </div>
 
       {users.length > 1 && (
