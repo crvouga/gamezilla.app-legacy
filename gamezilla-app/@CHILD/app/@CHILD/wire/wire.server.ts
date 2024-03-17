@@ -56,9 +56,13 @@ export const getDeps = async <TMsgToClient, TMsgToServer>(input: {
 //
 //
 
-export const init = async (): Promise<{ model: ModelServer }> => {
+export const init = async (): Promise<{
+  model: ModelServer
+  eff: Eff<MsgServer>
+}> => {
   return {
     model: null,
+    eff: Eff.None,
   }
 }
 

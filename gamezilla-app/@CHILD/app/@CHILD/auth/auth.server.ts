@@ -40,9 +40,7 @@ export const init: ServerModule["init"] = async (input) => {
   const sms = await AuthServerSMS.init({ ...input, stored: null })
 
   return {
-    model: {
-      sms: sms.model,
-    },
+    model: null,
     eff: Eff.tag("sms", sms.eff),
     msgCmd: ServerCmd.tag("sms", sms.msgCmd),
     msgEvt: sms.msgEvt,
@@ -87,7 +85,7 @@ const updateChild: ServerModule["update"] = async (input) => {
   const sms = await AuthServerSMS.update({
     deps: AuthServerSMS.getDeps(input),
     ctx: input.ctx,
-    model: input.model.sms,
+    model: null,
     msgCmd: input.msgCmd,
     msgEvt: input.msgEvt,
     msgClient:
@@ -98,10 +96,7 @@ const updateChild: ServerModule["update"] = async (input) => {
   })
 
   return {
-    model: {
-      ...input.model,
-      sms: sms.model,
-    },
+    model: null,
     eff: Eff.tag("sms", sms.eff),
     msgCmd: ServerCmd.tag("sms", sms.msgCmd),
     msgEvt: sms.msgEvt,
@@ -247,10 +242,7 @@ export const subscriptions: ServerModule["subscriptions"] = async (input) => {
   return Sub.batch([
     Sub.tag(
       "sms",
-      await AuthServerSMS.subscriptions({
-        ...input,
-        model: input.model.sms,
-      }),
+      await AuthServerSMS.subscriptions({ ...input, model: null }),
     ),
   ])
 }

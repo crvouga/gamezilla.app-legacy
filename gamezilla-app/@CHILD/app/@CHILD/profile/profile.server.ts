@@ -17,7 +17,6 @@ import { createProfileDb } from "./profile-db/profile-db-impl.postgres"
 import {
   ProfileCore,
   Req,
-  ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
@@ -35,7 +34,7 @@ type Module = AppServerModule<{
   Ctx: ServerCtx
   MsgInCmd: null
   MsgInEvent: ServerEvent
-  Model: ModelServer
+  Model: null
   Msg: MsgServer
   MsgOutCmd: ServerCmd<MsgToClient>
   MsgOutEvent: null

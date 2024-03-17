@@ -7,8 +7,6 @@ import {
   Result,
 } from "gamezilla-app/@SHARED/core"
 
-export type ModelServer = null
-
 export type Route =
   | {
       t: "/"

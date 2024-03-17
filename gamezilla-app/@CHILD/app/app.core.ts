@@ -15,11 +15,7 @@ import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 //
 
 export type ModelServer = {
-  wire: Wire.ModelServer
   spaces: Spaces.ModelServer
-  profile: Profile.ModelServer
-  auth: Auth.ModelServer
-  lang: Lang.ModelServer
 }
 
 export type ModelClient = {

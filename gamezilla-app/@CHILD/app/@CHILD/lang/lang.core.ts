@@ -14,8 +14,6 @@ export type ModelClient = {
   }
 }
 
-export type ModelServer = {}
-
 export type MsgToServer = { t: "noop" }
 
 export type MsgToClient = { t: "noop" }

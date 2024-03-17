@@ -7,7 +7,7 @@ import { LoggerConsole } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { Posix } from "gamezilla-app/@SHARED/core"
 import { AccountDb } from "../@SHARED/server/account-db"
 import { SessionDb } from "../@SHARED/server/session-db"
-import { ModelServer, ServerDeps, ServerModule } from "../auth.core"
+import { ServerDeps, ServerModule } from "../auth.core"
 import * as AuthServer from "../auth.server"
 import { createDbConnKvHashMap } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv/db-conn-kv-impl-hash-map"
 
@@ -34,7 +34,7 @@ const getDeps: ServerModule["getDeps"] = () => {
 
 const clientClickedContinueAsGuestButton =
   (deps: ServerDeps, clientId: ClientId, sessionId: SessionId) =>
-  async (model: ModelServer) => {
+  async (model: null) => {
     return AuthServer.update({
       model,
       ctx,

@@ -154,12 +154,14 @@ export const init = async (input: {
 
   return {
     model: {
-      wire: wire.model,
       spaces: space.model,
-      profile: profile.model,
-      auth: auth.model,
-      lang: lang.model,
     },
+    eff: Eff.batch<MsgServer>([
+      Eff.tag("auth", auth.eff),
+      Eff.tag("profile", profile.eff),
+      Eff.tag("lang", lang.eff),
+      Eff.tag("wire", wire.eff),
+    ]),
   }
 }
 
@@ -333,7 +335,7 @@ export const updateChild = async ({
 
   const auth = await AuthServer.update({
     deps: AuthServer.getDeps({ ctx }),
-    model: model.auth,
+    model: null,
     ctx,
     msgCmd: null,
     msgEvt: msgEvt,
@@ -343,7 +345,7 @@ export const updateChild = async ({
   })
 
   const wire = await WireServer.update({
-    model: model.wire,
+    model: null,
     ctx,
     msgCmd: msgCmd?.t === "wire" ? msgCmd : null,
     msgEvt: msgEvt,
@@ -355,7 +357,7 @@ export const updateChild = async ({
 
   const profile = await ProfileServer.update({
     deps: ProfileServer.getDeps({ ctx }),
-    model: model.profile,
+    model: null,
     ctx,
     msgCmd: null,
     msgEvt: msgEvt,
@@ -366,7 +368,7 @@ export const updateChild = async ({
 
   const lang = await LangServer.update({
     deps: LangServer.getDeps({ ctx }),
-    model: model.lang,
+    model: null,
     ctx,
     msgCmd: null,
     msgEvt: msgEvt,
@@ -382,11 +384,7 @@ export const updateChild = async ({
 
   return {
     model: {
-      auth: auth.model,
-      profile: profile.model,
       spaces: space.model,
-      wire: wire.model,
-      lang: lang.model,
     },
     msgCmd: batchMsgs<ServerCmd<MsgToClient>>(
       ServerCmd.tag("spaces", space.msgCmd),
@@ -440,10 +438,7 @@ export const subscriptions = async (input: {
       "wire",
       WireServer.subscriptions({ transport: input.deps.transport }),
     ),
-    Sub.tag(
-      "lang",
-      await LangServer.subscriptions({ model: input.model.lang, ctx }),
-    ),
+    Sub.tag("lang", await LangServer.subscriptions({ model: null, ctx })),
     Sub.flat(
       Sub.map(input.deps.transport.toServer, ({ sessionId, clientId, msgs }) =>
         msgs.map(

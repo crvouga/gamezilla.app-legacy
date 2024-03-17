@@ -40,7 +40,7 @@ export type ServerModule = AppServerModule<{
   Ctx: ServerCtx
   MsgInCmd: null
   MsgInEvent: ServerEvent
-  Model: ModelServer
+  Model: null
   Msg: MsgServer
   MsgOutCmd: ServerCmd<MsgToClient>
   MsgOutEvent: ServerEvent
@@ -70,10 +70,6 @@ export type ModelClient = ContinueAsGuest.ModelClient & {
     | { t: "logged-out" }
     | { t: "logged-in"; account: Account }
   sms: AuthSMS.ModelClient
-}
-
-export type ModelServer = {
-  sms: AuthSMS.ModelServer
 }
 
 //

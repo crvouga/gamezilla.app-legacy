@@ -1,12 +1,12 @@
 import { Sub } from "gamezilla-app/@SHARED/core"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import { ServerCmd, ServerCtx, ServerEvent } from "../../@SHARED/server"
-import { ModelServer, MsgServer, MsgToClient, MsgToServer } from "./lang.core"
+import { MsgServer, MsgToClient, MsgToServer } from "./lang.core"
 
 type Module = AppServerModule<{
   Ctx: ServerCtx
   Deps: {}
-  Model: ModelServer
+  Model: null
   MsgToServer: MsgToServer
   MsgToClient: MsgToClient
   Msg: MsgServer
@@ -18,7 +18,7 @@ type Module = AppServerModule<{
 
 export const init: Module["init"] = async () => {
   return {
-    model: {},
+    model: null,
   }
 }
 

@@ -49,8 +49,6 @@ export type ModelClient = {
   }
 }
 
-export type ModelServer = null
-
 //
 //
 //
