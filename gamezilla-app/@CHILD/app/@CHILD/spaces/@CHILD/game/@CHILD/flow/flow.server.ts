@@ -15,6 +15,8 @@ import {
   MsgToClient,
   MsgToServer,
 } from "./flow.core"
+import * as Create from "./@CHILD/create/create.core"
+import * as Play from "./@CHILD/play/play.core"
 
 type Module = GameServerModule<{
   Model: ModelServer
@@ -36,77 +38,76 @@ const init: Module["init"] = {
 }
 
 const update: Module["update"] = async (input) => {
-  return GameServerModule.andThen({ model: input.model }, (model) =>
-    updateChild({ ...input, model }),
+  return GameServerModule.andThen(
+    { model: input.model },
+    //
+    (model) => updatePlay({ ...input, model }),
+    (model) => updateCreate({ ...input, model }),
   )
 }
 
-const updateChild: Module["update"] = async (input) => {
-  const { modelSync } = input
+const updateCreate: Module["update"] = async (input) => {
+  const updated = await CreateServer.update({
+    ctx: input.ctx,
+    modelSync:
+      input.modelSync.t === "create"
+        ? input.modelSync.c
+        : Create.initSync({ ctx: input.ctx }),
+    model: input.model.t === "create" ? input.model.c : CreateServer.init,
+    msgCmd: input.msgCmd,
+    msgEvt: input.msgEvt,
+    msgClient:
+      input.msgClient?.t === "create"
+        ? { ...input.msgClient, ...input.msgClient.c }
+        : null,
+    msgSync:
+      input.msgSync?.t === "create"
+        ? { ...input.msgSync, ...input.msgSync.c }
+        : null,
+    msg: input.msg?.t === "create" ? input.msg.c : null,
+    deps: await CreateServer.deps({
+      ctx: input.ctx,
+    }),
+  })
 
-  switch (modelSync.t) {
-    case "play": {
-      const updated = await PlayServer.update({
-        ctx: input.ctx,
-        modelSync: modelSync.c,
-        model: input.model.t === "play" ? input.model.c : PlayServer.init,
-        msgCmd: input.msgCmd,
-        msgEvt: input.msgEvt,
-        msgClient:
-          input.msgClient?.t === "play"
-            ? { ...input.msgClient, ...input.msgClient.c }
-            : null,
-        msgSync:
-          input.msgSync?.t === "play"
-            ? { ...input.msgSync, ...input.msgSync.c }
-            : null,
-        msg: input.msg?.t === "play" ? input.msg.c : null,
-        deps: null,
-      })
+  const tagged = GameServerModule.tagOutput(
+    "create",
+    (msgCmd) => SpaceServerCmd.tag("create", msgCmd),
+    updated,
+  )
 
-      const tagged = GameServerModule.tagOutput(
-        "play",
-        (msgCmd) => SpaceServerCmd.tag("play", msgCmd),
-        updated,
-      )
+  return tagged
+}
 
-      return tagged
-    }
+const updatePlay: Module["update"] = async (input) => {
+  const updated = await PlayServer.update({
+    ctx: input.ctx,
+    modelSync:
+      input.modelSync.t === "play"
+        ? input.modelSync.c
+        : Play.initSync({ ctx: input.ctx }),
+    model: input.model.t === "play" ? input.model.c : PlayServer.init,
+    msgCmd: input.msgCmd,
+    msgEvt: input.msgEvt,
+    msgClient:
+      input.msgClient?.t === "play"
+        ? { ...input.msgClient, ...input.msgClient.c }
+        : null,
+    msgSync:
+      input.msgSync?.t === "play"
+        ? { ...input.msgSync, ...input.msgSync.c }
+        : null,
+    msg: input.msg?.t === "play" ? input.msg.c : null,
+    deps: null,
+  })
 
-    case "create": {
-      const updated = await CreateServer.update({
-        ctx: input.ctx,
-        modelSync: modelSync.c,
-        model: input.model.t === "create" ? input.model.c : CreateServer.init,
-        msgCmd: input.msgCmd,
-        msgEvt: input.msgEvt,
-        msgClient:
-          input.msgClient?.t === "create"
-            ? { ...input.msgClient, ...input.msgClient.c }
-            : null,
-        msgSync:
-          input.msgSync?.t === "create"
-            ? { ...input.msgSync, ...input.msgSync.c }
-            : null,
-        msg: input.msg?.t === "create" ? input.msg.c : null,
-        deps: await CreateServer.deps({
-          ctx: input.ctx,
-        }),
-      })
+  const tagged = GameServerModule.tagOutput(
+    "play",
+    (msgCmd) => SpaceServerCmd.tag("play", msgCmd),
+    updated,
+  )
 
-      const tagged = GameServerModule.tagOutput(
-        "create",
-        (msgCmd) => SpaceServerCmd.tag("create", msgCmd),
-        updated,
-      )
-
-      return tagged
-    }
-
-    case null: {
-      return { model: input.model }
-    }
-  }
+  return tagged
 }
 
 const subscriptions: Module["subscriptions"] = async (input) => {
