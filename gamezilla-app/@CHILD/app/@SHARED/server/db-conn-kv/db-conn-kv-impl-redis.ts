@@ -28,8 +28,8 @@ export const createDbConnKvRedis = async ({
 
         const durationInMicroseconds = (end - start) / BigInt(1000)
 
-        logger.info(
-          `[db-conn-kv-redis] get: key=${key} duration=${durationInMicroseconds}µs`,
+        logger.debug(
+          `[db-conn-kv] duration=${durationInMicroseconds}µs get: key=${key}`,
         )
 
         if (got === null || got === undefined) {
