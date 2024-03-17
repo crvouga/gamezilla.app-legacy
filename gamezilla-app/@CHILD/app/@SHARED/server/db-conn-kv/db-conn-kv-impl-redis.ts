@@ -20,7 +20,13 @@ export const createDbConnKvRedis = async ({
   return {
     async get(key, isValue) {
       try {
+        const start = Date.now()
+
         const got = await client.get(key)
+
+        const end = Date.now()
+
+        logger.info(`[db-kv] get duration=${end - start}ms key=${key}`)
 
         if (got === null || got === undefined) {
           return ok(null)

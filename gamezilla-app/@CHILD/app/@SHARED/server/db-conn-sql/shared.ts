@@ -13,5 +13,5 @@ export function logQuery({
 }) {
   const durationFormatted = `${end - start}ms`
 
-  logger.info(`[db] duration=${durationFormatted} sql=\n${sql}`)
+  logger.info(`[db-sql] duration=${durationFormatted} sql=\n${sql}`)
 }
