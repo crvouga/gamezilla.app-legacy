@@ -22,6 +22,7 @@ export const translations: Text = {
   "auth.continue-with-phone": "Continuar com o telefone",
   "auth.or": "ou",
   "auth.sign-in-to": "Entrar em",
+  "auth.logged-in": "Logado",
   "auth-sms.login-with-phone": "Login com telefone",
   "auth-sms.phone-number": "Número de telefone",
   "auth-sms.send-code": "Enviar código",

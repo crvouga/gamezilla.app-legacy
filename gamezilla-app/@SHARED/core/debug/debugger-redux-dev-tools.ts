@@ -8,7 +8,7 @@
 import { ProgramDebugger } from ".."
 import * as Json from "../data/json"
 import { Result, isErr } from "../data/result"
-import { Task } from "../task"
+import { IO } from "../data/io"
 import { toMsgPayload, toMsgType } from "../utils"
 import { p } from "../utils/pipe"
 import { Debug, Debugger, DebuggerDeps, Global, MsgWithDebug } from "./debugger"
@@ -175,24 +175,24 @@ const handleIncomingMsg = <Model, Msg extends object>({
   dispatch,
 }: DevToolHandlerR<Model, Msg>): ((
   msg: DevToolMsg,
-) => Result<string, Task<void>>) => {
+) => Result<string, IO<void>>) => {
   const dispatchToApp =
-    (m: unknown): Task<void> =>
+    (m: unknown): IO<void> =>
     async () =>
       dispatch(m as Msg)
 
-  const reInit: Task<void> = async () => connection.init(init)
+  const reInit: IO<void> = async () => connection.init(init)
 
-  const update = (payload: Model): Task<void> =>
+  const update = (payload: Model): IO<void> =>
     dispatchToApp({ type: "__DebugUpdateModel__", payload })
 
   const restart =
-    (model: Model): Task<void> =>
+    (model: Model): IO<void> =>
     async () =>
       connection.init(model)
 
   const liftState =
-    (state: LiftedState<Model>): Task<void> =>
+    (state: LiftedState<Model>): IO<void> =>
     async () =>
       connection.send(null, state)
 
@@ -226,7 +226,7 @@ const handleIncomingMsg = <Model, Msg extends object>({
             return Result.ok(
               p(
                 update(init),
-                Task.chain(() => reInit),
+                IO.chain(() => reInit),
               ),
             )
 
@@ -235,7 +235,7 @@ const handleIncomingMsg = <Model, Msg extends object>({
               Result.mapOk(x, (m) =>
                 p(
                   update(m),
-                  Task.chain(() => restart(m)),
+                  IO.chain(() => restart(m)),
                 ),
               ),
             )
@@ -254,7 +254,7 @@ const handleIncomingMsg = <Model, Msg extends object>({
                       liftedState.computedStates.length - 1
                     ].state,
                   ),
-                  Task.chain(() => liftState(liftedState)),
+                  IO.chain(() => liftState(liftedState)),
                 ),
               ),
             )
@@ -262,7 +262,7 @@ const handleIncomingMsg = <Model, Msg extends object>({
           case "TOGGLE_ACTION":
             return p(parseToggleAction<Model>(msg), (x) =>
               Result.mapOk(x, ([id, liftedState]) =>
-                p(toggle(id, liftedState), Task.chain(liftState)),
+                p(toggle(id, liftedState), IO.chain(liftState)),
               ),
             )
 
@@ -393,7 +393,7 @@ const toggleAction =
   <Model, Msg extends object>(
     dispatch: (m: MsgWithDebug<Model, Msg>) => void,
   ) =>
-  (id: number, liftedState: LiftedState<Model>): Task<LiftedState<Model>> =>
+  (id: number, liftedState: LiftedState<Model>): IO<LiftedState<Model>> =>
   async () => {
     const state = unsafeCopy(liftedState)
 

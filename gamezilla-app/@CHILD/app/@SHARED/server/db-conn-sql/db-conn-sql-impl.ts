@@ -2,15 +2,14 @@ import { ok } from "gamezilla-app/@SHARED/core"
 import { Logger } from "../logger"
 import { DbConnSql } from "."
 import { createDbConnPostgres } from "./db-conn-sql-impl-postgres"
-// import { createDbConnSqlite } from "./db-conn-sql-impl-sqlite"
 
-export const dbConnNoop: DbConnSql = {
+export const dbConnSqlNoop: DbConnSql = {
   query: async () => {
     return ok([])
   },
 }
 
-export const createDbConn = async ({
+export const createDbConnSql = async ({
   databaseUrl,
   logger,
 }: {
@@ -20,10 +19,6 @@ export const createDbConn = async ({
   const databaseType = connectionStringToDatabaseType(databaseUrl)
 
   switch (databaseType) {
-    // case "sqlite": {
-    //   return createDbConnSqlite({ databaseUrl, logger })
-    // }
-
     case "postgres": {
       return createDbConnPostgres({ databaseUrl, logger })
     }

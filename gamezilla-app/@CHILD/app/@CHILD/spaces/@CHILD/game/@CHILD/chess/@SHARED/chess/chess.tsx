@@ -1,5 +1,5 @@
 import * as ChessJS from "chess.js"
-import { Result, Task, err, exhaustive, ok } from "gamezilla-app/@SHARED/core"
+import { Result, IO, err, exhaustive, ok } from "gamezilla-app/@SHARED/core"
 
 import {
   IconBotCute,
@@ -116,7 +116,7 @@ export const toRandomMoveInput = (
 }
 
 export const getBestMove =
-  (level: BotLevel, model: Model): Task<BestMoveInputResult> =>
+  (level: BotLevel, model: Model): IO<BestMoveInputResult> =>
   async () => {
     // TODO get this working off main thread
     // TODO: should not be hardcoded

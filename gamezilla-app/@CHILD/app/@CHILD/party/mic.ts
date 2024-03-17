@@ -1,8 +1,8 @@
-import { err, ok, Result, Task } from "gamezilla-app/@SHARED/core"
+import { err, ok, Result, IO } from "gamezilla-app/@SHARED/core"
 
 export type MicLoadResult = Result<string, null>
 
-const load: Task<MicLoadResult> = async () => {
+const load: IO<MicLoadResult> = async () => {
   try {
     await navigator.mediaDevices.getUserMedia({
       audio: true,
@@ -16,7 +16,7 @@ const load: Task<MicLoadResult> = async () => {
 
 export type MicUnloadResult = Result<string, null>
 
-const unload: Task<MicUnloadResult> = async () => {
+const unload: IO<MicUnloadResult> = async () => {
   return ok(null)
 }
 

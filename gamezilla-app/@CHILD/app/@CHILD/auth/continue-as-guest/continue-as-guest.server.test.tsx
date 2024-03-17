@@ -2,16 +2,18 @@ import { describe, expect, it } from "bun:test"
 import { AppServerModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-server"
 import { ClientId, SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { ServerCtx } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { dbConnNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
+import { dbConnSqlNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import { LoggerConsole } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { Posix } from "gamezilla-app/@SHARED/core"
 import { AccountDb } from "../@SHARED/server/account-db"
 import { SessionDb } from "../@SHARED/server/session-db"
 import { ModelServer, ServerDeps, ServerModule } from "../auth.core"
 import * as AuthServer from "../auth.server"
+import { createDbConnKvHashMap } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv/db-conn-kv-impl-hash-map"
 
 const ctx: ServerCtx = {
-  dbConn: dbConnNoop,
+  dbConnSql: dbConnSqlNoop,
+  dbConnKv: createDbConnKvHashMap(),
   logger: LoggerConsole("test"),
   now: Posix.now(),
 }

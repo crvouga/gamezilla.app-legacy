@@ -125,7 +125,7 @@ const updateFromClient: Module["update"] = async ({
         return
       }
 
-      const ProfileDb = createProfileDb({ dbConn: ctx.dbConn })
+      const ProfileDb = createProfileDb({ dbConn: ctx.dbConnSql })
       const result = await handler({
         ProfileDb,
         msg: msgClient,
@@ -151,7 +151,7 @@ const updateFromEvent: Module["update"] = async ({ msgEvt, model, ctx }) => {
       return {
         model,
         eff: async (dispatch) => {
-          const ProfileDb = createProfileDb({ dbConn: ctx.dbConn })
+          const ProfileDb = createProfileDb({ dbConn: ctx.dbConnSql })
           const result = await findElseInsertNew({
             ProfileDb,
             userId: msgEvt.account.userId,

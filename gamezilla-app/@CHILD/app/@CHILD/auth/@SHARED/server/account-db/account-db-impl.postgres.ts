@@ -126,13 +126,13 @@ const accountToRow = (account: Account): AccountRow => {
 }
 
 export const AccountDbPostgres = ({
-  dbConn,
+  dbConnSql,
 }: {
-  dbConn: DbConnSql
+  dbConnSql: DbConnSql
 }): IAccountDb => {
   return {
     async findOneByUserId(input) {
-      const queried = await dbConn.query(
+      const queried = await dbConnSql.query(
         P.is(toAccountRow),
         `SELECT
           user_id,
@@ -165,7 +165,7 @@ export const AccountDbPostgres = ({
     },
 
     async findOneByEmail(input) {
-      const queried = await dbConn.query(
+      const queried = await dbConnSql.query(
         P.is(toAccountRow),
         `SELECT
           user_id,
@@ -195,7 +195,7 @@ export const AccountDbPostgres = ({
       return account
     },
     async findOneByPhoneNumber(input) {
-      const queried = await dbConn.query(
+      const queried = await dbConnSql.query(
         P.is(toAccountRow),
         `SELECT user_id, email_address, phone_number FROM user_account WHERE phone_number = :phone_number`,
         {
@@ -220,7 +220,7 @@ export const AccountDbPostgres = ({
     async insert(account) {
       const rowNew = accountToRow(account)
 
-      const queried = await dbConn.query(
+      const queried = await dbConnSql.query(
         P.is(toAccountRow),
         `INSERT INTO user_account (
             user_role,

@@ -14,6 +14,8 @@ export const createDbConnPostgres = async ({
 }): Promise<DbConnSql> => {
   const database = postgres(databaseUrl)
 
+  logger.info(`[db-conn-sql-postgres] connected`)
+
   return {
     query: async (isRow, rawSql, params) => {
       const sql = toSql(rawSql, params)

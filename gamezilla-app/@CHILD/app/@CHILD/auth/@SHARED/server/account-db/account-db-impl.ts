@@ -6,7 +6,7 @@ import { AccountDbPostgres } from "./account-db-impl.postgres"
 export type Impl =
   | {
       t: "postgres"
-      dbConn: DbConnSql
+      dbConnSql: DbConnSql
     }
   | {
       t: "in-memory"

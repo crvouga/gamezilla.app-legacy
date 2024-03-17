@@ -23,7 +23,7 @@ import {
   ServerTransport,
 } from "./@CHILD/wire/transport-server"
 import * as WireServer from "./@CHILD/wire/wire.server"
-import { createDbConn } from "./@SHARED/server/db-conn-sql"
+import { createDbConnSql } from "./@SHARED/server/db-conn-sql"
 import { Logger } from "./@SHARED/server/logger"
 import { createSMS } from "./@SHARED/server/sms"
 import {
@@ -33,6 +33,7 @@ import {
   MsgToServer,
   MsgToServerMeta,
 } from "./app.core"
+import { DbConnKv, createDbConnKv } from "./@SHARED/server/db-conn-kv"
 
 //
 //
@@ -44,7 +45,8 @@ import {
 
 export type Deps = {
   logger: Logger
-  dbConn: DbConnSql
+  dbConnSql: DbConnSql
+  dbConnKv: DbConnKv
   sms: SMS
   transport: IServerTransport<{
     MsgToClient: MsgToClient
@@ -65,7 +67,19 @@ export const getDeps = async ({
     throw new Error(`[deps] DATABASE_URL not set`)
   }
 
-  const dbConn = await createDbConn({ databaseUrl, logger })
+  const dbConnSql = await createDbConnSql({ databaseUrl, logger })
+
+  const redisUrl = process.env["REDIS_URL"]
+
+  if (!redisUrl) {
+    throw new Error(`[deps] REDIS_URL not set`)
+  }
+
+  const dbConnKv = await createDbConnKv({
+    t: "redis",
+    url: redisUrl,
+    logger,
+  })
 
   const sms = createSMS("twilio")
 
@@ -78,7 +92,8 @@ export const getDeps = async ({
     transport,
     sms,
     logger,
-    dbConn,
+    dbConnSql,
+    dbConnKv,
   }
 }
 
@@ -102,7 +117,8 @@ export const init = async (input: {
   eff?: Eff<MsgServer>
 }> => {
   const ctx: ServerCtx = {
-    dbConn: input.deps.dbConn,
+    dbConnSql: input.deps.dbConnSql,
+    dbConnKv: input.deps.dbConnKv,
     logger: input.deps.logger,
     now: input.ctx.now,
   }
@@ -160,7 +176,8 @@ export const update = async (input: {
   logMsg({ msg: input.msg, logger: input.deps.logger })
 
   const ctx: ServerCtx = {
-    dbConn: input.deps.dbConn,
+    dbConnSql: input.deps.dbConnSql,
+    dbConnKv: input.deps.dbConnKv,
     logger: input.deps.logger,
     now: input.ctx.now,
   }
@@ -402,7 +419,8 @@ export const subscriptions = async (input: {
   ctx: { now: Posix }
 }): Promise<Sub<MsgServer>> => {
   const ctx: ServerCtx = {
-    dbConn: input.deps.dbConn,
+    dbConnSql: input.deps.dbConnSql,
+    dbConnKv: input.deps.dbConnKv,
     logger: input.deps.logger,
     now: input.ctx.now,
   }

@@ -22,6 +22,7 @@ export const translations: Text = {
   "auth.continue-with-phone": "전화로 계속",
   "auth.or": "또는",
   "auth.sign-in-to": "로그인",
+  "auth.logged-in": "로그인됨",
   "auth-sms.login-with-phone": "전화로 로그인",
   "auth-sms.phone-number": "전화 번호",
   "auth-sms.send-code": "코드 보내기",

@@ -1,7 +1,7 @@
 import { Result } from "../data/result"
 import { Eff } from "../eff"
 import { PubSub, Sub } from "../sub"
-import { Task } from "../task"
+import { IO } from "../data/io"
 
 //
 //
@@ -103,7 +103,7 @@ export type Problem = { type: "ElementNotFound" }
 export type FocusResult = Result<Problem, null>
 
 export const focus =
-  (htmlId: string, timeout?: number): Task<FocusResult> =>
+  (htmlId: string, timeout?: number): IO<FocusResult> =>
   async () => {
     await new Promise((resolve) => setTimeout(resolve, timeout))
 
@@ -120,7 +120,7 @@ export const focus =
 export type ScrollResult = Result<Problem, null>
 
 export const scrollIntoView =
-  (htmlId: string): Task<ScrollResult> =>
+  (htmlId: string): IO<ScrollResult> =>
   async () => {
     await new Promise((resolve) => setTimeout(resolve, 0))
 
@@ -147,7 +147,7 @@ export type DomElement = {
 }
 
 export const getElementById =
-  (htmlId: string): Task<GetElementByIdResult> =>
+  (htmlId: string): IO<GetElementByIdResult> =>
   async () => {
     const element = document.getElementById(htmlId)
 

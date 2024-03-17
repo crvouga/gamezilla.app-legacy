@@ -1,5 +1,5 @@
 import { p } from "./utils/pipe"
-import { Task } from "./task"
+import { IO } from "./data/io"
 
 export type Eff<Msg = never> = (dispatch: (msg: Msg) => void) => void
 
@@ -82,7 +82,7 @@ const None: Eff = () => {
 
 const perform =
   <A, Msg>(f: (a: A) => Msg) =>
-  (task: Task<A>): Eff<Msg> => {
+  (task: IO<A>): Eff<Msg> => {
     return async (dispatch) => {
       const value = await task()
       dispatch(f(value))

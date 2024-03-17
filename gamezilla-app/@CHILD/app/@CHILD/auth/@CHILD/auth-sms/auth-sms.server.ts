@@ -60,7 +60,7 @@ export const getDeps: Module["getDeps"] = ({ ctx }) => {
   return {
     AccountDb: AccountDb({
       t: "postgres",
-      dbConn: ctx.dbConn,
+      dbConnSql: ctx.dbConnSql,
     }),
     VerifySMS: VerifySMS({
       t: "fake",

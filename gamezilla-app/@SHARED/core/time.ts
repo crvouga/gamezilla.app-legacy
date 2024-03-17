@@ -2,7 +2,7 @@ import { Posix } from "./data"
 import { TimeSpan } from "./data/time-span"
 import { Eff } from "./eff"
 import { PubSub, Sub } from "./sub"
-import { Task } from "./task"
+import { IO } from "./data/io"
 
 //
 //
@@ -13,7 +13,7 @@ import { Task } from "./task"
 //
 
 const delay =
-  <TMsg>(timeout: number, msg?: TMsg): Task<TMsg | null> =>
+  <TMsg>(timeout: number, msg?: TMsg): IO<TMsg | null> =>
   async () => {
     await new Promise((resolve) => setTimeout(resolve, timeout))
     return msg ?? null

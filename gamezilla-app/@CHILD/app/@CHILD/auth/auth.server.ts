@@ -19,8 +19,8 @@ import { ContinueAsGuestServer } from "./continue-as-guest"
 
 export const getDeps: ServerModule["getDeps"] = ({ ctx }) => {
   return {
-    AccountDb: AccountDb({ t: "postgres", dbConn: ctx.dbConn }),
-    SessionDb: SessionDb({ t: "postgres-with-cache", dbConn: ctx.dbConn }),
+    AccountDb: AccountDb({ t: "postgres", dbConnSql: ctx.dbConnSql }),
+    SessionDb: SessionDb({ t: "postgres-with-cache", dbConn: ctx.dbConnSql }),
     timeout: (timeSpan) =>
       new Promise((resolve) =>
         setTimeout(resolve, TimeSpan.toMilliseconds(timeSpan)),

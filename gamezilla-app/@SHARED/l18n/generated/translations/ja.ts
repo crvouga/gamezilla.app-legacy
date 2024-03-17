@@ -22,6 +22,7 @@ export const translations: Text = {
   "auth.continue-with-phone": "電話で続行",
   "auth.or": "または",
   "auth.sign-in-to": "サインイン",
+  "auth.logged-in": "ログインしました",
   "auth-sms.login-with-phone": "電話でログイン",
   "auth-sms.phone-number": "電話番号",
   "auth-sms.send-code": "コードを送信",

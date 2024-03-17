@@ -22,6 +22,7 @@ export const translations: Text = {
   "auth.continue-with-phone": "继续使用电话",
   "auth.or": "要么",
   "auth.sign-in-to": "登录到",
+  "auth.logged-in": "已登录",
   "auth-sms.login-with-phone": "使用电话登录",
   "auth-sms.phone-number": "电话号码",
   "auth-sms.send-code": "发送代码",

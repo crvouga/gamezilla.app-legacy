@@ -5,19 +5,21 @@ import {
   UserId,
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { ServerCtx } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { dbConnNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
+import { createDbConnKvHashMap } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv/db-conn-kv-impl-hash-map"
+import { dbConnSqlNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import { LoggerConsole } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { Posix } from "gamezilla-app/@SHARED/core"
 import { LamportTimestamp } from "gamezilla-app/@SHARED/lamport-clock"
 import { EventId } from "../@SHARED/event"
+import { Space } from "../spaces-core"
 import { ModelServer, ServerDeps } from "../spaces.core"
 import * as SpacesServer from "../spaces.server"
-import { Space } from "../spaces-core"
 
 export const ctx: ServerCtx = {
-  dbConn: dbConnNoop,
+  dbConnSql: dbConnSqlNoop,
   logger: LoggerConsole("test"),
   now: Posix.now(),
+  dbConnKv: createDbConnKvHashMap(),
 }
 
 export const init = () => {
