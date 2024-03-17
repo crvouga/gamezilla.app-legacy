@@ -133,6 +133,8 @@ export async function run<TModel, TMsg, TCtx>(
       program.render?.({ model: model!, ctx, dispatch })
     },
   )
+
+  updateDebugger?.(model, "@INIT")
 }
 
 export const Program = {
