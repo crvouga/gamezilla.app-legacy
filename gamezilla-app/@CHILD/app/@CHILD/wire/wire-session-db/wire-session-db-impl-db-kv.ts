@@ -12,12 +12,12 @@ export const WireSessionDbKv = ({
 }): IWireSessionDb => {
   const clientsKv = DbConnKv.instance(
     dbConnKv,
-    "wire-session-db/clients-by-session-id",
+    ["wire-session-db", "clients-by-session-id"],
     isClient,
   )
   const sessionIdsKv = DbConnKv.instance(
     dbConnKv,
-    "wire-session-db/session-ids-by-user-id",
+    ["wire-session-db", "session-ids-by-user-id"],
     P.arr(SessionId.is),
   )
   return {
