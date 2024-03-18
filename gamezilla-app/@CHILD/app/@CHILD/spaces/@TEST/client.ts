@@ -270,7 +270,10 @@ const toStartedSpace = (spaceId: SpaceId, startedBy: UserId) => {
       spaceId,
       userId: startedBy,
     }),
-  ].reduce((model, msgEvt) => Space.appendEvent({ model, msgEvt }), Space.init)
+  ].reduce(
+    (model, msgEvt) => Space.appendEvent({ model, event: msgEvt }),
+    Space.init,
+  )
 }
 
 export const serverListedSpaces =

@@ -10,7 +10,7 @@ export const makeSpace = (spaceId: SpaceId, hostId: UserId) => {
     (model) =>
       Space.appendEvent({
         model,
-        msgEvt: withId({
+        event: withId({
           t: "user-started-space",
           spaceId: spaceId,
           userId: hostId,
@@ -20,7 +20,7 @@ export const makeSpace = (spaceId: SpaceId, hostId: UserId) => {
     (model) =>
       Space.appendEvent({
         model,
-        msgEvt: withId({
+        event: withId({
           t: "user-inputted-game",
           spaceId: spaceId,
           userId: hostId,

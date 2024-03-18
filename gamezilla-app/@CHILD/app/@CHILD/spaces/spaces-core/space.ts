@@ -17,9 +17,10 @@ import * as SpaceState from "./space-state"
 
 export type Model = {
   events: WithEventMeta<SpaceEvent>[]
+  eventIds: { [eventId: EventId]: EventId }
   clock: LamportClock
   snapshots: {
-    [msgEvtId: EventId]: SpaceState.State
+    [eventId: EventId]: SpaceState.State
   }
 }
 
@@ -27,6 +28,7 @@ export const init: Model = {
   clock: LamportClock.init,
   events: [],
   snapshots: {},
+  eventIds: {},
 }
 
 export const isEqual = (left: Model, right: Model) => {
@@ -41,21 +43,25 @@ export const isEqual = (left: Model, right: Model) => {
 //
 
 export const startFromLatestSnapshot = (model: Model): Model => {
-  const msgEvts: WithEventMeta<SpaceEvent>[] = []
+  const events: WithEventMeta<SpaceEvent>[] = []
 
   for (let i = model.events.length - 1; i >= 0; i--) {
-    const msgEvt = model.events[i]!
+    const event = model.events[i]!
 
-    const snapshot = model.snapshots[msgEvt.eventId]
+    const snapshot = model.snapshots[event.eventId]
 
-    msgEvts.unshift(msgEvt)
+    events.unshift(event)
 
     if (snapshot) {
       return {
+        eventIds: events.reduce<Model["eventIds"]>(
+          (acc, event) => ({ ...acc, [event.eventId]: event.eventId }),
+          {},
+        ),
         clock: model.clock,
-        events: msgEvts,
+        events: events,
         snapshots: {
-          [msgEvt.eventId]: snapshot,
+          [event.eventId]: snapshot,
         },
       }
     }
@@ -63,8 +69,12 @@ export const startFromLatestSnapshot = (model: Model): Model => {
 
   return {
     clock: model.clock,
-    events: msgEvts,
+    events: events,
     snapshots: {},
+    eventIds: events.reduce<Model["eventIds"]>(
+      (acc, event) => ({ ...acc, [event.eventId]: event.eventId }),
+      {},
+    ),
   }
 }
 
@@ -76,43 +86,51 @@ export const startFromLatestSnapshot = (model: Model): Model => {
 
 export const appendEvent = ({
   model,
-  msgEvt,
+  event,
 }: {
   model: Model
-  msgEvt: WithEventId<SpaceEvent>
+  event: WithEventId<SpaceEvent>
 }): Model => {
+  if (model.eventIds[event.eventId]) {
+    return model
+  }
+
   //
   //
   //
 
   const newEvent: WithEventMeta<SpaceEvent> = {
-    ...msgEvt,
+    ...event,
     happenedAt: LamportClock.toCurrentTime(model.clock),
   }
 
   const newSnapshots = { ...model.snapshots }
 
-  const newEvents = [...model.events, newEvent].sort(
+  const appended = [...model.events, newEvent]
+
+  const newEvents = appended.sort(
     ascend((e) => LamportTimestamp.toNumber(e.happenedAt)),
   )
+
+  const newEventIds = {
+    ...model.eventIds,
+    [event.eventId]: event.eventId,
+  }
 
   //
   // Remove invalid snapshots
   //
 
-  const newEventIndex = newEvents.findIndex((e) => e.eventId === msgEvt.eventId)
+  const newEventIndex = newEvents.findIndex((e) => e.eventId === event.eventId)
 
   if (newEventIndex === -1) {
-    return model
-  }
-
-  if (newEvents.length - newEventIndex > 50) {
+    // This should never happen because we just appended the event
     return model
   }
 
   for (let i = newEventIndex; i < newEvents.length; i++) {
-    const msgEvtId = newEvents[i]!.eventId
-    delete newSnapshots[msgEvtId]
+    const event = newEvents[i]!.eventId
+    delete newSnapshots[event]
     continue
   }
 
@@ -124,9 +142,10 @@ export const appendEvent = ({
     clock: model.clock,
     events: newEvents,
     snapshots: newSnapshots,
+    eventIds: newEventIds,
   })
 
-  newSnapshots[msgEvt.eventId] = snapshot
+  newSnapshots[event.eventId] = snapshot
 
   //
   //
@@ -141,6 +160,7 @@ export const appendEvent = ({
     snapshots: newSnapshots,
     clock: newClock,
     events: newEvents,
+    eventIds: newEventIds,
   }
 
   //
@@ -150,14 +170,47 @@ export const appendEvent = ({
   return modelNew
 }
 
-export const toEventWithMeta = (model: Model, msgEvtId: EventId) => {
-  const msgEvt = model.events.find((e) => e.eventId === msgEvtId)
+export const deriveState = (model: Model): SpaceState.State => {
+  //
+  //
+  //
 
-  if (!msgEvt) {
+  let running = SpaceState.init
+
+  const events: WithEventMeta<SpaceEvent>[] = []
+
+  for (let i = model.events.length - 1; i >= 0; i--) {
+    const event = model.events[i]!
+
+    const snapshot = model.snapshots[event.eventId]
+
+    if (snapshot) {
+      running = snapshot
+      break
+    }
+
+    events.push(event)
+  }
+
+  //
+  //
+  //
+
+  for (const event of events) {
+    running = SpaceState.reducer({ state: running, msgSpace: event })
+  }
+
+  return running
+}
+
+export const toEventWithMeta = (model: Model, eventId: EventId) => {
+  const event = model.events.find((e) => e.eventId === eventId)
+
+  if (!event) {
     return null
   }
 
-  return msgEvt
+  return event
 }
 
 export const hasEvent = (model: Model, msgEvtId: EventId) => {
@@ -178,39 +231,6 @@ export const toSpaceId = (model: Model): SpaceId | null => {
   }
 }
 
-export const deriveState = (model: Model): SpaceState.State => {
-  //
-  //
-  //
-
-  let running = SpaceState.init
-
-  const msgEvts: WithEventMeta<SpaceEvent>[] = []
-
-  for (let i = model.events.length - 1; i >= 0; i--) {
-    const msgEvt = model.events[i]!
-
-    const snapshot = model.snapshots[msgEvt.eventId]
-
-    if (snapshot) {
-      running = snapshot
-      break
-    }
-
-    msgEvts.push(msgEvt)
-  }
-
-  //
-  //
-  //
-
-  for (const msgEvt of msgEvts) {
-    running = SpaceState.reducer({ state: running, msgSpace: msgEvt })
-  }
-
-  return running
-}
-
 export const toSpaceStarted = (model: Model): SpaceState.Started | null => {
   const state = deriveState(model)
 
@@ -229,8 +249,13 @@ export const toUserIds = (model: Model): UserId[] => {
 }
 
 export const merge = (left: Model, right: Model): Model => {
-  const msgEvts = [...left.events, ...right.events].sort(
+  const eventsNew: Model["events"] = [...left.events, ...right.events].sort(
     ascend((e) => LamportTimestamp.toNumber(e.happenedAt)),
+  )
+
+  const distinctEvents = eventsNew.filter(
+    (event, index, self) =>
+      index === self.findIndex((e) => e.eventId === event.eventId),
   )
 
   const snapshots = { ...left.snapshots, ...right.snapshots }
@@ -239,7 +264,11 @@ export const merge = (left: Model, right: Model): Model => {
 
   return {
     clock,
-    events: msgEvts,
+    events: distinctEvents,
     snapshots,
+    eventIds: {
+      ...left.eventIds,
+      ...right.eventIds,
+    },
   }
 }

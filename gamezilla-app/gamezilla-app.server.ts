@@ -14,7 +14,7 @@ const main = async () => {
     logger,
   })
 
-  await Program.run({
+  const program = await Program.run({
     ctx: AppServer.getCtx,
 
     init: (input) => AppServer.init({ ...input, deps }),
@@ -25,6 +25,16 @@ const main = async () => {
   })
 
   await server.start(SERVER_PORT)
+
+  server.registerHandler(async () => {
+    return {
+      status: 200,
+      headers: {},
+      body: JSON.stringify({
+        model: program.getModel(),
+      }),
+    }
+  })
 
   logger.info(
     `Server started. Listening on port ${SERVER_PORT}. IS_PROD=${IS_PROD}`,

@@ -135,6 +135,12 @@ export async function run<TModel, TMsg, TCtx>(
   )
 
   updateDebugger?.(model, "@INIT")
+
+  return {
+    getModel() {
+      return model
+    },
+  }
 }
 
 export const Program = {

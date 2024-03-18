@@ -102,6 +102,7 @@ export const reducer = ({
           }
         }
         default: {
+          console.error("Invalid modelSync", modelSync)
           return modelSync
         }
       }
@@ -120,6 +121,7 @@ export const reducer = ({
           }
         }
         default: {
+          console.error("Invalid modelSync", modelSync)
           return modelSync
         }
       }

@@ -12,7 +12,7 @@ import {
   sendToClient,
   sendToUser,
 } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { Eff, Result, Sub, batchMsgs, isErr } from "gamezilla-app/@SHARED/core"
+import { Eff, Result, Sub, batchMsgs } from "gamezilla-app/@SHARED/core"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import { Game } from "./@CHILD/game/game.server"
 import { ProfileCache } from "./profile-cache"
@@ -83,13 +83,7 @@ export const update: ServerModule["update"] = async (input) => {
 }
 
 const updateProfileCache: ServerModule["update"] = async (input) => {
-  const added = await input.deps.ProfileCache.add(
-    input.msgClient?.profiles ?? {},
-  )
-  if (isErr(added)) {
-    input.ctx.logger.error(`Error adding to profile cache. ${added.error}`)
-    return { model: input.model }
-  }
+  await input.deps.ProfileCache.add(input.msgClient?.profiles ?? {})
 
   return { model: input.model }
 }

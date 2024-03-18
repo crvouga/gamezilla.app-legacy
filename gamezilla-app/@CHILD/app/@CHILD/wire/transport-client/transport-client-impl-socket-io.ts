@@ -50,10 +50,10 @@ export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
         codebaseVersionId,
       }
 
-      socket.timeout(2000).emit("to-server", toServer, (err: unknown) => {
+      socket.emit("to-server", toServer, (err: unknown) => {
         if (err) {
           console.error("Error sending to server", err, toServer)
-          sendToServer(msgs)
+          // sendToServer(msgs)
         }
       })
     }

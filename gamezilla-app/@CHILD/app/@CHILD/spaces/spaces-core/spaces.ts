@@ -341,7 +341,7 @@ const appendEvent = ({
 
   const space = model.spaces[spaceId] ?? Space.init
 
-  const spaceNew = Space.appendEvent({ msgEvt, model: space })
+  const spaceNew = Space.appendEvent({ event: msgEvt, model: space })
 
   return {
     model: {
