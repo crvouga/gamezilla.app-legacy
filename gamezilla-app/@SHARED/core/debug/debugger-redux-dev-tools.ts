@@ -478,21 +478,6 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (
     }
   })
 
-  await new Promise<null>((resolve) => {
-    const unsubscribe = connection.subscribe((msg) => {
-      switch (msg.type) {
-        case "START": {
-          unsubscribe()
-          resolve(null)
-          break
-        }
-        default: {
-          break
-        }
-      }
-    })
-  })
-
   const Debugger = makeDebugger<any, any>(connection)
 
   Debugger({
