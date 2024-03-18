@@ -94,21 +94,37 @@ export async function run<TModel, TMsg, TCtx>(
     cleanUpSubscriptions = sub.subscribe(dispatch)
   }
 
+  let isUpdating = false
+  const queue: TMsg[] = []
+
   async function dispatch(msg: TMsg) {
     try {
       const ctx = await program.ctx()
 
+      // This is so we don't overwrite the model if we're already updating
+      if (isUpdating) {
+        queue.push(msg)
+        return
+      }
+
+      isUpdating = true
       const updated = await program.update({
         ctx,
         msg,
         model: model!,
       })
+      isUpdating = false
 
       model = updated.model
       updateUI(model, ctx)
       updateEff(updated.eff)
       updateSubscriptions(model, ctx)
       updateDebugger?.(model, msg)
+
+      if (queue.length > 0) {
+        const msg = queue.shift()!
+        dispatch(msg)
+      }
     } catch (error) {
       program.crash?.({ error })
     }
