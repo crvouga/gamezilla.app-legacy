@@ -101,7 +101,7 @@ export async function run<TModel, TMsg, TCtx>(
     try {
       const ctx = await program.ctx()
 
-      // This is so we don't overwrite the model if we're already updating
+      // This is so we don't overwrite ongoing updates
       if (isUpdating) {
         queue.push(msg)
         return
@@ -149,7 +149,6 @@ export async function run<TModel, TMsg, TCtx>(
       program.render?.({ model: model!, ctx, dispatch })
     },
   )
-
   updateDebugger?.(model, "@INIT")
 
   return {
