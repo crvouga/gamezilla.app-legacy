@@ -43,14 +43,23 @@ export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
       transport.msgEvt.publish({ t: "server-disconnected" })
     })
 
-    transport.toServer.subscribe((msgs) => {
+    const sendToServer = (msgs: MsgToServer[]) => {
       const toServer: MsgClientToMsgServer<MsgToServer> = {
         t: "to-server",
         msgs,
         codebaseVersionId,
       }
 
-      socket.emit("to-server", toServer)
+      socket.timeout(2000).emit("to-server", toServer, (err: unknown) => {
+        if (err) {
+          console.error("Error sending to server", err, toServer)
+          sendToServer(msgs)
+        }
+      })
+    }
+
+    transport.toServer.subscribe((msgs) => {
+      sendToServer(msgs)
     })
 
     socket.on("to-client", (msg: MsgServerToMsgClient<MsgToClient>) => {

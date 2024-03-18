@@ -43,23 +43,28 @@ export const ServerTransportSocketIO = <MsgToServer, MsgToClient>({
 
     transport.wire.publish({ t: "client-connected", clientId, sessionId })
 
-    socket.on("to-server", (msg: MsgClientToMsgServer<MsgToServer>) => {
-      if (msg.codebaseVersionId !== codebaseVersionId) {
-        transport.wire.publish({
-          t: "got-bad-msgs",
-          clientId,
-          msgs: msg.msgs,
-          reason: "codebase-version-id-mismatch",
-          sessionId,
-        })
-      }
+    socket.on(
+      "to-server",
+      (msg: MsgClientToMsgServer<MsgToServer>, acknowledge: Function) => {
+        if (msg.codebaseVersionId !== codebaseVersionId) {
+          transport.wire.publish({
+            t: "got-bad-msgs",
+            clientId,
+            msgs: msg.msgs,
+            reason: "codebase-version-id-mismatch",
+            sessionId,
+          })
+        }
 
-      transport.toServer.publish({
-        msgs: msg.msgs,
-        clientId: clientId,
-        sessionId: sessionId,
-      })
-    })
+        transport.toServer.publish({
+          msgs: msg.msgs,
+          clientId: clientId,
+          sessionId: sessionId,
+        })
+
+        acknowledge()
+      },
+    )
 
     const unsubscribe = transport.toClient.subscribe((msgsByClientId) => {
       const msgs = msgsByClientId[clientId]

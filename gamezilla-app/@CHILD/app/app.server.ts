@@ -218,11 +218,25 @@ function logMsg({
   msgEvt?: ServerEvent
   msgCmd?: ServerCmd<MsgToClient>
 }) {
-  const prefix = msg ? "[msg]" : msgEvt ? "[msgEvt]" : "[msgCmd]"
+  const prefix = msg ? "[msg]" : msgEvt ? "[evt]" : "[cmd]"
 
   const obj = { ...msg, ...msgEvt, ...msgCmd }
 
-  logger.info(`${prefix} ${toMsgType(obj)}`)
+  const sentMsgType =
+    msgCmd?.c.t === "send-to-client" ||
+    msgCmd?.c.t === "send-to-session" ||
+    msgCmd?.c.t === "send-to-user" ||
+    msgCmd?.c.t === "broadcast"
+      ? toMsgType(msgCmd.c.msg)
+      : null
+
+  const log = [prefix, toMsgType(obj)]
+
+  if (sentMsgType) {
+    log.push(`sent ${sentMsgType}`)
+  }
+
+  logger.info(log.join(" "))
 }
 
 type Output = {
@@ -254,7 +268,7 @@ const updateLoop = async (
       msgEvt: batchMsgs(acc.msgEvt, updatedCmd.msgEvt),
     }
 
-    ctx.logger.info(`[msgCmd] ${toMsgType(msgCmd)}`)
+    logMsg({ msgCmd, logger: deps.logger })
 
     return updateLoop(deps, ctx, accNew)
   }
@@ -276,7 +290,7 @@ const updateLoop = async (
       msgEvt: batchMsgs(msgEvtRest, updatedEvent.msgEvt),
     }
 
-    ctx.logger.info(`[evt] ${toMsgType(msgEvt)}`)
+    logMsg({ msgEvt, logger: deps.logger })
 
     return updateLoop(deps, ctx, accNew)
   }

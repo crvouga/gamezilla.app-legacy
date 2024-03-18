@@ -16,7 +16,7 @@ import * as SpaceState from "./space-state"
 //
 
 export type Model = {
-  msgEvts: WithEventMeta<SpaceEvent>[]
+  events: WithEventMeta<SpaceEvent>[]
   clock: LamportClock
   snapshots: {
     [msgEvtId: EventId]: SpaceState.State
@@ -25,7 +25,7 @@ export type Model = {
 
 export const init: Model = {
   clock: LamportClock.init,
-  msgEvts: [],
+  events: [],
   snapshots: {},
 }
 
@@ -43,8 +43,8 @@ export const isEqual = (left: Model, right: Model) => {
 export const startFromLatestSnapshot = (model: Model): Model => {
   const msgEvts: WithEventMeta<SpaceEvent>[] = []
 
-  for (let i = model.msgEvts.length - 1; i >= 0; i--) {
-    const msgEvt = model.msgEvts[i]!
+  for (let i = model.events.length - 1; i >= 0; i--) {
+    const msgEvt = model.events[i]!
 
     const snapshot = model.snapshots[msgEvt.eventId]
 
@@ -53,7 +53,7 @@ export const startFromLatestSnapshot = (model: Model): Model => {
     if (snapshot) {
       return {
         clock: model.clock,
-        msgEvts: msgEvts,
+        events: msgEvts,
         snapshots: {
           [msgEvt.eventId]: snapshot,
         },
@@ -63,7 +63,7 @@ export const startFromLatestSnapshot = (model: Model): Model => {
 
   return {
     clock: model.clock,
-    msgEvts: msgEvts,
+    events: msgEvts,
     snapshots: {},
   }
 }
@@ -92,7 +92,7 @@ export const appendEvent = ({
 
   const newSnapshots = { ...model.snapshots }
 
-  const newEvents = [...model.msgEvts, newEvent].sort(
+  const newEvents = [...model.events, newEvent].sort(
     ascend((e) => LamportTimestamp.toNumber(e.happenedAt)),
   )
 
@@ -122,7 +122,7 @@ export const appendEvent = ({
 
   const snapshot = deriveState({
     clock: model.clock,
-    msgEvts: newEvents,
+    events: newEvents,
     snapshots: newSnapshots,
   })
 
@@ -140,7 +140,7 @@ export const appendEvent = ({
   const modelNew: Model = {
     snapshots: newSnapshots,
     clock: newClock,
-    msgEvts: newEvents,
+    events: newEvents,
   }
 
   //
@@ -151,7 +151,7 @@ export const appendEvent = ({
 }
 
 export const toEventWithMeta = (model: Model, msgEvtId: EventId) => {
-  const msgEvt = model.msgEvts.find((e) => e.eventId === msgEvtId)
+  const msgEvt = model.events.find((e) => e.eventId === msgEvtId)
 
   if (!msgEvt) {
     return null
@@ -161,7 +161,7 @@ export const toEventWithMeta = (model: Model, msgEvtId: EventId) => {
 }
 
 export const hasEvent = (model: Model, msgEvtId: EventId) => {
-  return model.msgEvts.some((e) => e.eventId === msgEvtId)
+  return model.events.some((e) => e.eventId === msgEvtId)
 }
 
 export const toSpaceId = (model: Model): SpaceId | null => {
@@ -187,8 +187,8 @@ export const deriveState = (model: Model): SpaceState.State => {
 
   const msgEvts: WithEventMeta<SpaceEvent>[] = []
 
-  for (let i = model.msgEvts.length - 1; i >= 0; i--) {
-    const msgEvt = model.msgEvts[i]!
+  for (let i = model.events.length - 1; i >= 0; i--) {
+    const msgEvt = model.events[i]!
 
     const snapshot = model.snapshots[msgEvt.eventId]
 
@@ -229,7 +229,7 @@ export const toUserIds = (model: Model): UserId[] => {
 }
 
 export const merge = (left: Model, right: Model): Model => {
-  const msgEvts = [...left.msgEvts, ...right.msgEvts].sort(
+  const msgEvts = [...left.events, ...right.events].sort(
     ascend((e) => LamportTimestamp.toNumber(e.happenedAt)),
   )
 
@@ -239,7 +239,7 @@ export const merge = (left: Model, right: Model): Model => {
 
   return {
     clock,
-    msgEvts,
+    events: msgEvts,
     snapshots,
   }
 }

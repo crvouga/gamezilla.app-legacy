@@ -28,7 +28,7 @@ export const createDbConnKvRedis = async ({
 
         const durationInMicroseconds = (end - start) / BigInt(1000)
 
-        logger.debug(
+        logger.info(
           `[db-conn-kv] duration=${durationInMicroseconds}µs get: key=${key}`,
         )
 
