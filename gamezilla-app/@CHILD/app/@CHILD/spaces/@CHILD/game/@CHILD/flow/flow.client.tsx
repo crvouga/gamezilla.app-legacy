@@ -77,7 +77,7 @@ const update: Module["update"] = (input) => {
   )
 }
 
-const updateChild: Module["update"] = async (input) => {
+const updateChild: Module["update"] = (input) => {
   const { model, modelSync, msgEvt, ctx, msgCmd, msgSync, msgServer, msg } =
     input
 
@@ -87,7 +87,7 @@ const updateChild: Module["update"] = async (input) => {
     }
 
     case "play": {
-      const updated = await PlayClient.update({
+      const updated = PlayClient.update({
         ctx: { ...ctx, onQuit: () => {} },
         modelSync: modelSync.c,
         model: model.t === "play" ? model.c : PlayClient.init,
@@ -98,7 +98,7 @@ const updateChild: Module["update"] = async (input) => {
         msg: msg?.t === "play" ? msg.c : null,
       })
 
-      const tagged = await GameClientModule.tagOutput(
+      const tagged = GameClientModule.tagOutput(
         "play",
         (msgCmd) => ClientCmd.tag("play", msgCmd),
         updated,
@@ -111,7 +111,7 @@ const updateChild: Module["update"] = async (input) => {
     }
 
     case "create": {
-      const updated = await CreateClient.update({
+      const updated = CreateClient.update({
         ctx: { ...ctx, onQuit: () => {} },
         modelSync: modelSync.c,
         model: model.t === "create" ? model.c : CreateClient.init,
@@ -122,7 +122,7 @@ const updateChild: Module["update"] = async (input) => {
         msg: msg?.t === "create" ? msg.c : null,
       })
 
-      const tagged = await GameClientModule.tagOutput(
+      const tagged = GameClientModule.tagOutput(
         "create",
         (msgCmd) => SpaceClientCmd.tag("create", msgCmd),
         updated,
@@ -202,12 +202,12 @@ const updateFromMsg: Module["update"] = (input) => {
 //
 //
 
-const subscriptions: Module["subscriptions"] = async (input) => {
+const subscriptions: Module["subscriptions"] = (input) => {
   switch (input.modelSync.t) {
     case "play": {
       return Sub.tag(
         "play",
-        await PlayClient.subscriptions({
+        PlayClient.subscriptions({
           ctx: {
             ...input.ctx,
             onQuit() {},
@@ -220,7 +220,7 @@ const subscriptions: Module["subscriptions"] = async (input) => {
     case "create": {
       return Sub.tag(
         "create",
-        await CreateClient.subscriptions({
+        CreateClient.subscriptions({
           ctx: {
             ...input.ctx,
             onQuit() {},

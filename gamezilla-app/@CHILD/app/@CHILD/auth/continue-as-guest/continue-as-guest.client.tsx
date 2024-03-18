@@ -16,7 +16,7 @@ export const initModel: ModelClient = {
   guestRequest: notAsked,
 }
 
-export const update: ClientModule["update"] = async ({
+export const update: ClientModule["update"] = ({
   ctx,
   model,
   msg,

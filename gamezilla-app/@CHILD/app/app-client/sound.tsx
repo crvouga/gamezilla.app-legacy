@@ -151,7 +151,7 @@ const updateFromEvent: Module["update"] = ({ model, msgEvt }) => {
   }
 }
 
-export const updateFromCmd: Module["update"] = async ({ model, msgCmd }) => {
+export const updateFromCmd: Module["update"] = ({ model, msgCmd }) => {
   if (!msgCmd) {
     return { model }
   }

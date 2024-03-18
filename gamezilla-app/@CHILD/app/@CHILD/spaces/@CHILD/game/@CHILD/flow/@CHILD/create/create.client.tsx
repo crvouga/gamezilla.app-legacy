@@ -37,8 +37,8 @@ const update: ClientModule["update"] = (input) => {
   )
 }
 
-const updateFlowPackList: ClientModule["update"] = async (input) => {
-  const updated = await FlowPackListClient.update({
+const updateFlowPackList: ClientModule["update"] = (input) => {
+  const updated = FlowPackListClient.update({
     ctx: input.ctx,
     model: { ...input.model.flowPackList, packs: input.model.packs },
     msg: input.msg?.t === "flow-pack-list" ? input.msg.c : undefined,
@@ -65,8 +65,8 @@ const updateFlowPackList: ClientModule["update"] = async (input) => {
   }
 }
 
-const updateFlowPuzzleList: ClientModule["update"] = async (input) => {
-  const updated = await FlowPuzzleListClient.update({
+const updateFlowPuzzleList: ClientModule["update"] = (input) => {
+  const updated = FlowPuzzleListClient.update({
     ctx: input.ctx,
     model: { ...input.model.flowPuzzleList, puzzles: input.model.puzzles },
     msg: input.msg?.t === "flow-puzzle-list" ? input.msg.c : undefined,
@@ -115,14 +115,14 @@ const ViewFeedItem: ClientModule["ViewFeedItem"] = () => {
   return <div></div>
 }
 
-const subscriptions: ClientModule["subscriptions"] = async (input) => {
+const subscriptions: ClientModule["subscriptions"] = (input) => {
   return Sub.batch([
     //
-    await PuzzleCreateClient.subscriptions(input),
-    await PackBuilderClient.subscriptions(input),
+    PuzzleCreateClient.subscriptions(input),
+    PackBuilderClient.subscriptions(input),
     Sub.tag(
       "flow-pack-list",
-      await FlowPackListClient.subscriptions({
+      FlowPackListClient.subscriptions({
         ctx: input.ctx,
         model: input.model.flowPackList,
       }),

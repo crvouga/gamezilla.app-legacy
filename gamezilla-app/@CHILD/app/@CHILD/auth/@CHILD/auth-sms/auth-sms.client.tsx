@@ -71,7 +71,7 @@ type Module = AppClientModule<{
 //
 //
 
-export const init: Module["init"] = async () => {
+export const init: Module["init"] = () => {
   return {
     model: {
       codeInput: "",
@@ -79,8 +79,7 @@ export const init: Module["init"] = async () => {
       //
       phoneNumberInput: "",
       countryCodeInput:
-        (await Iso3166Alpha2Code.getNavigatorCountry()) ??
-        Iso3166Alpha2Code.of("US"),
+        Iso3166Alpha2Code.getNavigatorCountry() ?? Iso3166Alpha2Code.of("US"),
       phoneNumberError: null,
       //
 
@@ -113,7 +112,7 @@ const PHONE_NUMBER_INPUT_VIEW_ID = "phoneNumberInput"
 //
 //
 
-export const update: Module["update"] = async (input) => {
+export const update: Module["update"] = (input) => {
   if (input.msg) {
     return updateFromMsg(input)
   }
@@ -123,7 +122,7 @@ export const update: Module["update"] = async (input) => {
   return { model: input.model }
 }
 
-const updateFromMsg: Module["update"] = async (input) => {
+const updateFromMsg: Module["update"] = (input) => {
   if (!input.msg) {
     return { model: input.model }
   }
@@ -307,7 +306,7 @@ const updateFromMsg: Module["update"] = async (input) => {
   }
 }
 
-const updateFromServer: Module["update"] = async (input) => {
+const updateFromServer: Module["update"] = (input) => {
   if (!input.msgServer) {
     return { model: input.model }
   }

@@ -9,7 +9,7 @@ import { withId } from "../@SHARED/event"
 import { SpaceClientModule } from "../architecture/architecture"
 import { SpaceEvent, Spaces } from "../spaces-core"
 
-const update: SpaceClientModule["update"] = async (input) => {
+const update: SpaceClientModule["update"] = (input) => {
   return SpaceClientModule.andThen(
     { model: input.model },
     (model) => updateEndSpaceButton({ ...input, model }),
@@ -18,7 +18,7 @@ const update: SpaceClientModule["update"] = async (input) => {
   )
 }
 
-const updateFromAppEvent: SpaceClientModule["update"] = async (input) => {
+const updateFromAppEvent: SpaceClientModule["update"] = (input) => {
   const { ctx, model, msgEvt } = input
 
   switch (msgEvt?.t) {
@@ -47,7 +47,7 @@ const updateFromAppEvent: SpaceClientModule["update"] = async (input) => {
   }
 }
 
-const updateFromSpaceEvent: SpaceClientModule["update"] = async (input) => {
+const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
   const { ctx, model, msgSpaceEvent } = input
 
   switch (msgSpaceEvent?.t) {

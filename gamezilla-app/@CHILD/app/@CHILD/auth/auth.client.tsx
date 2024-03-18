@@ -28,8 +28,8 @@ import { ContinueAsGuestClient } from "./continue-as-guest"
 //
 //
 
-export const init: ClientModule["init"] = async (input) => {
-  const sms = await AuthClientSMS.init(input)
+export const init: ClientModule["init"] = (input) => {
+  const sms = AuthClientSMS.init(input)
 
   return {
     model: {
@@ -64,8 +64,8 @@ export const update: ClientModule["update"] = (input) => {
   )
 }
 
-const updateChild: ClientModule["update"] = async (input) => {
-  const updated = await AuthClientSMS.update({
+const updateChild: ClientModule["update"] = (input) => {
+  const updated = AuthClientSMS.update({
     ctx: input.ctx,
     model: input.model.sms,
     msgCmd: input.msgCmd,
@@ -82,7 +82,7 @@ const updateChild: ClientModule["update"] = async (input) => {
   }
 }
 
-const updateFromMsg: ClientModule["update"] = async (input) => {
+const updateFromMsg: ClientModule["update"] = (input) => {
   if (!input.msg) {
     return { model: input.model }
   }
@@ -190,11 +190,11 @@ const updateFromServer: ClientModule["update"] = (input) => {
   }
 }
 
-const updateFromEvent: ClientModule["update"] = async (input) => {
+const updateFromEvent: ClientModule["update"] = (input) => {
   return updateRedirect(input)
 }
 
-const updateRedirect: ClientModule["update"] = async (input) => {
+const updateRedirect: ClientModule["update"] = (input) => {
   if (!input.msgEvt) {
     return { model: input.model }
   }
@@ -253,14 +253,11 @@ const updateRedirect: ClientModule["update"] = async (input) => {
 //
 //
 
-export const subscriptions: ClientModule["subscriptions"] = async ({
+export const subscriptions: ClientModule["subscriptions"] = ({
   model,
   ctx,
 }) => {
-  return Sub.tag(
-    "sms",
-    await AuthClientSMS.subscriptions({ model: model.sms, ctx }),
-  )
+  return Sub.tag("sms", AuthClientSMS.subscriptions({ model: model.sms, ctx }))
 }
 
 //

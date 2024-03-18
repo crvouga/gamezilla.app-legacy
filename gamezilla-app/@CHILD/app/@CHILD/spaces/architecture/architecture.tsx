@@ -35,8 +35,6 @@ export type Input = {
   msgSpaceEvent?: WithEventId<SpaceEvent> | null
 }
 
-export type MaybePromise<T> = T | Promise<T>
-
 export type Output = {
   model: ModelClient
   modelLocation?: {
@@ -53,12 +51,9 @@ export type Output = {
 }
 
 export type SpaceClientModule = {
-  init: (input: { ctx: Ctx; model: ModelClient }) => MaybePromise<Output>
-  update: (input: Input) => MaybePromise<Output>
-  subscriptions: (input: {
-    ctx: Ctx
-    model: ModelClient
-  }) => MaybePromise<Sub<MsgClient>>
+  init: (input: { ctx: Ctx; model: ModelClient }) => Output
+  update: (input: Input) => Output
+  subscriptions: (input: { ctx: Ctx; model: ModelClient }) => Sub<MsgClient>
   View: (input: {
     ctx: Ctx
     model: ModelClient
@@ -66,19 +61,17 @@ export type SpaceClientModule = {
   }) => VDom
 }
 
-const andThen = async (
-  accPromise: MaybePromise<Output>,
-  ...updates: ((model: ModelClient) => MaybePromise<Output>)[]
-): Promise<Output> => {
+const andThen = (
+  acc: Output,
+  ...updates: ((model: ModelClient) => Output)[]
+): Output => {
   const [update, ...rest] = updates
-
-  const acc = await accPromise
 
   if (!update) {
     return acc
   }
 
-  const updated = await update(acc.model)
+  const updated = update(acc.model)
 
   const accNew: Output = {
     model: updated.model,

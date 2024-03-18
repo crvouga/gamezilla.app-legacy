@@ -308,9 +308,7 @@ const toNameWithEmoji = (code: Iso3166Alpha2Code): string => {
   return toName(code)
 }
 
-const getNavigatorCountry = async (): Promise<
-  Iso3166Alpha2Code | undefined
-> => {
+const getNavigatorCountry = (): Iso3166Alpha2Code | undefined => {
   const locale: unknown = navigator.language
 
   if (typeof locale !== "string") {

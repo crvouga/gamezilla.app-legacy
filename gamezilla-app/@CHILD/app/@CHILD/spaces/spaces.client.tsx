@@ -24,7 +24,7 @@ import { SyncClient } from "./sync/sync.client"
 //
 //
 
-export const init: ClientModule["init"] = async ({ ctx }) => {
+export const init: ClientModule["init"] = ({ ctx }) => {
   const model: ModelClient = {
     ...Spaces.init,
     games: {},
@@ -32,7 +32,7 @@ export const init: ClientModule["init"] = async ({ ctx }) => {
     modalPreviewUserId: null,
     listSpacesRequest: notAsked,
   }
-  const listSpaces = await ListSpacesClient.init({ ctx, model })
+  const listSpaces = ListSpacesClient.init({ ctx, model })
   return {
     model: {
       ...model,
@@ -51,8 +51,8 @@ export const init: ClientModule["init"] = async ({ ctx }) => {
 //
 //
 
-export const update: ClientModule["update"] = async (input) => {
-  const updated = await updateMain(input)
+export const update: ClientModule["update"] = (input) => {
+  const updated = updateMain(input)
 
   return {
     model: updated.model,
@@ -61,16 +61,13 @@ export const update: ClientModule["update"] = async (input) => {
   }
 }
 
-export const updateMain = async (
-  input: Input,
-  acc?: Output,
-): Promise<Output> => {
-  acc = acc ?? (await updateChild(input))
+export const updateMain = (input: Input, acc?: Output): Output => {
+  acc = acc ?? updateChild(input)
 
   const [spaceEvent, ...spaceEventsRest] = acc.msgSpaceEvent ?? []
 
   if (spaceEvent) {
-    const updated = await updateChild({
+    const updated = updateChild({
       ctx: input.ctx,
       model: acc.model,
       msgSpaceEvent: spaceEvent,
@@ -92,7 +89,7 @@ export const updateMain = async (
   )
 
   if (spaceCmd) {
-    const updated = await updateChild({
+    const updated = updateChild({
       ctx: input.ctx,
       model: acc.model,
       msgCmd: spaceCmd,
@@ -164,10 +161,10 @@ const updateSpacesFromSpaceEvent: SpaceClientModule["update"] = ({
 //
 //
 
-export const subscriptions: ClientModule["subscriptions"] = async (input) => {
+export const subscriptions: ClientModule["subscriptions"] = (input) => {
   return Sub.batch([
     //
-    await GameClient.subscriptions(input),
+    GameClient.subscriptions(input),
   ])
 }
 

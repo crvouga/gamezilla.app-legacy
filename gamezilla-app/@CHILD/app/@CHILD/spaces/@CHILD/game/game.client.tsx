@@ -134,14 +134,14 @@ const update: Module["update"] = (input) => {
 //
 //
 
-const subscriptions: Module["subscriptions"] = async (input) => {
+const subscriptions: Module["subscriptions"] = (input) => {
   const { modelSync, model } = input
 
   switch (modelSync.t) {
     case "connect-four": {
       return Sub.tag(
         "connect-four",
-        await ConnectFour.subscriptions({
+        ConnectFour.subscriptions({
           ctx: input.ctx,
           modelSync: modelSync.c,
           model: model.t === "connect-four" ? model.c : ConnectFour.init,
@@ -152,7 +152,7 @@ const subscriptions: Module["subscriptions"] = async (input) => {
     case "flow": {
       return Sub.tag(
         "flow",
-        await FlowClient.subscriptions({
+        FlowClient.subscriptions({
           ctx: input.ctx,
           modelSync: modelSync.c,
           model: model.t === "flow" ? model.c : FlowClient.init,

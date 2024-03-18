@@ -54,7 +54,7 @@ export type Toast = {
   errorMsg?: string | null
 }
 
-export const init: Module["init"] = async () => {
+export const init: Module["init"] = () => {
   return {
     model: { runningId: 0, hold: {} },
   }
@@ -83,7 +83,7 @@ export const update: Module["update"] = (input) => {
   )
 }
 
-const updateFromMsg: Module["update"] = async (input) => {
+const updateFromMsg: Module["update"] = (input) => {
   if (!input.msg) {
     return { model: input.model }
   }
@@ -154,7 +154,7 @@ const updateFromMsg: Module["update"] = async (input) => {
   }
 }
 
-const updateFromCmd: Module["update"] = async (input) => {
+const updateFromCmd: Module["update"] = (input) => {
   if (!input.msgCmd) {
     return { model: input.model }
   }

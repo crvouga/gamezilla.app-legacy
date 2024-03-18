@@ -144,8 +144,6 @@ export type Output<T extends AppClientModuleTypes> = {
   msgEvt?: T["MsgOutEvent"][]
 }
 
-type MaybePromise<T> = T | Promise<T>
-
 /**
  * `AppClientModule` represents a client side app module
  */
@@ -156,20 +154,17 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
   init: (input: {
     ctx: T["Ctx"]
     stored?: Record<string, unknown> | null
-  }) => MaybePromise<Output<T>>
+  }) => Output<T>
 
   /**
    * `update` handles all the state transitions and business logic of the module
    */
-  update: (input: Input<T>) => MaybePromise<Output<T>>
+  update: (input: Input<T>) => Output<T>
 
   /**
    * `subscriptions` is dispatchs msgs specific to the module
    */
-  subscriptions: (input: {
-    ctx: T["Ctx"]
-    model: T["Model"]
-  }) => MaybePromise<Sub<T["Msg"]>>
+  subscriptions: (input: { ctx: T["Ctx"]; model: T["Model"] }) => Sub<T["Msg"]>
 
   /**
    * `View` is for rendering the UI for the module
@@ -183,19 +178,17 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
   }) => VDom
 }
 
-export const andThen = async <T extends AppClientModuleTypes>(
-  accPromise: MaybePromise<Output<T>>,
-  ...updates: ((model: T["Model"]) => Output<T> | Promise<Output<T>>)[]
-): Promise<Output<T>> => {
+export const andThen = <T extends AppClientModuleTypes>(
+  acc: Output<T>,
+  ...updates: ((model: T["Model"]) => Output<T>)[]
+): Output<T> => {
   const [update, ...rest] = updates
 
   if (!update) {
-    return accPromise
+    return acc
   }
 
-  const acc = await accPromise
-
-  const updated = await update(acc.model)
+  const updated = update(acc.model)
 
   const accNew: Output<T> = {
     model: {

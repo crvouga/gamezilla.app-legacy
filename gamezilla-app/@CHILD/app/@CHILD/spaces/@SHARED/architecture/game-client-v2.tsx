@@ -130,8 +130,6 @@ export type Output<T extends GameClientModuleTypes> = {
   msgSync?: WithEventId<T["MsgSync"]>[]
 }
 
-type MaybePromise<T> = T | Promise<T>
-
 /**
  * `GameClientModule` represents a client side app module
  */
@@ -144,7 +142,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
   /**
    * `update` handles all the state transitions and business logic of the module
    */
-  update: (input: Input<T>) => MaybePromise<Output<T>>
+  update: (input: Input<T>) => Output<T>
 
   /**
    * `subscriptions` is dispatchs msgs specific to the module
@@ -153,7 +151,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
     ctx: T["Ctx"]
     modelSync: T["ModelSync"]
     model: T["Model"]
-  }) => MaybePromise<Sub<T["Msg"]>>
+  }) => Sub<T["Msg"]>
 
   /**
    * `View` is for rendering the UI for the module
@@ -185,18 +183,17 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
 //
 //
 
-export const andThen = async <T extends GameClientModuleTypes>(
-  accPromise: MaybePromise<Output<T>>,
-  ...updates: ((model: T["Model"]) => MaybePromise<Output<T>>)[]
-): Promise<Output<T>> => {
-  const acc = await accPromise
+export const andThen = <T extends GameClientModuleTypes>(
+  acc: Output<T>,
+  ...updates: ((model: T["Model"]) => Output<T>)[]
+): Output<T> => {
   const [update, ...rest] = updates
 
   if (!update) {
     return acc
   }
 
-  const updated = await update(acc.model)
+  const updated = update(acc.model)
 
   const accNew: Output<T> = {
     model: updated.model,
@@ -209,15 +206,15 @@ export const andThen = async <T extends GameClientModuleTypes>(
   return andThen(accNew, ...rest)
 }
 
-const tagOutput = async <
+const tagOutput = <
   TTag extends string,
   T extends GameClientModuleTypes,
   TTaggedCmd extends GameClientModuleTypes["MsgOutCmd"],
 >(
   tag: TTag,
   tagCmd: (msgCmd: T["MsgOutCmd"][]) => TTaggedCmd[],
-  outputPromise: MaybePromise<Output<T>>,
-): Promise<{
+  output: Output<T>,
+): {
   model: { t: TTag; c: T["Model"] }
 
   eff?: Eff<{ t: TTag; c: T["Msg"] }>
@@ -233,8 +230,7 @@ const tagOutput = async <
    *
    */
   msgSync?: WithEventId<{ t: TTag; c: T["MsgSync"] }>[]
-}> => {
-  const output = await outputPromise
+} => {
   return {
     model: {
       t: tag,

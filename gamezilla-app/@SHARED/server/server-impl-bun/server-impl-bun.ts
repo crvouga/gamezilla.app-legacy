@@ -28,6 +28,9 @@ export const ServerBun = <T>() => {
         websocket: webSocketHandler,
       })
     },
+    registerHandler(_handler) {
+      throw new Error("registerHandler not implemented for bun server")
+    },
     serveSinglePageApp(_input) {
       throw new Error(
         "serveSinglePageApp not implemented for bun server. Will not work when deployed",

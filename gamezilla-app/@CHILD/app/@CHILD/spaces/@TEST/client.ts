@@ -91,7 +91,7 @@ export const init = (ctx: ClientCtx) => {
 //
 
 export const serverConnected =
-  (ctx: ClientCtx) => async (model: SpaceCore.ModelClient) => {
+  (ctx: ClientCtx) => (model: SpaceCore.ModelClient) => {
     return SpaceClient.update({
       ctx,
       model,
@@ -246,7 +246,7 @@ export const clickedLeaveSpaceButton =
 //
 
 export const changeRoute =
-  (ctx: ClientCtx, route: Route) => async (model: SpaceCore.ModelClient) => {
+  (ctx: ClientCtx, route: Route) => (model: SpaceCore.ModelClient) => {
     return SpaceClient.update({
       ctx,
       model,
@@ -285,7 +285,7 @@ export const serverListedSpaces =
       SpaceId.generate(),
     ],
   ) =>
-  async (model: SpaceCore.ModelClient) => {
+  (model: SpaceCore.ModelClient) => {
     return SpaceClient.update({
       ctx,
       model,
@@ -300,8 +300,7 @@ export const serverListedSpaces =
   }
 
 export const clickSpaceCard =
-  (ctx: ClientCtx, spaceId: SpaceId) =>
-  async (model: SpaceCore.ModelClient) => {
+  (ctx: ClientCtx, spaceId: SpaceId) => (model: SpaceCore.ModelClient) => {
     return SpaceClient.update({
       ctx,
       model,

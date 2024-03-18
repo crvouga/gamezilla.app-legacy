@@ -476,7 +476,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 //
 
 const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
-  async update(input) {
+  update(input) {
     const pack = input.modelSync.packBuilder?.pack
 
     if (!pack) {
@@ -485,11 +485,11 @@ const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
 
     const ctx = { ...input.ctx, pack }
 
-    const initial = await FlowPackPuzzleGridClient.init({ ctx })
+    const initial = FlowPackPuzzleGridClient.init({ ctx })
 
     const model = input.model.packBuilder.flowPackPuzzleGrid ?? initial.model
 
-    const updated = await FlowPackPuzzleGridClient.update({
+    const updated = FlowPackPuzzleGridClient.update({
       ctx,
       model: { ...model, puzzles: input.model.puzzles },
       msg:
@@ -524,11 +524,11 @@ const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
       msgEvt: updated.msgEvt,
     }
   },
-  async subscriptions(input) {
+  subscriptions(input) {
     const pack = input.modelSync.packBuilder?.pack
     return Sub.tag(
       "pack-builder.flow-pack-puzzle-grid",
-      await FlowPackPuzzleGridClient.subscriptions({
+      FlowPackPuzzleGridClient.subscriptions({
         ctx: { ...input.ctx, pack },
         model: input.model.packBuilder.flowPackPuzzleGrid,
       }),
@@ -595,7 +595,7 @@ export const PackBuilderClient: Pick<
     )
   },
 
-  async subscriptions(input) {
+  subscriptions(input) {
     return PuzzleGrid.subscriptions(input)
   },
 }

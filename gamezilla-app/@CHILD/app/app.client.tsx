@@ -61,8 +61,8 @@ export type Deps = {
   stored: Record<string, unknown>
 }
 
-export const getDeps = async (): Promise<Deps> => {
-  const transport = await ClientTransport<MsgToServer, MsgToClient>({
+export const getDeps = (): Deps => {
+  const transport = ClientTransport<MsgToServer, MsgToClient>({
     impl:
       SERVER_IMPL === "node"
         ? {
@@ -122,13 +122,13 @@ export const getCtx = (): Ctx => {
   }
 }
 
-export const init = async (input: {
+export const init = (input: {
   deps: Deps
   ctx: Ctx
-}): Promise<{
+}): {
   model: ModelClient
   eff?: Eff<MsgClient>
-}> => {
+} => {
   const routing = Routing.init({
     location: input.ctx.location,
   })
@@ -142,45 +142,45 @@ export const init = async (input: {
     profiles: {},
   }
 
-  const lang = await LangClient.init({
+  const lang = LangClient.init({
     ctx,
     stored: input.deps.stored,
   })
 
-  const toast = await Toast.init({
+  const toast = Toast.init({
     stored: input.deps.stored,
     ctx,
   })
 
-  const wire = await Wire.init({
+  const wire = Wire.init({
     stored: input.deps.stored,
   })
 
-  const auth = await AuthClient.init({
+  const auth = AuthClient.init({
     stored: input.deps.stored,
     ctx,
   })
 
-  const space = await SpaceClient.init({
+  const space = SpaceClient.init({
     ctx,
     stored: input.deps.stored,
   })
 
-  const profile = await ProfileClient.init({
+  const profile = ProfileClient.init({
     ctx,
     stored: input.deps.stored,
   })
 
-  const sound = await Sound.init({
+  const sound = Sound.init({
     ctx: null,
     stored: input.deps.stored,
   })
 
-  const platform = await Platform.init({
+  const platform = Platform.init({
     stored: input.deps.stored,
   })
 
-  const statusBar = await StatusBar.init({
+  const statusBar = StatusBar.init({
     stored: input.deps.stored,
   })
 
@@ -213,7 +213,7 @@ export const init = async (input: {
     preloadSound(Object.values(APP_SOUND)),
   )
 
-  const updated = await updateLoop(input.deps, input.ctx, {
+  const updated = updateLoop(input.deps, input.ctx, {
     model: initialModel,
     eff: initialEff,
     msgCmd: initialCmd,
@@ -242,15 +242,15 @@ function log(...msg: unknown[]) {
   }
 }
 
-export const update = async (input: {
+export const update = (input: {
   ctx: Ctx
   msg: MsgClient
   model: ModelClient
   deps: Deps
-}): Promise<{
+}): {
   model: ModelClient
   eff?: Eff<MsgClient>
-}> => {
+} => {
   if (input.msg) {
     log("[msg]", toMsgType(input.msg))
   }
@@ -258,7 +258,7 @@ export const update = async (input: {
   if (msgServer) {
     log("[➡️]", toMsgType(msgServer))
   }
-  const updatedFromMsg = await updateChild({
+  const updatedFromMsg = updateChild({
     ctx: input.ctx,
     model: input.model,
     msg: input.msg,
@@ -266,7 +266,7 @@ export const update = async (input: {
     deps: input.deps,
   })
 
-  const updated = await updateLoop(input.deps, input.ctx, updatedFromMsg)
+  const updated = updateLoop(input.deps, input.ctx, updatedFromMsg)
 
   return updated
 }
@@ -278,16 +278,12 @@ type Output = {
   msgCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[]
 }
 
-const updateLoop = async (
-  deps: Deps,
-  ctx: Ctx,
-  acc: Output,
-): Promise<Output> => {
+const updateLoop = (deps: Deps, ctx: Ctx, acc: Output): Output => {
   const [msgCmd, ...msgCmdRest] = acc.msgCmd
 
   if (msgCmd) {
     log("[msgCmd]", toMsgType(msgCmd))
-    const updatedCmd = await updateChild({
+    const updatedCmd = updateChild({
       deps,
       ctx,
       model: acc.model,
@@ -305,7 +301,7 @@ const updateLoop = async (
 
   if (msgEvt) {
     log("[msgEvt]", toMsgType(msgEvt))
-    const updatedEvent = await updateChild({
+    const updatedEvent = updateChild({
       deps,
       ctx,
       model: acc.model,
@@ -322,7 +318,7 @@ const updateLoop = async (
   return acc
 }
 
-const updateChild = async ({
+const updateChild = ({
   ctx,
   model,
   msg,
@@ -338,10 +334,10 @@ const updateChild = async ({
   msgServer?: MsgToClient
   msgEvt?: ClientEvent
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>
-}): Promise<Output> => {
+}): Output => {
   const clientClient = toClientCtx({ model, ctx })
 
-  const space = await SpaceClient.update({
+  const space = SpaceClient.update({
     ctx: clientClient,
     model: model.spaces,
     msg: msg?.t === "spaces" ? msg.c : null,
@@ -350,7 +346,7 @@ const updateChild = async ({
     msgCmd: null,
   })
 
-  const profile = await ProfileClient.update({
+  const profile = ProfileClient.update({
     ctx: clientClient,
     model: model.profile,
     msg: msg?.t === "profile" ? msg.c : null,
@@ -359,7 +355,7 @@ const updateChild = async ({
     msgCmd: msgCmd?.t === "profile" ? msgCmd : null,
   })
 
-  const auth = await AuthClient.update({
+  const auth = AuthClient.update({
     ctx: clientClient,
     model: model.auth,
     msg: msg?.t === "auth" ? msg.c : null,
@@ -368,13 +364,13 @@ const updateChild = async ({
     msgCmd: null,
   })
 
-  const routing = await Routing.update({
+  const routing = Routing.update({
     model: model.routing,
     msg: msg?.t === "routing" ? msg.c : null,
     msgCmd: msgCmd?.t === "routing" ? msgCmd : null,
   })
 
-  const wire = await Wire.update({
+  const wire = Wire.update({
     model: model.wire,
     msg: msg?.t === "wire" ? msg.c : null,
     msgServer: msgServer?.t === "wire" ? msgServer.c : null,
@@ -382,26 +378,26 @@ const updateChild = async ({
     transport: deps.transport,
   })
 
-  const sound = await Sound.update({
+  const sound = Sound.update({
     model: model.sound,
     msg: msg?.t === "sound" ? msg.c : null,
     msgCmd: msgCmd?.t === "sound" ? msgCmd : null,
     ctx: null,
   })
 
-  const platform = await Platform.update({
+  const platform = Platform.update({
     model: model.platform,
     msg: msg?.t === "platform" ? msg.c : null,
     msgCmd: msgCmd?.t === "platform" ? msgCmd : null,
   })
 
-  const statusBar = await StatusBar.update({
+  const statusBar = StatusBar.update({
     model: model.statusBar,
     msg: msg?.t === "status-bar" ? msg.c : null,
     msgCmd: msgCmd?.t === "status-bar" ? msgCmd : null,
   })
 
-  const toast = await Toast.update({
+  const toast = Toast.update({
     model: model.toast,
     msg: msg?.t === "toast" ? msg.c : null,
     msgCmd: msgCmd?.t === "toast" ? msgCmd : null,
@@ -410,7 +406,7 @@ const updateChild = async ({
     msgServer: null,
   })
 
-  const lang = await LangClient.update({
+  const lang = LangClient.update({
     model: model.lang,
     msg: msg?.t === "lang" ? msg.c : null,
     msgCmd: null,
@@ -503,7 +499,7 @@ const toClientCtx = (input: {
 //
 //
 
-export const subscriptions = async (input: {
+export const subscriptions = (input: {
   ctx: Ctx
   deps: Deps
   model: ModelClient
@@ -515,21 +511,12 @@ export const subscriptions = async (input: {
     Sub.tag("wire", Wire.subscriptions({ transport: input.deps.transport })),
     Sub.tag("platform", Platform.subscriptions),
     Sub.tag("routing", Routing.subscriptions),
-    Sub.tag(
-      "lang",
-      await LangClient.subscriptions({ ctx, model: input.model.lang }),
-    ),
-    Sub.tag(
-      "toast",
-      await Toast.subscriptions({ ctx, model: input.model.toast }),
-    ),
-    Sub.tag(
-      "auth",
-      await AuthClient.subscriptions({ ctx, model: input.model.auth }),
-    ),
+    Sub.tag("lang", LangClient.subscriptions({ ctx, model: input.model.lang })),
+    Sub.tag("toast", Toast.subscriptions({ ctx, model: input.model.toast })),
+    Sub.tag("auth", AuthClient.subscriptions({ ctx, model: input.model.auth })),
     Sub.tag(
       "spaces",
-      await SpaceClient.subscriptions({ ctx, model: input.model.spaces }),
+      SpaceClient.subscriptions({ ctx, model: input.model.spaces }),
     ),
   ])
 }
