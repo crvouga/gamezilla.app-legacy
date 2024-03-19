@@ -1,8 +1,9 @@
+import { Brand } from "../brand"
 import { err, ok, Result } from "./result"
 
 type Problem = "Invalid"
 
-export type EmailAddress = string & { _opaque: "EmailAddress" }
+export type EmailAddress = Brand<string, "EmailAddress">
 
 // source: https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression
 const regex =

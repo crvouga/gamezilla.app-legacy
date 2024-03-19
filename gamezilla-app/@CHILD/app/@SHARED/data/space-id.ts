@@ -1,16 +1,7 @@
 import { Result } from "gamezilla-app/@SHARED/core"
-import { z } from "zod"
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
-export const SpaceId_ = z.string().brand("SpaceId")
-export type SpaceId_ = z.infer<typeof SpaceId_>
-
-export const gen = (): SpaceId_ => {
-  const id = `space:${Math.random().toString(36).slice(-6)}`
-  const parsed = SpaceId_.parse(id)
-  return parsed
-}
-
-export type SpaceId = string & { _opaque: "SpaceId" }
+export type SpaceId = Brand<string, "SpaceId">
 
 const namespace = "space"
 const separator = ":"

@@ -1,6 +1,7 @@
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 import { Result } from "../../../../@SHARED/core/data/result"
 
-export type ClientId = string & { _opaque: "ClientId" }
+export type ClientId = Brand<string, "ClientId">
 
 const is = (id: unknown): id is ClientId => {
   return typeof id === "string"

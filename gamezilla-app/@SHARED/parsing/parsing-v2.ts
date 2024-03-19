@@ -76,6 +76,29 @@ export function nullish(x: unknown): x is null | undefined {
   return x === null || x === undefined
 }
 
+export function discrimatedUnion<T extends string, U extends Record<T, string>>(
+  tag: T,
+  // @ts-ignore
+  union: U,
+): Validator<
+  {
+    [K in keyof U]: {
+      [P in T]: K
+    } & U[K]
+  }[keyof U]
+> {
+  return (input: unknown): input is any => {
+    if (typeof input !== "object" || input === null) return false
+    // @ts-ignore
+    const tagValue = input[tag]
+    if (typeof tagValue !== "string") return false
+    // @ts-ignore
+    const validator = union[tagValue]
+    if (!validator) return false
+    return validator(input)
+  }
+}
+
 export function or<A, B>(
   isA: (x: unknown) => x is A,
   isB: (x: unknown) => x is B,

@@ -1,6 +1,7 @@
 import { Result, Uuid } from "gamezilla-app/@SHARED/core"
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
-export type PartyId = string & { _opaque: "PartyId" }
+export type PartyId = Brand<string, "PartyId">
 
 const is = (id: unknown): id is PartyId => {
   return typeof id === "string"

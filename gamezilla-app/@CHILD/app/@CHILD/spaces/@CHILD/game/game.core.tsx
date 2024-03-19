@@ -57,6 +57,10 @@ export const gameNames: { [gameName in GameName]: GameName } = {
   flow: "flow",
 }
 
+export const isGameName = (x: unknown): x is GameName => {
+  return typeof x === "string" && Object.keys(gameNames).includes(x)
+}
+
 export const gameNameList: GameName[] = [
   // "connect-four",
   "flow",

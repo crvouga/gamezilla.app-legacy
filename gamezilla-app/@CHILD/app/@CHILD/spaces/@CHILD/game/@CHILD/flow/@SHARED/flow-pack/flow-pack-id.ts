@@ -1,6 +1,7 @@
 import { Uuid } from "gamezilla-app/@SHARED/core"
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
-export type FlowPackId = string & { __brand: "FlowPackId" }
+export type FlowPackId = Brand<string, "FlowPackId">
 
 const generate = () => {
   return `flow-pack:${Uuid.generate()}` as FlowPackId

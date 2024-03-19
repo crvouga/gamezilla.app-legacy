@@ -1,12 +1,13 @@
 import { memoize } from "gamezilla-app/@SHARED/core"
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
-export type NodeId = string & { readonly __brand: unique symbol }
+export type NodeId = Brand<string, "NodeId">
 
 export const createNodeId = (nodeId: string): NodeId => {
   return nodeId as NodeId
 }
 
-export type EdgeId = string & { readonly __brand: unique symbol }
+export type EdgeId = Brand<string, "EdgeId">
 
 export type GroupId =
   | "A"

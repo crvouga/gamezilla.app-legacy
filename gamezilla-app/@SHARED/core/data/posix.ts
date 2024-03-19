@@ -1,6 +1,7 @@
+import { Brand } from "../brand"
 import { TimeSpan } from "./time-span"
 
-export type Posix = number & { Posix: "Posix" }
+export type Posix = Brand<number, "Posix">
 
 const minPosixTime = new Date("1970-01-01T00:00:00.000Z").getTime()
 const maxPosixTime = new Date("2038-01-19T03:14:07.999Z").getTime()

@@ -1,6 +1,8 @@
 import { err, ok, Result, Uuid } from "gamezilla-app/@SHARED/core"
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
-export type UserId = string & { _opaque: "UserId" }
+export type UserId = Brand<string, "UserId">
+
 const namespace = "user"
 const separator = ":"
 

@@ -1,6 +1,8 @@
 import { err, ok, Result, Uuid } from "gamezilla-app/@SHARED/core"
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
-export type FlowPuzzleId = string & { _opaque: "FlowPuzzleId" }
+export type FlowPuzzleId = Brand<string, "FlowPuzzleId">
+
 const namespace = "flow-puzzle"
 const separator = ":"
 

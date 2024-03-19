@@ -1,3 +1,4 @@
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 import * as Board from "./chess"
 
 export type Clock = {
@@ -7,7 +8,7 @@ export type Clock = {
   }
 }
 
-export type Seconds = number & { _type: "Seconds" }
+export type Seconds = Brand<number, "Seconds">
 
 export const tick = ({
   turn,

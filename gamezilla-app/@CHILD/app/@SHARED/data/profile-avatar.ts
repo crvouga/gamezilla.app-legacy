@@ -1,3 +1,5 @@
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
+
 export type ProfileAvatarStyle =
   | "adventurer"
   | "adventurer-neutral"
@@ -64,7 +66,7 @@ const toStyle = (style: string): ProfileAvatarStyle => {
   return "adventurer"
 }
 
-export type ProfileAvatarSeed = string & { type: "Seed" }
+export type ProfileAvatarSeed = Brand<string, "ProfileAvatarSeed">
 
 const toSeed = (seedString: string) => {
   return seedString

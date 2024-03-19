@@ -1,6 +1,7 @@
 import { adjectives, nouns } from "gamezilla-app/@CHILD/app/@SHARED/data/words"
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
-export type FlowPuzzleName = string & { _type: "FlowPuzzleName" }
+export type FlowPuzzleName = Brand<string, "FlowPuzzleName">
 
 const generate = ({ count }: { count: number }) => {
   const adjective = adjectives[Math.floor(Math.random() * adjectives.length)]

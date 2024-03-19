@@ -1,6 +1,7 @@
 import { Uuid } from "gamezilla-app/@SHARED/core"
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
-export type ChatMessageId = string & { readonly ChatMessageId: unique symbol }
+export type ChatMessageId = Brand<string, "ChatMessageId">
 
 const generate = (): ChatMessageId => {
   const id = Uuid.generate()

@@ -1,6 +1,7 @@
 import { Result, Uuid, err, ok } from "gamezilla-app/@SHARED/core"
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
-export type EventId = string & { _opaque: "EventId" }
+export type EventId = Brand<string, "EventId">
 
 const namespace = "space-event"
 const separator = ":"

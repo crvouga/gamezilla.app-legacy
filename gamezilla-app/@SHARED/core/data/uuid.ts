@@ -1,4 +1,6 @@
-export type Uuid = string & { _opaque: "Uuid" }
+import { Brand } from "../brand"
+
+export type Uuid = Brand<string, "Uuid">
 
 const is = (id: unknown): id is Uuid => {
   return typeof id === "string"

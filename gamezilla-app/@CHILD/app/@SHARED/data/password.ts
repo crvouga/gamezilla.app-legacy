@@ -1,6 +1,7 @@
 import { Result } from "gamezilla-app/@SHARED/core"
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
-export type Password = string & { _opaque: "Password" }
+export type Password = Brand<string, "Password">
 
 const passwordMinLength = 6
 

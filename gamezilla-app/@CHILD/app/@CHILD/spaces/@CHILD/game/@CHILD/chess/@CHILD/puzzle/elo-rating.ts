@@ -1,4 +1,5 @@
 import { IntRange } from "gamezilla-app/@SHARED/core"
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
 //
 //
@@ -8,7 +9,7 @@ import { IntRange } from "gamezilla-app/@SHARED/core"
 //
 //
 
-export type EloRating = number & { readonly __brand: unique symbol }
+export type EloRating = Brand<number, "EloRating">
 
 const MIN_ELO_RATING: EloRating = 100 as EloRating
 

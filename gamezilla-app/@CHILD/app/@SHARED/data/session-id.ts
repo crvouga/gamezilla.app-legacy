@@ -1,6 +1,7 @@
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 import { Result } from "gamezilla-app/@SHARED/core/data/result"
 
-export type SessionId = string & { _opaque: "SessionId" }
+export type SessionId = Brand<string, "SessionId">
 
 const namespace = "session"
 const separator = ":"

@@ -1,8 +1,10 @@
+import { Brand } from "../brand"
+
 /**
  * Represents a unit interval, a number between 0 and 1
  * https://en.wikipedia.org/wiki/Unit_interval
  */
-export type UnitInterval = number & { _opaque: "UnitInterval" }
+export type UnitInterval = Brand<number, "UnitInterval">
 
 const is = (number: unknown): number is UnitInterval => {
   return typeof number === "number" && number >= 0 && number <= 1

@@ -1,7 +1,8 @@
 import { Result, err, ok } from "gamezilla-app/@SHARED/core"
 import { adjectives, nouns } from "../words"
+import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
-export type Username = string & { _opaque: "Username" }
+export type Username = Brand<string, "Username">
 
 const is = (username: unknown): username is Username => {
   return (
