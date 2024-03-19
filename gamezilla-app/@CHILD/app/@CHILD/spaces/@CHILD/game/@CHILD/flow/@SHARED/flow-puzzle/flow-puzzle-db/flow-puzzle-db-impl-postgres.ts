@@ -1,7 +1,7 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { Posix, Result, isErr, ok } from "gamezilla-app/@SHARED/core"
-import { createIs } from "gamezilla-app/@SHARED/core/parser"
+
 import { P } from "gamezilla-app/@SHARED/parsing"
 import { FlowVariantParser } from "../../flow"
 import { FlowPuzzle } from "../flow-puzzle"
@@ -27,25 +27,23 @@ type Row = {
   last_updated_by_user_id: string
 }
 
-const isRow = createIs<Row>()
+const toRow = (x: unknown): Row | null => {
+  if (
+    P.obj(x) &&
+    P.has(x, "flow_puzzle_id", P.str) &&
+    P.has(x, "flow_puzzle_name", P.str) &&
+    P.has(x, "flow_puzzle", P.record(P.unknown)) &&
+    P.has(x, "created_at", P.str) &&
+    P.has(x, "created_by_user_id", P.str) &&
+    P.has(x, "last_updated_at", P.str) &&
+    P.has(x, "last_updated_by_user_id", P.str)
+  ) {
+    return x
+  }
+  return null
+}
 
-// const toRow = (x: unknown): Row | null => {
-//   if (
-//     P.obj(x) &&
-//     P.has(x, "flow_puzzle_id", P.str) &&
-//     P.has(x, "flow_puzzle_name", P.str) &&
-//     P.has(x, "flow_puzzle", P.record(P.unknown)) &&
-//     P.has(x, "created_at", P.str) &&
-//     P.has(x, "created_by_user_id", P.str) &&
-//     P.has(x, "last_updated_at", P.str) &&
-//     P.has(x, "last_updated_by_user_id", P.str)
-//   ) {
-//     return x
-//   }
-//   return null
-// }
-
-// const isRow = P.is(toRow)
+const isRow = P.is(toRow)
 
 const postgresTimestampToPosix = (postgresTimestamp: string) => {
   return Posix.fromNumber(new Date(postgresTimestamp).getTime())

@@ -1,3 +1,1 @@
-import { tags } from "typia"
-
-export type Brand<T, _B extends string> = T & tags.Default<_B>
+export type Brand<T, _B extends string> = T & { __brand: _B }
