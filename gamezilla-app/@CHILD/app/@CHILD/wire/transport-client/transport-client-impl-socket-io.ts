@@ -50,7 +50,7 @@ export const ClientTransportSocketIO = <MsgToServer, MsgToClient>({
       socket.emit("to-server", toServer, (err: unknown) => {
         if (err) {
           console.error("Error sending to server", err, toServer)
-          // sendToServer(msgs)
+          sendToServer(msgs)
         }
       })
     }

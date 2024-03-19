@@ -11,6 +11,8 @@ const main = async () => {
 
   const root = document.getElementById("root")!
 
+  await deps.transport.start()
+
   await Program.run({
     ctx: AppClient.getCtx,
 
@@ -24,8 +26,6 @@ const main = async () => {
 
     debugger: DebuggerReduxDevTools,
   })
-
-  await deps.transport.start()
 
   console.log(`Renderer: ${VDOM_IMPL}`)
   console.log(`Transport: ${TRANSPORT_IMPL}`)
