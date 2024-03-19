@@ -2,7 +2,7 @@
 import {
   Route as Route0,
   toRoute as toRoute0,
-} from "../../../@CHILD/app/@CHILD/auth/@SHARED/auth.routes"
+} from "../../../@CHILD/app/@CHILD/auth/auth.routes"
 import {
   Route as Route1,
   toRoute as toRoute1,

@@ -15,10 +15,6 @@ export type Route =
       t: "login-sms-verify"
       phoneNumber: PhoneNumber
     }
-  | {
-      n: "auth-logout"
-      t: "logout"
-    }
 
 export const toRoute = P.union<Route>([
   (x) =>
@@ -36,10 +32,6 @@ export const toRoute = P.union<Route>([
     P.tag(x, "n", "auth-login") &&
     P.tag(x, "t", "login-sms-verify") &&
     P.has(x, "phoneNumber", PhoneNumber.is)
-      ? x
-      : null,
-  (x) =>
-    P.obj(x) && P.tag(x, "n", "auth-logout") && P.tag(x, "t", "logout")
       ? x
       : null,
 ])

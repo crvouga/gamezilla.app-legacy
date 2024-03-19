@@ -361,7 +361,7 @@ const updateChild = ({
     msg: msg?.t === "auth" ? msg.c : null,
     msgServer: msgServer?.t === "auth" ? msgServer.c : null,
     msgEvt: msgEvt,
-    msgCmd: null,
+    msgCmd: msgCmd?.t === "auth" ? msgCmd : null,
   })
 
   const routing = Routing.update({
@@ -549,6 +549,12 @@ export const View = (input: {
           <ViewRoute model={model} dispatch={dispatch} ctx={clientCtx} />
         </div>
 
+        <AuthClient.ViewModals
+          ctx={clientCtx}
+          dispatch={(c) => dispatch({ t: "auth", c })}
+          model={model.auth}
+        />
+
         <Portal.Exit portalId="modals" />
 
         <Toast.View
@@ -614,8 +620,7 @@ const ViewRouteLoggedOut: typeof ViewRoute = ({ ctx, dispatch, model }) => {
     }
     case "spaces":
     case "profile":
-    case "lang":
-    case "auth-logout": {
+    case "lang": {
       return (
         <ViewRedirect
           dispatch={dispatch}
@@ -628,16 +633,6 @@ const ViewRouteLoggedOut: typeof ViewRoute = ({ ctx, dispatch, model }) => {
 
 const ViewRouteLoggedIn: typeof ViewRoute = ({ ctx, dispatch, model }) => {
   switch (ctx.currentRoute.n) {
-    case "auth-logout": {
-      return (
-        <AuthClient.ViewLogoutScreen
-          model={model.auth}
-          ctx={ctx}
-          dispatch={(c) => dispatch({ t: "auth", c })}
-        />
-      )
-    }
-
     case "profile": {
       return (
         <ProfileClient.View

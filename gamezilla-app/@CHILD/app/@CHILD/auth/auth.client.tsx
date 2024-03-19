@@ -6,19 +6,14 @@ import {
   playSound,
   pushRoute,
   replaceRoute,
-  sendToServer,
   showToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
-import {
-  Button,
-  ConfirmationDialog,
-  IconMobilePhone,
-  LoadingState,
-} from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Button, IconMobilePhone } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@SHARED/core"
 import * as AuthClientSMS from "./@CHILD/auth-sms/auth-sms.client"
-import { ClientModule, LogoutMsg, ModelClient, MsgClient } from "./auth.core"
+import { ClientModule, ModelClient, MsgClient } from "./auth.core"
 import { ContinueAsGuestClient } from "./continue-as-guest"
+import { LogoutClient } from "./logout/logout.client"
 
 //
 //
@@ -38,6 +33,7 @@ export const init: ClientModule["init"] = (input) => {
       loginWithGoogle: notAsked,
       logout: notAsked,
       sms: sms.model,
+      opened: null,
     },
     eff: Eff.batch([Eff.tag("sms", sms.eff)]),
     msgEvt: batchMsgs(sms.msgEvt),
@@ -61,6 +57,7 @@ export const update: ClientModule["update"] = (input) => {
     (model) => updateFromEvent({ ...input, model }),
     (model) => updateChild({ ...input, model }),
     (model) => ContinueAsGuestClient.update({ ...input, model }),
+    (model) => LogoutClient.update({ ...input, model }),
   )
 }
 
@@ -68,7 +65,7 @@ const updateChild: ClientModule["update"] = (input) => {
   const updated = AuthClientSMS.update({
     ctx: input.ctx,
     model: input.model.sms,
-    msgCmd: input.msgCmd,
+    msgCmd: null,
     msgEvt: input.msgEvt,
     msgServer: input.msgServer?.t === "sms" ? input.msgServer.c : null,
     msg: input.msg?.t === "sms" ? input.msg.c : null,
@@ -88,10 +85,6 @@ const updateFromMsg: ClientModule["update"] = (input) => {
   }
   const { model, msg } = input
   switch (msg.t) {
-    case "logout": {
-      return updateFromLogoutMsg({ msg: msg.c, model })
-    }
-
     case "user-clicked-login-with-phone": {
       return {
         model,
@@ -106,54 +99,6 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 
     default: {
       return { model }
-    }
-  }
-}
-
-const updateFromLogoutMsg = ({
-  msg,
-  model,
-}: {
-  msg: LogoutMsg
-  model: ModelClient
-}): ReturnType<ClientModule["update"]> => {
-  const currentUserId =
-    model.currentUser.t === "logged-in"
-      ? model.currentUser.account.userId
-      : null
-
-  if (!currentUserId) {
-    return { model }
-  }
-
-  switch (msg.t) {
-    case "clicked-confirm": {
-      return {
-        model: {
-          ...model,
-          currentUser: { t: "logged-out" },
-        },
-        msgCmd: [
-          sendToServer({ t: "logout" }),
-          showToast("Logged out"),
-          playSound(APP_SOUND.navBackwardMin),
-        ],
-        msgEvt: [{ t: "auth/unauthenticated" }],
-      }
-    }
-
-    case "closed":
-    case "clicked-cancel": {
-      return {
-        model: { ...model, logout: notAsked },
-        msgCmd: [
-          replaceRoute({
-            n: "profile",
-            t: "profile",
-            userId: currentUserId,
-          }),
-        ],
-      }
     }
   }
 }
@@ -272,13 +217,6 @@ export const View: ClientModule["View"] = (input) => {
   const { model, ctx, dispatch } = input
 
   switch (ctx.currentRoute.n) {
-    case "auth-logout": {
-      switch (ctx.currentRoute.t) {
-        case "logout": {
-          return <ViewLogoutScreen {...input} />
-        }
-      }
-    }
     case "auth-login": {
       switch (ctx.currentRoute.t) {
         case "login": {
@@ -338,30 +276,10 @@ const ViewLoginScreen: ClientModule["View"] = (input) => {
   )
 }
 
-export const ViewLogoutScreen = ({
-  model,
-  dispatch,
-}: {
+export const ViewModals = (input: {
   ctx: BaseClientCtx
   model: ModelClient
   dispatch: (msg: MsgClient) => void
 }) => {
-  if (model.logout?.t === "loading") {
-    return <LoadingState />
-  }
-
-  const dispatchLogout = (c: LogoutMsg) => dispatch({ t: "logout", c })
-
-  return (
-    <div className="relative h-full w-full flex-1">
-      <ConfirmationDialog
-        open
-        title="Logout of Gamezilla?"
-        confirmTitle="Logout"
-        onClose={() => dispatchLogout({ t: "closed" })}
-        onCancel={() => dispatchLogout({ t: "clicked-cancel" })}
-        onConfirm={() => dispatchLogout({ t: "clicked-confirm" })}
-      />
-    </div>
-  )
+  return <LogoutClient.View {...input} />
 }

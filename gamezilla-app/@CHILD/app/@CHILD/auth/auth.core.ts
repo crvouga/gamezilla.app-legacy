@@ -3,6 +3,7 @@ import { AppClientModule } from "../../@SHARED/architecture/app-client"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import {
   AnonymousClientCtx,
+  AuthCmd,
   ClientCmd,
   ClientCtx,
   ClientEvent,
@@ -13,6 +14,7 @@ import * as AuthSMS from "./@CHILD/auth-sms/auth-sms.core"
 import { IAccountDb } from "./@SHARED/server/account-db"
 import { ISessionDb } from "./@SHARED/server/session-db"
 import { ContinueAsGuest } from "./continue-as-guest"
+import { Logout } from "./logout"
 
 //
 //
@@ -27,7 +29,7 @@ export type ClientModule = AppClientModule<{
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
   Ctx: AnonymousClientCtx | ClientCtx
-  MsgInCmd: never
+  MsgInCmd: AuthCmd
   MsgInEvent: ClientEvent
   MsgOutCmd: ClientCmd<{
     MsgClient: MsgClient
@@ -62,15 +64,20 @@ export type ServerDeps = {
 //
 //
 
-export type ModelClient = ContinueAsGuest.ModelClient & {
+type BaseModelClient = {
   loginWithGoogle: RemoteResult<string, null>
   logout: RemoteResult<string, null>
+  opened: "logged-out" | null
   currentUser:
     | { t: "loading" }
     | { t: "logged-out" }
     | { t: "logged-in"; account: Account }
   sms: AuthSMS.ModelClient
 }
+
+export type ModelClient = BaseModelClient &
+  ContinueAsGuest.ModelClient &
+  Logout.ModelClient
 
 //
 //
@@ -80,17 +87,13 @@ export type ModelClient = ContinueAsGuest.ModelClient & {
 
 export type MsgClient =
   | ContinueAsGuest.MsgClient
+  | Logout.MsgClient
   | { t: "user-clicked-login-with-phone" }
-  | { t: "logout"; c: LogoutMsg }
   | { t: "sms"; c: AuthSMS.MsgClient }
-
-export type LogoutMsg =
-  | { t: "clicked-confirm" }
-  | { t: "clicked-cancel" }
-  | { t: "closed" }
 
 export type MsgServer =
   | ContinueAsGuest.MsgServer
+  | Logout.MsgClient
   | {
       t: "sms"
       c: AuthSMS.MsgServer
@@ -98,12 +101,13 @@ export type MsgServer =
 
 export type MsgToServer =
   | ContinueAsGuest.MsgToServer
-  | { t: "logout" }
+  | Logout.MsgToServer
   | { t: "client-checked-auth" }
   | { t: "sms"; c: AuthSMS.MsgToServer }
 
 export type MsgToClient =
   | ContinueAsGuest.MsgToClient
+  | Logout.MsgToClient
   | { t: "client-authenticated"; account: Account; loggedIn: boolean }
   | { t: "client-unauthenticated" }
   | { t: "sms"; c: AuthSMS.MsgToClient }

@@ -6,6 +6,7 @@ import {
   ClientEvent,
   ProfileCmd,
   back,
+  logout,
   pushRoute,
   replaceRoute,
   sendToServer,
@@ -326,15 +327,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
     case "clicked-logout-button": {
       return {
         model,
-        msgCmd: [
-          pushRoute(
-            {
-              n: "auth-logout",
-              t: "logout",
-            },
-            true,
-          ),
-        ],
+        msgCmd: [logout()],
       }
     }
 

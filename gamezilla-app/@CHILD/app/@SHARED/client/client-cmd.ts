@@ -22,6 +22,30 @@ export type ClientCmd<T extends ClientCmdTypes> =
   | PlatformCmd<T["MsgClient"]>
   | ProfileCmd
   | StatusBarCmd
+  | AuthCmd
+
+//
+//
+//
+//
+//
+//
+
+export type AuthCmd = {
+  t: "auth"
+  c: {
+    t: "logout"
+  }
+}
+
+export const logout = <T extends ClientCmdTypes>(): ClientCmd<T> => {
+  return {
+    t: "auth",
+    c: {
+      t: "logout",
+    },
+  }
+}
 
 //
 //

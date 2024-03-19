@@ -23,6 +23,8 @@ export const translations: Text = {
   "auth.or": "أو",
   "auth.sign-in-to": "تسجيل الدخول إلى",
   "auth.logged-in": "تم تسجيل الدخول",
+  "auth.logout-of-gamezill.app": "تسجيل الخروج من gamezilla.app",
+  "auth.logout-of-gamezill.app-body": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
   "auth-sms.login-with-phone": "تسجيل الدخول برقم الهاتف",
   "auth-sms.phone-number": "رقم الهاتف",
   "auth-sms.send-code": "إرسال الرمز",

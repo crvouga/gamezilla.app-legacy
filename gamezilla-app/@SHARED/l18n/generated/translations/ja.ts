@@ -23,6 +23,8 @@ export const translations: Text = {
   "auth.or": "または",
   "auth.sign-in-to": "サインイン",
   "auth.logged-in": "ログインしました",
+  "auth.logout-of-gamezill.app": "gamezilla.appからログアウト",
+  "auth.logout-of-gamezill.app-body": "本当にログアウトしますか？",
   "auth-sms.login-with-phone": "電話でログイン",
   "auth-sms.phone-number": "電話番号",
   "auth-sms.send-code": "コードを送信",

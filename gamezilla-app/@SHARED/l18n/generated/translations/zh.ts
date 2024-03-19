@@ -23,6 +23,8 @@ export const translations: Text = {
   "auth.or": "要么",
   "auth.sign-in-to": "登录到",
   "auth.logged-in": "已登录",
+  "auth.logout-of-gamezill.app": "登出gamezilla.app",
+  "auth.logout-of-gamezill.app-body": "您确定要登出吗？",
   "auth-sms.login-with-phone": "使用电话登录",
   "auth-sms.phone-number": "电话号码",
   "auth-sms.send-code": "发送代码",

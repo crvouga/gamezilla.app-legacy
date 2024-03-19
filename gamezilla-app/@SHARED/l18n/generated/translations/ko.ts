@@ -23,6 +23,8 @@ export const translations: Text = {
   "auth.or": "또는",
   "auth.sign-in-to": "로그인",
   "auth.logged-in": "로그인됨",
+  "auth.logout-of-gamezill.app": "gamezilla.app에서 로그아웃",
+  "auth.logout-of-gamezill.app-body": "정말 로그아웃 하시겠습니까?",
   "auth-sms.login-with-phone": "전화로 로그인",
   "auth-sms.phone-number": "전화 번호",
   "auth-sms.send-code": "코드 보내기",

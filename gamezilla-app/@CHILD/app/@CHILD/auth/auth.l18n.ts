@@ -10,6 +10,8 @@ export type Text = {
   "auth.logged-in-with-phone": string
   "auth.logged-in-as-guest": string
   "auth.logged-in": string
+  "auth.logout-of-gamezill.app": string
+  "auth.logout-of-gamezill.app-body": string
 }
 
 export const translations: Translations<Text> = {
@@ -23,6 +25,9 @@ export const translations: Translations<Text> = {
     "auth.or": "or",
     "auth.sign-in-to": "Sign in to",
     "auth.logged-in": "Logged in",
+    "auth.logout-of-gamezill.app": "Logout of gamezilla.app?",
+    "auth.logout-of-gamezill.app-body":
+      "This will log you out of the app. Are you sure?",
   },
   de: {
     "auth.logged-in-as-guest": "Als Gast angemeldet",
@@ -34,6 +39,8 @@ export const translations: Translations<Text> = {
     "auth.or": "oder",
     "auth.sign-in-to": "Anmelden bei",
     "auth.logged-in": "Angemeldet",
+    "auth.logout-of-gamezill.app": "Von gamezilla.app abmelden",
+    "auth.logout-of-gamezill.app-body": "Möchtest du dich wirklich abmelden?",
   },
   es: {
     "auth.logged-in-as-guest": "Conectado como invitado",
@@ -45,6 +52,9 @@ export const translations: Translations<Text> = {
     "auth.or": "o",
     "auth.sign-in-to": "Iniciar sesión en",
     "auth.logged-in": "Conectado",
+    "auth.logout-of-gamezill.app": "Cerrar sesión en gamezilla.app",
+    "auth.logout-of-gamezill.app-body":
+      "¿Estás seguro de que quieres cerrar sesión?",
   },
   fr: {
     "auth.logged-in-as-guest": "Connecté en tant qu'invité",
@@ -56,6 +66,9 @@ export const translations: Translations<Text> = {
     "auth.or": "ou",
     "auth.sign-in-to": "Se connecter à",
     "auth.logged-in": "Connecté",
+    "auth.logout-of-gamezill.app": "Déconnexion de gamezilla.app",
+    "auth.logout-of-gamezill.app-body":
+      "Êtes-vous sûr de vouloir vous déconnecter?",
   },
   hi: {
     "auth.logged-in-as-guest": "मेहमान के रूप में लॉग इन",
@@ -67,6 +80,8 @@ export const translations: Translations<Text> = {
     "auth.or": "या",
     "auth.sign-in-to": "में साइन इन करें",
     "auth.logged-in": "लॉग इन",
+    "auth.logout-of-gamezill.app": "gamezilla.app से लॉग आउट करें",
+    "auth.logout-of-gamezill.app-body": "क्या आप वाकई लॉग आउट करना चाहते हैं?",
   },
   it: {
     "auth.logged-in-as-guest": "Accesso come ospite",
@@ -78,6 +93,8 @@ export const translations: Translations<Text> = {
     "auth.or": "o",
     "auth.sign-in-to": "Accedi a",
     "auth.logged-in": "Connesso",
+    "auth.logout-of-gamezill.app": "Disconnettersi da gamezilla.app",
+    "auth.logout-of-gamezill.app-body": "Sei sicuro di voler uscire?",
   },
   ja: {
     "auth.logged-in-as-guest": "ゲストとしてログイン",
@@ -89,6 +106,8 @@ export const translations: Translations<Text> = {
     "auth.or": "または",
     "auth.sign-in-to": "サインイン",
     "auth.logged-in": "ログインしました",
+    "auth.logout-of-gamezill.app": "gamezilla.appからログアウト",
+    "auth.logout-of-gamezill.app-body": "本当にログアウトしますか？",
   },
   ko: {
     "auth.logged-in-as-guest": "손님으로 로그인됨",
@@ -100,6 +119,8 @@ export const translations: Translations<Text> = {
     "auth.or": "또는",
     "auth.sign-in-to": "로그인",
     "auth.logged-in": "로그인됨",
+    "auth.logout-of-gamezill.app": "gamezilla.app에서 로그아웃",
+    "auth.logout-of-gamezill.app-body": "정말 로그아웃 하시겠습니까?",
   },
   pt: {
     "auth.logged-in-as-guest": "Logado como convidado",
@@ -111,6 +132,8 @@ export const translations: Translations<Text> = {
     "auth.or": "ou",
     "auth.sign-in-to": "Entrar em",
     "auth.logged-in": "Logado",
+    "auth.logout-of-gamezill.app": "Sair do gamezilla.app",
+    "auth.logout-of-gamezill.app-body": "Tem cert sure que deseja sair?",
   },
   ru: {
     "auth.logged-in-as-guest": "Вошел как гость",
@@ -122,6 +145,8 @@ export const translations: Translations<Text> = {
     "auth.or": "или",
     "auth.sign-in-to": "Войти в",
     "auth.logged-in": "Вошел",
+    "auth.logout-of-gamezill.app": "Выйти из gamezilla.app",
+    "auth.logout-of-gamezill.app-body": "Вы уверены, что хотите выйти?",
   },
   zh: {
     "auth.logged-in-as-guest": "以访客身份登录",
@@ -133,6 +158,8 @@ export const translations: Translations<Text> = {
     "auth.or": "要么",
     "auth.sign-in-to": "登录到",
     "auth.logged-in": "已登录",
+    "auth.logout-of-gamezill.app": "登出gamezilla.app",
+    "auth.logout-of-gamezill.app-body": "您确定要登出吗？",
   },
   ar: {
     "auth.logged-in-as-guest": "تم تسجيل الدخول كضيف",
@@ -144,5 +171,7 @@ export const translations: Translations<Text> = {
     "auth.or": "أو",
     "auth.sign-in-to": "تسجيل الدخول إلى",
     "auth.logged-in": "تم تسجيل الدخول",
+    "auth.logout-of-gamezill.app": "تسجيل الخروج من gamezilla.app",
+    "auth.logout-of-gamezill.app-body": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
   },
 }
