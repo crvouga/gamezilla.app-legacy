@@ -14,7 +14,7 @@
     "client:build": "vite build",
     "client:serve": "bun x serve -s dist -p 3000",
     "client:preview": "bun client:build && bun client:serve",
-    "client": "vite",
+    "client": "vite --open",
     "ngrok": "ngrok start --all",
     "ngrok:config:edit": "ngrok config edit",
     "tc": "bun x tsc --noEmit --watch",
