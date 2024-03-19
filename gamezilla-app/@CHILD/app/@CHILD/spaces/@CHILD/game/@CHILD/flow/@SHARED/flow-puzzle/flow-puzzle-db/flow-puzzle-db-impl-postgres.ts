@@ -1,13 +1,13 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { Posix, Result, isErr, ok } from "gamezilla-app/@SHARED/core"
+import { createIs } from "gamezilla-app/@SHARED/core/parser"
 import { P } from "gamezilla-app/@SHARED/parsing"
+import { FlowVariantParser } from "../../flow"
 import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle-id"
 import { FlowPuzzleName } from "../flow-puzzle-name"
 import { IFlowPuzzleDb } from "./flow-puzzle-db"
-import { FlowVariantParser } from "../../flow"
-import typia from "typia"
 
 //
 //
@@ -27,7 +27,7 @@ type Row = {
   last_updated_by_user_id: string
 }
 
-const isRow = typia.createIs<Row>()
+const isRow = createIs<Row>()
 
 // const toRow = (x: unknown): Row | null => {
 //   if (

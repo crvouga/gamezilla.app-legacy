@@ -28,7 +28,7 @@
     "cg": "bun x concurrently \"bun gen-l18n\" \"bun gen-routes\"",
     "cg:watch": "bun --watch cg",
     "prepare": "ts-patch install && typia patch",
-    "typia:gen": "bun x typia generate --input gamezilla-app --output generated --project tsconfig.json"
+    "typia:gen": "bun x typia generate --input gamezilla-app --output gamezilla-app --project tsconfig.json"
   },
   "dependencies": {
     "chess.js": "^1.0.0-beta.6",

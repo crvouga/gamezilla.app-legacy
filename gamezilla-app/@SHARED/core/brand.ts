@@ -1,2 +1,3 @@
-export type Brand<T, _B extends string> = T
-// & { readonly __brand: B }
+import { tags } from "typia"
+
+export type Brand<T, _B extends string> = T & tags.Default<_B>
