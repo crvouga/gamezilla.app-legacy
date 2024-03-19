@@ -155,3 +155,9 @@ export const tag = <
 ): x is T & { [tag in K]: TV } => {
   return obj(x) && has(x, tag, literal(tagValue))
 }
+
+export const and =
+  <A, B>(isA: (x: unknown) => x is A, isB: (x: unknown) => x is B) =>
+  (x: unknown): x is A & B => {
+    return isA(x) && isB(x)
+  }

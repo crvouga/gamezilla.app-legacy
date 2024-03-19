@@ -35,8 +35,13 @@ const toNumber = (clock: LamportClock): number => {
   return LamportTimestamp.toNumber(toCurrentTime(clock))
 }
 
+const is = (_x: unknown): _x is LamportClock => {
+  return false
+}
+
 export const LamportClock = {
   init,
+  is,
   increment,
   update,
   toCurrentTime,

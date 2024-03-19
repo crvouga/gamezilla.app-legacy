@@ -1,5 +1,6 @@
 import { Space } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { z } from "zod"
 import * as Game from "../@CHILD/game/game.core"
 import { EventId, EventMeta } from "../@SHARED/event"
 import { SpaceEvent } from "./space-event"
@@ -10,13 +11,15 @@ import { SpaceEvent } from "./space-event"
 //
 //
 
-export type Initial = {
-  type: "initial"
-}
+const Initial = z.object({
+  type: z.literal("initial"),
+})
+
+export type Initial = z.infer<typeof Initial>
 
 export type Started = Space & {
   type: "started"
-  game: Game.ModelSync | null
+  game?: Game.ModelSync | null
   latestEvent: EventId
 }
 

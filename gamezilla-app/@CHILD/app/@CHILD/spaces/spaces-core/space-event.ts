@@ -1,6 +1,7 @@
 import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import * as Game from "../@CHILD/game/game.core"
 
+// @generate-parsers
 export type SpaceEvent =
   | {
       t: "user-started-space"
