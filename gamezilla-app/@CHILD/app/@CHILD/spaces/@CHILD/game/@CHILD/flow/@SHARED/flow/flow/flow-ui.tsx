@@ -1,5 +1,5 @@
 import { Flow } from "."
-import { GroupId } from "./flow"
+import { GroupId } from "./flow.type"
 
 // source: https://tailwindcss.com/docs/customizing-colors
 const COLOR_TO_HEX = {

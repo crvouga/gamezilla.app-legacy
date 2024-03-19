@@ -1,6 +1,7 @@
 import { err, ok, Result, Uuid } from "gamezilla-app/@SHARED/core"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
+/** @see {isUserId} ts-auto-guard:type-guard */
 export type UserId = Brand<string, "UserId">
 
 const namespace = "user"

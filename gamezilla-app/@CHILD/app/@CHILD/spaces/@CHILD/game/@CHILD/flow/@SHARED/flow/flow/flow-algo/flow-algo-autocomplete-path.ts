@@ -1,4 +1,4 @@
-import { Edge, GroupId, Model, NodeId, yieldEdgesOut } from "../flow"
+import { Edge, GroupId, Model, NodeId, yieldEdgesOut } from "../flow.type"
 
 /**
  *

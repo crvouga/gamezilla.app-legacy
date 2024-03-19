@@ -74,6 +74,8 @@ export const isNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
  * Represents the entire puzzle.
  * The puzzle is a directed graph
  */
+
+/** @see {isModel} ts-auto-guard:type-guard */
 export type Model = {
   Flow: true
   /**

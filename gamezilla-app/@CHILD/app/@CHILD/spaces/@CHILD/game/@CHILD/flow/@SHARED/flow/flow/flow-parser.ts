@@ -7,7 +7,7 @@ import {
   Terminal,
   deriveEdgeHash,
   isGroupId,
-} from "./flow"
+} from "./flow.type"
 
 const isEdgeId = (x: unknown): x is string => {
   return P.str(x)

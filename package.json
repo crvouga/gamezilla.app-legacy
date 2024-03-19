@@ -25,6 +25,7 @@
     "pretty": "bun x prettier --write .",
     "gen-l18n": "bun gamezilla-app/@SHARED/l18n/l18n-gen.ts",
     "gen-routes": "bun gamezilla-app/@SHARED/routing/routes-gen.ts",
+    "gen-guard": "bun gamezilla-app/@SHARED/guards/guards-gen.ts",
     "cg": "bun x concurrently \"bun gen-l18n\" \"bun gen-routes\"",
     "cg:watch": "bun --watch cg"
   },
@@ -54,6 +55,7 @@
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.3.0",
     "tailwindcss": "^3.3.2",
+    "ts-auto-guard": "^4.2.0",
     "ts-node": "^10.9.2",
     "ts-patch": "^3.1.2",
     "typescript": "^5.4.2",

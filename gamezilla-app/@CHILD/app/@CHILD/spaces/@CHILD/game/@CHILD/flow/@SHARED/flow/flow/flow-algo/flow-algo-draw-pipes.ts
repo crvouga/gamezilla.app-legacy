@@ -1,5 +1,5 @@
 import { p } from "gamezilla-app/@SHARED/core"
-import * as Flow from "../flow"
+import * as Flow from "../flow.type"
 import { takeWhile } from "./utils"
 import { MinHeap } from "gamezilla-app/@SHARED/data-structures/min-heap"
 
