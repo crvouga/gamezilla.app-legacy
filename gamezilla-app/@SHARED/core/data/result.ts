@@ -14,6 +14,39 @@ export type Ok<T> = { readonly t: "ok"; readonly value: T }
 
 export type Err<T> = { readonly t: "err"; readonly error: T }
 
+const is = <TError, TValue>(
+  isErr: (x: unknown) => x is TError,
+  isOk: (x: unknown) => x is TValue,
+): ((x: unknown) => x is Result<TError, TValue>) => {
+  return (x): x is Result<TError, TValue> => {
+    if (x === undefined) {
+      return false
+    }
+
+    if (x === null) {
+      return false
+    }
+
+    if (typeof x !== "object") {
+      return false
+    }
+
+    if ("t" in x === false) {
+      return false
+    }
+
+    if (x.t === "err") {
+      return isErr((x as Err<TError>).error)
+    }
+
+    if (x.t === "ok") {
+      return isOk((x as Ok<TValue>).value)
+    }
+
+    return false
+  }
+}
+
 /**
  * `Ok<T>` represents a successful result
  */
@@ -113,6 +146,7 @@ const mapOk = <TError, A, B>(
 }
 
 export const Result = {
+  is,
   ok,
   err,
   mapOk,
@@ -177,9 +211,9 @@ export const remoteResultMap = <E, A, B>(
 
 export const RemoteResult = {
   map: remoteResultMap,
-
   loading,
   notAsked,
   err,
   ok,
+  is,
 }

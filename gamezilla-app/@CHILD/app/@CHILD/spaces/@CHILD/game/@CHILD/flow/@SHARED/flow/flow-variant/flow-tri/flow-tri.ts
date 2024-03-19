@@ -1,3 +1,4 @@
+import { P } from "gamezilla-app/@SHARED/parsing"
 import { Flow } from "../../flow"
 import * as FlowTriDimensions from "./flow-tri-dimensions"
 
@@ -24,3 +25,5 @@ export const distance =
   (_a: Flow.NodeId, _b: Flow.NodeId): number => {
     return 0
   }
+
+export const is = P.any

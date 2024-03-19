@@ -1,13 +1,13 @@
-import { P } from "gamezilla-app/@SHARED/parsing"
+import { P1 } from "gamezilla-app/@SHARED/parsing"
 
 export type Route = {
   n: "lang"
   t: "choose-lang"
 }
 
-export const toRoute = P.union<Route>([
+export const toRoute = P1.union<Route>([
   (x) =>
-    P.obj(x) && P.tag(x, "n", "lang") && P.tag(x, "t", "choose-lang")
+    P1.obj(x) && P1.tag(x, "n", "lang") && P1.tag(x, "t", "choose-lang")
       ? x
       : null,
 ])

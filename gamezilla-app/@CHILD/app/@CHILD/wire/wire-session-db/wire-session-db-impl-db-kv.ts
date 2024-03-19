@@ -1,6 +1,6 @@
 import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Task, isOk } from "gamezilla-app/@SHARED/core"
-import { P } from "gamezilla-app/@SHARED/parsing"
+import { P1 } from "gamezilla-app/@SHARED/parsing"
 import { isClient } from "../wire.core"
 import { IWireSessionDb } from "./wire-session-db"
 import { SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
@@ -18,7 +18,7 @@ export const WireSessionDbKv = ({
   const sessionIdsKv = DbConnKv.instance(
     dbConnKv,
     ["wire-session-db", "session-ids-by-user-id"],
-    P.arr(SessionId.is),
+    P1.arr(SessionId.is),
   )
   return {
     clients: {

@@ -3,6 +3,7 @@ import { Posix } from "gamezilla-app/@SHARED/core"
 import { FlowVariant } from "../flow"
 import { FlowPuzzleId } from "./flow-puzzle-id"
 import { FlowPuzzleName } from "./flow-puzzle-name"
+import { P } from "gamezilla-app/@SHARED/parsing"
 
 export type FlowPuzzle = {
   id: FlowPuzzleId
@@ -31,6 +32,17 @@ const create = (input: {
   }
 }
 
+const is = P.obj({
+  id: FlowPuzzleId.is,
+  name: FlowPuzzleName.is,
+  createdAt: Posix.is,
+  createdBy: UserId.is,
+  lastUpdatedAt: Posix.is,
+  lastUpdatedBy: UserId.is,
+  flow: FlowVariant.is,
+})
+
 export const FlowPuzzle = {
+  is,
   create,
 }

@@ -7,7 +7,7 @@ import {
   UserId,
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { ServerCtx, ServerEvent } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { P } from "gamezilla-app/@SHARED/parsing"
+import { P1 } from "gamezilla-app/@SHARED/parsing"
 import { z } from "zod"
 
 //
@@ -37,18 +37,22 @@ const Space = z.object({
 
 export const toSpace = (x: unknown): Space | null => {
   if (
-    P.obj(x) &&
-    P.has(x, "visibility", P.or(P.literal("public"), P.literal("private"))) &&
-    P.has(x, "spaceId", SpaceId.is) &&
-    P.has(x, "hostId", UserId.is) &&
-    P.has(x, "users", P.dict(UserId.is, UserId.is))
+    P1.obj(x) &&
+    P1.has(
+      x,
+      "visibility",
+      P1.or(P1.literal("public"), P1.literal("private")),
+    ) &&
+    P1.has(x, "spaceId", SpaceId.is) &&
+    P1.has(x, "hostId", UserId.is) &&
+    P1.has(x, "users", P1.dict(UserId.is, UserId.is))
   ) {
     return x
   }
   return null
 }
 
-export const isSpace = P.is(toSpace)
+export const isSpace = P1.is(toSpace)
 
 type SpaceEvent =
   | { t: "user-left"; userId: UserId }

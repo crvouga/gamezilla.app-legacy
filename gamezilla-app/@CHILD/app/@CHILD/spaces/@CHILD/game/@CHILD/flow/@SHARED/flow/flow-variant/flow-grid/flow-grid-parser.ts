@@ -1,24 +1,24 @@
-import { P } from "gamezilla-app/@SHARED/parsing"
+import { P1 } from "gamezilla-app/@SHARED/parsing"
 import { FlowParser } from "../../flow"
 import * as FlowGrid from "./flow-grid"
 import { Position } from "./flow-grid-position"
 
 const toPositions = (x: unknown): FlowGrid.Model["positions"] | null => {
-  if (P.dict(P.str, Position.is)(x)) {
+  if (P1.dict(P1.str, Position.is)(x)) {
     return x
   }
   return null
 }
 
-const isPositions = P.is(toPositions)
+const isPositions = P1.is(toPositions)
 
 const to = (x: unknown): FlowGrid.Model | null => {
   if (
-    P.obj(x) &&
-    P.has(x, "t", P.literal("flow-grid")) &&
-    P.has(x, "width", P.num) &&
-    P.has(x, "height", P.num) &&
-    P.has(x, "positions", isPositions) &&
+    P1.obj(x) &&
+    P1.has(x, "t", P1.literal("flow-grid")) &&
+    P1.has(x, "width", P1.num) &&
+    P1.has(x, "height", P1.num) &&
+    P1.has(x, "positions", isPositions) &&
     FlowParser.isModel(x)
   ) {
     return {
@@ -33,7 +33,7 @@ const to = (x: unknown): FlowGrid.Model | null => {
   return null
 }
 
-const is = P.is(to)
+const is = P1.is(to)
 
 export const FlowGridParser = {
   is,

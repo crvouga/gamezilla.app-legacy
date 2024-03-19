@@ -1,7 +1,7 @@
 import { SessionId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { Result, Uuid } from "gamezilla-app/@SHARED/core"
-import { P } from "gamezilla-app/@SHARED/parsing"
+import { P1 } from "gamezilla-app/@SHARED/parsing"
 import { ISessionDb } from "./session-db"
 
 //
@@ -17,16 +17,16 @@ type Row = {
 
 const toRow = (x: unknown): Row | null => {
   if (
-    P.obj(x) &&
-    P.has(x, "session_id", SessionId.is) &&
-    P.has(x, "user_id", UserId.is)
+    P1.obj(x) &&
+    P1.has(x, "session_id", SessionId.is) &&
+    P1.has(x, "user_id", UserId.is)
   ) {
     return x
   }
   return null
 }
 
-const isRow = P.is(toRow)
+const isRow = P1.is(toRow)
 
 //
 //

@@ -1,3 +1,4 @@
+import { P } from "gamezilla-app/@SHARED/parsing"
 import { Flow } from "../flow"
 import { FlowGrid } from "./flow-grid"
 import { FlowHex } from "./flow-hex"
@@ -42,3 +43,9 @@ export const init = (input: {
     }
   }
 }
+
+export const is: (x: unknown) => x is Model = P.or(
+  FlowGrid.is,
+  FlowHex.is,
+  FlowTri.is,
+)

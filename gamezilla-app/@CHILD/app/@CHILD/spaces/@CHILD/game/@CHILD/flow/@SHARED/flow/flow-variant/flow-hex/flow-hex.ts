@@ -1,3 +1,4 @@
+import { P } from "gamezilla-app/@SHARED/parsing"
 import { Flow } from "../../flow"
 import * as FlowHexDimensions from "./flow-hex-dimensions"
 
@@ -13,6 +14,8 @@ export type Model = Flow.Model &
     FlowHex: true
     positions: Record<Flow.NodeId, HexPosition>
   }
+
+export const is = P.any
 
 export const init = (input: {
   dimensions: FlowHexDimensions.Model

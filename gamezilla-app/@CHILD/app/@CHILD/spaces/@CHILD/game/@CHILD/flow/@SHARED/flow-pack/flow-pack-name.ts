@@ -9,6 +9,11 @@ const generate = ({ count }: { count: number }) => {
   return `Pack ${count} - ${adjective} ${noun}` as FlowPackName
 }
 
+const is = (name: unknown): name is FlowPackName => {
+  return typeof name === "string"
+}
+
 export const FlowPackName = {
   generate,
+  is,
 }

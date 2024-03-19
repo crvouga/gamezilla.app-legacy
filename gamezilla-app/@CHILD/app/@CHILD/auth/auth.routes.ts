@@ -1,5 +1,5 @@
 import { PhoneNumber } from "gamezilla-app/@SHARED/core"
-import { P } from "gamezilla-app/@SHARED/parsing"
+import { P1 } from "gamezilla-app/@SHARED/parsing"
 
 export type Route =
   | {
@@ -16,22 +16,22 @@ export type Route =
       phoneNumber: PhoneNumber
     }
 
-export const toRoute = P.union<Route>([
+export const toRoute = P1.union<Route>([
   (x) =>
-    P.obj(x) && P.tag(x, "n", "auth-login") && P.tag(x, "t", "login")
+    P1.obj(x) && P1.tag(x, "n", "auth-login") && P1.tag(x, "t", "login")
       ? x
       : null,
   (x) =>
-    P.obj(x) &&
-    P.tag(x, "n", "auth-login") &&
-    P.tag(x, "t", "login-sms-request")
+    P1.obj(x) &&
+    P1.tag(x, "n", "auth-login") &&
+    P1.tag(x, "t", "login-sms-request")
       ? x
       : null,
   (x) =>
-    P.obj(x) &&
-    P.tag(x, "n", "auth-login") &&
-    P.tag(x, "t", "login-sms-verify") &&
-    P.has(x, "phoneNumber", PhoneNumber.is)
+    P1.obj(x) &&
+    P1.tag(x, "n", "auth-login") &&
+    P1.tag(x, "t", "login-sms-verify") &&
+    P1.has(x, "phoneNumber", PhoneNumber.is)
       ? x
       : null,
 ])

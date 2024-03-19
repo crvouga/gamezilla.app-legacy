@@ -4,7 +4,7 @@ import {
   LamportClock,
   LamportTimestamp,
 } from "gamezilla-app/@SHARED/lamport-clock"
-import { P2 as P } from "gamezilla-app/@SHARED/parsing"
+import { P as P } from "gamezilla-app/@SHARED/parsing"
 import { EventId, WithEventId, WithEventMeta } from "../@SHARED/event"
 import { SpaceEvent } from "./space-event"
 import * as SpaceState from "./space-state"

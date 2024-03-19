@@ -99,12 +99,143 @@ export function discrimatedUnion<T extends string, U extends Record<T, string>>(
   }
 }
 
+export function or<A>(isA: (x: unknown) => x is A): (x: unknown) => x is A
 export function or<A, B>(
   isA: (x: unknown) => x is A,
   isB: (x: unknown) => x is B,
-): (x: unknown) => x is A | B {
-  return (x: unknown): x is A | B => {
-    return isA(x) || isB(x)
+): (x: unknown) => x is A | B
+export function or<A, B, C>(
+  isA: (x: unknown) => x is A,
+  isB: (x: unknown) => x is B,
+  isC: (x: unknown) => x is C,
+): (x: unknown) => x is A | B | C
+export function or<A, B, C, D>(
+  isA: (x: unknown) => x is A,
+  isB: (x: unknown) => x is B,
+  isC: (x: unknown) => x is C,
+  isD: (x: unknown) => x is D,
+): (x: unknown) => x is A | B | C | D
+export function or<A, B, C, D, E>(
+  isA: (x: unknown) => x is A,
+  isB: (x: unknown) => x is B,
+  isC: (x: unknown) => x is C,
+  isD: (x: unknown) => x is D,
+  isE: (x: unknown) => x is E,
+): (x: unknown) => x is A | B | C | D | E
+export function or<A, B, C, D, E, F>(
+  isA: (x: unknown) => x is A,
+  isB: (x: unknown) => x is B,
+  isC: (x: unknown) => x is C,
+  isD: (x: unknown) => x is D,
+  isE: (x: unknown) => x is E,
+  isF: (x: unknown) => x is F,
+): (x: unknown) => x is A | B | C | D | E | F
+export function or<A, B, C, D, E, F, G>(
+  isA: (x: unknown) => x is A,
+  isB: (x: unknown) => x is B,
+  isC: (x: unknown) => x is C,
+  isD: (x: unknown) => x is D,
+  isE: (x: unknown) => x is E,
+  isF: (x: unknown) => x is F,
+  isG: (x: unknown) => x is G,
+): (x: unknown) => x is A | B | C | D | E | F | G
+export function or<A, B, C, D, E, F, G, H>(
+  isA: (x: unknown) => x is A,
+  isB: (x: unknown) => x is B,
+  isC: (x: unknown) => x is C,
+  isD: (x: unknown) => x is D,
+  isE: (x: unknown) => x is E,
+  isF: (x: unknown) => x is F,
+  isG: (x: unknown) => x is G,
+  isH: (x: unknown) => x is H,
+): (x: unknown) => x is A | B | C | D | E | F | G | H
+export function or<A, B, C, D, E, F, G, H, I>(
+  isA: (x: unknown) => x is A,
+  isB: (x: unknown) => x is B,
+  isC: (x: unknown) => x is C,
+  isD: (x: unknown) => x is D,
+  isE: (x: unknown) => x is E,
+  isF: (x: unknown) => x is F,
+  isG: (x: unknown) => x is G,
+  isH: (x: unknown) => x is H,
+  isI: (x: unknown) => x is I,
+): (x: unknown) => x is A | B | C | D | E | F | G | H | I
+export function or<A, B, C, D, E, F, G, H, I, J>(
+  isA: (x: unknown) => x is A,
+  isB: (x: unknown) => x is B,
+  isC: (x: unknown) => x is C,
+  isD: (x: unknown) => x is D,
+  isE: (x: unknown) => x is E,
+  isF: (x: unknown) => x is F,
+  isG: (x: unknown) => x is G,
+  isH: (x: unknown) => x is H,
+  isI: (x: unknown) => x is I,
+  isJ: (x: unknown) => x is J,
+): (x: unknown) => x is A | B | C | D | E | F | G | H | I | J
+export function or<A, B, C, D, E, F, G, H, I, J, K>(
+  isA: (x: unknown) => x is A,
+  isB: (x: unknown) => x is B,
+  isC: (x: unknown) => x is C,
+  isD: (x: unknown) => x is D,
+  isE: (x: unknown) => x is E,
+  isF: (x: unknown) => x is F,
+  isG: (x: unknown) => x is G,
+  isH: (x: unknown) => x is H,
+  isI: (x: unknown) => x is I,
+  isJ: (x: unknown) => x is J,
+  isK: (x: unknown) => x is K,
+): (x: unknown) => x is A | B | C | D | E | F | G | H | I | J | K
+// export function or<A, B, C, D, E, F, G, H, I, J, K, L>(
+//   isA: (x: unknown) => x is A,
+//   isB: (x: unknown) => x is B,
+//   isC: (x: unknown) => x is C,
+//   isD: (x: unknown) => x is D,
+//   isE: (x: unknown) => x is E,
+//   isF: (x: unknown) => x is F,
+//   isG: (x: unknown) => x is G,
+//   isH: (x: unknown) => x is H,
+//   isI: (x: unknown) => x is I,
+//   isJ: (x: unknown) => x is J,
+//   isK: (x: unknown) => x is K,
+//   isL: (x: unknown) => x is K,
+// ): (x: unknown) => x is A | B | C | D | E | F | G | H | I | J | K | L
+// export function or<A, B, C, D, E, F, G, H, I, J, K, L, M>(
+//   isA: (x: unknown) => x is A,
+//   isB: (x: unknown) => x is B,
+//   isC: (x: unknown) => x is C,
+//   isD: (x: unknown) => x is D,
+//   isE: (x: unknown) => x is E,
+//   isF: (x: unknown) => x is F,
+//   isG: (x: unknown) => x is G,
+//   isH: (x: unknown) => x is H,
+//   isI: (x: unknown) => x is I,
+//   isJ: (x: unknown) => x is J,
+//   isK: (x: unknown) => x is K,
+//   isL: (x: unknown) => x is K,
+//   isM: (x: unknown) => x is M,
+// ): (x: unknown) => x is A | B | C | D | E | F | G | H | I | J | K | L | M
+// export function or<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
+//   isA: (x: unknown) => x is A,
+//   isB: (x: unknown) => x is B,
+//   isC: (x: unknown) => x is C,
+//   isD: (x: unknown) => x is D,
+//   isE: (x: unknown) => x is E,
+//   isF: (x: unknown) => x is F,
+//   isG: (x: unknown) => x is G,
+//   isH: (x: unknown) => x is H,
+//   isI: (x: unknown) => x is I,
+//   isJ: (x: unknown) => x is J,
+//   isK: (x: unknown) => x is K,
+//   isL: (x: unknown) => x is K,
+//   isM: (x: unknown) => x is M,
+//   isN: (x: unknown) => x is N,
+// ): (x: unknown) => x is A | B | C | D | E | F | G | H | I | J | K | L | M | N
+export function or(...guards: Validator<unknown>[]): Validator<unknown> {
+  return (input: unknown): input is any => {
+    for (const guard of guards) {
+      if (guard(input)) return true
+    }
+    return false
   }
 }
 
@@ -120,7 +251,7 @@ export function bool(x: unknown): x is boolean {
   return typeof x === "boolean"
 }
 
-export function literal<T extends string>(literal: T) {
+export function l<T extends string>(literal: T) {
   return (x: unknown): x is T => {
     return x === literal
   }

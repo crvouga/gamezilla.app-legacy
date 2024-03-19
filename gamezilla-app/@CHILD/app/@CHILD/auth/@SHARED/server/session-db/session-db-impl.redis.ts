@@ -1,7 +1,7 @@
 import { SessionId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Result } from "gamezilla-app/@SHARED/core"
-import { P } from "gamezilla-app/@SHARED/parsing"
+import { P, P1 } from "gamezilla-app/@SHARED/parsing"
 import { ISessionDb } from "./session-db"
 
 //
@@ -10,19 +10,12 @@ import { ISessionDb } from "./session-db"
 //
 //
 
-type Row = {
-  session_id: string
-  user_id: string
-}
+export const isRow = P.obj({
+  session_id: P.str,
+  user_id: P.str,
+})
 
-const toRow = (x: unknown): Row | null => {
-  if (P.obj(x) && P.has(x, "session_id", P.str) && P.has(x, "user_id", P.str)) {
-    return x
-  }
-  return null
-}
-
-export const isRow = P.is(toRow)
+export type Row = P.Infer<typeof isRow>
 
 //
 //
@@ -38,7 +31,7 @@ export const SessionDbPostgres = ({
   const sessionIdsByUserId = DbConnKv.instance(
     dbConn,
     ["auth-session", "session-ids-by-user-id"],
-    P.arr(SessionId.is),
+    P1.arr(SessionId.is),
   )
   const userIdBySessionId = DbConnKv.instance(
     dbConn,
