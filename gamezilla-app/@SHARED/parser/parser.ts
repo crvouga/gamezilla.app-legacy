@@ -38,8 +38,12 @@ export const is =
 //
 //
 
-const toErrorMessage = (expected: string, actual: string) => {
-  return `Expected: ${expected}. Actual: ${actual}`
+const toErrorMessage = (
+  expected: string,
+  actual: string,
+  actualValue: string,
+) => {
+  return `Expected: ${expected}.\nActual Type: ${actual}.\nActual Value: ${actualValue}\n`
 }
 
 const isIndexable = (input: unknown): input is Record<string, unknown> => {
@@ -54,7 +58,11 @@ export const obj = <T>(parsers: {
       if (typeof input !== "object") {
         return Result.err([
           {
-            message: toErrorMessage("object", typeof input),
+            message: toErrorMessage(
+              "object",
+              typeof input,
+              JSON.stringify(input),
+            ),
             path: [],
           },
         ])
@@ -63,7 +71,7 @@ export const obj = <T>(parsers: {
       if (input === null) {
         return Result.err([
           {
-            message: toErrorMessage("object", "null"),
+            message: toErrorMessage("object", "null", JSON.stringify(input)),
             path: [],
           },
         ])
@@ -72,7 +80,11 @@ export const obj = <T>(parsers: {
       if (!isIndexable(input)) {
         return Result.err([
           {
-            message: toErrorMessage("object", "non-indexable"),
+            message: toErrorMessage(
+              "object",
+              "non-indexable",
+              JSON.stringify(input),
+            ),
             path: [],
           },
         ])
@@ -116,7 +128,11 @@ export const str: Parser<string> = {
     if (typeof input !== "string") {
       return Result.err([
         {
-          message: toErrorMessage("string", typeof input),
+          message: toErrorMessage(
+            "string",
+            typeof input,
+            `${input instanceof Date}, ${JSON.stringify(input)}`,
+          ),
           path: [],
         },
       ])
@@ -130,7 +146,11 @@ export const num: Parser<number> = {
     if (typeof input !== "number") {
       return Result.err([
         {
-          message: toErrorMessage("number", typeof input),
+          message: toErrorMessage(
+            "number",
+            typeof input,
+            JSON.stringify(input),
+          ),
           path: [],
         },
       ])
@@ -147,7 +167,11 @@ export const l = <T extends string | number | boolean | null | undefined>(
       if (input !== value) {
         return Result.err([
           {
-            message: toErrorMessage(String(value), String(input)),
+            message: toErrorMessage(
+              String(value),
+              String(input),
+              JSON.stringify(input),
+            ),
             path: [],
           },
         ])
@@ -163,7 +187,11 @@ export const arr = <T>(parser: Parser<T>): Parser<T[]> => {
       if (!Array.isArray(input)) {
         return Result.err([
           {
-            message: toErrorMessage("array", typeof input),
+            message: toErrorMessage(
+              "array",
+              typeof input,
+              JSON.stringify(input),
+            ),
             path: [],
           },
         ])
@@ -217,7 +245,11 @@ export const dict = <TKey extends string | number, TValue>(
       if (!isIndexable(input)) {
         return Result.err([
           {
-            message: toErrorMessage("object", typeof input),
+            message: toErrorMessage(
+              "object",
+              typeof input,
+              JSON.stringify(input),
+            ),
             path: [],
           },
         ])
@@ -306,6 +338,7 @@ export const enumeration = <T extends string | number>(
             message: toErrorMessage(
               `one of ${values.join(", ")}`,
               String(input),
+              JSON.stringify(input),
             ),
             path: [],
           },

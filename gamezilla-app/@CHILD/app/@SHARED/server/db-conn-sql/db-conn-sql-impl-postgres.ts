@@ -1,5 +1,6 @@
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { err, ok } from "gamezilla-app/@SHARED/core"
+import { p } from "gamezilla-app/@SHARED/parser"
 import postgres from "postgres"
 import { Logger } from "../logger"
 import { logQuery } from "./shared"
@@ -28,24 +29,35 @@ export const createDbConnPostgres = async ({
 
         logQuery({ logger, sql, start, end })
 
-        const parsed = Array.isArray(rows)
-          ? rows.flatMap((row) => {
-              const parsed = rowParser.parse(row)
-              if (parsed.t === "ok") {
-                return [parsed.value]
-              }
-              logger.error(
-                `[db] Failed to parse row=${JSON.stringify(
-                  row,
-                  null,
-                  4,
-                )} \nerror=${JSON.stringify(parsed.error, null, 4)} sql=${sql}`,
-              )
-              return []
-            })
-          : []
+        const output: p.Infer<typeof rowParser>[] = []
 
-        return ok(parsed)
+        for (let i = 0; i < rows.length; i++) {
+          const row = rows[i]!
+          for (const columnKey in row) {
+            const value = row[columnKey]
+
+            if (value instanceof Date) {
+              row[columnKey] = value.toUTCString()
+            }
+          }
+
+          const parsed = rowParser.parse(row)
+
+          if (parsed.t === "err") {
+            logger.error(
+              `[db] Failed to parse row=${JSON.stringify(
+                row,
+                null,
+                4,
+              )} \nerror=${JSON.stringify(parsed.error, null, 4)} sql=${sql}`,
+            )
+            continue
+          }
+
+          output.push(parsed.value)
+        }
+
+        return ok(output)
       } catch (error) {
         logger.error(`[db] ${error} sql=${sql}`)
         return err(String(error))
