@@ -9,12 +9,15 @@ const Msg = or(
   }),
   p.obj({
     t: p.l("b"),
+    bar: p.num,
   }),
   p.obj({
     t: p.l("c"),
+    baz: p.arr(p.str),
   }),
   p.obj({
     t: p.l("d"),
+    qux: p.maybe(p.str),
   }),
   p.obj({
     t: p.l("e"),
@@ -95,6 +98,9 @@ if (parsed.t == "ok") {
     }
     case "b": {
       console.log("b")
+      break
+    }
+    case "d": {
       break
     }
   }

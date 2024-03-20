@@ -44,7 +44,7 @@ export type P = {
   num: ParserNumber
   l: ParserLiteral
   arr: ParserArray
-  nil: ParserNullish
+  maybe: ParserNullish
   custom: ParserCustom
 }
 

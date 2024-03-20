@@ -36,7 +36,7 @@ export const p: P = {
   arr: <T>(parser: Parser<T>): Parser<T[]> =>
     // @ts-ignore
     toResult(z.array(parser.parse)),
-  nil: <T>(parser: Parser<T>): Parser<T | null> =>
+  maybe: <T>(parser: Parser<T>): Parser<T | null> =>
     // @ts-ignore
     toResult(parser.nullish()),
   custom: <T>(predicate: (input: unknown) => input is T): Parser<T> => ({
