@@ -1,14 +1,11 @@
-import { z } from "zod"
+import { p } from "gamezilla-app/@SHARED/parser"
 
-export const Model = z.object({
-  t: z.literal("flow-tri"),
-  side: z.number(),
+export const Model = p.obj({
+  t: p.l("flow-tri"),
+  side: p.num,
 })
 
-export type Model = {
-  t: "flow-tri"
-  side: number
-}
+export type Model = p.Infer<typeof Model>
 
 export const init = (input: { side: number }): Model => {
   return {

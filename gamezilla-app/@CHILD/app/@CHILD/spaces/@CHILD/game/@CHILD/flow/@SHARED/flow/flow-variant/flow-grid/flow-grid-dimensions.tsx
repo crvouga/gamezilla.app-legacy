@@ -1,17 +1,13 @@
 import { IconXMark, Slider } from "gamezilla-app/@CHILD/app/@SHARED/ui"
-import { z } from "zod"
+import { p } from "gamezilla-app/@SHARED/parser"
 
-export const Model = z.object({
-  t: z.literal("flow-grid"),
-  width: z.number(),
-  height: z.number(),
+export const Model = p.obj({
+  t: p.l("flow-grid"),
+  width: p.num,
+  height: p.num,
 })
 
-export type Model = {
-  t: "flow-grid"
-  width: number
-  height: number
-}
+export type Model = p.Infer<typeof Model>
 
 export const init = (model: { width: number; height: number }): Model => {
   return {

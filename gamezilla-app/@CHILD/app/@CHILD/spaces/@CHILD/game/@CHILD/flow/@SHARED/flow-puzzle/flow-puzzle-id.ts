@@ -1,6 +1,6 @@
-import { err, ok, Result, Uuid } from "gamezilla-app/@SHARED/core"
+import { Uuid } from "gamezilla-app/@SHARED/core"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
-import { z } from "zod"
+import { p } from "gamezilla-app/@SHARED/parser"
 
 export type FlowPuzzleId = Brand<string, "FlowPuzzleId">
 
@@ -11,16 +11,7 @@ const is = (flowPuzzleId: unknown): flowPuzzleId is FlowPuzzleId => {
   return typeof flowPuzzleId === "string"
 }
 
-export const ZFlowPuzzleId = z.string().refine(is)
-
-type Problem = "invalid_id"
-
-const parse = (id: unknown): Result<Problem, FlowPuzzleId> => {
-  if (is(id)) {
-    return ok(id)
-  }
-  return err("invalid_id")
-}
+const parser = p.custom(is, "Invalid flow puzzle id")
 
 const generate = () => {
   const id = Uuid.generate()
@@ -34,7 +25,8 @@ const generate = () => {
 }
 
 export const FlowPuzzleId = {
+  ...parser,
   generate,
-  parse,
+
   is,
 }

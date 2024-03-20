@@ -1,10 +1,10 @@
-import { z } from "zod"
+import { p } from "gamezilla-app/@SHARED/parser"
 
-export const Model = z.object({
-  t: z.literal("flow-hex"),
-  width: z.number(),
-  height: z.number(),
-  side: z.number(),
+export const Model = p.obj({
+  t: p.l("flow-hex"),
+  width: p.num,
+  height: p.num,
+  side: p.num,
 })
 
 export type Model = {
