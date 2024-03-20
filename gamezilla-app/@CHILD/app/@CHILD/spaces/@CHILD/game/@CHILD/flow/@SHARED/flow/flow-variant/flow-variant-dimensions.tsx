@@ -1,6 +1,13 @@
 import { FlowHexDimensions } from "./flow-hex"
 import { FlowGridDimensions } from "./flow-grid"
 import { FlowTriDimensions } from "./flow-tri"
+import { z } from "zod"
+
+export const Model = z.discriminatedUnion("t", [
+  FlowGridDimensions.Model,
+  FlowHexDimensions.Model,
+  FlowTriDimensions.Model,
+])
 
 export type Model =
   | FlowGridDimensions.Model

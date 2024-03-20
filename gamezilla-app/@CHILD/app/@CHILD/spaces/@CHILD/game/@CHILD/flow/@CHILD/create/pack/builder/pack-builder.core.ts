@@ -4,7 +4,8 @@ import { FlowVariantUIPlay } from "../../../../@SHARED/flow"
 import { FlowPackPuzzleGrid } from "../../../../@SHARED/flow-pack"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
-import { P } from "gamezilla-app/@SHARED/parsing"
+import { p } from "gamezilla-app/@SHARED/parsing"
+import { or } from "gamezilla-app/@SHARED/parsing/or"
 
 //
 //
@@ -81,59 +82,60 @@ export type ModelSync = {
       }
 }
 
-export const isMsgSync = P.or(
-  P.obj({
-    t: P.l("pack-builder.user-clicked-exit-button"),
+export const isMsgSync = or(
+  or(
+    p.obj({
+      t: p.l("pack-builder.user-clicked-exit-button"),
+      userId: UserId.is,
+    }),
+    p.obj({
+      t: p.l("pack-builder.saved-pack"),
+      saved: Result.is(p.str, FlowPack.is),
+    }),
+    p.obj({
+      t: p.l("pack-builder.user-clicked-open-add-puzzle-button"),
+      userId: UserId.is,
+    }),
+    p.obj({
+      t: p.l("pack-builder.user-closed-add-puzzle"),
+    }),
+    p.obj({
+      t: p.l("pack-builder.user-clicked-add-puzzle-item"),
+      puzzle: FlowPuzzle.is,
+      userId: UserId.is,
+    }),
+    p.obj({
+      t: p.l("pack-builder.user-clicked-pack-item"),
+      puzzle: FlowPuzzle.is,
+      index: p.num,
+    }),
+    p.obj({
+      t: p.l("pack-builder.flow-play-ui"),
+      c: p.any,
+    }),
+    p.obj({
+      t: p.l("pack-builder.user-clicked-exit-puzzle-button"),
+      userId: UserId.is,
+    }),
+    p.obj({
+      t: p.l("pack-builder.user-clicked-next-puzzle-button"),
+      userId: UserId.is,
+      nextPuzzle: FlowPuzzle.is,
+    }),
+    p.obj({
+      t: p.l("pack-builder.user-clicked-previous-puzzle-button"),
+      userId: UserId.is,
+      previousPuzzle: FlowPuzzle.is,
+    }),
+    p.obj({
+      t: p.l("pack-builder.puzzle-screen.user-clicked-more-button"),
+      userId: UserId.is,
+    }),
+  ),
+  p.obj({
+    t: p.l("pack-builder.puzzle-screen.user-closed-more-drawer"),
     userId: UserId.is,
   }),
-  P.obj({
-    t: P.l("pack-builder.saved-pack"),
-    saved: Result.is(P.str, FlowPack.is),
-  }),
-  P.obj({
-    t: P.l("pack-builder.user-clicked-open-add-puzzle-button"),
-    userId: UserId.is,
-  }),
-  P.obj({
-    t: P.l("pack-builder.user-closed-add-puzzle"),
-  }),
-  P.obj({
-    t: P.l("pack-builder.user-clicked-add-puzzle-item"),
-    puzzle: FlowPuzzle.is,
-    userId: UserId.is,
-  }),
-  P.obj({
-    t: P.l("pack-builder.user-clicked-pack-item"),
-    puzzle: FlowPuzzle.is,
-    index: P.num,
-  }),
-  P.obj({
-    t: P.l("pack-builder.flow-play-ui"),
-    c: P.any,
-  }),
-  P.obj({
-    t: P.l("pack-builder.user-clicked-exit-puzzle-button"),
-    userId: UserId.is,
-  }),
-  P.obj({
-    t: P.l("pack-builder.user-clicked-next-puzzle-button"),
-    userId: UserId.is,
-    nextPuzzle: FlowPuzzle.is,
-  }),
-  P.obj({
-    t: P.l("pack-builder.user-clicked-previous-puzzle-button"),
-    userId: UserId.is,
-    previousPuzzle: FlowPuzzle.is,
-  }),
-  P.obj({
-    t: P.l("pack-builder.puzzle-screen.user-clicked-more-button"),
-    userId: UserId.is,
-  }),
-
-  // P.obj({
-  //   t: P.l("pack-builder.puzzle-screen.user-closed-more-drawer"),
-  //   userId: UserId.is,
-  // }),
 )
 
 export type MsgSync =

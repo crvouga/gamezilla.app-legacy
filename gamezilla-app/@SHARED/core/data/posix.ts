@@ -6,17 +6,32 @@ export type Posix = Brand<number, "Posix">
 const minPosixTime = new Date("1970-01-01T00:00:00.000Z").getTime()
 const maxPosixTime = new Date("2038-01-19T03:14:07.999Z").getTime()
 
-const is = (posixTime: unknown): posixTime is Posix => {
+function explain(posixTime: unknown): string[] {
+  const errors: string[] = []
   if (typeof posixTime !== "number") {
+    errors.push(`Expected a number, but got ${posixTime}`)
+  }
+  if (typeof posixTime === "number" && posixTime < minPosixTime) {
+    errors.push(
+      `Expected a number greater than ${minPosixTime}, but got ${posixTime}`,
+    )
+  }
+  if (typeof posixTime === "number" && posixTime > maxPosixTime) {
+    errors.push(
+      `Expected a number less than ${maxPosixTime}, but got ${posixTime}`,
+    )
+  }
+  return errors
+}
+
+function is(posixTime: unknown): posixTime is Posix {
+  const errors = explain(posixTime)
+  if (errors.length > 0) {
     return false
   }
-
-  if (posixTime < minPosixTime || posixTime > maxPosixTime) {
-    return false
-  }
-
   return true
 }
+is.explain = explain
 
 const fromNumber = (posixTime: number): Posix => {
   const clamped = Math.max(posixTime, minPosixTime)

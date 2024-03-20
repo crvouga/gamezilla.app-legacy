@@ -1,4 +1,4 @@
-import { P } from "gamezilla-app/@SHARED/parsing"
+import { p } from "gamezilla-app/@SHARED/parsing"
 import { Flow } from "../../flow"
 import * as FlowTriDimensions from "./flow-tri-dimensions"
 
@@ -26,4 +26,4 @@ export const distance =
     return 0
   }
 
-export const is = P.any
+export const is = p.any

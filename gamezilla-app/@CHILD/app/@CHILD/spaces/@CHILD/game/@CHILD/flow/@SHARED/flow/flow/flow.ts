@@ -3,6 +3,10 @@ import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
 export type NodeId = Brand<string, "NodeId">
 
+export const isNodeId = (nodeId: unknown): nodeId is NodeId => {
+  return typeof nodeId === "string"
+}
+
 export const createNodeId = (nodeId: string): NodeId => {
   return nodeId as NodeId
 }
@@ -62,7 +66,7 @@ export const isEdgeId = (model: Model, edgeId: string): edgeId is EdgeId => {
   return edgeId in model.edges
 }
 
-export const isNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
+export const hasNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
   return nodeId in model.nodes
 }
 
@@ -297,7 +301,7 @@ export const removeTerminal = (model: Model, groupId: GroupId): Model => {
  */
 export const yieldNodes = function* (model: Model): Generator<Node> {
   for (const nodeId in model.nodes) {
-    if (!isNodeId(model, nodeId)) {
+    if (!hasNodeId(model, nodeId)) {
       continue
     }
 
@@ -315,7 +319,7 @@ export const yieldNodes = function* (model: Model): Generator<Node> {
 
 export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
   for (const nodeId in model.pipesBySourceId) {
-    if (!isNodeId(model, nodeId)) {
+    if (!hasNodeId(model, nodeId)) {
       continue
     }
 
@@ -428,7 +432,7 @@ export const yieldEdgesIn = function* (
 ): Iterable<Edge> {
   const indexEdgesIn = toIndexEdgesIn(model)
   for (const sourceId in indexEdgesIn[targetNodeId]) {
-    if (!isNodeId(model, sourceId)) {
+    if (!hasNodeId(model, sourceId)) {
       continue
     }
 

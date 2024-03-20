@@ -1,7 +1,7 @@
 import { DELTAS, Position } from "./flow-grid-position"
 import { Flow } from "../../flow"
 import * as FlowGridDimensions from "./flow-grid-dimensions"
-import { P } from "gamezilla-app/@SHARED/parsing"
+import { p } from "gamezilla-app/@SHARED/parsing"
 
 //
 //
@@ -23,7 +23,7 @@ export const positionToNodeId = (position: Position): Flow.NodeId => {
   return Flow.createNodeId(`${position.x},${position.y}`)
 }
 
-export const is = P.any
+export const is = p.any
 
 export const distance =
   (model: Model) =>

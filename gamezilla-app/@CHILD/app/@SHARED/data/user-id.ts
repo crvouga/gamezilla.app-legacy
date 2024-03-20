@@ -7,7 +7,7 @@ export type UserId = Brand<string, "UserId">
 const namespace = "user"
 const separator = ":"
 
-const is = (userId: unknown): userId is UserId => {
+function is(userId: unknown): userId is UserId {
   return typeof userId === "string"
 }
 

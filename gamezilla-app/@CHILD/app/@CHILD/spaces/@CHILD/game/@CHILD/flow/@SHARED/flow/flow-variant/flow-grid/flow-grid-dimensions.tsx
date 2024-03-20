@@ -1,4 +1,11 @@
 import { IconXMark, Slider } from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { z } from "zod"
+
+export const Model = z.object({
+  t: z.literal("flow-grid"),
+  width: z.number(),
+  height: z.number(),
+})
 
 export type Model = {
   t: "flow-grid"

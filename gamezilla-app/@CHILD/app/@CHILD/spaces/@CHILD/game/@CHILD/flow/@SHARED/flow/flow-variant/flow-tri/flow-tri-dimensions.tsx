@@ -1,3 +1,10 @@
+import { z } from "zod"
+
+export const Model = z.object({
+  t: z.literal("flow-tri"),
+  side: z.number(),
+})
+
 export type Model = {
   t: "flow-tri"
   side: number

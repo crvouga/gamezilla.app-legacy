@@ -4,7 +4,7 @@ import {
   LamportClock,
   LamportTimestamp,
 } from "gamezilla-app/@SHARED/lamport-clock"
-import { P as P } from "gamezilla-app/@SHARED/parsing"
+import { p as p } from "gamezilla-app/@SHARED/parsing"
 import { EventId, WithEventId, WithEventMeta } from "../@SHARED/event"
 import { SpaceEvent } from "./space-event"
 import * as SpaceState from "./space-state"
@@ -27,11 +27,11 @@ export type Model = {
   }
 }
 
-export const isModel: (x: unknown) => x is Model = P.obj({
-  events: P.arr(P.any),
-  eventIds: P.dict(EventId.is, EventId.is),
+export const isModel: (x: unknown) => x is Model = p.obj({
+  events: p.arr(p.any),
+  eventIds: p.dict(EventId.is, EventId.is),
   clock: LamportClock.is,
-  snapshots: P.dict(EventId.is, P.any),
+  snapshots: p.dict(EventId.is, p.any),
 })
 
 export const init: Model = {

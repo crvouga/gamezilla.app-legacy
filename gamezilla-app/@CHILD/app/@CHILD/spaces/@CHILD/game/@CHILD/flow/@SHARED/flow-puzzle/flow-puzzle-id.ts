@@ -1,5 +1,6 @@
 import { err, ok, Result, Uuid } from "gamezilla-app/@SHARED/core"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
+import { z } from "zod"
 
 export type FlowPuzzleId = Brand<string, "FlowPuzzleId">
 
@@ -9,6 +10,8 @@ const separator = ":"
 const is = (flowPuzzleId: unknown): flowPuzzleId is FlowPuzzleId => {
   return typeof flowPuzzleId === "string"
 }
+
+export const ZFlowPuzzleId = z.string().refine(is)
 
 type Problem = "invalid_id"
 

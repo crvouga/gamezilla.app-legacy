@@ -3,7 +3,7 @@ import { Posix } from "gamezilla-app/@SHARED/core"
 import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id"
 import { FlowPackId } from "./flow-pack-id"
 import { FlowPackName } from "./flow-pack-name"
-import { P } from "gamezilla-app/@SHARED/parsing"
+import { p } from "gamezilla-app/@SHARED/parsing"
 
 export type FlowPack = {
   id: FlowPackId
@@ -15,14 +15,14 @@ export type FlowPack = {
   puzzleIds: FlowPuzzleId[]
 }
 
-const is: (x: unknown) => x is FlowPack = P.obj({
+const is: (x: unknown) => x is FlowPack = p.obj({
   id: FlowPackId.is,
   createdBy: UserId.is,
   createdAt: Posix.is,
   lastUpdatedBy: UserId.is,
   lastUpdatedAt: Posix.is,
   name: FlowPackName.is,
-  puzzleIds: P.arr(FlowPuzzleId.is),
+  puzzleIds: p.arr(FlowPuzzleId.is),
 })
 
 const create = (input: {

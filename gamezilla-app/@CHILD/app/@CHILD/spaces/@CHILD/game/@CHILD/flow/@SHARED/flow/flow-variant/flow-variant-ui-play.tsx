@@ -1,4 +1,4 @@
-import * as Flow from "../flow/flow.type"
+import * as Flow from "../flow/flow"
 import { AlgoDrawPipes } from "../flow/flow-algo"
 import * as FlowVariant from "./flow-variant"
 import * as FlowVariantUI from "./flow-variant-ui"

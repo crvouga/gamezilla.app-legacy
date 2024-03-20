@@ -1,7 +1,7 @@
 import { SessionId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Result } from "gamezilla-app/@SHARED/core"
-import { P, P1 } from "gamezilla-app/@SHARED/parsing"
+import { p, P1 } from "gamezilla-app/@SHARED/parsing"
 import { ISessionDb } from "./session-db"
 
 //
@@ -10,12 +10,12 @@ import { ISessionDb } from "./session-db"
 //
 //
 
-export const isRow = P.obj({
-  session_id: P.str,
-  user_id: P.str,
+export const isRow = p.obj({
+  session_id: p.str,
+  user_id: p.str,
 })
 
-export type Row = P.Infer<typeof isRow>
+export type Row = p.Infer<typeof isRow>
 
 //
 //
