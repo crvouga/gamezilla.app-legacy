@@ -1,4 +1,5 @@
 import { or } from "./or"
+import { Infer } from "./parser"
 import { p } from "./parser-impl-zod"
 
 const Msg = or(
@@ -76,6 +77,8 @@ const Msg = or(
     t: p.l("x"),
   }),
 )
+
+type Msg = Infer<typeof Msg>
 
 const x = {
   t: "a",
