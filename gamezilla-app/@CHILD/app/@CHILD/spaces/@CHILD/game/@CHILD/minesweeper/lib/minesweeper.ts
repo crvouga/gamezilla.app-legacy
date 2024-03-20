@@ -1,4 +1,4 @@
-import { Iter, NonNegInt, Random, Set, p } from "gamezilla-app/@SHARED/core"
+import { Iter, NonNegInt, Random, Set, pipe } from "gamezilla-app/@SHARED/core"
 import { Position } from "./position"
 
 export type Model = {
@@ -24,7 +24,7 @@ export const initMines = ({
   mineCount: NonNegInt
   seed: string
 }): Set<Position> => {
-  return p(
+  return pipe(
     Position.range(columnCount, rowCount),
     (x) => Random.shuffle(seed, x),
     (x) => Iter.take(mineCount, x),

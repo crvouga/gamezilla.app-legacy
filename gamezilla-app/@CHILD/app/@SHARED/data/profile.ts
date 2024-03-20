@@ -1,15 +1,11 @@
-import { p as p } from "gamezilla-app/@SHARED/parsing"
+import { p } from "gamezilla-app/@SHARED/parser"
 import { UserId } from "./user-id"
 import { Username } from "./username"
 
-const is = p.obj({
-  userId: UserId.is,
+export const Profile = p.obj({
+  userId: p.custom(UserId.is, "Invalid user id"),
   avatarUrl: p.str,
-  username: Username.is,
+  username: p.custom(Username.is, "Invalid username"),
 })
 
-export type Profile = p.Infer<typeof is>
-
-export const Profile = {
-  is,
-}
+export type Profile = p.Infer<typeof Profile>

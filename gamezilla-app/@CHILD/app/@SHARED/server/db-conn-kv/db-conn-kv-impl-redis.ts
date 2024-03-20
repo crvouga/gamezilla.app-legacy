@@ -1,7 +1,7 @@
-import { createClient } from "redis"
 import { err, ok } from "gamezilla-app/@SHARED/core"
-import { DbConnKv } from "./db-conn-kv"
+import { createClient } from "redis"
 import { Logger } from "../logger"
+import { DbConnKv } from "./db-conn-kv"
 
 export const createDbConnKvRedis = async ({
   url,
@@ -18,7 +18,7 @@ export const createDbConnKvRedis = async ({
   logger.info(`[db-conn-kv-redis] connected`)
 
   return {
-    async get(key, isValue) {
+    async get(key, parser) {
       try {
         const start = process.hrtime.bigint()
 
@@ -36,13 +36,17 @@ export const createDbConnKvRedis = async ({
           return ok(null)
         }
 
-        const parsed = JSON.parse(got)
+        const json = JSON.parse(got)
 
-        if (isValue(parsed)) {
-          return ok(parsed)
+        const parsed = parser.parse(json)
+
+        if (parsed.t === "ok") {
+          return ok(parsed.value)
         }
 
-        logger.error(`[db-conn-kv-redis] get: not a value: ${key} value=${got}`)
+        logger.error(
+          `[db-conn-kv-redis] get: not a value: ${key} ${parsed.error}`,
+        )
 
         return ok(null)
       } catch (e) {

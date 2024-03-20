@@ -11,11 +11,25 @@ export type ParserError = {
   path: string[]
 }
 
+export const errorToString = (error: ParserError): string => {
+  return error.path.join(".") + ": " + error.message
+}
+
+export const errorsToString = (errors: ParserError[]): string => {
+  return errors.map(errorToString).join("\n")
+}
+
 export type Parser<T> = {
   parse: (input: unknown) => Result<ParserError[], T>
 }
 
 export type Infer<TParser> = TParser extends Parser<infer T> ? T : never
+
+export const is =
+  <T>(parser: Parser<T>) =>
+  (input: unknown): input is T => {
+    return parser.parse(input).t === "ok"
+  }
 
 //
 //
@@ -194,6 +208,62 @@ export const maybe = <T>(parser: Parser<T>): Parser<T | null | undefined> => {
   }
 }
 
+export const dict = <TKey extends string | number, TValue>(
+  key: Parser<TKey>,
+  value: Parser<TValue>,
+): Parser<Record<TKey, TValue>> => {
+  return {
+    parse(input) {
+      if (!isIndexable(input)) {
+        return Result.err([
+          {
+            message: toErrorMessage("object", typeof input),
+            path: [],
+          },
+        ])
+      }
+
+      const result = {} as Record<TKey, TValue>
+      const errors: ParserError[] = []
+      for (const k in input) {
+        const keyParsed = key.parse(k)
+        if (keyParsed.t === "err") {
+          errors.push(
+            ...keyParsed.error.map((err): ParserError => {
+              return {
+                message: err.message,
+                path: [k, ...err.path],
+              }
+            }),
+          )
+          continue
+        }
+
+        const valueParsed = value.parse(input[k])
+        if (valueParsed.t === "err") {
+          errors.push(
+            ...valueParsed.error.map((err): ParserError => {
+              return {
+                message: err.message,
+                path: [k, ...err.path],
+              }
+            }),
+          )
+          continue
+        }
+
+        result[keyParsed.value] = valueParsed.value
+      }
+
+      if (errors.length > 0) {
+        return Result.err(errors)
+      }
+
+      return Result.ok(result)
+    },
+  }
+}
+
 export const custom = <T>(
   predicate: (input: unknown) => input is T,
   errorMessage: string,
@@ -209,6 +279,39 @@ export const custom = <T>(
           path: [],
         },
       ])
+    },
+  }
+}
+
+export const unknown: Parser<unknown> = {
+  parse(input) {
+    return Result.ok(input)
+  },
+}
+
+export const any: Parser<any> = {
+  parse(input) {
+    return Result.ok(input)
+  },
+}
+
+export const enumeration = <T extends string | number>(
+  values: T[],
+): Parser<T> => {
+  return {
+    parse(input) {
+      if (!values.includes(input as T)) {
+        return Result.err([
+          {
+            message: toErrorMessage(
+              `one of ${values.join(", ")}`,
+              String(input),
+            ),
+            path: [],
+          },
+        ])
+      }
+      return Result.ok(input as T)
     },
   }
 }

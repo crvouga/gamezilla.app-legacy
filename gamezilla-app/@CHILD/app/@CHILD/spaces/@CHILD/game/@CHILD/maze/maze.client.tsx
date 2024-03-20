@@ -3,14 +3,14 @@ import {
   ActionButton,
   IconArrowLeftOnRect,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
-import { Eff, Keyboard, Sub, p } from "gamezilla-app/@SHARED/core"
+import { Eff, Keyboard, Sub, pipe } from "gamezilla-app/@SHARED/core"
 import { Maze } from "./@SHARED/maze"
 import { Direction, Position } from "./@SHARED/position"
 import {
-  ModelClient,
-  MsgClient,
   Color,
+  ModelClient,
   ModelServer,
+  MsgClient,
   MsgToClient,
   initShared,
 } from "./maze.core"
@@ -240,7 +240,7 @@ export const View = ({
       {currentUserPlayer && (
         <>
           <ViewJoystick
-            activeDirection={p(currentUserPlayer.direction, (d) =>
+            activeDirection={pipe(currentUserPlayer.direction, (d) =>
               d === "none" ? undefined : d,
             )}
             onChange={(direction) =>

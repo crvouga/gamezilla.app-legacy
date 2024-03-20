@@ -1,7 +1,7 @@
 import { SessionId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Result } from "gamezilla-app/@SHARED/core"
-import { p, P1 } from "gamezilla-app/@SHARED/parsing"
+import { p } from "gamezilla-app/@SHARED/parser"
 import { ISessionDb } from "./session-db"
 
 //
@@ -31,12 +31,12 @@ export const SessionDbPostgres = ({
   const sessionIdsByUserId = DbConnKv.instance(
     dbConn,
     ["auth-session", "session-ids-by-user-id"],
-    P1.arr(SessionId.is),
+    p.arr(SessionId),
   )
   const userIdBySessionId = DbConnKv.instance(
     dbConn,
     ["auth-session", "user-id-by-session-id"],
-    UserId.is,
+    UserId,
   )
 
   return {

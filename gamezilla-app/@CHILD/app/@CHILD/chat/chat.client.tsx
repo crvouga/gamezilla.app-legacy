@@ -1,5 +1,5 @@
 import { ClientCtx, ClientEvent } from "gamezilla-app/@CHILD/app/@SHARED/client"
-import { Browser, Eff, p } from "gamezilla-app/@SHARED/core"
+import { Browser, Eff, pipe } from "gamezilla-app/@SHARED/core"
 import { VDom } from "gamezilla-app/@SHARED/vdom"
 import { ModelClient, MsgClient, MsgToClient } from "./chat.core"
 
@@ -99,7 +99,7 @@ export const update = ({
           userSelected: {},
           userSearch: "",
         },
-        eff: p(
+        eff: pipe(
           Browser.focus(userSearchInputId),
           Eff.perform((result) => ["focused", result]),
         ),

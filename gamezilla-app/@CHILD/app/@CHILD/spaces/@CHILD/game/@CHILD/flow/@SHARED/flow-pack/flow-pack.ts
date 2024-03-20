@@ -1,29 +1,21 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Posix } from "gamezilla-app/@SHARED/core"
+import { p } from "gamezilla-app/@SHARED/parser"
 import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id"
 import { FlowPackId } from "./flow-pack-id"
 import { FlowPackName } from "./flow-pack-name"
-import { p } from "gamezilla-app/@SHARED/parsing"
 
-export type FlowPack = {
-  id: FlowPackId
-  createdBy: UserId
-  createdAt: Posix
-  lastUpdatedBy: UserId
-  lastUpdatedAt: Posix
-  name: FlowPackName
-  puzzleIds: FlowPuzzleId[]
-}
-
-const is: (x: unknown) => x is FlowPack = p.obj({
-  id: FlowPackId.is,
-  createdBy: UserId.is,
-  createdAt: Posix.is,
-  lastUpdatedBy: UserId.is,
-  lastUpdatedAt: Posix.is,
-  name: FlowPackName.is,
-  puzzleIds: p.arr(FlowPuzzleId.is),
+const parser = p.obj({
+  id: p.custom(FlowPackId.is, "Invalid flow pack id"),
+  createdBy: p.custom(UserId.is, "Invalid user id"),
+  createdAt: p.custom(Posix.is, "Invalid posix"),
+  lastUpdatedBy: p.custom(UserId.is, "Invalid user id"),
+  lastUpdatedAt: p.custom(Posix.is, "Invalid posix"),
+  name: p.custom(FlowPackName.is, "Invalid flow pack name"),
+  puzzleIds: p.arr(p.custom(FlowPuzzleId.is, "Invalid flow puzzle id")),
 })
+
+export type FlowPack = p.Infer<typeof parser>
 
 const create = (input: {
   count?: number
@@ -80,5 +72,5 @@ export const FlowPack = {
   canGoPrevious,
   canGoNext,
   removePuzzleAtIndex,
-  is,
+  parser,
 }

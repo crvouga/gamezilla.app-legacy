@@ -10,9 +10,9 @@ import {
   sendToServer,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
+  Avatar,
   IconArrowLeftOnRect,
   IconRobot,
-  Avatar,
   Spinner,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
@@ -21,15 +21,15 @@ import {
   andThen,
   exhaustive,
   isErr,
-  p,
+  pipe,
 } from "gamezilla-app/@SHARED/core"
 import { Chess } from "../../@SHARED/chess"
 import { Chessboard, CoverArt, PlayerIcon } from "../../@SHARED/chess-ui"
 import {
-  ModelClient,
-  MsgClient,
   CoreModel,
+  ModelClient,
   ModelServer,
+  MsgClient,
   MsgToClient,
   MsgToServer,
   initCore,
@@ -128,7 +128,7 @@ export const updateFromServer = (input: {
   model: ModelClient
   eff?: Eff<MsgClient>
 } => {
-  return p(
+  return pipe(
     updateFromServerMain(input),
     andThen((model) => {
       if (

@@ -11,7 +11,7 @@ export const ProfileCacheDbKv = ({
   const profilesKv = DbConnKv.instance(
     dbConnKv,
     ["spaces", "profile-cache"],
-    Profile.is,
+    Profile,
   )
   return {
     async add(profiles) {

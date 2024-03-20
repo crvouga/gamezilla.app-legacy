@@ -6,7 +6,7 @@ import {
   Sub,
   exhaustive,
   isErr,
-  p,
+  pipe,
 } from "gamezilla-app/@SHARED/core"
 import { Mic } from "./mic"
 import { ModelClient, MsgClient, MsgToClient } from "./party.core"
@@ -136,7 +136,7 @@ const toLifecycleEff = ({
 
   // did user just leave party?
   if (userPrev && !userNext) {
-    return p(
+    return pipe(
       Mic.unload,
       Eff.perform((result) => ["MicUnload", result]),
     )
@@ -144,7 +144,7 @@ const toLifecycleEff = ({
 
   // did user just join party?
   if (!userPrev && userNext) {
-    return p(
+    return pipe(
       Mic.load,
       Eff.perform((result) => ["MicLoad", result]),
     )

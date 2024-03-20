@@ -24,7 +24,7 @@ import {
   Spinner,
   cn,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
-import { Eff, andThen, isErr, p } from "gamezilla-app/@SHARED/core"
+import { Eff, andThen, isErr, pipe } from "gamezilla-app/@SHARED/core"
 import { VDomChildren } from "gamezilla-app/@SHARED/vdom"
 import { Chess } from "../../@SHARED/chess"
 import { Chessboard } from "../../@SHARED/chess-ui/chessboard"
@@ -137,7 +137,7 @@ export const updateFromServer = (input: {
   eff?: Eff<MsgClient>
   msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[]
 } => {
-  return p(updateFromServerMain(input), andThen(watch))
+  return pipe(updateFromServerMain(input), andThen(watch))
 }
 
 export const updateFromServerMain: typeof updateFromServer = ({

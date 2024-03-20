@@ -1,6 +1,6 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { RemoteResult, Result, notAsked } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/parsing"
+import { p } from "gamezilla-app/@SHARED/parser"
 import { FlowPack } from "../../../../@SHARED/flow-pack/flow-pack"
 
 //
@@ -47,8 +47,11 @@ export type MsgToClient = {
 
 export const isMsgSync = p.obj({
   t: p.l("user-created-pack"),
-  created: Result.is(p.str, FlowPack.is),
-  userId: UserId.is,
+  created: p.custom(
+    Result.is(p.is(p.str), p.is(FlowPack.parser)),
+    "Invalid result",
+  ),
+  userId: UserId,
 })
 
 export type MsgSync = p.Infer<typeof isMsgSync>

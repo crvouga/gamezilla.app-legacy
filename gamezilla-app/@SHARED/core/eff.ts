@@ -1,5 +1,5 @@
-import { p } from "./utils/pipe"
 import { IO } from "./data/io"
+import { pipe } from "./utils/pipe"
 
 export type Eff<Msg = never> = (dispatch: (msg: Msg) => void) => void
 
@@ -54,7 +54,7 @@ const tag = <Tag extends string, Msg>(
   if (!eff) {
     return None
   }
-  return p(
+  return pipe(
     eff,
     map((msg) => ({ t: tagName, c: msg })),
   )

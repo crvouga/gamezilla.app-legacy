@@ -1,7 +1,7 @@
-import { p } from "gamezilla-app/@SHARED/core"
+import { pipe } from "gamezilla-app/@SHARED/core"
+import { MinHeap } from "gamezilla-app/@SHARED/data-structures/min-heap"
 import * as Flow from "../flow"
 import { takeWhile } from "./utils"
-import { MinHeap } from "gamezilla-app/@SHARED/data-structures/min-heap"
 
 /**
  * A `Pipeline` represents the sequence of nodes the user draws when connecting terminals.
@@ -69,7 +69,7 @@ export const drawPipes = (
     terminal.startId,
   )
 
-  const pipelineNew = p(
+  const pipelineNew = pipe(
     existingPipeline,
 
     // Cutting off pipeline if user draws over existing pipeline

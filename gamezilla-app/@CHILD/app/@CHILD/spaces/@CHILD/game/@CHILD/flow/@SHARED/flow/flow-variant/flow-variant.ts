@@ -1,4 +1,3 @@
-import { or } from "gamezilla-app/@SHARED/parsing/or"
 import { Flow } from "../flow"
 import { FlowGrid } from "./flow-grid"
 import { FlowHex } from "./flow-hex"
@@ -43,9 +42,3 @@ export const init = (input: {
     }
   }
 }
-
-export const is: (x: unknown) => x is Model = or(
-  FlowGrid.is,
-  FlowHex.is,
-  FlowTri.is,
-)

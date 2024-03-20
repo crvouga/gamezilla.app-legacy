@@ -15,18 +15,18 @@ import {
   eq,
   err,
   ok,
-  p,
+  pipe,
 } from "gamezilla-app/@SHARED/core"
 import { TimeSpan } from "gamezilla-app/@SHARED/core/data/time-span"
 import { ChessMsgSync } from "../../@SHARED/chess/chess-shared"
 import { EloRating } from "./elo-rating"
 import { PuzzleDb } from "./puzzle-db"
 import {
-  PuzzleInteraction,
   ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
+  PuzzleInteraction,
   initCore,
   transitionLoadingToStarted,
 } from "./puzzle.core"
@@ -115,7 +115,7 @@ export const update = (input: {
   eff?: Eff<MsgServer>
   msgCmd?: SpaceServerCmd<MsgToClient>[]
 } => {
-  return p(
+  return pipe(
     updateMain(input),
     andThen((model) =>
       watchPutInteraction({
@@ -279,7 +279,7 @@ export const updateFromClient = (input: {
   eff?: Eff<MsgServer>
   msgCmd?: SpaceServerCmd<MsgToClient>[]
 } => {
-  return p(
+  return pipe(
     input,
     andThen((model) => updateFromClientMain({ ...input, model })),
     // andThen((model) =>

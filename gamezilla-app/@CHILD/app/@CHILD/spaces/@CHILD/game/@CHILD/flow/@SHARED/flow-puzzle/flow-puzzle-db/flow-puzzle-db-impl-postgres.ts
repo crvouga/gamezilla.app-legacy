@@ -1,13 +1,12 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { Posix, Result, isErr, ok } from "gamezilla-app/@SHARED/core"
-import { P1 } from "gamezilla-app/@SHARED/parsing"
+import { p } from "gamezilla-app/@SHARED/parser"
 import { FlowVariantParser } from "../../flow"
 import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle-id"
 import { FlowPuzzleName } from "../flow-puzzle-name"
 import { IFlowPuzzleDb } from "./flow-puzzle-db"
-import { isRow } from "./row.type.guard"
 
 //
 //
@@ -17,15 +16,17 @@ import { isRow } from "./row.type.guard"
 //
 //
 
-export type Row = {
-  flow_puzzle_id: string
-  flow_puzzle_name: string
-  flow_puzzle: Record<string, unknown>
-  created_at: string
-  created_by_user_id: string
-  last_updated_at: string
-  last_updated_by_user_id: string
-}
+export const Row = p.obj({
+  flow_puzzle_id: p.str,
+  flow_puzzle_name: p.str,
+  flow_puzzle: p.dict(p.str, p.unknown),
+  created_at: p.str,
+  created_by_user_id: p.str,
+  last_updated_at: p.str,
+  last_updated_by_user_id: p.str,
+})
+
+export type Row = p.Infer<typeof Row>
 
 const postgresTimestampToPosix = (postgresTimestamp: string) => {
   return Posix.fromNumber(new Date(postgresTimestamp).getTime())
@@ -95,7 +96,7 @@ export const FlowPuzzleDbPostgres = ({
   return {
     async get(flowPuzzleId) {
       const queried = await dbConn.query(
-        isRow,
+        Row,
         `
         SELECT
           *
@@ -115,7 +116,7 @@ export const FlowPuzzleDbPostgres = ({
 
     async count(input) {
       const queried = await dbConn.query(
-        P1.num,
+        p.num,
         `
         SELECT
           COUNT(*)
@@ -178,7 +179,7 @@ export const FlowPuzzleDbPostgres = ({
       //
 
       const queried = await dbConn.query(
-        isRow,
+        Row,
         `
           SELECT
             *
@@ -201,7 +202,7 @@ export const FlowPuzzleDbPostgres = ({
       }
 
       const queriedCount = await dbConn.query(
-        P1.num,
+        p.num,
         `
           SELECT
             COUNT(*)
@@ -236,7 +237,7 @@ export const FlowPuzzleDbPostgres = ({
     async put(input) {
       const row = puzzleToRow(input)
       const queried = await dbConn.query(
-        P1.unknown,
+        p.unknown,
         `
           INSERT INTO game_flow_puzzle (
             flow_puzzle_id,
@@ -269,7 +270,7 @@ export const FlowPuzzleDbPostgres = ({
 
     async zap(input) {
       const queried = await dbConn.query(
-        P1.num,
+        p.num,
         `
         UPDATE
           game_flow_puzzle

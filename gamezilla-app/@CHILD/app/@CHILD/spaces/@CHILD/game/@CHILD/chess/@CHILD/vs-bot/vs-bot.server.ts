@@ -3,7 +3,7 @@ import {
   SpaceServerEvent,
 } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
-import { Eff, Sub, p } from "gamezilla-app/@SHARED/core"
+import { Eff, Sub, pipe } from "gamezilla-app/@SHARED/core"
 import { Chess } from "../../@SHARED/chess"
 import {
   ModelServer,
@@ -89,7 +89,7 @@ const toBotMoveEff = (modelPrev: Model, modelNext: Model): Eff<Msg> => {
     return Eff.None
   }
 
-  const eff = p(
+  const eff = pipe(
     Chess.getBestMove(modelNext.botLevel, modelNext.board),
     Eff.perform((moved): Msg => ({ t: "bot-moved", moved })),
   )

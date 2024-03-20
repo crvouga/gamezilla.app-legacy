@@ -7,7 +7,7 @@ import {
   IconMagnifyingGlass,
   IconXMark,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
-import { Browser, Eff, matchSort, p } from "gamezilla-app/@SHARED/core"
+import { Browser, Eff, matchSort, pipe } from "gamezilla-app/@SHARED/core"
 import { VDom } from "gamezilla-app/@SHARED/vdom"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./search.core"
 
@@ -71,7 +71,7 @@ export const update = ({
   if (msg.t === "clicked-clear") {
     return {
       model: { ...model, searchText: "" },
-      eff: p(
+      eff: pipe(
         Browser.focus(searchInputId),
         Eff.perform((result) => ({ t: "focus-done", result })),
       ),

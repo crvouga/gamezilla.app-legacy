@@ -1,5 +1,6 @@
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
 import { Result } from "gamezilla-app/@SHARED/core/data/result"
+import { p } from "gamezilla-app/@SHARED/parser"
 
 export type SessionId = Brand<string, "SessionId">
 
@@ -9,6 +10,8 @@ const separator = ":"
 const is = (id: unknown): id is SessionId => {
   return typeof id === "string" && id.startsWith(`${namespace}${separator}`)
 }
+
+const parser = p.custom(is, "Invalid session id")
 
 type Problem = "invalid_session_id"
 
@@ -49,6 +52,7 @@ export const generate = (): SessionId => {
 }
 
 export const SessionId = {
+  ...parser,
   generate,
   decode,
   is,

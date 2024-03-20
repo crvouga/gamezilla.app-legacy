@@ -4,34 +4,19 @@ import {
   Username,
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { err, isErr, ok, Result } from "gamezilla-app/@SHARED/core"
-import { Parsing as P } from "gamezilla-app/@SHARED/parsing"
+import { Result, err, isErr, ok } from "gamezilla-app/@SHARED/core"
+import { p } from "gamezilla-app/@SHARED/parser"
 import { ProfileCore } from "../profile.core"
 import { ProfileDb } from "./profile-db"
 
-type ProfileRow = {
-  user_id: string
-  username: string
-  avatar_seed: string | null
-  avatar_style: string | null
-}
+const ProfileRow = p.obj({
+  user_id: p.str,
+  username: p.str,
+  avatar_seed: p.maybe(p.str),
+  avatar_style: p.maybe(p.str),
+})
 
-const toProfileRow = (x: unknown): ProfileRow | null => {
-  if (
-    P.obj(x) &&
-    P.has(x, "user_id", P.str) &&
-    P.has(x, "username", P.str) &&
-    P.has(x, "avatar_seed", P.or(P.nullish, P.str)) &&
-    P.has(x, "avatar_style", P.or(P.nullish, P.str))
-  ) {
-    return {
-      ...x,
-      avatar_seed: x.avatar_seed ?? null,
-      avatar_style: x.avatar_style ?? null,
-    }
-  }
-  return null
-}
+type ProfileRow = p.Infer<typeof ProfileRow>
 
 const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
   if (!UserId.is(row.user_id)) {
@@ -83,7 +68,7 @@ export const createProfileDb = ({
           user_id = :user_id
       `
 
-      const queried = await dbConn.query(P.is(toProfileRow), sql, {
+      const queried = await dbConn.query(ProfileRow, sql, {
         user_id: userId,
       })
 
@@ -108,7 +93,7 @@ export const createProfileDb = ({
       }
 
       const inserted = await dbConn.query(
-        P.is(toProfileRow),
+        ProfileRow,
         `
         INSERT INTO user_profile (
           user_id,

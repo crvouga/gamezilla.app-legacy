@@ -5,11 +5,13 @@ const hashMap = new Map<string, unknown>()
 
 export const createDbConnKvHashMap = (): DbConnKv => {
   return {
-    async get(key, isValue) {
+    async get(key, parser) {
       const got = hashMap.get(key)
 
-      if (isValue(got)) {
-        return ok(got)
+      const parsed = parser.parse(got)
+
+      if (parsed.t === "ok") {
+        return ok(parsed.value)
       }
 
       return ok(null)

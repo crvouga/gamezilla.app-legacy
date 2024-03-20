@@ -2,7 +2,7 @@ import {
   SpaceReqCtx,
   SpaceServerEvent,
 } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { Eff, Sub, andThen, p } from "gamezilla-app/@SHARED/core"
+import { Eff, Sub, andThen, pipe } from "gamezilla-app/@SHARED/core"
 import {
   ModelServer,
   MsgServer,
@@ -61,7 +61,7 @@ type updateFromClient = (input: {
 }
 
 export const updateFromClient: updateFromClient = (input) => {
-  return p(
+  return pipe(
     input,
     andThen((model) => updateFromClient_({ ...input, model })),
     andThen((model) => updateBotMove({ ...input, model })),

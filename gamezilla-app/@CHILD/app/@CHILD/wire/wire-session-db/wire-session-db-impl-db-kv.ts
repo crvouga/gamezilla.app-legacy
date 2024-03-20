@@ -1,9 +1,9 @@
+import { SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Task, isOk } from "gamezilla-app/@SHARED/core"
-import { P1 } from "gamezilla-app/@SHARED/parsing"
-import { isClient } from "../wire.core"
+import { p } from "gamezilla-app/@SHARED/parser"
+import { Client } from "../wire.core"
 import { IWireSessionDb } from "./wire-session-db"
-import { SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 
 export const WireSessionDbKv = ({
   dbConnKv,
@@ -13,12 +13,12 @@ export const WireSessionDbKv = ({
   const clientsKv = DbConnKv.instance(
     dbConnKv,
     ["wire-session-db", "clients-by-session-id"],
-    isClient,
+    Client,
   )
   const sessionIdsKv = DbConnKv.instance(
     dbConnKv,
     ["wire-session-db", "session-ids-by-user-id"],
-    P1.arr(SessionId.is),
+    p.arr(p.custom(SessionId.is, "Invalid session id")),
   )
   return {
     clients: {

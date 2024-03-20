@@ -5,6 +5,8 @@
 //
 //
 
+import { p } from "gamezilla-app/@SHARED/parser"
+
 /**
  * A `Result` represents the result of an operation that may succeed or fail.
  */
@@ -47,6 +49,22 @@ const is = <TError, TValue>(
   }
 }
 
+const parser = <TError, TValue>(
+  errParser: p.Parser<TError>,
+  okParser: p.Parser<TValue>,
+): p.Parser<Result<TError, TValue>> => {
+  return p.or(
+    p.obj({
+      t: p.l("err"),
+      error: errParser,
+    }),
+    p.obj({
+      t: p.l("ok"),
+      value: okParser,
+    }),
+  )
+}
+
 /**
  * `Ok<T>` represents a successful result
  */
@@ -76,17 +94,18 @@ export const isOk = <TError, TValue>(
   return result.t === "ok"
 }
 
-const mapErr =
-  <A, B, TValue>(mapper: (a: A) => B) =>
-  (result: Result<A, TValue>): Result<B, TValue> => {
-    switch (result.t) {
-      case "err":
-        return err(mapper(result.error))
+const mapErr = <A, B, TValue>(
+  result: Result<A, TValue>,
+  mapper: (a: A) => B,
+): Result<B, TValue> => {
+  switch (result.t) {
+    case "err":
+      return err(mapper(result.error))
 
-      case "ok":
-        return result
-    }
+    case "ok":
+      return result
   }
+}
 
 const fromNullable =
   <TError, TValue>(error: TError) =>
@@ -146,6 +165,7 @@ const mapOk = <TError, A, B>(
 }
 
 export const Result = {
+  ...parser,
   is,
   ok,
   err,

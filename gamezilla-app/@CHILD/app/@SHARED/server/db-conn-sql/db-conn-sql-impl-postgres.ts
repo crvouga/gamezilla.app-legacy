@@ -17,7 +17,7 @@ export const createDbConnPostgres = async ({
   logger.info(`[db-conn-sql-postgres] connected`)
 
   return {
-    query: async (isRow, rawSql, params) => {
+    query: async (rowParser, rawSql, params) => {
       const sql = toSql(rawSql, params)
       try {
         const start = Date.now()
@@ -30,12 +30,11 @@ export const createDbConnPostgres = async ({
 
         const parsed = Array.isArray(rows)
           ? rows.flatMap((row) => {
-              if (isRow(row)) {
-                return [row]
+              const parsed = rowParser.parse(row)
+              if (parsed.t === "ok") {
+                return [parsed.value]
               }
-              logger.warn(
-                `[db] Failed to parse row=${JSON.stringify(row)} sql=${sql}`,
-              )
+              logger.warn(`[db] Failed to parse row=${parsed.error} sql=${sql}`)
               return []
             })
           : []

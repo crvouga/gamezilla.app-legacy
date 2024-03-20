@@ -2,8 +2,8 @@ import {
   SpaceReqCtx,
   SpaceServerEvent,
 } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { Eff, Sub, andThen, err, ok, p } from "gamezilla-app/@SHARED/core"
 import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
+import { Eff, Sub, andThen, err, ok, pipe } from "gamezilla-app/@SHARED/core"
 import { TicTacToe } from "../../@SHARED/tic-tic-toe"
 import {
   ModelServer,
@@ -116,7 +116,7 @@ export const updateFromClient = (input: {
   eff?: Eff<Msg>
   msgCmd?: SpaceServerCmd<MsgToClient>[]
 } => {
-  return p(
+  return pipe(
     input,
     andThen((model) => updateFromClientMain({ ...input, model })),
     andThen((model) => watchBotMove({ model, modelPrev: input.model })),

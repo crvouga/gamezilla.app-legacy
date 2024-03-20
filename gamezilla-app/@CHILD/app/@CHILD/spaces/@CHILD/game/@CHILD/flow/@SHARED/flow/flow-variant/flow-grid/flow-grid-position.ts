@@ -1,15 +1,11 @@
-import { P1 } from "gamezilla-app/@SHARED/parsing"
+import { p } from "gamezilla-app/@SHARED/parser"
 
-export type Position = { x: number; y: number }
+export const parser = p.obj({
+  x: p.num,
+  y: p.num,
+})
 
-const to = (x: unknown): Position | null => {
-  if (P1.obj(x) && P1.has(x, "x", P1.num) && P1.has(x, "y", P1.num)) {
-    return x
-  }
-  return null
-}
-
-const is = P1.is(to)
+export type Position = p.Infer<typeof parser>
 
 const distance = (a: Position, b: Position) => {
   return Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2)
@@ -17,8 +13,7 @@ const distance = (a: Position, b: Position) => {
 
 export const Position = {
   distance,
-  is,
-  to,
+  parser,
 }
 
 export const DELTAS: Position[] = [

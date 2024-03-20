@@ -1,4 +1,4 @@
-import { List, NonNegInt, p } from "gamezilla-app/@SHARED/core"
+import { List, NonNegInt, pipe } from "gamezilla-app/@SHARED/core"
 import { TimeSpan } from "gamezilla-app/@SHARED/core/data/time-span"
 import { Direction } from "./direction"
 import { Position } from "./position"
@@ -125,7 +125,7 @@ export const toEmptyPositions = (model: Model) => {
 }
 
 export const step = (model: Model): Model => {
-  const tailNew = p(
+  const tailNew = pipe(
     List.of(model.head),
     (x) => List.concat(x, model.tail),
     (x) => List.take(model.tailLength, x),

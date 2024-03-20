@@ -1,6 +1,7 @@
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { Result } from "gamezilla-app/@SHARED/core"
+import { p } from "gamezilla-app/@SHARED/parser"
 import { PuzzleDb, PuzzleRow } from "../puzzle-db/puzzle-db-impl"
-import { Parsing as P } from "gamezilla-app/@SHARED/parsing"
 
 //
 //
@@ -10,37 +11,23 @@ import { Parsing as P } from "gamezilla-app/@SHARED/parsing"
 //
 //
 
-export type LichessRow = {
-  PuzzleId: string
-  FEN: string
-  Moves: string
-  Rating: string
-  RatingDeviation: string
-  Popularity: string
-  NbPlays: string
-  Themes: string
-  GameUrl: string
-  OpeningTags: string
-}
+const LichessRow = p.obj({
+  PuzzleId: p.str,
+  FEN: p.str,
+  Moves: p.str,
+  Rating: p.str,
+  RatingDeviation: p.str,
+  Popularity: p.str,
+  NbPlays: p.str,
+  Themes: p.str,
+  GameUrl: p.str,
+  OpeningTags: p.str,
+})
+
+export type LichessRow = p.Infer<typeof LichessRow>
 
 export const toLichessRow = (x: unknown): LichessRow | null => {
-  if (
-    P.obj(x) &&
-    P.has(x, "PuzzleId", P.str) &&
-    P.has(x, "FEN", P.str) &&
-    P.has(x, "Moves", P.str) &&
-    P.has(x, "Rating", P.str) &&
-    P.has(x, "RatingDeviation", P.str) &&
-    P.has(x, "Popularity", P.str) &&
-    P.has(x, "NbPlays", P.str) &&
-    P.has(x, "Themes", P.str) &&
-    P.has(x, "GameUrl", P.str) &&
-    P.has(x, "OpeningTags", P.str)
-  ) {
-    return x
-  }
-
-  return null
+  return Result.withDefault(LichessRow.parse(x), null)
 }
 
 const log = (...args: unknown[]) => {

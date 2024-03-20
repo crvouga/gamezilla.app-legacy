@@ -1,27 +1,20 @@
 import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { P1 } from "gamezilla-app/@SHARED/parsing"
+import { Result } from "gamezilla-app/@SHARED/core"
+import { p } from "gamezilla-app/@SHARED/parser"
 
-export type Route =
-  | {
-      n: "spaces"
-      t: "space-list"
-    }
-  | {
-      n: "spaces"
-      t: "space"
-      spaceId: SpaceId
-    }
+export const Route = p.or(
+  p.obj({
+    n: p.l("spaces"),
+    t: p.l("space-list"),
+  }),
+  p.obj({
+    n: p.l("spaces"),
+    t: p.l("space"),
+    spaceId: p.custom(SpaceId.is, "Invalid space id"),
+  }),
+)
 
-export const toRoute = P1.union<Route>([
-  (x) =>
-    P1.obj(x) && P1.tag(x, "n", "spaces") && P1.tag(x, "t", "space-list")
-      ? x
-      : null,
-  (x) =>
-    P1.obj(x) &&
-    P1.tag(x, "n", "spaces") &&
-    P1.tag(x, "t", "space") &&
-    P1.has(x, "spaceId", SpaceId.is)
-      ? x
-      : null,
-])
+export type Route = p.Infer<typeof Route>
+
+export const toRoute = (route: unknown): Route | null =>
+  Result.withDefault(Route.parse(route), null)

@@ -1,13 +1,12 @@
-import { P1 } from "gamezilla-app/@SHARED/parsing"
+import { Result } from "gamezilla-app/@SHARED/core"
+import { p } from "gamezilla-app/@SHARED/parser"
 
-export type Route = {
-  n: "lang"
-  t: "choose-lang"
-}
+const Route = p.obj({
+  n: p.l("lang"),
+  t: p.l("choose-lang"),
+})
 
-export const toRoute = P1.union<Route>([
-  (x) =>
-    P1.obj(x) && P1.tag(x, "n", "lang") && P1.tag(x, "t", "choose-lang")
-      ? x
-      : null,
-])
+export type Route = p.Infer<typeof Route>
+
+export const toRoute = (x: unknown): Route | null =>
+  Result.withDefault(Route.parse(x), null)

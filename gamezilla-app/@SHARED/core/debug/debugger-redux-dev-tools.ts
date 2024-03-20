@@ -6,11 +6,11 @@
  * @since 0.5.0
  */
 import { ProgramDebugger } from ".."
+import { IO } from "../data/io"
 import * as Json from "../data/json"
 import { Result, isErr } from "../data/result"
-import { IO } from "../data/io"
 import { toMsgPayload, toMsgType } from "../utils"
-import { p } from "../utils/pipe"
+import { pipe } from "../utils/pipe"
 import { Debug, Debugger, DebuggerDeps, Global, MsgWithDebug } from "./debugger"
 
 type Unsubscribe = () => void
@@ -217,23 +217,23 @@ const handleIncomingMsg = <Model, Msg extends object>({
       case "DISPATCH":
         switch (msg.payload.type) {
           case "JUMP_TO_STATE":
-            return p(parseJump<Model>(msg), (x) => Result.mapOk(x, update))
+            return pipe(parseJump<Model>(msg), (x) => Result.mapOk(x, update))
 
           case "JUMP_TO_ACTION":
-            return p(parseJump<Model>(msg), (x) => Result.mapOk(x, update))
+            return pipe(parseJump<Model>(msg), (x) => Result.mapOk(x, update))
 
           case "RESET":
             return Result.ok(
-              p(
+              pipe(
                 update(init),
                 IO.chain(() => reInit),
               ),
             )
 
           case "ROLLBACK":
-            return p(parseRollback<Model>(msg), (x) =>
+            return pipe(parseRollback<Model>(msg), (x) =>
               Result.mapOk(x, (m) =>
-                p(
+                pipe(
                   update(m),
                   IO.chain(() => restart(m)),
                 ),
@@ -245,9 +245,9 @@ const handleIncomingMsg = <Model, Msg extends object>({
             return Result.err("idk")
 
           case "IMPORT_STATE":
-            return p(parseImportState<Model>(msg), (x) =>
+            return pipe(parseImportState<Model>(msg), (x) =>
               Result.mapOk(x, (liftedState) =>
-                p(
+                pipe(
                   update(
                     // @ts-ignore
                     liftedState.computedStates[
@@ -260,9 +260,9 @@ const handleIncomingMsg = <Model, Msg extends object>({
             )
 
           case "TOGGLE_ACTION":
-            return p(parseToggleAction<Model>(msg), (x) =>
+            return pipe(parseToggleAction<Model>(msg), (x) =>
               Result.mapOk(x, ([id, liftedState]) =>
-                p(toggle(id, liftedState), IO.chain(liftState)),
+                pipe(toggle(id, liftedState), IO.chain(liftState)),
               ),
             )
 
@@ -297,9 +297,9 @@ const handleActions = <Model, Msg extends object>({
  * @since 0.5.0
  */
 const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
-  return p(
+  return pipe(
     Json.parse(String(msg["state"])),
-    Result.mapErr((problem) => problem.message),
+    (_) => Result.mapErr(_, (problem) => problem.message),
     (x) =>
       Result.mapOk(
         x,
@@ -316,9 +316,9 @@ const parseJump = <Model>(msg: Monitor): Result<string, Model> => {
  * @since 0.5.0
  */
 const parseRollback = <Model>(msg: Monitor): Result<string, Model> => {
-  return p(
+  return pipe(
     Json.parse(String(msg["state"])),
-    Result.mapErr((problem) => problem.message),
+    (_) => Result.mapErr(_, (problem) => problem.message),
     (x) =>
       Result.mapOk(
         x,
@@ -351,7 +351,7 @@ const parseImportState = <Model>(
 const parseToggleAction = <Model>(
   msg: Monitor,
 ): Result<string, [number, LiftedState<Model>]> => {
-  const getId = p(
+  const getId = pipe(
     msg.payload["id"],
     Result.fromNullable("TOGGLE_ACTION message has some bad payload..."),
     (_) => Result.mapOk(_, (x) => x as number),
@@ -361,7 +361,7 @@ const parseToggleAction = <Model>(
     return getId
   }
 
-  const parseState = p(
+  const parseState = pipe(
     Json.parse(String(msg["state"])),
     (_) =>
       Result.mapOk(
@@ -369,7 +369,7 @@ const parseToggleAction = <Model>(
         // @ts-ignore
         (u) => u as LiftedState<Model>,
       ),
-    Result.mapErr((problem) => problem.message),
+    (_) => Result.mapErr(_, (problem) => problem.message),
   )
 
   if (parseState.t === "err") {

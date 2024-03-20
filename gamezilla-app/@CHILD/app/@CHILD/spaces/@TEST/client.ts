@@ -11,7 +11,7 @@ import {
   UserId,
   Username,
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { Posix, TimeSpan, p } from "gamezilla-app/@SHARED/core"
+import { Posix, TimeSpan, pipe } from "gamezilla-app/@SHARED/core"
 import {
   LamportClock,
   LamportTimestamp,
@@ -166,7 +166,7 @@ export const userJoinedSpace =
             spaceId: spaceId,
             userId: userId,
           }),
-          happenedAt: p(
+          happenedAt: pipe(
             space.clock,
             LamportClock.increment,
             LamportClock.toCurrentTime,
@@ -216,7 +216,7 @@ export const userLeftSpace =
             spaceId: spaceId,
             userId: userId,
           }),
-          happenedAt: p(
+          happenedAt: pipe(
             space.clock,
             LamportClock.increment,
             LamportClock.toCurrentTime,
@@ -359,7 +359,7 @@ export const userInputtedGame =
             spaceId,
             userId,
           }),
-          happenedAt: p(
+          happenedAt: pipe(
             space.clock,
             LamportClock.increment,
             LamportClock.toCurrentTime,

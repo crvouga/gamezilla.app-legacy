@@ -3,23 +3,23 @@
 /* eslint-disable @typescript-eslint/ban-types */
 // Source: https://github.com/gcanti/fp-ts/blob/master/src/function.ts
 
-export function p<A>(a: A): A
-export function p<A, B>(a: A, ab: (a: A) => B): B
-export function p<A, B, C>(a: A, ab: (a: A) => B, bc: (b: B) => C): C
-export function p<A, B, C, D>(
+export function pipe<A>(a: A): A
+export function pipe<A, B>(a: A, ab: (a: A) => B): B
+export function pipe<A, B, C>(a: A, ab: (a: A) => B, bc: (b: B) => C): C
+export function pipe<A, B, C, D>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
   cd: (c: C) => D,
 ): D
-export function p<A, B, C, D, E>(
+export function pipe<A, B, C, D, E>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
   cd: (c: C) => D,
   de: (d: D) => E,
 ): E
-export function p<A, B, C, D, E, F>(
+export function pipe<A, B, C, D, E, F>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -27,7 +27,7 @@ export function p<A, B, C, D, E, F>(
   de: (d: D) => E,
   ef: (e: E) => F,
 ): F
-export function p<A, B, C, D, E, F, G>(
+export function pipe<A, B, C, D, E, F, G>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -36,7 +36,7 @@ export function p<A, B, C, D, E, F, G>(
   ef: (e: E) => F,
   fg: (f: F) => G,
 ): G
-export function p<A, B, C, D, E, F, G, H>(
+export function pipe<A, B, C, D, E, F, G, H>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -46,7 +46,7 @@ export function p<A, B, C, D, E, F, G, H>(
   fg: (f: F) => G,
   gh: (g: G) => H,
 ): H
-export function p<A, B, C, D, E, F, G, H, I>(
+export function pipe<A, B, C, D, E, F, G, H, I>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -57,7 +57,7 @@ export function p<A, B, C, D, E, F, G, H, I>(
   gh: (g: G) => H,
   hi: (h: H) => I,
 ): I
-export function p<A, B, C, D, E, F, G, H, I, J>(
+export function pipe<A, B, C, D, E, F, G, H, I, J>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -69,7 +69,7 @@ export function p<A, B, C, D, E, F, G, H, I, J>(
   hi: (h: H) => I,
   ij: (i: I) => J,
 ): J
-export function p<A, B, C, D, E, F, G, H, I, J, K>(
+export function pipe<A, B, C, D, E, F, G, H, I, J, K>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -82,7 +82,7 @@ export function p<A, B, C, D, E, F, G, H, I, J, K>(
   ij: (i: I) => J,
   jk: (j: J) => K,
 ): K
-export function p<A, B, C, D, E, F, G, H, I, J, K, L>(
+export function pipe<A, B, C, D, E, F, G, H, I, J, K, L>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -96,7 +96,7 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L>(
   jk: (j: J) => K,
   kl: (k: K) => L,
 ): L
-export function p<A, B, C, D, E, F, G, H, I, J, K, L, M>(
+export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -111,7 +111,7 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M>(
   kl: (k: K) => L,
   lm: (l: L) => M,
 ): M
-export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
+export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -127,7 +127,7 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(
   lm: (l: L) => M,
   mn: (m: M) => N,
 ): N
-export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
+export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -145,7 +145,7 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(
   no: (n: N) => O,
 ): O
 
-export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
+export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -164,7 +164,7 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(
   op: (o: O) => P,
 ): P
 
-export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
+export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -184,7 +184,7 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(
   pq: (p: P) => Q,
 ): Q
 
-export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
+export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -205,7 +205,7 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(
   qr: (q: Q) => R,
 ): R
 
-export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
+export function pipe<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -227,7 +227,28 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(
   rs: (r: R) => S,
 ): S
 
-export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
+export function pipe<
+  A,
+  B,
+  C,
+  D,
+  E,
+  F,
+  G,
+  H,
+  I,
+  J,
+  K,
+  L,
+  M,
+  N,
+  O,
+  P,
+  Q,
+  R,
+  S,
+  T,
+>(
   a: A,
   ab: (a: A) => B,
   bc: (b: B) => C,
@@ -249,7 +270,7 @@ export function p<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(
   rs: (r: R) => S,
   st: (s: S) => T,
 ): T
-export function p(
+export function pipe(
   a: unknown,
   ab?: Function,
   bc?: Function,

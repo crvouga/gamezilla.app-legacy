@@ -117,12 +117,12 @@ const updateFromMsg: typeof update = async ({ msg, model, ctx, deps }) => {
   switch (msg.t) {
     case "client-connected": {
       return AppServerModule.andThen({ model }, async (model) => {
-        const gotExisiting = await deps.WireSessionDb.clients.findBySessionIds([
+        const gotExisting = await deps.WireSessionDb.clients.findBySessionIds([
           msg.sessionId,
         ])
 
         const maybeExisting: Client | null =
-          gotExisiting.t === "ok" ? gotExisiting.value[0] ?? null : null
+          gotExisting.t === "ok" ? gotExisting.value[0] ?? null : null
 
         const existing: Client = maybeExisting ?? {
           clientIds: CappedOrderedDict.init({ maxSize: 10 }),

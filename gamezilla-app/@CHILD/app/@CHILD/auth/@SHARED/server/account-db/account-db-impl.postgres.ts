@@ -1,4 +1,5 @@
 import { UserId, UserRole } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import {
   EmailAddress,
@@ -9,10 +10,8 @@ import {
   isErr,
   ok,
 } from "gamezilla-app/@SHARED/core"
-import { Parsing as P } from "gamezilla-app/@SHARED/parsing"
-
+import { p } from "gamezilla-app/@SHARED/parser"
 import { IAccountDb } from "./account-db"
-import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
 
 type AccountRow = {
   user_id: string
@@ -22,31 +21,19 @@ type AccountRow = {
   user_role: UserRole
 }
 
-export const toAccountRow = (row: unknown): AccountRow | null => {
-  if (
-    P.obj(row) &&
-    P.has(row, "user_id", P.str) &&
-    P.has(row, "email_address", P.or(P.str, P.nullish)) &&
-    P.has(row, "phone_number", P.or(P.str, P.nullish)) &&
-    P.has(row, "created_at", P.or(P.str, P.date)) &&
-    P.has(row, "user_role", UserRole.is)
-  ) {
-    return {
-      user_id: row.user_id,
-      email_address: row.email_address,
-      phone_number: row.phone_number,
-      created_at: new Date(row.created_at).toISOString(),
-      user_role: row.user_role,
-    }
-  }
-  return null
-}
+const AccountRow = p.obj({
+  user_id: p.str,
+  email_address: p.maybe(p.str),
+  phone_number: p.maybe(p.str),
+  created_at: p.str,
+  user_role: p.custom(UserRole.is, "Invalid user role"),
+})
 
 const rowToAccount = (row: AccountRow): Result<string, Account> => {
   const parsedUserId = UserId.parse(row.user_id)
 
   if (isErr(parsedUserId)) {
-    return parsedUserId
+    return Result.mapErr(parsedUserId, p.errorsToString)
   }
 
   const userId = parsedUserId.value
@@ -133,7 +120,7 @@ export const AccountDbPostgres = ({
   return {
     async findOneByUserId(input) {
       const queried = await dbConnSql.query(
-        P.is(toAccountRow),
+        AccountRow,
         `SELECT
           user_id,
           email_address,
@@ -166,7 +153,7 @@ export const AccountDbPostgres = ({
 
     async findOneByEmail(input) {
       const queried = await dbConnSql.query(
-        P.is(toAccountRow),
+        AccountRow,
         `SELECT
           user_id,
           email_address,
@@ -196,7 +183,7 @@ export const AccountDbPostgres = ({
     },
     async findOneByPhoneNumber(input) {
       const queried = await dbConnSql.query(
-        P.is(toAccountRow),
+        AccountRow,
         `SELECT user_id, email_address, phone_number FROM user_account WHERE phone_number = :phone_number`,
         {
           phone_number: PhoneNumber.toString(input.phoneNumber),
@@ -221,7 +208,7 @@ export const AccountDbPostgres = ({
       const rowNew = accountToRow(account)
 
       const queried = await dbConnSql.query(
-        P.is(toAccountRow),
+        AccountRow,
         `INSERT INTO user_account (
             user_role,
             user_id,

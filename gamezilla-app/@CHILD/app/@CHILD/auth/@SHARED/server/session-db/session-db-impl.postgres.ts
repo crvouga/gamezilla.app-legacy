@@ -1,7 +1,7 @@
 import { SessionId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { Result, Uuid } from "gamezilla-app/@SHARED/core"
-import { P1 } from "gamezilla-app/@SHARED/parsing"
+import { p } from "gamezilla-app/@SHARED/parser"
 import { ISessionDb } from "./session-db"
 
 //
@@ -10,23 +10,12 @@ import { ISessionDb } from "./session-db"
 //
 //
 
-type Row = {
-  session_id: SessionId
-  user_id: UserId
-}
+export const Row = p.obj({
+  session_id: p.custom(SessionId.is, "Invalid session id"),
+  user_id: p.custom(UserId.is, "Invalid user id"),
+})
 
-const toRow = (x: unknown): Row | null => {
-  if (
-    P1.obj(x) &&
-    P1.has(x, "session_id", SessionId.is) &&
-    P1.has(x, "user_id", UserId.is)
-  ) {
-    return x
-  }
-  return null
-}
-
-const isRow = P1.is(toRow)
+export type Row = p.Infer<typeof Row>
 
 //
 //
@@ -42,7 +31,7 @@ export const SessionDbPostgres = ({
   return {
     async findSessionIdsByUserId(userId: UserId) {
       const queried = await dbConnSql.query(
-        isRow,
+        Row,
         `SELECT * FROM user_session WHERE ended_at IS NULL AND user_id = :user_id`,
         { user_id: userId },
       )
@@ -52,7 +41,7 @@ export const SessionDbPostgres = ({
 
     async findUserIdBySessionId(sessionId: SessionId) {
       const queried = await dbConnSql.query(
-        isRow,
+        Row,
         `SELECT * FROM user_session WHERE ended_at IS NULL AND session_id = :session_id`,
         { session_id: sessionId },
       )
@@ -66,7 +55,7 @@ export const SessionDbPostgres = ({
       const userSessionId = `user-session:${Uuid.generate()}`
 
       const queried = await dbConnSql.query(
-        isRow,
+        Row,
         `INSERT INTO user_session (user_session_id, session_id, user_id) VALUES (:user_session_id, :session_id, :user_id)`,
         {
           user_session_id: userSessionId,
@@ -79,7 +68,7 @@ export const SessionDbPostgres = ({
 
     async zapByUserId(userId) {
       const queried = await dbConnSql.query(
-        isRow,
+        Row,
         `UPDATE user_session SET ended_at = :ended_at WHERE user_id = :user_id`,
         {
           ended_at: new Date().toISOString(),
@@ -91,7 +80,7 @@ export const SessionDbPostgres = ({
 
     async zapBySessionId(sessionId) {
       const queried = await dbConnSql.query(
-        isRow,
+        Row,
         `UPDATE user_session SET ended_at = :ended_at WHERE session_id = :session_id`,
         {
           ended_at: new Date().toISOString(),

@@ -1,8 +1,9 @@
 import { Result } from "gamezilla-app/@SHARED/core"
+import { p } from "gamezilla-app/@SHARED/parser"
 
 export type DbConnSql = {
   query: <TRow>(
-    isRow: (row: unknown) => row is TRow,
+    parser: p.Parser<TRow>,
     rawSql: string,
     params: {
       [key: string]:

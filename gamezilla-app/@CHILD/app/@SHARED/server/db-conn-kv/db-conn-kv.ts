@@ -1,9 +1,10 @@
 import { Task } from "gamezilla-app/@SHARED/core"
+import { Parser } from "gamezilla-app/@SHARED/parser/parser"
 
 export type DbConnKv = {
   get: <TValue>(
     key: string,
-    isValue: (row: unknown) => row is TValue,
+    parser: Parser<TValue>,
   ) => Task<string, TValue | null>
   set: <TValue>(key: string, value: TValue) => Task<string, null>
   zap: (key: string) => Task<string, null>
@@ -12,7 +13,7 @@ export type DbConnKv = {
 const instance = <TKey extends string = string, TValue = unknown>(
   dbConnKv: DbConnKv,
   namespace: string[],
-  isValue: (row: unknown) => row is TValue,
+  parser: Parser<TValue>,
 ): {
   get: (key: TKey) => Task<string, TValue | null>
   set: (key: TKey, value: TValue) => Task<string, null>
@@ -21,7 +22,7 @@ const instance = <TKey extends string = string, TValue = unknown>(
   const toKey = (key: string) => [...namespace, key].join(":")
   return {
     get: (key) => {
-      return dbConnKv.get(toKey(key), isValue)
+      return dbConnKv.get(toKey(key), parser)
     },
     set: (key, value: TValue) => {
       return dbConnKv.set(toKey(key), value)

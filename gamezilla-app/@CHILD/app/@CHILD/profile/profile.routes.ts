@@ -1,47 +1,28 @@
-import { P1 } from "gamezilla-app/@SHARED/parsing"
+import { Result } from "gamezilla-app/@SHARED/core"
+import { p } from "gamezilla-app/@SHARED/parser"
 import { UserId } from "../../@SHARED/data"
 
-export type Route =
-  | {
-      n: "profile"
-      t: "profile"
-      userId: UserId
-    }
-  | {
-      n: "profile"
-      t: "profile-edit"
-    }
-  | {
-      n: "profile"
-      t: "profile-edit-avatar"
-    }
-  | {
-      n: "profile"
-      t: "profile-edit-username"
-    }
+const Route = p.or(
+  p.obj({
+    n: p.l("profile"),
+    t: p.l("profile"),
+    userId: UserId,
+  }),
+  p.obj({
+    n: p.l("profile"),
+    t: p.l("profile-edit"),
+  }),
+  p.obj({
+    n: p.l("profile"),
+    t: p.l("profile-edit-avatar"),
+  }),
+  p.obj({
+    n: p.l("profile"),
+    t: p.l("profile-edit-username"),
+  }),
+)
 
-export const toRoute = P1.union<Route>([
-  (x) =>
-    P1.obj(x) &&
-    P1.tag(x, "n", "profile") &&
-    P1.tag(x, "t", "profile") &&
-    P1.has(x, "userId", UserId.is)
-      ? x
-      : null,
-  (x) =>
-    P1.obj(x) && P1.tag(x, "n", "profile") && P1.tag(x, "t", "profile-edit")
-      ? x
-      : null,
-  (x) =>
-    P1.obj(x) &&
-    P1.tag(x, "n", "profile") &&
-    P1.tag(x, "t", "profile-edit-avatar")
-      ? x
-      : null,
-  (x) =>
-    P1.obj(x) &&
-    P1.tag(x, "n", "profile") &&
-    P1.tag(x, "t", "profile-edit-username")
-      ? x
-      : null,
-])
+export type Route = p.Infer<typeof Route>
+
+export const toRoute = (x: unknown): Route | null =>
+  Result.withDefault(Route.parse(x), null)

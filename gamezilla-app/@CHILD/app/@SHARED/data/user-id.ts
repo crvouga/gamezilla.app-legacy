@@ -1,23 +1,16 @@
-import { err, ok, Result, Uuid } from "gamezilla-app/@SHARED/core"
+import { Uuid } from "gamezilla-app/@SHARED/core"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
+import { p } from "gamezilla-app/@SHARED/parser"
 
-/** @see {isUserId} ts-auto-guard:type-guard */
 export type UserId = Brand<string, "UserId">
+
+const parser = p.custom(is, "Invalid user id")
 
 const namespace = "user"
 const separator = ":"
 
 function is(userId: unknown): userId is UserId {
   return typeof userId === "string"
-}
-
-type Problem = "invalid_user_id"
-
-const parse = (id: unknown): Result<Problem, UserId> => {
-  if (is(id)) {
-    return ok(id)
-  }
-  return err("invalid_user_id")
 }
 
 const generate = () => {
@@ -32,7 +25,7 @@ const generate = () => {
 }
 
 export const UserId = {
+  ...parser,
   generate,
-  parse,
   is,
 }
