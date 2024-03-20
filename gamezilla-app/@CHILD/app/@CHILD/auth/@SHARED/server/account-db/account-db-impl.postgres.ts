@@ -13,7 +13,7 @@ import {
 import { p } from "gamezilla-app/@SHARED/parser"
 import { IAccountDb } from "./account-db"
 
-const AccountRow = p.obj({
+export const AccountRow = p.obj({
   user_id: p.str,
   email_address: p.maybe(p.str),
   phone_number: p.maybe(p.str),
@@ -21,7 +21,7 @@ const AccountRow = p.obj({
   user_role: p.custom(UserRole.is, "Invalid user role"),
 })
 
-type AccountRow = p.Infer<typeof AccountRow>
+export type AccountRow = p.Infer<typeof AccountRow>
 
 const rowToAccount = (row: AccountRow): Result<string, Account> => {
   const parsedUserId = UserId.parse(row.user_id)

@@ -36,10 +36,10 @@ export const createDbConnPostgres = async ({
               }
               logger.error(
                 `[db] Failed to parse row=${JSON.stringify(
-                  parsed.error,
+                  row,
                   null,
                   4,
-                )} sql=${sql}`,
+                )} \nerror=${JSON.stringify(parsed.error, null, 4)} sql=${sql}`,
               )
               return []
             })
