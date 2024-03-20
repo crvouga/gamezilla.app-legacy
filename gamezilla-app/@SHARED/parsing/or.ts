@@ -201,17 +201,6 @@ export function or(
     return false
   }
 }
-// or.explain = (...guards: ((x: unknown) => x is any)[]) => {
-//   return (input: unknown): string => {
-//     const explanations: string[] = []
-//     for (const guard of guards) {
-//       const explanation = guard(input)
-//       if (explanation === true) return "matched"
-//       explanations.push(explanation)
-//     }
-//     return "no guards matched"
-//   }
-// }
 
 export const isEnum = or(
   l("a"),

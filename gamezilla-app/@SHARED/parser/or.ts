@@ -1,5 +1,5 @@
 import { Result } from "../core"
-import { Parser } from "./parser"
+import { Parser, ParserError } from "./parser"
 
 export function or<A, B>(a: Parser<A>, b: Parser<B>): Parser<A | B>
 export function or<A, B, C>(
@@ -696,16 +696,25 @@ export function or<
   | Y
   | Z
 >
-export function or(...parsers: Array<Parser<any>>): Parser<any> {
+export function or(...parsers: Parser<unknown>[]): Parser<unknown> {
   return {
     parse(input) {
-      for (const parser of parsers) {
-        const result = parser.parse(input)
-        if (result.t === "ok") {
-          return result
+      const errors: ParserError[] = []
+
+      for (let i = 0; i < parsers.length; i++) {
+        const result = parsers[i]!.parse(input)
+        switch (result.t) {
+          case "ok": {
+            return result
+          }
+          case "err": {
+            errors.push(...result.error)
+            break
+          }
         }
       }
-      return Result.err({ message: "No parser could handle the input." })
+
+      return Result.err(errors)
     },
   }
 }
