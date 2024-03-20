@@ -217,15 +217,17 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
     ws: ServerWebSocket<ServerWebSocketData>,
     msg: MsgServerToMsgClient<MsgToClient>,
   ) => {
-    switch (ws.readyState) {
-      case 1: {
-        ws.send(JSON.stringify(msg))
-        return
+    Promise.resolve().then(() => {
+      switch (ws.readyState) {
+        case 1: {
+          ws.send(JSON.stringify(msg))
+          return
+        }
+        default: {
+          return
+        }
       }
-      default: {
-        return
-      }
-    }
+    })
   }
 
   transport.toClientBroadcast.subscribe((msgs) => {
