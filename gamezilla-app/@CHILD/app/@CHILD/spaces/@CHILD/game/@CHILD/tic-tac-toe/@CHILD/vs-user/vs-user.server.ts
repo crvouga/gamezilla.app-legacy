@@ -5,7 +5,7 @@ import {
 import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
 import { sendBack } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { Sub, Time, isErr } from "gamezilla-app/@SHARED/core"
-import { TimeSpan } from "gamezilla-app/@SHARED/core/data/time-span"
+import { TimeSpan } from "gamezilla-app/@SHARED/core/time-span"
 import {
   PlayerType,
   toOpposite,
@@ -13,12 +13,12 @@ import {
 } from "../../@SHARED/tic-tic-toe/tic-tac-toe"
 import * as Round from "./vs-user-round"
 import {
-  NewGame,
-  Res,
   ModelServer,
   MsgServer,
   MsgToClient,
   MsgToServer,
+  NewGame,
+  Res,
   initCoreModel,
   inputBestOutOf,
   inputMove,

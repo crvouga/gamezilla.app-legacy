@@ -1,6 +1,6 @@
 import { memoize } from "gamezilla-app/@SHARED/core"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
-import { p } from "gamezilla-app/@SHARED/parser"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
 //
 //

@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@SHARED/parser"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { Flow } from "../../flow"
 import * as FlowTriDimensions from "./flow-tri-dimensions"
 

@@ -1,5 +1,5 @@
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
-import { Result } from "../../../../@SHARED/core/data/result"
+import { Result } from "../../../../@SHARED/core/result"
 
 export type ClientId = Brand<string, "ClientId">
 

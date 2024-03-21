@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@SHARED/parser"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { UserId } from "./user-id"
 import { Username } from "./username"
 

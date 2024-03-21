@@ -1,5 +1,5 @@
-import { Result } from "../data/result"
 import { Eff } from "../eff"
+import { Result } from "../result"
 
 export type PutResult = Result<"failed_put_item_in_local_storage", null>
 

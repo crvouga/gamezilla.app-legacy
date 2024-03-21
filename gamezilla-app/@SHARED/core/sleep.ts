@@ -1,4 +1,4 @@
-import { TimeSpan } from "./data/time-span"
+import { TimeSpan } from "./time-span"
 
 export type Sleep = (timeSpan: TimeSpan) => Promise<void>
 

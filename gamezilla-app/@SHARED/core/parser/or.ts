@@ -1,4 +1,4 @@
-import { Result } from "../core"
+import { Result } from ".."
 import { Parser, ParserError } from "./parser"
 
 export function or<A>(a: Parser<A>): Parser<A>

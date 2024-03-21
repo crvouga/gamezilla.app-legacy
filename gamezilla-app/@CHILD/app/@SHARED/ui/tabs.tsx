@@ -1,4 +1,4 @@
-import { cn } from "."
+import { cn } from "./ui"
 
 export const Tabs = <TTab extends string>({
   tabs,

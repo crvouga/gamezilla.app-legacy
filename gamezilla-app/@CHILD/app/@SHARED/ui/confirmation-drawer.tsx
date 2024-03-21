@@ -1,6 +1,6 @@
-import { cn } from "."
 import { Button } from "./button"
 import { Drawer, DrawerProps } from "./drawer"
+import { cn } from "./ui"
 
 type Props = DrawerProps & {
   title: string

@@ -1,5 +1,5 @@
 import { List, NonNegInt, pipe } from "gamezilla-app/@SHARED/core"
-import { TimeSpan } from "gamezilla-app/@SHARED/core/data/time-span"
+import { TimeSpan } from "gamezilla-app/@SHARED/core/time-span"
 import { Direction } from "./direction"
 import { Position } from "./position"
 

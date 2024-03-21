@@ -17,7 +17,7 @@ import {
   ok,
   pipe,
 } from "gamezilla-app/@SHARED/core"
-import { TimeSpan } from "gamezilla-app/@SHARED/core/data/time-span"
+import { TimeSpan } from "gamezilla-app/@SHARED/core/time-span"
 import { ChessMsgSync } from "../../@SHARED/chess/chess-shared"
 import { EloRating } from "./elo-rating"
 import { PuzzleDb } from "./puzzle-db"

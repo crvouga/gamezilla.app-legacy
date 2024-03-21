@@ -1,5 +1,5 @@
-import { p } from "gamezilla-app/@SHARED/parser"
-import { Brand } from "../brand"
+import { p } from "gamezilla-app/@SHARED/core/parser"
+import { Brand } from "./brand"
 import { TimeSpan } from "./time-span"
 
 export type Posix = Brand<number, "Posix">

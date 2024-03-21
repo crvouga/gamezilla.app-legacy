@@ -1,5 +1,5 @@
 import { Task } from "gamezilla-app/@SHARED/core"
-import { Parser } from "gamezilla-app/@SHARED/parser/parser"
+import { Parser } from "gamezilla-app/@SHARED/core/parser/parser"
 
 export type DbConnKv = {
   get: <TValue>(

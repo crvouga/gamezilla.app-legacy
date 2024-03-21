@@ -1,7 +1,7 @@
 import { SessionId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Result, isOk } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/parser"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { ISessionDb } from "./session-db"
 
 //

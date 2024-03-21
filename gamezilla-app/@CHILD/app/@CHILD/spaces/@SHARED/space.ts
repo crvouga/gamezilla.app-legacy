@@ -7,7 +7,7 @@ import {
   UserId,
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { ServerCtx, ServerEvent } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { p } from "gamezilla-app/@SHARED/parser"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
 //
 //

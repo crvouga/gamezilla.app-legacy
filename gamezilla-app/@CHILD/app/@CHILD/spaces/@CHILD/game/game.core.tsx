@@ -1,5 +1,5 @@
 import { EventMeta } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { p } from "gamezilla-app/@SHARED/parser"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { SpaceCtx } from "../../@SHARED/space"
 import * as ConnectFour from "./@CHILD/connect-four/connect-four.core"
 import * as Flow from "./@CHILD/flow/flow.core"

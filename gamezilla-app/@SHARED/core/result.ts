@@ -1,11 +1,11 @@
-//
-//
-//
-//
-//
-//
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
-import { p } from "gamezilla-app/@SHARED/parser"
+//
+//
+//
+//
+//
+//
 
 /**
  * A `Result` represents the result of an operation that may succeed or fail.

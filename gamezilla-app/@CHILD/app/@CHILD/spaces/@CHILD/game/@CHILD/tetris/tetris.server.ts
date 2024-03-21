@@ -1,5 +1,5 @@
 import { Eff, Sub, Time, isErr } from "gamezilla-app/@SHARED/core"
-import { TimeSpan } from "gamezilla-app/@SHARED/core/data/time-span"
+import { TimeSpan } from "gamezilla-app/@SHARED/core/time-span"
 import {
   ModelServer,
   MsgServer,

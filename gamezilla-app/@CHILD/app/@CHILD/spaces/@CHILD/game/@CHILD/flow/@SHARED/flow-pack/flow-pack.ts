@@ -1,6 +1,6 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Posix } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/parser"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id"
 import { FlowPackId } from "./flow-pack-id"
 import { FlowPackName } from "./flow-pack-name"

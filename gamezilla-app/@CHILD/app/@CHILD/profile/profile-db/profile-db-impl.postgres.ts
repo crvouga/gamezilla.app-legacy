@@ -5,7 +5,7 @@ import {
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { Result, err, isErr, ok } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/parser"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { ProfileCore } from "../profile.core"
 import { ProfileDb } from "./profile-db"
 
