@@ -166,11 +166,13 @@ export const init: Model = {
  * A terminal represents the start and end nodes for a group.
  * These are the two circles the user is trying to connect
  */
-export type Terminal = {
-  groupId: GroupId
-  startId: NodeId
-  endId?: NodeId | null
-}
+
+export const Terminal = p.obj({
+  groupId: GroupId,
+  startId: NodeId,
+  endId: p.maybe(NodeId),
+})
+export type Terminal = p.Infer<typeof Terminal>
 
 export const isSameTerminal = (a: Terminal, b: Terminal): boolean => {
   const startA = a.startId ?? null
