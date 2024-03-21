@@ -29,25 +29,6 @@ export const hasNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
 //
 //
 
-export type GroupId =
-  | "A"
-  | "B"
-  | "C"
-  | "D"
-  | "E"
-  | "F"
-  | "G"
-  | "H"
-  | "I"
-  | "J"
-  | "K"
-  | "L"
-  | "M"
-  | "N"
-  | "O"
-  | "P"
-  | "Q"
-
 export const GROUP_ID_ORDER = [
   "A",
   "B",
@@ -72,7 +53,9 @@ export const isGroupId = (groupId: unknown): groupId is GroupId => {
   return GROUP_ID_ORDER.includes(groupId as GroupId)
 }
 
-export const GroupId = p.custom(isGroupId, "Invalid group id")
+export const GroupId = p.enumeration(GROUP_ID_ORDER)
+
+export type GroupId = p.Infer<typeof GroupId>
 
 //
 //
@@ -105,62 +88,6 @@ export const EdgeId = p.custom(isEdgeId, "Invalid edge id")
 //
 //
 //
-
-/**
- *
- * Model
- *
- *
- * Represents the entire puzzle.
- * The puzzle is a directed graph
- */
-
-export type Model = {
-  Flow: true
-  /**
-   * The set of all valid nodes in the puzzle.
-   */
-  nodes: {
-    [nodeId: NodeId]: Node
-  }
-
-  /**
-   * The set of all valid connections between nodes.
-   */
-  edges: {
-    [edgeId: EdgeId]: Edge
-  }
-
-  edgeHash: string | number
-
-  /**
-   * Represents the start and end nodes for each group.
-   */
-  terminalsByGroupId: {
-    [groupId in GroupId]?: Terminal
-  }
-
-  /**
-   * Represents the pipes that are connected to each node.
-   * We index each pipe with pipe's source node
-   * so that it's impossible for a node to be associated with more than one group
-   */
-  pipesBySourceId: {
-    [sourceId: NodeId]: Pipe
-  }
-}
-
-/**
- *
- */
-export const init: Model = {
-  Flow: true,
-  nodes: {},
-  edges: {},
-  terminalsByGroupId: {},
-  pipesBySourceId: {},
-  edgeHash: 0,
-}
 
 /**
  * A terminal represents the start and end nodes for a group.
@@ -243,6 +170,57 @@ export type Node = p.Infer<typeof Node>
 
 export const toNodes = (model: Model): { [nodeId: NodeId]: Node } => {
   return model.nodes
+}
+
+/**
+ *
+ * Model
+ *
+ *
+ * Represents the entire puzzle.
+ * The puzzle is a directed graph
+ */
+
+const Model = p.obj({
+  Flow: p.l(true),
+
+  /**
+   * The set of all valid nodes in the puzzle.
+   */
+  nodes: p.dict(NodeId, Node),
+
+  /**
+   * The set of all valid connections between nodes.
+   */
+  edges: p.dict(EdgeId, Edge),
+
+  /**
+   * Represents the start and end nodes for each group.
+   */
+  terminalsByGroupId: p.partialDict(GroupId, Terminal),
+
+  /**
+   * Represents the pipes that are connected to each node.
+   * We index each pipe with pipe's source node
+   * so that it's impossible for a node to be associated with more than one group
+   */
+  pipesBySourceId: p.dict(NodeId, Pipe),
+
+  edgeHash: p.or(p.str, p.num),
+})
+
+export type Model = p.Infer<typeof Model>
+
+/**
+ *
+ */
+export const init: Model = {
+  Flow: true,
+  nodes: {},
+  edges: {},
+  terminalsByGroupId: {},
+  pipesBySourceId: {},
+  edgeHash: 0,
 }
 
 /**

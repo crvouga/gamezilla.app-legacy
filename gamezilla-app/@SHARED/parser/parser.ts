@@ -239,7 +239,67 @@ export const maybe = <T>(parser: Parser<T>): Parser<T | null | undefined> => {
 export const dict = <TKey extends string | number, TValue>(
   key: Parser<TKey>,
   value: Parser<TValue>,
-): Parser<Record<TKey, TValue>> => {
+): Parser<{ [key in TKey]: TValue }> => {
+  return {
+    parse(input) {
+      if (!isIndexable(input)) {
+        return Result.err([
+          {
+            message: toErrorMessage(
+              "object",
+              typeof input,
+              JSON.stringify(input),
+            ),
+            path: [],
+          },
+        ])
+      }
+
+      const result = {} as Record<TKey, TValue>
+      const errors: ParserError[] = []
+      for (const k in input) {
+        const keyParsed = key.parse(k)
+        if (keyParsed.t === "err") {
+          errors.push(
+            ...keyParsed.error.map((err): ParserError => {
+              return {
+                message: err.message,
+                path: [k, ...err.path],
+              }
+            }),
+          )
+          continue
+        }
+
+        const valueParsed = value.parse(input[k])
+        if (valueParsed.t === "err") {
+          errors.push(
+            ...valueParsed.error.map((err): ParserError => {
+              return {
+                message: err.message,
+                path: [k, ...err.path],
+              }
+            }),
+          )
+          continue
+        }
+
+        result[keyParsed.value] = valueParsed.value
+      }
+
+      if (errors.length > 0) {
+        return Result.err(errors)
+      }
+
+      return Result.ok(result)
+    },
+  }
+}
+
+export const partialDict = <TKey extends string | number, TValue>(
+  key: Parser<TKey>,
+  value: Parser<TValue>,
+): Parser<Partial<{ [key in TKey]: TValue }>> => {
   return {
     parse(input) {
       if (!isIndexable(input)) {
