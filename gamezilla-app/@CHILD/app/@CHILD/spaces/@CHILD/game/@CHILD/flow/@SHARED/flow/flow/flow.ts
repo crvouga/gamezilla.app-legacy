@@ -2,6 +2,13 @@ import { memoize } from "gamezilla-app/@SHARED/core"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
 import { p } from "gamezilla-app/@SHARED/parser"
 
+//
+//
+//
+//
+//
+//
+
 export type NodeId = Brand<string, "NodeId">
 export const isNodeId = (nodeId: unknown): nodeId is NodeId => {
   return typeof nodeId === "string"
@@ -12,7 +19,15 @@ export const createNodeId = (nodeId: string): NodeId => {
   return nodeId as NodeId
 }
 
-export type EdgeId = Brand<string, "EdgeId">
+export const hasNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
+  return nodeId in model.nodes
+}
+
+//
+//
+//
+//
+//
 
 export type GroupId =
   | "A"
@@ -57,19 +72,39 @@ export const isGroupId = (groupId: unknown): groupId is GroupId => {
   return GROUP_ID_ORDER.includes(groupId as GroupId)
 }
 
+export const GroupId = p.custom(isGroupId, "Invalid group id")
+
+//
+//
+//
+//
+//
+
+export type EdgeId = Brand<string, "EdgeId">
+
 const EDGE_ID_SEPARATOR = "->"
 
 export const toEdgeId = (edge: Edge): EdgeId => {
   return `${edge.sourceId}${EDGE_ID_SEPARATOR}${edge.targetId}` as EdgeId
 }
 
-export const isEdgeId = (model: Model, edgeId: string): edgeId is EdgeId => {
+export const hasEdgeId = (model: Model, edgeId: string): edgeId is EdgeId => {
   return edgeId in model.edges
 }
 
-export const hasNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
-  return nodeId in model.nodes
+export const isEdgeId = (edgeId: unknown): edgeId is EdgeId => {
+  return typeof edgeId === "string"
 }
+
+export const EdgeId = p.custom(isEdgeId, "Invalid edge id")
+
+//
+//
+//
+//
+//
+//
+//
 
 /**
  *
@@ -80,7 +115,6 @@ export const hasNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
  * The puzzle is a directed graph
  */
 
-/** @see {isModel} ts-auto-guard:type-guard */
 export type Model = {
   Flow: true
   /**
@@ -348,7 +382,7 @@ export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
  */
 export const yieldEdges = function* (model: Model): Generator<Edge> {
   for (const edgeId in model.edges) {
-    if (!isEdgeId(model, edgeId)) {
+    if (!hasEdgeId(model, edgeId)) {
       continue
     }
 
