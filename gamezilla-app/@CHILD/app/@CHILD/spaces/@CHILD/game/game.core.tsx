@@ -1,6 +1,4 @@
-import { EventMeta } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { p } from "gamezilla-app/@SHARED/core/parser"
-import { SpaceCtx } from "../../@SHARED/space"
 import * as ConnectFour from "./@CHILD/connect-four/connect-four.core"
 import * as Flow from "./@CHILD/flow/flow.core"
 //
@@ -98,24 +96,6 @@ export const ModelSync = p.custom(
   "Invalid model sync",
 )
 
-export const initSync = (gameName: GameName): ModelSync => {
-  switch (gameName) {
-    case "connect-four": {
-      return {
-        t: "connect-four",
-        c: ConnectFour.initSync(),
-      }
-    }
-
-    case "flow": {
-      return {
-        t: "flow",
-        c: Flow.initSync(),
-      }
-    }
-  }
-}
-
 export type MsgSync =
   | { t: "connect-four"; c: ConnectFour.MsgSync }
   | { t: "flow"; c: Flow.MsgSync }
@@ -124,52 +104,3 @@ export const MsgSync = p.custom(
   (_x: unknown): _x is MsgSync => true,
   "Invalid msg sync",
 )
-
-export const reducer = ({
-  ctx,
-  modelSync,
-  msgSync,
-}: {
-  ctx: SpaceCtx
-  modelSync: ModelSync
-  msgSync: MsgSync & EventMeta
-}): ModelSync => {
-  switch (modelSync.t) {
-    case "connect-four": {
-      switch (msgSync.t) {
-        case "connect-four": {
-          return {
-            t: "connect-four",
-            c: ConnectFour.reducer({
-              ctx,
-              msgSync: { ...msgSync, ...msgSync.c },
-              modelSync: modelSync.c,
-            }),
-          }
-        }
-        default: {
-          return modelSync
-        }
-      }
-    }
-
-    case "flow": {
-      switch (msgSync.t) {
-        case "flow": {
-          return {
-            t: "flow",
-            c: Flow.reducer({
-              ctx,
-              msgSync: { ...msgSync, ...msgSync.c },
-              modelSync: modelSync.c,
-            }),
-          }
-        }
-
-        default: {
-          return modelSync
-        }
-      }
-    }
-  }
-}

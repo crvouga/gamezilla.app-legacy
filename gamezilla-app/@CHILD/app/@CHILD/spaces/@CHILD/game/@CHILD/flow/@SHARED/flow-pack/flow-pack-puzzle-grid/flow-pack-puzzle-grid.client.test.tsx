@@ -6,10 +6,11 @@ import {
   didShowErrorSm,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Posix, RequestResponse, TimeSpan } from "gamezilla-app/@SHARED/core"
-import { FlowPack, FlowPackPuzzleGridClient } from ".."
+import { FlowPack } from ".."
 import { testFlowClientCtx } from "../../../@CHILD/create/@TEST/client"
 import { FlowVariant, FlowVariantDimensions } from "../../flow"
 import { FlowPuzzle } from "../../flow-puzzle"
+import { FlowPackPuzzleGridClient } from "./flow-pack-puzzle-grid.client"
 import { ModelClient, initClient } from "./flow-pack-puzzle-grid.core"
 
 const initial = (_pack: FlowPack) => {

@@ -22,7 +22,3 @@ export type MsgSync = {
 export type ModelSync = {
   listTab: ListTab
 }
-
-export const initSync: ModelSync = {
-  listTab: "puzzles",
-}

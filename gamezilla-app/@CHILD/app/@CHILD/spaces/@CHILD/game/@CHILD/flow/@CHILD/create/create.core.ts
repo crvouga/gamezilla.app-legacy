@@ -16,20 +16,15 @@ import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle"
 import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle/flow-puzzle-db/flow-puzzle-db"
 import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id"
 import { FlowPuzzleList } from "../../@SHARED/flow-puzzle/flow-puzzle-list"
-import { ListTabs, ListTabsGame } from "./list-tabs"
-import { Pack, PackGame } from "./pack"
+import { ListTabs } from "./list-tabs"
+import { Pack } from "./pack"
 import { PackBuilder } from "./pack/builder"
-import { PuzzleBuilder, PuzzleBuilderGame } from "./puzzle/builder"
-import { PuzzleCreate, PuzzleCreateGame } from "./puzzle/create"
-import {
-  PuzzleDeleteForever,
-  PuzzleDeleteForeverGame,
-} from "./puzzle/delete-forever"
-import { PuzzleEditGame, PuzzleEditName } from "./puzzle/edit"
+import { PuzzleBuilder } from "./puzzle/builder"
+import { PuzzleCreate } from "./puzzle/create"
+import { PuzzleDeleteForever } from "./puzzle/delete-forever"
+import { PuzzleEditName } from "./puzzle/edit"
 import { PuzzleList } from "./puzzle/list"
-import { PuzzleListGame } from "./puzzle/list/puzzle-list.game"
 import { PuzzleSaveChanges } from "./puzzle/save-changes"
-import { PuzzleSaveChangesGame } from "./puzzle/save-changes/puzzle-save-changes.game"
 
 //
 //
@@ -230,36 +225,8 @@ export type ModelSync = Pack.ModelSync &
     puzzleBuilder: PuzzleBuilder.ModelSync | null
   }
 
-export const initSync = (_input: { ctx: SpaceCtx }): ModelSync => {
-  return {
-    ...ListTabs.initSync,
-    ...Pack.initSync,
-    opened: { t: "list" },
-    packBuilder: null,
-    puzzleBuilder: null,
-  }
-}
-
 export type SyncReducer = (input: {
   ctx: SpaceCtx
   msgSync: MsgSync
   modelSync: ModelSync
 }) => ModelSync
-
-export const reducer: SyncReducer = ({ modelSync, msgSync, ctx }) => {
-  return [
-    PuzzleDeleteForeverGame.reducer,
-    PuzzleBuilderGame.reducer,
-    PuzzleCreateGame.reducer,
-    PuzzleListGame.reducer,
-    PuzzleEditGame.reducer,
-    PuzzleSaveChangesGame.reducer,
-    //
-    PackGame.reducer,
-    //
-    ListTabsGame.reducer,
-  ].reduce(
-    (acc, reducer) => reducer({ ctx, msgSync, modelSync: acc }),
-    modelSync,
-  )
-}

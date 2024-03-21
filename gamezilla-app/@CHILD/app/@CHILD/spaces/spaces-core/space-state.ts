@@ -2,6 +2,7 @@ import { Space } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import * as Game from "../@CHILD/game/game.core"
+import * as GameGame from "../@CHILD/game/game.game"
 import { EventId, EventMeta } from "../@SHARED/event"
 import { SpaceEvent } from "./space-event"
 
@@ -104,8 +105,8 @@ export const reducer = ({
     case "started": {
       switch (msgSpace.t) {
         case "game": {
-          const game = state.game ?? Game.initSync(msgSpace.c.t)
-          const gameNew = Game.reducer({
+          const game = state.game ?? GameGame.initSync(msgSpace.c.t)
+          const gameNew = GameGame.reducer({
             ctx: { space: state },
             modelSync: game,
             msgSync: { ...msgSpace, ...msgSpace.c },
@@ -131,7 +132,7 @@ export const reducer = ({
           return {
             ...state,
             latestEvent: msgSpace.eventId,
-            game: msgSpace.game ? Game.initSync(msgSpace.game) : null,
+            game: msgSpace.game ? GameGame.initSync(msgSpace.game) : null,
           }
         }
 

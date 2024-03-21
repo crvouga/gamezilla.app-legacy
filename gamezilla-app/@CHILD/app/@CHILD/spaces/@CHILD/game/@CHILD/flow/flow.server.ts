@@ -5,18 +5,18 @@ import {
 } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { Sub } from "gamezilla-app/@SHARED/core"
 import { SpaceServerCmd } from "../../../../@SHARED/space-server-cmd"
+import * as CreateGame from "./@CHILD/create/create.game"
 import { CreateServer } from "./@CHILD/create/create.server"
+import * as Play from "./@CHILD/play/play.core"
 import { PlayServer } from "./@CHILD/play/play.server"
 import {
-  MsgSync,
-  ModelSync,
   ModelServer,
+  ModelSync,
   MsgServer,
+  MsgSync,
   MsgToClient,
   MsgToServer,
 } from "./flow.core"
-import * as Create from "./@CHILD/create/create.core"
-import * as Play from "./@CHILD/play/play.core"
 
 type Module = GameServerModule<{
   Model: ModelServer
@@ -52,7 +52,7 @@ const updateCreate: Module["update"] = async (input) => {
     modelSync:
       input.modelSync.t === "create"
         ? input.modelSync.c
-        : Create.initSync({ ctx: input.ctx }),
+        : CreateGame.initSync({ ctx: input.ctx }),
     model: input.model.t === "create" ? input.model.c : CreateServer.init,
     msgCmd: input.msgCmd,
     msgEvt: input.msgEvt,

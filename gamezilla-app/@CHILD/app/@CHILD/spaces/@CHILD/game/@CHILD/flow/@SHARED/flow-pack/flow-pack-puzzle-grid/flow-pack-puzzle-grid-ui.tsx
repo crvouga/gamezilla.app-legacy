@@ -4,11 +4,11 @@ import { VDom } from "gamezilla-app/@SHARED/vdom"
 const COLUMN_COUNT = 5
 const ROW_COUNT = 6
 
-export const toIndex = ({ x, y }: { x: number; y: number }) => {
+const toIndex = ({ x, y }: { x: number; y: number }) => {
   return y * COLUMN_COUNT + x
 }
 
-export const ViewPackPuzzleGrid = ({
+const ViewPackPuzzleGrid = ({
   renderCell,
 }: {
   renderCell: ({ x, y }: { x: number; y: number }) => VDom
@@ -37,7 +37,7 @@ export const ViewPackPuzzleGrid = ({
   return <div className="p-8">{columns}</div>
 }
 
-export const ViewAddCell = ({ onClick }: { onClick: () => void }) => {
+const ViewAddCell = ({ onClick }: { onClick: () => void }) => {
   return (
     <button
       onClick={onClick}
@@ -48,7 +48,7 @@ export const ViewAddCell = ({ onClick }: { onClick: () => void }) => {
   )
 }
 
-export const ViewPuzzleCell = ({
+const ViewPuzzleCell = ({
   onClick,
   index,
 }: {
@@ -65,14 +65,23 @@ export const ViewPuzzleCell = ({
   )
 }
 
-export const ViewEmptyCell = () => {
+const ViewEmptyCell = () => {
   return (
     <div className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-800 bg-neutral-950 opacity-70"></div>
   )
 }
 
-export const ViewLoadingCell = () => {
+const ViewLoadingCell = () => {
   return (
     <div className="flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded bg-neutral-600 opacity-70"></div>
   )
+}
+
+export const FlowPackPuzzleGridUI = {
+  toIndex,
+  ViewPackPuzzleGrid,
+  ViewAddCell,
+  ViewPuzzleCell,
+  ViewEmptyCell,
+  ViewLoadingCell,
 }

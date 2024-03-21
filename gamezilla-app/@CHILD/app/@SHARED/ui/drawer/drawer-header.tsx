@@ -1,4 +1,5 @@
-import { IconButton, IconXMark } from ".."
+import { IconButton } from "../icon-button"
+import { IconXMark } from "../icon/icon-x-mark"
 
 export const DrawerHeader = ({ onClose }: { onClose?: () => void }) => {
   return (
