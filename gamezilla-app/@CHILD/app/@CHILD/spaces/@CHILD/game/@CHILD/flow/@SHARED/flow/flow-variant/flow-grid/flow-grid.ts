@@ -1,3 +1,4 @@
+import { p } from "gamezilla-app/@SHARED/parser"
 import { Flow } from "../../flow"
 import * as FlowGridDimensions from "./flow-grid-dimensions"
 import { DELTAS, Position } from "./flow-grid-position"
@@ -10,13 +11,15 @@ import { DELTAS, Position } from "./flow-grid-position"
 //
 //
 
-export type Model = Flow.Model &
-  FlowGridDimensions.Model & {
-    t: "flow-grid"
-    positions: {
-      [nodeId: Flow.NodeId]: Position
-    }
-  }
+export const Model = p.and(
+  Flow.Model,
+  FlowGridDimensions.Model,
+  p.obj({
+    t: p.l("flow-grid"),
+    positions: p.dict(Flow.NodeId, Position.parser),
+  }),
+)
+export type Model = p.Infer<typeof Model>
 
 export const positionToNodeId = (position: Position): Flow.NodeId => {
   return Flow.createNodeId(`${position.x},${position.y}`)

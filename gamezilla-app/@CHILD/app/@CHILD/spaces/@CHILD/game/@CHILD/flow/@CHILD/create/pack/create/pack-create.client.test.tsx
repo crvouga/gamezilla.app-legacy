@@ -13,31 +13,22 @@ import {
 } from "../../@TEST/client"
 
 describe(import.meta.file, () => {
-  it("should make a sound when the user clicks the create button", async () => {
-    const output = await GameClientModule.andThen(
-      initial,
-      clickedPackCreateButton,
-    )
+  it("should make a sound when the user clicks the create button", () => {
+    const output = GameClientModule.andThen(initial, clickedPackCreateButton)
 
     expect(didPlaySound(output)).toBeTrue()
   })
 
-  it("should play a sound after user created a pack", async () => {
+  it("should play a sound after user created a pack", () => {
     const pack = createFlowPack(testFlowClientCtx())
-    const output = await GameClientModule.andThen(
-      initial,
-      userCreatedPack(pack),
-    )
+    const output = GameClientModule.andThen(initial, userCreatedPack(pack))
 
     expect(didPlaySound(output)).toBeTrue()
   })
 
-  it("should show toast after server created current users pack", async () => {
+  it("should show toast after server created current users pack", () => {
     const pack = createFlowPack(testFlowClientCtx())
-    const output = await GameClientModule.andThen(
-      initial,
-      userCreatedPack(pack),
-    )
+    const output = GameClientModule.andThen(initial, userCreatedPack(pack))
     expect(didShowToast(output)).toBeTrue()
   })
 })

@@ -101,12 +101,12 @@ export const isMsgSync = p.or(
   }),
   p.obj({
     t: p.l("pack-builder.user-clicked-add-puzzle-item"),
-    puzzle: FlowPuzzle.parser,
+    puzzle: FlowPuzzle,
     userId: userId,
   }),
   p.obj({
     t: p.l("pack-builder.user-clicked-pack-item"),
-    puzzle: FlowPuzzle.parser,
+    puzzle: FlowPuzzle,
     index: p.num,
   }),
   p.obj({
@@ -120,12 +120,12 @@ export const isMsgSync = p.or(
   p.obj({
     t: p.l("pack-builder.user-clicked-next-puzzle-button"),
     userId: userId,
-    nextPuzzle: FlowPuzzle.parser,
+    nextPuzzle: FlowPuzzle,
   }),
   p.obj({
     t: p.l("pack-builder.user-clicked-previous-puzzle-button"),
     userId: userId,
-    previousPuzzle: FlowPuzzle.parser,
+    previousPuzzle: FlowPuzzle,
   }),
   p.obj({
     t: p.l("pack-builder.puzzle-screen.user-clicked-more-button"),

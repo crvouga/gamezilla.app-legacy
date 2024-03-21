@@ -16,7 +16,7 @@ export const initial = {
   model: initClient,
 }
 
-export const testFlowClientCtx = (): FlowClientCtx => {
+export function testFlowClientCtx(): FlowClientCtx {
   return {
     ...testSpaceClientCtx(),
     onQuit() {},
@@ -221,7 +221,7 @@ export const serverCreatedPack = (pack: FlowPack) => (model: ModelClient) => {
   })
 }
 
-export const createFlowPuzzle = (ctx: SpaceClientCtx) => {
+export function createFlowPuzzle(ctx: SpaceClientCtx) {
   return FlowPuzzle.create({
     count: 1,
     createdAt: ctx.now,
@@ -230,10 +230,10 @@ export const createFlowPuzzle = (ctx: SpaceClientCtx) => {
   })
 }
 
-export const createFlowPack = (
+export function createFlowPack(
   ctx: SpaceClientCtx,
   puzzleIds: FlowPuzzleId[] = [],
-) => {
+) {
   return FlowPack.create({
     now: ctx.now,
     puzzleIds,

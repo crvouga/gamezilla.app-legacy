@@ -1,3 +1,4 @@
+import { p } from "gamezilla-app/@SHARED/parser"
 import { Brand } from "../brand"
 import { TimeSpan } from "./time-span"
 
@@ -32,6 +33,8 @@ function is(posixTime: unknown): posixTime is Posix {
   return true
 }
 is.explain = explain
+
+const parser = p.custom(is, "Invalid posix time")
 
 const fromNumber = (posixTime: number): Posix => {
   const clamped = Math.max(posixTime, minPosixTime)
@@ -74,6 +77,7 @@ const toIsoString = (posix: Posix): string => {
 const zero = fromNumber(0)
 
 export const Posix = {
+  ...parser,
   zero,
   is,
   fromNumber,

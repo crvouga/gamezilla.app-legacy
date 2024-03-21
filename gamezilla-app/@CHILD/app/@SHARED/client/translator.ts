@@ -34,11 +34,11 @@ export type TranslatorMsg =
 
 export const translatorSubscriptions = PubSub.create<TranslatorMsg>()
 
-const noop: Translator = () => "..."
+function noop(): string {
+  return ""
+}
 
-export const getTranslator = (
-  languageCode: LanguageCodeISO_639_1,
-): Translator => {
+export function getTranslator(languageCode: LanguageCodeISO_639_1): Translator {
   const translator = state.translators[languageCode]
 
   if (translator && translator.lang === languageCode) {

@@ -2,7 +2,7 @@ import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { Posix, Result, isErr, ok } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/parser"
-import { FlowVariantParser } from "../../flow"
+import { FlowVariant } from "../../flow"
 import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle-id"
 import { FlowPuzzleName } from "../flow-puzzle-name"
@@ -39,7 +39,10 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
   const flowPuzzleName = FlowPuzzleName.is(row.flow_puzzle_name)
     ? row.flow_puzzle_name
     : null
-  const flow = FlowVariantParser.is(row.flow_puzzle) ? row.flow_puzzle : null
+
+  const parsedFlow = FlowVariant.Model.parse(row.flow_puzzle)
+  const flow = parsedFlow.t === "ok" ? parsedFlow.value : null
+
   const createdAt = postgresTimestampToPosix(row.created_at)
   const createdBy = UserId.is(row.created_by_user_id)
     ? row.created_by_user_id
@@ -103,7 +106,8 @@ export const FlowPuzzleDbPostgres = ({
         FROM
           game_flow_puzzle
         WHERE
-          flow_puzzle_id = :flow_puzzle_id LIMIT 1`,
+          flow_puzzle_id = :flow_puzzle_id
+        LIMIT 1`,
         {
           flow_puzzle_id: flowPuzzleId,
         },

@@ -181,7 +181,7 @@ export const toNodes = (model: Model): { [nodeId: NodeId]: Node } => {
  * The puzzle is a directed graph
  */
 
-const Model = p.obj({
+export const Model = p.obj({
   Flow: p.l(true),
 
   /**

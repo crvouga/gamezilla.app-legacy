@@ -45,11 +45,11 @@ const closedMoreDrawer = (ctx: FlowClientCtx) => (model: ModelClient) => {
 }
 
 describe(import.meta.file, () => {
-  it("should open puzzle when user clickes puzzle grid item", async () => {
+  it("should open puzzle when user clickes puzzle grid item", () => {
     const ctx = testSpaceClientCtx()
     const puzzle = createFlowPuzzle(ctx)
 
-    const output = await andThen(
+    const output = andThen(
       initial,
       serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
@@ -63,9 +63,9 @@ describe(import.meta.file, () => {
     ).toBeTrue()
   })
 
-  it("should open puzzle picker when user clicks add puzzle button", async () => {
+  it("should open puzzle picker when user clicks add puzzle button", () => {
     const ctx = testSpaceClientCtx()
-    const output = await andThen(
+    const output = andThen(
       initial,
       serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
@@ -74,9 +74,9 @@ describe(import.meta.file, () => {
     expect(modelSync.packBuilder?.screen.t === "add-puzzle").toBeTrue()
   })
 
-  it("should close puzzle picker when user clicks closes", async () => {
+  it("should close puzzle picker when user clicks closes", () => {
     const ctx = testSpaceClientCtx()
-    const output = await andThen(
+    const output = andThen(
       initial,
       serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
@@ -86,10 +86,10 @@ describe(import.meta.file, () => {
     expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBeTrue()
   })
 
-  it("should add puzzle to the pack after clicking a puzzle in the picker", async () => {
+  it("should add puzzle to the pack after clicking a puzzle in the picker", () => {
     const ctx = testSpaceClientCtx()
     const puzzle = createFlowPuzzle(ctx)
-    const output = await andThen(
+    const output = andThen(
       initial,
       serverCreatedPack(createFlowPack(ctx)),
       clickedPuzzlePickerItem(puzzle),
@@ -101,10 +101,10 @@ describe(import.meta.file, () => {
     ).toBeTrue()
   })
 
-  it("should close puzzle picker after adding a puzzle to the pack", async () => {
+  it("should close puzzle picker after adding a puzzle to the pack", () => {
     const ctx = testSpaceClientCtx()
     const puzzle = createFlowPuzzle(ctx)
-    const output = await andThen(
+    const output = andThen(
       initial,
       serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
@@ -114,10 +114,10 @@ describe(import.meta.file, () => {
     expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBeTrue()
   })
 
-  it("should go back to grid after exiting puzzle", async () => {
+  it("should go back to grid after exiting puzzle", () => {
     const ctx = testSpaceClientCtx()
     const puzzle = createFlowPuzzle(ctx)
-    const output = await andThen(
+    const output = andThen(
       initial,
       serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
@@ -129,10 +129,10 @@ describe(import.meta.file, () => {
     expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBeTrue()
   })
 
-  it('should open the more drawer after clicking "more" button', async () => {
+  it('should open the more drawer after clicking "more" button', () => {
     const ctx = testFlowClientCtx()
     const puzzle = createFlowPuzzle(ctx)
-    const output = await andThen(
+    const output = andThen(
       initial,
       serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
@@ -147,10 +147,10 @@ describe(import.meta.file, () => {
     ).toBeTrue()
   })
 
-  it("should close the more drawer", async () => {
+  it("should close the more drawer", () => {
     const ctx = testFlowClientCtx()
     const puzzle = createFlowPuzzle(ctx)
-    const output = await andThen(
+    const output = andThen(
       initial,
       serverCreatedPack(createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(),
