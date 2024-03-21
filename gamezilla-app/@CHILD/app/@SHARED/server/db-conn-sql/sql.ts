@@ -22,7 +22,7 @@ const replaceParam = (query: string, key: string, value: unknown): string => {
 
       const jsonString = JSON.stringify(value)
 
-      const escapedJsonString = jsonString.replaceAll(/'/g, '"')
+      const escapedJsonString = jsonString.replace(/'/g, '"')
 
       const replaced = query.replace(
         new RegExp(`:${key}`, "g"),
