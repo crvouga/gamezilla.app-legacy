@@ -328,7 +328,7 @@ export const any: Parser<any> = {
 }
 
 export const enumeration = <T extends string | number>(
-  values: T[],
+  values: T[] | readonly T[],
 ): Parser<T> => {
   return {
     parse(input) {

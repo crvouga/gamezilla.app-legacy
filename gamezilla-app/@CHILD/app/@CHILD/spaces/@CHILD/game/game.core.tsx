@@ -1,7 +1,8 @@
 import { EventMeta } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
+import { p } from "gamezilla-app/@SHARED/parser"
 import { SpaceCtx } from "../../@SHARED/space"
-import * as Flow from "./@CHILD/flow/flow.core"
 import * as ConnectFour from "./@CHILD/connect-four/connect-four.core"
+import * as Flow from "./@CHILD/flow/flow.core"
 //
 //
 //
@@ -50,7 +51,11 @@ export type MsgToServer =
 //
 //
 
-export type GameName = "connect-four" | "flow"
+export const GAME_NAME = ["connect-four", "flow"] as const
+
+export const GameName = p.enumeration(GAME_NAME)
+
+export type GameName = p.Infer<typeof GameName>
 
 export const gameNames: { [gameName in GameName]: GameName } = {
   "connect-four": "connect-four",
@@ -109,6 +114,11 @@ export const initSync = (gameName: GameName): ModelSync => {
 export type MsgSync =
   | { t: "connect-four"; c: ConnectFour.MsgSync }
   | { t: "flow"; c: Flow.MsgSync }
+
+export const MsgSync = p.custom(
+  (_x: unknown): _x is MsgSync => true,
+  "Invalid msg sync",
+)
 
 export const reducer = ({
   ctx,

@@ -1,5 +1,6 @@
 import { Result } from "gamezilla-app/@SHARED/core"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
+import { p } from "gamezilla-app/@SHARED/parser"
 
 export type SpaceId = Brand<string, "SpaceId">
 
@@ -10,6 +11,7 @@ const is = (id: unknown): id is SpaceId => {
   // todo: better validation
   return typeof id === "string"
 }
+const parser = p.custom(is, "Invalid space id")
 
 type Problem = "invalid_id"
 
@@ -36,6 +38,7 @@ const generate = (): SpaceId => {
 }
 
 export const SpaceId = {
+  ...parser,
   is,
   decode,
   generate,
