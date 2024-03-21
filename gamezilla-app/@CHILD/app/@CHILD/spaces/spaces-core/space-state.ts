@@ -1,5 +1,6 @@
 import { Space } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { p } from "gamezilla-app/@SHARED/parser"
 import * as Game from "../@CHILD/game/game.core"
 import { EventId, EventMeta } from "../@SHARED/event"
 import { SpaceEvent } from "./space-event"
@@ -10,22 +11,32 @@ import { SpaceEvent } from "./space-event"
 //
 //
 
-export type Initial = {
-  type: "initial"
-}
+export const Initial = p.obj({
+  type: p.l("initial"),
+})
+export type Initial = p.Infer<typeof Initial>
 
-export type Started = Space & {
-  type: "started"
-  game?: Game.ModelSync | null
-  latestEvent: EventId
-}
+export const Started = p.and(
+  Space,
+  p.obj({
+    type: p.l("started"),
+    game: p.maybe(Game.ModelSync),
+    latestEvent: EventId,
+  }),
+)
+export type Started = p.Infer<typeof Started>
 
-export type Ended = Space & {
-  type: "ended"
-  latestEvent: EventId
-}
+export const Ended = p.and(
+  Space,
+  p.obj({
+    type: p.l("ended"),
+    latestEvent: EventId,
+  }),
+)
+export type Ended = p.Infer<typeof Ended>
 
-export type State = Initial | Started | Ended
+export const State = p.or(Initial, Started, Ended)
+export type State = p.Infer<typeof State>
 
 export const init: State = {
   type: "initial",

@@ -1,11 +1,12 @@
 import { memoize } from "gamezilla-app/@SHARED/core"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
+import { p } from "gamezilla-app/@SHARED/parser"
 
 export type NodeId = Brand<string, "NodeId">
-
 export const isNodeId = (nodeId: unknown): nodeId is NodeId => {
   return typeof nodeId === "string"
 }
+export const NodeId = p.custom(isNodeId, "Invalid node id")
 
 export const createNodeId = (nodeId: string): NodeId => {
   return nodeId as NodeId

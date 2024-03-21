@@ -93,6 +93,11 @@ export type ModelSync =
       c: Flow.ModelSync
     }
 
+export const ModelSync = p.custom(
+  (_x: unknown): _x is ModelSync => true,
+  "Invalid model sync",
+)
+
 export const initSync = (gameName: GameName): ModelSync => {
   switch (gameName) {
     case "connect-four": {

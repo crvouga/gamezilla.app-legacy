@@ -349,4 +349,5 @@ export const enumeration = <T extends string | number>(
   }
 }
 
+export { and } from "./and"
 export { or } from "./or"

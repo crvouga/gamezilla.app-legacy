@@ -1,3 +1,4 @@
+import { p } from "gamezilla-app/@SHARED/parser"
 import * as Flow from "../flow/flow"
 import { AlgoDrawPipes } from "../flow/flow-algo"
 import * as FlowVariant from "./flow-variant"
@@ -36,22 +37,25 @@ export type Model = {
 //
 //
 
-export type Msg =
-  | {
-      t: "pressed-down"
-      nodeId: Flow.NodeId
-    }
-  | {
-      t: "pressed-up"
-      nodeId: Flow.NodeId
-    }
-  | {
-      t: "dragged-over"
-      nodeId: Flow.NodeId
-    }
-  | {
-      t: "left"
-    }
+export const Msg = p.or(
+  p.obj({
+    t: p.l("pressed-down"),
+    nodeId: Flow.NodeId,
+  }),
+  p.obj({
+    t: p.l("pressed-up"),
+    nodeId: Flow.NodeId,
+  }),
+  p.obj({
+    t: p.l("dragged-over"),
+    nodeId: Flow.NodeId,
+  }),
+  p.obj({
+    t: p.l("left"),
+  }),
+)
+
+export type Msg = p.Infer<typeof Msg>
 
 export const init = ({ flow }: { flow: Flow.Model }): Model => {
   return {
