@@ -1,5 +1,5 @@
 import { Brand } from "./brand"
-import { err, ok, Result } from "./result"
+import { Result, err, ok } from "./result"
 
 type Problem = "Invalid"
 

@@ -1,4 +1,4 @@
-import { Result } from "../result"
+import { ResultPrivate, err, ok } from "../result/result"
 
 //
 //
@@ -20,7 +20,7 @@ export const errorsToString = (errors: ParserError[]): string => {
 }
 
 export type Parser<T> = {
-  parse: (input: unknown) => Result<ParserError[], T>
+  parse: (input: unknown) => ResultPrivate<ParserError[], T>
 }
 
 export type Infer<TParser> = TParser extends Parser<infer T> ? T : never
@@ -56,7 +56,7 @@ export const obj = <T>(parsers: {
   return {
     parse(input) {
       if (typeof input !== "object") {
-        return Result.err([
+        return err([
           {
             message: toErrorMessage(
               "object",
@@ -69,7 +69,7 @@ export const obj = <T>(parsers: {
       }
 
       if (input === null) {
-        return Result.err([
+        return err([
           {
             message: toErrorMessage("object", "null", JSON.stringify(input)),
             path: [],
@@ -78,7 +78,7 @@ export const obj = <T>(parsers: {
       }
 
       if (!isIndexable(input)) {
-        return Result.err([
+        return err([
           {
             message: toErrorMessage(
               "object",
@@ -115,10 +115,10 @@ export const obj = <T>(parsers: {
       }
 
       if (errors.length > 0) {
-        return Result.err(errors)
+        return err(errors)
       }
 
-      return Result.ok(result as T)
+      return ok(result as T)
     },
   }
 }
@@ -126,7 +126,7 @@ export const obj = <T>(parsers: {
 export const str: Parser<string> = {
   parse(input) {
     if (typeof input !== "string") {
-      return Result.err([
+      return err([
         {
           message: toErrorMessage(
             "string",
@@ -137,14 +137,14 @@ export const str: Parser<string> = {
         },
       ])
     }
-    return Result.ok(input)
+    return ok(input)
   },
 }
 
 export const num: Parser<number> = {
   parse(input) {
     if (typeof input !== "number") {
-      return Result.err([
+      return err([
         {
           message: toErrorMessage(
             "number",
@@ -155,7 +155,7 @@ export const num: Parser<number> = {
         },
       ])
     }
-    return Result.ok(input)
+    return ok(input)
   },
 }
 
@@ -165,7 +165,7 @@ export const l = <T extends string | number | boolean | null | undefined>(
   return {
     parse(input) {
       if (input !== value) {
-        return Result.err([
+        return err([
           {
             message: toErrorMessage(
               String(value),
@@ -176,7 +176,7 @@ export const l = <T extends string | number | boolean | null | undefined>(
           },
         ])
       }
-      return Result.ok(value)
+      return ok(value)
     },
   }
 }
@@ -185,7 +185,7 @@ export const arr = <T>(parser: Parser<T>): Parser<T[]> => {
   return {
     parse(input) {
       if (!Array.isArray(input)) {
-        return Result.err([
+        return err([
           {
             message: toErrorMessage(
               "array",
@@ -217,10 +217,10 @@ export const arr = <T>(parser: Parser<T>): Parser<T[]> => {
       }
 
       if (errors.length > 0) {
-        return Result.err(errors)
+        return err(errors)
       }
 
-      return Result.ok(result)
+      return ok(result)
     },
   }
 }
@@ -229,7 +229,7 @@ export const maybe = <T>(parser: Parser<T>): Parser<T | null | undefined> => {
   return {
     parse(input) {
       if (input === null || input === undefined) {
-        return Result.ok(null)
+        return ok(null)
       }
       return parser.parse(input)
     },
@@ -243,7 +243,7 @@ export const dict = <TKey extends string | number, TValue>(
   return {
     parse(input) {
       if (!isIndexable(input)) {
-        return Result.err([
+        return err([
           {
             message: toErrorMessage(
               "object",
@@ -288,10 +288,10 @@ export const dict = <TKey extends string | number, TValue>(
       }
 
       if (errors.length > 0) {
-        return Result.err(errors)
+        return err(errors)
       }
 
-      return Result.ok(result)
+      return ok(result)
     },
   }
 }
@@ -303,7 +303,7 @@ export const partialDict = <TKey extends string | number, TValue>(
   return {
     parse(input) {
       if (!isIndexable(input)) {
-        return Result.err([
+        return err([
           {
             message: toErrorMessage(
               "object",
@@ -348,10 +348,10 @@ export const partialDict = <TKey extends string | number, TValue>(
       }
 
       if (errors.length > 0) {
-        return Result.err(errors)
+        return err(errors)
       }
 
-      return Result.ok(result)
+      return ok(result)
     },
   }
 }
@@ -363,9 +363,9 @@ export const custom = <T>(
   return {
     parse(input) {
       if (predicate(input)) {
-        return Result.ok(input)
+        return ok(input)
       }
-      return Result.err([
+      return err([
         {
           message: `Custom validation failed. ${errorMessage}`,
           path: [],
@@ -377,13 +377,13 @@ export const custom = <T>(
 
 export const unknown: Parser<unknown> = {
   parse(input) {
-    return Result.ok(input)
+    return ok(input)
   },
 }
 
 export const any: Parser<any> = {
   parse(input) {
-    return Result.ok(input)
+    return ok(input)
   },
 }
 
@@ -393,7 +393,7 @@ export const enumeration = <T extends string | number>(
   return {
     parse(input) {
       if (!values.includes(input as T)) {
-        return Result.err([
+        return err([
           {
             message: toErrorMessage(
               `one of ${values.join(", ")}`,
@@ -404,7 +404,7 @@ export const enumeration = <T extends string | number>(
           },
         ])
       }
-      return Result.ok(input as T)
+      return ok(input as T)
     },
   }
 }
