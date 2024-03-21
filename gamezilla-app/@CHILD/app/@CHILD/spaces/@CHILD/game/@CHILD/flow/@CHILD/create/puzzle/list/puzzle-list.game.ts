@@ -29,4 +29,4 @@ const reducer: SyncReducer = ({ modelSync, msgSync }) => {
   }
 }
 
-export const PuzzeListGame = { reducer }
+export const PuzzleListGame = { reducer }

@@ -1,9 +1,9 @@
-import { Uuid } from "../data/uuid"
 import { Posix } from "./posix"
 import { Err, Loading, NotAsked, Ok, Result, err, notAsked, ok } from "./result"
 import { Sub } from "./sub"
 import { Time } from "./time"
 import { TimeSpan } from "./time-span"
+import { Uuid } from "./uuid"
 
 //
 //

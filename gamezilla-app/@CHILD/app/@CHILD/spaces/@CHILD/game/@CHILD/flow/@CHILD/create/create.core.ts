@@ -9,13 +9,13 @@ import {
 import { SpaceClientCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-client-cmd"
 import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
 import { FlowClientCtx } from "../../@SHARED/flow-ctx"
+import { FlowPack } from "../../@SHARED/flow-pack/flow-pack"
 import { IFlowPackDb } from "../../@SHARED/flow-pack/flow-pack-db"
 import { FlowPackList } from "../../@SHARED/flow-pack/flow-pack-list"
-import { FlowPack } from "../../@SHARED/flow-pack/flow-pack"
-import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle/flow-puzzle-db/flow-puzzle-db"
-import { FlowPuzzleList } from "../../@SHARED/flow-puzzle/flow-puzzle-list"
 import { FlowPuzzle } from "../../@SHARED/flow-puzzle/flow-puzzle"
+import { IFlowPuzzleDb } from "../../@SHARED/flow-puzzle/flow-puzzle-db/flow-puzzle-db"
 import { FlowPuzzleId } from "../../@SHARED/flow-puzzle/flow-puzzle-id"
+import { FlowPuzzleList } from "../../@SHARED/flow-puzzle/flow-puzzle-list"
 import { ListTabs, ListTabsGame } from "./list-tabs"
 import { Pack, PackGame } from "./pack"
 import { PackBuilder } from "./pack/builder"
@@ -26,8 +26,10 @@ import {
   PuzzleDeleteForeverGame,
 } from "./puzzle/delete-forever"
 import { PuzzleEditGame, PuzzleEditName } from "./puzzle/edit"
-import { PuzzeListGame, PuzzleList } from "./puzzle/list"
-import { PuzzleSaveChanges, PuzzleSaveChangesGame } from "./puzzle/save-changes"
+import { PuzzleList } from "./puzzle/list"
+import { PuzzleListGame } from "./puzzle/list/puzzle-list.game"
+import { PuzzleSaveChanges } from "./puzzle/save-changes"
+import { PuzzleSaveChangesGame } from "./puzzle/save-changes/puzzle-save-changes.game"
 
 //
 //
@@ -249,7 +251,7 @@ export const reducer: SyncReducer = ({ modelSync, msgSync, ctx }) => {
     PuzzleDeleteForeverGame.reducer,
     PuzzleBuilderGame.reducer,
     PuzzleCreateGame.reducer,
-    PuzzeListGame.reducer,
+    PuzzleListGame.reducer,
     PuzzleEditGame.reducer,
     PuzzleSaveChangesGame.reducer,
     //
