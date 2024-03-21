@@ -210,29 +210,36 @@ export const isSameTerminalsByGroupId = (
 }
 
 /**
+ * Represents a connection between two nodes.
+ */
+export const Edge = p.obj({
+  sourceId: NodeId,
+  targetId: NodeId,
+})
+export type Edge = p.Infer<typeof Edge>
+
+/**
  * A `Pipe` associates an edge with a group.
  * These are the lines the user draws in the puzzle.
  */
-export type Pipe = {
-  groupId: GroupId
-  edgeId: EdgeId
-}
+export const Pipe = p.obj({
+  groupId: GroupId,
+  edgeId: EdgeId,
+})
+export type Pipe = p.Infer<typeof Pipe>
 
-export type PipeJoined = Pipe & {
-  edge: Edge
-}
+export const PipeJoined = p.and(
+  Pipe,
+  p.obj({
+    edge: Edge,
+  }),
+)
+export type PipeJoined = p.Infer<typeof PipeJoined>
 
-/**
- * Represents a connection between two nodes.
- */
-export type Edge = {
-  sourceId: NodeId
-  targetId: NodeId
-}
-
-export type Node = {
-  nodeId: NodeId
-}
+export const Node = p.obj({
+  nodeId: NodeId,
+})
+export type Node = p.Infer<typeof Node>
 
 export const toNodes = (model: Model): { [nodeId: NodeId]: Node } => {
   return model.nodes
