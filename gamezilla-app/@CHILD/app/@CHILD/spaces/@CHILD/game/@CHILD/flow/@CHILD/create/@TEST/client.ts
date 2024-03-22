@@ -10,13 +10,14 @@ import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id"
 import { samples } from "../../../@SHARED/flow/flow-variant/flow-grid/flow-grid-samples"
 import { CreateClient } from "../create.client"
-import { ModelClient, ModelSync, initClient, initSync } from "../create.core"
+import { ModelClient, ModelSync, initClient } from "../create.core"
+import { initSync } from "../create.game"
 
 export const initial = {
   model: initClient,
 }
 
-export const testFlowClientCtx = (): FlowClientCtx => {
+export function testFlowClientCtx(): FlowClientCtx {
   return {
     ...testSpaceClientCtx(),
     onQuit() {},
@@ -221,7 +222,7 @@ export const serverCreatedPack = (pack: FlowPack) => (model: ModelClient) => {
   })
 }
 
-export const createFlowPuzzle = (ctx: SpaceClientCtx) => {
+export function createFlowPuzzle(ctx: SpaceClientCtx) {
   return FlowPuzzle.create({
     count: 1,
     createdAt: ctx.now,
@@ -230,10 +231,10 @@ export const createFlowPuzzle = (ctx: SpaceClientCtx) => {
   })
 }
 
-export const createFlowPack = (
+export function createFlowPack(
   ctx: SpaceClientCtx,
   puzzleIds: FlowPuzzleId[] = [],
-) => {
+) {
   return FlowPack.create({
     now: ctx.now,
     puzzleIds,

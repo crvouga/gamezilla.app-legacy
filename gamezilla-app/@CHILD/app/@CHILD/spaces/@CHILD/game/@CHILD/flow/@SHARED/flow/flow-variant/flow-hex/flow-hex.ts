@@ -1,18 +1,24 @@
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { Flow } from "../../flow"
 import * as FlowHexDimensions from "./flow-hex-dimensions"
 
-type HexPosition = {
-  x: number
-  y: number
-  z: number
-}
+export const HexPosition = p.obj({
+  x: p.num,
+  y: p.num,
+  z: p.num,
+})
+export type HexPosition = p.Infer<typeof HexPosition>
 
-export type Model = Flow.Model &
-  FlowHexDimensions.Model & {
-    t: "flow-hex"
-    FlowHex: true
-    positions: Record<Flow.NodeId, HexPosition>
-  }
+export const Model = p.and(
+  Flow.Model,
+  FlowHexDimensions.Model,
+  p.obj({
+    t: p.l("flow-hex"),
+    FlowHex: p.l(true),
+    positions: p.dict(Flow.NodeId, HexPosition),
+  }),
+)
+export type Model = p.Infer<typeof Model>
 
 export const init = (input: {
   dimensions: FlowHexDimensions.Model

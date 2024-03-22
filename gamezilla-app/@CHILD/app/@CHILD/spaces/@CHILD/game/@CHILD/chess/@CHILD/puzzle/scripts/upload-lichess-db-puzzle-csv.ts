@@ -1,6 +1,6 @@
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { Result } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/parser"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { PuzzleDb, PuzzleRow } from "../puzzle-db/puzzle-db-impl"
 
 //

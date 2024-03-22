@@ -1,8 +1,8 @@
-import { Posix } from "./data"
-import { TimeSpan } from "./data/time-span"
 import { Eff } from "./eff"
+import { IO } from "./io"
+import { Posix } from "./posix"
 import { PubSub, Sub } from "./sub"
-import { IO } from "./data/io"
+import { TimeSpan } from "./time-span"
 
 //
 //

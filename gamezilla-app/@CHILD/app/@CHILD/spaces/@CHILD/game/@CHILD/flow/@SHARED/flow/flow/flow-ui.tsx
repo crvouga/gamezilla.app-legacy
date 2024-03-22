@@ -1,5 +1,4 @@
-import { Flow } from "."
-import { GroupId } from "./flow"
+import { Edge, GroupId, NodeId } from "./flow"
 
 // source: https://tailwindcss.com/docs/customizing-colors
 const COLOR_TO_HEX = {
@@ -154,17 +153,17 @@ export type FlowViewProps<TModel> = {
   className?: string
   model: TModel
   isDragging?: boolean
-  autocompleteEdge?: (Flow.Edge & { groupId: Flow.GroupId }) | null
+  autocompleteEdge?: (Edge & { groupId: GroupId }) | null
   showCoordinates?: boolean
-  onPressDown?: (nodeId: Flow.NodeId) => void
-  onPressUp?: (nodeId: Flow.NodeId) => void
+  onPressDown?: (nodeId: NodeId) => void
+  onPressUp?: (nodeId: NodeId) => void
   onLeave?: () => void
-  onDraggedOver?: (nodeId: Flow.NodeId) => void
+  onDraggedOver?: (nodeId: NodeId) => void
   isActive?: ({
     nodeId,
     groupId,
   }: {
-    groupId: Flow.GroupId
-    nodeId: Flow.NodeId
+    groupId: GroupId
+    nodeId: NodeId
   }) => boolean
 }

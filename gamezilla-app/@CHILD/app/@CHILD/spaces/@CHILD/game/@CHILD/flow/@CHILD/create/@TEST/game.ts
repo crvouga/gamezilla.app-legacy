@@ -1,6 +1,7 @@
 import { WithEventId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { testSpaceClientCtx } from "../../../../../@SHARED/testing/client"
-import { MsgSync, initSync, reducer } from "../create.core"
+import { MsgSync } from "../create.core"
+import { initSync, reducer } from "../create.game"
 
 export const deriveModelSync = (input: {
   msgSync?: WithEventId<MsgSync>[]

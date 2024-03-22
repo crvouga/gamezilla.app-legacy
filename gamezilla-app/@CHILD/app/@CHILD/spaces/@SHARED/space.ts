@@ -7,6 +7,7 @@ import {
   UserId,
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { ServerCtx, ServerEvent } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
 //
 //
@@ -17,14 +18,14 @@ import { ServerCtx, ServerEvent } from "gamezilla-app/@CHILD/app/@SHARED/server"
 //
 //
 
-export type Space = {
-  visibility: "public" | "private"
-  spaceId: SpaceId
-  hostId: UserId
-  users: {
-    [userId: UserId]: UserId
-  }
-}
+export const Space = p.obj({
+  visibility: p.enumeration(["public", "private"]),
+  spaceId: SpaceId,
+  hostId: UserId,
+  users: p.dict(UserId, UserId),
+})
+
+export type Space = p.Infer<typeof Space>
 
 type SpaceEvent =
   | { t: "user-left"; userId: UserId }

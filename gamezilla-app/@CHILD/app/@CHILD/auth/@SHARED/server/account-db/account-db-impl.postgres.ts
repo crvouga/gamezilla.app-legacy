@@ -10,7 +10,7 @@ import {
   isErr,
   ok,
 } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/parser"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { IAccountDb } from "./account-db"
 
 export const AccountRow = p.obj({

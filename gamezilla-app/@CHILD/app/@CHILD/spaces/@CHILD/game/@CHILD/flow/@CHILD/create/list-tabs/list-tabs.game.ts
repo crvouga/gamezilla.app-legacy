@@ -1,4 +1,9 @@
 import { SyncReducer } from "../create.core"
+import { ModelSync } from "./list-tabs.core"
+
+const initSync: ModelSync = {
+  listTab: "puzzles",
+}
 
 const reducer: SyncReducer = ({ modelSync, msgSync }) => {
   switch (msgSync.t) {
@@ -16,5 +21,6 @@ const reducer: SyncReducer = ({ modelSync, msgSync }) => {
 }
 
 export const ListTabsGame = {
+  initSync,
   reducer,
 }

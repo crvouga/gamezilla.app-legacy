@@ -1,5 +1,5 @@
 import { Result } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/parser"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { UserId } from "../../@SHARED/data"
 
 const Route = p.or(

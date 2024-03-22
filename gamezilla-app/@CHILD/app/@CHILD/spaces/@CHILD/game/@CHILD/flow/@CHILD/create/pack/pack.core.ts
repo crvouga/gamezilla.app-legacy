@@ -70,10 +70,6 @@ export type MsgToClient =
 
 export type ModelSync = RemovePuzzle.ModelSync
 
-export const initSync: ModelSync = {
-  ...RemovePuzzle.initSync,
-}
-
 export type MsgSync =
   | PackCreate.MsgSync
   | PackBuilder.MsgSync

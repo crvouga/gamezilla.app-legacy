@@ -1,5 +1,5 @@
 import { Result } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/parser"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
 const Route = p.obj({
   n: p.l("lang"),

@@ -9,7 +9,7 @@ import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server"
 import { AccountDb } from "./@SHARED/server/account-db"
 import { SessionDb } from "./@SHARED/server/session-db"
 import { MsgToClient, ServerDeps, ServerModule } from "./auth.core"
-import { ContinueAsGuestServer } from "./continue-as-guest"
+import { ContinueAsGuestServer } from "./continue-as-guest/continue-as-guest.server"
 
 //
 //

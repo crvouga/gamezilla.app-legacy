@@ -1,8 +1,8 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { Posix, Result, isErr, ok } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/parser"
-import { FlowVariantParser } from "../../flow"
+import { p } from "gamezilla-app/@SHARED/core/parser"
+import { FlowVariant } from "../../flow"
 import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle-id"
 import { FlowPuzzleName } from "../flow-puzzle-name"
@@ -19,7 +19,7 @@ import { IFlowPuzzleDb } from "./flow-puzzle-db"
 export const Row = p.obj({
   flow_puzzle_id: p.str,
   flow_puzzle_name: p.str,
-  flow_puzzle: p.dict(p.str, p.unknown),
+  flow_puzzle: p.str,
   created_at: p.str,
   created_by_user_id: p.str,
   last_updated_at: p.str,
@@ -39,7 +39,10 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
   const flowPuzzleName = FlowPuzzleName.is(row.flow_puzzle_name)
     ? row.flow_puzzle_name
     : null
-  const flow = FlowVariantParser.is(row.flow_puzzle) ? row.flow_puzzle : null
+
+  const parsedFlow = FlowVariant.Model.parse(JSON.parse(row.flow_puzzle))
+  const flow = parsedFlow.t === "ok" ? parsedFlow.value : null
+
   const createdAt = postgresTimestampToPosix(row.created_at)
   const createdBy = UserId.is(row.created_by_user_id)
     ? row.created_by_user_id
@@ -74,7 +77,7 @@ const puzzleToRow = (puzzle: FlowPuzzle): Row => {
   return {
     flow_puzzle_id: puzzle.id,
     flow_puzzle_name: puzzle.name,
-    flow_puzzle: puzzle.flow,
+    flow_puzzle: JSON.stringify(puzzle.flow),
     created_at: Posix.toIsoString(puzzle.createdAt),
     created_by_user_id: puzzle.createdBy,
     last_updated_at: Posix.toIsoString(puzzle.lastUpdatedAt),
@@ -103,7 +106,8 @@ export const FlowPuzzleDbPostgres = ({
         FROM
           game_flow_puzzle
         WHERE
-          flow_puzzle_id = :flow_puzzle_id LIMIT 1`,
+          flow_puzzle_id = :flow_puzzle_id
+        LIMIT 1`,
         {
           flow_puzzle_id: flowPuzzleId,
         },

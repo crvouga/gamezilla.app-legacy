@@ -12,7 +12,7 @@ const currentUserId = "test-user-id" as UserId
 
 const currentSpaceId = "test-space-id" as SpaceId
 
-export const testSpaceClientCtx = (): SpaceClientCtx => {
+export function testSpaceClientCtx(): SpaceClientCtx {
   return {
     navigatorLanguage: "en",
     t: getTranslator("en"),

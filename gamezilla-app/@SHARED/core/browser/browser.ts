@@ -1,7 +1,7 @@
-import { Result } from "../data/result"
 import { Eff } from "../eff"
+import { IO } from "../io"
+import { Result } from "../result"
 import { PubSub, Sub } from "../sub"
-import { IO } from "../data/io"
 
 //
 //

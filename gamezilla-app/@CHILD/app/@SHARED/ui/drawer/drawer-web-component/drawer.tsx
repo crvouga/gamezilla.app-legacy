@@ -1,4 +1,4 @@
-import { Portal } from "../.."
+import { Portal } from "../../portal"
 import { cn } from "../../ui"
 import { DrawerProps } from "../drawer-shared"
 import "./drawer-element"

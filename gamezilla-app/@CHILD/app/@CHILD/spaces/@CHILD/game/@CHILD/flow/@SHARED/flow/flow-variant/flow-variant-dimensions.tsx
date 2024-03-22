@@ -1,11 +1,15 @@
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { FlowGridDimensions } from "./flow-grid"
 import { FlowHexDimensions } from "./flow-hex"
 import { FlowTriDimensions } from "./flow-tri"
 
-export type Model =
-  | FlowGridDimensions.Model
-  | FlowHexDimensions.Model
-  | FlowTriDimensions.Model
+export const Model = p.or(
+  FlowGridDimensions.Model,
+  FlowHexDimensions.Model,
+  FlowTriDimensions.Model,
+)
+
+export type Model = p.Infer<typeof Model>
 
 export const init = (model: Model): Model => {
   switch (model.t) {

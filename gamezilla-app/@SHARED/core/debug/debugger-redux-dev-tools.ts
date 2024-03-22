@@ -6,9 +6,9 @@
  * @since 0.5.0
  */
 import { ProgramDebugger } from ".."
-import { IO } from "../data/io"
-import * as Json from "../data/json"
-import { Result, isErr } from "../data/result"
+import { IO } from "../io"
+import * as Json from "../json"
+import { Result, isErr } from "../result"
 import { toMsgPayload, toMsgType } from "../utils"
 import { pipe } from "../utils/pipe"
 import { Debug, Debugger, DebuggerDeps, Global, MsgWithDebug } from "./debugger"

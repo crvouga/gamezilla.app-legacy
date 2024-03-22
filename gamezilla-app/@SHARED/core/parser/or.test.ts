@@ -1,5 +1,5 @@
 import { describe, it } from "bun:test"
-import { p } from "."
+import * as p from "./parser"
 
 describe("or", () => {
   it("should compile", () => {

@@ -1,10 +1,12 @@
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { Flow } from "../flow"
 import { FlowGrid } from "./flow-grid"
 import { FlowHex } from "./flow-hex"
 import { FlowTri } from "./flow-tri"
 import * as FlowVariantDimensions from "./flow-variant-dimensions"
 
-export type Model = FlowGrid.Model | FlowHex.Model | FlowTri.Model
+export const Model = p.or(FlowGrid.Model, FlowHex.Model, FlowTri.Model)
+export type Model = p.Infer<typeof Model>
 
 export const distance = (
   flow: Model,

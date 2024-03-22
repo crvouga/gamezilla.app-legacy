@@ -12,16 +12,11 @@ import {
 import { ClientModule } from "../auth.core"
 import { ModelClient } from "./continue-as-guest.core"
 
-export const initModel: ModelClient = {
+const initModel: ModelClient = {
   guestRequest: notAsked,
 }
 
-export const update: ClientModule["update"] = ({
-  ctx,
-  model,
-  msg,
-  msgServer,
-}) => {
+const update: ClientModule["update"] = ({ ctx, model, msg, msgServer }) => {
   switch (msg?.t) {
     case "guest.clicked-continue-as-guest-button": {
       return {
@@ -57,7 +52,7 @@ export const update: ClientModule["update"] = ({
   }
 }
 
-export const ViewContinueAsGuestButton: ClientModule["View"] = ({
+const ViewContinueAsGuestButton: ClientModule["View"] = ({
   dispatch,
   model,
   ctx,
@@ -70,4 +65,10 @@ export const ViewContinueAsGuestButton: ClientModule["View"] = ({
       loading={isRequesting(model.guestRequest)}
     />
   )
+}
+
+export const ContinueAsGuestClient = {
+  initModel,
+  update,
+  ViewContinueAsGuestButton,
 }

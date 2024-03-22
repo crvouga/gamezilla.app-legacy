@@ -1,29 +1,21 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Posix } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/parser"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { FlowVariant } from "../flow"
 import { FlowPuzzleId } from "./flow-puzzle-id"
 import { FlowPuzzleName } from "./flow-puzzle-name"
 
 const parser = p.obj({
-  id: p.custom(FlowPuzzleId.is, "Invalid flow puzzle id"),
-  name: p.custom(FlowPuzzleName.is, "Invalid flow puzzle name"),
-  createdAt: p.custom(Posix.is, "Invalid posix"),
-  createdBy: p.custom(UserId.is, "Invalid user id"),
-  lastUpdatedAt: p.custom(Posix.is, "Invalid posix"),
-  lastUpdatedBy: p.custom(UserId.is, "Invalid user id"),
-  flow: p.any,
+  id: FlowPuzzleId,
+  name: FlowPuzzleName,
+  createdAt: Posix,
+  createdBy: UserId,
+  lastUpdatedAt: Posix,
+  lastUpdatedBy: UserId,
+  flow: FlowVariant.Model,
 })
 
-export type FlowPuzzle = {
-  id: FlowPuzzleId
-  name: FlowPuzzleName
-  createdAt: Posix
-  createdBy: UserId
-  lastUpdatedAt: Posix
-  lastUpdatedBy: UserId
-  flow: FlowVariant.Model
-}
+export type FlowPuzzle = p.Infer<typeof parser>
 
 const create = (input: {
   count: number
@@ -43,6 +35,6 @@ const create = (input: {
 }
 
 export const FlowPuzzle = {
-  parser,
+  ...parser,
   create,
 }

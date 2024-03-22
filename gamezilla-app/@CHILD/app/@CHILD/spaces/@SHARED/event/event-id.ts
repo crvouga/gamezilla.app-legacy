@@ -1,5 +1,6 @@
 import { Result, Uuid, err, ok } from "gamezilla-app/@SHARED/core"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
 export type EventId = Brand<string, "EventId">
 
@@ -9,6 +10,8 @@ const separator = ":"
 const is = (id: unknown): id is EventId => {
   return typeof id === "string"
 }
+
+const parser = p.custom(is, "Invalid event id")
 
 type Problem = "invalid_id"
 
@@ -37,6 +40,7 @@ const generate = (): EventId => {
 }
 
 export const EventId = {
+  ...parser,
   is,
   decode,
   generate,

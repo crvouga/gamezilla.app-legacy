@@ -1,36 +1,33 @@
 import { memoize } from "gamezilla-app/@SHARED/core"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
+import { p } from "gamezilla-app/@SHARED/core/parser"
+
+//
+//
+//
+//
+//
+//
 
 export type NodeId = Brand<string, "NodeId">
-
 export const isNodeId = (nodeId: unknown): nodeId is NodeId => {
   return typeof nodeId === "string"
 }
+export const NodeId = p.custom(isNodeId, "Invalid node id")
 
 export const createNodeId = (nodeId: string): NodeId => {
   return nodeId as NodeId
 }
 
-export type EdgeId = Brand<string, "EdgeId">
+export const hasNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
+  return nodeId in model.nodes
+}
 
-export type GroupId =
-  | "A"
-  | "B"
-  | "C"
-  | "D"
-  | "E"
-  | "F"
-  | "G"
-  | "H"
-  | "I"
-  | "J"
-  | "K"
-  | "L"
-  | "M"
-  | "N"
-  | "O"
-  | "P"
-  | "Q"
+//
+//
+//
+//
+//
 
 export const GROUP_ID_ORDER = [
   "A",
@@ -56,86 +53,53 @@ export const isGroupId = (groupId: unknown): groupId is GroupId => {
   return GROUP_ID_ORDER.includes(groupId as GroupId)
 }
 
+export const GroupId = p.enumeration(GROUP_ID_ORDER)
+
+export type GroupId = p.Infer<typeof GroupId>
+
+//
+//
+//
+//
+//
+
+export type EdgeId = Brand<string, "EdgeId">
+
 const EDGE_ID_SEPARATOR = "->"
 
 export const toEdgeId = (edge: Edge): EdgeId => {
   return `${edge.sourceId}${EDGE_ID_SEPARATOR}${edge.targetId}` as EdgeId
 }
 
-export const isEdgeId = (model: Model, edgeId: string): edgeId is EdgeId => {
+export const hasEdgeId = (model: Model, edgeId: string): edgeId is EdgeId => {
   return edgeId in model.edges
 }
 
-export const hasNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
-  return nodeId in model.nodes
+export const isEdgeId = (edgeId: unknown): edgeId is EdgeId => {
+  return typeof edgeId === "string"
 }
 
-/**
- *
- * Model
- *
- *
- * Represents the entire puzzle.
- * The puzzle is a directed graph
- */
+export const EdgeId = p.custom(isEdgeId, "Invalid edge id")
 
-/** @see {isModel} ts-auto-guard:type-guard */
-export type Model = {
-  Flow: true
-  /**
-   * The set of all valid nodes in the puzzle.
-   */
-  nodes: {
-    [nodeId: NodeId]: Node
-  }
-
-  /**
-   * The set of all valid connections between nodes.
-   */
-  edges: {
-    [edgeId: EdgeId]: Edge
-  }
-
-  edgeHash: string | number
-
-  /**
-   * Represents the start and end nodes for each group.
-   */
-  terminalsByGroupId: {
-    [groupId in GroupId]?: Terminal
-  }
-
-  /**
-   * Represents the pipes that are connected to each node.
-   * We index each pipe with pipe's source node
-   * so that it's impossible for a node to be associated with more than one group
-   */
-  pipesBySourceId: {
-    [sourceId: NodeId]: Pipe
-  }
-}
-
-/**
- *
- */
-export const init: Model = {
-  Flow: true,
-  nodes: {},
-  edges: {},
-  terminalsByGroupId: {},
-  pipesBySourceId: {},
-  edgeHash: 0,
-}
+//
+//
+//
+//
+//
+//
+//
 
 /**
  * A terminal represents the start and end nodes for a group.
  * These are the two circles the user is trying to connect
  */
-export type Terminal = {
-  groupId: GroupId
-  startId: NodeId
-  endId?: NodeId | null
-}
+
+export const Terminal = p.obj({
+  groupId: GroupId,
+  startId: NodeId,
+  endId: p.maybe(NodeId),
+})
+export type Terminal = p.Infer<typeof Terminal>
 
 export const isSameTerminal = (a: Terminal, b: Terminal): boolean => {
   const startA = a.startId ?? null
@@ -173,32 +137,90 @@ export const isSameTerminalsByGroupId = (
 }
 
 /**
+ * Represents a connection between two nodes.
+ */
+export const Edge = p.obj({
+  sourceId: NodeId,
+  targetId: NodeId,
+})
+export type Edge = p.Infer<typeof Edge>
+
+/**
  * A `Pipe` associates an edge with a group.
  * These are the lines the user draws in the puzzle.
  */
-export type Pipe = {
-  groupId: GroupId
-  edgeId: EdgeId
-}
+export const Pipe = p.obj({
+  groupId: GroupId,
+  edgeId: EdgeId,
+})
+export type Pipe = p.Infer<typeof Pipe>
 
-export type PipeJoined = Pipe & {
-  edge: Edge
-}
+export const PipeJoined = p.and(
+  Pipe,
+  p.obj({
+    edge: Edge,
+  }),
+)
+export type PipeJoined = p.Infer<typeof PipeJoined>
 
-/**
- * Represents a connection between two nodes.
- */
-export type Edge = {
-  sourceId: NodeId
-  targetId: NodeId
-}
-
-export type Node = {
-  nodeId: NodeId
-}
+export const Node = p.obj({
+  nodeId: NodeId,
+})
+export type Node = p.Infer<typeof Node>
 
 export const toNodes = (model: Model): { [nodeId: NodeId]: Node } => {
   return model.nodes
+}
+
+/**
+ *
+ * Model
+ *
+ *
+ * Represents the entire puzzle.
+ * The puzzle is a directed graph
+ */
+
+export const Model = p.obj({
+  Flow: p.l(true),
+
+  /**
+   * The set of all valid nodes in the puzzle.
+   */
+  nodes: p.dict(NodeId, Node),
+
+  /**
+   * The set of all valid connections between nodes.
+   */
+  edges: p.dict(EdgeId, Edge),
+
+  /**
+   * Represents the start and end nodes for each group.
+   */
+  terminalsByGroupId: p.partialDict(GroupId, Terminal),
+
+  /**
+   * Represents the pipes that are connected to each node.
+   * We index each pipe with pipe's source node
+   * so that it's impossible for a node to be associated with more than one group
+   */
+  pipesBySourceId: p.dict(NodeId, Pipe),
+
+  edgeHash: p.or(p.str, p.num),
+})
+
+export type Model = p.Infer<typeof Model>
+
+/**
+ *
+ */
+export const init: Model = {
+  Flow: true,
+  nodes: {},
+  edges: {},
+  terminalsByGroupId: {},
+  pipesBySourceId: {},
+  edgeHash: 0,
 }
 
 /**
@@ -347,7 +369,7 @@ export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
  */
 export const yieldEdges = function* (model: Model): Generator<Edge> {
   for (const edgeId in model.edges) {
-    if (!isEdgeId(model, edgeId)) {
+    if (!hasEdgeId(model, edgeId)) {
       continue
     }
 

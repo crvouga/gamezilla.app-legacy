@@ -5,12 +5,10 @@
 //
 //
 
-import { p } from "gamezilla-app/@SHARED/parser"
-
 /**
  * A `Result` represents the result of an operation that may succeed or fail.
  */
-export type Result<TError, TValue> = Err<TError> | Ok<TValue>
+export type ResultPrivate<TError, TValue> = Err<TError> | Ok<TValue>
 
 export type Ok<T> = { readonly t: "ok"; readonly value: T }
 
@@ -19,8 +17,8 @@ export type Err<T> = { readonly t: "err"; readonly error: T }
 const is = <TError, TValue>(
   isErr: (x: unknown) => x is TError,
   isOk: (x: unknown) => x is TValue,
-): ((x: unknown) => x is Result<TError, TValue>) => {
-  return (x): x is Result<TError, TValue> => {
+): ((x: unknown) => x is ResultPrivate<TError, TValue>) => {
+  return (x): x is ResultPrivate<TError, TValue> => {
     if (x === undefined) {
       return false
     }
@@ -49,22 +47,6 @@ const is = <TError, TValue>(
   }
 }
 
-const parser = <TError, TValue>(
-  errParser: p.Parser<TError>,
-  okParser: p.Parser<TValue>,
-): p.Parser<Result<TError, TValue>> => {
-  return p.or(
-    p.obj({
-      t: p.l("err"),
-      error: errParser,
-    }),
-    p.obj({
-      t: p.l("ok"),
-      value: okParser,
-    }),
-  )
-}
-
 /**
  * `Ok<T>` represents a successful result
  */
@@ -89,15 +71,15 @@ export const isErr = <TError, TValue>(
 }
 
 export const isOk = <TError, TValue>(
-  result: Result<TError, TValue>,
+  result: ResultPrivate<TError, TValue>,
 ): result is Ok<TValue> => {
   return result.t === "ok"
 }
 
 const mapErr = <A, B, TValue>(
-  result: Result<A, TValue>,
+  result: ResultPrivate<A, TValue>,
   mapper: (a: A) => B,
-): Result<B, TValue> => {
+): ResultPrivate<B, TValue> => {
   switch (result.t) {
     case "err":
       return err(mapper(result.error))
@@ -109,7 +91,7 @@ const mapErr = <A, B, TValue>(
 
 const fromNullable =
   <TError, TValue>(error: TError) =>
-  (value: TValue | undefined | null): Result<TError, TValue> => {
+  (value: TValue | undefined | null): ResultPrivate<TError, TValue> => {
     if (value === undefined) {
       return err(error)
     }
@@ -121,7 +103,7 @@ const fromNullable =
     return ok(value)
   }
 
-const withDefault = <T>(result: Result<unknown, T>, fallback: T) => {
+const withDefault = <T>(result: ResultPrivate<unknown, T>, fallback: T) => {
   switch (result.t) {
     case "err":
       return fallback
@@ -143,7 +125,9 @@ const withDefault = <T>(result: Result<unknown, T>, fallback: T) => {
  * const result = combine(results);
  * // result = err("error");
  */
-const combine = <E, A>(results: Result<E, A>[]): Result<E, A[]> => {
+const combine = <E, A>(
+  results: ResultPrivate<E, A>[],
+): ResultPrivate<E, A[]> => {
   const values: A[] = []
   for (const result of results) {
     if (isErr(result)) {
@@ -155,17 +139,16 @@ const combine = <E, A>(results: Result<E, A>[]): Result<E, A[]> => {
 }
 
 const mapOk = <TError, A, B>(
-  result: Result<TError, A>,
+  result: ResultPrivate<TError, A>,
   mapper: (a: A) => B,
-): Result<TError, B> => {
+): ResultPrivate<TError, B> => {
   if (result.t === "ok") {
     return ok(mapper(result.value))
   }
   return result
 }
 
-export const Result = {
-  ...parser,
+export const ResultPrivate = {
   is,
   ok,
   err,
@@ -188,7 +171,7 @@ export const Result = {
 export type RemoteResult<TError, TValue> =
   | NotAsked
   | Loading
-  | Result<TError, TValue>
+  | ResultPrivate<TError, TValue>
 
 export type NotAsked = { t: "not-asked" }
 export const notAsked: NotAsked = { t: "not-asked" }
@@ -225,7 +208,7 @@ export const remoteResultMap = <E, A, B>(
 
     case "err":
     case "ok":
-      return Result.mapOk(result, mapper)
+      return ResultPrivate.mapOk(result, mapper)
   }
 }
 

@@ -57,7 +57,7 @@ export const canClear = (model: Model): boolean => {
 type DraftTerminal = {
   groupId: Flow.GroupId
   startId: Flow.NodeId
-  endId?: Flow.NodeId | null
+  endId: Flow.NodeId | null | undefined
 }
 
 export const init = ({ flow }: { flow: FlowVariant.Model }): Model => {

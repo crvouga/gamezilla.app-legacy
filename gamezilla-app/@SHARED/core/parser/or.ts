@@ -1,6 +1,7 @@
-import { Result } from "../core"
+import { Result } from ".."
 import { Parser, ParserError } from "./parser"
 
+export function or<A>(a: Parser<A>): Parser<A>
 export function or<A, B>(a: Parser<A>, b: Parser<B>): Parser<A | B>
 export function or<A, B, C>(
   a: Parser<A>,

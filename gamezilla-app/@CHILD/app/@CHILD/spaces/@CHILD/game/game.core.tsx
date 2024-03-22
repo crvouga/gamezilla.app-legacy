@@ -1,7 +1,6 @@
-import { EventMeta } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { SpaceCtx } from "../../@SHARED/space"
-import * as Flow from "./@CHILD/flow/flow.core"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import * as ConnectFour from "./@CHILD/connect-four/connect-four.core"
+import * as Flow from "./@CHILD/flow/flow.core"
 //
 //
 //
@@ -50,7 +49,11 @@ export type MsgToServer =
 //
 //
 
-export type GameName = "connect-four" | "flow"
+export const GAME_NAME = ["connect-four", "flow"] as const
+
+export const GameName = p.enumeration(GAME_NAME)
+
+export type GameName = p.Infer<typeof GameName>
 
 export const gameNames: { [gameName in GameName]: GameName } = {
   "connect-four": "connect-four",
@@ -88,73 +91,16 @@ export type ModelSync =
       c: Flow.ModelSync
     }
 
-export const initSync = (gameName: GameName): ModelSync => {
-  switch (gameName) {
-    case "connect-four": {
-      return {
-        t: "connect-four",
-        c: ConnectFour.initSync(),
-      }
-    }
-
-    case "flow": {
-      return {
-        t: "flow",
-        c: Flow.initSync(),
-      }
-    }
-  }
-}
+export const ModelSync = p.custom(
+  (_x: unknown): _x is ModelSync => true,
+  "Invalid model sync",
+)
 
 export type MsgSync =
   | { t: "connect-four"; c: ConnectFour.MsgSync }
   | { t: "flow"; c: Flow.MsgSync }
 
-export const reducer = ({
-  ctx,
-  modelSync,
-  msgSync,
-}: {
-  ctx: SpaceCtx
-  modelSync: ModelSync
-  msgSync: MsgSync & EventMeta
-}): ModelSync => {
-  switch (modelSync.t) {
-    case "connect-four": {
-      switch (msgSync.t) {
-        case "connect-four": {
-          return {
-            t: "connect-four",
-            c: ConnectFour.reducer({
-              ctx,
-              msgSync: { ...msgSync, ...msgSync.c },
-              modelSync: modelSync.c,
-            }),
-          }
-        }
-        default: {
-          return modelSync
-        }
-      }
-    }
-
-    case "flow": {
-      switch (msgSync.t) {
-        case "flow": {
-          return {
-            t: "flow",
-            c: Flow.reducer({
-              ctx,
-              msgSync: { ...msgSync, ...msgSync.c },
-              modelSync: modelSync.c,
-            }),
-          }
-        }
-
-        default: {
-          return modelSync
-        }
-      }
-    }
-  }
-}
+export const MsgSync = p.custom(
+  (_x: unknown): _x is MsgSync => true,
+  "Invalid msg sync",
+)

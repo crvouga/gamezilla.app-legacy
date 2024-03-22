@@ -1,4 +1,4 @@
-import { Brand } from "../brand"
+import { Brand } from "./brand"
 
 /**
  * Represents a unit interval, a number between 0 and 1
