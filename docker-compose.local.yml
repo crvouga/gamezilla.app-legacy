@@ -20,6 +20,9 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    volumes:
+      - gamezilla-app-redis-data:/data
 
 volumes:
   gamezilla-app-postgres-data:
+  gamezilla-app-redis-data:
