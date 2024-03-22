@@ -388,7 +388,9 @@ export const any: Parser<any> = {
   },
 }
 
-export const enumeration = <T extends string | number>(
+export const enumeration = <
+  T extends string | number | boolean | null | undefined,
+>(
   values: T[] | readonly T[],
 ): Parser<T> => {
   return {
