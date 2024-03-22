@@ -1,3 +1,4 @@
+import { Brand } from "../brand"
 import { ResultPrivate, err, ok } from "../result/result"
 
 //
@@ -405,6 +406,26 @@ export const enumeration = <T extends string | number>(
         ])
       }
       return ok(input as T)
+    },
+  }
+}
+
+export const brand = <
+  T,
+  TBrand extends string | number | boolean | null | undefined,
+>(
+  parser: Parser<T>,
+  _brand: TBrand,
+): Parser<Brand<T, TBrand>> => {
+  return {
+    parse(input) {
+      const parsed = parser.parse(input)
+      switch (parsed.t) {
+        case "err":
+          return parsed
+        case "ok":
+          return ok(parsed.value as Brand<T, TBrand>)
+      }
     },
   }
 }

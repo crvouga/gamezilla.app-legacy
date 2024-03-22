@@ -1,2 +1,4 @@
-/** @see {isBrand} ts-auto-guard:type-guard */
-export type Brand<T, _B extends string> = T & { __branded: _B }
+export type Brand<
+  T,
+  TBrand extends string | number | boolean | null | undefined,
+> = T & { __branded: TBrand }

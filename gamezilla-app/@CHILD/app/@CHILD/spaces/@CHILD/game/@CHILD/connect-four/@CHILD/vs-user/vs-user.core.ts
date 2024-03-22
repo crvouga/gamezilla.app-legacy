@@ -11,6 +11,7 @@ import {
   toTurn,
 } from "../../@SHARED/connect-four/connect-four"
 import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
 //
 //
@@ -53,28 +54,65 @@ export type MsgToClient = { t: null }
 //
 //
 
-export type MsgSync =
-  //
-  | { t: "user-stopped-playing"; userId: UserId }
-  | { t: "user-started-playing"; userId: UserId; playerType: PlayerType }
-  | {
-      t: "user-inputted-move-time-limit"
-      userId: UserId
-      moveTimeLimit: MoveTimeLimit
-    }
-  | { t: "user-dropped-disc"; columnIndex: ColumnIndex; userId: UserId }
-  | { t: "user-started-game"; userId: UserId }
-  | { t: "user-stopped-game"; userId: UserId }
-  | { t: "user-requested-rematch"; userId: UserId }
-  | {
-      t: "user-responded-to-rematch-request"
-      userId: UserId
-      response: "Accept" | "Decline"
-    }
-  | { t: "user-cancelled-rematch"; userId: UserId }
-  | { t: "user-resigned"; userId: UserId }
-  | { t: "time-passed"; currentTime: Posix }
-  | { t: "user-left"; userId: UserId }
+const MoveTimeLimit = p.enumeration([5, 7, 9])
+
+const RematchResponse = p.enumeration(["Accept", "Decline"])
+
+const MsgSync = p.or(
+  p.obj({
+    t: p.l("user-stopped-playing"),
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("user-started-playing"),
+    userId: UserId,
+    playerType: PlayerType,
+  }),
+  p.obj({
+    t: p.l("user-inputted-move-time-limit"),
+    userId: UserId,
+    moveTimeLimit: MoveTimeLimit,
+  }),
+  p.obj({
+    t: p.l("user-dropped-disc"),
+    columnIndex: p.num,
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("user-started-game"),
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("user-stopped-game"),
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("user-requested-rematch"),
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("user-responded-to-rematch-request"),
+    userId: UserId,
+    response: RematchResponse,
+  }),
+  p.obj({
+    t: p.l("user-cancelled-rematch"),
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("user-resigned"),
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("time-passed"),
+    currentTime: Posix,
+  }),
+  p.obj({
+    t: p.l("user-left"),
+    userId: UserId,
+  }),
+)
+export type MsgSync = p.Infer<typeof MsgSync>
 
 type EventError = { t: "not-playing" } | { t: "move"; c: MoveProblem }
 

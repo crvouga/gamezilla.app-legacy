@@ -1,5 +1,4 @@
 import { memoize } from "gamezilla-app/@SHARED/core"
-import { Brand } from "gamezilla-app/@SHARED/core/brand"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 
 //
@@ -9,14 +8,15 @@ import { p } from "gamezilla-app/@SHARED/core/parser"
 //
 //
 
-export type NodeId = Brand<string, "NodeId">
-export const isNodeId = (nodeId: unknown): nodeId is NodeId => {
-  return typeof nodeId === "string"
-}
-export const NodeId = p.custom(isNodeId, "Invalid node id")
+export const NodeId = p.brand(p.str, "NodeId")
+
+export type NodeId = p.Infer<typeof NodeId>
 
 export const createNodeId = (nodeId: string): NodeId => {
-  return nodeId as NodeId
+  if (p.is(NodeId)(nodeId)) {
+    return nodeId
+  }
+  throw new Error("Impossible condition. Invalid node id")
 }
 
 export const hasNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
@@ -63,7 +63,9 @@ export type GroupId = p.Infer<typeof GroupId>
 //
 //
 
-export type EdgeId = Brand<string, "EdgeId">
+export const EdgeId = p.brand(p.str, "EdgeId")
+
+export type EdgeId = p.Infer<typeof EdgeId>
 
 const EDGE_ID_SEPARATOR = "->"
 
@@ -78,8 +80,6 @@ export const hasEdgeId = (model: Model, edgeId: string): edgeId is EdgeId => {
 export const isEdgeId = (edgeId: unknown): edgeId is EdgeId => {
   return typeof edgeId === "string"
 }
-
-export const EdgeId = p.custom(isEdgeId, "Invalid edge id")
 
 //
 //

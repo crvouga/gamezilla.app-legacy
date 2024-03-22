@@ -6,6 +6,7 @@ import {
   isSubset,
   unique,
 } from "gamezilla-app/@SHARED/core"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
 //
 //
@@ -26,7 +27,11 @@ export type Pos2d = { x: number; y: number }
 //
 //
 
-export type PlayerType = "player-one" | "player-two"
+export const ALL_PLAYER_TYPES = ["player-one", "player-two"] as const
+
+export const PlayerType = p.enumeration(ALL_PLAYER_TYPES)
+
+export type PlayerType = p.Infer<typeof PlayerType>
 
 export const playerTypes: { [playerType in PlayerType]: PlayerType } = {
   "player-one": "player-one",
