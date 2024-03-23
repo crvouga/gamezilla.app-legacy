@@ -1,5 +1,5 @@
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
-import * as Board from "./chess"
+import * as Board from "./chess-core"
 
 export type Clock = {
   preset: Preset
