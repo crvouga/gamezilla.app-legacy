@@ -1,5 +1,5 @@
-import { Result } from ".."
-import { Parser, ParserError } from "./parser"
+import { err, ok } from "../../result/result"
+import { Parser, ParserError } from "./parser-types"
 
 export function and<A>(a: Parser<A>): Parser<A>
 export function and<A, B>(a: Parser<A>, b: Parser<B>): Parser<A & B>
@@ -716,10 +716,10 @@ export function and(...parsers: Parser<unknown>[]): Parser<unknown> {
       }
 
       if (errors.length === 0) {
-        return Result.ok(input)
+        return ok(input)
       }
 
-      return Result.err(errors)
+      return err(errors)
     },
   }
 }

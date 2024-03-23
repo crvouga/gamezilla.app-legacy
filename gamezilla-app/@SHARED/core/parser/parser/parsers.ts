@@ -1,18 +1,8 @@
-import { Brand } from "../brand"
-import { ResultPrivate, err, ok } from "../result/result"
+import { Brand } from "../../brand"
+import { err, ok } from "../../result/result"
+import { Parser, ParserError } from "./parser-types"
 
-//
-//
-//
-//
-//
-
-export type ParserError = {
-  message: string
-  path: string[]
-}
-
-export const errorToString = (error: ParserError): string => {
+const errorToString = (error: ParserError): string => {
   return error.path.join(".") + ": " + error.message
 }
 
@@ -20,11 +10,13 @@ export const errorsToString = (errors: ParserError[]): string => {
   return errors.map(errorToString).join("\n")
 }
 
-export type Parser<T> = {
-  parse: (input: unknown) => ResultPrivate<ParserError[], T>
+const toErrorMessage = (
+  expected: string,
+  actual: string,
+  actualValue: string,
+) => {
+  return `Expected: ${expected}.\nActual Type: ${actual}.\nActual Value: ${actualValue}\n`
 }
-
-export type Infer<TParser> = TParser extends Parser<infer T> ? T : never
 
 export const is =
   <T>(parser: Parser<T>) =>
@@ -38,14 +30,6 @@ export const is =
 //
 //
 //
-
-const toErrorMessage = (
-  expected: string,
-  actual: string,
-  actualValue: string,
-) => {
-  return `Expected: ${expected}.\nActual Type: ${actual}.\nActual Value: ${actualValue}\n`
-}
 
 const isIndexable = (input: unknown): input is Record<string, unknown> => {
   return typeof input === "object" && input !== null
@@ -431,6 +415,3 @@ export const brand = <
     },
   }
 }
-
-export { and } from "./and"
-export { or } from "./or"

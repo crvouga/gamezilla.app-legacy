@@ -1,10 +1,6 @@
 import { p } from "./parser"
 import { TimeSpan } from "./time-span"
 
-if (typeof p === "undefined") {
-  throw new Error("p is not defined")
-}
-
 const parser = p.brand(p.num, "Posix")
 export type Posix = p.Infer<typeof parser>
 

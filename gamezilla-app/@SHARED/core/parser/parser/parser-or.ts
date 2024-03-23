@@ -1,5 +1,5 @@
-import { Result } from ".."
-import { Parser, ParserError } from "./parser"
+import { err } from "../../result/result"
+import { Parser, ParserError } from "./parser-types"
 
 export function or<A>(a: Parser<A>): Parser<A>
 export function or<A, B>(a: Parser<A>, b: Parser<B>): Parser<A | B>
@@ -715,7 +715,7 @@ export function or(...parsers: Parser<unknown>[]): Parser<unknown> {
         }
       }
 
-      return Result.err(errors)
+      return err(errors)
     },
   }
 }
