@@ -50,9 +50,11 @@ export const playerTypeToColor: { [key in PlayerType]: Color } = {
   "player-two": "Yellow",
 }
 
-export type Column = readonly PlayerType[]
+export const Column = p.arr(PlayerType)
+export type Column = p.Infer<typeof Column>
 
-export type Columns = Column[]
+export const Columns = p.arr(Column)
+export type Columns = p.Infer<typeof Columns>
 
 export const MAX_COLUMN_HEIGHT = 6
 
@@ -60,9 +62,9 @@ export const EMPTY_COLUMNS: Columns = [[], [], [], [], [], [], []]
 
 export const COLUMN_COUNT = EMPTY_COLUMNS.length
 
-export type ColumnIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6
-
-export const ALL_COLUMN_INDEXES: ColumnIndex[] = [0, 1, 2, 3, 4, 5, 6]
+export const ALL_COLUMN_INDEXES = [0, 1, 2, 3, 4, 5, 6] as const
+export const ColumnIndex = p.enumeration(ALL_COLUMN_INDEXES)
+export type ColumnIndex = p.Infer<typeof ColumnIndex>
 
 export const ALL_POSITIONS: Pos2d[] = []
 for (let x = 0; x < COLUMN_COUNT; x++) {
@@ -86,12 +88,15 @@ export const isColumnIndex = (index: unknown): index is ColumnIndex => {
 
 export type RowIndex = 0 | 1 | 2 | 3 | 4 | 5
 
-export type MoveProblem =
-  | "game-over-winner"
-  | "game-over-tie"
-  | "not-turn"
-  | "column-is-full"
-  | "out-of-bounds"
+export const ALL_MOVE_PROBLEMS = [
+  "game-over-winner",
+  "game-over-tie",
+  "not-turn",
+  "column-is-full",
+  "out-of-bounds",
+] as const
+export const MoveProblem = p.enumeration(ALL_MOVE_PROBLEMS)
+export type MoveProblem = p.Infer<typeof MoveProblem>
 
 export const moveProblemToString = (problem: MoveProblem): string => {
   switch (problem) {

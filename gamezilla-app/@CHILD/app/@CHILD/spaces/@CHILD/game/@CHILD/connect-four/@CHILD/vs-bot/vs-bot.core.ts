@@ -10,6 +10,8 @@ import {
   EventId,
 } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import * as ConnectFour from "../../@SHARED/connect-four"
+import { p } from "gamezilla-app/@SHARED/core/parser"
+import { BotLevel } from "./bot-level"
 
 //
 //
@@ -61,28 +63,67 @@ export type MsgToClient = { t: null }
 
 export type MsgToServer = { t: null }
 
-export type MsgSync =
-  | {
-      t: "user-dropped-disc"
-      columnIndex: ConnectFour.ColumnIndex
-      userId: UserId
-    }
-  | { t: "user-left"; userId: UserId }
-  | { t: "bot-dropped-disc"; columnIndex: ConnectFour.ColumnIndex }
-  | {
-      t: "user-started-playing"
-      userId: UserId
-      playerType: ConnectFour.PlayerType
-    }
-  | { t: "user-stopped-playing"; userId: UserId }
-  | { t: "user-started-game"; userId: UserId }
-  | { t: "user-stopped-game"; userId: UserId }
-  | { t: "user-swapped-sides"; userId: UserId }
-  | { t: "user-changed-bot-level"; botLevel: BotLevel; userId: UserId }
-  | { t: "time-passed"; now: Posix }
-  | { t: "user-restarted-game"; userId: UserId }
+export const MsgSync = p.or(
+  p.obj({
+    t: p.l("user-dropped-disc"),
+    columnIndex: ConnectFour.ColumnIndex,
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("user-left"),
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("bot-dropped-disc"),
+    columnIndex: ConnectFour.ColumnIndex,
+  }),
+  p.obj({
+    t: p.l("user-started-playing"),
+    userId: UserId,
+    playerType: ConnectFour.PlayerType,
+  }),
+  p.obj({
+    t: p.l("user-stopped-playing"),
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("user-started-game"),
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("user-stopped-game"),
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("user-swapped-sides"),
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("user-changed-bot-level"),
+    botLevel: BotLevel,
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("time-passed"),
+    now: Posix,
+  }),
+  p.obj({
+    t: p.l("user-restarted-game"),
+    userId: UserId,
+  }),
+)
+export type MsgSync = p.Infer<typeof MsgSync>
 
-type EventErr = { t: "not-playing" } | { t: "move"; c: ConnectFour.MoveProblem }
+const EventErr = p.or(
+  p.obj({
+    t: p.l("not-playing"),
+  }),
+  p.obj({
+    t: p.l("move"),
+    c: ConnectFour.MoveProblem,
+  }),
+)
+type EventErr = p.Infer<typeof EventErr>
 
 export const msgSyncErrorToString = ({
   error,
@@ -99,11 +140,30 @@ export const msgSyncErrorToString = ({
   }
 }
 
-export type ModelSync = (StateSetup | StateGame) & {
-  errors: {
-    [eventId: EventId]: MsgSync & { error: EventErr }
-  }
-}
+export const StateSetup = p.obj({
+  type: p.l("setup"),
+  userPlayerType: ConnectFour.PlayerType,
+  botLevel: BotLevel,
+  playingUserId: p.maybe(UserId),
+})
+
+export type StateSetup = p.Infer<typeof StateSetup>
+
+export const StateGame = p.obj({
+  type: p.l("game"),
+  userPlayerType: ConnectFour.PlayerType,
+  botLevel: BotLevel,
+  playingUserId: UserId,
+  columns: ConnectFour.Columns,
+})
+export type StateGame = p.Infer<typeof StateGame>
+
+const BaseModelSync = p.obj({
+  errors: p.dict(EventId, p.and(MsgSync, p.obj({ error: EventErr }))),
+})
+
+export const ModelSync = p.and(BaseModelSync, p.or(StateSetup, StateGame))
+export type ModelSync = p.Infer<typeof ModelSync>
 
 export const initSync = (input: SpaceCtx): ModelSync => {
   return {
@@ -113,21 +173,6 @@ export const initSync = (input: SpaceCtx): ModelSync => {
     playingUserId: input.space.hostId,
     errors: {},
   }
-}
-
-export type StateSetup = {
-  type: "setup"
-  userPlayerType: ConnectFour.PlayerType
-  botLevel: BotLevel
-  playingUserId: UserId | null
-}
-
-export type StateGame = {
-  type: "game"
-  userPlayerType: ConnectFour.PlayerType
-  botLevel: BotLevel
-  playingUserId: UserId
-  columns: ConnectFour.Columns
 }
 
 export const reducer = ({
@@ -377,13 +422,3 @@ export const toGameOver = (model: ModelSync): GameOver | { type: null } => {
     }
   }
 }
-
-export type BotLevel = "Easy" | "Medium" | "Hard"
-
-export const botLevel: { [botLevel in BotLevel]: BotLevel } = {
-  Easy: "Easy",
-  Medium: "Medium",
-  Hard: "Hard",
-}
-
-export const allBotLevels: BotLevel[] = ["Easy", "Medium", "Hard"]

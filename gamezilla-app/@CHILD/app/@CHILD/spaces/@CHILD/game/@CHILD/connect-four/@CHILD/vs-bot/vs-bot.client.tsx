@@ -40,16 +40,15 @@ import {
   ViewColumns,
 } from "../../@SHARED/connect-four-ui"
 import {
-  BotLevel,
   ModelClient,
   MsgClient,
   MsgSync,
   ModelSync,
   MsgToClient,
   MsgToServer,
-  allBotLevels,
   reducer,
 } from "./vs-bot.core"
+import { ALL_BOT_LEVELS, BotLevel } from "./bot-level"
 
 //
 //
@@ -324,7 +323,7 @@ const View: Module["View"] = ({ model, ctx, modelSync, dispatch }) => {
       dispatch({ t: "user-swapped-sides", userId: ctx.currentUserId }),
     onStartGame: () =>
       dispatch({ t: "user-started-game", userId: ctx.currentUserId }),
-    botVariants: allBotLevels.map((botLevel) => {
+    botVariants: ALL_BOT_LEVELS.map((botLevel) => {
       return {
         label: botLevel,
         renderIcon: (props) => <ViewBotLevel {...props} level={botLevel} />,
@@ -339,7 +338,7 @@ const View: Module["View"] = ({ model, ctx, modelSync, dispatch }) => {
     human: {
       player:
         modelSync.userPlayerType === "player-one" ? "player-one" : "player-two",
-      userId: modelSync.playingUserId,
+      userId: modelSync.playingUserId ?? null,
     },
     bot: {
       label: modelSync.botLevel,

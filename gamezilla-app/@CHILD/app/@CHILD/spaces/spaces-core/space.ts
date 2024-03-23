@@ -21,7 +21,7 @@ import { p } from "gamezilla-app/@SHARED/core/parser"
 //
 //
 
-const Model = p.obj({
+export const Model = p.obj({
   events: p.arr(p.and(EventMeta, SpaceEvent)),
   eventIds: p.dict(EventId, EventId),
   clock: LamportClock,

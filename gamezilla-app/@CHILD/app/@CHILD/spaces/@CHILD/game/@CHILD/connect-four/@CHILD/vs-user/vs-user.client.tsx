@@ -182,7 +182,7 @@ const View: Module["View"] = ({ ctx, model, modelSync, dispatch }) => {
             renderIcon: (props) => {
               return <PlayerIcon playerType="player-one" {...props} />
             },
-            userId: modelSync.players["player-one"],
+            userId: modelSync.players["player-one"] ?? null,
           }}
           playerTwo={{
             label: "Yellow",
@@ -202,7 +202,7 @@ const View: Module["View"] = ({ ctx, model, modelSync, dispatch }) => {
             renderIcon: (props) => {
               return <PlayerIcon playerType="player-two" {...props} />
             },
-            userId: modelSync.players["player-two"],
+            userId: modelSync.players["player-two"] ?? null,
           }}
         />
       )

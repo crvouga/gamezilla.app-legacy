@@ -1,5 +1,7 @@
-import { Posix } from "gamezilla-app/@SHARED/core"
+import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Posix } from "gamezilla-app/@SHARED/core"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import {
   ColumnIndex,
   Columns,
@@ -10,8 +12,6 @@ import {
   toStatus,
   toTurn,
 } from "../../@SHARED/connect-four/connect-four"
-import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { p } from "gamezilla-app/@SHARED/core/parser"
 
 //
 //
@@ -58,7 +58,7 @@ const MoveTimeLimit = p.enumeration([5, 7, 9])
 
 const RematchResponse = p.enumeration(["Accept", "Decline"])
 
-const MsgSync = p.or(
+export const MsgSync = p.or(
   p.obj({
     t: p.l("user-stopped-playing"),
     userId: UserId,
@@ -114,27 +114,49 @@ const MsgSync = p.or(
 )
 export type MsgSync = p.Infer<typeof MsgSync>
 
-type EventError = { t: "not-playing" } | { t: "move"; c: MoveProblem }
+const GameOver = p.or(
+  p.obj({
+    type: p.l("Draw"),
+  }),
+  p.obj({
+    type: p.l("Winner"),
+    winner: PlayerType,
+  }),
+  p.obj({
+    type: p.l("resignation"),
+    resigner: PlayerType,
+  }),
+)
+export type GameOver = p.Infer<typeof GameOver>
 
-export type ModelSync = StateSetup | StateGame | StateGameOver
+const EventError = p.or(
+  p.obj({
+    t: p.l("not-playing"),
+  }),
+  p.obj({
+    t: p.l("move"),
+    c: MoveProblem,
+  }),
+)
 
-export const initSync = (ctx: SpaceCtx): ModelSync => {
-  return {
-    type: "setup",
-    moveTimeLimit: 5,
-    players: {
-      "player-one": ctx.space.hostId,
-      "player-two": null,
-    },
-    errors: {},
-  }
-}
+type EventError = p.Infer<typeof EventError>
 
-type Errors = {
-  errors: {
-    [eventId: string]: MsgSync & { error: EventError }
-  }
-}
+const Rematch = p.or(
+  p.obj({
+    type: p.l("NotAsking"),
+  }),
+  p.obj({
+    type: p.l("Asking"),
+    asker: PlayerType,
+  }),
+)
+export type Rematch = p.Infer<typeof Rematch>
+
+const Errors = p.obj({
+  errors: p.dict(p.str, p.and(MsgSync, p.obj({ error: EventError }))),
+})
+
+type Errors = p.Infer<typeof Errors>
 
 const addError = (
   modelSync: ModelSync,
@@ -150,57 +172,57 @@ const addError = (
   }
 }
 
-export type StateSetup = Errors & {
-  type: "setup"
-  moveTimeLimit: MoveTimeLimit
-  players: {
-    [playerType in PlayerType]: UserId | null
+export const StateSetup = p.and(
+  Errors,
+  p.obj({
+    type: p.l("setup"),
+    moveTimeLimit: MoveTimeLimit,
+    players: p.partialDict(PlayerType, p.maybe(UserId)),
+  }),
+)
+export type StateSetup = p.Infer<typeof StateSetup>
+
+export const StateGame = p.and(
+  Errors,
+  p.obj({
+    type: p.l("game"),
+    moveTimeLimit: MoveTimeLimit,
+    columns: Columns,
+    gameId: p.num,
+    lastMoveAt: Posix,
+    players: p.dict(PlayerType, UserId),
+  }),
+)
+export type StateGame = p.Infer<typeof StateGame>
+
+export const StateGameOver = p.and(
+  Errors,
+  p.obj({
+    type: p.l("game-over"),
+    moveTimeLimit: MoveTimeLimit,
+    columns: Columns,
+    gameId: p.num,
+    gameOver: GameOver,
+    rematch: Rematch,
+    players: p.dict(PlayerType, UserId),
+  }),
+)
+export type StateGameOver = p.Infer<typeof StateGameOver>
+
+export const ModelSync = p.or(StateSetup, StateGame, StateGameOver)
+export type ModelSync = p.Infer<typeof ModelSync>
+
+export const initSync = (ctx: SpaceCtx): ModelSync => {
+  return {
+    type: "setup",
+    moveTimeLimit: 5,
+    players: {
+      "player-one": ctx.space.hostId,
+      "player-two": null,
+    },
+    errors: {},
   }
 }
-
-export type StateGame = Errors & {
-  type: "game"
-  moveTimeLimit: MoveTimeLimit
-  columns: Columns
-  gameId: number
-  lastMoveAt: Posix
-  players: {
-    [playerType in PlayerType]: UserId
-  }
-}
-
-export type StateGameOver = Errors & {
-  type: "game-over"
-  moveTimeLimit: MoveTimeLimit
-  columns: Columns
-  gameId: number
-  gameOver: GameOver
-  rematch: Rematch
-  players: {
-    [playerType in PlayerType]: UserId
-  }
-}
-export type Rematch =
-  | {
-      type: "NotAsking"
-    }
-  | {
-      type: "Asking"
-      asker: PlayerType
-    }
-
-export type GameOver =
-  | {
-      type: "Draw"
-    }
-  | {
-      type: "Winner"
-      winner: PlayerType
-    }
-  | {
-      type: "resignation"
-      resigner: PlayerType
-    }
 
 export const toGameOver = (
   modelSync: ModelSync,

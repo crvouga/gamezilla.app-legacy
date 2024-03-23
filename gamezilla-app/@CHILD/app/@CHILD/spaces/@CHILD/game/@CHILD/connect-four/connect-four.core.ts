@@ -4,6 +4,7 @@ import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { GameMainMenu } from "../../@SHARED/game"
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.core"
 import * as VsUser from "./@CHILD/vs-user/vs-user.core"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
 //
 //
@@ -57,23 +58,37 @@ export type MsgToServer =
 //
 //
 
-export type MsgSync =
-  | { t: "user-changed-mode"; mode: Mode; userId: UserId }
-  | { t: "vs-bot"; c: VsBot.MsgSync }
-  | { t: "vs-user"; c: VsUser.MsgSync }
+export const MsgSync = p.or(
+  p.obj({
+    t: p.l("user-changed-mode"),
+    mode: p.enumeration(["none", "vs-user", "vs-bot"] as const),
+    userId: UserId,
+  }),
+  p.obj({
+    t: p.l("vs-bot"),
+    c: VsBot.MsgSync,
+  }),
+  p.obj({
+    t: p.l("vs-user"),
+    c: VsUser.MsgSync,
+  }),
+)
+export type MsgSync = p.Infer<typeof MsgSync>
 
-export type ModelSync =
-  | {
-      t: "none"
-    }
-  | {
-      t: "vs-user"
-      c: VsUser.ModelSync
-    }
-  | {
-      t: "vs-bot"
-      c: VsBot.ModelSync
-    }
+export const ModelSync = p.or(
+  p.obj({
+    t: p.l("none"),
+  }),
+  p.obj({
+    t: p.l("vs-user"),
+    c: VsUser.ModelSync,
+  }),
+  p.obj({
+    t: p.l("vs-bot"),
+    c: VsBot.ModelSync,
+  }),
+)
+export type ModelSync = p.Infer<typeof ModelSync>
 
 export const initSync = (): ModelSync => {
   return {

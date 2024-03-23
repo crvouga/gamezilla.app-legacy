@@ -1,9 +1,3 @@
-/**
- *
- *
- *
- *
- */
 import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { EventId, WithEventId } from "../@SHARED/event"
 import * as SpaceState from "./space-state"
@@ -24,17 +18,12 @@ export const SpaceError = p.obj({
 })
 export type SpaceError = p.Infer<typeof SpaceError>
 
-export type Model = {
-  spaces: {
-    [spaceId: SpaceId]: Space.Model
-  }
-  spaceIdByUserId: {
-    [userId: UserId]: SpaceId
-  }
-  errors: {
-    [eventId: string]: SpaceError
-  }
-}
+export const Model = p.obj({
+  spaces: p.dict(SpaceId, Space.Model),
+  spaceIdByUserId: p.dict(UserId, SpaceId),
+  errors: p.dict(EventId, SpaceError),
+})
+export type Model = p.Infer<typeof Model>
 
 export const init: Model = {
   spaces: {},
