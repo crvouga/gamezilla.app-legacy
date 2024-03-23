@@ -1,8 +1,12 @@
-import { p } from "gamezilla-app/@SHARED/core/parser"
-import { Brand } from "./brand"
+import { p } from "./parser"
 import { TimeSpan } from "./time-span"
 
-export type Posix = Brand<number, "Posix">
+if (typeof p === "undefined") {
+  throw new Error("p is not defined")
+}
+
+const parser = p.brand(p.num, "Posix")
+export type Posix = p.Infer<typeof parser>
 
 const minPosixTime = new Date("1970-01-01T00:00:00.000Z").getTime()
 const maxPosixTime = new Date("2038-01-19T03:14:07.999Z").getTime()
@@ -32,9 +36,6 @@ function is(posixTime: unknown): posixTime is Posix {
   }
   return true
 }
-is.explain = explain
-
-const parser = p.custom(is, "Invalid posix time")
 
 const fromNumber = (posixTime: number): Posix => {
   const clamped = Math.max(posixTime, minPosixTime)

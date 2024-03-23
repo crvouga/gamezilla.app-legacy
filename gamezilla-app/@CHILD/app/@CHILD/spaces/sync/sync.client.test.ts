@@ -58,7 +58,7 @@ describe(import.meta.file, () => {
       hasExcatlyOne(updated.msgCmd ?? [], (msgCmd) =>
         eq(msgCmd, addProfiles(someProfiles)),
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should merge space recieved from server", async () => {
@@ -76,7 +76,7 @@ describe(import.meta.file, () => {
       limit: Infinity,
     })
 
-    expect(listed.some((space) => Space.isEqual(space, someSpace))).toBeTrue()
+    expect(listed.some((space) => Space.isEqual(space, someSpace))).toBe(true)
   })
 
   it("should merge current user's space when recieved from server", async () => {
@@ -92,7 +92,7 @@ describe(import.meta.file, () => {
 
     expect(
       Spaces.toSpaceIdByUserId(updated.model, ctx.currentUserId) === spaceId,
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should sync current user's space when server connects if in space", async () => {
@@ -110,7 +110,7 @@ describe(import.meta.file, () => {
           msgCmd.c.t === "send-to-server" &&
           msgCmd.c.msg?.t === "sync",
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should send events to the server like user joined space", async () => {
@@ -132,7 +132,7 @@ describe(import.meta.file, () => {
           msgCmd.c.msg?.t === "event" &&
           msgCmd.c.msg?.c.t === "user-joined-space",
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should send events to the server like user ended space", async () => {
@@ -151,6 +151,6 @@ describe(import.meta.file, () => {
           msgCmd.c.msg?.t === "event" &&
           msgCmd.c.msg?.c.t === "user-ended-space",
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 })

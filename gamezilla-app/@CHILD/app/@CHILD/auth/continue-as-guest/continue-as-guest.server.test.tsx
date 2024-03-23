@@ -66,7 +66,7 @@ describe(import.meta.file, () => {
           msgCmd.c.clientIds.includes(clientId) &&
           msgCmd.c.msg.t === "guest.continue-as-guest-result",
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should output a client authenitcated event", async () => {
@@ -88,7 +88,7 @@ describe(import.meta.file, () => {
           msgEvt.sessionId === sessionId &&
           msgEvt.loggedIn,
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should be able to find user id from session id after continuing as guest", async () => {
@@ -104,6 +104,6 @@ describe(import.meta.file, () => {
 
     const userId = await AuthServer.toUserIdFromSessionId(deps, sessionId)
 
-    expect(userId !== null).toBeTrue()
+    expect(userId !== null).toBe(true)
   })
 })

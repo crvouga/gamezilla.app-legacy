@@ -58,7 +58,7 @@ describe(import.meta.file, () => {
     expect(
       modelSync.opened.t === "puzzle-builder" &&
         modelSync.puzzleBuilder?.puzzle.id === puzzle.id,
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should play a sound when clicking a puzzle in the list", async () => {
@@ -70,6 +70,6 @@ describe(import.meta.file, () => {
       //
     )
 
-    expect(didPlaySound(output)).toBeTrue()
+    expect(didPlaySound(output)).toBe(true)
   })
 })

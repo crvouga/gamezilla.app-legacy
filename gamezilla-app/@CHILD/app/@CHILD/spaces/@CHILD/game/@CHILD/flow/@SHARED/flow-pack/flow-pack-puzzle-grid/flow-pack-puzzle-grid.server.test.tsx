@@ -88,6 +88,6 @@ describe(import.meta.file, () => {
         client.clientId,
         (msg) => msg.t === "listed-puzzles-by-id",
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 })

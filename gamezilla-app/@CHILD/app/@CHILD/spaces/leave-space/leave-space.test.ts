@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
       userLeftSpace(ctx, ctx.currentUserId, spaceId),
     )
 
-    expect(didPushRoute(output, (x) => x.t === "space-list")).toBeTrue()
+    expect(didPushRoute(output, (x) => x.t === "space-list")).toBe(true)
   })
 
   it("should only redirect to list screen for the user leaving the space", async () => {
@@ -51,7 +51,7 @@ describe(import.meta.file, () => {
       userLeftSpace(ctx, userId, spaceId),
     )
 
-    expect(didPushRoute(output)).toBeFalse()
+    expect(didPushRoute(output)).toBe(false)
   })
 
   it("should show some toast after leaving a space", async () => {
@@ -69,7 +69,7 @@ describe(import.meta.file, () => {
       userLeftSpace(ctx, ctx.currentUserId, spaceId),
     )
 
-    expect(didShowToast(output)).toBeTrue()
+    expect(didShowToast(output)).toBe(true)
   })
 
   it("user is not in space after leaving", async () => {
@@ -102,6 +102,6 @@ describe(import.meta.file, () => {
       clickedLeaveSpaceButton(ctx),
     )
 
-    expect(didPlaySound(left)).toBeTrue()
+    expect(didPlaySound(left)).toBe(true)
   })
 })

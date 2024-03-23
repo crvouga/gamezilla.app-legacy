@@ -75,12 +75,12 @@ const serverListedPacksErr = (errorMessage: string) => (model: ModelClient) => {
 describe(import.meta.file, () => {
   it("should be request when user observes end of list", async () => {
     const output = await AppClientModule.andThen(initial, observedEndOfList)
-    expect(RequestResponse.isRequesting(output.model.request)).toBeTrue()
+    expect(RequestResponse.isRequesting(output.model.request)).toBe(true)
   })
 
   it("should send request to server when user observes end of list", async () => {
     const output = await AppClientModule.andThen(initial, observedEndOfList)
-    expect(didSendToServer(output, (msg) => msg.t === "list-packs")).toBeTrue()
+    expect(didSendToServer(output, (msg) => msg.t === "list-packs")).toBe(true)
   })
 
   it("should timeout request", async () => {
@@ -89,7 +89,7 @@ describe(import.meta.file, () => {
       observedEndOfList,
       elasped(TimeSpan.fromMinutes(5)),
     )
-    expect(RequestResponse.didRequestTimeout(output.model.request)).toBeTrue()
+    expect(RequestResponse.didRequestTimeout(output.model.request)).toBe(true)
   })
 
   it("should add packs listed from server", async () => {
@@ -110,6 +110,6 @@ describe(import.meta.file, () => {
       initial,
       serverListedPacksErr("Something went wrong"),
     )
-    expect(didShowErrorSm(output)).toBeTrue()
+    expect(didShowErrorSm(output)).toBe(true)
   })
 })

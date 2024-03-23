@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
           msgCmd.c.t === "push" &&
           msgCmd.c.route.t === "space-list",
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should play a sound when clicking go home button", async () => {
@@ -54,6 +54,6 @@ describe(import.meta.file, () => {
       output.msgCmd?.some(
         (msgCmd) => msgCmd.t === "sound" && msgCmd.c.t === "play",
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 })

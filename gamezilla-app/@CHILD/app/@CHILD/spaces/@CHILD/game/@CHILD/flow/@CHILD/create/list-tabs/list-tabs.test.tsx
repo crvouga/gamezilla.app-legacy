@@ -25,6 +25,6 @@ const userChangedListTab = (listTab: ListTab) => (model: ModelClient) => {
 describe(import.meta.file, () => {
   it("play a sound when changing list tabs", async () => {
     const output = await andThen(initial, userChangedListTab("packs"))
-    expect(didPlaySound(output)).toBeTrue()
+    expect(didPlaySound(output)).toBe(true)
   })
 })

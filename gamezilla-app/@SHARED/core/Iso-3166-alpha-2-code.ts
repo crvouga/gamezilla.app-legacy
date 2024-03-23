@@ -309,6 +309,10 @@ const toNameWithEmoji = (code: Iso3166Alpha2Code): string => {
 }
 
 const getNavigatorCountry = (): Iso3166Alpha2Code | undefined => {
+  if (typeof navigator === "undefined") {
+    return undefined
+  }
+
   const locale: unknown = navigator.language
 
   if (typeof locale !== "string") {

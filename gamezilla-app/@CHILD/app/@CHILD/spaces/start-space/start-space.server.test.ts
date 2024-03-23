@@ -42,6 +42,6 @@ describe(import.meta.file, () => {
           msg.c.t === "user-started-space" &&
           msg.c.spaceId === spaceId,
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 })

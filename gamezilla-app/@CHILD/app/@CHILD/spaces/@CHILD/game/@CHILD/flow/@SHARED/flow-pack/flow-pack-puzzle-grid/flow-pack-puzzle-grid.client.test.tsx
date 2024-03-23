@@ -120,7 +120,7 @@ describe(import.meta.file, () => {
 
     expect(
       didSendToServer(output, (msg) => msg.t === "list-puzzles-by-id"),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should have missing puzzle ids in list request", async () => {
@@ -137,7 +137,7 @@ describe(import.meta.file, () => {
           msg.t === "list-puzzles-by-id" &&
           hasSameElements(msg.puzzleIds, pack.puzzleIds),
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should record puzzles listed by server", async () => {
@@ -156,7 +156,7 @@ describe(import.meta.file, () => {
       initial(pack),
       serverListedPuzzlesByIdErr(ctx, error),
     )
-    expect(didShowErrorSm(output, error)).toBeTrue()
+    expect(didShowErrorSm(output, error)).toBe(true)
   })
 
   it("should in a loading state after requesting to list puzzles", async () => {
@@ -165,7 +165,7 @@ describe(import.meta.file, () => {
       initial(pack),
       userObversedGrid(ctx),
     )
-    expect(RequestResponse.isRequesting(output.model.request)).toBeTrue()
+    expect(RequestResponse.isRequesting(output.model.request)).toBe(true)
   })
 
   it("should in an ok state after server listed puzzles", async () => {
@@ -175,7 +175,7 @@ describe(import.meta.file, () => {
       userObversedGrid(ctx),
       serverListedPuzzlesByIdOk(ctx, [puzzle]),
     )
-    expect(RequestResponse.isOk(output.model.request)).toBeTrue()
+    expect(RequestResponse.isOk(output.model.request)).toBe(true)
   })
 
   it("should timeout request after too much time", async () => {
@@ -185,6 +185,6 @@ describe(import.meta.file, () => {
       userObversedGrid(ctx),
       elapsed(ctx, TimeSpan.fromMinutes(5)),
     )
-    expect(RequestResponse.isTimedOut(output.model.request)).toBeTrue()
+    expect(RequestResponse.isTimedOut(output.model.request)).toBe(true)
   })
 })

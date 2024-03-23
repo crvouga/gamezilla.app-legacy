@@ -18,7 +18,7 @@ describe(import.meta.file, () => {
   it("should start with no modals open", async () => {
     const ctx = createCtx()
     const output = await AppClientModule.andThen(init(ctx))
-    expect(output.model.modal === null).toBeTrue()
+    expect(output.model.modal === null).toBe(true)
   })
 
   it("should open users modal when user clicks on users button", async () => {
@@ -28,7 +28,7 @@ describe(import.meta.file, () => {
       clickedPeopleButton(ctx),
       //
     )
-    expect(output.model.modal === "users").toBeTrue()
+    expect(output.model.modal === "users").toBe(true)
   })
 
   it("should open user details modal after clicking user", async () => {
@@ -43,7 +43,7 @@ describe(import.meta.file, () => {
     expect(
       output.model.modal === "user-preview" &&
         output.model.modalPreviewUserId === someUserId,
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should close modal when the current route changes", async () => {
@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
       clickedUser(ctx, someUserId),
       changeRoute(ctx, { n: "spaces", t: "space-list" }),
     )
-    expect(output.model.modal === null).toBeTrue()
+    expect(output.model.modal === null).toBe(true)
   })
 
   it("should open user details corresponding cmd", async () => {
@@ -71,7 +71,7 @@ describe(import.meta.file, () => {
     expect(
       output.model.modal === "user-preview" &&
         output.model.modalPreviewUserId === someUserId,
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should navigate to preview users profile page when clicked", async () => {
@@ -83,7 +83,7 @@ describe(import.meta.file, () => {
       clickedUserPreviewLink(ctx),
     )
 
-    expect(didOpenProfile(output, someUserId)).toBeTrue()
+    expect(didOpenProfile(output, someUserId)).toBe(true)
   })
 
   it("should play sound when clicking preview user link", async () => {
@@ -99,7 +99,7 @@ describe(import.meta.file, () => {
       output.msgCmd?.some(
         (msgCmd) => msgCmd.t === "sound" && msgCmd.c.t === "play",
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should not navigate after clicking preview user link if preview is not open", async () => {
@@ -117,6 +117,6 @@ describe(import.meta.file, () => {
           msgCmd.c.t === "open-profile" &&
           msgCmd.c.userId === someUserId,
       ),
-    ).toBeFalse()
+    ).toBe(false)
   })
 })

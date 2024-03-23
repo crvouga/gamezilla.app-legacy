@@ -117,28 +117,28 @@ describe(import.meta.file, () => {
   it("should be loading after clicking remove puzzle button", async () => {
     const ctx = testRemovePuzzleCtx()
 
-    const output = await andThen(initial(ctx), clickedRemovePuzzleButton(ctx))
+    const output = andThen(initial(ctx), clickedRemovePuzzleButton(ctx))
 
-    expect(output.model.removePuzzleRequest.t === "loading").toBeTrue()
+    expect(output.model.removePuzzleRequest.t === "loading").toBe(true)
   })
 
   it("should send message to server after clicking remove puzzle button", async () => {
     const ctx = testRemovePuzzleCtx()
 
-    const output = await andThen(initial(ctx), clickedRemovePuzzleButton(ctx))
+    const output = andThen(initial(ctx), clickedRemovePuzzleButton(ctx))
 
     expect(
       didSendToServer(
         output,
         (msg) => msg.t === "remove-puzzle.clicked-remove-from-pack-button",
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should time out after a while after no response", async () => {
     const ctx = testRemovePuzzleCtx()
 
-    const output = await andThen(
+    const output = andThen(
       initial(ctx),
       clickedRemovePuzzleButton(ctx),
       timePassed({ ...ctx, now: Posix.add(ctx.now, TimeSpan.fromMinutes(1)) }),
@@ -146,37 +146,37 @@ describe(import.meta.file, () => {
 
     expect(
       RequestResponse.didRequestTimeout(output.model.removePuzzleRequest),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should be ok after server responds with ok", async () => {
     const ctx = testRemovePuzzleCtx()
-    const output = await andThen(
+    const output = andThen(
       initial(ctx),
       clickedRemovePuzzleButton(ctx),
       serverRemovedPuzzleOk(ctx),
     )
-    expect(RequestResponse.isOk(output.model.removePuzzleRequest)).toBeTrue()
+    expect(RequestResponse.isOk(output.model.removePuzzleRequest)).toBe(true)
   })
 
   it("should be error after server responds with error", async () => {
     const ctx = testRemovePuzzleCtx()
-    const output = await andThen(
+    const output = andThen(
       initial(ctx),
       clickedRemovePuzzleButton(ctx),
       serverRemovedPuzzleErr(ctx),
     )
-    expect(RequestResponse.isErr(output.model.removePuzzleRequest)).toBeTrue()
+    expect(RequestResponse.isErr(output.model.removePuzzleRequest)).toBe(true)
   })
 
   it("should remove puzzle from pack after server responds with ok", async () => {
     const ctx = testRemovePuzzleCtx()
-    const output = await andThen(
+    const output = andThen(
       initial(ctx),
       clickedRemovePuzzleButton(ctx),
       serverRemovedPuzzleOk(ctx),
     )
     const pack = output.model.packs[ctx.pack.id]
-    expect(pack?.puzzleIds.includes(ctx.puzzle.id)).toBeFalse()
+    expect(pack?.puzzleIds.includes(ctx.puzzle.id)).toBe(false)
   })
 })

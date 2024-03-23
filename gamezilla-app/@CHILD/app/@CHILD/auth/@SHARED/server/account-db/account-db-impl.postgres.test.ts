@@ -11,6 +11,6 @@ describe(import.meta.file, () => {
       user_role: "guest",
     }
 
-    expect(AccountRow.parse(row).t === "ok").toBeTrue()
+    expect(AccountRow.parse(row).t === "ok").toBe(true)
   })
 })

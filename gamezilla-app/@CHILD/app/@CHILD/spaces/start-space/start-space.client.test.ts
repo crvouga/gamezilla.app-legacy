@@ -20,7 +20,7 @@ describe(import.meta.file, () => {
       clickedStartSpaceButton(ctx, spaceId),
     )
 
-    expect(didShowToast(started)).toBeTrue()
+    expect(didShowToast(started)).toBe(true)
   })
 
   it("should start a space for current user after clicking start button", async () => {
@@ -46,7 +46,7 @@ describe(import.meta.file, () => {
       clickedStartSpaceButton(ctx, spaceId),
     )
 
-    expect(didPushRoute(started)).toBeTrue()
+    expect(didPushRoute(started)).toBe(true)
   })
 
   it("should play sound after starting space", async () => {
@@ -56,7 +56,7 @@ describe(import.meta.file, () => {
       clickedStartSpaceButton(ctx, SpaceId.generate()),
     )
 
-    expect(didPlaySound(started)).toBeTrue()
+    expect(didPlaySound(started)).toBe(true)
   })
 
   it("should send events to the server like user started space", async () => {
@@ -74,6 +74,6 @@ describe(import.meta.file, () => {
           msg.c.t === "user-started-space" &&
           msg.c.userId === ctx.currentUserId,
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 })

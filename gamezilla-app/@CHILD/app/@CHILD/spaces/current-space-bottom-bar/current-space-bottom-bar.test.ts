@@ -36,7 +36,7 @@ describe(import.meta.file, () => {
           msgCmd.c.route.t === "space" &&
           msgCmd.c.route.spaceId === currentUsersSpaceId,
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should play a sound when clicking current space bottom bar", async () => {
@@ -57,6 +57,6 @@ describe(import.meta.file, () => {
       output.msgCmd?.some(
         (msgCmd) => msgCmd.t === "sound" && msgCmd.c.t === "play",
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 })

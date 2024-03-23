@@ -27,7 +27,7 @@ describe(import.meta.file, () => {
       }),
     )
 
-    expect(didPushRoute(updated)).toBeTrue()
+    expect(didPushRoute(updated)).toBe(true)
   })
 
   it("should not redirect to space list after ending space if not on space route", async () => {
@@ -47,7 +47,7 @@ describe(import.meta.file, () => {
       }),
     )
 
-    expect(didPushRoute(output)).toBeFalse()
+    expect(didPushRoute(output)).toBe(false)
   })
 
   it("should play sound after ending space", async () => {
@@ -58,7 +58,7 @@ describe(import.meta.file, () => {
       clickedStartSpaceButton(ctx, spaceId),
       userClickedEndSpaceButton(ctx),
     )
-    expect(didPlaySound(updated)).toBeTrue()
+    expect(didPlaySound(updated)).toBe(true)
   })
 
   it("should end space when host logs out", async () => {
@@ -80,6 +80,6 @@ describe(import.meta.file, () => {
           spaceEvent.t === "user-ended-space" &&
           spaceEvent.userId === ctx.currentUserId,
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 })

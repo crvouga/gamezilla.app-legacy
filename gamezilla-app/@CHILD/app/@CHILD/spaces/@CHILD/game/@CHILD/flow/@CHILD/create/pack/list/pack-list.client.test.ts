@@ -18,12 +18,12 @@ describe(import.meta.file, () => {
     const pack = createFlowPack(ctx)
     const output = await andThen(initial, clickedPackItem(pack))
     const modelSync = deriveModelSync(output)
-    expect(modelSync.packBuilder?.pack.id === pack.id).toBeTrue()
+    expect(modelSync.packBuilder?.pack.id === pack.id).toBe(true)
   })
 
   it("should play sound when clicked pack list item", async () => {
     const pack = createFlowPack(ctx)
     const output = await andThen(initial, clickedPackItem(pack))
-    expect(didPlaySound(output)).toBeTrue()
+    expect(didPlaySound(output)).toBe(true)
   })
 })

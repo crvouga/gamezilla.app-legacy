@@ -24,7 +24,7 @@ describe(import.meta.file, () => {
     )
     expect(
       didSendMsgToClient(output, (msg) => msg.t === "current-user-space"),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should send back synced response when user sends sync message", async () => {
@@ -36,7 +36,7 @@ describe(import.meta.file, () => {
       clientSync(deps, client, clientsSpace),
     )
 
-    expect(didSendMsgToClient(output, (msg) => msg.t === "synced")).toBeTrue()
+    expect(didSendMsgToClient(output, (msg) => msg.t === "synced")).toBe(true)
   })
 
   it("should broadcast space events received from clients to other clients", async () => {
@@ -53,6 +53,6 @@ describe(import.meta.file, () => {
         output,
         (msg) => msg.t === "event" && msg.c.t === "user-started-space",
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 })

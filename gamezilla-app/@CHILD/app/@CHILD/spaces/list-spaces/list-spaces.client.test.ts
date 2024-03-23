@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
     expect(
       isRequesting(output.model.listSpacesRequest) &&
         output.model.listSpacesRequest.requestedAt === ctx.now,
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should send list space request to server initially", async () => {
@@ -50,7 +50,7 @@ describe(import.meta.file, () => {
       output.msgCmd?.some(
         (msgCmd) => msgCmd.t === "wire" && msgCmd.c.msg?.t === "list-spaces",
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should request spaces on space list route change", async () => {
@@ -59,7 +59,7 @@ describe(import.meta.file, () => {
       init(ctx),
       changeRouteToSpaceList(ctx),
     )
-    expect(updated.model.listSpacesRequest.t === "loading").toBeTrue()
+    expect(updated.model.listSpacesRequest.t === "loading").toBe(true)
   })
 
   it("should timeout request", async () => {
@@ -72,7 +72,7 @@ describe(import.meta.file, () => {
 
     expect(
       RequestResponse.didRequestTimeout(updated.model.listSpacesRequest),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should be ok when server responds with a list of spaces", async () => {
@@ -82,7 +82,7 @@ describe(import.meta.file, () => {
       changeRouteToSpaceList(ctx),
       serverListedSpaces(ctx),
     )
-    expect(isResponseOk(updated.model.listSpacesRequest)).toBeTrue()
+    expect(isResponseOk(updated.model.listSpacesRequest)).toBe(true)
   })
 
   it("should be ok when server responds with a list of spaces even when it timed out", async () => {
@@ -94,7 +94,7 @@ describe(import.meta.file, () => {
       serverListedSpaces(ctx),
     )
 
-    expect(isResponseOk(updated.model.listSpacesRequest)).toBeTrue()
+    expect(isResponseOk(updated.model.listSpacesRequest)).toBe(true)
   })
 
   it("should navigate to space screen after clicking a space card", async () => {
@@ -106,7 +106,7 @@ describe(import.meta.file, () => {
       clickSpaceCard(ctx, SpaceA),
     )
 
-    expect(didPushRoute(updated)).toBeTrue()
+    expect(didPushRoute(updated)).toBe(true)
   })
 
   it("should make a nav forward sound when opening a space screen", async () => {
@@ -117,7 +117,7 @@ describe(import.meta.file, () => {
       serverListedSpaces(ctx, [SpaceA]),
       clickSpaceCard(ctx, SpaceA),
     )
-    expect(didPlaySound(updated, APP_SOUND.navForwardMin)).toBeTrue()
+    expect(didPlaySound(updated, APP_SOUND.navForwardMin)).toBe(true)
   })
 
   it("should make a sound when closing room screen", async () => {
@@ -129,6 +129,6 @@ describe(import.meta.file, () => {
       clickSpaceCard(ctx, SpaceA),
       clickedGoHomeButton(ctx),
     )
-    expect(didPlaySound(updated, APP_SOUND.navBackwardMin)).toBeTrue()
+    expect(didPlaySound(updated, APP_SOUND.navBackwardMin)).toBe(true)
   })
 })

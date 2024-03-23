@@ -31,7 +31,7 @@ describe(import.meta.file, () => {
       didShowToast(output, (toast) =>
         toast.message.toLowerCase().includes("join"),
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should should toast of other user leaving space", async () => {
@@ -48,7 +48,7 @@ describe(import.meta.file, () => {
       userJoinedSpace(f.ctx, f.userA.userId, spaceId),
     )
 
-    expect(didShowToast(output)).toBeTrue()
+    expect(didShowToast(output)).toBe(true)
   })
 
   it("should join space when clicking join space button", async () => {
@@ -104,6 +104,6 @@ describe(import.meta.file, () => {
       SpaceA,
     )
 
-    expect(didShowErrorSm(joined)).toBeTrue()
+    expect(didShowErrorSm(joined)).toBe(true)
   })
 })

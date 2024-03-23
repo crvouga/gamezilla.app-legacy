@@ -68,7 +68,7 @@ describe(import.meta.file, () => {
     expect(
       isRequesting(output.model.guestRequest) &&
         output.model.guestRequest.requestedAt === ctx.now,
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should request to continue as guest when button is clicked", async () => {
@@ -82,7 +82,7 @@ describe(import.meta.file, () => {
         output,
         (msg) => msg.t === "guest.clicked-continue-as-guest-button",
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should resolve request as ok when resulted in ok", async () => {
@@ -91,7 +91,7 @@ describe(import.meta.file, () => {
       clickedContinueAsGuestButton,
       continueAsGuestResultedOk(UserId.generate()),
     )
-    expect(isResponseOk(output.model.guestRequest)).toBeTrue()
+    expect(isResponseOk(output.model.guestRequest)).toBe(true)
   })
 
   it("should resolve request as err when resulted in err", async () => {
@@ -100,7 +100,7 @@ describe(import.meta.file, () => {
       clickedContinueAsGuestButton,
       continueAsGuestResultedErr(),
     )
-    expect(isResponseErr(output.model.guestRequest)).toBeTrue()
+    expect(isResponseErr(output.model.guestRequest)).toBe(true)
   })
 
   it("should play sound after continuing as guest", async () => {
@@ -108,6 +108,6 @@ describe(import.meta.file, () => {
       AuthClient.init({ ctx, stored: {} }),
       clickedContinueAsGuestButton,
     )
-    expect(didPlaySound(output)).toBeTrue()
+    expect(didPlaySound(output)).toBe(true)
   })
 })

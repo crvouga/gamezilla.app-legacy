@@ -25,7 +25,7 @@ describe(import.meta.file, () => {
     expect(
       modelSync.opened.t === "puzzle-builder" &&
         modelSync.puzzleBuilder?.puzzle.id === puzzle.id,
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should exit puzzle builder after clicking exit button", async () => {
@@ -43,7 +43,7 @@ describe(import.meta.file, () => {
 
     const modelSync = deriveModelSync(output)
 
-    expect(modelSync.opened.t === "list").toBeTrue()
+    expect(modelSync.opened.t === "list").toBe(true)
   })
 
   it("should open save prompt when exiting with unsaved changes", async () => {
@@ -70,6 +70,6 @@ describe(import.meta.file, () => {
     expect(
       modelSync.opened.t === "puzzle-builder" &&
         output.model.puzzleBuilderOpened === "unsaved-changes",
-    ).toBeTrue()
+    ).toBe(true)
   })
 })

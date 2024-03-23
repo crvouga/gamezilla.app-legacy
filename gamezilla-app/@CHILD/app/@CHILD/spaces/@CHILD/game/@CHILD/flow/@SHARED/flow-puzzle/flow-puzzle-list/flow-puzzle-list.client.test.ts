@@ -80,7 +80,7 @@ describe(import.meta.file, () => {
   it("should it be requesting when the user observes the end of the list", async () => {
     const ctx = testSpaceClientCtx()
     const output = await andThen(initial, userObservedEndOfList(ctx))
-    expect(isRequesting(output.model.request)).toBeTrue()
+    expect(isRequesting(output.model.request)).toBe(true)
   })
 
   it("should send a list puzzles message to server when the user observes the end of the list", async () => {
@@ -91,7 +91,7 @@ describe(import.meta.file, () => {
         output,
         (msg) => msg.t === "flow-puzzle-list.list-puzzles",
       ),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should record puzzles recieved from server", async () => {
@@ -112,14 +112,14 @@ describe(import.meta.file, () => {
 
     const output = await andThen(initial, serverListedPuzzlesOk(ctx, [puzzle]))
 
-    expect(Object.values(output.model.puzzles)).not.toBeEmpty()
+    expect(Object.values(output.model.puzzles)).not.toEqual([])
   })
 
   it("should show error when recieving list error fro server", async () => {
     const ctx = testFlowClientCtx()
     const error = "Something went wrong"
     const output = await andThen(initial, serverListedPuzzlesErr(ctx, error))
-    expect(didShowErrorSm(output)).toBeTrue()
+    expect(didShowErrorSm(output)).toBe(true)
   })
 
   it("should show error after no server response", async () => {
@@ -129,6 +129,6 @@ describe(import.meta.file, () => {
       userObservedEndOfList(ctx),
       elapsed(TimeSpan.fromMinutes(5)),
     )
-    expect(RequestResponse.didRequestTimeout(output.model.request)).toBeTrue()
+    expect(RequestResponse.didRequestTimeout(output.model.request)).toBe(true)
   })
 })

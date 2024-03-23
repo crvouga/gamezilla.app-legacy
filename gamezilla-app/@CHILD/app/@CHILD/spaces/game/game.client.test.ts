@@ -25,7 +25,7 @@ describe(import.meta.file, () => {
       { model: started.model },
       clickedGameTile(ctx, "connect-four"),
     )
-    expect(didPlaySound(output)).toBeTrue()
+    expect(didPlaySound(output)).toBe(true)
   })
 
   it("should be able to start game", async () => {

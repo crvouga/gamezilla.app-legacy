@@ -60,7 +60,7 @@ describe(import.meta.file, () => {
     expect(
       modelSync.packBuilder?.screen.t === "screen-puzzle" &&
         modelSync.packBuilder.screen.puzzleIndex === 0,
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should open puzzle picker when user clicks add puzzle button", () => {
@@ -71,7 +71,7 @@ describe(import.meta.file, () => {
       clickedOpenPuzzlePickerButton(),
     )
     const modelSync = deriveModelSync(output)
-    expect(modelSync.packBuilder?.screen.t === "add-puzzle").toBeTrue()
+    expect(modelSync.packBuilder?.screen.t === "add-puzzle").toBe(true)
   })
 
   it("should close puzzle picker when user clicks closes", () => {
@@ -83,7 +83,7 @@ describe(import.meta.file, () => {
       closedPuzzlePickerDrawer,
     )
     const modelSync = deriveModelSync(output)
-    expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBeTrue()
+    expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true)
   })
 
   it("should add puzzle to the pack after clicking a puzzle in the picker", () => {
@@ -98,7 +98,7 @@ describe(import.meta.file, () => {
     expect(
       modelSync.packBuilder &&
         FlowPack.includes(modelSync.packBuilder.pack, puzzle.id),
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should close puzzle picker after adding a puzzle to the pack", () => {
@@ -111,7 +111,7 @@ describe(import.meta.file, () => {
       clickedPuzzlePickerItem(puzzle),
     )
     const modelSync = deriveModelSync(output)
-    expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBeTrue()
+    expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true)
   })
 
   it("should go back to grid after exiting puzzle", () => {
@@ -126,7 +126,7 @@ describe(import.meta.file, () => {
       clickedExitPuzzleButton(),
     )
     const modelSync = deriveModelSync(output)
-    expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBeTrue()
+    expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true)
   })
 
   it('should open the more drawer after clicking "more" button', () => {
@@ -144,7 +144,7 @@ describe(import.meta.file, () => {
     expect(
       modelSync.packBuilder?.screen.t === "screen-puzzle" &&
         modelSync.packBuilder?.screen.opened === "more",
-    ).toBeTrue()
+    ).toBe(true)
   })
 
   it("should close the more drawer", () => {
@@ -163,6 +163,6 @@ describe(import.meta.file, () => {
     expect(
       modelSync.packBuilder?.screen.t === "screen-puzzle" &&
         modelSync.packBuilder?.screen.opened === null,
-    ).toBeTrue()
+    ).toBe(true)
   })
 })
