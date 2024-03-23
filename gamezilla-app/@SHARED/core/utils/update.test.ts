@@ -1,8 +1,8 @@
 import { expect, describe, it } from "bun:test"
 import { batchMsgs } from "./update"
 
-describe("batchMsgs", () => {
-  it("batchMsgs", () => {
+describe("batchMsgs", async () => {
+  it("batchMsgs", async () => {
     const expected = [{ t: "foo" }, { t: "bar" }, { t: "baz" }]
     const input = [
       null,

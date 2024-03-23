@@ -4,12 +4,12 @@ import { MinHeap } from "./min-heap"
 const comparator = (a: number, b: number) => a - b
 
 describe(import.meta.file, () => {
-  test("initialization", () => {
+  test("initialization", async () => {
     const heap = new MinHeap(comparator)
     expect(heap.isEmpty()).toBe(true)
   })
 
-  test("insertion", () => {
+  test("insertion", async () => {
     const heap = new MinHeap(comparator)
     heap.insert(3)
     heap.insert(1)
@@ -17,7 +17,7 @@ describe(import.meta.file, () => {
     expect(heap.peek()).toBe(1)
   })
 
-  test("extractMin", () => {
+  test("extractMin", async () => {
     const heap = new MinHeap(comparator)
     heap.insert(3)
     heap.insert(1)
@@ -28,7 +28,7 @@ describe(import.meta.file, () => {
     expect(heap.peek()).toBe(3)
   })
 
-  test("peek", () => {
+  test("peek", async () => {
     const heap = new MinHeap(comparator)
     heap.insert(2)
     heap.insert(1)
@@ -37,7 +37,7 @@ describe(import.meta.file, () => {
     expect(heap.peek()).toBe(2)
   })
 
-  test("isEmpty", () => {
+  test("isEmpty", async () => {
     const heap = new MinHeap(comparator)
     expect(heap.isEmpty()).toBe(true)
     heap.insert(1)

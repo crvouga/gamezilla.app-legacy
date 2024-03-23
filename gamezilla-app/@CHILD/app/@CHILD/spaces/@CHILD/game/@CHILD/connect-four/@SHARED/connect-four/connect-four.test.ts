@@ -87,27 +87,27 @@ const expectWinner = (columns: Columns) => {
 }
 
 describe(import.meta.file, () => {
-  test("detects horizontal win", () => {
+  test("detects horizontal win", async () => {
     expectWinner(horizontal)
     expect(findWins(horizontal).length).toBe(1)
   })
 
-  test("detects vertical win", () => {
+  test("detects vertical win", async () => {
     expectWinner(vertical)
     expect(findWins(vertical).length).toBe(1)
   })
 
-  test("detects right diagonal win", () => {
+  test("detects right diagonal win", async () => {
     expectWinner(rightDiagonal)
     expect(findWins(rightDiagonal).length).toBe(1)
   })
 
-  test("detects left diagonal win", () => {
+  test("detects left diagonal win", async () => {
     expectWinner(leftDiagonal)
     expect(findWins(leftDiagonal).length).toBe(1)
   })
 
-  test("detects left and right diagonal win", () => {
+  test("detects left and right diagonal win", async () => {
     expectWinner(leftAndRightDiagonal)
 
     const wins = findWins(leftAndRightDiagonal)
@@ -115,7 +115,7 @@ describe(import.meta.file, () => {
     expect(wins.length).toBe(2)
   })
 
-  test("detects wins longer than 4", () => {
+  test("detects wins longer than 4", async () => {
     expectWinner(horizontalLongest)
 
     const wins = findWins(horizontalLongest)
@@ -131,12 +131,12 @@ describe(import.meta.file, () => {
     // }
   })
 
-  test("detects draw", () => {
+  test("detects draw", async () => {
     const status = toStatus(tie)
     expect(status.type).toBe("Tie")
   })
 
-  test("detects left diagonal win", () => {
+  test("detects left diagonal win", async () => {
     const columns: Columns = [
       [],
       [p2, p1, p2, p1],
@@ -152,7 +152,7 @@ describe(import.meta.file, () => {
     expect(wins.length).toBe(1)
   })
 
-  test("detects diagonal", () => {
+  test("detects diagonal", async () => {
     const columns: Columns = [
       [],
       [p1],
@@ -168,7 +168,7 @@ describe(import.meta.file, () => {
     expect(wins.length).toBe(1)
   })
 
-  test("detects right most vertical", () => {
+  test("detects right most vertical", async () => {
     const columns: Columns = [
       [p2, p2, p2],
       [p1],
@@ -184,7 +184,7 @@ describe(import.meta.file, () => {
     expect(wins.length).toBe(1)
   })
 
-  test("remove win subsets", () => {
+  test("remove win subsets", async () => {
     const columns: Columns = [
       [p1],
       [p1],

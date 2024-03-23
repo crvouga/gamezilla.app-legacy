@@ -28,7 +28,7 @@ export type Disc = {
   id: string
 }
 
-export function toDiscs(columns: Columns): Disc[] {
+export const toDiscs = (columns: Columns): Disc[] => {
   const discs: Disc[] = []
   for (let x = 0; x < columns.length; x++) {
     for (let y = 0; y < (columns[x]?.length ?? 0); y++) {

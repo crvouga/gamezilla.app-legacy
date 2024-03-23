@@ -207,7 +207,7 @@ export const update = async (input: {
   }
 }
 
-function logMsg({
+const logMsg = ({
   msg,
   msgEvt,
   msgCmd,
@@ -217,7 +217,7 @@ function logMsg({
   msg?: MsgServer
   msgEvt?: ServerEvent
   msgCmd?: ServerCmd<MsgToClient>
-}) {
+}) => {
   const prefix = msg ? "[msg]" : msgEvt ? "[evt]" : "[cmd]"
 
   const obj = { ...msg, ...msgEvt, ...msgCmd }

@@ -17,7 +17,7 @@ export const initial = {
   model: initClient,
 }
 
-export function testFlowClientCtx(): FlowClientCtx {
+export const testFlowClientCtx = (): FlowClientCtx => {
   return {
     ...testSpaceClientCtx(),
     onQuit() {},

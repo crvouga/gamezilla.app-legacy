@@ -26,7 +26,7 @@ const toBoard = (matrix: Matrix): Board => {
 }
 
 describe(import.meta.file, () => {
-  it("should detect one horizontal win", () => {
+  it("should detect one horizontal win", async () => {
     const matrix: Matrix = [
       [w, w, w, w, w],
       [b, b, b, b, _],
@@ -39,7 +39,7 @@ describe(import.meta.file, () => {
     expect(wins.length).toBe(1)
   })
 
-  it("should detect one vertical win", () => {
+  it("should detect one vertical win", async () => {
     const matrix: Matrix = [
       [w, b, _, _, _],
       [w, b, _, _, _],
@@ -52,7 +52,7 @@ describe(import.meta.file, () => {
     expect(wins.length).toBe(1)
   })
 
-  it("should detect one left diagonal win", () => {
+  it("should detect one left diagonal win", async () => {
     const matrix: Matrix = [
       [w, _, _, _, _],
       [b, w, _, _, _],
@@ -65,7 +65,7 @@ describe(import.meta.file, () => {
     expect(wins.length).toBe(1)
   })
 
-  it("should detect one right diagonal win", () => {
+  it("should detect one right diagonal win", async () => {
     const matrix: Matrix = [
       [_, _, _, _, w],
       [_, _, _, w, b],

@@ -293,7 +293,9 @@ const subscriptions: Module["subscriptions"] = (): Sub<MsgClient> => {
 //
 //
 
-export function toGameOver(columns: ConnectFour.Columns): VsBotGame.GameOver {
+export const toGameOver = (
+  columns: ConnectFour.Columns,
+): VsBotGame.GameOver => {
   const status = ConnectFour.toStatus(columns)
   switch (status.type) {
     case "Playing": {
@@ -489,7 +491,7 @@ const View: Module["View"] = ({ model, ctx, modelSync, dispatch }) => {
   )
 }
 
-function toVsBotStatus(status: ConnectFour.Status): VsBotGame.Status {
+const toVsBotStatus = (status: ConnectFour.Status): VsBotGame.Status => {
   switch (status.type) {
     case "Playing": {
       return { t: "playing", turn: status.turn }

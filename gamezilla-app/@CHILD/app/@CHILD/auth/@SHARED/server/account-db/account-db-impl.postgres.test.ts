@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test"
 import { AccountRow } from "./account-db-impl.postgres"
 
 describe(import.meta.file, () => {
-  it("should parse correctly", () => {
+  it("should parse correctly", async () => {
     const row: AccountRow = {
       created_at: "2021-01-01T00:00:00Z",
       email_address: null,

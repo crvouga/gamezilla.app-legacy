@@ -5,13 +5,13 @@ import {
   isColumnIndex,
 } from "../../../connect-four"
 
-export function initColumns({
+export const initColumns = ({
   parentNode,
   onClick,
 }: {
   onClick: (columnIndex: ColumnIndex) => void
   parentNode: SVGGElement
-}) {
+}) => {
   const cleanUps: (() => void)[] = []
   for (let columnIndex = 0; columnIndex < COLUMN_COUNT; columnIndex++) {
     const column = document.createElementNS(

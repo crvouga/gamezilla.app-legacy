@@ -151,7 +151,7 @@ export const dropDisc = (
   return ok(columnsNew)
 }
 
-export function isGameOver(columns: Columns): boolean {
+export const isGameOver = (columns: Columns): boolean => {
   return toStatus(columns).type !== "Playing"
 }
 

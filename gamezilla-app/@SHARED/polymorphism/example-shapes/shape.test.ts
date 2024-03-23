@@ -16,19 +16,19 @@ const shapes2D = [
 ]
 
 describe(import.meta.file, () => {
-  it("area", () => {
+  it("area", async () => {
     for (const shape of shapes2D) {
       expect(typeof area(shape)).toBe("number")
     }
   })
 
-  it("perimeter", () => {
+  it("perimeter", async () => {
     for (const shape of shapes2D) {
       expect(typeof perimeter(shape)).toBe("number")
     }
   })
 
-  it("volume", () => {
+  it("volume", async () => {
     for (const shape of shapes3D) {
       expect(typeof volume(shape)).toBe("number")
     }

@@ -2,11 +2,11 @@ import { easeAttrs } from "gamezilla-app/@SHARED/core"
 import { COLUMN_COUNT, Columns, MAX_COLUMN_HEIGHT } from "../../../connect-four"
 import { SvgIds } from "./shared"
 
-function toDiscId(input: { x: number; y: number }) {
+const toDiscId = (input: { x: number; y: number }) => {
   return `disc-${input.x}-${input.y}`
 }
 
-function createDiscNode({
+const createDiscNode = ({
   x,
   y,
   player,
@@ -16,7 +16,7 @@ function createDiscNode({
   x: number
   y: number
   player: "player-one" | "player-two"
-}) {
+}) => {
   const circle = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "circle",
@@ -35,7 +35,7 @@ function createDiscNode({
   return circle
 }
 
-export async function exitDisc({
+export const exitDisc = async ({
   node,
   x,
   y,
@@ -43,7 +43,7 @@ export async function exitDisc({
   node: SVGCircleElement
   x: number
   y: number
-}) {
+}) => {
   if (node.dataset["exiting"] === "true") {
     return
   }
@@ -63,7 +63,7 @@ export async function exitDisc({
   node.remove()
 }
 
-export async function enterDisc({
+export const enterDisc = async ({
   player,
   x,
   y,
@@ -75,7 +75,7 @@ export async function enterDisc({
   player: "player-one" | "player-two"
   x: number
   y: number
-}) {
+}) => {
   const node = createDiscNode({ x, y, player, ids })
   parentNode.appendChild(node)
 
@@ -89,7 +89,7 @@ export async function enterDisc({
   })
 }
 
-export function initDiscs({
+export const initDiscs = ({
   columns,
   parentNode,
   ids,
@@ -97,7 +97,7 @@ export function initDiscs({
   columns: Columns
   parentNode: SVGGElement
   ids: SvgIds
-}) {
+}) => {
   parentNode.innerHTML = ""
 
   for (let x = 0; x < columns.length; x++) {

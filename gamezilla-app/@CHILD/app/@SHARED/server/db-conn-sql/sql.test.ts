@@ -2,19 +2,19 @@ import { describe, expect, it } from "bun:test"
 import { toSql } from "./sql"
 
 describe(import.meta.file, () => {
-  it("should replace named parameter with number", () => {
+  it("should replace named parameter with number", async () => {
     expect(toSql("SELECT * FROM users WHERE id = :id", { id: 1 })).toBe(
       "SELECT * FROM users WHERE id = 1",
     )
   })
 
-  it("should replace named parameter with string", () => {
+  it("should replace named parameter with string", async () => {
     expect(toSql("SELECT * FROM users WHERE id = :id", { id: "1" })).toBe(
       "SELECT * FROM users WHERE id = '1'",
     )
   })
 
-  it("should handle SQL injection attempt", () => {
+  it("should handle SQL injection attempt", async () => {
     expect(
       toSql("SELECT * FROM users WHERE id = :id", {
         id: "1' OR '1' = '1",
@@ -22,7 +22,7 @@ describe(import.meta.file, () => {
     ).toBe("SELECT * FROM users WHERE id = '1'' OR ''1'' = ''1'")
   })
 
-  it("should prevent SQL injection", () => {
+  it("should prevent SQL injection", async () => {
     expect(
       toSql("SELECT * FROM users WHERE id = :id", {
         id: "DROP DATABASE;",
@@ -30,7 +30,7 @@ describe(import.meta.file, () => {
     ).toBe("SELECT * FROM users WHERE id = 'DROP DATABASE;'")
   })
 
-  it("should handle multiple parameters", () => {
+  it("should handle multiple parameters", async () => {
     expect(
       toSql("SELECT * FROM users WHERE id = :id AND name = :name", {
         id: 2,
@@ -39,41 +39,41 @@ describe(import.meta.file, () => {
     ).toBe("SELECT * FROM users WHERE id = 2 AND name = 'John'")
   })
 
-  it("should handle parameters not in query", () => {
+  it("should handle parameters not in query", async () => {
     expect(toSql("SELECT * FROM users", { id: 3 })).toBe("SELECT * FROM users")
   })
 
-  it("should handle no parameters", () => {
+  it("should handle no parameters", async () => {
     expect(toSql("SELECT * FROM users WHERE id = 4", {})).toBe(
       "SELECT * FROM users WHERE id = 4",
     )
   })
 
-  it("should handle missing parameter", () => {
+  it("should handle missing parameter", async () => {
     expect(toSql("SELECT * FROM users WHERE id = :id", { name: "Jane" })).toBe(
       "SELECT * FROM users WHERE id = :id",
     )
   })
 
-  it("should handle non-string parameter values", () => {
+  it("should handle non-string parameter values", async () => {
     expect(toSql("SELECT * FROM users WHERE age > :age", { age: 30 })).toBe(
       "SELECT * FROM users WHERE age > 30",
     )
   })
 
-  it("should handle non-string parameter names", () => {
+  it("should handle non-string parameter names", async () => {
     expect(toSql("SELECT * FROM users WHERE age > :age", { age: 30 })).toBe(
       "SELECT * FROM users WHERE age > 30",
     )
   })
 
-  it("should handle parameter names with underscores", () => {
+  it("should handle parameter names with underscores", async () => {
     expect(toSql("SELECT * FROM users WHERE age > :age", { age: 30 })).toBe(
       "SELECT * FROM users WHERE age > 30",
     )
   })
 
-  it("should handle parameter with overlapping names", () => {
+  it("should handle parameter with overlapping names", async () => {
     expect(
       toSql(
         "SELECT * FROM users WHERE phone_number = :phone_number AND phone_number_country = :phone_number_country",
@@ -84,7 +84,7 @@ describe(import.meta.file, () => {
     )
   })
 
-  it("should handle json columns", () => {
+  it("should handle json columns", async () => {
     expect(
       toSql("SELECT * FROM users WHERE meta->>'email' = :email", {
         email: "it@email.com",
@@ -92,7 +92,7 @@ describe(import.meta.file, () => {
     ).toBe("SELECT * FROM users WHERE meta->>'email' = 'it@email.com'")
   })
 
-  it("should handle inserting JSON column correctly", () => {
+  it("should handle inserting JSON column correctly", async () => {
     const jsonData = {
       key: "value",
       nested: {

@@ -474,7 +474,7 @@ export const isColor = (color: unknown): color is Color => {
   return typeof color === "string" && ["w", "b"].includes(color)
 }
 
-export function isPiece(piece: unknown): piece is Piece {
+export const isPiece = (piece: unknown): piece is Piece => {
   return Boolean(
     typeof piece === "string" &&
       piece[0] &&
@@ -496,17 +496,17 @@ for (const pieceType in pieceTypes) {
 
 export type PieceSymbol = "p" | "b" | "n" | "r" | "q" | "k"
 
-function isPieceType(char: string): char is PieceType {
+const isPieceType = (char: string): char is PieceType => {
   return ["P", "B", "N", "R", "Q", "K"].includes(char)
 }
-export function fenToPieces(
+export const fenToPieces = (
   fen: string,
   orientation: "w" | "b",
 ): {
   x: number
   y: number
   piece: Piece
-}[] {
+}[] => {
   const parts = fen.split(" ")
   const rowsString = parts[0]
   if (!rowsString) return []

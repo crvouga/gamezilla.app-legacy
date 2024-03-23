@@ -236,7 +236,7 @@ export const init = (input: {
 
 const SHOULD_LOG = false
 
-function log(...msg: unknown[]) {
+const log = (...msg: unknown[]) => {
   if (SHOULD_LOG) {
     console.log(...msg)
   }

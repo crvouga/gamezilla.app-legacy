@@ -200,10 +200,12 @@ export const mergeWithServer = ({
   }
 }
 
-function watch(model: ModelClient): {
+const watch = (
+  model: ModelClient,
+): {
   model: ModelClient
   eff?: Eff<MsgClient>
-} {
+} => {
   return { model }
 }
 

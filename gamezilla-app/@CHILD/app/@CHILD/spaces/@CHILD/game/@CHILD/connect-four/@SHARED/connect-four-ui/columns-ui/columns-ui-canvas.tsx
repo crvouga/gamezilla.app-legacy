@@ -144,6 +144,6 @@ const paint = ({
   context.fill("evenodd")
 }
 
-function isCanvas(i: unknown): i is HTMLCanvasElement {
+const isCanvas = (i: unknown): i is HTMLCanvasElement => {
   return i instanceof HTMLCanvasElement
 }

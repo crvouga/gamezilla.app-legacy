@@ -24,7 +24,7 @@ export type ProfileCore = {
   avatarStyle: ProfileAvatarStyle | null
 }
 
-export function profileCoreToProfile(profile: ProfileCore): Profile {
+export const profileCoreToProfile = (profile: ProfileCore): Profile => {
   return {
     avatarUrl: ProfileAvatar.toUrl({
       seed: profile.avatarSeed ?? profile.username,

@@ -21,7 +21,7 @@ export type ModelServer = {
   botStartedFindingMoveAt: Posix | null
 }
 
-export function isBotMoving(now: Posix, model: ModelServer) {
+export const isBotMoving = (now: Posix, model: ModelServer) => {
   if (!model.botStartedFindingMoveAt) {
     return false
   }

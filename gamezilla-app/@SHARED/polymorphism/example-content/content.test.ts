@@ -25,7 +25,7 @@ const feed = [
 ]
 
 describe(import.meta.file, () => {
-  it("should render html string", () => {
+  it("should render html string", async () => {
     feed.forEach((content) => {
       expect(typeof renderHTML(content)).toBe("string")
     })

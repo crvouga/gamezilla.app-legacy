@@ -12,6 +12,95 @@ import { ViewColumnsCanvas } from "./columns-ui-canvas"
 import { ViewColumnsSvg } from "./columns-ui-svg"
 import { Disc, Model as SharedModel, ViewColumnsProps, toDiscs } from "./shared"
 
+const discEnter = async (disc: Disc) => {
+  const { y, id } = disc
+
+  const node = await Transition.waitForElementById(id, rootId)
+
+  if (!node) {
+    return
+  }
+  await easeAttrs(node, {
+    cy: {
+      from: MAX_COLUMN_HEIGHT + 1,
+      to: y,
+      duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
+      easing: { type: "ease-out-quint" },
+    },
+  })
+}
+
+const discExit = async (disc: Disc) => {
+  const { x, y, id } = disc
+
+  const node = await Transition.waitForElementById(id, rootId)
+
+  if (!node) {
+    return
+  }
+
+  await easeAttrs(node, {
+    cy: {
+      from: y,
+      to: y - MAX_COLUMN_HEIGHT,
+      duration: 750,
+      easing: { type: "ease-in-back" },
+      delay: (x / COLUMN_COUNT) * 500,
+    },
+  })
+}
+
+const draw = async (win: Win) => {
+  const id = winToId(win)
+
+  const node = await Transition.waitForElementById(id, rootId)
+
+  if (!(node instanceof SVGRectElement)) {
+    return
+  }
+
+  const length = node.getTotalLength()
+  node.style.strokeDasharray = length.toString()
+  node.style.strokeDashoffset = length.toString()
+  node.style.stroke = "#fff"
+
+  const animation = node.animate(
+    [{ strokeDashoffset: length }, { strokeDashoffset: 0 }],
+    {
+      duration: 500,
+      easing: "ease-in-out",
+      fill: "both",
+    },
+  )
+
+  await animation.finished
+}
+
+const undraw = async (win: Win) => {
+  const id = winToId(win)
+
+  const node = await Transition.waitForElementById(id, rootId)
+
+  if (!(node instanceof SVGRectElement)) {
+    return
+  }
+
+  const length = node.getTotalLength()
+  node.style.strokeDasharray = length.toString()
+  node.style.strokeDashoffset = "0"
+
+  const animation = node.animate(
+    [{ strokeDashoffset: 0 }, { strokeDashoffset: length }],
+    {
+      duration: 500,
+      easing: "ease-in-out",
+      fill: "both",
+    },
+  )
+
+  await animation.finished
+}
+
 export type Model = SharedModel
 
 //
@@ -41,7 +130,7 @@ const rootId = "connect-four-columns-svg"
 //
 //
 
-export function init(columns?: Columns): Model {
+export const init = (columns?: Columns): Model => {
   return {
     discs: Transition.init(discsConfig.toId, columns ? toDiscs(columns) : []),
     wins: Transition.init(winsConfig.toId, columns ? findWins(columns) : []),
@@ -60,7 +149,7 @@ export type Msg =
   | { t: "discs"; c: Transition.Msg }
   | { t: "wins"; c: Transition.Msg }
 
-export function watch(model: Model, columns?: Columns) {
+export const watch = (model: Model, columns?: Columns) => {
   const discs = Transition.watch<Disc>(
     discsConfig,
     model.discs,
@@ -83,7 +172,7 @@ export function watch(model: Model, columns?: Columns) {
   }
 }
 
-export function update(model: Model, msg: Msg) {
+export const update = (model: Model, msg: Msg) => {
   const discs = Transition.update<Disc>(
     model.discs,
     msg.t === "discs" ? msg.c : undefined,
@@ -106,12 +195,12 @@ export function update(model: Model, msg: Msg) {
 //
 //
 
-export function View({
+export const View = ({
   implementation = "svg",
   ...props
 }: ViewColumnsProps & {
   implementation?: "svg" | "canvas"
-}) {
+}) => {
   switch (implementation) {
     case "canvas": {
       return <ViewColumnsCanvas {...props} />
@@ -131,92 +220,3 @@ export function View({
 //
 //
 //
-
-async function discEnter(disc: Disc) {
-  const { y, id } = disc
-
-  const node = await Transition.waitForElementById(id, rootId)
-
-  if (!node) {
-    return
-  }
-  await easeAttrs(node, {
-    cy: {
-      from: MAX_COLUMN_HEIGHT + 1,
-      to: y,
-      duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-      easing: { type: "ease-out-quint" },
-    },
-  })
-}
-
-async function discExit(disc: Disc) {
-  const { x, y, id } = disc
-
-  const node = await Transition.waitForElementById(id, rootId)
-
-  if (!node) {
-    return
-  }
-
-  await easeAttrs(node, {
-    cy: {
-      from: y,
-      to: y - MAX_COLUMN_HEIGHT,
-      duration: 750,
-      easing: { type: "ease-in-back" },
-      delay: (x / COLUMN_COUNT) * 500,
-    },
-  })
-}
-
-async function draw(win: Win) {
-  const id = winToId(win)
-
-  const node = await Transition.waitForElementById(id, rootId)
-
-  if (!(node instanceof SVGRectElement)) {
-    return
-  }
-
-  const length = node.getTotalLength()
-  node.style.strokeDasharray = length.toString()
-  node.style.strokeDashoffset = length.toString()
-  node.style.stroke = "#fff"
-
-  const animation = node.animate(
-    [{ strokeDashoffset: length }, { strokeDashoffset: 0 }],
-    {
-      duration: 500,
-      easing: "ease-in-out",
-      fill: "both",
-    },
-  )
-
-  await animation.finished
-}
-
-async function undraw(win: Win) {
-  const id = winToId(win)
-
-  const node = await Transition.waitForElementById(id, rootId)
-
-  if (!(node instanceof SVGRectElement)) {
-    return
-  }
-
-  const length = node.getTotalLength()
-  node.style.strokeDasharray = length.toString()
-  node.style.strokeDashoffset = "0"
-
-  const animation = node.animate(
-    [{ strokeDashoffset: 0 }, { strokeDashoffset: length }],
-    {
-      duration: 500,
-      easing: "ease-in-out",
-      fill: "both",
-    },
-  )
-
-  await animation.finished
-}
