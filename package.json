@@ -28,7 +28,7 @@
     "gen-guard": "bun gamezilla-app/@SHARED/guards/guards-gen.ts",
     "cg": "bun x concurrently \"bun gen-l18n\" \"bun gen-routes\"",
     "cg:watch": "bun --watch cg",
-    "check": "bun x concurrently \"bun tc\" \"bun cir-deps\""
+    "check": "bun cir-deps && bun x tsc"
   },
   "dependencies": {
     "chess.js": "^1.0.0-beta.6",
