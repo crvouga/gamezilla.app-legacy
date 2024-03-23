@@ -2,14 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  touch-action: manipulation;
-}
-
-.transform-origin-center {
-  transform-origin: center;
-}
-
 /*
 
 Remove arrows from number input
@@ -68,4 +60,5 @@ Scrollbar
   scrollbar-color: #212121 #000;
   scrollbar-width: none;
   scrollbar-gutter: stable both-edges;
+  touch-action: manipulation;
 }
