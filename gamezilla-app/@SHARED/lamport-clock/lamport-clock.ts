@@ -1,10 +1,13 @@
 // https://en.wikipedia.org/wiki/Lamport_timestamp
 
+import { p } from "../core/parser"
 import { LamportTimestamp } from "./lamport-timestamp"
 
-export type LamportClock = {
-  _currentTime: LamportTimestamp
-}
+const parser = p.obj({
+  _currentTime: LamportTimestamp,
+})
+
+export type LamportClock = p.Infer<typeof parser>
 
 const init: LamportClock = {
   _currentTime: LamportTimestamp.fromNumber(0),
@@ -40,6 +43,7 @@ const is = (_x: unknown): _x is LamportClock => {
 }
 
 export const LamportClock = {
+  ...parser,
   init,
   is,
   increment,

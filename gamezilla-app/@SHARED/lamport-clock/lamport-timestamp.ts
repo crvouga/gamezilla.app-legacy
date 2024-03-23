@@ -1,7 +1,11 @@
-export type LamportTimestamp = {
-  _type: "LamportTimestamp"
-  _value: number
-}
+import { p } from "../core/parser"
+
+const parser = p.obj({
+  _type: p.l("LamportTimestamp"),
+  _value: p.num,
+})
+
+export type LamportTimestamp = p.Infer<typeof parser>
 
 const fromNumber = (value: number): LamportTimestamp => {
   return {
@@ -61,6 +65,7 @@ const gt = (
 }
 
 export const LamportTimestamp = {
+  ...parser,
   fromNumber,
   toNumber,
   max,

@@ -9,6 +9,7 @@ import { EventId, WithEventId } from "../@SHARED/event"
 import * as SpaceState from "./space-state"
 import * as Space from "./space"
 import { SpaceEvent } from "./space-event"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
 //
 //
@@ -17,10 +18,11 @@ import { SpaceEvent } from "./space-event"
 //
 //
 
-export type SpaceError = {
-  t: "user-already-in-a-space"
-  userId: UserId
-}
+export const SpaceError = p.obj({
+  t: p.l("user-already-in-a-space"),
+  userId: UserId,
+})
+export type SpaceError = p.Infer<typeof SpaceError>
 
 export type Model = {
   spaces: {
