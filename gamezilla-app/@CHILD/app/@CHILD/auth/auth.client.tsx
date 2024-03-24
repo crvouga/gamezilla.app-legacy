@@ -93,6 +93,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
             n: "auth-login",
             t: "login-sms-request",
           }),
+          playSound(APP_SOUND.navForwardMin),
         ],
       }
     }
