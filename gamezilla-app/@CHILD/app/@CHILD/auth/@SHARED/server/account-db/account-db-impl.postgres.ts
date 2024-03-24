@@ -14,38 +14,23 @@ import { p } from "gamezilla-app/@SHARED/core/parser"
 import { IAccountDb } from "./account-db"
 
 export const AccountRow = p.obj({
-  user_id: p.str,
-  email_address: p.maybe(p.str),
+  user_id: UserId,
+  email_address: p.maybe(EmailAddress),
   phone_number: p.maybe(p.str),
   created_at: p.str,
-  user_role: p.custom(UserRole.is, "Invalid user role"),
+  user_role: UserRole,
 })
 
 export type AccountRow = p.Infer<typeof AccountRow>
 
 const rowToAccount = (row: AccountRow): Result<string, Account> => {
-  const parsedUserId = UserId.parse(row.user_id)
-
-  if (isErr(parsedUserId)) {
-    return Result.mapErr(parsedUserId, p.errorsToString)
-  }
-
-  const userId = parsedUserId.value
-
+  const userId = row.user_id
+  const emailAddress = row.email_address
   const createdAt = postgresTimestampToPosix(row.created_at)
-
-  const parsedEmailAddress = row.email_address
-    ? EmailAddress.parse(row.email_address)
-    : null
 
   const parsedPhoneNumber = row.phone_number
     ? PhoneNumber.parse(row.phone_number)
     : null
-
-  const emailAddress =
-    parsedEmailAddress && parsedEmailAddress.t === "ok"
-      ? parsedEmailAddress.value
-      : null
 
   const phoneNumber =
     parsedPhoneNumber && parsedPhoneNumber.t === "ok"
@@ -62,30 +47,55 @@ const rowToAccount = (row: AccountRow): Result<string, Account> => {
     }
 
     case "normal": {
-      if (!emailAddress || !phoneNumber) {
-        return err("invalid_account")
+      if (emailAddress) {
+        return ok({
+          role: "normal",
+          createdAt,
+          userId,
+          emailAddress: emailAddress ?? null,
+          phoneNumber: phoneNumber ?? null,
+        })
       }
 
-      return ok({
-        role: "normal",
-        createdAt,
-        userId,
-        emailAddress,
-        phoneNumber,
-      })
+      if (phoneNumber) {
+        return ok({
+          role: "normal",
+          createdAt,
+          userId,
+          emailAddress: emailAddress ?? null,
+          phoneNumber: phoneNumber ?? null,
+        })
+      }
+
+      return err(
+        "Invalid account. Missing email and phone number for a normal account.",
+      )
     }
 
     case "super": {
-      if (!emailAddress || !phoneNumber) {
-        return err("invalid_account")
+      if (emailAddress) {
+        return ok({
+          role: "super",
+          createdAt,
+          userId,
+          emailAddress: emailAddress ?? null,
+          phoneNumber: phoneNumber ?? null,
+        })
       }
-      return ok({
-        role: "super",
-        createdAt,
-        userId,
-        emailAddress,
-        phoneNumber,
-      })
+
+      if (phoneNumber) {
+        return ok({
+          role: "super",
+          createdAt,
+          userId,
+          emailAddress: emailAddress ?? null,
+          phoneNumber: phoneNumber ?? null,
+        })
+      }
+
+      return err(
+        "Invalid account. Missing email and phone number for a super account.",
+      )
     }
   }
 }

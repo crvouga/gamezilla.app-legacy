@@ -8,12 +8,14 @@ import { dbConnSqlNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-s
 import { Posix } from "gamezilla-app/@SHARED/core"
 import { SpaceServerCtx } from "../../../../@SHARED/space"
 import { LoggerConsole } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
+import { smsNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/sms"
 
 const hostUserId = "test-user-id" as UserId
 
 const currentSpaceId = "test-space-id" as SpaceId
 
 export const testSpaceServerCtx: SpaceServerCtx = {
+  sms: smsNoop,
   now: Posix.now(),
   dbConnSql: dbConnSqlNoop,
   dbConnKv: createDbConnKvHashMap(),

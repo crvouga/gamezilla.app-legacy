@@ -415,3 +415,33 @@ export const brand = <
     },
   }
 }
+
+export const regex = (regex: RegExp): Parser<string> => {
+  return {
+    parse(input) {
+      if (typeof input !== "string") {
+        return err([
+          {
+            message: toErrorMessage(
+              "string",
+              typeof input,
+              JSON.stringify(input),
+            ),
+            path: [],
+          },
+        ])
+      }
+
+      if (!regex.test(input)) {
+        return err([
+          {
+            message: `Expected string to match regex: ${regex.source}`,
+            path: [],
+          },
+        ])
+      }
+
+      return ok(input)
+    },
+  }
+}

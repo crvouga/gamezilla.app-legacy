@@ -1,0 +1,54 @@
+import { SMS } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
+import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
+import {
+  PhoneNumber,
+  Posix,
+  TimeSpan,
+  err,
+  isErr,
+} from "gamezilla-app/@SHARED/core"
+import { p } from "gamezilla-app/@SHARED/core/parser"
+import { IVerifySMS } from "./verify-sms"
+import { ICodeGenerator } from "./code-generator"
+
+export const EXPIRES_IN = TimeSpan.fromMinutes(5)
+
+export const Verification = p.obj({
+  code: p.str,
+  phoneNumber: p.str,
+  attempts: p.num,
+  createdAt: Posix,
+})
+
+export const VerifySMS = (deps: {
+  logger: Logger
+  sms: SMS
+  dbConnKv: DbConnKv
+  codeGenerator: ICodeGenerator
+}): IVerifySMS => {
+  const verificationsByPhoneNumber = DbConnKv.instance(
+    deps.dbConnKv,
+    ["auth", "sms", "verifications-by-phone-number"],
+    p.arr(Verification),
+  )
+  return {
+    async sendCode(input) {
+      const got = await verificationsByPhoneNumber.get(
+        PhoneNumber.toString(input.phoneNumber),
+      )
+      if (isErr(got)) {
+        deps.logger.error(
+          `[verify-sms] [real] failed to get verification by phone number. ${got.error}`,
+        )
+        return err(`Failed to get verification by phone number.`)
+      }
+
+      return err("not implemented")
+    },
+    async verifyCode(_input) {
+      verificationsByPhoneNumber
+      return err("not implemented")
+    },
+  }
+}

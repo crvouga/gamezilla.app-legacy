@@ -1,5 +1,6 @@
 import { AppServerModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-server"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
 import {
   ServerCmd,
   ServerCtx,
@@ -19,7 +20,6 @@ import { AccountDb } from "../../@SHARED/server/account-db/account-db-impl"
 import { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.core"
 import { IVerifySMS } from "./server/verify-sms/verify-sms"
 import { VerifySMS } from "./server/verify-sms/verify-sms-impl"
-import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
 
 //
 //
@@ -114,10 +114,16 @@ const updateFromMsg: Module["update"] = async ({ msg, model, deps, ctx }) => {
         now: ctx.now,
       })
 
-      if (found.t === "err") {
+      if (isErr(found)) {
         return {
           model,
-          msgCmd: [sendToClient([msg.clientId], msg)],
+          msgCmd: [
+            sendToClient([msg.clientId], {
+              t: "verified-code",
+              result: found,
+              phoneNumber: msg.phoneNumber,
+            }),
+          ],
         }
       }
 

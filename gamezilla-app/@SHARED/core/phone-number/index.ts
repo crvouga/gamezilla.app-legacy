@@ -40,6 +40,14 @@ const parse = (phoneNumber: unknown): Result<Problem, PhoneNumber> => {
   })
 }
 
+const unsafeParse = (phoneNumber: string): PhoneNumber => {
+  const result = parse(phoneNumber)
+  if (result.t === "err") {
+    throw new Error("Invalid phone number")
+  }
+  return result.value
+}
+
 const toString = (phoneNumber: PhoneNumber): string => {
   return phoneNumber._validPhoneNumber
 }
@@ -83,5 +91,6 @@ export const PhoneNumber = {
   eq,
   toCountry,
   parse,
+  unsafeParse,
   format,
 }

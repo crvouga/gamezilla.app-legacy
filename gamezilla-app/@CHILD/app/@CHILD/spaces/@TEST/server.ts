@@ -15,8 +15,10 @@ import { Space } from "../spaces-core"
 import { ModelServer, ServerDeps } from "../spaces.core"
 import * as SpacesServer from "../spaces.server"
 import { ProfileCache } from "../profile-cache"
+import { smsNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/sms"
 
 export const ctx: ServerCtx = {
+  sms: smsNoop,
   dbConnSql: dbConnSqlNoop,
   logger: LoggerConsole("test"),
   now: Posix.now(),

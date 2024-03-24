@@ -3,12 +3,12 @@ import { UserId } from "./user-id"
 
 type PhoneNumberOrEmail =
   | {
-      phoneNumber?: PhoneNumber | null
+      phoneNumber?: PhoneNumber | null | undefined
       emailAddress: EmailAddress
     }
   | {
       phoneNumber: PhoneNumber
-      emailAddress?: EmailAddress | null
+      emailAddress?: EmailAddress | null | undefined
     }
   | {
       phoneNumber: PhoneNumber
@@ -17,8 +17,8 @@ type PhoneNumberOrEmail =
 
 type GuestAccount = {
   role: "guest"
-  phoneNumber?: PhoneNumber | null
-  emailAddress?: EmailAddress | null
+  phoneNumber?: PhoneNumber | null | undefined
+  emailAddress?: EmailAddress | null | undefined
 }
 
 type NormalAccount = PhoneNumberOrEmail & {

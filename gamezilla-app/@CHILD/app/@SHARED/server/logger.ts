@@ -7,6 +7,15 @@ export type Logger = {
   fatal: (msg: string) => void
 }
 
+export type Impl =
+  | {
+      t: "console"
+      prefix: string
+    }
+  | {
+      t: "noop"
+    }
+
 export const LoggerConsole = (prefix: string): Logger => {
   return {
     info: (msg: string) => console.log(`[${prefix}] [info] ${msg}`),
@@ -15,5 +24,26 @@ export const LoggerConsole = (prefix: string): Logger => {
     debug: (msg: string) => console.log(`[${prefix}] [debug] ${msg}`),
     trace: (msg: string) => console.log(`[${prefix}] [trace] ${msg}`),
     fatal: (msg: string) => console.log(`[${prefix}] [fatal] ${msg}`),
+  }
+}
+
+export const loggerNoop: Logger = {
+  info: () => {},
+  warn: () => {},
+  error: () => {},
+  debug: () => {},
+  trace: () => {},
+  fatal: () => {},
+}
+
+export const Logger = (impl: Impl): Logger => {
+  switch (impl.t) {
+    case "console": {
+      return LoggerConsole(impl.prefix)
+    }
+
+    case "noop": {
+      return loggerNoop
+    }
   }
 }

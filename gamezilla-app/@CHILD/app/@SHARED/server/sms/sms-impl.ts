@@ -1,6 +1,12 @@
+import { Logger } from "../logger"
 import { SMS } from "./sms"
-import { createSMSTwilio } from "./sms-impl-twilio"
+import { SMSTwilio } from "./sms-impl-twilio"
 
-export const createSMS = (_impl: "twilio"): SMS => {
-  return createSMSTwilio()
+export type SMSImpl = {
+  t: "twilio"
+  logger: Logger
+}
+
+export const createSMS = (impl: SMSImpl): SMS => {
+  return SMSTwilio(impl)
 }

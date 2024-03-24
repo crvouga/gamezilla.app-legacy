@@ -1,9 +1,12 @@
-export type UserRole = "super" | "normal" | "guest"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
-const is = (userRole: unknown): userRole is UserRole => {
-  return userRole === "super" || userRole === "normal" || userRole === "guest"
-}
+const ALL_USER_ROLES = ["super", "normal", "guest"] as const
+
+const parser = p.enumeration(ALL_USER_ROLES)
+
+export type UserRole = p.Infer<typeof parser>
 
 export const UserRole = {
-  is,
+  ...parser,
+  ALL_USER_ROLES,
 }

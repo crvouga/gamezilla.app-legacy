@@ -10,8 +10,10 @@ import { SessionDb } from "../@SHARED/server/session-db"
 import { ServerDeps, ServerModule } from "../auth.core"
 import * as AuthServer from "../auth.server"
 import { createDbConnKvHashMap } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv/db-conn-kv-impl-hash-map"
+import { smsNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/sms"
 
 const ctx: ServerCtx = {
+  sms: smsNoop,
   dbConnSql: dbConnSqlNoop,
   dbConnKv: createDbConnKvHashMap(),
   logger: LoggerConsole("test"),

@@ -82,7 +82,10 @@ export const getDeps = async ({
     logger,
   })
 
-  const sms = createSMS("twilio")
+  const sms = createSMS({
+    t: "twilio",
+    logger,
+  })
 
   const transport = ServerTransport<MsgToServer, MsgToClient>({
     codebaseVersionId: CODEBASE_VERSION_ID,
@@ -124,6 +127,7 @@ export const init = async (input: {
   eff?: Eff<MsgServer>
 }> => {
   const ctx: ServerCtx = {
+    sms: input.deps.sms,
     dbConnSql: input.deps.dbConnSql,
     dbConnKv: input.deps.dbConnKv,
     logger: input.deps.logger,
@@ -185,6 +189,7 @@ export const update = async (input: {
   logMsg({ msg: input.msg, logger: input.deps.logger })
 
   const ctx: ServerCtx = {
+    sms: input.deps.sms,
     dbConnSql: input.deps.dbConnSql,
     dbConnKv: input.deps.dbConnKv,
     logger: input.deps.logger,
@@ -442,6 +447,7 @@ export const subscriptions = async (input: {
     dbConnKv: input.deps.dbConnKv,
     logger: input.deps.logger,
     now: input.ctx.now,
+    sms: input.deps.sms,
   }
   return Sub.batch([
     Sub.tag(
