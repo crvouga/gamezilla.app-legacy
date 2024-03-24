@@ -145,13 +145,15 @@ export const AccountDbPostgres = ({
       return account
     },
 
-    async findOneByEmail(input) {
+    async findOneByEmailAddress(input) {
       const queried = await dbConnSql.query(
         AccountRow,
         `SELECT
           user_id,
           email_address,
-          phone_number
+          phone_number,
+          created_at,
+          user_role
         FROM
           user_account
         WHERE
@@ -178,7 +180,16 @@ export const AccountDbPostgres = ({
     async findOneByPhoneNumber(input) {
       const queried = await dbConnSql.query(
         AccountRow,
-        `SELECT user_id, email_address, phone_number FROM user_account WHERE phone_number = :phone_number`,
+        `SELECT 
+          user_id,
+          email_address,
+          phone_number,
+          created_at,
+          user_role
+        FROM
+          user_account
+        WHERE
+          phone_number = :phone_number`,
         {
           phone_number: PhoneNumber.toString(input.phoneNumber),
         },

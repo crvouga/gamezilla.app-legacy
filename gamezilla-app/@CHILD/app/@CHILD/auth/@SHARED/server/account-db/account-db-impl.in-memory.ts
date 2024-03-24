@@ -12,7 +12,7 @@ export const AccountDbInMemory = (deps: {
       await deps.delay()
       return ok(input.userId ? accounts.get(input.userId) ?? null : null)
     },
-    async findOneByEmail(input) {
+    async findOneByEmailAddress(input) {
       await deps.delay()
       for (const account of accounts.values()) {
         if (account.emailAddress === input.emailAddress) {

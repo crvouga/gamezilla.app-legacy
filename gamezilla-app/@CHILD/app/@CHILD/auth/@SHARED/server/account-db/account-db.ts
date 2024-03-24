@@ -3,7 +3,7 @@ import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
 import { EmailAddress, PhoneNumber, Result } from "gamezilla-app/@SHARED/core"
 
 export type IAccountDb = {
-  findOneByEmail: (input: {
+  findOneByEmailAddress: (input: {
     emailAddress: EmailAddress
   }) => Promise<Result<string, Account | null>>
   findOneByPhoneNumber: (input: {
