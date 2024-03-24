@@ -37,6 +37,7 @@ export const VerifySMS = (deps: {
       const got = await verificationsByPhoneNumber.get(
         PhoneNumber.toString(input.phoneNumber),
       )
+
       if (isErr(got)) {
         deps.logger.error(
           `[verify-sms] [real] failed to get verification by phone number. ${got.error}`,
