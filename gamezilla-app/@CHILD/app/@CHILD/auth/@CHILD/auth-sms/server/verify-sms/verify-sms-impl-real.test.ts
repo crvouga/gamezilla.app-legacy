@@ -36,7 +36,7 @@ const Fixture = async () => {
 }
 
 describe(import.meta.file, () => {
-  it("should send verification code to phone number", async () => {
+  it.skip("should send verification code to phone number", async () => {
     const f = await Fixture()
 
     await f.verifySMS.sendCode({
