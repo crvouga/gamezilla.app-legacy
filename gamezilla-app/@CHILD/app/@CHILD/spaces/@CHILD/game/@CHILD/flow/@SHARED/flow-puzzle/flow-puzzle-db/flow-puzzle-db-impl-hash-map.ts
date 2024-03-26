@@ -1,4 +1,4 @@
-import { err, isErr, ok } from "gamezilla-app/@SHARED/core"
+import { Err, isErr, Ok } from "gamezilla-app/@SHARED/core"
 import { FlowPuzzle } from "../flow-puzzle"
 import { IFlowPuzzleDb } from "./flow-puzzle-db"
 
@@ -21,17 +21,17 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
       await new Promise((r) => setTimeout(r, 500))
 
       if (calls.get % ERROR_EVERY === 0) {
-        return err("get demo error")
+        return Err("get demo error")
       }
 
       const puzzle = db.get(id) ?? null
-      return ok(puzzle)
+      return Ok(puzzle)
     },
 
     async count(input) {
       calls.count++
       if (calls.count % ERROR_EVERY === 0) {
-        return err("count demo error")
+        return Err("count demo error")
       }
       const listed = await this.list({
         order: { createdAt: "asc" },
@@ -43,14 +43,14 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
         return listed
       }
 
-      return ok(listed.value.total)
+      return Ok(listed.value.total)
     },
 
     async list(input) {
       calls.list++
       await new Promise((r) => setTimeout(r, 500))
       if (calls.list % ERROR_EVERY === 0) {
-        return err("list demo error")
+        return Err("list demo error")
       }
 
       const puzzles = Array.from(db.values())
@@ -100,7 +100,7 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
         input.pagination.offset + input.pagination.limit,
       )
 
-      return ok({
+      return Ok({
         items: sliced,
         total: filtered.length,
         limit: input.pagination.limit,
@@ -113,20 +113,20 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
 
       await new Promise((resolve) => setTimeout(resolve, 500))
       if (calls.put % ERROR_EVERY === 0) {
-        return err("put demo error")
+        return Err("put demo error")
       }
       db.set(input.id, input)
-      return ok(null)
+      return Ok(null)
     },
 
     async zap({ id }) {
       calls.zap++
       await new Promise((resolve) => setTimeout(resolve, 500))
       if (calls.zap % ERROR_EVERY === 0) {
-        return err("zap demo error")
+        return Err("zap demo error")
       }
       db.delete(id)
-      return ok(null)
+      return Ok(null)
     },
   }
 }

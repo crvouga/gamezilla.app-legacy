@@ -1,3 +1,4 @@
+import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import {
   APP_SOUND,
   playSound,
@@ -5,9 +6,8 @@ import {
   showToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Button, IconPlus } from "gamezilla-app/@CHILD/app/@SHARED/ui"
-import { loading, ok } from "gamezilla-app/@SHARED/core"
+import { Ok, loading } from "gamezilla-app/@SHARED/core"
 import { ClientModule } from "../../create.core"
-import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 
 const update: ClientModule["update"] = (input) => {
   const { model, msg, msgSync, msgServer } = input
@@ -49,7 +49,7 @@ const update: ClientModule["update"] = (input) => {
       return {
         model: {
           ...model,
-          packCreateRequest: ok(null),
+          packCreateRequest: Ok(null),
         },
         msgCmd: [playSound(APP_SOUND.refreshFeed), showToast("Pack created")],
       }

@@ -1,6 +1,6 @@
 import { Profile, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
-import { ok } from "gamezilla-app/@SHARED/core"
+import { Ok } from "gamezilla-app/@SHARED/core"
 import { IProfileCache } from "./profile-cache"
 
 export const ProfileCacheDbKv = ({
@@ -20,7 +20,7 @@ export const ProfileCacheDbKv = ({
           profilesKv.set(userId, profile),
         ),
       )
-      return ok(null)
+      return Ok(null)
     },
     async get(userIds) {
       const profiles: { [userId: UserId]: Profile } = {}
@@ -38,7 +38,7 @@ export const ProfileCacheDbKv = ({
         }
       }
 
-      return ok(profiles)
+      return Ok(profiles)
     },
   }
 }

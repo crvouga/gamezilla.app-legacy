@@ -3,7 +3,7 @@ import {
   SpaceServerEvent,
 } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
-import { Eff, Sub, andThen, err, ok, pipe } from "gamezilla-app/@SHARED/core"
+import { Eff, Err, Ok, Sub, andThen, pipe } from "gamezilla-app/@SHARED/core"
 import { TicTacToe } from "../../@SHARED/tic-tic-toe"
 import {
   ModelServer,
@@ -55,7 +55,7 @@ export const update = ({
             t: "send-to-space",
             msg: {
               t: "bot-moved",
-              result: err("The bot moved not during game mode"),
+              result: Err("The bot moved not during game mode"),
             },
           },
         ],
@@ -93,7 +93,7 @@ export const update = ({
       msgCmd: [
         {
           t: "send-to-space",
-          msg: { t: "bot-moved", result: ok(modelNew) },
+          msg: { t: "bot-moved", result: Ok(modelNew) },
         },
       ],
     }
@@ -179,7 +179,7 @@ export const updateFromEvent = ({
       msgCmd: [
         {
           t: "send-to-space",
-          msg: { t: "player-left", result: ok(modelNew) },
+          msg: { t: "player-left", result: Ok(modelNew) },
         },
       ],
     }

@@ -6,7 +6,7 @@ import {
   showToast,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { ConfirmationDrawer } from "gamezilla-app/@CHILD/app/@SHARED/ui"
-import { notAsked, ok } from "gamezilla-app/@SHARED/core"
+import { Ok, notAsked } from "gamezilla-app/@SHARED/core"
 import { ClientModule, ModelClient, MsgClient } from "../auth.core"
 
 //
@@ -73,7 +73,7 @@ const update: ClientModule["update"] = ({ msg, model, msgCmd, msgEvt }) => {
       return {
         model: {
           ...model,
-          logout: ok(null),
+          logout: Ok(null),
           opened: null,
         },
       }

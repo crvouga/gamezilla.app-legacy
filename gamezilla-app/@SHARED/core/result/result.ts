@@ -50,14 +50,14 @@ const is = <TError, TValue>(
 /**
  * `Ok<T>` represents a successful result
  */
-export const ok = <T>(value: T): Ok<T> => {
+export const Ok = <T>(value: T): Ok<T> => {
   return { t: "ok", value }
 }
 
 /**
  * `Err<T>` represents a failed result
  */
-export const err = <T>(error: T): Err<T> => {
+export const Err = <T>(error: T): Err<T> => {
   return { t: "err", error }
 }
 
@@ -82,7 +82,7 @@ const mapErr = <A, B, TValue>(
 ): ResultPrivate<B, TValue> => {
   switch (result.t) {
     case "err":
-      return err(mapper(result.error))
+      return Err(mapper(result.error))
 
     case "ok":
       return result
@@ -93,14 +93,14 @@ const fromNullable =
   <TError, TValue>(error: TError) =>
   (value: TValue | undefined | null): ResultPrivate<TError, TValue> => {
     if (value === undefined) {
-      return err(error)
+      return Err(error)
     }
 
     if (value === null) {
-      return err(error)
+      return Err(error)
     }
 
-    return ok(value)
+    return Ok(value)
   }
 
 const withDefault = <T>(result: ResultPrivate<unknown, T>, fallback: T) => {
@@ -135,7 +135,7 @@ const combine = <E, A>(
     }
     values.push(result.value)
   }
-  return ok(values)
+  return Ok(values)
 }
 
 const mapOk = <TError, A, B>(
@@ -143,15 +143,15 @@ const mapOk = <TError, A, B>(
   mapper: (a: A) => B,
 ): ResultPrivate<TError, B> => {
   if (result.t === "ok") {
-    return ok(mapper(result.value))
+    return Ok(mapper(result.value))
   }
   return result
 }
 
 export const ResultPrivate = {
   is,
-  ok,
-  err,
+  ok: Ok,
+  err: Err,
   mapOk,
   mapErr,
   fromNullable,
@@ -216,7 +216,7 @@ export const RemoteResult = {
   map: remoteResultMap,
   loading,
   notAsked,
-  err,
-  ok,
+  err: Err,
+  ok: Ok,
   is,
 }

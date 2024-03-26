@@ -1,7 +1,7 @@
-import { PhoneNumber, err, ok } from "gamezilla-app/@SHARED/core"
-import { SMS } from "./sms"
+import { Err, Ok, PhoneNumber } from "gamezilla-app/@SHARED/core"
 import twilio from "twilio"
 import { Logger } from "../logger"
+import { SMS } from "./sms"
 
 const TWILLIO_ACCOUNT_SID = process.env["TWILLIO_ACCOUNT_SID"]
 
@@ -40,10 +40,10 @@ export const SMSTwilio = ({ logger }: { logger: Logger }): SMS => {
           body: input.message,
         })
         logger.info("SMS sent")
-        return ok(null)
+        return Ok(null)
       } catch (error) {
         logger.error(`Errored while sending SMS: ${error}`)
-        return err(String(error))
+        return Err(String(error))
       }
     },
   }

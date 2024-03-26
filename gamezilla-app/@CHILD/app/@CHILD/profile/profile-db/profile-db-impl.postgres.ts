@@ -4,7 +4,7 @@ import {
   Username,
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { Result, err, isErr, ok } from "gamezilla-app/@SHARED/core"
+import { Err, Ok, Result, isErr } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import { ProfileCore } from "../profile.core"
 import { ProfileDb } from "./profile-db"
@@ -20,11 +20,11 @@ type ProfileRow = p.Infer<typeof ProfileRow>
 
 const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
   if (!UserId.is(row.user_id)) {
-    return err("invalid user_id")
+    return Err("invalid user_id")
   }
 
   if (!Username.is(row.username)) {
-    return err("invalid username")
+    return Err("invalid username")
   }
 
   const avatarSeed = row.avatar_seed
@@ -40,7 +40,7 @@ const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
     style: avatarStyle,
   })
 
-  return ok({
+  return Ok({
     userId: row.user_id,
     avatarUrl: avatarUrl,
     username: row.username,
@@ -82,7 +82,7 @@ export const createProfileDb = ({
         return parsed
       }
 
-      return ok(parsed.value)
+      return Ok(parsed.value)
     },
     insertOne: async (profile) => {
       const rowNew: ProfileRow = {
@@ -115,7 +115,7 @@ export const createProfileDb = ({
         return inserted
       }
 
-      return ok(null)
+      return Ok(null)
     },
   }
 }

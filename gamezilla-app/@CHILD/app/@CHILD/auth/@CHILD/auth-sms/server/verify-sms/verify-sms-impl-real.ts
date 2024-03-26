@@ -2,15 +2,15 @@ import { SMS } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import {
+  Err,
   PhoneNumber,
   Posix,
   TimeSpan,
-  err,
   isErr,
 } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
-import { IVerifySMS } from "./verify-sms"
 import { ICodeGenerator } from "./code-generator"
+import { IVerifySMS } from "./verify-sms"
 
 export const EXPIRES_IN = TimeSpan.fromMinutes(5)
 
@@ -42,14 +42,14 @@ export const VerifySMS = (deps: {
         deps.logger.error(
           `[verify-sms] [real] failed to get verification by phone number. ${got.error}`,
         )
-        return err(`Failed to get verification by phone number.`)
+        return Err(`Failed to get verification by phone number.`)
       }
 
-      return err("not implemented")
+      return Err("not implemented")
     },
     async verifyCode(_input) {
       verificationsByPhoneNumber
-      return err("not implemented")
+      return Err("not implemented")
     },
   }
 }

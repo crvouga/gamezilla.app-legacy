@@ -1,6 +1,6 @@
 import {
-  err,
-  ok,
+  Err,
+  Ok,
   Result,
   eq,
   isSubset,
@@ -123,27 +123,27 @@ export const dropDisc = (
   const status = toStatus(columns)
 
   if (status.type === "Winner") {
-    return err("game-over-winner")
+    return Err("game-over-winner")
   }
 
   if (status.type === "Tie") {
-    return err("game-over-tie")
+    return Err("game-over-tie")
   }
 
   const turn = status.turn
 
   if (turn !== player) {
-    return err("not-turn")
+    return Err("not-turn")
   }
 
   const column = columns[columnIndex]
 
   if (!column) {
-    return err("out-of-bounds")
+    return Err("out-of-bounds")
   }
 
   if (column.length >= MAX_COLUMN_HEIGHT) {
-    return err("column-is-full")
+    return Err("column-is-full")
   }
 
   const columnsNew = columns.map((column, index) => {
@@ -153,7 +153,7 @@ export const dropDisc = (
     return column
   })
 
-  return ok(columnsNew)
+  return Ok(columnsNew)
 }
 
 export const isGameOver = (columns: Columns): boolean => {

@@ -1,7 +1,7 @@
 import { GameServerModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2"
 import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { err, isErr } from "gamezilla-app/@SHARED/core"
+import { Err, isErr } from "gamezilla-app/@SHARED/core"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { IFlowPuzzleDb } from "../../../../@SHARED/flow-puzzle/flow-puzzle-db"
 import { FlowPuzzleId } from "../../../../@SHARED/flow-puzzle/flow-puzzle-id"
@@ -64,18 +64,18 @@ const patchName = async (input: {
   const puzzle = result.value
 
   if (!puzzle) {
-    return err("Failed to find puzzle")
+    return Err("Failed to find puzzle")
   }
 
   if (puzzle.createdBy !== userId) {
-    return err("You must be the creator of this puzzle to edit it.")
+    return Err("You must be the creator of this puzzle to edit it.")
   }
 
   const newNameFinal =
     typeof newName === "string" && newName.length > 0 ? newName : puzzle.name
 
   if (!FlowPuzzleName.is(newNameFinal)) {
-    return err("Invalid name")
+    return Err("Invalid name")
   }
 
   const patched: FlowPuzzle = {

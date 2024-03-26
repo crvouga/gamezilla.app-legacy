@@ -1,4 +1,4 @@
-import { err } from "../../result/result"
+import { Err } from "../../result/result"
 import { Parser, ParserError } from "./parser-types"
 
 export function or<A>(a: Parser<A>): Parser<A>
@@ -715,7 +715,7 @@ export function or(...parsers: Parser<unknown>[]): Parser<unknown> {
         }
       }
 
-      return err(errors)
+      return Err(errors)
     },
   }
 }

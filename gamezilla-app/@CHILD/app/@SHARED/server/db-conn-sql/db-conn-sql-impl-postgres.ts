@@ -1,5 +1,5 @@
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { err, ok } from "gamezilla-app/@SHARED/core"
+import { Err, Ok } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import postgres from "postgres"
 import { Logger } from "../logger"
@@ -57,10 +57,10 @@ export const createDbConnPostgres = async ({
           output.push(parsed.value)
         }
 
-        return ok(output)
+        return Ok(output)
       } catch (error) {
         logger.error(`[db] ${error} sql=${sql}`)
-        return err(String(error))
+        return Err(String(error))
       }
     },
   }

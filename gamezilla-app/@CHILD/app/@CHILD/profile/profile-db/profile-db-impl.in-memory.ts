@@ -1,5 +1,5 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { ok } from "gamezilla-app/@SHARED/core"
+import { Ok } from "gamezilla-app/@SHARED/core"
 import { ProfileCore } from "../profile.core"
 import { ProfileDb } from "./profile-db"
 
@@ -14,11 +14,11 @@ export const createProfileDb = (): ProfileDb => {
         output.push(profile)
       }
 
-      return ok(output)
+      return Ok(output)
     },
     insertOne: async (profile) => {
       profiles.set(profile.userId, profile)
-      return ok(null)
+      return Ok(null)
     },
   }
 }

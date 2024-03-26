@@ -1,5 +1,5 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { err, NonEmpty, ok, Result } from "gamezilla-app/@SHARED/core"
+import { Err, NonEmpty, Ok, Result } from "gamezilla-app/@SHARED/core"
 import {
   Board,
   MoveProblem,
@@ -166,13 +166,13 @@ export const handle = ({
   switch (msg.t) {
     case "start-playing": {
       if (model.type !== "setup") {
-        return err("must-be-setup")
+        return Err("must-be-setup")
       }
 
       const { stone } = msg
 
       if (model[stone]) {
-        return err("player-taken")
+        return Err("player-taken")
       }
 
       const modelNew: Model = {
@@ -184,18 +184,18 @@ export const handle = ({
             : model[toOppositeStone(stone)],
       }
 
-      return ok(modelNew)
+      return Ok(modelNew)
     }
 
     case "stop-playing": {
       if (model.type !== "setup") {
-        return err("must-be-setup")
+        return Err("must-be-setup")
       }
 
       const { stone } = msg
 
       if (model[stone] !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
 
       const modelNew: Model = {
@@ -203,16 +203,16 @@ export const handle = ({
         [stone]: null,
       }
 
-      return ok(modelNew)
+      return Ok(modelNew)
     }
 
     case "start-game": {
       if (model.type !== "setup") {
-        return err("must-be-setup")
+        return Err("must-be-setup")
       }
 
       if (!(model.white && model.black)) {
-        return err("missing-player")
+        return Err("missing-player")
       }
 
       const modelNew: Model = {
@@ -222,12 +222,12 @@ export const handle = ({
         board: initBoard,
       }
 
-      return ok(modelNew)
+      return Ok(modelNew)
     }
 
     case "input-move": {
       if (model.type !== "playing") {
-        return err("must-be-playing")
+        return Err("must-be-playing")
       }
 
       const { position } = msg
@@ -255,11 +255,11 @@ export const handle = ({
           winner: statusNew.winner,
           wins: statusNew.wins,
         }
-        return ok(initSyncOver({ model: modelNew, gameOver }))
+        return Ok(initSyncOver({ model: modelNew, gameOver }))
       }
 
       if (statusNew.type === "draw") {
-        return ok(
+        return Ok(
           initSyncOver({
             model: modelNew,
             gameOver: { type: "Draw" },
@@ -267,19 +267,19 @@ export const handle = ({
         )
       }
 
-      return ok(modelNew)
+      return Ok(modelNew)
     }
 
     case "resign": {
       if (model.type !== "playing") {
-        return err("must-be-playing")
+        return Err("must-be-playing")
       }
 
       if (
         model.white !== ctx.currentUserId &&
         model.black !== ctx.currentUserId
       ) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
 
       const currentUserStone =
@@ -290,15 +290,15 @@ export const handle = ({
         gameOver: { type: "resigned", resigner: currentUserStone },
       })
 
-      return ok(modelNew)
+      return Ok(modelNew)
     }
 
     case "rematch-request": {
-      return ok(model)
+      return Ok(model)
     }
 
     case "rematch-respond": {
-      return ok(model)
+      return Ok(model)
     }
 
     case "stop-game": {
@@ -306,10 +306,10 @@ export const handle = ({
         model.black !== ctx.currentUserId &&
         model.white !== ctx.currentUserId
       ) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
 
-      return ok(initSetup(model))
+      return Ok(initSetup(model))
     }
   }
 }

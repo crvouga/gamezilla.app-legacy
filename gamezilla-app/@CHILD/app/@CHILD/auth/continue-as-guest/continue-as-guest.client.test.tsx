@@ -8,12 +8,12 @@ import {
 import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translator"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
+  Err,
+  Ok,
   Posix,
-  err,
   isRequesting,
   isResponseErr,
   isResponseOk,
-  ok,
 } from "gamezilla-app/@SHARED/core"
 import * as AuthClient from "../auth.client"
 import { ModelClient } from "../auth.core"
@@ -44,7 +44,7 @@ const continueAsGuestResultedOk = (userId: UserId) => (model: ModelClient) =>
     ctx,
     msgServer: {
       t: "guest.continue-as-guest-result",
-      result: ok(userId),
+      result: Ok(userId),
     },
   })
 
@@ -54,7 +54,7 @@ const continueAsGuestResultedErr = () => (model: ModelClient) =>
     ctx,
     msgServer: {
       t: "guest.continue-as-guest-result",
-      result: err("some error happened"),
+      result: Err("some error happened"),
     },
   })
 

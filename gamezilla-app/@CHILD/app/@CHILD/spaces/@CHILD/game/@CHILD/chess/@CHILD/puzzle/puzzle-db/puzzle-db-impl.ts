@@ -1,6 +1,6 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { NonEmpty, Result, Uuid, err, ok } from "gamezilla-app/@SHARED/core"
+import { Err, NonEmpty, Ok, Result, Uuid } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import { MoveInput, uciMoveToMoveInput } from "../../../@SHARED/chess"
 import { EloRating } from "../elo-rating"
@@ -100,11 +100,11 @@ const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
   )
 
   if (!NonEmpty.is(moves)) {
-    return err("Failed to parse moves from puzzle database record")
+    return Err("Failed to parse moves from puzzle database record")
   }
 
   if (!EloRating.is(row.rating)) {
-    return err("Failed to parse elo rating from puzzle database record")
+    return Err("Failed to parse elo rating from puzzle database record")
   }
 
   const puzzle: Puzzle = {
@@ -129,7 +129,7 @@ const rowToPuzzle = (row: PuzzleRow): Result<string, Puzzle> => {
     openingTags: row.opening_tags.split(" "),
   }
 
-  return ok(puzzle)
+  return Ok(puzzle)
 }
 
 export const uciMovesToPuzzleMoves = (
@@ -137,7 +137,7 @@ export const uciMovesToPuzzleMoves = (
 ): Result<string, [MoveInput, MoveInput, ...MoveInput[]]> => {
   const [move1, move2, ...rest] = moves
   if (!(move1 && move2)) {
-    return err("Missing first two moves")
+    return Err("Missing first two moves")
   }
   const moveInput1 = uciMoveToMoveInput(move1)
   const moveInput2 = uciMoveToMoveInput(move2)
@@ -156,7 +156,7 @@ export const uciMovesToPuzzleMoves = (
     return moveInputRest
   }
 
-  return ok([moveInput1.value, moveInput2.value, ...moveInputRest.value])
+  return Ok([moveInput1.value, moveInput2.value, ...moveInputRest.value])
 }
 
 const puzzlesFindForProfile = async (
@@ -295,15 +295,15 @@ const profilesFind = async (
   const row = rows[0]
 
   if (!row) {
-    return ok(null)
+    return Ok(null)
   }
 
   if (!UserId.is(row.user_id)) {
-    return err("Invalid user id")
+    return Err("Invalid user id")
   }
 
   if (!EloRating.is(row.elo_rating)) {
-    return err("Invalid elo rating")
+    return Err("Invalid elo rating")
   }
 
   const puzzleQuery = toPuzzleQueryJSON(row.puzzle_query)
@@ -319,7 +319,7 @@ const profilesFind = async (
     },
   }
 
-  return ok(profile)
+  return Ok(profile)
 }
 
 export const profilesInsert = async (
@@ -354,7 +354,7 @@ export const profilesInsert = async (
   if (mutated.t === "err") {
     return mutated
   }
-  return ok(null)
+  return Ok(null)
 }
 
 export const profilesFindElseInsert = async (
@@ -368,7 +368,7 @@ export const profilesFindElseInsert = async (
   }
 
   if (found.value !== null) {
-    return ok(found.value)
+    return Ok(found.value)
   }
 
   const inserted = await profilesInsert(dbConn, profile)
@@ -377,7 +377,7 @@ export const profilesFindElseInsert = async (
     return inserted
   }
 
-  return ok(profile)
+  return Ok(profile)
 }
 
 const profilesUpdate = async (
@@ -405,7 +405,7 @@ const profilesUpdate = async (
   if (mutated.t === "err") {
     return mutated
   }
-  return ok(null)
+  return Ok(null)
 }
 
 export const PuzzleDb = {

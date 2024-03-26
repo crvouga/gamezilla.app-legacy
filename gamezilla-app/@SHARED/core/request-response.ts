@@ -1,5 +1,5 @@
 import { Posix } from "./posix"
-import { Err, Loading, NotAsked, Ok, Result, err, notAsked, ok } from "./result"
+import { Err, Loading, NotAsked, Ok, Result, notAsked } from "./result"
 import { Sub } from "./sub"
 import { Time } from "./time"
 import { TimeSpan } from "./time-span"
@@ -150,8 +150,8 @@ export const RequestResponse = {
   isRequesting,
   requesting,
   response,
-  err,
-  ok,
+  err: Err,
+  ok: Ok,
   elapsed,
   didRequestTimeout,
   subscriptions,

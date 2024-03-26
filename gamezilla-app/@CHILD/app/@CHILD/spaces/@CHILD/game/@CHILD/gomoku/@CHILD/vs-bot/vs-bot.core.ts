@@ -1,5 +1,5 @@
-import { err, ok, Result } from "gamezilla-app/@SHARED/core"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Err, Ok, Result } from "gamezilla-app/@SHARED/core"
 import {
   Board,
   BotLevel,
@@ -111,12 +111,12 @@ export const handle = ({
   switch (msg.t) {
     case "input-bot-level": {
       if (model.type !== "setup") {
-        return err("must-be-setup")
+        return Err("must-be-setup")
       }
       if (model.userId !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
-      return ok({
+      return Ok({
         ...model,
         botLevel: msg.botLevel,
       })
@@ -124,12 +124,12 @@ export const handle = ({
 
     case "inputted-user-stone": {
       if (model.type !== "setup") {
-        return err("must-be-setup")
+        return Err("must-be-setup")
       }
       if (model.userId !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
-      return ok({
+      return Ok({
         ...model,
         userStone: msg.userStone,
       })
@@ -137,12 +137,12 @@ export const handle = ({
 
     case "start-playing": {
       if (model.type !== "setup") {
-        return err("must-be-setup")
+        return Err("must-be-setup")
       }
       if (model.userId) {
-        return err("must-be-no-player")
+        return Err("must-be-no-player")
       }
-      return ok({
+      return Ok({
         ...model,
         userId: ctx.currentUserId,
       })
@@ -150,12 +150,12 @@ export const handle = ({
 
     case "stop-playing": {
       if (model.type !== "setup") {
-        return err("must-be-setup")
+        return Err("must-be-setup")
       }
       if (model.userId !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
-      return ok({
+      return Ok({
         ...model,
         userId: null,
       })
@@ -163,12 +163,12 @@ export const handle = ({
 
     case "start-game": {
       if (model.type !== "setup") {
-        return err("must-be-setup")
+        return Err("must-be-setup")
       }
       if (model.userId !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
-      return ok({
+      return Ok({
         type: "game",
         board: initBoard,
         botLevel: model.botLevel,
@@ -180,11 +180,11 @@ export const handle = ({
 
     case "input-move": {
       if (model.type !== "game") {
-        return err("must-be-game")
+        return Err("must-be-game")
       }
 
       if (model.userId !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
 
       const moved = move({
@@ -197,17 +197,17 @@ export const handle = ({
         return moved
       }
 
-      return ok({ ...model, board: moved.value })
+      return Ok({ ...model, board: moved.value })
     }
 
     case "stop-game": {
       if (model.type !== "game") {
-        return err("must-be-game")
+        return Err("must-be-game")
       }
       if (model.userId !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
-      return ok({
+      return Ok({
         type: "setup",
         botLevel: model.botLevel,
         userId: model.userId,
@@ -217,12 +217,12 @@ export const handle = ({
 
     case "restart": {
       if (model.type !== "game") {
-        return err("must-be-game")
+        return Err("must-be-game")
       }
       if (model.userId !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
-      return ok({
+      return Ok({
         ...model,
         board: initBoard,
       })
@@ -230,12 +230,12 @@ export const handle = ({
 
     case "swap-sides": {
       if (model.type !== "game") {
-        return err("must-be-game")
+        return Err("must-be-game")
       }
       if (model.userId !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
-      return ok({
+      return Ok({
         ...model,
         board: initBoard,
         userStone: toOppositeStone(model.userStone),
@@ -246,13 +246,13 @@ export const handle = ({
 
 export const handleBotMove = (model: Model): Result<Problem, Model> => {
   if (model.type !== "game") {
-    return err("must-be-game")
+    return Err("must-be-game")
   }
 
   const isBotTurn = toTurn(model.board) === toOppositeStone(model.userStone)
 
   if (!isBotTurn) {
-    return err("not-bot-turn")
+    return Err("not-bot-turn")
   }
 
   const botStone = toOppositeStone(model.userStone)
@@ -260,7 +260,7 @@ export const handleBotMove = (model: Model): Result<Problem, Model> => {
   const position = toBestMove({ stone: botStone, board: model.board })
 
   if (!position) {
-    return err("no-position")
+    return Err("no-position")
   }
 
   const moved = move({ stone: botStone, position, board: model.board })
@@ -271,5 +271,5 @@ export const handleBotMove = (model: Model): Result<Problem, Model> => {
 
   const modelNew: Model = { ...model, board: moved.value }
 
-  return ok(modelNew)
+  return Ok(modelNew)
 }

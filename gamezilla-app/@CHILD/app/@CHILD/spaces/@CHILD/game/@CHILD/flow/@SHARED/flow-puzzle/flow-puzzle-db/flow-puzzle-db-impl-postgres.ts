@@ -1,6 +1,6 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { Posix, Result, isErr, ok } from "gamezilla-app/@SHARED/core"
+import { Ok, Posix, Result, isErr } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import { FlowVariant } from "../../flow"
 import { FlowPuzzle } from "../flow-puzzle"
@@ -230,7 +230,7 @@ export const FlowPuzzleDbPostgres = ({
 
       const total = queriedCount.value[0] ?? 0
 
-      return ok({
+      return Ok({
         items: items,
         total: total,
         limit: input.pagination.limit,

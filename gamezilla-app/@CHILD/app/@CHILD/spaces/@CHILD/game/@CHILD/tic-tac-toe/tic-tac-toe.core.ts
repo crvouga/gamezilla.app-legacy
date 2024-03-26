@@ -1,7 +1,7 @@
-import { err, Result } from "gamezilla-app/@SHARED/core"
+import { Err, Result } from "gamezilla-app/@SHARED/core"
+import { GameMainMenu } from "../../@SHARED/game"
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.core"
 import * as VsUser from "./@CHILD/vs-user/vs-user.core"
-import { GameMainMenu } from "../../@SHARED/game"
 
 //
 //
@@ -22,7 +22,7 @@ export type ModelServer =
   | { t: "vs-bot"; c: VsBot.ModelServer }
 
 export const parseModel = (): Result<string, ModelServer> => {
-  return err("Unimplemented")
+  return Err("Unimplemented")
 }
 
 //

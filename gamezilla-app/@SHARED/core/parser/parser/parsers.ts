@@ -1,5 +1,5 @@
 import { Brand } from "../../brand"
-import { err, ok } from "../../result/result"
+import { Err, Ok } from "../../result/result"
 import { Parser, ParserError } from "./parser-types"
 
 const errorToString = (error: ParserError): string => {
@@ -41,7 +41,7 @@ export const obj = <T>(parsers: {
   return {
     parse(input) {
       if (typeof input !== "object") {
-        return err([
+        return Err([
           {
             message: toErrorMessage(
               "object",
@@ -54,7 +54,7 @@ export const obj = <T>(parsers: {
       }
 
       if (input === null) {
-        return err([
+        return Err([
           {
             message: toErrorMessage("object", "null", JSON.stringify(input)),
             path: [],
@@ -63,7 +63,7 @@ export const obj = <T>(parsers: {
       }
 
       if (!isIndexable(input)) {
-        return err([
+        return Err([
           {
             message: toErrorMessage(
               "object",
@@ -100,10 +100,10 @@ export const obj = <T>(parsers: {
       }
 
       if (errors.length > 0) {
-        return err(errors)
+        return Err(errors)
       }
 
-      return ok(result as T)
+      return Ok(result as T)
     },
   }
 }
@@ -111,7 +111,7 @@ export const obj = <T>(parsers: {
 export const str: Parser<string> = {
   parse(input) {
     if (typeof input !== "string") {
-      return err([
+      return Err([
         {
           message: toErrorMessage(
             "string",
@@ -122,14 +122,14 @@ export const str: Parser<string> = {
         },
       ])
     }
-    return ok(input)
+    return Ok(input)
   },
 }
 
 export const num: Parser<number> = {
   parse(input) {
     if (typeof input !== "number") {
-      return err([
+      return Err([
         {
           message: toErrorMessage(
             "number",
@@ -140,7 +140,7 @@ export const num: Parser<number> = {
         },
       ])
     }
-    return ok(input)
+    return Ok(input)
   },
 }
 
@@ -150,7 +150,7 @@ export const l = <T extends string | number | boolean | null | undefined>(
   return {
     parse(input) {
       if (input !== value) {
-        return err([
+        return Err([
           {
             message: toErrorMessage(
               String(value),
@@ -161,7 +161,7 @@ export const l = <T extends string | number | boolean | null | undefined>(
           },
         ])
       }
-      return ok(value)
+      return Ok(value)
     },
   }
 }
@@ -170,7 +170,7 @@ export const arr = <T>(parser: Parser<T>): Parser<T[]> => {
   return {
     parse(input) {
       if (!Array.isArray(input)) {
-        return err([
+        return Err([
           {
             message: toErrorMessage(
               "array",
@@ -202,10 +202,10 @@ export const arr = <T>(parser: Parser<T>): Parser<T[]> => {
       }
 
       if (errors.length > 0) {
-        return err(errors)
+        return Err(errors)
       }
 
-      return ok(result)
+      return Ok(result)
     },
   }
 }
@@ -214,7 +214,7 @@ export const maybe = <T>(parser: Parser<T>): Parser<T | null | undefined> => {
   return {
     parse(input) {
       if (input === null || input === undefined) {
-        return ok(null)
+        return Ok(null)
       }
       return parser.parse(input)
     },
@@ -228,7 +228,7 @@ export const dict = <TKey extends string | number, TValue>(
   return {
     parse(input) {
       if (!isIndexable(input)) {
-        return err([
+        return Err([
           {
             message: toErrorMessage(
               "object",
@@ -273,10 +273,10 @@ export const dict = <TKey extends string | number, TValue>(
       }
 
       if (errors.length > 0) {
-        return err(errors)
+        return Err(errors)
       }
 
-      return ok(result)
+      return Ok(result)
     },
   }
 }
@@ -288,7 +288,7 @@ export const partialDict = <TKey extends string | number, TValue>(
   return {
     parse(input) {
       if (!isIndexable(input)) {
-        return err([
+        return Err([
           {
             message: toErrorMessage(
               "object",
@@ -333,10 +333,10 @@ export const partialDict = <TKey extends string | number, TValue>(
       }
 
       if (errors.length > 0) {
-        return err(errors)
+        return Err(errors)
       }
 
-      return ok(result)
+      return Ok(result)
     },
   }
 }
@@ -348,9 +348,9 @@ export const custom = <T>(
   return {
     parse(input) {
       if (predicate(input)) {
-        return ok(input)
+        return Ok(input)
       }
-      return err([
+      return Err([
         {
           message: `Custom validation failed. ${errorMessage}`,
           path: [],
@@ -362,13 +362,13 @@ export const custom = <T>(
 
 export const unknown: Parser<unknown> = {
   parse(input) {
-    return ok(input)
+    return Ok(input)
   },
 }
 
 export const any: Parser<any> = {
   parse(input) {
-    return ok(input)
+    return Ok(input)
   },
 }
 
@@ -380,7 +380,7 @@ export const enumeration = <
   return {
     parse(input) {
       if (!values.includes(input as T)) {
-        return err([
+        return Err([
           {
             message: toErrorMessage(
               `one of ${values.join(", ")}`,
@@ -391,7 +391,7 @@ export const enumeration = <
           },
         ])
       }
-      return ok(input as T)
+      return Ok(input as T)
     },
   }
 }
@@ -410,7 +410,7 @@ export const brand = <
         case "err":
           return parsed
         case "ok":
-          return ok(parsed.value as Brand<T, TBrand>)
+          return Ok(parsed.value as Brand<T, TBrand>)
       }
     },
   }
@@ -420,7 +420,7 @@ export const regex = (regex: RegExp): Parser<string> => {
   return {
     parse(input) {
       if (typeof input !== "string") {
-        return err([
+        return Err([
           {
             message: toErrorMessage(
               "string",
@@ -433,7 +433,7 @@ export const regex = (regex: RegExp): Parser<string> => {
       }
 
       if (!regex.test(input)) {
-        return err([
+        return Err([
           {
             message: `Expected string to match regex: ${regex.source}`,
             path: [],
@@ -441,7 +441,7 @@ export const regex = (regex: RegExp): Parser<string> => {
         ])
       }
 
-      return ok(input)
+      return Ok(input)
     },
   }
 }

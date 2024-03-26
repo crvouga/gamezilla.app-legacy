@@ -3,12 +3,12 @@ import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import {
   EmailAddress,
+  Err,
+  Ok,
   PhoneNumber,
   Posix,
   Result,
-  err,
   isErr,
-  ok,
 } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import { IAccountDb } from "./account-db"
@@ -39,7 +39,7 @@ const rowToAccount = (row: AccountRow): Result<string, Account> => {
 
   switch (row.user_role) {
     case "guest": {
-      return ok({
+      return Ok({
         role: "guest",
         createdAt,
         userId,
@@ -48,7 +48,7 @@ const rowToAccount = (row: AccountRow): Result<string, Account> => {
 
     case "normal": {
       if (emailAddress) {
-        return ok({
+        return Ok({
           role: "normal",
           createdAt,
           userId,
@@ -58,7 +58,7 @@ const rowToAccount = (row: AccountRow): Result<string, Account> => {
       }
 
       if (phoneNumber) {
-        return ok({
+        return Ok({
           role: "normal",
           createdAt,
           userId,
@@ -67,14 +67,14 @@ const rowToAccount = (row: AccountRow): Result<string, Account> => {
         })
       }
 
-      return err(
+      return Err(
         "Invalid account. Missing email and phone number for a normal account.",
       )
     }
 
     case "super": {
       if (emailAddress) {
-        return ok({
+        return Ok({
           role: "super",
           createdAt,
           userId,
@@ -84,7 +84,7 @@ const rowToAccount = (row: AccountRow): Result<string, Account> => {
       }
 
       if (phoneNumber) {
-        return ok({
+        return Ok({
           role: "super",
           createdAt,
           userId,
@@ -93,7 +93,7 @@ const rowToAccount = (row: AccountRow): Result<string, Account> => {
         })
       }
 
-      return err(
+      return Err(
         "Invalid account. Missing email and phone number for a super account.",
       )
     }
@@ -147,7 +147,7 @@ export const AccountDbPostgres = ({
       const row = queried.value[0] ?? null
 
       if (!row) {
-        return ok(null)
+        return Ok(null)
       }
 
       const account = rowToAccount(row)
@@ -180,7 +180,7 @@ export const AccountDbPostgres = ({
       const row = queried.value[0] ?? null
 
       if (!row) {
-        return ok(null)
+        return Ok(null)
       }
 
       const account = rowToAccount(row)
@@ -212,7 +212,7 @@ export const AccountDbPostgres = ({
       const row = queried.value[0] ?? null
 
       if (!row) {
-        return ok(null)
+        return Ok(null)
       }
 
       const account = rowToAccount(row)
@@ -244,7 +244,7 @@ export const AccountDbPostgres = ({
       if (isErr(queried)) {
         return queried
       }
-      return ok(null)
+      return Ok(null)
     },
   }
 }

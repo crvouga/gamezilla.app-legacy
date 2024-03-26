@@ -1,5 +1,5 @@
 import * as ChessJS from "chess.js"
-import { Result, IO, err, exhaustive, ok } from "gamezilla-app/@SHARED/core"
+import { Err, IO, Ok, Result, exhaustive } from "gamezilla-app/@SHARED/core"
 
 import {
   IconBotCute,
@@ -86,7 +86,7 @@ export const toBestMoveInput = (
   }
 
   if (!isRecord(move)) {
-    return err("failed_to_calculate_best_move")
+    return Err("failed_to_calculate_best_move")
   }
 
   const bestMoveInput = Object.entries(move).flatMap<MoveInput>(([from, to]) =>
@@ -94,10 +94,10 @@ export const toBestMoveInput = (
   )[0]
 
   if (bestMoveInput) {
-    return ok(bestMoveInput)
+    return Ok(bestMoveInput)
   }
 
-  return err("failed_to_calculate_best_move")
+  return Err("failed_to_calculate_best_move")
 }
 
 export const toRandomMoveInput = (
@@ -109,10 +109,10 @@ export const toRandomMoveInput = (
     legalMoveInputs[Math.floor(Math.random() * legalMoveInputs.length)]
 
   if (!randomMoveInput) {
-    return err("no_legal_move")
+    return Err("no_legal_move")
   }
 
-  return ok(randomMoveInput)
+  return Ok(randomMoveInput)
 }
 
 export const getBestMove =
@@ -789,19 +789,19 @@ export const move = (
     const moved = instance.move(moveInput_)
 
     if (!moved) {
-      return err("invalid_move")
+      return Err("invalid_move")
     }
 
     // const capturesNew = capturedPieceSymbol ? [...model.captures] : model.captures
 
-    return ok({
+    return Ok({
       pgn: instance.pgn(),
       fen: instance.fen(),
       previousMove: moveInput,
       didCapture: Boolean(moved.captured),
     })
   } catch (error) {
-    return err("invalid_move")
+    return Err("invalid_move")
   }
 }
 
@@ -816,8 +816,8 @@ export const moveMany = (moveInputs: MoveInput[], model: Model) => {
     if (moved.t === "err") {
       return moved
     }
-    return ok(moved.value)
-  }, ok({ ...model, didCapture: false }))
+    return Ok(moved.value)
+  }, Ok({ ...model, didCapture: false }))
 }
 
 export const toLegalMoveInputs = (model: Model): MoveInput[] => {
@@ -852,7 +852,7 @@ export const uciMoveToMoveInput = (
   const match = uciMove.match(uciMoveRegex)
 
   if (!match) {
-    return err(
+    return Err(
       `uci move did not match regex. uciMove: ${uciMove} regex: ${uciMoveRegex}`,
     )
   }
@@ -860,21 +860,21 @@ export const uciMoveToMoveInput = (
   const [, from, to, promotion] = match
 
   if (!(from && to)) {
-    return err("failed to extract from and to from uci move")
+    return Err("failed to extract from and to from uci move")
   }
 
   const upperCaseFrom = from.toUpperCase()
   const upperCaseTo = to.toUpperCase()
 
   if (!(isSquare(upperCaseFrom) && isSquare(upperCaseTo))) {
-    return err("from or to is not a valid square")
+    return Err("from or to is not a valid square")
   }
 
   const promotionPiece: PromotionPieceSymbol = isPromotionPieceSymbol(promotion)
     ? promotion
     : "q"
 
-  return ok({
+  return Ok({
     from: upperCaseFrom,
     to: upperCaseTo,
     promotion: promotionPiece,

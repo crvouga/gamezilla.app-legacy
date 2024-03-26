@@ -1,7 +1,7 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { ok } from "gamezilla-app/@SHARED/core"
-import { IAccountDb } from "./account-db"
 import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
+import { Ok } from "gamezilla-app/@SHARED/core"
+import { IAccountDb } from "./account-db"
 
 export const AccountDbInMemory = (deps: {
   delay: () => Promise<void>
@@ -10,32 +10,32 @@ export const AccountDbInMemory = (deps: {
   return {
     async findOneByUserId(input) {
       await deps.delay()
-      return ok(input.userId ? accounts.get(input.userId) ?? null : null)
+      return Ok(input.userId ? accounts.get(input.userId) ?? null : null)
     },
     async findOneByEmailAddress(input) {
       await deps.delay()
       for (const account of accounts.values()) {
         if (account.emailAddress === input.emailAddress) {
-          return ok(account)
+          return Ok(account)
         }
       }
-      return ok(null)
+      return Ok(null)
     },
 
     async findOneByPhoneNumber(input) {
       await deps.delay()
       for (const account of accounts.values()) {
         if (account.phoneNumber === input.phoneNumber) {
-          return ok(account)
+          return Ok(account)
         }
       }
-      return ok(null)
+      return Ok(null)
     },
 
     async insert(input) {
       await deps.delay()
       accounts.set(input.userId, input)
-      return ok(null)
+      return Ok(null)
     },
   }
 }

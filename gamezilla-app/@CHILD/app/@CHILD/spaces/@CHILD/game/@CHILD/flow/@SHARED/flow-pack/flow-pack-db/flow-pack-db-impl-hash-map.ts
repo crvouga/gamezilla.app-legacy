@@ -1,4 +1,4 @@
-import { Result, ok } from "gamezilla-app/@SHARED/core"
+import { Ok, Result } from "gamezilla-app/@SHARED/core"
 import { FlowPack } from "../flow-pack"
 import { IFlowPackDb } from "./flow-pack-db"
 
@@ -8,7 +8,7 @@ export const FlowPackDbHashMap = (): IFlowPackDb => {
   return {
     async get(id) {
       await new Promise((r) => setTimeout(r, 500))
-      return ok(db.get(id) ?? null)
+      return Ok(db.get(id) ?? null)
     },
 
     async count(input) {
@@ -33,7 +33,7 @@ export const FlowPackDbHashMap = (): IFlowPackDb => {
         input.pagination.offset,
         input.pagination.offset + input.pagination.limit,
       )
-      return ok({
+      return Ok({
         total: filtered.length,
         items: sliced,
         limit: input.pagination.limit,
@@ -44,13 +44,13 @@ export const FlowPackDbHashMap = (): IFlowPackDb => {
     async put(pack) {
       await new Promise((r) => setTimeout(r, 500))
       db.set(pack.id, pack)
-      return ok(pack)
+      return Ok(pack)
     },
 
     async zap(id) {
       await new Promise((r) => setTimeout(r, 500))
       db.delete(id)
-      return ok(null)
+      return Ok(null)
     },
   }
 }

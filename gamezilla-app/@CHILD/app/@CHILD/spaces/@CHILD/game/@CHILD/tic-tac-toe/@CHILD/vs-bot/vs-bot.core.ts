@@ -1,17 +1,17 @@
-import { err, isErr, ok, Result } from "gamezilla-app/@SHARED/core"
-import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { VsBotSetup } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot"
+import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Err, isErr, Ok, Result } from "gamezilla-app/@SHARED/core"
 import {
   BotLevel,
+  emptyBoard,
   Model,
+  move,
   PlayerType,
   Position,
-  emptyBoard,
-  move,
   toOpposite,
   toStatus,
 } from "../../@SHARED/tic-tic-toe/tic-tac-toe"
-import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 
 //
 //
@@ -121,14 +121,14 @@ export const handle = ({
   switch (msg.t) {
     case "input-bot-level": {
       if (model.type !== "setup") {
-        return err("must-be-in-setup-mode")
+        return Err("must-be-in-setup-mode")
       }
 
       if (model.player !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
 
-      return ok({
+      return Ok({
         ...model,
         botLevel: msg.botLevel,
       })
@@ -136,14 +136,14 @@ export const handle = ({
 
     case "start-playing": {
       if (model.type !== "setup") {
-        return err("must-be-in-setup-mode")
+        return Err("must-be-in-setup-mode")
       }
 
       if (model.player && model.player !== ctx.currentUserId) {
-        return err("not-allowed")
+        return Err("not-allowed")
       }
 
-      return ok({
+      return Ok({
         ...model,
         userPlayerType: msg.playerType,
         player: ctx.currentUserId,
@@ -152,14 +152,14 @@ export const handle = ({
 
     case "stop-playing": {
       if (model.type !== "setup") {
-        return err("must-be-in-setup-mode")
+        return Err("must-be-in-setup-mode")
       }
 
       if (model.player !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
 
-      return ok({
+      return Ok({
         ...model,
         player: null,
       })
@@ -167,18 +167,18 @@ export const handle = ({
 
     case "start-game": {
       if (model.type !== "setup") {
-        return err("must-be")
+        return Err("must-be")
       }
 
       if (model.player === "none") {
-        return err("missing_player")
+        return Err("missing_player")
       }
 
       if (model.player !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
 
-      return ok({
+      return Ok({
         type: "game",
         board: emptyBoard,
         botLevel: model.botLevel,
@@ -189,14 +189,14 @@ export const handle = ({
 
     case "stop-game": {
       if (model.type !== "game") {
-        return err("must-be-in-game-mode")
+        return Err("must-be-in-game-mode")
       }
 
       if (model.player !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
 
-      return ok({
+      return Ok({
         type: "setup",
         botLevel: model.botLevel,
         player: model.player,
@@ -206,11 +206,11 @@ export const handle = ({
 
     case "input-move": {
       if (model.type !== "game") {
-        return err("must-be-in-game-mode")
+        return Err("must-be-in-game-mode")
       }
 
       if (model.player !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
 
       const result = move({
@@ -228,16 +228,16 @@ export const handle = ({
         board: result.value,
       }
 
-      return ok(modelNext)
+      return Ok(modelNext)
     }
 
     case "swap-sides": {
       if (model.type !== "game") {
-        return err("must-be-in-game-mode")
+        return Err("must-be-in-game-mode")
       }
 
       if (model.player !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
 
       const modelNext: CoreModel = {
@@ -246,19 +246,19 @@ export const handle = ({
         userPlayerType: toOpposite(model.userPlayerType),
       }
 
-      return ok(modelNext)
+      return Ok(modelNext)
     }
 
     case "restart": {
       if (model.type !== "game") {
-        return err("must-be-in-game-mode")
+        return Err("must-be-in-game-mode")
       }
 
       if (model.player !== ctx.currentUserId) {
-        return err("must-be-player")
+        return Err("must-be-player")
       }
 
-      return ok({
+      return Ok({
         ...model,
         board: emptyBoard,
       })

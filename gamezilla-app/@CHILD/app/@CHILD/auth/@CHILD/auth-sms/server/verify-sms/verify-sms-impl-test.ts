@@ -1,6 +1,6 @@
-import { PhoneNumber, err, ok } from "gamezilla-app/@SHARED/core"
-import { IVerifySMS } from "./verify-sms"
 import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
+import { Err, Ok, PhoneNumber } from "gamezilla-app/@SHARED/core"
+import { IVerifySMS } from "./verify-sms"
 
 const CODE = "123"
 
@@ -21,16 +21,16 @@ export const VerifySMS = ({
         `[verify-sms] [test] fake sent code to ${phoneNumberStr}. code: ${CODE}`,
       )
 
-      return ok(null)
+      return Ok(null)
     },
     async verifyCode(input) {
       await delay()
 
       if (input.code === CODE) {
-        return ok(null)
+        return Ok(null)
       }
 
-      return err("Code does not match the code sent")
+      return Err("Code does not match the code sent")
     },
   }
 }

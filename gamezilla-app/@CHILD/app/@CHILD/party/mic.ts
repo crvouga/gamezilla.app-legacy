@@ -1,4 +1,4 @@
-import { err, ok, Result, IO } from "gamezilla-app/@SHARED/core"
+import { Err, IO, Ok, Result } from "gamezilla-app/@SHARED/core"
 
 export type MicLoadResult = Result<string, null>
 
@@ -8,16 +8,16 @@ const load: IO<MicLoadResult> = async () => {
       audio: true,
     })
 
-    return ok(null)
+    return Ok(null)
   } catch (error) {
-    return err("failed_to_load")
+    return Err("failed_to_load")
   }
 }
 
 export type MicUnloadResult = Result<string, null>
 
 const unload: IO<MicUnloadResult> = async () => {
-  return ok(null)
+  return Ok(null)
 }
 
 export const Mic = {

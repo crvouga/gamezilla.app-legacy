@@ -1,4 +1,4 @@
-import { err, ok, Result, memoize } from "gamezilla-app/@SHARED/core"
+import { Err, Ok, Result, memoize } from "gamezilla-app/@SHARED/core"
 
 //
 //
@@ -322,22 +322,22 @@ export const move = ({
   const status = toStatus(board)
 
   if (status.type === "Tie" || status.type === "Win") {
-    return err("game_over")
+    return Err("game_over")
   }
 
   if (status.turn !== player) {
-    return err("not_players_turn")
+    return Err("not_players_turn")
   }
 
   const slot = toSlot(board, position)
 
   if (slot !== Empty) {
-    return err("position_is_taken")
+    return Err("position_is_taken")
   }
 
   const boardNext = setSlot(board, position, player)
 
-  return ok(boardNext)
+  return Ok(boardNext)
 }
 
 export const toEmptyPositions = (board: Model): Position[] => {

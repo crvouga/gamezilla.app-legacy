@@ -6,12 +6,12 @@ import {
   didShowErrorSm,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
+  Err,
+  Ok,
   Posix,
   RequestResponse,
   TimeSpan,
-  err,
   isRequesting,
-  ok,
 } from "gamezilla-app/@SHARED/core"
 import { testSpaceClientCtx } from "../../../../../@SHARED/testing/client"
 import { testFlowClientCtx } from "../../../@CHILD/create/@TEST/client"
@@ -42,7 +42,7 @@ const serverListedPuzzlesOk =
       model,
       msgServer: {
         t: "flow-puzzle-list.listed-puzzle",
-        listed: ok({
+        listed: Ok({
           items: puzzles,
           limit: 25,
           offset: 0,
@@ -59,7 +59,7 @@ const serverListedPuzzlesErr =
       model,
       msgServer: {
         t: "flow-puzzle-list.listed-puzzle",
-        listed: err(error),
+        listed: Err(error),
       },
     })
   }

@@ -1,11 +1,11 @@
-import { ok } from "gamezilla-app/@SHARED/core"
+import { Ok } from "gamezilla-app/@SHARED/core"
 import { Logger } from "../logger"
 import { DbConnSql } from "./db-conn-sql"
 import { createDbConnPostgres } from "./db-conn-sql-impl-postgres"
 
 export const dbConnSqlNoop: DbConnSql = {
   query: async () => {
-    return ok([])
+    return Ok([])
   },
 }
 

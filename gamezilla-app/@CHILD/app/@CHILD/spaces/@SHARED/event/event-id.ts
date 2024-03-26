@@ -1,4 +1,4 @@
-import { Result, Uuid, err, ok } from "gamezilla-app/@SHARED/core"
+import { Err, Ok, Result, Uuid } from "gamezilla-app/@SHARED/core"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 
@@ -17,10 +17,10 @@ type Problem = "invalid_id"
 
 const decode = (id: string): Result<Problem, EventId> => {
   if (is(id)) {
-    return ok(id)
+    return Ok(id)
   }
 
-  return err("invalid_id")
+  return Err("invalid_id")
 }
 
 const baseId = Uuid.generate()

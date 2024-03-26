@@ -10,16 +10,16 @@ import {
   ServerEvent,
   sendToClient,
 } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { Result, err, isErr, ok } from "gamezilla-app/@SHARED/core"
+import { Err, Ok, Result, isErr } from "gamezilla-app/@SHARED/core"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import { ProfileDb } from "./profile-db/profile-db"
 import { createProfileDb } from "./profile-db/profile-db-impl.postgres"
 import {
-  ProfileCore,
-  Req,
   MsgServer,
   MsgToClient,
   MsgToServer,
+  ProfileCore,
+  Req,
   profileCoreToProfile,
 } from "./profile.core"
 
@@ -192,15 +192,15 @@ const handler = async ({
     }
 
     case "change-username": {
-      return err("not implemented")
+      return Err("not implemented")
     }
 
     case "delete-forever": {
-      return err("not implemented")
+      return Err("not implemented")
     }
 
     case "search": {
-      return err("not implemented")
+      return Err("not implemented")
     }
   }
 }
@@ -221,7 +221,7 @@ const findElseInsertNew = async ({
   const profile = found.value[0]
 
   if (profile) {
-    return ok(profile)
+    return Ok(profile)
   }
 
   const randomSeed = await ProfileAvatar.generateRandomSeed()
@@ -239,5 +239,5 @@ const findElseInsertNew = async ({
     return inserted
   }
 
-  return ok(profileNew)
+  return Ok(profileNew)
 }

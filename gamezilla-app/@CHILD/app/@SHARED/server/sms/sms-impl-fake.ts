@@ -1,4 +1,4 @@
-import { PhoneNumber, ok } from "gamezilla-app/@SHARED/core"
+import { Ok, PhoneNumber } from "gamezilla-app/@SHARED/core"
 import { SMS } from "./sms"
 
 export const SMSFake = (): SMS & {
@@ -12,7 +12,7 @@ export const SMSFake = (): SMS & {
         phoneNumber: _input.phoneNumber,
         message: _input.message,
       })
-      return ok(null)
+      return Ok(null)
     },
   }
 }

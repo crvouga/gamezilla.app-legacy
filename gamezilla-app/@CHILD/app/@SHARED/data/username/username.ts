@@ -1,6 +1,6 @@
-import { Result, err, ok } from "gamezilla-app/@SHARED/core"
-import { adjectives, nouns } from "../words"
+import { Err, Ok, Result } from "gamezilla-app/@SHARED/core"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
+import { adjectives, nouns } from "../words"
 
 export type Username = Brand<string, "Username">
 
@@ -16,9 +16,9 @@ type Problem = "invalid_username"
 
 const decode = (username: unknown): Result<Problem, Username> => {
   if (is(username)) {
-    return ok(username)
+    return Ok(username)
   }
-  return err("invalid_username")
+  return Err("invalid_username")
 }
 
 const fromString = (username: string): Username => {

@@ -8,13 +8,13 @@ import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import {
   Eff,
+  Err,
+  Ok,
   Result,
   Sub,
   Time,
   andThen,
   eq,
-  err,
-  ok,
   pipe,
 } from "gamezilla-app/@SHARED/core"
 import { TimeSpan } from "gamezilla-app/@SHARED/core/time-span"
@@ -82,7 +82,7 @@ const initialLoad = async ({
   const profile = found.value
 
   if (!profile) {
-    return err("Initial load failed. No profile found.")
+    return Err("Initial load failed. No profile found.")
   }
 
   const foundPuzzles = await PuzzleDb.puzzles.findForProfile(dbConn, {
@@ -95,7 +95,7 @@ const initialLoad = async ({
 
   const puzzles = foundPuzzles.value
 
-  return ok({ profile, puzzles })
+  return Ok({ profile, puzzles })
 }
 
 //
@@ -167,12 +167,12 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
       return {
         model: {
           ...modelNew,
-          requests: { ...model.requests, getPuzzles: ok(null) },
+          requests: { ...model.requests, getPuzzles: Ok(null) },
         },
         msgCmd: [
           {
             t: "send-to-space",
-            msg: { t: "db-got-puzzles", result: ok(modelNew) },
+            msg: { t: "db-got-puzzles", result: Ok(modelNew) },
           },
         ],
       }
@@ -206,7 +206,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
               t: "send-to-space",
               msg: {
                 t: "db-got-initial-load",
-                result: err("No puzzles found."),
+                result: Err("No puzzles found."),
               },
             },
           ],
@@ -228,7 +228,7 @@ const updateMain: typeof update = ({ msg, model, ctx }) => {
         msgCmd: [
           {
             t: "send-to-space",
-            msg: { t: "db-got-initial-load", result: ok(modelNew) },
+            msg: { t: "db-got-initial-load", result: Ok(modelNew) },
           },
         ],
       }

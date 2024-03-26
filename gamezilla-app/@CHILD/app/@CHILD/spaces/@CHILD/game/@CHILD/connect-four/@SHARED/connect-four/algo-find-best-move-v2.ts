@@ -3,12 +3,12 @@ import {
   Minimax,
   ScoreFn,
 } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/minimax"
-import { ok, Result } from "gamezilla-app/@SHARED/core"
+import { Ok, Result } from "gamezilla-app/@SHARED/core"
 import {
   Columns,
   MAX_COLUMN_HEIGHT,
-  opposite,
   PlayerType,
+  opposite,
   toStatus,
 } from "./connect-four"
 
@@ -93,7 +93,7 @@ export const findBestMove = ({
 
   const bestMove = bestChildState?.lastMoveColumnIndex ?? null
 
-  return ok({
+  return Ok({
     columnIndex: bestMove,
   })
 }

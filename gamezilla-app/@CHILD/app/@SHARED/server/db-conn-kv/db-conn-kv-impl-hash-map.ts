@@ -1,4 +1,4 @@
-import { ok } from "gamezilla-app/@SHARED/core"
+import { Ok } from "gamezilla-app/@SHARED/core"
 import { IDbConnKv } from "./db-conn-kv"
 
 const hashMap = new Map<string, unknown>()
@@ -11,20 +11,20 @@ export const DbConnKvHashMap = (): IDbConnKv => {
       const parsed = parser.parse(got)
 
       if (parsed.t === "ok") {
-        return ok(parsed.value)
+        return Ok(parsed.value)
       }
 
-      return ok(null)
+      return Ok(null)
     },
 
     async set(key, value) {
       hashMap.set(key, value)
-      return ok(null)
+      return Ok(null)
     },
 
     async zap(key) {
       hashMap.delete(key)
-      return ok(null)
+      return Ok(null)
     },
   }
 }

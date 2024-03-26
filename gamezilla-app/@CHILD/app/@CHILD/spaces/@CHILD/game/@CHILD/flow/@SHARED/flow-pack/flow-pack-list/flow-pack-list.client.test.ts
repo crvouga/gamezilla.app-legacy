@@ -5,11 +5,11 @@ import {
   didShowErrorSm,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
+  Err,
+  Ok,
   Posix,
   RequestResponse,
   TimeSpan,
-  err,
-  ok,
 } from "gamezilla-app/@SHARED/core"
 import { testSpaceClientCtx } from "../../../../../@SHARED/testing/client"
 import { FlowPack } from "../flow-pack"
@@ -51,7 +51,7 @@ const serverListedPacksOk =
       model,
       msgServer: {
         t: "listed-packs",
-        listed: ok({
+        listed: Ok({
           items: packs,
           limit: 25,
           offset: 0,
@@ -67,7 +67,7 @@ const serverListedPacksErr = (errorMessage: string) => (model: ModelClient) => {
     model,
     msgServer: {
       t: "listed-packs",
-      listed: err(errorMessage),
+      listed: Err(errorMessage),
     },
   })
 }

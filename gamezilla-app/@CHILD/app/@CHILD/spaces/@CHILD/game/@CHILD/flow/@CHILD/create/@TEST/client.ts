@@ -1,6 +1,6 @@
 import { EventId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { SpaceClientCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
-import { ok } from "gamezilla-app/@SHARED/core"
+import { Ok } from "gamezilla-app/@SHARED/core"
 import { LamportTimestamp } from "gamezilla-app/@SHARED/lamport-clock"
 import { testSpaceClientCtx } from "../../../../../@SHARED/testing/client"
 import { Flow } from "../../../@SHARED/flow"
@@ -46,7 +46,7 @@ export const userCreatedPack = (pack: FlowPack) => (model: ModelClient) => {
     modelSync: defaultModelSync,
     msgSync: {
       t: "user-created-pack",
-      created: ok(pack),
+      created: Ok(pack),
       eventId: EventId.generate(),
       happenedAt: LamportTimestamp.fromNumber(0),
       userId: ctx.currentUserId,
@@ -120,7 +120,7 @@ export const serverListedPuzzlesOk =
         t: "flow-puzzle-list",
         c: {
           t: "flow-puzzle-list.listed-puzzle",
-          listed: ok({
+          listed: Ok({
             items: puzzles,
             limit: 10,
             offset: 0,
@@ -166,7 +166,7 @@ export const puzzleBuilderUserSavedChanges =
         t: "puzzle-builder.saved-puzzle",
         eventId: EventId.generate(),
         happenedAt: LamportTimestamp.fromNumber(0),
-        saved: ok(puzzle),
+        saved: Ok(puzzle),
         userId: ctx.currentUserId,
       },
       ctx,
@@ -217,7 +217,7 @@ export const serverCreatedPack = (pack: FlowPack) => (model: ModelClient) => {
     modelSync: defaultModelSync,
     msgServer: {
       t: "pack-create.created-pack",
-      created: ok(pack),
+      created: Ok(pack),
     },
   })
 }

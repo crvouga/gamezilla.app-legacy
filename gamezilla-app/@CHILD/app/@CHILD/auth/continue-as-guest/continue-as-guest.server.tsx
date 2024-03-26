@@ -1,7 +1,7 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
 import { sendBack } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { TimeSpan, isErr, notAsked, ok } from "gamezilla-app/@SHARED/core"
+import { Ok, TimeSpan, isErr, notAsked } from "gamezilla-app/@SHARED/core"
 import { ServerModule } from "../auth.core"
 import { ModelClient } from "./continue-as-guest.core"
 
@@ -61,7 +61,7 @@ const update: ServerModule["update"] = async ({
         msgCmd: [
           sendBack(msgClient, {
             t: "guest.continue-as-guest-result",
-            result: ok(newGuestAccount.userId),
+            result: Ok(newGuestAccount.userId),
           }),
         ],
         msgEvt: [

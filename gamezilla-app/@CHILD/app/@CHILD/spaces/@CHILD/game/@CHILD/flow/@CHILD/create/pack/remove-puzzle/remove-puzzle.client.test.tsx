@@ -1,6 +1,13 @@
 import { describe, expect, it } from "bun:test"
 import { andThen } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-client-v2"
 import { didSendToServer } from "gamezilla-app/@CHILD/app/@SHARED/client"
+import {
+  Err,
+  Ok,
+  Posix,
+  RequestResponse,
+  TimeSpan,
+} from "gamezilla-app/@SHARED/core"
 import { FlowVariant, FlowVariantDimensions } from "../../../../@SHARED/flow"
 import { FlowPack } from "../../../../@SHARED/flow-pack"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle"
@@ -11,13 +18,6 @@ import {
   RemovePuzzleClientCtx,
   initClient,
 } from "./remove-puzzle.core"
-import {
-  Posix,
-  RequestResponse,
-  TimeSpan,
-  err,
-  ok,
-} from "gamezilla-app/@SHARED/core"
 
 const initial = (ctx: RemovePuzzleClientCtx) => {
   return {
@@ -47,7 +47,7 @@ const serverRemovedPuzzleOk =
       modelSync: defaultModelSync,
       msgServer: {
         t: "remove-puzzle.removed",
-        result: ok(null),
+        result: Ok(null),
         packId: ctx.pack.id,
         packPuzzleIndex: 0,
         puzzleId: ctx.puzzle.id,
@@ -63,7 +63,7 @@ const serverRemovedPuzzleErr =
       modelSync: defaultModelSync,
       msgServer: {
         t: "remove-puzzle.removed",
-        result: err("error"),
+        result: Err("error"),
         packId: ctx.pack.id,
         packPuzzleIndex: 0,
         puzzleId: ctx.puzzle.id,

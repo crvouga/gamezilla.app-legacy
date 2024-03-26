@@ -1,8 +1,8 @@
-import { err, isErr, ok, Result } from "gamezilla-app/@SHARED/core"
-import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { VsBotSetup } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@CHILD/game/@SHARED/vs-bot"
-import { Chess } from "../../@SHARED/chess"
 import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
+import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Err, isErr, Ok, Result } from "gamezilla-app/@SHARED/core"
+import { Chess } from "../../@SHARED/chess"
 
 //
 //
@@ -136,15 +136,15 @@ export const updateCore = ({
       switch (msg.t) {
         case "start-game": {
           if (!model.userId) {
-            return err("missing-user")
+            return Err("missing-user")
           }
           if (
             model.userId !== ctx.currentUserId ||
             model.userId !== ctx.space.hostId
           ) {
-            return err("not-allowed")
+            return Err("not-allowed")
           }
-          return ok({
+          return Ok({
             type: "game",
             botLevel: model.botLevel,
             userColor: model.userColor,
@@ -158,9 +158,9 @@ export const updateCore = ({
             model.userId !== ctx.currentUserId ||
             model.userId !== ctx.space.hostId
           ) {
-            return err("not-allowed")
+            return Err("not-allowed")
           }
-          return ok({
+          return Ok({
             ...model,
             botLevel: msg.botLevel,
           })
@@ -168,9 +168,9 @@ export const updateCore = ({
 
         case "stop-playing": {
           if (model.userId !== ctx.currentUserId) {
-            return err("not-allowed")
+            return Err("not-allowed")
           }
-          return ok({
+          return Ok({
             ...model,
             userId: null,
           })
@@ -178,9 +178,9 @@ export const updateCore = ({
 
         case "start-playing": {
           if (model.userId !== null && model.userId !== ctx.currentUserId) {
-            return err("not-allowed")
+            return Err("not-allowed")
           }
-          return ok({
+          return Ok({
             ...model,
             userId: ctx.currentUserId,
             userColor: msg.color,
@@ -188,7 +188,7 @@ export const updateCore = ({
         }
 
         default: {
-          return err("unhandled")
+          return Err("unhandled")
         }
       }
     }
@@ -197,11 +197,11 @@ export const updateCore = ({
       switch (msg.t) {
         case "input-move": {
           if (model.userId !== ctx.currentUserId) {
-            return err("must-be-playing")
+            return Err("must-be-playing")
           }
 
           if (Chess.toTurn(model.board) !== model.userColor) {
-            return err("must-be-turn")
+            return Err("must-be-turn")
           }
 
           const moved = Chess.move(msg.move, model.board)
@@ -215,7 +215,7 @@ export const updateCore = ({
           const gameOver = Chess.toGameOver(boardNew)
 
           if (gameOver.type !== "none") {
-            return ok({
+            return Ok({
               ...model,
               type: "game-over",
               board: boardNew,
@@ -240,9 +240,9 @@ export const updateCore = ({
             model.userId !== ctx.currentUserId ||
             ctx.currentUserId !== ctx.space.hostId
           ) {
-            return err("not-allowed")
+            return Err("not-allowed")
           }
-          return ok({
+          return Ok({
             type: "setup",
             botLevel: model.botLevel,
             userColor: model.userColor,
@@ -251,7 +251,7 @@ export const updateCore = ({
         }
 
         default: {
-          return err("unhandled")
+          return Err("unhandled")
         }
       }
     }
@@ -263,9 +263,9 @@ export const updateCore = ({
             model.userId !== ctx.currentUserId ||
             ctx.currentUserId !== ctx.space.hostId
           ) {
-            return err("not-allowed")
+            return Err("not-allowed")
           }
-          return ok({
+          return Ok({
             type: "setup",
             botLevel: model.botLevel,
             userColor: model.userColor,
@@ -273,13 +273,13 @@ export const updateCore = ({
           })
         }
         default: {
-          return err("unhandled")
+          return Err("unhandled")
         }
       }
     }
 
     default: {
-      return err("unhandled")
+      return Err("unhandled")
     }
   }
 }
@@ -297,7 +297,7 @@ export const botMoved = (
   model: CoreModel,
 ): Result<string, CoreModel & { didCapture: boolean }> => {
   if (model.type !== "game") {
-    return err("must_be_started")
+    return Err("must_be_started")
   }
 
   if (botMoveResult.t === "err") {
@@ -309,7 +309,7 @@ export const botMoved = (
   const botColor = Chess.toOppositeColor(model.userColor)
 
   if (Chess.toTurn(model.board) !== botColor) {
-    return err("must_be_turn")
+    return Err("must_be_turn")
   }
 
   const result = Chess.move(botMoveInput, model.board)
@@ -329,10 +329,10 @@ export const botMoved = (
       gameOver: gameOver,
       board: boardNew,
     }
-    return ok({ ...modelNew, didCapture })
+    return Ok({ ...modelNew, didCapture })
   }
 
-  return ok({
+  return Ok({
     ...model,
     board: boardNew,
     didCapture,

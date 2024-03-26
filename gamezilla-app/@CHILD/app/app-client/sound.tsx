@@ -12,11 +12,11 @@ import {
   ToggleButton,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
+  Err,
+  Ok,
   Result,
   TimeSpan,
   UnitInterval,
-  err,
-  ok,
 } from "gamezilla-app/@SHARED/core"
 
 //
@@ -297,7 +297,7 @@ const audioBuffers = new Map<string, AudioBuffer>()
 
 async function preloadSounds(src: string[]) {
   await Promise.allSettled(src.map((s) => preloadSound(s)))
-  return ok(null)
+  return Ok(null)
 }
 
 async function preloadSound(src: string) {
@@ -308,7 +308,7 @@ async function preloadSound(src: string) {
   const audioContext = getAudioContext()
   const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
   audioBuffers.set(src, audioBuffer)
-  return ok(null)
+  return Ok(null)
 }
 
 async function playSoundEff(
@@ -320,7 +320,7 @@ async function playSoundEff(
   const audioBuffer = audioBuffers.get(src)
 
   if (!audioBuffer) {
-    return err(`Sound not loaded. src: ${src}`)
+    return Err(`Sound not loaded. src: ${src}`)
   }
   const audioContext = getAudioContext()
   const sourceNode = audioContext.createBufferSource()
@@ -333,5 +333,5 @@ async function playSoundEff(
 
   sourceNode.start(0)
 
-  return ok(null)
+  return Ok(null)
 }
