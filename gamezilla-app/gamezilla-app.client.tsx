@@ -1,7 +1,7 @@
 import { Program } from "gamezilla-app/@SHARED/core"
 import { DebuggerReduxDevTools } from "gamezilla-app/@SHARED/core/debug"
 import { Render } from "gamezilla-app/@SHARED/vdom/render"
-import { TRANSPORT_IMPL, VDOM_IMPL } from "gamezilla-app/public-config"
+import { IS_PROD, TRANSPORT_IMPL, VDOM_IMPL } from "gamezilla-app/public-config"
 import * as AppClient from "./@CHILD/app/app.client"
 
 const main = async () => {
@@ -24,7 +24,7 @@ const main = async () => {
 
     render: (input) => render(<AppClient.View {...input} />, root),
 
-    debugger: DebuggerReduxDevTools,
+    debugger: IS_PROD ? undefined : DebuggerReduxDevTools,
   })
 
   console.log(`Renderer: ${VDOM_IMPL}`)
