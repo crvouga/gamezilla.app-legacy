@@ -1,10 +1,10 @@
 import { GameServerModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2"
 import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { Result } from "gamezilla-app/@SHARED/core"
+import { FlowVariant, FlowVariantDimensions } from "../../../../@SHARED/flow"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { ServerModule } from "../../create.core"
 import { MsgSync } from "./puzzle-create.core"
-import { FlowVariant, FlowVariantDimensions } from "../../../../@SHARED/flow"
 
 const update: ServerModule["update"] = async (input) => {
   return GameServerModule.andThen({ model: input.model }, (model) =>
@@ -41,7 +41,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         }),
       })
 
-      const created = await deps.FlowPuzzleDb.put(puzzleNew)
+      const created = await deps.FlowPuzzleDb.upsert(puzzleNew)
 
       const msgSync: MsgSync = {
         t: "user-created-puzzle",

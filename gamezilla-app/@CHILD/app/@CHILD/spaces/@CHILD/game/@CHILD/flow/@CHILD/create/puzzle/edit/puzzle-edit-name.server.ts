@@ -2,12 +2,12 @@ import { GameServerModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED
 import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { err, isErr } from "gamezilla-app/@SHARED/core"
+import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { IFlowPuzzleDb } from "../../../../@SHARED/flow-puzzle/flow-puzzle-db"
 import { FlowPuzzleId } from "../../../../@SHARED/flow-puzzle/flow-puzzle-id"
+import { FlowPuzzleName } from "../../../../@SHARED/flow-puzzle/flow-puzzle-name"
 import { ServerModule } from "../../create.core"
 import { MsgSync } from "./puzzle-edit-name.core"
-import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
-import { FlowPuzzleName } from "../../../../@SHARED/flow-puzzle/flow-puzzle-name"
 
 const update: ServerModule["update"] = async (input) => {
   return GameServerModule.andThen({ model: input.model }, (model) =>
@@ -84,7 +84,7 @@ const patchName = async (input: {
     lastUpdatedBy: userId,
   }
 
-  const put = await deps.FlowPuzzleDb.put(patched)
+  const put = await deps.FlowPuzzleDb.upsert(patched)
 
   return put
 }

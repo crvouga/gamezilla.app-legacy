@@ -3,7 +3,7 @@ import {
   Pagination,
   UserId,
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { Result } from "gamezilla-app/@SHARED/core"
+import { Task } from "gamezilla-app/@SHARED/core"
 import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle-id"
 
@@ -16,7 +16,7 @@ type WhereClause = {
   }
 }
 export type IFlowPuzzleDb = {
-  count: (input: { where: WhereClause }) => Promise<Result<string, number>>
+  count: (input: { where: WhereClause }) => Task<string, number>
   list: (input: {
     pagination: Pagination
     where: WhereClause
@@ -24,13 +24,13 @@ export type IFlowPuzzleDb = {
       createdAt?: "asc" | "desc"
       lastUpdatedAt?: "asc" | "desc"
     }
-  }) => Promise<Result<string, Paginated<FlowPuzzle>>>
-  get: (id: FlowPuzzleId) => Promise<Result<string, FlowPuzzle | null>>
-  put: (input: FlowPuzzle) => Promise<Result<string, null>>
+  }) => Task<string, Paginated<FlowPuzzle>>
+  get: (id: FlowPuzzleId) => Task<string, FlowPuzzle | null>
+  upsert: (input: FlowPuzzle) => Task<string, null>
   zap: (input: {
     id: FlowPuzzleId
     deletedByUserId: UserId
-  }) => Promise<Result<string, null>>
+  }) => Task<string, null>
 }
 
 export type ListPuzzlesInput = Parameters<IFlowPuzzleDb["list"]>[0]

@@ -108,7 +108,7 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
       })
     },
 
-    async put(input) {
+    async upsert(input) {
       calls.put++
 
       await new Promise((resolve) => setTimeout(resolve, 500))
