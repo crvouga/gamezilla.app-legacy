@@ -1,11 +1,9 @@
-import { PhoneNumber, Result } from "gamezilla-app/@SHARED/core"
+import { PhoneNumber, Task } from "gamezilla-app/@SHARED/core"
 
 export type IVerifySMS = {
-  sendCode: (input: {
-    phoneNumber: PhoneNumber
-  }) => Promise<Result<string, null>>
+  sendCode: (input: { phoneNumber: PhoneNumber }) => Task<string, null>
   verifyCode: (input: {
     phoneNumber: PhoneNumber
     code: string
-  }) => Promise<Result<string, null>>
+  }) => Task<string, null>
 }
