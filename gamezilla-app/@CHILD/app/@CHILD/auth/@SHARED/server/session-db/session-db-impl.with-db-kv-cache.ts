@@ -1,5 +1,5 @@
 import { SessionId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
+import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Result, isOk } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import { ISessionDb } from "./session-db"
@@ -14,16 +14,16 @@ export const SessionDbWithDbKvCache = ({
   SessionDb,
   dbConnKv,
 }: {
-  dbConnKv: DbConnKv
+  dbConnKv: IDbConnKv
   SessionDb: ISessionDb
 }): ISessionDb => {
-  const userIdBySessionId = DbConnKv.instance<SessionId, UserId>(
+  const userIdBySessionId = IDbConnKv.instance<SessionId, UserId>(
     dbConnKv,
     ["auth-session", "user-id-by-session-id"],
     UserId,
   )
 
-  const sessionIdsByUserId = DbConnKv.instance<UserId, SessionId[]>(
+  const sessionIdsByUserId = IDbConnKv.instance<UserId, SessionId[]>(
     dbConnKv,
     ["auth-session", "session-ids-by-user-id"],
     p.arr(SessionId),

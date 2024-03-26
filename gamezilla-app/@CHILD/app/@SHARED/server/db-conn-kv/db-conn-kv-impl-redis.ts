@@ -1,15 +1,15 @@
 import { err, ok } from "gamezilla-app/@SHARED/core"
 import { createClient } from "redis"
 import { Logger } from "../logger"
-import { DbConnKv } from "./db-conn-kv"
+import { IDbConnKv } from "./db-conn-kv"
 
-export const createDbConnKvRedis = async ({
+export const DbConnKvRedis = async ({
   url,
   logger,
 }: {
   url: string
   logger: Logger
-}): Promise<DbConnKv> => {
+}): Promise<IDbConnKv> => {
   // https://github.com/redis/node-redis
   const client = await createClient({
     url,

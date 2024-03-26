@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import { createDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
+import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { SMSFake } from "gamezilla-app/@CHILD/app/@SHARED/server/sms/sms-impl-fake"
 import { PhoneNumber, isOk } from "gamezilla-app/@SHARED/core"
@@ -9,7 +9,7 @@ import { VerifySMS } from "./verify-sms-impl-real"
 const Fixture = async () => {
   const sms = SMSFake()
 
-  const dbConnKv = await createDbConnKv({ t: "hash-map" })
+  const dbConnKv = await DbConnKv({ t: "hash-map" })
 
   const CODE = "123456"
 

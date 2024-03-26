@@ -1,7 +1,7 @@
 import { Task } from "gamezilla-app/@SHARED/core"
 import { Parser } from "gamezilla-app/@SHARED/core/parser/parser"
 
-export type DbConnKv = {
+export type IDbConnKv = {
   get: <TValue>(
     key: string,
     parser: Parser<TValue>,
@@ -11,7 +11,7 @@ export type DbConnKv = {
 }
 
 const instance = <TKey extends string = string, TValue = unknown>(
-  dbConnKv: DbConnKv,
+  dbConnKv: IDbConnKv,
   namespace: string[],
   parser: Parser<TValue>,
 ): {
@@ -33,6 +33,6 @@ const instance = <TKey extends string = string, TValue = unknown>(
   }
 }
 
-export const DbConnKv = {
+export const IDbConnKv = {
   instance,
 }

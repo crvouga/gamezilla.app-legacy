@@ -1,7 +1,7 @@
 import { Logger } from "../logger"
-import { DbConnKv } from "./db-conn-kv"
-import { createDbConnKvHashMap } from "./db-conn-kv-impl-hash-map"
-import { createDbConnKvRedis } from "./db-conn-kv-impl-redis"
+import { IDbConnKv } from "./db-conn-kv"
+import { DbConnKvHashMap } from "./db-conn-kv-impl-hash-map"
+import { DbConnKvRedis } from "./db-conn-kv-impl-redis"
 
 export type Impl =
   | {
@@ -13,13 +13,13 @@ export type Impl =
       logger: Logger
     }
 
-export const createDbConnKv = async (impl: Impl): Promise<DbConnKv> => {
+export const DbConnKv = async (impl: Impl): Promise<IDbConnKv> => {
   switch (impl.t) {
     case "hash-map": {
-      return createDbConnKvHashMap()
+      return DbConnKvHashMap()
     }
     case "redis": {
-      return createDbConnKvRedis({ url: impl.url, logger: impl.logger })
+      return DbConnKvRedis({ url: impl.url, logger: impl.logger })
     }
   }
 }

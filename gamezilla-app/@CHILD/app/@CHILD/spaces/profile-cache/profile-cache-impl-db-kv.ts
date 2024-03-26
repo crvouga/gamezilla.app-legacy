@@ -1,14 +1,14 @@
 import { Profile, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
+import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { ok } from "gamezilla-app/@SHARED/core"
 import { IProfileCache } from "./profile-cache"
 
 export const ProfileCacheDbKv = ({
   dbConnKv,
 }: {
-  dbConnKv: DbConnKv
+  dbConnKv: IDbConnKv
 }): IProfileCache => {
-  const profilesKv = DbConnKv.instance(
+  const profilesKv = IDbConnKv.instance(
     dbConnKv,
     ["spaces", "profile-cache"],
     Profile,

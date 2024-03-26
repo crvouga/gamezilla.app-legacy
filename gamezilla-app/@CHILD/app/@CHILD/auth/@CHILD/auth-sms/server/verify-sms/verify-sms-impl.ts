@@ -3,7 +3,7 @@ import { IVerifySMS } from "./verify-sms"
 import * as ImplTest from "./verify-sms-impl-test"
 import * as ImplTwilio from "./verify-sms-impl-real"
 import { SMS } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
+import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { ICodeGenerator } from "./code-generator"
 
 export type Impl =
@@ -16,7 +16,7 @@ export type Impl =
       t: "real"
       logger: Logger
       sms: SMS
-      dbConnKv: DbConnKv
+      dbConnKv: IDbConnKv
       codeGenerator: ICodeGenerator
     }
 

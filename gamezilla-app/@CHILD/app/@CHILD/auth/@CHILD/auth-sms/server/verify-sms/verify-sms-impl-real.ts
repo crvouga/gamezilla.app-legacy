@@ -1,5 +1,5 @@
 import { SMS } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
+import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import {
   PhoneNumber,
@@ -24,10 +24,10 @@ export const Verification = p.obj({
 export const VerifySMS = (deps: {
   logger: Logger
   sms: SMS
-  dbConnKv: DbConnKv
+  dbConnKv: IDbConnKv
   codeGenerator: ICodeGenerator
 }): IVerifySMS => {
-  const verificationsByPhoneNumber = DbConnKv.instance(
+  const verificationsByPhoneNumber = IDbConnKv.instance(
     deps.dbConnKv,
     ["auth", "sms", "verifications-by-phone-number"],
     p.arr(Verification),

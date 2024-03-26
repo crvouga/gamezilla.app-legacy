@@ -1,11 +1,11 @@
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
+import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { IWireMsgDb } from "./wire-msg-db"
 
 export type Impl =
   | {
       t: "db-kv"
-      dbConnKv: DbConnKv
+      dbConnKv: IDbConnKv
     }
   | {
       t: "db-sql"

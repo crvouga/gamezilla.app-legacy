@@ -9,7 +9,7 @@ import { Eff, isErr } from "gamezilla-app/@SHARED/core"
 import { Sub } from "gamezilla-app/@SHARED/core/sub"
 import { CappedOrderedDict } from "gamezilla-app/@SHARED/data-structures/capped-ordered-dict"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
-import { DbConnKv } from "../../@SHARED/server/db-conn-kv"
+import { IDbConnKv } from "../../@SHARED/server/db-conn-kv"
 import { IServerTransport } from "./transport-server"
 import { IWireSessionDb, WireSessionDb } from "./wire-session-db"
 import {
@@ -40,11 +40,13 @@ export const getDeps = async <TMsgToClient, TMsgToServer>(input: {
     MsgToClient: TMsgToClient
     MsgToServer: TMsgToServer
   }>
-  dbConnKv: DbConnKv
+  dbConnKv: IDbConnKv
 }): Promise<Deps<TMsgToClient, TMsgToServer>> => {
   return {
     transport: input.transport,
-    WireSessionDb: WireSessionDb({ t: "db-conn-kv", dbConnKv: input.dbConnKv }),
+    WireSessionDb: await WireSessionDb({
+      t: "hash-map",
+    }),
   }
 }
 

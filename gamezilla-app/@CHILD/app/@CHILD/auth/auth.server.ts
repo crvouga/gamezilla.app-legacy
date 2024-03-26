@@ -24,9 +24,8 @@ export const getDeps: ServerModule["getDeps"] = ({ ctx }) => {
       dbConnSql: ctx.dbConnSql,
     }),
     SessionDb: SessionDb({
-      t: "postgres-with-db-kv-cache",
+      t: "postgres-with-hash-map-cache",
       dbConnSql: ctx.dbConnSql,
-      dbConnKv: ctx.dbConnKv,
     }),
     timeout: (timeSpan) =>
       new Promise((resolve) =>

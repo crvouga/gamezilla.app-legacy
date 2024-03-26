@@ -3,7 +3,7 @@ import { ISessionDb } from "./session-db"
 import { SessionDbInMemory } from "./session-db-impl.in-memory"
 import { SessionDbPostgres } from "./session-db-impl.postgres"
 import { SessionDbWithCache } from "./session-db-impl.with-hash-map-cache"
-import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
+import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { SessionDbWithDbKvCache } from "./session-db-impl.with-db-kv-cache"
 
 export type Impl =
@@ -22,7 +22,7 @@ export type Impl =
   | {
       t: "postgres-with-db-kv-cache"
       dbConnSql: DbConnSql
-      dbConnKv: DbConnKv
+      dbConnKv: IDbConnKv
     }
 
 export const SessionDb = (impl: Impl): ISessionDb => {

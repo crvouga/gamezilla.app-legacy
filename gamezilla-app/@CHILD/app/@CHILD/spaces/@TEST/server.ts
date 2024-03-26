@@ -5,7 +5,7 @@ import {
   UserId,
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { ServerCtx } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { createDbConnKvHashMap } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv/db-conn-kv-impl-hash-map"
+import { DbConnKvHashMap } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv/db-conn-kv-impl-hash-map"
 import { dbConnSqlNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import { LoggerConsole } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { Posix } from "gamezilla-app/@SHARED/core"
@@ -22,7 +22,7 @@ export const ctx: ServerCtx = {
   dbConnSql: dbConnSqlNoop,
   logger: LoggerConsole("test"),
   now: Posix.now(),
-  dbConnKv: createDbConnKvHashMap(),
+  dbConnKv: DbConnKvHashMap(),
 }
 
 export const init = () => {
@@ -33,7 +33,7 @@ export const getDeps = (): ServerDeps => {
   return {
     ProfileCache: ProfileCache({
       t: "db-kv",
-      dbConnKv: createDbConnKvHashMap(),
+      dbConnKv: DbConnKvHashMap(),
     }),
   }
 }

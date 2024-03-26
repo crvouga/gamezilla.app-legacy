@@ -1,9 +1,9 @@
 import { ok } from "gamezilla-app/@SHARED/core"
-import { DbConnKv } from "./db-conn-kv"
+import { IDbConnKv } from "./db-conn-kv"
 
 const hashMap = new Map<string, unknown>()
 
-export const createDbConnKvHashMap = (): DbConnKv => {
+export const DbConnKvHashMap = (): IDbConnKv => {
   return {
     async get(key, parser) {
       const got = hashMap.get(key)

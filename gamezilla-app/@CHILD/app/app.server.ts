@@ -33,7 +33,7 @@ import {
   MsgToServer,
   MsgToServerMeta,
 } from "./app.core"
-import { DbConnKv, createDbConnKv } from "./@SHARED/server/db-conn-kv"
+import { IDbConnKv, DbConnKv } from "./@SHARED/server/db-conn-kv"
 
 //
 //
@@ -46,7 +46,7 @@ import { DbConnKv, createDbConnKv } from "./@SHARED/server/db-conn-kv"
 export type Deps = {
   logger: Logger
   dbConnSql: DbConnSql
-  dbConnKv: DbConnKv
+  dbConnKv: IDbConnKv
   sms: SMS
   transport: IServerTransport<{
     MsgToClient: MsgToClient
@@ -76,7 +76,7 @@ export const getDeps = async ({
     throw new Error(`[deps] REDIS_URL not set`)
   }
 
-  const dbConnKv = await createDbConnKv({
+  const dbConnKv = await DbConnKv({
     t: "redis",
     url: redisUrl,
     logger,
