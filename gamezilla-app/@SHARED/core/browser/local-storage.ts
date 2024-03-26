@@ -13,9 +13,9 @@ export const put =
     const attempt = (): PutResult => {
       try {
         localStorage.setItem(key, JSON.stringify(value))
-        return Result.ok(null)
+        return Result.Ok(null)
       } catch (error) {
-        return Result.err("failed_put_item_in_local_storage")
+        return Result.Err("failed_put_item_in_local_storage")
       }
     }
     const result = attempt()

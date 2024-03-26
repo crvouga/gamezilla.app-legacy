@@ -11,10 +11,10 @@ type Problem = "invalid_party_id"
 
 const decode = (id: string): Result<Problem, PartyId> => {
   if (is(id)) {
-    return Result.ok(id)
+    return Result.Ok(id)
   }
 
-  return Result.err("invalid_party_id")
+  return Result.Err("invalid_party_id")
 }
 const generate = (): PartyId => {
   const id = Uuid.generate()

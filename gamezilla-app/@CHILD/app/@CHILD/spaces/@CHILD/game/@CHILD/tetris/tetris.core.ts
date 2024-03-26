@@ -1,10 +1,10 @@
+import { Keyboard, Option, Result } from "gamezilla-app/@SHARED/core"
 import * as Board from "./@SHARED/board"
 import * as Direction from "./@SHARED/direction"
 import * as Piece from "./@SHARED/piece"
 import * as Position from "./@SHARED/position"
-import { Keyboard, Option, Result } from "gamezilla-app/@SHARED/core"
 
-const { err: Err, ok: Ok } = Result
+const { Err: Err, Ok: Ok } = Result
 
 //
 //
@@ -165,10 +165,10 @@ export const inputTranslate = (
   }
 
   if (inCollision(modelNext)) {
-    return Result.err("collision")
+    return Result.Err("collision")
   }
 
-  return Result.ok(modelNext)
+  return Result.Ok(modelNext)
 }
 
 //
@@ -193,10 +193,10 @@ export const inputRotate = (model: CoreModel): InputRotate_Done[1] => {
   }
 
   if (inCollision(modelNew)) {
-    return Result.err("collision")
+    return Result.Err("collision")
   }
 
-  return Result.ok(modelNew)
+  return Result.Ok(modelNew)
 }
 
 const toNextRotation = (rotation: 0 | 1 | 2 | 3): 0 | 1 | 2 | 3 => {
@@ -230,7 +230,7 @@ export type InputDropProblem = ""
 export const inputDrop = (model: CoreModel): InputDrop_Done[1] => {
   const modelNext = tick(toDrop(model))
 
-  return Result.ok(modelNext)
+  return Result.Ok(modelNext)
 }
 
 //

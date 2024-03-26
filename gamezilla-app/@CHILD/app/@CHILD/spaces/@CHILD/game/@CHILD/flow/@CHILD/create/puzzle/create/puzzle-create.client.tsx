@@ -2,8 +2,8 @@ import {
   APP_SOUND,
   playSound,
   sendToServer,
-  showErrSm,
   showCreatedSm,
+  showErrSm,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { Button, IconPlus } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
@@ -50,7 +50,7 @@ const update: ClientModule["update"] = (input) => {
         return {
           model: {
             ...model,
-            puzzleCreateRequest: Result.err(errorMessage),
+            puzzleCreateRequest: Result.Err(errorMessage),
           },
           msgCmd: showErrSm(errorMessage),
         }

@@ -229,7 +229,7 @@ export const updateCore = ({
             board: boardNew,
           }
 
-          return Result.ok({
+          return Result.Ok({
             ...modelNew,
             didCapture: boardNew.didCapture,
           })

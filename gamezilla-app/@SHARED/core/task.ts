@@ -3,7 +3,7 @@ import { Result } from "./result"
 export type Task<TErr, TVal> = Promise<Result<TErr, TVal>>
 
 const ok = async <TErr, TVal>(value: TVal): Task<TErr, TVal> => {
-  return Result.ok(value)
+  return Result.Ok(value)
 }
 
 function p<A, B, E>(

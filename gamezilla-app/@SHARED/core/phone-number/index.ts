@@ -12,13 +12,13 @@ type Problem = "invalid_phone_number"
 
 const parse = (phoneNumber: unknown): Result<Problem, PhoneNumber> => {
   if (typeof phoneNumber !== "string") {
-    return Result.err("invalid_phone_number")
+    return Result.Err("invalid_phone_number")
   }
 
   const result = phone(phoneNumber)
 
   if (!result.isValid) {
-    return Result.err("invalid_phone_number")
+    return Result.Err("invalid_phone_number")
   }
 
   const country = Iso3166Alpha2Code.is(result.countryCode)
@@ -30,10 +30,10 @@ const parse = (phoneNumber: unknown): Result<Problem, PhoneNumber> => {
     : null
 
   if (!country) {
-    return Result.err("invalid_phone_number")
+    return Result.Err("invalid_phone_number")
   }
 
-  return Result.ok({
+  return Result.Ok({
     _opaque: "PhoneNumber",
     _validPhoneNumber: result.phoneNumber,
     _country: country,

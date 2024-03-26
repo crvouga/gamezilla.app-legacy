@@ -1,5 +1,5 @@
-import { Keyboard, Option, Result } from "gamezilla-app/@SHARED/core"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Keyboard, Option, Result } from "gamezilla-app/@SHARED/core"
 import * as Direction from "./@SHARED/direction"
 import * as Snake from "./@SHARED/snake"
 
@@ -133,11 +133,11 @@ export const canStartGame = (model: CoreModel): boolean => {
 
 export const startGame = (model: CoreModel): StartGame_Done[1] => {
   if (model.gameStatus.type !== "GameSetup") {
-    return Result.err("must_be_in_game_setup")
+    return Result.Err("must_be_in_game_setup")
   }
 
   if (model.gameStatus.player.type === "none") {
-    return Result.err("missing_player")
+    return Result.Err("missing_player")
   }
 
   const playerUserId = model.gameStatus.player.value[1]
@@ -150,5 +150,5 @@ export const startGame = (model: CoreModel): StartGame_Done[1] => {
     },
   }
 
-  return Result.ok(modelNew)
+  return Result.Ok(modelNew)
 }

@@ -35,7 +35,7 @@ export const SessionDbWithDbKvCache = ({
         Result.withDefault(await sessionIdsByUserId.get(userId), []) ?? []
 
       if (cachedSessionIds && cachedSessionIds.length > 0) {
-        return Result.ok(cachedSessionIds)
+        return Result.Ok(cachedSessionIds)
       }
 
       const queried = await SessionDb.findSessionIdsByUserId(userId)
@@ -54,7 +54,7 @@ export const SessionDbWithDbKvCache = ({
       )
 
       if (cachedUserId) {
-        return Result.ok(cachedUserId)
+        return Result.Ok(cachedUserId)
       }
 
       const queried = await SessionDb.findUserIdBySessionId(sessionId)

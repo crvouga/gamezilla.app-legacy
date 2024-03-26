@@ -1,9 +1,9 @@
-import { Keyboard, NonEmpty, dissoc, Result } from "gamezilla-app/@SHARED/core"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Keyboard, NonEmpty, Result, dissoc } from "gamezilla-app/@SHARED/core"
 import { Maze } from "./@SHARED/maze"
 import { Direction, Position } from "./@SHARED/position"
 
-const { err: Err, ok: Ok } = Result
+const { Err: Err, Ok: Ok } = Result
 
 //
 //

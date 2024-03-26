@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test"
 import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { SMSFake } from "gamezilla-app/@CHILD/app/@SHARED/server/sms/sms-impl-fake"
-import { PhoneNumber, isOk } from "gamezilla-app/@SHARED/core"
+import { PhoneNumber, Result, isOk } from "gamezilla-app/@SHARED/core"
 import { CodeGenerator } from "./code-generator"
 import { VerifySMS } from "./verify-sms-impl-real"
 
@@ -24,7 +24,7 @@ const Fixture = async () => {
     codeGenerator,
   })
 
-  const phoneNumber = PhoneNumber.unsafeParse("+15555555555")
+  const phoneNumber = Result.unsafeUnwrap(PhoneNumber.parse("+15555555555"))
 
   return {
     CODE,

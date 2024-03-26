@@ -10,8 +10,8 @@ export const copy =
   async () => {
     try {
       await navigator.clipboard.writeText(text)
-      return Result.ok(null)
+      return Result.Ok(null)
     } catch {
-      return Result.err({ message: "Failed to copy to clipboard." })
+      return Result.Err({ message: "Failed to copy to clipboard." })
     }
   }

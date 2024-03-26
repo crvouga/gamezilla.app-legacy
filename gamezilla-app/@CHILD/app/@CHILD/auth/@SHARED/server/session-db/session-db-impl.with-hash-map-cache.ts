@@ -21,7 +21,7 @@ export const SessionDbWithCache = ({
       const cachedSessionIds = sessionIdsByUserId.get(userId)
 
       if (cachedSessionIds && cachedSessionIds.size > 0) {
-        return Result.ok(Array.from(cachedSessionIds))
+        return Result.Ok(Array.from(cachedSessionIds))
       }
 
       const queried = await SessionDb.findSessionIdsByUserId(userId)
@@ -37,7 +37,7 @@ export const SessionDbWithCache = ({
       const cachedUserId = userIdBySessionId.get(sessionId)
 
       if (cachedUserId) {
-        return Result.ok(cachedUserId)
+        return Result.Ok(cachedUserId)
       }
 
       const queried = await SessionDb.findUserIdBySessionId(sessionId)

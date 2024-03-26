@@ -47,6 +47,16 @@ const is = <TError, TValue>(
   }
 }
 
+const unsafeUnwrap = <TError, TValue>(
+  result: ResultPrivate<TError, TValue>,
+): TValue => {
+  if (result.t === "ok") {
+    return result.value
+  }
+
+  throw new Error("Tried to unwrap an error result")
+}
+
 /**
  * `Ok<T>` represents a successful result
  */
@@ -150,13 +160,14 @@ const mapOk = <TError, A, B>(
 
 export const ResultPrivate = {
   is,
-  ok: Ok,
-  err: Err,
+  Ok,
+  Err,
   mapOk,
   mapErr,
   fromNullable,
   withDefault,
   combine,
+  unsafeUnwrap,
 }
 
 //

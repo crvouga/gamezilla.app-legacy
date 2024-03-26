@@ -1,6 +1,6 @@
 import {
-  SpaceReqCtx,
-  SpaceServerEvent,
+    SpaceReqCtx,
+    SpaceServerEvent,
 } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
@@ -9,13 +9,13 @@ import { Eff, Result, Sub } from "gamezilla-app/@SHARED/core"
 import * as VsBot from "./@CHILD/vs-bot/vs-bot.server"
 import * as VsUser from "./@CHILD/vs-user/vs-user.server"
 import {
-  ModelServer,
-  MsgServer,
-  MsgToClient,
-  MsgToServer,
+    ModelServer,
+    MsgServer,
+    MsgToClient,
+    MsgToServer,
 } from "./tic-tac-toe.core"
 
-const { err: Err, ok: Ok } = Result
+const { Err: Err, Ok: Ok } = Result
 
 //
 //

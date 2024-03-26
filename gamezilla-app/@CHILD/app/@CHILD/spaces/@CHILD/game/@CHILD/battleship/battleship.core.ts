@@ -1,9 +1,9 @@
-import { Result } from "gamezilla-app/@SHARED/core"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Result } from "gamezilla-app/@SHARED/core"
 import { Position } from "./@SHARED/battleship/position"
 import { ShotRule } from "./@SHARED/battleship/shot-rule"
 
-const { err: Err } = Result
+const { Err: Err } = Result
 
 //
 //

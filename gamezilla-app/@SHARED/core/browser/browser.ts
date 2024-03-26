@@ -111,10 +111,10 @@ export const focus =
 
     if (element) {
       element.focus()
-      return Result.ok(null)
+      return Result.Ok(null)
     }
 
-    return Result.err({ type: "ElementNotFound" })
+    return Result.Err({ type: "ElementNotFound" })
   }
 
 export type ScrollResult = Result<Problem, null>
@@ -133,10 +133,10 @@ export const scrollIntoView =
         inline: "center",
       })
 
-      return Result.ok(null)
+      return Result.Ok(null)
     }
 
-    return Result.err({ type: "ElementNotFound" })
+    return Result.Err({ type: "ElementNotFound" })
   }
 
 export type GetElementByIdResult = Result<Problem, DomElement>
@@ -152,13 +152,13 @@ export const getElementById =
     const element = document.getElementById(htmlId)
 
     if (element) {
-      return Result.ok({
+      return Result.Ok({
         offsetHeight: element.offsetHeight,
         offsetWidth: element.offsetWidth,
       })
     }
 
-    return Result.err({ type: "ElementNotFound" })
+    return Result.Err({ type: "ElementNotFound" })
   }
 
 type VisibilityState = "visible" | "hidden"

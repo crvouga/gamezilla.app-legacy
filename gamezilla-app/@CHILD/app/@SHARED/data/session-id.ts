@@ -17,10 +17,10 @@ type Problem = "invalid_session_id"
 
 export const decode = (id: string): Result<Problem, SessionId> => {
   if (is(id)) {
-    return Result.ok(id)
+    return Result.Ok(id)
   }
 
-  return Result.err("invalid_session_id")
+  return Result.Err("invalid_session_id")
 }
 
 const characters =

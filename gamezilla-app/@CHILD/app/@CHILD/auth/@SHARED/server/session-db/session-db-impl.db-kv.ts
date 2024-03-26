@@ -51,15 +51,15 @@ export const SessionDbPostgres = ({
     },
 
     async insert(_input) {
-      return Result.err("not implemented")
+      return Result.Err("not implemented")
     },
 
     async zapByUserId(_userId) {
-      return Result.err("not implemented")
+      return Result.Err("not implemented")
     },
 
     async zapBySessionId(_sessionId) {
-      return Result.err("not implemented")
+      return Result.Err("not implemented")
     },
   }
 }

@@ -14,11 +14,11 @@ export const parse = (s: string): Result<Problem, Json> => {
   try {
     const parsed: Json = JSON.parse(s)
 
-    return Result.ok(parsed)
+    return Result.Ok(parsed)
   } catch (error) {
     // todo make better
     const message = String(error)
-    return Result.err({ message })
+    return Result.Err({ message })
   }
 }
 
@@ -26,10 +26,10 @@ export const stringify = (json: Json): Result<Problem, string> => {
   try {
     const stringified: string = JSON.stringify(json)
 
-    return Result.ok(stringified)
+    return Result.Ok(stringified)
   } catch (error) {
     // todo make better
     const message = String(error)
-    return Result.err({ message })
+    return Result.Err({ message })
   }
 }

@@ -201,16 +201,16 @@ const handleIncomingMsg = <Model, Msg extends object>({
   return (msg) => {
     switch (msg.type) {
       case "START":
-        return Result.ok(reInit)
+        return Result.Ok(reInit)
 
       case "ACTION": {
         const result = Json.parse(String(msg.payload))
         switch (result.t) {
           case "err":
-            return Result.err(result.error.message)
+            return Result.Err(result.error.message)
 
           case "ok":
-            return Result.ok(dispatchToApp(result.value))
+            return Result.Ok(dispatchToApp(result.value))
         }
       }
 
@@ -223,7 +223,7 @@ const handleIncomingMsg = <Model, Msg extends object>({
             return pipe(parseJump<Model>(msg), (x) => Result.mapOk(x, update))
 
           case "RESET":
-            return Result.ok(
+            return Result.Ok(
               pipe(
                 update(init),
                 IO.chain(() => reInit),
@@ -242,7 +242,7 @@ const handleIncomingMsg = <Model, Msg extends object>({
 
           case "COMMIT":
             // return Result.Ok(restart(debug$.getValue()[1]));
-            return Result.err("idk")
+            return Result.Err("idk")
 
           case "IMPORT_STATE":
             return pipe(parseImportState<Model>(msg), (x) =>
@@ -267,11 +267,11 @@ const handleIncomingMsg = <Model, Msg extends object>({
             )
 
           default:
-            return Result.err(msg.payload.type)
+            return Result.Err(msg.payload.type)
         }
 
       default:
-        return Result.err("unhandled case")
+        return Result.Err("unhandled case")
     }
   }
 }
@@ -339,8 +339,8 @@ const parseImportState = <Model>(
 ): Result<string, LiftedState<Model>> => {
   return typeof msg.payload["nextLiftedState"] === "object" &&
     msg.payload["nextLiftedState"] !== null
-    ? Result.ok(msg.payload["nextLiftedState"] as LiftedState<Model>)
-    : Result.err("IMPORT_STATE message has some bad payload...")
+    ? Result.Ok(msg.payload["nextLiftedState"] as LiftedState<Model>)
+    : Result.Err("IMPORT_STATE message has some bad payload...")
 }
 
 /**
@@ -376,7 +376,7 @@ const parseToggleAction = <Model>(
     return parseState
   }
 
-  return Result.ok([getId.value, parseState.value])
+  return Result.Ok([getId.value, parseState.value])
 }
 
 /**
