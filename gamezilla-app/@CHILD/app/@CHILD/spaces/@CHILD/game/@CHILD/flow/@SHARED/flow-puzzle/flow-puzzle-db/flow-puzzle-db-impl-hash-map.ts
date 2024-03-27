@@ -18,7 +18,6 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
   return {
     async get(id) {
       calls.get++
-      await new Promise((r) => setTimeout(r, 500))
 
       if (calls.get % ERROR_EVERY === 0) {
         return Err("get demo error")
@@ -48,7 +47,6 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
 
     async list(input) {
       calls.list++
-      await new Promise((r) => setTimeout(r, 500))
       if (calls.list % ERROR_EVERY === 0) {
         return Err("list demo error")
       }
@@ -111,7 +109,6 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
     async upsert(input) {
       calls.put++
 
-      await new Promise((resolve) => setTimeout(resolve, 500))
       if (calls.put % ERROR_EVERY === 0) {
         return Err("put demo error")
       }
@@ -121,7 +118,6 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
 
     async zap({ id }) {
       calls.zap++
-      await new Promise((resolve) => setTimeout(resolve, 500))
       if (calls.zap % ERROR_EVERY === 0) {
         return Err("zap demo error")
       }

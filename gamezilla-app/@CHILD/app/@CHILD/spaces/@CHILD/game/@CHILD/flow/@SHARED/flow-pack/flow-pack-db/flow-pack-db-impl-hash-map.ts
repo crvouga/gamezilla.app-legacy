@@ -7,7 +7,6 @@ const db = new Map<string, FlowPack>()
 export const FlowPackDbHashMap = (): IFlowPackDb => {
   return {
     async get(id) {
-      await new Promise((r) => setTimeout(r, 500))
       return Ok(db.get(id) ?? null)
     },
 
@@ -22,8 +21,6 @@ export const FlowPackDbHashMap = (): IFlowPackDb => {
     },
 
     async list(input) {
-      await new Promise((r) => setTimeout(r, 500))
-
       const all = Array.from(db.values())
 
       const filtered = all.filter((pack) =>
@@ -42,13 +39,11 @@ export const FlowPackDbHashMap = (): IFlowPackDb => {
     },
 
     async put(pack) {
-      await new Promise((r) => setTimeout(r, 500))
       db.set(pack.id, pack)
       return Ok(pack)
     },
 
     async zap(id) {
-      await new Promise((r) => setTimeout(r, 500))
       db.delete(id)
       return Ok(null)
     },

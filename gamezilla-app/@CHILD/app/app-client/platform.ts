@@ -104,7 +104,8 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
             for (let i = 0; i < 10; i++) {
               element.focus()
 
-              await new Promise((resolve) => setTimeout(resolve, 500))
+              await new Promise((resolve) => resolve(null))
+
               if (focused) {
                 break
               }

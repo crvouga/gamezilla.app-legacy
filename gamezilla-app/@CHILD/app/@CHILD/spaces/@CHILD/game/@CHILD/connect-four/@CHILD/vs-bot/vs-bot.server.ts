@@ -75,7 +75,6 @@ const updateFromMsg: Module["update"] = async (input) => {
             botStartedFindingMoveAt: ctx.now,
           },
           eff: async (dispatch) => {
-            await new Promise((r) => setTimeout(r, 1000 / 4))
             const found = ConnectFourBotWorker.findBestMove({
               columns: modelSync.columns,
               maxDepth: 4,
