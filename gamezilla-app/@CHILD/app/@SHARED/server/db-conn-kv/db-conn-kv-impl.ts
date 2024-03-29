@@ -1,6 +1,8 @@
+import { DbConnSql } from "../db-conn-sql"
 import { Logger } from "../logger"
 import { IDbConnKv } from "./db-conn-kv"
 import { DbConnKvHashMap } from "./db-conn-kv-impl-hash-map"
+import { DbConnKvPostgres } from "./db-conn-kv-impl-postgres"
 import { DbConnKvRedis } from "./db-conn-kv-impl-redis"
 
 export type Impl =
@@ -12,14 +14,24 @@ export type Impl =
       url: string
       logger: Logger
     }
+  | {
+      t: "postgres"
+      dbConn: DbConnSql
+      logger: Logger
+    }
 
 export const DbConnKv = async (impl: Impl): Promise<IDbConnKv> => {
   switch (impl.t) {
     case "hash-map": {
       return DbConnKvHashMap()
     }
+
     case "redis": {
       return DbConnKvRedis({ url: impl.url, logger: impl.logger })
+    }
+
+    case "postgres": {
+      return DbConnKvPostgres({ dbConn: impl.dbConn, logger: impl.logger })
     }
   }
 }
