@@ -29,7 +29,7 @@ export const ServerBun = <T>() => {
       })
     },
     registerHandler(_handler) {
-      throw new Error("registerHandler not implemented for bun server")
+      // throw new Error("registerHandler not implemented for bun server")
     },
     serveSinglePageApp(_input) {
       throw new Error(
