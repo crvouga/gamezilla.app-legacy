@@ -26,7 +26,4 @@ const vDomPlugin = () => {
 export default defineConfig({
   plugins: [tsconfigPaths(), vDomPlugin()],
   define: { "process.env": process.env },
-  build: {
-    target: "esnext",
-  },
 })
