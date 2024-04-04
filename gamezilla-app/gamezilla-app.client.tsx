@@ -1,34 +1,29 @@
+import * as AppClient from "gamezilla-app/@CHILD/app/app.client"
 import { Program } from "gamezilla-app/@SHARED/core"
 import { DebuggerReduxDevTools } from "gamezilla-app/@SHARED/core/debug"
 import { Render } from "gamezilla-app/@SHARED/vdom/render"
 import { IS_PROD, TRANSPORT_IMPL, VDOM_IMPL } from "gamezilla-app/public-config"
-import * as AppClient from "./@CHILD/app/app.client"
 
-const main = async () => {
-  const deps = await AppClient.getDeps()
+const deps = await AppClient.getDeps()
 
-  const render = await Render(VDOM_IMPL)
+const render = await Render(VDOM_IMPL)
 
-  const root = document.getElementById("root")!
+const root = document.getElementById("root")!
 
-  await deps.transport.start()
+await deps.transport.start()
 
-  await Program.run({
-    ctx: AppClient.getCtx,
+await Program.run({
+  ctx: AppClient.getCtx,
 
-    init: (input) => AppClient.init({ ...input, deps }),
+  init: (input) => AppClient.init({ ...input, deps }),
 
-    update: (input) => AppClient.update({ ...input, deps }),
+  update: (input) => AppClient.update({ ...input, deps }),
 
-    subscriptions: (input) => AppClient.subscriptions({ ...input, deps }),
+  subscriptions: (input) => AppClient.subscriptions({ ...input, deps }),
 
-    render: (input) => render(<AppClient.View {...input} />, root),
+  render: (input) => render(<AppClient.View {...input} />, root),
 
-    debugger: IS_PROD ? undefined : DebuggerReduxDevTools,
-  })
+  debugger: IS_PROD ? undefined : DebuggerReduxDevTools,
+})
 
-  console.log(`Renderer: ${VDOM_IMPL}`)
-  console.log(`Transport: ${TRANSPORT_IMPL}`)
-}
-
-main()
+console.log({ IS_PROD, TRANSPORT_IMPL, VDOM_IMPL })

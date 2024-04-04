@@ -1,5 +1,5 @@
 import { Server, WebSocketHandler } from "bun"
-import { IServer } from "../server"
+import { HttpHandler, IServer, stringToHttpRequestMethod } from "../server"
 
 type FetchHandler = (
   req: Request,
@@ -9,18 +9,33 @@ type FetchHandler = (
 type MaybePromise<T> = T | Promise<T>
 
 export const ServerBun = <T>() => {
-  const fetchHandlers: FetchHandler[] = []
+  const httpHandlers: HttpHandler[] = []
+  const _fetchHandlers: FetchHandler[] = []
   let webSocketHandler: WebSocketHandler<T>
   let server: Server
   const base: IServer = {
     async start(port) {
       server = Bun.serve({
         port: port,
-        async fetch(req, server) {
-          for (const handler of fetchHandlers) {
-            const response = await handler(req, server)
+        async fetch(req) {
+          for (const handler of httpHandlers) {
+            const response = await handler({
+              body: req.body ? await readableStreamToString(req.body) : null,
+              headers: Array.from(req.headers.entries()).reduce<
+                Record<string, string>
+              >((acc, [key, value]) => {
+                acc[key] = value
+                return acc
+              }, {}),
+              method: stringToHttpRequestMethod(req.method),
+              url: req.url,
+            })
+
             if (response) {
-              return response
+              return new Response(response.body, {
+                headers: response.headers,
+                status: response.status,
+              })
             }
           }
           return new Response("Not found", { status: 404 })
@@ -28,8 +43,8 @@ export const ServerBun = <T>() => {
         websocket: webSocketHandler,
       })
     },
-    registerHandler(_handler) {
-      // throw new Error("registerHandler not implemented for bun server")
+    registerHandler(handler) {
+      httpHandlers.push(handler)
     },
     serveSinglePageApp(_input) {
       throw new Error(
@@ -39,13 +54,13 @@ export const ServerBun = <T>() => {
   }
   return {
     ...base,
-    registerFetchHandler(fetch: FetchHandler) {
-      fetchHandlers.push(fetch)
+    _registerFetchHandler(handler: FetchHandler) {
+      _fetchHandlers.push(handler)
     },
-    setWebSocketHandler(handler: WebSocketHandler<T>) {
+    _setWebSocketHandler(handler: WebSocketHandler<T>) {
       webSocketHandler = handler
     },
-    publish(topic: string, data: string) {
+    _publish(topic: string, data: string) {
       server.publish(topic, data)
     },
     t: "bun",
@@ -53,3 +68,21 @@ export const ServerBun = <T>() => {
 }
 
 export type ServerBun = ReturnType<typeof ServerBun>
+
+async function readableStreamToString(
+  stream: ReadableStream<Uint8Array>,
+): Promise<string> {
+  const reader = stream.getReader()
+  const decoder = new TextDecoder("utf-8")
+  let result = ""
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    result += decoder.decode(value, { stream: true })
+  }
+
+  // Finish the stream and decode any remaining bytes
+  result += decoder.decode()
+  return result
+}

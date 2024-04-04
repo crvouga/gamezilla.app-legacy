@@ -176,8 +176,8 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
     },
   }
 
-  server.registerFetchHandler(onRequest)
-  server.setWebSocketHandler(websocket)
+  server._registerFetchHandler(onRequest)
+  server._setWebSocketHandler(websocket)
 
   transport.wire.publish({ t: "server-started", port: NaN })
 
@@ -191,7 +191,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 
   transport.topicPublish.subscribe((msg) => {
     for (const topic of msg.topics) {
-      server.publish(topic, JSON.stringify(msg.msg))
+      server._publish(topic, JSON.stringify(msg.msg))
     }
   })
 
