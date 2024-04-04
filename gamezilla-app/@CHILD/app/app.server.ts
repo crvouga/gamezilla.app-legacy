@@ -23,6 +23,7 @@ import {
   ServerTransport,
 } from "./@CHILD/wire/transport-server"
 import * as WireServer from "./@CHILD/wire/wire.server"
+import { DbConnKv, IDbConnKv } from "./@SHARED/server/db-conn-kv"
 import { createDbConnSql } from "./@SHARED/server/db-conn-sql"
 import { Logger } from "./@SHARED/server/logger"
 import { createSMS } from "./@SHARED/server/sms"
@@ -33,7 +34,6 @@ import {
   MsgToServer,
   MsgToServerMeta,
 } from "./app.core"
-import { IDbConnKv, DbConnKv } from "./@SHARED/server/db-conn-kv"
 
 //
 //

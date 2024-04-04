@@ -1,5 +1,10 @@
 import { Server, WebSocketHandler } from "bun"
-import { HttpHandler, IServer, stringToHttpRequestMethod } from "../server"
+import {
+  HttpHandler,
+  HttpRequest,
+  IServer,
+  stringToHttpRequestMethod,
+} from "../server"
 
 type FetchHandler = (
   req: Request,
@@ -18,18 +23,27 @@ export const ServerBun = <T>() => {
       server = Bun.serve({
         port: port,
         async fetch(req) {
+          for (const handler of _fetchHandlers) {
+            const response = await handler(req, server)
+            if (response) {
+              return response
+            }
+          }
+
+          const httpRequest: HttpRequest = {
+            body: req.body ? await readableStreamToString(req.body) : null,
+            headers: Array.from(req.headers.entries()).reduce<
+              Record<string, string>
+            >((acc, [key, value]) => {
+              acc[key] = value
+              return acc
+            }, {}),
+            method: stringToHttpRequestMethod(req.method),
+            url: req.url,
+          }
+
           for (const handler of httpHandlers) {
-            const response = await handler({
-              body: req.body ? await readableStreamToString(req.body) : null,
-              headers: Array.from(req.headers.entries()).reduce<
-                Record<string, string>
-              >((acc, [key, value]) => {
-                acc[key] = value
-                return acc
-              }, {}),
-              method: stringToHttpRequestMethod(req.method),
-              url: req.url,
-            })
+            const response = await handler(httpRequest)
 
             if (response) {
               return new Response(response.body, {
