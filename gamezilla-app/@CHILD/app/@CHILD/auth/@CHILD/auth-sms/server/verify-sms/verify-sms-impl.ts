@@ -1,10 +1,10 @@
-import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
-import { IVerifySMS } from "./verify-sms"
-import * as ImplTest from "./verify-sms-impl-test"
-import * as ImplTwilio from "./verify-sms-impl-real"
 import { SMS } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
+import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { ICodeGenerator } from "./code-generator"
+import { IVerifySMS } from "./verify-sms"
+import * as ImplReal from "./verify-sms-impl-real"
+import * as ImplFake from "./verify-sms-impl-test"
 
 export type Impl =
   | {
@@ -23,11 +23,11 @@ export type Impl =
 export const VerifySMS = (impl: Impl): IVerifySMS => {
   switch (impl.t) {
     case "fake": {
-      return ImplTest.VerifySMS(impl)
+      return ImplFake.VerifySMS(impl)
     }
 
     case "real": {
-      return ImplTwilio.VerifySMS(impl)
+      return ImplReal.VerifySMS(impl)
     }
   }
 }
