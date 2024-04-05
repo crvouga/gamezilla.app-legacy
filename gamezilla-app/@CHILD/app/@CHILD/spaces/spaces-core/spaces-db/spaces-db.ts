@@ -1,9 +1,8 @@
-import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Task } from "gamezilla-app/@SHARED/core"
 import * as Space from "../space"
 
 export type SpacesDb = {
-  get: (spaceId: SpaceId) => Task<string, Space.Model | null>
   list: (input: {
     limit: number
     offset: number
@@ -11,10 +10,11 @@ export type SpacesDb = {
       spaceId?: {
         equals?: SpaceId
       }
-      userId?: {
-        includes?: string
+      userIds?: {
+        includes?: UserId
       }
     }
   }) => Task<string, Space.Model[]>
+  get: (spaceId: SpaceId) => Task<string, Space.Model | null>
   upsert: (space: Space.Model) => Task<string, null>
 }
