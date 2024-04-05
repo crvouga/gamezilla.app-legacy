@@ -2,7 +2,7 @@ import { sendToClient } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { AppServerModule } from "../../../@SHARED/architecture/app-server"
 import { SpaceServerModule } from "../architecture/space-server"
 import * as Space from "../spaces-core/space"
-import * as Spaces from "../spaces-core/spaces"
+import * as Spaces from "../spaces-core/spaces-core.client"
 import { MsgToClient, spacesToProfiles } from "../spaces.core"
 import { isErr } from "gamezilla-app/@SHARED/core"
 
