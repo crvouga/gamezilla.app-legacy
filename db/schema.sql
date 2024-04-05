@@ -77,10 +77,20 @@ CREATE TABLE public.game_flow_puzzle (
     flow_puzzle json NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by_user_id text NOT NULL,
-    deleted_at timestamp without time zone,
-    deleted_by_user_id text,
     last_updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    last_updated_by_user_id text NOT NULL
+    last_updated_by_user_id text NOT NULL,
+    deleted_at timestamp without time zone,
+    deleted_by_user_id text
+);
+
+
+--
+-- Name: key_value; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE UNLOGGED TABLE public.key_value (
+    key text NOT NULL,
+    value text
 );
 
 
@@ -162,6 +172,14 @@ ALTER TABLE ONLY public.game_chess_puzzle_profile
 
 ALTER TABLE ONLY public.game_flow_puzzle
     ADD CONSTRAINT game_flow_puzzle_pkey PRIMARY KEY (flow_puzzle_id);
+
+
+--
+-- Name: key_value key_value_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.key_value
+    ADD CONSTRAINT key_value_pkey PRIMARY KEY (key);
 
 
 --
@@ -291,10 +309,10 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240203025639'),
     ('20240203034127'),
     ('20240203034632'),
-    ('20240203034815'),
     ('20240203034900'),
     ('20240203035440'),
     ('20240203040136'),
     ('20240203045837'),
     ('20240214195501'),
-    ('20240214202304');
+    ('20240214202304'),
+    ('20240405231549');

@@ -45,7 +45,8 @@ export const getDeps = async <TMsgToClient, TMsgToServer>(input: {
   return {
     transport: input.transport,
     WireSessionDb: await WireSessionDb({
-      t: "hash-map",
+      t: "db-conn-kv",
+      dbConnKv: input.dbConnKv,
     }),
   }
 }

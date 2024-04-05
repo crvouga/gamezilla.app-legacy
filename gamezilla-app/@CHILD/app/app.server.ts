@@ -68,16 +68,16 @@ export const getDeps = async ({
 
   const dbConnSql = await createDbConnSql({ databaseUrl, logger })
 
-  const redisUrl = process.env["REDIS_URL"]
+  // const redisUrl = process.env["REDIS_URL"]
 
-  if (!redisUrl) {
-    throw new Error(`[deps] REDIS_URL not set`)
-  }
+  // if (!redisUrl) {
+  //   throw new Error(`[deps] REDIS_URL not set`)
+  // }
 
   const dbConnKv = await DbConnKv({
-    t: "redis",
-    url: redisUrl,
+    t: "postgres",
     logger,
+    dbConn: dbConnSql,
   })
 
   const sms = createSMS({
