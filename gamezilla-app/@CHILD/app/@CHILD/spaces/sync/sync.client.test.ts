@@ -11,7 +11,7 @@ import { eq } from "gamezilla-app/@SHARED/core"
 import {
   clickedJoinSpaceButton,
   clickedStartSpaceButton,
-  createCtx,
+  Ctx,
   gotCurrentUsersSpace,
   gotMsgServer,
   gotSpace,
@@ -42,7 +42,7 @@ describe(import.meta.file, () => {
       [someProfile.userId]: someProfile,
     }
 
-    const ctx = createCtx()
+    const ctx = Ctx()
 
     const updated = await AppClientModule.andThen(
       init(ctx),
@@ -63,7 +63,7 @@ describe(import.meta.file, () => {
 
   it("should merge space recieved from server", async () => {
     const someSpace = makeSpace(SpaceId.generate(), UserId.generate())
-    const ctx = createCtx()
+    const ctx = Ctx()
 
     const output = await AppClientModule.andThen(
       init(ctx),
@@ -80,7 +80,7 @@ describe(import.meta.file, () => {
   })
 
   it("should merge current user's space when recieved from server", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const someStartedSpace = makeSpace(spaceId, ctx.currentUserId)
@@ -96,7 +96,7 @@ describe(import.meta.file, () => {
   })
 
   it("should sync current user's space when server connects if in space", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const output = await AppClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, SpaceId.generate()),
@@ -115,7 +115,7 @@ describe(import.meta.file, () => {
 
   it("should send events to the server like user joined space", async () => {
     const spaceId = SpaceId.generate()
-    const ctx = createCtx()
+    const ctx = Ctx()
     const output = await AppClientModule.andThen(
       init(ctx),
       //
@@ -136,7 +136,7 @@ describe(import.meta.file, () => {
   })
 
   it("should send events to the server like user ended space", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const output = await AppClientModule.andThen(
       init(ctx),
       userEndedSpace(ctx, UserId.generate(), SpaceId.generate()),

@@ -17,7 +17,7 @@ import {
   changeRoute,
   clickSpaceCard,
   clickedGoHomeButton,
-  createCtx,
+  Ctx,
   elapsed,
   init,
   serverListedSpaces,
@@ -29,7 +29,7 @@ const changeRouteToSpaceList = (ctx: ClientCtx) => {
 
 describe(import.meta.file, () => {
   it("should request spaces on init if on space list route", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const output = await init({
       ...ctx,
       currentRoute: { n: "spaces", t: "space-list" },
@@ -41,7 +41,7 @@ describe(import.meta.file, () => {
   })
 
   it("should send list space request to server initially", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const output = await init({
       ...ctx,
       currentRoute: { n: "spaces", t: "space-list" },
@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
   })
 
   it("should request spaces on space list route change", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const updated = await AppClientModule.andThen(
       init(ctx),
       changeRouteToSpaceList(ctx),
@@ -63,7 +63,7 @@ describe(import.meta.file, () => {
   })
 
   it("should timeout request", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const updated = await AppClientModule.andThen(
       init(ctx),
       changeRouteToSpaceList(ctx),
@@ -76,7 +76,7 @@ describe(import.meta.file, () => {
   })
 
   it("should be ok when server responds with a list of spaces", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const updated = await AppClientModule.andThen(
       init(ctx),
       changeRouteToSpaceList(ctx),
@@ -86,7 +86,7 @@ describe(import.meta.file, () => {
   })
 
   it("should be ok when server responds with a list of spaces even when it timed out", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const updated = await AppClientModule.andThen(
       init(ctx),
       changeRouteToSpaceList(ctx),
@@ -99,7 +99,7 @@ describe(import.meta.file, () => {
 
   it("should navigate to space screen after clicking a space card", async () => {
     const SpaceA = SpaceId.generate()
-    const ctx = createCtx()
+    const ctx = Ctx()
     const updated = await AppClientModule.andThen(
       init(ctx),
       serverListedSpaces(ctx, [SpaceA]),
@@ -111,7 +111,7 @@ describe(import.meta.file, () => {
 
   it("should make a nav forward sound when opening a space screen", async () => {
     const SpaceA = SpaceId.generate()
-    const ctx = createCtx()
+    const ctx = Ctx()
     const updated = await AppClientModule.andThen(
       init(ctx),
       serverListedSpaces(ctx, [SpaceA]),
@@ -122,7 +122,7 @@ describe(import.meta.file, () => {
 
   it("should make a sound when closing room screen", async () => {
     const SpaceA = SpaceId.generate()
-    const ctx = createCtx()
+    const ctx = Ctx()
     const updated = await AppClientModule.andThen(
       init(ctx),
       serverListedSpaces(ctx, [SpaceA]),

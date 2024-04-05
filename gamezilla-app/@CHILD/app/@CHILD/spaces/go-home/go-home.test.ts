@@ -3,14 +3,14 @@ import { SpaceId } from "../../../@SHARED/data"
 import {
   clickedGoHomeButton,
   clickedStartSpaceButton,
-  createCtx,
+  Ctx,
   init,
 } from "../@TEST/client"
 import { SpaceClientModule } from "../architecture/architecture"
 
 describe(import.meta.file, () => {
   it("should go to list screen when clicking go home button", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const started = await SpaceClientModule.andThen(
@@ -36,7 +36,7 @@ describe(import.meta.file, () => {
   })
 
   it("should play a sound when clicking go home button", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const startedSpace = await SpaceClientModule.andThen(

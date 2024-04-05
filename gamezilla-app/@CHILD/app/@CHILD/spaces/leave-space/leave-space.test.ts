@@ -8,7 +8,7 @@ import {
 import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   clickedLeaveSpaceButton,
-  createCtx,
+  Ctx,
   init,
   userJoinedSpace,
   userLeftSpace,
@@ -18,7 +18,7 @@ import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {
   it("should navigate to list screen after leaving space", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const joined = await andThen(
@@ -36,7 +36,7 @@ describe(import.meta.file, () => {
   })
 
   it("should only redirect to list screen for the user leaving the space", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
     const userId = UserId.generate()
 
@@ -55,7 +55,7 @@ describe(import.meta.file, () => {
   })
 
   it("should show some toast after leaving a space", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const joined = await andThen(
@@ -73,7 +73,7 @@ describe(import.meta.file, () => {
   })
 
   it("user is not in space after leaving", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
     const updated = await andThen(
       init(ctx),
@@ -88,7 +88,7 @@ describe(import.meta.file, () => {
   })
 
   it("should play sound after leaving", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const joined = await andThen(
