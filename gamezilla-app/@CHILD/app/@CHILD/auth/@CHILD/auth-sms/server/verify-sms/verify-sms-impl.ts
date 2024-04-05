@@ -1,6 +1,6 @@
-import { SMS } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
+import { SMS } from "gamezilla-app/@CHILD/app/@SHARED/server/sms"
 import { ICodeGenerator } from "./code-generator"
 import { IVerifySMS } from "./verify-sms"
 import * as ImplReal from "./verify-sms-impl-real"

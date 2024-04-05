@@ -1,4 +1,4 @@
-import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import { IFlowPuzzleDb } from "./flow-puzzle-db"
 import { FlowPuzzleDbHashMap } from "./flow-puzzle-db-impl-hash-map"
 import { FlowPuzzleDbPostgres } from "./flow-puzzle-db-impl-postgres"

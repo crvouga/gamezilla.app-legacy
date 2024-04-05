@@ -1,8 +1,8 @@
-import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { Err, Ok } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import postgres from "postgres"
 import { Logger } from "../logger"
+import { DbConnSql } from "./db-conn-sql"
 import { logQuery } from "./shared"
 import { toSql } from "./sql"
 

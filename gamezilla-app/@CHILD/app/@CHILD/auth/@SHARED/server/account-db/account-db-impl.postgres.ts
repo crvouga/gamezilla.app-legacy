@@ -1,6 +1,6 @@
 import { UserId, UserRole } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
-import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import {
   EmailAddress,
   Err,
