@@ -6,7 +6,7 @@ import { exitGame } from "../@SHARED/space-client-cmd"
 import {
   clickedGameTile,
   clickedStartSpaceButton,
-  createCtx,
+  Ctx,
   init,
 } from "../@TEST/client"
 import { SpaceClientModule } from "../architecture/architecture"
@@ -15,7 +15,7 @@ import * as SpacesClient from "../spaces.client"
 
 describe(import.meta.file, () => {
   it("should play a sound after inputting a game", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
     const started = await AppClientModule.andThen(
       init(ctx),
@@ -29,7 +29,7 @@ describe(import.meta.file, () => {
   })
 
   it("should be able to start game", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const output = await SpaceClientModule.andThen(
@@ -43,7 +43,7 @@ describe(import.meta.file, () => {
   })
 
   it("should exit game for corresponding cmd", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const output = await SpaceClientModule.andThen(

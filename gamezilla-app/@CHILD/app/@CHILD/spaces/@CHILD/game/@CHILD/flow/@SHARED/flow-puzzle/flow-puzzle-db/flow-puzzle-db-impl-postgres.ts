@@ -19,7 +19,7 @@ import { IFlowPuzzleDb } from "./flow-puzzle-db"
 export const Row = p.obj({
   flow_puzzle_id: p.str,
   flow_puzzle_name: p.str,
-  flow_puzzle: p.str,
+  flow_puzzle: p.dict(p.or(p.str, p.num), p.unknown),
   created_at: p.str,
   created_by_user_id: p.str,
   last_updated_at: p.str,
@@ -40,7 +40,7 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
     ? row.flow_puzzle_name
     : null
 
-  const parsedFlow = FlowVariant.Model.parse(JSON.parse(row.flow_puzzle))
+  const parsedFlow = FlowVariant.Model.parse(row.flow_puzzle)
   const flow = parsedFlow.t === "ok" ? parsedFlow.value : null
 
   const createdAt = postgresTimestampToPosix(row.created_at)
@@ -77,7 +77,7 @@ const puzzleToRow = (puzzle: FlowPuzzle): Row => {
   return {
     flow_puzzle_id: puzzle.id,
     flow_puzzle_name: puzzle.name,
-    flow_puzzle: JSON.stringify(puzzle.flow),
+    flow_puzzle: puzzle.flow,
     created_at: Posix.toIsoString(puzzle.createdAt),
     created_by_user_id: puzzle.createdBy,
     last_updated_at: Posix.toIsoString(puzzle.lastUpdatedAt),
@@ -206,10 +206,10 @@ export const FlowPuzzleDbPostgres = ({
       }
 
       const queriedCount = await dbConn.query(
-        p.num,
+        p.obj({ count: p.str }),
         `
           SELECT
-            COUNT(*)
+            COUNT(*) AS count
           FROM
             game_flow_puzzle
           ${whereStr}
@@ -228,7 +228,7 @@ export const FlowPuzzleDbPostgres = ({
         return parsed ? [parsed] : []
       })
 
-      const total = queriedCount.value[0] ?? 0
+      const total = parseFloat(queriedCount.value[0]?.count ?? "0") ?? 0
 
       return Ok({
         items: items,

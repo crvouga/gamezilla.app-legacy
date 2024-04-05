@@ -3,7 +3,7 @@ import { SpaceId } from "../../../@SHARED/data"
 import {
   clickedCurrentSpaceBottomBar,
   clickedStartSpaceButton,
-  createCtx,
+  Ctx,
   init,
 } from "../@TEST/client"
 import { SpaceClientModule } from "../architecture/space-client"
@@ -11,7 +11,7 @@ import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {
   it("should open current space when clicking current space bottom bar", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const started = await SpaceClientModule.andThen(
@@ -40,7 +40,7 @@ describe(import.meta.file, () => {
   })
 
   it("should play a sound when clicking current space bottom bar", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const started = await SpaceClientModule.andThen(

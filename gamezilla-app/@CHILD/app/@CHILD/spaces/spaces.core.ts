@@ -14,7 +14,7 @@ import { WithEventId, WithEventMeta } from "./@SHARED/event"
 import { IProfileCache } from "./profile-cache"
 import * as Space from "./spaces-core/space"
 import { SpaceEvent } from "./spaces-core/space-event"
-import * as Spaces from "./spaces-core/spaces"
+import * as Spaces from "./spaces-core/spaces-core.client"
 
 //
 //

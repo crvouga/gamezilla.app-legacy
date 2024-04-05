@@ -9,7 +9,7 @@ import { IconGamepad, TopBar } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { EmptyState } from "gamezilla-app/@CHILD/app/@SHARED/ui/empty-state"
 import { Ok, RequestResponse, requesting } from "gamezilla-app/@SHARED/core"
 import { SpaceClientModule } from "../architecture/architecture"
-import * as Spaces from "../spaces-core/spaces"
+import * as Spaces from "../spaces-core/spaces-core.client"
 import { StartSpaceClient } from "../start-space/start-space.client"
 import { ViewSpaceCard } from "./space-card"
 

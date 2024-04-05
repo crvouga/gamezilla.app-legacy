@@ -19,7 +19,7 @@ import { ProfileCache } from "./profile-cache"
 import * as Space from "./spaces-core/space"
 import { SpaceEvent } from "./spaces-core/space-event"
 import * as SpaceState from "./spaces-core/space-state"
-import * as Spaces from "./spaces-core/spaces"
+import * as Spaces from "./spaces-core/spaces-core.client"
 import {
   ModelServer,
   MsgServer,

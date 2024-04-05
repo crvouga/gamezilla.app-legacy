@@ -4,7 +4,7 @@ import {
   playSound,
   pushRoute,
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
-import { Avatar, IconXMark } from "gamezilla-app/@CHILD/app/@SHARED/ui"
+import { Avatar, Button } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import { CoverArt } from "../@CHILD/game/game-cover-art"
 import { SpaceClientModule } from "../architecture/architecture"
 import { Spaces } from "../spaces-core"
@@ -87,34 +87,34 @@ const View = ({
           </div>
 
           <div className="flex flex-1 flex-col gap-1 overflow-hidden py-3">
-            <p className="overflow-hidden text-ellipsis whitespace-nowrap text-left text-lg">
+            <p className="truncate text-left text-lg">
               {hostProfile ? `${hostProfile.username}'s space` : "..."}
             </p>
-            <p className="text-left text-sm text-neutral-300">
+            <p className="truncate text-left text-sm text-neutral-300">
               {userCount} in space
             </p>
           </div>
         </button>
 
-        {ctx.currentUserId === space.hostId && (
-          <button
-            aria-label="end space"
-            onClick={() => dispatch({ t: "clicked-end-space-button" })}
-            className="p-2"
-          >
-            <IconXMark className="h-8 w-8" />
-          </button>
-        )}
+        <div className="pr-4">
+          {ctx.currentUserId === space.hostId && (
+            <Button
+              color="danger"
+              text="End"
+              onClick={() => dispatch({ t: "clicked-end-space-button" })}
+              size="sm"
+            />
+          )}
 
-        {ctx.currentUserId !== space.hostId && (
-          <button
-            aria-label="leave space"
-            onClick={() => dispatch({ t: "clicked-leave-space-button" })}
-            className="p-2"
-          >
-            <IconXMark className="h-8 w-8" />
-          </button>
-        )}
+          {ctx.currentUserId !== space.hostId && (
+            <Button
+              color="danger"
+              text="Leave"
+              onClick={() => dispatch({ t: "clicked-leave-space-button" })}
+              size="sm"
+            />
+          )}
+        </div>
       </div>
     </div>
   )

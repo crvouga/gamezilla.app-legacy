@@ -26,6 +26,8 @@ export const translations: Text = {
   "auth.logout-of-gamezill.app": "Déconnexion de gamezilla.app",
   "auth.logout-of-gamezill.app-body":
     "Êtes-vous sûr de vouloir vous déconnecter?",
+  "verifiy-sms.code-message": (code) =>
+    `Votre code de v\xE9rification est ${code}`,
   "auth-sms.login-with-phone": "Se connecter avec le téléphone",
   "auth-sms.phone-number": "Numéro de téléphone",
   "auth-sms.send-code": "Envoyer le code",

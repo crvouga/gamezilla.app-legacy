@@ -7,7 +7,7 @@ import {
 import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   clickedStartSpaceButton,
-  createCtx,
+  Ctx,
   init,
   userClickedEndSpaceButton,
 } from "../@TEST/client"
@@ -16,7 +16,7 @@ import { EndSpaceClient } from "./end-space.client"
 
 describe(import.meta.file, () => {
   it("should redirect to space list after ending space if on space route", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
     const updated = await AppClientModule.andThen(
       init(ctx),
@@ -31,7 +31,7 @@ describe(import.meta.file, () => {
   })
 
   it("should not redirect to space list after ending space if not on space route", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const updated = await AppClientModule.andThen(
@@ -51,7 +51,7 @@ describe(import.meta.file, () => {
   })
 
   it("should play sound after ending space", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
     const updated = await AppClientModule.andThen(
       init(ctx),
@@ -62,7 +62,7 @@ describe(import.meta.file, () => {
   })
 
   it("should end space when host logs out", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
     const updated = await SpaceClientModule.andThen(
       init(ctx),

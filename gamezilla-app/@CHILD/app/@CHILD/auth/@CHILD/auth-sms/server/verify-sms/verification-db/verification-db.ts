@@ -5,16 +5,16 @@ import {
   VerificationId,
 } from "../verification"
 
-export type VerificationDb = {
+export type IVerificationDb = {
   find(input: {
     where: { equalsVerificationId: VerificationId }
   }): Task<string, Verification[]>
-  insert(verification: Verification): Task<string, null>
+  upsert(verification: Verification): Task<string, null>
 }
 
-export type VerificationAttemptDb = {
+export type IVerificationAttemptDb = {
   find(input: {
     where: { equalsVerificationId: VerificationId }
   }): Task<string, VerificationAttempt[]>
-  insert(attempt: VerificationAttempt): Task<string, null>
+  upsert(attempt: VerificationAttempt): Task<string, null>
 }

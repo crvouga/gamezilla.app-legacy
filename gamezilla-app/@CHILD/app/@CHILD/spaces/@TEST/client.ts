@@ -29,7 +29,7 @@ import * as SpaceCore from "../spaces.core"
 //
 //
 
-export const createCtx = (): ClientCtx => {
+export const Ctx = (): ClientCtx => {
   return {
     navigatorLanguage: "en",
     t: getTranslator("en"),

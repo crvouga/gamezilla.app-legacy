@@ -8,7 +8,7 @@ import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   clickedJoinSpaceButton,
   clickedLeaveSpaceButton,
-  createCtx,
+  Ctx,
   createFixture,
   init,
   userJoinedSpace,
@@ -18,7 +18,7 @@ import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {
   it("should show some toast after joining space", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const output = await andThen(
@@ -52,7 +52,7 @@ describe(import.meta.file, () => {
   })
 
   it("should join space when clicking join space button", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const joined = await andThen(
@@ -67,7 +67,7 @@ describe(import.meta.file, () => {
   })
 
   it("current user leaving joined space", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const left = await andThen(
@@ -84,7 +84,7 @@ describe(import.meta.file, () => {
   })
 
   it("preventing joining a space if already in a space", async () => {
-    const ctx = createCtx()
+    const ctx = Ctx()
     const SpaceA = SpaceId.generate()
     const SpaceB = SpaceId.generate()
 
