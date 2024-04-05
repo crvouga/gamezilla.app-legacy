@@ -25,6 +25,8 @@ export const translations: Text = {
   "auth.logged-in": "ログインしました",
   "auth.logout-of-gamezill.app": "gamezilla.appからログアウト",
   "auth.logout-of-gamezill.app-body": "本当にログアウトしますか？",
+  "verifiy-sms.code-message": (code) =>
+    `\u8A8D\u8A3C\u30B3\u30FC\u30C9\u306F${code}\u3067\u3059`,
   "auth-sms.login-with-phone": "電話でログイン",
   "auth-sms.phone-number": "電話番号",
   "auth-sms.send-code": "コードを送信",

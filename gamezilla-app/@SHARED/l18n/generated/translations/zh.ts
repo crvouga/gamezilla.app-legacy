@@ -25,6 +25,8 @@ export const translations: Text = {
   "auth.logged-in": "已登录",
   "auth.logout-of-gamezill.app": "登出gamezilla.app",
   "auth.logout-of-gamezill.app-body": "您确定要登出吗？",
+  "verifiy-sms.code-message": (code) =>
+    `\u60A8\u7684\u9A8C\u8BC1\u7801\u662F${code}`,
   "auth-sms.login-with-phone": "使用电话登录",
   "auth-sms.phone-number": "电话号码",
   "auth-sms.send-code": "发送代码",

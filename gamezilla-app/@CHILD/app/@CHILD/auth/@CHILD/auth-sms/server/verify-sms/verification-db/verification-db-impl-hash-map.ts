@@ -4,26 +4,26 @@ import {
   VerificationAttempt,
   VerificationId,
 } from "../verification"
-import { VerificationAttemptDb, VerificationDb } from "./verification-db"
+import { IVerificationAttemptDb, IVerificationDb } from "./verification-db"
 
-export const VerficationDbHashMap = (): VerificationDb => {
+export const VerficationDbHashMap = (): IVerificationDb => {
   const verificationsById = new Map<VerificationId, Verification>()
   return {
     async find(input) {
       const found = verificationsById.get(input.where.equalsVerificationId)
       return Ok(found ? [found] : [])
     },
-    async insert(verification) {
+    async upsert(verification) {
       verificationsById.set(verification.verificationId, verification)
       return Ok(null)
     },
   }
 }
 
-export const VerficationAttemptsDbHashMap = (): VerificationAttemptDb => {
+export const VerficationAttemptsDbHashMap = (): IVerificationAttemptDb => {
   const attempsById = new Map<VerificationId, VerificationAttempt[]>()
   return {
-    async insert(attempt) {
+    async upsert(attempt) {
       const attempts = attempsById.get(attempt.verificationId) ?? []
       attempts.push(attempt)
       attempsById.set(attempt.verificationId, attempts)

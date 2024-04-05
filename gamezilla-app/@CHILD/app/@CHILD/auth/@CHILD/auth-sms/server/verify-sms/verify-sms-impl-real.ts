@@ -1,55 +1,64 @@
 import { SMS } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
-import {
-  Err,
-  PhoneNumber,
-  Posix,
-  TimeSpan,
-  isErr,
-} from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { Ok, Posix, TimeSpan, isErr } from "gamezilla-app/@SHARED/core"
+import { Translator } from "gamezilla-app/@SHARED/l18n/generated"
 import { ICodeGenerator } from "./code-generator"
+import { Verification, VerificationId } from "./verification"
+import { IVerificationAttemptDb, IVerificationDb } from "./verification-db"
 import { IVerifySMS } from "./verify-sms"
+import { CodeHash } from "./code-hash"
 
 export const EXPIRES_IN = TimeSpan.fromMinutes(5)
 
-export const Verification = p.obj({
-  code: p.str,
-  phoneNumber: p.str,
-  attempts: p.num,
-  createdAt: Posix,
-})
-
-export const VerifySMS = (deps: {
+export type VerifySMSDeps = {
   logger: Logger
   sms: SMS
   dbConnKv: IDbConnKv
   codeGenerator: ICodeGenerator
-}): IVerifySMS => {
-  const verificationsByPhoneNumber = IDbConnKv.instance(
-    deps.dbConnKv,
-    ["auth", "sms", "verifications-by-phone-number"],
-    p.arr(Verification),
-  )
+  verificationDb: IVerificationDb
+  verificationAttemptDb: IVerificationAttemptDb
+  translator: Translator
+}
+
+export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
   return {
     async sendCode(input) {
-      const got = await verificationsByPhoneNumber.get(
-        PhoneNumber.toString(input.phoneNumber),
-      )
+      const code = deps.codeGenerator.generate()
 
-      if (isErr(got)) {
-        deps.logger.error(
-          `[verify-sms] [real] failed to get verification by phone number. ${got.error}`,
-        )
-        return Err(`Failed to get verification by phone number.`)
+      const codeHash = CodeHash.hash(code)
+
+      const verficationNew: Verification = {
+        codeHash: codeHash,
+        phoneNumber: input.phoneNumber,
+        createdAt: Posix.now(),
+        expiresIn: EXPIRES_IN,
+        verificationId: VerificationId.generate(),
       }
 
-      return Err("not implemented")
+      const upserted = await deps.verificationDb.upsert(verficationNew)
+
+      if (isErr(upserted)) {
+        return upserted
+      }
+
+      const sent = await deps.sms.sendMessage({
+        message: deps.translator("verifiy-sms.code-message", code),
+        phoneNumber: input.phoneNumber,
+      })
+
+      if (isErr(sent)) {
+        return sent
+      }
+
+      return Ok(null)
     },
     async verifyCode(_input) {
-      verificationsByPhoneNumber
-      return Err("not implemented")
+      // const found = deps.verificationDb.find({
+      //   where: {},
+      // })
+
+      return Ok(null)
     },
   }
 }
