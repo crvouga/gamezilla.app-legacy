@@ -1,6 +1,6 @@
 import { GameServerModule } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architecture/game-server-v2"
 import { withId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
-import { Result } from "gamezilla-app/@SHARED/core"
+import { Result, isErr } from "gamezilla-app/@SHARED/core"
 import { FlowVariant, FlowVariantDimensions } from "../../../../@SHARED/flow"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { ServerModule } from "../../create.core"
@@ -25,7 +25,11 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         },
       })
 
-      const count = counted.t === "ok" ? counted.value : 0
+      if (isErr(counted)) {
+        console.error(counted.error)
+      }
+
+      const count = Result.withDefault(counted, 0)
 
       const puzzleNew = FlowPuzzle.create({
         count: count,
