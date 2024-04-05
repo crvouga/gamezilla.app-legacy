@@ -100,7 +100,7 @@ describe(import.meta.file, () => {
     ).toBe(true)
   })
 
-  it('should sent a sms message with the "verifiy-sms.code-message" translation', async () => {
+  it('should sent a sms message with the "verify-sms.code-message" translation', async () => {
     const f = await Fixture()
     await f.verifySMS.sendCode({
       phoneNumber: f.phoneNumber,
@@ -109,7 +109,7 @@ describe(import.meta.file, () => {
       f.sms.sent.every(
         (smsMessage) =>
           smsMessage.message ===
-          f.translator("verifiy-sms.code-message", f.CODE),
+          f.translator("verify-sms.code-message", f.CODE),
       ),
     ).toBe(true)
   })

@@ -30,7 +30,9 @@ export const VerifySMS = ({
         return Ok(null)
       }
 
-      return Err("Code does not match the code sent")
+      return Err({
+        t: "code-incorrect",
+      })
     },
   }
 }

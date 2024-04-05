@@ -184,7 +184,10 @@ export const updateFromClient: Module["update"] = async ({
             t: "verified-code",
             phoneNumber: msgClient.phoneNumber,
             clientId: msgClient.clientId,
-            result: await deps.VerifySMS.verifyCode(msgClient),
+            result: Result.mapErr(
+              await deps.VerifySMS.verifyCode(msgClient),
+              () => "Something went wrong",
+            ),
             sessionId: msgClient.sessionId,
           })
         },

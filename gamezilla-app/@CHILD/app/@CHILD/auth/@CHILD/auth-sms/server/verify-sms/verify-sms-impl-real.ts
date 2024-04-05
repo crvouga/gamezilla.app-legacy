@@ -1,7 +1,8 @@
 import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { SMS } from "gamezilla-app/@CHILD/app/@SHARED/server/sms"
-import { Posix, TimeSpan, isErr } from "gamezilla-app/@SHARED/core"
+import { Ok, Posix, TimeSpan, isErr } from "gamezilla-app/@SHARED/core"
+import { Translator } from "gamezilla-app/@SHARED/l18n/generated"
 import { ICodeGenerator } from "./code-generator"
 import { CodeHash } from "./code-hash"
 import { Verification, VerificationId } from "./verification"
@@ -27,7 +28,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 
       const codeHash = CodeHash.hash(code)
 
-      const verficationNew: Verification = {
+      const verificationNew: Verification = {
         codeHash: codeHash,
         phoneNumber: input.phoneNumber,
         createdAt: Posix.now(),
@@ -35,14 +36,14 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
         verificationId: VerificationId.generate(),
       }
 
-      const upserted = await deps.verificationDb.upsert(verficationNew)
+      const upserted = await deps.verificationDb.upsert(verificationNew)
 
       if (isErr(upserted)) {
         return upserted
       }
 
       const sent = await deps.sms.sendMessage({
-        message: deps.translator("verifiy-sms.code-message", code),
+        message: deps.translator("verify-sms.code-message", code),
         phoneNumber: input.phoneNumber,
       })
 
@@ -53,10 +54,6 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
       return Ok(null)
     },
     async verifyCode(_input) {
-      // const found = deps.verificationDb.find({
-      //   where: {},
-      // })
-
       return Ok(null)
     },
   }
