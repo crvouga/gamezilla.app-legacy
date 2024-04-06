@@ -240,6 +240,7 @@ const findElseInsertAccount = async ({
 
   const accountNew: Account = {
     role: "normal",
+
     userId: UserId.generate(),
     phoneNumber,
     createdAt: now,

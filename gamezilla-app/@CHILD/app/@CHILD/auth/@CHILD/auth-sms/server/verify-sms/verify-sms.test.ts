@@ -43,7 +43,7 @@ const Fixture = async () => {
   })
 
   const phoneNumber = Result.withDefault(
-    PhoneNumber.parse("+1 480-209-8698"),
+    PhoneNumber.fromString("+1 480-209-8698"),
     null,
   )
 

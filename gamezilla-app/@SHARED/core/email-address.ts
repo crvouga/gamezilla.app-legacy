@@ -12,7 +12,11 @@ const is = (emailAddress: unknown): emailAddress is EmailAddress => {
   return typeof emailAddress === "string" && regex.test(emailAddress)
 }
 
+const toString = (emailAddress: EmailAddress): string => emailAddress
+
 export const EmailAddress = {
   ...parser,
+
+  toString,
   is,
 }

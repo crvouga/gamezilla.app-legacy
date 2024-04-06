@@ -181,7 +181,7 @@ const updateFromMsg: Module["update"] = (input) => {
     }
 
     case "clicked-send-code": {
-      const phoneNumber = PhoneNumber.parse(model.phoneNumberInput)
+      const phoneNumber = PhoneNumber.fromString(model.phoneNumberInput)
 
       if (isErr(phoneNumber)) {
         return {

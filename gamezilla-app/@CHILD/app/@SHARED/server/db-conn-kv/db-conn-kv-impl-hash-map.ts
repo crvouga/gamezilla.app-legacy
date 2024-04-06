@@ -22,6 +22,13 @@ export const DbConnKvHashMap = (): IDbConnKv => {
       return Ok(null)
     },
 
+    async setMany(entries) {
+      for (const [key, value] of entries) {
+        hashMap.set(key, value)
+      }
+      return Ok(null)
+    },
+
     async zap(key) {
       hashMap.delete(key)
       return Ok(null)

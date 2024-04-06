@@ -63,6 +63,17 @@ export const DbConnKvRedis = async ({
       }
     },
 
+    async setMany(entries) {
+      try {
+        await client.mSet(
+          entries.map(([key, value]) => [key, JSON.stringify(value)]),
+        )
+        return Ok(null)
+      } catch (e) {
+        return Err(String(e))
+      }
+    },
+
     async zap(key) {
       try {
         await client.del(key)

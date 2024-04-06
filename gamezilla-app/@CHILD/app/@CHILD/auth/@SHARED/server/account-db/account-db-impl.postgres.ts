@@ -14,8 +14,8 @@ import { p } from "gamezilla-app/@SHARED/core/parser"
 import { IAccountDb } from "./account-db"
 
 export const AccountRow = p.obj({
-  user_id: UserId,
-  email_address: p.maybe(EmailAddress),
+  user_id: p.str,
+  email_address: p.maybe(p.str),
   phone_number: p.maybe(p.str),
   created_at: p.str,
   user_role: UserRole,
@@ -24,80 +24,27 @@ export const AccountRow = p.obj({
 export type AccountRow = p.Infer<typeof AccountRow>
 
 const rowToAccount = (row: AccountRow): Result<string, Account> => {
-  const userId = row.user_id
-  const emailAddress = row.email_address
-  const createdAt = postgresTimestampToPosix(row.created_at)
+  const userId = Result.withDefault(UserId.parse(row.user_id), null)
 
-  const parsedPhoneNumber = row.phone_number
-    ? PhoneNumber.parse(row.phone_number)
-    : null
-
-  const phoneNumber =
-    parsedPhoneNumber && parsedPhoneNumber.t === "ok"
-      ? parsedPhoneNumber.value
-      : null
-
-  switch (row.user_role) {
-    case "guest": {
-      return Ok({
-        role: "guest",
-        createdAt,
-        userId,
-      })
-    }
-
-    case "normal": {
-      if (emailAddress) {
-        return Ok({
-          role: "normal",
-          createdAt,
-          userId,
-          emailAddress: emailAddress ?? null,
-          phoneNumber: phoneNumber ?? null,
-        })
-      }
-
-      if (phoneNumber) {
-        return Ok({
-          role: "normal",
-          createdAt,
-          userId,
-          emailAddress: emailAddress ?? null,
-          phoneNumber: phoneNumber ?? null,
-        })
-      }
-
-      return Err(
-        "Invalid account. Missing email and phone number for a normal account.",
-      )
-    }
-
-    case "super": {
-      if (emailAddress) {
-        return Ok({
-          role: "super",
-          createdAt,
-          userId,
-          emailAddress: emailAddress ?? null,
-          phoneNumber: phoneNumber ?? null,
-        })
-      }
-
-      if (phoneNumber) {
-        return Ok({
-          role: "super",
-          createdAt,
-          userId,
-          emailAddress: emailAddress ?? null,
-          phoneNumber: phoneNumber ?? null,
-        })
-      }
-
-      return Err(
-        "Invalid account. Missing email and phone number for a super account.",
-      )
-    }
+  if (!userId) {
+    return Err("Invalid account. Missing userId.")
   }
+
+  const account: Account = {
+    userId,
+    role: row.user_role,
+    createdAt: postgresTimestampToPosix(row.created_at),
+    emailAddress: Result.withDefault(
+      EmailAddress.parse(row.email_address),
+      null,
+    ),
+    phoneNumber: Result.withDefault(
+      PhoneNumber.fromString(row.phone_number),
+      null,
+    ),
+  }
+
+  return Ok(account)
 }
 
 const postgresTimestampToPosix = (postgresTimestamp: string) => {
@@ -107,7 +54,9 @@ const postgresTimestampToPosix = (postgresTimestamp: string) => {
 const accountToRow = (account: Account): AccountRow => {
   return {
     user_id: account.userId,
-    email_address: account.emailAddress,
+    email_address: account.emailAddress
+      ? EmailAddress.toString(account.emailAddress)
+      : null,
     phone_number: account.phoneNumber
       ? PhoneNumber.toString(account.phoneNumber)
       : null,

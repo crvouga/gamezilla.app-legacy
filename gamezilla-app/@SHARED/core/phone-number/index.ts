@@ -10,7 +10,7 @@ export type PhoneNumber = {
 
 type Problem = "invalid_phone_number"
 
-const parse = (phoneNumber: unknown): Result<Problem, PhoneNumber> => {
+const fromString = (phoneNumber: unknown): Result<Problem, PhoneNumber> => {
   if (typeof phoneNumber !== "string") {
     return Result.Err("invalid_phone_number")
   }
@@ -41,7 +41,7 @@ const parse = (phoneNumber: unknown): Result<Problem, PhoneNumber> => {
 }
 
 const unsafeParse = (phoneNumber: string): PhoneNumber => {
-  const result = parse(phoneNumber)
+  const result = fromString(phoneNumber)
   if (result.t === "err") {
     throw new Error("Invalid phone number")
   }
@@ -83,14 +83,14 @@ const format = (phoneNumber: PhoneNumber): string => {
 }
 
 const is = (phoneNumber: unknown): phoneNumber is PhoneNumber => {
-  return parse(phoneNumber).t === "ok"
+  return fromString(phoneNumber).t === "ok"
 }
 export const PhoneNumber = {
   is,
   toString,
   eq,
   toCountry,
-  parse,
+  fromString,
   unsafeParse,
   format,
 }

@@ -88,6 +88,29 @@ export const DbConnKvPostgres = async ({
       }
     },
 
+    async setMany(entries) {
+      try {
+        const valuesStr = entries
+          .map(([key, value]) => `('${key}', '${JSON.stringify(value)}')`)
+          .join(", ")
+
+        const queried = await dbConn.query(
+          Row,
+          `INSERT INTO key_value (key, value) VALUES ${valuesStr} ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+          {},
+        )
+
+        if (isErr(queried)) {
+          return queried
+        }
+
+        return Ok(null)
+      } catch (e) {
+        logger.error(`[db-conn-kv-postgres] setMany: ${String(e)}`)
+        return Err(String(e))
+      }
+    },
+
     async zap(key) {
       try {
         const queried = await dbConn.query(

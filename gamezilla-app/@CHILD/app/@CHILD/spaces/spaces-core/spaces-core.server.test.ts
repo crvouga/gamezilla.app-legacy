@@ -3,16 +3,23 @@
 // import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 // import { WithEventMeta, withId } from "../@SHARED/event"
 
+// const Fixture = async () => {
+//   return {
+//     spaceId: SpaceId.generate(),
+//     userId: UserId.generate(),
+//     spaceEvent: withId({
+//       t: "user-started-space",
+//       spaceId: SpaceId.generate(),
+//       userId: UserId.generate(),
+//     }),
+//   }
+// }
+
 // describe(import.meta.file, () => {
 //   it("should work", async () => {
 //     const spaceId = SpaceId.generate()
-//     const before = SpacesServer.listSpaces({
-//       limit: 1,
-//       offset: 0,
-//       where: {
-//         spaceId,
-//       },
-//     })
+//     const f = Fixture()
+//     const before = await SpacesServer.getSpaceById(spaceId)
 //     const updated = await SpacesServer.update({
 //       spaceEvent: withId({
 //         t: "user-started-space",
@@ -20,13 +27,8 @@
 //         userId: UserId.generate(),
 //       }),
 //     })
-//     const after = SpacesServer.listSpaces({
-//       limit: 1,
-//       offset: 0,
-//       where: {
-//         spaceId,
-//       },
-//     })
+//     const after = await SpacesServer.getSpaceById(spaceId)
+
 //     expect(before).toEqual([])
 //     expect(updated).toBeTruthy()
 //     // expect(after).toEqual([

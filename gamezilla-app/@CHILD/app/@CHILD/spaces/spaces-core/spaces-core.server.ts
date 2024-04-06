@@ -60,6 +60,10 @@ export const toSpace = (model: Model, spaceId: SpaceId): Space.Model | null => {
   return model.spaces[spaceId] ?? null
 }
 
+export const getSpaceById = (_spaceId: SpaceId): Promise<Space.Model> => {
+  return Promise.resolve(Space.init)
+}
+
 export const toErrorByEvenId = (
   model: Model,
   eventId: EventId,
