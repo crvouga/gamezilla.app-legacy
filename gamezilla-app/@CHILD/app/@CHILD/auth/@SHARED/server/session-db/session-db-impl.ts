@@ -4,7 +4,6 @@ import { ISessionDb } from "./session-db"
 import { SessionDbInMemory } from "./session-db-impl.in-memory"
 import { SessionDbPostgres } from "./session-db-impl.postgres"
 import { SessionDbWithDbKvCache } from "./session-db-impl.with-db-kv-cache"
-import { SessionDbWithCache } from "./session-db-impl.with-hash-map-cache"
 
 export type Impl =
   | {
@@ -13,10 +12,6 @@ export type Impl =
     }
   | {
       t: "postgres"
-      dbConnSql: IDbConnSql
-    }
-  | {
-      t: "postgres-with-hash-map-cache"
       dbConnSql: IDbConnSql
     }
   | {
@@ -35,11 +30,6 @@ export const SessionDb = (impl: Impl): ISessionDb => {
       return SessionDbPostgres(impl)
     }
 
-    case "postgres-with-hash-map-cache": {
-      return SessionDbWithCache({
-        SessionDb: SessionDbPostgres(impl),
-      })
-    }
     case "postgres-with-db-kv-cache": {
       return SessionDbWithDbKvCache({
         SessionDb: SessionDbPostgres(impl),
