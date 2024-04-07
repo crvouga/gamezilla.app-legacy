@@ -122,7 +122,6 @@ const updateChild: SpaceClientModule["update"] = (input) => {
   return SpaceClientModule.andThen(
     { model: input.model },
     (model) => EndSpaceClient.update({ ...input, model }),
-    (model) => Modals.update({ ...input, model }),
     (model) => LeaveSpaceClient.update({ ...input, model }),
     (model) => updateSpacesFromSpaceEvent({ ...input, model }),
     (model) => GameClient.update({ ...input, model }),
@@ -132,6 +131,7 @@ const updateChild: SpaceClientModule["update"] = (input) => {
     (model) => ListSpacesClient.update({ ...input, model }),
     (model) => GoHome.update({ ...input, model }),
     (model) => CurrentSpaceBottomBar.update({ ...input, model }),
+    (model) => Modals.update({ ...input, model }),
   )
 }
 
