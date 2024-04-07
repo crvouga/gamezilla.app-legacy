@@ -1,5 +1,5 @@
 import { Profile, SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { RequestResponse, Result } from "gamezilla-app/@SHARED/core"
+import { RequestResponse } from "gamezilla-app/@SHARED/core"
 import { AppClientModule } from "../../@SHARED/architecture/app-client"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import {
@@ -194,30 +194,4 @@ export type MsgToServerExtra = {
   profiles?: { [userId: UserId]: Profile }
   meta?: Record<string, unknown>
   causedBy?: unknown
-}
-
-//
-//
-//
-//
-//
-//
-
-export const spacesToProfiles = async (
-  deps: ServerDeps,
-  spaces: Space.Model[],
-) => {
-  const userIds = spaces.flatMap((space) => {
-    const state = Space.deriveState(space)
-    if (state.type === "started") {
-      return Object.values(state.users)
-    }
-    return []
-  })
-
-  const got = await deps.ProfileCache.get(userIds)
-
-  const profiles = Result.withDefault(got, {})
-
-  return profiles
 }

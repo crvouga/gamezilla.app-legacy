@@ -7,7 +7,7 @@ import { Result, isErr } from "gamezilla-app/@SHARED/core"
 import { SpaceServerModule } from "../architecture/space-server"
 import * as Space from "../spaces-core/space"
 import * as Spaces from "../spaces-core/spaces-core.client"
-import { MsgToClient, spacesToProfiles } from "../spaces.core"
+import { MsgToClient, ServerDeps } from "../spaces.core"
 import { SpaceState } from "../spaces-core"
 
 //
@@ -87,6 +87,22 @@ const updateSync: SpaceServerModule["update"] = async (input) => {
       return { model }
     }
   }
+}
+
+const spacesToProfiles = async (deps: ServerDeps, spaces: Space.Model[]) => {
+  const userIds = spaces.flatMap((space) => {
+    const state = Space.deriveState(space)
+    if (state.type === "started") {
+      return Object.values(state.users)
+    }
+    return []
+  })
+
+  const got = await deps.ProfileCache.get(userIds)
+
+  const profiles = Result.withDefault(got, {})
+
+  return profiles
 }
 
 const updateCurrentUserSpace: SpaceServerModule["update"] = async (input) => {
