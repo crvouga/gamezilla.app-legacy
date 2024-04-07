@@ -30,6 +30,7 @@ import {
 } from "./spaces.core"
 import { Input, Output, SpaceServerModule } from "./architecture/space-server"
 import { SyncServer } from "./sync/sync.server"
+import { ListSpacesServer } from "./list-spaces/list-spaces.server"
 
 //
 //
@@ -81,9 +82,7 @@ export const update: ServerModule["update"] = async (input) => {
       eff: updated.eff,
       msgCmd: SpaceServerCmd.toServerCmd(updated.msgCmd),
     },
-    (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),
-    (model) => updateFromEvent({ ...input, model }),
     (model) => updateChild_({ ...input, model }),
   )
 }
@@ -150,23 +149,8 @@ const updateChild: SpaceServerModule["update"] = async (input) => {
     { model: input.model },
     //
     (model) => SyncServer.update({ ...input, model }),
+    (model) => ListSpacesServer.update({ ...input, model }),
   )
-}
-
-const updateFromMsg: ServerModule["update"] = async ({ model, msg }) => {
-  if (!msg) {
-    return { model }
-  }
-
-  switch (msg.t) {
-    case "game": {
-      return { model }
-    }
-
-    case "event": {
-      return { model }
-    }
-  }
 }
 
 const updateFromClient: ServerModule["update"] = async (input) => {
@@ -188,74 +172,6 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         msgEvts: [msgClient.c],
         model,
       })
-    }
-
-    case "list-spaces": {
-      const spaces = Spaces.listSpaces({
-        model,
-        limit: msgClient.limit,
-        offset: msgClient.offset,
-        where: msgClient.where,
-      })
-
-      const profiles = await spacesToProfiles(input.deps, spaces)
-
-      const started = spaces.map((space) =>
-        Space.startFromLatestSnapshot(space),
-      )
-
-      return {
-        model,
-        msgCmd: [
-          sendBack(msgClient, {
-            t: "listed-spaces",
-            spaces: started,
-            profiles,
-            causedBy: msgClient.t,
-          }),
-        ],
-      }
-    }
-
-    default: {
-      return { model }
-    }
-  }
-}
-
-const updateFromEvent: ServerModule["update"] = async (input) => {
-  const { msgEvt, model } = input
-
-  if (!msgEvt) {
-    return { model }
-  }
-
-  switch (msgEvt.t) {
-    case "auth/client-authenticated": {
-      const space = Spaces.toSpaceByUserId({
-        model,
-        userId: msgEvt.account.userId,
-      })
-
-      if (!space) {
-        return { model }
-      }
-
-      const profiles = await spacesToProfiles(input.deps, [space])
-
-      const started = Space.startFromLatestSnapshot(space)
-
-      return {
-        model,
-        msgCmd: [
-          sendToClient<MsgToClient>([msgEvt.clientId], {
-            t: "current-user-space",
-            space: started,
-            profiles,
-            causedBy: msgEvt.t,
-          }),
-        ],
-      }
     }
 
     default: {

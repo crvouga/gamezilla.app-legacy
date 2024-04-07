@@ -1,7 +1,7 @@
 import { sendBack } from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { SpaceServerModule } from "../architecture/space-server"
 import * as Space from "../spaces-core/space"
 import * as Spaces from "../spaces-core/spaces-core.client"
-import { ServerModule } from "../spaces.core"
 
 //
 //
@@ -11,7 +11,7 @@ import { ServerModule } from "../spaces.core"
 //
 //
 
-const update: ServerModule["update"] = async (input) => {
+const update: SpaceServerModule["update"] = async (input) => {
   const { msgClient, model } = input
 
   switch (msgClient?.t) {
