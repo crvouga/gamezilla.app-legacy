@@ -13,9 +13,15 @@ export const createDbConnPostgres = async ({
   databaseUrl: string
   logger: Logger
 }): Promise<DbConnSql> => {
-  const database = postgres(databaseUrl)
+  const database = await getDatabaseConnection({
+    logger,
+    databaseUrl,
+  })
 
-  logger.info(`[db-conn-sql-postgres] connected`)
+  if (!database) {
+    logger.error(`[db-conn-sql-postgres] failed to connect`)
+    throw new Error("Failed to connect to the database")
+  }
 
   return {
     query: async (rowParser, rawSql, params) => {
@@ -64,4 +70,32 @@ export const createDbConnPostgres = async ({
       }
     },
   }
+}
+
+const MAX_RETRIES = 5
+const RETRY_DELAY = 2000
+
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+export const getDatabaseConnection = async ({
+  logger,
+  databaseUrl,
+}: {
+  databaseUrl: string
+  logger: Logger
+}) => {
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const database = postgres(databaseUrl)
+      await database.unsafe("SELECT 1")
+      logger.info(`[db-conn-sql-postgres] connected`)
+      return database
+    } catch (error) {
+      logger.error(
+        `Attempt ${attempt}: Failed to connect to the database. Error: ${error}`,
+      )
+      await delay(RETRY_DELAY)
+    }
+  }
+  return null
 }
