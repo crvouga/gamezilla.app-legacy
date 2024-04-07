@@ -23,8 +23,8 @@ export const DbConnKvHashMap = (): IDbConnKv => {
     },
 
     async setMany(entries) {
-      for (const [key, value] of entries) {
-        hashMap.set(key, value)
+      for (const entry of entries) {
+        hashMap.set(entry[0], entry[1])
       }
       return Ok(null)
     },
