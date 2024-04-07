@@ -32,7 +32,10 @@ export const Fixture = () => {
 
   const clientB = generateAuthClient()
 
+  const init = SpacesServer.init({ ctx })
+
   return {
+    init,
     deps,
     ctx,
     clientA,
@@ -90,6 +93,28 @@ export const userStartedSpace =
           t: "user-started-space",
           eventId: EventId.generate(),
           happenedAt: LamportTimestamp.fromNumber(0),
+          spaceId,
+          userId: client.userId,
+        },
+      },
+    })
+  }
+
+export const userJoinedSpace =
+  (deps: ServerDeps, client: AuthenticatedClient, spaceId: SpaceId) =>
+  (model: ModelServer) => {
+    return SpacesServer.update({
+      ctx,
+      deps,
+      model,
+      msgClient: {
+        t: "event",
+        clientId: client.clientId,
+        sessionId: client.sessionId,
+        c: {
+          t: "user-joined-space",
+          eventId: EventId.generate(),
+          happenedAt: LamportTimestamp.fromNumber(1),
           spaceId,
           userId: client.userId,
         },

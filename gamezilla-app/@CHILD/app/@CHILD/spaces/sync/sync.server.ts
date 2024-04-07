@@ -1,10 +1,14 @@
-import { sendToClient } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { AppServerModule } from "../../../@SHARED/architecture/app-server"
+import {
+  broadcast,
+  sendToClient,
+  sendToUser,
+} from "gamezilla-app/@CHILD/app/@SHARED/server"
+import { Result, isErr } from "gamezilla-app/@SHARED/core"
 import { SpaceServerModule } from "../architecture/space-server"
 import * as Space from "../spaces-core/space"
 import * as Spaces from "../spaces-core/spaces-core.client"
 import { MsgToClient, spacesToProfiles } from "../spaces.core"
-import { isErr } from "gamezilla-app/@SHARED/core"
+import { SpaceState } from "../spaces-core"
 
 //
 //
@@ -122,12 +126,78 @@ const updateCurrentUserSpace: SpaceServerModule["update"] = async (input) => {
   }
 }
 
+const sendSpaceEventToClient: SpaceServerModule["update"] = async ({
+  model,
+  msgSpaceEvent,
+  deps,
+}) => {
+  if (!msgSpaceEvent) {
+    return { model }
+  }
+
+  const msgEvtWithMeta = Spaces.toEventWithMeta(
+    model,
+    msgSpaceEvent.spaceId,
+    msgSpaceEvent.eventId,
+  )
+
+  if (!msgEvtWithMeta) {
+    return { model }
+  }
+
+  const spaceState = Spaces.toSpaceStarted(model, msgEvtWithMeta.spaceId)
+
+  const profiles = Result.withDefault(
+    await deps.ProfileCache.get(
+      "userId" in msgEvtWithMeta ? [msgEvtWithMeta.userId] : [],
+    ),
+    {},
+  )
+
+  const toClient: MsgToClient = {
+    t: "event",
+    c: msgEvtWithMeta,
+    profiles,
+  }
+
+  if (spaceState && msgEvtWithMeta.t === "game") {
+    return {
+      model,
+      msgCmd: [
+        sendToUser<MsgToClient>(SpaceState.toUserIds(spaceState), toClient),
+      ],
+    }
+  }
+
+  return {
+    model,
+    msgCmd: [broadcast<MsgToClient>(toClient)],
+  }
+}
+
+const outputSpaceEventsFromServer: SpaceServerModule["update"] = (input) => {
+  const { model, msgClient } = input
+
+  switch (msgClient?.t) {
+    case "event": {
+      return {
+        model,
+        msgSpaceEvent: [msgClient.c],
+      }
+    }
+  }
+
+  return { model }
+}
+
 const update: SpaceServerModule["update"] = async (input) => {
   return SpaceServerModule.andThen(
     { model: input.model },
     (model) => updateSync({ ...input, model }),
     (model) => updateCurrentUserSpace({ ...input, model }),
     (model) => updateProfileCache({ ...input, model }),
+    (model) => sendSpaceEventToClient({ ...input, model }),
+    (model) => outputSpaceEventsFromServer({ ...input, model }),
   )
 }
 

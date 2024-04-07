@@ -1,3 +1,8 @@
+import {
+  ClientId,
+  SessionId,
+  UserId,
+} from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { ServerCtx, ServerEvent } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { Eff, Sub } from "gamezilla-app/@SHARED/core"
 import { WithEventId } from "../@SHARED/event"
@@ -6,17 +11,11 @@ import { SpaceServerCmd } from "../@SHARED/space-server-cmd"
 import { SpaceEvent } from "../spaces-core"
 import {
   ModelServer,
-  MsgClient,
   MsgServer,
   MsgToClient,
   MsgToServer,
   ServerDeps,
 } from "../spaces.core"
-import {
-  ClientId,
-  SessionId,
-  UserId,
-} from "gamezilla-app/@CHILD/app/@SHARED/data"
 
 type Ctx = ServerCtx & {
   space?: Space
@@ -56,7 +55,10 @@ export type SpaceServerModule = {
     deps: ServerDeps
   }) => MaybePromise<Output>
   update: (input: Input) => MaybePromise<Output>
-  subscriptions: (input: { ctx: Ctx; model: ModelServer }) => Sub<MsgClient>
+  subscriptions: (input: {
+    ctx: Ctx
+    model: ModelServer
+  }) => MaybePromise<Sub<MsgServer>>
 }
 
 const andThen = async (

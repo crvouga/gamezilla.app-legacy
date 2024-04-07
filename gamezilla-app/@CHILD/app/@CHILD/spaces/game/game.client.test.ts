@@ -14,25 +14,25 @@ import { Spaces } from "../spaces-core"
 import * as SpacesClient from "../spaces.client"
 
 describe(import.meta.file, () => {
-  it("should play a sound after inputting a game", async () => {
+  it("should play a sound after inputting a game", () => {
     const ctx = Ctx()
     const spaceId = SpaceId.generate()
-    const started = await AppClientModule.andThen(
+    const started = AppClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
     )
-    const output = await AppClientModule.andThen(
+    const output = AppClientModule.andThen(
       { model: started.model },
       clickedGameTile(ctx, "connect-four"),
     )
     expect(didPlaySound(output)).toBe(true)
   })
 
-  it("should be able to start game", async () => {
+  it("should be able to start game", () => {
     const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
-    const output = await SpaceClientModule.andThen(
+    const output = SpaceClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
       clickedGameTile(ctx, "connect-four"),
@@ -42,11 +42,11 @@ describe(import.meta.file, () => {
     expect(gameName).toBe("connect-four")
   })
 
-  it("should exit game for corresponding cmd", async () => {
+  it("should exit game for corresponding cmd", () => {
     const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
-    const output = await SpaceClientModule.andThen(
+    const output = SpaceClientModule.andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, spaceId),
       clickedGameTile(ctx, "connect-four"),
