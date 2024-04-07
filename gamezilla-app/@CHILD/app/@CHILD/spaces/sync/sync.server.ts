@@ -31,7 +31,7 @@ const updateSync: SpaceServerModule["update"] = async (input) => {
 
   switch (msgClient?.t) {
     case "sync": {
-      return AppServerModule.andThen(
+      return SpaceServerModule.andThen(
         { model },
         (model) => {
           const merged = Spaces.mergeOne({
@@ -61,7 +61,7 @@ const updateSync: SpaceServerModule["update"] = async (input) => {
             return { model }
           }
 
-          const profiles = await spacesToProfiles(model, [spaceNew])
+          const profiles = await spacesToProfiles(input.deps, [spaceNew])
 
           const starting = Space.startFromLatestSnapshot(spaceNew)
 

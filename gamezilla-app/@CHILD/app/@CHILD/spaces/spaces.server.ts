@@ -28,6 +28,8 @@ import {
   ServerModule,
   spacesToProfiles,
 } from "./spaces.core"
+import { Input, Output, SpaceServerModule } from "./architecture/space-server"
+import { SyncServer } from "./sync/sync.server"
 
 //
 //
@@ -72,20 +74,83 @@ export const init: ServerModule["init"] = async () => {
 //
 
 export const update: ServerModule["update"] = async (input) => {
+  const updated = await updateMain(input)
   return AppServerModule.andThen(
-    { model: input.model },
-    (model) => updateProfileCache({ ...input, model }),
+    {
+      model: updated.model,
+      eff: updated.eff,
+      msgCmd: SpaceServerCmd.toServerCmd(updated.msgCmd),
+    },
     (model) => updateFromMsg({ ...input, model }),
     (model) => updateFromClient({ ...input, model }),
     (model) => updateFromEvent({ ...input, model }),
-    (model) => updateChild({ ...input, model }),
+    (model) => updateChild_({ ...input, model }),
   )
 }
 
-const updateProfileCache: ServerModule["update"] = async (input) => {
-  await input.deps.ProfileCache.add(input.msgClient?.profiles ?? {})
+const updateMain = async (input: Input, acc?: Output): Promise<Output> => {
+  acc = acc ?? (await updateChild(input))
 
-  return { model: input.model }
+  const [spaceEvent, ...spaceEventsRest] = acc.msgSpaceEvent ?? []
+
+  if (spaceEvent) {
+    const updated = await updateChild({
+      deps: input.deps,
+      ctx: input.ctx,
+      model: acc.model,
+      msgSpaceEvent: spaceEvent,
+    })
+
+    return updateMain(input, {
+      model: updated.model,
+      eff: Eff.batch([acc.eff, updated.eff]),
+      msgSpaceEvent: batchMsgs(spaceEventsRest, updated.msgSpaceEvent),
+      msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
+      msgEvt: updated.msgEvt,
+    })
+  }
+
+  const [spaceCmd, ...spaceCmdsRest] = SpaceServerCmd.toSpaceServerCmd(
+    acc.msgCmd,
+  )
+
+  if (spaceCmd) {
+    const updated = await updateChild({
+      deps: input.deps,
+      ctx: input.ctx,
+      model: acc.model,
+      msgCmd: spaceCmd,
+    })
+
+    return updateMain(input, {
+      model: updated.model,
+      eff: Eff.batch([acc.eff, updated.eff]),
+      msgSpaceEvent: batchMsgs(acc.msgSpaceEvent, updated.msgSpaceEvent),
+      msgCmd: batchMsgs(spaceCmdsRest, updated.msgCmd),
+      msgEvt: updated.msgEvt,
+    })
+  }
+
+  return acc
+}
+
+const updateChild: SpaceServerModule["update"] = async (input) => {
+  if (
+    input.msgSpaceEvent &&
+    Spaces.hasEvent(
+      input.model,
+      input.msgSpaceEvent.spaceId,
+      input.msgSpaceEvent.eventId,
+    )
+  ) {
+    return { model: input.model }
+  }
+
+  return SpaceServerModule.andThen(
+    { model: input.model },
+    //
+    (model) => SyncServer.update({ ...input, model }),
+  )
 }
 
 const updateFromMsg: ServerModule["update"] = async ({ model, msg }) => {
@@ -152,55 +217,6 @@ const updateFromClient: ServerModule["update"] = async (input) => {
       }
     }
 
-    case "sync": {
-      return AppServerModule.andThen(
-        { model },
-        (model) => {
-          const merged = Spaces.mergeOne({
-            model,
-            space: msgClient.space,
-          })
-
-          return {
-            model: {
-              errors: {},
-              games: model.games,
-              spaceIdByUserId: merged.spaceIdByUserId,
-              spaces: merged.spaces,
-            },
-          }
-        },
-        async (model) => {
-          const spaceId = Space.toSpaceId(msgClient.space)
-
-          if (!spaceId) {
-            return { model }
-          }
-
-          const spaceNew = Spaces.toSpace(model, spaceId)
-
-          if (!spaceNew) {
-            return { model }
-          }
-
-          const profiles = await spacesToProfiles(input.deps, [spaceNew])
-
-          const starting = Space.startFromLatestSnapshot(spaceNew)
-
-          return {
-            model,
-            msgCmd: [
-              sendToClient<MsgToClient>([msgClient.clientId], {
-                t: "synced",
-                causedBy: msgClient.t,
-                space: starting,
-                profiles: profiles,
-              }),
-            ],
-          }
-        },
-      )
-    }
     default: {
       return { model }
     }
@@ -276,7 +292,7 @@ const inputToSpaceId = (input: Parameters<ServerModule["update"]>[0]) => {
   return spaceId
 }
 
-const updateChild: ServerModule["update"] = async (input) => {
+const updateChild_: ServerModule["update"] = async (input) => {
   const { msg, msgEvt, msgClient, ctx, model } = input
 
   const spaceId = inputToSpaceId(input)

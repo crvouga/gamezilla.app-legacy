@@ -43,10 +43,6 @@ describe(import.meta.file, () => {
 
     const spaceId = Space.toSpaceStarted(f.spaceA)?.spaceId ?? null
 
-    if (!spaceId) {
-      throw new Error("Invalid spaceId")
-    }
-
     const before = await f.spacesDb.get(spaceId)
 
     const upserted = await f.spacesDb.upsert(f.spaceA)

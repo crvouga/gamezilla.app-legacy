@@ -63,7 +63,39 @@ const tag = <T extends string, A>(
   return map(msgCmd ?? [], (c) => ({ t: tag, c }))
 }
 
+const toSpaceServerCmd = <TMsgToClient>(
+  msgCmd: SpaceServerCmd<TMsgToClient>[] | undefined | null,
+): SpaceServerCmd<TMsgToClient>[] => {
+  return (msgCmd ?? []).flatMap((msgCmd) => {
+    switch (msgCmd.t) {
+      case "send-to-space": {
+        return [msgCmd]
+      }
+      default: {
+        return []
+      }
+    }
+  })
+}
+
+const toServerCmd = <TMsgToClient>(
+  msgCmd: SpaceServerCmd<TMsgToClient>[] | undefined | null,
+): ServerCmd<TMsgToClient>[] => {
+  return (msgCmd ?? []).flatMap((msgCmd) => {
+    switch (msgCmd.t) {
+      case "send-to-space": {
+        return []
+      }
+      default: {
+        return [msgCmd]
+      }
+    }
+  })
+}
+
 export const SpaceServerCmd = {
+  toServerCmd,
+  toSpaceServerCmd,
   map,
   mapOne,
   tag,

@@ -215,7 +215,9 @@ export const spacesToProfiles = async (
     return []
   })
 
-  const profiles = Result.withDefault(await deps.ProfileCache.get(userIds), {})
+  const got = await deps.ProfileCache.get(userIds)
+
+  const profiles = Result.withDefault(got, {})
 
   return profiles
 }
