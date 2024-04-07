@@ -1,11 +1,11 @@
 import { Posix } from "gamezilla-app/@SHARED/core"
 import { IDbConnKv } from "./db-conn-kv"
-import { DbConnSql } from "./db-conn-sql/db-conn-sql"
+import { IDbConnSql } from "./db-conn-sql/db-conn-sql"
 import { Logger } from "./logger"
 import { SMS } from "./sms"
 
 export type ServerCtx = {
-  dbConnSql: DbConnSql
+  dbConnSql: IDbConnSql
   dbConnKv: IDbConnKv
   now: Posix
   logger: Logger

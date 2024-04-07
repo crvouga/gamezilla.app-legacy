@@ -1,5 +1,5 @@
 import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
-import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
+import { IDbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import { IWireMsgDb } from "./wire-msg-db"
 
 export type Impl =
@@ -9,7 +9,7 @@ export type Impl =
     }
   | {
       t: "db-sql"
-      dbConnSql: DbConnSql
+      dbConnSql: IDbConnSql
     }
 
 export const WireMsgDb = <TMsg>(impl: Impl): IWireMsgDb<TMsg> => {

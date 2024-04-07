@@ -22,7 +22,7 @@ import {
 } from "./@CHILD/wire/transport-server"
 import * as WireServer from "./@CHILD/wire/wire.server"
 import { DbConnKv, IDbConnKv } from "./@SHARED/server/db-conn-kv"
-import { DbConnSql, createDbConnSql } from "./@SHARED/server/db-conn-sql"
+import { IDbConnSql, DbConnSql } from "./@SHARED/server/db-conn-sql"
 import { Logger } from "./@SHARED/server/logger"
 import { SMS, createSMS } from "./@SHARED/server/sms"
 import {
@@ -43,7 +43,7 @@ import {
 
 export type Deps = {
   logger: Logger
-  dbConnSql: DbConnSql
+  dbConnSql: IDbConnSql
   dbConnKv: IDbConnKv
   sms: SMS
   transport: IServerTransport<{
@@ -66,24 +66,11 @@ export const getDeps = async ({
     throw new Error(`[deps] DATABASE_URL not set`)
   }
 
-  const dbConnSql = await createDbConnSql({ databaseUrl, logger })
+  const dbConnSql = await DbConnSql({ databaseUrl, logger })
 
-  // const redisUrl = process.env["REDIS_URL"]
+  const dbConnKv = await DbConnKv({ t: "postgres", logger, dbConnSql })
 
-  // if (!redisUrl) {
-  //   throw new Error(`[deps] REDIS_URL not set`)
-  // }
-
-  const dbConnKv = await DbConnKv({
-    t: "postgres",
-    logger,
-    dbConn: dbConnSql,
-  })
-
-  const sms = createSMS({
-    t: "twilio",
-    logger,
-  })
+  const sms = createSMS({ t: "twilio", logger })
 
   const transport = ServerTransport<MsgToServer, MsgToClient>({
     codebaseVersionId: CODEBASE_VERSION_ID,

@@ -1,11 +1,11 @@
-import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
+import { IDbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import { IFlowPuzzleDb } from "./flow-puzzle-db"
 import { FlowPuzzleDbHashMap } from "./flow-puzzle-db-impl-hash-map"
 import { FlowPuzzleDbPostgres } from "./flow-puzzle-db-impl-postgres"
 
 export type FlowPuzzleDbImpl =
   | { t: "hash-map" }
-  | { t: "postgres"; dbConn: DbConnSql }
+  | { t: "postgres"; dbConn: IDbConnSql }
 
 export const FlowPuzzleDb = (impl: FlowPuzzleDbImpl): IFlowPuzzleDb => {
   switch (impl.t) {

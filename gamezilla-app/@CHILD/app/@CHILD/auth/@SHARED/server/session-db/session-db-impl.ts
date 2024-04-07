@@ -1,5 +1,5 @@
 import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
-import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
+import { IDbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import { ISessionDb } from "./session-db"
 import { SessionDbInMemory } from "./session-db-impl.in-memory"
 import { SessionDbPostgres } from "./session-db-impl.postgres"
@@ -13,15 +13,15 @@ export type Impl =
     }
   | {
       t: "postgres"
-      dbConnSql: DbConnSql
+      dbConnSql: IDbConnSql
     }
   | {
       t: "postgres-with-hash-map-cache"
-      dbConnSql: DbConnSql
+      dbConnSql: IDbConnSql
     }
   | {
       t: "postgres-with-db-kv-cache"
-      dbConnSql: DbConnSql
+      dbConnSql: IDbConnSql
       dbConnKv: IDbConnKv
     }
 

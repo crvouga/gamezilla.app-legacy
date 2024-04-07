@@ -1,5 +1,5 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
+import { IDbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import { Err, NonEmpty, Ok, Result, Uuid } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import { MoveInput, uciMoveToMoveInput } from "../../../@SHARED/chess"
@@ -160,7 +160,7 @@ export const uciMovesToPuzzleMoves = (
 }
 
 const puzzlesFindForProfile = async (
-  dbConn: DbConnSql,
+  dbConn: IDbConnSql,
   input: { profile: PuzzleProfile; omit?: string[] },
 ): Promise<Result<string, Puzzle[]>> => {
   const delta = 100
@@ -204,7 +204,7 @@ const puzzlesReplace = async ({
   dbConn,
   rows,
 }: {
-  dbConn: DbConnSql
+  dbConn: IDbConnSql
   rows: PuzzleRow[]
 }) => {
   const queryString = `
@@ -233,7 +233,7 @@ const puzzlesReplace = async ({
 }
 
 const interactionsInsert = async (
-  dbConn: DbConnSql,
+  dbConn: IDbConnSql,
   interactions: PuzzleInteraction[],
 ): Promise<Result<string, null>> => {
   const result = await dbConn.query(
@@ -268,7 +268,7 @@ const toPuzzleQueryJSON = (query: unknown): PuzzleQueryJSON | null => {
   }
 }
 const profilesFind = async (
-  dbConn: DbConnSql,
+  dbConn: IDbConnSql,
   userId: UserId,
 ): Promise<Result<string, PuzzleProfile | null>> => {
   const found = await dbConn.query(
@@ -323,7 +323,7 @@ const profilesFind = async (
 }
 
 export const profilesInsert = async (
-  dbConn: DbConnSql,
+  dbConn: IDbConnSql,
   profile: PuzzleProfile,
 ): Promise<Result<string, null>> => {
   const puzzleProfileId = Uuid.generate()
@@ -358,7 +358,7 @@ export const profilesInsert = async (
 }
 
 export const profilesFindElseInsert = async (
-  dbConn: DbConnSql,
+  dbConn: IDbConnSql,
   profile: PuzzleProfile,
 ): Promise<Result<string, PuzzleProfile>> => {
   const found = await profilesFind(dbConn, profile.userId)
@@ -381,7 +381,7 @@ export const profilesFindElseInsert = async (
 }
 
 const profilesUpdate = async (
-  dbConn: DbConnSql,
+  dbConn: IDbConnSql,
   profile: PuzzleProfile,
 ): Promise<Result<string, null>> => {
   const mutated = await dbConn.query(

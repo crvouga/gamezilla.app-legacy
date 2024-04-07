@@ -1,5 +1,5 @@
 import { SessionId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
+import { IDbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import { Result, Uuid } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import { ISessionDb } from "./session-db"
@@ -26,7 +26,7 @@ export type Row = p.Infer<typeof Row>
 export const SessionDbPostgres = ({
   dbConnSql,
 }: {
-  dbConnSql: DbConnSql
+  dbConnSql: IDbConnSql
 }): ISessionDb => {
   return {
     async findSessionIdsByUserId(userId: UserId) {

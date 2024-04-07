@@ -1,6 +1,6 @@
 import { UserId, UserRole } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
-import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
+import { IDbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import {
   EmailAddress,
   Err,
@@ -68,7 +68,7 @@ const accountToRow = (account: Account): AccountRow => {
 export const AccountDbPostgres = ({
   dbConnSql,
 }: {
-  dbConnSql: DbConnSql
+  dbConnSql: IDbConnSql
 }): IAccountDb => {
   return {
     async findOneByUserId(input) {

@@ -1,6 +1,6 @@
 import { Err, Ok, Result, isErr } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
-import { DbConnSql } from "../db-conn-sql"
+import { IDbConnSql } from "../db-conn-sql"
 import { Logger } from "../logger"
 import { IDbConnKv } from "./db-conn-kv"
 
@@ -13,7 +13,7 @@ export const DbConnKvPostgres = async ({
   logger,
   dbConn,
 }: {
-  dbConn: DbConnSql
+  dbConn: IDbConnSql
   logger: Logger
 }): Promise<IDbConnKv> => {
   return {

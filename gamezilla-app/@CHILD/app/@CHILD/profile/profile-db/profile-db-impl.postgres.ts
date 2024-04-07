@@ -3,7 +3,7 @@ import {
   UserId,
   Username,
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
+import { IDbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import { Err, Ok, Result, isErr } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import { ProfileCore } from "../profile.core"
@@ -52,7 +52,7 @@ const fromProfileRow = (row: ProfileRow): Result<string, ProfileCore> => {
 export const createProfileDb = ({
   dbConn,
 }: {
-  dbConn: DbConnSql
+  dbConn: IDbConnSql
 }): ProfileDb => {
   return {
     findOneByUserId: async (userId) => {

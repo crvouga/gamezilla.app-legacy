@@ -5,7 +5,7 @@ import {
 } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { SpaceServerCmd } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space-server-cmd"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
+import { IDbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import {
   Eff,
   Err,
@@ -66,7 +66,7 @@ const initialLoad = async ({
   dbConn,
   userId,
 }: {
-  dbConn: DbConnSql
+  dbConn: IDbConnSql
   userId: UserId
 }) => {
   const found = await PuzzleDb.profiles.findElseInsert(dbConn, {

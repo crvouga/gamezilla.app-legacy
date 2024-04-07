@@ -1,21 +1,21 @@
 import { Ok } from "gamezilla-app/@SHARED/core"
 import { Logger } from "../logger"
-import { DbConnSql } from "./db-conn-sql"
+import { IDbConnSql } from "./db-conn-sql"
 import { createDbConnPostgres } from "./db-conn-sql-impl-postgres"
 
-export const dbConnSqlNoop: DbConnSql = {
+export const dbConnSqlNoop: IDbConnSql = {
   query: async () => {
     return Ok([])
   },
 }
 
-export const createDbConnSql = async ({
+export const DbConnSql = async ({
   databaseUrl,
   logger,
 }: {
   databaseUrl: string
   logger: Logger
-}): Promise<DbConnSql> => {
+}): Promise<IDbConnSql> => {
   const databaseType = connectionStringToDatabaseType(databaseUrl)
 
   switch (databaseType) {
