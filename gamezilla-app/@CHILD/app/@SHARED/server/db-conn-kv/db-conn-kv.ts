@@ -124,30 +124,30 @@ export const withCache = ({
       return sourceGot
     },
     async set(key, value) {
-      // clearTimeout(timeouts.get(key))
-      // timeouts.set(
-      //   key,
-      //   setTimeout(() => source.set(key, value), writeDebounceMs),
-      // )
+      clearTimeout(timeouts.get(key))
+      timeouts.set(
+        key,
+        setTimeout(() => source.set(key, value), writeDebounceMs),
+      )
 
       return cache.set(key, value)
     },
     async setMany(entries) {
-      // const key = entries.reduce((acc, entry) => acc + entry[0], "")
-      // clearTimeout(timeouts.get(key))
-      // timeouts.set(
-      //   key,
-      //   setTimeout(() => source.setMany(entries), writeDebounceMs),
-      // )
+      const key = entries.reduce((acc, entry) => acc + entry[0], "")
+      clearTimeout(timeouts.get(key))
+      timeouts.set(
+        key,
+        setTimeout(() => source.setMany(entries), writeDebounceMs),
+      )
 
       return cache.setMany(entries)
     },
     async zap(key) {
-      // clearTimeout(timeouts.get(key))
-      // timeouts.set(
-      //   key,
-      //   setTimeout(() => source.zap(key), writeDebounceMs),
-      // )
+      clearTimeout(timeouts.get(key))
+      timeouts.set(
+        key,
+        setTimeout(() => source.zap(key), writeDebounceMs),
+      )
 
       return cache.zap(key)
     },
