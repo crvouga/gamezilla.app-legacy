@@ -1,8 +1,8 @@
 import { IS_PROD, SERVER_IMPL, SERVER_PORT } from "gamezilla-app/public-config"
 import { LoggerConsole } from "./@CHILD/app/@SHARED/server/logger"
 import * as AppServer from "./@CHILD/app/app.server"
-import { Program } from "./@SHARED/core"
 import { Server } from "./@SHARED/server"
+import { ProgramImpure } from "./@SHARED/core/program-impure"
 
 const server = Server(SERVER_IMPL)
 
@@ -13,7 +13,7 @@ const deps = await AppServer.getDeps({
   logger,
 })
 
-await Program.run({
+await ProgramImpure.run({
   ctx: AppServer.getCtx,
 
   init: (input) => AppServer.init({ ...input, deps }),
