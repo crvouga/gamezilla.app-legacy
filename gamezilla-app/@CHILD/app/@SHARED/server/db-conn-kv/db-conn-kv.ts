@@ -116,22 +116,16 @@ export const withCache = ({
       return sourceGot
     },
     async set(key, value) {
-      const [result] = await Promise.all([
-        source.set(key, value),
-        cache.set(key, value),
-      ])
-      return result
+      source.set(key, value)
+      return cache.set(key, value)
     },
     async setMany(entries) {
-      const [result] = await Promise.all([
-        source.setMany(entries),
-        cache.setMany(entries),
-      ])
-      return result
+      source.setMany(entries)
+      return cache.setMany(entries)
     },
     async zap(key) {
-      const [result] = await Promise.all([source.zap(key), cache.zap(key)])
-      return result
+      source.zap(key)
+      return cache.zap(key)
     },
   }
 }

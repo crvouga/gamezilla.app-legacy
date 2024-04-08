@@ -23,7 +23,7 @@ import {
 import * as WireServer from "./@CHILD/wire/wire.server"
 import { DbConnKv, IDbConnKv } from "./@SHARED/server/db-conn-kv"
 import { DbConnSql, IDbConnSql } from "./@SHARED/server/db-conn-sql"
-import { Logger } from "./@SHARED/server/logger"
+import { Logger, loggerNoop } from "./@SHARED/server/logger"
 import { ISMS, SMS } from "./@SHARED/server/sms"
 import {
   ModelServer,
@@ -69,10 +69,16 @@ export const getDeps = async ({
 
   const dbConnSql = await DbConnSql({ databaseUrl, logger })
 
+  const redisUrl = process.env["REDIS_URL"]
+
+  if (!redisUrl) {
+    throw new Error(`[deps] REDIS_URL not set`)
+  }
+
   const dbConnKv = IDbConnKv.withCache({
     source: await DbConnKv({
       t: "postgres",
-      logger,
+      logger: loggerNoop,
       dbConnSql,
     }),
     cache: await DbConnKv({
@@ -80,6 +86,12 @@ export const getDeps = async ({
     }),
     logger,
   })
+
+  // const dbConnKv = await DbConnKv({
+  //   t: "redis",
+  //   logger,
+  //   url: redisUrl,
+  // })
 
   const sms = SMS({ t: "twilio", logger })
 
