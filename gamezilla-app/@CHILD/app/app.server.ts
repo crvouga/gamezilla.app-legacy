@@ -23,7 +23,7 @@ import {
 import * as WireServer from "./@CHILD/wire/wire.server"
 import { DbConnKv, IDbConnKv } from "./@SHARED/server/db-conn-kv"
 import { IDbConnSql, DbConnSql } from "./@SHARED/server/db-conn-sql"
-import { Logger } from "./@SHARED/server/logger"
+import { Logger, loggerNoop } from "./@SHARED/server/logger"
 import { SMS, createSMS } from "./@SHARED/server/sms"
 import {
   ModelServer,
@@ -67,12 +67,12 @@ export const getDeps = async ({
     throw new Error(`[deps] DATABASE_URL not set`)
   }
 
-  const dbConnSql = await DbConnSql({ databaseUrl, logger })
+  const dbConnSql = await DbConnSql({ databaseUrl, logger: loggerNoop })
 
-  const dbConnKv = IDbConnKv.withCache({
-    cache: await DbConnKv({ t: "hash-map" }),
-    source: await DbConnKv({ t: "postgres", logger, dbConnSql }),
-    logger,
+  const dbConnKv = await DbConnKv({
+    t: "postgres",
+    logger: loggerNoop,
+    dbConnSql,
   })
 
   const sms = createSMS({ t: "twilio", logger })
