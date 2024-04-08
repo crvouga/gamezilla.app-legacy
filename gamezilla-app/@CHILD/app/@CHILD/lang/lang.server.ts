@@ -16,6 +16,8 @@ type Module = AppServerModule<{
   MsgOutEvent: null
 }>
 
+export type Deps = null
+
 export const init: Module["init"] = async () => {
   return {
     model: null,

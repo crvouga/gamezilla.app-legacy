@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "server": "bun db:migrate:up && bun --hot gamezilla-app/gamezilla-app.server.ts",
+    "server": "bun db:migrate:up && bun gamezilla-app/gamezilla-app.server.ts",
+    "server:dev": "bun --hot gamezilla-app/gamezilla-app.server.ts ",
     "db:migrate:up": "bun x dbmate -e DATABASE_URL up",
     "db:migrate:down": "bun x dbmate -e DATABASE_URL down",
     "db:up": "docker-compose -f docker-compose.local.yml up -d",

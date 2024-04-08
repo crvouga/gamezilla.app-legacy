@@ -3,7 +3,6 @@ import { LoggerConsole } from "./@CHILD/app/@SHARED/server/logger"
 import * as AppServer from "./@CHILD/app/app.server"
 import { Program } from "./@SHARED/core"
 import { Server } from "./@SHARED/server"
-// import { ProgramImpure } from "./@SHARED/core/program-impure"
 
 const server = Server(SERVER_IMPL)
 

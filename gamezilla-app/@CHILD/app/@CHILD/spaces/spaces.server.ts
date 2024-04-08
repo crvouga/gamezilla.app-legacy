@@ -37,6 +37,8 @@ export const getDeps: ServerModule["getDeps"] = async ({ ctx }) => {
   }
 }
 
+export type Deps = Awaited<ReturnType<typeof getDeps>>
+
 //
 //
 //

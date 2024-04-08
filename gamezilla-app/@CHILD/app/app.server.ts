@@ -53,6 +53,9 @@ export type Deps = {
   }>
   wire: WireServer.Deps<MsgToClient, MsgToServer>
   profile: ProfileServer.Deps
+  space: SpaceServer.Deps
+  lang: LangServer.Deps
+  auth: AuthServer.Deps
 }
 
 export const getDeps = async ({
@@ -71,7 +74,7 @@ export const getDeps = async ({
   const dbConnSql = await DbConnSql({ databaseUrl, logger })
 
   const dbConnKv = IDbConnKv.withCache({
-    writeDebounce: TimeSpan.fromSeconds(10),
+    writeDebounce: TimeSpan.fromSeconds(15),
     source: await DbConnKv({
       t: "postgres",
       logger: loggerNoop,
@@ -107,7 +110,22 @@ export const getDeps = async ({
     ctx,
   })
 
+  const space = await SpaceServer.getDeps({
+    ctx,
+  })
+
+  const auth = await AuthServer.getDeps({
+    ctx,
+  })
+
+  const lang = await LangServer.getDeps({
+    ctx,
+  })
+
   return {
+    lang,
+    auth,
+    space,
     profile,
     wire,
     transport,
@@ -337,10 +355,7 @@ export const updateChild = async ({
   //
 
   const userId = msgClient?.sessionId
-    ? await AuthServer.toUserIdFromSessionId(
-        await AuthServer.getDeps({ ctx }),
-        msgClient.sessionId,
-      )
+    ? await AuthServer.toUserIdFromSessionId(deps.auth, msgClient.sessionId)
     : null
 
   //
@@ -350,7 +365,7 @@ export const updateChild = async ({
   //
 
   const space = await SpaceServer.update({
-    deps: await SpaceServer.getDeps({ ctx }),
+    deps: deps.space,
     model: null,
     ctx,
     msgCmd: null,
@@ -363,7 +378,7 @@ export const updateChild = async ({
   })
 
   const auth = await AuthServer.update({
-    deps: await AuthServer.getDeps({ ctx }),
+    deps: deps.auth,
     model: null,
     ctx,
     msgCmd: null,
@@ -385,7 +400,7 @@ export const updateChild = async ({
   })
 
   const profile = await ProfileServer.update({
-    deps: ProfileServer.getDeps({ ctx }),
+    deps: deps.profile,
     model: null,
     ctx,
     msgCmd: null,
@@ -396,7 +411,7 @@ export const updateChild = async ({
   })
 
   const lang = await LangServer.update({
-    deps: await LangServer.getDeps({ ctx }),
+    deps: deps.lang,
     model: null,
     ctx,
     msgCmd: null,
@@ -463,7 +478,7 @@ export const subscriptions = async (input: {
       await SpaceServer.subscriptions({
         model: null,
         ctx,
-        deps: await SpaceServer.getDeps({ ctx }),
+        deps: input.deps.space,
       }),
     ),
     Sub.tag(
@@ -475,7 +490,7 @@ export const subscriptions = async (input: {
       await LangServer.subscriptions({
         model: null,
         ctx,
-        deps: await LangServer.getDeps({ ctx }),
+        deps: input.deps.lang,
       }),
     ),
     Sub.flat(

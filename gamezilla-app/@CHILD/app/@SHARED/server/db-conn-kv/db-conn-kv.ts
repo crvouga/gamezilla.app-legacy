@@ -78,6 +78,7 @@ export const withCache = ({
         )
         return cacheGot
       }
+      logger.info(`[db-conn-kv] HITTING SOURCE getMany: key=${key}`)
       const sourceGot = await source.get(key, parser)
       const sourceHit = Result.withDefault(sourceGot, null)
       if (sourceHit) {
@@ -105,6 +106,9 @@ export const withCache = ({
         )
         return cacheGot
       }
+      logger.info(
+        `[db-conn-kv] HITTING SOURCE getMany: keys=${keys.join(", ")}`,
+      )
       const sourceGot = await source.getMany(keys, parser)
       const sourceHit = Result.withDefault(sourceGot, null)
       if (sourceHit) {
@@ -120,28 +124,31 @@ export const withCache = ({
       return sourceGot
     },
     async set(key, value) {
-      clearTimeout(timeouts.get(key))
-      timeouts.set(
-        key,
-        setTimeout(() => source.set(key, value), writeDebounceMs),
-      )
+      // clearTimeout(timeouts.get(key))
+      // timeouts.set(
+      //   key,
+      //   setTimeout(() => source.set(key, value), writeDebounceMs),
+      // )
+
       return cache.set(key, value)
     },
     async setMany(entries) {
-      const key = entries.reduce((acc, entry) => acc + entry[0], "")
-      clearTimeout(timeouts.get(key))
-      timeouts.set(
-        key,
-        setTimeout(() => source.setMany(entries), writeDebounceMs),
-      )
+      // const key = entries.reduce((acc, entry) => acc + entry[0], "")
+      // clearTimeout(timeouts.get(key))
+      // timeouts.set(
+      //   key,
+      //   setTimeout(() => source.setMany(entries), writeDebounceMs),
+      // )
+
       return cache.setMany(entries)
     },
     async zap(key) {
-      clearTimeout(timeouts.get(key))
-      timeouts.set(
-        key,
-        setTimeout(() => source.zap(key), writeDebounceMs),
-      )
+      // clearTimeout(timeouts.get(key))
+      // timeouts.set(
+      //   key,
+      //   setTimeout(() => source.zap(key), writeDebounceMs),
+      // )
+
       return cache.zap(key)
     },
   }
