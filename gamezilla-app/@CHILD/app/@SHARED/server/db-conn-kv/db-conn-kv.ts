@@ -52,11 +52,7 @@ const instance = <TKey extends string = string, TValue = unknown>(
   }
 }
 
-const withReducedParsing = ({
-  dbConnKv,
-}: {
-  dbConnKv: IDbConnKv
-}): IDbConnKv => {
+const withReducedParsing = (dbConnKv: IDbConnKv): IDbConnKv => {
   const verifiedKeys = new Set<string>()
 
   return {

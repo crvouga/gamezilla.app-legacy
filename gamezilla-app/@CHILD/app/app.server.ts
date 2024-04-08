@@ -73,20 +73,14 @@ export const getDeps = async ({
 
   const dbConnSql = await DbConnSql({ databaseUrl, logger })
 
-  const dbConnKv = IDbConnKv.withReducedParsing({
-    dbConnKv: IDbConnKv.withCache({
+  const dbConnKv = IDbConnKv.withReducedParsing(
+    IDbConnKv.withCache({
       logger,
       writeDebounce: TimeSpan.fromSeconds(5),
-      source: await DbConnKv({
-        t: "postgres",
-        logger: loggerNoop,
-        dbConnSql,
-      }),
-      cache: await DbConnKv({
-        t: "hash-map",
-      }),
+      source: await DbConnKv({ t: "postgres", logger: loggerNoop, dbConnSql }),
+      cache: await DbConnKv({ t: "hash-map" }),
     }),
-  })
+  )
 
   const sms = SMS({ t: "twilio", logger })
 
