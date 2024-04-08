@@ -71,12 +71,6 @@ export const getDeps = async ({
     throw new Error(`[deps] DATABASE_URL not set`)
   }
 
-  const redisUrl = process.env["REDIS_URL"]
-
-  if (!redisUrl) {
-    throw new Error(`[deps] REDIS_URL not set`)
-  }
-
   const dbConnSql = await DbConnSql({ databaseUrl, logger })
 
   const dbConnKv = IDbConnKv.withReducedParsing({
