@@ -1,7 +1,7 @@
 import { Ok } from "gamezilla-app/@SHARED/core"
-import { SMS } from "./sms"
+import { ISMS } from "./sms"
 
-export const smsNoop: SMS = {
+export const smsNoop: ISMS = {
   async sendMessage(_input) {
     return Ok(null)
   },

@@ -1,6 +1,6 @@
 import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
-import { SMS } from "gamezilla-app/@CHILD/app/@SHARED/server/sms"
+import { ISMS } from "gamezilla-app/@CHILD/app/@SHARED/server/sms"
 import { Ok, Posix, TimeSpan, isErr } from "gamezilla-app/@SHARED/core"
 import { Translator } from "gamezilla-app/@SHARED/l18n/generated"
 import { ICodeGenerator } from "./code-generator"
@@ -13,7 +13,7 @@ export const EXPIRES_IN = TimeSpan.fromMinutes(5)
 
 export type VerifySMSDeps = {
   logger: Logger
-  sms: SMS
+  sms: ISMS
   dbConnKv: IDbConnKv
   codeGenerator: ICodeGenerator
   verificationDb: IVerificationDb

@@ -1,5 +1,5 @@
 import { IS_PROD, SERVER_IMPL, SERVER_PORT } from "gamezilla-app/public-config"
-import { LoggerConsole } from "./@CHILD/app/@SHARED/server/logger"
+import { LoggerConsole, loggerNoop } from "./@CHILD/app/@SHARED/server/logger"
 import * as AppServer from "./@CHILD/app/app.server"
 import { Program } from "./@SHARED/core"
 import { Server } from "./@SHARED/server"
@@ -10,7 +10,7 @@ const logger = LoggerConsole("app")
 
 const deps = await AppServer.getDeps({
   server,
-  logger,
+  logger: loggerNoop,
 })
 
 await Program.run({

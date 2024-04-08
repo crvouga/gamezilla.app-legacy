@@ -1,6 +1,6 @@
 import { PhoneNumber, Result } from "gamezilla-app/@SHARED/core"
 
-export type SMS = {
+export type ISMS = {
   sendMessage: (input: {
     phoneNumber: PhoneNumber
     message: string

@@ -1,5 +1,5 @@
 import { Logger } from "../logger"
-import { SMS } from "./sms"
+import { ISMS } from "./sms"
 import { SMSTwilio } from "./sms-impl-twilio"
 
 export type SMSImpl = {
@@ -7,6 +7,6 @@ export type SMSImpl = {
   logger: Logger
 }
 
-export const createSMS = (impl: SMSImpl): SMS => {
+export const SMS = (impl: SMSImpl): ISMS => {
   return SMSTwilio(impl)
 }

@@ -22,9 +22,9 @@ import {
 } from "./@CHILD/wire/transport-server"
 import * as WireServer from "./@CHILD/wire/wire.server"
 import { DbConnKv, IDbConnKv } from "./@SHARED/server/db-conn-kv"
-import { IDbConnSql, DbConnSql } from "./@SHARED/server/db-conn-sql"
-import { Logger, loggerNoop } from "./@SHARED/server/logger"
-import { SMS, createSMS } from "./@SHARED/server/sms"
+import { DbConnSql, IDbConnSql } from "./@SHARED/server/db-conn-sql"
+import { Logger } from "./@SHARED/server/logger"
+import { ISMS, SMS } from "./@SHARED/server/sms"
 import {
   ModelServer,
   MsgServer,
@@ -45,7 +45,7 @@ export type Deps = {
   logger: Logger
   dbConnSql: IDbConnSql
   dbConnKv: IDbConnKv
-  sms: SMS
+  sms: ISMS
   transport: IServerTransport<{
     MsgToClient: MsgToClient
     MsgToServer: MsgToServer
@@ -67,15 +67,21 @@ export const getDeps = async ({
     throw new Error(`[deps] DATABASE_URL not set`)
   }
 
-  const dbConnSql = await DbConnSql({ databaseUrl, logger: loggerNoop })
+  const dbConnSql = await DbConnSql({ databaseUrl, logger })
 
-  const dbConnKv = await DbConnKv({
-    t: "postgres",
-    logger: loggerNoop,
-    dbConnSql,
+  const dbConnKv = IDbConnKv.withCache({
+    source: await DbConnKv({
+      t: "postgres",
+      logger,
+      dbConnSql,
+    }),
+    cache: await DbConnKv({
+      t: "hash-map",
+    }),
+    logger,
   })
 
-  const sms = createSMS({ t: "twilio", logger })
+  const sms = SMS({ t: "twilio", logger })
 
   const transport = ServerTransport<MsgToServer, MsgToClient>({
     codebaseVersionId: CODEBASE_VERSION_ID,
@@ -91,7 +97,7 @@ export const getDeps = async ({
     sms: sms,
     dbConnSql: dbConnSql,
     dbConnKv: dbConnKv,
-    logger: logger,
+    logger,
     now: Posix.now(),
   }
 

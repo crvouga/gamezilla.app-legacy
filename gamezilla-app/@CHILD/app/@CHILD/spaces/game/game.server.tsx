@@ -3,7 +3,7 @@ import { Game } from "../@CHILD/game/game.server"
 import { WithEventId } from "../@SHARED/event"
 import { SpaceServerCmd } from "../@SHARED/space-server-cmd"
 import { SpaceServerModule } from "../architecture/space-server"
-import { Space, SpaceEvent } from "../spaces-core"
+import { SpaceEvent } from "../spaces-core"
 import { SpacesCoreServer } from "../spaces-core/spaces-core.server"
 import { MsgServer } from "../spaces.core"
 

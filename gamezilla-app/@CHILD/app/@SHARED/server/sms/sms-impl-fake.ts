@@ -1,7 +1,7 @@
 import { Ok, PhoneNumber } from "gamezilla-app/@SHARED/core"
-import { SMS } from "./sms"
+import { ISMS } from "./sms"
 
-export const SMSFake = (): SMS & {
+export const SMSFake = (): ISMS & {
   sent: { phoneNumber: PhoneNumber; message: string }[]
 } => {
   const sent: { phoneNumber: PhoneNumber; message: string }[] = []
