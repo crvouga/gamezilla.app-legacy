@@ -1,6 +1,7 @@
 import { Result, Task, TimeSpan } from "gamezilla-app/@SHARED/core"
 import { Parser } from "gamezilla-app/@SHARED/core/parser/parser"
 import { Logger } from "../logger"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
 export type IDbConnKv = {
   get: <TValue>(
@@ -51,7 +52,43 @@ const instance = <TKey extends string = string, TValue = unknown>(
   }
 }
 
-export const withCache = ({
+const withReducedParsing = ({
+  dbConnKv,
+}: {
+  dbConnKv: IDbConnKv
+}): IDbConnKv => {
+  const verifiedKeys = new Set<string>()
+
+  return {
+    ...dbConnKv,
+    async get<TValue>(key: string, parser: p.Parser<TValue>) {
+      if (verifiedKeys.has(key)) {
+        return dbConnKv.get(key, p.noop<TValue>())
+      }
+
+      verifiedKeys.add(key)
+
+      return dbConnKv.get(key, parser)
+    },
+
+    async getMany<TValue>(keys: string[], parser: p.Parser<TValue>) {
+      let key = ""
+      for (let i = 0; i < keys.length; i++) {
+        key += keys[i]
+      }
+
+      if (verifiedKeys.has(key)) {
+        return dbConnKv.getMany(keys, p.noop<TValue>())
+      }
+
+      verifiedKeys.add(key)
+
+      return dbConnKv.getMany(keys, parser)
+    },
+  }
+}
+
+const withCache = ({
   cache,
   source,
   logger,
@@ -125,6 +162,7 @@ export const withCache = ({
     },
     async set(key, value) {
       clearTimeout(timeouts.get(key))
+
       timeouts.set(
         key,
         setTimeout(() => source.set(key, value), writeDebounceMs),
@@ -133,8 +171,13 @@ export const withCache = ({
       return cache.set(key, value)
     },
     async setMany(entries) {
-      const key = entries.reduce((acc, entry) => acc + entry[0], "")
+      let key = ""
+      for (let i = 0; i < entries.length; i++) {
+        key += entries[i]![0]
+      }
+
       clearTimeout(timeouts.get(key))
+
       timeouts.set(
         key,
         setTimeout(() => source.setMany(entries), writeDebounceMs),
@@ -144,6 +187,7 @@ export const withCache = ({
     },
     async zap(key) {
       clearTimeout(timeouts.get(key))
+
       timeouts.set(
         key,
         setTimeout(() => source.zap(key), writeDebounceMs),
@@ -156,5 +200,6 @@ export const withCache = ({
 
 export const IDbConnKv = {
   instance,
+  withReducedParsing,
   withCache,
 }

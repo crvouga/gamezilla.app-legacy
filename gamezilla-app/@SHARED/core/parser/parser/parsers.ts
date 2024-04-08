@@ -24,6 +24,13 @@ export const is =
     return parser.parse(input).t === "ok"
   }
 
+export const noop = <T>(): Parser<T> => {
+  return {
+    parse(input) {
+      return Ok(input as T)
+    },
+  }
+}
 //
 //
 //

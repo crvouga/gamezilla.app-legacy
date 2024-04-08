@@ -71,19 +71,27 @@ export const getDeps = async ({
     throw new Error(`[deps] DATABASE_URL not set`)
   }
 
+  const redisUrl = process.env["REDIS_URL"]
+
+  if (!redisUrl) {
+    throw new Error(`[deps] REDIS_URL not set`)
+  }
+
   const dbConnSql = await DbConnSql({ databaseUrl, logger })
 
-  const dbConnKv = IDbConnKv.withCache({
-    writeDebounce: TimeSpan.fromSeconds(5),
-    source: await DbConnKv({
-      t: "postgres",
-      logger: loggerNoop,
-      dbConnSql,
+  const dbConnKv = IDbConnKv.withReducedParsing({
+    dbConnKv: IDbConnKv.withCache({
+      logger,
+      writeDebounce: TimeSpan.fromSeconds(5),
+      source: await DbConnKv({
+        t: "postgres",
+        logger: loggerNoop,
+        dbConnSql,
+      }),
+      cache: await DbConnKv({
+        t: "hash-map",
+      }),
     }),
-    cache: await DbConnKv({
-      t: "hash-map",
-    }),
-    logger,
   })
 
   const sms = SMS({ t: "twilio", logger })
