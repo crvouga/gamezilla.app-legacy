@@ -96,9 +96,10 @@ export const getDeps = async ({
 
   const sms = SMS({ t: "twilio", logger })
 
-  const transport = ServerTransport<MsgToServer, MsgToClient>({
+  const transport = await ServerTransport<MsgToServer, MsgToClient>({
     codebaseVersionId: CODEBASE_VERSION_ID,
     server,
+    databaseUrl,
   })
 
   const wire = await WireServer.getDeps({

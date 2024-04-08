@@ -13,9 +13,7 @@ export const SpacesDb = (deps: Deps): ISpacesDb => {
   const spacesBySpaceId = IDbConnKv.instance<SpaceId, Space.Model>(
     deps.dbConnKv,
     ["spaces", "space-by-id"],
-    // TODO: Add parser: Space.Model. Its too slow to add it now
     Space.Model,
-    // p.custom((x): x is Space.Model => true, ""),
   )
   const indexSpaceIdByUserId = IDbConnKv.instance<UserId, SpaceId>(
     deps.dbConnKv,

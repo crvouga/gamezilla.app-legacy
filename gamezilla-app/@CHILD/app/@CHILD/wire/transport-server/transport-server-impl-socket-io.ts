@@ -1,19 +1,25 @@
+import { createAdapter } from "@socket.io/postgres-adapter"
 import { ClientId, SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { ServerNode } from "gamezilla-app/@SHARED/server/server-impl-node/server-impl-node"
+import pg from "pg"
 import { Server } from "socket.io"
 import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core"
 import { IServerTransport, initServerTransport } from "./transport-server"
 
-export const ServerTransportSocketIO = <MsgToServer, MsgToClient>({
+export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
   server,
   codebaseVersionId,
+  databaseUrl,
 }: {
   codebaseVersionId: string
   server: ServerNode
-}): IServerTransport<{
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-}> => {
+  databaseUrl: string
+}): Promise<
+  IServerTransport<{
+    MsgToClient: MsgToClient
+    MsgToServer: MsgToServer
+  }>
+> => {
   const transport = initServerTransport<MsgToServer, MsgToClient>()
 
   const io = new Server(server.httpServer, {
@@ -24,6 +30,24 @@ export const ServerTransportSocketIO = <MsgToServer, MsgToClient>({
     transports: ["websocket"],
     allowUpgrades: true,
   })
+
+  const pool = new pg.Pool({
+    connectionString: databaseUrl,
+  })
+
+  pool.query(`
+  CREATE TABLE IF NOT EXISTS socket_io_attachments (
+      id          bigserial UNIQUE,
+      created_at  timestamptz DEFAULT NOW(),
+      payload     bytea
+  );
+`)
+
+  pool.on("error", (err) => {
+    console.error("Postgres error", err)
+  })
+
+  io.adapter(createAdapter(pool))
 
   io.on("connection", (socket) => {
     const maybeSessionId = socket.handshake.auth["sessionId"]
