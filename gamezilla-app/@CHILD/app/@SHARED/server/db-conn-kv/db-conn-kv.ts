@@ -1,4 +1,4 @@
-import { Result, Task } from "gamezilla-app/@SHARED/core"
+import { Result, Task, TimeSpan } from "gamezilla-app/@SHARED/core"
 import { Parser } from "gamezilla-app/@SHARED/core/parser/parser"
 import { Logger } from "../logger"
 
@@ -55,11 +55,15 @@ export const withCache = ({
   cache,
   source,
   logger,
+  writeDebounce,
 }: {
   cache: IDbConnKv
   source: IDbConnKv
   logger: Logger
+  writeDebounce: TimeSpan
 }): IDbConnKv => {
+  const writeDebounceMs = TimeSpan.toMilliseconds(writeDebounce)
+  const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
   return {
     async get(key, parser) {
       const start = process.hrtime.bigint()
@@ -116,15 +120,28 @@ export const withCache = ({
       return sourceGot
     },
     async set(key, value) {
-      source.set(key, value)
+      clearTimeout(timeouts.get(key))
+      timeouts.set(
+        key,
+        setTimeout(() => source.set(key, value), writeDebounceMs),
+      )
       return cache.set(key, value)
     },
     async setMany(entries) {
-      source.setMany(entries)
+      const key = entries.reduce((acc, entry) => acc + entry[0], "")
+      clearTimeout(timeouts.get(key))
+      timeouts.set(
+        key,
+        setTimeout(() => source.setMany(entries), writeDebounceMs),
+      )
       return cache.setMany(entries)
     },
     async zap(key) {
-      source.zap(key)
+      clearTimeout(timeouts.get(key))
+      timeouts.set(
+        key,
+        setTimeout(() => source.zap(key), writeDebounceMs),
+      )
       return cache.zap(key)
     },
   }

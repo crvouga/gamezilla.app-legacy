@@ -7,6 +7,7 @@ import {
   Eff,
   Posix,
   Sub,
+  TimeSpan,
   batchMsgs,
   toMsgType,
 } from "gamezilla-app/@SHARED/core"
@@ -69,13 +70,8 @@ export const getDeps = async ({
 
   const dbConnSql = await DbConnSql({ databaseUrl, logger })
 
-  const redisUrl = process.env["REDIS_URL"]
-
-  if (!redisUrl) {
-    throw new Error(`[deps] REDIS_URL not set`)
-  }
-
   const dbConnKv = IDbConnKv.withCache({
+    writeDebounce: TimeSpan.fromSeconds(5),
     source: await DbConnKv({
       t: "postgres",
       logger: loggerNoop,
@@ -86,12 +82,6 @@ export const getDeps = async ({
     }),
     logger,
   })
-
-  // const dbConnKv = await DbConnKv({
-  //   t: "redis",
-  //   logger,
-  //   url: redisUrl,
-  // })
 
   const sms = SMS({ t: "twilio", logger })
 
