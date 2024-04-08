@@ -8,7 +8,8 @@ import {
   init,
   userStartedSpace,
 } from "../@TEST/server"
-import { Spaces } from "../spaces-core"
+import { Space } from "../spaces-core"
+import { SpacesCoreServer } from "../spaces-core/spaces-core.server"
 
 describe(import.meta.file, () => {
   it("should add a new space when recieving a user started space event", async () => {
@@ -16,12 +17,16 @@ describe(import.meta.file, () => {
     const spaceId = SpaceId.generate()
     const client = generateAuthClient()
 
-    const started = await AppServerModule.andThen(
+    await AppServerModule.andThen(
       init(),
       userStartedSpace(deps, client, spaceId),
     )
 
-    expect(Spaces.toSpaceIdByUserId(started.model, client.userId)).toBe(spaceId)
+    expect(
+      Space.toSpaceId(
+        await SpacesCoreServer.getSpaceById(deps.SpacesDb, spaceId),
+      ),
+    ).toBe(spaceId)
   })
 
   it("should propogate the user started space event to the clients", async () => {

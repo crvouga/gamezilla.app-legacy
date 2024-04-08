@@ -74,7 +74,7 @@ export const initClient: ModelClient = {
   puzzles: {},
 }
 
-export type ModelServer = {}
+export type ModelServer = null
 
 export type MsgClient =
   | { t: "flow-puzzle-list.user-observed-end-of-list" }

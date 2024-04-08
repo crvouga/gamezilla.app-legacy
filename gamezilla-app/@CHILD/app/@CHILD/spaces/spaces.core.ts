@@ -15,6 +15,8 @@ import { IProfileCache } from "./profile-cache"
 import * as Space from "./spaces-core/space"
 import { SpaceEvent } from "./spaces-core/space-event"
 import * as Spaces from "./spaces-core/spaces-core.client"
+import { ISpacesDb } from "./spaces-core/space-db"
+import { IGameDb } from "./game/game-db"
 
 //
 //
@@ -56,6 +58,8 @@ export type ServerModule = AppServerModule<{
 
 export type ServerDeps = {
   ProfileCache: IProfileCache
+  SpacesDb: ISpacesDb
+  GameDb: IGameDb
 }
 
 //
@@ -66,11 +70,7 @@ export type ServerDeps = {
 //
 //
 
-export type ModelServer = Spaces.Model & {
-  games: {
-    [spaceId: SpaceId]: Game.ModelServer
-  }
-}
+export type ModelServer = null
 
 export type ModelClient = Spaces.Model & {
   games: {

@@ -5,10 +5,10 @@ import {
 } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { Result, isErr } from "gamezilla-app/@SHARED/core"
 import { SpaceServerModule } from "../architecture/space-server"
-import * as Space from "../spaces-core/space"
-import * as Spaces from "../spaces-core/spaces-core.client"
-import { MsgToClient, ServerDeps } from "../spaces.core"
 import { SpaceState } from "../spaces-core"
+import * as Space from "../spaces-core/space"
+import { SpacesCoreServer } from "../spaces-core/spaces-core.server"
+import { MsgToClient, ServerDeps } from "../spaces.core"
 
 //
 //
@@ -31,26 +31,19 @@ const updateProfileCache: SpaceServerModule["update"] = async (input) => {
 }
 
 const updateSync: SpaceServerModule["update"] = async (input) => {
-  const { msgClient, model } = input
+  const { msgClient, model, deps } = input
 
   switch (msgClient?.t) {
     case "sync": {
       return SpaceServerModule.andThen(
         { model },
-        (model) => {
-          const merged = Spaces.mergeOne({
-            model,
+        async (model) => {
+          await SpacesCoreServer.mergeOne({
+            spacesDb: deps.SpacesDb,
             space: msgClient.space,
           })
 
-          return {
-            model: {
-              errors: {},
-              games: model.games,
-              spaceIdByUserId: merged.spaceIdByUserId,
-              spaces: merged.spaces,
-            },
-          }
+          return { model }
         },
         async (model) => {
           const spaceId = Space.toSpaceId(msgClient.space)
@@ -59,7 +52,10 @@ const updateSync: SpaceServerModule["update"] = async (input) => {
             return { model }
           }
 
-          const spaceNew = Spaces.toSpace(model, spaceId)
+          const spaceNew = await SpacesCoreServer.getSpaceById(
+            deps.SpacesDb,
+            spaceId,
+          )
 
           if (!spaceNew) {
             return { model }
@@ -106,14 +102,14 @@ const spacesToProfiles = async (deps: ServerDeps, spaces: Space.Model[]) => {
 }
 
 const updateCurrentUserSpace: SpaceServerModule["update"] = async (input) => {
-  const { msgEvt, model } = input
+  const { msgEvt, model, deps } = input
 
   switch (msgEvt?.t) {
     case "auth/client-authenticated": {
-      const space = Spaces.toSpaceByUserId({
-        model,
-        userId: msgEvt.account.userId,
-      })
+      const space = await SpacesCoreServer.getSpaceByUserId(
+        deps.SpacesDb,
+        msgEvt.account.userId,
+      )
 
       if (!space) {
         return { model }
@@ -151,8 +147,8 @@ const sendSpaceEventToClient: SpaceServerModule["update"] = async ({
     return { model }
   }
 
-  const msgEvtWithMeta = Spaces.toEventWithMeta(
-    model,
+  const msgEvtWithMeta = await SpacesCoreServer.getEventWithMeta(
+    deps.SpacesDb,
     msgSpaceEvent.spaceId,
     msgSpaceEvent.eventId,
   )
@@ -161,7 +157,10 @@ const sendSpaceEventToClient: SpaceServerModule["update"] = async ({
     return { model }
   }
 
-  const spaceState = Spaces.toSpaceStarted(model, msgEvtWithMeta.spaceId)
+  const spaceState = await SpacesCoreServer.getSpaceStarted(
+    deps.SpacesDb,
+    msgEvtWithMeta.spaceId,
+  )
 
   const profiles = Result.withDefault(
     await deps.ProfileCache.get(

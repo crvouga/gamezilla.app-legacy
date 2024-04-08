@@ -26,7 +26,8 @@ export type ModelClient = {
   ghostIndex: ColumnIndex | null
 }
 
-export type ModelServer = null
+export const ModelServer = p.l(null)
+export type ModelServer = p.Infer<typeof ModelServer>
 
 //
 //

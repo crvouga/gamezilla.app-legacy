@@ -23,6 +23,12 @@ const updateFromAppEvent: SpaceClientModule["update"] = (input) => {
 
   switch (msgEvt?.t) {
     case "auth/unauthenticated": {
+      const DISABLE = true
+
+      if (DISABLE) {
+        return { model }
+      }
+
       const { currentUserId } = ctx
       const currentUserSpaceId = Spaces.toSpaceIdByUserId(model, currentUserId)
       if (!currentUserId || !currentUserSpaceId) {

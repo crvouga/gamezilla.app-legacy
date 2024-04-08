@@ -1,6 +1,7 @@
 import { sendToUser } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { SpaceServerModule } from "../architecture/space-server"
-import { Space, Spaces } from "../spaces-core"
+import { Space } from "../spaces-core"
+import { SpacesCoreServer } from "../spaces-core/spaces-core.server"
 
 const update: SpaceServerModule["update"] = (input) => {
   return SpaceServerModule.andThen(
@@ -10,11 +11,14 @@ const update: SpaceServerModule["update"] = (input) => {
   )
 }
 
-const updateFromSpaceEvent: SpaceServerModule["update"] = (input) => {
-  const { model, msgSpaceEvent } = input
+const updateFromSpaceEvent: SpaceServerModule["update"] = async (input) => {
+  const { model, msgSpaceEvent, deps } = input
   switch (msgSpaceEvent?.t) {
     case "user-joined-space": {
-      const space = Spaces.toSpace(model, msgSpaceEvent.spaceId)
+      const space = await SpacesCoreServer.getSpaceById(
+        deps.SpacesDb,
+        msgSpaceEvent.spaceId,
+      )
 
       if (!space) {
         return { model }

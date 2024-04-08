@@ -4,7 +4,7 @@ import postgres from "postgres"
 import { Logger } from "../logger"
 import { IDbConnSql } from "./db-conn-sql"
 import { logQuery } from "./shared"
-import { toSql } from "./sql"
+import { toSql, toSqlLog } from "./sql"
 
 export const createDbConnPostgres = async ({
   databaseUrl,
@@ -33,7 +33,12 @@ export const createDbConnPostgres = async ({
 
         const end = Date.now()
 
-        logQuery({ logger, sql, start, end })
+        logQuery({
+          logger,
+          sql: toSqlLog(rawSql, params),
+          start,
+          end,
+        })
 
         const output: p.Infer<typeof rowParser>[] = []
 

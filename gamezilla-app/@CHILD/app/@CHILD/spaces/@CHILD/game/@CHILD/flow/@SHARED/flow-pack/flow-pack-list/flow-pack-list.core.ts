@@ -12,6 +12,7 @@ import { RemoteResult, RequestResponse } from "gamezilla-app/@SHARED/core"
 import { IFlowPackDb } from "../flow-pack-db"
 import { FlowPackId } from "../flow-pack-id"
 import { FlowPack } from "../flow-pack"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
 //
 //
@@ -70,9 +71,10 @@ export const initClient: ModelClient = {
   packs: {},
 }
 
-export type ModelServer = {}
+export const ModelServer = p.l(null)
+export type ModelServer = p.Infer<typeof ModelServer>
 
-export const initServer: ModelServer = {}
+export const initServer: ModelServer = null
 
 export type MsgClient = { t: "user-observed-end-of-list" } | { t: "elapsed" }
 

@@ -47,7 +47,7 @@ const update: ServerModule["update"] = async (input) => {
 const updateFlowPuzzleList: ServerModule["update"] = async (input) => {
   const updated = await FlowPuzzleListServer.update({
     ctx: { ...input.ctx },
-    model: { ...input.model.flowPackList },
+    model: input.model.flowPackList,
     msg: input.msg?.t === "flow-puzzle-list" ? input.msg.c : undefined,
     msgClient:
       input.msgClient?.t === "flow-puzzle-list"
@@ -71,7 +71,7 @@ const updateFlowPuzzleList: ServerModule["update"] = async (input) => {
 const updateFlowPackList: ServerModule["update"] = async (input) => {
   const updated = await FlowPackListServer.update({
     ctx: input.ctx,
-    model: { ...input.model.flowPackList },
+    model: input.model.flowPackList,
     msg: input.msg?.t === "flow-pack-list" ? input.msg.c : undefined,
     msgClient:
       input.msgClient?.t === "flow-pack-list"

@@ -58,6 +58,7 @@ export type SpaceServerModule = {
   subscriptions: (input: {
     ctx: Ctx
     model: ModelServer
+    deps: ServerDeps
   }) => MaybePromise<Sub<MsgServer>>
 }
 

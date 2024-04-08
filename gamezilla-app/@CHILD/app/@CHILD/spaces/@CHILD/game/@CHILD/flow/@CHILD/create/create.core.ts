@@ -25,6 +25,7 @@ import { PuzzleDeleteForever } from "./puzzle/delete-forever"
 import { PuzzleEditName } from "./puzzle/edit"
 import { PuzzleList } from "./puzzle/list"
 import { PuzzleSaveChanges } from "./puzzle/save-changes"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
 //
 //
@@ -121,9 +122,10 @@ export const initClient: ClientModule["init"] = {
   //
 }
 
-export type ModelServer = {
-  flowPackList: FlowPackList.ModelServer
-}
+export const ModelServer = p.obj({
+  flowPackList: FlowPackList.ModelServer,
+})
+export type ModelServer = p.Infer<typeof ModelServer>
 
 export const initServer: ServerModule["init"] = {
   flowPackList: FlowPackList.initServer,

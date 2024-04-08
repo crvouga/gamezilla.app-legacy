@@ -19,10 +19,21 @@ export type ModelClient =
   | { t: "vs-user"; c: VsUser.ModelClient }
   | { t: null }
 
-export type ModelServer =
-  | { t: "vs-bot"; c: VsBot.ModelServer }
-  | { t: "vs-user"; c: VsUser.ModelServer }
-  | { t: null }
+export const ModelServer = p.or(
+  p.obj({
+    t: p.l("vs-bot"),
+    c: VsBot.ModelServer,
+  }),
+  p.obj({
+    t: p.l("vs-user"),
+    c: VsUser.ModelServer,
+  }),
+  p.obj({
+    t: p.l(null),
+  }),
+)
+
+export type ModelServer = p.Infer<typeof ModelServer>
 
 export type Mode = "none" | "vs-user" | "vs-bot"
 

@@ -4,7 +4,7 @@ import { IWireMsgDb } from "./wire-msg-db"
 
 export type Impl =
   | {
-      t: "db-kv"
+      t: "db-conn-kv"
       dbConnKv: IDbConnKv
     }
   | {
@@ -14,7 +14,7 @@ export type Impl =
 
 export const WireMsgDb = <TMsg>(impl: Impl): IWireMsgDb<TMsg> => {
   switch (impl.t) {
-    case "db-kv": {
+    case "db-conn-kv": {
       throw new Error("not implemented")
     }
     case "db-sql": {

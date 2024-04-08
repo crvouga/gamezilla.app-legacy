@@ -2,6 +2,7 @@ import { GameCore } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/archite
 import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { FlowVariant, FlowVariantUIPlay } from "../../@SHARED/flow"
 import { samples } from "../../@SHARED/flow/flow-variant/flow-grid/flow-grid-samples"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
 //
 //
@@ -15,7 +16,8 @@ export type ModelClient = {
   flow: FlowVariant.Model
 }
 
-export type ModelServer = {}
+export const ModelServer = p.obj({})
+export type ModelServer = p.Infer<typeof ModelServer>
 
 //
 //

@@ -19,9 +19,10 @@ import { BotLevel } from "./bot-level"
 //
 //
 
-export type ModelServer = {
-  botStartedFindingMoveAt: Posix | null
-}
+export const ModelServer = p.obj({
+  botStartedFindingMoveAt: p.maybe(Posix),
+})
+export type ModelServer = p.Infer<typeof ModelServer>
 
 export const isBotMoving = (now: Posix, model: ModelServer) => {
   if (!model.botStartedFindingMoveAt) {

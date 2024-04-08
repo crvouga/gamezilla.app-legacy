@@ -1,7 +1,8 @@
 import { sendBack } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { SpaceServerModule } from "../architecture/space-server"
 import * as Space from "../spaces-core/space"
-import * as Spaces from "../spaces-core/spaces-core.client"
+import { SpacesCoreServer } from "../spaces-core/spaces-core.server"
+import { Result } from "gamezilla-app/@SHARED/core"
 
 //
 //
@@ -12,18 +13,25 @@ import * as Spaces from "../spaces-core/spaces-core.client"
 //
 
 const update: SpaceServerModule["update"] = async (input) => {
-  const { msgClient, model } = input
+  const { msgClient, model, deps } = input
 
   switch (msgClient?.t) {
     case "list-spaces": {
-      const spaces = Spaces.listSpaces({
-        model,
+      const spaces = await SpacesCoreServer.listSpaces({
+        spacesDb: input.deps.SpacesDb,
         limit: msgClient.limit,
         offset: msgClient.offset,
         where: msgClient.where,
       })
 
       const started = spaces.map(Space.startFromLatestSnapshot)
+
+      const userIds = spaces.flatMap((space) => Space.toUserIds(space))
+
+      const profiles = Result.withDefault(
+        await deps.ProfileCache.get(userIds),
+        {},
+      )
 
       return {
         model,
@@ -32,6 +40,7 @@ const update: SpaceServerModule["update"] = async (input) => {
             t: "listed-spaces",
             spaces: started,
             causedBy: msgClient.t,
+            profiles,
           }),
         ],
       }

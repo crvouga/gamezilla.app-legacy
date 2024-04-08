@@ -16,6 +16,8 @@ import { ModelServer, ServerDeps } from "../spaces.core"
 import * as SpacesServer from "../spaces.server"
 import { ProfileCache } from "../profile-cache"
 import { smsNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/sms"
+import { SpacesDb } from "../spaces-core/space-db"
+import { GameDb } from "../game/game-db"
 
 export const Fixture = () => {
   const ctx: ServerCtx = {
@@ -56,11 +58,11 @@ export const init = () => {
 }
 
 export const getDeps = (): ServerDeps => {
+  const dbConnKv = DbConnKvHashMap()
   return {
-    ProfileCache: ProfileCache({
-      t: "db-kv",
-      dbConnKv: DbConnKvHashMap(),
-    }),
+    ProfileCache: ProfileCache({ t: "db-conn-kv", dbConnKv }),
+    SpacesDb: SpacesDb({ t: "db-conn-kv", dbConnKv }),
+    GameDb: GameDb({ t: "db-conn-kv", dbConnKv }),
   }
 }
 

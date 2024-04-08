@@ -1,7 +1,11 @@
 export function toSql(query: string, params: { [key: string]: any }): string {
-  return Object.keys(params)
-    .sort((a, b) => b.length - a.length)
-    .reduce((acc, key) => replaceParam(acc, key, params[key]), query)
+  const keys = Object.keys(params)
+  const sortedKeys = keys.sort((a, b) => b.length - a.length)
+  let replaced = query
+  for (const key of sortedKeys) {
+    replaced = replaceParam(replaced, key, params[key])
+  }
+  return replaced
 }
 
 const replaceParam = (query: string, key: string, value: unknown): string => {
@@ -52,6 +56,34 @@ const replaceParam = (query: string, key: string, value: unknown): string => {
 
     case "symbol": {
       return query
+    }
+  }
+}
+
+export function toSqlLog(
+  query: string,
+  params: { [key: string]: any },
+): string {
+  const keys = Object.keys(params)
+  const sortedKeys = keys.sort((a, b) => b.length - a.length)
+  let replaced = query
+  for (const key of sortedKeys) {
+    replaced = replaceParamLog(replaced, key, params[key])
+  }
+  return replaced
+}
+
+const replaceParamLog = (
+  query: string,
+  key: string,
+  value: unknown,
+): string => {
+  switch (typeof value) {
+    case "object": {
+      return query
+    }
+    default: {
+      return replaceParam(query, key, value)
     }
   }
 }

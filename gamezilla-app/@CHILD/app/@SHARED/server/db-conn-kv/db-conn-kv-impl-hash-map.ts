@@ -1,9 +1,8 @@
 import { Ok } from "gamezilla-app/@SHARED/core"
 import { IDbConnKv } from "./db-conn-kv"
 
-const hashMap = new Map<string, unknown>()
-
 export const DbConnKvHashMap = (): IDbConnKv => {
+  const hashMap = new Map<string, unknown>()
   return {
     async get(key, parser) {
       const got = hashMap.get(key)
@@ -15,6 +14,26 @@ export const DbConnKvHashMap = (): IDbConnKv => {
       }
 
       return Ok(null)
+    },
+
+    async getMany(keys, parser) {
+      const rows = keys.flatMap((key) => {
+        const got = hashMap.get(key)
+
+        if (!got) {
+          return []
+        }
+
+        const parsed = parser.parse(got)
+
+        if (parsed.t === "ok") {
+          return [parsed.value]
+        }
+
+        return []
+      })
+
+      return Ok(rows)
     },
 
     async set(key, value) {

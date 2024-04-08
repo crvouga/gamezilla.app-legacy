@@ -51,6 +51,7 @@ export type Deps = {
     MsgToServer: MsgToServer
   }>
   wire: WireServer.Deps<MsgToClient, MsgToServer>
+  profile: ProfileServer.Deps
 }
 
 export const getDeps = async ({
@@ -86,7 +87,20 @@ export const getDeps = async ({
     dbConnKv,
   })
 
+  const ctx: ServerCtx = {
+    sms: sms,
+    dbConnSql: dbConnSql,
+    dbConnKv: dbConnKv,
+    logger: logger,
+    now: Posix.now(),
+  }
+
+  const profile = await ProfileServer.getDeps({
+    ctx,
+  })
+
   return {
+    profile,
     wire,
     transport,
     sms,
@@ -146,14 +160,13 @@ export const init = async (input: {
   })
 
   return {
-    model: {
-      spaces: space.model,
-    },
+    model: null,
     eff: Eff.batch<MsgServer>([
       Eff.tag("auth", auth.eff),
       Eff.tag("profile", profile.eff),
       Eff.tag("lang", lang.eff),
       Eff.tag("wire", wire.eff),
+      Eff.tag("spaces", space.eff),
     ]),
   }
 }
@@ -317,7 +330,7 @@ export const updateChild = async ({
 
   const userId = msgClient?.sessionId
     ? await AuthServer.toUserIdFromSessionId(
-        AuthServer.getDeps({ ctx }),
+        await AuthServer.getDeps({ ctx }),
         msgClient.sessionId,
       )
     : null
@@ -329,8 +342,8 @@ export const updateChild = async ({
   //
 
   const space = await SpaceServer.update({
-    deps: SpaceServer.getDeps({ ctx }),
-    model: model.spaces,
+    deps: await SpaceServer.getDeps({ ctx }),
+    model: null,
     ctx,
     msgCmd: null,
     msgEvt: msgEvt,
@@ -342,7 +355,7 @@ export const updateChild = async ({
   })
 
   const auth = await AuthServer.update({
-    deps: AuthServer.getDeps({ ctx }),
+    deps: await AuthServer.getDeps({ ctx }),
     model: null,
     ctx,
     msgCmd: null,
@@ -375,7 +388,7 @@ export const updateChild = async ({
   })
 
   const lang = await LangServer.update({
-    deps: LangServer.getDeps({ ctx }),
+    deps: await LangServer.getDeps({ ctx }),
     model: null,
     ctx,
     msgCmd: null,
@@ -391,9 +404,7 @@ export const updateChild = async ({
   //
 
   return {
-    model: {
-      spaces: space.model,
-    },
+    model,
     msgCmd: batchMsgs<ServerCmd<MsgToClient>>(
       ServerCmd.tag("spaces", space.msgCmd),
       ServerCmd.tag("auth", auth.msgCmd),
@@ -441,13 +452,24 @@ export const subscriptions = async (input: {
   return Sub.batch([
     Sub.tag(
       "spaces",
-      await SpaceServer.subscriptions({ model: input.model.spaces, ctx }),
+      await SpaceServer.subscriptions({
+        model: null,
+        ctx,
+        deps: await SpaceServer.getDeps({ ctx }),
+      }),
     ),
     Sub.tag(
       "wire",
       WireServer.subscriptions({ transport: input.deps.transport }),
     ),
-    Sub.tag("lang", await LangServer.subscriptions({ model: null, ctx })),
+    Sub.tag(
+      "lang",
+      await LangServer.subscriptions({
+        model: null,
+        ctx,
+        deps: await LangServer.getDeps({ ctx }),
+      }),
+    ),
     Sub.flat(
       Sub.map(input.deps.transport.toServer, ({ sessionId, clientId, msgs }) =>
         msgs.map(

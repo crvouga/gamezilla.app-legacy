@@ -40,7 +40,7 @@ type Module = AppServerModule<{
   MsgOutEvent: null
   MsgToClient: MsgToClient
   MsgToServer: MsgToServer
-  Deps: {}
+  Deps: Deps
 }>
 //
 //
@@ -49,7 +49,9 @@ type Module = AppServerModule<{
 //
 //
 
-export const getDeps: Module["getDeps"] = () => {
+export type Deps = {}
+
+export const getDeps: Module["getDeps"] = async () => {
   return {}
 }
 

@@ -14,5 +14,7 @@ export type ISpacesDb = {
 
   get: (spaceId: SpaceId | null) => Task<string, Space.Model | null>
 
+  getByUserId: (userId: UserId) => Task<string, Space.Model | null>
+
   upsert: (space: Space.Model) => Task<string, null>
 }

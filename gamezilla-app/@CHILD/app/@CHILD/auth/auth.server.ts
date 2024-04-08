@@ -17,7 +17,7 @@ import { ContinueAsGuestServer } from "./continue-as-guest/continue-as-guest.ser
 //
 //
 
-export const getDeps: ServerModule["getDeps"] = ({ ctx }) => {
+export const getDeps: ServerModule["getDeps"] = async ({ ctx }) => {
   return {
     AccountDb: AccountDb({
       t: "postgres",
@@ -90,7 +90,7 @@ export const toUserIdFromSessionId = async (
 
 const updateChild: ServerModule["update"] = async (input) => {
   const sms = await AuthServerSMS.update({
-    deps: AuthServerSMS.getDeps(input),
+    deps: await AuthServerSMS.getDeps(input),
     ctx: input.ctx,
     model: null,
     msgCmd: input.msgCmd,
@@ -249,7 +249,11 @@ export const subscriptions: ServerModule["subscriptions"] = async (input) => {
   return Sub.batch([
     Sub.tag(
       "sms",
-      await AuthServerSMS.subscriptions({ ...input, model: null }),
+      await AuthServerSMS.subscriptions({
+        ...input,
+        model: null,
+        deps: await AuthServerSMS.getDeps(input),
+      }),
     ),
   ])
 }

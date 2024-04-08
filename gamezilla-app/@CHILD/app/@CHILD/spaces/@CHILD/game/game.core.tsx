@@ -13,9 +13,17 @@ export type ModelClient =
   | { t: "connect-four"; c: ConnectFour.ModelClient }
   | { t: "flow"; c: Flow.ModelClient }
 
-export type ModelServer =
-  | { t: "connect-four"; c: ConnectFour.ModelServer }
-  | { t: "flow"; c: Flow.ModelServer }
+export const ModelServer = p.or(
+  p.obj({
+    t: p.l("connect-four"),
+    c: ConnectFour.ModelServer,
+  }),
+  p.obj({
+    t: p.l("flow"),
+    c: Flow.ModelServer,
+  }),
+)
+export type ModelServer = p.Infer<typeof ModelServer>
 
 //
 //

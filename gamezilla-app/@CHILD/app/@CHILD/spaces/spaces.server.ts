@@ -5,10 +5,12 @@ import { GameServer } from "./game/game.server"
 import { JoinSpaceServer } from "./join-space/join-space.server"
 import { ListSpacesServer } from "./list-spaces/list-spaces.server"
 import { ProfileCache } from "./profile-cache"
-import * as Spaces from "./spaces-core/spaces-core.client"
+import { SpacesDb } from "./spaces-core/space-db"
+import { SpacesCoreServer } from "./spaces-core/spaces-core.server"
 import { ServerModule } from "./spaces.core"
 import { StartSpaceServer } from "./start-space/start-space.server"
 import { SyncServer } from "./sync/sync.server"
+import { GameDb } from "./game/game-db"
 
 //
 //
@@ -18,10 +20,18 @@ import { SyncServer } from "./sync/sync.server"
 //
 //
 
-export const getDeps: ServerModule["getDeps"] = ({ ctx }) => {
+export const getDeps: ServerModule["getDeps"] = async ({ ctx }) => {
   return {
     ProfileCache: ProfileCache({
-      t: "db-kv",
+      t: "db-conn-kv",
+      dbConnKv: ctx.dbConnKv,
+    }),
+    SpacesDb: SpacesDb({
+      t: "db-conn-kv",
+      dbConnKv: ctx.dbConnKv,
+    }),
+    GameDb: GameDb({
+      t: "db-conn-kv",
       dbConnKv: ctx.dbConnKv,
     }),
   }
@@ -37,11 +47,7 @@ export const getDeps: ServerModule["getDeps"] = ({ ctx }) => {
 
 export const init: ServerModule["init"] = async () => {
   return {
-    model: {
-      ...Spaces.init,
-      games: {},
-      profileCache: {},
-    },
+    model: null,
   }
 }
 
@@ -112,11 +118,11 @@ const updateMain = async (input: Input, acc?: Output): Promise<Output> => {
 const updateChild: SpaceServerModule["update"] = async (input) => {
   if (
     input.msgSpaceEvent &&
-    Spaces.hasEvent(
-      input.model,
+    (await SpacesCoreServer.hasEvent(
+      input.deps.SpacesDb,
       input.msgSpaceEvent.spaceId,
       input.msgSpaceEvent.eventId,
-    )
+    ))
   ) {
     return { model: input.model }
   }
@@ -133,20 +139,21 @@ const updateChild: SpaceServerModule["update"] = async (input) => {
   )
 }
 
-const updateSpacesFromSpaceEvent: SpaceServerModule["update"] = ({
+const updateSpacesFromSpaceEvent: SpaceServerModule["update"] = async ({
   msgSpaceEvent,
   model,
+  deps,
 }) => {
   if (!msgSpaceEvent) {
     return { model }
   }
 
-  const updated = Spaces.updateFromSpaceEvent({
-    model,
+  await SpacesCoreServer.update({
+    spacesDb: deps.SpacesDb,
     spaceEvent: msgSpaceEvent,
   })
 
-  return { model: { ...model, ...updated.model } }
+  return { model }
 }
 
 //

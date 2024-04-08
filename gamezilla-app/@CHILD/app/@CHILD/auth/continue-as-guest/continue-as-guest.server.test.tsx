@@ -20,7 +20,7 @@ const ctx: ServerCtx = {
   now: Posix.now(),
 }
 
-const getDeps: ServerModule["getDeps"] = () => {
+const getDeps: ServerModule["getDeps"] = async () => {
   return {
     AccountDb: AccountDb({
       t: "in-memory",
@@ -51,7 +51,7 @@ const clientClickedContinueAsGuestButton =
 
 describe(import.meta.file, () => {
   it("should be able to handle request", async () => {
-    const deps = getDeps({ ctx })
+    const deps = await getDeps({ ctx })
 
     const clientId = ClientId.generate()
 
@@ -72,7 +72,7 @@ describe(import.meta.file, () => {
   })
 
   it("should output a client authenitcated event", async () => {
-    const deps = getDeps({ ctx })
+    const deps = await getDeps({ ctx })
 
     const clientId = ClientId.generate()
     const sessionId = SessionId.generate()
@@ -94,7 +94,7 @@ describe(import.meta.file, () => {
   })
 
   it("should be able to find user id from session id after continuing as guest", async () => {
-    const deps = getDeps({ ctx })
+    const deps = await getDeps({ ctx })
 
     const clientId = ClientId.generate()
     const sessionId = SessionId.generate()

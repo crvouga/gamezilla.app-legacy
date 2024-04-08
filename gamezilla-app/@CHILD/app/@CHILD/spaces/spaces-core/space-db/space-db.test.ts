@@ -53,4 +53,24 @@ describe(import.meta.file, () => {
     expect(upserted).toEqual(Ok(null))
     expect(after).toEqual(Ok(f.spaceA))
   })
+
+  it("should be able to list spaces", async () => {
+    const f = await Fixture()
+
+    const before = await f.spacesDb.list({
+      limit: 10,
+      offset: 0,
+    })
+
+    const upserted = await f.spacesDb.upsert(f.spaceA)
+
+    const after = await f.spacesDb.list({
+      limit: 10,
+      offset: 0,
+    })
+
+    expect(before).toEqual(Ok([]))
+    expect(upserted).toEqual(Ok(null))
+    expect(after).toEqual(Ok([f.spaceA]))
+  })
 })

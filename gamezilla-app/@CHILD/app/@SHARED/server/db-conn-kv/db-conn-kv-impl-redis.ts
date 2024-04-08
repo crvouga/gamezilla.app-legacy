@@ -54,6 +54,46 @@ export const DbConnKvRedis = async ({
       }
     },
 
+    async getMany(keys, parser) {
+      try {
+        const start = process.hrtime.bigint()
+
+        const got = await client.mGet(keys)
+
+        const end = process.hrtime.bigint()
+
+        const durationInMicroseconds = (end - start) / BigInt(1000)
+
+        logger.info(
+          `[db-conn-kv] duration=${durationInMicroseconds}µs getMany: keys=${keys}`,
+        )
+
+        return Ok(
+          got.flatMap((value) => {
+            if (value === null || value === undefined) {
+              return []
+            }
+
+            const json = JSON.parse(value)
+
+            const parsed = parser.parse(json)
+
+            if (parsed.t === "ok") {
+              return parsed.value
+            }
+
+            logger.error(
+              `[db-conn-kv-redis] getMany: not a value: ${keys} ${parsed.error}`,
+            )
+
+            return []
+          }),
+        )
+      } catch (e) {
+        return Err(String(e))
+      }
+    },
+
     async set(key, value) {
       try {
         await client.set(key, JSON.stringify(value))

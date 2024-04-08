@@ -5,7 +5,7 @@ import { MsgServer, MsgToClient, MsgToServer } from "./lang.core"
 
 type Module = AppServerModule<{
   Ctx: ServerCtx
-  Deps: {}
+  Deps: null
   Model: null
   MsgToServer: MsgToServer
   MsgToClient: MsgToClient
@@ -31,5 +31,5 @@ export const subscriptions: Module["subscriptions"] = async () => {
 }
 
 export const getDeps: Module["getDeps"] = async () => {
-  return {}
+  return null
 }

@@ -1,11 +1,11 @@
-import { Eff, Sub } from "gamezilla-app/@SHARED/core"
+import { Eff, Result, Sub } from "gamezilla-app/@SHARED/core"
 import { Game } from "../@CHILD/game/game.server"
 import { WithEventId } from "../@SHARED/event"
 import { SpaceServerCmd } from "../@SHARED/space-server-cmd"
 import { SpaceServerModule } from "../architecture/space-server"
-import { SpaceEvent, Spaces } from "../spaces-core"
+import { Space, SpaceEvent } from "../spaces-core"
+import { SpacesCoreServer } from "../spaces-core/spaces-core.server"
 import { MsgServer } from "../spaces.core"
-import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 
 const inputToSpaceId = (input: Parameters<SpaceServerModule["update"]>[0]) => {
   if (input.msg && "spaceId" in input.msg) {
@@ -24,7 +24,7 @@ const inputToSpaceId = (input: Parameters<SpaceServerModule["update"]>[0]) => {
 }
 
 const updateGame: SpaceServerModule["update"] = async (input) => {
-  const { msg, msgEvt, msgClient, ctx, model } = input
+  const { msg, msgEvt, msgClient, ctx, model, deps } = input
 
   const spaceId = inputToSpaceId(input)
 
@@ -32,7 +32,10 @@ const updateGame: SpaceServerModule["update"] = async (input) => {
     return { model }
   }
 
-  const spaceState = Spaces.toSpaceStarted(model, spaceId)
+  const spaceState = await SpacesCoreServer.getSpaceStarted(
+    input.deps.SpacesDb,
+    spaceId,
+  )
 
   if (!spaceState) {
     return { model }
@@ -46,9 +49,14 @@ const updateGame: SpaceServerModule["update"] = async (input) => {
     ctx.logger.warn("msgClient is missing userId")
   }
 
+  const gameModel = Result.withDefault(
+    await deps.GameDb.getBySpaceId(spaceId),
+    null,
+  )
+
   const gameUpdated = await Game.update({
     ctx: { ...ctx, space: spaceState },
-    model: model.games[spaceId] ?? Game.init(spaceState.game.t),
+    model: gameModel ?? Game.init(spaceState.game.t),
     msg: msg?.t === "game" ? msg.c : null,
     msgClient:
       msgClient?.t === "game" && msgClient.userId
@@ -64,13 +72,7 @@ const updateGame: SpaceServerModule["update"] = async (input) => {
   )
 
   return {
-    model: {
-      ...model,
-      games: {
-        ...model.games,
-        [spaceId]: gameUpdated.model,
-      },
-    },
+    model,
     eff: Eff.map_((c) => ({ t: "game", c, spaceId }), gameUpdated.eff),
     msgCmd: SpaceServerCmd.map(gameUpdated.msgCmd, (c) => ({
       t: "game",
@@ -90,34 +92,8 @@ const update: SpaceServerModule["update"] = async (input) => {
   )
 }
 
-const subscriptions: SpaceServerModule["subscriptions"] = async ({
-  model,
-  ctx,
-}) => {
+const subscriptions: SpaceServerModule["subscriptions"] = async (_input) => {
   const batch: Sub<MsgServer>[] = []
-
-  for (const spaceId_ in model.spaces) {
-    const spaceId = spaceId_ as SpaceId
-    const spaceState = Spaces.toSpaceStarted(model, spaceId)
-
-    if (!spaceState) {
-      continue
-    }
-
-    if (!spaceState.game) {
-      continue
-    }
-
-    const sub = await Game.subscriptions({
-      ctx: { ...ctx, space: spaceState },
-      model: model.games[spaceId] ?? Game.init(spaceState.game.t),
-      modelSync: spaceState.game,
-    })
-
-    const mapped = Sub.map(sub, (c): MsgServer => ({ t: "game", c, spaceId }))
-
-    batch.push(mapped)
-  }
 
   return Sub.batch(batch)
 }

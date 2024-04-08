@@ -51,7 +51,7 @@ type Module = AppServerModule<{
 //
 //
 
-export const getDeps: Module["getDeps"] = ({ ctx }) => {
+export const getDeps: Module["getDeps"] = async ({ ctx }) => {
   return {
     AccountDb: AccountDb({
       t: "postgres",

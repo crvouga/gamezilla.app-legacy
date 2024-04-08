@@ -4,6 +4,7 @@ import * as Create from "./@CHILD/create/create.core"
 import * as Play from "./@CHILD/play/play.core"
 import { FlowPuzzle } from "./@SHARED/flow-puzzle/flow-puzzle"
 import { FlowPuzzleId } from "./@SHARED/flow-puzzle/flow-puzzle-id"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 
 //
 //
@@ -24,10 +25,21 @@ export type VariantModelClient =
 
 export type ModelClient = BaseModelClient & VariantModelClient
 
-export type ModelServer =
-  | { t: "none" }
-  | { t: "create"; c: Create.ModelServer }
-  | { t: "play"; c: Play.ModelServer }
+export const ModelServer = p.or(
+  p.obj({
+    t: p.l("none"),
+  }),
+  p.obj({
+    t: p.l("create"),
+    c: Create.ModelServer,
+  }),
+  p.obj({
+    t: p.l("play"),
+    c: Play.ModelServer,
+  }),
+)
+
+export type ModelServer = p.Infer<typeof ModelServer>
 
 //
 //

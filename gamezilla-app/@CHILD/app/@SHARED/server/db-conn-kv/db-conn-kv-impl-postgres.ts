@@ -66,6 +66,57 @@ export const DbConnKvPostgres = async ({
       }
     },
 
+    async getMany(keys, parser) {
+      try {
+        const start = process.hrtime.bigint()
+
+        const queried = await dbConn.query(
+          Row,
+          `SELECT key, value FROM key_value WHERE key IN (${keys
+            .map((key) => `'${key}'`)
+            .join(", ")})`,
+          {},
+        )
+
+        const end = process.hrtime.bigint()
+
+        const durationInMicroseconds = (end - start) / BigInt(1000)
+
+        logger.info(
+          `[db-conn-kv] duration=${durationInMicroseconds}µs get: keys=${keys.join(
+            ", ",
+          )}`,
+        )
+
+        if (isErr(queried)) {
+          return queried
+        }
+
+        const rows = queried.value.flatMap((row) => {
+          const json = JSON.parse(row.value)
+
+          const parsed = parser.parse(json)
+
+          if (isErr(parsed)) {
+            logger.error(
+              `[db-conn-kv-postgres] get: not a value: ${row.key} ${parsed.error}`,
+            )
+
+            return []
+          }
+
+          return parsed.value
+        })
+
+        return Ok(rows)
+      } catch (e) {
+        logger.error(
+          `[db-conn-kv-postgres] get: ${keys.join(", ")} ${String(e)}`,
+        )
+        return Err(String(e))
+      }
+    },
+
     async set(key, value) {
       try {
         const queried = await dbConn.query(
