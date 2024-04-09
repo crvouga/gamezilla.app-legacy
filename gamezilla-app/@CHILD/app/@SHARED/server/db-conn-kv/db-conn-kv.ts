@@ -1,4 +1,4 @@
-import { Result, Task, TimeSpan } from "gamezilla-app/@SHARED/core"
+import { Result, Task, TimeSpan, isErr } from "gamezilla-app/@SHARED/core"
 import { Parser } from "gamezilla-app/@SHARED/core/parser/parser"
 import { Logger } from "../logger"
 import { p } from "gamezilla-app/@SHARED/core/parser"
@@ -52,9 +52,13 @@ const instance = <TKey extends string = string, TValue = unknown>(
   }
 }
 
-const withReducedParsing = (dbConnKv: IDbConnKv): IDbConnKv => {
-  const verifiedKeys = new Set<string>()
-
+const withReducedParsing = ({
+  dbConnKv,
+  verifiedKeys,
+}: {
+  dbConnKv: IDbConnKv
+  verifiedKeys: Set<string>
+}): IDbConnKv => {
   return {
     ...dbConnKv,
     async get<TValue>(key: string, parser: p.Parser<TValue>) {
@@ -62,24 +66,33 @@ const withReducedParsing = (dbConnKv: IDbConnKv): IDbConnKv => {
         return dbConnKv.get(key, p.noop<TValue>())
       }
 
+      const got = await dbConnKv.get(key, parser)
+
+      if (isErr(got)) {
+        return got
+      }
+
       verifiedKeys.add(key)
 
-      return dbConnKv.get(key, parser)
+      return got
     },
 
     async getMany<TValue>(keys: string[], parser: p.Parser<TValue>) {
-      let key = ""
-      for (let i = 0; i < keys.length; i++) {
-        key += keys[i]
-      }
+      const key = keys.join(",")
 
       if (verifiedKeys.has(key)) {
         return dbConnKv.getMany(keys, p.noop<TValue>())
       }
 
+      const got = await dbConnKv.getMany(keys, parser)
+
+      if (isErr(got)) {
+        return got
+      }
+
       verifiedKeys.add(key)
 
-      return dbConnKv.getMany(keys, parser)
+      return got
     },
   }
 }
@@ -145,7 +158,9 @@ const withCache = ({
       const sourceGot = await source.getMany(keys, parser)
       const sourceHit = Result.withDefault(sourceGot, null)
       if (sourceHit) {
-        //
+        await cache.setMany(
+          sourceHit.map((value, i) => [keys[i], value] as [string, unknown]),
+        )
       }
       const end = process.hrtime.bigint()
       const durationInMicroseconds = (end - start) / BigInt(1000)
@@ -169,7 +184,7 @@ const withCache = ({
     async setMany(entries) {
       let key = ""
       for (let i = 0; i < entries.length; i++) {
-        key += entries[i]![0]
+        key = key + "," + entries[i]![0]
       }
 
       clearTimeout(timeouts.get(key))
