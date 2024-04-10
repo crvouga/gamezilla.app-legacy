@@ -1,10 +1,17 @@
 import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
 import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { ISMS } from "gamezilla-app/@CHILD/app/@SHARED/server/sms"
-import { Ok, Posix, TimeSpan, isErr } from "gamezilla-app/@SHARED/core"
+import {
+  Err,
+  Ok,
+  PhoneNumber,
+  Posix,
+  TimeSpan,
+  isErr,
+} from "gamezilla-app/@SHARED/core"
+import { IHashing } from "gamezilla-app/@SHARED/hashing"
 import { Translator } from "gamezilla-app/@SHARED/l18n/generated"
 import { ICodeGenerator } from "./code-generator"
-import { CodeHash } from "./code-hash"
 import { Verification, VerificationId } from "./verification"
 import { IVerificationAttemptDb, IVerificationDb } from "./verification-db"
 import { IVerifySMS } from "./verify-sms"
@@ -19,6 +26,7 @@ export type VerifySMSDeps = {
   verificationDb: IVerificationDb
   verificationAttemptDb: IVerificationAttemptDb
   translator: Translator
+  hashing: IHashing
 }
 
 export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
@@ -26,14 +34,28 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
     async sendCode(input) {
       const code = deps.codeGenerator.generate()
 
-      const codeHash = CodeHash.hash(code)
+      const codeHash = await deps.hashing.hash({
+        algo: {
+          t: "sha256",
+        },
+        password: code,
+      })
+
+      const phoneNumberHash = await deps.hashing.hash({
+        algo: {
+          t: "bcrypt",
+          cost: 10,
+        },
+        password: PhoneNumber.toString(input.phoneNumber),
+      })
 
       const verificationNew: Verification = {
         codeHash: codeHash,
-        phoneNumber: input.phoneNumber,
+        phoneNumberHash: phoneNumberHash,
         createdAt: Posix.now(),
         expiresIn: EXPIRES_IN,
         verificationId: VerificationId.generate(),
+        verifiedAt: null,
       }
 
       const upserted = await deps.verificationDb.upsert(verificationNew)
@@ -51,10 +73,44 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
         return sent
       }
 
-      return Ok(null)
+      return Ok({
+        verificationId: verificationNew.verificationId,
+      })
     },
-    async verifyCode(_input) {
-      return Ok(null)
+    async verifyCode(input) {
+      const found = await deps.verificationDb.findById({
+        verificationId: input.verificationId,
+      })
+
+      if (isErr(found)) {
+        return Err({
+          t: "database-error",
+          error: found.error,
+        })
+      }
+
+      const verification = found.value
+
+      if (!verification) {
+        return Err({
+          t: "verification-not-found",
+        })
+      }
+
+      const isCorrect = await deps.hashing.check({
+        hash: verification.codeHash,
+        password: input.code,
+      })
+
+      if (!isCorrect) {
+        return Err({
+          t: "code-incorrect",
+        })
+      }
+
+      return Ok({
+        phoneNumberHash: verification.phoneNumberHash,
+      })
     },
   }
 }

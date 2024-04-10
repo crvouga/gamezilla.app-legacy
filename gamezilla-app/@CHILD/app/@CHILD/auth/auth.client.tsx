@@ -156,8 +156,6 @@ const updateRedirect: ClientModule["update"] = (input) => {
       const toastMessage =
         msgEvt.account.role === "guest"
           ? ctx.t("auth.logged-in-as-guest")
-          : msgEvt.account.phoneNumber
-          ? ctx.t("auth.logged-in-with-phone")
           : ctx.t("auth.logged-in")
 
       return {
@@ -270,7 +268,7 @@ const ViewLoginScreen: ClientModule["View"] = (input) => {
             </p>
           </div>
 
-          <ContinueAsGuestClient.ViewContinueAsGuestButton {...input} />
+          <ContinueAsGuestClient.ViewButton {...input} />
         </div>
       </div>
     </div>

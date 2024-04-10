@@ -8,7 +8,7 @@ import {
   ClientCtx,
   ClientEvent,
 } from "../../@SHARED/client"
-import { Account } from "../../@SHARED/data/account"
+import { UserAccount } from "../../@SHARED/data/account"
 import { ServerCmd, ServerCtx, ServerEvent } from "../../@SHARED/server"
 import * as AuthSMS from "./@CHILD/auth-sms/auth-sms.core"
 import { IAccountDb } from "./@SHARED/server/account-db"
@@ -71,7 +71,7 @@ type BaseModelClient = {
   currentUser:
     | { t: "loading" }
     | { t: "logged-out" }
-    | { t: "logged-in"; account: Account }
+    | { t: "logged-in"; account: UserAccount }
   sms: AuthSMS.ModelClient
 }
 
@@ -108,6 +108,6 @@ export type MsgToServer =
 export type MsgToClient =
   | ContinueAsGuest.MsgToClient
   | Logout.MsgToClient
-  | { t: "client-authenticated"; account: Account; loggedIn: boolean }
+  | { t: "client-authenticated"; account: UserAccount; loggedIn: boolean }
   | { t: "client-unauthenticated" }
   | { t: "sms"; c: AuthSMS.MsgToClient }

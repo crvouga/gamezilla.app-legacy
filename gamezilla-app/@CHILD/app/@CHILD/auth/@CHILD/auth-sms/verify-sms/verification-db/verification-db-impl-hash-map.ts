@@ -9,9 +9,9 @@ import { IVerificationAttemptDb, IVerificationDb } from "./verification-db"
 export const VerficationDbHashMap = (): IVerificationDb => {
   const verificationsById = new Map<VerificationId, Verification>()
   return {
-    async find(input) {
-      const found = verificationsById.get(input.where.equalsVerificationId)
-      return Ok(found ? [found] : [])
+    async findById(input) {
+      const found = verificationsById.get(input.verificationId) ?? null
+      return Ok(found)
     },
     async upsert(verification) {
       verificationsById.set(verification.verificationId, verification)
@@ -20,7 +20,7 @@ export const VerficationDbHashMap = (): IVerificationDb => {
   }
 }
 
-export const VerficationAttemptsDbHashMap = (): IVerificationAttemptDb => {
+export const VerficationAttemptDbHashMap = (): IVerificationAttemptDb => {
   const attempsById = new Map<VerificationId, VerificationAttempt[]>()
   return {
     async upsert(attempt) {

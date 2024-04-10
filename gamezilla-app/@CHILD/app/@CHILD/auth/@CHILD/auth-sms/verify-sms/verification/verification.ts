@@ -1,17 +1,18 @@
-import { PhoneNumber, Posix, TimeSpan } from "gamezilla-app/@SHARED/core"
-import { CodeHash } from "../code-hash"
+import { Posix, TimeSpan } from "gamezilla-app/@SHARED/core"
+import { Hash } from "gamezilla-app/@SHARED/hashing"
 import { VerificationId } from "./verification-id"
 
 export type Verification = {
   verificationId: VerificationId
-  codeHash: CodeHash
-  phoneNumber: PhoneNumber
+  codeHash: Hash
+  phoneNumberHash: Hash
   createdAt: Posix
   expiresIn: TimeSpan
+  verifiedAt: Posix | null
 }
 
 export type VerificationAttempt = {
   verificationId: VerificationId
-  codeHash: CodeHash
+  codeHash: Hash
   createdAt: Posix
 }

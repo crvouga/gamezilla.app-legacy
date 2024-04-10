@@ -10,7 +10,7 @@ export type ModelClient = {
   guestRequest: RequestResponse<string, UserId>
 }
 
-export type ModelServer = {}
+export type ModelServer = null
 
 //
 //

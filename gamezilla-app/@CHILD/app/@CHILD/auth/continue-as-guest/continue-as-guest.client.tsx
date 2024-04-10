@@ -52,11 +52,7 @@ const update: ClientModule["update"] = ({ ctx, model, msg, msgServer }) => {
   }
 }
 
-const ViewContinueAsGuestButton: ClientModule["View"] = ({
-  dispatch,
-  model,
-  ctx,
-}) => {
+const ViewButton: ClientModule["View"] = ({ dispatch, model, ctx }) => {
   return (
     <Button
       onClick={() => dispatch({ t: "guest.clicked-continue-as-guest-button" })}
@@ -70,5 +66,5 @@ const ViewContinueAsGuestButton: ClientModule["View"] = ({
 export const ContinueAsGuestClient = {
   initModel,
   update,
-  ViewContinueAsGuestButton,
+  ViewButton,
 }

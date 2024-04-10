@@ -1,16 +1,17 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
-import { EmailAddress, PhoneNumber, Result } from "gamezilla-app/@SHARED/core"
+import { UserAccount } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
+import { Result } from "gamezilla-app/@SHARED/core"
+import { Hash } from "gamezilla-app/@SHARED/hashing"
 
 export type IAccountDb = {
-  findOneByEmailAddress: (input: {
-    emailAddress: EmailAddress
-  }) => Promise<Result<string, Account | null>>
-  findOneByPhoneNumber: (input: {
-    phoneNumber: PhoneNumber
-  }) => Promise<Result<string, Account | null>>
+  findOneByPhoneNumberHash: (input: {
+    phoneNumberHash: Hash
+  }) => Promise<Result<string, UserAccount | null>>
   findOneByUserId: (input: {
     userId: UserId | null
-  }) => Promise<Result<string, Account | null>>
-  insert: (input: Account) => Promise<Result<string, null>>
+  }) => Promise<Result<string, UserAccount | null>>
+  insert: (input: {
+    account: UserAccount
+    phoneNumberHash?: Hash
+  }) => Promise<Result<string, null>>
 }

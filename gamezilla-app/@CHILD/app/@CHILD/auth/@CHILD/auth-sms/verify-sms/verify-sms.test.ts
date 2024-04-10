@@ -13,6 +13,7 @@ import {
 import { CodeGenerator } from "./code-generator"
 import { VerificationAttemptDb, VerificationDb } from "./verification-db"
 import { VerifySMS } from "./verify-sms-impl"
+import { Hashing } from "gamezilla-app/@SHARED/hashing"
 
 const Fixture = async () => {
   const sms = SMSFake()
@@ -40,6 +41,7 @@ const Fixture = async () => {
     verificationDb: VerificationDb({
       t: "hash-map",
     }),
+    hashing: Hashing({ t: "noop" }),
   })
 
   const phoneNumber = Result.withDefault(
@@ -69,8 +71,14 @@ describe(import.meta.file, () => {
       phoneNumber: f.phoneNumber,
     })
 
+    const verificationId = Result.withDefault(sent, null)?.verificationId
+
+    if (!verificationId) {
+      throw new Error("Invalid verification id")
+    }
+
     const verified = await f.verifySMS.verifyCode({
-      phoneNumber: f.phoneNumber,
+      verificationId,
       code: f.CODE,
     })
 
@@ -114,17 +122,24 @@ describe(import.meta.file, () => {
     ).toBe(true)
   })
 
-  it.todo(
-    "should fail if the code is not the same as the code sent",
-    async () => {
-      const f = await Fixture()
-      const verified = await f.verifySMS.verifyCode({
-        phoneNumber: f.phoneNumber,
-        code: "42",
-      })
-      expect(isErr(verified) && verified.error.t === "code-incorrect").toBe(
-        true,
-      )
-    },
-  )
+  it("should fail if the code is not the same as the code sent", async () => {
+    const f = await Fixture()
+
+    const sent = await f.verifySMS.sendCode({
+      phoneNumber: f.phoneNumber,
+    })
+
+    const verificationId = Result.withDefault(sent, null)?.verificationId
+
+    if (!verificationId) {
+      throw new Error("Invalid verification id")
+    }
+
+    const verified = await f.verifySMS.verifyCode({
+      verificationId: verificationId,
+      code: "42",
+    })
+
+    expect(isErr(verified) && verified.error.t === "code-incorrect").toBe(true)
+  })
 })

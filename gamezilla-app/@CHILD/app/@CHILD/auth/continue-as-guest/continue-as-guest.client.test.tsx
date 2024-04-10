@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
+import { andThen } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
 import {
   AnonymousClientCtx,
   didPlaySound,
@@ -59,8 +59,8 @@ const continueAsGuestResultedErr = () => (model: ModelClient) =>
   })
 
 describe(import.meta.file, () => {
-  it("should request to continue as guest when button is clicked", async () => {
-    const output = await AppClientModule.andThen(
+  it("should request to continue as guest when button is clicked", () => {
+    const output = andThen(
       AuthClient.init({ ctx, stored: {} }),
       clickedContinueAsGuestButton,
     )
@@ -71,8 +71,8 @@ describe(import.meta.file, () => {
     ).toBe(true)
   })
 
-  it("should request to continue as guest when button is clicked", async () => {
-    const output = await AppClientModule.andThen(
+  it("should request to continue as guest when button is clicked", () => {
+    const output = andThen(
       AuthClient.init({ ctx, stored: {} }),
       clickedContinueAsGuestButton,
     )
@@ -85,8 +85,8 @@ describe(import.meta.file, () => {
     ).toBe(true)
   })
 
-  it("should resolve request as ok when resulted in ok", async () => {
-    const output = await AppClientModule.andThen(
+  it("should resolve request as ok when resulted in ok", () => {
+    const output = andThen(
       AuthClient.init({ ctx, stored: {} }),
       clickedContinueAsGuestButton,
       continueAsGuestResultedOk(UserId.generate()),
@@ -94,8 +94,8 @@ describe(import.meta.file, () => {
     expect(isResponseOk(output.model.guestRequest)).toBe(true)
   })
 
-  it("should resolve request as err when resulted in err", async () => {
-    const output = await AppClientModule.andThen(
+  it("should resolve request as err when resulted in err", () => {
+    const output = andThen(
       AuthClient.init({ ctx, stored: {} }),
       clickedContinueAsGuestButton,
       continueAsGuestResultedErr(),
@@ -103,8 +103,8 @@ describe(import.meta.file, () => {
     expect(isResponseErr(output.model.guestRequest)).toBe(true)
   })
 
-  it("should play sound after continuing as guest", async () => {
-    const output = await AppClientModule.andThen(
+  it("should play sound after continuing as guest", () => {
+    const output = andThen(
       AuthClient.init({ ctx, stored: {} }),
       clickedContinueAsGuestButton,
     )

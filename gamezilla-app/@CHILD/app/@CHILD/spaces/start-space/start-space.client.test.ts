@@ -11,47 +11,38 @@ import { clickedStartSpaceButton, Ctx, init } from "../@TEST/client"
 import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {
-  it("should show toast when current user starts a space", async () => {
+  it("should show toast when current user starts a space", () => {
     const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
-    const started = await andThen(
-      init(ctx),
-      clickedStartSpaceButton(ctx, spaceId),
-    )
+    const started = andThen(init(ctx), clickedStartSpaceButton(ctx, spaceId))
 
     expect(didShowToast(started)).toBe(true)
   })
 
-  it("should start a space for current user after clicking start button", async () => {
+  it("should start a space for current user after clicking start button", () => {
     const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
-    const started = await andThen(
-      init(ctx),
-      clickedStartSpaceButton(ctx, spaceId),
-    )
+    const started = andThen(init(ctx), clickedStartSpaceButton(ctx, spaceId))
 
     expect(Spaces.toSpaceIdByUserId(started.model, ctx.currentUserId)).toEqual(
       spaceId,
     )
   })
 
-  it("should redirect after starting a space", async () => {
+  it("should redirect after starting a space", () => {
     const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
-    const started = await andThen(
-      init(ctx),
-      clickedStartSpaceButton(ctx, spaceId),
-    )
+    const started = andThen(init(ctx), clickedStartSpaceButton(ctx, spaceId))
 
     expect(didPushRoute(started)).toBe(true)
   })
 
-  it("should play sound after starting space", async () => {
+  it("should play sound after starting space", () => {
     const ctx = Ctx()
-    const started = await andThen(
+    const started = andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, SpaceId.generate()),
     )
@@ -59,9 +50,9 @@ describe(import.meta.file, () => {
     expect(didPlaySound(started)).toBe(true)
   })
 
-  it("should send events to the server like user started space", async () => {
+  it("should send events to the server like user started space", () => {
     const ctx = Ctx()
-    const output = await andThen(
+    const output = andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, SpaceId.generate()),
     )

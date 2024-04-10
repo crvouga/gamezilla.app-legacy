@@ -23,6 +23,7 @@ import {
   TopBarBackButton,
 } from "gamezilla-app/@CHILD/app/@SHARED/ui"
 import {
+  Err,
   Iso3166Alpha2Code,
   PhoneNumber,
   Posix,
@@ -39,6 +40,7 @@ import {
   MsgToClient,
   MsgToServer,
 } from "./auth-sms.core"
+import { verifyCodeProblemToString } from "./verify-sms/verify-sms"
 
 //
 //
@@ -238,6 +240,21 @@ const updateFromMsg: Module["update"] = (input) => {
         }
       }
 
+      const verificationId =
+        model.sendCode.t === "ok" ? model.sendCode.value.verificationId : null
+
+      if (!verificationId) {
+        return {
+          model: {
+            ...model,
+            verifyCode: Err({
+              t: "verification-not-found",
+            }),
+          },
+          msgCmd: [playSound(APP_SOUND.alertErrorMd)],
+        }
+      }
+
       return {
         model: {
           ...model,
@@ -249,7 +266,7 @@ const updateFromMsg: Module["update"] = (input) => {
           sendToServer({
             t: "verify-code",
             code: model.codeInput,
-            phoneNumber: msg.phoneNumber,
+            verificationId,
           }),
         ],
       }
@@ -285,15 +302,16 @@ const updateFromMsg: Module["update"] = (input) => {
             model.verifyCode.t === "loading" &&
             TimeSpan.gte(
               Posix.diff(ctx.now, model.verifiedCodeAt),
-              TimeSpan.fromSeconds(5),
+              TimeSpan.fromSeconds(10),
             )
           ) {
             return {
               model: {
                 ...model,
-                verifyCode: RemoteResult.err(
-                  "Timed out. Server took too long to response",
-                ),
+                verifyCode: RemoteResult.err({
+                  t: "database-error",
+                  error: "Timed out. Server took too long to response",
+                }),
               },
               msgCmd: [playSound(APP_SOUND.alertErrorMd)],
             }
@@ -525,7 +543,12 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
 
               {isErr(model.verifyCode) && (
                 <div className="w-full p-4">
-                  <AlertError>{model.verifyCode.error}</AlertError>
+                  <AlertError>
+                    {verifyCodeProblemToString({
+                      problem: model.verifyCode.error,
+                      t: ctx.t,
+                    })}
+                  </AlertError>
                 </div>
               )}
             </div>

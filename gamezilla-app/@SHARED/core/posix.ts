@@ -45,13 +45,27 @@ const toNumber = (posixTime: Posix): number => {
   return posixTime
 }
 
+type Precision = "milliseconds" | "seconds" | "minutes"
+
 /**
  * Impure function that returns the current posix timestamp.
  */
-const now = (): Posix => {
-  return fromNumber(Date.now())
-}
+const now = (config?: { precision: Precision }): Posix => {
+  let timestamp = Date.now()
 
+  if (config?.precision) {
+    switch (config.precision) {
+      case "seconds":
+        timestamp = Math.floor(timestamp / 1000) * 1000
+        break
+      case "minutes":
+        timestamp = Math.floor(timestamp / 60000) * 60000
+        break
+    }
+  }
+
+  return fromNumber(timestamp)
+}
 /**
  * Returns the time span between two posix timestamps.
  */

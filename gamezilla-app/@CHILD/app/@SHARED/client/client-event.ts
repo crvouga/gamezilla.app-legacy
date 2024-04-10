@@ -1,8 +1,8 @@
 import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
-import { Account } from "../data/account"
+import { UserAccount } from "../data/account"
 
 export type ClientEvent =
-  | { t: "auth/authenticated"; account: Account; loggedIn?: boolean }
+  | { t: "auth/authenticated"; account: UserAccount; loggedIn?: boolean }
   | { t: "auth/unauthenticated" }
   | { t: "wire/server-connected" }
   | { t: "routing/route-changed"; route: Route }

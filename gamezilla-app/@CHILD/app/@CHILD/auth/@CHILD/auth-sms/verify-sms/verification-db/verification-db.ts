@@ -6,9 +6,9 @@ import {
 } from "../verification"
 
 export type IVerificationDb = {
-  find(input: {
-    where: { equalsVerificationId: VerificationId }
-  }): Task<string, Verification[]>
+  findById(input: {
+    verificationId: VerificationId
+  }): Task<string, Verification | null>
   upsert(verification: Verification): Task<string, null>
 }
 

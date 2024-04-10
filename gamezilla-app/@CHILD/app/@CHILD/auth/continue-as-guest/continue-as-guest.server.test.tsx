@@ -30,7 +30,7 @@ const getDeps: ServerModule["getDeps"] = async () => {
       t: "in-memory",
       delay: async () => {},
     }),
-    timeout: () => new Promise((resolve) => setTimeout(resolve, 0)),
+    timeout: () => new Promise((resolve) => resolve()),
   }
 }
 

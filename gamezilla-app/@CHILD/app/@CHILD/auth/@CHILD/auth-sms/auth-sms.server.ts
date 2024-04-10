@@ -1,25 +1,19 @@
 import { AppServerModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-server"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
+import { UserAccount } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
 import {
   ServerCmd,
   ServerCtx,
   ServerEvent,
   sendToClient,
 } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import {
-  Ok,
-  PhoneNumber,
-  Posix,
-  Result,
-  Sub,
-  isErr,
-} from "gamezilla-app/@SHARED/core"
+import { Err, Ok, Posix, Result, Sub, isErr } from "gamezilla-app/@SHARED/core"
+import { Hash, Hashing } from "gamezilla-app/@SHARED/hashing"
 import { IAccountDb } from "../../@SHARED/server/account-db"
 import { AccountDb } from "../../@SHARED/server/account-db/account-db-impl"
 import { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.core"
-import { IVerifySMS } from "./server/verify-sms/verify-sms"
-import { VerifySMS } from "./server/verify-sms/verify-sms-impl"
+import { IVerifySMS } from "./verify-sms/verify-sms"
+import { VerifySMS } from "./verify-sms/verify-sms-impl"
 
 //
 //
@@ -61,6 +55,7 @@ export const getDeps: Module["getDeps"] = async ({ ctx }) => {
       t: "fake",
       delay: () => new Promise((resolve) => setTimeout(resolve, 1000)),
       logger: ctx.logger,
+      hashing: Hashing({ t: "bun" }),
     }),
   }
 }
@@ -87,75 +82,16 @@ export const init: Module["init"] = async () => {
 //
 
 export const update: Module["update"] = async (input) => {
-  return AppServerModule.andThen(
-    { model: input.model },
-    (model) => updateFromMsg({ ...input, model }),
-    (model) => updateFromClient({ ...input, model }),
+  return AppServerModule.andThen({ model: input.model }, (model) =>
+    updateFromClient({ ...input, model }),
   )
-}
-
-const updateFromMsg: Module["update"] = async ({ msg, model, deps, ctx }) => {
-  if (!msg) {
-    return { model }
-  }
-
-  switch (msg.t) {
-    case "verified-code": {
-      if (isErr(msg.result)) {
-        return {
-          model,
-          msgCmd: [sendToClient([msg.clientId], msg)],
-        }
-      }
-
-      const found = await findElseInsertAccount({
-        accountDb: deps.AccountDb,
-        phoneNumber: msg.phoneNumber,
-        now: ctx.now,
-      })
-
-      if (isErr(found)) {
-        return {
-          model,
-          msgCmd: [
-            sendToClient([msg.clientId], {
-              t: "verified-code",
-              result: found,
-              phoneNumber: msg.phoneNumber,
-            }),
-          ],
-        }
-      }
-
-      return {
-        model,
-        msgCmd: [sendToClient([msg.clientId], msg)],
-        msgEvt: [
-          {
-            t: "auth/client-authenticated",
-            clientId: msg.clientId,
-            sessionId: msg.sessionId,
-            account: found.value,
-            loggedIn: true,
-          },
-        ],
-      }
-    }
-
-    case "sent-code": {
-      return {
-        model,
-        msgCmd: [sendToClient([msg.clientId], msg)],
-      }
-    }
-  }
 }
 
 export const updateFromClient: Module["update"] = async ({
   msgClient,
   model,
-
   deps,
+  ctx,
 }) => {
   if (!msgClient) {
     return { model }
@@ -163,34 +99,76 @@ export const updateFromClient: Module["update"] = async ({
 
   switch (msgClient.t) {
     case "send-code": {
+      const sent = await deps.VerifySMS.sendCode(msgClient)
+
       return {
         model,
-        eff: async (dispatch) => {
-          dispatch({
+        msgCmd: [
+          sendToClient([msgClient.clientId], {
             t: "sent-code",
             phoneNumber: msgClient.phoneNumber,
-            result: await deps.VerifySMS.sendCode(msgClient),
-            clientId: msgClient.clientId,
-          })
-        },
+            result: sent,
+          }),
+        ],
       }
     }
 
     case "verify-code": {
+      const verified = await deps.VerifySMS.verifyCode({
+        code: msgClient.code,
+        verificationId: msgClient.verificationId,
+      })
+
+      if (isErr(verified)) {
+        return {
+          model,
+          msgCmd: [
+            sendToClient([msgClient.clientId], {
+              t: "verified-code",
+              result: verified,
+            }),
+          ],
+        }
+      }
+
+      const found = await findElseInsertAccount({
+        accountDb: deps.AccountDb,
+        phoneNumberHash: verified.value.phoneNumberHash,
+        now: ctx.now,
+      })
+
+      if (isErr(found)) {
+        return {
+          model,
+          msgCmd: [
+            sendToClient([msgClient.clientId], {
+              t: "verified-code",
+              result: Err({
+                t: "database-error",
+                error: found.error,
+              }),
+            }),
+          ],
+        }
+      }
+
       return {
         model,
-        eff: async (dispatch) => {
-          dispatch({
+        msgCmd: [
+          sendToClient([msgClient.clientId], {
             t: "verified-code",
-            phoneNumber: msgClient.phoneNumber,
+            result: Result.mapOk(verified, () => null),
+          }),
+        ],
+        msgEvt: [
+          {
+            t: "auth/client-authenticated",
             clientId: msgClient.clientId,
-            result: Result.mapErr(
-              await deps.VerifySMS.verifyCode(msgClient),
-              () => "Something went wrong",
-            ),
             sessionId: msgClient.sessionId,
-          })
-        },
+            account: found.value,
+            loggedIn: true,
+          },
+        ],
       }
     }
   }
@@ -219,14 +197,16 @@ export const subscriptions: Module["subscriptions"] = async () => {
 
 const findElseInsertAccount = async ({
   accountDb,
-  phoneNumber,
+  phoneNumberHash,
   now,
 }: {
   accountDb: IAccountDb
-  phoneNumber: PhoneNumber
+  phoneNumberHash: Hash
   now: Posix
-}): Promise<Result<string, Account>> => {
-  const found = await accountDb.findOneByPhoneNumber({ phoneNumber })
+}): Promise<Result<string, UserAccount>> => {
+  const found = await accountDb.findOneByPhoneNumberHash({
+    phoneNumberHash,
+  })
 
   if (isErr(found)) {
     return found
@@ -238,15 +218,16 @@ const findElseInsertAccount = async ({
     return Ok(maybeAccount)
   }
 
-  const accountNew: Account = {
+  const accountNew: UserAccount = {
     role: "normal",
-
     userId: UserId.generate(),
-    phoneNumber,
     createdAt: now,
   }
 
-  const inserted = await accountDb.insert(accountNew)
+  const inserted = await accountDb.insert({
+    account: accountNew,
+    phoneNumberHash,
+  })
 
   if (isErr(inserted)) {
     return inserted

@@ -139,11 +139,19 @@ ALTER SEQUENCE public.socket_io_attachments_id_seq OWNED BY public.socket_io_att
 
 CREATE TABLE public.user_account (
     user_id text NOT NULL,
-    email_address text,
-    phone_number text,
-    created_at timestamp without time zone NOT NULL,
-    user_role public.user_role NOT NULL,
-    CONSTRAINT non_guest_users_must_have_email_address_or_phone_number CHECK ((((user_role)::text = 'guest'::text) OR ((email_address IS NOT NULL) OR (phone_number IS NOT NULL))))
+    created_at timestamp with time zone NOT NULL,
+    user_role public.user_role NOT NULL
+);
+
+
+--
+-- Name: user_account_phone_number; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_account_phone_number (
+    user_id text NOT NULL,
+    phone_number_hash jsonb NOT NULL,
+    created_at timestamp without time zone NOT NULL
 );
 
 
@@ -236,14 +244,6 @@ ALTER TABLE ONLY public.socket_io_attachments
 
 
 --
--- Name: user_account user_account_email_address_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.user_account
-    ADD CONSTRAINT user_account_email_address_key UNIQUE (email_address);
-
-
---
 -- Name: user_account user_account_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -332,6 +332,14 @@ CREATE INDEX idx_username ON public.user_profile USING btree (username);
 
 
 --
+-- Name: user_account_phone_number fk_user_account; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_account_phone_number
+    ADD CONSTRAINT fk_user_account FOREIGN KEY (user_id) REFERENCES public.user_account(user_id) ON DELETE CASCADE;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -361,4 +369,6 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240203045837'),
     ('20240214195501'),
     ('20240214202304'),
-    ('20240405231549');
+    ('20240405231549'),
+    ('20240410213113'),
+    ('20240410223252');

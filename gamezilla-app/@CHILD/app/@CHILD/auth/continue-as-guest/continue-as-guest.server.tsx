@@ -1,7 +1,7 @@
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { Account } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
+import { UserAccount } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
 import { sendBack } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { Ok, TimeSpan, isErr, notAsked } from "gamezilla-app/@SHARED/core"
+import { Ok, isErr, notAsked } from "gamezilla-app/@SHARED/core"
 import { ServerModule } from "../auth.core"
 import { ModelClient } from "./continue-as-guest.core"
 
@@ -17,15 +17,15 @@ const update: ServerModule["update"] = async ({
 }) => {
   switch (msgClient?.t) {
     case "guest.clicked-continue-as-guest-button": {
-      await deps.timeout(TimeSpan.fromSeconds(1))
-
-      const newGuestAccount: Account = {
+      const newGuestAccount: UserAccount = {
         role: "guest",
         userId: UserId.generate(),
         createdAt: ctx.now,
       }
 
-      const insertedAccount = await deps.AccountDb.insert(newGuestAccount)
+      const insertedAccount = await deps.AccountDb.insert({
+        account: newGuestAccount,
+      })
 
       if (isErr(insertedAccount)) {
         return {

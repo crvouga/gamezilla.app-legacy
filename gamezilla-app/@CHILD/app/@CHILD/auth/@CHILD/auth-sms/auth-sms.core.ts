@@ -1,4 +1,3 @@
-import { ClientId, SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import {
   Iso3166Alpha2Code,
   PhoneNumber,
@@ -6,6 +5,8 @@ import {
   RemoteResult,
   Result,
 } from "gamezilla-app/@SHARED/core"
+import { VerificationId } from "./verify-sms/verification"
+import { VerifyCodeProblem } from "./verify-sms/verify-sms"
 
 export type Route =
   | {
@@ -26,10 +27,10 @@ export type ModelClient = {
   codeError: string | null
   //
   sentCodeAt: Posix | null
-  sendCode: RemoteResult<string, null>
+  sendCode: RemoteResult<string, { verificationId: VerificationId }>
   //
   verifiedCodeAt: Posix | null
-  verifyCode: RemoteResult<string, null>
+  verifyCode: RemoteResult<VerifyCodeProblem, null>
 }
 
 export type MsgClient =
@@ -43,21 +44,7 @@ export type MsgClient =
   | { t: "clicked-verify-code"; phoneNumber: PhoneNumber }
   | { t: "time-passed"; now: Posix }
 
-type SentCode = {
-  t: "sent-code"
-  phoneNumber: PhoneNumber
-  result: Result<string, null>
-}
-
-type VerifiedCode = {
-  t: "verified-code"
-  phoneNumber: PhoneNumber
-  result: Result<string, null>
-}
-
-export type MsgServer =
-  | (SentCode & { clientId: ClientId })
-  | (VerifiedCode & { clientId: ClientId; sessionId: SessionId })
+export type MsgServer = { t: "noop" }
 
 export type MsgToServer =
   | {
@@ -66,8 +53,22 @@ export type MsgToServer =
     }
   | {
       t: "verify-code"
-      phoneNumber: PhoneNumber
+      verificationId: VerificationId
       code: string
     }
 
-export type MsgToClient = SentCode | VerifiedCode
+export type MsgToClient =
+  | {
+      t: "sent-code"
+      phoneNumber: PhoneNumber
+      result: Result<
+        string,
+        {
+          verificationId: VerificationId
+        }
+      >
+    }
+  | {
+      t: "verified-code"
+      result: Result<VerifyCodeProblem, null>
+    }

@@ -1,5 +1,8 @@
 import { IVerificationAttemptDb, IVerificationDb } from "./verification-db"
-import { VerficationDbHashMap } from "./verification-db-impl-hash-map"
+import {
+  VerficationAttemptDbHashMap,
+  VerficationDbHashMap,
+} from "./verification-db-impl-hash-map"
 
 export type Impl = {
   t: "hash-map"
@@ -16,7 +19,7 @@ export const VerificationDb = (impl: Impl): IVerificationDb => {
 export const VerificationAttemptDb = (impl: Impl): IVerificationAttemptDb => {
   switch (impl.t) {
     case "hash-map": {
-      return VerficationDbHashMap()
+      return VerficationAttemptDbHashMap()
     }
   }
 }

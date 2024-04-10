@@ -1,0 +1,53 @@
+import { PhoneNumber, Task } from "gamezilla-app/@SHARED/core"
+import { Hash } from "gamezilla-app/@SHARED/hashing"
+import { Translator } from "gamezilla-app/@SHARED/l18n/generated"
+import { VerificationId } from "./verification"
+
+export type VerifyCodeProblem =
+  | {
+      t: "code-incorrect"
+    }
+  | {
+      t: "verification-expired"
+    }
+  | {
+      t: "verification-not-found"
+    }
+  | {
+      t: "verification-already-verified"
+    }
+  | {
+      t: "database-error"
+      error: string
+    }
+
+export const verifyCodeProblemToString = ({
+  problem,
+  t,
+}: {
+  problem: VerifyCodeProblem
+  t: Translator
+}): string => {
+  switch (problem.t) {
+    case "code-incorrect":
+      return t("verify-sms-problem.code-incorrect")
+    case "verification-expired":
+      return t("verify-sms-problem.verification-expired")
+    case "verification-not-found":
+      return t("verify-sms-problem.verification-not-found")
+    case "verification-already-verified":
+      return t("verify-sms-problem.verification-already-verified")
+    case "database-error":
+      return t("verify-sms-problem.database-error")
+  }
+}
+
+export type IVerifySMS = {
+  sendCode: (input: {
+    phoneNumber: PhoneNumber
+  }) => Task<string, { verificationId: VerificationId }>
+  verifyCode: (input: {
+    verificationId: VerificationId
+    code: string
+  }) => Task<VerifyCodeProblem, { phoneNumberHash: Hash }>
+}
