@@ -8,19 +8,34 @@ import { Hashing } from "gamezilla-app/@SHARED/hashing"
 import { AccountDb } from "./account-db-impl"
 
 const Fixture = async () => {
-  const databaseUrl = process.env["DATABASE_URL"]
+  const IS_INTEGRATION_TEST = process.env["IS_INTEGRATION_TEST"]
 
-  if (!databaseUrl) {
-    throw new Error(`DATABASE_URL not set`)
+  const hashing = Hashing({ t: "bun" })
+
+  if (IS_INTEGRATION_TEST) {
+    const DATABASE_URL = process.env["DATABASE_URL"]
+
+    if (!DATABASE_URL) {
+      throw new Error(`DATABASE_URL not set`)
+    }
+
+    const dbConnSql = await DbConnSql({
+      databaseUrl: DATABASE_URL,
+      logger: loggerNoop,
+    })
+
+    const accountDb = AccountDb({
+      t: "postgres",
+      dbConnSql,
+    })
+
+    return {
+      hashing,
+      accountDb,
+    }
   }
 
-  const dbConnSql = await DbConnSql({ databaseUrl, logger: loggerNoop })
-
-  const accountDb = AccountDb({ t: "postgres", dbConnSql })
-
-  const hashing = Hashing({
-    t: "bun",
-  })
+  const accountDb = AccountDb({ t: "in-memory", async delay() {} })
 
   return {
     hashing,
@@ -58,7 +73,7 @@ describe(import.meta.file, () => {
     expect(maybeAccount).toEqual(account)
   })
 
-  it.only("should be able to find account by phone number hash", async () => {
+  it("should be able to find account by phone number hash", async () => {
     const f = await Fixture()
     const account: UserAccount = {
       userId: UserId.generate(),
