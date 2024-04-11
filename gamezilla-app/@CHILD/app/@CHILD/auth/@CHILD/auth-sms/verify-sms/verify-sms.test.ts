@@ -142,4 +142,8 @@ describe(import.meta.file, () => {
 
     expect(isErr(verified) && verified.error.t === "code-incorrect").toBe(true)
   })
+
+  it("should eventualy error after enough failed attempts", async () => {
+    //
+  })
 })
