@@ -32,6 +32,8 @@ export const translations: Text = {
   "verify-sms-problem.verification-not-found": "인증을 찾을 수 없음",
   "verify-sms-problem.verification-already-verified": "이미 확인된 인증",
   "verify-sms-problem.database-error": "데이터베이스 오류",
+  "verify-sms-problem.verification-expired-too-many-failed-attempts":
+    "너무 많은 실패한 시도로 인한 인증 만료",
   "auth-sms.login-with-phone": "전화로 로그인",
   "auth-sms.phone-number": "전화 번호",
   "auth-sms.send-code": "코드 보내기",

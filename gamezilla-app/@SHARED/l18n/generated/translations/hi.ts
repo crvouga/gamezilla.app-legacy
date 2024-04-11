@@ -33,6 +33,8 @@ export const translations: Text = {
   "verify-sms-problem.verification-already-verified":
     "सत्यापन पहले ही सत्यापित है",
   "verify-sms-problem.database-error": "डेटाबेस त्रुटि",
+  "verify-sms-problem.verification-expired-too-many-failed-attempts":
+    "बहुत सारे विफल प्रयासों के कारण सत्यापन समाप्त हो गया",
   "auth-sms.login-with-phone": "फोन से लॉगिन करें",
   "auth-sms.phone-number": "फ़ोन नंबर",
   "auth-sms.send-code": "कोड भेजें",

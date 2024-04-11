@@ -32,6 +32,8 @@ export const translations: Text = {
   "verify-sms-problem.verification-not-found": "認証が見つかりません",
   "verify-sms-problem.verification-already-verified": "認証済み",
   "verify-sms-problem.database-error": "データベースエラー",
+  "verify-sms-problem.verification-expired-too-many-failed-attempts":
+    "多くの失敗した試行のため、認証が期限切れ",
   "auth-sms.login-with-phone": "電話でログイン",
   "auth-sms.phone-number": "電話番号",
   "auth-sms.send-code": "コードを送信",

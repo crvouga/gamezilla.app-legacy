@@ -34,6 +34,8 @@ export const translations: Text = {
   "verify-sms-problem.verification-already-verified":
     "Vérification déjà vérifiée",
   "verify-sms-problem.database-error": "Erreur de base de données",
+  "verify-sms-problem.verification-expired-too-many-failed-attempts":
+    "Vérification expirée en raison de trop de tentatives échouées",
   "auth-sms.login-with-phone": "Se connecter avec le téléphone",
   "auth-sms.phone-number": "Numéro de téléphone",
   "auth-sms.send-code": "Envoyer le code",

@@ -32,6 +32,8 @@ export const translations: Text = {
   "verify-sms-problem.verification-not-found": "لم يتم العثور على التحقق",
   "verify-sms-problem.verification-already-verified": "تم التحقق بالفعل",
   "verify-sms-problem.database-error": "خطأ في قاعدة البيانات",
+  "verify-sms-problem.verification-expired-too-many-failed-attempts":
+    "انتهت صلاحية التحقق بسبب عدد كبير من المحاولات الفاشلة",
   "auth-sms.login-with-phone": "تسجيل الدخول برقم الهاتف",
   "auth-sms.phone-number": "رقم الهاتف",
   "auth-sms.send-code": "إرسال الرمز",

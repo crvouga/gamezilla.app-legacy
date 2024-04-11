@@ -32,6 +32,8 @@ export const translations: Text = {
   "verify-sms-problem.verification-not-found": "找不到验证",
   "verify-sms-problem.verification-already-verified": "验证已经验证",
   "verify-sms-problem.database-error": "数据库错误",
+  "verify-sms-problem.verification-expired-too-many-failed-attempts":
+    "由于失败尝试过多，验证已过期",
   "auth-sms.login-with-phone": "使用电话登录",
   "auth-sms.phone-number": "电话号码",
   "auth-sms.send-code": "发送代码",

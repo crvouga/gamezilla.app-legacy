@@ -34,6 +34,8 @@ export const translations: Text = {
   "verify-sms-problem.verification-expired":
     "Истек срок действия подтверждения",
   "verify-sms-problem.verification-not-found": "Подтверждение не найдено",
+  "verify-sms-problem.verification-expired-too-many-failed-attempts":
+    "Истек срок действия подтверждения из-за слишком многих неудачных попыток",
   "auth-sms.login-with-phone": "Войти с телефона",
   "auth-sms.phone-number": "Номер телефона",
   "auth-sms.send-code": "Отправить код",

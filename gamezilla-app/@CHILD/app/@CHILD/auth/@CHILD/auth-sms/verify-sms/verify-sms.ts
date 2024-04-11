@@ -11,6 +11,9 @@ export type VerifyCodeProblem =
       t: "verification-expired"
     }
   | {
+      t: "verification-expired-too-many-failed-attempts"
+    }
+  | {
       t: "verification-not-found"
     }
   | {
@@ -39,6 +42,10 @@ export const verifyCodeProblemToString = ({
       return t("verify-sms-problem.verification-already-verified")
     case "database-error":
       return t("verify-sms-problem.database-error")
+    case "verification-expired-too-many-failed-attempts":
+      return t(
+        "verify-sms-problem.verification-expired-too-many-failed-attempts",
+      )
   }
 }
 
