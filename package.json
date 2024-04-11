@@ -12,7 +12,7 @@
     "db:down": "docker-compose -f docker-compose.local.yml down",
     "db:new": "bun x dbmate new",
     "db:dump": "bun x dbmate dump",
-    "test:integration": "IS_INTEGRATION_TEST=true bun test",
+    "test:int": "IS_INTEGRATION_TEST=true bun test",
     "test:unit": "IS_INTEGRATION_TEST=false bun test",
     "client:build": "vite build",
     "client:serve": "bun x serve -s dist -p 3001",
