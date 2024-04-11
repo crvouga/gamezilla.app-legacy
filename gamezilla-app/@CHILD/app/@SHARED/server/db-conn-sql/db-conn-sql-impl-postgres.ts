@@ -1,6 +1,6 @@
 import { Err, Ok } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
-import postgres from "postgres"
+import pg from "pg"
 import { Logger } from "../logger"
 import { IDbConnSql } from "./db-conn-sql"
 import { logQuery } from "./shared"
@@ -13,15 +13,9 @@ export const createDbConnPostgres = async ({
   databaseUrl: string
   logger: Logger
 }): Promise<IDbConnSql> => {
-  const database = await getDatabaseConnection({
-    logger,
-    databaseUrl,
+  const pool = new pg.Pool({
+    connectionString: databaseUrl,
   })
-
-  if (!database) {
-    logger.error(`[db-conn-sql-postgres] failed to connect`)
-    throw new Error("Failed to connect to the database")
-  }
 
   return {
     query: async (rowParser, rawSql, params) => {
@@ -29,7 +23,7 @@ export const createDbConnPostgres = async ({
       try {
         const start = Date.now()
 
-        const rows = await database.unsafe(sql)
+        const queried = await pool.query(sql)
 
         const end = Date.now()
 
@@ -42,8 +36,8 @@ export const createDbConnPostgres = async ({
 
         const output: p.Infer<typeof rowParser>[] = []
 
-        for (let i = 0; i < rows.length; i++) {
-          const row = rows[i]!
+        for (let i = 0; i < queried.rows.length; i++) {
+          const row = queried.rows[i]!
           for (const columnKey in row) {
             const value = row[columnKey]
 
@@ -75,32 +69,4 @@ export const createDbConnPostgres = async ({
       }
     },
   }
-}
-
-const MAX_RETRIES = 5
-const RETRY_DELAY = 2000
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-export const getDatabaseConnection = async ({
-  logger,
-  databaseUrl,
-}: {
-  databaseUrl: string
-  logger: Logger
-}) => {
-  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-    try {
-      const database = postgres(databaseUrl)
-      await database.unsafe("SELECT 1")
-      logger.info(`[db-conn-sql-postgres] connected`)
-      return database
-    } catch (error) {
-      logger.error(
-        `Attempt ${attempt}: Failed to connect to the database. Error: ${error}`,
-      )
-      await delay(RETRY_DELAY)
-    }
-  }
-  return null
 }
