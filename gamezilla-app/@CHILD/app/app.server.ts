@@ -86,7 +86,7 @@ export const getDeps = async ({
     dbConnKv: IDbConnKv.withCache({
       source: await DbConnKv({ t: "postgres", logger: loggerNoop, dbConnSql }),
       cache: await DbConnKv({ t: "hash-map" }),
-      writeDebounce: TimeSpan.fromSeconds(5),
+      writeDebounce: TimeSpan.fromSeconds(1),
       cacheInvalidation,
       logger,
     }),
