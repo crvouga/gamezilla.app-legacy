@@ -104,6 +104,36 @@ CREATE TABLE public.schema_migrations (
 
 
 --
+-- Name: socket_io_attachments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.socket_io_attachments (
+    id bigint NOT NULL,
+    created_at timestamp with time zone DEFAULT now(),
+    payload bytea
+);
+
+
+--
+-- Name: socket_io_attachments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.socket_io_attachments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: socket_io_attachments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.socket_io_attachments_id_seq OWNED BY public.socket_io_attachments.id;
+
+
+--
 -- Name: user_account; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -148,6 +178,13 @@ CREATE TABLE public.user_session (
     ended_at timestamp with time zone,
     session_id text
 );
+
+
+--
+-- Name: socket_io_attachments id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.socket_io_attachments ALTER COLUMN id SET DEFAULT nextval('public.socket_io_attachments_id_seq'::regclass);
 
 
 --
@@ -196,6 +233,14 @@ ALTER TABLE ONLY public.key_value
 
 ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: socket_io_attachments socket_io_attachments_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.socket_io_attachments
+    ADD CONSTRAINT socket_io_attachments_id_key UNIQUE (id);
 
 
 --

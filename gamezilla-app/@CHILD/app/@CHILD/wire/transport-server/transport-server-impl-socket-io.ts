@@ -1,22 +1,22 @@
-import { createAdapter } from "@socket.io/postgres-adapter"
+import { createAdapter } from "@socket.io/redis-adapter"
 import { ClientId, SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { ServerNode } from "gamezilla-app/@SHARED/server/server-impl-node/server-impl-node"
-import pg from "pg"
+import { createClient } from "redis"
 import { Server } from "socket.io"
 import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core"
 import { IServerTransport, initServerTransport } from "./transport-server"
-import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 
 export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
   server,
   codebaseVersionId,
-  databaseUrl,
+  redisUrl,
   logger,
 }: {
   logger: Logger
   codebaseVersionId: string
   server: ServerNode
-  databaseUrl: string
+  redisUrl: string
 }): Promise<
   IServerTransport<{
     MsgToClient: MsgToClient
@@ -25,7 +25,14 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 > => {
   const transport = initServerTransport<MsgToServer, MsgToClient>()
 
+  const pubClient = createClient({ url: redisUrl })
+  const subClient = pubClient.duplicate()
+
+  await Promise.all([pubClient.connect(), subClient.connect()])
+
   const io = new Server(server.httpServer, {
+    // @ts-ignore
+    adapter: createAdapter(pubClient, subClient),
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
@@ -33,24 +40,6 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
     transports: ["websocket"],
     allowUpgrades: true,
   })
-
-  const pool = new pg.Pool({
-    connectionString: databaseUrl,
-  })
-
-  pool.query(`
-  CREATE TABLE IF NOT EXISTS socket_io_attachments (
-      id          bigserial UNIQUE,
-      created_at  timestamptz DEFAULT NOW(),
-      payload     bytea
-  );
-`)
-
-  pool.on("error", (err) => {
-    logger.error(`Postgres error: ${err}`)
-  })
-
-  io.adapter(createAdapter(pool))
 
   io.on("connection", (socket) => {
     const maybeSessionId = socket.handshake.auth["sessionId"]
