@@ -1,4 +1,3 @@
-import { createAdapter } from "@socket.io/redis-adapter"
 import { ClientId, SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { ServerNode } from "gamezilla-app/@SHARED/server/server-impl-node/server-impl-node"
@@ -31,8 +30,7 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
   await Promise.all([pubClient.connect(), subClient.connect()])
 
   const io = new Server(server.httpServer, {
-    // @ts-ignore
-    adapter: createAdapter(pubClient, subClient),
+    // adapter: createAdapter(pubClient, subClient),
     cors: {
       origin: "*",
       methods: ["GET", "POST"],
