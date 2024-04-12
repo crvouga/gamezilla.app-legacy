@@ -39,7 +39,7 @@ export const PubSubPostgres = <T>({
     logger.info(
       `[pubsub] recieved notification channel=${channel} instanceId=${instanceId} payload=${payload?.slice(
         0,
-        200,
+        100,
       )}`,
     )
 
@@ -47,7 +47,7 @@ export const PubSubPostgres = <T>({
       logger.info(
         `[pubsub] skipping self notification channel=${channel} instanceId=${instanceId} payload=${payload?.slice(
           0,
-          200,
+          100,
         )}`,
       )
       return

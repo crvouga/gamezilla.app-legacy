@@ -103,19 +103,25 @@ const withReducedParsing = ({
   }
 }
 
+const DistributedUpdateType = {
+  SET: 0,
+  SET_MANY: 1,
+  ZAP: 2,
+} as const
+
 export type DistributedUpdate =
   | {
-      t: "set"
-      key: string
-      value: unknown
+      t: typeof DistributedUpdateType.SET
+      k: string
+      v: unknown
     }
   | {
-      t: "zap"
-      key: string
+      t: typeof DistributedUpdateType.ZAP
+      k: string
     }
   | {
-      t: "setMany"
-      entries: [string, unknown][]
+      t: typeof DistributedUpdateType.SET_MANY
+      e: [string, unknown][]
     }
 
 const withDistributedUpdates = ({
@@ -129,23 +135,23 @@ const withDistributedUpdates = ({
 }): IDbConnKv & { unsubscribe: () => void } => {
   const unsubscribe = pubSub.subscribe((update) => {
     switch (update.t) {
-      case "set": {
-        logger.info(`[db-conn-kv] distributed set: key=${update.key}`)
-        dbConnKv.set(update.key, update.value)
+      case DistributedUpdateType.SET: {
+        logger.info(`[db-conn-kv] distributed set: key=${update.k}`)
+        dbConnKv.set(update.k, update.v)
         break
       }
-      case "setMany": {
+      case DistributedUpdateType.SET_MANY: {
         let key = ""
-        for (let i = 0; i < update.entries.length; i++) {
-          key = key + "," + update.entries[i]![0]
+        for (let i = 0; i < update.e.length; i++) {
+          key = key + "," + update.e[i]![0]
         }
         logger.info(`[db-conn-kv] distributed setMany: keys=${key}`)
-        dbConnKv.setMany(update.entries)
+        dbConnKv.setMany(update.e)
         break
       }
-      case "zap": {
-        logger.info(`[db-conn-kv] distributed zap: key=${update.key}`)
-        dbConnKv.zap(update.key)
+      case DistributedUpdateType.ZAP: {
+        logger.info(`[db-conn-kv] distributed zap: key=${update.k}`)
+        dbConnKv.zap(update.k)
         break
       }
     }
@@ -154,15 +160,15 @@ const withDistributedUpdates = ({
     ...dbConnKv,
     unsubscribe,
     set(key, value) {
-      pubSub.publish({ t: "set", key, value })
+      pubSub.publish({ t: DistributedUpdateType.SET, k: key, v: value })
       return dbConnKv.set(key, value)
     },
     setMany(entries) {
-      pubSub.publish({ t: "setMany", entries })
+      // pubSub.publish({ t: DistributedUpdateType.SET_MANY, e: entries })
       return dbConnKv.setMany(entries)
     },
     zap(key) {
-      pubSub.publish({ t: "zap", key })
+      // pubSub.publish({ t: DistributedUpdateType.ZAP, k: key })
       return dbConnKv.zap(key)
     },
   }
@@ -248,7 +254,9 @@ const withCache = ({
 
       timeouts.set(
         key,
-        setTimeout(() => source.set(key, value), writeDebounceMs),
+        setTimeout(async () => {
+          source.set(key, value)
+        }, writeDebounceMs),
       )
 
       return cache.set(key, value)
