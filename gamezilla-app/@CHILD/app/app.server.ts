@@ -22,7 +22,11 @@ import {
   ServerTransport,
 } from "./@CHILD/wire/transport-server"
 import * as WireServer from "./@CHILD/wire/wire.server"
-import { DbConnKv, IDbConnKv } from "./@SHARED/server/db-conn-kv"
+import {
+  DbConnKv,
+  DistributedUpdate,
+  IDbConnKv,
+} from "./@SHARED/server/db-conn-kv"
 import { DbConnSql, IDbConnSql } from "./@SHARED/server/db-conn-sql"
 import { Logger, loggerNoop } from "./@SHARED/server/logger"
 import { ISMS, SMS } from "./@SHARED/server/sms"
@@ -74,20 +78,23 @@ export const getDeps = async ({
 
   const dbConnSql = await DbConnSql({ databaseUrl, logger })
 
-  const cacheInvalidation = PubSubPostgres<string>({
-    channel: "cache_invalidation",
+  const distributedUpdates = PubSubPostgres<DistributedUpdate>({
+    channel: "distributed_update",
     dbConnSql,
-    decode: (msg) => msg ?? "",
-    encode: (msg) => msg,
+    decode: (msg) => (msg ? JSON.parse(msg) : null),
+    encode: (msg) => JSON.stringify(msg),
     logger,
   })
 
   const dbConnKv = IDbConnKv.withReducedParsing({
     dbConnKv: IDbConnKv.withCache({
       source: await DbConnKv({ t: "postgres", logger: loggerNoop, dbConnSql }),
-      cache: await DbConnKv({ t: "hash-map" }),
+      cache: IDbConnKv.withDistributedUpdates({
+        dbConnKv: await DbConnKv({ t: "hash-map" }),
+        logger,
+        pubSub: distributedUpdates,
+      }),
       writeDebounce: TimeSpan.fromSeconds(1),
-      cacheInvalidation,
       logger,
     }),
     verifiedKeys: new Set(),

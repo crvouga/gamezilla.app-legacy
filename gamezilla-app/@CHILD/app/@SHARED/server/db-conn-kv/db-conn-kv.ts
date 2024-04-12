@@ -5,9 +5,9 @@ import {
   TimeSpan,
   isErr,
 } from "gamezilla-app/@SHARED/core"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { Parser } from "gamezilla-app/@SHARED/core/parser/parser"
 import { Logger } from "../logger"
-import { p } from "gamezilla-app/@SHARED/core/parser"
 
 export type IDbConnKv = {
   get: <TValue>(
@@ -103,32 +103,86 @@ const withReducedParsing = ({
   }
 }
 
+export type DistributedUpdate =
+  | {
+      t: "set"
+      key: string
+      value: unknown
+    }
+  | {
+      t: "zap"
+      key: string
+    }
+  | {
+      t: "setMany"
+      entries: [string, unknown][]
+    }
+
+const withDistributedUpdates = ({
+  dbConnKv,
+  pubSub,
+  logger,
+}: {
+  logger: Logger
+  dbConnKv: IDbConnKv
+  pubSub: PubSub<DistributedUpdate>
+}): IDbConnKv & { unsubscribe: () => void } => {
+  const unsubscribe = pubSub.subscribe((update) => {
+    switch (update.t) {
+      case "set": {
+        logger.info(`[db-conn-kv] distributed set: key=${update.key}`)
+        dbConnKv.set(update.key, update.value)
+        break
+      }
+      case "setMany": {
+        let key = ""
+        for (let i = 0; i < update.entries.length; i++) {
+          key = key + "," + update.entries[i]![0]
+        }
+        logger.info(`[db-conn-kv] distributed setMany: keys=${key}`)
+        dbConnKv.setMany(update.entries)
+        break
+      }
+      case "zap": {
+        logger.info(`[db-conn-kv] distributed zap: key=${update.key}`)
+        dbConnKv.zap(update.key)
+        break
+      }
+    }
+  })
+  return {
+    ...dbConnKv,
+    unsubscribe,
+    set(key, value) {
+      pubSub.publish({ t: "set", key, value })
+      return dbConnKv.set(key, value)
+    },
+    setMany(entries) {
+      pubSub.publish({ t: "setMany", entries })
+      return dbConnKv.setMany(entries)
+    },
+    zap(key) {
+      pubSub.publish({ t: "zap", key })
+      return dbConnKv.zap(key)
+    },
+  }
+}
+
 const withCache = ({
   cache,
   source,
   logger,
   writeDebounce,
-  cacheInvalidation,
 }: {
   cache: IDbConnKv
   source: IDbConnKv
   logger: Logger
   writeDebounce: TimeSpan
-  cacheInvalidation?: PubSub<string>
-}): IDbConnKv & { cleanUp: () => void } => {
+}): IDbConnKv => {
   const writeDebounceMs = TimeSpan.toMilliseconds(writeDebounce)
   const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
 
-  const unsubscribe = cacheInvalidation?.subscribe((key) => {
-    logger.info(`[db-conn-kv] INVALIDATING CACHE key=${key}`)
-    cache.zap(key)
-  })
-
   return {
-    cleanUp() {
-      unsubscribe?.()
-    },
-
     async get(key, parser) {
       const start = process.hrtime.bigint()
 
@@ -197,8 +251,6 @@ const withCache = ({
         setTimeout(() => source.set(key, value), writeDebounceMs),
       )
 
-      cacheInvalidation?.publish(key)
-
       return cache.set(key, value)
     },
     async setMany(entries) {
@@ -214,8 +266,6 @@ const withCache = ({
         setTimeout(() => source.setMany(entries), writeDebounceMs),
       )
 
-      cacheInvalidation?.publish(key)
-
       return cache.setMany(entries)
     },
     async zap(key) {
@@ -226,8 +276,6 @@ const withCache = ({
         setTimeout(() => source.zap(key), writeDebounceMs),
       )
 
-      cacheInvalidation?.publish(key)
-
       return cache.zap(key)
     },
   }
@@ -236,5 +284,6 @@ const withCache = ({
 export const IDbConnKv = {
   instance,
   withReducedParsing,
+  withDistributedUpdates,
   withCache,
 }
