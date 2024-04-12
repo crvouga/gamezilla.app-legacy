@@ -5,12 +5,15 @@ import pg from "pg"
 import { Server } from "socket.io"
 import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core"
 import { IServerTransport, initServerTransport } from "./transport-server"
+import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 
 export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
   server,
   codebaseVersionId,
   databaseUrl,
+  logger,
 }: {
+  logger: Logger
   codebaseVersionId: string
   server: ServerNode
   databaseUrl: string
@@ -44,7 +47,7 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 `)
 
   pool.on("error", (err) => {
-    console.error("Postgres error", err)
+    logger.error(`Postgres error: ${err}`)
   })
 
   io.adapter(createAdapter(pool))

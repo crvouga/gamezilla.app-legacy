@@ -89,6 +89,7 @@ export const getDeps = async ({
     codebaseVersionId: CODEBASE_VERSION_ID,
     server,
     databaseUrl,
+    logger,
   })
 
   const wire = await WireServer.getDeps({
