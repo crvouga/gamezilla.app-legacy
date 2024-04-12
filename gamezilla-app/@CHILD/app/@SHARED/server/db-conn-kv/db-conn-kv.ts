@@ -1,4 +1,10 @@
-import { Result, Task, TimeSpan, isErr } from "gamezilla-app/@SHARED/core"
+import {
+  PubSub,
+  Result,
+  Task,
+  TimeSpan,
+  isErr,
+} from "gamezilla-app/@SHARED/core"
 import { Parser } from "gamezilla-app/@SHARED/core/parser/parser"
 import { Logger } from "../logger"
 import { p } from "gamezilla-app/@SHARED/core/parser"
@@ -102,15 +108,27 @@ const withCache = ({
   source,
   logger,
   writeDebounce,
+  cacheInvalidation,
 }: {
   cache: IDbConnKv
   source: IDbConnKv
   logger: Logger
   writeDebounce: TimeSpan
-}): IDbConnKv => {
+  cacheInvalidation?: PubSub<string>
+}): IDbConnKv & { cleanUp: () => void } => {
   const writeDebounceMs = TimeSpan.toMilliseconds(writeDebounce)
   const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
+
+  const unsubscribe = cacheInvalidation?.subscribe((key) => {
+    logger.info(`[db-conn-kv] INVALIDATING CACHE key=${key}`)
+    cache.zap(key)
+  })
+
   return {
+    cleanUp() {
+      unsubscribe?.()
+    },
+
     async get(key, parser) {
       const start = process.hrtime.bigint()
 
@@ -179,6 +197,8 @@ const withCache = ({
         setTimeout(() => source.set(key, value), writeDebounceMs),
       )
 
+      cacheInvalidation?.publish(key)
+
       return cache.set(key, value)
     },
     async setMany(entries) {
@@ -194,6 +214,8 @@ const withCache = ({
         setTimeout(() => source.setMany(entries), writeDebounceMs),
       )
 
+      cacheInvalidation?.publish(key)
+
       return cache.setMany(entries)
     },
     async zap(key) {
@@ -203,6 +225,8 @@ const withCache = ({
         key,
         setTimeout(() => source.zap(key), writeDebounceMs),
       )
+
+      cacheInvalidation?.publish(key)
 
       return cache.zap(key)
     },

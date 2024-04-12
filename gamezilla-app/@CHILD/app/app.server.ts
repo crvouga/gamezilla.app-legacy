@@ -33,6 +33,7 @@ import {
   MsgToServer,
   MsgToServerMeta,
 } from "./app.core"
+import { PubSubPostgres } from "./@SHARED/server/pub-sub/pub-sub-impl-posgtres"
 
 //
 //
@@ -73,11 +74,20 @@ export const getDeps = async ({
 
   const dbConnSql = await DbConnSql({ databaseUrl, logger })
 
+  const cacheInvalidation = PubSubPostgres<string>({
+    channel: "cache_invalidation",
+    dbConnSql,
+    decode: (msg) => msg ?? "",
+    encode: (msg) => msg,
+    logger,
+  })
+
   const dbConnKv = IDbConnKv.withReducedParsing({
     dbConnKv: IDbConnKv.withCache({
       source: await DbConnKv({ t: "postgres", logger: loggerNoop, dbConnSql }),
       cache: await DbConnKv({ t: "hash-map" }),
       writeDebounce: TimeSpan.fromSeconds(5),
+      cacheInvalidation,
       logger,
     }),
     verifiedKeys: new Set(),

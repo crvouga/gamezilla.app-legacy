@@ -4,8 +4,11 @@ import { IDbConnSql } from "./db-conn-sql"
 import { createDbConnPostgres } from "./db-conn-sql-impl-postgres"
 
 export const dbConnSqlNoop: IDbConnSql = {
-  query: async () => {
+  async query() {
     return Ok([])
+  },
+  onNotification() {
+    return () => {}
   },
 }
 
