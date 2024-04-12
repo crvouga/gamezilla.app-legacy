@@ -8,6 +8,7 @@ import { DbConnKvRedis } from "./db-conn-kv-impl-redis"
 export type Impl =
   | {
       t: "hash-map"
+      map?: Map<string, unknown>
     }
   | {
       t: "redis"
@@ -23,7 +24,7 @@ export type Impl =
 export const DbConnKv = async (impl: Impl): Promise<IDbConnKv> => {
   switch (impl.t) {
     case "hash-map": {
-      return DbConnKvHashMap()
+      return DbConnKvHashMap({ map: impl.map })
     }
 
     case "redis": {

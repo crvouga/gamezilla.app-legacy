@@ -178,17 +178,27 @@ const withCache = ({
   cache,
   source,
   logger,
+  cacheInvalidation,
   writeDebounce,
 }: {
   cache: IDbConnKv
   source: IDbConnKv
   logger: Logger
+  cacheInvalidation?: PubSub<string>
   writeDebounce: TimeSpan
-}): IDbConnKv => {
+}): IDbConnKv & { cleanUp: () => void } => {
   const writeDebounceMs = TimeSpan.toMilliseconds(writeDebounce)
   const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
 
+  const unsubscribe = cacheInvalidation?.subscribe((invalidatedKey) => {
+    logger.info(`[db-conn-kv] cache invalidation: key=${invalidatedKey}`)
+    cache.zap(invalidatedKey)
+  })
+
   return {
+    cleanUp() {
+      unsubscribe?.()
+    },
     async get(key, parser) {
       const start = process.hrtime.bigint()
 
@@ -255,7 +265,8 @@ const withCache = ({
       timeouts.set(
         key,
         setTimeout(async () => {
-          source.set(key, value)
+          await source.set(key, value)
+          cacheInvalidation?.publish(key)
         }, writeDebounceMs),
       )
 
@@ -271,7 +282,10 @@ const withCache = ({
 
       timeouts.set(
         key,
-        setTimeout(() => source.setMany(entries), writeDebounceMs),
+        setTimeout(async () => {
+          source.setMany(entries)
+          cacheInvalidation?.publish(key)
+        }, writeDebounceMs),
       )
 
       return cache.setMany(entries)
@@ -281,7 +295,10 @@ const withCache = ({
 
       timeouts.set(
         key,
-        setTimeout(() => source.zap(key), writeDebounceMs),
+        setTimeout(async () => {
+          await source.zap(key)
+          cacheInvalidation?.publish(key)
+        }, writeDebounceMs),
       )
 
       return cache.zap(key)

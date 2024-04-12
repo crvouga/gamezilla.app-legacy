@@ -11,6 +11,7 @@ import {
   batchMsgs,
   toMsgType,
 } from "gamezilla-app/@SHARED/core"
+import { LRUCache } from "gamezilla-app/@SHARED/data-structures/least-recently-used-cache"
 import { ServerInstance } from "gamezilla-app/@SHARED/server"
 import { CODEBASE_VERSION_ID } from "gamezilla-app/public-config"
 import * as AuthServer from "./@CHILD/auth/auth.server"
@@ -22,13 +23,10 @@ import {
   ServerTransport,
 } from "./@CHILD/wire/transport-server"
 import * as WireServer from "./@CHILD/wire/wire.server"
-import {
-  DbConnKv,
-  DistributedUpdate,
-  IDbConnKv,
-} from "./@SHARED/server/db-conn-kv"
+import { DbConnKv, IDbConnKv } from "./@SHARED/server/db-conn-kv"
 import { DbConnSql, IDbConnSql } from "./@SHARED/server/db-conn-sql"
-import { Logger, loggerNoop } from "./@SHARED/server/logger"
+import { Logger } from "./@SHARED/server/logger"
+import { PubSubPostgres } from "./@SHARED/server/pub-sub/pub-sub-impl-posgtres"
 import { ISMS, SMS } from "./@SHARED/server/sms"
 import {
   ModelServer,
@@ -37,7 +35,6 @@ import {
   MsgToServer,
   MsgToServerMeta,
 } from "./app.core"
-import { PubSubPostgres } from "./@SHARED/server/pub-sub/pub-sub-impl-posgtres"
 
 //
 //
@@ -78,10 +75,34 @@ export const getDeps = async ({
 
   const dbConnSql = await DbConnSql({ databaseUrl, logger })
 
+  const redisUrl = process.env["REDIS_URL"]
+
+  if (!redisUrl) {
+    throw new Error(`[deps] REDIS_URL not set`)
+  }
+
+  const cacheInvalidation = PubSubPostgres<string>({
+    channel: "cache_invalidation",
+    dbConnSql,
+    decode: (msg) => msg ?? "",
+    encode: (msg) => msg,
+    logger,
+  })
+
   const dbConnKv = IDbConnKv.withReducedParsing({
     dbConnKv: IDbConnKv.withCache({
-      source: await DbConnKv({ t: "postgres", logger: loggerNoop, dbConnSql }),
-      cache: await DbConnKv({ t: "hash-map" }),
+      source: await DbConnKv({
+        t: "redis",
+        logger,
+        url: redisUrl,
+      }),
+      cache: await DbConnKv({
+        t: "hash-map",
+        map: new LRUCache({
+          capacity: 1000,
+        }),
+      }),
+      cacheInvalidation,
       writeDebounce: TimeSpan.fromSeconds(1),
       logger,
     }),

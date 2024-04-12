@@ -77,10 +77,10 @@ CREATE TABLE public.game_flow_puzzle (
     flow_puzzle json NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_by_user_id text NOT NULL,
-    deleted_at timestamp without time zone,
-    deleted_by_user_id text,
     last_updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    last_updated_by_user_id text NOT NULL
+    last_updated_by_user_id text NOT NULL,
+    deleted_at timestamp without time zone,
+    deleted_by_user_id text
 );
 
 
@@ -101,36 +101,6 @@ CREATE UNLOGGED TABLE public.key_value (
 CREATE TABLE public.schema_migrations (
     version character varying(128) NOT NULL
 );
-
-
---
--- Name: socket_io_attachments; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.socket_io_attachments (
-    id bigint NOT NULL,
-    created_at timestamp with time zone DEFAULT now(),
-    payload bytea
-);
-
-
---
--- Name: socket_io_attachments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.socket_io_attachments_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: socket_io_attachments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.socket_io_attachments_id_seq OWNED BY public.socket_io_attachments.id;
 
 
 --
@@ -181,13 +151,6 @@ CREATE TABLE public.user_session (
 
 
 --
--- Name: socket_io_attachments id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.socket_io_attachments ALTER COLUMN id SET DEFAULT nextval('public.socket_io_attachments_id_seq'::regclass);
-
-
---
 -- Name: game_chess_puzzle_interaction game_chess_puzzle_interaction_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -233,14 +196,6 @@ ALTER TABLE ONLY public.key_value
 
 ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
-
-
---
--- Name: socket_io_attachments socket_io_attachments_id_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.socket_io_attachments
-    ADD CONSTRAINT socket_io_attachments_id_key UNIQUE (id);
 
 
 --
@@ -362,7 +317,6 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240203025639'),
     ('20240203034127'),
     ('20240203034632'),
-    ('20240203034815'),
     ('20240203034900'),
     ('20240203035440'),
     ('20240203040136'),
