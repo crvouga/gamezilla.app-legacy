@@ -21,7 +21,7 @@ export const PubSubPostgres = <T>({
   const subscribers = new Map<number, (msg: T) => void>()
 
   const instanceId = Math.random().toString(36).substring(2)
-  const SEPERATOR = "|||"
+  const SEPERATOR = "::::"
 
   dbConnSql.query(p.unknown, `LISTEN ${channel}`, {})
 
