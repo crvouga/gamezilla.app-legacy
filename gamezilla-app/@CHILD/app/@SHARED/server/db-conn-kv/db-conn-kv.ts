@@ -164,11 +164,11 @@ const withDistributedUpdates = ({
       return dbConnKv.set(key, value)
     },
     setMany(entries) {
-      // pubSub.publish({ t: DistributedUpdateType.SET_MANY, e: entries })
+      pubSub.publish({ t: DistributedUpdateType.SET_MANY, e: entries })
       return dbConnKv.setMany(entries)
     },
     zap(key) {
-      // pubSub.publish({ t: DistributedUpdateType.ZAP, k: key })
+      pubSub.publish({ t: DistributedUpdateType.ZAP, k: key })
       return dbConnKv.zap(key)
     },
   }
