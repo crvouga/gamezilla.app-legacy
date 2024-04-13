@@ -17,7 +17,7 @@ export const createDbConnPostgres = async ({
     connectionString: databaseUrl,
   })
 
-  const client = await pool.connect()
+  let client: pg.Client
 
   return {
     async query(rowParser, rawSql, params) {
@@ -25,7 +25,7 @@ export const createDbConnPostgres = async ({
       try {
         const start = Date.now()
 
-        const queried = await client.query(sql)
+        const queried = await pool.query(sql)
 
         const end = Date.now()
 
@@ -71,7 +71,7 @@ export const createDbConnPostgres = async ({
       }
     },
 
-    onNotification(callback) {
+    async onNotification(callback) {
       const cb = (notification: pg.Notification) => {
         callback({
           processId: notification.processId,
@@ -79,6 +79,8 @@ export const createDbConnPostgres = async ({
           payload: notification.payload,
         })
       }
+
+      client = client ?? (await pool.connect())
 
       client.on("notification", cb)
 

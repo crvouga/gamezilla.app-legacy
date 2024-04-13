@@ -92,7 +92,7 @@ export const getDeps = async ({
   })
 
   onServerShutdown(() => {
-    dbConnKvSource.flush
+    dbConnKvSource.flush()
   })
 
   const dbConnKv = IDbConnKv.withReducedParsing({
