@@ -8,9 +8,15 @@ const server = Server(SERVER_IMPL)
 
 const logger = LoggerConsole("app")
 
+const onServerShutdown = (callback: () => void) => {
+  process.on("SIGTERM", callback)
+  process.on("SIGINT", callback)
+}
+
 const deps = await AppServer.getDeps({
   server,
   logger,
+  onServerShutdown,
 })
 
 await ProgramImpure.run({

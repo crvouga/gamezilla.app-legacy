@@ -61,9 +61,11 @@ export type Deps = {
 export const getDeps = async ({
   logger,
   server,
+  onServerShutdown,
 }: {
   logger: Logger
   server: ServerInstance
+  onServerShutdown: (callback: () => void) => void
 }): Promise<Deps> => {
   const databaseUrl = process.env["DATABASE_URL"]
 
@@ -89,8 +91,9 @@ export const getDeps = async ({
     logger,
   })
 
-  process.on("SIGTERM", dbConnKvSource.flush)
-  process.on("SIGINT", dbConnKvSource.flush)
+  onServerShutdown(() => {
+    dbConnKvSource.flush
+  })
 
   const dbConnKv = IDbConnKv.withReducedParsing({
     dbConnKv: IDbConnKv.withCache({
