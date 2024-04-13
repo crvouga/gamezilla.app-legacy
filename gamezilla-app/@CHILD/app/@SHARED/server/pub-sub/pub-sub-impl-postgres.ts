@@ -1,21 +1,23 @@
-import { PubSub } from "gamezilla-app/@SHARED/core"
+import { PubSub as IPubSub } from "gamezilla-app/@SHARED/core"
 import { IDbConnSql } from "../db-conn-sql"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import { Logger } from "../logger"
 
-export const PubSubPostgres = <T>({
-  dbConnSql,
-  channel,
-  logger,
-  encode,
-  decode,
-}: {
+export type Deps<T> = {
   dbConnSql: IDbConnSql
   logger: Logger
   channel: string
   encode: (msg: T) => string
   decode: (msg: string | null) => T
-}): PubSub<T> => {
+}
+
+export const PubSub = <T>({
+  dbConnSql,
+  channel,
+  logger,
+  encode,
+  decode,
+}: Deps<T>): IPubSub<T> => {
   let runningSubscriberId = 0
 
   const subscribers = new Map<number, (msg: T) => void>()

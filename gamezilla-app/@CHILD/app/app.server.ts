@@ -26,7 +26,7 @@ import * as WireServer from "./@CHILD/wire/wire.server"
 import { DbConnKv, IDbConnKv } from "./@SHARED/server/db-conn-kv"
 import { DbConnSql, IDbConnSql } from "./@SHARED/server/db-conn-sql"
 import { Logger } from "./@SHARED/server/logger"
-import { PubSubPostgres } from "./@SHARED/server/pub-sub/pub-sub-impl-posgtres"
+import { PubSubPostgres } from "./@SHARED/server/pub-sub/pub-sub-impl-postgres"
 import { ISMS, SMS } from "./@SHARED/server/sms"
 import {
   ModelServer,
@@ -35,6 +35,7 @@ import {
   MsgToServer,
   MsgToServerMeta,
 } from "./app.core"
+import { PubSub } from "./@SHARED/server/pub-sub"
 
 //
 //
@@ -81,13 +82,7 @@ export const getDeps = async ({
     throw new Error(`[deps] REDIS_URL not set`)
   }
 
-  const cacheInvalidation = PubSubPostgres<string>({
-    channel: "cache_invalidation",
-    dbConnSql,
-    decode: (msg) => msg ?? "",
-    encode: (msg) => msg,
-    logger,
-  })
+  const cacheInvalidation = PubSub<string>({ t: "in-memory" })
 
   const dbConnKv = IDbConnKv.withReducedParsing({
     dbConnKv: IDbConnKv.withCache({
