@@ -6,7 +6,7 @@ export type ClientTransportEvent =
   | { t: "server-connect-error" }
   | { t: "got-bad-msgs"; reason: "codebase-version-mismatch" }
 
-type ClientTransportCommand = { t: "try-reconnect" }
+export type ClientTransportCommand = { t: "try-reconnect" }
 
 export type IClientTransport<T extends { MsgToClient: any; MsgToServer: any }> =
   {

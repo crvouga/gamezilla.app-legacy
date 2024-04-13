@@ -1,5 +1,7 @@
 import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core"
 import {
+  ClientTransportCommand,
+  ClientTransportEvent,
   ClientTransportWebSocketImpl,
   IClientTransport,
   initClientTransport,
@@ -8,6 +10,65 @@ import {
 const SESSION_ID_KEY = "gamezilla-session-id"
 const RECONNECT_INTERVAL = 2000 // 1 second
 const MAX_RECONNECT_ATTEMPTS = 6 // Adjust as needed
+
+type Model<MsgToServer> = {
+  reconnectAttempts: number
+  isConnected: boolean
+  isDocumentHidden: boolean
+  queue: MsgClientToMsgServer<MsgToServer>[]
+}
+
+export const init = <MsgToServer>(): Model<MsgToServer> => ({
+  reconnectAttempts: 0,
+  isConnected: false,
+  isDocumentHidden: false,
+  queue: [],
+})
+
+export const update = <MsgToServer>({
+  model,
+  evt,
+  cmd,
+}: {
+  model: Model<MsgToServer>
+  evt?: ClientTransportEvent
+  cmd?: ClientTransportCommand
+}): Model<MsgToServer> => {
+  const msg = evt ?? cmd
+  if (!msg) {
+    return model
+  }
+  switch (msg.t) {
+    case "try-reconnect": {
+      return {
+        ...model,
+        reconnectAttempts: 0,
+      }
+    }
+
+    case "got-bad-msgs": {
+      return model
+    }
+
+    case "server-connect-error": {
+      return model
+    }
+
+    case "server-connected": {
+      return {
+        ...model,
+        isConnected: true,
+      }
+    }
+
+    case "server-disconnected": {
+      return {
+        ...model,
+        isConnected: false,
+      }
+    }
+  }
+}
 
 export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
   codebaseVersionId,
