@@ -57,6 +57,7 @@ export const ServerNode = () => {
                   })
                 : null,
           }
+
           for (const handler of handlers) {
             const response = await handler(request)
             if (response) {
@@ -65,8 +66,6 @@ export const ServerNode = () => {
               return
             }
           }
-          res.writeHead(404)
-          res.end("Not Found")
         })
     },
     serveSinglePageApp(input) {
@@ -121,7 +120,7 @@ const serveSinglePageApp =
         fs.readFile(filePath, (err, content) => {
           if (err) {
             res.writeHead(404)
-            res.end("Not Found")
+            res.end(`Not Found err=${err}`)
             return
           }
 

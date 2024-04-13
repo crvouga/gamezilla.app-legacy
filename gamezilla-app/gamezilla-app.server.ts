@@ -24,6 +24,11 @@ await ProgramImpure.run({
     AppServer.subscriptions({ ...input, model: null, deps }),
 })
 
+server.serveSinglePageApp({
+  directory: "dist",
+  file: "index.html",
+})
+
 await server.start(SERVER_PORT)
 
 logger.info(
