@@ -84,11 +84,11 @@ export const getDeps = async ({
     dbConnKv: IDbConnKv.withCache({
       source: IDbConnKv.withThrottlingWrites({
         dbConnKv: await DbConnKv({
-          t: "redis",
+          t: "postgres",
           logger,
-          url: redisUrl,
+          dbConnSql,
         }),
-        throttle: TimeSpan.fromSeconds(5),
+        throttle: TimeSpan.fromSeconds(10),
       }),
       cache: await DbConnKv({
         t: "hash-map",
