@@ -1,8 +1,8 @@
 import { IS_PROD, SERVER_IMPL, SERVER_PORT } from "gamezilla-app/public-config"
 import { LoggerConsole } from "./@CHILD/app/@SHARED/server/logger"
 import * as AppServer from "./@CHILD/app/app.server"
-import { Server } from "./@SHARED/server"
 import { ProgramImpure } from "./@SHARED/core/program-impure"
+import { Server } from "./@SHARED/server"
 
 const server = Server(SERVER_IMPL)
 
@@ -22,11 +22,6 @@ await ProgramImpure.run({
 
   subscriptions: (input) =>
     AppServer.subscriptions({ ...input, model: null, deps }),
-})
-
-server.serveSinglePageApp({
-  directory: "dist",
-  file: "index.html",
 })
 
 await server.start(SERVER_PORT)
