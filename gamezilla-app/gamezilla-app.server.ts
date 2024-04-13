@@ -4,34 +4,38 @@ import * as AppServer from "./@CHILD/app/app.server"
 import { ProgramImpure } from "./@SHARED/core/program-impure"
 import { Server } from "./@SHARED/server"
 
-const server = Server(SERVER_IMPL)
+const main = async () => {
+  const server = Server(SERVER_IMPL)
 
-const logger = LoggerConsole("app")
+  const logger = LoggerConsole("app")
 
-const onServerShutdown = (callback: () => void) => {
-  process.on("SIGTERM", callback)
-  process.on("SIGINT", callback)
+  const onServerShutdown = (callback: () => void) => {
+    process.on("SIGTERM", callback)
+    process.on("SIGINT", callback)
+  }
+
+  const deps = await AppServer.getDeps({
+    server,
+    logger,
+    onServerShutdown,
+  })
+
+  await ProgramImpure.run({
+    ctx: AppServer.getCtx,
+
+    init: (input) => AppServer.init({ ...input, deps }),
+
+    update: (input) => AppServer.update({ ...input, model: null, deps }),
+
+    subscriptions: (input) =>
+      AppServer.subscriptions({ ...input, model: null, deps }),
+  })
+
+  await server.start(SERVER_PORT)
+
+  logger.info(
+    `Server started. Listening on port ${SERVER_PORT}. IS_PROD=${IS_PROD}`,
+  )
 }
 
-const deps = await AppServer.getDeps({
-  server,
-  logger,
-  onServerShutdown,
-})
-
-await ProgramImpure.run({
-  ctx: AppServer.getCtx,
-
-  init: (input) => AppServer.init({ ...input, deps }),
-
-  update: (input) => AppServer.update({ ...input, model: null, deps }),
-
-  subscriptions: (input) =>
-    AppServer.subscriptions({ ...input, model: null, deps }),
-})
-
-await server.start(SERVER_PORT)
-
-logger.info(
-  `Server started. Listening on port ${SERVER_PORT}. IS_PROD=${IS_PROD}`,
-)
+main()
