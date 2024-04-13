@@ -97,6 +97,7 @@ export const DbConnKvRedis = async ({
     async set(key, value) {
       try {
         await client.set(key, JSON.stringify(value))
+        logger.info(`[db-conn-kv-redis] set: key=${key}`)
         return Ok(null)
       } catch (e) {
         return Err(String(e))
@@ -106,7 +107,10 @@ export const DbConnKvRedis = async ({
     async setMany(entries) {
       try {
         await client.mSet(
-          entries.map(([key, value]) => [key, JSON.stringify(value)]),
+          entries.flatMap(([key, value]) => [key, JSON.stringify(value)]),
+        )
+        logger.info(
+          `[db-conn-kv-redis] setMany: keys=${entries.map(([key]) => key)}`,
         )
         return Ok(null)
       } catch (e) {
@@ -117,6 +121,7 @@ export const DbConnKvRedis = async ({
     async zap(key) {
       try {
         await client.del(key)
+        logger.info(`[db-conn-kv-redis] zap: key=${key}`)
         return Ok(null)
       } catch (e) {
         return Err(String(e))
