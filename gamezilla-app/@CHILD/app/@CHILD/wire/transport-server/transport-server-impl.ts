@@ -7,12 +7,12 @@ import { ServerTransportSocketIO } from "./transport-server-impl-socket-io"
 export const ServerTransport = async <MsgToServer, MsgToClient>({
   server,
   codebaseVersionId,
-  databaseUrl,
+  redisUrl,
   logger,
 }: {
   server: ServerInstance
   codebaseVersionId: string
-  databaseUrl: string
+  redisUrl: string
   logger: Logger
 }): Promise<
   IServerTransport<{
@@ -32,7 +32,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>({
       return ServerTransportSocketIO<MsgToServer, MsgToClient>({
         codebaseVersionId,
         server,
-        databaseUrl,
+        redisUrl,
         logger,
       })
     }

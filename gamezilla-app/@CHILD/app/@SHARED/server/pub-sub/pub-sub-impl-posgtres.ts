@@ -21,7 +21,7 @@ export const PubSubPostgres = <T>({
   const subscribers = new Map<number, (msg: T) => void>()
 
   const instanceId = Math.random().toString(36).substring(2)
-  const SEPERATOR = "::::"
+  const SEPERATOR = "___"
 
   dbConnSql.query(p.unknown, `LISTEN ${channel}`, {})
 
@@ -36,22 +36,20 @@ export const PubSubPostgres = <T>({
 
     const [payloadInstanceId, payload] = notification.payload.split(SEPERATOR)
 
+    if (payloadInstanceId === instanceId) {
+      return
+    }
+
+    if (!payload) {
+      return
+    }
+
     logger.info(
       `[pubsub] recieved notification channel=${channel} instanceId=${instanceId} payload=${payload?.slice(
         0,
         100,
       )}`,
     )
-
-    if (payloadInstanceId === instanceId) {
-      logger.info(
-        `[pubsub] skipping self notification channel=${channel} instanceId=${instanceId} payload=${payload?.slice(
-          0,
-          100,
-        )}`,
-      )
-      return
-    }
 
     const msg = decode(payload ?? null)
 
