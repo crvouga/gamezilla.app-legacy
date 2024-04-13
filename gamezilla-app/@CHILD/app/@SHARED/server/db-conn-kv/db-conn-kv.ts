@@ -178,10 +178,12 @@ const withDistributedUpdates = ({
 const withThrottlingWrites = ({
   dbConnKv,
   throttle,
+  logger,
 }: {
   dbConnKv: IDbConnKv
   throttle: TimeSpan
-}): IDbConnKv => {
+  logger: Logger
+}): IDbConnKv & { flush: () => void } => {
   const throttleMs = TimeSpan.toMilliseconds(throttle)
   const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
   const lastValues = new Map<string, any[]>()
@@ -230,8 +232,25 @@ const withThrottlingWrites = ({
     }
   }
 
+  const flush = async () => {
+    logger.info("[db-conn-kv] Flushing throttled writes")
+    for (const [key, timeout] of timeouts.entries()) {
+      clearTimeout(timeout)
+      const valueToSet = lastValues.get(key)
+      if (valueToSet && Array.isArray(valueToSet[0])) {
+        await dbConnKv.setMany(valueToSet)
+      } else {
+        await dbConnKv.set(key, valueToSet)
+      }
+      timeouts.delete(key)
+      lastValues.delete(key)
+    }
+    logger.info("[db-conn-kv] Flushed throttled writes")
+  }
+
   return {
     ...dbConnKv,
+    flush,
     async set(key, value) {
       scheduleSet(key, value)
       return Ok(null)

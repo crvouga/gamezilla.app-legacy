@@ -11,7 +11,6 @@ import {
   batchMsgs,
   toMsgType,
 } from "gamezilla-app/@SHARED/core"
-import { LRUCache } from "gamezilla-app/@SHARED/data-structures/least-recently-used-cache"
 import { ServerInstance } from "gamezilla-app/@SHARED/server"
 import { CODEBASE_VERSION_ID } from "gamezilla-app/public-config"
 import * as AuthServer from "./@CHILD/auth/auth.server"
@@ -80,16 +79,22 @@ export const getDeps = async ({
     throw new Error(`[deps] REDIS_URL not set`)
   }
 
+  const dbConnKvSource = IDbConnKv.withThrottlingWrites({
+    dbConnKv: await DbConnKv({
+      t: "postgres",
+      logger,
+      dbConnSql,
+    }),
+    throttle: TimeSpan.fromSeconds(10),
+    logger,
+  })
+
+  process.on("SIGTERM", dbConnKvSource.flush)
+  process.on("SIGINT", dbConnKvSource.flush)
+
   const dbConnKv = IDbConnKv.withReducedParsing({
     dbConnKv: IDbConnKv.withCache({
-      source: IDbConnKv.withThrottlingWrites({
-        dbConnKv: await DbConnKv({
-          t: "postgres",
-          logger,
-          dbConnSql,
-        }),
-        throttle: TimeSpan.fromSeconds(10),
-      }),
+      source: dbConnKvSource,
       cache: await DbConnKv({
         t: "hash-map",
         map: new Map(),
