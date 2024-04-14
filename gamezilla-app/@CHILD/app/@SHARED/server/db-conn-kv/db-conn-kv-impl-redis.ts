@@ -98,6 +98,7 @@ export const DbConnKvRedis = async ({
           }),
         )
       } catch (e) {
+        logger.error(`[db-conn-kv-redis] getMany: ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -108,6 +109,7 @@ export const DbConnKvRedis = async ({
         logger.info(`[db-conn-kv-redis] set: key=${key}`)
         return Ok(null)
       } catch (e) {
+        logger.error(`[db-conn-kv-redis] set: ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -122,6 +124,7 @@ export const DbConnKvRedis = async ({
         )
         return Ok(null)
       } catch (e) {
+        logger.error(`[db-conn-kv-redis] setMany: ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -132,6 +135,7 @@ export const DbConnKvRedis = async ({
         logger.info(`[db-conn-kv-redis] zap: key=${key}`)
         return Ok(null)
       } catch (e) {
+        logger.error(`[db-conn-kv-redis] zap: ${String(e)}`)
         return Err(String(e))
       }
     },

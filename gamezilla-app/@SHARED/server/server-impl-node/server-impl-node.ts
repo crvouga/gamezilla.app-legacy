@@ -8,65 +8,66 @@ export const ServerNode = () => {
   const handlers: HttpHandler[] = []
   const base: IServer = {
     async start(port) {
-      await new Promise((resolve) => {
-        httpServer.listen(port, undefined, undefined, () => {
-          resolve(null)
-        })
-      }),
-        httpServer.on("request", async (req, res) => {
-          const request: HttpRequest = {
-            method:
-              req.method === "GET"
-                ? "GET"
-                : req.method === "POST"
-                ? "POST"
-                : req.method === "PUT"
-                ? "PUT"
-                : req.method === "PATCH"
-                ? "PATCH"
-                : req.method === "DELETE"
-                ? "DELETE"
-                : req.method === "OPTIONS"
-                ? "OPTIONS"
-                : req.method === "HEAD"
-                ? "HEAD"
-                : req.method === "CONNECT"
-                ? "CONNECT"
-                : req.method === "TRACE"
-                ? "TRACE"
-                : "GET",
-            url: req.url ?? "",
-            headers: req.headers as Record<string, string>,
-            body:
-              req.method === "POST" ||
-              req.method === "PUT" ||
-              req.method === "PATCH" ||
-              req.method === "DELETE" ||
-              req.method === "OPTIONS" ||
-              req.method === "HEAD" ||
-              req.method === "CONNECT" ||
-              req.method === "TRACE"
-                ? await new Promise((resolve) => {
-                    let body = ""
-                    req.on("data", (chunk) => {
-                      body += chunk
-                    })
-                    req.on("end", () => {
-                      resolve(body)
-                    })
-                  })
-                : null,
-          }
+      try {
+        await new Promise<void>((r) => httpServer.listen(port, r))
+      } catch (error) {
+        console.error("error", error)
+      }
 
-          for (const handler of handlers) {
-            const response = await handler(request)
-            if (response) {
-              res.writeHead(response.status, response.headers)
-              res.end(response.body)
-              return
-            }
+      httpServer.on("request", async (req, res) => {
+        const request: HttpRequest = {
+          method:
+            req.method === "GET"
+              ? "GET"
+              : req.method === "POST"
+              ? "POST"
+              : req.method === "PUT"
+              ? "PUT"
+              : req.method === "PATCH"
+              ? "PATCH"
+              : req.method === "DELETE"
+              ? "DELETE"
+              : req.method === "OPTIONS"
+              ? "OPTIONS"
+              : req.method === "HEAD"
+              ? "HEAD"
+              : req.method === "CONNECT"
+              ? "CONNECT"
+              : req.method === "TRACE"
+              ? "TRACE"
+              : "GET",
+          url: req.url ?? "",
+          headers: req.headers as Record<string, string>,
+          body:
+            req.method === "POST" ||
+            req.method === "PUT" ||
+            req.method === "PATCH" ||
+            req.method === "DELETE" ||
+            req.method === "OPTIONS" ||
+            req.method === "HEAD" ||
+            req.method === "CONNECT" ||
+            req.method === "TRACE"
+              ? await new Promise((resolve) => {
+                  let body = ""
+                  req.on("data", (chunk) => {
+                    body += chunk
+                  })
+                  req.on("end", () => {
+                    resolve(body)
+                  })
+                })
+              : null,
+        }
+
+        for (const handler of handlers) {
+          const response = await handler(request)
+          if (response) {
+            res.writeHead(response.status, response.headers)
+            res.end(response.body)
+            return
           }
-        })
+        }
+      })
     },
     serveSinglePageApp(input) {
       serveSinglePageApp(httpServer)(input)

@@ -83,9 +83,9 @@ export const getDeps = async ({
 
   const dbConnKv = await pipe(
     await DbConnKv({
-      t: "postgres",
+      t: "redis",
       logger,
-      dbConnSql,
+      url: redisUrl,
     }),
     (dbConnKv) =>
       IDbConnKv.withThrottlingWrites({
