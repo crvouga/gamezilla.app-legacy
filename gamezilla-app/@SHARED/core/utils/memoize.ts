@@ -1,4 +1,4 @@
-import { LRUCache } from "gamezilla-app/@SHARED/data-structures/least-recently-used-cache"
+import { LRUCache } from "gamezilla-app/@SHARED/least-recently-used-cache.ts/least-recently-used-cache"
 
 /**
  * @description
@@ -14,7 +14,7 @@ import { LRUCache } from "gamezilla-app/@SHARED/data-structures/least-recently-u
  * const memoizedFibonacci = memoize(fibonacci)
  *
  */
-export const memoize = <TInput, TOutput>({
+export const memoize = <TInput, TOutput extends {}>({
   toKey,
   func,
   cacheCapacity,
@@ -24,7 +24,7 @@ export const memoize = <TInput, TOutput>({
   cacheCapacity: number
 }) => {
   const cache = new LRUCache<string | number, TOutput>({
-    capacity: cacheCapacity,
+    max: cacheCapacity,
   })
 
   return (x: TInput): TOutput => {
@@ -44,7 +44,7 @@ export const memoize = <TInput, TOutput>({
   }
 }
 
-export const memoizeAsync = <TInput, TOutput>({
+export const memoizeAsync = <TInput, TOutput extends {}>({
   toKey,
   func,
   cacheCapacity,
@@ -54,7 +54,7 @@ export const memoizeAsync = <TInput, TOutput>({
   cacheCapacity: number
 }) => {
   const cache = new LRUCache<string | number, TOutput>({
-    capacity: cacheCapacity,
+    max: cacheCapacity,
   })
 
   return async (x: TInput): Promise<TOutput> => {

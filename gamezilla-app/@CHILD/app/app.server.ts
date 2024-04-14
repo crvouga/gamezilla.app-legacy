@@ -9,6 +9,7 @@ import {
   Sub,
   TimeSpan,
   batchMsgs,
+  pipe,
   toMsgType,
 } from "gamezilla-app/@SHARED/core"
 import { ServerInstance } from "gamezilla-app/@SHARED/server"
@@ -33,6 +34,7 @@ import {
   MsgToServer,
   MsgToServerMeta,
 } from "./app.core"
+import { LRUCache } from "gamezilla-app/@SHARED/least-recently-used-cache.ts/least-recently-used-cache"
 
 //
 //
@@ -81,31 +83,33 @@ export const getDeps = async ({
     throw new Error(`[deps] REDIS_URL not set`)
   }
 
-  const dbConnKvSource = IDbConnKv.withThrottlingWrites({
-    dbConnKv: await DbConnKv({
+  const dbConnKv = await pipe(
+    await DbConnKv({
       t: "postgres",
       logger,
       dbConnSql,
     }),
-    throttle: TimeSpan.fromSeconds(10),
-    logger,
-  })
-
-  onServerShutdown(() => {
-    dbConnKvSource.flush()
-  })
-
-  const dbConnKv = IDbConnKv.withReducedParsing({
-    dbConnKv: IDbConnKv.withCache({
-      source: dbConnKvSource,
-      cache: await DbConnKv({
-        t: "hash-map",
-        map: new Map(),
+    (dbConnKv) =>
+      IDbConnKv.withThrottlingWrites({
+        logger,
+        dbConnKv,
+        throttle: TimeSpan.fromSeconds(10),
       }),
-      logger,
-    }),
-    verifiedKeys: new Set(),
-  })
+    async (dbConnKv) =>
+      IDbConnKv.withCache({
+        logger,
+        source: dbConnKv,
+        cache: await DbConnKv({
+          t: "hash-map",
+          map: new LRUCache({ max: 1000 }),
+        }),
+      }),
+    async (dbConnKv) =>
+      IDbConnKv.withReducedParsing({
+        dbConnKv: await dbConnKv,
+        verifiedKeys: new Set(),
+      }),
+  )
 
   const sms = SMS({ t: "twilio", logger })
 
