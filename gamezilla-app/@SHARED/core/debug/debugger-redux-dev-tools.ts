@@ -286,7 +286,7 @@ const handleActions = <Model, Msg extends object>({
   connection,
 }: DevToolHandlerR<Model, Msg>): Debug<Model, Msg> => {
   return ([action, model]) =>
-    action.type === "MESSAGE"
+    actionType === "MESSAGE"
       ? connection.send(action.payload, model)
       : undefined
 }
@@ -498,9 +498,40 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (
     },
   })
 
+  const rateLimits = new Map<string, { lastReset: number; count: number }>()
+  const blockList = new Set<string>()
+  const TIME_LIMIT = 1000
+  const COUNT_LIMIT = 10
+
   return function updateDebugger(model: any, msg: any) {
+    const actionType = toMsgType(msg)
+
+    if (blockList.has(actionType)) {
+      return
+    }
+
+    if (!rateLimits.has(actionType)) {
+      rateLimits.set(actionType, { lastReset: Date.now(), count: 1 })
+    }
+
+    const rateLimit = rateLimits.get(actionType)!
+
+    const timeElapsed = Date.now() - rateLimit.lastReset
+
+    if (timeElapsed < TIME_LIMIT) {
+      rateLimit.count++
+    }
+
+    if (rateLimit.count > COUNT_LIMIT) {
+      blockList.add(actionType)
+      console.log(
+        `Action type ${actionType} has be blocked due to high frequency`,
+      )
+      return
+    }
+
     const action = {
-      type: toMsgType(msg),
+      type: actionType,
       payload: toMsgPayload(msg, {}),
     }
 

@@ -24,7 +24,7 @@ const main = async () => {
 
     render: (input) => render(<AppClient.View {...input} />, root),
 
-    debugger: IS_PROD ? undefined : DebuggerReduxDevTools,
+    debugger: DebuggerReduxDevTools,
   })
 
   console.log({ IS_PROD, TRANSPORT_IMPL, VDOM_IMPL })
