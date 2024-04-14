@@ -7,9 +7,9 @@ import { IS_PROD, TRANSPORT_IMPL, VDOM_IMPL } from "gamezilla-app/public-config"
 const main = async () => {
   const deps = await AppClient.getDeps()
 
-  const render = await Render(VDOM_IMPL)
-
   const root = document.getElementById("root")!
+
+  const render = await Render(VDOM_IMPL, root)
 
   await deps.transport.start()
 
@@ -22,7 +22,7 @@ const main = async () => {
 
     subscriptions: (input) => AppClient.subscriptions({ ...input, deps }),
 
-    render: (input) => render(<AppClient.View {...input} />, root),
+    render: (input) => render(<AppClient.View {...input} />),
 
     debugger: DebuggerReduxDevTools,
   })
