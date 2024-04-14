@@ -92,7 +92,7 @@ export const View = ({
         dispatch={dispatch}
         title="Tic-Tac-Toe"
         ctx={ctx}
-        renderCoverArt={(props) => <CoverArt {...props} />}
+        renderCoverArt={(props) => <CoverArt {...props} key={props.key} />}
         buttons={[
           GameMainMenu.buttons.playFriend({
             onClick: () => dispatch({ t: "input-mode", mode: "vs-user" }),

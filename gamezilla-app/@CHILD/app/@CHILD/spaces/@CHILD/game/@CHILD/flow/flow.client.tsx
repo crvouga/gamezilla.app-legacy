@@ -263,7 +263,7 @@ const View: Module["View"] = (input) => {
     case null: {
       return (
         <GameMainMenu.View
-          renderCoverArt={(props) => <CoverArt {...props} />}
+          renderCoverArt={(props) => <CoverArt {...props} key={props.key} />}
           ctx={ctx}
           title="Flow"
           dispatch={dispatch}

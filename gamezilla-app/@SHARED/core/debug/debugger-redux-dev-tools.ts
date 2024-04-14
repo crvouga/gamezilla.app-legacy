@@ -286,7 +286,7 @@ const handleActions = <Model, Msg extends object>({
   connection,
 }: DevToolHandlerR<Model, Msg>): Debug<Model, Msg> => {
   return ([action, model]) =>
-    actionType === "MESSAGE"
+    action.type === "MESSAGE"
       ? connection.send(action.payload, model)
       : undefined
 }

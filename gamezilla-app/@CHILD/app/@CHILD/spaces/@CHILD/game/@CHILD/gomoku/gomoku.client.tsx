@@ -227,7 +227,7 @@ export const view = ({
       return (
         <GameMainMenu.View
           title="Gomoku"
-          renderCoverArt={(props) => <CoverArt {...props} />}
+          renderCoverArt={(props) => <CoverArt {...props} key={props.key} />}
           ctx={spaceCtx}
           dispatch={() => {
             //

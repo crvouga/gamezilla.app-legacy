@@ -296,7 +296,7 @@ export const View: Client["View"] = ({ ctx, modelSync, dispatch }) => {
         <GameMainMenu.View
           title="Chess"
           ctx={ctx}
-          renderCoverArt={(props) => <CoverArt {...props} />}
+          renderCoverArt={(props) => <CoverArt {...props} key={props.key} />}
           dispatch={dispatch}
           buttons={[
             GameMainMenu.buttons.playComputer({
