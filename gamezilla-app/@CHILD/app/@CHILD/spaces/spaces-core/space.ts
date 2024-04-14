@@ -255,7 +255,7 @@ export const toUserIds = (model: Model): UserId[] => {
   return SpaceState.toUserIds(deriveState(model))
 }
 
-export const merge = (left: Model, right: Model): Model => {
+export const mergeLeft = (left: Model, right: Model): Model => {
   const eventsNew: Model["events"] = [...left.events, ...right.events].sort(
     ascend((e) => LamportTimestamp.toNumber(e.happenedAt)),
   )

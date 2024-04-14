@@ -98,7 +98,7 @@ const mergeOne = async ({
 
   const currentSpace = await getSpaceById(spacesDb, spaceId)
 
-  const spaceNew = Space.merge(currentSpace, space)
+  const spaceNew = Space.mergeLeft(space, currentSpace)
 
   await spacesDb.upsert(spaceNew)
 }

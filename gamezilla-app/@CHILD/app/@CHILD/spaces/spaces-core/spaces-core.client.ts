@@ -389,7 +389,7 @@ export const mergeOne = ({
     }
   }
 
-  const spaceNew = Space.merge(currentSpace, space)
+  const spaceNew = Space.mergeLeft(space, currentSpace)
 
   const spaceIdByUserIdNew = updateSpaceIdByUserIdFromSpaceState(
     model.spaceIdByUserId,
