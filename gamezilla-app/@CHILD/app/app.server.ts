@@ -63,11 +63,9 @@ export type Deps = {
 export const getDeps = async ({
   logger,
   server,
-  onServerShutdown,
 }: {
   logger: Logger
   server: ServerInstance
-  onServerShutdown: (callback: () => void) => void
 }): Promise<Deps> => {
   const databaseUrl = process.env["DATABASE_URL"]
 

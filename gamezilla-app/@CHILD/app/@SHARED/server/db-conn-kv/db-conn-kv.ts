@@ -183,7 +183,7 @@ const withThrottlingWrites = ({
   dbConnKv: IDbConnKv
   throttle: TimeSpan
   logger: Logger
-}): IDbConnKv & { flush: () => void } => {
+}): IDbConnKv => {
   const throttleMs = TimeSpan.toMilliseconds(throttle)
   const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
   const lastValues = new Map<string, any[]>()
@@ -248,9 +248,11 @@ const withThrottlingWrites = ({
     logger.info("[db-conn-kv] Flushed throttled writes")
   }
 
+  process.on("SIGTERM", flush)
+  process.on("SIGINT", flush)
+
   return {
     ...dbConnKv,
-    flush,
     async set(key, value) {
       scheduleSet(key, value)
       return Ok(null)
