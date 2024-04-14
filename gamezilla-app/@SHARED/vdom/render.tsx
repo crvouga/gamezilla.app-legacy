@@ -26,12 +26,9 @@ export const Render = async (
     case "react": {
       const ReactDOMClient = await import("react-dom/client")
       const ReactDOM = await import("react-dom")
-
       const React = await import("react")
-
       const reactRoot = ReactDOMClient.createRoot(root)
       createPortal = ReactDOM.createPortal
-
       return (vDom) => {
         reactRoot.render(<React.StrictMode>{vDom}</React.StrictMode>)
       }
@@ -40,9 +37,7 @@ export const Render = async (
     case "preact": {
       const Preact = await import("preact")
       const PreactCompat = await import("preact/compat")
-
       createPortal = PreactCompat.createPortal
-
       return (vDom) => {
         Preact.render(vDom, root)
       }
