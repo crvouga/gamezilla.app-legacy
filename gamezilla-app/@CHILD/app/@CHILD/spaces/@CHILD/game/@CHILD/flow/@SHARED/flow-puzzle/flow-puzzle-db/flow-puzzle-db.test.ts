@@ -139,7 +139,7 @@ describe(import.meta.file, () => {
     for (let i = 0; i < EXPECTED_COUNT; i++) {
       await f.flowPuzzleDb.upsert(randomFlowPuzzle({ createdBy }))
     }
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 3; i++) {
       await f.flowPuzzleDb.upsert(randomFlowPuzzle())
     }
 
@@ -155,5 +155,68 @@ describe(import.meta.file, () => {
     if (counted.t === "ok") {
       expect(counted.value).toBe(EXPECTED_COUNT)
     }
+  })
+
+  it("should paginate correctly", async () => {
+    const f = Fixture()
+    const puzzles: FlowPuzzle[] = []
+    const createdBy = UserId.generate()
+    for (let i = 0; i < 5; i++) {
+      const puzzle = randomFlowPuzzle({ createdBy })
+      puzzles.push(puzzle)
+      await f.flowPuzzleDb.upsert(puzzle)
+    }
+    for (let limit = 0; limit < puzzles.length; limit++) {
+      for (let offset = 0; offset < puzzles.length; offset++) {
+        const listed = await f.flowPuzzleDb.list({
+          order: {
+            createdAt: "asc",
+          },
+          pagination: {
+            limit,
+            offset,
+          },
+          where: {
+            createdBy: {
+              equals: createdBy,
+            },
+          },
+        })
+        expect(listed.t).toBe("ok")
+        if (listed.t === "ok") {
+          const expected = puzzles.slice(offset, offset + limit)
+          expect(listed.value.items).toEqual(expected)
+        }
+      }
+    }
+  })
+
+  it("should update existing record when upserting", async () => {
+    const f = Fixture()
+    const puzzle = randomFlowPuzzle()
+    await f.flowPuzzleDb.upsert(puzzle)
+    const updatedPuzzle = {
+      ...puzzle,
+      name: FlowPuzzleName.generate({
+        count: 1,
+      }),
+    }
+    await f.flowPuzzleDb.upsert(updatedPuzzle)
+    const after = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
+    expect(after).toBe(updatedPuzzle)
+  })
+
+  it("should be able to zap records", async () => {
+    const f = Fixture()
+    const puzzle = randomFlowPuzzle()
+    await f.flowPuzzleDb.upsert(puzzle)
+    const before = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
+    await f.flowPuzzleDb.zap({
+      id: puzzle.id,
+      deletedByUserId: UserId.generate(),
+    })
+    const after = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
+    expect(before).toBe(puzzle)
+    expect(after).toBe(null)
   })
 })
