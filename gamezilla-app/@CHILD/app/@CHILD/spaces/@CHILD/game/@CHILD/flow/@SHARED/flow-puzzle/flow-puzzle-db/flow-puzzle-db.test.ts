@@ -6,6 +6,8 @@ import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { FlowVariant, FlowVariantDimensions } from "../../flow/flow-variant"
 import { FlowPuzzleName } from "../flow-puzzle-name"
 import { FlowPuzzleId } from "../flow-puzzle-id"
+import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
+import { loggerNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 
 const randomFlowPuzzle = (input?: { createdBy?: UserId }): FlowPuzzle => {
   const createdBy = input?.createdBy ?? UserId.generate()
@@ -29,7 +31,31 @@ const randomFlowPuzzle = (input?: { createdBy?: UserId }): FlowPuzzle => {
   }
 }
 
-const Fixture = () => {
+const Fixture = async () => {
+  const IS_INTEGRATION_TEST = process.env["IS_INTEGRATION_TEST"]
+
+  if (IS_INTEGRATION_TEST) {
+    const DATABASE_URL = process.env["DATABASE_URL"]
+
+    if (!DATABASE_URL) {
+      throw new Error(`DATABASE_URL not set`)
+    }
+
+    const dbConnSql = await DbConnSql({
+      databaseUrl: DATABASE_URL,
+      logger: loggerNoop,
+    })
+
+    const flowPuzzleDb = FlowPuzzleDb({
+      t: "postgres",
+      dbConn: dbConnSql,
+    })
+
+    return {
+      flowPuzzleDb,
+    }
+  }
+
   const flowPuzzleDb = FlowPuzzleDb({
     t: "hash-map",
   })
@@ -41,7 +67,7 @@ const Fixture = () => {
 
 describe(import.meta.file, () => {
   it("should be ok", async () => {
-    const f = Fixture()
+    const f = await Fixture()
 
     const puzzle = randomFlowPuzzle()
     const before = await f.flowPuzzleDb.get(puzzle.id)
@@ -54,7 +80,7 @@ describe(import.meta.file, () => {
   })
 
   it("should be able to insert puzzles", async () => {
-    const f = Fixture()
+    const f = await Fixture()
 
     const puzzle = randomFlowPuzzle()
     const before = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
@@ -66,7 +92,7 @@ describe(import.meta.file, () => {
   })
 
   it("should be able to list puzzles by created by", async () => {
-    const f = Fixture()
+    const f = await Fixture()
 
     const puzzle = randomFlowPuzzle()
     await f.flowPuzzleDb.upsert(puzzle)
@@ -98,7 +124,7 @@ describe(import.meta.file, () => {
   })
 
   it("should be able to list puzzles by id", async () => {
-    const f = Fixture()
+    const f = await Fixture()
 
     const puzzleA = randomFlowPuzzle()
     await f.flowPuzzleDb.upsert(puzzleA)
@@ -133,7 +159,7 @@ describe(import.meta.file, () => {
   it("should be able to count puzzles by created by user id", async () => {
     const EXPECTED_COUNT = 3
 
-    const f = Fixture()
+    const f = await Fixture()
 
     const createdBy = UserId.generate()
     for (let i = 0; i < EXPECTED_COUNT; i++) {
@@ -158,7 +184,7 @@ describe(import.meta.file, () => {
   })
 
   it("should paginate correctly", async () => {
-    const f = Fixture()
+    const f = await Fixture()
     const puzzles: FlowPuzzle[] = []
     const createdBy = UserId.generate()
     for (let i = 0; i < 5; i++) {
@@ -192,7 +218,7 @@ describe(import.meta.file, () => {
   })
 
   it("should update existing record when upserting", async () => {
-    const f = Fixture()
+    const f = await Fixture()
     const puzzle = randomFlowPuzzle()
     await f.flowPuzzleDb.upsert(puzzle)
     const updatedPuzzle = {
@@ -207,7 +233,7 @@ describe(import.meta.file, () => {
   })
 
   it("should be able to zap records", async () => {
-    const f = Fixture()
+    const f = await Fixture()
     const puzzle = randomFlowPuzzle()
     await f.flowPuzzleDb.upsert(puzzle)
     const before = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
