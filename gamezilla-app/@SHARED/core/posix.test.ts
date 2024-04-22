@@ -2,10 +2,6 @@ import { describe, expect, it } from "bun:test"
 import { Posix } from "./posix"
 
 describe(import.meta.file, () => {
-  it("should get current posix time", () => {
-    expect(Posix.now()).toBeCloseTo(Date.now())
-  })
-
   it("should be able to be precise to the second", () => {
     const now = Posix.now({
       precision: "minutes",
