@@ -114,7 +114,7 @@ export const getDeps = async ({
   const transport = await ServerTransport<MsgToServer, MsgToClient>({
     codebaseVersionId: CODEBASE_VERSION_ID,
     server,
-    databaseUrl,
+    redisUrl,
     logger,
   })
 

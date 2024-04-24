@@ -1,9 +1,9 @@
 import { SyncReducer } from "../create.core"
-import { PackBuilderGame } from "./builder/pack-builder.game"
-import { PackCreateGame } from "./create/pack-create.game"
-import { PackListGame } from "./list/pack-list.game"
+import { PackBuilderGame } from "./builder/pack-builder.sync"
+import { PackCreateGame } from "./create/pack-create.sync"
+import { PackListGame } from "./list/pack-list.sync"
 import { ModelSync } from "./pack.core"
-import { RemovePuzzleGame } from "./remove-puzzle/remove-puzzle.game"
+import { RemovePuzzleGame } from "./remove-puzzle/remove-puzzle.sync"
 
 const initSync: ModelSync = {
   ...RemovePuzzleGame.initSync,

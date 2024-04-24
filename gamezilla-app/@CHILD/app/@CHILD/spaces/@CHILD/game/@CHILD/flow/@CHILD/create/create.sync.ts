@@ -1,13 +1,13 @@
 import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { ModelSync, SyncReducer } from "./create.core"
-import { ListTabsGame } from "./list-tabs/list-tabs.game"
-import { PackGame } from "./pack/pack.game"
-import { PuzzleBuilderGame } from "./puzzle/builder/puzzle-builder.game"
-import { PuzzleCreateGame } from "./puzzle/create/puzzle-create.game"
-import { PuzzleDeleteForeverGame } from "./puzzle/delete-forever/puzzle-delete-forever.game"
-import { PuzzleEditGame } from "./puzzle/edit/puzzle-edit.game"
-import { PuzzleListGame } from "./puzzle/list/puzzle-list.game"
-import { PuzzleSaveChangesGame } from "./puzzle/save-changes/puzzle-save-changes.game"
+import { ListTabsGame } from "./list-tabs/list-tabs.sync"
+import { PackGame } from "./pack/pack.sync"
+import { PuzzleBuilderGame } from "./puzzle/builder/puzzle-builder.sync"
+import { PuzzleCreateGame } from "./puzzle/create/puzzle-create.sync"
+import { PuzzleDeleteForeverGame } from "./puzzle/delete-forever/puzzle-delete-forever.sync"
+import { PuzzleEditGame } from "./puzzle/edit/puzzle-edit.sync"
+import { PuzzleListGame } from "./puzzle/list/puzzle-list.sync"
+import { PuzzleSaveChangesGame } from "./puzzle/save-changes/puzzle-save-changes.sync"
 
 export const initSync = (_input: { ctx: SpaceCtx }): ModelSync => {
   return {

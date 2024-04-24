@@ -1,6 +1,6 @@
 import { SpaceCtx } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/space"
 import { WithEventMeta } from "../../../../@SHARED/event"
-import * as Create from "./@CHILD/create/create.game"
+import * as Create from "./@CHILD/create/create.sync"
 import * as Play from "./@CHILD/play/play.core"
 import { ModelSync, MsgSync } from "./flow.core"
 

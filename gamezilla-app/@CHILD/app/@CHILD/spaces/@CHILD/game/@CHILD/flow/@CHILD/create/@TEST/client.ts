@@ -11,7 +11,7 @@ import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id"
 import { samples } from "../../../@SHARED/flow/flow-variant/flow-grid/flow-grid-samples"
 import { CreateClient } from "../create.client"
 import { ModelClient, ModelSync, initClient } from "../create.core"
-import { initSync } from "../create.game"
+import { initSync } from "../create.sync"
 
 export const initial = {
   model: initClient,

@@ -2,7 +2,7 @@ import { testSpaceServerCtx } from "../../../../../@SHARED/testing/server"
 import { FlowPackDb } from "../../../@SHARED/flow-pack/flow-pack-db"
 import { FlowPuzzleDb } from "../../../@SHARED/flow-puzzle/flow-puzzle-db"
 import { FlowServerDeps, initServer } from "../create.core"
-import { initSync } from "../create.game"
+import { initSync } from "../create.sync"
 
 export const initial = {
   model: initServer,

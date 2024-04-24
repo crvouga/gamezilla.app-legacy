@@ -1,7 +1,7 @@
 import { EventMeta } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { SpaceCtx } from "../../@SHARED/space"
 import * as ConnectFour from "./@CHILD/connect-four/connect-four.core"
-import * as Flow from "./@CHILD/flow/flow.game"
+import * as Flow from "./@CHILD/flow/flow.sync"
 import { GameName, ModelSync, MsgSync } from "./game.core"
 
 export const initSync = (gameName: GameName): ModelSync => {

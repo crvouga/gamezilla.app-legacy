@@ -10,7 +10,6 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
   server,
   codebaseVersionId,
   redisUrl,
-  logger,
 }: {
   logger: Logger
   codebaseVersionId: string
