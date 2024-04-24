@@ -1,4 +1,5 @@
 import {
+  Ok,
   PubSub,
   Result,
   Task,
@@ -174,31 +175,109 @@ const withDistributedUpdates = ({
   }
 }
 
+const withThrottlingWrites = ({
+  dbConnKv,
+  throttle,
+  logger,
+}: {
+  dbConnKv: IDbConnKv
+  throttle: TimeSpan
+  logger: Logger
+}): IDbConnKv => {
+  const throttleMs = TimeSpan.toMilliseconds(throttle)
+  const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
+  const lastValues = new Map<string, any[]>()
+
+  const scheduleSet = (key: string, value: any) => {
+    if (!timeouts.has(key)) {
+      timeouts.set(
+        key,
+        setTimeout(() => {
+          const valueToSet = lastValues.get(key)
+          dbConnKv.set(key, valueToSet)
+          timeouts.delete(key)
+          lastValues.delete(key)
+        }, throttleMs),
+      )
+    }
+    lastValues.set(key, value)
+  }
+
+  const scheduleSetMany = (entries: [string, any][]) => {
+    const key = entries.map((entry) => entry[0]).join(",")
+    if (!timeouts.has(key)) {
+      timeouts.set(
+        key,
+        setTimeout(() => {
+          const entriesToSet = lastValues.get(key)
+          dbConnKv.setMany(entriesToSet as [string, any][])
+          timeouts.delete(key)
+          lastValues.delete(key)
+        }, throttleMs),
+      )
+    }
+
+    lastValues.set(key, entries)
+  }
+
+  const scheduleZap = (key: string) => {
+    if (!timeouts.has(key)) {
+      timeouts.set(
+        key,
+        setTimeout(() => {
+          dbConnKv.zap(key)
+          timeouts.delete(key)
+        }, throttleMs),
+      )
+    }
+  }
+
+  const flush = async () => {
+    logger.info("[db-conn-kv] Flushing throttled writes")
+    for (const [key, timeout] of timeouts.entries()) {
+      clearTimeout(timeout)
+      const valueToSet = lastValues.get(key)
+      if (valueToSet && Array.isArray(valueToSet[0])) {
+        await dbConnKv.setMany(valueToSet)
+      } else {
+        await dbConnKv.set(key, valueToSet)
+      }
+      timeouts.delete(key)
+      lastValues.delete(key)
+    }
+    logger.info("[db-conn-kv] Flushed throttled writes")
+  }
+
+  process.on("SIGTERM", flush)
+  process.on("SIGINT", flush)
+
+  return {
+    ...dbConnKv,
+    async set(key, value) {
+      scheduleSet(key, value)
+      return Ok(null)
+    },
+    async setMany(entries) {
+      scheduleSetMany(entries)
+      return Ok(null)
+    },
+    async zap(key) {
+      scheduleZap(key)
+      return Ok(null)
+    },
+  }
+}
+
 const withCache = ({
   cache,
   source,
   logger,
-  cacheInvalidation,
-  writeDebounce,
 }: {
   cache: IDbConnKv
   source: IDbConnKv
   logger: Logger
-  cacheInvalidation?: PubSub<string>
-  writeDebounce: TimeSpan
-}): IDbConnKv & { cleanUp: () => void } => {
-  const writeDebounceMs = TimeSpan.toMilliseconds(writeDebounce)
-  const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
-
-  const unsubscribe = cacheInvalidation?.subscribe((invalidatedKey) => {
-    logger.info(`[db-conn-kv] cache invalidation: key=${invalidatedKey}`)
-    cache.zap(invalidatedKey)
-  })
-
+}): IDbConnKv => {
   return {
-    cleanUp() {
-      unsubscribe?.()
-    },
     async get(key, parser) {
       const start = process.hrtime.bigint()
 
@@ -208,11 +287,11 @@ const withCache = ({
         const end = process.hrtime.bigint()
         const durationInMicroseconds = (end - start) / BigInt(1000)
         logger.info(
-          `[db-conn-kv] CACHED duration=${durationInMicroseconds}µs get: key=${key}`,
+          `[db-conn-kv-with-cache] CACHED duration=${durationInMicroseconds}µs get: key=${key}`,
         )
         return cacheGot
       }
-      logger.info(`[db-conn-kv] HITTING SOURCE getMany: key=${key}`)
+      logger.info(`[db-conn-kv-with-cache] HITTING SOURCE getMany: key=${key}`)
       const sourceGot = await source.get(key, parser)
       const sourceHit = Result.withDefault(sourceGot, null)
       if (sourceHit) {
@@ -221,7 +300,7 @@ const withCache = ({
       const end = process.hrtime.bigint()
       const durationInMicroseconds = (end - start) / BigInt(1000)
       logger.info(
-        `[db-conn-kv] duration=${durationInMicroseconds}µs get: key=${key}`,
+        `[db-conn-kv-with-cache] duration=${durationInMicroseconds}µs get: key=${key}`,
       )
       return sourceGot
     },
@@ -234,14 +313,16 @@ const withCache = ({
         const end = process.hrtime.bigint()
         const durationInMicroseconds = (end - start) / BigInt(1000)
         logger.info(
-          `[db-conn-kv] CACHED duration=${durationInMicroseconds}µs get: keys=${keys.join(
+          `[db-conn-kv-with-cache] CACHED duration=${durationInMicroseconds}µs get: keys=${keys.join(
             ", ",
           )}`,
         )
         return cacheGot
       }
       logger.info(
-        `[db-conn-kv] HITTING SOURCE getMany: keys=${keys.join(", ")}`,
+        `[db-conn-kv-with-cache] HITTING SOURCE getMany: keys=${keys.join(
+          ", ",
+        )}`,
       )
       const sourceGot = await source.getMany(keys, parser)
       const sourceHit = Result.withDefault(sourceGot, null)
@@ -253,22 +334,14 @@ const withCache = ({
       const end = process.hrtime.bigint()
       const durationInMicroseconds = (end - start) / BigInt(1000)
       logger.info(
-        `[db-conn-kv] duration=${durationInMicroseconds}µs get: keys=${keys.join(
+        `[db-conn-kv-with-cache] duration=${durationInMicroseconds}µs get: keys=${keys.join(
           ", ",
         )}`,
       )
       return sourceGot
     },
     async set(key, value) {
-      clearTimeout(timeouts.get(key))
-
-      timeouts.set(
-        key,
-        setTimeout(async () => {
-          await source.set(key, value)
-          cacheInvalidation?.publish(key)
-        }, writeDebounceMs),
-      )
+      source.set(key, value)
 
       return cache.set(key, value)
     },
@@ -278,28 +351,12 @@ const withCache = ({
         key = key + "," + entries[i]![0]
       }
 
-      clearTimeout(timeouts.get(key))
-
-      timeouts.set(
-        key,
-        setTimeout(async () => {
-          source.setMany(entries)
-          cacheInvalidation?.publish(key)
-        }, writeDebounceMs),
-      )
+      source.setMany(entries)
 
       return cache.setMany(entries)
     },
     async zap(key) {
-      clearTimeout(timeouts.get(key))
-
-      timeouts.set(
-        key,
-        setTimeout(async () => {
-          await source.zap(key)
-          cacheInvalidation?.publish(key)
-        }, writeDebounceMs),
-      )
+      source.zap(key)
 
       return cache.zap(key)
     },
@@ -308,6 +365,7 @@ const withCache = ({
 
 export const IDbConnKv = {
   instance,
+  withThrottlingWrites,
   withReducedParsing,
   withDistributedUpdates,
   withCache,

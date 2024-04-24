@@ -7,7 +7,7 @@ import {
 } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { Eff, isErr } from "gamezilla-app/@SHARED/core"
 import { Sub } from "gamezilla-app/@SHARED/core/sub"
-import { CappedOrderedDict } from "gamezilla-app/@SHARED/data-structures/capped-ordered-dict"
+import { CappedOrderedDict } from "gamezilla-app/@SHARED/capped-ordered-dict/capped-ordered-dict"
 import { AppServerModule } from "../../@SHARED/architecture/app-server"
 import { IDbConnKv } from "../../@SHARED/server/db-conn-kv"
 import { IServerTransport } from "./transport-server"
@@ -353,7 +353,7 @@ const sendToSession = async <TMsgToClient, TMsgToServer>({
   const clients = gotClients.t === "ok" ? gotClients.value : []
 
   for (const client of clients) {
-    const clientIds = CappedOrderedDict.values(client.clientIds)
+    const clientIds = CappedOrderedDict.valuesNewestFirst(client.clientIds)
 
     if (clientIds.length === 0) {
       ctx.logger.warn(

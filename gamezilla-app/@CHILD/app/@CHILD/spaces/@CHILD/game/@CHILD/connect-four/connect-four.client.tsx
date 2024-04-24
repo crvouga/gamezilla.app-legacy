@@ -211,7 +211,7 @@ const View: Module["View"] = ({ dispatch, ctx, modelSync, model }) => {
         <GameMainMenu.View
           ctx={ctx}
           title="Connect Four"
-          renderCoverArt={(props) => <CoverArt {...props} />}
+          renderCoverArt={(props) => <CoverArt {...props} key={props.key} />}
           dispatch={dispatch}
           buttons={[
             GameMainMenu.buttons.playFriend({

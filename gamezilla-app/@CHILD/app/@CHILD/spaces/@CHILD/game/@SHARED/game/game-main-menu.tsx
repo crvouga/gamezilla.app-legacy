@@ -85,7 +85,7 @@ export const View = ({
   ctx: SpaceClientCtx
   title: string
   dispatch: (msg: Msg) => void
-  renderCoverArt: (props: { className: string }) => VDom
+  renderCoverArt: (props: { className: string; key: string }) => VDom
   buttons: MainMenuButton[]
 }) => {
   if (ctx.currentUserId !== ctx.space.hostId) {

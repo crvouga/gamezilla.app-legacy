@@ -1,7 +1,6 @@
 import { ClientId, SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { ServerNode } from "gamezilla-app/@SHARED/server/server-impl-node/server-impl-node"
-import { createClient } from "redis"
 import { Server } from "socket.io"
 import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core"
 import { IServerTransport, initServerTransport } from "./transport-server"
@@ -9,7 +8,6 @@ import { IServerTransport, initServerTransport } from "./transport-server"
 export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
   server,
   codebaseVersionId,
-  redisUrl,
 }: {
   logger: Logger
   codebaseVersionId: string
@@ -23,13 +21,7 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 > => {
   const transport = initServerTransport<MsgToServer, MsgToClient>()
 
-  const pubClient = createClient({ url: redisUrl })
-  const subClient = pubClient.duplicate()
-
-  await Promise.all([pubClient.connect(), subClient.connect()])
-
   const io = new Server(server.httpServer, {
-    // adapter: createAdapter(pubClient, subClient),
     cors: {
       origin: "*",
       methods: ["GET", "POST"],

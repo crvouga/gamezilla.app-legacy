@@ -1,6 +1,6 @@
 import { Posix } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
-import { CappedOrderedDict } from "gamezilla-app/@SHARED/data-structures/capped-ordered-dict"
+import { CappedOrderedDict } from "gamezilla-app/@SHARED/capped-ordered-dict/capped-ordered-dict"
 import { ClientId, SessionId } from "../../@SHARED/data"
 import { ClientTransportEvent } from "./transport-client"
 import { ServerTransportMsg } from "./transport-server"

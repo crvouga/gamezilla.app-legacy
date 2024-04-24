@@ -19,7 +19,7 @@ export const IS_PROD = process.env["NODE_ENV"] === "production"
 //
 //
 
-export const VDOM_IMPL: VDomImpl = "inferno" as VDomImpl
+export const VDOM_IMPL: VDomImpl = "react" as VDomImpl
 
 //
 //
@@ -54,7 +54,7 @@ export const TRANSPORT_IMPL =
 //
 //
 
-const SERVER_PORT_LOCAL = 5002
+const SERVER_PORT_LOCAL = 5001
 const SERVER_URL_LOCAL = `http://localhost:${SERVER_PORT_LOCAL}/`
 const SERVER_URL_NGROK = "https://gamezilla-server.ngrok.io/"
 const SERVER_URL_PROD = "https://server.gamezilla.app/"

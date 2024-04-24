@@ -1,27 +1,29 @@
-import { PubSub } from "gamezilla-app/@SHARED/core"
+import { PubSub as IPubSub } from "gamezilla-app/@SHARED/core"
 import { IDbConnSql } from "../db-conn-sql"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import { Logger } from "../logger"
 
-export const PubSubPostgres = <T>({
-  dbConnSql,
-  channel,
-  logger,
-  encode,
-  decode,
-}: {
+export type Deps<T> = {
   dbConnSql: IDbConnSql
   logger: Logger
   channel: string
   encode: (msg: T) => string
   decode: (msg: string | null) => T
-}): PubSub<T> => {
+}
+
+export const PubSub = <T>({
+  dbConnSql,
+  channel,
+  logger,
+  encode,
+  decode,
+}: Deps<T>): IPubSub<T> => {
   let runningSubscriberId = 0
 
   const subscribers = new Map<number, (msg: T) => void>()
 
   const instanceId = Math.random().toString(36).substring(2)
-  const SEPERATOR = "::::"
+  const SEPERATOR = "___"
 
   dbConnSql.query(p.unknown, `LISTEN ${channel}`, {})
 
@@ -36,22 +38,20 @@ export const PubSubPostgres = <T>({
 
     const [payloadInstanceId, payload] = notification.payload.split(SEPERATOR)
 
+    if (payloadInstanceId === instanceId) {
+      return
+    }
+
+    if (!payload) {
+      return
+    }
+
     logger.info(
       `[pubsub] recieved notification channel=${channel} instanceId=${instanceId} payload=${payload?.slice(
         0,
         100,
       )}`,
     )
-
-    if (payloadInstanceId === instanceId) {
-      logger.info(
-        `[pubsub] skipping self notification channel=${channel} instanceId=${instanceId} payload=${payload?.slice(
-          0,
-          100,
-        )}`,
-      )
-      return
-    }
 
     const msg = decode(payload ?? null)
 

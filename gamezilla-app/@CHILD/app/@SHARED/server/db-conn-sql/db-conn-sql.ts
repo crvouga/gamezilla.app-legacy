@@ -23,5 +23,5 @@ export type IDbConnSql = {
   ) => Promise<Result<string, TRow[]>>
   onNotification: (
     callback: (notification: DbConnSqlNotification) => void,
-  ) => () => void
+  ) => Promise<() => void>
 }

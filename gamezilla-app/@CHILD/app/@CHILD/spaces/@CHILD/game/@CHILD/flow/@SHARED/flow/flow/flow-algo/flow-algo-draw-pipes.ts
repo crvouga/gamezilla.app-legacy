@@ -1,5 +1,5 @@
 import { pipe } from "gamezilla-app/@SHARED/core"
-import { MinHeap } from "gamezilla-app/@SHARED/data-structures/min-heap"
+import { MinHeap } from "gamezilla-app/@SHARED/min-heap/min-heap"
 import * as Flow from "../flow"
 import { takeWhile } from "./utils"
 

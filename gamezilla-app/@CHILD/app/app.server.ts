@@ -9,9 +9,9 @@ import {
   Sub,
   TimeSpan,
   batchMsgs,
+  pipe,
   toMsgType,
 } from "gamezilla-app/@SHARED/core"
-import { LRUCache } from "gamezilla-app/@SHARED/data-structures/least-recently-used-cache"
 import { ServerInstance } from "gamezilla-app/@SHARED/server"
 import { CODEBASE_VERSION_ID } from "gamezilla-app/public-config"
 import * as AuthServer from "./@CHILD/auth/auth.server"
@@ -26,7 +26,6 @@ import * as WireServer from "./@CHILD/wire/wire.server"
 import { DbConnKv, IDbConnKv } from "./@SHARED/server/db-conn-kv"
 import { DbConnSql, IDbConnSql } from "./@SHARED/server/db-conn-sql"
 import { Logger } from "./@SHARED/server/logger"
-import { PubSubPostgres } from "./@SHARED/server/pub-sub/pub-sub-impl-posgtres"
 import { ISMS, SMS } from "./@SHARED/server/sms"
 import {
   ModelServer,
@@ -35,6 +34,7 @@ import {
   MsgToServer,
   MsgToServerMeta,
 } from "./app.core"
+import { LRUCache } from "gamezilla-app/@SHARED/least-recently-used-cache.ts/least-recently-used-cache"
 
 //
 //
@@ -81,33 +81,33 @@ export const getDeps = async ({
     throw new Error(`[deps] REDIS_URL not set`)
   }
 
-  const cacheInvalidation = PubSubPostgres<string>({
-    channel: "cache_invalidation",
-    dbConnSql,
-    decode: (msg) => msg ?? "",
-    encode: (msg) => msg,
-    logger,
-  })
-
-  const dbConnKv = IDbConnKv.withReducedParsing({
-    dbConnKv: IDbConnKv.withCache({
-      source: await DbConnKv({
-        t: "redis",
+  const dbConnKv = await pipe(
+    await DbConnKv({
+      t: "redis",
+      logger,
+      url: redisUrl,
+    }),
+    (dbConnKv) =>
+      IDbConnKv.withThrottlingWrites({
         logger,
-        url: redisUrl,
+        dbConnKv,
+        throttle: TimeSpan.fromSeconds(10),
       }),
-      cache: await DbConnKv({
-        t: "hash-map",
-        map: new LRUCache({
-          capacity: 1000,
+    async (dbConnKv) =>
+      IDbConnKv.withCache({
+        logger,
+        source: dbConnKv,
+        cache: await DbConnKv({
+          t: "hash-map",
+          map: new LRUCache({ max: 1000 }),
         }),
       }),
-      cacheInvalidation,
-      writeDebounce: TimeSpan.fromSeconds(1),
-      logger,
-    }),
-    verifiedKeys: new Set(),
-  })
+    async (dbConnKv) =>
+      IDbConnKv.withReducedParsing({
+        dbConnKv: await dbConnKv,
+        verifiedKeys: new Set(),
+      }),
+  )
 
   const sms = SMS({ t: "twilio", logger })
 

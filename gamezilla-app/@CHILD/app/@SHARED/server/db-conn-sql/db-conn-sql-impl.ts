@@ -7,7 +7,7 @@ export const dbConnSqlNoop: IDbConnSql = {
   async query() {
     return Ok([])
   },
-  onNotification() {
+  async onNotification() {
     return () => {}
   },
 }

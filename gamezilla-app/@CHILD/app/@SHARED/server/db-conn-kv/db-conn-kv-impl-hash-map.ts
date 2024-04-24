@@ -1,4 +1,5 @@
 import { Ok } from "gamezilla-app/@SHARED/core"
+import { p } from "gamezilla-app/@SHARED/core/parser"
 import { IDbConnKv } from "./db-conn-kv"
 
 export const DbConnKvHashMap = (config?: {
@@ -11,29 +12,28 @@ export const DbConnKvHashMap = (config?: {
 
       const parsed = parser.parse(got)
 
-      if (parsed.t === "ok") {
-        return Ok(parsed.value)
+      switch (parsed.t) {
+        case "err":
+          return Ok(null)
+        case "ok":
+          return Ok(parsed.value)
       }
-
-      return Ok(null)
     },
 
-    async getMany(keys, parser) {
-      const rows = keys.flatMap((key) => {
+    async getMany<TValue>(keys: string[], parser: p.Parser<TValue>) {
+      const rows: TValue[] = []
+
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i]!
         const got = hashMap.get(key)
-
         if (!got) {
-          return []
+          continue
         }
-
         const parsed = parser.parse(got)
-
         if (parsed.t === "ok") {
-          return [parsed.value]
+          rows.push(parsed.value)
         }
-
-        return []
-      })
+      }
 
       return Ok(rows)
     },
@@ -44,8 +44,8 @@ export const DbConnKvHashMap = (config?: {
     },
 
     async setMany(entries) {
-      for (const entry of entries) {
-        hashMap.set(entry[0], entry[1])
+      for (let i = 0; i < entries.length; i++) {
+        hashMap.set(entries[i]![0], entries[i]![1])
       }
       return Ok(null)
     },

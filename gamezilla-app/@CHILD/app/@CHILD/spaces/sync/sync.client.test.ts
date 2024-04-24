@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import { AppClientModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
+import { andThen } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-client"
 import { addProfiles } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import {
   Profile,
@@ -9,9 +9,9 @@ import {
 } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { eq } from "gamezilla-app/@SHARED/core"
 import {
+  Ctx,
   clickedJoinSpaceButton,
   clickedStartSpaceButton,
-  Ctx,
   gotCurrentUsersSpace,
   gotMsgServer,
   gotSpace,
@@ -20,8 +20,8 @@ import {
   userEndedSpace,
   userStartedSpace,
 } from "../@TEST/client"
-import { Space, Spaces } from "../spaces-core"
 import { makeSpace } from "../@TEST/shared"
+import { Space, Spaces } from "../spaces-core"
 
 const hasExcatlyOne = <T>(
   items: T[],
@@ -31,7 +31,7 @@ const hasExcatlyOne = <T>(
 }
 
 describe(import.meta.file, () => {
-  it("should record profiles when recieved from server", async () => {
+  it("should record profiles when recieved from server", () => {
     const someProfile: Profile = {
       userId: UserId.generate(),
       avatarUrl: "some url",
@@ -44,7 +44,7 @@ describe(import.meta.file, () => {
 
     const ctx = Ctx()
 
-    const updated = await AppClientModule.andThen(
+    const updated = andThen(
       init(ctx),
       //
       gotMsgServer(ctx, {
@@ -61,14 +61,11 @@ describe(import.meta.file, () => {
     ).toBe(true)
   })
 
-  it("should merge space recieved from server", async () => {
+  it("should merge space recieved from server", () => {
     const someSpace = makeSpace(SpaceId.generate(), UserId.generate())
     const ctx = Ctx()
 
-    const output = await AppClientModule.andThen(
-      init(ctx),
-      gotSpace(ctx, someSpace),
-    )
+    const output = andThen(init(ctx), gotSpace(ctx, someSpace))
 
     const listed = Spaces.listSpaces({
       model: output.model,
@@ -79,13 +76,13 @@ describe(import.meta.file, () => {
     expect(listed.some((space) => Space.isEqual(space, someSpace))).toBe(true)
   })
 
-  it("should merge current user's space when recieved from server", async () => {
+  it("should merge current user's space when recieved from server", () => {
     const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
     const someStartedSpace = makeSpace(spaceId, ctx.currentUserId)
 
-    const updated = await AppClientModule.andThen(
+    const updated = andThen(
       init(ctx),
       gotCurrentUsersSpace(ctx, someStartedSpace),
     )
@@ -95,9 +92,9 @@ describe(import.meta.file, () => {
     ).toBe(true)
   })
 
-  it("should sync current user's space when server connects if in space", async () => {
+  it("should sync current user's space when server connects if in space", () => {
     const ctx = Ctx()
-    const output = await AppClientModule.andThen(
+    const output = andThen(
       init(ctx),
       clickedStartSpaceButton(ctx, SpaceId.generate()),
       serverConnected(ctx),
@@ -113,10 +110,10 @@ describe(import.meta.file, () => {
     ).toBe(true)
   })
 
-  it("should send events to the server like user joined space", async () => {
+  it("should send events to the server like user joined space", () => {
     const spaceId = SpaceId.generate()
     const ctx = Ctx()
-    const output = await AppClientModule.andThen(
+    const output = andThen(
       init(ctx),
       //
       userStartedSpace(ctx, UserId.generate(), spaceId),
@@ -135,9 +132,9 @@ describe(import.meta.file, () => {
     ).toBe(true)
   })
 
-  it("should send events to the server like user ended space", async () => {
+  it("should send events to the server like user ended space", () => {
     const ctx = Ctx()
-    const output = await AppClientModule.andThen(
+    const output = andThen(
       init(ctx),
       userEndedSpace(ctx, UserId.generate(), SpaceId.generate()),
     )

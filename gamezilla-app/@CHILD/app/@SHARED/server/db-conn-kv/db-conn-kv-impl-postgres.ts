@@ -53,7 +53,11 @@ export const DbConnKvPostgres = async ({
 
         if (isErr(parsed)) {
           logger.error(
-            `[db-conn-kv-postgres] get: not a value: ${key} ${parsed.error}`,
+            `[db-conn-kv-postgres] get: not a value: ${key} ${JSON.stringify(
+              parsed.error,
+              null,
+              2,
+            )}`,
           )
 
           return Ok(null)
@@ -99,7 +103,9 @@ export const DbConnKvPostgres = async ({
 
           if (isErr(parsed)) {
             logger.error(
-              `[db-conn-kv-postgres] get: not a value: ${row.key} ${parsed.error}`,
+              `[db-conn-kv-postgres] get: not a value: ${
+                row.key
+              } ${JSON.stringify(parsed.error, null, 2)}`,
             )
 
             return []

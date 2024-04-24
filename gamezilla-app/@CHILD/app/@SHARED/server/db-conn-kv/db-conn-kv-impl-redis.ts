@@ -45,7 +45,11 @@ export const DbConnKvRedis = async ({
         }
 
         logger.error(
-          `[db-conn-kv-redis] get: not a value: ${key} ${parsed.error}`,
+          `[db-conn-kv-redis] get: not a value: ${key} ${JSON.stringify(
+            parsed.error,
+            null,
+            2,
+          )}`,
         )
 
         return Ok(null)
@@ -83,13 +87,18 @@ export const DbConnKvRedis = async ({
             }
 
             logger.error(
-              `[db-conn-kv-redis] getMany: not a value: ${keys} ${parsed.error}`,
+              `[db-conn-kv-redis] getMany: not a value: ${keys} ${JSON.stringify(
+                parsed.error,
+                null,
+                2,
+              )}`,
             )
 
             return []
           }),
         )
       } catch (e) {
+        logger.error(`[db-conn-kv-redis] getMany: ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -97,8 +106,10 @@ export const DbConnKvRedis = async ({
     async set(key, value) {
       try {
         await client.set(key, JSON.stringify(value))
+        logger.info(`[db-conn-kv-redis] set: key=${key}`)
         return Ok(null)
       } catch (e) {
+        logger.error(`[db-conn-kv-redis] set: ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -106,10 +117,14 @@ export const DbConnKvRedis = async ({
     async setMany(entries) {
       try {
         await client.mSet(
-          entries.map(([key, value]) => [key, JSON.stringify(value)]),
+          entries.flatMap(([key, value]) => [key, JSON.stringify(value)]),
+        )
+        logger.info(
+          `[db-conn-kv-redis] setMany: keys=${entries.map(([key]) => key)}`,
         )
         return Ok(null)
       } catch (e) {
+        logger.error(`[db-conn-kv-redis] setMany: ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -117,8 +132,10 @@ export const DbConnKvRedis = async ({
     async zap(key) {
       try {
         await client.del(key)
+        logger.info(`[db-conn-kv-redis] zap: key=${key}`)
         return Ok(null)
       } catch (e) {
+        logger.error(`[db-conn-kv-redis] zap: ${String(e)}`)
         return Err(String(e))
       }
     },
