@@ -1,6 +1,6 @@
 import { cn } from "gamezilla-app/@CHILD/app/@SHARED/ui"
-import { Flow, FlowUI } from "../../flow"
-import * as FlowGrid from "./flow-grid"
+import { Flow, FlowUI } from "../../../flow"
+import * as FlowGrid from "../flow-grid"
 
 // const TERMINAL_NODE_RADIUS_ACTIVE = 0.4;
 const TERMINAL_NODE_RADIUS = 0.33
@@ -12,7 +12,7 @@ let isCurrentDeviceTouch = false
 /**
  * Renders the Flow Grid UI
  */
-export const View = ({
+const View = ({
   model,
   isDragging,
   className,
@@ -344,4 +344,8 @@ const map = <T, TY>(iterable: Iterable<T>, fn: (x: T) => TY): TY[] => {
   }
 
   return result
+}
+
+export const FlowGridUISvg = {
+  View,
 }
