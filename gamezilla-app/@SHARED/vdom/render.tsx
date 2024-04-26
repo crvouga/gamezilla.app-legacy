@@ -24,9 +24,11 @@ export const Render = async (
     }
 
     case "react": {
-      const ReactDOMClient = await import("react-dom/client")
-      const ReactDOM = await import("react-dom")
-      const React = await import("react")
+      const [ReactDOMClient, ReactDOM, React] = await Promise.all([
+        import("react-dom/client"),
+        import("react-dom"),
+        import("react"),
+      ])
       const reactRoot = ReactDOMClient.createRoot(root)
       createPortal = ReactDOM.createPortal
       return (vDom) => {
@@ -35,8 +37,10 @@ export const Render = async (
     }
 
     case "preact": {
-      const Preact = await import("preact")
-      const PreactCompat = await import("preact/compat")
+      const [Preact, PreactCompat] = await Promise.all([
+        import("preact"),
+        import("preact/compat"),
+      ])
       createPortal = PreactCompat.createPortal
       return (vDom) => {
         Preact.render(vDom, root)
