@@ -1,7 +1,7 @@
 import { SpaceId, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { pipe } from "gamezilla-app/@SHARED/core"
-import { withId } from "../@SHARED/event"
-import { Space } from "../spaces-core"
+import { withId } from "../event"
+import { Space } from "../../spaces-core"
 
 export const makeSpace = (spaceId: SpaceId, hostId: UserId) => {
   return pipe(

@@ -10,7 +10,7 @@ import {
   Ctx,
   init,
   userClickedEndSpaceButton,
-} from "../@TEST/client"
+} from "../@SHARED/testing/client"
 import { SpaceClientModule } from "../architecture/architecture"
 import { EndSpaceClient } from "./end-space.client"
 

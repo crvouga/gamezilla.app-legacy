@@ -11,7 +11,10 @@ import {
 import { FlowVariant, FlowVariantDimensions } from "../../../../@SHARED/flow"
 import { FlowPack } from "../../../../@SHARED/flow-pack"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle"
-import { defaultModelSync, testFlowClientCtx } from "../../@TEST/client"
+import {
+  defaultModelSync,
+  testFlowClientCtx,
+} from "../../@SHARED/testing/client"
 import { RemovePuzzleClient } from "./remove-puzzle.client"
 import {
   ModelClient,

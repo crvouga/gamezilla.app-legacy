@@ -10,14 +10,14 @@ import { dbConnSqlNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-s
 import { LoggerConsole } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { Posix } from "gamezilla-app/@SHARED/core"
 import { LamportTimestamp } from "gamezilla-app/@SHARED/lamport-clock"
-import { EventId } from "../@SHARED/event"
-import { Space } from "../spaces-core"
-import { ModelServer, ServerDeps } from "../spaces.core"
-import * as SpacesServer from "../spaces.server"
-import { ProfileCache } from "../profile-cache"
+import { EventId } from "../event"
+import { Space } from "../../spaces-core"
+import { ModelServer, ServerDeps } from "../../spaces.core"
+import * as SpacesServer from "../../spaces.server"
+import { ProfileCache } from "../../profile-cache"
 import { smsNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/sms"
-import { SpacesDb } from "../spaces-core/space-db"
-import { GameDb } from "../game/game-db"
+import { SpacesDb } from "../../spaces-core/space-db"
+import { GameDb } from "../../game/game-db"
 
 export const Fixture = () => {
   const ctx: ServerCtx = {

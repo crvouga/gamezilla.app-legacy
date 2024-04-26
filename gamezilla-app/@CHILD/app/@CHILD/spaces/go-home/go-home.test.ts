@@ -5,7 +5,7 @@ import {
   clickedStartSpaceButton,
   Ctx,
   init,
-} from "../@TEST/client"
+} from "../@SHARED/testing/client"
 import { SpaceClientModule } from "../architecture/architecture"
 
 describe(import.meta.file, () => {

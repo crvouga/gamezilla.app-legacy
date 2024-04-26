@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test"
 import {
   AuthenticatedClient,
   generateAuthClient,
-} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@TEST/server"
+} from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/testing/server"
 import { AppServerModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-server"
 import { didSendToClient } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { FlowPack, FlowPackDb } from ".."

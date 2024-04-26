@@ -14,7 +14,7 @@ import {
   isRequesting,
 } from "gamezilla-app/@SHARED/core"
 import { testSpaceClientCtx } from "../../../../../@SHARED/testing/client"
-import { testFlowClientCtx } from "../../../@CHILD/create/@TEST/client"
+import { testFlowClientCtx } from "../../../@CHILD/create/@SHARED/testing/client"
 import { FlowVariant, FlowVariantDimensions } from "../../flow"
 import { FlowClientCtx } from "../../flow-ctx"
 import { FlowPuzzle } from "../flow-puzzle"

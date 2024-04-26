@@ -7,7 +7,7 @@ import {
   getDeps,
   init,
   userStartedSpace,
-} from "../@TEST/server"
+} from "../@SHARED/testing/server"
 import { Space } from "../spaces-core"
 import { SpacesCoreServer } from "../spaces-core/spaces-core.server"
 

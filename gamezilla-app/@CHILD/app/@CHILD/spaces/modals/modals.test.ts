@@ -10,7 +10,7 @@ import {
   clickedUserPreviewLink,
   Ctx,
   init,
-} from "../@TEST/client.ts"
+} from "../@SHARED/testing/client.ts"
 import { SpaceClientModule } from "../architecture/architecture.tsx"
 import { Modals } from "./modals.tsx"
 

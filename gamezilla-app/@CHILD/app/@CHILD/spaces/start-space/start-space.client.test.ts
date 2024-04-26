@@ -7,7 +7,7 @@ import {
 } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { andThen } from "../../../@SHARED/architecture/app-client"
-import { clickedStartSpaceButton, Ctx, init } from "../@TEST/client"
+import { clickedStartSpaceButton, Ctx, init } from "../@SHARED/testing/client"
 import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {

@@ -5,11 +5,11 @@ import {
   initial,
   testFlowClientCtx,
   createFlowPuzzle,
-} from "../../@TEST/client"
+} from "../../@SHARED/testing/client"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle/flow-puzzle"
 import { CreateClient } from "../../create.client"
 import { ModelClient } from "../../create.core"
-import { deriveModelSync } from "../../@TEST/game"
+import { deriveModelSync } from "../../@SHARED/testing/game"
 import { didPlaySound } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { EventId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { LamportTimestamp } from "gamezilla-app/@SHARED/lamport-clock"

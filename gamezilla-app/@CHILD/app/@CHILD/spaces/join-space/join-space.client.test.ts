@@ -13,7 +13,7 @@ import {
   init,
   userJoinedSpace,
   userStartedSpace,
-} from "../@TEST/client"
+} from "../@SHARED/testing/client"
 import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {

@@ -3,7 +3,11 @@ import { andThen } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/architec
 import { EventId } from "gamezilla-app/@CHILD/app/@CHILD/spaces/@SHARED/event"
 import { didPlaySound } from "gamezilla-app/@CHILD/app/@SHARED/client"
 import { LamportTimestamp } from "gamezilla-app/@SHARED/lamport-clock"
-import { defaultModelSync, initial, testFlowClientCtx } from "../@TEST/client"
+import {
+  defaultModelSync,
+  initial,
+  testFlowClientCtx,
+} from "../@SHARED/testing/client"
 import { CreateClient } from "../create.client"
 import { ModelClient } from "../create.core"
 import { ListTab } from "./list-tabs.core"

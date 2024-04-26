@@ -8,8 +8,8 @@ import {
   puzzleBuilderPressDownRandomNode,
   serverListedPuzzlesOk,
   testFlowClientCtx,
-} from "../../@TEST/client"
-import { deriveModelSync } from "../../@TEST/game"
+} from "../../@SHARED/testing/client"
+import { deriveModelSync } from "../../@SHARED/testing/game"
 
 const ctx = testFlowClientCtx()
 

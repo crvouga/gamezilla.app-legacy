@@ -15,8 +15,8 @@ import {
   initial,
   serverCreatedPack,
   testFlowClientCtx,
-} from "../../@TEST/client"
-import { deriveModelSync } from "../../@TEST/game"
+} from "../../@SHARED/testing/client"
+import { deriveModelSync } from "../../@SHARED/testing/game"
 import { ModelClient } from "../../create.core"
 import { PackBuilderClient } from "./pack-builder.client"
 

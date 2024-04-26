@@ -21,7 +21,7 @@ import {
   elapsed,
   init,
   serverListedSpaces,
-} from "../@TEST/client"
+} from "../@SHARED/testing/client"
 
 const changeRouteToSpaceList = (ctx: ClientCtx) => {
   return changeRoute(ctx, { n: "spaces", t: "space-list" })

@@ -2,7 +2,11 @@ import { describe, expect, it } from "bun:test"
 import { AppServerModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/app-server"
 import { SpaceId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { didSendMsgToClient } from "gamezilla-app/@CHILD/app/@SHARED/server"
-import { Fixture, userJoinedSpace, userStartedSpace } from "../@TEST/server"
+import {
+  Fixture,
+  userJoinedSpace,
+  userStartedSpace,
+} from "../@SHARED/testing/server"
 
 describe(import.meta.file, () => {
   it("should send a sync message to client that joined a space", async () => {

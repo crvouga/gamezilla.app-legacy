@@ -19,8 +19,8 @@ import {
   serverConnected,
   userEndedSpace,
   userStartedSpace,
-} from "../@TEST/client"
-import { makeSpace } from "../@TEST/shared"
+} from "../@SHARED/testing/client"
+import { makeSpace } from "../@SHARED/testing/shared"
 import { Space, Spaces } from "../spaces-core"
 
 const hasExcatlyOne = <T>(

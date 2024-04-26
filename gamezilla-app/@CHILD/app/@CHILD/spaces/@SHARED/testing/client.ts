@@ -17,10 +17,10 @@ import {
   LamportTimestamp,
 } from "gamezilla-app/@SHARED/lamport-clock"
 import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
-import { GameName } from "../@CHILD/game/game.core"
-import { Space, SpaceEvent } from "../spaces-core"
-import * as SpaceClient from "../spaces.client"
-import * as SpaceCore from "../spaces.core"
+import { GameName } from "../../@CHILD/game/game.core"
+import { Space, SpaceEvent } from "../../spaces-core"
+import * as SpaceClient from "../../spaces.client"
+import * as SpaceCore from "../../spaces.core"
 
 //
 //

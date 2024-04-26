@@ -5,7 +5,7 @@ import {
   clickedStartSpaceButton,
   Ctx,
   init,
-} from "../@TEST/client"
+} from "../@SHARED/testing/client"
 import { SpaceClientModule } from "../architecture/space-client"
 import { Spaces } from "../spaces-core"
 

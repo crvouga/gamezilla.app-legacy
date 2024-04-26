@@ -10,7 +10,7 @@ import {
   initial,
   testFlowClientCtx,
   userCreatedPack,
-} from "../../@TEST/client"
+} from "../../@SHARED/testing/client"
 
 describe(import.meta.file, () => {
   it("should make a sound when the user clicks the create button", () => {
