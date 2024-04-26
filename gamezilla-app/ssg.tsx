@@ -5,6 +5,8 @@ import { VDOM_IMPL } from "./public-config"
 import * as AppClient from "./@CHILD/app/app.client"
 
 const run = async () => {
+  console.log("Running SSG")
+  const start = Date.now()
   const renderToString = await RenderToString(VDOM_IMPL)
 
   const ctx = AppClient.getCtx()
@@ -22,6 +24,8 @@ const run = async () => {
   const finalHtml = indexHtml.replace("<!--ssg-outlet-->", appHtml)
 
   fs.writeFileSync(indexPath, finalHtml)
+  const end = Date.now()
+  console.log(`SSG completed in ${end - start}ms`)
 }
 
 run()
