@@ -20,7 +20,6 @@ const run = async () => {
 
   const indexPath = path.join(__dirname, "..", "dist", "index.html")
   const indexHtml = fs.readFileSync(indexPath, "utf-8")
-
   const finalHtml = indexHtml.replace("<!--ssg-outlet-->", appHtml)
 
   fs.writeFileSync(indexPath, finalHtml)
