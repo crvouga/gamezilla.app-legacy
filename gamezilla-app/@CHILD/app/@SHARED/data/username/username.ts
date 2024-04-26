@@ -1,6 +1,5 @@
 import { Err, Ok, Result } from "gamezilla-app/@SHARED/core"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
-import { adjectives, nouns } from "../words"
 
 export type Username = Brand<string, "Username">
 
@@ -30,17 +29,17 @@ const fromString = (username: string): Username => {
   throw new Error("impossible state. did not create username from string")
 }
 
-function generate(
+const generate = async (
   separator?: string,
   digitCount?: number,
   length?: number,
-): Username {
+): Promise<Username> => {
+  const { adjectives, nouns } = await import("../words")
   const noun = nouns[Math.floor(Math.random() * nouns.length)] ?? ""
   const adjective =
     adjectives[Math.floor(Math.random() * adjectives.length)] ?? ""
 
   let username
-  // Create unique username
   if (separator) {
     username = adjective + separator + noun + getRandomDigits(digitCount)
   } else {
@@ -54,7 +53,7 @@ function generate(
   return fromString(username)
 }
 
-function getRandomDigits(digitCount?: number) {
+const getRandomDigits = (digitCount?: number) => {
   if (!digitCount) {
     return ""
   }

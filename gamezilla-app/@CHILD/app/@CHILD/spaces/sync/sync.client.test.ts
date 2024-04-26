@@ -31,11 +31,11 @@ const hasExcatlyOne = <T>(
 }
 
 describe(import.meta.file, () => {
-  it("should record profiles when recieved from server", () => {
+  it("should record profiles when recieved from server", async () => {
     const someProfile: Profile = {
       userId: UserId.generate(),
       avatarUrl: "some url",
-      username: Username.generate(),
+      username: await Username.generate(),
     }
 
     const someProfiles: { [userId: UserId]: Profile } = {

@@ -11,17 +11,16 @@ import {
 } from "../../@SHARED/testing/client"
 import { deriveModelSync } from "../../@SHARED/testing/game"
 
-const ctx = testFlowClientCtx()
-
 describe(import.meta.file, () => {
   it("should open puzzle builder on list item click", async () => {
+    const ctx = await testFlowClientCtx()
     const puzzle = createFlowPuzzle(ctx)
-    const output = await GameClientModule.andThen(
+    const output = GameClientModule.andThen(
       initial,
-      serverListedPuzzlesOk([puzzle]),
-      clickedPuzzleListItem(puzzle),
+      serverListedPuzzlesOk(ctx, [puzzle]),
+      clickedPuzzleListItem(ctx, puzzle),
     )
-    const modelSync = deriveModelSync(output)
+    const modelSync = deriveModelSync(ctx)(output)
     expect(
       modelSync.opened.t === "puzzle-builder" &&
         modelSync.puzzleBuilder?.puzzle.id === puzzle.id,
@@ -29,43 +28,49 @@ describe(import.meta.file, () => {
   })
 
   it("should exit puzzle builder after clicking exit button", async () => {
+    const ctx = await testFlowClientCtx()
     const puzzle = createFlowPuzzle(ctx)
-    const openedBuilder = await GameClientModule.andThen(
+    const openedBuilder = GameClientModule.andThen(
       initial,
-      serverListedPuzzlesOk([puzzle]),
-      clickedPuzzleListItem(puzzle),
+      serverListedPuzzlesOk(ctx, [puzzle]),
+      clickedPuzzleListItem(ctx, puzzle),
     )
 
-    const output = await GameClientModule.andThen(
+    const output = GameClientModule.andThen(
       openedBuilder,
-      clickedExitPuzzleBuilderButton(deriveModelSync(openedBuilder)),
+      clickedExitPuzzleBuilderButton(ctx, deriveModelSync(ctx)(openedBuilder)),
     )
 
-    const modelSync = deriveModelSync(output)
+    const modelSync = deriveModelSync(ctx)(output)
 
     expect(modelSync.opened.t === "list").toBe(true)
   })
 
   it("should open save prompt when exiting with unsaved changes", async () => {
+    const ctx = await testFlowClientCtx()
+
     const puzzle = createFlowPuzzle(ctx)
 
-    const openedBuilder = await GameClientModule.andThen(
+    const openedBuilder = GameClientModule.andThen(
       initial,
-      serverListedPuzzlesOk([puzzle]),
-      clickedPuzzleListItem(puzzle),
+      serverListedPuzzlesOk(ctx, [puzzle]),
+      clickedPuzzleListItem(ctx, puzzle),
     )
 
-    const madeEdit = await GameClientModule.andThen(
+    const madeEdit = GameClientModule.andThen(
       openedBuilder,
-      puzzleBuilderPressDownRandomNode(deriveModelSync(openedBuilder)),
+      puzzleBuilderPressDownRandomNode(
+        ctx,
+        deriveModelSync(ctx)(openedBuilder),
+      ),
     )
 
-    const output = await GameClientModule.andThen(
+    const output = GameClientModule.andThen(
       madeEdit,
-      clickedExitPuzzleBuilderButton(deriveModelSync(madeEdit)),
+      clickedExitPuzzleBuilderButton(ctx, deriveModelSync(ctx)(madeEdit)),
     )
 
-    const modelSync = deriveModelSync(output)
+    const modelSync = deriveModelSync(ctx)(output)
 
     expect(
       modelSync.opened.t === "puzzle-builder" &&

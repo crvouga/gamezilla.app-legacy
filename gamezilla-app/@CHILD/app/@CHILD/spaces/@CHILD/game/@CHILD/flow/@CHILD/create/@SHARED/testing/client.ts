@@ -17,54 +17,51 @@ export const initial = {
   model: initClient,
 }
 
-export const testFlowClientCtx = (): FlowClientCtx => {
+export const testFlowClientCtx = async (): Promise<FlowClientCtx> => {
   return {
-    ...testSpaceClientCtx(),
+    ...(await testSpaceClientCtx()),
     onQuit() {},
   }
 }
 
-const ctx = testFlowClientCtx()
+export const clickedPackCreateButton =
+  (ctx: FlowClientCtx) => (model: ModelClient) => {
+    return CreateClient.update({
+      model,
+      ctx: ctx,
+      modelSync: initSync({ ctx }),
+      msg: { t: "pack-create.clicked-create-button" },
+    })
+  }
 
-export const defaultModelSync = initSync({
-  ctx,
-})
+export const userCreatedPack =
+  (ctx: FlowClientCtx, pack: FlowPack) => (model: ModelClient) => {
+    return CreateClient.update({
+      model,
+      ctx: ctx,
+      modelSync: initSync({ ctx }),
+      msgSync: {
+        t: "user-created-pack",
+        created: Ok(pack),
+        eventId: EventId.generate(),
+        happenedAt: LamportTimestamp.fromNumber(0),
+        userId: ctx.currentUserId,
+      },
+    })
+  }
 
-export const clickedPackCreateButton = (model: ModelClient) => {
-  return CreateClient.update({
-    model,
-    ctx: ctx,
-    modelSync: defaultModelSync,
-    msg: { t: "pack-create.clicked-create-button" },
-  })
-}
-
-export const userCreatedPack = (pack: FlowPack) => (model: ModelClient) => {
-  return CreateClient.update({
-    model,
-    ctx: ctx,
-    modelSync: defaultModelSync,
-    msgSync: {
-      t: "user-created-pack",
-      created: Ok(pack),
-      eventId: EventId.generate(),
-      happenedAt: LamportTimestamp.fromNumber(0),
-      userId: ctx.currentUserId,
-    },
-  })
-}
-
-export const clickedPackItem = (pack: FlowPack) => (model: ModelClient) => {
-  return CreateClient.update({
-    model,
-    ctx: ctx,
-    modelSync: defaultModelSync,
-    msg: { t: "pack-list.clicked-pack-item", pack },
-  })
-}
+export const clickedPackItem =
+  (ctx: FlowClientCtx, pack: FlowPack) => (model: ModelClient) => {
+    return CreateClient.update({
+      model,
+      ctx: ctx,
+      modelSync: initSync({ ctx }),
+      msg: { t: "pack-list.clicked-pack-item", pack },
+    })
+  }
 
 export const clickedOpenPuzzlePickerButton =
-  (modelSync: ModelSync = defaultModelSync) =>
+  (ctx: FlowClientCtx, modelSync: ModelSync = initSync({ ctx })) =>
   (model: ModelClient) => {
     return CreateClient.update({
       model,
@@ -77,17 +74,18 @@ export const clickedOpenPuzzlePickerButton =
     })
   }
 
-export const closedPuzzlePickerDrawer = (model: ModelClient) => {
-  return CreateClient.update({
-    model,
-    msg: { t: "pack-builder.user-closed-add-puzzle" },
-    ctx,
-    modelSync: defaultModelSync,
-  })
-}
+export const closedPuzzlePickerDrawer =
+  (ctx: FlowClientCtx) => (model: ModelClient) => {
+    return CreateClient.update({
+      model,
+      msg: { t: "pack-builder.user-closed-add-puzzle" },
+      ctx,
+      modelSync: initSync({ ctx }),
+    })
+  }
 
 export const clickedPuzzleListItem =
-  (puzzle: FlowPuzzle) => (model: ModelClient) => {
+  (ctx: FlowClientCtx, puzzle: FlowPuzzle) => (model: ModelClient) => {
     return CreateClient.update({
       model,
       msg: {
@@ -95,12 +93,12 @@ export const clickedPuzzleListItem =
         puzzle,
       },
       ctx,
-      modelSync: defaultModelSync,
+      modelSync: initSync({ ctx }),
     })
   }
 
 export const clickedExitPuzzleBuilderButton =
-  (modelSync: ModelSync = defaultModelSync) =>
+  (ctx: FlowClientCtx, modelSync: ModelSync = initSync({ ctx })) =>
   (model: ModelClient) => {
     return CreateClient.update({
       model,
@@ -111,11 +109,11 @@ export const clickedExitPuzzleBuilderButton =
   }
 
 export const serverListedPuzzlesOk =
-  (puzzles: FlowPuzzle[]) => (model: ModelClient) => {
+  (ctx: FlowClientCtx, puzzles: FlowPuzzle[]) => (model: ModelClient) => {
     return CreateClient.update({
       ctx: ctx,
       model,
-      modelSync: defaultModelSync,
+      modelSync: initSync({ ctx }),
       msgServer: {
         t: "flow-puzzle-list",
         c: {
@@ -132,7 +130,7 @@ export const serverListedPuzzlesOk =
   }
 
 export const puzzleBuilderPressDownRandomNode =
-  (modelSync: ModelSync) => (model: ModelClient) => {
+  (ctx: FlowClientCtx, modelSync: ModelSync) => (model: ModelClient) => {
     const puzzleBuilder = modelSync.puzzleBuilder
 
     if (!puzzleBuilder) {
@@ -154,12 +152,12 @@ export const puzzleBuilderPressDownRandomNode =
         c: { t: "pressed-down-node", nodeId: randomNode.nodeId },
       },
       ctx,
-      modelSync: defaultModelSync,
+      modelSync: initSync({ ctx }),
     })
   }
 
 export const puzzleBuilderUserSavedChanges =
-  (puzzle: FlowPuzzle) => (model: ModelClient) => {
+  (ctx: FlowClientCtx, puzzle: FlowPuzzle) => (model: ModelClient) => {
     return CreateClient.update({
       model,
       msgSync: {
@@ -170,12 +168,12 @@ export const puzzleBuilderUserSavedChanges =
         userId: ctx.currentUserId,
       },
       ctx,
-      modelSync: defaultModelSync,
+      modelSync: initSync({ ctx }),
     })
   }
 
 export const clickedPuzzlePickerItem =
-  (puzzle: FlowPuzzle) => (model: ModelClient) => {
+  (ctx: FlowClientCtx, puzzle: FlowPuzzle) => (model: ModelClient) => {
     return CreateClient.update({
       model,
       msg: {
@@ -184,43 +182,46 @@ export const clickedPuzzlePickerItem =
         userId: ctx.currentUserId,
       },
       ctx,
-      modelSync: defaultModelSync,
+      modelSync: initSync({ ctx }),
     })
   }
 
-export const clickedExitPuzzleButton = () => (model: ModelClient) => {
-  return CreateClient.update({
-    model,
-    msg: {
-      t: "pack-builder.user-clicked-exit-puzzle-button",
-      userId: ctx.currentUserId,
-    },
-    ctx,
-    modelSync: defaultModelSync,
-  })
-}
+export const clickedExitPuzzleButton =
+  (ctx: FlowClientCtx) => (model: ModelClient) => {
+    return CreateClient.update({
+      model,
+      msg: {
+        t: "pack-builder.user-clicked-exit-puzzle-button",
+        userId: ctx.currentUserId,
+      },
+      ctx,
+      modelSync: initSync({ ctx }),
+    })
+  }
 
 export const clickedPuzzleGridItem =
-  (puzzle: FlowPuzzle, index: number) => (model: ModelClient) => {
+  (ctx: FlowClientCtx, puzzle: FlowPuzzle, index: number) =>
+  (model: ModelClient) => {
     return CreateClient.update({
       model,
       msg: { t: "pack-builder.user-clicked-pack-item", puzzle, index },
       ctx,
-      modelSync: defaultModelSync,
+      modelSync: initSync({ ctx }),
     })
   }
 
-export const serverCreatedPack = (pack: FlowPack) => (model: ModelClient) => {
-  return CreateClient.update({
-    model,
-    ctx: ctx,
-    modelSync: defaultModelSync,
-    msgServer: {
-      t: "pack-create.created-pack",
-      created: Ok(pack),
-    },
-  })
-}
+export const serverCreatedPack =
+  (ctx: FlowClientCtx, pack: FlowPack) => (model: ModelClient) => {
+    return CreateClient.update({
+      model,
+      ctx: ctx,
+      modelSync: initSync({ ctx }),
+      msgServer: {
+        t: "pack-create.created-pack",
+        created: Ok(pack),
+      },
+    })
+  }
 
 export function createFlowPuzzle(ctx: SpaceClientCtx) {
   return FlowPuzzle.create({

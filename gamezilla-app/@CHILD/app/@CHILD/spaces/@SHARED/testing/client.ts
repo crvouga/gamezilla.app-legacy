@@ -41,19 +41,19 @@ export const Ctx = (): ClientCtx => {
   }
 }
 
-const randomProfile = (): Profile => {
+const randomProfile = async (): Promise<Profile> => {
   return {
     avatarUrl: ProfileAvatar.random(),
     userId: UserId.generate(),
-    username: Username.generate(),
+    username: await Username.generate(),
   }
 }
 
-export const createFixture = () => {
-  const currentUser = randomProfile()
-  const userA = randomProfile()
-  const userB = randomProfile()
-  const userC = randomProfile()
+export const createFixture = async () => {
+  const currentUser = await randomProfile()
+  const userA = await randomProfile()
+  const userB = await randomProfile()
+  const userC = await randomProfile()
 
   const ctx: ClientCtx = {
     navigatorLanguage: "en",

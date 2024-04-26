@@ -226,8 +226,8 @@ const findElseInsertNew = async ({
     return Ok(profile)
   }
 
-  const randomSeed = await ProfileAvatar.generateRandomSeed()
-  const randomUsername = Username.generate(".")
+  const randomSeed = ProfileAvatar.generateRandomSeed()
+  const randomUsername = await Username.generate(".")
   const profileNew: ProfileCore = {
     userId,
     username: randomUsername,

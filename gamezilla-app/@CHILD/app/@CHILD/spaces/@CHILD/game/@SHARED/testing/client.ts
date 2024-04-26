@@ -12,7 +12,7 @@ const currentUserId = "test-user-id" as UserId
 
 const currentSpaceId = "test-space-id" as SpaceId
 
-export function testSpaceClientCtx(): SpaceClientCtx {
+export async function testSpaceClientCtx(): Promise<SpaceClientCtx> {
   return {
     navigatorLanguage: "en",
     t: getTranslator("en"),
@@ -31,7 +31,7 @@ export function testSpaceClientCtx(): SpaceClientCtx {
           style: "fun-emoji",
         }),
         userId: currentUserId,
-        username: Username.generate(),
+        username: await Username.generate(),
       },
     },
     space: {

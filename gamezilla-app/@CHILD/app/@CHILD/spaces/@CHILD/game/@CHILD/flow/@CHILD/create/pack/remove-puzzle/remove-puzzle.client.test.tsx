@@ -11,16 +11,14 @@ import {
 import { FlowVariant, FlowVariantDimensions } from "../../../../@SHARED/flow"
 import { FlowPack } from "../../../../@SHARED/flow-pack"
 import { FlowPuzzle } from "../../../../@SHARED/flow-puzzle"
-import {
-  defaultModelSync,
-  testFlowClientCtx,
-} from "../../@SHARED/testing/client"
+import { testFlowClientCtx } from "../../@SHARED/testing/client"
 import { RemovePuzzleClient } from "./remove-puzzle.client"
 import {
   ModelClient,
   RemovePuzzleClientCtx,
   initClient,
 } from "./remove-puzzle.core"
+import { initSync } from "../../create.sync"
 
 const initial = (ctx: RemovePuzzleClientCtx) => {
   return {
@@ -35,7 +33,7 @@ const clickedRemovePuzzleButton =
     return RemovePuzzleClient.update({
       ctx,
       model,
-      modelSync: defaultModelSync,
+      modelSync: initSync({ ctx }),
       msg: {
         t: "remove-puzzle.clicked-remove-from-pack-button",
       },
@@ -47,7 +45,7 @@ const serverRemovedPuzzleOk =
     return RemovePuzzleClient.update({
       ctx,
       model,
-      modelSync: defaultModelSync,
+      modelSync: initSync({ ctx }),
       msgServer: {
         t: "remove-puzzle.removed",
         result: Ok(null),
@@ -63,7 +61,7 @@ const serverRemovedPuzzleErr =
     return RemovePuzzleClient.update({
       ctx,
       model,
-      modelSync: defaultModelSync,
+      modelSync: initSync({ ctx }),
       msgServer: {
         t: "remove-puzzle.removed",
         result: Err("error"),
@@ -78,15 +76,15 @@ const timePassed = (ctx: RemovePuzzleClientCtx) => (model: ModelClient) => {
   return RemovePuzzleClient.update({
     ctx,
     model,
-    modelSync: defaultModelSync,
+    modelSync: initSync({ ctx }),
     msg: {
       t: "remove-puzzle.time-passed",
     },
   })
 }
 
-const testRemovePuzzleCtx = (): RemovePuzzleClientCtx => {
-  const ctx = testFlowClientCtx()
+const testRemovePuzzleCtx = async (): Promise<RemovePuzzleClientCtx> => {
+  const ctx = await testFlowClientCtx()
   const puzzle = FlowPuzzle.create({
     count: 1,
     createdAt: ctx.now,
@@ -118,7 +116,7 @@ const testRemovePuzzleCtx = (): RemovePuzzleClientCtx => {
 
 describe(import.meta.file, () => {
   it("should be loading after clicking remove puzzle button", async () => {
-    const ctx = testRemovePuzzleCtx()
+    const ctx = await testRemovePuzzleCtx()
 
     const output = andThen(initial(ctx), clickedRemovePuzzleButton(ctx))
 
@@ -126,7 +124,7 @@ describe(import.meta.file, () => {
   })
 
   it("should send message to server after clicking remove puzzle button", async () => {
-    const ctx = testRemovePuzzleCtx()
+    const ctx = await testRemovePuzzleCtx()
 
     const output = andThen(initial(ctx), clickedRemovePuzzleButton(ctx))
 
@@ -139,7 +137,7 @@ describe(import.meta.file, () => {
   })
 
   it("should time out after a while after no response", async () => {
-    const ctx = testRemovePuzzleCtx()
+    const ctx = await testRemovePuzzleCtx()
 
     const output = andThen(
       initial(ctx),
@@ -153,7 +151,7 @@ describe(import.meta.file, () => {
   })
 
   it("should be ok after server responds with ok", async () => {
-    const ctx = testRemovePuzzleCtx()
+    const ctx = await testRemovePuzzleCtx()
     const output = andThen(
       initial(ctx),
       clickedRemovePuzzleButton(ctx),
@@ -163,7 +161,7 @@ describe(import.meta.file, () => {
   })
 
   it("should be error after server responds with error", async () => {
-    const ctx = testRemovePuzzleCtx()
+    const ctx = await testRemovePuzzleCtx()
     const output = andThen(
       initial(ctx),
       clickedRemovePuzzleButton(ctx),
@@ -173,7 +171,7 @@ describe(import.meta.file, () => {
   })
 
   it("should remove puzzle from pack after server responds with ok", async () => {
-    const ctx = testRemovePuzzleCtx()
+    const ctx = await testRemovePuzzleCtx()
     const output = andThen(
       initial(ctx),
       clickedRemovePuzzleButton(ctx),

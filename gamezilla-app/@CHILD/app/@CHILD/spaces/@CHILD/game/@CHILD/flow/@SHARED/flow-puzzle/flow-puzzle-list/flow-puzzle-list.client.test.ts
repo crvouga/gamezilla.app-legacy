@@ -64,28 +64,28 @@ const serverListedPuzzlesErr =
     })
   }
 
-const elapsed = (timeSpan: TimeSpan) => (model: ModelClient) => {
-  const ctx = testSpaceClientCtx()
-  return FlowPuzzleListClient.update({
-    ctx: {
-      ...ctx,
-      now: Posix.add(ctx.now, timeSpan),
-    },
-    model,
-    msg: { t: "flow-puzzle-list.elasped" },
-  })
-}
+const elapsed =
+  (ctx: FlowClientCtx, timeSpan: TimeSpan) => (model: ModelClient) => {
+    return FlowPuzzleListClient.update({
+      ctx: {
+        ...ctx,
+        now: Posix.add(ctx.now, timeSpan),
+      },
+      model,
+      msg: { t: "flow-puzzle-list.elasped" },
+    })
+  }
 
 describe(import.meta.file, () => {
   it("should it be requesting when the user observes the end of the list", async () => {
-    const ctx = testSpaceClientCtx()
-    const output = await andThen(initial, userObservedEndOfList(ctx))
+    const ctx = await testSpaceClientCtx()
+    const output = andThen(initial, userObservedEndOfList(ctx))
     expect(isRequesting(output.model.request)).toBe(true)
   })
 
   it("should send a list puzzles message to server when the user observes the end of the list", async () => {
-    const ctx = testSpaceClientCtx()
-    const output = await andThen(initial, userObservedEndOfList(ctx))
+    const ctx = await testSpaceClientCtx()
+    const output = andThen(initial, userObservedEndOfList(ctx))
     expect(
       didSendToServer(
         output,
@@ -95,7 +95,7 @@ describe(import.meta.file, () => {
   })
 
   it("should record puzzles recieved from server", async () => {
-    const ctx = testFlowClientCtx()
+    const ctx = await testFlowClientCtx()
     const puzzle = FlowPuzzle.create({
       count: 1,
       createdAt: ctx.now,
@@ -110,24 +110,24 @@ describe(import.meta.file, () => {
       }),
     })
 
-    const output = await andThen(initial, serverListedPuzzlesOk(ctx, [puzzle]))
+    const output = andThen(initial, serverListedPuzzlesOk(ctx, [puzzle]))
 
     expect(Object.values(output.model.puzzles)).not.toEqual([])
   })
 
   it("should show error when recieving list error fro server", async () => {
-    const ctx = testFlowClientCtx()
+    const ctx = await testFlowClientCtx()
     const error = "Something went wrong"
-    const output = await andThen(initial, serverListedPuzzlesErr(ctx, error))
+    const output = andThen(initial, serverListedPuzzlesErr(ctx, error))
     expect(didShowErrorSm(output)).toBe(true)
   })
 
   it("should show error after no server response", async () => {
-    const ctx = testFlowClientCtx()
-    const output = await andThen(
+    const ctx = await testFlowClientCtx()
+    const output = andThen(
       initial,
       userObservedEndOfList(ctx),
-      elapsed(TimeSpan.fromMinutes(5)),
+      elapsed(ctx, TimeSpan.fromMinutes(5)),
     )
     expect(RequestResponse.didRequestTimeout(output.model.request)).toBe(true)
   })

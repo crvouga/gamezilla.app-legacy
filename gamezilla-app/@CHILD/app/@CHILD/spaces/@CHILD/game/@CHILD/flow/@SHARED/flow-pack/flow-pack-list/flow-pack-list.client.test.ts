@@ -11,20 +11,19 @@ import {
   RequestResponse,
   TimeSpan,
 } from "gamezilla-app/@SHARED/core"
-import { testSpaceClientCtx } from "../../../../../@SHARED/testing/client"
+import { FlowClientCtx } from "../../flow-ctx"
 import { FlowPack } from "../flow-pack"
 import { FlowPackListClient } from "./flow-pack-list.client"
 import { ModelClient, initClient } from "./flow-pack-list.core"
+import { testFlowClientCtx } from "../../../@CHILD/create/@SHARED/testing/client"
 
 const initial = {
   model: initClient,
 }
 
-const ctx = testSpaceClientCtx()
-
-const observedEndOfList = (model: ModelClient) => {
+const observedEndOfList = (ctx: FlowClientCtx) => (model: ModelClient) => {
   return FlowPackListClient.update({
-    ctx: ctx,
+    ctx,
     model,
     msg: {
       t: "user-observed-end-of-list",
@@ -32,19 +31,20 @@ const observedEndOfList = (model: ModelClient) => {
   })
 }
 
-const elasped = (timeSpan: TimeSpan) => (model: ModelClient) => {
-  return FlowPackListClient.update({
-    ctx: {
-      ...ctx,
-      now: Posix.add(ctx.now, timeSpan),
-    },
-    model,
-    msg: { t: "elapsed" },
-  })
-}
+const elasped =
+  (ctx: FlowClientCtx, timeSpan: TimeSpan) => (model: ModelClient) => {
+    return FlowPackListClient.update({
+      ctx: {
+        ...ctx,
+        now: Posix.add(ctx.now, timeSpan),
+      },
+      model,
+      msg: { t: "elapsed" },
+    })
+  }
 
 const serverListedPacksOk =
-  (...packs: FlowPack[]) =>
+  (ctx: FlowClientCtx, ...packs: FlowPack[]) =>
   (model: ModelClient) => {
     return FlowPackListClient.update({
       ctx: ctx,
@@ -61,54 +61,60 @@ const serverListedPacksOk =
     })
   }
 
-const serverListedPacksErr = (errorMessage: string) => (model: ModelClient) => {
-  return FlowPackListClient.update({
-    ctx: ctx,
-    model,
-    msgServer: {
-      t: "listed-packs",
-      listed: Err(errorMessage),
-    },
-  })
-}
+const serverListedPacksErr =
+  (ctx: FlowClientCtx, errorMessage: string) => (model: ModelClient) => {
+    return FlowPackListClient.update({
+      ctx,
+      model,
+      msgServer: {
+        t: "listed-packs",
+        listed: Err(errorMessage),
+      },
+    })
+  }
 
 describe(import.meta.file, () => {
   it("should be request when user observes end of list", async () => {
-    const output = await AppClientModule.andThen(initial, observedEndOfList)
+    const ctx = await testFlowClientCtx()
+    const output = AppClientModule.andThen(initial, observedEndOfList(ctx))
     expect(RequestResponse.isRequesting(output.model.request)).toBe(true)
   })
 
   it("should send request to server when user observes end of list", async () => {
-    const output = await AppClientModule.andThen(initial, observedEndOfList)
+    const ctx = await testFlowClientCtx()
+    const output = AppClientModule.andThen(initial, observedEndOfList(ctx))
     expect(didSendToServer(output, (msg) => msg.t === "list-packs")).toBe(true)
   })
 
   it("should timeout request", async () => {
-    const output = await AppClientModule.andThen(
+    const ctx = await testFlowClientCtx()
+    const output = AppClientModule.andThen(
       initial,
-      observedEndOfList,
-      elasped(TimeSpan.fromMinutes(5)),
+      observedEndOfList(ctx),
+      elasped(ctx, TimeSpan.fromMinutes(5)),
     )
     expect(RequestResponse.didRequestTimeout(output.model.request)).toBe(true)
   })
 
   it("should add packs listed from server", async () => {
+    const ctx = await testFlowClientCtx()
     const pack = FlowPack.create({
       createdBy: ctx.currentUserId,
       now: ctx.now,
       puzzleIds: [],
     })
-    const output = await AppClientModule.andThen(
+    const output = AppClientModule.andThen(
       initial,
-      serverListedPacksOk(pack),
+      serverListedPacksOk(ctx, pack),
     )
     expect(Object.values(output.model.packs)).toEqual([pack])
   })
 
   it("should show error when packs listed from server errors", async () => {
-    const output = await AppClientModule.andThen(
+    const ctx = await testFlowClientCtx()
+    const output = AppClientModule.andThen(
       initial,
-      serverListedPacksErr("Something went wrong"),
+      serverListedPacksErr(ctx, "Something went wrong"),
     )
     expect(didShowErrorSm(output)).toBe(true)
   })

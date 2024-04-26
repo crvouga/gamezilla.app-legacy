@@ -112,7 +112,7 @@ const hasSameElements = <T,>(a: T[], b: T[]): boolean => {
 
 describe(import.meta.file, () => {
   it("should send a request to list puzzles when grid is visible", async () => {
-    const { pack, ctx } = setup(testFlowClientCtx())
+    const { pack, ctx } = setup(await testFlowClientCtx())
     const output = andThen(initial(pack), userObversedGrid(ctx))
 
     expect(
@@ -121,7 +121,7 @@ describe(import.meta.file, () => {
   })
 
   it("should have missing puzzle ids in list request", async () => {
-    const { pack, ctx } = setup(testFlowClientCtx())
+    const { pack, ctx } = setup(await testFlowClientCtx())
     const output = andThen(initial(pack), userObversedGrid(ctx))
 
     expect(
@@ -135,7 +135,7 @@ describe(import.meta.file, () => {
   })
 
   it("should record puzzles listed by server", async () => {
-    const { pack, ctx, puzzle } = setup(testFlowClientCtx())
+    const { pack, ctx, puzzle } = setup(await testFlowClientCtx())
     const output = andThen(
       initial(pack),
       serverListedPuzzlesByIdOk(ctx, [puzzle]),
@@ -144,7 +144,7 @@ describe(import.meta.file, () => {
   })
 
   it("should show an error when server sends an error while listing puzzles", async () => {
-    const { pack, ctx } = setup(testFlowClientCtx())
+    const { pack, ctx } = setup(await testFlowClientCtx())
     const error = "Something went wrong"
     const output = andThen(
       initial(pack),
@@ -154,13 +154,13 @@ describe(import.meta.file, () => {
   })
 
   it("should in a loading state after requesting to list puzzles", async () => {
-    const { pack, ctx } = setup(testFlowClientCtx())
+    const { pack, ctx } = setup(await testFlowClientCtx())
     const output = andThen(initial(pack), userObversedGrid(ctx))
     expect(RequestResponse.isRequesting(output.model.request)).toBe(true)
   })
 
   it("should in an ok state after server listed puzzles", async () => {
-    const { puzzle, pack, ctx } = setup(testFlowClientCtx())
+    const { puzzle, pack, ctx } = setup(await testFlowClientCtx())
     const output = andThen(
       initial(pack),
       userObversedGrid(ctx),
@@ -170,7 +170,7 @@ describe(import.meta.file, () => {
   })
 
   it("should timeout request after too much time", async () => {
-    const { pack, ctx } = setup(testFlowClientCtx())
+    const { pack, ctx } = setup(await testFlowClientCtx())
     const output = andThen(
       initial(pack),
       userObversedGrid(ctx),

@@ -4,18 +4,18 @@ import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { LamportTimestamp } from "gamezilla-app/@SHARED/lamport-clock"
 import { GameClientModule } from "../../../../@SHARED/architecture/game-client-v2"
 import { EventId } from "../../../../@SHARED/event"
-import { testSpaceClientCtx } from "../../@SHARED/testing/client"
+import { FlowClientCtx } from "./@SHARED/flow-ctx"
 import { FlowClient } from "./flow.client"
 import { ModelClient } from "./flow.core"
+import { testFlowClientCtx } from "./@CHILD/create/@SHARED/testing/client"
 
 const init = {
   model: FlowClient.init,
 }
 
-const ctx = testSpaceClientCtx()
-
-const useSelectedMode =
-  (userId: UserId, mode: "create" | "play" | null) => (model: ModelClient) => {
+const userSelectedMode =
+  (ctx: FlowClientCtx, userId: UserId, mode: "create" | "play" | null) =>
+  (model: ModelClient) => {
     return FlowClient.update({
       ctx,
       model,
@@ -34,25 +34,28 @@ const useSelectedMode =
 
 describe(import.meta.file, () => {
   it("should play a sound when selecting play mode", async () => {
-    const output = await GameClientModule.andThen(
+    const ctx = await testFlowClientCtx()
+    const output = GameClientModule.andThen(
       init,
-      useSelectedMode(ctx.currentUserId, "play"),
+      userSelectedMode(ctx, ctx.currentUserId, "play"),
     )
     expect(didPlaySound(output)).toBe(true)
   })
 
   it("should play a sound when selecting create mode", async () => {
-    const output = await GameClientModule.andThen(
+    const ctx = await testFlowClientCtx()
+    const output = GameClientModule.andThen(
       init,
-      useSelectedMode(ctx.currentUserId, "create"),
+      userSelectedMode(ctx, ctx.currentUserId, "create"),
     )
     expect(didPlaySound(output)).toBe(true)
   })
 
   it("should not play a sound when selecting no mode", async () => {
-    const output = await GameClientModule.andThen(
+    const ctx = await testFlowClientCtx()
+    const output = GameClientModule.andThen(
       init,
-      useSelectedMode(ctx.currentUserId, null),
+      userSelectedMode(ctx, ctx.currentUserId, null),
     )
     expect(didPlaySound(output)).toBe(true)
   })

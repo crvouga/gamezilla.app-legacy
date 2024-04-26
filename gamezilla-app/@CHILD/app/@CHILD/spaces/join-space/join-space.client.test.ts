@@ -21,7 +21,7 @@ describe(import.meta.file, () => {
     const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
-    const output = await andThen(
+    const output = andThen(
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), spaceId),
       clickedJoinSpaceButton(ctx, spaceId),
@@ -35,15 +35,15 @@ describe(import.meta.file, () => {
   })
 
   it("should should toast of other user leaving space", async () => {
-    const f = createFixture()
+    const f = await createFixture()
     const spaceId = SpaceId.generate()
 
-    const started = await andThen(
+    const started = andThen(
       f.initial,
       userStartedSpace(f.ctx, f.ctx.currentUserId, spaceId),
     )
 
-    const output = await andThen(
+    const output = andThen(
       { model: started.model },
       userJoinedSpace(f.ctx, f.userA.userId, spaceId),
     )
@@ -55,7 +55,7 @@ describe(import.meta.file, () => {
     const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
-    const joined = await andThen(
+    const joined = andThen(
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), spaceId),
       clickedJoinSpaceButton(ctx, spaceId),
@@ -70,7 +70,7 @@ describe(import.meta.file, () => {
     const ctx = Ctx()
     const spaceId = SpaceId.generate()
 
-    const left = await andThen(
+    const left = andThen(
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), spaceId),
       clickedJoinSpaceButton(ctx, spaceId),
@@ -88,13 +88,13 @@ describe(import.meta.file, () => {
     const SpaceA = SpaceId.generate()
     const SpaceB = SpaceId.generate()
 
-    const arranged = await andThen(
+    const arranged = andThen(
       init(ctx),
       userStartedSpace(ctx, UserId.generate(), SpaceA),
       clickedJoinSpaceButton(ctx, SpaceA),
     )
 
-    const joined = await andThen(
+    const joined = andThen(
       { model: arranged.model },
       userStartedSpace(ctx, UserId.generate(), SpaceB),
       clickedJoinSpaceButton(ctx, SpaceB),
