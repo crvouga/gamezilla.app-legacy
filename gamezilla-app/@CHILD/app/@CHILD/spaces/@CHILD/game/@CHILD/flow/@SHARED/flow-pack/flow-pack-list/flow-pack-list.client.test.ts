@@ -98,7 +98,7 @@ describe(import.meta.file, () => {
 
   it("should add packs listed from server", async () => {
     const ctx = await testFlowClientCtx()
-    const pack = FlowPack.create({
+    const pack = await FlowPack.create({
       createdBy: ctx.currentUserId,
       now: ctx.now,
       puzzleIds: [],

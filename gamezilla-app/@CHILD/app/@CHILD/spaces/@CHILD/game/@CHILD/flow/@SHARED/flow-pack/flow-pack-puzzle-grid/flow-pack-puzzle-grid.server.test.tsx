@@ -47,7 +47,7 @@ const createDeps = async (
     FlowPuzzleDb: FlowPuzzleDb({ t: "hash-map" }),
   }
 
-  const puzzle = FlowPuzzle.create({
+  const puzzle = await FlowPuzzle.create({
     createdBy: client.userId,
     count: 1,
     createdAt: testSpaceServerCtx.now,
@@ -61,7 +61,7 @@ const createDeps = async (
     }),
   })
 
-  const somePack = FlowPack.create({
+  const somePack = await FlowPack.create({
     createdBy: client.userId,
     now: testSpaceServerCtx.now,
     puzzleIds: [puzzle.id],

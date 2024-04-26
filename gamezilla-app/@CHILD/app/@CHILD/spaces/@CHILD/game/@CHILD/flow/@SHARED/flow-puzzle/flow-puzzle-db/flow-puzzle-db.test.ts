@@ -9,12 +9,14 @@ import { FlowPuzzleId } from "../flow-puzzle-id"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import { loggerNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 
-const randomFlowPuzzle = (input?: { createdBy?: UserId }): FlowPuzzle => {
+const randomFlowPuzzle = async (input?: {
+  createdBy?: UserId
+}): Promise<FlowPuzzle> => {
   const createdBy = input?.createdBy ?? UserId.generate()
   return {
     createdAt: Posix.now(),
     createdBy,
-    name: FlowPuzzleName.generate({
+    name: await FlowPuzzleName.generate({
       count: 0,
     }),
     lastUpdatedAt: Posix.now(),
@@ -69,7 +71,7 @@ describe(import.meta.file, () => {
   it("should be ok", async () => {
     const f = await Fixture()
 
-    const puzzle = randomFlowPuzzle()
+    const puzzle = await randomFlowPuzzle()
     const before = await f.flowPuzzleDb.get(puzzle.id)
     const inserted = await f.flowPuzzleDb.upsert(puzzle)
     const after = await f.flowPuzzleDb.get(puzzle.id)
@@ -82,7 +84,7 @@ describe(import.meta.file, () => {
   it("should be able to insert puzzles", async () => {
     const f = await Fixture()
 
-    const puzzle = randomFlowPuzzle()
+    const puzzle = await randomFlowPuzzle()
     const before = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
     await f.flowPuzzleDb.upsert(puzzle)
     const after = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
@@ -94,11 +96,11 @@ describe(import.meta.file, () => {
   it("should be able to list puzzles by created by", async () => {
     const f = await Fixture()
 
-    const puzzle = randomFlowPuzzle()
+    const puzzle = await randomFlowPuzzle()
     await f.flowPuzzleDb.upsert(puzzle)
 
     for (let i = 0; i < 3; i++) {
-      await f.flowPuzzleDb.upsert(randomFlowPuzzle())
+      await f.flowPuzzleDb.upsert(await randomFlowPuzzle())
     }
 
     const listed = await f.flowPuzzleDb.list({
@@ -126,13 +128,13 @@ describe(import.meta.file, () => {
   it("should be able to list puzzles by id", async () => {
     const f = await Fixture()
 
-    const puzzleA = randomFlowPuzzle()
+    const puzzleA = await randomFlowPuzzle()
     await f.flowPuzzleDb.upsert(puzzleA)
-    const puzzleB = randomFlowPuzzle()
+    const puzzleB = await randomFlowPuzzle()
     await f.flowPuzzleDb.upsert(puzzleB)
 
     for (let i = 0; i < 3; i++) {
-      await f.flowPuzzleDb.upsert(randomFlowPuzzle())
+      await f.flowPuzzleDb.upsert(await randomFlowPuzzle())
     }
 
     const listed = await f.flowPuzzleDb.list({
@@ -163,10 +165,10 @@ describe(import.meta.file, () => {
 
     const createdBy = UserId.generate()
     for (let i = 0; i < EXPECTED_COUNT; i++) {
-      await f.flowPuzzleDb.upsert(randomFlowPuzzle({ createdBy }))
+      await f.flowPuzzleDb.upsert(await randomFlowPuzzle({ createdBy }))
     }
     for (let i = 0; i < 3; i++) {
-      await f.flowPuzzleDb.upsert(randomFlowPuzzle())
+      await f.flowPuzzleDb.upsert(await randomFlowPuzzle())
     }
 
     const counted = await f.flowPuzzleDb.count({
@@ -188,7 +190,7 @@ describe(import.meta.file, () => {
     const puzzles: FlowPuzzle[] = []
     const createdBy = UserId.generate()
     for (let i = 0; i < 5; i++) {
-      const puzzle = randomFlowPuzzle({ createdBy })
+      const puzzle = await randomFlowPuzzle({ createdBy })
       puzzles.push(puzzle)
       await f.flowPuzzleDb.upsert(puzzle)
     }
@@ -219,11 +221,11 @@ describe(import.meta.file, () => {
 
   it("should update existing record when upserting", async () => {
     const f = await Fixture()
-    const puzzle = randomFlowPuzzle()
+    const puzzle = await randomFlowPuzzle()
     await f.flowPuzzleDb.upsert(puzzle)
     const updatedPuzzle = {
       ...puzzle,
-      name: FlowPuzzleName.generate({
+      name: await FlowPuzzleName.generate({
         count: 1,
       }),
     }
@@ -234,7 +236,7 @@ describe(import.meta.file, () => {
 
   it("should be able to zap records", async () => {
     const f = await Fixture()
-    const puzzle = randomFlowPuzzle()
+    const puzzle = await randomFlowPuzzle()
     await f.flowPuzzleDb.upsert(puzzle)
     const before = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
     await f.flowPuzzleDb.zap({

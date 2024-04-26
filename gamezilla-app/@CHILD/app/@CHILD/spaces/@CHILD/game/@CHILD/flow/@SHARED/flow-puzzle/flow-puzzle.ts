@@ -17,15 +17,15 @@ const parser = p.obj({
 
 export type FlowPuzzle = p.Infer<typeof parser>
 
-const create = (input: {
+const create = async (input: {
   count: number
   flow: FlowVariant.Model
   createdAt: Posix
   createdBy: UserId
-}): FlowPuzzle => {
+}): Promise<FlowPuzzle> => {
   return {
     flow: input.flow,
-    name: FlowPuzzleName.generate({ count: input.count }),
+    name: await FlowPuzzleName.generate({ count: input.count }),
     id: FlowPuzzleId.generate(),
     createdAt: input.createdAt,
     createdBy: input.createdBy,

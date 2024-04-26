@@ -47,7 +47,7 @@ describe(import.meta.file, () => {
   it("should open puzzle builder after clicking a puzzle in the list", async () => {
     const ctx = await testFlowClientCtx()
 
-    const puzzle = createFlowPuzzle(ctx)
+    const puzzle = await createFlowPuzzle(ctx)
 
     const output = andThen(
       initial,
@@ -66,7 +66,7 @@ describe(import.meta.file, () => {
   it("should play a sound when clicking a puzzle in the list", async () => {
     const ctx = await testFlowClientCtx()
 
-    const puzzle = createFlowPuzzle(ctx)
+    const puzzle = await createFlowPuzzle(ctx)
 
     const output = andThen(
       initial,

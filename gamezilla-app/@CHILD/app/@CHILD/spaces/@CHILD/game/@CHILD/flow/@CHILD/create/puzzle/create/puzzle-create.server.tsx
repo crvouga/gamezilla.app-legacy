@@ -31,7 +31,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
       const count = Result.withDefault(counted, 0)
 
-      const puzzleNew = FlowPuzzle.create({
+      const puzzleNew = await FlowPuzzle.create({
         count: count,
         createdAt: ctx.now,
         createdBy: msgClient.userId,

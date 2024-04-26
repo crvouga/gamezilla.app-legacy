@@ -46,11 +46,11 @@ const closedMoreDrawer = (ctx: FlowClientCtx) => (model: ModelClient) => {
 describe(import.meta.file, () => {
   it("should open puzzle when user clickes puzzle grid item", async () => {
     const ctx = await testFlowClientCtx()
-    const puzzle = createFlowPuzzle(ctx)
+    const puzzle = await createFlowPuzzle(ctx)
 
     const output = andThen(
       initial,
-      serverCreatedPack(ctx, createFlowPack(ctx)),
+      serverCreatedPack(ctx, await createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
       clickedPuzzlePickerItem(ctx, puzzle),
       clickedPuzzleGridItem(ctx, puzzle, 0),
@@ -66,7 +66,7 @@ describe(import.meta.file, () => {
     const ctx = await testFlowClientCtx()
     const output = andThen(
       initial,
-      serverCreatedPack(ctx, createFlowPack(ctx)),
+      serverCreatedPack(ctx, await createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
     )
     const modelSync = deriveModelSync(ctx)(output)
@@ -77,7 +77,7 @@ describe(import.meta.file, () => {
     const ctx = await testFlowClientCtx()
     const output = andThen(
       initial,
-      serverCreatedPack(ctx, createFlowPack(ctx)),
+      serverCreatedPack(ctx, await createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
       closedPuzzlePickerDrawer(ctx),
     )
@@ -87,10 +87,10 @@ describe(import.meta.file, () => {
 
   it("should add puzzle to the pack after clicking a puzzle in the picker", async () => {
     const ctx = await testFlowClientCtx()
-    const puzzle = createFlowPuzzle(ctx)
+    const puzzle = await createFlowPuzzle(ctx)
     const output = andThen(
       initial,
-      serverCreatedPack(ctx, createFlowPack(ctx)),
+      serverCreatedPack(ctx, await createFlowPack(ctx)),
       clickedPuzzlePickerItem(ctx, puzzle),
     )
     const modelSync = deriveModelSync(ctx)(output)
@@ -102,10 +102,10 @@ describe(import.meta.file, () => {
 
   it("should close puzzle picker after adding a puzzle to the pack", async () => {
     const ctx = await testFlowClientCtx()
-    const puzzle = createFlowPuzzle(ctx)
+    const puzzle = await createFlowPuzzle(ctx)
     const output = andThen(
       initial,
-      serverCreatedPack(ctx, createFlowPack(ctx)),
+      serverCreatedPack(ctx, await createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
       clickedPuzzlePickerItem(ctx, puzzle),
     )
@@ -115,10 +115,10 @@ describe(import.meta.file, () => {
 
   it("should go back to grid after exiting puzzle", async () => {
     const ctx = await testFlowClientCtx()
-    const puzzle = createFlowPuzzle(ctx)
+    const puzzle = await createFlowPuzzle(ctx)
     const output = andThen(
       initial,
-      serverCreatedPack(ctx, createFlowPack(ctx)),
+      serverCreatedPack(ctx, await createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
       clickedPuzzlePickerItem(ctx, puzzle),
       clickedPuzzleGridItem(ctx, puzzle, 0),
@@ -130,10 +130,10 @@ describe(import.meta.file, () => {
 
   it('should open the more drawer after clicking "more" button', async () => {
     const ctx = await testFlowClientCtx()
-    const puzzle = createFlowPuzzle(ctx)
+    const puzzle = await createFlowPuzzle(ctx)
     const output = andThen(
       initial,
-      serverCreatedPack(ctx, createFlowPack(ctx)),
+      serverCreatedPack(ctx, await createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
       clickedPuzzlePickerItem(ctx, puzzle),
       clickedPuzzleGridItem(ctx, puzzle, 0),
@@ -148,10 +148,10 @@ describe(import.meta.file, () => {
 
   it("should close the more drawer", async () => {
     const ctx = await testFlowClientCtx()
-    const puzzle = createFlowPuzzle(ctx)
+    const puzzle = await createFlowPuzzle(ctx)
     const output = andThen(
       initial,
-      serverCreatedPack(ctx, createFlowPack(ctx)),
+      serverCreatedPack(ctx, await createFlowPack(ctx)),
       clickedOpenPuzzlePickerButton(ctx),
       clickedPuzzlePickerItem(ctx, puzzle),
       clickedPuzzleGridItem(ctx, puzzle, 0),

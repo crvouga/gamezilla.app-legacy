@@ -1,5 +1,6 @@
 import { Err, Ok, Result } from "gamezilla-app/@SHARED/core"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
+import { getWords } from "../words"
 
 export type Username = Brand<string, "Username">
 
@@ -34,7 +35,8 @@ const generate = async (
   digitCount?: number,
   length?: number,
 ): Promise<Username> => {
-  const { adjectives, nouns } = await import("../words")
+  const { adjectives, nouns } = await getWords()
+
   const noun = nouns[Math.floor(Math.random() * nouns.length)] ?? ""
   const adjective =
     adjectives[Math.floor(Math.random() * adjectives.length)] ?? ""

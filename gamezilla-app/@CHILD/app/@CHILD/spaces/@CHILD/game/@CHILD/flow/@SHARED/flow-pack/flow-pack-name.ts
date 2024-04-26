@@ -1,9 +1,10 @@
-import { adjectives, nouns } from "gamezilla-app/@CHILD/app/@SHARED/data/words"
+import { getWords } from "gamezilla-app/@CHILD/app/@SHARED/data/words"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
 
 export type FlowPackName = Brand<string, "FlowPackName">
 
-const generate = ({ count }: { count: number }) => {
+const generate = async ({ count }: { count: number }) => {
+  const { adjectives, nouns } = await getWords()
   const adjective = adjectives[Math.floor(Math.random() * adjectives.length)]
   const noun = nouns[Math.floor(Math.random() * nouns.length)]
   return `Pack ${count} - ${adjective} ${noun}` as FlowPackName

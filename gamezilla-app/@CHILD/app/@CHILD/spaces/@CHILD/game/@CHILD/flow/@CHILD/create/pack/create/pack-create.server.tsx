@@ -32,7 +32,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         id: FlowPackId.generate(),
         lastUpdatedAt: ctx.now,
         lastUpdatedBy: msgClient.userId,
-        name: FlowPackName.generate({ count: counted.value }),
+        name: await FlowPackName.generate({ count: counted.value }),
         puzzleIds: [],
       }
 

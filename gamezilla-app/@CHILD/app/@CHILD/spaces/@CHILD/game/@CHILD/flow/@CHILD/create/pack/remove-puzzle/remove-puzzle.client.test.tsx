@@ -85,7 +85,7 @@ const timePassed = (ctx: RemovePuzzleClientCtx) => (model: ModelClient) => {
 
 const testRemovePuzzleCtx = async (): Promise<RemovePuzzleClientCtx> => {
   const ctx = await testFlowClientCtx()
-  const puzzle = FlowPuzzle.create({
+  const puzzle = await FlowPuzzle.create({
     count: 1,
     createdAt: ctx.now,
     createdBy: ctx.currentUserId,
@@ -99,7 +99,7 @@ const testRemovePuzzleCtx = async (): Promise<RemovePuzzleClientCtx> => {
     }),
   })
 
-  const pack = FlowPack.create({
+  const pack = await FlowPack.create({
     createdBy: ctx.currentUserId,
     now: ctx.now,
     puzzleIds: [puzzle.id],

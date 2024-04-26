@@ -1,10 +1,11 @@
-import { adjectives, nouns } from "gamezilla-app/@CHILD/app/@SHARED/data/words"
+import { getWords } from "gamezilla-app/@CHILD/app/@SHARED/data/words"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 
 export type FlowPuzzleName = Brand<string, "FlowPuzzleName">
 
-const generate = ({ count }: { count: number }) => {
+const generate = async ({ count }: { count: number }) => {
+  const { adjectives, nouns } = await getWords()
   const adjective = adjectives[Math.floor(Math.random() * adjectives.length)]
   const noun = nouns[Math.floor(Math.random() * nouns.length)]
   const name = `Puzzle ${count} - ${adjective} ${noun}` as FlowPuzzleName

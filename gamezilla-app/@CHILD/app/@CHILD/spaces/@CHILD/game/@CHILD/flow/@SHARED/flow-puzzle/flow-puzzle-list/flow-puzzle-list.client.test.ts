@@ -96,7 +96,7 @@ describe(import.meta.file, () => {
 
   it("should record puzzles recieved from server", async () => {
     const ctx = await testFlowClientCtx()
-    const puzzle = FlowPuzzle.create({
+    const puzzle = await FlowPuzzle.create({
       count: 1,
       createdAt: ctx.now,
       createdBy: ctx.currentUserId,
