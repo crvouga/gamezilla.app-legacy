@@ -1,14 +1,6 @@
 import { transitionSub, TransitionProps } from "./transition-shared"
 
 declare global {
-  namespace infero.createElement.JSX {
-    interface IntrinsicElements {
-      "transition-element": {
-        id: string
-        children: unknown
-      }
-    }
-  }
   namespace JSX {
     interface IntrinsicElements {
       "transition-element": {

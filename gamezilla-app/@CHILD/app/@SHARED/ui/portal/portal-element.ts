@@ -1,16 +1,4 @@
 declare global {
-  namespace infero.createElement.JSX {
-    interface IntrinsicElements {
-      "portal-entrance": {
-        "portial-id": string
-        children: unknown
-      }
-      "portal-exit": {
-        "portial-id": string
-      }
-    }
-  }
-
   namespace JSX {
     interface IntrinsicElements {
       "portal-entrance": {

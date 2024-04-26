@@ -11,13 +11,6 @@ import { SvgIds } from "./shared"
 import { initWins, syncWins } from "./wins"
 
 declare global {
-  namespace inferno.createElement.JSX {
-    interface IntrinsicElements {
-      "connect-four-columns": {
-        "initial-columns-json": string
-      }
-    }
-  }
   namespace JSX {
     interface IntrinsicElements {
       "connect-four-columns": {

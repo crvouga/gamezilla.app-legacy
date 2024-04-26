@@ -4,13 +4,6 @@ import {
 } from "./intersection-observer-shared"
 
 declare global {
-  namespace inferno.createElement.JSX {
-    interface IntrinsicElements {
-      "intersection-observer-dispatcher": {
-        id: string
-      }
-    }
-  }
   namespace JSX {
     interface IntrinsicElements {
       "intersection-observer-dispatcher": {
