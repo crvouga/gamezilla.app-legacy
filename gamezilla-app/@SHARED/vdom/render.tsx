@@ -1,3 +1,4 @@
+import { classNameModule } from "./module-classname"
 import { VDom } from "./vdom"
 
 export type VDomImpl = "inferno" | "preact" | "react" | "snabbdom"
@@ -54,7 +55,9 @@ export const Render = async (
         Snabbdom.propsModule,
         Snabbdom.styleModule,
         Snabbdom.eventListenersModule,
+        classNameModule,
       ])
+
       return (vDom) => {
         patch(root, vDom)
       }

@@ -19,6 +19,29 @@ const vDomPlugin = () => {
     case "react": {
       return react()
     }
+
+    case "snabbdom": {
+      return [{}]
+    }
+  }
+}
+
+const esbuildConfig = () => {
+  switch (VDOM_IMPL) {
+    case "snabbdom": {
+      // https://michealpearce.dev/custom-jsx-with-vite-typescript/
+      return {
+        jsx: "transform",
+        jsxDev: false,
+        jsxImportSource: "snabbdom",
+        jsxInject: `import { h, jsx, Fragment } from 'snabbdom'`,
+        jsxFactory: "jsx",
+        jsxFragment: "Fragment",
+      } as const
+    }
+    default: {
+      return {} as const
+    }
   }
 }
 
@@ -26,13 +49,5 @@ const vDomPlugin = () => {
 export default defineConfig({
   plugins: [tsconfigPaths(), vDomPlugin()],
   define: { "process.env": process.env },
-  // https://michealpearce.dev/custom-jsx-with-vite-typescript/
-  esbuild: {
-    jsx: "transform",
-    jsxDev: false,
-    jsxImportSource: "snabbdom",
-    jsxInject: `import { h, jsx, Fragment } from 'snabbdom'`,
-    jsxFactory: "jsx",
-    jsxFragment: "Fragment",
-  },
+  esbuild: esbuildConfig(),
 })
