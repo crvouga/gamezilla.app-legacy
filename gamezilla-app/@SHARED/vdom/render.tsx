@@ -1,6 +1,6 @@
 import { VDom } from "./vdom"
 
-export type VDomImpl = "inferno" | "preact" | "react"
+export type VDomImpl = "inferno" | "preact" | "react" | "snabbdom"
 
 export type Render = {
   (vDom: VDom): void
@@ -44,6 +44,19 @@ export const Render = async (
       createPortal = PreactCompat.createPortal
       return (vDom) => {
         Preact.render(vDom, root)
+      }
+    }
+
+    case "snabbdom": {
+      const Snabbdom = await import("snabbdom")
+      const patch = Snabbdom.init([
+        Snabbdom.classModule,
+        Snabbdom.propsModule,
+        Snabbdom.styleModule,
+        Snabbdom.eventListenersModule,
+      ])
+      return (vDom) => {
+        patch(root, vDom)
       }
     }
   }

@@ -590,7 +590,7 @@ const ViewRoute = ({
     default: {
       switch (model.auth.currentUser.t) {
         case "loading": {
-          return <LoadingState />
+          return <LoadingState {...{}} />
         }
         case "logged-in": {
           return (

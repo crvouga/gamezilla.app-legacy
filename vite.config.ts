@@ -26,4 +26,13 @@ const vDomPlugin = () => {
 export default defineConfig({
   plugins: [tsconfigPaths(), vDomPlugin()],
   define: { "process.env": process.env },
+  // https://michealpearce.dev/custom-jsx-with-vite-typescript/
+  esbuild: {
+    jsx: "transform",
+    jsxDev: false,
+    jsxImportSource: "snabbdom",
+    jsxInject: `import { h, jsx, Fragment } from 'snabbdom'`,
+    jsxFactory: "jsx",
+    jsxFragment: "Fragment",
+  },
 })
