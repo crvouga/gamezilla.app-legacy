@@ -17,7 +17,7 @@ export const CoverArt = (props: { className?: string }) => {
   const playerTwoFill = `url(#${ids.playerTwoGradient})`
 
   return (
-    <svg width="100%" viewBox={"0 0 2 2"} {...props}>
+    <svg width="100%" viewBox="0 0 2 2" {...props}>
       <defs>
         <pattern
           id={ids.holePattern}
