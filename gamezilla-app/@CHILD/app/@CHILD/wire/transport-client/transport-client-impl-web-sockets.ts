@@ -84,6 +84,10 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 
   const transport = initClientTransport<MsgToServer, MsgToClient>()
 
+  if (typeof window === "undefined") {
+    return transport
+  }
+
   let reconnectAttempts = 0
   let ws: WebSocket
   let isConnected = false
@@ -206,6 +210,11 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 
 function toWebsocketServerUrl(baseServerUrl: string) {
   const baseServerUrlObj = new URL(baseServerUrl)
+
+  if (typeof window === "undefined") {
+    return baseServerUrlObj.toString()
+  }
+
   const sessionId = localStorage.getItem(SESSION_ID_KEY)
 
   if (sessionId) {

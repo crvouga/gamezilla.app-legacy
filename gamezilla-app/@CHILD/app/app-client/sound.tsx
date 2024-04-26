@@ -252,46 +252,50 @@ export const ViewStatusBarDrawer = ({
 //
 //
 
-const MyAudioContext: typeof window.AudioContext =
-  window.AudioContext ||
-  // @ts-ignore
-  window.webkitAudioContext
+const MyAudioContext = (): typeof window.AudioContext => {
+  return (
+    window.AudioContext ||
+    // @ts-ignore
+    window.webkitAudioContext
+  )
+}
 
 let _audioContext: AudioContext
 
 const getAudioContext = () => {
   if (!_audioContext) {
-    _audioContext = new MyAudioContext()
+    _audioContext = new (MyAudioContext())()
   }
   return _audioContext
 }
 
-const resumedPromise = new Promise((resolve) => {
-  const handler = async (): Promise<null> => {
-    const audioContext = getAudioContext()
+const resumedPromise = () =>
+  new Promise((resolve) => {
+    const handler = async (): Promise<null> => {
+      const audioContext = getAudioContext()
 
-    switch (audioContext.state) {
-      case "closed":
-      case "running": {
-        resolve(null)
-        document.body.removeEventListener("click", handler)
-        document.body.removeEventListener("touchstart", handler)
-        return null
-      }
+      switch (audioContext.state) {
+        case "closed":
+        case "running": {
+          resolve(null)
+          document.body.removeEventListener("click", handler)
+          document.body.removeEventListener("touchstart", handler)
+          return null
+        }
 
-      case "suspended": {
-        await audioContext.resume()
-        resolve(null)
-        document.body.removeEventListener("click", handler)
-        document.body.removeEventListener("touchstart", handler)
-        return null
+        case "suspended": {
+          await audioContext.resume()
+          resolve(null)
+          document.body.removeEventListener("click", handler)
+          document.body.removeEventListener("touchstart", handler)
+          return null
+        }
       }
     }
-  }
 
-  document.body.addEventListener("click", handler)
-  document.body.addEventListener("touchstart", handler)
-})
+    document.body.addEventListener("click", handler)
+    document.body.addEventListener("touchstart", handler)
+  })
 
 const audioBuffers = new Map<string, AudioBuffer>()
 
@@ -301,7 +305,7 @@ async function preloadSounds(src: string[]) {
 }
 
 async function preloadSound(src: string) {
-  await resumedPromise
+  await resumedPromise()
 
   const response = await fetch(src)
   const arrayBuffer = await response.arrayBuffer()
@@ -315,7 +319,7 @@ async function playSoundEff(
   src: string,
   volume: number,
 ): Promise<Result<string, null>> {
-  await resumedPromise
+  await resumedPromise()
 
   const audioBuffer = audioBuffers.get(src)
 

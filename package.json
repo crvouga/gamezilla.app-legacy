@@ -14,7 +14,7 @@
     "db:dump": "bun x dbmate dump",
     "test:int": "IS_INTEGRATION_TEST=true bun test",
     "test:unit": "IS_INTEGRATION_TEST=false bun test",
-    "client:build": "vite build",
+    "client:build": "vite build && bun gamezilla-app/ssg.tsx",
     "client:serve": "bun x serve -s dist -p 3001",
     "preview": "bun client:build && bun client:serve",
     "client": "vite --open",

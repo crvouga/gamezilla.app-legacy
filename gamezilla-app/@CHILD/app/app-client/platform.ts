@@ -10,6 +10,14 @@ export const init = (_input: {
 }): {
   model: Model
 } => {
+  if (typeof window === "undefined") {
+    return {
+      model: {
+        documentVisibilityState: "visible",
+      },
+    }
+  }
+
   return {
     model: {
       documentVisibilityState: document.visibilityState,

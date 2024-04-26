@@ -1,9 +1,12 @@
 import { createPortal, VDomChildren } from "gamezilla-app/@SHARED/vdom"
 
-const getExit = (portalId: string): HTMLElement => {
-  return document.querySelector(
+const getExit = (portalId: string): HTMLElement | null => {
+  if (typeof document === "undefined") {
+    return null
+  }
+  return (document.querySelector(
     `[data-portal-exit][data-portal-id="${portalId}"]`,
-  ) as HTMLElement
+  ) ?? null) as HTMLElement | null
 }
 
 const PortalEntrance = ({

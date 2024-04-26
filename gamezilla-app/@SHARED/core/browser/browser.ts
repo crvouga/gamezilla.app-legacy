@@ -29,6 +29,12 @@ export const onLocation = <Msg>(fn: (location: Location) => Msg): Sub<Msg> => {
 }
 
 export const location = (): Location => {
+  if (typeof window === "undefined") {
+    return {
+      pathname: "",
+      query: {},
+    }
+  }
   return {
     pathname: window.location.pathname,
     query: Object.fromEntries(

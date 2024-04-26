@@ -77,6 +77,19 @@ export const getDeps = async (): Promise<Deps> => {
     codebaseVersionId: CODEBASE_VERSION_ID,
   })
 
+  const stored = getStored()
+
+  return {
+    transport,
+    stored,
+  }
+}
+
+const getStored = () => {
+  if (typeof window === "undefined") {
+    return {}
+  }
+
   const stored: Record<string, unknown> = {}
 
   for (let i = 0; i < localStorage.length; i++) {
@@ -92,10 +105,7 @@ export const getDeps = async (): Promise<Deps> => {
     }
   }
 
-  return {
-    transport,
-    stored,
-  }
+  return stored
 }
 
 //
