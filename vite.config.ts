@@ -46,7 +46,7 @@ const esbuildConfig = () => {
         jsx: "transform",
         jsxDev: false,
         jsxImportSource: "@",
-        jsxInject: `import { jsx } from '@/jsx-runtime'`,
+        jsxInject: `import { jsx } from 'gamezilla-app/@SHARED/vdom/jsx-runtime'`,
         jsxFactory: "jsx.component",
         jsxFragment: "jsx.fragment",
       } as const
@@ -61,11 +61,6 @@ const esbuildConfig = () => {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [tsconfigPaths(), vDomPlugin()],
-  define: { "process.env": process.env },
   esbuild: esbuildConfig(),
-  resolve: {
-    alias: {
-      "@": new URL("./src", import.meta.url).pathname,
-    },
-  },
+  define: { "process.env": process.env },
 })
