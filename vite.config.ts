@@ -39,6 +39,19 @@ const esbuildConfig = () => {
         jsxFragment: "Fragment",
       } as const
     }
+
+    // https://michealpearce.dev/custom-jsx-with-vite-typescript/
+    case "custom-jsx": {
+      return {
+        jsx: "transform",
+        jsxDev: false,
+        jsxImportSource: "@",
+        jsxInject: `import { jsx } from '@/jsx-runtime'`,
+        jsxFactory: "jsx.component",
+        jsxFragment: "jsx.fragment",
+      } as const
+    }
+
     default: {
       return {} as const
     }
@@ -50,4 +63,9 @@ export default defineConfig({
   plugins: [tsconfigPaths(), vDomPlugin()],
   define: { "process.env": process.env },
   esbuild: esbuildConfig(),
+  resolve: {
+    alias: {
+      "@": new URL("./src", import.meta.url).pathname,
+    },
+  },
 })

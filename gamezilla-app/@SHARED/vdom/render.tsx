@@ -1,7 +1,12 @@
 import { classNameModule } from "./module-classname"
 import { VDom } from "./vdom"
 
-export type VDomImpl = "inferno" | "preact" | "react" | "snabbdom"
+export type VDomImpl =
+  | "inferno"
+  | "preact"
+  | "react"
+  | "snabbdom"
+  | "custom-jsx"
 
 export type Render = {
   (vDom: VDom): void
@@ -60,6 +65,13 @@ export const Render = async (
 
       return (vDom) => {
         patch(root, vDom)
+      }
+    }
+
+    case "custom-jsx": {
+      return (vDom) => {
+        //
+        root.append(vDom)
       }
     }
   }
