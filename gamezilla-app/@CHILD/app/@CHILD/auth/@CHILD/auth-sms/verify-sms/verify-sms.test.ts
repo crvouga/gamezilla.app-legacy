@@ -10,10 +10,11 @@ import {
   isErr,
   isOk,
 } from "gamezilla-app/@SHARED/core"
+import { Hashing } from "gamezilla-app/@SHARED/hashing"
 import { CodeGenerator } from "./code-generator"
+import { VerificationId } from "./verification"
 import { VerificationAttemptDb, VerificationDb } from "./verification-db"
 import { VerifySMS } from "./verify-sms-impl"
-import { Hashing } from "gamezilla-app/@SHARED/hashing"
 
 const Fixture = async () => {
   const sms = SMSFake()
@@ -21,6 +22,7 @@ const Fixture = async () => {
   const dbConnKv = await DbConnKv({ t: "hash-map" })
 
   const CODE = "123456"
+  const WRONG_CODE = "42"
 
   const codeGenerator = CodeGenerator({ t: "fake", code: CODE })
 
@@ -56,6 +58,7 @@ const Fixture = async () => {
   return {
     translator,
     CODE,
+    WRONG_CODE,
     phoneNumber,
     dbConnKv,
     verifySMS,
@@ -91,9 +94,7 @@ describe(import.meta.file, () => {
     await f.verifySMS.sendCode({
       phoneNumber: f.phoneNumber,
     })
-    expect(
-      f.sms.sent.every((smsMessage) => smsMessage.message.includes(f.CODE)),
-    ).toBe(true)
+    expect(f.sms.sent[0]?.message.includes(f.CODE)).toBe(true)
   })
 
   it("should send a sms message to the phone number inputted", async () => {
@@ -114,11 +115,8 @@ describe(import.meta.file, () => {
       phoneNumber: f.phoneNumber,
     })
     expect(
-      f.sms.sent.every(
-        (smsMessage) =>
-          smsMessage.message ===
-          f.translator("verify-sms.code-message", f.CODE),
-      ),
+      f.sms.sent[0]?.message ===
+        f.translator("verify-sms.code-message", f.CODE),
     ).toBe(true)
   })
 
@@ -137,13 +135,55 @@ describe(import.meta.file, () => {
 
     const verified = await f.verifySMS.verifyCode({
       verificationId: verificationId,
-      code: "42",
+      code: f.WRONG_CODE,
     })
 
     expect(isErr(verified) && verified.error.t === "code-incorrect").toBe(true)
   })
 
-  it("should eventualy error after enough failed attempts", async () => {
-    //
+  it("should eventually error after enough failed attempts", async () => {
+    const f = await Fixture()
+
+    const sent = await f.verifySMS.sendCode({
+      phoneNumber: f.phoneNumber,
+    })
+
+    const verificationId = Result.withDefault(sent, null)?.verificationId
+
+    if (!verificationId) {
+      throw new Error("Invalid verification id")
+    }
+
+    for (let i = 0; i < 1000; i++) {
+      const verified = await f.verifySMS.verifyCode({
+        verificationId: verificationId,
+        code: f.WRONG_CODE,
+      })
+
+      if (isErr(verified) && verified.error.t === "code-incorrect") {
+        continue
+      }
+
+      if (
+        isErr(verified) &&
+        verified.error.t === "verification-expired-too-many-failed-attempts"
+      ) {
+        return
+      }
+    }
+    throw new Error("Should have eventually errored")
+  })
+
+  it("should error if the verification id is not found", async () => {
+    const f = await Fixture()
+
+    const verified = await f.verifySMS.verifyCode({
+      verificationId: VerificationId.generate(),
+      code: f.CODE,
+    })
+
+    expect(
+      isErr(verified) && verified.error.t === "verification-not-found",
+    ).toBe(true)
   })
 })

@@ -1,7 +1,7 @@
 import { Uuid } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 
-const parser = p.brand(p.str, "VerifcationId")
+const parser = p.brand(p.str, "VerificationId")
 
 export type VerificationId = p.Infer<typeof parser>
 

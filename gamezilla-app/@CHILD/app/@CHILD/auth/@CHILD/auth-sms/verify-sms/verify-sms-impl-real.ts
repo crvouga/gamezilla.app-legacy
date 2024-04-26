@@ -12,8 +12,13 @@ import {
 import { IHashing } from "gamezilla-app/@SHARED/hashing"
 import { Translator } from "gamezilla-app/@SHARED/l18n/generated"
 import { ICodeGenerator } from "./code-generator"
-import { Verification, VerificationId } from "./verification"
+import {
+  Verification,
+  VerificationAttempt,
+  VerificationId,
+} from "./verification"
 import { IVerificationAttemptDb, IVerificationDb } from "./verification-db"
+import { VerificationAttemptId } from "./verification/verification-attempt-id"
 import { IVerifySMS } from "./verify-sms"
 
 export const EXPIRES_IN = TimeSpan.fromMinutes(5)
@@ -96,6 +101,43 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
           t: "verification-not-found",
         })
       }
+
+      const foundAttempts = await deps.verificationAttemptDb.find({
+        where: {
+          equalsVerificationId: input.verificationId,
+        },
+      })
+
+      if (isErr(foundAttempts)) {
+        return Err({
+          t: "database-error",
+          error: foundAttempts.error,
+        })
+      }
+
+      const attempts = foundAttempts.value
+
+      if (attempts.length >= 3) {
+        return Err({
+          t: "verification-expired-too-many-failed-attempts",
+        })
+      }
+
+      const inputtedCodeHash = await deps.hashing.hash({
+        algo: {
+          t: "sha256",
+        },
+        password: input.code,
+      })
+
+      const newAttempt: VerificationAttempt = {
+        verificationAttemptId: VerificationAttemptId.generate(),
+        codeHash: inputtedCodeHash,
+        createdAt: Posix.now(),
+        verificationId: input.verificationId,
+      }
+
+      await deps.verificationAttemptDb.upsert(newAttempt)
 
       const isCorrect = await deps.hashing.check({
         hash: verification.codeHash,
