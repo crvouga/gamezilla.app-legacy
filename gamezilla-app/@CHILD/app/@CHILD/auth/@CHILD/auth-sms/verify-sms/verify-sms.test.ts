@@ -70,9 +70,7 @@ describe(import.meta.file, () => {
   it("should be ok", async () => {
     const f = await Fixture()
 
-    const sent = await f.verifySMS.sendCode({
-      phoneNumber: f.phoneNumber,
-    })
+    const sent = await f.verifySMS.sendCode(f)
 
     const verificationId = Result.withDefault(sent, null)?.verificationId
 
@@ -123,9 +121,7 @@ describe(import.meta.file, () => {
   it("should fail if the code is not the same as the code sent", async () => {
     const f = await Fixture()
 
-    const sent = await f.verifySMS.sendCode({
-      phoneNumber: f.phoneNumber,
-    })
+    const sent = await f.verifySMS.sendCode(f)
 
     const verificationId = Result.withDefault(sent, null)?.verificationId
 
@@ -144,9 +140,7 @@ describe(import.meta.file, () => {
   it("should eventually error after enough failed attempts", async () => {
     const f = await Fixture()
 
-    const sent = await f.verifySMS.sendCode({
-      phoneNumber: f.phoneNumber,
-    })
+    const sent = await f.verifySMS.sendCode(f)
 
     const verificationId = Result.withDefault(sent, null)?.verificationId
 
@@ -176,6 +170,8 @@ describe(import.meta.file, () => {
 
   it("should error if the verification id is not found", async () => {
     const f = await Fixture()
+
+    await f.verifySMS.sendCode(f)
 
     const verified = await f.verifySMS.verifyCode({
       verificationId: VerificationId.generate(),
