@@ -273,13 +273,46 @@ export const yieldTerminals = function* (model: Model): Generator<Terminal> {
   }
 }
 
-type PipeJoined = Flow.PipeJoined & {
+export type PipeJoined = Flow.PipeJoined & {
   source: Node
   target: Node
 }
 
 export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
   for (const pipe of Flow.yieldPipes(model)) {
+    const source = toNode(model, pipe.edge.sourceId)
+
+    if (!source) {
+      continue
+    }
+
+    const target = toNode(model, pipe.edge.targetId)
+
+    if (!target) {
+      continue
+    }
+
+    yield {
+      ...pipe,
+      source,
+      target,
+    }
+  }
+}
+
+export const yieldPipelines = function* (
+  model: Model,
+): Iterable<Iterable<PipeJoined>> {
+  for (const terminal of Flow.yieldTerminals(model)) {
+    yield yieldPipeline(model, terminal.startId)
+  }
+}
+
+export const yieldPipeline = function* (
+  model: Model,
+  startNodeId: Flow.NodeId,
+): Iterable<PipeJoined> {
+  for (const pipe of Flow.yieldPipeline(model, startNodeId)) {
     const source = toNode(model, pipe.edge.sourceId)
 
     if (!source) {

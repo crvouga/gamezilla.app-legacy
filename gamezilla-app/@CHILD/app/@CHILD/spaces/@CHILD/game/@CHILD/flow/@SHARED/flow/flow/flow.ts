@@ -479,6 +479,36 @@ export const yieldTerminals = function* (model: Model): Iterable<Terminal> {
   }
 }
 
+export const yieldPipelines = function* (
+  model: Model,
+): Iterable<Iterable<Pipe>> {
+  for (const terminal of yieldTerminals(model)) {
+    yield yieldPipeline(model, terminal.startId)
+  }
+}
+
+export const pipelineToGroupId = (pipeline: Iterable<Pipe>): GroupId | null => {
+  for (const pipe of pipeline) {
+    return pipe.groupId
+  }
+  return null
+}
+
+export const yieldPipeline = function* (
+  model: Model,
+  currentNodeId: NodeId,
+): Iterable<PipeJoined> {
+  const pipe = toPipeBySourceId(model, currentNodeId)
+
+  if (!pipe) {
+    return
+  }
+
+  yield pipe
+
+  yield* yieldPipeline(model, pipe.edge.targetId)
+}
+
 /**
  *
  */

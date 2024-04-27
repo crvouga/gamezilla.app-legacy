@@ -133,6 +133,9 @@ const View = ({
       */}
       <g transform="translate(0.5, 0.5)">
         {map(FlowGrid.yieldTerminals(model), (terminal) => {
+          const pipeline = FlowGrid.yieldPipeline(model, terminal.startId)
+          const pipleinePathData = pipelineToSvgPathData(pipeline)
+
           return (
             <g key={terminal.groupId}>
               <ViewTerminalNode
@@ -147,6 +150,16 @@ const View = ({
                   }),
                 )}
               />
+
+              <path
+                d={pipleinePathData}
+                stroke={FlowUI.Color.groupIdToHex(terminal.groupId)}
+                strokeWidth={EDGE_STROKE_WIDTH}
+                fill="none"
+                strokeLinejoin="round"
+                strokeLinecap="round"
+              />
+
               {terminal.end && (
                 <ViewTerminalNode
                   key={terminal.end.nodeId}
@@ -161,30 +174,6 @@ const View = ({
                   )}
                 />
               )}
-            </g>
-          )
-        })}
-      </g>
-
-      <g transform="translate(0.5, 0.5)">
-        {map(FlowGrid.yieldPipes(model), (pipe) => {
-          return (
-            <g key={pipe.edgeId}>
-              <line
-                key={pipe.edgeId}
-                x1={pipe.source.x}
-                y1={pipe.source.y}
-                x2={pipe.target.x}
-                y2={pipe.target.y}
-                stroke={FlowUI.Color.groupIdToHex(pipe.groupId)}
-                strokeWidth={EDGE_STROKE_WIDTH}
-              />
-              <circle
-                cx={pipe.target.x}
-                cy={pipe.target.y}
-                r={0.14}
-                fill={FlowUI.Color.groupIdToHex(pipe.groupId)}
-              />
             </g>
           )
         })}
@@ -306,6 +295,16 @@ const ViewTerminalNode = ({
       fill={FlowUI.Color.groupIdToHex(groupId)}
     />
   )
+}
+
+const pipelineToSvgPathData = (
+  pipeline: Iterable<FlowGrid.PipeJoined>,
+): string => {
+  let path = ""
+  for (const pipe of pipeline) {
+    path += `M ${pipe.source.x} ${pipe.source.y} L ${pipe.target.x} ${pipe.target.y} `
+  }
+  return path
 }
 
 const touchEventToNodeId = (msgSync: TouchEvent): Flow.NodeId | null => {
