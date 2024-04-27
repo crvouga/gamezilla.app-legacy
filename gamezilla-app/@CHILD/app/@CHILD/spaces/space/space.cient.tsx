@@ -91,7 +91,7 @@ const ViewTopBar: SpaceClientModule["View"] = (input) => {
   const peopleCount = Object.keys(space.users).length
 
   return (
-    <nav className="flex h-14 w-full items-center border-b border-neutral-600">
+    <nav className="flex h-14 w-full items-center border-b border-neutral-500">
       <ViewTopBarButton
         onClick={() => dispatch({ t: "clicked-go-home-button" })}
         label="Home"

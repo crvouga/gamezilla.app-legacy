@@ -178,7 +178,7 @@ const View: SpaceClientModule["View"] = (input) => {
       </div>
 
       {!currentUserSpaceId && (
-        <div className="flex border-t border-neutral-600 p-4">
+        <div className="flex border-t border-neutral-500 p-4">
           <StartSpaceClient.ViewStartSpaceButton {...input} />
         </div>
       )}

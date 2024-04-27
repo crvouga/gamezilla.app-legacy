@@ -282,7 +282,7 @@ export const View = ({
           </div>
         </div>
 
-        <div className="relative flex aspect-square w-full items-center justify-end overflow-hidden bg-neutral-700">
+        <div className="relative flex aspect-square w-full items-center justify-end overflow-hidden bg-neutral-800">
           <Chessboard
             id="puzzle-chess-board"
             orientation={
@@ -533,7 +533,7 @@ const ViewStatusBar = ({ model }: { model: ModelClient }) => {
 
   if (model.t === "solved-with-hint") {
     return (
-      <div className="flex w-full items-center justify-center gap-2 bg-neutral-600 p-2 text-white">
+      <div className="flex w-full items-center justify-center gap-2 bg-neutral-800 p-2 text-white">
         <IconCheckmarkCircle className="h-6 w-6" />
         <p className="text-xl">Solved with hint</p>
       </div>

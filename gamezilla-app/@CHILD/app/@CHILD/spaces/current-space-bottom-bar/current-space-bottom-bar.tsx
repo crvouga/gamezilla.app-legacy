@@ -80,7 +80,7 @@ const View = ({
                 className="h-14 w-14"
               />
             ) : (
-              <div className="h-14 w-14 overflow-hidden rounded border border-neutral-600">
+              <div className="h-14 w-14 overflow-hidden rounded border border-neutral-500">
                 <CoverArt gameName={space.game.t} />
               </div>
             )}

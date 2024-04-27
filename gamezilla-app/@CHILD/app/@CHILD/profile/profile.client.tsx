@@ -548,7 +548,7 @@ const ViewField = ({
         <p className="h-7 text-lg">{value}</p>
       ) : (
         <div className="flex h-7 w-full items-center ">
-          <div className="h-4 w-1/2 animate-pulse rounded-lg bg-neutral-600"></div>
+          <div className="h-4 w-1/2 animate-pulse rounded-lg bg-neutral-800"></div>
         </div>
       )}
     </div>

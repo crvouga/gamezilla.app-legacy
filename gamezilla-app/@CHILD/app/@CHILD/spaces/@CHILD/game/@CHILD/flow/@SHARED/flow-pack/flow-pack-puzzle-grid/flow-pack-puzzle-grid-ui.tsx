@@ -41,7 +41,7 @@ const ViewAddCell = ({ onClick }: { onClick: () => void }) => {
   return (
     <button
       onClick={onClick}
-      className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-700 bg-neutral-800 hover:opacity-90 active:opacity-80"
+      className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-500 bg-neutral-800 hover:opacity-90 active:opacity-80"
     >
       <IconPlus className="h-8 w-8" />
     </button>
@@ -67,13 +67,13 @@ const ViewPuzzleCell = ({
 
 const ViewEmptyCell = () => {
   return (
-    <div className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-800 bg-neutral-950 opacity-70"></div>
+    <div className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-500 bg-neutral-950 opacity-70"></div>
   )
 }
 
 const ViewLoadingCell = () => {
   return (
-    <div className="flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded bg-neutral-600 opacity-70"></div>
+    <div className="flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded bg-neutral-800 opacity-70"></div>
   )
 }
 

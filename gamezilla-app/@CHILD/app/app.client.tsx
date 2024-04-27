@@ -552,7 +552,7 @@ export const View = (input: {
       className="fixed left-1/2 top-1/2 flex h-[100dvh] w-screen select-none items-center justify-center overflow-hidden bg-black text-white"
       style={{ transform: "translate(-50%, -50%)" }}
     >
-      <div className="relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-600">
+      <div className="relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-500">
         <ViewStatusBar model={model} dispatch={dispatch} ctx={ctx} />
 
         <div className="relative flex w-full flex-1 flex-col overflow-hidden">
@@ -792,7 +792,7 @@ const ViewBottomNavBar = ({
         model={model.spaces}
         dispatch={(c) => dispatch({ t: "spaces", c })}
       />
-      <div className="flex w-full items-center justify-center border-t border-neutral-600">
+      <div className="flex w-full items-center justify-center border-t border-neutral-500">
         {items.map((item, index) => {
           const isSelected = eq(item.route, model.routing.currentRoute)
           return (
@@ -807,7 +807,7 @@ const ViewBottomNavBar = ({
               className={cn(
                 "flex flex-1 flex-col items-center justify-center pb-2 pt-1",
                 isSelected ? "text-blue-500" : "text-opacity-50",
-                index < items.length - 1 ? "border-r border-neutral-600" : "",
+                index < items.length - 1 ? "border-r border-neutral-500" : "",
               )}
             >
               {item.icon}

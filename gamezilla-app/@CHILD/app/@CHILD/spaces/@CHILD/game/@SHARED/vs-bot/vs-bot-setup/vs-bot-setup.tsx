@@ -180,7 +180,7 @@ export const View = ({
       <div className="flex flex-1 items-center justify-center"></div>
 
       {ctx.currentUserId === ctx.space.hostId && (
-        <div className="flex items-center gap-4 border-t border-neutral-600 p-4">
+        <div className="flex items-center gap-4 border-t border-neutral-500 p-4">
           <Button
             className="flex-1"
             onClick={onQuit}
@@ -251,7 +251,7 @@ const PlayerIcons = ({
       ) : (
         <div
           role="button"
-          className="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-600"
+          className="grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-neutral-800"
         >
           <IconQuestionMark className="h-10 w-10 text-neutral-300" />
         </div>

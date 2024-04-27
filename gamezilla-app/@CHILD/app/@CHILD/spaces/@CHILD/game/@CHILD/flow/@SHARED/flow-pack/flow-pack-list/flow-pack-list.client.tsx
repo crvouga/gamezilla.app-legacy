@@ -108,7 +108,7 @@ const View: ClientModule["View"] = (input) => {
 
   return (
     <div className="relative flex w-full flex-1 flex-col gap-2 overflow-hidden">
-      <div className="relative flex max-h-full w-full flex-1 flex-col items-center overflow-hidden overflow-y-scroll border-t border-t-neutral-700">
+      <div className="relative flex max-h-full w-full flex-1 flex-col items-center overflow-hidden overflow-y-scroll border-t border-t-neutral-500">
         {shouldShowEmptyState && (
           <EmptyState
             label="No packs"
@@ -162,7 +162,7 @@ const FlowPackListItem = ({
 }) => {
   return (
     <button
-      className="flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden border-b border-b-neutral-700 px-4 py-6 text-left hover:bg-neutral-900 active:opacity-50"
+      className="flex w-full max-w-full shrink-0 items-center justify-between gap-6 overflow-hidden border-b border-b-neutral-500 px-4 py-6 text-left hover:bg-neutral-900 active:opacity-50"
       onClick={onClick}
     >
       <IconBox className="h-9 w-9 shrink-0" />
