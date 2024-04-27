@@ -123,6 +123,9 @@ const View = ({
       watch={model}
       paint={paint}
       onMouseDown={(event) => {
+        // event.preventDefault()
+        // event.stopImmediatePropagation()
+        // event.stopPropagation()
         const canvas = event.currentTarget as HTMLCanvasElement
         const rect = canvas.getBoundingClientRect()
         const x = (event.clientX - rect.left) / rect.width
@@ -149,6 +152,9 @@ const View = ({
         }
       }}
       onMouseUp={(event) => {
+        // event.preventDefault()
+        // event.stopImmediatePropagation()
+        // event.stopPropagation()
         const canvas = event.currentTarget as HTMLCanvasElement
         const rect = canvas.getBoundingClientRect()
         const x = (event.clientX - rect.left) / rect.width
@@ -176,6 +182,9 @@ const View = ({
         }
       }}
       onMouseMove={(event) => {
+        // event.preventDefault()
+        // event.stopImmediatePropagation()
+        // event.stopPropagation()
         //
         const canvas = event.currentTarget as HTMLCanvasElement
         const rect = canvas.getBoundingClientRect()
@@ -207,6 +216,9 @@ const View = ({
         }
       }}
       onTouchStart={(event) => {
+        // event.preventDefault()
+        // event.stopImmediatePropagation()
+        // event.stopPropagation()
         const canvas = event.currentTarget as HTMLCanvasElement
         const rect = canvas.getBoundingClientRect()
         const x = ((event.touches[0]?.clientX ?? 0) - rect.left) / rect.width
@@ -233,6 +245,9 @@ const View = ({
         }
       }}
       onTouchEnd={(event) => {
+        // event.preventDefault()
+        // event.stopImmediatePropagation()
+        // event.stopPropagation()
         const canvas = event.currentTarget as HTMLCanvasElement
         const rect = canvas.getBoundingClientRect()
         const x = ((event.touches[0]?.clientX ?? 0) - rect.left) / rect.width
@@ -259,6 +274,9 @@ const View = ({
         }
       }}
       onTouchMove={(event) => {
+        // event.preventDefault()
+        // event.stopImmediatePropagation()
+        // event.stopPropagation()
         const canvas = event.currentTarget as HTMLCanvasElement
         const rect = canvas.getBoundingClientRect()
         const x = ((event.touches[0]?.clientX ?? 0) - rect.left) / rect.width

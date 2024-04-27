@@ -323,15 +323,13 @@ export const removeTerminal = (model: Model, groupId: GroupId): Model => {
  */
 export const yieldNodes = function* (model: Model): Generator<Node> {
   for (const nodeId in model.nodes) {
-    if (!hasNodeId(model, nodeId)) {
+    const node = model.nodes[nodeId as NodeId]
+
+    if (!node) {
       continue
     }
 
-    const node = model.nodes[nodeId]
-
-    if (node) {
-      yield node
-    }
+    yield node
   }
 }
 
@@ -341,11 +339,7 @@ export const yieldNodes = function* (model: Model): Generator<Node> {
 
 export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
   for (const nodeId in model.pipesBySourceId) {
-    if (!hasNodeId(model, nodeId)) {
-      continue
-    }
-
-    const pipe = model.pipesBySourceId[nodeId]
+    const pipe = model.pipesBySourceId[nodeId as NodeId]
 
     if (!pipe) {
       continue
@@ -369,11 +363,7 @@ export const yieldPipes = function* (model: Model): Generator<PipeJoined> {
  */
 export const yieldEdges = function* (model: Model): Generator<Edge> {
   for (const edgeId in model.edges) {
-    if (!hasEdgeId(model, edgeId)) {
-      continue
-    }
-
-    const edge = toEdge(model, edgeId)
+    const edge = toEdge(model, edgeId as EdgeId)
 
     if (!edge) {
       continue
@@ -479,11 +469,7 @@ export const yieldEdgesIn = function* (
  */
 export const yieldTerminals = function* (model: Model): Iterable<Terminal> {
   for (const groupId in model.terminalsByGroupId) {
-    if (!isGroupId(groupId)) {
-      continue
-    }
-
-    const terminal = model.terminalsByGroupId[groupId]
+    const terminal = model.terminalsByGroupId[groupId as GroupId]
 
     if (!terminal) {
       continue

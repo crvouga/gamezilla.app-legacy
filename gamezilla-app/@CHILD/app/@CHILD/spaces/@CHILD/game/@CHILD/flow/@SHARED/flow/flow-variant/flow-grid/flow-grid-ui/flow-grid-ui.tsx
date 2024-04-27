@@ -5,7 +5,7 @@ import { FlowGridUISvg } from "./flow-grid-ui-svg"
 
 type FlowGridUIImpl = "svg" | "canvas"
 
-const IMPL = "canvas" as FlowGridUIImpl
+const IMPL = "svg" as FlowGridUIImpl
 
 const View = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
   switch (IMPL) {
