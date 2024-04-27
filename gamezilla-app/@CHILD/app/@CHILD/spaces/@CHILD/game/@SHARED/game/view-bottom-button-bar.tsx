@@ -20,7 +20,7 @@ export const ViewBottomButtonBar = ({
   children: VDomChildren
 }) => {
   return (
-    <div className="flex w-full items-center border-t border-neutral-500">
+    <div className="flex w-full items-center border-t border-neutral-800">
       {children}
     </div>
   )

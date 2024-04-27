@@ -148,7 +148,7 @@ const View: SpaceClientModule["View"] = (input) => {
         />
       </div>
 
-      <div className="flex flex-row gap-4 border-t border-neutral-500 p-4">
+      <div className="flex flex-row gap-4 border-t border-neutral-800 p-4">
         <Button
           className="flex-1"
           onClick={() => {

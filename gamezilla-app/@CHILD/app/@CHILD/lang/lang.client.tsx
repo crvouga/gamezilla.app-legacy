@@ -216,7 +216,7 @@ const ViewChooseLang: Module["View"] = ({ ctx, dispatch, model }) => {
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       <TopBar title={ctx.t("lang.choose-language")} />
-      <div className="flex flex-1 flex-col divide-y divide-neutral-500 overflow-y-scroll">
+      <div className="flex flex-1 flex-col divide-y divide-neutral-800 overflow-y-scroll">
         {LanguageCodeISO_639_1.ALL.map((code) => {
           return (
             <ListItemButton
@@ -240,7 +240,7 @@ const ViewChooseLang: Module["View"] = ({ ctx, dispatch, model }) => {
         })}
         <div className="w-full p-8"></div>
       </div>
-      <div className="w-full border-t border-t-neutral-500 p-4">
+      <div className="w-full border-t border-t-neutral-800 p-4">
         <Button
           onClick={() => dispatch({ t: "choose-lang.clicked-done" })}
           text={ctx.t("lang.done")}

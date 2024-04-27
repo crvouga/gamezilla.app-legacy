@@ -37,7 +37,7 @@ export const Select = <T,>({
       <select
         id={id}
         className={cn(
-          "flex appearance-none items-center rounded-md border border-neutral-500 bg-neutral-800 p-3 py-4 text-xl outline-none",
+          "flex appearance-none items-center rounded-md border border-neutral-800 bg-neutral-800 p-3 py-4 text-xl outline-none",
           error && "border border-red-500 text-red-500",
           !error && " ring-blue-600 focus:ring-2",
         )}

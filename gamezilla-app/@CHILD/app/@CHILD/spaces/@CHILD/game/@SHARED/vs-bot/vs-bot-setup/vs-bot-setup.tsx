@@ -180,7 +180,7 @@ export const View = ({
       <div className="flex flex-1 items-center justify-center"></div>
 
       {ctx.currentUserId === ctx.space.hostId && (
-        <div className="flex items-center gap-4 border-t border-neutral-500 p-4">
+        <div className="flex items-center gap-4 border-t border-neutral-800 p-4">
           <Button
             className="flex-1"
             onClick={onQuit}

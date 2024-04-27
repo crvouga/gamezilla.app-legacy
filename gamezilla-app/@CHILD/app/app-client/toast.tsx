@@ -278,7 +278,7 @@ function Toast({
       <div
         className={cn(
           "pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden  rounded-lg border p-3 text-lg text-white shadow-2xl",
-          toast.variant === "info" && "border-neutral-500 bg-neutral-800",
+          toast.variant === "info" && "border-neutral-800 bg-neutral-800",
           toast.variant === "error" && "border-red-400 bg-red-500",
         )}
         key={toast.toastId}

@@ -501,7 +501,7 @@ const PlayerSlot = ({
   ctx: SpaceClientCtx
 }) => {
   return (
-    <div className="flex flex-1 items-center gap-2 overflow-hidden rounded border border-neutral-500 p-2">
+    <div className="flex flex-1 items-center gap-2 overflow-hidden rounded border border-neutral-800 p-2">
       <PlayerIcon className="h-8 w-8" playerType={playerType} />
       <Avatar
         className="h-8 w-8"
