@@ -15,7 +15,13 @@ const run = async () => {
   const initial = AppClient.init({ deps, ctx })
 
   const appHtml = renderToString(
-    <AppClient.View ctx={ctx} dispatch={dispatch} model={initial.model} />,
+    <>
+      <AppClient.View
+        ctx={{ ...ctx }}
+        dispatch={dispatch}
+        model={{ ...initial.model }}
+      />
+    </>,
   )
 
   const indexPath = path.join(__dirname, "..", "dist", "index.html")
