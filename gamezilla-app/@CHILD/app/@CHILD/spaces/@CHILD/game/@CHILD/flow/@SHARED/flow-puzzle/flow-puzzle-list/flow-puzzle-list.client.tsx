@@ -117,7 +117,7 @@ const View: ClientModule["View"] = (input) => {
 
   return (
     <div className="relative flex h-full w-full flex-col gap-2 overflow-hidden">
-      <div className="border-1 relative flex w-full flex-1 flex-col items-center overflow-y-scroll border-t border-neutral-800">
+      <div className="border-1 relative flex w-full flex-1 flex-col items-center overflow-y-scroll border-t border-neutral-700">
         {shouldShowEmptyState && (
           <EmptyState
             label="No puzzles"
@@ -175,7 +175,7 @@ const FlowPuzzleListItem = ({
       className="box-border flex w-full items-center gap-4 border-b border-b-neutral-800 text-left hover:bg-neutral-900 active:opacity-50"
       onClick={onClick}
     >
-      <div className="flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden border-r border-neutral-800">
+      <div className="flex aspect-square h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden border-r border-neutral-700">
         <FlowVariantUI.View disabled model={puzzle.flow} />
       </div>
       <div className="overflow-hidden">

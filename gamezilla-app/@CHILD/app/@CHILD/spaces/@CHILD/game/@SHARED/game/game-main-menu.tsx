@@ -132,7 +132,7 @@ export const View = ({
         </div>
       </div>
 
-      <div className="flex justify-center border-t border-neutral-800 p-4">
+      <div className="flex justify-center border-t border-neutral-700 p-4">
         <Button
           onClick={() =>
             dispatch({ t: "game-main-menu/clicked-exit-game-button" })

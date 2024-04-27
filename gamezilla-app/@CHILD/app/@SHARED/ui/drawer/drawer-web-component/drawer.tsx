@@ -17,7 +17,7 @@ export const DrawerWebComponent = ({
       <drawer-element id={id} position={position}>
         <div
           className={cn(
-            "h-fit max-h-full w-full overflow-hidden border border-neutral-800 bg-black",
+            "h-fit max-h-full w-full overflow-hidden border border-neutral-700 bg-black",
             position === "bottom" ? "rounded-t-2xl" : "rounded-b-2xl",
           )}
         >

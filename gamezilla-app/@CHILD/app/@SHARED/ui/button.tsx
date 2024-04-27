@@ -57,7 +57,7 @@ export const Button = ({
           "rounded-md border-2 border-blue-500/40  text-blue-500 ring-blue-500",
 
         combo === "outlined-default" &&
-          "rounded-md border border-neutral-800 text-inherit text-neutral-300",
+          "rounded-md border border-neutral-700 text-inherit text-neutral-300",
 
         combo === "soft-primary" && "rounded-md bg-blue-500/20 text-blue-200",
 

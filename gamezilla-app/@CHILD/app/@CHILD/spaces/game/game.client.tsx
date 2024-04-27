@@ -324,7 +324,7 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
           />
         </div>
 
-        <div className="flex w-full items-center justify-center border-t border-neutral-800 p-4">
+        <div className="flex w-full items-center justify-center border-t border-neutral-700 p-4">
           <Button
             className="w-full"
             onClick={() => dispatch({ t: "clicked-go-home-button" })}
@@ -345,7 +345,7 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
             <button
               aria-label={gameName}
               onClick={() => dispatch({ t: "clicked-game-tile", gameName })}
-              className="flex overflow-hidden rounded-lg border border-neutral-800"
+              className="flex overflow-hidden rounded-lg border border-neutral-700"
             >
               <CoverArt gameName={gameName} />
             </button>
@@ -357,7 +357,7 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
         ))}
       </div>
 
-      <div className="flex w-full items-center justify-center border-t border-neutral-800 p-4">
+      <div className="flex w-full items-center justify-center border-t border-neutral-700 p-4">
         <Button
           className="w-full"
           onClick={() => dispatch({ t: "clicked-go-home-button" })}

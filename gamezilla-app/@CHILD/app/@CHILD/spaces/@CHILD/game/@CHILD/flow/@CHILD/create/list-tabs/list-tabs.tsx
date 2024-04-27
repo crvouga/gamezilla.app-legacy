@@ -102,7 +102,7 @@ const View: ClientModule["View"] = (input) => {
 
       {modelSync.listTab === "packs" && <PackListClient.View {...input} />}
 
-      <div className="flex w-full items-center gap-4 border-t border-neutral-800 p-4">
+      <div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
         <Button
           onClick={input.ctx.onQuit}
           className="flex-1"

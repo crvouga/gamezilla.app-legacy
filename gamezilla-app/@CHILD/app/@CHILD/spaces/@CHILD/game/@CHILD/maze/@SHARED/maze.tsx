@@ -191,7 +191,7 @@ const viewBox = [
 
 export const CoverArt = () => {
   return (
-    <svg viewBox={viewBox} width="100%" className="border border-neutral-800">
+    <svg viewBox={viewBox} width="100%" className="border border-neutral-700">
       <rect
         x={coverArtMaze.lower.x}
         y={coverArtMaze.lower.y}

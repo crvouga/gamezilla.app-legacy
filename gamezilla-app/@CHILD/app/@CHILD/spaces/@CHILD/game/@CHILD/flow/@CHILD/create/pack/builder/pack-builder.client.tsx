@@ -148,7 +148,7 @@ const ScreenAddPuzzle: Pick<ClientModule, "update" | "View"> = {
   View(input) {
     return (
       <div className="flex h-full max-h-full w-full flex-col overflow-hidden">
-        <div className="flex w-full shrink-0 items-center border-b border-neutral-800 p-4 text-3xl font-bold">
+        <div className="flex w-full shrink-0 items-center border-b border-neutral-700 p-4 text-3xl font-bold">
           <p className="flex-1">Add puzzle</p>
         </div>
         <div className="h-full max-h-full w-full max-w-full flex-1 overflow-hidden overflow-y-scroll">
@@ -166,7 +166,7 @@ const ScreenAddPuzzle: Pick<ClientModule, "update" | "View"> = {
             }}
           />
         </div>
-        <div className="flex w-full shrink-0 items-center justify-center border-t border-neutral-800 p-4">
+        <div className="flex w-full shrink-0 items-center justify-center border-t border-neutral-700 p-4">
           <Button
             text="Close"
             className="w-full"
@@ -255,7 +255,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
           </div>
         </div>
 
-        <div className="w-full border-t border-neutral-800 p-4">
+        <div className="w-full border-t border-neutral-700 p-4">
           <ButtonExitBuilder.View {...input} />
         </div>
       </div>
