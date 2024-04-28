@@ -104,7 +104,7 @@ const ViewPipelines = ({
         const pipelinePathData = pipelineToSvgPathData(pipeline)
 
         return (
-          <g key={terminal.groupId}>
+          <g key={terminal.groupId} id={terminal.groupId}>
             <path
               d={isGroupActive?.(terminal.groupId) ? "" : pipelinePathData}
               stroke={groupColor}
