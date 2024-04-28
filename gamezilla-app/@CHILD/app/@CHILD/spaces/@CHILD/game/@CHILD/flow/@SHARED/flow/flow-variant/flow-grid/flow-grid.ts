@@ -304,31 +304,38 @@ export const yieldPipelines = function* (
   model: Model,
 ): Iterable<Iterable<PipeJoined>> {
   for (const terminal of Flow.yieldTerminals(model)) {
-    yield yieldPipeline(model, terminal.startId)
+    yield toPipeline(model, terminal.startId)
   }
 }
 
-export const yieldPipeline = function* (
+export const toPipeline = (
   model: Model,
-  startNodeId: Flow.NodeId,
-): Iterable<PipeJoined> {
-  for (const pipe of Flow.yieldPipeline(model, startNodeId)) {
+  startingNodeId: Flow.NodeId,
+): PipeJoined[] => {
+  const pipeline: PipeJoined[] = []
+
+  let currentNodeId = startingNodeId
+
+  while (true) {
+    const pipe = Flow.toPipeBySourceId(model, currentNodeId)
+
+    if (!pipe) {
+      return pipeline
+    }
     const source = toNode(model, pipe.edge.sourceId)
 
     if (!source) {
-      continue
+      return pipeline
     }
 
     const target = toNode(model, pipe.edge.targetId)
 
     if (!target) {
-      continue
+      return pipeline
     }
 
-    yield {
-      ...pipe,
-      source,
-      target,
-    }
+    pipeline.push({ ...pipe, source, target })
+
+    currentNodeId = pipe.edge.targetId
   }
 }

@@ -207,6 +207,8 @@ export const Model = p.obj({
   pipesBySourceId: p.dict(NodeId, Pipe),
 
   edgeHash: p.or(p.str, p.num),
+
+  nodeHash: p.or(p.str, p.num),
 })
 
 export type Model = p.Infer<typeof Model>
@@ -221,6 +223,7 @@ export const init: Model = {
   terminalsByGroupId: {},
   pipesBySourceId: {},
   edgeHash: 0,
+  nodeHash: 0,
 }
 
 /**
@@ -247,12 +250,17 @@ export const toEdge = (model: Model, edgeId: EdgeId): Edge | null => {
  * Adds a node to the puzzle.
  */
 export const addNode = (model: Model, node: Node): Model => {
-  return {
+  const modelNew: Model = {
     ...model,
     nodes: {
       ...model.nodes,
       [node.nodeId]: node,
     },
+  }
+  const nodeHash = deriveNodeHash(modelNew)
+  return {
+    ...modelNew,
+    nodeHash,
   }
 }
 
@@ -260,6 +268,12 @@ export const deriveEdgeHash = (
   model: Pick<Model, "edges">,
 ): string | number => {
   return djb2Hash(Object.values(model.edges).sort().join(","))
+}
+
+export const deriveNodeHash = (
+  model: Pick<Model, "nodes">,
+): string | number => {
+  return djb2Hash(Object.values(model.nodes).sort().join(","))
 }
 
 /**
@@ -273,8 +287,8 @@ export const addEdge = (model: Model, edge: Edge): Model => {
       [toEdgeId(edge)]: edge,
     },
   }
-  const hashNew = deriveEdgeHash(modelNew)
-  return { ...modelNew, edgeHash: hashNew }
+  const edgeHash = deriveEdgeHash(modelNew)
+  return { ...modelNew, edgeHash }
 }
 
 /**
@@ -494,19 +508,23 @@ export const pipelineToGroupId = (pipeline: Iterable<Pipe>): GroupId | null => {
   return null
 }
 
-export const yieldPipeline = function* (
+export const yieldPipeline = (
   model: Model,
-  currentNodeId: NodeId,
-): Iterable<PipeJoined> {
-  const pipe = toPipeBySourceId(model, currentNodeId)
+  startingNodeId: NodeId,
+): Iterable<PipeJoined> => {
+  const pipeline: PipeJoined[] = []
 
-  if (!pipe) {
-    return
+  let currentNodeId = startingNodeId
+
+  while (true) {
+    const pipe = toPipeBySourceId(model, currentNodeId)
+
+    if (!pipe) {
+      return pipeline
+    }
+
+    pipeline.push(pipe)
   }
-
-  yield pipe
-
-  yield* yieldPipeline(model, pipe.edge.targetId)
 }
 
 /**

@@ -3,16 +3,6 @@ import { LRUCache } from "gamezilla-app/@SHARED/least-recently-used-cache.ts/lea
 /**
  * @description
  * optimization for expensive function calls by caching results
- *
- * @example
- * // O(n^2) time complexity
- * const fibonacci = (n) =>
- *   n <= 1 ? 1 : fibonacci(n - 1) + fibonacci(n - 2)
- *
- * // O(n) time complexity on the first call
- * // O(1) time complexity on subsequent calls
- * const memoizedFibonacci = memoize(fibonacci)
- *
  */
 export const memoize = <TInput, TOutput extends {}>({
   toKey,
