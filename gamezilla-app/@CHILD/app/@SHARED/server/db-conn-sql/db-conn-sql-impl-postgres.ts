@@ -7,6 +7,7 @@ import { logQuery } from "./shared"
 import { toSql, toSqlLog } from "./sql"
 
 let pool: pg.Pool
+let client: pg.PoolClient
 
 export const createDbConnPostgres = async ({
   databaseUrl,
@@ -21,7 +22,9 @@ export const createDbConnPostgres = async ({
     })
   }
 
-  let client: pg.Client
+  if (!client) {
+    client = await pool.connect()
+  }
 
   return {
     async query(rowParser, rawSql, params) {
@@ -96,8 +99,6 @@ export const createDbConnPostgres = async ({
           payload: notification.payload,
         })
       }
-
-      client = client ?? (await pool.connect())
 
       client.on("notification", cb)
 
