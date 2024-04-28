@@ -106,7 +106,7 @@ export const FlowPuzzleDbHashMap = (): IFlowPuzzleDb => {
       })
     },
 
-    async upsert(input) {
+    async put(input) {
       calls.put++
 
       if (calls.put % ERROR_EVERY === 0) {

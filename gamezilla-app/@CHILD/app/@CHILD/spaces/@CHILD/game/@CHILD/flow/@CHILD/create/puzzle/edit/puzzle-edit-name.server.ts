@@ -84,7 +84,7 @@ const patchName = async (input: {
     lastUpdatedBy: userId,
   }
 
-  const put = await deps.FlowPuzzleDb.upsert(patched)
+  const put = await deps.FlowPuzzleDb.put(patched)
 
   return put
 }

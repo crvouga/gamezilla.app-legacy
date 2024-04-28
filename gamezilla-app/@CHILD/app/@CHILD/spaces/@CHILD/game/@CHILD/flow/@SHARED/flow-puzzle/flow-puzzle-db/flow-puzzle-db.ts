@@ -21,21 +21,21 @@ export type OrderClause = {
   lastUpdatedAt?: "asc" | "desc"
 }
 
+export type ListPuzzlesInput = {
+  pagination: Pagination
+  where: WhereClause
+  order: OrderClause
+}
+
+export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>
+
 export type IFlowPuzzleDb = {
   count: (input: { where: WhereClause }) => Task<string, number>
-  list: (input: {
-    pagination: Pagination
-    where: WhereClause
-    order: OrderClause
-  }) => Task<string, Paginated<FlowPuzzle>>
+  list: (input: ListPuzzlesInput) => Task<string, Paginated<FlowPuzzle>>
   get: (id: FlowPuzzleId) => Task<string, FlowPuzzle | null>
-  upsert: (input: FlowPuzzle) => Task<string, null>
+  put: (input: FlowPuzzle) => Task<string, null>
   zap: (input: {
     id: FlowPuzzleId
     deletedByUserId: UserId
   }) => Task<string, null>
 }
-
-export type ListPuzzlesInput = Parameters<IFlowPuzzleDb["list"]>[0]
-
-export type ListPuzzlesOutput = Awaited<ReturnType<IFlowPuzzleDb["list"]>>

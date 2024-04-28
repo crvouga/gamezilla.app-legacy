@@ -67,7 +67,7 @@ const createDeps = async (
     puzzleIds: [puzzle.id],
   })
 
-  await deps.FlowPuzzleDb.upsert(puzzle)
+  await deps.FlowPuzzleDb.put(puzzle)
   await deps.FlowPackDb.put(somePack)
 
   return deps

@@ -45,7 +45,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
         }),
       })
 
-      const created = await deps.FlowPuzzleDb.upsert(puzzleNew)
+      const created = await deps.FlowPuzzleDb.put(puzzleNew)
 
       const msgSync: MsgSync = {
         t: "user-created-puzzle",

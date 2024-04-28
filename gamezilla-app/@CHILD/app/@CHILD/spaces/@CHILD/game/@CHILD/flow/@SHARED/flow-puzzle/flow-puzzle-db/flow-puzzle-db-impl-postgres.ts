@@ -269,7 +269,7 @@ export const FlowPuzzleDbPostgres = ({
       })
     },
 
-    async upsert(input) {
+    async put(input) {
       const row = puzzleToRow(input)
       const queried = await dbConn.query(
         p.unknown,
