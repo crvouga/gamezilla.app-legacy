@@ -20,16 +20,16 @@ export const Row = p.obj({
   flow_puzzle_id: p.str,
   flow_puzzle_name: p.str,
   flow_puzzle: p.dict(p.or(p.str, p.num), p.unknown),
-  created_at: p.str,
+  created_at: p.or(p.num, p.str),
   created_by_user_id: p.str,
-  last_updated_at: p.str,
+  last_updated_at: p.or(p.num, p.str),
   last_updated_by_user_id: p.str,
 })
 
 export type Row = p.Infer<typeof Row>
 
-const postgresTimestampToPosix = (postgresTimestamp: string) => {
-  return Posix.fromNumber(new Date(postgresTimestamp).getTime())
+const ensureNumber = (x: string | number): number => {
+  return typeof x === "string" ? parseFloat(x) : x
 }
 
 const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
@@ -43,11 +43,11 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
   const parsedFlow = FlowVariant.Model.parse(row.flow_puzzle)
   const flow = parsedFlow.t === "ok" ? parsedFlow.value : null
 
-  const createdAt = postgresTimestampToPosix(row.created_at)
+  const createdAt = Posix.fromNumber(ensureNumber(row.created_at))
   const createdBy = UserId.is(row.created_by_user_id)
     ? row.created_by_user_id
     : null
-  const lastUpdatedAt = postgresTimestampToPosix(row.last_updated_at)
+  const lastUpdatedAt = Posix.fromNumber(ensureNumber(row.last_updated_at))
   const lastUpdatedBy = UserId.is(row.last_updated_by_user_id)
     ? row.last_updated_by_user_id
     : null
@@ -70,6 +70,13 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
       lastUpdatedBy,
     }
   }
+  console.error(
+    `[flow-puzzle-db] Failed to parse row=${JSON.stringify(
+      row,
+      null,
+      4,
+    )} \nerror=${JSON.stringify(parsedFlow, null, 4)}`,
+  )
   return null
 }
 
@@ -78,9 +85,9 @@ const puzzleToRow = (puzzle: FlowPuzzle): Row => {
     flow_puzzle_id: puzzle.id,
     flow_puzzle_name: puzzle.name,
     flow_puzzle: puzzle.flow,
-    created_at: Posix.toIsoString(puzzle.createdAt),
+    created_at: puzzle.createdAt,
     created_by_user_id: puzzle.createdBy,
-    last_updated_at: Posix.toIsoString(puzzle.lastUpdatedAt),
+    last_updated_at: puzzle.lastUpdatedAt,
     last_updated_by_user_id: puzzle.lastUpdatedBy,
   }
 }
@@ -148,9 +155,9 @@ export const FlowPuzzleDbPostgres = ({
         `deleted_at IS NULL`,
       ]
 
-      if (!input.where.createdBy) {
+      if (!input.where.createdBy?.equals) {
         where.push(`created_by_user_id = :created_by_user_id`)
-        variables[`created_by_user_id`] = input.where.createdBy
+        variables[`created_by_user_id`] = input.where.createdBy?.equals
       }
 
       const whereStr = where.length > 0 ? `WHERE ${where.join(" AND ")}` : ""

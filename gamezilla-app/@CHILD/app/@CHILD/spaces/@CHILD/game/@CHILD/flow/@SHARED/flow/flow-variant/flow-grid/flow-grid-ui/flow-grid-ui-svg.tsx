@@ -112,7 +112,7 @@ const ViewPipelines = ({
               strokeLinejoin="inherit"
               strokeLinecap="square"
               strokeWidth="1"
-              strokeOpacity="0.2"
+              strokeOpacity="0.25"
             />
 
             <path

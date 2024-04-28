@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test"
 import { FlowPuzzleDb } from "./flow-puzzle-db-impl"
 import { FlowPuzzle } from "../flow-puzzle"
-import { Posix, Result } from "gamezilla-app/@SHARED/core"
+import { Ok, Posix, Result, eq } from "gamezilla-app/@SHARED/core"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { FlowVariant, FlowVariantDimensions } from "../../flow/flow-variant"
 import { FlowPuzzleName } from "../flow-puzzle-name"
@@ -68,6 +68,13 @@ const Fixture = async () => {
 }
 
 describe(import.meta.file, () => {
+  it("should be able to insert", async () => {
+    const f = await Fixture()
+    const puzzle = await randomFlowPuzzle()
+    const inserted = await f.flowPuzzleDb.upsert(puzzle)
+    expect(inserted.t).toBe("ok")
+  })
+
   it("should be ok", async () => {
     const f = await Fixture()
 
@@ -85,12 +92,12 @@ describe(import.meta.file, () => {
     const f = await Fixture()
 
     const puzzle = await randomFlowPuzzle()
-    const before = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
+    const before = await f.flowPuzzleDb.get(puzzle.id)
     await f.flowPuzzleDb.upsert(puzzle)
-    const after = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
+    const after = await f.flowPuzzleDb.get(puzzle.id)
 
-    expect(before).toBe(null)
-    expect(after).toBe(puzzle)
+    expect(before).toEqual(Ok(null))
+    expect(after).toEqual(Ok(puzzle))
   })
 
   it("should be able to list puzzles by created by", async () => {

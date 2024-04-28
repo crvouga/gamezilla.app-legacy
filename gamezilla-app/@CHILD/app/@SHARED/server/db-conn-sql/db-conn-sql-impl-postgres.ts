@@ -51,12 +51,25 @@ export const createDbConnPostgres = async ({
           const parsed = rowParser.parse(row)
 
           if (parsed.t === "err") {
+            if (process.env.NODE_ENV === "test") {
+              throw new Error(
+                `Failed to parse \nerror=${JSON.stringify(
+                  parsed.error,
+                  null,
+                  4,
+                )} sql=${rawSql}`,
+              )
+            }
             logger.error(
               `[db] Failed to parse row=${JSON.stringify(
                 row,
                 null,
                 4,
-              )} \nerror=${JSON.stringify(parsed.error, null, 4)} sql=${sql}`,
+              )} \nerror=${JSON.stringify(
+                parsed.error,
+                null,
+                4,
+              )} sql=${rawSql}`,
             )
             continue
           }
@@ -66,7 +79,7 @@ export const createDbConnPostgres = async ({
 
         return Ok(output)
       } catch (error) {
-        logger.error(`[db] ${error} sql=${sql}`)
+        logger.error(`[db] ${error} sql=${rawSql}`)
         return Err(String(error))
       }
     },

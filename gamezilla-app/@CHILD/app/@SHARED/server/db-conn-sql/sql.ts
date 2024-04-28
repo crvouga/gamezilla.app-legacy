@@ -12,51 +12,31 @@ const replaceParam = (query: string, key: string, value: unknown): string => {
   switch (typeof value) {
     case "number":
     case "bigint":
-    case "boolean": {
-      return query
-        .replace(new RegExp(`:${key}`, "g"), `${value}`)
-        .replaceAll(`"`, `'`)
-    }
-    case "object": {
+    case "boolean":
+      return query.replace(new RegExp(`:${key}`, "g"), `${value}`)
+    case "object":
       if (value === null) {
-        return query
-          .replace(new RegExp(`:${key}`, "g"), `NULL`)
-          .replaceAll(`"`, `'`)
+        return query.replace(new RegExp(`:${key}`, "g"), `NULL`)
       }
 
       const jsonString = JSON.stringify(value)
-
+      // Escapes single quotes in JSON strings by replacing them with two single quotes
       const escapedJsonString = jsonString.replace(/'/g, "''")
 
-      const replaced = query.replace(
-        new RegExp(`:${key}`, "g"),
-        `'${escapedJsonString}'`,
-      )
-
-      return replaced
-    }
-    case "undefined": {
-      return query
-        .replace(new RegExp(`:${key}`, "g"), `NULL`)
-        .replaceAll(`"`, `'`)
-    }
-    case "string": {
+      // Replace the placeholder with the correctly escaped JSON string wrapped in single quotes
+      return query.replace(new RegExp(`:${key}`, "g"), `'${escapedJsonString}'`)
+    case "undefined":
+      return query.replace(new RegExp(`:${key}`, "g"), `NULL`)
+    case "string":
+      // Escapes single quotes in strings by replacing them with two single quotes
       const escapedValue = value.replace(/'/g, "''")
-
-      const replaced = query.replace(
-        new RegExp(`:${key}`, "g"),
-        `'${escapedValue}'`,
-      )
-      return replaced
-    }
-
-    case "function": {
+      return query.replace(new RegExp(`:${key}`, "g"), `'${escapedValue}'`)
+    case "function":
+    case "symbol":
+      // Functions and symbols should not be interpolated into SQL queries
       return query
-    }
-
-    case "symbol": {
+    default:
       return query
-    }
   }
 }
 
