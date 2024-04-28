@@ -31,9 +31,9 @@ export const DbConnKvPostgres = async ({
 
         const end = process.hrtime.bigint()
 
-        const durationInNanoseconds = (end - start) / BigInt(1000)
+        const durationInMicroseconds = (end - start) / BigInt(1000)
 
-        logger.info(`duration=${durationInNanoseconds}µs get: key=${key}`)
+        logger.info(`duration=${durationInMicroseconds}µs get: key=${key}`)
 
         if (isErr(queried)) {
           return queried
@@ -82,10 +82,10 @@ export const DbConnKvPostgres = async ({
 
         const end = process.hrtime.bigint()
 
-        const durationInNanoseconds = (end - start) / BigInt(1000)
+        const durationInMicroseconds = (end - start) / BigInt(1000)
 
         logger.info(
-          `duration=${durationInNanoseconds}µs get: keys=${keys.join(", ")}`,
+          `duration=${durationInMicroseconds}µs get: keys=${keys.join(", ")}`,
         )
 
         if (isErr(queried)) {
