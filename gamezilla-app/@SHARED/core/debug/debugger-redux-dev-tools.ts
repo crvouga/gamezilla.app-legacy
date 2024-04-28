@@ -525,7 +525,7 @@ export const DebuggerReduxDevTools: ProgramDebugger = async (
     if (rateLimit.count > COUNT_LIMIT) {
       blockList.add(actionType)
       console.log(
-        `Action type ${actionType} has be blocked due to high frequency`,
+        `[debugger] action type \`${actionType}\` has be blocked due to high frequency`,
       )
       return
     }

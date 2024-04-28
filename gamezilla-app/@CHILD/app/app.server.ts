@@ -254,7 +254,7 @@ export const update = async (input: {
     ctx: ctx,
     model: input.model,
     msg: input.msg,
-    msgClient: input.msg.t === "➡️" ? { ...input.msg, ...input.msg.c } : null,
+    msgClient: input.msg.t === "→" ? { ...input.msg, ...input.msg.c } : null,
   })
 
   const updated = await updateLoop(input.deps, ctx, updatedFromMsg)
@@ -522,7 +522,7 @@ export const subscriptions = async (input: {
       Sub.map(input.deps.transport.toServer, ({ sessionId, clientId, msgs }) =>
         msgs.map(
           (msg: any): MsgServer => ({
-            t: "➡️",
+            t: "→",
             sessionId,
             clientId,
             c: msg,

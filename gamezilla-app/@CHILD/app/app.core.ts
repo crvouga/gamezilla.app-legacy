@@ -38,7 +38,7 @@ export type ModelClient = {
 //
 
 export type MsgServer =
-  | ({ t: "➡️"; c: MsgToServer } & MsgToServerMeta)
+  | ({ t: "→"; c: MsgToServer } & MsgToServerMeta)
   | { t: "wire"; c: Wire.MsgServer }
   | { t: "spaces"; c: Spaces.MsgServer }
   | { t: "profile"; c: Profile.MsgServer }
@@ -46,7 +46,7 @@ export type MsgServer =
   | { t: "lang"; c: Lang.MsgServer }
 
 export type MsgClient =
-  | { t: "➡️"; c: MsgToClient }
+  | { t: "→"; c: MsgToClient }
   | { t: "routing"; c: Routing.Msg }
   | { t: "toast"; c: Toast.Msg }
   | { t: "sound"; c: Sound.Msg }

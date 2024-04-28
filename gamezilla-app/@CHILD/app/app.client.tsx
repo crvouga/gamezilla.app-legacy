@@ -264,9 +264,9 @@ export const update = (input: {
   if (input.msg) {
     log("[msg]", toMsgType(input.msg))
   }
-  const msgServer = input.msg.t === "➡️" ? input.msg.c : undefined
+  const msgServer = input.msg.t === "→" ? input.msg.c : undefined
   if (msgServer) {
-    log("[➡️]", toMsgType(msgServer))
+    log("[→]", toMsgType(msgServer))
   }
   const updatedFromMsg = updateChild({
     ctx: input.ctx,
@@ -517,7 +517,7 @@ export const subscriptions = (input: {
   const ctx = toClientCtx(input)
 
   return Sub.batch<MsgClient>([
-    Sub.tag("➡️", Sub.flat(input.deps.transport.toClient)),
+    Sub.tag("→", Sub.flat(input.deps.transport.toClient)),
     Sub.tag("wire", Wire.subscriptions({ transport: input.deps.transport })),
     Sub.tag("platform", Platform.subscriptions),
     Sub.tag("routing", Routing.subscriptions),
