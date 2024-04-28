@@ -206,9 +206,9 @@ export const Model = p.obj({
    */
   pipesBySourceId: p.dict(NodeId, Pipe),
 
-  edgeHash: p.or(p.str, p.num),
+  edgeHash: p.maybe(p.or(p.str, p.num)),
 
-  nodeHash: p.or(p.str, p.num),
+  nodeHash: p.maybe(p.or(p.str, p.num)),
 })
 
 export type Model = p.Infer<typeof Model>
