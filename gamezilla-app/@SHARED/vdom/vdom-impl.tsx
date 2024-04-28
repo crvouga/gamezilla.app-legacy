@@ -1,6 +1,1 @@
-export type VDomImpl =
-  | "inferno"
-  | "preact"
-  | "react"
-  | "snabbdom"
-  | "custom-jsx"
+export type VDomImpl = "inferno" | "preact" | "react"
