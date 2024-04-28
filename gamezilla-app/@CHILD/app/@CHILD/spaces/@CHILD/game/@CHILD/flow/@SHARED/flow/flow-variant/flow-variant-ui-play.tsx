@@ -237,7 +237,7 @@ export const View = ({
             }
           : null
       }
-      isActive={({ groupId }) =>
+      isGroupActive={(groupId) =>
         model.status.t === "dragging" && model.status.activeGroupId === groupId
       }
     />

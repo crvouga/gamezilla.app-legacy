@@ -22,7 +22,7 @@ const View = ({
   onDraggedOver,
   onPressDown,
   onPressUp,
-  isActive,
+  isGroupActive,
   onLeave,
 }: FlowUI.FlowViewProps<FlowGrid.Model>) => {
   const draggedOver = (nodeId: Flow.NodeId) => {
@@ -63,7 +63,7 @@ const View = ({
         e.stopPropagation()
         e.preventDefault()
       }}
-      viewBox={toViewBox(model)}
+      viewBox={`${0} ${0} ${model.width} ${model.height}`}
       onTouchMove={onTouchMove}
       onMouseLeave={left}
     >
@@ -74,7 +74,7 @@ const View = ({
 
 
       */}
-      <g>
+      {/* <g>
         {map(FlowGrid.yieldNodes(model), (node) => {
           const groupId = Flow.toGroupId(model, node.nodeId)
           const fill = !groupId
@@ -94,7 +94,7 @@ const View = ({
             />
           )
         })}
-      </g>
+      </g> */}
 
       {/*
 
@@ -133,45 +133,44 @@ const View = ({
       */}
       <g transform="translate(0.5, 0.5)">
         {map(FlowGrid.yieldTerminals(model), (terminal) => {
+          const groupColor = FlowUI.Color.groupIdToHex(terminal.groupId)
           const pipeline = FlowGrid.yieldPipeline(model, terminal.startId)
-          const pipleinePathData = pipelineToSvgPathData(pipeline)
+          const pipelinePathData = pipelineToSvgPathData(pipeline)
 
           return (
             <g key={terminal.groupId}>
-              <ViewTerminalNode
-                key={terminal.start.nodeId}
-                groupId={terminal.groupId}
-                x={terminal.start.x}
-                y={terminal.start.y}
-                isActive={Boolean(
-                  isActive?.({
-                    nodeId: terminal.start.nodeId,
-                    groupId: terminal.groupId,
-                  }),
-                )}
+              <path
+                d={isGroupActive(terminal.groupId) ? "" : pipelinePathData}
+                stroke={groupColor}
+                fill="none"
+                strokeLinejoin="inherit"
+                strokeLinecap="square"
+                strokeWidth="1"
+                strokeOpacity="0.2"
+              />
+
+              <circle
+                cx={terminal.start.x}
+                cy={terminal.start.y}
+                r={TERMINAL_NODE_RADIUS}
+                fill={groupColor}
               />
 
               <path
-                d={pipleinePathData}
-                stroke={FlowUI.Color.groupIdToHex(terminal.groupId)}
-                strokeWidth={EDGE_STROKE_WIDTH}
+                d={pipelinePathData}
+                stroke={groupColor}
                 fill="none"
                 strokeLinejoin="round"
                 strokeLinecap="round"
+                strokeWidth={EDGE_STROKE_WIDTH}
               />
 
               {terminal.end && (
-                <ViewTerminalNode
-                  key={terminal.end.nodeId}
-                  groupId={terminal.groupId}
-                  x={terminal.end.x}
-                  y={terminal.end.y}
-                  isActive={Boolean(
-                    isActive?.({
-                      nodeId: terminal.end.nodeId,
-                      groupId: terminal.groupId,
-                    }),
-                  )}
+                <circle
+                  cx={terminal.end.x}
+                  cy={terminal.end.y}
+                  r={TERMINAL_NODE_RADIUS}
+                  fill={groupColor}
                 />
               )}
             </g>
@@ -228,72 +227,43 @@ const View = ({
       */}
       <g>
         {map(FlowGrid.yieldNodes(model), (node) => {
-          const nodeId = node.nodeId
-          const groupId = Flow.toGroupId(model, node.nodeId)
           return (
             <rect
               key={node.nodeId}
               x={node.x}
               y={node.y}
-              width={1}
-              className={cn(
-                isDragging
-                  ? "cursor-grabbing"
-                  : groupId
-                  ? "cursor-pointer"
-                  : null,
-              )}
-              height={1}
+              width="1"
+              height="1"
               fill="transparent"
               onMouseDown={() => {
                 if (isCurrentDeviceTouch) {
                   return
                 }
-                onPressDown?.(nodeId)
+                onPressDown?.(node.nodeId)
               }}
               onMouseUp={() => {
-                onPressUp?.(nodeId)
+                onPressUp?.(node.nodeId)
               }}
               onMouseEnter={() => {
-                draggedOver?.(nodeId)
+                draggedOver?.(node.nodeId)
               }}
               onTouchStart={() => {
                 isCurrentDeviceTouch = true
-                onPressDown?.(nodeId)
+                onPressDown?.(node.nodeId)
               }}
               onTouchCancel={() => {
                 isCurrentDeviceTouch = true
-                onPressUp?.(nodeId)
+                onPressUp?.(node.nodeId)
               }}
               onTouchEnd={() => {
                 isCurrentDeviceTouch = true
-                onPressUp?.(nodeId)
+                onPressUp?.(node.nodeId)
               }}
             />
           )
         })}
       </g>
     </svg>
-  )
-}
-
-const ViewTerminalNode = ({
-  groupId,
-  x,
-  y,
-}: {
-  groupId: Flow.GroupId
-  x: number
-  y: number
-  isActive: boolean
-}) => {
-  return (
-    <circle
-      cx={x}
-      cy={y}
-      r={TERMINAL_NODE_RADIUS}
-      fill={FlowUI.Color.groupIdToHex(groupId)}
-    />
   )
 }
 
@@ -329,10 +299,6 @@ const touchEventToNodeId = (msgSync: TouchEvent): Flow.NodeId | null => {
     y: Math.floor(svgPosition.y),
   })
   return nodeId
-}
-
-const toViewBox = ({ width, height }: { width: number; height: number }) => {
-  return `${0} ${0} ${width} ${height}`
 }
 
 const map = <T, TY>(iterable: Iterable<T>, fn: (x: T) => TY): TY[] => {

@@ -159,11 +159,5 @@ export type FlowViewProps<TModel> = {
   onPressUp?: (nodeId: NodeId) => void
   onLeave?: () => void
   onDraggedOver?: (nodeId: NodeId) => void
-  isActive?: ({
-    nodeId,
-    groupId,
-  }: {
-    groupId: GroupId
-    nodeId: NodeId
-  }) => boolean
+  isGroupActive: (groupId: GroupId) => boolean
 }
