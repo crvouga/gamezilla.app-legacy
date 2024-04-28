@@ -120,10 +120,10 @@ export const FlowPuzzleDbPostgres = ({
 
     async count(input) {
       const queried = await dbConn.query(
-        p.num,
+        p.obj({ count: p.num }),
         `
         SELECT
-          COUNT(*)
+          COUNT(*) AS count
         FROM
           game_flow_puzzle
         WHERE
@@ -133,7 +133,7 @@ export const FlowPuzzleDbPostgres = ({
           created_by_user_id: input.where.createdBy,
         },
       )
-      return Result.mapOk(queried, (x) => x[0] ?? 0)
+      return Result.mapOk(queried, (x) => x[0]?.count ?? 0)
     },
 
     async list(input) {
