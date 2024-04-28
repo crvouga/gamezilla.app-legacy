@@ -199,41 +199,61 @@ const ViewClickable = (
     <g key={props.model.nodeHash}>
       {map(FlowGrid.yieldNodes(props.model), (node) => {
         return (
-          <rect
+          <ViewClickableNode
             key={node.nodeId}
-            x={node.x}
-            y={node.y}
-            width="1"
-            height="1"
-            fill="transparent"
-            onMouseDown={() => {
-              if (isCurrentDeviceTouch) {
-                return
-              }
-              props.onPressDown?.(node.nodeId)
-            }}
-            onMouseUp={() => {
-              props.onPressUp?.(node.nodeId)
-            }}
-            onMouseEnter={() => {
-              props.draggedOver?.(node.nodeId)
-            }}
-            onTouchStart={() => {
-              isCurrentDeviceTouch = true
-              props.onPressDown?.(node.nodeId)
-            }}
-            onTouchCancel={() => {
-              isCurrentDeviceTouch = true
-              props.onPressUp?.(node.nodeId)
-            }}
-            onTouchEnd={() => {
-              isCurrentDeviceTouch = true
-              props.onPressUp?.(node.nodeId)
-            }}
+            node={node}
+            onPressDown={props.onPressDown}
+            onPressUp={props.onPressUp}
+            draggedOver={props.draggedOver}
           />
         )
       })}
     </g>
+  )
+}
+
+const ViewClickableNode = (
+  props: Pick<
+    FlowUI.FlowViewProps<FlowGrid.Model>,
+    "onPressDown" | "onPressUp"
+  > & {
+    node: FlowGrid.Node
+    draggedOver?: (nodeId: Flow.NodeId) => void
+  },
+) => {
+  return (
+    <rect
+      key={props.node.nodeId}
+      x={props.node.x}
+      y={props.node.y}
+      width="1"
+      height="1"
+      fill="transparent"
+      onMouseDown={() => {
+        if (isCurrentDeviceTouch) {
+          return
+        }
+        props.onPressDown?.(props.node.nodeId)
+      }}
+      onMouseUp={() => {
+        props.onPressUp?.(props.node.nodeId)
+      }}
+      onMouseEnter={() => {
+        props.draggedOver?.(props.node.nodeId)
+      }}
+      onTouchStart={() => {
+        isCurrentDeviceTouch = true
+        props.onPressDown?.(props.node.nodeId)
+      }}
+      onTouchCancel={() => {
+        isCurrentDeviceTouch = true
+        props.onPressUp?.(props.node.nodeId)
+      }}
+      onTouchEnd={() => {
+        isCurrentDeviceTouch = true
+        props.onPressUp?.(props.node.nodeId)
+      }}
+    />
   )
 }
 
