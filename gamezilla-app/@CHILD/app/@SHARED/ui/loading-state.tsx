@@ -5,7 +5,7 @@ export const LoadingState = () => {
     <div
       id="loading-screen"
       key="loading-screen"
-      className="flex flex-col items-center justify-center"
+      className="flex h-full w-full flex-col items-center justify-center"
     >
       <Spinner />
     </div>
