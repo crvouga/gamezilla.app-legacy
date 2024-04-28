@@ -55,7 +55,6 @@ describe(import.meta.file, () => {
         }),
       },
     })
-    console.log(inserted)
     expect(inserted.t).toBe("ok")
   })
 
