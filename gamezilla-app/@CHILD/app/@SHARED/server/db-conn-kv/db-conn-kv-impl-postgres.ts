@@ -50,20 +50,16 @@ export const DbConnKvPostgres = async ({
         const parsed = parser.parse(json)
 
         if (isErr(parsed)) {
-          logger.error(
-            ` get: not a value: ${key} ${JSON.stringify(
-              parsed.error,
-              null,
-              2,
-            )}`,
-          )
+          const errorStr = JSON.stringify(parsed.error, null, 2)
+
+          logger.error(`get: not a value: ${key} ${errorStr}`)
 
           return Ok(null)
         }
 
         return Ok(parsed.value)
       } catch (e) {
-        logger.error(` get: ${key} ${String(e)}`)
+        logger.error(`get: ${key} ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -72,11 +68,11 @@ export const DbConnKvPostgres = async ({
       try {
         const start = process.hrtime.bigint()
 
+        const keysStr = keys.map((key) => `'${key}'`).join(", ")
+
         const queried = await dbConn.query(
           Row,
-          `SELECT key, value FROM key_value WHERE key IN (${keys
-            .map((key) => `'${key}'`)
-            .join(", ")})`,
+          `SELECT key, value FROM key_value WHERE key IN (${keysStr})`,
           {},
         )
 
@@ -98,13 +94,9 @@ export const DbConnKvPostgres = async ({
           const parsed = parser.parse(json)
 
           if (isErr(parsed)) {
-            logger.error(
-              ` get: not a value: ${row.key} ${JSON.stringify(
-                parsed.error,
-                null,
-                2,
-              )}`,
-            )
+            const errorStr = JSON.stringify(parsed.error, null, 2)
+
+            logger.error(`get: not a value: ${row.key} ${errorStr}`)
 
             return []
           }
@@ -114,7 +106,7 @@ export const DbConnKvPostgres = async ({
 
         return Ok(rows)
       } catch (e) {
-        logger.error(` get: ${keys.join(", ")} ${String(e)}`)
+        logger.error(`get: ${keys.join(", ")} ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -136,7 +128,7 @@ export const DbConnKvPostgres = async ({
 
         return Ok(null)
       } catch (e) {
-        logger.error(` set: ${key} ${String(e)}`)
+        logger.error(`set: ${key} ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -159,7 +151,7 @@ export const DbConnKvPostgres = async ({
 
         return Ok(null)
       } catch (e) {
-        logger.error(` setMany: ${String(e)}`)
+        logger.error(`setMany: ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -176,7 +168,7 @@ export const DbConnKvPostgres = async ({
 
         return Result.mapOk(queried, () => null)
       } catch (e) {
-        logger.error(` zap: ${key} ${String(e)}`)
+        logger.error(`zap: ${key} ${String(e)}`)
         return Err(String(e))
       }
     },
