@@ -1,5 +1,5 @@
 import { IDbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
-import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
+import { ILogger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger/logger"
 import { ISMS } from "gamezilla-app/@CHILD/app/@SHARED/server/sms"
 import {
   Err,
@@ -24,7 +24,7 @@ import { IVerifySMS } from "./verify-sms"
 export const EXPIRES_IN = TimeSpan.fromMinutes(5)
 
 export type VerifySMSDeps = {
-  logger: Logger
+  logger: ILogger
   sms: ISMS
   dbConnKv: IDbConnKv
   codeGenerator: ICodeGenerator

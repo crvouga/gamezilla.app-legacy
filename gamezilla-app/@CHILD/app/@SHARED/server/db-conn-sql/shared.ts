@@ -1,4 +1,4 @@
-import { Logger } from "../logger"
+import { ILogger } from "../logger/logger"
 
 export function logQuery({
   sql,
@@ -9,11 +9,11 @@ export function logQuery({
   sql: string
   start: number
   end: number
-  logger: Logger
+  logger: ILogger
 }) {
   const durationFormatted = `${end - start}ms`
 
   logger.info(
-    `[db-sql] duration=${durationFormatted} sql=\n${sql.slice(0, 1000)}`,
+    `duration=${durationFormatted} sql=\n${sql.slice(0, 1000)}`,
   )
 }

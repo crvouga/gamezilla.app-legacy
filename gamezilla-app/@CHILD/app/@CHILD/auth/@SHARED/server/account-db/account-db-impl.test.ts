@@ -2,10 +2,10 @@ import { describe, expect, it } from "bun:test"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { UserAccount } from "gamezilla-app/@CHILD/app/@SHARED/data/account"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
-import { loggerNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { Posix, Result } from "gamezilla-app/@SHARED/core"
 import { Hashing } from "gamezilla-app/@SHARED/hashing"
 import { AccountDb } from "./account-db-impl"
+import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 
 const Fixture = async () => {
   const IS_INTEGRATION_TEST = process.env["IS_INTEGRATION_TEST"]
@@ -21,7 +21,7 @@ const Fixture = async () => {
 
     const dbConnSql = await DbConnSql({
       databaseUrl: DATABASE_URL,
-      logger: loggerNoop,
+      logger: Logger({ t: "noop" }),
     })
 
     const accountDb = AccountDb({

@@ -1,4 +1,4 @@
-import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
+import { ILogger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger/logger"
 import { Err, Ok, PhoneNumber } from "gamezilla-app/@SHARED/core"
 import { Hash, IHashing } from "gamezilla-app/@SHARED/hashing"
 import { VerificationId } from "./verification"
@@ -8,7 +8,7 @@ const CODE = "123"
 
 export type VerifySMSDeps = {
   hashing: IHashing
-  logger: Logger
+  logger: ILogger
   delay: () => Promise<void>
 }
 

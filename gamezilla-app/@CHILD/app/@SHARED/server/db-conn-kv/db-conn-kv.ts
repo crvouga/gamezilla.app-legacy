@@ -8,7 +8,7 @@ import {
 } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import { Parser } from "gamezilla-app/@SHARED/core/parser/parser"
-import { Logger } from "../logger"
+import { ILogger } from "../logger/logger"
 
 export type IDbConnKv = {
   get: <TValue>(
@@ -130,14 +130,14 @@ const withDistributedUpdates = ({
   pubSub,
   logger,
 }: {
-  logger: Logger
+  logger: ILogger
   dbConnKv: IDbConnKv
   pubSub: PubSub<DistributedUpdate>
 }): IDbConnKv & { unsubscribe: () => void } => {
   const unsubscribe = pubSub.subscribe((update) => {
     switch (update.t) {
       case DistributedUpdateType.SET: {
-        logger.info(`[db-conn-kv] distributed set: key=${update.k}`)
+        logger.info(`distributed set: key=${update.k}`)
         dbConnKv.set(update.k, update.v)
         break
       }
@@ -146,12 +146,12 @@ const withDistributedUpdates = ({
         for (let i = 0; i < update.e.length; i++) {
           key = key + "," + update.e[i]![0]
         }
-        logger.info(`[db-conn-kv] distributed setMany: keys=${key}`)
+        logger.info(`distributed setMany: keys=${key}`)
         dbConnKv.setMany(update.e)
         break
       }
       case DistributedUpdateType.ZAP: {
-        logger.info(`[db-conn-kv] distributed zap: key=${update.k}`)
+        logger.info(`distributed zap: key=${update.k}`)
         dbConnKv.zap(update.k)
         break
       }
@@ -182,7 +182,7 @@ const withThrottlingWrites = ({
 }: {
   dbConnKv: IDbConnKv
   throttle: TimeSpan
-  logger: Logger
+  logger: ILogger
 }): IDbConnKv => {
   const throttleMs = TimeSpan.toMilliseconds(throttle)
   const timeouts = new Map<string, ReturnType<typeof setTimeout>>()
@@ -233,7 +233,7 @@ const withThrottlingWrites = ({
   }
 
   const flush = async () => {
-    logger.info("[db-conn-kv] Flushing throttled writes")
+    logger.info("Flushing throttled writes")
     for (const [key, timeout] of timeouts.entries()) {
       clearTimeout(timeout)
       const valueToSet = lastValues.get(key)
@@ -245,11 +245,17 @@ const withThrottlingWrites = ({
       timeouts.delete(key)
       lastValues.delete(key)
     }
-    logger.info("[db-conn-kv] Flushed throttled writes")
+    logger.info("Flushed throttled writes")
   }
 
-  process.on("SIGTERM", flush)
-  process.on("SIGINT", flush)
+  process.on("SIGTERM", () => {
+    flush()
+    process.exit(0)
+  })
+  process.on("SIGINT", () => {
+    flush()
+    process.exit(0)
+  })
 
   return {
     ...dbConnKv,
@@ -275,7 +281,7 @@ const withCache = ({
 }: {
   cache: IDbConnKv
   source: IDbConnKv
-  logger: Logger
+  logger: ILogger
 }): IDbConnKv => {
   return {
     async get(key, parser) {
@@ -287,11 +293,11 @@ const withCache = ({
         const end = process.hrtime.bigint()
         const durationInMicroseconds = (end - start) / BigInt(1000)
         logger.info(
-          `[db-conn-kv-with-cache] CACHED duration=${durationInMicroseconds}µs get: key=${key}`,
+          `CACHED duration=${durationInMicroseconds}µs get: key=${key}`,
         )
         return cacheGot
       }
-      logger.info(`[db-conn-kv-with-cache] HITTING SOURCE getMany: key=${key}`)
+      logger.info(`HITTING SOURCE getMany: key=${key}`)
       const sourceGot = await source.get(key, parser)
       const sourceHit = Result.withDefault(sourceGot, null)
       if (sourceHit) {
@@ -299,9 +305,7 @@ const withCache = ({
       }
       const end = process.hrtime.bigint()
       const durationInMicroseconds = (end - start) / BigInt(1000)
-      logger.info(
-        `[db-conn-kv-with-cache] duration=${durationInMicroseconds}µs get: key=${key}`,
-      )
+      logger.info(`duration=${durationInMicroseconds}µs get: key=${key}`)
       return sourceGot
     },
     async getMany(keys, parser) {
@@ -313,17 +317,13 @@ const withCache = ({
         const end = process.hrtime.bigint()
         const durationInMicroseconds = (end - start) / BigInt(1000)
         logger.info(
-          `[db-conn-kv-with-cache] CACHED duration=${durationInMicroseconds}µs get: keys=${keys.join(
+          `CACHED duration=${durationInMicroseconds}µs get: keys=${keys.join(
             ", ",
           )}`,
         )
         return cacheGot
       }
-      logger.info(
-        `[db-conn-kv-with-cache] HITTING SOURCE getMany: keys=${keys.join(
-          ", ",
-        )}`,
-      )
+      logger.info(`HITTING SOURCE getMany: keys=${keys.join(", ")}`)
       const sourceGot = await source.getMany(keys, parser)
       const sourceHit = Result.withDefault(sourceGot, null)
       if (sourceHit) {
@@ -334,9 +334,7 @@ const withCache = ({
       const end = process.hrtime.bigint()
       const durationInMicroseconds = (end - start) / BigInt(1000)
       logger.info(
-        `[db-conn-kv-with-cache] duration=${durationInMicroseconds}µs get: keys=${keys.join(
-          ", ",
-        )}`,
+        `duration=${durationInMicroseconds}µs get: keys=${keys.join(", ")}`,
       )
       return sourceGot
     },

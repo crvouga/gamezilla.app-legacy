@@ -7,8 +7,9 @@ import { DbConnKvHashMap } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn
 import { dbConnSqlNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import { Posix } from "gamezilla-app/@SHARED/core"
 import { SpaceServerCtx } from "../../../../@SHARED/space"
-import { LoggerConsole } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
+
 import { smsNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/sms"
+import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger/logger-impl"
 
 const hostUserId = "test-user-id" as UserId
 
@@ -19,7 +20,7 @@ export const testSpaceServerCtx: SpaceServerCtx = {
   now: Posix.now(),
   dbConnSql: dbConnSqlNoop,
   dbConnKv: DbConnKvHashMap(),
-  logger: LoggerConsole("test-space"),
+  logger: Logger({ t: "noop" }),
   sessionId: SessionId.generate(),
   space: {
     hostId: hostUserId,

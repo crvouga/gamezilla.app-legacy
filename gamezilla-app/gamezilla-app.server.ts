@@ -1,17 +1,17 @@
 import { IS_PROD, SERVER_IMPL, SERVER_PORT } from "gamezilla-app/public-config"
-import { LoggerConsole } from "./@CHILD/app/@SHARED/server/logger"
 import * as AppServer from "./@CHILD/app/app.server"
 import { ProgramImpure } from "./@SHARED/core/program-impure"
 import { Server } from "./@SHARED/server"
+import { ILogger, Logger } from "./@CHILD/app/@SHARED/server/logger"
 
 const main = async () => {
   const server = Server(SERVER_IMPL)
 
-  const logger = LoggerConsole("app")
+  const logger = Logger({ t: "console" })
 
   const deps = await AppServer.getDeps({
     server,
-    logger,
+    logger: ILogger.prefix("app", logger),
   })
 
   await ProgramImpure.run({

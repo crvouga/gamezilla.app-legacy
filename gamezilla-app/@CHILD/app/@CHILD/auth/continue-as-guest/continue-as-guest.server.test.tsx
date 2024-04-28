@@ -3,7 +3,6 @@ import { AppServerModule } from "gamezilla-app/@CHILD/app/@SHARED/architecture/a
 import { ClientId, SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { ServerCtx } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { dbConnSqlNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
-import { LoggerConsole } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { Posix } from "gamezilla-app/@SHARED/core"
 import { AccountDb } from "../@SHARED/server/account-db"
 import { SessionDb } from "../@SHARED/server/session-db"
@@ -11,12 +10,13 @@ import { ServerDeps, ServerModule } from "../auth.core"
 import * as AuthServer from "../auth.server"
 import { DbConnKvHashMap } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv/db-conn-kv-impl-hash-map"
 import { smsNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/sms"
+import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger/logger-impl"
 
 const ctx: ServerCtx = {
   sms: smsNoop,
   dbConnSql: dbConnSqlNoop,
   dbConnKv: DbConnKvHashMap(),
-  logger: LoggerConsole("test"),
+  logger: Logger({ t: "noop" }),
   now: Posix.now(),
 }
 

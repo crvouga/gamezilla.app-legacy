@@ -7,7 +7,6 @@ import {
 import { ServerCtx } from "gamezilla-app/@CHILD/app/@SHARED/server"
 import { DbConnKvHashMap } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv/db-conn-kv-impl-hash-map"
 import { dbConnSqlNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
-import { LoggerConsole } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { Posix } from "gamezilla-app/@SHARED/core"
 import { LamportTimestamp } from "gamezilla-app/@SHARED/lamport-clock"
 import { EventId } from "../event"
@@ -18,12 +17,13 @@ import { ProfileCache } from "../../profile-cache"
 import { smsNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/sms"
 import { SpacesDb } from "../../spaces-core/space-db"
 import { GameDb } from "../../game/game-db"
+import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 
 export const Fixture = () => {
   const ctx: ServerCtx = {
     sms: smsNoop,
     dbConnSql: dbConnSqlNoop,
-    logger: LoggerConsole("test"),
+    logger: Logger({ t: "noop" }),
     now: Posix.now(),
     dbConnKv: DbConnKvHashMap(),
   }
@@ -48,7 +48,7 @@ export const Fixture = () => {
 export const ctx: ServerCtx = {
   sms: smsNoop,
   dbConnSql: dbConnSqlNoop,
-  logger: LoggerConsole("test"),
+  logger: Logger({ t: "noop" }),
   now: Posix.now(),
   dbConnKv: DbConnKvHashMap(),
 }

@@ -12,6 +12,7 @@ import {
   pipe,
   toMsgType,
 } from "gamezilla-app/@SHARED/core"
+import { LRUCache } from "gamezilla-app/@SHARED/least-recently-used-cache"
 import { ServerInstance } from "gamezilla-app/@SHARED/server"
 import { CODEBASE_VERSION_ID } from "gamezilla-app/public-config"
 import * as AuthServer from "./@CHILD/auth/auth.server"
@@ -25,7 +26,7 @@ import {
 import * as WireServer from "./@CHILD/wire/wire.server"
 import { DbConnKv, IDbConnKv } from "./@SHARED/server/db-conn-kv"
 import { DbConnSql, IDbConnSql } from "./@SHARED/server/db-conn-sql"
-import { Logger } from "./@SHARED/server/logger"
+import { ILogger } from "./@SHARED/server/logger/logger"
 import { ISMS, SMS } from "./@SHARED/server/sms"
 import {
   ModelServer,
@@ -34,7 +35,6 @@ import {
   MsgToServer,
   MsgToServerMeta,
 } from "./app.core"
-import { LRUCache } from "gamezilla-app/@SHARED/least-recently-used-cache.ts/least-recently-used-cache"
 
 //
 //
@@ -45,7 +45,7 @@ import { LRUCache } from "gamezilla-app/@SHARED/least-recently-used-cache.ts/lea
 //
 
 export type Deps = {
-  logger: Logger
+  logger: ILogger
   dbConnSql: IDbConnSql
   dbConnKv: IDbConnKv
   sms: ISMS
@@ -64,44 +64,52 @@ export const getDeps = async ({
   logger,
   server,
 }: {
-  logger: Logger
+  logger: ILogger
   server: ServerInstance
 }): Promise<Deps> => {
   const databaseUrl = process.env["DATABASE_URL"]
 
   if (!databaseUrl) {
-    throw new Error(`[deps] DATABASE_URL not set`)
+    throw new Error(`DATABASE_URL not set`)
   }
 
-  const dbConnSql = await DbConnSql({ databaseUrl, logger })
+  const dbConnSql = await DbConnSql({
+    databaseUrl,
+    logger: ILogger.prefix("db-conn-sql", logger),
+  })
 
   const redisUrl = process.env["REDIS_URL"]
 
   if (!redisUrl) {
-    throw new Error(`[deps] REDIS_URL not set`)
+    throw new Error(`REDIS_URL not set`)
   }
 
   const dbConnKv = await pipe(
-    await DbConnKv({
+    DbConnKv({
       t: "redis",
-      logger,
+      logger: ILogger.prefix("redis", logger),
       url: redisUrl,
     }),
-    (dbConnKv) =>
+
+    async (dbConnKv) =>
       IDbConnKv.withThrottlingWrites({
-        logger,
-        dbConnKv,
+        logger: ILogger.prefix("with-throttling-writes", logger),
+        dbConnKv: await dbConnKv,
         throttle: TimeSpan.fromSeconds(10),
       }),
+
     async (dbConnKv) =>
       IDbConnKv.withCache({
-        logger,
-        source: dbConnKv,
+        logger: ILogger.prefix("with-cache", logger),
+        source: await dbConnKv,
         cache: await DbConnKv({
           t: "hash-map",
-          map: new LRUCache({ max: 1000 }),
+          map: LRUCache({
+            maxCapcity: 1000,
+          }),
         }),
       }),
+
     async (dbConnKv) =>
       IDbConnKv.withReducedParsing({
         dbConnKv: await dbConnKv,
@@ -109,13 +117,16 @@ export const getDeps = async ({
       }),
   )
 
-  const sms = SMS({ t: "twilio", logger })
+  const sms = SMS({
+    t: "twilio",
+    logger: ILogger.prefix("twilio", logger),
+  })
 
   const transport = await ServerTransport<MsgToServer, MsgToClient>({
     codebaseVersionId: CODEBASE_VERSION_ID,
     server,
     redisUrl,
-    logger,
+    logger: ILogger.prefix("transport", logger),
   })
 
   const wire = await WireServer.getDeps({
@@ -124,9 +135,9 @@ export const getDeps = async ({
   })
 
   const ctx: ServerCtx = {
-    sms: sms,
-    dbConnSql: dbConnSql,
-    dbConnKv: dbConnKv,
+    sms,
+    dbConnSql,
+    dbConnKv,
     logger,
     now: Posix.now(),
   }
@@ -271,7 +282,7 @@ const logMsg = ({
   msgCmd,
   logger,
 }: {
-  logger: Logger
+  logger: ILogger
   msg?: MsgServer
   msgEvt?: ServerEvent
   msgCmd?: ServerCmd<MsgToClient>

@@ -1,4 +1,4 @@
-import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
+import { ILogger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger/logger"
 import { ServerInstance } from "gamezilla-app/@SHARED/server"
 import { IServerTransport } from "./transport-server"
 import { ServerTransportBunWebSockets } from "./transport-server-impl-bun-web-sockets"
@@ -13,7 +13,7 @@ export const ServerTransport = async <MsgToServer, MsgToClient>({
   server: ServerInstance
   codebaseVersionId: string
   redisUrl: string
-  logger: Logger
+  logger: ILogger
 }): Promise<
   IServerTransport<{
     MsgToServer: MsgToServer

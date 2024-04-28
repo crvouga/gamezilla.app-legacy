@@ -43,7 +43,7 @@ export const FlowPackDbHashMap = (): IFlowPackDb => {
       return Ok(pack)
     },
 
-    async zap(id) {
+    async zap({ id }) {
       db.delete(id)
       return Ok(null)
     },

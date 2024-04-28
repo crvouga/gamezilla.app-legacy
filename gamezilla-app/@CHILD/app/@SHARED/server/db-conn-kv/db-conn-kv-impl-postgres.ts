@@ -1,7 +1,7 @@
 import { Err, Ok, Result, isErr } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import { IDbConnSql } from "../db-conn-sql"
-import { Logger } from "../logger"
+import { ILogger } from "../logger/logger"
 import { IDbConnKv } from "./db-conn-kv"
 
 const Row = p.obj({
@@ -14,7 +14,7 @@ export const DbConnKvPostgres = async ({
   dbConn,
 }: {
   dbConn: IDbConnSql
-  logger: Logger
+  logger: ILogger
 }): Promise<IDbConnKv> => {
   return {
     async get(key, parser) {
@@ -33,9 +33,7 @@ export const DbConnKvPostgres = async ({
 
         const durationInNanoseconds = (end - start) / BigInt(1000)
 
-        logger.info(
-          `[db-conn-kv] duration=${durationInNanoseconds}µs get: key=${key}`,
-        )
+        logger.info(`duration=${durationInNanoseconds}µs get: key=${key}`)
 
         if (isErr(queried)) {
           return queried
@@ -53,7 +51,7 @@ export const DbConnKvPostgres = async ({
 
         if (isErr(parsed)) {
           logger.error(
-            `[db-conn-kv-postgres] get: not a value: ${key} ${JSON.stringify(
+            ` get: not a value: ${key} ${JSON.stringify(
               parsed.error,
               null,
               2,
@@ -65,7 +63,7 @@ export const DbConnKvPostgres = async ({
 
         return Ok(parsed.value)
       } catch (e) {
-        logger.error(`[db-conn-kv-postgres] get: ${key} ${String(e)}`)
+        logger.error(` get: ${key} ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -87,9 +85,7 @@ export const DbConnKvPostgres = async ({
         const durationInNanoseconds = (end - start) / BigInt(1000)
 
         logger.info(
-          `[db-conn-kv] duration=${durationInNanoseconds}µs get: keys=${keys.join(
-            ", ",
-          )}`,
+          `duration=${durationInNanoseconds}µs get: keys=${keys.join(", ")}`,
         )
 
         if (isErr(queried)) {
@@ -103,9 +99,11 @@ export const DbConnKvPostgres = async ({
 
           if (isErr(parsed)) {
             logger.error(
-              `[db-conn-kv-postgres] get: not a value: ${
-                row.key
-              } ${JSON.stringify(parsed.error, null, 2)}`,
+              ` get: not a value: ${row.key} ${JSON.stringify(
+                parsed.error,
+                null,
+                2,
+              )}`,
             )
 
             return []
@@ -116,9 +114,7 @@ export const DbConnKvPostgres = async ({
 
         return Ok(rows)
       } catch (e) {
-        logger.error(
-          `[db-conn-kv-postgres] get: ${keys.join(", ")} ${String(e)}`,
-        )
+        logger.error(` get: ${keys.join(", ")} ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -140,7 +136,7 @@ export const DbConnKvPostgres = async ({
 
         return Ok(null)
       } catch (e) {
-        logger.error(`[db-conn-kv-postgres] set: ${key} ${String(e)}`)
+        logger.error(` set: ${key} ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -163,7 +159,7 @@ export const DbConnKvPostgres = async ({
 
         return Ok(null)
       } catch (e) {
-        logger.error(`[db-conn-kv-postgres] setMany: ${String(e)}`)
+        logger.error(` setMany: ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -180,7 +176,7 @@ export const DbConnKvPostgres = async ({
 
         return Result.mapOk(queried, () => null)
       } catch (e) {
-        logger.error(`[db-conn-kv-postgres] zap: ${key} ${String(e)}`)
+        logger.error(` zap: ${key} ${String(e)}`)
         return Err(String(e))
       }
     },

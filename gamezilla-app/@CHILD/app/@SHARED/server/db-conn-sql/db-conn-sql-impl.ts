@@ -1,5 +1,5 @@
 import { Ok } from "gamezilla-app/@SHARED/core"
-import { Logger } from "../logger"
+import { ILogger } from "../logger/logger"
 import { IDbConnSql } from "./db-conn-sql"
 import { createDbConnPostgres } from "./db-conn-sql-impl-postgres"
 
@@ -17,7 +17,7 @@ export const DbConnSql = async ({
   logger,
 }: {
   databaseUrl: string
-  logger: Logger
+  logger: ILogger
 }): Promise<IDbConnSql> => {
   const databaseType = connectionStringToDatabaseType(databaseUrl)
 
@@ -27,7 +27,7 @@ export const DbConnSql = async ({
     }
 
     default: {
-      throw new Error(`[db] unknown database type for ${databaseUrl}`)
+      throw new Error(`unknown database type for ${databaseUrl}`)
     }
   }
 }

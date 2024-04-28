@@ -6,6 +6,7 @@ import {
 import { Result } from "gamezilla-app/@SHARED/core"
 import { FlowPack } from "../flow-pack"
 import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id"
+import { FlowPackId } from "../flow-pack-id"
 
 export type IFlowPackDb = {
   count: (input: {
@@ -23,7 +24,10 @@ export type IFlowPackDb = {
       lastUpdatedAt?: "asc" | "desc"
     }
   }) => Promise<Result<string, Paginated<FlowPack>>>
-  get: (id: FlowPuzzleId) => Promise<Result<string, FlowPack | null>>
-  put: (input: FlowPack) => Promise<Result<string, FlowPack>>
-  zap: (id: FlowPuzzleId) => Promise<Result<string, null>>
+  get: (id: FlowPackId) => Promise<Result<string, FlowPack | null>>
+  put: (pack: FlowPack) => Promise<Result<string, FlowPack>>
+  zap: (input: {
+    id: FlowPuzzleId
+    deletedBy: UserId
+  }) => Promise<Result<string, null>>
 }

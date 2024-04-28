@@ -1,4 +1,4 @@
-import { LRUCache } from "gamezilla-app/@SHARED/least-recently-used-cache.ts/least-recently-used-cache"
+import { LRUCache } from "gamezilla-app/@SHARED/least-recently-used-cache"
 
 /**
  * @description
@@ -13,8 +13,8 @@ export const memoize = <TInput, TOutput extends {}>({
   func: (x: TInput) => TOutput
   cacheCapacity: number
 }) => {
-  const cache = new LRUCache<string | number, TOutput>({
-    max: cacheCapacity,
+  const cache = LRUCache<string | number, TOutput>({
+    maxCapcity: cacheCapacity,
   })
 
   return (x: TInput): TOutput => {
@@ -43,8 +43,8 @@ export const memoizeAsync = <TInput, TOutput extends {}>({
   func: (x: TInput) => Promise<TOutput>
   cacheCapacity: number
 }) => {
-  const cache = new LRUCache<string | number, TOutput>({
-    max: cacheCapacity,
+  const cache = LRUCache<string | number, TOutput>({
+    maxCapcity: cacheCapacity,
   })
 
   return async (x: TInput): Promise<TOutput> => {

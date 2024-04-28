@@ -1,5 +1,5 @@
 import { ClientId, SessionId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
+import { ILogger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger/logger"
 import { ServerNode } from "gamezilla-app/@SHARED/server/server-impl-node/server-impl-node"
 import { Server } from "socket.io"
 import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core"
@@ -9,7 +9,7 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
   server,
   codebaseVersionId,
 }: {
-  logger: Logger
+  logger: ILogger
   codebaseVersionId: string
   server: ServerNode
   redisUrl: string

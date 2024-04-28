@@ -1,7 +1,7 @@
 import { Err, Ok } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import pg from "pg"
-import { Logger } from "../logger"
+import { ILogger } from "../logger/logger"
 import { IDbConnSql } from "./db-conn-sql"
 import { logQuery } from "./shared"
 import { toSql, toSqlLog } from "./sql"
@@ -14,7 +14,7 @@ export const createDbConnPostgres = async ({
   logger,
 }: {
   databaseUrl: string
-  logger: Logger
+  logger: ILogger
 }): Promise<IDbConnSql> => {
   if (!pool) {
     pool = new pg.Pool({
@@ -68,7 +68,7 @@ export const createDbConnPostgres = async ({
               )
             }
             logger.error(
-              `[db] Failed to parse row=${JSON.stringify(
+              `Failed to parse row=${JSON.stringify(
                 row,
                 null,
                 4,
@@ -86,7 +86,7 @@ export const createDbConnPostgres = async ({
 
         return Ok(output)
       } catch (error) {
-        logger.error(`[db] ${error} sql=${rawSql}`)
+        logger.error(`${error} sql=${rawSql}`)
         return Err(String(error))
       }
     },

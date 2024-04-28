@@ -161,7 +161,7 @@ class Stack {
 }
 
 /**
- * Promise representing an in-progress {@link LRUCache#fetch} call
+ * Promise representing an in-progress {@link _LRUCache#fetch} call
  */
 export type BackgroundFetch<V> = Promise<V | undefined> & {
   __returned: BackgroundFetch<V> | undefined
@@ -219,14 +219,14 @@ export namespace LRUCache {
     options: FetcherFetchOptions<K, V, FC>
     /**
      * Object provided in the {@link FetchOptions.context} option to
-     * {@link LRUCache#fetch}
+     * {@link _LRUCache#fetch}
      */
     context: FC
   }
 
   /**
-   * Status object that may be passed to {@link LRUCache#fetch},
-   * {@link LRUCache#get}, {@link LRUCache#set}, and {@link LRUCache#has}.
+   * Status object that may be passed to {@link _LRUCache#fetch},
+   * {@link _LRUCache#get}, {@link _LRUCache#set}, and {@link _LRUCache#has}.
    */
   export interface Status<V> {
     /**
@@ -282,7 +282,7 @@ export namespace LRUCache {
     oldValue?: V
 
     /**
-     * The results of a {@link LRUCache#has} operation
+     * The results of a {@link _LRUCache#has} operation
      *
      * - hit: the item was found in the cache
      * - stale: the item was found in the cache, but is stale
@@ -291,12 +291,12 @@ export namespace LRUCache {
     has?: "hit" | "stale" | "miss"
 
     /**
-     * The status of a {@link LRUCache#fetch} operation.
+     * The status of a {@link _LRUCache#fetch} operation.
      * Note that this can change as the underlying fetch() moves through
      * various states.
      *
      * - inflight: there is another fetch() for this key which is in process
-     * - get: there is no fetchMethod, so {@link LRUCache#get} was called.
+     * - get: there is no fetchMethod, so {@link _LRUCache#get} was called.
      * - miss: the item is not in cache, and will be fetched.
      * - hit: the item is in the cache, and was resolved immediately.
      * - stale: the item is in the cache, but stale.
@@ -345,7 +345,7 @@ export namespace LRUCache {
     fetchRejected?: true
 
     /**
-     * The status of a {@link LRUCache#get} operation.
+     * The status of a {@link _LRUCache#get} operation.
      *
      * - fetching: The item is currently being fetched.  If a previous value
      *   is present and allowed, that will be returned.
@@ -363,7 +363,7 @@ export namespace LRUCache {
 
   /**
    * options which override the options set in the LRUCache constructor
-   * when calling {@link LRUCache#fetch}.
+   * when calling {@link _LRUCache#fetch}.
    *
    * This is the union of {@link GetOptions} and {@link SetOptions}, plus
    * {@link OptionsBase.noDeleteOnFetchRejection},
@@ -373,7 +373,7 @@ export namespace LRUCache {
    *
    * Any of these may be modified in the {@link OptionsBase.fetchMethod}
    * function, but the {@link GetOptions} fields will of course have no
-   * effect, as the {@link LRUCache#get} call already happened by the time
+   * effect, as the {@link _LRUCache#get} call already happened by the time
    * the fetchMethod is called.
    */
   export interface FetcherFetchOptions<K, V, FC = unknown>
@@ -396,7 +396,7 @@ export namespace LRUCache {
   }
 
   /**
-   * Options that may be passed to the {@link LRUCache#fetch} method.
+   * Options that may be passed to the {@link _LRUCache#fetch} method.
    */
   export interface FetchOptions<K, V, FC>
     extends FetcherFetchOptions<K, V, FC> {
@@ -418,7 +418,7 @@ export namespace LRUCache {
     status?: Status<V>
   }
   /**
-   * Options provided to {@link LRUCache#fetch} when the FC type is something
+   * Options provided to {@link _LRUCache#fetch} when the FC type is something
    * other than `unknown`, `undefined`, or `void`
    */
   export interface FetchOptionsWithContext<K, V, FC>
@@ -426,7 +426,7 @@ export namespace LRUCache {
     context: FC
   }
   /**
-   * Options provided to {@link LRUCache#fetch} when the FC type is
+   * Options provided to {@link _LRUCache#fetch} when the FC type is
    * `undefined` or `void`
    */
   export interface FetchOptionsNoContext<K, V>
@@ -435,7 +435,7 @@ export namespace LRUCache {
   }
 
   /**
-   * Options that may be passed to the {@link LRUCache#has} method.
+   * Options that may be passed to the {@link _LRUCache#has} method.
    */
   export interface HasOptions<K, V, FC>
     extends Pick<OptionsBase<K, V, FC>, "updateAgeOnHas"> {
@@ -443,7 +443,7 @@ export namespace LRUCache {
   }
 
   /**
-   * Options that may be passed to the {@link LRUCache#get} method.
+   * Options that may be passed to the {@link _LRUCache#get} method.
    */
   export interface GetOptions<K, V, FC>
     extends Pick<
@@ -454,13 +454,13 @@ export namespace LRUCache {
   }
 
   /**
-   * Options that may be passed to the {@link LRUCache#peek} method.
+   * Options that may be passed to the {@link _LRUCache#peek} method.
    */
   export interface PeekOptions<K, V, FC>
     extends Pick<OptionsBase<K, V, FC>, "allowStale"> {}
 
   /**
-   * Options that may be passed to the {@link LRUCache#set} method.
+   * Options that may be passed to the {@link _LRUCache#set} method.
    */
   export interface SetOptions<K, V, FC>
     extends Pick<
@@ -469,13 +469,13 @@ export namespace LRUCache {
     > {
     /**
      * If size tracking is enabled, then setting an explicit size
-     * in the {@link LRUCache#set} call will prevent calling the
+     * in the {@link _LRUCache#set} call will prevent calling the
      * {@link OptionsBase.sizeCalculation} function.
      */
     size?: Size
     /**
      * If TTL tracking is enabled, then setting an explicit start
-     * time in the {@link LRUCache#set} call will override the
+     * time in the {@link _LRUCache#set} call will override the
      * default time from `performance.now()` or `Date.now()`.
      *
      * Note that it must be a valid value for whichever time-tracking
@@ -495,7 +495,7 @@ export namespace LRUCache {
   ) => Promise<V | undefined | void> | V | undefined | void
 
   /**
-   * Options which may be passed to the {@link LRUCache} constructor.
+   * Options which may be passed to the {@link _LRUCache} constructor.
    *
    * Most of these may be overridden in the various options that use
    * them.
@@ -512,7 +512,7 @@ export namespace LRUCache {
   export interface OptionsBase<K, V, FC> {
     /**
      * The maximum number of items to store in the cache before evicting
-     * old entries. This is read-only on the {@link LRUCache} instance,
+     * old entries. This is read-only on the {@link _LRUCache} instance,
      * and may not be overridden.
      *
      * If set, then storage space will be pre-allocated at construction
@@ -571,7 +571,7 @@ export namespace LRUCache {
     ttlAutopurge?: boolean
 
     /**
-     * Update the age of items on {@link LRUCache#get}, renewing their TTL
+     * Update the age of items on {@link _LRUCache#get}, renewing their TTL
      *
      * Has no effect if {@link OptionsBase.ttl} is not set.
      *
@@ -580,7 +580,7 @@ export namespace LRUCache {
     updateAgeOnGet?: boolean
 
     /**
-     * Update the age of items on {@link LRUCache#has}, renewing their TTL
+     * Update the age of items on {@link _LRUCache#has}, renewing their TTL
      *
      * Has no effect if {@link OptionsBase.ttl} is not set.
      *
@@ -589,7 +589,7 @@ export namespace LRUCache {
     updateAgeOnHas?: boolean
 
     /**
-     * Allow {@link LRUCache#get} and {@link LRUCache#fetch} calls to return
+     * Allow {@link _LRUCache#get} and {@link _LRUCache#fetch} calls to return
      * stale data, if available.
      */
     allowStale?: boolean
@@ -621,7 +621,7 @@ export namespace LRUCache {
      * {@link OptionsBase.dispose} function if the entry key is
      * still accessible within the cache.
      * This may be overridden by passing an options object to
-     * {@link LRUCache#set}.
+     * {@link _LRUCache#set}.
      */
     noDisposeOnSet?: boolean
 
@@ -651,7 +651,7 @@ export namespace LRUCache {
     /**
      * The maximum allowed size for any single item in the cache.
      *
-     * If a larger item is passed to {@link LRUCache#set} or returned by a
+     * If a larger item is passed to {@link _LRUCache#set} or returned by a
      * {@link OptionsBase.fetchMethod}, then it will not be stored in the
      * cache.
      */
@@ -662,13 +662,13 @@ export namespace LRUCache {
      *
      * If not provided, and {@link OptionsBase.maxSize} or
      * {@link OptionsBase.maxEntrySize} are set, then all
-     * {@link LRUCache#set} calls **must** provide an explicit
+     * {@link _LRUCache#set} calls **must** provide an explicit
      * {@link SetOptions.size} or sizeCalculation param.
      */
     sizeCalculation?: SizeCalculator<K, V>
 
     /**
-     * Method that provides the implementation for {@link LRUCache#fetch}
+     * Method that provides the implementation for {@link _LRUCache#fetch}
      */
     fetchMethod?: Fetcher<K, V, FC>
 
@@ -680,7 +680,7 @@ export namespace LRUCache {
 
     /**
      * Do not delete stale items when they are retrieved with
-     * {@link LRUCache#get}.
+     * {@link _LRUCache#get}.
      *
      * Note that the `get` return value will still be `undefined`
      * unless {@link OptionsBase.allowStale} is true.
@@ -694,7 +694,7 @@ export namespace LRUCache {
      *
      * This differs from using {@link OptionsBase.allowStale} in that stale
      * data will ONLY be returned in the case that the
-     * {@link LRUCache#fetch} fails, not any other times.
+     * {@link _LRUCache#fetch} fails, not any other times.
      */
     allowStaleOnFetchRejection?: boolean
 
@@ -738,12 +738,12 @@ export namespace LRUCache {
      * object passed to {@link OptionsBase.fetchMethod}, and still cache the
      * resulting resolution value, as long as it is not `undefined`.
      *
-     * When used on its own, this means aborted {@link LRUCache#fetch} calls are not
+     * When used on its own, this means aborted {@link _LRUCache#fetch} calls are not
      * immediately resolved or rejected when they are aborted, and instead
      * take the full time to await.
      *
      * When used with {@link OptionsBase.allowStaleOnFetchAbort}, aborted
-     * {@link LRUCache#fetch} calls will resolve immediately to their stale
+     * {@link _LRUCache#fetch} calls will resolve immediately to their stale
      * cached value or `undefined`, and will continue to process and eventually
      * update the cache when they resolve, as long as the resulting value is
      * not `undefined`, thus supporting a "return stale on timeout while
@@ -754,7 +754,7 @@ export namespace LRUCache {
      * when passed to other underlying APIs that use AbortSignals.
      *
      * This may be overridden in the {@link OptionsBase.fetchMethod} or the
-     * call to {@link LRUCache#fetch}.
+     * call to {@link _LRUCache#fetch}.
      */
     ignoreFetchAbort?: boolean
   }
@@ -771,7 +771,7 @@ export namespace LRUCache {
   }
 
   /**
-   * The valid safe options for the {@link LRUCache} constructor
+   * The valid safe options for the {@link _LRUCache} constructor
    */
   export type Options<K, V, FC> =
     | OptionsMaxLimit<K, V, FC>
@@ -779,8 +779,8 @@ export namespace LRUCache {
     | OptionsTTLLimit<K, V, FC>
 
   /**
-   * Entry objects used by {@link LRUCache#load} and {@link LRUCache#dump},
-   * and returned by {@link LRUCache#info}.
+   * Entry objects used by {@link _LRUCache#load} and {@link _LRUCache#dump},
+   * and returned by {@link _LRUCache#info}.
    */
   export interface Entry<V> {
     value: V
@@ -799,9 +799,7 @@ export namespace LRUCache {
  * Changing any of these will alter the defaults for subsequent method calls,
  * but is otherwise safe.
  */
-export class LRUCache<K extends {}, V extends {}, FC = unknown>
-  implements Map<K, V>
-{
+class _LRUCache<K extends {}, V extends {}, FC = unknown> implements Map<K, V> {
   // properties coming in from the options of these, only max and maxSize
   // really *need* to be protected. The rest can be modified, as they just
   // set defaults for various methods.
@@ -812,65 +810,65 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
   readonly #fetchMethod?: LRUCache.Fetcher<K, V, FC>
 
   /**
-   * {@link LRUCache.OptionsBase.ttl}
+   * {@link _LRUCache.OptionsBase.ttl}
    */
   ttl: LRUCache.Milliseconds
 
   /**
-   * {@link LRUCache.OptionsBase.ttlResolution}
+   * {@link _LRUCache.OptionsBase.ttlResolution}
    */
   ttlResolution: LRUCache.Milliseconds
   /**
-   * {@link LRUCache.OptionsBase.ttlAutopurge}
+   * {@link _LRUCache.OptionsBase.ttlAutopurge}
    */
   ttlAutopurge: boolean
   /**
-   * {@link LRUCache.OptionsBase.updateAgeOnGet}
+   * {@link _LRUCache.OptionsBase.updateAgeOnGet}
    */
   updateAgeOnGet: boolean
   /**
-   * {@link LRUCache.OptionsBase.updateAgeOnHas}
+   * {@link _LRUCache.OptionsBase.updateAgeOnHas}
    */
   updateAgeOnHas: boolean
   /**
-   * {@link LRUCache.OptionsBase.allowStale}
+   * {@link _LRUCache.OptionsBase.allowStale}
    */
   allowStale: boolean
 
   /**
-   * {@link LRUCache.OptionsBase.noDisposeOnSet}
+   * {@link _LRUCache.OptionsBase.noDisposeOnSet}
    */
   noDisposeOnSet: boolean
   /**
-   * {@link LRUCache.OptionsBase.noUpdateTTL}
+   * {@link _LRUCache.OptionsBase.noUpdateTTL}
    */
   noUpdateTTL: boolean
   /**
-   * {@link LRUCache.OptionsBase.maxEntrySize}
+   * {@link _LRUCache.OptionsBase.maxEntrySize}
    */
   maxEntrySize: LRUCache.Size
   /**
-   * {@link LRUCache.OptionsBase.sizeCalculation}
+   * {@link _LRUCache.OptionsBase.sizeCalculation}
    */
   sizeCalculation?: LRUCache.SizeCalculator<K, V>
   /**
-   * {@link LRUCache.OptionsBase.noDeleteOnFetchRejection}
+   * {@link _LRUCache.OptionsBase.noDeleteOnFetchRejection}
    */
   noDeleteOnFetchRejection: boolean
   /**
-   * {@link LRUCache.OptionsBase.noDeleteOnStaleGet}
+   * {@link _LRUCache.OptionsBase.noDeleteOnStaleGet}
    */
   noDeleteOnStaleGet: boolean
   /**
-   * {@link LRUCache.OptionsBase.allowStaleOnFetchAbort}
+   * {@link _LRUCache.OptionsBase.allowStaleOnFetchAbort}
    */
   allowStaleOnFetchAbort: boolean
   /**
-   * {@link LRUCache.OptionsBase.allowStaleOnFetchRejection}
+   * {@link _LRUCache.OptionsBase.allowStaleOnFetchRejection}
    */
   allowStaleOnFetchRejection: boolean
   /**
-   * {@link LRUCache.OptionsBase.ignoreFetchAbort}
+   * {@link _LRUCache.OptionsBase.ignoreFetchAbort}
    */
   ignoreFetchAbort: boolean
 
@@ -907,7 +905,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
     K extends {},
     V extends {},
     FC extends unknown = unknown,
-  >(c: LRUCache<K, V, FC>) {
+  >(c: _LRUCache<K, V, FC>) {
     return {
       // properties
       starts: c.#starts,
@@ -944,13 +942,13 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
   // Protected read-only members
 
   /**
-   * {@link LRUCache.OptionsBase.max} (read-only)
+   * {@link _LRUCache.OptionsBase.max} (read-only)
    */
   get max(): LRUCache.Count {
     return this.#max
   }
   /**
-   * {@link LRUCache.OptionsBase.maxSize} (read-only)
+   * {@link _LRUCache.OptionsBase.maxSize} (read-only)
    */
   get maxSize(): LRUCache.Count {
     return this.#maxSize
@@ -968,25 +966,25 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
     return this.#size
   }
   /**
-   * {@link LRUCache.OptionsBase.fetchMethod} (read-only)
+   * {@link _LRUCache.OptionsBase.fetchMethod} (read-only)
    */
   get fetchMethod(): LRUCache.Fetcher<K, V, FC> | undefined {
     return this.#fetchMethod
   }
   /**
-   * {@link LRUCache.OptionsBase.dispose} (read-only)
+   * {@link _LRUCache.OptionsBase.dispose} (read-only)
    */
   get dispose() {
     return this.#dispose
   }
   /**
-   * {@link LRUCache.OptionsBase.disposeAfter} (read-only)
+   * {@link _LRUCache.OptionsBase.disposeAfter} (read-only)
    */
   get disposeAfter() {
     return this.#disposeAfter
   }
 
-  constructor(options: LRUCache.Options<K, V, FC> | LRUCache<K, V, FC>) {
+  constructor(options: LRUCache.Options<K, V, FC> | _LRUCache<K, V, FC>) {
     const {
       max = 0,
       ttl,
@@ -1112,7 +1110,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
         const msg =
           "TTL caching without ttlAutopurge, max, or maxSize can " +
           "result in unbounded memory consumption."
-        emitWarning(msg, "UnboundedCacheWarning", code, LRUCache)
+        emitWarning(msg, "UnboundedCacheWarning", code, _LRUCache)
       }
     }
   }
@@ -1359,7 +1357,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
   }
 
   /**
-   * Inverse order version of {@link LRUCache.entries}
+   * Inverse order version of {@link _LRUCache.entries}
    *
    * Return a generator yielding `[key, value]` pairs,
    * in order from least recently used to most recently used.
@@ -1390,7 +1388,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
   }
 
   /**
-   * Inverse order version of {@link LRUCache.keys}
+   * Inverse order version of {@link _LRUCache.keys}
    *
    * Return a generator yielding the keys in the cache,
    * in order from least recently used to most recently used.
@@ -1418,7 +1416,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
   }
 
   /**
-   * Inverse order version of {@link LRUCache.values}
+   * Inverse order version of {@link _LRUCache.values}
    *
    * Return a generator yielding the values in the cache,
    * in order from least recently used to most recently used.
@@ -1434,7 +1432,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
 
   /**
    * Iterating over the cache itself yields the same results as
-   * {@link LRUCache.entries}
+   * {@link _LRUCache.entries}
    */
   [Symbol.iterator]() {
     return this.entries()
@@ -1451,7 +1449,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
    * similar to Array.find().  fn is called as fn(value, key, cache).
    */
   find(
-    fn: (v: V, k: K, self: LRUCache<K, V, FC>) => boolean,
+    fn: (v: V, k: K, self: _LRUCache<K, V, FC>) => boolean,
     getOptions: LRUCache.GetOptions<K, V, FC> = {},
   ) {
     for (const i of this.#indexes()) {
@@ -1472,7 +1470,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
    * Does not iterate over stale values.
    */
   forEach(
-    fn: (v: V, k: K, self: LRUCache<K, V, FC>) => any,
+    fn: (v: V, k: K, self: _LRUCache<K, V, FC>) => any,
     thisp: any = this,
   ) {
     for (const i of this.#indexes()) {
@@ -1484,11 +1482,11 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
   }
 
   /**
-   * The same as {@link LRUCache.forEach} but items are iterated over in
+   * The same as {@link _LRUCache.forEach} but items are iterated over in
    * reverse order.  (ie, less recently used items are iterated over first.)
    */
   rforEach(
-    fn: (v: V, k: K, self: LRUCache<K, V, FC>) => any,
+    fn: (v: V, k: K, self: _LRUCache<K, V, FC>) => any,
     thisp: any = this,
   ) {
     for (const i of this.#rindexes()) {
@@ -1516,7 +1514,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
 
   /**
    * Get the extended info about a given entry, to get its value, size, and
-   * TTL info simultaneously. Like {@link LRUCache#dump}, but just for a
+   * TTL info simultaneously. Like {@link _LRUCache#dump}, but just for a
    * single key. Always returns stale values, if their info is found in the
    * cache, so be sure to check for expired TTLs if relevant.
    */
@@ -1545,7 +1543,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
   }
 
   /**
-   * Return an array of [key, {@link LRUCache.Entry}] tuples which can be
+   * Return an array of [key, {@link _LRUCache.Entry}] tuples which can be
    * passed to cache.load()
    */
   dump() {
@@ -1599,7 +1597,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
    * Add a value to the cache.
    *
    * Note: if `undefined` is specified as a value, this is an alias for
-   * {@link LRUCache#delete}
+   * {@link _LRUCache#delete}
    */
   set(
     k: K,
@@ -1778,7 +1776,7 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
    * in the cache.
    *
    * Will not update item age unless
-   * {@link LRUCache.OptionsBase.updateAgeOnHas} is set.
+   * {@link _LRUCache.OptionsBase.updateAgeOnHas} is set.
    */
   has(k: K, hasOptions: LRUCache.HasOptions<K, V, FC> = {}) {
     const { updateAgeOnHas = this.updateAgeOnHas, status } = hasOptions
@@ -1808,11 +1806,11 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
   }
 
   /**
-   * Like {@link LRUCache#get} but doesn't update recency or delete stale
+   * Like {@link _LRUCache#get} but doesn't update recency or delete stale
    * items.
    *
    * Returns `undefined` if the item is stale, unless
-   * {@link LRUCache.OptionsBase.allowStale} is set.
+   * {@link _LRUCache.OptionsBase.allowStale} is set.
    */
   peek(k: K, peekOptions: LRUCache.PeekOptions<K, V, FC> = {}) {
     const { allowStale = this.allowStale } = peekOptions
@@ -1971,15 +1969,15 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
 
   /**
    * Make an asynchronous cached fetch using the
-   * {@link LRUCache.OptionsBase.fetchMethod} function.
+   * {@link _LRUCache.OptionsBase.fetchMethod} function.
    *
    * If multiple fetches for the same key are issued, then they will all be
    * coalesced into a single call to fetchMethod.
    *
    * Note that this means that handling options such as
-   * {@link LRUCache.OptionsBase.allowStaleOnFetchAbort},
-   * {@link LRUCache.FetchOptions.signal},
-   * and {@link LRUCache.OptionsBase.allowStaleOnFetchRejection} will be
+   * {@link _LRUCache.OptionsBase.allowStaleOnFetchAbort},
+   * {@link _LRUCache.FetchOptions.signal},
+   * and {@link _LRUCache.OptionsBase.allowStaleOnFetchRejection} will be
    * determined by the FIRST fetch() call for a given key.
    *
    * This is a known (fixable) shortcoming which will be addresed on when
@@ -2278,4 +2276,12 @@ export class LRUCache<K extends {}, V extends {}, FC = unknown>
       }
     }
   }
+}
+
+export const LRUCache = <K extends {}, V extends {}, FC = unknown>({
+  maxCapcity,
+}: {
+  maxCapcity: number
+}): Map<K, V> => {
+  return new _LRUCache<K, V, FC>({ max: maxCapcity })
 }

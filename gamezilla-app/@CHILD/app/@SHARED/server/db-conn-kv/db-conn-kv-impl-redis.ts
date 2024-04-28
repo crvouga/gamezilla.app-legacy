@@ -1,6 +1,6 @@
 import { Err, Ok } from "gamezilla-app/@SHARED/core"
 import { createClient } from "redis"
-import { Logger } from "../logger"
+import { ILogger } from "../logger/logger"
 import { IDbConnKv } from "./db-conn-kv"
 
 export const DbConnKvRedis = async ({
@@ -8,14 +8,14 @@ export const DbConnKvRedis = async ({
   logger,
 }: {
   url: string
-  logger: Logger
+  logger: ILogger
 }): Promise<IDbConnKv> => {
   // https://github.com/redis/node-redis
   const client = await createClient({
     url,
   }).connect()
 
-  logger.info(`[db-conn-kv-redis] connected`)
+  logger.info(`connected`)
 
   return {
     async get(key, parser) {
@@ -28,9 +28,7 @@ export const DbConnKvRedis = async ({
 
         const durationInMicroseconds = (end - start) / BigInt(1000)
 
-        logger.info(
-          `[db-conn-kv] duration=${durationInMicroseconds}µs get: key=${key}`,
-        )
+        logger.info(`duration=${durationInMicroseconds}µs get: key=${key}`)
 
         if (got === null || got === undefined) {
           return Ok(null)
@@ -45,11 +43,7 @@ export const DbConnKvRedis = async ({
         }
 
         logger.error(
-          `[db-conn-kv-redis] get: not a value: ${key} ${JSON.stringify(
-            parsed.error,
-            null,
-            2,
-          )}`,
+          `get: not a value: ${key} ${JSON.stringify(parsed.error, null, 2)}`,
         )
 
         return Ok(null)
@@ -69,7 +63,7 @@ export const DbConnKvRedis = async ({
         const durationInMicroseconds = (end - start) / BigInt(1000)
 
         logger.info(
-          `[db-conn-kv] duration=${durationInMicroseconds}µs getMany: keys=${keys}`,
+          `duration=${durationInMicroseconds}µs getMany: keys=${keys}`,
         )
 
         return Ok(
@@ -87,7 +81,7 @@ export const DbConnKvRedis = async ({
             }
 
             logger.error(
-              `[db-conn-kv-redis] getMany: not a value: ${keys} ${JSON.stringify(
+              `getMany: not a value: ${keys} ${JSON.stringify(
                 parsed.error,
                 null,
                 2,
@@ -98,7 +92,7 @@ export const DbConnKvRedis = async ({
           }),
         )
       } catch (e) {
-        logger.error(`[db-conn-kv-redis] getMany: ${String(e)}`)
+        logger.error(`getMany: ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -106,10 +100,10 @@ export const DbConnKvRedis = async ({
     async set(key, value) {
       try {
         await client.set(key, JSON.stringify(value))
-        logger.info(`[db-conn-kv-redis] set: key=${key}`)
+        logger.info(`set: key=${key}`)
         return Ok(null)
       } catch (e) {
-        logger.error(`[db-conn-kv-redis] set: ${String(e)}`)
+        logger.error(`set: ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -119,12 +113,10 @@ export const DbConnKvRedis = async ({
         await client.mSet(
           entries.flatMap(([key, value]) => [key, JSON.stringify(value)]),
         )
-        logger.info(
-          `[db-conn-kv-redis] setMany: keys=${entries.map(([key]) => key)}`,
-        )
+        logger.info(`setMany: keys=${entries.map(([key]) => key)}`)
         return Ok(null)
       } catch (e) {
-        logger.error(`[db-conn-kv-redis] setMany: ${String(e)}`)
+        logger.error(`setMany: ${String(e)}`)
         return Err(String(e))
       }
     },
@@ -132,10 +124,10 @@ export const DbConnKvRedis = async ({
     async zap(key) {
       try {
         await client.del(key)
-        logger.info(`[db-conn-kv-redis] zap: key=${key}`)
+        logger.info(`zap: key=${key}`)
         return Ok(null)
       } catch (e) {
-        logger.error(`[db-conn-kv-redis] zap: ${String(e)}`)
+        logger.error(`zap: ${String(e)}`)
         return Err(String(e))
       }
     },

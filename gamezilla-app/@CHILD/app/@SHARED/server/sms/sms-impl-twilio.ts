@@ -1,6 +1,6 @@
 import { Err, Ok, PhoneNumber } from "gamezilla-app/@SHARED/core"
 import twilio from "twilio"
-import { Logger } from "../logger"
+import { ILogger } from "../logger/logger"
 import { ISMS } from "./sms"
 
 const TWILLIO_ACCOUNT_SID = process.env["TWILLIO_ACCOUNT_SID"]
@@ -22,7 +22,7 @@ if (!TWILLIO_ACCOUNT_SID) {
   throw new Error("TWILLIO_ACCOUNT_SID is not set")
 }
 
-export const SMSTwilio = ({ logger }: { logger: Logger }): ISMS => {
+export const SMSTwilio = ({ logger }: { logger: ILogger }): ISMS => {
   const client = twilio(TWILLIO_ACCOUNT_SID, TWILLIO_AUTH_TOKEN)
 
   return {

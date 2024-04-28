@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
-import { loggerNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { Ok, Posix, Result } from "gamezilla-app/@SHARED/core"
 import { FlowVariant, FlowVariantDimensions } from "../../flow/flow-variant"
 import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle-id"
 import { FlowPuzzleName } from "../flow-puzzle-name"
 import { FlowPuzzleDb } from "./flow-puzzle-db-impl"
+import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger/logger-impl"
 
 const randomFlowPuzzle = async (input?: {
   createdBy?: UserId
@@ -45,7 +45,7 @@ const Fixture = async () => {
 
     const dbConnSql = await DbConnSql({
       databaseUrl: DATABASE_URL,
-      logger: loggerNoop,
+      logger: Logger({ t: "noop" }),
     })
 
     const flowPuzzleDb = FlowPuzzleDb({
