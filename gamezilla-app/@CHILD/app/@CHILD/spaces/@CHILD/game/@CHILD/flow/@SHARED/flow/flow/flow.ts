@@ -403,7 +403,7 @@ export const toIndexEdgesOut = (model: Model) => {
 }
 
 export const toIndexEdgesOutMemoized = memoize({
-  toKey: (model) => model.edgeHash,
+  toKey: (model) => model.edgeHash ?? 0,
   func: toIndexEdgesOut,
   cacheCapacity: 100,
 })

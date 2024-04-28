@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test"
-import { FlowPuzzleDb } from "./flow-puzzle-db-impl"
-import { FlowPuzzle } from "../flow-puzzle"
-import { Ok, Posix, Result, eq } from "gamezilla-app/@SHARED/core"
 import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { FlowVariant, FlowVariantDimensions } from "../../flow/flow-variant"
-import { FlowPuzzleName } from "../flow-puzzle-name"
-import { FlowPuzzleId } from "../flow-puzzle-id"
 import { DbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import { loggerNoop } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
+import { Ok, Posix, Result } from "gamezilla-app/@SHARED/core"
+import { FlowVariant, FlowVariantDimensions } from "../../flow/flow-variant"
+import { FlowPuzzle } from "../flow-puzzle"
+import { FlowPuzzleId } from "../flow-puzzle-id"
+import { FlowPuzzleName } from "../flow-puzzle-name"
+import { FlowPuzzleDb } from "./flow-puzzle-db-impl"
 
 const randomFlowPuzzle = async (input?: {
   createdBy?: UserId
@@ -25,8 +25,8 @@ const randomFlowPuzzle = async (input?: {
     flow: FlowVariant.init({
       dimensions: FlowVariantDimensions.init({
         t: "flow-grid",
-        height: 10,
-        width: 10,
+        height: 5,
+        width: 5,
       }),
       terminalsByGroupId: {},
     }),
@@ -126,7 +126,6 @@ describe(import.meta.file, () => {
     })
 
     expect(listed.t).toBe("ok")
-
     if (listed.t === "ok") {
       expect(listed.value.items).toEqual([puzzle])
     }
@@ -238,7 +237,7 @@ describe(import.meta.file, () => {
     }
     await f.flowPuzzleDb.upsert(updatedPuzzle)
     const after = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
-    expect(after).toBe(updatedPuzzle)
+    expect(after).toEqual(updatedPuzzle)
   })
 
   it("should be able to zap records", async () => {
@@ -251,7 +250,7 @@ describe(import.meta.file, () => {
       deletedByUserId: UserId.generate(),
     })
     const after = Result.withDefault(await f.flowPuzzleDb.get(puzzle.id), null)
-    expect(before).toBe(puzzle)
+    expect(before).toEqual(puzzle)
     expect(after).toBe(null)
   })
 })

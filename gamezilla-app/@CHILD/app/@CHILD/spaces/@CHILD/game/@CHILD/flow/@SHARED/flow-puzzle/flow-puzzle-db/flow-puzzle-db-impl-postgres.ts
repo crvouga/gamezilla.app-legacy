@@ -1,12 +1,15 @@
-import { UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
-import { IDbConnSql } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
+import { Pagination, UserId } from "gamezilla-app/@CHILD/app/@SHARED/data"
+import {
+  DbConnVariables,
+  IDbConnSql,
+} from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-sql"
 import { Ok, Posix, Result, isErr } from "gamezilla-app/@SHARED/core"
 import { p } from "gamezilla-app/@SHARED/core/parser"
 import { FlowVariant } from "../../flow"
 import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle-id"
 import { FlowPuzzleName } from "../flow-puzzle-name"
-import { IFlowPuzzleDb } from "./flow-puzzle-db"
+import { IFlowPuzzleDb, OrderClause, WhereClause } from "./flow-puzzle-db"
 
 //
 //
@@ -98,6 +101,70 @@ const puzzleToRow = (puzzle: FlowPuzzle): Row => {
 //
 //
 
+const toSqlWhere = (input: { where: WhereClause }) => {
+  const variables: DbConnVariables = {}
+
+  const where: string[] = [
+    //
+    `deleted_at IS NULL`,
+  ]
+
+  if (input.where.createdBy?.equals) {
+    where.push(`created_by_user_id = :created_by_user_id`)
+    variables[`created_by_user_id`] = input.where.createdBy?.equals
+  }
+
+  if (input.where.puzzleId?.in) {
+    const puzzleIds = input.where.puzzleId?.in
+      .map((puzzleId) => `'${puzzleId}'`)
+      .join(", ")
+    where.push(`flow_puzzle_id IN (${puzzleIds})`)
+  }
+
+  const str = where.length > 0 ? `WHERE ${where.join(" AND ")}` : ""
+
+  return {
+    str,
+    variables,
+  }
+}
+
+const toSqlOrder = (input: { order: OrderClause }) => {
+  const orderBy: string[] = []
+
+  if (input.order.createdAt) {
+    orderBy.push(
+      `created_at ${input.order.createdAt === "desc" ? "DESC" : "ASC"}`,
+    )
+  }
+
+  if (input.order.lastUpdatedAt) {
+    orderBy.push(
+      `last_updated_at ${
+        input.order.lastUpdatedAt === "desc" ? "DESC" : "ASC"
+      }`,
+    )
+  }
+
+  const str = orderBy.length > 0 ? `ORDER BY ${orderBy.join(", ")}` : ""
+
+  return {
+    str,
+  }
+}
+
+const toSqlPagination = (input: { pagination: Pagination }) => {
+  const variables: DbConnVariables = {
+    limit: input.pagination.limit,
+    offset: input.pagination.offset,
+  }
+  const str = `LIMIT :limit OFFSET :offset`
+  return {
+    variables,
+    str,
+  }
+}
+
 export const FlowPuzzleDbPostgres = ({
   dbConn,
 }: {
@@ -113,7 +180,8 @@ export const FlowPuzzleDbPostgres = ({
         FROM
           game_flow_puzzle
         WHERE
-          flow_puzzle_id = :flow_puzzle_id
+              flow_puzzle_id = :flow_puzzle_id
+          AND deleted_at IS NULL
         LIMIT 1`,
         {
           flow_puzzle_id: flowPuzzleId,
@@ -126,68 +194,31 @@ export const FlowPuzzleDbPostgres = ({
     },
 
     async count(input) {
+      const where = toSqlWhere(input)
+
       const queried = await dbConn.query(
-        p.obj({ count: p.num }),
+        p.obj({ count: p.str }),
         `
         SELECT
           COUNT(*) AS count
         FROM
           game_flow_puzzle
-        WHERE
-          created_by_user_id = :created_by_user_id
+        ${where.str}
         `,
-        {
-          created_by_user_id: input.where.createdBy,
-        },
+        where.variables,
       )
-      return Result.mapOk(queried, (x) => x[0]?.count ?? 0)
+      return Result.mapOk(queried, (x) => parseFloat(x[0]?.count ?? "0"))
     },
 
     async list(input) {
-      const variables: Record<string, unknown> = {}
+      const where = toSqlWhere(input)
+      const order = toSqlOrder(input)
+      const pagination = toSqlPagination(input)
 
-      //
-      //
-      //
-
-      const where: string[] = [
-        //
-        `deleted_at IS NULL`,
-      ]
-
-      if (!input.where.createdBy?.equals) {
-        where.push(`created_by_user_id = :created_by_user_id`)
-        variables[`created_by_user_id`] = input.where.createdBy?.equals
+      const variables: DbConnVariables = {
+        ...where.variables,
+        ...pagination.variables,
       }
-
-      const whereStr = where.length > 0 ? `WHERE ${where.join(" AND ")}` : ""
-
-      //
-      //
-      //
-
-      const orderBy: string[] = []
-
-      if (input.order.createdAt) {
-        orderBy.push(
-          `created_at ${input.order.createdAt === "desc" ? "DESC" : "ASC"}`,
-        )
-      }
-
-      if (input.order.lastUpdatedAt) {
-        orderBy.push(
-          `last_updated_at ${
-            input.order.lastUpdatedAt === "desc" ? "DESC" : "ASC"
-          }`,
-        )
-      }
-
-      const orderByStr =
-        orderBy.length > 0 ? `ORDER BY ${orderBy.join(", ")}` : ""
-
-      //
-      //
-      //
 
       const queried = await dbConn.query(
         Row,
@@ -196,16 +227,11 @@ export const FlowPuzzleDbPostgres = ({
             *
           FROM
             game_flow_puzzle
-          ${whereStr}
-          ${orderByStr}
-          LIMIT :limit
-          OFFSET :offset
+          ${where.str}
+          ${order.str}
+          ${pagination.str}
         `,
-        {
-          created_by_user_id: input.where.createdBy,
-          limit: input.pagination.limit,
-          offset: input.pagination.offset,
-        },
+        variables,
       )
 
       if (isErr(queried)) {
@@ -219,11 +245,9 @@ export const FlowPuzzleDbPostgres = ({
             COUNT(*) AS count
           FROM
             game_flow_puzzle
-          ${whereStr}
+          ${where.str}
         `,
-        {
-          created_by_user_id: input.where.createdBy,
-        },
+        variables,
       )
 
       if (isErr(queriedCount)) {
@@ -292,7 +316,7 @@ export const FlowPuzzleDbPostgres = ({
           flow_puzzle_id = :flow_puzzle_id
         `,
         {
-          deleted_at: new Date().toISOString(),
+          deleted_at: Posix.now(),
           deleted_by_user_id: input.deletedByUserId,
           flow_puzzle_id: input.id,
         },

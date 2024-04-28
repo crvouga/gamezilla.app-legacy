@@ -6,6 +6,8 @@ import { IDbConnSql } from "./db-conn-sql"
 import { logQuery } from "./shared"
 import { toSql, toSqlLog } from "./sql"
 
+let pool: pg.Pool
+
 export const createDbConnPostgres = async ({
   databaseUrl,
   logger,
@@ -13,9 +15,11 @@ export const createDbConnPostgres = async ({
   databaseUrl: string
   logger: Logger
 }): Promise<IDbConnSql> => {
-  const pool = new pg.Pool({
-    connectionString: databaseUrl,
-  })
+  if (!pool) {
+    pool = new pg.Pool({
+      connectionString: databaseUrl,
+    })
+  }
 
   let client: pg.Client
 

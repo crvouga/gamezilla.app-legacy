@@ -7,7 +7,7 @@ import { Task } from "gamezilla-app/@SHARED/core"
 import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle-id"
 
-type WhereClause = {
+export type WhereClause = {
   createdBy?: {
     equals: UserId
   }
@@ -15,15 +15,18 @@ type WhereClause = {
     in: FlowPuzzleId[]
   }
 }
+
+export type OrderClause = {
+  createdAt?: "asc" | "desc"
+  lastUpdatedAt?: "asc" | "desc"
+}
+
 export type IFlowPuzzleDb = {
   count: (input: { where: WhereClause }) => Task<string, number>
   list: (input: {
     pagination: Pagination
     where: WhereClause
-    order: {
-      createdAt?: "asc" | "desc"
-      lastUpdatedAt?: "asc" | "desc"
-    }
+    order: OrderClause
   }) => Task<string, Paginated<FlowPuzzle>>
   get: (id: FlowPuzzleId) => Task<string, FlowPuzzle | null>
   upsert: (input: FlowPuzzle) => Task<string, null>
