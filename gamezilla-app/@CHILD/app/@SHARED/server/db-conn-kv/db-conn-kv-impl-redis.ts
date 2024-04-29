@@ -117,7 +117,10 @@ export const DbConnKvRedis = async ({
     async setMany(entries) {
       try {
         await globalThis.redisClient.mSet(
-          entries.flatMap(([key, value]) => [key, JSON.stringify(value)]),
+          entries.flatMap(([key, value]): [string, string] => [
+            key,
+            JSON.stringify(value),
+          ]),
         )
         logger.info(`setMany: keys=${entries.map(([key]) => key)}`)
         return Ok(null)

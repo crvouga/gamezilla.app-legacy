@@ -11,7 +11,7 @@ declare global {
   var pgPoolClient: pg.PoolClient
 }
 
-export const createDbConnPostgres = async ({
+export const DbConnPostgres = async ({
   databaseUrl,
   logger,
 }: {

@@ -1,7 +1,7 @@
 import { Ok } from "gamezilla-app/@SHARED/core"
 import { ILogger } from "../logger/logger"
 import { IDbConnSql } from "./db-conn-sql"
-import { createDbConnPostgres } from "./db-conn-sql-impl-postgres"
+import { DbConnPostgres } from "./db-conn-sql-impl-postgres"
 
 export const dbConnSqlNoop: IDbConnSql = {
   async query() {
@@ -23,7 +23,7 @@ export const DbConnSql = async ({
 
   switch (databaseType) {
     case "postgres": {
-      return createDbConnPostgres({ databaseUrl, logger })
+      return DbConnPostgres({ databaseUrl, logger })
     }
 
     default: {
