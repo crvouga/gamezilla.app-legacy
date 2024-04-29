@@ -5,6 +5,7 @@ import {
   IServer,
   stringToHttpRequestMethod,
 } from "../server"
+import { ILogger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 
 type FetchHandler = (
   req: Request,
@@ -13,7 +14,7 @@ type FetchHandler = (
 
 type MaybePromise<T> = T | Promise<T>
 
-export const ServerBun = <T>() => {
+export const ServerBun = <T>({ logger }: { logger: ILogger }) => {
   const httpHandlers: HttpHandler[] = []
   const _fetchHandlers: FetchHandler[] = []
   let webSocketHandler: WebSocketHandler<T>
@@ -56,6 +57,7 @@ export const ServerBun = <T>() => {
         },
         websocket: webSocketHandler,
       })
+      logger.info(`Listening on port ${port}`)
     },
     registerHandler(handler) {
       httpHandlers.push(handler)

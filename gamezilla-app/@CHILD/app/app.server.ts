@@ -84,23 +84,25 @@ export const getDeps = async ({
     throw new Error(`REDIS_URL not set`)
   }
 
+  const loggerDbConnKv = ILogger.prefix("db-conn-kv", logger)
+
   const dbConnKv = await pipe(
     DbConnKv({
       t: "redis",
-      logger: ILogger.prefix("redis", logger),
+      logger: ILogger.prefix("redis", loggerDbConnKv),
       url: redisUrl,
     }),
 
     async (dbConnKv) =>
       IDbConnKv.withThrottlingWrites({
-        logger: ILogger.prefix("with-throttling-writes", logger),
+        logger: ILogger.prefix("with-throttling-writes", loggerDbConnKv),
         dbConnKv: await dbConnKv,
         throttle: TimeSpan.fromSeconds(10),
       }),
 
     async (dbConnKv) =>
       IDbConnKv.withCache({
-        logger: ILogger.prefix("with-cache", logger),
+        logger: ILogger.prefix("with-cache", loggerDbConnKv),
         source: await dbConnKv,
         cache: await DbConnKv({
           t: "hash-map",

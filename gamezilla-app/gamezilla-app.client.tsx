@@ -14,7 +14,7 @@ const main = async () => {
   await deps.transport.start()
 
   await Program.run({
-    ctx: AppClient.getCtx,
+    getCtx: AppClient.getCtx,
 
     init: (input) => AppClient.init({ ...input, deps }),
 
