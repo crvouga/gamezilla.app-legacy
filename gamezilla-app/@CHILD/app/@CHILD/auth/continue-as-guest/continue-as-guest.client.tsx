@@ -16,13 +16,13 @@ const initModel: ModelClient = {
   guestRequest: notAsked,
 }
 
-const update: ClientModule["update"] = ({ ctx, model, msg, msgServer }) => {
-  switch (msg?.t) {
+const update: ClientModule["update"] = (input) => {
+  switch (input.msg?.t) {
     case "guest.clicked-continue-as-guest-button": {
       return {
         model: {
-          ...model,
-          guestRequest: RequestResponse.requesting(ctx.now),
+          ...input.model,
+          guestRequest: RequestResponse.requesting(input.ctx.now),
         },
         msgCmd: [
           playSound(APP_SOUND.tap),
@@ -32,15 +32,15 @@ const update: ClientModule["update"] = ({ ctx, model, msg, msgServer }) => {
     }
   }
 
-  switch (msgServer?.t) {
+  switch (input.msgServer?.t) {
     case "guest.continue-as-guest-result": {
       return {
         model: {
-          ...model,
+          ...input.model,
           guestRequest: RequestResponse.response(
-            model.guestRequest,
-            ctx.now,
-            msgServer.result,
+            input.model.guestRequest,
+            input.ctx.now,
+            input.msgServer.result,
           ),
         },
       }
@@ -48,17 +48,19 @@ const update: ClientModule["update"] = ({ ctx, model, msg, msgServer }) => {
   }
 
   return {
-    model,
+    model: input.model,
   }
 }
 
-const ViewButton: ClientModule["View"] = ({ dispatch, model, ctx }) => {
+const ViewButton: ClientModule["View"] = (props) => {
   return (
     <Button
-      onClick={() => dispatch({ t: "guest.clicked-continue-as-guest-button" })}
+      onClick={() =>
+        props.dispatch({ t: "guest.clicked-continue-as-guest-button" })
+      }
       start={<IconUserCircle className="h-6 w-6" />}
-      text={ctx.t("auth.continue-as-guest")}
-      loading={isRequesting(model.guestRequest)}
+      text={props.ctx.t("auth.continue-as-guest")}
+      loading={isRequesting(props.model.guestRequest)}
     />
   )
 }

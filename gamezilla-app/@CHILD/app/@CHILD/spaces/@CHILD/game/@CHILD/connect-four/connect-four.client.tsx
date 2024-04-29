@@ -196,38 +196,38 @@ const updateChild =
 //
 //
 
-const View: Module["View"] = ({ dispatch, ctx, modelSync, model }) => {
+const View: Module["View"] = (props) => {
   const onQuit = () => {
-    dispatch({
+    props.dispatch({
       t: "user-changed-mode",
       mode: "none",
-      userId: ctx.currentUserId,
+      userId: props.ctx.currentUserId,
     })
   }
 
-  switch (modelSync.t) {
+  switch (props.modelSync.t) {
     case "none": {
       return (
         <GameMainMenu.View
-          ctx={ctx}
+          ctx={props.ctx}
           title="Connect Four"
           renderCoverArt={(props) => <CoverArt {...props} key={props.key} />}
-          dispatch={dispatch}
+          dispatch={props.dispatch}
           buttons={[
             GameMainMenu.buttons.playFriend({
               onClick: () =>
-                dispatch({
+                props.dispatch({
                   mode: "vs-user",
                   t: "user-changed-mode",
-                  userId: ctx.currentUserId,
+                  userId: props.ctx.currentUserId,
                 }),
             }),
             GameMainMenu.buttons.playComputer({
               onClick: () =>
-                dispatch({
+                props.dispatch({
                   mode: "vs-bot",
                   t: "user-changed-mode",
-                  userId: ctx.currentUserId,
+                  userId: props.ctx.currentUserId,
                 }),
             }),
           ]}
@@ -238,10 +238,10 @@ const View: Module["View"] = ({ dispatch, ctx, modelSync, model }) => {
     case "vs-bot": {
       return (
         <VsBot.View
-          ctx={{ ...ctx, onQuit }}
-          dispatch={(c) => dispatch({ t: "vs-bot", c })}
-          model={model?.t === "vs-bot" ? model.c : VsBot.init}
-          modelSync={modelSync.c}
+          ctx={{ ...props.ctx, onQuit }}
+          dispatch={(c) => props.dispatch({ t: "vs-bot", c })}
+          model={props.model?.t === "vs-bot" ? props.model.c : VsBot.init}
+          modelSync={props.modelSync.c}
         />
       )
     }
@@ -249,10 +249,10 @@ const View: Module["View"] = ({ dispatch, ctx, modelSync, model }) => {
     case "vs-user": {
       return (
         <VsUser.View
-          ctx={{ ...ctx, onQuit }}
-          dispatch={(c) => dispatch({ t: "vs-user", c })}
-          model={model?.t === "vs-user" ? model.c : VsUser.init}
-          modelSync={modelSync.c}
+          ctx={{ ...props.ctx, onQuit }}
+          dispatch={(c) => props.dispatch({ t: "vs-user", c })}
+          model={props.model?.t === "vs-user" ? props.model.c : VsUser.init}
+          modelSync={props.modelSync.c}
         />
       )
     }

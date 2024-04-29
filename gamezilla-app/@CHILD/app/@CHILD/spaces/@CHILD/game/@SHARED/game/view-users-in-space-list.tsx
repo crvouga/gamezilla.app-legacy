@@ -42,19 +42,19 @@ export const ViewUsersInSpaceList = ({
   )
 }
 
-export const ViewSpaceHostChip = ({ ctx }: { ctx: BaseClientCtx }) => {
+export const ViewSpaceHostChip = (props: { ctx: BaseClientCtx }) => {
   return (
     <div className="flex items-center gap-1 rounded-xl border border-white/20 bg-white/20 px-2 py-1 text-xs font-semibold">
       <IconCrown className="h-4 w-4 text-yellow-300" />
-      {ctx.t("host")}
+      {props.ctx.t("host")}
     </div>
   )
 }
 
-export const ViewYouChip = ({ ctx }: { ctx: BaseClientCtx }) => {
+export const ViewYouChip = (props: { ctx: BaseClientCtx }) => {
   return (
     <div className="rounded-xl border border-white/20 bg-white/20 px-2 py-1 text-xs">
-      {ctx.t("you")}
+      {props.ctx.t("you")}
     </div>
   )
 }

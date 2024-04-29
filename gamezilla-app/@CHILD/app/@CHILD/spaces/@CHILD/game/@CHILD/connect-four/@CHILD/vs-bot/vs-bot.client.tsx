@@ -312,95 +312,103 @@ export const toGameOver = (
   }
 }
 
-const View: Module["View"] = ({ model, ctx, modelSync, dispatch }) => {
+const View: Module["View"] = (props) => {
   const vsBotSetupProps: VsBotSetup.VsBotSetupProps = {
-    ctx: ctx,
-    onQuit: ctx.onQuit,
+    ctx: props.ctx,
+    onQuit: props.ctx.onQuit,
     title: "Connect Four",
     renderCoverArt: (props) => <CoverArt {...props} />,
-    canStartGame: modelSync.playingUserId !== null,
+    canStartGame: props.modelSync.playingUserId !== null,
     onSwapSides: () =>
-      dispatch({ t: "user-swapped-sides", userId: ctx.currentUserId }),
+      props.dispatch({
+        t: "user-swapped-sides",
+        userId: props.ctx.currentUserId,
+      }),
     onStartGame: () =>
-      dispatch({ t: "user-started-game", userId: ctx.currentUserId }),
+      props.dispatch({
+        t: "user-started-game",
+        userId: props.ctx.currentUserId,
+      }),
     botVariants: ALL_BOT_LEVELS.map((botLevel) => {
       return {
         label: botLevel,
         renderIcon: (props) => <ViewBotLevel {...props} level={botLevel} />,
         onSelect: () =>
-          dispatch({
+          props.dispatch({
             t: "user-changed-bot-level",
             botLevel,
-            userId: ctx.currentUserId,
+            userId: props.ctx.currentUserId,
           }),
       }
     }),
     human: {
       player:
-        modelSync.userPlayerType === "player-one" ? "player-one" : "player-two",
-      userId: modelSync.playingUserId ?? null,
+        props.modelSync.userPlayerType === "player-one"
+          ? "player-one"
+          : "player-two",
+      userId: props.modelSync.playingUserId ?? null,
     },
     bot: {
-      label: modelSync.botLevel,
-      renderIcon: (props) => (
-        <ViewBotLevel {...props} level={modelSync.botLevel} />
+      label: props.modelSync.botLevel,
+      renderIcon: (iconProps) => (
+        <ViewBotLevel {...iconProps} level={props.modelSync.botLevel} />
       ),
     },
     playerOne: {
       label: "Red",
       renderIcon: (props) => <PlayerOneIcon {...props} />,
       onStartPlaying: () =>
-        dispatch({
+        props.dispatch({
           t: "user-started-playing",
           playerType: "player-one",
-          userId: ctx.currentUserId,
+          userId: props.ctx.currentUserId,
         }),
       onStopPlaying: () =>
-        dispatch({
+        props.dispatch({
           t: "user-stopped-playing",
-          userId: ctx.currentUserId,
+          userId: props.ctx.currentUserId,
         }),
     },
     playerTwo: {
       label: "Yellow",
       renderIcon: (props) => <PlayerTwoIcon {...props} />,
       onStartPlaying: () =>
-        dispatch({
+        props.dispatch({
           t: "user-started-playing",
           playerType: "player-two",
-          userId: ctx.currentUserId,
+          userId: props.ctx.currentUserId,
         }),
       onStopPlaying: () =>
-        dispatch({
+        props.dispatch({
           t: "user-stopped-playing",
-          userId: ctx.currentUserId,
+          userId: props.ctx.currentUserId,
         }),
     },
   }
 
-  if (!model) {
+  if (!props.model) {
     return null
   }
 
-  if (modelSync.type === "setup") {
+  if (props.modelSync.type === "setup") {
     return (
       <VsBotSetup.View
-        model={model.vsBotSetup}
-        dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
+        model={props.model.vsBotSetup}
+        dispatch={(c) => props.dispatch({ t: "vs-bot-setup", c })}
         {...vsBotSetupProps}
       />
     )
   }
 
-  const status = ConnectFour.toStatus(modelSync.columns)
+  const status = ConnectFour.toStatus(props.modelSync.columns)
 
   const vsBotGameProps: VsBotGame.VsBotGameProps = {
     ...vsBotSetupProps,
     human: {
       ...vsBotSetupProps.human,
-      userId: modelSync.playingUserId,
+      userId: props.modelSync.playingUserId,
     },
-    isSpectating: ctx.currentUserId !== modelSync.playingUserId,
+    isSpectating: props.ctx.currentUserId !== props.modelSync.playingUserId,
     turn:
       status.type !== "Playing"
         ? null
@@ -409,7 +417,7 @@ const View: Module["View"] = ({ model, ctx, modelSync, dispatch }) => {
         : "player-two",
   }
 
-  const isSpectating = ctx.currentUserId !== modelSync.playingUserId
+  const isSpectating = props.ctx.currentUserId !== props.modelSync.playingUserId
 
   return (
     <GameLayout isSpectating={isSpectating}>
@@ -424,41 +432,41 @@ const View: Module["View"] = ({ model, ctx, modelSync, dispatch }) => {
         <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
           <ViewColumns
             gameId={0}
-            columns={modelSync.columns}
+            columns={props.modelSync.columns}
             disabled={isSpectating || status.type !== "Playing"}
             onDropDisc={(columnIndex) => {
-              dispatch({
+              props.dispatch({
                 t: "user-dropped-disc",
                 columnIndex,
-                userId: ctx.currentUserId,
+                userId: props.ctx.currentUserId,
               })
             }}
           />
-          {model && (
+          {props.model && (
             <VsBotGame.ViewGameOverOverlay
               {...vsBotGameProps}
-              model={model.vsBotGame}
+              model={props.model.vsBotGame}
               onPlayAgain={() =>
-                dispatch({
+                props.dispatch({
                   t: "user-restarted-game",
-                  userId: ctx.currentUserId,
+                  userId: props.ctx.currentUserId,
                 })
               }
-              gameOver={toGameOver(modelSync.columns)}
+              gameOver={toGameOver(props.modelSync.columns)}
             />
           )}
         </div>
       </div>
 
-      {ctx.currentUserId === modelSync.playingUserId && (
+      {props.ctx.currentUserId === props.modelSync.playingUserId && (
         <ViewBottomButtonBar>
           <ViewBottomButtonBarAction
             icon={(props) => <IconArrowLeftOnRect {...props} />}
             label="Exit"
             onClick={() =>
-              dispatch({
+              props.dispatch({
                 t: "user-stopped-game",
-                userId: ctx.currentUserId,
+                userId: props.ctx.currentUserId,
               })
             }
           />
@@ -467,9 +475,9 @@ const View: Module["View"] = ({ model, ctx, modelSync, dispatch }) => {
             icon={(props) => <IconRightLeft {...props} />}
             label="Swap sides"
             onClick={() =>
-              dispatch({
+              props.dispatch({
                 t: "user-swapped-sides",
-                userId: ctx.currentUserId,
+                userId: props.ctx.currentUserId,
               })
             }
           />
@@ -478,9 +486,9 @@ const View: Module["View"] = ({ model, ctx, modelSync, dispatch }) => {
             icon={(props) => <IconArrowRotateLeft {...props} />}
             label="Restart"
             onClick={() =>
-              dispatch({
+              props.dispatch({
                 t: "user-restarted-game",
-                userId: ctx.currentUserId,
+                userId: props.ctx.currentUserId,
               })
             }
           />
@@ -504,11 +512,13 @@ const toVsBotStatus = (status: ConnectFour.Status): VsBotGame.Status => {
   }
 }
 
-const ViewFeedItem: Module["ViewFeedItem"] = ({ msgSync, ctx }) => {
+const ViewFeedItem: Module["ViewFeedItem"] = (props) => {
   const username =
-    "userId" in msgSync ? ctx.profiles[msgSync.userId]?.username ?? null : null
+    "userId" in props.msgSync
+      ? props.ctx.profiles[props.msgSync.userId]?.username ?? null
+      : null
 
-  switch (msgSync.t) {
+  switch (props.msgSync.t) {
     case "bot-dropped-disc": {
       return <FeedItem.Info text="Bot dropped disc" />
     }
@@ -516,13 +526,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({ msgSync, ctx }) => {
     case "user-changed-bot-level": {
       return (
         <FeedItem.Info
-          text={`${username} changed bot level to ${msgSync.botLevel}`}
+          text={`${username} changed bot level to ${props.msgSync.botLevel}`}
         />
       )
     }
 
     case "user-dropped-disc": {
-      if (msgSync.userId === ctx.currentUserId) {
+      if (props.msgSync.userId === props.ctx.currentUserId) {
         return <FeedItem.Info text={`${username} dropped disc`} />
       }
 

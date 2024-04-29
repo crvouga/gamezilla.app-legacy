@@ -107,20 +107,15 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
 }
 
 const View: SpaceClientModule["View"] = (input) => {
-  const { model, ctx, dispatch } = input
-  const { currentUserId, space } = ctx
-
-  if (!space || !currentUserId) {
+  if (!input.ctx.space || !input.ctx.currentUserId) {
     return null
   }
 
-  const spaceState = Spaces.toSpaceState(model, space.spaceId)
+  const spaceState = Spaces.toSpaceState(input.model, input.ctx.space.spaceId)
 
   if (spaceState.type !== "started") {
     return null
   }
-
-  const game = spaceState.game
 
   return (
     <div className="flex h-full w-full flex-col">
@@ -128,12 +123,12 @@ const View: SpaceClientModule["View"] = (input) => {
 
       <div className="flex w-full flex-1 flex-col overflow-y-scroll">
         <ViewGameHeader
-          title={game ? gameNameToString(game.t) : null}
+          title={spaceState.game ? gameNameToString(spaceState.game.t) : null}
           renderCoverArt={
-            game
+            spaceState.game
               ? (props) => (
                   <div {...props}>
-                    <CoverArt gameName={game.t} />
+                    <CoverArt gameName={spaceState.game!.t} />
                   </div>
                 )
               : undefined
@@ -141,9 +136,13 @@ const View: SpaceClientModule["View"] = (input) => {
         />
 
         <ViewUsersInSpaceList
-          ctx={{ ...ctx, currentUserId, space }}
+          ctx={{
+            ...input.ctx,
+            currentUserId: input.ctx.currentUserId,
+            space: input.ctx.space,
+          }}
           onOpenUserDetails={(userId) =>
-            dispatch({ t: "clicked-user", userId })
+            input.dispatch({ t: "clicked-user", userId })
           }
         />
       </div>
@@ -152,7 +151,7 @@ const View: SpaceClientModule["View"] = (input) => {
         <Button
           className="flex-1"
           onClick={() => {
-            dispatch({ t: "clicked-go-home-button" })
+            input.dispatch({ t: "clicked-go-home-button" })
           }}
           text="Go Home"
         />
@@ -162,7 +161,10 @@ const View: SpaceClientModule["View"] = (input) => {
           variant="contained"
           color="primary"
           onClick={() => {
-            dispatch({ t: "clicked-join-space-button", spaceId: space.spaceId })
+            input.dispatch({
+              t: "clicked-join-space-button",
+              spaceId: input.ctx.space?.spaceId!,
+            })
           }}
           text="Join space"
         />

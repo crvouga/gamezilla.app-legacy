@@ -37,10 +37,10 @@ const ViewPackPuzzleGrid = ({
   return <div className="p-8">{columns}</div>
 }
 
-const ViewAddCell = ({ onClick }: { onClick: () => void }) => {
+const ViewAddCell = (props: { onClick: () => void }) => {
   return (
     <button
-      onClick={onClick}
+      onClick={props.onClick}
       className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-700 bg-neutral-800 hover:opacity-90 active:opacity-80"
     >
       <IconPlus className="h-8 w-8" />

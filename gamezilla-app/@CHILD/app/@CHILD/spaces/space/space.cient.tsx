@@ -17,62 +17,62 @@ import { Modals } from "../modals/modals"
 import { Spaces } from "../spaces-core"
 import { ModelClient, MsgClient } from "../spaces.core"
 
-const View = (input: {
+const View = (props: {
   model: ModelClient
   ctx: ClientCtx
   dispatch: (m: MsgClient) => void
   spaceId: SpaceId
 }) => {
-  const { model, ctx, dispatch } = input
-  const spaceState = Spaces.toSpaceState(input.model, input.spaceId)
+  const spaceState = () => Spaces.toSpaceState(props.model, props.spaceId)
 
-  switch (spaceState.type) {
+  switch (spaceState().type) {
     case "initial": {
-      return <ViewSpaceNotFound {...input} />
+      return <ViewSpaceNotFound {...props} />
     }
 
     case "ended": {
-      return <EndSpaceClient.ViewSpaceEnded {...input} />
+      return <EndSpaceClient.ViewSpaceEnded {...props} />
     }
 
     case "started": {
       const spaceCtx: SpaceClientCtx = {
-        ...ctx,
-        currentUserId: ctx.currentUserId,
-        space: spaceState,
+        ...props.ctx,
+        currentUserId: props.ctx.currentUserId,
+        // @ts-ignore
+        space: spaceState(),
       }
 
       const currentUserSpaceId = Spaces.toSpaceIdByUserId(
-        input.model,
-        input.ctx.currentUserId,
+        props.model,
+        props.ctx.currentUserId,
       )
 
       if (currentUserSpaceId !== spaceCtx.space.spaceId) {
         return (
           <>
-            <JoinSpaceClient.View {...input} ctx={spaceCtx} />
-            <Modals.View {...input} ctx={spaceCtx} />
+            <JoinSpaceClient.View {...props} ctx={spaceCtx} />
+            <Modals.View {...props} ctx={spaceCtx} />
           </>
         )
       }
 
       return (
         <div className="flex h-full w-full flex-1 flex-col">
-          <Modals.View {...input} ctx={spaceCtx} />
+          <Modals.View {...props} ctx={spaceCtx} />
 
-          <ViewTopBar {...input} ctx={spaceCtx} />
+          <ViewTopBar {...props} ctx={spaceCtx} />
 
           {false && (
             <Feed.View
-              spaceState={spaceState}
+              spaceState={spaceState()}
               ctx={spaceCtx}
-              model={model}
-              dispatch={dispatch}
+              model={props.model}
+              dispatch={props.dispatch}
             />
           )}
 
           <div className="flex w-full flex-1 flex-col overflow-hidden">
-            <GameClient.View {...input} ctx={spaceCtx} />
+            <GameClient.View {...props} ctx={spaceCtx} />
           </div>
         </div>
       )
@@ -80,41 +80,38 @@ const View = (input: {
   }
 }
 
-const ViewTopBar: SpaceClientModule["View"] = (input) => {
-  const { ctx, dispatch } = input
-  const { space, currentUserId } = ctx
-
-  if (!space || !currentUserId) {
+const ViewTopBar: SpaceClientModule["View"] = (props) => {
+  if (!props.ctx.space || !props.ctx.currentUserId) {
     return null
   }
 
-  const peopleCount = Object.keys(space.users).length
+  const peopleCount = Object.keys(props.ctx.space.users).length
 
   return (
     <nav className="flex h-14 w-full items-center border-b border-neutral-700">
       <ViewTopBarButton
-        onClick={() => dispatch({ t: "clicked-go-home-button" })}
+        onClick={() => props.dispatch({ t: "clicked-go-home-button" })}
         label="Home"
         icon={<IconHome className="h-6 w-6" />}
       />
 
       <ViewTopBarButton
-        onClick={() => dispatch({ t: "clicked-people-button" })}
+        onClick={() => props.dispatch({ t: "clicked-people-button" })}
         label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
         icon={<IconUserGroup className="h-6 w-6" />}
       />
 
       <div className="flex-1"></div>
 
-      {space.hostId !== ctx.currentUserId && (
+      {props.ctx.space.hostId !== props.ctx.currentUserId && (
         <div className="p-2">
-          <LeaveSpaceClient.ViewLeaveSpaceButton {...input} />
+          <LeaveSpaceClient.ViewLeaveSpaceButton {...props} />
         </div>
       )}
 
-      {space.hostId === ctx.currentUserId && (
+      {props.ctx.space.hostId === props.ctx.currentUserId && (
         <div className="p-2">
-          <EndSpaceClient.ViewEndSpaceButton {...input} />
+          <EndSpaceClient.ViewEndSpaceButton {...props} />
         </div>
       )}
     </nav>

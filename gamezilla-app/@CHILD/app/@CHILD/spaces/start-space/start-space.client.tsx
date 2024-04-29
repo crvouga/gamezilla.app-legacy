@@ -82,14 +82,14 @@ const updateStartSpaceButton: SpaceClientModule["update"] = (input) => {
   }
 }
 
-const ViewStartSpaceButton: SpaceClientModule["View"] = ({ dispatch }) => {
+const ViewStartSpaceButton: SpaceClientModule["View"] = (props) => {
   return (
     <Button
       size="lg"
       color="primary"
       className="w-full"
       onClick={() =>
-        dispatch({
+        props.dispatch({
           t: "clicked-start-space-button",
           spaceId: SpaceId.generate(),
         })

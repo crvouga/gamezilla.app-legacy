@@ -65,7 +65,7 @@ const View = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
   )
 }
 
-const ViewGrid = ({ model }: FlowUI.FlowViewProps<FlowGrid.Model>) => {
+const ViewGrid = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
   return (
     <>
       <defs>
@@ -82,8 +82,8 @@ const ViewGrid = ({ model }: FlowUI.FlowViewProps<FlowGrid.Model>) => {
       <rect
         x={0}
         y={0}
-        width={model.width}
-        height={model.height}
+        width={props.model.width}
+        height={props.model.height}
         fill="url(#grid)"
         stroke="green"
         strokeWidth="0.02"
@@ -92,21 +92,20 @@ const ViewGrid = ({ model }: FlowUI.FlowViewProps<FlowGrid.Model>) => {
   )
 }
 
-const ViewPipelines = ({
-  model,
-  isGroupActive,
-}: FlowUI.FlowViewProps<FlowGrid.Model>) => {
+const ViewPipelines = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
   return (
     <g transform="translate(0.5, 0.5)">
-      {map(FlowGrid.yieldTerminals(model), (terminal) => {
+      {map(FlowGrid.yieldTerminals(props.model), (terminal) => {
         const groupColor = FlowUI.Color.groupIdToHex(terminal.groupId)
-        const pipeline = FlowGrid.toPipeline(model, terminal.startId)
+        const pipeline = FlowGrid.toPipeline(props.model, terminal.startId)
         const pipelinePathData = pipelineToSvgPathData(pipeline)
 
         return (
           <g key={terminal.groupId} id={terminal.groupId}>
             <path
-              d={isGroupActive?.(terminal.groupId) ? "" : pipelinePathData}
+              d={
+                props.isGroupActive?.(terminal.groupId) ? "" : pipelinePathData
+              }
               stroke={groupColor}
               fill="none"
               strokeLinejoin="inherit"
@@ -146,19 +145,16 @@ const ViewPipelines = ({
   )
 }
 
-const ViewAutocompleteEdge = ({
-  autocompleteEdge,
-  model,
-}: FlowUI.FlowViewProps<FlowGrid.Model>) => {
+const ViewAutocompleteEdge = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
   return (
-    autocompleteEdge && (
+    props.autocompleteEdge && (
       <g transform="translate(0.5, 0.5)">
         <line
-          x1={model.positions[autocompleteEdge.sourceId]?.x}
-          y1={model.positions[autocompleteEdge.sourceId]?.y}
-          x2={model.positions[autocompleteEdge.targetId]?.x}
-          y2={model.positions[autocompleteEdge.targetId]?.y}
-          stroke={FlowUI.Color.groupIdToHex(autocompleteEdge.groupId)}
+          x1={props.model.positions[props.autocompleteEdge.sourceId]?.x}
+          y1={props.model.positions[props.autocompleteEdge.sourceId]?.y}
+          x2={props.model.positions[props.autocompleteEdge.targetId]?.x}
+          y2={props.model.positions[props.autocompleteEdge.targetId]?.y}
+          stroke={FlowUI.Color.groupIdToHex(props.autocompleteEdge.groupId)}
           strokeWidth={EDGE_STROKE_WIDTH}
           strokeOpacity={0.5}
         />

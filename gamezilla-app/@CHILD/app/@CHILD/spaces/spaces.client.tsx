@@ -178,34 +178,34 @@ export const subscriptions: ClientModule["subscriptions"] = (input) => {
 //
 //
 
-export const View: ClientModule["View"] = ({ ctx, dispatch, model, slots }) => {
-  switch (ctx.currentRoute.n) {
+export const View: ClientModule["View"] = (props) => {
+  switch (props.ctx.currentRoute.n) {
     case "spaces": {
-      switch (ctx.currentRoute.t) {
+      switch (props.ctx.currentRoute.t) {
         case "space-list": {
           return (
             <>
               <ListSpacesClient.View
-                dispatch={dispatch}
-                ctx={ctx}
-                model={model}
+                dispatch={props.dispatch}
+                ctx={props.ctx}
+                model={props.model}
               />
 
-              {slots?.bottomBar(null)}
+              {props.slots?.bottomBar(null)}
             </>
           )
         }
         case "space": {
-          if (isAnonymous(ctx)) {
+          if (isAnonymous(props.ctx)) {
             return null
           }
 
           return (
             <SpaceClient.View
-              spaceId={ctx.currentRoute.spaceId}
-              ctx={ctx}
-              dispatch={dispatch}
-              model={model}
+              spaceId={props.ctx.currentRoute.spaceId}
+              ctx={props.ctx}
+              dispatch={props.dispatch}
+              model={props.model}
             />
           )
         }

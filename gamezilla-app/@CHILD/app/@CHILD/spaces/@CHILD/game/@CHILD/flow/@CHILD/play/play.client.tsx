@@ -87,10 +87,10 @@ const subscriptions: Module["subscriptions"] = () => {
 
 const USE_GAME_STATE = true
 
-const View: Module["View"] = ({ model, modelSync, dispatch, ctx }) => {
-  const isPlaying = ctx.currentUserId === ctx.space.hostId
+const View: Module["View"] = (input) => {
+  const isPlaying = input.ctx.currentUserId === input.ctx.space.hostId
   const isSpectating = !isPlaying
-  const host = ctx.profiles[ctx.space.hostId]
+  const host = input.ctx.profiles[input.ctx.space.hostId]
   return (
     <GameLayout isSpectating={isSpectating}>
       <div className="flex w-full flex-1 flex-col items-center justify-center">
@@ -99,16 +99,18 @@ const View: Module["View"] = ({ model, modelSync, dispatch, ctx }) => {
         )}
         {USE_GAME_STATE ? (
           <FlowVariantUIPlay.View
-            dispatch={(c) => dispatch({ t: "msgSync", c: { t: "grid", c } })}
-            model={modelSync.play}
+            dispatch={(c) =>
+              input.dispatch({ t: "msgSync", c: { t: "grid", c } })
+            }
+            model={input.modelSync.play}
             disabled={isSpectating}
-            flow={modelSync.flow}
+            flow={input.modelSync.flow}
           />
         ) : (
           <FlowVariantUIPlay.View
-            dispatch={(c) => dispatch({ t: "grid", c })}
-            model={model.play}
-            flow={model.flow}
+            dispatch={(c) => input.dispatch({ t: "grid", c })}
+            model={input.model.play}
+            flow={input.model.flow}
             disabled={isSpectating}
           />
         )}
@@ -117,7 +119,7 @@ const View: Module["View"] = ({ model, modelSync, dispatch, ctx }) => {
         <div className="w-full p-4">
           <Button
             className="w-full"
-            onClick={ctx.onQuit}
+            onClick={input.ctx.onQuit}
             start={<IconArrowLeftOnRect className="h-6 w-6" />}
             text="Exit"
           />
@@ -127,10 +129,10 @@ const View: Module["View"] = ({ model, modelSync, dispatch, ctx }) => {
   )
 }
 
-export const ViewFeedItem: Module["ViewFeedItem"] = ({ msgSync }) => {
-  switch (msgSync.t) {
+export const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
+  switch (input.msgSync.t) {
     case "grid": {
-      switch (msgSync.c.t) {
+      switch (input.msgSync.c.t) {
         case "dragged-over":
         case "left":
         case "pressed-down":

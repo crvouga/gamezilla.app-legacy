@@ -212,22 +212,20 @@ export const subscriptions: ClientModule["subscriptions"] = ({
 //
 //
 
-export const View: ClientModule["View"] = (input) => {
-  const { model, ctx, dispatch } = input
-
-  switch (ctx.currentRoute.n) {
+export const View: ClientModule["View"] = (props) => {
+  switch (props.ctx.currentRoute.n) {
     case "auth-login": {
-      switch (ctx.currentRoute.t) {
+      switch (props.ctx.currentRoute.t) {
         case "login": {
-          return <ViewLoginScreen {...input} />
+          return <ViewLoginScreen {...props} />
         }
         case "login-sms-request":
         case "login-sms-verify": {
           return (
             <AuthClientSMS.View
-              ctx={ctx}
-              dispatch={(c) => dispatch({ t: "sms", c })}
-              model={model.sms}
+              ctx={props.ctx}
+              dispatch={(c) => props.dispatch({ t: "sms", c })}
+              model={props.model.sms}
             />
           )
         }
@@ -239,14 +237,13 @@ export const View: ClientModule["View"] = (input) => {
   }
 }
 
-const ViewLoginScreen: ClientModule["View"] = (input) => {
-  const { dispatch, ctx } = input
+const ViewLoginScreen: ClientModule["View"] = (props) => {
   return (
     <div className="relative flex h-full w-full flex-1 flex-col">
       <div className="flex flex-1 flex-col items-center justify-center gap-8 p-4">
         <div className="flex w-full flex-col items-start justify-center">
           <p className="text-2xl text-neutral-200">
-            {ctx.t("auth.sign-in-to")}
+            {props.ctx.t("auth.sign-in-to")}
           </p>
           <h1 className="bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent">
             gamezilla.app
@@ -255,20 +252,22 @@ const ViewLoginScreen: ClientModule["View"] = (input) => {
 
         <div className="flex w-full flex-col gap-6">
           <Button
-            onClick={() => dispatch({ t: "user-clicked-login-with-phone" })}
+            onClick={() =>
+              props.dispatch({ t: "user-clicked-login-with-phone" })
+            }
             size="lg"
             className="w-full"
             start={<IconMobilePhone className="h-6 w-6" />}
-            text={ctx.t("auth.continue-with-phone")}
+            text={props.ctx.t("auth.continue-with-phone")}
           />
 
           <div className="flex w-full items-center justify-center py-1">
             <p className="text-base font-bold uppercase text-neutral-300">
-              {ctx.t("auth.or")}
+              {props.ctx.t("auth.or")}
             </p>
           </div>
 
-          <ContinueAsGuestClient.ViewButton {...input} />
+          <ContinueAsGuestClient.ViewButton {...props} />
         </div>
       </div>
     </div>

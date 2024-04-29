@@ -1,10 +1,10 @@
-export const IconComputerDesktop = ({ className }: { className?: string }) => {
+export const IconComputerDesktop = (props: { className?: string }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className={className ? className : "h-6 w-6"}
+      className={props.className ? props.className : "h-6 w-6"}
     >
       <path
         fillRule="evenodd"

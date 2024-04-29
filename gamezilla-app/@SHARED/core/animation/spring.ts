@@ -15,10 +15,10 @@ export type Config = {
   mass: number
 }
 
-export const init = ({ from, to }: { from: number; to: number }): Model => {
+export const init = (inp: { from: number; to: number }): Model => {
   return {
-    current: from,
-    target: to,
+    current: inp.from,
+    target: inp.to,
     velocity: 0,
     friction: 0.9,
     tension: 0.25,

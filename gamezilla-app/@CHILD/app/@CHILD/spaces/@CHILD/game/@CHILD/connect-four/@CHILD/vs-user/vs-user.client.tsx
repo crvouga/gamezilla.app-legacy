@@ -139,16 +139,16 @@ const subscriptions: Module["subscriptions"] = () => {
 //
 //
 
-const View: Module["View"] = ({ ctx, model, modelSync, dispatch }) => {
-  if (!model) {
+const View: Module["View"] = (props) => {
+  if (!props.model) {
     return null
   }
 
-  switch (modelSync.type) {
+  switch (props.modelSync.type) {
     case "setup": {
       return (
         <VsUserSetupScreen
-          ctx={ctx}
+          ctx={props.ctx}
           title="Connect Four"
           renderCoverArt={(props) => {
             return (
@@ -158,51 +158,51 @@ const View: Module["View"] = ({ ctx, model, modelSync, dispatch }) => {
             )
           }}
           onStartGame={() => {
-            dispatch({
+            props.dispatch({
               t: "user-started-game",
-              userId: ctx.currentUserId,
+              userId: props.ctx.currentUserId,
             })
           }}
-          onQuit={ctx.onQuit}
+          onQuit={props.ctx.onQuit}
           playerOne={{
             label: "Red",
             onStartPlaying: () => {
-              dispatch({
+              props.dispatch({
                 t: "user-started-playing",
                 playerType: "player-one",
-                userId: ctx.currentUserId,
+                userId: props.ctx.currentUserId,
               })
             },
             onStopPlaying: () => {
-              dispatch({
+              props.dispatch({
                 t: "user-stopped-playing",
-                userId: ctx.currentUserId,
+                userId: props.ctx.currentUserId,
               })
             },
             renderIcon: (props) => {
               return <PlayerIcon playerType="player-one" {...props} />
             },
-            userId: modelSync.players["player-one"] ?? null,
+            userId: props.modelSync.players["player-one"] ?? null,
           }}
           playerTwo={{
             label: "Yellow",
             onStartPlaying: () => {
-              dispatch({
+              props.dispatch({
                 t: "user-started-playing",
-                userId: ctx.currentUserId,
+                userId: props.ctx.currentUserId,
                 playerType: "player-two",
               })
             },
             onStopPlaying: () => {
-              dispatch({
+              props.dispatch({
                 t: "user-stopped-playing",
-                userId: ctx.currentUserId,
+                userId: props.ctx.currentUserId,
               })
             },
             renderIcon: (props) => {
               return <PlayerIcon playerType="player-two" {...props} />
             },
-            userId: modelSync.players["player-two"] ?? null,
+            userId: props.modelSync.players["player-two"] ?? null,
           }}
         />
       )
@@ -210,7 +210,10 @@ const View: Module["View"] = ({ ctx, model, modelSync, dispatch }) => {
 
     case "game":
     case "game-over": {
-      const currentUserPlayerType = toPlayerType(ctx.currentUserId, modelSync)
+      const currentUserPlayerType = toPlayerType(
+        props.ctx.currentUserId,
+        props.modelSync,
+      )
 
       return (
         <GameLayout isSpectating={currentUserPlayerType === null}>
@@ -218,46 +221,46 @@ const View: Module["View"] = ({ ctx, model, modelSync, dispatch }) => {
             <div className="flex w-full items-center gap-2 px-2">
               <PlayerSlot
                 playerType="player-one"
-                modelSync={modelSync}
-                ctx={ctx}
+                modelSync={props.modelSync}
+                ctx={props.ctx}
               />
               <PlayerSlot
                 playerType="player-two"
-                modelSync={modelSync}
-                ctx={ctx}
+                modelSync={props.modelSync}
+                ctx={props.ctx}
               />
             </div>
 
-            <Feedback ctx={ctx} modelSync={modelSync} />
+            <Feedback ctx={props.ctx} modelSync={props.modelSync} />
 
             <div className="relative w-full">
               <ViewColumns
-                columns={modelSync.columns}
-                gameId={modelSync.gameId}
+                columns={props.modelSync.columns}
+                gameId={props.modelSync.gameId}
                 onDropDisc={(columnIndex) =>
-                  dispatch({
+                  props.dispatch({
                     t: "user-dropped-disc",
-                    userId: ctx.currentUserId,
+                    userId: props.ctx.currentUserId,
                     columnIndex,
                   })
                 }
                 onHover={(columnIndex) =>
-                  dispatch({
+                  props.dispatch({
                     t: "hovered-over-columns",
                     columnIndex,
                   })
                 }
                 disabled={
-                  toTurn(modelSync.columns) !== currentUserPlayerType ||
-                  modelSync.type === "game-over"
+                  toTurn(props.modelSync.columns) !== currentUserPlayerType ||
+                  props.modelSync.type === "game-over"
                 }
               />
-              {modelSync.type === "game-over" && (
+              {props.modelSync.type === "game-over" && (
                 <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
                   <ViewGameOverMessage
-                    dispatch={dispatch}
-                    ctx={ctx}
-                    modelSync={modelSync}
+                    dispatch={props.dispatch}
+                    ctx={props.ctx}
+                    modelSync={props.modelSync}
                   />
                 </div>
               )}
@@ -265,29 +268,29 @@ const View: Module["View"] = ({ ctx, model, modelSync, dispatch }) => {
           </div>
 
           <ViewBottomButtonBar>
-            {modelSync.type === "game" && (
+            {props.modelSync.type === "game" && (
               <ViewBottomButtonBarAction
                 icon={(props) => <IconFlag {...props} />}
                 label="Resign"
                 onClick={() => {
-                  dispatch({
+                  props.dispatch({
                     t: "clicked-resign",
-                    userId: ctx.currentUserId,
+                    userId: props.ctx.currentUserId,
                   })
                 }}
               />
             )}
 
-            {modelSync.type === "game-over" &&
-              ctx.currentUserId === ctx.space.hostId && (
+            {props.modelSync.type === "game-over" &&
+              props.ctx.currentUserId === props.ctx.space.hostId && (
                 <>
                   <ViewBottomButtonBarAction
                     icon={(props) => <IconArrowLeftOnRect {...props} />}
                     label="Exit"
                     onClick={() => {
-                      dispatch({
+                      props.dispatch({
                         t: "user-stopped-game",
-                        userId: ctx.currentUserId,
+                        userId: props.ctx.currentUserId,
                       })
                     }}
                   />
@@ -296,9 +299,9 @@ const View: Module["View"] = ({ ctx, model, modelSync, dispatch }) => {
                     icon={(props) => <IconArrowRotateLeft {...props} />}
                     label="Rematch"
                     onClick={() => {
-                      dispatch({
+                      props.dispatch({
                         t: "user-requested-rematch",
-                        userId: ctx.currentUserId,
+                        userId: props.ctx.currentUserId,
                       })
                     }}
                   />
@@ -309,16 +312,16 @@ const View: Module["View"] = ({ ctx, model, modelSync, dispatch }) => {
           <ConfirmationDialog
             headerIcon={<IconFlag className="h-10 w-10" />}
             title="Resign from game?"
-            onCancel={() => dispatch({ t: "close-modal" })}
-            onClose={() => dispatch({ t: "close-modal" })}
+            onCancel={() => props.dispatch({ t: "close-modal" })}
+            onClose={() => props.dispatch({ t: "close-modal" })}
             confirmTitle="Resign"
             onConfirm={() =>
-              dispatch({
+              props.dispatch({
                 t: "user-resigned",
-                userId: ctx.currentUserId,
+                userId: props.ctx.currentUserId,
               })
             }
-            open={model.openedModal === "confirm-resign"}
+            open={props.model.openedModal === "confirm-resign"}
           />
         </GameLayout>
       )

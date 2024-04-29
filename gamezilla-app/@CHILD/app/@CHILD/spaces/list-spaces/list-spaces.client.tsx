@@ -130,19 +130,17 @@ const update: SpaceClientModule["update"] = (input) => {
 //
 //
 
-const View: SpaceClientModule["View"] = (input) => {
-  const { ctx, dispatch, model } = input
-
-  const currentUserId = ctx.currentUserId
+const View: SpaceClientModule["View"] = (props) => {
+  const currentUserId = props.ctx.currentUserId
 
   if (!currentUserId) {
     return null
   }
 
-  const currentUserSpaceId = model.spaceIdByUserId[currentUserId]
+  const currentUserSpaceId = props.model.spaceIdByUserId[currentUserId]
 
-  const spaces = Object.keys(model.spaces).flatMap((spaceId) => {
-    const space = Spaces.toSpaceStarted(model, spaceId as SpaceId)
+  const spaces = Object.keys(props.model.spaces).flatMap((spaceId) => {
+    const space = Spaces.toSpaceStarted(props.model, spaceId as SpaceId)
     if (!space) {
       return []
     }
@@ -166,9 +164,12 @@ const View: SpaceClientModule["View"] = (input) => {
             return (
               <ViewSpaceCard
                 key={state.spaceId}
-                ctx={{ ...ctx, currentUserId }}
+                ctx={{ ...props.ctx, currentUserId }}
                 onClick={() =>
-                  dispatch({ t: "clicked-space-card", spaceId: state.spaceId })
+                  props.dispatch({
+                    t: "clicked-space-card",
+                    spaceId: state.spaceId,
+                  })
                 }
                 state={state}
               />
@@ -179,7 +180,7 @@ const View: SpaceClientModule["View"] = (input) => {
 
       {!currentUserSpaceId && (
         <div className="flex border-t border-neutral-700 p-4">
-          <StartSpaceClient.ViewStartSpaceButton {...input} />
+          <StartSpaceClient.ViewStartSpaceButton {...props} />
         </div>
       )}
     </div>

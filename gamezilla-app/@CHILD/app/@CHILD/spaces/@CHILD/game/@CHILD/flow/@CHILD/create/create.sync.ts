@@ -19,7 +19,7 @@ export const initSync = (_input: { ctx: SpaceCtx }): ModelSync => {
   }
 }
 
-export const reducer: SyncReducer = ({ modelSync, msgSync, ctx }) => {
+export const reducer: SyncReducer = (input) => {
   return [
     PuzzleDeleteForeverGame.reducer,
     PuzzleBuilderGame.reducer,
@@ -32,7 +32,7 @@ export const reducer: SyncReducer = ({ modelSync, msgSync, ctx }) => {
     //
     ListTabsGame.reducer,
   ].reduce(
-    (acc, reducer) => reducer({ ctx, msgSync, modelSync: acc }),
-    modelSync,
+    (acc, reducer) => reducer({ ...input, modelSync: acc }),
+    input.modelSync,
   )
 }

@@ -7,7 +7,7 @@ export type Render = {
 
 export type CreatePortal = (vDom: VDom, container: Element) => VDom
 
-export let createPortal: CreatePortal
+export let createPortal: CreatePortal | null = null
 
 export const Render = async (
   vDomImpl: VDomImpl,
@@ -43,6 +43,18 @@ export const Render = async (
       createPortal = PreactCompat.createPortal
       return (vDom) => {
         Preact.render(vDom, root)
+      }
+    }
+
+    case "solid": {
+      const Solid = await import("solid-js/web")
+      let dispose: () => void
+
+      return (vDom) => {
+        if (dispose) {
+          dispose()
+        }
+        dispose = Solid.render(() => vDom, root)
       }
     }
   }

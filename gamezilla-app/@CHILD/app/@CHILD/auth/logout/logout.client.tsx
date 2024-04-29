@@ -17,12 +17,12 @@ import { ClientModule, ModelClient, MsgClient } from "../auth.core"
 //
 //
 
-const update: ClientModule["update"] = ({ msg, model, msgCmd, msgEvt }) => {
-  switch (msg?.t) {
+const update: ClientModule["update"] = (input) => {
+  switch (input.msg?.t) {
     case "logout-drawer.clicked-confirm": {
       return {
         model: {
-          ...model,
+          ...input.model,
           currentUser: { t: "logged-out" },
         },
         msgCmd: [
@@ -37,17 +37,17 @@ const update: ClientModule["update"] = ({ msg, model, msgCmd, msgEvt }) => {
     case "logout-drawer.closed":
     case "logout-drawer.clicked-cancel": {
       const currentUserId =
-        model.currentUser.t === "logged-in"
-          ? model.currentUser.account.userId
+        input.model.currentUser.t === "logged-in"
+          ? input.model.currentUser.account.userId
           : null
 
       if (!currentUserId) {
-        return { model }
+        return { model: input.model }
       }
 
       return {
         model: {
-          ...model,
+          ...input.model,
           logout: notAsked,
           opened: null,
         },
@@ -56,11 +56,11 @@ const update: ClientModule["update"] = ({ msg, model, msgCmd, msgEvt }) => {
     }
   }
 
-  switch (msgCmd?.c.t) {
+  switch (input.msgCmd?.c.t) {
     case "logout": {
       return {
         model: {
-          ...model,
+          ...input.model,
           opened: "logged-out",
         },
         msgCmd: [playSound(APP_SOUND.alertErrorSm)],
@@ -68,11 +68,11 @@ const update: ClientModule["update"] = ({ msg, model, msgCmd, msgEvt }) => {
     }
   }
 
-  switch (msgEvt?.t) {
+  switch (input.msgEvt?.t) {
     case "auth/unauthenticated": {
       return {
         model: {
-          ...model,
+          ...input.model,
           logout: Ok(null),
           opened: null,
         },
@@ -80,7 +80,7 @@ const update: ClientModule["update"] = ({ msg, model, msgCmd, msgEvt }) => {
     }
   }
 
-  return { model }
+  return { model: input.model }
 }
 
 //

@@ -2,6 +2,7 @@ import preact from "@preact/preset-vite"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 import inferno from "vite-plugin-inferno"
+import solid from "vite-plugin-solid"
 import tsconfigPaths from "vite-tsconfig-paths"
 // @ts-ignore
 import { VDOM_IMPL } from "./gamezilla-app/public-config"
@@ -18,6 +19,10 @@ const vDomPlugin = () => {
 
     case "react": {
       return react()
+    }
+
+    case "solid": {
+      return solid()
     }
   }
 }

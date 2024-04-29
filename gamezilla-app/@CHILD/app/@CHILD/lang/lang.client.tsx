@@ -197,12 +197,18 @@ export const ViewStatusBarDrawer: Module["View"] = ({
   )
 }
 
-export const View: Module["View"] = ({ ctx, dispatch, model }) => {
-  switch (ctx.currentRoute.n) {
+export const View: Module["View"] = (input) => {
+  switch (input.ctx.currentRoute.n) {
     case "lang": {
-      switch (ctx.currentRoute.t) {
+      switch (input.ctx.currentRoute.t) {
         case "choose-lang": {
-          return <ViewChooseLang ctx={ctx} dispatch={dispatch} model={model} />
+          return (
+            <ViewChooseLang
+              ctx={input.ctx}
+              dispatch={input.dispatch}
+              model={input.model}
+            />
+          )
         }
       }
     }
@@ -212,28 +218,28 @@ export const View: Module["View"] = ({ ctx, dispatch, model }) => {
   }
 }
 
-const ViewChooseLang: Module["View"] = ({ ctx, dispatch, model }) => {
+const ViewChooseLang: Module["View"] = (input) => {
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
-      <TopBar title={ctx.t("lang.choose-language")} />
+      <TopBar title={input.ctx.t("lang.choose-language")} />
       <div className="flex flex-1 flex-col divide-y divide-neutral-700 overflow-y-scroll">
         {LanguageCodeISO_639_1.ALL.map((code) => {
           return (
             <ListItemButton
               label={translations[code][code]}
               icon={(props) => {
-                if (model.loading[code]?.endedAt === null) {
+                if (input.model.loading[code]?.endedAt === null) {
                   return <Spinner {...props} />
                 }
 
-                if (model.lang === code) {
+                if (input.model.lang === code) {
                   return <IconCheckmarkCircle {...props} />
                 }
                 return <IconCheckmarkCircleEmpty {...props} />
               }}
-              end={() => <p>{ctx.t(code)}</p>}
+              end={() => <p>{input.ctx.t(code)}</p>}
               onClick={() =>
-                dispatch({ t: "choose-lang.clicked-lang", lang: code })
+                input.dispatch({ t: "choose-lang.clicked-lang", lang: code })
               }
             />
           )
@@ -242,8 +248,8 @@ const ViewChooseLang: Module["View"] = ({ ctx, dispatch, model }) => {
       </div>
       <div className="w-full border-t border-t-neutral-800 p-4">
         <Button
-          onClick={() => dispatch({ t: "choose-lang.clicked-done" })}
-          text={ctx.t("lang.done")}
+          onClick={() => input.dispatch({ t: "choose-lang.clicked-done" })}
+          text={input.ctx.t("lang.done")}
           className="w-full"
         />
       </div>

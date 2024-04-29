@@ -522,14 +522,14 @@ export const View = (input: { model: Model; dispatch: (m: Msg) => void }) => {
   )
 }
 
-const ViewStatus: typeof View = ({ model }) => {
+const ViewStatus: typeof View = (input) => {
   const position =
-    toCurrentPlacingTerminalPosition(model) === "start" ? "first" : "last"
+    toCurrentPlacingTerminalPosition(input.model) === "start" ? "first" : "last"
   return (
     <div className="flex w-full items-center justify-center gap-1 pb-2">
       {`Placing ${position}`}
       <ViewTerminal
-        groupId={toCurrentPlacingGroupId(model)}
+        groupId={toCurrentPlacingGroupId(input.model)}
         className="h-6 w-6"
       />
     </div>

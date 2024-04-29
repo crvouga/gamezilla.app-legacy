@@ -210,7 +210,7 @@ export const subscriptions: Module["subscriptions"] = ({ model }) => {
 //
 //
 
-export const View: Module["View"] = ({ model, dispatch }) => {
+export const View: Module["View"] = (props) => {
   return (
     <Transition
       mode="out-in"
@@ -219,11 +219,11 @@ export const View: Module["View"] = ({ model, dispatch }) => {
       onEnter={onEnter}
       onExit={onExit}
     >
-      {model.toast && (
+      {props.model.toast && (
         <Toast
-          key={model.toast.toastId}
-          toast={model.toast}
-          dispatch={dispatch}
+          key={props.model.toast.toastId}
+          toast={props.model.toast}
+          dispatch={props.dispatch}
         />
       )}
     </Transition>

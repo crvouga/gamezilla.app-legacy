@@ -425,39 +425,44 @@ export const subscriptions: ClientModule["subscriptions"] = (_input) => {
 //
 //
 
-export const View: ClientModule["View"] = ({ model, dispatch, ctx, slots }) => {
-  switch (ctx.currentRoute.n) {
+export const View: ClientModule["View"] = (props) => {
+  switch (props.ctx.currentRoute.n) {
     case "profile": {
-      switch (ctx.currentRoute.t) {
+      switch (props.ctx.currentRoute.t) {
         case "profile": {
           return (
             <div className="relative flex h-full w-full flex-col">
               <ViewProfileScreen
-                model={model}
-                ctx={ctx}
-                dispatch={dispatch}
-                userId={ctx.currentRoute.userId}
+                model={props.model}
+                ctx={props.ctx}
+                dispatch={props.dispatch}
+                userId={props.ctx.currentRoute.userId}
               />
 
-              {slots?.bottomBar(null)}
+              {props.slots?.bottomBar(null)}
             </div>
           )
         }
 
         case "profile-edit": {
-          return <ViewUpdateScreen ctx={ctx} dispatch={dispatch} />
+          return <ViewUpdateScreen ctx={props.ctx} dispatch={props.dispatch} />
         }
 
         case "profile-edit-avatar": {
-          return <ViewUpdateAvatarScreen model={model} dispatch={dispatch} />
+          return (
+            <ViewUpdateAvatarScreen
+              model={props.model}
+              dispatch={props.dispatch}
+            />
+          )
         }
 
         case "profile-edit-username": {
           return (
             <ViewUpdateUsernameScreen
-              ctx={ctx}
-              model={model}
-              dispatch={dispatch}
+              ctx={props.ctx}
+              model={props.model}
+              dispatch={props.dispatch}
             />
           )
         }
@@ -473,18 +478,15 @@ export const View: ClientModule["View"] = ({ model, dispatch, ctx, slots }) => {
   }
 }
 
-const ViewUpdateScreen = ({
-  ctx,
-  dispatch,
-}: {
+const ViewUpdateScreen = (input: {
   ctx: Ctx
   dispatch: (m: MsgClient) => void
 }) => {
-  if (!ctx.currentUserId) {
+  if (!input.ctx.currentUserId) {
     return null
   }
 
-  const profile = ctx.profiles[ctx.currentUserId]
+  const profile = input.ctx.profiles[input.ctx.currentUserId]
 
   return (
     <div className="flex h-full w-full flex-col items-center gap-4">
@@ -492,7 +494,7 @@ const ViewUpdateScreen = ({
         left={
           <TopBarBackButton
             onClick={() =>
-              dispatch({
+              input.dispatch({
                 t: "clicked-back-button",
                 from: { t: "profile-update" },
               })
@@ -507,7 +509,7 @@ const ViewUpdateScreen = ({
           src={profile?.avatarUrl}
           className="h-28 w-28"
           alt="profile avatar"
-          onClick={() => dispatch({ t: "clicked-avatar" })}
+          onClick={() => input.dispatch({ t: "clicked-avatar" })}
         />
 
         <Button
@@ -515,13 +517,13 @@ const ViewUpdateScreen = ({
           color="primary"
           variant="text"
           className="block"
-          onClick={() => dispatch({ t: "clicked-change-avatar-button" })}
+          onClick={() => input.dispatch({ t: "clicked-change-avatar-button" })}
           text=" Change Avatar"
         />
       </div>
 
       <ViewField
-        onClick={() => dispatch({ t: "clicked-update-username-button" })}
+        onClick={() => input.dispatch({ t: "clicked-update-username-button" })}
         label="Username"
         value={profile?.username}
       />
@@ -557,20 +559,16 @@ const ViewField = ({
   </button>
 )
 
-const ViewUpdateUsernameScreen = ({
-  ctx,
-  model,
-  dispatch,
-}: {
+const ViewUpdateUsernameScreen = (input: {
   model: ModelClient
   dispatch: (msg: MsgClient) => void
   ctx: Ctx
 }) => {
-  const currentUsername = ctx.currentUserId
-    ? model.profiles[ctx.currentUserId]?.username
+  const currentUsername = input.ctx.currentUserId
+    ? input.model.profiles[input.ctx.currentUserId]?.username
     : null
 
-  const inputVal = model.draft?.username ?? currentUsername ?? ""
+  const inputVal = input.model.draft?.username ?? currentUsername ?? ""
   return (
     <div className="flex h-full w-full flex-col">
       <TopBar
@@ -579,7 +577,7 @@ const ViewUpdateUsernameScreen = ({
             variant="text"
             color="primary"
             onClick={() =>
-              dispatch({
+              input.dispatch({
                 t: "clicked-back-button",
                 from: { t: "profile-update-username" },
               })
@@ -593,9 +591,9 @@ const ViewUpdateUsernameScreen = ({
             variant="text"
             color="primary"
             onClick={() => {
-              const username = model.draft?.username
+              const username = input.model.draft?.username
               if (username) {
-                dispatch({ t: "change-username", username })
+                input.dispatch({ t: "change-username", username })
               }
             }}
             text="Done"
@@ -609,7 +607,7 @@ const ViewUpdateUsernameScreen = ({
           value={inputVal}
           id={"username"}
           onChange={(username) =>
-            dispatch({ t: "inputted-username", username })
+            input.dispatch({ t: "inputted-username", username })
           }
         />
       </div>

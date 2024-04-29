@@ -294,10 +294,10 @@ const Winner = ({
   )
 }
 
-const Draw = ({ ctx, playerOne, playerTwo, human }: Props) => {
+const Draw = (props: Props) => {
   const humanSlot = (
     <>
-      <Avatar src={ctx.profiles[ctx.currentUserId]?.avatarUrl} />
+      <Avatar src={props.ctx.profiles[props.ctx.currentUserId]?.avatarUrl} />
     </>
   )
 
@@ -309,15 +309,15 @@ const Draw = ({ ctx, playerOne, playerTwo, human }: Props) => {
 
   const playerOneSlot = (
     <>
-      {playerOne.renderIcon({ className: "h-5 w-5" })}
-      {human.player === "player-one" ? humanSlot : botSlot}
+      {props.playerOne.renderIcon({ className: "h-5 w-5" })}
+      {props.human.player === "player-one" ? humanSlot : botSlot}
     </>
   )
 
   const playerTwoSlot = (
     <>
-      {playerTwo.renderIcon({ className: "h-5 w-5" })}
-      {human.player === "player-two" ? humanSlot : botSlot}
+      {props.playerTwo.renderIcon({ className: "h-5 w-5" })}
+      {props.human.player === "player-two" ? humanSlot : botSlot}
     </>
   )
 

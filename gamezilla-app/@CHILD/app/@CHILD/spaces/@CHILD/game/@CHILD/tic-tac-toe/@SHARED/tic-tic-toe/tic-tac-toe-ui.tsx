@@ -111,8 +111,8 @@ export const ViewBoard = ({
 }
 
 const strokeWidth = 0.1 * scale
-const ViewWins = ({ board }: { board: Model }) => {
-  const wins = toWins(board)
+const ViewWins = (props: { board: Model }) => {
+  const wins = toWins(props.board)
 
   return (
     <g>

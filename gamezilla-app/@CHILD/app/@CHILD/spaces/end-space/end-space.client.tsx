@@ -161,24 +161,24 @@ const updateEndSpaceButton: SpaceClientModule["update"] = ({
   }
 }
 
-export const ViewEndSpaceButton: SpaceClientModule["View"] = ({ dispatch }) => {
+export const ViewEndSpaceButton: SpaceClientModule["View"] = (props) => {
   return (
     <Button
       color="danger"
       variant="contained"
       size="sm"
       text="End"
-      onClick={() => dispatch({ t: "clicked-end-space-button" })}
+      onClick={() => props.dispatch({ t: "clicked-end-space-button" })}
     />
   )
 }
 
-const ViewSpaceEnded: SpaceClientModule["View"] = ({ dispatch }) => {
+const ViewSpaceEnded: SpaceClientModule["View"] = (props) => {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4">
       <p className="text-center text-2xl">Space ended</p>
       <Button
-        onClick={() => dispatch({ t: "clicked-go-home-button" })}
+        onClick={() => props.dispatch({ t: "clicked-go-home-button" })}
         size="lg"
         variant="contained"
         color="primary"

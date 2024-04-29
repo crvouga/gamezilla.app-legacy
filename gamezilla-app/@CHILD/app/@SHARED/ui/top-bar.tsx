@@ -23,9 +23,9 @@ export const TopBar = (input: {
   )
 }
 
-export const TopBarBackButton = ({ onClick }: { onClick: () => void }) => {
+export const TopBarBackButton = (props: { onClick: () => void }) => {
   return (
-    <IconButton onClick={onClick} label="Go back">
+    <IconButton onClick={props.onClick} label="Go back">
       <IconChevronLeft className="h-6 w-6" />
     </IconButton>
   )

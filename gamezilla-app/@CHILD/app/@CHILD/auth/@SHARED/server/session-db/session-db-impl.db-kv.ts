@@ -23,14 +23,14 @@ export type Row = p.Infer<typeof isRow>
 //
 //
 
-export const SessionDbKV = ({ dbConn }: { dbConn: IDbConnKv }): ISessionDb => {
+export const SessionDbKV = (input: { dbConn: IDbConnKv }): ISessionDb => {
   const sessionIdsByUserId = IDbConnKv.instance(
-    dbConn,
+    input.dbConn,
     ["auth-session", "session-ids-by-user-id"],
     p.arr(SessionId),
   )
   const userIdBySessionId = IDbConnKv.instance(
-    dbConn,
+    input.dbConn,
     ["auth-session", "user-id-by-session-id"],
     UserId,
   )

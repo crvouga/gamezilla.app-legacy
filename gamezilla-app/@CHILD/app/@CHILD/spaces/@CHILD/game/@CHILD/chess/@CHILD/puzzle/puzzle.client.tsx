@@ -479,8 +479,8 @@ export const BottomBarActions = ({
   return []
 }
 
-const ViewStatusBar = ({ model }: { model: ModelClient }) => {
-  if (model.t === "loading") {
+const ViewStatusBar = (input: { model: ModelClient }) => {
+  if (input.model.t === "loading") {
     return (
       <div className="flex w-full items-center justify-center p-2">
         <p className="text-xl">...</p>
@@ -488,7 +488,7 @@ const ViewStatusBar = ({ model }: { model: ModelClient }) => {
     )
   }
 
-  if (model.t === "incorrect") {
+  if (input.model.t === "incorrect") {
     return (
       <div className="flex w-full items-center justify-center gap-2 bg-red-500 p-2 text-white">
         <IconXMark className="h-6 w-6" />
@@ -497,7 +497,7 @@ const ViewStatusBar = ({ model }: { model: ModelClient }) => {
     )
   }
 
-  if (model.t === "solved") {
+  if (input.model.t === "solved") {
     return (
       <div className="flex w-full items-center justify-center gap-2 bg-green-500 p-2 text-white">
         <IconCheckmarkCircle className="h-6 w-6" />
@@ -506,12 +506,12 @@ const ViewStatusBar = ({ model }: { model: ModelClient }) => {
     )
   }
 
-  if (model.t === "started") {
+  if (input.model.t === "started") {
     return (
       <div
         className={cn(
           "flex w-full items-center justify-center gap-2 p-2",
-          toPlayerColor(model.puzzle) === "b"
+          toPlayerColor(input.model.puzzle) === "b"
             ? "bg-black text-white"
             : "bg-white text-black",
         )}
@@ -519,19 +519,19 @@ const ViewStatusBar = ({ model }: { model: ModelClient }) => {
         <div
           className={cn(
             "h-6 w-6 rounded-full border-2",
-            toPlayerColor(model.puzzle) === "b"
+            toPlayerColor(input.model.puzzle) === "b"
               ? "border-[#ababab] bg-black"
               : "border-black bg-white",
           )}
         ></div>
         <p className="text-xl text-inherit">
-          {Chess.colorToString(toPlayerColor(model.puzzle))} to move
+          {Chess.colorToString(toPlayerColor(input.model.puzzle))} to move
         </p>
       </div>
     )
   }
 
-  if (model.t === "solved-with-hint") {
+  if (input.model.t === "solved-with-hint") {
     return (
       <div className="flex w-full items-center justify-center gap-2 bg-neutral-800 p-2 text-white">
         <IconCheckmarkCircle className="h-6 w-6" />

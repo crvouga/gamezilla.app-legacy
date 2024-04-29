@@ -31,7 +31,7 @@ export const doPaint = (columns: Columns) => {
   paint({ context, columns })
 }
 
-export const ViewColumnsCanvas = ({ onClick }: ViewColumnsProps) => {
+export const ViewColumnsCanvas = (props: ViewColumnsProps) => {
   return (
     <canvas
       id="view-columns-canvas"
@@ -49,8 +49,8 @@ export const ViewColumnsCanvas = ({ onClick }: ViewColumnsProps) => {
           }),
         )
 
-        if (onClick && isColumnIndex(columnIndex)) {
-          onClick(columnIndex)
+        if (props.onClick && isColumnIndex(columnIndex)) {
+          props.onClick(columnIndex)
           return
         }
       }}

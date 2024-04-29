@@ -83,8 +83,8 @@ type Problem = ["database-error", string]
 
 export type Res = [...Req, Result<Problem, Partial<ModelClient>>]
 
-export const update = ({ msg }: { msg: MsgClient; model: ModelClient }) => {
-  switch (msg[0]) {
+export const update = (input: { msg: MsgClient; model: ModelClient }) => {
+  switch (input.msg[0]) {
     default: {
       return null
     }

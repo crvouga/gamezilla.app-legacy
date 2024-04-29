@@ -289,30 +289,30 @@ export const subscriptions: Client["subscriptions"] = (_input) => {
 //
 //
 
-export const View: Client["View"] = ({ ctx, modelSync, dispatch }) => {
-  switch (modelSync.t) {
+export const View: Client["View"] = (input) => {
+  switch (input.modelSync.t) {
     case "none": {
       return (
         <GameMainMenu.View
           title="Chess"
-          ctx={ctx}
+          ctx={input.ctx}
           renderCoverArt={(props) => <CoverArt {...props} key={props.key} />}
-          dispatch={dispatch}
+          dispatch={input.dispatch}
           buttons={[
             GameMainMenu.buttons.playComputer({
               onClick: () =>
-                dispatch({
+                input.dispatch({
                   t: "input-mode",
                   mode: "vs-bot",
-                  userId: ctx.currentUserId,
+                  userId: input.ctx.currentUserId,
                 }),
             }),
             GameMainMenu.buttons.playFriend({
               onClick: () =>
-                dispatch({
+                input.dispatch({
                   t: "input-mode",
                   mode: "vs-user",
-                  userId: ctx.currentUserId,
+                  userId: input.ctx.currentUserId,
                 }),
             }),
             {
@@ -320,10 +320,10 @@ export const View: Client["View"] = ({ ctx, modelSync, dispatch }) => {
               description: "Train with more than 3 million puzzles",
               renderIcon: (props) => <IconPuzzlePiece {...props} />,
               onClick: () =>
-                dispatch({
+                input.dispatch({
                   t: "input-mode",
                   mode: "puzzle",
-                  userId: ctx.currentUserId,
+                  userId: input.ctx.currentUserId,
                 }),
             },
           ]}

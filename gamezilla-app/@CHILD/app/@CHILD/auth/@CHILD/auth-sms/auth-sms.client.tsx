@@ -391,8 +391,11 @@ const updateFromServer: Module["update"] = (input) => {
 
 const INTERVAL_ID = Uuid.generate()
 
-export const subscriptions: Module["subscriptions"] = ({ model }) => {
-  if (model.sendCode.t === "loading" || model.verifyCode.t === "loading") {
+export const subscriptions: Module["subscriptions"] = (input) => {
+  if (
+    input.model.sendCode.t === "loading" ||
+    input.model.verifyCode.t === "loading"
+  ) {
     return Time.interval(
       INTERVAL_ID,
       TimeSpan.fromMilliseconds(1000),
@@ -416,34 +419,34 @@ export const subscriptions: Module["subscriptions"] = ({ model }) => {
 //
 //
 
-export const View: Module["View"] = ({ model, dispatch, ctx }) => {
-  switch (ctx.currentRoute.n) {
+export const View: Module["View"] = (props) => {
+  switch (props.ctx.currentRoute.n) {
     case "auth-login": {
-      switch (ctx.currentRoute.t) {
+      switch (props.ctx.currentRoute.t) {
         case "login-sms-request": {
           return (
             <div className="w-full flex-1">
               <TopBar
                 left={
                   <TopBarBackButton
-                    onClick={() => dispatch({ t: "clicked-back-button" })}
+                    onClick={() => props.dispatch({ t: "clicked-back-button" })}
                   />
                 }
-                title={ctx.t("auth-sms.login-with-phone")}
+                title={props.ctx.t("auth-sms.login-with-phone")}
               />
 
               <div className="flex w-full flex-col gap-6 p-4 py-6">
                 {false && (
                   <Select
                     id="countryCode"
-                    label={ctx.t("auth-sms.country")}
+                    label={props.ctx.t("auth-sms.country")}
                     onChange={(countryCodeNew) => {
-                      dispatch({
+                      props.dispatch({
                         t: "inputted-country-code",
                         countryCode: countryCodeNew,
                       })
                     }}
-                    value={model.countryCodeInput}
+                    value={props.model.countryCodeInput}
                     options={Iso3166Alpha2Code.all}
                     toKey={(countryCode) => countryCode}
                     toName={(countryCode) =>
@@ -453,87 +456,89 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
                 )}
 
                 <TextField
-                  value={model.phoneNumberInput}
+                  value={props.model.phoneNumberInput}
                   id="phoneNumberInput"
-                  label={ctx.t("auth-sms.phone-number")}
+                  label={props.ctx.t("auth-sms.phone-number")}
                   type="tel"
                   startIcon={<IconMobilePhone className="h-5 w-5" />}
-                  error={typeof model.phoneNumberError === "string"}
-                  helperText={model.phoneNumberError}
+                  error={typeof props.model.phoneNumberError === "string"}
+                  helperText={props.model.phoneNumberError}
                   onChange={(value) => {
-                    dispatch({
+                    props.dispatch({
                       t: "inputted-phone-number",
                       phoneNumber: value,
                     })
                   }}
                   onClear={() => {
-                    dispatch({ t: "clicked-phone-number-clear" })
+                    props.dispatch({ t: "clicked-phone-number-clear" })
                   }}
                 />
 
                 <Button
-                  text={ctx.t("auth-sms.send-code")}
+                  text={props.ctx.t("auth-sms.send-code")}
                   className="w-full"
                   variant="contained"
                   color="primary"
                   size="lg"
-                  loading={model.sendCode.t === "loading"}
+                  loading={props.model.sendCode.t === "loading"}
                   onClick={() => {
-                    dispatch({ t: "clicked-send-code" })
+                    props.dispatch({ t: "clicked-send-code" })
                   }}
                 />
               </div>
 
-              {isErr(model.sendCode) && (
+              {isErr(props.model.sendCode) && (
                 <div className="w-full p-4">
-                  <AlertError>{model.sendCode.error}</AlertError>
+                  <AlertError>{props.model.sendCode.error}</AlertError>
                 </div>
               )}
             </div>
           )
         }
         case "login-sms-verify": {
-          const phoneNumber = ctx.currentRoute.phoneNumber
+          const phoneNumber = props.ctx.currentRoute.phoneNumber
           return (
             <div className="w-full flex-1">
               <TopBar
                 left={
                   <TopBarBackButton
-                    onClick={() => dispatch({ t: "clicked-back-button" })}
+                    onClick={() => props.dispatch({ t: "clicked-back-button" })}
                   />
                 }
-                title={ctx.t("auth-sms.login-with-phone")}
+                title={props.ctx.t("auth-sms.login-with-phone")}
               />
 
               <div className="flex w-full flex-col gap-6 p-4 py-6">
                 <TextField
-                  value={model.codeInput}
+                  value={props.model.codeInput}
                   id={CODE_INPUT_VIEW_ID}
-                  label={ctx.t("auth-sms.code")}
-                  error={typeof model.codeError === "string"}
+                  label={props.ctx.t("auth-sms.code")}
+                  error={typeof props.model.codeError === "string"}
                   helperText={
-                    typeof model.codeError === "string" ? model.codeError : null
+                    typeof props.model.codeError === "string"
+                      ? props.model.codeError
+                      : null
                   }
                   autoFocus
                   type="tel"
                   onChange={(value) => {
-                    dispatch({ t: "inputted-code", code: value })
+                    props.dispatch({ t: "inputted-code", code: value })
                   }}
                   onClear={() => {
-                    dispatch({ t: "clicked-code-clear" })
+                    props.dispatch({ t: "clicked-code-clear" })
                   }}
                 />
                 <Button
                   className="w-full"
-                  text={ctx.t("auth-sms.verify-code")}
+                  text={props.ctx.t("auth-sms.verify-code")}
                   color="primary"
                   size="lg"
                   loading={
-                    model.verifyCode.t === "loading" ||
-                    model.verifyCode.t === "ok"
+                    props.model.verifyCode.t === "loading" ||
+                    props.model.verifyCode.t === "ok"
                   }
                   onClick={() => {
-                    dispatch({
+                    props.dispatch({
                       t: "clicked-verify-code",
                       phoneNumber,
                     })
@@ -541,12 +546,12 @@ export const View: Module["View"] = ({ model, dispatch, ctx }) => {
                 />
               </div>
 
-              {isErr(model.verifyCode) && (
+              {isErr(props.model.verifyCode) && (
                 <div className="w-full p-4">
                   <AlertError>
                     {verifyCodeProblemToString({
-                      problem: model.verifyCode.error,
-                      t: ctx.t,
+                      problem: props.model.verifyCode.error,
+                      t: props.ctx.t,
                     })}
                   </AlertError>
                 </div>

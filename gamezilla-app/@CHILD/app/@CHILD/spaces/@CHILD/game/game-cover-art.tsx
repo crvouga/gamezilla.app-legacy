@@ -3,8 +3,8 @@ import * as Flow from "./@CHILD/flow/flow-cover-art"
 
 import { GameName } from "./game.core"
 
-export const CoverArt = ({ gameName }: { gameName: GameName }) => {
-  switch (gameName) {
+export const CoverArt = (input: { gameName: GameName }) => {
+  switch (input.gameName) {
     case "connect-four": {
       return <ConnectFour.CoverArt />
     }
@@ -14,7 +14,7 @@ export const CoverArt = ({ gameName }: { gameName: GameName }) => {
     }
 
     default: {
-      const check: never = gameName
+      const check: never = input.gameName
       return check
     }
   }

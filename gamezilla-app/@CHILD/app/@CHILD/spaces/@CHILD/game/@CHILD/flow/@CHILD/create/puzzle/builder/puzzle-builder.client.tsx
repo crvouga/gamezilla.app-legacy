@@ -277,8 +277,8 @@ const ViewMode: ClientModule["View"] = (input) => {
   }
 }
 
-const ViewSpectating: ClientModule["View"] = ({ modelSync, ctx }) => {
-  if (!modelSync.puzzleBuilder) {
+const ViewSpectating: ClientModule["View"] = (input) => {
+  if (!input.modelSync.puzzleBuilder) {
     return null
   }
 
@@ -286,12 +286,12 @@ const ViewSpectating: ClientModule["View"] = ({ modelSync, ctx }) => {
     <GameLayout isSpectating>
       <div className="flex w-full flex-1 flex-col items-center justify-center overflow-y-scroll">
         <ViewProfileCard
-          profile={ctx.profiles[ctx.space.hostId]}
+          profile={input.ctx.profiles[input.ctx.space.hostId]}
           subtitle="Editor"
         />
         <FlowVariantUI.View
           disabled
-          model={toCurrentFlow(modelSync.puzzleBuilder)}
+          model={toCurrentFlow(input.modelSync.puzzleBuilder)}
         />
       </div>
     </GameLayout>
@@ -344,12 +344,13 @@ const updateMoreDrawer: ClientModule["update"] = (input) => {
 }
 
 export const ViewMoreDrawer: ClientModule["View"] = (input) => {
-  const { dispatch } = input
   return (
     <Drawer
       id="more-drawer"
       open={input.model.puzzleBuilderOpened === "more"}
-      onClose={() => dispatch({ t: "puzzle-builder.user-closed-more-drawer" })}
+      onClose={() =>
+        input.dispatch({ t: "puzzle-builder.user-closed-more-drawer" })
+      }
       position="bottom"
     >
       <PuzzleEditNameClient.View {...input} />

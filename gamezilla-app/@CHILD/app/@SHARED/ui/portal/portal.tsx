@@ -9,30 +9,30 @@ const getExit = (portalId: string): HTMLElement | null => {
   ) ?? null) as HTMLElement | null
 }
 
-const PortalEntrance = ({
-  portalId,
-  children,
-}: {
-  portalId: string
-  children: VDomChildren
-}) => {
-  const element = getExit(portalId)
+const Entrance = (props: { portalId: string; children: VDomChildren }) => {
+  const element = getExit(props.portalId)
   if (!element) {
     return null
   }
   return (
-    <div data-portal-entrance data-portal-id={portalId}>
-      {createPortal(children, element)}
+    <div data-portal-entrance data-portal-id={props.portalId}>
+      {createPortal?.(props.children, element)}
     </div>
   )
 }
 
-const PortalExit = ({ portalId }: { portalId: string }) => {
-  return <div id={portalId} data-portal-exit data-portal-id={portalId}></div>
+const Exit = (props: { portalId: string }) => {
+  return (
+    <div
+      id={props.portalId}
+      data-portal-exit
+      data-portal-id={props.portalId}
+    ></div>
+  )
 }
 
 export const Portal = {
   getExit,
-  Entrance: PortalEntrance,
-  Exit: PortalExit,
+  Entrance,
+  Exit,
 }

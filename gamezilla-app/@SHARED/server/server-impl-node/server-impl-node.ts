@@ -4,7 +4,7 @@ import * as path from "node:path"
 import { HttpHandler, HttpRequest, IServer } from "../server"
 import { ILogger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 
-export const ServerNode = ({ logger }: { logger: ILogger }) => {
+export const ServerNode = (input: { logger: ILogger }) => {
   const httpServer = new http.Server()
   const handlers: HttpHandler[] = []
   const base: IServer = {
@@ -15,7 +15,7 @@ export const ServerNode = ({ logger }: { logger: ILogger }) => {
         console.error("error", error)
       }
 
-      logger.info(`Listening on port ${port}`)
+      input.logger.info(`Listening on port ${port}`)
 
       httpServer.on("request", async (req, res) => {
         const request: HttpRequest = {

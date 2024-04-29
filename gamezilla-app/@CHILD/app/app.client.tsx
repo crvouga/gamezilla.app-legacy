@@ -44,6 +44,11 @@ import { getTranslator } from "./@SHARED/client/translator"
 import { IntersectionObserverEmitter } from "./@SHARED/ui/intersection-observer"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core"
+import { createEffect } from "solid-js"
+
+export type Model = ModelClient
+
+export type Msg = MsgClient
 
 //
 //
@@ -118,7 +123,7 @@ const getStored = () => {
 //
 //
 
-type Ctx = {
+export type Ctx = {
   now: Posix
   location: Browser.Location
   navigatorLanguage: LanguageCodeISO_639_1
@@ -266,7 +271,7 @@ export const update = (input: {
   }
   const msgServer = input.msg.t === "→" ? input.msg.c : undefined
   if (msgServer) {
-    log("[→]", toMsgType(msgServer))
+    log("[➡️]", toMsgType(msgServer))
   }
   const updatedFromMsg = updateChild({
     ctx: input.ctx,
@@ -539,13 +544,12 @@ export const subscriptions = (input: {
 //
 //
 
-export const View = (input: {
+export const View = (props: {
   ctx: Ctx
   model: ModelClient
   dispatch: (msg: MsgClient) => void
 }) => {
-  const { ctx, dispatch, model } = input
-  const clientCtx = toClientCtx({ model, ctx })
+  const clientCtx = () => toClientCtx(props)
 
   return (
     <div
@@ -553,63 +557,77 @@ export const View = (input: {
       style={{ transform: "translate(-50%, -50%)" }}
     >
       <div className="relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-700">
-        <ViewStatusBar model={model} dispatch={dispatch} ctx={ctx} />
+        <ViewStatusBar
+          model={props.model}
+          dispatch={props.dispatch}
+          ctx={props.ctx}
+        />
 
         <div className="relative flex w-full flex-1 flex-col overflow-hidden">
-          <ViewRoute model={model} dispatch={dispatch} ctx={clientCtx} />
+          <ViewRoute
+            model={props.model}
+            dispatch={props.dispatch}
+            ctx={clientCtx()}
+          />
         </div>
 
         <AuthClient.ViewModals
-          ctx={clientCtx}
-          dispatch={(c) => dispatch({ t: "auth", c })}
-          model={model.auth}
+          ctx={clientCtx()}
+          dispatch={(c) => props.dispatch({ t: "auth", c })}
+          model={props.model.auth}
         />
 
         <Portal.Exit portalId="modals" />
 
         <Toast.View
-          ctx={ctx}
-          model={model.toast}
-          dispatch={(c) => dispatch({ t: "toast", c })}
+          ctx={props.ctx}
+          model={props.model.toast}
+          dispatch={(c) => props.dispatch({ t: "toast", c })}
         />
       </div>
     </div>
   )
 }
 
-const ViewRoute = ({
-  model,
-  dispatch,
-  ctx,
-}: {
+const ViewRoute = (props: {
   ctx: ClientCtx | AnonymousClientCtx
   model: ModelClient
   dispatch: (m: MsgClient) => void
 }) => {
-  switch (model.routing.currentRoute.n) {
+  switch (props.model.routing.currentRoute.n) {
     case "lang": {
       return (
         <LangClient.View
-          ctx={ctx}
-          dispatch={(c) => dispatch({ t: "lang", c })}
-          model={model.lang}
+          ctx={props.ctx}
+          dispatch={(c) => props.dispatch({ t: "lang", c })}
+          model={props.model.lang}
         />
       )
     }
 
     default: {
-      switch (model.auth.currentUser.t) {
+      switch (props.model.auth.currentUser.t) {
         case "loading": {
-          return <LoadingState {...{}} />
+          return <LoadingState />
         }
+
         case "logged-in": {
           return (
-            <ViewRouteLoggedIn model={model} dispatch={dispatch} ctx={ctx} />
+            <ViewRouteLoggedIn
+              model={props.model}
+              dispatch={props.dispatch}
+              ctx={props.ctx}
+            />
           )
         }
+
         case "logged-out": {
           return (
-            <ViewRouteLoggedOut model={model} dispatch={dispatch} ctx={ctx} />
+            <ViewRouteLoggedOut
+              model={props.model}
+              dispatch={props.dispatch}
+              ctx={props.ctx}
+            />
           )
         }
       }
@@ -617,14 +635,14 @@ const ViewRoute = ({
   }
 }
 
-const ViewRouteLoggedOut: typeof ViewRoute = ({ ctx, dispatch, model }) => {
-  switch (ctx.currentRoute.n) {
+const ViewRouteLoggedOut: typeof ViewRoute = (props) => {
+  switch (props.ctx.currentRoute.n) {
     case "auth-login": {
       return (
         <AuthClient.View
-          model={model.auth}
-          ctx={ctx}
-          dispatch={(c) => dispatch({ t: "auth", c })}
+          model={props.model.auth}
+          ctx={props.ctx}
+          dispatch={(c) => props.dispatch({ t: "auth", c })}
         />
       )
     }
@@ -633,7 +651,7 @@ const ViewRouteLoggedOut: typeof ViewRoute = ({ ctx, dispatch, model }) => {
     case "lang": {
       return (
         <ViewRedirect
-          dispatch={dispatch}
+          dispatch={props.dispatch}
           route={{ n: "auth-login", t: "login" }}
         />
       )
@@ -641,17 +659,21 @@ const ViewRouteLoggedOut: typeof ViewRoute = ({ ctx, dispatch, model }) => {
   }
 }
 
-const ViewRouteLoggedIn: typeof ViewRoute = ({ ctx, dispatch, model }) => {
-  switch (ctx.currentRoute.n) {
+const ViewRouteLoggedIn: typeof ViewRoute = (props) => {
+  switch (props.ctx.currentRoute.n) {
     case "profile": {
       return (
         <ProfileClient.View
-          dispatch={(m) => dispatch({ t: "profile", c: m })}
-          model={model.profile}
-          ctx={ctx}
+          dispatch={(m) => props.dispatch({ t: "profile", c: m })}
+          model={props.model.profile}
+          ctx={props.ctx}
           slots={{
             bottomBar: () => (
-              <ViewBottomNavBar model={model} dispatch={dispatch} ctx={ctx} />
+              <ViewBottomNavBar
+                model={props.model}
+                dispatch={props.dispatch}
+                ctx={props.ctx}
+              />
             ),
           }}
         />
@@ -661,12 +683,16 @@ const ViewRouteLoggedIn: typeof ViewRoute = ({ ctx, dispatch, model }) => {
     case "spaces": {
       return (
         <SpaceClient.View
-          dispatch={(m) => dispatch({ t: "spaces", c: m })}
-          model={model.spaces}
-          ctx={ctx}
+          dispatch={(m) => props.dispatch({ t: "spaces", c: m })}
+          model={props.model.spaces}
+          ctx={props.ctx}
           slots={{
             bottomBar: () => (
-              <ViewBottomNavBar model={model} dispatch={dispatch} ctx={ctx} />
+              <ViewBottomNavBar
+                model={props.model}
+                dispatch={props.dispatch}
+                ctx={props.ctx}
+              />
             ),
           }}
         />
@@ -677,7 +703,7 @@ const ViewRouteLoggedIn: typeof ViewRoute = ({ ctx, dispatch, model }) => {
     case "auth-login": {
       return (
         <ViewRedirect
-          dispatch={dispatch}
+          dispatch={props.dispatch}
           route={{ n: "spaces", t: "space-list" }}
         />
       )
@@ -685,10 +711,7 @@ const ViewRouteLoggedIn: typeof ViewRoute = ({ ctx, dispatch, model }) => {
   }
 }
 
-const ViewRedirect = ({
-  route,
-  dispatch,
-}: {
+const ViewRedirect = (input: {
   route: Route
   dispatch: (m: MsgClient) => void
 }) => {
@@ -696,51 +719,51 @@ const ViewRedirect = ({
     <IntersectionObserverEmitter
       id="redirect"
       onVisible={() =>
-        dispatch({
+        input.dispatch({
           t: "routing",
-          c: { t: "clicked-link", route },
+          c: { t: "clicked-link", route: input.route },
         })
       }
     />
   )
 }
 
-const ViewStatusBar: typeof View = ({ ctx, dispatch, model }) => {
-  const clientCtx = toClientCtx({ model, ctx })
+const ViewStatusBar: typeof View = (input) => {
+  const clientCtx = toClientCtx({ model: input.model, ctx: input.ctx })
 
   return (
     <StatusBar.View
-      model={model.statusBar}
-      dispatch={(c) => dispatch({ t: "status-bar", c })}
+      model={input.model.statusBar}
+      dispatch={(c) => input.dispatch({ t: "status-bar", c })}
       slots={{
         barLeft: (
           <>
-            <Wire.ViewStatusBar model={model.wire} />
+            <Wire.ViewStatusBar model={input.model.wire} />
           </>
         ),
 
         barRight: (
           <>
-            <Sound.ViewStatusBar model={model.sound} />
+            <Sound.ViewStatusBar model={input.model.sound} />
           </>
         ),
 
         drawerContent: (
           <>
             <Wire.ViewStatusBarDrawer
-              model={model.wire}
-              dispatch={(c) => dispatch({ t: "wire", c })}
+              model={input.model.wire}
+              dispatch={(c) => input.dispatch({ t: "wire", c })}
             />
 
             <LangClient.ViewStatusBarDrawer
               ctx={clientCtx}
-              dispatch={(c) => dispatch({ t: "lang", c })}
-              model={model.lang}
+              dispatch={(c) => input.dispatch({ t: "lang", c })}
+              model={input.model.lang}
             />
 
             <Sound.ViewStatusBarDrawer
-              model={model.sound}
-              dispatch={(c) => dispatch({ t: "sound", c })}
+              model={input.model.sound}
+              dispatch={(c) => input.dispatch({ t: "sound", c })}
             />
           </>
         ),
@@ -749,16 +772,12 @@ const ViewStatusBar: typeof View = ({ ctx, dispatch, model }) => {
   )
 }
 
-const ViewBottomNavBar = ({
-  model,
-  dispatch,
-  ctx,
-}: {
+const ViewBottomNavBar = (props: {
   ctx: ClientCtx | AnonymousClientCtx
   model: ModelClient
   dispatch: (m: MsgClient) => void
 }) => {
-  if (isAnonymous(ctx)) {
+  if (isAnonymous(props.ctx)) {
     return null
   }
   const items: {
@@ -778,7 +797,7 @@ const ViewBottomNavBar = ({
       route: {
         n: "profile",
         t: "profile",
-        userId: ctx.currentUserId,
+        userId: props.ctx.currentUserId,
       },
       label: "Profile",
       icon: <IconUserCircle className="h-6 w-6" />,
@@ -788,18 +807,18 @@ const ViewBottomNavBar = ({
   return (
     <div className="flex w-full shrink-0 flex-col items-center justify-center">
       <SpaceClient.ViewCurrentSpaceBar
-        ctx={ctx}
-        model={model.spaces}
-        dispatch={(c) => dispatch({ t: "spaces", c })}
+        ctx={props.ctx}
+        model={props.model.spaces}
+        dispatch={(c) => props.dispatch({ t: "spaces", c })}
       />
       <div className="flex w-full items-center justify-center border-t border-neutral-700">
         {items.map((item, index) => {
-          const isSelected = eq(item.route, model.routing.currentRoute)
+          const isSelected = eq(item.route, props.model.routing.currentRoute)
           return (
             <button
               key={index}
               onClick={() =>
-                dispatch({
+                props.dispatch({
                   t: "routing",
                   c: { t: "clicked-link", route: item.route },
                 })

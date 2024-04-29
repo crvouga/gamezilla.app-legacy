@@ -203,8 +203,8 @@ export const updateFromCmd: Module["update"] = ({ model, msgCmd }) => {
   }
 }
 
-export const ViewStatusBar = ({ model }: { model: Model }) => {
-  if (model.muted) {
+export const ViewStatusBar = (props: { model: Model }) => {
+  if (props.model.muted) {
     return <IconVolumeXMark className="h-4 w-4" />
   }
 

@@ -152,12 +152,7 @@ export const mergeWithServer = ({
 //
 //
 
-export const View = ({
-  goBack,
-  model,
-  ctx,
-  dispatch,
-}: {
+export const View = (props: {
   ctx: SpaceClientCtx
   goBack: () => void
   model: Model
@@ -165,47 +160,49 @@ export const View = ({
 }) => {
   const vsBotProps: VsBotSetup.VsBotSetupProps = {
     bot: {
-      label: model.botLevel,
-      renderIcon: (props) =>
-        renderBotLevel({ level: model.botLevel, ...props }),
+      label: props.model.botLevel,
+      renderIcon: (iconProps) =>
+        renderBotLevel({ level: props.model.botLevel, ...iconProps }),
     },
-    onSwapSides: () => dispatch({ t: "swap-sides" }),
-    canStartGame: Boolean(model.player),
-    ctx,
+    onSwapSides: () => props.dispatch({ t: "swap-sides" }),
+    canStartGame: Boolean(props.model.player),
+    ctx: props.ctx,
     human: {
-      player: model.userPlayerType === "X" ? "player-one" : "player-two",
-      userId: model.player ?? null,
+      player: props.model.userPlayerType === "X" ? "player-one" : "player-two",
+      userId: props.model.player ?? null,
     },
-    onQuit: goBack,
-    onStartGame: () => dispatch({ t: "start-game" }),
+    onQuit: props.goBack,
+    onStartGame: () => props.dispatch({ t: "start-game" }),
     botVariants: allBotLevels.map((botLevel) => {
       return {
         label: botLevel,
         renderIcon: (props) => renderBotLevel({ level: botLevel, ...props }),
-        onSelect: () => dispatch({ t: "input-bot-level", botLevel }),
+        onSelect: () => props.dispatch({ t: "input-bot-level", botLevel }),
       }
     }),
     playerOne: {
       label: "Cross",
-      onStartPlaying: () => dispatch({ t: "start-playing", playerType: "X" }),
-      onStopPlaying: () => dispatch({ t: "stop-playing" }),
+      onStartPlaying: () =>
+        props.dispatch({ t: "start-playing", playerType: "X" }),
+      onStopPlaying: () => props.dispatch({ t: "stop-playing" }),
       renderIcon: (props) => <PlayerTypeIcon {...props} playerType="X" />,
     },
     playerTwo: {
       label: "Naught",
-      onStartPlaying: () => dispatch({ t: "start-playing", playerType: "O" }),
-      onStopPlaying: () => dispatch({ t: "stop-playing" }),
+      onStartPlaying: () =>
+        props.dispatch({ t: "start-playing", playerType: "O" }),
+      onStopPlaying: () => props.dispatch({ t: "stop-playing" }),
       renderIcon: (props) => <PlayerTypeIcon {...props} playerType="O" />,
     },
     renderCoverArt: (props) => <CoverArt {...props} />,
     title: "Tic-Tac-Toe",
   }
 
-  if (model.type === "setup") {
+  if (props.model.type === "setup") {
     return (
       <VsBotSetup.View
-        model={model.vsBotSetup}
-        dispatch={(c) => dispatch({ t: "vs-bot-setup", c })}
+        model={props.model.vsBotSetup}
+        dispatch={(c) => props.dispatch({ t: "vs-bot-setup", c })}
         {...vsBotProps}
       />
     )
@@ -215,14 +212,14 @@ export const View = ({
     ...vsBotProps,
     human: {
       ...vsBotProps.human,
-      userId: model.player,
+      userId: props.model.player,
     },
     turn: null,
     isSpectating: false,
   }
 
-  const turn = toTurn(model.board)
-  const status = toStatus(model.board)
+  const turn = toTurn(props.model.board)
+  const status = toStatus(props.model.board)
 
   return (
     <div className="flex h-full w-full flex-col ">
@@ -231,13 +228,15 @@ export const View = ({
 
         <LoadingBar
           className="w-full"
-          disabled={model.userPlayerType === turn || status.type !== "Turn"}
+          disabled={
+            props.model.userPlayerType === turn || status.type !== "Turn"
+          }
           color={gameTheme.background}
         />
 
         <ViewBoard
-          board={model.board}
-          onClick={(position) => dispatch({ t: "input-move", position })}
+          board={props.model.board}
+          onClick={(position) => props.dispatch({ t: "input-move", position })}
         />
       </div>
 
@@ -245,26 +244,26 @@ export const View = ({
         <ViewBottomButtonBarAction
           icon={(props) => <IconArrowLeftOnRect {...props} />}
           label="Exit"
-          onClick={() => dispatch({ t: "stop-game" })}
+          onClick={() => props.dispatch({ t: "stop-game" })}
         />
         <ViewBottomButtonBarAction
           icon={(props) => <IconRightLeft {...props} />}
           label="Swap sides"
-          onClick={() => dispatch({ t: "swap-sides" })}
+          onClick={() => props.dispatch({ t: "swap-sides" })}
         />
         <ViewBottomButtonBarAction
           icon={(props) => <IconArrowRotateLeft {...props} />}
           label="Restart"
-          onClick={() => dispatch({ t: "restart" })}
+          onClick={() => props.dispatch({ t: "restart" })}
         />
       </ViewBottomButtonBar>
     </div>
   )
 }
 
-export const ViewMsg = ({ msg }: { msg: Msg | MsgToClient }) => {
-  if ("result" in msg && msg.result.t === "err") {
-    return msg.result.error
+export const ViewMsg = (props: { msg: Msg | MsgToClient }) => {
+  if ("result" in props.msg && props.msg.result.t === "err") {
+    return props.msg.result.error
   }
   return null
 }

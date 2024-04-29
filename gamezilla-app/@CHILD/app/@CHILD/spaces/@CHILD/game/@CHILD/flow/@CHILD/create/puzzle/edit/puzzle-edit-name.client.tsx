@@ -252,22 +252,22 @@ const updateDraftNameInput: ClientModule["update"] = ({ model, msg }) => {
   }
 }
 
-const ViewDraftNameInput: ClientModule["View"] = ({ model, dispatch }) => {
+const ViewDraftNameInput: ClientModule["View"] = (input) => {
   return (
     <div className="w-full p-4">
       <TextField
         id="edit-name-input"
         label="Name"
-        value={model.puzzleEditNameDraft}
+        value={input.model.puzzleEditNameDraft}
         onChange={(draftName) =>
-          dispatch({
+          input.dispatch({
             t: "puzzle.edit-name.user-inputted-draft-name",
             draftName,
           })
         }
-        error={Boolean(model.puzzleEditNameValidationError)}
+        error={Boolean(input.model.puzzleEditNameValidationError)}
         helperText={editNameValidationErrorToString(
-          model.puzzleEditNameValidationError,
+          input.model.puzzleEditNameValidationError,
         )}
       />
     </div>

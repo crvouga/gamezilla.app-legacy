@@ -5,17 +5,17 @@ const initSync: ModelSync = {
   listTab: "puzzles",
 }
 
-const reducer: SyncReducer = ({ modelSync, msgSync }) => {
-  switch (msgSync.t) {
+const reducer: SyncReducer = (input) => {
+  switch (input.msgSync.t) {
     case "user-changed-list-tab": {
       return {
-        ...modelSync,
-        listTab: msgSync.listTab,
+        ...input.modelSync,
+        listTab: input.msgSync.listTab,
       }
     }
 
     default: {
-      return modelSync
+      return input.modelSync
     }
   }
 }

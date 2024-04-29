@@ -185,8 +185,8 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
 //
 //
 
-export const ViewStatusBar = ({ model }: { model: ModelClient }) => {
-  switch (model.state.t) {
+export const ViewStatusBar = (props: { model: ModelClient }) => {
+  switch (props.model.state.t) {
     case "server-connected": {
       return <span className="h-2 w-2 rounded-full bg-green-500"></span>
     }

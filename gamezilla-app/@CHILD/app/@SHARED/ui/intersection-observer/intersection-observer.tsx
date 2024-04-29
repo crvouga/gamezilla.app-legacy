@@ -5,12 +5,11 @@ import {
   sub,
 } from "./intersection-observer-shared"
 
-export const IntersectionObserverEmitter = ({
-  children,
-  ...props
-}: IntersectionObserverEmitterProps & {
-  children?: VDomChildren
-}) => {
+export const IntersectionObserverEmitter = (
+  props: IntersectionObserverEmitterProps & {
+    children?: VDomChildren
+  },
+) => {
   // There is some kind of race condition setTimeout fixes
   setTimeout(() => sub.publish({ type: "props", props }), 1)
 

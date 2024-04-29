@@ -1,1 +1,1 @@
-export type VDomImpl = "inferno" | "preact" | "react"
+export type VDomImpl = "inferno" | "preact" | "react" | "solid"

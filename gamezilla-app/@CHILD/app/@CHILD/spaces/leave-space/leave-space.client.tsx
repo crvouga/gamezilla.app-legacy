@@ -104,14 +104,14 @@ const updateLeaveSpaceButton: SpaceClientModule["update"] = ({
   }
 }
 
-const ViewLeaveSpaceButton: SpaceClientModule["View"] = ({ dispatch }) => {
+const ViewLeaveSpaceButton: SpaceClientModule["View"] = (props) => {
   return (
     <Button
       color="danger"
       variant="contained"
       size="sm"
       text="Leave"
-      onClick={() => dispatch({ t: "clicked-leave-space-button" })}
+      onClick={() => props.dispatch({ t: "clicked-leave-space-button" })}
     />
   )
 }
