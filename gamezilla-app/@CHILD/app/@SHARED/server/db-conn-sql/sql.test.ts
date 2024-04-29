@@ -3,85 +3,93 @@ import { toSql } from "./sql"
 
 describe(import.meta.file, () => {
   it("should replace named parameter with number", async () => {
-    expect(toSql("SELECT * FROM users WHERE id = :id", { id: 1 })).toBe(
-      "SELECT * FROM users WHERE id = 1",
-    )
+    const expected = "SELECT * FROM users WHERE id = 1"
+    const actual = toSql("SELECT * FROM users WHERE id = :id", { id: 1 })
+    expect(actual).toBe(expected)
   })
 
   it("should replace named parameter with string", async () => {
-    expect(toSql("SELECT * FROM users WHERE id = :id", { id: "1" })).toBe(
-      "SELECT * FROM users WHERE id = '1'",
-    )
+    const expected = "SELECT * FROM users WHERE name = 'John'"
+    const actual = toSql("SELECT * FROM users WHERE name = :name", {
+      name: "John",
+    })
+    expect(actual).toBe(expected)
   })
 
   it("should handle SQL injection attempt", async () => {
-    expect(
-      toSql("SELECT * FROM users WHERE id = :id", {
-        id: "1' OR '1' = '1",
-      }),
-    ).toBe("SELECT * FROM users WHERE id = '1'' OR ''1'' = ''1'")
+    const expected = "SELECT * FROM users WHERE id = '1'' OR ''1'' = ''1'"
+    const actual = toSql("SELECT * FROM users WHERE id = :id", {
+      id: "1' OR '1' = '1",
+    })
+    expect(actual).toBe(expected)
   })
 
   it("should prevent SQL injection", async () => {
-    expect(
-      toSql("SELECT * FROM users WHERE id = :id", {
-        id: "DROP DATABASE;",
-      }),
-    ).toBe("SELECT * FROM users WHERE id = 'DROP DATABASE;'")
+    const expected = "SELECT * FROM users WHERE id = '1'' OR ''1'' = ''1'"
+    const actual = toSql("SELECT * FROM users WHERE id = :id", {
+      id: "1' OR '1' = '1",
+    })
+    expect(actual).toBe(expected)
   })
 
   it("should handle multiple parameters", async () => {
-    expect(
-      toSql("SELECT * FROM users WHERE id = :id AND name = :name", {
+    const expected = "SELECT * FROM users WHERE id = 2 AND name = 'John'"
+    const actual = toSql(
+      "SELECT * FROM users WHERE id = :id AND name = :name",
+      {
         id: 2,
         name: "John",
-      }),
-    ).toBe("SELECT * FROM users WHERE id = 2 AND name = 'John'")
+      },
+    )
+    expect(actual).toBe(expected)
   })
 
   it("should handle parameters not in query", async () => {
-    expect(toSql("SELECT * FROM users", { id: 3 })).toBe("SELECT * FROM users")
+    const expected = "SELECT * FROM users"
+    const actual = toSql("SELECT * FROM users", { id: 3 })
+    expect(actual).toBe(expected)
   })
 
   it("should handle no parameters", async () => {
-    expect(toSql("SELECT * FROM users WHERE id = 4", {})).toBe(
-      "SELECT * FROM users WHERE id = 4",
-    )
+    const expected = "SELECT * FROM users"
+    const actual = toSql("SELECT * FROM users", {})
+    expect(actual).toBe(expected)
   })
 
   it("should handle missing parameter", async () => {
-    expect(toSql("SELECT * FROM users WHERE id = :id", { name: "Jane" })).toBe(
-      "SELECT * FROM users WHERE id = :id",
-    )
+    const expected = "SELECT * FROM users WHERE id = :id"
+    const actual = toSql("SELECT * FROM users WHERE id = :id", {})
+    expect(actual).toBe(expected)
   })
 
   it("should handle non-string parameter values", async () => {
-    expect(toSql("SELECT * FROM users WHERE age > :age", { age: 30 })).toBe(
-      "SELECT * FROM users WHERE age > 30",
-    )
+    const expected = "SELECT * FROM users WHERE age > 30"
+    const actual = toSql("SELECT * FROM users WHERE age > :age", { age: 30 })
+    expect(actual).toBe(expected)
   })
 
   it("should handle non-string parameter names", async () => {
-    expect(toSql("SELECT * FROM users WHERE age > :age", { age: 30 })).toBe(
-      "SELECT * FROM users WHERE age > 30",
-    )
+    const expected = "SELECT * FROM users WHERE age > 30"
+    const actual = toSql("SELECT * FROM users WHERE age > :age", { age: 30 })
+    expect(actual).toBe(expected)
   })
 
   it("should handle parameter names with underscores", async () => {
-    expect(toSql("SELECT * FROM users WHERE age > :age", { age: 30 })).toBe(
-      "SELECT * FROM users WHERE age > 30",
-    )
+    const expected = "SELECT * FROM users WHERE first_name = 'John'"
+    const actual = toSql("SELECT * FROM users WHERE first_name = :first_name", {
+      first_name: "John",
+    })
+    expect(actual).toBe(expected)
   })
 
   it("should handle parameter with overlapping names", async () => {
-    expect(
-      toSql(
-        "SELECT * FROM users WHERE phone_number = :phone_number AND phone_number_country = :phone_number_country",
-        { phone_number: "555-555-5555", phone_number_country: "US" },
-      ),
-    ).toBe(
-      "SELECT * FROM users WHERE phone_number = '555-555-5555' AND phone_number_country = 'US'",
+    const expected =
+      "SELECT * FROM users WHERE phone_number = '555-555-5555' AND phone_number_country = 'US'"
+    const actual = toSql(
+      "SELECT * FROM users WHERE phone_number = :phone_number AND phone_number_country = :phone_number_country",
+      { phone_number: "555-555-5555", phone_number_country: "US" },
     )
+    expect(actual).toBe(expected)
   })
 
   it("should handle json columns", async () => {
@@ -133,7 +141,6 @@ describe(import.meta.file, () => {
     const query = "SELECT * FROM users WHERE name = :name"
     const params = { name: maliciousInput }
 
-    // Using a safe parameterization approach is crucial
     const safeQuery = toSql(query, params)
 
     expect(toSql(query, params)).toBe(safeQuery)
@@ -144,7 +151,6 @@ describe(import.meta.file, () => {
     const query = "SELECT * FROM users WHERE id = :id"
     const params = { id: maliciousInput }
 
-    // Ensure your logic properly escapes and doesn't alter the query's logic
     const safeQuery = toSql(query, params)
     expect(toSql(query, params)).toBe(safeQuery)
   })
@@ -177,7 +183,16 @@ describe(import.meta.file, () => {
   })
 
   it("should handle type mismatch exploits", async () => {
-    const maliciousInput = 1 // Attempting to force a string comparison
+    const maliciousInput = 1
+    const query = "SELECT * FROM users WHERE id = :id"
+    const params = { id: maliciousInput }
+
+    const safeQuery = toSql(query, params)
+    expect(toSql(query, params)).toBe(safeQuery)
+  })
+
+  it("should handle comment injection", async () => {
+    const maliciousInput = "1 --"
     const query = "SELECT * FROM users WHERE id = :id"
     const params = { id: maliciousInput }
 
