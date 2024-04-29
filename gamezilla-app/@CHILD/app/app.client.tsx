@@ -44,7 +44,6 @@ import { getTranslator } from "./@SHARED/client/translator"
 import { IntersectionObserverEmitter } from "./@SHARED/ui/intersection-observer"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core"
-import { createEffect } from "solid-js"
 
 export type Model = ModelClient
 
