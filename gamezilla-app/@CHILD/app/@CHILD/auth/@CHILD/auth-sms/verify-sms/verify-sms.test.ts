@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test"
 import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translator"
 import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
+import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 import { SMSFake } from "gamezilla-app/@CHILD/app/@SHARED/server/sms/sms-impl-fake"
 import {
   PhoneNumber,
@@ -14,7 +15,6 @@ import { CodeGenerator } from "./code-generator"
 import { VerificationId } from "./verification"
 import { VerificationAttemptDb, VerificationDb } from "./verification-db"
 import { VerifySMS } from "./verify-sms-impl"
-import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
 
 const Fixture = async () => {
   const sms = SMSFake()

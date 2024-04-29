@@ -77,10 +77,10 @@ CREATE TABLE public.game_flow_puzzle (
     flow_puzzle json NOT NULL,
     created_at bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
     created_by_user_id text NOT NULL,
-    deleted_at bigint,
-    deleted_by_user_id text,
     last_updated_at bigint DEFAULT ((EXTRACT(epoch FROM CURRENT_TIMESTAMP) * (1000)::numeric))::bigint NOT NULL,
-    last_updated_by_user_id text NOT NULL
+    last_updated_by_user_id text NOT NULL,
+    deleted_at bigint,
+    deleted_by_user_id text
 );
 
 
@@ -362,7 +362,6 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240203025639'),
     ('20240203034127'),
     ('20240203034632'),
-    ('20240203034815'),
     ('20240203034900'),
     ('20240203035440'),
     ('20240203040136'),
