@@ -3,6 +3,12 @@ import { createClient } from "redis"
 import { ILogger } from "../logger/logger"
 import { IDbConnKv } from "./db-conn-kv"
 
+declare global {
+  var redisClient: Awaited<
+    ReturnType<ReturnType<typeof createClient>["connect"]>
+  >
+}
+
 export const DbConnKvRedis = async ({
   url,
   logger,
@@ -11,7 +17,7 @@ export const DbConnKvRedis = async ({
   logger: ILogger
 }): Promise<IDbConnKv> => {
   // https://github.com/redis/node-redis
-  const client = await createClient({
+  globalThis.redisClient ??= await createClient({
     url,
   }).connect()
 
@@ -22,7 +28,7 @@ export const DbConnKvRedis = async ({
       try {
         const start = process.hrtime.bigint()
 
-        const got = await client.get(key)
+        const got = await globalThis.redisClient.get(key)
 
         const end = process.hrtime.bigint()
 
@@ -56,7 +62,7 @@ export const DbConnKvRedis = async ({
       try {
         const start = process.hrtime.bigint()
 
-        const got = await client.mGet(keys)
+        const got = await globalThis.redisClient.mGet(keys)
 
         const end = process.hrtime.bigint()
 
@@ -99,7 +105,7 @@ export const DbConnKvRedis = async ({
 
     async set(key, value) {
       try {
-        await client.set(key, JSON.stringify(value))
+        await globalThis.redisClient.set(key, JSON.stringify(value))
         logger.info(`set: key=${key}`)
         return Ok(null)
       } catch (e) {
@@ -110,7 +116,7 @@ export const DbConnKvRedis = async ({
 
     async setMany(entries) {
       try {
-        await client.mSet(
+        await globalThis.redisClient.mSet(
           entries.flatMap(([key, value]) => [key, JSON.stringify(value)]),
         )
         logger.info(`setMany: keys=${entries.map(([key]) => key)}`)
@@ -123,7 +129,7 @@ export const DbConnKvRedis = async ({
 
     async zap(key) {
       try {
-        await client.del(key)
+        await globalThis.redisClient.del(key)
         logger.info(`zap: key=${key}`)
         return Ok(null)
       } catch (e) {

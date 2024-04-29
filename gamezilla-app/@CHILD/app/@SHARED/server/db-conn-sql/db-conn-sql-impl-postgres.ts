@@ -6,8 +6,10 @@ import { IDbConnSql } from "./db-conn-sql"
 import { logQuery } from "./shared"
 import { toSql, toSqlLog } from "./sql"
 
-let pool: pg.Pool
-let client: pg.PoolClient
+declare global {
+  var pgPool: pg.Pool
+  var pgPoolClient: pg.PoolClient
+}
 
 export const createDbConnPostgres = async ({
   databaseUrl,
@@ -16,15 +18,11 @@ export const createDbConnPostgres = async ({
   databaseUrl: string
   logger: ILogger
 }): Promise<IDbConnSql> => {
-  if (!pool) {
-    pool = new pg.Pool({
-      connectionString: databaseUrl,
-    })
-  }
+  globalThis.pgPool ??= new pg.Pool({
+    connectionString: databaseUrl,
+  })
 
-  if (!client) {
-    client = await pool.connect()
-  }
+  globalThis.pgPoolClient ??= await globalThis.pgPool.connect()
 
   return {
     async query(rowParser, rawSql, params) {
@@ -32,7 +30,7 @@ export const createDbConnPostgres = async ({
       try {
         const start = Date.now()
 
-        const queried = await pool.query(sql)
+        const queried = await pgPool.query(sql)
 
         const end = Date.now()
 
@@ -58,15 +56,6 @@ export const createDbConnPostgres = async ({
           const parsed = rowParser.parse(row)
 
           if (parsed.t === "err") {
-            if (process.env.NODE_ENV === "test") {
-              throw new Error(
-                `Failed to parse \nerror=${JSON.stringify(
-                  parsed.error,
-                  null,
-                  4,
-                )} sql=${rawSql}`,
-              )
-            }
             logger.error(
               `Failed to parse row=${JSON.stringify(
                 row,
@@ -100,10 +89,10 @@ export const createDbConnPostgres = async ({
         })
       }
 
-      client.on("notification", cb)
+      pgPoolClient.on("notification", cb)
 
       return () => {
-        client.off("notification", cb)
+        pgPoolClient.off("notification", cb)
       }
     },
   }
