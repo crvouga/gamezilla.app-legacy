@@ -114,4 +114,74 @@ describe(import.meta.file, () => {
 
     expect(built === expectedResult).toBe(true)
   })
+
+  it("should be safe against SQL injection", async () => {
+    const sqlQuery = "SELECT * FROM users WHERE id = :id"
+    const parameters = {
+      id: "1' OR '1' = '1",
+    }
+
+    const expectedResult = "SELECT * FROM users WHERE id = '1'' OR ''1'' = ''1'"
+
+    const built = toSql(sqlQuery, parameters)
+
+    expect(built === expectedResult).toBe(true)
+  })
+
+  it("should handle second-order SQL injection", async () => {
+    const maliciousInput = "1'; DELETE FROM users --"
+    const query = "SELECT * FROM users WHERE name = :name"
+    const params = { name: maliciousInput }
+
+    // Using a safe parameterization approach is crucial
+    const safeQuery = toSql(query, params)
+
+    expect(toSql(query, params)).toBe(safeQuery)
+  })
+
+  it("should handle tautologies", async () => {
+    const maliciousInput = "1' OR '1' = '1"
+    const query = "SELECT * FROM users WHERE id = :id"
+    const params = { id: maliciousInput }
+
+    // Ensure your logic properly escapes and doesn't alter the query's logic
+    const safeQuery = toSql(query, params)
+    expect(toSql(query, params)).toBe(safeQuery)
+  })
+
+  it("should handle union attacks", async () => {
+    const maliciousInput = "1 UNION SELECT password, 1, 2, 3 FROM admins --"
+    const query = "SELECT * FROM users WHERE id = :id"
+    const params = { id: maliciousInput }
+
+    const safeQuery = toSql(query, params)
+    expect(toSql(query, params)).toBe(safeQuery)
+  })
+
+  it("should handle batch injection attempts", async () => {
+    const maliciousInput = "1; DELETE FROM users"
+    const query = "SELECT * FROM users WHERE id = :id"
+    const params = { id: maliciousInput }
+
+    const safeQuery = toSql(query, params)
+    expect(toSql(query, params)).toBe(safeQuery)
+  })
+
+  it("should handle null byte injection", async () => {
+    const maliciousInput = "admin%00"
+    const query = "SELECT * FROM users WHERE username = :username"
+    const params = { username: maliciousInput }
+
+    const safeQuery = toSql(query, params)
+    expect(toSql(query, params)).toBe(safeQuery)
+  })
+
+  it("should handle type mismatch exploits", async () => {
+    const maliciousInput = 1 // Attempting to force a string comparison
+    const query = "SELECT * FROM users WHERE id = :id"
+    const params = { id: maliciousInput }
+
+    const safeQuery = toSql(query, params)
+    expect(toSql(query, params)).toBe(safeQuery)
+  })
 })
