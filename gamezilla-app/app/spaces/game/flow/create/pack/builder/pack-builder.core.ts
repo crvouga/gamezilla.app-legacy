@@ -1,6 +1,6 @@
 import { UserId } from "gamezilla-app/app/@shared/data"
-import { Result } from "gamezilla-app/@/core"
-import { p } from "gamezilla-app/@/core/parser"
+import { Result } from "gamezilla-app/@shared/core"
+import { p } from "gamezilla-app/@shared/core/parser"
 import { FlowVariantUIPlay } from "../../../@shared/flow"
 import { FlowPackPuzzleGrid } from "../../../@shared/flow-pack"
 import { FlowPack } from "../../../@shared/flow-pack/flow-pack"

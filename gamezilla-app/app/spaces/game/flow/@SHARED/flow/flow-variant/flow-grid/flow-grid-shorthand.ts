@@ -1,4 +1,4 @@
-import { NonEmpty } from "gamezilla-app/@/core"
+import { NonEmpty } from "gamezilla-app/@shared/core"
 import { Flow } from "../../flow"
 import * as FlowGrid from "./flow-grid"
 import * as FlowGridDimensions from "./flow-grid-dimensions"

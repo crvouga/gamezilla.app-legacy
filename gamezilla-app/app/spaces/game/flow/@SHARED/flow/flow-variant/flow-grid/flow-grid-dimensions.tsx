@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser"
 import { IconXMark, Slider } from "gamezilla-app/app/@shared/ui"
 
 export const Model = p.obj({

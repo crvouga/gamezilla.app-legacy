@@ -1,5 +1,5 @@
 import { UserId } from "gamezilla-app/app/@shared/data"
-import { Posix } from "gamezilla-app/@/core"
+import { Posix } from "gamezilla-app/@shared/core"
 import { FlowPuzzle } from "../../../@shared/flow-puzzle/flow-puzzle"
 import { samples } from "../../../@shared/flow/flow-variant/flow-grid/flow-grid-samples"
 

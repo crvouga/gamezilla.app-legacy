@@ -1,6 +1,6 @@
 import { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space"
 import { UserId } from "gamezilla-app/app/@shared/data"
-import { Posix, RequestResponse, Result } from "gamezilla-app/@/core"
+import { Posix, RequestResponse, Result } from "gamezilla-app/@shared/core"
 import { FlowPack } from "../../../@shared/flow-pack"
 import { FlowPuzzle } from "../../../@shared/flow-puzzle"
 import { FlowPuzzleId } from "../../../@shared/flow-puzzle/flow-puzzle-id"

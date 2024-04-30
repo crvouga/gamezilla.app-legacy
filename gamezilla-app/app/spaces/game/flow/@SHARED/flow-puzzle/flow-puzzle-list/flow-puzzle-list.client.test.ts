@@ -6,7 +6,7 @@ import {
   RequestResponse,
   TimeSpan,
   isRequesting,
-} from "gamezilla-app/@/core"
+} from "gamezilla-app/@shared/core"
 import { andThen } from "gamezilla-app/app/@shared/architecture/app-client"
 import {
   didSendToServer,

@@ -13,11 +13,11 @@ import {
   ListItemButton,
   TextField,
 } from "gamezilla-app/app/@shared/ui"
-import { isLoading, isOk, loading } from "gamezilla-app/@/core"
+import { isLoading, isOk, loading } from "gamezilla-app/@shared/core"
 import { FlowPuzzleName } from "../../../@shared/flow-puzzle/flow-puzzle-name"
 import { ClientModule } from "../../create.core"
 import { editNameValidationErrorToString } from "./puzzle-edit-name.core"
-import { VDomChildren } from "gamezilla-app/@/vdom"
+import { VDomChildren } from "gamezilla-app/@shared/vdom"
 
 //
 //

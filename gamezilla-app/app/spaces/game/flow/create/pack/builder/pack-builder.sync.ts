@@ -1,4 +1,4 @@
-import { isErr } from "gamezilla-app/@/core"
+import { isErr } from "gamezilla-app/@shared/core"
 import { FlowPack } from "../../../@shared/flow-pack/flow-pack"
 import { SyncReducer } from "../../create.core"
 import { FlowVariantUIPlay } from "../../../@shared/flow"

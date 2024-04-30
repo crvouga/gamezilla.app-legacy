@@ -1,4 +1,4 @@
-import { VDom } from "gamezilla-app/@/vdom"
+import { VDom } from "gamezilla-app/@shared/vdom"
 import { IconPlus } from "gamezilla-app/app/@shared/ui"
 
 const COLUMN_COUNT = 5

@@ -4,7 +4,13 @@ import {
   didSendToServer,
   didShowErrorSm,
 } from "gamezilla-app/app/@shared/client"
-import { Err, Ok, Posix, RequestResponse, TimeSpan } from "gamezilla-app/@/core"
+import {
+  Err,
+  Ok,
+  Posix,
+  RequestResponse,
+  TimeSpan,
+} from "gamezilla-app/@shared/core"
 import { FlowClientCtx } from "../../flow-ctx"
 import { FlowPack } from "../flow-pack"
 import { FlowPackListClient } from "./flow-pack-list.client"

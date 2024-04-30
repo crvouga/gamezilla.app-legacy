@@ -1,5 +1,5 @@
-import { Ok } from "gamezilla-app/@/core"
-import { LamportTimestamp } from "gamezilla-app/@/lamport-clock"
+import { Ok } from "gamezilla-app/@shared/core"
+import { LamportTimestamp } from "gamezilla-app/@shared/lamport-clock"
 import { EventId } from "gamezilla-app/app/spaces/@shared/event"
 import { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space"
 import { testSpaceClientCtx } from "../../../../@shared/testing/client"

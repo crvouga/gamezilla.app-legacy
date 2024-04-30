@@ -1,4 +1,4 @@
-import { Result, isErr } from "gamezilla-app/@/core"
+import { Result, isErr } from "gamezilla-app/@shared/core"
 import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2"
 import { withId } from "gamezilla-app/app/spaces/@shared/event"
 import { FlowVariant, FlowVariantDimensions } from "../../../@shared/flow"

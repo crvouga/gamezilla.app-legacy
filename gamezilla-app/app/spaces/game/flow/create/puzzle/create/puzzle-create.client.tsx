@@ -7,7 +7,7 @@ import {
   isErr,
   isLoading,
   loading,
-} from "gamezilla-app/@/core"
+} from "gamezilla-app/@shared/core"
 import {
   APP_SOUND,
   playSound,

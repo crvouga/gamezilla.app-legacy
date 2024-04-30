@@ -6,7 +6,7 @@ import {
   showToast,
 } from "gamezilla-app/app/@shared/client"
 import { Button, IconPlus } from "gamezilla-app/app/@shared/ui"
-import { Ok, loading } from "gamezilla-app/@/core"
+import { Ok, loading } from "gamezilla-app/@shared/core"
 import { ClientModule } from "../../create.core"
 
 const update: ClientModule["update"] = (input) => {

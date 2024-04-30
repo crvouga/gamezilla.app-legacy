@@ -1,7 +1,7 @@
 import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2"
 import { withId } from "gamezilla-app/app/spaces/@shared/event"
 import { UserId } from "gamezilla-app/app/@shared/data"
-import { Err, isErr } from "gamezilla-app/@/core"
+import { Err, isErr } from "gamezilla-app/@shared/core"
 import { FlowPuzzle } from "../../../@shared/flow-puzzle/flow-puzzle"
 import { IFlowPuzzleDb } from "../../../@shared/flow-puzzle/flow-puzzle-db"
 import { FlowPuzzleId } from "../../../@shared/flow-puzzle/flow-puzzle-id"

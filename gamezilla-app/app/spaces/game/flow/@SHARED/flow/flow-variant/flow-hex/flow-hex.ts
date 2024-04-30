@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser"
 import { Flow } from "../../flow"
 import * as FlowHexDimensions from "./flow-hex-dimensions"
 

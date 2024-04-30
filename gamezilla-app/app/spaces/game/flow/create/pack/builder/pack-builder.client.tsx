@@ -15,7 +15,7 @@ import {
   IconEllipsisVertical,
 } from "gamezilla-app/app/@shared/ui"
 
-import { Eff, Sub } from "gamezilla-app/@/core"
+import { Eff, Sub } from "gamezilla-app/@shared/core"
 import {
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,

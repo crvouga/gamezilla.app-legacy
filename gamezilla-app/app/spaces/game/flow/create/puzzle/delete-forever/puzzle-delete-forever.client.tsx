@@ -1,4 +1,4 @@
-import { RemoteResult, isLoading } from "gamezilla-app/@/core"
+import { RemoteResult, isLoading } from "gamezilla-app/@shared/core"
 import {
   APP_SOUND,
   playSound,

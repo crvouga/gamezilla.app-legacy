@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test"
 import { UserId } from "gamezilla-app/app/@shared/data"
 import { DbConnSql } from "gamezilla-app/app/@shared/server/db-conn-sql"
-import { Ok, Posix, Result } from "gamezilla-app/@/core"
+import { Ok, Posix, Result } from "gamezilla-app/@shared/core"
 import { FlowVariant, FlowVariantDimensions } from "../../flow/flow-variant"
 import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle-id"

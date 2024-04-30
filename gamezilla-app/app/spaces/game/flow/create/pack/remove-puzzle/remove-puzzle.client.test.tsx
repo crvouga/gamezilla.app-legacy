@@ -7,7 +7,7 @@ import {
   Posix,
   RequestResponse,
   TimeSpan,
-} from "gamezilla-app/@/core"
+} from "gamezilla-app/@shared/core"
 import { FlowVariant, FlowVariantDimensions } from "../../../@shared/flow"
 import { FlowPack } from "../../../@shared/flow-pack"
 import { FlowPuzzle } from "../../../@shared/flow-puzzle"

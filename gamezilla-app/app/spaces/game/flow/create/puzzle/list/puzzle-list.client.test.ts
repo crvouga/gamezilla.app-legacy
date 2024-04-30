@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import { LamportTimestamp } from "gamezilla-app/@/lamport-clock"
+import { LamportTimestamp } from "gamezilla-app/@shared/lamport-clock"
 import { didPlaySound } from "gamezilla-app/app/@shared/client"
 import { andThen } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2"
 import { EventId } from "gamezilla-app/app/spaces/@shared/event"

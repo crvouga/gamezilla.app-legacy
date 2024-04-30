@@ -1,4 +1,4 @@
-import { easeAttrs, eq } from "gamezilla-app/@/core"
+import { easeAttrs, eq } from "gamezilla-app/@shared/core"
 import {
   COLUMN_COUNT,
   ColumnIndex,

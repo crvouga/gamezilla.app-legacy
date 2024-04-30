@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser"
 
 export const parser = p.obj({
   x: p.num,

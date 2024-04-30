@@ -1,6 +1,6 @@
 import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2"
 import { withId } from "gamezilla-app/app/spaces/@shared/event"
-import { Result } from "gamezilla-app/@/core"
+import { Result } from "gamezilla-app/@shared/core"
 import { ServerModule } from "../../create.core"
 import { MsgSync } from "./puzzle-save-changes.core"
 

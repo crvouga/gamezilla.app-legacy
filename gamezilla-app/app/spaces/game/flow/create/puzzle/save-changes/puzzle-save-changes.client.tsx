@@ -13,7 +13,7 @@ import {
   IconArrowLeftOnRect,
   IconFloppyDisk,
 } from "gamezilla-app/app/@shared/ui"
-import { Result, isErr, isOk, loading } from "gamezilla-app/@/core"
+import { Result, isErr, isOk, loading } from "gamezilla-app/@shared/core"
 import { FlowVariantUIEdit } from "../../../@shared/flow"
 import { FlowPuzzle } from "../../../@shared/flow-puzzle/flow-puzzle"
 import {

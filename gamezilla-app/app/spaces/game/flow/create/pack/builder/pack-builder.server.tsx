@@ -1,7 +1,7 @@
 import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2"
 import { withId } from "gamezilla-app/app/spaces/@shared/event"
 import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd"
-import { Eff } from "gamezilla-app/@/core"
+import { Eff } from "gamezilla-app/@shared/core"
 
 import { FlowPackPuzzleGridServer } from "../../../@shared/flow-pack/flow-pack-puzzle-grid/flow-pack-puzzle-grid.server"
 import { ServerModule } from "../../create.core"

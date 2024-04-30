@@ -13,7 +13,7 @@ import {
   IconPlay,
   cn,
 } from "gamezilla-app/app/@shared/ui"
-import { VDom } from "gamezilla-app/@/vdom"
+import { VDom } from "gamezilla-app/@shared/vdom"
 import {
   FlowVariantUI,
   FlowVariantUIEdit,

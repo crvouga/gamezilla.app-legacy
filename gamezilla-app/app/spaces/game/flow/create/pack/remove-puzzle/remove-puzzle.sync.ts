@@ -1,4 +1,4 @@
-import { RequestResponse } from "gamezilla-app/@/core"
+import { RequestResponse } from "gamezilla-app/@shared/core"
 import { ModelSync, MsgSync } from "./remove-puzzle.core"
 
 const initSync: ModelSync = {

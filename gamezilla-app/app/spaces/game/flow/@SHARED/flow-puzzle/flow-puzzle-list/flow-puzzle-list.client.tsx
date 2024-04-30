@@ -10,7 +10,7 @@ import {
   TimeSpan,
   descend,
   isErr,
-} from "gamezilla-app/@/core"
+} from "gamezilla-app/@shared/core"
 import { FlowVariantUI } from "../../flow"
 import { FlowPuzzle } from "../flow-puzzle"
 import { ClientModule } from "./flow-puzzle-list.core"

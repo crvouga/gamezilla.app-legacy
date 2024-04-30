@@ -8,8 +8,8 @@ import {
   IconExpand,
   IconXMark,
 } from "gamezilla-app/app/@shared/ui"
-import { eq, memoize } from "gamezilla-app/@/core"
-import { History } from "gamezilla-app/@/history"
+import { eq, memoize } from "gamezilla-app/@shared/core"
+import { History } from "gamezilla-app/@shared/history"
 import {
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,

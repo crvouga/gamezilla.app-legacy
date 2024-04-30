@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test"
-import { Posix, RequestResponse, TimeSpan } from "gamezilla-app/@/core"
+import { Posix, RequestResponse, TimeSpan } from "gamezilla-app/@shared/core"
 import { andThen } from "gamezilla-app/app/@shared/architecture/app-client"
 import {
   didSendToServer,
