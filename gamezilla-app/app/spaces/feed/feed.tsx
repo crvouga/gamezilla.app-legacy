@@ -1,4 +1,4 @@
-import { Game } from "../@CHILD/game/game.client"
+import { Game } from "../game/game.client"
 import { WithEventId } from "../@SHARED/event"
 import { FeedItem } from "../@SHARED/feed-item"
 import { SpaceClientCtx } from "../@SHARED/space"

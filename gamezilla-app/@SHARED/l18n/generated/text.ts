@@ -5,7 +5,7 @@ import type { Text as Text2 } from "../../../app/auth/auth-sms/verify-sms/verify
 import type { Text as Text3 } from "../../../app/auth/auth-sms/auth-sms.l18n"
 import type { Text as Text4 } from "../../../app/spaces/spaces.l18n"
 import type { Text as Text5 } from "../../../app/spaces/modals/modals.l18n"
-import type { Text as Text6 } from "../../../app/spaces/@CHILD/game/@SHARED/game/chips.l18n"
+import type { Text as Text6 } from "../../../app/spaces/game/@SHARED/game/chips.l18n"
 import type { Text as Text7 } from "../../../app/lang/lang.l18n"
 
 export type Text = Text0 & Text1 & Text2 & Text3 & Text4 & Text5 & Text6 & Text7

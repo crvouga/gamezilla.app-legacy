@@ -5,12 +5,9 @@ import {
   showToast,
 } from "gamezilla-app/app/@SHARED/client"
 import { Button, TopBar } from "gamezilla-app/app/@SHARED/ui"
-import {
-  ViewGameHeader,
-  ViewUsersInSpaceList,
-} from "../@CHILD/game/@SHARED/game"
-import { CoverArt } from "../@CHILD/game/game-cover-art"
-import { gameNameToString } from "../@CHILD/game/game.core"
+import { ViewGameHeader, ViewUsersInSpaceList } from "../game/@SHARED/game"
+import { CoverArt } from "../game/game-cover-art"
+import { gameNameToString } from "../game/game.core"
 import { withId } from "../@SHARED/event"
 import { SpaceClientModule } from "../architecture/architecture"
 import { SpaceEvent, Spaces } from "../spaces-core"

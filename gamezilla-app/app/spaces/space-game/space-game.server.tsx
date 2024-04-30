@@ -1,5 +1,5 @@
 import { Eff, Result, Sub } from "gamezilla-app/@SHARED/core"
-import { Game } from "../@CHILD/game/game.server"
+import { Game } from "../game/game.server"
 import { WithEventId } from "../@SHARED/event"
 import { SpaceServerCmd } from "../@SHARED/space-server-cmd"
 import { SpaceServerModule } from "../architecture/space-server"

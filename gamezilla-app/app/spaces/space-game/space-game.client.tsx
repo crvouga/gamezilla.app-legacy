@@ -1,13 +1,10 @@
 import { APP_SOUND, playSound } from "gamezilla-app/app/@SHARED/client"
 import { Button } from "gamezilla-app/app/@SHARED/ui"
 import { Eff, Sub } from "gamezilla-app/@SHARED/core"
-import {
-  ViewGameHeader,
-  ViewUsersInSpaceList,
-} from "../@CHILD/game/@SHARED/game"
-import { CoverArt } from "../@CHILD/game/game-cover-art"
-import { Game } from "../@CHILD/game/game.client"
-import { gameNameList, gameNameToString } from "../@CHILD/game/game.core"
+import { ViewGameHeader, ViewUsersInSpaceList } from "../game/@SHARED/game"
+import { CoverArt } from "../game/game-cover-art"
+import { Game } from "../game/game.client"
+import { gameNameList, gameNameToString } from "../game/game.core"
 import { WithEventId, withId } from "../@SHARED/event"
 import { SpaceClientCmd } from "../@SHARED/space-client-cmd"
 import { SpaceClientModule } from "../architecture/architecture"

@@ -8,7 +8,7 @@ import {
   ViewSpaceHostChip,
   ViewUsersInSpaceList,
   ViewYouChip,
-} from "../@CHILD/game/@SHARED/game"
+} from "../game/@SHARED/game"
 import { SpaceClientCtx } from "../@SHARED/space"
 import { SpaceClientModule } from "../architecture/architecture"
 

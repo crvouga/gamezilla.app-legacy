@@ -9,7 +9,7 @@ import {
   ClientEvent,
 } from "../@SHARED/client"
 import { ServerCmd, ServerCtx, ServerEvent } from "../@SHARED/server"
-import * as Game from "./@CHILD/game/game.core"
+import * as Game from "./game/game.core"
 import { WithEventId, WithEventMeta } from "./@SHARED/event"
 import { IProfileCache } from "./profile-cache"
 import * as Space from "./spaces-core/space"

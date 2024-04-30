@@ -1,8 +1,8 @@
 import { BaseClientCtx } from "gamezilla-app/app/@SHARED/client"
 import { Avatar, cn } from "gamezilla-app/app/@SHARED/ui"
-import { ViewSpaceHostChip, ViewYouChip } from "../@CHILD/game/@SHARED/game"
-import { CoverArt } from "../@CHILD/game/game-cover-art"
-import { gameNameToString } from "../@CHILD/game/game.core"
+import { ViewSpaceHostChip, ViewYouChip } from "../game/@SHARED/game"
+import { CoverArt } from "../game/game-cover-art"
+import { gameNameToString } from "../game/game.core"
 import { SpaceState } from "../spaces-core"
 
 const MAX_AVATAR_COUNT = 3

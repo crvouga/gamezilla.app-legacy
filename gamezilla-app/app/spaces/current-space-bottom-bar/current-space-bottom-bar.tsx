@@ -5,7 +5,7 @@ import {
   pushRoute,
 } from "gamezilla-app/app/@SHARED/client"
 import { Avatar, Button } from "gamezilla-app/app/@SHARED/ui"
-import { CoverArt } from "../@CHILD/game/game-cover-art"
+import { CoverArt } from "../game/game-cover-art"
 import { SpaceClientModule } from "../architecture/architecture"
 import { Spaces } from "../spaces-core"
 import { ModelClient, MsgClient } from "../spaces.core"
