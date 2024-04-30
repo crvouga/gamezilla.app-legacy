@@ -16,7 +16,7 @@ import * as SpacesServer from "../../spaces.server"
 import { ProfileCache } from "../../profile-cache"
 import { smsNoop } from "gamezilla-app/app/@SHARED/server/sms"
 import { SpacesDb } from "../../spaces-core/space-db"
-import { GameDb } from "../../game/game-db"
+import { GameDb } from "../../space-game/space-game-db"
 import { Logger } from "gamezilla-app/app/@SHARED/server/logger"
 
 export const Fixture = () => {

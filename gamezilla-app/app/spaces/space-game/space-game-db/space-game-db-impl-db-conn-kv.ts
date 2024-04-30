@@ -1,5 +1,5 @@
 import { IDbConnKv } from "gamezilla-app/app/@SHARED/server/db-conn-kv"
-import { IGameDb } from "./game-db"
+import { IGameDb } from "./space-game-db"
 import * as Game from "../../@CHILD/game/game.core"
 import { SpaceId } from "gamezilla-app/app/@SHARED/data"
 

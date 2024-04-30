@@ -16,7 +16,7 @@ import * as Space from "./spaces-core/space"
 import { SpaceEvent } from "./spaces-core/space-event"
 import * as Spaces from "./spaces-core/spaces-core.client"
 import { ISpacesDb } from "./spaces-core/space-db"
-import { IGameDb } from "./game/game-db"
+import { IGameDb } from "./space-game/space-game-db"
 
 //
 //
