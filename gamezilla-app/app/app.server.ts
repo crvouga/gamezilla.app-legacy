@@ -15,15 +15,12 @@ import {
 import { LRUCache } from "gamezilla-app/@SHARED/least-recently-used-cache"
 import { ServerInstance } from "gamezilla-app/@SHARED/server"
 import { CODEBASE_VERSION_ID } from "gamezilla-app/public-config"
-import * as AuthServer from "./@CHILD/auth/auth.server"
-import * as LangServer from "./@CHILD/lang/lang.server"
-import * as ProfileServer from "./@CHILD/profile/profile.server"
-import * as SpaceServer from "./@CHILD/spaces/spaces.server"
-import {
-  IServerTransport,
-  ServerTransport,
-} from "./@CHILD/wire/transport-server"
-import * as WireServer from "./@CHILD/wire/wire.server"
+import * as AuthServer from "./auth/auth.server"
+import * as LangServer from "./lang/lang.server"
+import * as ProfileServer from "./profile/profile.server"
+import * as SpaceServer from "./spaces/spaces.server"
+import { IServerTransport, ServerTransport } from "./wire/transport-server"
+import * as WireServer from "./wire/wire.server"
 import { DbConnKv, IDbConnKv } from "./@SHARED/server/db-conn-kv"
 import { DbConnSql, IDbConnSql } from "./@SHARED/server/db-conn-sql"
 import { ILogger } from "./@SHARED/server/logger/logger"

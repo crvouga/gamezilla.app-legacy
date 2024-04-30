@@ -1,8 +1,8 @@
-import * as Auth from "./@CHILD/auth/auth.core"
-import * as Lang from "./@CHILD/lang/lang.core"
-import * as Profile from "./@CHILD/profile/profile.core"
-import * as Spaces from "./@CHILD/spaces/spaces.core"
-import * as Wire from "./@CHILD/wire/wire.core"
+import * as Auth from "./auth/auth.core"
+import * as Lang from "./lang/lang.core"
+import * as Profile from "./profile/profile.core"
+import * as Spaces from "./spaces/spaces.core"
+import * as Wire from "./wire/wire.core"
 import { ClientId, SessionId, UserId } from "./@SHARED/data"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 

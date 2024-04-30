@@ -31,15 +31,12 @@ import {
   SERVER_IMPL,
   SERVER_URL,
 } from "gamezilla-app/public-config"
-import * as AuthClient from "./@CHILD/auth/auth.client"
-import * as LangClient from "./@CHILD/lang/lang.client"
-import * as ProfileClient from "./@CHILD/profile/profile.client"
-import * as SpaceClient from "./@CHILD/spaces/spaces.client"
-import {
-  ClientTransport,
-  IClientTransport,
-} from "./@CHILD/wire/transport-client"
-import * as Wire from "./@CHILD/wire/wire.client"
+import * as AuthClient from "./auth/auth.client"
+import * as LangClient from "./lang/lang.client"
+import * as ProfileClient from "./profile/profile.client"
+import * as SpaceClient from "./spaces/spaces.client"
+import { ClientTransport, IClientTransport } from "./wire/transport-client"
+import * as Wire from "./wire/wire.client"
 import { getTranslator } from "./@SHARED/client/translator"
 import { IntersectionObserverEmitter } from "./@SHARED/ui/intersection-observer"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
