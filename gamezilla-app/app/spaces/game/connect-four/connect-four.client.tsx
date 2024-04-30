@@ -13,8 +13,8 @@ import {
 } from "gamezilla-app/app/@SHARED/client"
 import { Sub } from "gamezilla-app/@SHARED/core"
 import { SpaceClientCmd } from "../../@SHARED/space-client-cmd"
-import { VsBot } from "./@CHILD/vs-bot/vs-bot.client"
-import { VsUser } from "./@CHILD/vs-user/vs-user.client"
+import { VsBot } from "./vs-bot/vs-bot.client"
+import { VsUser } from "./vs-user/vs-user.client"
 import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art"
 import {
   ModelClient,

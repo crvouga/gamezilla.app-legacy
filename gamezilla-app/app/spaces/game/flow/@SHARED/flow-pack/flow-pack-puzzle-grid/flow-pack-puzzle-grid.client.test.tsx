@@ -7,7 +7,7 @@ import {
 } from "gamezilla-app/app/@SHARED/client"
 import { Posix, RequestResponse, TimeSpan } from "gamezilla-app/@SHARED/core"
 import { FlowPack } from ".."
-import { testFlowClientCtx } from "../../../@CHILD/create/@SHARED/testing/client"
+import { testFlowClientCtx } from "../../../create/@SHARED/testing/client"
 import { FlowVariant, FlowVariantDimensions } from "../../flow"
 import { FlowPuzzle } from "../../flow-puzzle"
 import { FlowPackPuzzleGridClient } from "./flow-pack-puzzle-grid.client"

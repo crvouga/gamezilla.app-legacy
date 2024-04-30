@@ -6,8 +6,8 @@ import {
 } from "gamezilla-app/app/spaces/@SHARED/space"
 import { ClientCmd } from "gamezilla-app/app/@SHARED/client"
 import { Sub } from "gamezilla-app/@SHARED/core"
-import * as VsBot from "./@CHILD/vs-bot/vs-bot.client"
-import * as VsUser from "./@CHILD/vs-user/vs-user.client"
+import * as VsBot from "./vs-bot/vs-bot.client"
+import * as VsUser from "./vs-user/vs-user.client"
 import { CoverArt } from "./@SHARED/tic-tic-toe/tic-tac-toe-ui"
 import {
   ModelClient,

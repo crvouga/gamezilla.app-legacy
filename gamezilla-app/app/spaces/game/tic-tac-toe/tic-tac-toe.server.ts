@@ -6,8 +6,8 @@ import { SpaceServerCmd } from "gamezilla-app/app/spaces/@SHARED/space-server-cm
 import { UserId } from "gamezilla-app/app/@SHARED/data"
 import { sendToClient } from "gamezilla-app/app/@SHARED/server"
 import { Eff, Result, Sub } from "gamezilla-app/@SHARED/core"
-import * as VsBot from "./@CHILD/vs-bot/vs-bot.server"
-import * as VsUser from "./@CHILD/vs-user/vs-user.server"
+import * as VsBot from "./vs-bot/vs-bot.server"
+import * as VsUser from "./vs-user/vs-user.server"
 import {
   ModelServer,
   MsgServer,

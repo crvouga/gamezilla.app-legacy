@@ -5,7 +5,7 @@ import {
 import { SpaceServerCmd } from "gamezilla-app/app/spaces/@SHARED/space-server-cmd"
 import { AppServerModule } from "gamezilla-app/app/@SHARED/architecture/app-server"
 import { sendBack } from "gamezilla-app/app/@SHARED/server"
-import { FlowServerDeps } from "../../../@CHILD/create/create.core"
+import { FlowServerDeps } from "../../../create/create.core"
 import {
   ModelServer,
   MsgServer,

@@ -4,8 +4,8 @@ import {
 } from "gamezilla-app/app/spaces/@SHARED/space"
 import { UserId } from "gamezilla-app/app/@SHARED/data"
 import { Eff, Sub } from "gamezilla-app/@SHARED/core"
-import * as VsBot from "./@CHILD/vs-bot/vs-bot.server"
-import * as VsUser from "./@CHILD/vs-user/vs-user.server"
+import * as VsBot from "./vs-bot/vs-bot.server"
+import * as VsUser from "./vs-user/vs-user.server"
 import { Mode, ModelServer, MsgServer, MsgToServer } from "./gomoku.core"
 
 //

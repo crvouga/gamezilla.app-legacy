@@ -16,8 +16,8 @@ import {
 } from "gamezilla-app/app/@SHARED/ui"
 import { Sub } from "gamezilla-app/@SHARED/core"
 import { SpaceClientCmd } from "../../@SHARED/space-client-cmd"
-import { CreateClient } from "./@CHILD/create/create.client"
-import { PlayClient } from "./@CHILD/play/play.client"
+import { CreateClient } from "./create/create.client"
+import { PlayClient } from "./play/play.client"
 import { CoverArt } from "./@SHARED/flow-cover-art"
 import { FlowClientCtx } from "./@SHARED/flow-ctx"
 import {

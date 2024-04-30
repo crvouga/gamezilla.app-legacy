@@ -7,7 +7,7 @@ import { EventId } from "../../@SHARED/event"
 import { FlowClientCtx } from "./@SHARED/flow-ctx"
 import { FlowClient } from "./flow.client"
 import { ModelClient } from "./flow.core"
-import { testFlowClientCtx } from "./@CHILD/create/@SHARED/testing/client"
+import { testFlowClientCtx } from "./create/@SHARED/testing/client"
 
 const init = {
   model: FlowClient.init,

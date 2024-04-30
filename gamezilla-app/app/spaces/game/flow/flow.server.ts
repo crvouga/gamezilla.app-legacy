@@ -5,10 +5,10 @@ import {
 } from "gamezilla-app/app/spaces/@SHARED/space"
 import { Sub } from "gamezilla-app/@SHARED/core"
 import { SpaceServerCmd } from "../../@SHARED/space-server-cmd"
-import { CreateServer } from "./@CHILD/create/create.server"
-import * as CreateGame from "./@CHILD/create/create.sync"
-import * as Play from "./@CHILD/play/play.core"
-import { PlayServer } from "./@CHILD/play/play.server"
+import { CreateServer } from "./create/create.server"
+import * as CreateGame from "./create/create.sync"
+import * as Play from "./play/play.core"
+import { PlayServer } from "./play/play.server"
 import {
   ModelServer,
   ModelSync,

@@ -7,7 +7,7 @@ import { AppServerModule } from "gamezilla-app/app/@SHARED/architecture/app-serv
 import { didSendToClient } from "gamezilla-app/app/@SHARED/server"
 import { FlowPack, FlowPackDb } from ".."
 import { testSpaceServerCtx } from "../../../../@SHARED/testing/server"
-import { FlowServerDeps } from "../../../@CHILD/create/create.core"
+import { FlowServerDeps } from "../../../create/create.core"
 import { FlowVariant, FlowVariantDimensions } from "../../flow"
 import { FlowPuzzle, FlowPuzzleDb } from "../../flow-puzzle"
 import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id"
