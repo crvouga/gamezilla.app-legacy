@@ -2,7 +2,7 @@ import { Sub } from "gamezilla-app/@SHARED/core"
 import { GameServerModule } from "../@SHARED/architecture/game-server-v2"
 import { SpaceServerCtx, SpaceServerEvent } from "../@SHARED/space"
 import { SpaceServerCmd } from "../@SHARED/space-server-cmd"
-import { FlowServer } from "./@CHILD/flow/flow.server"
+import { FlowServer } from "./flow/flow.server"
 import {
   MsgSync,
   GameName,
@@ -12,7 +12,7 @@ import {
   MsgToClient,
   MsgToServer,
 } from "./game.core"
-import { ConnectFourServer } from "./@CHILD/connect-four/connect-four.server"
+import { ConnectFourServer } from "./connect-four/connect-four.server"
 
 //
 //

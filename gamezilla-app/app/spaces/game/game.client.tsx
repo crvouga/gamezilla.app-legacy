@@ -5,8 +5,8 @@ import {
 import { Sub } from "gamezilla-app/@SHARED/core"
 import { GameClientModule } from "../@SHARED/architecture/game-client-v2"
 import { SpaceClientCmd } from "../@SHARED/space-client-cmd"
-import { ConnectFour } from "./@CHILD/connect-four/connect-four.client"
-import { FlowClient } from "./@CHILD/flow/flow.client"
+import { ConnectFour } from "./connect-four/connect-four.client"
+import { FlowClient } from "./flow/flow.client"
 import {
   GameName,
   ModelClient,
