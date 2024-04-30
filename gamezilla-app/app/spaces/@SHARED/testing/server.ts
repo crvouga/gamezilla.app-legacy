@@ -3,21 +3,21 @@ import {
   SessionId,
   SpaceId,
   UserId,
-} from "gamezilla-app/app/@SHARED/data"
-import { ServerCtx } from "gamezilla-app/app/@SHARED/server"
-import { DbConnKvHashMap } from "gamezilla-app/app/@SHARED/server/db-conn-kv/db-conn-kv-impl-hash-map"
-import { dbConnSqlNoop } from "gamezilla-app/app/@SHARED/server/db-conn-sql"
-import { Posix } from "gamezilla-app/@SHARED/core"
-import { LamportTimestamp } from "gamezilla-app/@SHARED/lamport-clock"
+} from "gamezilla-app/app/@shared/data"
+import { ServerCtx } from "gamezilla-app/app/@shared/server"
+import { DbConnKvHashMap } from "gamezilla-app/app/@shared/server/db-conn-kv/db-conn-kv-impl-hash-map"
+import { dbConnSqlNoop } from "gamezilla-app/app/@shared/server/db-conn-sql"
+import { Posix } from "gamezilla-app/@shared/core"
+import { LamportTimestamp } from "gamezilla-app/@shared/lamport-clock"
 import { EventId } from "../event"
 import { Space } from "../../spaces-core"
 import { ModelServer, ServerDeps } from "../../spaces.core"
 import * as SpacesServer from "../../spaces.server"
 import { ProfileCache } from "../../profile-cache"
-import { smsNoop } from "gamezilla-app/app/@SHARED/server/sms"
+import { smsNoop } from "gamezilla-app/app/@shared/server/sms"
 import { SpacesDb } from "../../spaces-core/space-db"
 import { GameDb } from "../../space-game/space-game-db"
-import { Logger } from "gamezilla-app/app/@SHARED/server/logger"
+import { Logger } from "gamezilla-app/app/@shared/server/logger"
 
 export const Fixture = () => {
   const ctx: ServerCtx = {

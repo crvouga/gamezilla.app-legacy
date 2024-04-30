@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test"
-import { GameClientModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
-import { didPlaySound, didShowToast } from "gamezilla-app/app/@SHARED/client"
+import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2"
+import { didPlaySound, didShowToast } from "gamezilla-app/app/@shared/client"
 import {
   clickedPackCreateButton,
   createFlowPack,

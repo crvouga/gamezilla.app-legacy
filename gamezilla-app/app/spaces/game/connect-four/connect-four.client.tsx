@@ -1,21 +1,21 @@
-import { GameMainMenu } from "gamezilla-app/app/spaces/game/@SHARED/game"
-import { GameClientModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
-import { withId } from "gamezilla-app/app/spaces/@SHARED/event"
-import { FeedItem } from "gamezilla-app/app/spaces/@SHARED/feed-item"
+import { GameMainMenu } from "gamezilla-app/app/spaces/game/@shared/game"
+import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2"
+import { withId } from "gamezilla-app/app/spaces/@shared/event"
+import { FeedItem } from "gamezilla-app/app/spaces/@shared/feed-item"
 import {
   SpaceClientCtx,
   SpaceClientEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
+} from "gamezilla-app/app/spaces/@shared/space"
 import {
   APP_SOUND,
   ClientCmd,
   playSound,
-} from "gamezilla-app/app/@SHARED/client"
-import { Sub } from "gamezilla-app/@SHARED/core"
-import { SpaceClientCmd } from "../../@SHARED/space-client-cmd"
+} from "gamezilla-app/app/@shared/client"
+import { Sub } from "gamezilla-app/@shared/core"
+import { SpaceClientCmd } from "../../@shared/space-client-cmd"
 import { VsBot } from "./vs-bot/vs-bot.client"
 import { VsUser } from "./vs-user/vs-user.client"
-import { CoverArt } from "./@SHARED/connect-four-ui/connect-four-cover-art"
+import { CoverArt } from "./@shared/connect-four-ui/connect-four-cover-art"
 import {
   ModelClient,
   ModelSync,

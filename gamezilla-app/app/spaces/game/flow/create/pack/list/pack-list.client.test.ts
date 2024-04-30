@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test"
-import { andThen } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
-import { didPlaySound } from "gamezilla-app/app/@SHARED/client"
+import { andThen } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2"
+import { didPlaySound } from "gamezilla-app/app/@shared/client"
 import {
   clickedPackItem,
   createFlowPack,

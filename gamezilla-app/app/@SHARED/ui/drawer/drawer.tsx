@@ -1,4 +1,4 @@
-import { VDom, VDomChildren } from "gamezilla-app/@SHARED/vdom"
+import { VDom, VDomChildren } from "gamezilla-app/@shared/vdom"
 import { VDOM_IMPL } from "gamezilla-app/public-config"
 import { PrivateDrawerProps } from "./drawer-shared"
 import { DrawerWebComponent } from "./drawer-web-component"

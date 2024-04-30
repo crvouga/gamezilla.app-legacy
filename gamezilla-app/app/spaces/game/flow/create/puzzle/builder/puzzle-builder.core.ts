@@ -1,10 +1,10 @@
-import { UserId } from "gamezilla-app/app/@SHARED/data"
+import { UserId } from "gamezilla-app/app/@shared/data"
 import {
   FlowVariant,
   FlowVariantUIEdit,
   FlowVariantUIPlay,
-} from "../../../@SHARED/flow"
-import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle"
+} from "../../../@shared/flow"
+import { FlowPuzzle } from "../../../@shared/flow-puzzle/flow-puzzle"
 
 export type ModelClient = {}
 

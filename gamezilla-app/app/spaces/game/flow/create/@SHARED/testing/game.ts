@@ -1,5 +1,5 @@
-import { WithEventId } from "gamezilla-app/app/spaces/@SHARED/event"
-import { FlowClientCtx } from "../../../@SHARED/flow-ctx"
+import { WithEventId } from "gamezilla-app/app/spaces/@shared/event"
+import { FlowClientCtx } from "../../../@shared/flow-ctx"
 import { MsgSync } from "../../create.core"
 import { initSync, reducer } from "../../create.sync"
 

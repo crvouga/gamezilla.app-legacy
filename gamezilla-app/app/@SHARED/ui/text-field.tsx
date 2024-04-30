@@ -1,4 +1,4 @@
-import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { VDom } from "gamezilla-app/@shared/vdom"
 import { IconXMark } from "./icon"
 import { cn } from "./ui"
 

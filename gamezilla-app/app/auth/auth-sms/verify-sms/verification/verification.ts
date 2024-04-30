@@ -1,5 +1,5 @@
-import { Posix, TimeSpan } from "gamezilla-app/@SHARED/core"
-import { Hash } from "gamezilla-app/@SHARED/hashing"
+import { Posix, TimeSpan } from "gamezilla-app/@shared/core"
+import { Hash } from "gamezilla-app/@shared/hashing"
 import { VerificationAttemptId } from "./verification-attempt-id"
 import { VerificationId } from "./verification-id"
 

@@ -1,39 +1,39 @@
-import { Eff, Posix } from "gamezilla-app/@SHARED/core"
+import { Eff, Posix } from "gamezilla-app/@shared/core"
 import {
   ClientCmd,
   ClientCtx,
   sendToServer,
-} from "gamezilla-app/app/@SHARED/client"
+} from "gamezilla-app/app/@shared/client"
 import {
   IconArrowLeftOnRect,
   IconArrowRotateLeft,
   IconRightLeft,
   LoadingBar,
-} from "gamezilla-app/app/@SHARED/ui"
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
+} from "gamezilla-app/app/@shared/ui"
+import { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space"
 import {
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
-} from "gamezilla-app/app/spaces/game/@SHARED/game"
+} from "gamezilla-app/app/spaces/game/@shared/game"
 import {
   IconBotCute,
   IconBotLevel1,
   IconBotScary,
   VsBotGame,
   VsBotSetup,
-} from "gamezilla-app/app/spaces/game/@SHARED/vs-bot"
+} from "gamezilla-app/app/spaces/game/@shared/vs-bot"
 import {
   BotLevel,
   allBotLevels,
   toStatus,
   toTurn,
-} from "../@SHARED/tic-tic-toe/tic-tac-toe"
+} from "../@shared/tic-tic-toe/tic-tac-toe"
 import {
   CoverArt,
   PlayerTypeIcon,
   ViewBoard,
   gameTheme,
-} from "../@SHARED/tic-tic-toe/tic-tac-toe-ui"
+} from "../@shared/tic-tic-toe/tic-tac-toe-ui"
 import {
   ModelClient,
   ModelServer,

@@ -2,7 +2,7 @@ import * as fs from "node:fs"
 import * as http from "node:http"
 import * as path from "node:path"
 import { HttpHandler, HttpRequest, IServer } from "../server"
-import { ILogger } from "gamezilla-app/app/@SHARED/server/logger"
+import { ILogger } from "gamezilla-app/app/@shared/server/logger"
 
 export const ServerNode = (input: { logger: ILogger }) => {
   const httpServer = new http.Server()

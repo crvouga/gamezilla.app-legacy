@@ -1,12 +1,12 @@
 import { describe, expect, it } from "bun:test"
-import { AppServerModule } from "gamezilla-app/app/@SHARED/architecture/app-server"
-import { didSendToClient } from "gamezilla-app/app/@SHARED/server"
+import { AppServerModule } from "gamezilla-app/app/@shared/architecture/app-server"
+import { didSendToClient } from "gamezilla-app/app/@shared/server"
 import {
   AuthenticatedClient,
   generateAuthClient,
-} from "gamezilla-app/app/spaces/@SHARED/testing/server"
+} from "gamezilla-app/app/spaces/@shared/testing/server"
 import { FlowPack, FlowPackDb } from ".."
-import { testSpaceServerCtx } from "../../../../@SHARED/testing/server"
+import { testSpaceServerCtx } from "../../../../@shared/testing/server"
 import { FlowServerDeps } from "../../../create/create.core"
 import { FlowVariant, FlowVariantDimensions } from "../../flow"
 import { FlowPuzzle, FlowPuzzleDb } from "../../flow-puzzle"

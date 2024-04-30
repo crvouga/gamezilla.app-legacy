@@ -1,4 +1,4 @@
-import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { VDom } from "gamezilla-app/@shared/vdom"
 import { cn } from "./ui"
 
 export const Select = <T,>({

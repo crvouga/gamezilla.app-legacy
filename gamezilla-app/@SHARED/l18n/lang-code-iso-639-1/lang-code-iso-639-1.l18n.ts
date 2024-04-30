@@ -1,4 +1,4 @@
-import { LanguageCodeISO_639_1, Translations } from "gamezilla-app/@SHARED/l18n"
+import { LanguageCodeISO_639_1, Translations } from "gamezilla-app/@shared/l18n"
 
 export type Text = {
   [code in LanguageCodeISO_639_1]: string

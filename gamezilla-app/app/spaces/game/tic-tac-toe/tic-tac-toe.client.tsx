@@ -1,12 +1,12 @@
-import { Sub } from "gamezilla-app/@SHARED/core"
-import { ClientCmd } from "gamezilla-app/app/@SHARED/client"
-import { GameClient } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client"
+import { Sub } from "gamezilla-app/@shared/core"
+import { ClientCmd } from "gamezilla-app/app/@shared/client"
+import { GameClient } from "gamezilla-app/app/spaces/@shared/architecture/game-client"
 import {
   SpaceClientCtx,
   SpaceClientEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { GameMainMenu } from "gamezilla-app/app/spaces/game/@SHARED/game"
-import { CoverArt } from "./@SHARED/tic-tic-toe/tic-tac-toe-ui"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { GameMainMenu } from "gamezilla-app/app/spaces/game/@shared/game"
+import { CoverArt } from "./@shared/tic-tic-toe/tic-tac-toe-ui"
 import {
   ModelClient,
   MsgClient,

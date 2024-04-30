@@ -1,5 +1,5 @@
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space"
+import { VDom } from "gamezilla-app/@shared/vdom"
 
 export type PlayerType = "player-one" | "player-two"
 

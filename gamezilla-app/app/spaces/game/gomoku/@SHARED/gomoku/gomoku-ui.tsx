@@ -1,5 +1,5 @@
-import { Hex } from "gamezilla-app/@SHARED/core"
-import { cn } from "gamezilla-app/app/@SHARED/ui"
+import { Hex } from "gamezilla-app/@shared/core"
+import { cn } from "gamezilla-app/app/@shared/ui"
 import {
   Board,
   Bounds,

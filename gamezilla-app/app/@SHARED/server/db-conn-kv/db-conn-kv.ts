@@ -5,9 +5,9 @@ import {
   Task,
   TimeSpan,
   isErr,
-} from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/core/parser"
-import { Parser } from "gamezilla-app/@SHARED/core/parser/parser"
+} from "gamezilla-app/@shared/core"
+import { p } from "gamezilla-app/@shared/core/parser"
+import { Parser } from "gamezilla-app/@shared/core/parser/parser"
 import { ILogger } from "../logger/logger"
 
 export type IDbConnKv = {

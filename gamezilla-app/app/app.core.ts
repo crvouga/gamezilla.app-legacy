@@ -3,7 +3,7 @@ import * as Lang from "./lang/lang.core"
 import * as Profile from "./profile/profile.core"
 import * as Spaces from "./spaces/spaces.core"
 import * as Wire from "./wire/wire.core"
-import { ClientId, SessionId, UserId } from "./@SHARED/data"
+import { ClientId, SessionId, UserId } from "./@shared/data"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 
 //

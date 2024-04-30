@@ -1,7 +1,7 @@
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { RemoteResult, Result, notAsked } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/core/parser"
-import { FlowPack } from "../../../@SHARED/flow-pack/flow-pack"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { RemoteResult, Result, notAsked } from "gamezilla-app/@/core"
+import { p } from "gamezilla-app/@/core/parser"
+import { FlowPack } from "../../../@shared/flow-pack/flow-pack"
 
 //
 //

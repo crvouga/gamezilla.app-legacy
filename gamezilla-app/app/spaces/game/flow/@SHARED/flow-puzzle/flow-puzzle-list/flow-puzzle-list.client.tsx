@@ -1,8 +1,8 @@
-import { AppClientModule } from "gamezilla-app/app/@SHARED/architecture/app-client"
-import { sendToServer, showErrSm } from "gamezilla-app/app/@SHARED/client"
-import { IconPuzzlePiece, Spinner, cn } from "gamezilla-app/app/@SHARED/ui"
-import { EmptyState } from "gamezilla-app/app/@SHARED/ui/empty-state"
-import { IntersectionObserverEmitter } from "gamezilla-app/app/@SHARED/ui/intersection-observer"
+import { AppClientModule } from "gamezilla-app/app/@shared/architecture/app-client"
+import { sendToServer, showErrSm } from "gamezilla-app/app/@shared/client"
+import { IconPuzzlePiece, Spinner, cn } from "gamezilla-app/app/@shared/ui"
+import { EmptyState } from "gamezilla-app/app/@shared/ui/empty-state"
+import { IntersectionObserverEmitter } from "gamezilla-app/app/@shared/ui/intersection-observer"
 import {
   Posix,
   RequestResponse,
@@ -10,7 +10,7 @@ import {
   TimeSpan,
   descend,
   isErr,
-} from "gamezilla-app/@SHARED/core"
+} from "gamezilla-app/@/core"
 import { FlowVariantUI } from "../../flow"
 import { FlowPuzzle } from "../flow-puzzle"
 import { ClientModule } from "./flow-puzzle-list.core"

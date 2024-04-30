@@ -1,5 +1,5 @@
-import { GameServerModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-server-v2"
-import { withId } from "gamezilla-app/app/spaces/@SHARED/event"
+import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2"
+import { withId } from "gamezilla-app/app/spaces/@shared/event"
 import { ServerModule } from "../../create.core"
 import { MsgSync } from "./puzzle-delete-forever.core"
 

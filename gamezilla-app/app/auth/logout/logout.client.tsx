@@ -1,12 +1,12 @@
-import { Ok, notAsked } from "gamezilla-app/@SHARED/core"
+import { Ok, notAsked } from "gamezilla-app/@shared/core"
 import {
   APP_SOUND,
   BaseClientCtx,
   playSound,
   sendToServer,
   showToast,
-} from "gamezilla-app/app/@SHARED/client"
-import { ConfirmationDrawer } from "gamezilla-app/app/@SHARED/ui"
+} from "gamezilla-app/app/@shared/client"
+import { ConfirmationDrawer } from "gamezilla-app/app/@shared/ui"
 import { ClientModule, ModelClient, MsgClient } from "../auth.core"
 
 //

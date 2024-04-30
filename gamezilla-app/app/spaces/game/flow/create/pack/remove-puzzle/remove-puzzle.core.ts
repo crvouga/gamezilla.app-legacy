@@ -1,10 +1,10 @@
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { Posix, RequestResponse, Result } from "gamezilla-app/@SHARED/core"
-import { FlowPack } from "../../../@SHARED/flow-pack"
-import { FlowPuzzle } from "../../../@SHARED/flow-puzzle"
-import { FlowPuzzleId } from "../../../@SHARED/flow-puzzle/flow-puzzle-id"
-import { FlowPackId } from "../../../@SHARED/flow-pack/flow-pack-id"
+import { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { Posix, RequestResponse, Result } from "gamezilla-app/@/core"
+import { FlowPack } from "../../../@shared/flow-pack"
+import { FlowPuzzle } from "../../../@shared/flow-puzzle"
+import { FlowPuzzleId } from "../../../@shared/flow-puzzle/flow-puzzle-id"
+import { FlowPackId } from "../../../@shared/flow-pack/flow-pack-id"
 
 //
 //

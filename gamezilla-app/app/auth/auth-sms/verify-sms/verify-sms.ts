@@ -1,6 +1,6 @@
-import { PhoneNumber, Task } from "gamezilla-app/@SHARED/core"
-import { Hash } from "gamezilla-app/@SHARED/hashing"
-import { Translator } from "gamezilla-app/@SHARED/l18n/generated"
+import { PhoneNumber, Task } from "gamezilla-app/@shared/core"
+import { Hash } from "gamezilla-app/@shared/hashing"
+import { Translator } from "gamezilla-app/@shared/l18n/generated"
 import { VerificationId } from "./verification"
 
 export type VerifyCodeProblem =

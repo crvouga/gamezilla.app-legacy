@@ -1,15 +1,15 @@
-import { RemoteResult, TimeSpan } from "gamezilla-app/@SHARED/core"
-import { AppClientModule } from "../@SHARED/architecture/app-client"
-import { AppServerModule } from "../@SHARED/architecture/app-server"
+import { RemoteResult, TimeSpan } from "gamezilla-app/@shared/core"
+import { AppClientModule } from "../@shared/architecture/app-client"
+import { AppServerModule } from "../@shared/architecture/app-server"
 import {
   AnonymousClientCtx,
   AuthCmd,
   ClientCmd,
   ClientCtx,
   ClientEvent,
-} from "../@SHARED/client"
-import { UserAccount } from "../@SHARED/data/account"
-import { ServerCmd, ServerCtx, ServerEvent } from "../@SHARED/server"
+} from "../@shared/client"
+import { UserAccount } from "../@shared/data/account"
+import { ServerCmd, ServerCtx, ServerEvent } from "../@shared/server"
 import * as AuthSMS from "./auth-sms/auth-sms.core"
 import { IAccountDb } from "./@SHARED/server/account-db"
 import { ISessionDb } from "./@SHARED/server/session-db"

@@ -1,7 +1,7 @@
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { Keyboard, NonEmpty, Result, dissoc } from "gamezilla-app/@SHARED/core"
-import { Maze } from "./@SHARED/maze"
-import { Direction, Position } from "./@SHARED/position"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { Keyboard, NonEmpty, Result, dissoc } from "gamezilla-app/@shared/core"
+import { Maze } from "./@shared/maze"
+import { Direction, Position } from "./@shared/position"
 
 const { Err: Err, Ok: Ok } = Result
 

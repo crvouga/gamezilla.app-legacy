@@ -1,10 +1,10 @@
-import { BaseClientCtx, ClientEvent } from "gamezilla-app/app/@SHARED/client"
+import { BaseClientCtx, ClientEvent } from "gamezilla-app/app/@shared/client"
 
-import { Eff, Sub, batchMsgs } from "gamezilla-app/@SHARED/core"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
-import { WithEventId } from "../@SHARED/event"
-import { Space } from "../@SHARED/space"
-import { SpaceClientCmd } from "../@SHARED/space-client-cmd"
+import { Eff, Sub, batchMsgs } from "gamezilla-app/@shared/core"
+import { VDom } from "gamezilla-app/@shared/vdom"
+import { WithEventId } from "../@shared/event"
+import { Space } from "../@shared/space"
+import { SpaceClientCmd } from "../@shared/space-client-cmd"
 import { SpaceEvent } from "../spaces-core"
 import {
   ModelClient,

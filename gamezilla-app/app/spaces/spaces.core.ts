@@ -1,16 +1,16 @@
-import { Profile, SpaceId, UserId } from "gamezilla-app/app/@SHARED/data"
-import { RequestResponse } from "gamezilla-app/@SHARED/core"
-import { AppClientModule } from "../@SHARED/architecture/app-client"
-import { AppServerModule } from "../@SHARED/architecture/app-server"
+import { Profile, SpaceId, UserId } from "gamezilla-app/app/@shared/data"
+import { RequestResponse } from "gamezilla-app/@shared/core"
+import { AppClientModule } from "../@shared/architecture/app-client"
+import { AppServerModule } from "../@shared/architecture/app-server"
 import {
   AnonymousClientCtx,
   ClientCmd,
   ClientCtx,
   ClientEvent,
-} from "../@SHARED/client"
-import { ServerCmd, ServerCtx, ServerEvent } from "../@SHARED/server"
+} from "../@shared/client"
+import { ServerCmd, ServerCtx, ServerEvent } from "../@shared/server"
 import * as Game from "./game/game.core"
-import { WithEventId, WithEventMeta } from "./@SHARED/event"
+import { WithEventId, WithEventMeta } from "./@shared/event"
 import { IProfileCache } from "./profile-cache"
 import * as Space from "./spaces-core/space"
 import { SpaceEvent } from "./spaces-core/space-event"

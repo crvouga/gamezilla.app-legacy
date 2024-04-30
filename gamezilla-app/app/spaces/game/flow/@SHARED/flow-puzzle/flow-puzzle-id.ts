@@ -1,6 +1,6 @@
-import { Uuid } from "gamezilla-app/@SHARED/core"
-import { Brand } from "gamezilla-app/@SHARED/core/brand"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { Uuid } from "gamezilla-app/@shared/core"
+import { Brand } from "gamezilla-app/@shared/core/brand"
+import { p } from "gamezilla-app/@shared/core/parser"
 
 export type FlowPuzzleId = Brand<string, "FlowPuzzleId">
 

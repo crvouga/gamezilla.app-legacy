@@ -1,5 +1,5 @@
-import { Browser, Eff, Sub, Time } from "gamezilla-app/@SHARED/core"
-import { PlatformCmd } from "../@SHARED/client"
+import { Browser, Eff, Sub, Time } from "gamezilla-app/@shared/core"
+import { PlatformCmd } from "../@shared/client"
 
 export type Model = {
   documentVisibilityState: DocumentVisibilityState

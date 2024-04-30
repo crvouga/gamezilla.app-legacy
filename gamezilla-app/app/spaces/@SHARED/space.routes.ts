@@ -1,6 +1,6 @@
-import { SpaceId } from "gamezilla-app/app/@SHARED/data"
-import { Result } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { SpaceId } from "gamezilla-app/app/@shared/data"
+import { Result } from "gamezilla-app/@shared/core"
+import { p } from "gamezilla-app/@shared/core/parser"
 
 export const Route = p.or(
   p.obj({

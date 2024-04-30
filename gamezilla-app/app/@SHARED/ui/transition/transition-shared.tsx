@@ -1,4 +1,4 @@
-import { PubSub } from "gamezilla-app/@SHARED/core"
+import { PubSub } from "gamezilla-app/@shared/core"
 
 export type TransitionProps = {
   id: string

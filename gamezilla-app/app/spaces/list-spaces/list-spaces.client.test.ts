@@ -1,18 +1,18 @@
 import { describe, expect, it } from "bun:test"
-import { AppClientModule } from "gamezilla-app/app/@SHARED/architecture/app-client"
+import { AppClientModule } from "gamezilla-app/app/@shared/architecture/app-client"
 import {
   APP_SOUND,
   ClientCtx,
   didPlaySound,
   didPushRoute,
-} from "gamezilla-app/app/@SHARED/client"
-import { SpaceId } from "gamezilla-app/app/@SHARED/data"
+} from "gamezilla-app/app/@shared/client"
+import { SpaceId } from "gamezilla-app/app/@shared/data"
 import {
   RequestResponse,
   TimeSpan,
   isRequesting,
   isResponseOk,
-} from "gamezilla-app/@SHARED/core"
+} from "gamezilla-app/@shared/core"
 import {
   changeRoute,
   clickSpaceCard,
@@ -21,7 +21,7 @@ import {
   elapsed,
   init,
   serverListedSpaces,
-} from "../@SHARED/testing/client"
+} from "../@shared/testing/client"
 
 const changeRouteToSpaceList = (ctx: ClientCtx) => {
   return changeRoute(ctx, { n: "spaces", t: "space-list" })

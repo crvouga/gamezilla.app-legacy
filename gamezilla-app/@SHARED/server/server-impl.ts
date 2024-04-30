@@ -1,4 +1,4 @@
-import { ILogger } from "gamezilla-app/app/@SHARED/server/logger"
+import { ILogger } from "gamezilla-app/app/@shared/server/logger"
 import { ServerBun } from "./server-impl-bun/server-impl-bun"
 import { ServerNode } from "./server-impl-node/server-impl-node"
 

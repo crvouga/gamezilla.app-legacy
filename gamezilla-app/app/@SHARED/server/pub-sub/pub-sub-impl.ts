@@ -1,4 +1,4 @@
-import { PubSub as IPubSub } from "gamezilla-app/@SHARED/core"
+import { PubSub as IPubSub } from "gamezilla-app/@shared/core"
 import * as ImplPostgres from "./pub-sub-impl-postgres"
 
 export type Impl<T> =

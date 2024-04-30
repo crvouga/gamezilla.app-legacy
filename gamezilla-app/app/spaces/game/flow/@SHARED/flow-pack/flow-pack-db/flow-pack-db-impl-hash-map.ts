@@ -1,4 +1,4 @@
-import { Ok, Result } from "gamezilla-app/@SHARED/core"
+import { Ok, Result } from "gamezilla-app/@shared/core"
 import { FlowPack } from "../flow-pack"
 import { IFlowPackDb } from "./flow-pack-db"
 

@@ -1,8 +1,8 @@
-import { UserId, Username } from "gamezilla-app/app/@SHARED/data"
-import { Posix } from "gamezilla-app/@SHARED/core"
-import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n"
-import { Translator } from "gamezilla-app/@SHARED/l18n/generated"
-import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
+import { UserId, Username } from "gamezilla-app/app/@shared/data"
+import { Posix } from "gamezilla-app/@shared/core"
+import { LanguageCodeISO_639_1 } from "gamezilla-app/@shared/l18n"
+import { Translator } from "gamezilla-app/@shared/l18n/generated"
+import { Route } from "gamezilla-app/@shared/routing/generated/routes"
 
 type Profile = {
   userId: UserId

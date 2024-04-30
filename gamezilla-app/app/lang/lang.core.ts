@@ -1,6 +1,6 @@
-import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n/lang-code-iso-639-1/lang-code-iso-639-1"
-import { TranslatorMsg } from "../@SHARED/client/translator"
-import { Posix } from "gamezilla-app/@SHARED/core"
+import { LanguageCodeISO_639_1 } from "gamezilla-app/@shared/l18n/lang-code-iso-639-1/lang-code-iso-639-1"
+import { TranslatorMsg } from "../@shared/client/translator"
+import { Posix } from "gamezilla-app/@shared/core"
 
 export type TranslationLoading = {
   startedAt: Posix

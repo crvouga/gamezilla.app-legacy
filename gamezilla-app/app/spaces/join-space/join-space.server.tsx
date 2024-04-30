@@ -1,4 +1,4 @@
-import { sendToUser } from "gamezilla-app/app/@SHARED/server"
+import { sendToUser } from "gamezilla-app/app/@shared/server"
 import { SpaceServerModule } from "../architecture/space-server"
 import { Space } from "../spaces-core"
 import { SpacesCoreServer } from "../spaces-core/spaces-core.server"

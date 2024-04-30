@@ -1,4 +1,4 @@
-import { VDomImpl } from "gamezilla-app/@SHARED/vdom"
+import { VDomImpl } from "gamezilla-app/@shared/vdom"
 import config from "../config.json"
 
 //

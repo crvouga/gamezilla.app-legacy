@@ -1,5 +1,5 @@
-import { ClientCmd } from "gamezilla-app/app/@SHARED/client"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
+import { ClientCmd } from "gamezilla-app/app/@shared/client"
+import { UserId } from "gamezilla-app/app/@shared/data"
 
 export type SpaceClientCmdTypes = {
   MsgClient: any

@@ -1,10 +1,10 @@
-import { PartyId, UserId } from "gamezilla-app/app/@SHARED/data"
+import { PartyId, UserId } from "gamezilla-app/app/@shared/data"
 import {
   RemoteResult,
   Result,
   dissoc,
   filterObject,
-} from "gamezilla-app/@SHARED/core"
+} from "gamezilla-app/@shared/core"
 import { MicLoadResult, MicUnloadResult } from "./mic"
 const { Err: Err, Ok: Ok } = Result
 

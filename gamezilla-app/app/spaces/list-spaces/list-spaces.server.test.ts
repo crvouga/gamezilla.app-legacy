@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test"
-import { AppServerModule } from "gamezilla-app/app/@SHARED/architecture/app-server"
-import { SpaceId } from "gamezilla-app/app/@SHARED/data"
-import { didSendMsgToClient } from "gamezilla-app/app/@SHARED/server"
-import { Fixture, init, userStartedSpace } from "../@SHARED/testing/server"
+import { AppServerModule } from "gamezilla-app/app/@shared/architecture/app-server"
+import { SpaceId } from "gamezilla-app/app/@shared/data"
+import { didSendMsgToClient } from "gamezilla-app/app/@shared/server"
+import { Fixture, init, userStartedSpace } from "../@shared/testing/server"
 import { ModelServer } from "../spaces.core"
 import * as SpacesServer from "../spaces.server"
 

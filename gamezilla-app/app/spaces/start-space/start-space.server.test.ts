@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test"
-import { AppServerModule } from "gamezilla-app/app/@SHARED/architecture/app-server"
-import { SpaceId } from "gamezilla-app/app/@SHARED/data"
-import { didSendMsgToClient } from "gamezilla-app/app/@SHARED/server"
+import { AppServerModule } from "gamezilla-app/app/@shared/architecture/app-server"
+import { SpaceId } from "gamezilla-app/app/@shared/data"
+import { didSendMsgToClient } from "gamezilla-app/app/@shared/server"
 import {
   generateAuthClient,
   getDeps,
   init,
   userStartedSpace,
-} from "../@SHARED/testing/server"
+} from "../@shared/testing/server"
 import { Space } from "../spaces-core"
 import { SpacesCoreServer } from "../spaces-core/spaces-core.server"
 

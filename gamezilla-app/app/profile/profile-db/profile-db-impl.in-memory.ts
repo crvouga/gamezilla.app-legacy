@@ -1,5 +1,5 @@
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { Ok } from "gamezilla-app/@SHARED/core"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { Ok } from "gamezilla-app/@shared/core"
 import { ProfileCore } from "../profile.core"
 import { ProfileDb } from "./profile-db"
 

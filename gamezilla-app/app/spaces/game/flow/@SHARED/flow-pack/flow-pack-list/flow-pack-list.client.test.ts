@@ -1,16 +1,10 @@
 import { describe, expect, it } from "bun:test"
-import { AppClientModule } from "gamezilla-app/app/@SHARED/architecture/app-client"
+import { AppClientModule } from "gamezilla-app/app/@shared/architecture/app-client"
 import {
   didSendToServer,
   didShowErrorSm,
-} from "gamezilla-app/app/@SHARED/client"
-import {
-  Err,
-  Ok,
-  Posix,
-  RequestResponse,
-  TimeSpan,
-} from "gamezilla-app/@SHARED/core"
+} from "gamezilla-app/app/@shared/client"
+import { Err, Ok, Posix, RequestResponse, TimeSpan } from "gamezilla-app/@/core"
 import { FlowClientCtx } from "../../flow-ctx"
 import { FlowPack } from "../flow-pack"
 import { FlowPackListClient } from "./flow-pack-list.client"

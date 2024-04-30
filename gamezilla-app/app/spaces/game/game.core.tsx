@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser"
 import * as ConnectFour from "./connect-four/connect-four.core"
 import * as Flow from "./flow/flow.core"
 //

@@ -1,4 +1,4 @@
-import { EmailAddress, RemoteResult, Result } from "gamezilla-app/@SHARED/core"
+import { EmailAddress, RemoteResult, Result } from "gamezilla-app/@shared/core"
 
 type SocialLoginProvider = "google"
 

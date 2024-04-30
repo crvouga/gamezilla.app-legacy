@@ -1,7 +1,7 @@
-import { IDbConnKv } from "gamezilla-app/app/@SHARED/server/db-conn-kv"
+import { IDbConnKv } from "gamezilla-app/app/@shared/server/db-conn-kv"
 import { IGameDb } from "./space-game-db"
 import * as Game from "../../game/game.core"
-import { SpaceId } from "gamezilla-app/app/@SHARED/data"
+import { SpaceId } from "gamezilla-app/app/@shared/data"
 
 const GameDb = ({ dbConnKv }: { dbConnKv: IDbConnKv }): IGameDb => {
   const bySpaceId = IDbConnKv.instance<SpaceId, Game.ModelServer>(

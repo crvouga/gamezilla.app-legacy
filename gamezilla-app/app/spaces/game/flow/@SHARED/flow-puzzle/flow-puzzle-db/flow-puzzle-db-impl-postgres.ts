@@ -1,10 +1,10 @@
-import { Pagination, UserId } from "gamezilla-app/app/@SHARED/data"
+import { Pagination, UserId } from "gamezilla-app/app/@shared/data"
 import {
   DbConnVariables,
   IDbConnSql,
-} from "gamezilla-app/app/@SHARED/server/db-conn-sql"
-import { Ok, Posix, Result, isErr } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+} from "gamezilla-app/app/@shared/server/db-conn-sql"
+import { Ok, Posix, Result, isErr } from "gamezilla-app/@shared/core"
+import { p } from "gamezilla-app/@shared/core/parser"
 import { FlowVariant } from "../../flow"
 import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle-id"

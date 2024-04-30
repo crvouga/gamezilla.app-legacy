@@ -1,5 +1,5 @@
-import { IDbConnKv } from "gamezilla-app/app/@SHARED/server/db-conn-kv"
-import { IDbConnSql } from "gamezilla-app/app/@SHARED/server/db-conn-sql"
+import { IDbConnKv } from "gamezilla-app/app/@shared/server/db-conn-kv"
+import { IDbConnSql } from "gamezilla-app/app/@shared/server/db-conn-sql"
 import { ISessionDb } from "./session-db"
 import { SessionDbInMemory } from "./session-db-impl.in-memory"
 import { SessionDbPostgres } from "./session-db-impl.postgres"

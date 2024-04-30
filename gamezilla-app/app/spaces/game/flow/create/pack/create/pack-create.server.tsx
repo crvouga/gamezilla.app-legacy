@@ -1,8 +1,8 @@
-import { GameServerModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-server-v2"
-import { sendBack } from "gamezilla-app/app/@SHARED/server"
-import { FlowPack } from "../../../@SHARED/flow-pack/flow-pack"
-import { FlowPackId } from "../../../@SHARED/flow-pack/flow-pack-id"
-import { FlowPackName } from "../../../@SHARED/flow-pack/flow-pack-name"
+import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2"
+import { sendBack } from "gamezilla-app/app/@shared/server"
+import { FlowPack } from "../../../@shared/flow-pack/flow-pack"
+import { FlowPackId } from "../../../@shared/flow-pack/flow-pack-id"
+import { FlowPackName } from "../../../@shared/flow-pack/flow-pack-name"
 import { ServerModule } from "../../create.core"
 
 const update: ServerModule["update"] = async (input) => {

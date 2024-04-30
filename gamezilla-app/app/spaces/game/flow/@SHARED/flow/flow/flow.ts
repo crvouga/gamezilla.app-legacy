@@ -1,5 +1,5 @@
-import { memoize } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { memoize } from "gamezilla-app/@shared/core"
+import { p } from "gamezilla-app/@shared/core/parser"
 
 //
 //

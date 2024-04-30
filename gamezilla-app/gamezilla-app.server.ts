@@ -1,8 +1,8 @@
 import { SERVER_IMPL, SERVER_PORT } from "gamezilla-app/public-config"
-import { ILogger, Logger } from "./app/@SHARED/server/logger"
+import { ILogger, Logger } from "./app/@shared/server/logger"
 import * as AppServer from "./app/app.server"
-import { ProgramImpure } from "./@SHARED/core/program-impure"
-import { Server } from "./@SHARED/server"
+import { ProgramImpure } from "./@shared/core/program-impure"
+import { Server } from "./@shared/server"
 
 const main = async () => {
   const logger = ILogger.prefix("app", Logger({ t: "console" }))

@@ -1,4 +1,4 @@
-import { ServerCmd } from "gamezilla-app/app/@SHARED/server"
+import { ServerCmd } from "gamezilla-app/app/@shared/server"
 
 //
 //

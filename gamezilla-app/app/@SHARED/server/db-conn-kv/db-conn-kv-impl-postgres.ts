@@ -1,5 +1,5 @@
-import { Err, Ok, Result, isErr } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { Err, Ok, Result, isErr } from "gamezilla-app/@shared/core"
+import { p } from "gamezilla-app/@shared/core/parser"
 import { IDbConnSql } from "../db-conn-sql"
 import { ILogger } from "../logger/logger"
 import { IDbConnKv } from "./db-conn-kv"

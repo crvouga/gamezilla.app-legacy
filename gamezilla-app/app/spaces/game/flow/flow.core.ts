@@ -1,10 +1,10 @@
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { GameMainMenu } from "../@SHARED/game"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { GameMainMenu } from "../@shared/game"
 import * as Create from "./create/create.core"
 import * as Play from "./play/play.core"
-import { FlowPuzzle } from "./@SHARED/flow-puzzle/flow-puzzle"
-import { FlowPuzzleId } from "./@SHARED/flow-puzzle/flow-puzzle-id"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { FlowPuzzle } from "./@shared/flow-puzzle/flow-puzzle"
+import { FlowPuzzleId } from "./@shared/flow-puzzle/flow-puzzle-id"
+import { p } from "gamezilla-app/@shared/core/parser"
 
 //
 //

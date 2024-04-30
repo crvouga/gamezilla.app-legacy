@@ -1,4 +1,4 @@
-import { Eff, Transition, easeAttrs } from "gamezilla-app/@SHARED/core"
+import { Eff, Transition, easeAttrs } from "gamezilla-app/@/core"
 import {
   COLUMN_COUNT,
   Columns,

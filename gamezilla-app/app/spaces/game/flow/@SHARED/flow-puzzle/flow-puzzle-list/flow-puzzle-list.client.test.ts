@@ -6,14 +6,14 @@ import {
   RequestResponse,
   TimeSpan,
   isRequesting,
-} from "gamezilla-app/@SHARED/core"
-import { andThen } from "gamezilla-app/app/@SHARED/architecture/app-client"
+} from "gamezilla-app/@/core"
+import { andThen } from "gamezilla-app/app/@shared/architecture/app-client"
 import {
   didSendToServer,
   didShowErrorSm,
-} from "gamezilla-app/app/@SHARED/client"
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { testSpaceClientCtx } from "../../../../@SHARED/testing/client"
+} from "gamezilla-app/app/@shared/client"
+import { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space"
+import { testSpaceClientCtx } from "../../../../@shared/testing/client"
 import { testFlowClientCtx } from "../../../create/@SHARED/testing/client"
 import { FlowVariant, FlowVariantDimensions } from "../../flow"
 import { FlowClientCtx } from "../../flow-ctx"

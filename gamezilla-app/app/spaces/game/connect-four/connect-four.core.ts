@@ -1,10 +1,10 @@
-import { WithEventMeta } from "gamezilla-app/app/spaces/@SHARED/event"
-import { SpaceCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { GameMainMenu } from "../@SHARED/game"
+import { WithEventMeta } from "gamezilla-app/app/spaces/@shared/event"
+import { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { GameMainMenu } from "../@shared/game"
 import * as VsBot from "./vs-bot/vs-bot.core"
 import * as VsUser from "./vs-user/vs-user.core"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser"
 
 //
 //

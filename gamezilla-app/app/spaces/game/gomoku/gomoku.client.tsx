@@ -1,10 +1,10 @@
-import { GameMainMenu } from "gamezilla-app/app/spaces/game/@SHARED/game"
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { ClientCtx } from "gamezilla-app/app/@SHARED/client"
-import { Eff, Sub } from "gamezilla-app/@SHARED/core"
+import { GameMainMenu } from "gamezilla-app/app/spaces/game/@shared/game"
+import { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space"
+import { ClientCtx } from "gamezilla-app/app/@shared/client"
+import { Eff, Sub } from "gamezilla-app/@shared/core"
 import * as VsBot from "./vs-bot/vs-bot.client"
 import * as VsUser from "./vs-user/vs-user.client"
-import { CoverArt } from "./@SHARED/gomoku/gomoku-ui"
+import { CoverArt } from "./@shared/gomoku/gomoku-ui"
 import { ModelClient, MsgClient, ModelServer, MsgToClient } from "./gomoku.core"
 
 //

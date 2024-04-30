@@ -1,14 +1,14 @@
-import { RequestResponse } from "gamezilla-app/@SHARED/core"
-import { AppClientModule } from "gamezilla-app/app/@SHARED/architecture/app-client"
-import { AppServerModule } from "gamezilla-app/app/@SHARED/architecture/app-server"
+import { RequestResponse } from "gamezilla-app/@shared/core"
+import { AppClientModule } from "gamezilla-app/app/@shared/architecture/app-client"
+import { AppServerModule } from "gamezilla-app/app/@shared/architecture/app-server"
 import {
   SpaceClientCtx,
   SpaceClientEvent,
   SpaceServerCtx,
   SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { SpaceClientCmd } from "gamezilla-app/app/spaces/@SHARED/space-client-cmd"
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@SHARED/space-server-cmd"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { SpaceClientCmd } from "gamezilla-app/app/spaces/@shared/space-client-cmd"
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd"
 import { FlowPuzzle } from "../flow-puzzle"
 import {
   IFlowPuzzleDb,

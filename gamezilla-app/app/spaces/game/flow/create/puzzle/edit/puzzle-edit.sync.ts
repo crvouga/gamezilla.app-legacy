@@ -1,6 +1,6 @@
-import { SpaceCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle"
-import { FlowPuzzleName } from "../../../@SHARED/flow-puzzle/flow-puzzle-name"
+import { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space"
+import { FlowPuzzle } from "../../../@shared/flow-puzzle/flow-puzzle"
+import { FlowPuzzleName } from "../../../@shared/flow-puzzle/flow-puzzle-name"
 import { ModelSync, MsgSync } from "../../create.core"
 
 const reducer = ({

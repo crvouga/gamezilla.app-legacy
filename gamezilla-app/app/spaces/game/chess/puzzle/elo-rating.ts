@@ -1,5 +1,5 @@
-import { IntRange } from "gamezilla-app/@SHARED/core"
-import { Brand } from "gamezilla-app/@SHARED/core/brand"
+import { IntRange } from "gamezilla-app/@shared/core"
+import { Brand } from "gamezilla-app/@shared/core/brand"
 
 //
 //

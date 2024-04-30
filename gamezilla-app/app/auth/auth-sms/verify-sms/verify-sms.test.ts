@@ -1,20 +1,20 @@
 import { describe, expect, it } from "bun:test"
-import { getTranslator } from "gamezilla-app/app/@SHARED/client/translator"
-import { DbConnKv } from "gamezilla-app/app/@SHARED/server/db-conn-kv"
-import { SMSFake } from "gamezilla-app/app/@SHARED/server/sms/sms-impl-fake"
+import { getTranslator } from "gamezilla-app/app/@shared/client/translator"
+import { DbConnKv } from "gamezilla-app/app/@shared/server/db-conn-kv"
+import { SMSFake } from "gamezilla-app/app/@shared/server/sms/sms-impl-fake"
 import {
   PhoneNumber,
   Result,
   eq,
   isErr,
   isOk,
-} from "gamezilla-app/@SHARED/core"
-import { Hashing } from "gamezilla-app/@SHARED/hashing"
+} from "gamezilla-app/@shared/core"
+import { Hashing } from "gamezilla-app/@shared/hashing"
 import { CodeGenerator } from "./code-generator"
 import { VerificationId } from "./verification"
 import { VerificationAttemptDb, VerificationDb } from "./verification-db"
 import { VerifySMS } from "./verify-sms-impl"
-import { Logger } from "gamezilla-app/app/@SHARED/server/logger"
+import { Logger } from "gamezilla-app/app/@shared/server/logger"
 
 const Fixture = async () => {
   const sms = SMSFake()

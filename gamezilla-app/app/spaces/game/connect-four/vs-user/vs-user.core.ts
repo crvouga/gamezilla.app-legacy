@@ -1,7 +1,7 @@
-import { SpaceCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { Posix } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { Posix } from "gamezilla-app/@shared/core"
+import { p } from "gamezilla-app/@shared/core/parser"
 import {
   ColumnIndex,
   Columns,
@@ -11,7 +11,7 @@ import {
   dropDisc,
   toStatus,
   toTurn,
-} from "../@SHARED/connect-four/connect-four"
+} from "../@shared/connect-four/connect-four"
 
 //
 //

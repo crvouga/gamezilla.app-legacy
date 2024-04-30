@@ -1,4 +1,4 @@
-import * as TicTacToe from "../@SHARED/tic-tic-toe/tic-tac-toe"
+import * as TicTacToe from "../@shared/tic-tic-toe/tic-tac-toe"
 
 export type Round =
   | {

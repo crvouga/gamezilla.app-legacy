@@ -1,15 +1,15 @@
-import { ClientId, SessionId } from "gamezilla-app/app/@SHARED/data"
+import { ClientId, SessionId } from "gamezilla-app/app/@shared/data"
 import {
   ServerCmd,
   ServerCtx,
   ServerEvent,
   WireCmd,
-} from "gamezilla-app/app/@SHARED/server"
-import { Eff, isErr } from "gamezilla-app/@SHARED/core"
-import { Sub } from "gamezilla-app/@SHARED/core/sub"
-import { CappedOrderedDict } from "gamezilla-app/@SHARED/capped-ordered-dict/capped-ordered-dict"
-import { AppServerModule } from "../@SHARED/architecture/app-server"
-import { IDbConnKv } from "../@SHARED/server/db-conn-kv"
+} from "gamezilla-app/app/@shared/server"
+import { Eff, isErr } from "gamezilla-app/@shared/core"
+import { Sub } from "gamezilla-app/@shared/core/sub"
+import { CappedOrderedDict } from "gamezilla-app/@shared/capped-ordered-dict/capped-ordered-dict"
+import { AppServerModule } from "../@shared/architecture/app-server"
+import { IDbConnKv } from "../@shared/server/db-conn-kv"
 import { IServerTransport } from "./transport-server"
 import { IWireSessionDb, WireSessionDb } from "./wire-session-db"
 import {

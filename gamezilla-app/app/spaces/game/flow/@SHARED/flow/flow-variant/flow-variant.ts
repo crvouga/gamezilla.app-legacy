@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser"
 import { Flow } from "../flow"
 import { FlowGrid } from "./flow-grid"
 import { FlowHex } from "./flow-hex"

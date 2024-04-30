@@ -1,4 +1,4 @@
-import { Result } from "gamezilla-app/@SHARED/core"
+import { Result } from "gamezilla-app/@shared/core"
 import { Polymorphic } from "../polymorphic-function"
 
 export type AuthProvider = {

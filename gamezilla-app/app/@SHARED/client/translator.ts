@@ -1,9 +1,9 @@
-import { PubSub } from "gamezilla-app/@SHARED/core"
-import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n"
+import { PubSub } from "gamezilla-app/@shared/core"
+import { LanguageCodeISO_639_1 } from "gamezilla-app/@shared/l18n"
 import {
   Translator,
   loadTranslator,
-} from "gamezilla-app/@SHARED/l18n/generated"
+} from "gamezilla-app/@shared/l18n/generated"
 
 const state: {
   lastLoaded: LanguageCodeISO_639_1 | null

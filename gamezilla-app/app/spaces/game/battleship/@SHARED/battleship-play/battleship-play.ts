@@ -1,4 +1,4 @@
-import { Set } from "gamezilla-app/@SHARED/core"
+import { Set } from "gamezilla-app/@shared/core"
 import { Pos2d } from "../pos-2d/pos-2d"
 
 export type Model<TPlayerType extends string> = {

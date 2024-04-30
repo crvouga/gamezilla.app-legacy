@@ -1,4 +1,4 @@
-import { IDbConnSql } from "gamezilla-app/app/@SHARED/server/db-conn-sql"
+import { IDbConnSql } from "gamezilla-app/app/@shared/server/db-conn-sql"
 import { IAccountDb } from "./account-db"
 import { AccountDbInMemory } from "./account-db-impl-in-memory"
 import { AccountDbPostgres } from "./account-db-impl-postgres"

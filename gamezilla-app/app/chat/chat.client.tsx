@@ -1,6 +1,6 @@
-import { ClientCtx, ClientEvent } from "gamezilla-app/app/@SHARED/client"
-import { Browser, Eff, pipe } from "gamezilla-app/@SHARED/core"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { ClientCtx, ClientEvent } from "gamezilla-app/app/@shared/client"
+import { Browser, Eff, pipe } from "gamezilla-app/@shared/core"
+import { VDom } from "gamezilla-app/@shared/vdom"
 import { ModelClient, MsgClient, MsgToClient } from "./chat.core"
 
 //

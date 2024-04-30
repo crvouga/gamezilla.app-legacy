@@ -1,7 +1,7 @@
-import { ProfileAvatar, UserId, Username } from "gamezilla-app/app/@SHARED/data"
-import { IDbConnSql } from "gamezilla-app/app/@SHARED/server/db-conn-sql"
-import { Err, Ok, Result, isErr } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { ProfileAvatar, UserId, Username } from "gamezilla-app/app/@shared/data"
+import { IDbConnSql } from "gamezilla-app/app/@shared/server/db-conn-sql"
+import { Err, Ok, Result, isErr } from "gamezilla-app/@shared/core"
+import { p } from "gamezilla-app/@shared/core/parser"
 import { ProfileCore } from "../profile.core"
 import { ProfileDb } from "./profile-db"
 

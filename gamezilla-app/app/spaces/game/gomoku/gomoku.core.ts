@@ -1,5 +1,5 @@
-import { Result } from "gamezilla-app/@SHARED/core"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
+import { Result } from "gamezilla-app/@shared/core"
+import { UserId } from "gamezilla-app/app/@shared/data"
 import * as VsBot from "./vs-bot/vs-bot.core"
 import * as VsUser from "./vs-user/vs-user.core"
 

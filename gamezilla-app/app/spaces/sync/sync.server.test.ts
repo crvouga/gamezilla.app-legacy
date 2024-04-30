@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test"
-import { AppServerModule } from "gamezilla-app/app/@SHARED/architecture/app-server"
-import { SpaceId } from "gamezilla-app/app/@SHARED/data"
-import { didSendMsgToClient } from "gamezilla-app/app/@SHARED/server"
+import { AppServerModule } from "gamezilla-app/app/@shared/architecture/app-server"
+import { SpaceId } from "gamezilla-app/app/@shared/data"
+import { didSendMsgToClient } from "gamezilla-app/app/@shared/server"
 import {
   authenticatedClientConnected,
   clientSync,
@@ -9,8 +9,8 @@ import {
   getDeps,
   init,
   userStartedSpace,
-} from "../@SHARED/testing/server"
-import { makeSpace } from "../@SHARED/testing/shared"
+} from "../@shared/testing/server"
+import { makeSpace } from "../@shared/testing/shared"
 
 describe(import.meta.file, () => {
   it("should send user's space when they connect to the server", async () => {

@@ -1,4 +1,4 @@
-import { Ok, PhoneNumber } from "gamezilla-app/@SHARED/core"
+import { Ok, PhoneNumber } from "gamezilla-app/@shared/core"
 import { ISMS } from "./sms"
 
 export const SMSFake = (): ISMS & {

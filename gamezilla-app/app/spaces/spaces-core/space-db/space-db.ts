@@ -1,5 +1,5 @@
-import { SpaceId, UserId } from "gamezilla-app/app/@SHARED/data"
-import { Task } from "gamezilla-app/@SHARED/core"
+import { SpaceId, UserId } from "gamezilla-app/app/@shared/data"
+import { Task } from "gamezilla-app/@shared/core"
 import * as Space from "../space"
 
 export type ISpacesDb = {

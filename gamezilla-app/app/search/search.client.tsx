@@ -2,10 +2,10 @@ import {
   ClientCmd,
   ClientEvent,
   sendToServer,
-} from "gamezilla-app/app/@SHARED/client"
-import { IconMagnifyingGlass, IconXMark } from "gamezilla-app/app/@SHARED/ui"
-import { Browser, Eff, matchSort, pipe } from "gamezilla-app/@SHARED/core"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
+} from "gamezilla-app/app/@shared/client"
+import { IconMagnifyingGlass, IconXMark } from "gamezilla-app/app/@shared/ui"
+import { Browser, Eff, matchSort, pipe } from "gamezilla-app/@shared/core"
+import { VDom } from "gamezilla-app/@shared/vdom"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./search.core"
 
 //

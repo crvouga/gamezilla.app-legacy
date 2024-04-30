@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser"
 import { FlowGridDimensions } from "./flow-grid"
 import { FlowHexDimensions } from "./flow-hex"
 import { FlowTriDimensions } from "./flow-tri"

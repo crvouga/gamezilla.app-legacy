@@ -1,7 +1,7 @@
 import {
   DbConnKv,
   IDbConnKv,
-} from "gamezilla-app/app/@SHARED/server/db-conn-kv"
+} from "gamezilla-app/app/@shared/server/db-conn-kv"
 import { IWireSessionDb } from "./wire-session-db"
 import { WireSessionDbKv } from "./wire-session-db-impl-db-kv"
 

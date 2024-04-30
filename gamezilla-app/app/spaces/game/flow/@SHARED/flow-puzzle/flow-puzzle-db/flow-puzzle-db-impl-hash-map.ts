@@ -1,4 +1,4 @@
-import { Err, isErr, Ok } from "gamezilla-app/@SHARED/core"
+import { Err, isErr, Ok } from "gamezilla-app/@shared/core"
 import { FlowPuzzle } from "../flow-puzzle"
 import { IFlowPuzzleDb } from "./flow-puzzle-db"
 

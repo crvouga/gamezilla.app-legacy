@@ -1,5 +1,5 @@
-import { SpaceId, UserId } from "gamezilla-app/app/@SHARED/data"
-import { pipe } from "gamezilla-app/@SHARED/core"
+import { SpaceId, UserId } from "gamezilla-app/app/@shared/data"
+import { pipe } from "gamezilla-app/@shared/core"
 import { withId } from "../event"
 import { Space } from "../../spaces-core"
 

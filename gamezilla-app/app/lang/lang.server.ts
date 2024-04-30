@@ -1,6 +1,6 @@
-import { Sub } from "gamezilla-app/@SHARED/core"
-import { AppServerModule } from "../@SHARED/architecture/app-server"
-import { ServerCmd, ServerCtx, ServerEvent } from "../@SHARED/server"
+import { Sub } from "gamezilla-app/@shared/core"
+import { AppServerModule } from "../@shared/architecture/app-server"
+import { ServerCmd, ServerCtx, ServerEvent } from "../@shared/server"
 import { MsgServer, MsgToClient, MsgToServer } from "./lang.core"
 
 type Module = AppServerModule<{

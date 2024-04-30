@@ -1,9 +1,9 @@
-import { ClientId, SessionId, UserId } from "gamezilla-app/app/@SHARED/data"
-import { ServerCtx, ServerEvent } from "gamezilla-app/app/@SHARED/server"
-import { Eff, Sub } from "gamezilla-app/@SHARED/core"
-import { WithEventId } from "../@SHARED/event"
-import { Space } from "../@SHARED/space"
-import { SpaceServerCmd } from "../@SHARED/space-server-cmd"
+import { ClientId, SessionId, UserId } from "gamezilla-app/app/@shared/data"
+import { ServerCtx, ServerEvent } from "gamezilla-app/app/@shared/server"
+import { Eff, Sub } from "gamezilla-app/@shared/core"
+import { WithEventId } from "../@shared/event"
+import { Space } from "../@shared/space"
+import { SpaceServerCmd } from "../@shared/space-server-cmd"
 import { SpaceEvent } from "../spaces-core"
 import {
   ModelServer,

@@ -1,14 +1,14 @@
-import { AppServerModule } from "gamezilla-app/app/@SHARED/architecture/app-server"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { UserAccount } from "gamezilla-app/app/@SHARED/data/account"
+import { AppServerModule } from "gamezilla-app/app/@shared/architecture/app-server"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { UserAccount } from "gamezilla-app/app/@shared/data/account"
 import {
   ServerCmd,
   ServerCtx,
   ServerEvent,
   sendToClient,
-} from "gamezilla-app/app/@SHARED/server"
-import { Err, Ok, Posix, Result, Sub, isErr } from "gamezilla-app/@SHARED/core"
-import { Hash, Hashing } from "gamezilla-app/@SHARED/hashing"
+} from "gamezilla-app/app/@shared/server"
+import { Err, Ok, Posix, Result, Sub, isErr } from "gamezilla-app/@shared/core"
+import { Hash, Hashing } from "gamezilla-app/@shared/hashing"
 import { IAccountDb } from "../@SHARED/server/account-db"
 import { AccountDb } from "../@SHARED/server/account-db/account-db-impl"
 import { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.core"

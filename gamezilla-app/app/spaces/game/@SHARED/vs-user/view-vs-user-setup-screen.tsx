@@ -1,13 +1,13 @@
-import { UserId } from "gamezilla-app/app/@SHARED/data"
+import { UserId } from "gamezilla-app/app/@shared/data"
 import {
   IconArrowLeftOnRect,
   IconQuestionMark,
   Avatar,
   Button,
-} from "gamezilla-app/app/@SHARED/ui"
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
+} from "gamezilla-app/app/@shared/ui"
+import { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space"
 import { ViewGameHeader } from "../game/view-game-header"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { VDom } from "gamezilla-app/@shared/vdom"
 
 type IconProps = { className: string }
 

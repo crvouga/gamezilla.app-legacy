@@ -1,4 +1,4 @@
-import { Err, Ok } from "gamezilla-app/@SHARED/core"
+import { Err, Ok } from "gamezilla-app/@shared/core"
 import { createClient } from "redis"
 import { ILogger } from "../logger/logger"
 import { IDbConnKv } from "./db-conn-kv"

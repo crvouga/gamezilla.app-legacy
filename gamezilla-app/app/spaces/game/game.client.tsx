@@ -1,10 +1,10 @@
 import {
   SpaceClientCtx,
   SpaceClientEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { Sub } from "gamezilla-app/@SHARED/core"
-import { GameClientModule } from "../@SHARED/architecture/game-client-v2"
-import { SpaceClientCmd } from "../@SHARED/space-client-cmd"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { Sub } from "gamezilla-app/@shared/core"
+import { GameClientModule } from "../@shared/architecture/game-client-v2"
+import { SpaceClientCmd } from "../@shared/space-client-cmd"
 import { ConnectFour } from "./connect-four/connect-four.client"
 import { FlowClient } from "./flow/flow.client"
 import {

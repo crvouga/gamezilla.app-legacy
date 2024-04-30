@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test"
-import { Posix, RequestResponse, TimeSpan } from "gamezilla-app/@SHARED/core"
-import { andThen } from "gamezilla-app/app/@SHARED/architecture/app-client"
+import { Posix, RequestResponse, TimeSpan } from "gamezilla-app/@/core"
+import { andThen } from "gamezilla-app/app/@shared/architecture/app-client"
 import {
   didSendToServer,
   didShowErrorSm,
-} from "gamezilla-app/app/@SHARED/client"
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
+} from "gamezilla-app/app/@shared/client"
+import { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space"
 import { FlowPack } from ".."
 import { testFlowClientCtx } from "../../../create/@SHARED/testing/client"
 import { FlowVariant, FlowVariantDimensions } from "../../flow"

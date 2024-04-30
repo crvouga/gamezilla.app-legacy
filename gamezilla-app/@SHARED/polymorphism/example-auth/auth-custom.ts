@@ -1,4 +1,4 @@
-import { Result } from "gamezilla-app/@SHARED/core"
+import { Result } from "gamezilla-app/@shared/core"
 import { AuthProvider, signUpWithEmailAndPassword } from "./auth"
 
 type CustomAuthProvider = {

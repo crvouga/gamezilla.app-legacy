@@ -1,13 +1,13 @@
-import { ClientCtx, ClientEvent } from "gamezilla-app/app/@SHARED/client"
+import { ClientCtx, ClientEvent } from "gamezilla-app/app/@shared/client"
 import {
   ClientId,
   Profile,
   SessionId,
   SpaceId,
   UserId,
-} from "gamezilla-app/app/@SHARED/data"
-import { ServerCtx, ServerEvent } from "gamezilla-app/app/@SHARED/server"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+} from "gamezilla-app/app/@shared/data"
+import { ServerCtx, ServerEvent } from "gamezilla-app/app/@shared/server"
+import { p } from "gamezilla-app/@shared/core/parser"
 
 //
 //

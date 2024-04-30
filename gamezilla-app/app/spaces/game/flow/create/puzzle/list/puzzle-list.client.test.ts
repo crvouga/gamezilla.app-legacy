@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test"
-import { LamportTimestamp } from "gamezilla-app/@SHARED/lamport-clock"
-import { didPlaySound } from "gamezilla-app/app/@SHARED/client"
-import { andThen } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
-import { EventId } from "gamezilla-app/app/spaces/@SHARED/event"
-import { FlowClientCtx } from "../../../@SHARED/flow-ctx"
-import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle"
+import { LamportTimestamp } from "gamezilla-app/@/lamport-clock"
+import { didPlaySound } from "gamezilla-app/app/@shared/client"
+import { andThen } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2"
+import { EventId } from "gamezilla-app/app/spaces/@shared/event"
+import { FlowClientCtx } from "../../../@shared/flow-ctx"
+import { FlowPuzzle } from "../../../@shared/flow-puzzle/flow-puzzle"
 import {
   createFlowPuzzle,
   initial,

@@ -1,16 +1,16 @@
 import { describe, expect, it } from "bun:test"
-import { andThen } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
-import { didSendToServer } from "gamezilla-app/app/@SHARED/client"
+import { andThen } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2"
+import { didSendToServer } from "gamezilla-app/app/@shared/client"
 import {
   Err,
   Ok,
   Posix,
   RequestResponse,
   TimeSpan,
-} from "gamezilla-app/@SHARED/core"
-import { FlowVariant, FlowVariantDimensions } from "../../../@SHARED/flow"
-import { FlowPack } from "../../../@SHARED/flow-pack"
-import { FlowPuzzle } from "../../../@SHARED/flow-puzzle"
+} from "gamezilla-app/@/core"
+import { FlowVariant, FlowVariantDimensions } from "../../../@shared/flow"
+import { FlowPack } from "../../../@shared/flow-pack"
+import { FlowPuzzle } from "../../../@shared/flow-puzzle"
 import { testFlowClientCtx } from "../../@SHARED/testing/client"
 import { RemovePuzzleClient } from "./remove-puzzle.client"
 import {

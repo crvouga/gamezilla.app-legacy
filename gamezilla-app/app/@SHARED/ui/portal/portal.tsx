@@ -1,4 +1,4 @@
-import { createPortal, VDomChildren } from "gamezilla-app/@SHARED/vdom"
+import { createPortal, VDomChildren } from "gamezilla-app/@shared/vdom"
 
 const getExit = (portalId: string): HTMLElement | null => {
   if (typeof document === "undefined") {

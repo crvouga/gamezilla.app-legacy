@@ -1,4 +1,4 @@
-import { Polymorphic } from "gamezilla-app/@SHARED/polymorphism/polymorphic-function"
+import { Polymorphic } from "gamezilla-app/@shared/polymorphism/polymorphic-function"
 import { Pos2d } from "../pos-2d/pos-2d"
 
 export type Ship = {

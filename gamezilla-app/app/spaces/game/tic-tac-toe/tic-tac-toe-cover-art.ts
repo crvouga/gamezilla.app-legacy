@@ -1,1 +1,1 @@
-export { CoverArt } from "./@SHARED/tic-tic-toe/tic-tac-toe-ui"
+export { CoverArt } from "./@shared/tic-tic-toe/tic-tac-toe-ui"

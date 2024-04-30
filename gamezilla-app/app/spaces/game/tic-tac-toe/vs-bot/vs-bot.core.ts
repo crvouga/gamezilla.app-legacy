@@ -1,7 +1,7 @@
-import { Err, isErr, Ok, Result } from "gamezilla-app/@SHARED/core"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { SpaceCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { VsBotSetup } from "gamezilla-app/app/spaces/game/@SHARED/vs-bot"
+import { Err, isErr, Ok, Result } from "gamezilla-app/@shared/core"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space"
+import { VsBotSetup } from "gamezilla-app/app/spaces/game/@shared/vs-bot"
 import {
   BotLevel,
   emptyBoard,
@@ -11,7 +11,7 @@ import {
   Position,
   toOpposite,
   toStatus,
-} from "../@SHARED/tic-tic-toe/tic-tac-toe"
+} from "../@shared/tic-tic-toe/tic-tac-toe"
 
 //
 //

@@ -2,8 +2,8 @@ import {
   ChildrenFn,
   Minimax,
   ScoreFn,
-} from "gamezilla-app/app/spaces/game/@SHARED/minimax"
-import { Ok, Result } from "gamezilla-app/@SHARED/core"
+} from "gamezilla-app/app/spaces/game/@shared/minimax"
+import { Ok, Result } from "gamezilla-app/@shared/core"
 import {
   Columns,
   MAX_COLUMN_HEIGHT,

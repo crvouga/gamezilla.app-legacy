@@ -1,5 +1,5 @@
-import { PubSub as IPubSub } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { PubSub as IPubSub } from "gamezilla-app/@shared/core"
+import { p } from "gamezilla-app/@shared/core/parser"
 import { IDbConnSql } from "../db-conn-sql"
 import { ILogger } from "../logger/logger"
 

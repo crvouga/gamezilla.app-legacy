@@ -1,5 +1,5 @@
-import { VDom } from "gamezilla-app/@SHARED/vdom"
-import { IconPlus } from "gamezilla-app/app/@SHARED/ui"
+import { VDom } from "gamezilla-app/@/vdom"
+import { IconPlus } from "gamezilla-app/app/@shared/ui"
 
 const COLUMN_COUNT = 5
 const ROW_COUNT = 6

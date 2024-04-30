@@ -1,6 +1,6 @@
-import { Eff, Sub } from "gamezilla-app/@SHARED/core"
+import { Eff, Sub } from "gamezilla-app/@shared/core"
 import { EventMeta, WithEventId } from "../event"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { VDom } from "gamezilla-app/@shared/vdom"
 
 //
 //

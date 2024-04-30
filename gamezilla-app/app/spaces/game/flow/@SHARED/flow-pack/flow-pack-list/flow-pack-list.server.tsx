@@ -1,6 +1,6 @@
-import { sendBack } from "gamezilla-app/app/@SHARED/server"
+import { sendBack } from "gamezilla-app/app/@shared/server"
 import { ServerModule } from "./flow-pack-list.core"
-import { AppServerModule } from "gamezilla-app/app/@SHARED/architecture/app-server"
+import { AppServerModule } from "gamezilla-app/app/@shared/architecture/app-server"
 
 const update: ServerModule["update"] = async (input) => {
   return AppServerModule.andThen(

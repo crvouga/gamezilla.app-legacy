@@ -1,4 +1,4 @@
-import { IDbConnKv } from "gamezilla-app/app/@SHARED/server/db-conn-kv"
+import { IDbConnKv } from "gamezilla-app/app/@shared/server/db-conn-kv"
 import { ProfileCacheDbKv } from "./profile-cache-impl-db-kv"
 import { IProfileCache } from "./profile-cache"
 

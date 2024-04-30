@@ -1,8 +1,8 @@
-import { Err, Ok, Posix, Result, isErr } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/core/parser"
-import { UserId, UserRole } from "gamezilla-app/app/@SHARED/data"
-import { UserAccount } from "gamezilla-app/app/@SHARED/data/account"
-import { IDbConnSql } from "gamezilla-app/app/@SHARED/server/db-conn-sql"
+import { Err, Ok, Posix, Result, isErr } from "gamezilla-app/@shared/core"
+import { p } from "gamezilla-app/@shared/core/parser"
+import { UserId, UserRole } from "gamezilla-app/app/@shared/data"
+import { UserAccount } from "gamezilla-app/app/@shared/data/account"
+import { IDbConnSql } from "gamezilla-app/app/@shared/server/db-conn-sql"
 import { IAccountDb } from "./account-db"
 
 export const UserAccountRow = p.obj({

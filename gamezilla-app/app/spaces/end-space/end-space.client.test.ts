@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test"
-import { AppClientModule } from "gamezilla-app/app/@SHARED/architecture/app-client"
-import { didPlaySound, didPushRoute } from "gamezilla-app/app/@SHARED/client"
-import { SpaceId } from "gamezilla-app/app/@SHARED/data"
+import { AppClientModule } from "gamezilla-app/app/@shared/architecture/app-client"
+import { didPlaySound, didPushRoute } from "gamezilla-app/app/@shared/client"
+import { SpaceId } from "gamezilla-app/app/@shared/data"
 import {
   clickedStartSpaceButton,
   Ctx,
   init,
   userClickedEndSpaceButton,
-} from "../@SHARED/testing/client"
+} from "../@shared/testing/client"
 import { SpaceClientModule } from "../architecture/architecture"
 import { EndSpaceClient } from "./end-space.client"
 

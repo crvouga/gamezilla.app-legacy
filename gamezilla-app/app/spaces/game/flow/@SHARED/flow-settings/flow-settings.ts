@@ -1,4 +1,4 @@
-import { UserId } from "gamezilla-app/app/@SHARED/data"
+import { UserId } from "gamezilla-app/app/@shared/data"
 
 export type FlowUserSettings = {
   userId: UserId

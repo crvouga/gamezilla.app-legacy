@@ -1,4 +1,4 @@
-import { Ok } from "gamezilla-app/@SHARED/core"
+import { Ok } from "gamezilla-app/@shared/core"
 import { ILogger } from "../logger/logger"
 import { IDbConnSql } from "./db-conn-sql"
 import { DbConnPostgres } from "./db-conn-sql-impl-postgres"

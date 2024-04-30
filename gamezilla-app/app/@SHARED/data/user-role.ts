@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser"
 
 const ALL_USER_ROLES = ["super", "normal", "guest"] as const
 

@@ -1,5 +1,5 @@
-import { ClientCtx } from "gamezilla-app/app/@SHARED/client"
-import { Eff, Sub } from "gamezilla-app/@SHARED/core"
+import { ClientCtx } from "gamezilla-app/app/@shared/client"
+import { Eff, Sub } from "gamezilla-app/@shared/core"
 import {
   ModelClient,
   MsgClient,

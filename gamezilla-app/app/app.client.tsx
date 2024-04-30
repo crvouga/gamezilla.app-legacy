@@ -6,10 +6,10 @@ import {
   batchMsgs,
   eq,
   toMsgType,
-} from "gamezilla-app/@SHARED/core"
-import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n"
-import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
+} from "gamezilla-app/@shared/core"
+import { LanguageCodeISO_639_1 } from "gamezilla-app/@shared/l18n"
+import { Route } from "gamezilla-app/@shared/routing/generated/routes"
+import { VDom } from "gamezilla-app/@shared/vdom"
 import {
   APP_SOUND,
   AnonymousClientCtx,
@@ -18,21 +18,21 @@ import {
   ClientEvent,
   isAnonymous,
   preloadSound,
-} from "gamezilla-app/app/@SHARED/client"
+} from "gamezilla-app/app/@shared/client"
 import {
   IconGamepad,
   IconUserCircle,
   LoadingState,
   Portal,
   cn,
-} from "gamezilla-app/app/@SHARED/ui"
+} from "gamezilla-app/app/@shared/ui"
 import {
   CODEBASE_VERSION_ID,
   SERVER_IMPL,
   SERVER_URL,
 } from "gamezilla-app/public-config"
-import { getTranslator } from "./@SHARED/client/translator"
-import { IntersectionObserverEmitter } from "./@SHARED/ui/intersection-observer"
+import { getTranslator } from "./@shared/client/translator"
+import { IntersectionObserverEmitter } from "./@shared/ui/intersection-observer"
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
 import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core"
 import * as AuthClient from "./auth/auth.client"

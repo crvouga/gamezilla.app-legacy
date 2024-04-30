@@ -1,4 +1,4 @@
-import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
+import { Route } from "gamezilla-app/@shared/routing/generated/routes"
 import { UserAccount } from "../data/account"
 
 export type ClientEvent =

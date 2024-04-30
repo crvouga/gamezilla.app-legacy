@@ -1,4 +1,4 @@
-import { Err, Ok, PhoneNumber } from "gamezilla-app/@SHARED/core"
+import { Err, Ok, PhoneNumber } from "gamezilla-app/@shared/core"
 import twilio from "twilio"
 import { ILogger } from "../logger/logger"
 import { ISMS } from "./sms"

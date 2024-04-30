@@ -1,5 +1,5 @@
-import { ClientId, SessionId, UserId } from "gamezilla-app/app/@SHARED/data"
-import { Eff, Sub, batchMsgs } from "gamezilla-app/@SHARED/core"
+import { ClientId, SessionId, UserId } from "gamezilla-app/app/@shared/data"
+import { Eff, Sub, batchMsgs } from "gamezilla-app/@shared/core"
 
 //
 //

@@ -1,6 +1,6 @@
-import { Brand } from "gamezilla-app/@SHARED/core/brand"
-import { p } from "gamezilla-app/@SHARED/core/parser"
-import { Result } from "gamezilla-app/@SHARED/core/result"
+import { Brand } from "gamezilla-app/@shared/core/brand"
+import { p } from "gamezilla-app/@shared/core/parser"
+import { Result } from "gamezilla-app/@shared/core/result"
 
 export type SessionId = Brand<string, "SessionId">
 

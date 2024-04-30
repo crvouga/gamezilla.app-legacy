@@ -1,19 +1,19 @@
-import { withId } from "gamezilla-app/app/spaces/@SHARED/event"
-import { ClientCtx, routeChanged } from "gamezilla-app/app/@SHARED/client"
-import { getTranslator } from "gamezilla-app/app/@SHARED/client/translator"
+import { withId } from "gamezilla-app/app/spaces/@shared/event"
+import { ClientCtx, routeChanged } from "gamezilla-app/app/@shared/client"
+import { getTranslator } from "gamezilla-app/app/@shared/client/translator"
 import {
   Profile,
   ProfileAvatar,
   SpaceId,
   UserId,
   Username,
-} from "gamezilla-app/app/@SHARED/data"
-import { Posix, TimeSpan, pipe } from "gamezilla-app/@SHARED/core"
+} from "gamezilla-app/app/@shared/data"
+import { Posix, TimeSpan, pipe } from "gamezilla-app/@shared/core"
 import {
   LamportClock,
   LamportTimestamp,
-} from "gamezilla-app/@SHARED/lamport-clock"
-import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
+} from "gamezilla-app/@shared/lamport-clock"
+import { Route } from "gamezilla-app/@shared/routing/generated/routes"
 import { GameName } from "../../game/game.core"
 import { Space, SpaceEvent } from "../../spaces-core"
 import * as SpaceClient from "../../spaces.client"

@@ -1,10 +1,10 @@
-import { Eff, Err, Ok, Sub, andThen, pipe } from "gamezilla-app/@SHARED/core"
+import { Eff, Err, Ok, Sub, andThen, pipe } from "gamezilla-app/@shared/core"
 import {
   SpaceReqCtx,
   SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@SHARED/space-server-cmd"
-import { TicTacToe } from "../@SHARED/tic-tic-toe"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd"
+import { TicTacToe } from "../@shared/tic-tic-toe"
 import {
   ModelServer,
   MsgServer,

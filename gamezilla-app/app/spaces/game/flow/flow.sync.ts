@@ -1,5 +1,5 @@
-import { SpaceCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { WithEventMeta } from "../../@SHARED/event"
+import { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space"
+import { WithEventMeta } from "../../@shared/event"
 import * as Create from "./create/create.sync"
 import * as Play from "./play/play.core"
 import { ModelSync, MsgSync } from "./flow.core"

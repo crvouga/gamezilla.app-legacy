@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test"
-import { SpaceId } from "../../@SHARED/data"
+import { SpaceId } from "../../@shared/data"
 import {
   clickedGoHomeButton,
   clickedStartSpaceButton,
   Ctx,
   init,
-} from "../@SHARED/testing/client"
+} from "../@shared/testing/client"
 import { SpaceClientModule } from "../architecture/architecture"
 
 describe(import.meta.file, () => {

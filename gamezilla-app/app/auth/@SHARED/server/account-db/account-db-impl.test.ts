@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test"
-import { Posix, Result } from "gamezilla-app/@SHARED/core"
-import { Hashing } from "gamezilla-app/@SHARED/hashing"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { UserAccount } from "gamezilla-app/app/@SHARED/data/account"
-import { DbConnSql } from "gamezilla-app/app/@SHARED/server/db-conn-sql"
-import { Logger } from "gamezilla-app/app/@SHARED/server/logger"
+import { Posix, Result } from "gamezilla-app/@shared/core"
+import { Hashing } from "gamezilla-app/@shared/hashing"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { UserAccount } from "gamezilla-app/app/@shared/data/account"
+import { DbConnSql } from "gamezilla-app/app/@shared/server/db-conn-sql"
+import { Logger } from "gamezilla-app/app/@shared/server/logger"
 import { AccountDb } from "./account-db-impl"
 
 const Fixture = async () => {

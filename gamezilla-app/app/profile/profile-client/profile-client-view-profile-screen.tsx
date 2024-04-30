@@ -1,5 +1,5 @@
-import { AnonymousClientCtx, ClientCtx } from "gamezilla-app/app/@SHARED/client"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
+import { AnonymousClientCtx, ClientCtx } from "gamezilla-app/app/@shared/client"
+import { UserId } from "gamezilla-app/app/@shared/data"
 import {
   Button,
   IconArrowLeftOnRect,
@@ -8,7 +8,7 @@ import {
   Avatar,
   TopBar,
   TopBarBackButton,
-} from "gamezilla-app/app/@SHARED/ui"
+} from "gamezilla-app/app/@shared/ui"
 import { ModelClient, MsgClient } from "../profile.core"
 
 export const ViewProfileScreen = (props: {

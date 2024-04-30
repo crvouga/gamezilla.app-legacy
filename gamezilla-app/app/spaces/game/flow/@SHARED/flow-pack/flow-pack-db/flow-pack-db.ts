@@ -1,5 +1,5 @@
-import { Result } from "gamezilla-app/@SHARED/core"
-import { Paginated, Pagination, UserId } from "gamezilla-app/app/@SHARED/data"
+import { Result } from "gamezilla-app/@shared/core"
+import { Paginated, Pagination, UserId } from "gamezilla-app/app/@shared/data"
 import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id"
 import { FlowPack } from "../flow-pack"
 import { FlowPackId } from "../flow-pack-id"

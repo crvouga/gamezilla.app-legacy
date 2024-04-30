@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser"
 import * as Flow from "../flow/flow"
 import { AlgoDrawPipes } from "../flow/flow-algo"
 import * as FlowVariant from "./flow-variant"

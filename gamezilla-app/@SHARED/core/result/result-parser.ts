@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser"
 import { ResultPrivate } from "./result"
 
 export const parser = <TError, TValue>(

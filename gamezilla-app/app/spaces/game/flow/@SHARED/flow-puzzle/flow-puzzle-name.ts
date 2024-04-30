@@ -1,6 +1,6 @@
-import { getWords } from "gamezilla-app/app/@SHARED/data/words"
-import { Brand } from "gamezilla-app/@SHARED/core/brand"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { getWords } from "gamezilla-app/app/@shared/data/words"
+import { Brand } from "gamezilla-app/@shared/core/brand"
+import { p } from "gamezilla-app/@shared/core/parser"
 
 export type FlowPuzzleName = Brand<string, "FlowPuzzleName">
 

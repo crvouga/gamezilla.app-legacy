@@ -1,5 +1,5 @@
-import { isErr } from "gamezilla-app/@SHARED/core"
-import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../@SHARED/flow"
+import { isErr } from "gamezilla-app/@shared/core"
+import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../@shared/flow"
 import { SyncReducer } from "../../create.core"
 
 const reducer: SyncReducer = ({ modelSync, msgSync }) => {

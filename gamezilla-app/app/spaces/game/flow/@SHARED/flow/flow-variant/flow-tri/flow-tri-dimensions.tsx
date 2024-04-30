@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { p } from "gamezilla-app/@/core/parser"
 
 export const Model = p.obj({
   t: p.l("flow-tri"),

@@ -1,4 +1,4 @@
-import { VDomChildren } from "gamezilla-app/@SHARED/vdom"
+import { VDomChildren } from "gamezilla-app/@shared/vdom"
 import "./transition-element"
 import { TransitionProps, transitionSub } from "./transition-shared"
 

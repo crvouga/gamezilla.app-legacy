@@ -6,7 +6,7 @@ import {
 import {
   Route as Route1,
   toRoute as toRoute1,
-} from "../../../app/spaces/@SHARED/space.routes"
+} from "../../../app/spaces/@shared/space.routes"
 import {
   Route as Route2,
   toRoute as toRoute2,

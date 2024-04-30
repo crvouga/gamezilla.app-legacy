@@ -1,11 +1,11 @@
-import { SessionId, SpaceId, UserId } from "gamezilla-app/app/@SHARED/data"
-import { DbConnKvHashMap } from "gamezilla-app/app/@SHARED/server/db-conn-kv/db-conn-kv-impl-hash-map"
-import { dbConnSqlNoop } from "gamezilla-app/app/@SHARED/server/db-conn-sql"
-import { Posix } from "gamezilla-app/@SHARED/core"
-import { SpaceServerCtx } from "../../../@SHARED/space"
+import { SessionId, SpaceId, UserId } from "gamezilla-app/app/@shared/data"
+import { DbConnKvHashMap } from "gamezilla-app/app/@shared/server/db-conn-kv/db-conn-kv-impl-hash-map"
+import { dbConnSqlNoop } from "gamezilla-app/app/@shared/server/db-conn-sql"
+import { Posix } from "gamezilla-app/@shared/core"
+import { SpaceServerCtx } from "../../../@shared/space"
 
-import { smsNoop } from "gamezilla-app/app/@SHARED/server/sms"
-import { Logger } from "gamezilla-app/app/@SHARED/server/logger/logger-impl"
+import { smsNoop } from "gamezilla-app/app/@shared/server/sms"
+import { Logger } from "gamezilla-app/app/@shared/server/logger/logger-impl"
 
 const hostUserId = "test-user-id" as UserId
 

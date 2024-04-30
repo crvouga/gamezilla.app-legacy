@@ -1,11 +1,11 @@
-import { Eff, Result, Sub } from "gamezilla-app/@SHARED/core"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { sendToClient } from "gamezilla-app/app/@SHARED/server"
+import { Eff, Result, Sub } from "gamezilla-app/@shared/core"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { sendToClient } from "gamezilla-app/app/@shared/server"
 import {
   SpaceReqCtx,
   SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@SHARED/space-server-cmd"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd"
 import {
   ModelServer,
   MsgServer,

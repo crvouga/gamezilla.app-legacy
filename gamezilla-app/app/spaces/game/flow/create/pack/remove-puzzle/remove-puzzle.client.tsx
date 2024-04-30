@@ -1,13 +1,13 @@
-import { RequestResponse, isErr } from "gamezilla-app/@SHARED/core"
-import { sendToServer } from "gamezilla-app/app/@SHARED/client"
-import { IconDeleteForever, ListItemButton } from "gamezilla-app/app/@SHARED/ui"
+import { RequestResponse, isErr } from "gamezilla-app/@shared/core"
+import { sendToServer } from "gamezilla-app/app/@shared/client"
+import { IconDeleteForever, ListItemButton } from "gamezilla-app/app/@shared/ui"
 import {
   GameClientModule,
   andThen,
-} from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
-import { SpaceClientEvent } from "gamezilla-app/app/spaces/@SHARED/space"
-import { FlowClientCmd } from "../../../@SHARED/flow-ctx"
-import { FlowPack } from "../../../@SHARED/flow-pack"
+} from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2"
+import { SpaceClientEvent } from "gamezilla-app/app/spaces/@shared/space"
+import { FlowClientCmd } from "../../../@shared/flow-ctx"
+import { FlowPack } from "../../../@shared/flow-pack"
 import {
   ModelClient,
   ModelSync,

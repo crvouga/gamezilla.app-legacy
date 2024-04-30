@@ -1,5 +1,5 @@
-import { cn } from "gamezilla-app/app/@SHARED/ui"
-import { VDomChildren } from "gamezilla-app/@SHARED/vdom"
+import { cn } from "gamezilla-app/app/@shared/ui"
+import { VDomChildren } from "gamezilla-app/@shared/vdom"
 
 export const GameLayout = ({
   children,

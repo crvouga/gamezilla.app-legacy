@@ -1,5 +1,5 @@
-import { Eff, Sub } from "gamezilla-app/@SHARED/core"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { Eff, Sub } from "gamezilla-app/@shared/core"
+import { VDom } from "gamezilla-app/@shared/vdom"
 
 //
 //

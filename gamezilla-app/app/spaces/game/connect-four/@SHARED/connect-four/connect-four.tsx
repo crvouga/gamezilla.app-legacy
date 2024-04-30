@@ -5,8 +5,8 @@ import {
   eq,
   isSubset,
   unique,
-} from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+} from "gamezilla-app/@shared/core"
+import { p } from "gamezilla-app/@shared/core/parser"
 
 //
 //

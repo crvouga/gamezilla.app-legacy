@@ -1,23 +1,23 @@
-import { GameClientModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
+import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2"
 import {
   APP_SOUND,
   playSound,
   sendToServer,
   showErrSm,
   showCreatedSm,
-} from "gamezilla-app/app/@SHARED/client"
+} from "gamezilla-app/app/@shared/client"
 import {
   Button,
   Drawer,
   IconPenToSquare,
   ListItemButton,
   TextField,
-} from "gamezilla-app/app/@SHARED/ui"
-import { isLoading, isOk, loading } from "gamezilla-app/@SHARED/core"
-import { FlowPuzzleName } from "../../../@SHARED/flow-puzzle/flow-puzzle-name"
+} from "gamezilla-app/app/@shared/ui"
+import { isLoading, isOk, loading } from "gamezilla-app/@/core"
+import { FlowPuzzleName } from "../../../@shared/flow-puzzle/flow-puzzle-name"
 import { ClientModule } from "../../create.core"
 import { editNameValidationErrorToString } from "./puzzle-edit-name.core"
-import { VDomChildren } from "gamezilla-app/@SHARED/vdom"
+import { VDomChildren } from "gamezilla-app/@/vdom"
 
 //
 //

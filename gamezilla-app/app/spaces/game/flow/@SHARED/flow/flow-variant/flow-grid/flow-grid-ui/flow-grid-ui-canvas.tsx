@@ -1,5 +1,5 @@
-import { cn } from "gamezilla-app/app/@SHARED/ui"
-import { Canvas } from "gamezilla-app/app/@SHARED/ui/canvas"
+import { cn } from "gamezilla-app/app/@shared/ui"
+import { Canvas } from "gamezilla-app/app/@shared/ui/canvas"
 import { Flow, FlowUI } from "../../../flow"
 import * as FlowGrid from "../flow-grid"
 

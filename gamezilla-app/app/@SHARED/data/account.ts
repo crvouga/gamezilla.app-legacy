@@ -1,4 +1,4 @@
-import { Posix } from "gamezilla-app/@SHARED/core"
+import { Posix } from "gamezilla-app/@shared/core"
 import { UserId } from "./user-id"
 
 export type UserAccount = {

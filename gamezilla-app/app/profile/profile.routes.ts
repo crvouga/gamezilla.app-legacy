@@ -1,6 +1,6 @@
-import { Result } from "gamezilla-app/@SHARED/core"
-import { p } from "gamezilla-app/@SHARED/core/parser"
-import { UserId } from "../@SHARED/data"
+import { Result } from "gamezilla-app/@shared/core"
+import { p } from "gamezilla-app/@shared/core/parser"
+import { UserId } from "../@shared/data"
 
 const Route = p.or(
   p.obj({

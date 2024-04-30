@@ -1,7 +1,7 @@
 import { Game } from "../game/game.client"
-import { WithEventId } from "../@SHARED/event"
-import { FeedItem } from "../@SHARED/feed-item"
-import { SpaceClientCtx } from "../@SHARED/space"
+import { WithEventId } from "../@shared/event"
+import { FeedItem } from "../@shared/feed-item"
+import { SpaceClientCtx } from "../@shared/space"
 import { SpaceEvent, SpaceState, Spaces } from "../spaces-core"
 import { ModelClient, MsgClient } from "../spaces.core"
 

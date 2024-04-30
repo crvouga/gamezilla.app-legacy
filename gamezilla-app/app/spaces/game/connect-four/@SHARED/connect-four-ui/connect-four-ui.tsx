@@ -1,4 +1,4 @@
-import { Uuid } from "gamezilla-app/@SHARED/core"
+import { Uuid } from "gamezilla-app/@shared/core"
 import { PlayerType } from "../connect-four"
 import { gameTheme } from "./shared"
 

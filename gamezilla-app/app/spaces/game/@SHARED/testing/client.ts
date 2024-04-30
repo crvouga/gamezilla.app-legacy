@@ -1,12 +1,12 @@
-import { getTranslator } from "gamezilla-app/app/@SHARED/client/translator"
+import { getTranslator } from "gamezilla-app/app/@shared/client/translator"
 import {
   ProfileAvatar,
   SpaceId,
   UserId,
   Username,
-} from "gamezilla-app/app/@SHARED/data"
-import { Posix } from "gamezilla-app/@SHARED/core"
-import { SpaceClientCtx } from "../../../@SHARED/space"
+} from "gamezilla-app/app/@shared/data"
+import { Posix } from "gamezilla-app/@shared/core"
+import { SpaceClientCtx } from "../../../@shared/space"
 
 const currentUserId = "test-user-id" as UserId
 

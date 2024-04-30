@@ -1,4 +1,4 @@
-import { APP_SOUND } from "gamezilla-app/app/@SHARED/client"
+import { APP_SOUND } from "gamezilla-app/app/@shared/client"
 import {
   Button,
   Drawer,
@@ -7,13 +7,13 @@ import {
   IconArrowRotateRight,
   IconExpand,
   IconXMark,
-} from "gamezilla-app/app/@SHARED/ui"
-import { eq, memoize } from "gamezilla-app/@SHARED/core"
-import { History } from "gamezilla-app/@SHARED/history"
+} from "gamezilla-app/app/@shared/ui"
+import { eq, memoize } from "gamezilla-app/@/core"
+import { History } from "gamezilla-app/@/history"
 import {
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
-} from "../../../../@SHARED/game"
+} from "../../../../@shared/game"
 import * as Flow from "../flow/flow"
 import * as FlowUI from "../flow/flow-ui"
 import * as FlowVariant from "./flow-variant"

@@ -1,4 +1,4 @@
-import { Polymorphic } from "gamezilla-app/@SHARED/polymorphism/polymorphic-function"
+import { Polymorphic } from "gamezilla-app/@shared/polymorphism/polymorphic-function"
 
 type Torpedo = {
   type: "Torpedo"

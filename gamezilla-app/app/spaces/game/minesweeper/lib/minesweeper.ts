@@ -1,4 +1,4 @@
-import { Iter, NonNegInt, Random, Set, pipe } from "gamezilla-app/@SHARED/core"
+import { Iter, NonNegInt, Random, Set, pipe } from "gamezilla-app/@shared/core"
 import { Position } from "./position"
 
 export type Model = {

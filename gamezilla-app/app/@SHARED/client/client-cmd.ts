@@ -1,5 +1,5 @@
-import { TimeSpan, UnitInterval, eq } from "gamezilla-app/@SHARED/core"
-import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
+import { TimeSpan, UnitInterval, eq } from "gamezilla-app/@shared/core"
+import { Route } from "gamezilla-app/@shared/routing/generated/routes"
 import { Profile, UserId } from "../data"
 
 //

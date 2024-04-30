@@ -1,6 +1,6 @@
 import { Server, ServerWebSocket, WebSocketHandler } from "bun"
-import { ClientId, SessionId } from "gamezilla-app/app/@SHARED/data"
-import { ServerBun } from "gamezilla-app/@SHARED/server/server-impl-bun/server-impl-bun"
+import { ClientId, SessionId } from "gamezilla-app/app/@shared/data"
+import { ServerBun } from "gamezilla-app/@shared/server/server-impl-bun/server-impl-bun"
 import { MsgClientToMsgServer, MsgServerToMsgClient } from "../transport.core"
 import { IServerTransport, initServerTransport } from "./transport-server"
 

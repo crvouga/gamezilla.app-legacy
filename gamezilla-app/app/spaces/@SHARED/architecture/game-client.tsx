@@ -1,10 +1,10 @@
 import {
   WithEventId,
   WithEventMeta,
-} from "gamezilla-app/app/spaces/@SHARED/event"
-import { ClientCmd, ClientEvent } from "gamezilla-app/app/@SHARED/client"
-import { Eff, Sub } from "gamezilla-app/@SHARED/core"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
+} from "gamezilla-app/app/spaces/@shared/event"
+import { ClientCmd, ClientEvent } from "gamezilla-app/app/@shared/client"
+import { Eff, Sub } from "gamezilla-app/@shared/core"
+import { VDom } from "gamezilla-app/@shared/vdom"
 
 export type GameClientTypes = {
   //

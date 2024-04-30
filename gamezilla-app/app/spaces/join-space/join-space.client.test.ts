@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test"
-import { andThen } from "gamezilla-app/app/@SHARED/architecture/app-client"
-import { didShowErrorSm, didShowToast } from "gamezilla-app/app/@SHARED/client"
-import { SpaceId, UserId } from "gamezilla-app/app/@SHARED/data"
+import { andThen } from "gamezilla-app/app/@shared/architecture/app-client"
+import { didShowErrorSm, didShowToast } from "gamezilla-app/app/@shared/client"
+import { SpaceId, UserId } from "gamezilla-app/app/@shared/data"
 import {
   clickedJoinSpaceButton,
   clickedLeaveSpaceButton,
@@ -10,7 +10,7 @@ import {
   init,
   userJoinedSpace,
   userStartedSpace,
-} from "../@SHARED/testing/client"
+} from "../@shared/testing/client"
 import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {

@@ -4,9 +4,9 @@ import {
   RouteCmd,
   SoundCmd,
   playSound,
-} from "gamezilla-app/app/@SHARED/client"
-import { Browser, Eff } from "gamezilla-app/@SHARED/core"
-import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
+} from "gamezilla-app/app/@shared/client"
+import { Browser, Eff } from "gamezilla-app/@shared/core"
+import { Route } from "gamezilla-app/@shared/routing/generated/routes"
 
 //
 //

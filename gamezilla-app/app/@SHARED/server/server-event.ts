@@ -1,4 +1,4 @@
-import { ClientId, SessionId, UserId } from "gamezilla-app/app/@SHARED/data"
+import { ClientId, SessionId, UserId } from "gamezilla-app/app/@shared/data"
 import { UserAccount } from "../data/account"
 
 export type ServerEvent =

@@ -1,6 +1,6 @@
-import { LamportTimestamp } from "gamezilla-app/@SHARED/lamport-clock/lamport-timestamp"
+import { LamportTimestamp } from "gamezilla-app/@shared/lamport-clock/lamport-timestamp"
 import { EventId } from "./event-id"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser"
 
 export const EventMeta = p.obj({
   happenedAt: LamportTimestamp,

@@ -1,5 +1,5 @@
-import { Uuid } from "gamezilla-app/@SHARED/core"
-import { Brand } from "gamezilla-app/@SHARED/core/brand"
+import { Uuid } from "gamezilla-app/@shared/core"
+import { Brand } from "gamezilla-app/@shared/core/brand"
 
 export type FlowPackId = Brand<string, "FlowPackId">
 

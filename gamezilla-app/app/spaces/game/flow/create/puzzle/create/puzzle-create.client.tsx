@@ -7,15 +7,15 @@ import {
   isErr,
   isLoading,
   loading,
-} from "gamezilla-app/@SHARED/core"
+} from "gamezilla-app/@/core"
 import {
   APP_SOUND,
   playSound,
   sendToServer,
   showCreatedSm,
   showErrSm,
-} from "gamezilla-app/app/@SHARED/client"
-import { Button, IconPlus } from "gamezilla-app/app/@SHARED/ui"
+} from "gamezilla-app/app/@shared/client"
+import { Button, IconPlus } from "gamezilla-app/app/@shared/ui"
 import { ClientModule } from "../../create.core"
 
 const update: ClientModule["update"] = (input) => {

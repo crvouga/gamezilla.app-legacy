@@ -1,5 +1,5 @@
-import { SpaceId } from "gamezilla-app/app/@SHARED/data"
-import { Task } from "gamezilla-app/@SHARED/core"
+import { SpaceId } from "gamezilla-app/app/@shared/data"
+import { Task } from "gamezilla-app/@shared/core"
 import * as Game from "../../game/game.core"
 
 export type IGameDb = {

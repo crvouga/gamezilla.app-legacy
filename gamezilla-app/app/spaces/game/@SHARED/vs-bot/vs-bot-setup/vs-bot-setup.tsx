@@ -1,15 +1,15 @@
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
+import { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space"
+import { UserId } from "gamezilla-app/app/@shared/data"
 import {
   Button,
   Drawer,
   IconArrowLeftOnRect,
   IconQuestionMark,
   Avatar,
-} from "gamezilla-app/app/@SHARED/ui"
+} from "gamezilla-app/app/@shared/ui"
 import { ViewGameHeader } from "../../game/view-game-header"
 import { PlayerType, VsBotProps } from "../vs-bot"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { VDom } from "gamezilla-app/@shared/vdom"
 
 //
 //

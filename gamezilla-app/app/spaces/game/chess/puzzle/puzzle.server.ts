@@ -8,17 +8,17 @@ import {
   andThen,
   eq,
   pipe,
-} from "gamezilla-app/@SHARED/core"
-import { TimeSpan } from "gamezilla-app/@SHARED/core/time-span"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { IDbConnSql } from "gamezilla-app/app/@SHARED/server/db-conn-sql"
+} from "gamezilla-app/@shared/core"
+import { TimeSpan } from "gamezilla-app/@shared/core/time-span"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { IDbConnSql } from "gamezilla-app/app/@shared/server/db-conn-sql"
 import {
   SpaceReqCtx,
   SpaceServerCtx,
   SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@SHARED/space-server-cmd"
-import { ChessMsgSync } from "../@SHARED/chess/chess-shared"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd"
+import { ChessMsgSync } from "../@shared/chess/chess-shared"
 import { EloRating } from "./elo-rating"
 import { PuzzleDb } from "./puzzle-db"
 import {

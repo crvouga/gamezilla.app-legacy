@@ -1,4 +1,4 @@
-import { Translations } from "gamezilla-app/@SHARED/l18n"
+import { Translations } from "gamezilla-app/@shared/l18n"
 
 export type Text = {
   you: string

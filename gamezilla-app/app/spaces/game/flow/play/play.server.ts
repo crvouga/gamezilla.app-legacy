@@ -1,9 +1,9 @@
-import { GameServerModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-server-v2"
+import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2"
 import {
   SpaceServerCtx,
   SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { Sub } from "gamezilla-app/@SHARED/core"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { Sub } from "gamezilla-app/@shared/core"
 import {
   MsgSync,
   ModelSync,
@@ -12,7 +12,7 @@ import {
   MsgToClient,
   MsgToServer,
 } from "./play.core"
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@SHARED/space-server-cmd"
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd"
 
 type Module = GameServerModule<{
   Model: ModelServer

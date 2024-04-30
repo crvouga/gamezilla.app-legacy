@@ -4,10 +4,10 @@ import {
   didPushRoute,
   didSendToServer,
   didShowToast,
-} from "gamezilla-app/app/@SHARED/client"
-import { SpaceId } from "gamezilla-app/app/@SHARED/data"
-import { andThen } from "../../@SHARED/architecture/app-client"
-import { Ctx, clickedStartSpaceButton, init } from "../@SHARED/testing/client"
+} from "gamezilla-app/app/@shared/client"
+import { SpaceId } from "gamezilla-app/app/@shared/data"
+import { andThen } from "../../@shared/architecture/app-client"
+import { Ctx, clickedStartSpaceButton, init } from "../@shared/testing/client"
 import { Spaces } from "../spaces-core"
 
 describe(import.meta.file, () => {

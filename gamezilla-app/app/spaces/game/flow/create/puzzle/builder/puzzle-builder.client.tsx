@@ -2,24 +2,24 @@ import {
   GameLayout,
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
-} from "gamezilla-app/app/spaces/game/@SHARED/game"
-import { GameClientModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
-import { withId } from "gamezilla-app/app/spaces/@SHARED/event"
-import { APP_SOUND, playSound } from "gamezilla-app/app/@SHARED/client"
+} from "gamezilla-app/app/spaces/game/@shared/game"
+import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2"
+import { withId } from "gamezilla-app/app/spaces/@shared/event"
+import { APP_SOUND, playSound } from "gamezilla-app/app/@shared/client"
 import {
   Drawer,
   IconEllipsisVertical,
   IconPenToSquare,
   IconPlay,
   cn,
-} from "gamezilla-app/app/@SHARED/ui"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
+} from "gamezilla-app/app/@shared/ui"
+import { VDom } from "gamezilla-app/@/vdom"
 import {
   FlowVariantUI,
   FlowVariantUIEdit,
   FlowVariantUIPlay,
-} from "../../../@SHARED/flow"
-import { ViewProfileCard } from "../../../@SHARED/ui"
+} from "../../../@shared/flow"
+import { ViewProfileCard } from "../../../@shared/ui"
 import { ClientModule } from "../../create.core"
 import { PuzzleDeleteForeverClient } from "../delete-forever/puzzle-delete-forever.client"
 import { PuzzleEditNameClient } from "../edit/puzzle-edit-name.client"

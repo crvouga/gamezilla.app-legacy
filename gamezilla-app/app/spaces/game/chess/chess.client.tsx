@@ -1,22 +1,22 @@
-import { Eff, RemoteResult, Sub, isErr } from "gamezilla-app/@SHARED/core"
+import { Eff, RemoteResult, Sub, isErr } from "gamezilla-app/@shared/core"
 import {
   APP_SOUND,
   ClientCmd,
   playSound,
   preloadSound,
   sendToServer,
-} from "gamezilla-app/app/@SHARED/client"
-import { IconPuzzlePiece } from "gamezilla-app/app/@SHARED/ui"
-import { GameClient } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client"
+} from "gamezilla-app/app/@shared/client"
+import { IconPuzzlePiece } from "gamezilla-app/app/@shared/ui"
+import { GameClient } from "gamezilla-app/app/spaces/@shared/architecture/game-client"
 import {
   SpaceClientCtx,
   SpaceClientEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { GameMainMenu } from "gamezilla-app/app/spaces/game/@SHARED/game"
-import { GameClientModule } from "../../@SHARED/architecture/game-client-v2"
-import { SpaceClientCmd } from "../../@SHARED/space-client-cmd"
-import { CoverArt } from "./@SHARED/chess-ui"
-import { CHESS_SOUND } from "./@SHARED/chess/chess-sounds"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { GameMainMenu } from "gamezilla-app/app/spaces/game/@shared/game"
+import { GameClientModule } from "../../@shared/architecture/game-client-v2"
+import { SpaceClientCmd } from "../../@shared/space-client-cmd"
+import { CoverArt } from "./@shared/chess-ui"
+import { CHESS_SOUND } from "./@shared/chess/chess-sounds"
 import {
   ModelClient,
   ModelSync,

@@ -1,5 +1,5 @@
-import { Err, Result } from "gamezilla-app/@SHARED/core"
-import { GameMainMenu } from "../@SHARED/game"
+import { Err, Result } from "gamezilla-app/@shared/core"
+import { GameMainMenu } from "../@shared/game"
 import * as VsBot from "./vs-bot/vs-bot.core"
 import * as VsUser from "./vs-user/vs-user.core"
 

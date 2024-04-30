@@ -1,4 +1,4 @@
-import { VDomChildren } from "gamezilla-app/@SHARED/vdom"
+import { VDomChildren } from "gamezilla-app/@shared/vdom"
 
 export const IconButton = ({
   children,

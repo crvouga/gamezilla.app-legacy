@@ -1,4 +1,4 @@
-import { Err } from "gamezilla-app/@SHARED/core"
+import { Err } from "gamezilla-app/@shared/core"
 import { SocialLogin } from "./social-login"
 
 export const createSocialLogin = (): SocialLogin => {

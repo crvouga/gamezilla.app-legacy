@@ -1,5 +1,5 @@
-import { SessionId } from "gamezilla-app/app/@SHARED/data"
-import { EmailAddress } from "gamezilla-app/@SHARED/core"
+import { SessionId } from "gamezilla-app/app/@shared/data"
+import { EmailAddress } from "gamezilla-app/@shared/core"
 
 export type SocialLoginState =
   | {

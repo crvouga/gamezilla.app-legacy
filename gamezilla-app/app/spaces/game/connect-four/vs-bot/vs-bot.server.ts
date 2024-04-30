@@ -1,14 +1,14 @@
-import { GameServer } from "gamezilla-app/app/spaces/@SHARED/architecture/game-server"
-import { GameServerModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-server-v2"
-import { withId } from "gamezilla-app/app/spaces/@SHARED/event"
+import { GameServer } from "gamezilla-app/app/spaces/@shared/architecture/game-server"
+import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2"
+import { withId } from "gamezilla-app/app/spaces/@shared/event"
 import {
   SpaceServerCtx,
   SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@SHARED/space-server-cmd"
-import { Sub, Time, TimeSpan, isErr } from "gamezilla-app/@SHARED/core"
-import { ConnectFourBotWorker } from "../@SHARED/connect-four"
-import * as ConnectFour from "../@SHARED/connect-four/connect-four"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd"
+import { Sub, Time, TimeSpan, isErr } from "gamezilla-app/@shared/core"
+import { ConnectFourBotWorker } from "../@shared/connect-four"
+import * as ConnectFour from "../@shared/connect-four/connect-four"
 import {
   MsgSync,
   ModelSync,

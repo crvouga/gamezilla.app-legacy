@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test"
-import { Ok, Posix } from "gamezilla-app/@SHARED/core"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
+import { Ok, Posix } from "gamezilla-app/@/core"
+import { UserId } from "gamezilla-app/app/@shared/data"
 import { FlowPack } from "../flow-pack"
 import { FlowPackId } from "../flow-pack-id"
 import { FlowPackName } from "../flow-pack-name"

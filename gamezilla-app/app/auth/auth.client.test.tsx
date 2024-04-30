@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test"
-import { Posix } from "gamezilla-app/@SHARED/core"
-import { andThen } from "../@SHARED/architecture/app-client"
+import { Posix } from "gamezilla-app/@shared/core"
+import { andThen } from "../@shared/architecture/app-client"
 import {
   AnonymousClientCtx,
   ClientCtx,
   didPlaySound,
   didPushRoute,
-} from "../@SHARED/client"
-import { getTranslator } from "../@SHARED/client/translator"
+} from "../@shared/client"
+import { getTranslator } from "../@shared/client/translator"
 import * as AuthClient from "./auth.client"
 import * as AuthCore from "./auth.core"
 

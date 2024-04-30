@@ -1,6 +1,6 @@
-import { SessionId, UserId } from "gamezilla-app/app/@SHARED/data"
+import { SessionId, UserId } from "gamezilla-app/app/@shared/data"
 import { Client } from "../wire.core"
-import { Task } from "gamezilla-app/@SHARED/core"
+import { Task } from "gamezilla-app/@shared/core"
 
 export type IWireSessionDb = {
   clients: {

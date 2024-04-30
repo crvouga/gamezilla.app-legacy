@@ -1,10 +1,10 @@
-import { AppServerModule } from "gamezilla-app/app/@SHARED/architecture/app-server"
-import { sendBack } from "gamezilla-app/app/@SHARED/server"
+import { AppServerModule } from "gamezilla-app/app/@shared/architecture/app-server"
+import { sendBack } from "gamezilla-app/app/@shared/server"
 import {
   SpaceServerCtx,
   SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@SHARED/space-server-cmd"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd"
 import { FlowServerDeps } from "../../../create/create.core"
 import {
   ModelServer,

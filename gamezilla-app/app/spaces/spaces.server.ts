@@ -1,5 +1,5 @@
-import { Eff, batchMsgs } from "gamezilla-app/@SHARED/core"
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@SHARED/space-server-cmd"
+import { Eff, batchMsgs } from "gamezilla-app/@shared/core"
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd"
 import { Input, Output, SpaceServerModule } from "./architecture/space-server"
 import { JoinSpaceServer } from "./join-space/join-space.server"
 import { ListSpacesServer } from "./list-spaces/list-spaces.server"

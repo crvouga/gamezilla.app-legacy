@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { DbConnSql } from "gamezilla-app/app/@SHARED/server/db-conn-sql"
-import { Ok, Posix, Result } from "gamezilla-app/@SHARED/core"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { DbConnSql } from "gamezilla-app/app/@shared/server/db-conn-sql"
+import { Ok, Posix, Result } from "gamezilla-app/@/core"
 import { FlowVariant, FlowVariantDimensions } from "../../flow/flow-variant"
 import { FlowPuzzle } from "../flow-puzzle"
 import { FlowPuzzleId } from "../flow-puzzle-id"
 import { FlowPuzzleName } from "../flow-puzzle-name"
 import { FlowPuzzleDb } from "./flow-puzzle-db-impl"
-import { Logger } from "gamezilla-app/app/@SHARED/server/logger/logger-impl"
+import { Logger } from "gamezilla-app/app/@shared/server/logger/logger-impl"
 
 const randomFlowPuzzle = async (input?: {
   createdBy?: UserId

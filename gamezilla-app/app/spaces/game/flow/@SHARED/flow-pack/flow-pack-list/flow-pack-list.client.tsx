@@ -5,12 +5,12 @@ import {
   TimeSpan,
   descend,
   isErr,
-} from "gamezilla-app/@SHARED/core"
-import { AppClientModule } from "gamezilla-app/app/@SHARED/architecture/app-client"
-import { sendToServer, showErrSm } from "gamezilla-app/app/@SHARED/client"
-import { IconBox, Spinner, cn } from "gamezilla-app/app/@SHARED/ui"
-import { EmptyState } from "gamezilla-app/app/@SHARED/ui/empty-state"
-import { IntersectionObserverEmitter } from "gamezilla-app/app/@SHARED/ui/intersection-observer"
+} from "gamezilla-app/@shared/core"
+import { AppClientModule } from "gamezilla-app/app/@shared/architecture/app-client"
+import { sendToServer, showErrSm } from "gamezilla-app/app/@shared/client"
+import { IconBox, Spinner, cn } from "gamezilla-app/app/@shared/ui"
+import { EmptyState } from "gamezilla-app/app/@shared/ui/empty-state"
+import { IntersectionObserverEmitter } from "gamezilla-app/app/@shared/ui/intersection-observer"
 import { FlowPack } from "../flow-pack"
 import { ClientModule } from "./flow-pack-list.core"
 

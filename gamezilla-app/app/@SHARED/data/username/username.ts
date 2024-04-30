@@ -1,5 +1,5 @@
-import { Err, Ok, Result } from "gamezilla-app/@SHARED/core"
-import { Brand } from "gamezilla-app/@SHARED/core/brand"
+import { Err, Ok, Result } from "gamezilla-app/@shared/core"
+import { Brand } from "gamezilla-app/@shared/core/brand"
 import { getWords } from "../words"
 
 export type Username = Brand<string, "Username">

@@ -1,5 +1,5 @@
-import { SpaceCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../@SHARED/flow"
+import { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space"
+import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../@shared/flow"
 import { ModelSync, MsgSync } from "../../create.core"
 
 const reducer = ({

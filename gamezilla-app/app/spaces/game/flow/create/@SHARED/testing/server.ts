@@ -1,6 +1,6 @@
-import { testSpaceServerCtx } from "../../../../@SHARED/testing/server"
-import { FlowPackDb } from "../../../@SHARED/flow-pack/flow-pack-db"
-import { FlowPuzzleDb } from "../../../@SHARED/flow-puzzle/flow-puzzle-db"
+import { testSpaceServerCtx } from "../../../../@shared/testing/server"
+import { FlowPackDb } from "../../../@shared/flow-pack/flow-pack-db"
+import { FlowPuzzleDb } from "../../../@shared/flow-puzzle/flow-puzzle-db"
 import { FlowServerDeps, initServer } from "../../create.core"
 import { initSync } from "../../create.sync"
 

@@ -5,10 +5,10 @@ import {
   Posix,
   RemoteResult,
   Result,
-} from "gamezilla-app/@SHARED/core"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { SpaceCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { Chess } from "../@SHARED/chess"
+} from "gamezilla-app/@shared/core"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space"
+import { Chess } from "../@shared/chess"
 import { EloRating } from "./elo-rating"
 import { zip } from "./utils"
 

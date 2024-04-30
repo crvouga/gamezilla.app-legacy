@@ -1,5 +1,5 @@
-import { Result } from "gamezilla-app/@SHARED/core"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
+import { Result } from "gamezilla-app/@shared/core"
+import { UserId } from "gamezilla-app/app/@shared/data"
 import { ProfileCore } from "../profile.core"
 
 export type ProfileDb = {

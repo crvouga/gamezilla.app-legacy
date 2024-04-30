@@ -1,7 +1,7 @@
-import { Result } from "gamezilla-app/@SHARED/core"
-import { Hash } from "gamezilla-app/@SHARED/hashing"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { UserAccount } from "gamezilla-app/app/@SHARED/data/account"
+import { Result } from "gamezilla-app/@shared/core"
+import { Hash } from "gamezilla-app/@shared/hashing"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { UserAccount } from "gamezilla-app/app/@shared/data/account"
 
 export type IAccountDb = {
   findOneByPhoneNumberHash: (input: {

@@ -2,9 +2,9 @@ import {
   ClientCmd,
   ClientEvent,
   showToast,
-} from "gamezilla-app/app/@SHARED/client"
-import { Eff, Sub } from "gamezilla-app/@SHARED/core"
-import { ListItemButton, cn } from "../@SHARED/ui"
+} from "gamezilla-app/app/@shared/client"
+import { Eff, Sub } from "gamezilla-app/@shared/core"
+import { ListItemButton, cn } from "../@shared/ui"
 import { IClientTransport } from "./transport-client"
 import { ModelClient, MsgClient, MsgToClient } from "./wire.core"
 

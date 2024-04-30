@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test"
-import { SpaceId } from "../../@SHARED/data"
+import { SpaceId } from "../../@shared/data"
 import {
   clickedCurrentSpaceBottomBar,
   clickedStartSpaceButton,
   Ctx,
   init,
-} from "../@SHARED/testing/client"
+} from "../@shared/testing/client"
 import { SpaceClientModule } from "../architecture/space-client"
 import { Spaces } from "../spaces-core"
 

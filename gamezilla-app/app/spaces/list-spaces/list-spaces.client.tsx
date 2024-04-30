@@ -3,11 +3,11 @@ import {
   playSound,
   pushRoute,
   sendToServer,
-} from "gamezilla-app/app/@SHARED/client"
-import { SpaceId } from "gamezilla-app/app/@SHARED/data"
-import { IconGamepad, TopBar } from "gamezilla-app/app/@SHARED/ui"
-import { EmptyState } from "gamezilla-app/app/@SHARED/ui/empty-state"
-import { Ok, RequestResponse, requesting } from "gamezilla-app/@SHARED/core"
+} from "gamezilla-app/app/@shared/client"
+import { SpaceId } from "gamezilla-app/app/@shared/data"
+import { IconGamepad, TopBar } from "gamezilla-app/app/@shared/ui"
+import { EmptyState } from "gamezilla-app/app/@shared/ui/empty-state"
+import { Ok, RequestResponse, requesting } from "gamezilla-app/@shared/core"
 import { SpaceClientModule } from "../architecture/architecture"
 import * as Spaces from "../spaces-core/spaces-core.client"
 import { StartSpaceClient } from "../start-space/start-space.client"

@@ -1,10 +1,10 @@
 import {
   SpaceClientCtx,
   spaceToProfiles,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { BaseClientCtx } from "gamezilla-app/app/@SHARED/client"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { Avatar, IconCrown } from "gamezilla-app/app/@SHARED/ui"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { BaseClientCtx } from "gamezilla-app/app/@shared/client"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { Avatar, IconCrown } from "gamezilla-app/app/@shared/ui"
 
 export const ViewUsersInSpaceList = ({
   ctx,

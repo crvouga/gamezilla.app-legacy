@@ -1,6 +1,6 @@
-import { Sub, Transition } from "gamezilla-app/@SHARED/core"
+import { Sub, Transition } from "gamezilla-app/@/core"
 
-import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { VDom } from "gamezilla-app/@/vdom"
 import { ColumnIndex, Columns, PlayerType, Win } from "../../connect-four"
 
 export type ViewColumnsProps = {

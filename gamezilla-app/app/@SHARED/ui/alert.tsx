@@ -1,4 +1,4 @@
-import { VDomChildren } from "gamezilla-app/@SHARED/vdom"
+import { VDomChildren } from "gamezilla-app/@shared/vdom"
 import { IconExclamationCircle, IconInfoCircle } from "./icon"
 import { IconCheckmarkCircle } from "./icon/icon-checkmark-circle"
 import { cn } from "./ui"

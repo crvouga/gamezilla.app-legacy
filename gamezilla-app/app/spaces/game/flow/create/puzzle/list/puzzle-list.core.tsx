@@ -1,4 +1,4 @@
-import { FlowPuzzle } from "../../../@SHARED/flow-puzzle/flow-puzzle"
+import { FlowPuzzle } from "../../../@shared/flow-puzzle/flow-puzzle"
 
 //
 //

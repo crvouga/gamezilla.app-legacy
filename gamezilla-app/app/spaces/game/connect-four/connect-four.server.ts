@@ -1,7 +1,7 @@
-import { Sub } from "gamezilla-app/@SHARED/core"
-import { GameServerModule } from "../../@SHARED/architecture/game-server-v2"
-import { SpaceServerCtx, SpaceServerEvent } from "../../@SHARED/space"
-import { SpaceServerCmd } from "../../@SHARED/space-server-cmd"
+import { Sub } from "gamezilla-app/@shared/core"
+import { GameServerModule } from "../../@shared/architecture/game-server-v2"
+import { SpaceServerCtx, SpaceServerEvent } from "../../@shared/space"
+import { SpaceServerCmd } from "../../@shared/space-server-cmd"
 import {
   MsgSync,
   ModelSync,

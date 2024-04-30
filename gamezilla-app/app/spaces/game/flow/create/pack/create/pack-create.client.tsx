@@ -1,12 +1,12 @@
-import { withId } from "gamezilla-app/app/spaces/@SHARED/event"
+import { withId } from "gamezilla-app/app/spaces/@shared/event"
 import {
   APP_SOUND,
   playSound,
   sendToServer,
   showToast,
-} from "gamezilla-app/app/@SHARED/client"
-import { Button, IconPlus } from "gamezilla-app/app/@SHARED/ui"
-import { Ok, loading } from "gamezilla-app/@SHARED/core"
+} from "gamezilla-app/app/@shared/client"
+import { Button, IconPlus } from "gamezilla-app/app/@shared/ui"
+import { Ok, loading } from "gamezilla-app/@/core"
 import { ClientModule } from "../../create.core"
 
 const update: ClientModule["update"] = (input) => {

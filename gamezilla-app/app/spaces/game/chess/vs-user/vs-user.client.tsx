@@ -1,9 +1,9 @@
-import { Eff, Option, Sub, exhaustive, isErr } from "gamezilla-app/@SHARED/core"
-import { ClientCtx } from "gamezilla-app/app/@SHARED/client"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
-import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@SHARED/ui"
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { Chess } from "../@SHARED/chess"
+import { Eff, Option, Sub, exhaustive, isErr } from "gamezilla-app/@shared/core"
+import { ClientCtx } from "gamezilla-app/app/@shared/client"
+import { UserId } from "gamezilla-app/app/@shared/data"
+import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@shared/ui"
+import { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space"
+import { Chess } from "../@shared/chess"
 import {
   CoreModel,
   ModelClient,

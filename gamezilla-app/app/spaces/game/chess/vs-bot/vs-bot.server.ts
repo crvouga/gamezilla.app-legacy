@@ -1,10 +1,10 @@
-import { Eff, Sub, pipe } from "gamezilla-app/@SHARED/core"
+import { Eff, Sub, pipe } from "gamezilla-app/@shared/core"
 import {
   SpaceReqCtx,
   SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@SHARED/space-server-cmd"
-import { Chess } from "../@SHARED/chess"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd"
+import { Chess } from "../@shared/chess"
 import {
   ModelServer,
   MsgServer,

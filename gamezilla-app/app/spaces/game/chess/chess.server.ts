@@ -1,5 +1,5 @@
-import { Sub } from "gamezilla-app/@SHARED/core"
-import { GameServer } from "gamezilla-app/app/spaces/@SHARED/architecture/game-server"
+import { Sub } from "gamezilla-app/@shared/core"
+import { GameServer } from "gamezilla-app/app/spaces/@shared/architecture/game-server"
 import {
   ModelServer,
   ModelSync,

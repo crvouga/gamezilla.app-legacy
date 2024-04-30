@@ -1,4 +1,4 @@
-import { Ok } from "gamezilla-app/@SHARED/core"
+import { Ok } from "gamezilla-app/@shared/core"
 import { ISMS } from "./sms"
 
 export const smsNoop: ISMS = {

@@ -1,5 +1,5 @@
-import { Spinner, cn } from "gamezilla-app/app/@SHARED/ui"
-import { VDom, VDomChildren } from "gamezilla-app/@SHARED/vdom"
+import { Spinner, cn } from "gamezilla-app/app/@shared/ui"
+import { VDom, VDomChildren } from "gamezilla-app/@shared/vdom"
 
 type BottomBarButtonAction = {
   label: string

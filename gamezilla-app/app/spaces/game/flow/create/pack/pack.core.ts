@@ -1,5 +1,5 @@
-import { FlowPack } from "../../@SHARED/flow-pack"
-import { FlowPackId } from "../../@SHARED/flow-pack/flow-pack-id"
+import { FlowPack } from "../../@shared/flow-pack"
+import { FlowPackId } from "../../@shared/flow-pack/flow-pack-id"
 import { PackBuilder } from "./builder"
 import { PackCreate } from "./create"
 import { PackList } from "./list"

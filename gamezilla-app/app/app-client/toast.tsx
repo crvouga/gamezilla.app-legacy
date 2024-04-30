@@ -1,7 +1,7 @@
-import { AppClientModule } from "gamezilla-app/app/@SHARED/architecture/app-client"
-import { ToastCmd } from "gamezilla-app/app/@SHARED/client"
-import { IconXMark, Transition, cn } from "gamezilla-app/app/@SHARED/ui"
-import { Posix, Sub, Time, TimeSpan } from "gamezilla-app/@SHARED/core"
+import { AppClientModule } from "gamezilla-app/app/@shared/architecture/app-client"
+import { ToastCmd } from "gamezilla-app/app/@shared/client"
+import { IconXMark, Transition, cn } from "gamezilla-app/app/@shared/ui"
+import { Posix, Sub, Time, TimeSpan } from "gamezilla-app/@shared/core"
 
 //
 //

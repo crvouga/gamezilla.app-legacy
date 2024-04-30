@@ -1,9 +1,9 @@
-import { GameClientModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
-import { FlowPackListClient } from "../../../@SHARED/flow-pack/flow-pack-list"
+import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2"
+import { FlowPackListClient } from "../../../@shared/flow-pack/flow-pack-list"
 import { ClientModule } from "../../create.core"
 import { PackCreateClient } from "../create/pack-create.client"
-import { withId } from "gamezilla-app/app/spaces/@SHARED/event"
-import { APP_SOUND, playSound } from "gamezilla-app/app/@SHARED/client"
+import { withId } from "gamezilla-app/app/spaces/@shared/event"
+import { APP_SOUND, playSound } from "gamezilla-app/app/@shared/client"
 
 const update: ClientModule["update"] = (input) => {
   return GameClientModule.andThen(

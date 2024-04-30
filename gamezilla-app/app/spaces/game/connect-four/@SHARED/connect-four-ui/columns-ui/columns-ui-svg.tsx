@@ -1,4 +1,4 @@
-import { cn } from "gamezilla-app/app/@SHARED/ui"
+import { cn } from "gamezilla-app/app/@shared/ui"
 import {
   COLUMN_COUNT,
   Columns,

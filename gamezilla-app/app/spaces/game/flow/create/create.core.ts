@@ -1,21 +1,21 @@
-import { GameClientModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
-import { GameServerModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-server-v2"
+import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2"
+import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2"
 import {
   SpaceClientEvent,
   SpaceCtx,
   SpaceServerCtx,
   SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { SpaceClientCmd } from "gamezilla-app/app/spaces/@SHARED/space-client-cmd"
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@SHARED/space-server-cmd"
-import { FlowClientCtx } from "../@SHARED/flow-ctx"
-import { FlowPack } from "../@SHARED/flow-pack/flow-pack"
-import { IFlowPackDb } from "../@SHARED/flow-pack/flow-pack-db"
-import { FlowPackList } from "../@SHARED/flow-pack/flow-pack-list"
-import { FlowPuzzle } from "../@SHARED/flow-puzzle/flow-puzzle"
-import { IFlowPuzzleDb } from "../@SHARED/flow-puzzle/flow-puzzle-db/flow-puzzle-db"
-import { FlowPuzzleId } from "../@SHARED/flow-puzzle/flow-puzzle-id"
-import { FlowPuzzleList } from "../@SHARED/flow-puzzle/flow-puzzle-list"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { SpaceClientCmd } from "gamezilla-app/app/spaces/@shared/space-client-cmd"
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd"
+import { FlowClientCtx } from "../@shared/flow-ctx"
+import { FlowPack } from "../@shared/flow-pack/flow-pack"
+import { IFlowPackDb } from "../@shared/flow-pack/flow-pack-db"
+import { FlowPackList } from "../@shared/flow-pack/flow-pack-list"
+import { FlowPuzzle } from "../@shared/flow-puzzle/flow-puzzle"
+import { IFlowPuzzleDb } from "../@shared/flow-puzzle/flow-puzzle-db/flow-puzzle-db"
+import { FlowPuzzleId } from "../@shared/flow-puzzle/flow-puzzle-id"
+import { FlowPuzzleList } from "../@shared/flow-puzzle/flow-puzzle-list"
 import { ListTabs } from "./list-tabs"
 import { Pack } from "./pack"
 import { PackBuilder } from "./pack/builder"
@@ -25,7 +25,7 @@ import { PuzzleDeleteForever } from "./puzzle/delete-forever"
 import { PuzzleEditName } from "./puzzle/edit"
 import { PuzzleList } from "./puzzle/list"
 import { PuzzleSaveChanges } from "./puzzle/save-changes"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser"
 
 //
 //

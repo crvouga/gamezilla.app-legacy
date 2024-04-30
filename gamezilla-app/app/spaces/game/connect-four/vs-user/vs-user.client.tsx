@@ -2,14 +2,14 @@ import {
   GameLayout,
   ViewBottomButtonBar,
   ViewBottomButtonBarAction,
-} from "gamezilla-app/app/spaces/game/@SHARED/game"
-import { VsUserSetupScreen } from "gamezilla-app/app/spaces/game/@SHARED/vs-user"
-import { GameClientModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
+} from "gamezilla-app/app/spaces/game/@shared/game"
+import { VsUserSetupScreen } from "gamezilla-app/app/spaces/game/@shared/vs-user"
+import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2"
 import {
   SpaceClientCtx,
   SpaceClientEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { ClientCmd, ClientCtx } from "gamezilla-app/app/@SHARED/client"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { ClientCmd, ClientCtx } from "gamezilla-app/app/@shared/client"
 import {
   Button,
   ConfirmationDialog,
@@ -20,11 +20,11 @@ import {
   IconSpinner,
   IconXMark,
   Avatar,
-} from "gamezilla-app/app/@SHARED/ui"
-import { Sub } from "gamezilla-app/@SHARED/core"
-import { PlayerType, toTurn } from "../@SHARED/connect-four"
-import { PlayerIcon, ViewColumns } from "../@SHARED/connect-four-ui"
-import { CoverArt } from "../@SHARED/connect-four-ui/connect-four-cover-art"
+} from "gamezilla-app/app/@shared/ui"
+import { Sub } from "gamezilla-app/@shared/core"
+import { PlayerType, toTurn } from "../@shared/connect-four"
+import { PlayerIcon, ViewColumns } from "../@shared/connect-four-ui"
+import { CoverArt } from "../@shared/connect-four-ui/connect-four-cover-art"
 import {
   ModelClient,
   MsgClient,

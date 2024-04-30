@@ -3,16 +3,16 @@ import {
   SpaceClientEvent,
   SpaceServerCtx,
   SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
-import { SpaceClientCmd } from "gamezilla-app/app/spaces/@SHARED/space-client-cmd"
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@SHARED/space-server-cmd"
-import { AppClientModule } from "gamezilla-app/app/@SHARED/architecture/app-client"
-import { AppServerModule } from "gamezilla-app/app/@SHARED/architecture/app-server"
-import { RemoteResult, RequestResponse } from "gamezilla-app/@SHARED/core"
+} from "gamezilla-app/app/spaces/@shared/space"
+import { SpaceClientCmd } from "gamezilla-app/app/spaces/@shared/space-client-cmd"
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd"
+import { AppClientModule } from "gamezilla-app/app/@shared/architecture/app-client"
+import { AppServerModule } from "gamezilla-app/app/@shared/architecture/app-server"
+import { RemoteResult, RequestResponse } from "gamezilla-app/@shared/core"
 import { IFlowPackDb } from "../flow-pack-db"
 import { FlowPackId } from "../flow-pack-id"
 import { FlowPack } from "../flow-pack"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser"
 
 //
 //

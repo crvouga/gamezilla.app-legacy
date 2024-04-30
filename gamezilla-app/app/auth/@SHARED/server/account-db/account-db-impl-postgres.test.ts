@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test"
 import { UserAccountRow } from "./account-db-impl-postgres"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
+import { UserId } from "gamezilla-app/app/@shared/data"
 
 describe(import.meta.file, () => {
   it("should parse correctly", async () => {

@@ -1,9 +1,9 @@
-import { SpaceId, UserId } from "gamezilla-app/app/@SHARED/data"
-import { EventId, WithEventId } from "../@SHARED/event"
+import { SpaceId, UserId } from "gamezilla-app/app/@shared/data"
+import { EventId, WithEventId } from "../@shared/event"
 import * as SpaceState from "./space-state"
 import * as Space from "./space"
 import { SpaceEvent } from "./space-event"
-import { p } from "gamezilla-app/@SHARED/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser"
 
 //
 //
