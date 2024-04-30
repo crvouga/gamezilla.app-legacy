@@ -1,4 +1,16 @@
 import {
+  Browser,
+  Eff,
+  Posix,
+  Sub,
+  batchMsgs,
+  eq,
+  toMsgType,
+} from "gamezilla-app/@SHARED/core"
+import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n"
+import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
+import { VDom } from "gamezilla-app/@SHARED/vdom"
+import {
   APP_SOUND,
   AnonymousClientCtx,
   ClientCmd,
@@ -15,32 +27,20 @@ import {
   cn,
 } from "gamezilla-app/app/@SHARED/ui"
 import {
-  Browser,
-  Eff,
-  Posix,
-  Sub,
-  batchMsgs,
-  eq,
-  toMsgType,
-} from "gamezilla-app/@SHARED/core"
-import { LanguageCodeISO_639_1 } from "gamezilla-app/@SHARED/l18n"
-import { Route } from "gamezilla-app/@SHARED/routing/generated/routes"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
-import {
   CODEBASE_VERSION_ID,
   SERVER_IMPL,
   SERVER_URL,
 } from "gamezilla-app/public-config"
+import { getTranslator } from "./@SHARED/client/translator"
+import { IntersectionObserverEmitter } from "./@SHARED/ui/intersection-observer"
+import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
+import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core"
 import * as AuthClient from "./auth/auth.client"
 import * as LangClient from "./lang/lang.client"
 import * as ProfileClient from "./profile/profile.client"
 import * as SpaceClient from "./spaces/spaces.client"
 import { ClientTransport, IClientTransport } from "./wire/transport-client"
 import * as Wire from "./wire/wire.client"
-import { getTranslator } from "./@SHARED/client/translator"
-import { IntersectionObserverEmitter } from "./@SHARED/ui/intersection-observer"
-import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client"
-import { ModelClient, MsgClient, MsgToClient, MsgToServer } from "./app.core"
 
 export type Model = ModelClient
 
