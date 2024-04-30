@@ -1,5 +1,5 @@
-import { UserId } from "gamezilla-app/app/@SHARED/data"
 import { Keyboard, Option, Result } from "gamezilla-app/@SHARED/core"
+import { UserId } from "gamezilla-app/app/@SHARED/data"
 import * as Direction from "./@SHARED/direction"
 import * as Snake from "./@SHARED/snake"
 

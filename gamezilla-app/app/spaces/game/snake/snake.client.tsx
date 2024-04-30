@@ -7,14 +7,14 @@ import {
   exhaustive,
   isErr,
 } from "gamezilla-app/@SHARED/core"
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
 import { ClientCtx } from "gamezilla-app/app/@SHARED/client"
+import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
 import { Direction } from "./@SHARED/direction"
 import {
-  ModelClient,
-  MsgClient,
   CoreModel,
+  ModelClient,
   ModelServer,
+  MsgClient,
   MsgToClient,
   initCoreModel,
 } from "./snake.core"

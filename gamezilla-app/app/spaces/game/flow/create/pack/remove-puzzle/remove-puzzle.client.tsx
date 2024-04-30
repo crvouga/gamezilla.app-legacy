@@ -1,12 +1,13 @@
+import { RequestResponse, isErr } from "gamezilla-app/@SHARED/core"
+import { sendToServer } from "gamezilla-app/app/@SHARED/client"
+import { IconDeleteForever, ListItemButton } from "gamezilla-app/app/@SHARED/ui"
 import {
   GameClientModule,
   andThen,
 } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
 import { SpaceClientEvent } from "gamezilla-app/app/spaces/@SHARED/space"
-import { sendToServer } from "gamezilla-app/app/@SHARED/client"
-import { IconDeleteForever, ListItemButton } from "gamezilla-app/app/@SHARED/ui"
-import { RequestResponse, isErr } from "gamezilla-app/@SHARED/core"
 import { FlowClientCmd } from "../../../@SHARED/flow-ctx"
+import { FlowPack } from "../../../@SHARED/flow-pack"
 import {
   ModelClient,
   ModelSync,
@@ -16,7 +17,6 @@ import {
   MsgToServer,
   RemovePuzzleClientCtx,
 } from "./remove-puzzle.core"
-import { FlowPack } from "../../../@SHARED/flow-pack"
 
 type Module = GameClientModule<{
   Model: ModelClient

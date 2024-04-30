@@ -1,5 +1,5 @@
-import { SessionId, UserId } from "gamezilla-app/app/@SHARED/data"
 import { Result } from "gamezilla-app/@SHARED/core"
+import { SessionId, UserId } from "gamezilla-app/app/@SHARED/data"
 
 export type ISessionDb = {
   findSessionIdsByUserId: (

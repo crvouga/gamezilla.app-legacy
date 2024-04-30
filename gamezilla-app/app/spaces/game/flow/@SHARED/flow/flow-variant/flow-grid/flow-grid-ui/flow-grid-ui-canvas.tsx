@@ -1,7 +1,7 @@
+import { cn } from "gamezilla-app/app/@SHARED/ui"
 import { Canvas } from "gamezilla-app/app/@SHARED/ui/canvas"
 import { Flow, FlowUI } from "../../../flow"
 import * as FlowGrid from "../flow-grid"
-import { cn } from "gamezilla-app/app/@SHARED/ui"
 
 const paint = (model: FlowGrid.Model, ctx: CanvasRenderingContext2D) => {
   const canvasWidth = ctx.canvas.width

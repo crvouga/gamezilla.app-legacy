@@ -1,9 +1,9 @@
-import { gameTheme } from "../../shared"
 import {
   COLUMN_COUNT,
   ColumnIndex,
   MAX_COLUMN_HEIGHT,
 } from "../../../connect-four"
+import { gameTheme } from "../../shared"
 import { ColumnsProps, columnsPropsSub } from "../shared"
 import { initColumns } from "./columns"
 import { initDiscs, syncDiscs } from "./discs"

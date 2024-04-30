@@ -1,6 +1,6 @@
 import { PubSub } from "gamezilla-app/@SHARED/core"
-import { ColumnIndex, Columns, PlayerType } from "../../connect-four"
 import { VDom } from "gamezilla-app/@SHARED/vdom"
+import { ColumnIndex, Columns, PlayerType } from "../../connect-four"
 
 export type ColumnsProps = {
   columns: Columns

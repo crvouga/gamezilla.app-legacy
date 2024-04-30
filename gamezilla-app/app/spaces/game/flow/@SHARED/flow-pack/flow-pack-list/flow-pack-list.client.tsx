@@ -1,8 +1,3 @@
-import { AppClientModule } from "gamezilla-app/app/@SHARED/architecture/app-client"
-import { sendToServer, showErrSm } from "gamezilla-app/app/@SHARED/client"
-import { IconBox, Spinner, cn } from "gamezilla-app/app/@SHARED/ui"
-import { EmptyState } from "gamezilla-app/app/@SHARED/ui/empty-state"
-import { IntersectionObserverEmitter } from "gamezilla-app/app/@SHARED/ui/intersection-observer"
 import {
   Posix,
   RequestResponse,
@@ -11,8 +6,13 @@ import {
   descend,
   isErr,
 } from "gamezilla-app/@SHARED/core"
-import { ClientModule } from "./flow-pack-list.core"
+import { AppClientModule } from "gamezilla-app/app/@SHARED/architecture/app-client"
+import { sendToServer, showErrSm } from "gamezilla-app/app/@SHARED/client"
+import { IconBox, Spinner, cn } from "gamezilla-app/app/@SHARED/ui"
+import { EmptyState } from "gamezilla-app/app/@SHARED/ui/empty-state"
+import { IntersectionObserverEmitter } from "gamezilla-app/app/@SHARED/ui/intersection-observer"
 import { FlowPack } from "../flow-pack"
+import { ClientModule } from "./flow-pack-list.core"
 
 const update: ClientModule["update"] = (input) => {
   return AppClientModule.andThen(

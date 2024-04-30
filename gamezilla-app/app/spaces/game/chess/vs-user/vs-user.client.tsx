@@ -1,14 +1,14 @@
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
+import { Eff, Option, Sub, exhaustive, isErr } from "gamezilla-app/@SHARED/core"
 import { ClientCtx } from "gamezilla-app/app/@SHARED/client"
 import { UserId } from "gamezilla-app/app/@SHARED/data"
 import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@SHARED/ui"
-import { Eff, Option, Sub, exhaustive, isErr } from "gamezilla-app/@SHARED/core"
+import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
 import { Chess } from "../@SHARED/chess"
 import {
-  ModelClient,
-  MsgClient,
   CoreModel,
+  ModelClient,
   ModelServer,
+  MsgClient,
   MsgToClient,
   initCore,
 } from "./vs-user.core"

@@ -1,5 +1,5 @@
-import { IconXMark, Slider } from "gamezilla-app/app/@SHARED/ui"
 import { p } from "gamezilla-app/@SHARED/core/parser"
+import { IconXMark, Slider } from "gamezilla-app/app/@SHARED/ui"
 
 export const Model = p.obj({
   t: p.l("flow-grid"),

@@ -1,13 +1,11 @@
-import { GameMainMenu } from "gamezilla-app/app/spaces/game/@SHARED/game"
+import { Sub } from "gamezilla-app/@SHARED/core"
+import { ClientCmd } from "gamezilla-app/app/@SHARED/client"
 import { GameClient } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client"
 import {
   SpaceClientCtx,
   SpaceClientEvent,
 } from "gamezilla-app/app/spaces/@SHARED/space"
-import { ClientCmd } from "gamezilla-app/app/@SHARED/client"
-import { Sub } from "gamezilla-app/@SHARED/core"
-import * as VsBot from "./vs-bot/vs-bot.client"
-import * as VsUser from "./vs-user/vs-user.client"
+import { GameMainMenu } from "gamezilla-app/app/spaces/game/@SHARED/game"
 import { CoverArt } from "./@SHARED/tic-tic-toe/tic-tac-toe-ui"
 import {
   ModelClient,
@@ -15,6 +13,8 @@ import {
   MsgToClient,
   MsgToServer,
 } from "./tic-tac-toe.core"
+import * as VsBot from "./vs-bot/vs-bot.client"
+import * as VsUser from "./vs-user/vs-user.client"
 
 type Client = GameClient<{
   ModelClient: ModelClient

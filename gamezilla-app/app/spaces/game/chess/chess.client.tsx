@@ -1,9 +1,4 @@
-import { GameMainMenu } from "gamezilla-app/app/spaces/game/@SHARED/game"
-import { GameClient } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client"
-import {
-  SpaceClientCtx,
-  SpaceClientEvent,
-} from "gamezilla-app/app/spaces/@SHARED/space"
+import { Eff, RemoteResult, Sub, isErr } from "gamezilla-app/@SHARED/core"
 import {
   APP_SOUND,
   ClientCmd,
@@ -12,12 +7,14 @@ import {
   sendToServer,
 } from "gamezilla-app/app/@SHARED/client"
 import { IconPuzzlePiece } from "gamezilla-app/app/@SHARED/ui"
-import { Eff, RemoteResult, Sub, isErr } from "gamezilla-app/@SHARED/core"
+import { GameClient } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client"
+import {
+  SpaceClientCtx,
+  SpaceClientEvent,
+} from "gamezilla-app/app/spaces/@SHARED/space"
+import { GameMainMenu } from "gamezilla-app/app/spaces/game/@SHARED/game"
 import { GameClientModule } from "../../@SHARED/architecture/game-client-v2"
 import { SpaceClientCmd } from "../../@SHARED/space-client-cmd"
-import * as Puzzle from "./puzzle/puzzle.client"
-import * as VsBot from "./vs-bot/vs-bot.client"
-import * as VsUser from "./vs-user/vs-user.client"
 import { CoverArt } from "./@SHARED/chess-ui"
 import { CHESS_SOUND } from "./@SHARED/chess/chess-sounds"
 import {
@@ -28,6 +25,9 @@ import {
   MsgToClient,
   MsgToServer,
 } from "./chess.core"
+import * as Puzzle from "./puzzle/puzzle.client"
+import * as VsBot from "./vs-bot/vs-bot.client"
+import * as VsUser from "./vs-user/vs-user.client"
 
 //
 //

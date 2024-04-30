@@ -1,7 +1,7 @@
-import { VsBotSetup } from "gamezilla-app/app/spaces/game/@SHARED/vs-bot"
-import { SpaceCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
 import { Err, isErr, Ok, Result } from "gamezilla-app/@SHARED/core"
+import { UserId } from "gamezilla-app/app/@SHARED/data"
+import { SpaceCtx } from "gamezilla-app/app/spaces/@SHARED/space"
+import { VsBotSetup } from "gamezilla-app/app/spaces/game/@SHARED/vs-bot"
 import { Chess } from "../@SHARED/chess"
 
 //

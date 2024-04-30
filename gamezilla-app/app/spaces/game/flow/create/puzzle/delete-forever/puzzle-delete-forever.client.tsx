@@ -1,4 +1,4 @@
-import { GameClientModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
+import { RemoteResult, isLoading } from "gamezilla-app/@SHARED/core"
 import {
   APP_SOUND,
   playSound,
@@ -10,7 +10,7 @@ import {
   IconDeleteForever,
   ListItemButton,
 } from "gamezilla-app/app/@SHARED/ui"
-import { RemoteResult, isLoading } from "gamezilla-app/@SHARED/core"
+import { GameClientModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
 import { ClientModule } from "../../create.core"
 
 const update: ClientModule["update"] = (input) => {

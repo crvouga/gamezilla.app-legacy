@@ -1,10 +1,5 @@
-import {
-  GameLayout,
-  ViewBottomButtonBar,
-  ViewBottomButtonBarAction,
-} from "gamezilla-app/app/spaces/game/@SHARED/game"
-import { GameClientModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
+import { Eff, andThen, isErr, pipe } from "gamezilla-app/@SHARED/core"
+import { VDomChildren } from "gamezilla-app/@SHARED/vdom"
 import {
   APP_SOUND,
   ClientCmd,
@@ -24,8 +19,13 @@ import {
   Spinner,
   cn,
 } from "gamezilla-app/app/@SHARED/ui"
-import { Eff, andThen, isErr, pipe } from "gamezilla-app/@SHARED/core"
-import { VDomChildren } from "gamezilla-app/@SHARED/vdom"
+import { GameClientModule } from "gamezilla-app/app/spaces/@SHARED/architecture/game-client-v2"
+import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
+import {
+  GameLayout,
+  ViewBottomButtonBar,
+  ViewBottomButtonBarAction,
+} from "gamezilla-app/app/spaces/game/@SHARED/game"
 import { Chess } from "../@SHARED/chess"
 import { Chessboard } from "../@SHARED/chess-ui/chessboard"
 import { CHESS_SOUND } from "../@SHARED/chess/chess-sounds"

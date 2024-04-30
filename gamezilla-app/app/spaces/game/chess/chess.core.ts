@@ -1,6 +1,6 @@
-import { SpaceCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
 import { RemoteResult, Result } from "gamezilla-app/@SHARED/core"
+import { UserId } from "gamezilla-app/app/@SHARED/data"
+import { SpaceCtx } from "gamezilla-app/app/spaces/@SHARED/space"
 import { GameMainMenu } from "../@SHARED/game"
 import * as Puzzle from "./puzzle/puzzle.core"
 import * as VsBot from "./vs-bot/vs-bot.core"

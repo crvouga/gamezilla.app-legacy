@@ -1,5 +1,3 @@
-import { SpaceCtx } from "gamezilla-app/app/spaces/@SHARED/space"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
 import {
   Err,
   NonEmpty,
@@ -8,6 +6,8 @@ import {
   RemoteResult,
   Result,
 } from "gamezilla-app/@SHARED/core"
+import { UserId } from "gamezilla-app/app/@SHARED/data"
+import { SpaceCtx } from "gamezilla-app/app/spaces/@SHARED/space"
 import { Chess } from "../@SHARED/chess"
 import { EloRating } from "./elo-rating"
 import { zip } from "./utils"

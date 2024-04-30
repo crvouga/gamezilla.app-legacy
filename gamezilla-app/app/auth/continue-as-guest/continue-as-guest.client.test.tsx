@@ -1,12 +1,4 @@
 import { describe, expect, it } from "bun:test"
-import { andThen } from "gamezilla-app/app/@SHARED/architecture/app-client"
-import {
-  AnonymousClientCtx,
-  didPlaySound,
-  didSendToServer,
-} from "gamezilla-app/app/@SHARED/client"
-import { getTranslator } from "gamezilla-app/app/@SHARED/client/translator"
-import { UserId } from "gamezilla-app/app/@SHARED/data"
 import {
   Err,
   Ok,
@@ -15,6 +7,14 @@ import {
   isResponseErr,
   isResponseOk,
 } from "gamezilla-app/@SHARED/core"
+import { andThen } from "gamezilla-app/app/@SHARED/architecture/app-client"
+import {
+  AnonymousClientCtx,
+  didPlaySound,
+  didSendToServer,
+} from "gamezilla-app/app/@SHARED/client"
+import { getTranslator } from "gamezilla-app/app/@SHARED/client/translator"
+import { UserId } from "gamezilla-app/app/@SHARED/data"
 import * as AuthClient from "../auth.client"
 import { ModelClient } from "../auth.core"
 

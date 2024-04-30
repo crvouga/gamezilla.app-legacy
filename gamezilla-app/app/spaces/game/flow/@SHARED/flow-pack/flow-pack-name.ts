@@ -1,5 +1,5 @@
-import { getWords } from "gamezilla-app/app/@SHARED/data/words"
 import { Brand } from "gamezilla-app/@SHARED/core/brand"
+import { getWords } from "gamezilla-app/app/@SHARED/data/words"
 
 export type FlowPackName = Brand<string, "FlowPackName">
 

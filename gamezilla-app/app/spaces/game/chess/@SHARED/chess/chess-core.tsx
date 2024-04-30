@@ -1,6 +1,7 @@
 import * as ChessJS from "chess.js"
 import { Err, IO, Ok, Result, exhaustive } from "gamezilla-app/@SHARED/core"
 
+import { VDom } from "gamezilla-app/@SHARED/vdom"
 import {
   IconBotCute,
   IconBotLevel1,
@@ -8,7 +9,6 @@ import {
   IconBotScary,
   IconBotSimple,
 } from "gamezilla-app/app/spaces/game/@SHARED/vs-bot"
-import { VDom } from "gamezilla-app/@SHARED/vdom"
 
 export type BotLevel = 0 | 1 | 2 | 3 | 4
 

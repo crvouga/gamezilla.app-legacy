@@ -1,5 +1,5 @@
-import { cn } from "../ui"
 import { IconProps } from "../icon-shared"
+import { cn } from "../ui"
 
 export const IconArrowLeftOnRect = (props: IconProps) => {
   return (

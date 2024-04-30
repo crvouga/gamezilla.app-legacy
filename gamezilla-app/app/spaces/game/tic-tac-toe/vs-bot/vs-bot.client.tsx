@@ -1,15 +1,4 @@
-import {
-  ViewBottomButtonBar,
-  ViewBottomButtonBarAction,
-} from "gamezilla-app/app/spaces/game/@SHARED/game"
-import {
-  IconBotCute,
-  IconBotLevel1,
-  IconBotScary,
-  VsBotGame,
-  VsBotSetup,
-} from "gamezilla-app/app/spaces/game/@SHARED/vs-bot"
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
+import { Eff, Posix } from "gamezilla-app/@SHARED/core"
 import {
   ClientCmd,
   ClientCtx,
@@ -21,7 +10,18 @@ import {
   IconRightLeft,
   LoadingBar,
 } from "gamezilla-app/app/@SHARED/ui"
-import { Eff, Posix } from "gamezilla-app/@SHARED/core"
+import { SpaceClientCtx } from "gamezilla-app/app/spaces/@SHARED/space"
+import {
+  ViewBottomButtonBar,
+  ViewBottomButtonBarAction,
+} from "gamezilla-app/app/spaces/game/@SHARED/game"
+import {
+  IconBotCute,
+  IconBotLevel1,
+  IconBotScary,
+  VsBotGame,
+  VsBotSetup,
+} from "gamezilla-app/app/spaces/game/@SHARED/vs-bot"
 import {
   BotLevel,
   allBotLevels,
@@ -36,8 +36,8 @@ import {
 } from "../@SHARED/tic-tic-toe/tic-tac-toe-ui"
 import {
   ModelClient,
-  MsgClient,
   ModelServer,
+  MsgClient,
   MsgToClient,
   MsgToServer,
   handle,

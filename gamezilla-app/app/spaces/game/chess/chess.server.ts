@@ -1,10 +1,10 @@
-import { GameServer } from "gamezilla-app/app/spaces/@SHARED/architecture/game-server"
 import { Sub } from "gamezilla-app/@SHARED/core"
+import { GameServer } from "gamezilla-app/app/spaces/@SHARED/architecture/game-server"
 import {
-  MsgSync,
-  ModelSync,
   ModelServer,
+  ModelSync,
   MsgServer,
+  MsgSync,
   MsgToClient,
   MsgToServer,
 } from "./chess.core"

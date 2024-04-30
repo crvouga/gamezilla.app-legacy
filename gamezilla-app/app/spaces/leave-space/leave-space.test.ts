@@ -7,8 +7,8 @@ import {
 } from "gamezilla-app/app/@SHARED/client"
 import { SpaceId, UserId } from "gamezilla-app/app/@SHARED/data"
 import {
-  clickedLeaveSpaceButton,
   Ctx,
+  clickedLeaveSpaceButton,
   init,
   userJoinedSpace,
   userLeftSpace,
