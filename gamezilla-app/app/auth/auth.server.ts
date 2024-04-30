@@ -2,7 +2,7 @@ import { AppServerModule } from "gamezilla-app/app/@SHARED/architecture/app-serv
 import { SessionId, UserId } from "gamezilla-app/app/@SHARED/data"
 import { ServerCmd, sendToClient } from "gamezilla-app/app/@SHARED/server"
 import { Eff, Sub, TimeSpan, isErr, isOk } from "gamezilla-app/@SHARED/core"
-import * as AuthServerSMS from "./@CHILD/auth-sms/auth-sms.server"
+import * as AuthServerSMS from "./auth-sms/auth-sms.server"
 import { AccountDb } from "./@SHARED/server/account-db"
 import { SessionDb } from "./@SHARED/server/session-db"
 import { MsgToClient, ServerDeps, ServerModule } from "./auth.core"

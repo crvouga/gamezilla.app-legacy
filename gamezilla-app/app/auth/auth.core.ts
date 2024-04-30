@@ -10,7 +10,7 @@ import {
 } from "../@SHARED/client"
 import { UserAccount } from "../@SHARED/data/account"
 import { ServerCmd, ServerCtx, ServerEvent } from "../@SHARED/server"
-import * as AuthSMS from "./@CHILD/auth-sms/auth-sms.core"
+import * as AuthSMS from "./auth-sms/auth-sms.core"
 import { IAccountDb } from "./@SHARED/server/account-db"
 import { ISessionDb } from "./@SHARED/server/session-db"
 import { ContinueAsGuest } from "./continue-as-guest"

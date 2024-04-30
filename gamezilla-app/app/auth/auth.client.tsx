@@ -10,7 +10,7 @@ import {
 } from "gamezilla-app/app/@SHARED/client"
 import { Button, IconMobilePhone } from "gamezilla-app/app/@SHARED/ui"
 import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@SHARED/core"
-import * as AuthClientSMS from "./@CHILD/auth-sms/auth-sms.client"
+import * as AuthClientSMS from "./auth-sms/auth-sms.client"
 import { ClientModule, ModelClient, MsgClient } from "./auth.core"
 import { ContinueAsGuestClient } from "./continue-as-guest/continue-as-guest.client"
 import { LogoutClient } from "./logout/logout.client"
