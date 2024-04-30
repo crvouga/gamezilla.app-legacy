@@ -2,19 +2,19 @@
 import {
   Route as Route0,
   toRoute as toRoute0,
-} from "../../../@CHILD/app/@CHILD/auth/auth.routes"
+} from "../../../app/@CHILD/auth/auth.routes"
 import {
   Route as Route1,
   toRoute as toRoute1,
-} from "../../../@CHILD/app/@CHILD/spaces/@SHARED/space.routes"
+} from "../../../app/@CHILD/spaces/@SHARED/space.routes"
 import {
   Route as Route2,
   toRoute as toRoute2,
-} from "../../../@CHILD/app/@CHILD/lang/lang.routes"
+} from "../../../app/@CHILD/lang/lang.routes"
 import {
   Route as Route3,
   toRoute as toRoute3,
-} from "../../../@CHILD/app/@CHILD/profile/profile.routes"
+} from "../../../app/@CHILD/profile/profile.routes"
 
 export type Route = Route0 | Route1 | Route2 | Route3
 

@@ -1,4 +1,4 @@
-import * as AppClient from "gamezilla-app/@CHILD/app/app.client"
+import * as AppClient from "gamezilla-app/app/app.client"
 import { Program } from "gamezilla-app/@SHARED/core"
 import { DebuggerReduxDevTools } from "gamezilla-app/@SHARED/core/debug"
 import { IS_PROD, TRANSPORT_IMPL, VDOM_IMPL } from "gamezilla-app/public-config"

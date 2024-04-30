@@ -5,7 +5,7 @@ import {
   IServer,
   stringToHttpRequestMethod,
 } from "../server"
-import { ILogger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
+import { ILogger } from "gamezilla-app/app/@SHARED/server/logger"
 
 type FetchHandler = (
   req: Request,
