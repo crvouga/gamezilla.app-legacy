@@ -1,14 +1,7 @@
 import { describe, expect, it } from "bun:test"
-<<<<<<< HEAD:gamezilla-app/app/@CHILD/auth/@CHILD/auth-sms/verify-sms/verify-sms.test.ts
 import { getTranslator } from "gamezilla-app/app/@SHARED/client/translator"
 import { DbConnKv } from "gamezilla-app/app/@SHARED/server/db-conn-kv"
 import { SMSFake } from "gamezilla-app/app/@SHARED/server/sms/sms-impl-fake"
-=======
-import { getTranslator } from "gamezilla-app/@CHILD/app/@SHARED/client/translator"
-import { DbConnKv } from "gamezilla-app/@CHILD/app/@SHARED/server/db-conn-kv"
-import { Logger } from "gamezilla-app/@CHILD/app/@SHARED/server/logger"
-import { SMSFake } from "gamezilla-app/@CHILD/app/@SHARED/server/sms/sms-impl-fake"
->>>>>>> 6e75906b7c9111c0257625a0cab4d134c9863a4d:gamezilla-app/@CHILD/app/@CHILD/auth/@CHILD/auth-sms/verify-sms/verify-sms.test.ts
 import {
   PhoneNumber,
   Result,
@@ -21,10 +14,7 @@ import { CodeGenerator } from "./code-generator"
 import { VerificationId } from "./verification"
 import { VerificationAttemptDb, VerificationDb } from "./verification-db"
 import { VerifySMS } from "./verify-sms-impl"
-<<<<<<< HEAD:gamezilla-app/app/@CHILD/auth/@CHILD/auth-sms/verify-sms/verify-sms.test.ts
 import { Logger } from "gamezilla-app/app/@SHARED/server/logger"
-=======
->>>>>>> 6e75906b7c9111c0257625a0cab4d134c9863a4d:gamezilla-app/@CHILD/app/@CHILD/auth/@CHILD/auth-sms/verify-sms/verify-sms.test.ts
 
 const Fixture = async () => {
   const sms = SMSFake()
