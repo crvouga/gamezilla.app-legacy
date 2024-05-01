@@ -1,10 +1,10 @@
 import type {
-  IfMaybeUndefined,
-  IfVoid,
-  IsAny,
-  IsUnknownOrNonInferrable,
-} from "./helpers"
-import { hasMatchFunction } from "./helpers"
+	IfMaybeUndefined,
+	IfVoid,
+	IsAny,
+	IsUnknownOrNonInferrable,
+} from "./helpers";
+import { hasMatchFunction } from "./helpers";
 
 /**
  * An action with a string type and an associated payload. This is the
@@ -18,23 +18,23 @@ import { hasMatchFunction } from "./helpers"
  * @public
  */
 export type PayloadMsg<
-  P = void,
-  T extends string = string,
-  M = never,
-  E = never,
+	P = void,
+	T extends string = string,
+	M = never,
+	E = never,
 > = {
-  payload: P
-  type: T
+	payload: P;
+	type: T;
 } & ([M] extends [never]
-  ? {}
-  : {
-      meta: M
-    }) &
-  ([E] extends [never]
-    ? {}
-    : {
-        error: E
-      })
+	? {}
+	: {
+			meta: M;
+		}) &
+	([E] extends [never]
+		? {}
+		: {
+				error: E;
+			});
 
 /**
  * A "prepare" method to be used as the second parameter of `Msg`.
@@ -44,10 +44,10 @@ export type PayloadMsg<
  * @public
  */
 export type PrepareMsg<P> =
-  | ((...args: any[]) => { payload: P })
-  | ((...args: any[]) => { payload: P; meta: any })
-  | ((...args: any[]) => { payload: P; error: any })
-  | ((...args: any[]) => { payload: P; meta: any; error: any })
+	| ((...args: any[]) => { payload: P })
+	| ((...args: any[]) => { payload: P; meta: any })
+	| ((...args: any[]) => { payload: P; error: any })
+	| ((...args: any[]) => { payload: P; meta: any; error: any });
 
 /**
  * Internal version of `MsgCreatorWithPreparedPayload`. Not to be used externally.
@@ -55,25 +55,25 @@ export type PrepareMsg<P> =
  * @internal
  */
 export type _MsgCreatorWithPreparedPayload<
-  PA extends PrepareMsg<any> | void,
-  T extends string = string,
+	PA extends PrepareMsg<any> | void,
+	T extends string = string,
 > = PA extends PrepareMsg<infer P>
-  ? MsgCreatorWithPreparedPayload<
-      Parameters<PA>,
-      P,
-      T,
-      ReturnType<PA> extends {
-        error: infer E
-      }
-        ? E
-        : never,
-      ReturnType<PA> extends {
-        meta: infer M
-      }
-        ? M
-        : never
-    >
-  : void
+	? MsgCreatorWithPreparedPayload<
+			Parameters<PA>,
+			P,
+			T,
+			ReturnType<PA> extends {
+				error: infer E;
+			}
+				? E
+				: never,
+			ReturnType<PA> extends {
+				meta: infer M;
+			}
+				? M
+				: never
+		>
+	: void;
 
 /**
  * Basic type for all action creators.
@@ -81,8 +81,8 @@ export type _MsgCreatorWithPreparedPayload<
  * @inheritdoc {redux#MsgCreator}
  */
 export interface BaseMsgCreator<P, T extends string, M = never, E = never> {
-  type: T
-  is: (action: unknown) => action is PayloadMsg<P, T, M, E>
+	type: T;
+	is: (action: unknown) => action is PayloadMsg<P, T, M, E>;
 }
 
 /**
@@ -99,18 +99,18 @@ export interface BaseMsgCreator<P, T extends string, M = never, E = never> {
  * @public
  */
 export interface MsgCreatorWithPreparedPayload<
-  Args extends unknown[],
-  P,
-  T extends string = string,
-  E = never,
-  M = never,
+	Args extends unknown[],
+	P,
+	T extends string = string,
+	E = never,
+	M = never,
 > extends BaseMsgCreator<P, T, M, E> {
-  /**
-   * Calling this {@link redux#MsgCreator} with `Args` will return
-   * an Msg with a payload of type `P` and (depending on the `PrepareMsg`
-   * method used) a `meta`- and `error` property of types `M` and `E` respectively.
-   */
-  (...args: Args): PayloadMsg<P, T, M, E>
+	/**
+	 * Calling this {@link redux#MsgCreator} with `Args` will return
+	 * an Msg with a payload of type `P` and (depending on the `PrepareMsg`
+	 * method used) a `meta`- and `error` property of types `M` and `E` respectively.
+	 */
+	(...args: Args): PayloadMsg<P, T, M, E>;
 }
 
 /**
@@ -121,13 +121,13 @@ export interface MsgCreatorWithPreparedPayload<
  * @public
  */
 export interface MsgCreatorWithOptionalPayload<P, T extends string = string>
-  extends BaseMsgCreator<P, T> {
-  /**
-   * Calling this {@link redux#MsgCreator} with an argument will
-   * return a {@link PayloadMsg} of type `T` with a payload of `P`.
-   * Calling it without an argument will return a PayloadMsg with a payload of `undefined`.
-   */
-  (payload?: P): PayloadMsg<P, T>
+	extends BaseMsgCreator<P, T> {
+	/**
+	 * Calling this {@link redux#MsgCreator} with an argument will
+	 * return a {@link PayloadMsg} of type `T` with a payload of `P`.
+	 * Calling it without an argument will return a PayloadMsg with a payload of `undefined`.
+	 */
+	(payload?: P): PayloadMsg<P, T>;
 }
 
 /**
@@ -138,12 +138,12 @@ export interface MsgCreatorWithOptionalPayload<P, T extends string = string>
  * @public
  */
 export interface MsgCreatorWithoutPayload<T extends string = string>
-  extends BaseMsgCreator<undefined, T> {
-  /**
-   * Calling this {@link redux#MsgCreator} will
-   * return a {@link PayloadMsg} of type `T` with a payload of `undefined`
-   */
-  (noArgument: void): PayloadMsg<undefined, T>
+	extends BaseMsgCreator<undefined, T> {
+	/**
+	 * Calling this {@link redux#MsgCreator} will
+	 * return a {@link PayloadMsg} of type `T` with a payload of `undefined`
+	 */
+	(noArgument: void): PayloadMsg<undefined, T>;
 }
 
 /**
@@ -154,12 +154,12 @@ export interface MsgCreatorWithoutPayload<T extends string = string>
  * @public
  */
 export interface MsgCreatorWithPayload<P, T extends string = string>
-  extends BaseMsgCreator<P, T> {
-  /**
-   * Calling this {@link redux#MsgCreator} with an argument will
-   * return a {@link PayloadMsg} of type `T` with a payload of `P`
-   */
-  (payload: P): PayloadMsg<P, T>
+	extends BaseMsgCreator<P, T> {
+	/**
+	 * Calling this {@link redux#MsgCreator} with an argument will
+	 * return a {@link PayloadMsg} of type `T` with a payload of `P`
+	 */
+	(payload: P): PayloadMsg<P, T>;
 }
 
 /**
@@ -170,13 +170,13 @@ export interface MsgCreatorWithPayload<P, T extends string = string>
  * @public
  */
 export interface MsgCreatorWithNonInferrablePayload<T extends string = string>
-  extends BaseMsgCreator<unknown, T> {
-  /**
-   * Calling this {@link redux#MsgCreator} with an argument will
-   * return a {@link PayloadMsg} of type `T` with a payload
-   * of exactly the type of the argument.
-   */
-  <PT extends unknown>(payload: PT): PayloadMsg<PT, T>
+	extends BaseMsgCreator<unknown, T> {
+	/**
+	 * Calling this {@link redux#MsgCreator} with an argument will
+	 * return a {@link PayloadMsg} of type `T` with a payload
+	 * of exactly the type of the argument.
+	 */
+	<PT extends unknown>(payload: PT): PayloadMsg<PT, T>;
 }
 
 /**
@@ -189,34 +189,34 @@ export interface MsgCreatorWithNonInferrablePayload<T extends string = string>
  * @public
  */
 export type PayloadMsgCreator<
-  P = void,
-  T extends string = string,
-  PA extends PrepareMsg<P> | void = void,
+	P = void,
+	T extends string = string,
+	PA extends PrepareMsg<P> | void = void,
 > = IfPrepareMsgMethodProvided<
-  PA,
-  _MsgCreatorWithPreparedPayload<PA, T>,
-  // else
-  IsAny<
-    P,
-    MsgCreatorWithPayload<any, T>,
-    IsUnknownOrNonInferrable<
-      P,
-      MsgCreatorWithNonInferrablePayload<T>,
-      // else
-      IfVoid<
-        P,
-        MsgCreatorWithoutPayload<T>,
-        // else
-        IfMaybeUndefined<
-          P,
-          MsgCreatorWithOptionalPayload<P, T>,
-          // else
-          MsgCreatorWithPayload<P, T>
-        >
-      >
-    >
-  >
->
+	PA,
+	_MsgCreatorWithPreparedPayload<PA, T>,
+	// else
+	IsAny<
+		P,
+		MsgCreatorWithPayload<any, T>,
+		IsUnknownOrNonInferrable<
+			P,
+			MsgCreatorWithNonInferrablePayload<T>,
+			// else
+			IfVoid<
+				P,
+				MsgCreatorWithoutPayload<T>,
+				// else
+				IfMaybeUndefined<
+					P,
+					MsgCreatorWithOptionalPayload<P, T>,
+					// else
+					MsgCreatorWithPayload<P, T>
+				>
+			>
+		>
+	>
+>;
 
 /**
  * A utility function to create an action creator for the given action type
@@ -231,8 +231,8 @@ export type PayloadMsgCreator<
  * @public
  */
 export function Msg<P = void, T extends string = string>(
-  type: T,
-): PayloadMsgCreator<P, T>
+	type: T,
+): PayloadMsgCreator<P, T>;
 
 /**
  * A utility function to create an action creator for the given action type
@@ -247,85 +247,85 @@ export function Msg<P = void, T extends string = string>(
  * @public
  */
 export function Msg<PA extends PrepareMsg<any>, T extends string = string>(
-  type: T,
-  prepareMsg: PA,
-): PayloadMsgCreator<ReturnType<PA>["payload"], T, PA>
+	type: T,
+	prepareMsg: PA,
+): PayloadMsgCreator<ReturnType<PA>["payload"], T, PA>;
 
 export function Msg(type: string, prepareMsg?: Function): any {
-  function actionCreator(...args: any[]) {
-    if (prepareMsg) {
-      let prepared = prepareMsg(...args)
-      if (!prepared) {
-        throw new Error("prepareMsg did not return an object")
-      }
+	function actionCreator(...args: any[]) {
+		if (prepareMsg) {
+			let prepared = prepareMsg(...args);
+			if (!prepared) {
+				throw new Error("prepareMsg did not return an object");
+			}
 
-      return {
-        type,
-        payload: prepared.payload,
-        ...("meta" in prepared && { meta: prepared.meta }),
-        ...("error" in prepared && { error: prepared.error }),
-      }
-    }
-    return { type, payload: args[0] }
-  }
+			return {
+				type,
+				payload: prepared.payload,
+				...("meta" in prepared && { meta: prepared.meta }),
+				...("error" in prepared && { error: prepared.error }),
+			};
+		}
+		return { type, payload: args[0] };
+	}
 
-  actionCreator.toString = () => `${type}`
+	actionCreator.toString = () => `${type}`;
 
-  actionCreator.type = type
+	actionCreator.type = type;
 
-  actionCreator.is = (action: unknown): action is PayloadMsg =>
-    isMsg(action) && action.type === type
+	actionCreator.is = (action: unknown): action is PayloadMsg =>
+		isMsg(action) && action.type === type;
 
-  return actionCreator
+	return actionCreator;
 }
 
 /**
  * Returns true if value is an RTK-like action creator, with a static type property and match method.
  */
 export function isMsgCreator(
-  action: unknown,
+	action: unknown,
 ): action is BaseMsgCreator<unknown, string> & Function {
-  return (
-    typeof action === "function" &&
-    "type" in action &&
-    // hasMatchFunction only wants Matchers but I don't see the point in rewriting it
-    hasMatchFunction(action as any)
-  )
+	return (
+		typeof action === "function" &&
+		"type" in action &&
+		// hasMatchFunction only wants Matchers but I don't see the point in rewriting it
+		hasMatchFunction(action as any)
+	);
 }
 
 /**
  * Returns true if value is an action with a string type and valid Flux Standard Msg keys.
  */
 export function isFSA(action: unknown): action is {
-  type: string
-  payload?: unknown
-  error?: unknown
-  meta?: unknown
+	type: string;
+	payload?: unknown;
+	error?: unknown;
+	meta?: unknown;
 } {
-  return isMsg(action) && Object.keys(action).every(isValidKey)
+	return isMsg(action) && Object.keys(action).every(isValidKey);
 }
 
-export type Msg = { type: string }
+export type Msg = { type: string };
 
 export function isMsg(action: unknown): action is { type: string } {
-  return (
-    typeof action === "object" &&
-    action !== null &&
-    typeof (action as any).type === "string"
-  )
+	return (
+		typeof action === "object" &&
+		action !== null &&
+		typeof (action as any).type === "string"
+	);
 }
 
 function isValidKey(key: string) {
-  return ["type", "payload", "error", "meta"].indexOf(key) > -1
+	return ["type", "payload", "error", "meta"].indexOf(key) > -1;
 }
 
 // helper types for more readable typings
 
 type IfPrepareMsgMethodProvided<
-  PA extends PrepareMsg<any> | void,
-  True,
-  False,
-> = PA extends (...args: any[]) => any ? True : False
+	PA extends PrepareMsg<any> | void,
+	True,
+	False,
+> = PA extends (...args: any[]) => any ? True : False;
 
 /**
  * Enhances the Msg function to include a namespace prefix to the action type.
@@ -334,16 +334,16 @@ type IfPrepareMsgMethodProvided<
  * @returns A function that creates namespaced messages.
  */
 export function Namespace<TN extends string>(namespace: TN) {
-  return function <
-    P = void,
-    T extends string = string,
-    PA extends PrepareMsg<P> | void = void,
-  >(type: T, prepareMsg?: PA): PayloadMsgCreator<P, `${TN}/${T}`, PA> {
-    // @ts-ignore
-    return Msg(`${namespace}/${type}`, prepareMsg) as PayloadMsgCreator<
-      P,
-      `${TN}/${T}`,
-      PA
-    >
-  }
+	return function <
+		P = void,
+		T extends string = string,
+		PA extends PrepareMsg<P> | void = void,
+	>(type: T, prepareMsg?: PA): PayloadMsgCreator<P, `${TN}/${T}`, PA> {
+		// @ts-ignore
+		return Msg(`${namespace}/${type}`, prepareMsg) as PayloadMsgCreator<
+			P,
+			`${TN}/${T}`,
+			PA
+		>;
+	};
 }

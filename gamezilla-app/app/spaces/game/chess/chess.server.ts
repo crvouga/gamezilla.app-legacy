@@ -1,13 +1,13 @@
-import { Sub } from "gamezilla-app/@shared/core"
-import { GameServer } from "gamezilla-app/app/spaces/@shared/architecture/game-server"
-import {
-  ModelServer,
-  ModelSync,
-  MsgServer,
-  MsgSync,
-  MsgToClient,
-  MsgToServer,
-} from "./chess.core"
+import { Sub } from "gamezilla-app/@shared/core";
+import type { GameServer } from "gamezilla-app/app/spaces/@shared/architecture/game-server";
+import type {
+	ModelServer,
+	ModelSync,
+	MsgServer,
+	MsgSync,
+	MsgToClient,
+	MsgToServer,
+} from "./chess.core";
 
 //
 //
@@ -18,13 +18,13 @@ import {
 //
 
 type Server = GameServer<{
-  MsgSync: MsgSync
-  ModelSync: ModelSync
-  ModelServer: ModelServer
-  MsgServer: MsgServer
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-}>
+	MsgSync: MsgSync;
+	ModelSync: ModelSync;
+	ModelServer: ModelServer;
+	MsgServer: MsgServer;
+	MsgToClient: MsgToClient;
+	MsgToServer: MsgToServer;
+}>;
 
 //
 //
@@ -35,13 +35,13 @@ type Server = GameServer<{
 //
 
 export const init: Server["init"] = async (input) => {
-  if (input.model) {
-    return { model: input.model }
-  }
-  return {
-    model: { t: "none" },
-  }
-}
+	if (input.model) {
+		return { model: input.model };
+	}
+	return {
+		model: { t: "none" },
+	};
+};
 
 //
 //
@@ -52,12 +52,12 @@ export const init: Server["init"] = async (input) => {
 //
 
 export const update: Server["update"] = async (_input) => {
-  return {
-    model: {
-      t: "none",
-    },
-  }
-}
+	return {
+		model: {
+			t: "none",
+		},
+	};
+};
 
 //
 //
@@ -68,5 +68,5 @@ export const update: Server["update"] = async (_input) => {
 //
 
 export const subscriptions: Server["subscriptions"] = async (_input) => {
-  return Sub.None
-}
+	return Sub.None;
+};

@@ -1,7 +1,7 @@
-import { it, expect, describe } from "bun:test"
+import { it, expect, describe } from "bun:test";
 
 describe(import.meta.file, () => {
-  it("should work", () => {
-    expect(true).toBe(true)
-  })
-})
+	it("should work", () => {
+		expect(true).toBe(true);
+	});
+});

@@ -1,72 +1,72 @@
-import { EventMeta } from "gamezilla-app/app/spaces/@shared/event"
-import { SpaceCtx } from "../@shared/space"
-import * as ConnectFour from "./connect-four/connect-four.core"
-import * as Flow from "./flow/flow.sync"
-import { GameName, ModelSync, MsgSync } from "./game.core"
+import type { EventMeta } from "gamezilla-app/app/spaces/@shared/event";
+import type { SpaceCtx } from "../@shared/space";
+import * as ConnectFour from "./connect-four/connect-four.core";
+import * as Flow from "./flow/flow.sync";
+import type { GameName, ModelSync, MsgSync } from "./game.core";
 
 export const initSync = (gameName: GameName): ModelSync => {
-  switch (gameName) {
-    case "connect-four": {
-      return {
-        t: "connect-four",
-        c: ConnectFour.initSync(),
-      }
-    }
+	switch (gameName) {
+		case "connect-four": {
+			return {
+				t: "connect-four",
+				c: ConnectFour.initSync(),
+			};
+		}
 
-    case "flow": {
-      return {
-        t: "flow",
-        c: Flow.initSync(),
-      }
-    }
-  }
-}
+		case "flow": {
+			return {
+				t: "flow",
+				c: Flow.initSync(),
+			};
+		}
+	}
+};
 
 export const reducer = ({
-  ctx,
-  modelSync,
-  msgSync,
+	ctx,
+	modelSync,
+	msgSync,
 }: {
-  ctx: SpaceCtx
-  modelSync: ModelSync
-  msgSync: MsgSync & EventMeta
+	ctx: SpaceCtx;
+	modelSync: ModelSync;
+	msgSync: MsgSync & EventMeta;
 }): ModelSync => {
-  switch (modelSync.t) {
-    case "connect-four": {
-      switch (msgSync.t) {
-        case "connect-four": {
-          return {
-            t: "connect-four",
-            c: ConnectFour.reducer({
-              ctx,
-              msgSync: { ...msgSync, ...msgSync.c },
-              modelSync: modelSync.c,
-            }),
-          }
-        }
-        default: {
-          return modelSync
-        }
-      }
-    }
+	switch (modelSync.t) {
+		case "connect-four": {
+			switch (msgSync.t) {
+				case "connect-four": {
+					return {
+						t: "connect-four",
+						c: ConnectFour.reducer({
+							ctx,
+							msgSync: { ...msgSync, ...msgSync.c },
+							modelSync: modelSync.c,
+						}),
+					};
+				}
+				default: {
+					return modelSync;
+				}
+			}
+		}
 
-    case "flow": {
-      switch (msgSync.t) {
-        case "flow": {
-          return {
-            t: "flow",
-            c: Flow.reducer({
-              ctx,
-              msgSync: { ...msgSync, ...msgSync.c },
-              modelSync: modelSync.c,
-            }),
-          }
-        }
+		case "flow": {
+			switch (msgSync.t) {
+				case "flow": {
+					return {
+						t: "flow",
+						c: Flow.reducer({
+							ctx,
+							msgSync: { ...msgSync, ...msgSync.c },
+							modelSync: modelSync.c,
+						}),
+					};
+				}
 
-        default: {
-          return modelSync
-        }
-      }
-    }
-  }
-}
+				default: {
+					return modelSync;
+				}
+			}
+		}
+	}
+};

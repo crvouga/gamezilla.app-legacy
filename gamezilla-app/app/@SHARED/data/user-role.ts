@@ -1,12 +1,12 @@
-import { p } from "gamezilla-app/@shared/core/parser"
+import { p } from "gamezilla-app/@shared/core/parser";
 
-const ALL_USER_ROLES = ["super", "normal", "guest"] as const
+const ALL_USER_ROLES = ["super", "normal", "guest"] as const;
 
-const parser = p.enumeration(ALL_USER_ROLES)
+const parser = p.enumeration(ALL_USER_ROLES);
 
-export type UserRole = p.Infer<typeof parser>
+export type UserRole = p.Infer<typeof parser>;
 
 export const UserRole = {
-  ...parser,
-  ALL_USER_ROLES,
-}
+	...parser,
+	ALL_USER_ROLES,
+};

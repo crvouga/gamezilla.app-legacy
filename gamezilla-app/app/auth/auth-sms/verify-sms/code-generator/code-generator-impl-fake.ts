@@ -1,13 +1,13 @@
-import { ICodeGenerator } from "./code-generator"
+import type { ICodeGenerator } from "./code-generator";
 
 export const CodeGeneratorFake = ({
-  code,
+	code,
 }: {
-  code: string
+	code: string;
 }): ICodeGenerator => {
-  return {
-    generate() {
-      return code
-    },
-  }
-}
+	return {
+		generate() {
+			return code;
+		},
+	};
+};

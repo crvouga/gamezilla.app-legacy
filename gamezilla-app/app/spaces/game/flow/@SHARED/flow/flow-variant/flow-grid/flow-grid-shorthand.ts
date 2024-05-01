@@ -1,75 +1,75 @@
-import { NonEmpty } from "gamezilla-app/@shared/core"
-import { Flow } from "../../flow"
-import * as FlowGrid from "./flow-grid"
-import * as FlowGridDimensions from "./flow-grid-dimensions"
+import type { NonEmpty } from "gamezilla-app/@shared/core";
+import { Flow } from "../../flow";
+import * as FlowGrid from "./flow-grid";
+import * as FlowGridDimensions from "./flow-grid-dimensions";
 
-export type Model = NonEmpty<NonEmpty<Flow.GroupId | null>>
+export type Model = NonEmpty<NonEmpty<Flow.GroupId | null>>;
 
 type DraftTerminal = {
-  groupId: Flow.GroupId
-  startId: Flow.NodeId
-  endId: Flow.NodeId | null
-}
+	groupId: Flow.GroupId;
+	startId: Flow.NodeId;
+	endId: Flow.NodeId | null;
+};
 
 export function fromShorthand(model: Model): FlowGrid.Model {
-  let grid = FlowGrid.init({
-    dimensions: FlowGridDimensions.init({
-      width: model[0].length,
-      height: model.length,
-    }),
-  })
+	let grid = FlowGrid.init({
+		dimensions: FlowGridDimensions.init({
+			width: model[0].length,
+			height: model.length,
+		}),
+	});
 
-  const draftTerminals: {
-    [groupId in Flow.GroupId]?: DraftTerminal
-  } = {}
+	const draftTerminals: {
+		[groupId in Flow.GroupId]?: DraftTerminal;
+	} = {};
 
-  for (let y = 0; y < model.length; y++) {
-    const row = model[y]
+	for (let y = 0; y < model.length; y++) {
+		const row = model[y];
 
-    if (!row) {
-      continue
-    }
+		if (!row) {
+			continue;
+		}
 
-    for (let x = 0; x < row.length; x++) {
-      const position = {
-        x,
-        y,
-      }
+		for (let x = 0; x < row.length; x++) {
+			const position = {
+				x,
+				y,
+			};
 
-      const nodeId = FlowGrid.positionToNodeId(position)
+			const nodeId = FlowGrid.positionToNodeId(position);
 
-      grid = FlowGrid.addNode(grid, position)
+			grid = FlowGrid.addNode(grid, position);
 
-      const groupId = row[x]
+			const groupId = row[x];
 
-      if (!groupId) {
-        continue
-      }
+			if (!groupId) {
+				continue;
+			}
 
-      const draftTerminal = draftTerminals[groupId]
+			const draftTerminal = draftTerminals[groupId];
 
-      if (!draftTerminal) {
-        const draftTerminalNew: DraftTerminal = {
-          groupId,
-          startId: nodeId,
-          endId: null,
-        }
-        draftTerminals[groupId] = draftTerminalNew
-        continue
-      }
+			if (!draftTerminal) {
+				const draftTerminalNew: DraftTerminal = {
+					groupId,
+					startId: nodeId,
+					endId: null,
+				};
+				draftTerminals[groupId] = draftTerminalNew;
+				continue;
+			}
 
-      const added = Flow.addTerminal(grid, {
-        groupId: draftTerminal.groupId,
-        startId: draftTerminal.startId,
-        endId: nodeId,
-      })
+			const added = Flow.addTerminal(grid, {
+				groupId: draftTerminal.groupId,
+				startId: draftTerminal.startId,
+				endId: nodeId,
+			});
 
-      grid = {
-        ...grid,
-        ...added,
-      }
-    }
-  }
+			grid = {
+				...grid,
+				...added,
+			};
+		}
+	}
 
-  return grid
+	return grid;
 }

@@ -1,9 +1,9 @@
-import { FlowPack } from "../../@shared/flow-pack"
-import { FlowPackId } from "../../@shared/flow-pack/flow-pack-id"
-import { PackBuilder } from "./builder"
-import { PackCreate } from "./create"
-import { PackList } from "./list"
-import { RemovePuzzle } from "./remove-puzzle"
+import type { FlowPack } from "../../@shared/flow-pack";
+import type { FlowPackId } from "../../@shared/flow-pack/flow-pack-id";
+import { PackBuilder } from "./builder";
+import { PackCreate } from "./create";
+import { PackList } from "./list";
+import { RemovePuzzle } from "./remove-puzzle";
 
 //
 //
@@ -14,20 +14,20 @@ import { RemovePuzzle } from "./remove-puzzle"
 //
 
 export type ModelClient = PackCreate.ModelClient &
-  PackBuilder.ModelClient &
-  PackList.ModelClient &
-  RemovePuzzle.ModelClient
+	PackBuilder.ModelClient &
+	PackList.ModelClient &
+	RemovePuzzle.ModelClient;
 
 export const initClient = (packs: {
-  [packId: FlowPackId]: FlowPack
+	[packId: FlowPackId]: FlowPack;
 }): ModelClient => {
-  return {
-    ...PackBuilder.initClient,
-    ...PackCreate.initClient,
-    ...PackList.initClient,
-    ...RemovePuzzle.initClient(packs),
-  }
-}
+	return {
+		...PackBuilder.initClient,
+		...PackCreate.initClient,
+		...PackList.initClient,
+		...RemovePuzzle.initClient(packs),
+	};
+};
 
 //
 //
@@ -38,27 +38,27 @@ export const initClient = (packs: {
 //
 
 export type MsgClient =
-  | PackCreate.MsgClient
-  | PackBuilder.MsgClient
-  | PackList.MsgClient
-  | RemovePuzzle.MsgClient
+	| PackCreate.MsgClient
+	| PackBuilder.MsgClient
+	| PackList.MsgClient
+	| RemovePuzzle.MsgClient;
 
 export type MsgServer =
-  | PackCreate.MsgServer
-  | PackBuilder.MsgServer
-  | PackList.MsgServer
+	| PackCreate.MsgServer
+	| PackBuilder.MsgServer
+	| PackList.MsgServer;
 
 export type MsgToServer =
-  | PackCreate.MsgToServer
-  | PackBuilder.MsgToServer
-  | PackList.MsgToServer
-  | RemovePuzzle.MsgToServer
+	| PackCreate.MsgToServer
+	| PackBuilder.MsgToServer
+	| PackList.MsgToServer
+	| RemovePuzzle.MsgToServer;
 
 export type MsgToClient =
-  | PackCreate.MsgToClient
-  | PackBuilder.MsgToClient
-  | PackList.MsgToClient
-  | RemovePuzzle.MsgToClient
+	| PackCreate.MsgToClient
+	| PackBuilder.MsgToClient
+	| PackList.MsgToClient
+	| RemovePuzzle.MsgToClient;
 
 //
 //
@@ -68,10 +68,10 @@ export type MsgToClient =
 //
 //
 
-export type ModelSync = RemovePuzzle.ModelSync
+export type ModelSync = RemovePuzzle.ModelSync;
 
 export type MsgSync =
-  | PackCreate.MsgSync
-  | PackBuilder.MsgSync
-  | PackList.MsgSync
-  | RemovePuzzle.MsgSync
+	| PackCreate.MsgSync
+	| PackBuilder.MsgSync
+	| PackList.MsgSync
+	| RemovePuzzle.MsgSync;

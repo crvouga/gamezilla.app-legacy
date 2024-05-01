@@ -1,49 +1,49 @@
-import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2"
-import { withId } from "gamezilla-app/app/spaces/@shared/event"
-import { ServerModule } from "../../create.core"
-import { MsgSync } from "./puzzle-delete-forever.core"
+import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2";
+import { withId } from "gamezilla-app/app/spaces/@shared/event";
+import type { ServerModule } from "../../create.core";
+import type { MsgSync } from "./puzzle-delete-forever.core";
 
 const update: ServerModule["update"] = async (input) => {
-  return GameServerModule.andThen({ model: input.model }, (model) =>
-    updateFromClient({ ...input, model }),
-  )
-}
+	return GameServerModule.andThen({ model: input.model }, (model) =>
+		updateFromClient({ ...input, model }),
+	);
+};
 
 const updateFromClient: ServerModule["update"] = async (input) => {
-  const { modelSync, msgClient, model, deps } = input
+	const { modelSync, msgClient, model, deps } = input;
 
-  switch (msgClient?.t) {
-    case "delete-forever/user-confirmed": {
-      const puzzleBuilder = modelSync.puzzleBuilder
+	switch (msgClient?.t) {
+		case "delete-forever/user-confirmed": {
+			const puzzleBuilder = modelSync.puzzleBuilder;
 
-      if (!puzzleBuilder) {
-        return { model }
-      }
+			if (!puzzleBuilder) {
+				return { model };
+			}
 
-      const deleted = await deps.FlowPuzzleDb.zap({
-        id: puzzleBuilder.puzzle.id,
-        deletedByUserId: msgClient.userId,
-      })
+			const deleted = await deps.FlowPuzzleDb.zap({
+				id: puzzleBuilder.puzzle.id,
+				deletedByUserId: msgClient.userId,
+			});
 
-      const msgSync: MsgSync = {
-        t: "user-deleted-puzzle",
-        flowPuzzleId: puzzleBuilder.puzzle.id,
-        userId: msgClient.userId,
-        deleted,
-      }
+			const msgSync: MsgSync = {
+				t: "user-deleted-puzzle",
+				flowPuzzleId: puzzleBuilder.puzzle.id,
+				userId: msgClient.userId,
+				deleted,
+			};
 
-      return {
-        model,
-        msgSync: [withId(msgSync)],
-      }
-    }
+			return {
+				model,
+				msgSync: [withId(msgSync)],
+			};
+		}
 
-    default: {
-      return { model }
-    }
-  }
-}
+		default: {
+			return { model };
+		}
+	}
+};
 
 export const PuzzleDeleteForeverServer: Pick<ServerModule, "update"> = {
-  update,
-}
+	update,
+};

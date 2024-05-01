@@ -1,14 +1,14 @@
-import { p } from "../core/parser"
+import { p } from "../core/parser";
 
-const parser = p.brand(p.str, "HashValue")
+const parser = p.brand(p.str, "HashValue");
 
-export type HashValue = p.Infer<typeof parser>
+export type HashValue = p.Infer<typeof parser>;
 
 const fromString = (value: string): HashValue => {
-  return value as HashValue
-}
+	return value as HashValue;
+};
 
 export const HashValue = {
-  ...parser,
-  fromString,
-}
+	...parser,
+	fromString,
+};

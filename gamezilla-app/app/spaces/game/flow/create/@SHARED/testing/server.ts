@@ -1,20 +1,20 @@
-import { testSpaceServerCtx } from "../../../../@shared/testing/server"
-import { FlowPackDb } from "../../../@shared/flow-pack/flow-pack-db"
-import { FlowPuzzleDb } from "../../../@shared/flow-puzzle/flow-puzzle-db"
-import { FlowServerDeps, initServer } from "../../create.core"
-import { initSync } from "../../create.sync"
+import { testSpaceServerCtx } from "../../../../@shared/testing/server";
+import { FlowPackDb } from "../../../@shared/flow-pack/flow-pack-db";
+import { FlowPuzzleDb } from "../../../@shared/flow-puzzle/flow-puzzle-db";
+import { type FlowServerDeps, initServer } from "../../create.core";
+import { initSync } from "../../create.sync";
 
 export const initial = {
-  model: initServer,
-}
+	model: initServer,
+};
 
 export const defaultModelSync = initSync({
-  ctx: testSpaceServerCtx,
-})
+	ctx: testSpaceServerCtx,
+});
 
 export const getDeps = (): FlowServerDeps => {
-  return {
-    FlowPackDb: FlowPackDb({ t: "hash-map" }),
-    FlowPuzzleDb: FlowPuzzleDb({ t: "hash-map" }),
-  }
-}
+	return {
+		FlowPackDb: FlowPackDb({ t: "hash-map" }),
+		FlowPuzzleDb: FlowPuzzleDb({ t: "hash-map" }),
+	};
+};

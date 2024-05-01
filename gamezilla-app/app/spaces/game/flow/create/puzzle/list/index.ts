@@ -1,1 +1,1 @@
-export * as PuzzleList from "./puzzle-list.core"
+export * as PuzzleList from "./puzzle-list.core";

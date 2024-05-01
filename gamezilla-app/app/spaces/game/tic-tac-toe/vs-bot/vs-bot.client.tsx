@@ -1,48 +1,48 @@
-import { Eff, Posix } from "gamezilla-app/@shared/core"
+import type { Eff, Posix } from "gamezilla-app/@shared/core";
 import {
-  ClientCmd,
-  ClientCtx,
-  sendToServer,
-} from "gamezilla-app/app/@shared/client"
+	type ClientCmd,
+	type ClientCtx,
+	sendToServer,
+} from "gamezilla-app/app/@shared/client";
 import {
-  IconArrowLeftOnRect,
-  IconArrowRotateLeft,
-  IconRightLeft,
-  LoadingBar,
-} from "gamezilla-app/app/@shared/ui"
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space"
+	IconArrowLeftOnRect,
+	IconArrowRotateLeft,
+	IconRightLeft,
+	LoadingBar,
+} from "gamezilla-app/app/@shared/ui";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space";
 import {
-  ViewBottomButtonBar,
-  ViewBottomButtonBarAction,
-} from "gamezilla-app/app/spaces/game/@shared/game"
+	ViewBottomButtonBar,
+	ViewBottomButtonBarAction,
+} from "gamezilla-app/app/spaces/game/@shared/game";
 import {
-  IconBotCute,
-  IconBotLevel1,
-  IconBotScary,
-  VsBotGame,
-  VsBotSetup,
-} from "gamezilla-app/app/spaces/game/@shared/vs-bot"
+	IconBotCute,
+	IconBotLevel1,
+	IconBotScary,
+	VsBotGame,
+	VsBotSetup,
+} from "gamezilla-app/app/spaces/game/@shared/vs-bot";
 import {
-  BotLevel,
-  allBotLevels,
-  toStatus,
-  toTurn,
-} from "../@shared/tic-tic-toe/tic-tac-toe"
+	type BotLevel,
+	allBotLevels,
+	toStatus,
+	toTurn,
+} from "../@shared/tic-tic-toe/tic-tac-toe";
 import {
-  CoverArt,
-  PlayerTypeIcon,
-  ViewBoard,
-  gameTheme,
-} from "../@shared/tic-tic-toe/tic-tac-toe-ui"
+	CoverArt,
+	PlayerTypeIcon,
+	ViewBoard,
+	gameTheme,
+} from "../@shared/tic-tic-toe/tic-tac-toe-ui";
 import {
-  ModelClient,
-  ModelServer,
-  MsgClient,
-  MsgToClient,
-  MsgToServer,
-  handle,
-  initCoreModel,
-} from "./vs-bot.core"
+	type ModelClient,
+	type ModelServer,
+	type MsgClient,
+	type MsgToClient,
+	type MsgToServer,
+	handle,
+	initCoreModel,
+} from "./vs-bot.core";
 
 //
 //
@@ -52,14 +52,14 @@ import {
 //
 //
 
-export type Model = ModelClient
+export type Model = ModelClient;
 
 export const init = (...input: Parameters<typeof initCoreModel>): Model => {
-  return {
-    ...initCoreModel(...input),
-    vsBotSetup: VsBotSetup.init,
-  }
-}
+	return {
+		...initCoreModel(...input),
+		vsBotSetup: VsBotSetup.init,
+	};
+};
 
 //
 //
@@ -69,80 +69,80 @@ export const init = (...input: Parameters<typeof initCoreModel>): Model => {
 //
 //
 
-export type Msg = MsgClient
+export type Msg = MsgClient;
 
 export const update = ({
-  msg,
-  model,
-  ctx,
+	msg,
+	model,
+	ctx,
 }: {
-  ctx: SpaceClientCtx
-  msg: Msg
-  model: Model
+	ctx: SpaceClientCtx;
+	msg: Msg;
+	model: Model;
 }): {
-  model: Model
+	model: Model;
 
-  eff?: Eff<Msg>
-  msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[]
+	eff?: Eff<Msg>;
+	msgCmd?: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>[];
 } => {
-  if (msg.t === "vs-bot-setup") {
-    const updated = VsBotSetup.update(model.vsBotSetup, msg.c)
-    return { model: { ...model, vsBotSetup: updated } }
-  }
+	if (msg.t === "vs-bot-setup") {
+		const updated = VsBotSetup.update(model.vsBotSetup, msg.c);
+		return { model: { ...model, vsBotSetup: updated } };
+	}
 
-  const handled = handle({ ctx, msg, model })
-  if (handled.t === "err") {
-    return { model, msgCmd: [sendToServer(msg)] }
-  }
-  const merged = mergeWithServer({
-    ...ctx,
-    client: model,
-    server: handled.value,
-  })
-  return { model: merged, msgCmd: [sendToServer(msg)] }
-}
+	const handled = handle({ ctx, msg, model });
+	if (handled.t === "err") {
+		return { model, msgCmd: [sendToServer(msg)] };
+	}
+	const merged = mergeWithServer({
+		...ctx,
+		client: model,
+		server: handled.value,
+	});
+	return { model: merged, msgCmd: [sendToServer(msg)] };
+};
 
 export const updateFromServer = ({
-  msg,
-  model,
-  ctx,
+	msg,
+	model,
+	ctx,
 }: {
-  ctx: ClientCtx
-  msg: MsgToClient
-  model: Model
+	ctx: ClientCtx;
+	msg: MsgToClient;
+	model: Model;
 }): {
-  model: Model
+	model: Model;
 } => {
-  if (msg.result.t === "err") {
-    return {
-      model,
-    }
-  }
+	if (msg.result.t === "err") {
+		return {
+			model,
+		};
+	}
 
-  const modelNew = mergeWithServer({
-    ...ctx,
-    client: model,
-    server: msg.result.value,
-  })
+	const modelNew = mergeWithServer({
+		...ctx,
+		client: model,
+		server: msg.result.value,
+	});
 
-  return {
-    model: modelNew,
-  }
-}
+	return {
+		model: modelNew,
+	};
+};
 
 export const mergeWithServer = ({
-  server,
-  client = init({ userId: null }),
+	server,
+	client = init({ userId: null }),
 }: {
-  now: Posix
-  client?: ModelClient
-  server: ModelServer
+	now: Posix;
+	client?: ModelClient;
+	server: ModelServer;
 }): ModelClient => {
-  return {
-    ...client,
-    ...server,
-  }
-}
+	return {
+		...client,
+		...server,
+	};
+};
 
 //
 //
@@ -153,137 +153,137 @@ export const mergeWithServer = ({
 //
 
 export const View = (props: {
-  ctx: SpaceClientCtx
-  goBack: () => void
-  model: Model
-  dispatch: (msg: Msg) => void
+	ctx: SpaceClientCtx;
+	goBack: () => void;
+	model: Model;
+	dispatch: (msg: Msg) => void;
 }) => {
-  const vsBotProps: VsBotSetup.VsBotSetupProps = {
-    bot: {
-      label: props.model.botLevel,
-      renderIcon: (iconProps) =>
-        renderBotLevel({ level: props.model.botLevel, ...iconProps }),
-    },
-    onSwapSides: () => props.dispatch({ t: "swap-sides" }),
-    canStartGame: Boolean(props.model.player),
-    ctx: props.ctx,
-    human: {
-      player: props.model.userPlayerType === "X" ? "player-one" : "player-two",
-      userId: props.model.player ?? null,
-    },
-    onQuit: props.goBack,
-    onStartGame: () => props.dispatch({ t: "start-game" }),
-    botVariants: allBotLevels.map((botLevel) => {
-      return {
-        label: botLevel,
-        renderIcon: (props) => renderBotLevel({ level: botLevel, ...props }),
-        onSelect: () => props.dispatch({ t: "input-bot-level", botLevel }),
-      }
-    }),
-    playerOne: {
-      label: "Cross",
-      onStartPlaying: () =>
-        props.dispatch({ t: "start-playing", playerType: "X" }),
-      onStopPlaying: () => props.dispatch({ t: "stop-playing" }),
-      renderIcon: (props) => <PlayerTypeIcon {...props} playerType="X" />,
-    },
-    playerTwo: {
-      label: "Naught",
-      onStartPlaying: () =>
-        props.dispatch({ t: "start-playing", playerType: "O" }),
-      onStopPlaying: () => props.dispatch({ t: "stop-playing" }),
-      renderIcon: (props) => <PlayerTypeIcon {...props} playerType="O" />,
-    },
-    renderCoverArt: (props) => <CoverArt {...props} />,
-    title: "Tic-Tac-Toe",
-  }
+	const vsBotProps: VsBotSetup.VsBotSetupProps = {
+		bot: {
+			label: props.model.botLevel,
+			renderIcon: (iconProps) =>
+				renderBotLevel({ level: props.model.botLevel, ...iconProps }),
+		},
+		onSwapSides: () => props.dispatch({ t: "swap-sides" }),
+		canStartGame: Boolean(props.model.player),
+		ctx: props.ctx,
+		human: {
+			player: props.model.userPlayerType === "X" ? "player-one" : "player-two",
+			userId: props.model.player ?? null,
+		},
+		onQuit: props.goBack,
+		onStartGame: () => props.dispatch({ t: "start-game" }),
+		botVariants: allBotLevels.map((botLevel) => {
+			return {
+				label: botLevel,
+				renderIcon: (props) => renderBotLevel({ level: botLevel, ...props }),
+				onSelect: () => props.dispatch({ t: "input-bot-level", botLevel }),
+			};
+		}),
+		playerOne: {
+			label: "Cross",
+			onStartPlaying: () =>
+				props.dispatch({ t: "start-playing", playerType: "X" }),
+			onStopPlaying: () => props.dispatch({ t: "stop-playing" }),
+			renderIcon: (props) => <PlayerTypeIcon {...props} playerType="X" />,
+		},
+		playerTwo: {
+			label: "Naught",
+			onStartPlaying: () =>
+				props.dispatch({ t: "start-playing", playerType: "O" }),
+			onStopPlaying: () => props.dispatch({ t: "stop-playing" }),
+			renderIcon: (props) => <PlayerTypeIcon {...props} playerType="O" />,
+		},
+		renderCoverArt: (props) => <CoverArt {...props} />,
+		title: "Tic-Tac-Toe",
+	};
 
-  if (props.model.type === "setup") {
-    return (
-      <VsBotSetup.View
-        model={props.model.vsBotSetup}
-        dispatch={(c) => props.dispatch({ t: "vs-bot-setup", c })}
-        {...vsBotProps}
-      />
-    )
-  }
+	if (props.model.type === "setup") {
+		return (
+			<VsBotSetup.View
+				model={props.model.vsBotSetup}
+				dispatch={(c) => props.dispatch({ t: "vs-bot-setup", c })}
+				{...vsBotProps}
+			/>
+		);
+	}
 
-  const vsBotGameProps: VsBotGame.VsBotGameProps = {
-    ...vsBotProps,
-    human: {
-      ...vsBotProps.human,
-      userId: props.model.player,
-    },
-    turn: null,
-    isSpectating: false,
-  }
+	const vsBotGameProps: VsBotGame.VsBotGameProps = {
+		...vsBotProps,
+		human: {
+			...vsBotProps.human,
+			userId: props.model.player,
+		},
+		turn: null,
+		isSpectating: false,
+	};
 
-  const turn = toTurn(props.model.board)
-  const status = toStatus(props.model.board)
+	const turn = toTurn(props.model.board);
+	const status = toStatus(props.model.board);
 
-  return (
-    <div className="flex h-full w-full flex-col ">
-      <div className="flex flex-1 flex-col items-center justify-center">
-        <VsBotGame.VsBotPlayerSection {...vsBotGameProps} />
+	return (
+		<div className="flex h-full w-full flex-col ">
+			<div className="flex flex-1 flex-col items-center justify-center">
+				<VsBotGame.VsBotPlayerSection {...vsBotGameProps} />
 
-        <LoadingBar
-          className="w-full"
-          disabled={
-            props.model.userPlayerType === turn || status.type !== "Turn"
-          }
-          color={gameTheme.background}
-        />
+				<LoadingBar
+					className="w-full"
+					disabled={
+						props.model.userPlayerType === turn || status.type !== "Turn"
+					}
+					color={gameTheme.background}
+				/>
 
-        <ViewBoard
-          board={props.model.board}
-          onClick={(position) => props.dispatch({ t: "input-move", position })}
-        />
-      </div>
+				<ViewBoard
+					board={props.model.board}
+					onClick={(position) => props.dispatch({ t: "input-move", position })}
+				/>
+			</div>
 
-      <ViewBottomButtonBar>
-        <ViewBottomButtonBarAction
-          icon={(props) => <IconArrowLeftOnRect {...props} />}
-          label="Exit"
-          onClick={() => props.dispatch({ t: "stop-game" })}
-        />
-        <ViewBottomButtonBarAction
-          icon={(props) => <IconRightLeft {...props} />}
-          label="Swap sides"
-          onClick={() => props.dispatch({ t: "swap-sides" })}
-        />
-        <ViewBottomButtonBarAction
-          icon={(props) => <IconArrowRotateLeft {...props} />}
-          label="Restart"
-          onClick={() => props.dispatch({ t: "restart" })}
-        />
-      </ViewBottomButtonBar>
-    </div>
-  )
-}
+			<ViewBottomButtonBar>
+				<ViewBottomButtonBarAction
+					icon={(props) => <IconArrowLeftOnRect {...props} />}
+					label="Exit"
+					onClick={() => props.dispatch({ t: "stop-game" })}
+				/>
+				<ViewBottomButtonBarAction
+					icon={(props) => <IconRightLeft {...props} />}
+					label="Swap sides"
+					onClick={() => props.dispatch({ t: "swap-sides" })}
+				/>
+				<ViewBottomButtonBarAction
+					icon={(props) => <IconArrowRotateLeft {...props} />}
+					label="Restart"
+					onClick={() => props.dispatch({ t: "restart" })}
+				/>
+			</ViewBottomButtonBar>
+		</div>
+	);
+};
 
 export const ViewMsg = (props: { msg: Msg | MsgToClient }) => {
-  if ("result" in props.msg && props.msg.result.t === "err") {
-    return props.msg.result.error
-  }
-  return null
-}
+	if ("result" in props.msg && props.msg.result.t === "err") {
+		return props.msg.result.error;
+	}
+	return null;
+};
 
 export const renderBotLevel = ({
-  level,
-  ...props
+	level,
+	...props
 }: {
-  level: BotLevel
-  className?: string
+	level: BotLevel;
+	className?: string;
 }) => {
-  switch (level) {
-    case "Easy": {
-      return <IconBotCute {...props} />
-    }
-    case "Medium": {
-      return <IconBotLevel1 {...props} />
-    }
-    case "Impossible": {
-      return <IconBotScary {...props} />
-    }
-  }
-}
+	switch (level) {
+		case "Easy": {
+			return <IconBotCute {...props} />;
+		}
+		case "Medium": {
+			return <IconBotLevel1 {...props} />;
+		}
+		case "Impossible": {
+			return <IconBotScary {...props} />;
+		}
+	}
+};

@@ -1,79 +1,79 @@
-import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2"
-import { withId } from "gamezilla-app/app/spaces/@shared/event"
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd"
-import { Eff } from "gamezilla-app/@shared/core"
+import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2";
+import { withId } from "gamezilla-app/app/spaces/@shared/event";
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd";
+import { Eff } from "gamezilla-app/@shared/core";
 
-import { FlowPackPuzzleGridServer } from "../../../@shared/flow-pack/flow-pack-puzzle-grid/flow-pack-puzzle-grid.server"
-import { ServerModule } from "../../create.core"
+import { FlowPackPuzzleGridServer } from "../../../@shared/flow-pack/flow-pack-puzzle-grid/flow-pack-puzzle-grid.server";
+import type { ServerModule } from "../../create.core";
 
 const SavePack: Pick<ServerModule, "update"> = {
-  async update(input) {
-    const { deps, model, modelSync, msgSync } = input
-    switch (msgSync?.t) {
-      case "pack-builder.user-clicked-add-puzzle-item": {
-        if (!modelSync.packBuilder) {
-          return { model }
-        }
+	async update(input) {
+		const { deps, model, modelSync, msgSync } = input;
+		switch (msgSync?.t) {
+			case "pack-builder.user-clicked-add-puzzle-item": {
+				if (!modelSync.packBuilder) {
+					return { model };
+				}
 
-        const saved = await deps.FlowPackDb.put(modelSync.packBuilder.pack)
+				const saved = await deps.FlowPackDb.put(modelSync.packBuilder.pack);
 
-        return {
-          model,
-          msgSync: [withId({ t: "pack-builder.saved-pack", saved })],
-        }
-      }
-      default: {
-        return { model }
-      }
-    }
-  },
-}
+				return {
+					model,
+					msgSync: [withId({ t: "pack-builder.saved-pack", saved })],
+				};
+			}
+			default: {
+				return { model };
+			}
+		}
+	},
+};
 
 const PuzzleGrid: Pick<ServerModule, "update"> = {
-  async update(input) {
-    const pack = input.modelSync.packBuilder?.pack
+	async update(input) {
+		const pack = input.modelSync.packBuilder?.pack;
 
-    if (!pack) {
-      return { model: input.model }
-    }
+		if (!pack) {
+			return { model: input.model };
+		}
 
-    const ctx = { ...input.ctx, pack }
+		const ctx = { ...input.ctx, pack };
 
-    const updated = await FlowPackPuzzleGridServer.update({
-      ctx,
-      model: {},
-      msg:
-        input.msg?.t === "pack-builder.flow-pack-puzzle-grid"
-          ? input.msg.c
-          : null,
-      msgCmd: input.msgCmd,
-      msgClient:
-        input.msgClient?.t === "pack-builder.flow-pack-puzzle-grid"
-          ? { ...input.msgClient, ...input.msgClient.c }
-          : null,
-      deps: input.deps,
-      msgEvt: input.msgEvt,
-    })
+		const updated = await FlowPackPuzzleGridServer.update({
+			ctx,
+			model: {},
+			msg:
+				input.msg?.t === "pack-builder.flow-pack-puzzle-grid"
+					? input.msg.c
+					: null,
+			msgCmd: input.msgCmd,
+			msgClient:
+				input.msgClient?.t === "pack-builder.flow-pack-puzzle-grid"
+					? { ...input.msgClient, ...input.msgClient.c }
+					: null,
+			deps: input.deps,
+			msgEvt: input.msgEvt,
+		});
 
-    return {
-      model: input.model,
-      eff: Eff.tag("pack-builder.flow-pack-puzzle-grid", updated.eff),
-      msgCmd: SpaceServerCmd.tag(
-        "pack-builder.flow-pack-puzzle-grid",
-        updated.msgCmd,
-      ),
-      msgEvt: updated.msgEvt,
-    }
-  },
-}
+		return {
+			model: input.model,
+			eff: Eff.tag("pack-builder.flow-pack-puzzle-grid", updated.eff),
+			msgCmd: SpaceServerCmd.tag(
+				"pack-builder.flow-pack-puzzle-grid",
+				updated.msgCmd,
+			),
+			msgEvt: updated.msgEvt,
+		};
+	},
+};
 
 export const PackBuilderServer: Pick<ServerModule, "update"> = {
-  async update(input) {
-    return GameServerModule.andThen(
-      { model: input.model },
-      (model) => SavePack.update({ ...input, model }),
-      (model) => PuzzleGrid.update({ ...input, model }),
-      //
-    )
-  },
-}
+	async update(input) {
+		return GameServerModule.andThen(
+			{ model: input.model },
+			(model) => SavePack.update({ ...input, model }),
+			(model) => PuzzleGrid.update({ ...input, model }),
+			//
+		);
+	},
+};

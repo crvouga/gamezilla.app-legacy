@@ -1,6 +1,6 @@
-import * as FlowHex from "./flow-hex"
-import { FlowViewProps } from "../../flow/flow-ui"
+import type * as FlowHex from "./flow-hex";
+import type { FlowViewProps } from "../../flow/flow-ui";
 
 export const View = (_props: FlowViewProps<FlowHex.Model>) => {
-  return <div>FlowHex</div>
-}
+	return <div>FlowHex</div>;
+};

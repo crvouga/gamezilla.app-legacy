@@ -1,15 +1,15 @@
-import { Sub } from "gamezilla-app/@shared/core"
-import { GameServerModule } from "../../@shared/architecture/game-server-v2"
-import { SpaceServerCtx, SpaceServerEvent } from "../../@shared/space"
-import { SpaceServerCmd } from "../../@shared/space-server-cmd"
-import {
-  MsgSync,
-  ModelSync,
-  ModelServer,
-  MsgServer,
-  MsgToClient,
-  MsgToServer,
-} from "./connect-four.core"
+import { Sub } from "gamezilla-app/@shared/core";
+import type { GameServerModule } from "../../@shared/architecture/game-server-v2";
+import type { SpaceServerCtx, SpaceServerEvent } from "../../@shared/space";
+import type { SpaceServerCmd } from "../../@shared/space-server-cmd";
+import type {
+	MsgSync,
+	ModelSync,
+	ModelServer,
+	MsgServer,
+	MsgToClient,
+	MsgToServer,
+} from "./connect-four.core";
 
 //
 //
@@ -20,19 +20,19 @@ import {
 //
 
 type Module = GameServerModule<{
-  Model: ModelServer
-  Msg: MsgServer
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  ModelSync: ModelSync
-  MsgSync: MsgSync
-  Ctx: SpaceServerCtx
-  MsgInCmd: null
-  MsgInEvent: SpaceServerEvent
-  MsgOutCmd: SpaceServerCmd<MsgToClient>
-  MsgOutEvent: null
-  Deps: null
-}>
+	Model: ModelServer;
+	Msg: MsgServer;
+	MsgToClient: MsgToClient;
+	MsgToServer: MsgToServer;
+	ModelSync: ModelSync;
+	MsgSync: MsgSync;
+	Ctx: SpaceServerCtx;
+	MsgInCmd: null;
+	MsgInEvent: SpaceServerEvent;
+	MsgOutCmd: SpaceServerCmd<MsgToClient>;
+	MsgOutEvent: null;
+	Deps: null;
+}>;
 
 //
 //
@@ -43,8 +43,8 @@ type Module = GameServerModule<{
 //
 
 const init: Module["init"] = {
-  t: null,
-}
+	t: null,
+};
 
 //
 //
@@ -55,10 +55,10 @@ const init: Module["init"] = {
 //
 
 const update: Module["update"] = async (input) => {
-  return {
-    model: input.model,
-  }
-}
+	return {
+		model: input.model,
+	};
+};
 
 //
 //
@@ -69,12 +69,12 @@ const update: Module["update"] = async (input) => {
 //
 
 const subscriptions: Module["subscriptions"] = async (_input) => {
-  return Sub.None
-}
+	return Sub.None;
+};
 
 export const ConnectFourServer: Module = {
-  init,
-  update,
-  subscriptions,
-  deps: async () => null,
-}
+	init,
+	update,
+	subscriptions,
+	deps: async () => null,
+};

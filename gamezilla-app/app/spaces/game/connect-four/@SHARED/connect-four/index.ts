@@ -1,2 +1,2 @@
-export * from "./connect-four"
-export * from "./algo-find-best-move-v2"
+export * from "./connect-four";
+export * from "./algo-find-best-move-v2";

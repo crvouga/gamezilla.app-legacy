@@ -1,2 +1,2 @@
-export * from "./verification"
-export * from "./verification-id"
+export * from "./verification";
+export * from "./verification-id";

@@ -1,9 +1,16 @@
-import { Posix } from "./posix"
-import { Err, Loading, NotAsked, Ok, Result, notAsked } from "./result"
-import { Sub } from "./sub"
-import { Time } from "./time"
-import { TimeSpan } from "./time-span"
-import { Uuid } from "./uuid"
+import { Posix } from "./posix";
+import {
+	Err,
+	type Loading,
+	type NotAsked,
+	Ok,
+	type Result,
+	notAsked,
+} from "./result";
+import { Sub } from "./sub";
+import { Time } from "./time";
+import { TimeSpan } from "./time-span";
+import { Uuid } from "./uuid";
 
 //
 //
@@ -14,146 +21,146 @@ import { Uuid } from "./uuid"
 //
 
 export type Requesting = Loading & {
-  requestedAt: Posix
-  lifeSpan: TimeSpan
-  requestId: string
-}
+	requestedAt: Posix;
+	lifeSpan: TimeSpan;
+	requestId: string;
+};
 
 export type RequestTimedOut = {
-  t: "request-failed"
-  reason: "timed-out"
-  lifeSpan: TimeSpan
-  requestId: string
-}
+	t: "request-failed";
+	reason: "timed-out";
+	lifeSpan: TimeSpan;
+	requestId: string;
+};
 
-export type RequestFailed = RequestTimedOut
+export type RequestFailed = RequestTimedOut;
 
 export type ResponseErr<TError> = Err<TError> & {
-  requestedAt: Posix
-  respondedAt: Posix
-  lifeSpan: TimeSpan
-  requestId: string
-}
+	requestedAt: Posix;
+	respondedAt: Posix;
+	lifeSpan: TimeSpan;
+	requestId: string;
+};
 
 export type ResponseOk<TValue> = Ok<TValue> & {
-  requestedAt: Posix
-  respondedAt: Posix
-  lifeSpan: TimeSpan
-  requestId: string
-}
+	requestedAt: Posix;
+	respondedAt: Posix;
+	lifeSpan: TimeSpan;
+	requestId: string;
+};
 
 export type RequestResponse<TError, TValue> =
-  | NotAsked
-  | Requesting
-  | RequestFailed
-  | ResponseErr<TError>
-  | ResponseOk<TValue>
+	| NotAsked
+	| Requesting
+	| RequestFailed
+	| ResponseErr<TError>
+	| ResponseOk<TValue>;
 
 export const requesting = (
-  requestedAt: Posix,
-  lifeSpan: TimeSpan = TimeSpan.fromMinutes(1),
+	requestedAt: Posix,
+	lifeSpan: TimeSpan = TimeSpan.fromMinutes(1),
 ): Requesting => {
-  return { t: "loading", requestedAt, lifeSpan, requestId: Uuid.generate() }
-}
+	return { t: "loading", requestedAt, lifeSpan, requestId: Uuid.generate() };
+};
 
 export const isRequesting = <TError, TValue>(
-  request: RequestResponse<TError, TValue>,
+	request: RequestResponse<TError, TValue>,
 ): request is Requesting => {
-  return request.t === "loading"
-}
+	return request.t === "loading";
+};
 
 export const didRequestTimeout = <TError, TValue>(
-  request: RequestResponse<TError, TValue>,
+	request: RequestResponse<TError, TValue>,
 ): request is RequestFailed => {
-  return request.t === "request-failed" && request.reason === "timed-out"
-}
+	return request.t === "request-failed" && request.reason === "timed-out";
+};
 
 export const isResponseOk = <TError, TValue>(
-  request: RequestResponse<TError, TValue>,
+	request: RequestResponse<TError, TValue>,
 ): request is ResponseOk<TValue> => {
-  return request.t === "ok"
-}
+	return request.t === "ok";
+};
 
 export const isResponseErr = <TError, TValue>(
-  request: RequestResponse<TError, TValue>,
+	request: RequestResponse<TError, TValue>,
 ): request is ResponseErr<TError> => {
-  return request.t === "err"
-}
+	return request.t === "err";
+};
 
 export const response = <TError, TValue>(
-  request: RequestResponse<TError, TValue>,
-  responsedAt: Posix,
-  result: Result<TError, TValue>,
+	request: RequestResponse<TError, TValue>,
+	responsedAt: Posix,
+	result: Result<TError, TValue>,
 ): RequestResponse<TError, TValue> => {
-  if (request.t === "not-asked") {
-    return request
-  }
-  return {
-    ...result,
-    requestedAt: responsedAt,
-    respondedAt: responsedAt,
-    lifeSpan: request.lifeSpan,
-    requestId: request.requestId,
-  }
-}
+	if (request.t === "not-asked") {
+		return request;
+	}
+	return {
+		...result,
+		requestedAt: responsedAt,
+		respondedAt: responsedAt,
+		lifeSpan: request.lifeSpan,
+		requestId: request.requestId,
+	};
+};
 
 export const elapsed = <TError, TValue>(
-  request: RequestResponse<TError, TValue>,
-  now: Posix,
+	request: RequestResponse<TError, TValue>,
+	now: Posix,
 ): RequestResponse<TError, TValue> => {
-  if (
-    isRequesting(request) &&
-    TimeSpan.gte(Posix.diff(now, request.requestedAt), request.lifeSpan)
-  ) {
-    return {
-      t: "request-failed",
-      reason: "timed-out",
-      lifeSpan: request.lifeSpan,
-      requestId: request.requestId,
-    }
-  }
-  return request
-}
+	if (
+		isRequesting(request) &&
+		TimeSpan.gte(Posix.diff(now, request.requestedAt), request.lifeSpan)
+	) {
+		return {
+			t: "request-failed",
+			reason: "timed-out",
+			lifeSpan: request.lifeSpan,
+			requestId: request.requestId,
+		};
+	}
+	return request;
+};
 
 const subscriptions = <TError, TValue, TMsg>(
-  request: RequestResponse<TError, TValue>,
-  elasped: () => TMsg,
+	request: RequestResponse<TError, TValue>,
+	elasped: () => TMsg,
 ): Sub<TMsg> => {
-  if (isRequesting(request)) {
-    return Time.interval("", TimeSpan.fromSeconds(1), elasped)
-  }
-  return Sub.None
-}
+	if (isRequesting(request)) {
+		return Time.interval("", TimeSpan.fromSeconds(1), elasped);
+	}
+	return Sub.None;
+};
 
 const isErr = <TError, TValue>(
-  request: RequestResponse<TError, TValue>,
+	request: RequestResponse<TError, TValue>,
 ): request is ResponseErr<TError> => {
-  return request.t === "err"
-}
+	return request.t === "err";
+};
 
 const isOk = <TError, TValue>(
-  request: RequestResponse<TError, TValue>,
+	request: RequestResponse<TError, TValue>,
 ): request is ResponseOk<TValue> => {
-  return request.t === "ok"
-}
+	return request.t === "ok";
+};
 
 const isTimedOut = <TError, TValue>(
-  request: RequestResponse<TError, TValue>,
+	request: RequestResponse<TError, TValue>,
 ): request is RequestFailed => {
-  return request.t === "request-failed" && request.reason === "timed-out"
-}
+	return request.t === "request-failed" && request.reason === "timed-out";
+};
 
 export const RequestResponse = {
-  isTimedOut,
-  isOk,
-  isErr,
-  isRequesting,
-  requesting,
-  response,
-  err: Err,
-  ok: Ok,
-  elapsed,
-  didRequestTimeout,
-  subscriptions,
-  notAsked,
-}
+	isTimedOut,
+	isOk,
+	isErr,
+	isRequesting,
+	requesting,
+	response,
+	err: Err,
+	ok: Ok,
+	elapsed,
+	didRequestTimeout,
+	subscriptions,
+	notAsked,
+};

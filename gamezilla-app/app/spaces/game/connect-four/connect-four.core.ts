@@ -1,10 +1,10 @@
-import { WithEventMeta } from "gamezilla-app/app/spaces/@shared/event"
-import { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space"
-import { UserId } from "gamezilla-app/app/@shared/data"
-import { GameMainMenu } from "../@shared/game"
-import * as VsBot from "./vs-bot/vs-bot.core"
-import * as VsUser from "./vs-user/vs-user.core"
-import { p } from "gamezilla-app/@shared/core/parser"
+import type { WithEventMeta } from "gamezilla-app/app/spaces/@shared/event";
+import type { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space";
+import { UserId } from "gamezilla-app/app/@shared/data";
+import type { GameMainMenu } from "../@shared/game";
+import * as VsBot from "./vs-bot/vs-bot.core";
+import * as VsUser from "./vs-user/vs-user.core";
+import { p } from "gamezilla-app/@shared/core/parser";
 
 //
 //
@@ -15,27 +15,27 @@ import { p } from "gamezilla-app/@shared/core/parser"
 //
 
 export type ModelClient =
-  | { t: "vs-bot"; c: VsBot.ModelClient }
-  | { t: "vs-user"; c: VsUser.ModelClient }
-  | { t: null }
+	| { t: "vs-bot"; c: VsBot.ModelClient }
+	| { t: "vs-user"; c: VsUser.ModelClient }
+	| { t: null };
 
 export const ModelServer = p.or(
-  p.obj({
-    t: p.l("vs-bot"),
-    c: VsBot.ModelServer,
-  }),
-  p.obj({
-    t: p.l("vs-user"),
-    c: VsUser.ModelServer,
-  }),
-  p.obj({
-    t: p.l(null),
-  }),
-)
+	p.obj({
+		t: p.l("vs-bot"),
+		c: VsBot.ModelServer,
+	}),
+	p.obj({
+		t: p.l("vs-user"),
+		c: VsUser.ModelServer,
+	}),
+	p.obj({
+		t: p.l(null),
+	}),
+);
 
-export type ModelServer = p.Infer<typeof ModelServer>
+export type ModelServer = p.Infer<typeof ModelServer>;
 
-export type Mode = "none" | "vs-user" | "vs-bot"
+export type Mode = "none" | "vs-user" | "vs-bot";
 
 //
 //
@@ -46,22 +46,22 @@ export type Mode = "none" | "vs-user" | "vs-bot"
 //
 
 export type MsgClient =
-  | GameMainMenu.Msg
-  | MsgSync
-  | { t: "vs-user"; c: VsUser.MsgClient }
-  | { t: "vs-bot"; c: VsBot.MsgClient }
+	| GameMainMenu.Msg
+	| MsgSync
+	| { t: "vs-user"; c: VsUser.MsgClient }
+	| { t: "vs-bot"; c: VsBot.MsgClient };
 
 export type MsgServer =
-  | { t: "vs-user"; c: VsUser.MsgServer }
-  | { t: "vs-bot"; c: VsBot.MsgServer }
+	| { t: "vs-user"; c: VsUser.MsgServer }
+	| { t: "vs-bot"; c: VsBot.MsgServer };
 
 export type MsgToClient =
-  | { t: "vs-user"; c: VsUser.MsgToClient }
-  | { t: "vs-bot"; c: VsBot.MsgToClient }
+	| { t: "vs-user"; c: VsUser.MsgToClient }
+	| { t: "vs-bot"; c: VsBot.MsgToClient };
 
 export type MsgToServer =
-  | { t: "vs-user"; c: VsUser.MsgToServer }
-  | { t: "vs-bot"; c: VsBot.MsgToServer }
+	| { t: "vs-user"; c: VsUser.MsgToServer }
+	| { t: "vs-bot"; c: VsBot.MsgToServer };
 
 //
 //
@@ -70,107 +70,107 @@ export type MsgToServer =
 //
 
 export const MsgSync = p.or(
-  p.obj({
-    t: p.l("user-changed-mode"),
-    mode: p.enumeration(["none", "vs-user", "vs-bot"] as const),
-    userId: UserId,
-  }),
-  p.obj({
-    t: p.l("vs-bot"),
-    c: VsBot.MsgSync,
-  }),
-  p.obj({
-    t: p.l("vs-user"),
-    c: VsUser.MsgSync,
-  }),
-)
-export type MsgSync = p.Infer<typeof MsgSync>
+	p.obj({
+		t: p.l("user-changed-mode"),
+		mode: p.enumeration(["none", "vs-user", "vs-bot"] as const),
+		userId: UserId,
+	}),
+	p.obj({
+		t: p.l("vs-bot"),
+		c: VsBot.MsgSync,
+	}),
+	p.obj({
+		t: p.l("vs-user"),
+		c: VsUser.MsgSync,
+	}),
+);
+export type MsgSync = p.Infer<typeof MsgSync>;
 
 export const ModelSync = p.or(
-  p.obj({
-    t: p.l("none"),
-  }),
-  p.obj({
-    t: p.l("vs-user"),
-    c: VsUser.ModelSync,
-  }),
-  p.obj({
-    t: p.l("vs-bot"),
-    c: VsBot.ModelSync,
-  }),
-)
-export type ModelSync = p.Infer<typeof ModelSync>
+	p.obj({
+		t: p.l("none"),
+	}),
+	p.obj({
+		t: p.l("vs-user"),
+		c: VsUser.ModelSync,
+	}),
+	p.obj({
+		t: p.l("vs-bot"),
+		c: VsBot.ModelSync,
+	}),
+);
+export type ModelSync = p.Infer<typeof ModelSync>;
 
 export const initSync = (): ModelSync => {
-  return {
-    t: "none",
-  }
-}
+	return {
+		t: "none",
+	};
+};
 
 export const reducer = ({
-  ctx,
-  msgSync,
-  modelSync,
+	ctx,
+	msgSync,
+	modelSync,
 }: {
-  ctx: SpaceCtx
-  modelSync: ModelSync
-  msgSync: WithEventMeta<MsgSync>
+	ctx: SpaceCtx;
+	modelSync: ModelSync;
+	msgSync: WithEventMeta<MsgSync>;
 }): ModelSync => {
-  switch (msgSync.t) {
-    case "user-changed-mode": {
-      switch (msgSync.mode) {
-        case "none": {
-          return {
-            t: "none",
-          }
-        }
+	switch (msgSync.t) {
+		case "user-changed-mode": {
+			switch (msgSync.mode) {
+				case "none": {
+					return {
+						t: "none",
+					};
+				}
 
-        case "vs-bot": {
-          return {
-            t: "vs-bot",
-            c: VsBot.initSync(ctx),
-          }
-        }
+				case "vs-bot": {
+					return {
+						t: "vs-bot",
+						c: VsBot.initSync(ctx),
+					};
+				}
 
-        case "vs-user": {
-          return {
-            t: "vs-user",
-            c: VsUser.initSync(ctx),
-          }
-        }
-      }
-    }
+				case "vs-user": {
+					return {
+						t: "vs-user",
+						c: VsUser.initSync(ctx),
+					};
+				}
+			}
+		}
 
-    case "vs-bot": {
-      switch (modelSync.t) {
-        case "vs-bot": {
-          return {
-            t: "vs-bot",
-            c: VsBot.reducer({
-              modelSync: modelSync.c,
-              msgSync: { ...msgSync, ...msgSync.c },
-            }),
-          }
-        }
-        default: {
-          return modelSync
-        }
-      }
-    }
+		case "vs-bot": {
+			switch (modelSync.t) {
+				case "vs-bot": {
+					return {
+						t: "vs-bot",
+						c: VsBot.reducer({
+							modelSync: modelSync.c,
+							msgSync: { ...msgSync, ...msgSync.c },
+						}),
+					};
+				}
+				default: {
+					return modelSync;
+				}
+			}
+		}
 
-    case "vs-user": {
-      switch (modelSync.t) {
-        case "vs-user": {
-          return {
-            t: "vs-user",
-            c: VsUser.reducer(modelSync.c, msgSync.c),
-          }
-        }
+		case "vs-user": {
+			switch (modelSync.t) {
+				case "vs-user": {
+					return {
+						t: "vs-user",
+						c: VsUser.reducer(modelSync.c, msgSync.c),
+					};
+				}
 
-        default: {
-          return modelSync
-        }
-      }
-    }
-  }
-}
+				default: {
+					return modelSync;
+				}
+			}
+		}
+	}
+};

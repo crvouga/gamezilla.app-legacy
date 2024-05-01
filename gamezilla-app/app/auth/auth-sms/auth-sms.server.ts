@@ -1,19 +1,26 @@
-import { AppServerModule } from "gamezilla-app/app/@shared/architecture/app-server"
-import { UserId } from "gamezilla-app/app/@shared/data"
-import { UserAccount } from "gamezilla-app/app/@shared/data/account"
+import { AppServerModule } from "gamezilla-app/app/@shared/architecture/app-server";
+import { UserId } from "gamezilla-app/app/@shared/data";
+import type { UserAccount } from "gamezilla-app/app/@shared/data/account";
 import {
-  ServerCmd,
-  ServerCtx,
-  ServerEvent,
-  sendToClient,
-} from "gamezilla-app/app/@shared/server"
-import { Err, Ok, Posix, Result, Sub, isErr } from "gamezilla-app/@shared/core"
-import { Hash, Hashing } from "gamezilla-app/@shared/hashing"
-import { IAccountDb } from "../@SHARED/server/account-db"
-import { AccountDb } from "../@SHARED/server/account-db/account-db-impl"
-import { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.core"
-import { IVerifySMS } from "./verify-sms/verify-sms"
-import { VerifySMS } from "./verify-sms/verify-sms-impl"
+	type ServerCmd,
+	type ServerCtx,
+	type ServerEvent,
+	sendToClient,
+} from "gamezilla-app/app/@shared/server";
+import {
+	Err,
+	Ok,
+	type Posix,
+	Result,
+	Sub,
+	isErr,
+} from "gamezilla-app/@shared/core";
+import { type Hash, Hashing } from "gamezilla-app/@shared/hashing";
+import type { IAccountDb } from "../@SHARED/server/account-db";
+import { AccountDb } from "../@SHARED/server/account-db/account-db-impl";
+import type { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.core";
+import type { IVerifySMS } from "./verify-sms/verify-sms";
+import { VerifySMS } from "./verify-sms/verify-sms-impl";
 
 //
 //
@@ -23,20 +30,20 @@ import { VerifySMS } from "./verify-sms/verify-sms-impl"
 //
 
 type Module = AppServerModule<{
-  Ctx: ServerCtx
-  MsgInCmd: null
-  MsgInEvent: ServerEvent
-  Model: null
-  Msg: MsgServer
-  MsgOutCmd: ServerCmd<MsgToClient>
-  MsgOutEvent: ServerEvent
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  Deps: {
-    AccountDb: IAccountDb
-    VerifySMS: IVerifySMS
-  }
-}>
+	Ctx: ServerCtx;
+	MsgInCmd: null;
+	MsgInEvent: ServerEvent;
+	Model: null;
+	Msg: MsgServer;
+	MsgOutCmd: ServerCmd<MsgToClient>;
+	MsgOutEvent: ServerEvent;
+	MsgToClient: MsgToClient;
+	MsgToServer: MsgToServer;
+	Deps: {
+		AccountDb: IAccountDb;
+		VerifySMS: IVerifySMS;
+	};
+}>;
 
 //
 //
@@ -46,19 +53,19 @@ type Module = AppServerModule<{
 //
 
 export const getDeps: Module["getDeps"] = async ({ ctx }) => {
-  return {
-    AccountDb: AccountDb({
-      t: "postgres",
-      dbConnSql: ctx.dbConnSql,
-    }),
-    VerifySMS: VerifySMS({
-      t: "fake",
-      delay: () => new Promise((resolve) => setTimeout(resolve, 1000)),
-      logger: ctx.logger,
-      hashing: Hashing({ t: "bun" }),
-    }),
-  }
-}
+	return {
+		AccountDb: AccountDb({
+			t: "postgres",
+			dbConnSql: ctx.dbConnSql,
+		}),
+		VerifySMS: VerifySMS({
+			t: "fake",
+			delay: () => new Promise((resolve) => setTimeout(resolve, 1000)),
+			logger: ctx.logger,
+			hashing: Hashing({ t: "bun" }),
+		}),
+	};
+};
 
 //
 //
@@ -68,10 +75,10 @@ export const getDeps: Module["getDeps"] = async ({ ctx }) => {
 //
 
 export const init: Module["init"] = async () => {
-  return {
-    model: null,
-  }
-}
+	return {
+		model: null,
+	};
+};
 
 //
 //
@@ -82,97 +89,97 @@ export const init: Module["init"] = async () => {
 //
 
 export const update: Module["update"] = async (input) => {
-  return AppServerModule.andThen({ model: input.model }, (model) =>
-    updateFromClient({ ...input, model }),
-  )
-}
+	return AppServerModule.andThen({ model: input.model }, (model) =>
+		updateFromClient({ ...input, model }),
+	);
+};
 
 export const updateFromClient: Module["update"] = async ({
-  msgClient,
-  model,
-  deps,
-  ctx,
+	msgClient,
+	model,
+	deps,
+	ctx,
 }) => {
-  if (!msgClient) {
-    return { model }
-  }
+	if (!msgClient) {
+		return { model };
+	}
 
-  switch (msgClient.t) {
-    case "send-code": {
-      const sent = await deps.VerifySMS.sendCode(msgClient)
+	switch (msgClient.t) {
+		case "send-code": {
+			const sent = await deps.VerifySMS.sendCode(msgClient);
 
-      return {
-        model,
-        msgCmd: [
-          sendToClient([msgClient.clientId], {
-            t: "sent-code",
-            phoneNumber: msgClient.phoneNumber,
-            result: sent,
-          }),
-        ],
-      }
-    }
+			return {
+				model,
+				msgCmd: [
+					sendToClient([msgClient.clientId], {
+						t: "sent-code",
+						phoneNumber: msgClient.phoneNumber,
+						result: sent,
+					}),
+				],
+			};
+		}
 
-    case "verify-code": {
-      const verified = await deps.VerifySMS.verifyCode({
-        code: msgClient.code,
-        verificationId: msgClient.verificationId,
-      })
+		case "verify-code": {
+			const verified = await deps.VerifySMS.verifyCode({
+				code: msgClient.code,
+				verificationId: msgClient.verificationId,
+			});
 
-      if (isErr(verified)) {
-        return {
-          model,
-          msgCmd: [
-            sendToClient([msgClient.clientId], {
-              t: "verified-code",
-              result: verified,
-            }),
-          ],
-        }
-      }
+			if (isErr(verified)) {
+				return {
+					model,
+					msgCmd: [
+						sendToClient([msgClient.clientId], {
+							t: "verified-code",
+							result: verified,
+						}),
+					],
+				};
+			}
 
-      const found = await findElseInsertAccount({
-        accountDb: deps.AccountDb,
-        phoneNumberHash: verified.value.phoneNumberHash,
-        now: ctx.now,
-      })
+			const found = await findElseInsertAccount({
+				accountDb: deps.AccountDb,
+				phoneNumberHash: verified.value.phoneNumberHash,
+				now: ctx.now,
+			});
 
-      if (isErr(found)) {
-        return {
-          model,
-          msgCmd: [
-            sendToClient([msgClient.clientId], {
-              t: "verified-code",
-              result: Err({
-                t: "database-error",
-                error: found.error,
-              }),
-            }),
-          ],
-        }
-      }
+			if (isErr(found)) {
+				return {
+					model,
+					msgCmd: [
+						sendToClient([msgClient.clientId], {
+							t: "verified-code",
+							result: Err({
+								t: "database-error",
+								error: found.error,
+							}),
+						}),
+					],
+				};
+			}
 
-      return {
-        model,
-        msgCmd: [
-          sendToClient([msgClient.clientId], {
-            t: "verified-code",
-            result: Result.mapOk(verified, () => null),
-          }),
-        ],
-        msgEvt: [
-          {
-            t: "auth/client-authenticated",
-            clientId: msgClient.clientId,
-            sessionId: msgClient.sessionId,
-            account: found.value,
-            loggedIn: true,
-          },
-        ],
-      }
-    }
-  }
-}
+			return {
+				model,
+				msgCmd: [
+					sendToClient([msgClient.clientId], {
+						t: "verified-code",
+						result: Result.mapOk(verified, () => null),
+					}),
+				],
+				msgEvt: [
+					{
+						t: "auth/client-authenticated",
+						clientId: msgClient.clientId,
+						sessionId: msgClient.sessionId,
+						account: found.value,
+						loggedIn: true,
+					},
+				],
+			};
+		}
+	}
+};
 
 //
 //
@@ -182,8 +189,8 @@ export const updateFromClient: Module["update"] = async ({
 //
 
 export const subscriptions: Module["subscriptions"] = async () => {
-  return Sub.None
-}
+	return Sub.None;
+};
 
 //
 //
@@ -196,42 +203,42 @@ export const subscriptions: Module["subscriptions"] = async () => {
 //
 
 const findElseInsertAccount = async ({
-  accountDb,
-  phoneNumberHash,
-  now,
+	accountDb,
+	phoneNumberHash,
+	now,
 }: {
-  accountDb: IAccountDb
-  phoneNumberHash: Hash
-  now: Posix
+	accountDb: IAccountDb;
+	phoneNumberHash: Hash;
+	now: Posix;
 }): Promise<Result<string, UserAccount>> => {
-  const found = await accountDb.findOneByPhoneNumberHash({
-    phoneNumberHash,
-  })
+	const found = await accountDb.findOneByPhoneNumberHash({
+		phoneNumberHash,
+	});
 
-  if (isErr(found)) {
-    return found
-  }
+	if (isErr(found)) {
+		return found;
+	}
 
-  const maybeAccount = found.value
+	const maybeAccount = found.value;
 
-  if (maybeAccount) {
-    return Ok(maybeAccount)
-  }
+	if (maybeAccount) {
+		return Ok(maybeAccount);
+	}
 
-  const accountNew: UserAccount = {
-    role: "normal",
-    userId: UserId.generate(),
-    createdAt: now,
-  }
+	const accountNew: UserAccount = {
+		role: "normal",
+		userId: UserId.generate(),
+		createdAt: now,
+	};
 
-  const inserted = await accountDb.insert({
-    account: accountNew,
-    phoneNumberHash,
-  })
+	const inserted = await accountDb.insert({
+		account: accountNew,
+		phoneNumberHash,
+	});
 
-  if (isErr(inserted)) {
-    return inserted
-  }
+	if (isErr(inserted)) {
+		return inserted;
+	}
 
-  return Ok(accountNew)
-}
+	return Ok(accountNew);
+};

@@ -1,13 +1,13 @@
 export type Pagination = {
-  limit: number
-  offset: number
-}
+	limit: number;
+	offset: number;
+};
 
 export type WithPagination = {
-  pagination: Pagination
-}
+	pagination: Pagination;
+};
 
 export type Paginated<T> = Pagination & {
-  items: T[]
-  total: number
-}
+	items: T[];
+	total: number;
+};

@@ -1,16 +1,20 @@
-import { Eff, batchMsgs } from "gamezilla-app/@shared/core"
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd"
-import { Input, Output, SpaceServerModule } from "./architecture/space-server"
-import { JoinSpaceServer } from "./join-space/join-space.server"
-import { ListSpacesServer } from "./list-spaces/list-spaces.server"
-import { ProfileCache } from "./profile-cache"
-import { GameDb } from "./space-game/space-game-db"
-import { GameServer } from "./space-game/space-game.server"
-import { SpacesDb } from "./spaces-core/space-db"
-import { SpacesCoreServer } from "./spaces-core/spaces-core.server"
-import { ServerModule } from "./spaces.core"
-import { StartSpaceServer } from "./start-space/start-space.server"
-import { SyncServer } from "./sync/sync.server"
+import { Eff, batchMsgs } from "gamezilla-app/@shared/core";
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd";
+import {
+	type Input,
+	type Output,
+	SpaceServerModule,
+} from "./architecture/space-server";
+import { JoinSpaceServer } from "./join-space/join-space.server";
+import { ListSpacesServer } from "./list-spaces/list-spaces.server";
+import { ProfileCache } from "./profile-cache";
+import { GameDb } from "./space-game/space-game-db";
+import { GameServer } from "./space-game/space-game.server";
+import { SpacesDb } from "./spaces-core/space-db";
+import { SpacesCoreServer } from "./spaces-core/spaces-core.server";
+import type { ServerModule } from "./spaces.core";
+import { StartSpaceServer } from "./start-space/start-space.server";
+import { SyncServer } from "./sync/sync.server";
 
 //
 //
@@ -21,23 +25,23 @@ import { SyncServer } from "./sync/sync.server"
 //
 
 export const getDeps: ServerModule["getDeps"] = async ({ ctx }) => {
-  return {
-    ProfileCache: ProfileCache({
-      t: "db-conn-kv",
-      dbConnKv: ctx.dbConnKv,
-    }),
-    SpacesDb: SpacesDb({
-      t: "db-conn-kv",
-      dbConnKv: ctx.dbConnKv,
-    }),
-    GameDb: GameDb({
-      t: "db-conn-kv",
-      dbConnKv: ctx.dbConnKv,
-    }),
-  }
-}
+	return {
+		ProfileCache: ProfileCache({
+			t: "db-conn-kv",
+			dbConnKv: ctx.dbConnKv,
+		}),
+		SpacesDb: SpacesDb({
+			t: "db-conn-kv",
+			dbConnKv: ctx.dbConnKv,
+		}),
+		GameDb: GameDb({
+			t: "db-conn-kv",
+			dbConnKv: ctx.dbConnKv,
+		}),
+	};
+};
 
-export type Deps = Awaited<ReturnType<typeof getDeps>>
+export type Deps = Awaited<ReturnType<typeof getDeps>>;
 
 //
 //
@@ -48,10 +52,10 @@ export type Deps = Awaited<ReturnType<typeof getDeps>>
 //
 
 export const init: ServerModule["init"] = async () => {
-  return {
-    model: null,
-  }
-}
+	return {
+		model: null,
+	};
+};
 
 //
 //
@@ -62,101 +66,101 @@ export const init: ServerModule["init"] = async () => {
 //
 
 export const update: ServerModule["update"] = async (input) => {
-  const updated = await updateMain(input)
+	const updated = await updateMain(input);
 
-  return {
-    model: updated.model,
-    eff: updated.eff,
-    msgCmd: SpaceServerCmd.toServerCmd(updated.msgCmd),
-  }
-}
+	return {
+		model: updated.model,
+		eff: updated.eff,
+		msgCmd: SpaceServerCmd.toServerCmd(updated.msgCmd),
+	};
+};
 
 const updateMain = async (input: Input, acc?: Output): Promise<Output> => {
-  acc = acc ?? (await updateChild(input))
+	acc = acc ?? (await updateChild(input));
 
-  const [spaceEvent, ...spaceEventsRest] = acc.msgSpaceEvent ?? []
+	const [spaceEvent, ...spaceEventsRest] = acc.msgSpaceEvent ?? [];
 
-  if (spaceEvent) {
-    const updated = await updateChild({
-      deps: input.deps,
-      ctx: input.ctx,
-      model: acc.model,
-      msgSpaceEvent: spaceEvent,
-    })
+	if (spaceEvent) {
+		const updated = await updateChild({
+			deps: input.deps,
+			ctx: input.ctx,
+			model: acc.model,
+			msgSpaceEvent: spaceEvent,
+		});
 
-    return updateMain(input, {
-      model: updated.model,
-      eff: Eff.batch([acc.eff, updated.eff]),
-      msgSpaceEvent: batchMsgs(spaceEventsRest, updated.msgSpaceEvent),
-      msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
-      msgEvt: updated.msgEvt,
-    })
-  }
+		return updateMain(input, {
+			model: updated.model,
+			eff: Eff.batch([acc.eff, updated.eff]),
+			msgSpaceEvent: batchMsgs(spaceEventsRest, updated.msgSpaceEvent),
+			msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
+			msgEvt: updated.msgEvt,
+		});
+	}
 
-  const [spaceCmd, ...spaceCmdsRest] = SpaceServerCmd.toSpaceServerCmd(
-    acc.msgCmd,
-  )
+	const [spaceCmd, ...spaceCmdsRest] = SpaceServerCmd.toSpaceServerCmd(
+		acc.msgCmd,
+	);
 
-  if (spaceCmd) {
-    const updated = await updateChild({
-      deps: input.deps,
-      ctx: input.ctx,
-      model: acc.model,
-      msgCmd: spaceCmd,
-    })
+	if (spaceCmd) {
+		const updated = await updateChild({
+			deps: input.deps,
+			ctx: input.ctx,
+			model: acc.model,
+			msgCmd: spaceCmd,
+		});
 
-    return updateMain(input, {
-      model: updated.model,
-      eff: Eff.batch([acc.eff, updated.eff]),
-      msgSpaceEvent: batchMsgs(acc.msgSpaceEvent, updated.msgSpaceEvent),
-      msgCmd: batchMsgs(spaceCmdsRest, updated.msgCmd),
-      msgEvt: updated.msgEvt,
-    })
-  }
+		return updateMain(input, {
+			model: updated.model,
+			eff: Eff.batch([acc.eff, updated.eff]),
+			msgSpaceEvent: batchMsgs(acc.msgSpaceEvent, updated.msgSpaceEvent),
+			msgCmd: batchMsgs(spaceCmdsRest, updated.msgCmd),
+			msgEvt: updated.msgEvt,
+		});
+	}
 
-  return acc
-}
+	return acc;
+};
 
 const updateChild: SpaceServerModule["update"] = async (input) => {
-  if (
-    input.msgSpaceEvent &&
-    (await SpacesCoreServer.hasEvent(
-      input.deps.SpacesDb,
-      input.msgSpaceEvent.spaceId,
-      input.msgSpaceEvent.eventId,
-    ))
-  ) {
-    return { model: input.model }
-  }
+	if (
+		input.msgSpaceEvent &&
+		(await SpacesCoreServer.hasEvent(
+			input.deps.SpacesDb,
+			input.msgSpaceEvent.spaceId,
+			input.msgSpaceEvent.eventId,
+		))
+	) {
+		return { model: input.model };
+	}
 
-  return SpaceServerModule.andThen(
-    { model: input.model },
-    //
-    (model) => updateSpacesFromSpaceEvent({ ...input, model }),
-    (model) => ListSpacesServer.update({ ...input, model }),
-    (model) => SyncServer.update({ ...input, model }),
-    (model) => StartSpaceServer.update({ ...input, model }),
-    (model) => JoinSpaceServer.update({ ...input, model }),
-    (model) => GameServer.update({ ...input, model }),
-  )
-}
+	return SpaceServerModule.andThen(
+		{ model: input.model },
+		//
+		(model) => updateSpacesFromSpaceEvent({ ...input, model }),
+		(model) => ListSpacesServer.update({ ...input, model }),
+		(model) => SyncServer.update({ ...input, model }),
+		(model) => StartSpaceServer.update({ ...input, model }),
+		(model) => JoinSpaceServer.update({ ...input, model }),
+		(model) => GameServer.update({ ...input, model }),
+	);
+};
 
 const updateSpacesFromSpaceEvent: SpaceServerModule["update"] = async ({
-  msgSpaceEvent,
-  model,
-  deps,
+	msgSpaceEvent,
+	model,
+	deps,
 }) => {
-  if (!msgSpaceEvent) {
-    return { model }
-  }
+	if (!msgSpaceEvent) {
+		return { model };
+	}
 
-  await SpacesCoreServer.update({
-    spacesDb: deps.SpacesDb,
-    spaceEvent: msgSpaceEvent,
-  })
+	await SpacesCoreServer.update({
+		spacesDb: deps.SpacesDb,
+		spaceEvent: msgSpaceEvent,
+	});
 
-  return { model }
-}
+	return { model };
+};
 
 //
 //
@@ -167,5 +171,5 @@ const updateSpacesFromSpaceEvent: SpaceServerModule["update"] = async ({
 //
 
 export const subscriptions: ServerModule["subscriptions"] = async (input) => {
-  return GameServer.subscriptions(input)
-}
+	return GameServer.subscriptions(input);
+};

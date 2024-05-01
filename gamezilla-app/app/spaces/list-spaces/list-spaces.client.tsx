@@ -1,17 +1,17 @@
 import {
-  APP_SOUND,
-  playSound,
-  pushRoute,
-  sendToServer,
-} from "gamezilla-app/app/@shared/client"
-import { SpaceId } from "gamezilla-app/app/@shared/data"
-import { IconGamepad, TopBar } from "gamezilla-app/app/@shared/ui"
-import { EmptyState } from "gamezilla-app/app/@shared/ui/empty-state"
-import { Ok, RequestResponse, requesting } from "gamezilla-app/@shared/core"
-import { SpaceClientModule } from "../architecture/architecture"
-import * as Spaces from "../spaces-core/spaces-core.client"
-import { StartSpaceClient } from "../start-space/start-space.client"
-import { ViewSpaceCard } from "./space-card"
+	APP_SOUND,
+	playSound,
+	pushRoute,
+	sendToServer,
+} from "gamezilla-app/app/@shared/client";
+import type { SpaceId } from "gamezilla-app/app/@shared/data";
+import { IconGamepad, TopBar } from "gamezilla-app/app/@shared/ui";
+import { EmptyState } from "gamezilla-app/app/@shared/ui/empty-state";
+import { Ok, RequestResponse, requesting } from "gamezilla-app/@shared/core";
+import type { SpaceClientModule } from "../architecture/architecture";
+import * as Spaces from "../spaces-core/spaces-core.client";
+import { StartSpaceClient } from "../start-space/start-space.client";
+import { ViewSpaceCard } from "./space-card";
 
 //
 //
@@ -20,14 +20,14 @@ import { ViewSpaceCard } from "./space-card"
 //
 
 const sendListSpacesRequest: SpaceClientModule["update"] = ({ model, ctx }) => {
-  return {
-    model: {
-      ...model,
-      listSpacesRequest: requesting(ctx.now),
-    },
-    msgCmd: [sendToServer({ t: "list-spaces", limit: 100, offset: 0 })],
-  }
-}
+	return {
+		model: {
+			...model,
+			listSpacesRequest: requesting(ctx.now),
+		},
+		msgCmd: [sendToServer({ t: "list-spaces", limit: 100, offset: 0 })],
+	};
+};
 
 //
 //
@@ -37,8 +37,8 @@ const sendListSpacesRequest: SpaceClientModule["update"] = ({ model, ctx }) => {
 //
 
 const init: SpaceClientModule["init"] = ({ model, ctx }) => {
-  return sendListSpacesRequest({ model, ctx })
-}
+	return sendListSpacesRequest({ model, ctx });
+};
 
 //
 //
@@ -49,78 +49,78 @@ const init: SpaceClientModule["init"] = ({ model, ctx }) => {
 //
 
 const update: SpaceClientModule["update"] = (input) => {
-  const { ctx, msgServer, model, msgEvt, msg } = input
+	const { ctx, msgServer, model, msgEvt, msg } = input;
 
-  switch (msgEvt?.t) {
-    case "routing/route-changed": {
-      if (msgEvt.route.t === "space-list") {
-        return sendListSpacesRequest({ model, ctx })
-      }
-      return { model }
-    }
-  }
+	switch (msgEvt?.t) {
+		case "routing/route-changed": {
+			if (msgEvt.route.t === "space-list") {
+				return sendListSpacesRequest({ model, ctx });
+			}
+			return { model };
+		}
+	}
 
-  switch (msg?.t) {
-    case "time-passed": {
-      return {
-        model: {
-          ...model,
-          listSpacesRequest: RequestResponse.elapsed(
-            model.listSpacesRequest,
-            ctx.now,
-          ),
-        },
-      }
-    }
+	switch (msg?.t) {
+		case "time-passed": {
+			return {
+				model: {
+					...model,
+					listSpacesRequest: RequestResponse.elapsed(
+						model.listSpacesRequest,
+						ctx.now,
+					),
+				},
+			};
+		}
 
-    case "clicked-space-card": {
-      return {
-        model,
-        modelLocation: {
-          t: "push",
-          c: {
-            filters: {
-              limit: 100,
-              offset: 0,
-            },
-            screen: {
-              t: "space",
-              spaceId: msg.spaceId,
-            },
-          },
-        },
-        msgCmd: [
-          pushRoute({
-            n: "spaces",
-            t: "space",
-            spaceId: msg.spaceId,
-          }),
-          playSound(APP_SOUND.navForwardMin),
-        ],
-      }
-    }
-  }
+		case "clicked-space-card": {
+			return {
+				model,
+				modelLocation: {
+					t: "push",
+					c: {
+						filters: {
+							limit: 100,
+							offset: 0,
+						},
+						screen: {
+							t: "space",
+							spaceId: msg.spaceId,
+						},
+					},
+				},
+				msgCmd: [
+					pushRoute({
+						n: "spaces",
+						t: "space",
+						spaceId: msg.spaceId,
+					}),
+					playSound(APP_SOUND.navForwardMin),
+				],
+			};
+		}
+	}
 
-  switch (msgServer?.t) {
-    case "listed-spaces": {
-      const merged = Spaces.mergeMany({ model, spaces: msgServer.spaces })
-      return {
-        model: {
-          ...model,
-          spaceIdByUserId: merged.spaceIdByUserId,
-          spaces: merged.spaces,
-          listSpacesRequest: RequestResponse.response(
-            model.listSpacesRequest,
-            ctx.now,
-            Ok(null),
-          ),
-        },
-      }
-    }
-  }
+	switch (msgServer?.t) {
+		case "listed-spaces": {
+			const merged = Spaces.mergeMany({ model, spaces: msgServer.spaces });
+			return {
+				model: {
+					...model,
+					spaceIdByUserId: merged.spaceIdByUserId,
+					spaces: merged.spaces,
+					listSpacesRequest: RequestResponse.response(
+						model.listSpacesRequest,
+						ctx.now,
+						Ok(null),
+					),
+				},
+			};
+		}
+	}
 
-  return { model }
-}
+	return { model };
+};
 
 //
 //
@@ -131,64 +131,64 @@ const update: SpaceClientModule["update"] = (input) => {
 //
 
 const View: SpaceClientModule["View"] = (props) => {
-  const currentUserId = props.ctx.currentUserId
+	const currentUserId = props.ctx.currentUserId;
 
-  if (!currentUserId) {
-    return null
-  }
+	if (!currentUserId) {
+		return null;
+	}
 
-  const currentUserSpaceId = props.model.spaceIdByUserId[currentUserId]
+	const currentUserSpaceId = props.model.spaceIdByUserId[currentUserId];
 
-  const spaces = Object.keys(props.model.spaces).flatMap((spaceId) => {
-    const space = Spaces.toSpaceStarted(props.model, spaceId as SpaceId)
-    if (!space) {
-      return []
-    }
-    return [space]
-  })
+	const spaces = Object.keys(props.model.spaces).flatMap((spaceId) => {
+		const space = Spaces.toSpaceStarted(props.model, spaceId as SpaceId);
+		if (!space) {
+			return [];
+		}
+		return [space];
+	});
 
-  return (
-    <div className="relative flex w-full flex-1 flex-col overflow-hidden">
-      <TopBar title="Spaces" />
+	return (
+		<div className="relative flex w-full flex-1 flex-col overflow-hidden">
+			<TopBar title="Spaces" />
 
-      <div className="relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8">
-        {spaces.length === 0 && (
-          <EmptyState
-            renderIcon={(props) => <IconGamepad {...props} />}
-            label="No active spaces"
-          />
-        )}
+			<div className="relative flex w-full flex-1 flex-col overflow-hidden overflow-y-scroll pb-8">
+				{spaces.length === 0 && (
+					<EmptyState
+						renderIcon={(props) => <IconGamepad {...props} />}
+						label="No active spaces"
+					/>
+				)}
 
-        <div className="flex w-full flex-1 flex-col gap-5 p-5">
-          {spaces.flatMap((state) => {
-            return (
-              <ViewSpaceCard
-                key={state.spaceId}
-                ctx={{ ...props.ctx, currentUserId }}
-                onClick={() =>
-                  props.dispatch({
-                    t: "clicked-space-card",
-                    spaceId: state.spaceId,
-                  })
-                }
-                state={state}
-              />
-            )
-          })}
-        </div>
-      </div>
+				<div className="flex w-full flex-1 flex-col gap-5 p-5">
+					{spaces.flatMap((state) => {
+						return (
+							<ViewSpaceCard
+								key={state.spaceId}
+								ctx={{ ...props.ctx, currentUserId }}
+								onClick={() =>
+									props.dispatch({
+										t: "clicked-space-card",
+										spaceId: state.spaceId,
+									})
+								}
+								state={state}
+							/>
+						);
+					})}
+				</div>
+			</div>
 
-      {!currentUserSpaceId && (
-        <div className="flex border-t border-neutral-700 p-4">
-          <StartSpaceClient.ViewStartSpaceButton {...props} />
-        </div>
-      )}
-    </div>
-  )
-}
+			{!currentUserSpaceId && (
+				<div className="flex border-t border-neutral-700 p-4">
+					<StartSpaceClient.ViewStartSpaceButton {...props} />
+				</div>
+			)}
+		</div>
+	);
+};
 
 export const ListSpacesClient = {
-  init,
-  update,
-  View,
-}
+	init,
+	update,
+	View,
+};

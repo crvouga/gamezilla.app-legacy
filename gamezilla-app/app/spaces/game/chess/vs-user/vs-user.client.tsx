@@ -1,17 +1,23 @@
-import { Eff, Option, Sub, exhaustive, isErr } from "gamezilla-app/@shared/core"
-import { ClientCtx } from "gamezilla-app/app/@shared/client"
-import { UserId } from "gamezilla-app/app/@shared/data"
-import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@shared/ui"
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space"
-import { Chess } from "../@shared/chess"
 import {
-  CoreModel,
-  ModelClient,
-  ModelServer,
-  MsgClient,
-  MsgToClient,
-  initCore,
-} from "./vs-user.core"
+	Eff,
+	Option,
+	Sub,
+	exhaustive,
+	isErr,
+} from "gamezilla-app/@shared/core";
+import type { ClientCtx } from "gamezilla-app/app/@shared/client";
+import type { UserId } from "gamezilla-app/app/@shared/data";
+import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@shared/ui";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space";
+import { Chess } from "../@shared/chess";
+import {
+	type CoreModel,
+	type ModelClient,
+	type ModelServer,
+	type MsgClient,
+	type MsgToClient,
+	initCore,
+} from "./vs-user.core";
 
 //
 //
@@ -21,24 +27,24 @@ import {
 //
 //
 
-export type Model = ModelClient
+export type Model = ModelClient;
 
 export const init = ({
-  userId,
+	userId,
 }: {
-  userId?: UserId | null
+	userId?: UserId | null;
 }): {
-  model: ModelClient
+	model: ModelClient;
 } => {
-  return {
-    model: {
-      coreModel: initCore({ userId: userId ?? "none" }),
-      openedMenuId: Option.None,
-      openedModal: "none",
-      isFlipped: false,
-    },
-  }
-}
+	return {
+		model: {
+			coreModel: initCore({ userId: userId ?? "none" }),
+			openedMenuId: Option.None,
+			openedModal: "none",
+			isFlipped: false,
+		},
+	};
+};
 
 //
 //
@@ -48,227 +54,227 @@ export const init = ({
 //
 //
 
-export type Msg = MsgClient
+export type Msg = MsgClient;
 
 export const update = (
-  msg: Msg,
-  model: Model,
+	msg: Msg,
+	model: Model,
 ): { model: Model; eff?: Eff<Msg> } => {
-  switch (msg[0]) {
-    //
-    //
-    // MsgClient
-    //
-    //
+	switch (msg[0]) {
+		//
+		//
+		// MsgClient
+		//
+		//
 
-    case "OpenedMenu": {
-      return { model: { ...model, openedMenuId: Option.Some(msg[1]) } }
-    }
+		case "OpenedMenu": {
+			return { model: { ...model, openedMenuId: Option.Some(msg[1]) } };
+		}
 
-    case "ClosedMenu": {
-      return { model: { ...model, openedMenuId: Option.None } }
-    }
+		case "ClosedMenu": {
+			return { model: { ...model, openedMenuId: Option.None } };
+		}
 
-    case "ClickedFlip": {
-      return { model: { ...model, isFlipped: !model.isFlipped } }
-    }
+		case "ClickedFlip": {
+			return { model: { ...model, isFlipped: !model.isFlipped } };
+		}
 
-    case "OpenedModal": {
-      return { model: { ...model, openedModal: msg[1] } }
-    }
+		case "OpenedModal": {
+			return { model: { ...model, openedModal: msg[1] } };
+		}
 
-    case "ClosedModal": {
-      return { model: { ...model, openedModal: "none" } }
-    }
+		case "ClosedModal": {
+			return { model: { ...model, openedModal: "none" } };
+		}
 
-    //
-    //
-    //
-    // MsgToServer
-    //
-    //
-    //
+		//
+		//
+		//
+		// MsgToServer
+		//
+		//
+		//
 
-    default: {
-      return { model }
-    }
-  }
-}
+		default: {
+			return { model };
+		}
+	}
+};
 
 export const updateFromServer = (
-  { ctx }: { ctx: SpaceClientCtx },
-  msg: MsgToClient,
-  _model: Model,
+	{ ctx }: { ctx: SpaceClientCtx },
+	msg: MsgToClient,
+	_model: Model,
 ): [Model, Eff<Msg>] => {
-  const model: Model = { ..._model, openedMenuId: Option.None }
+	const model: Model = { ..._model, openedMenuId: Option.None };
 
-  switch (msg[0]) {
-    case "InputClock_Done": {
-      if (msg[1].t === "err") {
-        return [model, Eff.None]
-      }
-      return [{ ...model, coreModel: msg[1].value }, Eff.None]
-    }
+	switch (msg[0]) {
+		case "InputClock_Done": {
+			if (msg[1].t === "err") {
+				return [model, Eff.None];
+			}
+			return [{ ...model, coreModel: msg[1].value }, Eff.None];
+		}
 
-    case "input-move-done": {
-      if (msg[1].t === "err") {
-        return [model, Eff.None]
-      }
+		case "input-move-done": {
+			if (msg[1].t === "err") {
+				return [model, Eff.None];
+			}
 
-      const coreModelNew = msg[1].value
+			const coreModelNew = msg[1].value;
 
-      if (coreModelNew.type !== "game") {
-        return [model, Eff.None]
-      }
+			if (coreModelNew.type !== "game") {
+				return [model, Eff.None];
+			}
 
-      return [{ ...model, coreModel: coreModelNew }, Eff.None]
-    }
+			return [{ ...model, coreModel: coreModelNew }, Eff.None];
+		}
 
-    case "InputPlayer_Done": {
-      if (msg[1].t === "err") {
-        return [model, Eff.None]
-      }
+		case "InputPlayer_Done": {
+			if (msg[1].t === "err") {
+				return [model, Eff.None];
+			}
 
-      const coreModel = msg[1].value
+			const coreModel = msg[1].value;
 
-      return [{ ...model, coreModel }, Eff.None]
-    }
+			return [{ ...model, coreModel }, Eff.None];
+		}
 
-    case "StartGame_Done": {
-      if (msg[1].t === "err") {
-        return [model, Eff.None]
-      }
+		case "StartGame_Done": {
+			if (msg[1].t === "err") {
+				return [model, Eff.None];
+			}
 
-      const coreModel = msg[1].value
+			const coreModel = msg[1].value;
 
-      return [{ ...model, coreModel }, Eff.None]
-    }
+			return [{ ...model, coreModel }, Eff.None];
+		}
 
-    //
-    //
-    // Draw
-    //
-    //
+		//
+		//
+		// Draw
+		//
+		//
 
-    case "RequestToDraw_Done": {
-      switch (msg[1].t) {
-        case "err": {
-          return [model, Eff.None]
-        }
+		case "RequestToDraw_Done": {
+			switch (msg[1].t) {
+				case "err": {
+					return [model, Eff.None];
+				}
 
-        case "ok": {
-          return [{ ...model, openedModal: "AskedToDraw" }, Eff.None]
-        }
+				case "ok": {
+					return [{ ...model, openedModal: "AskedToDraw" }, Eff.None];
+				}
 
-        default: {
-          return [model, Eff.None]
-        }
-      }
-    }
+				default: {
+					return [model, Eff.None];
+				}
+			}
+		}
 
-    case "RespondToDraw_Done": {
-      if (msg[1].t === "err") {
-        return [model, Eff.None]
-      }
+		case "RespondToDraw_Done": {
+			if (msg[1].t === "err") {
+				return [model, Eff.None];
+			}
 
-      const coreModel = msg[1].value
+			const coreModel = msg[1].value;
 
-      if (coreModel.type === "game-over") {
-        return [{ ...model, coreModel }, Eff.None]
-      }
+			if (coreModel.type === "game-over") {
+				return [{ ...model, coreModel }, Eff.None];
+			}
 
-      const isNotPlaying =
-        coreModel.type === "game" &&
-        coreModel.w !== ctx.currentUserId &&
-        coreModel.b !== ctx.currentUserId
+			const isNotPlaying =
+				coreModel.type === "game" &&
+				coreModel.w !== ctx.currentUserId &&
+				coreModel.b !== ctx.currentUserId;
 
-      if (isNotPlaying) {
-        return [{ ...model, coreModel }, Eff.None]
-      }
+			if (isNotPlaying) {
+				return [{ ...model, coreModel }, Eff.None];
+			}
 
-      return [{ ...model, coreModel }, Eff.None]
-    }
+			return [{ ...model, coreModel }, Eff.None];
+		}
 
-    case "CancelDraw_Done": {
-      const result = msg[1]
+		case "CancelDraw_Done": {
+			const result = msg[1];
 
-      if (isErr(result)) {
-        return [model, Eff.None]
-      }
+			if (isErr(result)) {
+				return [model, Eff.None];
+			}
 
-      const coreModel = result.value
+			const coreModel = result.value;
 
-      const isNotPlaying =
-        coreModel.type === "game" &&
-        coreModel.w !== ctx.currentUserId &&
-        coreModel.b !== ctx.currentUserId
+			const isNotPlaying =
+				coreModel.type === "game" &&
+				coreModel.w !== ctx.currentUserId &&
+				coreModel.b !== ctx.currentUserId;
 
-      if (isNotPlaying) {
-        return [{ ...model, coreModel }, Eff.None]
-      }
+			if (isNotPlaying) {
+				return [{ ...model, coreModel }, Eff.None];
+			}
 
-      return [{ ...model, coreModel }, Eff.None]
-    }
+			return [{ ...model, coreModel }, Eff.None];
+		}
 
-    //
-    //
-    //
-    //
-    //
+		//
+		//
+		//
+		//
+		//
 
-    case "resign_Done": {
-      if (msg[1].t === "err") {
-        return [model, Eff.None]
-      }
+		case "resign_Done": {
+			if (msg[1].t === "err") {
+				return [model, Eff.None];
+			}
 
-      const coreModelNew = msg[1].value
+			const coreModelNew = msg[1].value;
 
-      if (coreModelNew.type === "setup") {
-        return [model, Eff.None]
-      }
+			if (coreModelNew.type === "setup") {
+				return [model, Eff.None];
+			}
 
-      return [{ ...model, coreModel: coreModelNew }, Eff.None]
-    }
+			return [{ ...model, coreModel: coreModelNew }, Eff.None];
+		}
 
-    case "NewGame_Done": {
-      if (msg[1].t === "err") {
-        return [model, Eff.None]
-      }
+		case "NewGame_Done": {
+			if (msg[1].t === "err") {
+				return [model, Eff.None];
+			}
 
-      const coreModelNew = msg[1].value
+			const coreModelNew = msg[1].value;
 
-      return [{ ...model, coreModel: coreModelNew }, Eff.None]
-    }
+			return [{ ...model, coreModel: coreModelNew }, Eff.None];
+		}
 
-    case "game-over": {
-      return [
-        {
-          ...model,
-          openedModal: "game-over",
-        },
-        Eff.None,
-      ]
-    }
+		case "game-over": {
+			return [
+				{
+					...model,
+					openedModal: "game-over",
+				},
+				Eff.None,
+			];
+		}
 
-    case "GameStarted": {
-      return [model, Eff.None]
-    }
+		case "GameStarted": {
+			return [model, Eff.None];
+		}
 
-    case "ClockTicked": {
-      const coreModel = msg[1]
+		case "ClockTicked": {
+			const coreModel = msg[1];
 
-      return [{ ...model, coreModel }, Eff.None]
-    }
+			return [{ ...model, coreModel }, Eff.None];
+		}
 
-    case "player-left": {
-      return [{ ...model, coreModel: msg[1] }, Eff.None]
-    }
+		case "player-left": {
+			return [{ ...model, coreModel: msg[1] }, Eff.None];
+		}
 
-    default: {
-      return exhaustive(msg[0])
-    }
-  }
-}
+		default: {
+			return exhaustive(msg[0]);
+		}
+	}
+};
 
 //
 //
@@ -279,8 +285,8 @@ export const updateFromServer = (
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Sub.None
-}
+	return Sub.None;
+};
 
 //
 //
@@ -291,58 +297,58 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 //
 
 export const View = ({
-  model,
-  dispatch,
-  onQuit,
+	model,
+	dispatch,
+	onQuit,
 }: {
-  ctx: ClientCtx
-  model: Model
-  dispatch: (msg: Msg) => void
-  onQuit: () => void
+	ctx: ClientCtx;
+	model: Model;
+	dispatch: (msg: Msg) => void;
+	onQuit: () => void;
 }) => {
-  if (model.coreModel.type === "setup") {
-    return (
-      <div>
-        <div className="flex-1"></div>
-        <div className="flex items-center gap-4 border-t border-neutral-700 p-4">
-          <Button
-            className="flex-1"
-            onClick={onQuit}
-            start={<IconArrowLeftOnRect className="h-6 w-6" />}
-            text="Exit"
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            className="flex-1"
-            text="Start Game"
-          />
-        </div>
-      </div>
-    )
-  }
+	if (model.coreModel.type === "setup") {
+		return (
+			<div>
+				<div className="flex-1"></div>
+				<div className="flex items-center gap-4 border-t border-neutral-700 p-4">
+					<Button
+						className="flex-1"
+						onClick={onQuit}
+						start={<IconArrowLeftOnRect className="h-6 w-6" />}
+						text="Exit"
+					/>
+					<Button
+						variant="contained"
+						color="primary"
+						className="flex-1"
+						text="Start Game"
+					/>
+				</div>
+			</div>
+		);
+	}
 
-  // const { w, b } = model.coreModel;
+	// const { w, b } = model.coreModel;
 
-  // const currentUserColor: Chess.Color | "none" | "Both" =
-  //   ctx.currentUserId === w && ctx.currentUserId === b
-  //     ? "Both"
-  //     : ctx.currentUserId === w
-  //     ? "w"
-  //     : ctx.currentUserId === b
-  //     ? "b"
-  //     : "none";
+	// const currentUserColor: Chess.Color | "none" | "Both" =
+	//   ctx.currentUserId === w && ctx.currentUserId === b
+	//     ? "Both"
+	//     : ctx.currentUserId === w
+	//     ? "w"
+	//     : ctx.currentUserId === b
+	//     ? "b"
+	//     : "none";
 
-  // const boardOrientation: Chess.Color = p(
-  //   currentUserColor === "none" || currentUserColor === "Both"
-  //     ? "w"
-  //     : currentUserColor,
-  //   (color) => (model.isFlipped ? Chess.toOppositeColor(color) : color)
-  // );
+	// const boardOrientation: Chess.Color = p(
+	//   currentUserColor === "none" || currentUserColor === "Both"
+	//     ? "w"
+	//     : currentUserColor,
+	//   (color) => (model.isFlipped ? Chess.toOppositeColor(color) : color)
+	// );
 
-  return (
-    <div>
-      {/* <Chessboard
+	return (
+		<div>
+			{/* <Chessboard
         model={board}
         boardOrientation={boardOrientation}
         isDraggablePiece={({ piece }) => {
@@ -368,76 +374,76 @@ export const View = ({
         }}
       /> */}
 
-      <div className="flex-1"></div>
+			<div className="flex-1"></div>
 
-      <ViewGameOverDialog model={model} dispatch={dispatch} />
-    </div>
-  )
-}
+			<ViewGameOverDialog model={model} dispatch={dispatch} />
+		</div>
+	);
+};
 
 const ViewGameOverDialog = ({
-  model,
+	model,
 }: {
-  model: Model
-  dispatch: (msg: Msg) => void
+	model: Model;
+	dispatch: (msg: Msg) => void;
 }) => {
-  if (model.coreModel.type === "setup") {
-    return <span>{toGameText(model.coreModel)}</span>
-  }
+	if (model.coreModel.type === "setup") {
+		return <span>{toGameText(model.coreModel)}</span>;
+	}
 
-  if (model.coreModel.type === "game") {
-    return <span></span>
-  }
+	if (model.coreModel.type === "game") {
+		return <span></span>;
+	}
 
-  return <span></span>
-}
+	return <span></span>;
+};
 
 const toGameText = (model: CoreModel): string => {
-  switch (model.type) {
-    case "game-over": {
-      switch (model.gameOver.type) {
-        case "Checkmate": {
-          const colorStr = Chess.colorToString(model.gameOver.winner)
-          return `${colorStr} won by checkmate`
-        }
+	switch (model.type) {
+		case "game-over": {
+			switch (model.gameOver.type) {
+				case "Checkmate": {
+					const colorStr = Chess.colorToString(model.gameOver.winner);
+					return `${colorStr} won by checkmate`;
+				}
 
-        case "DrawByAgreement": {
-          return "Drawn by agreement"
-        }
+				case "DrawByAgreement": {
+					return "Drawn by agreement";
+				}
 
-        case "resignation": {
-          return `${Chess.colorToString(model.gameOver.resigner)} resigned`
-        }
+				case "resignation": {
+					return `${Chess.colorToString(model.gameOver.resigner)} resigned`;
+				}
 
-        case "Stalemate": {
-          return "Stalemate"
-        }
+				case "Stalemate": {
+					return "Stalemate";
+				}
 
-        case "WinOnTime": {
-          return `${Chess.colorToString(model.gameOver.winner)} won on time`
-        }
+				case "WinOnTime": {
+					return `${Chess.colorToString(model.gameOver.winner)} won on time`;
+				}
 
-        default:
-          return exhaustive(model.gameOver)
-      }
-    }
+				default:
+					return exhaustive(model.gameOver);
+			}
+		}
 
-    case "setup": {
-      return "Setting up game"
-    }
+		case "setup": {
+			return "Setting up game";
+		}
 
-    case "game": {
-      if (Chess.inCheck(model.board)) {
-        return `${Chess.colorToString(Chess.toTurn(model.board))} is in check`
-      }
+		case "game": {
+			if (Chess.inCheck(model.board)) {
+				return `${Chess.colorToString(Chess.toTurn(model.board))} is in check`;
+			}
 
-      return `${Chess.colorToString(Chess.toTurn(model.board))}'s turn`
-    }
+			return `${Chess.colorToString(Chess.toTurn(model.board))}'s turn`;
+		}
 
-    default:
-      return exhaustive(model)
-  }
-}
+		default:
+			return exhaustive(model);
+	}
+};
 
 //
 //
@@ -448,18 +454,18 @@ const toGameText = (model: CoreModel): string => {
 //
 
 export const mergeWithServer = ({
-  client,
-  server,
+	client,
+	server,
 }: {
-  client?: ModelClient
-  server: ModelServer
+	client?: ModelClient;
+	server: ModelServer;
 }): ModelClient => {
-  const initial = init({ userId: null })
-  const clientModel = client ?? initial.model
-  return {
-    isFlipped: clientModel.isFlipped,
-    openedMenuId: clientModel.openedMenuId,
-    openedModal: clientModel.openedModal,
-    coreModel: server,
-  }
-}
+	const initial = init({ userId: null });
+	const clientModel = client ?? initial.model;
+	return {
+		isFlipped: clientModel.isFlipped,
+		openedMenuId: clientModel.openedMenuId,
+		openedModal: clientModel.openedModal,
+		coreModel: server,
+	};
+};

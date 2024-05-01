@@ -1,8 +1,8 @@
-import { sendBack } from "gamezilla-app/app/@shared/server"
-import { SpaceServerModule } from "../architecture/space-server"
-import * as Space from "../spaces-core/space"
-import { SpacesCoreServer } from "../spaces-core/spaces-core.server"
-import { Result } from "gamezilla-app/@shared/core"
+import { sendBack } from "gamezilla-app/app/@shared/server";
+import type { SpaceServerModule } from "../architecture/space-server";
+import * as Space from "../spaces-core/space";
+import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
+import { Result } from "gamezilla-app/@shared/core";
 
 //
 //
@@ -13,42 +13,42 @@ import { Result } from "gamezilla-app/@shared/core"
 //
 
 const update: SpaceServerModule["update"] = async (input) => {
-  const { msgClient, model, deps } = input
+	const { msgClient, model, deps } = input;
 
-  switch (msgClient?.t) {
-    case "list-spaces": {
-      const spaces = await SpacesCoreServer.listSpaces({
-        spacesDb: input.deps.SpacesDb,
-        limit: msgClient.limit,
-        offset: msgClient.offset,
-        where: msgClient.where,
-      })
+	switch (msgClient?.t) {
+		case "list-spaces": {
+			const spaces = await SpacesCoreServer.listSpaces({
+				spacesDb: input.deps.SpacesDb,
+				limit: msgClient.limit,
+				offset: msgClient.offset,
+				where: msgClient.where,
+			});
 
-      const started = spaces.map(Space.startFromLatestSnapshot)
+			const started = spaces.map(Space.startFromLatestSnapshot);
 
-      const userIds = spaces.flatMap((space) => Space.toUserIds(space))
+			const userIds = spaces.flatMap((space) => Space.toUserIds(space));
 
-      const profiles = Result.withDefault(
-        await deps.ProfileCache.get(userIds),
-        {},
-      )
+			const profiles = Result.withDefault(
+				await deps.ProfileCache.get(userIds),
+				{},
+			);
 
-      return {
-        model,
-        msgCmd: [
-          sendBack(msgClient, {
-            t: "listed-spaces",
-            spaces: started,
-            causedBy: msgClient.t,
-            profiles,
-          }),
-        ],
-      }
-    }
-  }
+			return {
+				model,
+				msgCmd: [
+					sendBack(msgClient, {
+						t: "listed-spaces",
+						spaces: started,
+						causedBy: msgClient.t,
+						profiles,
+					}),
+				],
+			};
+		}
+	}
 
-  return { model }
-}
+	return { model };
+};
 
 //
 //
@@ -58,5 +58,5 @@ const update: SpaceServerModule["update"] = async (input) => {
 //
 
 export const ListSpacesServer = {
-  update,
-}
+	update,
+};

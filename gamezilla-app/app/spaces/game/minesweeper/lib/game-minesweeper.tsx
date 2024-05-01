@@ -1,8 +1,8 @@
 /* eslint-disable-next-line */
-export interface GameMinesweeperProps {}
+export type GameMinesweeperProps = {};
 
 export function GameMinesweeper(_props: GameMinesweeperProps) {
-  return <h1>Welcome to GameMinesweeper!</h1>
+	return <h1>Welcome to GameMinesweeper!</h1>;
 }
 
-export default GameMinesweeper
+export default GameMinesweeper;

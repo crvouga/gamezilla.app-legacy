@@ -1,17 +1,17 @@
-import { Option } from "./option"
+import { Option } from "./option";
 
 export const removeKey = <Key extends keyof Record, Record>(
-  key: Key,
-  record: Record,
+	key: Key,
+	record: Record,
 ): Omit<Record, Key> => {
-  const { [key]: _value, ...rest } = record
+	const { [key]: _value, ...rest } = record;
 
-  return rest
-}
+	return rest;
+};
 
 export const get = <Key extends keyof Record, Record>(
-  key: Key,
-  record: Record,
+	key: Key,
+	record: Record,
 ): Option<Record[Key]> => {
-  return Option.fromNullable(record[key])
-}
+	return Option.fromNullable(record[key]);
+};

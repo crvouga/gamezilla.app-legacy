@@ -1,25 +1,25 @@
-import { IDbConnKv } from "gamezilla-app/app/@shared/server/db-conn-kv"
-import { IGameDb } from "./space-game-db"
-import * as Game from "../../game/game.core"
-import { SpaceId } from "gamezilla-app/app/@shared/data"
+import { IDbConnKv } from "gamezilla-app/app/@shared/server/db-conn-kv";
+import type { IGameDb } from "./space-game-db";
+import * as Game from "../../game/game.core";
+import type { SpaceId } from "gamezilla-app/app/@shared/data";
 
 const GameDb = ({ dbConnKv }: { dbConnKv: IDbConnKv }): IGameDb => {
-  const bySpaceId = IDbConnKv.instance<SpaceId, Game.ModelServer>(
-    dbConnKv,
-    ["game", "game-by-id"],
-    Game.ModelServer,
-  )
+	const bySpaceId = IDbConnKv.instance<SpaceId, Game.ModelServer>(
+		dbConnKv,
+		["game", "game-by-id"],
+		Game.ModelServer,
+	);
 
-  return {
-    async getBySpaceId(spaceId) {
-      return bySpaceId.get(spaceId)
-    },
-    async upsert(spaceId, game) {
-      return bySpaceId.set(spaceId, game)
-    },
-  }
-}
+	return {
+		async getBySpaceId(spaceId) {
+			return bySpaceId.get(spaceId);
+		},
+		async upsert(spaceId, game) {
+			return bySpaceId.set(spaceId, game);
+		},
+	};
+};
 
 export const ImplDbConnKv = {
-  GameDb,
-}
+	GameDb,
+};

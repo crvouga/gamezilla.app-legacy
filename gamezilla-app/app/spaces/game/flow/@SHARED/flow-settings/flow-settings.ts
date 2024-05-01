@@ -1,7 +1,7 @@
-import { UserId } from "gamezilla-app/app/@shared/data"
+import type { UserId } from "gamezilla-app/app/@shared/data";
 
 export type FlowUserSettings = {
-  userId: UserId
-  showCoordinates: boolean
-  showGroupLabels: boolean
-}
+	userId: UserId;
+	showCoordinates: boolean;
+	showGroupLabels: boolean;
+};

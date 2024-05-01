@@ -1,13 +1,13 @@
-import { Posix } from "gamezilla-app/@shared/core"
-import { IDbConnKv } from "./db-conn-kv"
-import { IDbConnSql } from "./db-conn-sql/db-conn-sql"
-import { ILogger } from "./logger/logger"
-import { ISMS } from "./sms"
+import type { Posix } from "gamezilla-app/@shared/core";
+import type { IDbConnKv } from "./db-conn-kv";
+import type { IDbConnSql } from "./db-conn-sql/db-conn-sql";
+import type { ILogger } from "./logger/logger";
+import type { ISMS } from "./sms";
 
 export type ServerCtx = {
-  dbConnSql: IDbConnSql
-  dbConnKv: IDbConnKv
-  now: Posix
-  logger: ILogger
-  sms: ISMS
-}
+	dbConnSql: IDbConnSql;
+	dbConnKv: IDbConnKv;
+	now: Posix;
+	logger: ILogger;
+	sms: ISMS;
+};

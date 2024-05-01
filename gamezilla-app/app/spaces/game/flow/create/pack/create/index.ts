@@ -1,1 +1,1 @@
-export * as PackCreate from "./pack-create.core"
+export * as PackCreate from "./pack-create.core";

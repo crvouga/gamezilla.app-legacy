@@ -1,65 +1,65 @@
-import { LRUCache } from "gamezilla-app/@shared/least-recently-used-cache"
+import { LRUCache } from "gamezilla-app/@shared/least-recently-used-cache";
 
 /**
  * @description
  * optimization for expensive function calls by caching results
  */
 export const memoize = <TInput, TOutput extends {}>({
-  toKey,
-  func,
-  cacheCapacity,
+	toKey,
+	func,
+	cacheCapacity,
 }: {
-  toKey: (x: TInput) => string | number
-  func: (x: TInput) => TOutput
-  cacheCapacity: number
+	toKey: (x: TInput) => string | number;
+	func: (x: TInput) => TOutput;
+	cacheCapacity: number;
 }) => {
-  const cache = LRUCache<string | number, TOutput>({
-    maxCapcity: cacheCapacity,
-  })
+	const cache = LRUCache<string | number, TOutput>({
+		maxCapcity: cacheCapacity,
+	});
 
-  return (x: TInput): TOutput => {
-    const key = toKey(x)
+	return (x: TInput): TOutput => {
+		const key = toKey(x);
 
-    const cached = cache.get(key)
+		const cached = cache.get(key);
 
-    if (cached) {
-      return cached
-    }
+		if (cached) {
+			return cached;
+		}
 
-    const y = func(x)
+		const y = func(x);
 
-    cache.set(key, y)
+		cache.set(key, y);
 
-    return y
-  }
-}
+		return y;
+	};
+};
 
 export const memoizeAsync = <TInput, TOutput extends {}>({
-  toKey,
-  func,
-  cacheCapacity,
+	toKey,
+	func,
+	cacheCapacity,
 }: {
-  toKey: (x: TInput) => string | number
-  func: (x: TInput) => Promise<TOutput>
-  cacheCapacity: number
+	toKey: (x: TInput) => string | number;
+	func: (x: TInput) => Promise<TOutput>;
+	cacheCapacity: number;
 }) => {
-  const cache = LRUCache<string | number, TOutput>({
-    maxCapcity: cacheCapacity,
-  })
+	const cache = LRUCache<string | number, TOutput>({
+		maxCapcity: cacheCapacity,
+	});
 
-  return async (x: TInput): Promise<TOutput> => {
-    const key = toKey(x)
+	return async (x: TInput): Promise<TOutput> => {
+		const key = toKey(x);
 
-    const cached = cache.get(key)
+		const cached = cache.get(key);
 
-    if (cached) {
-      return cached
-    }
+		if (cached) {
+			return cached;
+		}
 
-    const y = await func(x)
+		const y = await func(x);
 
-    cache.set(key, y)
+		cache.set(key, y);
 
-    return y
-  }
-}
+		return y;
+	};
+};

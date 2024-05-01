@@ -1,1 +1,1 @@
-export * as PuzzleDeleteForever from "./puzzle-delete-forever.core"
+export * as PuzzleDeleteForever from "./puzzle-delete-forever.core";

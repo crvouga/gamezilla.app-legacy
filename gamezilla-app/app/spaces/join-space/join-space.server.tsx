@@ -1,49 +1,49 @@
-import { sendToUser } from "gamezilla-app/app/@shared/server"
-import { SpaceServerModule } from "../architecture/space-server"
-import { Space } from "../spaces-core"
-import { SpacesCoreServer } from "../spaces-core/spaces-core.server"
+import { sendToUser } from "gamezilla-app/app/@shared/server";
+import { SpaceServerModule } from "../architecture/space-server";
+import { Space } from "../spaces-core";
+import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
 
 const update: SpaceServerModule["update"] = (input) => {
-  return SpaceServerModule.andThen(
-    { model: input.model },
-    //
-    (model) => updateFromSpaceEvent({ ...input, model }),
-  )
-}
+	return SpaceServerModule.andThen(
+		{ model: input.model },
+		//
+		(model) => updateFromSpaceEvent({ ...input, model }),
+	);
+};
 
 const updateFromSpaceEvent: SpaceServerModule["update"] = async (input) => {
-  const { model, msgSpaceEvent, deps } = input
-  switch (msgSpaceEvent?.t) {
-    case "user-joined-space": {
-      const space = await SpacesCoreServer.getSpaceById(
-        deps.SpacesDb,
-        msgSpaceEvent.spaceId,
-      )
+	const { model, msgSpaceEvent, deps } = input;
+	switch (msgSpaceEvent?.t) {
+		case "user-joined-space": {
+			const space = await SpacesCoreServer.getSpaceById(
+				deps.SpacesDb,
+				msgSpaceEvent.spaceId,
+			);
 
-      if (!space) {
-        return { model }
-      }
+			if (!space) {
+				return { model };
+			}
 
-      const started = Space.startFromLatestSnapshot(space)
+			const started = Space.startFromLatestSnapshot(space);
 
-      return {
-        model,
-        msgCmd: [
-          sendToUser([msgSpaceEvent.userId], {
-            t: "synced",
-            space: started,
-            causedBy: msgSpaceEvent.t,
-          }),
-        ],
-      }
-    }
+			return {
+				model,
+				msgCmd: [
+					sendToUser([msgSpaceEvent.userId], {
+						t: "synced",
+						space: started,
+						causedBy: msgSpaceEvent.t,
+					}),
+				],
+			};
+		}
 
-    default: {
-      return { model: input.model }
-    }
-  }
-}
+		default: {
+			return { model: input.model };
+		}
+	}
+};
 
 export const JoinSpaceServer = {
-  update,
-}
+	update,
+};

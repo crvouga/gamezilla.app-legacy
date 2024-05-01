@@ -1,86 +1,89 @@
-import { BaseClientCtx, ClientEvent } from "gamezilla-app/app/@shared/client"
+import type {
+	BaseClientCtx,
+	ClientEvent,
+} from "gamezilla-app/app/@shared/client";
 
-import { Eff, Sub, batchMsgs } from "gamezilla-app/@shared/core"
-import { VDom } from "gamezilla-app/@shared/vdom"
-import { WithEventId } from "../@shared/event"
-import { Space } from "../@shared/space"
-import { SpaceClientCmd } from "../@shared/space-client-cmd"
-import { SpaceEvent } from "../spaces-core"
-import {
-  ModelClient,
-  ModelLocation,
-  MsgClient,
-  MsgToClient,
-  MsgToServer,
-} from "../spaces.core"
+import { Eff, type Sub, batchMsgs } from "gamezilla-app/@shared/core";
+import type { VDom } from "gamezilla-app/@shared/vdom";
+import type { WithEventId } from "../@shared/event";
+import type { Space } from "../@shared/space";
+import type { SpaceClientCmd } from "../@shared/space-client-cmd";
+import type { SpaceEvent } from "../spaces-core";
+import type {
+	ModelClient,
+	ModelLocation,
+	MsgClient,
+	MsgToClient,
+	MsgToServer,
+} from "../spaces.core";
 
 type Ctx = BaseClientCtx & {
-  space?: Space
-}
+	space?: Space;
+};
 
 export type Input = {
-  ctx: Ctx
-  model: ModelClient
-  modelLocation?: ModelLocation
-  msg?: MsgClient | null
-  msgServer?: MsgToClient | null
-  msgEvt?: ClientEvent | null
-  msgCmd?: SpaceClientCmd<{
-    MsgClient: MsgClient
-    MsgToServer: MsgToServer
-  }> | null
-  msgSpaceEvent?: WithEventId<SpaceEvent> | null
-}
+	ctx: Ctx;
+	model: ModelClient;
+	modelLocation?: ModelLocation;
+	msg?: MsgClient | null;
+	msgServer?: MsgToClient | null;
+	msgEvt?: ClientEvent | null;
+	msgCmd?: SpaceClientCmd<{
+		MsgClient: MsgClient;
+		MsgToServer: MsgToServer;
+	}> | null;
+	msgSpaceEvent?: WithEventId<SpaceEvent> | null;
+};
 
 export type Output = {
-  model: ModelClient
-  modelLocation?: {
-    t: "replace" | "push"
-    c: ModelLocation
-  }
-  eff?: Eff<MsgClient>
-  msgCmd?: SpaceClientCmd<{
-    MsgClient: MsgClient
-    MsgToServer: MsgToServer
-  }>[]
-  msgEvt?: unknown[]
-  msgSpaceEvent?: WithEventId<SpaceEvent>[]
-}
+	model: ModelClient;
+	modelLocation?: {
+		t: "replace" | "push";
+		c: ModelLocation;
+	};
+	eff?: Eff<MsgClient>;
+	msgCmd?: SpaceClientCmd<{
+		MsgClient: MsgClient;
+		MsgToServer: MsgToServer;
+	}>[];
+	msgEvt?: unknown[];
+	msgSpaceEvent?: WithEventId<SpaceEvent>[];
+};
 
 export type SpaceClientModule = {
-  init: (input: { ctx: Ctx; model: ModelClient }) => Output
-  update: (input: Input) => Output
-  subscriptions: (input: { ctx: Ctx; model: ModelClient }) => Sub<MsgClient>
-  View: (input: {
-    ctx: Ctx
-    model: ModelClient
-    dispatch: (msg: MsgClient) => void
-  }) => VDom
-}
+	init: (input: { ctx: Ctx; model: ModelClient }) => Output;
+	update: (input: Input) => Output;
+	subscriptions: (input: { ctx: Ctx; model: ModelClient }) => Sub<MsgClient>;
+	View: (input: {
+		ctx: Ctx;
+		model: ModelClient;
+		dispatch: (msg: MsgClient) => void;
+	}) => VDom;
+};
 
 const andThen = (
-  acc: Output,
-  ...updates: ((model: ModelClient) => Output)[]
+	acc: Output,
+	...updates: ((model: ModelClient) => Output)[]
 ): Output => {
-  const [update, ...rest] = updates
+	const [update, ...rest] = updates;
 
-  if (!update) {
-    return acc
-  }
+	if (!update) {
+		return acc;
+	}
 
-  const updated = update(acc.model)
+	const updated = update(acc.model);
 
-  const accNew: Output = {
-    model: updated.model,
-    eff: Eff.batch([acc.eff, updated.eff]),
-    msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
-    msgEvt: batchMsgs(acc.msgEvt, updated.msgEvt),
-    msgSpaceEvent: batchMsgs(acc.msgSpaceEvent, updated.msgSpaceEvent),
-  }
+	const accNew: Output = {
+		model: updated.model,
+		eff: Eff.batch([acc.eff, updated.eff]),
+		msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
+		msgEvt: batchMsgs(acc.msgEvt, updated.msgEvt),
+		msgSpaceEvent: batchMsgs(acc.msgSpaceEvent, updated.msgSpaceEvent),
+	};
 
-  return andThen(accNew, ...rest)
-}
+	return andThen(accNew, ...rest);
+};
 
 export const SpaceClientModule = {
-  andThen,
-}
+	andThen,
+};

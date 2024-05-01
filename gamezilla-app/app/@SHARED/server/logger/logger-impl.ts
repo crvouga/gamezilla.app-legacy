@@ -1,23 +1,23 @@
-import { ILogger } from "./logger"
-import { LoggerConsole } from "./logger-impl-console"
-import { loggerNoop } from "./logger-impl-noop"
+import type { ILogger } from "./logger";
+import { LoggerConsole } from "./logger-impl-console";
+import { loggerNoop } from "./logger-impl-noop";
 
 export type Impl =
-  | {
-      t: "console"
-    }
-  | {
-      t: "noop"
-    }
+	| {
+			t: "console";
+	  }
+	| {
+			t: "noop";
+	  };
 
 export const Logger = (impl: Impl): ILogger => {
-  switch (impl.t) {
-    case "console": {
-      return LoggerConsole()
-    }
+	switch (impl.t) {
+		case "console": {
+			return LoggerConsole();
+		}
 
-    case "noop": {
-      return loggerNoop
-    }
-  }
-}
+		case "noop": {
+			return loggerNoop;
+		}
+	}
+};

@@ -1,35 +1,35 @@
-import { isErr } from "gamezilla-app/@shared/core"
-import { SyncReducer } from "../../create.core"
+import { isErr } from "gamezilla-app/@shared/core";
+import type { SyncReducer } from "../../create.core";
 
 const reducer: SyncReducer = ({ modelSync, msgSync }) => {
-  switch (msgSync.t) {
-    case "puzzle-builder.saved-puzzle": {
-      if (isErr(msgSync.saved)) {
-        return modelSync
-      }
+	switch (msgSync.t) {
+		case "puzzle-builder.saved-puzzle": {
+			if (isErr(msgSync.saved)) {
+				return modelSync;
+			}
 
-      if (!modelSync.puzzleBuilder) {
-        return modelSync
-      }
+			if (!modelSync.puzzleBuilder) {
+				return modelSync;
+			}
 
-      return {
-        ...modelSync,
-        listTab: modelSync.listTab,
-        opened: modelSync.opened,
-        packBuilder: modelSync.packBuilder,
-        puzzleBuilder: {
-          ...modelSync.puzzleBuilder,
-          puzzle: msgSync.saved.value,
-        },
-      }
-    }
+			return {
+				...modelSync,
+				listTab: modelSync.listTab,
+				opened: modelSync.opened,
+				packBuilder: modelSync.packBuilder,
+				puzzleBuilder: {
+					...modelSync.puzzleBuilder,
+					puzzle: msgSync.saved.value,
+				},
+			};
+		}
 
-    default: {
-      return modelSync
-    }
-  }
-}
+		default: {
+			return modelSync;
+		}
+	}
+};
 
 export const PuzzleSaveChangesGame = {
-  reducer,
-}
+	reducer,
+};

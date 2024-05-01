@@ -1,18 +1,18 @@
-import { Sub } from "gamezilla-app/@shared/core"
-import { GameServerModule } from "../@shared/architecture/game-server-v2"
-import { SpaceServerCtx, SpaceServerEvent } from "../@shared/space"
-import { SpaceServerCmd } from "../@shared/space-server-cmd"
-import { FlowServer } from "./flow/flow.server"
-import {
-  MsgSync,
-  GameName,
-  ModelSync,
-  ModelServer,
-  MsgServer,
-  MsgToClient,
-  MsgToServer,
-} from "./game.core"
-import { ConnectFourServer } from "./connect-four/connect-four.server"
+import { Sub } from "gamezilla-app/@shared/core";
+import { GameServerModule } from "../@shared/architecture/game-server-v2";
+import type { SpaceServerCtx, SpaceServerEvent } from "../@shared/space";
+import { SpaceServerCmd } from "../@shared/space-server-cmd";
+import { FlowServer } from "./flow/flow.server";
+import type {
+	MsgSync,
+	GameName,
+	ModelSync,
+	ModelServer,
+	MsgServer,
+	MsgToClient,
+	MsgToServer,
+} from "./game.core";
+import { ConnectFourServer } from "./connect-four/connect-four.server";
 
 //
 //
@@ -23,19 +23,19 @@ import { ConnectFourServer } from "./connect-four/connect-four.server"
 //
 
 type Module = GameServerModule<{
-  Model: ModelServer
-  Msg: MsgServer
-  MsgToClient: MsgToClient
-  MsgToServer: MsgToServer
-  ModelSync: ModelSync
-  MsgSync: MsgSync
-  Ctx: SpaceServerCtx
-  MsgInCmd: null
-  MsgInEvent: SpaceServerEvent
-  MsgOutCmd: SpaceServerCmd<MsgToClient>
-  MsgOutEvent: null
-  Deps: null
-}>
+	Model: ModelServer;
+	Msg: MsgServer;
+	MsgToClient: MsgToClient;
+	MsgToServer: MsgToServer;
+	ModelSync: ModelSync;
+	MsgSync: MsgSync;
+	Ctx: SpaceServerCtx;
+	MsgInCmd: null;
+	MsgInEvent: SpaceServerEvent;
+	MsgOutCmd: SpaceServerCmd<MsgToClient>;
+	MsgOutEvent: null;
+	Deps: null;
+}>;
 
 //
 //
@@ -46,22 +46,22 @@ type Module = GameServerModule<{
 //
 
 const init = (gameName: GameName): Module["init"] => {
-  switch (gameName) {
-    case "connect-four": {
-      return {
-        t: "connect-four",
-        c: ConnectFourServer.init,
-      }
-    }
+	switch (gameName) {
+		case "connect-four": {
+			return {
+				t: "connect-four",
+				c: ConnectFourServer.init,
+			};
+		}
 
-    case "flow": {
-      return {
-        t: "flow",
-        c: FlowServer.init,
-      }
-    }
-  }
-}
+		case "flow": {
+			return {
+				t: "flow",
+				c: FlowServer.init,
+			};
+		}
+	}
+};
 
 //
 //
@@ -72,68 +72,68 @@ const init = (gameName: GameName): Module["init"] => {
 //
 
 export const update: Module["update"] = async (input) => {
-  const { modelSync, ctx, model } = input
+	const { modelSync, ctx, model } = input;
 
-  return GameServerModule.andThen({ model }, async (model) => {
-    switch (modelSync.t) {
-      case "flow": {
-        const updated = await FlowServer.update({
-          ctx,
-          modelSync: modelSync.c,
-          model: model.t === "flow" ? model.c : FlowServer.init,
-          msgCmd: input.msgCmd,
-          msgEvt: input.msgEvt,
-          msgClient:
-            input.msgClient?.t === "flow"
-              ? { ...input.msgClient, ...input.msgClient.c }
-              : null,
-          msgSync:
-            input.msgSync?.t === "flow"
-              ? { ...input.msgSync, ...input.msgSync.c }
-              : null,
-          msg: input.msg?.t === "flow" ? input.msg.c : null,
-          deps: null,
-        })
+	return GameServerModule.andThen({ model }, async (model) => {
+		switch (modelSync.t) {
+			case "flow": {
+				const updated = await FlowServer.update({
+					ctx,
+					modelSync: modelSync.c,
+					model: model.t === "flow" ? model.c : FlowServer.init,
+					msgCmd: input.msgCmd,
+					msgEvt: input.msgEvt,
+					msgClient:
+						input.msgClient?.t === "flow"
+							? { ...input.msgClient, ...input.msgClient.c }
+							: null,
+					msgSync:
+						input.msgSync?.t === "flow"
+							? { ...input.msgSync, ...input.msgSync.c }
+							: null,
+					msg: input.msg?.t === "flow" ? input.msg.c : null,
+					deps: null,
+				});
 
-        const tagged = GameServerModule.tagOutput(
-          "flow",
-          (msgCmd) => SpaceServerCmd.tag("flow", msgCmd),
-          updated,
-        )
+				const tagged = GameServerModule.tagOutput(
+					"flow",
+					(msgCmd) => SpaceServerCmd.tag("flow", msgCmd),
+					updated,
+				);
 
-        return tagged
-      }
+				return tagged;
+			}
 
-      case "connect-four": {
-        const updated = await ConnectFourServer.update({
-          ctx,
-          modelSync: modelSync.c,
-          model: model.t === "connect-four" ? model.c : ConnectFourServer.init,
-          msgCmd: input.msgCmd,
-          msgEvt: input.msgEvt,
-          msgClient:
-            input.msgClient?.t === "connect-four"
-              ? { ...input.msgClient, ...input.msgClient.c }
-              : null,
-          msgSync:
-            input.msgSync?.t === "connect-four"
-              ? { ...input.msgSync, ...input.msgSync.c }
-              : null,
-          msg: input.msg?.t === "connect-four" ? input.msg.c : null,
-          deps: null,
-        })
+			case "connect-four": {
+				const updated = await ConnectFourServer.update({
+					ctx,
+					modelSync: modelSync.c,
+					model: model.t === "connect-four" ? model.c : ConnectFourServer.init,
+					msgCmd: input.msgCmd,
+					msgEvt: input.msgEvt,
+					msgClient:
+						input.msgClient?.t === "connect-four"
+							? { ...input.msgClient, ...input.msgClient.c }
+							: null,
+					msgSync:
+						input.msgSync?.t === "connect-four"
+							? { ...input.msgSync, ...input.msgSync.c }
+							: null,
+					msg: input.msg?.t === "connect-four" ? input.msg.c : null,
+					deps: null,
+				});
 
-        const tagged = GameServerModule.tagOutput(
-          "connect-four",
-          (msgCmd) => SpaceServerCmd.tag("connect-four", msgCmd),
-          updated,
-        )
+				const tagged = GameServerModule.tagOutput(
+					"connect-four",
+					(msgCmd) => SpaceServerCmd.tag("connect-four", msgCmd),
+					updated,
+				);
 
-        return tagged
-      }
-    }
-  })
-}
+				return tagged;
+			}
+		}
+	});
+};
 
 //
 //
@@ -144,36 +144,36 @@ export const update: Module["update"] = async (input) => {
 //
 
 export const subscriptions: Module["subscriptions"] = async (input) => {
-  const { modelSync, model } = input
+	const { modelSync, model } = input;
 
-  switch (modelSync.t) {
-    case "connect-four": {
-      return Sub.tag(
-        "connect-four",
-        await ConnectFourServer.subscriptions({
-          ...input,
-          modelSync: modelSync.c,
-          model: model?.t === "connect-four" ? model.c : ConnectFourServer.init,
-        }),
-      )
-    }
+	switch (modelSync.t) {
+		case "connect-four": {
+			return Sub.tag(
+				"connect-four",
+				await ConnectFourServer.subscriptions({
+					...input,
+					modelSync: modelSync.c,
+					model: model?.t === "connect-four" ? model.c : ConnectFourServer.init,
+				}),
+			);
+		}
 
-    case "flow": {
-      return Sub.tag(
-        "flow",
-        await FlowServer.subscriptions({
-          ...input,
-          modelSync: modelSync.c,
-          model: model?.t === "flow" ? model.c : FlowServer.init,
-        }),
-      )
-    }
-  }
-}
+		case "flow": {
+			return Sub.tag(
+				"flow",
+				await FlowServer.subscriptions({
+					...input,
+					modelSync: modelSync.c,
+					model: model?.t === "flow" ? model.c : FlowServer.init,
+				}),
+			);
+		}
+	}
+};
 
 export const Game = {
-  init,
-  update,
-  subscriptions,
-  deps: null,
-}
+	init,
+	update,
+	subscriptions,
+	deps: null,
+};

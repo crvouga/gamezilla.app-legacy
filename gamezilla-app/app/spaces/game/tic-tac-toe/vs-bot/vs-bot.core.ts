@@ -1,17 +1,17 @@
-import { Err, isErr, Ok, Result } from "gamezilla-app/@shared/core"
-import { UserId } from "gamezilla-app/app/@shared/data"
-import { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space"
-import { VsBotSetup } from "gamezilla-app/app/spaces/game/@shared/vs-bot"
+import { Err, isErr, Ok, type Result } from "gamezilla-app/@shared/core";
+import type { UserId } from "gamezilla-app/app/@shared/data";
+import type { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space";
+import type { VsBotSetup } from "gamezilla-app/app/spaces/game/@shared/vs-bot";
 import {
-  BotLevel,
-  emptyBoard,
-  Model,
-  move,
-  PlayerType,
-  Position,
-  toOpposite,
-  toStatus,
-} from "../@shared/tic-tic-toe/tic-tac-toe"
+	type BotLevel,
+	emptyBoard,
+	type Model,
+	move,
+	type PlayerType,
+	type Position,
+	toOpposite,
+	toStatus,
+} from "../@shared/tic-tic-toe/tic-tac-toe";
 
 //
 //
@@ -21,53 +21,53 @@ import {
 //
 //
 
-export type CoreModel = SetupModel | ModelSync
+export type CoreModel = SetupModel | ModelSync;
 
 export type SetupModel = {
-  type: "setup"
-  player?: UserId | null
-  userPlayerType: PlayerType
-  botLevel: BotLevel
-}
+	type: "setup";
+	player?: UserId | null;
+	userPlayerType: PlayerType;
+	botLevel: BotLevel;
+};
 
 export type ModelSync = {
-  type: "game"
-  player: UserId
-  userPlayerType: PlayerType
-  botLevel: BotLevel
-  board: Model
-}
+	type: "game";
+	player: UserId;
+	userPlayerType: PlayerType;
+	botLevel: BotLevel;
+	board: Model;
+};
 
 export type ModelClient = CoreModel & {
-  vsBotSetup: VsBotSetup.Model
-}
+	vsBotSetup: VsBotSetup.Model;
+};
 
-export type ModelServer = CoreModel
+export type ModelServer = CoreModel;
 
 export const initCoreModel = ({
-  userId,
+	userId,
 }: {
-  userId: SetupModel["player"]
+	userId: SetupModel["player"];
 }): CoreModel => {
-  return {
-    type: "setup",
-    botLevel: "Medium",
-    userPlayerType: "X",
-    player: userId,
-  }
-}
+	return {
+		type: "setup",
+		botLevel: "Medium",
+		userPlayerType: "X",
+		player: userId,
+	};
+};
 
 export const isBotTurn = (model: CoreModel): model is ModelSync => {
-  if (model.type !== "game") {
-    return false
-  }
+	if (model.type !== "game") {
+		return false;
+	}
 
-  const status = toStatus(model.board)
+	const status = toStatus(model.board);
 
-  return (
-    status.type === "Turn" && status.turn === toOpposite(model.userPlayerType)
-  )
-}
+	return (
+		status.type === "Turn" && status.turn === toOpposite(model.userPlayerType)
+	);
+};
 
 //
 //
@@ -77,30 +77,30 @@ export const isBotTurn = (model: CoreModel): model is ModelSync => {
 //
 //
 
-export type MsgClient = Req | { t: "vs-bot-setup"; c: VsBotSetup.Msg }
+export type MsgClient = Req | { t: "vs-bot-setup"; c: VsBotSetup.Msg };
 
-export type MsgServer = { t: "bot-moved" }
+export type MsgServer = { t: "bot-moved" };
 
-export type MsgToServer = Req
+export type MsgToServer = Req;
 
 export type MsgToClient =
-  | Res
-  | { t: "bot-moved"; result: Result<string, CoreModel> }
-  | { t: "player-left"; result: Result<string, CoreModel> }
+	| Res
+	| { t: "bot-moved"; result: Result<string, CoreModel> }
+	| { t: "player-left"; result: Result<string, CoreModel> };
 
 export type Req =
-  | { t: "input-bot-level"; botLevel: BotLevel }
-  | { t: "start-playing"; playerType: PlayerType }
-  | { t: "stop-playing" }
-  | { t: "start-game" }
-  | { t: "stop-game" }
-  | { t: "input-move"; position: Position }
-  | { t: "swap-sides" }
-  | { t: "restart" }
+	| { t: "input-bot-level"; botLevel: BotLevel }
+	| { t: "start-playing"; playerType: PlayerType }
+	| { t: "stop-playing" }
+	| { t: "start-game" }
+	| { t: "stop-game" }
+	| { t: "input-move"; position: Position }
+	| { t: "swap-sides" }
+	| { t: "restart" };
 
 export type Res = Req & {
-  result: Result<string, CoreModel>
-}
+	result: Result<string, CoreModel>;
+};
 
 //
 //
@@ -110,158 +110,158 @@ export type Res = Req & {
 //
 
 export const handle = ({
-  ctx,
-  msg,
-  model,
+	ctx,
+	msg,
+	model,
 }: {
-  ctx: SpaceCtx & { currentUserId: UserId }
-  msg: Req
-  model: CoreModel
+	ctx: SpaceCtx & { currentUserId: UserId };
+	msg: Req;
+	model: CoreModel;
 }): Result<string, CoreModel> => {
-  switch (msg.t) {
-    case "input-bot-level": {
-      if (model.type !== "setup") {
-        return Err("must-be-in-setup-mode")
-      }
+	switch (msg.t) {
+		case "input-bot-level": {
+			if (model.type !== "setup") {
+				return Err("must-be-in-setup-mode");
+			}
 
-      if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player")
-      }
+			if (model.player !== ctx.currentUserId) {
+				return Err("must-be-player");
+			}
 
-      return Ok({
-        ...model,
-        botLevel: msg.botLevel,
-      })
-    }
+			return Ok({
+				...model,
+				botLevel: msg.botLevel,
+			});
+		}
 
-    case "start-playing": {
-      if (model.type !== "setup") {
-        return Err("must-be-in-setup-mode")
-      }
+		case "start-playing": {
+			if (model.type !== "setup") {
+				return Err("must-be-in-setup-mode");
+			}
 
-      if (model.player && model.player !== ctx.currentUserId) {
-        return Err("not-allowed")
-      }
+			if (model.player && model.player !== ctx.currentUserId) {
+				return Err("not-allowed");
+			}
 
-      return Ok({
-        ...model,
-        userPlayerType: msg.playerType,
-        player: ctx.currentUserId,
-      })
-    }
+			return Ok({
+				...model,
+				userPlayerType: msg.playerType,
+				player: ctx.currentUserId,
+			});
+		}
 
-    case "stop-playing": {
-      if (model.type !== "setup") {
-        return Err("must-be-in-setup-mode")
-      }
+		case "stop-playing": {
+			if (model.type !== "setup") {
+				return Err("must-be-in-setup-mode");
+			}
 
-      if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player")
-      }
+			if (model.player !== ctx.currentUserId) {
+				return Err("must-be-player");
+			}
 
-      return Ok({
-        ...model,
-        player: null,
-      })
-    }
+			return Ok({
+				...model,
+				player: null,
+			});
+		}
 
-    case "start-game": {
-      if (model.type !== "setup") {
-        return Err("must-be")
-      }
+		case "start-game": {
+			if (model.type !== "setup") {
+				return Err("must-be");
+			}
 
-      if (model.player === "none") {
-        return Err("missing_player")
-      }
+			if (model.player === "none") {
+				return Err("missing_player");
+			}
 
-      if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player")
-      }
+			if (model.player !== ctx.currentUserId) {
+				return Err("must-be-player");
+			}
 
-      return Ok({
-        type: "game",
-        board: emptyBoard,
-        botLevel: model.botLevel,
-        player: model.player,
-        userPlayerType: model.userPlayerType,
-      })
-    }
+			return Ok({
+				type: "game",
+				board: emptyBoard,
+				botLevel: model.botLevel,
+				player: model.player,
+				userPlayerType: model.userPlayerType,
+			});
+		}
 
-    case "stop-game": {
-      if (model.type !== "game") {
-        return Err("must-be-in-game-mode")
-      }
+		case "stop-game": {
+			if (model.type !== "game") {
+				return Err("must-be-in-game-mode");
+			}
 
-      if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player")
-      }
+			if (model.player !== ctx.currentUserId) {
+				return Err("must-be-player");
+			}
 
-      return Ok({
-        type: "setup",
-        botLevel: model.botLevel,
-        player: model.player,
-        userPlayerType: model.userPlayerType,
-      })
-    }
+			return Ok({
+				type: "setup",
+				botLevel: model.botLevel,
+				player: model.player,
+				userPlayerType: model.userPlayerType,
+			});
+		}
 
-    case "input-move": {
-      if (model.type !== "game") {
-        return Err("must-be-in-game-mode")
-      }
+		case "input-move": {
+			if (model.type !== "game") {
+				return Err("must-be-in-game-mode");
+			}
 
-      if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player")
-      }
+			if (model.player !== ctx.currentUserId) {
+				return Err("must-be-player");
+			}
 
-      const result = move({
-        board: model.board,
-        player: model.userPlayerType,
-        position: msg.position,
-      })
+			const result = move({
+				board: model.board,
+				player: model.userPlayerType,
+				position: msg.position,
+			});
 
-      if (isErr(result)) {
-        return result
-      }
+			if (isErr(result)) {
+				return result;
+			}
 
-      const modelNext: CoreModel = {
-        ...model,
-        board: result.value,
-      }
+			const modelNext: CoreModel = {
+				...model,
+				board: result.value,
+			};
 
-      return Ok(modelNext)
-    }
+			return Ok(modelNext);
+		}
 
-    case "swap-sides": {
-      if (model.type !== "game") {
-        return Err("must-be-in-game-mode")
-      }
+		case "swap-sides": {
+			if (model.type !== "game") {
+				return Err("must-be-in-game-mode");
+			}
 
-      if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player")
-      }
+			if (model.player !== ctx.currentUserId) {
+				return Err("must-be-player");
+			}
 
-      const modelNext: CoreModel = {
-        ...model,
-        board: emptyBoard,
-        userPlayerType: toOpposite(model.userPlayerType),
-      }
+			const modelNext: CoreModel = {
+				...model,
+				board: emptyBoard,
+				userPlayerType: toOpposite(model.userPlayerType),
+			};
 
-      return Ok(modelNext)
-    }
+			return Ok(modelNext);
+		}
 
-    case "restart": {
-      if (model.type !== "game") {
-        return Err("must-be-in-game-mode")
-      }
+		case "restart": {
+			if (model.type !== "game") {
+				return Err("must-be-in-game-mode");
+			}
 
-      if (model.player !== ctx.currentUserId) {
-        return Err("must-be-player")
-      }
+			if (model.player !== ctx.currentUserId) {
+				return Err("must-be-player");
+			}
 
-      return Ok({
-        ...model,
-        board: emptyBoard,
-      })
-    }
-  }
-}
+			return Ok({
+				...model,
+				board: emptyBoard,
+			});
+		}
+	}
+};

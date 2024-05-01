@@ -1,19 +1,19 @@
-import { Ship, placeShip } from "./ship"
+import { type Ship, placeShip } from "./ship";
 
 export type ShipSubmarine = Ship & {
-  Ship: "Submarine"
-  size: 3
-  airLevel: number
-}
+	Ship: "Submarine";
+	size: 3;
+	airLevel: number;
+};
 
 const is = (ship: Ship): ship is ShipSubmarine => {
-  return ship.Ship === "Submarine"
-}
+	return ship.Ship === "Submarine";
+};
 
 placeShip.implement(is, (_submarine, model) => {
-  return model
-})
+	return model;
+});
 
 export const ShipSubmarine = {
-  is,
-}
+	is,
+};

@@ -1,1 +1,1 @@
-export * as PackList from "./pack-list.core"
+export * as PackList from "./pack-list.core";

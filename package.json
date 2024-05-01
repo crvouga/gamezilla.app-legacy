@@ -47,6 +47,7 @@
     "twilio": "^5.0.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.7.2",
     "@preact/preset-vite": "^2.7.0",
     "@types/pg": "^8.11.5",
     "@types/react": "^18.2.45",

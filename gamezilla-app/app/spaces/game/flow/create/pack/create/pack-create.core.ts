@@ -1,7 +1,11 @@
-import { UserId } from "gamezilla-app/app/@shared/data"
-import { RemoteResult, Result, notAsked } from "gamezilla-app/@shared/core"
-import { p } from "gamezilla-app/@shared/core/parser"
-import { FlowPack } from "../../../@shared/flow-pack/flow-pack"
+import { UserId } from "gamezilla-app/app/@shared/data";
+import {
+	type RemoteResult,
+	Result,
+	notAsked,
+} from "gamezilla-app/@shared/core";
+import { p } from "gamezilla-app/@shared/core/parser";
+import { FlowPack } from "../../../@shared/flow-pack/flow-pack";
 
 //
 //
@@ -10,14 +14,14 @@ import { FlowPack } from "../../../@shared/flow-pack/flow-pack"
 //
 
 export type ModelClient = {
-  packCreateRequest: RemoteResult<string, null>
-}
+	packCreateRequest: RemoteResult<string, null>;
+};
 
 export const initClient: ModelClient = {
-  packCreateRequest: notAsked,
-}
+	packCreateRequest: notAsked,
+};
 
-export type ModelServer = {}
+export type ModelServer = {};
 
 //
 //
@@ -25,19 +29,19 @@ export type ModelServer = {}
 //
 
 export type MsgClient = {
-  t: "pack-create.clicked-create-button"
-}
+	t: "pack-create.clicked-create-button";
+};
 
-export type MsgToServer = { t: "pack-create.clicked-create-button" }
+export type MsgToServer = { t: "pack-create.clicked-create-button" };
 
 export type MsgServer = {
-  t: "noop"
-}
+	t: "noop";
+};
 
 export type MsgToClient = {
-  t: "pack-create.created-pack"
-  created: Result<string, FlowPack>
-}
+	t: "pack-create.created-pack";
+	created: Result<string, FlowPack>;
+};
 
 //
 //
@@ -46,12 +50,12 @@ export type MsgToClient = {
 //
 
 export const isMsgSync = p.obj({
-  t: p.l("user-created-pack"),
-  created: p.custom(
-    Result.is(p.is(p.str), p.is(FlowPack.parser)),
-    "Invalid result",
-  ),
-  userId: UserId,
-})
+	t: p.l("user-created-pack"),
+	created: p.custom(
+		Result.is(p.is(p.str), p.is(FlowPack.parser)),
+		"Invalid result",
+	),
+	userId: UserId,
+});
 
-export type MsgSync = p.Infer<typeof isMsgSync>
+export type MsgSync = p.Infer<typeof isMsgSync>;

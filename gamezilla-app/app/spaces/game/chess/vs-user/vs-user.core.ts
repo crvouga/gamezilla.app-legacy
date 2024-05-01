@@ -1,9 +1,9 @@
-import { eq, isErr, Option, Result } from "gamezilla-app/@shared/core"
-import { UserId } from "gamezilla-app/app/@shared/data"
-import { Chess } from "../@shared/chess"
-import * as Clock from "../@shared/chess/chess-clock"
+import { eq, isErr, Option, Result } from "gamezilla-app/@shared/core";
+import type { UserId } from "gamezilla-app/app/@shared/data";
+import { Chess } from "../@shared/chess";
+import * as Clock from "../@shared/chess/chess-clock";
 
-const { Ok: Ok, Err: Err } = Result
+const { Ok, Err } = Result;
 
 //
 //
@@ -14,75 +14,75 @@ const { Ok: Ok, Err: Err } = Result
 //
 
 export type ModelClient = {
-  coreModel: CoreModel
-  openedMenuId: Option<string>
-  openedModal: Modal | "none"
-  isFlipped: boolean
-}
+	coreModel: CoreModel;
+	openedMenuId: Option<string>;
+	openedModal: Modal | "none";
+	isFlipped: boolean;
+};
 
-export type Modal = "RequestToDraw" | "AskedToDraw" | "resign" | "game-over"
+export type Modal = "RequestToDraw" | "AskedToDraw" | "resign" | "game-over";
 
-export type ModelServer = CoreModel
+export type ModelServer = CoreModel;
 
 export type CoreModel =
-  | {
-      type: "setup"
-      clockPreset: Clock.Preset
-      w: UserId | "none"
-      b: UserId | "none"
-    }
-  | {
-      type: "game"
-      drawAgreement: DrawAgreement
-      w: UserId
-      b: UserId
-      clock: Clock.Clock
-      board: Chess.Model
-    }
-  | {
-      type: "game-over"
-      gameOver: GameOver
-      w: UserId
-      b: UserId
-      clock: Clock.Clock
-      board: Chess.Model
-    }
+	| {
+			type: "setup";
+			clockPreset: Clock.Preset;
+			w: UserId | "none";
+			b: UserId | "none";
+	  }
+	| {
+			type: "game";
+			drawAgreement: DrawAgreement;
+			w: UserId;
+			b: UserId;
+			clock: Clock.Clock;
+			board: Chess.Model;
+	  }
+	| {
+			type: "game-over";
+			gameOver: GameOver;
+			w: UserId;
+			b: UserId;
+			clock: Clock.Clock;
+			board: Chess.Model;
+	  };
 
 export type DrawAgreement =
-  | {
-      type: "NotAsking"
-    }
-  | {
-      type: "Asking"
-      asker: Chess.Color
-    }
+	| {
+			type: "NotAsking";
+	  }
+	| {
+			type: "Asking";
+			asker: Chess.Color;
+	  };
 
 export type GameOver =
-  | Chess.GameOver
-  | {
-      type: "resignation"
-      resigner: Chess.Color
-    }
-  | {
-      type: "DrawByAgreement"
-    }
-  | {
-      type: "WinOnTime"
-      winner: Chess.Color
-    }
+	| Chess.GameOver
+	| {
+			type: "resignation";
+			resigner: Chess.Color;
+	  }
+	| {
+			type: "DrawByAgreement";
+	  }
+	| {
+			type: "WinOnTime";
+			winner: Chess.Color;
+	  };
 
 export const initCore = ({
-  userId,
+	userId,
 }: {
-  userId: UserId | "none"
+	userId: UserId | "none";
 }): CoreModel => {
-  return {
-    type: "setup",
-    w: userId,
-    b: "none",
-    clockPreset: "Blitz",
-  }
-}
+	return {
+		type: "setup",
+		w: userId,
+		b: "none",
+		clockPreset: "Blitz",
+	};
+};
 
 //
 //
@@ -93,45 +93,45 @@ export const initCore = ({
 //
 
 export type MsgClient =
-  | ["OpenedMenu", string]
-  | ["ClosedMenu"]
-  | ["OpenedModal", Modal]
-  | ["ClosedModal"]
-  | ["ClickedFlip"]
-  | Req
+	| ["OpenedMenu", string]
+	| ["ClosedMenu"]
+	| ["OpenedModal", Modal]
+	| ["ClosedModal"]
+	| ["ClickedFlip"]
+	| Req;
 
-export type MsgServer = ClockTicked
+export type MsgServer = ClockTicked;
 
 export type MsgToClient =
-  | ["game-over"]
-  | ["GameStarted"]
-  | ["player-left", CoreModel]
-  | ClockTicked_Done
-  | Res
+	| ["game-over"]
+	| ["GameStarted"]
+	| ["player-left", CoreModel]
+	| ClockTicked_Done
+	| Res;
 
-export type MsgToServer = Req
+export type MsgToServer = Req;
 
 export type Req =
-  | InputPlayer
-  | InputClock
-  | StartGame
-  | InputMove
-  | Resign
-  | RequestToDraw
-  | RespondToDraw
-  | NewGame
-  | CancelDraw
+	| InputPlayer
+	| InputClock
+	| StartGame
+	| InputMove
+	| Resign
+	| RequestToDraw
+	| RespondToDraw
+	| NewGame
+	| CancelDraw;
 
 export type Res =
-  | InputPlayer_Done
-  | InputClock_Done
-  | StartGame_Done
-  | InputMove_Done
-  | Resign_Done
-  | RequestToDraw_Done
-  | RespondToDraw_Done
-  | NewGame_Done
-  | CancelDraw_Done
+	| InputPlayer_Done
+	| InputClock_Done
+	| StartGame_Done
+	| InputMove_Done
+	| Resign_Done
+	| RequestToDraw_Done
+	| RespondToDraw_Done
+	| NewGame_Done
+	| CancelDraw_Done;
 
 //
 //
@@ -140,120 +140,120 @@ export type Res =
 //
 //
 
-export type InputMove = ["input-move", Chess.MoveInput & { userId: UserId }]
+export type InputMove = ["input-move", Chess.MoveInput & { userId: UserId }];
 
 export type InputMove_Done = [
-  "input-move-done",
-  Result<MoveProblem, CoreModel & { didCapture: boolean }>,
-]
+	"input-move-done",
+	Result<MoveProblem, CoreModel & { didCapture: boolean }>,
+];
 
 export type MoveProblem =
-  | Chess.MoveProblem
-  | "game_must_be_started"
-  | "user_must_be_a_player"
+	| Chess.MoveProblem
+	| "game_must_be_started"
+	| "user_must_be_a_player";
 
 export const inputMove = (
-  { userId, ...moveInput }: InputMove[1],
-  model: CoreModel,
+	{ userId, ...moveInput }: InputMove[1],
+	model: CoreModel,
 ): InputMove_Done[1] => {
-  if (model.type !== "game") {
-    return Err("game_must_be_started")
-  }
+	if (model.type !== "game") {
+		return Err("game_must_be_started");
+	}
 
-  if (model.w !== userId && model.b !== userId) {
-    return Err("user_must_be_a_player")
-  }
+	if (model.w !== userId && model.b !== userId) {
+		return Err("user_must_be_a_player");
+	}
 
-  const result = Chess.move(moveInput, model.board)
+	const result = Chess.move(moveInput, model.board);
 
-  if (isErr(result)) {
-    return result
-  }
+	if (isErr(result)) {
+		return result;
+	}
 
-  const boardNew = result.value
+	const boardNew = result.value;
 
-  const gameOver = Chess.toGameOver(boardNew)
+	const gameOver = Chess.toGameOver(boardNew);
 
-  if (gameOver.type !== "none") {
-    const modelNew: CoreModel = {
-      type: "game-over",
-      b: model.b,
-      w: model.w,
-      board: boardNew,
-      clock: model.clock,
-      gameOver: gameOver,
-    }
+	if (gameOver.type !== "none") {
+		const modelNew: CoreModel = {
+			type: "game-over",
+			b: model.b,
+			w: model.w,
+			board: boardNew,
+			clock: model.clock,
+			gameOver: gameOver,
+		};
 
-    return Ok({
-      ...modelNew,
-      didCapture: boardNew.didCapture,
-    })
-  }
+		return Ok({
+			...modelNew,
+			didCapture: boardNew.didCapture,
+		});
+	}
 
-  const modelNew: CoreModel = {
-    ...model,
-    board: boardNew,
-  }
+	const modelNew: CoreModel = {
+		...model,
+		board: boardNew,
+	};
 
-  return Ok({
-    ...modelNew,
-    didCapture: boardNew.didCapture,
-  })
-}
+	return Ok({
+		...modelNew,
+		didCapture: boardNew.didCapture,
+	});
+};
 
 //
 //
 //
 
 export type InputPlayer = [
-  "InputPlayer",
-  {
-    color: Chess.Color
-    userId: UserId | "none"
-  },
-]
+	"InputPlayer",
+	{
+		color: Chess.Color;
+		userId: UserId | "none";
+	},
+];
 
 export type InputPlayer_Done = [
-  "InputPlayer_Done",
-  Result<InputPlayerProblem, CoreModel>,
-]
+	"InputPlayer_Done",
+	Result<InputPlayerProblem, CoreModel>,
+];
 
 export type InputPlayerProblem =
-  | "game_must_be_in_setup_mode"
-  | "player_is_taken"
-  | "must_be_playing"
+	| "game_must_be_in_setup_mode"
+	| "player_is_taken"
+	| "must_be_playing";
 
 export const inputPlayer = (
-  { userId, color }: InputPlayer[1],
-  model: CoreModel,
+	{ userId, color }: InputPlayer[1],
+	model: CoreModel,
 ): InputPlayer_Done[1] => {
-  if (model.type !== "setup") {
-    return Err("game_must_be_in_setup_mode")
-  }
+	if (model.type !== "setup") {
+		return Err("game_must_be_in_setup_mode");
+	}
 
-  const targetPlayer = userId
-  const targetColor = color
+	const targetPlayer = userId;
+	const targetColor = color;
 
-  if (model[targetColor] !== "none" && targetPlayer !== "none") {
-    return Err("player_is_taken")
-  }
+	if (model[targetColor] !== "none" && targetPlayer !== "none") {
+		return Err("player_is_taken");
+	}
 
-  const otherColor = Chess.toOppositeColor(color)
-  const otherPlayer = model[otherColor]
+	const otherColor = Chess.toOppositeColor(color);
+	const otherPlayer = model[otherColor];
 
-  const otherPlayerNew =
-    otherPlayer !== "none" &&
-    targetPlayer !== "none" &&
-    otherPlayer === targetPlayer
-      ? "none"
-      : otherPlayer
+	const otherPlayerNew =
+		otherPlayer !== "none" &&
+		targetPlayer !== "none" &&
+		otherPlayer === targetPlayer
+			? "none"
+			: otherPlayer;
 
-  return Ok({
-    ...model,
-    [targetColor]: targetPlayer,
-    [otherColor]: otherPlayerNew,
-  })
-}
+	return Ok({
+		...model,
+		[targetColor]: targetPlayer,
+		[otherColor]: otherPlayerNew,
+	});
+};
 
 //
 //
@@ -263,125 +263,125 @@ export const inputPlayer = (
 //
 
 export type InputClock = [
-  "InputClock",
-  { clockPreset: Clock.Preset; userId: UserId },
-]
+	"InputClock",
+	{ clockPreset: Clock.Preset; userId: UserId },
+];
 
 export type InputClock_Done = [
-  "InputClock_Done",
-  Result<InputClockProblem, CoreModel>,
-]
+	"InputClock_Done",
+	Result<InputClockProblem, CoreModel>,
+];
 
-export type InputClockProblem = "must_be_in_setup_mode" | "must_be_playing"
+export type InputClockProblem = "must_be_in_setup_mode" | "must_be_playing";
 
 export const inputClockProblemToString = (
-  problem: InputClockProblem,
+	problem: InputClockProblem,
 ): string => {
-  switch (problem) {
-    case "must_be_in_setup_mode": {
-      return "Must be in setup mode"
-    }
+	switch (problem) {
+		case "must_be_in_setup_mode": {
+			return "Must be in setup mode";
+		}
 
-    case "must_be_playing": {
-      return "Must be playing to change the clock"
-    }
-  }
-}
+		case "must_be_playing": {
+			return "Must be playing to change the clock";
+		}
+	}
+};
 
 export const inputClock = (
-  { clockPreset, userId }: InputClock[1],
-  model: CoreModel,
+	{ clockPreset, userId }: InputClock[1],
+	model: CoreModel,
 ): InputClock_Done[1] => {
-  if (model.type !== "setup") {
-    return Err("must_be_in_setup_mode")
-  }
+	if (model.type !== "setup") {
+		return Err("must_be_in_setup_mode");
+	}
 
-  const someUserId = Option.Some(userId)
+	const someUserId = Option.Some(userId);
 
-  if (!eq(someUserId, model.b) && !eq(someUserId, model.w)) {
-    return Err("must_be_playing")
-  }
+	if (!eq(someUserId, model.b) && !eq(someUserId, model.w)) {
+		return Err("must_be_playing");
+	}
 
-  return Ok({
-    ...model,
-    clockPreset,
-  })
-}
+	return Ok({
+		...model,
+		clockPreset,
+	});
+};
 
 //
 //
 //
 //
 
-export type StartGame = ["start-game", { userId: UserId }]
+export type StartGame = ["start-game", { userId: UserId }];
 export type StartGame_Done = [
-  "StartGame_Done",
-  Result<StartGameProblem, CoreModel>,
-]
+	"StartGame_Done",
+	Result<StartGameProblem, CoreModel>,
+];
 export type StartGameProblem =
-  | "missing_white_player"
-  | "missing_black_player"
-  | "missing_both_players"
-  | "game_not_in_setup_mode"
-  | "must_be_a_player"
+	| "missing_white_player"
+	| "missing_black_player"
+	| "missing_both_players"
+	| "game_not_in_setup_mode"
+	| "must_be_a_player";
 
 export const startGameProblemToString = (problem: StartGameProblem): string => {
-  switch (problem) {
-    case "must_be_a_player": {
-      return "Must be playing to start the game"
-    }
+	switch (problem) {
+		case "must_be_a_player": {
+			return "Must be playing to start the game";
+		}
 
-    case "game_not_in_setup_mode": {
-      return "Game muse be in setup mode"
-    }
+		case "game_not_in_setup_mode": {
+			return "Game muse be in setup mode";
+		}
 
-    case "missing_black_player": {
-      return "Missing black player"
-    }
+		case "missing_black_player": {
+			return "Missing black player";
+		}
 
-    case "missing_both_players": {
-      return "Missing white and black players"
-    }
+		case "missing_both_players": {
+			return "Missing white and black players";
+		}
 
-    case "missing_white_player": {
-      return "Missing white player"
-    }
-  }
-}
+		case "missing_white_player": {
+			return "Missing white player";
+		}
+	}
+};
 
 export const startGame = (
-  { userId }: StartGame[1],
-  model: CoreModel,
+	{ userId }: StartGame[1],
+	model: CoreModel,
 ): StartGame_Done[1] => {
-  if (model.type !== "setup") {
-    return Err("game_not_in_setup_mode")
-  }
+	if (model.type !== "setup") {
+		return Err("game_not_in_setup_mode");
+	}
 
-  if (model.w === "none" && model.b === "none") {
-    return Err("missing_both_players")
-  }
+	if (model.w === "none" && model.b === "none") {
+		return Err("missing_both_players");
+	}
 
-  if (model.w === "none") {
-    return Err("missing_white_player")
-  }
+	if (model.w === "none") {
+		return Err("missing_white_player");
+	}
 
-  if (model.b === "none") {
-    return Err("missing_black_player")
-  }
+	if (model.b === "none") {
+		return Err("missing_black_player");
+	}
 
-  if (userId !== model.b && userId !== model.w) {
-    return Err("must_be_a_player")
-  }
+	if (userId !== model.b && userId !== model.w) {
+		return Err("must_be_a_player");
+	}
 
-  return Ok({
-    type: "game",
-    w: model.w,
-    b: model.b,
-    board: Chess.init(),
-    clock: Clock.presetToClock(model.clockPreset),
-    drawAgreement: { type: "NotAsking" },
-  })
-}
+	return Ok({
+		type: "game",
+		w: model.w,
+		b: model.b,
+		board: Chess.init(),
+		clock: Clock.presetToClock(model.clockPreset),
+		drawAgreement: { type: "NotAsking" },
+	});
+};
 
 //
 //
@@ -391,113 +391,113 @@ export const startGame = (
 //
 //
 
-export type RequestToDraw = ["RequestToDraw", Chess.Color]
+export type RequestToDraw = ["RequestToDraw", Chess.Color];
 export type RequestToDraw_Done = [
-  "RequestToDraw_Done",
-  Result<"game_must_be_started", CoreModel>,
-]
+	"RequestToDraw_Done",
+	Result<"game_must_be_started", CoreModel>,
+];
 
 export const requestToDraw = (
-  color: Chess.Color,
-  model: CoreModel,
+	color: Chess.Color,
+	model: CoreModel,
 ): RequestToDraw_Done[1] => {
-  if (model.type !== "game") {
-    return Err("game_must_be_started")
-  }
+	if (model.type !== "game") {
+		return Err("game_must_be_started");
+	}
 
-  const modelNew: CoreModel = {
-    ...model,
-    drawAgreement: {
-      type: "Asking",
-      asker: color,
-    },
-  }
-  return Ok(modelNew)
-}
+	const modelNew: CoreModel = {
+		...model,
+		drawAgreement: {
+			type: "Asking",
+			asker: color,
+		},
+	};
+	return Ok(modelNew);
+};
 
-export type RespondToDraw = ["RespondToDraw", "Accepted" | "Declined"]
+export type RespondToDraw = ["RespondToDraw", "Accepted" | "Declined"];
 export type RespondToDraw_Done = [
-  "RespondToDraw_Done",
-  Result<"failed_to_respond_to_draw", CoreModel>,
-]
+	"RespondToDraw_Done",
+	Result<"failed_to_respond_to_draw", CoreModel>,
+];
 
 export const respondToDraw = (
-  drawResponse: RespondToDraw[1],
-  model: CoreModel,
+	drawResponse: RespondToDraw[1],
+	model: CoreModel,
 ): RespondToDraw_Done[1] => {
-  if (model.type !== "game") {
-    return Err("failed_to_respond_to_draw")
-  }
+	if (model.type !== "game") {
+		return Err("failed_to_respond_to_draw");
+	}
 
-  if (!(model.drawAgreement.type === "Asking")) {
-    return Err("failed_to_respond_to_draw")
-  }
+	if (!(model.drawAgreement.type === "Asking")) {
+		return Err("failed_to_respond_to_draw");
+	}
 
-  if (drawResponse === "Declined") {
-    const modelNew: CoreModel = {
-      ...model,
-      drawAgreement: { type: "NotAsking" },
-    }
-    return Ok(modelNew)
-  }
+	if (drawResponse === "Declined") {
+		const modelNew: CoreModel = {
+			...model,
+			drawAgreement: { type: "NotAsking" },
+		};
+		return Ok(modelNew);
+	}
 
-  const modelNew: CoreModel = {
-    type: "game-over",
-    b: model.b,
-    w: model.w,
-    board: model.board,
-    clock: model.clock,
-    gameOver: {
-      type: "DrawByAgreement",
-    },
-  }
+	const modelNew: CoreModel = {
+		type: "game-over",
+		b: model.b,
+		w: model.w,
+		board: model.board,
+		clock: model.clock,
+		gameOver: {
+			type: "DrawByAgreement",
+		},
+	};
 
-  return Ok(modelNew)
-}
+	return Ok(modelNew);
+};
 
-export type CancelDraw = ["CancelDraw", { userId: UserId }]
+export type CancelDraw = ["CancelDraw", { userId: UserId }];
 export type CancelDraw_Done = [
-  "CancelDraw_Done",
-  Result<CancelDrawProblem, CoreModel>,
-]
+	"CancelDraw_Done",
+	Result<CancelDrawProblem, CoreModel>,
+];
 export type CancelDrawProblem =
-  | "must_be_in_game_mode"
-  | "must_be_asking_for_a_draw"
-  | "must_be_the_one_asking"
-  | "must_be_playing"
+	| "must_be_in_game_mode"
+	| "must_be_asking_for_a_draw"
+	| "must_be_the_one_asking"
+	| "must_be_playing";
 
 export const cancelDraw = (
-  { userId }: CancelDraw[1],
-  model: CoreModel,
+	{ userId }: CancelDraw[1],
+	model: CoreModel,
 ): CancelDraw_Done[1] => {
-  if (model.type !== "game") {
-    return Err("must_be_in_game_mode")
-  }
+	if (model.type !== "game") {
+		return Err("must_be_in_game_mode");
+	}
 
-  if (model.drawAgreement.type === "NotAsking") {
-    return Err("must_be_asking_for_a_draw")
-  }
+	if (model.drawAgreement.type === "NotAsking") {
+		return Err("must_be_asking_for_a_draw");
+	}
 
-  const color: Chess.Color | "none" =
-    model.b === userId ? "b" : model.w === userId ? "w" : "none"
+	const color: Chess.Color | "none" =
+		model.b === userId ? "b" : model.w === userId ? "w" : "none";
 
-  if (color === "none") {
-    return Err("must_be_playing")
-  }
+	if (color === "none") {
+		return Err("must_be_playing");
+	}
 
-  if (model.drawAgreement.asker !== color) {
-    return Err("must_be_the_one_asking")
-  }
+	if (model.drawAgreement.asker !== color) {
+		return Err("must_be_the_one_asking");
+	}
 
-  const modelNew: CoreModel = {
-    ...model,
-    drawAgreement: {
-      type: "NotAsking",
-    },
-  }
+	const modelNew: CoreModel = {
+		...model,
+		drawAgreement: {
+			type: "NotAsking",
+		},
+	};
 
-  return Ok(modelNew)
-}
+	return Ok(modelNew);
+};
 
 //
 //
@@ -507,53 +507,53 @@ export const cancelDraw = (
 //
 //
 
-export type Resign = ["resign", Chess.Color]
-export type Resign_Done = ["resign_Done", Result<"can_not_resign", CoreModel>]
+export type Resign = ["resign", Chess.Color];
+export type Resign_Done = ["resign_Done", Result<"can_not_resign", CoreModel>];
 
 export const resign = (color: Resign[1], model: CoreModel): Resign_Done[1] => {
-  if (model.type !== "game") {
-    return Err("can_not_resign")
-  }
+	if (model.type !== "game") {
+		return Err("can_not_resign");
+	}
 
-  const modelNew: CoreModel = {
-    type: "game-over",
-    b: model.b,
-    w: model.w,
-    board: model.board,
-    clock: model.clock,
-    gameOver: {
-      type: "resignation",
-      resigner: color,
-    },
-  }
+	const modelNew: CoreModel = {
+		type: "game-over",
+		b: model.b,
+		w: model.w,
+		board: model.board,
+		clock: model.clock,
+		gameOver: {
+			type: "resignation",
+			resigner: color,
+		},
+	};
 
-  return Ok(modelNew)
-}
+	return Ok(modelNew);
+};
 
 //
 //
 //
 //
 
-export type NewGame = ["NewGame"]
+export type NewGame = ["NewGame"];
 export type NewGame_Done = [
-  "NewGame_Done",
-  Result<"game_must_be_over", CoreModel>,
-]
+	"NewGame_Done",
+	Result<"game_must_be_over", CoreModel>,
+];
 export const NewGame = (model: CoreModel): NewGame_Done[1] => {
-  if (model.type !== "game-over") {
-    return Err("game_must_be_over")
-  }
+	if (model.type !== "game-over") {
+		return Err("game_must_be_over");
+	}
 
-  const modelNew: CoreModel = {
-    type: "setup",
-    b: model.b,
-    w: model.w,
-    clockPreset: model.clock.preset,
-  }
+	const modelNew: CoreModel = {
+		type: "setup",
+		b: model.b,
+		w: model.w,
+		clockPreset: model.clock.preset,
+	};
 
-  return Ok(modelNew)
-}
+	return Ok(modelNew);
+};
 
 //
 //
@@ -561,43 +561,43 @@ export const NewGame = (model: CoreModel): NewGame_Done[1] => {
 //
 //
 
-export type ClockTicked = ["ClockTicked"]
-export type ClockTicked_Done = ["ClockTicked", CoreModel]
+export type ClockTicked = ["ClockTicked"];
+export type ClockTicked_Done = ["ClockTicked", CoreModel];
 
 export const clockTicked = (model: CoreModel): CoreModel => {
-  if (model.type !== "game") {
-    return model
-  }
+	if (model.type !== "game") {
+		return model;
+	}
 
-  const turn = Chess.toTurn(model.board)
+	const turn = Chess.toTurn(model.board);
 
-  if (
-    model.drawAgreement.type === "Asking" &&
-    model.drawAgreement.asker !== turn
-  ) {
-    return model
-  }
+	if (
+		model.drawAgreement.type === "Asking" &&
+		model.drawAgreement.asker !== turn
+	) {
+		return model;
+	}
 
-  const ticked = Clock.tick({ turn, clock: model.clock })
+	const ticked = Clock.tick({ turn, clock: model.clock });
 
-  if (ticked.type === "TimeIsUp") {
-    const loser = ticked.timeIsUp
+	if (ticked.type === "TimeIsUp") {
+		const loser = ticked.timeIsUp;
 
-    return {
-      type: "game-over",
-      w: model.w,
-      b: model.b,
-      board: model.board,
-      clock: ticked.clock,
-      gameOver: {
-        type: "WinOnTime",
-        winner: Chess.toOppositeColor(loser),
-      },
-    }
-  }
+		return {
+			type: "game-over",
+			w: model.w,
+			b: model.b,
+			board: model.board,
+			clock: ticked.clock,
+			gameOver: {
+				type: "WinOnTime",
+				winner: Chess.toOppositeColor(loser),
+			},
+		};
+	}
 
-  return {
-    ...model,
-    clock: ticked.clock,
-  }
-}
+	return {
+		...model,
+		clock: ticked.clock,
+	};
+};

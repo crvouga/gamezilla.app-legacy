@@ -1,26 +1,26 @@
 import {
-  Eff,
-  Keyboard,
-  Option,
-  Sub,
-  exhaustive,
-  isErr,
-} from "gamezilla-app/@shared/core"
-import * as Board from "./@shared/board"
-import * as Direction from "./@shared/direction"
-import * as Piece from "./@shared/piece"
-import * as Position from "./@shared/position"
+	Eff,
+	Keyboard,
+	Option,
+	type Sub,
+	exhaustive,
+	isErr,
+} from "gamezilla-app/@shared/core";
+import * as Board from "./@shared/board";
+import type * as Direction from "./@shared/direction";
+import * as Piece from "./@shared/piece";
+import * as Position from "./@shared/position";
 import {
-  ModelClient,
-  MsgClient,
-  ModelServer,
-  MsgToClient,
-  columnCount,
-  initShared,
-  rowCount,
-  toGhostPiece,
-  toPiece,
-} from "./tetris.core"
+	type ModelClient,
+	type MsgClient,
+	type ModelServer,
+	type MsgToClient,
+	columnCount,
+	initShared,
+	rowCount,
+	toGhostPiece,
+	toPiece,
+} from "./tetris.core";
 
 //
 //
@@ -30,12 +30,12 @@ import {
 //
 //
 
-export type Model = ModelClient
+export type Model = ModelClient;
 
 export const init: Model = {
-  coreModel: initShared,
-  touched: Option.None,
-}
+	coreModel: initShared,
+	touched: Option.None,
+};
 
 //
 //
@@ -45,191 +45,191 @@ export const init: Model = {
 //
 //
 
-export type Msg = MsgClient
+export type Msg = MsgClient;
 
 export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
-  switch (msg[0]) {
-    case "MouseMove": {
-      return [model, Eff.None]
-    }
+	switch (msg[0]) {
+		case "MouseMove": {
+			return [model, Eff.None];
+		}
 
-    case "TouchStart": {
-      return [{ ...model, touched: Option.Some(msg[1]) }, Eff.None]
-    }
+		case "TouchStart": {
+			return [{ ...model, touched: Option.Some(msg[1]) }, Eff.None];
+		}
 
-    case "TouchMove": {
-      if (model.touched.type === "none") {
-        return [model, Eff.None]
-      }
+		case "TouchMove": {
+			if (model.touched.type === "none") {
+				return [model, Eff.None];
+			}
 
-      const from = model.touched.value
+			const from = model.touched.value;
 
-      const to = msg[1]
+			const to = msg[1];
 
-      const direction = positionsToDirection({ from, to })
+			const direction = positionsToDirection({ from, to });
 
-      if (direction === "none") {
-        return [model, Eff.None]
-      }
+			if (direction === "none") {
+				return [model, Eff.None];
+			}
 
-      return [model, Eff.None]
-    }
+			return [model, Eff.None];
+		}
 
-    case "TouchEnd": {
-      return [{ ...model, touched: Option.None }, Eff.None]
-    }
+		case "TouchEnd": {
+			return [{ ...model, touched: Option.None }, Eff.None];
+		}
 
-    case "PressedKey": {
-      const key = msg[1]
+		case "PressedKey": {
+			const key = msg[1];
 
-      if (key === "Space") {
-        return [model, Eff.None]
-      }
+			if (key === "Space") {
+				return [model, Eff.None];
+			}
 
-      if (key === "ArrowUp" || key === "W" || key === "w") {
-        return [model, Eff.None]
-      }
+			if (key === "ArrowUp" || key === "W" || key === "w") {
+				return [model, Eff.None];
+			}
 
-      const direction = keyToDirection(key)
+			const direction = keyToDirection(key);
 
-      if (direction !== "none") {
-        return [model, Eff.None]
-      }
+			if (direction !== "none") {
+				return [model, Eff.None];
+			}
 
-      return [model, Eff.None]
-    }
+			return [model, Eff.None];
+		}
 
-    case "ClickedBoard": {
-      // const position = msg[1]
+		case "ClickedBoard": {
+			// const position = msg[1]
 
-      return [model, Eff.None]
-    }
+			return [model, Eff.None];
+		}
 
-    default: {
-      return exhaustive(msg[0])
-    }
-  }
-}
+		default: {
+			return exhaustive(msg[0]);
+		}
+	}
+};
 
 const positionsToDirection = ({
-  from,
-  to,
+	from,
+	to,
 }: {
-  from: Position.Position
-  to: Position.Position
+	from: Position.Position;
+	to: Position.Position;
 }): Direction.Direction | "none" => {
-  const xDelta = to.x - from.x
-  const yDelta = to.y - from.y
+	const xDelta = to.x - from.x;
+	const yDelta = to.y - from.y;
 
-  if (xDelta < 0) {
-    return "Left"
-  }
+	if (xDelta < 0) {
+		return "Left";
+	}
 
-  if (xDelta > 0) {
-    return "Right"
-  }
+	if (xDelta > 0) {
+		return "Right";
+	}
 
-  if (yDelta > 0) {
-    return "Down"
-  }
+	if (yDelta > 0) {
+		return "Down";
+	}
 
-  return "none"
-}
+	return "none";
+};
 
 const keyToDirection = (key: Keyboard.Key): Direction.Direction | "none" => {
-  switch (key) {
-    case "A":
-    case "a":
-    case "ArrowLeft":
-      return "Left"
+	switch (key) {
+		case "A":
+		case "a":
+		case "ArrowLeft":
+			return "Left";
 
-    case "D":
-    case "d":
-    case "ArrowRight":
-      return "Right"
+		case "D":
+		case "d":
+		case "ArrowRight":
+			return "Right";
 
-    case "S":
-    case "s":
-    case "ArrowDown":
-      return "Down"
+		case "S":
+		case "s":
+		case "ArrowDown":
+			return "Down";
 
-    default:
-      return "none"
-  }
-}
+		default:
+			return "none";
+	}
+};
 
 export const updateFromServer = (
-  msg: MsgToClient,
-  model: Model,
+	msg: MsgToClient,
+	model: Model,
 ): [Model, Eff<Msg>] => {
-  switch (msg[0]) {
-    case "MouseMove_Done": {
-      const result = msg[1]
+	switch (msg[0]) {
+		case "MouseMove_Done": {
+			const result = msg[1];
 
-      if (isErr(result)) {
-        return [model, Eff.None]
-      }
+			if (isErr(result)) {
+				return [model, Eff.None];
+			}
 
-      const modelNew = result.value
+			const modelNew = result.value;
 
-      return [{ ...model, coreModel: modelNew }, Eff.None]
-    }
+			return [{ ...model, coreModel: modelNew }, Eff.None];
+		}
 
-    case "InputDrop_Done": {
-      const result = msg[1]
+		case "InputDrop_Done": {
+			const result = msg[1];
 
-      if (isErr(result)) {
-        return [model, Eff.None]
-      }
+			if (isErr(result)) {
+				return [model, Eff.None];
+			}
 
-      const modelNew = result.value
+			const modelNew = result.value;
 
-      return [{ ...model, coreModel: modelNew }, Eff.None]
-    }
+			return [{ ...model, coreModel: modelNew }, Eff.None];
+		}
 
-    case "Tick_Done": {
-      const modelNew = msg[1]
-      return [{ ...model, coreModel: modelNew }, Eff.None]
-    }
+		case "Tick_Done": {
+			const modelNew = msg[1];
+			return [{ ...model, coreModel: modelNew }, Eff.None];
+		}
 
-    case "InputRotate_Done": {
-      const result = msg[1]
+		case "InputRotate_Done": {
+			const result = msg[1];
 
-      if (isErr(result)) {
-        return [model, Eff.None]
-      }
+			if (isErr(result)) {
+				return [model, Eff.None];
+			}
 
-      const modelNew = result.value
+			const modelNew = result.value;
 
-      return [{ ...model, coreModel: modelNew }, Eff.None]
-    }
+			return [{ ...model, coreModel: modelNew }, Eff.None];
+		}
 
-    case "InputTranslate_Done": {
-      const result = msg[1]
+		case "InputTranslate_Done": {
+			const result = msg[1];
 
-      if (isErr(result)) {
-        return [model, Eff.None]
-      }
+			if (isErr(result)) {
+				return [model, Eff.None];
+			}
 
-      const modelNew = result.value
+			const modelNew = result.value;
 
-      return [{ ...model, coreModel: modelNew }, Eff.None]
-    }
-  }
-}
+			return [{ ...model, coreModel: modelNew }, Eff.None];
+		}
+	}
+};
 
 export const mergeWithServer = ({
-  clientModel,
-  serverModel,
+	clientModel,
+	serverModel,
 }: {
-  clientModel: ModelClient
-  serverModel: ModelServer
+	clientModel: ModelClient;
+	serverModel: ModelServer;
 }): ModelClient => {
-  return {
-    ...clientModel,
-    coreModel: serverModel,
-  }
-}
+	return {
+		...clientModel,
+		coreModel: serverModel,
+	};
+};
 
 //
 //
@@ -240,8 +240,8 @@ export const mergeWithServer = ({
 //
 
 export const subscriptions = (_model: Model): Sub<Msg> => {
-  return Keyboard.keyDowns<Msg>((key) => ["PressedKey", key])
-}
+	return Keyboard.keyDowns<Msg>((key) => ["PressedKey", key]);
+};
 
 //
 //
@@ -255,59 +255,59 @@ export const subscriptions = (_model: Model): Sub<Msg> => {
 // const gridStrokeWidth = 0.025
 
 export const View = ({
-  dispatch,
+	dispatch,
 }: {
-  model: Model
-  dispatch: (msg: Msg) => void
+	model: Model;
+	dispatch: (msg: Msg) => void;
 }) => {
-  return (
-    <div>
-      <div>
-        <canvas
-          onTouchMove={(e) => {
-            const touch = e.touches[0]
+	return (
+		<div>
+			<div>
+				<canvas
+					onTouchMove={(e) => {
+						const touch = e.touches[0];
 
-            if (!touch) {
-              return
-            }
-          }}
-          onClick={(e) => {
-            dispatch(["ClickedBoard", mouseEventToPosition(e)])
-          }}
-          onMouseMove={(e) => {
-            const x = Math.floor(
-              rescale({
-                value: e.pageX - e.currentTarget.offsetLeft,
-                from: [0, e.currentTarget.width],
-                to: [0, columnCount],
-              }),
-            )
+						if (!touch) {
+							return;
+						}
+					}}
+					onClick={(e) => {
+						dispatch(["ClickedBoard", mouseEventToPosition(e)]);
+					}}
+					onMouseMove={(e) => {
+						const x = Math.floor(
+							rescale({
+								value: e.pageX - e.currentTarget.offsetLeft,
+								from: [0, e.currentTarget.width],
+								to: [0, columnCount],
+							}),
+						);
 
-            const y = Math.floor(
-              rescale({
-                value: e.pageY - e.currentTarget.offsetTop,
-                from: [0, e.currentTarget.height],
-                to: [0, rowCount],
-              }),
-            )
+						const y = Math.floor(
+							rescale({
+								value: e.pageY - e.currentTarget.offsetTop,
+								from: [0, e.currentTarget.height],
+								to: [0, rowCount],
+							}),
+						);
 
-            dispatch(["MouseMove", { x, y }])
-          }}
-          onTouchStart={(e) => {
-            const touch = e.touches[0]
+						dispatch(["MouseMove", { x, y }]);
+					}}
+					onTouchStart={(e) => {
+						const touch = e.touches[0];
 
-            if (!touch) {
-              return
-            }
+						if (!touch) {
+							return;
+						}
 
-            // const x = touch.clientX;
-            // const y = touch.clientY;
-            // console.log("Start", { x, y });
-          }}
-        />
-      </div>
+						// const x = touch.clientX;
+						// const y = touch.clientY;
+						// console.log("Start", { x, y });
+					}}
+				/>
+			</div>
 
-      {/* <svg width="100%" viewBox={[0, 0, columnCount, rowCount,].join(", ")}>
+			{/* <svg width="100%" viewBox={[0, 0, columnCount, rowCount,].join(", ")}>
             {range(1, Board.toColumnCount(model.coreModel.board)).map(x => (
                 <line key={x} x1={x} y1={0} x2={x} y2={rowCount} stroke={gridStroke} strokeWidth={gridStrokeWidth} />
             ))}
@@ -343,123 +343,123 @@ export const View = ({
             ))}
 
         </svg> */}
-    </div>
-  )
-}
+		</div>
+	);
+};
 
 const mouseEventToPosition = (msgSync: MouseEvent): Position.Position => {
-  if (!(msgSync.currentTarget instanceof HTMLCanvasElement)) {
-    return {
-      x: 0,
-      y: 0,
-    }
-  }
-  const x = Math.floor(
-    rescale({
-      value: msgSync.pageX - msgSync.currentTarget.offsetLeft,
-      from: [0, msgSync.currentTarget.width],
-      to: [0, columnCount],
-    }),
-  )
+	if (!(msgSync.currentTarget instanceof HTMLCanvasElement)) {
+		return {
+			x: 0,
+			y: 0,
+		};
+	}
+	const x = Math.floor(
+		rescale({
+			value: msgSync.pageX - msgSync.currentTarget.offsetLeft,
+			from: [0, msgSync.currentTarget.width],
+			to: [0, columnCount],
+		}),
+	);
 
-  const y = Math.floor(
-    rescale({
-      value: msgSync.pageY - msgSync.currentTarget.offsetTop,
-      from: [0, msgSync.currentTarget.height],
-      to: [0, rowCount],
-    }),
-  )
+	const y = Math.floor(
+		rescale({
+			value: msgSync.pageY - msgSync.currentTarget.offsetTop,
+			from: [0, msgSync.currentTarget.height],
+			to: [0, rowCount],
+		}),
+	);
 
-  return { x, y }
-}
+	return { x, y };
+};
 
 export const paint = (context: CanvasRenderingContext2D, model: Model) => {
-  const columnCount = Board.toColumnCount(model.coreModel.board)
-  const rowCount = Board.toRowCount(model.coreModel.board)
-  const canvasWidth = context.canvas.width
-  const canvasHeight = context.canvas.height
-  const cellWidth = canvasWidth / columnCount
-  const cellHeight = canvasHeight / rowCount
-  const cellLength = Math.min(cellWidth, cellHeight)
+	const columnCount = Board.toColumnCount(model.coreModel.board);
+	const rowCount = Board.toRowCount(model.coreModel.board);
+	const canvasWidth = context.canvas.width;
+	const canvasHeight = context.canvas.height;
+	const cellWidth = canvasWidth / columnCount;
+	const cellHeight = canvasHeight / rowCount;
+	const cellLength = Math.min(cellWidth, cellHeight);
 
-  context.fillStyle = "#000"
-  context.fillRect(0, 0, columnCount * cellLength, rowCount * cellLength)
+	context.fillStyle = "#000";
+	context.fillRect(0, 0, columnCount * cellLength, rowCount * cellLength);
 
-  context.strokeStyle = "#222"
+	context.strokeStyle = "#222";
 
-  for (let x = 0; x < columnCount; x++) {
-    context.moveTo(x * cellLength, 0 * cellLength)
-    context.lineTo(x * cellLength, rowCount * cellLength)
-    context.stroke()
-  }
+	for (let x = 0; x < columnCount; x++) {
+		context.moveTo(x * cellLength, 0 * cellLength);
+		context.lineTo(x * cellLength, rowCount * cellLength);
+		context.stroke();
+	}
 
-  for (let y = 0; y < rowCount; y++) {
-    context.moveTo(0 * cellLength, y * cellLength)
-    context.lineTo(columnCount * cellLength, y * cellLength)
-    context.stroke()
-  }
+	for (let y = 0; y < rowCount; y++) {
+		context.moveTo(0 * cellLength, y * cellLength);
+		context.lineTo(columnCount * cellLength, y * cellLength);
+		context.stroke();
+	}
 
-  for (const { x, y } of toGhostPiece(model.coreModel)) {
-    context.fillStyle = "#555"
-    context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength)
-  }
+	for (const { x, y } of toGhostPiece(model.coreModel)) {
+		context.fillStyle = "#555";
+		context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength);
+	}
 
-  for (const { x, y } of toPiece(model.coreModel)) {
-    context.fillStyle = Piece.colors[model.coreModel.tetrominoName]
-    context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength)
-  }
+	for (const { x, y } of toPiece(model.coreModel)) {
+		context.fillStyle = Piece.colors[model.coreModel.tetrominoName];
+		context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength);
+	}
 
-  for (let x = 0; x < columnCount; x++) {
-    for (let y = 0; y < rowCount; y++) {
-      const cell = Board.toCell({ x, y }, model.coreModel.board)
+	for (let x = 0; x < columnCount; x++) {
+		for (let y = 0; y < rowCount; y++) {
+			const cell = Board.toCell({ x, y }, model.coreModel.board);
 
-      if (cell === "Empty") {
-        continue
-      }
-      context.fillStyle = Piece.colors[cell]
-      context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength)
-    }
-  }
-}
+			if (cell === "Empty") {
+				continue;
+			}
+			context.fillStyle = Piece.colors[cell];
+			context.fillRect(x * cellLength, y * cellLength, cellLength, cellLength);
+		}
+	}
+};
 
 const theme = {
-  lightBlue: "#01DEEC",
-  darkBlue: "#003D78",
-  pieceBlue: "#2C2C7E",
-}
+	lightBlue: "#01DEEC",
+	darkBlue: "#003D78",
+	pieceBlue: "#2C2C7E",
+};
 
 export const CoverArt = () => {
-  return (
-    <svg width="100%" viewBox={[0, 0, 4, 4].join(", ")}>
-      <rect width="100%" height="100%" fill={theme.lightBlue} />
-      {Piece.pieces.T.map((position) =>
-        Position.rotate(Position.rotate(position)),
-      )
-        .map((position) => Position.add(position, { x: 1.5, y: 1 }))
-        .map((position) => (
-          <rect
-            key={`${position.x}-${position.y}`}
-            x={position.x}
-            y={position.y}
-            width={1}
-            height={1}
-            fill={theme.pieceBlue}
-          />
-        ))}
-    </svg>
-  )
-}
+	return (
+		<svg width="100%" viewBox={[0, 0, 4, 4].join(", ")}>
+			<rect width="100%" height="100%" fill={theme.lightBlue} />
+			{Piece.pieces.T.map((position) =>
+				Position.rotate(Position.rotate(position)),
+			)
+				.map((position) => Position.add(position, { x: 1.5, y: 1 }))
+				.map((position) => (
+					<rect
+						key={`${position.x}-${position.y}`}
+						x={position.x}
+						y={position.y}
+						width={1}
+						height={1}
+						fill={theme.pieceBlue}
+					/>
+				))}
+		</svg>
+	);
+};
 
-type Range = [number, number]
+type Range = [number, number];
 
 const rescale = ({
-  value,
-  from,
-  to,
+	value,
+	from,
+	to,
 }: {
-  value: number
-  from: Range
-  to: Range
+	value: number;
+	from: Range;
+	to: Range;
 }) => {
-  return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0]
-}
+	return ((value - from[0]) * (to[1] - to[0])) / (from[1] - from[0]) + to[0];
+};

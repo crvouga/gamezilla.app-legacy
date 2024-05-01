@@ -1,107 +1,112 @@
-import { Eff, Transition, easeAttrs } from "gamezilla-app/@shared/core"
+import { Eff, Transition, easeAttrs } from "gamezilla-app/@shared/core";
 import {
-  COLUMN_COUNT,
-  Columns,
-  MAX_COLUMN_HEIGHT,
-  Win,
-  findWins,
-  winToId,
-} from "../../connect-four"
-import "./columns-element"
-import { ViewColumnsCanvas } from "./columns-ui-canvas"
-import { ViewColumnsSvg } from "./columns-ui-svg"
-import { Disc, Model as SharedModel, ViewColumnsProps, toDiscs } from "./shared"
+	COLUMN_COUNT,
+	type Columns,
+	MAX_COLUMN_HEIGHT,
+	type Win,
+	findWins,
+	winToId,
+} from "../../connect-four";
+import "./columns-element";
+import { ViewColumnsCanvas } from "./columns-ui-canvas";
+import { ViewColumnsSvg } from "./columns-ui-svg";
+import {
+	type Disc,
+	type Model as SharedModel,
+	type ViewColumnsProps,
+	toDiscs,
+} from "./shared";
 
 const discEnter = async (disc: Disc) => {
-  const { y, id } = disc
+	const { y, id } = disc;
 
-  const node = await Transition.waitForElementById(id, rootId)
+	const node = await Transition.waitForElementById(id, rootId);
 
-  if (!node) {
-    return
-  }
-  await easeAttrs(node, {
-    cy: {
-      from: MAX_COLUMN_HEIGHT + 1,
-      to: y,
-      duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
-      easing: { type: "ease-out-quint" },
-    },
-  })
-}
+	if (!node) {
+		return;
+	}
+	await easeAttrs(node, {
+		cy: {
+			from: MAX_COLUMN_HEIGHT + 1,
+			to: y,
+			duration: 200 + 300 * (1 - y / MAX_COLUMN_HEIGHT),
+			easing: { type: "ease-out-quint" },
+		},
+	});
+};
 
 const discExit = async (disc: Disc) => {
-  const { x, y, id } = disc
+	const { x, y, id } = disc;
 
-  const node = await Transition.waitForElementById(id, rootId)
+	const node = await Transition.waitForElementById(id, rootId);
 
-  if (!node) {
-    return
-  }
+	if (!node) {
+		return;
+	}
 
-  await easeAttrs(node, {
-    cy: {
-      from: y,
-      to: y - MAX_COLUMN_HEIGHT,
-      duration: 750,
-      easing: { type: "ease-in-back" },
-      delay: (x / COLUMN_COUNT) * 500,
-    },
-  })
-}
+	await easeAttrs(node, {
+		cy: {
+			from: y,
+			to: y - MAX_COLUMN_HEIGHT,
+			duration: 750,
+			easing: { type: "ease-in-back" },
+			delay: (x / COLUMN_COUNT) * 500,
+		},
+	});
+};
 
 const draw = async (win: Win) => {
-  const id = winToId(win)
+	const id = winToId(win);
 
-  const node = await Transition.waitForElementById(id, rootId)
+	const node = await Transition.waitForElementById(id, rootId);
 
-  if (!(node instanceof SVGRectElement)) {
-    return
-  }
+	if (!(node instanceof SVGRectElement)) {
+		return;
+	}
 
-  const length = node.getTotalLength()
-  node.style.strokeDasharray = length.toString()
-  node.style.strokeDashoffset = length.toString()
-  node.style.stroke = "#fff"
+	const length = node.getTotalLength();
+	node.style.strokeDasharray = length.toString();
+	node.style.strokeDashoffset = length.toString();
+	node.style.stroke = "#fff";
 
-  const animation = node.animate(
-    [{ strokeDashoffset: length }, { strokeDashoffset: 0 }],
-    {
-      duration: 500,
-      easing: "ease-in-out",
-      fill: "both",
-    },
-  )
+	const animation = node.animate(
+		[{ strokeDashoffset: length }, { strokeDashoffset: 0 }],
+		{
+			duration: 500,
+			easing: "ease-in-out",
+			fill: "both",
+		},
+	);
 
-  await animation.finished
-}
+	await animation.finished;
+};
 
 const undraw = async (win: Win) => {
-  const id = winToId(win)
+	const id = winToId(win);
 
-  const node = await Transition.waitForElementById(id, rootId)
+	const node = await Transition.waitForElementById(id, rootId);
 
-  if (!(node instanceof SVGRectElement)) {
-    return
-  }
+	if (!(node instanceof SVGRectElement)) {
+		return;
+	}
 
-  const length = node.getTotalLength()
-  node.style.strokeDasharray = length.toString()
-  node.style.strokeDashoffset = "0"
+	const length = node.getTotalLength();
+	node.style.strokeDasharray = length.toString();
+	node.style.strokeDashoffset = "0";
 
-  const animation = node.animate(
-    [{ strokeDashoffset: 0 }, { strokeDashoffset: length }],
-    {
-      duration: 500,
-      easing: "ease-in-out",
-      fill: "both",
-    },
-  )
+	const animation = node.animate(
+		[{ strokeDashoffset: 0 }, { strokeDashoffset: length }],
+		{
+			duration: 500,
+			easing: "ease-in-out",
+			fill: "both",
+		},
+	);
 
-  await animation.finished
-}
+	await animation.finished;
+};
 
-export type Model = SharedModel
+export type Model = SharedModel;
 
 //
 //
@@ -110,18 +115,18 @@ export type Model = SharedModel
 //
 
 const discsConfig = Transition.config<Disc>({
-  toId: (disc) => disc.id,
-  enter: discEnter,
-  exit: discExit,
-})
+	toId: (disc) => disc.id,
+	enter: discEnter,
+	exit: discExit,
+});
 
 const winsConfig = Transition.config<Win>({
-  toId: winToId,
-  enter: draw,
-  exit: undraw,
-})
+	toId: winToId,
+	enter: draw,
+	exit: undraw,
+});
 
-const rootId = "connect-four-columns-svg"
+const rootId = "connect-four-columns-svg";
 
 //
 //
@@ -131,11 +136,11 @@ const rootId = "connect-four-columns-svg"
 //
 
 export const init = (columns?: Columns): Model => {
-  return {
-    discs: Transition.init(discsConfig.toId, columns ? toDiscs(columns) : []),
-    wins: Transition.init(winsConfig.toId, columns ? findWins(columns) : []),
-  }
-}
+	return {
+		discs: Transition.init(discsConfig.toId, columns ? toDiscs(columns) : []),
+		wins: Transition.init(winsConfig.toId, columns ? findWins(columns) : []),
+	};
+};
 
 //
 //
@@ -146,46 +151,46 @@ export const init = (columns?: Columns): Model => {
 //
 
 export type Msg =
-  | { t: "discs"; c: Transition.Msg }
-  | { t: "wins"; c: Transition.Msg }
+	| { t: "discs"; c: Transition.Msg }
+	| { t: "wins"; c: Transition.Msg };
 
 export const watch = (model: Model, columns?: Columns) => {
-  const discs = Transition.watch<Disc>(
-    discsConfig,
-    model.discs,
-    columns ? toDiscs(columns) : undefined,
-  )
-  const wins = Transition.watch<Win>(
-    winsConfig,
-    model.wins,
-    columns ? findWins(columns) : undefined,
-  )
-  return {
-    model: {
-      discs: discs.model,
-      wins: wins.model,
-    },
-    eff: Eff.batch<Msg>([
-      Eff.tag("discs", discs.eff),
-      Eff.tag("wins", wins.eff),
-    ]),
-  }
-}
+	const discs = Transition.watch<Disc>(
+		discsConfig,
+		model.discs,
+		columns ? toDiscs(columns) : undefined,
+	);
+	const wins = Transition.watch<Win>(
+		winsConfig,
+		model.wins,
+		columns ? findWins(columns) : undefined,
+	);
+	return {
+		model: {
+			discs: discs.model,
+			wins: wins.model,
+		},
+		eff: Eff.batch<Msg>([
+			Eff.tag("discs", discs.eff),
+			Eff.tag("wins", wins.eff),
+		]),
+	};
+};
 
 export const update = (model: Model, msg: Msg) => {
-  const discs = Transition.update<Disc>(
-    model.discs,
-    msg.t === "discs" ? msg.c : undefined,
-  )
-  const wins = Transition.update<Win>(
-    model.wins,
-    msg.t === "wins" ? msg.c : undefined,
-  )
-  return {
-    discs: discs,
-    wins: wins,
-  }
-}
+	const discs = Transition.update<Disc>(
+		model.discs,
+		msg.t === "discs" ? msg.c : undefined,
+	);
+	const wins = Transition.update<Win>(
+		model.wins,
+		msg.t === "wins" ? msg.c : undefined,
+	);
+	return {
+		discs: discs,
+		wins: wins,
+	};
+};
 
 //
 //
@@ -196,21 +201,21 @@ export const update = (model: Model, msg: Msg) => {
 //
 
 export const View = ({
-  implementation = "svg",
-  ...props
+	implementation = "svg",
+	...props
 }: ViewColumnsProps & {
-  implementation?: "svg" | "canvas"
+	implementation?: "svg" | "canvas";
 }) => {
-  switch (implementation) {
-    case "canvas": {
-      return <ViewColumnsCanvas {...props} />
-    }
+	switch (implementation) {
+		case "canvas": {
+			return <ViewColumnsCanvas {...props} />;
+		}
 
-    case "svg": {
-      return <ViewColumnsSvg id={rootId} {...props} />
-    }
-  }
-}
+		case "svg": {
+			return <ViewColumnsSvg id={rootId} {...props} />;
+		}
+	}
+};
 
 //
 //

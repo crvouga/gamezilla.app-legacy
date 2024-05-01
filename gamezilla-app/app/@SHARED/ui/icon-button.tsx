@@ -1,17 +1,17 @@
-import { VDomChildren } from "gamezilla-app/@shared/vdom"
+import type { VDomChildren } from "gamezilla-app/@shared/vdom";
 
 export const IconButton = ({
-  children,
-  onClick,
-  label,
+	children,
+	onClick,
+	label,
 }: {
-  onClick?: () => void
-  children: VDomChildren
-  label: string
+	onClick?: () => void;
+	children: VDomChildren;
+	label: string;
 }) => {
-  return (
-    <button className="rounded-full p-3" onClick={onClick} aria-label={label}>
-      {children}
-    </button>
-  )
-}
+	return (
+		<button className="rounded-full p-3" onClick={onClick} aria-label={label}>
+			{children}
+		</button>
+	);
+};

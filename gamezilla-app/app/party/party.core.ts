@@ -1,12 +1,12 @@
-import { PartyId, UserId } from "gamezilla-app/app/@shared/data"
+import type { PartyId, UserId } from "gamezilla-app/app/@shared/data";
 import {
-  RemoteResult,
-  Result,
-  dissoc,
-  filterObject,
-} from "gamezilla-app/@shared/core"
-import { MicLoadResult, MicUnloadResult } from "./mic"
-const { Err: Err, Ok: Ok } = Result
+	type RemoteResult,
+	Result,
+	dissoc,
+	filterObject,
+} from "gamezilla-app/@shared/core";
+import type { MicLoadResult, MicUnloadResult } from "./mic";
+const { Err, Ok } = Result;
 
 //
 //
@@ -17,28 +17,28 @@ const { Err: Err, Ok: Ok } = Result
 //
 
 export type CoreModel = {
-  parties: {
-    [partyId: PartyId]: {
-      partyId: PartyId
-      hostId: UserId
-    }
-  }
-  users: {
-    [userId: UserId]: {
-      userId: UserId
-      partyId: PartyId
-    }
-  }
-}
+	parties: {
+		[partyId: PartyId]: {
+			partyId: PartyId;
+			hostId: UserId;
+		};
+	};
+	users: {
+		[userId: UserId]: {
+			userId: UserId;
+			partyId: PartyId;
+		};
+	};
+};
 
-export type ModelServer = CoreModel
+export type ModelServer = CoreModel;
 
 export type ModelClient = CoreModel & {
-  volume: number
-  requests: {
-    [key in Req[0]]?: RemoteResult<Problem, null>
-  }
-}
+	volume: number;
+	requests: {
+		[key in Req[0]]?: RemoteResult<Problem, null>;
+	};
+};
 
 //
 //
@@ -48,18 +48,18 @@ export type ModelClient = CoreModel & {
 //
 //
 
-export type MsgServer = ["none"]
+export type MsgServer = ["none"];
 
 export type MsgClient =
-  | Req
-  | ["clicked-banner"]
-  | ["MicSound", { volume: number }]
-  | ["MicLoad", MicLoadResult]
-  | ["MicUnload", MicUnloadResult]
+	| Req
+	| ["clicked-banner"]
+	| ["MicSound", { volume: number }]
+	| ["MicLoad", MicLoadResult]
+	| ["MicUnload", MicUnloadResult];
 
-export type MsgToServer = Req
+export type MsgToServer = Req;
 
-export type MsgToClient = Res
+export type MsgToClient = Res;
 
 //
 //
@@ -70,159 +70,159 @@ export type MsgToClient = Res
 //
 
 export type Req =
-  | ["party-get", null]
-  | ["PartyCreate", { userId: UserId; partyId: PartyId }]
-  | ["PartyDestroy", { userId: UserId }]
-  | ["PartyLeave", { userId: UserId }]
-  | ["PartyJoin", { userId: UserId; partyId: PartyId }]
+	| ["party-get", null]
+	| ["PartyCreate", { userId: UserId; partyId: PartyId }]
+	| ["PartyDestroy", { userId: UserId }]
+	| ["PartyLeave", { userId: UserId }]
+	| ["PartyJoin", { userId: UserId; partyId: PartyId }];
 
 export type Res =
-  | ["party-get", null, Result<Problem, CoreModel>]
-  | [
-      "PartyCreate",
-      { userId: UserId; partyId: PartyId },
-      Result<Problem, CoreModel>,
-    ]
-  | ["PartyDestroy", { userId: UserId }, Result<Problem, CoreModel>]
-  | ["PartyLeave", { userId: UserId }, Result<Problem, CoreModel>]
-  | [
-      "PartyJoin",
-      { userId: UserId; partyId: PartyId },
-      Result<Problem, CoreModel>,
-    ]
+	| ["party-get", null, Result<Problem, CoreModel>]
+	| [
+			"PartyCreate",
+			{ userId: UserId; partyId: PartyId },
+			Result<Problem, CoreModel>,
+	  ]
+	| ["PartyDestroy", { userId: UserId }, Result<Problem, CoreModel>]
+	| ["PartyLeave", { userId: UserId }, Result<Problem, CoreModel>]
+	| [
+			"PartyJoin",
+			{ userId: UserId; partyId: PartyId },
+			Result<Problem, CoreModel>,
+	  ];
 
 type Problem =
-  | "must_not_be_in_party"
-  | "must_be_in_party"
-  | "must_be_host"
-  | "party_must_exist"
-  | "must_not_be_host"
-  | "user_not_found"
-  | "party_not_found"
+	| "must_not_be_in_party"
+	| "must_be_in_party"
+	| "must_be_host"
+	| "party_must_exist"
+	| "must_not_be_host"
+	| "user_not_found"
+	| "party_not_found";
 
 export const handle = (
-  msg: Req,
-  model: CoreModel,
+	msg: Req,
+	model: CoreModel,
 ): Result<Problem, CoreModel> => {
-  switch (msg[0]) {
-    case "party-get": {
-      return Ok(model)
-    }
+	switch (msg[0]) {
+		case "party-get": {
+			return Ok(model);
+		}
 
-    case "PartyCreate": {
-      const { partyId, userId } = msg[1]
+		case "PartyCreate": {
+			const { partyId, userId } = msg[1];
 
-      const user = model.users[userId]
+			const user = model.users[userId];
 
-      if (user) {
-        return Err("must_not_be_in_party")
-      }
+			if (user) {
+				return Err("must_not_be_in_party");
+			}
 
-      const modelNew: CoreModel = {
-        ...model,
-        users: {
-          ...model.users,
-          [userId]: {
-            partyId,
-            userId,
-          },
-        },
-        parties: {
-          ...model.parties,
-          [partyId]: {
-            hostId: userId,
-            partyId,
-          },
-        },
-      }
+			const modelNew: CoreModel = {
+				...model,
+				users: {
+					...model.users,
+					[userId]: {
+						partyId,
+						userId,
+					},
+				},
+				parties: {
+					...model.parties,
+					[partyId]: {
+						hostId: userId,
+						partyId,
+					},
+				},
+			};
 
-      return Ok(modelNew)
-    }
+			return Ok(modelNew);
+		}
 
-    case "PartyDestroy": {
-      const { userId } = msg[1]
+		case "PartyDestroy": {
+			const { userId } = msg[1];
 
-      const user = model.users[userId]
+			const user = model.users[userId];
 
-      if (!user) {
-        return Err("user_not_found")
-      }
+			if (!user) {
+				return Err("user_not_found");
+			}
 
-      const party = model.parties[user.partyId]
+			const party = model.parties[user.partyId];
 
-      if (!party) {
-        return Err("party_not_found")
-      }
+			if (!party) {
+				return Err("party_not_found");
+			}
 
-      if (party.hostId !== userId) {
-        return Err("must_be_host")
-      }
+			if (party.hostId !== userId) {
+				return Err("must_be_host");
+			}
 
-      const modelNew: CoreModel = {
-        parties: dissoc(model.parties, user.partyId),
-        users: filterObject(
-          model.users,
-          (entry) => entry[1].partyId !== user.partyId,
-        ),
-      }
+			const modelNew: CoreModel = {
+				parties: dissoc(model.parties, user.partyId),
+				users: filterObject(
+					model.users,
+					(entry) => entry[1].partyId !== user.partyId,
+				),
+			};
 
-      return Ok(modelNew)
-    }
+			return Ok(modelNew);
+		}
 
-    case "PartyJoin": {
-      const { userId, partyId } = msg[1]
+		case "PartyJoin": {
+			const { userId, partyId } = msg[1];
 
-      const user = model.users[userId]
+			const user = model.users[userId];
 
-      if (user) {
-        return Err("must_not_be_in_party")
-      }
+			if (user) {
+				return Err("must_not_be_in_party");
+			}
 
-      const party = model.parties[partyId]
+			const party = model.parties[partyId];
 
-      if (!party) {
-        return Err("party_must_exist")
-      }
+			if (!party) {
+				return Err("party_must_exist");
+			}
 
-      const modelNew: CoreModel = {
-        ...model,
-        users: {
-          ...model.users,
-          [userId]: {
-            userId,
-            partyId,
-          },
-        },
-      }
+			const modelNew: CoreModel = {
+				...model,
+				users: {
+					...model.users,
+					[userId]: {
+						userId,
+						partyId,
+					},
+				},
+			};
 
-      return Ok(modelNew)
-    }
+			return Ok(modelNew);
+		}
 
-    case "PartyLeave": {
-      const { userId } = msg[1]
+		case "PartyLeave": {
+			const { userId } = msg[1];
 
-      const user = model.users[userId]
+			const user = model.users[userId];
 
-      if (!user) {
-        return Err("must_be_in_party")
-      }
+			if (!user) {
+				return Err("must_be_in_party");
+			}
 
-      const party = model.parties[user.partyId]
+			const party = model.parties[user.partyId];
 
-      if (!party) {
-        return Err("must_be_in_party")
-      }
+			if (!party) {
+				return Err("must_be_in_party");
+			}
 
-      if (party.hostId === userId) {
-        return Err("must_not_be_host")
-      }
+			if (party.hostId === userId) {
+				return Err("must_not_be_host");
+			}
 
-      const modelNew: CoreModel = {
-        parties: model.parties,
-        users: dissoc(model.users, userId),
-      }
+			const modelNew: CoreModel = {
+				parties: model.parties,
+				users: dissoc(model.users, userId),
+			};
 
-      return Ok(modelNew)
-    }
-  }
-}
+			return Ok(modelNew);
+		}
+	}
+};

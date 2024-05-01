@@ -1,1 +1,1 @@
-export * as TicTacToe from "./tic-tac-toe"
+export * as TicTacToe from "./tic-tac-toe";

@@ -1,4 +1,4 @@
 export type Carrier = {
-  type: "Carrier"
-  size: 5
-}
+	type: "Carrier";
+	size: 5;
+};

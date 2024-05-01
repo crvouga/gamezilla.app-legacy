@@ -1,1 +1,1 @@
-export * from "./vs-bot-game"
+export * from "./vs-bot-game";

@@ -1,1 +1,1 @@
-export * from "./least-recently-used-cache"
+export * from "./least-recently-used-cache";

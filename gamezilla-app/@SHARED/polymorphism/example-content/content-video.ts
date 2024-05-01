@@ -1,29 +1,29 @@
-import { Content, renderHTML } from "./content"
+import { type Content, renderHTML } from "./content";
 
 export type Video = {
-  Content: "video"
-  title: string
-  message: string
-  videoSrc: string
-}
+	Content: "video";
+	title: string;
+	message: string;
+	videoSrc: string;
+};
 
 const isVideo = (content: Content): content is Video =>
-  content.Content === "video"
+	content.Content === "video";
 
 renderHTML.implement(isVideo, (video) => {
-  return `
+	return `
         <div>
             <h1>${video.title}</h1>
             <p>${video.message}</p>
         </div>
-    `
-})
+    `;
+});
 
 export const Video = (input: {
-  title: string
-  message: string
-  videoSrc: string
+	title: string;
+	message: string;
+	videoSrc: string;
 }): Video => ({
-  ...input,
-  Content: "video",
-})
+	...input,
+	Content: "video",
+});

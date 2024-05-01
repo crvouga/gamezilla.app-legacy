@@ -1,1 +1,1 @@
-export * as ContinueAsGuest from "./continue-as-guest.core"
+export * as ContinueAsGuest from "./continue-as-guest.core";

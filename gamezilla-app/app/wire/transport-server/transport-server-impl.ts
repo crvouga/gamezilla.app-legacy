@@ -1,40 +1,40 @@
-import { ILogger } from "gamezilla-app/app/@shared/server/logger/logger"
-import { ServerInstance } from "gamezilla-app/@shared/server"
-import { IServerTransport } from "./transport-server"
-import { ServerTransportBunWebSockets } from "./transport-server-impl-bun-web-sockets"
-import { ServerTransportSocketIO } from "./transport-server-impl-socket-io"
+import type { ILogger } from "gamezilla-app/app/@shared/server/logger/logger";
+import type { ServerInstance } from "gamezilla-app/@shared/server";
+import type { IServerTransport } from "./transport-server";
+import { ServerTransportBunWebSockets } from "./transport-server-impl-bun-web-sockets";
+import { ServerTransportSocketIO } from "./transport-server-impl-socket-io";
 
 export const ServerTransport = async <MsgToServer, MsgToClient>({
-  server,
-  codebaseVersionId,
-  redisUrl,
-  logger,
+	server,
+	codebaseVersionId,
+	redisUrl,
+	logger,
 }: {
-  server: ServerInstance
-  codebaseVersionId: string
-  redisUrl: string
-  logger: ILogger
+	server: ServerInstance;
+	codebaseVersionId: string;
+	redisUrl: string;
+	logger: ILogger;
 }): Promise<
-  IServerTransport<{
-    MsgToServer: MsgToServer
-    MsgToClient: MsgToClient
-  }>
+	IServerTransport<{
+		MsgToServer: MsgToServer;
+		MsgToClient: MsgToClient;
+	}>
 > => {
-  switch (server.t) {
-    case "bun": {
-      return ServerTransportBunWebSockets<MsgToServer, MsgToClient>({
-        codebaseVersionId,
-        server,
-      })
-    }
+	switch (server.t) {
+		case "bun": {
+			return ServerTransportBunWebSockets<MsgToServer, MsgToClient>({
+				codebaseVersionId,
+				server,
+			});
+		}
 
-    case "node": {
-      return ServerTransportSocketIO<MsgToServer, MsgToClient>({
-        codebaseVersionId,
-        server,
-        redisUrl,
-        logger,
-      })
-    }
-  }
-}
+		case "node": {
+			return ServerTransportSocketIO<MsgToServer, MsgToClient>({
+				codebaseVersionId,
+				server,
+				redisUrl,
+				logger,
+			});
+		}
+	}
+};

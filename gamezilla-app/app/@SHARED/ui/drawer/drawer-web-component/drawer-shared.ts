@@ -1,8 +1,8 @@
-import { PubSub } from "gamezilla-app/@shared/core"
-import { PrivateDrawerProps } from "../drawer-shared"
+import { PubSub } from "gamezilla-app/@shared/core";
+import type { PrivateDrawerProps } from "../drawer-shared";
 
 export type DrawerEvent = PrivateDrawerProps & {
-  type: "props"
-}
+	type: "props";
+};
 
-export const drawerSub = PubSub.create<DrawerEvent>()
+export const drawerSub = PubSub.create<DrawerEvent>();

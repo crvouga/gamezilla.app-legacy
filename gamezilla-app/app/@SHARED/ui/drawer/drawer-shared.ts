@@ -1,12 +1,12 @@
-import { VDomChildren } from "gamezilla-app/@shared/vdom"
+import type { VDomChildren } from "gamezilla-app/@shared/vdom";
 
 export type PrivateDrawerProps = {
-  id: string
-  onClose: () => void
-  open: boolean
-  position: "bottom" | "top"
-}
+	id: string;
+	onClose: () => void;
+	open: boolean;
+	position: "bottom" | "top";
+};
 
 export type DrawerProps = PrivateDrawerProps & {
-  children?: VDomChildren
-}
+	children?: VDomChildren;
+};

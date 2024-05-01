@@ -1,18 +1,18 @@
-import { Ok, PhoneNumber } from "gamezilla-app/@shared/core"
-import { ISMS } from "./sms"
+import { Ok, type PhoneNumber } from "gamezilla-app/@shared/core";
+import type { ISMS } from "./sms";
 
 export const SMSFake = (): ISMS & {
-  sent: { phoneNumber: PhoneNumber; message: string }[]
+	sent: { phoneNumber: PhoneNumber; message: string }[];
 } => {
-  const sent: { phoneNumber: PhoneNumber; message: string }[] = []
-  return {
-    sent,
-    async sendMessage(_input) {
-      sent.push({
-        phoneNumber: _input.phoneNumber,
-        message: _input.message,
-      })
-      return Ok(null)
-    },
-  }
-}
+	const sent: { phoneNumber: PhoneNumber; message: string }[] = [];
+	return {
+		sent,
+		async sendMessage(_input) {
+			sent.push({
+				phoneNumber: _input.phoneNumber,
+				message: _input.message,
+			});
+			return Ok(null);
+		},
+	};
+};

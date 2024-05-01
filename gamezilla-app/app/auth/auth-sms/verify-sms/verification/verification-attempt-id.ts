@@ -1,19 +1,19 @@
-import { Uuid } from "gamezilla-app/@shared/core"
-import { p } from "gamezilla-app/@shared/core/parser"
+import { Uuid } from "gamezilla-app/@shared/core";
+import { p } from "gamezilla-app/@shared/core/parser";
 
-const parser = p.brand(p.str, "VerificationAttemptId")
+const parser = p.brand(p.str, "VerificationAttemptId");
 
-export type VerificationAttemptId = p.Infer<typeof parser>
+export type VerificationAttemptId = p.Infer<typeof parser>;
 
 const generate = (): VerificationAttemptId => {
-  const id = `auth-sms-verification-attempt:${Uuid.generate()}`
-  if (p.is(parser)(id)) {
-    return id
-  }
-  throw new Error("Failed to generate VerificationAttemptId")
-}
+	const id = `auth-sms-verification-attempt:${Uuid.generate()}`;
+	if (p.is(parser)(id)) {
+		return id;
+	}
+	throw new Error("Failed to generate VerificationAttemptId");
+};
 
 export const VerificationAttemptId = {
-  ...parser,
-  generate,
-}
+	...parser,
+	generate,
+};

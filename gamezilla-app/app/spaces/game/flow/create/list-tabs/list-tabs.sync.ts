@@ -1,26 +1,26 @@
-import { SyncReducer } from "../create.core"
-import { ModelSync } from "./list-tabs.core"
+import type { SyncReducer } from "../create.core";
+import type { ModelSync } from "./list-tabs.core";
 
 const initSync: ModelSync = {
-  listTab: "puzzles",
-}
+	listTab: "puzzles",
+};
 
 const reducer: SyncReducer = (input) => {
-  switch (input.msgSync.t) {
-    case "user-changed-list-tab": {
-      return {
-        ...input.modelSync,
-        listTab: input.msgSync.listTab,
-      }
-    }
+	switch (input.msgSync.t) {
+		case "user-changed-list-tab": {
+			return {
+				...input.modelSync,
+				listTab: input.msgSync.listTab,
+			};
+		}
 
-    default: {
-      return input.modelSync
-    }
-  }
-}
+		default: {
+			return input.modelSync;
+		}
+	}
+};
 
 export const ListTabsGame = {
-  initSync,
-  reducer,
-}
+	initSync,
+	reducer,
+};

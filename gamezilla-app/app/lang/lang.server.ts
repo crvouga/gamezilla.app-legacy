@@ -1,37 +1,37 @@
-import { Sub } from "gamezilla-app/@shared/core"
-import { AppServerModule } from "../@shared/architecture/app-server"
-import { ServerCmd, ServerCtx, ServerEvent } from "../@shared/server"
-import { MsgServer, MsgToClient, MsgToServer } from "./lang.core"
+import { Sub } from "gamezilla-app/@shared/core";
+import type { AppServerModule } from "../@shared/architecture/app-server";
+import type { ServerCmd, ServerCtx, ServerEvent } from "../@shared/server";
+import type { MsgServer, MsgToClient, MsgToServer } from "./lang.core";
 
 type Module = AppServerModule<{
-  Ctx: ServerCtx
-  Deps: null
-  Model: null
-  MsgToServer: MsgToServer
-  MsgToClient: MsgToClient
-  Msg: MsgServer
-  MsgInCmd: null
-  MsgInEvent: ServerEvent
-  MsgOutCmd: ServerCmd<MsgToClient>
-  MsgOutEvent: null
-}>
+	Ctx: ServerCtx;
+	Deps: null;
+	Model: null;
+	MsgToServer: MsgToServer;
+	MsgToClient: MsgToClient;
+	Msg: MsgServer;
+	MsgInCmd: null;
+	MsgInEvent: ServerEvent;
+	MsgOutCmd: ServerCmd<MsgToClient>;
+	MsgOutEvent: null;
+}>;
 
-export type Deps = null
+export type Deps = null;
 
 export const init: Module["init"] = async () => {
-  return {
-    model: null,
-  }
-}
+	return {
+		model: null,
+	};
+};
 
 export const update: Module["update"] = async ({ model }) => {
-  return { model }
-}
+	return { model };
+};
 
 export const subscriptions: Module["subscriptions"] = async () => {
-  return Sub.None
-}
+	return Sub.None;
+};
 
 export const getDeps: Module["getDeps"] = async () => {
-  return null
-}
+	return null;
+};

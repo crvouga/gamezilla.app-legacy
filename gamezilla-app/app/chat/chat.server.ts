@@ -1,28 +1,28 @@
-import { Eff } from "gamezilla-app/@shared/core"
-import { ModelServer, MsgServer, MsgToServer } from "./chat.core"
+import type { Eff } from "gamezilla-app/@shared/core";
+import type { ModelServer, MsgServer, MsgToServer } from "./chat.core";
 
-export const init: { model: ModelServer } = { model: null }
+export const init: { model: ModelServer } = { model: null };
 
 export const updateFromClient = ({
-  model,
+	model,
 }: {
-  msg: MsgToServer
-  model: ModelServer
+	msg: MsgToServer;
+	model: ModelServer;
 }): {
-  model: ModelServer
-  eff?: Eff<MsgServer>
+	model: ModelServer;
+	eff?: Eff<MsgServer>;
 } => {
-  return { model }
-}
+	return { model };
+};
 
 export const update = ({
-  model,
+	model,
 }: {
-  msg: MsgServer
-  model: ModelServer
+	msg: MsgServer;
+	model: ModelServer;
 }): {
-  model: ModelServer
-  eff?: Eff<MsgServer>
+	model: ModelServer;
+	eff?: Eff<MsgServer>;
 } => {
-  return { model }
-}
+	return { model };
+};

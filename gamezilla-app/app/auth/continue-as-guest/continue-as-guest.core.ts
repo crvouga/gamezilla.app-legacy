@@ -1,5 +1,5 @@
-import { RequestResponse, Result } from "gamezilla-app/@shared/core"
-import { UserId } from "gamezilla-app/app/@shared/data"
+import type { RequestResponse, Result } from "gamezilla-app/@shared/core";
+import type { UserId } from "gamezilla-app/app/@shared/data";
 
 //
 //
@@ -7,23 +7,23 @@ import { UserId } from "gamezilla-app/app/@shared/data"
 //
 
 export type ModelClient = {
-  guestRequest: RequestResponse<string, UserId>
-}
+	guestRequest: RequestResponse<string, UserId>;
+};
 
-export type ModelServer = null
+export type ModelServer = null;
 
 //
 //
 //
 //
 
-export type MsgClient = { t: "guest.clicked-continue-as-guest-button" }
+export type MsgClient = { t: "guest.clicked-continue-as-guest-button" };
 
-export type MsgServer = { t: null }
+export type MsgServer = { t: null };
 
-export type MsgToServer = { t: "guest.clicked-continue-as-guest-button" }
+export type MsgToServer = { t: "guest.clicked-continue-as-guest-button" };
 
 export type MsgToClient = {
-  t: "guest.continue-as-guest-result"
-  result: Result<string, UserId>
-}
+	t: "guest.continue-as-guest-result";
+	result: Result<string, UserId>;
+};

@@ -1,5 +1,11 @@
-import { Eff, exhaustive, isErr } from "gamezilla-app/@shared/core"
-import { Res, ModelServer, MsgServer, MsgToServer, handle } from "./party.core"
+import { Eff, exhaustive, isErr } from "gamezilla-app/@shared/core";
+import {
+	type Res,
+	type ModelServer,
+	type MsgServer,
+	type MsgToServer,
+	handle,
+} from "./party.core";
 
 //
 //
@@ -9,12 +15,12 @@ import { Res, ModelServer, MsgServer, MsgToServer, handle } from "./party.core"
 //
 //
 
-export type Model = ModelServer
+export type Model = ModelServer;
 
 export const init: Model = {
-  parties: {},
-  users: {},
-}
+	parties: {},
+	users: {},
+};
 
 //
 //
@@ -24,39 +30,39 @@ export const init: Model = {
 //
 //
 
-export type Msg = MsgServer
+export type Msg = MsgServer;
 
 export const update = (msg: Msg, model: Model): [Model, Eff<Msg>] => {
-  switch (msg[0]) {
-    case "none": {
-      return [model, Eff.None]
-    }
+	switch (msg[0]) {
+		case "none": {
+			return [model, Eff.None];
+		}
 
-    default: {
-      return exhaustive(msg[0])
-    }
-  }
-}
+		default: {
+			return exhaustive(msg[0]);
+		}
+	}
+};
 
 export const updateFromClient = (
-  msg: MsgToServer,
-  model: Model,
+	msg: MsgToServer,
+	model: Model,
 ): [Model, Eff<Msg>] => {
-  switch (msg[0]) {
-    case "PartyCreate":
-    case "PartyDestroy":
-    case "PartyJoin":
-    case "party-get":
-    case "PartyLeave": {
-      const res: Res = [...msg, handle(msg, model)]
-      if (isErr(res[2])) {
-        return [model, Eff.None]
-      }
-      return [res[2].value, Eff.None]
-    }
+	switch (msg[0]) {
+		case "PartyCreate":
+		case "PartyDestroy":
+		case "PartyJoin":
+		case "party-get":
+		case "PartyLeave": {
+			const res: Res = [...msg, handle(msg, model)];
+			if (isErr(res[2])) {
+				return [model, Eff.None];
+			}
+			return [res[2].value, Eff.None];
+		}
 
-    default: {
-      return exhaustive(msg[0])
-    }
-  }
-}
+		default: {
+			return exhaustive(msg[0]);
+		}
+	}
+};

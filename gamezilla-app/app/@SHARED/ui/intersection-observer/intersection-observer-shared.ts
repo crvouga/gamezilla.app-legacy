@@ -1,15 +1,15 @@
-import { PubSub } from "gamezilla-app/@shared/core"
+import { PubSub } from "gamezilla-app/@shared/core";
 
 export type IntersectionObserverEmitterProps = {
-  onVisible?: () => void
-  onHidden?: () => void
-  className?: string
-  id: string
-}
+	onVisible?: () => void;
+	onHidden?: () => void;
+	className?: string;
+	id: string;
+};
 
 export type IntersectionObserverEmitterEvent = {
-  type: "props"
-  props: IntersectionObserverEmitterProps
-}
+	type: "props";
+	props: IntersectionObserverEmitterProps;
+};
 
-export const sub = PubSub.create<IntersectionObserverEmitterEvent>()
+export const sub = PubSub.create<IntersectionObserverEmitterEvent>();

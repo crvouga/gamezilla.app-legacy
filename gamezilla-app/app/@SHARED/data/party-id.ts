@@ -1,32 +1,32 @@
-import { Result, Uuid } from "gamezilla-app/@shared/core"
-import { Brand } from "gamezilla-app/@shared/core/brand"
+import { Result, Uuid } from "gamezilla-app/@shared/core";
+import type { Brand } from "gamezilla-app/@shared/core/brand";
 
-export type PartyId = Brand<string, "PartyId">
+export type PartyId = Brand<string, "PartyId">;
 
 const is = (id: unknown): id is PartyId => {
-  return typeof id === "string"
-}
+	return typeof id === "string";
+};
 
-type Problem = "invalid_party_id"
+type Problem = "invalid_party_id";
 
 const decode = (id: string): Result<Problem, PartyId> => {
-  if (is(id)) {
-    return Result.Ok(id)
-  }
+	if (is(id)) {
+		return Result.Ok(id);
+	}
 
-  return Result.Err("invalid_party_id")
-}
+	return Result.Err("invalid_party_id");
+};
 const generate = (): PartyId => {
-  const id = Uuid.generate()
-  if (is(id)) {
-    return id
-  }
+	const id = Uuid.generate();
+	if (is(id)) {
+		return id;
+	}
 
-  throw new Error("generated invalid id")
-}
+	throw new Error("generated invalid id");
+};
 
 export const PartyId = {
-  is,
-  decode,
-  generate,
-}
+	is,
+	decode,
+	generate,
+};

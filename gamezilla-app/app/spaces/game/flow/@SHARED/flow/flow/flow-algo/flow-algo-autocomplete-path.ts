@@ -1,27 +1,33 @@
-import { Edge, GroupId, Model, NodeId, yieldEdgesOut } from "../flow"
+import {
+	type Edge,
+	type GroupId,
+	type Model,
+	type NodeId,
+	yieldEdgesOut,
+} from "../flow";
 
 /**
  *
  */
 export const toAutocompleteEdge = (
-  _model: Model,
-  _groupId: GroupId,
+	_model: Model,
+	_groupId: GroupId,
 ): Edge | null => {
-  return null
-}
+	return null;
+};
 
 const findPathEndNode = (
-  model: Model,
-  groupId: GroupId,
-  nodeId: NodeId,
+	model: Model,
+	groupId: GroupId,
+	nodeId: NodeId,
 ): NodeId => {
-  for (const outEdge of yieldEdgesOut(model, nodeId)) {
-    if (outEdge.targetId === nodeId) {
-      return nodeId
-    }
+	for (const outEdge of yieldEdgesOut(model, nodeId)) {
+		if (outEdge.targetId === nodeId) {
+			return nodeId;
+		}
 
-    return findPathEndNode(model, groupId, outEdge.targetId)
-  }
+		return findPathEndNode(model, groupId, outEdge.targetId);
+	}
 
-  return nodeId
-}
+	return nodeId;
+};

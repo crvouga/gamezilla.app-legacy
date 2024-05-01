@@ -1,13 +1,13 @@
-import { ClientCtx } from "gamezilla-app/app/@shared/client"
-import { Eff, Sub, isErr } from "gamezilla-app/@shared/core"
+import type { ClientCtx } from "gamezilla-app/app/@shared/client";
+import { Eff, Sub, isErr } from "gamezilla-app/@shared/core";
 import {
-  ModelClient,
-  MsgClient,
-  ModelServer,
-  MsgToClient,
-  handle,
-  initShared,
-} from "./vs-bot.core"
+	type ModelClient,
+	type MsgClient,
+	type ModelServer,
+	type MsgToClient,
+	handle,
+	initShared,
+} from "./vs-bot.core";
 
 //
 //
@@ -17,9 +17,9 @@ import {
 //
 //
 
-export type Model = ModelClient
+export type Model = ModelClient;
 
-export const init = initShared
+export const init = initShared;
 
 //
 //
@@ -29,80 +29,80 @@ export const init = initShared
 //
 //
 
-export type Msg = MsgClient
+export type Msg = MsgClient;
 
 export const update = ({
-  ctx,
-  msg,
-  model,
+	ctx,
+	msg,
+	model,
 }: {
-  ctx: ClientCtx
-  msg: Msg
-  model: Model
+	ctx: ClientCtx;
+	msg: Msg;
+	model: Model;
 }): {
-  model: Model
-  eff?: Eff<Msg>
+	model: Model;
+	eff?: Eff<Msg>;
 } => {
-  switch (msg.t) {
-    default: {
-      const result = handle({ ctx, msg, model })
+	switch (msg.t) {
+		default: {
+			const result = handle({ ctx, msg, model });
 
-      if (isErr(result)) {
-        return {
-          model,
-          eff: Eff.None,
-        }
-      }
+			if (isErr(result)) {
+				return {
+					model,
+					eff: Eff.None,
+				};
+			}
 
-      const merged = mergeWithServer({
-        ctx,
-        serverModel: result.value,
-        clientModel: model,
-      })
+			const merged = mergeWithServer({
+				ctx,
+				serverModel: result.value,
+				clientModel: model,
+			});
 
-      return {
-        model: merged,
-        eff: Eff.None,
-      }
-    }
-  }
-}
+			return {
+				model: merged,
+				eff: Eff.None,
+			};
+		}
+	}
+};
 
 export const updateFromServer = ({
-  msg,
-  model,
-  ctx,
+	msg,
+	model,
+	ctx,
 }: {
-  ctx: ClientCtx
-  msg: MsgToClient
-  model: Model
+	ctx: ClientCtx;
+	msg: MsgToClient;
+	model: Model;
 }): {
-  model: Model
-  eff?: Eff<Msg>
+	model: Model;
+	eff?: Eff<Msg>;
 } => {
-  if (msg.result.t === "err") {
-    return { model }
-  }
+	if (msg.result.t === "err") {
+		return { model };
+	}
 
-  const merged = mergeWithServer({
-    ctx,
-    clientModel: model,
-    serverModel: msg.result.value,
-  })
+	const merged = mergeWithServer({
+		ctx,
+		clientModel: model,
+		serverModel: msg.result.value,
+	});
 
-  return { model: merged }
-}
+	return { model: merged };
+};
 
 export const mergeWithServer = ({
-  serverModel,
-  clientModel,
+	serverModel,
+	clientModel,
 }: {
-  ctx: ClientCtx
-  clientModel: ModelClient
-  serverModel: ModelServer
+	ctx: ClientCtx;
+	clientModel: ModelClient;
+	serverModel: ModelServer;
 }): ModelClient => {
-  return { ...clientModel, ...serverModel }
-}
+	return { ...clientModel, ...serverModel };
+};
 
 //
 //
@@ -113,16 +113,16 @@ export const mergeWithServer = ({
 //
 
 export const subscriptions = (_ctx: ClientCtx, model: Model): Sub<Msg> => {
-  switch (model.type) {
-    case "game": {
-      return Sub.None
-    }
+	switch (model.type) {
+		case "game": {
+			return Sub.None;
+		}
 
-    case "setup": {
-      return Sub.None
-    }
-  }
-}
+		case "setup": {
+			return Sub.None;
+		}
+	}
+};
 
 //
 //
@@ -133,10 +133,10 @@ export const subscriptions = (_ctx: ClientCtx, model: Model): Sub<Msg> => {
 //
 
 export const View = (_props: {
-  model: Model
-  ctx: ClientCtx
-  dispatch: (m: Msg) => void
-  onBack: () => void
+	model: Model;
+	ctx: ClientCtx;
+	dispatch: (m: Msg) => void;
+	onBack: () => void;
 }) => {
-  return <div></div>
-}
+	return <div></div>;
+};

@@ -1,4 +1,4 @@
 export type IconProps = {
-  className?: string
-  "aria-label"?: string
-}
+	className?: string;
+	"aria-label"?: string;
+};

@@ -1,105 +1,105 @@
 import {
-  ChildrenFn,
-  Minimax,
-  ScoreFn,
-} from "gamezilla-app/app/spaces/game/@shared/minimax"
-import { Ok, Result } from "gamezilla-app/@shared/core"
+	type ChildrenFn,
+	Minimax,
+	type ScoreFn,
+} from "gamezilla-app/app/spaces/game/@shared/minimax";
+import { Ok, type Result } from "gamezilla-app/@shared/core";
 import {
-  Columns,
-  MAX_COLUMN_HEIGHT,
-  PlayerType,
-  opposite,
-  toStatus,
-} from "./connect-four"
+	type Columns,
+	MAX_COLUMN_HEIGHT,
+	type PlayerType,
+	opposite,
+	toStatus,
+} from "./connect-four";
 
-export type BestMoveProblem = "no_move_available"
+export type BestMoveProblem = "no_move_available";
 
 export type BestMoveResult = Result<
-  BestMoveProblem,
-  { columnIndex: number | null }
->
+	BestMoveProblem,
+	{ columnIndex: number | null }
+>;
 
 type State = {
-  columns: Columns
-  lastMoveColumnIndex: number | null
-  turn: PlayerType
-}
+	columns: Columns;
+	lastMoveColumnIndex: number | null;
+	turn: PlayerType;
+};
 
-const COLUMN_INDEX_ORDER = [3, 4, 2, 5, 1, 6, 0]
+const COLUMN_INDEX_ORDER = [3, 4, 2, 5, 1, 6, 0];
 
 export const findBestMove = ({
-  maximizingPlayer,
-  columns,
-  maxDepth,
+	maximizingPlayer,
+	columns,
+	maxDepth,
 }: {
-  maxDepth: number
-  maximizingPlayer: PlayerType
-  columns: Columns
+	maxDepth: number;
+	maximizingPlayer: PlayerType;
+	columns: Columns;
 }): BestMoveResult => {
-  const childrenFn: ChildrenFn<State> = (modelSync) => {
-    const children: State[] = []
+	const childrenFn: ChildrenFn<State> = (modelSync) => {
+		const children: State[] = [];
 
-    for (const columnIndex of COLUMN_INDEX_ORDER) {
-      const column = modelSync.columns[columnIndex]
+		for (const columnIndex of COLUMN_INDEX_ORDER) {
+			const column = modelSync.columns[columnIndex];
 
-      if (!column) {
-        continue
-      }
+			if (!column) {
+				continue;
+			}
 
-      if (column.length >= MAX_COLUMN_HEIGHT) {
-        continue
-      }
+			if (column.length >= MAX_COLUMN_HEIGHT) {
+				continue;
+			}
 
-      const columnsNew: Columns = modelSync.columns.map((column) =>
-        column.map((slot) => slot),
-      )
+			const columnsNew: Columns = modelSync.columns.map((column) =>
+				column.map((slot) => slot),
+			);
 
-      columnsNew[columnIndex] = [...column, modelSync.turn]
+			columnsNew[columnIndex] = [...column, modelSync.turn];
 
-      children.push({
-        columns: columnsNew,
-        turn: opposite[modelSync.turn],
-        lastMoveColumnIndex: columnIndex,
-      })
-    }
+			children.push({
+				columns: columnsNew,
+				turn: opposite[modelSync.turn],
+				lastMoveColumnIndex: columnIndex,
+			});
+		}
 
-    return children
-  }
+		return children;
+	};
 
-  const scoreFn: ScoreFn<State> = (modelSync) => {
-    const status = toStatus(modelSync.columns)
+	const scoreFn: ScoreFn<State> = (modelSync) => {
+		const status = toStatus(modelSync.columns);
 
-    if (status.type !== "Winner") {
-      return 0
-    }
+		if (status.type !== "Winner") {
+			return 0;
+		}
 
-    if (status.winner !== maximizingPlayer) {
-      return Infinity
-    }
+		if (status.winner !== maximizingPlayer) {
+			return Number.POSITIVE_INFINITY;
+		}
 
-    return -Infinity
-  }
+		return Number.NEGATIVE_INFINITY;
+	};
 
-  const bestChildState = Minimax.findBestChildState({
-    scoreFn,
-    childrenFn,
-    maxDepth,
-    parentState: {
-      columns,
-      turn: maximizingPlayer,
-      lastMoveColumnIndex: null,
-    },
-  })
+	const bestChildState = Minimax.findBestChildState({
+		scoreFn,
+		childrenFn,
+		maxDepth,
+		parentState: {
+			columns,
+			turn: maximizingPlayer,
+			lastMoveColumnIndex: null,
+		},
+	});
 
-  const bestMove = bestChildState?.lastMoveColumnIndex ?? null
+	const bestMove = bestChildState?.lastMoveColumnIndex ?? null;
 
-  return Ok({
-    columnIndex: bestMove,
-  })
-}
+	return Ok({
+		columnIndex: bestMove,
+	});
+};
 
 export const ConnectFourBotWorker = {
-  findBestMove,
-}
+	findBestMove,
+};
 
-export type ConnectFourBotWorker = typeof ConnectFourBotWorker
+export type ConnectFourBotWorker = typeof ConnectFourBotWorker;
