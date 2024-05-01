@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "server:prod": "bun db:migrate:up && bun gamezilla-app/main.server.ts",
+    "server:prod": "bun db:up && bun gamezilla-app/main.server.ts",
     "server": "bun --watch gamezilla-app/main.server.ts ",
     "db:up": "bun x dbmate -e DATABASE_URL up",
     "db:down": "bun x dbmate -e DATABASE_URL down",
