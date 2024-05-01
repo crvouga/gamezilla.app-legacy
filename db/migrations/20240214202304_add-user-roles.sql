@@ -22,9 +22,9 @@ ALTER TABLE user_account ADD CONSTRAINT non_guest_users_must_have_email_address_
 
 -- migrate:down
 
-ALTER TABLE user_account DROP CONSTRAINT non_guest_users_must_have_email_address_or_phone_number;
+ALTER TABLE user_account DROP CONSTRAINT IF EXISTS non_guest_users_must_have_email_address_or_phone_number;
 
-ALTER TABLE user_account DROP COLUMN user_role;
+ALTER TABLE user_account DROP COLUMN IF EXISTS user_role;
 
 DROP TYPE user_role;
 
