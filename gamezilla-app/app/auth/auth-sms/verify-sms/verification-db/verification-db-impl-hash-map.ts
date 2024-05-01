@@ -1,4 +1,4 @@
-import { Ok } from "gamezilla-app/@shared/core";
+import { Ok } from "gamezilla-app/@/core";
 import type {
 	Verification,
 	VerificationAttempt,

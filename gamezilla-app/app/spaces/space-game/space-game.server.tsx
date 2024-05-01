@@ -1,7 +1,7 @@
-import { Eff, Result, Sub } from "gamezilla-app/@shared/core";
+import { Eff, Result, Sub } from "gamezilla-app/@/core";
 import { Game } from "../game/game.server";
-import type { WithEventId } from "../@shared/event";
-import { SpaceServerCmd } from "../@shared/space-server-cmd";
+import type { WithEventId } from "../@/event";
+import { SpaceServerCmd } from "../@/space-server-cmd";
 import { SpaceServerModule } from "../architecture/space-server";
 import type { SpaceEvent } from "../spaces-core";
 import { SpacesCoreServer } from "../spaces-core/spaces-core.server";

@@ -3,11 +3,11 @@ import type {
 	Eff,
 	RemoteResult,
 	Result,
-} from "gamezilla-app/@shared/core";
+} from "gamezilla-app/@/core";
 import type { ChatId } from "./chat-id";
 import type { ChatMessageId } from "./chat-message-id";
 import type { ChatUserJoinId } from "./chat-user-join-id";
-import type { UserId } from "gamezilla-app/app/@shared/data";
+import type { UserId } from "gamezilla-app/app/@/data";
 
 //
 //

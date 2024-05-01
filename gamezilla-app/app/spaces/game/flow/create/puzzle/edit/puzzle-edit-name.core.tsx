@@ -2,9 +2,9 @@ import {
 	type RemoteResult,
 	type Result,
 	notAsked,
-} from "gamezilla-app/@shared/core";
-import type { FlowPuzzleId } from "../../../@shared/flow-puzzle/flow-puzzle-id";
-import type { UserId } from "gamezilla-app/app/@shared/data";
+} from "gamezilla-app/@/core";
+import type { FlowPuzzleId } from "../../../@/flow-puzzle/flow-puzzle-id";
+import type { UserId } from "gamezilla-app/app/@/data";
 
 //
 //

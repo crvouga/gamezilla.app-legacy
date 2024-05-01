@@ -1,23 +1,23 @@
-import { AppClientModule } from "gamezilla-app/app/@shared/architecture/app-client";
+import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
 import {
 	APP_SOUND,
 	type ClientEvent,
 	type SoundCmd,
 	playSound,
-} from "gamezilla-app/app/@shared/client";
+} from "gamezilla-app/app/@/client";
 import {
 	IconVolumeHigh,
 	IconVolumeXMark,
 	ListItemButton,
 	ToggleButton,
-} from "gamezilla-app/app/@shared/ui";
+} from "gamezilla-app/app/@/ui";
 import {
 	Err,
 	Ok,
 	type Result,
 	TimeSpan,
 	UnitInterval,
-} from "gamezilla-app/@shared/core";
+} from "gamezilla-app/@/core";
 
 //
 //

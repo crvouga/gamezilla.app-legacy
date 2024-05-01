@@ -1,6 +1,6 @@
-import type { RemoteResult, Result } from "gamezilla-app/@shared/core";
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import type { FlowPuzzle } from "../../../@shared/flow-puzzle/flow-puzzle";
+import type { RemoteResult, Result } from "gamezilla-app/@/core";
+import type { UserId } from "gamezilla-app/app/@/data";
+import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 
 //
 //

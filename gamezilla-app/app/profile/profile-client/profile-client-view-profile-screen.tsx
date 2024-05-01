@@ -1,8 +1,8 @@
 import type {
 	AnonymousClientCtx,
 	ClientCtx,
-} from "gamezilla-app/app/@shared/client";
-import type { UserId } from "gamezilla-app/app/@shared/data";
+} from "gamezilla-app/app/@/client";
+import type { UserId } from "gamezilla-app/app/@/data";
 import {
 	Button,
 	IconArrowLeftOnRect,
@@ -11,7 +11,7 @@ import {
 	Avatar,
 	TopBar,
 	TopBarBackButton,
-} from "gamezilla-app/app/@shared/ui";
+} from "gamezilla-app/app/@/ui";
 import type { ModelClient, MsgClient } from "../profile.core";
 
 export const ViewProfileScreen = (props: {

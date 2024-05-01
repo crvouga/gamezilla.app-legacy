@@ -1,12 +1,12 @@
 import * as AppClient from "gamezilla-app/app/app.client";
-import { Program } from "gamezilla-app/@shared/core";
-import { DebuggerReduxDevTools } from "gamezilla-app/@shared/core/debug";
+import { Program } from "gamezilla-app/@/core";
+import { DebuggerReduxDevTools } from "gamezilla-app/@/core/debug";
 import {
 	IS_PROD,
 	TRANSPORT_IMPL,
 	VDOM_IMPL,
 } from "gamezilla-app/public-config";
-import { Render } from "./@shared/vdom";
+import { Render } from "./@/vdom";
 
 const main = async () => {
 	const deps = await AppClient.getDeps();

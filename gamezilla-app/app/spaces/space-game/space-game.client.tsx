@@ -1,12 +1,12 @@
-import { APP_SOUND, playSound } from "gamezilla-app/app/@shared/client";
-import { Button } from "gamezilla-app/app/@shared/ui";
-import { Eff, Sub } from "gamezilla-app/@shared/core";
-import { ViewGameHeader, ViewUsersInSpaceList } from "../game/@shared/game";
+import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
+import { Button } from "gamezilla-app/app/@/ui";
+import { Eff, Sub } from "gamezilla-app/@/core";
+import { ViewGameHeader, ViewUsersInSpaceList } from "../game/@/game";
 import { CoverArt } from "../game/game-cover-art";
 import { Game } from "../game/game.client";
 import { gameNameList, gameNameToString } from "../game/game.core";
-import { type WithEventId, withId } from "../@shared/event";
-import { SpaceClientCmd } from "../@shared/space-client-cmd";
+import { type WithEventId, withId } from "../@/event";
+import { SpaceClientCmd } from "../@/space-client-cmd";
 import { SpaceClientModule } from "../architecture/architecture";
 import { Space, type SpaceEvent, Spaces } from "../spaces-core";
 import type { MsgClient } from "../spaces.core";

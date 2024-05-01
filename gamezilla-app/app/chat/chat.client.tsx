@@ -1,6 +1,6 @@
-import type { ClientCtx, ClientEvent } from "gamezilla-app/app/@shared/client";
-import { Browser, Eff, pipe } from "gamezilla-app/@shared/core";
-import type { VDom } from "gamezilla-app/@shared/vdom";
+import type { ClientCtx, ClientEvent } from "gamezilla-app/app/@/client";
+import { Browser, Eff, pipe } from "gamezilla-app/@/core";
+import type { VDom } from "gamezilla-app/@/vdom";
 import type { ModelClient, MsgClient, MsgToClient } from "./chat.core";
 
 //

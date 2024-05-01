@@ -4,12 +4,12 @@ import {
 	Sub,
 	exhaustive,
 	isErr,
-} from "gamezilla-app/@shared/core";
-import type { ClientCtx } from "gamezilla-app/app/@shared/client";
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@shared/ui";
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space";
-import { Chess } from "../@shared/chess";
+} from "gamezilla-app/@/core";
+import type { ClientCtx } from "gamezilla-app/app/@/client";
+import type { UserId } from "gamezilla-app/app/@/data";
+import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@/ui";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
+import { Chess } from "../@/chess";
 import {
 	type CoreModel,
 	type ModelClient,

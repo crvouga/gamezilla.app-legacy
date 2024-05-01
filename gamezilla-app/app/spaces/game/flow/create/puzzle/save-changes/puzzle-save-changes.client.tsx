@@ -1,28 +1,28 @@
-import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import { withId } from "gamezilla-app/app/spaces/@shared/event";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { withId } from "gamezilla-app/app/spaces/@/event";
 import {
 	APP_SOUND,
 	playSound,
 	sendToServer,
 	showErrSm,
 	showCreatedSm,
-} from "gamezilla-app/app/@shared/client";
+} from "gamezilla-app/app/@/client";
 import {
 	Button,
 	Drawer,
 	IconArrowLeftOnRect,
 	IconFloppyDisk,
-} from "gamezilla-app/app/@shared/ui";
-import { Result, isErr, isOk, loading } from "gamezilla-app/@shared/core";
-import { FlowVariantUIEdit } from "../../../@shared/flow";
-import type { FlowPuzzle } from "../../../@shared/flow-puzzle/flow-puzzle";
+} from "gamezilla-app/app/@/ui";
+import { Result, isErr, isOk, loading } from "gamezilla-app/@/core";
+import { FlowVariantUIEdit } from "../../../@/flow";
+import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import type {
 	ModelClient,
 	ClientModule,
 	MsgClient,
 	MsgSync,
 } from "../../create.core";
-import { ViewBottomButtonBarAction } from "../../../../@shared/game";
+import { ViewBottomButtonBarAction } from "../../../../@/game";
 
 //
 //

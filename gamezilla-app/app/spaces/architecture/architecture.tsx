@@ -1,13 +1,13 @@
 import type {
 	BaseClientCtx,
 	ClientEvent,
-} from "gamezilla-app/app/@shared/client";
+} from "gamezilla-app/app/@/client";
 
-import { Eff, type Sub, batchMsgs } from "gamezilla-app/@shared/core";
-import type { VDom } from "gamezilla-app/@shared/vdom";
-import type { WithEventId } from "../@shared/event";
-import type { Space } from "../@shared/space";
-import type { SpaceClientCmd } from "../@shared/space-client-cmd";
+import { Eff, type Sub, batchMsgs } from "gamezilla-app/@/core";
+import type { VDom } from "gamezilla-app/@/vdom";
+import type { WithEventId } from "../@/event";
+import type { Space } from "../@/space";
+import type { SpaceClientCmd } from "../@/space-client-cmd";
 import type { SpaceEvent } from "../spaces-core";
 import type {
 	ModelClient,

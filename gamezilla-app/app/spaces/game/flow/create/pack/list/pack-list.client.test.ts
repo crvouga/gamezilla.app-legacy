@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
-import { andThen } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import { didPlaySound } from "gamezilla-app/app/@shared/client";
+import { andThen } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { didPlaySound } from "gamezilla-app/app/@/client";
 import {
 	clickedPackItem,
 	createFlowPack,
 	initial,
 	testFlowClientCtx,
-} from "../../@shared/testing/client";
-import { deriveModelSync } from "../../@shared/testing/game";
+} from "../../@/testing/client";
+import { deriveModelSync } from "../../@/testing/game";
 
 describe(import.meta.file, () => {
 	it("should open pack builder when clicked pack list item", async () => {

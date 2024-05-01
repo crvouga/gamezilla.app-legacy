@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import {
 	clickedExitPuzzleBuilderButton,
 	clickedPuzzleListItem,
@@ -8,8 +8,8 @@ import {
 	puzzleBuilderPressDownRandomNode,
 	serverListedPuzzlesOk,
 	testFlowClientCtx,
-} from "../../@shared/testing/client";
-import { deriveModelSync } from "../../@shared/testing/game";
+} from "../../@/testing/client";
+import { deriveModelSync } from "../../@/testing/game";
 
 describe(import.meta.file, () => {
 	it("should open puzzle builder on list item click", async () => {

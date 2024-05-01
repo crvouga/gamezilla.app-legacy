@@ -8,12 +8,12 @@ import {
 	closeStatusBar,
 	playSound,
 	pushRoute,
-} from "gamezilla-app/app/@shared/client";
-import { LocalStorage } from "gamezilla-app/@shared/core";
-import { LanguageCodeISO_639_1 } from "gamezilla-app/@shared/l18n";
-import { translations } from "gamezilla-app/@shared/l18n/lang-code-iso-639-1/lang-code-iso-639-1.l18n";
-import type { AppClientModule } from "../@shared/architecture/app-client";
-import { translatorSubscriptions } from "../@shared/client/translator";
+} from "gamezilla-app/app/@/client";
+import { LocalStorage } from "gamezilla-app/@/core";
+import { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
+import { translations } from "gamezilla-app/@/l18n/lang-code-iso-639-1/lang-code-iso-639-1.l18n";
+import type { AppClientModule } from "../@/architecture/app-client";
+import { translatorSubscriptions } from "../@/client/translator";
 import {
 	Button,
 	IconCheckmarkCircle,
@@ -22,7 +22,7 @@ import {
 	ListItemButton,
 	Spinner,
 	TopBar,
-} from "../@shared/ui";
+} from "../@/ui";
 import type {
 	ModelClient,
 	MsgClient,

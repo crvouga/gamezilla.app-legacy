@@ -1,8 +1,8 @@
-import { Err, isErr, Ok, Result } from "gamezilla-app/@shared/core";
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import type { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space";
-import type { VsBotSetup } from "gamezilla-app/app/spaces/game/@shared/vs-bot";
-import { Chess } from "../@shared/chess";
+import { Err, isErr, Ok, Result } from "gamezilla-app/@/core";
+import type { UserId } from "gamezilla-app/app/@/data";
+import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
+import type { VsBotSetup } from "gamezilla-app/app/spaces/game/@/vs-bot";
+import { Chess } from "../@/chess";
 
 //
 //

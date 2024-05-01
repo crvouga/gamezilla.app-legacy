@@ -1,4 +1,4 @@
-import { Eff, exhaustive, isErr } from "gamezilla-app/@shared/core";
+import { Eff, exhaustive, isErr } from "gamezilla-app/@/core";
 import {
 	type Res,
 	type ModelServer,

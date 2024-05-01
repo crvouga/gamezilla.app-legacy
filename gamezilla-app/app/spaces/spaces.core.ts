@@ -1,16 +1,16 @@
-import type { Profile, SpaceId, UserId } from "gamezilla-app/app/@shared/data";
-import type { RequestResponse } from "gamezilla-app/@shared/core";
-import type { AppClientModule } from "../@shared/architecture/app-client";
-import type { AppServerModule } from "../@shared/architecture/app-server";
+import type { Profile, SpaceId, UserId } from "gamezilla-app/app/@/data";
+import type { RequestResponse } from "gamezilla-app/@/core";
+import type { AppClientModule } from "../@/architecture/app-client";
+import type { AppServerModule } from "../@/architecture/app-server";
 import type {
 	AnonymousClientCtx,
 	ClientCmd,
 	ClientCtx,
 	ClientEvent,
-} from "../@shared/client";
-import type { ServerCmd, ServerCtx, ServerEvent } from "../@shared/server";
+} from "../@/client";
+import type { ServerCmd, ServerCtx, ServerEvent } from "../@/server";
 import type * as Game from "./game/game.core";
-import type { WithEventId, WithEventMeta } from "./@shared/event";
+import type { WithEventId, WithEventMeta } from "./@/event";
 import type { IProfileCache } from "./profile-cache";
 import type * as Space from "./spaces-core/space";
 import type { SpaceEvent } from "./spaces-core/space-event";

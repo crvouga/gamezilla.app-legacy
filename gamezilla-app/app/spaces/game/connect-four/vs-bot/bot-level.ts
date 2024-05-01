@@ -1,4 +1,4 @@
-import { p } from "gamezilla-app/@shared/core/parser";
+import { p } from "gamezilla-app/@/core/parser";
 
 export const ALL_BOT_LEVELS = ["Easy", "Medium", "Hard"] as const;
 

@@ -1,5 +1,5 @@
-import type { ClientCtx } from "gamezilla-app/app/@shared/client";
-import type { UserId } from "gamezilla-app/app/@shared/data";
+import type { ClientCtx } from "gamezilla-app/app/@/client";
+import type { UserId } from "gamezilla-app/app/@/data";
 import {
 	Eff,
 	RemoteResult,
@@ -7,7 +7,7 @@ import {
 	exhaustive,
 	isErr,
 	pipe,
-} from "gamezilla-app/@shared/core";
+} from "gamezilla-app/@/core";
 import { Mic } from "./mic";
 import type { ModelClient, MsgClient, MsgToClient } from "./party.core";
 

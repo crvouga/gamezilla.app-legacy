@@ -3,7 +3,7 @@ import type * as Lang from "./lang/lang.core";
 import type * as Profile from "./profile/profile.core";
 import type * as Spaces from "./spaces/spaces.core";
 import type * as Wire from "./wire/wire.core";
-import type { ClientId, SessionId, UserId } from "./@shared/data";
+import type { ClientId, SessionId, UserId } from "./@/data";
 import type { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 
 //

@@ -6,8 +6,8 @@ import {
 	type ProfileAvatarStyle,
 	type UserId,
 	type Username,
-} from "gamezilla-app/app/@shared/data";
-import type { RemoteResult, Result } from "gamezilla-app/@shared/core";
+} from "gamezilla-app/app/@/data";
+import type { RemoteResult, Result } from "gamezilla-app/@/core";
 
 //
 //

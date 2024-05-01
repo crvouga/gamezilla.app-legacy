@@ -1,5 +1,5 @@
-import { Browser, type Eff, type Sub, Time } from "gamezilla-app/@shared/core";
-import type { PlatformCmd } from "../@shared/client";
+import { Browser, type Eff, type Sub, Time } from "gamezilla-app/@/core";
+import type { PlatformCmd } from "../@/client";
 
 export type Model = {
 	documentVisibilityState: DocumentVisibilityState;

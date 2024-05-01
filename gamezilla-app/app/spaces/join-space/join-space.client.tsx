@@ -3,12 +3,12 @@ import {
 	playSound,
 	showErrSm,
 	showToast,
-} from "gamezilla-app/app/@shared/client";
-import { Button, TopBar } from "gamezilla-app/app/@shared/ui";
-import { ViewGameHeader, ViewUsersInSpaceList } from "../game/@shared/game";
+} from "gamezilla-app/app/@/client";
+import { Button, TopBar } from "gamezilla-app/app/@/ui";
+import { ViewGameHeader, ViewUsersInSpaceList } from "../game/@/game";
 import { CoverArt } from "../game/game-cover-art";
 import { gameNameToString } from "../game/game.core";
-import { withId } from "../@shared/event";
+import { withId } from "../@/event";
 import { SpaceClientModule } from "../architecture/architecture";
 import { type SpaceEvent, Spaces } from "../spaces-core";
 

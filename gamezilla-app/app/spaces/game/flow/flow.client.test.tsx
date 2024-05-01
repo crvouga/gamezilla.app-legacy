@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
-import { didPlaySound } from "gamezilla-app/app/@shared/client";
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import { LamportTimestamp } from "gamezilla-app/@shared/lamport-clock";
-import { GameClientModule } from "../../@shared/architecture/game-client-v2";
-import { EventId } from "../../@shared/event";
-import type { FlowClientCtx } from "./@shared/flow-ctx";
+import { didPlaySound } from "gamezilla-app/app/@/client";
+import type { UserId } from "gamezilla-app/app/@/data";
+import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
+import { GameClientModule } from "../../@/architecture/game-client-v2";
+import { EventId } from "../../@/event";
+import type { FlowClientCtx } from "./@/flow-ctx";
 import { FlowClient } from "./flow.client";
 import type { ModelClient } from "./flow.core";
-import { testFlowClientCtx } from "./create/@shared/testing/client";
+import { testFlowClientCtx } from "./create/@/testing/client";
 
 const init = {
 	model: FlowClient.init,

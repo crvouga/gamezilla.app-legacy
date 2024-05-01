@@ -1,9 +1,9 @@
-import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2";
-import { withId } from "gamezilla-app/app/spaces/@shared/event";
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd";
-import { Eff } from "gamezilla-app/@shared/core";
+import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
+import { withId } from "gamezilla-app/app/spaces/@/event";
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
+import { Eff } from "gamezilla-app/@/core";
 
-import { FlowPackPuzzleGridServer } from "../../../@shared/flow-pack/flow-pack-puzzle-grid/flow-pack-puzzle-grid.server";
+import { FlowPackPuzzleGridServer } from "../../../@/flow-pack/flow-pack-puzzle-grid/flow-pack-puzzle-grid.server";
 import type { ServerModule } from "../../create.core";
 
 const SavePack: Pick<ServerModule, "update"> = {

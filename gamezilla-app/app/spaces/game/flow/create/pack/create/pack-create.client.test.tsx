@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
-import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import { didPlaySound, didShowToast } from "gamezilla-app/app/@shared/client";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { didPlaySound, didShowToast } from "gamezilla-app/app/@/client";
 import {
 	clickedPackCreateButton,
 	createFlowPack,
 	initial,
 	testFlowClientCtx,
 	userCreatedPack,
-} from "../../@shared/testing/client";
+} from "../../@/testing/client";
 
 describe(import.meta.file, () => {
 	it("should make a sound when the user clicks the create button", async () => {

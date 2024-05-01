@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
 import { SpacesDb } from "./space-db-impl";
-import { DbConnKv } from "gamezilla-app/app/@shared/server/db-conn-kv";
+import { DbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import * as Space from "../space";
-import { Ok, pipe } from "gamezilla-app/@shared/core";
-import { EventId } from "../../@shared/event";
-import { SpaceId, UserId } from "gamezilla-app/app/@shared/data";
+import { Ok, pipe } from "gamezilla-app/@/core";
+import { EventId } from "../../@/event";
+import { SpaceId, UserId } from "gamezilla-app/app/@/data";
 
 const generateSpace = () => {
 	return pipe(

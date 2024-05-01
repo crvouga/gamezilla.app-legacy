@@ -1,9 +1,9 @@
-import { SpaceId, type UserId } from "gamezilla-app/app/@shared/data";
-import { IDbConnKv } from "gamezilla-app/app/@shared/server/db-conn-kv";
-import { Err, Ok, Result, isErr } from "gamezilla-app/@shared/core";
+import { SpaceId, type UserId } from "gamezilla-app/app/@/data";
+import { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
+import { Err, Ok, Result, isErr } from "gamezilla-app/@/core";
 import * as Space from "../space";
 import type { ISpacesDb } from "./space-db";
-import { p } from "gamezilla-app/@shared/core/parser";
+import { p } from "gamezilla-app/@/core/parser";
 
 export type Deps = {
 	dbConnKv: IDbConnKv;

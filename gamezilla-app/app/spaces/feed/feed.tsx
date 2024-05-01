@@ -1,7 +1,7 @@
 import { Game } from "../game/game.client";
-import type { WithEventId } from "../@shared/event";
-import { FeedItem } from "../@shared/feed-item";
-import type { SpaceClientCtx } from "../@shared/space";
+import type { WithEventId } from "../@/event";
+import { FeedItem } from "../@/feed-item";
+import type { SpaceClientCtx } from "../@/space";
 import { type SpaceEvent, type SpaceState, Spaces } from "../spaces-core";
 import type { ModelClient, MsgClient } from "../spaces.core";
 

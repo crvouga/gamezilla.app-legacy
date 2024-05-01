@@ -1,5 +1,5 @@
-import { Uuid } from "gamezilla-app/@shared/core";
-import { p } from "gamezilla-app/@shared/core/parser";
+import { Uuid } from "gamezilla-app/@/core";
+import { p } from "gamezilla-app/@/core/parser";
 
 const parser = p.brand(p.str, "VerificationId");
 

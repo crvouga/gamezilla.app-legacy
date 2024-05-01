@@ -1,8 +1,8 @@
-import { Result, isErr } from "gamezilla-app/@shared/core";
-import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2";
-import { withId } from "gamezilla-app/app/spaces/@shared/event";
-import { FlowVariant, FlowVariantDimensions } from "../../../@shared/flow";
-import { FlowPuzzle } from "../../../@shared/flow-puzzle/flow-puzzle";
+import { Result, isErr } from "gamezilla-app/@/core";
+import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
+import { withId } from "gamezilla-app/app/spaces/@/event";
+import { FlowVariant, FlowVariantDimensions } from "../../../@/flow";
+import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import type { ServerModule } from "../../create.core";
 import type { MsgSync } from "./puzzle-create.core";
 

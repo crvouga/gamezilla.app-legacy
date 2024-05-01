@@ -1,11 +1,11 @@
-import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2";
-import { withId } from "gamezilla-app/app/spaces/@shared/event";
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import { Err, isErr } from "gamezilla-app/@shared/core";
-import type { FlowPuzzle } from "../../../@shared/flow-puzzle/flow-puzzle";
-import type { IFlowPuzzleDb } from "../../../@shared/flow-puzzle/flow-puzzle-db";
-import type { FlowPuzzleId } from "../../../@shared/flow-puzzle/flow-puzzle-id";
-import { FlowPuzzleName } from "../../../@shared/flow-puzzle/flow-puzzle-name";
+import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
+import { withId } from "gamezilla-app/app/spaces/@/event";
+import type { UserId } from "gamezilla-app/app/@/data";
+import { Err, isErr } from "gamezilla-app/@/core";
+import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
+import type { IFlowPuzzleDb } from "../../../@/flow-puzzle/flow-puzzle-db";
+import type { FlowPuzzleId } from "../../../@/flow-puzzle/flow-puzzle-id";
+import { FlowPuzzleName } from "../../../@/flow-puzzle/flow-puzzle-name";
 import type { ServerModule } from "../../create.core";
 import type { MsgSync } from "./puzzle-edit-name.core";
 

@@ -1,6 +1,6 @@
-import { Ok } from "gamezilla-app/@shared/core";
-import { Profile, type UserId } from "gamezilla-app/app/@shared/data";
-import { IDbConnKv } from "gamezilla-app/app/@shared/server/db-conn-kv";
+import { Ok } from "gamezilla-app/@/core";
+import { Profile, type UserId } from "gamezilla-app/app/@/data";
+import { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import type { IProfileCache } from "./profile-cache";
 
 export const ProfileCacheDbKv = ({

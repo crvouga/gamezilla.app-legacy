@@ -1,7 +1,7 @@
-import type { Posix } from "gamezilla-app/@shared/core";
-import { p } from "gamezilla-app/@shared/core/parser";
-import { CappedOrderedDict } from "gamezilla-app/@shared/capped-ordered-dict/capped-ordered-dict";
-import { ClientId, SessionId } from "../@shared/data";
+import type { Posix } from "gamezilla-app/@/core";
+import { p } from "gamezilla-app/@/core/parser";
+import { CappedOrderedDict } from "gamezilla-app/@/capped-ordered-dict/capped-ordered-dict";
+import { ClientId, SessionId } from "../@/data";
 import type { ClientTransportEvent } from "./transport-client";
 import type { ServerTransportMsg } from "./transport-server";
 

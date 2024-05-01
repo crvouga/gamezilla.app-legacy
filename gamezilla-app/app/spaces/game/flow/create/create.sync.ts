@@ -1,4 +1,4 @@
-import type { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space";
+import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import type { ModelSync, SyncReducer } from "./create.core";
 import { ListTabsGame } from "./list-tabs/list-tabs.sync";
 import { PackGame } from "./pack/pack.sync";

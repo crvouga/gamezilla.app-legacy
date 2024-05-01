@@ -1,17 +1,17 @@
 import { describe, expect, it } from "bun:test";
-import { andThen } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import { didSendToServer } from "gamezilla-app/app/@shared/client";
+import { andThen } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { didSendToServer } from "gamezilla-app/app/@/client";
 import {
 	Err,
 	Ok,
 	Posix,
 	RequestResponse,
 	TimeSpan,
-} from "gamezilla-app/@shared/core";
-import { FlowVariant, FlowVariantDimensions } from "../../../@shared/flow";
-import { FlowPack } from "../../../@shared/flow-pack";
-import { FlowPuzzle } from "../../../@shared/flow-puzzle";
-import { testFlowClientCtx } from "../../@shared/testing/client";
+} from "gamezilla-app/@/core";
+import { FlowVariant, FlowVariantDimensions } from "../../../@/flow";
+import { FlowPack } from "../../../@/flow-pack";
+import { FlowPuzzle } from "../../../@/flow-puzzle";
+import { testFlowClientCtx } from "../../@/testing/client";
 import { RemovePuzzleClient } from "./remove-puzzle.client";
 import {
 	type ModelClient,

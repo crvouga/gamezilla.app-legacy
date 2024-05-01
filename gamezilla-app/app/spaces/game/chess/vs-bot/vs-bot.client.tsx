@@ -5,23 +5,23 @@ import {
 	exhaustive,
 	isErr,
 	pipe,
-} from "gamezilla-app/@shared/core";
-import { type ClientCmd, sendToServer } from "gamezilla-app/app/@shared/client";
+} from "gamezilla-app/@/core";
+import { type ClientCmd, sendToServer } from "gamezilla-app/app/@/client";
 import {
 	Avatar,
 	IconArrowLeftOnRect,
 	IconRobot,
 	Spinner,
-} from "gamezilla-app/app/@shared/ui";
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space";
+} from "gamezilla-app/app/@/ui";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import {
 	GameLayout,
 	ViewBottomButtonBar,
 	ViewBottomButtonBarAction,
-} from "gamezilla-app/app/spaces/game/@shared/game";
-import { VsBotSetup } from "gamezilla-app/app/spaces/game/@shared/vs-bot";
-import { Chess } from "../@shared/chess";
-import { Chessboard, CoverArt, PlayerIcon } from "../@shared/chess-ui";
+} from "gamezilla-app/app/spaces/game/@/game";
+import { VsBotSetup } from "gamezilla-app/app/spaces/game/@/vs-bot";
+import { Chess } from "../@/chess";
+import { Chessboard, CoverArt, PlayerIcon } from "../@/chess-ui";
 import {
 	type CoreModel,
 	type ModelClient,

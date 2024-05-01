@@ -1,10 +1,10 @@
-import type { PartyId, UserId } from "gamezilla-app/app/@shared/data";
+import type { PartyId, UserId } from "gamezilla-app/app/@/data";
 import {
 	type RemoteResult,
 	Result,
 	dissoc,
 	filterObject,
-} from "gamezilla-app/@shared/core";
+} from "gamezilla-app/@/core";
 import type { MicLoadResult, MicUnloadResult } from "./mic";
 const { Err, Ok } = Result;
 

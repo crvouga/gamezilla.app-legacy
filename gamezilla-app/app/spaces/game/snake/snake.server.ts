@@ -1,5 +1,5 @@
-import { Eff, Result, Sub, Time } from "gamezilla-app/@shared/core";
-import * as Snake from "./@shared/snake";
+import { Eff, Result, Sub, Time } from "gamezilla-app/@/core";
+import * as Snake from "./@/snake";
 import {
 	type CoreModel,
 	type InputDirection,

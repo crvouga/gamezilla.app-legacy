@@ -1,4 +1,4 @@
-import type { IDbConnKv } from "gamezilla-app/app/@shared/server/db-conn-kv";
+import type { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import type { IGameDb } from "./space-game-db";
 import { ImplDbConnKv } from "./space-game-db-impl-db-conn-kv";
 

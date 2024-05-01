@@ -5,13 +5,13 @@ import {
 	Sub,
 	andThen,
 	pipe,
-} from "gamezilla-app/@shared/core";
+} from "gamezilla-app/@/core";
 import type {
 	SpaceReqCtx,
 	SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@shared/space";
-import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd";
-import { TicTacToe } from "../@shared/tic-tic-toe";
+} from "gamezilla-app/app/spaces/@/space";
+import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
+import { TicTacToe } from "../@/tic-tic-toe";
 import {
 	type ModelServer,
 	type MsgServer,

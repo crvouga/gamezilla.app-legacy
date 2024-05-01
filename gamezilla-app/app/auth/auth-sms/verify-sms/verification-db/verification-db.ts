@@ -1,4 +1,4 @@
-import type { Task } from "gamezilla-app/@shared/core";
+import type { Task } from "gamezilla-app/@/core";
 import type {
 	Verification,
 	VerificationAttempt,

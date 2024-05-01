@@ -1,4 +1,4 @@
-import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../@shared/flow";
+import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../@/flow";
 import type { SyncReducer } from "../../create.core";
 
 const reducer: SyncReducer = ({ modelSync, msgSync }) => {

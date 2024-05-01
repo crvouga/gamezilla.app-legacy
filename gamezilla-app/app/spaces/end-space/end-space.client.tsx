@@ -3,9 +3,9 @@ import {
 	playSound,
 	pushRoute,
 	showToast,
-} from "gamezilla-app/app/@shared/client";
-import { Button } from "gamezilla-app/app/@shared/ui";
-import { withId } from "../@shared/event";
+} from "gamezilla-app/app/@/client";
+import { Button } from "gamezilla-app/app/@/ui";
+import { withId } from "../@/event";
 import { SpaceClientModule } from "../architecture/architecture";
 import { type SpaceEvent, Spaces } from "../spaces-core";
 

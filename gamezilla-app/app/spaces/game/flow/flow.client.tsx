@@ -1,25 +1,25 @@
-import { GameMainMenu } from "gamezilla-app/app/spaces/game/@shared/game";
-import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import { withId } from "gamezilla-app/app/spaces/@shared/event";
+import { GameMainMenu } from "gamezilla-app/app/spaces/game/@/game";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { withId } from "gamezilla-app/app/spaces/@/event";
 import type {
 	SpaceClientCtx,
 	SpaceClientEvent,
-} from "gamezilla-app/app/spaces/@shared/space";
+} from "gamezilla-app/app/spaces/@/space";
 import {
 	APP_SOUND,
 	ClientCmd,
 	playSound,
-} from "gamezilla-app/app/@shared/client";
+} from "gamezilla-app/app/@/client";
 import {
 	IconGamepad,
 	IconScrewdriverWrench,
-} from "gamezilla-app/app/@shared/ui";
-import { Sub } from "gamezilla-app/@shared/core";
-import { SpaceClientCmd } from "../../@shared/space-client-cmd";
+} from "gamezilla-app/app/@/ui";
+import { Sub } from "gamezilla-app/@/core";
+import { SpaceClientCmd } from "../../@/space-client-cmd";
 import { CreateClient } from "./create/create.client";
 import { PlayClient } from "./play/play.client";
-import { CoverArt } from "./@shared/flow-cover-art";
-import type { FlowClientCtx } from "./@shared/flow-ctx";
+import { CoverArt } from "./@/flow-cover-art";
+import type { FlowClientCtx } from "./@/flow-ctx";
 import type {
 	ModelClient,
 	ModelSync,

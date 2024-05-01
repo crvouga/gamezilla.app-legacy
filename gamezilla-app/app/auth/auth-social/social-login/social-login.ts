@@ -2,7 +2,7 @@ import type {
 	EmailAddress,
 	RemoteResult,
 	Result,
-} from "gamezilla-app/@shared/core";
+} from "gamezilla-app/@/core";
 
 type SocialLoginProvider = "google";
 

@@ -1,9 +1,9 @@
 import type {
 	SpaceReqCtx,
 	SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@shared/space";
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import { Eff, Sub } from "gamezilla-app/@shared/core";
+} from "gamezilla-app/app/spaces/@/space";
+import type { UserId } from "gamezilla-app/app/@/data";
+import { Eff, Sub } from "gamezilla-app/@/core";
 import * as VsBot from "./vs-bot/vs-bot.server";
 import * as VsUser from "./vs-user/vs-user.server";
 import type { Mode, ModelServer, MsgServer, MsgToServer } from "./gomoku.core";

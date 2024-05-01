@@ -2,7 +2,7 @@ import {
 	ServerCmd,
 	type ServerCtx,
 	type ServerEvent,
-} from "gamezilla-app/app/@shared/server";
+} from "gamezilla-app/app/@/server";
 import {
 	Eff,
 	Posix,
@@ -11,9 +11,9 @@ import {
 	batchMsgs,
 	pipe,
 	toMsgType,
-} from "gamezilla-app/@shared/core";
-import { LRUCache } from "gamezilla-app/@shared/least-recently-used-cache";
-import type { ServerInstance } from "gamezilla-app/@shared/server";
+} from "gamezilla-app/@/core";
+import { LRUCache } from "gamezilla-app/@/least-recently-used-cache";
+import type { ServerInstance } from "gamezilla-app/@/server";
 import { CODEBASE_VERSION_ID } from "gamezilla-app/public-config";
 import * as AuthServer from "./auth/auth.server";
 import * as LangServer from "./lang/lang.server";
@@ -24,10 +24,10 @@ import {
 	ServerTransport,
 } from "./wire/transport-server";
 import * as WireServer from "./wire/wire.server";
-import { DbConnKv, IDbConnKv } from "./@shared/server/db-conn-kv";
-import { DbConnSql, type IDbConnSql } from "./@shared/server/db-conn-sql";
-import { ILogger } from "./@shared/server/logger/logger";
-import { type ISMS, SMS } from "./@shared/server/sms";
+import { DbConnKv, IDbConnKv } from "./@/server/db-conn-kv";
+import { DbConnSql, type IDbConnSql } from "./@/server/db-conn-sql";
+import { ILogger } from "./@/server/logger/logger";
+import { type ISMS, SMS } from "./@/server/sms";
 import type {
 	ModelServer,
 	MsgServer,

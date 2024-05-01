@@ -1,7 +1,7 @@
-import { SessionId } from "gamezilla-app/app/@shared/data";
-import { IDbConnKv } from "gamezilla-app/app/@shared/server/db-conn-kv";
-import { Task, isOk } from "gamezilla-app/@shared/core";
-import { p } from "gamezilla-app/@shared/core/parser";
+import { SessionId } from "gamezilla-app/app/@/data";
+import { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
+import { Task, isOk } from "gamezilla-app/@/core";
+import { p } from "gamezilla-app/@/core/parser";
 import { Client } from "../wire.core";
 import type { IWireSessionDb } from "./wire-session-db";
 

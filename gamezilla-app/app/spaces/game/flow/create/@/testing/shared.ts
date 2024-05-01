@@ -1,0 +1,13 @@
+import type { UserId } from "gamezilla-app/app/@/data";
+import type { Posix } from "gamezilla-app/@/core";
+import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
+import { samples } from "../../../@/flow/flow-variant/flow-grid/flow-grid-samples";
+
+export const createFlowPuzzle = (createdAt: Posix, createdBy: UserId) => {
+	return FlowPuzzle.create({
+		count: 1,
+		createdAt,
+		createdBy,
+		flow: samples["5x5"]["1"],
+	});
+};

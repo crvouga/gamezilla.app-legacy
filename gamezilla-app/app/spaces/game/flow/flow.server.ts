@@ -1,10 +1,10 @@
-import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2";
+import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
 import type {
 	SpaceServerCtx,
 	SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@shared/space";
-import { Sub } from "gamezilla-app/@shared/core";
-import { SpaceServerCmd } from "../../@shared/space-server-cmd";
+} from "gamezilla-app/app/spaces/@/space";
+import { Sub } from "gamezilla-app/@/core";
+import { SpaceServerCmd } from "../../@/space-server-cmd";
 import { CreateServer } from "./create/create.server";
 import * as CreateGame from "./create/create.sync";
 import * as Play from "./play/play.core";

@@ -1,5 +1,5 @@
-import type { IDbConnKv } from "gamezilla-app/app/@shared/server/db-conn-kv";
-import type { IDbConnSql } from "gamezilla-app/app/@shared/server/db-conn-sql";
+import type { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
+import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
 import type { IWireMsgDb } from "./wire-msg-db";
 
 export type Impl =

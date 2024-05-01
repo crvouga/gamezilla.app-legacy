@@ -1,7 +1,7 @@
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import { Result } from "gamezilla-app/@shared/core";
-import type { Position } from "./@shared/battleship/position";
-import type { ShotRule } from "./@shared/battleship/shot-rule";
+import type { UserId } from "gamezilla-app/app/@/data";
+import { Result } from "gamezilla-app/@/core";
+import type { Position } from "./@/battleship/position";
+import type { ShotRule } from "./@/battleship/shot-rule";
 
 const { Err } = Result;
 

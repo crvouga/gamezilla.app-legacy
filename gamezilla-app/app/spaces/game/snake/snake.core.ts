@@ -1,7 +1,7 @@
-import { type Keyboard, Option, Result } from "gamezilla-app/@shared/core";
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import type * as Direction from "./@shared/direction";
-import * as Snake from "./@shared/snake";
+import { type Keyboard, Option, Result } from "gamezilla-app/@/core";
+import type { UserId } from "gamezilla-app/app/@/data";
+import type * as Direction from "./@/direction";
+import * as Snake from "./@/snake";
 
 //
 //

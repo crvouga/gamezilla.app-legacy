@@ -1,6 +1,6 @@
-import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@shared/core";
-import { isAnonymous } from "../@shared/client";
-import { SpaceClientCmd } from "./@shared/space-client-cmd";
+import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@/core";
+import { isAnonymous } from "../@/client";
+import { SpaceClientCmd } from "./@/space-client-cmd";
 import {
 	type Input,
 	type Output,

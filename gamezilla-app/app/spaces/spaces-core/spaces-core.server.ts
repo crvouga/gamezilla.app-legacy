@@ -1,6 +1,6 @@
-import type { SpaceId, UserId } from "gamezilla-app/app/@shared/data";
-import { Result } from "gamezilla-app/@shared/core";
-import type { EventId, WithEventId } from "../@shared/event";
+import type { SpaceId, UserId } from "gamezilla-app/app/@/data";
+import { Result } from "gamezilla-app/@/core";
+import type { EventId, WithEventId } from "../@/event";
 import * as Space from "./space";
 import type { ISpacesDb } from "./space-db/space-db";
 import type { SpaceEvent } from "./space-event";

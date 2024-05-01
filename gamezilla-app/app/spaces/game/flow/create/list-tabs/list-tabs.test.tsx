@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { andThen } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import { EventId } from "gamezilla-app/app/spaces/@shared/event";
-import { didPlaySound } from "gamezilla-app/app/@shared/client";
-import { LamportTimestamp } from "gamezilla-app/@shared/lamport-clock";
-import type { FlowClientCtx } from "../../@shared/flow-ctx";
-import { initial, testFlowClientCtx } from "../@shared/testing/client";
+import { andThen } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { EventId } from "gamezilla-app/app/spaces/@/event";
+import { didPlaySound } from "gamezilla-app/app/@/client";
+import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
+import type { FlowClientCtx } from "../../@/flow-ctx";
+import { initial, testFlowClientCtx } from "../@/testing/client";
 import { CreateClient } from "../create.client";
 import type { ModelClient } from "../create.core";
 import { initSync } from "../create.sync";

@@ -1,17 +1,17 @@
-import type { SpaceId, UserId } from "gamezilla-app/app/@shared/data";
-import { ascend, eq } from "gamezilla-app/@shared/core";
-import { p } from "gamezilla-app/@shared/core/parser";
-import { CappedOrderedDict } from "gamezilla-app/@shared/capped-ordered-dict/capped-ordered-dict";
+import type { SpaceId, UserId } from "gamezilla-app/app/@/data";
+import { ascend, eq } from "gamezilla-app/@/core";
+import { p } from "gamezilla-app/@/core/parser";
+import { CappedOrderedDict } from "gamezilla-app/@/capped-ordered-dict/capped-ordered-dict";
 import {
 	LamportClock,
 	LamportTimestamp,
-} from "gamezilla-app/@shared/lamport-clock";
+} from "gamezilla-app/@/lamport-clock";
 import {
 	EventId,
 	EventMeta,
 	type WithEventId,
 	type WithEventMeta,
-} from "../@shared/event";
+} from "../@/event";
 import { SpaceEvent } from "./space-event";
 import * as SpaceState from "./space-state";
 

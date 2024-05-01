@@ -1,9 +1,9 @@
-import { AppClientModule } from "gamezilla-app/app/@shared/architecture/app-client";
+import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
 import {
 	APP_SOUND,
 	type BaseClientCtx,
 	type ClientEvent,
-} from "gamezilla-app/app/@shared/client";
+} from "gamezilla-app/app/@/client";
 import {
 	type ClientCmd,
 	focusView,
@@ -12,7 +12,7 @@ import {
 	replaceRoute,
 	sendToServer,
 	showToast,
-} from "gamezilla-app/app/@shared/client/client-cmd";
+} from "gamezilla-app/app/@/client/client-cmd";
 import {
 	AlertError,
 	Button,
@@ -21,7 +21,7 @@ import {
 	TextField,
 	TopBar,
 	TopBarBackButton,
-} from "gamezilla-app/app/@shared/ui";
+} from "gamezilla-app/app/@/ui";
 import {
 	Err,
 	Iso3166Alpha2Code,
@@ -33,7 +33,7 @@ import {
 	TimeSpan,
 	Uuid,
 	isErr,
-} from "gamezilla-app/@shared/core";
+} from "gamezilla-app/@/core";
 import type {
 	ModelClient,
 	MsgClient,

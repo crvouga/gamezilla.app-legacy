@@ -1,5 +1,5 @@
-import type { Posix, TimeSpan } from "gamezilla-app/@shared/core";
-import type { Hash } from "gamezilla-app/@shared/hashing";
+import type { Posix, TimeSpan } from "gamezilla-app/@/core";
+import type { Hash } from "gamezilla-app/@/hashing";
 import type { VerificationAttemptId } from "./verification-attempt-id";
 import type { VerificationId } from "./verification-id";
 

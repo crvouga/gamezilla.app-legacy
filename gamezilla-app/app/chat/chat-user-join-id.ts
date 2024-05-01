@@ -1,5 +1,5 @@
-import { Uuid } from "gamezilla-app/@shared/core";
-import type { Brand } from "gamezilla-app/@shared/core/brand";
+import { Uuid } from "gamezilla-app/@/core";
+import type { Brand } from "gamezilla-app/@/core/brand";
 
 export type ChatUserJoinId = Brand<string, "ChatUserJoinId">;
 

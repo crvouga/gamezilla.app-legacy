@@ -1,10 +1,10 @@
-import { AppServerModule } from "gamezilla-app/app/@shared/architecture/app-server";
-import type { SessionId, UserId } from "gamezilla-app/app/@shared/data";
-import { ServerCmd, sendToClient } from "gamezilla-app/app/@shared/server";
-import { Eff, Sub, TimeSpan, isErr, isOk } from "gamezilla-app/@shared/core";
+import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
+import type { SessionId, UserId } from "gamezilla-app/app/@/data";
+import { ServerCmd, sendToClient } from "gamezilla-app/app/@/server";
+import { Eff, Sub, TimeSpan, isErr, isOk } from "gamezilla-app/@/core";
 import * as AuthServerSMS from "./auth-sms/auth-sms.server";
-import { AccountDb } from "./@shared/server/account-db";
-import { SessionDb } from "./@shared/server/session-db";
+import { AccountDb } from "./@/server/account-db";
+import { SessionDb } from "./@/server/session-db";
 import type { MsgToClient, ServerDeps, ServerModule } from "./auth.core";
 import { ContinueAsGuestServer } from "./continue-as-guest/continue-as-guest.server";
 

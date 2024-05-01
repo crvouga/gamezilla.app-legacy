@@ -1,12 +1,12 @@
-import type { UserId } from "gamezilla-app/app/@shared/data";
+import type { UserId } from "gamezilla-app/app/@/data";
 import {
 	type Keyboard,
 	type NonEmpty,
 	Result,
 	dissoc,
-} from "gamezilla-app/@shared/core";
-import { Maze } from "./@shared/maze";
-import { Direction, Position } from "./@shared/position";
+} from "gamezilla-app/@/core";
+import { Maze } from "./@/maze";
+import { Direction, Position } from "./@/position";
 
 const { Err, Ok } = Result;
 

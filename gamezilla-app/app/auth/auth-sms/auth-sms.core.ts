@@ -4,7 +4,7 @@ import type {
 	Posix,
 	RemoteResult,
 	Result,
-} from "gamezilla-app/@shared/core";
+} from "gamezilla-app/@/core";
 import type { VerificationId } from "./verify-sms/verification";
 import type { VerifyCodeProblem } from "./verify-sms/verify-sms";
 

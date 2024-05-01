@@ -1,4 +1,4 @@
-import type { Translations } from "gamezilla-app/@shared/l18n";
+import type { Translations } from "gamezilla-app/@/l18n";
 
 export type Text = {
 	"verify-sms.code-message": (code: string) => string;

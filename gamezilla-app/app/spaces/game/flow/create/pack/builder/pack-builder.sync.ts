@@ -1,7 +1,7 @@
-import { isErr } from "gamezilla-app/@shared/core";
-import { FlowPack } from "../../../@shared/flow-pack/flow-pack";
+import { isErr } from "gamezilla-app/@/core";
+import { FlowPack } from "../../../@/flow-pack/flow-pack";
 import type { SyncReducer } from "../../create.core";
-import { FlowVariantUIPlay } from "../../../@shared/flow";
+import { FlowVariantUIPlay } from "../../../@/flow";
 
 const userCreatedPack: SyncReducer = ({ modelSync, msgSync }) => {
 	switch (msgSync.t) {

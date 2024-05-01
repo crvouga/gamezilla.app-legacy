@@ -1,10 +1,10 @@
-import { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2";
-import { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd";
-import { Eff, Sub } from "gamezilla-app/@shared/core";
-import { FlowPackDb } from "../@shared/flow-pack/flow-pack-db";
-import { FlowPackListServer } from "../@shared/flow-pack/flow-pack-list";
-import { FlowPuzzleDb } from "../@shared/flow-puzzle/flow-puzzle-db";
-import { FlowPuzzleListServer } from "../@shared/flow-puzzle/flow-puzzle-list";
+import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
+import { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
+import { Eff, Sub } from "gamezilla-app/@/core";
+import { FlowPackDb } from "../@/flow-pack/flow-pack-db";
+import { FlowPackListServer } from "../@/flow-pack/flow-pack-list";
+import { FlowPuzzleDb } from "../@/flow-puzzle/flow-puzzle-db";
+import { FlowPuzzleListServer } from "../@/flow-puzzle/flow-puzzle-list";
 import { type ServerModule, initServer } from "./create.core";
 import { PackBuilderServer } from "./pack/builder/pack-builder.server";
 import { PackCreateServer } from "./pack/create/pack-create.server";

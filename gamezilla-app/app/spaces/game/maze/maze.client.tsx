@@ -1,11 +1,11 @@
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import {
 	ActionButton,
 	IconArrowLeftOnRect,
-} from "gamezilla-app/app/@shared/ui";
-import { Eff, Keyboard, Sub, pipe } from "gamezilla-app/@shared/core";
-import { Maze } from "./@shared/maze";
-import { Direction, type Position } from "./@shared/position";
+} from "gamezilla-app/app/@/ui";
+import { Eff, Keyboard, Sub, pipe } from "gamezilla-app/@/core";
+import { Maze } from "./@/maze";
+import { Direction, type Position } from "./@/position";
 import {
 	type Color,
 	type ModelClient,

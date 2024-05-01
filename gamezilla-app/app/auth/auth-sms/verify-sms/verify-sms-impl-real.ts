@@ -5,12 +5,12 @@ import {
 	Posix,
 	TimeSpan,
 	isErr,
-} from "gamezilla-app/@shared/core";
-import type { IHashing } from "gamezilla-app/@shared/hashing";
-import type { Translator } from "gamezilla-app/@shared/l18n/generated";
-import type { IDbConnKv } from "gamezilla-app/app/@shared/server/db-conn-kv";
-import type { ILogger } from "gamezilla-app/app/@shared/server/logger/logger";
-import type { ISMS } from "gamezilla-app/app/@shared/server/sms";
+} from "gamezilla-app/@/core";
+import type { IHashing } from "gamezilla-app/@/hashing";
+import type { Translator } from "gamezilla-app/@/l18n/generated";
+import type { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
+import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
+import type { ISMS } from "gamezilla-app/app/@/server/sms";
 import type { ICodeGenerator } from "./code-generator";
 import {
 	type Verification,

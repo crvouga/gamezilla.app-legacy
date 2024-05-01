@@ -1,7 +1,7 @@
-import { type RemoteResult, notAsked } from "gamezilla-app/@shared/core";
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import type { IFlowPuzzleDb } from "../../../@shared/flow-puzzle/flow-puzzle-db";
-import type { FlowPuzzleId } from "../../../@shared/flow-puzzle/flow-puzzle-id";
+import { type RemoteResult, notAsked } from "gamezilla-app/@/core";
+import type { UserId } from "gamezilla-app/app/@/data";
+import type { IFlowPuzzleDb } from "../../../@/flow-puzzle/flow-puzzle-db";
+import type { FlowPuzzleId } from "../../../@/flow-puzzle/flow-puzzle-id";
 
 export type ModelClient = {
 	puzzleDeleteForeverRequest: RemoteResult<string, null>;

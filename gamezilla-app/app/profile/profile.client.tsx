@@ -1,4 +1,4 @@
-import type { AppClientModule } from "gamezilla-app/app/@shared/architecture/app-client";
+import type { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
 import {
 	type AnonymousClientCtx,
 	type ClientCmd,
@@ -10,8 +10,8 @@ import {
 	pushRoute,
 	replaceRoute,
 	sendToServer,
-} from "gamezilla-app/app/@shared/client";
-import { ProfileAvatar, type UserId } from "gamezilla-app/app/@shared/data";
+} from "gamezilla-app/app/@/client";
+import { ProfileAvatar, type UserId } from "gamezilla-app/app/@/data";
 import {
 	Avatar,
 	Button,
@@ -19,8 +19,8 @@ import {
 	TextField,
 	TopBar,
 	TopBarBackButton,
-} from "gamezilla-app/app/@shared/ui";
-import { Sub, isErr, loading } from "gamezilla-app/@shared/core";
+} from "gamezilla-app/app/@/ui";
+import { Sub, isErr, loading } from "gamezilla-app/@/core";
 import { ViewProfileScreen } from "./profile-client/profile-client-view-profile-screen";
 import { ViewUpdateAvatarScreen } from "./profile-client/profile-client-view-update-avatar-screen";
 import type {

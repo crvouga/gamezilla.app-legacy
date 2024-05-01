@@ -6,10 +6,10 @@ import {
 	type Sub,
 	exhaustive,
 	isErr,
-} from "gamezilla-app/@shared/core";
-import type { ClientCtx } from "gamezilla-app/app/@shared/client";
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space";
-import { Direction } from "./@shared/direction";
+} from "gamezilla-app/@/core";
+import type { ClientCtx } from "gamezilla-app/app/@/client";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
+import { Direction } from "./@/direction";
 import {
 	type CoreModel,
 	type ModelClient,

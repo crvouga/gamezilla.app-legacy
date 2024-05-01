@@ -1,5 +1,5 @@
-import { PhoneNumber, Result } from "gamezilla-app/@shared/core";
-import { p } from "gamezilla-app/@shared/core/parser";
+import { PhoneNumber, Result } from "gamezilla-app/@/core";
+import { p } from "gamezilla-app/@/core/parser";
 
 const Route = p.or(
 	p.obj({

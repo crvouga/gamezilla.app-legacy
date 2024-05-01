@@ -1,5 +1,5 @@
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import { Err, Ok, type Result } from "gamezilla-app/@shared/core";
+import type { UserId } from "gamezilla-app/app/@/data";
+import { Err, Ok, type Result } from "gamezilla-app/@/core";
 import {
 	type Board,
 	type BotLevel,
@@ -10,8 +10,8 @@ import {
 	toBestMove,
 	toOppositeStone,
 	toTurn,
-} from "../@shared/gomoku/gomoku";
-import type { Position } from "../@shared/gomoku/gomoku-position";
+} from "../@/gomoku/gomoku";
+import type { Position } from "../@/gomoku/gomoku-position";
 
 //
 //

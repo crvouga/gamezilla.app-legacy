@@ -1,7 +1,7 @@
-import type { RemoteResult, Result } from "gamezilla-app/@shared/core";
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import type { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space";
-import type { GameMainMenu } from "../@shared/game";
+import type { RemoteResult, Result } from "gamezilla-app/@/core";
+import type { UserId } from "gamezilla-app/app/@/data";
+import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
+import type { GameMainMenu } from "../@/game";
 import type * as Puzzle from "./puzzle/puzzle.core";
 import type * as VsBot from "./vs-bot/vs-bot.core";
 import type * as VsUser from "./vs-user/vs-user.core";

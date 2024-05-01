@@ -1,8 +1,8 @@
-import { Err, NonEmpty, Ok, Result, Uuid } from "gamezilla-app/@shared/core";
-import { p } from "gamezilla-app/@shared/core/parser";
-import { UserId } from "gamezilla-app/app/@shared/data";
-import type { IDbConnSql } from "gamezilla-app/app/@shared/server/db-conn-sql";
-import { type MoveInput, uciMoveToMoveInput } from "../../@shared/chess";
+import { Err, NonEmpty, Ok, Result, Uuid } from "gamezilla-app/@/core";
+import { p } from "gamezilla-app/@/core/parser";
+import { UserId } from "gamezilla-app/app/@/data";
+import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
+import { type MoveInput, uciMoveToMoveInput } from "../../@/chess";
 import { EloRating } from "../elo-rating";
 import {
 	type Puzzle,

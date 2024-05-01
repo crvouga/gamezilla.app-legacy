@@ -1,5 +1,5 @@
-import type { Result } from "gamezilla-app/@shared/core";
-import type { UserId } from "gamezilla-app/app/@shared/data";
+import type { Result } from "gamezilla-app/@/core";
+import type { UserId } from "gamezilla-app/app/@/data";
 import type { Puzzle, PuzzleInteraction } from "../puzzle.core";
 
 export type PuzzleDb = {

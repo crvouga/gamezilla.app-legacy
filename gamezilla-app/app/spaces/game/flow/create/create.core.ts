@@ -1,21 +1,21 @@
-import type { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import type { GameServerModule } from "gamezilla-app/app/spaces/@shared/architecture/game-server-v2";
+import type { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import type { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
 import type {
 	SpaceClientEvent,
 	SpaceCtx,
 	SpaceServerCtx,
 	SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@shared/space";
-import type { SpaceClientCmd } from "gamezilla-app/app/spaces/@shared/space-client-cmd";
-import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd";
-import type { FlowClientCtx } from "../@shared/flow-ctx";
-import type { FlowPack } from "../@shared/flow-pack/flow-pack";
-import type { IFlowPackDb } from "../@shared/flow-pack/flow-pack-db";
-import { FlowPackList } from "../@shared/flow-pack/flow-pack-list";
-import type { FlowPuzzle } from "../@shared/flow-puzzle/flow-puzzle";
-import type { IFlowPuzzleDb } from "../@shared/flow-puzzle/flow-puzzle-db/flow-puzzle-db";
-import type { FlowPuzzleId } from "../@shared/flow-puzzle/flow-puzzle-id";
-import { FlowPuzzleList } from "../@shared/flow-puzzle/flow-puzzle-list";
+} from "gamezilla-app/app/spaces/@/space";
+import type { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
+import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
+import type { FlowClientCtx } from "../@/flow-ctx";
+import type { FlowPack } from "../@/flow-pack/flow-pack";
+import type { IFlowPackDb } from "../@/flow-pack/flow-pack-db";
+import { FlowPackList } from "../@/flow-pack/flow-pack-list";
+import type { FlowPuzzle } from "../@/flow-puzzle/flow-puzzle";
+import type { IFlowPuzzleDb } from "../@/flow-puzzle/flow-puzzle-db/flow-puzzle-db";
+import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
+import { FlowPuzzleList } from "../@/flow-puzzle/flow-puzzle-list";
 import type { ListTabs } from "./list-tabs";
 import { Pack } from "./pack";
 import type { PackBuilder } from "./pack/builder";
@@ -25,7 +25,7 @@ import { PuzzleDeleteForever } from "./puzzle/delete-forever";
 import { PuzzleEditName } from "./puzzle/edit";
 import { PuzzleList } from "./puzzle/list";
 import type { PuzzleSaveChanges } from "./puzzle/save-changes";
-import { p } from "gamezilla-app/@shared/core/parser";
+import { p } from "gamezilla-app/@/core/parser";
 
 //
 //

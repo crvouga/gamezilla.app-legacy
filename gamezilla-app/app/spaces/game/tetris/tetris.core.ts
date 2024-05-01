@@ -1,8 +1,8 @@
-import { type Keyboard, type Option, Result } from "gamezilla-app/@shared/core";
-import * as Board from "./@shared/board";
-import * as Direction from "./@shared/direction";
-import * as Piece from "./@shared/piece";
-import * as Position from "./@shared/position";
+import { type Keyboard, type Option, Result } from "gamezilla-app/@/core";
+import * as Board from "./@/board";
+import * as Direction from "./@/direction";
+import * as Piece from "./@/piece";
+import * as Position from "./@/position";
 
 const { Err, Ok } = Result;
 

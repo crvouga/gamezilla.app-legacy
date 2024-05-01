@@ -1,7 +1,7 @@
-import type { Eff } from "gamezilla-app/@shared/core";
-import type { VDom } from "gamezilla-app/@shared/vdom";
-import { Drawer } from "../@shared/ui";
-import type { StatusBarCmd } from "../@shared/client";
+import type { Eff } from "gamezilla-app/@/core";
+import type { VDom } from "gamezilla-app/@/vdom";
+import { Drawer } from "../@/ui";
+import type { StatusBarCmd } from "../@/client";
 
 export type Model = {
 	isDrawerOpen: boolean;

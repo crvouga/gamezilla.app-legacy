@@ -1,16 +1,16 @@
-import { RequestResponse, isErr } from "gamezilla-app/@shared/core";
-import { sendToServer } from "gamezilla-app/app/@shared/client";
+import { RequestResponse, isErr } from "gamezilla-app/@/core";
+import { sendToServer } from "gamezilla-app/app/@/client";
 import {
 	IconDeleteForever,
 	ListItemButton,
-} from "gamezilla-app/app/@shared/ui";
+} from "gamezilla-app/app/@/ui";
 import {
 	type GameClientModule,
 	andThen,
-} from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import type { SpaceClientEvent } from "gamezilla-app/app/spaces/@shared/space";
-import type { FlowClientCmd } from "../../../@shared/flow-ctx";
-import { FlowPack } from "../../../@shared/flow-pack";
+} from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import type { SpaceClientEvent } from "gamezilla-app/app/spaces/@/space";
+import type { FlowClientCmd } from "../../../@/flow-ctx";
+import { FlowPack } from "../../../@/flow-pack";
 import type {
 	ModelClient,
 	ModelSync,

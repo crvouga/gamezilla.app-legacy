@@ -1,6 +1,6 @@
-import { Result } from "gamezilla-app/@shared/core";
-import { p } from "gamezilla-app/@shared/core/parser";
-import type { IDbConnSql } from "gamezilla-app/app/@shared/server/db-conn-sql";
+import { Result } from "gamezilla-app/@/core";
+import { p } from "gamezilla-app/@/core/parser";
+import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
 import { PuzzleDb, type PuzzleRow } from "../puzzle-db/puzzle-db-impl";
 
 //

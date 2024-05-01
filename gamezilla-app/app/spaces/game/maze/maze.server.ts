@@ -1,5 +1,5 @@
-import { Eff, Sub, Time } from "gamezilla-app/@shared/core";
-import { TimeSpan } from "gamezilla-app/@shared/core/time-span";
+import { Eff, Sub, Time } from "gamezilla-app/@/core";
+import { TimeSpan } from "gamezilla-app/@/core/time-span";
 import {
 	type ModelServer,
 	type MsgServer,

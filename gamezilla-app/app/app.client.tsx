@@ -6,10 +6,10 @@ import {
 	batchMsgs,
 	eq,
 	toMsgType,
-} from "gamezilla-app/@shared/core";
-import { LanguageCodeISO_639_1 } from "gamezilla-app/@shared/l18n";
-import type { Route } from "gamezilla-app/@shared/routing/generated/routes";
-import type { VDom } from "gamezilla-app/@shared/vdom";
+} from "gamezilla-app/@/core";
+import { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
+import type { Route } from "gamezilla-app/@/routing/generated/routes";
+import type { VDom } from "gamezilla-app/@/vdom";
 import {
 	APP_SOUND,
 	type AnonymousClientCtx,
@@ -18,21 +18,21 @@ import {
 	type ClientEvent,
 	isAnonymous,
 	preloadSound,
-} from "gamezilla-app/app/@shared/client";
+} from "gamezilla-app/app/@/client";
 import {
 	IconGamepad,
 	IconUserCircle,
 	LoadingState,
 	Portal,
 	cn,
-} from "gamezilla-app/app/@shared/ui";
+} from "gamezilla-app/app/@/ui";
 import {
 	CODEBASE_VERSION_ID,
 	SERVER_IMPL,
 	SERVER_URL,
 } from "gamezilla-app/public-config";
-import { getTranslator } from "./@shared/client/translator";
-import { IntersectionObserverEmitter } from "./@shared/ui/intersection-observer";
+import { getTranslator } from "./@/client/translator";
+import { IntersectionObserverEmitter } from "./@/ui/intersection-observer";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import type {
 	ModelClient,

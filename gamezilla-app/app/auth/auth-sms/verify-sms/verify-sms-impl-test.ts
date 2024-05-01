@@ -1,6 +1,6 @@
-import type { ILogger } from "gamezilla-app/app/@shared/server/logger/logger";
-import { Err, Ok, PhoneNumber } from "gamezilla-app/@shared/core";
-import type { Hash, IHashing } from "gamezilla-app/@shared/hashing";
+import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
+import { Err, Ok, PhoneNumber } from "gamezilla-app/@/core";
+import type { Hash, IHashing } from "gamezilla-app/@/hashing";
 import { VerificationId } from "./verification";
 import type { IVerifySMS } from "./verify-sms";
 

@@ -1,7 +1,7 @@
-import { Err, isErr, Ok, type Result } from "gamezilla-app/@shared/core";
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import type { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space";
-import type { VsBotSetup } from "gamezilla-app/app/spaces/game/@shared/vs-bot";
+import { Err, isErr, Ok, type Result } from "gamezilla-app/@/core";
+import type { UserId } from "gamezilla-app/app/@/data";
+import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
+import type { VsBotSetup } from "gamezilla-app/app/spaces/game/@/vs-bot";
 import {
 	type BotLevel,
 	emptyBoard,
@@ -11,7 +11,7 @@ import {
 	type Position,
 	toOpposite,
 	toStatus,
-} from "../@shared/tic-tic-toe/tic-tac-toe";
+} from "../@/tic-tic-toe/tic-tac-toe";
 
 //
 //

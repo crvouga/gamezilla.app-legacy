@@ -1,4 +1,4 @@
-import { addProfiles, sendToServer } from "gamezilla-app/app/@shared/client";
+import { addProfiles, sendToServer } from "gamezilla-app/app/@/client";
 import { SpaceClientModule } from "../architecture/architecture";
 import { Space, Spaces } from "../spaces-core";
 

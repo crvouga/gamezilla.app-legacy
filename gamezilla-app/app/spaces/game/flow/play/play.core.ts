@@ -1,8 +1,8 @@
-import type { GameCore } from "gamezilla-app/app/spaces/@shared/architecture/game-core";
-import type { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space";
-import { type FlowVariant, FlowVariantUIPlay } from "../@shared/flow";
-import { samples } from "../@shared/flow/flow-variant/flow-grid/flow-grid-samples";
-import { p } from "gamezilla-app/@shared/core/parser";
+import type { GameCore } from "gamezilla-app/app/spaces/@/architecture/game-core";
+import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
+import { type FlowVariant, FlowVariantUIPlay } from "../@/flow";
+import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
+import { p } from "gamezilla-app/@/core/parser";
 
 //
 //

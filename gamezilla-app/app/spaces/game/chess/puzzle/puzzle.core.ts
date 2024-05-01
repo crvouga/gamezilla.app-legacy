@@ -5,10 +5,10 @@ import {
 	type Posix,
 	type RemoteResult,
 	type Result,
-} from "gamezilla-app/@shared/core";
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import type { SpaceCtx } from "gamezilla-app/app/spaces/@shared/space";
-import { Chess } from "../@shared/chess";
+} from "gamezilla-app/@/core";
+import type { UserId } from "gamezilla-app/app/@/data";
+import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
+import { Chess } from "../@/chess";
 import { EloRating } from "./elo-rating";
 import { zip } from "./utils";
 

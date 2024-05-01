@@ -1,14 +1,14 @@
 import { describe, expect, it } from "bun:test";
-import { Posix } from "gamezilla-app/@shared/core";
-import { AppServerModule } from "gamezilla-app/app/@shared/architecture/app-server";
-import { ClientId, SessionId } from "gamezilla-app/app/@shared/data";
-import type { ServerCtx } from "gamezilla-app/app/@shared/server";
-import { DbConnKvHashMap } from "gamezilla-app/app/@shared/server/db-conn-kv/db-conn-kv-impl-hash-map";
-import { dbConnSqlNoop } from "gamezilla-app/app/@shared/server/db-conn-sql";
-import { Logger } from "gamezilla-app/app/@shared/server/logger/logger-impl";
-import { smsNoop } from "gamezilla-app/app/@shared/server/sms";
-import { AccountDb } from "../@shared/server/account-db";
-import { SessionDb } from "../@shared/server/session-db";
+import { Posix } from "gamezilla-app/@/core";
+import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
+import { ClientId, SessionId } from "gamezilla-app/app/@/data";
+import type { ServerCtx } from "gamezilla-app/app/@/server";
+import { DbConnKvHashMap } from "gamezilla-app/app/@/server/db-conn-kv/db-conn-kv-impl-hash-map";
+import { dbConnSqlNoop } from "gamezilla-app/app/@/server/db-conn-sql";
+import { Logger } from "gamezilla-app/app/@/server/logger/logger-impl";
+import { smsNoop } from "gamezilla-app/app/@/server/sms";
+import { AccountDb } from "../@/server/account-db";
+import { SessionDb } from "../@/server/session-db";
 import type { ServerDeps, ServerModule } from "../auth.core";
 import * as AuthServer from "../auth.server";
 

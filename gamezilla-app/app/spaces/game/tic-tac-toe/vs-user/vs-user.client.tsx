@@ -1,11 +1,11 @@
-import { type ClientCmd, sendToServer } from "gamezilla-app/app/@shared/client";
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space";
-import { VsUserSetupScreen } from "gamezilla-app/app/spaces/game/@shared/vs-user";
-import { toTurn } from "../@shared/tic-tic-toe/tic-tac-toe";
+import { type ClientCmd, sendToServer } from "gamezilla-app/app/@/client";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
+import { VsUserSetupScreen } from "gamezilla-app/app/spaces/game/@/vs-user";
+import { toTurn } from "../@/tic-tic-toe/tic-tac-toe";
 import {
 	CoverArt,
 	PlayerTypeIcon,
-} from "../@shared/tic-tic-toe/tic-tac-toe-ui";
+} from "../@/tic-tic-toe/tic-tac-toe-ui";
 import * as Round from "./vs-user-round";
 import {
 	type ModelClient,

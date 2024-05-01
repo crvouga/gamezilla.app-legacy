@@ -1,14 +1,14 @@
-import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import { withId } from "gamezilla-app/app/spaces/@shared/event";
-import type { SpaceClientEvent } from "gamezilla-app/app/spaces/@shared/space";
-import type { ClientCmd } from "gamezilla-app/app/@shared/client";
-import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@shared/ui";
-import { Sub } from "gamezilla-app/@shared/core";
-import { GameLayout } from "../../@shared/game";
-import { FlowVariantUIPlay } from "../@shared/flow";
-import type { FlowClientCtx } from "../@shared/flow-ctx";
-import { samples } from "../@shared/flow/flow-variant/flow-grid/flow-grid-samples";
-import { ViewProfileCard } from "../@shared/ui";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { withId } from "gamezilla-app/app/spaces/@/event";
+import type { SpaceClientEvent } from "gamezilla-app/app/spaces/@/space";
+import type { ClientCmd } from "gamezilla-app/app/@/client";
+import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@/ui";
+import { Sub } from "gamezilla-app/@/core";
+import { GameLayout } from "../../@/game";
+import { FlowVariantUIPlay } from "../@/flow";
+import type { FlowClientCtx } from "../@/flow-ctx";
+import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
+import { ViewProfileCard } from "../@/ui";
 import type {
 	ModelClient,
 	ModelSync,

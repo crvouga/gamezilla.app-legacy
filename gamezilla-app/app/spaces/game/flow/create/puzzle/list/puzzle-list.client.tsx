@@ -1,7 +1,7 @@
-import { APP_SOUND, playSound } from "gamezilla-app/app/@shared/client";
-import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import { withId } from "gamezilla-app/app/spaces/@shared/event";
-import { FlowPuzzleListClient } from "../../../@shared/flow-puzzle/flow-puzzle-list";
+import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { withId } from "gamezilla-app/app/spaces/@/event";
+import { FlowPuzzleListClient } from "../../../@/flow-puzzle/flow-puzzle-list";
 import type { ClientModule } from "../../create.core";
 import { PuzzleCreateClient } from "../create/puzzle-create.client";
 

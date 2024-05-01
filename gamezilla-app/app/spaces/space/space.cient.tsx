@@ -1,8 +1,8 @@
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space";
-import type { ClientCtx } from "gamezilla-app/app/@shared/client";
-import type { SpaceId } from "gamezilla-app/app/@shared/data";
-import { Button, IconHome, IconUserGroup } from "gamezilla-app/app/@shared/ui";
-import type { VDom } from "gamezilla-app/@shared/vdom";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
+import type { ClientCtx } from "gamezilla-app/app/@/client";
+import type { SpaceId } from "gamezilla-app/app/@/data";
+import { Button, IconHome, IconUserGroup } from "gamezilla-app/app/@/ui";
+import type { VDom } from "gamezilla-app/@/vdom";
 import type { SpaceClientModule } from "../architecture/architecture";
 import { EndSpaceClient } from "../end-space/end-space.client";
 import { Feed } from "../feed/feed";

@@ -1,10 +1,10 @@
-import type { UserId } from "gamezilla-app/app/@shared/data";
+import type { UserId } from "gamezilla-app/app/@/data";
 import {
 	Err,
 	type NonEmpty,
 	Ok,
 	type Result,
-} from "gamezilla-app/@shared/core";
+} from "gamezilla-app/@/core";
 import {
 	type Board,
 	type MoveProblem,
@@ -14,8 +14,8 @@ import {
 	move,
 	toOppositeStone,
 	toStatus,
-} from "../@shared/gomoku/gomoku";
-import type { Position } from "../@shared/gomoku/gomoku-position";
+} from "../@/gomoku/gomoku";
+import type { Position } from "../@/gomoku/gomoku-position";
 
 //
 //

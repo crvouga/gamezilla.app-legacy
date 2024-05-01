@@ -2,10 +2,10 @@ import {
 	type ClientCmd,
 	type ClientEvent,
 	sendToServer,
-} from "gamezilla-app/app/@shared/client";
-import { IconMagnifyingGlass, IconXMark } from "gamezilla-app/app/@shared/ui";
-import { Browser, Eff, matchSort, pipe } from "gamezilla-app/@shared/core";
-import type { VDom } from "gamezilla-app/@shared/vdom";
+} from "gamezilla-app/app/@/client";
+import { IconMagnifyingGlass, IconXMark } from "gamezilla-app/app/@/ui";
+import { Browser, Eff, matchSort, pipe } from "gamezilla-app/@/core";
+import type { VDom } from "gamezilla-app/@/vdom";
 import type {
 	ModelClient,
 	MsgClient,

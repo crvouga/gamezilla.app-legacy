@@ -6,15 +6,15 @@ import {
 	isRequesting,
 	isResponseErr,
 	isResponseOk,
-} from "gamezilla-app/@shared/core";
-import { andThen } from "gamezilla-app/app/@shared/architecture/app-client";
+} from "gamezilla-app/@/core";
+import { andThen } from "gamezilla-app/app/@/architecture/app-client";
 import {
 	type AnonymousClientCtx,
 	didPlaySound,
 	didSendToServer,
-} from "gamezilla-app/app/@shared/client";
-import { getTranslator } from "gamezilla-app/app/@shared/client/translator";
-import { UserId } from "gamezilla-app/app/@shared/data";
+} from "gamezilla-app/app/@/client";
+import { getTranslator } from "gamezilla-app/app/@/client/translator";
+import { UserId } from "gamezilla-app/app/@/data";
 import * as AuthClient from "../auth.client";
 import type { ModelClient } from "../auth.core";
 

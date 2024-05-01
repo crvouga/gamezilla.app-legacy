@@ -1,12 +1,12 @@
-import { Eff, andThen, isErr, pipe } from "gamezilla-app/@shared/core";
-import type { VDomChildren } from "gamezilla-app/@shared/vdom";
+import { Eff, andThen, isErr, pipe } from "gamezilla-app/@/core";
+import type { VDomChildren } from "gamezilla-app/@/vdom";
 import {
 	APP_SOUND,
 	type ClientCmd,
 	playSound,
 	sendToServer,
 	showToast,
-} from "gamezilla-app/app/@shared/client";
+} from "gamezilla-app/app/@/client";
 import {
 	Avatar,
 	IconArrowCircle,
@@ -18,17 +18,17 @@ import {
 	IconXMark,
 	Spinner,
 	cn,
-} from "gamezilla-app/app/@shared/ui";
-import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space";
+} from "gamezilla-app/app/@/ui";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import {
 	GameLayout,
 	ViewBottomButtonBar,
 	ViewBottomButtonBarAction,
-} from "gamezilla-app/app/spaces/game/@shared/game";
-import { Chess } from "../@shared/chess";
-import { Chessboard } from "../@shared/chess-ui/chessboard";
-import { CHESS_SOUND } from "../@shared/chess/chess-sounds";
+} from "gamezilla-app/app/spaces/game/@/game";
+import { Chess } from "../@/chess";
+import { Chessboard } from "../@/chess-ui/chessboard";
+import { CHESS_SOUND } from "../@/chess/chess-sounds";
 import {
 	type CoreModel,
 	type ModelClient,

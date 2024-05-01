@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { andThen } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import type { FlowClientCtx } from "../../../@shared/flow-ctx";
-import { FlowPack } from "../../../@shared/flow-pack/flow-pack";
-import { deriveModelSync } from "../../@shared/testing/game";
+import { andThen } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import type { FlowClientCtx } from "../../../@/flow-ctx";
+import { FlowPack } from "../../../@/flow-pack/flow-pack";
+import { deriveModelSync } from "../../@/testing/game";
 import type { ModelClient } from "../../create.core";
 import { PackBuilderClient } from "./pack-builder.client";
 import {
@@ -16,7 +16,7 @@ import {
 	initial,
 	serverCreatedPack,
 	testFlowClientCtx,
-} from "../../@shared/testing/client";
+} from "../../@/testing/client";
 import { initSync } from "../../create.sync";
 
 const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {

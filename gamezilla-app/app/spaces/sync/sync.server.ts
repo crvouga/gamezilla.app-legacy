@@ -2,8 +2,8 @@ import {
 	broadcast,
 	sendToClient,
 	sendToUser,
-} from "gamezilla-app/app/@shared/server";
-import { Result, isErr } from "gamezilla-app/@shared/core";
+} from "gamezilla-app/app/@/server";
+import { Result, isErr } from "gamezilla-app/@/core";
 import { SpaceServerModule } from "../architecture/space-server";
 import { SpaceState } from "../spaces-core";
 import * as Space from "../spaces-core/space";

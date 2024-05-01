@@ -1,6 +1,6 @@
-import { type ClientId, SessionId } from "gamezilla-app/app/@shared/data";
-import type { ILogger } from "gamezilla-app/app/@shared/server/logger/logger";
-import type { ServerNode } from "gamezilla-app/@shared/server/server-impl-node/server-impl-node";
+import { type ClientId, SessionId } from "gamezilla-app/app/@/data";
+import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
+import type { ServerNode } from "gamezilla-app/@/server/server-impl-node/server-impl-node";
 import { Server } from "socket.io";
 import type {
 	MsgClientToMsgServer,

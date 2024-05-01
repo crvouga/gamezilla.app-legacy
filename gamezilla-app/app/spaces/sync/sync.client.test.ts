@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
-import { andThen } from "gamezilla-app/app/@shared/architecture/app-client";
-import { addProfiles } from "gamezilla-app/app/@shared/client";
+import { andThen } from "gamezilla-app/app/@/architecture/app-client";
+import { addProfiles } from "gamezilla-app/app/@/client";
 import {
 	type Profile,
 	SpaceId,
 	UserId,
 	Username,
-} from "gamezilla-app/app/@shared/data";
-import { eq } from "gamezilla-app/@shared/core";
+} from "gamezilla-app/app/@/data";
+import { eq } from "gamezilla-app/@/core";
 import {
 	Ctx,
 	clickedJoinSpaceButton,
@@ -19,8 +19,8 @@ import {
 	serverConnected,
 	userEndedSpace,
 	userStartedSpace,
-} from "../@shared/testing/client";
-import { makeSpace } from "../@shared/testing/shared";
+} from "../@/testing/client";
+import { makeSpace } from "../@/testing/shared";
 import { Space, Spaces } from "../spaces-core";
 
 const hasExcatlyOne = <T>(

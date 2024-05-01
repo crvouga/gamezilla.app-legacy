@@ -1,11 +1,11 @@
-import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import { withId } from "gamezilla-app/app/spaces/@shared/event";
-import { SpaceClientCmd } from "gamezilla-app/app/spaces/@shared/space-client-cmd";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { withId } from "gamezilla-app/app/spaces/@/event";
+import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
 import {
 	APP_SOUND,
 	playSound,
 	showToast,
-} from "gamezilla-app/app/@shared/client";
+} from "gamezilla-app/app/@/client";
 import {
 	Button,
 	Drawer,
@@ -13,18 +13,18 @@ import {
 	IconChevronLeft,
 	IconChevronRight,
 	IconEllipsisVertical,
-} from "gamezilla-app/app/@shared/ui";
+} from "gamezilla-app/app/@/ui";
 
-import { Eff, Sub } from "gamezilla-app/@shared/core";
+import { Eff, Sub } from "gamezilla-app/@/core";
 import {
 	ViewBottomButtonBar,
 	ViewBottomButtonBarAction,
-} from "../../../../@shared/game";
-import { FlowVariantUIPlay } from "../../../@shared/flow";
+} from "../../../../@/game";
+import { FlowVariantUIPlay } from "../../../@/flow";
 
-import { FlowPackPuzzleGridUI } from "../../../@shared/flow-pack/flow-pack-puzzle-grid/flow-pack-puzzle-grid-ui";
-import { FlowPackPuzzleGridClient } from "../../../@shared/flow-pack/flow-pack-puzzle-grid/flow-pack-puzzle-grid.client";
-import { FlowPuzzleListClient } from "../../../@shared/flow-puzzle/flow-puzzle-list";
+import { FlowPackPuzzleGridUI } from "../../../@/flow-pack/flow-pack-puzzle-grid/flow-pack-puzzle-grid-ui";
+import { FlowPackPuzzleGridClient } from "../../../@/flow-pack/flow-pack-puzzle-grid/flow-pack-puzzle-grid.client";
+import { FlowPuzzleListClient } from "../../../@/flow-puzzle/flow-puzzle-list";
 import type { ClientModule } from "../../create.core";
 import { RemovePuzzleClient } from "../remove-puzzle/remove-puzzle.client";
 

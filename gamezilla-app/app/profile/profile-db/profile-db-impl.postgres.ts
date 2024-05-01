@@ -2,10 +2,10 @@ import {
 	ProfileAvatar,
 	UserId,
 	Username,
-} from "gamezilla-app/app/@shared/data";
-import type { IDbConnSql } from "gamezilla-app/app/@shared/server/db-conn-sql";
-import { Err, Ok, Result, isErr } from "gamezilla-app/@shared/core";
-import { p } from "gamezilla-app/@shared/core/parser";
+} from "gamezilla-app/app/@/data";
+import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
+import { Err, Ok, Result, isErr } from "gamezilla-app/@/core";
+import { p } from "gamezilla-app/@/core/parser";
 import type { ProfileCore } from "../profile.core";
 import type { ProfileDb } from "./profile-db";
 

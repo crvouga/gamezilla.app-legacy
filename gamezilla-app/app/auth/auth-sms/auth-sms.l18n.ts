@@ -1,4 +1,4 @@
-import type { Translations } from "gamezilla-app/@shared/l18n";
+import type { Translations } from "gamezilla-app/@/l18n";
 
 export type Text = {
 	"auth-sms.phone-number": string;

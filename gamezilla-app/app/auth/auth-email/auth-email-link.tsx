@@ -3,8 +3,8 @@ import {
 	type Result,
 	exhaustive,
 	isErr,
-} from "gamezilla-app/@shared/core";
-import type { RouteCmd } from "gamezilla-app/app/@shared/client";
+} from "gamezilla-app/@/core";
+import type { RouteCmd } from "gamezilla-app/app/@/client";
 import {
 	AlertError,
 	AlertSuccess,
@@ -12,7 +12,7 @@ import {
 	TextField,
 	TopBar,
 	TopBarBackButton,
-} from "gamezilla-app/app/@shared/ui";
+} from "gamezilla-app/app/@/ui";
 
 //
 //

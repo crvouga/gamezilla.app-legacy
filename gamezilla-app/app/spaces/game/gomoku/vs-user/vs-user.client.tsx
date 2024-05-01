@@ -1,5 +1,5 @@
-import type { ClientCtx } from "gamezilla-app/app/@shared/client";
-import { Eff, Sub } from "gamezilla-app/@shared/core";
+import type { ClientCtx } from "gamezilla-app/app/@/client";
+import { Eff, Sub } from "gamezilla-app/@/core";
 import {
 	type ModelClient,
 	type MsgClient,

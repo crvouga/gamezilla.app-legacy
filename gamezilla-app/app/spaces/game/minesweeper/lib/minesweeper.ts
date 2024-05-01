@@ -4,7 +4,7 @@ import {
 	Random,
 	Set,
 	pipe,
-} from "gamezilla-app/@shared/core";
+} from "gamezilla-app/@/core";
 import { Position } from "./position";
 
 export type Model = {

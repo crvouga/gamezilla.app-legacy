@@ -1,16 +1,16 @@
-import { Sub, Time, isErr } from "gamezilla-app/@shared/core";
-import { TimeSpan } from "gamezilla-app/@shared/core/time-span";
-import { sendBack } from "gamezilla-app/app/@shared/server";
+import { Sub, Time, isErr } from "gamezilla-app/@/core";
+import { TimeSpan } from "gamezilla-app/@/core/time-span";
+import { sendBack } from "gamezilla-app/app/@/server";
 import type {
 	SpaceReqCtx,
 	SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@shared/space";
-import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@shared/space-server-cmd";
+} from "gamezilla-app/app/spaces/@/space";
+import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 import {
 	type PlayerType,
 	toOpposite,
 	toTurn,
-} from "../@shared/tic-tic-toe/tic-tac-toe";
+} from "../@/tic-tic-toe/tic-tac-toe";
 import * as Round from "./vs-user-round";
 import {
 	type ModelServer,

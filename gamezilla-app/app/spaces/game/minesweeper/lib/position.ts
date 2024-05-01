@@ -1,4 +1,4 @@
-import { Set, List, NonNegInt } from "gamezilla-app/@shared/core";
+import { Set, List, NonNegInt } from "gamezilla-app/@/core";
 
 export type Position = {
 	x: NonNegInt;

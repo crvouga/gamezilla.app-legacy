@@ -1,8 +1,8 @@
-import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import { SpaceClientCmd } from "gamezilla-app/app/spaces/@shared/space-client-cmd";
-import { Eff, Sub } from "gamezilla-app/@shared/core";
-import { FlowPackListClient } from "../@shared/flow-pack/flow-pack-list";
-import { FlowPuzzleListClient } from "../@shared/flow-puzzle/flow-puzzle-list";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
+import { Eff, Sub } from "gamezilla-app/@/core";
+import { FlowPackListClient } from "../@/flow-pack/flow-pack-list";
+import { FlowPuzzleListClient } from "../@/flow-puzzle/flow-puzzle-list";
 import { type ClientModule, initClient } from "./create.core";
 import { ListTabsClient } from "./list-tabs/list-tabs";
 import { PackBuilderClient } from "./pack/builder/pack-builder.client";

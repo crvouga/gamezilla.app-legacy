@@ -1,17 +1,17 @@
-import type { RemoteResult, TimeSpan } from "gamezilla-app/@shared/core";
-import type { AppClientModule } from "../@shared/architecture/app-client";
-import type { AppServerModule } from "../@shared/architecture/app-server";
+import type { RemoteResult, TimeSpan } from "gamezilla-app/@/core";
+import type { AppClientModule } from "../@/architecture/app-client";
+import type { AppServerModule } from "../@/architecture/app-server";
 import type {
 	AnonymousClientCtx,
 	AuthCmd,
 	ClientCmd,
 	ClientCtx,
 	ClientEvent,
-} from "../@shared/client";
-import type { UserAccount } from "../@shared/data/account";
-import type { ServerCmd, ServerCtx, ServerEvent } from "../@shared/server";
-import type { IAccountDb } from "./@shared/server/account-db";
-import type { ISessionDb } from "./@shared/server/session-db";
+} from "../@/client";
+import type { UserAccount } from "../@/data/account";
+import type { ServerCmd, ServerCtx, ServerEvent } from "../@/server";
+import type { IAccountDb } from "./@/server/account-db";
+import type { ISessionDb } from "./@/server/session-db";
 import type * as AuthSMS from "./auth-sms/auth-sms.core";
 import type { ContinueAsGuest } from "./continue-as-guest";
 import type { Logout } from "./logout";

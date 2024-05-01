@@ -1,16 +1,16 @@
-import { RemoteResult, isLoading } from "gamezilla-app/@shared/core";
+import { RemoteResult, isLoading } from "gamezilla-app/@/core";
 import {
 	APP_SOUND,
 	playSound,
 	sendToServer,
 	showCreatedSm,
-} from "gamezilla-app/app/@shared/client";
+} from "gamezilla-app/app/@/client";
 import {
 	ConfirmationDrawer,
 	IconDeleteForever,
 	ListItemButton,
-} from "gamezilla-app/app/@shared/ui";
-import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
+} from "gamezilla-app/app/@/ui";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import type { ClientModule } from "../../create.core";
 
 const update: ClientModule["update"] = (input) => {

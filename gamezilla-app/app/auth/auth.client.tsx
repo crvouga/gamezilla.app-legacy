@@ -1,4 +1,4 @@
-import { AppClientModule } from "gamezilla-app/app/@shared/architecture/app-client";
+import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
 import {
 	APP_SOUND,
 	type BaseClientCtx,
@@ -7,9 +7,9 @@ import {
 	pushRoute,
 	replaceRoute,
 	showToast,
-} from "gamezilla-app/app/@shared/client";
-import { Button, IconMobilePhone } from "gamezilla-app/app/@shared/ui";
-import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@shared/core";
+} from "gamezilla-app/app/@/client";
+import { Button, IconMobilePhone } from "gamezilla-app/app/@/ui";
+import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@/core";
 import * as AuthClientSMS from "./auth-sms/auth-sms.client";
 import type { ClientModule, ModelClient, MsgClient } from "./auth.core";
 import { ContinueAsGuestClient } from "./continue-as-guest/continue-as-guest.client";

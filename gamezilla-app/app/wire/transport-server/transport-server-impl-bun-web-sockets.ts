@@ -1,6 +1,6 @@
 import type { Server, ServerWebSocket, WebSocketHandler } from "bun";
-import { ClientId, SessionId } from "gamezilla-app/app/@shared/data";
-import type { ServerBun } from "gamezilla-app/@shared/server/server-impl-bun/server-impl-bun";
+import { ClientId, SessionId } from "gamezilla-app/app/@/data";
+import type { ServerBun } from "gamezilla-app/@/server/server-impl-bun/server-impl-bun";
 import type {
 	MsgClientToMsgServer,
 	MsgServerToMsgClient,

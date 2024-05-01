@@ -1,14 +1,14 @@
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space";
-import type { UserId } from "gamezilla-app/app/@shared/data";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
+import type { UserId } from "gamezilla-app/app/@/data";
 import {
 	type Posix,
 	RequestResponse,
 	type Result,
-} from "gamezilla-app/@shared/core";
-import type { FlowPack } from "../../../@shared/flow-pack";
-import type { FlowPuzzle } from "../../../@shared/flow-puzzle";
-import type { FlowPuzzleId } from "../../../@shared/flow-puzzle/flow-puzzle-id";
-import type { FlowPackId } from "../../../@shared/flow-pack/flow-pack-id";
+} from "gamezilla-app/@/core";
+import type { FlowPack } from "../../../@/flow-pack";
+import type { FlowPuzzle } from "../../../@/flow-puzzle";
+import type { FlowPuzzleId } from "../../../@/flow-puzzle/flow-puzzle-id";
+import type { FlowPackId } from "../../../@/flow-pack/flow-pack-id";
 
 //
 //

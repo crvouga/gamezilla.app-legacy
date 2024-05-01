@@ -1,5 +1,5 @@
-import type { EventMeta } from "gamezilla-app/app/spaces/@shared/event";
-import type { SpaceCtx } from "../@shared/space";
+import type { EventMeta } from "gamezilla-app/app/spaces/@/event";
+import type { SpaceCtx } from "../@/space";
 import * as ConnectFour from "./connect-four/connect-four.core";
 import * as Flow from "./flow/flow.sync";
 import type { GameName, ModelSync, MsgSync } from "./game.core";

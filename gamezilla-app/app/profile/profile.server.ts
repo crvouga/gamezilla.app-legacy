@@ -3,15 +3,15 @@ import {
 	ProfileAvatar,
 	type UserId,
 	Username,
-} from "gamezilla-app/app/@shared/data";
+} from "gamezilla-app/app/@/data";
 import {
 	type ServerCmd,
 	type ServerCtx,
 	type ServerEvent,
 	sendToClient,
-} from "gamezilla-app/app/@shared/server";
-import { Err, Ok, Result, isErr } from "gamezilla-app/@shared/core";
-import type { AppServerModule } from "../@shared/architecture/app-server";
+} from "gamezilla-app/app/@/server";
+import { Err, Ok, Result, isErr } from "gamezilla-app/@/core";
+import type { AppServerModule } from "../@/architecture/app-server";
 import type { ProfileDb } from "./profile-db/profile-db";
 import { createProfileDb } from "./profile-db/profile-db-impl.postgres";
 import {

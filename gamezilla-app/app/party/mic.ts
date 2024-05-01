@@ -1,4 +1,4 @@
-import { Err, type IO, Ok, type Result } from "gamezilla-app/@shared/core";
+import { Err, type IO, Ok, type Result } from "gamezilla-app/@/core";
 
 export type MicLoadResult = Result<string, null>;
 

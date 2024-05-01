@@ -1,4 +1,4 @@
-import type { Eff } from "gamezilla-app/@shared/core";
+import type { Eff } from "gamezilla-app/@/core";
 import type { ModelServer, MsgServer, MsgToServer } from "./search.core";
 
 type Model = ModelServer;

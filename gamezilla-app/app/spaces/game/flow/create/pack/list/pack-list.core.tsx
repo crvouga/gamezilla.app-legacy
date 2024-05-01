@@ -1,4 +1,4 @@
-import type { FlowPack } from "../../../@shared/flow-pack/flow-pack";
+import type { FlowPack } from "../../../@/flow-pack/flow-pack";
 
 export type ModelClient = {};
 

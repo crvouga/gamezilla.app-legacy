@@ -1,12 +1,12 @@
-import { AppServerModule } from "gamezilla-app/app/@shared/architecture/app-server";
-import { UserId } from "gamezilla-app/app/@shared/data";
-import type { UserAccount } from "gamezilla-app/app/@shared/data/account";
+import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
+import { UserId } from "gamezilla-app/app/@/data";
+import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import {
 	type ServerCmd,
 	type ServerCtx,
 	type ServerEvent,
 	sendToClient,
-} from "gamezilla-app/app/@shared/server";
+} from "gamezilla-app/app/@/server";
 import {
 	Err,
 	Ok,
@@ -14,10 +14,10 @@ import {
 	Result,
 	Sub,
 	isErr,
-} from "gamezilla-app/@shared/core";
-import { type Hash, Hashing } from "gamezilla-app/@shared/hashing";
-import type { IAccountDb } from "../@shared/server/account-db";
-import { AccountDb } from "../@shared/server/account-db/account-db-impl";
+} from "gamezilla-app/@/core";
+import { type Hash, Hashing } from "gamezilla-app/@/hashing";
+import type { IAccountDb } from "../@/server/account-db";
+import { AccountDb } from "../@/server/account-db/account-db-impl";
 import type { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.core";
 import type { IVerifySMS } from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl";

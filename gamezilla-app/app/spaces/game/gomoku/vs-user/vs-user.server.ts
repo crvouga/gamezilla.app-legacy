@@ -1,8 +1,8 @@
 import type {
 	SpaceReqCtx,
 	SpaceServerEvent,
-} from "gamezilla-app/app/spaces/@shared/space";
-import { type Eff, Sub } from "gamezilla-app/@shared/core";
+} from "gamezilla-app/app/spaces/@/space";
+import { type Eff, Sub } from "gamezilla-app/@/core";
 import {
 	type ModelServer,
 	type MsgServer,

@@ -2,40 +2,40 @@ import {
 	GameLayout,
 	ViewBottomButtonBar,
 	ViewBottomButtonBarAction,
-} from "gamezilla-app/app/spaces/game/@shared/game";
+} from "gamezilla-app/app/spaces/game/@/game";
 import {
 	IconBotHappy,
 	IconBotLevel1,
 	IconBotLevel4,
 	VsBotGame,
 	VsBotSetup,
-} from "gamezilla-app/app/spaces/game/@shared/vs-bot";
-import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import { type EventMeta, withId } from "gamezilla-app/app/spaces/@shared/event";
-import { FeedItem } from "gamezilla-app/app/spaces/@shared/feed-item";
+} from "gamezilla-app/app/spaces/game/@/vs-bot";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { type EventMeta, withId } from "gamezilla-app/app/spaces/@/event";
+import { FeedItem } from "gamezilla-app/app/spaces/@/feed-item";
 import type {
 	SpaceClientCtx,
 	SpaceClientEvent,
-} from "gamezilla-app/app/spaces/@shared/space";
+} from "gamezilla-app/app/spaces/@/space";
 import {
 	APP_SOUND,
 	type ClientCmd,
 	playSound,
-} from "gamezilla-app/app/@shared/client";
-import type { UserId } from "gamezilla-app/app/@shared/data";
+} from "gamezilla-app/app/@/client";
+import type { UserId } from "gamezilla-app/app/@/data";
 import {
 	IconArrowLeftOnRect,
 	IconArrowRotateLeft,
 	IconRightLeft,
-} from "gamezilla-app/app/@shared/ui";
-import { Sub, TimeSpan } from "gamezilla-app/@shared/core";
-import * as ConnectFour from "../@shared/connect-four";
+} from "gamezilla-app/app/@/ui";
+import { Sub, TimeSpan } from "gamezilla-app/@/core";
+import * as ConnectFour from "../@/connect-four";
 import {
 	CoverArt,
 	PlayerOneIcon,
 	PlayerTwoIcon,
 	ViewColumns,
-} from "../@shared/connect-four-ui";
+} from "../@/connect-four-ui";
 import {
 	type ModelClient,
 	type MsgClient,

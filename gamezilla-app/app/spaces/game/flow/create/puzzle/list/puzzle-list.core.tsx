@@ -1,4 +1,4 @@
-import type { FlowPuzzle } from "../../../@shared/flow-puzzle/flow-puzzle";
+import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 
 //
 //

@@ -4,9 +4,9 @@ import {
 	type RouteCmd,
 	type SoundCmd,
 	playSound,
-} from "gamezilla-app/app/@shared/client";
-import { Browser, type Eff } from "gamezilla-app/@shared/core";
-import type { Route } from "gamezilla-app/@shared/routing/generated/routes";
+} from "gamezilla-app/app/@/client";
+import { Browser, type Eff } from "gamezilla-app/@/core";
+import type { Route } from "gamezilla-app/@/routing/generated/routes";
 
 //
 //

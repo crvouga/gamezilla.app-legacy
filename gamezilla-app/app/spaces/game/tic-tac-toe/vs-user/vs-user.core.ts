@@ -1,6 +1,6 @@
-import { Result, isErr } from "gamezilla-app/@shared/core";
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import * as TicTacToe from "../@shared/tic-tic-toe/tic-tac-toe";
+import { Result, isErr } from "gamezilla-app/@/core";
+import type { UserId } from "gamezilla-app/app/@/data";
+import * as TicTacToe from "../@/tic-tic-toe/tic-tac-toe";
 import * as Round from "./vs-user-round";
 
 const { Err, Ok } = Result;

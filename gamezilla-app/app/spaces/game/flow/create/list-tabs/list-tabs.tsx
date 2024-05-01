@@ -1,13 +1,13 @@
-import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
-import { withId } from "gamezilla-app/app/spaces/@shared/event";
-import { APP_SOUND, playSound } from "gamezilla-app/app/@shared/client";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { withId } from "gamezilla-app/app/spaces/@/event";
+import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
 import {
 	Avatar,
 	Button,
 	IconArrowLeftOnRect,
 	Tabs,
-} from "gamezilla-app/app/@shared/ui";
-import { ViewSpaceHostChip } from "../../../@shared/game";
+} from "gamezilla-app/app/@/ui";
+import { ViewSpaceHostChip } from "../../../@/game";
 import type { ClientModule } from "../create.core";
 import { PackListClient } from "../pack/list/pack-list.client";
 import { PuzzleListClient } from "../puzzle/list/puzzle-list.client";

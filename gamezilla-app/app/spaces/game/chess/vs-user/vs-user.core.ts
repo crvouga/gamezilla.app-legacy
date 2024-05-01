@@ -1,7 +1,7 @@
-import { eq, isErr, Option, Result } from "gamezilla-app/@shared/core";
-import type { UserId } from "gamezilla-app/app/@shared/data";
-import { Chess } from "../@shared/chess";
-import * as Clock from "../@shared/chess/chess-clock";
+import { eq, isErr, Option, Result } from "gamezilla-app/@/core";
+import type { UserId } from "gamezilla-app/app/@/data";
+import { Chess } from "../@/chess";
+import * as Clock from "../@/chess/chess-clock";
 
 const { Ok, Err } = Result;
 

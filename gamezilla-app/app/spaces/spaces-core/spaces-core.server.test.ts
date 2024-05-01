@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { SpaceId, UserId } from "gamezilla-app/app/@shared/data";
-import { DbConnKv } from "gamezilla-app/app/@shared/server/db-conn-kv";
-import { withId } from "../@shared/event";
+import { SpaceId, UserId } from "gamezilla-app/app/@/data";
+import { DbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
+import { withId } from "../@/event";
 import { SpacesDb } from "./space-db/space-db-impl";
 import { SpacesCoreServer } from "./spaces-core.server";
 

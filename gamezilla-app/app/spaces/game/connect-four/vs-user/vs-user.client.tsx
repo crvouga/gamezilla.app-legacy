@@ -2,14 +2,14 @@ import {
 	GameLayout,
 	ViewBottomButtonBar,
 	ViewBottomButtonBarAction,
-} from "gamezilla-app/app/spaces/game/@shared/game";
-import { VsUserSetupScreen } from "gamezilla-app/app/spaces/game/@shared/vs-user";
-import { GameClientModule } from "gamezilla-app/app/spaces/@shared/architecture/game-client-v2";
+} from "gamezilla-app/app/spaces/game/@/game";
+import { VsUserSetupScreen } from "gamezilla-app/app/spaces/game/@/vs-user";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import type {
 	SpaceClientCtx,
 	SpaceClientEvent,
-} from "gamezilla-app/app/spaces/@shared/space";
-import type { ClientCmd, ClientCtx } from "gamezilla-app/app/@shared/client";
+} from "gamezilla-app/app/spaces/@/space";
+import type { ClientCmd, ClientCtx } from "gamezilla-app/app/@/client";
 import {
 	Button,
 	ConfirmationDialog,
@@ -20,11 +20,11 @@ import {
 	IconSpinner,
 	IconXMark,
 	Avatar,
-} from "gamezilla-app/app/@shared/ui";
-import { Sub } from "gamezilla-app/@shared/core";
-import { type PlayerType, toTurn } from "../@shared/connect-four";
-import { PlayerIcon, ViewColumns } from "../@shared/connect-four-ui";
-import { CoverArt } from "../@shared/connect-four-ui/connect-four-cover-art";
+} from "gamezilla-app/app/@/ui";
+import { Sub } from "gamezilla-app/@/core";
+import { type PlayerType, toTurn } from "../@/connect-four";
+import { PlayerIcon, ViewColumns } from "../@/connect-four-ui";
+import { CoverArt } from "../@/connect-four-ui/connect-four-cover-art";
 import {
 	type ModelClient,
 	type MsgClient,

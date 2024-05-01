@@ -2,12 +2,12 @@ import type {
 	ClientId,
 	SessionId,
 	UserId,
-} from "gamezilla-app/app/@shared/data";
-import type { ServerCtx, ServerEvent } from "gamezilla-app/app/@shared/server";
-import { Eff, type Sub } from "gamezilla-app/@shared/core";
-import type { WithEventId } from "../@shared/event";
-import type { Space } from "../@shared/space";
-import type { SpaceServerCmd } from "../@shared/space-server-cmd";
+} from "gamezilla-app/app/@/data";
+import type { ServerCtx, ServerEvent } from "gamezilla-app/app/@/server";
+import { Eff, type Sub } from "gamezilla-app/@/core";
+import type { WithEventId } from "../@/event";
+import type { Space } from "../@/space";
+import type { SpaceServerCmd } from "../@/space-server-cmd";
 import type { SpaceEvent } from "../spaces-core";
 import type {
 	ModelServer,

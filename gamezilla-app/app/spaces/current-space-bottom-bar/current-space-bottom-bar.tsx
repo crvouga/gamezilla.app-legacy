@@ -3,8 +3,8 @@ import {
 	type ClientCtx,
 	playSound,
 	pushRoute,
-} from "gamezilla-app/app/@shared/client";
-import { Avatar, Button } from "gamezilla-app/app/@shared/ui";
+} from "gamezilla-app/app/@/client";
+import { Avatar, Button } from "gamezilla-app/app/@/ui";
 import { CoverArt } from "../game/game-cover-art";
 import type { SpaceClientModule } from "../architecture/architecture";
 import { Spaces } from "../spaces-core";

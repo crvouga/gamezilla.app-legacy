@@ -1,5 +1,5 @@
-import { Err, type Result } from "gamezilla-app/@shared/core";
-import type { GameMainMenu } from "../@shared/game";
+import { Err, type Result } from "gamezilla-app/@/core";
+import type { GameMainMenu } from "../@/game";
 import type * as VsBot from "./vs-bot/vs-bot.core";
 import type * as VsUser from "./vs-user/vs-user.core";
 

@@ -1,4 +1,4 @@
-import { isErr } from "gamezilla-app/@shared/core";
+import { isErr } from "gamezilla-app/@/core";
 import type { SyncReducer } from "../../create.core";
 
 const reducer: SyncReducer = ({ modelSync, msgSync }) => {

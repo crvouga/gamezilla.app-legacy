@@ -5,11 +5,11 @@ import {
 	type Sub,
 	exhaustive,
 	isErr,
-} from "gamezilla-app/@shared/core";
-import * as Board from "./@shared/board";
-import type * as Direction from "./@shared/direction";
-import * as Piece from "./@shared/piece";
-import * as Position from "./@shared/position";
+} from "gamezilla-app/@/core";
+import * as Board from "./@/board";
+import type * as Direction from "./@/direction";
+import * as Piece from "./@/piece";
+import * as Position from "./@/position";
 import {
 	type ModelClient,
 	type MsgClient,
