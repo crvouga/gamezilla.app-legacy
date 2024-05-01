@@ -14,7 +14,6 @@ import {
 } from "gamezilla-app/@/core";
 import { LRUCache } from "gamezilla-app/@/least-recently-used-cache";
 import type { ServerInstance } from "gamezilla-app/@/server";
-import { CODEBASE_VERSION_ID } from "gamezilla-app/public-config";
 import * as AuthServer from "./auth/auth.server";
 import * as LangServer from "./lang/lang.server";
 import * as ProfileServer from "./profile/profile.server";
@@ -63,7 +62,9 @@ export type Deps = {
 export const getDeps = async ({
 	logger,
 	server,
+	codebaseVersionId,
 }: {
+	codebaseVersionId: string;
 	logger: ILogger;
 	server: ServerInstance;
 }): Promise<Deps> => {
@@ -125,7 +126,7 @@ export const getDeps = async ({
 	});
 
 	const transport = await ServerTransport<MsgToServer, MsgToClient>({
-		codebaseVersionId: CODEBASE_VERSION_ID,
+		codebaseVersionId,
 		server,
 		redisUrl,
 		logger: ILogger.prefix("transport", logger),

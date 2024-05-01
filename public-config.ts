@@ -1,5 +1,5 @@
 import type { VDomImpl } from "gamezilla-app/@/vdom";
-import config from "../config.json";
+import config from "./config.json";
 
 //
 //
