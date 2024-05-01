@@ -11,7 +11,11 @@ import { Render } from "./@/vdom";
 const main = async () => {
 	const deps = await AppClient.getDeps();
 
-	const root = document.getElementById("root")!;
+	const root = document.getElementById("root");
+
+	if (!root) {
+		throw new Error("Root element not found");
+	}
 
 	const render = await Render(VDOM_IMPL, root);
 
