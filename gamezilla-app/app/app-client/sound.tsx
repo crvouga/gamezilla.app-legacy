@@ -177,9 +177,11 @@ export const updateFromCmd: Module["update"] = ({ model, msgCmd }) => {
 				return { model };
 			}
 
+			console.log("play sound update", soundCmd.src);
 			return {
 				model,
 				eff: async (dispatch) => {
+					console.log("play sound effect", soundCmd.src);
 					const { delay } = soundCmd;
 
 					if (delay) {
@@ -269,8 +271,12 @@ const getAudioContext = () => {
 	return _audioContext;
 };
 
-const resumedPromise = () =>
-	new Promise((resolve) => {
+let hasResumed = false;
+const resumedPromise = async () => {
+	if (hasResumed) {
+		return;
+	}
+	await new Promise((resolve) => {
 		const handler = async (): Promise<null> => {
 			const audioContext = getAudioContext();
 
@@ -296,7 +302,8 @@ const resumedPromise = () =>
 		document.body.addEventListener("click", handler);
 		document.body.addEventListener("touchstart", handler);
 	});
-
+	hasResumed = true;
+};
 const audioBuffers = new Map<string, AudioBuffer>();
 
 async function preloadSounds(src: string[]) {
