@@ -14,7 +14,7 @@ import {
 } from "gamezilla-app/app/@shared/client";
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@shared/space";
 import { testSpaceClientCtx } from "../../../../@shared/testing/client";
-import { testFlowClientCtx } from "../../../create/@SHARED/testing/client";
+import { testFlowClientCtx } from "../../../create/@shared/testing/client";
 import { FlowVariant, FlowVariantDimensions } from "../../flow";
 import type { FlowClientCtx } from "../../flow-ctx";
 import { FlowPuzzle } from "../flow-puzzle";

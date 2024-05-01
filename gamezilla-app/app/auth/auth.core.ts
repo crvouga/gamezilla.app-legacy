@@ -11,8 +11,8 @@ import type {
 import type { UserAccount } from "../@shared/data/account";
 import type { ServerCmd, ServerCtx, ServerEvent } from "../@shared/server";
 import type * as AuthSMS from "./auth-sms/auth-sms.core";
-import type { IAccountDb } from "./@SHARED/server/account-db";
-import type { ISessionDb } from "./@SHARED/server/session-db";
+import type { IAccountDb } from "./@shared/server/account-db";
+import type { ISessionDb } from "./@shared/server/session-db";
 import type { ContinueAsGuest } from "./continue-as-guest";
 import type { Logout } from "./logout";
 

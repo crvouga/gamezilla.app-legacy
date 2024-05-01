@@ -16,8 +16,8 @@ import {
 	isErr,
 } from "gamezilla-app/@shared/core";
 import { type Hash, Hashing } from "gamezilla-app/@shared/hashing";
-import type { IAccountDb } from "../@SHARED/server/account-db";
-import { AccountDb } from "../@SHARED/server/account-db/account-db-impl";
+import type { IAccountDb } from "../@shared/server/account-db";
+import { AccountDb } from "../@shared/server/account-db/account-db-impl";
 import type { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.core";
 import type { IVerifySMS } from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl";

@@ -3,8 +3,8 @@ import type { SessionId, UserId } from "gamezilla-app/app/@shared/data";
 import { ServerCmd, sendToClient } from "gamezilla-app/app/@shared/server";
 import { Eff, Sub, TimeSpan, isErr, isOk } from "gamezilla-app/@shared/core";
 import * as AuthServerSMS from "./auth-sms/auth-sms.server";
-import { AccountDb } from "./@SHARED/server/account-db";
-import { SessionDb } from "./@SHARED/server/session-db";
+import { AccountDb } from "./@shared/server/account-db";
+import { SessionDb } from "./@shared/server/session-db";
 import type { MsgToClient, ServerDeps, ServerModule } from "./auth.core";
 import { ContinueAsGuestServer } from "./continue-as-guest/continue-as-guest.server";
 

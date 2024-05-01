@@ -9,8 +9,8 @@ import {
 	createFlowPuzzle,
 	initial,
 	testFlowClientCtx,
-} from "../../@SHARED/testing/client";
-import { deriveModelSync } from "../../@SHARED/testing/game";
+} from "../../@shared/testing/client";
+import { deriveModelSync } from "../../@shared/testing/game";
 import { CreateClient } from "../../create.client";
 import type { ModelClient } from "../../create.core";
 import { initSync } from "../../create.sync";
