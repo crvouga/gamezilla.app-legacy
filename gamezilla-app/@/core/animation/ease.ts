@@ -20,7 +20,7 @@ export type Model = {
 
 const initConstant = (value: number): Model => {
 	return {
-		startMs: Posix.fromNumber(0),
+		startMs: Posix.init(0),
 		durationMs: 0,
 		value,
 		from: value,

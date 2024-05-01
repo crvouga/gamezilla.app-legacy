@@ -5,7 +5,7 @@ import { FlowPuzzleDbPostgres } from "./flow-puzzle-db-impl-postgres";
 
 export type FlowPuzzleDbImpl =
 	| { t: "hash-map" }
-	| { t: "postgres"; dbConn: IDbConnSql };
+	| { t: "postgres"; dbConnSql: IDbConnSql };
 
 export const FlowPuzzleDb = (impl: FlowPuzzleDbImpl): IFlowPuzzleDb => {
 	switch (impl.t) {

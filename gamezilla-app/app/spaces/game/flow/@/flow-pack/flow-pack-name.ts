@@ -1,7 +1,9 @@
-import type { Brand } from "gamezilla-app/@/core/brand";
+import { p } from "gamezilla-app/@/core/parser";
 import { getWords } from "gamezilla-app/app/@/data/words";
 
-export type FlowPackName = Brand<string, "FlowPackName">;
+const parser = p.brand(p.str, "FlowPackName");
+
+export type FlowPackName = p.Infer<typeof parser>;
 
 const generate = async ({ count }: { count: number }) => {
 	const { adjectives, nouns } = await getWords();
@@ -15,6 +17,7 @@ const is = (name: unknown): name is FlowPackName => {
 };
 
 export const FlowPackName = {
+	...parser,
 	generate,
 	is,
 };

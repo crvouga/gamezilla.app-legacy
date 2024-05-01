@@ -1,7 +1,9 @@
 import { Uuid } from "gamezilla-app/@/core";
-import type { Brand } from "gamezilla-app/@/core/brand";
+import { p } from "gamezilla-app/@/core/parser";
 
-export type FlowPackId = Brand<string, "FlowPackId">;
+const parser = p.brand(p.str, "FlowPackId");
+
+export type FlowPackId = p.Infer<typeof parser>;
 
 const generate = () => {
 	return `flow-pack:${Uuid.generate()}` as FlowPackId;
@@ -12,6 +14,7 @@ const is = (flowPackId: unknown): flowPackId is FlowPackId => {
 };
 
 export const FlowPackId = {
+	...parser,
 	is,
 	generate,
 };

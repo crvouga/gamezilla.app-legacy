@@ -5,8 +5,33 @@ import type { FlowPack } from "../flow-pack";
 import { FlowPackId } from "../flow-pack-id";
 import { FlowPackName } from "../flow-pack-name";
 import { FlowPackDb } from "./flow-pack-db-impl";
+import { IS_INTEGRATION_TEST } from "public-config";
+import { Logger } from "gamezilla-app/app/@/server/logger";
+import { DbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
 
 const Fixture = async () => {
+	if (IS_INTEGRATION_TEST) {
+		const DATABASE_URL = process.env["DATABASE_URL"];
+
+		if (!DATABASE_URL) {
+			throw new Error(`DATABASE_URL not set`);
+		}
+
+		const dbConnSql = await DbConnSql({
+			databaseUrl: DATABASE_URL,
+			logger: Logger({ t: "noop" }),
+		});
+
+		const flowPackDb = FlowPackDb({
+			t: "db-conn-sql",
+			dbConnSql,
+		});
+
+		return {
+			flowPackDb,
+		};
+	}
+
 	const flowPackDb = FlowPackDb({
 		t: "hash-map",
 	});

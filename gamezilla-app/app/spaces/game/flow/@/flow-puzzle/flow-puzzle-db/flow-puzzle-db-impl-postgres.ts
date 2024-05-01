@@ -46,11 +46,11 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
 	const parsedFlow = FlowVariant.Model.parse(row.flow_puzzle);
 	const flow = parsedFlow.t === "ok" ? parsedFlow.value : null;
 
-	const createdAt = Posix.fromNumber(ensureNumber(row.created_at));
+	const createdAt = Posix.init(ensureNumber(row.created_at));
 	const createdBy = UserId.is(row.created_by_user_id)
 		? row.created_by_user_id
 		: null;
-	const lastUpdatedAt = Posix.fromNumber(ensureNumber(row.last_updated_at));
+	const lastUpdatedAt = Posix.init(ensureNumber(row.last_updated_at));
 	const lastUpdatedBy = UserId.is(row.last_updated_by_user_id)
 		? row.last_updated_by_user_id
 		: null;
@@ -166,13 +166,13 @@ const toSqlPagination = (input: { pagination: Pagination }) => {
 };
 
 export const FlowPuzzleDbPostgres = ({
-	dbConn,
+	dbConnSql,
 }: {
-	dbConn: IDbConnSql;
+	dbConnSql: IDbConnSql;
 }): IFlowPuzzleDb => {
 	return {
 		async get(flowPuzzleId) {
-			const queried = await dbConn.query(
+			const queried = await dbConnSql.query(
 				Row,
 				`
         SELECT
@@ -196,7 +196,7 @@ export const FlowPuzzleDbPostgres = ({
 		async count(input) {
 			const where = toSqlWhere(input);
 
-			const queried = await dbConn.query(
+			const queried = await dbConnSql.query(
 				p.obj({ count: p.str }),
 				`
         SELECT
@@ -222,7 +222,7 @@ export const FlowPuzzleDbPostgres = ({
 				...pagination.variables,
 			};
 
-			const queried = await dbConn.query(
+			const queried = await dbConnSql.query(
 				Row,
 				`
           SELECT
@@ -240,7 +240,7 @@ export const FlowPuzzleDbPostgres = ({
 				return queried;
 			}
 
-			const queriedCount = await dbConn.query(
+			const queriedCount = await dbConnSql.query(
 				p.obj({ count: p.str }),
 				`
           SELECT
@@ -273,7 +273,7 @@ export const FlowPuzzleDbPostgres = ({
 
 		async put(input) {
 			const row = puzzleToRow(input);
-			const queried = await dbConn.query(
+			const queried = await dbConnSql.query(
 				p.unknown,
 				`
           INSERT INTO game_flow_puzzle (
@@ -306,7 +306,7 @@ export const FlowPuzzleDbPostgres = ({
 		},
 
 		async zap(input) {
-			const queried = await dbConn.query(
+			const queried = await dbConnSql.query(
 				p.num,
 				`
         UPDATE

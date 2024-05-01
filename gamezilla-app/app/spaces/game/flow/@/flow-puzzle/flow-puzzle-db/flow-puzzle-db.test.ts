@@ -8,6 +8,7 @@ import { FlowPuzzleId } from "../flow-puzzle-id";
 import { FlowPuzzleName } from "../flow-puzzle-name";
 import { FlowPuzzleDb } from "./flow-puzzle-db-impl";
 import { Logger } from "gamezilla-app/app/@/server/logger/logger-impl";
+import { IS_INTEGRATION_TEST } from "public-config";
 
 const randomFlowPuzzle = async (input?: {
 	createdBy?: UserId;
@@ -34,8 +35,6 @@ const randomFlowPuzzle = async (input?: {
 };
 
 const Fixture = async () => {
-	const IS_INTEGRATION_TEST = process.env["IS_INTEGRATION_TEST"];
-
 	if (IS_INTEGRATION_TEST) {
 		const DATABASE_URL = process.env["DATABASE_URL"];
 
@@ -50,7 +49,7 @@ const Fixture = async () => {
 
 		const flowPuzzleDb = FlowPuzzleDb({
 			t: "postgres",
-			dbConn: dbConnSql,
+			dbConnSql: dbConnSql,
 		});
 
 		return {

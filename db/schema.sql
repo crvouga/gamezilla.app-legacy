@@ -68,6 +68,23 @@ CREATE TABLE public.game_chess_puzzle_profile (
 
 
 --
+-- Name: game_flow_pack; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.game_flow_pack (
+    flow_pack_id text NOT NULL,
+    flow_pack_name text NOT NULL,
+    flow_puzzle_ids text[] NOT NULL,
+    created_at_posix bigint NOT NULL,
+    created_by_user_id text NOT NULL,
+    last_updated_at_posix bigint NOT NULL,
+    last_updated_by_user_id text NOT NULL,
+    deleted_at_posix bigint,
+    deleted_by_user_id text
+);
+
+
+--
 -- Name: game_flow_puzzle; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -209,6 +226,14 @@ ALTER TABLE ONLY public.game_chess_puzzle
 
 ALTER TABLE ONLY public.game_chess_puzzle_profile
     ADD CONSTRAINT game_chess_puzzle_profile_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: game_flow_pack game_flow_pack_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.game_flow_pack
+    ADD CONSTRAINT game_flow_pack_pkey PRIMARY KEY (flow_pack_id);
 
 
 --
@@ -372,4 +397,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240405231549'),
     ('20240410213113'),
     ('20240410223252'),
-    ('20240428015435');
+    ('20240428015435'),
+    ('20240501070923');

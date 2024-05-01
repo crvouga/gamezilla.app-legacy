@@ -42,7 +42,7 @@ const toAccount = ({
 };
 
 const postgresTimestampToPosix = (postgresTimestamp: string) => {
-	return Posix.fromNumber(new Date(postgresTimestamp).getTime());
+	return Posix.init(new Date(postgresTimestamp).getTime());
 };
 
 export const AccountDbPostgres = ({

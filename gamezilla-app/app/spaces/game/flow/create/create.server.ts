@@ -18,7 +18,7 @@ const deps: ServerModule["deps"] = async (input) => {
 	return {
 		FlowPuzzleDb: FlowPuzzleDb({
 			t: "postgres",
-			dbConn: input.ctx.dbConnSql,
+			dbConnSql: input.ctx.dbConnSql,
 		}),
 		FlowPackDb: FlowPackDb({
 			t: "hash-map",

@@ -4,17 +4,17 @@ import type { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
 import type { FlowPack } from "../flow-pack";
 import type { FlowPackId } from "../flow-pack-id";
 
+export type WhereClause = {
+	createdBy?: UserId;
+};
+
 export type IFlowPackDb = {
 	count: (input: {
-		where: {
-			createdBy?: UserId;
-		};
+		where: WhereClause
 	}) => Promise<Result<string, number>>;
 	list: (input: {
 		pagination: Pagination;
-		where: {
-			createdBy?: UserId;
-		};
+		where: WhereClause
 		order: {
 			createdAt?: "asc" | "desc";
 			lastUpdatedAt?: "asc" | "desc";

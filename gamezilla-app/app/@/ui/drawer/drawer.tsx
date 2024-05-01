@@ -3,9 +3,9 @@ import type { PrivateDrawerProps } from "./drawer-shared";
 import { DrawerWebComponent } from "./drawer-web-component";
 
 export type DrawerProps = PrivateDrawerProps & {
-  children?: VDomChildren;
+	children?: VDomChildren;
 };
 
 export const Drawer = (props: DrawerProps): VDom => {
-  return <DrawerWebComponent {...props} />;
+	return <DrawerWebComponent {...props} />;
 };

@@ -33,8 +33,12 @@ function is(posixTime: unknown): posixTime is Posix {
 	return true;
 }
 
-const fromNumber = (posixTime: number): Posix => {
-	const clamped = Math.max(posixTime, minPosixTime);
+const init = (posixTime: number | string): Posix => {
+	const cleaned =
+		typeof posixTime === "string" ? parseFloat(posixTime) : posixTime;
+
+	const clamped = Math.max(cleaned, minPosixTime);
+
 	if (is(clamped)) {
 		return clamped;
 	}
@@ -64,7 +68,7 @@ const now = (config?: { precision: Precision }): Posix => {
 		}
 	}
 
-	return fromNumber(timestamp);
+	return init(timestamp);
 };
 /**
  * Returns the time span between two posix timestamps.
@@ -74,24 +78,24 @@ const diff = (a: Posix, b: Posix): TimeSpan => {
 };
 
 const add = (posix: Posix, timeSpan: TimeSpan): Posix => {
-	return fromNumber(toNumber(posix) + TimeSpan.toMilliseconds(timeSpan));
+	return init(toNumber(posix) + TimeSpan.toMilliseconds(timeSpan));
 };
 
 const fromIsoString = (isoString: string): Posix => {
-	return fromNumber(new Date(isoString).getTime());
+	return init(new Date(isoString).getTime());
 };
 
 const toIsoString = (posix: Posix): string => {
 	return new Date(toNumber(posix)).toISOString();
 };
 
-const zero = fromNumber(0);
+const zero = init(0);
 
 export const Posix = {
 	...parser,
 	zero,
 	is,
-	fromNumber,
+	init,
 	toNumber,
 	now,
 	diff,

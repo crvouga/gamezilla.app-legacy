@@ -170,7 +170,7 @@ test("should be able to merge", async () => {
 			userId: "1",
 			counterId: "2",
 		},
-		Posix.fromNumber(t0 + 1000),
+		Posix.init(t0 + 1000),
 	);
 
 	const event3 = withMetaAt(
@@ -179,7 +179,7 @@ test("should be able to merge", async () => {
 			userId: "1",
 			counterId: "3",
 		},
-		Posix.fromNumber(t0 + 2000),
+		Posix.init(t0 + 2000),
 	);
 
 	const streamA = await EventStream.fromArray(config, [event1, event3]);
