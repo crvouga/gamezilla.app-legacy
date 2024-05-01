@@ -32,7 +32,7 @@ const ListPuzzlesById: Pick<ServerModule, "update"> = {
 			case "list-puzzles-by-id": {
 				const listed = await input.deps.FlowPuzzleDb.list({
 					pagination: {
-						limit: Number.POSITIVE_INFINITY,
+						limit: input.msgClient.puzzleIds.length,
 						offset: 0,
 					},
 					order: {

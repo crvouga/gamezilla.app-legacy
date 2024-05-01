@@ -177,11 +177,9 @@ export const updateFromCmd: Module["update"] = ({ model, msgCmd }) => {
 				return { model };
 			}
 
-			console.log("play sound update", soundCmd.src);
 			return {
 				model,
 				eff: async (dispatch) => {
-					console.log("play sound effect", soundCmd.src);
 					const { delay } = soundCmd;
 
 					if (delay) {
