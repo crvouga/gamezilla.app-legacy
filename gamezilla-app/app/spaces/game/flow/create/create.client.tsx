@@ -112,7 +112,7 @@ const View: ClientModule["View"] = (input) => {
 };
 
 const ViewFeedItem: ClientModule["ViewFeedItem"] = () => {
-	return <div></div>;
+	return <div />;
 };
 
 const subscriptions: ClientModule["subscriptions"] = (input) => {

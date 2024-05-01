@@ -187,7 +187,7 @@ export const View = ({
 	dispatch: (msg: Msg) => void;
 }) => {
 	if (model.type === "setup") {
-		return <div></div>;
+		return <div />;
 	}
 
 	const viewBox = [
@@ -204,6 +204,7 @@ export const View = ({
 	return (
 		<div>
 			{!currentUserPlayer && <p>Spectating</p>}
+			{/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
 			<svg width="100%" viewBox={viewBox}>
 				<rect
 					x={model.lower.x}
@@ -294,6 +295,7 @@ const ViewJoystick = ({
 }) => {
 	return (
 		<div>
+			{/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
 			<svg
 				width="100%"
 				viewBox="-1 -1 2 2"
@@ -310,6 +312,7 @@ const ViewJoystick = ({
 						{Direction.all.map((direction) => {
 							const { x, y } = directionToVector(direction);
 							return (
+								// biome-ignore lint/a11y/useKeyWithMouseEvents: <explanation>
 								<rect
 									key={direction}
 									x={x}

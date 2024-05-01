@@ -1,4 +1,3 @@
-/* eslint-disable no-constant-condition */
 import { eq, memoize, Random } from "gamezilla-app/@shared/core";
 import { Direction, Position } from "./position";
 
@@ -193,6 +192,7 @@ const viewBox = [
 
 export const CoverArt = () => {
 	return (
+		// biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
 		<svg viewBox={viewBox} width="100%" className="border border-neutral-700">
 			<rect
 				x={coverArtMaze.lower.x}

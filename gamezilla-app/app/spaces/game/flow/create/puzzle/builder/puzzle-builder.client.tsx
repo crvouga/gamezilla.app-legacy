@@ -131,6 +131,10 @@ const updateFromMsgSync: ClientModule["update"] = (input) => {
 						msgCmd: [playSound(updated.msgCmd.sourceSrc)],
 					};
 				}
+
+				default: {
+					return { model };
+				}
 			}
 		}
 
@@ -355,7 +359,7 @@ export const ViewMoreDrawer: ClientModule["View"] = (input) => {
 		>
 			<PuzzleEditNameClient.View {...input} />
 			<PuzzleDeleteForeverClient.View {...input} />
-			<div className="w-full pb-2"></div>
+			<div className="pb-2 w-full" />
 		</Drawer>
 	);
 };
