@@ -1,11 +1,11 @@
 {
-  "compilerOptions": {
-    "importHelpers": true,
-    "composite": true,
-    "allowImportingTsExtensions": false,
-    "moduleResolution": "bundler",
-    "module": "es2015",
-    "noEmit": false
-  },
-  "include": ["vite.config.ts", "tailwind.config.ts"]
+	"compilerOptions": {
+		"importHelpers": true,
+		"composite": true,
+		"allowImportingTsExtensions": false,
+		"moduleResolution": "bundler",
+		"module": "es2015",
+		"noEmit": false
+	},
+	"include": ["vite.config.ts", "tailwind.config.ts"]
 }
