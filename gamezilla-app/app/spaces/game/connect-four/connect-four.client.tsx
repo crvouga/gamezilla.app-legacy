@@ -6,11 +6,7 @@ import type {
 	SpaceClientCtx,
 	SpaceClientEvent,
 } from "gamezilla-app/app/spaces/@/space";
-import {
-	APP_SOUND,
-	ClientCmd,
-	playSound,
-} from "gamezilla-app/app/@/client";
+import { APP_SOUND, ClientCmd, playSound } from "gamezilla-app/app/@/client";
 import { Sub } from "gamezilla-app/@/core";
 import type { SpaceClientCmd } from "../../@/space-client-cmd";
 import { VsBot } from "./vs-bot/vs-bot.client";

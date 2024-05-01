@@ -1,8 +1,4 @@
-import type {
-	ClientId,
-	SessionId,
-	UserId,
-} from "gamezilla-app/app/@/data";
+import type { ClientId, SessionId, UserId } from "gamezilla-app/app/@/data";
 import { Eff, type Sub } from "gamezilla-app/@/core";
 import type { EventMeta, WithEventId } from "../event";
 

@@ -75,11 +75,13 @@ const update: ServerModule["update"] = async ({
 				],
 			};
 		}
-	}
 
-	return {
-		model,
-	};
+		default: {
+			return {
+				model,
+			};
+		}
+	}
 };
 
 export const ContinueAsGuestServer = {

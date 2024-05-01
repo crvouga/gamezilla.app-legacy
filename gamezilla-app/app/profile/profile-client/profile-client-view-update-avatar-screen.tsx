@@ -1,10 +1,5 @@
 import { ProfileAvatar } from "gamezilla-app/app/@/data";
-import {
-	Button,
-	Avatar,
-	TextField,
-	TopBar,
-} from "gamezilla-app/app/@/ui";
+import { Button, Avatar, TextField, TopBar } from "gamezilla-app/app/@/ui";
 import type { ModelClient, MsgClient } from "../profile.core";
 
 export const ViewUpdateAvatarScreen = ({

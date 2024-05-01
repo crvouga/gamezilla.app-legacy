@@ -1,10 +1,5 @@
 import type { UserId } from "gamezilla-app/app/@/data";
-import {
-	Err,
-	type NonEmpty,
-	Ok,
-	type Result,
-} from "gamezilla-app/@/core";
+import { Err, type NonEmpty, Ok, type Result } from "gamezilla-app/@/core";
 import {
 	type Board,
 	type MoveProblem,

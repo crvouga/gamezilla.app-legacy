@@ -1,7 +1,4 @@
-import type {
-	BaseClientCtx,
-	ClientEvent,
-} from "gamezilla-app/app/@/client";
+import type { BaseClientCtx, ClientEvent } from "gamezilla-app/app/@/client";
 
 import { Eff, type Sub, batchMsgs } from "gamezilla-app/@/core";
 import type { VDom } from "gamezilla-app/@/vdom";

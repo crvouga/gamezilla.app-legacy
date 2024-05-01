@@ -1,8 +1,4 @@
-import {
-	APP_SOUND,
-	openProfile,
-	playSound,
-} from "gamezilla-app/app/@/client";
+import { APP_SOUND, openProfile, playSound } from "gamezilla-app/app/@/client";
 import { Avatar, Button, Drawer } from "gamezilla-app/app/@/ui";
 import {
 	ViewSpaceHostChip,

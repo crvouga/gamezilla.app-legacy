@@ -1,8 +1,4 @@
-import type {
-	EmailAddress,
-	RemoteResult,
-	Result,
-} from "gamezilla-app/@/core";
+import type { EmailAddress, RemoteResult, Result } from "gamezilla-app/@/core";
 
 type SocialLoginProvider = "google";
 

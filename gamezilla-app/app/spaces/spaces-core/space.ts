@@ -2,10 +2,7 @@ import type { SpaceId, UserId } from "gamezilla-app/app/@/data";
 import { ascend, eq } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { CappedOrderedDict } from "gamezilla-app/@/capped-ordered-dict/capped-ordered-dict";
-import {
-	LamportClock,
-	LamportTimestamp,
-} from "gamezilla-app/@/lamport-clock";
+import { LamportClock, LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import {
 	EventId,
 	EventMeta,

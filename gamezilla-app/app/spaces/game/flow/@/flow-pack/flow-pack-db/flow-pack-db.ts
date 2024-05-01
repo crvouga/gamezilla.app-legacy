@@ -1,9 +1,5 @@
 import type { Result } from "gamezilla-app/@/core";
-import type {
-	Paginated,
-	Pagination,
-	UserId,
-} from "gamezilla-app/app/@/data";
+import type { Paginated, Pagination, UserId } from "gamezilla-app/app/@/data";
 import type { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
 import type { FlowPack } from "../flow-pack";
 import type { FlowPackId } from "../flow-pack-id";

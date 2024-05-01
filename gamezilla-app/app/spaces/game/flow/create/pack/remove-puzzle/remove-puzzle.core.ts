@@ -1,10 +1,6 @@
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import type { UserId } from "gamezilla-app/app/@/data";
-import {
-	type Posix,
-	RequestResponse,
-	type Result,
-} from "gamezilla-app/@/core";
+import { type Posix, RequestResponse, type Result } from "gamezilla-app/@/core";
 import type { FlowPack } from "../../../@/flow-pack";
 import type { FlowPuzzle } from "../../../@/flow-puzzle";
 import type { FlowPuzzleId } from "../../../@/flow-puzzle/flow-puzzle-id";

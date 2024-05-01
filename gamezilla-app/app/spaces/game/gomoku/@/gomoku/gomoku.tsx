@@ -1,10 +1,4 @@
-import {
-	Err,
-	NonEmpty,
-	Ok,
-	Random,
-	type Result,
-} from "gamezilla-app/@/core";
+import { Err, NonEmpty, Ok, Random, type Result } from "gamezilla-app/@/core";
 import { Direction, Position } from "./gomoku-position";
 
 export type Board = {

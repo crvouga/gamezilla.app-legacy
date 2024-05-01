@@ -5,15 +5,8 @@ import type {
 	SpaceClientCtx,
 	SpaceClientEvent,
 } from "gamezilla-app/app/spaces/@/space";
-import {
-	APP_SOUND,
-	ClientCmd,
-	playSound,
-} from "gamezilla-app/app/@/client";
-import {
-	IconGamepad,
-	IconScrewdriverWrench,
-} from "gamezilla-app/app/@/ui";
+import { APP_SOUND, ClientCmd, playSound } from "gamezilla-app/app/@/client";
+import { IconGamepad, IconScrewdriverWrench } from "gamezilla-app/app/@/ui";
 import { Sub } from "gamezilla-app/@/core";
 import { SpaceClientCmd } from "../../@/space-client-cmd";
 import { CreateClient } from "./create/create.client";

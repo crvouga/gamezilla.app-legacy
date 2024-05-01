@@ -1,9 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
-import {
-	didSendToServer,
-	didShowErrorSm,
-} from "gamezilla-app/app/@/client";
+import { didSendToServer, didShowErrorSm } from "gamezilla-app/app/@/client";
 import {
 	Err,
 	Ok,

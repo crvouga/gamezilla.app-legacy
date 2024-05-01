@@ -2,13 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { getTranslator } from "gamezilla-app/app/@/client/translator";
 import { DbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
-import {
-	PhoneNumber,
-	Result,
-	eq,
-	isErr,
-	isOk,
-} from "gamezilla-app/@/core";
+import { PhoneNumber, Result, eq, isErr, isOk } from "gamezilla-app/@/core";
 import { Hashing } from "gamezilla-app/@/hashing";
 import { CodeGenerator } from "./code-generator";
 import { VerificationId } from "./verification";

@@ -1,11 +1,7 @@
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
-import {
-	APP_SOUND,
-	playSound,
-	showToast,
-} from "gamezilla-app/app/@/client";
+import { APP_SOUND, playSound, showToast } from "gamezilla-app/app/@/client";
 import {
 	Button,
 	Drawer,

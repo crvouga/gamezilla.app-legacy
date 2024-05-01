@@ -1,9 +1,6 @@
 import { RequestResponse, isErr } from "gamezilla-app/@/core";
 import { sendToServer } from "gamezilla-app/app/@/client";
-import {
-	IconDeleteForever,
-	ListItemButton,
-} from "gamezilla-app/app/@/ui";
+import { IconDeleteForever, ListItemButton } from "gamezilla-app/app/@/ui";
 import {
 	type GameClientModule,
 	andThen,

@@ -7,14 +7,7 @@ import {
 	type ServerEvent,
 	sendToClient,
 } from "gamezilla-app/app/@/server";
-import {
-	Err,
-	Ok,
-	type Posix,
-	Result,
-	Sub,
-	isErr,
-} from "gamezilla-app/@/core";
+import { Err, Ok, type Posix, Result, Sub, isErr } from "gamezilla-app/@/core";
 import { type Hash, Hashing } from "gamezilla-app/@/hashing";
 import type { IAccountDb } from "../@/server/account-db";
 import { AccountDb } from "../@/server/account-db/account-db-impl";

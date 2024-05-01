@@ -9,10 +9,7 @@ import {
 	Username,
 } from "gamezilla-app/app/@/data";
 import { Posix, type TimeSpan, pipe } from "gamezilla-app/@/core";
-import {
-	LamportClock,
-	LamportTimestamp,
-} from "gamezilla-app/@/lamport-clock";
+import { LamportClock, LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import type { Route } from "gamezilla-app/@/routing/generated/routes";
 import type { GameName } from "../../game/game.core";
 import { Space, type SpaceEvent } from "../../spaces-core";

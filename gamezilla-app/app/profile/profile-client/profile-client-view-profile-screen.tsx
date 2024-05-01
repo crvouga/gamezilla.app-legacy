@@ -1,7 +1,4 @@
-import type {
-	AnonymousClientCtx,
-	ClientCtx,
-} from "gamezilla-app/app/@/client";
+import type { AnonymousClientCtx, ClientCtx } from "gamezilla-app/app/@/client";
 import type { UserId } from "gamezilla-app/app/@/data";
 import {
 	Button,

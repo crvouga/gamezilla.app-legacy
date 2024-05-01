@@ -5,10 +5,7 @@ import type {
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import { UserId } from "gamezilla-app/app/@/data";
 import { Posix, TimeSpan } from "gamezilla-app/@/core";
-import {
-	type EventMeta,
-	EventId,
-} from "gamezilla-app/app/spaces/@/event";
+import { type EventMeta, EventId } from "gamezilla-app/app/spaces/@/event";
 import * as ConnectFour from "../@/connect-four";
 import { p } from "gamezilla-app/@/core/parser";
 import { BotLevel } from "./bot-level";

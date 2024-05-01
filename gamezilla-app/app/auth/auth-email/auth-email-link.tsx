@@ -1,9 +1,4 @@
-import {
-	type Eff,
-	type Result,
-	exhaustive,
-	isErr,
-} from "gamezilla-app/@/core";
+import { type Eff, type Result, exhaustive, isErr } from "gamezilla-app/@/core";
 import type { RouteCmd } from "gamezilla-app/app/@/client";
 import {
 	AlertError,

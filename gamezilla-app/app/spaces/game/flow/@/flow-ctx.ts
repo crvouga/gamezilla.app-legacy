@@ -1,8 +1,5 @@
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
-import type {
-	ClientCmd,
-	ClientCmdTypes,
-} from "gamezilla-app/app/@/client";
+import type { ClientCmd, ClientCmdTypes } from "gamezilla-app/app/@/client";
 import type { FlowPuzzle } from "./flow-puzzle/flow-puzzle";
 import type { FlowPuzzleId } from "./flow-puzzle/flow-puzzle-id";
 
