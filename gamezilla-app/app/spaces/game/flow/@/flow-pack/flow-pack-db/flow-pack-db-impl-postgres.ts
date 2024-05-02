@@ -1,12 +1,12 @@
-import { Err, Posix, Result, pipe } from "gamezilla-app/@/core";
+import { Err, Posix, Result } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
-import { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
-import type { IFlowPackDb, WhereClause } from "./flow-pack-db";
-import { FlowPack } from "../flow-pack";
 import { UserId } from "gamezilla-app/app/@/data";
+import { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
+import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
+import { FlowPack } from "../flow-pack";
 import { FlowPackId } from "../flow-pack-id";
 import { FlowPackName } from "../flow-pack-name";
-import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
+import type { IFlowPackDb, WhereClause } from "./flow-pack-db";
 
 const Row = p.obj({
   flow_pack_id: FlowPackId,
@@ -34,7 +34,7 @@ const rowToFlowPack = (row: Row): FlowPack | null => {
   };
 };
 
-const toSqlWhere = (where: WhereClause) => {
+export const toSqlWhere = (where: WhereClause) => {
   const clauses: string[] = [];
   const variables: Record<string, any> = {};
   if (where.createdBy) {
@@ -65,20 +65,12 @@ export const FlowPackDbPostgres = ({
     async count(input) {
     
     
-      const whereStr = pipe(
-        [],
-        (x) =>
-          input.where.createdBy
-            ? [...x, "created_by_user_id = :created_by_user_id"]
-            : x,
-        (x) => x.join(" AND "),
-        (x) => (x.length > 0 ? `WHERE ${x}` : "")
-      );
+      
 
-      const queried = await dbConnSql.query(
+       await dbConnSql.query(
         p.obj({ count: p.num }),
         `SELECT COUNT(*) FROM game_flow_pack WHERE flow_pack_id = :flow_pack_id`,
-        { flow_pack_id: id }
+        { flow_pack_id: input.where.createdBy }
       );
       return Err("Not implemented");
     },
