@@ -20,10 +20,7 @@ export const commas = (values: (string | number)[]): VarTypeCommas => ({
   values,
 });
 
-export type VarType =
-  | VarTypePrimitive
-  | VarTypeJson
-  | VarTypeCommas;
+export type VarType = VarTypePrimitive | VarTypeJson | VarTypeCommas;
 
 export type Vars = {
   [key: string]: VarType;
@@ -37,7 +34,7 @@ export const to = (query: string, variables: Vars): string => {
     replaced = replaceParam(replaced, key, variables[key]);
   }
   return replaced;
-}
+};
 
 const replaceParam = (
   query: string,
@@ -48,14 +45,11 @@ const replaceParam = (
     case "number":
     case "bigint":
     case "boolean": {
-      return query.replace(new RegExp(`:${variable}`, "g"), `${value}`);
+      const replaced = query.replace(new RegExp(`:${variable}`, "g"), `${value}`);
+      return replaced
     }
     case "object": {
-      if (value === null) {
-        return query.replace(new RegExp(`:${variable}`, "g"), "NULL");
-      }
-
-      switch (value.t) {
+      switch (value?.t) {
         case "commas": {
           const commasStr = value.values
             .map((v) => {
@@ -82,10 +76,17 @@ const replaceParam = (
           const jsonString = value.json;
           const escapedJsonString = jsonString.replace(/'/g, "''");
 
-          return query.replace(
+          const replaced =  query.replace(
             new RegExp(`:${variable}`, "g"),
             `'${escapedJsonString}'`
           );
+
+          return replaced
+        }
+        default: {
+          const replaced = query.replace(new RegExp(`:${variable}`, "g"), "NULL");
+        
+          return replaced
         }
       }
     }
@@ -116,7 +117,7 @@ export const toLog = (query: string, params: Vars): string => {
     replaced = replaceParamLog(replaced, key, params[key]);
   }
   return replaced;
-}
+};
 
 const replaceParamLog = (
   query: string,
