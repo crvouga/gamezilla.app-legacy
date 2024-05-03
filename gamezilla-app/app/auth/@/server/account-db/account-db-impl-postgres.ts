@@ -4,6 +4,7 @@ import { UserId, UserRole } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
 import type { IAccountDb } from "./account-db";
+import { Sql } from "gamezilla-app/@/sql";
 
 export const UserAccountRow = p.obj({
 	user_id: p.str,
@@ -124,14 +125,13 @@ export const AccountDbPostgres = ({
 				user_role: input.account.role,
 			};
 
-			const accountPhoneNumberRowNew: UserAccountPhoneNumberRow | null =
-				input.phoneNumberHash
-					? {
-							user_id: input.account.userId,
-							phone_number_hash: input.phoneNumberHash,
-							created_at: Posix.toIsoString(input.account.createdAt),
-						}
-					: null;
+			const accountPhoneNumberRowNew: Sql.Vars | null = input.phoneNumberHash
+				? {
+						user_id: input.account.userId,
+						phone_number_hash: Sql.json(input.phoneNumberHash),
+						created_at: Posix.toIsoString(input.account.createdAt),
+					}
+				: null;
 
 			const insertedAccount = await dbConnSql.query(
 				p.unknown,
@@ -152,15 +152,15 @@ export const AccountDbPostgres = ({
 				? await dbConnSql.query(
 						p.unknown,
 						`INSERT INTO user_account_phone_number (
-              user_id,
-              phone_number_hash,
-              created_at
-            )
-            VALUES (
-              :user_id,
-              :phone_number_hash,
-              :created_at
-            )`,
+							user_id,
+							phone_number_hash,
+							created_at
+						)
+						VALUES (
+							:user_id,
+							:phone_number_hash,
+							:created_at
+						)`,
 						accountPhoneNumberRowNew,
 					)
 				: Ok(null);

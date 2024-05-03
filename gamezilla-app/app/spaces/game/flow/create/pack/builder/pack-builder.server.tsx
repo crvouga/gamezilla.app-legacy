@@ -9,6 +9,7 @@ import type { ServerModule } from "../../create.core";
 const SavePack: Pick<ServerModule, "update"> = {
 	async update(input) {
 		const { deps, model, modelSync, msgSync } = input;
+
 		switch (msgSync?.t) {
 			case "pack-builder.user-clicked-add-puzzle-item": {
 				if (!modelSync.packBuilder) {

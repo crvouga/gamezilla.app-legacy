@@ -1,8 +1,5 @@
 import { type Pagination, UserId } from "gamezilla-app/app/@/data";
-import type {
-	DbConnVariables,
-	IDbConnSql,
-} from "gamezilla-app/app/@/server/db-conn-sql";
+import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
 import { Ok, Posix, Result, isErr } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { FlowVariant } from "../../flow";
@@ -10,6 +7,7 @@ import type { FlowPuzzle } from "../flow-puzzle";
 import { FlowPuzzleId } from "../flow-puzzle-id";
 import { FlowPuzzleName } from "../flow-puzzle-name";
 import type { IFlowPuzzleDb, OrderClause, WhereClause } from "./flow-puzzle-db";
+import { Sql } from "gamezilla-app/@/sql";
 
 //
 //
@@ -83,18 +81,6 @@ const rowToFlowPuzzle = (row: Row): FlowPuzzle | null => {
 	return null;
 };
 
-const puzzleToRow = (puzzle: FlowPuzzle): Row => {
-	return {
-		flow_puzzle_id: puzzle.id,
-		flow_puzzle_name: puzzle.name,
-		flow_puzzle: puzzle.flow,
-		created_at: puzzle.createdAt,
-		created_by_user_id: puzzle.createdBy,
-		last_updated_at: puzzle.lastUpdatedAt,
-		last_updated_by_user_id: puzzle.lastUpdatedBy,
-	};
-};
-
 //
 //
 //
@@ -102,7 +88,7 @@ const puzzleToRow = (puzzle: FlowPuzzle): Row => {
 //
 
 const toSqlWhere = (input: { where: WhereClause }) => {
-	const variables: DbConnVariables = {};
+	const variables: Sql.Vars = {};
 
 	const where: string[] = [
 		//
@@ -154,7 +140,7 @@ const toSqlOrder = (input: { order: OrderClause }) => {
 };
 
 const toSqlPagination = (input: { pagination: Pagination }) => {
-	const variables: DbConnVariables = {
+	const variables: Sql.Vars = {
 		limit: input.pagination.limit,
 		offset: input.pagination.offset,
 	};
@@ -217,7 +203,7 @@ export const FlowPuzzleDbPostgres = ({
 			const order = toSqlOrder(input);
 			const pagination = toSqlPagination(input);
 
-			const variables: DbConnVariables = {
+			const variables: Sql.Vars = {
 				...where.variables,
 				...pagination.variables,
 			};
@@ -272,35 +258,42 @@ export const FlowPuzzleDbPostgres = ({
 		},
 
 		async put(input) {
-			const row = puzzleToRow(input);
 			const queried = await dbConnSql.query(
 				p.unknown,
 				`
-          INSERT INTO game_flow_puzzle (
-            flow_puzzle_id,
-            flow_puzzle_name,
-            flow_puzzle,
-            created_at,
-            created_by_user_id,
-            last_updated_at,
-            last_updated_by_user_id
-          )
-          VALUES (
-            :flow_puzzle_id,
-            :flow_puzzle_name,
-            :flow_puzzle,
-            :created_at,
-            :created_by_user_id,
-            :last_updated_at,
-            :last_updated_by_user_id
-          ) ON CONFLICT (flow_puzzle_id) DO
-          UPDATE SET
-            flow_puzzle_name = :flow_puzzle_name,
-            flow_puzzle = :flow_puzzle,
-            last_updated_at = :last_updated_at,
-            last_updated_by_user_id = :last_updated_by_user_id
-        `,
-				row,
+				INSERT INTO game_flow_puzzle (
+					flow_puzzle_id,
+					flow_puzzle_name,
+					flow_puzzle,
+					created_at,
+					created_by_user_id,
+					last_updated_at,
+					last_updated_by_user_id
+				)
+				VALUES (
+					:flow_puzzle_id,
+					:flow_puzzle_name,
+					:flow_puzzle,
+					:created_at,
+					:created_by_user_id,
+					:last_updated_at,
+					:last_updated_by_user_id
+				) ON CONFLICT (flow_puzzle_id) DO
+				UPDATE SET
+					flow_puzzle_name = :flow_puzzle_name,
+					flow_puzzle = :flow_puzzle,
+					last_updated_at = :last_updated_at,
+					last_updated_by_user_id = :last_updated_by_user_id
+				`,
+				{
+					flow_puzzle_id: input.id,
+					flow_puzzle_name: input.name,
+					flow_puzzle: Sql.json(input.flow),
+					created_at: input.createdAt,
+					created_by_user_id: input.createdBy,
+					last_updated_at: input.lastUpdatedAt,
+					last_updated_by_user_id: input.lastUpdatedBy,
+				},
 			);
 			return Result.mapOk(queried, () => null);
 		},

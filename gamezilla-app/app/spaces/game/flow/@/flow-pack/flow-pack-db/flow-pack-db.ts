@@ -10,11 +10,11 @@ export type WhereClause = {
 
 export type IFlowPackDb = {
 	count: (input: {
-		where: WhereClause
+		where: WhereClause;
 	}) => Promise<Result<string, number>>;
 	list: (input: {
 		pagination: Pagination;
-		where: WhereClause
+		where: WhereClause;
 		order: {
 			createdAt?: "asc" | "desc";
 			lastUpdatedAt?: "asc" | "desc";

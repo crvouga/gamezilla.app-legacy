@@ -4,7 +4,8 @@ import pg from "pg";
 import type { ILogger } from "../logger/logger";
 import type { IDbConnSql } from "./db-conn-sql";
 import { logQuery } from "./shared";
-import { toSql, toSqlLog } from "./sql";
+import { Sql } from "gamezilla-app/@/sql";
+
 
 declare global {
 	var pgPool: pg.Pool;
@@ -26,7 +27,7 @@ export const DbConnPostgres = async ({
 
 	return {
 		async query(rowParser, rawSql, params) {
-			const sql = toSql(rawSql, params);
+			const sql = Sql.to(rawSql, params);
 			try {
 				const start = Date.now();
 
@@ -36,7 +37,7 @@ export const DbConnPostgres = async ({
 
 				logQuery({
 					logger,
-					sql: toSqlLog(rawSql, params),
+					sql: Sql.toLog(rawSql, params),
 					start,
 					end,
 				});
