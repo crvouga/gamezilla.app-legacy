@@ -705,7 +705,6 @@ export const adjectives = [
 	"shiny",
 	"jealous",
 	"insane",
-	"gay",
 	"vivid",
 	"wounded",
 	"hurt",
@@ -1747,7 +1746,6 @@ export const adjectives = [
 	"ghostly",
 	"seeming",
 	"flickering",
-
 	"clenched",
 	"offshore",
 	"stinging",
