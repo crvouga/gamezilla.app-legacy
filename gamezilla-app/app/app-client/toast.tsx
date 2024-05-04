@@ -1,7 +1,12 @@
-import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
-import type { ToastCmd } from "gamezilla-app/app/@/client";
-import { IconXMark, Transition, cn } from "gamezilla-app/app/@/ui";
 import { Posix, Sub, Time, TimeSpan } from "gamezilla-app/@/core";
+import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
+import {
+	APP_SOUND,
+	SoundCmd,
+	playSound,
+	type ToastCmd,
+} from "gamezilla-app/app/@/client";
+import { IconXMark, Show, Transition, cn } from "gamezilla-app/app/@/ui";
 
 //
 //
@@ -22,7 +27,7 @@ type Module = AppClientModule<{
 	MsgToClient: null;
 	MsgToServer: null;
 	//
-	MsgOutCmd: null;
+	MsgOutCmd: SoundCmd;
 	//
 	MsgInEvent: null;
 	MsgOutEvent: null;
@@ -97,6 +102,7 @@ const updateFromMsg: Module["update"] = (input) => {
 					...model,
 					toast: null,
 				},
+				msgCmd: [playSound(APP_SOUND.tap)],
 			};
 		}
 
@@ -212,64 +218,73 @@ export const subscriptions: Module["subscriptions"] = ({ model }) => {
 
 export const View: Module["View"] = (props) => {
 	return (
-		<Transition
-			mode="out-in"
-			className="pointer-events-none absolute left-0 top-0 z-[100] flex w-full flex-col items-center gap-4 px-4 pt-4 "
-			id="toast-root"
-			onEnter={onEnter}
-			onExit={onExit}
-		>
-			{props.model.toast && (
-				<Toast
-					key={props.model.toast.toastId}
-					toast={props.model.toast}
-					dispatch={props.dispatch}
-				/>
-			)}
+		<Transition mode="out-in" id="toast-root" onEnter={onEnter} onExit={onExit}>
+			<Show
+				when={() => props.model.toast}
+				render={(toast) => (
+					<Toast key={toast.toastId} toast={toast} dispatch={props.dispatch} />
+				)}
+			/>
 		</Transition>
 	);
 };
 
-async function onEnter(node: HTMLElement) {
+const onEnter = async (node: HTMLElement) => {
 	await node?.animate(
-		[{ transform: "translateY(-150%)" }, { transform: "translateY(0%)" }],
+		[
+			{
+				transform: "translateY(-150%)",
+			},
+			{
+				transform: "translateY(0%)",
+			},
+		],
 		{
 			duration: 200,
 			easing: "ease-in-out",
 			fill: "both",
 		},
 	).finished;
-}
+};
 
-async function onExit(node: HTMLElement) {
+const onExit = async (node: HTMLElement) => {
 	await node?.animate(
-		[{ transform: "translateY(0%)" }, { transform: "translateY(-150%)" }],
+		[
+			{
+				transform: "translateY(0%)",
+			},
+			{
+				transform: "translateY(-150%)",
+			},
+		],
 		{
 			duration: 200,
 			easing: "ease-in-out",
 			fill: "both",
 		},
 	).finished;
-}
+};
 
-function Toast({
-	toast,
-	dispatch,
-}: {
-	toast: Toast;
-	dispatch: (m: Msg) => void;
-}) {
-	const errorMsg = toast.errorMsg;
+const Toast = (props: { toast: Toast; dispatch: (m: Msg) => void }) => {
+	const errorMsg = props.toast.errorMsg;
 	return (
 		<div
-			id={String(toast.toastId)}
-			className="w-full overflow-visible"
+			id={String(props.toast.toastId)}
+			className="pointer-events-none absolute left-0 top-0 z-40 w-full overflow-visible p-4"
 			//
-			onMouseDown={() => dispatch({ t: "pressed-down-on-toast", toast })}
-			onMouseUp={() => dispatch({ t: "pressed-up-on-toast", toast })}
+			onMouseDown={() =>
+				props.dispatch({ t: "pressed-down-on-toast", toast: props.toast })
+			}
+			onMouseUp={() =>
+				props.dispatch({ t: "pressed-up-on-toast", toast: props.toast })
+			}
 			//
-			onTouchStart={() => dispatch({ t: "pressed-down-on-toast", toast })}
-			onTouchEnd={() => dispatch({ t: "pressed-up-on-toast", toast })}
+			onTouchStart={() =>
+				props.dispatch({ t: "pressed-down-on-toast", toast: props.toast })
+			}
+			onTouchEnd={() =>
+				props.dispatch({ t: "pressed-up-on-toast", toast: props.toast })
+			}
 			//
 			onContextMenu={(e) => {
 				e.preventDefault();
@@ -278,22 +293,22 @@ function Toast({
 			<div
 				className={cn(
 					"pointer-events-auto z-40 flex w-full items-center justify-between overflow-hidden  rounded-lg border p-3 text-lg text-white shadow-2xl",
-					toast.variant === "info" && "border-neutral-600 bg-neutral-700",
-					toast.variant === "error" && "border-red-400 bg-red-500",
+					props.toast.variant === "info" && "border-neutral-600 bg-neutral-700",
+					props.toast.variant === "error" && "border-red-400 bg-red-500",
 				)}
-				key={toast.toastId}
+				key={props.toast.toastId}
 			>
-				{toast.text}
+				{props.toast.text}
 				{errorMsg && (
 					<>
 						<button
 							type="button"
 							className="font-bold"
 							onClick={() =>
-								dispatch({
+								props.dispatch({
 									t: "clicked-see-error",
 									errorMsg: errorMsg,
-									toastId: toast.toastId,
+									toastId: props.toast.toastId,
 								})
 							}
 						>
@@ -304,15 +319,15 @@ function Toast({
 				<button
 					type="button"
 					onClick={() =>
-						dispatch({
+						props.dispatch({
 							t: "clicked-dismiss-button",
-							toastId: toast.toastId,
+							toastId: props.toast.toastId,
 						})
 					}
 				>
-					<IconXMark />
+					<IconXMark className="w-5 h-5" />
 				</button>
 			</div>
 		</div>
 	);
-}
+};

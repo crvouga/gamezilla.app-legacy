@@ -15,6 +15,7 @@ export * from "./loading-bar";
 export * from "./loading-state";
 export * from "./portal";
 export * from "./select";
+export * from "./show";
 export * from "./slider";
 export * from "./spinner";
 export * from "./tabs";
