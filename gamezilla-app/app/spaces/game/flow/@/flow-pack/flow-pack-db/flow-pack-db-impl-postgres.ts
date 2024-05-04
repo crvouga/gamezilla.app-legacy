@@ -195,8 +195,13 @@ export const FlowPackDbPostgres = ({
 			return Result.mapOk(queried, () => input);
 		},
 
-		async zap() {
-			return Err("Not implemented");
+		async zap(input) {
+			const queried = await dbConnSql.query(
+				p.unknown,
+				"DELETE FROM game_flow_pack WHERE flow_pack_id = :flow_pack_id",
+				{ flow_pack_id: input.id },
+			);
+			return Result.mapOk(queried, () => null);``
 		},
 	};
 };

@@ -99,4 +99,17 @@ describe(import.meta.file, () => {
 		});
 		expect(count).toEqual(Ok(1));
 	});
+
+	it('should be able to zap', async () => {
+		const f = await Fixture();
+		const pack = await randomFlowPack();
+		await f.flowPackDb.put(pack);
+		const zapped = await f.flowPackDb.zap({
+			deletedBy: pack.createdBy,
+			id: pack.id,
+		});
+		const after = await f.flowPackDb.get(pack.id);
+		expect(zapped).toEqual(Ok(null));
+		expect(after).toEqual(Ok(null));
+	})
 });

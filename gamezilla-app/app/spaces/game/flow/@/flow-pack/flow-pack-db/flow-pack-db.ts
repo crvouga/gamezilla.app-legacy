@@ -1,6 +1,5 @@
 import { Task } from "gamezilla-app/@/core";
 import type { Paginated, Pagination, UserId } from "gamezilla-app/app/@/data";
-import type { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
 import type { FlowPack } from "../flow-pack";
 import type { FlowPackId } from "../flow-pack-id";
 
@@ -22,5 +21,5 @@ export type IFlowPackDb = {
 	}) => Task<string, Paginated<FlowPack>>;
 	get: (id: FlowPackId) => Task<string, FlowPack | null>;
 	put: (pack: FlowPack) => Task<string, FlowPack>;
-	zap: (input: { id: FlowPuzzleId; deletedBy: UserId }) => Task<string, null>;
+	zap: (input: { id: FlowPackId; deletedBy: UserId }) => Task<string, null>;
 };
