@@ -56,18 +56,10 @@ export const DbConnPostgres = async ({
 					const parsed = rowParser.parse(row);
 
 					if (parsed.t === "err") {
-						logger.error(
-							`Failed to parse row=${JSON.stringify(
-								row,
-								null,
-								4,
-							)} \nerror=${JSON.stringify(
-								parsed.error,
-								null,
-								4,
-							)} sql=${rawSql}`,
-						);
-						continue;
+						const rowStr = JSON.stringify(row, null, 4);
+						const errorStr = JSON.stringify(parsed.error, null, 4);
+						const error = `Failed to parse row\nrow=${rowStr}\nerror=${errorStr}\nsql=${rawSql}`;
+						return Err(error);
 					}
 
 					output.push(parsed.value);

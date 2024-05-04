@@ -49,7 +49,7 @@ const randomFlowPack = async (): Promise<FlowPack> => {
 };
 
 describe(import.meta.file, () => {
-	it.skip("should be able to put", async () => {
+	it("should be able to put", async () => {
 		const f = await Fixture();
 		const pack = await randomFlowPack();
 		const put = await f.flowPackDb.put(pack);

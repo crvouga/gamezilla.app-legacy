@@ -17,8 +17,8 @@ const Row = p.obj({
 	created_by_user_id: UserId,
 	last_updated_at_posix: p.or(p.num, p.str),
 	last_updated_by_user_id: UserId,
-	deleted_at_posix: p.or(p.num, p.str),
-	deleted_by_user_id: UserId,
+	deleted_at_posix: p.maybe(p.or(p.num, p.str)),
+	deleted_by_user_id: p.maybe(UserId),
 });
 
 type Row = p.Infer<typeof Row>;
@@ -93,7 +93,7 @@ export const FlowPackDbPostgres = ({
 				) VALUES (
 					:flow_pack_id,
 					:flow_pack_name,
-					ARRAY[:flow_puzzle_ids],
+					ARRAY[:flow_puzzle_ids]::TEXT[],
 					:created_at_posix,
 					:created_by_user_id,
 					:last_updated_at_posix,
@@ -102,7 +102,7 @@ export const FlowPackDbPostgres = ({
 					:deleted_by_user_id
 				) ON CONFLICT (flow_pack_id) DO UPDATE SET
 					flow_pack_name = :flow_pack_name,
-					flow_puzzle_ids = ARRAY[:flow_puzzle_ids],
+					flow_puzzle_ids = ARRAY[:flow_puzzle_ids]::TEXT[],
 					last_updated_at_posix = :last_updated_at_posix,
 					last_updated_by_user_id = :last_updated_by_user_id
 				`,
