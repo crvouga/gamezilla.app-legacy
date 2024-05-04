@@ -6,7 +6,7 @@ import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
 import type { FlowPack } from "../flow-pack";
 import { FlowPackId } from "../flow-pack-id";
 import { FlowPackName } from "../flow-pack-name";
-import type { IFlowPackDb, WhereClause } from "./flow-pack-db";
+import type { IFlowPackDb, OrderClause, WhereClause } from "./flow-pack-db";
 import { Sql } from "gamezilla-app/@/sql";
 
 const Row = p.obj({
@@ -35,15 +35,36 @@ const rowToFlowPack = (row: Row): FlowPack | null => {
 	};
 };
 
-export const toSqlWhere = (where: WhereClause) => {
+const toSqlWhere = (where: WhereClause) => {
 	const clauses: string[] = [];
-	const variables: Record<string, any> = {};
+	const vars: Record<string, any> = {};
 	if (where.createdBy) {
 		clauses.push("created_by_user_id = :created_by_user_id");
-		variables["created_by_user_id"] = where.createdBy;
+		vars["created_by_user_id"] = where.createdBy;
 	}
 
-	return { whereStr: clauses.join(" AND "), variables };
+	const str = clauses.length > 0 ? `WHERE ${clauses.join("\nAND\t")}` : "";
+
+	return { str, vars };
+};
+
+const toSqlOrder = (order: OrderClause) => {
+	const clauses: string[] = [];
+	const vars: Record<string, any> = {};
+	if (order.createdAt) {
+		clauses.push(
+			`created_at_posix ${order.createdAt === "asc" ? "ASC" : "DESC"}`,
+		);
+	}
+	if (order.lastUpdatedAt) {
+		clauses.push(
+			`last_updated_at_posix ${order.lastUpdatedAt === "asc" ? "ASC" : "DESC"}`,
+		);
+	}
+
+	const str = clauses.length > 0 ? `ORDER BY ${clauses.join(",\n")}` : "";
+
+	return { str, vars };
 };
 
 export const FlowPackDbPostgres = ({
@@ -72,8 +93,36 @@ export const FlowPackDbPostgres = ({
 			return Err("Not implemented");
 		},
 
-		async list() {
-			return Err("Not implemented");
+		async list(input) {
+			const sqlWhere = toSqlWhere(input.where);
+			const sqlOrder = toSqlOrder(input.order);
+			const sqlPagination = Sql.pagination(input.pagination);
+			const vars = {
+				...sqlWhere.vars,
+				...sqlOrder.vars,
+				...sqlPagination.vars,
+			};
+
+			const str = `
+				SELECT * FROM game_flow_pack
+				${sqlWhere.str}
+				${sqlOrder.str}
+				${sqlPagination.str}
+			`;
+
+			const queried = await dbConnSql.query(Row, str, vars);
+
+			const total = Result.withDefault(await this.count(input), 0);
+
+			const result = Result.mapOk(queried, (rows) => {
+				return {
+					...input.pagination,
+					items: rows.map(rowToFlowPack),
+					total,
+				};
+			});
+
+			return result;
 		},
 
 		async put(input) {

@@ -8,22 +8,19 @@ export type WhereClause = {
 	createdBy?: UserId;
 };
 
+export type OrderClause = {
+	createdAt?: "asc" | "desc";
+	lastUpdatedAt?: "asc" | "desc";
+};
+
 export type IFlowPackDb = {
-	count: (input: {
-		where: WhereClause;
-	}) => Task<string, number>;
+	count: (input: { where: WhereClause }) => Task<string, number>;
 	list: (input: {
 		pagination: Pagination;
 		where: WhereClause;
-		order: {
-			createdAt?: "asc" | "desc";
-			lastUpdatedAt?: "asc" | "desc";
-		};
+		order: OrderClause;
 	}) => Task<string, Paginated<FlowPack>>;
 	get: (id: FlowPackId) => Task<string, FlowPack | null>;
 	put: (pack: FlowPack) => Task<string, FlowPack>;
-	zap: (input: {
-		id: FlowPuzzleId;
-		deletedBy: UserId;
-	}) => Task<string, null>;
+	zap: (input: { id: FlowPuzzleId; deletedBy: UserId }) => Task<string, null>;
 };

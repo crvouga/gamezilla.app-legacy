@@ -26,6 +26,16 @@ export type Vars = {
 	[key: string]: VarType;
 };
 
+export const pagination = (input: { limit: number; offset: number }) => {
+	return {
+		str: `LIMIT\t:limit\nOFFSET\t:offset\n`,
+		vars: {
+			limit: input.limit,
+			offset: input.offset,
+		},
+	};
+};
+
 export const to = (query: string, variables: Vars): string => {
 	const keys = Object.keys(variables);
 	keys.sort((a, b) => b.length - a.length);
