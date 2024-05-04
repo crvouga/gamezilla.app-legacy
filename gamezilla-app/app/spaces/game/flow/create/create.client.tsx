@@ -46,7 +46,6 @@ const updateFlowPackList: ClientModule["update"] = (input) => {
 			input.msgServer?.t === "flow-pack-list" ? input.msgServer.c : undefined,
 		msgEvt: input.msgEvt,
 		msgCmd: input.msgCmd,
-		modelLocation: null,
 	});
 	return {
 		model: {
@@ -74,7 +73,6 @@ const updateFlowPuzzleList: ClientModule["update"] = (input) => {
 			input.msgServer?.t === "flow-puzzle-list" ? input.msgServer.c : undefined,
 		msgEvt: input.msgEvt,
 		msgCmd: input.msgCmd,
-		modelLocation: null,
 	});
 	return {
 		model: {
