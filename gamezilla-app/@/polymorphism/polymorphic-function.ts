@@ -1,7 +1,9 @@
 export const Polymorphic = <
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	TFunction extends (variant: any, ...args: any[]) => any | (() => void),
 >() => {
 	type Variant = Parameters<TFunction>[0];
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	type RestParameters = Parameters<TFunction> extends [any, ...infer Rest]
 		? Rest
 		: never;
@@ -17,6 +19,7 @@ export const Polymorphic = <
 
 	let handleNotImplemented: TFunction | undefined;
 
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const implementations: Implementation<any, any>[] = [];
 
 	function run(variant: Variant, ...args: RestParameters): TOutput {

@@ -17,10 +17,6 @@ export type AppClientModuleTypes = {
 	 */
 	Model: any;
 	/**
-	 * `ModelLocation` is the state of the module that lives in the web browser's location
-	 */
-	ModelLocation?: any;
-	/**
 	 * `Msg` is a message that is local to the module. Should always be an event that happens in the module. Like `user-clicked-a-button`
 	 */
 	Msg: any;
@@ -89,10 +85,6 @@ export type Input<T extends AppClientModuleTypes> = {
 	 */
 	model: T["Model"];
 	/**
-	 *
-	 */
-	modelLocation?: T["ModelLocation"];
-	/**
 	 * `msg` is an event that happens client side within this module. Like `user-clicked-a-button`
 	 */
 	msg?: T["Msg"] | null;
@@ -116,20 +108,11 @@ export type Input<T extends AppClientModuleTypes> = {
 //
 //
 
-export type OutputModelLocation<T extends AppClientModuleTypes> = {
-	t: "push" | "replace";
-	c: T["ModelLocation"];
-};
-
 export type Output<T extends AppClientModuleTypes> = {
 	/**
 	 * `model` will be the new state of the module
 	 */
 	model: T["Model"];
-	/**
-	 * `modelLocation` is a location to navigate to
-	 */
-	modelLocation?: OutputModelLocation<T>;
 	/**
 	 * `eff` is a side effect to be performed. May dispatch a message
 	 */
@@ -182,26 +165,32 @@ export const andThen = <T extends AppClientModuleTypes>(
 	acc: Output<T>,
 	...updates: ((model: T["Model"]) => Output<T>)[]
 ): Output<T> => {
-	const [update, ...rest] = updates;
-
-	if (!update) {
-		return acc;
-	}
-
-	const updated = update(acc.model);
-
-	const accNew: Output<T> = {
-		model: {
-			...acc.model,
+	let runningModel = { ...acc.model };
+	let runningEffs = [acc.eff];
+	let runningCmds = [...(acc?.msgCmd ?? [])];
+	let runningEvts = [...(acc?.msgEvt ?? [])];
+	for (let i = 0; i < updates.length; i++) {
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
+		const update = updates[i]!;
+		const updated = update(runningModel);
+		runningModel = {
+			...runningModel,
 			...updated.model,
-		},
-		modelLocation: updated.modelLocation ?? acc.modelLocation,
-		eff: Eff.batch([acc.eff, updated.eff]),
-		msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
-		msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
+		};
+		runningEffs.push(updated.eff);
+		if (updated.msgCmd) {
+			runningCmds.push(...updated.msgCmd);
+		}
+		if (updated.msgEvt) {
+			runningEvts?.push(...updated.msgEvt);
+		}
+	}
+	return {
+		model: runningModel,
+		eff: Eff.batch(runningEffs),
+		msgCmd: runningCmds,
+		msgEvt: runningEvts,
 	};
-
-	return andThen(accNew, ...rest);
 };
 
 export const AppClientModule = {

@@ -6,7 +6,6 @@ import type { IDbConnSql } from "./db-conn-sql";
 import { logQuery } from "./shared";
 import { Sql } from "gamezilla-app/@/sql";
 
-
 declare global {
 	var pgPool: pg.Pool;
 	var pgPoolClient: pg.PoolClient;

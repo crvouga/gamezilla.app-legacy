@@ -63,7 +63,7 @@ const tag = <Tag extends string, Msg>(
 const batch = <Msg>(
 	...effLists: (Eff<Msg> | undefined | null)[][]
 ): Eff<Msg> => {
-	const batchedEff: Eff<Msg> = (dispatch) => {
+	return (dispatch) => {
 		for (const effList of effLists) {
 			for (const eff of effList) {
 				if (eff) {
@@ -72,8 +72,6 @@ const batch = <Msg>(
 			}
 		}
 	};
-
-	return batchedEff;
 };
 
 const None: Eff = () => {

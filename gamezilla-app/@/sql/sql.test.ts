@@ -76,9 +76,12 @@ describe(import.meta.file, () => {
 
 	it("should handle parameter names with underscores", async () => {
 		const expected = "SELECT * FROM users WHERE first_name = 'John'";
-		const actual = Sql.to("SELECT * FROM users WHERE first_name = :first_name", {
-			first_name: "John",
-		});
+		const actual = Sql.to(
+			"SELECT * FROM users WHERE first_name = :first_name",
+			{
+				first_name: "John",
+			},
+		);
 		expect(actual).toBe(expected);
 	});
 
@@ -218,7 +221,7 @@ describe(import.meta.file, () => {
 	it("should handle array column data type", async () => {
 		const expected =
 			"INSERT INTO users (name, emails) VALUES ('John', ARRAY['email@email.com', 'email@email.com'])";
-		
+
 		const actual = Sql.to(
 			"INSERT INTO users (name, emails) VALUES (:name, ARRAY[:emails])",
 			{
@@ -236,5 +239,5 @@ describe(import.meta.file, () => {
 			ids: Sql.commas([1, 2, 3]),
 		});
 		expect(actual).toBe(expected);
-	})
+	});
 });

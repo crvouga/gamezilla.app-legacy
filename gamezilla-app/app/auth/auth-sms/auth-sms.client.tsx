@@ -1,4 +1,20 @@
-import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
+import {
+	Err,
+	Iso3166Alpha2Code,
+	PhoneNumber,
+	Posix,
+	RemoteResult,
+	Sub,
+	Time,
+	TimeSpan,
+	Uuid,
+	isErr,
+} from "gamezilla-app/@/core";
+import { Polymorphic } from "gamezilla-app/@/polymorphism/polymorphic-function";
+import {
+	AppClientModule,
+	andThen,
+} from "gamezilla-app/app/@/architecture/app-client";
 import {
 	APP_SOUND,
 	type BaseClientCtx,
@@ -22,18 +38,6 @@ import {
 	TopBar,
 	TopBarBackButton,
 } from "gamezilla-app/app/@/ui";
-import {
-	Err,
-	Iso3166Alpha2Code,
-	PhoneNumber,
-	Posix,
-	RemoteResult,
-	Sub,
-	Time,
-	TimeSpan,
-	Uuid,
-	isErr,
-} from "gamezilla-app/@/core";
 import type {
 	ModelClient,
 	MsgClient,
@@ -115,23 +119,17 @@ const PHONE_NUMBER_INPUT_VIEW_ID = "phoneNumberInput";
 //
 
 export const update: Module["update"] = (input) => {
-	if (input.msg) {
-		return updateFromMsg(input);
-	}
-	if (input.msgServer) {
-		return updateFromServer(input);
-	}
-	return { model: input.model };
+	return andThen(
+		{ model: input.model },
+		(model) => updateFromMsg({ ...input, model }),
+		(model) => updateFromServer({ ...input, model }),
+	);
 };
 
 const updateFromMsg: Module["update"] = (input) => {
-	if (!input.msg) {
-		return { model: input.model };
-	}
-
 	const { ctx, model, msg } = input;
 
-	switch (msg.t) {
+	switch (msg?.t) {
 		case "clicked-back-button": {
 			if (ctx.currentRoute.t === "login-sms-verify") {
 				return {
@@ -321,17 +319,17 @@ const updateFromMsg: Module["update"] = (input) => {
 				},
 			);
 		}
+
+		default: {
+			return { model };
+		}
 	}
 };
 
 const updateFromServer: Module["update"] = (input) => {
-	if (!input.msgServer) {
-		return { model: input.model };
-	}
-
 	const { model, msgServer } = input;
 
-	switch (msgServer.t) {
+	switch (msgServer?.t) {
 		case "sent-code": {
 			if (isErr(msgServer.result)) {
 				return {
@@ -377,6 +375,10 @@ const updateFromServer: Module["update"] = (input) => {
 					verifyCode: msgServer.result,
 				},
 			};
+		}
+
+		default: {
+			return { model };
 		}
 	}
 };

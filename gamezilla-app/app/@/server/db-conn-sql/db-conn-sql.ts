@@ -2,7 +2,6 @@ import type { Result } from "gamezilla-app/@/core";
 import type { p } from "gamezilla-app/@/core/parser";
 import { Sql } from "gamezilla-app/@/sql";
 
-
 export type DbConnSqlNotification = {
 	processId: number;
 	channel: string;
