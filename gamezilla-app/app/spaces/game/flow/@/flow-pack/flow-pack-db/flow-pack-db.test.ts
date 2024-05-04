@@ -88,5 +88,15 @@ describe(import.meta.file, () => {
 		}
 	});
 
-	
+	it("should be able to count", async () => {
+		const f = await Fixture();
+		const pack = await randomFlowPack();
+		await f.flowPackDb.put(pack);
+		const count = await f.flowPackDb.count({
+			where: {
+				createdBy: pack.createdBy,
+			},
+		});
+		expect(count).toEqual(Ok(1));
+	});
 });

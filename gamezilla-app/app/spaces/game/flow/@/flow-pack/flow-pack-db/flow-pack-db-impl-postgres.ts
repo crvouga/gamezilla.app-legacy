@@ -67,6 +67,17 @@ const toSqlOrder = (order: OrderClause) => {
 	return { str, vars };
 };
 
+const ensureNumber = (maybeNumber: unknown): number => {
+	if (typeof maybeNumber === "number") {
+		return maybeNumber;
+	}
+	if (typeof maybeNumber === "string") {
+		return parseFloat(maybeNumber);
+	}
+	return 0;
+}
+
+
 export const FlowPackDbPostgres = ({
 	dbConnSql,
 }: {
@@ -85,12 +96,23 @@ export const FlowPackDbPostgres = ({
 		},
 
 		async count(input) {
-			await dbConnSql.query(
-				p.obj({ count: p.num }),
-				"SELECT COUNT(*) FROM game_flow_pack WHERE flow_pack_id = :flow_pack_id",
-				{ flow_pack_id: input.where.createdBy },
+			const where = toSqlWhere(input.where);
+			const vars = where.vars;
+			const str = `
+				SELECT
+					COUNT(*)
+				FROM
+					game_flow_pack
+				${where.str}
+			`
+			
+			const queried = await dbConnSql.query(
+				p.obj({ count: p.or(p.num, p.str) }),
+				str,
+				vars
 			);
-			return Err("Not implemented");
+
+			return Result.mapOk(queried, (rows) => ensureNumber(rows[0]?.count));
 		},
 
 		async list(input) {
@@ -117,7 +139,10 @@ export const FlowPackDbPostgres = ({
 			const result = Result.mapOk(queried, (rows) => {
 				return {
 					...input.pagination,
-					items: rows.map(rowToFlowPack),
+					items: rows.flatMap((row) => {
+						const pack = rowToFlowPack(row);
+						return pack ? [pack] : [];
+					}),
 					total,
 				};
 			});
