@@ -5,7 +5,9 @@ import {
 	IconArrowLeftOnRect,
 	IconChevronLeft,
 	IconChevronRight,
+	IconDeleteForever,
 	IconEllipsisVertical,
+	ListItemButton,
 } from "gamezilla-app/app/@/ui";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
@@ -290,7 +292,9 @@ export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
 			return null;
 		}
 
-		if (modelSync.packBuilder.screen.t !== "screen-puzzle") {
+		const screen = modelSync.packBuilder.screen;
+
+		if (screen.t !== "screen-puzzle") {
 			return null;
 		}
 
@@ -308,7 +312,7 @@ export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
 				/>
 				<Drawer
 					id="screen-puzzle-more"
-					open={modelSync.packBuilder.screen.opened === "more"}
+					open={screen.opened === "more"}
 					onClose={() =>
 						dispatch({
 							t: "pack-builder.puzzle-screen.user-closed-more-drawer",
@@ -317,14 +321,17 @@ export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
 					}
 					position="bottom"
 				>
-					<RemovePuzzleClient.ViewListItem
-						{...input}
-						ctx={{
-							...input.ctx,
-							pack: modelSync.packBuilder.pack,
-							puzzle: modelSync.packBuilder.screen.puzzle,
-							packPuzzleIndex: modelSync.packBuilder.screen.puzzleIndex,
-						}}
+					<ListItemButton
+						icon={(props) => <IconDeleteForever {...props} />}
+						label="Remove from pack"
+						color="danger"
+						onClick={() =>
+							dispatch({
+								t: "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button",
+								userId: ctx.currentUserId,
+								puzzleIndex: screen.puzzleIndex,
+							})
+						}
 					/>
 					<div className="w-full p-2"></div>
 				</Drawer>
@@ -373,7 +380,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 				return {
 					model,
 					msgSync: [withId(msg)],
-					msgCmd: [playSound(APP_SOUND.tap)],
+					msgCmd: [playSound(APP_SOUND.refreshFeed), showToast("Puzzle removed")],
 				};
 			}
 		}
