@@ -8,11 +8,12 @@ import type {
 } from "gamezilla-app/app/spaces/@/space";
 import type { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
 import type { FlowPack } from "..";
-import type {
-	ModelClient,
-	MsgClient,
-	MsgToClient,
-	MsgToServer,
+import {
+	initClient,
+	type ModelClient,
+	type MsgClient,
+	type MsgToClient,
+	type MsgToServer,
 } from "./flow-pack-grid.core";
 
 type Ctx = SpaceClientCtx & {
@@ -156,10 +157,7 @@ export const FlowPackGridClient: Pick<
 > = {
 	init() {
 		return {
-			model: {
-				puzzles: {},
-				request: RequestResponse.notAsked,
-			},
+			model: initClient
 		};
 	},
 	update(input) {

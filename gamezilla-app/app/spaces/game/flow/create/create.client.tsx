@@ -6,34 +6,18 @@ import { FlowPuzzleListClient } from "../@/flow-puzzle/flow-puzzle-list";
 import { initClient, type ClientModule } from "./create.core";
 import { ListTabsClient } from "./list-tabs/list-tabs";
 import { PackBuilderClient } from "./pack/builder/pack-builder.client";
-import { PackCreateClient } from "./pack/create/pack-create.client";
-import { PackListClient } from "./pack/list/pack-list.client";
+import { PackClient } from "./pack/pack.client";
 import { PuzzleBuilderClient } from "./puzzle/builder/puzzle-builder.client";
-import { PuzzleCreateClient } from "./puzzle/create/puzzle-create.client";
-import { PuzzleDeleteForeverClient } from "./puzzle/delete-forever/puzzle-delete-forever.client";
-import { PuzzleEditNameClient } from "./puzzle/edit/puzzle-edit-name.client";
-import { PuzzleListClient } from "./puzzle/list/puzzle-list.client";
-import { PuzzleSaveChangesClient } from "./puzzle/save-changes/puzzle-save-changes.client";
+import { PuzzleClient } from "./puzzle/puzzle.client";
 
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
-		//
 		(model) => updateFlowPuzzleList({ ...input, model }),
 		(model) => updateFlowPackList({ ...input, model }),
-		//
 		(model) => ListTabsClient.update({ ...input, model }),
-		//
-		(model) => PackListClient.update({ ...input, model }),
-		(model) => PuzzleBuilderClient.update({ ...input, model }),
-		(model) => PuzzleListClient.update({ ...input, model }),
-		(model) => PuzzleEditNameClient.update({ ...input, model }),
-		(model) => PuzzleDeleteForeverClient.update({ ...input, model }),
-		(model) => PuzzleSaveChangesClient.update({ ...input, model }),
-		(model) => PuzzleCreateClient.update({ ...input, model }),
-		//
-		(model) => PackCreateClient.update({ ...input, model }),
-		(model) => PackBuilderClient.update({ ...input, model }),
+		(model) => PuzzleClient.update({ ...input, model }),		
+		(model) => PackClient.update({ ...input, model }),
 	);
 };
 
@@ -116,8 +100,8 @@ const ViewFeedItem: ClientModule["ViewFeedItem"] = () => {
 const subscriptions: ClientModule["subscriptions"] = (input) => {
 	return Sub.batch([
 		//
-		PuzzleCreateClient.subscriptions(input),
-		PackBuilderClient.subscriptions(input),
+		PuzzleClient.subscriptions(input),
+		PackClient.subscriptions(input),
 		Sub.tag(
 			"flow-pack-list",
 			FlowPackListClient.subscriptions({
