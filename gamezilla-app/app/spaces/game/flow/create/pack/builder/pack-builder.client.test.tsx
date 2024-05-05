@@ -201,6 +201,7 @@ describe(import.meta.file, () => {
 	});
 
 	it("should should remove puzzle from pack clicking remove from pack button", async () => {
-		// const f = await Fixture();
+		const f = await Fixture();
+		f;
 	});
 });

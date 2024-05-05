@@ -137,6 +137,12 @@ const updateChild: ClientModule["update"] = (input) => {
 				...tagged,
 				model: {
 					...tagged.model,
+					t: "create",
+					c: {
+						...tagged.model.c,
+						packs: {},
+						puzzles: {},
+					},
 					packs: updated.model.packs,
 					puzzles: updated.model.puzzles,
 				},
@@ -318,7 +324,15 @@ const View: ClientModule["View"] = (input) => {
 					ctx={ctx}
 					dispatch={(c) => dispatch({ t: "create", c })}
 					modelSync={modelSync.c}
-					model={input.model.t === "create" ? input.model.c : CreateClient.init}
+					model={
+						input.model.t === "create"
+							? {
+									...input.model.c,
+									packs: input.model.packs,
+									puzzles: input.model.puzzles,
+								}
+							: CreateClient.init
+					}
 				/>
 			);
 		}
