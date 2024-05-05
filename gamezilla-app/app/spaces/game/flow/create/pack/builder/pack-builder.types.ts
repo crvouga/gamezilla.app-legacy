@@ -112,16 +112,16 @@ export const MsgCore = p.or(
 		c: p.any,
 	}),
 	p.obj({
-		t: p.l("pack-builder.user-clicked-exit-puzzle-button"),
+		t: p.l("pack-builder.puzzle-screen.user-clicked-exit-puzzle-button"),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("pack-builder.user-clicked-next-puzzle-button"),
+		t: p.l("pack-builder.puzzle-screen.user-clicked-next-puzzle-button"),
 		userId: UserId,
 		nextPuzzle: FlowPuzzle,
 	}),
 	p.obj({
-		t: p.l("pack-builder.user-clicked-previous-puzzle-button"),
+		t: p.l("pack-builder.puzzle-screen.user-clicked-previous-puzzle-button"),
 		userId: UserId,
 		previousPuzzle: FlowPuzzle,
 	}),

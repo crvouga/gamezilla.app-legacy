@@ -74,7 +74,7 @@ describe(import.meta.file, () => {
 
 		const modelCore = f.applyMsgs([
 			{
-				t: "pack-builder.user-clicked-exit-puzzle-button",
+				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button",
 				userId: f.currentUserId,
 			},
 		]);
@@ -157,7 +157,7 @@ describe(import.meta.file, () => {
 				index: 0,
 			},
 			{
-				t: "pack-builder.user-clicked-next-puzzle-button",
+				t: "pack-builder.puzzle-screen.user-clicked-next-puzzle-button",
 				userId: f.currentUserId,
 				nextPuzzle: f.puzzles[1],
 			},
@@ -177,7 +177,7 @@ describe(import.meta.file, () => {
 				index: 0,
 			},
 			{
-				t: "pack-builder.user-clicked-next-puzzle-button",
+				t: "pack-builder.puzzle-screen.user-clicked-next-puzzle-button",
 				userId: f.currentUserId,
 				nextPuzzle: await randomFlowPuzzle({ createdBy: f.currentUserId }),
 			},
@@ -198,7 +198,7 @@ describe(import.meta.file, () => {
 				index: 1,
 			},
 			{
-				t: "pack-builder.user-clicked-previous-puzzle-button",
+				t: "pack-builder.puzzle-screen.user-clicked-previous-puzzle-button",
 				userId: f.currentUserId,
 				previousPuzzle: f.puzzles[0],
 			},
@@ -218,7 +218,7 @@ describe(import.meta.file, () => {
 				index: 1,
 			},
 			{
-				t: "pack-builder.user-clicked-previous-puzzle-button",
+				t: "pack-builder.puzzle-screen.user-clicked-previous-puzzle-button",
 				userId: f.currentUserId,
 				previousPuzzle: await randomFlowPuzzle({ createdBy: f.currentUserId }),
 			},
@@ -238,7 +238,7 @@ describe(import.meta.file, () => {
 				index: 1,
 			},
 			{
-				t: "pack-builder.user-clicked-exit-puzzle-button",
+				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button",
 				userId: f.currentUserId,
 			},
 		]);
