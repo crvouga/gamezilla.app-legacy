@@ -247,6 +247,4 @@ describe(import.meta.file, () => {
 		expect(before).toEqual(f.pack);
 		expect(after).toEqual(updatedPack);
 	});
-
-	
 });

@@ -1,5 +1,6 @@
 import type { VDom } from "gamezilla-app/@/vdom";
-import { IconPlus } from "gamezilla-app/app/@/ui";
+import { IconPlus, Swiper } from "gamezilla-app/app/@/ui";
+import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
 
 const COLUMN_COUNT = 5;
 const ROW_COUNT = 6;
@@ -8,21 +9,33 @@ const toIndex = ({ x, y }: { x: number; y: number }) => {
 	return y * COLUMN_COUNT + x;
 };
 
-const ViewPackPuzzleGrid = ({
-	renderCell,
-}: {
-	renderCell: ({ x, y }: { x: number; y: number }) => VDom;
+const ViewPackPuzzleGridSlide = (props: {
+	slideIndex: number;
+	puzzleIds: FlowPuzzleId[];
+	renderCell: (input: {
+		x: number;
+		y: number;
+		index: number;
+		puzzleId: FlowPuzzleId | null;
+		empty: boolean;
+	}) => VDom;
 }) => {
 	const columns: VDom[] = [];
+	const indexOffset = props.slideIndex * (COLUMN_COUNT * ROW_COUNT);
+
 	for (let y = 0; y < ROW_COUNT; y++) {
 		const row: VDom[] = [];
 		for (let x = 0; x < COLUMN_COUNT; x++) {
+			const index = toIndex({ x, y }) + indexOffset;
+			const puzzleId = props.puzzleIds[index] ?? null;
+			const empty = index >= props.puzzleIds.length;
+
 			row.push(
 				<div
 					key={`${y}-${x}`}
 					className="flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16"
 				>
-					{renderCell({ x, y })}
+					{props.renderCell({ x, y, puzzleId, empty, index })}
 				</div>,
 			);
 		}
@@ -34,7 +47,39 @@ const ViewPackPuzzleGrid = ({
 		);
 	}
 
-	return <div className="p-8">{columns}</div>;
+	return <div className="w-full aspect-square">{columns}</div>;
+};
+
+const ViewPackPuzzleGrid = (props: {
+	puzzleIds: FlowPuzzleId[];
+	renderCell: (input: {
+		x: number;
+		y: number;
+		empty: boolean;
+		puzzleId: FlowPuzzleId | null;
+		index: number;
+	}) => VDom;
+}) => {
+	const slides: VDom[] = [];
+
+	const slideCount = Math.ceil(
+		(props.puzzleIds.length + 1) / (COLUMN_COUNT * ROW_COUNT),
+	);
+
+	for (let slideIndex = 0; slideIndex < slideCount; slideIndex++) {
+		slides.push(
+			<Swiper.Slide key={slideIndex} className="w-3/4">
+				<ViewPackPuzzleGridSlide
+					key={slideIndex}
+					slideIndex={slideIndex}
+					puzzleIds={props.puzzleIds}
+					renderCell={props.renderCell}
+				/>
+			</Swiper.Slide>,
+		);
+	}
+
+	return <Swiper.Container className="w-full">{slides}</Swiper.Container>;
 };
 
 const ViewAddCell = (props: { onClick: () => void }) => {

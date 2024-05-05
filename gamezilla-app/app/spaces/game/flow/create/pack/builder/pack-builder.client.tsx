@@ -1,3 +1,4 @@
+import { Eff, Sub } from "gamezilla-app/@/core";
 import { APP_SOUND, playSound, showToast } from "gamezilla-app/app/@/client";
 import {
 	Button,
@@ -12,7 +13,6 @@ import {
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
-import { Eff, Sub } from "gamezilla-app/@/core";
 import {
 	ViewBottomButtonBar,
 	ViewBottomButtonBarAction,
@@ -22,7 +22,6 @@ import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-gr
 import { FlowPackGridClient } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid.client";
 import { FlowPuzzleListClient } from "../../../@/flow-puzzle/flow-puzzle-list";
 import type { ClientModule } from "../../create.core";
-import { RemovePuzzleClient } from "../remove-puzzle/remove-puzzle.client";
 
 //
 //
@@ -215,10 +214,9 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 					</p>
 					<div className="flex w-full flex-1 flex-col items-center justify-center">
 						<FlowPackGridUI.ViewPackPuzzleGrid
-							renderCell={(position) => {
-								const index = FlowPackGridUI.toIndex(position);
-
-								const puzzleId = packBuilder.pack.puzzleIds[index];
+							puzzleIds={packBuilder.pack.puzzleIds}
+							renderCell={(props) => {
+								const puzzleId = packBuilder.pack.puzzleIds[props.index];
 
 								if (puzzleId) {
 									const puzzle = puzzleId ? model.puzzles[puzzleId] : null;
@@ -233,15 +231,15 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 												input.dispatch({
 													t: "pack-builder.user-clicked-pack-item",
 													puzzle,
-													index,
+													index: props.index,
 												})
 											}
-											index={index}
+											index={props.index}
 										/>
 									);
 								}
 
-								if (index === packBuilder.pack.puzzleIds.length) {
+								if (props.index === packBuilder.pack.puzzleIds.length) {
 									return <ButtonAddPuzzle.View {...input} />;
 								}
 
@@ -380,7 +378,10 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 				return {
 					model,
 					msgSync: [withId(msg)],
-					msgCmd: [playSound(APP_SOUND.refreshFeed), showToast("Puzzle removed")],
+					msgCmd: [
+						playSound(APP_SOUND.refreshFeed),
+						showToast("Puzzle removed"),
+					],
 				};
 			}
 		}
