@@ -7,6 +7,40 @@ export type CreatePortal = (vDom: VDom, container: Element) => VDom;
 
 export let createPortal: CreatePortal | null = null;
 
+export type RenderToString = (vDom: VDom) => string;
+
+export const RenderToString = async (
+	vDomImpl: VDomImpl,
+): Promise<RenderToString> => {
+	switch (vDomImpl) {
+		case "inferno": {
+			// const InfernoServer = await import("inferno-server");
+			// return (vDom) => InfernoServer.renderToString(vDom);
+			throw new Error("Inferno does not support renderToString");
+		}
+
+		case "react": {
+			// const ReactDOMServer = await import("react-dom/server");
+			// return (vDom) => ReactDOMServer.renderToString(vDom);
+			throw new Error("React does not support renderToString");
+		}
+
+		case "preact": {
+			// const PreactCompat = await import("preact/compat");
+			// return (vDom) => PreactCompat.render(vDom, null);
+			throw new Error("Preact does not support renderToString");
+		}
+
+		case "solid": {
+			const Solid = await import("solid-js/web");
+			return (vDom) => {
+				const string = Solid.renderToString(() => vDom);
+				return string;
+			};
+		}
+	}
+};
+
 export const Render = async (
 	vDomImpl: VDomImpl,
 	root: HTMLElement,
