@@ -1,10 +1,12 @@
 import { isErr } from "gamezilla-app/@/core";
-import { FlowPack } from "../../../@/flow-pack/flow-pack";
-import type { SyncReducer } from "../../create.core";
 import { FlowVariantUIPlay } from "../../../@/flow";
+import { FlowPack } from "../../../@/flow-pack/flow-pack";
+import { SyncReducer } from "../../create.core";
 import { ModelSync } from "./pack-builder.core";
 
-const userCreatedPack: SyncReducer = ({ modelSync, msgSync }) => {
+const reducers: SyncReducer[] = [];
+
+reducers.push(({ modelSync, msgSync }) => {
 	switch (msgSync.t) {
 		case "user-created-pack": {
 			if (isErr(msgSync.created)) {
@@ -29,9 +31,9 @@ const userCreatedPack: SyncReducer = ({ modelSync, msgSync }) => {
 			return modelSync;
 		}
 	}
-};
+});
 
-const userClickedExitButton: SyncReducer = ({ modelSync, msgSync }) => {
+reducers.push(({ modelSync, msgSync }) => {
 	switch (msgSync.t) {
 		case "pack-builder.user-clicked-exit-button": {
 			return {
@@ -46,9 +48,9 @@ const userClickedExitButton: SyncReducer = ({ modelSync, msgSync }) => {
 			return modelSync;
 		}
 	}
-};
+});
 
-const userClickedAddPuzzleItem: SyncReducer = ({ modelSync, msgSync }) => {
+reducers.push(({ modelSync, msgSync }) => {
 	switch (msgSync.t) {
 		case "pack-builder.user-clicked-add-puzzle-item": {
 			if (!modelSync.packBuilder) {
@@ -73,12 +75,9 @@ const userClickedAddPuzzleItem: SyncReducer = ({ modelSync, msgSync }) => {
 			return modelSync;
 		}
 	}
-};
+});
 
-const userClickedOpenAddPuzzleButton: SyncReducer = ({
-	modelSync,
-	msgSync,
-}) => {
+reducers.push(({ modelSync, msgSync }) => {
 	switch (msgSync.t) {
 		case "pack-builder.user-clicked-open-add-puzzle-button": {
 			if (!modelSync.packBuilder) {
@@ -98,9 +97,9 @@ const userClickedOpenAddPuzzleButton: SyncReducer = ({
 			return modelSync;
 		}
 	}
-};
+});
 
-const userClosedAddPuzzle: SyncReducer = ({ modelSync, msgSync }) => {
+reducers.push(({ modelSync, msgSync }) => {
 	switch (msgSync.t) {
 		case "pack-builder.user-closed-add-puzzle": {
 			if (!modelSync.packBuilder) {
@@ -124,9 +123,9 @@ const userClosedAddPuzzle: SyncReducer = ({ modelSync, msgSync }) => {
 			return modelSync;
 		}
 	}
-};
+});
 
-const userClickedPackItem: SyncReducer = ({ modelSync, msgSync }) => {
+reducers.push(({ modelSync, msgSync }) => {
 	switch (msgSync.t) {
 		case "pack-builder.user-clicked-pack-item": {
 			if (!modelSync.packBuilder) {
@@ -154,9 +153,9 @@ const userClickedPackItem: SyncReducer = ({ modelSync, msgSync }) => {
 			return modelSync;
 		}
 	}
-};
+});
 
-const userClickedExitPuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
+reducers.push(({ modelSync, msgSync }) => {
 	switch (msgSync.t) {
 		case "pack-builder.user-clicked-exit-puzzle-button": {
 			if (!modelSync.packBuilder) {
@@ -179,9 +178,9 @@ const userClickedExitPuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
 			return modelSync;
 		}
 	}
-};
+});
 
-const flowGridUIPlay: SyncReducer = ({ modelSync, msgSync }) => {
+reducers.push(({ modelSync, msgSync }) => {
 	switch (msgSync.t) {
 		case "pack-builder.flow-play-ui": {
 			if (!modelSync.packBuilder) {
@@ -218,15 +217,21 @@ const flowGridUIPlay: SyncReducer = ({ modelSync, msgSync }) => {
 			return modelSync;
 		}
 	}
-};
+});
 
-const userClickedNextPuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
+reducers.push(({ modelSync, msgSync }) => {
 	if (modelSync.packBuilder?.screen.t !== "screen-puzzle") {
 		return modelSync;
 	}
 
 	switch (msgSync.t) {
 		case "pack-builder.user-clicked-next-puzzle-button": {
+			const indexOfNextPuzzle = modelSync.packBuilder.pack.puzzleIds.indexOf(
+				msgSync.nextPuzzle.id,
+			);
+			if (indexOfNextPuzzle === -1) {
+				return modelSync;
+			}
 			return {
 				...modelSync,
 				packBuilder: {
@@ -252,18 +257,20 @@ const userClickedNextPuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
 			return modelSync;
 		}
 	}
-};
+});
 
-const userClickedPreviousPuzzleButton: SyncReducer = ({
-	modelSync,
-	msgSync,
-}) => {
+reducers.push(({ modelSync, msgSync }) => {
 	if (modelSync.packBuilder?.screen.t !== "screen-puzzle") {
 		return modelSync;
 	}
 
 	switch (msgSync.t) {
 		case "pack-builder.user-clicked-previous-puzzle-button": {
+			const indexOfPreviousPuzzle =
+				modelSync.packBuilder.pack.puzzleIds.indexOf(msgSync.previousPuzzle.id);
+			if (indexOfPreviousPuzzle === -1) {
+				return modelSync;
+			}
 			return {
 				...modelSync,
 				packBuilder: {
@@ -288,9 +295,9 @@ const userClickedPreviousPuzzleButton: SyncReducer = ({
 			return modelSync;
 		}
 	}
-};
+});
 
-const moreDrawer: SyncReducer = ({ modelSync, msgSync }) => {
+reducers.push(({ modelSync, msgSync }) => {
 	switch (msgSync.t) {
 		case "pack-builder.puzzle-screen.user-clicked-more-button": {
 			if (!modelSync.packBuilder) {
@@ -326,17 +333,13 @@ const moreDrawer: SyncReducer = ({ modelSync, msgSync }) => {
 			return modelSync;
 		}
 	}
-};
+});
 
 const clamp = (value: number, min: number, max: number): number => {
 	return Math.max(min, Math.min(max, value));
 };
 
-const userClickedRemovePuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
-	if (modelSync.packBuilder?.screen.t !== "screen-puzzle") {
-		return modelSync;
-	}
-
+reducers.push(({ modelSync, msgSync }) => {
 	switch (msgSync.t) {
 		case "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button": {
 			if (!modelSync.packBuilder) {
@@ -361,25 +364,16 @@ const userClickedRemovePuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
 			return modelSync;
 		}
 	}
-};
+});
 
 const reducer: SyncReducer = (input) => {
-	return [
-		flowGridUIPlay,
-		moreDrawer,
-		userClickedPreviousPuzzleButton,
-		userClickedNextPuzzleButton,
-		userClosedAddPuzzle,
-		userClickedOpenAddPuzzleButton,
-		userClickedAddPuzzleItem,
-		userCreatedPack,
-		userClickedExitButton,
-		userClickedPackItem,
-		userClickedExitPuzzleButton,
-		userClickedRemovePuzzleButton,
-		//
-	].reduce(
-		(modelSync, reducer) => reducer({ ...input, modelSync }),
+	return reducers.reduce(
+		(modelSync, reducer) =>
+			reducer({
+				ctx: input.ctx,
+				modelSync,
+				msgSync: input.msgSync,
+			}),
 		input.modelSync,
 	);
 };
