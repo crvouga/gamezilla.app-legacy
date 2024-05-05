@@ -13,7 +13,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 	const { modelSync, msgClient, model, deps } = input;
 
 	switch (msgClient?.t) {
-		case "delete-forever/user-confirmed": {
+		case "delete-forever.user-confirmed": {
 			const puzzleBuilder = modelSync.puzzleBuilder;
 
 			if (!puzzleBuilder) {

@@ -19,12 +19,12 @@ export type ModelServer = {};
 //
 
 export type MsgClient =
-	| { t: "delete-forever/user-clicked-delete-button" }
-	| { t: "delete-forever/user-closed-drawer" }
-	| { t: "delete-forever/user-clicked-confirm-button" }
-	| { t: "delete-forever/user-clicked-cancel-button" };
+	| { t: "delete-forever.user-clicked-delete-button" }
+	| { t: "delete-forever.user-closed-drawer" }
+	| { t: "delete-forever.user-clicked-confirm-button" }
+	| { t: "delete-forever.user-clicked-cancel-button" };
 
-export type MsgToServer = { t: "delete-forever/user-confirmed" };
+export type MsgToServer = { t: "delete-forever.user-confirmed" };
 
 export type MsgToClient = { t: "noop" };
 

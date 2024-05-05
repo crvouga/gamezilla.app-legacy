@@ -2,6 +2,7 @@ import { isErr } from "gamezilla-app/@/core";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
 import type { SyncReducer } from "../../create.core";
 import { FlowVariantUIPlay } from "../../../@/flow";
+import { ModelSync } from "./pack-builder.core";
 
 const userCreatedPack: SyncReducer = ({ modelSync, msgSync }) => {
 	switch (msgSync.t) {
@@ -351,6 +352,18 @@ const reducer: SyncReducer = (input) => {
 	);
 };
 
+const initSync = ({ pack }: { pack: FlowPack }): ModelSync => {
+	return {
+		pack,
+		screen: {
+			t: "screen-puzzle-grid",
+			pageIndex: 0,
+		},
+		t: "pack-builder",
+	};
+};
+
 export const PackBuilderSync = {
+	initSync,
 	reducer,
 };

@@ -20,6 +20,7 @@ import { deriveModelSync } from "../../@/testing/game";
 import type { ModelClient, ModelSync } from "../../create.core";
 import { initSync } from "../../create.sync";
 import { PackBuilderClient } from "./pack-builder.client";
+import { PackBuilderSync } from "./pack-builder.sync";
 
 const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
 	return PackBuilderClient.update({
@@ -202,6 +203,10 @@ describe(import.meta.file, () => {
 
 	it("should should remove puzzle from pack clicking remove from pack button", async () => {
 		const f = await Fixture();
-		f;
+		const scaned = scan({
+			update: PackBuilderClient.update,
+			reducer: PackBuilderSync.reducer,
+			initial: f,
+		});
 	});
 });

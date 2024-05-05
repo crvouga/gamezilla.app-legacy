@@ -25,26 +25,26 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 	const { msg, model } = input;
 
 	switch (msg?.t) {
-		case "delete-forever/user-clicked-delete-button": {
+		case "delete-forever.user-clicked-delete-button": {
 			return {
 				model: { ...model, puzzleBuilderOpened: "delete-forever" },
 				msgCmd: [playSound(APP_SOUND.alertErrorSm)],
 			};
 		}
 
-		case "delete-forever/user-closed-drawer": {
+		case "delete-forever.user-closed-drawer": {
 			return { model: { ...model, puzzleBuilderOpened: null } };
 		}
 
-		case "delete-forever/user-clicked-cancel-button": {
+		case "delete-forever.user-clicked-cancel-button": {
 			return { model: { ...model, puzzleBuilderOpened: "more" } };
 		}
 
-		case "delete-forever/user-clicked-confirm-button": {
+		case "delete-forever.user-clicked-confirm-button": {
 			return {
 				model: { ...model, puzzleDeleteForeverRequest: RemoteResult.loading },
 				msgCmd: [
-					sendToServer({ t: "delete-forever/user-confirmed" }),
+					sendToServer({ t: "delete-forever.user-confirmed" }),
 					playSound(APP_SOUND.tap),
 				],
 			};
@@ -89,7 +89,7 @@ const View: ClientModule["View"] = (input) => {
 				label="Delete Forever"
 				color="danger"
 				onClick={() =>
-					dispatch({ t: "delete-forever/user-clicked-delete-button" })
+					dispatch({ t: "delete-forever.user-clicked-delete-button" })
 				}
 			/>
 
@@ -99,7 +99,7 @@ const View: ClientModule["View"] = (input) => {
 					input.model.puzzleBuilderOpened === "delete-forever" ||
 					isLoading(model.puzzleDeleteForeverRequest)
 				}
-				onClose={() => dispatch({ t: "delete-forever/user-closed-drawer" })}
+				onClose={() => dispatch({ t: "delete-forever.user-closed-drawer" })}
 				variant="danger"
 				position="bottom"
 				title="Delete puzzle forever?"
@@ -109,13 +109,13 @@ const View: ClientModule["View"] = (input) => {
 				confirmText="Delete"
 				onConfirm={() =>
 					dispatch({
-						t: "delete-forever/user-clicked-confirm-button",
+						t: "delete-forever.user-clicked-confirm-button",
 					})
 				}
 				//
 				cancelDisabled={isLoading(model.puzzleDeleteForeverRequest)}
 				onCancel={() =>
-					dispatch({ t: "delete-forever/user-clicked-cancel-button" })
+					dispatch({ t: "delete-forever.user-clicked-cancel-button" })
 				}
 			/>
 		</>

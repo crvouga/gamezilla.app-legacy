@@ -12,3 +12,4 @@ export type GameSyncModule<T extends GameSyncTypes> = {
 		modelSync: T["ModelSync"];
 	}) => T["ModelSync"];
 };
+
