@@ -9,7 +9,7 @@ import {
 	serverListedPuzzlesOk,
 	testFlowClientCtx,
 } from "../../@/testing/client";
-import { deriveModelSync } from "../../@/testing/game";
+import { deriveModelCore } from "../../@/testing/game";
 
 describe(import.meta.file, () => {
 	it("should open puzzle builder on list item click", async () => {
@@ -20,10 +20,10 @@ describe(import.meta.file, () => {
 			serverListedPuzzlesOk(ctx, [puzzle]),
 			clickedPuzzleListItem(ctx, puzzle),
 		);
-		const modelSync = deriveModelSync(ctx)(output);
+		const modelCore = deriveModelCore(ctx)(output);
 		expect(
-			modelSync.opened.t === "puzzle-builder" &&
-				modelSync.puzzleBuilder?.puzzle.id === puzzle.id,
+			modelCore.opened.t === "puzzle-builder" &&
+				modelCore.puzzleBuilder?.puzzle.id === puzzle.id,
 		).toBe(true);
 	});
 
@@ -38,12 +38,12 @@ describe(import.meta.file, () => {
 
 		const output = GameClientModule.andThen(
 			openedBuilder,
-			clickedExitPuzzleBuilderButton(ctx, deriveModelSync(ctx)(openedBuilder)),
+			clickedExitPuzzleBuilderButton(ctx, deriveModelCore(ctx)(openedBuilder)),
 		);
 
-		const modelSync = deriveModelSync(ctx)(output);
+		const modelCore = deriveModelCore(ctx)(output);
 
-		expect(modelSync.opened.t === "list").toBe(true);
+		expect(modelCore.opened.t === "list").toBe(true);
 	});
 
 	it("should open save prompt when exiting with unsaved changes", async () => {
@@ -61,19 +61,19 @@ describe(import.meta.file, () => {
 			openedBuilder,
 			puzzleBuilderPressDownRandomNode(
 				ctx,
-				deriveModelSync(ctx)(openedBuilder),
+				deriveModelCore(ctx)(openedBuilder),
 			),
 		);
 
 		const output = GameClientModule.andThen(
 			madeEdit,
-			clickedExitPuzzleBuilderButton(ctx, deriveModelSync(ctx)(madeEdit)),
+			clickedExitPuzzleBuilderButton(ctx, deriveModelCore(ctx)(madeEdit)),
 		);
 
-		const modelSync = deriveModelSync(ctx)(output);
+		const modelCore = deriveModelCore(ctx)(output);
 
 		expect(
-			modelSync.opened.t === "puzzle-builder" &&
+			modelCore.opened.t === "puzzle-builder" &&
 				output.model.puzzleBuilderOpened === "unsaved-changes",
 		).toBe(true);
 	});

@@ -20,7 +20,7 @@ import type {
 	ModelClient,
 	ClientModule,
 	MsgClient,
-	MsgSync,
+	MsgCore,
 } from "../../create.core";
 import { ViewBottomButtonBarAction } from "../../../../@/game";
 
@@ -40,13 +40,13 @@ const update: ClientModule["update"] = (input) => {
 	);
 };
 
-const updatePuzzles: ClientModule["update"] = ({ msgSync, model }) => {
-	switch (msgSync?.t) {
+const updatePuzzles: ClientModule["update"] = ({ msgCore, model }) => {
+	switch (msgCore?.t) {
 		case "puzzle-builder.saved-puzzle": {
-			if (isErr(msgSync.saved)) {
+			if (isErr(msgCore.saved)) {
 				return { model };
 			}
-			const puzzleNew = msgSync.saved.value;
+			const puzzleNew = msgCore.saved.value;
 
 			return {
 				model: {
@@ -66,18 +66,18 @@ const updatePuzzles: ClientModule["update"] = ({ msgSync, model }) => {
 };
 
 const updateExitBuilder: ClientModule["update"] = (input) => {
-	const { msg, model, modelSync, msgSync } = input;
+	const { msg, model, modelCore, msgCore } = input;
 
 	switch (msg?.t) {
 		case "puzzle-builder.user-clicked-exit-button": {
-			if (!modelSync.puzzleBuilder) {
+			if (!modelCore.puzzleBuilder) {
 				return exitBuilderWithSound(input);
 			}
 
 			if (
 				FlowVariantUIEdit.isUnsavedChanges(
-					modelSync.puzzleBuilder.edit,
-					modelSync.puzzleBuilder.puzzle.flow,
+					modelCore.puzzleBuilder.edit,
+					modelCore.puzzleBuilder.puzzle.flow,
 				)
 			) {
 				return {
@@ -112,12 +112,12 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
 		}
 	}
 
-	switch (msgSync?.t) {
+	switch (msgCore?.t) {
 		case "puzzle-builder.saved-puzzle": {
 			if (
 				model.puzzleSaveChangesRequest?.t === "loading" &&
 				model.puzzleSaveChangesIsExiting &&
-				isOk(msgSync.saved)
+				isOk(msgCore.saved)
 			) {
 				return exitBuilder({
 					...input,
@@ -139,24 +139,24 @@ const updateExitBuilder: ClientModule["update"] = (input) => {
 };
 
 const updateSaveChangesRequest: ClientModule["update"] = (input) => {
-	const { model, msg, ctx, msgSync } = input;
+	const { model, msg, ctx, msgCore } = input;
 
 	if (msg?.t === "puzzle-save-changes.user-clicked-save-button") {
 		return saveChanges(input);
 	}
 
 	if (
-		msgSync?.t === "puzzle-builder.saved-puzzle" &&
-		msgSync.userId === ctx.currentUserId
+		msgCore?.t === "puzzle-builder.saved-puzzle" &&
+		msgCore.userId === ctx.currentUserId
 	) {
 		return {
 			model: {
 				...model,
-				puzzleSaveChangesRequest: Result.mapOk(msgSync.saved, () => null),
+				puzzleSaveChangesRequest: Result.mapOk(msgCore.saved, () => null),
 			},
-			msgCmd: isOk(msgSync.saved)
+			msgCmd: isOk(msgCore.saved)
 				? showCreatedSm("Saved changes")
-				: showErrSm(msgSync.saved.error),
+				: showErrSm(msgCore.saved.error),
 		};
 	}
 	return { model };
@@ -171,19 +171,19 @@ const exitBuilderWithSound: ClientModule["update"] = (input) => {
 };
 
 const exitBuilder: ClientModule["update"] = (input) => {
-	const msgSync: MsgSync = {
+	const msgCore: MsgCore = {
 		t: "puzzle-builder.user-clicked-exit-button",
 		userId: input.ctx.currentUserId,
 	};
 
 	return {
 		model: { ...input.model, puzzleBuilderOpened: null },
-		msgSync: [withId(msgSync)],
+		msgCore: [withId(msgCore)],
 	};
 };
 
-const saveChanges: ClientModule["update"] = ({ model, modelSync }) => {
-	const puzzleBuilder = modelSync.puzzleBuilder;
+const saveChanges: ClientModule["update"] = ({ model, modelCore }) => {
+	const puzzleBuilder = modelCore.puzzleBuilder;
 
 	if (!puzzleBuilder) {
 		return { model };

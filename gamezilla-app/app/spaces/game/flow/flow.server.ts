@@ -6,14 +6,14 @@ import type {
 import { Sub } from "gamezilla-app/@/core";
 import { SpaceServerCmd } from "../../@/space-server-cmd";
 import { CreateServer } from "./create/create.server";
-import { CreateSync } from "./create/create.sync";
+import { CreateCore } from "./create/create.sync";
 import * as Play from "./play/play.core";
 import { PlayServer } from "./play/play.server";
 import type {
 	ModelServer,
-	ModelSync,
+	ModelCore,
 	MsgServer,
-	MsgSync,
+	MsgCore,
 	MsgToClient,
 	MsgToServer,
 } from "./flow.core";
@@ -23,8 +23,8 @@ type Module = GameServerModule<{
 	Msg: MsgServer;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
-	MsgSync: MsgSync;
-	ModelSync: ModelSync;
+	MsgCore: MsgCore;
+	ModelCore: ModelCore;
 	Ctx: SpaceServerCtx;
 	MsgInCmd: null;
 	MsgInEvent: SpaceServerEvent;
@@ -49,10 +49,10 @@ const update: Module["update"] = async (input) => {
 const updateCreate: Module["update"] = async (input) => {
 	const updated = await CreateServer.update({
 		ctx: input.ctx,
-		modelSync:
-			input.modelSync.t === "create"
-				? input.modelSync.c
-				: CreateSync.initSync({ ctx: input.ctx }),
+		modelCore:
+			input.modelCore.t === "create"
+				? input.modelCore.c
+				: CreateCore.initCore({ ctx: input.ctx }),
 		model: input.model.t === "create" ? input.model.c : CreateServer.init,
 		msgCmd: input.msgCmd,
 		msgEvt: input.msgEvt,
@@ -60,9 +60,9 @@ const updateCreate: Module["update"] = async (input) => {
 			input.msgClient?.t === "create"
 				? { ...input.msgClient, ...input.msgClient.c }
 				: null,
-		msgSync:
-			input.msgSync?.t === "create"
-				? { ...input.msgSync, ...input.msgSync.c }
+		msgCore:
+			input.msgCore?.t === "create"
+				? { ...input.msgCore, ...input.msgCore.c }
 				: null,
 		msg: input.msg?.t === "create" ? input.msg.c : null,
 		deps: await CreateServer.deps({
@@ -82,10 +82,10 @@ const updateCreate: Module["update"] = async (input) => {
 const updatePlay: Module["update"] = async (input) => {
 	const updated = await PlayServer.update({
 		ctx: input.ctx,
-		modelSync:
-			input.modelSync.t === "play"
-				? input.modelSync.c
-				: Play.initSync({ ctx: input.ctx }),
+		modelCore:
+			input.modelCore.t === "play"
+				? input.modelCore.c
+				: Play.initCore({ ctx: input.ctx }),
 		model: input.model.t === "play" ? input.model.c : PlayServer.init,
 		msgCmd: input.msgCmd,
 		msgEvt: input.msgEvt,
@@ -93,9 +93,9 @@ const updatePlay: Module["update"] = async (input) => {
 			input.msgClient?.t === "play"
 				? { ...input.msgClient, ...input.msgClient.c }
 				: null,
-		msgSync:
-			input.msgSync?.t === "play"
-				? { ...input.msgSync, ...input.msgSync.c }
+		msgCore:
+			input.msgCore?.t === "play"
+				? { ...input.msgCore, ...input.msgCore.c }
 				: null,
 		msg: input.msg?.t === "play" ? input.msg.c : null,
 		deps: null,
@@ -111,15 +111,15 @@ const updatePlay: Module["update"] = async (input) => {
 };
 
 const subscriptions: Module["subscriptions"] = async (input) => {
-	const { modelSync } = input;
+	const { modelCore } = input;
 
-	switch (modelSync.t) {
+	switch (modelCore.t) {
 		case "play": {
 			return Sub.tag(
 				"play",
 				await PlayServer.subscriptions({
 					ctx: input.ctx,
-					modelSync: modelSync.c,
+					modelCore: modelCore.c,
 					model: input.model.t === "play" ? input.model.c : PlayServer.init,
 				}),
 			);
@@ -130,7 +130,7 @@ const subscriptions: Module["subscriptions"] = async (input) => {
 				"create",
 				await CreateServer.subscriptions({
 					ctx: input.ctx,
-					modelSync: modelSync.c,
+					modelCore: modelCore.c,
 					model: input.model.t === "create" ? input.model.c : CreateServer.init,
 				}),
 			);

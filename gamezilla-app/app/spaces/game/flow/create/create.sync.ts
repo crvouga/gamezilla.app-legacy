@@ -1,43 +1,43 @@
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import type { ModelSync, SyncReducer } from "./create.core";
-import { ListTabsGame } from "./list-tabs/list-tabs.sync";
-import { PackGame } from "./pack/pack.sync";
-import { PuzzleBuilderGame } from "./puzzle/builder/puzzle-builder.sync";
-import { PuzzleCreateGame } from "./puzzle/create/puzzle-create.sync";
-import { PuzzleDeleteForeverGame } from "./puzzle/delete-forever/puzzle-delete-forever.sync";
-import { PuzzleEditGame } from "./puzzle/edit/puzzle-edit.sync";
-import { PuzzleListGame } from "./puzzle/list/puzzle-list.sync";
-import { PuzzleSaveChangesGame } from "./puzzle/save-changes/puzzle-save-changes.sync";
+import type { ModelCore, UpdateCore } from "./create.core";
+import { ListTabsCore } from "./list-tabs/list-tabs.core";
+import { PackCore } from "./pack/pack.sync";
+import { PuzzleBuilderCore } from "./puzzle/builder/puzzle-builder.sync";
+import { PuzzleCreateCore } from "./puzzle/create/puzzle-create.sync";
+import { PuzzleDeleteForeverCore } from "./puzzle/delete-forever/puzzle-delete-forever.sync";
+import { PuzzleEditCore } from "./puzzle/edit/puzzle-edit.sync";
+import { PuzzleListCore } from "./puzzle/list/puzzle-list.sync";
+import { PuzzleSaveChangesCore } from "./puzzle/save-changes/puzzle-save-changes.sync";
 
-const initSync = (_input: { ctx: SpaceCtx }): ModelSync => {
+const initCore = (_input: { ctx: SpaceCtx }): ModelCore => {
 	return {
-		...ListTabsGame.initSync,
-		...PackGame.initSync,
+		...ListTabsCore.initCore,
+		...PackCore.initCore,
 		opened: { t: "list" },
 		packBuilder: null,
 		puzzleBuilder: null,
 	};
 };
 
-const reducer: SyncReducer = (input) => {
+const updateCore: UpdateCore = (input) => {
 	return [
-		PuzzleDeleteForeverGame.reducer,
-		PuzzleBuilderGame.reducer,
-		PuzzleCreateGame.reducer,
-		PuzzleListGame.reducer,
-		PuzzleEditGame.reducer,
-		PuzzleSaveChangesGame.reducer,
+		PuzzleDeleteForeverCore.updateCore,
+		PuzzleBuilderCore.updateCore,
+		PuzzleCreateCore.updateCore,
+		PuzzleListCore.updateCore,
+		PuzzleEditCore.updateCore,
+		PuzzleSaveChangesCore.updateCore,
 		//
-		PackGame.reducer,
+		PackCore.updateCore,
 		//
-		ListTabsGame.reducer,
+		ListTabsCore.updateCore,
 	].reduce(
-		(acc, reducer) => reducer({ ...input, modelSync: acc }),
-		input.modelSync,
+		(acc, updateCore) => updateCore({ ...input, modelCore: acc }),
+		input.modelCore,
 	);
 };
 
-export const CreateSync = {
-	initSync,
-	reducer,
+export const CreateCore = {
+	initCore,
+	updateCore,
 };

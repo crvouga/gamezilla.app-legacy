@@ -1,38 +1,38 @@
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import { FlowPuzzleName } from "../../../@/flow-puzzle/flow-puzzle-name";
-import type { ModelSync, MsgSync } from "../../create.core";
+import type { ModelCore, MsgCore } from "../../create.core";
 
-const reducer = ({
-	modelSync,
-	msgSync,
+const updateCore = ({
+	modelCore,
+	msgCore,
 }: {
 	ctx: SpaceCtx;
-	msgSync: MsgSync;
-	modelSync: ModelSync;
-}): ModelSync => {
-	switch (msgSync.t) {
+	msgCore: MsgCore;
+	modelCore: ModelCore;
+}): ModelCore => {
+	switch (msgCore.t) {
 		case "user-edited-puzzle-name": {
-			const puzzleBuilder = modelSync.puzzleBuilder;
+			const puzzleBuilder = modelCore.puzzleBuilder;
 			if (!puzzleBuilder) {
-				return modelSync;
+				return modelCore;
 			}
 
-			if (msgSync.flowPuzzleId !== puzzleBuilder.puzzle.id) {
-				return modelSync;
+			if (msgCore.flowPuzzleId !== puzzleBuilder.puzzle.id) {
+				return modelCore;
 			}
-			if (msgSync.edited.t === "err") {
-				return modelSync;
+			if (msgCore.edited.t === "err") {
+				return modelCore;
 			}
-			if (!FlowPuzzleName.is(msgSync.newName)) {
-				return modelSync;
+			if (!FlowPuzzleName.is(msgCore.newName)) {
+				return modelCore;
 			}
 			const puzzleNew: FlowPuzzle = {
 				...puzzleBuilder.puzzle,
-				name: msgSync.newName,
+				name: msgCore.newName,
 			};
 			return {
-				...modelSync,
+				...modelCore,
 				puzzleBuilder: {
 					...puzzleBuilder,
 					puzzle: puzzleNew,
@@ -41,11 +41,11 @@ const reducer = ({
 		}
 
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 };
 
-export const PuzzleEditGame = {
-	reducer,
+export const PuzzleEditCore = {
+	updateCore,
 };

@@ -1,16 +1,16 @@
-import type { SyncReducer } from "../../create.core";
+import type { UpdateCore } from "../../create.core";
 
-const reducer: SyncReducer = ({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "pack-list.user-clicked-pack-item": {
 			return {
-				...modelSync,
+				...modelCore,
 				opened: {
 					t: "pack-builder",
 				},
 				packBuilder: {
 					t: "pack-builder",
-					pack: msgSync.pack,
+					pack: msgCore.pack,
 					opened: {
 						t: null,
 					},
@@ -23,11 +23,11 @@ const reducer: SyncReducer = ({ modelSync, msgSync }) => {
 		}
 
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 };
 
 export const PackListGame = {
-	reducer,
+	updateCore,
 };

@@ -47,7 +47,7 @@ export const drawPipes = (
 ): Flow.Model => {
 	const newNodeGroupId = Flow.findGroupIdByNodeId(model, nodeIdNew);
 
-	// PrmsgSync drawing over other groups
+	// PrmsgCore drawing over other groups
 	if (newNodeGroupId && newNodeGroupId !== groupId) {
 		return model;
 	}

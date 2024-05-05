@@ -35,7 +35,7 @@ export type MsgServer = { t: "noop" };
 //
 //
 
-export type MsgSync = {
+export type MsgCore = {
 	t: "user-deleted-puzzle";
 	deleted: Deleted;
 	flowPuzzleId: FlowPuzzleId;

@@ -1,4 +1,4 @@
-import type { GameSyncModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
+import type { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import { type FlowVariant, FlowVariantUIPlay } from "../@/flow";
 import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
@@ -28,8 +28,8 @@ export type ModelServer = p.Infer<typeof ModelServer>;
 
 export type MsgClient =
 	| {
-			t: "msgSync";
-			c: MsgSync;
+			t: "msgCore";
+			c: MsgCore;
 	  }
 	| {
 			t: "grid";
@@ -42,23 +42,23 @@ export type MsgToServer = { t: null };
 
 export type MsgToClient = { t: null };
 
-export type MsgSync = {
+export type MsgCore = {
 	t: "grid";
 	c: FlowVariantUIPlay.Msg;
 };
 
-export type ModelSync = {
+export type ModelCore = {
 	play: FlowVariantUIPlay.Model;
 	flow: FlowVariant.Model;
 };
 
-type Module = GameSyncModule<{
+type Module = GameCoreModule<{
 	Ctx: SpaceCtx;
-	ModelSync: ModelSync;
-	MsgSync: MsgSync;
+	ModelCore: ModelCore;
+	MsgCore: MsgCore;
 }>;
 
-export const initSync: Module["initSync"] = () => {
+export const initCore: Module["initCore"] = () => {
 	const flow = samples["8x8"][1];
 	return {
 		play: FlowVariantUIPlay.init({
@@ -68,15 +68,15 @@ export const initSync: Module["initSync"] = () => {
 	};
 };
 
-export const reducer: Module["reducer"] = ({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "grid": {
 			const gridPlayNew = FlowVariantUIPlay.update({
-				msg: msgSync.c,
-				model: modelSync.play,
-				flow: modelSync.flow,
+				msg: msgCore.c,
+				model: modelCore.play,
+				flow: modelCore.flow,
 			});
-			return { play: gridPlayNew, flow: modelSync.flow };
+			return { play: gridPlayNew, flow: modelCore.flow };
 		}
 	}
 };

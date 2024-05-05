@@ -10,9 +10,9 @@ import type { FlowClientCmd } from "../../../@/flow-ctx";
 import { FlowPack } from "../../../@/flow-pack";
 import type {
 	ModelClient,
-	ModelSync,
+	ModelCore,
 	MsgClient,
-	MsgSync,
+	MsgCore,
 	MsgToClient,
 	MsgToServer,
 	RemovePuzzleClientCtx,
@@ -20,9 +20,9 @@ import type {
 
 type Module = GameClientModule<{
 	Model: ModelClient;
-	ModelSync: ModelSync;
+	ModelCore: ModelCore;
 	Msg: MsgClient;
-	MsgSync: MsgSync;
+	MsgCore: MsgCore;
 	Ctx: RemovePuzzleClientCtx;
 	MsgInCmd: never;
 	MsgInEvent: SpaceClientEvent;

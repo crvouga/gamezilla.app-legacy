@@ -1,7 +1,7 @@
 import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import type { ServerModule } from "../../create.core";
-import type { MsgSync } from "./puzzle-delete-forever.core";
+import type { MsgCore } from "./puzzle-delete-forever.core";
 
 const update: ServerModule["update"] = async (input) => {
 	return GameServerModule.andThen({ model: input.model }, (model) =>
@@ -10,11 +10,11 @@ const update: ServerModule["update"] = async (input) => {
 };
 
 const updateFromClient: ServerModule["update"] = async (input) => {
-	const { modelSync, msgClient, model, deps } = input;
+	const { modelCore, msgClient, model, deps } = input;
 
 	switch (msgClient?.t) {
 		case "delete-forever.user-confirmed": {
-			const puzzleBuilder = modelSync.puzzleBuilder;
+			const puzzleBuilder = modelCore.puzzleBuilder;
 
 			if (!puzzleBuilder) {
 				return { model };
@@ -25,7 +25,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 				deletedByUserId: msgClient.userId,
 			});
 
-			const msgSync: MsgSync = {
+			const msgCore: MsgCore = {
 				t: "user-deleted-puzzle",
 				flowPuzzleId: puzzleBuilder.puzzle.id,
 				userId: msgClient.userId,
@@ -34,7 +34,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
 			return {
 				model,
-				msgSync: [withId(msgSync)],
+				msgCore: [withId(msgCore)],
 			};
 		}
 

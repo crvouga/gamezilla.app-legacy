@@ -132,7 +132,7 @@ const TOUCHED_Y_OFFSET = SCALE;
 
 const onDragStartOrMove =
 	(props: ChessboardProps) => (e: MouseEvent | TouchEvent) => {
-		e.preventDefault(); // prmsgSync swipe gestures on iOS
+		e.preventDefault(); // prmsgCore swipe gestures on iOS
 
 		let clientX: number;
 		let clientY: number;

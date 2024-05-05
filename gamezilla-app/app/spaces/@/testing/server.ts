@@ -143,7 +143,7 @@ export const authenticatedClientConnected =
 		});
 	};
 
-export const clientSync =
+export const clientCore =
 	(deps: ServerDeps, client: AuthenticatedClient, space: Space.Model) =>
 	(model: ModelServer) => {
 		return SpacesServer.update({

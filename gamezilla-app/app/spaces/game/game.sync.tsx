@@ -2,69 +2,69 @@ import type { EventMeta } from "gamezilla-app/app/spaces/@/event";
 import type { SpaceCtx } from "../@/space";
 import * as ConnectFour from "./connect-four/connect-four.core";
 import * as Flow from "./flow/flow.sync";
-import type { GameName, ModelSync, MsgSync } from "./game.core";
+import type { GameName, ModelCore, MsgCore } from "./game.core";
 
-export const initSync = (gameName: GameName): ModelSync => {
+export const initCore = (gameName: GameName): ModelCore => {
 	switch (gameName) {
 		case "connect-four": {
 			return {
 				t: "connect-four",
-				c: ConnectFour.initSync(),
+				c: ConnectFour.initCore(),
 			};
 		}
 
 		case "flow": {
 			return {
 				t: "flow",
-				c: Flow.initSync(),
+				c: Flow.initCore(),
 			};
 		}
 	}
 };
 
-export const reducer = ({
+export const updateCore = ({
 	ctx,
-	modelSync,
-	msgSync,
+	modelCore,
+	msgCore,
 }: {
 	ctx: SpaceCtx;
-	modelSync: ModelSync;
-	msgSync: MsgSync & EventMeta;
-}): ModelSync => {
-	switch (modelSync.t) {
+	modelCore: ModelCore;
+	msgCore: MsgCore & EventMeta;
+}): ModelCore => {
+	switch (modelCore.t) {
 		case "connect-four": {
-			switch (msgSync.t) {
+			switch (msgCore.t) {
 				case "connect-four": {
 					return {
 						t: "connect-four",
-						c: ConnectFour.reducer({
+						c: ConnectFour.updateCore({
 							ctx,
-							msgSync: { ...msgSync, ...msgSync.c },
-							modelSync: modelSync.c,
+							msgCore: { ...msgCore, ...msgCore.c },
+							modelCore: modelCore.c,
 						}),
 					};
 				}
 				default: {
-					return modelSync;
+					return modelCore;
 				}
 			}
 		}
 
 		case "flow": {
-			switch (msgSync.t) {
+			switch (msgCore.t) {
 				case "flow": {
 					return {
 						t: "flow",
-						c: Flow.reducer({
+						c: Flow.updateCore({
 							ctx,
-							msgSync: { ...msgSync, ...msgSync.c },
-							modelSync: modelSync.c,
+							msgCore: { ...msgCore, ...msgCore.c },
+							modelCore: modelCore.c,
 						}),
 					};
 				}
 
 				default: {
-					return modelSync;
+					return modelCore;
 				}
 			}
 		}

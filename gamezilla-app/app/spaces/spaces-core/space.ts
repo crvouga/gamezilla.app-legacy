@@ -201,7 +201,7 @@ export const deriveState = (model: Model): SpaceState.State => {
 	//
 
 	for (const event of events) {
-		running = SpaceState.reducer({ state: running, msgSpace: event });
+		running = SpaceState.updateCore({ state: running, msgSpace: event });
 	}
 
 	return running;

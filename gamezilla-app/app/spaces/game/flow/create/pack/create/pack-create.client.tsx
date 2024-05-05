@@ -10,7 +10,7 @@ import { Ok, loading } from "gamezilla-app/@/core";
 import type { ClientModule } from "../../create.core";
 
 const update: ClientModule["update"] = (input) => {
-	const { model, msg, msgSync, msgServer } = input;
+	const { model, msg, msgCore, msgServer } = input;
 
 	switch (msg?.t) {
 		case "pack-create.clicked-create-button": {
@@ -33,7 +33,7 @@ const update: ClientModule["update"] = (input) => {
 		case "pack-create.created-pack": {
 			return {
 				model,
-				msgSync: [
+				msgCore: [
 					withId({
 						t: "user-created-pack",
 						created: msgServer.created,
@@ -44,7 +44,7 @@ const update: ClientModule["update"] = (input) => {
 		}
 	}
 
-	switch (msgSync?.t) {
+	switch (msgCore?.t) {
 		case "user-created-pack": {
 			return {
 				model: {

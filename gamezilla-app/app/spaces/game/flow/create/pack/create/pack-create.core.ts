@@ -45,7 +45,7 @@ export type MsgToClient = {
 //
 //
 
-export const isMsgSync = p.obj({
+export const isMsgCore = p.obj({
 	t: p.l("user-created-pack"),
 	created: p.custom(
 		Result.is(p.is(p.str), p.is(FlowPack.parser)),
@@ -54,4 +54,4 @@ export const isMsgSync = p.obj({
 	userId: UserId,
 });
 
-export type MsgSync = p.Infer<typeof isMsgSync>;
+export type MsgCore = p.Infer<typeof isMsgCore>;

@@ -40,7 +40,7 @@ export type ModelServer = p.Infer<typeof ModelServer>;
 export type MsgServer = { t: null };
 
 export type MsgClient =
-	| MsgSync
+	| MsgCore
 	| { t: "hovered-over-columns"; columnIndex: ColumnIndex }
 	| { t: "clicked-resign"; userId: UserId }
 	| { t: "close-modal" };
@@ -59,7 +59,7 @@ const MoveTimeLimit = p.enumeration([5, 7, 9]);
 
 const RematchResponse = p.enumeration(["Accept", "Decline"]);
 
-export const MsgSync = p.or(
+export const MsgCore = p.or(
 	p.obj({
 		t: p.l("user-stopped-playing"),
 		userId: UserId,
@@ -113,7 +113,7 @@ export const MsgSync = p.or(
 		userId: UserId,
 	}),
 );
-export type MsgSync = p.Infer<typeof MsgSync>;
+export type MsgCore = p.Infer<typeof MsgCore>;
 
 const GameOver = p.or(
 	p.obj({
@@ -154,21 +154,21 @@ const Rematch = p.or(
 export type Rematch = p.Infer<typeof Rematch>;
 
 const Errors = p.obj({
-	errors: p.dict(p.str, p.and(MsgSync, p.obj({ error: EventError }))),
+	errors: p.dict(p.str, p.and(MsgCore, p.obj({ error: EventError }))),
 });
 
 type Errors = p.Infer<typeof Errors>;
 
 const addError = (
-	modelSync: ModelSync,
-	msgSync: MsgSync,
+	modelCore: ModelCore,
+	msgCore: MsgCore,
 	error: EventError,
-): ModelSync => {
+): ModelCore => {
 	return {
-		...modelSync,
+		...modelCore,
 		errors: {
-			...modelSync.errors,
-			[JSON.stringify(msgSync)]: { ...msgSync, error },
+			...modelCore.errors,
+			[JSON.stringify(msgCore)]: { ...msgCore, error },
 		},
 	};
 };
@@ -210,10 +210,10 @@ export const StateGameOver = p.and(
 );
 export type StateGameOver = p.Infer<typeof StateGameOver>;
 
-export const ModelSync = p.or(StateSetup, StateGame, StateGameOver);
-export type ModelSync = p.Infer<typeof ModelSync>;
+export const ModelCore = p.or(StateSetup, StateGame, StateGameOver);
+export type ModelCore = p.Infer<typeof ModelCore>;
 
-export const initSync = (ctx: SpaceCtx): ModelSync => {
+export const initCore = (ctx: SpaceCtx): ModelCore => {
 	return {
 		type: "setup",
 		moveTimeLimit: 5,
@@ -226,13 +226,13 @@ export const initSync = (ctx: SpaceCtx): ModelSync => {
 };
 
 export const toGameOver = (
-	modelSync: ModelSync,
+	modelCore: ModelCore,
 ): GameOver | { type: "none" } => {
-	if (modelSync.type === "setup") {
+	if (modelCore.type === "setup") {
 		return { type: "none" };
 	}
 
-	const status = toStatus(modelSync.columns);
+	const status = toStatus(modelCore.columns);
 
 	if (status.type === "Tie") {
 		return { type: "Draw" };
@@ -255,39 +255,42 @@ export const allMoveTimeLimit: {
 	"9": 9,
 };
 
-export const reducer = (modelSync: ModelSync, msgSync: MsgSync): ModelSync => {
-	switch (modelSync.type) {
+export const updateCore = (
+	modelCore: ModelCore,
+	msgCore: MsgCore,
+): ModelCore => {
+	switch (modelCore.type) {
 		case "setup": {
-			switch (msgSync.t) {
+			switch (msgCore.t) {
 				case "user-started-playing": {
-					if (modelSync.players[msgSync.playerType] !== null) {
-						return addError(modelSync, msgSync, {
+					if (modelCore.players[msgCore.playerType] !== null) {
+						return addError(modelCore, msgCore, {
 							t: "not-playing",
 						});
 					}
 
 					return {
-						...modelSync,
+						...modelCore,
 						players: {
-							...modelSync.players,
-							[msgSync.playerType]: msgSync.userId,
+							...modelCore.players,
+							[msgCore.playerType]: msgCore.userId,
 						},
 					};
 				}
 
 				case "user-stopped-playing": {
-					const playerType = toPlayerType(msgSync.userId, modelSync);
+					const playerType = toPlayerType(msgCore.userId, modelCore);
 
 					if (!playerType) {
-						return addError(modelSync, msgSync, {
+						return addError(modelCore, msgCore, {
 							t: "not-playing",
 						});
 					}
 
 					return {
-						...modelSync,
+						...modelCore,
 						players: {
-							...modelSync.players,
+							...modelCore.players,
 							[playerType]: null,
 						},
 					};
@@ -295,26 +298,26 @@ export const reducer = (modelSync: ModelSync, msgSync: MsgSync): ModelSync => {
 
 				case "user-inputted-move-time-limit": {
 					return {
-						...modelSync,
-						moveTimeLimit: msgSync.moveTimeLimit,
+						...modelCore,
+						moveTimeLimit: msgCore.moveTimeLimit,
 					};
 				}
 
 				case "user-started-game": {
-					const playerOne = modelSync.players["player-one"];
-					const playerTwo = modelSync.players["player-two"];
+					const playerOne = modelCore.players["player-one"];
+					const playerTwo = modelCore.players["player-two"];
 
 					if (!playerOne || !playerTwo) {
-						return addError(modelSync, msgSync, {
+						return addError(modelCore, msgCore, {
 							t: "not-playing",
 						});
 					}
 
 					return {
-						errors: modelSync.errors,
+						errors: modelCore.errors,
 						type: "game",
 						columns: EMPTY_COLUMNS,
-						moveTimeLimit: modelSync.moveTimeLimit,
+						moveTimeLimit: modelCore.moveTimeLimit,
 						lastMoveAt: Posix.now(),
 						gameId: 0,
 						players: {
@@ -325,47 +328,47 @@ export const reducer = (modelSync: ModelSync, msgSync: MsgSync): ModelSync => {
 				}
 
 				default: {
-					return modelSync;
+					return modelCore;
 				}
 			}
 		}
 
 		case "game": {
-			switch (msgSync.t) {
+			switch (msgCore.t) {
 				case "user-dropped-disc": {
-					const turn = toTurn(modelSync.columns);
+					const turn = toTurn(modelCore.columns);
 
 					const dropped = dropDisc(
-						modelSync.columns,
-						msgSync.columnIndex,
+						modelCore.columns,
+						msgCore.columnIndex,
 						turn,
 					);
 
 					if (dropped.t === "err") {
-						return addError(modelSync, msgSync, {
+						return addError(modelCore, msgCore, {
 							t: "move",
 							c: dropped.error,
 						});
 					}
 
 					return {
-						...modelSync,
+						...modelCore,
 						columns: dropped.value,
-						// lastMoveAt: msgSync.happenedAt,
+						// lastMoveAt: msgCore.happenedAt,
 					};
 				}
 
 				case "user-resigned": {
-					const resignedPlayer = toPlayerType(msgSync.userId, modelSync);
+					const resignedPlayer = toPlayerType(msgCore.userId, modelCore);
 
 					if (!resignedPlayer) {
-						return addError(modelSync, msgSync, {
+						return addError(modelCore, msgCore, {
 							t: "not-playing",
 						});
 					}
 
 					return {
-						...modelSync,
+						...modelCore,
 						type: "game-over",
 						gameOver: {
 							type: "resignation",
@@ -376,27 +379,27 @@ export const reducer = (modelSync: ModelSync, msgSync: MsgSync): ModelSync => {
 				}
 
 				case "time-passed": {
-					return modelSync;
+					return modelCore;
 				}
 			}
-			return modelSync;
+			return modelCore;
 		}
 
 		case "game-over": {
-			return modelSync;
+			return modelCore;
 		}
 	}
 };
 
 export const toPlayerType = (
 	userId: UserId,
-	modelSync: ModelSync,
+	modelCore: ModelCore,
 ): PlayerType | null => {
-	if (modelSync.players["player-one"] === userId) {
+	if (modelCore.players["player-one"] === userId) {
 		return "player-one";
 	}
 
-	if (modelSync.players["player-two"] === userId) {
+	if (modelCore.players["player-two"] === userId) {
 		return "player-two";
 	}
 

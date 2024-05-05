@@ -68,10 +68,10 @@ export type MsgToClient =
 //
 //
 
-export type ModelSync = RemovePuzzle.ModelSync;
+export type ModelCore = RemovePuzzle.ModelCore;
 
-export type MsgSync =
-	| PackCreate.MsgSync
-	| PackBuilder.MsgSync
-	| PackList.MsgSync
-	| RemovePuzzle.MsgSync;
+export type MsgCore =
+	| PackCreate.MsgCore
+	| PackBuilder.MsgCore
+	| PackList.MsgCore
+	| RemovePuzzle.MsgCore;

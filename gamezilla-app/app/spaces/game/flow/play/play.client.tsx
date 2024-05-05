@@ -11,9 +11,9 @@ import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
 import { ViewProfileCard } from "../@/ui";
 import type {
 	ModelClient,
-	ModelSync,
+	ModelCore,
 	MsgClient,
-	MsgSync,
+	MsgCore,
 	MsgToClient,
 	MsgToServer,
 } from "./play.core";
@@ -23,8 +23,8 @@ type Module = GameClientModule<{
 	Msg: MsgClient;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
-	MsgSync: MsgSync;
-	ModelSync: ModelSync;
+	MsgCore: MsgCore;
+	ModelCore: ModelCore;
 	Ctx: FlowClientCtx;
 	MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
 	MsgInEvent: SpaceClientEvent;
@@ -68,11 +68,11 @@ const updateFromMsg: Module["update"] = (input) => {
 			};
 		}
 
-		case "msgSync": {
-			const msgSync = withId(msg.c);
+		case "msgCore": {
+			const msgCore = withId(msg.c);
 			return {
 				model,
-				msgSync: [msgSync],
+				msgCore: [msgCore],
 			};
 		}
 	}
@@ -97,11 +97,11 @@ const View: Module["View"] = (input) => {
 				{USE_GAME_STATE ? (
 					<FlowVariantUIPlay.View
 						dispatch={(c) =>
-							input.dispatch({ t: "msgSync", c: { t: "grid", c } })
+							input.dispatch({ t: "msgCore", c: { t: "grid", c } })
 						}
-						model={input.modelSync.play}
+						model={input.modelCore.play}
 						disabled={isSpectating}
-						flow={input.modelSync.flow}
+						flow={input.modelCore.flow}
 					/>
 				) : (
 					<FlowVariantUIPlay.View
@@ -127,9 +127,9 @@ const View: Module["View"] = (input) => {
 };
 
 export const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-	switch (input.msgSync.t) {
+	switch (input.msgCore.t) {
 		case "grid": {
-			switch (input.msgSync.c.t) {
+			switch (input.msgCore.c.t) {
 				case "dragged-over":
 				case "left":
 				case "pressed-down":

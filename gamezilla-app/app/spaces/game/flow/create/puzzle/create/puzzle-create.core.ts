@@ -49,7 +49,7 @@ export type MsgToClient = {
 //
 //
 
-export type MsgSync = {
+export type MsgCore = {
 	t: "user-created-puzzle";
 	created: Result<string, FlowPuzzle>;
 	userId: UserId;

@@ -21,7 +21,7 @@ export type MsgToClient = {
 	t: "noop";
 };
 
-export type MsgSync = {
+export type MsgCore = {
 	t: "pack-list.user-clicked-pack-item";
 	pack: FlowPack;
 };

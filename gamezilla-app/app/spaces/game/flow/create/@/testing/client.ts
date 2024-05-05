@@ -16,14 +16,14 @@ import { CreateClient } from "../../create.client";
 import {
 	initClient,
 	type ModelClient,
-	type ModelSync,
+	type ModelCore,
 } from "../../create.core";
-import { CreateSync } from "../../create.sync";
+import { CreateCore } from "../../create.sync";
 
 export const FlowCreateFixtureClient = async () => {
 	const f = await SpaceGameFixtureClient();
 	const model = initClient;
-	const modelSync = CreateSync.initSync({ ctx: f.ctx });
+	const modelCore = CreateCore.initCore({ ctx: f.ctx });
 	const ctx: FlowClientCtx = {
 		...f.ctx,
 		onQuit() {},
@@ -32,7 +32,7 @@ export const FlowCreateFixtureClient = async () => {
 		...f,
 		ctx,
 		model,
-		modelSync,
+		modelCore,
 	};
 };
 
@@ -52,7 +52,7 @@ export const clickedPackCreateButton =
 		return CreateClient.update({
 			model,
 			ctx: ctx,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 			msg: { t: "pack-create.clicked-create-button" },
 		});
 	};
@@ -62,8 +62,8 @@ export const userCreatedPack =
 		return CreateClient.update({
 			model,
 			ctx: ctx,
-			modelSync: CreateSync.initSync({ ctx }),
-			msgSync: {
+			modelCore: CreateCore.initCore({ ctx }),
+			msgCore: {
 				t: "user-created-pack",
 				created: Ok(pack),
 				eventId: EventId.generate(),
@@ -78,13 +78,13 @@ export const clickedPackItem =
 		return CreateClient.update({
 			model,
 			ctx: ctx,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 			msg: { t: "pack-list.clicked-pack-item", pack },
 		});
 	};
 
 export const clickedOpenPuzzlePickerButton =
-	(ctx: FlowClientCtx, modelSync: ModelSync = CreateSync.initSync({ ctx })) =>
+	(ctx: FlowClientCtx, modelCore: ModelCore = CreateCore.initCore({ ctx })) =>
 	(model: ModelClient) => {
 		return CreateClient.update({
 			model,
@@ -93,7 +93,7 @@ export const clickedOpenPuzzlePickerButton =
 				userId: ctx.currentUserId,
 			},
 			ctx,
-			modelSync,
+			modelCore,
 		});
 	};
 
@@ -103,7 +103,7 @@ export const closedPuzzlePickerDrawer =
 			model,
 			msg: { t: "pack-builder.user-closed-add-puzzle" },
 			ctx,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 		});
 	};
 
@@ -116,18 +116,18 @@ export const clickedPuzzleListItem =
 				puzzle,
 			},
 			ctx,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 		});
 	};
 
 export const clickedExitPuzzleBuilderButton =
-	(ctx: FlowClientCtx, modelSync: ModelSync = CreateSync.initSync({ ctx })) =>
+	(ctx: FlowClientCtx, modelCore: ModelCore = CreateCore.initCore({ ctx })) =>
 	(model: ModelClient) => {
 		return CreateClient.update({
 			model,
 			msg: { t: "puzzle-builder.user-clicked-exit-button" },
 			ctx,
-			modelSync: modelSync,
+			modelCore: modelCore,
 		});
 	};
 
@@ -136,7 +136,7 @@ export const serverListedPuzzlesOk =
 		return CreateClient.update({
 			ctx: ctx,
 			model,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 			msgServer: {
 				t: "flow-puzzle-list",
 				c: {
@@ -153,8 +153,8 @@ export const serverListedPuzzlesOk =
 	};
 
 export const puzzleBuilderPressDownRandomNode =
-	(ctx: FlowClientCtx, modelSync: ModelSync) => (model: ModelClient) => {
-		const puzzleBuilder = modelSync.puzzleBuilder;
+	(ctx: FlowClientCtx, modelCore: ModelCore) => (model: ModelClient) => {
+		const puzzleBuilder = modelCore.puzzleBuilder;
 
 		if (!puzzleBuilder) {
 			return { model };
@@ -175,7 +175,7 @@ export const puzzleBuilderPressDownRandomNode =
 				c: { t: "pressed-down-node", nodeId: randomNode.nodeId },
 			},
 			ctx,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 		});
 	};
 
@@ -183,7 +183,7 @@ export const puzzleBuilderUserSavedChanges =
 	(ctx: FlowClientCtx, puzzle: FlowPuzzle) => (model: ModelClient) => {
 		return CreateClient.update({
 			model,
-			msgSync: {
+			msgCore: {
 				t: "puzzle-builder.saved-puzzle",
 				eventId: EventId.generate(),
 				happenedAt: LamportTimestamp.fromNumber(0),
@@ -191,7 +191,7 @@ export const puzzleBuilderUserSavedChanges =
 				userId: ctx.currentUserId,
 			},
 			ctx,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 		});
 	};
 
@@ -205,7 +205,7 @@ export const clickedPuzzlePickerItem =
 				userId: ctx.currentUserId,
 			},
 			ctx,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 		});
 	};
 
@@ -218,7 +218,7 @@ export const clickedExitPuzzleButton =
 				userId: ctx.currentUserId,
 			},
 			ctx,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 		});
 	};
 
@@ -229,7 +229,7 @@ export const clickedPuzzleGridItem =
 			model,
 			msg: { t: "pack-builder.user-clicked-pack-item", puzzle, index },
 			ctx,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 		});
 	};
 
@@ -238,7 +238,7 @@ export const serverCreatedPack =
 		return CreateClient.update({
 			model,
 			ctx: ctx,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 			msgServer: {
 				t: "pack-create.created-pack",
 				created: Ok(pack),

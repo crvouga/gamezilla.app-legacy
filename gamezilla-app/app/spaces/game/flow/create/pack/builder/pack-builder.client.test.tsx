@@ -16,16 +16,16 @@ import {
 	serverCreatedPack,
 	testFlowClientCtx,
 } from "../../@/testing/client";
-import { deriveModelSync } from "../../@/testing/game";
-import type { ModelClient, ModelSync } from "../../create.core";
+import { deriveModelCore } from "../../@/testing/game";
+import type { ModelClient, ModelCore } from "../../create.core";
 import { PackBuilderClient } from "./pack-builder.client";
-import { CreateSync } from "../../create.sync";
+import { CreateCore } from "../../create.sync";
 
 const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
 	return PackBuilderClient.update({
 		ctx,
 		model,
-		modelSync: CreateSync.initSync({ ctx }),
+		modelCore: CreateCore.initCore({ ctx }),
 		msg: {
 			t: "pack-builder.puzzle-screen.user-clicked-more-button",
 			userId: ctx.currentUserId,
@@ -37,7 +37,7 @@ const closedMoreDrawer = (ctx: FlowClientCtx) => (model: ModelClient) => {
 	return PackBuilderClient.update({
 		ctx,
 		model,
-		modelSync: CreateSync.initSync({ ctx }),
+		modelCore: CreateCore.initCore({ ctx }),
 		msg: {
 			t: "pack-builder.puzzle-screen.user-closed-more-drawer",
 			userId: ctx.currentUserId,
@@ -63,8 +63,8 @@ export const Fixture = async () => {
 			[pack.id]: pack,
 		},
 	};
-	const modelSync: ModelSync = {
-		...f.modelSync,
+	const modelCore: ModelCore = {
+		...f.modelCore,
 		packBuilder: {
 			t: "pack-builder",
 			pack: pack,
@@ -78,7 +78,7 @@ export const Fixture = async () => {
 		pack,
 		puzzle,
 		model,
-		modelSync,
+		modelCore,
 	};
 };
 
@@ -94,10 +94,10 @@ describe(import.meta.file, () => {
 			clickedPuzzlePickerItem(ctx, puzzle),
 			clickedPuzzleGridItem(ctx, puzzle, 0),
 		);
-		const modelSync = deriveModelSync(ctx)(output);
+		const modelCore = deriveModelCore(ctx)(output);
 		expect(
-			modelSync.packBuilder?.screen.t === "screen-puzzle" &&
-				modelSync.packBuilder.screen.puzzleIndex === 0,
+			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
+				modelCore.packBuilder.screen.puzzleIndex === 0,
 		).toBe(true);
 	});
 
@@ -108,8 +108,8 @@ describe(import.meta.file, () => {
 			serverCreatedPack(ctx, await createFlowPack(ctx)),
 			clickedOpenPuzzlePickerButton(ctx),
 		);
-		const modelSync = deriveModelSync(ctx)(output);
-		expect(modelSync.packBuilder?.screen.t === "add-puzzle").toBe(true);
+		const modelCore = deriveModelCore(ctx)(output);
+		expect(modelCore.packBuilder?.screen.t === "add-puzzle").toBe(true);
 	});
 
 	it("should close puzzle picker when user clicks closes", async () => {
@@ -120,8 +120,8 @@ describe(import.meta.file, () => {
 			clickedOpenPuzzlePickerButton(ctx),
 			closedPuzzlePickerDrawer(ctx),
 		);
-		const modelSync = deriveModelSync(ctx)(output);
-		expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
+		const modelCore = deriveModelCore(ctx)(output);
+		expect(modelCore.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
 	});
 
 	it("should add puzzle to the pack after clicking a puzzle in the picker", async () => {
@@ -132,10 +132,10 @@ describe(import.meta.file, () => {
 			serverCreatedPack(ctx, await createFlowPack(ctx)),
 			clickedPuzzlePickerItem(ctx, puzzle),
 		);
-		const modelSync = deriveModelSync(ctx)(output);
+		const modelCore = deriveModelCore(ctx)(output);
 		expect(
-			modelSync.packBuilder &&
-				FlowPack.includes(modelSync.packBuilder.pack, puzzle.id),
+			modelCore.packBuilder &&
+				FlowPack.includes(modelCore.packBuilder.pack, puzzle.id),
 		).toBe(true);
 	});
 
@@ -148,8 +148,8 @@ describe(import.meta.file, () => {
 			clickedOpenPuzzlePickerButton(ctx),
 			clickedPuzzlePickerItem(ctx, puzzle),
 		);
-		const modelSync = deriveModelSync(ctx)(output);
-		expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
+		const modelCore = deriveModelCore(ctx)(output);
+		expect(modelCore.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
 	});
 
 	it("should go back to grid after exiting puzzle", async () => {
@@ -163,8 +163,8 @@ describe(import.meta.file, () => {
 			clickedPuzzleGridItem(ctx, puzzle, 0),
 			clickedExitPuzzleButton(ctx),
 		);
-		const modelSync = deriveModelSync(ctx)(output);
-		expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
+		const modelCore = deriveModelCore(ctx)(output);
+		expect(modelCore.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
 	});
 
 	it('should open the more drawer after clicking "more" button', async () => {
@@ -178,10 +178,10 @@ describe(import.meta.file, () => {
 			clickedPuzzleGridItem(ctx, puzzle, 0),
 			clickedMoreButton(ctx),
 		);
-		const modelSync = deriveModelSync(ctx)(output);
+		const modelCore = deriveModelCore(ctx)(output);
 		expect(
-			modelSync.packBuilder?.screen.t === "screen-puzzle" &&
-				modelSync.packBuilder?.screen.opened === "more",
+			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
+				modelCore.packBuilder?.screen.opened === "more",
 		).toBe(true);
 	});
 
@@ -197,10 +197,10 @@ describe(import.meta.file, () => {
 			clickedMoreButton(ctx),
 			closedMoreDrawer(ctx),
 		);
-		const modelSync = deriveModelSync(ctx)(output);
+		const modelCore = deriveModelCore(ctx)(output);
 		expect(
-			modelSync.packBuilder?.screen.t === "screen-puzzle" &&
-				modelSync.packBuilder?.screen.opened === null,
+			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
+				modelCore.packBuilder?.screen.opened === null,
 		).toBe(true);
 	});
 
@@ -215,7 +215,7 @@ describe(import.meta.file, () => {
 			},
 		});
 		expect(
-			output.msgSync?.some(
+			output.msgCore?.some(
 				(msg) =>
 					msg.t ===
 					"pack-builder.puzzle-screen.user-clicked-remove-from-pack-button",
@@ -232,8 +232,8 @@ describe(import.meta.file, () => {
 		};
 		const output = PackBuilderClient.update({
 			...f,
-			modelSync: {
-				...f.modelSync,
+			modelCore: {
+				...f.modelCore,
 				packBuilder: {
 					t: "pack-builder",
 					pack: updatedPack,

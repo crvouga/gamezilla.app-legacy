@@ -15,9 +15,9 @@ import { CoverArt } from "./@/flow-cover-art";
 import type { FlowClientCtx } from "./@/flow-ctx";
 import type {
 	ModelClient,
-	ModelSync,
+	ModelCore,
 	MsgClient,
-	MsgSync,
+	MsgCore,
 	MsgToClient,
 	MsgToServer,
 } from "./flow.core";
@@ -37,8 +37,8 @@ type ClientModule = GameClientModule<{
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	//
-	MsgSync: MsgSync;
-	ModelSync: ModelSync;
+	MsgCore: MsgCore;
+	ModelCore: ModelCore;
 	//
 	Ctx: SpaceClientCtx;
 	//
@@ -66,16 +66,16 @@ const update: ClientModule["update"] = (input) => {
 		{ model: input.model },
 		(model) => GameMainMenu.update({ ...input, model }),
 		(model) => updateFromMsg({ ...input, model }),
-		(model) => updateFromMsgSync({ ...input, model }),
+		(model) => updateFromMsgCore({ ...input, model }),
 		(model) => updateChild({ ...input, model }),
 	);
 };
 
 const updateChild: ClientModule["update"] = (input) => {
-	const { model, modelSync, msgEvt, ctx, msgCmd, msgSync, msgServer, msg } =
+	const { model, modelCore, msgEvt, ctx, msgCmd, msgCore, msgServer, msg } =
 		input;
 
-	switch (modelSync.t) {
+	switch (modelCore.t) {
 		case null: {
 			return { model };
 		}
@@ -86,12 +86,12 @@ const updateChild: ClientModule["update"] = (input) => {
 					...ctx,
 					onQuit: () => {},
 				},
-				modelSync: modelSync.c,
+				modelCore: modelCore.c,
 				model: model.t === "play" ? model.c : PlayClient.init,
 				msgCmd: msgCmd,
 				msgEvt: msgEvt,
 				msgServer: msgServer?.t === "play" ? msgServer.c : null,
-				msgSync: msgSync?.t === "play" ? { ...msgSync, ...msgSync.c } : null,
+				msgCore: msgCore?.t === "play" ? { ...msgCore, ...msgCore.c } : null,
 				msg: msg?.t === "play" ? msg.c : null,
 			});
 
@@ -114,7 +114,7 @@ const updateChild: ClientModule["update"] = (input) => {
 		case "create": {
 			const updated = CreateClient.update({
 				ctx: { ...ctx, onQuit: () => {} },
-				modelSync: modelSync.c,
+				modelCore: modelCore.c,
 				model: {
 					...(model.t === "create" ? model.c : CreateClient.init),
 					packs: model.packs,
@@ -123,7 +123,7 @@ const updateChild: ClientModule["update"] = (input) => {
 				msgCmd: msgCmd,
 				msgEvt: msgEvt,
 				msgServer: msgServer?.t === "create" ? msgServer.c : null,
-				msgSync: msgSync?.t === "create" ? { ...msgSync, ...msgSync.c } : null,
+				msgCore: msgCore?.t === "create" ? { ...msgCore, ...msgCore.c } : null,
 				msg: msg?.t === "create" ? msg.c : null,
 			});
 
@@ -151,12 +151,12 @@ const updateChild: ClientModule["update"] = (input) => {
 	}
 };
 
-const updateFromMsgSync: ClientModule["update"] = (input) => {
-	const { msgSync, model } = input;
+const updateFromMsgCore: ClientModule["update"] = (input) => {
+	const { msgCore, model } = input;
 
-	switch (msgSync?.t) {
+	switch (msgCore?.t) {
 		case "user-changed-mode": {
-			switch (msgSync.mode) {
+			switch (msgCore.mode) {
 				case "play": {
 					return {
 						model: { ...model, t: "play", c: PlayClient.init },
@@ -194,11 +194,11 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 	const { msg, model } = input;
 
 	switch (msg?.t) {
-		case "msgSync": {
-			const msgSync = withId(msg.c);
+		case "msgCore": {
+			const msgCore = withId(msg.c);
 			return {
 				model,
-				msgSync: [msgSync],
+				msgCore: [msgCore],
 			};
 		}
 
@@ -218,7 +218,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 //
 
 const subscriptions: ClientModule["subscriptions"] = (input) => {
-	switch (input.modelSync.t) {
+	switch (input.modelCore.t) {
 		case "play": {
 			return Sub.tag(
 				"play",
@@ -227,7 +227,7 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 						...input.ctx,
 						onQuit() {},
 					},
-					modelSync: input.modelSync.c,
+					modelCore: input.modelCore.c,
 					model: input.model.t === "play" ? input.model.c : PlayClient.init,
 				}),
 			);
@@ -240,7 +240,7 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 						...input.ctx,
 						onQuit() {},
 					},
-					modelSync: input.modelSync.c,
+					modelCore: input.modelCore.c,
 					model: input.model.t === "create" ? input.model.c : CreateClient.init,
 				}),
 			);
@@ -259,13 +259,13 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 //
 
 const View: ClientModule["View"] = (input) => {
-	const { modelSync, dispatch } = input;
+	const { modelCore, dispatch } = input;
 
 	const ctx: FlowClientCtx = {
 		...input.ctx,
 		onQuit: () =>
 			dispatch({
-				t: "msgSync",
+				t: "msgCore",
 				c: {
 					t: "user-changed-mode",
 					mode: null,
@@ -274,7 +274,7 @@ const View: ClientModule["View"] = (input) => {
 			}),
 	};
 
-	switch (modelSync.t) {
+	switch (modelCore.t) {
 		case null: {
 			return (
 				<GameMainMenu.View
@@ -289,7 +289,7 @@ const View: ClientModule["View"] = (input) => {
 							description: "Start playing puzzles",
 							onClick: () => {
 								dispatch({
-									t: "msgSync",
+									t: "msgCore",
 									c: {
 										t: "user-changed-mode",
 										mode: "play",
@@ -304,7 +304,7 @@ const View: ClientModule["View"] = (input) => {
 							description: "Create new puzzles and packs",
 							onClick: () => {
 								dispatch({
-									t: "msgSync",
+									t: "msgCore",
 									c: {
 										t: "user-changed-mode",
 										mode: "create",
@@ -323,7 +323,7 @@ const View: ClientModule["View"] = (input) => {
 				<CreateClient.View
 					ctx={ctx}
 					dispatch={(c) => dispatch({ t: "create", c })}
-					modelSync={modelSync.c}
+					modelCore={modelCore.c}
 					model={
 						input.model.t === "create"
 							? {
@@ -342,7 +342,7 @@ const View: ClientModule["View"] = (input) => {
 				<PlayClient.View
 					ctx={ctx}
 					dispatch={(c) => dispatch({ t: "play", c })}
-					modelSync={modelSync.c}
+					modelCore={modelCore.c}
 					model={input.model.t === "play" ? input.model.c : PlayClient.init}
 				/>
 			);
@@ -353,19 +353,19 @@ const View: ClientModule["View"] = (input) => {
 const ViewFeedItem: ClientModule["ViewFeedItem"] = ({
 	ctx,
 	dispatch,
-	modelSync,
-	msgSync,
+	modelCore,
+	msgCore,
 }) => {
-	switch (msgSync.t) {
+	switch (msgCore.t) {
 		case "play": {
-			switch (modelSync.t) {
+			switch (modelCore.t) {
 				case "play": {
 					return (
 						<PlayClient.ViewFeedItem
 							ctx={{ ...ctx, onQuit() {} }}
 							dispatch={(c) => dispatch({ t: "play", c })}
-							modelSync={modelSync.c}
-							msgSync={msgSync.c}
+							modelCore={modelCore.c}
+							msgCore={msgCore.c}
 						/>
 					);
 				}
@@ -376,14 +376,14 @@ const ViewFeedItem: ClientModule["ViewFeedItem"] = ({
 		}
 
 		case "create": {
-			switch (modelSync.t) {
+			switch (modelCore.t) {
 				case "create": {
 					return (
 						<CreateClient.ViewFeedItem
 							ctx={{ ...ctx, onQuit() {} }}
 							dispatch={(c) => dispatch({ t: "create", c })}
-							modelSync={modelSync.c}
-							msgSync={msgSync.c}
+							modelCore={modelCore.c}
+							msgCore={msgCore.c}
 						/>
 					);
 				}

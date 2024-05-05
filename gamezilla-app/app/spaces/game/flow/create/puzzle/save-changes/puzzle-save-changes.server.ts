@@ -2,7 +2,7 @@ import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-s
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { Result } from "gamezilla-app/@/core";
 import type { ServerModule } from "../../create.core";
-import type { MsgSync } from "./puzzle-save-changes.core";
+import type { MsgCore } from "./puzzle-save-changes.core";
 
 const update: ServerModule["update"] = async (input) => {
 	return GameServerModule.andThen({ model: input.model }, (model) =>
@@ -22,7 +22,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 				lastUpdatedAt: ctx.now,
 			});
 
-			const msgSync: MsgSync = {
+			const msgCore: MsgCore = {
 				t: "puzzle-builder.saved-puzzle",
 				saved: Result.mapOk(saved, () => msgClient.puzzle),
 				userId: msgClient.puzzle.createdBy,
@@ -30,7 +30,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
 			return {
 				model,
-				msgSync: [withId(msgSync)],
+				msgCore: [withId(msgCore)],
 			};
 		}
 

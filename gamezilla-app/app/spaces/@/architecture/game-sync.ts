@@ -1,14 +1,14 @@
-export type GameSyncTypes = {
+export type GameCoreTypes = {
 	Ctx: any;
-	ModelSync: any;
-	MsgSync: any;
+	ModelCore: any;
+	MsgCore: any;
 };
 
-export type GameSyncModule<T extends GameSyncTypes> = {
-	initSync: (input: { ctx: T["Ctx"] }) => T["ModelSync"];
-	reducer: (input: {
+export type GameCoreModule<T extends GameCoreTypes> = {
+	initCore: (input: { ctx: T["Ctx"] }) => T["ModelCore"];
+	updateCore: (input: {
 		ctx: T["Ctx"];
-		msgSync: T["MsgSync"];
-		modelSync: T["ModelSync"];
-	}) => T["ModelSync"];
+		msgCore: T["MsgCore"];
+		modelCore: T["ModelCore"];
+	}) => T["ModelCore"];
 };

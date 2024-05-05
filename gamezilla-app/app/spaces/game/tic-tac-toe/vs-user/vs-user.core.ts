@@ -13,7 +13,7 @@ const { Err, Ok } = Result;
 //
 //
 
-export type CoreModel = SetupModel | ModelSync | GameOverModel;
+export type CoreModel = SetupModel | ModelCore | GameOverModel;
 
 export type SetupModel = {
 	type: "setup";
@@ -23,7 +23,7 @@ export type SetupModel = {
 	moveTimeLimit: MoveTimeLimit;
 };
 
-export type ModelSync = {
+export type ModelCore = {
 	type: "game";
 	X: UserId;
 	O: UserId;
@@ -86,7 +86,7 @@ export const bestOutOfToString = (bestOutOf: BestOutOf): string => {
 
 export const toWinCount = ({
 	maxRoundCount,
-}: Pick<ModelSync, "maxRoundCount">): number => {
+}: Pick<ModelCore, "maxRoundCount">): number => {
 	return Math.floor(maxRoundCount / 2) + 1;
 };
 
@@ -153,7 +153,7 @@ export type MsgToClient =
 	| MoveCountDown_Done
 	| ["player-left", CoreModel];
 
-export type MsgSync = ["ClickedBoard", TicTacToe.Position];
+export type MsgCore = ["ClickedBoard", TicTacToe.Position];
 
 export type Req =
 	| InputPlayer

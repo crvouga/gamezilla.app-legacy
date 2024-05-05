@@ -14,9 +14,9 @@ import { VsUser } from "./vs-user/vs-user.client";
 import { CoverArt } from "./@/connect-four-ui/connect-four-cover-art";
 import type {
 	ModelClient,
-	ModelSync,
+	ModelCore,
 	MsgClient,
-	MsgSync,
+	MsgCore,
 	MsgToClient,
 	MsgToServer,
 } from "./connect-four.core";
@@ -34,8 +34,8 @@ type Module = GameClientModule<{
 	Msg: MsgClient;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
-	ModelSync: ModelSync;
-	MsgSync: MsgSync;
+	ModelCore: ModelCore;
+	MsgCore: MsgCore;
 	Ctx: SpaceClientCtx;
 	MsgInCmd: null;
 	MsgInEvent: SpaceClientEvent;
@@ -70,7 +70,7 @@ const update: Module["update"] = (input) => {
 		(model) => GameMainMenu.update({ ...input, model }),
 		(model) => updateChild(model)(input),
 		(model) => updateFromMsg(model)(input),
-		(model) => updateFromMsgSync(model)(input),
+		(model) => updateFromMsgCore(model)(input),
 	);
 };
 
@@ -81,7 +81,7 @@ const updateFromMsg =
 
 		switch (msg?.t) {
 			case "user-changed-mode": {
-				return { model, msgSync: [withId(msg)] };
+				return { model, msgCore: [withId(msg)] };
 			}
 
 			default: {
@@ -90,18 +90,18 @@ const updateFromMsg =
 		}
 	};
 
-const updateFromMsgSync =
+const updateFromMsgCore =
 	(model: ModelClient): Module["update"] =>
 	(input) => {
-		const { msgSync } = input;
+		const { msgCore } = input;
 
-		if (!msgSync) {
+		if (!msgCore) {
 			return { model };
 		}
 
-		switch (msgSync.t) {
+		switch (msgCore.t) {
 			case "user-changed-mode": {
-				switch (msgSync.mode) {
+				switch (msgCore.mode) {
 					case "none": {
 						return {
 							model: { t: null },
@@ -135,9 +135,9 @@ const updateFromMsgSync =
 const updateChild =
 	(model: ModelClient): Module["update"] =>
 	(input) => {
-		const { msg, msgEvt, msgSync, msgServer, modelSync } = input;
+		const { msg, msgEvt, msgCore, msgServer, modelCore } = input;
 
-		switch (modelSync.t) {
+		switch (modelCore.t) {
 			case "none": {
 				return { model };
 			}
@@ -148,11 +148,11 @@ const updateChild =
 					msg: msg?.t === "vs-bot" ? msg.c : null,
 					msgEvt: msgEvt,
 					msgCmd: null,
-					msgSync:
-						msgSync?.t === "vs-bot" ? { ...msgSync, ...msgSync.c } : null,
+					msgCore:
+						msgCore?.t === "vs-bot" ? { ...msgCore, ...msgCore.c } : null,
 					msgServer: msgServer?.t === "vs-bot" ? msgServer.c : null,
 					model: model.t === "vs-bot" ? model.c : VsBot.init,
-					modelSync: modelSync.c,
+					modelCore: modelCore.c,
 				});
 
 				return GameClientModule.tagOutput(
@@ -169,10 +169,10 @@ const updateChild =
 					msg: msg?.t === "vs-user" ? msg.c : null,
 					msgCmd: null,
 					msgEvt: msgEvt,
-					msgSync:
-						msgSync?.t === "vs-user" ? { ...msgSync, ...msgSync.c } : null,
+					msgCore:
+						msgCore?.t === "vs-user" ? { ...msgCore, ...msgCore.c } : null,
 					msgServer: msgServer?.t === "vs-user" ? msgServer.c : null,
-					modelSync: modelSync.c,
+					modelCore: modelCore.c,
 				});
 
 				return GameClientModule.tagOutput(
@@ -201,7 +201,7 @@ const View: Module["View"] = (props) => {
 		});
 	};
 
-	switch (props.modelSync.t) {
+	switch (props.modelCore.t) {
 		case "none": {
 			return (
 				<GameMainMenu.View
@@ -237,7 +237,7 @@ const View: Module["View"] = (props) => {
 					ctx={{ ...props.ctx, onQuit }}
 					dispatch={(c) => props.dispatch({ t: "vs-bot", c })}
 					model={props.model?.t === "vs-bot" ? props.model.c : VsBot.init}
-					modelSync={props.modelSync.c}
+					modelCore={props.modelCore.c}
 				/>
 			);
 		}
@@ -248,7 +248,7 @@ const View: Module["View"] = (props) => {
 					ctx={{ ...props.ctx, onQuit }}
 					dispatch={(c) => props.dispatch({ t: "vs-user", c })}
 					model={props.model?.t === "vs-user" ? props.model.c : VsUser.init}
-					modelSync={props.modelSync.c}
+					modelCore={props.modelCore.c}
 				/>
 			);
 		}
@@ -256,10 +256,10 @@ const View: Module["View"] = (props) => {
 };
 
 const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-	const { modelSync, ctx, msgSync } = input;
-	switch (msgSync.t) {
+	const { modelCore, ctx, msgCore } = input;
+	switch (msgCore.t) {
 		case "user-changed-mode": {
-			switch (msgSync.mode) {
+			switch (msgCore.mode) {
 				case "none": {
 					const profile = ctx.profiles[ctx.currentUserId];
 
@@ -289,13 +289,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
 		}
 
 		case "vs-bot": {
-			switch (modelSync.t) {
+			switch (modelCore.t) {
 				case "vs-bot": {
 					return (
 						<VsBot.ViewFeedItem
 							ctx={{ ...ctx, onQuit: () => {} }}
-							msgSync={msgSync.c}
-							modelSync={modelSync.c}
+							msgCore={msgCore.c}
+							modelCore={modelCore.c}
 							dispatch={(c) => input.dispatch({ t: "vs-bot", c })}
 						/>
 					);
@@ -307,13 +307,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
 		}
 
 		case "vs-user": {
-			switch (modelSync.t) {
+			switch (modelCore.t) {
 				case "vs-user": {
 					return (
 						<VsUser.ViewFeedItem
 							ctx={{ ...ctx, onQuit: () => {} }}
-							msgSync={msgSync.c}
-							modelSync={modelSync.c}
+							msgCore={msgCore.c}
+							modelCore={modelCore.c}
 							dispatch={(c) => input.dispatch({ t: "vs-user", c })}
 						/>
 					);
@@ -335,9 +335,9 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
 //
 
 const subscriptions: Module["subscriptions"] = (input) => {
-	const { model, modelSync } = input;
+	const { model, modelCore } = input;
 
-	switch (modelSync.t) {
+	switch (modelCore.t) {
 		case "none": {
 			return Sub.None;
 		}
@@ -348,7 +348,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
 				VsBot.subscriptions({
 					...input,
 					model: model?.t === "vs-bot" ? model.c : VsBot.init,
-					modelSync: modelSync.c,
+					modelCore: modelCore.c,
 					ctx: { ...input.ctx, onQuit: () => {} },
 				}),
 			);
@@ -360,7 +360,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
 				VsUser.subscriptions({
 					...input,
 					model: model?.t === "vs-user" ? model.c : VsUser.init,
-					modelSync: modelSync.c,
+					modelCore: modelCore.c,
 					ctx: { ...input.ctx, onQuit: () => {} },
 				}),
 			);

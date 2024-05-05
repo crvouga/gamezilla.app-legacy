@@ -1,92 +1,92 @@
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../@/flow";
-import type { ModelSync, MsgSync } from "../../create.core";
+import type { ModelCore, MsgCore } from "../../create.core";
 
-const reducer = ({
-	modelSync,
-	msgSync,
+const updateCore = ({
+	modelCore,
+	msgCore,
 	ctx,
 }: {
 	ctx: SpaceCtx;
-	msgSync: MsgSync;
-	modelSync: ModelSync;
-}): ModelSync => {
-	switch (msgSync.t) {
+	msgCore: MsgCore;
+	modelCore: ModelCore;
+}): ModelCore => {
+	switch (msgCore.t) {
 		case "puzzle-builder.flow-ui-play": {
-			if (!modelSync.puzzleBuilder) {
-				return modelSync;
+			if (!modelCore.puzzleBuilder) {
+				return modelCore;
 			}
 
 			const currentFlow = FlowVariantUIEdit.toCurrentFlow({
-				model: modelSync.puzzleBuilder.edit,
+				model: modelCore.puzzleBuilder.edit,
 			});
 
 			const updated = FlowVariantUIPlay.update({
-				model: modelSync.puzzleBuilder.play,
-				msg: msgSync.c,
+				model: modelCore.puzzleBuilder.play,
+				msg: msgCore.c,
 				flow: currentFlow,
 			});
 
 			return {
-				...modelSync,
+				...modelCore,
 				puzzleBuilder: {
-					...modelSync.puzzleBuilder,
+					...modelCore.puzzleBuilder,
 					play: updated,
 				},
 			};
 		}
 
 		case "puzzle-builder.flow-ui-edit": {
-			if (!modelSync.puzzleBuilder) {
-				return modelSync;
+			if (!modelCore.puzzleBuilder) {
+				return modelCore;
 			}
 
 			const updated = FlowVariantUIEdit.update({
-				model: modelSync.puzzleBuilder.edit,
-				msg: msgSync.c,
-				flow: modelSync.puzzleBuilder.puzzle.flow,
+				model: modelCore.puzzleBuilder.edit,
+				msg: msgCore.c,
+				flow: modelCore.puzzleBuilder.puzzle.flow,
 			});
 
 			return {
-				...modelSync,
+				...modelCore,
 				puzzleBuilder: {
-					...modelSync.puzzleBuilder,
+					...modelCore.puzzleBuilder,
 					edit: updated.model,
 				},
 			};
 		}
 
 		case "puzzle-builder.user-clicked-edit-mode-button": {
-			if (!modelSync.puzzleBuilder) {
-				return modelSync;
+			if (!modelCore.puzzleBuilder) {
+				return modelCore;
 			}
 
-			if (msgSync.userId !== ctx.space.hostId) {
-				return modelSync;
+			if (msgCore.userId !== ctx.space.hostId) {
+				return modelCore;
 			}
 
 			return {
-				...modelSync,
+				...modelCore,
 				puzzleBuilder: {
-					...modelSync.puzzleBuilder,
+					...modelCore.puzzleBuilder,
 					mode: { t: "edit" },
 				},
 			};
 		}
 
 		case "puzzle-builder.user-clicked-play-mode-button": {
-			if (!modelSync.puzzleBuilder) {
-				return modelSync;
+			if (!modelCore.puzzleBuilder) {
+				return modelCore;
 			}
 			const initial = FlowVariantUIPlay.init({
 				flow: FlowVariantUIEdit.toCurrentFlow({
-					model: modelSync.puzzleBuilder.edit,
+					model: modelCore.puzzleBuilder.edit,
 				}),
 			});
 			return {
-				...modelSync,
+				...modelCore,
 				puzzleBuilder: {
-					...modelSync.puzzleBuilder,
+					...modelCore.puzzleBuilder,
 					mode: { t: "play" },
 					play: initial,
 				},
@@ -94,19 +94,19 @@ const reducer = ({
 		}
 
 		case "puzzle-builder.user-clicked-exit-button": {
-			if (msgSync.userId !== ctx.space.hostId) {
-				return modelSync;
+			if (msgCore.userId !== ctx.space.hostId) {
+				return modelCore;
 			}
 
-			return { ...modelSync, opened: { t: "list" }, listTab: "puzzles" };
+			return { ...modelCore, opened: { t: "list" }, listTab: "puzzles" };
 		}
 
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 };
 
-export const PuzzleBuilderGame = {
-	reducer,
+export const PuzzleBuilderCore = {
+	updateCore,
 };

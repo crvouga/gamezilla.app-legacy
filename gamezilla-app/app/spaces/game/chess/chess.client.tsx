@@ -19,9 +19,9 @@ import { CoverArt } from "./@/chess-ui";
 import { CHESS_SOUND } from "./@/chess/chess-sounds";
 import type {
 	ModelClient,
-	ModelSync,
+	ModelCore,
 	MsgClient,
-	MsgSync,
+	MsgCore,
 	MsgToClient,
 	MsgToServer,
 } from "./chess.core";
@@ -42,8 +42,8 @@ type Client = GameClient<{
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	ClientCtx: SpaceClientCtx;
-	MsgSync: MsgSync;
-	ModelSync: ModelSync;
+	MsgCore: MsgCore;
+	ModelCore: ModelCore;
 	ClientCmd: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
 	ClientEvent: SpaceClientEvent;
 }>;
@@ -290,7 +290,7 @@ export const subscriptions: Client["subscriptions"] = (_input) => {
 //
 
 export const View: Client["View"] = (input) => {
-	switch (input.modelSync.t) {
+	switch (input.modelCore.t) {
 		case "none": {
 			return (
 				<GameMainMenu.View

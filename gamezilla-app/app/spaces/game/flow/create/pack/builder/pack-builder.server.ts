@@ -8,19 +8,19 @@ import type { ServerModule } from "../../create.core";
 
 const SavePack: Pick<ServerModule, "update"> = {
 	async update(input) {
-		const { deps, model, modelSync, msgSync } = input;
+		const { deps, model, modelCore, msgCore } = input;
 
-		switch (msgSync?.t) {
+		switch (msgCore?.t) {
 			case "pack-builder.user-clicked-add-puzzle-item": {
-				if (!modelSync.packBuilder) {
+				if (!modelCore.packBuilder) {
 					return { model };
 				}
 
-				const saved = await deps.FlowPackDb.put(modelSync.packBuilder.pack);
+				const saved = await deps.FlowPackDb.put(modelCore.packBuilder.pack);
 
 				return {
 					model,
-					msgSync: [withId({ t: "pack-builder.saved-pack", saved })],
+					msgCore: [withId({ t: "pack-builder.saved-pack", saved })],
 				};
 			}
 
@@ -33,7 +33,7 @@ const SavePack: Pick<ServerModule, "update"> = {
 
 const PuzzleGrid: Pick<ServerModule, "update"> = {
 	async update(input) {
-		const pack = input.modelSync.packBuilder?.pack;
+		const pack = input.modelCore.packBuilder?.pack;
 
 		if (!pack) {
 			return { model: input.model };

@@ -10,17 +10,17 @@ import {
 	initial,
 	testFlowClientCtx,
 } from "../../@/testing/client";
-import { deriveModelSync } from "../../@/testing/game";
+import { deriveModelCore } from "../../@/testing/game";
 import { CreateClient } from "../../create.client";
 import type { ModelClient } from "../../create.core";
-import { CreateSync } from "../../create.sync";
+import { CreateCore } from "../../create.sync";
 
 const clickedPuzzleListItem =
 	(ctx: FlowClientCtx, puzzle: FlowPuzzle) => (model: ModelClient) => {
 		return CreateClient.update({
 			ctx,
 			model,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 			msg: {
 				t: "puzzle-list.clicked-puzzle-list-item",
 				puzzle,
@@ -33,8 +33,8 @@ const userClickedPuzzleListItem =
 		return CreateClient.update({
 			ctx,
 			model,
-			modelSync: CreateSync.initSync({ ctx }),
-			msgSync: {
+			modelCore: CreateCore.initCore({ ctx }),
+			msgCore: {
 				t: "puzzle-list.clicked-puzzle-list-item",
 				puzzle,
 				eventId: EventId.generate(),
@@ -55,11 +55,11 @@ describe(import.meta.file, () => {
 			//
 		);
 
-		const modelSync = deriveModelSync(ctx)(output);
+		const modelCore = deriveModelCore(ctx)(output);
 
 		expect(
-			modelSync.opened.t === "puzzle-builder" &&
-				modelSync.puzzleBuilder?.puzzle.id === puzzle.id,
+			modelCore.opened.t === "puzzle-builder" &&
+				modelCore.puzzleBuilder?.puzzle.id === puzzle.id,
 		).toBe(true);
 	});
 

@@ -4,7 +4,7 @@ import { withId } from "gamezilla-app/app/spaces/@/event";
 import { FlowVariant, FlowVariantDimensions } from "../../../@/flow";
 import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import type { ServerModule } from "../../create.core";
-import type { MsgSync } from "./puzzle-create.core";
+import type { MsgCore } from "./puzzle-create.core";
 
 const update: ServerModule["update"] = async (input) => {
 	return GameServerModule.andThen({ model: input.model }, (model) =>
@@ -47,7 +47,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
 			const created = await deps.FlowPuzzleDb.put(puzzleNew);
 
-			const msgSync: MsgSync = {
+			const msgCore: MsgCore = {
 				t: "user-created-puzzle",
 				created: Result.mapOk(created, () => puzzleNew),
 				userId: msgClient.userId,
@@ -55,7 +55,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
 			return {
 				model,
-				msgSync: [withId(msgSync)],
+				msgCore: [withId(msgCore)],
 			};
 		}
 

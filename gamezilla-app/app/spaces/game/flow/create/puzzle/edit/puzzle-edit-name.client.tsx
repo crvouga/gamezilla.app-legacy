@@ -53,9 +53,9 @@ const View: ClientModule["View"] = (input) => {
 //
 
 const updateFormButtons: ClientModule["update"] = (input) => {
-	const { modelSync, msgSync, msg, model } = input;
+	const { modelCore, msgCore, msg, model } = input;
 
-	const puzzleBuilder = modelSync.puzzleBuilder;
+	const puzzleBuilder = modelCore.puzzleBuilder;
 
 	if (!puzzleBuilder) {
 		return { model };
@@ -107,15 +107,15 @@ const updateFormButtons: ClientModule["update"] = (input) => {
 		}
 	}
 
-	switch (msgSync?.t) {
+	switch (msgCore?.t) {
 		case "user-edited-puzzle-name": {
 			const puzzlesNew = { ...model.puzzles };
-			const puzzle = puzzlesNew[msgSync.flowPuzzleId];
+			const puzzle = puzzlesNew[msgCore.flowPuzzleId];
 
-			if (puzzle && FlowPuzzleName.is(msgSync.newName)) {
-				puzzlesNew[msgSync.flowPuzzleId] = {
+			if (puzzle && FlowPuzzleName.is(msgCore.newName)) {
+				puzzlesNew[msgCore.flowPuzzleId] = {
 					...puzzle,
-					name: msgSync.newName,
+					name: msgCore.newName,
 				};
 			}
 
@@ -123,12 +123,12 @@ const updateFormButtons: ClientModule["update"] = (input) => {
 				model: {
 					...model,
 					puzzles: puzzlesNew,
-					puzzleEditNameRequest: msgSync.edited,
+					puzzleEditNameRequest: msgCore.edited,
 					puzzleBuilderOpened: null,
 				},
-				msgCmd: isOk(msgSync.edited)
+				msgCmd: isOk(msgCore.edited)
 					? showCreatedSm("Saved name")
-					: showErrSm(msgSync.edited.error),
+					: showErrSm(msgCore.edited.error),
 			};
 		}
 
@@ -143,7 +143,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
 const ViewFormButtons: ClientModule["View"] = ({
 	dispatch,
 	model,
-	modelSync,
+	modelCore,
 }) => {
 	return (
 		<div className="flex w-full items-center gap-4 p-4 pb-6">
@@ -163,8 +163,8 @@ const ViewFormButtons: ClientModule["View"] = ({
 				text="Save"
 				loading={isLoading(model.puzzleEditNameRequest)}
 				disabled={
-					modelSync.opened.t !== "puzzle-builder" ||
-					model.puzzleEditNameDraft === modelSync.puzzleBuilder?.puzzle.name
+					modelCore.opened.t !== "puzzle-builder" ||
+					model.puzzleEditNameDraft === modelCore.puzzleBuilder?.puzzle.name
 				}
 				onClick={() =>
 					dispatch({ t: "puzzle.edit-name.user-clicked-save-button" })
@@ -181,7 +181,7 @@ const ViewFormButtons: ClientModule["View"] = ({
 //
 
 const updateDrawer: ClientModule["update"] = (input) => {
-	const { msg, model, modelSync } = input;
+	const { msg, model, modelCore } = input;
 
 	switch (msg?.t) {
 		case "puzzle.edit-name.user-clicked-button": {
@@ -189,7 +189,7 @@ const updateDrawer: ClientModule["update"] = (input) => {
 				model: {
 					...model,
 					puzzleBuilderOpened: "edit-name",
-					puzzleEditNameDraft: modelSync.puzzleBuilder?.puzzle.name ?? "",
+					puzzleEditNameDraft: modelCore.puzzleBuilder?.puzzle.name ?? "",
 				},
 			};
 		}

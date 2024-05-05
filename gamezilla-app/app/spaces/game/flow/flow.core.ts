@@ -54,7 +54,7 @@ export type ModelServer = p.Infer<typeof ModelServer>;
 
 export type MsgClient =
 	| GameMainMenu.Msg
-	| { t: "msgSync"; c: MsgSync }
+	| { t: "msgCore"; c: MsgCore }
 	| { t: "create"; c: Create.MsgClient }
 	| { t: "play"; c: Play.MsgClient };
 
@@ -80,12 +80,12 @@ export type Mode = "create" | "play";
 //
 //
 
-export type MsgSync =
+export type MsgCore =
 	| { t: "user-changed-mode"; mode: Mode | null; userId: UserId }
-	| { t: "play"; c: Play.MsgSync }
-	| { t: "create"; c: Create.MsgSync };
+	| { t: "play"; c: Play.MsgCore }
+	| { t: "create"; c: Create.MsgCore };
 
-export type ModelSync =
+export type ModelCore =
 	| { t: null }
-	| { t: "create"; c: Create.ModelSync }
-	| { t: "play"; c: Play.ModelSync };
+	| { t: "create"; c: Create.ModelCore }
+	| { t: "play"; c: Play.ModelCore };

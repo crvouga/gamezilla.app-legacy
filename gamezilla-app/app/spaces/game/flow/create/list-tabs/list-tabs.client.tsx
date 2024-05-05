@@ -22,9 +22,9 @@ const update: ClientModule["update"] = (input) => {
 };
 
 const updateUserChangedListTab: ClientModule["update"] = (input) => {
-	const { model, msgSync } = input;
+	const { model, msgCore } = input;
 
-	switch (msgSync?.t) {
+	switch (msgCore?.t) {
 		case "user-changed-list-tab": {
 			return {
 				model,
@@ -45,7 +45,7 @@ const updateListTab: ClientModule["update"] = (input) => {
 		case "user-changed-list-tab": {
 			return {
 				model,
-				msgSync: [
+				msgCore: [
 					withId({
 						t: "user-changed-list-tab",
 						listTab: msg.listTab,
@@ -61,7 +61,7 @@ const updateListTab: ClientModule["update"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-	const { ctx, modelSync, dispatch } = input;
+	const { ctx, modelCore, dispatch } = input;
 
 	const isSpectating = ctx.space.hostId !== ctx.currentUserId;
 
@@ -95,12 +95,12 @@ const View: ClientModule["View"] = (input) => {
 				onSelect={(listTab) =>
 					dispatch({ t: "user-changed-list-tab", listTab })
 				}
-				selected={modelSync.listTab}
+				selected={modelCore.listTab}
 			/>
 
-			{modelSync.listTab === "puzzles" && <PuzzleListClient.View {...input} />}
+			{modelCore.listTab === "puzzles" && <PuzzleListClient.View {...input} />}
 
-			{modelSync.listTab === "packs" && <PackListClient.View {...input} />}
+			{modelCore.listTab === "packs" && <PackListClient.View {...input} />}
 
 			<div className="flex w-full items-center gap-4 border-t border-neutral-700 p-4">
 				<Button

@@ -20,7 +20,7 @@ const updatePuzzleListItem: ClientModule["update"] = (input) => {
 		case "puzzle-list.clicked-puzzle-list-item": {
 			return {
 				model,
-				msgSync: [
+				msgCore: [
 					withId({
 						t: "puzzle-list.clicked-puzzle-list-item",
 						puzzle: msg.puzzle,
@@ -34,9 +34,9 @@ const updatePuzzleListItem: ClientModule["update"] = (input) => {
 };
 
 const updateUserClickedListItem: ClientModule["update"] = (input) => {
-	const { model, msgSync } = input;
+	const { model, msgCore } = input;
 
-	switch (msgSync?.t) {
+	switch (msgCore?.t) {
 		case "puzzle-list.clicked-puzzle-list-item": {
 			return {
 				model,

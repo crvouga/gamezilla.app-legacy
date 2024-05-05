@@ -47,7 +47,7 @@ export type Mode = "none" | "vs-user" | "vs-bot";
 
 export type MsgClient =
 	| GameMainMenu.Msg
-	| MsgSync
+	| MsgCore
 	| { t: "vs-user"; c: VsUser.MsgClient }
 	| { t: "vs-bot"; c: VsBot.MsgClient };
 
@@ -69,7 +69,7 @@ export type MsgToServer =
 //
 //
 
-export const MsgSync = p.or(
+export const MsgCore = p.or(
 	p.obj({
 		t: p.l("user-changed-mode"),
 		mode: p.enumeration(["none", "vs-user", "vs-bot"] as const),
@@ -77,48 +77,48 @@ export const MsgSync = p.or(
 	}),
 	p.obj({
 		t: p.l("vs-bot"),
-		c: VsBot.MsgSync,
+		c: VsBot.MsgCore,
 	}),
 	p.obj({
 		t: p.l("vs-user"),
-		c: VsUser.MsgSync,
+		c: VsUser.MsgCore,
 	}),
 );
-export type MsgSync = p.Infer<typeof MsgSync>;
+export type MsgCore = p.Infer<typeof MsgCore>;
 
-export const ModelSync = p.or(
+export const ModelCore = p.or(
 	p.obj({
 		t: p.l("none"),
 	}),
 	p.obj({
 		t: p.l("vs-user"),
-		c: VsUser.ModelSync,
+		c: VsUser.ModelCore,
 	}),
 	p.obj({
 		t: p.l("vs-bot"),
-		c: VsBot.ModelSync,
+		c: VsBot.ModelCore,
 	}),
 );
-export type ModelSync = p.Infer<typeof ModelSync>;
+export type ModelCore = p.Infer<typeof ModelCore>;
 
-export const initSync = (): ModelSync => {
+export const initCore = (): ModelCore => {
 	return {
 		t: "none",
 	};
 };
 
-export const reducer = ({
+export const updateCore = ({
 	ctx,
-	msgSync,
-	modelSync,
+	msgCore,
+	modelCore,
 }: {
 	ctx: SpaceCtx;
-	modelSync: ModelSync;
-	msgSync: WithEventMeta<MsgSync>;
-}): ModelSync => {
-	switch (msgSync.t) {
+	modelCore: ModelCore;
+	msgCore: WithEventMeta<MsgCore>;
+}): ModelCore => {
+	switch (msgCore.t) {
 		case "user-changed-mode": {
-			switch (msgSync.mode) {
+			switch (msgCore.mode) {
 				case "none": {
 					return {
 						t: "none",
@@ -128,47 +128,47 @@ export const reducer = ({
 				case "vs-bot": {
 					return {
 						t: "vs-bot",
-						c: VsBot.initSync(ctx),
+						c: VsBot.initCore(ctx),
 					};
 				}
 
 				case "vs-user": {
 					return {
 						t: "vs-user",
-						c: VsUser.initSync(ctx),
+						c: VsUser.initCore(ctx),
 					};
 				}
 			}
 		}
 
 		case "vs-bot": {
-			switch (modelSync.t) {
+			switch (modelCore.t) {
 				case "vs-bot": {
 					return {
 						t: "vs-bot",
-						c: VsBot.reducer({
-							modelSync: modelSync.c,
-							msgSync: { ...msgSync, ...msgSync.c },
+						c: VsBot.updateCore({
+							modelCore: modelCore.c,
+							msgCore: { ...msgCore, ...msgCore.c },
 						}),
 					};
 				}
 				default: {
-					return modelSync;
+					return modelCore;
 				}
 			}
 		}
 
 		case "vs-user": {
-			switch (modelSync.t) {
+			switch (modelCore.t) {
 				case "vs-user": {
 					return {
 						t: "vs-user",
-						c: VsUser.reducer(modelSync.c, msgSync.c),
+						c: VsUser.updateCore(modelCore.c, msgCore.c),
 					};
 				}
 
 				default: {
-					return modelSync;
+					return modelCore;
 				}
 			}
 		}

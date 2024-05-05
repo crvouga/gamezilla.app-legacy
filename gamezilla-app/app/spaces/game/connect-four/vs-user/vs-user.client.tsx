@@ -28,8 +28,8 @@ import { CoverArt } from "../@/connect-four-ui/connect-four-cover-art";
 import {
 	type ModelClient,
 	type MsgClient,
-	type MsgSync,
-	type ModelSync,
+	type MsgCore,
+	type ModelCore,
 	type StateGame,
 	type StateGameOver,
 	type MsgToClient,
@@ -50,8 +50,8 @@ type Module = GameClientModule<{
 	Msg: MsgClient;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
-	ModelSync: ModelSync;
-	MsgSync: MsgSync;
+	ModelCore: ModelCore;
+	MsgCore: MsgCore;
 	Ctx: SpaceClientCtx & { onQuit: () => void };
 	MsgInCmd: null;
 	MsgInEvent: SpaceClientEvent;
@@ -144,7 +144,7 @@ const View: Module["View"] = (props) => {
 		return null;
 	}
 
-	switch (props.modelSync.type) {
+	switch (props.modelCore.type) {
 		case "setup": {
 			return (
 				<VsUserSetupScreen
@@ -182,7 +182,7 @@ const View: Module["View"] = (props) => {
 						renderIcon: (props) => {
 							return <PlayerIcon playerType="player-one" {...props} />;
 						},
-						userId: props.modelSync.players["player-one"] ?? null,
+						userId: props.modelCore.players["player-one"] ?? null,
 					}}
 					playerTwo={{
 						label: "Yellow",
@@ -202,7 +202,7 @@ const View: Module["View"] = (props) => {
 						renderIcon: (props) => {
 							return <PlayerIcon playerType="player-two" {...props} />;
 						},
-						userId: props.modelSync.players["player-two"] ?? null,
+						userId: props.modelCore.players["player-two"] ?? null,
 					}}
 				/>
 			);
@@ -212,7 +212,7 @@ const View: Module["View"] = (props) => {
 		case "game-over": {
 			const currentUserPlayerType = toPlayerType(
 				props.ctx.currentUserId,
-				props.modelSync,
+				props.modelCore,
 			);
 
 			return (
@@ -221,22 +221,22 @@ const View: Module["View"] = (props) => {
 						<div className="flex w-full items-center gap-2 px-2">
 							<PlayerSlot
 								playerType="player-one"
-								modelSync={props.modelSync}
+								modelCore={props.modelCore}
 								ctx={props.ctx}
 							/>
 							<PlayerSlot
 								playerType="player-two"
-								modelSync={props.modelSync}
+								modelCore={props.modelCore}
 								ctx={props.ctx}
 							/>
 						</div>
 
-						<Feedback ctx={props.ctx} modelSync={props.modelSync} />
+						<Feedback ctx={props.ctx} modelCore={props.modelCore} />
 
 						<div className="relative w-full">
 							<ViewColumns
-								columns={props.modelSync.columns}
-								gameId={props.modelSync.gameId}
+								columns={props.modelCore.columns}
+								gameId={props.modelCore.gameId}
 								onDropDisc={(columnIndex) =>
 									props.dispatch({
 										t: "user-dropped-disc",
@@ -251,16 +251,16 @@ const View: Module["View"] = (props) => {
 									})
 								}
 								disabled={
-									toTurn(props.modelSync.columns) !== currentUserPlayerType ||
-									props.modelSync.type === "game-over"
+									toTurn(props.modelCore.columns) !== currentUserPlayerType ||
+									props.modelCore.type === "game-over"
 								}
 							/>
-							{props.modelSync.type === "game-over" && (
+							{props.modelCore.type === "game-over" && (
 								<div className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/50">
 									<ViewGameOverMessage
 										dispatch={props.dispatch}
 										ctx={props.ctx}
-										modelSync={props.modelSync}
+										modelCore={props.modelCore}
 									/>
 								</div>
 							)}
@@ -268,7 +268,7 @@ const View: Module["View"] = (props) => {
 					</div>
 
 					<ViewBottomButtonBar>
-						{props.modelSync.type === "game" && (
+						{props.modelCore.type === "game" && (
 							<ViewBottomButtonBarAction
 								icon={(props) => <IconFlag {...props} />}
 								label="Resign"
@@ -281,7 +281,7 @@ const View: Module["View"] = (props) => {
 							/>
 						)}
 
-						{props.modelSync.type === "game-over" &&
+						{props.modelCore.type === "game-over" &&
 							props.ctx.currentUserId === props.ctx.space.hostId && (
 								<>
 									<ViewBottomButtonBarAction
@@ -331,18 +331,18 @@ const View: Module["View"] = (props) => {
 
 const ViewGameOverMessage = ({
 	ctx,
-	modelSync,
+	modelCore,
 	dispatch,
 }: {
-	modelSync: StateGameOver;
+	modelCore: StateGameOver;
 	ctx: ClientCtx;
-	dispatch: (msg: MsgSync) => void;
+	dispatch: (msg: MsgCore) => void;
 }) => {
-	const currentPlayerType = toPlayerType(ctx.currentUserId, modelSync);
+	const currentPlayerType = toPlayerType(ctx.currentUserId, modelCore);
 
 	if (
-		modelSync.rematch.type === "Asking" &&
-		modelSync.rematch.asker === currentPlayerType
+		modelCore.rematch.type === "Asking" &&
+		modelCore.rematch.asker === currentPlayerType
 	) {
 		return (
 			<>
@@ -363,8 +363,8 @@ const ViewGameOverMessage = ({
 	}
 
 	if (
-		modelSync.rematch.type === "Asking" &&
-		modelSync.rematch.asker !== currentPlayerType &&
+		modelCore.rematch.type === "Asking" &&
+		modelCore.rematch.asker !== currentPlayerType &&
 		currentPlayerType !== null
 	) {
 		return (
@@ -401,12 +401,12 @@ const ViewGameOverMessage = ({
 		);
 	}
 
-	if (modelSync.gameOver.type === "Draw") {
+	if (modelCore.gameOver.type === "Draw") {
 		return <p className="text-xl">Tie</p>;
 	}
 
-	if (modelSync.gameOver.type === "resignation") {
-		const { resigner } = modelSync.gameOver;
+	if (modelCore.gameOver.type === "resignation") {
+		const { resigner } = modelCore.gameOver;
 
 		const winner: PlayerType =
 			resigner === "player-one" ? "player-two" : "player-one";
@@ -418,7 +418,7 @@ const ViewGameOverMessage = ({
 						<PlayerIcon playerType={winner} />
 						<Avatar
 							alt=""
-							src={ctx.profiles[modelSync.players[winner]]?.avatarUrl}
+							src={ctx.profiles[modelCore.players[winner]]?.avatarUrl}
 						/>
 					</div>
 					<p>Winner</p>
@@ -434,8 +434,8 @@ const ViewGameOverMessage = ({
 		);
 	}
 
-	if (modelSync.gameOver.type === "Winner") {
-		const { winner } = modelSync.gameOver;
+	if (modelCore.gameOver.type === "Winner") {
+		const { winner } = modelCore.gameOver;
 
 		if (currentPlayerType === null) {
 			return (
@@ -444,7 +444,7 @@ const ViewGameOverMessage = ({
 						<PlayerIcon playerType={winner} className="h-20 w-20" />
 						<Avatar
 							className="h-20 w-20"
-							src={ctx.profiles[modelSync.players[winner]]?.avatarUrl}
+							src={ctx.profiles[modelCore.players[winner]]?.avatarUrl}
 						/>
 					</div>
 					<p>Winner</p>
@@ -460,12 +460,12 @@ const ViewGameOverMessage = ({
 
 const Feedback = ({
 	ctx,
-	modelSync,
+	modelCore,
 }: {
 	ctx: SpaceClientCtx;
-	modelSync: StateGame | StateGameOver;
+	modelCore: StateGame | StateGameOver;
 }) => {
-	if (modelSync.type === "game-over") {
+	if (modelCore.type === "game-over") {
 		return (
 			<p className="flex items-center justify-center text-neutral-300">
 				Game Over
@@ -473,9 +473,9 @@ const Feedback = ({
 		);
 	}
 
-	const turn = toTurn(modelSync.columns);
+	const turn = toTurn(modelCore.columns);
 
-	const currentUserPlayerType = toPlayerType(ctx.currentUserId, modelSync);
+	const currentUserPlayerType = toPlayerType(ctx.currentUserId, modelCore);
 
 	if (currentUserPlayerType !== turn) {
 		return (
@@ -495,11 +495,11 @@ const Feedback = ({
 };
 
 const PlayerSlot = ({
-	modelSync,
+	modelCore,
 	playerType,
 	ctx,
 }: {
-	modelSync: StateGame | StateGameOver;
+	modelCore: StateGame | StateGameOver;
 	playerType: PlayerType;
 	ctx: SpaceClientCtx;
 }) => {
@@ -509,10 +509,10 @@ const PlayerSlot = ({
 			<Avatar
 				className="h-8 w-8"
 				alt=""
-				src={ctx.profiles[modelSync.players[playerType]]?.avatarUrl}
+				src={ctx.profiles[modelCore.players[playerType]]?.avatarUrl}
 			/>
 			<p className="text-neutral-300">
-				{ctx.profiles[modelSync.players[playerType]]?.username ?? "..."}
+				{ctx.profiles[modelCore.players[playerType]]?.username ?? "..."}
 			</p>
 		</div>
 	);

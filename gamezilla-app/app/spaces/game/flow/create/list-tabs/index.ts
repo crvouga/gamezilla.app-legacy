@@ -1,1 +1,1 @@
-export * as ListTabs from "./list-tabs.core";
+export * as ListTabs from "./list-tabs.types";

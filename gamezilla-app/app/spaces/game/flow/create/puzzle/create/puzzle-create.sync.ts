@@ -1,19 +1,19 @@
 import { isErr } from "gamezilla-app/@/core";
 import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../@/flow";
-import type { SyncReducer } from "../../create.core";
+import type { UpdateCore } from "../../create.core";
 
-const reducer: SyncReducer = ({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "user-created-puzzle": {
-			if (isErr(msgSync.created)) {
-				return modelSync;
+			if (isErr(msgCore.created)) {
+				return modelCore;
 			}
-			const puzzleNew = msgSync.created.value;
+			const puzzleNew = msgCore.created.value;
 			return {
-				...modelSync,
-				listTab: modelSync.listTab,
+				...modelCore,
+				listTab: modelCore.listTab,
 				opened: { t: "puzzle-builder" },
-				packBuilder: modelSync.packBuilder,
+				packBuilder: modelCore.packBuilder,
 				puzzleBuilder: {
 					t: "puzzle-builder",
 					mode: { t: "edit" },
@@ -25,9 +25,9 @@ const reducer: SyncReducer = ({ modelSync, msgSync }) => {
 		}
 
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 };
 
-export const PuzzleCreateGame = { reducer };
+export const PuzzleCreateCore = { updateCore };

@@ -96,15 +96,15 @@ export type MsgToClient = {
 
 //
 //
-// Sync
+// Core
 //
 //
 
-export type ModelSync = {
+export type ModelCore = {
 	removePuzzleRequest: RequestResponse<string, null>;
 };
 
-export type MsgSync =
+export type MsgCore =
 	| {
 			t: "remove-puzzle.user-clicked-remove-puzzle-button";
 			userId: UserId;
@@ -118,25 +118,28 @@ export type MsgSync =
 			now: Posix;
 	  };
 
-export const initSync: ModelSync = {
+export const initCore: ModelCore = {
 	removePuzzleRequest: RequestResponse.notAsked,
 };
 
-export const reducer = (modelSync: ModelSync, msgSync: MsgSync): ModelSync => {
-	switch (msgSync.t) {
+export const updateCore = (
+	modelCore: ModelCore,
+	msgCore: MsgCore,
+): ModelCore => {
+	switch (msgCore.t) {
 		case "remove-puzzle.user-removed-puzzle-from-pack": {
 			return {
-				...modelSync,
+				...modelCore,
 				removePuzzleRequest: RequestResponse.response(
-					modelSync.removePuzzleRequest,
-					msgSync.now,
-					msgSync.result,
+					modelCore.removePuzzleRequest,
+					msgCore.now,
+					msgCore.result,
 				),
 			};
 		}
 
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 };

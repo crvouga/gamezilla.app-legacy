@@ -37,7 +37,7 @@ import { toCurrentFlow } from "./puzzle-builder.core";
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
-		(model) => updateFromMsgSync({ ...input, model }),
+		(model) => updateFromMsgCore({ ...input, model }),
 		(model) => updateMoreDrawer({ ...input, model }),
 		(model) => updateFromMsg({ ...input, model }),
 	);
@@ -50,21 +50,21 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 		case "puzzle-builder.flow-ui-edit": {
 			return {
 				model,
-				msgSync: [withId({ t: "puzzle-builder.flow-ui-edit", c: msg.c })],
+				msgCore: [withId({ t: "puzzle-builder.flow-ui-edit", c: msg.c })],
 			};
 		}
 
 		case "puzzle-builder.flow-ui-play": {
 			return {
 				model,
-				msgSync: [withId({ t: "puzzle-builder.flow-ui-play", c: msg.c })],
+				msgCore: [withId({ t: "puzzle-builder.flow-ui-play", c: msg.c })],
 			};
 		}
 
 		case "puzzle-builder.user-clicked-edit-mode-button": {
 			return {
 				model,
-				msgSync: [
+				msgCore: [
 					withId({
 						t: "puzzle-builder.user-clicked-edit-mode-button",
 						userId: ctx.currentUserId,
@@ -76,7 +76,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 		case "puzzle-builder.user-clicked-play-mode-button": {
 			return {
 				model,
-				msgSync: [
+				msgCore: [
 					withId({
 						t: "puzzle-builder.user-clicked-play-mode-button",
 						userId: ctx.currentUserId,
@@ -103,21 +103,21 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 	}
 };
 
-const updateFromMsgSync: ClientModule["update"] = (input) => {
-	const { model, modelSync, msgSync } = input;
+const updateFromMsgCore: ClientModule["update"] = (input) => {
+	const { model, modelCore, msgCore } = input;
 
-	switch (msgSync?.t) {
+	switch (msgCore?.t) {
 		case "puzzle-builder.flow-ui-edit": {
-			if (!modelSync.puzzleBuilder) {
+			if (!modelCore.puzzleBuilder) {
 				return { model };
 			}
-			if (modelSync.puzzleBuilder.mode.t !== "edit") {
+			if (modelCore.puzzleBuilder.mode.t !== "edit") {
 				return { model };
 			}
 			const updated = FlowVariantUIEdit.update({
-				model: modelSync.puzzleBuilder.edit,
-				msg: msgSync.c,
-				flow: modelSync.puzzleBuilder.puzzle.flow,
+				model: modelCore.puzzleBuilder.edit,
+				msg: msgCore.c,
+				flow: modelCore.puzzleBuilder.puzzle.flow,
 			});
 
 			if (!updated.msgCmd) {
@@ -171,9 +171,9 @@ const View: ClientModule["View"] = (input) => {
 };
 
 const ViewMode: ClientModule["View"] = (input) => {
-	const { model, modelSync, dispatch } = input;
+	const { model, modelCore, dispatch } = input;
 
-	const puzzleBuilder = modelSync.puzzleBuilder;
+	const puzzleBuilder = modelCore.puzzleBuilder;
 
 	if (!puzzleBuilder) {
 		return null;
@@ -282,7 +282,7 @@ const ViewMode: ClientModule["View"] = (input) => {
 };
 
 const ViewSpectating: ClientModule["View"] = (input) => {
-	if (!input.modelSync.puzzleBuilder) {
+	if (!input.modelCore.puzzleBuilder) {
 		return null;
 	}
 
@@ -295,7 +295,7 @@ const ViewSpectating: ClientModule["View"] = (input) => {
 				/>
 				<FlowVariantUI.View
 					disabled
-					model={toCurrentFlow(input.modelSync.puzzleBuilder)}
+					model={toCurrentFlow(input.modelCore.puzzleBuilder)}
 				/>
 			</div>
 		</GameLayout>

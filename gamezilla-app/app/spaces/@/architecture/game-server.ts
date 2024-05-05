@@ -22,14 +22,14 @@ export type GameServerTypes = {
 	MsgToClient: any;
 	MsgToServer: any;
 	//
-	ModelSync: any;
-	MsgSync: any;
+	ModelCore: any;
+	MsgCore: any;
 	//
 };
 
 type Output<T extends GameServerTypes> = {
 	model: T["ModelServer"];
-	msgSync?: WithEventId<T["MsgSync"]>[];
+	msgCore?: WithEventId<T["MsgCore"]>[];
 	eff?: Eff<T["MsgServer"]>;
 	msgCmd?: SpaceServerCmd<T["MsgToClient"]>[];
 };
@@ -37,7 +37,7 @@ type Output<T extends GameServerTypes> = {
 export type GameServer<T extends GameServerTypes> = {
 	init: (input: {
 		ctx: SpaceServerCtx;
-		state: T["ModelSync"];
+		state: T["ModelCore"];
 		model?: T["ModelServer"] | null;
 	}) => Promise<{
 		model: T["ModelServer"];
@@ -47,12 +47,12 @@ export type GameServer<T extends GameServerTypes> = {
 
 	update: (input: {
 		ctx: SpaceServerCtx | SpaceReqCtx;
-		state: T["ModelSync"];
+		state: T["ModelCore"];
 		model?: T["ModelServer"] | null;
 		//
 		msg?: T["MsgServer"] | null;
 		clientMsg?: T["MsgToServer"] | null;
-		msgSync?: WithEventMeta<T["MsgSync"]> | null;
+		msgCore?: WithEventMeta<T["MsgCore"]> | null;
 		msgEvt?: SpaceServerEvent | null;
 	}) => Promise<Output<T>>;
 
@@ -60,7 +60,7 @@ export type GameServer<T extends GameServerTypes> = {
 		model?: T["ModelServer"] | null;
 		intervalId: string;
 		ctx: SpaceServerCtx;
-		state: T["ModelSync"];
+		state: T["ModelCore"];
 	}) => Promise<Sub<T["MsgServer"]>>;
 };
 
@@ -75,8 +75,8 @@ const tag = <T extends string, Types extends GameServerTypes>(
 	MsgServer: { t: T; c: Types["MsgServer"] };
 	MsgToClient: { t: T; c: Types["MsgToClient"] };
 	MsgToServer: { t: T; c: Types["MsgToServer"] };
-	ModelSync: { t: T; c: Types["ModelSync"] };
-	MsgSync: { t: T; c: Types["MsgSync"] & EventMeta };
+	ModelCore: { t: T; c: Types["ModelCore"] };
+	MsgCore: { t: T; c: Types["MsgCore"] & EventMeta };
 }> => {
 	return {
 		init: async (input) => {
@@ -96,7 +96,7 @@ const tag = <T extends string, Types extends GameServerTypes>(
 				msgEvt: input.msgEvt,
 				msg: input.msg?.t === tag ? input.msg?.c : undefined,
 				model: input.model?.t === tag ? input.model?.c : undefined,
-				msgSync: input.msgSync?.t === tag ? input.msgSync?.c : undefined,
+				msgCore: input.msgCore?.t === tag ? input.msgCore?.c : undefined,
 				clientMsg: input.clientMsg?.t === tag ? input.clientMsg?.c : undefined,
 				ctx: input.ctx,
 				state: input.state.c,
@@ -105,13 +105,13 @@ const tag = <T extends string, Types extends GameServerTypes>(
 				model: { t: tag, c: updated.model },
 				eff: Eff.tag(tag, updated.eff),
 				msgCmd: SpaceServerCmd.tag(tag, updated.msgCmd),
-				msgSync: updated.msgSync
-					? updated.msgSync.map(
-							(msgSync): EventMeta & { t: T; c: Types["MsgSync"] } => ({
-								eventId: msgSync.msgEvtId,
-								happenedAt: msgSync.happenedAt,
+				msgCore: updated.msgCore
+					? updated.msgCore.map(
+							(msgCore): EventMeta & { t: T; c: Types["MsgCore"] } => ({
+								eventId: msgCore.msgEvtId,
+								happenedAt: msgCore.happenedAt,
 								t: tag,
-								c: msgSync,
+								c: msgCore,
 							}),
 						)
 					: undefined,
@@ -153,7 +153,7 @@ const chain = async <T extends GameServerTypes>(
 ): Promise<Output<T>> => {
 	const msgCmd: SpaceServerCmd<T["MsgToClient"]>[] =
 		(await initial).msgCmd ?? [];
-	const msgSyncs: (T["MsgSync"] & EventMeta)[] = (await initial)?.msgSync ?? [];
+	const msgCores: (T["MsgCore"] & EventMeta)[] = (await initial)?.msgCore ?? [];
 	const eff: Eff<T["MsgServer"]>[] = (await initial).eff
 		? [(await initial).eff!]
 		: [];
@@ -170,11 +170,11 @@ const chain = async <T extends GameServerTypes>(
 		if (updated.eff) {
 			eff.push(updated.eff);
 		}
-		if (updated.msgSync) {
+		if (updated.msgCore) {
 			let j = 0;
-			const len = updated.msgSync.length;
+			const len = updated.msgCore.length;
 			for (j = 0; j < len; ++j) {
-				msgSyncs.push(updated.msgSync[j]!);
+				msgCores.push(updated.msgCore[j]!);
 			}
 		}
 		if (updated.msgCmd) {
@@ -189,7 +189,7 @@ const chain = async <T extends GameServerTypes>(
 	return {
 		model,
 		eff: Eff.batch(eff),
-		msgSync: msgSyncs,
+		msgCore: msgCores,
 		msgCmd,
 	};
 };

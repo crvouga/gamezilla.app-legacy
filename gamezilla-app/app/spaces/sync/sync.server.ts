@@ -30,7 +30,7 @@ const updateProfileCache: SpaceServerModule["update"] = async (input) => {
 	return { model: input.model };
 };
 
-const updateSync: SpaceServerModule["update"] = async (input) => {
+const updateCore: SpaceServerModule["update"] = async (input) => {
 	const { msgClient, model, deps } = input;
 
 	switch (msgClient?.t) {
@@ -208,7 +208,7 @@ const outputSpaceEventsFromServer: SpaceServerModule["update"] = (input) => {
 const update: SpaceServerModule["update"] = async (input) => {
 	return SpaceServerModule.andThen(
 		{ model: input.model },
-		(model) => updateSync({ ...input, model }),
+		(model) => updateCore({ ...input, model }),
 		(model) => updateCurrentUserSpace({ ...input, model }),
 		(model) => updateProfileCache({ ...input, model }),
 		(model) => sendSpaceEventToClient({ ...input, model }),

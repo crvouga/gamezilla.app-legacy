@@ -66,7 +66,7 @@ export type MsgToClient = {
 //
 //
 
-export type MsgSync = {
+export type MsgCore = {
 	t: "user-edited-puzzle-name";
 	edited: Result<string, null>;
 	flowPuzzleId: FlowPuzzleId;

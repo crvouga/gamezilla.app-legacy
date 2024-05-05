@@ -4,9 +4,9 @@ import type { SpaceServerCtx, SpaceServerEvent } from "../@/space";
 import { SpaceServerCmd } from "../@/space-server-cmd";
 import { FlowServer } from "./flow/flow.server";
 import type {
-	MsgSync,
+	MsgCore,
 	GameName,
-	ModelSync,
+	ModelCore,
 	ModelServer,
 	MsgServer,
 	MsgToClient,
@@ -27,8 +27,8 @@ type Module = GameServerModule<{
 	Msg: MsgServer;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
-	ModelSync: ModelSync;
-	MsgSync: MsgSync;
+	ModelCore: ModelCore;
+	MsgCore: MsgCore;
 	Ctx: SpaceServerCtx;
 	MsgInCmd: null;
 	MsgInEvent: SpaceServerEvent;
@@ -76,11 +76,11 @@ const update: Module["update"] = async (input) => {
 		{ model: input.model },
 		//
 		async (model) => {
-			switch (input.modelSync.t) {
+			switch (input.modelCore.t) {
 				case "flow": {
 					const updated = await FlowServer.update({
 						ctx: input.ctx,
-						modelSync: input.modelSync.c,
+						modelCore: input.modelCore.c,
 						model: model.t === "flow" ? model.c : FlowServer.init,
 						msgCmd: input.msgCmd,
 						msgEvt: input.msgEvt,
@@ -88,9 +88,9 @@ const update: Module["update"] = async (input) => {
 							input.msgClient?.t === "flow"
 								? { ...input.msgClient, ...input.msgClient.c }
 								: null,
-						msgSync:
-							input.msgSync?.t === "flow"
-								? { ...input.msgSync, ...input.msgSync.c }
+						msgCore:
+							input.msgCore?.t === "flow"
+								? { ...input.msgCore, ...input.msgCore.c }
 								: null,
 						msg: input.msg?.t === "flow" ? input.msg.c : null,
 						deps: null,
@@ -108,7 +108,7 @@ const update: Module["update"] = async (input) => {
 				case "connect-four": {
 					const updated = await ConnectFourServer.update({
 						ctx: input.ctx,
-						modelSync: input.modelSync.c,
+						modelCore: input.modelCore.c,
 						model:
 							model.t === "connect-four" ? model.c : ConnectFourServer.init,
 						msgCmd: input.msgCmd,
@@ -117,9 +117,9 @@ const update: Module["update"] = async (input) => {
 							input.msgClient?.t === "connect-four"
 								? { ...input.msgClient, ...input.msgClient.c }
 								: null,
-						msgSync:
-							input.msgSync?.t === "connect-four"
-								? { ...input.msgSync, ...input.msgSync.c }
+						msgCore:
+							input.msgCore?.t === "connect-four"
+								? { ...input.msgCore, ...input.msgCore.c }
 								: null,
 						msg: input.msg?.t === "connect-four" ? input.msg.c : null,
 						deps: null,
@@ -147,15 +147,15 @@ const update: Module["update"] = async (input) => {
 //
 
 const subscriptions: Module["subscriptions"] = async (input) => {
-	const { modelSync, model } = input;
+	const { modelCore, model } = input;
 
-	switch (modelSync.t) {
+	switch (modelCore.t) {
 		case "connect-four": {
 			return Sub.tag(
 				"connect-four",
 				await ConnectFourServer.subscriptions({
 					...input,
-					modelSync: modelSync.c,
+					modelCore: modelCore.c,
 					model: model?.t === "connect-four" ? model.c : ConnectFourServer.init,
 				}),
 			);
@@ -166,7 +166,7 @@ const subscriptions: Module["subscriptions"] = async (input) => {
 				"flow",
 				await FlowServer.subscriptions({
 					...input,
-					modelSync: modelSync.c,
+					modelCore: modelCore.c,
 					model: model?.t === "flow" ? model.c : FlowServer.init,
 				}),
 			);

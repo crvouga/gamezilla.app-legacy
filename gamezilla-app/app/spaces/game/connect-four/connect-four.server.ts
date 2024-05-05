@@ -3,8 +3,8 @@ import type { GameServerModule } from "../../@/architecture/game-server-v2";
 import type { SpaceServerCtx, SpaceServerEvent } from "../../@/space";
 import type { SpaceServerCmd } from "../../@/space-server-cmd";
 import type {
-	MsgSync,
-	ModelSync,
+	MsgCore,
+	ModelCore,
 	ModelServer,
 	MsgServer,
 	MsgToClient,
@@ -24,8 +24,8 @@ type Module = GameServerModule<{
 	Msg: MsgServer;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
-	ModelSync: ModelSync;
-	MsgSync: MsgSync;
+	ModelCore: ModelCore;
+	MsgCore: MsgCore;
 	Ctx: SpaceServerCtx;
 	MsgInCmd: null;
 	MsgInEvent: SpaceServerEvent;

@@ -1,13 +1,13 @@
-import type { SyncReducer } from "../../create.core";
+import type { UpdateCore } from "../../create.core";
 
-const reducer: SyncReducer = ({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 };
 
 export const PackCreateGame = {
-	reducer,
+	updateCore,
 };

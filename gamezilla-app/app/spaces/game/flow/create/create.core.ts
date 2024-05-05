@@ -41,8 +41,8 @@ export type ClientModule = GameClientModule<{
 	Msg: MsgClient;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
-	MsgSync: MsgSync;
-	ModelSync: ModelSync;
+	MsgCore: MsgCore;
+	ModelCore: ModelCore;
 	Ctx: FlowClientCtx;
 	MsgOutCmd: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
 	MsgInEvent: SpaceClientEvent;
@@ -53,8 +53,8 @@ export type ClientModule = GameClientModule<{
 export type ServerModule = GameServerModule<{
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
-	MsgSync: MsgSync;
-	ModelSync: ModelSync;
+	MsgCore: MsgCore;
+	ModelCore: ModelCore;
 	Ctx: SpaceServerCtx;
 	MsgInCmd: null;
 	MsgInEvent: SpaceServerEvent;
@@ -206,29 +206,29 @@ export type MsgToClient =
 //
 //
 
-export type MsgSync =
-	| ListTabs.MsgSync
+export type MsgCore =
+	| ListTabs.MsgCore
 	//
-	| Pack.MsgSync
+	| Pack.MsgCore
 	//
-	| PuzzleBuilder.MsgSync
-	| PuzzleList.MsgSync
-	| PuzzleCreate.MsgSync
-	| PuzzleEditName.MsgSync
-	| PuzzleDeleteForever.MsgSync
-	| PuzzleSaveChanges.MsgSync;
+	| PuzzleBuilder.MsgCore
+	| PuzzleList.MsgCore
+	| PuzzleCreate.MsgCore
+	| PuzzleEditName.MsgCore
+	| PuzzleDeleteForever.MsgCore
+	| PuzzleSaveChanges.MsgCore;
 
-export type ModelSync = Pack.ModelSync &
-	ListTabs.ModelSync & {
+export type ModelCore = Pack.ModelCore &
+	ListTabs.ModelCore & {
 		opened: { t: "list" } | { t: "puzzle-builder" } | { t: "pack-builder" };
 		//
-		packBuilder: PackBuilder.ModelSync | null;
+		packBuilder: PackBuilder.ModelCore | null;
 		//
-		puzzleBuilder: PuzzleBuilder.ModelSync | null;
+		puzzleBuilder: PuzzleBuilder.ModelCore | null;
 	};
 
-export type SyncReducer = (input: {
+export type UpdateCore = (input: {
 	ctx: SpaceCtx;
-	msgSync: MsgSync;
-	modelSync: ModelSync;
-}) => ModelSync;
+	msgCore: MsgCore;
+	modelCore: ModelCore;
+}) => ModelCore;

@@ -1,12 +1,13 @@
 import type { WithEventId } from "gamezilla-app/app/spaces/@/event";
 import type { FlowClientCtx } from "../../../@/flow-ctx";
-import type { MsgSync } from "../../create.core";
-import { CreateSync } from "../../create.sync";
+import type { MsgCore } from "../../create.core";
+import { CreateCore } from "../../create.sync";
 
-export const deriveModelSync =
-	(ctx: FlowClientCtx) => (input: { msgSync?: WithEventId<MsgSync>[] }) => {
-		return (input.msgSync ?? []).reduce(
-			(modelSync, msgSync) => CreateSync.reducer({ modelSync, msgSync, ctx }),
-			CreateSync.initSync({ ctx }),
+export const deriveModelCore =
+	(ctx: FlowClientCtx) => (input: { msgCore?: WithEventId<MsgCore>[] }) => {
+		return (input.msgCore ?? []).reduce(
+			(modelCore, msgCore) =>
+				CreateCore.updateCore({ modelCore, msgCore, ctx }),
+			CreateCore.initCore({ ctx }),
 		);
 	};

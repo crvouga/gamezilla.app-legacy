@@ -21,8 +21,8 @@ type Client = GameClient<{
 	MsgClient: MsgClient;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
-	MsgSync: null;
-	ModelSync: null;
+	MsgCore: null;
+	ModelCore: null;
 	ClientCtx: SpaceClientCtx;
 	ClientCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
 	ClientEvent: SpaceClientEvent;

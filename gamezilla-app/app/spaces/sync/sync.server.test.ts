@@ -4,7 +4,7 @@ import { SpaceId } from "gamezilla-app/app/@/data";
 import { didSendMsgToClient } from "gamezilla-app/app/@/server";
 import {
 	authenticatedClientConnected,
-	clientSync,
+	clientCore,
 	generateAuthClient,
 	getDeps,
 	init,
@@ -33,7 +33,7 @@ describe(import.meta.file, () => {
 		const clientsSpace = makeSpace(SpaceId.generate(), client.userId);
 		const output = await AppServerModule.andThen(
 			init(),
-			clientSync(deps, client, clientsSpace),
+			clientCore(deps, client, clientsSpace),
 		);
 
 		expect(didSendMsgToClient(output, (msg) => msg.t === "synced")).toBe(true);

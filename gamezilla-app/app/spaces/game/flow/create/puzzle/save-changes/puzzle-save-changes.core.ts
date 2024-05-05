@@ -38,7 +38,7 @@ export type MsgToClient = { t: "noop" };
 //
 //
 
-export type MsgSync = {
+export type MsgCore = {
 	t: "puzzle-builder.saved-puzzle";
 	saved: Result<string, FlowPuzzle>;
 	userId: UserId;

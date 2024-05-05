@@ -10,8 +10,8 @@ import { Sub, Time, TimeSpan, isErr } from "gamezilla-app/@/core";
 import { ConnectFourBotWorker } from "../@/connect-four";
 import * as ConnectFour from "../@/connect-four/connect-four";
 import {
-	type MsgSync,
-	type ModelSync,
+	type MsgCore,
+	type ModelCore,
 	type ModelServer,
 	type MsgServer,
 	type MsgToClient,
@@ -34,8 +34,8 @@ type Module = GameServerModule<{
 	Msg: MsgServer;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
-	ModelSync: ModelSync;
-	MsgSync: MsgSync;
+	ModelCore: ModelCore;
+	MsgCore: MsgCore;
 	Ctx: SpaceServerCtx;
 	Deps: null;
 	MsgInCmd: null;
@@ -55,7 +55,7 @@ export const update: Module["update"] = async (input) => {
 };
 
 const updateFromMsg: Module["update"] = async (input) => {
-	const { msg, model, modelSync, ctx } = input;
+	const { msg, model, modelCore, ctx } = input;
 
 	if (!msg) {
 		return { model };
@@ -64,9 +64,9 @@ const updateFromMsg: Module["update"] = async (input) => {
 	switch (msg.t) {
 		case "time-passed": {
 			const shouldBotMove =
-				isBotTurn(modelSync) && !isBotMoving(ctx.now, model);
+				isBotTurn(modelCore) && !isBotMoving(ctx.now, model);
 			if (
-				modelSync.type === "game" &&
+				modelCore.type === "game" &&
 				shouldBotMove &&
 				msg.t === "time-passed"
 			) {
@@ -77,9 +77,9 @@ const updateFromMsg: Module["update"] = async (input) => {
 					},
 					eff: async (dispatch) => {
 						const found = ConnectFourBotWorker.findBestMove({
-							columns: modelSync.columns,
+							columns: modelCore.columns,
 							maxDepth: 4,
-							maximizingPlayer: toBotPlayer(modelSync),
+							maximizingPlayer: toBotPlayer(modelCore),
 						});
 						dispatch({
 							t: "bot-found-best-move",
@@ -109,14 +109,14 @@ const updateFromMsg: Module["update"] = async (input) => {
 						return { model };
 					}
 
-					const msgSyncNew = withId<MsgSync>({
+					const msgCoreNew = withId<MsgCore>({
 						t: "bot-dropped-disc",
 						columnIndex,
 					});
 
 					return {
 						model,
-						msgSync: [msgSyncNew],
+						msgCore: [msgCoreNew],
 					};
 				},
 				async (model) => {
@@ -130,7 +130,7 @@ const updateFromMsg: Module["update"] = async (input) => {
 };
 
 export const subscriptions: Module["subscriptions"] = async (input) => {
-	if (isBotTurn(input.modelSync)) {
+	if (isBotTurn(input.modelCore)) {
 		return Time.interval(`vs-bot`, TimeSpan.fromSeconds(1 / 2), () => ({
 			t: "time-passed",
 		}));

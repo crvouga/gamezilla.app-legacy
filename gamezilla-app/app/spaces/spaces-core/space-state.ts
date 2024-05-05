@@ -21,7 +21,7 @@ export const Started = p.and(
 	Space,
 	p.obj({
 		type: p.l("started"),
-		game: p.maybe(Game.ModelSync),
+		game: p.maybe(Game.ModelCore),
 		latestEvent: EventId,
 	}),
 );
@@ -69,7 +69,7 @@ export const toUserIds = (state: State): UserId[] => {
 //
 //
 
-export const reducer = ({
+export const updateCore = ({
 	state,
 	msgSpace,
 }: {
@@ -105,11 +105,11 @@ export const reducer = ({
 		case "started": {
 			switch (msgSpace.t) {
 				case "game": {
-					const game = state.game ?? GameGame.initSync(msgSpace.c.t);
-					const gameNew = GameGame.reducer({
+					const game = state.game ?? GameGame.initCore(msgSpace.c.t);
+					const gameNew = GameGame.updateCore({
 						ctx: { space: state },
-						modelSync: game,
-						msgSync: { ...msgSpace, ...msgSpace.c },
+						modelCore: game,
+						msgCore: { ...msgSpace, ...msgSpace.c },
 					});
 					return {
 						...state,
@@ -132,7 +132,7 @@ export const reducer = ({
 					return {
 						...state,
 						latestEvent: msgSpace.eventId,
-						game: msgSpace.game ? GameGame.initSync(msgSpace.game) : null,
+						game: msgSpace.game ? GameGame.initCore(msgSpace.game) : null,
 					};
 				}
 

@@ -19,7 +19,7 @@ import { Button, IconPlus } from "gamezilla-app/app/@/ui";
 import type { ClientModule } from "../../create.core";
 
 const update: ClientModule["update"] = (input) => {
-	const { msgSync, model, msg, ctx } = input;
+	const { msgCore, model, msg, ctx } = input;
 
 	switch (msg?.t) {
 		case "puzzle-create.user-clicked-create-button": {
@@ -63,21 +63,21 @@ const update: ClientModule["update"] = (input) => {
 		}
 	}
 
-	switch (msgSync?.t) {
+	switch (msgCore?.t) {
 		case "user-created-puzzle": {
-			if (isErr(msgSync.created)) {
+			if (isErr(msgCore.created)) {
 				return {
-					model: { ...model, puzzleCreateRequest: msgSync.created },
-					msgCmd: showErrSm(msgSync.created.error),
+					model: { ...model, puzzleCreateRequest: msgCore.created },
+					msgCmd: showErrSm(msgCore.created.error),
 				};
 			}
 
-			const puzzleNew = msgSync.created.value;
+			const puzzleNew = msgCore.created.value;
 
 			return {
 				model: {
 					...model,
-					puzzleCreateRequest: Result.mapOk(msgSync.created, () => null),
+					puzzleCreateRequest: Result.mapOk(msgCore.created, () => null),
 					puzzles: { ...model.puzzles, [puzzleNew.id]: puzzleNew },
 				},
 				msgCmd: showCreatedSm("Puzzle created"),

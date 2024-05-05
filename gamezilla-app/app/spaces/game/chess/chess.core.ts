@@ -66,9 +66,9 @@ export type Problem = "must_be_the_host";
 //
 //
 
-export type MsgSync = { t: "user-changed-mode"; mode: Mode; userId: UserId };
+export type MsgCore = { t: "user-changed-mode"; mode: Mode; userId: UserId };
 
-export type ModelSync =
+export type ModelCore =
 	| {
 			t: "none";
 	  }
@@ -82,22 +82,22 @@ export type ModelSync =
 			t: "puzzle";
 	  };
 
-export const initSync = (): ModelSync => {
+export const initCore = (): ModelCore => {
 	return {
 		t: "none",
 	};
 };
 
-export const reducer = ({
-	msgSync,
+export const updateCore = ({
+	msgCore,
 }: {
 	ctx: SpaceCtx;
-	modelSync: ModelSync;
-	msgSync: MsgSync;
-}): ModelSync => {
-	switch (msgSync.t) {
+	modelCore: ModelCore;
+	msgCore: MsgCore;
+}): ModelCore => {
+	switch (msgCore.t) {
 		case "user-changed-mode": {
-			switch (msgSync.mode) {
+			switch (msgCore.mode) {
 				case "none": {
 					return { t: "none" };
 				}

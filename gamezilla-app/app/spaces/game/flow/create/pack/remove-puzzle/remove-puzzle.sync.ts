@@ -1,30 +1,30 @@
 import { RequestResponse } from "gamezilla-app/@/core";
-import type { ModelSync, MsgSync } from "./remove-puzzle.core";
+import type { ModelCore, MsgCore } from "./remove-puzzle.core";
 
-const initSync: ModelSync = {
+const initCore: ModelCore = {
 	removePuzzleRequest: RequestResponse.notAsked,
 };
 
-const reducer = (modelSync: ModelSync, msgSync: MsgSync): ModelSync => {
-	switch (msgSync.t) {
+const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
+	switch (msgCore.t) {
 		case "remove-puzzle.user-removed-puzzle-from-pack": {
 			return {
-				...modelSync,
+				...modelCore,
 				removePuzzleRequest: RequestResponse.response(
-					modelSync.removePuzzleRequest,
-					msgSync.now,
-					msgSync.result,
+					modelCore.removePuzzleRequest,
+					msgCore.now,
+					msgCore.result,
 				),
 			};
 		}
 
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 };
 
 export const RemovePuzzleGame = {
-	initSync,
-	reducer,
+	initCore,
+	updateCore,
 };

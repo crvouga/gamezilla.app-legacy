@@ -18,7 +18,7 @@ import {
 	type RemovePuzzleClientCtx,
 	initClient,
 } from "./remove-puzzle.core";
-import { CreateSync } from "../../create.sync";
+import { CreateCore } from "../../create.sync";
 
 const initial = (ctx: RemovePuzzleClientCtx) => {
 	return {
@@ -33,7 +33,7 @@ const clickedRemovePuzzleButton =
 		return RemovePuzzleClient.update({
 			ctx,
 			model,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 			msg: {
 				t: "remove-puzzle.clicked-remove-from-pack-button",
 			},
@@ -45,7 +45,7 @@ const serverRemovedPuzzleOk =
 		return RemovePuzzleClient.update({
 			ctx,
 			model,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 			msgServer: {
 				t: "remove-puzzle.removed",
 				result: Ok(null),
@@ -61,7 +61,7 @@ const serverRemovedPuzzleErr =
 		return RemovePuzzleClient.update({
 			ctx,
 			model,
-			modelSync: CreateSync.initSync({ ctx }),
+			modelCore: CreateCore.initCore({ ctx }),
 			msgServer: {
 				t: "remove-puzzle.removed",
 				result: Err("error"),
@@ -76,7 +76,7 @@ const timePassed = (ctx: RemovePuzzleClientCtx) => (model: ModelClient) => {
 	return RemovePuzzleClient.update({
 		ctx,
 		model,
-		modelSync: CreateSync.initSync({ ctx }),
+		modelCore: CreateCore.initCore({ ctx }),
 		msg: {
 			t: "remove-puzzle.time-passed",
 		},

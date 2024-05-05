@@ -8,16 +8,16 @@ import { initial, testFlowClientCtx } from "../@/testing/client";
 import { CreateClient } from "../create.client";
 import type { ModelClient } from "../create.core";
 
-import type { ListTab } from "./list-tabs.core";
-import { CreateSync } from "../create.sync";
+import type { ListTab } from "./list-tabs.types";
+import { CreateCore } from "../create.sync";
 
 const userChangedListTab =
 	(ctx: FlowClientCtx, listTab: ListTab) => (model: ModelClient) => {
 		return CreateClient.update({
 			ctx,
 			model,
-			modelSync: CreateSync.initSync({ ctx }),
-			msgSync: {
+			modelCore: CreateCore.initCore({ ctx }),
+			msgCore: {
 				t: "user-changed-list-tab",
 				eventId: EventId.generate(),
 				happenedAt: LamportTimestamp.fromNumber(0),

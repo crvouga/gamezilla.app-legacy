@@ -1,67 +1,67 @@
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import type { WithEventMeta } from "../../@/event";
-import { CreateSync } from "./create/create.sync";
-import type { ModelSync, MsgSync } from "./flow.core";
+import { CreateCore } from "./create/create.sync";
+import type { ModelCore, MsgCore } from "./flow.core";
 import * as Play from "./play/play.core";
 
-export const initSync = () => {
+export const initCore = () => {
 	return { t: null };
 };
 
-export const reducer = ({
+export const updateCore = ({
 	ctx,
-	msgSync,
-	modelSync,
+	msgCore,
+	modelCore,
 }: {
 	ctx: SpaceCtx;
-	msgSync: WithEventMeta<MsgSync>;
-	modelSync: ModelSync;
-}): ModelSync => {
-	switch (msgSync.t) {
+	msgCore: WithEventMeta<MsgCore>;
+	modelCore: ModelCore;
+}): ModelCore => {
+	switch (msgCore.t) {
 		case "play": {
-			switch (modelSync.t) {
+			switch (modelCore.t) {
 				case "play": {
 					return {
 						t: "play",
-						c: Play.reducer({
+						c: Play.updateCore({
 							ctx,
-							msgSync: msgSync.c,
-							modelSync: modelSync.c,
+							msgCore: msgCore.c,
+							modelCore: modelCore.c,
 						}),
 					};
 				}
 				default: {
-					console.error("Invalid modelSync", modelSync);
-					return modelSync;
+					console.error("Invalid modelCore", modelCore);
+					return modelCore;
 				}
 			}
 		}
 
 		case "create": {
-			switch (modelSync.t) {
+			switch (modelCore.t) {
 				case "create": {
 					return {
 						t: "create",
-						c: CreateSync.reducer({
+						c: CreateCore.updateCore({
 							ctx,
-							msgSync: msgSync.c,
-							modelSync: modelSync.c,
+							msgCore: msgCore.c,
+							modelCore: modelCore.c,
 						}),
 					};
 				}
 				default: {
-					console.error("Invalid modelSync", modelSync);
-					return modelSync;
+					console.error("Invalid modelCore", modelCore);
+					return modelCore;
 				}
 			}
 		}
 
 		case "user-changed-mode": {
-			if (msgSync.userId !== ctx.space.hostId) {
-				return modelSync;
+			if (msgCore.userId !== ctx.space.hostId) {
+				return modelCore;
 			}
 
-			switch (msgSync.mode) {
+			switch (msgCore.mode) {
 				case null: {
 					return { t: null };
 				}
@@ -69,14 +69,14 @@ export const reducer = ({
 				case "play": {
 					return {
 						t: "play",
-						c: Play.initSync({ ctx }),
+						c: Play.initCore({ ctx }),
 					};
 				}
 
 				case "create": {
 					return {
 						t: "create",
-						c: CreateSync.initSync({ ctx }),
+						c: CreateCore.initCore({ ctx }),
 					};
 				}
 			}

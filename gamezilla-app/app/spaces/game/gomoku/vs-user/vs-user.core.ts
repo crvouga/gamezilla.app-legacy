@@ -20,7 +20,7 @@ import type { Position } from "../@/gomoku/gomoku-position";
 //
 //
 
-export type Model = ModelSetup | ModelPlaying | ModelSyncOver;
+export type Model = ModelSetup | ModelPlaying | ModelCoreOver;
 
 export type ModelSetup = {
 	type: "setup";
@@ -35,7 +35,7 @@ export type ModelPlaying = {
 	board: Board;
 };
 
-export type ModelSyncOver = {
+export type ModelCoreOver = {
 	type: "game-over";
 	white: UserId;
 	black: UserId;
@@ -86,13 +86,13 @@ export const initShared = ({
 	};
 };
 
-const initSyncOver = ({
+const initCoreOver = ({
 	model,
 	gameOver,
 }: {
 	gameOver: GameOver;
 	model: ModelPlaying;
-}): ModelSyncOver => {
+}): ModelCoreOver => {
 	return {
 		type: "game-over",
 		black: model.black,
@@ -255,12 +255,12 @@ export const handle = ({
 					winner: statusNew.winner,
 					wins: statusNew.wins,
 				};
-				return Ok(initSyncOver({ model: modelNew, gameOver }));
+				return Ok(initCoreOver({ model: modelNew, gameOver }));
 			}
 
 			if (statusNew.type === "draw") {
 				return Ok(
-					initSyncOver({
+					initCoreOver({
 						model: modelNew,
 						gameOver: { type: "Draw" },
 					}),
@@ -285,7 +285,7 @@ export const handle = ({
 			const currentUserStone =
 				model.white === ctx.currentUserId ? "white" : "black";
 
-			const modelNew = initSyncOver({
+			const modelNew = initCoreOver({
 				model,
 				gameOver: { type: "resigned", resigner: currentUserStone },
 			});

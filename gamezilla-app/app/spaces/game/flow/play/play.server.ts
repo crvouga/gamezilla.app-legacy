@@ -5,8 +5,8 @@ import type {
 } from "gamezilla-app/app/spaces/@/space";
 import { Sub } from "gamezilla-app/@/core";
 import type {
-	MsgSync,
-	ModelSync,
+	MsgCore,
+	ModelCore,
 	ModelServer,
 	MsgServer,
 	MsgToClient,
@@ -19,8 +19,8 @@ type Module = GameServerModule<{
 	Msg: MsgServer;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
-	MsgSync: MsgSync;
-	ModelSync: ModelSync;
+	MsgCore: MsgCore;
+	ModelCore: ModelCore;
 	Ctx: SpaceServerCtx;
 	MsgInCmd: null;
 	MsgInEvent: SpaceServerEvent;

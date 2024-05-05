@@ -48,11 +48,11 @@ export type GameServerModuleTypes = {
 	/**
 	 *
 	 */
-	MsgSync: any;
+	MsgCore: any;
 	/**
 	 *
 	 */
-	ModelSync: any;
+	ModelCore: any;
 	/**
 	 *
 	 */
@@ -75,13 +75,13 @@ export type Input<T extends GameServerModuleTypes> = {
 	 */
 	model: T["Model"];
 	/**
-	 * `modelSync` is the current state of the game. This is shared between client and server.
+	 * `modelCore` is the current state of the game. This is shared between client and server.
 	 */
-	modelSync: T["ModelSync"];
+	modelCore: T["ModelCore"];
 	/**
-	 * `msgSync` is an msgEvt of game
+	 * `msgCore` is an msgEvt of game
 	 */
-	msgSync?: (T["MsgSync"] & { eventId: EventId }) | null;
+	msgCore?: (T["MsgCore"] & { eventId: EventId }) | null;
 	/**
 	 * `msg`
 	 */
@@ -134,9 +134,9 @@ export type Output<T extends GameServerModuleTypes> = {
 	 */
 	msgEvt?: T["MsgOutEvent"][];
 	/**
-	 *  `msgSync` is an msgEvt that occurred in the game. Shared with the client side
+	 *  `msgCore` is an msgEvt that occurred in the game. Shared with the client side
 	 */
-	msgSync?: WithEventId<T["MsgSync"]>[];
+	msgCore?: WithEventId<T["MsgCore"]>[];
 };
 
 /**
@@ -162,7 +162,7 @@ export type GameServerModule<T extends GameServerModuleTypes> = {
 	 */
 	subscriptions: (input: {
 		ctx: T["Ctx"];
-		modelSync: T["ModelSync"];
+		modelCore: T["ModelCore"];
 		model: T["Model"];
 	}) => Promise<Sub<T["Msg"]>>;
 };
@@ -193,7 +193,7 @@ const andThen = async <T extends GameServerModuleTypes>(
 		eff: Eff.batch([acc.eff, updated.eff]),
 		msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
 		msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
-		msgSync: [...(acc.msgSync ?? []), ...(updated.msgSync ?? [])],
+		msgCore: [...(acc.msgCore ?? []), ...(updated.msgCore ?? [])],
 	};
 
 	return andThen(accNew, ...rest);
@@ -222,7 +222,7 @@ const tagOutput = <
 	/**
 	 *
 	 */
-	msgSync?: WithEventId<{ t: TTag; c: T["MsgSync"] }>[];
+	msgCore?: WithEventId<{ t: TTag; c: T["MsgCore"] }>[];
 } => {
 	return {
 		model: {
@@ -232,7 +232,7 @@ const tagOutput = <
 		msgCmd: output.msgCmd ? tagCmd(output.msgCmd) ?? [] : [],
 		eff: Eff.tag(tag, output.eff),
 		msgEvt: output.msgEvt,
-		msgSync: output.msgSync?.map((c) => ({
+		msgCore: output.msgCore?.map((c) => ({
 			eventId: c.eventId,
 			c: c,
 			t: tag,

@@ -42,7 +42,7 @@ type Mode =
 			t: "edit";
 	  };
 
-export type ModelSync = {
+export type ModelCore = {
 	t: "puzzle-builder";
 	puzzle: FlowPuzzle;
 	mode: Mode;
@@ -50,26 +50,26 @@ export type ModelSync = {
 	edit: FlowVariantUIEdit.Model;
 };
 
-export const toCurrentFlow = (modelSync: ModelSync): FlowVariant.Model => {
-	switch (modelSync.mode.t) {
+export const toCurrentFlow = (modelCore: ModelCore): FlowVariant.Model => {
+	switch (modelCore.mode.t) {
 		case "edit": {
 			return FlowVariantUIEdit.toCurrentFlow({
-				model: modelSync.edit,
+				model: modelCore.edit,
 			});
 		}
 
 		case "play": {
 			return FlowVariantUIPlay.toCurrentFlow({
 				flow: FlowVariantUIEdit.toCurrentFlow({
-					model: modelSync.edit,
+					model: modelCore.edit,
 				}),
-				model: modelSync.play,
+				model: modelCore.play,
 			});
 		}
 	}
 };
 
-export type MsgSync =
+export type MsgCore =
 	| {
 			t: "puzzle-builder.flow-ui-play";
 			c: FlowVariantUIPlay.Msg;

@@ -21,7 +21,7 @@ import {
 //
 //
 
-export type CoreModel = SetupModel | ModelSync;
+export type CoreModel = SetupModel | ModelCore;
 
 export type SetupModel = {
 	type: "setup";
@@ -30,7 +30,7 @@ export type SetupModel = {
 	botLevel: BotLevel;
 };
 
-export type ModelSync = {
+export type ModelCore = {
 	type: "game";
 	player: UserId;
 	userPlayerType: PlayerType;
@@ -57,7 +57,7 @@ export const initCoreModel = ({
 	};
 };
 
-export const isBotTurn = (model: CoreModel): model is ModelSync => {
+export const isBotTurn = (model: CoreModel): model is ModelCore => {
 	if (model.type !== "game") {
 		return false;
 	}

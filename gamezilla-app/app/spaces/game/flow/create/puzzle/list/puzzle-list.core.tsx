@@ -22,7 +22,7 @@ export type MsgToClient = {
 	t: "noop";
 };
 
-export type MsgSync = {
+export type MsgCore = {
 	t: "puzzle-list.clicked-puzzle-list-item";
 	puzzle: FlowPuzzle;
 };

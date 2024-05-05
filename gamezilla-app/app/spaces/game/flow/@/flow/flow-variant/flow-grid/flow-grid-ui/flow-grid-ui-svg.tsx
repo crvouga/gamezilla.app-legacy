@@ -263,12 +263,12 @@ const pipelineToSvgPathData = (
 	return path;
 };
 
-const touchEventToNodeId = (msgSync: TouchEvent): Flow.NodeId | null => {
-	const touch = msgSync.touches[0];
+const touchEventToNodeId = (msgCore: TouchEvent): Flow.NodeId | null => {
+	const touch = msgCore.touches[0];
 	if (!touch) {
 		return null;
 	}
-	const svg = msgSync.currentTarget;
+	const svg = msgCore.currentTarget;
 	if (!(svg instanceof SVGSVGElement)) {
 		return null;
 	}

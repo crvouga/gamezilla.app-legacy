@@ -10,9 +10,9 @@ import { FlowClient } from "./flow/flow.client";
 import type {
 	GameName,
 	ModelClient,
-	ModelSync,
+	ModelCore,
 	MsgClient,
-	MsgSync,
+	MsgCore,
 	MsgToClient,
 	MsgToServer,
 } from "./game.core";
@@ -30,8 +30,8 @@ type Module = GameClientModule<{
 	Msg: MsgClient;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
-	ModelSync: ModelSync;
-	MsgSync: MsgSync;
+	ModelCore: ModelCore;
+	MsgCore: MsgCore;
 	Ctx: SpaceClientCtx;
 	MsgInCmd: null;
 	MsgInEvent: SpaceClientEvent;
@@ -77,20 +77,20 @@ const init = (gameName: GameName): Module["init"] => {
 //
 
 const update: Module["update"] = (input) => {
-	const { ctx, msg, msgServer, msgCmd, msgEvt, msgSync, modelSync } = input;
+	const { ctx, msg, msgServer, msgCmd, msgEvt, msgCore, modelCore } = input;
 
-	switch (modelSync.t) {
+	switch (modelCore.t) {
 		case "connect-four": {
 			const updated = ConnectFour.update({
 				ctx,
-				modelSync: modelSync.c,
+				modelCore: modelCore.c,
 				model:
 					input.model?.t === "connect-four" ? input.model.c : ConnectFour.init,
 				msgCmd: msgCmd,
 				msgEvt: msgEvt,
 				msgServer: msgServer?.t === "connect-four" ? msgServer.c : null,
-				msgSync:
-					msgSync?.t === "connect-four" ? { ...msgSync, ...msgSync.c } : null,
+				msgCore:
+					msgCore?.t === "connect-four" ? { ...msgCore, ...msgCore.c } : null,
 				msg: msg?.t === "connect-four" ? msg.c : null,
 			});
 
@@ -106,12 +106,12 @@ const update: Module["update"] = (input) => {
 		case "flow": {
 			const updated = FlowClient.update({
 				ctx: ctx,
-				modelSync: modelSync.c,
+				modelCore: modelCore.c,
 				model: input.model?.t === "flow" ? input.model.c : FlowClient.init,
 				msgCmd: msgCmd,
 				msgEvt: msgEvt,
 				msgServer: msgServer?.t === "flow" ? msgServer.c : null,
-				msgSync: msgSync?.t === "flow" ? { ...msgSync, ...msgSync.c } : null,
+				msgCore: msgCore?.t === "flow" ? { ...msgCore, ...msgCore.c } : null,
 				msg: msg?.t === "flow" ? msg.c : null,
 			});
 
@@ -135,15 +135,15 @@ const update: Module["update"] = (input) => {
 //
 
 const subscriptions: Module["subscriptions"] = (input) => {
-	const { modelSync, model } = input;
+	const { modelCore, model } = input;
 
-	switch (modelSync.t) {
+	switch (modelCore.t) {
 		case "connect-four": {
 			return Sub.tag(
 				"connect-four",
 				ConnectFour.subscriptions({
 					ctx: input.ctx,
-					modelSync: modelSync.c,
+					modelCore: modelCore.c,
 					model: model.t === "connect-four" ? model.c : ConnectFour.init,
 				}),
 			);
@@ -154,7 +154,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
 				"flow",
 				FlowClient.subscriptions({
 					ctx: input.ctx,
-					modelSync: modelSync.c,
+					modelCore: modelCore.c,
 					model: model.t === "flow" ? model.c : FlowClient.init,
 				}),
 			);
@@ -171,15 +171,15 @@ const subscriptions: Module["subscriptions"] = (input) => {
 //
 
 const View: Module["View"] = (input) => {
-	const { model, ctx, modelSync, dispatch } = input;
+	const { model, ctx, modelCore, dispatch } = input;
 
-	switch (modelSync.t) {
+	switch (modelCore.t) {
 		case "connect-four": {
 			return (
 				<ConnectFour.View
 					ctx={ctx}
 					dispatch={(c) => dispatch({ t: "connect-four", c })}
-					modelSync={modelSync.c}
+					modelCore={modelCore.c}
 					model={model?.t === "connect-four" ? model.c : ConnectFour.init}
 				/>
 			);
@@ -190,7 +190,7 @@ const View: Module["View"] = (input) => {
 				<FlowClient.View
 					ctx={ctx}
 					dispatch={(c) => dispatch({ t: "flow", c })}
-					modelSync={modelSync.c}
+					modelCore={modelCore.c}
 					model={model.t === "flow" ? model.c : FlowClient.init}
 				/>
 			);
@@ -199,17 +199,17 @@ const View: Module["View"] = (input) => {
 };
 
 const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-	const { msgSync, modelSync, ctx, dispatch } = input;
+	const { msgCore, modelCore, ctx, dispatch } = input;
 
-	switch (modelSync.t) {
+	switch (modelCore.t) {
 		case "connect-four": {
-			switch (msgSync.t) {
+			switch (msgCore.t) {
 				case "connect-four": {
 					return (
 						<ConnectFour.ViewFeedItem
 							ctx={ctx}
-							msgSync={msgSync.c}
-							modelSync={modelSync.c}
+							msgCore={msgCore.c}
+							modelCore={modelCore.c}
 							dispatch={(c) => dispatch({ t: "connect-four", c })}
 						/>
 					);

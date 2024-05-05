@@ -1,7 +1,7 @@
 import { Eff, type Sub } from "gamezilla-app/@/core";
 import type { EventId, EventMeta, WithEventId } from "../event";
 import type { VDom } from "gamezilla-app/@/vdom";
-import { GameSyncModule } from "./game-sync";
+import { GameCoreModule } from "./game-sync";
 
 //
 //
@@ -49,11 +49,11 @@ export type GameClientModuleTypes = {
 	/**
 	 *
 	 */
-	MsgSync: any;
+	MsgCore: any;
 	/**
 	 *
 	 */
-	ModelSync: any;
+	ModelCore: any;
 };
 
 //
@@ -93,13 +93,13 @@ export type Input<T extends GameClientModuleTypes> = {
 	msgCmd?: T["MsgInCmd"] | null;
 
 	/**
-	 * `modelSync` is the current state of the game. This is shared and auto synced between client and server.
+	 * `modelCore` is the current state of the game. This is shared and auto synced between client and server.
 	 */
-	modelSync: T["ModelSync"];
+	modelCore: T["ModelCore"];
 	/**
-	 * `msgSync` is an msgEvt of game
+	 * `msgCore` is an msgEvt of game
 	 */
-	msgSync?: (T["MsgSync"] & EventMeta) | null;
+	msgCore?: (T["MsgCore"] & EventMeta) | null;
 };
 
 //
@@ -126,9 +126,9 @@ export type Output<T extends GameClientModuleTypes> = {
 	 */
 	msgEvt?: T["MsgOutEvent"][];
 	/**
-	 *  `msgSync` are events that occurred in the game. Shared with the server side
+	 *  `msgCore` are events that occurred in the game. Shared with the server side
 	 */
-	msgSync?: WithEventId<T["MsgSync"]>[];
+	msgCore?: WithEventId<T["MsgCore"]>[];
 };
 
 /**
@@ -150,7 +150,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
 	 */
 	subscriptions: (input: {
 		ctx: T["Ctx"];
-		modelSync: T["ModelSync"];
+		modelCore: T["ModelCore"];
 		model: T["Model"];
 	}) => Sub<T["Msg"]>;
 
@@ -159,7 +159,7 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
 	 */
 	View: (input: {
 		ctx: T["Ctx"];
-		modelSync: T["ModelSync"];
+		modelCore: T["ModelCore"];
 		model: T["Model"];
 		dispatch: (msg: T["Msg"]) => void;
 	}) => VDom;
@@ -169,8 +169,8 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
 	 */
 	ViewFeedItem: (input: {
 		ctx: T["Ctx"];
-		msgSync: T["MsgSync"];
-		modelSync: T["ModelSync"];
+		msgCore: T["MsgCore"];
+		modelCore: T["ModelCore"];
 		dispatch: (msg: T["Msg"]) => void;
 	}) => VDom;
 };
@@ -186,23 +186,23 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
 
 export const scan = <T extends GameClientModuleTypes>(
 	_module: Pick<GameClientModule<T>, "update">,
-	_moduleSync: Pick<GameSyncModule<T>, "reducer">,
+	_moduleCore: Pick<GameCoreModule<T>, "updateCore">,
 	_ctx: T["Ctx"],
-	_msgs: ((T["MsgSync"] & EventId) | T["MsgToClient"] | T["Msg"])[],
-): { model: T["Model"]; modelSync: T["ModelSync"] }[] => {
-	const scanOutput: { model: T["Model"]; modelSync: T["ModelSync"] }[] = [];
+	_msgs: ((T["MsgCore"] & EventId) | T["MsgToClient"] | T["Msg"])[],
+): { model: T["Model"]; modelCore: T["ModelCore"] }[] => {
+	const scanOutput: { model: T["Model"]; modelCore: T["ModelCore"] }[] = [];
 
 	// for (const msg of msgs) {
 	// 	 module.update({
 	// 		ctx: ctx,
 	// 		model: scanOutput[scanOutput.length - 1]?.model ?? module.init,
-	// 		modelSync: scanOutput[scanOutput.length - 1]?.modelSync ?? moduleSync.initSync({ ctx }),
+	// 		modelCore: scanOutput[scanOutput.length - 1]?.modelCore ?? moduleCore.initCore({ ctx }),
 	// 		msg: msg,
 	// 	});
-	// 	moduleSync.reducer({
+	// 	moduleCore.updateCore({
 	// 		ctx: ctx,
-	// 		modelSync: scanOutput[scanOutput.length - 1]?.modelSync ?? moduleSync.initSync({ ctx }),
-	// 		msgSync: msg,
+	// 		modelCore: scanOutput[scanOutput.length - 1]?.modelCore ?? moduleCore.initCore({ ctx }),
+	// 		msgCore: msg,
 	// 	});
 	// }
 
@@ -226,7 +226,7 @@ export const andThen = <T extends GameClientModuleTypes>(
 		eff: Eff.batch([acc.eff, updated.eff]),
 		msgCmd: [...(acc.msgCmd ?? []), ...(updated.msgCmd ?? [])],
 		msgEvt: [...(acc.msgEvt ?? []), ...(updated.msgEvt ?? [])],
-		msgSync: [...(acc.msgSync ?? []), ...(updated.msgSync ?? [])],
+		msgCore: [...(acc.msgCore ?? []), ...(updated.msgCore ?? [])],
 	};
 
 	return andThen(accNew, ...rest);
@@ -255,7 +255,7 @@ const tagOutput = <
 	/**
 	 *
 	 */
-	msgSync?: WithEventId<{ t: TTag; c: T["MsgSync"] }>[];
+	msgCore?: WithEventId<{ t: TTag; c: T["MsgCore"] }>[];
 } => {
 	return {
 		model: {
@@ -265,7 +265,7 @@ const tagOutput = <
 		msgCmd: output.msgCmd ? tagCmd(output.msgCmd) : [],
 		eff: Eff.tag(tag, output.eff),
 		msgEvt: output.msgEvt,
-		msgSync: output.msgSync?.map((c) => {
+		msgCore: output.msgCore?.map((c) => {
 			const child = { ...c };
 			delete child.eventId;
 			return {

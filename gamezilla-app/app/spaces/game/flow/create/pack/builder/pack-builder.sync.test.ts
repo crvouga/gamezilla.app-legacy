@@ -1,14 +1,14 @@
 import { describe, expect, it } from "bun:test";
-import { SpaceGameSyncFixture } from "gamezilla-app/app/spaces/game/@/testing/sync";
+import { SpaceGameCoreFixture } from "gamezilla-app/app/spaces/game/@/testing/sync";
 import { randomFlowPack, randomFlowPuzzle } from "../../../@/testing";
-import { CreateSync } from "../../create.sync";
-import { PackBuilderSync } from "./pack-builder.sync";
-import { ModelSync } from "../../create.core";
-import { MsgSync } from "./pack-builder.core";
+import { CreateCore } from "../../create.sync";
+import { PackBuilderCore } from "./pack-builder.sync";
+import { ModelCore } from "../../create.core";
+import { MsgCore } from "./pack-builder.core";
 import { UserId } from "gamezilla-app/app/@/data";
 
 const Fixture = async () => {
-	const f = await SpaceGameSyncFixture();
+	const f = await SpaceGameCoreFixture();
 	const createdBy = UserId.generate();
 
 	const puzzles = [
@@ -21,8 +21,8 @@ const Fixture = async () => {
 		createdBy,
 		puzzleIds: puzzles.map((puzzle) => puzzle.id),
 	});
-	const init = CreateSync.initSync({ ctx: f.ctx });
-	const modelSync: ModelSync = {
+	const init = CreateCore.initCore({ ctx: f.ctx });
+	const modelCore: ModelCore = {
 		...init,
 		packBuilder: {
 			t: "pack-builder",
@@ -34,11 +34,11 @@ const Fixture = async () => {
 		},
 	};
 
-	const applyMsgs = (msgs: MsgSync[]) => {
+	const applyMsgs = (msgs: MsgCore[]) => {
 		return msgs.reduce(
-			(modelSync, msgSync) =>
-				PackBuilderSync.reducer({ ctx: f.ctx, modelSync, msgSync }),
-			{ ...modelSync },
+			(modelCore, msgCore) =>
+				PackBuilderCore.updateCore({ ctx: f.ctx, modelCore, msgCore }),
+			{ ...modelCore },
 		);
 	};
 
@@ -48,7 +48,7 @@ const Fixture = async () => {
 		currentUserId: createdBy,
 		pack,
 		puzzles,
-		modelSync,
+		modelCore,
 	};
 };
 
@@ -56,7 +56,7 @@ describe(import.meta.file, () => {
 	it("should remove puzzle from pack after clicking remove button", async () => {
 		const f = await Fixture();
 
-		const modelSync = f.applyMsgs([
+		const modelCore = f.applyMsgs([
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button",
 				userId: f.currentUserId,
@@ -65,27 +65,27 @@ describe(import.meta.file, () => {
 		]);
 
 		expect(
-			modelSync.packBuilder?.pack.puzzleIds.includes(f.puzzles[0].id),
+			modelCore.packBuilder?.pack.puzzleIds.includes(f.puzzles[0].id),
 		).toBe(false);
 	});
 
 	it("should be able to exit puzzle screen", async () => {
 		const f = await Fixture();
 
-		const modelSync = f.applyMsgs([
+		const modelCore = f.applyMsgs([
 			{
 				t: "pack-builder.user-clicked-exit-puzzle-button",
 				userId: f.currentUserId,
 			},
 		]);
 
-		expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
+		expect(modelCore.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
 	});
 
 	it("should open puzzle screen when clicking puzzle grid item", async () => {
 		const f = await Fixture();
 
-		const modelSync = f.applyMsgs([
+		const modelCore = f.applyMsgs([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
@@ -94,25 +94,25 @@ describe(import.meta.file, () => {
 		]);
 
 		expect(
-			modelSync.packBuilder?.screen.t === "screen-puzzle" &&
-				modelSync.packBuilder.screen.puzzle.id === f.puzzles[0].id,
+			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
+				modelCore.packBuilder.screen.puzzle.id === f.puzzles[0].id,
 		).toBe(true);
 	});
 
 	it("should be able to exit pack builder", async () => {
 		const f = await Fixture();
-		const modelSync = f.applyMsgs([
+		const modelCore = f.applyMsgs([
 			{
 				t: "pack-builder.user-clicked-exit-button",
 				userId: f.currentUserId,
 			},
 		]);
-		expect(modelSync.opened.t !== "puzzle-builder").toBe(true);
+		expect(modelCore.opened.t !== "puzzle-builder").toBe(true);
 	});
 
 	it("should be able to open 'more' drawer", async () => {
 		const f = await Fixture();
-		const modelSync = f.applyMsgs([
+		const modelCore = f.applyMsgs([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
@@ -124,14 +124,14 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(
-			modelSync.packBuilder?.screen.t === "screen-puzzle" &&
-				modelSync.packBuilder?.screen.opened === "more",
+			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
+				modelCore.packBuilder?.screen.opened === "more",
 		).toBe(true);
 	});
 
 	it("should be able to close 'more' drawer", async () => {
 		const f = await Fixture();
-		const modelSync = f.applyMsgs([
+		const modelCore = f.applyMsgs([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
@@ -143,14 +143,14 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(
-			modelSync.packBuilder?.screen.t === "screen-puzzle" &&
-				modelSync.packBuilder?.screen.opened === null,
+			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
+				modelCore.packBuilder?.screen.opened === null,
 		).toBe(true);
 	});
 
 	it("should be able to go to next puzzle", async () => {
 		const f = await Fixture();
-		const modelSync = f.applyMsgs([
+		const modelCore = f.applyMsgs([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
@@ -163,14 +163,14 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(
-			modelSync.packBuilder?.screen.t === "screen-puzzle" &&
-				modelSync.packBuilder?.screen.puzzle.id === f.puzzles[1].id,
+			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
+				modelCore.packBuilder?.screen.puzzle.id === f.puzzles[1].id,
 		).toBe(true);
 	});
 
 	it("should do nothing if next puzzle is not in pack", async () => {
 		const f = await Fixture();
-		const modelSync = f.applyMsgs([
+		const modelCore = f.applyMsgs([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
@@ -184,14 +184,14 @@ describe(import.meta.file, () => {
 		]);
 
 		expect(
-			modelSync.packBuilder?.screen.t === "screen-puzzle" &&
-				modelSync.packBuilder?.screen.puzzleIndex === 0,
+			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
+				modelCore.packBuilder?.screen.puzzleIndex === 0,
 		).toBe(true);
 	});
 
 	it("should be able to go to previous puzzle", async () => {
 		const f = await Fixture();
-		const modelSync = f.applyMsgs([
+		const modelCore = f.applyMsgs([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[1],
@@ -204,14 +204,14 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(
-			modelSync.packBuilder?.screen.t === "screen-puzzle" &&
-				modelSync.packBuilder?.screen.puzzle.id === f.puzzles[0].id,
+			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
+				modelCore.packBuilder?.screen.puzzle.id === f.puzzles[0].id,
 		).toBe(true);
 	});
 
 	it("should do nothing if previous puzzle is not in pack", async () => {
 		const f = await Fixture();
-		const modelSync = f.applyMsgs([
+		const modelCore = f.applyMsgs([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[1],
@@ -224,14 +224,14 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(
-			modelSync.packBuilder?.screen.t === "screen-puzzle" &&
-				modelSync.packBuilder?.screen.puzzle.id === f.puzzles[1].id,
+			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
+				modelCore.packBuilder?.screen.puzzle.id === f.puzzles[1].id,
 		).toBe(true);
 	});
 
 	it("should be able to exit puzzle screen", async () => {
 		const f = await Fixture();
-		const modelSync = f.applyMsgs([
+		const modelCore = f.applyMsgs([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[1],
@@ -242,23 +242,23 @@ describe(import.meta.file, () => {
 				userId: f.currentUserId,
 			},
 		]);
-		expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
+		expect(modelCore.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
 	});
 
 	it("should be able to open add puzzle screen", async () => {
 		const f = await Fixture();
-		const modelSync = f.applyMsgs([
+		const modelCore = f.applyMsgs([
 			{
 				t: "pack-builder.user-clicked-open-add-puzzle-button",
 				userId: f.currentUserId,
 			},
 		]);
-		expect(modelSync.packBuilder?.screen.t === "add-puzzle").toBe(true);
+		expect(modelCore.packBuilder?.screen.t === "add-puzzle").toBe(true);
 	});
 
 	it("should be able to close add puzzle screen", async () => {
 		const f = await Fixture();
-		const modelSync = f.applyMsgs([
+		const modelCore = f.applyMsgs([
 			{
 				t: "pack-builder.user-clicked-open-add-puzzle-button",
 				userId: f.currentUserId,
@@ -267,20 +267,20 @@ describe(import.meta.file, () => {
 				t: "pack-builder.user-closed-add-puzzle",
 			},
 		]);
-		expect(modelSync.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
+		expect(modelCore.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
 	});
 
 	it("should be able to add new puzzle", async () => {
 		const f = await Fixture();
 		const newPuzzle = await randomFlowPuzzle({ createdBy: f.currentUserId });
-		const modelSync = f.applyMsgs([
+		const modelCore = f.applyMsgs([
 			{
 				t: "pack-builder.user-clicked-add-puzzle-item",
 				puzzle: newPuzzle,
 				userId: f.currentUserId,
 			},
 		]);
-		expect(modelSync.packBuilder?.pack.puzzleIds.includes(newPuzzle.id)).toBe(
+		expect(modelCore.packBuilder?.pack.puzzleIds.includes(newPuzzle.id)).toBe(
 			true,
 		);
 	});

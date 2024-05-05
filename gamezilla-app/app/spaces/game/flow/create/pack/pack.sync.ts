@@ -1,26 +1,26 @@
-import type { SyncReducer } from "../create.core";
-import { PackBuilderSync } from "./builder/pack-builder.sync";
+import type { UpdateCore } from "../create.core";
+import { PackBuilderCore } from "./builder/pack-builder.sync";
 import { PackCreateGame } from "./create/pack-create.sync";
 import { PackListGame } from "./list/pack-list.sync";
-import type { ModelSync } from "./pack.core";
+import type { ModelCore } from "./pack.core";
 import { RemovePuzzleGame } from "./remove-puzzle/remove-puzzle.sync";
 
-const initSync: ModelSync = {
-	...RemovePuzzleGame.initSync,
+const initCore: ModelCore = {
+	...RemovePuzzleGame.initCore,
 };
 
-const reducer: SyncReducer = (input) => {
+const updateCore: UpdateCore = (input) => {
 	return [
-		PackCreateGame.reducer,
-		PackBuilderSync.reducer,
-		PackListGame.reducer,
+		PackCreateGame.updateCore,
+		PackBuilderCore.updateCore,
+		PackListGame.updateCore,
 	].reduce(
-		(modelSync, reducer) => reducer({ ...input, modelSync }),
-		input.modelSync,
+		(modelCore, updateCore) => updateCore({ ...input, modelCore }),
+		input.modelCore,
 	);
 };
 
-export const PackGame = {
-	initSync,
-	reducer,
+export const PackCore = {
+	initCore,
+	updateCore,
 };

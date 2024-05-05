@@ -1,20 +1,20 @@
 import { isErr } from "gamezilla-app/@/core";
 import { FlowVariantUIPlay } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
-import { SyncReducer } from "../../create.core";
-import { ModelSync } from "./pack-builder.core";
+import { UpdateCore } from "../../create.core";
+import { ModelCore } from "./pack-builder.core";
 
-const reducers: SyncReducer[] = [];
+const updateCores: UpdateCore[] = [];
 
-reducers.push(({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "user-created-pack": {
-			if (isErr(msgSync.created)) {
-				return modelSync;
+			if (isErr(msgCore.created)) {
+				return modelCore;
 			}
 
 			return {
-				...modelSync,
+				...modelCore,
 				opened: { t: "pack-builder" },
 				packBuilder: {
 					t: "pack-builder",
@@ -23,44 +23,44 @@ reducers.push(({ modelSync, msgSync }) => {
 						t: "screen-puzzle-grid",
 						pageIndex: 0,
 					},
-					pack: msgSync.created.value,
+					pack: msgCore.created.value,
 				},
 			};
 		}
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 });
 
-reducers.push(({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "pack-builder.user-clicked-exit-button": {
 			return {
-				...modelSync,
-				puzzleBuilder: modelSync.puzzleBuilder,
-				packBuilder: modelSync.packBuilder,
+				...modelCore,
+				puzzleBuilder: modelCore.puzzleBuilder,
+				packBuilder: modelCore.packBuilder,
 				opened: { t: "list" },
 				listTab: "packs",
 			};
 		}
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 });
 
-reducers.push(({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "pack-builder.user-clicked-add-puzzle-item": {
-			if (!modelSync.packBuilder) {
-				return modelSync;
+			if (!modelCore.packBuilder) {
+				return modelCore;
 			}
 			return {
-				...modelSync,
+				...modelCore,
 				packBuilder: {
-					...modelSync.packBuilder,
-					pack: FlowPack.add(modelSync.packBuilder.pack, msgSync.puzzle.id),
+					...modelCore.packBuilder,
+					pack: FlowPack.add(modelCore.packBuilder.pack, msgCore.puzzle.id),
 					screen: {
 						t: "screen-puzzle-grid",
 						pageIndex: 0,
@@ -72,21 +72,21 @@ reducers.push(({ modelSync, msgSync }) => {
 			};
 		}
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 });
 
-reducers.push(({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "pack-builder.user-clicked-open-add-puzzle-button": {
-			if (!modelSync.packBuilder) {
-				return modelSync;
+			if (!modelCore.packBuilder) {
+				return modelCore;
 			}
 			return {
-				...modelSync,
+				...modelCore,
 				packBuilder: {
-					...modelSync.packBuilder,
+					...modelCore.packBuilder,
 					screen: {
 						t: "add-puzzle",
 					},
@@ -94,21 +94,21 @@ reducers.push(({ modelSync, msgSync }) => {
 			};
 		}
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 });
 
-reducers.push(({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "pack-builder.user-closed-add-puzzle": {
-			if (!modelSync.packBuilder) {
-				return modelSync;
+			if (!modelCore.packBuilder) {
+				return modelCore;
 			}
 			return {
-				...modelSync,
+				...modelCore,
 				packBuilder: {
-					...modelSync.packBuilder,
+					...modelCore.packBuilder,
 					opened: {
 						t: null,
 					},
@@ -120,29 +120,29 @@ reducers.push(({ modelSync, msgSync }) => {
 			};
 		}
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 });
 
-reducers.push(({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "pack-builder.user-clicked-pack-item": {
-			if (!modelSync.packBuilder) {
-				return modelSync;
+			if (!modelCore.packBuilder) {
+				return modelCore;
 			}
 
 			return {
-				...modelSync,
+				...modelCore,
 				packBuilder: {
-					...modelSync.packBuilder,
+					...modelCore.packBuilder,
 					screen: {
 						opened: null,
 						t: "screen-puzzle",
-						puzzleIndex: msgSync.index,
-						puzzle: msgSync.puzzle,
+						puzzleIndex: msgCore.index,
+						puzzle: msgCore.puzzle,
 						playUI: FlowVariantUIPlay.init({
-							flow: msgSync.puzzle.flow,
+							flow: msgCore.puzzle.flow,
 						}),
 					},
 				},
@@ -150,22 +150,22 @@ reducers.push(({ modelSync, msgSync }) => {
 		}
 
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 });
 
-reducers.push(({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "pack-builder.user-clicked-exit-puzzle-button": {
-			if (!modelSync.packBuilder) {
-				return modelSync;
+			if (!modelCore.packBuilder) {
+				return modelCore;
 			}
 
 			return {
-				...modelSync,
+				...modelCore,
 				packBuilder: {
-					...modelSync.packBuilder,
+					...modelCore.packBuilder,
 					screen: {
 						t: "screen-puzzle-grid",
 						pageIndex: 0,
@@ -175,162 +175,162 @@ reducers.push(({ modelSync, msgSync }) => {
 		}
 
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 });
 
-reducers.push(({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "pack-builder.flow-play-ui": {
-			if (!modelSync.packBuilder) {
-				return modelSync;
+			if (!modelCore.packBuilder) {
+				return modelCore;
 			}
 
-			if (modelSync.packBuilder.screen.t !== "screen-puzzle") {
-				return modelSync;
+			if (modelCore.packBuilder.screen.t !== "screen-puzzle") {
+				return modelCore;
 			}
 
-			const screen = modelSync.packBuilder.screen;
+			const screen = modelCore.packBuilder.screen;
 
 			const updated = FlowVariantUIPlay.update({
 				flow: screen.puzzle.flow,
 				model: screen.playUI,
-				msg: msgSync.c,
+				msg: msgCore.c,
 			});
 
 			return {
-				...modelSync,
+				...modelCore,
 				packBuilder: {
-					...modelSync.packBuilder,
+					...modelCore.packBuilder,
 					screen: {
 						opened: null,
 						t: "screen-puzzle",
-						puzzleIndex: modelSync.packBuilder.screen.puzzleIndex,
-						puzzle: modelSync.packBuilder.screen.puzzle,
+						puzzleIndex: modelCore.packBuilder.screen.puzzleIndex,
+						puzzle: modelCore.packBuilder.screen.puzzle,
 						playUI: updated,
 					},
 				},
 			};
 		}
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 });
 
-reducers.push(({ modelSync, msgSync }) => {
-	if (modelSync.packBuilder?.screen.t !== "screen-puzzle") {
-		return modelSync;
+updateCores.push(({ modelCore, msgCore }) => {
+	if (modelCore.packBuilder?.screen.t !== "screen-puzzle") {
+		return modelCore;
 	}
 
-	switch (msgSync.t) {
+	switch (msgCore.t) {
 		case "pack-builder.user-clicked-next-puzzle-button": {
-			const indexOfNextPuzzle = modelSync.packBuilder.pack.puzzleIds.indexOf(
-				msgSync.nextPuzzle.id,
+			const indexOfNextPuzzle = modelCore.packBuilder.pack.puzzleIds.indexOf(
+				msgCore.nextPuzzle.id,
 			);
 			if (indexOfNextPuzzle === -1) {
-				return modelSync;
+				return modelCore;
 			}
 			return {
-				...modelSync,
+				...modelCore,
 				packBuilder: {
-					...modelSync.packBuilder,
+					...modelCore.packBuilder,
 					screen: {
 						t: "screen-puzzle",
 						opened: null,
 						puzzleIndex: clamp(
-							modelSync.packBuilder.screen.puzzleIndex + 1,
+							modelCore.packBuilder.screen.puzzleIndex + 1,
 							0,
-							modelSync.packBuilder.pack.puzzleIds.length - 1,
+							modelCore.packBuilder.pack.puzzleIds.length - 1,
 						),
 						playUI: FlowVariantUIPlay.init({
-							flow: msgSync.nextPuzzle.flow,
+							flow: msgCore.nextPuzzle.flow,
 						}),
-						puzzle: msgSync.nextPuzzle,
+						puzzle: msgCore.nextPuzzle,
 					},
 				},
 			};
 		}
 
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 });
 
-reducers.push(({ modelSync, msgSync }) => {
-	if (modelSync.packBuilder?.screen.t !== "screen-puzzle") {
-		return modelSync;
+updateCores.push(({ modelCore, msgCore }) => {
+	if (modelCore.packBuilder?.screen.t !== "screen-puzzle") {
+		return modelCore;
 	}
 
-	switch (msgSync.t) {
+	switch (msgCore.t) {
 		case "pack-builder.user-clicked-previous-puzzle-button": {
 			const indexOfPreviousPuzzle =
-				modelSync.packBuilder.pack.puzzleIds.indexOf(msgSync.previousPuzzle.id);
+				modelCore.packBuilder.pack.puzzleIds.indexOf(msgCore.previousPuzzle.id);
 			if (indexOfPreviousPuzzle === -1) {
-				return modelSync;
+				return modelCore;
 			}
 			return {
-				...modelSync,
+				...modelCore,
 				packBuilder: {
-					...modelSync.packBuilder,
+					...modelCore.packBuilder,
 					screen: {
 						t: "screen-puzzle",
 						opened: null,
 						puzzleIndex: clamp(
-							modelSync.packBuilder.screen.puzzleIndex - 1,
+							modelCore.packBuilder.screen.puzzleIndex - 1,
 							0,
-							modelSync.packBuilder.pack.puzzleIds.length - 1,
+							modelCore.packBuilder.pack.puzzleIds.length - 1,
 						),
 						playUI: FlowVariantUIPlay.init({
-							flow: msgSync.previousPuzzle.flow,
+							flow: msgCore.previousPuzzle.flow,
 						}),
-						puzzle: msgSync.previousPuzzle,
+						puzzle: msgCore.previousPuzzle,
 					},
 				},
 			};
 		}
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 });
 
-reducers.push(({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "pack-builder.puzzle-screen.user-clicked-more-button": {
-			if (!modelSync.packBuilder) {
-				return modelSync;
+			if (!modelCore.packBuilder) {
+				return modelCore;
 			}
 			return {
-				...modelSync,
+				...modelCore,
 				packBuilder: {
-					...modelSync.packBuilder,
+					...modelCore.packBuilder,
 					screen: {
-						...modelSync.packBuilder.screen,
+						...modelCore.packBuilder.screen,
 						opened: "more",
 					},
 				},
 			};
 		}
 		case "pack-builder.puzzle-screen.user-closed-more-drawer": {
-			if (!modelSync.packBuilder) {
-				return modelSync;
+			if (!modelCore.packBuilder) {
+				return modelCore;
 			}
 			return {
-				...modelSync,
+				...modelCore,
 				packBuilder: {
-					...modelSync.packBuilder,
+					...modelCore.packBuilder,
 					screen: {
-						...modelSync.packBuilder.screen,
+						...modelCore.packBuilder.screen,
 						opened: null,
 					},
 				},
 			};
 		}
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 });
@@ -339,20 +339,20 @@ const clamp = (value: number, min: number, max: number): number => {
 	return Math.max(min, Math.min(max, value));
 };
 
-reducers.push(({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button": {
-			if (!modelSync.packBuilder) {
-				return modelSync;
+			if (!modelCore.packBuilder) {
+				return modelCore;
 			}
 
-			const pack = modelSync.packBuilder.pack;
+			const pack = modelCore.packBuilder.pack;
 
 			return {
-				...modelSync,
+				...modelCore,
 				packBuilder: {
-					...modelSync.packBuilder,
-					pack: FlowPack.remove(pack, msgSync.puzzleIndex),
+					...modelCore.packBuilder,
+					pack: FlowPack.remove(pack, msgCore.puzzleIndex),
 					screen: {
 						t: "screen-puzzle-grid",
 						pageIndex: 0,
@@ -361,24 +361,24 @@ reducers.push(({ modelSync, msgSync }) => {
 			};
 		}
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 });
 
-const reducer: SyncReducer = (input) => {
-	return reducers.reduce(
-		(modelSync, reducer) =>
-			reducer({
+const updateCore: UpdateCore = (input) => {
+	return updateCores.reduce(
+		(modelCore, updateCore) =>
+			updateCore({
 				ctx: input.ctx,
-				modelSync,
-				msgSync: input.msgSync,
+				modelCore,
+				msgCore: input.msgCore,
 			}),
-		input.modelSync,
+		input.modelCore,
 	);
 };
 
-const initSync = ({ pack }: { pack: FlowPack }): ModelSync => {
+const initCore = ({ pack }: { pack: FlowPack }): ModelCore => {
 	return {
 		pack,
 		screen: {
@@ -389,7 +389,7 @@ const initSync = ({ pack }: { pack: FlowPack }): ModelSync => {
 	};
 };
 
-export const PackBuilderSync = {
-	initSync,
-	reducer,
+export const PackBuilderCore = {
+	initCore,
+	updateCore,
 };

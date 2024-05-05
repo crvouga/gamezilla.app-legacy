@@ -148,9 +148,9 @@ const updateGame: SpaceClientModule["update"] = (input) => {
 		return { model };
 	}
 
-	const modelSync = spaceState.game;
+	const modelCore = spaceState.game;
 
-	if (!modelSync) {
+	if (!modelCore) {
 		return { model };
 	}
 
@@ -158,7 +158,7 @@ const updateGame: SpaceClientModule["update"] = (input) => {
 		? Spaces.toEventWithMeta(model, spaceId, msgSpaceEvent?.eventId)
 		: null;
 
-	const gameModel = model.games[spaceId] ?? GameClient.init(modelSync.t);
+	const gameModel = model.games[spaceId] ?? GameClient.init(modelCore.t);
 
 	const gameUpdated = GameClient.update({
 		ctx: {
@@ -167,18 +167,18 @@ const updateGame: SpaceClientModule["update"] = (input) => {
 			currentUserId: ctx.currentUserId,
 		},
 		model: gameModel,
-		msgSync:
+		msgCore:
 			msgSpaceEventWithMeta?.t === "game"
 				? { ...msgSpaceEventWithMeta, ...msgSpaceEventWithMeta.c }
 				: null,
-		modelSync: modelSync,
+		modelCore: modelCore,
 		msgServer: msgServer?.t === "game" ? msgServer.c : null,
 		msgCmd: null,
 		msgEvt,
 		msg: msg?.t === "game" ? msg.c : null,
 	});
 
-	const msgSpaceEventNew = (gameUpdated.msgSync ?? []).map(
+	const msgSpaceEventNew = (gameUpdated.msgCore ?? []).map(
 		(e): WithEventId<SpaceEvent> => ({ ...e, spaceId, t: "game", c: e }),
 	);
 
@@ -243,17 +243,17 @@ const subscriptionsCurrentUserGame: SpaceClientModule["subscriptions"] = ({
 		return Sub.None;
 	}
 
-	const modelSync = spaceState.game;
+	const modelCore = spaceState.game;
 
-	if (!modelSync) {
+	if (!modelCore) {
 		return Sub.None;
 	}
 
-	const gameModel = model.games[spaceId] ?? GameClient.init(modelSync.t);
+	const gameModel = model.games[spaceId] ?? GameClient.init(modelCore.t);
 
 	const gameSub = GameClient.subscriptions({
 		ctx: { ...clientCtx, space: spaceState },
-		modelSync: modelSync,
+		modelCore: modelCore,
 		model: gameModel,
 	});
 
@@ -286,7 +286,7 @@ const View: SpaceClientModule["View"] = (input) => {
 	if (space.game) {
 		return (
 			<GameClient.View
-				modelSync={space.game}
+				modelCore={space.game}
 				ctx={{ ...ctx, space: space, currentUserId: ctx.currentUserId }}
 				dispatch={(c) => dispatch({ t: "game", spaceId: space.spaceId, c })}
 				model={model.games[ctx.space.spaceId] ?? GameClient.init(space.game.t)}

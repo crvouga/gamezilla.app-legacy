@@ -2,9 +2,9 @@ import { Sub } from "gamezilla-app/@/core";
 import type { GameServer } from "gamezilla-app/app/spaces/@/architecture/game-server";
 import type {
 	ModelServer,
-	ModelSync,
+	ModelCore,
 	MsgServer,
-	MsgSync,
+	MsgCore,
 	MsgToClient,
 	MsgToServer,
 } from "./chess.core";
@@ -18,8 +18,8 @@ import type {
 //
 
 type Server = GameServer<{
-	MsgSync: MsgSync;
-	ModelSync: ModelSync;
+	MsgCore: MsgCore;
+	ModelCore: ModelCore;
 	ModelServer: ModelServer;
 	MsgServer: MsgServer;
 	MsgToClient: MsgToClient;

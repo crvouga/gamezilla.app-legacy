@@ -18,7 +18,7 @@ import type {
 	SpaceServerEvent,
 } from "gamezilla-app/app/spaces/@/space";
 import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
-import type { ChessMsgSync } from "../@/chess/chess-shared";
+import type { ChessMsgCore } from "../@/chess/chess-shared";
 import { EloRating } from "./elo-rating";
 import { PuzzleDb } from "./puzzle-db";
 import {
@@ -410,7 +410,7 @@ const updateFromClientMain: typeof updateFromClient = ({ model }) => {
 export const updateFromGame = ({
 	model,
 }: {
-	msg: ChessMsgSync;
+	msg: ChessMsgCore;
 	model: ModelServer;
 }): {
 	model: ModelServer;

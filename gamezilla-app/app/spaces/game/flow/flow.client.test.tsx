@@ -19,10 +19,10 @@ const userSelectedMode =
 		return FlowClient.update({
 			ctx,
 			model,
-			modelSync: {
+			modelCore: {
 				t: null,
 			},
-			msgSync: {
+			msgCore: {
 				t: "user-changed-mode",
 				userId: userId,
 				mode,

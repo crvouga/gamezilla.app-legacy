@@ -347,8 +347,8 @@ export const View = ({
 	);
 };
 
-const mouseEventToPosition = (msgSync: MouseEvent): Position.Position => {
-	if (!(msgSync.currentTarget instanceof HTMLCanvasElement)) {
+const mouseEventToPosition = (msgCore: MouseEvent): Position.Position => {
+	if (!(msgCore.currentTarget instanceof HTMLCanvasElement)) {
 		return {
 			x: 0,
 			y: 0,
@@ -356,16 +356,16 @@ const mouseEventToPosition = (msgSync: MouseEvent): Position.Position => {
 	}
 	const x = Math.floor(
 		rescale({
-			value: msgSync.pageX - msgSync.currentTarget.offsetLeft,
-			from: [0, msgSync.currentTarget.width],
+			value: msgCore.pageX - msgCore.currentTarget.offsetLeft,
+			from: [0, msgCore.currentTarget.width],
 			to: [0, columnCount],
 		}),
 	);
 
 	const y = Math.floor(
 		rescale({
-			value: msgSync.pageY - msgSync.currentTarget.offsetTop,
-			from: [0, msgSync.currentTarget.height],
+			value: msgCore.pageY - msgCore.currentTarget.offsetTop,
+			from: [0, msgCore.currentTarget.height],
 			to: [0, rowCount],
 		}),
 	);

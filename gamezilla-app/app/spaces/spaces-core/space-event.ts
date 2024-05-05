@@ -32,7 +32,7 @@ export const SpaceEvent = p.or(
 	p.obj({
 		t: p.l("game"),
 		spaceId: SpaceId,
-		c: Game.MsgSync,
+		c: Game.MsgCore,
 	}),
 );
 

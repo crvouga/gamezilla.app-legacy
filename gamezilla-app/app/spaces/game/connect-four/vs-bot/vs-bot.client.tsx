@@ -39,11 +39,11 @@ import {
 import {
 	type ModelClient,
 	type MsgClient,
-	type MsgSync,
-	type ModelSync,
+	type MsgCore,
+	type ModelCore,
 	type MsgToClient,
 	type MsgToServer,
-	reducer,
+	updateCore,
 } from "./vs-bot.core";
 import { ALL_BOT_LEVELS, type BotLevel } from "./bot-level";
 
@@ -60,8 +60,8 @@ type Module = GameClientModule<{
 	Msg: MsgClient;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
-	ModelSync: ModelSync;
-	MsgSync: MsgSync;
+	ModelCore: ModelCore;
+	MsgCore: MsgCore;
 	Ctx: SpaceClientCtx & { onQuit: () => void };
 	MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
 	MsgInEvent: SpaceClientEvent;
@@ -89,7 +89,7 @@ const update: Module["update"] = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
 		(model) => updateFromMsg(model)(input),
-		(model) => updateFromMsgSync(model)(input),
+		(model) => updateFromMsgCore(model)(input),
 		(model) => watchGameOver(model)(input),
 	);
 };
@@ -97,24 +97,24 @@ const update: Module["update"] = (input) => {
 const watchGameOver =
 	(model: ModelClient): Module["update"] =>
 	(input) => {
-		const { msgSync, modelSync } = input;
+		const { msgCore, modelCore } = input;
 
-		if (!msgSync) {
+		if (!msgCore) {
 			return { model };
 		}
 
-		const modelSyncNext = reducer({
-			msgSync: msgSync,
-			modelSync: modelSync,
+		const modelCoreNext = updateCore({
+			msgCore: msgCore,
+			modelCore: modelCore,
 		});
 
-		if (modelSync.type !== "game" || modelSyncNext.type !== "game") {
+		if (modelCore.type !== "game" || modelCoreNext.type !== "game") {
 			return { model };
 		}
 
-		const statusBefore = ConnectFour.toStatus(modelSync.columns);
+		const statusBefore = ConnectFour.toStatus(modelCore.columns);
 
-		const status = ConnectFour.toStatus(modelSyncNext.columns);
+		const status = ConnectFour.toStatus(modelCoreNext.columns);
 
 		if (statusBefore.type === status.type) {
 			return { model };
@@ -130,7 +130,7 @@ const watchGameOver =
 			}
 
 			case "Winner": {
-				if (status.winner === modelSyncNext.userPlayerType) {
+				if (status.winner === modelCoreNext.userPlayerType) {
 					return {
 						model,
 						msgCmd: [
@@ -152,18 +152,18 @@ const watchGameOver =
 		}
 	};
 
-const updateFromMsgSync =
+const updateFromMsgCore =
 	(model: ModelClient): Module["update"] =>
 	(input) => {
-		const { msgSync, modelSync, ctx } = input;
+		const { msgCore, modelCore, ctx } = input;
 
-		if (!msgSync) {
+		if (!msgCore) {
 			return { model };
 		}
 
 		return {
 			model,
-			msgCmd: updateSound(ctx.currentUserId, modelSync, msgSync),
+			msgCmd: updateSound(ctx.currentUserId, modelCore, msgCore),
 		};
 	};
 
@@ -196,27 +196,27 @@ const updateFromMsg =
 			}
 
 			default: {
-				const msgSync = withId(msg);
-				return { model, msgSync: [msgSync] };
+				const msgCore = withId(msg);
+				return { model, msgCore: [msgCore] };
 			}
 		}
 	};
 
 const updateSound = (
 	currentUserId: UserId,
-	modelSync: ModelSync,
-	msgSync: MsgSync & EventMeta,
+	modelCore: ModelCore,
+	msgCore: MsgCore & EventMeta,
 ): ClientCmd<{
 	MsgToServer: MsgToServer;
 	MsgClient: MsgClient;
 }>[] => {
-	switch (modelSync.type) {
+	switch (modelCore.type) {
 		case "game": {
-			switch (msgSync.t) {
+			switch (msgCore.t) {
 				case "user-dropped-disc": {
-					const error = modelSync.errors[msgSync.eventId];
+					const error = modelCore.errors[msgCore.eventId];
 
-					if (error && msgSync.userId === currentUserId) {
+					if (error && msgCore.userId === currentUserId) {
 						return [playSound(APP_SOUND.alertErrorSm)];
 					}
 
@@ -244,7 +244,7 @@ const updateSound = (
 		}
 
 		case "setup": {
-			switch (msgSync.t) {
+			switch (msgCore.t) {
 				case "user-started-playing":
 				case "user-stopped-playing":
 				case "user-swapped-sides":
@@ -315,7 +315,7 @@ const View: Module["View"] = (props) => {
 		onQuit: props.ctx.onQuit,
 		title: "Connect Four",
 		renderCoverArt: (props) => <CoverArt {...props} />,
-		canStartGame: props.modelSync.playingUserId !== null,
+		canStartGame: props.modelCore.playingUserId !== null,
 		onSwapSides: () =>
 			props.dispatch({
 				t: "user-swapped-sides",
@@ -340,15 +340,15 @@ const View: Module["View"] = (props) => {
 		}),
 		human: {
 			player:
-				props.modelSync.userPlayerType === "player-one"
+				props.modelCore.userPlayerType === "player-one"
 					? "player-one"
 					: "player-two",
-			userId: props.modelSync.playingUserId ?? null,
+			userId: props.modelCore.playingUserId ?? null,
 		},
 		bot: {
-			label: props.modelSync.botLevel,
+			label: props.modelCore.botLevel,
 			renderIcon: (iconProps) => (
-				<ViewBotLevel {...iconProps} level={props.modelSync.botLevel} />
+				<ViewBotLevel {...iconProps} level={props.modelCore.botLevel} />
 			),
 		},
 		playerOne: {
@@ -387,7 +387,7 @@ const View: Module["View"] = (props) => {
 		return null;
 	}
 
-	if (props.modelSync.type === "setup") {
+	if (props.modelCore.type === "setup") {
 		return (
 			<VsBotSetup.View
 				model={props.model.vsBotSetup}
@@ -397,15 +397,15 @@ const View: Module["View"] = (props) => {
 		);
 	}
 
-	const status = ConnectFour.toStatus(props.modelSync.columns);
+	const status = ConnectFour.toStatus(props.modelCore.columns);
 
 	const vsBotGameProps: VsBotGame.VsBotGameProps = {
 		...vsBotSetupProps,
 		human: {
 			...vsBotSetupProps.human,
-			userId: props.modelSync.playingUserId,
+			userId: props.modelCore.playingUserId,
 		},
-		isSpectating: props.ctx.currentUserId !== props.modelSync.playingUserId,
+		isSpectating: props.ctx.currentUserId !== props.modelCore.playingUserId,
 		turn:
 			status.type !== "Playing"
 				? null
@@ -415,7 +415,7 @@ const View: Module["View"] = (props) => {
 	};
 
 	const isSpectating =
-		props.ctx.currentUserId !== props.modelSync.playingUserId;
+		props.ctx.currentUserId !== props.modelCore.playingUserId;
 
 	return (
 		<GameLayout isSpectating={isSpectating}>
@@ -430,7 +430,7 @@ const View: Module["View"] = (props) => {
 				<div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
 					<ViewColumns
 						gameId={0}
-						columns={props.modelSync.columns}
+						columns={props.modelCore.columns}
 						disabled={isSpectating || status.type !== "Playing"}
 						onDropDisc={(columnIndex) => {
 							props.dispatch({
@@ -450,13 +450,13 @@ const View: Module["View"] = (props) => {
 									userId: props.ctx.currentUserId,
 								})
 							}
-							gameOver={toGameOver(props.modelSync.columns)}
+							gameOver={toGameOver(props.modelCore.columns)}
 						/>
 					)}
 				</div>
 			</div>
 
-			{props.ctx.currentUserId === props.modelSync.playingUserId && (
+			{props.ctx.currentUserId === props.modelCore.playingUserId && (
 				<ViewBottomButtonBar>
 					<ViewBottomButtonBarAction
 						icon={(props) => <IconArrowLeftOnRect {...props} />}
@@ -512,11 +512,11 @@ const toVsBotStatus = (status: ConnectFour.Status): VsBotGame.Status => {
 
 const ViewFeedItem: Module["ViewFeedItem"] = (props) => {
 	const username =
-		"userId" in props.msgSync
-			? props.ctx.profiles[props.msgSync.userId]?.username ?? null
+		"userId" in props.msgCore
+			? props.ctx.profiles[props.msgCore.userId]?.username ?? null
 			: null;
 
-	switch (props.msgSync.t) {
+	switch (props.msgCore.t) {
 		case "bot-dropped-disc": {
 			return <FeedItem.Info text="Bot dropped disc" />;
 		}
@@ -524,13 +524,13 @@ const ViewFeedItem: Module["ViewFeedItem"] = (props) => {
 		case "user-changed-bot-level": {
 			return (
 				<FeedItem.Info
-					text={`${username} changed bot level to ${props.msgSync.botLevel}`}
+					text={`${username} changed bot level to ${props.msgCore.botLevel}`}
 				/>
 			);
 		}
 
 		case "user-dropped-disc": {
-			if (props.msgSync.userId === props.ctx.currentUserId) {
+			if (props.msgCore.userId === props.ctx.currentUserId) {
 				return <FeedItem.Info text={`${username} dropped disc`} />;
 			}
 

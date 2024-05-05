@@ -1,21 +1,21 @@
-import type { SyncReducer } from "../../create.core";
+import type { UpdateCore } from "../../create.core";
 
-const reducer: SyncReducer = ({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "user-deleted-puzzle": {
 			return {
-				...modelSync,
+				...modelCore,
 				puzzleBuilder: null,
 				opened: { t: "list" },
 				listTab: "puzzles",
 			};
 		}
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 };
 
-export const PuzzleDeleteForeverGame = {
-	reducer,
+export const PuzzleDeleteForeverCore = {
+	updateCore,
 };

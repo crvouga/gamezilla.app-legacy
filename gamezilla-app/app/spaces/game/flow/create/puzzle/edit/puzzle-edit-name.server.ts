@@ -7,7 +7,7 @@ import type { IFlowPuzzleDb } from "../../../@/flow-puzzle/flow-puzzle-db";
 import type { FlowPuzzleId } from "../../../@/flow-puzzle/flow-puzzle-id";
 import { FlowPuzzleName } from "../../../@/flow-puzzle/flow-puzzle-name";
 import type { ServerModule } from "../../create.core";
-import type { MsgSync } from "./puzzle-edit-name.core";
+import type { MsgCore } from "./puzzle-edit-name.core";
 
 const update: ServerModule["update"] = async (input) => {
 	return GameServerModule.andThen({ model: input.model }, (model) =>
@@ -27,7 +27,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 				userId: msgClient.userId,
 			});
 
-			const msgSync: MsgSync = {
+			const msgCore: MsgCore = {
 				t: "user-edited-puzzle-name",
 				edited,
 				flowPuzzleId: msgClient.flowPuzzleId,
@@ -37,7 +37,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
 			return {
 				model,
-				msgSync: [withId(msgSync)],
+				msgCore: [withId(msgCore)],
 			};
 		}
 

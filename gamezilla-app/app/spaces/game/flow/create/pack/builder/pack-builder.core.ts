@@ -34,7 +34,7 @@ export const initServer: ModelServer = null;
 //
 
 export type MsgClient =
-	| MsgSync
+	| MsgCore
 	| {
 			t: "pack-builder.flow-pack-grid";
 			c: FlowPackGrid.MsgClient;
@@ -61,7 +61,7 @@ export type MsgToClient = {
 //
 //
 
-export type ModelSync = {
+export type ModelCore = {
 	t: "pack-builder";
 	pack: FlowPack;
 	screen:
@@ -81,7 +81,7 @@ export type ModelSync = {
 		  };
 };
 
-export const MsgSync = p.or(
+export const MsgCore = p.or(
 	p.obj({
 		t: p.l("pack-builder.user-clicked-exit-button"),
 		userId: UserId,
@@ -140,4 +140,4 @@ export const MsgSync = p.or(
 	}),
 );
 
-export type MsgSync = p.Infer<typeof MsgSync>;
+export type MsgCore = p.Infer<typeof MsgCore>;

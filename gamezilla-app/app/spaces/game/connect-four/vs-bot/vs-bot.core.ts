@@ -43,7 +43,7 @@ export type ModelClient = {
 //
 
 export type MsgClient =
-	| MsgSync
+	| MsgCore
 	| { t: "vs-bot-setup"; c: VsBotSetup.Msg }
 	| { t: "vs-bot-game"; c: VsBotGame.Msg };
 
@@ -61,7 +61,7 @@ export type MsgToClient = { t: null };
 
 export type MsgToServer = { t: null };
 
-export const MsgSync = p.or(
+export const MsgCore = p.or(
 	p.obj({
 		t: p.l("user-dropped-disc"),
 		columnIndex: ConnectFour.ColumnIndex,
@@ -110,7 +110,7 @@ export const MsgSync = p.or(
 		userId: UserId,
 	}),
 );
-export type MsgSync = p.Infer<typeof MsgSync>;
+export type MsgCore = p.Infer<typeof MsgCore>;
 
 const EventErr = p.or(
 	p.obj({
@@ -123,7 +123,7 @@ const EventErr = p.or(
 );
 type EventErr = p.Infer<typeof EventErr>;
 
-export const msgSyncErrorToString = ({
+export const msgCoreErrorToString = ({
 	error,
 }: {
 	error: EventErr;
@@ -156,14 +156,14 @@ export const StateGame = p.obj({
 });
 export type StateGame = p.Infer<typeof StateGame>;
 
-const BaseModelSync = p.obj({
-	errors: p.dict(EventId, p.and(MsgSync, p.obj({ error: EventErr }))),
+const BaseModelCore = p.obj({
+	errors: p.dict(EventId, p.and(MsgCore, p.obj({ error: EventErr }))),
 });
 
-export const ModelSync = p.and(BaseModelSync, p.or(StateSetup, StateGame));
-export type ModelSync = p.Infer<typeof ModelSync>;
+export const ModelCore = p.and(BaseModelCore, p.or(StateSetup, StateGame));
+export type ModelCore = p.Infer<typeof ModelCore>;
 
-export const initSync = (input: SpaceCtx): ModelSync => {
+export const initCore = (input: SpaceCtx): ModelCore => {
 	return {
 		type: "setup",
 		botLevel: "Medium",
@@ -173,187 +173,187 @@ export const initSync = (input: SpaceCtx): ModelSync => {
 	};
 };
 
-export const reducer = ({
-	modelSync,
-	msgSync,
+export const updateCore = ({
+	modelCore,
+	msgCore,
 }: {
-	modelSync: ModelSync;
-	msgSync: MsgSync & EventMeta;
-}): ModelSync => {
-	switch (modelSync.type) {
+	modelCore: ModelCore;
+	msgCore: MsgCore & EventMeta;
+}): ModelCore => {
+	switch (modelCore.type) {
 		case "setup": {
-			switch (msgSync.t) {
+			switch (msgCore.t) {
 				case "user-started-playing": {
 					return {
-						...modelSync,
-						playingUserId: msgSync.userId,
-						userPlayerType: msgSync.playerType,
+						...modelCore,
+						playingUserId: msgCore.userId,
+						userPlayerType: msgCore.playerType,
 					};
 				}
 
 				case "user-stopped-playing": {
-					if (modelSync.playingUserId !== msgSync.userId) {
-						return addError(modelSync, msgSync, {
+					if (modelCore.playingUserId !== msgCore.userId) {
+						return addError(modelCore, msgCore, {
 							t: "not-playing",
 						});
 					}
 
 					return {
-						...modelSync,
+						...modelCore,
 						playingUserId: null,
 					};
 				}
 
 				case "user-swapped-sides": {
-					if (modelSync.playingUserId !== msgSync.userId) {
-						return addError(modelSync, msgSync, {
+					if (modelCore.playingUserId !== msgCore.userId) {
+						return addError(modelCore, msgCore, {
 							t: "not-playing",
 						});
 					}
 
 					return {
-						...modelSync,
-						userPlayerType: ConnectFour.opposite[modelSync.userPlayerType],
+						...modelCore,
+						userPlayerType: ConnectFour.opposite[modelCore.userPlayerType],
 					};
 				}
 
 				case "user-started-game": {
-					if (modelSync.playingUserId !== msgSync.userId) {
-						return addError(modelSync, msgSync, {
+					if (modelCore.playingUserId !== msgCore.userId) {
+						return addError(modelCore, msgCore, {
 							t: "not-playing",
 						});
 					}
 
 					return {
-						...modelSync,
+						...modelCore,
 						type: "game",
-						playingUserId: modelSync.playingUserId,
+						playingUserId: modelCore.playingUserId,
 						columns: ConnectFour.EMPTY_COLUMNS,
 					};
 				}
 
 				case "user-changed-bot-level": {
-					if (modelSync.playingUserId !== msgSync.userId) {
-						return addError(modelSync, msgSync, {
+					if (modelCore.playingUserId !== msgCore.userId) {
+						return addError(modelCore, msgCore, {
 							t: "not-playing",
 						});
 					}
 					return {
-						...modelSync,
-						botLevel: msgSync.botLevel,
+						...modelCore,
+						botLevel: msgCore.botLevel,
 					};
 				}
 
 				case "bot-dropped-disc": {
-					return addError(modelSync, msgSync, { t: "not-playing" });
+					return addError(modelCore, msgCore, { t: "not-playing" });
 				}
 
 				default: {
-					return modelSync;
+					return modelCore;
 				}
 			}
 		}
 
 		case "game": {
-			switch (msgSync.t) {
+			switch (msgCore.t) {
 				case "bot-dropped-disc": {
 					const moved = ConnectFour.dropDisc(
-						modelSync.columns,
-						msgSync.columnIndex,
-						toBotPlayer(modelSync),
+						modelCore.columns,
+						msgCore.columnIndex,
+						toBotPlayer(modelCore),
 					);
 
 					if (moved.t === "err") {
-						return addError(modelSync, msgSync, {
+						return addError(modelCore, msgCore, {
 							t: "move",
 							c: moved.error,
 						});
 					}
 
-					return { ...modelSync, columns: moved.value };
+					return { ...modelCore, columns: moved.value };
 				}
 
 				case "user-dropped-disc": {
-					if (modelSync.playingUserId !== msgSync.userId) {
-						return addError(modelSync, msgSync, {
+					if (modelCore.playingUserId !== msgCore.userId) {
+						return addError(modelCore, msgCore, {
 							t: "not-playing",
 						});
 					}
 
 					const moved = ConnectFour.dropDisc(
-						modelSync.columns,
-						msgSync.columnIndex,
-						modelSync.userPlayerType,
+						modelCore.columns,
+						msgCore.columnIndex,
+						modelCore.userPlayerType,
 					);
 
 					if (moved.t === "err") {
-						return addError(modelSync, msgSync, {
+						return addError(modelCore, msgCore, {
 							t: "move",
 							c: moved.error,
 						});
 					}
 
-					return { ...modelSync, columns: moved.value };
+					return { ...modelCore, columns: moved.value };
 				}
 
 				case "user-left": {
-					if (msgSync.userId === modelSync.playingUserId) {
+					if (msgCore.userId === modelCore.playingUserId) {
 						return {
-							...modelSync,
+							...modelCore,
 							type: "setup",
-							botLevel: modelSync.botLevel,
-							userPlayerType: modelSync.userPlayerType,
+							botLevel: modelCore.botLevel,
+							userPlayerType: modelCore.userPlayerType,
 							playingUserId: null,
 						};
 					}
-					return modelSync;
+					return modelCore;
 				}
 
 				case "user-stopped-game": {
-					if (msgSync.userId !== modelSync.playingUserId) {
-						return addError(modelSync, msgSync, {
+					if (msgCore.userId !== modelCore.playingUserId) {
+						return addError(modelCore, msgCore, {
 							t: "not-playing",
 						});
 					}
 
 					return {
-						...modelSync,
+						...modelCore,
 						type: "setup",
-						botLevel: modelSync.botLevel,
-						userPlayerType: modelSync.userPlayerType,
-						playingUserId: modelSync.playingUserId,
+						botLevel: modelCore.botLevel,
+						userPlayerType: modelCore.userPlayerType,
+						playingUserId: modelCore.playingUserId,
 					};
 				}
 
 				case "user-swapped-sides": {
-					if (msgSync.userId !== modelSync.playingUserId) {
-						return addError(modelSync, msgSync, {
+					if (msgCore.userId !== modelCore.playingUserId) {
+						return addError(modelCore, msgCore, {
 							t: "not-playing",
 						});
 					}
 
 					return {
-						...modelSync,
-						userPlayerType: ConnectFour.opposite[modelSync.userPlayerType],
+						...modelCore,
+						userPlayerType: ConnectFour.opposite[modelCore.userPlayerType],
 						columns: ConnectFour.EMPTY_COLUMNS,
 					};
 				}
 
 				case "user-restarted-game": {
-					if (msgSync.userId !== modelSync.playingUserId) {
-						return addError(modelSync, msgSync, {
+					if (msgCore.userId !== modelCore.playingUserId) {
+						return addError(modelCore, msgCore, {
 							t: "not-playing",
 						});
 					}
 
 					return {
-						...modelSync,
+						...modelCore,
 						columns: ConnectFour.EMPTY_COLUMNS,
 					};
 				}
 
 				default: {
-					return modelSync;
+					return modelCore;
 				}
 			}
 		}
@@ -361,39 +361,39 @@ export const reducer = ({
 };
 
 const addError = (
-	modelSync: ModelSync,
-	msgSync: MsgSync & EventMeta,
+	modelCore: ModelCore,
+	msgCore: MsgCore & EventMeta,
 	error: EventErr,
-): ModelSync => {
+): ModelCore => {
 	return {
-		...modelSync,
+		...modelCore,
 		errors: {
-			...modelSync.errors,
-			[msgSync.eventId]: { ...msgSync, error },
+			...modelCore.errors,
+			[msgCore.eventId]: { ...msgCore, error },
 		},
 	};
 };
 
-export const isBotTurn = (modelSync: ModelSync): boolean => {
-	if (modelSync.type !== "game") {
+export const isBotTurn = (modelCore: ModelCore): boolean => {
+	if (modelCore.type !== "game") {
 		return false;
 	}
-	const status = ConnectFour.toStatus(modelSync.columns);
+	const status = ConnectFour.toStatus(modelCore.columns);
 	return (
 		status.type === "Playing" &&
-		status.turn === ConnectFour.opposite[modelSync.userPlayerType]
+		status.turn === ConnectFour.opposite[modelCore.userPlayerType]
 	);
 };
 
-export const toBotPlayer = (modelSync: ModelSync): ConnectFour.PlayerType => {
-	return ConnectFour.opposite[modelSync.userPlayerType];
+export const toBotPlayer = (modelCore: ModelCore): ConnectFour.PlayerType => {
+	return ConnectFour.opposite[modelCore.userPlayerType];
 };
 
 export type GameOver =
 	| { type: "Tie" }
 	| { type: "Winner"; winner: ConnectFour.PlayerType };
 
-export const toGameOver = (model: ModelSync): GameOver | { type: null } => {
+export const toGameOver = (model: ModelCore): GameOver | { type: null } => {
 	switch (model.type) {
 		case "game": {
 			const status = ConnectFour.toStatus(model.columns);

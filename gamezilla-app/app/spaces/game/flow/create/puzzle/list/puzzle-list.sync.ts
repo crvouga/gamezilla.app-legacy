@@ -1,32 +1,32 @@
 import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../@/flow";
-import type { SyncReducer } from "../../create.core";
+import type { UpdateCore } from "../../create.core";
 
-const reducer: SyncReducer = ({ modelSync, msgSync }) => {
-	switch (msgSync.t) {
+const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
 		case "puzzle-list.clicked-puzzle-list-item": {
 			return {
-				...modelSync,
+				...modelCore,
 				listTab: "puzzles",
-				packBuilder: modelSync.packBuilder,
+				packBuilder: modelCore.packBuilder,
 				opened: { t: "puzzle-builder" },
 				puzzleBuilder: {
 					t: "puzzle-builder",
 					edit: FlowVariantUIEdit.init({
-						flow: msgSync.puzzle.flow,
+						flow: msgCore.puzzle.flow,
 					}),
 					play: FlowVariantUIPlay.init({
-						flow: msgSync.puzzle.flow,
+						flow: msgCore.puzzle.flow,
 					}),
 					mode: { t: "edit" },
-					puzzle: msgSync.puzzle,
+					puzzle: msgCore.puzzle,
 				},
 			};
 		}
 
 		default: {
-			return modelSync;
+			return modelCore;
 		}
 	}
 };
 
-export const PuzzleListGame = { reducer };
+export const PuzzleListCore = { updateCore };

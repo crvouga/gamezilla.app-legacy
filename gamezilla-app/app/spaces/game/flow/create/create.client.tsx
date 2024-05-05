@@ -4,7 +4,7 @@ import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
 import { FlowPackListClient } from "../@/flow-pack/flow-pack-list";
 import { FlowPuzzleListClient } from "../@/flow-puzzle/flow-puzzle-list";
 import { initClient, type ClientModule } from "./create.core";
-import { ListTabsClient } from "./list-tabs/list-tabs";
+import { ListTabsClient } from "./list-tabs/list-tabs.client";
 import { PackBuilderClient } from "./pack/builder/pack-builder.client";
 import { PackClient } from "./pack/pack.client";
 import { PuzzleBuilderClient } from "./puzzle/builder/puzzle-builder.client";
@@ -39,7 +39,7 @@ const updateFlowPackList: ClientModule["update"] = (input) => {
 		},
 		eff: Eff.tag("flow-pack-list", updated.eff),
 		msgEvt: [],
-		msgSync: [],
+		msgCore: [],
 		msgCmd: SpaceClientCmd.map(
 			updated.msgCmd,
 			(c) => ({ t: "flow-pack-list", c }),
@@ -66,7 +66,7 @@ const updateFlowPuzzleList: ClientModule["update"] = (input) => {
 		},
 		eff: Eff.tag("flow-puzzle-list", updated.eff),
 		msgEvt: [],
-		msgSync: [],
+		msgCore: [],
 		msgCmd: SpaceClientCmd.map(
 			updated.msgCmd,
 			(c) => ({ t: "flow-puzzle-list", c }),
@@ -76,9 +76,9 @@ const updateFlowPuzzleList: ClientModule["update"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-	const { modelSync } = input;
+	const { modelCore } = input;
 
-	switch (modelSync.opened.t) {
+	switch (modelCore.opened.t) {
 		case "puzzle-builder": {
 			return <PuzzleBuilderClient.View {...input} />;
 		}

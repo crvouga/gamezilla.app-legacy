@@ -6,7 +6,7 @@ const update: SpaceClientModule["update"] = (input) => {
 	return SpaceClientModule.andThen(
 		{ model: input.model },
 		(model) => updateProfiles({ ...input, model }),
-		(model) => updateSync({ ...input, model }),
+		(model) => updateCore({ ...input, model }),
 		(model) => sendSpaceEventToServer({ ...input, model }),
 		(model) => outputSpaceEventsFromServer({ ...input, model }),
 	);
@@ -70,7 +70,7 @@ const updateProfiles: SpaceClientModule["update"] = ({ model, msgServer }) => {
 	return { model };
 };
 
-const updateSync: SpaceClientModule["update"] = (input) => {
+const updateCore: SpaceClientModule["update"] = (input) => {
 	const { model, msgEvt, msgServer } = input;
 
 	switch (msgEvt?.t) {
@@ -99,7 +99,7 @@ const updateSync: SpaceClientModule["update"] = (input) => {
 			return {
 				model: {
 					...model,
-					isSyncing: true,
+					isSycing: true,
 				},
 				msgCmd: [
 					sendToServer({
