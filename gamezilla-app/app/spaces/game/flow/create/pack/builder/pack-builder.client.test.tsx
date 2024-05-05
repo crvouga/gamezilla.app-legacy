@@ -69,7 +69,7 @@ export const Fixture = async () => {
 			t: "pack-builder",
 			pack: pack,
 			screen: {
-				t: "add-puzzle",
+				t: "screen-add-puzzle",
 			},
 		},
 	};
@@ -109,7 +109,7 @@ describe(import.meta.file, () => {
 			clickedOpenPuzzlePickerButton(ctx),
 		);
 		const modelCore = deriveModelCore(ctx)(output);
-		expect(modelCore.packBuilder?.screen.t === "add-puzzle").toBe(true);
+		expect(modelCore.packBuilder?.screen.t === "screen-add-puzzle").toBe(true);
 	});
 
 	it("should close puzzle picker when user clicks closes", async () => {
@@ -238,7 +238,7 @@ describe(import.meta.file, () => {
 					t: "pack-builder",
 					pack: updatedPack,
 					screen: {
-						t: "add-puzzle",
+						t: "screen-add-puzzle",
 					},
 				},
 			},

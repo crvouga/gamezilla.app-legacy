@@ -88,7 +88,7 @@ updateCores.push(({ modelCore, msgCore }) => {
 				packBuilder: {
 					...modelCore.packBuilder,
 					screen: {
-						t: "add-puzzle",
+						t: "screen-add-puzzle",
 					},
 				},
 			};

@@ -61,24 +61,26 @@ export type MsgToClient = {
 //
 //
 
+type Screen =
+	| {
+			t: "screen-add-puzzle";
+	  }
+	| {
+			t: "screen-puzzle-grid";
+			pageIndex: number;
+	  }
+	| {
+			t: "screen-puzzle";
+			puzzleIndex: number;
+			puzzle: FlowPuzzle;
+			playUI: FlowVariantUIPlay.Model;
+			opened: "more" | null;
+	  };
+
 export type ModelCore = {
 	t: "pack-builder";
 	pack: FlowPack;
-	screen:
-		| {
-				t: "add-puzzle";
-		  }
-		| {
-				t: "screen-puzzle-grid";
-				pageIndex: number;
-		  }
-		| {
-				t: "screen-puzzle";
-				puzzleIndex: number;
-				puzzle: FlowPuzzle;
-				playUI: FlowVariantUIPlay.Model;
-				opened: "more" | null;
-		  };
+	screen: Screen;
 };
 
 export const MsgCore = p.or(

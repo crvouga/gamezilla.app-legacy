@@ -253,7 +253,7 @@ describe(import.meta.file, () => {
 				userId: f.currentUserId,
 			},
 		]);
-		expect(modelCore.packBuilder?.screen.t === "add-puzzle").toBe(true);
+		expect(modelCore.packBuilder?.screen.t === "screen-add-puzzle").toBe(true);
 	});
 
 	it("should be able to close add puzzle screen", async () => {

@@ -591,7 +591,7 @@ export const PackBuilderClient: Pick<
 				slots={{
 					grid() {
 						switch (modelCore.packBuilder?.screen.t) {
-							case "add-puzzle": {
+							case "screen-add-puzzle": {
 								return <ScreenAddPuzzle.View {...input} />;
 							}
 

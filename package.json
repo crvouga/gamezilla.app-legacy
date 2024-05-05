@@ -33,7 +33,8 @@
 		"cg": "bun x concurrently \"bun gen-l18n\" \"bun gen-routes\"",
 		"cg:watch": "bun --watch cg",
 		"check": "bun server:cir-deps && bun client:cir-deps && bun x tsc",
-		"format": "bunx @biomejs/biome format --write gamezilla-app"
+		"format": "bun x @biomejs/biome format --write gamezilla-app",
+		"format:watch": "bun x watch 'bun format' gamezilla-app"
 	},
 	"dependencies": {
 		"chess.js": "^1.0.0-beta.6",
