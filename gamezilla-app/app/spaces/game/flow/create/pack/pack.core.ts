@@ -7,6 +7,7 @@ import { RemovePuzzleGame } from "./remove-puzzle/remove-puzzle.core";
 
 const initCore: ModelCore = {
 	...RemovePuzzleGame.initCore,
+	packBuilder: null,
 };
 
 const updateCore: UpdateCore = (input) => {

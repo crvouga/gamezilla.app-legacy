@@ -214,6 +214,11 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 					</p>
 					<div className="flex w-full flex-1 flex-col items-center justify-center">
 						<FlowPackGridUI.ViewPackPuzzleGrid
+							slideIndex={
+								packBuilder.screen.t === "screen-puzzle-grid"
+									? packBuilder.screen.slideIndex
+									: 0
+							}
 							puzzleIds={packBuilder.pack.puzzleIds}
 							renderCell={(props) => {
 								const puzzleId = packBuilder.pack.puzzleIds[props.index];
@@ -231,7 +236,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 												input.dispatch({
 													t: "pack-builder.user-clicked-pack-item",
 													puzzle,
-													index: props.index,
+													// index: props.index,
 												})
 											}
 											index={props.index}

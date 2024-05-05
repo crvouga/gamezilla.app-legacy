@@ -16,13 +16,21 @@ declare global {
 	}
 }
 
-const Container = (props: { children?: VDomChildren; className?: string }) => {
+const Container = (props: {
+	id: string;
+	children?: VDomChildren;
+	className?: string;
+	slideIndex: number;
+	onSlideIndexChanged?: (index: number) => void;
+}) => {
 	return (
 		<swiper-container
 			slides-per-view="auto"
 			className={props.className}
 			grab-cursor
 			centered-slides
+			initial-slide={props.slideIndex}
+			slide={props.slideIndex}
 		>
 			{props.children}
 		</swiper-container>

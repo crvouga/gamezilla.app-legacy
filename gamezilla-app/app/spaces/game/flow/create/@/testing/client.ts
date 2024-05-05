@@ -223,11 +223,10 @@ export const clickedExitPuzzleButton =
 	};
 
 export const clickedPuzzleGridItem =
-	(ctx: FlowClientCtx, puzzle: FlowPuzzle, index: number) =>
-	(model: ModelClient) => {
+	(ctx: FlowClientCtx, puzzle: FlowPuzzle) => (model: ModelClient) => {
 		return CreateClient.update({
 			model,
-			msg: { t: "pack-builder.user-clicked-pack-item", puzzle, index },
+			msg: { t: "pack-builder.user-clicked-pack-item", puzzle },
 			ctx,
 			modelCore: CreateCore.initCore({ ctx }),
 		});

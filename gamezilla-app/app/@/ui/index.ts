@@ -18,7 +18,7 @@ export * from "./select";
 export * from "./show";
 export * from "./slider";
 export * from "./spinner";
-export * from "./swiper";
+export * from "./swiper/swiper";
 export * from "./tabs";
 export * from "./text-field";
 export * from "./toggle-button";

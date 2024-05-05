@@ -1,11 +1,12 @@
 import { describe, expect, it } from "bun:test";
+import { UserId } from "gamezilla-app/app/@/data";
 import { SpaceGameCoreFixture } from "gamezilla-app/app/spaces/game/@/testing/sync";
+import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
 import { randomFlowPack, randomFlowPuzzle } from "../../../@/testing";
 import { CreateCore } from "../../create.core";
-import { PackBuilderCore } from "./pack-builder.core";
 import { ModelCore } from "../../create.types";
+import { PackBuilderCore } from "./pack-builder.core";
 import { MsgCore } from "./pack-builder.types";
-import { UserId } from "gamezilla-app/app/@/data";
 
 const Fixture = async () => {
 	const f = await SpaceGameCoreFixture();
@@ -29,7 +30,7 @@ const Fixture = async () => {
 			pack,
 			screen: {
 				t: "screen-puzzle-grid",
-				pageIndex: 0,
+				slideIndex: 0,
 			},
 		},
 	};
@@ -89,7 +90,6 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
-				index: 0,
 			},
 		]);
 
@@ -116,7 +116,6 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
-				index: 0,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-more-button",
@@ -135,7 +134,6 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
-				index: 0,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-closed-more-drawer",
@@ -154,7 +152,6 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
-				index: 0,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-next-puzzle-button",
@@ -174,7 +171,6 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
-				index: 0,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-next-puzzle-button",
@@ -195,7 +191,6 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[1],
-				index: 1,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-previous-puzzle-button",
@@ -215,7 +210,6 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[1],
-				index: 1,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-previous-puzzle-button",
@@ -235,7 +229,6 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[1],
-				index: 1,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button",
@@ -283,5 +276,44 @@ describe(import.meta.file, () => {
 		expect(modelCore.packBuilder?.pack.puzzleIds.includes(newPuzzle.id)).toBe(
 			true,
 		);
+	});
+
+	it("should be on the correct slide index after exiting the puzzle screen", async () => {
+		const f = await Fixture();
+
+		const msgs: MsgCore[] = [];
+
+		for (let i = 0; i < FlowPackGridUI.PER_SLIDE_ITEM_COUNT; i++) {
+			msgs.push({
+				t: "pack-builder.user-clicked-add-puzzle-item",
+				userId: f.currentUserId,
+				puzzle: await randomFlowPuzzle({ createdBy: f.currentUserId }),
+			});
+		}
+
+		const puzzle = await randomFlowPuzzle({ createdBy: f.currentUserId });
+
+		msgs.push({
+			t: "pack-builder.user-clicked-add-puzzle-item",
+			userId: f.currentUserId,
+			puzzle,
+		});
+
+		msgs.push({
+			t: "pack-builder.user-clicked-pack-item",
+			puzzle,
+		});
+
+		msgs.push({
+			t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button",
+			userId: f.currentUserId,
+		});
+
+		const after = f.applyMsgs(msgs);
+
+		expect(
+			after.packBuilder?.screen.t === "screen-puzzle-grid" &&
+				after.packBuilder.screen.slideIndex === 1,
+		).toBe(true);
 	});
 });

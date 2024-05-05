@@ -4,9 +4,14 @@ import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
 
 const COLUMN_COUNT = 5;
 const ROW_COUNT = 6;
+const PER_SLIDE_ITEM_COUNT = COLUMN_COUNT * ROW_COUNT;
 
 const toIndex = ({ x, y }: { x: number; y: number }) => {
 	return y * COLUMN_COUNT + x;
+};
+
+const toSlideIndex = (input: { index: number }) => {
+	return Math.floor(input.index / (COLUMN_COUNT * ROW_COUNT));
 };
 
 const ViewPackPuzzleGridSlide = (props: {
@@ -51,6 +56,7 @@ const ViewPackPuzzleGridSlide = (props: {
 };
 
 const ViewPackPuzzleGrid = (props: {
+	slideIndex: number;
 	puzzleIds: FlowPuzzleId[];
 	renderCell: (input: {
 		x: number;
@@ -79,7 +85,11 @@ const ViewPackPuzzleGrid = (props: {
 		);
 	}
 
-	return <Swiper.Container className="w-full">{slides}</Swiper.Container>;
+	return (
+		<Swiper.Container id="123" slideIndex={props.slideIndex} className="w-full">
+			{slides}
+		</Swiper.Container>
+	);
 };
 
 const ViewAddCell = (props: { onClick: () => void }) => {
@@ -123,7 +133,11 @@ const ViewLoadingCell = () => {
 };
 
 export const FlowPackGridUI = {
+	PER_SLIDE_ITEM_COUNT,
+	ROW_COUNT,
+	COLUMN_COUNT,
 	toIndex,
+	toSlideIndex,
 	ViewPackPuzzleGrid,
 	ViewAddCell,
 	ViewPuzzleCell,

@@ -16,7 +16,7 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 					},
 					screen: {
 						t: "screen-puzzle-grid",
-						pageIndex: 0,
+						slideIndex: 0,
 					},
 				},
 			};

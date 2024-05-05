@@ -92,7 +92,7 @@ describe(import.meta.file, () => {
 			serverCreatedPack(ctx, await createFlowPack(ctx)),
 			clickedOpenPuzzlePickerButton(ctx),
 			clickedPuzzlePickerItem(ctx, puzzle),
-			clickedPuzzleGridItem(ctx, puzzle, 0),
+			clickedPuzzleGridItem(ctx, puzzle),
 		);
 		const modelCore = deriveModelCore(ctx)(output);
 		expect(
@@ -160,7 +160,7 @@ describe(import.meta.file, () => {
 			serverCreatedPack(ctx, await createFlowPack(ctx)),
 			clickedOpenPuzzlePickerButton(ctx),
 			clickedPuzzlePickerItem(ctx, puzzle),
-			clickedPuzzleGridItem(ctx, puzzle, 0),
+			clickedPuzzleGridItem(ctx, puzzle),
 			clickedExitPuzzleButton(ctx),
 		);
 		const modelCore = deriveModelCore(ctx)(output);
@@ -175,7 +175,7 @@ describe(import.meta.file, () => {
 			serverCreatedPack(ctx, await createFlowPack(ctx)),
 			clickedOpenPuzzlePickerButton(ctx),
 			clickedPuzzlePickerItem(ctx, puzzle),
-			clickedPuzzleGridItem(ctx, puzzle, 0),
+			clickedPuzzleGridItem(ctx, puzzle),
 			clickedMoreButton(ctx),
 		);
 		const modelCore = deriveModelCore(ctx)(output);
@@ -193,7 +193,7 @@ describe(import.meta.file, () => {
 			serverCreatedPack(ctx, await createFlowPack(ctx)),
 			clickedOpenPuzzlePickerButton(ctx),
 			clickedPuzzlePickerItem(ctx, puzzle),
-			clickedPuzzleGridItem(ctx, puzzle, 0),
+			clickedPuzzleGridItem(ctx, puzzle),
 			clickedMoreButton(ctx),
 			closedMoreDrawer(ctx),
 		);

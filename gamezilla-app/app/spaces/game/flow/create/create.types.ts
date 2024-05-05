@@ -1,3 +1,4 @@
+import { p } from "gamezilla-app/@/core/parser";
 import type { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import type { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
 import type {
@@ -17,15 +18,8 @@ import type { IFlowPuzzleDb } from "../@/flow-puzzle/flow-puzzle-db/flow-puzzle-
 import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
 import { FlowPuzzleList } from "../@/flow-puzzle/flow-puzzle-list";
 import type { ListTabs } from "./list-tabs";
-import { Pack } from "./pack";
-import type { PackBuilder } from "./pack/builder";
-import { PuzzleBuilder } from "./puzzle/builder";
-import { PuzzleCreate } from "./puzzle/create";
-import { PuzzleDeleteForever } from "./puzzle/delete-forever";
-import { PuzzleEditName } from "./puzzle/edit";
-import { PuzzleList } from "./puzzle/list";
-import type { PuzzleSaveChanges } from "./puzzle/save-changes";
-import { p } from "gamezilla-app/@/core/parser";
+import { PackTypes } from "./pack";
+import { PuzzleTypes } from "./puzzle";
 
 //
 //
@@ -96,30 +90,16 @@ type BaseModelClient = {
 };
 
 export type ModelClient = BaseModelClient &
-	//
-	PuzzleCreate.ModelClient &
-	PuzzleList.ModelClient &
-	PuzzleSaveChanges.ModelClient &
-	PuzzleEditName.ModelClient &
-	PuzzleDeleteForever.ModelClient &
-	//
-	Pack.ModelClient;
+	PuzzleTypes.ModelClient &
+	PackTypes.ModelClient;
 
 export const initClient: ClientModule["init"] = {
-	...Pack.initClient({}),
-	//
-	...PuzzleBuilder.initClient,
-	...PuzzleCreate.initClient,
-	...PuzzleList.initClient,
-	...PuzzleEditName.initClient,
-	...PuzzleDeleteForever.initClient,
-	//
+	...PackTypes.initClient({}),
+	...PuzzleTypes.initClient,
 	flowPuzzleList: FlowPuzzleList.initClient,
 	flowPackList: FlowPackList.initClient,
-	//
 	packs: {},
 	puzzles: {},
-	//
 };
 
 export const ModelServer = p.obj({
@@ -146,57 +126,28 @@ type BaseMsgClient = { t: "time-passed" };
 export type MsgClient =
 	| { t: "flow-pack-list"; c: FlowPackList.MsgClient }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgClient }
-	//
 	| BaseMsgClient
 	| ListTabs.MsgClient
-	//
-	| PuzzleBuilder.MsgClient
-	| PuzzleCreate.MsgClient
-	| PuzzleEditName.MsgClient
-	| PuzzleDeleteForever.MsgClient
-	| PuzzleList.MsgClient
-	| PuzzleSaveChanges.MsgClient
-	//
-	| Pack.MsgClient;
+	| PuzzleTypes.MsgClient
+	| PackTypes.MsgClient;
 
 export type MsgServer =
-	//
 	| { t: "flow-pack-list"; c: FlowPackList.MsgServer }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgServer }
-	//
-	| PuzzleCreate.MsgServer
-	| PuzzleSaveChanges.MsgServer
-	| PuzzleDeleteForever.MsgServer
-	| PuzzleList.MsgServer
-	| PuzzleEditName.MsgServer
-	//
-	| Pack.MsgServer;
+	| PuzzleTypes.MsgServer
+	| PackTypes.MsgServer;
 
 export type MsgToServer =
-	//
 	| { t: "flow-pack-list"; c: FlowPackList.MsgToServer }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgToServer }
-	//
-	| PuzzleCreate.MsgToServer
-	| PuzzleSaveChanges.MsgToServer
-	| PuzzleDeleteForever.MsgToServer
-	| PuzzleEditName.MsgToServer
-	| PuzzleList.MsgToServer
-	//
-	| Pack.MsgToServer;
+	| PuzzleTypes.MsgToServer
+	| PackTypes.MsgToServer;
 
 export type MsgToClient =
-	//
 	| { t: "flow-pack-list"; c: FlowPackList.MsgToClient }
 	| { t: "flow-puzzle-list"; c: FlowPuzzleList.MsgToClient }
-	//
-	| PuzzleCreate.MsgToClient
-	| PuzzleSaveChanges.MsgToClient
-	| PuzzleEditName.MsgToClient
-	| PuzzleDeleteForever.MsgToClient
-	| PuzzleList.MsgToClient
-	//
-	| Pack.MsgToClient;
+	| PuzzleTypes.MsgToClient
+	| PackTypes.MsgToClient;
 
 //
 //
@@ -208,24 +159,17 @@ export type MsgToClient =
 
 export type MsgCore =
 	| ListTabs.MsgCore
-	//
-	| Pack.MsgCore
-	//
-	| PuzzleBuilder.MsgCore
-	| PuzzleList.MsgCore
-	| PuzzleCreate.MsgCore
-	| PuzzleEditName.MsgCore
-	| PuzzleDeleteForever.MsgCore
-	| PuzzleSaveChanges.MsgCore;
+	| PackTypes.MsgCore
+	| PuzzleTypes.MsgCore;
 
-export type ModelCore = Pack.ModelCore &
-	ListTabs.ModelCore & {
-		opened: { t: "list" } | { t: "puzzle-builder" } | { t: "pack-builder" };
-		//
-		packBuilder: PackBuilder.ModelCore | null;
-		//
-		puzzleBuilder: PuzzleBuilder.ModelCore | null;
-	};
+type BaseModelCore = {
+	opened: { t: "list" } | { t: "puzzle-builder" } | { t: "pack-builder" };
+};
+
+export type ModelCore = PuzzleTypes.ModelCore &
+	PackTypes.ModelCore &
+	ListTabs.ModelCore &
+	BaseModelCore;
 
 export type UpdateCore = (input: {
 	ctx: SpaceCtx;

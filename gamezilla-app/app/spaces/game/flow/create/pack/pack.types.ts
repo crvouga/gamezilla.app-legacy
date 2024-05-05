@@ -68,7 +68,9 @@ export type MsgToClient =
 //
 //
 
-export type ModelCore = RemovePuzzle.ModelCore;
+export type ModelCore = RemovePuzzle.ModelCore & {
+	packBuilder: PackBuilder.ModelCore | null;
+};
 
 export type MsgCore =
 	| PackCreate.MsgCore

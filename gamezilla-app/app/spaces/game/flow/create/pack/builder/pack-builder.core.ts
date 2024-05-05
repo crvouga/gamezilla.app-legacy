@@ -3,6 +3,7 @@ import { FlowVariantUIPlay } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
 import { UpdateCore } from "../../create.types";
 import { ModelCore } from "./pack-builder.types";
+import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
 
 const updateCores: UpdateCore[] = [];
 
@@ -21,7 +22,7 @@ updateCores.push(({ modelCore, msgCore }) => {
 					opened: { t: null },
 					screen: {
 						t: "screen-puzzle-grid",
-						pageIndex: 0,
+						slideIndex: 0,
 					},
 					pack: msgCore.created.value,
 				},
@@ -63,7 +64,7 @@ updateCores.push(({ modelCore, msgCore }) => {
 					pack: FlowPack.add(modelCore.packBuilder.pack, msgCore.puzzle.id),
 					screen: {
 						t: "screen-puzzle-grid",
-						pageIndex: 0,
+						slideIndex: 0,
 					},
 					opened: {
 						t: null,
@@ -114,7 +115,7 @@ updateCores.push(({ modelCore, msgCore }) => {
 					},
 					screen: {
 						t: "screen-puzzle-grid",
-						pageIndex: 0,
+						slideIndex: 0,
 					},
 				},
 			};
@@ -132,6 +133,14 @@ updateCores.push(({ modelCore, msgCore }) => {
 				return modelCore;
 			}
 
+			const index = modelCore.packBuilder.pack.puzzleIds.indexOf(
+				msgCore.puzzle.id,
+			);
+
+			if (index === -1) {
+				return modelCore;
+			}
+
 			return {
 				...modelCore,
 				packBuilder: {
@@ -139,7 +148,7 @@ updateCores.push(({ modelCore, msgCore }) => {
 					screen: {
 						opened: null,
 						t: "screen-puzzle",
-						puzzleIndex: msgCore.index,
+						puzzleIndex: index,
 						puzzle: msgCore.puzzle,
 						playUI: FlowVariantUIPlay.init({
 							flow: msgCore.puzzle.flow,
@@ -162,13 +171,26 @@ updateCores.push(({ modelCore, msgCore }) => {
 				return modelCore;
 			}
 
+			const puzzleIndex =
+				modelCore.packBuilder.screen.t === "screen-puzzle"
+					? modelCore.packBuilder.screen.puzzleIndex
+					: null;
+
+			if (puzzleIndex === null) {
+				return modelCore;
+			}
+
+			const slideIndex = FlowPackGridUI.toSlideIndex({
+				index: puzzleIndex,
+			});
+
 			return {
 				...modelCore,
 				packBuilder: {
 					...modelCore.packBuilder,
 					screen: {
 						t: "screen-puzzle-grid",
-						pageIndex: 0,
+						slideIndex: slideIndex,
 					},
 				},
 			};
@@ -355,7 +377,7 @@ updateCores.push(({ modelCore, msgCore }) => {
 					pack: FlowPack.remove(pack, msgCore.puzzleIndex),
 					screen: {
 						t: "screen-puzzle-grid",
-						pageIndex: 0,
+						slideIndex: 0,
 					},
 				},
 			};
@@ -383,7 +405,7 @@ const initCore = ({ pack }: { pack: FlowPack }): ModelCore => {
 		pack,
 		screen: {
 			t: "screen-puzzle-grid",
-			pageIndex: 0,
+			slideIndex: 0,
 		},
 		t: "pack-builder",
 	};

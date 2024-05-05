@@ -1,1 +1,1 @@
-export * as Pack from "./pack.types";
+export * as PackTypes from "./pack.types";

@@ -67,7 +67,7 @@ type Screen =
 	  }
 	| {
 			t: "screen-puzzle-grid";
-			pageIndex: number;
+			slideIndex: number;
 	  }
 	| {
 			t: "screen-puzzle";
@@ -107,7 +107,7 @@ export const MsgCore = p.or(
 	p.obj({
 		t: p.l("pack-builder.user-clicked-pack-item"),
 		puzzle: FlowPuzzle,
-		index: p.num,
+		// index: p.num,
 	}),
 	p.obj({
 		t: p.l("pack-builder.flow-play-ui"),
