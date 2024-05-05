@@ -2,9 +2,9 @@ import { UserId } from "gamezilla-app/app/@/data";
 import { Result } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import type { FlowVariantUIPlay } from "../../../@/flow";
-import { FlowPackGrid } from "../../../@/flow-pack";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
 import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
+import { FlowPackGrid } from "../../../@/flow-pack/flow-pack-grid";
 
 //
 //
