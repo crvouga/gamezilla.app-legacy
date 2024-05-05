@@ -16,7 +16,7 @@ const update: ClientModule["update"] = (input) => {
 		(model) => updateFlowPuzzleList({ ...input, model }),
 		(model) => updateFlowPackList({ ...input, model }),
 		(model) => ListTabsClient.update({ ...input, model }),
-		(model) => PuzzleClient.update({ ...input, model }),		
+		(model) => PuzzleClient.update({ ...input, model }),
 		(model) => PackClient.update({ ...input, model }),
 	);
 };

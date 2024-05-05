@@ -157,7 +157,7 @@ export const FlowPackGridClient: Pick<
 > = {
 	init() {
 		return {
-			model: initClient
+			model: initClient,
 		};
 	},
 	update(input) {

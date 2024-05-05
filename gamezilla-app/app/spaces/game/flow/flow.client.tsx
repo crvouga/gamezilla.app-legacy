@@ -30,7 +30,7 @@ import type {
 //
 //
 
-type Module = GameClientModule<{
+type ClientModule = GameClientModule<{
 	Model: ModelClient;
 	Msg: MsgClient;
 	//
@@ -55,12 +55,13 @@ type Module = GameClientModule<{
 //
 //
 
-const init: Module["init"] = {
+const init: ClientModule["init"] = {
 	t: "none",
 	puzzles: {},
+	packs: {},
 };
 
-const update: Module["update"] = (input) => {
+const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
 		(model) => GameMainMenu.update({ ...input, model }),
@@ -70,7 +71,7 @@ const update: Module["update"] = (input) => {
 	);
 };
 
-const updateChild: Module["update"] = (input) => {
+const updateChild: ClientModule["update"] = (input) => {
 	const { model, modelSync, msgEvt, ctx, msgCmd, msgSync, msgServer, msg } =
 		input;
 
@@ -81,7 +82,10 @@ const updateChild: Module["update"] = (input) => {
 
 		case "play": {
 			const updated = PlayClient.update({
-				ctx: { ...ctx, onQuit: () => {} },
+				ctx: {
+					...ctx,
+					onQuit: () => {},
+				},
 				modelSync: modelSync.c,
 				model: model.t === "play" ? model.c : PlayClient.init,
 				msgCmd: msgCmd,
@@ -99,7 +103,11 @@ const updateChild: Module["update"] = (input) => {
 
 			return {
 				...tagged,
-				model: { ...tagged.model, puzzles: model.puzzles },
+				model: {
+					...tagged.model,
+					puzzles: model.puzzles,
+					packs: model.packs,
+				},
 			};
 		}
 
@@ -107,7 +115,11 @@ const updateChild: Module["update"] = (input) => {
 			const updated = CreateClient.update({
 				ctx: { ...ctx, onQuit: () => {} },
 				modelSync: modelSync.c,
-				model: model.t === "create" ? model.c : CreateClient.init,
+				model: {
+					...(model.t === "create" ? model.c : CreateClient.init),
+					packs: model.packs,
+					puzzles: model.puzzles,
+				},
 				msgCmd: msgCmd,
 				msgEvt: msgEvt,
 				msgServer: msgServer?.t === "create" ? msgServer.c : null,
@@ -123,13 +135,17 @@ const updateChild: Module["update"] = (input) => {
 
 			return {
 				...tagged,
-				model: { ...tagged.model, puzzles: model.puzzles },
+				model: {
+					...tagged.model,
+					packs: updated.model.packs,
+					puzzles: updated.model.puzzles,
+				},
 			};
 		}
 	}
 };
 
-const updateFromMsgSync: Module["update"] = (input) => {
+const updateFromMsgSync: ClientModule["update"] = (input) => {
 	const { msgSync, model } = input;
 
 	switch (msgSync?.t) {
@@ -168,7 +184,7 @@ const updateFromMsgSync: Module["update"] = (input) => {
 	}
 };
 
-const updateFromMsg: Module["update"] = (input) => {
+const updateFromMsg: ClientModule["update"] = (input) => {
 	const { msg, model } = input;
 
 	switch (msg?.t) {
@@ -195,7 +211,7 @@ const updateFromMsg: Module["update"] = (input) => {
 //
 //
 
-const subscriptions: Module["subscriptions"] = (input) => {
+const subscriptions: ClientModule["subscriptions"] = (input) => {
 	switch (input.modelSync.t) {
 		case "play": {
 			return Sub.tag(
@@ -236,7 +252,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
 //
 //
 
-const View: Module["View"] = (input) => {
+const View: ClientModule["View"] = (input) => {
 	const { modelSync, dispatch } = input;
 
 	const ctx: FlowClientCtx = {
@@ -320,7 +336,7 @@ const View: Module["View"] = (input) => {
 	}
 };
 
-const ViewFeedItem: Module["ViewFeedItem"] = ({
+const ViewFeedItem: ClientModule["ViewFeedItem"] = ({
 	ctx,
 	dispatch,
 	modelSync,
@@ -370,7 +386,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = ({
 	}
 };
 
-export const FlowClient: Module = {
+export const FlowClient: ClientModule = {
 	init,
 	subscriptions,
 	update,

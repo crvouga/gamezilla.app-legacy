@@ -5,6 +5,8 @@ import * as Play from "./play/play.core";
 import type { FlowPuzzle } from "./@/flow-puzzle/flow-puzzle";
 import type { FlowPuzzleId } from "./@/flow-puzzle/flow-puzzle-id";
 import { p } from "gamezilla-app/@/core/parser";
+import { FlowPackId } from "./@/flow-pack/flow-pack-id";
+import { FlowPack } from "./@/flow-pack";
 
 //
 //
@@ -15,6 +17,9 @@ import { p } from "gamezilla-app/@/core/parser";
 export type BaseModelClient = {
 	puzzles: {
 		[flowPuzzleId: FlowPuzzleId]: FlowPuzzle;
+	};
+	packs: {
+		[flowPackId: FlowPackId]: FlowPack;
 	};
 };
 

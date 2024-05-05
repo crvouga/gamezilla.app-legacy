@@ -5,18 +5,16 @@ import { PackBuilderClient } from "./builder/pack-builder.client";
 import { PackCreateClient } from "./create/pack-create.client";
 import { PackListClient } from "./list/pack-list.client";
 
-export const PackClient:  Pick<ClientModule, 'update' | "subscriptions"> = {
-  update(input) {
-    return GameClientModule.andThen(
-      { model: input.model },
-      (model) => PackListClient.update({ ...input, model }),
-      (model) => PackCreateClient.update({ ...input, model }),
-      (model) => PackBuilderClient.update({ ...input, model })
-    );
-  },
-  subscriptions(input) {
-    return Sub.batch([
-      PackBuilderClient.subscriptions(input),
-    ]);
-  },
+export const PackClient: Pick<ClientModule, "update" | "subscriptions"> = {
+	update(input) {
+		return GameClientModule.andThen(
+			{ model: input.model },
+			(model) => PackListClient.update({ ...input, model }),
+			(model) => PackCreateClient.update({ ...input, model }),
+			(model) => PackBuilderClient.update({ ...input, model }),
+		);
+	},
+	subscriptions(input) {
+		return Sub.batch([PackBuilderClient.subscriptions(input)]);
+	},
 };
