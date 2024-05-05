@@ -81,7 +81,7 @@ export type Input<T extends GameServerModuleTypes> = {
 	/**
 	 * `msgSync` is an msgEvt of game
 	 */
-	msgSync?: (T["MsgSync"] & {eventId: EventId}) | null;
+	msgSync?: (T["MsgSync"] & { eventId: EventId }) | null;
 	/**
 	 * `msg`
 	 */
