@@ -1,5 +1,6 @@
-import { Err, Posix, Result } from "gamezilla-app/@/core";
+import { Posix, Result } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
+import { Sql } from "gamezilla-app/@/sql";
 import { UserId } from "gamezilla-app/app/@/data";
 import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
 import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
@@ -7,7 +8,6 @@ import type { FlowPack } from "../flow-pack";
 import { FlowPackId } from "../flow-pack-id";
 import { FlowPackName } from "../flow-pack-name";
 import type { IFlowPackDb, OrderClause, WhereClause } from "./flow-pack-db";
-import { Sql } from "gamezilla-app/@/sql";
 
 const Row = p.obj({
 	flow_pack_id: FlowPackId,
@@ -75,8 +75,7 @@ const ensureNumber = (maybeNumber: unknown): number => {
 		return parseFloat(maybeNumber);
 	}
 	return 0;
-}
-
+};
 
 export const FlowPackDbPostgres = ({
 	dbConnSql,
@@ -104,12 +103,12 @@ export const FlowPackDbPostgres = ({
 				FROM
 					game_flow_pack
 				${where.str}
-			`
-			
+			`;
+
 			const queried = await dbConnSql.query(
 				p.obj({ count: p.or(p.num, p.str) }),
 				str,
-				vars
+				vars,
 			);
 
 			return Result.mapOk(queried, (rows) => ensureNumber(rows[0]?.count));
@@ -201,7 +200,7 @@ export const FlowPackDbPostgres = ({
 				"DELETE FROM game_flow_pack WHERE flow_pack_id = :flow_pack_id",
 				{ flow_pack_id: input.id },
 			);
-			return Result.mapOk(queried, () => null);``
+			return Result.mapOk(queried, () => null);
 		},
 	};
 };

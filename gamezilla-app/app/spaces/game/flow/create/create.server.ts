@@ -17,16 +17,21 @@ import { PuzzleSaveChangesServer } from "./puzzle/save-changes/puzzle-save-chang
 const deps: ServerModule["deps"] = async (input) => {
 	return {
 		FlowPuzzleDb: FlowPuzzleDb({
-			t: "postgres",
+			t: "db-conn-sql",
 			dbConnSql: input.ctx.dbConnSql,
 		}),
 		FlowPackDb: FlowPackDb({
-			t: "hash-map",
+			t: "db-conn-sql",
+			dbConnSql: input.ctx.dbConnSql,
 		}),
 	};
 };
 
 const update: ServerModule["update"] = async (input) => {
+	if (input.msgSync?.t === "pack-builder.user-clicked-add-puzzle-item") {
+		debugger;
+		//
+	}
 	return GameServerModule.andThen(
 		{ model: input.model },
 		//

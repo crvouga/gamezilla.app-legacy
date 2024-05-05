@@ -6,7 +6,7 @@ import type { VDom } from "gamezilla-app/@/vdom";
 import type { SpaceClientModule } from "../architecture/architecture";
 import { EndSpaceClient } from "../end-space/end-space.client";
 import { Feed } from "../feed/feed";
-import { GameClient } from "../space-game/space-game.client";
+import { SpaceGameClient } from "../space-game/space-game.client";
 import { JoinSpaceClient } from "../join-space/join-space.client";
 import { LeaveSpaceClient } from "../leave-space/leave-space.client";
 import { Modals } from "../modals/modals";
@@ -68,7 +68,7 @@ const View = (props: {
 					)}
 
 					<div className="flex w-full flex-1 flex-col overflow-hidden">
-						<GameClient.View {...props} ctx={spaceCtx} />
+						<SpaceGameClient.View {...props} ctx={spaceCtx} />
 					</div>
 				</div>
 			);

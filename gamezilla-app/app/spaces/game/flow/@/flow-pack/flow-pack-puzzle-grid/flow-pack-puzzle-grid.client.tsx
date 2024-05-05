@@ -49,7 +49,7 @@ const ObserveGrid: Pick<ClientModule, "View" | "update"> = {
 				}
 
 				const isMissingPuzzles = input.ctx.pack.puzzleIds.some(
-					(puzzleId) => !input.model.puzzles[puzzleId],
+					(puzzleId) => !Boolean(input.model.puzzles[puzzleId]),
 				);
 
 				if (!isMissingPuzzles) {

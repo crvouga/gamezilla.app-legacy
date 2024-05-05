@@ -8,7 +8,7 @@ import {
 } from "./architecture/architecture";
 import { CurrentSpaceBottomBar } from "./current-space-bottom-bar/current-space-bottom-bar";
 import { EndSpaceClient } from "./end-space/end-space.client";
-import { GameClient } from "./space-game/space-game.client";
+import { SpaceGameClient } from "./space-game/space-game.client";
 import { GoHome } from "./go-home/go-home";
 import { JoinSpaceClient } from "./join-space/join-space.client";
 import { LeaveSpaceClient } from "./leave-space/leave-space.client";
@@ -128,7 +128,7 @@ const updateChild: SpaceClientModule["update"] = (input) => {
 		(model) => EndSpaceClient.update({ ...input, model }),
 		(model) => LeaveSpaceClient.update({ ...input, model }),
 		(model) => updateSpacesFromSpaceEvent({ ...input, model }),
-		(model) => GameClient.update({ ...input, model }),
+		(model) => SpaceGameClient.update({ ...input, model }),
 		(model) => SyncClient.update({ ...input, model }),
 		(model) => StartSpaceClient.update({ ...input, model }),
 		(model) => JoinSpaceClient.update({ ...input, model }),
@@ -168,7 +168,7 @@ const updateSpacesFromSpaceEvent: SpaceClientModule["update"] = ({
 export const subscriptions: ClientModule["subscriptions"] = (input) => {
 	return Sub.batch([
 		//
-		GameClient.subscriptions(input),
+		SpaceGameClient.subscriptions(input),
 	]);
 };
 

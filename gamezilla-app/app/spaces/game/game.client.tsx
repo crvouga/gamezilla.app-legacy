@@ -226,7 +226,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
 	}
 };
 
-export const Game = {
+export const GameClient = {
 	init,
 	subscriptions,
 	update,

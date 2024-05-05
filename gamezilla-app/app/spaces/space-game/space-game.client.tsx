@@ -3,7 +3,7 @@ import { Button } from "gamezilla-app/app/@/ui";
 import { Eff, Sub } from "gamezilla-app/@/core";
 import { ViewGameHeader, ViewUsersInSpaceList } from "../game/@/game";
 import { CoverArt } from "../game/game-cover-art";
-import { Game } from "../game/game.client";
+import { GameClient } from "../game/game.client";
 import { gameNameList, gameNameToString } from "../game/game.core";
 import { type WithEventId, withId } from "../@/event";
 import { SpaceClientCmd } from "../@/space-client-cmd";
@@ -158,9 +158,9 @@ const updateGame: SpaceClientModule["update"] = (input) => {
 		? Spaces.toEventWithMeta(model, spaceId, msgSpaceEvent?.eventId)
 		: null;
 
-	const gameModel = model.games[spaceId] ?? Game.init(modelSync.t);
+	const gameModel = model.games[spaceId] ?? GameClient.init(modelSync.t);
 
-	const gameUpdated = Game.update({
+	const gameUpdated = GameClient.update({
 		ctx: {
 			...ctx,
 			space: spaceState,
@@ -249,9 +249,9 @@ const subscriptionsCurrentUserGame: SpaceClientModule["subscriptions"] = ({
 		return Sub.None;
 	}
 
-	const gameModel = model.games[spaceId] ?? Game.init(modelSync.t);
+	const gameModel = model.games[spaceId] ?? GameClient.init(modelSync.t);
 
-	const gameSub = Game.subscriptions({
+	const gameSub = GameClient.subscriptions({
 		ctx: { ...clientCtx, space: spaceState },
 		modelSync: modelSync,
 		model: gameModel,
@@ -285,11 +285,11 @@ const View: SpaceClientModule["View"] = (input) => {
 
 	if (space.game) {
 		return (
-			<Game.View
+			<GameClient.View
 				modelSync={space.game}
 				ctx={{ ...ctx, space: space, currentUserId: ctx.currentUserId }}
 				dispatch={(c) => dispatch({ t: "game", spaceId: space.spaceId, c })}
-				model={model.games[ctx.space.spaceId] ?? Game.init(space.game.t)}
+				model={model.games[ctx.space.spaceId] ?? GameClient.init(space.game.t)}
 			/>
 		);
 	}
@@ -373,7 +373,7 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
 //
 //
 
-export const GameClient = {
+export const SpaceGameClient = {
 	View,
 	update,
 	subscriptions,

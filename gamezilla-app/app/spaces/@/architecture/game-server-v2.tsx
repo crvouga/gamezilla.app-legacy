@@ -1,6 +1,6 @@
-import type { ClientId, SessionId, UserId } from "gamezilla-app/app/@/data";
 import { Eff, type Sub } from "gamezilla-app/@/core";
-import type { EventMeta, WithEventId } from "../event";
+import type { ClientId, SessionId, UserId } from "gamezilla-app/app/@/data";
+import type { EventId, WithEventId } from "../event";
 
 //
 //
@@ -81,7 +81,7 @@ export type Input<T extends GameServerModuleTypes> = {
 	/**
 	 * `msgSync` is an msgEvt of game
 	 */
-	msgSync?: (T["MsgSync"] & EventMeta) | null;
+	msgSync?: (T["MsgSync"] & {eventId: EventId}) | null;
 	/**
 	 * `msg`
 	 */

@@ -5,14 +5,14 @@ import { FlowPuzzleDbPostgres } from "./flow-puzzle-db-impl-postgres";
 
 export type FlowPuzzleDbImpl =
 	| { t: "hash-map" }
-	| { t: "postgres"; dbConnSql: IDbConnSql };
+	| { t: "db-conn-sql"; dbConnSql: IDbConnSql };
 
 export const FlowPuzzleDb = (impl: FlowPuzzleDbImpl): IFlowPuzzleDb => {
 	switch (impl.t) {
 		case "hash-map": {
 			return FlowPuzzleDbHashMap();
 		}
-		case "postgres": {
+		case "db-conn-sql": {
 			return FlowPuzzleDbPostgres(impl);
 		}
 	}

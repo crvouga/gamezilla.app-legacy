@@ -1,11 +1,12 @@
 import { describe, expect, it } from "bun:test";
-import { Ok, Posix } from "gamezilla-app/@/core";
+import { Ok, Posix, Result } from "gamezilla-app/@/core";
 import { UserId } from "gamezilla-app/app/@/data";
 import { ServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
 import type { FlowPack } from "../flow-pack";
 import { FlowPackId } from "../flow-pack-id";
 import { FlowPackName } from "../flow-pack-name";
 import { FlowPackDb } from "./flow-pack-db-impl";
+import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
 
 const Fixture = async () => {
 	const testEnv = await ServerTestEnv();
@@ -33,8 +34,10 @@ const Fixture = async () => {
 	}
 };
 
-const randomFlowPack = async (): Promise<FlowPack> => {
-	const createdBy = UserId.generate();
+const randomFlowPack = async (input?: {
+	createdBy?: UserId;
+}): Promise<FlowPack> => {
+	const createdBy = input?.createdBy ?? UserId.generate();
 	return {
 		createdAt: Posix.now(),
 		createdBy: createdBy,
@@ -85,6 +88,37 @@ describe(import.meta.file, () => {
 		expect(listed.t).toBe("ok");
 		if (listed.t === "ok") {
 			expect(listed.value.items).toEqual([pack]);
+			expect(listed.value.total).toEqual(1);
+		}
+	});
+
+	it("should be able to filter by created by", async () => {
+		const f = await Fixture();
+		const createdBy = UserId.generate();
+		const pack = await randomFlowPack({ createdBy });
+		await f.flowPackDb.put(pack);
+
+		for (let i = 0; i < 10; i++) {
+			const other = await randomFlowPack();
+			await f.flowPackDb.put(other);
+		}
+
+		const listed = await f.flowPackDb.list({
+			order: {
+				createdAt: "asc",
+			},
+			pagination: {
+				limit: 10,
+				offset: 0,
+			},
+			where: {
+				createdBy: pack.createdBy,
+			},
+		});
+		expect(listed.t).toBe("ok");
+		if (listed.t === "ok") {
+			expect(listed.value.items).toEqual([pack]);
+			expect(listed.value.total).toEqual(1);
 		}
 	});
 
@@ -100,7 +134,7 @@ describe(import.meta.file, () => {
 		expect(count).toEqual(Ok(1));
 	});
 
-	it('should be able to zap', async () => {
+	it("should be able to zap", async () => {
 		const f = await Fixture();
 		const pack = await randomFlowPack();
 		await f.flowPackDb.put(pack);
@@ -111,5 +145,21 @@ describe(import.meta.file, () => {
 		const after = await f.flowPackDb.get(pack.id);
 		expect(zapped).toEqual(Ok(null));
 		expect(after).toEqual(Ok(null));
-	})
+	});
+
+	it("should be able to update", async () => {
+		const f = await Fixture();
+		const pack = await randomFlowPack();
+		await f.flowPackDb.put(pack);
+		const before = Result.withDefault(await f.flowPackDb.get(pack.id), null);
+		const updated: FlowPack = {
+			...pack,
+			name: await FlowPackName.generate({ count: 1 }),
+			puzzleIds: [FlowPuzzleId.generate(), FlowPuzzleId.generate()],
+		};
+		await f.flowPackDb.put(updated);
+		const after = Result.withDefault(await f.flowPackDb.get(pack.id), null);
+		expect(before).toEqual(pack);
+		expect(after).toEqual(updated);
+	});
 });

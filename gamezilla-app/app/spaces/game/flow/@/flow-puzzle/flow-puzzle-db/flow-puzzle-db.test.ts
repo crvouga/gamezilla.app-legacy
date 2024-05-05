@@ -37,7 +37,7 @@ const Fixture = async () => {
 	switch (testEnv.t) {
 		case "integration": {
 			const flowPuzzleDb = FlowPuzzleDb({
-				t: "postgres",
+				t: "db-conn-sql",
 				dbConnSql: testEnv.dbConnSql,
 			});
 

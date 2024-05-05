@@ -9,7 +9,7 @@ import { JoinSpaceServer } from "./join-space/join-space.server";
 import { ListSpacesServer } from "./list-spaces/list-spaces.server";
 import { ProfileCache } from "./profile-cache";
 import { GameDb } from "./space-game/space-game-db";
-import { GameServer } from "./space-game/space-game.server";
+import { SpaceGameServer } from "./space-game/space-game.server";
 import { SpacesDb } from "./spaces-core/space-db";
 import { SpacesCoreServer } from "./spaces-core/spaces-core.server";
 import type { ServerModule } from "./spaces.core";
@@ -141,7 +141,7 @@ const updateChild: SpaceServerModule["update"] = async (input) => {
 		(model) => SyncServer.update({ ...input, model }),
 		(model) => StartSpaceServer.update({ ...input, model }),
 		(model) => JoinSpaceServer.update({ ...input, model }),
-		(model) => GameServer.update({ ...input, model }),
+		(model) => SpaceGameServer.update({ ...input, model }),
 	);
 };
 
@@ -171,5 +171,5 @@ const updateSpacesFromSpaceEvent: SpaceServerModule["update"] = async ({
 //
 
 export const subscriptions: ServerModule["subscriptions"] = async (input) => {
-	return GameServer.subscriptions(input);
+	return SpaceGameServer.subscriptions(input);
 };

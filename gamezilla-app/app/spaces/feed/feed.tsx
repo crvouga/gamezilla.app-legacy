@@ -1,4 +1,4 @@
-import { Game } from "../game/game.client";
+import { GameClient } from "../game/game.client";
 import type { WithEventId } from "../@/event";
 import { FeedItem } from "../@/feed-item";
 import type { SpaceClientCtx } from "../@/space";
@@ -48,7 +48,7 @@ const ViewFeedItem = ({
 				return null;
 			}
 			return (
-				<Game.ViewFeedItem
+				<GameClient.ViewFeedItem
 					ctx={ctx}
 					msgSync={{ ...msgEvt, ...msgEvt.c }}
 					modelSync={state.game}
