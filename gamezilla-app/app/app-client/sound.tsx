@@ -310,8 +310,6 @@ async function preloadSounds(src: string[]) {
 }
 
 async function preloadSound(src: string) {
-	await resumedPromise();
-
 	const response = await fetch(src);
 	const arrayBuffer = await response.arrayBuffer();
 	const audioContext = getAudioContext();
@@ -324,8 +322,6 @@ async function playSoundEff(
 	src: string,
 	volume: number,
 ): Promise<Result<string, null>> {
-	await resumedPromise();
-
 	const audioBuffer = audioBuffers.get(src);
 
 	if (!audioBuffer) {
