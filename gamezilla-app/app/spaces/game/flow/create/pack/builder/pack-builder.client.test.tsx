@@ -18,15 +18,14 @@ import {
 } from "../../@/testing/client";
 import { deriveModelSync } from "../../@/testing/game";
 import type { ModelClient, ModelSync } from "../../create.core";
-import { initSync } from "../../create.sync";
 import { PackBuilderClient } from "./pack-builder.client";
-import { PackBuilderSync } from "./pack-builder.sync";
+import { CreateSync } from "../../create.sync";
 
 const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
 	return PackBuilderClient.update({
 		ctx,
 		model,
-		modelSync: initSync({ ctx }),
+		modelSync: CreateSync.initSync({ ctx }),
 		msg: {
 			t: "pack-builder.puzzle-screen.user-clicked-more-button",
 			userId: ctx.currentUserId,
@@ -38,7 +37,7 @@ const closedMoreDrawer = (ctx: FlowClientCtx) => (model: ModelClient) => {
 	return PackBuilderClient.update({
 		ctx,
 		model,
-		modelSync: initSync({ ctx }),
+		modelSync: CreateSync.initSync({ ctx }),
 		msg: {
 			t: "pack-builder.puzzle-screen.user-closed-more-drawer",
 			userId: ctx.currentUserId,
@@ -69,11 +68,15 @@ export const Fixture = async () => {
 		packBuilder: {
 			t: "pack-builder",
 			pack: pack,
-			screen: { t: "add-puzzle" },
+			screen: {
+				t: "add-puzzle",
+			},
 		},
 	};
 	return {
 		...f,
+		pack,
+		puzzle,
 		model,
 		modelSync,
 	};
@@ -203,10 +206,45 @@ describe(import.meta.file, () => {
 
 	it("should should remove puzzle from pack clicking remove from pack button", async () => {
 		const f = await Fixture();
-		const scaned = scan({
-			update: PackBuilderClient.update,
-			reducer: PackBuilderSync.reducer,
-			initial: f,
+		const output = PackBuilderClient.update({
+			...f,
+			msg: {
+				t: "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button",
+				userId: f.ctx.currentUserId,
+				puzzleIndex: f.pack.puzzleIds.indexOf(f.puzzle.id),
+			},
 		});
+		expect(
+			output.msgSync?.some(
+				(msg) =>
+					msg.t ===
+					"pack-builder.puzzle-screen.user-clicked-remove-from-pack-button",
+			),
+		).toBe(true);
+	});
+
+	it("should update pack when pack changes in model sync", async () => {
+		const f = await Fixture();
+		const before = { ...f.model.packs[f.pack.id] };
+		const updatedPack: FlowPack = {
+			...f.pack,
+			puzzleIds: [],
+		};
+		const output = PackBuilderClient.update({
+			...f,
+			modelSync: {
+				...f.modelSync,
+				packBuilder: {
+					t: "pack-builder",
+					pack: updatedPack,
+					screen: {
+						t: "add-puzzle",
+					},
+				},
+			},
+		});
+		const after = { ...output.model.packs[f.pack.id] };
+		expect(before).toEqual(f.pack);
+		expect(after).toEqual(updatedPack);
 	});
 });

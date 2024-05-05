@@ -13,14 +13,14 @@ import {
 import { deriveModelSync } from "../../@/testing/game";
 import { CreateClient } from "../../create.client";
 import type { ModelClient } from "../../create.core";
-import { initSync } from "../../create.sync";
+import { CreateSync } from "../../create.sync";
 
 const clickedPuzzleListItem =
 	(ctx: FlowClientCtx, puzzle: FlowPuzzle) => (model: ModelClient) => {
 		return CreateClient.update({
 			ctx,
 			model,
-			modelSync: initSync({ ctx }),
+			modelSync: CreateSync.initSync({ ctx }),
 			msg: {
 				t: "puzzle-list.clicked-puzzle-list-item",
 				puzzle,
@@ -33,7 +33,7 @@ const userClickedPuzzleListItem =
 		return CreateClient.update({
 			ctx,
 			model,
-			modelSync: initSync({ ctx }),
+			modelSync: CreateSync.initSync({ ctx }),
 			msgSync: {
 				t: "puzzle-list.clicked-puzzle-list-item",
 				puzzle,

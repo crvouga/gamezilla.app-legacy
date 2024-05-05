@@ -332,6 +332,37 @@ const clamp = (value: number, min: number, max: number): number => {
 	return Math.max(min, Math.min(max, value));
 };
 
+const userClickedRemovePuzzleButton: SyncReducer = ({ modelSync, msgSync }) => {
+	if (modelSync.packBuilder?.screen.t !== "screen-puzzle") {
+		return modelSync;
+	}
+
+	switch (msgSync.t) {
+		case "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button": {
+			if (!modelSync.packBuilder) {
+				return modelSync;
+			}
+
+			const pack = modelSync.packBuilder.pack;
+
+			return {
+				...modelSync,
+				packBuilder: {
+					...modelSync.packBuilder,
+					pack: FlowPack.remove(pack, msgSync.puzzleIndex),
+					screen: {
+						t: "screen-puzzle-grid",
+						pageIndex: 0,
+					},
+				},
+			};
+		}
+		default: {
+			return modelSync;
+		}
+	}
+};
+
 const reducer: SyncReducer = (input) => {
 	return [
 		flowGridUIPlay,
@@ -345,6 +376,7 @@ const reducer: SyncReducer = (input) => {
 		userClickedExitButton,
 		userClickedPackItem,
 		userClickedExitPuzzleButton,
+		userClickedRemovePuzzleButton,
 		//
 	].reduce(
 		(modelSync, reducer) => reducer({ ...input, modelSync }),

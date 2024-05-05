@@ -368,6 +368,14 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 					msgCmd: [playSound(APP_SOUND.tap)],
 				};
 			}
+
+			case "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button": {
+				return {
+					model,
+					msgSync: [withId(msg)],
+					msgCmd: [playSound(APP_SOUND.tap)],
+				};
+			}
 		}
 
 		return { model };
@@ -544,6 +552,21 @@ export const PackBuilderClient: Pick<
 			(model) => ScreenPuzzle.update({ ...input, model }),
 			(model) => PuzzleGrid.update({ ...input, model }),
 			(model) => ScreenPuzzleMore.update({ ...input, model }),
+			(model) => {
+				if (input.modelSync.packBuilder?.pack) {
+					return {
+						model: {
+							...model,
+							packs: {
+								...model.packs,
+								[input.modelSync.packBuilder.pack.id]:
+									input.modelSync.packBuilder.pack,
+							},
+						},
+					};
+				}
+				return { model };
+			},
 		);
 	},
 

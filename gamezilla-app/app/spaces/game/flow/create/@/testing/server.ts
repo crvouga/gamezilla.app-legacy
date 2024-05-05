@@ -6,13 +6,13 @@ import {
 import { FlowPackDb } from "../../../@/flow-pack/flow-pack-db";
 import { FlowPuzzleDb } from "../../../@/flow-puzzle/flow-puzzle-db";
 import { initServer, type FlowServerDeps } from "../../create.core";
-import { initSync } from "../../create.sync";
+import { CreateSync } from "../../create.sync";
 
 export const initial = {
 	model: initServer,
 };
 
-export const defaultModelSync = initSync({
+export const defaultModelSync = CreateSync.initSync({
 	ctx: testSpaceServerCtx,
 });
 
@@ -48,7 +48,7 @@ export const FlowCreateFixtureServer = async () => {
 	const f = await SpaceGameFixtureServer();
 	const deps = await getDeps();
 	const model = initServer;
-	const modelSync = initSync({
+	const modelSync = CreateSync.initSync({
 		ctx: f.ctx,
 	});
 	return {

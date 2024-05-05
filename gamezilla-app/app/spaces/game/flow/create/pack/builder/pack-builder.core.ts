@@ -135,6 +135,7 @@ export const MsgSync = p.or(
 	}),
 	p.obj({
 		t: p.l("pack-builder.puzzle-screen.user-clicked-remove-from-pack-button"),
+		puzzleIndex: p.num,
 		userId: UserId,
 	}),
 );

@@ -9,7 +9,7 @@ import { PuzzleEditGame } from "./puzzle/edit/puzzle-edit.sync";
 import { PuzzleListGame } from "./puzzle/list/puzzle-list.sync";
 import { PuzzleSaveChangesGame } from "./puzzle/save-changes/puzzle-save-changes.sync";
 
-export const initSync = (_input: { ctx: SpaceCtx }): ModelSync => {
+const initSync = (_input: { ctx: SpaceCtx }): ModelSync => {
 	return {
 		...ListTabsGame.initSync,
 		...PackGame.initSync,
@@ -19,7 +19,7 @@ export const initSync = (_input: { ctx: SpaceCtx }): ModelSync => {
 	};
 };
 
-export const reducer: SyncReducer = (input) => {
+const reducer: SyncReducer = (input) => {
 	return [
 		PuzzleDeleteForeverGame.reducer,
 		PuzzleBuilderGame.reducer,
@@ -35,4 +35,9 @@ export const reducer: SyncReducer = (input) => {
 		(acc, reducer) => reducer({ ...input, modelSync: acc }),
 		input.modelSync,
 	);
+};
+
+export const CreateSync = {
+	initSync,
+	reducer,
 };

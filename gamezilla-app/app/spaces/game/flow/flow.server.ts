@@ -6,7 +6,7 @@ import type {
 import { Sub } from "gamezilla-app/@/core";
 import { SpaceServerCmd } from "../../@/space-server-cmd";
 import { CreateServer } from "./create/create.server";
-import * as CreateGame from "./create/create.sync";
+import { CreateSync } from "./create/create.sync";
 import * as Play from "./play/play.core";
 import { PlayServer } from "./play/play.server";
 import type {
@@ -52,7 +52,7 @@ const updateCreate: Module["update"] = async (input) => {
 		modelSync:
 			input.modelSync.t === "create"
 				? input.modelSync.c
-				: CreateGame.initSync({ ctx: input.ctx }),
+				: CreateSync.initSync({ ctx: input.ctx }),
 		model: input.model.t === "create" ? input.model.c : CreateServer.init,
 		msgCmd: input.msgCmd,
 		msgEvt: input.msgEvt,

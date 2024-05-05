@@ -1,8 +1,8 @@
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import type { WithEventMeta } from "../../@/event";
-import * as Create from "./create/create.sync";
-import * as Play from "./play/play.core";
+import { CreateSync } from "./create/create.sync";
 import type { ModelSync, MsgSync } from "./flow.core";
+import * as Play from "./play/play.core";
 
 export const initSync = () => {
 	return { t: null };
@@ -42,7 +42,7 @@ export const reducer = ({
 				case "create": {
 					return {
 						t: "create",
-						c: Create.reducer({
+						c: CreateSync.reducer({
 							ctx,
 							msgSync: msgSync.c,
 							modelSync: modelSync.c,
@@ -76,7 +76,7 @@ export const reducer = ({
 				case "create": {
 					return {
 						t: "create",
-						c: Create.initSync({ ctx }),
+						c: CreateSync.initSync({ ctx }),
 					};
 				}
 			}

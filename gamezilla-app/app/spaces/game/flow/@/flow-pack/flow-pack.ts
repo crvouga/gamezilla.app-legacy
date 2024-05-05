@@ -47,6 +47,13 @@ const add = (pack: FlowPack, puzzleId: FlowPuzzleId): FlowPack => {
 	};
 };
 
+const remove = (pack: FlowPack, index: number): FlowPack => {
+	return {
+		...pack,
+		puzzleIds: pack.puzzleIds.filter((_, i) => i !== index),
+	};
+};
+
 const removePuzzleAtIndex = (pack: FlowPack, index: number): FlowPack => {
 	return {
 		...pack,
@@ -71,6 +78,7 @@ export const FlowPack = {
 	includes,
 	canGoPrevious,
 	canGoNext,
+	remove,
 	removePuzzleAtIndex,
 	parser,
 };
