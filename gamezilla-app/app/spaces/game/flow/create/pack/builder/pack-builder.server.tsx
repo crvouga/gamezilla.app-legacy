@@ -23,7 +23,7 @@ const SavePack: Pick<ServerModule, "update"> = {
 					msgSync: [withId({ t: "pack-builder.saved-pack", saved })],
 				};
 			}
-				
+
 			default: {
 				return { model };
 			}

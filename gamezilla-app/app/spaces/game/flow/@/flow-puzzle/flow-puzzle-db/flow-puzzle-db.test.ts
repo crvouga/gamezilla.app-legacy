@@ -1,36 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import { Ok, Posix, Result } from "gamezilla-app/@/core";
+import { Ok, Result } from "gamezilla-app/@/core";
 import { UserId } from "gamezilla-app/app/@/data";
 import { ServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
-import { FlowVariant, FlowVariantDimensions } from "../../flow/flow-variant";
+import { randomFlowPuzzle } from "../../testing";
 import type { FlowPuzzle } from "../flow-puzzle";
-import { FlowPuzzleId } from "../flow-puzzle-id";
 import { FlowPuzzleName } from "../flow-puzzle-name";
 import { FlowPuzzleDb } from "./flow-puzzle-db-impl";
-
-const randomFlowPuzzle = async (input?: {
-	createdBy?: UserId;
-}): Promise<FlowPuzzle> => {
-	const createdBy = input?.createdBy ?? UserId.generate();
-	return {
-		createdAt: Posix.now(),
-		createdBy,
-		name: await FlowPuzzleName.generate({
-			count: 0,
-		}),
-		lastUpdatedAt: Posix.now(),
-		lastUpdatedBy: createdBy,
-		id: FlowPuzzleId.generate(),
-		flow: FlowVariant.init({
-			dimensions: FlowVariantDimensions.init({
-				t: "flow-grid",
-				height: 5,
-				width: 5,
-			}),
-			terminalsByGroupId: {},
-		}),
-	};
-};
 
 const Fixture = async () => {
 	const testEnv = await ServerTestEnv();

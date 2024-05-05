@@ -27,3 +27,9 @@ export const testSpaceServerCtx: SpaceServerCtx = {
 		visibility: "public",
 	},
 };
+
+export const SpaceGameServerFixture = async () => {
+	return {
+		ctx: testSpaceServerCtx,
+	};
+};

@@ -351,6 +351,6 @@ const reducer: SyncReducer = (input) => {
 	);
 };
 
-export const PackBuilderGame = {
+export const PackBuilderSync = {
 	reducer,
 };

@@ -28,10 +28,6 @@ const deps: ServerModule["deps"] = async (input) => {
 };
 
 const update: ServerModule["update"] = async (input) => {
-	if (input.msgSync?.t === "pack-builder.user-clicked-add-puzzle-item") {
-		debugger;
-		//
-	}
 	return GameServerModule.andThen(
 		{ model: input.model },
 		//

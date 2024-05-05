@@ -1,12 +1,12 @@
 import { describe, expect, it } from "bun:test";
-import { Ok, Posix, Result } from "gamezilla-app/@/core";
+import { Ok, Result } from "gamezilla-app/@/core";
 import { UserId } from "gamezilla-app/app/@/data";
 import { ServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
+import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
+import { randomFlowPack } from "../../testing";
 import type { FlowPack } from "../flow-pack";
-import { FlowPackId } from "../flow-pack-id";
 import { FlowPackName } from "../flow-pack-name";
 import { FlowPackDb } from "./flow-pack-db-impl";
-import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
 
 const Fixture = async () => {
 	const testEnv = await ServerTestEnv();
@@ -32,23 +32,6 @@ const Fixture = async () => {
 			};
 		}
 	}
-};
-
-const randomFlowPack = async (input?: {
-	createdBy?: UserId;
-}): Promise<FlowPack> => {
-	const createdBy = input?.createdBy ?? UserId.generate();
-	return {
-		createdAt: Posix.now(),
-		createdBy: createdBy,
-		id: FlowPackId.generate(),
-		lastUpdatedAt: Posix.now(),
-		lastUpdatedBy: createdBy,
-		name: await FlowPackName.generate({
-			count: 0,
-		}),
-		puzzleIds: [],
-	};
 };
 
 describe(import.meta.file, () => {

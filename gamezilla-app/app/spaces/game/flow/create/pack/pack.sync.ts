@@ -1,5 +1,5 @@
 import type { SyncReducer } from "../create.core";
-import { PackBuilderGame } from "./builder/pack-builder.sync";
+import { PackBuilderSync } from "./builder/pack-builder.sync";
 import { PackCreateGame } from "./create/pack-create.sync";
 import { PackListGame } from "./list/pack-list.sync";
 import type { ModelSync } from "./pack.core";
@@ -12,7 +12,7 @@ const initSync: ModelSync = {
 const reducer: SyncReducer = (input) => {
 	return [
 		PackCreateGame.reducer,
-		PackBuilderGame.reducer,
+		PackBuilderSync.reducer,
 		PackListGame.reducer,
 	].reduce(
 		(modelSync, reducer) => reducer({ ...input, modelSync }),
