@@ -8,7 +8,7 @@ import {
 	type MsgServer,
 	type MsgToServer,
 	initShared,
-} from "./vs-user.core";
+} from "./vs-user.types";
 
 //
 //

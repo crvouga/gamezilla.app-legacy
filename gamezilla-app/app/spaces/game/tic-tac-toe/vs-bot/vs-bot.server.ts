@@ -12,7 +12,7 @@ import {
 	type MsgToServer,
 	initCoreModel,
 	isBotTurn,
-} from "./vs-bot.core";
+} from "./vs-bot.types";
 
 //
 //

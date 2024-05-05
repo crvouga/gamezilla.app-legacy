@@ -11,7 +11,7 @@ import {
 import { Button, IconMobilePhone } from "gamezilla-app/app/@/ui";
 import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@/core";
 import * as AuthClientSMS from "./auth-sms/auth-sms.client";
-import type { ClientModule, ModelClient, MsgClient } from "./auth.core";
+import type { ClientModule, ModelClient, MsgClient } from "./auth.types";
 import { ContinueAsGuestClient } from "./continue-as-guest/continue-as-guest.client";
 import { LogoutClient } from "./logout/logout.client";
 

@@ -2,7 +2,7 @@ import { SessionId } from "gamezilla-app/app/@/data";
 import { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import { Task, isOk } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
-import { Client } from "../wire.core";
+import { Client } from "../wire.types";
 import type { IWireSessionDb } from "./wire-session-db";
 
 export const WireSessionDbKv = ({

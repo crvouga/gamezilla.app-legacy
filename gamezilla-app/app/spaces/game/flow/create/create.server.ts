@@ -5,7 +5,7 @@ import { FlowPackDb } from "../@/flow-pack/flow-pack-db";
 import { FlowPackListServer } from "../@/flow-pack/flow-pack-list";
 import { FlowPuzzleDb } from "../@/flow-puzzle/flow-puzzle-db";
 import { FlowPuzzleListServer } from "../@/flow-puzzle/flow-puzzle-list";
-import { type ServerModule, initServer } from "./create.core";
+import { type ServerModule, initServer } from "./create.types";
 import { PackBuilderServer } from "./pack/builder/pack-builder.server";
 import { PackCreateServer } from "./pack/create/pack-create.server";
 import { PuzzleCreateServer } from "./puzzle/create/puzzle-create.server";

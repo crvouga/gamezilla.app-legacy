@@ -9,7 +9,7 @@ import {
 	type MsgToClient,
 	type MsgToServer,
 	initCore,
-} from "./vs-user.core";
+} from "./vs-user.types";
 
 //
 //

@@ -1,6 +1,6 @@
 import { Sub } from "gamezilla-app/@/core";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import { ClientModule } from "../create.core";
+import { ClientModule } from "../create.types";
 import { PuzzleBuilderClient } from "./builder/puzzle-builder.client";
 import { PuzzleCreateClient } from "./create/puzzle-create.client";
 import { PuzzleDeleteForeverClient } from "./delete-forever/puzzle-delete-forever.client";

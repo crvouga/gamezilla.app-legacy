@@ -16,7 +16,7 @@ import { ListSpacesClient } from "./list-spaces/list-spaces.client";
 import { Modals } from "./modals/modals";
 import { SpaceClient } from "./space/space.cient";
 import { Spaces } from "./spaces-core";
-import type { ClientModule, ModelClient } from "./spaces.core";
+import type { ClientModule, ModelClient } from "./spaces.types";
 import { StartSpaceClient } from "./start-space/start-space.client";
 import { SyncClient } from "./sync/sync.client";
 

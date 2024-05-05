@@ -3,7 +3,7 @@ import { sendBack } from "gamezilla-app/app/@/server";
 import type { FlowPack } from "../../../@/flow-pack/flow-pack";
 import { FlowPackId } from "../../../@/flow-pack/flow-pack-id";
 import { FlowPackName } from "../../../@/flow-pack/flow-pack-name";
-import type { ServerModule } from "../../create.core";
+import type { ServerModule } from "../../create.types";
 
 const update: ServerModule["update"] = async (input) => {
 	return GameServerModule.andThen({ model: input.model }, (model) =>

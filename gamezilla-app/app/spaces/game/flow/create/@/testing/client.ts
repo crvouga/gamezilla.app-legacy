@@ -17,8 +17,8 @@ import {
 	initClient,
 	type ModelClient,
 	type ModelCore,
-} from "../../create.core";
-import { CreateCore } from "../../create.sync";
+} from "../../create.types";
+import { CreateCore } from "../../create.core";
 
 export const FlowCreateFixtureClient = async () => {
 	const f = await SpaceGameFixtureClient();

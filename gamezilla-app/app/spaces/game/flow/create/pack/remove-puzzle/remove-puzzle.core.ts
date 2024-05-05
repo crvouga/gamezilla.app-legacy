@@ -1,131 +1,11 @@
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
-import type { UserId } from "gamezilla-app/app/@/data";
-import { type Posix, RequestResponse, type Result } from "gamezilla-app/@/core";
-import type { FlowPack } from "../../../@/flow-pack";
-import type { FlowPuzzle } from "../../../@/flow-puzzle";
-import type { FlowPuzzleId } from "../../../@/flow-puzzle/flow-puzzle-id";
-import type { FlowPackId } from "../../../@/flow-pack/flow-pack-id";
+import { RequestResponse } from "gamezilla-app/@/core";
+import type { ModelCore, MsgCore } from "./remove-puzzle.types";
 
-//
-//
-//
-//
-//
-
-export type RemovePuzzleClientCtx = SpaceClientCtx & {
-	pack: FlowPack;
-	puzzle: FlowPuzzle;
-	packPuzzleIndex: number;
-};
-
-//
-//
-// Model
-//
-//
-
-export type ModelClient = {
-	packs: {
-		[packId: FlowPackId]: FlowPack;
-	};
-	removePuzzleRequest: RequestResponse<string, null>;
-};
-
-export const initClient = (packs: ModelClient["packs"]): ModelClient => {
-	return {
-		packs,
-		removePuzzleRequest: RequestResponse.notAsked,
-	};
-};
-
-//
-//
-// Msg
-//
-//
-
-export type MsgClient =
-	| {
-			t: "remove-puzzle.clicked-remove-from-pack-button";
-	  }
-	| {
-			t: "remove-puzzle.time-passed";
-	  };
-
-export type MsgToServer = {
-	t: "remove-puzzle.clicked-remove-from-pack-button";
-};
-
-export type ReqRes =
-	| {
-			t: "remove-puzzle-from-pack";
-			req: {
-				userId: UserId;
-				puzzleId: FlowPuzzleId;
-				packId: FlowPackId;
-			};
-			res: {
-				result: Result<string, null>;
-				puzzleId: FlowPuzzleId;
-				packId: FlowPackId;
-				packPuzzleIndex: number;
-			};
-	  }
-	| {
-			t: "remove-puzzle-from-pack";
-			req: {
-				userId: UserId;
-				puzzleId: FlowPuzzleId;
-				packId: FlowPackId;
-			};
-			res: {
-				result: Result<string, null>;
-				puzzleId: FlowPuzzleId;
-				packId: FlowPackId;
-				packPuzzleIndex: number;
-			};
-	  };
-
-export type MsgToClient = {
-	t: "remove-puzzle.removed";
-	result: Result<string, null>;
-	puzzleId: FlowPuzzleId;
-	packId: FlowPackId;
-	packPuzzleIndex: number;
-};
-
-//
-//
-// Core
-//
-//
-
-export type ModelCore = {
-	removePuzzleRequest: RequestResponse<string, null>;
-};
-
-export type MsgCore =
-	| {
-			t: "remove-puzzle.user-clicked-remove-puzzle-button";
-			userId: UserId;
-			puzzleId: FlowPuzzleId;
-	  }
-	| {
-			t: "remove-puzzle.user-removed-puzzle-from-pack";
-			result: Result<string, null>;
-			puzzleId: FlowPuzzleId;
-			userId: UserId;
-			now: Posix;
-	  };
-
-export const initCore: ModelCore = {
+const initCore: ModelCore = {
 	removePuzzleRequest: RequestResponse.notAsked,
 };
 
-export const updateCore = (
-	modelCore: ModelCore,
-	msgCore: MsgCore,
-): ModelCore => {
+const updateCore = (modelCore: ModelCore, msgCore: MsgCore): ModelCore => {
 	switch (msgCore.t) {
 		case "remove-puzzle.user-removed-puzzle-from-pack": {
 			return {
@@ -142,4 +22,9 @@ export const updateCore = (
 			return modelCore;
 		}
 	}
+};
+
+export const RemovePuzzleGame = {
+	initCore,
+	updateCore,
 };

@@ -11,7 +11,7 @@ import {
 	ListItemButton,
 } from "gamezilla-app/app/@/ui";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import type { ClientModule } from "../../create.core";
+import type { ClientModule } from "../../create.types";
 
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(

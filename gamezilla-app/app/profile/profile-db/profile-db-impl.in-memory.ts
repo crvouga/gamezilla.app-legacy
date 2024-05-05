@@ -1,6 +1,6 @@
 import type { UserId } from "gamezilla-app/app/@/data";
 import { Ok } from "gamezilla-app/@/core";
-import type { ProfileCore } from "../profile.core";
+import type { ProfileCore } from "../profile.types";
 import type { ProfileDb } from "./profile-db";
 
 export const createProfileDb = (): ProfileDb => {

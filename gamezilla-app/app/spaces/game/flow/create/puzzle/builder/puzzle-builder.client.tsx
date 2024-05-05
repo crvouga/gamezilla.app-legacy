@@ -20,11 +20,11 @@ import {
 	FlowVariantUIPlay,
 } from "../../../@/flow";
 import { ViewProfileCard } from "../../../@/ui";
-import type { ClientModule } from "../../create.core";
+import type { ClientModule } from "../../create.types";
 import { PuzzleDeleteForeverClient } from "../delete-forever/puzzle-delete-forever.client";
 import { PuzzleEditNameClient } from "../edit/puzzle-edit-name.client";
 import { PuzzleSaveChangesClient } from "../save-changes/puzzle-save-changes.client";
-import { toCurrentFlow } from "./puzzle-builder.core";
+import { toCurrentFlow } from "./puzzle-builder.types";
 
 //
 //

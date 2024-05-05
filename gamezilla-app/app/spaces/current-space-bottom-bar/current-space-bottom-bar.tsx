@@ -8,7 +8,7 @@ import { Avatar, Button } from "gamezilla-app/app/@/ui";
 import { CoverArt } from "../game/game-cover-art";
 import type { SpaceClientModule } from "../architecture/architecture";
 import { Spaces } from "../spaces-core";
-import type { ModelClient, MsgClient } from "../spaces.core";
+import type { ModelClient, MsgClient } from "../spaces.types";
 
 const update: SpaceClientModule["update"] = ({ model, msg, ctx }) => {
 	switch (msg?.t) {

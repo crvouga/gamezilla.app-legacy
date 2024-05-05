@@ -32,7 +32,7 @@ import {
 	initCore,
 	isBotTurn,
 	updateCore,
-} from "./vs-bot.core";
+} from "./vs-bot.types";
 
 //
 //

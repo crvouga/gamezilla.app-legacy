@@ -1,8 +1,8 @@
 import { Space } from "gamezilla-app/app/spaces/@/space";
 import type { UserId } from "gamezilla-app/app/@/data";
 import { p } from "gamezilla-app/@/core/parser";
-import * as Game from "../game/game.core";
-import * as GameGame from "../game/game.sync";
+import * as Game from "../game/game.types";
+import * as GameGame from "../game/game.core";
 import { EventId, type EventMeta } from "../@/event";
 import type { SpaceEvent } from "./space-event";
 

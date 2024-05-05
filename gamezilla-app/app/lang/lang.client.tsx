@@ -29,7 +29,7 @@ import type {
 	MsgToClient,
 	MsgToServer,
 	TranslationLoading,
-} from "./lang.core";
+} from "./lang.types";
 
 //
 //

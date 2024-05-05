@@ -2,8 +2,8 @@ import { Ok, isErr, notAsked } from "gamezilla-app/@/core";
 import { UserId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import { sendBack } from "gamezilla-app/app/@/server";
-import type { ServerModule } from "../auth.core";
-import type { ModelClient } from "./continue-as-guest.core";
+import type { ServerModule } from "../auth.types";
+import type { ModelClient } from "./continue-as-guest.types";
 
 const initModel: ModelClient = {
 	guestRequest: notAsked,

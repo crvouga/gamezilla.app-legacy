@@ -1,45 +1,35 @@
-import type { RemoteResult, Result } from "gamezilla-app/@/core";
-import type { UserId } from "gamezilla-app/app/@/data";
-import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
+import { isErr } from "gamezilla-app/@/core";
+import type { UpdateCore } from "../../create.types";
 
-//
-//
-//
+const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
+		case "puzzle-builder.saved-puzzle": {
+			if (isErr(msgCore.saved)) {
+				return modelCore;
+			}
 
-export type ModelClient = {
-	puzzleSaveChangesRequest?: RemoteResult<string, null>;
-	puzzleSaveChangesIsExiting?: boolean;
+			if (!modelCore.puzzleBuilder) {
+				return modelCore;
+			}
+
+			return {
+				...modelCore,
+				listTab: modelCore.listTab,
+				opened: modelCore.opened,
+				packBuilder: modelCore.packBuilder,
+				puzzleBuilder: {
+					...modelCore.puzzleBuilder,
+					puzzle: msgCore.saved.value,
+				},
+			};
+		}
+
+		default: {
+			return modelCore;
+		}
+	}
 };
 
-export type ModelServer = {};
-
-//
-//
-//
-
-export type MsgClient =
-	| { t: "puzzle-save-changes.user-clicked-save-button" }
-	| { t: "puzzle-save-changes.user-clicked-cancel-exit" }
-	| { t: "puzzle-save-changes.user-clicked-save-and-exit" }
-	| { t: "puzzle-save-changes.user-clicked-discard-and-exit" };
-
-export type MsgServer = { t: "noop" };
-
-export type MsgToServer =
-	| { t: "puzzle-save-changes.user-clicked-save-button"; puzzle: FlowPuzzle }
-	| {
-			t: "puzzle-save-changes.user-clicked-save-and-exit";
-			puzzle: FlowPuzzle;
-	  };
-
-export type MsgToClient = { t: "noop" };
-
-//
-//
-//
-
-export type MsgCore = {
-	t: "puzzle-builder.saved-puzzle";
-	saved: Result<string, FlowPuzzle>;
-	userId: UserId;
+export const PuzzleSaveChangesCore = {
+	updateCore,
 };

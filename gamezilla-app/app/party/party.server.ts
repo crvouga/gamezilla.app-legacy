@@ -5,7 +5,7 @@ import {
 	type MsgServer,
 	type MsgToServer,
 	handle,
-} from "./party.core";
+} from "./party.types";
 
 //
 //

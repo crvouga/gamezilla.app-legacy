@@ -9,7 +9,7 @@ import {
 } from "../@/client";
 import { getTranslator } from "../@/client/translator";
 import * as AuthClient from "./auth.client";
-import type * as AuthCore from "./auth.core";
+import type * as AuthCore from "./auth.types";
 
 const ctx: AnonymousClientCtx = {
 	currentRoute: {

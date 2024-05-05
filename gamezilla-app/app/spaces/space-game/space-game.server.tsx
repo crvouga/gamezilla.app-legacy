@@ -5,7 +5,7 @@ import { SpaceServerCmd } from "../@/space-server-cmd";
 import { SpaceServerModule } from "../architecture/space-server";
 import type { SpaceEvent } from "../spaces-core";
 import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
-import type { MsgServer } from "../spaces.core";
+import type { MsgServer } from "../spaces.types";
 
 const inputToSpaceId = (input: Parameters<SpaceServerModule["update"]>[0]) => {
 	if (input.msg && "spaceId" in input.msg) {

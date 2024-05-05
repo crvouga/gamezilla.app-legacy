@@ -1,4 +1,4 @@
-import type { UpdateCore } from "../create.core";
+import type { UpdateCore } from "../create.types";
 import type { ModelCore } from "./list-tabs.types";
 
 const initCore: ModelCore = {

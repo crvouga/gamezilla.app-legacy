@@ -29,7 +29,7 @@ import {
 	type PuzzleInteraction,
 	initCore,
 	transitionLoadingToStarted,
-} from "./puzzle.core";
+} from "./puzzle.types";
 
 //
 //

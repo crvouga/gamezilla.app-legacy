@@ -1,7 +1,7 @@
 import { Err, type Result } from "gamezilla-app/@/core";
 import type { GameMainMenu } from "../@/game";
-import type * as VsBot from "./vs-bot/vs-bot.core";
-import type * as VsUser from "./vs-user/vs-user.core";
+import type * as VsBot from "./vs-bot/vs-bot.types";
+import type * as VsUser from "./vs-user/vs-user.types";
 
 //
 //

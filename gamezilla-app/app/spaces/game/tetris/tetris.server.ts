@@ -10,7 +10,7 @@ import {
 	inputTranslate,
 	mouseMove,
 	tick,
-} from "./tetris.core";
+} from "./tetris.types";
 
 //
 //

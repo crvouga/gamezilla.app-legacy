@@ -1,6 +1,6 @@
 import { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import type { IGameDb } from "./space-game-db";
-import * as Game from "../../game/game.core";
+import * as Game from "../../game/game.types";
 import type { SpaceId } from "gamezilla-app/app/@/data";
 
 const GameDb = ({ dbConnKv }: { dbConnKv: IDbConnKv }): IGameDb => {

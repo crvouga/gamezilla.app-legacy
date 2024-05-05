@@ -1,8 +1,8 @@
 import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { Result } from "gamezilla-app/@/core";
-import type { ServerModule } from "../../create.core";
-import type { MsgCore } from "./puzzle-save-changes.core";
+import type { ServerModule } from "../../create.types";
+import type { MsgCore } from "./puzzle-save-changes.types";
 
 const update: ServerModule["update"] = async (input) => {
 	return GameServerModule.andThen({ model: input.model }, (model) =>

@@ -1,1 +1,1 @@
-export * as PuzzleBuilder from "./puzzle-builder.core";
+export * as PuzzleBuilder from "./puzzle-builder.types";

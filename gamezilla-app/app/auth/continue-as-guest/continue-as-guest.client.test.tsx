@@ -16,7 +16,7 @@ import {
 import { getTranslator } from "gamezilla-app/app/@/client/translator";
 import { UserId } from "gamezilla-app/app/@/data";
 import * as AuthClient from "../auth.client";
-import type { ModelClient } from "../auth.core";
+import type { ModelClient } from "../auth.types";
 
 const ctx: AnonymousClientCtx = {
 	currentRoute: {

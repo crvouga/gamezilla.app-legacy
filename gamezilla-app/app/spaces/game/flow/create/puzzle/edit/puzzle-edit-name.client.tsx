@@ -15,8 +15,8 @@ import {
 } from "gamezilla-app/app/@/ui";
 import { isLoading, isOk, loading } from "gamezilla-app/@/core";
 import { FlowPuzzleName } from "../../../@/flow-puzzle/flow-puzzle-name";
-import type { ClientModule } from "../../create.core";
-import { editNameValidationErrorToString } from "./puzzle-edit-name.core";
+import type { ClientModule } from "../../create.types";
+import { editNameValidationErrorToString } from "./puzzle-edit-name.types";
 import type { VDomChildren } from "gamezilla-app/@/vdom";
 
 //

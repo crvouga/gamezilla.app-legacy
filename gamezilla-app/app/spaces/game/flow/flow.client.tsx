@@ -20,7 +20,7 @@ import type {
 	MsgCore,
 	MsgToClient,
 	MsgToServer,
-} from "./flow.core";
+} from "./flow.types";
 
 //
 //

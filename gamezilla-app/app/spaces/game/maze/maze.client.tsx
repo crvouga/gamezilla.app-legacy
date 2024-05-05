@@ -10,7 +10,7 @@ import {
 	type MsgClient,
 	type MsgToClient,
 	initShared,
-} from "./maze.core";
+} from "./maze.types";
 
 //
 //

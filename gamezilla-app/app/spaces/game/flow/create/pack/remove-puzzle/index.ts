@@ -1,2 +1,2 @@
-export * as RemovePuzzle from "./remove-puzzle.core";
+export * as RemovePuzzle from "./remove-puzzle.types";
 export * from "./remove-puzzle.client";

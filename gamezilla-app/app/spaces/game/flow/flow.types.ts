@@ -1,7 +1,7 @@
 import type { UserId } from "gamezilla-app/app/@/data";
 import type { GameMainMenu } from "../@/game";
-import * as Create from "./create/create.core";
-import * as Play from "./play/play.core";
+import * as Create from "./create/create.types";
+import * as Play from "./play/play.types";
 import type { FlowPuzzle } from "./@/flow-puzzle/flow-puzzle";
 import type { FlowPuzzleId } from "./@/flow-puzzle/flow-puzzle-id";
 import { p } from "gamezilla-app/@/core/parser";

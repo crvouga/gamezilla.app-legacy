@@ -8,7 +8,7 @@ import {
 	handle,
 	initShared,
 	tick,
-} from "./maze.core";
+} from "./maze.types";
 
 //
 //

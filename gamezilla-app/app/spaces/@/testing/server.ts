@@ -11,7 +11,7 @@ import { Posix } from "gamezilla-app/@/core";
 import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import { EventId } from "../event";
 import type { Space } from "../../spaces-core";
-import type { ModelServer, ServerDeps } from "../../spaces.core";
+import type { ModelServer, ServerDeps } from "../../spaces.types";
 import * as SpacesServer from "../../spaces.server";
 import { ProfileCache } from "../../profile-cache";
 import { smsNoop } from "gamezilla-app/app/@/server/sms";

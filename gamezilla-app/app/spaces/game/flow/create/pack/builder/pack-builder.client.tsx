@@ -21,7 +21,7 @@ import { FlowVariantUIPlay } from "../../../@/flow";
 import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
 import { FlowPackGridClient } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid.client";
 import { FlowPuzzleListClient } from "../../../@/flow-puzzle/flow-puzzle-list";
-import type { ClientModule } from "../../create.core";
+import type { ClientModule } from "../../create.types";
 
 //
 //

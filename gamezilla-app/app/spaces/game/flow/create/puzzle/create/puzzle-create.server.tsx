@@ -3,8 +3,8 @@ import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-s
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { FlowVariant, FlowVariantDimensions } from "../../../@/flow";
 import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
-import type { ServerModule } from "../../create.core";
-import type { MsgCore } from "./puzzle-create.core";
+import type { ServerModule } from "../../create.types";
+import type { MsgCore } from "./puzzle-create.types";
 
 const update: ServerModule["update"] = async (input) => {
 	return GameServerModule.andThen({ model: input.model }, (model) =>

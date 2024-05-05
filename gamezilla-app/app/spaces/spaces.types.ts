@@ -9,7 +9,7 @@ import type {
 	ClientEvent,
 } from "../@/client";
 import type { ServerCmd, ServerCtx, ServerEvent } from "../@/server";
-import type * as Game from "./game/game.core";
+import type * as Game from "./game/game.types";
 import type { WithEventId, WithEventMeta } from "./@/event";
 import type { IProfileCache } from "./profile-cache";
 import type * as Space from "./spaces-core/space";

@@ -21,7 +21,7 @@ import type {
 	ClientModule,
 	MsgClient,
 	MsgCore,
-} from "../../create.core";
+} from "../../create.types";
 import { ViewBottomButtonBarAction } from "../../../../@/game";
 
 //

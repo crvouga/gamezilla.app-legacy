@@ -6,7 +6,7 @@ import {
 import type { Eff, Sub } from "gamezilla-app/@/core";
 import { ListItemButton, cn } from "../@/ui";
 import type { IClientTransport } from "./transport-client";
-import type { ModelClient, MsgClient, MsgToClient } from "./wire.core";
+import type { ModelClient, MsgClient, MsgToClient } from "./wire.types";
 
 //
 //

@@ -1,7 +1,7 @@
 import * as ConnectFour from "./connect-four/connect-four-cover-art";
 import * as Flow from "./flow/flow-cover-art";
 
-import type { GameName } from "./game.core";
+import type { GameName } from "./game.types";
 
 export const CoverArt = (input: { gameName: GameName }) => {
 	switch (input.gameName) {

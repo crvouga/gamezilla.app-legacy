@@ -12,8 +12,8 @@ import {
 } from "../../@/testing/client";
 import { deriveModelCore } from "../../@/testing/game";
 import { CreateClient } from "../../create.client";
-import type { ModelClient } from "../../create.core";
-import { CreateCore } from "../../create.sync";
+import type { ModelClient } from "../../create.types";
+import { CreateCore } from "../../create.core";
 
 const clickedPuzzleListItem =
 	(ctx: FlowClientCtx, puzzle: FlowPuzzle) => (model: ModelClient) => {

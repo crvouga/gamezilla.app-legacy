@@ -13,7 +13,7 @@ import {
 	botMoved,
 	initServer,
 	isBotTurn,
-} from "./vs-bot.core";
+} from "./vs-bot.types";
 
 //
 //

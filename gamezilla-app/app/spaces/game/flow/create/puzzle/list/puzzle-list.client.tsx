@@ -2,7 +2,7 @@ import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { FlowPuzzleListClient } from "../../../@/flow-puzzle/flow-puzzle-list";
-import type { ClientModule } from "../../create.core";
+import type { ClientModule } from "../../create.types";
 import { PuzzleCreateClient } from "../create/puzzle-create.client";
 
 const update: ClientModule["update"] = (input) => {

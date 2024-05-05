@@ -16,7 +16,7 @@ import type {
 	MsgCore,
 	MsgToClient,
 	MsgToServer,
-} from "./play.core";
+} from "./play.types";
 
 type Module = GameClientModule<{
 	Model: ModelClient;

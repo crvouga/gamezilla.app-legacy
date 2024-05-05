@@ -7,7 +7,7 @@ import type {
 	MsgCore,
 	MsgToClient,
 	MsgToServer,
-} from "./chess.core";
+} from "./chess.types";
 
 //
 //

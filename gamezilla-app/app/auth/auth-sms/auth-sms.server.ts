@@ -11,7 +11,7 @@ import { Err, Ok, type Posix, Result, Sub, isErr } from "gamezilla-app/@/core";
 import { type Hash, Hashing } from "gamezilla-app/@/hashing";
 import type { IAccountDb } from "../@/server/account-db";
 import { AccountDb } from "../@/server/account-db/account-db-impl";
-import type { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.core";
+import type { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.types";
 import type { IVerifySMS } from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl";
 

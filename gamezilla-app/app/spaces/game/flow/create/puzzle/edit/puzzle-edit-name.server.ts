@@ -6,8 +6,8 @@ import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import type { IFlowPuzzleDb } from "../../../@/flow-puzzle/flow-puzzle-db";
 import type { FlowPuzzleId } from "../../../@/flow-puzzle/flow-puzzle-id";
 import { FlowPuzzleName } from "../../../@/flow-puzzle/flow-puzzle-name";
-import type { ServerModule } from "../../create.core";
-import type { MsgCore } from "./puzzle-edit-name.core";
+import type { ServerModule } from "../../create.types";
+import type { MsgCore } from "./puzzle-edit-name.types";
 
 const update: ServerModule["update"] = async (input) => {
 	return GameServerModule.andThen({ model: input.model }, (model) =>

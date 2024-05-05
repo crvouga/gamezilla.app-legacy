@@ -20,7 +20,7 @@ import {
 	rowCount,
 	toGhostPiece,
 	toPiece,
-} from "./tetris.core";
+} from "./tetris.types";
 
 //
 //

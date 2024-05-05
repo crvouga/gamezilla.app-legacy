@@ -14,7 +14,7 @@ import {
 	type ToggleStatusResult,
 	initCoreModel,
 	startGame,
-} from "./snake.core";
+} from "./snake.types";
 
 //
 //

@@ -14,7 +14,7 @@ import type {
 	MsgClient,
 	MsgToClient,
 	MsgToServer,
-} from "../spaces.core";
+} from "../spaces.types";
 import type { VDom } from "gamezilla-app/@/vdom";
 
 type Ctx = AnonymousClientCtx & {

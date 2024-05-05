@@ -9,7 +9,7 @@ import {
 	type MsgToServer,
 	handleBotMove,
 	initShared,
-} from "./vs-bot.core";
+} from "./vs-bot.types";
 
 //
 //

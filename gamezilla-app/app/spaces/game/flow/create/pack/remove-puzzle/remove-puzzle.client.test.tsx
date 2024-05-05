@@ -17,8 +17,8 @@ import {
 	type ModelClient,
 	type RemovePuzzleClientCtx,
 	initClient,
-} from "./remove-puzzle.core";
-import { CreateCore } from "../../create.sync";
+} from "./remove-puzzle.types";
+import { CreateCore } from "../../create.core";
 
 const initial = (ctx: RemovePuzzleClientCtx) => {
 	return {

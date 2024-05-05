@@ -7,7 +7,7 @@ import {
 	showToast,
 } from "gamezilla-app/app/@/client";
 import { ConfirmationDrawer } from "gamezilla-app/app/@/ui";
-import type { ClientModule, ModelClient, MsgClient } from "../auth.core";
+import type { ClientModule, ModelClient, MsgClient } from "../auth.types";
 
 //
 //

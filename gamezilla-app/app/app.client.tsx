@@ -34,7 +34,7 @@ import type {
 	MsgClient,
 	MsgToClient,
 	MsgToServer,
-} from "./app.core";
+} from "./app.types";
 import * as AuthClient from "./auth/auth.client";
 import * as LangClient from "./lang/lang.client";
 import * as ProfileClient from "./profile/profile.client";

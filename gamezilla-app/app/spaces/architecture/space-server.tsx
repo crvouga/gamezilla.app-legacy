@@ -11,7 +11,7 @@ import type {
 	MsgToClient,
 	MsgToServer,
 	ServerDeps,
-} from "../spaces.core";
+} from "../spaces.types";
 
 type Ctx = ServerCtx & {
 	space?: Space;

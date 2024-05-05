@@ -2,7 +2,7 @@ import type { BaseClientCtx } from "gamezilla-app/app/@/client";
 import { Avatar, cn } from "gamezilla-app/app/@/ui";
 import { ViewSpaceHostChip, ViewYouChip } from "../game/@/game";
 import { CoverArt } from "../game/game-cover-art";
-import { gameNameToString } from "../game/game.core";
+import { gameNameToString } from "../game/game.types";
 import type { SpaceState } from "../spaces-core";
 
 const MAX_AVATAR_COUNT = 3;

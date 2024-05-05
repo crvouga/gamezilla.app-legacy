@@ -33,7 +33,7 @@ import type {
 	MsgToClient,
 	MsgToServer,
 	MsgToServerMeta,
-} from "./app.core";
+} from "./app.types";
 
 //
 //

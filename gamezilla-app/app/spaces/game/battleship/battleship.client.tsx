@@ -2,7 +2,7 @@ import {
 	type MsgClient,
 	type ModelClient,
 	initShared,
-} from "./battleship.core";
+} from "./battleship.types";
 
 export const init = initShared;
 

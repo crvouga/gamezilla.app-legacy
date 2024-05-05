@@ -7,7 +7,7 @@ import {
 	type MsgToClient,
 	handle,
 	initShared,
-} from "./vs-bot.core";
+} from "./vs-bot.types";
 
 //
 //

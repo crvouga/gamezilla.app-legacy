@@ -17,9 +17,9 @@ import {
 	testFlowClientCtx,
 } from "../../@/testing/client";
 import { deriveModelCore } from "../../@/testing/game";
-import type { ModelClient, ModelCore } from "../../create.core";
+import type { ModelClient, ModelCore } from "../../create.types";
 import { PackBuilderClient } from "./pack-builder.client";
-import { CreateCore } from "../../create.sync";
+import { CreateCore } from "../../create.core";
 
 const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
 	return PackBuilderClient.update({

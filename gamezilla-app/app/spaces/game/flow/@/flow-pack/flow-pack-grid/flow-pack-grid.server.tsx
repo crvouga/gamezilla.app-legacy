@@ -5,7 +5,7 @@ import type {
 	SpaceServerEvent,
 } from "gamezilla-app/app/spaces/@/space";
 import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
-import type { FlowServerDeps } from "../../../create/create.core";
+import type { FlowServerDeps } from "../../../create/create.types";
 import type {
 	ModelServer,
 	MsgServer,

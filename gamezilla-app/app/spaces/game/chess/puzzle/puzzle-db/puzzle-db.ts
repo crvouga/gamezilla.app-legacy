@@ -1,6 +1,6 @@
 import type { Result } from "gamezilla-app/@/core";
 import type { UserId } from "gamezilla-app/app/@/data";
-import type { Puzzle, PuzzleInteraction } from "../puzzle.core";
+import type { Puzzle, PuzzleInteraction } from "../puzzle.types";
 
 export type PuzzleDb = {
 	interactions: {

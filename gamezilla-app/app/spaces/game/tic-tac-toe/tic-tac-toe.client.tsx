@@ -12,7 +12,7 @@ import type {
 	MsgClient,
 	MsgToClient,
 	MsgToServer,
-} from "./tic-tac-toe.core";
+} from "./tic-tac-toe.types";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";
 

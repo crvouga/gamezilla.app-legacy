@@ -35,7 +35,7 @@ import {
 	type MsgToClient,
 	type MsgToServer,
 	toPlayerType,
-} from "./vs-user.core";
+} from "./vs-user.types";
 
 //
 //

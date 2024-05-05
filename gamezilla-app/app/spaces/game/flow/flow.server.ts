@@ -6,8 +6,8 @@ import type {
 import { Sub } from "gamezilla-app/@/core";
 import { SpaceServerCmd } from "../../@/space-server-cmd";
 import { CreateServer } from "./create/create.server";
-import { CreateCore } from "./create/create.sync";
-import * as Play from "./play/play.core";
+import { CreateCore } from "./create/create.core";
+import * as Play from "./play/play.types";
 import { PlayServer } from "./play/play.server";
 import type {
 	ModelServer,
@@ -16,7 +16,7 @@ import type {
 	MsgCore,
 	MsgToClient,
 	MsgToServer,
-} from "./flow.core";
+} from "./flow.types";
 
 type Module = GameServerModule<{
 	Model: ModelServer;

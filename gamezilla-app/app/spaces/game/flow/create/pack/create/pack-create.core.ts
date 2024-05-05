@@ -1,57 +1,13 @@
-import { UserId } from "gamezilla-app/app/@/data";
-import { type RemoteResult, Result, notAsked } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import { FlowPack } from "../../../@/flow-pack/flow-pack";
+import type { UpdateCore } from "../../create.types";
 
-//
-//
-//
-//
-//
-
-export type ModelClient = {
-	packCreateRequest: RemoteResult<string, null>;
+const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
+		default: {
+			return modelCore;
+		}
+	}
 };
 
-export const initClient: ModelClient = {
-	packCreateRequest: notAsked,
+export const PackCreateGame = {
+	updateCore,
 };
-
-export type ModelServer = {};
-
-//
-//
-//
-//
-
-export type MsgClient = {
-	t: "pack-create.clicked-create-button";
-};
-
-export type MsgToServer = { t: "pack-create.clicked-create-button" };
-
-export type MsgServer = {
-	t: "noop";
-};
-
-export type MsgToClient = {
-	t: "pack-create.created-pack";
-	created: Result<string, FlowPack>;
-};
-
-//
-//
-//
-//
-//
-
-export const isMsgCore = p.obj({
-	t: p.l("user-created-pack"),
-	created: p.custom(
-		Result.is(p.is(p.str), p.is(FlowPack.parser)),
-		"Invalid result",
-	),
-	userId: UserId,
-});
-
-export type MsgCore = p.Infer<typeof isMsgCore>;

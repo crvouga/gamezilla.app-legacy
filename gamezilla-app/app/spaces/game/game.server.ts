@@ -11,7 +11,7 @@ import type {
 	MsgServer,
 	MsgToClient,
 	MsgToServer,
-} from "./game.core";
+} from "./game.types";
 import { ConnectFourServer } from "./connect-four/connect-four.server";
 
 //

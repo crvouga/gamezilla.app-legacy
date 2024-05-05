@@ -1,6 +1,6 @@
 import { SpaceId, UserId } from "gamezilla-app/app/@/data";
 import { p } from "gamezilla-app/@/core/parser";
-import * as Game from "../game/game.core";
+import * as Game from "../game/game.types";
 
 export const SpaceEvent = p.or(
 	p.obj({

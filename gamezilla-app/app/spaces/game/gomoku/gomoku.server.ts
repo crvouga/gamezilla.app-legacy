@@ -6,7 +6,7 @@ import type { UserId } from "gamezilla-app/app/@/data";
 import { Eff, Sub } from "gamezilla-app/@/core";
 import * as VsBot from "./vs-bot/vs-bot.server";
 import * as VsUser from "./vs-user/vs-user.server";
-import type { Mode, ModelServer, MsgServer, MsgToServer } from "./gomoku.core";
+import type { Mode, ModelServer, MsgServer, MsgToServer } from "./gomoku.types";
 
 //
 //

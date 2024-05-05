@@ -44,7 +44,7 @@ import {
 	type MsgToClient,
 	type MsgToServer,
 	updateCore,
-} from "./vs-bot.core";
+} from "./vs-bot.types";
 import { ALL_BOT_LEVELS, type BotLevel } from "./bot-level";
 
 //

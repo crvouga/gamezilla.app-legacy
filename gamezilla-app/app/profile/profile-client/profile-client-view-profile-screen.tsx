@@ -9,7 +9,7 @@ import {
 	TopBar,
 	TopBarBackButton,
 } from "gamezilla-app/app/@/ui";
-import type { ModelClient, MsgClient } from "../profile.core";
+import type { ModelClient, MsgClient } from "../profile.types";
 
 export const ViewProfileScreen = (props: {
 	ctx: ClientCtx | AnonymousClientCtx;

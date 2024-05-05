@@ -1,4 +1,4 @@
-import type { ServerModule } from "../../create.core";
+import type { ServerModule } from "../../create.types";
 
 const update: ServerModule["update"] = async (input) => {
 	return { model: input.model };

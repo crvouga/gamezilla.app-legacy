@@ -1,77 +1,26 @@
-import type { FlowPack } from "../../@/flow-pack";
-import type { FlowPackId } from "../../@/flow-pack/flow-pack-id";
-import { PackBuilder } from "./builder";
-import { PackCreate } from "./create";
-import { PackList } from "./list";
-import { RemovePuzzle } from "./remove-puzzle";
+import type { UpdateCore } from "../create.types";
+import { PackBuilderCore } from "./builder/pack-builder.core";
+import { PackCreateGame } from "./create/pack-create.core";
+import { PackListGame } from "./list/pack-list.core";
+import type { ModelCore } from "./pack.types";
+import { RemovePuzzleGame } from "./remove-puzzle/remove-puzzle.core";
 
-//
-//
-//
-// Model
-//
-//
-//
-
-export type ModelClient = PackCreate.ModelClient &
-	PackBuilder.ModelClient &
-	PackList.ModelClient &
-	RemovePuzzle.ModelClient;
-
-export const initClient = (packs: {
-	[packId: FlowPackId]: FlowPack;
-}): ModelClient => {
-	return {
-		...PackBuilder.initClient,
-		...PackCreate.initClient,
-		...PackList.initClient,
-		...RemovePuzzle.initClient(packs),
-	};
+const initCore: ModelCore = {
+	...RemovePuzzleGame.initCore,
 };
 
-//
-//
-//
-// Msg
-//
-//
-//
+const updateCore: UpdateCore = (input) => {
+	return [
+		PackCreateGame.updateCore,
+		PackBuilderCore.updateCore,
+		PackListGame.updateCore,
+	].reduce(
+		(modelCore, updateCore) => updateCore({ ...input, modelCore }),
+		input.modelCore,
+	);
+};
 
-export type MsgClient =
-	| PackCreate.MsgClient
-	| PackBuilder.MsgClient
-	| PackList.MsgClient
-	| RemovePuzzle.MsgClient;
-
-export type MsgServer =
-	| PackCreate.MsgServer
-	| PackBuilder.MsgServer
-	| PackList.MsgServer;
-
-export type MsgToServer =
-	| PackCreate.MsgToServer
-	| PackBuilder.MsgToServer
-	| PackList.MsgToServer
-	| RemovePuzzle.MsgToServer;
-
-export type MsgToClient =
-	| PackCreate.MsgToClient
-	| PackBuilder.MsgToClient
-	| PackList.MsgToClient
-	| RemovePuzzle.MsgToClient;
-
-//
-//
-//
-//
-//
-//
-//
-
-export type ModelCore = RemovePuzzle.ModelCore;
-
-export type MsgCore =
-	| PackCreate.MsgCore
-	| PackBuilder.MsgCore
-	| PackList.MsgCore
-	| RemovePuzzle.MsgCore;
+export const PackCore = {
+	initCore,
+	updateCore,
+};

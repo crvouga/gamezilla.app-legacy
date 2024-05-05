@@ -11,7 +11,7 @@ import { JoinSpaceClient } from "../join-space/join-space.client";
 import { LeaveSpaceClient } from "../leave-space/leave-space.client";
 import { Modals } from "../modals/modals";
 import { Spaces } from "../spaces-core";
-import type { ModelClient, MsgClient } from "../spaces.core";
+import type { ModelClient, MsgClient } from "../spaces.types";
 
 const View = (props: {
 	model: ModelClient;

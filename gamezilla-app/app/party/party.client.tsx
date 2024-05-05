@@ -9,7 +9,7 @@ import {
 	pipe,
 } from "gamezilla-app/@/core";
 import { Mic } from "./mic";
-import type { ModelClient, MsgClient, MsgToClient } from "./party.core";
+import type { ModelClient, MsgClient, MsgToClient } from "./party.types";
 
 //
 //

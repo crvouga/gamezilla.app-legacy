@@ -1,143 +1,395 @@
-import { UserId } from "gamezilla-app/app/@/data";
-import { Result } from "gamezilla-app/@/core";
-import { p } from "gamezilla-app/@/core/parser";
-import type { FlowVariantUIPlay } from "../../../@/flow";
+import { isErr } from "gamezilla-app/@/core";
+import { FlowVariantUIPlay } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
-import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
-import { FlowPackGrid } from "../../../@/flow-pack/flow-pack-grid";
+import { UpdateCore } from "../../create.types";
+import { ModelCore } from "./pack-builder.types";
 
-//
-//
-//
-//
-//
+const updateCores: UpdateCore[] = [];
 
-export type ModelClient = {
-	packBuilder: {
-		flowPackPuzzleGrid: FlowPackGrid.ModelClient;
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
+		case "user-created-pack": {
+			if (isErr(msgCore.created)) {
+				return modelCore;
+			}
+
+			return {
+				...modelCore,
+				opened: { t: "pack-builder" },
+				packBuilder: {
+					t: "pack-builder",
+					opened: { t: null },
+					screen: {
+						t: "screen-puzzle-grid",
+						pageIndex: 0,
+					},
+					pack: msgCore.created.value,
+				},
+			};
+		}
+		default: {
+			return modelCore;
+		}
+	}
+});
+
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
+		case "pack-builder.user-clicked-exit-button": {
+			return {
+				...modelCore,
+				puzzleBuilder: modelCore.puzzleBuilder,
+				packBuilder: modelCore.packBuilder,
+				opened: { t: "list" },
+				listTab: "packs",
+			};
+		}
+		default: {
+			return modelCore;
+		}
+	}
+});
+
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
+		case "pack-builder.user-clicked-add-puzzle-item": {
+			if (!modelCore.packBuilder) {
+				return modelCore;
+			}
+			return {
+				...modelCore,
+				packBuilder: {
+					...modelCore.packBuilder,
+					pack: FlowPack.add(modelCore.packBuilder.pack, msgCore.puzzle.id),
+					screen: {
+						t: "screen-puzzle-grid",
+						pageIndex: 0,
+					},
+					opened: {
+						t: null,
+					},
+				},
+			};
+		}
+		default: {
+			return modelCore;
+		}
+	}
+});
+
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
+		case "pack-builder.user-clicked-open-add-puzzle-button": {
+			if (!modelCore.packBuilder) {
+				return modelCore;
+			}
+			return {
+				...modelCore,
+				packBuilder: {
+					...modelCore.packBuilder,
+					screen: {
+						t: "add-puzzle",
+					},
+				},
+			};
+		}
+		default: {
+			return modelCore;
+		}
+	}
+});
+
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
+		case "pack-builder.user-closed-add-puzzle": {
+			if (!modelCore.packBuilder) {
+				return modelCore;
+			}
+			return {
+				...modelCore,
+				packBuilder: {
+					...modelCore.packBuilder,
+					opened: {
+						t: null,
+					},
+					screen: {
+						t: "screen-puzzle-grid",
+						pageIndex: 0,
+					},
+				},
+			};
+		}
+		default: {
+			return modelCore;
+		}
+	}
+});
+
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
+		case "pack-builder.user-clicked-pack-item": {
+			if (!modelCore.packBuilder) {
+				return modelCore;
+			}
+
+			return {
+				...modelCore,
+				packBuilder: {
+					...modelCore.packBuilder,
+					screen: {
+						opened: null,
+						t: "screen-puzzle",
+						puzzleIndex: msgCore.index,
+						puzzle: msgCore.puzzle,
+						playUI: FlowVariantUIPlay.init({
+							flow: msgCore.puzzle.flow,
+						}),
+					},
+				},
+			};
+		}
+
+		default: {
+			return modelCore;
+		}
+	}
+});
+
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
+		case "pack-builder.user-clicked-exit-puzzle-button": {
+			if (!modelCore.packBuilder) {
+				return modelCore;
+			}
+
+			return {
+				...modelCore,
+				packBuilder: {
+					...modelCore.packBuilder,
+					screen: {
+						t: "screen-puzzle-grid",
+						pageIndex: 0,
+					},
+				},
+			};
+		}
+
+		default: {
+			return modelCore;
+		}
+	}
+});
+
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
+		case "pack-builder.flow-play-ui": {
+			if (!modelCore.packBuilder) {
+				return modelCore;
+			}
+
+			if (modelCore.packBuilder.screen.t !== "screen-puzzle") {
+				return modelCore;
+			}
+
+			const screen = modelCore.packBuilder.screen;
+
+			const updated = FlowVariantUIPlay.update({
+				flow: screen.puzzle.flow,
+				model: screen.playUI,
+				msg: msgCore.c,
+			});
+
+			return {
+				...modelCore,
+				packBuilder: {
+					...modelCore.packBuilder,
+					screen: {
+						opened: null,
+						t: "screen-puzzle",
+						puzzleIndex: modelCore.packBuilder.screen.puzzleIndex,
+						puzzle: modelCore.packBuilder.screen.puzzle,
+						playUI: updated,
+					},
+				},
+			};
+		}
+		default: {
+			return modelCore;
+		}
+	}
+});
+
+updateCores.push(({ modelCore, msgCore }) => {
+	if (modelCore.packBuilder?.screen.t !== "screen-puzzle") {
+		return modelCore;
+	}
+
+	switch (msgCore.t) {
+		case "pack-builder.user-clicked-next-puzzle-button": {
+			const indexOfNextPuzzle = modelCore.packBuilder.pack.puzzleIds.indexOf(
+				msgCore.nextPuzzle.id,
+			);
+			if (indexOfNextPuzzle === -1) {
+				return modelCore;
+			}
+			return {
+				...modelCore,
+				packBuilder: {
+					...modelCore.packBuilder,
+					screen: {
+						t: "screen-puzzle",
+						opened: null,
+						puzzleIndex: clamp(
+							modelCore.packBuilder.screen.puzzleIndex + 1,
+							0,
+							modelCore.packBuilder.pack.puzzleIds.length - 1,
+						),
+						playUI: FlowVariantUIPlay.init({
+							flow: msgCore.nextPuzzle.flow,
+						}),
+						puzzle: msgCore.nextPuzzle,
+					},
+				},
+			};
+		}
+
+		default: {
+			return modelCore;
+		}
+	}
+});
+
+updateCores.push(({ modelCore, msgCore }) => {
+	if (modelCore.packBuilder?.screen.t !== "screen-puzzle") {
+		return modelCore;
+	}
+
+	switch (msgCore.t) {
+		case "pack-builder.user-clicked-previous-puzzle-button": {
+			const indexOfPreviousPuzzle =
+				modelCore.packBuilder.pack.puzzleIds.indexOf(msgCore.previousPuzzle.id);
+			if (indexOfPreviousPuzzle === -1) {
+				return modelCore;
+			}
+			return {
+				...modelCore,
+				packBuilder: {
+					...modelCore.packBuilder,
+					screen: {
+						t: "screen-puzzle",
+						opened: null,
+						puzzleIndex: clamp(
+							modelCore.packBuilder.screen.puzzleIndex - 1,
+							0,
+							modelCore.packBuilder.pack.puzzleIds.length - 1,
+						),
+						playUI: FlowVariantUIPlay.init({
+							flow: msgCore.previousPuzzle.flow,
+						}),
+						puzzle: msgCore.previousPuzzle,
+					},
+				},
+			};
+		}
+		default: {
+			return modelCore;
+		}
+	}
+});
+
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
+		case "pack-builder.puzzle-screen.user-clicked-more-button": {
+			if (!modelCore.packBuilder) {
+				return modelCore;
+			}
+			return {
+				...modelCore,
+				packBuilder: {
+					...modelCore.packBuilder,
+					screen: {
+						...modelCore.packBuilder.screen,
+						opened: "more",
+					},
+				},
+			};
+		}
+		case "pack-builder.puzzle-screen.user-closed-more-drawer": {
+			if (!modelCore.packBuilder) {
+				return modelCore;
+			}
+			return {
+				...modelCore,
+				packBuilder: {
+					...modelCore.packBuilder,
+					screen: {
+						...modelCore.packBuilder.screen,
+						opened: null,
+					},
+				},
+			};
+		}
+		default: {
+			return modelCore;
+		}
+	}
+});
+
+const clamp = (value: number, min: number, max: number): number => {
+	return Math.max(min, Math.min(max, value));
+};
+
+updateCores.push(({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
+		case "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button": {
+			if (!modelCore.packBuilder) {
+				return modelCore;
+			}
+
+			const pack = modelCore.packBuilder.pack;
+
+			return {
+				...modelCore,
+				packBuilder: {
+					...modelCore.packBuilder,
+					pack: FlowPack.remove(pack, msgCore.puzzleIndex),
+					screen: {
+						t: "screen-puzzle-grid",
+						pageIndex: 0,
+					},
+				},
+			};
+		}
+		default: {
+			return modelCore;
+		}
+	}
+});
+
+const updateCore: UpdateCore = (input) => {
+	return updateCores.reduce(
+		(modelCore, updateCore) =>
+			updateCore({
+				ctx: input.ctx,
+				modelCore,
+				msgCore: input.msgCore,
+			}),
+		input.modelCore,
+	);
+};
+
+const initCore = ({ pack }: { pack: FlowPack }): ModelCore => {
+	return {
+		pack,
+		screen: {
+			t: "screen-puzzle-grid",
+			pageIndex: 0,
+		},
+		t: "pack-builder",
 	};
 };
 
-export const initClient: ModelClient = {
-	packBuilder: {
-		flowPackPuzzleGrid: FlowPackGrid.initClient,
-	},
+export const PackBuilderCore = {
+	initCore,
+	updateCore,
 };
-
-export type ModelServer = null;
-
-export const initServer: ModelServer = null;
-
-//
-//
-//
-//
-
-export type MsgClient =
-	| MsgCore
-	| {
-			t: "pack-builder.flow-pack-grid";
-			c: FlowPackGrid.MsgClient;
-	  };
-
-export type MsgServer = {
-	t: "pack-builder.flow-pack-grid";
-	c: FlowPackGrid.MsgServer;
-};
-
-export type MsgToServer = {
-	t: "pack-builder.flow-pack-grid";
-	c: FlowPackGrid.MsgToServer;
-};
-
-export type MsgToClient = {
-	t: "pack-builder.flow-pack-grid";
-	c: FlowPackGrid.MsgToClient;
-};
-
-//
-//
-//
-//
-//
-
-export type ModelCore = {
-	t: "pack-builder";
-	pack: FlowPack;
-	screen:
-		| {
-				t: "add-puzzle";
-		  }
-		| {
-				t: "screen-puzzle-grid";
-				pageIndex: number;
-		  }
-		| {
-				t: "screen-puzzle";
-				puzzleIndex: number;
-				puzzle: FlowPuzzle;
-				playUI: FlowVariantUIPlay.Model;
-				opened: "more" | null;
-		  };
-};
-
-export const MsgCore = p.or(
-	p.obj({
-		t: p.l("pack-builder.user-clicked-exit-button"),
-		userId: UserId,
-	}),
-	p.obj({
-		t: p.l("pack-builder.saved-pack"),
-		saved: p.custom(Result.is(p.is(p.str), p.is(FlowPack.parser)), "invalid"),
-	}),
-	p.obj({
-		t: p.l("pack-builder.user-clicked-open-add-puzzle-button"),
-		userId: UserId,
-	}),
-	p.obj({
-		t: p.l("pack-builder.user-closed-add-puzzle"),
-	}),
-	p.obj({
-		t: p.l("pack-builder.user-clicked-add-puzzle-item"),
-		puzzle: FlowPuzzle,
-		userId: UserId,
-	}),
-	p.obj({
-		t: p.l("pack-builder.user-clicked-pack-item"),
-		puzzle: FlowPuzzle,
-		index: p.num,
-	}),
-	p.obj({
-		t: p.l("pack-builder.flow-play-ui"),
-		c: p.any,
-	}),
-	p.obj({
-		t: p.l("pack-builder.user-clicked-exit-puzzle-button"),
-		userId: UserId,
-	}),
-	p.obj({
-		t: p.l("pack-builder.user-clicked-next-puzzle-button"),
-		userId: UserId,
-		nextPuzzle: FlowPuzzle,
-	}),
-	p.obj({
-		t: p.l("pack-builder.user-clicked-previous-puzzle-button"),
-		userId: UserId,
-		previousPuzzle: FlowPuzzle,
-	}),
-	p.obj({
-		t: p.l("pack-builder.puzzle-screen.user-clicked-more-button"),
-		userId: UserId,
-	}),
-	p.obj({
-		t: p.l("pack-builder.puzzle-screen.user-closed-more-drawer"),
-		userId: UserId,
-	}),
-	p.obj({
-		t: p.l("pack-builder.puzzle-screen.user-clicked-remove-from-pack-button"),
-		puzzleIndex: p.num,
-		userId: UserId,
-	}),
-);
-
-export type MsgCore = p.Infer<typeof MsgCore>;

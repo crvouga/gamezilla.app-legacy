@@ -1,56 +1,33 @@
-import {
-	Posix,
-	type RemoteResult,
-	type Result,
-	notAsked,
-} from "gamezilla-app/@/core";
-import type { UserId } from "gamezilla-app/app/@/data";
-import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
+import { isErr } from "gamezilla-app/@/core";
+import { FlowVariantUIEdit, FlowVariantUIPlay } from "../../../@/flow";
+import type { UpdateCore } from "../../create.types";
 
-//
-//
-//
-//
-//
+const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
+	switch (msgCore.t) {
+		case "user-created-puzzle": {
+			if (isErr(msgCore.created)) {
+				return modelCore;
+			}
+			const puzzleNew = msgCore.created.value;
+			return {
+				...modelCore,
+				listTab: modelCore.listTab,
+				opened: { t: "puzzle-builder" },
+				packBuilder: modelCore.packBuilder,
+				puzzleBuilder: {
+					t: "puzzle-builder",
+					mode: { t: "edit" },
+					edit: FlowVariantUIEdit.init({ flow: puzzleNew.flow }),
+					play: FlowVariantUIPlay.init({ flow: puzzleNew.flow }),
+					puzzle: puzzleNew,
+				},
+			};
+		}
 
-export type ModelClient = {
-	puzzleCreateRequest: RemoteResult<string, null>;
-	puzzleCreateRequestedAt: Posix;
+		default: {
+			return modelCore;
+		}
+	}
 };
 
-export const initClient: ModelClient = {
-	puzzleCreateRequest: notAsked,
-	puzzleCreateRequestedAt: Posix.now(),
-};
-
-export type ModelServer = {};
-
-//
-//
-//
-//
-
-export type MsgClient = {
-	t: "puzzle-create.user-clicked-create-button";
-};
-
-export type MsgServer = { t: "noop" };
-
-export type MsgToServer = { t: "puzzle-create.user-clicked-create-button" };
-
-export type MsgToClient = {
-	t: "created-puzzle";
-	created: Result<string, FlowPuzzle>;
-};
-
-//
-//
-//
-//
-//
-
-export type MsgCore = {
-	t: "user-created-puzzle";
-	created: Result<string, FlowPuzzle>;
-	userId: UserId;
-};
+export const PuzzleCreateCore = { updateCore };

@@ -8,7 +8,7 @@ import { SpaceServerModule } from "../architecture/space-server";
 import { SpaceState } from "../spaces-core";
 import * as Space from "../spaces-core/space";
 import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
-import type { MsgToClient, ServerDeps } from "../spaces.core";
+import type { MsgToClient, ServerDeps } from "../spaces.types";
 
 //
 //

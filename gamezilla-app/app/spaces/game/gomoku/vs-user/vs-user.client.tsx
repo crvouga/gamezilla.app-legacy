@@ -6,7 +6,7 @@ import {
 	type ModelServer,
 	type MsgToClient,
 	initShared,
-} from "./vs-user.core";
+} from "./vs-user.types";
 
 //
 //

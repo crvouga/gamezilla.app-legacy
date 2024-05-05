@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
 import { SpaceGameCoreFixture } from "gamezilla-app/app/spaces/game/@/testing/sync";
 import { randomFlowPack, randomFlowPuzzle } from "../../../@/testing";
-import { CreateCore } from "../../create.sync";
-import { PackBuilderCore } from "./pack-builder.sync";
-import { ModelCore } from "../../create.core";
-import { MsgCore } from "./pack-builder.core";
+import { CreateCore } from "../../create.core";
+import { PackBuilderCore } from "./pack-builder.core";
+import { ModelCore } from "../../create.types";
+import { MsgCore } from "./pack-builder.types";
 import { UserId } from "gamezilla-app/app/@/data";
 
 const Fixture = async () => {

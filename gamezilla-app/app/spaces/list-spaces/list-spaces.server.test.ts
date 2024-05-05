@@ -3,7 +3,7 @@ import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
 import { SpaceId } from "gamezilla-app/app/@/data";
 import { didSendMsgToClient } from "gamezilla-app/app/@/server";
 import { Fixture, init, userStartedSpace } from "../@/testing/server";
-import type { ModelServer } from "../spaces.core";
+import type { ModelServer } from "../spaces.types";
 import * as SpacesServer from "../spaces.server";
 
 const clientAListSpaces =

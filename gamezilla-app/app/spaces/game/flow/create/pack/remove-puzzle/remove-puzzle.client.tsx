@@ -16,7 +16,7 @@ import type {
 	MsgToClient,
 	MsgToServer,
 	RemovePuzzleClientCtx,
-} from "./remove-puzzle.core";
+} from "./remove-puzzle.types";
 
 type Module = GameClientModule<{
 	Model: ModelClient;

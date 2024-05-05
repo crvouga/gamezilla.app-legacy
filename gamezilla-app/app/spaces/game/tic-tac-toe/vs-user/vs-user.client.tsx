@@ -12,7 +12,7 @@ import {
 	type MsgToServer,
 	type Res,
 	initCoreModel,
-} from "./vs-user.core";
+} from "./vs-user.types";
 
 //
 //

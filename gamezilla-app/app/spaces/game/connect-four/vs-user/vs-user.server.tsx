@@ -12,7 +12,7 @@ import type {
 	MsgServer,
 	MsgToClient,
 	MsgToServer,
-} from "./vs-user.core";
+} from "./vs-user.types";
 
 //
 //

@@ -11,7 +11,7 @@ import type {
 	MsgClient,
 	MsgToClient,
 	MsgToServer,
-} from "./search.core";
+} from "./search.types";
 
 //
 //

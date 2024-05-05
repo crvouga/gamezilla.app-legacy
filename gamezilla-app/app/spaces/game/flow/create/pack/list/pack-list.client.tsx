@@ -1,6 +1,6 @@
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { FlowPackListClient } from "../../../@/flow-pack/flow-pack-list";
-import type { ClientModule } from "../../create.core";
+import type { ClientModule } from "../../create.types";
 import { PackCreateClient } from "../create/pack-create.client";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";

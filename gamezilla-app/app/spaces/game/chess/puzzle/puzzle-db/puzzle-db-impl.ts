@@ -9,7 +9,7 @@ import {
 	type PuzzleInteraction,
 	type PuzzleProfile,
 	initQuery,
-} from "../puzzle.core";
+} from "../puzzle.types";
 import { splitEvery } from "../utils";
 
 //

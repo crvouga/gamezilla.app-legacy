@@ -4,7 +4,7 @@ import { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 import { Eff } from "gamezilla-app/@/core";
 
 import { FlowPackGridServer } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid.server";
-import type { ServerModule } from "../../create.core";
+import type { ServerModule } from "../../create.types";
 
 const SavePack: Pick<ServerModule, "update"> = {
 	async update(input) {

@@ -1,8 +1,8 @@
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import type { WithEventMeta } from "../../@/event";
-import { CreateCore } from "./create/create.sync";
-import type { ModelCore, MsgCore } from "./flow.core";
-import * as Play from "./play/play.core";
+import { CreateCore } from "./create/create.core";
+import type { ModelCore, MsgCore } from "./flow.types";
+import * as Play from "./play/play.types";
 
 export const initCore = () => {
 	return { t: null };

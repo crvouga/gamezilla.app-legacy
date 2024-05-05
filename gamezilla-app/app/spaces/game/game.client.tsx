@@ -15,7 +15,7 @@ import type {
 	MsgCore,
 	MsgToClient,
 	MsgToServer,
-} from "./game.core";
+} from "./game.types";
 
 //
 //

@@ -12,7 +12,7 @@ import type { UserAccount } from "../@/data/account";
 import type { ServerCmd, ServerCtx, ServerEvent } from "../@/server";
 import type { IAccountDb } from "./@/server/account-db";
 import type { ISessionDb } from "./@/server/session-db";
-import type * as AuthSMS from "./auth-sms/auth-sms.core";
+import type * as AuthSMS from "./auth-sms/auth-sms.types";
 import type { ContinueAsGuest } from "./continue-as-guest";
 import type { Logout } from "./logout";
 

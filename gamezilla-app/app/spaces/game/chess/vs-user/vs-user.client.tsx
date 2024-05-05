@@ -11,7 +11,7 @@ import {
 	type MsgClient,
 	type MsgToClient,
 	initCore,
-} from "./vs-user.core";
+} from "./vs-user.types";
 
 //
 //

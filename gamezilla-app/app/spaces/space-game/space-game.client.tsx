@@ -4,12 +4,12 @@ import { Eff, Sub } from "gamezilla-app/@/core";
 import { ViewGameHeader, ViewUsersInSpaceList } from "../game/@/game";
 import { CoverArt } from "../game/game-cover-art";
 import { GameClient } from "../game/game.client";
-import { gameNameList, gameNameToString } from "../game/game.core";
+import { gameNameList, gameNameToString } from "../game/game.types";
 import { type WithEventId, withId } from "../@/event";
 import { SpaceClientCmd } from "../@/space-client-cmd";
 import { SpaceClientModule } from "../architecture/architecture";
 import { Space, type SpaceEvent, Spaces } from "../spaces-core";
-import type { MsgClient } from "../spaces.core";
+import type { MsgClient } from "../spaces.types";
 
 const update: SpaceClientModule["update"] = (input) => {
 	return SpaceClientModule.andThen(

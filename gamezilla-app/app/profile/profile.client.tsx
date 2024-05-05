@@ -28,7 +28,7 @@ import type {
 	MsgClient,
 	MsgToClient,
 	MsgToServer,
-} from "./profile.core";
+} from "./profile.types";
 
 //
 //

@@ -12,7 +12,7 @@ import type {
 	MsgClient,
 	MsgToClient,
 	MsgToServer,
-} from "../spaces.core";
+} from "../spaces.types";
 
 type Ctx = BaseClientCtx & {
 	space?: Space;

@@ -9,7 +9,7 @@ import type {
 	MsgServer,
 	MsgToClient,
 	MsgToServer,
-} from "./connect-four.core";
+} from "./connect-four.types";
 
 //
 //

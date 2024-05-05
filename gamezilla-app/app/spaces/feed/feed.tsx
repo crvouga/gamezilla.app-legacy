@@ -3,7 +3,7 @@ import type { WithEventId } from "../@/event";
 import { FeedItem } from "../@/feed-item";
 import type { SpaceClientCtx } from "../@/space";
 import { type SpaceEvent, type SpaceState, Spaces } from "../spaces-core";
-import type { ModelClient, MsgClient } from "../spaces.core";
+import type { ModelClient, MsgClient } from "../spaces.types";
 
 const View = ({
 	spaceState,

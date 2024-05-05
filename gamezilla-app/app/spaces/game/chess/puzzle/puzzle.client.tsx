@@ -43,7 +43,7 @@ import {
 	toNextEloRating,
 	toPlayerColor,
 	updateCore,
-} from "./puzzle.core";
+} from "./puzzle.types";
 
 //
 //

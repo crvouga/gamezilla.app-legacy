@@ -1,7 +1,7 @@
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import { FlowPuzzleName } from "../../../@/flow-puzzle/flow-puzzle-name";
-import type { ModelCore, MsgCore } from "../../create.core";
+import type { ModelCore, MsgCore } from "../../create.types";
 
 const updateCore = ({
 	modelCore,

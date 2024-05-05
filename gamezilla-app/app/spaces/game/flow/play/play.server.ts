@@ -11,7 +11,7 @@ import type {
 	MsgServer,
 	MsgToClient,
 	MsgToServer,
-} from "./play.core";
+} from "./play.types";
 import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 
 type Module = GameServerModule<{

@@ -24,7 +24,7 @@ import type {
 	MsgCore,
 	MsgToClient,
 	MsgToServer,
-} from "./chess.core";
+} from "./chess.types";
 import * as Puzzle from "./puzzle/puzzle.client";
 import * as VsBot from "./vs-bot/vs-bot.client";
 import * as VsUser from "./vs-user/vs-user.client";

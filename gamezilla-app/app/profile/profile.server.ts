@@ -21,7 +21,7 @@ import {
 	type ProfileCore,
 	type Req,
 	profileCoreToProfile,
-} from "./profile.core";
+} from "./profile.types";
 
 //
 //

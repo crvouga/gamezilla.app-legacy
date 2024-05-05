@@ -9,7 +9,7 @@ import { Logger } from "gamezilla-app/app/@/server/logger/logger-impl";
 import { smsNoop } from "gamezilla-app/app/@/server/sms";
 import { AccountDb } from "../@/server/account-db";
 import { SessionDb } from "../@/server/session-db";
-import type { ServerDeps, ServerModule } from "../auth.core";
+import type { ServerDeps, ServerModule } from "../auth.types";
 import * as AuthServer from "../auth.server";
 
 const ctx: ServerCtx = {

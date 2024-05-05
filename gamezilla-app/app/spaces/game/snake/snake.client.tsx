@@ -17,7 +17,7 @@ import {
 	type MsgClient,
 	type MsgToClient,
 	initCoreModel,
-} from "./snake.core";
+} from "./snake.types";
 
 //
 //

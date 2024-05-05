@@ -2,9 +2,9 @@ import { describe, expect, it } from "bun:test";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { randomFlowPack, randomFlowPuzzle } from "../../../@/testing";
 import { FlowCreateFixtureServer } from "../../@/testing/server";
-import { ModelCore, MsgCore } from "../../create.core";
+import { ModelCore, MsgCore } from "../../create.types";
 import { PackBuilderServer } from "./pack-builder.server";
-import { PackBuilderCore } from "./pack-builder.sync";
+import { PackBuilderCore } from "./pack-builder.core";
 
 const Fixture = async () => {
 	const f = await FlowCreateFixtureServer();

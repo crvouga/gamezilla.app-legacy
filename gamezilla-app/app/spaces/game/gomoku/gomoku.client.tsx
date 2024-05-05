@@ -10,7 +10,7 @@ import type {
 	MsgClient,
 	ModelServer,
 	MsgToClient,
-} from "./gomoku.core";
+} from "./gomoku.types";
 
 //
 //

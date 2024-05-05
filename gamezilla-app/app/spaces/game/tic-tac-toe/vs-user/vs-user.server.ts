@@ -32,7 +32,7 @@ import {
 	roundCountDown,
 	startGame,
 	stopPlaying,
-} from "./vs-user.core";
+} from "./vs-user.types";
 
 //
 //

@@ -42,7 +42,7 @@ import type {
 	MsgClient,
 	MsgToClient,
 	MsgToServer,
-} from "./auth-sms.core";
+} from "./auth-sms.types";
 import { verifyCodeProblemToString } from "./verify-sms/verify-sms";
 
 //

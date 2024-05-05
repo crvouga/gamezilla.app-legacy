@@ -6,10 +6,10 @@ import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import type { FlowClientCtx } from "../../@/flow-ctx";
 import { initial, testFlowClientCtx } from "../@/testing/client";
 import { CreateClient } from "../create.client";
-import type { ModelClient } from "../create.core";
+import type { ModelClient } from "../create.types";
 
 import type { ListTab } from "./list-tabs.types";
-import { CreateCore } from "../create.sync";
+import { CreateCore } from "../create.core";
 
 const userChangedListTab =
 	(ctx: FlowClientCtx, listTab: ListTab) => (model: ModelClient) => {

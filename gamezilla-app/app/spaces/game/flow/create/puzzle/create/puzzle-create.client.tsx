@@ -16,7 +16,7 @@ import {
 	showErrSm,
 } from "gamezilla-app/app/@/client";
 import { Button, IconPlus } from "gamezilla-app/app/@/ui";
-import type { ClientModule } from "../../create.core";
+import type { ClientModule } from "../../create.types";
 
 const update: ClientModule["update"] = (input) => {
 	const { msgCore, model, msg, ctx } = input;

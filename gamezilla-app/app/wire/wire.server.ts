@@ -18,7 +18,7 @@ import type {
 	MsgServer,
 	MsgToClient,
 	MsgToServer,
-} from "./wire.core";
+} from "./wire.types";
 
 //
 //

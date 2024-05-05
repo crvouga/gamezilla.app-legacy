@@ -19,7 +19,7 @@ import {
 	isBotMoving,
 	isBotTurn,
 	toBotPlayer,
-} from "./vs-bot.core";
+} from "./vs-bot.types";
 
 //
 //

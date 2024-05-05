@@ -42,7 +42,7 @@ import {
 	type MsgToServer,
 	handle,
 	initCoreModel,
-} from "./vs-bot.core";
+} from "./vs-bot.types";
 
 //
 //

@@ -11,10 +11,10 @@ import {
 import { Posix, type TimeSpan, pipe } from "gamezilla-app/@/core";
 import { LamportClock, LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import type { Route } from "gamezilla-app/@/routing/generated/routes";
-import type { GameName } from "../../game/game.core";
+import type { GameName } from "../../game/game.types";
 import { Space, type SpaceEvent } from "../../spaces-core";
 import * as SpaceClient from "../../spaces.client";
-import type * as SpaceCore from "../../spaces.core";
+import type * as SpaceCore from "../../spaces.types";
 
 //
 //
