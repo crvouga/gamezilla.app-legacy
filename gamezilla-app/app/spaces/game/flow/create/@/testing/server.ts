@@ -1,11 +1,11 @@
 import { ServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
 import {
-	SpaceGameServerFixture,
+	SpaceGameFixtureServer,
 	testSpaceServerCtx,
 } from "../../../../@/testing/server";
 import { FlowPackDb } from "../../../@/flow-pack/flow-pack-db";
 import { FlowPuzzleDb } from "../../../@/flow-puzzle/flow-puzzle-db";
-import { type FlowServerDeps, initServer } from "../../create.core";
+import { initServer, type FlowServerDeps } from "../../create.core";
 import { initSync } from "../../create.sync";
 
 export const initial = {
@@ -44,11 +44,13 @@ export const getDeps = async (): Promise<FlowServerDeps> => {
 	}
 };
 
-export const FlowCreateFixture = async () => {
-	const f = await SpaceGameServerFixture();
+export const FlowCreateFixtureServer = async () => {
+	const f = await SpaceGameFixtureServer();
 	const deps = await getDeps();
 	const model = initServer;
-	const modelSync = defaultModelSync;
+	const modelSync = initSync({
+		ctx: f.ctx,
+	});
 	return {
 		...f,
 		deps,

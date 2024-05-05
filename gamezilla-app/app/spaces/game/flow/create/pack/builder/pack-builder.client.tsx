@@ -1,6 +1,3 @@
-import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import { withId } from "gamezilla-app/app/spaces/@/event";
-import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
 import { APP_SOUND, playSound, showToast } from "gamezilla-app/app/@/client";
 import {
 	Button,
@@ -10,6 +7,9 @@ import {
 	IconChevronRight,
 	IconEllipsisVertical,
 } from "gamezilla-app/app/@/ui";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { withId } from "gamezilla-app/app/spaces/@/event";
+import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
 
 import { Eff, Sub } from "gamezilla-app/@/core";
 import {
@@ -18,8 +18,8 @@ import {
 } from "../../../../@/game";
 import { FlowVariantUIPlay } from "../../../@/flow";
 
-import { FlowPackPuzzleGridUI } from "../../../@/flow-pack/flow-pack-puzzle-grid/flow-pack-puzzle-grid-ui";
-import { FlowPackPuzzleGridClient } from "../../../@/flow-pack/flow-pack-puzzle-grid/flow-pack-puzzle-grid.client";
+import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
+import { FlowPackGridClient } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid.client";
 import { FlowPuzzleListClient } from "../../../@/flow-puzzle/flow-puzzle-list";
 import type { ClientModule } from "../../create.core";
 import { RemovePuzzleClient } from "../remove-puzzle/remove-puzzle.client";
@@ -97,7 +97,7 @@ const ButtonAddPuzzle: Pick<ClientModule, "update" | "View"> = {
 
 	View(input) {
 		return (
-			<FlowPackPuzzleGridUI.ViewAddCell
+			<FlowPackGridUI.ViewAddCell
 				onClick={() =>
 					input.dispatch({
 						t: "pack-builder.user-clicked-open-add-puzzle-button",
@@ -214,9 +214,9 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 						{packBuilder.pack.name}
 					</p>
 					<div className="flex w-full flex-1 flex-col items-center justify-center">
-						<FlowPackPuzzleGridUI.ViewPackPuzzleGrid
+						<FlowPackGridUI.ViewPackPuzzleGrid
 							renderCell={(position) => {
-								const index = FlowPackPuzzleGridUI.toIndex(position);
+								const index = FlowPackGridUI.toIndex(position);
 
 								const puzzleId = packBuilder.pack.puzzleIds[index];
 
@@ -224,11 +224,11 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 									const puzzle = puzzleId ? model.puzzles[puzzleId] : null;
 
 									if (!puzzle) {
-										return <FlowPackPuzzleGridUI.ViewLoadingCell />;
+										return <FlowPackGridUI.ViewLoadingCell />;
 									}
 
 									return (
-										<FlowPackPuzzleGridUI.ViewPuzzleCell
+										<FlowPackGridUI.ViewPuzzleCell
 											onClick={() =>
 												input.dispatch({
 													t: "pack-builder.user-clicked-pack-item",
@@ -245,7 +245,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 									return <ButtonAddPuzzle.View {...input} />;
 								}
 
-								return <FlowPackPuzzleGridUI.ViewEmptyCell />;
+								return <FlowPackGridUI.ViewEmptyCell />;
 							}}
 						/>
 					</div>
@@ -480,21 +480,18 @@ const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
 
 		const ctx = { ...input.ctx, pack };
 
-		const initial = FlowPackPuzzleGridClient.init({ ctx });
+		const initial = FlowPackGridClient.init({ ctx });
 
 		const model = input.model.packBuilder.flowPackPuzzleGrid ?? initial.model;
 
-		const updated = FlowPackPuzzleGridClient.update({
+		const updated = FlowPackGridClient.update({
 			ctx,
 			model: { ...model, puzzles: input.model.puzzles },
-			msg:
-				input.msg?.t === "pack-builder.flow-pack-puzzle-grid"
-					? input.msg.c
-					: null,
+			msg: input.msg?.t === "pack-builder.flow-pack-grid" ? input.msg.c : null,
 			msgCmd: input.msgCmd,
 			msgEvt: input.msgEvt,
 			msgServer:
-				input.msgServer?.t === "pack-builder.flow-pack-puzzle-grid"
+				input.msgServer?.t === "pack-builder.flow-pack-grid"
 					? input.msgServer.c
 					: null,
 		});
@@ -511,19 +508,16 @@ const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
 					flowPackPuzzleGrid: updated.model,
 				},
 			},
-			eff: Eff.tag("pack-builder.flow-pack-puzzle-grid", updated.eff),
-			msgCmd: SpaceClientCmd.tag(
-				"pack-builder.flow-pack-puzzle-grid",
-				updated.msgCmd,
-			),
+			eff: Eff.tag("pack-builder.flow-pack-grid", updated.eff),
+			msgCmd: SpaceClientCmd.tag("pack-builder.flow-pack-grid", updated.msgCmd),
 			msgEvt: updated.msgEvt,
 		};
 	},
 	subscriptions(input) {
 		const pack = input.modelSync.packBuilder?.pack;
 		return Sub.tag(
-			"pack-builder.flow-pack-puzzle-grid",
-			FlowPackPuzzleGridClient.subscriptions({
+			"pack-builder.flow-pack-grid",
+			FlowPackGridClient.subscriptions({
 				ctx: { ...input.ctx, pack },
 				model: input.model.packBuilder.flowPackPuzzleGrid,
 			}),
@@ -559,11 +553,11 @@ export const PackBuilderClient: Pick<
 		const { modelSync, model } = input;
 
 		return (
-			<FlowPackPuzzleGridClient.View
+			<FlowPackGridClient.View
 				ctx={{ ...input.ctx, pack: modelSync.packBuilder?.pack }}
 				model={model.packBuilder.flowPackPuzzleGrid}
 				dispatch={(c) =>
-					input.dispatch({ t: "pack-builder.flow-pack-puzzle-grid", c })
+					input.dispatch({ t: "pack-builder.flow-pack-grid", c })
 				}
 				slots={{
 					grid() {

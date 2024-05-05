@@ -34,6 +34,7 @@ export const randomFlowPuzzle = async (input?: {
 
 export const randomFlowPack = async (input?: {
 	createdBy?: UserId;
+	puzzleIds?: FlowPuzzleId[];
 }): Promise<FlowPack> => {
 	const createdBy = input?.createdBy ?? UserId.generate();
 	return {
@@ -45,6 +46,6 @@ export const randomFlowPack = async (input?: {
 		name: await FlowPackName.generate({
 			count: 0,
 		}),
-		puzzleIds: [],
+		puzzleIds: input?.puzzleIds ?? [],
 	};
 };

@@ -1,6 +1,7 @@
 import { Eff, type Sub } from "gamezilla-app/@/core";
-import type { EventMeta, WithEventId } from "../event";
+import type { EventId, EventMeta, WithEventId } from "../event";
 import type { VDom } from "gamezilla-app/@/vdom";
+import { GameSyncModule } from "./game-sync";
 
 //
 //
@@ -183,6 +184,31 @@ export type GameClientModule<T extends GameClientModuleTypes> = {
 //
 //
 
+export const scan = <T extends GameClientModuleTypes>(
+	_module: Pick<GameClientModule<T>, "update">,
+	_moduleSync: Pick<GameSyncModule<T>, "reducer">,
+	_ctx: T["Ctx"],
+	_msgs: ((T["MsgSync"] & EventId) | T["MsgToClient"] | T["Msg"])[],
+): { model: T["Model"]; modelSync: T["ModelSync"] }[] => {
+	const scanOutput: { model: T["Model"]; modelSync: T["ModelSync"] }[] = [];
+
+	// for (const msg of msgs) {
+	// 	 module.update({
+	// 		ctx: ctx,
+	// 		model: scanOutput[scanOutput.length - 1]?.model ?? module.init,
+	// 		modelSync: scanOutput[scanOutput.length - 1]?.modelSync ?? moduleSync.initSync({ ctx }),
+	// 		msg: msg,
+	// 	});
+	// 	moduleSync.reducer({
+	// 		ctx: ctx,
+	// 		modelSync: scanOutput[scanOutput.length - 1]?.modelSync ?? moduleSync.initSync({ ctx }),
+	// 		msgSync: msg,
+	// 	});
+	// }
+
+	return scanOutput;
+};
+
 export const andThen = <T extends GameClientModuleTypes>(
 	acc: Output<T>,
 	...updates: ((model: T["Model"]) => Output<T>)[]
@@ -254,4 +280,5 @@ const tagOutput = <
 export const GameClientModule = {
 	andThen,
 	tagOutput,
+	scan,
 };

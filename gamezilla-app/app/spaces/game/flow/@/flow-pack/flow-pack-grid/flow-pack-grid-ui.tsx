@@ -77,7 +77,7 @@ const ViewLoadingCell = () => {
 	);
 };
 
-export const FlowPackPuzzleGridUI = {
+export const FlowPackGridUI = {
 	toIndex,
 	ViewPackPuzzleGrid,
 	ViewAddCell,

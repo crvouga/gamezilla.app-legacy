@@ -2,7 +2,7 @@ import { UserId } from "gamezilla-app/app/@/data";
 import { Result } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import type { FlowVariantUIPlay } from "../../../@/flow";
-import { FlowPackPuzzleGrid } from "../../../@/flow-pack";
+import { FlowPackGrid } from "../../../@/flow-pack";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
 import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 
@@ -14,19 +14,19 @@ import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 
 export type ModelClient = {
 	packBuilder: {
-		flowPackPuzzleGrid: FlowPackPuzzleGrid.ModelClient;
+		flowPackPuzzleGrid: FlowPackGrid.ModelClient;
 	};
 };
 
 export const initClient: ModelClient = {
 	packBuilder: {
-		flowPackPuzzleGrid: FlowPackPuzzleGrid.initClient,
+		flowPackPuzzleGrid: FlowPackGrid.initClient,
 	},
 };
 
-export type ModelServer = {};
+export type ModelServer = null;
 
-export const initServer: ModelServer = {};
+export const initServer: ModelServer = null;
 
 //
 //
@@ -36,23 +36,23 @@ export const initServer: ModelServer = {};
 export type MsgClient =
 	| MsgSync
 	| {
-			t: "pack-builder.flow-pack-puzzle-grid";
-			c: FlowPackPuzzleGrid.MsgClient;
+			t: "pack-builder.flow-pack-grid";
+			c: FlowPackGrid.MsgClient;
 	  };
 
 export type MsgServer = {
-	t: "pack-builder.flow-pack-puzzle-grid";
-	c: FlowPackPuzzleGrid.MsgServer;
+	t: "pack-builder.flow-pack-grid";
+	c: FlowPackGrid.MsgServer;
 };
 
 export type MsgToServer = {
-	t: "pack-builder.flow-pack-puzzle-grid";
-	c: FlowPackPuzzleGrid.MsgToServer;
+	t: "pack-builder.flow-pack-grid";
+	c: FlowPackGrid.MsgToServer;
 };
 
 export type MsgToClient = {
-	t: "pack-builder.flow-pack-puzzle-grid";
-	c: FlowPackPuzzleGrid.MsgToClient;
+	t: "pack-builder.flow-pack-grid";
+	c: FlowPackGrid.MsgToClient;
 };
 
 //
@@ -81,12 +81,10 @@ export type ModelSync = {
 		  };
 };
 
-const userId = p.custom(UserId.is, "Invalid user id");
-
-export const isMsgSync = p.or(
+export const MsgSync = p.or(
 	p.obj({
 		t: p.l("pack-builder.user-clicked-exit-button"),
-		userId: userId,
+		userId: UserId,
 	}),
 	p.obj({
 		t: p.l("pack-builder.saved-pack"),
@@ -94,7 +92,7 @@ export const isMsgSync = p.or(
 	}),
 	p.obj({
 		t: p.l("pack-builder.user-clicked-open-add-puzzle-button"),
-		userId: userId,
+		userId: UserId,
 	}),
 	p.obj({
 		t: p.l("pack-builder.user-closed-add-puzzle"),
@@ -102,7 +100,7 @@ export const isMsgSync = p.or(
 	p.obj({
 		t: p.l("pack-builder.user-clicked-add-puzzle-item"),
 		puzzle: FlowPuzzle,
-		userId: userId,
+		userId: UserId,
 	}),
 	p.obj({
 		t: p.l("pack-builder.user-clicked-pack-item"),
@@ -115,77 +113,30 @@ export const isMsgSync = p.or(
 	}),
 	p.obj({
 		t: p.l("pack-builder.user-clicked-exit-puzzle-button"),
-		userId: userId,
+		userId: UserId,
 	}),
 	p.obj({
 		t: p.l("pack-builder.user-clicked-next-puzzle-button"),
-		userId: userId,
+		userId: UserId,
 		nextPuzzle: FlowPuzzle,
 	}),
 	p.obj({
 		t: p.l("pack-builder.user-clicked-previous-puzzle-button"),
-		userId: userId,
+		userId: UserId,
 		previousPuzzle: FlowPuzzle,
 	}),
 	p.obj({
 		t: p.l("pack-builder.puzzle-screen.user-clicked-more-button"),
-		userId: userId,
+		userId: UserId,
 	}),
 	p.obj({
 		t: p.l("pack-builder.puzzle-screen.user-closed-more-drawer"),
-		userId: userId,
+		userId: UserId,
+	}),
+	p.obj({
+		t: p.l("pack-builder.puzzle-screen.user-clicked-remove-from-pack-button"),
+		userId: UserId,
 	}),
 );
 
-export type MsgSync =
-	| {
-			t: "pack-builder.user-clicked-exit-button";
-			userId: UserId;
-	  }
-	| {
-			t: "pack-builder.saved-pack";
-			saved: Result<string, FlowPack>;
-	  }
-	| {
-			t: "pack-builder.user-clicked-open-add-puzzle-button";
-			userId: UserId;
-	  }
-	| {
-			t: "pack-builder.user-closed-add-puzzle";
-	  }
-	| {
-			t: "pack-builder.user-clicked-add-puzzle-item";
-			puzzle: FlowPuzzle;
-			userId: UserId;
-	  }
-	| {
-			t: "pack-builder.user-clicked-pack-item";
-			puzzle: FlowPuzzle;
-			index: number;
-	  }
-	| {
-			t: "pack-builder.flow-play-ui";
-			c: FlowVariantUIPlay.Msg;
-	  }
-	| {
-			t: "pack-builder.user-clicked-exit-puzzle-button";
-			userId: UserId;
-	  }
-	| {
-			t: "pack-builder.user-clicked-next-puzzle-button";
-			userId: UserId;
-			nextPuzzle: FlowPuzzle;
-	  }
-	| {
-			t: "pack-builder.user-clicked-previous-puzzle-button";
-			userId: UserId;
-			previousPuzzle: FlowPuzzle;
-	  }
-	| {
-			t: "pack-builder.puzzle-screen.user-clicked-more-button";
-			userId: UserId;
-	  }
-	| {
-			t: "pack-builder.puzzle-screen.user-closed-more-drawer";
-			userId: UserId;
-	  };
+export type MsgSync = p.Infer<typeof MsgSync>;

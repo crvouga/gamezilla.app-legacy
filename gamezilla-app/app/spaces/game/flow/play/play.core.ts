@@ -1,4 +1,4 @@
-import type { GameCore } from "gamezilla-app/app/spaces/@/architecture/game-core";
+import type { GameSyncModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import { type FlowVariant, FlowVariantUIPlay } from "../@/flow";
 import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
@@ -52,7 +52,7 @@ export type ModelSync = {
 	flow: FlowVariant.Model;
 };
 
-type Module = GameCore<{
+type Module = GameSyncModule<{
 	Ctx: SpaceCtx;
 	ModelSync: ModelSync;
 	MsgSync: MsgSync;

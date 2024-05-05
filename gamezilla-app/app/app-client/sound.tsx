@@ -270,7 +270,7 @@ const getAudioContext = () => {
 };
 
 let hasResumed = false;
-const resumedPromise = async () => {
+export const resumedPromise = async () => {
 	if (hasResumed) {
 		return;
 	}

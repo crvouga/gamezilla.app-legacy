@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { randomFlowPack, randomFlowPuzzle } from "../../../@/testing";
-import { FlowCreateFixture } from "../../@/testing/server";
+import { FlowCreateFixtureServer } from "../../@/testing/server";
 import { ModelSync, MsgSync } from "../../create.core";
 import { PackBuilderServer } from "./pack-builder.server";
 import { PackBuilderSync } from "./pack-builder.sync";
 
 const Fixture = async () => {
-	const f = await FlowCreateFixture();
+	const f = await FlowCreateFixtureServer();
 	const pack = await randomFlowPack();
 	const modelSync: ModelSync = {
 		...f.modelSync,

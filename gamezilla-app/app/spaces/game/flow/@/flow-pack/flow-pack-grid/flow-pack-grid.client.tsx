@@ -13,7 +13,7 @@ import type {
 	MsgClient,
 	MsgToClient,
 	MsgToServer,
-} from "./flow-pack-puzzle-grid.core";
+} from "./flow-pack-grid.core";
 
 type Ctx = SpaceClientCtx & {
 	pack?: FlowPack | null;
@@ -76,7 +76,7 @@ const ObserveGrid: Pick<ClientModule, "View" | "update"> = {
 	View(input) {
 		return (
 			<IntersectionObserverEmitter
-				id="flow-pack-puzzle-grid"
+				id="flow-pack-grid"
 				onVisible={() => input.dispatch({ t: "user-observed-grid" })}
 			/>
 		);
@@ -150,7 +150,7 @@ const RequestTimeout: Pick<ClientModule, "update" | "subscriptions"> = {
 	},
 };
 
-export const FlowPackPuzzleGridClient: Pick<
+export const FlowPackGridClient: Pick<
 	ClientModule,
 	"View" | "update" | "subscriptions" | "init"
 > = {

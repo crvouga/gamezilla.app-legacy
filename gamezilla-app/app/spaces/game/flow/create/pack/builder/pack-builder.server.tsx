@@ -3,7 +3,7 @@ import { withId } from "gamezilla-app/app/spaces/@/event";
 import { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 import { Eff } from "gamezilla-app/@/core";
 
-import { FlowPackPuzzleGridServer } from "../../../@/flow-pack/flow-pack-puzzle-grid/flow-pack-puzzle-grid.server";
+import { FlowPackGridServer } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid.server";
 import type { ServerModule } from "../../create.core";
 
 const SavePack: Pick<ServerModule, "update"> = {
@@ -41,16 +41,13 @@ const PuzzleGrid: Pick<ServerModule, "update"> = {
 
 		const ctx = { ...input.ctx, pack };
 
-		const updated = await FlowPackPuzzleGridServer.update({
+		const updated = await FlowPackGridServer.update({
 			ctx,
 			model: {},
-			msg:
-				input.msg?.t === "pack-builder.flow-pack-puzzle-grid"
-					? input.msg.c
-					: null,
+			msg: input.msg?.t === "pack-builder.flow-pack-grid" ? input.msg.c : null,
 			msgCmd: input.msgCmd,
 			msgClient:
-				input.msgClient?.t === "pack-builder.flow-pack-puzzle-grid"
+				input.msgClient?.t === "pack-builder.flow-pack-grid"
 					? { ...input.msgClient, ...input.msgClient.c }
 					: null,
 			deps: input.deps,
@@ -59,11 +56,8 @@ const PuzzleGrid: Pick<ServerModule, "update"> = {
 
 		return {
 			model: input.model,
-			eff: Eff.tag("pack-builder.flow-pack-puzzle-grid", updated.eff),
-			msgCmd: SpaceServerCmd.tag(
-				"pack-builder.flow-pack-puzzle-grid",
-				updated.msgCmd,
-			),
+			eff: Eff.tag("pack-builder.flow-pack-grid", updated.eff),
+			msgCmd: SpaceServerCmd.tag("pack-builder.flow-pack-grid", updated.msgCmd),
 			msgEvt: updated.msgEvt,
 		};
 	},

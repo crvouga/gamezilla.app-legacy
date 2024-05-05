@@ -2,10 +2,9 @@ import { describe, expect, it } from "bun:test";
 import { andThen } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import type { FlowClientCtx } from "../../../@/flow-ctx";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
-import { deriveModelSync } from "../../@/testing/game";
-import type { ModelClient } from "../../create.core";
-import { PackBuilderClient } from "./pack-builder.client";
+import { randomFlowPack, randomFlowPuzzle } from "../../../@/testing";
 import {
+	FlowCreateFixtureClient,
 	clickedExitPuzzleButton,
 	clickedOpenPuzzlePickerButton,
 	clickedPuzzleGridItem,
@@ -17,7 +16,10 @@ import {
 	serverCreatedPack,
 	testFlowClientCtx,
 } from "../../@/testing/client";
+import { deriveModelSync } from "../../@/testing/game";
+import type { ModelClient, ModelSync } from "../../create.core";
 import { initSync } from "../../create.sync";
+import { PackBuilderClient } from "./pack-builder.client";
 
 const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
 	return PackBuilderClient.update({
@@ -41,6 +43,39 @@ const closedMoreDrawer = (ctx: FlowClientCtx) => (model: ModelClient) => {
 			userId: ctx.currentUserId,
 		},
 	});
+};
+
+export const Fixture = async () => {
+	const f = await FlowCreateFixtureClient();
+	const puzzle = await randomFlowPuzzle({
+		createdBy: f.ctx.currentUserId,
+	});
+	const pack = await randomFlowPack({
+		createdBy: f.ctx.currentUserId,
+		puzzleIds: [puzzle.id],
+	});
+	const model: ModelClient = {
+		...f.model,
+		puzzles: {
+			[puzzle.id]: puzzle,
+		},
+		packs: {
+			[pack.id]: pack,
+		},
+	};
+	const modelSync: ModelSync = {
+		...f.modelSync,
+		packBuilder: {
+			t: "pack-builder",
+			pack: pack,
+			screen: { t: "add-puzzle" },
+		},
+	};
+	return {
+		...f,
+		model,
+		modelSync,
+	};
 };
 
 describe(import.meta.file, () => {
@@ -163,5 +198,9 @@ describe(import.meta.file, () => {
 			modelSync.packBuilder?.screen.t === "screen-puzzle" &&
 				modelSync.packBuilder?.screen.opened === null,
 		).toBe(true);
+	});
+
+	it("should should remove puzzle from pack clicking remove from pack button", async () => {
+		// const f = await Fixture();
 	});
 });

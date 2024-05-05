@@ -11,8 +11,8 @@ import type { FlowServerDeps } from "../../../create/create.core";
 import { FlowVariant, FlowVariantDimensions } from "../../flow";
 import { FlowPuzzle, FlowPuzzleDb } from "../../flow-puzzle";
 import type { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
-import type { ModelServer } from "./flow-pack-puzzle-grid.core";
-import { FlowPackPuzzleGridServer } from "./flow-pack-puzzle-grid.server";
+import type { ModelServer } from "./flow-pack-grid.core";
+import { FlowPackGridServer } from "./flow-pack-grid.server";
 
 const initial = () => {
 	return {
@@ -27,7 +27,7 @@ const userObversedGrid =
 		puzzleIds: FlowPuzzleId[],
 	) =>
 	(model: ModelServer) => {
-		return FlowPackPuzzleGridServer.update({
+		return FlowPackGridServer.update({
 			ctx: testSpaceServerCtx,
 			model,
 			deps,

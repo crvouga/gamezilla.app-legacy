@@ -2,7 +2,10 @@ import { Ok } from "gamezilla-app/@/core";
 import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import { EventId } from "gamezilla-app/app/spaces/@/event";
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
-import { testSpaceClientCtx } from "../../../../@/testing/client";
+import {
+	SpaceGameFixtureClient,
+	testSpaceClientCtx,
+} from "../../../../@/testing/client";
 import { Flow } from "../../../@/flow";
 import type { FlowClientCtx } from "../../../@/flow-ctx";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
@@ -11,11 +14,27 @@ import type { FlowPuzzleId } from "../../../@/flow-puzzle/flow-puzzle-id";
 import { samples } from "../../../@/flow/flow-variant/flow-grid/flow-grid-samples";
 import { CreateClient } from "../../create.client";
 import {
+	initClient,
 	type ModelClient,
 	type ModelSync,
-	initClient,
 } from "../../create.core";
 import { initSync } from "../../create.sync";
+
+export const FlowCreateFixtureClient = async () => {
+	const f = await SpaceGameFixtureClient();
+	const model = initClient;
+	const modelSync = initSync({ ctx: f.ctx });
+	const ctx: FlowClientCtx = {
+		...f.ctx,
+		onQuit() {},
+	};
+	return {
+		...f,
+		ctx,
+		model,
+		modelSync,
+	};
+};
 
 export const initial = {
 	model: initClient,

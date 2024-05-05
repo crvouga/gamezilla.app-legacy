@@ -28,7 +28,7 @@ export const testSpaceServerCtx: SpaceServerCtx = {
 	},
 };
 
-export const SpaceGameServerFixture = async () => {
+export const SpaceGameFixtureServer = async () => {
 	return {
 		ctx: testSpaceServerCtx,
 	};

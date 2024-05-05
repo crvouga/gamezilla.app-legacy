@@ -7,8 +7,8 @@ import { FlowPack } from "..";
 import { testFlowClientCtx } from "../../../create/@/testing/client";
 import { FlowVariant, FlowVariantDimensions } from "../../flow";
 import { FlowPuzzle } from "../../flow-puzzle";
-import { FlowPackPuzzleGridClient } from "./flow-pack-puzzle-grid.client";
-import { type ModelClient, initClient } from "./flow-pack-puzzle-grid.core";
+import { FlowPackGridClient } from "./flow-pack-grid.client";
+import { type ModelClient, initClient } from "./flow-pack-grid.core";
 
 const initial = (_pack: FlowPack) => {
 	return {
@@ -17,7 +17,7 @@ const initial = (_pack: FlowPack) => {
 };
 
 const userObversedGrid = (ctx: SpaceClientCtx) => (model: ModelClient) => {
-	return FlowPackPuzzleGridClient.update({
+	return FlowPackGridClient.update({
 		ctx,
 		model,
 		msg: {
@@ -28,7 +28,7 @@ const userObversedGrid = (ctx: SpaceClientCtx) => (model: ModelClient) => {
 
 const serverListedPuzzlesByIdErr =
 	(ctx: SpaceClientCtx, error: string) => (model: ModelClient) => {
-		return FlowPackPuzzleGridClient.update({
+		return FlowPackGridClient.update({
 			ctx,
 			model,
 			msgServer: {
@@ -43,7 +43,7 @@ const serverListedPuzzlesByIdErr =
 
 const serverListedPuzzlesByIdOk =
 	(ctx: SpaceClientCtx, puzzles: FlowPuzzle[]) => (model: ModelClient) => {
-		return FlowPackPuzzleGridClient.update({
+		return FlowPackGridClient.update({
 			ctx,
 			model,
 			msgServer: {
@@ -63,7 +63,7 @@ const serverListedPuzzlesByIdOk =
 
 const elapsed =
 	(ctx: SpaceClientCtx, timeSpan: TimeSpan) => (model: ModelClient) => {
-		return FlowPackPuzzleGridClient.update({
+		return FlowPackGridClient.update({
 			ctx: { ...ctx, now: Posix.add(ctx.now, timeSpan) },
 			model,
 			msg: { t: "elapsed" },
