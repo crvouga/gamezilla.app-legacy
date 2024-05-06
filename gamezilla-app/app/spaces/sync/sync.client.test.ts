@@ -62,7 +62,10 @@ describe(import.meta.file, () => {
 	});
 
 	it("should merge space recieved from server", () => {
-		const someSpace = makeSpace(SpaceId.generate(), UserId.generate());
+		const someSpace = makeSpace({
+			spaceId: SpaceId.generate(),
+			hostId: UserId.generate(),
+		});
 		const ctx = Ctx();
 
 		const output = andThen(init(ctx), gotSpace(ctx, someSpace));
@@ -80,7 +83,7 @@ describe(import.meta.file, () => {
 		const ctx = Ctx();
 		const spaceId = SpaceId.generate();
 
-		const someStartedSpace = makeSpace(spaceId, ctx.currentUserId);
+		const someStartedSpace = makeSpace({ spaceId, hostId: ctx.currentUserId });
 
 		const updated = andThen(
 			init(ctx),

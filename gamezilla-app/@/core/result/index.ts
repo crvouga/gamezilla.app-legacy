@@ -6,6 +6,6 @@ export type { ResultPrivate } from "./result";
 export type Result<TError, TValue> = ResultPrivate<TError, TValue>;
 
 export const Result = {
-	...parser,
+	parser,
 	...ResultPrivate,
 };

@@ -11,6 +11,7 @@ export type EventMeta = p.Infer<typeof EventMeta>;
 
 export type WithEventId<T> = T & {
 	eventId: EventId;
+	happenedAt?: LamportTimestamp | null | undefined;
 };
 
 export type WithEventMeta<T> = T & EventMeta;

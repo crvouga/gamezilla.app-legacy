@@ -30,7 +30,10 @@ describe(import.meta.file, () => {
 	it("should send back synced response when user sends sync message", async () => {
 		const deps = getDeps();
 		const client = generateAuthClient();
-		const clientsSpace = makeSpace(SpaceId.generate(), client.userId);
+		const clientsSpace = makeSpace({
+			spaceId: SpaceId.generate(),
+			hostId: client.userId,
+		});
 		const output = await AppServerModule.andThen(
 			init(),
 			clientCore(deps, client, clientsSpace),
