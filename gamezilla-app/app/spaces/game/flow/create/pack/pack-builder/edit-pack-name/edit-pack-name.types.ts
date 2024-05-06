@@ -10,10 +10,10 @@ type EditPackNameValidationError = { t: "name-cannot-be-empty" };
 
 export type ModelCore = {
 	pack: FlowPack;
-	editPackNameDraft: string;
-	editPackNameResult: RemoteResult<string, null>;
-	editPackNameRollback: FlowPackName;
-	editPackNameValidationError: EditPackNameValidationError | null;
+	draft: string;
+	result: RemoteResult<string, null>;
+	rollback: FlowPackName;
+	validationError: EditPackNameValidationError | null;
 };
 
 export const MsgCore = p.or(

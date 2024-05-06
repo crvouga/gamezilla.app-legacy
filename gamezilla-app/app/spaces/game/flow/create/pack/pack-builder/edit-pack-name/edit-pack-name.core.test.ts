@@ -36,7 +36,7 @@ describe(import.meta.file, () => {
 				packNameDraft,
 			},
 		]);
-		expect(model.editPackNameDraft).toBe(packNameDraft);
+		expect(model.draft).toBe(packNameDraft);
 	});
 
 	it("should only allow host to input pack name", async () => {
@@ -49,7 +49,7 @@ describe(import.meta.file, () => {
 				packNameDraft,
 			},
 		]);
-		expect(model.editPackNameDraft).toBe("");
+		expect(model.draft).toBe("");
 	});
 
 	it("should be loading after saving pack name", async () => {
@@ -60,7 +60,7 @@ describe(import.meta.file, () => {
 				userId: f.hostId,
 			},
 		]);
-		expect(model.editPackNameResult.t).toBe("loading");
+		expect(model.result.t).toBe("loading");
 	});
 
 	it("should be ok if persisting pack is ok", async () => {
@@ -72,7 +72,7 @@ describe(import.meta.file, () => {
 				result: Ok(null),
 			},
 		]);
-		expect(model.editPackNameResult.t).toBe("ok");
+		expect(model.result.t).toBe("ok");
 	});
 
 	it("should be error if persisting pack is error", async () => {
@@ -84,7 +84,7 @@ describe(import.meta.file, () => {
 				result: Err("some error"),
 			},
 		]);
-		expect(model.editPackNameResult.t).toBe("err");
+		expect(model.result.t).toBe("err");
 	});
 
 	it("should error if name is empty", async () => {
@@ -96,7 +96,7 @@ describe(import.meta.file, () => {
 				packNameDraft: "",
 			},
 		]);
-		expect(model.editPackNameValidationError?.t).toBe("name-cannot-be-empty");
+		expect(model.validationError?.t).toBe("name-cannot-be-empty");
 	});
 
 	it("should clear validation error after input of non empty name", async () => {
@@ -113,7 +113,7 @@ describe(import.meta.file, () => {
 				packNameDraft: "pack-name",
 			},
 		]);
-		expect(model.editPackNameValidationError).toBe(null);
+		expect(model.validationError).toBe(null);
 	});
 
 	it("should optimisitcally update pack name", async () => {

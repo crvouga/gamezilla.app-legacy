@@ -59,7 +59,7 @@ const View: ClientModule["View"] = (input) => {
 			<TextField
 				id="pack-name"
 				label="Pack Name"
-				value={input.modelCore.editPackNameDraft}
+				value={input.modelCore.draft}
 				onChange={(packNameDraft) =>
 					input.dispatch({
 						t: "edit-pack-name.user-inputted-draft-name",

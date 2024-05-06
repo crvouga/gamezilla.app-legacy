@@ -7,10 +7,10 @@ import { FlowPackName } from "../../../../@/flow-pack/flow-pack-name";
 const init = (input: { pack: FlowPack }): ModelCore => {
 	return {
 		pack: input.pack,
-		editPackNameRollback: input.pack.name,
-		editPackNameDraft: "",
-		editPackNameResult: notAsked,
-		editPackNameValidationError: null,
+		rollback: input.pack.name,
+		draft: "",
+		result: notAsked,
+		validationError: null,
 	};
 };
 
@@ -21,7 +21,7 @@ const update = <TModel extends ModelCore, TMsg extends MsgCore>(input: {
 }): TModel => {
 	switch (input.msg.t) {
 		case "edit-pack-name.user-clicked-save-button": {
-			const parsed = FlowPackName.parse(input.model.editPackNameDraft);
+			const parsed = FlowPackName.parse(input.model.draft);
 
 			if (isErr(parsed)) {
 				return input.model;
@@ -33,7 +33,7 @@ const update = <TModel extends ModelCore, TMsg extends MsgCore>(input: {
 					...input.model.pack,
 					name: parsed.value,
 				},
-				editPackNameResult: loading,
+				result: loading,
 			};
 		}
 
@@ -45,14 +45,14 @@ const update = <TModel extends ModelCore, TMsg extends MsgCore>(input: {
 			if (input.msg.packNameDraft === "") {
 				return {
 					...input.model,
-					editPackNameValidationError: { t: "name-cannot-be-empty" },
+					validationError: { t: "name-cannot-be-empty" },
 				};
 			}
 
 			return {
 				...input.model,
-				editPackNameDraft: input.msg.packNameDraft,
-				editPackNameValidationError: null,
+				draft: input.msg.packNameDraft,
+				validationError: null,
 			};
 		}
 
@@ -60,16 +60,16 @@ const update = <TModel extends ModelCore, TMsg extends MsgCore>(input: {
 			if (isErr(input.msg.result)) {
 				return {
 					...input.model,
-					editPackNameResult: input.msg.result,
+					result: input.msg.result,
 					pack: {
 						...input.model.pack,
-						name: input.model.editPackNameRollback,
+						name: input.model.rollback,
 					},
 				};
 			}
 			return {
 				...input.model,
-				editPackNameResult: input.msg.result,
+				result: input.msg.result,
 			};
 		}
 
