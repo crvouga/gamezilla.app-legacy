@@ -1,6 +1,6 @@
 import type { FlowPack } from "../../@/flow-pack";
 import type { FlowPackId } from "../../@/flow-pack/flow-pack-id";
-import { PackBuilder } from "./builder";
+import { PackBuilder } from "./pack-builder";
 import { PackCreate } from "./create";
 import { PackList } from "./list";
 import { RemovePuzzle } from "./remove-puzzle";

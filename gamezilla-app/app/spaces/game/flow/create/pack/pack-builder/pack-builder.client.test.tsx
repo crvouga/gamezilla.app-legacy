@@ -20,6 +20,7 @@ import { deriveModelCore } from "../../@/testing/game";
 import type { ModelClient, ModelCore } from "../../create.types";
 import { PackBuilderClient } from "./pack-builder.client";
 import { CreateCore } from "../../create.core";
+import { PackBuilderCore } from "./pack-builder.core";
 
 const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
 	return PackBuilderClient.update({
@@ -65,14 +66,9 @@ export const Fixture = async () => {
 	};
 	const modelCore: ModelCore = {
 		...f.modelCore,
-		packBuilder: {
-			t: "pack-builder",
-			slideIndex: 0,
+		packBuilder: PackBuilderCore.initCore({
 			pack,
-			screen: {
-				t: "screen-add-puzzle",
-			},
-		},
+		}),
 	};
 	return {
 		...f,
@@ -235,14 +231,9 @@ describe(import.meta.file, () => {
 			...f,
 			modelCore: {
 				...f.modelCore,
-				packBuilder: {
-					t: "pack-builder",
+				packBuilder: PackBuilderCore.initCore({
 					pack: updatedPack,
-					slideIndex: 0,
-					screen: {
-						t: "screen-add-puzzle",
-					},
-				},
+				})
 			},
 		});
 		const after = { ...output.model.packs[f.pack.id] };

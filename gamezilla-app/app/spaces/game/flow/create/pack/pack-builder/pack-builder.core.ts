@@ -4,6 +4,7 @@ import { FlowPack } from "../../../@/flow-pack/flow-pack";
 import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
 import { UpdateCore } from "../../create.types";
 import { ModelCore } from "./pack-builder.types";
+import { EditPackNameCore } from "./edit-pack-name/edit-pack-name.core";
 
 const updates: UpdateCore[] = [];
 
@@ -25,6 +26,9 @@ updates.push(({ modelCore, msgCore }) => {
 						t: "screen-puzzle-grid",
 					},
 					pack: msgCore.created.value,
+					editPackName: EditPackNameCore.init({
+						pack: msgCore.created.value,
+					})
 				},
 			};
 		}
@@ -440,6 +444,9 @@ const initCore = ({ pack }: { pack: FlowPack }): ModelCore => {
 			t: "screen-puzzle-grid",
 		},
 		t: "pack-builder",
+		editPackName: EditPackNameCore.init({
+						pack,
+					})
 	};
 };
 

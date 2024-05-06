@@ -1,7 +1,7 @@
 import { Sub } from "gamezilla-app/@/core";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { type ClientModule } from "../create.types";
-import { PackBuilderClient } from "./builder/pack-builder.client";
+import { PackBuilderClient } from "./pack-builder/pack-builder.client";
 import { PackCreateClient } from "./create/pack-create.client";
 import { PackListClient } from "./list/pack-list.client";
 

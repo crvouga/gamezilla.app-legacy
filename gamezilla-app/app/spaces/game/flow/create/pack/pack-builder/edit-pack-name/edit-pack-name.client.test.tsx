@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { SpaceGameFixtureClient } from "gamezilla-app/app/spaces/game/@/testing/client";
-import { randomFlowPack } from "../../../@/testing";
+import { randomFlowPack } from "../../../../@/testing";
 import { EditPackNameClient } from "./edit-pack-name.client";
 import { EditPackNameCore } from "./edit-pack-name.core";
 import { MsgCore } from "./edit-pack-name.types";

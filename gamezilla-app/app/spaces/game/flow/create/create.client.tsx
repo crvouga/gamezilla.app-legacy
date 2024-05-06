@@ -5,7 +5,7 @@ import { FlowPackListClient } from "../@/flow-pack/flow-pack-list";
 import { FlowPuzzleListClient } from "../@/flow-puzzle/flow-puzzle-list";
 import { initClient, type ClientModule } from "./create.types";
 import { ListTabsClient } from "./list-tabs/list-tabs.client";
-import { PackBuilderClient } from "./pack/builder/pack-builder.client";
+import { PackBuilderClient } from "./pack/pack-builder/pack-builder.client";
 import { PackClient } from "./pack/pack.client";
 import { PuzzleBuilderClient } from "./puzzle/builder/puzzle-builder.client";
 import { PuzzleClient } from "./puzzle/puzzle.client";

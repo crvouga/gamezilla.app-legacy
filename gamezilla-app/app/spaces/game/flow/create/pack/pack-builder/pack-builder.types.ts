@@ -5,6 +5,7 @@ import { FlowVariantUIPlay } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
 import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import { FlowPackGrid } from "../../../@/flow-pack/flow-pack-grid";
+import { EditPackNameTypes } from "./edit-pack-name";
 
 //
 //
@@ -81,9 +82,11 @@ export type ModelCore = {
 	pack: FlowPack;
 	screen: Screen;
 	slideIndex: number;
+	editPackName: EditPackNameTypes.ModelCore
 };
 
 export const MsgCore = p.or(
+	EditPackNameTypes.MsgCore,
 	p.obj({
 		t: p.l("pack-builder.user-clicked-exit-button"),
 		userId: UserId,

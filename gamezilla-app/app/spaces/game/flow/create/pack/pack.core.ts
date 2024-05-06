@@ -1,5 +1,5 @@
 import type { UpdateCore } from "../create.types";
-import { PackBuilderCore } from "./builder/pack-builder.core";
+import { PackBuilderCore } from "./pack-builder/pack-builder.core";
 import { PackCreateGame } from "./create/pack-create.core";
 import { PackListGame } from "./list/pack-list.core";
 import type { ModelCore } from "./pack.types";

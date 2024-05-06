@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { Err, Ok } from "gamezilla-app/@/core";
 import { SpaceCoreFixture } from "gamezilla-app/app/spaces/@/testing/core";
-import { randomFlowPack } from "../../../@/testing";
+import { randomFlowPack } from "../../../../@/testing";
 import { EditPackNameCore } from "./edit-pack-name.core";
 import { ModelCore, MsgCore } from "./edit-pack-name.types";
 

@@ -1,5 +1,5 @@
 import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
-import { FlowServerDeps } from "../../create.types";
+import { FlowServerDeps } from "../../../create.types";
 import { MsgCore, ModelCore } from "./edit-pack-name.types";
 
 type ServerModule = GameServerModule<{

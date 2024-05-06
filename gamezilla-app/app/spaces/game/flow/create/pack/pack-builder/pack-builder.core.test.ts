@@ -39,14 +39,7 @@ const Fixture = async (input?: {
 	const init = CreateCore.initCore({ ctx: f.ctx });
 	const modelCore: ModelCore = {
 		...init,
-		packBuilder: {
-			t: "pack-builder",
-			pack,
-			slideIndex: 0,
-			screen: {
-				t: "screen-puzzle-grid",
-			},
-		},
+		packBuilder: PackBuilderCore.initCore({ pack }),
 	};
 
 	const updateModelCore = (msgs: MsgCore[]): ModelCore => {
