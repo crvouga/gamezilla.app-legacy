@@ -67,6 +67,7 @@ export const Fixture = async () => {
 		...f.modelCore,
 		packBuilder: {
 			t: "pack-builder",
+			slideIndex: 0,
 			pack: pack,
 			screen: {
 				t: "screen-add-puzzle",
@@ -237,6 +238,7 @@ describe(import.meta.file, () => {
 				packBuilder: {
 					t: "pack-builder",
 					pack: updatedPack,
+					slideIndex: 0,
 					screen: {
 						t: "screen-add-puzzle",
 					},

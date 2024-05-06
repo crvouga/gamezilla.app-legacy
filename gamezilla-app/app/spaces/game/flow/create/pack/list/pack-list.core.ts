@@ -11,12 +11,12 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 				packBuilder: {
 					t: "pack-builder",
 					pack: msgCore.pack,
+					slideIndex: 0,
 					opened: {
 						t: null,
 					},
 					screen: {
 						t: "screen-puzzle-grid",
-						slideIndex: 0,
 					},
 				},
 			};

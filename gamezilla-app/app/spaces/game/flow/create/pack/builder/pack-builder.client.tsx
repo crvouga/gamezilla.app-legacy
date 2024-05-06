@@ -22,6 +22,7 @@ import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-gr
 import { FlowPackGridClient } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid.client";
 import { FlowPuzzleListClient } from "../../../@/flow-puzzle/flow-puzzle-list";
 import type { ClientModule } from "../../create.types";
+import { PackBuilderCore } from "./pack-builder.core";
 
 //
 //
@@ -83,7 +84,7 @@ const ButtonAddPuzzle: Pick<ClientModule, "update" | "View"> = {
 		const { model, msg } = input;
 
 		switch (msg?.t) {
-			case "pack-builder.user-clicked-open-add-puzzle-button": {
+			case "pack-builder.user-opened-add-puzzle-screen": {
 				return {
 					model,
 					msgCore: [withId(msg)],
@@ -99,7 +100,7 @@ const ButtonAddPuzzle: Pick<ClientModule, "update" | "View"> = {
 			<FlowPackGridUI.ViewAddCell
 				onClick={() =>
 					input.dispatch({
-						t: "pack-builder.user-clicked-open-add-puzzle-button",
+						t: "pack-builder.user-opened-add-puzzle-screen",
 						userId: input.ctx.currentUserId,
 					})
 				}
@@ -128,7 +129,7 @@ const ScreenAddPuzzle: Pick<ClientModule, "update" | "View"> = {
 				};
 			}
 
-			case "pack-builder.user-closed-add-puzzle": {
+			case "pack-builder.user-closed-add-puzzle-screen": {
 				return {
 					model,
 					msgCore: [withId(msg)],
@@ -166,7 +167,9 @@ const ScreenAddPuzzle: Pick<ClientModule, "update" | "View"> = {
 						text="Close"
 						className="w-full"
 						onClick={() =>
-							input.dispatch({ t: "pack-builder.user-closed-add-puzzle" })
+							input.dispatch({
+								t: "pack-builder.user-closed-add-puzzle-screen",
+							})
 						}
 					/>
 				</div>
@@ -194,14 +197,18 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 					msgCmd: [playSound(APP_SOUND.navForwardMin)],
 				};
 			}
+			case "pack-builder.user-changed-slide": {
+				return {
+					model,
+					msgCore: [withId(msg)],
+				};
+			}
 		}
 
 		return { model };
 	},
 	View(input) {
-		const { modelCore, model } = input;
-
-		const packBuilder = modelCore.packBuilder;
+		const packBuilder = input.modelCore.packBuilder;
 
 		if (!packBuilder) {
 			return null;
@@ -213,18 +220,25 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 						{packBuilder.pack.name}
 					</p>
 					<div className="flex w-full flex-1 flex-col items-center justify-center">
+						slideIndex={PackBuilderCore.toSlideIndex(packBuilder)}
 						<FlowPackGridUI.ViewPackPuzzleGrid
-							slideIndex={
-								packBuilder.screen.t === "screen-puzzle-grid"
-									? packBuilder.screen.slideIndex
-									: 0
-							}
+							id={packBuilder.pack.id}
+							slideIndex={PackBuilderCore.toSlideIndex(packBuilder)}
 							puzzleIds={packBuilder.pack.puzzleIds}
+							onSlideIndexChanged={(newSlideIndex) =>
+								input.dispatch({
+									t: "pack-builder.user-changed-slide",
+									newSlideIndex,
+									userId: input.ctx.currentUserId,
+								})
+							}
 							renderCell={(props) => {
 								const puzzleId = packBuilder.pack.puzzleIds[props.index];
 
 								if (puzzleId) {
-									const puzzle = puzzleId ? model.puzzles[puzzleId] : null;
+									const puzzle = puzzleId
+										? input.model.puzzles[puzzleId]
+										: null;
 
 									if (!puzzle) {
 										return <FlowPackGridUI.ViewLoadingCell />;

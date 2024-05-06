@@ -1,7 +1,7 @@
 import { UserId } from "gamezilla-app/app/@/data";
 import { Result } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
-import type { FlowVariantUIPlay } from "../../../@/flow";
+import { FlowVariantUIPlay } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
 import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import { FlowPackGrid } from "../../../@/flow-pack/flow-pack-grid";
@@ -67,7 +67,6 @@ type Screen =
 	  }
 	| {
 			t: "screen-puzzle-grid";
-			slideIndex: number;
 	  }
 	| {
 			t: "screen-puzzle";
@@ -81,6 +80,7 @@ export type ModelCore = {
 	t: "pack-builder";
 	pack: FlowPack;
 	screen: Screen;
+	slideIndex: number;
 };
 
 export const MsgCore = p.or(
@@ -93,11 +93,11 @@ export const MsgCore = p.or(
 		saved: p.custom(Result.is(p.is(p.str), p.is(FlowPack.parser)), "invalid"),
 	}),
 	p.obj({
-		t: p.l("pack-builder.user-clicked-open-add-puzzle-button"),
+		t: p.l("pack-builder.user-opened-add-puzzle-screen"),
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("pack-builder.user-closed-add-puzzle"),
+		t: p.l("pack-builder.user-closed-add-puzzle-screen"),
 	}),
 	p.obj({
 		t: p.l("pack-builder.user-clicked-add-puzzle-item"),
@@ -107,11 +107,15 @@ export const MsgCore = p.or(
 	p.obj({
 		t: p.l("pack-builder.user-clicked-pack-item"),
 		puzzle: FlowPuzzle,
-		// index: p.num,
+	}),
+	p.obj({
+		t: p.l("pack-builder.user-changed-slide"),
+		newSlideIndex: p.num,
+		userId: UserId,
 	}),
 	p.obj({
 		t: p.l("pack-builder.flow-play-ui"),
-		c: p.any,
+		c: FlowVariantUIPlay.Msg,
 	}),
 	p.obj({
 		t: p.l("pack-builder.puzzle-screen.user-clicked-exit-puzzle-button"),

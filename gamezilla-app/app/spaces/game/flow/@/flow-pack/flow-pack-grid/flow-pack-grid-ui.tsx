@@ -10,8 +10,13 @@ const toIndex = ({ x, y }: { x: number; y: number }) => {
 	return y * COLUMN_COUNT + x;
 };
 
-const toSlideIndex = (input: { index: number }) => {
-	return Math.floor(input.index / (COLUMN_COUNT * ROW_COUNT));
+const toSlideIndex = (index: number) => {
+	return Math.floor(index / (COLUMN_COUNT * ROW_COUNT));
+};
+
+const clampSlideIndex = (slideIndex: number, itemCount: number): number => {
+	const slideCount = Math.ceil(itemCount / PER_SLIDE_ITEM_COUNT);
+	return Math.min(slideIndex, slideCount - 1);
 };
 
 const ViewPackPuzzleGridSlide = (props: {
@@ -56,7 +61,9 @@ const ViewPackPuzzleGridSlide = (props: {
 };
 
 const ViewPackPuzzleGrid = (props: {
+	id: string;
 	slideIndex: number;
+	onSlideIndexChanged: (index: number) => void;
 	puzzleIds: FlowPuzzleId[];
 	renderCell: (input: {
 		x: number;
@@ -86,7 +93,12 @@ const ViewPackPuzzleGrid = (props: {
 	}
 
 	return (
-		<Swiper.Container id="123" slideIndex={props.slideIndex} className="w-full">
+		<Swiper.Container
+			onSlideIndexChanged={props.onSlideIndexChanged}
+			id={props.id}
+			slideIndex={props.slideIndex}
+			className="w-full"
+		>
 			{slides}
 		</Swiper.Container>
 	);
@@ -136,6 +148,7 @@ export const FlowPackGridUI = {
 	PER_SLIDE_ITEM_COUNT,
 	ROW_COUNT,
 	COLUMN_COUNT,
+	clampSlideIndex,
 	toIndex,
 	toSlideIndex,
 	ViewPackPuzzleGrid,

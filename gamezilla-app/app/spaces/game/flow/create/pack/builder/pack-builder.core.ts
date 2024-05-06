@@ -1,13 +1,13 @@
 import { isErr } from "gamezilla-app/@/core";
 import { FlowVariantUIPlay } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
+import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
 import { UpdateCore } from "../../create.types";
 import { ModelCore } from "./pack-builder.types";
-import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
 
-const updateCores: UpdateCore[] = [];
+const updates: UpdateCore[] = [];
 
-updateCores.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "user-created-pack": {
 			if (isErr(msgCore.created)) {
@@ -20,9 +20,9 @@ updateCores.push(({ modelCore, msgCore }) => {
 				packBuilder: {
 					t: "pack-builder",
 					opened: { t: null },
+					slideIndex: 0,
 					screen: {
 						t: "screen-puzzle-grid",
-						slideIndex: 0,
 					},
 					pack: msgCore.created.value,
 				},
@@ -34,7 +34,7 @@ updateCores.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updateCores.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "pack-builder.user-clicked-exit-button": {
 			return {
@@ -51,7 +51,7 @@ updateCores.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updateCores.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "pack-builder.user-clicked-add-puzzle-item": {
 			if (!modelCore.packBuilder) {
@@ -78,9 +78,9 @@ updateCores.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updateCores.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
-		case "pack-builder.user-clicked-open-add-puzzle-button": {
+		case "pack-builder.user-opened-add-puzzle-screen": {
 			if (!modelCore.packBuilder) {
 				return modelCore;
 			}
@@ -100,9 +100,9 @@ updateCores.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updateCores.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
-		case "pack-builder.user-closed-add-puzzle": {
+		case "pack-builder.user-closed-add-puzzle-screen": {
 			if (!modelCore.packBuilder) {
 				return modelCore;
 			}
@@ -115,7 +115,6 @@ updateCores.push(({ modelCore, msgCore }) => {
 					},
 					screen: {
 						t: "screen-puzzle-grid",
-						slideIndex: 0,
 					},
 				},
 			};
@@ -126,7 +125,7 @@ updateCores.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updateCores.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "pack-builder.user-clicked-pack-item": {
 			if (!modelCore.packBuilder) {
@@ -164,7 +163,7 @@ updateCores.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updateCores.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button": {
 			if (!modelCore.packBuilder) {
@@ -180,17 +179,15 @@ updateCores.push(({ modelCore, msgCore }) => {
 				return modelCore;
 			}
 
-			const slideIndex = FlowPackGridUI.toSlideIndex({
-				index: puzzleIndex,
-			});
+			const slideIndex = FlowPackGridUI.toSlideIndex(puzzleIndex);
 
 			return {
 				...modelCore,
 				packBuilder: {
 					...modelCore.packBuilder,
+					slideIndex: slideIndex,
 					screen: {
 						t: "screen-puzzle-grid",
-						slideIndex: slideIndex,
 					},
 				},
 			};
@@ -202,7 +199,27 @@ updateCores.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updateCores.push(({ modelCore, msgCore }) => {
+updates.push((input) => {
+	switch (input.msgCore.t) {
+		case "pack-builder.user-changed-slide": {
+			if (!input.modelCore.packBuilder) {
+				return input.modelCore;
+			}
+			return {
+				...input.modelCore,
+				packBuilder: {
+					...input.modelCore.packBuilder,
+					slideIndex: input.msgCore.newSlideIndex,
+				},
+			};
+		}
+		default: {
+			return input.modelCore;
+		}
+	}
+});
+
+updates.push(({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "pack-builder.flow-play-ui": {
 			if (!modelCore.packBuilder) {
@@ -241,7 +258,7 @@ updateCores.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updateCores.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore }) => {
 	if (modelCore.packBuilder?.screen.t !== "screen-puzzle") {
 		return modelCore;
 	}
@@ -281,7 +298,7 @@ updateCores.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updateCores.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore }) => {
 	if (modelCore.packBuilder?.screen.t !== "screen-puzzle") {
 		return modelCore;
 	}
@@ -319,7 +336,7 @@ updateCores.push(({ modelCore, msgCore }) => {
 	}
 });
 
-updateCores.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "pack-builder.puzzle-screen.user-clicked-more-button": {
 			if (!modelCore.packBuilder) {
@@ -361,7 +378,7 @@ const clamp = (value: number, min: number, max: number): number => {
 	return Math.max(min, Math.min(max, value));
 };
 
-updateCores.push(({ modelCore, msgCore }) => {
+updates.push(({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button": {
 			if (!modelCore.packBuilder) {
@@ -377,7 +394,6 @@ updateCores.push(({ modelCore, msgCore }) => {
 					pack: FlowPack.remove(pack, msgCore.puzzleIndex),
 					screen: {
 						t: "screen-puzzle-grid",
-						slideIndex: 0,
 					},
 				},
 			};
@@ -388,13 +404,30 @@ updateCores.push(({ modelCore, msgCore }) => {
 	}
 });
 
+updates.push((input) => {
+	if (!input.modelCore.packBuilder) {
+		return input.modelCore;
+	}
+
+	return {
+		...input.modelCore,
+		packBuilder: {
+			...input.modelCore.packBuilder,
+			slideIndex: FlowPackGridUI.clampSlideIndex(
+				input.modelCore.packBuilder.slideIndex,
+				input.modelCore.packBuilder.pack.puzzleIds.length,
+			),
+		},
+	};
+});
+
 const updateCore: UpdateCore = (input) => {
-	return updateCores.reduce(
+	return updates.reduce(
 		(modelCore, updateCore) =>
 			updateCore({
 				ctx: input.ctx,
-				modelCore,
 				msgCore: input.msgCore,
+				modelCore,
 			}),
 		input.modelCore,
 	);
@@ -403,15 +436,20 @@ const updateCore: UpdateCore = (input) => {
 const initCore = ({ pack }: { pack: FlowPack }): ModelCore => {
 	return {
 		pack,
+		slideIndex: 0,
 		screen: {
 			t: "screen-puzzle-grid",
-			slideIndex: 0,
 		},
 		t: "pack-builder",
 	};
 };
 
+const toSlideIndex = (modelCore: ModelCore | null): number => {
+	return modelCore?.slideIndex ?? 0;
+};
+
 export const PackBuilderCore = {
+	toSlideIndex,
 	initCore,
 	updateCore,
 };

@@ -14,7 +14,10 @@ const Fixture = async () => {
 		packBuilder: {
 			t: "pack-builder",
 			pack: pack,
-			screen: { t: "screen-add-puzzle" },
+			slideIndex: 0,
+			screen: {
+				t: "screen-add-puzzle",
+			},
 		},
 	};
 	return {

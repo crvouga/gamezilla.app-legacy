@@ -89,7 +89,7 @@ export const clickedOpenPuzzlePickerButton =
 		return CreateClient.update({
 			model,
 			msg: {
-				t: "pack-builder.user-clicked-open-add-puzzle-button",
+				t: "pack-builder.user-opened-add-puzzle-screen",
 				userId: ctx.currentUserId,
 			},
 			ctx,
@@ -101,7 +101,7 @@ export const closedPuzzlePickerDrawer =
 	(ctx: FlowClientCtx) => (model: ModelClient) => {
 		return CreateClient.update({
 			model,
-			msg: { t: "pack-builder.user-closed-add-puzzle" },
+			msg: { t: "pack-builder.user-closed-add-puzzle-screen" },
 			ctx,
 			modelCore: CreateCore.initCore({ ctx }),
 		});

@@ -7,16 +7,20 @@ import { CreateCore } from "../../create.core";
 import { ModelCore } from "../../create.types";
 import { PackBuilderCore } from "./pack-builder.core";
 import { MsgCore } from "./pack-builder.types";
+import { FlowPuzzle } from "../../../@/flow-puzzle";
 
-const Fixture = async () => {
+const Fixture = async (input?: { puzzleCount?: number }) => {
 	const f = await SpaceGameCoreFixture();
 	const createdBy = UserId.generate();
 
-	const puzzles = [
+	const puzzles: [FlowPuzzle, FlowPuzzle, FlowPuzzle, ...FlowPuzzle[]] = [
 		await randomFlowPuzzle({ createdBy }),
 		await randomFlowPuzzle({ createdBy }),
 		await randomFlowPuzzle({ createdBy }),
-	] as const;
+	];
+	for (let i = 0; i < (input?.puzzleCount ?? 0); i++) {
+		puzzles.push(await randomFlowPuzzle({ createdBy }));
+	}
 
 	const pack = await randomFlowPack({
 		createdBy,
@@ -28,14 +32,14 @@ const Fixture = async () => {
 		packBuilder: {
 			t: "pack-builder",
 			pack,
+			slideIndex: 0,
 			screen: {
 				t: "screen-puzzle-grid",
-				slideIndex: 0,
 			},
 		},
 	};
 
-	const applyMsgs = (msgs: MsgCore[]) => {
+	const updateModelCore = (msgs: MsgCore[]): ModelCore => {
 		return msgs.reduce(
 			(modelCore, msgCore) =>
 				PackBuilderCore.updateCore({ ctx: f.ctx, modelCore, msgCore }),
@@ -45,7 +49,7 @@ const Fixture = async () => {
 
 	return {
 		...f,
-		applyMsgs,
+		updateModelCore,
 		currentUserId: createdBy,
 		pack,
 		puzzles,
@@ -57,7 +61,7 @@ describe(import.meta.file, () => {
 	it("should remove puzzle from pack after clicking remove button", async () => {
 		const f = await Fixture();
 
-		const modelCore = f.applyMsgs([
+		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button",
 				userId: f.currentUserId,
@@ -73,7 +77,7 @@ describe(import.meta.file, () => {
 	it("should be able to exit puzzle screen", async () => {
 		const f = await Fixture();
 
-		const modelCore = f.applyMsgs([
+		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button",
 				userId: f.currentUserId,
@@ -86,7 +90,7 @@ describe(import.meta.file, () => {
 	it("should open puzzle screen when clicking puzzle grid item", async () => {
 		const f = await Fixture();
 
-		const modelCore = f.applyMsgs([
+		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
@@ -101,7 +105,7 @@ describe(import.meta.file, () => {
 
 	it("should be able to exit pack builder", async () => {
 		const f = await Fixture();
-		const modelCore = f.applyMsgs([
+		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-exit-button",
 				userId: f.currentUserId,
@@ -112,7 +116,7 @@ describe(import.meta.file, () => {
 
 	it("should be able to open 'more' drawer", async () => {
 		const f = await Fixture();
-		const modelCore = f.applyMsgs([
+		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
@@ -130,7 +134,7 @@ describe(import.meta.file, () => {
 
 	it("should be able to close 'more' drawer", async () => {
 		const f = await Fixture();
-		const modelCore = f.applyMsgs([
+		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
@@ -148,7 +152,7 @@ describe(import.meta.file, () => {
 
 	it("should be able to go to next puzzle", async () => {
 		const f = await Fixture();
-		const modelCore = f.applyMsgs([
+		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
@@ -167,7 +171,7 @@ describe(import.meta.file, () => {
 
 	it("should do nothing if next puzzle is not in pack", async () => {
 		const f = await Fixture();
-		const modelCore = f.applyMsgs([
+		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
@@ -187,7 +191,7 @@ describe(import.meta.file, () => {
 
 	it("should be able to go to previous puzzle", async () => {
 		const f = await Fixture();
-		const modelCore = f.applyMsgs([
+		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[1],
@@ -206,7 +210,7 @@ describe(import.meta.file, () => {
 
 	it("should do nothing if previous puzzle is not in pack", async () => {
 		const f = await Fixture();
-		const modelCore = f.applyMsgs([
+		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[1],
@@ -225,7 +229,7 @@ describe(import.meta.file, () => {
 
 	it("should be able to exit puzzle screen", async () => {
 		const f = await Fixture();
-		const modelCore = f.applyMsgs([
+		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[1],
@@ -240,9 +244,9 @@ describe(import.meta.file, () => {
 
 	it("should be able to open add puzzle screen", async () => {
 		const f = await Fixture();
-		const modelCore = f.applyMsgs([
+		const modelCore = f.updateModelCore([
 			{
-				t: "pack-builder.user-clicked-open-add-puzzle-button",
+				t: "pack-builder.user-opened-add-puzzle-screen",
 				userId: f.currentUserId,
 			},
 		]);
@@ -251,13 +255,13 @@ describe(import.meta.file, () => {
 
 	it("should be able to close add puzzle screen", async () => {
 		const f = await Fixture();
-		const modelCore = f.applyMsgs([
+		const modelCore = f.updateModelCore([
 			{
-				t: "pack-builder.user-clicked-open-add-puzzle-button",
+				t: "pack-builder.user-opened-add-puzzle-screen",
 				userId: f.currentUserId,
 			},
 			{
-				t: "pack-builder.user-closed-add-puzzle",
+				t: "pack-builder.user-closed-add-puzzle-screen",
 			},
 		]);
 		expect(modelCore.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
@@ -266,7 +270,7 @@ describe(import.meta.file, () => {
 	it("should be able to add new puzzle", async () => {
 		const f = await Fixture();
 		const newPuzzle = await randomFlowPuzzle({ createdBy: f.currentUserId });
-		const modelCore = f.applyMsgs([
+		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-add-puzzle-item",
 				puzzle: newPuzzle,
@@ -279,41 +283,85 @@ describe(import.meta.file, () => {
 	});
 
 	it("should be on the correct slide index after exiting the puzzle screen", async () => {
-		const f = await Fixture();
-
-		const msgs: MsgCore[] = [];
-
-		for (let i = 0; i < FlowPackGridUI.PER_SLIDE_ITEM_COUNT; i++) {
-			msgs.push({
-				t: "pack-builder.user-clicked-add-puzzle-item",
-				userId: f.currentUserId,
-				puzzle: await randomFlowPuzzle({ createdBy: f.currentUserId }),
-			});
-		}
+		const f = await Fixture({
+			puzzleCount: FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
+		});
 
 		const puzzle = await randomFlowPuzzle({ createdBy: f.currentUserId });
 
-		msgs.push({
-			t: "pack-builder.user-clicked-add-puzzle-item",
-			userId: f.currentUserId,
-			puzzle,
+		const modelCore = f.updateModelCore([
+			{
+				t: "pack-builder.user-clicked-add-puzzle-item",
+				puzzle,
+				userId: f.currentUserId,
+			},
+			{
+				t: "pack-builder.user-clicked-pack-item",
+				puzzle,
+			},
+			{
+				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button",
+				userId: f.currentUserId,
+			},
+		]);
+
+		const expected = FlowPackGridUI.toSlideIndex(
+			modelCore.packBuilder?.pack.puzzleIds.indexOf(puzzle.id) ?? 0,
+		);
+		const actual = PackBuilderCore.toSlideIndex(modelCore.packBuilder);
+		expect(actual).toBe(expected);
+	});
+
+	it("should allow user to change slide", async () => {
+		const f = await Fixture({
+			puzzleCount: FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
 		});
 
-		msgs.push({
-			t: "pack-builder.user-clicked-pack-item",
-			puzzle,
+		const modelCore = f.updateModelCore([
+			{
+				t: "pack-builder.user-changed-slide",
+				newSlideIndex: 1,
+				userId: f.currentUserId,
+			},
+		]);
+		expect(PackBuilderCore.toSlideIndex(f.modelCore.packBuilder)).toBe(0);
+		expect(PackBuilderCore.toSlideIndex(modelCore.packBuilder)).toBe(1);
+	});
+
+	it("should prevent slide index from going out of bounds", async () => {
+		const f = await Fixture({ puzzleCount: 3 });
+		const modelCore = f.updateModelCore([
+			{
+				t: "pack-builder.user-changed-slide",
+				newSlideIndex: 10,
+				userId: f.currentUserId,
+			},
+		]);
+		expect(PackBuilderCore.toSlideIndex(f.modelCore.packBuilder)).toBe(0);
+		expect(PackBuilderCore.toSlideIndex(modelCore.packBuilder)).toBe(0);
+	});
+
+	it("should be on the correct slide when closing the add puzzle screen", async () => {
+		const f = await Fixture({
+			puzzleCount: FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
 		});
 
-		msgs.push({
-			t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button",
-			userId: f.currentUserId,
-		});
+		const modelCore = f.updateModelCore([
+			{
+				t: "pack-builder.user-changed-slide",
+				newSlideIndex: 1,
+				userId: f.currentUserId,
+			},
+			{
+				t: "pack-builder.user-opened-add-puzzle-screen",
+				userId: f.currentUserId,
+			},
+			{
+				t: "pack-builder.user-closed-add-puzzle-screen",
+			},
+		]);
 
-		const after = f.applyMsgs(msgs);
-
-		expect(
-			after.packBuilder?.screen.t === "screen-puzzle-grid" &&
-				after.packBuilder.screen.slideIndex === 1,
-		).toBe(true);
+		expect(PackBuilderCore.toSlideIndex(f.modelCore.packBuilder)).toBe(0);
+		expect(PackBuilderCore.toSlideIndex(modelCore.packBuilder)).toBe(1);
 	});
 });
