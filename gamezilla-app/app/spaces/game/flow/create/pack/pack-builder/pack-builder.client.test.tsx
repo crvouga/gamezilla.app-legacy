@@ -66,7 +66,7 @@ export const Fixture = async () => {
 	};
 	const modelCore: ModelCore = {
 		...f.modelCore,
-		packBuilder: PackBuilderCore.initCore({
+		packBuilder: PackBuilderCore.init({
 			pack,
 		}),
 	};
@@ -206,7 +206,7 @@ describe(import.meta.file, () => {
 		const output = PackBuilderClient.update({
 			...f,
 			msg: {
-				t: "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button",
+				t: "remove-puzzle-from-pack.user-clicked-remove-from-pack-button",
 				userId: f.ctx.currentUserId,
 				puzzleIndex: f.pack.puzzleIds.indexOf(f.puzzle.id),
 			},
@@ -215,7 +215,7 @@ describe(import.meta.file, () => {
 			output.msgCore?.some(
 				(msg) =>
 					msg.t ===
-					"pack-builder.puzzle-screen.user-clicked-remove-from-pack-button",
+					"remove-puzzle-from-pack.user-clicked-remove-from-pack-button",
 			),
 		).toBe(true);
 	});
@@ -231,7 +231,7 @@ describe(import.meta.file, () => {
 			...f,
 			modelCore: {
 				...f.modelCore,
-				packBuilder: PackBuilderCore.initCore({
+				packBuilder: PackBuilderCore.init({
 					pack: updatedPack,
 				}),
 			},

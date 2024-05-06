@@ -343,7 +343,7 @@ export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
 						color="danger"
 						onClick={() =>
 							dispatch({
-								t: "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button",
+								t: "remove-puzzle-from-pack.user-clicked-remove-from-pack-button",
 								userId: ctx.currentUserId,
 								puzzleIndex: screen.puzzleIndex,
 							})
@@ -392,7 +392,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 				};
 			}
 
-			case "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button": {
+			case "remove-puzzle-from-pack.user-clicked-remove-from-pack-button": {
 				return {
 					model,
 					msgCore: [withId(msg)],

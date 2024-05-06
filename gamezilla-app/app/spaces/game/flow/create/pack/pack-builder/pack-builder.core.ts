@@ -383,7 +383,7 @@ const clamp = (value: number, min: number, max: number): number => {
 
 updates.push(({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
-		case "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button": {
+		case "remove-puzzle-from-pack.user-clicked-remove-from-pack-button": {
 			if (!modelCore.packBuilder) {
 				return modelCore;
 			}
@@ -424,7 +424,7 @@ updates.push((input) => {
 	};
 });
 
-const updateCore: UpdateCore = (input) => {
+const update: UpdateCore = (input) => {
 	return updates.reduce(
 		(modelCore, updateCore) =>
 			updateCore({
@@ -436,7 +436,7 @@ const updateCore: UpdateCore = (input) => {
 	);
 };
 
-const initCore = ({ pack }: { pack: FlowPack }): ModelCore => {
+const init = ({ pack }: { pack: FlowPack }): ModelCore => {
 	return {
 		pack,
 		slideIndex: 0,
@@ -456,6 +456,6 @@ const toSlideIndex = (modelCore: ModelCore | null): number => {
 
 export const PackBuilderCore = {
 	toSlideIndex,
-	initCore,
-	updateCore,
+	init,
+	update,
 };

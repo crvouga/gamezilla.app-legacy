@@ -144,7 +144,7 @@ export const MsgCore = p.or(
 		userId: UserId,
 	}),
 	p.obj({
-		t: p.l("pack-builder.puzzle-screen.user-clicked-remove-from-pack-button"),
+		t: p.l("remove-puzzle-from-pack.user-clicked-remove-from-pack-button"),
 		puzzleIndex: p.num,
 		userId: UserId,
 	}),

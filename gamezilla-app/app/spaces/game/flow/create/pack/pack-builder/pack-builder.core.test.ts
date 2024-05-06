@@ -39,13 +39,13 @@ const Fixture = async (input?: {
 	const init = CreateCore.initCore({ ctx: f.ctx });
 	const modelCore: ModelCore = {
 		...init,
-		packBuilder: PackBuilderCore.initCore({ pack }),
+		packBuilder: PackBuilderCore.init({ pack }),
 	};
 
 	const updateModelCore = (msgs: MsgCore[]): ModelCore => {
 		return msgs.reduce(
 			(modelCore, msgCore) =>
-				PackBuilderCore.updateCore({ ctx: f.ctx, modelCore, msgCore }),
+				PackBuilderCore.update({ ctx: f.ctx, modelCore, msgCore }),
 			{ ...modelCore },
 		);
 	};
@@ -66,7 +66,7 @@ describe(import.meta.file, () => {
 
 		const modelCore = f.updateModelCore([
 			{
-				t: "pack-builder.puzzle-screen.user-clicked-remove-from-pack-button",
+				t: "remove-puzzle-from-pack.user-clicked-remove-from-pack-button",
 				userId: f.currentUserId,
 				puzzleIndex: 0,
 			},

@@ -1,4 +1,5 @@
 import type { UpdateCore } from "../../create.types";
+import { PackBuilderCore } from "../pack-builder/pack-builder.core";
 
 const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
@@ -8,17 +9,9 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 				opened: {
 					t: "pack-builder",
 				},
-				packBuilder: {
-					t: "pack-builder",
+				packBuilder: PackBuilderCore.init({
 					pack: msgCore.pack,
-					slideIndex: 0,
-					opened: {
-						t: null,
-					},
-					screen: {
-						t: "screen-puzzle-grid",
-					},
-				},
+				}),
 			};
 		}
 

@@ -11,14 +11,9 @@ const Fixture = async () => {
 	const pack = await randomFlowPack();
 	const modelCore: ModelCore = {
 		...f.modelCore,
-		packBuilder: {
-			t: "pack-builder",
-			pack: pack,
-			slideIndex: 0,
-			screen: {
-				t: "screen-add-puzzle",
-			},
-		},
+		packBuilder: PackBuilderCore.init({
+			pack,
+		}),
 	};
 	return {
 		...f,
@@ -39,7 +34,7 @@ describe(import.meta.file, () => {
 			userId: puzzle.createdBy,
 		});
 
-		const modelCoreNew = PackBuilderCore.updateCore({
+		const modelCoreNew = PackBuilderCore.update({
 			ctx: f.ctx,
 			modelCore: f.modelCore,
 			msgCore,

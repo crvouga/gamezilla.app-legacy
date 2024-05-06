@@ -94,7 +94,7 @@ export type ModelClient = BaseModelClient &
 	PackTypes.ModelClient;
 
 export const initClient: ClientModule["init"] = {
-	...PackTypes.initClient({}),
+	...PackTypes.initClient(),
 	...PuzzleTypes.initClient,
 	flowPuzzleList: FlowPuzzleList.initClient,
 	flowPackList: FlowPackList.initClient,
