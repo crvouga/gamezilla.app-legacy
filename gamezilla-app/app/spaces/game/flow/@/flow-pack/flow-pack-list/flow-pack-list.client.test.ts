@@ -1,6 +1,4 @@
 import { describe, expect, it } from "bun:test";
-import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
-import { didSendToServer, didShowErrorSm } from "gamezilla-app/app/@/client";
 import {
 	Err,
 	Ok,
@@ -8,11 +6,13 @@ import {
 	RequestResponse,
 	TimeSpan,
 } from "gamezilla-app/@/core";
+import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
+import { didSendToServer, didShowErrorSm } from "gamezilla-app/app/@/client";
+import { testFlowClientCtx } from "../../../builder/@/testing/client";
 import type { FlowClientCtx } from "../../flow-ctx";
 import { FlowPack } from "../flow-pack";
 import { FlowPackListClient } from "./flow-pack-list.client";
-import { type ModelClient, initClient } from "./flow-pack-list.core";
-import { testFlowClientCtx } from "../../../builder/@/testing/client";
+import { initClient, type ModelClient } from "./flow-pack-list.core";
 
 const initial = {
 	model: initClient,
@@ -28,7 +28,7 @@ const observedEndOfList = (ctx: FlowClientCtx) => (model: ModelClient) => {
 	});
 };
 
-const elasped =
+const elapsed =
 	(ctx: FlowClientCtx, timeSpan: TimeSpan) => (model: ModelClient) => {
 		return FlowPackListClient.update({
 			ctx: {
@@ -88,7 +88,7 @@ describe(import.meta.file, () => {
 		const output = AppClientModule.andThen(
 			initial,
 			observedEndOfList(ctx),
-			elasped(ctx, TimeSpan.fromMinutes(5)),
+			elapsed(ctx, TimeSpan.fromMinutes(5)),
 		);
 		expect(RequestResponse.didRequestTimeout(output.model.request)).toBe(true);
 	});
