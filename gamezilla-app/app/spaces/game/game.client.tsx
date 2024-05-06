@@ -189,7 +189,9 @@ const View: Module["View"] = (input) => {
 			return (
 				<FlowClient.View
 					ctx={ctx}
-					dispatch={(c) => dispatch({ t: "flow", c })}
+					dispatch={(c) => {
+						dispatch({ t: "flow", c });
+					}}
 					modelCore={modelCore.c}
 					model={model.t === "flow" ? model.c : FlowClient.init}
 				/>

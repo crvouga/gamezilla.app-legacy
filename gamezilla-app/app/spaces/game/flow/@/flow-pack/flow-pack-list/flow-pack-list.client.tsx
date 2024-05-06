@@ -12,7 +12,7 @@ import { IconBox, Spinner, cn } from "gamezilla-app/app/@/ui";
 import { EmptyState } from "gamezilla-app/app/@/ui/empty-state";
 import { IntersectionObserverEmitter } from "gamezilla-app/app/@/ui/intersection-observer";
 import type { FlowPack } from "../flow-pack";
-import type { ClientModule } from "./flow-pack-list.core";
+import { initClient, type ClientModule } from "./flow-pack-list.core";
 
 const update: ClientModule["update"] = (input) => {
 	return AppClientModule.andThen(
@@ -192,6 +192,7 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 };
 
 export const FlowPackListClient = {
+	initClient,
 	update,
 	View,
 	subscriptions,

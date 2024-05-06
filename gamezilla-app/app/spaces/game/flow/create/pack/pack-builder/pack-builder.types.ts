@@ -6,7 +6,6 @@ import { FlowPack } from "../../../@/flow-pack/flow-pack";
 import { FlowPackGrid } from "../../../@/flow-pack/flow-pack-grid";
 import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import { EditPackNameTypes } from "./edit-pack-name";
-import { createNamespace } from "gamezilla-app/@/msg";
 
 //
 //
@@ -83,40 +82,6 @@ export type ModelCore = EditPackNameTypes.ModelCore & {
 	screen: Screen;
 	slideIndex: number;
 };
-
-const createMsg = createNamespace("pack-builder");
-
-export const UserClickedExitButton = createMsg("user-clicked-exit-button");
-export const UserOpenedAddPuzzleScreen = createMsg(
-	"user-opened-add-puzzle-screen",
-);
-export const UserClosedAddPuzzleScreen = createMsg(
-	"user-closed-add-puzzle-screen",
-);
-export const UserClickedAddPuzzleItem = createMsg(
-	"user-clicked-add-puzzle-item",
-);
-export const UserClickedPackItem = createMsg("user-clicked-pack-item");
-export const UserChangedSlide = createMsg("user-changed-slide");
-export const FlowPlayUI = createMsg("flow-play-ui");
-export const PuzzleScreenUserClickedExitPuzzleButton = createMsg(
-	"puzzle-screen.user-clicked-exit-puzzle-button",
-);
-export const PuzzleScreenUserClickedNextPuzzleButton = createMsg(
-	"puzzle-screen.user-clicked-next-puzzle-button",
-);
-export const PuzzleScreenUserClickedPreviousPuzzleButton = createMsg(
-	"puzzle-screen.user-clicked-previous-puzzle-button",
-);
-export const PuzzleScreenUserClickedMoreButton = createMsg(
-	"puzzle-screen.user-clicked-more-button",
-);
-export const PuzzleScreenUserClosedMoreDrawer = createMsg(
-	"puzzle-screen.user-closed-more-drawer",
-);
-export const RemovePuzzleFromPackUserClickedRemoveFromPackButton = createMsg(
-	"remove-puzzle-from-pack.user-clicked-remove-from-pack-button",
-);
 
 export const MsgCore = p.or(
 	p.obj({

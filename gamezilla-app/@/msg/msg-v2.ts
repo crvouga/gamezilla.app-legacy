@@ -1,12 +1,12 @@
 import { p } from "../core/parser";
 
-export const Msg = p.obj({
+export const AnyMsg = p.obj({
 	t: p.str,
 });
 
-export type Msg = p.Infer<typeof Msg>;
+export type AnyMsg = p.Infer<typeof AnyMsg>;
 
-export const createMsg = <
+export const Msg = <
 	TTag extends string,
 	TPayload extends Record<string, unknown>,
 >(
@@ -19,26 +19,25 @@ export const createMsg = <
 	function msgCreator(payload: TPayload) {
 		return { t, ...payload };
 	}
-	const msgParser = p.and(
-		payloadParser,
-		p.obj({
-			t: p.l(t),
-		}),
-	);
+	const MsgBase = p.obj({
+		t: p.l(t),
+	});
+	const MsgWithPayload = p.and(payloadParser, MsgBase);
+
+	type Msg = p.Infer<typeof MsgWithPayload>;
 
 	function is(msg: unknown): msg is Msg {
-		return msgParser.parse(msg).t === "ok";
+		const parsed = AnyMsg.parse(msg);
+		return parsed.t === "ok" && parsed.value.t === t;
 	}
-	return {
-		...msgCreator,
-		...msgParser,
-		is,
-	};
+
+	msgCreator.is = is;
+	msgCreator.parse = MsgWithPayload.parse;
+
+	return msgCreator;
 };
 
-export const createNamespace = <TNamespace extends string>(
-	namespace: TNamespace,
-) => {
+export const Namespace = <TNamespace extends string>(namespace: TNamespace) => {
 	return <TTag extends string, TPayload extends Record<string, unknown>>(
 		t: TTag,
 		payloadParser: p.Parser<TPayload> = p.dict(
@@ -46,6 +45,6 @@ export const createNamespace = <TNamespace extends string>(
 			p.unknown,
 		) as p.Parser<TPayload>,
 	) => {
-		return createMsg(`${namespace}.${t}`, payloadParser);
+		return Msg(`${namespace}.${t}`, payloadParser);
 	};
 };

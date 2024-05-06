@@ -74,7 +74,11 @@ export type ModelServer = p.Infer<typeof ModelServer>;
 
 export const initServer: ModelServer = null;
 
-export type MsgClient = { t: "user-observed-end-of-list" } | { t: "elapsed" };
+export const MsgClient = p.or(
+	p.obj({ t: p.l("user-observed-end-of-list") }),
+	p.obj({ t: p.l("elapsed") }),
+);
+export type MsgClient = p.Infer<typeof MsgClient>;
 
 export type MsgServer = { t: "noop" };
 
@@ -82,6 +86,14 @@ export type MsgToServer = {
 	t: "list-packs";
 	input: ListPackInput;
 };
+
+export const MsgToClient = p.obj({
+	t: p.l("listed-packs"),
+	listed: p.custom(
+		(x: unknown): x is ListPackOutput => Boolean(x),
+		"ListPackOutput",
+	),
+});
 
 export type MsgToClient = {
 	t: "listed-packs";

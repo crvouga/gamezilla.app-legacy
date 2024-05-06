@@ -341,7 +341,9 @@ const View: ClientModule["View"] = (input) => {
 			return (
 				<PlayClient.View
 					ctx={ctx}
-					dispatch={(c) => dispatch({ t: "play", c })}
+					dispatch={(c) => {
+						dispatch({ t: "play", c });
+					}}
 					modelCore={modelCore.c}
 					model={input.model.t === "play" ? input.model.c : PlayClient.init}
 				/>

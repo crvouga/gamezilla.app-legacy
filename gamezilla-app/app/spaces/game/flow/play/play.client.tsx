@@ -1,24 +1,26 @@
+import { Sub } from "gamezilla-app/@/core";
+import type { ClientCmd } from "gamezilla-app/app/@/client";
+import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@/ui";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import type { SpaceClientEvent } from "gamezilla-app/app/spaces/@/space";
-import type { ClientCmd } from "gamezilla-app/app/@/client";
-import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@/ui";
-import { Sub } from "gamezilla-app/@/core";
 import { GameLayout } from "../../@/game";
 import { FlowVariantUIPlay } from "../@/flow";
 import type { FlowClientCtx } from "../@/flow-ctx";
+import { FlowPackListClient } from "../@/flow-pack";
 import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
 import { ViewProfileCard } from "../@/ui";
-import type {
-	ModelClient,
-	ModelCore,
-	MsgClient,
-	MsgCore,
-	MsgToClient,
-	MsgToServer,
+import {
+	GotFlowPlayMsg,
+	type ModelClient,
+	type ModelCore,
+	type MsgClient,
+	type MsgCore,
+	type MsgToClient,
+	type MsgToServer,
 } from "./play.types";
 
-type Module = GameClientModule<{
+type ClientModule = GameClientModule<{
 	Model: ModelClient;
 	Msg: MsgClient;
 	MsgToClient: MsgToClient;
@@ -33,58 +35,28 @@ type Module = GameClientModule<{
 }>;
 
 const flow = samples["8x8"][0];
-const init: Module["init"] = {
+const init: ClientModule["init"] = {
 	play: FlowVariantUIPlay.init({ flow }),
 	flow,
+	packList: FlowPackListClient.initClient,
 };
 
-const update: Module["update"] = (input) => {
-	return GameClientModule.andThen(
-		{ model: input.model },
-		//
-		(model) => updateFromMsg({ ...input, model }),
-	);
-};
-
-const updateFromMsg: Module["update"] = (input) => {
-	const { msg, model } = input;
-
-	if (!msg) {
-		return { model };
+const update: ClientModule["update"] = (input) => {
+	if (GotFlowPlayMsg.is(input.msg)) {
+		return {
+			model: input.model,
+			msgCore: [withId(input.msg)],
+		};
 	}
 
-	switch (msg.t) {
-		case "grid": {
-			const updated = FlowVariantUIPlay.update({
-				msg: msg.c,
-				model: model.play,
-				flow: model.flow,
-			});
-			return {
-				model: {
-					play: updated,
-					flow: model.flow,
-				},
-			};
-		}
-
-		case "msgCore": {
-			const msgCore = withId(msg.c);
-			return {
-				model,
-				msgCore: [msgCore],
-			};
-		}
-	}
+	return { model: input.model };
 };
 
-const subscriptions: Module["subscriptions"] = () => {
+const subscriptions: ClientModule["subscriptions"] = () => {
 	return Sub.None;
 };
 
-const USE_GAME_STATE = true;
-
-const View: Module["View"] = (input) => {
+const View: ClientModule["View"] = (input) => {
 	const isPlaying = input.ctx.currentUserId === input.ctx.space.hostId;
 	const isSpectating = !isPlaying;
 	const host = input.ctx.profiles[input.ctx.space.hostId];
@@ -94,23 +66,19 @@ const View: Module["View"] = (input) => {
 				{isSpectating && host && (
 					<ViewProfileCard profile={host} subtitle="Player" />
 				)}
-				{USE_GAME_STATE ? (
-					<FlowVariantUIPlay.View
-						dispatch={(c) =>
-							input.dispatch({ t: "msgCore", c: { t: "grid", c } })
-						}
-						model={input.modelCore.play}
-						disabled={isSpectating}
-						flow={input.modelCore.flow}
-					/>
-				) : (
-					<FlowVariantUIPlay.View
-						dispatch={(c) => input.dispatch({ t: "grid", c })}
-						model={input.model.play}
-						flow={input.model.flow}
-						disabled={isSpectating}
-					/>
-				)}
+
+				<FlowVariantUIPlay.View
+					dispatch={(c) => {
+						const msg = GotFlowPlayMsg({
+							c,
+						});
+						console.log("msg", msg, "c", c);
+						input.dispatch(msg);
+					}}
+					model={input.modelCore.play}
+					disabled={isSpectating}
+					flow={input.modelCore.flow}
+				/>
 			</div>
 			{isPlaying && (
 				<div className="w-full p-4">
@@ -126,25 +94,11 @@ const View: Module["View"] = (input) => {
 	);
 };
 
-export const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
-	switch (input.msgCore.t) {
-		case "grid": {
-			switch (input.msgCore.c.t) {
-				case "dragged-over":
-				case "left":
-				case "pressed-down":
-				case "pressed-up": {
-					return null;
-				}
-				default: {
-					return null;
-				}
-			}
-		}
-	}
+export const ViewFeedItem: ClientModule["ViewFeedItem"] = (_input) => {
+	return null;
 };
 
-export const PlayClient: Module = {
+export const PlayClient: ClientModule = {
 	init,
 	update,
 	subscriptions,
