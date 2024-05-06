@@ -220,7 +220,6 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 						{packBuilder.pack.name}
 					</p>
 					<div className="flex w-full flex-1 flex-col items-center justify-center">
-						slideIndex={PackBuilderCore.toSlideIndex(packBuilder)}
 						<FlowPackGridUI.ViewPackPuzzleGrid
 							id={packBuilder.pack.id}
 							slideIndex={PackBuilderCore.toSlideIndex(packBuilder)}

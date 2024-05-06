@@ -33,17 +33,15 @@ const onContainer = async (props: {
 	mountedElementIds.add(props.id);
 
 	// @ts-expect-error
-	const activeIndex = swiperElement.swiper?.activeIndex ?? 0;
-	let previousActiveIndex = activeIndex;
+	let previousActiveIndex = swiperElement.swiper?.activeIndex ?? 0;
 	const onSlideChangeEventHandler = (event: Event) => {
 		// @ts-expect-error
 		const swiper = event?.detail?.[0];
 		const activeIndex = swiper?.activeIndex ?? 0;
-		if (activeIndex === previousActiveIndex) {
-			return;
+		if (activeIndex !== previousActiveIndex) {
+			props.onSlideIndexChanged(activeIndex);
+			previousActiveIndex = activeIndex;
 		}
-		props.onSlideIndexChanged(activeIndex);
-		previousActiveIndex = activeIndex;
 	};
 
 	swiperElement.addEventListener(
@@ -51,28 +49,24 @@ const onContainer = async (props: {
 		onSlideChangeEventHandler,
 	);
 
-	let timeout: ReturnType<typeof setTimeout> | undefined = undefined;
-
-	const cleanup = () => {
-		clearTimeout(timeout);
-		swiperElement.removeEventListener(
-			"swiperslidechange",
-			onSlideChangeEventHandler,
-		);
-		mountedElementIds.delete(props.id);
-		console.log("cleanup", props.id);
-	};
-
-	const TIMEOUT = 1000;
-	const cleanUpGarbage = () => {
-		const element = document.getElementById(props.id);
-		if (!element) {
-			cleanup();
-			return;
+	const observer = new MutationObserver((mutations) => {
+		for (let i = 0; i < mutations.length; i++) {
+			const mutation = mutations[i]!;
+			for (let j = 0; j < mutation.removedNodes.length; j++) {
+				const node = mutation.removedNodes[j]!;
+				if (node.contains(swiperElement)) {
+					mountedElementIds.delete(props.id);
+					observer.disconnect();
+					swiperElement.removeEventListener(
+						"swiperslidechange",
+						onSlideChangeEventHandler,
+					);
+					swiperElement.remove();
+				}
+			}
 		}
-		timeout = setTimeout(cleanUpGarbage, TIMEOUT);
-	};
-	timeout = setTimeout(cleanUpGarbage, TIMEOUT);
+	});
+	observer.observe(document.body, { childList: true, subtree: true });
 };
 
 const Container = (props: {
