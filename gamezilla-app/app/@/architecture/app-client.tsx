@@ -145,7 +145,7 @@ export type AppClientModule<T extends AppClientModuleTypes> = {
 	update: (input: Input<T>) => Output<T>;
 
 	/**
-	 * `subscriptions` is dispatchs msgs specific to the module
+	 * `subscriptions` is dispatches msgs specific to the module
 	 */
 	subscriptions: (input: { ctx: T["Ctx"]; model: T["Model"] }) => Sub<T["Msg"]>;
 

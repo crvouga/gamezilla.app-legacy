@@ -1,5 +1,5 @@
+import { Eff, batchMsgs, type Sub } from "gamezilla-app/@/core";
 import type { ClientId, SessionId, UserId } from "gamezilla-app/app/@/data";
-import { Eff, type Sub, batchMsgs } from "gamezilla-app/@/core";
 
 //
 //
@@ -137,7 +137,7 @@ export type AppServerModule<T extends AppServerModuleTypes> = {
 	update: (input: Input<T>) => Promise<Output<T>>;
 
 	/**
-	 * `subscriptions` is dispatchs msgs specific to the module
+	 * `subscriptions` is dispatches msgs specific to the module
 	 */
 	subscriptions: (input: {
 		ctx: T["Ctx"];
