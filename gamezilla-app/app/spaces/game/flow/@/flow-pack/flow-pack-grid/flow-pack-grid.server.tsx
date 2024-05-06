@@ -17,10 +17,8 @@ type ServerModule = AppServerModule<{
 	Ctx: SpaceServerCtx;
 	Model: ModelServer;
 	Msg: MsgServer;
-	MsgInCmd: null;
 	MsgInEvent: SpaceServerEvent;
 	MsgOutCmd: SpaceServerCmd<MsgToClient>;
-	MsgOutEvent: null;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	Deps: FlowServerDeps;
