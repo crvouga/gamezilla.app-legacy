@@ -47,7 +47,7 @@ export const testFlowClientCtx = async (): Promise<FlowClientCtx> => {
 	};
 };
 
-export const clickedPackCreateButton =
+export const clickedPackCreateNewButton =
 	(ctx: FlowClientCtx) => (model: ModelClient) => {
 		return CreateClient.update({
 			model,

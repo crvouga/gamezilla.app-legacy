@@ -9,7 +9,7 @@ import {
 } from "gamezilla-app/app/@/ui";
 import { ViewSpaceHostChip } from "../../../@/game";
 import type { ClientModule } from "../create.types";
-import { PackListClient } from "../pack/list/pack-list.client";
+import { PackListClient } from "../pack/pack-list/pack-list.client";
 import { PuzzleListClient } from "../puzzle/list/puzzle-list.client";
 
 const update: ClientModule["update"] = (input) => {

@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { didPlaySound, didShowToast } from "gamezilla-app/app/@/client";
 import {
-	clickedPackCreateButton,
+	clickedPackCreateNewButton,
 	createFlowPack,
 	initial,
 	testFlowClientCtx,
@@ -15,7 +15,7 @@ describe(import.meta.file, () => {
 
 		const output = GameClientModule.andThen(
 			initial,
-			clickedPackCreateButton(ctx),
+			clickedPackCreateNewButton(ctx),
 		);
 
 		expect(didPlaySound(output)).toBe(true);

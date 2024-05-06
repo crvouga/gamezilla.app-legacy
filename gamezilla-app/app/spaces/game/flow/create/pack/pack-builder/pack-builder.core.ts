@@ -43,8 +43,6 @@ updates.push(({ modelCore, msgCore }) => {
 		case "pack-builder.user-clicked-exit-button": {
 			return {
 				...modelCore,
-				puzzleBuilder: modelCore.puzzleBuilder,
-				packBuilder: modelCore.packBuilder,
 				opened: { t: "list" },
 				listTab: "packs",
 			};
@@ -443,7 +441,6 @@ const init = ({ pack }: { pack: FlowPack }): ModelCore => {
 		screen: {
 			t: "screen-puzzle-grid",
 		},
-		t: "pack-builder",
 		editPackName: EditPackNameCore.init({
 			pack,
 		}),

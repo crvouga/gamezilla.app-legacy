@@ -1,6 +1,6 @@
 import type { UpdateCore } from "../../create.types";
 
-const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
+const update: UpdateCore = ({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		default: {
 			return modelCore;
@@ -8,6 +8,6 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 	}
 };
 
-export const PackCreateGame = {
-	updateCore,
+export const PackCreateNewCore = {
+	update,
 };

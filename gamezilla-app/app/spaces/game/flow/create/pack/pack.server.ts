@@ -1,12 +1,12 @@
 import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
 import { type ServerModule } from "../create.types";
 import { PackBuilderServer } from "./pack-builder/pack-builder.server";
-import { PackCreateServer } from "./create/pack-create.server";
+import { PackCreateNewServer } from "./pack-create-new/pack-create-new.server";
 
 const update: ServerModule["update"] = async (input) => {
 	return GameServerModule.andThen(
 		{ model: input.model },
-		(model) => PackCreateServer.update({ ...input, model }),
+		(model) => PackCreateNewServer.update({ ...input, model }),
 		(model) => PackBuilderServer.update({ ...input, model }),
 	);
 };

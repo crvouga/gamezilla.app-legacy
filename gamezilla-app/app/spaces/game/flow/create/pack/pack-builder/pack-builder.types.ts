@@ -78,7 +78,6 @@ type Screen =
 	  };
 
 export type ModelCore = {
-	t: "pack-builder";
 	pack: FlowPack;
 	screen: Screen;
 	slideIndex: number;

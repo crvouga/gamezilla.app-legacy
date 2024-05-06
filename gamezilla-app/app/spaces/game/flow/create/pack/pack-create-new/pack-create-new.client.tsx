@@ -17,7 +17,7 @@ const update: ClientModule["update"] = (input) => {
 			return {
 				model: {
 					...model,
-					packCreateRequest: loading,
+					packCreateNewRequest: loading,
 				},
 				msgCmd: [
 					playSound(APP_SOUND.tap),
@@ -49,7 +49,7 @@ const update: ClientModule["update"] = (input) => {
 			return {
 				model: {
 					...model,
-					packCreateRequest: Ok(null),
+					packCreateNewRequest: Ok(null),
 				},
 				msgCmd: [playSound(APP_SOUND.refreshFeed), showToast("Pack created")],
 			};
@@ -67,14 +67,14 @@ const ViewCreateButton: ClientModule["View"] = (input) => {
 			text="Create Pack"
 			variant="contained"
 			color="primary"
-			loading={model.packCreateRequest.t === "loading"}
+			loading={model.packCreateNewRequest.t === "loading"}
 			start={<IconPlus className="h-8 w-8" />}
 			onClick={() => dispatch({ t: "pack-create.clicked-create-button" })}
 		/>
 	);
 };
 
-export const PackCreateClient = {
+export const PackCreateNewClient = {
 	update,
 	ViewCreateButton,
 };

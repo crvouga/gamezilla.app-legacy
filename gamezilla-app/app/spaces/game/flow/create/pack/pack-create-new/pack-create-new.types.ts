@@ -10,11 +10,11 @@ import { FlowPack } from "../../../@/flow-pack/flow-pack";
 //
 
 export type ModelClient = {
-	packCreateRequest: RemoteResult<string, null>;
+	packCreateNewRequest: RemoteResult<string, null>;
 };
 
 export const initClient: ModelClient = {
-	packCreateRequest: notAsked,
+	packCreateNewRequest: notAsked,
 };
 
 export type ModelServer = {};

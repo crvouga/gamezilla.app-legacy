@@ -1,7 +1,7 @@
 import type { UpdateCore } from "../../create.types";
 import { PackBuilderCore } from "../pack-builder/pack-builder.core";
 
-const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
+const update: UpdateCore = ({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "pack-list.user-clicked-pack-item": {
 			return {
@@ -21,6 +21,6 @@ const updateCore: UpdateCore = ({ modelCore, msgCore }) => {
 	}
 };
 
-export const PackListGame = {
-	updateCore,
+export const PackListCore = {
+	update,
 };

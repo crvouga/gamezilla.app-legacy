@@ -1,5 +1,5 @@
-import { PackCreate } from "./create";
-import { PackList } from "./list";
+import { PackCreateNew } from "./pack-create-new";
+import { PackList } from "./pack-list";
 import { PackBuilder } from "./pack-builder";
 
 //
@@ -10,14 +10,14 @@ import { PackBuilder } from "./pack-builder";
 //
 //
 
-export type ModelClient = PackCreate.ModelClient &
+export type ModelClient = PackCreateNew.ModelClient &
 	PackBuilder.ModelClient &
 	PackList.ModelClient;
 
 export const initClient = (): ModelClient => {
 	return {
 		...PackBuilder.initClient,
-		...PackCreate.initClient,
+		...PackCreateNew.initClient,
 		...PackList.initClient,
 	};
 };
@@ -31,22 +31,22 @@ export const initClient = (): ModelClient => {
 //
 
 export type MsgClient =
-	| PackCreate.MsgClient
+	| PackCreateNew.MsgClient
 	| PackBuilder.MsgClient
 	| PackList.MsgClient;
 
 export type MsgServer =
-	| PackCreate.MsgServer
+	| PackCreateNew.MsgServer
 	| PackBuilder.MsgServer
 	| PackList.MsgServer;
 
 export type MsgToServer =
-	| PackCreate.MsgToServer
+	| PackCreateNew.MsgToServer
 	| PackBuilder.MsgToServer
 	| PackList.MsgToServer;
 
 export type MsgToClient =
-	| PackCreate.MsgToClient
+	| PackCreateNew.MsgToClient
 	| PackBuilder.MsgToClient
 	| PackList.MsgToClient;
 
@@ -63,6 +63,6 @@ export type ModelCore = {
 };
 
 export type MsgCore =
-	| PackCreate.MsgCore
+	| PackCreateNew.MsgCore
 	| PackBuilder.MsgCore
 	| PackList.MsgCore;

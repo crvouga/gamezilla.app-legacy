@@ -1,7 +1,7 @@
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { FlowPackListClient } from "../../../@/flow-pack/flow-pack-list";
 import type { ClientModule } from "../../create.types";
-import { PackCreateClient } from "../create/pack-create.client";
+import { PackCreateNewClient } from "../pack-create-new/pack-create-new.client";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
 
@@ -41,7 +41,7 @@ const View: ClientModule["View"] = (input) => {
 				dispatch={(c) => input.dispatch({ t: "flow-pack-list", c })}
 				model={input.model.flowPackList}
 				slots={{
-					fab: () => <PackCreateClient.ViewCreateButton {...input} />,
+					fab: () => <PackCreateNewClient.ViewCreateButton {...input} />,
 				}}
 				emits={{
 					clickedPackItem: (pack) =>

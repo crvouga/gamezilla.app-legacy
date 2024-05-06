@@ -162,8 +162,10 @@ export type MsgCore =
 	| PackTypes.MsgCore
 	| PuzzleTypes.MsgCore;
 
+type Open = { t: "list" } | { t: "puzzle-builder" } | { t: "pack-builder" };
+
 type BaseModelCore = {
-	opened: { t: "list" } | { t: "puzzle-builder" } | { t: "pack-builder" };
+	opened: Open;
 };
 
 export type ModelCore = PuzzleTypes.ModelCore &
