@@ -82,7 +82,7 @@ export type ModelCore = {
 	pack: FlowPack;
 	screen: Screen;
 	slideIndex: number;
-	editPackName: EditPackNameTypes.ModelCore
+	editPackName: EditPackNameTypes.ModelCore;
 };
 
 export const MsgCore = p.or(

@@ -233,7 +233,7 @@ describe(import.meta.file, () => {
 				...f.modelCore,
 				packBuilder: PackBuilderCore.initCore({
 					pack: updatedPack,
-				})
+				}),
 			},
 		});
 		const after = { ...output.model.packs[f.pack.id] };

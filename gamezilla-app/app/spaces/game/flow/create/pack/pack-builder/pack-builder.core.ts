@@ -28,7 +28,7 @@ updates.push(({ modelCore, msgCore }) => {
 					pack: msgCore.created.value,
 					editPackName: EditPackNameCore.init({
 						pack: msgCore.created.value,
-					})
+					}),
 				},
 			};
 		}
@@ -445,8 +445,8 @@ const initCore = ({ pack }: { pack: FlowPack }): ModelCore => {
 		},
 		t: "pack-builder",
 		editPackName: EditPackNameCore.init({
-						pack,
-					})
+			pack,
+		}),
 	};
 };
 
