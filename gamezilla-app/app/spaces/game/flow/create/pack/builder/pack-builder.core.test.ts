@@ -2,14 +2,17 @@ import { describe, expect, it } from "bun:test";
 import { UserId } from "gamezilla-app/app/@/data";
 import { SpaceGameCoreFixture } from "gamezilla-app/app/spaces/game/@/testing/sync";
 import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
+import { FlowPuzzle } from "../../../@/flow-puzzle";
 import { randomFlowPack, randomFlowPuzzle } from "../../../@/testing";
 import { CreateCore } from "../../create.core";
 import { ModelCore } from "../../create.types";
 import { PackBuilderCore } from "./pack-builder.core";
 import { MsgCore } from "./pack-builder.types";
-import { FlowPuzzle } from "../../../@/flow-puzzle";
 
-const Fixture = async (input?: { puzzleCount?: number }) => {
+const Fixture = async (input?: {
+	puzzleCount?: number;
+	appendDuplicatesOf?: FlowPuzzle;
+}) => {
 	const f = await SpaceGameCoreFixture();
 	const createdBy = UserId.generate();
 
@@ -18,8 +21,15 @@ const Fixture = async (input?: { puzzleCount?: number }) => {
 		await randomFlowPuzzle({ createdBy }),
 		await randomFlowPuzzle({ createdBy }),
 	];
+
 	for (let i = 0; i < (input?.puzzleCount ?? 0); i++) {
 		puzzles.push(await randomFlowPuzzle({ createdBy }));
+	}
+
+	if (input?.appendDuplicatesOf) {
+		for (let i = 0; i < 3; i++) {
+			puzzles.push(input.appendDuplicatesOf);
+		}
 	}
 
 	const pack = await randomFlowPack({
@@ -94,6 +104,7 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
+				puzzleIndex: 0,
 			},
 		]);
 
@@ -120,6 +131,7 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
+				puzzleIndex: 0,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-more-button",
@@ -138,6 +150,7 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
+				puzzleIndex: 0,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-closed-more-drawer",
@@ -156,6 +169,7 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
+				puzzleIndex: 0,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-next-puzzle-button",
@@ -175,6 +189,7 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[0],
+				puzzleIndex: 0,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-next-puzzle-button",
@@ -195,6 +210,7 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[1],
+				puzzleIndex: 1,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-previous-puzzle-button",
@@ -214,6 +230,7 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[1],
+				puzzleIndex: 1,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-previous-puzzle-button",
@@ -233,6 +250,7 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle: f.puzzles[1],
+				puzzleIndex: 1,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button",
@@ -287,17 +305,13 @@ describe(import.meta.file, () => {
 			puzzleCount: FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
 		});
 
-		const puzzle = await randomFlowPuzzle({ createdBy: f.currentUserId });
+		const puzzle = f.puzzles[f.puzzles.length - 1]!;
 
 		const modelCore = f.updateModelCore([
 			{
-				t: "pack-builder.user-clicked-add-puzzle-item",
-				puzzle,
-				userId: f.currentUserId,
-			},
-			{
 				t: "pack-builder.user-clicked-pack-item",
 				puzzle,
+				puzzleIndex: f.puzzles.length - 1,
 			},
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-exit-puzzle-button",
@@ -363,5 +377,56 @@ describe(import.meta.file, () => {
 
 		expect(PackBuilderCore.toSlideIndex(f.modelCore.packBuilder)).toBe(0);
 		expect(PackBuilderCore.toSlideIndex(modelCore.packBuilder)).toBe(1);
+	});
+
+	it("should open the correct level when opening puzzle screen", async () => {
+		const f = await Fixture({
+			puzzleCount: FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
+		});
+		const indexNextPage = FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1;
+		const modelCore = f.updateModelCore([
+			{
+				t: "pack-builder.user-clicked-pack-item",
+				puzzle: f.puzzles[indexNextPage]!,
+				puzzleIndex: indexNextPage,
+			},
+		]);
+		expect(
+			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
+				modelCore.packBuilder?.screen.puzzleIndex === indexNextPage,
+		).toBe(true);
+	});
+
+	it("should open the correct level when opening puzzle screen event when there is duplicate puzzles in the pack", async () => {
+		const puzzle = await randomFlowPuzzle();
+		const f = await Fixture({ appendDuplicatesOf: puzzle });
+
+		const modelCore = f.updateModelCore([
+			{
+				t: "pack-builder.user-clicked-pack-item",
+				puzzle: f.puzzles[f.puzzles.length - 1]!,
+				puzzleIndex: f.puzzles.length - 1,
+			},
+		]);
+
+		expect(
+			modelCore.packBuilder?.screen.t === "screen-puzzle" &&
+				modelCore.packBuilder?.screen.puzzleIndex === f.puzzles.length - 1,
+		).toBe(true);
+	});
+
+	it("should not open pack item if puzzle is not at index given", async () => {
+		const puzzle = await randomFlowPuzzle();
+		const f = await Fixture({ appendDuplicatesOf: puzzle });
+
+		const modelCore = f.updateModelCore([
+			{
+				t: "pack-builder.user-clicked-pack-item",
+				puzzle: f.puzzles[f.puzzles.length - 1]!,
+				puzzleIndex: 0,
+			},
+		]);
+
+		expect(modelCore.packBuilder?.screen.t === "screen-puzzle-grid").toBe(true);
 	});
 });

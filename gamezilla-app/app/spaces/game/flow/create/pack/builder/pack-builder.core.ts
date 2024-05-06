@@ -132,11 +132,10 @@ updates.push(({ modelCore, msgCore }) => {
 				return modelCore;
 			}
 
-			const index = modelCore.packBuilder.pack.puzzleIds.indexOf(
-				msgCore.puzzle.id,
-			);
+			const puzzleId =
+				modelCore.packBuilder.pack.puzzleIds[msgCore.puzzleIndex];
 
-			if (index === -1) {
+			if (puzzleId !== msgCore.puzzle.id) {
 				return modelCore;
 			}
 
@@ -147,7 +146,7 @@ updates.push(({ modelCore, msgCore }) => {
 					screen: {
 						opened: null,
 						t: "screen-puzzle",
-						puzzleIndex: index,
+						puzzleIndex: msgCore.puzzleIndex,
 						puzzle: msgCore.puzzle,
 						playUI: FlowVariantUIPlay.init({
 							flow: msgCore.puzzle.flow,

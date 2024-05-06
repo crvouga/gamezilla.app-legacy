@@ -107,6 +107,7 @@ export const MsgCore = p.or(
 	p.obj({
 		t: p.l("pack-builder.user-clicked-pack-item"),
 		puzzle: FlowPuzzle,
+		puzzleIndex: p.num,
 	}),
 	p.obj({
 		t: p.l("pack-builder.user-changed-slide"),

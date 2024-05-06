@@ -249,7 +249,7 @@ const ScreenPuzzleGrid: Pick<ClientModule, "update" | "View"> = {
 												input.dispatch({
 													t: "pack-builder.user-clicked-pack-item",
 													puzzle,
-													// index: props.index,
+													puzzleIndex: props.index,
 												})
 											}
 											index={props.index}
