@@ -5,8 +5,8 @@ import type {
 } from "gamezilla-app/app/spaces/@/space";
 import { Sub } from "gamezilla-app/@/core";
 import { SpaceServerCmd } from "../../@/space-server-cmd";
-import { CreateServer } from "./create/create.server";
-import { CreateCore } from "./create/create.core";
+import { BuilderServer } from "./builder/builder.server";
+import { BuilderCore } from "./builder/builder.core";
 import * as Play from "./play/play.types";
 import { PlayServer } from "./play/play.server";
 import type {
@@ -44,32 +44,32 @@ const update: ServerModule["update"] = async (input) => {
 };
 
 const updateCreate: ServerModule["update"] = async (input) => {
-	const updated = await CreateServer.update({
+	const updated = await BuilderServer.update({
 		ctx: input.ctx,
 		modelCore:
-			input.modelCore.t === "create"
+			input.modelCore.t === "builder"
 				? input.modelCore.c
-				: CreateCore.initCore({ ctx: input.ctx }),
-		model: input.model.t === "create" ? input.model.c : CreateServer.init,
+				: BuilderCore.initCore({ ctx: input.ctx }),
+		model: input.model.t === "builder" ? input.model.c : BuilderServer.init,
 		msgCmd: input.msgCmd,
 		msgEvt: input.msgEvt,
 		msgClient:
-			input.msgClient?.t === "create"
+			input.msgClient?.t === "builder"
 				? { ...input.msgClient, ...input.msgClient.c }
 				: null,
 		msgCore:
-			input.msgCore?.t === "create"
+			input.msgCore?.t === "builder"
 				? { ...input.msgCore, ...input.msgCore.c }
 				: null,
-		msg: input.msg?.t === "create" ? input.msg.c : null,
-		deps: await CreateServer.deps({
+		msg: input.msg?.t === "builder" ? input.msg.c : null,
+		deps: await BuilderServer.deps({
 			ctx: input.ctx,
 		}),
 	});
 
 	const tagged = GameServerModule.tagOutput(
-		"create",
-		(msgCmd) => SpaceServerCmd.tag("create", msgCmd),
+		"builder",
+		(msgCmd) => SpaceServerCmd.tag("builder", msgCmd),
 		updated,
 	);
 
@@ -122,13 +122,14 @@ const subscriptions: ServerModule["subscriptions"] = async (input) => {
 			);
 		}
 
-		case "create": {
+		case "builder": {
 			return Sub.tag(
-				"create",
-				await CreateServer.subscriptions({
+				"builder",
+				await BuilderServer.subscriptions({
 					ctx: input.ctx,
 					modelCore: modelCore.c,
-					model: input.model.t === "create" ? input.model.c : CreateServer.init,
+					model:
+						input.model.t === "builder" ? input.model.c : BuilderServer.init,
 				}),
 			);
 		}

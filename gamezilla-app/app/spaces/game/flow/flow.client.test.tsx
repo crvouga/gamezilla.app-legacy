@@ -7,14 +7,14 @@ import { EventId } from "../../@/event";
 import type { FlowClientCtx } from "./@/flow-ctx";
 import { FlowClient } from "./flow.client";
 import type { ModelClient } from "./flow.types";
-import { testFlowClientCtx } from "./create/@/testing/client";
+import { testFlowClientCtx } from "./builder/@/testing/client";
 
 const init = {
 	model: FlowClient.init,
 };
 
 const userSelectedMode =
-	(ctx: FlowClientCtx, userId: UserId, mode: "create" | "play" | null) =>
+	(ctx: FlowClientCtx, userId: UserId, mode: "builder" | "play" | null) =>
 	(model: ModelClient) => {
 		return FlowClient.update({
 			ctx,
@@ -46,7 +46,7 @@ describe(import.meta.file, () => {
 		const ctx = await testFlowClientCtx();
 		const output = GameClientModule.andThen(
 			init,
-			userSelectedMode(ctx, ctx.currentUserId, "create"),
+			userSelectedMode(ctx, ctx.currentUserId, "builder"),
 		);
 		expect(didPlaySound(output)).toBe(true);
 	});

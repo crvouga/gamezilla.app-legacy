@@ -7,7 +7,7 @@ import {
 } from "gamezilla-app/app/spaces/@/testing/server";
 import { FlowPack, FlowPackDb } from "..";
 import { testSpaceServerCtx } from "../../../../@/testing/server";
-import type { FlowServerDeps } from "../../../create/create.types";
+import type { FlowServerDeps } from "../../../builder/builder.types";
 import { FlowVariant, FlowVariantDimensions } from "../../flow";
 import { FlowPuzzle, FlowPuzzleDb } from "../../flow-puzzle";
 import type { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";

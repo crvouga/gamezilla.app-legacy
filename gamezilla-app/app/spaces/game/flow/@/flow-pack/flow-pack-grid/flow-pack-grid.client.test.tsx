@@ -4,7 +4,7 @@ import { andThen } from "gamezilla-app/app/@/architecture/app-client";
 import { didSendToServer, didShowErrorSm } from "gamezilla-app/app/@/client";
 import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import { FlowPack } from "..";
-import { testFlowClientCtx } from "../../../create/@/testing/client";
+import { testFlowClientCtx } from "../../../builder/@/testing/client";
 import { FlowVariant, FlowVariantDimensions } from "../../flow";
 import { FlowPuzzle } from "../../flow-puzzle";
 import { FlowPackGridClient } from "./flow-pack-grid.client";

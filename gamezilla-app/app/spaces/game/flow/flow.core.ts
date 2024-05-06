@@ -1,6 +1,6 @@
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import type { WithEventMeta } from "../../@/event";
-import { CreateCore } from "./create/create.core";
+import { BuilderCore } from "./builder/builder.core";
 import type { ModelCore, MsgCore } from "./flow.types";
 import * as Play from "./play/play.types";
 
@@ -37,12 +37,12 @@ export const updateCore = ({
 			}
 		}
 
-		case "create": {
+		case "builder": {
 			switch (modelCore.t) {
-				case "create": {
+				case "builder": {
 					return {
-						t: "create",
-						c: CreateCore.updateCore({
+						t: "builder",
+						c: BuilderCore.updateCore({
 							ctx,
 							msgCore: msgCore.c,
 							modelCore: modelCore.c,
@@ -73,10 +73,10 @@ export const updateCore = ({
 					};
 				}
 
-				case "create": {
+				case "builder": {
 					return {
-						t: "create",
-						c: CreateCore.initCore({ ctx }),
+						t: "builder",
+						c: BuilderCore.initCore({ ctx }),
 					};
 				}
 			}

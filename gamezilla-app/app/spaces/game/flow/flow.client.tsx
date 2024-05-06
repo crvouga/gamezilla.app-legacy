@@ -9,7 +9,7 @@ import { APP_SOUND, ClientCmd, playSound } from "gamezilla-app/app/@/client";
 import { IconGamepad, IconScrewdriverWrench } from "gamezilla-app/app/@/ui";
 import { Sub } from "gamezilla-app/@/core";
 import { SpaceClientCmd } from "../../@/space-client-cmd";
-import { CreateClient } from "./create/create.client";
+import { BuilderClient } from "./builder/builder.client";
 import { PlayClient } from "./play/play.client";
 import { CoverArt } from "./@/flow-cover-art";
 import type { FlowClientCtx } from "./@/flow-ctx";
@@ -109,25 +109,25 @@ const updateChild: ClientModule["update"] = (input) => {
 			};
 		}
 
-		case "create": {
-			const updated = CreateClient.update({
+		case "builder": {
+			const updated = BuilderClient.update({
 				ctx: { ...ctx, onQuit: () => {} },
 				modelCore: modelCore.c,
 				model: {
-					...(model.t === "create" ? model.c : CreateClient.init),
+					...(model.t === "builder" ? model.c : BuilderClient.init),
 					packs: model.packs,
 					puzzles: model.puzzles,
 				},
 				msgCmd: msgCmd,
 				msgEvt: msgEvt,
-				msgServer: msgServer?.t === "create" ? msgServer.c : null,
-				msgCore: msgCore?.t === "create" ? { ...msgCore, ...msgCore.c } : null,
-				msg: msg?.t === "create" ? msg.c : null,
+				msgServer: msgServer?.t === "builder" ? msgServer.c : null,
+				msgCore: msgCore?.t === "builder" ? { ...msgCore, ...msgCore.c } : null,
+				msg: msg?.t === "builder" ? msg.c : null,
 			});
 
 			const tagged = GameClientModule.tagOutput(
-				"create",
-				(msgCmd) => SpaceClientCmd.tag("create", msgCmd),
+				"builder",
+				(msgCmd) => SpaceClientCmd.tag("builder", msgCmd),
 				updated,
 			);
 
@@ -135,7 +135,7 @@ const updateChild: ClientModule["update"] = (input) => {
 				...tagged,
 				model: {
 					...tagged.model,
-					t: "create",
+					t: "builder",
 					c: {
 						...tagged.model.c,
 						packs: {},
@@ -162,12 +162,12 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 					};
 				}
 
-				case "create": {
+				case "builder": {
 					return {
 						model: {
 							...model,
-							t: "create",
-							c: CreateClient.init,
+							t: "builder",
+							c: BuilderClient.init,
 						},
 						msgCmd: [playSound(APP_SOUND.navForwardMin)],
 					};
@@ -230,16 +230,17 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 				}),
 			);
 		}
-		case "create": {
+		case "builder": {
 			return Sub.tag(
-				"create",
-				CreateClient.subscriptions({
+				"builder",
+				BuilderClient.subscriptions({
 					ctx: {
 						...input.ctx,
 						onQuit() {},
 					},
 					modelCore: input.modelCore.c,
-					model: input.model.t === "create" ? input.model.c : CreateClient.init,
+					model:
+						input.model.t === "builder" ? input.model.c : BuilderClient.init,
 				}),
 			);
 		}
@@ -298,14 +299,14 @@ const View: ClientModule["View"] = (input) => {
 						},
 						{
 							renderIcon: (props) => <IconScrewdriverWrench {...props} />,
-							title: "Create",
-							description: "Create new puzzles and packs",
+							title: "Builder",
+							description: "Create and edit puzzles and packs",
 							onClick: () => {
 								dispatch({
 									t: "msgCore",
 									c: {
 										t: "user-changed-mode",
-										mode: "create",
+										mode: "builder",
 										userId: input.ctx.currentUserId,
 									},
 								});
@@ -316,20 +317,20 @@ const View: ClientModule["View"] = (input) => {
 			);
 		}
 
-		case "create": {
+		case "builder": {
 			return (
-				<CreateClient.View
+				<BuilderClient.View
 					ctx={ctx}
-					dispatch={(c) => dispatch({ t: "create", c })}
+					dispatch={(c) => dispatch({ t: "builder", c })}
 					modelCore={modelCore.c}
 					model={
-						input.model.t === "create"
+						input.model.t === "builder"
 							? {
 									...input.model.c,
 									packs: input.model.packs,
 									puzzles: input.model.puzzles,
 								}
-							: CreateClient.init
+							: BuilderClient.init
 					}
 				/>
 			);
@@ -375,13 +376,13 @@ const ViewFeedItem: ClientModule["ViewFeedItem"] = ({
 			}
 		}
 
-		case "create": {
+		case "builder": {
 			switch (modelCore.t) {
-				case "create": {
+				case "builder": {
 					return (
-						<CreateClient.ViewFeedItem
+						<BuilderClient.ViewFeedItem
 							ctx={{ ...ctx, onQuit() {} }}
-							dispatch={(c) => dispatch({ t: "create", c })}
+							dispatch={(c) => dispatch({ t: "builder", c })}
 							modelCore={modelCore.c}
 							msgCore={msgCore.c}
 						/>
