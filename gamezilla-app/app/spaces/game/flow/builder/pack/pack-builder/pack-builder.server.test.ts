@@ -1,14 +1,21 @@
 import { describe, expect, it } from "bun:test";
+import { Result } from "gamezilla-app/@/core";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { randomFlowPack, randomFlowPuzzle } from "../../../@/testing";
 import { FlowCreateFixtureServer } from "../../@/testing/server";
 import { ModelCore, MsgCore } from "../../builder.types";
-import { PackBuilderServer } from "./pack-builder.server";
 import { PackBuilderCore } from "./pack-builder.core";
+import { PackBuilderServer } from "./pack-builder.server";
 
 const Fixture = async () => {
 	const f = await FlowCreateFixtureServer();
-	const pack = await randomFlowPack();
+	const puzzle = await randomFlowPuzzle();
+	const pack = await randomFlowPack({
+		createdBy: puzzle.createdBy,
+		puzzleIds: [puzzle.id],
+	});
+	await f.deps.FlowPackDb.put(pack);
+	await f.deps.FlowPuzzleDb.put(puzzle);
 	const modelCore: ModelCore = {
 		...f.modelCore,
 		packBuilder: PackBuilderCore.init({
@@ -52,5 +59,27 @@ describe(import.meta.file, () => {
 					msgCore.t === "pack-builder.saved-pack" && msgCore.saved.t === "ok",
 			),
 		).toBe(true);
+	});
+
+	it("should save pack after user removes puzzle from it", async () => {
+		const f = await Fixture();
+
+		await PackBuilderServer.update({
+			...f,
+			msgCore: withId({
+				t: "remove-puzzle-from-pack.user-clicked-remove-from-pack-button",
+				puzzleIndex: 0,
+				userId: f.pack.createdBy,
+			}),
+		});
+
+		const before = f.pack;
+		const after = Result.withDefault(
+			await f.deps.FlowPackDb.get(f.pack.id),
+			null,
+		);
+
+		expect(before.puzzleIds.includes(f.pack.puzzleIds[0]!)).toBe(true);
+		expect(after?.puzzleIds.includes(f.pack.puzzleIds[0]!)).toBe(false);
 	});
 });

@@ -1,4 +1,4 @@
-import { Eff } from "gamezilla-app/@/core";
+import { Eff, isErr } from "gamezilla-app/@/core";
 import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
@@ -6,6 +6,7 @@ import { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 import { FlowPackGridServer } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid.server";
 import type { ServerModule } from "../../builder.types";
 import { EditPackNameServer } from "./edit-pack-name/edit-pack-name.server";
+import { PackBuilderCore } from "./pack-builder.core";
 
 const SavePack: Pick<ServerModule, "update"> = {
 	async update(input) {
@@ -65,11 +66,36 @@ const PuzzleGrid: Pick<ServerModule, "update"> = {
 	},
 };
 
+const RemovedPuzzleFromPack: Pick<ServerModule, "update"> = {
+	async update(input) {
+		switch (input.msgCore?.t) {
+			case "remove-puzzle-from-pack.user-clicked-remove-from-pack-button": {
+				const modelCoreNew = PackBuilderCore.update({
+					ctx: input.ctx,
+					modelCore: input.modelCore,
+					msgCore: input.msgCore,
+				});
+				const packNew = modelCoreNew.packBuilder?.pack;
+				if (!packNew) {
+					return { model: input.model };
+				}
+				const put = await input.deps.FlowPackDb.put(packNew);
+				if (isErr(put)) {
+					return { model: input.model };
+				}
+				return { model: input.model };
+			}
+		}
+		return { model: input.model };
+	},
+};
+
 export const PackBuilderServer: Pick<ServerModule, "update"> = {
 	async update(input) {
 		return GameServerModule.andThen(
 			{ model: input.model },
 			(model) => SavePack.update({ ...input, model }),
+			(model) => RemovedPuzzleFromPack.update({ ...input, model }),
 			(model) => PuzzleGrid.update({ ...input, model }),
 			async (model) => {
 				if (!input.modelCore.packBuilder) {
