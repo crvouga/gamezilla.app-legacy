@@ -1,4 +1,4 @@
-import { Eff, Sub } from "gamezilla-app/@/core";
+import { Sub } from "gamezilla-app/@/core";
 import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
 import { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 import { FlowPackDb } from "../@/flow-pack/flow-pack-db";
@@ -42,14 +42,13 @@ const updateFlowPuzzleList: ServerModule["update"] = async (input) => {
 				? { ...input.msgClient, ...input.msgClient.c }
 				: undefined,
 	});
+
 	return {
 		model: {
 			...input.model,
 			flowPackList: updated.model,
 		},
 		msgCmd: SpaceServerCmd.tag("flow-puzzle-list", updated.msgCmd),
-		eff: Eff.tag("flow-puzzle-list", updated.eff),
-		msgEvt: updated.msgEvt,
 	};
 };
 
@@ -69,8 +68,6 @@ const updateFlowPackList: ServerModule["update"] = async (input) => {
 			flowPackList: updated.model,
 		},
 		msgCmd: SpaceServerCmd.tag("flow-pack-list", updated.msgCmd),
-		eff: updated.eff,
-		msgEvt: updated.msgEvt,
 	};
 };
 
