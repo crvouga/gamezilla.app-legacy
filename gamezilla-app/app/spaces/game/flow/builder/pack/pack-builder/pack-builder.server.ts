@@ -77,9 +77,9 @@ export const PackBuilderServer: Pick<ServerModule, "update"> = {
 				}
 				const updated = await EditPackNameServer.update({
 					...input,
-					modelCore: input.modelCore.packBuilder,
+					modelCore: input.modelCore.packBuilder.editPackName,
 					msgCore:
-						input.msgCore?.t === "pack-builder.got-edit-pack-name-msg"
+						input.msgCore?.t === "got-edit-pack-name"
 							? { ...input.msgCore, ...input.msgCore.c }
 							: null,
 				});
@@ -87,12 +87,12 @@ export const PackBuilderServer: Pick<ServerModule, "update"> = {
 					model: model,
 					msgCore: (updated.msgCore ?? []).map((c) => ({
 						c,
-						t: "pack-builder.got-edit-pack-name-msg",
+						t: "got-edit-pack-name",
 						eventId: c.eventId,
 					})),
 				};
 			},
-			//
+			
 		);
 	},
 };

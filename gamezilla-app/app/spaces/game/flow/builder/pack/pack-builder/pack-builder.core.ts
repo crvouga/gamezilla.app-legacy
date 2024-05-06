@@ -427,7 +427,7 @@ const update: UpdateCore = (input) => {
 
 const init = ({ pack }: { pack: FlowPack }): ModelCore => {
 	return {
-		...EditPackNameCore.init({ pack }),
+		editPackName: EditPackNameCore.init({ pack }),
 		pack,
 		slideIndex: 0,
 		screen: {

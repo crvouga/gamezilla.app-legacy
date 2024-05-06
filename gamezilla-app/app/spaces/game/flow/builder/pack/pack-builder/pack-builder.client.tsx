@@ -23,6 +23,7 @@ import { FlowPackGridClient } from "../../../@/flow-pack/flow-pack-grid/flow-pac
 import { FlowPuzzleListClient } from "../../../@/flow-puzzle/flow-puzzle-list";
 import type { ClientModule } from "../../builder.types";
 import { PackBuilderCore } from "./pack-builder.core";
+import { EditPackNameClient } from "./edit-pack-name/edit-pack-name.client";
 
 //
 //
@@ -574,6 +575,34 @@ export const PackBuilderClient: Pick<
 			(model) => ScreenPuzzle.update({ ...input, model }),
 			(model) => PuzzleGrid.update({ ...input, model }),
 			(model) => ScreenPuzzleMore.update({ ...input, model }),
+			(model) => {
+				if (!input.modelCore.packBuilder) {
+					return { model };
+				}
+				const updated = EditPackNameClient.update({
+					...input,
+					model,
+					modelCore: input.modelCore.packBuilder.editPackName,
+					msg:
+						input.msgCore?.t === "got-edit-pack-name" ? input.msgCore.c : null,
+					msgCore:
+						input.msgCore?.t === "got-edit-pack-name"
+							? {
+									...input.msgCore,
+									...input.msgCore.c,
+								}
+							: null,
+					ctx: { ...input.ctx, open: false },
+				});
+				return {
+					model,
+					msgCore: (updated.msgCore ?? []).map((c) => ({
+						c,
+						t: "got-edit-pack-name",
+						eventId: c.eventId,
+					})),
+				};
+			},
 			(model) => {
 				if (input.modelCore.packBuilder?.pack) {
 					return {

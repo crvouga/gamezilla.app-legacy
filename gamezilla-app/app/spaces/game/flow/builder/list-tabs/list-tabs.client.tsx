@@ -3,7 +3,7 @@ import {
 	Avatar,
 	Button,
 	IconArrowLeftOnRect,
-	Tabs
+	Tabs,
 } from "gamezilla-app/app/@/ui";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";

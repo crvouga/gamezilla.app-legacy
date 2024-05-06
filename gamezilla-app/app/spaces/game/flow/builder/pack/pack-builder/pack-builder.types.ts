@@ -77,15 +77,16 @@ type Screen =
 			opened: "more" | null;
 	  };
 
-export type ModelCore = EditPackNameTypes.ModelCore & {
+export type ModelCore = {
 	pack: FlowPack;
 	screen: Screen;
 	slideIndex: number;
+	editPackName: EditPackNameTypes.ModelCore;
 };
 
 export const MsgCore = p.or(
 	p.obj({
-		t: p.l("pack-builder.got-edit-pack-name-msg"),
+		t: p.l("got-edit-pack-name"),
 		c: EditPackNameTypes.MsgCore,
 	}),
 	p.obj({
