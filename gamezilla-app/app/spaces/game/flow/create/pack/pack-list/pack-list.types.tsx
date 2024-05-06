@@ -9,18 +9,6 @@ export type MsgClient = {
 	pack: FlowPack;
 };
 
-export type MsgServer = {
-	t: "noop";
-};
-
-export type MsgToServer = {
-	t: "noop";
-};
-
-export type MsgToClient = {
-	t: "noop";
-};
-
 export type MsgCore = {
 	t: "pack-list.user-clicked-pack-item";
 	pack: FlowPack;

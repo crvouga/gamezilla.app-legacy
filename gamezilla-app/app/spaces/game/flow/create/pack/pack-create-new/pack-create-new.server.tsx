@@ -15,7 +15,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 	const { model, msgClient, ctx, deps } = input;
 
 	switch (msgClient?.t) {
-		case "pack-create.clicked-create-button": {
+		case "pack-create-new.clicked-create-button": {
 			const counted = await deps.FlowPackDb.count({
 				where: {
 					createdBy: msgClient.userId,
@@ -44,7 +44,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 				},
 				msgCmd: [
 					sendBack(msgClient, {
-						t: "pack-create.created-pack",
+						t: "pack-create-new.created-pack",
 						created: put,
 					}),
 				],

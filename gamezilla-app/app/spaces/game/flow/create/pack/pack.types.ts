@@ -10,7 +10,10 @@ import { PackBuilder } from "./pack-builder";
 //
 //
 
-export type ModelClient = PackCreateNew.ModelClient &
+type BaseModelClient = {};
+
+export type ModelClient = BaseModelClient &
+	PackCreateNew.ModelClient &
 	PackBuilder.ModelClient &
 	PackList.ModelClient;
 
@@ -35,20 +38,11 @@ export type MsgClient =
 	| PackBuilder.MsgClient
 	| PackList.MsgClient;
 
-export type MsgServer =
-	| PackCreateNew.MsgServer
-	| PackBuilder.MsgServer
-	| PackList.MsgServer;
+export type MsgServer = PackCreateNew.MsgServer | PackBuilder.MsgServer;
 
-export type MsgToServer =
-	| PackCreateNew.MsgToServer
-	| PackBuilder.MsgToServer
-	| PackList.MsgToServer;
+export type MsgToServer = PackCreateNew.MsgToServer | PackBuilder.MsgToServer;
 
-export type MsgToClient =
-	| PackCreateNew.MsgToClient
-	| PackBuilder.MsgToClient
-	| PackList.MsgToClient;
+export type MsgToClient = PackCreateNew.MsgToClient | PackBuilder.MsgToClient;
 
 //
 //

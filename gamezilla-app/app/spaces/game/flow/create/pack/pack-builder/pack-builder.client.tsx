@@ -514,7 +514,7 @@ const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
 
 		const initial = FlowPackGridClient.init({ ctx });
 
-		const model = input.model.packBuilder.flowPackPuzzleGrid ?? initial.model;
+		const model = input.model.packBuilder?.flowPackPuzzleGrid ?? initial.model;
 
 		const updated = FlowPackGridClient.update({
 			ctx,

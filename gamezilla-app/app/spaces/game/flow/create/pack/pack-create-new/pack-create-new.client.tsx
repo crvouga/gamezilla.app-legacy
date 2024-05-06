@@ -13,7 +13,7 @@ const update: ClientModule["update"] = (input) => {
 	const { model, msg, msgCore, msgServer } = input;
 
 	switch (msg?.t) {
-		case "pack-create.clicked-create-button": {
+		case "pack-create-new.clicked-create-button": {
 			return {
 				model: {
 					...model,
@@ -22,7 +22,7 @@ const update: ClientModule["update"] = (input) => {
 				msgCmd: [
 					playSound(APP_SOUND.tap),
 					sendToServer({
-						t: "pack-create.clicked-create-button",
+						t: "pack-create-new.clicked-create-button",
 					}),
 				],
 			};
@@ -30,7 +30,7 @@ const update: ClientModule["update"] = (input) => {
 	}
 
 	switch (msgServer?.t) {
-		case "pack-create.created-pack": {
+		case "pack-create-new.created-pack": {
 			return {
 				model,
 				msgCore: [
@@ -69,7 +69,7 @@ const ViewCreateButton: ClientModule["View"] = (input) => {
 			color="primary"
 			loading={model.packCreateNewRequest.t === "loading"}
 			start={<IconPlus className="h-8 w-8" />}
-			onClick={() => dispatch({ t: "pack-create.clicked-create-button" })}
+			onClick={() => dispatch({ t: "pack-create-new.clicked-create-button" })}
 		/>
 	);
 };

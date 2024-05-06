@@ -25,17 +25,17 @@ export type ModelServer = {};
 //
 
 export type MsgClient = {
-	t: "pack-create.clicked-create-button";
+	t: "pack-create-new.clicked-create-button";
 };
 
-export type MsgToServer = { t: "pack-create.clicked-create-button" };
+export type MsgToServer = { t: "pack-create-new.clicked-create-button" };
 
 export type MsgServer = {
 	t: "noop";
 };
 
 export type MsgToClient = {
-	t: "pack-create.created-pack";
+	t: "pack-create-new.created-pack";
 	created: Result<string, FlowPack>;
 };
 
@@ -45,13 +45,10 @@ export type MsgToClient = {
 //
 //
 
-export const isMsgCore = p.obj({
+export const MsgCore = p.obj({
 	t: p.l("user-created-pack"),
-	created: p.custom(
-		Result.is(p.is(p.str), p.is(FlowPack.parser)),
-		"Invalid result",
-	),
+	created: Result.parser(p.str, FlowPack.parser),
 	userId: UserId,
 });
 
-export type MsgCore = p.Infer<typeof isMsgCore>;
+export type MsgCore = p.Infer<typeof MsgCore>;

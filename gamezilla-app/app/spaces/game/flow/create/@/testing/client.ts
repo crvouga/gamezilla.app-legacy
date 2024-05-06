@@ -53,7 +53,7 @@ export const clickedPackCreateNewButton =
 			model,
 			ctx: ctx,
 			modelCore: CreateCore.initCore({ ctx }),
-			msg: { t: "pack-create.clicked-create-button" },
+			msg: { t: "pack-create-new.clicked-create-button" },
 		});
 	};
 
@@ -240,7 +240,7 @@ export const serverCreatedPack =
 			ctx: ctx,
 			modelCore: CreateCore.initCore({ ctx }),
 			msgServer: {
-				t: "pack-create.created-pack",
+				t: "pack-create-new.created-pack",
 				created: Ok(pack),
 			},
 		});
