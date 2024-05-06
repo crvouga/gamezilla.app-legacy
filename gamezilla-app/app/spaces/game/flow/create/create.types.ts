@@ -50,12 +50,10 @@ export type ServerModule = GameServerModule<{
 	MsgCore: MsgCore;
 	ModelCore: ModelCore;
 	Ctx: SpaceServerCtx;
-	MsgInCmd: null;
 	MsgInEvent: SpaceServerEvent;
 	Model: ModelServer;
 	Msg: MsgServer;
 	MsgOutCmd: SpaceServerCmd<MsgToClient>;
-	MsgOutEvent: null;
 	Deps: FlowServerDeps;
 }>;
 

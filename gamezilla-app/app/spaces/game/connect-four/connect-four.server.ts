@@ -19,7 +19,7 @@ import type {
 //
 //
 
-type Module = GameServerModule<{
+type ServerModule = GameServerModule<{
 	Model: ModelServer;
 	Msg: MsgServer;
 	MsgToClient: MsgToClient;
@@ -27,11 +27,8 @@ type Module = GameServerModule<{
 	ModelCore: ModelCore;
 	MsgCore: MsgCore;
 	Ctx: SpaceServerCtx;
-	MsgInCmd: null;
 	MsgInEvent: SpaceServerEvent;
 	MsgOutCmd: SpaceServerCmd<MsgToClient>;
-	MsgOutEvent: null;
-	Deps: null;
 }>;
 
 //
@@ -42,7 +39,7 @@ type Module = GameServerModule<{
 //
 //
 
-const init: Module["init"] = {
+const init: ServerModule["init"] = {
 	t: null,
 };
 
@@ -54,7 +51,7 @@ const init: Module["init"] = {
 //
 //
 
-const update: Module["update"] = async (input) => {
+const update: ServerModule["update"] = async (input) => {
 	return {
 		model: input.model,
 	};
@@ -68,11 +65,11 @@ const update: Module["update"] = async (input) => {
 //
 //
 
-const subscriptions: Module["subscriptions"] = async (_input) => {
+const subscriptions: ServerModule["subscriptions"] = async (_input) => {
 	return Sub.None;
 };
 
-export const ConnectFourServer: Module = {
+export const ConnectFourServer: ServerModule = {
 	init,
 	update,
 	subscriptions,

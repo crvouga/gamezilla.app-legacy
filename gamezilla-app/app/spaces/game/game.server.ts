@@ -22,7 +22,7 @@ import { ConnectFourServer } from "./connect-four/connect-four.server";
 //
 //
 
-type Module = GameServerModule<{
+type ServerModule = GameServerModule<{
 	Model: ModelServer;
 	Msg: MsgServer;
 	MsgToClient: MsgToClient;
@@ -30,11 +30,8 @@ type Module = GameServerModule<{
 	ModelCore: ModelCore;
 	MsgCore: MsgCore;
 	Ctx: SpaceServerCtx;
-	MsgInCmd: null;
 	MsgInEvent: SpaceServerEvent;
 	MsgOutCmd: SpaceServerCmd<MsgToClient>;
-	MsgOutEvent: null;
-	Deps: null;
 }>;
 
 //
@@ -45,7 +42,7 @@ type Module = GameServerModule<{
 //
 //
 
-const init = (gameName: GameName): Module["init"] => {
+const init = (gameName: GameName): ServerModule["init"] => {
 	switch (gameName) {
 		case "connect-four": {
 			return {
@@ -71,7 +68,7 @@ const init = (gameName: GameName): Module["init"] => {
 //
 //
 
-const update: Module["update"] = async (input) => {
+const update: ServerModule["update"] = async (input) => {
 	return GameServerModule.andThen(
 		{ model: input.model },
 		//
@@ -146,7 +143,7 @@ const update: Module["update"] = async (input) => {
 //
 //
 
-const subscriptions: Module["subscriptions"] = async (input) => {
+const subscriptions: ServerModule["subscriptions"] = async (input) => {
 	const { modelCore, model } = input;
 
 	switch (modelCore.t) {

@@ -14,7 +14,7 @@ import type {
 } from "./play.types";
 import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 
-type Module = GameServerModule<{
+type ServerModule = GameServerModule<{
 	Model: ModelServer;
 	Msg: MsgServer;
 	MsgToClient: MsgToClient;
@@ -22,30 +22,27 @@ type Module = GameServerModule<{
 	MsgCore: MsgCore;
 	ModelCore: ModelCore;
 	Ctx: SpaceServerCtx;
-	MsgInCmd: null;
 	MsgInEvent: SpaceServerEvent;
 	MsgOutCmd: SpaceServerCmd<MsgToClient>;
-	MsgOutEvent: null;
-	Deps: null;
 }>;
 
-const init: Module["init"] = async () => {
+const init: ServerModule["init"] = async () => {
 	return {
 		model: {},
 	};
 };
 
-const update: Module["update"] = async (input) => {
+const update: ServerModule["update"] = async (input) => {
 	return {
 		model: input.model,
 	};
 };
 
-const subscriptions: Module["subscriptions"] = async () => {
+const subscriptions: ServerModule["subscriptions"] = async () => {
 	return Sub.None;
 };
 
-export const PlayServer: Module = {
+export const PlayServer: ServerModule = {
 	init,
 	update,
 	subscriptions,

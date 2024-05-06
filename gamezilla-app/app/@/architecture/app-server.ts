@@ -11,43 +11,43 @@ export type AppServerModuleTypes = {
 	/**
 	 * `Deps` is the dependencies of the module
 	 */
-	Deps: any;
+	Deps?: any;
 	/**
 	 * `Ctx` is data passed down from parent modules
 	 */
-	Ctx: any;
+	Ctx?: any;
 	/**
 	 * `Model` is the state of the module
 	 */
-	Model: any;
+	Model?: any;
 	/**
 	 * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvt
 	 */
-	Msg: any;
+	Msg?: any;
 	/**
 	 * `MsgToClient` is a message to send to the client component of the module
 	 */
-	MsgToClient: any;
+	MsgToClient?: any;
 	/**
 	 * `MsgToServer` is a message to send to the client component of the module
 	 */
-	MsgToServer: any;
+	MsgToServer?: any;
 	/**
 	 * `MsgInCmd` is a message from other modules. Usually verbs
 	 */
-	MsgInCmd: any;
+	MsgInCmd?: any;
 	/**
 	 * `MsgInEvent` is a message to notify other modules. Usually past tense verbs
 	 */
-	MsgInEvent: any;
+	MsgInEvent?: any;
 	/**
 	 * `MsgOutCmd` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
 	 */
-	MsgOutCmd: any;
+	MsgOutCmd?: any;
 	/**
 	 * `MsgOutEvent` is a message that is only produced by this module. Always past tense verbs
 	 */
-	MsgOutEvent: any;
+	MsgOutEvent?: any;
 };
 
 //

@@ -59,6 +59,7 @@ const PuzzleGrid: Pick<ServerModule, "update"> = {
 			eff: Eff.tag("pack-builder.flow-pack-grid", updated.eff),
 			msgCmd: SpaceServerCmd.tag("pack-builder.flow-pack-grid", updated.msgCmd),
 			msgEvt: updated.msgEvt,
+			msgCore: [],
 		};
 	},
 };

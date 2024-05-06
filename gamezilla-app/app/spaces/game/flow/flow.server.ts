@@ -18,7 +18,7 @@ import type {
 	MsgToServer,
 } from "./flow.types";
 
-type Module = GameServerModule<{
+type ServerModule = GameServerModule<{
 	Model: ModelServer;
 	Msg: MsgServer;
 	MsgToClient: MsgToClient;
@@ -26,18 +26,15 @@ type Module = GameServerModule<{
 	MsgCore: MsgCore;
 	ModelCore: ModelCore;
 	Ctx: SpaceServerCtx;
-	MsgInCmd: null;
 	MsgInEvent: SpaceServerEvent;
 	MsgOutCmd: SpaceServerCmd<MsgToClient>;
-	MsgOutEvent: null;
-	Deps: null;
 }>;
 
-const init: Module["init"] = {
+const init: ServerModule["init"] = {
 	t: "none",
 };
 
-const update: Module["update"] = async (input) => {
+const update: ServerModule["update"] = async (input) => {
 	return GameServerModule.andThen(
 		{ model: input.model },
 		//
@@ -46,7 +43,7 @@ const update: Module["update"] = async (input) => {
 	);
 };
 
-const updateCreate: Module["update"] = async (input) => {
+const updateCreate: ServerModule["update"] = async (input) => {
 	const updated = await CreateServer.update({
 		ctx: input.ctx,
 		modelCore:
@@ -79,7 +76,7 @@ const updateCreate: Module["update"] = async (input) => {
 	return tagged;
 };
 
-const updatePlay: Module["update"] = async (input) => {
+const updatePlay: ServerModule["update"] = async (input) => {
 	const updated = await PlayServer.update({
 		ctx: input.ctx,
 		modelCore:
@@ -110,7 +107,7 @@ const updatePlay: Module["update"] = async (input) => {
 	return tagged;
 };
 
-const subscriptions: Module["subscriptions"] = async (input) => {
+const subscriptions: ServerModule["subscriptions"] = async (input) => {
 	const { modelCore } = input;
 
 	switch (modelCore.t) {
@@ -142,7 +139,7 @@ const subscriptions: Module["subscriptions"] = async (input) => {
 	}
 };
 
-export const FlowServer: Module = {
+export const FlowServer: ServerModule = {
 	init,
 	subscriptions,
 	update,

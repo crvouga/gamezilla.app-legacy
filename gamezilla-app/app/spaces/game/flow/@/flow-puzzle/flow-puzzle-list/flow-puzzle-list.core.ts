@@ -51,11 +51,9 @@ export type ServerModule = AppServerModule<{
 	Model: ModelServer;
 	Msg: MsgServer;
 	MsgOutCmd: SpaceServerCmd<MsgToClient>;
-	MsgOutEvent: never;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	Ctx: SpaceServerCtx;
-	MsgInCmd: never;
 	MsgInEvent: SpaceServerEvent;
 }>;
 
