@@ -28,10 +28,8 @@ type ClientModule = GameClientModule<{
 	MsgCore: MsgCore;
 	ModelCore: ModelCore;
 	Ctx: FlowClientCtx;
-	MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
-	MsgInEvent: SpaceClientEvent;
-	MsgOutEvent: null;
-	MsgInCmd: null;
+	MsgCmdOut: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
+	MsgEvtIn: SpaceClientEvent;
 }>;
 
 const flow = samples["8x8"][0];

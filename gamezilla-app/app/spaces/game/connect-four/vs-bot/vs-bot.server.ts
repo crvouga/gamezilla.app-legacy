@@ -38,10 +38,10 @@ type Module = GameServerModule<{
 	MsgCore: MsgCore;
 	Ctx: SpaceServerCtx;
 	Deps: null;
-	MsgInCmd: null;
-	MsgInEvent: SpaceServerEvent;
-	MsgOutCmd: SpaceServerCmd<MsgToClient>;
-	MsgOutEvent: null;
+	MsgCmdIn: null;
+	MsgEvtIn: SpaceServerEvent;
+	MsgCmdOut: SpaceServerCmd<MsgToClient>;
+	MsgEvtOut: null;
 }>;
 
 export const init: Module["init"] = {

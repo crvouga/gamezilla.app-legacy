@@ -26,8 +26,8 @@ type ServerModule = GameServerModule<{
 	MsgCore: MsgCore;
 	ModelCore: ModelCore;
 	Ctx: SpaceServerCtx;
-	MsgInEvent: SpaceServerEvent;
-	MsgOutCmd: SpaceServerCmd<MsgToClient>;
+	MsgEvtIn: SpaceServerEvent;
+	MsgCmdOut: SpaceServerCmd<MsgToClient>;
 }>;
 
 const init: ServerModule["init"] = {

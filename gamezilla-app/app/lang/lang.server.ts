@@ -10,10 +10,10 @@ type Module = AppServerModule<{
 	MsgToServer: MsgToServer;
 	MsgToClient: MsgToClient;
 	Msg: MsgServer;
-	MsgInCmd: null;
-	MsgInEvent: ServerEvent;
-	MsgOutCmd: ServerCmd<MsgToClient>;
-	MsgOutEvent: null;
+	MsgCmdIn: null;
+	MsgEvtIn: ServerEvent;
+	MsgCmdOut: ServerCmd<MsgToClient>;
+	MsgEvtOut: null;
 }>;
 
 export type Deps = null;

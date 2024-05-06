@@ -38,10 +38,8 @@ export type ClientModule = GameClientModule<{
 	MsgCore: MsgCore;
 	ModelCore: ModelCore;
 	Ctx: FlowClientCtx;
-	MsgOutCmd: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
-	MsgInEvent: SpaceClientEvent;
-	MsgInCmd: null;
-	MsgOutEvent: null;
+	MsgCmdOut: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
+	MsgEvtIn: SpaceClientEvent;
 }>;
 
 export type ServerModule = GameServerModule<{
@@ -50,10 +48,10 @@ export type ServerModule = GameServerModule<{
 	MsgCore: MsgCore;
 	ModelCore: ModelCore;
 	Ctx: SpaceServerCtx;
-	MsgInEvent: SpaceServerEvent;
+	MsgEvtIn: SpaceServerEvent;
 	Model: ModelServer;
 	Msg: MsgServer;
-	MsgOutCmd: SpaceServerCmd<MsgToClient>;
+	MsgCmdOut: SpaceServerCmd<MsgToClient>;
 	Deps: FlowServerDeps;
 }>;
 

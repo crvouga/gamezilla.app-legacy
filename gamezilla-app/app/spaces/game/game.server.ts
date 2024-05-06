@@ -30,8 +30,8 @@ type ServerModule = GameServerModule<{
 	ModelCore: ModelCore;
 	MsgCore: MsgCore;
 	Ctx: SpaceServerCtx;
-	MsgInEvent: SpaceServerEvent;
-	MsgOutCmd: SpaceServerCmd<MsgToClient>;
+	MsgEvtIn: SpaceServerEvent;
+	MsgCmdOut: SpaceServerCmd<MsgToClient>;
 }>;
 
 //

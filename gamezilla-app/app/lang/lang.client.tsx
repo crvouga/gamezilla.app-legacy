@@ -45,10 +45,10 @@ type Module = AppClientModule<{
 	MsgToServer: MsgToServer;
 	MsgToClient: MsgToClient;
 	Msg: MsgClient;
-	MsgInCmd: null;
-	MsgInEvent: ClientEvent;
-	MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
-	MsgOutEvent: null;
+	MsgCmdIn: null;
+	MsgEvtIn: ClientEvent;
+	MsgCmdOut: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
+	MsgEvtOut: null;
 }>;
 
 //

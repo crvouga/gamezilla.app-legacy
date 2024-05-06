@@ -26,13 +26,12 @@ export type ClientModule = AppClientModule<{
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	Ctx: SpaceClientCtx;
-	MsgInCmd: never;
-	MsgInEvent: SpaceClientEvent;
-	MsgOutCmd: SpaceClientCmd<{
+	MsgEvtIn: SpaceClientEvent;
+	MsgCmdOut: SpaceClientCmd<{
 		MsgClient: MsgClient;
 		MsgToServer: MsgToServer;
 	}>;
-	MsgOutEvent: SpaceClientEvent;
+	MsgEvtOut: SpaceClientEvent;
 	ViewSlot: {
 		fab: null;
 	};
@@ -47,11 +46,11 @@ export type ServerModule = AppServerModule<{
 	};
 	Model: ModelServer;
 	Msg: MsgServer;
-	MsgOutCmd: SpaceServerCmd<MsgToClient>;
+	MsgCmdOut: SpaceServerCmd<MsgToClient>;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	Ctx: SpaceServerCtx;
-	MsgInEvent: SpaceServerEvent;
+	MsgEvtIn: SpaceServerEvent;
 }>;
 
 //

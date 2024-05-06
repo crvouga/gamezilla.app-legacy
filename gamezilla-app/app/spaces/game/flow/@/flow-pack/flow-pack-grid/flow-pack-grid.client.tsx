@@ -23,15 +23,12 @@ type Ctx = SpaceClientCtx & {
 type ClientModule = AppClientModule<{
 	Ctx: Ctx;
 	Model: ModelClient;
-	ModelLocation: null;
 	Msg: MsgClient;
-	MsgInCmd: null;
-	MsgInEvent: SpaceClientEvent;
-	MsgOutCmd: SpaceClientCmd<{
+	MsgEvtIn: SpaceClientEvent;
+	MsgCmdOut: SpaceClientCmd<{
 		MsgClient: MsgClient;
 		MsgToServer: MsgToServer;
 	}>;
-	MsgOutEvent: null;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	ViewSlot: {
@@ -50,7 +47,7 @@ const ObserveGrid: Pick<ClientModule, "View" | "update"> = {
 				}
 
 				const isMissingPuzzles = input.ctx.pack.puzzleIds.some(
-					(puzzleId) => !Boolean(input.model.puzzles[puzzleId]),
+					(puzzleId) => !Boolean(input.model?.puzzles[puzzleId]),
 				);
 
 				if (!isMissingPuzzles) {
@@ -102,7 +99,7 @@ const ServerListedPuzzles: Pick<ClientModule, "update"> = {
 
 						const puzzlesNew = msgServer.listed.value.items.reduce(
 							(acc, puzzle) => ({ ...acc, [puzzle.id]: puzzle }),
-							input.model.puzzles,
+							model.puzzles,
 						);
 
 						return {

@@ -21,16 +21,16 @@ type Ctx = { now: Posix };
 type Module = AppClientModule<{
 	Model: Model;
 	Msg: Msg;
-	MsgInCmd: ToastCmd;
+	MsgCmdIn: ToastCmd;
 	Ctx: Ctx;
 	//
 	MsgToClient: null;
 	MsgToServer: null;
 	//
-	MsgOutCmd: SoundCmd;
+	MsgCmdOut: SoundCmd;
 	//
-	MsgInEvent: null;
-	MsgOutEvent: null;
+	MsgEvtIn: null;
+	MsgEvtOut: null;
 }>;
 
 //

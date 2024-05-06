@@ -30,12 +30,12 @@ import type { IGameDb } from "./space-game/space-game-db";
 export type ClientModule = AppClientModule<{
 	ModelLocation: ModelLocation;
 	Ctx: AnonymousClientCtx | ClientCtx;
-	MsgInCmd: never;
-	MsgInEvent: ClientEvent;
+	MsgCmdIn: never;
+	MsgEvtIn: ClientEvent;
 	Model: ModelClient;
 	Msg: MsgClient;
-	MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
-	MsgOutEvent: ClientEvent;
+	MsgCmdOut: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
+	MsgEvtOut: ClientEvent;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	ViewSlot: {
@@ -45,12 +45,12 @@ export type ClientModule = AppClientModule<{
 
 export type ServerModule = AppServerModule<{
 	Ctx: ServerCtx;
-	MsgInCmd: null;
-	MsgInEvent: ServerEvent;
+	MsgCmdIn: null;
+	MsgEvtIn: ServerEvent;
 	Model: ModelServer;
 	Msg: MsgServer;
-	MsgOutCmd: ServerCmd<MsgToClient>;
-	MsgOutEvent: null;
+	MsgCmdOut: ServerCmd<MsgToClient>;
+	MsgEvtOut: null;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	Deps: ServerDeps;

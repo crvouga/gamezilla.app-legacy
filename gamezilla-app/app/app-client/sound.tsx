@@ -29,12 +29,12 @@ import {
 
 type Module = AppClientModule<{
 	Ctx: null;
-	MsgInCmd: SoundCmd;
-	MsgInEvent: ClientEvent;
+	MsgCmdIn: SoundCmd;
+	MsgEvtIn: ClientEvent;
 	Model: Model;
 	Msg: Msg;
-	MsgOutCmd: SoundCmd;
-	MsgOutEvent: never;
+	MsgCmdOut: SoundCmd;
+	MsgEvtOut: never;
 	MsgToClient: never;
 	MsgToServer: never;
 }>;

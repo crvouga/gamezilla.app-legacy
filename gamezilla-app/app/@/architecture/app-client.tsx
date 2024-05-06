@@ -29,21 +29,21 @@ export type AppClientModuleTypes = {
 	 */
 	MsgToServer?: any;
 	/**
-	 * `MsgInCmd` is a message from other modules. Usually verbs
+	 * `MsgCmdIn` is a message from other modules. Usually verbs
 	 */
-	MsgInCmd?: any;
+	MsgCmdIn?: any;
 	/**
-	 * `MsgInEvent` is a message to notify other modules. Usually past tense verbs
+	 * `MsgEvtIn` is a message to notify other modules. Usually past tense verbs
 	 */
-	MsgInEvent?: any;
+	MsgEvtIn?: any;
 	/**
-	 * `MsgOutCmd` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
+	 * `MsgCmdOut` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
 	 */
-	MsgOutCmd?: any;
+	MsgCmdOut?: any;
 	/**
-	 * `MsgOutEvent` is a message that is only produced by this module. Always past tense verbs
+	 * `MsgEvtOut` is a message that is only produced by this module. Always past tense verbs
 	 */
-	MsgOutEvent?: any;
+	MsgEvtOut?: any;
 	/**
 	 *  `ViewSlot` is a slot that the module can fill with a view
 	 */
@@ -95,11 +95,11 @@ export type Input<T extends AppClientModuleTypes> = {
 	/**
 	 * `msgEvt` is an event that happen in another module. Like `user-logged-out`, `route-changed`
 	 */
-	msgEvt?: T["MsgInEvent"] | null;
+	msgEvt?: T["MsgEvtIn"] | null;
 	/**
 	 * `msgCmd` is a command to sent from another module. Like `show-toast`, `logout`
 	 */
-	msgCmd?: T["MsgInCmd"] | null;
+	msgCmd?: T["MsgCmdIn"] | null;
 };
 
 //
@@ -120,11 +120,11 @@ export type Output<T extends AppClientModuleTypes> = {
 	/**
 	 * `msgCmd` is a message to send to another module
 	 */
-	msgCmd?: T["MsgOutCmd"][];
+	msgCmd?: T["MsgCmdOut"][];
 	/**
 	 * `msgEvt` is a message to notify other modules
 	 */
-	msgEvt?: T["MsgOutEvent"][];
+	msgEvt?: T["MsgEvtOut"][];
 };
 
 /**

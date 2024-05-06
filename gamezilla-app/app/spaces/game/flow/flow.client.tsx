@@ -42,10 +42,8 @@ type ClientModule = GameClientModule<{
 	//
 	Ctx: SpaceClientCtx;
 	//
-	MsgOutCmd: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
-	MsgInEvent: SpaceClientEvent;
-	MsgInCmd: null;
-	MsgOutEvent: null;
+	MsgCmdOut: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
+	MsgEvtIn: SpaceClientEvent;
 }>;
 
 //

@@ -46,13 +46,13 @@ type ClientModule = AppClientModule<{
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	Ctx: Ctx;
-	MsgInCmd: ProfileCmd;
-	MsgInEvent: ClientEvent;
-	MsgOutCmd: ClientCmd<{
+	MsgCmdIn: ProfileCmd;
+	MsgEvtIn: ClientEvent;
+	MsgCmdOut: ClientCmd<{
 		MsgClient: MsgClient;
 		MsgToServer: MsgToServer;
 	}>;
-	MsgOutEvent: never;
+	MsgEvtOut: never;
 	ViewSlot: {
 		bottomBar: null;
 	};

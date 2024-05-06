@@ -30,21 +30,21 @@ export type GameServerModuleTypes = {
 	 */
 	MsgToServer?: any;
 	/**
-	 * `MsgInCmd` is a message from other modules. Usually verbs
+	 * `MsgCmdIn` is a message from other modules. Usually verbs
 	 */
-	MsgInCmd?: any;
+	MsgCmdIn?: any;
 	/**
-	 * `MsgInEvent` is a message to notify other modules. Usually past tense verbs
+	 * `MsgEvtIn` is a message to notify other modules. Usually past tense verbs
 	 */
-	MsgInEvent?: any;
+	MsgEvtIn?: any;
 	/**
-	 * `MsgOutCmd` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
+	 * `MsgCmdOut` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
 	 */
-	MsgOutCmd?: any;
+	MsgCmdOut?: any;
 	/**
-	 * `MsgOutEvent` is a message that is only produced by this module. Always past tense verbs
+	 * `MsgEvtOut` is a message that is only produced by this module. Always past tense verbs
 	 */
-	MsgOutEvent?: any;
+	MsgEvtOut?: any;
 	/**
 	 *
 	 */
@@ -99,11 +99,11 @@ export type Input<T extends GameServerModuleTypes> = {
 	/**
 	 * `msgEvt`
 	 */
-	msgEvt?: T["MsgInEvent"] | null;
+	msgEvt?: T["MsgEvtIn"] | null;
 	/**
 	 * `msgCmd`
 	 */
-	msgCmd?: T["MsgInCmd"] | null;
+	msgCmd?: T["MsgCmdIn"] | null;
 	/**
 	 *
 	 */
@@ -128,11 +128,11 @@ export type Output<T extends GameServerModuleTypes> = {
 	/**
 	 * `msgCmd` is a message to one other module. Always present tense
 	 */
-	msgCmd?: T["MsgOutCmd"][];
+	msgCmd?: T["MsgCmdOut"][];
 	/**
 	 * `msgEvt` is a message to many other modules. Always past tense
 	 */
-	msgEvt?: T["MsgOutEvent"][];
+	msgEvt?: T["MsgEvtOut"][];
 	/**
 	 *  `msgCore` is an msgEvt that occurred in the game. Shared with the client side
 	 */
@@ -202,10 +202,10 @@ const andThen = async <T extends GameServerModuleTypes>(
 const tagOutput = <
 	TTag extends string,
 	T extends GameServerModuleTypes,
-	TTaggedCmd extends GameServerModuleTypes["MsgOutCmd"],
+	TTaggedCmd extends GameServerModuleTypes["MsgCmdOut"],
 >(
 	tag: TTag,
-	tagCmd: (msgCmd: T["MsgOutCmd"][]) => TTaggedCmd[] | null | undefined,
+	tagCmd: (msgCmd: T["MsgCmdOut"][]) => TTaggedCmd[] | null | undefined,
 	output: Output<T>,
 ): {
 	model: { t: TTag; c: T["Model"] };
@@ -218,7 +218,7 @@ const tagOutput = <
 	/**
 	 *
 	 */
-	msgEvt?: T["MsgOutEvent"][];
+	msgEvt?: T["MsgEvtOut"][];
 	/**
 	 *
 	 */

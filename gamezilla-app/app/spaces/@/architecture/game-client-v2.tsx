@@ -30,21 +30,21 @@ export type GameClientModuleTypes = {
 	 */
 	MsgToServer?: any;
 	/**
-	 * `MsgInCmd` is a message from other modules. Usually verbs
+	 * `MsgCmdIn` is a message from other modules. Usually verbs
 	 */
-	MsgInCmd?: any;
+	MsgCmdIn?: any;
 	/**
-	 * `MsgInEvent` is a message to notify other modules. Usually past tense verbs
+	 * `MsgCmdOut` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
 	 */
-	MsgInEvent?: any;
+	MsgCmdOut?: any;
 	/**
-	 * `MsgOutCmd` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
+	 * `MsgEvtIn` is a message to notify other modules. Usually past tense verbs
 	 */
-	MsgOutCmd?: any;
+	MsgEvtIn?: any;
 	/**
-	 * `MsgOutEvent` is a message that is only produced by this module. Always past tense verbs
+	 * `MsgEvtOut` is a message that is only produced by this module. Always past tense verbs
 	 */
-	MsgOutEvent?: any;
+	MsgEvtOut?: any;
 	/**
 	 *
 	 */
@@ -109,11 +109,11 @@ export type Input<T extends GameClientModuleTypes> = {
 	/**
 	 * `msgEvt`
 	 */
-	msgEvt?: T["MsgInEvent"] | null;
+	msgEvt?: T["MsgEvtIn"] | null;
 	/**
 	 * `msgCmd`
 	 */
-	msgCmd?: T["MsgInCmd"] | null;
+	msgCmd?: T["MsgCmdIn"] | null;
 
 	/**
 	 * `modelCore` is the current state of the game. This is shared and auto synced between client and server.
@@ -143,11 +143,11 @@ export type Output<T extends GameClientModuleTypes> = {
 	/**
 	 * `msgCmd` is a message to one other module. Always present tense
 	 */
-	msgCmd?: T["MsgOutCmd"][];
+	msgCmd?: T["MsgCmdOut"][];
 	/**
 	 * `msgEvt` is a message to many other modules. Always past tense
 	 */
-	msgEvt?: T["MsgOutEvent"][];
+	msgEvt?: T["MsgEvtOut"][];
 	/**
 	 *  `msgCore` are events that occurred in the game. Shared with the server side
 	 */
@@ -235,10 +235,10 @@ export const andThen = <T extends GameClientModuleTypes>(
 const tagOutput = <
 	TTag extends string,
 	T extends GameClientModuleTypes,
-	TTaggedCmd extends GameClientModuleTypes["MsgOutCmd"],
+	TTaggedCmd extends GameClientModuleTypes["MsgCmdOut"],
 >(
 	tag: TTag,
-	tagCmd: (msgCmd: T["MsgOutCmd"][]) => TTaggedCmd[],
+	tagCmd: (msgCmd: T["MsgCmdOut"][]) => TTaggedCmd[],
 	output: Output<T>,
 ): {
 	model: { t: TTag; c: T["Model"] };
@@ -251,7 +251,7 @@ const tagOutput = <
 	/**
 	 *
 	 */
-	msgEvt?: T["MsgOutEvent"][];
+	msgEvt?: T["MsgEvtOut"][];
 	/**
 	 *
 	 */

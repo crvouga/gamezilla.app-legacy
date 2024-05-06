@@ -63,10 +63,10 @@ type Module = GameClientModule<{
 	ModelCore: ModelCore;
 	MsgCore: MsgCore;
 	Ctx: SpaceClientCtx & { onQuit: () => void };
-	MsgOutCmd: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
-	MsgInEvent: SpaceClientEvent;
-	MsgInCmd: null;
-	MsgOutEvent: null;
+	MsgCmdOut: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
+	MsgEvtIn: SpaceClientEvent;
+	MsgCmdIn: null;
+	MsgEvtOut: null;
 }>;
 
 //

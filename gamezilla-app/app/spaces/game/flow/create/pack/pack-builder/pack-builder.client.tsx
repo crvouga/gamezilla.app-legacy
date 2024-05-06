@@ -506,10 +506,6 @@ const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
 	update(input) {
 		const pack = input.modelCore.packBuilder?.pack;
 
-		if (!pack) {
-			return { model: input.model };
-		}
-
 		const ctx = { ...input.ctx, pack };
 
 		const initial = FlowPackGridClient.init({ ctx });
@@ -533,7 +529,7 @@ const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
 				...input.model,
 				puzzles: {
 					...input.model.puzzles,
-					...updated.model.puzzles,
+					...updated.model?.puzzles,
 				},
 				packBuilder: {
 					...input.model.packBuilder,

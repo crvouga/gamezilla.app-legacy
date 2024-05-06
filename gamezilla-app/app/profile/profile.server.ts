@@ -32,12 +32,12 @@ import {
 
 type Module = AppServerModule<{
 	Ctx: ServerCtx;
-	MsgInCmd: null;
-	MsgInEvent: ServerEvent;
+	MsgCmdIn: null;
+	MsgEvtIn: ServerEvent;
 	Model: null;
 	Msg: MsgServer;
-	MsgOutCmd: ServerCmd<MsgToClient>;
-	MsgOutEvent: null;
+	MsgCmdOut: ServerCmd<MsgToClient>;
+	MsgEvtOut: null;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	Deps: Deps;

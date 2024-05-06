@@ -29,23 +29,23 @@ export type ClientModule = AppClientModule<{
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	Ctx: AnonymousClientCtx | ClientCtx;
-	MsgInCmd: AuthCmd;
-	MsgInEvent: ClientEvent;
-	MsgOutCmd: ClientCmd<{
+	MsgCmdIn: AuthCmd;
+	MsgEvtIn: ClientEvent;
+	MsgCmdOut: ClientCmd<{
 		MsgClient: MsgClient;
 		MsgToServer: MsgToServer;
 	}>;
-	MsgOutEvent: ClientEvent;
+	MsgEvtOut: ClientEvent;
 }>;
 
 export type ServerModule = AppServerModule<{
 	Ctx: ServerCtx;
-	MsgInCmd: null;
-	MsgInEvent: ServerEvent;
+	MsgCmdIn: null;
+	MsgEvtIn: ServerEvent;
 	Model: null;
 	Msg: MsgServer;
-	MsgOutCmd: ServerCmd<MsgToClient>;
-	MsgOutEvent: ServerEvent;
+	MsgCmdOut: ServerCmd<MsgToClient>;
+	MsgEvtOut: ServerEvent;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	Deps: ServerDeps;
