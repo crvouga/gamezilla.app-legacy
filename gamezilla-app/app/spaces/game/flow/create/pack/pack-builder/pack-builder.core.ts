@@ -18,18 +18,9 @@ updates.push(({ modelCore, msgCore }) => {
 			return {
 				...modelCore,
 				opened: { t: "pack-builder" },
-				packBuilder: {
-					t: "pack-builder",
-					opened: { t: null },
-					slideIndex: 0,
-					screen: {
-						t: "screen-puzzle-grid",
-					},
+				packBuilder: init({
 					pack: msgCore.created.value,
-					editPackName: EditPackNameCore.init({
-						pack: msgCore.created.value,
-					}),
-				},
+				}),
 			};
 		}
 		default: {
@@ -436,14 +427,12 @@ const update: UpdateCore = (input) => {
 
 const init = ({ pack }: { pack: FlowPack }): ModelCore => {
 	return {
+		...EditPackNameCore.init({ pack }),
 		pack,
 		slideIndex: 0,
 		screen: {
 			t: "screen-puzzle-grid",
 		},
-		editPackName: EditPackNameCore.init({
-			pack,
-		}),
 	};
 };
 

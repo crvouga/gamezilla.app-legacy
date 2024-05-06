@@ -1,10 +1,11 @@
+import { Eff } from "gamezilla-app/@/core";
 import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
-import { Eff } from "gamezilla-app/@/core";
 
 import { FlowPackGridServer } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid.server";
 import type { ServerModule } from "../../create.types";
+import { EditPackNameServer } from "./edit-pack-name/edit-pack-name.server";
 
 const SavePack: Pick<ServerModule, "update"> = {
 	async update(input) {
@@ -70,6 +71,27 @@ export const PackBuilderServer: Pick<ServerModule, "update"> = {
 			{ model: input.model },
 			(model) => SavePack.update({ ...input, model }),
 			(model) => PuzzleGrid.update({ ...input, model }),
+			async (model) => {
+				if (!input.modelCore.packBuilder) {
+					return { model };
+				}
+				const updated = await EditPackNameServer.update({
+					...input,
+					modelCore: input.modelCore.packBuilder,
+					msgCore:
+						input.msgCore?.t === "pack-builder.got-edit-pack-name-msg"
+							? { ...input.msgCore, ...input.msgCore.c }
+							: null,
+				});
+				return {
+					model: model,
+					msgCore: (updated.msgCore ?? []).map((c) => ({
+						c,
+						t: "pack-builder.got-edit-pack-name-msg",
+						eventId: c.eventId,
+					})),
+				};
+			},
 			//
 		);
 	},

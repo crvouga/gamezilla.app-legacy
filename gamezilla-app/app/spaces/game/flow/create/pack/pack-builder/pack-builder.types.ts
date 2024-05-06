@@ -1,12 +1,12 @@
-import { UserId } from "gamezilla-app/app/@/data";
 import { Result } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
+import { UserId } from "gamezilla-app/app/@/data";
 import { FlowVariantUIPlay } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
-import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import { FlowPackGrid } from "../../../@/flow-pack/flow-pack-grid";
+import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import { EditPackNameTypes } from "./edit-pack-name";
-import { Namespace } from "gamezilla-app/@/msg";
+import { createNamespace } from "gamezilla-app/@/msg";
 
 //
 //
@@ -78,24 +78,51 @@ type Screen =
 			opened: "more" | null;
 	  };
 
-export type ModelCore = {
+export type ModelCore = EditPackNameTypes.ModelCore & {
 	pack: FlowPack;
 	screen: Screen;
 	slideIndex: number;
-	editPackName: EditPackNameTypes.ModelCore;
 };
 
-const Msg = Namespace("pack-builder");
+const createMsg = createNamespace("pack-builder");
 
-const UserClickedExitButton = Msg<{ userId: UserId }>(
-	"user-clicked-exit-button",
+export const UserClickedExitButton = createMsg("user-clicked-exit-button");
+export const UserOpenedAddPuzzleScreen = createMsg(
+	"user-opened-add-puzzle-screen",
 );
-export const MsgCore_ = {
-	UserClickedExitButton,
-};
+export const UserClosedAddPuzzleScreen = createMsg(
+	"user-closed-add-puzzle-screen",
+);
+export const UserClickedAddPuzzleItem = createMsg(
+	"user-clicked-add-puzzle-item",
+);
+export const UserClickedPackItem = createMsg("user-clicked-pack-item");
+export const UserChangedSlide = createMsg("user-changed-slide");
+export const FlowPlayUI = createMsg("flow-play-ui");
+export const PuzzleScreenUserClickedExitPuzzleButton = createMsg(
+	"puzzle-screen.user-clicked-exit-puzzle-button",
+);
+export const PuzzleScreenUserClickedNextPuzzleButton = createMsg(
+	"puzzle-screen.user-clicked-next-puzzle-button",
+);
+export const PuzzleScreenUserClickedPreviousPuzzleButton = createMsg(
+	"puzzle-screen.user-clicked-previous-puzzle-button",
+);
+export const PuzzleScreenUserClickedMoreButton = createMsg(
+	"puzzle-screen.user-clicked-more-button",
+);
+export const PuzzleScreenUserClosedMoreDrawer = createMsg(
+	"puzzle-screen.user-closed-more-drawer",
+);
+export const RemovePuzzleFromPackUserClickedRemoveFromPackButton = createMsg(
+	"remove-puzzle-from-pack.user-clicked-remove-from-pack-button",
+);
 
 export const MsgCore = p.or(
-	EditPackNameTypes.MsgCore,
+	p.obj({
+		t: p.l("pack-builder.got-edit-pack-name-msg"),
+		c: EditPackNameTypes.MsgCore,
+	}),
 	p.obj({
 		t: p.l("pack-builder.user-clicked-exit-button"),
 		userId: UserId,
