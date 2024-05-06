@@ -6,6 +6,7 @@ import { FlowPack } from "../../../@/flow-pack/flow-pack";
 import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import { FlowPackGrid } from "../../../@/flow-pack/flow-pack-grid";
 import { EditPackNameTypes } from "./edit-pack-name";
+import { Namespace } from "gamezilla-app/@/msg";
 
 //
 //
@@ -82,6 +83,15 @@ export type ModelCore = {
 	screen: Screen;
 	slideIndex: number;
 	editPackName: EditPackNameTypes.ModelCore;
+};
+
+const Msg = Namespace("pack-builder");
+
+const UserClickedExitButton = Msg<{ userId: UserId }>(
+	"user-clicked-exit-button",
+);
+export const MsgCore_ = {
+	UserClickedExitButton,
 };
 
 export const MsgCore = p.or(

@@ -3,8 +3,8 @@ import { FlowVariantUIPlay } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
 import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
 import { UpdateCore } from "../../create.types";
-import { ModelCore } from "./pack-builder.types";
 import { EditPackNameCore } from "./edit-pack-name/edit-pack-name.core";
+import { ModelCore } from "./pack-builder.types";
 
 const updates: UpdateCore[] = [];
 

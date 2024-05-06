@@ -111,7 +111,7 @@ const ViewPipelines = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 							strokeLinejoin="inherit"
 							strokeLinecap="square"
 							strokeWidth="1"
-							strokeOpacity="0.25"
+							strokeOpacity="0.2"
 						/>
 
 						<path
