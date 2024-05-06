@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
+import { Err } from "gamezilla-app/@/core";
+import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
+import { didShowErrorSm } from "gamezilla-app/app/@/client";
+import { withId } from "gamezilla-app/app/spaces/@/event";
 import { SpaceGameFixtureClient } from "gamezilla-app/app/spaces/game/@/testing/client";
 import { randomFlowPack } from "../../../../@/testing";
 import { EditPackNameClient } from "./edit-pack-name.client";
 import { EditPackNameCore } from "./edit-pack-name.core";
 import { MsgCore } from "./edit-pack-name.types";
-import { Err } from "gamezilla-app/@/core";
-import { didShowErrorSm } from "gamezilla-app/app/@/client";
-import { withId } from "gamezilla-app/app/spaces/@/event";
-import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 
 const Fixture = async () => {
 	const f = await SpaceGameFixtureClient();
@@ -29,7 +29,7 @@ const Fixture = async () => {
 };
 
 describe(import.meta.file, () => {
-	it("should propogate space event", async () => {
+	it("should propagate space event", async () => {
 		const f = await Fixture();
 		const msgCores: MsgCore[] = [
 			{
@@ -48,7 +48,7 @@ describe(import.meta.file, () => {
 		}
 	});
 
-	it("should show error if persiting pack fails", async () => {
+	it("should show error if persisting pack fails", async () => {
 		const f = await Fixture();
 		const output = EditPackNameClient.update({
 			...f,

@@ -1,44 +1,64 @@
-// import { describe, it } from "bun:test";
-// import { Result } from "gamezilla-app/@/core";
-// import { randomFlowPack } from "../../../@/testing";
-// import { FlowCreateFixtureServer } from "../../@/testing/server";
-// import { EditPackNameCore } from "./edit-pack-name.core";
-// import { EditPackNameServer } from "./edit-pack-name.server";
-// import { ModelCore, MsgCore } from "./edit-pack-name.types";
+import { describe, expect, it } from "bun:test";
+import { Result } from "gamezilla-app/@/core";
+import { withId } from "gamezilla-app/app/spaces/@/event";
+import { randomFlowPack } from "../../../../@/testing";
+import { FlowCreateFixtureServer } from "../../../@/testing/server";
+import { EditPackNameCore } from "./edit-pack-name.core";
+import { EditPackNameServer } from "./edit-pack-name.server";
 
-// const Fixture = async () => {
-// 	const f = await FlowCreateFixtureServer();
-// 	const pack = await randomFlowPack();
-// 	const modelCore = EditPackNameCore.init({ pack });
+const Fixture = async () => {
+	const f = await FlowCreateFixtureServer();
+	const pack = await randomFlowPack();
+	await f.deps.FlowPackDb.put(pack);
+	const modelCore = EditPackNameCore.init({ pack });
 
-// 	const updateCore = (init: ModelCore, msgs: MsgCore[]) => {
-// 		return msgs.reduce(
-// 			(model, msg) => EditPackNameCore.update({ ctx: f.ctx, model, msg }),
-// 			init,
-// 		);
-// 	};
+	return {
+		...f,
+		pack,
+		modelCore,
+	};
+};
 
-// 	await f.deps.FlowPackDb.put(pack);
-
-// 	return {
-// 		...f,
-// 		pack,
-// 		updateCore,
-// 		modelCore,
-// 	};
-// };
-
-// describe(import.meta.file, () => {
-// 	it("should persist pack name when it changes", async () => {
-// 		const f = await Fixture();
-// 		const newPackName = "new-pack-name";
-// 		await EditPackNameServer.update({
-// 			...f,
-// 		});
-// 		const after = Result.withDefault(
-// 			await f.deps.FlowPackDb.get(f.pack.id),
-// 			null,
-// 		);
-// 		// expect(after?.name).toEqual(newPackName);
-// 	});
-// });
+describe(import.meta.file, () => {
+	it("should persist pack name after user clicks save button", async () => {
+		const f = await Fixture();
+		const someNewName = "some new name";
+		await EditPackNameServer.update({
+			...f,
+			modelCore: {
+				...f.modelCore,
+				draft: someNewName,
+			},
+			msgCore: withId({
+				t: "edit-pack-name.user-clicked-save-button",
+				userId: f.pack.createdBy,
+			}),
+		});
+		const after = Result.withDefault(
+			await f.deps.FlowPackDb.get(f.pack.id),
+			null,
+		);
+		expect(String(after?.name)).toBe(someNewName);
+    });
+    
+	it("should output persist pack msg core after user clicks save button", async () => {
+		const f = await Fixture();
+		const someNewName = "some new name";
+		const output = await EditPackNameServer.update({
+			...f,
+			modelCore: {
+				...f.modelCore,
+				draft: someNewName,
+			},
+			msgCore: withId({
+				t: "edit-pack-name.user-clicked-save-button",
+				userId: f.pack.createdBy,
+			}),
+		});
+		expect(
+			output.msgCore?.some(
+				(m) => m.t === "edit-pack-name.server-persisted-pack",
+			),
+		).toBe(true);
+	});
+});

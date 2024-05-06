@@ -29,7 +29,7 @@ export const MsgCore = p.or(
 	p.obj({
 		t: p.l("edit-pack-name.server-persisted-pack"),
 		userId: UserId,
-		result: Result.parser(p.str, p.l(null)),
+		result: Result.parser(p.str, p.unknown),
 	}),
 );
 export type MsgCore = p.Infer<typeof MsgCore>;
