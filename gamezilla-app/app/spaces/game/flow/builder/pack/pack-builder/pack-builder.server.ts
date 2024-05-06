@@ -92,7 +92,6 @@ export const PackBuilderServer: Pick<ServerModule, "update"> = {
 					})),
 				};
 			},
-			
 		);
 	},
 };
