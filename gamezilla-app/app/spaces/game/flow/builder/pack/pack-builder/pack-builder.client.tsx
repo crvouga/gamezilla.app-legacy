@@ -350,7 +350,7 @@ export const ScreenPuzzleMore: Pick<ClientModule, "update" | "View"> = {
 							})
 						}
 					/>
-					<div className="w-full p-2"></div>
+					<div className="w-full p-2" />
 				</Drawer>
 			</>
 		);
@@ -445,7 +445,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 					model={screen.playUI}
 				/>
 
-				<div className="flex-1"></div>
+				<div className="flex-1" />
 
 				<ViewBottomButtonBar>
 					<ViewBottomButtonBarAction
