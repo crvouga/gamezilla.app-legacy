@@ -24,6 +24,7 @@ type ClientModule = GameClientModule<{
 const update: ClientModule["update"] = (input) => {
 	switch (input.msg?.t) {
 		case "edit-pack-name.user-clicked-save-button":
+		case "edit-pack-name.user-closed-drawer":
 		case "edit-pack-name.user-inputted-draft-name": {
 			return { model: input.model, msgCore: [withId(input.msg)] };
 		}
@@ -47,7 +48,7 @@ const update: ClientModule["update"] = (input) => {
 	return { model: input.model };
 };
 
-const View: ClientModule["View"] = (input) => {
+const ViewDrawer: ClientModule["View"] = (input) => {
 	return (
 		<Drawer
 			id="edit-pack-name"
@@ -70,7 +71,15 @@ const View: ClientModule["View"] = (input) => {
 			/>
 			<div>
 				<Button text="Cancel" onClick={() => input.emits?.cancel(null)} />
-				<Button text="Save" />
+				<Button
+					text="Save"
+					onClick={() =>
+						input.dispatch({
+							t: "edit-pack-name.user-clicked-save-button",
+							userId: input.ctx.currentUserId,
+						})
+					}
+				/>
 			</div>
 		</Drawer>
 	);
@@ -78,5 +87,5 @@ const View: ClientModule["View"] = (input) => {
 
 export const EditPackNameClient = {
 	update,
-	View,
+	ViewDrawer,
 };

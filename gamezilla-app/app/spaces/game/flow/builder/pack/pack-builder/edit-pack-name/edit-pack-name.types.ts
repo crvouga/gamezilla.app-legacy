@@ -31,5 +31,9 @@ export const MsgCore = p.or(
 		userId: UserId,
 		result: Result.parser(p.str, p.unknown),
 	}),
+	p.obj({
+		t: p.l("edit-pack-name.user-closed-drawer"),
+		userId: UserId,
+	}),
 );
 export type MsgCore = p.Infer<typeof MsgCore>;

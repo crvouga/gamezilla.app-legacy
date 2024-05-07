@@ -47,7 +47,7 @@ const ObserveGrid: Pick<ClientModule, "View" | "update"> = {
 				}
 
 				const isMissingPuzzles = input.ctx.pack.puzzleIds.some(
-					(puzzleId) => !Boolean(input.model?.puzzles[puzzleId]),
+					(puzzleId) => !input.model?.puzzles[puzzleId],
 				);
 
 				if (!isMissingPuzzles) {
@@ -98,7 +98,10 @@ const ServerListedPuzzles: Pick<ClientModule, "update"> = {
 						}
 
 						const puzzlesNew = msgServer.listed.value.items.reduce(
-							(acc, puzzle) => ({ ...acc, [puzzle.id]: puzzle }),
+							(acc, puzzle) => {
+								acc[puzzle.id] = puzzle;
+								return acc;
+							},
 							model.puzzles,
 						);
 

@@ -79,7 +79,9 @@ describe(import.meta.file, () => {
 			null,
 		);
 
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
 		expect(before.puzzleIds.includes(f.pack.puzzleIds[0]!)).toBe(true);
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
 		expect(after?.puzzleIds.includes(f.pack.puzzleIds[0]!)).toBe(false);
 	});
 });

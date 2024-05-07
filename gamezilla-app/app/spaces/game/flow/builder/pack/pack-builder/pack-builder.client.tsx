@@ -561,6 +561,61 @@ const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
 //
 //
 
+const EditPackName: Pick<ClientModule, "update" | "View"> = {
+	update(input) {
+		if (!input.modelCore.packBuilder) {
+			return { model: input.model };
+		}
+		const updated = EditPackNameClient.update({
+			...input,
+			modelCore: input.modelCore.packBuilder.editPackName,
+			msg: input.msgCore?.t === "got-edit-pack-name" ? input.msgCore.c : null,
+			msgCore:
+				input.msgCore?.t === "got-edit-pack-name"
+					? { ...input.msgCore, ...input.msgCore.c }
+					: null,
+		});
+		return {
+			model: input.model,
+			msgCore: (updated.msgCore ?? []).map((c) => ({
+				c,
+				t: "got-edit-pack-name",
+				eventId: c.eventId,
+			})),
+		};
+	},
+	View(input) {
+		if (!input.modelCore.packBuilder) {
+			return null;
+		}
+		return (
+			<>
+				<EditPackNameClient.ViewDrawer
+					ctx={input.ctx}
+					model={input.modelCore.packBuilder.editPackName}
+					modelCore={input.modelCore.packBuilder.editPackName}
+					dispatch={(c) => input.dispatch({ t: "got-edit-pack-name", c })}
+				/>
+			</>
+		);
+	},
+};
+
+const updateRecordPack: ClientModule["update"] = (input) => {
+	if (input.modelCore.packBuilder?.pack) {
+		return {
+			model: {
+				...input.model,
+				packs: {
+					...input.model.packs,
+					[input.modelCore.packBuilder.pack.id]:
+						input.modelCore.packBuilder.pack,
+				},
+			},
+		};
+	}
+	return { model: input.model };
+};
 export const PackBuilderClient: Pick<
 	ClientModule,
 	"update" | "View" | "subscriptions"
@@ -575,44 +630,8 @@ export const PackBuilderClient: Pick<
 			(model) => ScreenPuzzle.update({ ...input, model }),
 			(model) => PuzzleGrid.update({ ...input, model }),
 			(model) => ScreenPuzzleMore.update({ ...input, model }),
-			(model) => {
-				if (!input.modelCore.packBuilder) {
-					return { model };
-				}
-				const updated = EditPackNameClient.update({
-					...input,
-					modelCore: input.modelCore.packBuilder.editPackName,
-					msg:
-						input.msgCore?.t === "got-edit-pack-name" ? input.msgCore.c : null,
-					msgCore:
-						input.msgCore?.t === "got-edit-pack-name"
-							? { ...input.msgCore, ...input.msgCore.c }
-							: null,
-				});
-				return {
-					model,
-					msgCore: (updated.msgCore ?? []).map((c) => ({
-						c,
-						t: "got-edit-pack-name",
-						eventId: c.eventId,
-					})),
-				};
-			},
-			(model) => {
-				if (input.modelCore.packBuilder?.pack) {
-					return {
-						model: {
-							...model,
-							packs: {
-								...model.packs,
-								[input.modelCore.packBuilder.pack.id]:
-									input.modelCore.packBuilder.pack,
-							},
-						},
-					};
-				}
-				return { model };
-			},
+			(model) => EditPackName.update({ ...input, model }),
+			(model) => updateRecordPack({ ...input, model }),
 		);
 	},
 
