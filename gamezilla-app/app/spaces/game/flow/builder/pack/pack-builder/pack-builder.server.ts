@@ -90,6 +90,30 @@ const RemovedPuzzleFromPack: Pick<ServerModule, "update"> = {
 	},
 };
 
+const EditPackName: Pick<ServerModule, "update"> = {
+	async update(input) {
+		if (!input.modelCore.packBuilder) {
+			return { model: input.model };
+		}
+		const updated = await EditPackNameServer.update({
+			...input,
+			modelCore: input.modelCore.packBuilder.editPackName,
+			msgCore:
+				input.msgCore?.t === "got-edit-pack-name"
+					? { ...input.msgCore, ...input.msgCore.c }
+					: null,
+		});
+		return {
+			model: input.model,
+			msgCore: (updated.msgCore ?? []).map(({ eventId, ...c }) => ({
+				eventId,
+				c,
+				t: "got-edit-pack-name",
+			})),
+		};
+	},
+};
+
 export const PackBuilderServer: Pick<ServerModule, "update"> = {
 	async update(input) {
 		return GameServerModule.andThen(
@@ -97,27 +121,7 @@ export const PackBuilderServer: Pick<ServerModule, "update"> = {
 			(model) => SavePack.update({ ...input, model }),
 			(model) => RemovedPuzzleFromPack.update({ ...input, model }),
 			(model) => PuzzleGrid.update({ ...input, model }),
-			async (model) => {
-				if (!input.modelCore.packBuilder) {
-					return { model };
-				}
-				const updated = await EditPackNameServer.update({
-					...input,
-					modelCore: input.modelCore.packBuilder.editPackName,
-					msgCore:
-						input.msgCore?.t === "got-edit-pack-name"
-							? { ...input.msgCore, ...input.msgCore.c }
-							: null,
-				});
-				return {
-					model: model,
-					msgCore: (updated.msgCore ?? []).map((c) => ({
-						c,
-						t: "got-edit-pack-name",
-						eventId: c.eventId,
-					})),
-				};
-			},
+			(model) => EditPackName.update({ ...input, model }),
 		);
 	},
 };

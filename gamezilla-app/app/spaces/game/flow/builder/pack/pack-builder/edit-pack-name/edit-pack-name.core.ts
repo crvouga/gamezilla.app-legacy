@@ -16,21 +16,21 @@ const init = (input: { pack: FlowPack }): ModelCore => {
 
 const update = <TModel extends ModelCore, TMsg extends MsgCore>(input: {
 	ctx: SpaceCtx;
-	model: TModel;
-	msg: TMsg;
+	modelCore: TModel;
+	msgCore: TMsg;
 }): TModel => {
-	switch (input.msg.t) {
+	switch (input.msgCore.t) {
 		case "edit-pack-name.user-clicked-save-button": {
-			const parsed = FlowPackName.parse(input.model.draft);
+			const parsed = FlowPackName.parse(input.modelCore.draft);
 
 			if (isErr(parsed)) {
-				return input.model;
+				return input.modelCore;
 			}
 
 			return {
-				...input.model,
+				...input.modelCore,
 				pack: {
-					...input.model.pack,
+					...input.modelCore.pack,
 					name: parsed.value,
 				},
 				result: loading,
@@ -38,43 +38,43 @@ const update = <TModel extends ModelCore, TMsg extends MsgCore>(input: {
 		}
 
 		case "edit-pack-name.user-inputted-draft-name": {
-			if (input.msg.userId !== input.ctx.space.hostId) {
-				return input.model;
+			if (input.msgCore.userId !== input.ctx.space.hostId) {
+				return input.modelCore;
 			}
 
-			if (input.msg.packNameDraft === "") {
+			if (input.msgCore.packNameDraft === "") {
 				return {
-					...input.model,
+					...input.modelCore,
 					validationError: { t: "name-cannot-be-empty" },
 				};
 			}
 
 			return {
-				...input.model,
-				draft: input.msg.packNameDraft,
+				...input.modelCore,
+				draft: input.msgCore.packNameDraft,
 				validationError: null,
 			};
 		}
 
 		case "edit-pack-name.server-persisted-pack": {
-			if (isErr(input.msg.result)) {
+			if (isErr(input.msgCore.result)) {
 				return {
-					...input.model,
-					result: input.msg.result,
+					...input.modelCore,
+					result: input.msgCore.result,
 					pack: {
-						...input.model.pack,
-						name: input.model.rollback,
+						...input.modelCore.pack,
+						name: input.modelCore.rollback,
 					},
 				};
 			}
 			return {
-				...input.model,
-				result: input.msg.result,
+				...input.modelCore,
+				result: input.msgCore.result,
 			};
 		}
 
 		default: {
-			return input.model;
+			return input.modelCore;
 		}
 	}
 };

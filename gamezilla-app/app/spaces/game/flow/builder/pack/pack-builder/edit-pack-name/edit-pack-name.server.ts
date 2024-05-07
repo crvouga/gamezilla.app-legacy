@@ -16,11 +16,12 @@ const update: ServerModule["update"] = async (input) => {
 	switch (input.msgCore?.t) {
 		case "edit-pack-name.user-clicked-save-button": {
 			const modelCoreNext = EditPackNameCore.update({
-				ctx: input.ctx,
-				model: input.modelCore,
-				msg: input.msgCore,
+				...input,
+				msgCore: input.msgCore,
 			});
+
 			const put = await input.deps.FlowPackDb.put(modelCoreNext.pack);
+
 			return {
 				model: input.model,
 				msgCore: [
@@ -32,8 +33,10 @@ const update: ServerModule["update"] = async (input) => {
 				],
 			};
 		}
+		default: {
+			return { model: input.model };
+		}
 	}
-	return { model: input.model };
 };
 
 export const EditPackNameServer = {

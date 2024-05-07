@@ -10,7 +10,8 @@ const Fixture = async () => {
 
 	const update = (init: ModelCore, msgs: MsgCore[]) => {
 		return msgs.reduce(
-			(model, msg) => EditPackNameCore.update({ ctx: f.ctx, model, msg }),
+			(model, msg) =>
+				EditPackNameCore.update({ ctx: f.ctx, modelCore: model, msgCore: msg }),
 			init,
 		);
 	};

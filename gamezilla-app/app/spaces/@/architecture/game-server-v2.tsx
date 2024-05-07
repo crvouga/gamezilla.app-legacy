@@ -137,23 +137,23 @@ export type Output<T extends GameServerModuleTypes> = {
 	/**
 	 * `model` will be the new state of the module
 	 */
-	model: T["Model"];
+	readonly model: T["Model"];
 	/**
 	 * `eff` is a side effect to be performed. May dispatch a message
 	 */
-	eff?: Eff<T["Msg"]>;
+	readonly eff?: Eff<T["Msg"]>;
 	/**
 	 * `msgCmd` is a message to one other module. Always present tense
 	 */
-	msgCmd?: T["MsgCmdOut"][];
+	readonly msgCmd?: T["MsgCmdOut"][];
 	/**
 	 * `msgEvt` is a message to many other modules. Always past tense
 	 */
-	msgEvt?: T["MsgEvtOut"][];
+	readonly msgEvt?: T["MsgEvtOut"][];
 	/**
 	 *  `msgCore` is an msgEvt that occurred in the game. Shared with the client side
 	 */
-	msgCore?: WithEventId<T["MsgCore"]>[];
+	readonly msgCore?: WithEventId<T["MsgCore"]>[];
 };
 
 /**
