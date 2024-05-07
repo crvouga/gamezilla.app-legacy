@@ -267,7 +267,7 @@ const tagOutput = <
 		msgEvt: output.msgEvt,
 		msgCore: output.msgCore?.map((c) => {
 			const child = { ...c };
-			delete child.eventId;
+			child.eventId = undefined;
 			return {
 				eventId: c.eventId,
 				c: child,
