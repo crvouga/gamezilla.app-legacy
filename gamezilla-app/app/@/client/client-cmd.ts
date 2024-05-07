@@ -10,7 +10,9 @@ import type { Profile, UserId } from "../data";
 //
 
 export type ClientCmdTypes = {
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	MsgClient: any;
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	MsgToServer: any;
 };
 
@@ -607,6 +609,9 @@ const tagOne = <Tag extends string, T extends ClientCmdTypes>(
 						c: { ...msgCmd.c, msg: { t, c: null } },
 					};
 				}
+				default: {
+					return msgCmd;
+				}
 			}
 		}
 
@@ -667,6 +672,9 @@ const map = <A extends ClientCmdTypes, B extends ClientCmdTypes>(
 							};
 						}
 						return { ...msgCmd, c: { ...msgCmd.c, msg: null } };
+					}
+					default: {
+						return msgCmd;
 					}
 				}
 			}

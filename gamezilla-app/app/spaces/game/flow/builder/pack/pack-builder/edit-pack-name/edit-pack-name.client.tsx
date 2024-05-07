@@ -11,13 +11,13 @@ import { withId } from "gamezilla-app/app/spaces/@/event";
 import { isErr } from "gamezilla-app/@/core";
 
 type ClientModule = GameClientModule<{
-	Ctx: ClientCtx & { open: boolean };
+	Ctx: ClientCtx;
 	ModelCore: ModelCore;
 	MsgCore: MsgCore;
 	Msg: MsgClient;
 	ViewEmit: {
-		close: void;
-		cancel: void;
+		close: null;
+		cancel: null;
 	};
 }>;
 
@@ -51,11 +51,11 @@ const View: ClientModule["View"] = (input) => {
 	return (
 		<Drawer
 			id="edit-pack-name"
-			open={input.ctx.open}
-			onClose={() => input.emits?.close()}
+			open={false}
+			onClose={() => input.emits?.close(null)}
 			position="bottom"
 		>
-			<DrawerHeader onClose={() => input.emits?.close()} />
+			<DrawerHeader onClose={() => input.emits?.close(null)} />
 			<TextField
 				id="pack-name"
 				label="Pack Name"
@@ -69,7 +69,7 @@ const View: ClientModule["View"] = (input) => {
 				}
 			/>
 			<div>
-				<Button text="Cancel" onClick={() => input.emits?.cancel()} />
+				<Button text="Cancel" onClick={() => input.emits?.cancel(null)} />
 				<Button text="Save" />
 			</div>
 		</Drawer>
