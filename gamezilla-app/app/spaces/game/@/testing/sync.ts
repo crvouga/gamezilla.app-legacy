@@ -1,4 +1,4 @@
-import { type SpaceId, type UserId } from "gamezilla-app/app/@/data";
+import type { SpaceId, UserId } from "gamezilla-app/app/@/data";
 import type { SpaceCtx } from "../../../@/space";
 
 const hostUserId = "test-user-id" as UserId;

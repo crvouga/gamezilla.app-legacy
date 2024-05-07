@@ -1,8 +1,8 @@
 import { p } from "gamezilla-app/@/core/parser";
 import type { UserId } from "gamezilla-app/app/@/data";
 import type { GameMainMenu } from "../@/game";
-import { FlowPack } from "./@/flow-pack";
-import { FlowPackId } from "./@/flow-pack/flow-pack-id";
+import type { FlowPack } from "./@/flow-pack";
+import type { FlowPackId } from "./@/flow-pack/flow-pack-id";
 import type { FlowPuzzle } from "./@/flow-puzzle/flow-puzzle";
 import type { FlowPuzzleId } from "./@/flow-puzzle/flow-puzzle-id";
 import { BuilderTypes } from "./builder";

@@ -581,18 +581,13 @@ export const PackBuilderClient: Pick<
 				}
 				const updated = EditPackNameClient.update({
 					...input,
-					model,
 					modelCore: input.modelCore.packBuilder.editPackName,
 					msg:
 						input.msgCore?.t === "got-edit-pack-name" ? input.msgCore.c : null,
 					msgCore:
 						input.msgCore?.t === "got-edit-pack-name"
-							? {
-									...input.msgCore,
-									...input.msgCore.c,
-								}
+							? { ...input.msgCore, ...input.msgCore.c }
 							: null,
-					ctx: { ...input.ctx, open: false },
 				});
 				return {
 					model,

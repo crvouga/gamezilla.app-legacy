@@ -3,7 +3,7 @@ import { Result } from "gamezilla-app/@/core";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { randomFlowPack, randomFlowPuzzle } from "../../../@/testing";
 import { FlowCreateFixtureServer } from "../../@/testing/server";
-import { ModelCore, MsgCore } from "../../builder.types";
+import type { ModelCore, MsgCore } from "../../builder.types";
 import { PackBuilderCore } from "./pack-builder.core";
 import { PackBuilderServer } from "./pack-builder.server";
 

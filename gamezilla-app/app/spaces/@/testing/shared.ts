@@ -1,4 +1,4 @@
-import { SpaceId, UserId } from "gamezilla-app/app/@/data";
+import { type SpaceId, UserId } from "gamezilla-app/app/@/data";
 import { pipe } from "gamezilla-app/@/core";
 import { withId } from "../event";
 import { Space } from "../../spaces-core";

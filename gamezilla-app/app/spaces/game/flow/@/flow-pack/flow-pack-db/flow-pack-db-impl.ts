@@ -1,4 +1,4 @@
-import { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
+import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
 import type { IFlowPackDb } from "./flow-pack-db";
 import { FlowPackDbHashMap } from "./flow-pack-db-impl-hash-map";
 import { FlowPackDbPostgres } from "./flow-pack-db-impl-postgres";

@@ -2,7 +2,7 @@ import { Posix, Sub, Time, TimeSpan } from "gamezilla-app/@/core";
 import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
 import {
 	APP_SOUND,
-	SoundCmd,
+	type SoundCmd,
 	playSound,
 	type ToastCmd,
 } from "gamezilla-app/app/@/client";

@@ -7,7 +7,7 @@ import { SpaceGameFixtureClient } from "gamezilla-app/app/spaces/game/@/testing/
 import { randomFlowPack } from "../../../../@/testing";
 import { EditPackNameClient } from "./edit-pack-name.client";
 import { EditPackNameCore } from "./edit-pack-name.core";
-import { MsgCore } from "./edit-pack-name.types";
+import type { MsgCore } from "./edit-pack-name.types";
 
 const Fixture = async () => {
 	const f = await SpaceGameFixtureClient();

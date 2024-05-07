@@ -35,7 +35,7 @@ function is(posixTime: unknown): posixTime is Posix {
 
 const init = (posixTime: number | string): Posix => {
 	const cleaned =
-		typeof posixTime === "string" ? parseFloat(posixTime) : posixTime;
+		typeof posixTime === "string" ? Number.parseFloat(posixTime) : posixTime;
 
 	const clamped = Math.max(cleaned, minPosixTime);
 

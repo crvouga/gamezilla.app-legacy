@@ -166,9 +166,9 @@ export const andThen = <T extends AppClientModuleTypes>(
 	...updates: ((model: T["Model"]) => Output<T>)[]
 ): Output<T> => {
 	let runningModel = { ...acc.model };
-	let runningEffs = [acc.eff];
-	let runningCmds = [...(acc?.msgCmd ?? [])];
-	let runningEvts = [...(acc?.msgEvt ?? [])];
+	const runningEffs = [acc.eff];
+	const runningCmds = [...(acc?.msgCmd ?? [])];
+	const runningEvts = [...(acc?.msgEvt ?? [])];
 	for (let i = 0; i < updates.length; i++) {
 		// biome-ignore lint/style/noNonNullAssertion: <explanation>
 		const update = updates[i]!;

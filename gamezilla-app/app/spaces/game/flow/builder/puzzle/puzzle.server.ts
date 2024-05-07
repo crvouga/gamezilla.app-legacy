@@ -1,5 +1,5 @@
 import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
-import { type ServerModule } from "../builder.types";
+import type { ServerModule } from "../builder.types";
 import { PuzzleCreateServer } from "./create/puzzle-create.server";
 import { PuzzleDeleteForeverServer } from "./delete-forever/puzzle-delete-forever.server";
 import { PuzzleEditNameServer } from "./edit/puzzle-edit-name.server";

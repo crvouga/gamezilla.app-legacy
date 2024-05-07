@@ -1,10 +1,10 @@
 import { UserId } from "gamezilla-app/app/@/data";
-import { FlowPuzzle } from "../flow-puzzle";
+import type { FlowPuzzle } from "../flow-puzzle";
 import { Posix } from "gamezilla-app/@/core";
 import { FlowPuzzleName } from "../flow-puzzle/flow-puzzle-name";
 import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id";
 import { FlowVariant, FlowVariantDimensions } from "../flow";
-import { FlowPack } from "../flow-pack";
+import type { FlowPack } from "../flow-pack";
 import { FlowPackId } from "../flow-pack/flow-pack-id";
 import { FlowPackName } from "../flow-pack/flow-pack-name";
 

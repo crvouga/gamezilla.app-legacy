@@ -2,12 +2,12 @@ import { describe, expect, it } from "bun:test";
 import { UserId } from "gamezilla-app/app/@/data";
 import { SpaceGameCoreFixture } from "gamezilla-app/app/spaces/game/@/testing/sync";
 import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
-import { FlowPuzzle } from "../../../@/flow-puzzle";
+import type { FlowPuzzle } from "../../../@/flow-puzzle";
 import { randomFlowPack, randomFlowPuzzle } from "../../../@/testing";
 import { BuilderCore } from "../../builder.core";
-import { ModelCore } from "../../builder.types";
+import type { ModelCore } from "../../builder.types";
 import { PackBuilderCore } from "./pack-builder.core";
-import { MsgCore } from "./pack-builder.types";
+import type { MsgCore } from "./pack-builder.types";
 
 const Fixture = async (input?: {
 	puzzleCount?: number;

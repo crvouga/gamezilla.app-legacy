@@ -1,6 +1,6 @@
 import type { VDom } from "gamezilla-app/@/vdom";
 import { IconPlus, Swiper } from "gamezilla-app/app/@/ui";
-import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
+import type { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
 
 const COLUMN_COUNT = 5;
 const ROW_COUNT = 6;

@@ -1,6 +1,6 @@
 import { SpaceId, UserId } from "gamezilla-app/app/@/data";
 import { makeSpace } from "./shared";
-import { SpaceCtx } from "../space";
+import type { SpaceCtx } from "../space";
 import { Space } from "../../spaces-core";
 
 export const SpaceCoreFixture = () => {

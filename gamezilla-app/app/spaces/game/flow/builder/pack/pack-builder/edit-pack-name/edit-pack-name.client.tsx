@@ -1,12 +1,12 @@
-import { ClientCtx, showErrSm } from "gamezilla-app/app/@/client";
+import { type ClientCtx, showErrSm } from "gamezilla-app/app/@/client";
 import {
 	Button,
 	Drawer,
 	DrawerHeader,
 	TextField,
 } from "gamezilla-app/app/@/ui";
-import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import { ModelCore, MsgClient, MsgCore } from "./edit-pack-name.types";
+import type { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import type { ModelCore, MsgClient, MsgCore } from "./edit-pack-name.types";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { isErr } from "gamezilla-app/@/core";
 

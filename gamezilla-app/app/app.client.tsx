@@ -44,7 +44,7 @@ import {
 	type IClientTransport,
 } from "./wire/transport-client";
 import * as Wire from "./wire/wire.client";
-import { ServerImpl } from "public-config";
+import type { ServerImpl } from "public-config";
 
 export type Model = ModelClient;
 

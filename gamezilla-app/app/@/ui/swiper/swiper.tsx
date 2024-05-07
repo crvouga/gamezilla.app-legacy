@@ -1,5 +1,5 @@
 import { waitForElementById } from "gamezilla-app/@/core/dom";
-import { VDomChildren } from "gamezilla-app/@/vdom";
+import type { VDomChildren } from "gamezilla-app/@/vdom";
 import { register } from "swiper/element/bundle";
 
 if (typeof window !== "undefined") {

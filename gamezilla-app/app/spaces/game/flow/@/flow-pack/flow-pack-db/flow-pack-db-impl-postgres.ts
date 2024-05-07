@@ -72,7 +72,7 @@ const ensureNumber = (maybeNumber: unknown): number => {
 		return maybeNumber;
 	}
 	if (typeof maybeNumber === "string") {
-		return parseFloat(maybeNumber);
+		return Number.parseFloat(maybeNumber);
 	}
 	return 0;
 };

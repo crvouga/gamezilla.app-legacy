@@ -1,7 +1,7 @@
 import { Sub } from "gamezilla-app/@/core";
 import type { ClientCmd } from "gamezilla-app/app/@/client";
 import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@/ui";
-import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import type { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import type { SpaceClientEvent } from "gamezilla-app/app/spaces/@/space";
 import { GameLayout } from "../../@/game";
