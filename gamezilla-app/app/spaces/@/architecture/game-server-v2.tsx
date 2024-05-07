@@ -12,50 +12,67 @@ export type GameServerModuleTypes = {
 	/**
 	 * `Ctx` is data passed down from parent modules
 	 */
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	Ctx?: any;
 	/**
 	 * `Model` is the state of the module
 	 */
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	Model?: any;
 	/**
 	 * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvt
 	 */
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	Msg?: any;
 	/**
 	 * `MsgToClient` is a message to send to the client component of the module
 	 */
+
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	MsgToClient?: any;
 	/**
 	 * `MsgToServer` is a message to send to the client component of the module
 	 */
+
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	MsgToServer?: any;
 	/**
 	 * `MsgCmdIn` is a message from other modules. Usually verbs
 	 */
+
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	MsgCmdIn?: any;
 	/**
 	 * `MsgEvtIn` is a message to notify other modules. Usually past tense verbs
 	 */
+
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	MsgEvtIn?: any;
 	/**
 	 * `MsgCmdOut` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
 	 */
+
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	MsgCmdOut?: any;
 	/**
 	 * `MsgEvtOut` is a message that is only produced by this module. Always past tense verbs
 	 */
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	MsgEvtOut?: any;
 	/**
 	 *
 	 */
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	MsgCore?: any;
 	/**
 	 *
 	 */
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	ModelCore?: any;
 	/**
 	 *
 	 */
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	Deps?: any;
 };
 
