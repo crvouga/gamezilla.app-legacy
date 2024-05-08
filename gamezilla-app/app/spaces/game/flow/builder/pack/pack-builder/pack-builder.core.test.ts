@@ -16,15 +16,22 @@ const Fixture = async (input?: {
 	const f = await SpaceGameCoreFixture();
 	const createdBy = UserId.generate();
 
-	const puzzles: [FlowPuzzle, FlowPuzzle, FlowPuzzle, ...FlowPuzzle[]] = [
-		await randomFlowPuzzle({ createdBy }),
-		await randomFlowPuzzle({ createdBy }),
-		await randomFlowPuzzle({ createdBy }),
+	const puzzlesPromises = [
+		randomFlowPuzzle({ createdBy }),
+		randomFlowPuzzle({ createdBy }),
+		randomFlowPuzzle({ createdBy }),
 	];
 
 	for (let i = 0; i < (input?.puzzleCount ?? 0); i++) {
-		puzzles.push(await randomFlowPuzzle({ createdBy }));
+		puzzlesPromises.push(randomFlowPuzzle({ createdBy }));
 	}
+
+	const puzzles = (await Promise.all(puzzlesPromises)) as [
+		FlowPuzzle,
+		FlowPuzzle,
+		FlowPuzzle,
+		...FlowPuzzle[],
+	];
 
 	if (input?.appendDuplicatesOf) {
 		for (let i = 0; i < 3; i++) {
