@@ -27,54 +27,74 @@ const toBoard = (matrix: Matrix): Board => {
 
 describe(import.meta.file, () => {
 	it("should detect one horizontal win", async () => {
-		const matrix: Matrix = [
+		const board = toBoard([
 			[w, w, w, w, w],
 			[b, b, b, b, _],
 			[_, _, _, _, _],
 			[_, _, _, _, _],
 			[_, _, _, _, _],
-		];
-		const board = toBoard(matrix);
+		]);
 		const wins = toWins(board);
 		expect(wins.length).toBe(1);
 	});
 
 	it("should detect one vertical win", async () => {
-		const matrix: Matrix = [
+		const board = toBoard([
 			[w, b, _, _, _],
 			[w, b, _, _, _],
 			[w, b, _, _, _],
 			[w, b, _, _, _],
 			[w, _, _, _, _],
-		];
-		const board = toBoard(matrix);
+		]);
 		const wins = toWins(board);
 		expect(wins.length).toBe(1);
 	});
 
 	it("should detect one left diagonal win", async () => {
-		const matrix: Matrix = [
+		const board = toBoard([
 			[w, _, _, _, _],
 			[b, w, _, _, _],
 			[_, b, w, _, _],
 			[_, _, b, w, _],
 			[_, _, _, b, w],
-		];
-		const board = toBoard(matrix);
+		]);
 		const wins = toWins(board);
 		expect(wins.length).toBe(1);
 	});
 
 	it("should detect one right diagonal win", async () => {
-		const matrix: Matrix = [
+		const board = toBoard([
 			[_, _, _, _, w],
 			[_, _, _, w, b],
 			[_, _, w, b, _],
 			[_, w, b, _, _],
 			[w, b, _, _, _],
-		];
-		const board = toBoard(matrix);
+		]);
 		const wins = toWins(board);
 		expect(wins.length).toBe(1);
+	});
+
+	it("should detect two wins", async () => {
+		const board = toBoard([
+			[w, w, w, w, w],
+			[b, b, b, b, b],
+			[_, _, _, _, _],
+			[_, _, _, _, _],
+			[_, _, _, _, _],
+		]);
+		const wins = toWins(board);
+		expect(wins.length).toBe(2);
+	});
+
+	it("should detect no wins", async () => {
+		const board = toBoard([
+			[w, w, w, w, b],
+			[b, b, b, b, w],
+			[_, _, _, _, _],
+			[_, _, _, _, _],
+			[_, _, _, _, _],
+		]);
+		const wins = toWins(board);
+		expect(wins.length).toBe(0);
 	});
 });
