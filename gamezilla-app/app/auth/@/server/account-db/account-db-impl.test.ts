@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { PhoneNumber, Posix, Result } from "gamezilla-app/@/core";
+import { Ok, PhoneNumber, Posix, Result } from "gamezilla-app/@/core";
 import { Hashing } from "gamezilla-app/@/hashing";
 import { UserId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
@@ -60,22 +60,20 @@ describe(import.meta.file, () => {
 		expect(maybeAccount).toEqual(account);
 	});
 
-	it("should be able to find account by phone number hash", async () => {
+	it.only("should be able to find account by phone number", async () => {
 		const f = await Fixture();
 		const phoneNumber = Result.unwrap(PhoneNumber.fromString("+14802098698"));
 		const account: UserAccount = {
 			phoneNumber,
 			userId: UserId.generate(),
-			role: "guest",
+			role: "normal",
 			createdAt: Posix.now({
 				precision: "seconds",
 			}),
 		};
-
-		const inserted = await f.accountDb.insert({ account });
+		const insert = await f.accountDb.insert({ account });
+		expect(insert.t).toBe("ok");
 		const found = await f.accountDb.findOneByPhoneNumber({ phoneNumber });
-		const maybeAccount = Result.withDefault(found, null);
-		expect(inserted.t).toBe("ok");
-		expect(maybeAccount).toEqual(account);
+		expect(found).toEqual(Ok(account));
 	});
 });

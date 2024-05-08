@@ -35,7 +35,6 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 					createdAt: {
 						"<=": now,
 						">=": Posix.sub(now, TimeSpan.fromHours(1)),
-						
 					},
 					phoneNumber: {
 						"=": input.phoneNumber,

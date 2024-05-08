@@ -11,6 +11,5 @@ export type IAccountDb = {
 	}) => Task<string, UserAccount | null>;
 	insert: (input: {
 		account: UserAccount;
-		phoneNumber?: PhoneNumber;
 	}) => Task<string, null>;
 };

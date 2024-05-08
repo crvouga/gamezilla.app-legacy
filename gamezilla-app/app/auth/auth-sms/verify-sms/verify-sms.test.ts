@@ -58,7 +58,6 @@ const Fixture = async (input?: {
 	};
 };
 
-
 describe(import.meta.file, () => {
 	it("should be ok", async () => {
 		const f = await Fixture();
@@ -200,17 +199,20 @@ describe(import.meta.file, () => {
 		if (isErr(sent)) expect(sent.error.t).toBe("hourly-limit-reached");
 	});
 
-	it('should let user send code again after it has been over an hour after they hit the limit', async () => {
-		const sendCodeHourlyLimit = 3
+	it("should let user send code again after it has been over an hour after they hit the limit", async () => {
+		const sendCodeHourlyLimit = 3;
 		let now = Posix.now();
 		const f = await Fixture({ sendCodeHourlyLimit, now: () => now });
-		for(let i = 0; i < sendCodeHourlyLimit; i++) {
+		for (let i = 0; i < sendCodeHourlyLimit; i++) {
 			await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
 		}
-		now = Posix.add(now, TimeSpan.add(TimeSpan.fromHours(1), TimeSpan.fromMilliseconds(1)));
+		now = Posix.add(
+			now,
+			TimeSpan.add(TimeSpan.fromHours(1), TimeSpan.fromMilliseconds(1)),
+		);
 		const sent = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
 		expect(isOk(sent)).toBe(true);
-	})
+	});
 
 	it("should only apply hourly limit to a single phone number", async () => {
 		const sendCodeHourlyLimit = 3;

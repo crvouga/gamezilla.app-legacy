@@ -156,7 +156,7 @@ ALTER SEQUENCE public.socket_io_attachments_id_seq OWNED BY public.socket_io_att
 
 CREATE TABLE public.user_account (
     user_id text NOT NULL,
-    created_at timestamp with time zone NOT NULL,
+    created_at_posix bigint NOT NULL,
     user_role public.user_role NOT NULL,
     phone_number text
 );
@@ -399,4 +399,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240410223252'),
     ('20240428015435'),
     ('20240501070923'),
-    ('20240508205504');
+    ('20240508205504'),
+    ('20240508214804');

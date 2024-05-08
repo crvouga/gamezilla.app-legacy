@@ -1,4 +1,4 @@
-import { Ok, eq } from "gamezilla-app/@/core";
+import { Ok, PhoneNumber } from "gamezilla-app/@/core";
 import type { UserId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import type { IAccountDb } from "./account-db";
@@ -16,7 +16,11 @@ export const AccountDbInMemory = (deps: {
 		async findOneByPhoneNumber(input) {
 			await deps.delay();
 			for (const account of accounts.values()) {
-				if (eq(account.phoneNumber, input.phoneNumber)) {
+				if (
+					account.phoneNumber &&
+					PhoneNumber.toString(account.phoneNumber) ===
+						PhoneNumber.toString(input.phoneNumber)
+				) {
 					return Ok(account);
 				}
 			}

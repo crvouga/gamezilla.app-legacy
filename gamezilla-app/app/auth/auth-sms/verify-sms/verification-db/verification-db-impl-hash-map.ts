@@ -28,14 +28,13 @@ export const VerificationDbHashMap = (): IVerificationDb => {
 					}
 					return true;
 				})
-				.filter(v => {
+				.filter((v) => {
 					if (input.where.createdAt?.[">="]) {
 						return v.createdAt >= input.where.createdAt?.[">="];
 					}
 					return true;
-				
 				})
-				.filter((v) => {					
+				.filter((v) => {
 					if (input.where.phoneNumber?.["="]) {
 						return eq(input.where.phoneNumber?.["="], v.phoneNumber);
 					}

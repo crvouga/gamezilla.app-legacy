@@ -5,9 +5,9 @@ import { UserAccountRow } from "./account-db-impl-postgres";
 describe(import.meta.file, () => {
 	it("should parse correctly", async () => {
 		const row: UserAccountRow = {
-			created_at: "2021-01-01T00:00:00Z",
+			created_at_posix: "2021-01-01T00:00:00Z",
 			user_id: "123" as UserId,
-			user_role: "guest",
+			user_role_posix: "guest",
 			phone_number: null,
 		};
 
