@@ -24,12 +24,14 @@ export type VerifySMSDeps = {
 	verifyCodeMaxAttempts: number;
 	verifyCodeExpiresIn: TimeSpan;
 	sendCodeHourlyLimit: number;
+	sendCodeDailyLimit: number;
 };
 
 export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 	return {
 		async sendCode(input) {
 			const now = deps.now();
+
 			const lastHourVerifications = await deps.verificationDb.find({
 				where: {
 					createdAt: {
@@ -54,6 +56,31 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 			) {
 				return Err({
 					t: "hourly-limit-reached",
+				});
+			}
+
+			const lastDayVerifications = await deps.verificationDb.find({
+				where: {
+					createdAt: {
+						"<=": now,
+						">=": Posix.sub(now, TimeSpan.fromDays(1)),
+					},
+					phoneNumber: {
+						"=": input.phoneNumber,
+					},
+				},
+			});
+
+			if (isErr(lastDayVerifications)) {
+				return Err({
+					t: "database-error",
+					error: lastDayVerifications.error,
+				});
+			}
+
+			if (lastDayVerifications.value.items.length >= deps.sendCodeDailyLimit) {
+				return Err({
+					t: "daily-limit-reached",
 				});
 			}
 

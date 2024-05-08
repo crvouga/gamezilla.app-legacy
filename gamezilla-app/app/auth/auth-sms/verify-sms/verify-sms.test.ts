@@ -21,6 +21,7 @@ const Fixture = async (input?: {
 	verifyCodeMaxAttempts?: number;
 	verifyCodeExpiresIn?: TimeSpan;
 	sendCodeHourlyLimit?: number;
+	sendCodeDailyLimit?: number;
 	now?: () => Posix;
 }) => {
 	const sms = SMSFake();
@@ -42,6 +43,7 @@ const Fixture = async (input?: {
 		hashing,
 		now: input?.now ?? Posix.now,
 		sendCodeHourlyLimit: input?.sendCodeHourlyLimit ?? 10,
+		sendCodeDailyLimit: input?.sendCodeDailyLimit ?? 10,
 		verifyCodeExpiresIn: input?.verifyCodeExpiresIn ?? TimeSpan.fromMinutes(5),
 		verifyCodeMaxAttempts: input?.verifyCodeMaxAttempts ?? 3,
 	});
@@ -199,7 +201,7 @@ describe(import.meta.file, () => {
 		if (isErr(sent)) expect(sent.error.t).toBe("hourly-limit-reached");
 	});
 
-	it("should let user send code again after it has been over an hour after they hit the limit", async () => {
+	it("should let user send code again after it has been over an hour after they hit the hourly limit", async () => {
 		const sendCodeHourlyLimit = 3;
 		let now = Posix.now();
 		const f = await Fixture({ sendCodeHourlyLimit, now: () => now });
@@ -232,4 +234,54 @@ describe(import.meta.file, () => {
 		const sent = await f.verifySMS.sendCode({ phoneNumber: phoneNumberB });
 		expect(isOk(sent)).toBe(true);
 	});
+
+	it("should error sending code if daily limit is reached", async () => {
+		const sendCodeDailyLimit = 3;
+		const f = await Fixture({ sendCodeDailyLimit });
+		for (let i = 0; i < sendCodeDailyLimit; i++) {
+			await f.verifySMS.sendCode({
+				phoneNumber: f.phoneNumber,
+			});
+		}
+		const sent = await f.verifySMS.sendCode({
+			phoneNumber: f.phoneNumber,
+		});
+		expect(sent.t).toBe("err");
+		if (isErr(sent)) expect(sent.error.t).toBe("daily-limit-reached");
+	});
+
+	it("should let user send code again after it has been over a day after they hit the daily limit", async () => {
+		const sendCodeDailyLimit = 3;
+		let now = Posix.now();
+		const f = await Fixture({ sendCodeDailyLimit, now: () => now });
+		for (let i = 0; i < sendCodeDailyLimit; i++) {
+			await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+		}
+		now = Posix.add(
+			now,
+			TimeSpan.add(TimeSpan.fromDays(1), TimeSpan.fromMilliseconds(1)),
+		);
+		const sent = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+		expect(isOk(sent)).toBe(true);
+	});
+
+
+	it("should only apply daily limit to a single phone number", async () => {
+		const sendCodeDailyLimit = 3;
+
+		const f = await Fixture({ sendCodeDailyLimit });
+
+		const phoneNumberA = Result.unwrap(
+			PhoneNumber.fromString("+1 480-209-8698"),
+		);
+		const phoneNumberB = Result.unwrap(
+			PhoneNumber.fromString("+1 480-209-8699"),
+		);
+		for (let i = 0; i < sendCodeDailyLimit + 1; i++) {
+			await f.verifySMS.sendCode({ phoneNumber: phoneNumberA });
+		}
+		const sent = await f.verifySMS.sendCode({ phoneNumber: phoneNumberB });
+		expect(isOk(sent)).toBe(true);
+	});
+
 });

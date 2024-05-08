@@ -10,11 +10,11 @@ import type { Text as Text7 } from "../../../app/@/shared.l18n";
 import type { Text as Text8 } from "../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.l18n";
 
 export type Text = Text0 &
-	Text1 &
-	Text2 &
-	Text3 &
-	Text4 &
-	Text5 &
-	Text6 &
-	Text7 &
-	Text8;
+  Text1 &
+  Text2 &
+  Text3 &
+  Text4 &
+  Text5 &
+  Text6 &
+  Text7 &
+  Text8;

@@ -8,8 +8,8 @@ export type Text = {
 	"verify-sms-problem.verification-already-verified": string;
 	"verify-sms-problem.database-error": string;
 	"verify-sms-problem.verification-expired-too-many-failed-attempts": string;
-	"verify-sms-problem.bad-input-missing-verification-id": string;
 	"verify-sms-problem.send-code-hourly-limit-reached": string;
+	"verify-sms-problem.send-code-daily-limit-reached": string;
 };
 
 export const translations: Translations<Text> = {
@@ -23,10 +23,10 @@ export const translations: Translations<Text> = {
 		"verify-sms-problem.database-error": "Database error",
 		"verify-sms-problem.verification-expired-too-many-failed-attempts":
 			"Verification expired due to too many failed attempts",
-		"verify-sms-problem.bad-input-missing-verification-id":
-			"Bad input. Missing verification id",
 		"verify-sms-problem.send-code-hourly-limit-reached":
 			"Hourly limit reached. Please try again later.",
+		"verify-sms-problem.send-code-daily-limit-reached":
+			"Daily limit reached. Please try again later.",
 	},
 	ar: {
 		"verify-sms.code-message": (code) => `رمز التحقق الخاص بك هو ${code}`,
@@ -37,10 +37,11 @@ export const translations: Translations<Text> = {
 		"verify-sms-problem.database-error": "خطأ في قاعدة البيانات",
 		"verify-sms-problem.verification-expired-too-many-failed-attempts":
 			"انتهت صلاحية التحقق بسبب عدد كبير من المحاولات الفاشلة",
-		"verify-sms-problem.bad-input-missing-verification-id":
-			"إدخال سيء. نقص معرف التحقق",
+
 		"verify-sms-problem.send-code-hourly-limit-reached":
 			"تم الوصول إلى الحد الساعي. يرجى المحاولة مرة أخرى في وقت لاحق.",
+		"verify-sms-problem.send-code-daily-limit-reached":
+			"تم الوصول إلى الحد اليومي. يرجى المحاولة مرة أخرى في وقت لاحق.",
 	},
 	de: {
 		"verify-sms.code-message": (code) => `Ihr Bestätigungscode lautet ${code}`,
@@ -52,10 +53,11 @@ export const translations: Translations<Text> = {
 		"verify-sms-problem.database-error": "Datenbankfehler",
 		"verify-sms-problem.verification-expired-too-many-failed-attempts":
 			"Verifizierung abgelaufen aufgrund zu vieler fehlgeschlagener Versuche",
-		"verify-sms-problem.bad-input-missing-verification-id":
-			"Schlechte Eingabe. Fehlende Verifizierungs-ID",
+
 		"verify-sms-problem.send-code-hourly-limit-reached":
 			"Stündliches Limit erreicht. Bitte versuchen Sie es später erneut.",
+		"verify-sms-problem.send-code-daily-limit-reached":
+			"Tägliches Limit erreicht. Bitte versuchen Sie es später erneut.",
 	},
 	es: {
 		"verify-sms.code-message": (code) => `Su código de verificación es ${code}`,
@@ -67,10 +69,11 @@ export const translations: Translations<Text> = {
 		"verify-sms-problem.database-error": "Error de base de datos",
 		"verify-sms-problem.verification-expired-too-many-failed-attempts":
 			"Verificación caducada debido a demasiados intentos fallidos",
-		"verify-sms-problem.bad-input-missing-verification-id":
-			"Entrada incorrecta. Falta el ID de verificación",
+
 		"verify-sms-problem.send-code-hourly-limit-reached":
 			"Se ha alcanzado el límite por hora. Por favor, inténtelo de nuevo más tarde.",
+		"verify-sms-problem.send-code-daily-limit-reached":
+			"Límite diario alcanzado. Por favor, inténtelo de nuevo más tarde.",
 	},
 	fr: {
 		"verify-sms.code-message": (code) =>
@@ -83,10 +86,11 @@ export const translations: Translations<Text> = {
 		"verify-sms-problem.database-error": "Erreur de base de données",
 		"verify-sms-problem.verification-expired-too-many-failed-attempts":
 			"Vérification expirée en raison de trop de tentatives échouées",
-		"verify-sms-problem.bad-input-missing-verification-id":
-			"Mauvaise entrée. ID de vérification manquant",
+
 		"verify-sms-problem.send-code-hourly-limit-reached":
 			"Limite horaire atteinte. Veuillez réessayer plus tard.",
+		"verify-sms-problem.send-code-daily-limit-reached":
+			"Limite quotidienne atteinte. Veuillez réessayer plus tard.",
 	},
 	hi: {
 		"verify-sms.code-message": (code) => `आपका सत्यापन कोड है ${code}`,
@@ -98,10 +102,11 @@ export const translations: Translations<Text> = {
 		"verify-sms-problem.database-error": "डेटाबेस त्रुटि",
 		"verify-sms-problem.verification-expired-too-many-failed-attempts":
 			"बहुत सारे विफल प्रयासों के कारण सत्यापन समाप्त हो गया",
-		"verify-sms-problem.bad-input-missing-verification-id":
-			"बुरी इनपुट। सत्यापन आईडी गायब है",
+
 		"verify-sms-problem.send-code-hourly-limit-reached":
 			"प्रति घंटे सीमा पहुंच गई है। कृपया बाद में पुन: प्रयास करें।",
+		"verify-sms-problem.send-code-daily-limit-reached":
+			"दैनिक सीमा पहुंच गई है। कृपया बाद में पुन: प्रयास करें।",
 	},
 	it: {
 		"verify-sms.code-message": (code) => `Il tuo codice di verifica è ${code}`,
@@ -113,10 +118,11 @@ export const translations: Translations<Text> = {
 		"verify-sms-problem.database-error": "Errore del database",
 		"verify-sms-problem.verification-expired-too-many-failed-attempts":
 			"Verifica scaduta a causa di troppi tentativi falliti",
-		"verify-sms-problem.bad-input-missing-verification-id":
-			"Input non valido. ID di verifica mancante",
+
 		"verify-sms-problem.send-code-hourly-limit-reached":
 			"Limite orario raggiunto. Riprova più tardi.",
+		"verify-sms-problem.send-code-daily-limit-reached":
+			"Limite giornaliero raggiunto. Riprova più tardi.",
 	},
 	ja: {
 		"verify-sms.code-message": (code) => `認証コードは${code}です`,
@@ -127,10 +133,10 @@ export const translations: Translations<Text> = {
 		"verify-sms-problem.database-error": "データベースエラー",
 		"verify-sms-problem.verification-expired-too-many-failed-attempts":
 			"多くの失敗した試行のため、認証が期限切れ",
-		"verify-sms-problem.bad-input-missing-verification-id":
-			"不正な入力。検証IDが欠落しています",
 		"verify-sms-problem.send-code-hourly-limit-reached":
 			"時間制限に達しました。後でもう一度お試しください。",
+		"verify-sms-problem.send-code-daily-limit-reached":
+			"1日の制限に達しました。後でもう一度お試しください。",
 	},
 	ko: {
 		"verify-sms.code-message": (code) => `인증 코드는 ${code}입니다`,
@@ -141,10 +147,10 @@ export const translations: Translations<Text> = {
 		"verify-sms-problem.database-error": "데이터베이스 오류",
 		"verify-sms-problem.verification-expired-too-many-failed-attempts":
 			"너무 많은 실패한 시도로 인한 인증 만료",
-		"verify-sms-problem.bad-input-missing-verification-id":
-			"잘못된 입력. 확인 ID 누락",
 		"verify-sms-problem.send-code-hourly-limit-reached":
 			"시간당 제한에 도달했습니다. 나중에 다시 시도하십시오.",
+		"verify-sms-problem.send-code-daily-limit-reached":
+			"일일 제한에 도달했습니다. 나중에 다시 시도하십시오.",
 	},
 	pt: {
 		"verify-sms.code-message": (code) => `Seu código de verificação é ${code}`,
@@ -156,10 +162,10 @@ export const translations: Translations<Text> = {
 		"verify-sms-problem.database-error": "Erro de banco de dados",
 		"verify-sms-problem.verification-expired-too-many-failed-attempts":
 			"Verificação expirada devido a muitas tentativas falhadas",
-		"verify-sms-problem.bad-input-missing-verification-id":
-			"Entrada ruim. ID de verificação ausente",
 		"verify-sms-problem.send-code-hourly-limit-reached":
 			"Limite horário atingido. Por favor, tente novamente mais tarde.",
+		"verify-sms-problem.send-code-daily-limit-reached":
+			"Limite diário atingido. Por favor, tente novamente mais tarde.",
 	},
 	ru: {
 		"verify-sms.code-message": (code) => `Ваш код подтверждения - ${code}`,
@@ -172,10 +178,10 @@ export const translations: Translations<Text> = {
 		"verify-sms-problem.verification-not-found": "Подтверждение не найдено",
 		"verify-sms-problem.verification-expired-too-many-failed-attempts":
 			"Истек срок действия подтверждения из-за слишком многих неудачных попыток",
-		"verify-sms-problem.bad-input-missing-verification-id":
-			"Плохой ввод. Отсутствует идентификатор подтверждения",
 		"verify-sms-problem.send-code-hourly-limit-reached":
 			"Достигнут часовой лимит. Пожалуйста, попробуйте позже.",
+		"verify-sms-problem.send-code-daily-limit-reached":
+			"Достигнут дневной лимит. Пожалуйста, попробуйте позже.",
 	},
 	zh: {
 		"verify-sms.code-message": (code) => `您的验证码是${code}`,
@@ -186,9 +192,9 @@ export const translations: Translations<Text> = {
 		"verify-sms-problem.database-error": "数据库错误",
 		"verify-sms-problem.verification-expired-too-many-failed-attempts":
 			"由于失败尝试过多，验证已过期",
-		"verify-sms-problem.bad-input-missing-verification-id":
-			"错误输入。缺少验证ID",
 		"verify-sms-problem.send-code-hourly-limit-reached":
 			"已达到每小时限制。请稍后再试。",
+		"verify-sms-problem.send-code-daily-limit-reached":
+			"已达到每日限制。请稍后再试。",
 	},
 };

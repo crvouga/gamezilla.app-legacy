@@ -2,67 +2,68 @@
 import type { Text } from "../text";
 
 export const translations: Text = {
-	"verify-sms.code-message": (code) =>
-		`\u0906\u092A\u0915\u093E \u0938\u0924\u094D\u092F\u093E\u092A\u0928 \u0915\u094B\u0921 \u0939\u0948 ${code}`,
-	"verify-sms-problem.code-incorrect": "कोड गलत है",
-	"verify-sms-problem.verification-expired": "सत्यापन समाप्त हो गया",
-	"verify-sms-problem.verification-not-found": "सत्यापन नहीं मिला",
-	"verify-sms-problem.verification-already-verified": "सत्यापन पहले ही सत्यापित है",
-	"verify-sms-problem.database-error": "डेटाबेस त्रुटि",
-	"verify-sms-problem.verification-expired-too-many-failed-attempts":
-		"बहुत सारे विफल प्रयासों के कारण सत्यापन समाप्त हो गया",
-	"verify-sms-problem.bad-input-missing-verification-id":
-		"बुरी इनपुट। सत्यापन आईडी गायब है",
-	"verify-sms-problem.send-code-hourly-limit-reached":
-		"प्रति घंटे सीमा पहुंच गई है। कृपया बाद में पुन: प्रयास करें।",
-	"auth-sms.login-with-phone": "फोन से लॉगिन करें",
-	"auth-sms.phone-number": "फ़ोन नंबर",
-	"auth-sms.send-code": "कोड भेजें",
-	"auth-sms.country": "देश",
-	"auth-sms.code": "कोड",
-	"auth-sms.verify-code": "सत्यापित करें",
-	"auth-sms.invalid-phone-number": "अमान्य फोन नंबर",
-	"auth.logged-in-as-guest": "मेहमान के रूप में लॉग इन",
-	"auth.logged-in-with-phone": "फोन के साथ लॉग इन",
-	"auth.current-user-logged-out": "लॉग आउट",
-	"auth.current-user-logged-in": "लॉग इन",
-	"auth.continue-as-guest": "मेहमान के रूप में जारी रखें",
-	"auth.continue-with-phone": "फोन के साथ जारी रखें",
-	"auth.or": "या",
-	"auth.sign-in-to": "में साइन इन करें",
-	"auth.logged-in": "लॉग इन",
-	"auth.logout-of-gamezill.app": "gamezilla.app से लॉग आउट करें",
-	"auth.logout-of-gamezill.app-body": "क्या आप वाकई लॉग आउट करना चाहते हैं?",
-	"spaces.current-user-joined-space": "स्थान जुड़ गया",
-	"spaces.other-user-joined-space": (username) =>
-		username
-			? `${username} \u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E`
-			: "\u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E",
-	"spaces.space-not-found": "स्थान नहीं मिला",
-	"spaces.go-home": "घर जा",
-	"spaces.current-user-ended-space": "स्थान समाप्त",
-	"spaces.other-user-ended-space": (username) =>
-		username
-			? `${username} \u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924`
-			: "\u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924",
-	"spaces.see-profile": "प्रोफ़ाइल देखें",
-	host: "मेज़बान",
-	you: "तुम",
-	"lang.language": "भाषा",
-	"lang.choose-language": "भाषा चुनें",
-	"lang.done": "किया",
-	"lang.loaded-translations": "लोड की गई अनुवाद",
-	"app.something-went-wrong": "कुछ गलत हो गया",
-	en: "अंग्रेज़ी",
-	es: "स्पेनिश",
-	ar: "अरबी",
-	de: "जर्मन",
-	fr: "फ्रेंच",
-	hi: "हिंदी",
-	it: "इतालवी",
-	ja: "जापानी",
-	ko: "कोरियाई",
-	pt: "पुर्तगाली",
-	ru: "रूसी",
-	zh: "चीनी",
+  "verify-sms.code-message": (code) =>
+    `\u0906\u092A\u0915\u093E \u0938\u0924\u094D\u092F\u093E\u092A\u0928 \u0915\u094B\u0921 \u0939\u0948 ${code}`,
+  "verify-sms-problem.code-incorrect": "कोड गलत है",
+  "verify-sms-problem.verification-expired": "सत्यापन समाप्त हो गया",
+  "verify-sms-problem.verification-not-found": "सत्यापन नहीं मिला",
+  "verify-sms-problem.verification-already-verified":
+    "सत्यापन पहले ही सत्यापित है",
+  "verify-sms-problem.database-error": "डेटाबेस त्रुटि",
+  "verify-sms-problem.verification-expired-too-many-failed-attempts":
+    "बहुत सारे विफल प्रयासों के कारण सत्यापन समाप्त हो गया",
+  "verify-sms-problem.send-code-hourly-limit-reached":
+    "प्रति घंटे सीमा पहुंच गई है। कृपया बाद में पुन: प्रयास करें।",
+  "verify-sms-problem.send-code-daily-limit-reached":
+    "दैनिक सीमा पहुंच गई है। कृपया बाद में पुन: प्रयास करें।",
+  "auth-sms.login-with-phone": "फोन से लॉगिन करें",
+  "auth-sms.phone-number": "फ़ोन नंबर",
+  "auth-sms.send-code": "कोड भेजें",
+  "auth-sms.country": "देश",
+  "auth-sms.code": "कोड",
+  "auth-sms.verify-code": "सत्यापित करें",
+  "auth-sms.invalid-phone-number": "अमान्य फोन नंबर",
+  "auth.logged-in-as-guest": "मेहमान के रूप में लॉग इन",
+  "auth.logged-in-with-phone": "फोन के साथ लॉग इन",
+  "auth.current-user-logged-out": "लॉग आउट",
+  "auth.current-user-logged-in": "लॉग इन",
+  "auth.continue-as-guest": "मेहमान के रूप में जारी रखें",
+  "auth.continue-with-phone": "फोन के साथ जारी रखें",
+  "auth.or": "या",
+  "auth.sign-in-to": "में साइन इन करें",
+  "auth.logged-in": "लॉग इन",
+  "auth.logout-of-gamezill.app": "gamezilla.app से लॉग आउट करें",
+  "auth.logout-of-gamezill.app-body": "क्या आप वाकई लॉग आउट करना चाहते हैं?",
+  "spaces.current-user-joined-space": "स्थान जुड़ गया",
+  "spaces.other-user-joined-space": (username) =>
+    username
+      ? `${username} \u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E`
+      : "\u0938\u094D\u0925\u093E\u0928 \u091C\u0941\u0921\u093C \u0917\u092F\u093E",
+  "spaces.space-not-found": "स्थान नहीं मिला",
+  "spaces.go-home": "घर जा",
+  "spaces.current-user-ended-space": "स्थान समाप्त",
+  "spaces.other-user-ended-space": (username) =>
+    username
+      ? `${username} \u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924`
+      : "\u0938\u094D\u0925\u093E\u0928 \u0938\u092E\u093E\u092A\u094D\u0924",
+  "spaces.see-profile": "प्रोफ़ाइल देखें",
+  host: "मेज़बान",
+  you: "तुम",
+  "lang.language": "भाषा",
+  "lang.choose-language": "भाषा चुनें",
+  "lang.done": "किया",
+  "lang.loaded-translations": "लोड की गई अनुवाद",
+  "app.something-went-wrong": "कुछ गलत हो गया",
+  en: "अंग्रेज़ी",
+  es: "स्पेनिश",
+  ar: "अरबी",
+  de: "जर्मन",
+  fr: "फ्रेंच",
+  hi: "हिंदी",
+  it: "इतालवी",
+  ja: "जापानी",
+  ko: "कोरियाई",
+  pt: "पुर्तगाली",
+  ru: "रूसी",
+  zh: "चीनी",
 };
