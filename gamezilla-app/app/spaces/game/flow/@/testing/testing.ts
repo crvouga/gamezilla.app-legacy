@@ -1,12 +1,12 @@
-import { UserId } from "gamezilla-app/app/@/data";
-import type { FlowPuzzle } from "../flow-puzzle";
 import { Posix } from "gamezilla-app/@/core";
-import { FlowPuzzleName } from "../flow-puzzle/flow-puzzle-name";
-import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id";
+import { UserId } from "gamezilla-app/app/@/data";
 import { FlowVariant, FlowVariantDimensions } from "../flow";
 import type { FlowPack } from "../flow-pack";
 import { FlowPackId } from "../flow-pack/flow-pack-id";
 import { FlowPackName } from "../flow-pack/flow-pack-name";
+import type { FlowPuzzle } from "../flow-puzzle";
+import { FlowPuzzleId } from "../flow-puzzle/flow-puzzle-id";
+import { FlowPuzzleName } from "../flow-puzzle/flow-puzzle-name";
 
 export const randomFlowPuzzle = async (input?: {
 	createdBy?: UserId;
@@ -24,8 +24,8 @@ export const randomFlowPuzzle = async (input?: {
 		flow: FlowVariant.init({
 			dimensions: FlowVariantDimensions.init({
 				t: "flow-grid",
-				height: 5,
-				width: 5,
+				height: 0,
+				width: 0,
 			}),
 			terminalsByGroupId: {},
 		}),

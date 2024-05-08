@@ -305,7 +305,6 @@ describe(import.meta.file, () => {
 			puzzleCount: FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
 		});
 
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
 		const puzzle = f.puzzles[f.puzzles.length - 1]!;
 
 		const modelCore = f.updateModelCore([
@@ -394,8 +393,7 @@ describe(import.meta.file, () => {
 		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-pack-item",
-				// biome-ignore lint/style/noNonNullAssertion: <explanation>
-				puzzle: f.puzzles[indexNextPage]!,
+				puzzle: f.puzzles[indexNextPage] as FlowPuzzle,
 				puzzleIndex: indexNextPage,
 			},
 		]);
@@ -412,8 +410,7 @@ describe(import.meta.file, () => {
 		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-pack-item",
-				// biome-ignore lint/style/noNonNullAssertion: <explanation>
-				puzzle: f.puzzles[f.puzzles.length - 1]!,
+				puzzle: f.puzzles[f.puzzles.length - 1] as FlowPuzzle,
 				puzzleIndex: f.puzzles.length - 1,
 			},
 		]);
@@ -431,7 +428,6 @@ describe(import.meta.file, () => {
 		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-pack-item",
-				// biome-ignore lint/style/noNonNullAssertion: <explanation>
 				puzzle: f.puzzles[f.puzzles.length - 1]!,
 				puzzleIndex: 0,
 			},

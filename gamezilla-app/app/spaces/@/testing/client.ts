@@ -1,16 +1,16 @@
-import { withId } from "gamezilla-app/app/spaces/@/event";
-import { type ClientCtx, routeChanged } from "gamezilla-app/app/@/client";
+import { Posix, pipe, type TimeSpan } from "gamezilla-app/@/core";
+import { LamportClock, LamportTimestamp } from "gamezilla-app/@/lamport-clock";
+import type { Route } from "gamezilla-app/@/routing/generated/routes";
+import { routeChanged, type ClientCtx } from "gamezilla-app/app/@/client";
 import { getTranslator } from "gamezilla-app/app/@/client/translator";
 import {
-	type Profile,
 	ProfileAvatar,
 	SpaceId,
 	UserId,
 	Username,
+	type Profile,
 } from "gamezilla-app/app/@/data";
-import { Posix, type TimeSpan, pipe } from "gamezilla-app/@/core";
-import { LamportClock, LamportTimestamp } from "gamezilla-app/@/lamport-clock";
-import type { Route } from "gamezilla-app/@/routing/generated/routes";
+import { withId } from "gamezilla-app/app/spaces/@/event";
 import type { GameName } from "../../game/game.types";
 import { Space, type SpaceEvent } from "../../spaces-core";
 import * as SpaceClient from "../../spaces.client";
@@ -83,19 +83,20 @@ export const SoaceClientFixture = async () => {
 	};
 };
 
-const randomProfile = async (): Promise<Profile> => {
+const randomProfile = (): Profile => {
+	const userId = UserId.generate();
 	return {
 		avatarUrl: ProfileAvatar.random(),
-		userId: UserId.generate(),
-		username: await Username.generate(),
+		userId,
+		username: Username.fromString(`username-${userId}`),
 	};
 };
 
-export const createFixture = async () => {
-	const currentUser = await randomProfile();
-	const userA = await randomProfile();
-	const userB = await randomProfile();
-	const userC = await randomProfile();
+export const SpaceClientFixture = () => {
+	const currentUser = randomProfile();
+	const userA = randomProfile();
+	const userB = randomProfile();
+	const userC = randomProfile();
 
 	const ctx: ClientCtx = {
 		navigatorLanguage: "en",

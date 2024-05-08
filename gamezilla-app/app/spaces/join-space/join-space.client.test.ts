@@ -3,10 +3,10 @@ import { andThen } from "gamezilla-app/app/@/architecture/app-client";
 import { didShowErrorSm, didShowToast } from "gamezilla-app/app/@/client";
 import { SpaceId, UserId } from "gamezilla-app/app/@/data";
 import {
+	Ctx,
+	SpaceClientFixture,
 	clickedJoinSpaceButton,
 	clickedLeaveSpaceButton,
-	Ctx,
-	createFixture,
 	init,
 	userJoinedSpace,
 	userStartedSpace,
@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
 	});
 
 	it("should should toast of other user leaving space", async () => {
-		const f = await createFixture();
+		const f = await SpaceClientFixture();
 		const spaceId = SpaceId.generate();
 
 		const started = andThen(

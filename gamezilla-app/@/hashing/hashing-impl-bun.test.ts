@@ -9,7 +9,7 @@ const Fixture = () => {
 	};
 };
 
-describe.if(IS_INTEGRATION_TEST)( import.meta.file, () => {
+describe.if(IS_INTEGRATION_TEST)(import.meta.file, () => {
 	it("should be able to hash a password with bcrypt", async () => {
 		const f = Fixture();
 		const password = "my-pa$$w0rd";
