@@ -151,6 +151,12 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				});
 			}
 
+			if (verification.verifiedAt) {
+				return Err({
+					t: "verification-already-verified",
+				});
+			}
+
 			if (
 				TimeSpan.gte(
 					Posix.diff(deps.now(), verification.createdAt),
@@ -211,6 +217,13 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 					t: "code-incorrect",
 				});
 			}
+
+			const verificationNew: Verification = {
+				...verification,
+				verifiedAt: deps.now(),
+			};
+
+			await deps.verificationDb.upsert(verificationNew);
 
 			return Ok({
 				phoneNumber: verification.phoneNumber,

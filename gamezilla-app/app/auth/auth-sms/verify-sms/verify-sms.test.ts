@@ -265,7 +265,6 @@ describe(import.meta.file, () => {
 		expect(isOk(sent)).toBe(true);
 	});
 
-
 	it("should only apply daily limit to a single phone number", async () => {
 		const sendCodeDailyLimit = 3;
 
@@ -284,4 +283,22 @@ describe(import.meta.file, () => {
 		expect(isOk(sent)).toBe(true);
 	});
 
+	it("should only allow verifications to be used once", async () => {
+		const f = await Fixture();
+		const sent = Result.unwrap(
+			await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber }),
+		);
+		const firstVerification = await f.verifySMS.verifyCode({
+			verificationId: sent.verificationId,
+			code: f.CODE,
+		});
+		const secondVerification = await f.verifySMS.verifyCode({
+			verificationId: sent.verificationId,
+			code: f.CODE,
+		});
+		expect(firstVerification.t).toBe("ok");
+		expect(secondVerification.t).toBe("err");
+		if (isErr(secondVerification))
+			expect(secondVerification.error.t).toBe("verification-already-verified");
+	});
 });

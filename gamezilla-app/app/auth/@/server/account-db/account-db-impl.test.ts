@@ -60,9 +60,9 @@ describe(import.meta.file, () => {
 		expect(maybeAccount).toEqual(account);
 	});
 
-	it.only("should be able to find account by phone number", async () => {
+	it("should be able to find account by phone number", async () => {
 		const f = await Fixture();
-		const phoneNumber = Result.unwrap(PhoneNumber.fromString("+14802098698"));
+		const phoneNumber = PhoneNumber.random()
 		const account: UserAccount = {
 			phoneNumber,
 			userId: UserId.generate(),
