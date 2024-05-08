@@ -127,6 +127,7 @@ const View: SpaceClientModule["View"] = (props) => {
 			>
 				<div>
 					<button
+						type="button"
 						className="flex w-full flex-col items-center justify-center gap-2 p-4"
 						onClick={() => props.dispatch({ t: "clicked-preview-user-link" })}
 					>

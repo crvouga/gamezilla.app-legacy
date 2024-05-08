@@ -35,6 +35,54 @@ export const Ctx = (): ClientCtx => {
 	};
 };
 
+export const SoaceClientFixture = async () => {
+	const ctx: ClientCtx = {
+		navigatorLanguage: "en",
+		t: getTranslator("en"),
+		currentRoute: { n: "spaces", t: "space-list" },
+		documentVisibilityState: "visible",
+		now: Posix.now(),
+		profiles: {},
+		currentUserId: UserId.generate(),
+	};
+
+	type Msg =
+		| { t: "msg"; c: SpaceCore.MsgClient }
+		| { t: "msg-server"; c: SpaceCore.MsgToClient };
+
+	const updates = (initial: SpaceCore.ModelClient, msgs: Msg[]) => {
+		const outputs: ReturnType<typeof SpaceClient.update>[] = [];
+		for (const msg of msgs) {
+			switch (msg.t) {
+				case "msg": {
+					const output = SpaceClient.update({
+						ctx,
+						model: initial,
+						msg: msg.c,
+					});
+					outputs.push(output);
+					break;
+				}
+				case "msg-server": {
+					const output = SpaceClient.update({
+						ctx,
+						model: initial,
+						msgServer: msg.c,
+					});
+					outputs.push(output);
+					break;
+				}
+			}
+		}
+		return outputs;
+	};
+
+	return {
+		ctx,
+		updates,
+	};
+};
+
 const randomProfile = async (): Promise<Profile> => {
 	return {
 		avatarUrl: ProfileAvatar.random(),

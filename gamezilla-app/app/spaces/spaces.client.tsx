@@ -65,8 +65,8 @@ export const update: ClientModule["update"] = (input) => {
 	};
 };
 
-export const updateMain = (input: Input, acc?: Output): Output => {
-	acc = acc ?? updateChild(input);
+export const updateMain = (input: Input, initial?: Output): Output => {
+	const acc = initial ?? updateChild(input);
 
 	const [spaceEvent, ...spaceEventsRest] = acc.msgSpaceEvent ?? [];
 
@@ -212,6 +212,9 @@ export const View: ClientModule["View"] = (props) => {
 							model={props.model}
 						/>
 					);
+				}
+				default: {
+					return null;
 				}
 			}
 		}

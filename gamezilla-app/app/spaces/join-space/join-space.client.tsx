@@ -121,14 +121,12 @@ const View: SpaceClientModule["View"] = (input) => {
 			<div className="flex w-full flex-1 flex-col overflow-y-scroll">
 				<ViewGameHeader
 					title={spaceState.game ? gameNameToString(spaceState.game.t) : null}
-					renderCoverArt={
-						spaceState.game
-							? (props) => (
-									<div {...props}>
-										<CoverArt gameName={spaceState.game!.t} />
-									</div>
-								)
-							: undefined
+					renderCoverArt={(props) =>
+						spaceState.game ? (
+							<div {...props}>
+								<CoverArt gameName={spaceState.game.t} />
+							</div>
+						) : null
 					}
 				/>
 
@@ -158,9 +156,13 @@ const View: SpaceClientModule["View"] = (input) => {
 					variant="contained"
 					color="primary"
 					onClick={() => {
+						const spaceId = input.ctx.space?.spaceId;
+						if (!spaceId) {
+							return;
+						}
 						input.dispatch({
 							t: "clicked-join-space-button",
-							spaceId: input.ctx.space?.spaceId!,
+							spaceId,
 						});
 					}}
 					text="Join space"
