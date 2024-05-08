@@ -17,36 +17,36 @@ import {
 import { Spaces } from "../spaces-core";
 
 describe(import.meta.file, () => {
-	it("should navigate to list screen after leaving space", async () => {
+	it("should navigate to list screen after leaving space", () => {
 		const ctx = Ctx();
 		const spaceId = SpaceId.generate();
 
-		const joined = await andThen(
+		const joined = andThen(
 			init(ctx),
 			userStartedSpace(ctx, UserId.generate(), spaceId),
 			userJoinedSpace(ctx, ctx.currentUserId, spaceId),
 		);
 
-		const output = await andThen(
-			{ model: joined.model },
+		const output = andThen(
+			joined,
 			userLeftSpace(ctx, ctx.currentUserId, spaceId),
 		);
 
 		expect(didPushRoute(output, (x) => x.t === "space-list")).toBe(true);
 	});
 
-	it("should only redirect to list screen for the user leaving the space", async () => {
+	it("should only redirect to list screen for the user leaving the space", () => {
 		const ctx = Ctx();
 		const spaceId = SpaceId.generate();
 		const userId = UserId.generate();
 
-		const joined = await andThen(
+		const joined = andThen(
 			init(ctx),
 			userStartedSpace(ctx, ctx.currentUserId, spaceId),
 			userJoinedSpace(ctx, userId, spaceId),
 		);
 
-		const output = await andThen(
+		const output = andThen(
 			{ model: joined.model },
 			userLeftSpace(ctx, userId, spaceId),
 		);
@@ -54,17 +54,17 @@ describe(import.meta.file, () => {
 		expect(didPushRoute(output)).toBe(false);
 	});
 
-	it("should show some toast after leaving a space", async () => {
+	it("should show some toast after leaving a space", () => {
 		const ctx = Ctx();
 		const spaceId = SpaceId.generate();
 
-		const joined = await andThen(
+		const joined = andThen(
 			init(ctx),
 			userStartedSpace(ctx, UserId.generate(), spaceId),
 			userJoinedSpace(ctx, ctx.currentUserId, spaceId),
 		);
 
-		const output = await andThen(
+		const output = andThen(
 			{ model: joined.model },
 			userLeftSpace(ctx, ctx.currentUserId, spaceId),
 		);
@@ -72,10 +72,10 @@ describe(import.meta.file, () => {
 		expect(didShowToast(output)).toBe(true);
 	});
 
-	it("user is not in space after leaving", async () => {
+	it("user is not in space after leaving", () => {
 		const ctx = Ctx();
 		const spaceId = SpaceId.generate();
-		const updated = await andThen(
+		const updated = andThen(
 			init(ctx),
 			userStartedSpace(ctx, UserId.generate(), spaceId),
 			userJoinedSpace(ctx, ctx.currentUserId, spaceId),
@@ -87,20 +87,17 @@ describe(import.meta.file, () => {
 		);
 	});
 
-	it("should play sound after leaving", async () => {
+	it("should play sound after leaving", () => {
 		const ctx = Ctx();
 		const spaceId = SpaceId.generate();
 
-		const joined = await andThen(
+		const joined = andThen(
 			init(ctx),
 			userStartedSpace(ctx, UserId.generate(), spaceId),
 			userJoinedSpace(ctx, ctx.currentUserId, spaceId),
 		);
 
-		const left = await andThen(
-			{ model: joined.model },
-			clickedLeaveSpaceButton(ctx),
-		);
+		const left = andThen(joined, clickedLeaveSpaceButton(ctx));
 
 		expect(didPlaySound(left)).toBe(true);
 	});
