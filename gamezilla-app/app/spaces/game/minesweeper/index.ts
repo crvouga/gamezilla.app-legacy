@@ -1,1 +1,1 @@
-export * from "./lib/game-minesweeper";
+export * from "./minesweeper-ui";
