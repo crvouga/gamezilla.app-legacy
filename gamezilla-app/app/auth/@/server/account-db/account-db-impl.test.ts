@@ -62,7 +62,7 @@ describe(import.meta.file, () => {
 
 	it("should be able to find account by phone number", async () => {
 		const f = await Fixture();
-		const phoneNumber = PhoneNumber.random()
+		const phoneNumber = PhoneNumber.random();
 		const account: UserAccount = {
 			phoneNumber,
 			userId: UserId.generate(),

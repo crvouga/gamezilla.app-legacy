@@ -8,7 +8,7 @@ import {
 	isErr,
 	isOk,
 } from "gamezilla-app/@/core";
-import { Hashing } from "gamezilla-app/@/hashing";
+import { Hashing, IHashing } from "gamezilla-app/@/hashing";
 import { Translator } from "gamezilla-app/app/@/client/translator";
 import { Logger } from "gamezilla-app/app/@/server/logger";
 import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
@@ -23,6 +23,7 @@ const Fixture = async (input?: {
 	sendCodeHourlyLimit?: number;
 	sendCodeDailyLimit?: number;
 	now?: () => Posix;
+	hashing?: IHashing;
 }) => {
 	const sms = SMSFake();
 	const CODE = "123456";
@@ -31,7 +32,7 @@ const Fixture = async (input?: {
 	const logger = Logger({ t: "noop" });
 	const translator = Translator("en");
 	const verificationDb = VerificationDb({ t: "hash-map" });
-	const hashing = Hashing({ t: "noop" });
+	const hashing = input?.hashing ?? Hashing({ t: "noop" });
 
 	const verifySMS = VerifySMS({
 		t: "real",
@@ -51,6 +52,7 @@ const Fixture = async (input?: {
 	const phoneNumber = Result.unwrap(PhoneNumber.fromString("+1 480-209-8698"));
 
 	return {
+		verificationDb,
 		translator,
 		CODE,
 		WRONG_CODE,
@@ -300,5 +302,27 @@ describe(import.meta.file, () => {
 		expect(secondVerification.t).toBe("err");
 		if (isErr(secondVerification))
 			expect(secondVerification.error.t).toBe("verification-already-verified");
+	});
+
+	it("should hash sent codes stored in the database", async () => {
+		const f = await Fixture({
+			hashing: Hashing({ t: 'bun' }),
+		});
+		const sent = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+		const verificationId = Result.unwrap(sent).verificationId;
+		const code = f.CODE;
+		const verification = await f.verifySMS.verifyCode({ verificationId, code });
+		expect(isOk(verification)).toBe(true);
+		const found = Result.unwrap(
+			await f.verificationDb.find({
+				where: {
+					verificationId: {
+						"=": verificationId,
+					},
+				},
+			}),
+		);
+		const codeHash = found.items[0]?.codeHash.value;
+		expect(codeHash).not.toEqual(code);
 	});
 });
