@@ -32,6 +32,31 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 		async sendCode(input) {
 			const now = deps.now();
 
+			const lastDayVerifications = await deps.verificationDb.find({
+				where: {
+					createdAt: {
+						"<=": now,
+						">=": Posix.sub(now, TimeSpan.fromDays(1)),
+					},
+					phoneNumber: {
+						"=": input.phoneNumber,
+					},
+				},
+			});
+
+			if (isErr(lastDayVerifications)) {
+				return Err({
+					t: "database-error",
+					error: lastDayVerifications.error,
+				});
+			}
+
+			if (lastDayVerifications.value.items.length >= deps.sendCodeDailyLimit) {
+				return Err({
+					t: "daily-limit-reached",
+				});
+			}
+
 			const lastHourVerifications = await deps.verificationDb.find({
 				where: {
 					createdAt: {
@@ -56,31 +81,6 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 			) {
 				return Err({
 					t: "hourly-limit-reached",
-				});
-			}
-
-			const lastDayVerifications = await deps.verificationDb.find({
-				where: {
-					createdAt: {
-						"<=": now,
-						">=": Posix.sub(now, TimeSpan.fromDays(1)),
-					},
-					phoneNumber: {
-						"=": input.phoneNumber,
-					},
-				},
-			});
-
-			if (isErr(lastDayVerifications)) {
-				return Err({
-					t: "database-error",
-					error: lastDayVerifications.error,
-				});
-			}
-
-			if (lastDayVerifications.value.items.length >= deps.sendCodeDailyLimit) {
-				return Err({
-					t: "daily-limit-reached",
 				});
 			}
 
@@ -127,6 +127,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				verificationId: verificationNew.verificationId,
 			});
 		},
+		
 		async verifyCode(input) {
 			const found = await deps.verificationDb.find({
 				where: {

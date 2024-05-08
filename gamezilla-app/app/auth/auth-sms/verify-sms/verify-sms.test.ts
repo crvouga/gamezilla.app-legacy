@@ -12,7 +12,7 @@ import { Hashing, IHashing } from "gamezilla-app/@/hashing";
 import { Translator } from "gamezilla-app/app/@/client/translator";
 import { Logger } from "gamezilla-app/app/@/server/logger";
 import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
-import { CodeGenerator } from "./code-generator";
+import { CodeGenerator, ICodeGenerator } from "./code-generator";
 import { VerificationId } from "./verification";
 import { VerificationDb } from "./verification-db";
 import { VerifySMS } from "./verify-sms-impl";
@@ -22,13 +22,15 @@ const Fixture = async (input?: {
 	verifyCodeExpiresIn?: TimeSpan;
 	sendCodeHourlyLimit?: number;
 	sendCodeDailyLimit?: number;
+	codeGenerator?: ICodeGenerator;
 	now?: () => Posix;
 	hashing?: IHashing;
 }) => {
 	const sms = SMSFake();
 	const CODE = "123456";
 	const WRONG_CODE = "42";
-	const codeGenerator = CodeGenerator({ t: "fake", code: CODE });
+	const codeGenerator =
+		input?.codeGenerator ?? CodeGenerator({ t: "fake", code: CODE });
 	const logger = Logger({ t: "noop" });
 	const translator = Translator("en");
 	const verificationDb = VerificationDb({ t: "hash-map" });
@@ -188,6 +190,63 @@ describe(import.meta.file, () => {
 		);
 	});
 
+	it("should fail if the code has expired, even if no new code has been sent", async () => {
+		const verifyCodeExpiresIn = TimeSpan.fromMinutes(5);
+
+		let now = Posix.now();
+		const f = await Fixture({ verifyCodeExpiresIn, now: () => now });
+
+		const sent = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+		const verificationId = Result.unwrap(sent).verificationId;
+
+		now = Posix.add(now, verifyCodeExpiresIn);
+		now = Posix.add(now, TimeSpan.fromSeconds(1));
+
+		const verified = await f.verifySMS.verifyCode({
+			verificationId,
+			code: f.CODE,
+		});
+
+		expect(isErr(verified)).toBe(true);
+		isErr(verified) && expect(verified.error.t).toBe("verification-expired");
+	});
+
+	it("should fail to verify code for the same phone number but different verification requests", async () => {
+		const CODE_A = "123456";
+		const CODE_B = "654321";
+
+		let currentCode: string;
+		const f = await Fixture({
+			codeGenerator: {
+				generate: () => currentCode,
+			},
+		});
+
+		currentCode = CODE_A;
+		const sentA = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+		const verificationIdA = Result.unwrap(sentA).verificationId;
+
+		currentCode = CODE_B;
+		const sentB = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+		const verificationIdB = Result.unwrap(sentB).verificationId;
+
+		const verifiedAWithCodeB = await f.verifySMS.verifyCode({
+			verificationId: verificationIdA,
+			code: CODE_B,
+		});
+		const verifiedBWithCodeA = await f.verifySMS.verifyCode({
+			verificationId: verificationIdB,
+			code: CODE_A,
+		});
+
+		expect(isErr(verifiedAWithCodeB)).toBe(true);
+		isErr(verifiedAWithCodeB) &&
+			expect(verifiedAWithCodeB.error.t).toBe("code-incorrect");
+		expect(isErr(verifiedBWithCodeA)).toBe(true);
+		isErr(verifiedBWithCodeA) &&
+			expect(verifiedBWithCodeA.error.t).toBe("code-incorrect");
+	});
+
 	it("should error sending code if hourly limit is reached", async () => {
 		const sendCodeHourlyLimit = 3;
 		const f = await Fixture({ sendCodeHourlyLimit });
@@ -306,23 +365,24 @@ describe(import.meta.file, () => {
 
 	it("should hash sent codes stored in the database", async () => {
 		const f = await Fixture({
-			hashing: Hashing({ t: 'bun' }),
+			hashing: Hashing({ t: "bun" }),
 		});
 		const sent = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
 		const verificationId = Result.unwrap(sent).verificationId;
 		const code = f.CODE;
 		const verification = await f.verifySMS.verifyCode({ verificationId, code });
-		expect(isOk(verification)).toBe(true);
-		const found = Result.unwrap(
-			await f.verificationDb.find({
-				where: {
-					verificationId: {
-						"=": verificationId,
-					},
+
+		const found = await f.verificationDb.find({
+			where: {
+				verificationId: {
+					"=": verificationId,
 				},
-			}),
-		);
-		const codeHash = found.items[0]?.codeHash.value;
+			},
+		});
+
+		const codeHash = Result.unwrap(found).items[0]?.codeHash.value;
+
+		expect(isOk(verification)).toBe(true);
 		expect(codeHash).not.toEqual(code);
 	});
 });
