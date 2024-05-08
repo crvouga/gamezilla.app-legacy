@@ -2,8 +2,10 @@ import type { VDom } from "gamezilla-app/@/vdom";
 import { IconPlus, Swiper } from "gamezilla-app/app/@/ui";
 import type { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
 
-const COLUMN_COUNT = 5;
-const ROW_COUNT = 6;
+const IS_TEST = true;
+
+const COLUMN_COUNT = IS_TEST ? 2 : 5;
+const ROW_COUNT = IS_TEST ? 2 : 6;
 const PER_SLIDE_ITEM_COUNT = COLUMN_COUNT * ROW_COUNT;
 
 const toIndex = ({ x, y }: { x: number; y: number }) => {

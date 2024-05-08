@@ -337,16 +337,22 @@ describe(import.meta.file, () => {
 	});
 
 	it("should prevent slide index from going out of bounds", async () => {
-		const f = await Fixture({ puzzleCount: 3 });
+		const f = await Fixture({
+			puzzleCount: FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
+		});
+		const expectedSlide = FlowPackGridUI.toSlideIndex(
+			FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
+		);
 		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-changed-slide",
-				newSlideIndex: 10,
+				newSlideIndex: 100000,
 				userId: f.currentUserId,
 			},
 		]);
-		expect(PackBuilderCore.toSlideIndex(f.modelCore.packBuilder)).toBe(0);
-		expect(PackBuilderCore.toSlideIndex(modelCore.packBuilder)).toBe(0);
+		expect(PackBuilderCore.toSlideIndex(modelCore.packBuilder)).toBe(
+			expectedSlide,
+		);
 	});
 
 	it("should be on the correct slide when closing the add puzzle screen", async () => {

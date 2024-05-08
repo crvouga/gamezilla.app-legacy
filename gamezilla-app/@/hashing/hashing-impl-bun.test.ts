@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { IS_INTEGRATION_TEST } from "public-config";
 import { Hashing } from "./hashing-impl";
 
 const Fixture = () => {
@@ -8,7 +9,7 @@ const Fixture = () => {
 	};
 };
 
-describe(import.meta.file, () => {
+describe.if(IS_INTEGRATION_TEST)( import.meta.file, () => {
 	it("should be able to hash a password with bcrypt", async () => {
 		const f = Fixture();
 		const password = "my-pa$$w0rd";

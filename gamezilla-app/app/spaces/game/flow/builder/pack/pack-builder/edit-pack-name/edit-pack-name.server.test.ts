@@ -39,8 +39,8 @@ describe(import.meta.file, () => {
 			null,
 		);
 		expect(String(after?.name)).toBe(someNewName);
-    });
-    
+	});
+
 	it("should output persist pack msg core after user clicks save button", async () => {
 		const f = await Fixture();
 		const someNewName = "some new name";

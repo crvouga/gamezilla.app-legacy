@@ -11,6 +11,8 @@ import config from "./config.json";
 
 export const IS_PROD = process.env["NODE_ENV"] === "production";
 
+export const IS_INTEGRATION_TEST = process.env["IS_INTEGRATION_TEST"] === "true";
+
 //
 //
 //
