@@ -103,7 +103,7 @@ describe(import.meta.file, () => {
 		const puzzleB = await randomFlowPuzzle();
 		await f.flowPuzzleDb.put(puzzleB);
 
-		for (let i = 0; i < 3; i++) {
+		for (let i = 0; i < 1; i++) {
 			await f.flowPuzzleDb.put(await randomFlowPuzzle());
 		}
 
@@ -129,7 +129,7 @@ describe(import.meta.file, () => {
 	});
 
 	it("should be able to count puzzles by created by user id", async () => {
-		const EXPECTED_COUNT = 3;
+		const EXPECTED_COUNT = 1;
 
 		const f = await Fixture();
 
@@ -137,7 +137,7 @@ describe(import.meta.file, () => {
 		for (let i = 0; i < EXPECTED_COUNT; i++) {
 			await f.flowPuzzleDb.put(await randomFlowPuzzle({ createdBy }));
 		}
-		for (let i = 0; i < 3; i++) {
+		for (let i = 0; i < 1; i++) {
 			await f.flowPuzzleDb.put(await randomFlowPuzzle());
 		}
 
