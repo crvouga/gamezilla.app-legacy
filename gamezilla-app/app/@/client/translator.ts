@@ -1,8 +1,8 @@
 import { PubSub } from "gamezilla-app/@/core";
 import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 import {
-	type Translator,
 	loadTranslator,
+	type Translator,
 } from "gamezilla-app/@/l18n/generated";
 
 const state: {
@@ -38,7 +38,7 @@ function noop(): string {
 	return "";
 }
 
-export function getTranslator(languageCode: LanguageCodeISO_639_1): Translator {
+export function Translator(languageCode: LanguageCodeISO_639_1): Translator {
 	const translator = state.translators[languageCode];
 
 	if (translator && translator.lang === languageCode) {

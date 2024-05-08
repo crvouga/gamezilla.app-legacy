@@ -21,6 +21,7 @@ const update: ServerModule["update"] = async ({
 				role: "guest",
 				userId: UserId.generate(),
 				createdAt: ctx.now,
+				phoneNumber: null,
 			};
 
 			const insertedAccount = await deps.AccountDb.insert({

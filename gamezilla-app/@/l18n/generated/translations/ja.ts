@@ -11,6 +11,10 @@ export const translations: Text = {
 	"verify-sms-problem.database-error": "データベースエラー",
 	"verify-sms-problem.verification-expired-too-many-failed-attempts":
 		"多くの失敗した試行のため、認証が期限切れ",
+	"verify-sms-problem.bad-input-missing-verification-id":
+		"不正な入力。検証IDが欠落しています",
+	"verify-sms-problem.send-code-hourly-limit-reached":
+		"時間制限に達しました。後でもう一度お試しください。",
 	"auth-sms.login-with-phone": "電話でログイン",
 	"auth-sms.phone-number": "電話番号",
 	"auth-sms.send-code": "コードを送信",

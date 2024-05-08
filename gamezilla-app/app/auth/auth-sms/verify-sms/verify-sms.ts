@@ -1,5 +1,4 @@
 import type { PhoneNumber, Task } from "gamezilla-app/@/core";
-import type { Hash } from "gamezilla-app/@/hashing";
 import type { Translator } from "gamezilla-app/@/l18n/generated";
 import type { VerificationId } from "./verification";
 
@@ -49,12 +48,36 @@ export const verifyCodeProblemToString = ({
 	}
 };
 
+export type SendCodeProblem =
+	| {
+			t: "database-error";
+			error: string;
+	  }
+	| {
+			t: "hourly-limit-reached";
+	  };
+
+export const sendCodeProblemToString = ({
+	problem,
+	t,
+}: {
+	problem: SendCodeProblem;
+	t: Translator;
+}): string => {
+	switch (problem.t) {
+		case "database-error":
+			return t("verify-sms-problem.database-error");
+		case "hourly-limit-reached":
+			return t("verify-sms-problem.send-code-hourly-limit-reached");
+	}
+};
+
 export type IVerifySMS = {
 	sendCode: (input: {
 		phoneNumber: PhoneNumber;
-	}) => Task<string, { verificationId: VerificationId }>;
+	}) => Task<SendCodeProblem, { verificationId: VerificationId }>;
 	verifyCode: (input: {
 		verificationId: VerificationId;
 		code: string;
-	}) => Task<VerifyCodeProblem, { phoneNumberHash: Hash }>;
+	}) => Task<VerifyCodeProblem, { phoneNumber: PhoneNumber }>;
 };

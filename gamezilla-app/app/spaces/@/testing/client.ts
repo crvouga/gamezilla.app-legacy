@@ -2,7 +2,7 @@ import { Posix, pipe, type TimeSpan } from "gamezilla-app/@/core";
 import { LamportClock, LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import type { Route } from "gamezilla-app/@/routing/generated/routes";
 import { routeChanged, type ClientCtx } from "gamezilla-app/app/@/client";
-import { getTranslator } from "gamezilla-app/app/@/client/translator";
+import { Translator } from "gamezilla-app/app/@/client/translator";
 import {
 	ProfileAvatar,
 	SpaceId,
@@ -26,7 +26,7 @@ import type * as SpaceCore from "../../spaces.types";
 export const Ctx = (): ClientCtx => {
 	return {
 		navigatorLanguage: "en",
-		t: getTranslator("en"),
+		t: Translator("en"),
 		currentRoute: { n: "spaces", t: "space-list" },
 		documentVisibilityState: "visible",
 		now: Posix.now(),
@@ -38,7 +38,7 @@ export const Ctx = (): ClientCtx => {
 export const SoaceClientFixture = async () => {
 	const ctx: ClientCtx = {
 		navigatorLanguage: "en",
-		t: getTranslator("en"),
+		t: Translator("en"),
 		currentRoute: { n: "spaces", t: "space-list" },
 		documentVisibilityState: "visible",
 		now: Posix.now(),
@@ -100,7 +100,7 @@ export const SpaceClientFixture = () => {
 
 	const ctx: ClientCtx = {
 		navigatorLanguage: "en",
-		t: getTranslator("en"),
+		t: Translator("en"),
 		currentRoute: { n: "spaces", t: "space-list" },
 		currentUserId: currentUser.userId,
 		documentVisibilityState: "visible",

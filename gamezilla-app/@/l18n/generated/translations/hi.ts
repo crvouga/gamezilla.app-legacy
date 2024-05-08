@@ -11,6 +11,10 @@ export const translations: Text = {
 	"verify-sms-problem.database-error": "डेटाबेस त्रुटि",
 	"verify-sms-problem.verification-expired-too-many-failed-attempts":
 		"बहुत सारे विफल प्रयासों के कारण सत्यापन समाप्त हो गया",
+	"verify-sms-problem.bad-input-missing-verification-id":
+		"बुरी इनपुट। सत्यापन आईडी गायब है",
+	"verify-sms-problem.send-code-hourly-limit-reached":
+		"प्रति घंटे सीमा पहुंच गई है। कृपया बाद में पुन: प्रयास करें।",
 	"auth-sms.login-with-phone": "फोन से लॉगिन करें",
 	"auth-sms.phone-number": "फ़ोन नंबर",
 	"auth-sms.send-code": "कोड भेजें",

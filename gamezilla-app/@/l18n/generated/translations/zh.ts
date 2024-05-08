@@ -11,6 +11,10 @@ export const translations: Text = {
 	"verify-sms-problem.database-error": "数据库错误",
 	"verify-sms-problem.verification-expired-too-many-failed-attempts":
 		"由于失败尝试过多，验证已过期",
+	"verify-sms-problem.bad-input-missing-verification-id":
+		"错误输入。缺少验证ID",
+	"verify-sms-problem.send-code-hourly-limit-reached":
+		"已达到每小时限制。请稍后再试。",
 	"auth-sms.login-with-phone": "使用电话登录",
 	"auth-sms.phone-number": "电话号码",
 	"auth-sms.send-code": "发送代码",

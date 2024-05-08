@@ -1,4 +1,4 @@
-import type { Posix, TimeSpan } from "gamezilla-app/@/core";
+import type { PhoneNumber, Posix, TimeSpan } from "gamezilla-app/@/core";
 import type { Hash } from "gamezilla-app/@/hashing";
 import type { VerificationAttemptId } from "./verification-attempt-id";
 import type { VerificationId } from "./verification-id";
@@ -6,7 +6,7 @@ import type { VerificationId } from "./verification-id";
 export type Verification = {
 	verificationId: VerificationId;
 	codeHash: Hash;
-	phoneNumberHash: Hash;
+	phoneNumber: PhoneNumber;
 	createdAt: Posix;
 	expiresIn: TimeSpan;
 	verifiedAt: Posix | null;

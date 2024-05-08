@@ -1,11 +1,11 @@
-import { getTranslator } from "gamezilla-app/app/@/client/translator";
+import { Posix } from "gamezilla-app/@/core";
+import { Translator } from "gamezilla-app/app/@/client/translator";
 import {
 	ProfileAvatar,
+	Username,
 	type SpaceId,
 	type UserId,
-	Username,
 } from "gamezilla-app/app/@/data";
-import { Posix } from "gamezilla-app/@/core";
 import type { SpaceClientCtx } from "../../../@/space";
 
 const currentUserId = "test-user-id" as UserId;
@@ -15,7 +15,7 @@ const currentSpaceId = "test-space-id" as SpaceId;
 export async function testSpaceClientCtx(): Promise<SpaceClientCtx> {
 	return {
 		navigatorLanguage: "en",
-		t: getTranslator("en"),
+		t: Translator("en"),
 		currentRoute: {
 			n: "spaces",
 			t: "space",

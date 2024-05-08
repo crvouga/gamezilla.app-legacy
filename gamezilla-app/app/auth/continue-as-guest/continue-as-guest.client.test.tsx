@@ -9,11 +9,11 @@ import {
 } from "gamezilla-app/@/core";
 import { andThen } from "gamezilla-app/app/@/architecture/app-client";
 import {
-	type AnonymousClientCtx,
 	didPlaySound,
 	didSendToServer,
+	type AnonymousClientCtx,
 } from "gamezilla-app/app/@/client";
-import { getTranslator } from "gamezilla-app/app/@/client/translator";
+import { Translator } from "gamezilla-app/app/@/client/translator";
 import { UserId } from "gamezilla-app/app/@/data";
 import * as AuthClient from "../auth.client";
 import type { ModelClient } from "../auth.types";
@@ -24,7 +24,7 @@ const ctx: AnonymousClientCtx = {
 		t: "login",
 	},
 	navigatorLanguage: "en",
-	t: getTranslator("en"),
+	t: Translator("en"),
 	documentVisibilityState: "visible",
 	now: Posix.now(),
 	profiles: {},

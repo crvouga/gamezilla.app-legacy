@@ -11,6 +11,10 @@ export const translations: Text = {
 	"verify-sms-problem.database-error": "Datenbankfehler",
 	"verify-sms-problem.verification-expired-too-many-failed-attempts":
 		"Verifizierung abgelaufen aufgrund zu vieler fehlgeschlagener Versuche",
+	"verify-sms-problem.bad-input-missing-verification-id":
+		"Schlechte Eingabe. Fehlende Verifizierungs-ID",
+	"verify-sms-problem.send-code-hourly-limit-reached":
+		"Stündliches Limit erreicht. Bitte versuchen Sie es später erneut.",
 	"auth-sms.login-with-phone": "Mit Telefonnummer anmelden",
 	"auth-sms.phone-number": "Telefonnummer",
 	"auth-sms.send-code": "Code senden",

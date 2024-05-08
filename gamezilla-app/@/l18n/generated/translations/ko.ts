@@ -11,6 +11,10 @@ export const translations: Text = {
 	"verify-sms-problem.database-error": "데이터베이스 오류",
 	"verify-sms-problem.verification-expired-too-many-failed-attempts":
 		"너무 많은 실패한 시도로 인한 인증 만료",
+	"verify-sms-problem.bad-input-missing-verification-id":
+		"잘못된 입력. 확인 ID 누락",
+	"verify-sms-problem.send-code-hourly-limit-reached":
+		"시간당 제한에 도달했습니다. 나중에 다시 시도하십시오.",
 	"auth-sms.login-with-phone": "전화로 로그인",
 	"auth-sms.phone-number": "전화 번호",
 	"auth-sms.send-code": "코드 보내기",

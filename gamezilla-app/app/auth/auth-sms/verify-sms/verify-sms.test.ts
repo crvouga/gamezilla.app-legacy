@@ -1,64 +1,63 @@
 import { describe, expect, it } from "bun:test";
-import { getTranslator } from "gamezilla-app/app/@/client/translator";
-import { DbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
-import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
-import { PhoneNumber, Result, eq, isErr, isOk } from "gamezilla-app/@/core";
+import {
+	PhoneNumber,
+	Posix,
+	Result,
+	TimeSpan,
+	eq,
+	isErr,
+	isOk,
+} from "gamezilla-app/@/core";
 import { Hashing } from "gamezilla-app/@/hashing";
+import { Translator } from "gamezilla-app/app/@/client/translator";
+import { Logger } from "gamezilla-app/app/@/server/logger";
+import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
 import { CodeGenerator } from "./code-generator";
 import { VerificationId } from "./verification";
-import { VerificationAttemptDb, VerificationDb } from "./verification-db";
+import { VerificationDb } from "./verification-db";
 import { VerifySMS } from "./verify-sms-impl";
-import { Logger } from "gamezilla-app/app/@/server/logger";
 
-const Fixture = async () => {
+const Fixture = async (input?: {
+	verifyCodeMaxAttempts?: number;
+	verifyCodeExpiresIn?: TimeSpan;
+	sendCodeHourlyLimit?: number;
+	now?: () => Posix;
+}) => {
 	const sms = SMSFake();
-
-	const dbConnKv = await DbConnKv({ t: "hash-map" });
-
 	const CODE = "123456";
 	const WRONG_CODE = "42";
-
 	const codeGenerator = CodeGenerator({ t: "fake", code: CODE });
-
 	const logger = Logger({ t: "noop" });
-
-	const translator = getTranslator("en");
+	const translator = Translator("en");
+	const verificationDb = VerificationDb({ t: "hash-map" });
+	const hashing = Hashing({ t: "noop" });
 
 	const verifySMS = VerifySMS({
 		t: "real",
-		dbConnKv,
 		logger,
 		sms,
 		codeGenerator,
 		translator,
-		verificationAttemptDb: VerificationAttemptDb({
-			t: "hash-map",
-		}),
-		verificationDb: VerificationDb({
-			t: "hash-map",
-		}),
-		hashing: Hashing({ t: "noop" }),
+		verificationDb,
+		hashing,
+		now: input?.now ?? Posix.now,
+		sendCodeHourlyLimit: input?.sendCodeHourlyLimit ?? 10,
+		verifyCodeExpiresIn: input?.verifyCodeExpiresIn ?? TimeSpan.fromMinutes(5),
+		verifyCodeMaxAttempts: input?.verifyCodeMaxAttempts ?? 3,
 	});
 
-	const phoneNumber = Result.withDefault(
-		PhoneNumber.fromString("+1 480-209-8698"),
-		null,
-	);
-
-	if (!phoneNumber) {
-		throw new Error("Invalid phone number");
-	}
+	const phoneNumber = Result.unwrap(PhoneNumber.fromString("+1 480-209-8698"));
 
 	return {
 		translator,
 		CODE,
 		WRONG_CODE,
 		phoneNumber,
-		dbConnKv,
 		verifySMS,
 		sms,
 	};
 };
+
 
 describe(import.meta.file, () => {
 	it("should be ok", async () => {
@@ -66,11 +65,7 @@ describe(import.meta.file, () => {
 
 		const sent = await f.verifySMS.sendCode(f);
 
-		const verificationId = Result.withDefault(sent, null)?.verificationId;
-
-		if (!verificationId) {
-			throw new Error("Invalid verification id");
-		}
+		const verificationId = Result.unwrap(sent).verificationId;
 
 		const verified = await f.verifySMS.verifyCode({
 			verificationId,
@@ -132,34 +127,24 @@ describe(import.meta.file, () => {
 	});
 
 	it("should eventually error after enough failed attempts", async () => {
-		const f = await Fixture();
+		const f = await Fixture({ verifyCodeMaxAttempts: 1 });
 
 		const sent = await f.verifySMS.sendCode(f);
 
-		const verificationId = Result.withDefault(sent, null)?.verificationId;
+		const verificationId = Result.unwrap(sent).verificationId;
 
-		if (!verificationId) {
-			throw new Error("Invalid verification id");
-		}
-
-		for (let i = 0; i < 1000; i++) {
-			const verified = await f.verifySMS.verifyCode({
-				verificationId: verificationId,
-				code: f.WRONG_CODE,
-			});
-
-			if (isErr(verified) && verified.error.t === "code-incorrect") {
-				continue;
-			}
-
-			if (
-				isErr(verified) &&
-				verified.error.t === "verification-expired-too-many-failed-attempts"
-			) {
-				return;
-			}
-		}
-		throw new Error("Should have eventually errored");
+		await f.verifySMS.verifyCode({
+			verificationId,
+			code: f.WRONG_CODE,
+		});
+		const verified = await f.verifySMS.verifyCode({
+			verificationId,
+			code: f.WRONG_CODE,
+		});
+		expect(
+			isErr(verified) &&
+				verified.error.t === "verification-expired-too-many-failed-attempts",
+		).toBe(true);
 	});
 
 	it("should error if the verification id is not found", async () => {
@@ -175,5 +160,74 @@ describe(import.meta.file, () => {
 		expect(
 			isErr(verified) && verified.error.t === "verification-not-found",
 		).toBe(true);
+	});
+
+	it("should error if verification expired", async () => {
+		const verifyCodeExpiresIn = TimeSpan.fromMinutes(5);
+
+		let now = Posix.now();
+
+		const f = await Fixture({ verifyCodeExpiresIn, now: () => now });
+
+		const sent = await f.verifySMS.sendCode(f);
+
+		const verificationId = Result.unwrap(sent).verificationId;
+
+		now = Posix.add(now, verifyCodeExpiresIn);
+
+		const verified = await f.verifySMS.verifyCode({
+			verificationId,
+			code: f.CODE,
+		});
+
+		expect(isErr(verified) && verified.error.t === "verification-expired").toBe(
+			true,
+		);
+	});
+
+	it("should error sending code if hourly limit is reached", async () => {
+		const sendCodeHourlyLimit = 3;
+		const f = await Fixture({ sendCodeHourlyLimit });
+		for (let i = 0; i < sendCodeHourlyLimit; i++) {
+			await f.verifySMS.sendCode({
+				phoneNumber: f.phoneNumber,
+			});
+		}
+		const sent = await f.verifySMS.sendCode({
+			phoneNumber: f.phoneNumber,
+		});
+		expect(sent.t).toBe("err");
+		if (isErr(sent)) expect(sent.error.t).toBe("hourly-limit-reached");
+	});
+
+	it('should let user send code again after it has been over an hour after they hit the limit', async () => {
+		const sendCodeHourlyLimit = 3
+		let now = Posix.now();
+		const f = await Fixture({ sendCodeHourlyLimit, now: () => now });
+		for(let i = 0; i < sendCodeHourlyLimit; i++) {
+			await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+		}
+		now = Posix.add(now, TimeSpan.add(TimeSpan.fromHours(1), TimeSpan.fromMilliseconds(1)));
+		const sent = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+		expect(isOk(sent)).toBe(true);
+	})
+
+	it("should only apply hourly limit to a single phone number", async () => {
+		const sendCodeHourlyLimit = 3;
+
+		const f = await Fixture({ sendCodeHourlyLimit });
+
+		const phoneNumberA = Result.unwrap(
+			PhoneNumber.fromString("+1 480-209-8698"),
+		);
+		const phoneNumberB = Result.unwrap(
+			PhoneNumber.fromString("+1 480-209-8699"),
+		);
+
+		for (let i = 0; i < sendCodeHourlyLimit + 1; i++) {
+			await f.verifySMS.sendCode({ phoneNumber: phoneNumberA });
+		}
+		const sent = await f.verifySMS.sendCode({ phoneNumber: phoneNumberB });
+		expect(isOk(sent)).toBe(true);
 	});
 });

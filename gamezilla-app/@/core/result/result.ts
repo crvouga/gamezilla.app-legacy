@@ -47,14 +47,16 @@ const is = <TError, TValue>(
 	};
 };
 
-const unsafeUnwrap = <TError, TValue>(
+const unwrap = <TError, TValue>(
 	result: ResultPrivate<TError, TValue>,
 ): TValue => {
-	if (result.t === "ok") {
-		return result.value;
-	}
+	switch (result.t) {
+		case "ok":
+			return result.value;
 
-	throw new Error("Tried to unwrap an error result");
+		case "err":
+			throw new Error("Tried to unwrap an error result");
+	}
 };
 
 /**
@@ -167,7 +169,7 @@ export const ResultPrivate = {
 	fromNullable,
 	withDefault,
 	combine,
-	unsafeUnwrap,
+	unwrap,
 };
 
 //

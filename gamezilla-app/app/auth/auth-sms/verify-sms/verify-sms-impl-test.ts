@@ -1,6 +1,6 @@
-import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
 import { Err, Ok, PhoneNumber } from "gamezilla-app/@/core";
-import type { Hash, IHashing } from "gamezilla-app/@/hashing";
+import type { IHashing } from "gamezilla-app/@/hashing";
+import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
 import { VerificationId } from "./verification";
 import type { IVerifySMS } from "./verify-sms";
 
@@ -12,7 +12,7 @@ export type VerifySMSDeps = {
 	delay: () => Promise<void>;
 };
 
-const phoneNumberHashes = new Map<VerificationId, Hash>();
+const phoneNumbers = new Map<VerificationId, PhoneNumber>();
 export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 	return {
 		async sendCode(input) {
@@ -20,15 +20,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 
 			const verificationId = VerificationId.generate();
 
-			const phoneNumberHash = await deps.hashing.hash({
-				algo: {
-					t: "bcrypt",
-					cost: 10,
-				},
-				password: PhoneNumber.toString(input.phoneNumber),
-			});
-
-			phoneNumberHashes.set(verificationId, phoneNumberHash);
+			phoneNumbers.set(verificationId, input.phoneNumber);
 
 			const phoneNumberStr = PhoneNumber.toString(input.phoneNumber);
 
@@ -43,9 +35,9 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 		async verifyCode(input) {
 			await deps.delay();
 
-			const phoneNumberHash = phoneNumberHashes.get(input.verificationId);
+			const phoneNumber = phoneNumbers.get(input.verificationId);
 
-			if (!phoneNumberHash) {
+			if (!phoneNumber) {
 				return Err({
 					t: "verification-not-found",
 				});
@@ -53,7 +45,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 
 			if (input.code === CODE) {
 				return Ok({
-					phoneNumberHash,
+					phoneNumber,
 				});
 			}
 

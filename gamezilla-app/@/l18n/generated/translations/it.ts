@@ -10,6 +10,10 @@ export const translations: Text = {
 	"verify-sms-problem.database-error": "Errore del database",
 	"verify-sms-problem.verification-expired-too-many-failed-attempts":
 		"Verifica scaduta a causa di troppi tentativi falliti",
+	"verify-sms-problem.bad-input-missing-verification-id":
+		"Input non valido. ID di verifica mancante",
+	"verify-sms-problem.send-code-hourly-limit-reached":
+		"Limite orario raggiunto. Riprova più tardi.",
 	"auth-sms.login-with-phone": "Accedi con il telefono",
 	"auth-sms.phone-number": "Numero di telefono",
 	"auth-sms.send-code": "Invia codice",

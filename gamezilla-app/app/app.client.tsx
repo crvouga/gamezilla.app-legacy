@@ -12,12 +12,12 @@ import type { Route } from "gamezilla-app/@/routing/generated/routes";
 import type { VDom } from "gamezilla-app/@/vdom";
 import {
 	APP_SOUND,
-	type AnonymousClientCtx,
 	ClientCmd,
-	type ClientCtx,
-	type ClientEvent,
 	isAnonymous,
 	preloadSound,
+	type AnonymousClientCtx,
+	type ClientCtx,
+	type ClientEvent,
 } from "gamezilla-app/app/@/client";
 import {
 	IconGamepad,
@@ -26,7 +26,8 @@ import {
 	Portal,
 	cn,
 } from "gamezilla-app/app/@/ui";
-import { getTranslator } from "./@/client/translator";
+import type { ServerImpl } from "public-config";
+import { Translator } from "./@/client/translator";
 import { IntersectionObserverEmitter } from "./@/ui/intersection-observer";
 import { Platform, Routing, Sound, StatusBar, Toast } from "./app-client";
 import type {
@@ -44,7 +45,6 @@ import {
 	type IClientTransport,
 } from "./wire/transport-client";
 import * as Wire from "./wire/wire.client";
-import type { ServerImpl } from "public-config";
 
 export type Model = ModelClient;
 
@@ -158,7 +158,7 @@ export const init = (input: {
 	const ctx: AnonymousClientCtx = {
 		...input.ctx,
 		currentRoute: routing.model.currentRoute,
-		t: getTranslator(input.ctx.navigatorLanguage),
+		t: Translator(input.ctx.navigatorLanguage),
 		currentUserId: null,
 		documentVisibilityState: "visible",
 		profiles: {},
@@ -495,7 +495,7 @@ const toClientCtx = (input: {
 }): ClientCtx | AnonymousClientCtx => {
 	const anonymousCtx: AnonymousClientCtx = {
 		...input.ctx,
-		t: getTranslator(input.model.lang.lang),
+		t: Translator(input.model.lang.lang),
 		profiles: input.model.profile.profiles,
 		now: input.ctx.now,
 		documentVisibilityState: input.model.platform.documentVisibilityState,

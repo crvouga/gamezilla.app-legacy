@@ -81,6 +81,10 @@ const add = (posix: Posix, timeSpan: TimeSpan): Posix => {
 	return init(toNumber(posix) + TimeSpan.toMilliseconds(timeSpan));
 };
 
+const sub = (posix: Posix, timeSpan: TimeSpan): Posix => {
+	return init(toNumber(posix) - TimeSpan.toMilliseconds(timeSpan));
+}
+
 const fromIsoString = (isoString: string): Posix => {
 	return init(new Date(isoString).getTime());
 };
@@ -100,6 +104,7 @@ export const Posix = {
 	now,
 	diff,
 	add,
+	sub,
 	fromIsoString,
 	toIsoString,
 };

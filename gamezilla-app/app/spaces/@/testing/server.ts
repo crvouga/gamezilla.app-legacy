@@ -1,23 +1,23 @@
+import { Posix } from "gamezilla-app/@/core";
+import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import {
 	ClientId,
 	SessionId,
-	type SpaceId,
 	UserId,
+	type SpaceId,
 } from "gamezilla-app/app/@/data";
 import type { ServerCtx } from "gamezilla-app/app/@/server";
 import { DbConnKvHashMap } from "gamezilla-app/app/@/server/db-conn-kv/db-conn-kv-impl-hash-map";
 import { dbConnSqlNoop } from "gamezilla-app/app/@/server/db-conn-sql";
-import { Posix } from "gamezilla-app/@/core";
-import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
-import { EventId } from "../event";
-import type { Space } from "../../spaces-core";
-import type { ModelServer, ServerDeps } from "../../spaces.types";
-import * as SpacesServer from "../../spaces.server";
-import { ProfileCache } from "../../profile-cache";
-import { smsNoop } from "gamezilla-app/app/@/server/sms";
-import { SpacesDb } from "../../spaces-core/space-db";
-import { GameDb } from "../../space-game/space-game-db";
 import { Logger } from "gamezilla-app/app/@/server/logger";
+import { smsNoop } from "gamezilla-app/app/@/server/sms";
+import { ProfileCache } from "../../profile-cache";
+import { GameDb } from "../../space-game/space-game-db";
+import type { Space } from "../../spaces-core";
+import { SpacesDb } from "../../spaces-core/space-db";
+import * as SpacesServer from "../../spaces.server";
+import type { ModelServer, ServerDeps } from "../../spaces.types";
+import { EventId } from "../event";
 
 export const Fixture = () => {
 	const ctx: ServerCtx = {
@@ -138,6 +138,7 @@ export const authenticatedClientConnected =
 					createdAt: Posix.now(),
 					role: "guest",
 					userId: client.userId,
+					phoneNumber: null,
 				},
 			},
 		});

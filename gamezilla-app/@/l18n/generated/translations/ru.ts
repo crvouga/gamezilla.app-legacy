@@ -13,6 +13,10 @@ export const translations: Text = {
 	"verify-sms-problem.verification-not-found": "Подтверждение не найдено",
 	"verify-sms-problem.verification-expired-too-many-failed-attempts":
 		"Истек срок действия подтверждения из-за слишком многих неудачных попыток",
+	"verify-sms-problem.bad-input-missing-verification-id":
+		"Плохой ввод. Отсутствует идентификатор подтверждения",
+	"verify-sms-problem.send-code-hourly-limit-reached":
+		"Достигнут часовой лимит. Пожалуйста, попробуйте позже.",
 	"auth-sms.login-with-phone": "Войти с телефона",
 	"auth-sms.phone-number": "Номер телефона",
 	"auth-sms.send-code": "Отправить код",

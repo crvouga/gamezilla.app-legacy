@@ -1,15 +1,22 @@
-import { Err, Ok, Posix, Result, isErr } from "gamezilla-app/@/core";
+import {
+	Err,
+	Ok,
+	PhoneNumber,
+	Posix,
+	Result,
+	isErr,
+} from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { UserId, UserRole } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
 import type { IAccountDb } from "./account-db";
-import { Sql } from "gamezilla-app/@/sql";
 
 export const UserAccountRow = p.obj({
 	user_id: p.str,
 	created_at: p.str,
 	user_role: UserRole,
+	phone_number: p.maybe(p.str),
 });
 export type UserAccountRow = p.Infer<typeof UserAccountRow>;
 
@@ -37,6 +44,10 @@ const toAccount = ({
 		userId,
 		role: userAccount.user_role,
 		createdAt: postgresTimestampToPosix(userAccount.created_at),
+		phoneNumber: Result.withDefault(
+			PhoneNumber.fromString(userAccount.phone_number),
+			null,
+		),
 	};
 
 	return Ok(account);
@@ -56,13 +67,15 @@ export const AccountDbPostgres = ({
 			const queried = await dbConnSql.query(
 				UserAccountRow,
 				`SELECT
-          user_id,
-          created_at,
-          user_role
-        FROM
-          user_account
-        WHERE
-          user_id = :user_id`,
+					user_id,
+					created_at,
+					user_role,
+					phone_number
+				FROM
+					user_account
+				WHERE
+					user_id = :user_id
+				`,
 				{
 					user_id: input.userId,
 				},
@@ -83,22 +96,20 @@ export const AccountDbPostgres = ({
 			return account;
 		},
 
-		async findOneByPhoneNumberHash(input) {
+		async findOneByPhoneNumber(input) {
 			const queried = await dbConnSql.query(
 				UserAccountRow,
 				`
-        SELECT
-          user_account.user_id    AS user_id,
-          user_account.created_at AS created_at,
-          user_account.user_role  AS user_role
-        FROM
-          user_account_phone_number
-        JOIN user_account
-        ON user_account_phone_number.user_id = user_account.user_id
-        WHERE
-          phone_number_hash->>'value' = :phone_number_hash_value`,
+				SELECT
+					user_id,
+					created_at,
+					user_role,
+					phone_number
+				FROM
+					user_account
+				`,
 				{
-					phone_number_hash_value: input.phoneNumberHash.value,
+					phone_number: PhoneNumber.toString(input.phoneNumber),
 				},
 			);
 
@@ -123,55 +134,30 @@ export const AccountDbPostgres = ({
 				created_at: Posix.toIsoString(input.account.createdAt),
 				user_id: input.account.userId,
 				user_role: input.account.role,
+				phone_number: input.phoneNumber
+					? PhoneNumber.toString(input.phoneNumber)
+					: null,
 			};
 
-			const accountPhoneNumberRowNew: Sql.Vars | null = input.phoneNumberHash
-				? {
-						user_id: input.account.userId,
-						phone_number_hash: Sql.json(input.phoneNumberHash),
-						created_at: Posix.toIsoString(input.account.createdAt),
-					}
-				: null;
-
-			const insertedAccount = await dbConnSql.query(
+			const inserted = await dbConnSql.query(
 				p.unknown,
 				`INSERT INTO user_account (
-            user_role,
-            user_id,         
-            created_at
-          )
-          VALUES (
-            :user_role,
-            :user_id,
-            :created_at
-          )`,
+					phone_number,
+					user_role,
+					user_id,         
+					created_at
+				)
+				VALUES (
+					:phone_number,
+					:user_role,
+					:user_id,
+					:created_at
+				)`,
 				accountRowNew,
 			);
 
-			const insertedAccountPhoneNumber = accountPhoneNumberRowNew
-				? await dbConnSql.query(
-						p.unknown,
-						`INSERT INTO user_account_phone_number (
-							user_id,
-							phone_number_hash,
-							created_at
-						)
-						VALUES (
-							:user_id,
-							:phone_number_hash,
-							:created_at
-						)`,
-						accountPhoneNumberRowNew,
-					)
-				: Ok(null);
-
-			const combined = Result.combine([
-				insertedAccount,
-				insertedAccountPhoneNumber,
-			]);
-
-			if (isErr(combined)) {
-				return combined;
+			if (isErr(inserted)) {
+				return inserted;
 			}
 
 			return Ok(null);

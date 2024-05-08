@@ -1,4 +1,5 @@
-import type { Task } from "gamezilla-app/@/core";
+import type { PhoneNumber, Posix, Task } from "gamezilla-app/@/core";
+import { Paginated } from "gamezilla-app/app/@/data";
 import type {
 	Verification,
 	VerificationAttempt,
@@ -6,15 +7,31 @@ import type {
 } from "../verification";
 
 export type IVerificationDb = {
-	findById(input: {
-		verificationId: VerificationId;
-	}): Task<string, Verification | null>;
-	upsert(verification: Verification): Task<string, null>;
-};
-
-export type IVerificationAttemptDb = {
 	find(input: {
-		where: { equalsVerificationId: VerificationId };
-	}): Task<string, VerificationAttempt[]>;
-	upsert(attempt: VerificationAttempt): Task<string, null>;
+		where: {
+			verificationId?: {
+				"="?: VerificationId;
+			};
+			createdAt?: {
+				"<="?: Posix;
+				">="?: Posix;
+			};
+			phoneNumber?: {
+				"="?: PhoneNumber;
+			};
+		};
+		limit?: number;
+		offset?: number;
+	}): Task<string, Paginated<Verification>>;
+	upsert(verification: Verification): Task<string, null>;
+	attempts: {
+		find(input: {
+			where: {
+				verificationId?: {
+					"=": VerificationId;
+				};
+			};
+		}): Task<string, VerificationAttempt[]>;
+		upsert(attempt: VerificationAttempt): Task<string, null>;
+	};
 };

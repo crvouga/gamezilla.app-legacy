@@ -1,45 +1,63 @@
-import {
-	Err,
-	Ok,
-	PhoneNumber,
-	Posix,
-	TimeSpan,
-	isErr,
-} from "gamezilla-app/@/core";
+import { Err, Ok, Posix, TimeSpan, isErr } from "gamezilla-app/@/core";
 import type { IHashing } from "gamezilla-app/@/hashing";
 import type { Translator } from "gamezilla-app/@/l18n/generated";
-import type { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
 import type { ISMS } from "gamezilla-app/app/@/server/sms";
 import type { ICodeGenerator } from "./code-generator";
 import {
+	VerificationId,
 	type Verification,
 	type VerificationAttempt,
-	VerificationId,
 } from "./verification";
-import type {
-	IVerificationAttemptDb,
-	IVerificationDb,
-} from "./verification-db";
+import type { IVerificationDb } from "./verification-db";
 import { VerificationAttemptId } from "./verification/verification-attempt-id";
 import type { IVerifySMS } from "./verify-sms";
-
-export const EXPIRES_IN = TimeSpan.fromMinutes(5);
 
 export type VerifySMSDeps = {
 	logger: ILogger;
 	sms: ISMS;
-	dbConnKv: IDbConnKv;
 	codeGenerator: ICodeGenerator;
 	verificationDb: IVerificationDb;
-	verificationAttemptDb: IVerificationAttemptDb;
 	translator: Translator;
 	hashing: IHashing;
+	now: () => Posix;
+	verifyCodeMaxAttempts: number;
+	verifyCodeExpiresIn: TimeSpan;
+	sendCodeHourlyLimit: number;
 };
 
 export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 	return {
 		async sendCode(input) {
+			const now = deps.now();
+			const lastHourVerifications = await deps.verificationDb.find({
+				where: {
+					createdAt: {
+						"<=": now,
+						">=": Posix.sub(now, TimeSpan.fromHours(1)),
+						
+					},
+					phoneNumber: {
+						"=": input.phoneNumber,
+					},
+				},
+			});
+
+			if (isErr(lastHourVerifications)) {
+				return Err({
+					t: "database-error",
+					error: lastHourVerifications.error,
+				});
+			}
+
+			if (
+				lastHourVerifications.value.items.length >= deps.sendCodeHourlyLimit
+			) {
+				return Err({
+					t: "hourly-limit-reached",
+				});
+			}
+
 			const code = deps.codeGenerator.generate();
 
 			const codeHash = await deps.hashing.hash({
@@ -49,19 +67,11 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				password: code,
 			});
 
-			const phoneNumberHash = await deps.hashing.hash({
-				algo: {
-					t: "bcrypt",
-					cost: 10,
-				},
-				password: PhoneNumber.toString(input.phoneNumber),
-			});
-
 			const verificationNew: Verification = {
 				codeHash: codeHash,
-				phoneNumberHash: phoneNumberHash,
-				createdAt: Posix.now(),
-				expiresIn: EXPIRES_IN,
+				phoneNumber: input.phoneNumber,
+				createdAt: deps.now(),
+				expiresIn: deps.verifyCodeExpiresIn,
 				verificationId: VerificationId.generate(),
 				verifiedAt: null,
 			};
@@ -69,7 +79,10 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 			const upserted = await deps.verificationDb.upsert(verificationNew);
 
 			if (isErr(upserted)) {
-				return upserted;
+				return Err({
+					t: "database-error",
+					error: upserted.error,
+				});
 			}
 
 			const sent = await deps.sms.sendMessage({
@@ -78,7 +91,10 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 			});
 
 			if (isErr(sent)) {
-				return sent;
+				return Err({
+					t: "database-error",
+					error: sent.error,
+				});
 			}
 
 			return Ok({
@@ -86,8 +102,12 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 			});
 		},
 		async verifyCode(input) {
-			const found = await deps.verificationDb.findById({
-				verificationId: input.verificationId,
+			const found = await deps.verificationDb.find({
+				where: {
+					verificationId: {
+						"=": input.verificationId,
+					},
+				},
 			});
 
 			if (isErr(found)) {
@@ -97,7 +117,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				});
 			}
 
-			const verification = found.value;
+			const verification = found.value.items[0];
 
 			if (!verification) {
 				return Err({
@@ -105,9 +125,22 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				});
 			}
 
-			const foundAttempts = await deps.verificationAttemptDb.find({
+			if (
+				TimeSpan.gte(
+					Posix.diff(deps.now(), verification.createdAt),
+					verification.expiresIn,
+				)
+			) {
+				return Err({
+					t: "verification-expired",
+				});
+			}
+
+			const foundAttempts = await deps.verificationDb.attempts.find({
 				where: {
-					equalsVerificationId: input.verificationId,
+					verificationId: {
+						"=": input.verificationId,
+					},
 				},
 			});
 
@@ -120,7 +153,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 
 			const attempts = foundAttempts.value;
 
-			if (attempts.length >= 3) {
+			if (attempts.length >= deps.verifyCodeMaxAttempts) {
 				return Err({
 					t: "verification-expired-too-many-failed-attempts",
 				});
@@ -140,7 +173,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				verificationId: input.verificationId,
 			};
 
-			await deps.verificationAttemptDb.upsert(newAttempt);
+			await deps.verificationDb.attempts.upsert(newAttempt);
 
 			const isCorrect = await deps.hashing.check({
 				hash: verification.codeHash,
@@ -154,7 +187,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 			}
 
 			return Ok({
-				phoneNumberHash: verification.phoneNumberHash,
+				phoneNumber: verification.phoneNumber,
 			});
 		},
 	};

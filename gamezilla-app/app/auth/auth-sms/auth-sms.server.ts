@@ -1,18 +1,30 @@
+import {
+	Err,
+	Ok,
+	PhoneNumber,
+	Result,
+	Sub,
+	isErr,
+	type Posix,
+} from "gamezilla-app/@/core";
+import { Hashing } from "gamezilla-app/@/hashing";
 import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
+import { Translator } from "gamezilla-app/app/@/client/translator";
 import { UserId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import {
+	sendToClient,
 	type ServerCmd,
 	type ServerCtx,
 	type ServerEvent,
-	sendToClient,
 } from "gamezilla-app/app/@/server";
-import { Err, Ok, type Posix, Result, Sub, isErr } from "gamezilla-app/@/core";
-import { type Hash, Hashing } from "gamezilla-app/@/hashing";
 import type { IAccountDb } from "../@/server/account-db";
 import { AccountDb } from "../@/server/account-db/account-db-impl";
 import type { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.types";
-import type { IVerifySMS } from "./verify-sms/verify-sms";
+import {
+	sendCodeProblemToString,
+	type IVerifySMS,
+} from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl";
 
 //
@@ -107,7 +119,14 @@ export const updateFromClient: Module["update"] = async ({
 					sendToClient([msgClient.clientId], {
 						t: "sent-code",
 						phoneNumber: msgClient.phoneNumber,
-						result: sent,
+						result: isErr(sent)
+							? Err(
+									sendCodeProblemToString({
+										problem: sent.error,
+										t: Translator("en"),
+									}),
+								)
+							: sent,
 					}),
 				],
 			};
@@ -133,7 +152,7 @@ export const updateFromClient: Module["update"] = async ({
 
 			const found = await findElseInsertAccount({
 				accountDb: deps.AccountDb,
-				phoneNumberHash: verified.value.phoneNumberHash,
+				phoneNumber: verified.value.phoneNumber,
 				now: ctx.now,
 			});
 
@@ -197,15 +216,15 @@ export const subscriptions: Module["subscriptions"] = async () => {
 
 const findElseInsertAccount = async ({
 	accountDb,
-	phoneNumberHash,
+	phoneNumber,
 	now,
 }: {
 	accountDb: IAccountDb;
-	phoneNumberHash: Hash;
+	phoneNumber: PhoneNumber;
 	now: Posix;
 }): Promise<Result<string, UserAccount>> => {
-	const found = await accountDb.findOneByPhoneNumberHash({
-		phoneNumberHash,
+	const found = await accountDb.findOneByPhoneNumber({
+		phoneNumber,
 	});
 
 	if (isErr(found)) {
@@ -222,11 +241,11 @@ const findElseInsertAccount = async ({
 		role: "normal",
 		userId: UserId.generate(),
 		createdAt: now,
+		phoneNumber,
 	};
 
 	const inserted = await accountDb.insert({
 		account: accountNew,
-		phoneNumberHash,
 	});
 
 	if (isErr(inserted)) {
