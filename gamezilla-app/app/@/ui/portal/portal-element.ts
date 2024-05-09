@@ -26,7 +26,7 @@ if (typeof window !== "undefined") {
 		if (!entrances.has(id)) {
 			entrances.set(id, new Set());
 		}
-		entrances.get(id)!.add(element);
+		entrances.get(id)?.add(element);
 		updatePortal(id);
 	};
 
@@ -109,10 +109,6 @@ if (typeof window !== "undefined") {
 	class PortalExit extends HTMLElement {
 		static get observedAttributes() {
 			return ["portal-id"];
-		}
-
-		constructor() {
-			super();
 		}
 
 		connectedCallback() {

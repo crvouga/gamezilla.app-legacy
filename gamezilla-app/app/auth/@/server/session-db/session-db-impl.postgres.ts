@@ -32,7 +32,7 @@ export const SessionDbPostgres = ({
 		async findSessionIdsByUserId(userId: UserId) {
 			const queried = await dbConnSql.query(
 				Row,
-				`SELECT * FROM user_session WHERE ended_at IS NULL AND user_id = :user_id`,
+				"SELECT * FROM user_session WHERE ended_at IS NULL AND user_id = :user_id",
 				{ user_id: userId },
 			);
 
@@ -42,7 +42,7 @@ export const SessionDbPostgres = ({
 		async findUserIdBySessionId(sessionId: SessionId) {
 			const queried = await dbConnSql.query(
 				Row,
-				`SELECT * FROM user_session WHERE ended_at IS NULL AND session_id = :session_id`,
+				"SELECT * FROM user_session WHERE ended_at IS NULL AND session_id = :session_id",
 				{ session_id: sessionId },
 			);
 
@@ -56,7 +56,7 @@ export const SessionDbPostgres = ({
 
 			const queried = await dbConnSql.query(
 				Row,
-				`INSERT INTO user_session (user_session_id, session_id, user_id) VALUES (:user_session_id, :session_id, :user_id)`,
+				"INSERT INTO user_session (user_session_id, session_id, user_id) VALUES (:user_session_id, :session_id, :user_id)",
 				{
 					user_session_id: userSessionId,
 					session_id: sessionId,
@@ -69,7 +69,7 @@ export const SessionDbPostgres = ({
 		async zapByUserId(userId) {
 			const queried = await dbConnSql.query(
 				Row,
-				`UPDATE user_session SET ended_at = :ended_at WHERE user_id = :user_id`,
+				"UPDATE user_session SET ended_at = :ended_at WHERE user_id = :user_id",
 				{
 					ended_at: new Date().toISOString(),
 					user_id: userId,
@@ -81,7 +81,7 @@ export const SessionDbPostgres = ({
 		async zapBySessionId(sessionId) {
 			const queried = await dbConnSql.query(
 				Row,
-				`UPDATE user_session SET ended_at = :ended_at WHERE session_id = :session_id`,
+				"UPDATE user_session SET ended_at = :ended_at WHERE session_id = :session_id",
 				{
 					ended_at: new Date().toISOString(),
 					session_id: sessionId,

@@ -244,7 +244,7 @@ const ViewChooseLang: Module["View"] = (input) => {
 						/>
 					);
 				})}
-				<div className="w-full p-8"></div>
+				<div className="w-full p-8" />
 			</div>
 			<div className="w-full border-t border-t-neutral-800 p-4">
 				<Button

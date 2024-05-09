@@ -170,7 +170,7 @@ export const updateFromServerMain: typeof updateFromServer = ({
 				if (msg.t === "db-got-initial-load") {
 					return {
 						model,
-						msgCmd: [showToast(`Failed to load puzzles and profile.`, "error")],
+						msgCmd: [showToast("Failed to load puzzles and profile.", "error")],
 					};
 				}
 
@@ -523,7 +523,7 @@ const ViewStatusBar = (input: { model: ModelClient }) => {
 							? "border-[#ababab] bg-black"
 							: "border-black bg-white",
 					)}
-				></div>
+				/>
 				<p className="text-xl text-inherit">
 					{Chess.colorToString(toPlayerColor(input.model.puzzle))} to move
 				</p>
@@ -540,7 +540,7 @@ const ViewStatusBar = (input: { model: ModelClient }) => {
 		);
 	}
 
-	return <div></div>;
+	return <div />;
 };
 
 const TickingClock = (input: { sec: number }) => {
@@ -551,7 +551,7 @@ const TickingClock = (input: { sec: number }) => {
 			stroke="currentColor"
 			strokeWidth="0.2"
 		>
-			<circle cx="0" cy="0" r="0.9"></circle>
+			<circle cx="0" cy="0" r="0.9" />
 
 			{/* up */}
 			<line
@@ -560,7 +560,7 @@ const TickingClock = (input: { sec: number }) => {
 				y1="0"
 				x2="0"
 				y2="-1"
-			></line>
+			/>
 
 			{/* right */}
 			<line
@@ -569,7 +569,7 @@ const TickingClock = (input: { sec: number }) => {
 				y1="0"
 				x2="1"
 				y2="0"
-			></line>
+			/>
 
 			{/* down */}
 			<line
@@ -578,7 +578,7 @@ const TickingClock = (input: { sec: number }) => {
 				y1="0"
 				x2="0"
 				y2="1"
-			></line>
+			/>
 
 			{/* left */}
 			<line
@@ -587,7 +587,7 @@ const TickingClock = (input: { sec: number }) => {
 				y1="0"
 				x2="-1"
 				y2="0"
-			></line>
+			/>
 		</svg>
 	);
 };

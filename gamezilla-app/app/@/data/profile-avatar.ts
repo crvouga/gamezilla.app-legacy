@@ -82,7 +82,7 @@ const toUrl = ({
 	style: ProfileAvatarStyle;
 	seed: string;
 }) => {
-	const BASE_URL = `https://api.dicebear.com/7.x`;
+	const BASE_URL = "https://api.dicebear.com/7.x";
 	const FILE_TYPE = "svg";
 	const url = new URL(`${BASE_URL}/${style}/${FILE_TYPE}`);
 	url.searchParams.append("seed", seed);

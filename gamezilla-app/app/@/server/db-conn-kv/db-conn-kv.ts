@@ -144,7 +144,7 @@ const withDistributedUpdates = ({
 			case DistributedUpdateType.SET_MANY: {
 				let key = "";
 				for (let i = 0; i < update.e.length; i++) {
-					key = key + "," + update.e[i]![0];
+					key = `${key},${update.e[i]?.[0]}`;
 				}
 				logger.info(`distributed setMany: keys=${key}`);
 				dbConnKv.setMany(update.e);
@@ -346,7 +346,7 @@ const withCache = ({
 		async setMany(entries) {
 			let key = "";
 			for (let i = 0; i < entries.length; i++) {
-				key = key + "," + entries[i]![0];
+				key = `${key},${entries[i]?.[0]}`;
 			}
 
 			source.setMany(entries);

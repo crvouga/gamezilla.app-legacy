@@ -78,7 +78,12 @@ const paint = ({
 	const cellWidth = width / COLUMN_COUNT;
 	const cellHeight = height / MAX_COLUMN_HEIGHT;
 
-	let x, y, cx, cy, r, gradient;
+	let x;
+	let y;
+	let cx;
+	let cy;
+	let r;
+	let gradient;
 
 	for (x = 0; x < columns.length; x++) {
 		const column = columns[x];

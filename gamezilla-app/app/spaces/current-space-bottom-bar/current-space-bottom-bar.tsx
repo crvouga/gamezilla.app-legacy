@@ -69,7 +69,7 @@ const View = ({
 
 	return (
 		<div className="flex w-full flex-col items-center justify-center overflow-hidden text-inherit">
-			<div className="h-1 w-full bg-gradient-to-tr from-blue-700  via-blue-600 to-sky-500"></div>
+			<div className="h-1 w-full bg-gradient-to-tr from-blue-700  via-blue-600 to-sky-500" />
 			<div className="flex w-full items-center overflow-hidden text-inherit">
 				<button
 					className="flex flex-1 items-center gap-3 overflow-hidden"

@@ -1,6 +1,6 @@
-import { exec } from "child_process";
-import fs from "fs/promises";
-import path from "path";
+import { exec } from "node:child_process";
+import fs from "node:fs/promises";
+import path from "node:path";
 import { LanguageCodeISO_639_1 } from "./lang-code-iso-639-1/lang-code-iso-639-1";
 import type { Translations, TranslationText } from "./translations";
 
@@ -199,9 +199,8 @@ function serialize(obj: object): string {
 	const keyValuePairs = Object.entries(obj).map(([key, value]) => {
 		if (typeof value === "function") {
 			return `${JSON.stringify(key)}: ${value.toString()}`;
-		} else {
-			return `${JSON.stringify(key)}: ${JSON.stringify(value)}`;
 		}
+			return `${JSON.stringify(key)}: ${JSON.stringify(value)}`;
 	});
 
 	return `{
@@ -233,7 +232,6 @@ async function scanFiles(input: {
 
 		if (file.name.endsWith(input.targetFileSuffix)) {
 			files.push(res);
-			continue;
 		}
 	}
 

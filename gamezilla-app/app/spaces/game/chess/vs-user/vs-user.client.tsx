@@ -303,7 +303,7 @@ export const View = ({
 	if (model.coreModel.type === "setup") {
 		return (
 			<div>
-				<div className="flex-1"></div>
+				<div className="flex-1" />
 				<div className="flex items-center gap-4 border-t border-neutral-700 p-4">
 					<Button
 						className="flex-1"
@@ -368,7 +368,7 @@ export const View = ({
         }}
       /> */}
 
-			<div className="flex-1"></div>
+			<div className="flex-1" />
 
 			<ViewGameOverDialog model={model} dispatch={dispatch} />
 		</div>
@@ -386,10 +386,10 @@ const ViewGameOverDialog = ({
 	}
 
 	if (model.coreModel.type === "game") {
-		return <span></span>;
+		return <span />;
 	}
 
-	return <span></span>;
+	return <span />;
 };
 
 const toGameText = (model: CoreModel): string => {

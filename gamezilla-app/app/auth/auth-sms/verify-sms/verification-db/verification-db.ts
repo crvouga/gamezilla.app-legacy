@@ -1,5 +1,5 @@
 import type { PhoneNumber, Posix, Task } from "gamezilla-app/@/core";
-import { Paginated } from "gamezilla-app/app/@/data";
+import type { Paginated } from "gamezilla-app/app/@/data";
 import type {
 	Verification,
 	VerificationAttempt,

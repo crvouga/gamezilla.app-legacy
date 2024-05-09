@@ -45,7 +45,7 @@ const VersusSection = ({
 			<div className="grid w-full grid-cols-7">
 				<PlayerLabels player={playerOne} ctx={ctx} />
 
-				<div className="col-span-1"></div>
+				<div className="col-span-1" />
 
 				<PlayerLabels player={playerTwo} ctx={ctx} />
 			</div>
@@ -53,7 +53,7 @@ const VersusSection = ({
 			<div className="mt-2 grid w-full grid-cols-7">
 				<PlayerButtons player={playerOne} ctx={ctx} />
 
-				<div className="col-span-1"></div>
+				<div className="col-span-1" />
 
 				<PlayerButtons player={playerTwo} ctx={ctx} />
 			</div>

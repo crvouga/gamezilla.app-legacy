@@ -31,7 +31,7 @@ export const Avatar = ({
 				<span
 					onClick={onClick}
 					className={cn(
-						`inline-block aspect-square h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-white/40`,
+						"inline-block aspect-square h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-white/40",
 						className,
 					)}
 				>

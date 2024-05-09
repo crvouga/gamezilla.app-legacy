@@ -262,7 +262,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
 					const profile = ctx.profiles[ctx.currentUserId];
 
 					if (!profile) {
-						return <FeedItem.Info text={`Exited game to main menu`} />;
+						return <FeedItem.Info text={"Exited game to main menu"} />;
 					}
 
 					return (
@@ -276,7 +276,7 @@ const ViewFeedItem: Module["ViewFeedItem"] = (input) => {
 					const profile = ctx.profiles[ctx.currentUserId];
 
 					if (!profile) {
-						return <FeedItem.Info text={`Changed game mode`} />;
+						return <FeedItem.Info text={"Changed game mode"} />;
 					}
 
 					return (

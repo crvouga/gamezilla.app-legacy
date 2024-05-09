@@ -94,15 +94,15 @@ const instance = new Chess();
 const setVisibleDropZoneNode = (node: SVGCircleElement | null) => {
 	if (!node) {
 		if (visibleDropZoneNode) {
-			visibleDropZoneNode.setAttribute("fill", `transparent`);
+			visibleDropZoneNode.setAttribute("fill", "transparent");
 		}
 		visibleDropZoneNode = null;
 		return;
 	}
 
 	if (visibleDropZoneNode && visibleDropZoneNode !== node) {
-		visibleDropZoneNode.setAttribute("fill", `transparent`);
-		node.setAttribute("fill", `black`);
+		visibleDropZoneNode.setAttribute("fill", "transparent");
+		node.setAttribute("fill", "black");
 	}
 	visibleDropZoneNode = node;
 };
@@ -353,7 +353,7 @@ const onPieceDragStart =
 		touched = { node: target, piece: input.piece, source: input.source };
 
 		// make sure piece is rendered on top of other pieces
-		if (touched && touched.node && touched.node.parentNode) {
+		if (touched?.node?.parentNode) {
 			touched.node.parentNode.appendChild(touched.node);
 		}
 		updateDropZoneUI(input.props.orientation ?? "w");
@@ -510,7 +510,7 @@ export const Chessboard = (props: ChessboardProps) => {
 								y="0"
 								width="100%"
 								height="100%"
-							></rect>
+							/>
 
 							{renderPiece[piece]()}
 						</svg>

@@ -138,5 +138,5 @@ export const View = (_props: {
 	dispatch: (m: Msg) => void;
 	onBack: () => void;
 }) => {
-	return <div></div>;
+	return <div />;
 };

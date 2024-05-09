@@ -134,13 +134,13 @@ const ViewPuzzleCell = ({
 
 const ViewEmptyCell = () => {
 	return (
-		<div className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-700 bg-neutral-950 opacity-70"></div>
+		<div className="flex h-full w-full items-center justify-center overflow-hidden rounded border-2 border-neutral-700 bg-neutral-950 opacity-70" />
 	);
 };
 
 const ViewLoadingCell = () => {
 	return (
-		<div className="flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded bg-neutral-800 opacity-70"></div>
+		<div className="flex h-full w-full animate-pulse items-center justify-center overflow-hidden rounded bg-neutral-800 opacity-70" />
 	);
 };
 

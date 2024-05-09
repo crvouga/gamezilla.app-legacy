@@ -92,12 +92,12 @@ const toSqlWhere = (input: { where: WhereClause }) => {
 
 	const where: string[] = [
 		//
-		`deleted_at IS NULL`,
+		"deleted_at IS NULL",
 	];
 
 	if (input.where.createdBy?.equals) {
-		where.push(`created_by_user_id = :created_by_user_id`);
-		variables[`created_by_user_id`] = input.where.createdBy?.equals;
+		where.push("created_by_user_id = :created_by_user_id");
+		variables["created_by_user_id"] = input.where.createdBy?.equals;
 	}
 
 	if (input.where.puzzleId?.in) {
@@ -144,7 +144,7 @@ const toSqlPagination = (input: { pagination: Pagination }) => {
 		limit: input.pagination.limit,
 		offset: input.pagination.offset,
 	};
-	const str = `LIMIT :limit OFFSET :offset`;
+	const str = "LIMIT :limit OFFSET :offset";
 	return {
 		variables,
 		str,

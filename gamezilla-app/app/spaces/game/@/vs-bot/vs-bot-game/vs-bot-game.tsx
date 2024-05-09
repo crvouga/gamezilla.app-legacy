@@ -200,7 +200,7 @@ export const ViewGameOverOverlay = (
 					disabled={props.isSpectating}
 					onClick={!props.isSpectating ? props.onPlayAgain : undefined}
 				>
-					<div className="flex-1"></div>
+					<div className="flex-1" />
 
 					<Winner {...props} winner={gameOver.winner} />
 
@@ -209,7 +209,7 @@ export const ViewGameOverOverlay = (
 							Tap to play again
 						</div>
 					) : (
-						<div className="flex-1"></div>
+						<div className="flex-1" />
 					)}
 				</button>
 			)}
@@ -219,7 +219,7 @@ export const ViewGameOverOverlay = (
 					disabled={props.isSpectating}
 					onClick={!props.isSpectating ? props.onPlayAgain : undefined}
 				>
-					<div className="flex-1"></div>
+					<div className="flex-1" />
 
 					<Draw {...props} />
 
@@ -228,7 +228,7 @@ export const ViewGameOverOverlay = (
 							Tap to play again
 						</div>
 					) : (
-						<div className="flex-1"></div>
+						<div className="flex-1" />
 					)}
 				</button>
 			)}

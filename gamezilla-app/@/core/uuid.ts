@@ -8,7 +8,7 @@ const is = (id: unknown): id is Uuid => {
 
 const generate = (): Uuid => {
 	let d = new Date().getTime();
-	let d2 = (performance && performance.now && performance.now() * 1000) || 0;
+	let d2 = (performance?.now && performance.now() * 1000) || 0;
 
 	const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
 		let r = Math.random() * 16;

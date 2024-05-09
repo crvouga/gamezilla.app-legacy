@@ -8,11 +8,11 @@ import {
 	isErr,
 	isOk,
 } from "gamezilla-app/@/core";
-import { Hashing, IHashing } from "gamezilla-app/@/hashing";
+import { Hashing, type IHashing } from "gamezilla-app/@/hashing";
 import { Translator } from "gamezilla-app/app/@/client/translator";
 import { Logger } from "gamezilla-app/app/@/server/logger";
 import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
-import { CodeGenerator, ICodeGenerator } from "./code-generator";
+import { CodeGenerator, type ICodeGenerator } from "./code-generator";
 import { VerificationId } from "./verification";
 import { VerificationDb } from "./verification-db";
 import { VerifySMS } from "./verify-sms-impl";

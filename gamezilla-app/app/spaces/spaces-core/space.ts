@@ -134,8 +134,10 @@ export const appendEvent = ({
 	}
 
 	for (let i = newEventIndex; i < newEvents.length; i++) {
-		const event = newEvents[i]!.eventId;
-		newSnapshots = CappedOrderedDict.remove(newSnapshots, event);
+		const eventId = newEvents[i]?.eventId;
+		if (eventId) {
+			newSnapshots = CappedOrderedDict.remove(newSnapshots, eventId);
+		}
 	}
 
 	//

@@ -154,7 +154,7 @@ export const View = ({
 
 				<div className="grid w-full grid-cols-7">
 					<PlayerLabels player={playerOneProp} ctx={ctx} />
-					<div className="col-span-1"></div>
+					<div className="col-span-1" />
 					<PlayerLabels player={playerTwoProp} ctx={ctx} />
 				</div>
 
@@ -166,7 +166,7 @@ export const View = ({
 						player={playerOneProp}
 						ctx={ctx}
 					/>
-					<div className="col-span-1"></div>
+					<div className="col-span-1" />
 					<PlayerButtons
 						onSwapSides={onSwapSides}
 						dispatch={dispatch}
@@ -177,7 +177,7 @@ export const View = ({
 				</div>
 			</div>
 
-			<div className="flex flex-1 items-center justify-center"></div>
+			<div className="flex flex-1 items-center justify-center" />
 
 			{ctx.currentUserId === ctx.space.hostId && (
 				<div className="flex items-center gap-4 border-t border-neutral-700 p-4">

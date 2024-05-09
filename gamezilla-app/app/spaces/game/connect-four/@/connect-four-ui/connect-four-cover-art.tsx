@@ -25,7 +25,7 @@ export const CoverArt = (props: { className?: string }) => {
 					width={1}
 					height={1}
 				>
-					<circle cx={0.5} cy={0.5} r={0.425} fill="black"></circle>
+					<circle cx={0.5} cy={0.5} r={0.425} fill="black" />
 				</pattern>
 
 				<mask id={ids.holeMask}>
@@ -35,14 +35,14 @@ export const CoverArt = (props: { className?: string }) => {
 						width={COLUMN_COUNT}
 						height={MAX_COLUMN_HEIGHT}
 						fill="white"
-					></rect>
+					/>
 					<rect
 						x={0}
 						y={0}
 						width={COLUMN_COUNT}
 						height={MAX_COLUMN_HEIGHT}
 						fill={`url(#${ids.holePattern})`}
-					></rect>
+					/>
 				</mask>
 
 				<linearGradient id={ids.columnGradient} gradientTransform="rotate(90)">

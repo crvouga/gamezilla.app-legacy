@@ -207,7 +207,6 @@ export const InMemoryStore = <TKey extends string | number, TValue>({
 				// KEEP entry is newer
 				if (entry._appendStep > runningEntry._appendStep) {
 					runningEntry = entry;
-					continue;
 				}
 			}
 

@@ -89,7 +89,12 @@ export const chainAwait = async <Model, Msg, Event, Cmd>(
 	let model: Model = { ...initial.model };
 
 	for (let i = 0, len = updaters.length; i < len; ++i) {
-		const updated = await updaters[i]!(model);
+		const updated = await updaters[i]?.(model);
+
+		if (!updated) {
+			continue;
+		}
+
 		model = updated.model;
 
 		if (updated.eff) {
@@ -98,13 +103,19 @@ export const chainAwait = async <Model, Msg, Event, Cmd>(
 
 		if (updated.msgEvt) {
 			for (let j = 0, len = updated.msgEvt.length; j < len; ++j) {
-				msgEvt.push(updated.msgEvt[j]!);
+				const msg = updated.msgEvt[j];
+				if (msg) {
+					msgEvt.push(msg);
+				}
 			}
 		}
 
 		if (updated.msgCmd) {
 			for (let j = 0, len = updated.msgCmd.length; j < len; ++j) {
-				msgCmd.push(updated.msgCmd[j]!);
+				const msg = updated.msgCmd[j];
+				if (msg) {
+					msgCmd.push(msg);
+				}
 			}
 		}
 	}

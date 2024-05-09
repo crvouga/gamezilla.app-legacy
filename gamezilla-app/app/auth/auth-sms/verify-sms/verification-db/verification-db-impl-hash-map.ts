@@ -4,7 +4,7 @@ import type {
 	VerificationAttempt,
 	VerificationId,
 } from "../verification";
-import { VerificationAttemptId } from "../verification/verification-attempt-id";
+import type { VerificationAttemptId } from "../verification/verification-attempt-id";
 import type { IVerificationDb } from "./verification-db";
 
 export const VerificationDbHashMap = (): IVerificationDb => {
@@ -40,7 +40,7 @@ export const VerificationDbHashMap = (): IVerificationDb => {
 					}
 					return true;
 				});
-			const limit = input.limit ?? Infinity;
+			const limit = input.limit ?? Number.POSITIVE_INFINITY;
 			const offset = input.offset ?? 0;
 			const sliced = filtered.slice(offset, offset + limit);
 			return Ok({

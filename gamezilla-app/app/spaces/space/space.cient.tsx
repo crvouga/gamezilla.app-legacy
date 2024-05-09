@@ -93,11 +93,11 @@ const ViewTopBar: SpaceClientModule["View"] = (props) => {
 
 			<ViewTopBarButton
 				onClick={() => props.dispatch({ t: "clicked-people-button" })}
-				label={peopleCount > 1 ? `People (${peopleCount})` : `People`}
+				label={peopleCount > 1 ? `People (${peopleCount})` : "People"}
 				icon={<IconUserGroup className="h-6 w-6" />}
 			/>
 
-			<div className="flex-1"></div>
+			<div className="flex-1" />
 
 			{props.ctx.space.hostId !== props.ctx.currentUserId && (
 				<div className="p-2">

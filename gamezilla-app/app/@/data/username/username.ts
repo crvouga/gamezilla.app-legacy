@@ -59,8 +59,8 @@ const getRandomDigits = (digitCount?: number) => {
 	if (!digitCount) {
 		return "";
 	}
-	const min = Math.pow(10, digitCount - 1);
-	const max = Math.pow(10, digitCount) - 1;
+	const min = 10 ** (digitCount - 1);
+	const max = 10 ** digitCount - 1;
 	return String(Math.floor(Math.random() * (max - min + 1)) + min);
 };
 

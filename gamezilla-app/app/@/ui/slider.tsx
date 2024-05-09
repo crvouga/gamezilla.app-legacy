@@ -29,7 +29,7 @@ export const Slider = ({
 					const val = "value" in msgEvt.target ? msgEvt.target.value : "";
 					const parsed =
 						typeof val === "string" ? Number.parseFloat(val) : Number.NaN;
-					if (isNaN(parsed)) {
+					if (Number.isNaN(parsed)) {
 						return;
 					}
 					onInput?.(parsed);

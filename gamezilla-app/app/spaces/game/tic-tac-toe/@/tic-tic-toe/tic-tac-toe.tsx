@@ -309,7 +309,7 @@ const toSlotFrequency = (board: Model): SlotFrequency => {
 
 export const toTurn = (board: Model): PlayerType => {
 	const frequency = toSlotFrequency(board);
-	return frequency["X"] <= frequency["O"] ? "X" : "O";
+	return frequency.X <= frequency.O ? "X" : "O";
 };
 
 export type MoveProblem =

@@ -531,7 +531,7 @@ export const fenToPieces = (
 		for (let i = 0; i < row.length; i++) {
 			const char = row.charAt(i);
 
-			if (isNaN(Number(char))) {
+			if (Number.isNaN(Number(char))) {
 				const color = char === char.toLowerCase() ? "b" : "w";
 				const pieceType = char.toUpperCase();
 

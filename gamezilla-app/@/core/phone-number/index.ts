@@ -98,7 +98,7 @@ const random = (): PhoneNumber => {
 		throw new Error("Invalid country");
 	}
 
-	let phoneNumber = country.format.replace(/[0-9]/g, () =>
+	const phoneNumber = country.format.replace(/[0-9]/g, () =>
 		Math.floor(Math.random() * 10).toString(),
 	);
 
@@ -106,9 +106,8 @@ const random = (): PhoneNumber => {
 
 	if (phoneNumberResult.t === "ok") {
 		return phoneNumberResult.value;
-	} else {
-		return random();
 	}
+		return random();
 };
 
 export const PhoneNumber = {

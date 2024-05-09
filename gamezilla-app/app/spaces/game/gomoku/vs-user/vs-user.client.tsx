@@ -124,5 +124,5 @@ export const View = (_props: {
 	model: Model;
 	onCancel: () => void;
 }) => {
-	return <div></div>;
+	return <div />;
 };

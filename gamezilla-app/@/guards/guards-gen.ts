@@ -1,6 +1,6 @@
-import { exec } from "child_process";
-import fs from "fs/promises";
-import path from "path";
+import { exec } from "node:child_process";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 //
 //
@@ -80,7 +80,6 @@ async function scanFiles(input: {
 
 		if (file.name.endsWith(input.targetFileSuffix)) {
 			files.push(res);
-			continue;
 		}
 	}
 

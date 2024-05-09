@@ -58,7 +58,7 @@ export const uploadLichessDbPuzzleCsv = async ({
 		return;
 	}
 
-	console.error(`not implemented`);
+	console.error("not implemented");
 
 	let batch: PuzzleRow[] = [];
 
@@ -89,7 +89,6 @@ export const uploadLichessDbPuzzleCsv = async ({
 
 		if (inserted.t === "err") {
 			log(`insert error ${inserted.error}`);
-			continue;
 		}
 	}
 

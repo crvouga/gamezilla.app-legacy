@@ -1,7 +1,7 @@
 import {
 	Err,
 	Ok,
-	PhoneNumber,
+	type PhoneNumber,
 	Result,
 	Sub,
 	isErr,

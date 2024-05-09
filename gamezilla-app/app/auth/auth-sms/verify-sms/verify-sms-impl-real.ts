@@ -127,7 +127,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				verificationId: verificationNew.verificationId,
 			});
 		},
-		
+
 		async verifyCode(input) {
 			const found = await deps.verificationDb.find({
 				where: {

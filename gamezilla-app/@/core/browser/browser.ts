@@ -73,7 +73,7 @@ export const replaceQueryParam = (key: string, value: string): Eff => {
 			window.history.replaceState(
 				null,
 				"",
-				window.location.pathname + "?" + searchParams.toString(),
+				`${window.location.pathname}?${searchParams.toString()}`,
 			);
 			window.dispatchEvent(new Event("popstate"));
 		}, 0);

@@ -75,7 +75,7 @@ export function findExactCountryPhoneData(
 	if (
 		countryPhoneDatum.mobile_begin_with.some((beginWith) => {
 			return phoneNumber.match(
-				new RegExp("^" + countryPhoneDatum.country_code + beginWith),
+				new RegExp(`^${countryPhoneDatum.country_code}${beginWith}`),
 			);
 		})
 	) {
@@ -118,7 +118,7 @@ export function findPossibleCountryPhoneData(
 	if (
 		countryPhoneDatum.mobile_begin_with.some((beginWith) => {
 			return phoneNumber.match(
-				new RegExp("^" + countryPhoneDatum.country_code + "\\d?" + beginWith),
+				new RegExp(`^${countryPhoneDatum.country_code}\\d?${beginWith}`),
 			);
 		})
 	) {
@@ -144,7 +144,7 @@ export function findCountryPhoneDataByPhoneNumber(
 
 	for (const countryPhoneDatum of countryPhoneData) {
 		// if the country code is wrong, skip directly
-		if (!phoneNumber.match(new RegExp("^" + countryPhoneDatum.country_code))) {
+		if (!phoneNumber.match(new RegExp(`^${countryPhoneDatum.country_code}`))) {
 			continue;
 		}
 
@@ -195,7 +195,7 @@ export function validatePhoneISO3166(
 
 	// remove country calling code from the phone number
 	const phoneWithoutCountry = phone.replace(
-		new RegExp("^" + countryPhoneDatum.country_code),
+		new RegExp(`^${countryPhoneDatum.country_code}`),
 		"",
 	);
 
@@ -219,7 +219,7 @@ export function validatePhoneISO3166(
 	// some country doesn't have mobile_begin_with
 	const isBeginWithValid = mobile_begin_with.length
 		? mobile_begin_with.some((beginWith) =>
-				phoneWithoutCountry.match(new RegExp("^" + beginWith)),
+				phoneWithoutCountry.match(new RegExp(`^${beginWith}`)),
 			)
 		: true;
 

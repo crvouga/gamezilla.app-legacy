@@ -86,7 +86,7 @@ export const ViewBoard = ({
 						);
 					}
 
-					return <g key={key}></g>;
+					return <g key={key} />;
 				}),
 			)}
 
@@ -133,7 +133,7 @@ const ViewWins = (props: { board: Model }) => {
 						y2={(rightMost.row + 1 / 2) * scale}
 						strokeWidth={strokeWidth}
 						stroke={gameTheme.cross}
-					></line>
+					/>
 				);
 			})}
 		</g>
@@ -268,7 +268,7 @@ export const ViewSlot = ({
 }) => {
 	switch (slot) {
 		case Empty:
-			return <g></g>;
+			return <g />;
 
 		case "O":
 			return (

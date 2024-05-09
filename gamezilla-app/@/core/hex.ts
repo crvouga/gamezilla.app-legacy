@@ -11,7 +11,7 @@ function darkenHex(hex: string, percent: number): string {
 
 	// Convert the RGB color back to hex
 	const newHex =
-		"#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+		`#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 
 	return newHex;
 }

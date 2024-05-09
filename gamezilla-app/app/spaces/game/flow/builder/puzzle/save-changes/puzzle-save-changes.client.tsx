@@ -284,7 +284,7 @@ const ViewUnsavedChangesDrawer: ClientModule["View"] = ({
 						})
 					}
 				/>
-				<div className="w-full"></div>
+				<div className="w-full" />
 				<Button
 					className="w-full"
 					text="Cancel"

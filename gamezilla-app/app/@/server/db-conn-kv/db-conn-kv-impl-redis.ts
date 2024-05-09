@@ -21,7 +21,7 @@ export const DbConnKvRedis = async ({
 		url,
 	}).connect();
 
-	logger.info(`connected`);
+	logger.info("connected");
 
 	return {
 		async get(key, parser) {

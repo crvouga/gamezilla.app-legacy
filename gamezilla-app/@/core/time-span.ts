@@ -84,7 +84,7 @@ const decode = (encoded: string): TimeSpan | null => {
 		return null;
 	}
 	const parsed = Number.parseFloat(value);
-	if (isNaN(parsed)) {
+	if (Number.isNaN(parsed)) {
 		return null;
 	}
 	return {

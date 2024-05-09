@@ -24,9 +24,7 @@ export const renderRuntimeErrors = () => {
 		errorDiv.style.left = "0";
 		errorDiv.style.backgroundColor = "white";
 		errorDiv.innerHTML =
-			"Error: " +
-			errorMsg +
-			(url ? " - at " + url + ": " + lineNumber + ":" + column : "");
+			`Error: ${errorMsg}${url ? ` - at ${url}: ${lineNumber}:${column}` : ""}`;
 		document.body.appendChild(errorDiv);
 	}
 };

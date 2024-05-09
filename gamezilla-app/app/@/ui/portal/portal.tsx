@@ -27,7 +27,7 @@ const Exit = (props: { portalId: string }) => {
 			id={props.portalId}
 			data-portal-exit
 			data-portal-id={props.portalId}
-		></div>
+		/>
 	);
 };
 

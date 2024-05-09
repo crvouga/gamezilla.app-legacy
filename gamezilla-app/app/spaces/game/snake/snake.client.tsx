@@ -186,7 +186,7 @@ export const View = ({
 	dispatch: (msg: Msg) => void;
 }) => {
 	if (model.gameStatus.type === "GameSetup") {
-		return <div></div>;
+		return <div />;
 	}
 
 	return (

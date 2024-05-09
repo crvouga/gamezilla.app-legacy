@@ -105,12 +105,18 @@ export const initDiscs = ({
 	parentNode.innerHTML = "";
 
 	for (let x = 0; x < columns.length; x++) {
-		for (let y = 0; y < columns[x]!.length; y++) {
+		for (let y = 0; y < (columns?.[x]?.length ?? 0); y++) {
+			const player = columns[x]?.[y];
+
+			if (!player) {
+				continue;
+			}
+
 			const discNode = createDiscNode({
 				x,
 				ids,
 				y,
-				player: columns[x]![y]!,
+				player,
 			});
 			parentNode?.appendChild(discNode);
 		}
@@ -128,7 +134,7 @@ export function syncDiscs({
 }) {
 	for (let x = 0; x < COLUMN_COUNT; x++) {
 		for (let y = 0; y < MAX_COLUMN_HEIGHT; y++) {
-			const disc = columns[x]![y]!;
+			const disc = columns[x]?.[y]!;
 
 			const node = parentNode.querySelector(`#${toDiscId({ x, y })}`);
 

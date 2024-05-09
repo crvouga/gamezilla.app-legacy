@@ -17,9 +17,8 @@ export const toValue = (instance: Instance): number => {
 export function currentTime() {
 	if (typeof window !== "undefined") {
 		return performance.now();
-	} else {
-		return 0;
 	}
+		return 0;
 }
 
 export type Instance = {
@@ -98,7 +97,7 @@ export const stepInstance = (instance: Instance, t: number): Instance => {
 };
 
 function roundTo(x: number, decimals: number) {
-	const p = Math.pow(10, decimals);
+	const p = 10 ** decimals;
 	return Math.round(x * p) / p;
 }
 
@@ -142,7 +141,7 @@ export function springStep({ x0, v0, t0, t, k, c, m, X }: Input): Output {
 			x: X + a * exp(rn * dt) + b * exp(rp * dt),
 			v: a * rn * exp(rn * dt) + b * rp * exp(rp * dt),
 		};
-	} else if (radicand < 0) {
+	}if (radicand < 0) {
 		const r = -c / (2 * m);
 		const s = sqrt(-radicand) / (2 * m);
 		const a = dx;
@@ -153,7 +152,7 @@ export function springStep({ x0, v0, t0, t, k, c, m, X }: Input): Output {
 				exp(r * dt) *
 				((b * s + a * r) * cos(s * dt) - (a * s - b * r) * sin(s * dt)),
 		};
-	} else {
+	}
 		const r = -c / (2 * m);
 		const a = dx;
 		const b = v0 - r * dx;
@@ -161,7 +160,6 @@ export function springStep({ x0, v0, t0, t, k, c, m, X }: Input): Output {
 			x: X + (a + b * dt) * exp(r * dt),
 			v: (b + a * r + b * r * dt) * exp(r * dt),
 		};
-	}
 }
 
 type Input = {

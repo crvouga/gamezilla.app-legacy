@@ -223,10 +223,10 @@ export const View = ({
 	}
 
 	if (model.type === "game") {
-		return <div></div>;
+		return <div />;
 	}
 
-	return <div></div>;
+	return <div />;
 };
 
 export const toGameText = ({ model }: { model: ModelClient }): string => {
@@ -238,17 +238,17 @@ export const toGameText = ({ model }: { model: ModelClient }): string => {
 		case "game-over": {
 			switch (model.gameOver.type) {
 				case "resignation": {
-					return `Resigned`;
+					return "Resigned";
 				}
 
 				case "Winner": {
 					// const userId = model[model.gameOver.winner];
 
-					return `won`;
+					return "won";
 				}
 
 				case "Tie": {
-					return `Tie`;
+					return "Tie";
 				}
 
 				default: {

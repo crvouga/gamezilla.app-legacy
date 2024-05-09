@@ -31,7 +31,7 @@ const fromNumber = (n: number): EloRating => {
 		return cleaned;
 	}
 
-	throw new Error(`Impossible condition`);
+	throw new Error("Impossible condition");
 };
 
 //
@@ -70,7 +70,7 @@ const toExpectedScore = ({
 	playerRating: EloRating;
 	opponentRating: EloRating;
 }): number => {
-	return 1 / (1 + Math.pow(10, (opponentRating - playerRating) / 400));
+	return 1 / (1 + 10 ** ((opponentRating - playerRating) / 400));
 };
 
 const toNewRating = ({

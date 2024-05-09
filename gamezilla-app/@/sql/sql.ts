@@ -28,7 +28,7 @@ export type Vars = {
 
 export const pagination = (input: { limit: number; offset: number }) => {
 	return {
-		str: `LIMIT\t:limit\nOFFSET\t:offset\n`,
+		str: "LIMIT\t:limit\nOFFSET\t:offset\n",
 		vars: {
 			limit: input.limit,
 			offset: input.offset,

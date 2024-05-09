@@ -52,7 +52,7 @@ export const listSpaces = ({
 	};
 	sort?: "newest" | "oldest";
 }): Space.Model[] => {
-	if (where && where.spaceId) {
+	if (where?.spaceId) {
 		const space = model.spaces[where.spaceId];
 
 		if (!space) {

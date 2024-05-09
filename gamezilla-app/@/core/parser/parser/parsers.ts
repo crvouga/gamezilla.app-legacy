@@ -3,7 +3,7 @@ import { Err, Ok } from "../../result/result";
 import type { Parser, ParserError } from "./parser-types";
 
 const errorToString = (error: ParserError): string => {
-	return error.path.join(".") + ": " + error.message;
+	return `${error.path.join(".")}: ${error.message}`;
 };
 
 export const errorsToString = (errors: ParserError[]): string => {
