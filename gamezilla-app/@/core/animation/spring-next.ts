@@ -18,7 +18,7 @@ export function currentTime() {
 	if (typeof window !== "undefined") {
 		return performance.now();
 	}
-		return 0;
+	return 0;
 }
 
 export type Instance = {
@@ -141,7 +141,8 @@ export function springStep({ x0, v0, t0, t, k, c, m, X }: Input): Output {
 			x: X + a * exp(rn * dt) + b * exp(rp * dt),
 			v: a * rn * exp(rn * dt) + b * rp * exp(rp * dt),
 		};
-	}if (radicand < 0) {
+	}
+	if (radicand < 0) {
 		const r = -c / (2 * m);
 		const s = sqrt(-radicand) / (2 * m);
 		const a = dx;
@@ -153,13 +154,13 @@ export function springStep({ x0, v0, t0, t, k, c, m, X }: Input): Output {
 				((b * s + a * r) * cos(s * dt) - (a * s - b * r) * sin(s * dt)),
 		};
 	}
-		const r = -c / (2 * m);
-		const a = dx;
-		const b = v0 - r * dx;
-		return {
-			x: X + (a + b * dt) * exp(r * dt),
-			v: (b + a * r + b * r * dt) * exp(r * dt),
-		};
+	const r = -c / (2 * m);
+	const a = dx;
+	const b = v0 - r * dx;
+	return {
+		x: X + (a + b * dt) * exp(r * dt),
+		v: (b + a * r + b * r * dt) * exp(r * dt),
+	};
 }
 
 type Input = {

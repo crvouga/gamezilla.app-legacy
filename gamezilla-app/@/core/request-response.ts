@@ -1,12 +1,5 @@
 import { Posix } from "./posix";
-import {
-	Err,
-	type Loading,
-	type NotAsked,
-	Ok,
-	type Result,
-	notAsked,
-} from "./result";
+import { Err, Ok, type Loading, type NotAsked, type Result } from "./result";
 import { Sub } from "./sub";
 import { Time } from "./time";
 import { TimeSpan } from "./time-span";
@@ -162,5 +155,4 @@ export const RequestResponse = {
 	elapsed,
 	didRequestTimeout,
 	subscriptions,
-	notAsked,
 };

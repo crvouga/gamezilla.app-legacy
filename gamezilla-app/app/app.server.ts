@@ -75,6 +75,7 @@ export const getDeps = async ({
 	}
 
 	const dbConnSql = await DbConnSql({
+		t: "postgres",
 		databaseUrl,
 		logger: ILogger.prefix("db-conn-sql", logger),
 	});

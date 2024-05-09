@@ -2,7 +2,7 @@ import {
 	Posix,
 	type RemoteResult,
 	type Result,
-	notAsked,
+	NotAsked,
 } from "gamezilla-app/@/core";
 import type { UserId } from "gamezilla-app/app/@/data";
 import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
@@ -19,7 +19,7 @@ export type ModelClient = {
 };
 
 export const initClient: ModelClient = {
-	puzzleCreateRequest: notAsked,
+	puzzleCreateRequest: NotAsked,
 	puzzleCreateRequestedAt: Posix.now(),
 };
 

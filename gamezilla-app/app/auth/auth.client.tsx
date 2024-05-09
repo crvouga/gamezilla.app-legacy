@@ -9,7 +9,7 @@ import {
 	showToast,
 } from "gamezilla-app/app/@/client";
 import { Button, IconMobilePhone } from "gamezilla-app/app/@/ui";
-import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@/core";
+import { Eff, Sub, batchMsgs, NotAsked } from "gamezilla-app/@/core";
 import * as AuthClientSMS from "./auth-sms/auth-sms.client";
 import type { ClientModule, ModelClient, MsgClient } from "./auth.types";
 import { ContinueAsGuestClient } from "./continue-as-guest/continue-as-guest.client";
@@ -30,8 +30,8 @@ export const init: ClientModule["init"] = (input) => {
 		model: {
 			...ContinueAsGuestClient.initModel,
 			currentUser: { t: "loading" },
-			loginWithGoogle: notAsked,
-			logout: notAsked,
+			loginWithGoogle: NotAsked,
+			logout: NotAsked,
 			sms: sms.model,
 			opened: null,
 		},

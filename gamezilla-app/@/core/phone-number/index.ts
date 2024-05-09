@@ -107,7 +107,7 @@ const random = (): PhoneNumber => {
 	if (phoneNumberResult.t === "ok") {
 		return phoneNumberResult.value;
 	}
-		return random();
+	return random();
 };
 
 export const PhoneNumber = {

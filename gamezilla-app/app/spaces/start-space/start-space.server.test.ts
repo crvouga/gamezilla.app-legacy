@@ -3,7 +3,7 @@ import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
 import { SpaceId } from "gamezilla-app/app/@/data";
 import { didSendMsgToClient } from "gamezilla-app/app/@/server";
 import {
-	generateAuthClient,
+	randomAuthenticatedClient,
 	getDeps,
 	init,
 	userStartedSpace,
@@ -15,7 +15,7 @@ describe(import.meta.file, () => {
 	it("should add a new space when recieving a user started space event", async () => {
 		const deps = getDeps();
 		const spaceId = SpaceId.generate();
-		const client = generateAuthClient();
+		const client = randomAuthenticatedClient();
 
 		await AppServerModule.andThen(
 			init(),
@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
 	it("should propogate the user started space event to the clients", async () => {
 		const deps = getDeps();
 		const spaceId = SpaceId.generate();
-		const client = generateAuthClient();
+		const client = randomAuthenticatedClient();
 
 		const started = await AppServerModule.andThen(
 			init(),

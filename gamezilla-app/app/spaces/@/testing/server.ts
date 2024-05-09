@@ -8,8 +8,9 @@ import {
 } from "gamezilla-app/app/@/data";
 import type { ServerCtx } from "gamezilla-app/app/@/server";
 import { DbConnKvHashMap } from "gamezilla-app/app/@/server/db-conn-kv/db-conn-kv-impl-hash-map";
-import { dbConnSqlNoop } from "gamezilla-app/app/@/server/db-conn-sql";
+import { DbConnSqlNoop } from "gamezilla-app/app/@/server/db-conn-sql";
 import { Logger } from "gamezilla-app/app/@/server/logger";
+import { AppServerFixture } from "gamezilla-app/app/@/server/server-test-env";
 import { smsNoop } from "gamezilla-app/app/@/server/sms";
 import { ProfileCache } from "../../profile-cache";
 import { GameDb } from "../../space-game/space-game-db";
@@ -19,24 +20,15 @@ import * as SpacesServer from "../../spaces.server";
 import type { ModelServer, ServerDeps } from "../../spaces.types";
 import { EventId } from "../event";
 
-export const Fixture = () => {
-	const ctx: ServerCtx = {
-		sms: smsNoop,
-		dbConnSql: dbConnSqlNoop,
-		logger: Logger({ t: "noop" }),
-		now: Posix.now(),
-		dbConnKv: DbConnKvHashMap(),
-	};
-
+export const SpaceServerFixture = () => {
+	const f = AppServerFixture();
 	const deps = getDeps();
-
-	const clientA = generateAuthClient();
-
-	const clientB = generateAuthClient();
-
+	const clientA = randomAuthenticatedClient();
+	const clientB = randomAuthenticatedClient();
 	const init = SpacesServer.init({ ctx });
 
 	return {
+		...f,
 		init,
 		deps,
 		ctx,
@@ -47,7 +39,7 @@ export const Fixture = () => {
 
 export const ctx: ServerCtx = {
 	sms: smsNoop,
-	dbConnSql: dbConnSqlNoop,
+	dbConnSql: DbConnSqlNoop(),
 	logger: Logger({ t: "noop" }),
 	now: Posix.now(),
 	dbConnKv: DbConnKvHashMap(),
@@ -66,7 +58,7 @@ export const getDeps = (): ServerDeps => {
 	};
 };
 
-export const generateAuthClient = (): AuthenticatedClient => {
+export const randomAuthenticatedClient = (): AuthenticatedClient => {
 	return {
 		clientId: ClientId.generate(),
 		sessionId: SessionId.generate(),

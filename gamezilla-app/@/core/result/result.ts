@@ -47,7 +47,7 @@ const is = <TError, TValue>(
 	};
 };
 
-const unwrap = <TError, TValue>(
+export const unwrap = <TError, TValue>(
 	result: ResultPrivate<TError, TValue>,
 ): TValue => {
 	switch (result.t) {
@@ -181,16 +181,17 @@ export const ResultPrivate = {
 //
 //
 
+export type Remote = NotAsked | Loading;
+
 export type RemoteResult<TError, TValue> =
-	| NotAsked
-	| Loading
+	| Remote
 	| ResultPrivate<TError, TValue>;
 
 export type NotAsked = { t: "not-asked" };
-export const notAsked: NotAsked = { t: "not-asked" };
+export const NotAsked: NotAsked = { t: "not-asked" };
 
 export type Loading = { t: "loading" };
-export const loading: Loading = { t: "loading" };
+export const Loading: Loading = { t: "loading" };
 
 export const isLoading = <TError, TValue>(
 	result?: RemoteResult<TError, TValue>,
@@ -227,9 +228,9 @@ export const remoteResultMap = <E, A, B>(
 
 export const RemoteResult = {
 	map: remoteResultMap,
-	loading,
-	notAsked,
-	err: Err,
-	ok: Ok,
+	Loading,
+	NotAsked,
+	Err,
+	Ok,
 	is,
 };

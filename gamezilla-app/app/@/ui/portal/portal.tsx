@@ -23,11 +23,7 @@ const Entrance = (props: { portalId: string; children: VDomChildren }) => {
 
 const Exit = (props: { portalId: string }) => {
 	return (
-		<div
-			id={props.portalId}
-			data-portal-exit
-			data-portal-id={props.portalId}
-		/>
+		<div id={props.portalId} data-portal-exit data-portal-id={props.portalId} />
 	);
 };
 

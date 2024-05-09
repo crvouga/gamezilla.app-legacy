@@ -23,8 +23,9 @@ export const renderRuntimeErrors = () => {
 		errorDiv.style.top = "0";
 		errorDiv.style.left = "0";
 		errorDiv.style.backgroundColor = "white";
-		errorDiv.innerHTML =
-			`Error: ${errorMsg}${url ? ` - at ${url}: ${lineNumber}:${column}` : ""}`;
+		errorDiv.innerHTML = `Error: ${errorMsg}${
+			url ? ` - at ${url}: ${lineNumber}:${column}` : ""
+		}`;
 		document.body.appendChild(errorDiv);
 	}
 };

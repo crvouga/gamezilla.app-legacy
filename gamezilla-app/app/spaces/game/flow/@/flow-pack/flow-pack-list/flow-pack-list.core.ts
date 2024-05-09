@@ -64,7 +64,7 @@ export type ModelClient = {
 };
 
 export const initClient: ModelClient = {
-	request: RemoteResult.notAsked,
+	request: RemoteResult.NotAsked,
 	packs: {},
 };
 

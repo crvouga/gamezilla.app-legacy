@@ -1,4 +1,4 @@
-import { type RemoteResult, type Result, notAsked } from "gamezilla-app/@/core";
+import { type RemoteResult, type Result, NotAsked } from "gamezilla-app/@/core";
 import type { FlowPuzzleId } from "../../../@/flow-puzzle/flow-puzzle-id";
 import type { UserId } from "gamezilla-app/app/@/data";
 
@@ -15,7 +15,7 @@ export type ModelClient = {
 
 export const initClient: ModelClient = {
 	puzzleEditNameDraft: "",
-	puzzleEditNameRequest: notAsked,
+	puzzleEditNameRequest: NotAsked,
 	puzzleEditNameValidationError: null,
 };
 

@@ -86,3 +86,7 @@ export type IVerifySMS = {
 		code: string;
 	}) => Task<VerifyCodeProblem, { phoneNumber: PhoneNumber }>;
 };
+
+export type SendCodeOutput = Awaited<ReturnType<IVerifySMS["sendCode"]>>;
+
+export type VerifyCodeOutput = Awaited<ReturnType<IVerifySMS["verifyCode"]>>;

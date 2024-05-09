@@ -1,4 +1,4 @@
-import { Eff, Sub, batchMsgs, notAsked } from "gamezilla-app/@/core";
+import { Eff, Sub, batchMsgs, NotAsked } from "gamezilla-app/@/core";
 import { isAnonymous } from "../@/client";
 import { SpaceClientCmd } from "./@/space-client-cmd";
 import {
@@ -34,7 +34,7 @@ export const init: ClientModule["init"] = ({ ctx }) => {
 		games: {},
 		modal: null,
 		modalPreviewUserId: null,
-		listSpacesRequest: notAsked,
+		listSpacesRequest: NotAsked,
 	};
 	const listSpaces = ListSpacesClient.init({ ctx, model });
 	return {

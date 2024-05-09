@@ -42,7 +42,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 
 		case "delete-forever.user-clicked-confirm-button": {
 			return {
-				model: { ...model, puzzleDeleteForeverRequest: RemoteResult.loading },
+				model: { ...model, puzzleDeleteForeverRequest: RemoteResult.Loading },
 				msgCmd: [
 					sendToServer({ t: "delete-forever.user-confirmed" }),
 					playSound(APP_SOUND.tap),

@@ -3,14 +3,14 @@ import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
 import { SpaceId } from "gamezilla-app/app/@/data";
 import { didSendMsgToClient } from "gamezilla-app/app/@/server";
 import {
-	Fixture,
+	SpaceServerFixture,
 	userJoinedSpace,
 	userStartedSpace,
 } from "../@/testing/server";
 
 describe(import.meta.file, () => {
 	it("should send a sync message to client that joined a space", async () => {
-		const f = Fixture();
+		const f = SpaceServerFixture();
 
 		const spaceId = SpaceId.generate();
 		const updated = await AppServerModule.andThen(

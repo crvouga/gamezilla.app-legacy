@@ -20,7 +20,7 @@ import {
 	TopBar,
 	TopBarBackButton,
 } from "gamezilla-app/app/@/ui";
-import { Sub, isErr, loading } from "gamezilla-app/@/core";
+import { Sub, isErr, Loading } from "gamezilla-app/@/core";
 import { ViewProfileScreen } from "./profile-client/profile-client-view-profile-screen";
 import { ViewUpdateAvatarScreen } from "./profile-client/profile-client-view-update-avatar-screen";
 import type {
@@ -399,7 +399,7 @@ const loadProfile = (
 	return {
 		model: {
 			...model,
-			requests: { ...model.requests, "find-one": loading },
+			requests: { ...model.requests, "find-one": Loading },
 		},
 		msgCmd: [sendToServer({ t: "find-one", userId })],
 	};

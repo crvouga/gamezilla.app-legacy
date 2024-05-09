@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { Ok, Result } from "gamezilla-app/@/core";
 import { UserId } from "gamezilla-app/app/@/data";
-import { ServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
+import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
 import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
 import { randomFlowPack } from "../../testing";
 import type { FlowPack } from "../flow-pack";
@@ -9,7 +9,7 @@ import { FlowPackName } from "../flow-pack-name";
 import { FlowPackDb } from "./flow-pack-db-impl";
 
 const Fixture = async () => {
-	const testEnv = await ServerTestEnv();
+	const testEnv = await AppServerTestEnv();
 	switch (testEnv.t) {
 		case "integration": {
 			const flowPackDb = FlowPackDb({

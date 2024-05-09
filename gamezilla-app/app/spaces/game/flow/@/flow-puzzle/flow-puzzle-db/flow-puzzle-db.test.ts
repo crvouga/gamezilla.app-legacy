@@ -1,14 +1,14 @@
 import { describe, expect, it } from "bun:test";
 import { Ok, Posix, Result, TimeSpan, ascend } from "gamezilla-app/@/core";
 import { UserId } from "gamezilla-app/app/@/data";
-import { ServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
+import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
 import { randomFlowPuzzle } from "../../testing";
 import type { FlowPuzzle } from "../flow-puzzle";
 import { FlowPuzzleName } from "../flow-puzzle-name";
 import { FlowPuzzleDb } from "./flow-puzzle-db-impl";
 
 const Fixture = async () => {
-	const testEnv = await ServerTestEnv();
+	const testEnv = await AppServerTestEnv();
 	switch (testEnv.t) {
 		case "integration": {
 			const flowPuzzleDb = FlowPuzzleDb({

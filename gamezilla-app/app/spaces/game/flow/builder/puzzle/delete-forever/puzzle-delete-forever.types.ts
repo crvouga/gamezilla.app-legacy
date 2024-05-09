@@ -1,4 +1,4 @@
-import { type RemoteResult, notAsked } from "gamezilla-app/@/core";
+import { type RemoteResult, NotAsked } from "gamezilla-app/@/core";
 import type { UserId } from "gamezilla-app/app/@/data";
 import type { IFlowPuzzleDb } from "../../../@/flow-puzzle/flow-puzzle-db";
 import type { FlowPuzzleId } from "../../../@/flow-puzzle/flow-puzzle-id";
@@ -8,7 +8,7 @@ export type ModelClient = {
 };
 
 export const initClient: ModelClient = {
-	puzzleDeleteForeverRequest: notAsked,
+	puzzleDeleteForeverRequest: NotAsked,
 };
 
 export type ModelServer = {};

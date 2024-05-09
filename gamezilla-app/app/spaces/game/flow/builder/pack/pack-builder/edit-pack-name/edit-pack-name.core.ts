@@ -1,4 +1,4 @@
-import { isErr, loading, notAsked } from "gamezilla-app/@/core";
+import { isErr, Loading, NotAsked } from "gamezilla-app/@/core";
 import type { ModelCore, MsgCore } from "./edit-pack-name.types";
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import type { FlowPack } from "../../../../@/flow-pack";
@@ -9,7 +9,7 @@ const init = (input: { pack: FlowPack }): ModelCore => {
 		pack: input.pack,
 		rollback: input.pack.name,
 		draft: "",
-		result: notAsked,
+		result: NotAsked,
 		validationError: null,
 	};
 };
@@ -33,7 +33,7 @@ const update = <TModel extends ModelCore, TMsg extends MsgCore>(input: {
 					...input.modelCore.pack,
 					name: parsed.value,
 				},
-				result: loading,
+				result: Loading,
 			};
 		}
 

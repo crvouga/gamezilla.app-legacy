@@ -1,31 +1,32 @@
 import { Err, Ok, PhoneNumber } from "gamezilla-app/@/core";
-import type { IHashing } from "gamezilla-app/@/hashing";
 import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
 import { VerificationId } from "./verification";
 import type { IVerifySMS } from "./verify-sms";
 
-const CODE = "123";
+const DEFAULT_CODE = "123";
 
 export type VerifySMSDeps = {
-	hashing: IHashing;
-	logger: ILogger;
-	delay: () => Promise<void>;
+	logger?: ILogger;
+	delay?: () => Promise<void>;
+	verificationId?: VerificationId;
+	code?: string;
 };
 
-const phoneNumbers = new Map<VerificationId, PhoneNumber>();
 export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
+	const phoneNumbers = new Map<VerificationId, PhoneNumber>();
+
 	return {
 		async sendCode(input) {
-			await deps.delay();
+			await deps.delay?.();
 
-			const verificationId = VerificationId.generate();
+			const verificationId = deps.verificationId ?? VerificationId.generate();
 
 			phoneNumbers.set(verificationId, input.phoneNumber);
 
 			const phoneNumberStr = PhoneNumber.toString(input.phoneNumber);
 
-			deps.logger.info(
-				`[verify-sms] [test] fake sent code to ${phoneNumberStr}. code: ${CODE}`,
+			deps.logger?.info(
+				`[verify-sms] [test] fake sent code to ${phoneNumberStr}. code: ${DEFAULT_CODE}`,
 			);
 
 			return Ok({
@@ -33,7 +34,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 			});
 		},
 		async verifyCode(input) {
-			await deps.delay();
+			await deps.delay?.();
 
 			const phoneNumber = phoneNumbers.get(input.verificationId);
 
@@ -43,7 +44,8 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				});
 			}
 
-			if (input.code === CODE) {
+			const code = deps.code ?? DEFAULT_CODE;
+			if (code === DEFAULT_CODE) {
 				return Ok({
 					phoneNumber,
 				});

@@ -13,7 +13,7 @@ import {
 	ListItemButton,
 	TextField,
 } from "gamezilla-app/app/@/ui";
-import { isLoading, isOk, loading } from "gamezilla-app/@/core";
+import { isLoading, isOk, Loading } from "gamezilla-app/@/core";
 import { FlowPuzzleName } from "../../../@/flow-puzzle/flow-puzzle-name";
 import type { ClientModule } from "../../builder.types";
 import { editNameValidationErrorToString } from "./puzzle-edit-name.types";
@@ -88,7 +88,7 @@ const updateFormButtons: ClientModule["update"] = (input) => {
 			return {
 				model: {
 					...model,
-					puzzleEditNameRequest: loading,
+					puzzleEditNameRequest: Loading,
 					puzzleEditNameValidationError: null,
 				},
 				msgCmd: [

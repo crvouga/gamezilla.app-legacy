@@ -1,4 +1,4 @@
-import { Ok, isErr, notAsked } from "gamezilla-app/@/core";
+import { Ok, isErr, NotAsked } from "gamezilla-app/@/core";
 import { UserId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import { sendBack } from "gamezilla-app/app/@/server";
@@ -6,7 +6,7 @@ import type { ServerModule } from "../auth.types";
 import type { ModelClient } from "./continue-as-guest.types";
 
 const initModel: ModelClient = {
-	guestRequest: notAsked,
+	guestRequest: NotAsked,
 };
 
 const update: ServerModule["update"] = async ({

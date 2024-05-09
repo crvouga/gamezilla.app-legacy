@@ -1,16 +1,17 @@
 import { describe, expect, it } from "bun:test";
 import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
 import { didSendToClient } from "gamezilla-app/app/@/server";
+import { SpaceServerCtx } from "gamezilla-app/app/spaces/@/space";
 import {
+	randomAuthenticatedClient,
 	type AuthenticatedClient,
-	generateAuthClient,
 } from "gamezilla-app/app/spaces/@/testing/server";
+import { SpaceGameFixtureServer } from "gamezilla-app/app/spaces/game/@/testing/server";
 import { FlowPack, FlowPackDb } from "..";
-import { testSpaceServerCtx } from "../../../../@/testing/server";
 import type { FlowServerDeps } from "../../../builder/builder.types";
-import { FlowVariant, FlowVariantDimensions } from "../../flow";
-import { FlowPuzzle, FlowPuzzleDb } from "../../flow-puzzle";
+import { FlowPuzzleDb } from "../../flow-puzzle";
 import type { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
+import { randomFlowPuzzle } from "../../testing";
 import type { ModelServer } from "./flow-pack-grid.core";
 import { FlowPackGridServer } from "./flow-pack-grid.server";
 
@@ -23,12 +24,13 @@ const initial = () => {
 const userObversedGrid =
 	(
 		deps: FlowServerDeps,
+		ctx: SpaceServerCtx,
 		client: AuthenticatedClient,
 		puzzleIds: FlowPuzzleId[],
 	) =>
 	(model: ModelServer) => {
 		return FlowPackGridServer.update({
-			ctx: testSpaceServerCtx,
+			ctx,
 			model,
 			deps,
 			msgClient: {
@@ -39,53 +41,38 @@ const userObversedGrid =
 		});
 	};
 
-const createDeps = async (
-	client: AuthenticatedClient,
-): Promise<FlowServerDeps> => {
+const Fixture = async () => {
 	const deps: FlowServerDeps = {
 		FlowPackDb: FlowPackDb({ t: "hash-map" }),
 		FlowPuzzleDb: FlowPuzzleDb({ t: "hash-map" }),
 	};
-
-	const puzzle = await FlowPuzzle.create({
-		createdBy: client.userId,
-		count: 1,
-		createdAt: testSpaceServerCtx.now,
-		flow: FlowVariant.init({
-			dimensions: FlowVariantDimensions.init({
-				t: "flow-grid",
-				height: 5,
-				width: 5,
-			}),
-			terminalsByGroupId: {},
-		}),
-	});
-
+	const f = await SpaceGameFixtureServer();
+	const client = randomAuthenticatedClient();
+	const puzzle = await randomFlowPuzzle();
 	const somePack = await FlowPack.create({
 		createdBy: client.userId,
-		now: testSpaceServerCtx.now,
+		now: f.ctx.now,
 		puzzleIds: [puzzle.id],
 	});
 
 	await deps.FlowPuzzleDb.put(puzzle);
 	await deps.FlowPackDb.put(somePack);
 
-	return deps;
+	return { ...f, client, deps };
 };
 
 describe(import.meta.file, () => {
 	it("should send back listed puzzles", async () => {
-		const client = generateAuthClient();
-		const deps = await createDeps(client);
+		const f = await Fixture();
 		const output = await AppServerModule.andThen(
 			initial(),
-			userObversedGrid(deps, client, []),
+			userObversedGrid(f.deps, f.ctx, f.client, []),
 		);
 
 		expect(
 			didSendToClient(
 				output,
-				client.clientId,
+				f.client.clientId,
 				(msg) => msg.t === "listed-puzzles-by-id",
 			),
 		).toBe(true);

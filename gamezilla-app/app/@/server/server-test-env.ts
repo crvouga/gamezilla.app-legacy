@@ -1,5 +1,10 @@
+import { Posix } from "gamezilla-app/@/core";
+import { DbConnKv } from "./db-conn-kv";
 import { DbConnSql, type IDbConnSql } from "./db-conn-sql";
 import { Logger } from "./logger";
+import { ServerCtx } from "./server-ctx";
+import { SMS } from "./sms";
+import { ClientId, SessionId } from "../data";
 
 export type ITestEnv =
 	| {
@@ -10,7 +15,7 @@ export type ITestEnv =
 			dbConnSql: IDbConnSql;
 	  };
 
-export const ServerTestEnv = async (): Promise<ITestEnv> => {
+export const AppServerTestEnv = async (): Promise<ITestEnv> => {
 	if (process.env["IS_INTEGRATION_TEST"] === "true") {
 		const DATABASE_URL = process.env["DATABASE_URL"];
 
@@ -19,6 +24,7 @@ export const ServerTestEnv = async (): Promise<ITestEnv> => {
 		}
 
 		const dbConnSql = await DbConnSql({
+			t: "postgres",
 			databaseUrl: DATABASE_URL,
 			logger: Logger({ t: "noop" }),
 		});
@@ -31,5 +37,26 @@ export const ServerTestEnv = async (): Promise<ITestEnv> => {
 
 	return {
 		t: "unit",
+	};
+};
+
+export const randomClient = () => {
+	return {
+		sessionId: SessionId.generate(),
+		clientId: ClientId.generate(),
+	};
+};
+
+export const AppServerFixture = async () => {
+	const ctx: ServerCtx = {
+		dbConnKv: await DbConnKv({ t: "hash-map" }),
+		dbConnSql: await DbConnSql({ t: "noop" }),
+		logger: Logger({ t: "noop" }),
+		now: Posix.now(),
+		sms: SMS({ t: "fake" }),
+	};
+	return {
+		ctx,
+		//
 	};
 };

@@ -1,6 +1,7 @@
 import {
 	Err,
 	Iso3166Alpha2Code,
+	NotAsked,
 	PhoneNumber,
 	Posix,
 	RemoteResult,
@@ -79,20 +80,20 @@ type Module = AppClientModule<{
 export const init: Module["init"] = () => {
 	return {
 		model: {
-			codeInput: "",
-			codeError: null,
+			inputtedCode: "",
+			inputtedCodeError: null,
 			//
-			phoneNumberInput: "",
+			inputtedPhoneNumber: "",
 			countryCodeInput:
 				Iso3166Alpha2Code.getNavigatorCountry() ?? Iso3166Alpha2Code.of("US"),
 			phoneNumberError: null,
 			//
 
 			sentCodeAt: null,
-			sendCode: RemoteResult.notAsked,
+			sendCode: NotAsked,
 
 			verifiedCodeAt: null,
-			verifyCode: RemoteResult.notAsked,
+			verifyCode: RemoteResult.NotAsked,
 		},
 	};
 };
@@ -157,7 +158,7 @@ const updateFromMsg: Module["update"] = (input) => {
 			return {
 				model: {
 					...model,
-					phoneNumberInput: msg.phoneNumber,
+					inputtedPhoneNumber: msg.phoneNumber,
 					phoneNumberError: null,
 				},
 			};
@@ -167,7 +168,7 @@ const updateFromMsg: Module["update"] = (input) => {
 			return {
 				model: {
 					...model,
-					phoneNumberInput: "",
+					inputtedPhoneNumber: "",
 					phoneNumberError: null,
 				},
 			};
@@ -179,8 +180,8 @@ const updateFromMsg: Module["update"] = (input) => {
 			};
 		}
 
-		case "clicked-send-code": {
-			const phoneNumber = PhoneNumber.fromString(model.phoneNumberInput);
+		case "user-clicked-send-code-button": {
+			const phoneNumber = PhoneNumber.fromString(model.inputtedPhoneNumber);
 
 			if (isErr(phoneNumber)) {
 				return {
@@ -198,12 +199,12 @@ const updateFromMsg: Module["update"] = (input) => {
 			return {
 				model: {
 					...model,
-					sendCode: RemoteResult.loading,
+					sendCode: RemoteResult.Loading,
 					sentCodeAt: ctx.now,
 				},
 				msgCmd: [
 					sendToServer({
-						t: "send-code",
+						t: "user-clicked-send-code-button",
 						phoneNumber: phoneNumber.value,
 					}),
 					playSound(APP_SOUND.tap),
@@ -213,22 +214,26 @@ const updateFromMsg: Module["update"] = (input) => {
 
 		case "inputted-code": {
 			return {
-				model: { ...model, codeInput: msg.code, codeError: null },
+				model: {
+					...model,
+					inputtedCode: msg.inputtedCode,
+					inputtedCodeError: null,
+				},
 			};
 		}
 
 		case "clicked-code-clear": {
 			return {
-				model: { ...model, codeInput: "", codeError: null },
+				model: { ...model, inputtedCode: "", inputtedCodeError: null },
 			};
 		}
 
-		case "clicked-verify-code": {
-			if (model.codeInput === "") {
+		case "user-clicked-verify-code-button": {
+			if (model.inputtedCode === "") {
 				return {
 					model: {
 						...model,
-						codeError: "Please enter the code",
+						inputtedCodeError: "Please enter the code",
 					},
 					msgCmd: [
 						playSound(APP_SOUND.alertErrorSm),
@@ -256,13 +261,13 @@ const updateFromMsg: Module["update"] = (input) => {
 				model: {
 					...model,
 					verifiedCodeAt: ctx.now,
-					verifyCode: RemoteResult.loading,
+					verifyCode: RemoteResult.Loading,
 				},
 				msgCmd: [
 					playSound(APP_SOUND.tap),
 					sendToServer({
-						t: "verify-code",
-						code: model.codeInput,
+						t: "user-clicked-verify-code-button",
+						inputtedCode: model.inputtedCode,
 						verificationId,
 					}),
 				],
@@ -284,9 +289,10 @@ const updateFromMsg: Module["update"] = (input) => {
 						return {
 							model: {
 								...model,
-								sendCode: RemoteResult.err(
-									"Timed out. Server took too long to response",
-								),
+								sendCode: RemoteResult.Err({
+									t: "database-error",
+									error: ctx.t("app.something-went-wrong"),
+								}),
 							},
 							msgCmd: [playSound(APP_SOUND.alertErrorMd)],
 						};
@@ -305,7 +311,7 @@ const updateFromMsg: Module["update"] = (input) => {
 						return {
 							model: {
 								...model,
-								verifyCode: RemoteResult.err({
+								verifyCode: RemoteResult.Err({
 									t: "database-error",
 									error: "Timed out. Server took too long to response",
 								}),
@@ -330,9 +336,9 @@ const updateFromServer: Module["update"] = (input) => {
 
 	switch (msgServer?.t) {
 		case "sent-code": {
-			if (isErr(msgServer.result)) {
+			if (isErr(msgServer.sent)) {
 				return {
-					model: { ...model, sendCode: msgServer.result },
+					model: { ...model, sendCode: msgServer.sent },
 					msgCmd: [playSound(APP_SOUND.alertErrorMd)],
 				};
 			}
@@ -340,9 +346,9 @@ const updateFromServer: Module["update"] = (input) => {
 			return {
 				model: {
 					...model,
-					sendCode: msgServer.result,
-					verifyCode: RemoteResult.notAsked,
-					codeInput: "",
+					sendCode: msgServer.sent,
+					verifyCode: RemoteResult.NotAsked,
+					inputtedCode: "",
 				},
 				msgCmd: [
 					pushRoute({
@@ -362,16 +368,16 @@ const updateFromServer: Module["update"] = (input) => {
 		}
 
 		case "verified-code": {
-			if (isErr(msgServer.result)) {
+			if (isErr(msgServer.verified)) {
 				return {
-					model: { ...model, verifyCode: msgServer.result },
+					model: { ...model, verifyCode: msgServer.verified },
 					msgCmd: [playSound(APP_SOUND.alertErrorMd)],
 				};
 			}
 			return {
 				model: {
 					...model,
-					verifyCode: msgServer.result,
+					verifyCode: msgServer.verified,
 				},
 			};
 		}
@@ -457,7 +463,7 @@ export const View: Module["View"] = (props) => {
 								)}
 
 								<TextField
-									value={props.model.phoneNumberInput}
+									value={props.model.inputtedPhoneNumber}
 									id="phoneNumberInput"
 									label={props.ctx.t("auth-sms.phone-number")}
 									type="tel"
@@ -483,7 +489,7 @@ export const View: Module["View"] = (props) => {
 									size="lg"
 									loading={props.model.sendCode.t === "loading"}
 									onClick={() => {
-										props.dispatch({ t: "clicked-send-code" });
+										props.dispatch({ t: "user-clicked-send-code-button" });
 									}}
 								/>
 							</div>
@@ -511,19 +517,19 @@ export const View: Module["View"] = (props) => {
 
 							<div className="flex w-full flex-col gap-6 p-4 py-6">
 								<TextField
-									value={props.model.codeInput}
+									value={props.model.inputtedCode}
 									id={CODE_INPUT_VIEW_ID}
 									label={props.ctx.t("auth-sms.code")}
-									error={typeof props.model.codeError === "string"}
+									error={typeof props.model.inputtedCodeError === "string"}
 									helperText={
-										typeof props.model.codeError === "string"
-											? props.model.codeError
+										typeof props.model.inputtedCodeError === "string"
+											? props.model.inputtedCodeError
 											: null
 									}
 									autoFocus
 									type="tel"
 									onChange={(value) => {
-										props.dispatch({ t: "inputted-code", code: value });
+										props.dispatch({ t: "inputted-code", inputtedCode: value });
 									}}
 									onClear={() => {
 										props.dispatch({ t: "clicked-code-clear" });
@@ -540,7 +546,7 @@ export const View: Module["View"] = (props) => {
 									}
 									onClick={() => {
 										props.dispatch({
-											t: "clicked-verify-code",
+											t: "user-clicked-verify-code-button",
 											phoneNumber,
 										});
 									}}

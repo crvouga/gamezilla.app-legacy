@@ -13,7 +13,7 @@ import {
 	IconArrowLeftOnRect,
 	IconFloppyDisk,
 } from "gamezilla-app/app/@/ui";
-import { Result, isErr, isOk, loading } from "gamezilla-app/@/core";
+import { Result, isErr, isOk, Loading } from "gamezilla-app/@/core";
 import { FlowVariantUIEdit } from "../../../@/flow";
 import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import type {
@@ -197,7 +197,7 @@ const saveChanges: ClientModule["update"] = ({ model, modelCore }) => {
 	};
 
 	return {
-		model: { ...model, puzzleSaveChangesRequest: loading },
+		model: { ...model, puzzleSaveChangesRequest: Loading },
 		msgCmd: [
 			playSound(APP_SOUND.tap),
 			sendToServer({

@@ -6,7 +6,7 @@ import {
 	TimeSpan,
 	isErr,
 	isLoading,
-	loading,
+	Loading,
 } from "gamezilla-app/@/core";
 import {
 	APP_SOUND,
@@ -26,7 +26,7 @@ const update: ClientModule["update"] = (input) => {
 			return {
 				model: {
 					...model,
-					puzzleCreateRequest: loading,
+					puzzleCreateRequest: Loading,
 					puzzleCreateRequestedAt: ctx.now,
 				},
 				msgCmd: [

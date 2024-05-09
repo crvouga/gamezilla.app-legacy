@@ -1,10 +1,10 @@
+import { Eff, Sub, TimeSpan, isErr, isOk } from "gamezilla-app/@/core";
 import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
 import type { SessionId, UserId } from "gamezilla-app/app/@/data";
 import { ServerCmd, sendToClient } from "gamezilla-app/app/@/server";
-import { Eff, Sub, TimeSpan, isErr, isOk } from "gamezilla-app/@/core";
-import * as AuthServerSMS from "./auth-sms/auth-sms.server";
 import { AccountDb } from "./@/server/account-db";
 import { SessionDb } from "./@/server/session-db";
+import { AuthSMSServer } from "./auth-sms/auth-sms.server";
 import type { MsgToClient, ServerDeps, ServerModule } from "./auth.types";
 import { ContinueAsGuestServer } from "./continue-as-guest/continue-as-guest.server";
 
@@ -43,13 +43,13 @@ export type Deps = Awaited<ReturnType<typeof getDeps>>;
 //
 
 export const init: ServerModule["init"] = async (input) => {
-	const sms = await AuthServerSMS.init({ ...input, stored: null });
+	const sms = await AuthSMSServer.init({ ...input, stored: null });
 
 	return {
 		model: null,
 		eff: Eff.tag("sms", sms.eff),
 		msgCmd: ServerCmd.tag("sms", sms.msgCmd),
-		msgEvt: sms.msgEvt,
+		msgEvt: [],
 	};
 };
 
@@ -88,12 +88,9 @@ export const toUserIdFromSessionId = async (
 };
 
 const updateChild: ServerModule["update"] = async (input) => {
-	const sms = await AuthServerSMS.update({
-		deps: await AuthServerSMS.getDeps(input),
-		ctx: input.ctx,
-		model: null,
-		msgCmd: input.msgCmd,
-		msgEvt: input.msgEvt,
+	const sms = await AuthSMSServer.update({
+		...input,
+		deps: await AuthSMSServer.getDeps(input),
 		msgClient:
 			input.msgClient?.t === "sms"
 				? { ...input.msgClient, ...input.msgClient.c }
@@ -105,7 +102,7 @@ const updateChild: ServerModule["update"] = async (input) => {
 		model: null,
 		eff: Eff.tag("sms", sms.eff),
 		msgCmd: ServerCmd.tag("sms", sms.msgCmd),
-		msgEvt: sms.msgEvt,
+		// msgEvt: sms.msgEvt,
 	};
 };
 
@@ -248,10 +245,10 @@ export const subscriptions: ServerModule["subscriptions"] = async (input) => {
 	return Sub.batch([
 		Sub.tag(
 			"sms",
-			await AuthServerSMS.subscriptions({
+			await AuthSMSServer.subscriptions({
 				...input,
 				model: null,
-				deps: await AuthServerSMS.getDeps(input),
+				deps: await AuthSMSServer.getDeps(input),
 			}),
 		),
 	]);

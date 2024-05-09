@@ -1,4 +1,4 @@
-import { Ok, notAsked } from "gamezilla-app/@/core";
+import { Ok, NotAsked } from "gamezilla-app/@/core";
 import {
 	APP_SOUND,
 	type BaseClientCtx,
@@ -48,7 +48,7 @@ const update: ClientModule["update"] = (input) => {
 			return {
 				model: {
 					...input.model,
-					logout: notAsked,
+					logout: NotAsked,
 					opened: null,
 				},
 				msgCmd: [playSound(APP_SOUND.tap)],

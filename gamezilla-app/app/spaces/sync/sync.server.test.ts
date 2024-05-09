@@ -5,7 +5,7 @@ import { didSendMsgToClient } from "gamezilla-app/app/@/server";
 import {
 	authenticatedClientConnected,
 	clientCore,
-	generateAuthClient,
+	randomAuthenticatedClient,
 	getDeps,
 	init,
 	userStartedSpace,
@@ -15,7 +15,7 @@ import { makeSpace } from "../@/testing/shared";
 describe(import.meta.file, () => {
 	it("should send user's space when they connect to the server", async () => {
 		const deps = getDeps();
-		const client = generateAuthClient();
+		const client = randomAuthenticatedClient();
 		const spaceId = SpaceId.generate();
 		const output = await AppServerModule.andThen(
 			init(),
@@ -29,7 +29,7 @@ describe(import.meta.file, () => {
 
 	it("should send back synced response when user sends sync message", async () => {
 		const deps = getDeps();
-		const client = generateAuthClient();
+		const client = randomAuthenticatedClient();
 		const clientsSpace = makeSpace({
 			spaceId: SpaceId.generate(),
 			hostId: client.userId,
@@ -44,7 +44,7 @@ describe(import.meta.file, () => {
 
 	it("should broadcast space events received from clients to other clients", async () => {
 		const deps = getDeps();
-		const client = generateAuthClient();
+		const client = randomAuthenticatedClient();
 		const spaceId = SpaceId.generate();
 		const output = await AppServerModule.andThen(
 			init(),

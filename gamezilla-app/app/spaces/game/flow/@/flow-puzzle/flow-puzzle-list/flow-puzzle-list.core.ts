@@ -1,4 +1,4 @@
-import { RequestResponse } from "gamezilla-app/@/core";
+import { NotAsked, RequestResponse } from "gamezilla-app/@/core";
 import type { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
 import type { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
 import type {
@@ -67,7 +67,7 @@ export type ModelClient = {
 };
 
 export const initClient: ModelClient = {
-	request: RequestResponse.notAsked,
+	request: NotAsked,
 	puzzles: {},
 };
 

@@ -1,3 +1,4 @@
+import { NotAsked } from "gamezilla-app/@/core";
 import { RequestResponse } from "gamezilla-app/@/core/request-response";
 import type { ListPuzzlesOutput } from "../../flow-puzzle";
 import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
@@ -11,7 +12,7 @@ export type ModelClient = {
 };
 
 export const initClient: ModelClient = {
-	request: RequestResponse.notAsked,
+	request: NotAsked,
 	puzzles: {},
 };
 

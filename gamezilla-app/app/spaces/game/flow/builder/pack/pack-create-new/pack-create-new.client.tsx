@@ -6,7 +6,7 @@ import {
 	showToast,
 } from "gamezilla-app/app/@/client";
 import { Button, IconPlus } from "gamezilla-app/app/@/ui";
-import { Ok, loading } from "gamezilla-app/@/core";
+import { Ok, Loading } from "gamezilla-app/@/core";
 import type { ClientModule } from "../../builder.types";
 
 const update: ClientModule["update"] = (input) => {
@@ -17,7 +17,7 @@ const update: ClientModule["update"] = (input) => {
 			return {
 				model: {
 					...model,
-					packCreateNewRequest: loading,
+					packCreateNewRequest: Loading,
 				},
 				msgCmd: [
 					playSound(APP_SOUND.tap),

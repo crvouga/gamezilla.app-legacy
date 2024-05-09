@@ -2,12 +2,16 @@ import { describe, expect, it } from "bun:test";
 import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
 import { SpaceId } from "gamezilla-app/app/@/data";
 import { didSendMsgToClient } from "gamezilla-app/app/@/server";
-import { Fixture, init, userStartedSpace } from "../@/testing/server";
+import {
+	SpaceServerFixture,
+	init,
+	userStartedSpace,
+} from "../@/testing/server";
 import type { ModelServer } from "../spaces.types";
 import * as SpacesServer from "../spaces.server";
 
 const clientAListSpaces =
-	(f: ReturnType<typeof Fixture>) => (model: ModelServer) => {
+	(f: ReturnType<typeof SpaceServerFixture>) => (model: ModelServer) => {
 		return SpacesServer.update({
 			ctx: f.ctx,
 			deps: f.deps,
@@ -24,7 +28,7 @@ const clientAListSpaces =
 
 describe(import.meta.file, () => {
 	it("should list spaces when requested", async () => {
-		const f = Fixture();
+		const f = SpaceServerFixture();
 		const spaceId = SpaceId.generate();
 		const output = await AppServerModule.andThen(
 			init(),
@@ -37,7 +41,7 @@ describe(import.meta.file, () => {
 	});
 
 	it("should include the started space in the response", async () => {
-		const f = Fixture();
+		const f = SpaceServerFixture();
 		const spaceId = SpaceId.generate();
 		const output = await AppServerModule.andThen(
 			init(),

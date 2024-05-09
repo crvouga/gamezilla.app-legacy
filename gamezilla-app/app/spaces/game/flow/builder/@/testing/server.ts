@@ -1,8 +1,5 @@
-import { ServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
-import {
-	SpaceGameFixtureServer,
-	testSpaceServerCtx,
-} from "../../../../@/testing/server";
+import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
+import { SpaceGameFixtureServer } from "../../../../@/testing/server";
 import { FlowPackDb } from "../../../@/flow-pack/flow-pack-db";
 import { FlowPuzzleDb } from "../../../@/flow-puzzle/flow-puzzle-db";
 import { initServer, type FlowServerDeps } from "../../builder.types";
@@ -12,12 +9,8 @@ export const initial = {
 	model: initServer,
 };
 
-export const defaultModelCore = BuilderCore.initCore({
-	ctx: testSpaceServerCtx,
-});
-
 export const getDeps = async (): Promise<FlowServerDeps> => {
-	const testEnv = await ServerTestEnv();
+	const testEnv = await AppServerTestEnv();
 	switch (testEnv.t) {
 		case "integration": {
 			return {

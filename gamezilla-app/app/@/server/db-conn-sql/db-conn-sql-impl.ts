@@ -3,47 +3,34 @@ import type { ILogger } from "../logger/logger";
 import type { IDbConnSql } from "./db-conn-sql";
 import { DbConnPostgres } from "./db-conn-sql-impl-postgres";
 
-export const dbConnSqlNoop: IDbConnSql = {
-	async query() {
-		return Ok([]);
-	},
-	async onNotification() {
-		return () => {};
-	},
-};
+type DbConnSqlImpl =
+	| {
+			t: "postgres";
+			databaseUrl: string;
+			logger: ILogger;
+	  }
+	| {
+			t: "noop";
+	  };
 
-export const DbConnSql = async ({
-	databaseUrl,
-	logger,
-}: {
-	databaseUrl: string;
-	logger: ILogger;
-}): Promise<IDbConnSql> => {
-	const databaseType = connectionStringToDatabaseType(databaseUrl);
-
-	switch (databaseType) {
+export const DbConnSql = async (impl: DbConnSqlImpl): Promise<IDbConnSql> => {
+	switch (impl.t) {
+		case "noop": {
+			return DbConnSqlNoop();
+		}
 		case "postgres": {
-			return DbConnPostgres({ databaseUrl, logger });
-		}
-
-		default: {
-			throw new Error(`unknown database type for ${databaseUrl}`);
+			return DbConnPostgres(impl);
 		}
 	}
 };
 
-type DatabaseType = "sqlite" | "postgres";
-
-const connectionStringToDatabaseType = (
-	connectionString: string,
-): DatabaseType | null => {
-	if (connectionString.includes("sqlite")) {
-		return "sqlite";
-	}
-
-	if (connectionString.includes("postgres")) {
-		return "postgres";
-	}
-
-	return null;
+export const DbConnSqlNoop = (): IDbConnSql => {
+	return {
+		async query() {
+			return Ok([]);
+		},
+		async onNotification() {
+			return () => {};
+		},
+	};
 };

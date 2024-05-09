@@ -1,11 +1,11 @@
-import { RequestResponse, isRequesting, notAsked } from "gamezilla-app/@/core";
+import { RequestResponse, isRequesting, NotAsked } from "gamezilla-app/@/core";
 import { APP_SOUND, playSound, sendToServer } from "gamezilla-app/app/@/client";
 import { Button, IconUserCircle } from "gamezilla-app/app/@/ui";
 import type { ClientModule } from "../auth.types";
 import type { ModelClient } from "./continue-as-guest.types";
 
 const initModel: ModelClient = {
-	guestRequest: notAsked,
+	guestRequest: NotAsked,
 };
 
 const update: ClientModule["update"] = (input) => {

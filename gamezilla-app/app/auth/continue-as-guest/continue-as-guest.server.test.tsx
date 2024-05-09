@@ -4,17 +4,17 @@ import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
 import { ClientId, SessionId } from "gamezilla-app/app/@/data";
 import type { ServerCtx } from "gamezilla-app/app/@/server";
 import { DbConnKvHashMap } from "gamezilla-app/app/@/server/db-conn-kv/db-conn-kv-impl-hash-map";
-import { dbConnSqlNoop } from "gamezilla-app/app/@/server/db-conn-sql";
 import { Logger } from "gamezilla-app/app/@/server/logger/logger-impl";
 import { smsNoop } from "gamezilla-app/app/@/server/sms";
 import { AccountDb } from "../@/server/account-db";
 import { SessionDb } from "../@/server/session-db";
 import type { ServerDeps, ServerModule } from "../auth.types";
 import * as AuthServer from "../auth.server";
+import { DbConnSqlNoop } from "gamezilla-app/app/@/server/db-conn-sql";
 
 const ctx: ServerCtx = {
 	sms: smsNoop,
-	dbConnSql: dbConnSqlNoop,
+	dbConnSql: DbConnSqlNoop(),
 	dbConnKv: DbConnKvHashMap(),
 	logger: Logger({ t: "noop" }),
 	now: Posix.now(),
