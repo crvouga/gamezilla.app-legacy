@@ -104,7 +104,7 @@ describe(import.meta.file, () => {
 
 		expect(
 			updated.msgEvt?.some(
-				(msgEvt) => msgEvt.t === "auth-sms.user-authenticated-with-sms",
+				(msgEvt) => msgEvt.t === "auth/client-authenticated-with-sms",
 			),
 		).toBe(true);
 	});

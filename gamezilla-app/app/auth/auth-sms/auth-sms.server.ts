@@ -1,7 +1,4 @@
-import {
-	Sub,
-	isErr
-} from "gamezilla-app/@/core";
+import { Sub, isErr } from "gamezilla-app/@/core";
 import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
 import {
 	sendToClient,
@@ -11,12 +8,7 @@ import {
 } from "gamezilla-app/app/@/server";
 import type { IAccountDb } from "../@/server/account-db";
 import { AccountDb } from "../@/server/account-db/account-db-impl";
-import type {
-	AuthSMSServerEvent,
-	MsgServer,
-	MsgToClient,
-	MsgToServer,
-} from "./auth-sms.types";
+import type { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.types";
 import { type IVerifySMS } from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl";
 
@@ -34,7 +26,7 @@ type Module = AppServerModule<{
 	Model: null;
 	Msg: MsgServer;
 	MsgCmdOut: ServerCmd<MsgToClient>;
-	MsgEvtOut: AuthSMSServerEvent;
+	MsgEvtOut: ServerEvent;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	Deps: {
@@ -145,7 +137,7 @@ const updateVerifyCode: Module["update"] = async ({
 				msgEvt: [
 					{
 						...msgClient,
-						t: "auth-sms.user-authenticated-with-sms",
+						t: "auth/client-authenticated-with-sms",
 						phoneNumber: verified.value.phoneNumber,
 					},
 				],

@@ -47,11 +47,11 @@ export type AppServerModuleTypes = {
 //
 //
 
-type InputMsg<T extends AppServerModuleTypes> = 
-	| ({ v: 'msg' }        & T['Msg'])
-	| ({ v: 'msg-client' } & T['MsgToServer'])
-	| ({ v: 'msg-evt' }    & T['MsgEvtIn'])
-	| ({ v: 'msg-cmd' }    & T['MsgCmdIn'])
+type InputMsg<T extends AppServerModuleTypes> =
+	| ({ v: "msg" } & T["Msg"])
+	| ({ v: "msg-client" } & T["MsgToServer"])
+	| ({ v: "msg-evt" } & T["MsgEvtIn"])
+	| ({ v: "msg-cmd" } & T["MsgCmdIn"]);
 
 export type Input<T extends AppServerModuleTypes> = {
 	/**
@@ -61,13 +61,13 @@ export type Input<T extends AppServerModuleTypes> = {
 	/**
 	 * `msg` is the message that is being processed
 	 */
-	msg: InputMsg<T>
+	msg: InputMsg<T>;
 };
 
-type OutputMsg<T extends AppServerModuleTypes> = 
-	| ({ v: 'msg' }        & T['Msg'])
-	| ({ v: 'msg-cmd' }    & T['MsgCmdOut'])
-	| ({ v: 'msg-evt' }    & T['MsgEvtOut'])
+type OutputMsg<T extends AppServerModuleTypes> =
+	| ({ v: "msg" } & T["Msg"])
+	| ({ v: "msg-cmd" } & T["MsgCmdOut"])
+	| ({ v: "msg-evt" } & T["MsgEvtOut"]);
 
 export type Output<T extends AppServerModuleTypes> = {
 	/**
@@ -87,7 +87,7 @@ export type AppServerModule<T extends AppServerModuleTypes> = {
 	/**
 	 * `init` is the initial state of the module
 	 */
-	init: (input: { ctx: T["Ctx"]; }) => Promise<Output<T>>;
+	init: (input: { ctx: T["Ctx"] }) => Promise<Output<T>>;
 
 	/**
 	 * `update` handles all the state transitions and business logic of the module
@@ -118,7 +118,6 @@ const andThen = async <T extends AppServerModuleTypes>(
 
 	const updated = await update();
 
-	
 	const accNew: Output<T> = {
 		eff: Eff.batch([acc.eff, updated.eff]),
 		msg: batchMsgs(acc.msg, updated.msg),
@@ -126,7 +125,6 @@ const andThen = async <T extends AppServerModuleTypes>(
 
 	return andThen(accNew, ...rest);
 };
-
 
 export const AppServerModule = {
 	andThen,

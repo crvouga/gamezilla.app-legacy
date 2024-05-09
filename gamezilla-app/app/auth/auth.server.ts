@@ -102,7 +102,7 @@ const updateChild: ServerModule["update"] = async (input) => {
 		model: null,
 		eff: Eff.tag("sms", sms.eff),
 		msgCmd: ServerCmd.tag("sms", sms.msgCmd),
-		// msgEvt: sms.msgEvt,
+		msgEvt: sms.msgEvt,
 	};
 };
 
@@ -128,9 +128,8 @@ const updateFromClient: ServerModule["update"] = async ({
 				model,
 				msgEvt: [
 					{
+						...msgClient,
 						t: "auth/client-unauthenticated",
-						clientId: msgClient.clientId,
-						sessionId: msgClient.sessionId,
 					},
 				],
 			};
@@ -143,11 +142,7 @@ const updateFromClient: ServerModule["update"] = async ({
 };
 
 const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
-	if (!msgEvt) {
-		return { model };
-	}
-
-	switch (msgEvt.t) {
+	switch (msgEvt?.t) {
 		case "wire/client-connected": {
 			const foundUserId = await deps.SessionDb.findUserIdBySessionId(
 				msgEvt.sessionId,

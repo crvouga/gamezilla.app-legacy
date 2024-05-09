@@ -1,3 +1,4 @@
+import { PhoneNumber } from "gamezilla-app/@/core";
 import type { ClientId, SessionId, UserId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "../data/account";
 
@@ -24,4 +25,10 @@ export type ServerEvent =
 			t: "auth/client-unauthenticated";
 			sessionId: SessionId;
 			clientId: ClientId;
+	  }
+	| {
+			t: "auth/client-authenticated-with-sms";
+			sessionId: SessionId;
+			clientId: ClientId;
+			phoneNumber: PhoneNumber;
 	  };

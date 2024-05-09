@@ -4,8 +4,6 @@ import type {
 	Posix,
 	Remote,
 } from "gamezilla-app/@/core";
-import { ClientId, SessionId } from "gamezilla-app/app/@/data";
-import { ServerEvent } from "gamezilla-app/app/@/server";
 import type { SendCodeOutput, VerifyCodeOutput } from "./verify-sms";
 import type { VerificationId } from "./verify-sms/verification";
 
@@ -67,13 +65,4 @@ export type MsgToClient =
 	| {
 			t: "verified-code";
 			verified: VerifyCodeOutput;
-	  };
-
-export type AuthSMSServerEvent =
-	| ServerEvent
-	| {
-			t: "auth-sms.user-authenticated-with-sms";
-			sessionId: SessionId;
-			clientId: ClientId;
-			phoneNumber: PhoneNumber;
 	  };
