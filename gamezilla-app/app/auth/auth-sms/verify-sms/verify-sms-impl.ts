@@ -14,7 +14,7 @@ export const VerifySMS = (impl: Impl): IVerifySMS => {
 		case "fake": {
 			return ImplFake.VerifySMS(impl);
 		}
-			
+
 		case "fake-always-ok": {
 			return {
 				async sendCode() {

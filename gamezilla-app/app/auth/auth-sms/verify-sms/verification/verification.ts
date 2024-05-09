@@ -1,7 +1,7 @@
-import type { PhoneNumber, Posix, TimeSpan } from "gamezilla-app/@/core";
-import type { Hash } from "gamezilla-app/@/hashing";
+import { PhoneNumber, Posix, TimeSpan } from "gamezilla-app/@/core";
+import { Hash, Hashing } from "gamezilla-app/@/hashing";
 import type { VerificationAttemptId } from "./verification-attempt-id";
-import type { VerificationId } from "./verification-id";
+import { VerificationId } from "./verification-id";
 
 export type Verification = {
 	verificationId: VerificationId;
@@ -17,4 +17,18 @@ export type VerificationAttempt = {
 	verificationId: VerificationId;
 	codeHash: Hash;
 	createdAt: Posix;
+};
+
+export const randomVerification = async (): Promise<Verification> => {
+	return {
+		verificationId: VerificationId.generate(),
+		codeHash: await Hashing({ t: "noop" }).hash({
+			algo: { t: "sha256" },
+			password: "123",
+		}),
+		phoneNumber: PhoneNumber.random(),
+		createdAt: Posix.now(),
+		expiresIn: TimeSpan.fromMinutes(1),
+		verifiedAt: null,
+	};
 };
