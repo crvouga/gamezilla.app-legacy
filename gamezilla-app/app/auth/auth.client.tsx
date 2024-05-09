@@ -10,7 +10,7 @@ import {
 } from "gamezilla-app/app/@/client";
 import { Button, IconMobilePhone } from "gamezilla-app/app/@/ui";
 import { Eff, Sub, batchMsgs, NotAsked } from "gamezilla-app/@/core";
-import * as AuthClientSMS from "./auth-sms/auth-sms.client";
+import { AuthSMSClient } from "./auth-sms/auth-sms.client";
 import type { ClientModule, ModelClient, MsgClient } from "./auth.types";
 import { ContinueAsGuestClient } from "./continue-as-guest/continue-as-guest.client";
 import { LogoutClient } from "./logout/logout.client";
@@ -24,7 +24,7 @@ import { LogoutClient } from "./logout/logout.client";
 //
 
 export const init: ClientModule["init"] = (input) => {
-	const sms = AuthClientSMS.init(input);
+	const sms = AuthSMSClient.init(input);
 
 	return {
 		model: {
@@ -62,7 +62,7 @@ export const update: ClientModule["update"] = (input) => {
 };
 
 const updateChild: ClientModule["update"] = (input) => {
-	const updated = AuthClientSMS.update({
+	const updated = AuthSMSClient.update({
 		ctx: input.ctx,
 		model: input.model.sms,
 		msgCmd: null,
@@ -201,7 +201,7 @@ export const subscriptions: ClientModule["subscriptions"] = ({
 	model,
 	ctx,
 }) => {
-	return Sub.tag("sms", AuthClientSMS.subscriptions({ model: model.sms, ctx }));
+	return Sub.tag("sms", AuthSMSClient.subscriptions({ model: model.sms, ctx }));
 };
 
 //
@@ -212,20 +212,20 @@ export const subscriptions: ClientModule["subscriptions"] = ({
 //
 //
 
-export const View: ClientModule["View"] = (props) => {
-	switch (props.ctx.currentRoute.n) {
+export const View: ClientModule["View"] = (input) => {
+	switch (input.ctx.currentRoute.n) {
 		case "auth-login": {
-			switch (props.ctx.currentRoute.t) {
+			switch (input.ctx.currentRoute.t) {
 				case "login": {
-					return <ViewLoginScreen {...props} />;
+					return <ViewLoginScreen {...input} />;
 				}
 				case "login-sms-request":
 				case "login-sms-verify": {
 					return (
-						<AuthClientSMS.View
-							ctx={props.ctx}
-							dispatch={(c) => props.dispatch({ t: "sms", c })}
-							model={props.model.sms}
+						<AuthSMSClient.View
+							ctx={input.ctx}
+							dispatch={(c) => input.dispatch({ t: "sms", c })}
+							model={input.model.sms}
 						/>
 					);
 				}
@@ -237,13 +237,13 @@ export const View: ClientModule["View"] = (props) => {
 	}
 };
 
-const ViewLoginScreen: ClientModule["View"] = (props) => {
+const ViewLoginScreen: ClientModule["View"] = (input) => {
 	return (
 		<div className="relative flex h-full w-full flex-1 flex-col">
 			<div className="flex flex-1 flex-col items-center justify-center gap-8 p-4">
 				<div className="flex w-full flex-col items-start justify-center">
 					<p className="text-2xl text-neutral-200">
-						{props.ctx.t("auth.sign-in-to")}
+						{input.ctx.t("auth.sign-in-to")}
 					</p>
 					<h1 className="bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text pb-2 text-5xl font-extrabold text-transparent">
 						gamezilla.app
@@ -253,21 +253,21 @@ const ViewLoginScreen: ClientModule["View"] = (props) => {
 				<div className="flex w-full flex-col gap-6">
 					<Button
 						onClick={() =>
-							props.dispatch({ t: "user-clicked-login-with-phone" })
+							input.dispatch({ t: "user-clicked-login-with-phone" })
 						}
 						size="lg"
 						className="w-full"
 						start={<IconMobilePhone className="h-6 w-6" />}
-						text={props.ctx.t("auth.continue-with-phone")}
+						text={input.ctx.t("auth.continue-with-phone")}
 					/>
 
 					<div className="flex w-full items-center justify-center py-1">
 						<p className="text-base font-bold uppercase text-neutral-300">
-							{props.ctx.t("auth.or")}
+							{input.ctx.t("auth.or")}
 						</p>
 					</div>
 
-					<ContinueAsGuestClient.ViewButton {...props} />
+					<ContinueAsGuestClient.ViewButton {...input} />
 				</div>
 			</div>
 		</div>

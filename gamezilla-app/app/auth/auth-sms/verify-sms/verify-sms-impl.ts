@@ -7,7 +7,7 @@ import { VerificationId } from "./verification";
 export type Impl =
 	| ({ t: "real" } & ImplReal.VerifySMSDeps)
 	| ({ t: "fake" } & ImplFake.VerifySMSDeps)
-	| { t: "fake-always-ok" };
+	| { t: "fake-always-ok"; phoneNumber?: PhoneNumber };
 
 export const VerifySMS = (impl: Impl): IVerifySMS => {
 	switch (impl.t) {
@@ -20,7 +20,7 @@ export const VerifySMS = (impl: Impl): IVerifySMS => {
 					return Ok({ verificationId: VerificationId.generate() });
 				},
 				async verifyCode() {
-					return Ok({ phoneNumber: PhoneNumber.random() });
+					return Ok({ phoneNumber: impl.phoneNumber ?? PhoneNumber.random() });
 				},
 			};
 		}

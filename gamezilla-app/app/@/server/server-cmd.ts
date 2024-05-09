@@ -92,9 +92,25 @@ export const broadcast = <MsgToClient>(
 };
 
 export const sendToClient = <MsgToClient>(
-	clientIds: ClientId[],
+	clientIdInput:
+		| ClientId
+		| ClientId[]
+		| { clientId: ClientId }
+		| { clientIds: ClientId[] },
 	msg: MsgToClient,
 ): ServerCmd<MsgToClient> => {
+	const clientIds: ClientId[] = [];
+
+	if (Array.isArray(clientIdInput)) {
+		clientIds.push(...clientIdInput);
+	} else if ("clientId" in clientIdInput) {
+		clientIds.push(clientIdInput.clientId);
+	} else if ("clientIds" in clientIdInput) {
+		clientIds.push(...clientIdInput.clientIds);
+	} else {
+		clientIds.push(clientIdInput);
+	}
+
 	return {
 		t: "wire",
 		c: {

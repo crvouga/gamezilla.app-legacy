@@ -77,7 +77,7 @@ type Module = AppClientModule<{
 //
 //
 
-export const init: Module["init"] = () => {
+const init: Module["init"] = () => {
 	return {
 		model: {
 			inputtedCode: "",
@@ -118,7 +118,7 @@ const PHONE_NUMBER_INPUT_VIEW_ID = "phoneNumberInput";
 //
 //
 
-export const update: Module["update"] = (input) => {
+const update: Module["update"] = (input) => {
 	return andThen(
 		{ model: input.model },
 		(model) => updateFromMsg({ ...input, model }),
@@ -398,7 +398,7 @@ const updateFromServer: Module["update"] = (input) => {
 
 const INTERVAL_ID = Uuid.generate();
 
-export const subscriptions: Module["subscriptions"] = (input) => {
+const subscriptions: Module["subscriptions"] = (input) => {
 	if (
 		input.model.sendCode.t === "loading" ||
 		input.model.verifyCode.t === "loading"
@@ -426,7 +426,7 @@ export const subscriptions: Module["subscriptions"] = (input) => {
 //
 //
 
-export const View: Module["View"] = (props) => {
+const View: Module["View"] = (props) => {
 	switch (props.ctx.currentRoute.n) {
 		case "auth-login": {
 			switch (props.ctx.currentRoute.t) {
@@ -575,4 +575,11 @@ export const View: Module["View"] = (props) => {
 			return null;
 		}
 	}
+};
+
+export const AuthSMSClient = {
+	init,
+	update,
+	subscriptions,
+	View,
 };

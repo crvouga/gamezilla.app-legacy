@@ -1,12 +1,14 @@
 import { describe, expect, it } from "bun:test";
-import { PhoneNumber } from "gamezilla-app/@/core";
+import { Ok, PhoneNumber, Result } from "gamezilla-app/@/core";
 import { ClientId, SessionId } from "gamezilla-app/app/@/data";
+import { randomNormalUserAccount } from "gamezilla-app/app/@/data/account";
 import { didSendMsgToClient } from "gamezilla-app/app/@/server";
 import {
 	AppServerFixture,
 	randomClient,
 } from "gamezilla-app/app/@/server/server-test-env";
 import { AuthSMSTypes } from ".";
+import { AccountDb } from "../@/server/account-db";
 import { AuthSMSServer } from "./auth-sms.server";
 import { VerificationId } from "./verify-sms/verification";
 import { IVerifySMS } from "./verify-sms/verify-sms";
@@ -28,6 +30,10 @@ const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
 	const deps = {
 		...(await AuthSMSServer.getDeps(f)),
 		...input,
+		AccountDb: AccountDb({
+			t: "in-memory",
+			delay: async () => {},
+		}),
 	};
 	const updates = function* (msgs: InputMsg[]) {
 		for (const msg of msgs) {
@@ -49,6 +55,7 @@ const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
 
 	return {
 		...f,
+		...deps,
 		client,
 		update,
 	};
@@ -104,8 +111,64 @@ describe(import.meta.file, () => {
 
 		expect(
 			updated.msgEvt?.some(
-				(msgEvt) => msgEvt.t === "auth/client-authenticated-with-sms",
+				(msgEvt) => msgEvt.t === "auth/client-authenticated",
 			),
 		).toBe(true);
+	});
+
+	it("should create a new account if no account exists", async () => {
+		const phoneNumber = PhoneNumber.random();
+		const f = await Fixture({
+			VerifySMS: VerifySMS({ t: "fake-always-ok", phoneNumber }),
+		});
+
+		const before = Result.unwrap(
+			await f.AccountDb.findOneByPhoneNumber({ phoneNumber }),
+		);
+
+		await f.update([
+			{
+				msgClient: {
+					...f.client,
+					t: "user-clicked-verify-code-button",
+					inputtedCode: "123",
+					verificationId: VerificationId.generate(),
+				},
+			},
+		]);
+
+		const after = Result.unwrap(
+			await f.AccountDb.findOneByPhoneNumber({ phoneNumber }),
+		);
+
+		expect(before).toBe(null);
+		expect(after?.phoneNumber).toBe(phoneNumber);
+	});
+
+	it("should not create account if it already exists", async () => {
+		const account = randomNormalUserAccount();
+
+		const f = await Fixture({
+			VerifySMS: VerifySMS({
+				t: "fake-always-ok",
+				phoneNumber: account.phoneNumber,
+			}),
+		});
+
+		await f.AccountDb.insert({ account });
+
+		await f.update([
+			{
+				msgClient: {
+					...f.client,
+					t: "user-clicked-verify-code-button",
+					inputtedCode: "123",
+					verificationId: VerificationId.generate(),
+				},
+			},
+		]);
+
+		const after = await f.AccountDb.findOneByPhoneNumber(account);
+		expect(after).toEqual(Ok(account));
 	});
 });

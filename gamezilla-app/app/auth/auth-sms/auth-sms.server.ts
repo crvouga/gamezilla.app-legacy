@@ -1,5 +1,7 @@
-import { Sub, isErr } from "gamezilla-app/@/core";
+import { Err, Sub, isErr } from "gamezilla-app/@/core";
 import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
+import { UserId } from "gamezilla-app/app/@/data";
+import { UserAccount } from "gamezilla-app/app/@/data/account";
 import {
 	sendToClient,
 	type ServerCmd,
@@ -21,9 +23,7 @@ import { VerifySMS } from "./verify-sms/verify-sms-impl";
 
 type Module = AppServerModule<{
 	Ctx: ServerCtx;
-	MsgCmdIn: null;
 	MsgEvtIn: ServerEvent;
-	Model: null;
 	Msg: MsgServer;
 	MsgCmdOut: ServerCmd<MsgToClient>;
 	MsgEvtOut: ServerEvent;
@@ -109,6 +109,7 @@ const updateVerifyCode: Module["update"] = async ({
 	msgClient,
 	model,
 	deps,
+	ctx,
 }) => {
 	switch (msgClient?.t) {
 		case "user-clicked-verify-code-button": {
@@ -129,16 +130,80 @@ const updateVerifyCode: Module["update"] = async ({
 				};
 			}
 
+			const found = await deps.AccountDb.findOneByPhoneNumber(verified.value);
+
+			if (isErr(found)) {
+				return {
+					model,
+					msgCmd: [
+						sendToClient(msgClient, {
+							t: "verified-code",
+							verified: Err({
+								t: "database-error",
+								error: found.error,
+							}),
+						}),
+					],
+				};
+			}
+
+			const accountFound = found.value;
+
+			if (accountFound) {
+				return {
+					model,
+					msgCmd: [
+						sendToClient(msgClient, {
+							t: "verified-code",
+							verified,
+						}),
+					],
+					msgEvt: [
+						{
+							...msgClient,
+							t: "auth/client-authenticated",
+							account: accountFound,
+							loggedIn: true,
+						},
+					],
+				};
+			}
+
+			const accountNew: UserAccount = {
+				createdAt: ctx.now,
+				phoneNumber: verified.value.phoneNumber,
+				role: "guest",
+				userId: UserId.generate(),
+			};
+
+			const inserted = await deps.AccountDb.insert({
+				account: accountNew,
+			});
+
+			if (isErr(inserted)) {
+				return {
+					model,
+					msgCmd: [
+						sendToClient(msgClient, {
+							t: "verified-code",
+							verified: Err({
+								t: "database-error",
+								error: inserted.error,
+							}),
+						}),
+					],
+				};
+			}
+
 			return {
 				model,
-				msgCmd: [
-					sendToClient([msgClient.clientId], { t: "verified-code", verified }),
-				],
+				msgCmd: [sendToClient(msgClient, { t: "verified-code", verified })],
 				msgEvt: [
 					{
 						...msgClient,
-						t: "auth/client-authenticated-with-sms",
-						phoneNumber: verified.value.phoneNumber,
+						t: "auth/client-authenticated",
+						account: accountNew,
+						loggedIn: true,
 					},
 				],
 			};
