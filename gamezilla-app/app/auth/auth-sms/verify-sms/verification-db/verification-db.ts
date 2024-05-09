@@ -23,7 +23,7 @@ export type IVerificationDb = {
 		limit?: number;
 		offset?: number;
 	}): Task<string, Paginated<Verification>>;
-	upsert(verification: Verification): Task<string, null>;
+	put(verification: Verification): Task<string, null>;
 	attempts: {
 		find(input: {
 			where: {
@@ -32,6 +32,6 @@ export type IVerificationDb = {
 				};
 			};
 		}): Task<string, VerificationAttempt[]>;
-		upsert(attempt: VerificationAttempt): Task<string, null>;
+		put(attempt: VerificationAttempt): Task<string, null>;
 	};
 };

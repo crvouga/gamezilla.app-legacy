@@ -50,12 +50,12 @@ export const VerificationDbHashMap = (): IVerificationDb => {
 				offset: offset,
 			});
 		},
-		async upsert(verification) {
+		async put(verification) {
 			verifications.set(verification.verificationId, verification);
 			return Ok(null);
 		},
 		attempts: {
-			async upsert(attempt) {
+			async put(attempt) {
 				verificationAttempts.set(attempt.verificationAttemptId, attempt);
 				return Ok(null);
 			},

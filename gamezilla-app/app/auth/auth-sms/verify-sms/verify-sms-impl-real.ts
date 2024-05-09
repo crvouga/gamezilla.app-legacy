@@ -102,7 +102,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				verifiedAt: null,
 			};
 
-			const upserted = await deps.verificationDb.upsert(verificationNew);
+			const upserted = await deps.verificationDb.put(verificationNew);
 
 			if (isErr(upserted)) {
 				return Err({
@@ -206,7 +206,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				verificationId: input.verificationId,
 			};
 
-			await deps.verificationDb.attempts.upsert(newAttempt);
+			await deps.verificationDb.attempts.put(newAttempt);
 
 			const isCorrect = await deps.hashing.check({
 				hash: verification.codeHash,
@@ -224,7 +224,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				verifiedAt: deps.now(),
 			};
 
-			await deps.verificationDb.upsert(verificationNew);
+			await deps.verificationDb.put(verificationNew);
 
 			return Ok({
 				phoneNumber: verification.phoneNumber,
