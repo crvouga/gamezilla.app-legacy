@@ -3,18 +3,11 @@ import type {
 	PhoneNumber,
 	Posix,
 	Remote,
+	Result,
 } from "gamezilla-app/@/core";
-import type { SendCodeOutput, VerifyCodeOutput } from "./verify-sms";
+import type { SendCodeOutput, VerifyCodeProblem } from "./verify-sms";
 import type { VerificationId } from "./verify-sms/verification";
-
-export type Route =
-	| {
-			t: "/";
-	  }
-	| {
-			t: "/verify";
-			phoneNumber: PhoneNumber;
-	  };
+import { UserAccount } from "gamezilla-app/app/@/data/account";
 
 export type ModelClient = {
 	//
@@ -31,6 +24,8 @@ export type ModelClient = {
 	verifiedCodeAt: Posix | null;
 	verifyCode: Remote | VerifyCodeOutput;
 };
+
+type VerifyCodeOutput = Result<VerifyCodeProblem, UserAccount>;
 
 export type MsgClient =
 	| { t: "clicked-back-button" }
