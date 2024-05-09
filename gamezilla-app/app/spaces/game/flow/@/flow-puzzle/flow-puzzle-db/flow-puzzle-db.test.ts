@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { Ok, Result } from "gamezilla-app/@/core";
+import { Ok, Posix, Result, TimeSpan, ascend } from "gamezilla-app/@/core";
 import { UserId } from "gamezilla-app/app/@/data";
 import { ServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
 import { randomFlowPuzzle } from "../../testing";
@@ -159,11 +159,14 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const puzzles: FlowPuzzle[] = [];
 		const createdBy = UserId.generate();
+		let createdAt = Posix.now();
 		for (let i = 0; i < 5; i++) {
-			const puzzle = await randomFlowPuzzle({ createdBy });
+			const puzzle = await randomFlowPuzzle({ createdBy, createdAt });
+			createdAt = Posix.add(createdAt, TimeSpan.fromSeconds(1));
 			puzzles.push(puzzle);
 			await f.flowPuzzleDb.put(puzzle);
 		}
+		puzzles.sort(ascend((p) => p.createdAt));
 		for (let limit = 0; limit < puzzles.length; limit++) {
 			for (let offset = 0; offset < puzzles.length; offset++) {
 				const listed = await f.flowPuzzleDb.list({

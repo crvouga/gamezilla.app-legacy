@@ -10,10 +10,12 @@ import { FlowPuzzleName } from "../flow-puzzle/flow-puzzle-name";
 
 export const randomFlowPuzzle = async (input?: {
 	createdBy?: UserId;
+	createdAt?: Posix;
 }): Promise<FlowPuzzle> => {
 	const createdBy = input?.createdBy ?? UserId.generate();
+	const createdAt = input?.createdAt ?? Posix.now();
 	return {
-		createdAt: Posix.now(),
+		createdAt,
 		createdBy,
 		name: await FlowPuzzleName.generate({
 			count: 0,
