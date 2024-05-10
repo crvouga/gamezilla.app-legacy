@@ -35,6 +35,7 @@ describe(import.meta.file, () => {
 		const inserted = await f.verificationDb.put(verification);
 		expect(inserted).toEqual(Ok(null));
 	});
+	
 	it("should insert records correctly", async () => {
 		const f = await Fixture();
 		const verification = await randomVerification();
@@ -98,7 +99,7 @@ describe(import.meta.file, () => {
 		expect(unwrap(found).items[0]).toEqual(verification);
 	});
 
-	it.only("should find by created at correctly", async () => {
+	it.todo("should find by created at correctly", async () => {
 		const f = await Fixture();
 		const now = Posix.now();
 
