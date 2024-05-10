@@ -17,26 +17,26 @@ export const VerificationDbHashMap = (): IVerificationDb => {
 		async find(input) {
 			const filtered = Array.from(verifications.values())
 				.filter((v) => {
-					if (input.where.verificationId?.["="]) {
-						return input.where.verificationId?.["="] === v.verificationId;
+					if (input.where?.verificationId?.["="]) {
+						return input.where?.verificationId?.["="] === v.verificationId;
 					}
 					return true;
 				})
 				.filter((v) => {
-					if (input.where.createdAt?.["<="]) {
-						return v.createdAt <= input.where.createdAt?.["<="];
+					if (input.where?.createdAt?.["<="]) {
+						return v.createdAt <= input.where?.createdAt?.["<="];
 					}
 					return true;
 				})
 				.filter((v) => {
-					if (input.where.createdAt?.[">="]) {
-						return v.createdAt >= input.where.createdAt?.[">="];
+					if (input.where?.createdAt?.[">="]) {
+						return v.createdAt >= input.where?.createdAt?.[">="];
 					}
 					return true;
 				})
 				.filter((v) => {
-					if (input.where.phoneNumber?.["="]) {
-						return eq(input.where.phoneNumber?.["="], v.phoneNumber);
+					if (input.where?.phoneNumber?.["="]) {
+						return eq(input.where?.phoneNumber?.["="], v.phoneNumber);
 					}
 					return true;
 				});
@@ -62,8 +62,8 @@ export const VerificationDbHashMap = (): IVerificationDb => {
 			async find(input) {
 				const filtered = Array.from(verificationAttempts.values()).filter(
 					(v) => {
-						if (input.where.verificationId?.["="]) {
-							return input.where.verificationId?.["="] === v.verificationId;
+						if (input.where?.verificationId?.["="]) {
+							return input.where?.verificationId?.["="] === v.verificationId;
 						}
 						return true;
 					},

@@ -8,7 +8,7 @@ export type Verification = {
 	codeHash: Hash;
 	phoneNumber: PhoneNumber;
 	createdAt: Posix;
-	expiresIn: TimeSpan;
+	expiresAt: Posix;
 	verifiedAt: Posix | null;
 };
 
@@ -20,6 +20,7 @@ export type VerificationAttempt = {
 };
 
 export const randomVerification = async (): Promise<Verification> => {
+	const createdAt = Posix.now();
 	return {
 		verificationId: VerificationId.generate(),
 		codeHash: await Hashing({ t: "noop" }).hash({
@@ -27,8 +28,8 @@ export const randomVerification = async (): Promise<Verification> => {
 			password: "123",
 		}),
 		phoneNumber: PhoneNumber.random(),
-		createdAt: Posix.now(),
-		expiresIn: TimeSpan.fromMinutes(1),
+		createdAt,
+		expiresAt: Posix.add(createdAt, TimeSpan.fromMinutes(1)),
 		verifiedAt: null,
 	};
 };

@@ -9,18 +9,10 @@ import { FlowPuzzleName } from "../flow-puzzle-name";
 import type { IFlowPuzzleDb, OrderClause, WhereClause } from "./flow-puzzle-db";
 import { Sql } from "gamezilla-app/@/sql";
 
-//
-//
-//
-//
-//
-//
-//
-
 export const Row = p.obj({
 	flow_puzzle_id: p.str,
 	flow_puzzle_name: p.str,
-	flow_puzzle: p.dict(p.or(p.str, p.num), p.unknown),
+	flow_puzzle: p.json,
 	created_at: p.or(p.num, p.str),
 	created_by_user_id: p.str,
 	last_updated_at: p.or(p.num, p.str),
@@ -161,14 +153,15 @@ export const FlowPuzzleDbPostgres = ({
 			const queried = await dbConnSql.query(
 				Row,
 				`
-        SELECT
-          *
-        FROM
-          game_flow_puzzle
-        WHERE
-              flow_puzzle_id = :flow_puzzle_id
-          AND deleted_at IS NULL
-        LIMIT 1`,
+				SELECT
+					*
+				FROM
+					game_flow_puzzle
+				WHERE
+						flow_puzzle_id = :flow_puzzle_id
+					AND deleted_at IS NULL
+				LIMIT 1
+				`,
 				{
 					flow_puzzle_id: flowPuzzleId,
 				},
@@ -185,12 +178,12 @@ export const FlowPuzzleDbPostgres = ({
 			const queried = await dbConnSql.query(
 				p.obj({ count: p.str }),
 				`
-        SELECT
-          COUNT(*) AS count
-        FROM
-          game_flow_puzzle
-        ${where.str}
-        `,
+				SELECT
+					COUNT(*) AS count
+				FROM
+					game_flow_puzzle
+					${where.str}
+				`,
 				where.variables,
 			);
 			return Result.mapOk(queried, (x) =>
@@ -211,14 +204,14 @@ export const FlowPuzzleDbPostgres = ({
 			const queried = await dbConnSql.query(
 				Row,
 				`
-          SELECT
-            *
-          FROM
-            game_flow_puzzle
-          ${where.str}
-          ${order.str}
-          ${pagination.str}
-        `,
+				SELECT
+					*
+				FROM
+					game_flow_puzzle
+				${where.str}
+				${order.str}
+				${pagination.str}
+				`,
 				variables,
 			);
 
@@ -229,12 +222,12 @@ export const FlowPuzzleDbPostgres = ({
 			const queriedCount = await dbConnSql.query(
 				p.obj({ count: p.str }),
 				`
-          SELECT
-            COUNT(*) AS count
-          FROM
-            game_flow_puzzle
-          ${where.str}
-        `,
+				SELECT
+					COUNT(*) AS count
+				FROM
+					game_flow_puzzle
+				${where.str}
+				`,
 				variables,
 			);
 

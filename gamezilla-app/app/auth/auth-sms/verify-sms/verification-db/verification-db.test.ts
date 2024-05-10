@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
 import { VerificationDb } from "./verification-db-impl";
-import { randomVerification } from "../verification/verification";
-import { Ok, unwrap } from "gamezilla-app/@/core";
+import { Verification, randomVerification } from "../verification/verification";
+import { Ok, Posix, unwrap } from "gamezilla-app/@/core";
 
 const Fixture = async () => {
 	//
@@ -53,5 +53,32 @@ describe(import.meta.file, () => {
 		});
 		expect(unwrap(before).items[0] ?? null).toEqual(null);
 		expect(unwrap(after).items[0]).toEqual(verification);
+	});
+
+	it("should upsert records correctly", async () => {
+		const f = await Fixture();
+		const verification = await randomVerification();
+		await f.verificationDb.put(verification);
+		const before = await f.verificationDb.find({
+			where: {
+				verificationId: {
+					"=": verification.verificationId,
+				},
+			},
+		});
+		const verificationNew: Verification = {
+			...verification,
+			verifiedAt: Posix.now(),
+		};
+		await f.verificationDb.put(verificationNew);
+		const after = await f.verificationDb.find({
+			where: {
+				verificationId: {
+					"=": verification.verificationId,
+				},
+			},
+		});
+		expect(unwrap(before).items[0]).toEqual(verification);
+		expect(unwrap(after).items[0]).toEqual(verificationNew);
 	});
 });

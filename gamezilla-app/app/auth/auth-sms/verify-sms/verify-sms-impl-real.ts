@@ -93,11 +93,13 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				password: code,
 			});
 
+			const createdAt = deps.now();
+
 			const verificationNew: Verification = {
 				codeHash: codeHash,
 				phoneNumber: input.phoneNumber,
-				createdAt: deps.now(),
-				expiresIn: deps.verifyCodeExpiresIn,
+				createdAt,
+				expiresAt: Posix.add(createdAt, deps.verifyCodeExpiresIn),
 				verificationId: VerificationId.generate(),
 				verifiedAt: null,
 			};
@@ -158,12 +160,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				});
 			}
 
-			if (
-				TimeSpan.gte(
-					Posix.diff(deps.now(), verification.createdAt),
-					verification.expiresIn,
-				)
-			) {
+			if (deps.now() >= verification.expiresAt) {
 				return Err({
 					t: "verification-expired",
 				});

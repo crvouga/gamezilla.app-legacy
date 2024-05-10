@@ -454,3 +454,39 @@ export const regex = (regex: RegExp): Parser<string> => {
 		},
 	};
 };
+
+export type Json =
+	| string
+	| number
+	| boolean
+	| null
+	| { [key: string]: Json }
+	| Json[];
+
+export const json: Parser<Json> = {
+	parse(input) {
+		try {
+			const serialized = JSON.stringify(input);
+			if (typeof serialized !== "string") {
+				return Err([
+					{
+						message: toErrorMessage(
+							"string",
+							typeof input,
+							JSON.stringify(input),
+						),
+						path: [],
+					},
+				]);
+			}
+			return Ok(input as Json);
+		} catch (error) {
+			return Err([
+				{
+					message: `Expected valid JSON. ${error}`,
+					path: [],
+				},
+			]);
+		}
+	},
+};

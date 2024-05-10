@@ -6,20 +6,22 @@ import type {
 	VerificationId,
 } from "../verification";
 
+export type WhereClause = {
+	verificationId?: {
+		"="?: VerificationId;
+	};
+	createdAt?: {
+		"<="?: Posix;
+		">="?: Posix;
+	};
+	phoneNumber?: {
+		"="?: PhoneNumber;
+	};
+};
+
 export type IVerificationDb = {
 	find(input: {
-		where: {
-			verificationId?: {
-				"="?: VerificationId;
-			};
-			createdAt?: {
-				"<="?: Posix;
-				">="?: Posix;
-			};
-			phoneNumber?: {
-				"="?: PhoneNumber;
-			};
-		};
+		where?: WhereClause;
 		limit?: number;
 		offset?: number;
 	}): Task<string, Paginated<Verification>>;
