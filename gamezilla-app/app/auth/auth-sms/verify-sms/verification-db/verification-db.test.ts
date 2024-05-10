@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
+import { Ok, Posix, TimeSpan, unwrap } from "gamezilla-app/@/core";
 import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
-import { VerificationDb } from "./verification-db-impl";
 import { Verification, randomVerification } from "../verification/verification";
-import { Ok, Posix, unwrap } from "gamezilla-app/@/core";
+import { VerificationDb } from "./verification-db-impl";
 
 const Fixture = async () => {
 	//
@@ -25,6 +25,8 @@ const Fixture = async () => {
 		}
 	}
 };
+
+type Fixture = Awaited<ReturnType<typeof Fixture>>;
 
 describe(import.meta.file, () => {
 	it("should be ok inserting records", async () => {
@@ -81,4 +83,81 @@ describe(import.meta.file, () => {
 		expect(unwrap(before).items[0]).toEqual(verification);
 		expect(unwrap(after).items[0]).toEqual(verificationNew);
 	});
+
+	it("should find by phone number", async () => {
+		const f = await Fixture();
+		const verification = await randomVerification();
+		await f.verificationDb.put(verification);
+		const found = await f.verificationDb.find({
+			where: {
+				phoneNumber: {
+					"=": verification.phoneNumber,
+				},
+			},
+		});
+		expect(unwrap(found).items[0]).toEqual(verification);
+	});
+
+	it("should find by created at correctly", async () => {
+		const f = await Fixture();
+		const now = Posix.now();
+
+		await insertVerifications({
+			f,
+			start: Posix.sub(now, TimeSpan.fromMinutes(11)),
+			end: Posix.sub(now, TimeSpan.fromMinutes(10)),
+		});
+
+		await insertVerifications({
+			f,
+			start: Posix.add(now, TimeSpan.fromMinutes(10)),
+			end: Posix.add(now, TimeSpan.fromMinutes(11)),
+		});
+
+		const start = now;
+		const end = Posix.add(now, TimeSpan.fromMinutes(1));
+		const expected = await insertVerifications({
+			f,
+			start,
+			end,
+		});
+
+		const found = await f.verificationDb.find({
+			where: {
+				createdAt: {
+					"<=": end,
+					">=": start,
+				},
+			},
+		});
+		const actual = unwrap(found).items;
+		expect(actual).toEqual(expected);
+	});
 });
+
+const insertVerifications = async ({
+	f,
+	start,
+	end,
+	count = 3,
+}: {
+	f: Fixture;
+	end: Posix;
+	count?: number;
+	start: Posix;
+}) => {
+	const verifications: Verification[] = [];
+
+	const timeSpan = TimeSpan.scale(Posix.diff(end, start), 1 / count);
+
+	let runningTime = start;
+
+	for (let i = 0; i < count; i++) {
+		const verification = await randomVerification({ createdAt: runningTime });
+		await f.verificationDb.put(verification);
+		verifications.push(verification);
+		runningTime = Posix.add(runningTime, timeSpan);
+	}
+
+	return verifications;
+};

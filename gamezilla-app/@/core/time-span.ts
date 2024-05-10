@@ -150,12 +150,17 @@ const humanFriendlyString = (timeSpan: TimeSpan): string => {
 	return "A moment ago";
 };
 
+const negate = (timeSpan: TimeSpan): TimeSpan => {
+	return fromMilliseconds(-toMilliseconds(timeSpan));
+};
+
 /**
  * @description
  * `TimeSpan` represents a duration of time.
  */
 export const TimeSpan = {
 	humanFriendlyString,
+	negate,
 	//
 	//
 	//

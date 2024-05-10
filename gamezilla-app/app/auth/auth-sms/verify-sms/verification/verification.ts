@@ -19,8 +19,10 @@ export type VerificationAttempt = {
 	createdAt: Posix;
 };
 
-export const randomVerification = async (): Promise<Verification> => {
-	const createdAt = Posix.now();
+export const randomVerification = async (input?: {
+	createdAt?: Posix;
+}): Promise<Verification> => {
+	const createdAt = input?.createdAt ?? Posix.now();
 	return {
 		verificationId: VerificationId.generate(),
 		codeHash: await Hashing({ t: "noop" }).hash({
