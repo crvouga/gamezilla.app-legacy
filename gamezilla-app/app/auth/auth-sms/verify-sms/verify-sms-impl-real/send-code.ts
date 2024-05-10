@@ -88,7 +88,10 @@ export const SendCode =
 		}
 
 		const sent = await deps.sms.sendMessage({
-			message: deps.translator("verify-sms.code-message", code),
+			message: deps.Translator(input.perferredLanguage)(
+				"verify-sms.code-message",
+				code,
+			),
 			phoneNumber: input.phoneNumber,
 		});
 

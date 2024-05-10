@@ -206,6 +206,7 @@ const updateFromMsg: Module["update"] = (input) => {
 					sendToServer({
 						t: "user-clicked-send-code-button",
 						phoneNumber: phoneNumber.value,
+						perferredLanguage: ctx.navigatorLanguage,
 					}),
 					playSound(APP_SOUND.tap),
 				],
