@@ -1,106 +1,207 @@
-import { Err, Ok, Posix, isErr } from "gamezilla-app/@/core";
-import { type Verification } from "../verification";
+import { Err, Ok, Task, isErr } from "gamezilla-app/@/core";
+import { VerificationId, type Verification } from "../verification";
 import {
 	VerificationAttempt,
 	VerificationAttemptId,
 } from "../verification-attempt";
-import type { IVerifySMS } from "../verify-sms";
+import type { IVerifySMS, VerifyCodeProblem } from "../verify-sms";
 import { VerifySMSDeps } from "./shared";
 
 export const VerifyCode =
 	(deps: VerifySMSDeps): IVerifySMS["verifyCode"] =>
 	async (input) => {
-		const found = await deps.verificationDb.find({
-			where: {
-				verificationId: {
-					"=": input.verificationId,
-				},
-			},
-		});
+		const found = await findVerification(deps, input.verificationId);
 
 		if (isErr(found)) {
-			return Err({
-				t: "database-error",
-				error: found.error,
-			});
+			return found;
 		}
 
-		const verification = found.value.items[0];
+		const validated = await validateVerification(deps, found.value);
 
-		if (!verification) {
-			return Err({
-				t: "verification-not-found",
-			});
+		if (isErr(validated)) {
+			return validated;
 		}
 
-		if (verification.verifiedAt) {
-			return Err({
-				t: "verification-already-verified",
-			});
+		const verification = validated.value;
+
+		const previousAttempts = await findPreviousAttempts(
+			deps,
+			input.verificationId,
+		);
+
+		if (isErr(previousAttempts)) {
+			return previousAttempts;
 		}
 
-		if (deps.now() >= verification.expiresAt) {
-			return Err({
-				t: "verification-expired",
-			});
+		const validatedPreviousAttempts = await validatePreviousAttempts(
+			deps,
+			previousAttempts.value,
+		);
+
+		if (isErr(validatedPreviousAttempts)) {
+			return validatedPreviousAttempts;
 		}
 
-		const foundAttempts = await deps.verificationAttemptDb.find({
-			where: {
-				verificationId: {
-					"=": input.verificationId,
-				},
-			},
-		});
+		const recordedAttempt = await recordAttempt(
+			deps,
+			input.verificationId,
+			input.code,
+		);
 
-		if (isErr(foundAttempts)) {
-			return Err({
-				t: "database-error",
-				error: foundAttempts.error,
-			});
+		if (isErr(recordedAttempt)) {
+			return recordedAttempt;
 		}
 
-		if (foundAttempts.value.length >= deps.verifyCodeMaxAttempts) {
-			return Err({
-				t: "verification-expired-too-many-failed-attempts",
-			});
+		const validatedCode = await validateCode(deps, verification, input.code);
+
+		if (isErr(validatedCode)) {
+			return validatedCode;
 		}
 
-		const inputtedCodeHash = await deps.hashing.hash({
-			algo: {
-				t: "sha256",
-			},
-			password: input.code,
-		});
+		const marked = await markAsVerified(deps, verification);
 
-		const newAttempt: VerificationAttempt = {
-			verificationAttemptId: VerificationAttemptId.generate(),
-			codeHash: inputtedCodeHash,
-			createdAt: Posix.now(),
-			verificationId: input.verificationId,
-		};
-
-		await deps.verificationAttemptDb.put(newAttempt);
-
-		const isCorrect = await deps.hashing.check({
-			hash: verification.codeHash,
-			password: input.code,
-		});
-
-		if (!isCorrect) {
-			return Err({
-				t: "code-incorrect",
-			});
+		if (isErr(marked)) {
+			return marked;
 		}
 
-		const verificationNew: Verification = {
-			...verification,
-			verifiedAt: deps.now(),
-		};
-
-		await deps.verificationDb.put(verificationNew);
-
-		return Ok({
-			phoneNumber: verification.phoneNumber,
-		});
+		return Ok(verification);
 	};
+
+const findVerification = async (
+	deps: VerifySMSDeps,
+	verificationId: VerificationId,
+): Task<VerifyCodeProblem, Verification | null> => {
+	const found = await deps.verificationDb.find({
+		where: {
+			verificationId: {
+				"=": verificationId,
+			},
+		},
+	});
+
+	if (isErr(found)) {
+		return Err({
+			t: "database-error",
+			error: found.error,
+		});
+	}
+
+	return Ok(found.value.items[0] ?? null);
+};
+
+const validateVerification = async (
+	deps: VerifySMSDeps,
+	verification: Verification | null,
+): Task<VerifyCodeProblem, Verification> => {
+	if (!verification) {
+		return Err({
+			t: "verification-not-found",
+		});
+	}
+
+	if (verification.verifiedAt) {
+		return Err({
+			t: "verification-already-verified",
+		});
+	}
+
+	if (deps.now() >= verification.expiresAt) {
+		return Err({
+			t: "verification-expired",
+		});
+	}
+
+	return Ok(verification);
+};
+
+const findPreviousAttempts = async (
+	deps: VerifySMSDeps,
+	verificationId: VerificationId,
+): Task<VerifyCodeProblem, VerificationAttempt[]> => {
+	const foundAttempts = await deps.verificationAttemptDb.find({
+		where: {
+			verificationId: {
+				"=": verificationId,
+			},
+		},
+	});
+
+	if (isErr(foundAttempts)) {
+		return Err({
+			t: "database-error",
+			error: foundAttempts.error,
+		});
+	}
+
+	return Ok(foundAttempts.value);
+};
+
+const validatePreviousAttempts = async (
+	deps: VerifySMSDeps,
+	attempts: VerificationAttempt[],
+): Task<VerifyCodeProblem, null> => {
+	if (attempts.length >= deps.verifyCodeMaxAttempts) {
+		return Err({
+			t: "verification-expired-too-many-failed-attempts",
+		});
+	}
+
+	return Ok(null);
+};
+
+const recordAttempt = async (
+	deps: VerifySMSDeps,
+	verificationId: VerificationId,
+	inputtedCode: string,
+): Task<VerifyCodeProblem, null> => {
+	const codeHash = await deps.hashing.hash({
+		algo: {
+			t: "sha256",
+		},
+		password: inputtedCode,
+	});
+
+	const newAttempt: VerificationAttempt = {
+		verificationAttemptId: VerificationAttemptId.generate(),
+		codeHash,
+		createdAt: deps.now(),
+		verificationId,
+	};
+
+	await deps.verificationAttemptDb.put(newAttempt);
+
+	return Ok(null);
+};
+
+const validateCode = async (
+	deps: VerifySMSDeps,
+	verification: Verification,
+	inputtedCode: string,
+): Task<VerifyCodeProblem, boolean> => {
+	const isCorrect = await deps.hashing.check({
+		hash: verification.codeHash,
+		password: inputtedCode,
+	});
+
+	if (!isCorrect) {
+		return Err({
+			t: "code-incorrect",
+		});
+	}
+
+	return Ok(true);
+};
+
+const markAsVerified = async (
+	deps: VerifySMSDeps,
+	verification: Verification,
+): Task<VerifyCodeProblem, null> => {
+	const verificationNew: Verification = {
+		...verification,
+		verifiedAt: deps.now(),
+	};
+
+	await deps.verificationDb.put(verificationNew);
+
+	return Ok(null);
+};
