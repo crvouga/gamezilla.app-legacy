@@ -1,17 +1,16 @@
 import {
-	Err,
 	Ok,
 	PhoneNumber,
 	Posix,
 	Result,
-	isErr,
+	isErr
 } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { Hash } from "gamezilla-app/@/hashing";
 import { Sql } from "gamezilla-app/@/sql";
 import { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
-import { Verification } from "../verification/verification";
-import { VerificationId } from "../verification/verification-id";
+import { Verification } from "../verification";
+import { VerificationId } from "../verification-id";
 import type { IVerificationDb, WhereClause } from "./verification-db";
 
 export const Row = p.obj({
@@ -24,8 +23,7 @@ export const Row = p.obj({
 });
 type Row = p.Infer<typeof Row>;
 
-export const
-	VerificationDbPostgres = (deps: {
+export const VerificationDbPostgres = (deps: {
 	dbConnSql: IDbConnSql;
 }): IVerificationDb => {
 	return {
@@ -109,14 +107,6 @@ export const
 			const queried = await deps.dbConnSql.query(p.unknown, query, vars);
 
 			return Result.mapOk(queried, () => null);
-		},
-		attempts: {
-			async put() {
-				return Err("not implemented");
-			},
-			async find() {
-				return Err("not implemented");
-			},
 		},
 	};
 };

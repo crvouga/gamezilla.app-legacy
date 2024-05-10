@@ -403,14 +403,10 @@ const subscriptions: Module["subscriptions"] = (input) => {
 		input.model.sendCode.t === "loading" ||
 		input.model.verifyCode.t === "loading"
 	) {
-		return Time.interval(
-			INTERVAL_ID,
-			TimeSpan.milliseconds(1000),
-			(now) => ({
-				t: "time-passed",
-				now,
-			}),
-		);
+		return Time.interval(INTERVAL_ID, TimeSpan.milliseconds(1000), (now) => ({
+			t: "time-passed",
+			now,
+		}));
 	}
 
 	return Sub.None;

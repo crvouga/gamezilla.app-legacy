@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { Ok, Posix, TimeSpan, unwrap } from "gamezilla-app/@/core";
 import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
-import { Verification, randomVerification } from "../verification/verification";
+import { Verification, randomVerification } from "../verification";
 import { VerificationDb } from "./verification-db-impl";
 
 const Fixture = async () => {
@@ -35,7 +35,7 @@ describe(import.meta.file, () => {
 		const inserted = await f.verificationDb.put(verification);
 		expect(inserted).toEqual(Ok(null));
 	});
-	
+
 	it("should insert records correctly", async () => {
 		const f = await Fixture();
 		const verification = await randomVerification();
@@ -135,9 +135,7 @@ describe(import.meta.file, () => {
 		expect(actual).toEqual(expected);
 	});
 
-	it('should insert attempts correctly', async () => {
-
-	})
+	it("should insert attempts correctly", async () => {});
 });
 
 const insertVerifications = async ({
@@ -158,7 +156,9 @@ const insertVerifications = async ({
 	let runningCreatedAt = start;
 
 	for (let i = 0; i < count; i++) {
-		const verification = await randomVerification({ createdAt: runningCreatedAt });
+		const verification = await randomVerification({
+			createdAt: runningCreatedAt,
+		});
 		await f.verificationDb.put(verification);
 		verifications.push(verification);
 		runningCreatedAt = Posix.future(runningCreatedAt, timeSpan);

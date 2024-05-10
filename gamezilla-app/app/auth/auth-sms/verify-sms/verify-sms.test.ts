@@ -12,37 +12,44 @@ import { Hashing, type IHashing } from "gamezilla-app/@/hashing";
 import { Translator } from "gamezilla-app/app/@/client/translator";
 import { Logger } from "gamezilla-app/app/@/server/logger";
 import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
-import { CodeGenerator, type ICodeGenerator } from "./code-generator";
+import {
+	VerificationCodeGenerator,
+	type IVerificationCodeGenerator,
+} from "./verification-code-generator";
 import { VerificationId } from "./verification";
-import { VerificationDb } from "./verification-db";
+import { VerificationDb } from "./verification/verification-db";
 import { VerifySMS } from "./verify-sms-impl";
+import { VerificationAttemptDb } from "./verification-attempt";
 
 const Fixture = async (input?: {
 	verifyCodeMaxAttempts?: number;
 	verifyCodeExpiresIn?: TimeSpan;
 	sendCodeHourlyLimit?: number;
 	sendCodeDailyLimit?: number;
-	codeGenerator?: ICodeGenerator;
+	codeGenerator?: IVerificationCodeGenerator;
 	now?: () => Posix;
 	hashing?: IHashing;
 }) => {
 	const sms = SMSFake();
 	const CODE = "123456";
 	const WRONG_CODE = "42";
-	const codeGenerator =
-		input?.codeGenerator ?? CodeGenerator({ t: "fake", code: CODE });
+	const verificationCodeGenerator =
+		input?.codeGenerator ??
+		VerificationCodeGenerator({ t: "fake", code: CODE });
 	const logger = Logger({ t: "noop" });
 	const translator = Translator("en");
 	const verificationDb = VerificationDb({ t: "hash-map" });
+	const verificationAttemptDb = VerificationAttemptDb({ t: "hash-map" });
 	const hashing = input?.hashing ?? Hashing({ t: "noop" });
 
 	const verifySMS = VerifySMS({
 		t: "real",
 		logger,
 		sms,
-		codeGenerator,
+		verificationCodeGenerator,
 		translator,
 		verificationDb,
+		verificationAttemptDb,
 		hashing,
 		now: input?.now ?? Posix.now,
 		sendCodeHourlyLimit: input?.sendCodeHourlyLimit ?? 10,

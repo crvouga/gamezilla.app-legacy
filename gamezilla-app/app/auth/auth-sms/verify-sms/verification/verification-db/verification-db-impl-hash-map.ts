@@ -1,18 +1,10 @@
 import { Ok, eq } from "gamezilla-app/@/core";
-import type {
-	Verification,
-	VerificationAttempt,
-	VerificationId,
-} from "../verification";
-import type { VerificationAttemptId } from "../verification/verification-attempt-id";
+import type { Verification, VerificationId } from "..";
 import type { IVerificationDb } from "./verification-db";
 
 export const VerificationDbHashMap = (): IVerificationDb => {
 	const verifications = new Map<VerificationId, Verification>();
-	const verificationAttempts = new Map<
-		VerificationAttemptId,
-		VerificationAttempt
-	>();
+
 	return {
 		async find(input) {
 			const filtered = Array.from(verifications.values())
@@ -54,22 +46,6 @@ export const VerificationDbHashMap = (): IVerificationDb => {
 			verifications.set(verification.verificationId, verification);
 			return Ok(null);
 		},
-		attempts: {
-			async put(attempt) {
-				verificationAttempts.set(attempt.verificationAttemptId, attempt);
-				return Ok(null);
-			},
-			async find(input) {
-				const filtered = Array.from(verificationAttempts.values()).filter(
-					(v) => {
-						if (input.where?.verificationId?.["="]) {
-							return input.where?.verificationId?.["="] === v.verificationId;
-						}
-						return true;
-					},
-				);
-				return Ok(filtered);
-			},
-		},
+		
 	};
 };

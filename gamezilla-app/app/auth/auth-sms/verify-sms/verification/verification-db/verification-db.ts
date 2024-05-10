@@ -1,10 +1,6 @@
 import type { PhoneNumber, Posix, Task } from "gamezilla-app/@/core";
 import type { Paginated } from "gamezilla-app/app/@/data";
-import type {
-	Verification,
-	VerificationAttempt,
-	VerificationId,
-} from "../verification";
+import type { Verification, VerificationId } from "..";
 
 export type WhereClause = {
 	verificationId?: {
@@ -26,14 +22,4 @@ export type IVerificationDb = {
 		offset?: number;
 	}): Task<string, Paginated<Verification>>;
 	put(verification: Verification): Task<string, null>;
-	attempts: {
-		find(input: {
-			where: {
-				verificationId?: {
-					"=": VerificationId;
-				};
-			};
-		}): Task<string, VerificationAttempt[]>;
-		put(attempt: VerificationAttempt): Task<string, null>;
-	};
 };

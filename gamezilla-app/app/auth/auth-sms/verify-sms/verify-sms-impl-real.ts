@@ -3,21 +3,21 @@ import type { IHashing } from "gamezilla-app/@/hashing";
 import type { Translator } from "gamezilla-app/@/l18n/generated";
 import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
 import type { ISMS } from "gamezilla-app/app/@/server/sms";
-import type { ICodeGenerator } from "./code-generator";
+import type { IVerificationCodeGenerator } from "./verification-code-generator";
 import {
 	VerificationId,
 	type Verification,
-	type VerificationAttempt,
 } from "./verification";
-import type { IVerificationDb } from "./verification-db";
-import { VerificationAttemptId } from "./verification/verification-attempt-id";
+import type { IVerificationDb } from "./verification/verification-db";
 import type { IVerifySMS } from "./verify-sms";
+import { IVerificationAttemptDb, VerificationAttempt, VerificationAttemptId } from "./verification-attempt";
 
 export type VerifySMSDeps = {
 	logger: ILogger;
 	sms: ISMS;
-	codeGenerator: ICodeGenerator;
+	verificationCodeGenerator: IVerificationCodeGenerator;
 	verificationDb: IVerificationDb;
+	verificationAttemptDb: IVerificationAttemptDb;
 	translator: Translator;
 	hashing: IHashing;
 	now: () => Posix;
@@ -84,7 +84,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				});
 			}
 
-			const code = deps.codeGenerator.generate();
+			const code = deps.verificationCodeGenerator.generate();
 
 			const codeHash = await deps.hashing.hash({
 				algo: {
@@ -166,7 +166,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				});
 			}
 
-			const foundAttempts = await deps.verificationDb.attempts.find({
+			const foundAttempts = await deps.verificationAttemptDb.find({
 				where: {
 					verificationId: {
 						"=": input.verificationId,
@@ -181,9 +181,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				});
 			}
 
-			const attempts = foundAttempts.value;
-
-			if (attempts.length >= deps.verifyCodeMaxAttempts) {
+			if (foundAttempts.value.length >= deps.verifyCodeMaxAttempts) {
 				return Err({
 					t: "verification-expired-too-many-failed-attempts",
 				});
@@ -203,7 +201,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				verificationId: input.verificationId,
 			};
 
-			await deps.verificationDb.attempts.put(newAttempt);
+			await deps.verificationAttemptDb.put(newAttempt);
 
 			const isCorrect = await deps.hashing.check({
 				hash: verification.codeHash,
