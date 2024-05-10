@@ -1,10 +1,4 @@
-import {
-	Ok,
-	PhoneNumber,
-	Posix,
-	Result,
-	isErr
-} from "gamezilla-app/@/core";
+import { Ok, PhoneNumber, Posix, Result, isErr } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { Hash } from "gamezilla-app/@/hashing";
 import { Sql } from "gamezilla-app/@/sql";

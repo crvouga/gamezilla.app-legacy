@@ -46,6 +46,5 @@ export const VerificationDbHashMap = (): IVerificationDb => {
 			verifications.set(verification.verificationId, verification);
 			return Ok(null);
 		},
-		
 	};
 };
