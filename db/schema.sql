@@ -25,32 +25,6 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: auth_sms_verification; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.auth_sms_verification (
-    verification_id text NOT NULL,
-    code_hash json NOT NULL,
-    phone_number text NOT NULL,
-    created_at_posix bigint NOT NULL,
-    expires_in_milliseconds bigint NOT NULL,
-    verified_at_posix bigint
-);
-
-
---
--- Name: auth_sms_verification_attempt; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.auth_sms_verification_attempt (
-    verification_attempt_id text NOT NULL,
-    verificationid text NOT NULL,
-    inputted_code_hash json NOT NULL,
-    created_at_posix bigint NOT NULL
-);
-
-
---
 -- Name: game_chess_puzzle; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -229,22 +203,6 @@ CREATE TABLE public.user_session (
 --
 
 ALTER TABLE ONLY public.socket_io_attachments ALTER COLUMN id SET DEFAULT nextval('public.socket_io_attachments_id_seq'::regclass);
-
-
---
--- Name: auth_sms_verification_attempt auth_sms_verification_attempt_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.auth_sms_verification_attempt
-    ADD CONSTRAINT auth_sms_verification_attempt_pkey PRIMARY KEY (verification_attempt_id);
-
-
---
--- Name: auth_sms_verification auth_sms_verification_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.auth_sms_verification
-    ADD CONSTRAINT auth_sms_verification_pkey PRIMARY KEY (verification_id);
 
 
 --
@@ -443,5 +401,4 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240428015435'),
     ('20240501070923'),
     ('20240508205504'),
-    ('20240508214804'),
-    ('20240509164949');
+    ('20240508214804');

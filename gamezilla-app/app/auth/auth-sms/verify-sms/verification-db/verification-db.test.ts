@@ -27,13 +27,13 @@ const Fixture = async () => {
 };
 
 describe(import.meta.file, () => {
-	it("should be able to put verifications", async () => {
+	it("should be ok inserting records", async () => {
 		const f = await Fixture();
 		const verification = await randomVerification();
 		const inserted = await f.verificationDb.put(verification);
 		expect(inserted).toEqual(Ok(null));
 	});
-	it("should be able to store verifications", async () => {
+	it("should insert records correctly", async () => {
 		const f = await Fixture();
 		const verification = await randomVerification();
 		const before = await f.verificationDb.find({
