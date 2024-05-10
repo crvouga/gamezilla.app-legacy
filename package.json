@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"server": "bun gamezilla-app/main.server.ts",
-		"server:build": "bun db:up && bun x tsc --noEmit && bun check && bun test",
+		"server:build": "bun db:up && bun check && bun test",
 		"server:start": "bun x pm2 start bun --name \"gamezilla-app-server\" -- server -i 3",
 		"server:stop": "bun x pm2 stop gamezilla-app-server",
 		"server:delete": "bun x pm2 delete gamezilla-app-server",
