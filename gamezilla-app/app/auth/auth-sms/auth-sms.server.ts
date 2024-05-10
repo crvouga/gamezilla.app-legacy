@@ -1,5 +1,15 @@
-import { Err, Ok, Posix, Sub, Task, isErr } from "gamezilla-app/@/core";
+import {
+	Err,
+	Ok,
+	Posix,
+	Sub,
+	Task,
+	TimeSpan,
+	isErr,
+} from "gamezilla-app/@/core";
+import { Hashing } from "gamezilla-app/@/hashing";
 import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
+import { Translator } from "gamezilla-app/app/@/client/translator";
 import { UserId } from "gamezilla-app/app/@/data";
 import { UserAccount } from "gamezilla-app/app/@/data/account";
 import {
@@ -8,10 +18,14 @@ import {
 	type ServerCtx,
 	type ServerEvent,
 } from "gamezilla-app/app/@/server";
+import { SMS } from "gamezilla-app/app/@/server/sms";
 import type { IAccountDb } from "../@/server/account-db";
 import { AccountDb } from "../@/server/account-db/account-db-impl";
 import type { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.types";
 import { VerificationId } from "./verify-sms/verification";
+import { VerificationAttemptDb } from "./verify-sms/verification-attempt";
+import { VerificationCodeGenerator } from "./verify-sms/verification-code-generator";
+import { VerificationDb } from "./verify-sms/verification/verification-db";
 import { VerifyCodeProblem, type IVerifySMS } from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl";
 
@@ -50,8 +64,22 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 			dbConnSql: ctx.dbConnSql,
 		}),
 		VerifySMS: VerifySMS({
-			t: "fake",
+			t: "real",
 			logger: ctx.logger,
+			hashing: Hashing({ t: "bun" }),
+			now: () => Posix.now(),
+			sendCodeDailyLimit: 50,
+			sendCodeHourlyLimit: 5,
+			sms: SMS({ t: "fake" }),
+			Translator: Translator,
+			verificationAttemptDb: VerificationAttemptDb({ t: "hash-map" }),
+			verificationDb: VerificationDb({ t: "hash-map" }),
+			verificationCodeGenerator: VerificationCodeGenerator({
+				t: "fake",
+				code: "123",
+			}),
+			verifyCodeExpiresIn: TimeSpan.minutes(5),
+			verifyCodeMaxAttempts: 3,
 		}),
 	};
 };

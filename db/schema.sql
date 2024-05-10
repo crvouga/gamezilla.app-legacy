@@ -33,7 +33,7 @@ CREATE TABLE public.auth_sms_verification (
     code_hash json NOT NULL,
     phone_number text NOT NULL,
     created_at_posix bigint NOT NULL,
-    expires_in_milliseconds bigint NOT NULL,
+    expires_at_posix bigint NOT NULL,
     verified_at_posix bigint
 );
 
@@ -444,4 +444,4 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240501070923'),
     ('20240508205504'),
     ('20240508214804'),
-    ('20240509164949');
+    ('20240510025350');

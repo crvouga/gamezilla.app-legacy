@@ -326,7 +326,7 @@ export const showErrSm = <T extends ClientCmdTypes>(
 				text,
 				toastVariant: "error",
 				errorMsg,
-				duration: duration ?? TimeSpan.fromSeconds(4),
+				duration: duration ?? TimeSpan.seconds(4),
 			},
 		},
 		{

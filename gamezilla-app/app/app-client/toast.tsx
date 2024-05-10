@@ -174,7 +174,7 @@ const updateFromCmd: Module["update"] = (input) => {
 			const toastNew: Toast = {
 				toastId: model.runningId,
 				text: toastCmd.text,
-				duration: toastCmd.duration ?? TimeSpan.fromSeconds(2),
+				duration: toastCmd.duration ?? TimeSpan.seconds(2),
 				variant: toastCmd.toastVariant ?? "info",
 				createdAt: ctx.now,
 				errorMsg: toastCmd.errorMsg ?? null,

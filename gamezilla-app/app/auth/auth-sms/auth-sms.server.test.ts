@@ -68,6 +68,7 @@ describe(import.meta.file, () => {
 			{
 				msgClient: {
 					...f.client,
+					perferredLanguage: "en",
 					t: "user-clicked-send-code-button",
 					phoneNumber: PhoneNumber.random(),
 				},

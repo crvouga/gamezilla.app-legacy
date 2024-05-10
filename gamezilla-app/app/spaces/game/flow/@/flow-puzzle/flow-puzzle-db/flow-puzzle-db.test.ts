@@ -162,7 +162,7 @@ describe(import.meta.file, () => {
 		let createdAt = Posix.now();
 		for (let i = 0; i < 5; i++) {
 			const puzzle = await randomFlowPuzzle({ createdBy, createdAt });
-			createdAt = Posix.add(createdAt, TimeSpan.fromSeconds(1));
+			createdAt = Posix.future(createdAt, TimeSpan.seconds(1));
 			puzzles.push(puzzle);
 			await f.flowPuzzleDb.put(puzzle);
 		}

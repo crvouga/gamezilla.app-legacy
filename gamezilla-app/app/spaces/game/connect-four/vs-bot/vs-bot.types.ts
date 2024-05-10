@@ -27,7 +27,7 @@ export const isBotMoving = (now: Posix, model: ModelServer) => {
 	}
 	return TimeSpan.lte(
 		Posix.diff(now, model.botStartedFindingMoveAt),
-		TimeSpan.fromSeconds(5),
+		TimeSpan.seconds(5),
 	);
 };
 

@@ -3,31 +3,31 @@ export type TimeSpan = {
 	_durationMilliseconds: number;
 };
 
-const fromMilliseconds = (durationMilliseconds: number): TimeSpan => {
+const milliseconds = (durationMilliseconds: number): TimeSpan => {
 	return {
 		type: "TimeSpan",
 		_durationMilliseconds: durationMilliseconds,
 	};
 };
 
-const fromSeconds = (durationSeconds: number): TimeSpan => {
-	return fromMilliseconds(durationSeconds * 1000);
+const seconds = (durationSeconds: number): TimeSpan => {
+	return milliseconds(durationSeconds * 1000);
 };
 
-const fromMinutes = (durationMinutes: number): TimeSpan => {
-	return fromSeconds(durationMinutes * 60);
+const minutes = (durationMinutes: number): TimeSpan => {
+	return seconds(durationMinutes * 60);
 };
 
-const fromHours = (durationHours: number): TimeSpan => {
-	return fromMinutes(durationHours * 60);
+const hours = (durationHours: number): TimeSpan => {
+	return minutes(durationHours * 60);
 };
 
-const fromDays = (durationDays: number): TimeSpan => {
-	return fromHours(durationDays * 24);
+const days = (durationDays: number): TimeSpan => {
+	return hours(durationDays * 24);
 };
 
 const fromWeeks = (durationWeeks: number): TimeSpan => {
-	return fromDays(durationWeeks * 7);
+	return days(durationWeeks * 7);
 };
 
 const toMilliseconds = (timeSpan: TimeSpan): number => {
@@ -55,15 +55,15 @@ const toWeeks = (timeSpan: TimeSpan): number => {
 };
 
 const add = (left: TimeSpan, right: TimeSpan): TimeSpan => {
-	return fromMilliseconds(toMilliseconds(left) + toMilliseconds(right));
+	return milliseconds(toMilliseconds(left) + toMilliseconds(right));
 };
 
 const subtract = (left: TimeSpan, right: TimeSpan): TimeSpan => {
-	return fromMilliseconds(toMilliseconds(left) - toMilliseconds(right));
+	return milliseconds(toMilliseconds(left) - toMilliseconds(right));
 };
 
 const scale = (timeSpan: TimeSpan, factor: number): TimeSpan => {
-	return fromMilliseconds(toMilliseconds(timeSpan) * factor);
+	return milliseconds(toMilliseconds(timeSpan) * factor);
 };
 
 const encodingKey = "TimeSpan";
@@ -150,20 +150,25 @@ const humanFriendlyString = (timeSpan: TimeSpan): string => {
 	return "A moment ago";
 };
 
+const negate = (timeSpan: TimeSpan): TimeSpan => {
+	return milliseconds(-toMilliseconds(timeSpan));
+};
+
 /**
  * @description
  * `TimeSpan` represents a duration of time.
  */
 export const TimeSpan = {
 	humanFriendlyString,
+	negate,
 	//
 	//
 	//
-	fromMilliseconds,
-	fromSeconds,
-	fromMinutes,
-	fromHours,
-	fromDays,
+	milliseconds,
+	seconds,
+	minutes,
+	hours,
+	days,
 	fromWeeks,
 	//
 	//

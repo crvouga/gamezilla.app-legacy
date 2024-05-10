@@ -438,7 +438,7 @@ export const updateFromEvent = ({
 //
 //
 
-const TICK_RATE = TimeSpan.fromMilliseconds(500);
+const TICK_RATE = TimeSpan.milliseconds(500);
 
 export const subscriptions = (
 	intervalId: string,

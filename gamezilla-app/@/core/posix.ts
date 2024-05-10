@@ -74,14 +74,14 @@ const now = (config?: { precision: Precision }): Posix => {
  * Returns the time span between two posix timestamps.
  */
 const diff = (a: Posix, b: Posix): TimeSpan => {
-	return TimeSpan.fromMilliseconds(Math.abs(a - b));
+	return TimeSpan.milliseconds(Math.abs(a - b));
 };
 
-const add = (posix: Posix, timeSpan: TimeSpan): Posix => {
+const future = (posix: Posix, timeSpan: TimeSpan): Posix => {
 	return init(toNumber(posix) + TimeSpan.toMilliseconds(timeSpan));
 };
 
-const sub = (posix: Posix, timeSpan: TimeSpan): Posix => {
+const past = (posix: Posix, timeSpan: TimeSpan): Posix => {
 	return init(toNumber(posix) - TimeSpan.toMilliseconds(timeSpan));
 };
 
@@ -103,8 +103,8 @@ export const Posix = {
 	toNumber,
 	now,
 	diff,
-	add,
-	sub,
+	future,
+	past,
 	fromIsoString,
 	toIsoString,
 };

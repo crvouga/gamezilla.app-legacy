@@ -1,10 +1,10 @@
-import type { ICodeGenerator } from "./code-generator";
+import type { IVerificationCodeGenerator } from "./verification-code-generator";
 
 export const CodeGeneratorFake = ({
 	code,
 }: {
 	code: string;
-}): ICodeGenerator => {
+}): IVerificationCodeGenerator => {
 	return {
 		generate() {
 			return code;

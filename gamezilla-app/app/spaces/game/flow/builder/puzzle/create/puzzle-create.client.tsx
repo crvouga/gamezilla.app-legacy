@@ -43,7 +43,7 @@ const update: ClientModule["update"] = (input) => {
 				isLoading(model.puzzleCreateRequest) &&
 				TimeSpan.gte(
 					Posix.diff(model.puzzleCreateRequestedAt, ctx.now),
-					TimeSpan.fromSeconds(5),
+					TimeSpan.seconds(5),
 				)
 			) {
 				const errorMessage = "Request timed out";
@@ -97,7 +97,7 @@ const id = "puzzle-create-request";
 const subscriptions: ClientModule["subscriptions"] = ({ model }) => {
 	switch (model.puzzleCreateRequest.t) {
 		case "loading": {
-			return Time.interval(id, TimeSpan.fromSeconds(1), () => ({
+			return Time.interval(id, TimeSpan.seconds(1), () => ({
 				t: "time-passed",
 			}));
 		}

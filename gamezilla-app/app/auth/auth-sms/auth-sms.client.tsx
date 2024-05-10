@@ -206,6 +206,7 @@ const updateFromMsg: Module["update"] = (input) => {
 					sendToServer({
 						t: "user-clicked-send-code-button",
 						phoneNumber: phoneNumber.value,
+						perferredLanguage: ctx.navigatorLanguage,
 					}),
 					playSound(APP_SOUND.tap),
 				],
@@ -283,7 +284,7 @@ const updateFromMsg: Module["update"] = (input) => {
 						model.sendCode.t === "loading" &&
 						TimeSpan.gte(
 							Posix.diff(ctx.now, model.sentCodeAt),
-							TimeSpan.fromSeconds(5),
+							TimeSpan.seconds(5),
 						)
 					) {
 						return {
@@ -305,7 +306,7 @@ const updateFromMsg: Module["update"] = (input) => {
 						model.verifyCode.t === "loading" &&
 						TimeSpan.gte(
 							Posix.diff(ctx.now, model.verifiedCodeAt),
-							TimeSpan.fromSeconds(10),
+							TimeSpan.seconds(10),
 						)
 					) {
 						return {
@@ -359,7 +360,7 @@ const updateFromServer: Module["update"] = (input) => {
 					showToast(
 						`Sent code to ${PhoneNumber.toString(msgServer.phoneNumber)}`,
 						"info",
-						TimeSpan.fromSeconds(4),
+						TimeSpan.seconds(4),
 					),
 					focusView(CODE_INPUT_VIEW_ID),
 					playSound(APP_SOUND.navForwardMin),
@@ -403,14 +404,10 @@ const subscriptions: Module["subscriptions"] = (input) => {
 		input.model.sendCode.t === "loading" ||
 		input.model.verifyCode.t === "loading"
 	) {
-		return Time.interval(
-			INTERVAL_ID,
-			TimeSpan.fromMilliseconds(1000),
-			(now) => ({
-				t: "time-passed",
-				now,
-			}),
-		);
+		return Time.interval(INTERVAL_ID, TimeSpan.milliseconds(1000), (now) => ({
+			t: "time-passed",
+			now,
+		}));
 	}
 
 	return Sub.None;

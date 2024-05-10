@@ -12,50 +12,58 @@ import { Hashing, type IHashing } from "gamezilla-app/@/hashing";
 import { Translator } from "gamezilla-app/app/@/client/translator";
 import { Logger } from "gamezilla-app/app/@/server/logger";
 import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
-import { CodeGenerator, type ICodeGenerator } from "./code-generator";
+import {
+	VerificationCodeGenerator,
+	type IVerificationCodeGenerator,
+} from "./verification-code-generator";
 import { VerificationId } from "./verification";
-import { VerificationDb } from "./verification-db";
+import { VerificationDb } from "./verification/verification-db";
 import { VerifySMS } from "./verify-sms-impl";
+import { VerificationAttemptDb } from "./verification-attempt";
+import { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 
 const Fixture = async (input?: {
 	verifyCodeMaxAttempts?: number;
 	verifyCodeExpiresIn?: TimeSpan;
 	sendCodeHourlyLimit?: number;
 	sendCodeDailyLimit?: number;
-	codeGenerator?: ICodeGenerator;
+	codeGenerator?: IVerificationCodeGenerator;
 	now?: () => Posix;
 	hashing?: IHashing;
 }) => {
 	const sms = SMSFake();
 	const CODE = "123456";
 	const WRONG_CODE = "42";
-	const codeGenerator =
-		input?.codeGenerator ?? CodeGenerator({ t: "fake", code: CODE });
+	const verificationCodeGenerator =
+		input?.codeGenerator ??
+		VerificationCodeGenerator({ t: "fake", code: CODE });
 	const logger = Logger({ t: "noop" });
-	const translator = Translator("en");
 	const verificationDb = VerificationDb({ t: "hash-map" });
+	const verificationAttemptDb = VerificationAttemptDb({ t: "hash-map" });
 	const hashing = input?.hashing ?? Hashing({ t: "noop" });
 
 	const verifySMS = VerifySMS({
 		t: "real",
 		logger,
 		sms,
-		codeGenerator,
-		translator,
+		verificationCodeGenerator,
+		Translator: Translator,
 		verificationDb,
+		verificationAttemptDb,
 		hashing,
 		now: input?.now ?? Posix.now,
 		sendCodeHourlyLimit: input?.sendCodeHourlyLimit ?? 10,
 		sendCodeDailyLimit: input?.sendCodeDailyLimit ?? 10,
-		verifyCodeExpiresIn: input?.verifyCodeExpiresIn ?? TimeSpan.fromMinutes(5),
+		verifyCodeExpiresIn: input?.verifyCodeExpiresIn ?? TimeSpan.minutes(5),
 		verifyCodeMaxAttempts: input?.verifyCodeMaxAttempts ?? 3,
 	});
 
 	const phoneNumber = unwrap(PhoneNumber.fromString("+1 480-209-8698"));
+	const perferredLanguage: LanguageCodeISO_639_1 = "en";
 
 	return {
+		perferredLanguage,
 		verificationDb,
-		translator,
 		CODE,
 		WRONG_CODE,
 		phoneNumber,
@@ -84,6 +92,7 @@ describe(import.meta.file, () => {
 	it("should send a sms message with the code in it", async () => {
 		const f = await Fixture();
 		await f.verifySMS.sendCode({
+			...f,
 			phoneNumber: f.phoneNumber,
 		});
 		expect(f.sms.sent[0]?.message.includes(f.CODE)).toBe(true);
@@ -92,6 +101,7 @@ describe(import.meta.file, () => {
 	it("should send a sms message to the phone number inputted", async () => {
 		const f = await Fixture();
 		await f.verifySMS.sendCode({
+			...f,
 			phoneNumber: f.phoneNumber,
 		});
 		expect(
@@ -104,11 +114,12 @@ describe(import.meta.file, () => {
 	it('should sent a sms message with the "verify-sms.code-message" translation', async () => {
 		const f = await Fixture();
 		await f.verifySMS.sendCode({
+			...f,
 			phoneNumber: f.phoneNumber,
 		});
 		expect(
 			f.sms.sent[0]?.message ===
-				f.translator("verify-sms.code-message", f.CODE),
+				Translator(f.perferredLanguage)("verify-sms.code-message", f.CODE),
 		).toBe(true);
 	});
 
@@ -164,7 +175,7 @@ describe(import.meta.file, () => {
 	});
 
 	it("should error if verification expired", async () => {
-		const verifyCodeExpiresIn = TimeSpan.fromMinutes(5);
+		const verifyCodeExpiresIn = TimeSpan.minutes(5);
 
 		let now = Posix.now();
 
@@ -174,7 +185,7 @@ describe(import.meta.file, () => {
 
 		const verificationId = unwrap(sent).verificationId;
 
-		now = Posix.add(now, verifyCodeExpiresIn);
+		now = Posix.future(now, verifyCodeExpiresIn);
 
 		const verified = await f.verifySMS.verifyCode({
 			verificationId,
@@ -187,16 +198,19 @@ describe(import.meta.file, () => {
 	});
 
 	it("should fail if the code has expired, even if no new code has been sent", async () => {
-		const verifyCodeExpiresIn = TimeSpan.fromMinutes(5);
+		const verifyCodeExpiresIn = TimeSpan.minutes(5);
 
 		let now = Posix.now();
 		const f = await Fixture({ verifyCodeExpiresIn, now: () => now });
 
-		const sent = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+		const sent = await f.verifySMS.sendCode({
+			...f,
+			phoneNumber: f.phoneNumber,
+		});
 		const verificationId = unwrap(sent).verificationId;
 
-		now = Posix.add(now, verifyCodeExpiresIn);
-		now = Posix.add(now, TimeSpan.fromSeconds(1));
+		now = Posix.future(now, verifyCodeExpiresIn);
+		now = Posix.future(now, TimeSpan.seconds(1));
 
 		const verified = await f.verifySMS.verifyCode({
 			verificationId,
@@ -219,11 +233,17 @@ describe(import.meta.file, () => {
 		});
 
 		currentCode = CODE_A;
-		const sentA = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+		const sentA = await f.verifySMS.sendCode({
+			...f,
+			phoneNumber: f.phoneNumber,
+		});
 		const verificationIdA = unwrap(sentA).verificationId;
 
 		currentCode = CODE_B;
-		const sentB = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+		const sentB = await f.verifySMS.sendCode({
+			...f,
+			phoneNumber: f.phoneNumber,
+		});
 		const verificationIdB = unwrap(sentB).verificationId;
 
 		const verifiedAWithCodeB = await f.verifySMS.verifyCode({
@@ -248,10 +268,12 @@ describe(import.meta.file, () => {
 		const f = await Fixture({ sendCodeHourlyLimit });
 		for (let i = 0; i < sendCodeHourlyLimit; i++) {
 			await f.verifySMS.sendCode({
+				...f,
 				phoneNumber: f.phoneNumber,
 			});
 		}
 		const sent = await f.verifySMS.sendCode({
+			...f,
 			phoneNumber: f.phoneNumber,
 		});
 		expect(sent.t).toBe("err");
@@ -263,13 +285,16 @@ describe(import.meta.file, () => {
 		let now = Posix.now();
 		const f = await Fixture({ sendCodeHourlyLimit, now: () => now });
 		for (let i = 0; i < sendCodeHourlyLimit; i++) {
-			await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+			await f.verifySMS.sendCode({ ...f, phoneNumber: f.phoneNumber });
 		}
-		now = Posix.add(
+		now = Posix.future(
 			now,
-			TimeSpan.add(TimeSpan.fromHours(1), TimeSpan.fromMilliseconds(1)),
+			TimeSpan.add(TimeSpan.hours(1), TimeSpan.milliseconds(1)),
 		);
-		const sent = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+		const sent = await f.verifySMS.sendCode({
+			...f,
+			phoneNumber: f.phoneNumber,
+		});
 		expect(isOk(sent)).toBe(true);
 	});
 
@@ -282,9 +307,12 @@ describe(import.meta.file, () => {
 		const phoneNumberB = unwrap(PhoneNumber.fromString("+1 480-209-8699"));
 
 		for (let i = 0; i < sendCodeHourlyLimit + 1; i++) {
-			await f.verifySMS.sendCode({ phoneNumber: phoneNumberA });
+			await f.verifySMS.sendCode({ ...f, phoneNumber: phoneNumberA });
 		}
-		const sent = await f.verifySMS.sendCode({ phoneNumber: phoneNumberB });
+		const sent = await f.verifySMS.sendCode({
+			...f,
+			phoneNumber: phoneNumberB,
+		});
 		expect(isOk(sent)).toBe(true);
 	});
 
@@ -293,10 +321,12 @@ describe(import.meta.file, () => {
 		const f = await Fixture({ sendCodeDailyLimit });
 		for (let i = 0; i < sendCodeDailyLimit; i++) {
 			await f.verifySMS.sendCode({
+				...f,
 				phoneNumber: f.phoneNumber,
 			});
 		}
 		const sent = await f.verifySMS.sendCode({
+			...f,
 			phoneNumber: f.phoneNumber,
 		});
 		expect(sent.t).toBe("err");
@@ -308,13 +338,16 @@ describe(import.meta.file, () => {
 		let now = Posix.now();
 		const f = await Fixture({ sendCodeDailyLimit, now: () => now });
 		for (let i = 0; i < sendCodeDailyLimit; i++) {
-			await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+			await f.verifySMS.sendCode({ ...f, phoneNumber: f.phoneNumber });
 		}
-		now = Posix.add(
+		now = Posix.future(
 			now,
-			TimeSpan.add(TimeSpan.fromDays(1), TimeSpan.fromMilliseconds(1)),
+			TimeSpan.add(TimeSpan.days(1), TimeSpan.milliseconds(1)),
 		);
-		const sent = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+		const sent = await f.verifySMS.sendCode({
+			...f,
+			phoneNumber: f.phoneNumber,
+		});
 		expect(isOk(sent)).toBe(true);
 	});
 
@@ -326,16 +359,19 @@ describe(import.meta.file, () => {
 		const phoneNumberA = unwrap(PhoneNumber.fromString("+1 480-209-8698"));
 		const phoneNumberB = unwrap(PhoneNumber.fromString("+1 480-209-8699"));
 		for (let i = 0; i < sendCodeDailyLimit + 1; i++) {
-			await f.verifySMS.sendCode({ phoneNumber: phoneNumberA });
+			await f.verifySMS.sendCode({ ...f, phoneNumber: phoneNumberA });
 		}
-		const sent = await f.verifySMS.sendCode({ phoneNumber: phoneNumberB });
+		const sent = await f.verifySMS.sendCode({
+			...f,
+			phoneNumber: phoneNumberB,
+		});
 		expect(isOk(sent)).toBe(true);
 	});
 
 	it("should only allow verifications to be used once", async () => {
 		const f = await Fixture();
 		const sent = unwrap(
-			await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber }),
+			await f.verifySMS.sendCode({ ...f, phoneNumber: f.phoneNumber }),
 		);
 		const firstVerification = await f.verifySMS.verifyCode({
 			verificationId: sent.verificationId,
@@ -355,7 +391,10 @@ describe(import.meta.file, () => {
 		const f = await Fixture({
 			hashing: Hashing({ t: "bun" }),
 		});
-		const sent = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
+		const sent = await f.verifySMS.sendCode({
+			...f,
+			phoneNumber: f.phoneNumber,
+		});
 		const verificationId = unwrap(sent).verificationId;
 		const code = f.CODE;
 		const verification = await f.verifySMS.verifyCode({ verificationId, code });

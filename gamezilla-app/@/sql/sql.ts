@@ -26,9 +26,18 @@ export type Vars = {
 	[key: string]: VarType;
 };
 
-export const pagination = (input: { limit: number; offset: number }) => {
+export const pagination = (input: { limit?: number; offset?: number }) => {
+	let str = "";
+
+	if (input.limit) {
+		str += `LIMIT\t${input.limit}\n`;
+	}
+
+	if (input.offset) {
+		str += `OFFSET\t${input.offset}\n`;
+	}
 	return {
-		str: "LIMIT\t:limit\nOFFSET\t:offset\n",
+		str,
 		vars: {
 			limit: input.limit,
 			offset: input.offset,

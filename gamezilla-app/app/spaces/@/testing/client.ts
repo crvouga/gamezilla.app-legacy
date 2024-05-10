@@ -300,7 +300,7 @@ export const changeRoute =
 export const elapsed =
 	(ctx: ClientCtx, timeSpan: TimeSpan) => (model: SpaceCore.ModelClient) => {
 		return SpaceClient.update({
-			ctx: { ...ctx, now: Posix.add(ctx.now, timeSpan) },
+			ctx: { ...ctx, now: Posix.future(ctx.now, timeSpan) },
 			model,
 			msg: { t: "time-passed" },
 		});

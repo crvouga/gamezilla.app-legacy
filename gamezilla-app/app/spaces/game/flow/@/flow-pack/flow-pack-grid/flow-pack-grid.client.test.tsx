@@ -64,7 +64,7 @@ const serverListedPuzzlesByIdOk =
 const elapsed =
 	(ctx: SpaceClientCtx, timeSpan: TimeSpan) => (model: ModelClient) => {
 		return FlowPackGridClient.update({
-			ctx: { ...ctx, now: Posix.add(ctx.now, timeSpan) },
+			ctx: { ...ctx, now: Posix.future(ctx.now, timeSpan) },
 			model,
 			msg: { t: "elapsed" },
 		});
@@ -171,7 +171,7 @@ describe(import.meta.file, () => {
 		const output = andThen(
 			initial(pack),
 			userObversedGrid(ctx),
-			elapsed(ctx, TimeSpan.fromMinutes(5)),
+			elapsed(ctx, TimeSpan.minutes(5)),
 		);
 		expect(RequestResponse.isTimedOut(output.model.request)).toBe(true);
 	});

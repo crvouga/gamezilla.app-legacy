@@ -135,7 +135,7 @@ const watchGameOver =
 						model,
 						msgCmd: [
 							playSound(APP_SOUND.celebration, {
-								delay: TimeSpan.fromSeconds(1 / 2),
+								delay: TimeSpan.seconds(1 / 2),
 							}),
 						],
 					};
@@ -144,7 +144,7 @@ const watchGameOver =
 					model,
 					msgCmd: [
 						playSound(APP_SOUND.alertErrorLg, {
-							delay: TimeSpan.fromSeconds(1 / 2),
+							delay: TimeSpan.seconds(1 / 2),
 						}),
 					],
 				};

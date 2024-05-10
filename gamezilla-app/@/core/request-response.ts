@@ -51,7 +51,7 @@ export type RequestResponse<TError, TValue> =
 
 export const requesting = (
 	requestedAt: Posix,
-	lifeSpan: TimeSpan = TimeSpan.fromMinutes(1),
+	lifeSpan: TimeSpan = TimeSpan.minutes(1),
 ): Requesting => {
 	return { t: "loading", requestedAt, lifeSpan, requestId: Uuid.generate() };
 };
@@ -120,7 +120,7 @@ const subscriptions = <TError, TValue, TMsg>(
 	elasped: () => TMsg,
 ): Sub<TMsg> => {
 	if (isRequesting(request)) {
-		return Time.interval("", TimeSpan.fromSeconds(1), elasped);
+		return Time.interval("", TimeSpan.seconds(1), elasped);
 	}
 	return Sub.None;
 };

@@ -99,7 +99,7 @@ export const getDeps = async ({
 			IDbConnKv.withThrottlingWrites({
 				logger: ILogger.prefix("with-throttling-writes", loggerDbConnKv),
 				dbConnKv: await dbConnKv,
-				throttle: TimeSpan.fromSeconds(10),
+				throttle: TimeSpan.seconds(10),
 			}),
 
 		async (dbConnKv) =>

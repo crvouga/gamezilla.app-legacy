@@ -67,7 +67,7 @@ describe(import.meta.file, () => {
 		const updated = await AppClientModule.andThen(
 			init(ctx),
 			changeRouteToSpaceList(ctx),
-			elapsed(ctx, TimeSpan.fromMinutes(5)),
+			elapsed(ctx, TimeSpan.minutes(5)),
 		);
 
 		expect(
@@ -90,7 +90,7 @@ describe(import.meta.file, () => {
 		const updated = await AppClientModule.andThen(
 			init(ctx),
 			changeRouteToSpaceList(ctx),
-			elapsed(ctx, TimeSpan.fromSeconds(10)),
+			elapsed(ctx, TimeSpan.seconds(10)),
 			serverListedSpaces(ctx),
 		);
 

@@ -7,7 +7,7 @@ CREATE TABLE auth_sms_verification (
 	code_hash JSON NOT NULL,
     phone_number TEXT NOT NULL,
     created_at_posix BIGINT NOT NULL,
-    expires_in_milliseconds BIGINT NOT NULL,
+    expires_at_posix BIGINT NOT NULL,
     verified_at_posix BIGINT
 );
 
