@@ -31,7 +31,7 @@ export const randomVerification = async (input?: {
 		}),
 		phoneNumber: PhoneNumber.random(),
 		createdAt,
-		expiresAt: Posix.add(createdAt, TimeSpan.fromMinutes(1)),
+		expiresAt: Posix.future(createdAt, TimeSpan.minutes(1)),
 		verifiedAt: null,
 	};
 };

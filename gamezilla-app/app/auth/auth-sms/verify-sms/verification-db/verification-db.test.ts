@@ -104,18 +104,18 @@ describe(import.meta.file, () => {
 
 		await insertVerifications({
 			f,
-			start: Posix.sub(now, TimeSpan.fromMinutes(11)),
-			end: Posix.sub(now, TimeSpan.fromMinutes(10)),
+			start: Posix.past(now, TimeSpan.minutes(11)),
+			end: Posix.past(now, TimeSpan.minutes(10)),
 		});
 
 		await insertVerifications({
 			f,
-			start: Posix.add(now, TimeSpan.fromMinutes(10)),
-			end: Posix.add(now, TimeSpan.fromMinutes(11)),
+			start: Posix.future(now, TimeSpan.minutes(10)),
+			end: Posix.future(now, TimeSpan.minutes(11)),
 		});
 
 		const start = now;
-		const end = Posix.add(now, TimeSpan.fromMinutes(1));
+		const end = Posix.future(now, TimeSpan.minutes(1));
 		const expected = await insertVerifications({
 			f,
 			start,
@@ -133,6 +133,10 @@ describe(import.meta.file, () => {
 		const actual = unwrap(found).items;
 		expect(actual).toEqual(expected);
 	});
+
+	it('should insert attempts correctly', async () => {
+
+	})
 });
 
 const insertVerifications = async ({
@@ -156,7 +160,7 @@ const insertVerifications = async ({
 		const verification = await randomVerification({ createdAt: runningTime });
 		await f.verificationDb.put(verification);
 		verifications.push(verification);
-		runningTime = Posix.add(runningTime, timeSpan);
+		runningTime = Posix.future(runningTime, timeSpan);
 	}
 
 	return verifications;

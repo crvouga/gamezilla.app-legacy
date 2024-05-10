@@ -36,7 +36,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				where: {
 					createdAt: {
 						"<=": now,
-						">=": Posix.sub(now, TimeSpan.fromDays(1)),
+						">=": Posix.past(now, TimeSpan.days(1)),
 					},
 					phoneNumber: {
 						"=": input.phoneNumber,
@@ -61,7 +61,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				where: {
 					createdAt: {
 						"<=": now,
-						">=": Posix.sub(now, TimeSpan.fromHours(1)),
+						">=": Posix.past(now, TimeSpan.hours(1)),
 					},
 					phoneNumber: {
 						"=": input.phoneNumber,
@@ -99,7 +99,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				codeHash: codeHash,
 				phoneNumber: input.phoneNumber,
 				createdAt,
-				expiresAt: Posix.add(createdAt, deps.verifyCodeExpiresIn),
+				expiresAt: Posix.future(createdAt, deps.verifyCodeExpiresIn),
 				verificationId: VerificationId.generate(),
 				verifiedAt: null,
 			};

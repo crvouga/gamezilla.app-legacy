@@ -136,14 +136,14 @@ export const subscriptions = (
 				case "b": {
 					return Time.interval(
 						`${intervalId}-b`,
-						TimeSpan.fromMilliseconds(1000),
+						TimeSpan.milliseconds(1000),
 						() => ["ClockTicked"],
 					);
 				}
 				case "w": {
 					return Time.interval(
 						`${intervalId}-w`,
-						TimeSpan.fromMilliseconds(1000),
+						TimeSpan.milliseconds(1000),
 						() => ["ClockTicked"],
 					);
 				}

@@ -47,7 +47,7 @@ const Fixture = async (input?: {
 		now: input?.now ?? Posix.now,
 		sendCodeHourlyLimit: input?.sendCodeHourlyLimit ?? 10,
 		sendCodeDailyLimit: input?.sendCodeDailyLimit ?? 10,
-		verifyCodeExpiresIn: input?.verifyCodeExpiresIn ?? TimeSpan.fromMinutes(5),
+		verifyCodeExpiresIn: input?.verifyCodeExpiresIn ?? TimeSpan.minutes(5),
 		verifyCodeMaxAttempts: input?.verifyCodeMaxAttempts ?? 3,
 	});
 
@@ -164,7 +164,7 @@ describe(import.meta.file, () => {
 	});
 
 	it("should error if verification expired", async () => {
-		const verifyCodeExpiresIn = TimeSpan.fromMinutes(5);
+		const verifyCodeExpiresIn = TimeSpan.minutes(5);
 
 		let now = Posix.now();
 
@@ -174,7 +174,7 @@ describe(import.meta.file, () => {
 
 		const verificationId = unwrap(sent).verificationId;
 
-		now = Posix.add(now, verifyCodeExpiresIn);
+		now = Posix.future(now, verifyCodeExpiresIn);
 
 		const verified = await f.verifySMS.verifyCode({
 			verificationId,
@@ -187,7 +187,7 @@ describe(import.meta.file, () => {
 	});
 
 	it("should fail if the code has expired, even if no new code has been sent", async () => {
-		const verifyCodeExpiresIn = TimeSpan.fromMinutes(5);
+		const verifyCodeExpiresIn = TimeSpan.minutes(5);
 
 		let now = Posix.now();
 		const f = await Fixture({ verifyCodeExpiresIn, now: () => now });
@@ -195,8 +195,8 @@ describe(import.meta.file, () => {
 		const sent = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
 		const verificationId = unwrap(sent).verificationId;
 
-		now = Posix.add(now, verifyCodeExpiresIn);
-		now = Posix.add(now, TimeSpan.fromSeconds(1));
+		now = Posix.future(now, verifyCodeExpiresIn);
+		now = Posix.future(now, TimeSpan.seconds(1));
 
 		const verified = await f.verifySMS.verifyCode({
 			verificationId,
@@ -265,9 +265,9 @@ describe(import.meta.file, () => {
 		for (let i = 0; i < sendCodeHourlyLimit; i++) {
 			await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
 		}
-		now = Posix.add(
+		now = Posix.future(
 			now,
-			TimeSpan.add(TimeSpan.fromHours(1), TimeSpan.fromMilliseconds(1)),
+			TimeSpan.add(TimeSpan.hours(1), TimeSpan.milliseconds(1)),
 		);
 		const sent = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
 		expect(isOk(sent)).toBe(true);
@@ -310,9 +310,9 @@ describe(import.meta.file, () => {
 		for (let i = 0; i < sendCodeDailyLimit; i++) {
 			await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
 		}
-		now = Posix.add(
+		now = Posix.future(
 			now,
-			TimeSpan.add(TimeSpan.fromDays(1), TimeSpan.fromMilliseconds(1)),
+			TimeSpan.add(TimeSpan.days(1), TimeSpan.milliseconds(1)),
 		);
 		const sent = await f.verifySMS.sendCode({ phoneNumber: f.phoneNumber });
 		expect(isOk(sent)).toBe(true);

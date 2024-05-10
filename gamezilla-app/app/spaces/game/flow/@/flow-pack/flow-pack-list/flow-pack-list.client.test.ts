@@ -33,7 +33,7 @@ const elapsed =
 		return FlowPackListClient.update({
 			ctx: {
 				...ctx,
-				now: Posix.add(ctx.now, timeSpan),
+				now: Posix.future(ctx.now, timeSpan),
 			},
 			model,
 			msg: { t: "elapsed" },
@@ -88,7 +88,7 @@ describe(import.meta.file, () => {
 		const output = AppClientModule.andThen(
 			initial,
 			observedEndOfList(ctx),
-			elapsed(ctx, TimeSpan.fromMinutes(5)),
+			elapsed(ctx, TimeSpan.minutes(5)),
 		);
 		expect(RequestResponse.didRequestTimeout(output.model.request)).toBe(true);
 	});

@@ -73,7 +73,7 @@ const food: Model["food"] = Position.add(head, { x: 3, y: 0 });
 
 export const init: Model = {
 	status: "Paused",
-	tickRate: TimeSpan.fromMilliseconds(1000 / 6),
+	tickRate: TimeSpan.milliseconds(1000 / 6),
 	head,
 	tail,
 	food,

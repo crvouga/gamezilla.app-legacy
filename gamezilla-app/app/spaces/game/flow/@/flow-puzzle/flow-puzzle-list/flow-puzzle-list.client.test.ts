@@ -66,7 +66,7 @@ const elapsed =
 		return FlowPuzzleListClient.update({
 			ctx: {
 				...ctx,
-				now: Posix.add(ctx.now, timeSpan),
+				now: Posix.future(ctx.now, timeSpan),
 			},
 			model,
 			msg: { t: "flow-puzzle-list.elasped" },
@@ -124,7 +124,7 @@ describe(import.meta.file, () => {
 		const output = andThen(
 			initial,
 			userObservedEndOfList(ctx),
-			elapsed(ctx, TimeSpan.fromMinutes(5)),
+			elapsed(ctx, TimeSpan.minutes(5)),
 		);
 		expect(RequestResponse.didRequestTimeout(output.model.request)).toBe(true);
 	});

@@ -283,7 +283,7 @@ const updateFromMsg: Module["update"] = (input) => {
 						model.sendCode.t === "loading" &&
 						TimeSpan.gte(
 							Posix.diff(ctx.now, model.sentCodeAt),
-							TimeSpan.fromSeconds(5),
+							TimeSpan.seconds(5),
 						)
 					) {
 						return {
@@ -305,7 +305,7 @@ const updateFromMsg: Module["update"] = (input) => {
 						model.verifyCode.t === "loading" &&
 						TimeSpan.gte(
 							Posix.diff(ctx.now, model.verifiedCodeAt),
-							TimeSpan.fromSeconds(10),
+							TimeSpan.seconds(10),
 						)
 					) {
 						return {
@@ -359,7 +359,7 @@ const updateFromServer: Module["update"] = (input) => {
 					showToast(
 						`Sent code to ${PhoneNumber.toString(msgServer.phoneNumber)}`,
 						"info",
-						TimeSpan.fromSeconds(4),
+						TimeSpan.seconds(4),
 					),
 					focusView(CODE_INPUT_VIEW_ID),
 					playSound(APP_SOUND.navForwardMin),
@@ -405,7 +405,7 @@ const subscriptions: Module["subscriptions"] = (input) => {
 	) {
 		return Time.interval(
 			INTERVAL_ID,
-			TimeSpan.fromMilliseconds(1000),
+			TimeSpan.milliseconds(1000),
 			(now) => ({
 				t: "time-passed",
 				now,
