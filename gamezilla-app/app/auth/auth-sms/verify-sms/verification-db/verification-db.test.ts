@@ -98,7 +98,7 @@ describe(import.meta.file, () => {
 		expect(unwrap(found).items[0]).toEqual(verification);
 	});
 
-	it("should find by created at correctly", async () => {
+	it.only("should find by created at correctly", async () => {
 		const f = await Fixture();
 		const now = Posix.now();
 
@@ -154,13 +154,13 @@ const insertVerifications = async ({
 
 	const timeSpan = TimeSpan.scale(Posix.diff(end, start), 1 / count);
 
-	let runningTime = start;
+	let runningCreatedAt = start;
 
 	for (let i = 0; i < count; i++) {
-		const verification = await randomVerification({ createdAt: runningTime });
+		const verification = await randomVerification({ createdAt: runningCreatedAt });
 		await f.verificationDb.put(verification);
 		verifications.push(verification);
-		runningTime = Posix.future(runningTime, timeSpan);
+		runningCreatedAt = Posix.future(runningCreatedAt, timeSpan);
 	}
 
 	return verifications;

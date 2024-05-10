@@ -24,7 +24,8 @@ export const Row = p.obj({
 });
 type Row = p.Infer<typeof Row>;
 
-export const VerificationDbPostgres = (deps: {
+export const
+	VerificationDbPostgres = (deps: {
 	dbConnSql: IDbConnSql;
 }): IVerificationDb => {
 	return {
@@ -159,13 +160,13 @@ const toSqlWhere = (where?: WhereClause) => {
 	}
 
 	if (where?.createdAt?.["<="]) {
-		clauses.push(`created_at_posix <= :created_at_posix`);
-		vars["created_at_posix"] = where?.createdAt["<="];
+		clauses.push(`created_at_posix <= :lte_created_at_posix`);
+		vars["lte_created_at_posix"] = where?.createdAt["<="];
 	}
 
 	if (where?.createdAt?.[">="]) {
-		clauses.push(`created_at_posix >= :created_at_posix`);
-		vars["created_at_posix"] = where?.createdAt[">="];
+		clauses.push(`created_at_posix >= :gte_created_at_posix`);
+		vars["gte_created_at_posix"] = where?.createdAt[">="];
 	}
 
 	const str = clauses.length > 0 ? `WHERE ${clauses.join(" AND ")}` : "";

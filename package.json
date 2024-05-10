@@ -4,8 +4,8 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"server-prod": "bun db:up && bun gamezilla-app/main.server.ts",
-		"server": "bun gamezilla-app/main.server.ts ",
+		"server": "bun gamezilla-app/main.server.ts",
+		"server:build": "bun db:up && bun x tsc --noEmit && bun test:int",
 		"server:start": "bun x pm2 start bun --name \"gamezilla-app-server\" -- server -i 3",
 		"server:stop": "bun x pm2 stop gamezilla-app-server",
 		"server:delete": "bun x pm2 delete gamezilla-app-server",
