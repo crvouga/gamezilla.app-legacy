@@ -271,15 +271,13 @@ export const showToast = <T extends ClientCmdTypes>(
 };
 
 export const didShowToast = <T>(
-	{
-		msgCmd,
-	}: {
+	output?: {
 		msgCmd?: (ToastCmd | T)[];
 	},
 	predicate?: (toast: { message: string }) => boolean,
 ): boolean => {
 	return (
-		msgCmd?.some((cmd) => {
+		output?.msgCmd?.some((cmd) => {
 			return (
 				typeof cmd === "object" &&
 				cmd !== null &&
@@ -504,15 +502,13 @@ export const pushRoute = <T extends ClientCmdTypes>(
 };
 
 export const didPushRoute = <T>(
-	{
-		msgCmd,
-	}: {
+	output?: {
 		msgCmd?: (RouteCmd | T)[];
 	},
 	predicate?: (route: Route) => boolean,
 ): boolean => {
 	return Boolean(
-		msgCmd?.some((cmd) => {
+		output?.msgCmd?.some((cmd) => {
 			if (
 				typeof cmd === "object" &&
 				cmd &&
