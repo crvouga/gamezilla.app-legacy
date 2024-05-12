@@ -29,8 +29,6 @@ export const RenderToNode = async (): Promise<RenderToNode> => {
 	};
 };
 
-
-
 export const Render = async (
 	vDomImpl: VDomImpl,
 	root: HTMLElement,
