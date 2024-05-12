@@ -82,7 +82,7 @@ const future = (posix: Posix, timeSpan: TimeSpan): Posix => {
 };
 
 const past = (posix: Posix, timeSpan: TimeSpan): Posix => {
-	return  init(toNumber(posix) - TimeSpan.toMilliseconds(timeSpan));
+	return init(toNumber(posix) - TimeSpan.toMilliseconds(timeSpan));
 };
 
 const fromIsoString = (isoString: string): Posix => {

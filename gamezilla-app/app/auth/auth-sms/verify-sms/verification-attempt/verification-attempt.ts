@@ -1,6 +1,6 @@
 import { Posix } from "gamezilla-app/@/core";
-import { Hash } from "gamezilla-app/@/hashing";
-import type { VerificationAttemptId } from "./verification-attempt-id";
+import { Hash, Hashing } from "gamezilla-app/@/hashing";
+import { VerificationAttemptId } from "./verification-attempt-id";
 import { VerificationId } from "../verification";
 
 export type VerificationAttempt = {
@@ -9,3 +9,16 @@ export type VerificationAttempt = {
 	codeHash: Hash;
 	createdAt: Posix;
 };
+
+export const randomVerificationAttempt =
+	async (): Promise<VerificationAttempt> => {
+		return {
+			verificationAttemptId: VerificationAttemptId.generate(),
+			verificationId: VerificationId.generate(),
+			codeHash: await Hashing({ t: "noop" }).hash({
+				algo: { t: "sha256" },
+				password: "123",
+			}),
+			createdAt: Posix.now(),
+		};
+	};

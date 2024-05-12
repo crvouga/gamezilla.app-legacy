@@ -1,6 +1,7 @@
-import { describe, it } from "bun:test";
+import { describe, expect, it } from "bun:test";
 import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
 import { VerificationAttemptDb } from "./verification-attempt-db-impl";
+import { randomVerificationAttempt } from "../verification-attempt";
 
 const Fixture = async () => {
 	const testEnv = await AppServerTestEnv();
@@ -8,7 +9,7 @@ const Fixture = async () => {
 	switch (testEnv.t) {
 		case "integration": {
 			return {
-				verificationDb: VerificationAttemptDb({
+				verificationAttemptDb: VerificationAttemptDb({
 					t: "postgres",
 					dbConnSql: testEnv.dbConnSql,
 				}),
@@ -16,7 +17,7 @@ const Fixture = async () => {
 		}
 		case "unit": {
 			return {
-				verificationDb: VerificationAttemptDb({
+				verificationAttemptDb: VerificationAttemptDb({
 					t: "hash-map",
 				}),
 			};
@@ -25,8 +26,10 @@ const Fixture = async () => {
 };
 
 describe(import.meta.file, () => {
-	it.todo("put", async () => {
+	it.todo("should be ok after inserting", async () => {
 		const f = await Fixture();
-		f;
+		const verificationAttempt = await randomVerificationAttempt();
+		const result = await f.verificationAttemptDb.put(verificationAttempt);
+		expect(result.t).toBe("ok");
 	});
 });

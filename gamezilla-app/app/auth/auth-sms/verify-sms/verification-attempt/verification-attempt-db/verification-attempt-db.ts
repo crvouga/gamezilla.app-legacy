@@ -1,4 +1,4 @@
-import type { PhoneNumber, Posix, Task } from "gamezilla-app/@/core";
+import type { Posix, Task } from "gamezilla-app/@/core";
 import { VerificationId } from "../../verification/verification-id";
 import { VerificationAttempt } from "../verification-attempt";
 
@@ -9,9 +9,6 @@ export type WhereClause = {
 	createdAt?: {
 		"<="?: Posix;
 		">="?: Posix;
-	};
-	phoneNumber?: {
-		"="?: PhoneNumber;
 	};
 };
 

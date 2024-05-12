@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { Ok, Posix, TimeSpan, unwrap } from "gamezilla-app/@/core";
+import { Ok, PhoneNumber, Posix, TimeSpan, ascend, unwrap } from "gamezilla-app/@/core";
 import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
 import { Verification, randomVerification } from "../verification";
 import { VerificationDb } from "./verification-db-impl";
@@ -135,61 +135,83 @@ describe(import.meta.file, () => {
 		expect(actual).toEqual(expected);
 	});
 
-	it('should limit correctly', async () => {
+	it("should limit correctly", async () => {
 		const f = await Fixture();
 		const now = Posix.now();
+		const start = now;
+		const end = Posix.future(now, TimeSpan.milliseconds(1));
 		const expected = await insertVerifications({
 			f,
-			start: now,
-			end: Posix.future(now, TimeSpan.milliseconds(1)),
+			start,
+			end,
 			count: 10,
 		});
-
 		const found = await f.verificationDb.find({
 			limit: 5,
+			offset: 0,
+			where: {
+				createdAt: {
+					"<=": end,
+					">=": start,
+				},
+			},
 		});
-
-		const actual = unwrap(found).items;
+		const actual = unwrap(found).items;		
 		expect(actual).toEqual(expected.slice(0, 5));
-	})
+	});
 
-	it('should offset correctly', async () => {
+	it("should offset correctly", async () => {
 		const f = await Fixture();
 		const now = Posix.now();
+		const start = now;
+		const end = Posix.future(now, TimeSpan.milliseconds(2));
 		const expected = await insertVerifications({
 			f,
-			start: now,
-			end: Posix.future(now, TimeSpan.milliseconds(1)),
+			start,
+			end,
 			count: 10,
 		});
 
 		const found = await f.verificationDb.find({
+			where: {
+				createdAt: {
+					"<=": end,
+					">=": start,
+				},
+			},
 			offset: 5,
 			limit: 5,
 		});
 
 		const actual = unwrap(found).items;
 		expect(actual).toEqual(expected.slice(5));
-	})
+	});
 
-	it('should offset and limit correctly', async () => {
+	it("should offset and limit correctly", async () => {
 		const f = await Fixture();
 		const now = Posix.now();
+		const start =  now
+		const end = Posix.future(now, TimeSpan.milliseconds(1))
 		const expected = await insertVerifications({
 			f,
-			start: now,
-			end: Posix.future(now, TimeSpan.milliseconds(1)),
+			start,
+			end,
 			count: 10,
 		});
 
 		const found = await f.verificationDb.find({
+			where: {
+				createdAt: {
+					"<=": end,
+					">=": start,
+				},
+			},
 			offset: 3,
 			limit: 5,
 		});
-
 		const actual = unwrap(found).items;
 		expect(actual).toEqual(expected.slice(3, 8));
-	})
+	});
 });
 
 const insertVerifications = async ({
