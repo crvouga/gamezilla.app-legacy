@@ -3,6 +3,7 @@ import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
 import { randomVerificationAttempt } from "../verification-attempt";
 import { VerificationAttemptDb } from "./verification-attempt-db-impl";
 import { unwrap } from "gamezilla-app/@/core";
+import { VerificationId } from "../../verification/verification-id";
 
 const Fixture = async () => {
 	const testEnv = await AppServerTestEnv();
@@ -68,5 +69,19 @@ describe(import.meta.file, () => {
 			},
 		});
 		expect(unwrap(result)[0]).toEqual(verificationAttempt);
+	});
+
+	it("should not find when verificationId is not equal", async () => {
+		const f = await Fixture();
+		const verificationAttempt = await randomVerificationAttempt();
+		await f.verificationAttemptDb.insert(verificationAttempt);
+		const result = await f.verificationAttemptDb.find({
+			where: {
+				verificationId: {
+					"=": VerificationId.generate(),
+				},
+			},
+		});
+		expect(unwrap(result)[0] ?? null).toBe(null);
 	});
 });

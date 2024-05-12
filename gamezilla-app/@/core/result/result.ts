@@ -47,6 +47,9 @@ const is = <TError, TValue>(
 	};
 };
 
+/**
+ * Unwraps a result, throwing an error if the result is an error.
+ */
 export const unwrap = <TError, TValue>(
 	result: ResultPrivate<TError, TValue>,
 ): TValue => {
