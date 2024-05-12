@@ -137,8 +137,8 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 	const routeCmd = msgCmd.c;
 
 	switch (routeCmd.t) {
-		case "push": {
-			return {
+		case "push": {			
+			return {	
 				model: {
 					currentRoute: routeCmd.route,
 				},

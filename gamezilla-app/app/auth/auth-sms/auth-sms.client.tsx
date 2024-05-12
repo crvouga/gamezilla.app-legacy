@@ -358,7 +358,7 @@ const updateFromServer: Module["update"] = (input) => {
 						phoneNumber: msgServer.phoneNumber,
 					}),
 					showToast(
-						`Sent code to ${PhoneNumber.toString(msgServer.phoneNumber)}`,
+						`Sent code to ${PhoneNumber.format(msgServer.phoneNumber)}`,
 						"info",
 						TimeSpan.seconds(4),
 					),
