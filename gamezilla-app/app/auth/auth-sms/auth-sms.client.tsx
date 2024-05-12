@@ -409,151 +409,15 @@ const subscriptions: Module["subscriptions"] = (input) => {
 //
 //
 
-const View: Module["View"] = (props) => {
-	switch (props.ctx.currentRoute.n) {
+const View: Module["View"] = (input) => {
+	switch (input.ctx.currentRoute.n) {
 		case "auth-login": {
-			switch (props.ctx.currentRoute.t) {
+			switch (input.ctx.currentRoute.t) {
 				case "login-sms-request": {
-					return (
-						<div className="w-full flex-1">
-							<TopBar
-								left={
-									<TopBarBackButton
-										onClick={() => props.dispatch({ t: "clicked-back-button" })}
-									/>
-								}
-								title={props.ctx.t("auth-sms.login-with-phone")}
-							/>
-
-							<div className="flex w-full flex-col gap-6 p-4 py-6">
-								{false && (
-									<Select
-										id="countryCode"
-										label={props.ctx.t("auth-sms.country")}
-										onChange={(countryCodeNew) => {
-											props.dispatch({
-												t: "inputted-country-code",
-												countryCode: countryCodeNew,
-											});
-										}}
-										value={props.model.countryCodeInput}
-										options={Iso3166Alpha2Code.all}
-										toKey={(countryCode) => countryCode}
-										toName={(countryCode) =>
-											Iso3166Alpha2Code.toNameWithEmoji(countryCode)
-										}
-									/>
-								)}
-
-								<TextField
-									value={props.model.inputtedPhoneNumber}
-									id="phoneNumberInput"
-									label={props.ctx.t("auth-sms.phone-number")}
-									type="tel"
-									startIcon={<IconMobilePhone className="h-5 w-5" />}
-									error={typeof props.model.phoneNumberError === "string"}
-									helperText={props.model.phoneNumberError}
-									onChange={(value) => {
-										props.dispatch({
-											t: "inputted-phone-number",
-											phoneNumber: value,
-										});
-									}}
-									onClear={() => {
-										props.dispatch({ t: "clicked-phone-number-clear" });
-									}}
-								/>
-
-								<Button
-									text={props.ctx.t("auth-sms.send-code")}
-									className="w-full"
-									variant="contained"
-									color="primary"
-									size="lg"
-									loading={props.model.sendCode.t === "loading"}
-									onClick={() => {
-										props.dispatch({ t: "user-clicked-send-code-button" });
-									}}
-								/>
-							</div>
-
-							{isErr(props.model.sendCode) && (
-								<div className="w-full p-4">
-									<AlertError
-										text={sendCodeProblemToString({
-											problem: props.model.sendCode.error,
-											t: props.ctx.t,
-										})}
-									/>
-								</div>
-							)}
-						</div>
-					);
+					return <ViewSendCode {...input} />;
 				}
 				case "login-sms-verify": {
-					const verificationId = props.ctx.currentRoute.verificationId;
-					return (
-						<div className="w-full flex-1">
-							<TopBar
-								left={
-									<TopBarBackButton
-										onClick={() => props.dispatch({ t: "clicked-back-button" })}
-									/>
-								}
-								title={props.ctx.t("auth-sms.login-with-phone")}
-							/>
-
-							<div className="flex w-full flex-col gap-6 p-4 py-6">
-								<TextField
-									value={props.model.inputtedCode}
-									id={CODE_INPUT_VIEW_ID}
-									label={props.ctx.t("auth-sms.code")}
-									error={typeof props.model.inputtedCodeError === "string"}
-									helperText={
-										typeof props.model.inputtedCodeError === "string"
-											? props.model.inputtedCodeError
-											: null
-									}
-									autoFocus
-									type="tel"
-									onChange={(value) => {
-										props.dispatch({ t: "inputted-code", inputtedCode: value });
-									}}
-									onClear={() => {
-										props.dispatch({ t: "clicked-code-clear" });
-									}}
-								/>
-								<Button
-									className="w-full"
-									text={props.ctx.t("auth-sms.verify-code")}
-									color="primary"
-									size="lg"
-									loading={
-										props.model.verifyCode.t === "loading" ||
-										props.model.verifyCode.t === "ok"
-									}
-									onClick={() => {
-										props.dispatch({
-											t: "user-clicked-verify-code-button",
-											verificationId,
-											inputtedCode: props.model.inputtedCode,
-										});
-									}}
-								/>
-							</div>
-
-							{isErr(props.model.verifyCode) && (
-								<div className="w-full p-4">
-									<AlertError
-										text={verifyCodeProblemToString({
-											problem: props.model.verifyCode.error,
-											t: props.ctx.t,
-										})}
-									/>
-								</div>
-							)}
-						</div>
-					);
+					return <ViewVerifyCode {...input} />;
 				}
 				default: {
 					return null;
@@ -564,6 +428,155 @@ const View: Module["View"] = (props) => {
 			return null;
 		}
 	}
+};
+
+const ViewSendCode: Module["View"] = (input) => {
+	return (
+		<div className="w-full flex-1">
+			<TopBar
+				left={
+					<TopBarBackButton
+						onClick={() => input.dispatch({ t: "clicked-back-button" })}
+					/>
+				}
+				title={input.ctx.t("auth-sms.login-with-phone")}
+			/>
+
+			<div className="flex w-full flex-col gap-6 p-4 py-6">
+				{false && (
+					<Select
+						id="countryCode"
+						label={input.ctx.t("auth-sms.country")}
+						onChange={(countryCodeNew) => {
+							input.dispatch({
+								t: "inputted-country-code",
+								countryCode: countryCodeNew,
+							});
+						}}
+						value={input.model.countryCodeInput}
+						options={Iso3166Alpha2Code.all}
+						toKey={(countryCode) => countryCode}
+						toName={(countryCode) =>
+							Iso3166Alpha2Code.toNameWithEmoji(countryCode)
+						}
+					/>
+				)}
+
+				<TextField
+					value={input.model.inputtedPhoneNumber}
+					id="phoneNumberInput"
+					label={input.ctx.t("auth-sms.phone-number")}
+					type="tel"
+					startIcon={<IconMobilePhone className="h-5 w-5" />}
+					error={typeof input.model.phoneNumberError === "string"}
+					helperText={input.model.phoneNumberError}
+					onChange={(value) => {
+						input.dispatch({
+							t: "inputted-phone-number",
+							phoneNumber: value,
+						});
+					}}
+					onClear={() => {
+						input.dispatch({ t: "clicked-phone-number-clear" });
+					}}
+				/>
+
+				<Button
+					text={input.ctx.t("auth-sms.send-code")}
+					className="w-full"
+					variant="contained"
+					color="primary"
+					size="lg"
+					loading={input.model.sendCode.t === "loading"}
+					onClick={() => {
+						input.dispatch({ t: "user-clicked-send-code-button" });
+					}}
+				/>
+			</div>
+
+			{isErr(input.model.sendCode) && (
+				<div className="w-full p-4">
+					<AlertError
+						text={sendCodeProblemToString({
+							problem: input.model.sendCode.error,
+							t: input.ctx.t,
+						})}
+					/>
+				</div>
+			)}
+		</div>
+	);
+};
+
+const ViewVerifyCode: Module["View"] = (input) => {
+	if (input.ctx.currentRoute.t !== "login-sms-verify") {
+		return null;
+	}
+
+	const verificationId = input.ctx.currentRoute.verificationId;
+
+	return (
+		<div className="w-full flex-1">
+			<TopBar
+				left={
+					<TopBarBackButton
+						onClick={() => input.dispatch({ t: "clicked-back-button" })}
+					/>
+				}
+				title={input.ctx.t("auth-sms.login-with-phone")}
+			/>
+
+			<div className="flex w-full flex-col gap-6 p-4 py-6">
+				<TextField
+					value={input.model.inputtedCode}
+					id={CODE_INPUT_VIEW_ID}
+					label={input.ctx.t("auth-sms.code")}
+					error={typeof input.model.inputtedCodeError === "string"}
+					helperText={
+						typeof input.model.inputtedCodeError === "string"
+							? input.model.inputtedCodeError
+							: null
+					}
+					autoFocus
+					type="tel"
+					onChange={(value) => {
+						input.dispatch({ t: "inputted-code", inputtedCode: value });
+					}}
+					onClear={() => {
+						input.dispatch({ t: "clicked-code-clear" });
+					}}
+				/>
+				<Button
+					className="w-full"
+					text={input.ctx.t("auth-sms.verify-code")}
+					color="primary"
+					size="lg"
+					loading={
+						input.model.verifyCode.t === "loading" ||
+						input.model.verifyCode.t === "ok"
+					}
+					onClick={() => {
+						input.dispatch({
+							t: "user-clicked-verify-code-button",
+							verificationId,
+							inputtedCode: input.model.inputtedCode,
+						});
+					}}
+				/>
+			</div>
+
+			{isErr(input.model.verifyCode) && (
+				<div className="w-full p-4">
+					<AlertError
+						text={verifyCodeProblemToString({
+							problem: input.model.verifyCode.error,
+							t: input.ctx.t,
+						})}
+					/>
+				</div>
+			)}
+		</div>
+	);
 };
 
 export const AuthSMSClient = {
