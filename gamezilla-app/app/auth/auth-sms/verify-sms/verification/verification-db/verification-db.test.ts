@@ -135,7 +135,61 @@ describe(import.meta.file, () => {
 		expect(actual).toEqual(expected);
 	});
 
-	it("should insert attempts correctly", async () => {});
+	it('should limit correctly', async () => {
+		const f = await Fixture();
+		const now = Posix.now();
+		const expected = await insertVerifications({
+			f,
+			start: now,
+			end: Posix.future(now, TimeSpan.milliseconds(1)),
+			count: 10,
+		});
+
+		const found = await f.verificationDb.find({
+			limit: 5,
+		});
+
+		const actual = unwrap(found).items;
+		expect(actual).toEqual(expected.slice(0, 5));
+	})
+
+	it('should offset correctly', async () => {
+		const f = await Fixture();
+		const now = Posix.now();
+		const expected = await insertVerifications({
+			f,
+			start: now,
+			end: Posix.future(now, TimeSpan.milliseconds(1)),
+			count: 10,
+		});
+
+		const found = await f.verificationDb.find({
+			offset: 5,
+			limit: 5,
+		});
+
+		const actual = unwrap(found).items;
+		expect(actual).toEqual(expected.slice(5));
+	})
+
+	it('should offset and limit correctly', async () => {
+		const f = await Fixture();
+		const now = Posix.now();
+		const expected = await insertVerifications({
+			f,
+			start: now,
+			end: Posix.future(now, TimeSpan.milliseconds(1)),
+			count: 10,
+		});
+
+		const found = await f.verificationDb.find({
+			offset: 3,
+			limit: 5,
+		});
+
+		const actual = unwrap(found).items;
+		expect(actual).toEqual(expected.slice(3, 8));
+	})
 });
 
 const insertVerifications = async ({
