@@ -1,10 +1,10 @@
 import { Posix } from "gamezilla-app/@/core";
+import { ClientId, SessionId } from "../data";
 import { DbConnKv } from "./db-conn-kv";
 import { DbConnSql, type IDbConnSql } from "./db-conn-sql";
 import { Logger } from "./logger";
 import { ServerCtx } from "./server-ctx";
 import { SMS } from "./sms";
-import { ClientId, SessionId } from "../data";
 
 export type ITestEnv =
 	| {
@@ -48,12 +48,13 @@ export const randomClient = () => {
 };
 
 export const AppServerFixture = async () => {
+	const logger = Logger({ t: "noop" })
 	const ctx: ServerCtx = {
 		dbConnKv: await DbConnKv({ t: "hash-map" }),
 		dbConnSql: await DbConnSql({ t: "noop" }),
-		logger: Logger({ t: "noop" }),
+		logger,
 		now: Posix.now(),
-		sms: SMS({ t: "fake" }),
+		sms: SMS({ t: "fake", logger }),
 	};
 	return {
 		ctx,
