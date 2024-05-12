@@ -1,14 +1,14 @@
 import { Posix, Result, isErr } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { Sql } from "gamezilla-app/@/sql";
-import { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
+import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
 import { VerificationId } from "../../verification/verification-id";
 import { VerificationAttemptId } from "../verification-attempt-id";
 import type {
 	IVerificationAttemptDb,
 	WhereClause,
 } from "./verification-attempt-db";
-import { VerificationAttempt } from "../verification-attempt";
+import type { VerificationAttempt } from "../verification-attempt";
 import { Hash } from "gamezilla-app/@/hashing";
 
 export const Row = p.obj({
@@ -90,7 +90,7 @@ const toSqlWhere = (where: WhereClause) => {
 	const clauses: string[] = [];
 
 	if (where.verificationId?.["="]) {
-		clauses.push(`verification_id = :eq_verification_id`);
+		clauses.push("verification_id = :eq_verification_id");
 		vars["eq_verification_id"] = where.verificationId["="];
 	}
 
