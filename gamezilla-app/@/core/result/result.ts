@@ -55,7 +55,9 @@ export const unwrap = <TError, TValue>(
 			return result.value;
 
 		case "err":
-			throw new Error("Tried to unwrap an error result");
+			throw new Error(
+				`Tried to unwrap an error result. ${String(result.error)}`,
+			);
 	}
 };
 

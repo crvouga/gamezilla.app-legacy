@@ -1,16 +1,21 @@
-import { Err } from "gamezilla-app/@/core";
+import { Posix, Result, isErr } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
+import { Sql } from "gamezilla-app/@/sql";
 import { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
 import { VerificationId } from "../../verification/verification-id";
-import type { IVerificationAttemptDb } from "./verification-attempt-db";
+import { VerificationAttemptId } from "../verification-attempt-id";
+import type {
+	IVerificationAttemptDb,
+	WhereClause,
+} from "./verification-attempt-db";
+import { VerificationAttempt } from "../verification-attempt";
+import { Hash } from "gamezilla-app/@/hashing";
 
 export const Row = p.obj({
+	verification_attempt_id: VerificationAttemptId,
 	verification_id: VerificationId,
-	code_hash: p.json,
-	phone_number: p.str,
-	created_at_posix: p.str,
-	expires_at_posix: p.str,
-	verified_at_posix: p.maybe(p.str),
+	inputted_code_hash: p.json,
+	created_at_posix: p.or(p.str, p.num),
 });
 type Row = p.Infer<typeof Row>;
 
@@ -19,11 +24,80 @@ export const VerificationAttemptDbPostgres = (deps: {
 }): IVerificationAttemptDb => {
 	deps;
 	return {
-		async put() {
-			return Err("not implemented");
+		async insert(input) {
+			const query = `
+				INSERT INTO auth_sms_verification_attempt (
+					verification_attempt_id,
+					verification_id,
+					inputted_code_hash,
+					created_at_posix
+				) VALUES (
+					:verification_attempt_id,
+					:verification_id,
+					:inputted_code_hash,
+					:created_at_posix
+				)		
+			`;
+			const vars: Sql.Vars = {
+				verification_attempt_id: input.verificationAttemptId,
+				verification_id: input.verificationId,
+				inputted_code_hash: Sql.json(input.codeHash),
+				created_at_posix: input.createdAt,
+			};
+			const queried = await deps.dbConnSql.query(p.unknown, query, vars);
+			return Result.mapOk(queried, () => null);
 		},
-		async find() {
-			return Err("not implemented");
+		async find(input) {
+			const where = toSqlWhere(input.where);
+
+			const query = `
+				SELECT
+					verification_attempt_id,
+					verification_id,
+					inputted_code_hash,
+					created_at_posix
+				FROM auth_sms_verification_attempt
+				${where.str}
+				ORDER BY created_at_posix DESC
+			`;
+
+			const queried = await deps.dbConnSql.query(Row, query, where.vars);
+
+			return Result.mapOk(queried, (rows) =>
+				rows.flatMap(rowToVerificationAttempt),
+			);
 		},
+	};
+};
+
+const rowToVerificationAttempt = (row: Row): VerificationAttempt[] => {
+	const codeHash = Hash.parse(row.inputted_code_hash);
+	if (isErr(codeHash)) {
+		return [];
+	}
+	return [
+		{
+			verificationAttemptId: row.verification_attempt_id,
+			verificationId: row.verification_id,
+			codeHash: codeHash.value,
+			createdAt: Posix.init(row.created_at_posix),
+		},
+	];
+};
+
+const toSqlWhere = (where: WhereClause) => {
+	const vars: Sql.Vars = {};
+	const clauses: string[] = [];
+
+	if (where.verificationId?.["="]) {
+		clauses.push(`verification_id = :eq_verification_id`);
+		vars["eq_verification_id"] = where.verificationId["="];
+	}
+
+	const str = clauses.length > 0 ? `WHERE ${clauses.join(" AND ")}` : "";
+
+	return {
+		str,
+		vars,
 	};
 };

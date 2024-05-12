@@ -9,7 +9,7 @@ export const VerificationAttemptDbHashMap = (): IVerificationAttemptDb => {
 		VerificationAttempt
 	>();
 	return {
-		async put(attempt) {
+		async insert(attempt) {
 			verificationAttempts.set(attempt.verificationAttemptId, attempt);
 			return Ok(null);
 		},

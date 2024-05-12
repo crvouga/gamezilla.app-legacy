@@ -1,7 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
-import { VerificationAttemptDb } from "./verification-attempt-db-impl";
 import { randomVerificationAttempt } from "../verification-attempt";
+import { VerificationAttemptDb } from "./verification-attempt-db-impl";
+import { unwrap } from "gamezilla-app/@/core";
 
 const Fixture = async () => {
 	const testEnv = await AppServerTestEnv();
@@ -26,10 +27,32 @@ const Fixture = async () => {
 };
 
 describe(import.meta.file, () => {
-	it.todo("should be ok after inserting", async () => {
+	it("should be ok after inserting", async () => {
 		const f = await Fixture();
 		const verificationAttempt = await randomVerificationAttempt();
-		const result = await f.verificationAttemptDb.put(verificationAttempt);
+		const result = await f.verificationAttemptDb.insert(verificationAttempt);
 		expect(result.t).toBe("ok");
+	});
+
+	it("should insert correctly", async () => {
+		const f = await Fixture();
+		const verificationAttempt = await randomVerificationAttempt();
+		const before = await f.verificationAttemptDb.find({
+			where: {
+				verificationId: {
+					"=": verificationAttempt.verificationId,
+				},
+			},
+		});
+		await f.verificationAttemptDb.insert(verificationAttempt);
+		const after = await f.verificationAttemptDb.find({
+			where: {
+				verificationId: {
+					"=": verificationAttempt.verificationId,
+				},
+			},
+		});
+		expect(unwrap(before)[0] ?? null).toBe(null);
+		expect(unwrap(after)[0]).toEqual(verificationAttempt);
 	});
 });

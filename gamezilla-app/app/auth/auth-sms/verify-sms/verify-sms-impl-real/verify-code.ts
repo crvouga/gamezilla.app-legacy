@@ -168,7 +168,7 @@ const recordAttempt = async (
 		verificationId,
 	};
 
-	await deps.verificationAttemptDb.put(newAttempt);
+	await deps.verificationAttemptDb.insert(newAttempt);
 
 	return Ok(null);
 };
