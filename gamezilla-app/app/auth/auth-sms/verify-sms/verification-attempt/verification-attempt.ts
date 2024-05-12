@@ -1,5 +1,5 @@
 import { Posix } from "gamezilla-app/@/core";
-import { Hash, Hashing } from "gamezilla-app/@/hashing";
+import { type Hash, Hashing } from "gamezilla-app/@/hashing";
 import { VerificationAttemptId } from "./verification-attempt-id";
 import { VerificationId } from "../verification";
 

@@ -1,7 +1,7 @@
 import type { PhoneNumber, Task } from "gamezilla-app/@/core";
 import type { Translator } from "gamezilla-app/@/l18n/generated";
 import type { VerificationId } from "./verification";
-import { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
+import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 
 export type VerifyCodeProblem =
 	| {

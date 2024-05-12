@@ -20,7 +20,7 @@ import { VerificationId } from "./verification";
 import { VerificationDb } from "./verification/verification-db";
 import { VerifySMS } from "./verify-sms-impl";
 import { VerificationAttemptDb } from "./verification-attempt";
-import { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
+import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 
 const Fixture = async (input?: {
 	verifyCodeMaxAttempts?: number;

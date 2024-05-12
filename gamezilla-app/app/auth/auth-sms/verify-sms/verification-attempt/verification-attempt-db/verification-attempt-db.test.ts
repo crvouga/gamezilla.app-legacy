@@ -55,4 +55,18 @@ describe(import.meta.file, () => {
 		expect(unwrap(before)[0] ?? null).toBe(null);
 		expect(unwrap(after)[0]).toEqual(verificationAttempt);
 	});
+
+	it("should find correctly", async () => {
+		const f = await Fixture();
+		const verificationAttempt = await randomVerificationAttempt();
+		await f.verificationAttemptDb.insert(verificationAttempt);
+		const result = await f.verificationAttemptDb.find({
+			where: {
+				verificationId: {
+					"=": verificationAttempt.verificationId,
+				},
+			},
+		});
+		expect(unwrap(result)[0]).toEqual(verificationAttempt);
+	});
 });
