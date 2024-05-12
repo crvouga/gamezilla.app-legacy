@@ -15,7 +15,12 @@ const isOdd = (x: number) => !isEven(x);
 
 export const PawnIcon = (props: { stroke?: string }) => {
 	return (
-		<g transform="translate(0 -2) scale(1)" style="transform-origin: center;">
+		<g
+			transform="translate(0 -2) scale(1)"
+			style={{
+				transformOrigin: "center",
+			}}
+		>
 			<path
 				fill={"currentColor"}
 				stroke={props.stroke ?? "#000"}
@@ -38,7 +43,9 @@ export const PlayerIcon = ({
 		<svg viewBox="0 0 45 45" className={className}>
 			<g
 				transform="translate(0 -2) scale(1.25)"
-				style="transform-origin: center;"
+				style={{
+					transformOrigin: "center",
+				}}
 			>
 				<path
 					fill={color === "w" ? "#fff" : "#000"}

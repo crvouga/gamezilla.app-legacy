@@ -272,6 +272,7 @@ export const View = ({
 						}
 					}}
 					onClick={(e) => {
+						// @ts-ignore
 						dispatch(["ClickedBoard", mouseEventToPosition(e)]);
 					}}
 					onMouseMove={(e) => {

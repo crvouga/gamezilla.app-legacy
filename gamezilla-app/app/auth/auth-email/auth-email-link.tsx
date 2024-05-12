@@ -190,7 +190,7 @@ export const View = ({
 				/>
 
 				{model.submission.type === "problem" && (
-					<AlertError>{model.submission.message}</AlertError>
+					<AlertError text={model.submission.message} />
 				)}
 
 				{model.submission.type === "ok" && (

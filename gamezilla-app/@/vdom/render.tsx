@@ -1,3 +1,4 @@
+import { expect } from "bun:test";
 import type { VDom } from "./vdom";
 import type { VDomImpl } from "./vdom-impl";
 
@@ -9,36 +10,52 @@ export let createPortal: CreatePortal | null = null;
 
 export type RenderToString = (vDom: VDom) => string;
 
-export const RenderToString = async (
-	vDomImpl: VDomImpl,
-): Promise<RenderToString> => {
-	switch (vDomImpl) {
-		case "inferno": {
-			// const InfernoServer = await import("inferno-server");
-			// return (vDom) => InfernoServer.renderToString(vDom);
-			throw new Error("Inferno does not support renderToString");
-		}
+export const RenderToString = async (): Promise<RenderToString> => {
+	const ReactDOMServer = await import("react-dom/server");
+	return (vDom) => {
+		const html = ReactDOMServer.renderToString(vDom);
+		return html;
+	};
+};
 
-		case "react": {
-			// const ReactDOMServer = await import("react-dom/server");
-			// return (vDom) => ReactDOMServer.renderToString(vDom);
-			throw new Error("React does not support renderToString");
-		}
+type RenderToNode = (vDom: VDom) => HTMLElement;
 
-		case "preact": {
-			// const PreactCompat = await import("preact/compat");
-			// return (vDom) => PreactCompat.render(vDom, null);
-			throw new Error("Preact does not support renderToString");
-		}
+export const RenderToNode = async (): Promise<RenderToNode> => {
+	const renderToString = await RenderToString();
+	const node = document.createElement("div");
+	return (vDom) => {
+		const html = renderToString(vDom);
+		node.innerHTML = html;
+		return node;
+	};
+};
 
-		case "solid": {
-			const Solid = await import("solid-js/web");
-			return (vDom) => {
-				const string = Solid.renderToString(() => vDom);
-				return string;
-			};
+export const getByText = (
+	node: HTMLElement,
+	text: string,
+): HTMLElement | null => {
+	const elements: HTMLElement[] = [];
+
+	const searchNode = (currentNode: HTMLElement) => {
+		if (currentNode.textContent?.includes(text)) {
+			elements.push(currentNode);
 		}
+		for (let i = 0; i < currentNode.children.length; i++) {
+			searchNode(currentNode.children[i] as HTMLElement);
+		}
+	};
+
+	searchNode(node);
+	const element = elements[0] ?? null;
+	return element;
+};
+
+export const expectByText = (node: HTMLElement, text: string) => {
+	const element = getByText(node, text);
+	if (!element) {
+		throw new Error(`Element with text "${text}" not found`);
 	}
+	expect(element.innerHTML.includes(text)).toBe(true);
 };
 
 export const Render = async (

@@ -7,8 +7,8 @@ import type {
 } from "gamezilla-app/@/core";
 import type { SendCodeOutput, VerifyCodeProblem } from "./verify-sms";
 import type { VerificationId } from "./verify-sms/verification";
-import { UserAccount } from "gamezilla-app/app/@/data/account";
-import { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
+import type { UserAccount } from "gamezilla-app/app/@/data/account";
+import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 
 export type ModelClient = {
 	//

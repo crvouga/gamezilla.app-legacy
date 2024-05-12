@@ -5,9 +5,9 @@ import { cn } from "./ui";
 
 export const AlertError = ({
 	className,
-	children,
+	text,
 }: {
-	children?: VDomChildren;
+	text?: string;
 	className?: string;
 }) => {
 	return (
@@ -21,7 +21,7 @@ export const AlertError = ({
 				<IconExclamationCircle className="h-6 w-6" />
 			</div>
 
-			{children}
+			{text}
 		</div>
 	);
 };

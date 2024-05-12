@@ -49,6 +49,7 @@ const View = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 				e.preventDefault();
 			}}
 			viewBox={`${0} ${0} ${props.model.width} ${props.model.height}`}
+			// @ts-ignore
 			onTouchMove={onTouchMove}
 			onMouseLeave={left}
 		>

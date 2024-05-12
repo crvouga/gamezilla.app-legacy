@@ -43,7 +43,10 @@ import type {
 	MsgToClient,
 	MsgToServer,
 } from "./auth-sms.types";
-import { verifyCodeProblemToString } from "./verify-sms/verify-sms";
+import {
+	sendCodeProblemToString,
+	verifyCodeProblemToString,
+} from "./verify-sms/verify-sms";
 
 //
 //
@@ -476,7 +479,12 @@ const View: Module["View"] = (props) => {
 
 							{isErr(props.model.sendCode) && (
 								<div className="w-full p-4">
-									<AlertError>{props.model.sendCode.error}</AlertError>
+									<AlertError
+										text={sendCodeProblemToString({
+											problem: props.model.sendCode.error,
+											t: props.ctx.t,
+										})}
+									/>
 								</div>
 							)}
 						</div>
@@ -536,12 +544,12 @@ const View: Module["View"] = (props) => {
 
 							{isErr(props.model.verifyCode) && (
 								<div className="w-full p-4">
-									<AlertError>
-										{verifyCodeProblemToString({
+									<AlertError
+										text={verifyCodeProblemToString({
 											problem: props.model.verifyCode.error,
 											t: props.ctx.t,
 										})}
-									</AlertError>
+									/>
 								</div>
 							)}
 						</div>

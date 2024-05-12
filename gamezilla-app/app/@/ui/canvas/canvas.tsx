@@ -25,11 +25,17 @@ export const Canvas = <T,>({
 	return (
 		<canvas
 			className={className}
+			// @ts-ignore
 			onMouseDown={onMouseDown}
+			// @ts-ignore
 			onMouseUp={onMouseUp}
+			// @ts-ignore
 			onMouseMove={onMouseMove}
+			// @ts-ignore
 			onTouchStart={onTouchStart}
+			// @ts-ignore
 			onTouchMove={onTouchMove}
+			// @ts-ignore
 			onTouchEnd={onTouchEnd}
 		/>
 	);
