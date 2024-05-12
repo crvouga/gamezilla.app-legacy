@@ -99,24 +99,24 @@ describe(import.meta.file, () => {
 		expect(unwrap(found).items[0]).toEqual(verification);
 	});
 
-	it.todo("should find by created at correctly", async () => {
+	it("should find by created at correctly", async () => {
 		const f = await Fixture();
 		const now = Posix.now();
 
 		await insertVerifications({
 			f,
-			start: Posix.past(now, TimeSpan.minutes(11)),
-			end: Posix.past(now, TimeSpan.minutes(10)),
+			start: Posix.past(now, TimeSpan.milliseconds(2)),
+			end: Posix.past(now, TimeSpan.milliseconds(1)),
 		});
 
 		await insertVerifications({
 			f,
-			start: Posix.future(now, TimeSpan.minutes(10)),
-			end: Posix.future(now, TimeSpan.minutes(11)),
+			start: Posix.future(now, TimeSpan.milliseconds(2)),
+			end: Posix.future(now, TimeSpan.milliseconds(3)),
 		});
 
 		const start = now;
-		const end = Posix.future(now, TimeSpan.minutes(1));
+		const end = Posix.future(now, TimeSpan.milliseconds(1));
 		const expected = await insertVerifications({
 			f,
 			start,

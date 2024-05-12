@@ -37,7 +37,7 @@ const init = (posixTime: number | string): Posix => {
 	const cleaned =
 		typeof posixTime === "string" ? Number.parseFloat(posixTime) : posixTime;
 
-	const clamped = Math.max(cleaned, minPosixTime);
+	const clamped = Math.floor(Math.max(cleaned, minPosixTime));
 
 	if (is(clamped)) {
 		return clamped;
@@ -46,7 +46,7 @@ const init = (posixTime: number | string): Posix => {
 };
 
 const toNumber = (posixTime: Posix): number => {
-	return posixTime;
+	return Math.floor(posixTime);
 };
 
 type Precision = "milliseconds" | "seconds" | "minutes";
@@ -82,7 +82,7 @@ const future = (posix: Posix, timeSpan: TimeSpan): Posix => {
 };
 
 const past = (posix: Posix, timeSpan: TimeSpan): Posix => {
-	return init(toNumber(posix) - TimeSpan.toMilliseconds(timeSpan));
+	return  init(toNumber(posix) - TimeSpan.toMilliseconds(timeSpan));
 };
 
 const fromIsoString = (isoString: string): Posix => {

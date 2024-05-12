@@ -144,12 +144,12 @@ const toSqlWhere = (where?: WhereClause) => {
 	}
 
 	if (where?.createdAt?.["<="]) {
-		clauses.push(`created_at_posix >= :lte_created_at_posix`);
+		clauses.push(`:lte_created_at_posix >= created_at_posix `);
 		vars["lte_created_at_posix"] = where?.createdAt["<="];
 	}
 
 	if (where?.createdAt?.[">="]) {
-		clauses.push(`created_at_posix <= :gte_created_at_posix`);
+		clauses.push(`created_at_posix >= :gte_created_at_posix`);
 		vars["gte_created_at_posix"] = where?.createdAt[">="];
 	}
 
