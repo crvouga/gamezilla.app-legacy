@@ -3,40 +3,36 @@ import twilio from "twilio";
 import type { ILogger } from "../logger/logger";
 import type { ISMS } from "./sms";
 
-const TWILLIO_ACCOUNT_SID = process.env["TWILLIO_ACCOUNT_SID"];
-
-if (!TWILLIO_ACCOUNT_SID) {
-	throw new Error("TWILLIO_ACCOUNT_SID is not set");
-}
-
-const TWILLIO_AUTH_TOKEN = process.env["TWILLIO_AUTH_TOKEN"];
-
-if (!TWILLIO_AUTH_TOKEN) {
-	throw new Error("TWILLIO_AUTH_TOKEN is not set");
-}
-
-const TWILLIO_MESSAGING_SERVICE_SID =
-	process.env["TWILLIO_MESSAGING_SERVICE_SID"];
-
-if (!TWILLIO_ACCOUNT_SID) {
-	throw new Error("TWILLIO_ACCOUNT_SID is not set");
-}
-
-export const SMSTwilio = ({ logger }: { logger: ILogger }): ISMS => {
+export const SMSTwilio = ({ logger }: { logger: ILogger }): ISMS => {	
+	const TWILLIO_ACCOUNT_SID = process.env["TWILLIO_ACCOUNT_SID"];
+	
+	if (!TWILLIO_ACCOUNT_SID) {
+		throw new Error("TWILLIO_ACCOUNT_SID is not set");
+	}
+	
+	const TWILLIO_AUTH_TOKEN = process.env["TWILLIO_AUTH_TOKEN"];
+	
+	if (!TWILLIO_AUTH_TOKEN) {
+		throw new Error("TWILLIO_AUTH_TOKEN is not set");
+	}
+	
+	const TWILLIO_MESSAGING_SERVICE_SID =
+		process.env["TWILLIO_MESSAGING_SERVICE_SID"];
+	
+	if (!TWILLIO_ACCOUNT_SID) {
+		throw new Error("TWILLIO_ACCOUNT_SID is not set");
+	}
 	const client = twilio(TWILLIO_ACCOUNT_SID, TWILLIO_AUTH_TOKEN);
-
 	return {
 		async sendMessage(input) {
 			try {
+				const phoneNumber = PhoneNumber.toString(input.phoneNumber);
 				logger.info(
-					`Sending SMS ${JSON.stringify({
-						phoneNumber: input.phoneNumber,
-						message: input.message,
-					})}`,
+					`Sending SMS phoneNumber=${phoneNumber} message=${input.message}`,
 				);
 				await client.messages.create({
 					messagingServiceSid: TWILLIO_MESSAGING_SERVICE_SID,
-					to: PhoneNumber.toString(input.phoneNumber),
+					to: phoneNumber,
 					body: input.message,
 				});
 				logger.info("SMS sent");
