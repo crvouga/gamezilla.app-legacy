@@ -1,5 +1,4 @@
 import {
-	Err,
 	Iso3166Alpha2Code,
 	NotAsked,
 	PhoneNumber,
@@ -9,7 +8,7 @@ import {
 	Time,
 	TimeSpan,
 	Uuid,
-	isErr,
+	isErr
 } from "gamezilla-app/@/core";
 import {
 	AppClientModule,
@@ -242,26 +241,10 @@ const updateFromMsg: Module["update"] = (input) => {
 					],
 				};
 			}
-
-			const verificationId =
-				model.sendCode.t === "ok" ? model.sendCode.value.verificationId : null;
-
-			if (!verificationId) {
-				return {
-					model: {
-						...model,
-						verifyCode: Err({
-							t: "verification-not-found",
-						}),
-					},
-					msgCmd: [playSound(APP_SOUND.alertErrorMd)],
-				};
-			}
-
+		
 			return {
 				model: {
 					...model,
-					verifiedCodeAt: ctx.now,
 					verifyCode: RemoteResult.Loading,
 				},
 				msgCmd: [
@@ -269,7 +252,7 @@ const updateFromMsg: Module["update"] = (input) => {
 					sendToServer({
 						t: "user-clicked-verify-code-button",
 						inputtedCode: model.inputtedCode,
-						verificationId,
+						verificationId: msg.verificationId,
 					}),
 				],
 			};
@@ -355,7 +338,7 @@ const updateFromServer: Module["update"] = (input) => {
 					pushRoute({
 						n: "auth-login",
 						t: "login-sms-verify",
-						phoneNumber: msgServer.phoneNumber,
+						verificationId: msgServer.sent.value.verificationId,
 					}),
 					showToast(
 						`Sent code to ${PhoneNumber.format(msgServer.phoneNumber)}`,
@@ -500,7 +483,7 @@ const View: Module["View"] = (props) => {
 					);
 				}
 				case "login-sms-verify": {
-					const phoneNumber = props.ctx.currentRoute.phoneNumber;
+					const verificationId = props.ctx.currentRoute.verificationId;
 					return (
 						<div className="w-full flex-1">
 							<TopBar
@@ -544,7 +527,8 @@ const View: Module["View"] = (props) => {
 									onClick={() => {
 										props.dispatch({
 											t: "user-clicked-verify-code-button",
-											phoneNumber,
+											verificationId,
+											inputtedCode: props.model.inputtedCode,
 										});
 									}}
 								/>
