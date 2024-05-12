@@ -10,19 +10,34 @@ import { VerifySMSDeps } from "./shared";
 export const VerifyCode =
 	(deps: VerifySMSDeps): IVerifySMS["verifyCode"] =>
 	async (input) => {
-		const found = await findVerification(deps, input.verificationId);
+		const found = await deps.verificationDb.find({
+			where: {
+				verificationId: {
+					"=": input.verificationId,
+				},
+			},
+		});
 
 		if (isErr(found)) {
-			return found;
+			return Err({
+				t: "database-error",
+				error: found.error,
+			});
 		}
 
-		const validated = await validateVerification(deps, found.value);
+		const verification = found.value.items[0] ?? null;
+
+		if (!verification) {
+			return Err({
+				t: "verification-not-found",
+			});
+		}
+
+		const validated = await validateVerification(deps, verification);
 
 		if (isErr(validated)) {
 			return validated;
 		}
-
-		const verification = validated.value;
 
 		const previousAttempts = await findPreviousAttempts(
 			deps,
@@ -66,28 +81,6 @@ export const VerifyCode =
 
 		return Ok(verification);
 	};
-
-const findVerification = async (
-	deps: VerifySMSDeps,
-	verificationId: VerificationId,
-): Task<VerifyCodeProblem, Verification | null> => {
-	const found = await deps.verificationDb.find({
-		where: {
-			verificationId: {
-				"=": verificationId,
-			},
-		},
-	});
-
-	if (isErr(found)) {
-		return Err({
-			t: "database-error",
-			error: found.error,
-		});
-	}
-
-	return Ok(found.value.items[0] ?? null);
-};
 
 const validateVerification = async (
 	deps: VerifySMSDeps,

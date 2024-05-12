@@ -14,7 +14,7 @@ const Route = p.or(
 	p.obj({
 		n: p.l("auth-login"),
 		t: p.l("login-sms-verify"),
-		verificationId: VerificationId
+		verificationId: VerificationId,
 	}),
 );
 

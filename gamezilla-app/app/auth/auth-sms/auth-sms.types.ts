@@ -36,8 +36,11 @@ export type MsgClient =
 	| { t: "user-clicked-send-code-button" }
 	| { t: "inputted-code"; inputtedCode: string }
 	| { t: "clicked-code-clear" }
-	| { t: "user-clicked-verify-code-button"; verificationId: VerificationId;
-			inputtedCode: string; }
+	| {
+			t: "user-clicked-verify-code-button";
+			verificationId: VerificationId;
+			inputtedCode: string;
+	  }
 	| { t: "time-passed"; now: Posix };
 
 export type MsgServer = { t: "noop" };

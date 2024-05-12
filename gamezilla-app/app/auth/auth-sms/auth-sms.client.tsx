@@ -8,7 +8,7 @@ import {
 	Time,
 	TimeSpan,
 	Uuid,
-	isErr
+	isErr,
 } from "gamezilla-app/@/core";
 import {
 	AppClientModule,
@@ -241,7 +241,7 @@ const updateFromMsg: Module["update"] = (input) => {
 					],
 				};
 			}
-		
+
 			return {
 				model: {
 					...model,

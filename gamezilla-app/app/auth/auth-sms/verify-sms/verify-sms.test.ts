@@ -128,14 +128,14 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	it('should nevet send an empty sms message with the "verify-sms.code-message" translation', async () => {	
+	it('should nevet send an empty sms message with the "verify-sms.code-message" translation', async () => {
 		const f = await Fixture();
 		await f.verifySMS.sendCode({
 			...f,
 			phoneNumber: f.phoneNumber,
 		});
 		expect((f.sms.sent[0]?.message.length ?? 0) > 0).toBe(true);
-	})
+	});
 
 	it("should fail if the code is not the same as the code sent", async () => {
 		const f = await Fixture();
