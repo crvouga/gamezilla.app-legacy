@@ -28,6 +28,7 @@ import { VerificationCodeGenerator } from "./verify-sms/verification-code-genera
 import { VerificationDb } from "./verify-sms/verification/verification-db";
 import { VerifyCodeProblem, type IVerifySMS } from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl";
+import { ILogger, Logger } from "gamezilla-app/app/@/server/logger";
 
 //
 //
@@ -68,12 +69,18 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 			logger: ctx.logger,
 			hashing: Hashing({ t: "bun" }),
 			now: () => Posix.now(),
-			sendCodeDailyLimit: 50,
-			sendCodeHourlyLimit: 5,
-			sms: SMS({ t: "fake" }),
+			sendCodeDailyLimit: 100,
+			sendCodeHourlyLimit: 10,
+			sms: SMS({ t: "fake", logger: ILogger.prefix('sms', ctx.logger) }),
 			Translator: Translator,
-			verificationAttemptDb: VerificationAttemptDb({ t: "hash-map" }),
-			verificationDb: VerificationDb({ t: "hash-map" }),
+			verificationAttemptDb: VerificationAttemptDb({
+				t: "postgres",
+				dbConnSql: ctx.dbConnSql,
+			}),
+			verificationDb: VerificationDb({
+				t: "postgres",
+				dbConnSql: ctx.dbConnSql,
+			}),
 			verificationCodeGenerator: VerificationCodeGenerator({
 				t: "fake",
 				code: "123",

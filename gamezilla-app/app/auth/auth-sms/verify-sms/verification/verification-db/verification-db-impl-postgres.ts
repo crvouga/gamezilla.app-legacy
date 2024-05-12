@@ -75,13 +75,15 @@ export const VerificationDbPostgres = (deps: {
 					phone_number,
 					created_at_posix,
 					expires_at_posix,
-					code_hash
+					code_hash,
+					verified_at_posix
 				) VALUES (
 					:verification_id,
 					:phone_number,
 					:created_at_posix,
 					:expires_at_posix,
-					:code_hash
+					:code_hash,
+					:verified_at_posix
 				) ON CONFLICT (verification_id) DO UPDATE SET
 					phone_number = :phone_number,
 					created_at_posix = :created_at_posix,

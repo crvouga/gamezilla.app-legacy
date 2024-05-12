@@ -10,12 +10,13 @@ export type SMSImpl =
 	  }
 	| {
 			t: "fake";
+			logger: ILogger;
 	  };
 
 export const SMS = (impl: SMSImpl): ISMS => {
 	switch (impl.t) {
 		case "fake": {
-			return SMSFake();
+			return SMSFake(impl);
 		}
 		case "twilio": {
 			return SMSTwilio(impl);

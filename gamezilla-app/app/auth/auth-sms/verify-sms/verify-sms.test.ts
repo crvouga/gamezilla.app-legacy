@@ -17,7 +17,10 @@ import {
 	type IVerificationCodeGenerator,
 } from "./verification-code-generator";
 import { VerificationId } from "./verification";
-import { VerificationDb } from "./verification/verification-db";
+import {
+	IVerificationDb,
+	VerificationDb,
+} from "./verification/verification-db";
 import { VerifySMS } from "./verify-sms-impl";
 import { VerificationAttemptDb } from "./verification-attempt";
 import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
@@ -30,15 +33,17 @@ const Fixture = async (input?: {
 	codeGenerator?: IVerificationCodeGenerator;
 	now?: () => Posix;
 	hashing?: IHashing;
+	verificationDb?: IVerificationDb;
 }) => {
-	const sms = SMSFake();
+	const sms = SMSFake({ logger: Logger({ t: "noop" }), });
 	const CODE = "123456";
 	const WRONG_CODE = "42";
 	const verificationCodeGenerator =
 		input?.codeGenerator ??
 		VerificationCodeGenerator({ t: "fake", code: CODE });
 	const logger = Logger({ t: "noop" });
-	const verificationDb = VerificationDb({ t: "hash-map" });
+	const verificationDb =
+		input?.verificationDb ?? VerificationDb({ t: "hash-map" });
 	const verificationAttemptDb = VerificationAttemptDb({ t: "hash-map" });
 	const hashing = input?.hashing ?? Hashing({ t: "noop" });
 
@@ -411,5 +416,19 @@ describe(import.meta.file, () => {
 
 		expect(isOk(verification)).toBe(true);
 		expect(codeHash).not.toEqual(code);
+	});
+
+	it("should return database error when database returns an error", async () => {
+		const f = await Fixture({
+			verificationDb: VerificationDb({ t: "always-err", error: "some error" }),
+		});
+		const verification = await f.verifySMS.verifyCode({
+			verificationId: VerificationId.generate(),
+			code: "123",
+		});
+
+		expect(verification.t).toBe("err");
+		if (isErr(verification))
+			expect(verification.error.t).toBe("database-error");
 	});
 });
