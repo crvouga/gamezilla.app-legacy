@@ -1,12 +1,12 @@
 import { describe, expect, it } from "bun:test";
-import { Err, Ok, PhoneNumber, eq } from "gamezilla-app/@/core";
+import { Err, Ok, PhoneNumber } from "gamezilla-app/@/core";
 import { Route } from "gamezilla-app/@/routing/generated/routes";
-import { expectByText } from "gamezilla-app/@/vdom";
 import { didPushRoute } from "gamezilla-app/app/@/client";
 import { AppClientFixture } from "gamezilla-app/app/@/client/client-test-env";
 import type { AuthSMSTypes } from ".";
 import { AuthSMSClient } from "./auth-sms.client";
 import { VerificationId } from "./verify-sms/verification";
+import { expectByText } from "gamezilla-app/@/vdom/vdom-testing";
 
 type Msg =
 	| {
