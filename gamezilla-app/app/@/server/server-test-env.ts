@@ -48,7 +48,7 @@ export const randomClient = () => {
 };
 
 export const AppServerFixture = async () => {
-	const logger = Logger({ t: "noop" })
+	const logger = Logger({ t: "noop" });
 	const ctx: ServerCtx = {
 		dbConnKv: await DbConnKv({ t: "hash-map" }),
 		dbConnSql: await DbConnSql({ t: "noop" }),

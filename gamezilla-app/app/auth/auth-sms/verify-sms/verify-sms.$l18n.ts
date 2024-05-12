@@ -14,7 +14,7 @@ export type Text = {
 
 export const translations: Translations<Text> = {
 	en: {
-		"verify-sms.code-message": (code) => `Your verification code is ${code}`,
+		"verify-sms.code-message": (code) => `Your gamezilla.app verification code is ${code}. Do not share this code with anyone. We will never ask for this code.`,
 		"verify-sms-problem.code-incorrect": "Code is incorrect",
 		"verify-sms-problem.verification-expired": "Verification expired",
 		"verify-sms-problem.verification-not-found": "Verification not found",

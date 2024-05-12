@@ -71,7 +71,10 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 			now: () => Posix.now(),
 			sendCodeDailyLimit: 100,
 			sendCodeHourlyLimit: 10,
-			sms: SMS({ t: "fake", logger: ILogger.prefix('sms', ctx.logger) }),
+			sms: SMS({
+				t: "fake",
+				logger: ILogger.prefix("sms", ctx.logger),
+			}),
 			Translator: Translator,
 			verificationAttemptDb: VerificationAttemptDb({
 				t: "postgres",

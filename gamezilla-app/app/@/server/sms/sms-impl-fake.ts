@@ -15,10 +15,9 @@ export const SMSFake = ({
 				phoneNumber: input.phoneNumber,
 				message: input.message,
 			});
+			const phoneNumber = PhoneNumber.toString(input.phoneNumber);
 			logger.info(
-				`Sent SMS phoneNumber=${PhoneNumber.format(
-					input?.phoneNumber,
-				)} message=${input?.message}`,
+				`Sent SMS phoneNumber="${phoneNumber}" message="${input.message}"`,
 			);
 			return Ok(null);
 		},
