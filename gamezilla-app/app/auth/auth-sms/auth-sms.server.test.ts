@@ -4,15 +4,15 @@ import { ClientId, SessionId } from "gamezilla-app/app/@/data";
 import { randomNormalUserAccount } from "gamezilla-app/app/@/data/account";
 import { didSendMsgToClient } from "gamezilla-app/app/@/server";
 import {
-    AppServerFixture,
-    randomClient,
+	AppServerFixture,
+	randomClient,
 } from "gamezilla-app/app/@/server/server-test-env";
 import { AuthSMSTypes } from ".";
 import { AccountDb } from "../@/server/account-db";
 import { AuthSMSServer } from "./auth-sms.server";
 import { VerificationId } from "./verify-sms/verification";
 import { IVerifySMS } from "./verify-sms/verify-sms";
-import { VerifySMS } from "./verify-sms/verify-sms-impl";
+import { VerifySMS } from "./verify-sms/verify-sms-impl/verify-sms-impl";
 
 type InputMsg =
 	| {

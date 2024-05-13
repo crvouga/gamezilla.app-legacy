@@ -13,16 +13,16 @@ import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 import { Translator } from "gamezilla-app/app/@/client/translator";
 import { Logger } from "gamezilla-app/app/@/server/logger";
 import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
-import { VerificationId } from "../verification";
-import { VerificationAttemptDb } from "../verification-attempt";
+import { VerificationId } from "../../verification";
+import { VerificationAttemptDb } from "../../verification-attempt";
 import {
 	VerificationCodeGenerator,
 	type IVerificationCodeGenerator,
-} from "../verification-code-generator";
+} from "../../verification-code-generator";
 import {
 	VerificationDb,
 	type IVerificationDb,
-} from "../verification/verification-db";
+} from "../../verification/verification-db";
 import { VerifySMS } from "../verify-sms-impl";
 import { VerifySMSProvider } from "./verify-sms-provider";
 

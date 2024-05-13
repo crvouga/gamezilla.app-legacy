@@ -1,8 +1,8 @@
 import { Ok, PhoneNumber } from "gamezilla-app/@/core";
-import type { IVerifySMS } from "./verify-sms";
-import * as ImplReal from "./verify-sms-impl-real";
+import { VerificationId } from "../verification";
+import type { IVerifySMS } from "../verify-sms";
 import * as ImplFake from "./verify-sms-impl-fake";
-import { VerificationId } from "./verification";
+import * as ImplReal from "./verify-sms-impl-real";
 
 export type Impl =
 	| ({ t: "real" } & ImplReal.VerifySMSDeps)

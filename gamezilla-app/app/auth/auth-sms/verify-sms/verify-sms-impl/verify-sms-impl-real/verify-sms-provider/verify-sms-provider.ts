@@ -1,6 +1,6 @@
 import type { PhoneNumber, Task } from "gamezilla-app/@/core";
 import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
-import type { SendCodeProblem, VerifyCodeProblem } from "../../verify-sms";
+import type { SendCodeProblem, VerifyCodeProblem } from "../../../verify-sms";
 
 export type IVerifySMSProvider = {
 	sendCode: (input: {

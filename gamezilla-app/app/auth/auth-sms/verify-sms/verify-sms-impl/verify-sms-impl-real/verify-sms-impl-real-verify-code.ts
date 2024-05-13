@@ -1,10 +1,10 @@
 import { Err, Ok, isErr } from "gamezilla-app/@/core";
-import type { Verification } from "../verification";
+import type { Verification } from "../../verification";
 import {
-	VerificationAttemptId,
-	type VerificationAttempt,
-} from "../verification-attempt";
-import type { IVerifySMS } from "../verify-sms";
+    VerificationAttemptId,
+    type VerificationAttempt,
+} from "../../verification-attempt";
+import type { IVerifySMS } from "../../verify-sms";
 import type { VerifySMSDeps } from "./shared";
 
 export const VerifyCode =

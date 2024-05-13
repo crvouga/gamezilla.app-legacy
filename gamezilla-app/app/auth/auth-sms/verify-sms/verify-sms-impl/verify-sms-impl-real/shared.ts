@@ -1,8 +1,8 @@
 import { Posix, TimeSpan } from "gamezilla-app/@/core";
 import type { IHashing } from "gamezilla-app/@/hashing";
 import type { ILogger } from "gamezilla-app/app/@/server/logger/logger";
-import { IVerificationAttemptDb } from "../verification-attempt";
-import type { IVerificationDb } from "../verification/verification-db";
+import { IVerificationAttemptDb } from "../../verification-attempt";
+import type { IVerificationDb } from "../../verification/verification-db";
 import { IVerifySMSProvider } from "./verify-sms-provider";
 
 export type VerifySMSDeps = {

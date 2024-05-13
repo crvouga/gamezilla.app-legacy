@@ -4,9 +4,9 @@ import { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 import { Translator } from "gamezilla-app/@/l18n/generated";
 import { ILogger } from "gamezilla-app/app/@/server/logger";
 import { ISMS } from "gamezilla-app/app/@/server/sms";
-import { Verification } from "../../verification";
-import { IVerificationCodeGenerator } from "../../verification-code-generator";
-import { IVerificationDb } from "../../verification/verification-db";
+import { Verification } from "../../../verification";
+import { IVerificationCodeGenerator } from "../../../verification-code-generator";
+import { IVerificationDb } from "../../../verification/verification-db";
 import { IVerifySMSProvider } from "./verify-sms-provider";
 
 export type Deps = {

@@ -19,6 +19,7 @@ import {
 	type ServerEvent,
 } from "gamezilla-app/app/@/server";
 import { ILogger } from "gamezilla-app/app/@/server/logger";
+import { SMS } from "gamezilla-app/app/@/server/sms";
 import type { IAccountDb } from "../@/server/account-db";
 import { AccountDb } from "../@/server/account-db/account-db-impl";
 import type { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.types";
@@ -31,9 +32,8 @@ import {
 	type IVerifySMS,
 	type VerifyCodeProblem,
 } from "./verify-sms/verify-sms";
-import { VerifySMS } from "./verify-sms/verify-sms-impl";
-import { VerifySMSProvider } from "./verify-sms/verify-sms-impl-real/verify-sms-provider";
-import { SMS } from "gamezilla-app/app/@/server/sms";
+import { VerifySMS } from "./verify-sms/verify-sms-impl/verify-sms-impl";
+import { VerifySMSProvider } from "./verify-sms/verify-sms-impl/verify-sms-impl-real/verify-sms-provider";
 
 //
 //
