@@ -80,7 +80,7 @@ export const SendCode =
 
 		const sent = await deps.provider.sendCode({
 			phoneNumber: input.phoneNumber,
-			perferredLanguage: input.perferredLanguage,
+			preferredLanguage: input.preferredLanguage,
 		});
 
 		if (isErr(sent)) {

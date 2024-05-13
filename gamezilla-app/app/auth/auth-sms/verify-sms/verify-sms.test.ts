@@ -1,29 +1,29 @@
 import { describe, expect, it } from "bun:test";
 import {
-	PhoneNumber,
-	Posix,
-	TimeSpan,
-	eq,
-	isErr,
-	isOk,
-	unwrap,
+    PhoneNumber,
+    Posix,
+    TimeSpan,
+    eq,
+    isErr,
+    isOk,
+    unwrap,
 } from "gamezilla-app/@/core";
 import { Hashing, type IHashing } from "gamezilla-app/@/hashing";
+import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 import { Translator } from "gamezilla-app/app/@/client/translator";
 import { Logger } from "gamezilla-app/app/@/server/logger";
 import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
-import {
-	VerificationCodeGenerator,
-	type IVerificationCodeGenerator,
-} from "./verification-code-generator";
 import { VerificationId } from "./verification";
+import { VerificationAttemptDb } from "./verification-attempt";
 import {
-	type IVerificationDb,
-	VerificationDb,
+    VerificationCodeGenerator,
+    type IVerificationCodeGenerator,
+} from "./verification-code-generator";
+import {
+    VerificationDb,
+    type IVerificationDb,
 } from "./verification/verification-db";
 import { VerifySMS } from "./verify-sms-impl";
-import { VerificationAttemptDb } from "./verification-attempt";
-import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 import { VerifySMSProvider } from "./verify-sms-impl-real/verify-sms-provider";
 
 const Fixture = async (input?: {
@@ -74,10 +74,10 @@ const Fixture = async (input?: {
 	});
 
 	const phoneNumber = unwrap(PhoneNumber.fromString("+1 480-209-8698"));
-	const perferredLanguage: LanguageCodeISO_639_1 = "en";
+	const preferredLanguage: LanguageCodeISO_639_1 = "en";
 
 	return {
-		perferredLanguage,
+		preferredLanguage,
 		verificationDb,
 		CODE,
 		WRONG_CODE,
@@ -134,7 +134,7 @@ describe(import.meta.file, () => {
 		});
 		expect(
 			f.sms.sent[0]?.message ===
-				Translator(f.perferredLanguage)("verify-sms.code-message", f.CODE),
+				Translator(f.preferredLanguage)("verify-sms.code-message", f.CODE),
 		).toBe(true);
 	});
 

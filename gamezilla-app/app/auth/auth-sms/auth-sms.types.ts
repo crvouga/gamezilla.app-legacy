@@ -1,14 +1,14 @@
 import type {
-	Iso3166Alpha2Code,
-	PhoneNumber,
-	Posix,
-	Remote,
-	Result,
+    Iso3166Alpha2Code,
+    PhoneNumber,
+    Posix,
+    Remote,
+    Result,
 } from "gamezilla-app/@/core";
+import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
+import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import type { SendCodeOutput, VerifyCodeProblem } from "./verify-sms";
 import type { VerificationId } from "./verify-sms/verification";
-import type { UserAccount } from "gamezilla-app/app/@/data/account";
-import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 
 export type ModelClient = {
 	//
@@ -49,7 +49,7 @@ export type MsgToServer =
 	| {
 			t: "user-clicked-send-code-button";
 			phoneNumber: PhoneNumber;
-			perferredLanguage: LanguageCodeISO_639_1;
+			preferredLanguage: LanguageCodeISO_639_1;
 	  }
 	| {
 			t: "user-clicked-verify-code-button";

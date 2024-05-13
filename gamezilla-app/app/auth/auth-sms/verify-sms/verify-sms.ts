@@ -1,7 +1,7 @@
 import type { PhoneNumber, Task } from "gamezilla-app/@/core";
+import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 import type { Translator } from "gamezilla-app/@/l18n/generated";
 import type { VerificationId } from "./verification";
-import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 
 export type VerifyCodeProblem =
 	| {
@@ -93,7 +93,7 @@ export const sendCodeProblemToString = ({
 export type IVerifySMS = {
 	sendCode: (input: {
 		phoneNumber: PhoneNumber;
-		perferredLanguage: LanguageCodeISO_639_1;
+		preferredLanguage: LanguageCodeISO_639_1;
 	}) => Task<SendCodeProblem, { verificationId: VerificationId }>;
 	verifyCode: (input: {
 		verificationId: VerificationId;

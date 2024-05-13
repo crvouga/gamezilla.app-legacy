@@ -1,51 +1,51 @@
 import {
-	Iso3166Alpha2Code,
-	NotAsked,
-	PhoneNumber,
-	Posix,
-	RemoteResult,
-	Sub,
-	Time,
-	TimeSpan,
-	Uuid,
-	isErr,
+    Iso3166Alpha2Code,
+    NotAsked,
+    PhoneNumber,
+    Posix,
+    RemoteResult,
+    Sub,
+    Time,
+    TimeSpan,
+    Uuid,
+    isErr,
 } from "gamezilla-app/@/core";
 import {
-	AppClientModule,
-	andThen,
+    AppClientModule,
+    andThen,
 } from "gamezilla-app/app/@/architecture/app-client";
 import {
-	APP_SOUND,
-	type BaseClientCtx,
-	type ClientEvent,
+    APP_SOUND,
+    type BaseClientCtx,
+    type ClientEvent,
 } from "gamezilla-app/app/@/client";
 import {
-	focusView,
-	playSound,
-	pushRoute,
-	replaceRoute,
-	sendToServer,
-	showToast,
-	type ClientCmd,
+    focusView,
+    playSound,
+    pushRoute,
+    replaceRoute,
+    sendToServer,
+    showToast,
+    type ClientCmd,
 } from "gamezilla-app/app/@/client/client-cmd";
 import {
-	AlertError,
-	Button,
-	IconMobilePhone,
-	Select,
-	TextField,
-	TopBar,
-	TopBarBackButton,
+    AlertError,
+    Button,
+    IconMobilePhone,
+    Select,
+    TextField,
+    TopBar,
+    TopBarBackButton,
 } from "gamezilla-app/app/@/ui";
 import type {
-	ModelClient,
-	MsgClient,
-	MsgToClient,
-	MsgToServer,
+    ModelClient,
+    MsgClient,
+    MsgToClient,
+    MsgToServer,
 } from "./auth-sms.types";
 import {
-	sendCodeProblemToString,
-	verifyCodeProblemToString,
+    sendCodeProblemToString,
+    verifyCodeProblemToString,
 } from "./verify-sms/verify-sms";
 
 //
@@ -208,7 +208,7 @@ const updateFromMsg: Module["update"] = (input) => {
 					sendToServer({
 						t: "user-clicked-send-code-button",
 						phoneNumber: phoneNumber.value,
-						perferredLanguage: ctx.navigatorLanguage,
+						preferredLanguage: ctx.navigatorLanguage,
 					}),
 					playSound(APP_SOUND.tap),
 				],

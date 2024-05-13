@@ -4,8 +4,8 @@ import { ClientId, SessionId } from "gamezilla-app/app/@/data";
 import { randomNormalUserAccount } from "gamezilla-app/app/@/data/account";
 import { didSendMsgToClient } from "gamezilla-app/app/@/server";
 import {
-	AppServerFixture,
-	randomClient,
+    AppServerFixture,
+    randomClient,
 } from "gamezilla-app/app/@/server/server-test-env";
 import { AuthSMSTypes } from ".";
 import { AccountDb } from "../@/server/account-db";
@@ -68,7 +68,7 @@ describe(import.meta.file, () => {
 			{
 				msgClient: {
 					...f.client,
-					perferredLanguage: "en",
+					preferredLanguage: "en",
 					t: "user-clicked-send-code-button",
 					phoneNumber: PhoneNumber.random(),
 				},
