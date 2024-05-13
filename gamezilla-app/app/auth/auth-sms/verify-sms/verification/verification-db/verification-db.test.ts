@@ -279,6 +279,23 @@ describe(import.meta.file, () => {
 		const actual = unwrap(found).items;
 		expect(actual).toEqual(expected);
 	});
+
+	it("should allow code hash to be null", async () => {
+		const f = await Fixture();
+		const verification = await randomVerification({
+			codeHash: null,
+		});
+		const put = await f.verificationDb.put(verification);
+		const found = await f.verificationDb.find({
+			where: {
+				verificationId: {
+					"=": verification.verificationId,
+				},
+			},
+		});
+		expect(put.t).toBe("ok");
+		expect(unwrap(found).items[0]).toEqual(verification);
+	});
 });
 
 const insertVerifications = async ({

@@ -1,15 +1,17 @@
 import { Err, Ok, isErr } from "gamezilla-app/@/core";
-import { type Verification } from "../verification";
+import type { Verification } from "../verification";
 import {
-	VerificationAttempt,
+	type VerificationAttempt,
 	VerificationAttemptId,
 } from "../verification-attempt";
 import type { IVerifySMS } from "../verify-sms";
-import { VerifySMSDeps } from "./shared";
+import type { VerifySMSDeps } from "./shared";
 
 export const VerifyCode =
 	(deps: VerifySMSDeps): IVerifySMS["verifyCode"] =>
 	async (input) => {
+		deps.logger.info(`Verifying code for ${input.verificationId}`);
+
 		const found = await deps.verificationDb.find({
 			where: {
 				verificationId: {
@@ -69,6 +71,7 @@ export const VerifyCode =
 			});
 		}
 
+		deps.logger.info(`Checking previous attempts for ${input.verificationId}`);
 		const previousAttempts = await deps.verificationAttemptDb.find({
 			where: {
 				verificationId: {
@@ -78,11 +81,17 @@ export const VerifyCode =
 		});
 
 		if (isErr(previousAttempts)) {
+			deps.logger.error(
+				`Error checking previous attempts for ${input.verificationId}`,
+			);
 			return Err({
 				t: "database-error",
 				error: previousAttempts.error,
 			});
 		}
+		deps.logger.info(
+			`Previous attempts for ${input.verificationId}: ${previousAttempts.value.length}`,
+		);
 
 		if (previousAttempts.value.length >= deps.verifyCodeMaxAttempts) {
 			return Err({

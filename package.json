@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "server": "bun gamezilla-app/main.server.ts",
+    "server": "npx tsx gamezilla-app/main.server.ts",
     "server:build": "bun db:up && bun check && bun test",
     "server:start": "bun x pm2 start bun --name \"gamezilla-app-server\" -- server -i 3",
     "server:stop": "bun x pm2 stop gamezilla-app-server",
@@ -46,7 +46,9 @@
   "dependencies": {
     "@vonage/server-sdk": "^3.14.0",
     "chess.js": "^1.0.0-beta.6",
+    "dotenv": "^16.4.5",
     "inferno": "^8.2.3",
+    "js-sha256": "^0.11.0",
     "pg": "^8.11.5",
     "preact": "^10.19.3",
     "react": "canary",

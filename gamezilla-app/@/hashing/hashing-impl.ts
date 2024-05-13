@@ -1,5 +1,6 @@
 import type { IHashing } from "./hashing";
 import * as ImplBun from "./hashing-impl-bun";
+import * as ImplNode from "./hashing-impl-node";
 import * as ImplNoop from "./hashing-impl-noop";
 
 export type HashingImpl =
@@ -8,6 +9,9 @@ export type HashingImpl =
 	  }
 	| {
 			t: "noop";
+	  }
+	| {
+			t: "node";
 	  };
 
 export const Hashing = (impl: HashingImpl): IHashing => {
@@ -18,6 +22,10 @@ export const Hashing = (impl: HashingImpl): IHashing => {
 
 		case "noop": {
 			return ImplNoop.Hashing();
+		}
+
+		case "node": {
+			return ImplNode.Hashing();
 		}
 	}
 };

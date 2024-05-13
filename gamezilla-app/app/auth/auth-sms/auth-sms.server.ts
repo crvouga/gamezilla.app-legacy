@@ -9,6 +9,7 @@ import {
 } from "gamezilla-app/@/core";
 import { Hashing } from "gamezilla-app/@/hashing";
 import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
+import { Translator } from "gamezilla-app/app/@/client/translator";
 import { UserId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import {
@@ -17,18 +18,21 @@ import {
 	type ServerCtx,
 	type ServerEvent,
 } from "gamezilla-app/app/@/server";
+import { ILogger } from "gamezilla-app/app/@/server/logger";
 import type { IAccountDb } from "../@/server/account-db";
 import { AccountDb } from "../@/server/account-db/account-db-impl";
 import type { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.types";
 import type { VerificationId } from "./verify-sms/verification";
 import { VerificationAttemptDb } from "./verify-sms/verification-attempt";
+import { VerificationCodeGenerator } from "./verify-sms/verification-code-generator";
 import { VerificationDb } from "./verify-sms/verification/verification-db";
-import { verifyCodeProblemToString, type IVerifySMS, type VerifyCodeProblem } from "./verify-sms/verify-sms";
+import {
+	verifyCodeProblemToString,
+	type IVerifySMS,
+	type VerifyCodeProblem,
+} from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl";
 import { VerifySMSProvider } from "./verify-sms/verify-sms-impl-real/verify-sms-provider";
-import { ILogger } from "gamezilla-app/app/@/server/logger";
-import { Translator } from "gamezilla-app/app/@/client/translator";
-import { VerificationCodeGenerator } from "./verify-sms/verification-code-generator";
 
 //
 //
@@ -63,10 +67,17 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 		t: "postgres",
 		dbConnSql: ctx.dbConnSql,
 	});
-	const hashing = Hashing({ t: "bun" });
+
+	const verificationAttemptDb = VerificationAttemptDb({
+		t: "postgres",
+		dbConnSql: ctx.dbConnSql,
+	});
+
+	const hashing = Hashing({ t: "node" });
+
 	const providerInHouse = VerifySMSProvider({
 		t: "in-house",
-		hashing: Hashing({ t: "bun" }),
+		hashing,
 		logger: ctx.logger,
 		now: Posix.now,
 		sms: ctx.sms,
@@ -77,11 +88,14 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 		}),
 		verificationDb,
 	});
+
 	const providerTwilio = VerifySMSProvider({
 		t: "twilio",
 		logger: ILogger.prefix("twilio-verify", ctx.logger),
 	});
-	const provider = true ? providerTwilio : providerInHouse;
+
+	const provider = ctx.env === "test" ? providerInHouse : providerTwilio;
+
 	return {
 		AccountDb: AccountDb({
 			t: "postgres",
@@ -92,12 +106,9 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 			logger: ctx.logger,
 			hashing,
 			now: Posix.now,
-			sendCodeDailyLimit: 100,
-			sendCodeHourlyLimit: 10,
-			verificationAttemptDb: VerificationAttemptDb({
-				t: "postgres",
-				dbConnSql: ctx.dbConnSql,
-			}),
+			sendCodeDailyLimit: 1000,
+			sendCodeHourlyLimit: 100,
+			verificationAttemptDb,
 			verificationDb,
 			verifyCodeExpiresIn: TimeSpan.minutes(5),
 			verifyCodeMaxAttempts: 3,
@@ -216,6 +227,7 @@ const updateVerifyCode: Module["update"] = async ({
 }) => {
 	switch (msgClient?.t) {
 		case "user-clicked-verify-code-button": {
+			ctx.logger.info(`Verifying code for ${msgClient.verificationId}`);
 			const verified = await handleVerifyCode({
 				AccountDb: deps.AccountDb,
 				VerifySMS: deps.VerifySMS,
@@ -223,9 +235,15 @@ const updateVerifyCode: Module["update"] = async ({
 				verificationId: msgClient.verificationId,
 				inputtedCode: msgClient.inputtedCode,
 			});
+			ctx.logger.info(`Verified code for ${msgClient.verificationId}`);
 
 			if (isErr(verified)) {
-				ctx.logger.error(`Failed to verify code. ${verifyCodeProblemToString({ problem: verified.error, t: Translator('en') })}`);
+				ctx.logger.error(
+					`Failed to verify code. ${verifyCodeProblemToString({
+						problem: verified.error,
+						t: Translator("en"),
+					})}`,
+				);
 				return {
 					model,
 					msgCmd: [sendToClient(msgClient, { t: "verified-code", verified })],

@@ -47,8 +47,8 @@ const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
 	};
 
 	const update = (msgs: InputMsg[]) => {
-		const upates = Array.from(updates(msgs));
-		return upates[upates.length - 1]!;
+		const updates_ = Array.from(updates(msgs));
+		return updates_[updates_.length - 1] as (typeof updates_)[number];
 	};
 
 	const client = randomClient();

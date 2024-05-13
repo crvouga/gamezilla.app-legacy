@@ -18,7 +18,7 @@ import {
 } from "./verification-code-generator";
 import { VerificationId } from "./verification";
 import {
-	IVerificationDb,
+	type IVerificationDb,
 	VerificationDb,
 } from "./verification/verification-db";
 import { VerifySMS } from "./verify-sms-impl";
@@ -405,7 +405,7 @@ describe(import.meta.file, () => {
 
 	it("should hash sent codes stored in the database", async () => {
 		const f = await Fixture({
-			hashing: Hashing({ t: "bun" }),
+			hashing: Hashing({ t: "node" }),
 		});
 		const sent = await f.verifySMS.sendCode({
 			...f,

@@ -13,6 +13,7 @@ import * as AuthServer from "../auth.server";
 import { DbConnSqlNoop } from "gamezilla-app/app/@/server/db-conn-sql";
 
 const ctx: ServerCtx = {
+	env: "test",
 	sms: smsNoop,
 	dbConnSql: DbConnSqlNoop(),
 	dbConnKv: DbConnKvHashMap(),

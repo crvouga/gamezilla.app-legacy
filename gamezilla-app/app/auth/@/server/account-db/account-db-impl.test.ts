@@ -1,27 +1,22 @@
 import { describe, expect, it } from "bun:test";
 import { Ok, PhoneNumber, Posix, Result } from "gamezilla-app/@/core";
-import { Hashing } from "gamezilla-app/@/hashing";
 import { UserId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
 import { AccountDb } from "./account-db-impl";
 
 const Fixture = async () => {
-	const hashing = Hashing({ t: "bun" });
-
 	const testEnv = await AppServerTestEnv();
 
 	switch (testEnv.t) {
 		case "integration": {
 			return {
-				hashing,
 				accountDb: AccountDb({ t: "postgres", dbConnSql: testEnv.dbConnSql }),
 			};
 		}
 
 		case "unit": {
 			return {
-				hashing,
 				accountDb: AccountDb({ t: "in-memory", async delay() {} }),
 			};
 		}

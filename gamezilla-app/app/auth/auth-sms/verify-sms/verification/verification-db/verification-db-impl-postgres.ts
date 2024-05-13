@@ -13,7 +13,7 @@ import type {
 
 export const Row = p.obj({
 	verification_id: VerificationId,
-	code_hash: p.json,
+	code_hash: p.maybe(p.json),
 	phone_number: p.str,
 	created_at_posix: p.str,
 	expires_at_posix: p.str,
@@ -62,10 +62,7 @@ export const VerificationDbPostgres = (deps: {
 
 			const total = parseInt(queriedCount.value[0]?.count ?? "0") ?? 0;
 
-			const items = queried.value.flatMap((row) => {
-				const verification = rowToVerification(row);
-				return verification ? [verification] : [];
-			});
+			const items = queried.value.flatMap(rowToVerification);
 
 			return Ok({
 				items,
@@ -113,28 +110,27 @@ export const VerificationDbPostgres = (deps: {
 	};
 };
 
-const rowToVerification = (row: Row): Verification | null => {
+const rowToVerification = (row: Row): Verification[] => {
 	const phoneNumber = Result.withDefault(
 		PhoneNumber.fromString(row.phone_number),
 		null,
 	);
 	if (!phoneNumber) {
-		return null;
+		return [];
 	}
 	const codeHash = Result.withDefault(Hash.parse(row.code_hash), null);
-	if (!codeHash) {
-		return null;
-	}
-	return {
-		verificationId: row.verification_id,
-		codeHash,
-		phoneNumber,
-		createdAt: Posix.init(row.created_at_posix),
-		expiresAt: Posix.init(row.expires_at_posix),
-		verifiedAt: row.verified_at_posix
-			? Posix.init(row.verified_at_posix)
-			: null,
-	};
+	return [
+		{
+			verificationId: row.verification_id,
+			codeHash,
+			phoneNumber,
+			createdAt: Posix.init(row.created_at_posix),
+			expiresAt: Posix.init(row.expires_at_posix),
+			verifiedAt: row.verified_at_posix
+				? Posix.init(row.verified_at_posix)
+				: null,
+		},
+	];
 };
 
 const toSqlOrder = (order?: OrderClause) => {

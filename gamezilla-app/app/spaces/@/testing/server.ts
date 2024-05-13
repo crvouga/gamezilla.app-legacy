@@ -38,6 +38,7 @@ export const SpaceServerFixture = () => {
 };
 
 export const ctx: ServerCtx = {
+	env: "test",
 	sms: smsNoop,
 	dbConnSql: DbConnSqlNoop(),
 	logger: Logger({ t: "noop" }),

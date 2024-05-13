@@ -33,7 +33,7 @@ export const VDOM_IMPL: VDomImpl = "react" as VDomImpl;
 
 export type ServerImpl = "bun" | "node";
 
-export const SERVER_IMPL = "bun" as ServerImpl;
+export const SERVER_IMPL = "node" as ServerImpl;
 
 //
 //

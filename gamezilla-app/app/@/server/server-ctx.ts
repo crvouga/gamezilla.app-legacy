@@ -10,4 +10,5 @@ export type ServerCtx = {
 	now: Posix;
 	logger: ILogger;
 	sms: ISMS;
+	env: "prod" | "test";
 };
