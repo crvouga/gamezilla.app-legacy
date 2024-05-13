@@ -50,6 +50,10 @@ const clientClickedContinueAsGuestButton =
 		});
 	};
 
+export const Fixture = () => {
+	// 
+}
+
 describe(import.meta.file, () => {
 	it("should be able to handle request", async () => {
 		const deps = await getDeps({ ctx });
@@ -109,4 +113,6 @@ describe(import.meta.file, () => {
 
 		expect(userId !== null).toBe(true);
 	});
+
+	it.todo('should always use the same guest account for the same session id')
 });
