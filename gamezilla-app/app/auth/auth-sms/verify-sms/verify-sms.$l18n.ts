@@ -11,6 +11,7 @@ export type Text = {
 	"verify-sms-problem.send-code-hourly-limit-reached": string;
 	"verify-sms-problem.send-code-daily-limit-reached": string;
 	"verify-sms-problem.verification-expired-not-latest-verifcation": string;
+	"verify-sms-problem.send-code-limit-reached": string;
 };
 
 export const translations: Translations<Text> = {
@@ -31,6 +32,8 @@ export const translations: Translations<Text> = {
 			"Daily limit reached. Please try again later.",
 		"verify-sms-problem.verification-expired-not-latest-verifcation":
 			"Verification expired because it is not the latest verification",
+		"verify-sms-problem.send-code-limit-reached":
+			"Limit reached. Please try again later.",
 	},
 	ar: {
 		"verify-sms.code-message": (code) => `رمز التحقق الخاص بك هو ${code}`,
@@ -47,6 +50,8 @@ export const translations: Translations<Text> = {
 			"تم الوصول إلى الحد اليومي. يرجى المحاولة مرة أخرى في وقت لاحق.",
 		"verify-sms-problem.verification-expired-not-latest-verifcation":
 			"انتهت صلاحية التحقق لأنها ليست أحدث عملية تحقق",
+		"verify-sms-problem.send-code-limit-reached":
+			"تم الوصول إلى الحد. يرجى المحاولة مرة أخرى في وقت لاحق.",
 	},
 	de: {
 		"verify-sms.code-message": (code) => `Ihr Bestätigungscode lautet ${code}`,
@@ -58,13 +63,14 @@ export const translations: Translations<Text> = {
 		"verify-sms-problem.database-error": "Datenbankfehler",
 		"verify-sms-problem.verification-expired-too-many-failed-attempts":
 			"Verifizierung abgelaufen aufgrund zu vieler fehlgeschlagener Versuche",
-
 		"verify-sms-problem.send-code-hourly-limit-reached":
 			"Stündliches Limit erreicht. Bitte versuchen Sie es später erneut.",
 		"verify-sms-problem.send-code-daily-limit-reached":
 			"Tägliches Limit erreicht. Bitte versuchen Sie es später erneut.",
 		"verify-sms-problem.verification-expired-not-latest-verifcation":
 			"Verifizierung abgelaufen, weil es nicht die neueste Verifizierung ist",
+		"verify-sms-problem.send-code-limit-reached":
+			"Limit erreicht. Bitte versuchen Sie es später erneut.",
 	},
 	es: {
 		"verify-sms.code-message": (code) => `Su código de verificación es ${code}`,
@@ -82,6 +88,8 @@ export const translations: Translations<Text> = {
 			"Límite diario alcanzado. Por favor, inténtelo de nuevo más tarde.",
 		"verify-sms-problem.verification-expired-not-latest-verifcation":
 			"La verificación ha caducado porque no es la última verificación",
+		"verify-sms-problem.send-code-limit-reached":
+			"Límite alcanzado. Por favor, inténtelo de nuevo más tarde.",
 	},
 	fr: {
 		"verify-sms.code-message": (code) =>
@@ -100,6 +108,8 @@ export const translations: Translations<Text> = {
 			"Limite quotidienne atteinte. Veuillez réessayer plus tard.",
 		"verify-sms-problem.verification-expired-not-latest-verifcation":
 			"La vérification a expiré car ce n'est pas la dernière vérification",
+		"verify-sms-problem.send-code-limit-reached":
+			"Limite atteinte. Veuillez réessayer plus tard.",
 	},
 	hi: {
 		"verify-sms.code-message": (code) => `आपका सत्यापन कोड है ${code}`,
@@ -117,6 +127,8 @@ export const translations: Translations<Text> = {
 			"दैनिक सीमा पहुंच गई है। कृपया बाद में पुन: प्रयास करें।",
 		"verify-sms-problem.verification-expired-not-latest-verifcation":
 			"सत्यापन समाप्त हो गया क्योंकि यह नवीनतम सत्यापन नहीं है",
+		"verify-sms-problem.send-code-limit-reached":
+			"सीमा पहुंच गई। कृपया बाद में पुन: प्रयास करें।",
 	},
 	it: {
 		"verify-sms.code-message": (code) => `Il tuo codice di verifica è ${code}`,
@@ -128,13 +140,14 @@ export const translations: Translations<Text> = {
 		"verify-sms-problem.database-error": "Errore del database",
 		"verify-sms-problem.verification-expired-too-many-failed-attempts":
 			"Verifica scaduta a causa di troppi tentativi falliti",
-
 		"verify-sms-problem.send-code-hourly-limit-reached":
 			"Limite orario raggiunto. Riprova più tardi.",
 		"verify-sms-problem.send-code-daily-limit-reached":
 			"Limite giornaliero raggiunto. Riprova più tardi.",
 		"verify-sms-problem.verification-expired-not-latest-verifcation":
 			"La verifica è scaduta perché non è l'ultima verifica",
+		"verify-sms-problem.send-code-limit-reached":
+			"Limite raggiunto. Riprova più tardi.",
 	},
 	ja: {
 		"verify-sms.code-message": (code) => `認証コードは${code}です`,
@@ -151,6 +164,8 @@ export const translations: Translations<Text> = {
 			"1日の制限に達しました。後でもう一度お試しください。",
 		"verify-sms-problem.verification-expired-not-latest-verifcation":
 			"最新の検証ではないため、検証が期限切れになりました",
+		"verify-sms-problem.send-code-limit-reached":
+			"制限に達しました。後でもう一度お試しください。",
 	},
 	ko: {
 		"verify-sms.code-message": (code) => `인증 코드는 ${code}입니다`,
@@ -167,6 +182,8 @@ export const translations: Translations<Text> = {
 			"일일 제한에 도달했습니다. 나중에 다시 시도하십시오.",
 		"verify-sms-problem.verification-expired-not-latest-verifcation":
 			"최신 인증이 아니기 때문에 인증이 만료되었습니다",
+		"verify-sms-problem.send-code-limit-reached":
+			"제한에 도달했습니다. 나중에 다시 시도하십시오.",
 	},
 	pt: {
 		"verify-sms.code-message": (code) => `Seu código de verificação é ${code}`,
@@ -184,6 +201,8 @@ export const translations: Translations<Text> = {
 			"Limite diário atingido. Por favor, tente novamente mais tarde.",
 		"verify-sms-problem.verification-expired-not-latest-verifcation":
 			"A verificação expirou porque não é a verificação mais recente",
+		"verify-sms-problem.send-code-limit-reached":
+			"Limite atingido. Por favor, tente novamente mais tarde.",
 	},
 	ru: {
 		"verify-sms.code-message": (code) => `Ваш код подтверждения - ${code}`,
@@ -202,6 +221,8 @@ export const translations: Translations<Text> = {
 			"Достигнут дневной лимит. Пожалуйста, попробуйте позже.",
 		"verify-sms-problem.verification-expired-not-latest-verifcation":
 			"Подтверждение истекло, потому что это не последнее подтверждение",
+		"verify-sms-problem.send-code-limit-reached":
+			"Лимит достигнут. Пожалуйста, попробуйте позже.",
 	},
 	zh: {
 		"verify-sms.code-message": (code) => `您的验证码是${code}`,
@@ -218,5 +239,6 @@ export const translations: Translations<Text> = {
 			"已达到每日限制。请稍后再试。",
 		"verify-sms-problem.verification-expired-not-latest-verifcation":
 			"验证已过期，因为它不是最新的验证",
+		"verify-sms-problem.send-code-limit-reached": "已达到限制。请稍后再试。",
 	},
 };

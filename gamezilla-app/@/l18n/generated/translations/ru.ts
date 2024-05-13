@@ -30,6 +30,8 @@ export const translations: Text = {
 		"Достигнут дневной лимит. Пожалуйста, попробуйте позже.",
 	"verify-sms-problem.verification-expired-not-latest-verifcation":
 		"Подтверждение истекло, потому что это не последнее подтверждение",
+	"verify-sms-problem.send-code-limit-reached":
+		"Лимит достигнут. Пожалуйста, попробуйте позже.",
 	"auth-sms.login-with-phone": "Войти с телефона",
 	"auth-sms.phone-number": "Номер телефона",
 	"auth-sms.send-code": "Отправить код",

@@ -26,6 +26,17 @@ export const VerifySMSProvider = (deps: Deps): IVerifySMSProvider => {
 				deps.logger.info(`Sent code to ${to}}`);
 				return Ok(null);
 			} catch (error) {
+				const twilioCode =
+					typeof error === "object" && error && "code" in error
+						? Number(error.code)
+						: null;
+
+				// https://www.twilio.com/docs/api/errors/60203
+				if (twilioCode === 60203) {
+					return Err({
+						t: "limit-reached",
+					});
+				}
 				return Err({
 					t: "database-error",
 					error: String(error),
@@ -57,6 +68,18 @@ export const VerifySMSProvider = (deps: Deps): IVerifySMSProvider => {
 					t: "code-incorrect",
 				});
 			} catch (error) {
+				const twilioCode =
+					typeof error === "object" && error && "code" in error
+						? Number(error.code)
+						: null;
+
+				// https://www.twilio.com/docs/errors/60200
+				if (twilioCode === 60200) {
+					return Err({
+						t: "code-incorrect",
+					});
+				}
+
 				return Err({
 					t: "database-error",
 					error: String(error),

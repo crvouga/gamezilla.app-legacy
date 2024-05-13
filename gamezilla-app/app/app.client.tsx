@@ -560,7 +560,7 @@ export const View = (props: {
 
 	return (
 		<div
-			className="fixed left-1/2 top-1/2 flex h-[100dvh] w-screen select-none items-center justify-center overflow-hidden bg-black text-white"
+			className="fixed left-1/2 top-1/2 flex h-[100dvh] w-screen items-center justify-center overflow-hidden bg-black text-white"
 			style={{ transform: "translate(-50%, -50%)" }}
 		>
 			<div className="relative flex h-full max-h-[915px] w-full max-w-[520px] flex-col items-center justify-center overflow-hidden rounded border border-neutral-700">

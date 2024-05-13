@@ -28,6 +28,8 @@ export const translations: Text = {
 		"1日の制限に達しました。後でもう一度お試しください。",
 	"verify-sms-problem.verification-expired-not-latest-verifcation":
 		"最新の検証ではないため、検証が期限切れになりました",
+	"verify-sms-problem.send-code-limit-reached":
+		"制限に達しました。後でもう一度お試しください。",
 	"auth-sms.login-with-phone": "電話でログイン",
 	"auth-sms.phone-number": "電話番号",
 	"auth-sms.send-code": "コードを送信",

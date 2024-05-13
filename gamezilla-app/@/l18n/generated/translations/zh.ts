@@ -28,6 +28,7 @@ export const translations: Text = {
 		"已达到每日限制。请稍后再试。",
 	"verify-sms-problem.verification-expired-not-latest-verifcation":
 		"验证已过期，因为它不是最新的验证",
+	"verify-sms-problem.send-code-limit-reached": "已达到限制。请稍后再试。",
 	"auth-sms.login-with-phone": "使用电话登录",
 	"auth-sms.phone-number": "电话号码",
 	"auth-sms.send-code": "发送代码",

@@ -28,6 +28,8 @@ export const translations: Text = {
 		"일일 제한에 도달했습니다. 나중에 다시 시도하십시오.",
 	"verify-sms-problem.verification-expired-not-latest-verifcation":
 		"최신 인증이 아니기 때문에 인증이 만료되었습니다",
+	"verify-sms-problem.send-code-limit-reached":
+		"제한에 도달했습니다. 나중에 다시 시도하십시오.",
 	"auth-sms.login-with-phone": "전화로 로그인",
 	"auth-sms.phone-number": "전화 번호",
 	"auth-sms.send-code": "코드 보내기",

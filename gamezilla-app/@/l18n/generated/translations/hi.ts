@@ -28,6 +28,8 @@ export const translations: Text = {
 		"दैनिक सीमा पहुंच गई है। कृपया बाद में पुन: प्रयास करें।",
 	"verify-sms-problem.verification-expired-not-latest-verifcation":
 		"सत्यापन समाप्त हो गया क्योंकि यह नवीनतम सत्यापन नहीं है",
+	"verify-sms-problem.send-code-limit-reached":
+		"सीमा पहुंच गई। कृपया बाद में पुन: प्रयास करें।",
 	"auth-sms.login-with-phone": "फोन से लॉगिन करें",
 	"auth-sms.phone-number": "फ़ोन नंबर",
 	"auth-sms.send-code": "कोड भेजें",

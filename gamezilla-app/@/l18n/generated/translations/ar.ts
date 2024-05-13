@@ -28,6 +28,8 @@ export const translations: Text = {
 		"تم الوصول إلى الحد اليومي. يرجى المحاولة مرة أخرى في وقت لاحق.",
 	"verify-sms-problem.verification-expired-not-latest-verifcation":
 		"انتهت صلاحية التحقق لأنها ليست أحدث عملية تحقق",
+	"verify-sms-problem.send-code-limit-reached":
+		"تم الوصول إلى الحد. يرجى المحاولة مرة أخرى في وقت لاحق.",
 	"auth-sms.login-with-phone": "تسجيل الدخول برقم الهاتف",
 	"auth-sms.phone-number": "رقم الهاتف",
 	"auth-sms.send-code": "إرسال الرمز",

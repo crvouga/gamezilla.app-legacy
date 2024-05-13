@@ -27,6 +27,8 @@ export const translations: Text = {
 		"Limite giornaliero raggiunto. Riprova più tardi.",
 	"verify-sms-problem.verification-expired-not-latest-verifcation":
 		"La verifica è scaduta perché non è l'ultima verifica",
+	"verify-sms-problem.send-code-limit-reached":
+		"Limite raggiunto. Riprova più tardi.",
 	"auth-sms.login-with-phone": "Accedi con il telefono",
 	"auth-sms.phone-number": "Numero di telefono",
 	"auth-sms.send-code": "Invia codice",

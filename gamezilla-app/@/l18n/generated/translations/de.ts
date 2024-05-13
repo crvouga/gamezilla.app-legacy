@@ -28,6 +28,8 @@ export const translations: Text = {
 		"Tägliches Limit erreicht. Bitte versuchen Sie es später erneut.",
 	"verify-sms-problem.verification-expired-not-latest-verifcation":
 		"Verifizierung abgelaufen, weil es nicht die neueste Verifizierung ist",
+	"verify-sms-problem.send-code-limit-reached":
+		"Limit erreicht. Bitte versuchen Sie es später erneut.",
 	"auth-sms.login-with-phone": "Mit Telefonnummer anmelden",
 	"auth-sms.phone-number": "Telefonnummer",
 	"auth-sms.send-code": "Code senden",

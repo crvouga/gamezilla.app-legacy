@@ -30,6 +30,8 @@ export const translations: Text = {
 		"Limite quotidienne atteinte. Veuillez réessayer plus tard.",
 	"verify-sms-problem.verification-expired-not-latest-verifcation":
 		"La vérification a expiré car ce n'est pas la dernière vérification",
+	"verify-sms-problem.send-code-limit-reached":
+		"Limite atteinte. Veuillez réessayer plus tard.",
 	"auth-sms.login-with-phone": "Se connecter avec le téléphone",
 	"auth-sms.phone-number": "Numéro de téléphone",
 	"auth-sms.send-code": "Envoyer le code",
