@@ -1,9 +1,9 @@
 import { Posix } from "gamezilla-app/@/core";
 import { ClientId, SessionId } from "../data";
-import { DbConnKv, IDbConnKv } from "./db-conn-kv";
+import { DbConnKv, type IDbConnKv } from "./db-conn-kv";
 import { DbConnSql, type IDbConnSql } from "./db-conn-sql";
 import { ILogger, Logger } from "./logger";
-import { ServerCtx } from "./server-ctx";
+import type { ServerCtx } from "./server-ctx";
 import { SMS } from "./sms";
 
 export type ITestEnv =

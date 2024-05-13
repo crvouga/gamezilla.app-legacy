@@ -1,6 +1,6 @@
 import { Ok, PhoneNumber } from "gamezilla-app/@/core";
 import type { ISMS } from "./sms";
-import { ILogger } from "../logger";
+import type { ILogger } from "../logger";
 
 export const SMSFake = ({
 	logger,

@@ -96,6 +96,7 @@ export const getDeps = async ({
 		}),
 
 		async (dbConnKv) =>
+			// biome-ignore lint/correctness/noConstantCondition: <explanation>
 			true
 				? dbConnKv
 				: IDbConnKv.withThrottlingWrites({
@@ -105,6 +106,7 @@ export const getDeps = async ({
 					}),
 
 		async (dbConnKv) =>
+			// biome-ignore lint/correctness/noConstantCondition: <explanation>
 			true
 				? dbConnKv
 				: IDbConnKv.withCache({

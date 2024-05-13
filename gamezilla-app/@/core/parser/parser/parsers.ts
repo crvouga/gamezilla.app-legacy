@@ -375,6 +375,7 @@ export const unknown: Parser<unknown> = {
 	},
 };
 
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export const any: Parser<any> = {
 	parse(input) {
 		return Ok(input);
@@ -488,5 +489,23 @@ export const json: Parser<Json> = {
 				},
 			]);
 		}
+	},
+};
+
+export const bool: Parser<boolean> = {
+	parse(input) {
+		if (typeof input !== "boolean") {
+			return Err([
+				{
+					message: toErrorMessage(
+						"boolean",
+						typeof input,
+						JSON.stringify(input),
+					),
+					path: [],
+				},
+			]);
+		}
+		return Ok(input);
 	},
 };
