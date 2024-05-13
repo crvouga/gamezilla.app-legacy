@@ -33,7 +33,7 @@ import {
 	type VerifyCodeProblem,
 } from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl/verify-sms-impl";
-import { VerifySMSProvider } from "./verify-sms/verify-sms-impl/verify-sms-impl-real/verify-sms-provider";
+import { VerifySMSProvider } from "./verify-sms/verify-sms-impl/verify-sms-impl-in-house/verify-sms-provider";
 
 //
 //
@@ -106,7 +106,7 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 			dbConnSql: ctx.dbConnSql,
 		}),
 		VerifySMS: VerifySMS({
-			t: "real",
+			t: "in-house",
 			logger: ctx.logger,
 			hashing,
 			now: Posix.now,

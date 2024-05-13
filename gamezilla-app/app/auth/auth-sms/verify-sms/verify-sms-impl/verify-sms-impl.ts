@@ -1,10 +1,10 @@
 import { Ok, PhoneNumber } from "gamezilla-app/@/core";
 import type { IVerifySMS } from "../verify-sms";
 import * as ImplFake from "./verify-sms-impl-fake";
-import * as ImplReal from "./verify-sms-impl-real";
+import * as ImplInHouse from "./verify-sms-impl-in-house";
 
 export type Impl =
-	| ({ t: "real" } & ImplReal.VerifySMSDeps)
+	| ({ t: "in-house" } & ImplInHouse.VerifySMSDeps)
 	| ({ t: "fake" } & ImplFake.VerifySMSDeps)
 	| { t: "fake-always-ok"; phoneNumber?: PhoneNumber };
 
@@ -25,8 +25,8 @@ export const VerifySMS = (impl: Impl): IVerifySMS => {
 			};
 		}
 
-		case "real": {
-			return ImplReal.VerifySMS(impl);
+		case "in-house": {
+			return ImplInHouse.VerifySMS(impl);
 		}
 	}
 };

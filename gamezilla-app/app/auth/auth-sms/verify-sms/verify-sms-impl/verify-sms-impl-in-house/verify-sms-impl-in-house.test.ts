@@ -8,83 +8,14 @@ import {
 	isOk,
 	unwrap,
 } from "gamezilla-app/@/core";
-import { Hashing, type IHashing } from "gamezilla-app/@/hashing";
-import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
+import { Hashing } from "gamezilla-app/@/hashing";
 import { Translator } from "gamezilla-app/app/@/client/translator";
-import { Logger } from "gamezilla-app/app/@/server/logger";
-import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
-import { VerificationAttemptDb } from "../../verification-attempt";
 import {
-	VerificationCodeGenerator,
-	type IVerificationCodeGenerator,
-} from "../../verification-code-generator";
-import {
-	VerificationDb,
-	type IVerificationDb,
+	VerificationDb
 } from "../../verification/verification-db";
-import { VerifySMS } from "../verify-sms-impl";
-import { VerifySMSProvider } from "./verify-sms-provider";
+import { VerifySMSInHouseFixture } from "./verify-sms-impl-in-house.test-fixture";
 
-const Fixture = async (input?: {
-	verifyCodeMaxAttempts?: number;
-	verifyCodeExpiresIn?: TimeSpan;
-	sendCodeHourlyLimit?: number;
-	sendCodeDailyLimit?: number;
-	codeGenerator?: IVerificationCodeGenerator;
-	now?: () => Posix;
-	hashing?: IHashing;
-	verificationDb?: IVerificationDb;
-}) => {
-	const sms = SMSFake({ logger: Logger({ t: "noop" }) });
-	const CODE = "123456";
-	const WRONG_CODE = "42";
-	const verificationCodeGenerator =
-		input?.codeGenerator ??
-		VerificationCodeGenerator({ t: "fake", code: CODE });
-	const logger = Logger({ t: "noop" });
-	const verificationDb =
-		input?.verificationDb ?? VerificationDb({ t: "hash-map" });
-	const verificationAttemptDb = VerificationAttemptDb({ t: "hash-map" });
-	const hashing = input?.hashing ?? Hashing({ t: "noop" });
-
-	const verifySMSProvider = VerifySMSProvider({
-		t: "in-house",
-		hashing,
-		logger,
-		now: input?.now ?? Posix.now,
-		sms,
-		verificationCodeGenerator,
-		Translator,
-		verificationDb,
-	});
-
-	const verifySMS = VerifySMS({
-		t: "real",
-		logger,
-		verificationDb,
-		verificationAttemptDb,
-		hashing,
-		now: input?.now ?? Posix.now,
-		sendCodeHourlyLimit: input?.sendCodeHourlyLimit ?? 10,
-		sendCodeDailyLimit: input?.sendCodeDailyLimit ?? 10,
-		verifyCodeExpiresIn: input?.verifyCodeExpiresIn ?? TimeSpan.minutes(5),
-		verifyCodeMaxAttempts: input?.verifyCodeMaxAttempts ?? 3,
-		provider: verifySMSProvider,
-	});
-
-	const phoneNumber = unwrap(PhoneNumber.fromString("+1 480-209-8698"));
-	const preferredLanguage: LanguageCodeISO_639_1 = "en";
-
-	return {
-		preferredLanguage,
-		verificationDb,
-		CODE,
-		WRONG_CODE,
-		phoneNumber,
-		verifySMS,
-		sms,
-	};
-};
+const Fixture = VerifySMSInHouseFixture
 
 describe(import.meta.file, () => {
 	it("should be ok", async () => {
