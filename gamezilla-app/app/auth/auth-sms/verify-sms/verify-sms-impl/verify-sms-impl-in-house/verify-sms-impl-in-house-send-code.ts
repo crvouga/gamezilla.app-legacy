@@ -1,10 +1,10 @@
 import { Err, Ok, Posix, TimeSpan, isErr } from "gamezilla-app/@/core";
 import { VerificationId, type Verification } from "../../verification";
 import type { IVerifySMS } from "../../verify-sms";
-import { VerifySMSDeps } from "./shared";
+import { Deps } from "./shared";
 
 export const SendCode =
-	(deps: VerifySMSDeps): IVerifySMS["sendCode"] =>
+	(deps: Deps): IVerifySMS["sendCode"] =>
 	async (input) => {
 		const now = deps.now();
 
@@ -60,13 +60,20 @@ export const SendCode =
 
 		const createdAt = deps.now();
 
+		const code = deps.verificationCodeGenerator.generate();
+
 		const verificationNew: Verification = {
-			codeHash: null,
 			phoneNumber: input.phoneNumber,
 			createdAt,
 			expiresAt: Posix.future(createdAt, deps.verifyCodeExpiresIn),
 			verificationId: VerificationId.generate(),
 			verifiedAt: null,
+			codeHash: await deps.hashing.hash({
+				algo: {
+					t: "sha256",
+				},
+				password: code,
+			}),
 		};
 
 		const upserted = await deps.verificationDb.put(verificationNew);
@@ -78,13 +85,28 @@ export const SendCode =
 			});
 		}
 
-		const sent = await deps.provider.sendCode({
+		const put = await deps.verificationDb.put(verificationNew);
+
+		if (isErr(put)) {
+			return Err({
+				t: "database-error",
+				error: put.error,
+			});
+		}
+
+		const sent = await deps.sms.sendMessage({
+			message: deps.Translator(input.preferredLanguage)(
+				"verify-sms.code-message",
+				code,
+			),
 			phoneNumber: input.phoneNumber,
-			preferredLanguage: input.preferredLanguage,
 		});
 
 		if (isErr(sent)) {
-			return sent;
+			return Err({
+				t: "database-error",
+				error: sent.error,
+			});
 		}
 
 		return Ok(null);

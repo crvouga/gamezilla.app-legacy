@@ -1,9 +1,4 @@
-import {
-	PhoneNumber,
-	Posix,
-	TimeSpan,
-	unwrap
-} from "gamezilla-app/@/core";
+import { PhoneNumber, Posix, TimeSpan, unwrap } from "gamezilla-app/@/core";
 import { Hashing, type IHashing } from "gamezilla-app/@/hashing";
 import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 import { Translator } from "gamezilla-app/app/@/client/translator";
@@ -19,7 +14,6 @@ import {
 	type IVerificationDb,
 } from "../../verification/verification-db";
 import { VerifySMS } from "../verify-sms-impl";
-import { VerifySMSProvider } from "./verify-sms-provider";
 
 export const VerifySMSInHouseFixture = async (input?: {
 	verifyCodeMaxAttempts?: number;
@@ -43,17 +37,6 @@ export const VerifySMSInHouseFixture = async (input?: {
 	const verificationAttemptDb = VerificationAttemptDb({ t: "hash-map" });
 	const hashing = input?.hashing ?? Hashing({ t: "noop" });
 
-	const verifySMSProvider = VerifySMSProvider({
-		t: "in-house",
-		hashing,
-		logger,
-		now: input?.now ?? Posix.now,
-		sms,
-		verificationCodeGenerator,
-		Translator,
-		verificationDb,
-	});
-
 	const verifySMS = VerifySMS({
 		t: "in-house",
 		logger,
@@ -65,7 +48,9 @@ export const VerifySMSInHouseFixture = async (input?: {
 		sendCodeDailyLimit: input?.sendCodeDailyLimit ?? 10,
 		verifyCodeExpiresIn: input?.verifyCodeExpiresIn ?? TimeSpan.minutes(5),
 		verifyCodeMaxAttempts: input?.verifyCodeMaxAttempts ?? 3,
-		provider: verifySMSProvider,
+		sms,
+		Translator,
+		verificationCodeGenerator,
 	});
 
 	const phoneNumber = unwrap(PhoneNumber.fromString("+1 480-209-8698"));

@@ -10,12 +10,10 @@ import {
 } from "gamezilla-app/@/core";
 import { Hashing } from "gamezilla-app/@/hashing";
 import { Translator } from "gamezilla-app/app/@/client/translator";
-import {
-	VerificationDb
-} from "../../verification/verification-db";
+import { VerificationDb } from "../../verification/verification-db";
 import { VerifySMSInHouseFixture } from "./verify-sms-impl-in-house.test-fixture";
 
-const Fixture = VerifySMSInHouseFixture
+const Fixture = VerifySMSInHouseFixture;
 
 describe(import.meta.file, () => {
 	it("should be ok", async () => {

@@ -33,7 +33,6 @@ import {
 	type VerifyCodeProblem,
 } from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl/verify-sms-impl";
-import { VerifySMSProvider } from "./verify-sms/verify-sms-impl/verify-sms-impl-in-house/verify-sms-provider";
 
 //
 //
@@ -76,48 +75,45 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 
 	const hashing = Hashing({ t: "bun" });
 
-	const providerInHouse = VerifySMSProvider({
-		t: "in-house",
-		hashing,
-		logger: ctx.logger,
-		now: Posix.now,
-		sms: SMS({
-			t: "fake",
-			logger: ILogger.prefix("sms", ctx.logger),
-		}),
-		Translator,
-		verificationCodeGenerator: VerificationCodeGenerator({
-			t: "fake",
-			code: "123",
-		}),
-		verificationDb,
+	const verificationCodeGenerator = VerificationCodeGenerator({
+		t: "fake",
+		code: "123",
 	});
 
-	const providerTwilio = VerifySMSProvider({
+	const sms = SMS({
+		t: "fake",
+		logger: ILogger.prefix("sms", ctx.logger),
+	});
+
+	const verifySMSInHouse = VerifySMS({
+		t: "in-house",
+		logger: ctx.logger,
+		hashing,
+		now: Posix.now,
+		sendCodeDailyLimit: 1000,
+		sendCodeHourlyLimit: 100,
+		verificationAttemptDb,
+		verificationDb,
+		verifyCodeExpiresIn: TimeSpan.minutes(5),
+		verifyCodeMaxAttempts: 3,
+		sms,
+		Translator,
+		verificationCodeGenerator,
+	});
+
+	const verifySMSTwilio = VerifySMS({
 		t: "twilio",
 		logger: ILogger.prefix("twilio-verify", ctx.logger),
 	});
 
-	const provider = ctx.env === "prod" ? providerTwilio : providerInHouse;
+	const verifySMS = ctx.env === "prod" ? verifySMSTwilio : verifySMSInHouse;
 
 	return {
 		AccountDb: AccountDb({
 			t: "postgres",
 			dbConnSql: ctx.dbConnSql,
 		}),
-		VerifySMS: VerifySMS({
-			t: "in-house",
-			logger: ctx.logger,
-			hashing,
-			now: Posix.now,
-			sendCodeDailyLimit: 1000,
-			sendCodeHourlyLimit: 100,
-			verificationAttemptDb,
-			verificationDb,
-			verifyCodeExpiresIn: TimeSpan.minutes(5),
-			verifyCodeMaxAttempts: 3,
-			provider,
-		}),
+		VerifySMS: verifySMS,
 	};
 };
 

@@ -5,10 +5,10 @@ import {
 	type VerificationAttempt,
 } from "../../verification-attempt";
 import type { IVerifySMS } from "../../verify-sms";
-import type { VerifySMSDeps } from "./shared";
+import type { Deps } from "./shared";
 
 export const VerifyCode =
-	(deps: VerifySMSDeps): IVerifySMS["verifyCode"] =>
+	(deps: Deps): IVerifySMS["verifyCode"] =>
 	async (input) => {
 		deps.logger.info(
 			`Verifying code for ${PhoneNumber.toString(input.phoneNumber)}`,
@@ -121,13 +121,21 @@ export const VerifyCode =
 
 		await deps.verificationAttemptDb.insert(newAttempt);
 
-		const verified = await deps.provider.verifyCode({
-			code: input.code,
-			phoneNumber: verification.phoneNumber,
+		if (!verification.codeHash) {
+			return Err({
+				t: "verification-not-found",
+			});
+		}
+
+		const isCorrect = await deps.hashing.check({
+			hash: verification.codeHash,
+			password: input.code,
 		});
 
-		if (isErr(verified)) {
-			return verified;
+		if (!isCorrect) {
+			return Err({
+				t: "code-incorrect",
+			});
 		}
 
 		const verificationNew: Verification = {
