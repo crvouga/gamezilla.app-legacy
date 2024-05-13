@@ -19,7 +19,7 @@ export type ITestEnv =
 
 export const AppServerTestEnv = async (): Promise<ITestEnv> => {
 	if (process.env["IS_INTEGRATION_TEST"] === "true") {
-		const logger = ILogger.prefix('integration-test', Logger({ t: "noop" }));
+		const logger = ILogger.prefix("integration-test", Logger({ t: "noop" }));
 
 		const DATABASE_URL = process.env["DATABASE_URL"];
 
@@ -30,7 +30,7 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
 		const dbConnSql = await DbConnSql({
 			t: "postgres",
 			databaseUrl: DATABASE_URL,
-			logger: ILogger.prefix('db-conn-sql', logger),
+			logger: ILogger.prefix("db-conn-sql", logger),
 		});
 
 		const REDIS_URL = process.env["REDIS_URL"];
@@ -40,10 +40,10 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
 		}
 
 		const dbConnKv = await DbConnKv({
-			t: 'redis',
-			logger: ILogger.prefix('db-conn-kv', logger),
+			t: "redis",
+			logger: ILogger.prefix("db-conn-kv", logger),
 			url: REDIS_URL,
-		})
+		});
 
 		return {
 			t: "integration",
@@ -54,7 +54,7 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
 
 	return {
 		t: "unit",
-		dbConnKv: await DbConnKv({ t: 'hash-map'})
+		dbConnKv: await DbConnKv({ t: "hash-map" }),
 	};
 };
 

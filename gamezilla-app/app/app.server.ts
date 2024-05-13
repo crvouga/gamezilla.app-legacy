@@ -96,23 +96,27 @@ export const getDeps = async ({
 		}),
 
 		async (dbConnKv) =>
-			IDbConnKv.withThrottlingWrites({
-				logger: ILogger.prefix("with-throttling-writes", loggerDbConnKv),
-				dbConnKv: await dbConnKv,
-				throttle: TimeSpan.seconds(3),
-			}),
+			true
+				? dbConnKv
+				: IDbConnKv.withThrottlingWrites({
+						logger: ILogger.prefix("with-throttling-writes", loggerDbConnKv),
+						dbConnKv: await dbConnKv,
+						throttle: TimeSpan.seconds(3),
+					}),
 
 		async (dbConnKv) =>
-			IDbConnKv.withCache({
-				logger: ILogger.prefix("with-cache", loggerDbConnKv),
-				source: await dbConnKv,
-				cache: await DbConnKv({
-					t: "hash-map",
-					map: LRUCache({
-						maxCapcity: 1000,
+			true
+				? dbConnKv
+				: IDbConnKv.withCache({
+						logger: ILogger.prefix("with-cache", loggerDbConnKv),
+						source: await dbConnKv,
+						cache: await DbConnKv({
+							t: "hash-map",
+							map: LRUCache({
+								maxCapcity: 1000,
+							}),
+						}),
 					}),
-				}),
-			}),
 
 		async (dbConnKv) =>
 			IDbConnKv.withReducedParsing({

@@ -10,9 +10,9 @@ const FixtureVariant = async () => {
 		case "integration": {
 			return {
 				sessionDb: SessionDb({
-                    t: "postgres-with-db-kv-cache",
-                    dbConnKv: testEnv.dbConnKv,
-                    dbConnSql: testEnv.dbConnSql,        
+					t: "postgres-with-db-kv-cache",
+					dbConnKv: testEnv.dbConnKv,
+					dbConnSql: testEnv.dbConnSql,
 				}),
 			};
 		}
@@ -44,18 +44,18 @@ const Fixture = async () => {
 			sessionId: SessionId.generate(),
 			userId,
 		},
-        {
-            sessionId: SessionId.generate(),
-            userId: UserId.generate(),
-        },
-        {
-            sessionId: SessionId.generate(),
-            userId: UserId.generate(),
-        },
-        {
-            sessionId: SessionId.generate(),
-            userId: UserId.generate(),
-        },
+		{
+			sessionId: SessionId.generate(),
+			userId: UserId.generate(),
+		},
+		{
+			sessionId: SessionId.generate(),
+			userId: UserId.generate(),
+		},
+		{
+			sessionId: SessionId.generate(),
+			userId: UserId.generate(),
+		},
 	] as const;
 	for (const session of sessions) {
 		await f.sessionDb.insert(session);
@@ -85,8 +85,10 @@ describe(import.meta.file, () => {
 	it("should find session ids by user id", async () => {
 		const f = await Fixture();
 		const sessionIds = await f.sessionDb.findSessionIdsByUserId(f.userId);
-        expect(sessionIds.t).toBe("ok");
-        const expected = f.sessions.filter(s => s.userId === f.userId).map(s => s.sessionId);
+		expect(sessionIds.t).toBe("ok");
+		const expected = f.sessions
+			.filter((s) => s.userId === f.userId)
+			.map((s) => s.sessionId);
 		expect(unwrap(sessionIds)).toEqual(expected);
 	});
 
@@ -94,7 +96,7 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		await f.sessionDb.zapByUserId(f.userId);
 		const sessionIds = await f.sessionDb.findSessionIdsByUserId(f.userId);
-		expect(sessionIds.t).toBe("ok"); 
+		expect(sessionIds.t).toBe("ok");
 		expect(unwrap(sessionIds)).toEqual([]);
 	});
 
@@ -103,9 +105,11 @@ describe(import.meta.file, () => {
 		await f.sessionDb.zapBySessionId(f.sessions[0].sessionId);
 		const sessionIds = await f.sessionDb.findSessionIdsByUserId(f.userId);
 		expect(sessionIds.t).toBe("ok");
-        const expected = f.sessions
-			.filter(s => s.userId === f.userId && s.sessionId !== f.sessions[0].sessionId)
-            .map(s => s.sessionId)
+		const expected = f.sessions
+			.filter(
+				(s) => s.userId === f.userId && s.sessionId !== f.sessions[0].sessionId,
+			)
+			.map((s) => s.sessionId);
 		expect(unwrap(sessionIds)).toEqual(expected);
 	});
 });
