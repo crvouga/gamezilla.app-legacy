@@ -45,7 +45,7 @@ export const VerifySMSProvider = (deps: Deps): IVerifySMSProvider => {
 			if (!verification) {
 				return Err({
 					t: "database-error",
-					error: "Verification not put in database",
+					error: "Bad logic. Verification not put in database before sending code.",
 				});
 			}
 
