@@ -270,7 +270,7 @@ const updateFromMsg: Module["update"] = (input) => {
 						model.sendCode.t === "loading" &&
 						TimeSpan.gte(
 							Posix.diff(ctx.now, model.sentCodeAt),
-							TimeSpan.seconds(5),
+							TimeSpan.seconds(30),
 						)
 					) {
 						return {
@@ -292,7 +292,7 @@ const updateFromMsg: Module["update"] = (input) => {
 						model.verifyCode.t === "loading" &&
 						TimeSpan.gte(
 							Posix.diff(ctx.now, model.verifiedCodeAt),
-							TimeSpan.seconds(10),
+							TimeSpan.seconds(30),
 						)
 					) {
 						return {

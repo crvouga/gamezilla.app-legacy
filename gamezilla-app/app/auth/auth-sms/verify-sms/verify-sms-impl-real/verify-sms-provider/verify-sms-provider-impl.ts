@@ -12,7 +12,7 @@ export const VerifySMSProvider = (impl: Impl): IVerifySMSProvider => {
 			return ImplInHouse.VerifySMSProvider(impl);
 		}
 		case "twilio": {
-			return ImplTwilio.VerifySMSProvider();
+			return ImplTwilio.VerifySMSProvider(impl);
 		}
 	}
 };

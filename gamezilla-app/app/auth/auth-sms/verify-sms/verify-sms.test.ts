@@ -62,9 +62,6 @@ const Fixture = async (input?: {
 	const verifySMS = VerifySMS({
 		t: "real",
 		logger,
-		sms,
-		verificationCodeGenerator,
-		Translator: Translator,
 		verificationDb,
 		verificationAttemptDb,
 		hashing,

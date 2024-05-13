@@ -2,71 +2,71 @@
 import type { Text } from "../text";
 
 export const translations: Text = {
-  "auth.logged-in-as-guest": "Вошел как гость",
-  "auth.logged-in-with-phone": "Вошел с телефона",
-  "auth.current-user-logged-out": "Вышел",
-  "auth.current-user-logged-in": "Вошел",
-  "auth.continue-as-guest": "Продолжить как гость",
-  "auth.continue-with-phone": "Продолжить с телефоном",
-  "auth.or": "или",
-  "auth.sign-in-to": "Войти в",
-  "auth.logged-in": "Вошел",
-  "auth.logout-of-gamezill.app": "Выйти из gamezilla.app",
-  "auth.logout-of-gamezill.app-body": "Вы уверены, что хотите выйти?",
-  "verify-sms.code-message": (code) =>
-    `\u0412\u0430\u0448 \u043A\u043E\u0434 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F - ${code}`,
-  "verify-sms-problem.code-incorrect": "Неверный код",
-  "verify-sms-problem.database-error": "Ошибка базы данных",
-  "verify-sms-problem.verification-already-verified":
-    "Подтверждение уже подтверждено",
-  "verify-sms-problem.verification-expired":
-    "Истек срок действия подтверждения",
-  "verify-sms-problem.verification-not-found": "Подтверждение не найдено",
-  "verify-sms-problem.verification-expired-too-many-failed-attempts":
-    "Истек срок действия подтверждения из-за слишком многих неудачных попыток",
-  "verify-sms-problem.send-code-hourly-limit-reached":
-    "Достигнут часовой лимит. Пожалуйста, попробуйте позже.",
-  "verify-sms-problem.send-code-daily-limit-reached":
-    "Достигнут дневной лимит. Пожалуйста, попробуйте позже.",
-  "verify-sms-problem.verification-expired-not-latest-verifcation":
-    "Подтверждение истекло, потому что это не последнее подтверждение",
-  "auth-sms.login-with-phone": "Войти с телефона",
-  "auth-sms.phone-number": "Номер телефона",
-  "auth-sms.send-code": "Отправить код",
-  "auth-sms.country": "Страна",
-  "auth-sms.code": "Код",
-  "auth-sms.verify-code": "Проверить",
-  "auth-sms.invalid-phone-number": "Неверный номер телефона",
-  "spaces.current-user-joined-space": "Присоединился к пространству",
-  "spaces.other-user-joined-space": (username) =>
-    username
-      ? `${username} \u043F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443`
-      : "\u041F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443",
-  "spaces.space-not-found": "Пространство не найдено",
-  "spaces.go-home": "Иди домой",
-  "spaces.current-user-ended-space": "Пространство закончено",
-  "spaces.other-user-ended-space": (username) =>
-    username
-      ? `${username} \u0437\u0430\u043A\u043E\u043D\u0447\u0438\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`
-      : "\u041F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E \u0437\u0430\u043A\u043E\u043D\u0447\u0435\u043D\u043E",
-  "spaces.see-profile": "Посмотреть профиль",
-  host: "Хост",
-  you: "Вы",
-  "lang.language": "Язык",
-  "lang.choose-language": "Выберите язык",
-  "lang.done": "Готово",
-  "lang.loaded-translations": "Загруженные переводы",
-  "app.something-went-wrong": "Что-то пошло не так",
-  en: "Английский",
-  es: "Испанский",
-  ar: "Арабский",
-  de: "Немецкий",
-  fr: "Французский",
-  hi: "Хинди",
-  it: "Итальянский",
-  ja: "Японский",
-  ko: "Корейский",
-  pt: "Португальский",
-  ru: "Русский",
-  zh: "Китайский",
+	"auth.logged-in-as-guest": "Вошел как гость",
+	"auth.logged-in-with-phone": "Вошел с телефона",
+	"auth.current-user-logged-out": "Вышел",
+	"auth.current-user-logged-in": "Вошел",
+	"auth.continue-as-guest": "Продолжить как гость",
+	"auth.continue-with-phone": "Продолжить с телефоном",
+	"auth.or": "или",
+	"auth.sign-in-to": "Войти в",
+	"auth.logged-in": "Вошел",
+	"auth.logout-of-gamezill.app": "Выйти из gamezilla.app",
+	"auth.logout-of-gamezill.app-body": "Вы уверены, что хотите выйти?",
+	"verify-sms.code-message": (code) =>
+		`\u0412\u0430\u0448 \u043A\u043E\u0434 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u044F - ${code}`,
+	"verify-sms-problem.code-incorrect": "Неверный код",
+	"verify-sms-problem.database-error": "Ошибка базы данных",
+	"verify-sms-problem.verification-already-verified":
+		"Подтверждение уже подтверждено",
+	"verify-sms-problem.verification-expired":
+		"Истек срок действия подтверждения",
+	"verify-sms-problem.verification-not-found": "Подтверждение не найдено",
+	"verify-sms-problem.verification-expired-too-many-failed-attempts":
+		"Истек срок действия подтверждения из-за слишком многих неудачных попыток",
+	"verify-sms-problem.send-code-hourly-limit-reached":
+		"Достигнут часовой лимит. Пожалуйста, попробуйте позже.",
+	"verify-sms-problem.send-code-daily-limit-reached":
+		"Достигнут дневной лимит. Пожалуйста, попробуйте позже.",
+	"verify-sms-problem.verification-expired-not-latest-verifcation":
+		"Подтверждение истекло, потому что это не последнее подтверждение",
+	"auth-sms.login-with-phone": "Войти с телефона",
+	"auth-sms.phone-number": "Номер телефона",
+	"auth-sms.send-code": "Отправить код",
+	"auth-sms.country": "Страна",
+	"auth-sms.code": "Код",
+	"auth-sms.verify-code": "Проверить",
+	"auth-sms.invalid-phone-number": "Неверный номер телефона",
+	"spaces.current-user-joined-space": "Присоединился к пространству",
+	"spaces.other-user-joined-space": (username) =>
+		username
+			? `${username} \u043F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443`
+			: "\u041F\u0440\u0438\u0441\u043E\u0435\u0434\u0438\u043D\u0438\u043B\u0441\u044F \u043A \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443",
+	"spaces.space-not-found": "Пространство не найдено",
+	"spaces.go-home": "Иди домой",
+	"spaces.current-user-ended-space": "Пространство закончено",
+	"spaces.other-user-ended-space": (username) =>
+		username
+			? `${username} \u0437\u0430\u043A\u043E\u043D\u0447\u0438\u043B \u043F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E`
+			: "\u041F\u0440\u043E\u0441\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u043E \u0437\u0430\u043A\u043E\u043D\u0447\u0435\u043D\u043E",
+	"spaces.see-profile": "Посмотреть профиль",
+	host: "Хост",
+	you: "Вы",
+	"lang.language": "Язык",
+	"lang.choose-language": "Выберите язык",
+	"lang.done": "Готово",
+	"lang.loaded-translations": "Загруженные переводы",
+	"app.something-went-wrong": "Что-то пошло не так",
+	en: "Английский",
+	es: "Испанский",
+	ar: "Арабский",
+	de: "Немецкий",
+	fr: "Французский",
+	hi: "Хинди",
+	it: "Итальянский",
+	ja: "Японский",
+	ko: "Корейский",
+	pt: "Португальский",
+	ru: "Русский",
+	zh: "Китайский",
 };

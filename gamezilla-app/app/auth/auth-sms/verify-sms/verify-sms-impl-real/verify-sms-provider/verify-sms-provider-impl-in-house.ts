@@ -85,16 +85,7 @@ export const VerifySMSProvider = (deps: Deps): IVerifySMSProvider => {
 				});
 			}
 
-			const codeHash = await deps.hashing.hash({
-				algo: {
-					t: "sha256",
-				},
-				password: code,
-			});
-
-			return Ok({
-				codeHash,
-			});
+			return Ok(null);
 		},
 
 		async verifyCode(input) {
