@@ -7,6 +7,7 @@ import { IVerificationAttemptDb } from "../verification-attempt";
 import type { IVerificationCodeGenerator } from "../verification-code-generator";
 import type { IVerificationDb } from "../verification/verification-db";
 import { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
+import { IVerifySMSProvider } from "./verify-sms-provider";
 
 export type VerifySMSDeps = {
 	logger: ILogger;
@@ -21,4 +22,5 @@ export type VerifySMSDeps = {
 	verifyCodeExpiresIn: TimeSpan;
 	sendCodeHourlyLimit: number;
 	sendCodeDailyLimit: number;
+	provider: IVerifySMSProvider;
 };

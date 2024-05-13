@@ -58,19 +58,10 @@ export const SendCode =
 			});
 		}
 
-		const code = deps.verificationCodeGenerator.generate();
-
-		const codeHash = await deps.hashing.hash({
-			algo: {
-				t: "sha256",
-			},
-			password: code,
-		});
-
 		const createdAt = deps.now();
 
 		const verificationNew: Verification = {
-			codeHash: codeHash,
+			codeHash: null,
 			phoneNumber: input.phoneNumber,
 			createdAt,
 			expiresAt: Posix.future(createdAt, deps.verifyCodeExpiresIn),
@@ -87,19 +78,13 @@ export const SendCode =
 			});
 		}
 
-		const sent = await deps.sms.sendMessage({
-			message: deps.Translator(input.perferredLanguage)(
-				"verify-sms.code-message",
-				code,
-			),
+		const sent = await deps.provider.sendCode({
 			phoneNumber: input.phoneNumber,
+			perferredLanguage: input.perferredLanguage,
 		});
 
 		if (isErr(sent)) {
-			return Err({
-				t: "database-error",
-				error: sent.error,
-			});
+			return sent;
 		}
 
 		return Ok({

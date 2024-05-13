@@ -45,6 +45,30 @@ export const VerifyCode =
 			});
 		}
 
+		const foundLatestVerification = await deps.verificationDb.find({
+			where: {
+				phoneNumber: { "=": verification.phoneNumber },
+			},
+			order: {
+				createdAt: "desc",
+			},
+		});
+
+		if (isErr(foundLatestVerification)) {
+			return Err({
+				t: "database-error",
+				error: foundLatestVerification.error,
+			});
+		}
+
+		const latestVerification = foundLatestVerification.value.items[0];
+
+		if (latestVerification?.verificationId !== verification.verificationId) {
+			return Err({
+				t: "verification-expired-not-latest-verifcation",
+			});
+		}
+
 		const previousAttempts = await deps.verificationAttemptDb.find({
 			where: {
 				verificationId: {
@@ -67,9 +91,7 @@ export const VerifyCode =
 		}
 
 		const codeHash = await deps.hashing.hash({
-			algo: {
-				t: "sha256",
-			},
+			algo: { t: "sha256" },
 			password: input.code,
 		});
 
@@ -82,15 +104,13 @@ export const VerifyCode =
 
 		await deps.verificationAttemptDb.insert(newAttempt);
 
-		const isCorrect = await deps.hashing.check({
-			hash: verification.codeHash,
-			password: input.code,
+		const verified = await deps.provider.verifyCode({
+			code: input.code,
+			phoneNumber: verification.phoneNumber,
 		});
 
-		if (!isCorrect) {
-			return Err({
-				t: "code-incorrect",
-			});
+		if (isErr(verified)) {
+			return verified;
 		}
 
 		const verificationNew: Verification = {

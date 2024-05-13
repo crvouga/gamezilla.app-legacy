@@ -4,7 +4,7 @@ import { VerificationId } from "./verification-id";
 
 export type Verification = {
 	verificationId: VerificationId;
-	codeHash: Hash;
+	codeHash: Hash | null;
 	phoneNumber: PhoneNumber;
 	createdAt: Posix;
 	expiresAt: Posix;

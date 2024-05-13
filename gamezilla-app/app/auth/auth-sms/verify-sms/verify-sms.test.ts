@@ -24,6 +24,7 @@ import {
 import { VerifySMS } from "./verify-sms-impl";
 import { VerificationAttemptDb } from "./verification-attempt";
 import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
+import { VerifySMSProvider } from "./verify-sms-impl-real/verify-sms-provider";
 
 const Fixture = async (input?: {
 	verifyCodeMaxAttempts?: number;
@@ -47,6 +48,17 @@ const Fixture = async (input?: {
 	const verificationAttemptDb = VerificationAttemptDb({ t: "hash-map" });
 	const hashing = input?.hashing ?? Hashing({ t: "noop" });
 
+	const verifySMSProvider = VerifySMSProvider({
+		t: "in-house",
+		hashing,
+		logger,
+		now: input?.now ?? Posix.now,
+		sms,
+		verificationCodeGenerator,
+		Translator,
+		verificationDb,
+	});
+
 	const verifySMS = VerifySMS({
 		t: "real",
 		logger,
@@ -61,6 +73,7 @@ const Fixture = async (input?: {
 		sendCodeDailyLimit: input?.sendCodeDailyLimit ?? 10,
 		verifyCodeExpiresIn: input?.verifyCodeExpiresIn ?? TimeSpan.minutes(5),
 		verifyCodeMaxAttempts: input?.verifyCodeMaxAttempts ?? 3,
+		provider: verifySMSProvider,
 	});
 
 	const phoneNumber = unwrap(PhoneNumber.fromString("+1 480-209-8698"));
@@ -235,46 +248,38 @@ describe(import.meta.file, () => {
 		isErr(verified) && expect(verified.error.t).toBe("verification-expired");
 	});
 
-	it("should fail to verify code for the same phone number but different verification requests", async () => {
-		const CODE_A = "123456";
-		const CODE_B = "654321";
-
-		let currentCode: string;
+	it("should error if when verifying after a new code was sent", async () => {
+		let now = Posix.now();
 		const f = await Fixture({
-			codeGenerator: {
-				generate: () => currentCode,
-			},
+			now: () => now,
 		});
 
-		currentCode = CODE_A;
-		const sentA = await f.verifySMS.sendCode({
-			...f,
-			phoneNumber: f.phoneNumber,
-		});
-		const verificationIdA = unwrap(sentA).verificationId;
+		const sentA = await f.verifySMS.sendCode(f);
 
-		currentCode = CODE_B;
-		const sentB = await f.verifySMS.sendCode({
-			...f,
-			phoneNumber: f.phoneNumber,
-		});
-		const verificationIdB = unwrap(sentB).verificationId;
+		now = Posix.future(now, TimeSpan.seconds(1));
 
-		const verifiedAWithCodeB = await f.verifySMS.verifyCode({
-			verificationId: verificationIdA,
-			code: CODE_B,
-		});
-		const verifiedBWithCodeA = await f.verifySMS.verifyCode({
-			verificationId: verificationIdB,
-			code: CODE_A,
+		const sentB = await f.verifySMS.sendCode(f);
+
+		now = Posix.future(now, TimeSpan.seconds(1));
+
+		const verifiedA = await f.verifySMS.verifyCode({
+			verificationId: unwrap(sentA).verificationId,
+			code: f.CODE,
 		});
 
-		expect(isErr(verifiedAWithCodeB)).toBe(true);
-		isErr(verifiedAWithCodeB) &&
-			expect(verifiedAWithCodeB.error.t).toBe("code-incorrect");
-		expect(isErr(verifiedBWithCodeA)).toBe(true);
-		isErr(verifiedBWithCodeA) &&
-			expect(verifiedBWithCodeA.error.t).toBe("code-incorrect");
+		now = Posix.future(now, TimeSpan.seconds(1));
+
+		const verifiedB = await f.verifySMS.verifyCode({
+			verificationId: unwrap(sentB).verificationId,
+			code: f.CODE,
+		});
+
+		expect(isErr(verifiedA)).toBe(true);
+		isErr(verifiedA) &&
+			expect(verifiedA.error.t).toBe(
+				"verification-expired-not-latest-verifcation",
+			);
+		expect(isOk(verifiedB)).toBe(true);
 	});
 
 	it("should error sending code if hourly limit is reached", async () => {
@@ -421,7 +426,7 @@ describe(import.meta.file, () => {
 			},
 		});
 
-		const codeHash = unwrap(found).items[0]?.codeHash.value;
+		const codeHash = unwrap(found).items[0]?.codeHash?.value;
 
 		expect(isOk(verification)).toBe(true);
 		expect(codeHash).not.toEqual(code);

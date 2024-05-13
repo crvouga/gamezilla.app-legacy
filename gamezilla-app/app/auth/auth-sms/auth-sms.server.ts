@@ -29,6 +29,7 @@ import { VerificationCodeGenerator } from "./verify-sms/verification-code-genera
 import { VerificationDb } from "./verify-sms/verification/verification-db";
 import type { VerifyCodeProblem, IVerifySMS } from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl";
+import { VerifySMSProvider } from "./verify-sms/verify-sms-impl-real/verify-sms-provider";
 
 //
 //
@@ -90,6 +91,9 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 			}),
 			verifyCodeExpiresIn: TimeSpan.minutes(5),
 			verifyCodeMaxAttempts: 3,
+			provider: VerifySMSProvider({
+				t: "twilio",
+			}),
 		}),
 	};
 };

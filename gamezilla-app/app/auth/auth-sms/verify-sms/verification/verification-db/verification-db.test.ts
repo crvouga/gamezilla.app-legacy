@@ -1,5 +1,12 @@
 import { describe, expect, it } from "bun:test";
-import { Ok, Posix, TimeSpan, unwrap } from "gamezilla-app/@/core";
+import {
+	Ok,
+	Posix,
+	TimeSpan,
+	ascend,
+	descend,
+	unwrap,
+} from "gamezilla-app/@/core";
 import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
 import { Verification, randomVerification } from "../verification";
 import { VerificationDb } from "./verification-db-impl";
@@ -211,6 +218,66 @@ describe(import.meta.file, () => {
 		});
 		const actual = unwrap(found).items;
 		expect(actual).toEqual(expected.slice(3, 8));
+	});
+
+	it("should order by asc created at correctly", async () => {
+		const f = await Fixture();
+		const now = Posix.now();
+		const start = now;
+		const end = Posix.future(now, TimeSpan.milliseconds(10));
+		const expected = await insertVerifications({
+			f,
+			start,
+			end,
+			count: 10,
+		});
+
+		expected.sort(ascend((v) => v.createdAt));
+
+		const found = await f.verificationDb.find({
+			where: {
+				createdAt: {
+					"<=": end,
+					">=": start,
+				},
+			},
+			order: {
+				createdAt: "asc",
+			},
+		});
+
+		const actual = unwrap(found).items;
+		expect(actual).toEqual(expected);
+	});
+
+	it("should order by desc created at correctly", async () => {
+		const f = await Fixture();
+		const now = Posix.now();
+		const start = now;
+		const end = Posix.future(now, TimeSpan.milliseconds(10));
+		const expected = await insertVerifications({
+			f,
+			start,
+			end,
+			count: 10,
+		});
+
+		expected.sort(descend((v) => v.createdAt));
+
+		const found = await f.verificationDb.find({
+			where: {
+				createdAt: {
+					"<=": end,
+					">=": start,
+				},
+			},
+			order: {
+				createdAt: "desc",
+			},
+		});
+
+		const actual = unwrap(found).items;
+		expect(actual).toEqual(expected);
 	});
 });
 

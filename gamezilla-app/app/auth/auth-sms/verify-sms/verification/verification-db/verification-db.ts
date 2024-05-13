@@ -15,9 +15,14 @@ export type WhereClause = {
 	};
 };
 
+export type OrderClause = {
+	createdAt?: "asc" | "desc";
+};
+
 export type IVerificationDb = {
 	find(input: {
 		where?: WhereClause;
+		order?: OrderClause;
 		limit?: number;
 		offset?: number;
 	}): Task<string, Paginated<Verification>>;

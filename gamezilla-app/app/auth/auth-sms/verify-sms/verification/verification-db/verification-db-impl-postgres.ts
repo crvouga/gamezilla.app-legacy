@@ -5,7 +5,11 @@ import { Sql } from "gamezilla-app/@/sql";
 import { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
 import { Verification } from "../verification";
 import { VerificationId } from "../verification-id";
-import type { IVerificationDb, WhereClause } from "./verification-db";
+import type {
+	IVerificationDb,
+	OrderClause,
+	WhereClause,
+} from "./verification-db";
 
 export const Row = p.obj({
 	verification_id: VerificationId,
@@ -23,16 +27,18 @@ export const VerificationDbPostgres = (deps: {
 	return {
 		async find(input) {
 			const where = toSqlWhere(input.where);
+			const order = toSqlOrder(input.order);
 			const pagination = Sql.pagination(input);
 			const query = `
 				SELECT * FROM auth_sms_verification
 				${where.str}
-				ORDER BY created_at_posix DESC
+				${order.str}
 				${pagination.str}
 			`;
 			const vars = {
 				...where.vars,
 				...pagination.vars,
+				...order.vars,
 			};
 			const queried = await deps.dbConnSql.query(Row, query, vars);
 
@@ -47,7 +53,7 @@ export const VerificationDbPostgres = (deps: {
 			const queriedCount = await deps.dbConnSql.query(
 				p.obj({ count: p.str }),
 				queryCount,
-				where.vars,
+				vars,
 			);
 
 			if (isErr(queriedCount)) {
@@ -128,6 +134,26 @@ const rowToVerification = (row: Row): Verification | null => {
 		verifiedAt: row.verified_at_posix
 			? Posix.init(row.verified_at_posix)
 			: null,
+	};
+};
+
+const toSqlOrder = (order?: OrderClause) => {
+	const vars: Record<string, any> = {};
+	const clauses: string[] = [];
+
+	if (order?.createdAt) {
+		const sqlOrder = order.createdAt === "asc" ? "ASC" : "DESC";
+		clauses.push(`created_at_posix ${sqlOrder}`);
+	}
+
+	const str =
+		clauses.length > 0
+			? `ORDER BY ${clauses.join(", ")}`
+			: "ORDER BY created_at_posix DESC";
+
+	return {
+		str,
+		vars,
 	};
 };
 

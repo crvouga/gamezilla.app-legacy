@@ -1,4 +1,4 @@
-import { Ok, eq } from "gamezilla-app/@/core";
+import { Ok, ascend, descend, eq } from "gamezilla-app/@/core";
 import type { Verification, VerificationId } from "..";
 import type { IVerificationDb } from "./verification-db";
 
@@ -32,6 +32,18 @@ export const VerificationDbHashMap = (): IVerificationDb => {
 					}
 					return true;
 				});
+
+			switch (input.order?.createdAt) {
+				case "asc": {
+					filtered.sort(ascend((v) => v.createdAt));
+					break;
+				}
+				case "desc": {
+					filtered.sort(descend((v) => v.createdAt));
+					break;
+				}
+			}
+
 			const limit = input.limit ?? Number.POSITIVE_INFINITY;
 			const offset = input.offset ?? 0;
 			const sliced = filtered.slice(offset, offset + limit);

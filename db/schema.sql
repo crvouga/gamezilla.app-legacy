@@ -30,7 +30,7 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.auth_sms_verification (
     verification_id text NOT NULL,
-    code_hash json NOT NULL,
+    code_hash json,
     phone_number text NOT NULL,
     created_at_posix bigint NOT NULL,
     expires_at_posix bigint NOT NULL,
@@ -445,4 +445,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240508205504'),
     ('20240508214804'),
     ('20240510025350'),
-    ('20240512033531');
+    ('20240512033531'),
+    ('20240513005516');
