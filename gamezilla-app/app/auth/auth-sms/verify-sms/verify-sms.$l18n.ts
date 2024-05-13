@@ -10,7 +10,7 @@ export type Text = {
 	"verify-sms-problem.verification-expired-too-many-failed-attempts": string;
 	"verify-sms-problem.send-code-hourly-limit-reached": string;
 	"verify-sms-problem.send-code-daily-limit-reached": string;
-	"verify-sms-problem.verification-expired-not-latest-verifcation": string;
+	"verify-sms-problem.verification-expired-not-latest-verification": string;
 	"verify-sms-problem.send-code-limit-reached": string;
 };
 
@@ -30,7 +30,7 @@ export const translations: Translations<Text> = {
 			"Hourly limit reached. Please try again later.",
 		"verify-sms-problem.send-code-daily-limit-reached":
 			"Daily limit reached. Please try again later.",
-		"verify-sms-problem.verification-expired-not-latest-verifcation":
+		"verify-sms-problem.verification-expired-not-latest-verification":
 			"Verification expired because it is not the latest verification",
 		"verify-sms-problem.send-code-limit-reached":
 			"Limit reached. Please try again later.",
@@ -48,7 +48,7 @@ export const translations: Translations<Text> = {
 			"تم الوصول إلى الحد الساعي. يرجى المحاولة مرة أخرى في وقت لاحق.",
 		"verify-sms-problem.send-code-daily-limit-reached":
 			"تم الوصول إلى الحد اليومي. يرجى المحاولة مرة أخرى في وقت لاحق.",
-		"verify-sms-problem.verification-expired-not-latest-verifcation":
+		"verify-sms-problem.verification-expired-not-latest-verification":
 			"انتهت صلاحية التحقق لأنها ليست أحدث عملية تحقق",
 		"verify-sms-problem.send-code-limit-reached":
 			"تم الوصول إلى الحد. يرجى المحاولة مرة أخرى في وقت لاحق.",
@@ -67,7 +67,7 @@ export const translations: Translations<Text> = {
 			"Stündliches Limit erreicht. Bitte versuchen Sie es später erneut.",
 		"verify-sms-problem.send-code-daily-limit-reached":
 			"Tägliches Limit erreicht. Bitte versuchen Sie es später erneut.",
-		"verify-sms-problem.verification-expired-not-latest-verifcation":
+		"verify-sms-problem.verification-expired-not-latest-verification":
 			"Verifizierung abgelaufen, weil es nicht die neueste Verifizierung ist",
 		"verify-sms-problem.send-code-limit-reached":
 			"Limit erreicht. Bitte versuchen Sie es später erneut.",
@@ -86,7 +86,7 @@ export const translations: Translations<Text> = {
 			"Se ha alcanzado el límite por hora. Por favor, inténtelo de nuevo más tarde.",
 		"verify-sms-problem.send-code-daily-limit-reached":
 			"Límite diario alcanzado. Por favor, inténtelo de nuevo más tarde.",
-		"verify-sms-problem.verification-expired-not-latest-verifcation":
+		"verify-sms-problem.verification-expired-not-latest-verification":
 			"La verificación ha caducado porque no es la última verificación",
 		"verify-sms-problem.send-code-limit-reached":
 			"Límite alcanzado. Por favor, inténtelo de nuevo más tarde.",
@@ -106,7 +106,7 @@ export const translations: Translations<Text> = {
 			"Limite horaire atteinte. Veuillez réessayer plus tard.",
 		"verify-sms-problem.send-code-daily-limit-reached":
 			"Limite quotidienne atteinte. Veuillez réessayer plus tard.",
-		"verify-sms-problem.verification-expired-not-latest-verifcation":
+		"verify-sms-problem.verification-expired-not-latest-verification":
 			"La vérification a expiré car ce n'est pas la dernière vérification",
 		"verify-sms-problem.send-code-limit-reached":
 			"Limite atteinte. Veuillez réessayer plus tard.",
@@ -125,7 +125,7 @@ export const translations: Translations<Text> = {
 			"प्रति घंटे सीमा पहुंच गई है। कृपया बाद में पुन: प्रयास करें।",
 		"verify-sms-problem.send-code-daily-limit-reached":
 			"दैनिक सीमा पहुंच गई है। कृपया बाद में पुन: प्रयास करें।",
-		"verify-sms-problem.verification-expired-not-latest-verifcation":
+		"verify-sms-problem.verification-expired-not-latest-verification":
 			"सत्यापन समाप्त हो गया क्योंकि यह नवीनतम सत्यापन नहीं है",
 		"verify-sms-problem.send-code-limit-reached":
 			"सीमा पहुंच गई। कृपया बाद में पुन: प्रयास करें।",
@@ -144,7 +144,7 @@ export const translations: Translations<Text> = {
 			"Limite orario raggiunto. Riprova più tardi.",
 		"verify-sms-problem.send-code-daily-limit-reached":
 			"Limite giornaliero raggiunto. Riprova più tardi.",
-		"verify-sms-problem.verification-expired-not-latest-verifcation":
+		"verify-sms-problem.verification-expired-not-latest-verification":
 			"La verifica è scaduta perché non è l'ultima verifica",
 		"verify-sms-problem.send-code-limit-reached":
 			"Limite raggiunto. Riprova più tardi.",
@@ -162,7 +162,7 @@ export const translations: Translations<Text> = {
 			"時間制限に達しました。後でもう一度お試しください。",
 		"verify-sms-problem.send-code-daily-limit-reached":
 			"1日の制限に達しました。後でもう一度お試しください。",
-		"verify-sms-problem.verification-expired-not-latest-verifcation":
+		"verify-sms-problem.verification-expired-not-latest-verification":
 			"最新の検証ではないため、検証が期限切れになりました",
 		"verify-sms-problem.send-code-limit-reached":
 			"制限に達しました。後でもう一度お試しください。",
@@ -180,7 +180,7 @@ export const translations: Translations<Text> = {
 			"시간당 제한에 도달했습니다. 나중에 다시 시도하십시오.",
 		"verify-sms-problem.send-code-daily-limit-reached":
 			"일일 제한에 도달했습니다. 나중에 다시 시도하십시오.",
-		"verify-sms-problem.verification-expired-not-latest-verifcation":
+		"verify-sms-problem.verification-expired-not-latest-verification":
 			"최신 인증이 아니기 때문에 인증이 만료되었습니다",
 		"verify-sms-problem.send-code-limit-reached":
 			"제한에 도달했습니다. 나중에 다시 시도하십시오.",
@@ -199,7 +199,7 @@ export const translations: Translations<Text> = {
 			"Limite horário atingido. Por favor, tente novamente mais tarde.",
 		"verify-sms-problem.send-code-daily-limit-reached":
 			"Limite diário atingido. Por favor, tente novamente mais tarde.",
-		"verify-sms-problem.verification-expired-not-latest-verifcation":
+		"verify-sms-problem.verification-expired-not-latest-verification":
 			"A verificação expirou porque não é a verificação mais recente",
 		"verify-sms-problem.send-code-limit-reached":
 			"Limite atingido. Por favor, tente novamente mais tarde.",
@@ -219,7 +219,7 @@ export const translations: Translations<Text> = {
 			"Достигнут часовой лимит. Пожалуйста, попробуйте позже.",
 		"verify-sms-problem.send-code-daily-limit-reached":
 			"Достигнут дневной лимит. Пожалуйста, попробуйте позже.",
-		"verify-sms-problem.verification-expired-not-latest-verifcation":
+		"verify-sms-problem.verification-expired-not-latest-verification":
 			"Подтверждение истекло, потому что это не последнее подтверждение",
 		"verify-sms-problem.send-code-limit-reached":
 			"Лимит достигнут. Пожалуйста, попробуйте позже.",
@@ -237,7 +237,7 @@ export const translations: Translations<Text> = {
 			"已达到每小时限制。请稍后再试。",
 		"verify-sms-problem.send-code-daily-limit-reached":
 			"已达到每日限制。请稍后再试。",
-		"verify-sms-problem.verification-expired-not-latest-verifcation":
+		"verify-sms-problem.verification-expired-not-latest-verification":
 			"验证已过期，因为它不是最新的验证",
 		"verify-sms-problem.send-code-limit-reached": "已达到限制。请稍后再试。",
 	},

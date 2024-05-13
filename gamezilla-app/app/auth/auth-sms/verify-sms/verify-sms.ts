@@ -14,7 +14,7 @@ export type VerifyCodeProblem =
 			t: "verification-expired-too-many-failed-attempts";
 	  }
 	| {
-			t: "verification-expired-not-latest-verifcation";
+			t: "verification-expired-not-latest-verification";
 	  }
 	| {
 			t: "verification-not-found";
@@ -49,9 +49,9 @@ export const verifyCodeProblemToString = ({
 			return t(
 				"verify-sms-problem.verification-expired-too-many-failed-attempts",
 			);
-		case "verification-expired-not-latest-verifcation":
+		case "verification-expired-not-latest-verification":
 			return t(
-				"verify-sms-problem.verification-expired-not-latest-verifcation",
+				"verify-sms-problem.verification-expired-not-latest-verification",
 			);
 	}
 };

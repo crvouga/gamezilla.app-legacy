@@ -1,30 +1,30 @@
 import { describe, expect, it } from "bun:test";
 import {
-    PhoneNumber,
-    Posix,
-    TimeSpan,
-    eq,
-    isErr,
-    isOk,
-    unwrap,
+	PhoneNumber,
+	Posix,
+	TimeSpan,
+	eq,
+	isErr,
+	isOk,
+	unwrap,
 } from "gamezilla-app/@/core";
 import { Hashing, type IHashing } from "gamezilla-app/@/hashing";
 import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 import { Translator } from "gamezilla-app/app/@/client/translator";
 import { Logger } from "gamezilla-app/app/@/server/logger";
 import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
-import { VerificationId } from "./verification";
-import { VerificationAttemptDb } from "./verification-attempt";
+import { VerificationId } from "../verification";
+import { VerificationAttemptDb } from "../verification-attempt";
 import {
-    VerificationCodeGenerator,
-    type IVerificationCodeGenerator,
-} from "./verification-code-generator";
+	VerificationCodeGenerator,
+	type IVerificationCodeGenerator,
+} from "../verification-code-generator";
 import {
-    VerificationDb,
-    type IVerificationDb,
-} from "./verification/verification-db";
-import { VerifySMS } from "./verify-sms-impl";
-import { VerifySMSProvider } from "./verify-sms-impl-real/verify-sms-provider";
+	VerificationDb,
+	type IVerificationDb,
+} from "../verification/verification-db";
+import { VerifySMS } from "../verify-sms-impl";
+import { VerifySMSProvider } from "./verify-sms-provider";
 
 const Fixture = async (input?: {
 	verifyCodeMaxAttempts?: number;
@@ -138,7 +138,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	it('should nevet send an empty sms message with the "verify-sms.code-message" translation', async () => {
+	it('should never send an empty sms message with the "verify-sms.code-message" translation', async () => {
 		const f = await Fixture();
 		await f.verifySMS.sendCode({
 			...f,
@@ -274,7 +274,7 @@ describe(import.meta.file, () => {
 		expect(isErr(verifiedA)).toBe(true);
 		isErr(verifiedA) &&
 			expect(verifiedA.error.t).toBe(
-				"verification-expired-not-latest-verifcation",
+				"verification-expired-not-latest-verification",
 			);
 		expect(isOk(verifiedB)).toBe(true);
 	});

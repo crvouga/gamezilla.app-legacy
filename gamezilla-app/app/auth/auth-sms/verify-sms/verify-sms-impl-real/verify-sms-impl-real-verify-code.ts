@@ -1,8 +1,8 @@
 import { Err, Ok, isErr } from "gamezilla-app/@/core";
 import type { Verification } from "../verification";
 import {
-	type VerificationAttempt,
 	VerificationAttemptId,
+	type VerificationAttempt,
 } from "../verification-attempt";
 import type { IVerifySMS } from "../verify-sms";
 import type { VerifySMSDeps } from "./shared";
@@ -67,7 +67,7 @@ export const VerifyCode =
 
 		if (latestVerification?.verificationId !== verification.verificationId) {
 			return Err({
-				t: "verification-expired-not-latest-verifcation",
+				t: "verification-expired-not-latest-verification",
 			});
 		}
 
