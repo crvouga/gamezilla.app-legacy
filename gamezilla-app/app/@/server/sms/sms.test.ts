@@ -11,7 +11,7 @@ const Fixture = async () => {
 	switch (testEnv.t) {
 		case "integration": {
 			const sms = SMS({
-				t: "twilio",
+				t: "fake",
 				logger,
 			});
 			return {
