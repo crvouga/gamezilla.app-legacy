@@ -66,10 +66,10 @@ export type SendCodeProblem =
 	  }
 	| {
 			t: "daily-limit-reached";
-	}
-	| {
-		  t: 'limit-reached'
 	  }
+	| {
+			t: "limit-reached";
+	  };
 
 export const sendCodeProblemToString = ({
 	problem,
@@ -85,8 +85,8 @@ export const sendCodeProblemToString = ({
 			return t("verify-sms-problem.send-code-hourly-limit-reached");
 		case "daily-limit-reached":
 			return t("verify-sms-problem.send-code-daily-limit-reached");
-		case 'limit-reached':
-			return t('verify-sms-problem.send-code-limit-reached')
+		case "limit-reached":
+			return t("verify-sms-problem.send-code-limit-reached");
 	}
 };
 

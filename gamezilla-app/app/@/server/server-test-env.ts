@@ -1,22 +1,26 @@
 import { Posix } from "gamezilla-app/@/core";
 import { ClientId, SessionId } from "../data";
-import { DbConnKv } from "./db-conn-kv";
+import { DbConnKv, IDbConnKv } from "./db-conn-kv";
 import { DbConnSql, type IDbConnSql } from "./db-conn-sql";
-import { Logger } from "./logger";
+import { ILogger, Logger } from "./logger";
 import { ServerCtx } from "./server-ctx";
 import { SMS } from "./sms";
 
 export type ITestEnv =
 	| {
 			t: "unit";
+			dbConnKv: IDbConnKv;
 	  }
 	| {
 			t: "integration";
 			dbConnSql: IDbConnSql;
+			dbConnKv: IDbConnKv;
 	  };
 
 export const AppServerTestEnv = async (): Promise<ITestEnv> => {
 	if (process.env["IS_INTEGRATION_TEST"] === "true") {
+		const logger = ILogger.prefix('integration-test', Logger({ t: "noop" }));
+
 		const DATABASE_URL = process.env["DATABASE_URL"];
 
 		if (!DATABASE_URL) {
@@ -26,17 +30,31 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
 		const dbConnSql = await DbConnSql({
 			t: "postgres",
 			databaseUrl: DATABASE_URL,
-			logger: Logger({ t: "noop" }),
+			logger: ILogger.prefix('db-conn-sql', logger),
 		});
+
+		const REDIS_URL = process.env["REDIS_URL"];
+
+		if (!REDIS_URL) {
+			throw new Error("REDIS_URL not set");
+		}
+
+		const dbConnKv = await DbConnKv({
+			t: 'redis',
+			logger: ILogger.prefix('db-conn-kv', logger),
+			url: REDIS_URL,
+		})
 
 		return {
 			t: "integration",
 			dbConnSql,
+			dbConnKv,
 		};
 	}
 
 	return {
 		t: "unit",
+		dbConnKv: await DbConnKv({ t: 'hash-map'})
 	};
 };
 
