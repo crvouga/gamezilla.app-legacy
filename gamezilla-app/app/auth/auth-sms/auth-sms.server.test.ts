@@ -117,7 +117,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	it.only("should create a new account if no account exists", async () => {
+	it("should create a new account if no account exists", async () => {
 		const phoneNumber = PhoneNumber.random();
 		const f = await Fixture({
 			VerifySMS: VerifySMS({ t: "fake-always-ok", phoneNumber }),
