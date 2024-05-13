@@ -73,7 +73,7 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 		dbConnSql: ctx.dbConnSql,
 	});
 
-	const hashing = Hashing({ t: "node" });
+	const hashing = Hashing({ t: "bun" });
 
 	const providerInHouse = VerifySMSProvider({
 		t: "in-house",

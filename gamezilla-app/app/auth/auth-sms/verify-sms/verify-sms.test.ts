@@ -405,7 +405,7 @@ describe(import.meta.file, () => {
 
 	it("should hash sent codes stored in the database", async () => {
 		const f = await Fixture({
-			hashing: Hashing({ t: "node" }),
+			hashing: Hashing({ t: "bun" }),
 		});
 		const sent = await f.verifySMS.sendCode({
 			...f,
