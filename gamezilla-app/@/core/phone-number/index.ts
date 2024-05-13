@@ -1,12 +1,15 @@
 import { Iso3166Alpha2Code } from "../Iso-3166-alpha-2-code";
+import { p } from "../parser";
 import { Result } from "../result";
 import { phone } from "./phone";
 
-export type PhoneNumber = {
-	_opaque: "PhoneNumber";
-	_validPhoneNumber: string;
-	_country: Iso3166Alpha2Code;
-};
+const parser = p.obj({
+	_country: Iso3166Alpha2Code,
+	_validPhoneNumber: p.str,
+	_opaque: p.l("PhoneNumber"),
+});
+
+export type PhoneNumber = p.Infer<typeof parser>;
 
 type Problem = "invalid_phone_number";
 
@@ -111,6 +114,7 @@ const random = (): PhoneNumber => {
 };
 
 export const PhoneNumber = {
+	...parser,
 	random,
 	is,
 	toString,

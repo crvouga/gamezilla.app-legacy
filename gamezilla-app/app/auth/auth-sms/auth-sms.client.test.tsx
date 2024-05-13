@@ -1,12 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import { Err, Ok, PhoneNumber } from "gamezilla-app/@/core";
+import { Err, Ok, PhoneNumber, eq } from "gamezilla-app/@/core";
 import { Route } from "gamezilla-app/@/routing/generated/routes";
+import { expectByText } from "gamezilla-app/@/vdom/vdom-testing";
 import { didPushRoute } from "gamezilla-app/app/@/client";
 import { AppClientFixture } from "gamezilla-app/app/@/client/client-test-env";
 import type { AuthSMSTypes } from ".";
 import { AuthSMSClient } from "./auth-sms.client";
-import { VerificationId } from "./verify-sms/verification";
-import { expectByText } from "gamezilla-app/@/vdom/vdom-testing";
 
 type Msg =
 	| {
@@ -68,16 +67,15 @@ const Fixture = async (input?: { currentRoute?: Route }) => {
 describe(import.meta.file, () => {
 	it("should navigate to verify code screen after code is sent", async () => {
 		const f = await Fixture();
-		const verificationId = VerificationId.generate();
+
+		const phoneNumber = PhoneNumber.random();
 
 		const output = f.update(f.init, [
 			{
 				msgServer: {
 					t: "sent-code",
-					phoneNumber: PhoneNumber.random(),
-					sent: Ok({
-						verificationId,
-					}),
+					phoneNumber,
+					sent: Ok(null),
 				},
 			},
 		]);
@@ -88,7 +86,7 @@ describe(import.meta.file, () => {
 				(msg) =>
 					msg.n === "auth-login" &&
 					msg.t === "login-sms-verify" &&
-					msg.verificationId === verificationId,
+					eq(msg.phoneNumber, phoneNumber),
 			),
 		).toBe(true);
 	});
@@ -111,11 +109,13 @@ describe(import.meta.file, () => {
 	});
 
 	it("should render error message when verify code errors", async () => {
+		const phoneNumber = PhoneNumber.random();
+
 		const f = await Fixture({
 			currentRoute: {
 				n: "auth-login",
 				t: "login-sms-verify",
-				verificationId: VerificationId.generate(),
+				phoneNumber,
 			},
 		});
 		const output = f.update(f.init, [

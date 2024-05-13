@@ -29,16 +29,12 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 				`[verify-sms] [test] fake sent code to ${phoneNumberStr}. code: ${DEFAULT_CODE}`,
 			);
 
-			return Ok({
-				verificationId,
-			});
+			return Ok(null);
 		},
 		async verifyCode(input) {
 			await deps.delay?.();
 
-			const phoneNumber = phoneNumbers.get(input.verificationId);
-
-			if (!phoneNumber) {
+			if (!input.phoneNumber) {
 				return Err({
 					t: "verification-not-found",
 				});
@@ -46,9 +42,7 @@ export const VerifySMS = (deps: VerifySMSDeps): IVerifySMS => {
 
 			const code = deps.code ?? DEFAULT_CODE;
 			if (code === DEFAULT_CODE) {
-				return Ok({
-					phoneNumber,
-				});
+				return Ok(null);
 			}
 
 			return Err({

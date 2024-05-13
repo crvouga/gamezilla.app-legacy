@@ -16,11 +16,12 @@ export const AccountDbInMemory = (deps: {
 		async findOneByPhoneNumber(input) {
 			await deps.delay();
 			for (const account of accounts.values()) {
-				if (
-					account.phoneNumber &&
-					PhoneNumber.toString(account.phoneNumber) ===
+				const match = account.phoneNumber
+					? PhoneNumber.toString(account.phoneNumber) ===
 						PhoneNumber.toString(input.phoneNumber)
-				) {
+					: false;
+				if (match) {
+					console.log("found account", account);
 					return Ok(account);
 				}
 			}

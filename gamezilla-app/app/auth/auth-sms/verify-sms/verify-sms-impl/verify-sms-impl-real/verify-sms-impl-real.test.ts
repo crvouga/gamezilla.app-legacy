@@ -13,7 +13,6 @@ import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 import { Translator } from "gamezilla-app/app/@/client/translator";
 import { Logger } from "gamezilla-app/app/@/server/logger";
 import { SMSFake } from "gamezilla-app/app/@/server/sms/sms-impl-fake";
-import { VerificationId } from "../../verification";
 import { VerificationAttemptDb } from "../../verification-attempt";
 import {
 	VerificationCodeGenerator,
@@ -93,10 +92,8 @@ describe(import.meta.file, () => {
 
 		const sent = await f.verifySMS.sendCode(f);
 
-		const verificationId = unwrap(sent).verificationId;
-
 		const verified = await f.verifySMS.verifyCode({
-			verificationId,
+			phoneNumber: f.phoneNumber,
 			code: f.CODE,
 		});
 
@@ -150,12 +147,10 @@ describe(import.meta.file, () => {
 	it("should fail if the code is not the same as the code sent", async () => {
 		const f = await Fixture();
 
-		const sent = await f.verifySMS.sendCode(f);
-
-		const verificationId = unwrap(sent).verificationId;
+		await f.verifySMS.sendCode(f);
 
 		const verified = await f.verifySMS.verifyCode({
-			verificationId: verificationId,
+			phoneNumber: f.phoneNumber,
 			code: f.WRONG_CODE,
 		});
 
@@ -165,16 +160,14 @@ describe(import.meta.file, () => {
 	it("should eventually error after enough failed attempts", async () => {
 		const f = await Fixture({ verifyCodeMaxAttempts: 1 });
 
-		const sent = await f.verifySMS.sendCode(f);
-
-		const verificationId = unwrap(sent).verificationId;
+		await f.verifySMS.sendCode(f);
 
 		await f.verifySMS.verifyCode({
-			verificationId,
+			phoneNumber: f.phoneNumber,
 			code: f.WRONG_CODE,
 		});
 		const verified = await f.verifySMS.verifyCode({
-			verificationId,
+			phoneNumber: f.phoneNumber,
 			code: f.WRONG_CODE,
 		});
 		expect(
@@ -189,7 +182,7 @@ describe(import.meta.file, () => {
 		await f.verifySMS.sendCode(f);
 
 		const verified = await f.verifySMS.verifyCode({
-			verificationId: VerificationId.generate(),
+			phoneNumber: PhoneNumber.random(),
 			code: f.CODE,
 		});
 
@@ -205,14 +198,12 @@ describe(import.meta.file, () => {
 
 		const f = await Fixture({ verifyCodeExpiresIn, now: () => now });
 
-		const sent = await f.verifySMS.sendCode(f);
-
-		const verificationId = unwrap(sent).verificationId;
+		await f.verifySMS.sendCode(f);
 
 		now = Posix.future(now, verifyCodeExpiresIn);
 
 		const verified = await f.verifySMS.verifyCode({
-			verificationId,
+			phoneNumber: f.phoneNumber,
 			code: f.CODE,
 		});
 
@@ -227,17 +218,16 @@ describe(import.meta.file, () => {
 		let now = Posix.now();
 		const f = await Fixture({ verifyCodeExpiresIn, now: () => now });
 
-		const sent = await f.verifySMS.sendCode({
+		await f.verifySMS.sendCode({
 			...f,
 			phoneNumber: f.phoneNumber,
 		});
-		const verificationId = unwrap(sent).verificationId;
 
 		now = Posix.future(now, verifyCodeExpiresIn);
 		now = Posix.future(now, TimeSpan.seconds(1));
 
 		const verified = await f.verifySMS.verifyCode({
-			verificationId,
+			phoneNumber: f.phoneNumber,
 			code: f.CODE,
 		});
 
@@ -245,37 +235,44 @@ describe(import.meta.file, () => {
 		isErr(verified) && expect(verified.error.t).toBe("verification-expired");
 	});
 
-	it("should error if when verifying after a new code was sent", async () => {
+	it("should error if using previous unused code", async () => {
+		const CODE_A = "123";
+		const CODE_B = "456";
 		let now = Posix.now();
+		let code = CODE_A;
 		const f = await Fixture({
 			now: () => now,
+			codeGenerator: {
+				generate() {
+					return code;
+				},
+			},
 		});
 
-		const sentA = await f.verifySMS.sendCode(f);
+		await f.verifySMS.sendCode(f);
 
 		now = Posix.future(now, TimeSpan.seconds(1));
 
-		const sentB = await f.verifySMS.sendCode(f);
+		code = CODE_B;
+
+		await f.verifySMS.sendCode(f);
 
 		now = Posix.future(now, TimeSpan.seconds(1));
 
 		const verifiedA = await f.verifySMS.verifyCode({
-			verificationId: unwrap(sentA).verificationId,
-			code: f.CODE,
+			phoneNumber: f.phoneNumber,
+			code: CODE_A,
 		});
 
 		now = Posix.future(now, TimeSpan.seconds(1));
 
 		const verifiedB = await f.verifySMS.verifyCode({
-			verificationId: unwrap(sentB).verificationId,
-			code: f.CODE,
+			phoneNumber: f.phoneNumber,
+			code: CODE_B,
 		});
 
 		expect(isErr(verifiedA)).toBe(true);
-		isErr(verifiedA) &&
-			expect(verifiedA.error.t).toBe(
-				"verification-expired-not-latest-verification",
-			);
+		isErr(verifiedA) && expect(verifiedA.error.t).toBe("code-incorrect");
 		expect(isOk(verifiedB)).toBe(true);
 	});
 
@@ -386,15 +383,13 @@ describe(import.meta.file, () => {
 
 	it("should only allow verifications to be used once", async () => {
 		const f = await Fixture();
-		const sent = unwrap(
-			await f.verifySMS.sendCode({ ...f, phoneNumber: f.phoneNumber }),
-		);
+		await f.verifySMS.sendCode({ ...f, phoneNumber: f.phoneNumber });
 		const firstVerification = await f.verifySMS.verifyCode({
-			verificationId: sent.verificationId,
+			phoneNumber: f.phoneNumber,
 			code: f.CODE,
 		});
 		const secondVerification = await f.verifySMS.verifyCode({
-			verificationId: sent.verificationId,
+			phoneNumber: f.phoneNumber,
 			code: f.CODE,
 		});
 		expect(firstVerification.t).toBe("ok");
@@ -407,19 +402,24 @@ describe(import.meta.file, () => {
 		const f = await Fixture({
 			hashing: Hashing({ t: "bun" }),
 		});
-		const sent = await f.verifySMS.sendCode({
+		await f.verifySMS.sendCode({
 			...f,
 			phoneNumber: f.phoneNumber,
 		});
-		const verificationId = unwrap(sent).verificationId;
 		const code = f.CODE;
-		const verification = await f.verifySMS.verifyCode({ verificationId, code });
+		const verification = await f.verifySMS.verifyCode({
+			phoneNumber: f.phoneNumber,
+			code,
+		});
 
 		const found = await f.verificationDb.find({
 			where: {
-				verificationId: {
-					"=": verificationId,
+				phoneNumber: {
+					"=": f.phoneNumber,
 				},
+			},
+			order: {
+				createdAt: "desc",
 			},
 		});
 
@@ -434,7 +434,7 @@ describe(import.meta.file, () => {
 			verificationDb: VerificationDb({ t: "always-err", error: "some error" }),
 		});
 		const verification = await f.verifySMS.verifyCode({
-			verificationId: VerificationId.generate(),
+			phoneNumber: f.phoneNumber,
 			code: "123",
 		});
 

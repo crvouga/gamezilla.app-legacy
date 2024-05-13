@@ -1,51 +1,51 @@
 import {
-    Iso3166Alpha2Code,
-    NotAsked,
-    PhoneNumber,
-    Posix,
-    RemoteResult,
-    Sub,
-    Time,
-    TimeSpan,
-    Uuid,
-    isErr,
+	Iso3166Alpha2Code,
+	NotAsked,
+	PhoneNumber,
+	Posix,
+	RemoteResult,
+	Sub,
+	Time,
+	TimeSpan,
+	Uuid,
+	isErr,
 } from "gamezilla-app/@/core";
 import {
-    AppClientModule,
-    andThen,
+	AppClientModule,
+	andThen,
 } from "gamezilla-app/app/@/architecture/app-client";
 import {
-    APP_SOUND,
-    type BaseClientCtx,
-    type ClientEvent,
+	APP_SOUND,
+	type BaseClientCtx,
+	type ClientEvent,
 } from "gamezilla-app/app/@/client";
 import {
-    focusView,
-    playSound,
-    pushRoute,
-    replaceRoute,
-    sendToServer,
-    showToast,
-    type ClientCmd,
+	focusView,
+	playSound,
+	pushRoute,
+	replaceRoute,
+	sendToServer,
+	showToast,
+	type ClientCmd,
 } from "gamezilla-app/app/@/client/client-cmd";
 import {
-    AlertError,
-    Button,
-    IconMobilePhone,
-    Select,
-    TextField,
-    TopBar,
-    TopBarBackButton,
+	AlertError,
+	Button,
+	IconMobilePhone,
+	Select,
+	TextField,
+	TopBar,
+	TopBarBackButton,
 } from "gamezilla-app/app/@/ui";
 import type {
-    ModelClient,
-    MsgClient,
-    MsgToClient,
-    MsgToServer,
+	ModelClient,
+	MsgClient,
+	MsgToClient,
+	MsgToServer,
 } from "./auth-sms.types";
 import {
-    sendCodeProblemToString,
-    verifyCodeProblemToString,
+	sendCodeProblemToString,
+	verifyCodeProblemToString,
 } from "./verify-sms/verify-sms";
 
 //
@@ -255,7 +255,7 @@ const updateFromMsg: Module["update"] = (input) => {
 					sendToServer({
 						t: "user-clicked-verify-code-button",
 						inputtedCode: model.inputtedCode,
-						verificationId: msg.verificationId,
+						phoneNumber: msg.phoneNumber,
 					}),
 				],
 			};
@@ -341,7 +341,7 @@ const updateFromServer: Module["update"] = (input) => {
 					pushRoute({
 						n: "auth-login",
 						t: "login-sms-verify",
-						verificationId: msgServer.sent.value.verificationId,
+						phoneNumber: msgServer.phoneNumber,
 					}),
 					showToast(
 						`Sent code to ${PhoneNumber.format(msgServer.phoneNumber)}`,
@@ -513,7 +513,7 @@ const ViewVerifyCode: Module["View"] = (input) => {
 		return null;
 	}
 
-	const verificationId = input.ctx.currentRoute.verificationId;
+	const phoneNumber = input.ctx.currentRoute.phoneNumber;
 
 	return (
 		<div className="w-full flex-1">
@@ -558,7 +558,7 @@ const ViewVerifyCode: Module["View"] = (input) => {
 					onClick={() => {
 						input.dispatch({
 							t: "user-clicked-verify-code-button",
-							verificationId,
+							phoneNumber,
 							inputtedCode: input.model.inputtedCode,
 						});
 					}}

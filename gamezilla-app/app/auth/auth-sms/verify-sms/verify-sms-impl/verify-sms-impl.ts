@@ -1,5 +1,4 @@
 import { Ok, PhoneNumber } from "gamezilla-app/@/core";
-import { VerificationId } from "../verification";
 import type { IVerifySMS } from "../verify-sms";
 import * as ImplFake from "./verify-sms-impl-fake";
 import * as ImplReal from "./verify-sms-impl-real";
@@ -18,10 +17,10 @@ export const VerifySMS = (impl: Impl): IVerifySMS => {
 		case "fake-always-ok": {
 			return {
 				async sendCode() {
-					return Ok({ verificationId: VerificationId.generate() });
+					return Ok(null);
 				},
 				async verifyCode() {
-					return Ok({ phoneNumber: impl.phoneNumber ?? PhoneNumber.random() });
+					return Ok(null);
 				},
 			};
 		}

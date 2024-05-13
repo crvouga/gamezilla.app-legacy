@@ -6,6 +6,8 @@
 //
 //
 
+import { p } from "./parser";
+
 const ISO_3166_ALPHA_2_MAPPINGS = {
 	AD: "Andorra",
 	AE: "United Arab Emirates",
@@ -260,7 +262,19 @@ const ISO_3166_ALPHA_2_MAPPINGS = {
 	ZW: "Zimbabwe",
 } as const;
 
-export type Iso3166Alpha2Code = keyof typeof ISO_3166_ALPHA_2_MAPPINGS;
+const parser = p.custom(
+	(input: unknown): input is keyof typeof ISO_3166_ALPHA_2_MAPPINGS => {
+		return Boolean(
+			typeof input === "string" &&
+				ISO_3166_ALPHA_2_MAPPINGS[
+					input as keyof typeof ISO_3166_ALPHA_2_MAPPINGS
+				],
+		);
+	},
+	"Iso3166Alpha2Code",
+);
+
+export type Iso3166Alpha2Code = p.Infer<typeof parser>;
 
 const all = Object.keys(ISO_3166_ALPHA_2_MAPPINGS) as Iso3166Alpha2Code[];
 
@@ -329,6 +343,7 @@ const getNavigatorCountry = (): Iso3166Alpha2Code | undefined => {
 };
 
 export const Iso3166Alpha2Code = {
+	...parser,
 	of,
 	toEmoji,
 	toName,

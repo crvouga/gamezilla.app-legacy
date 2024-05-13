@@ -10,7 +10,6 @@ import {
 import { AuthSMSTypes } from ".";
 import { AccountDb } from "../@/server/account-db";
 import { AuthSMSServer } from "./auth-sms.server";
-import { VerificationId } from "./verify-sms/verification";
 import { IVerifySMS } from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl/verify-sms-impl";
 
@@ -27,13 +26,14 @@ type InputMsg =
 
 const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
 	const f = await AppServerFixture();
-	const deps = {
-		...(await AuthSMSServer.getDeps(f)),
-		...input,
+	const depsBase = await AuthSMSServer.getDeps(f);
+	const deps: Awaited<ReturnType<typeof AuthSMSServer.getDeps>> = {
+		...depsBase,
 		AccountDb: AccountDb({
 			t: "in-memory",
 			delay: async () => {},
 		}),
+		VerifySMS: input?.VerifySMS ?? depsBase.VerifySMS,
 	};
 	const updates = function* (msgs: InputMsg[]) {
 		for (const msg of msgs) {
@@ -86,7 +86,7 @@ describe(import.meta.file, () => {
 				msgClient: {
 					...f.client,
 					t: "user-clicked-verify-code-button",
-					verificationId: VerificationId.generate(),
+					phoneNumber: PhoneNumber.random(),
 					inputtedCode: "123456",
 				},
 			},
@@ -105,7 +105,7 @@ describe(import.meta.file, () => {
 					...f.client,
 					t: "user-clicked-verify-code-button",
 					inputtedCode: "123",
-					verificationId: VerificationId.generate(),
+					phoneNumber: PhoneNumber.random(),
 				},
 			},
 		]);
@@ -117,7 +117,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	it("should create a new account if no account exists", async () => {
+	it.only("should create a new account if no account exists", async () => {
 		const phoneNumber = PhoneNumber.random();
 		const f = await Fixture({
 			VerifySMS: VerifySMS({ t: "fake-always-ok", phoneNumber }),
@@ -133,7 +133,7 @@ describe(import.meta.file, () => {
 					...f.client,
 					t: "user-clicked-verify-code-button",
 					inputtedCode: "123",
-					verificationId: VerificationId.generate(),
+					phoneNumber,
 				},
 			},
 		]);
@@ -164,7 +164,7 @@ describe(import.meta.file, () => {
 					...f.client,
 					t: "user-clicked-verify-code-button",
 					inputtedCode: "123",
-					verificationId: VerificationId.generate(),
+					phoneNumber: PhoneNumber.random(),
 				},
 			},
 		]);

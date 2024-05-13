@@ -1,8 +1,8 @@
-import { Err, Ok, isErr } from "gamezilla-app/@/core";
+import { Err, Ok, PhoneNumber, isErr } from "gamezilla-app/@/core";
 import type { Verification } from "../../verification";
 import {
-    VerificationAttemptId,
-    type VerificationAttempt,
+	VerificationAttemptId,
+	type VerificationAttempt,
 } from "../../verification-attempt";
 import type { IVerifySMS } from "../../verify-sms";
 import type { VerifySMSDeps } from "./shared";
@@ -10,13 +10,18 @@ import type { VerifySMSDeps } from "./shared";
 export const VerifyCode =
 	(deps: VerifySMSDeps): IVerifySMS["verifyCode"] =>
 	async (input) => {
-		deps.logger.info(`Verifying code for ${input.verificationId}`);
+		deps.logger.info(
+			`Verifying code for ${PhoneNumber.toString(input.phoneNumber)}`,
+		);
 
 		const found = await deps.verificationDb.find({
 			where: {
-				verificationId: {
-					"=": input.verificationId,
+				phoneNumber: {
+					"=": input.phoneNumber,
 				},
+			},
+			order: {
+				createdAt: "desc",
 			},
 		});
 
@@ -49,7 +54,9 @@ export const VerifyCode =
 
 		const foundLatestVerification = await deps.verificationDb.find({
 			where: {
-				phoneNumber: { "=": verification.phoneNumber },
+				phoneNumber: {
+					"=": verification.phoneNumber,
+				},
 			},
 			order: {
 				createdAt: "desc",
@@ -71,18 +78,19 @@ export const VerifyCode =
 			});
 		}
 
-		deps.logger.info(`Checking previous attempts for ${input.verificationId}`);
+		const verificationId = verification.verificationId;
+		deps.logger.info(`Checking previous attempts for ${verificationId}`);
 		const previousAttempts = await deps.verificationAttemptDb.find({
 			where: {
 				verificationId: {
-					"=": input.verificationId,
+					"=": verificationId,
 				},
 			},
 		});
 
 		if (isErr(previousAttempts)) {
 			deps.logger.error(
-				`Error checking previous attempts for ${input.verificationId}`,
+				`Error checking previous attempts for ${verificationId}`,
 			);
 			return Err({
 				t: "database-error",
@@ -90,7 +98,7 @@ export const VerifyCode =
 			});
 		}
 		deps.logger.info(
-			`Previous attempts for ${input.verificationId}: ${previousAttempts.value.length}`,
+			`Previous attempts for ${verificationId}: ${previousAttempts.value.length}`,
 		);
 
 		if (previousAttempts.value.length >= deps.verifyCodeMaxAttempts) {
@@ -108,7 +116,7 @@ export const VerifyCode =
 			verificationAttemptId: VerificationAttemptId.generate(),
 			codeHash,
 			createdAt: deps.now(),
-			verificationId: input.verificationId,
+			verificationId: verificationId,
 		};
 
 		await deps.verificationAttemptDb.insert(newAttempt);
@@ -129,5 +137,5 @@ export const VerifyCode =
 
 		await deps.verificationDb.put(verificationNew);
 
-		return Ok(verification);
+		return Ok(null);
 	};

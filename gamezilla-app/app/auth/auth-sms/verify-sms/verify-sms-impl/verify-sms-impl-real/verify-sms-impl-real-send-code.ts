@@ -87,7 +87,5 @@ export const SendCode =
 			return sent;
 		}
 
-		return Ok({
-			verificationId: verificationNew.verificationId,
-		});
+		return Ok(null);
 	};

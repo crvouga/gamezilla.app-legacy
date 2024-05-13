@@ -1,6 +1,5 @@
-import { Result } from "gamezilla-app/@/core";
+import { PhoneNumber, Result } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
-import { VerificationId } from "./auth-sms/verify-sms/verification";
 
 const Route = p.or(
 	p.obj({
@@ -14,7 +13,7 @@ const Route = p.or(
 	p.obj({
 		n: p.l("auth-login"),
 		t: p.l("login-sms-verify"),
-		verificationId: VerificationId,
+		phoneNumber: PhoneNumber,
 	}),
 );
 

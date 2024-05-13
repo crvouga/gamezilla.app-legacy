@@ -1,7 +1,6 @@
 import type { PhoneNumber, Task } from "gamezilla-app/@/core";
 import type { LanguageCodeISO_639_1 } from "gamezilla-app/@/l18n";
 import type { Translator } from "gamezilla-app/@/l18n/generated";
-import type { VerificationId } from "./verification";
 
 export type VerifyCodeProblem =
 	| {
@@ -94,11 +93,11 @@ export type IVerifySMS = {
 	sendCode: (input: {
 		phoneNumber: PhoneNumber;
 		preferredLanguage: LanguageCodeISO_639_1;
-	}) => Task<SendCodeProblem, { verificationId: VerificationId }>;
+	}) => Task<SendCodeProblem, null>;
 	verifyCode: (input: {
-		verificationId: VerificationId;
+		phoneNumber: PhoneNumber;
 		code: string;
-	}) => Task<VerifyCodeProblem, { phoneNumber: PhoneNumber }>;
+	}) => Task<VerifyCodeProblem, null>;
 };
 
 export type SendCodeOutput = Awaited<ReturnType<IVerifySMS["sendCode"]>>;

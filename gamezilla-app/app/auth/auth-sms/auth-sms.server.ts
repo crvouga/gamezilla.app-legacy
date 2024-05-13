@@ -1,6 +1,7 @@
 import {
 	Err,
 	Ok,
+	PhoneNumber,
 	Posix,
 	Sub,
 	TimeSpan,
@@ -23,7 +24,6 @@ import { SMS } from "gamezilla-app/app/@/server/sms";
 import type { IAccountDb } from "../@/server/account-db";
 import { AccountDb } from "../@/server/account-db/account-db-impl";
 import type { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.types";
-import type { VerificationId } from "./verify-sms/verification";
 import { VerificationAttemptDb } from "./verify-sms/verification-attempt";
 import { VerificationCodeGenerator } from "./verify-sms/verification-code-generator";
 import { VerificationDb } from "./verify-sms/verification/verification-db";
@@ -82,7 +82,7 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 		logger: ctx.logger,
 		now: Posix.now,
 		sms: SMS({
-			t: 'fake',
+			t: "fake",
 			logger: ILogger.prefix("sms", ctx.logger),
 		}),
 		Translator,
@@ -173,21 +173,23 @@ const updateSendCode: Module["update"] = async ({ msgClient, model, deps }) => {
 
 const handleVerifyCode = async (input: {
 	now: Posix;
-	verificationId: VerificationId;
+	phoneNumber: PhoneNumber;
 	inputtedCode: string;
 	AccountDb: IAccountDb;
 	VerifySMS: IVerifySMS;
 }): Task<VerifyCodeProblem, UserAccount> => {
 	const verified = await input.VerifySMS.verifyCode({
 		code: input.inputtedCode,
-		verificationId: input.verificationId,
+		phoneNumber: input.phoneNumber,
 	});
 
 	if (isErr(verified)) {
 		return verified;
 	}
 
-	const found = await input.AccountDb.findOneByPhoneNumber(verified.value);
+	const found = await input.AccountDb.findOneByPhoneNumber({
+		phoneNumber: input.phoneNumber,
+	});
 
 	if (isErr(found)) {
 		return Err({
@@ -204,7 +206,7 @@ const handleVerifyCode = async (input: {
 
 	const accountNew: UserAccount = {
 		createdAt: input.now,
-		phoneNumber: verified.value.phoneNumber,
+		phoneNumber: input.phoneNumber,
 		role: "normal",
 		userId: UserId.generate(),
 	};
@@ -231,15 +233,19 @@ const updateVerifyCode: Module["update"] = async ({
 }) => {
 	switch (msgClient?.t) {
 		case "user-clicked-verify-code-button": {
-			ctx.logger.info(`Verifying code for ${msgClient.verificationId}`);
+			ctx.logger.info(
+				`Verifying code for ${PhoneNumber.toString(msgClient.phoneNumber)}`,
+			);
 			const verified = await handleVerifyCode({
 				AccountDb: deps.AccountDb,
 				VerifySMS: deps.VerifySMS,
 				now: ctx.now,
-				verificationId: msgClient.verificationId,
+				phoneNumber: msgClient.phoneNumber,
 				inputtedCode: msgClient.inputtedCode,
 			});
-			ctx.logger.info(`Verified code for ${msgClient.verificationId}`);
+			ctx.logger.info(
+				`Verified code for ${PhoneNumber.toString(msgClient.phoneNumber)}`,
+			);
 
 			if (isErr(verified)) {
 				ctx.logger.error(
