@@ -35,11 +35,8 @@ export type MsgToServer = { t: "noop" };
 //
 //
 
-const Mode = p.or(
-	p.obj({ t: p.l("play") }),
-	p.obj({ t: p.l("edit") }),
-)
-type Mode = p.Infer<typeof Mode>	
+const Mode = p.or(p.obj({ t: p.l("play") }), p.obj({ t: p.l("edit") }));
+type Mode = p.Infer<typeof Mode>;
 
 export type ModelCore = {
 	t: "puzzle-builder";

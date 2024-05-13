@@ -33,6 +33,7 @@ import {
 } from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl";
 import { VerifySMSProvider } from "./verify-sms/verify-sms-impl-real/verify-sms-provider";
+import { SMS } from "gamezilla-app/app/@/server/sms";
 
 //
 //
@@ -80,7 +81,10 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 		hashing,
 		logger: ctx.logger,
 		now: Posix.now,
-		sms: ctx.sms,
+		sms: SMS({
+			t: 'fake',
+			logger: ILogger.prefix("sms", ctx.logger),
+		}),
 		Translator,
 		verificationCodeGenerator: VerificationCodeGenerator({
 			t: "fake",
@@ -94,7 +98,7 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 		logger: ILogger.prefix("twilio-verify", ctx.logger),
 	});
 
-	const provider = ctx.env === "test" ? providerInHouse : providerTwilio;
+	const provider = ctx.env === "prod" ? providerTwilio : providerInHouse;
 
 	return {
 		AccountDb: AccountDb({

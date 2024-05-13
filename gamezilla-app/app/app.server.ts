@@ -145,7 +145,7 @@ export const getDeps = async ({
 	});
 
 	const ctx: ServerCtx = {
-		env: "prod",
+		env: process.env.NODE_ENV === "production" ? "prod" : "dev",
 		sms,
 		dbConnSql,
 		dbConnKv,
@@ -203,7 +203,7 @@ export const init = async (input: {
 	eff?: Eff<MsgServer>;
 }> => {
 	const ctx: ServerCtx = {
-		env: "prod",
+		env: process.env.NODE_ENV === "production" ? "prod" : "dev",
 		sms: input.deps.sms,
 		dbConnSql: input.deps.dbConnSql,
 		dbConnKv: input.deps.dbConnKv,
@@ -265,7 +265,7 @@ export const update = async (input: {
 	logMsg({ msg: input.msg, logger: input.deps.logger });
 
 	const ctx: ServerCtx = {
-		env: "prod",
+		env: process.env.NODE_ENV === "production" ? "prod" : "dev",
 		sms: input.deps.sms,
 		dbConnSql: input.deps.dbConnSql,
 		dbConnKv: input.deps.dbConnKv,
@@ -515,7 +515,7 @@ export const subscriptions = async (input: {
 	ctx: { now: Posix };
 }): Promise<Sub<MsgServer>> => {
 	const ctx: ServerCtx = {
-		env: "prod",
+		env: process.env.NODE_ENV === "production" ? "prod" : "dev",
 		dbConnSql: input.deps.dbConnSql,
 		dbConnKv: input.deps.dbConnKv,
 		logger: input.deps.logger,
