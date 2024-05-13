@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { CODEBASE_VERSION_ID, SERVER_IMPL, SERVER_PORT } from "public-config";
 import { ProgramImpure } from "./@/core/program-impure";
 import { Server } from "./@/server";

@@ -9,9 +9,9 @@ import config from "./config.json";
 //
 //
 
-export const IS_PROD = process.env["NODE_ENV"] === "production";
+export const IS_PROD = process.env.NODE_ENV === "production";
 
-export const IS_INTEGRATION_TEST = process.env["IS_INTEGRATION_TEST"] === "true";
+export const IS_INTEGRATION_TEST = process.env.IS_INTEGRATION_TEST === "true";
 
 //
 //
@@ -21,7 +21,7 @@ export const IS_INTEGRATION_TEST = process.env["IS_INTEGRATION_TEST"] === "true"
 //
 //
 
-export const VDOM_IMPL: VDomImpl = "react" as VDomImpl;
+export const VDOM_IMPL: VDomImpl = "inferno" as VDomImpl;
 
 //
 //
@@ -33,7 +33,7 @@ export const VDOM_IMPL: VDomImpl = "react" as VDomImpl;
 
 export type ServerImpl = "bun" | "node";
 
-export const SERVER_IMPL = "node" as ServerImpl;
+export const SERVER_IMPL = "bun" as ServerImpl;
 
 //
 //
@@ -69,7 +69,7 @@ export const SERVER_URL = IS_PROD
 		? SERVER_URL_NGROK
 		: SERVER_URL_LOCAL;
 
-export const SERVER_PORT = Number(process.env?.["PORT"] ?? SERVER_PORT_LOCAL);
+export const SERVER_PORT = Number(process.env?.PORT ?? SERVER_PORT_LOCAL);
 
 //
 //
@@ -79,4 +79,4 @@ export const SERVER_PORT = Number(process.env?.["PORT"] ?? SERVER_PORT_LOCAL);
 //
 //
 
-export const CODEBASE_VERSION_ID = config["codebase_version_id"];
+export const CODEBASE_VERSION_ID = config.codebase_version_id;

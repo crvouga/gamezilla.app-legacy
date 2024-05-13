@@ -1,8 +1,11 @@
+import { p } from "../core/parser";
+
 /**
  * `History` is a data structure that allows you to keep track of the state of
  * an object over time. It is useful for implementing undo/redo functionality.
  *
  */
+
 export type History<T> = {
 	_past: T[];
 	_present: T;
@@ -90,7 +93,16 @@ const canUndo = <T>(history: History<T>): boolean => {
 	return history._past.length > 0;
 };
 
+const parser = <T>(value: p.Parser<T>): p.Parser<History<T>> => {
+	return p.obj({
+		_past: p.arr(value),
+		_present: value,
+		_future: p.arr(value),
+	});
+};
+
 export const History = {
+	parser,
 	init,
 	push,
 	undo,

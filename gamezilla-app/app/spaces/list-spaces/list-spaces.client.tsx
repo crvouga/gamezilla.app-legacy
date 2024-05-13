@@ -76,19 +76,6 @@ const update: SpaceClientModule["update"] = (input) => {
 		case "clicked-space-card": {
 			return {
 				model,
-				modelLocation: {
-					t: "push",
-					c: {
-						filters: {
-							limit: 100,
-							offset: 0,
-						},
-						screen: {
-							t: "space",
-							spaceId: msg.spaceId,
-						},
-					},
-				},
 				msgCmd: [
 					pushRoute({
 						n: "spaces",
@@ -165,12 +152,12 @@ const View: SpaceClientModule["View"] = (props) => {
 							<ViewSpaceCard
 								key={state.spaceId}
 								ctx={{ ...props.ctx, currentUserId }}
-								onClick={() =>
+								onClick={() => {
 									props.dispatch({
 										t: "clicked-space-card",
 										spaceId: state.spaceId,
-									})
-								}
+									});
+								}}
 								state={state}
 							/>
 						);

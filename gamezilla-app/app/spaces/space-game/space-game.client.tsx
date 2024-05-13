@@ -273,14 +273,18 @@ const subscriptionsCurrentUserGame: SpaceClientModule["subscriptions"] = ({
 const View: SpaceClientModule["View"] = (input) => {
 	const { model, ctx, dispatch } = input;
 
-	if (!ctx.space || !ctx.currentUserId) {
-		return null;
+	if (!ctx.space) {
+		return <>Missing space</>;
+	}
+
+	if (!ctx.currentUserId) {
+		return <>Missing current user id</>;
 	}
 
 	const space = Spaces.toSpaceStarted(model, ctx.space?.spaceId);
 
 	if (!space) {
-		return null;
+		return <>Space not started</>;
 	}
 
 	if (space.game) {

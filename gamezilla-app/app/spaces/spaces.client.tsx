@@ -14,7 +14,7 @@ import { JoinSpaceClient } from "./join-space/join-space.client";
 import { LeaveSpaceClient } from "./leave-space/leave-space.client";
 import { ListSpacesClient } from "./list-spaces/list-spaces.client";
 import { Modals } from "./modals/modals";
-import { SpaceClient } from "./space/space.cient";
+import { SpaceClient } from "./space/space.client";
 import { Spaces } from "./spaces-core";
 import type { ClientModule, ModelClient } from "./spaces.types";
 import { StartSpaceClient } from "./start-space/start-space.client";
@@ -201,7 +201,7 @@ export const View: ClientModule["View"] = (props) => {
 				}
 				case "space": {
 					if (isAnonymous(props.ctx)) {
-						return null;
+						return <>isAnonymous</>;
 					}
 
 					return (
@@ -214,12 +214,12 @@ export const View: ClientModule["View"] = (props) => {
 					);
 				}
 				default: {
-					return null;
+					return <>404</>;
 				}
 			}
 		}
 		default: {
-			return null;
+			return <>404</>;
 		}
 	}
 };

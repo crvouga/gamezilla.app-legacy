@@ -39,6 +39,8 @@ const main = async () => {
 
 		render: (input) => render(<AppClient.View {...input} />),
 
+		crash: (input) => console.log("Crash!", input.error),
+
 		debugger: DebuggerReduxDevTools,
 	});
 

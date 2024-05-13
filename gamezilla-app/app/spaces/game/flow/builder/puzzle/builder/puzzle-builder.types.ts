@@ -5,6 +5,7 @@ import {
 	FlowVariantUIPlay,
 } from "../../../@/flow";
 import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
+import { p } from "gamezilla-app/@/core/parser";
 
 export type ModelClient = {};
 
@@ -34,13 +35,11 @@ export type MsgToServer = { t: "noop" };
 //
 //
 
-type Mode =
-	| {
-			t: "play";
-	  }
-	| {
-			t: "edit";
-	  };
+const Mode = p.or(
+	p.obj({ t: p.l("play") }),
+	p.obj({ t: p.l("edit") }),
+)
+type Mode = p.Infer<typeof Mode>	
 
 export type ModelCore = {
 	t: "puzzle-builder";

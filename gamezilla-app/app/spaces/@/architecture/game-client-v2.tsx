@@ -221,6 +221,10 @@ export const andThen = <T extends GameClientModuleTypes>(
 
 	const updated = update(acc.model);
 
+	if (!updated) {
+		return acc;
+	}
+
 	const accNew: Output<T> = {
 		model: updated.model,
 		eff: Eff.batch([acc.eff, updated.eff]),

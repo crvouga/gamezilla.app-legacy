@@ -19,9 +19,9 @@ const View = (props: {
 	dispatch: (m: MsgClient) => void;
 	spaceId: SpaceId;
 }) => {
-	const spaceState = () => Spaces.toSpaceState(props.model, props.spaceId);
+	const spaceState = Spaces.toSpaceState(props.model, props.spaceId);
 
-	switch (spaceState().type) {
+	switch (spaceState.type) {
 		case "initial": {
 			return <ViewSpaceNotFound {...props} />;
 		}
@@ -34,8 +34,7 @@ const View = (props: {
 			const spaceCtx: SpaceClientCtx = {
 				...props.ctx,
 				currentUserId: props.ctx.currentUserId,
-				// @ts-ignore
-				space: spaceState(),
+				space: spaceState,
 			};
 
 			const currentUserSpaceId = Spaces.toSpaceIdByUserId(
@@ -60,7 +59,7 @@ const View = (props: {
 
 					{false && (
 						<Feed.View
-							spaceState={spaceState()}
+							spaceState={spaceState}
 							ctx={spaceCtx}
 							model={props.model}
 							dispatch={props.dispatch}

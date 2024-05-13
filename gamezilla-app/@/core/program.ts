@@ -31,7 +31,7 @@ export type Program<TModel, TMsg, TCtx> = {
 
 	debugger?: ProgramDebugger;
 
-	crash?: (input: { error: unknown }) => void;
+	crash: (input: { error: unknown }) => void;
 
 	render?: (input: {
 		model: TModel;
@@ -54,9 +54,9 @@ function generateProgramId() {
 //
 
 export type ProgramDebugger = (
-	initialModel: any,
-	setModel: (model: any, msg?: any) => MaybePromise<void>,
-) => MaybePromise<(model: any, msg?: any) => void>;
+	initialModel: unknown,
+	setModel: (model: unknown, msg?: unknown) => MaybePromise<void>,
+) => MaybePromise<(model: unknown, msg?: unknown) => void>;
 
 export async function run<TModel, TMsg, TCtx>(
 	program: Program<TModel, TMsg, TCtx> & {},
@@ -98,6 +98,9 @@ export async function run<TModel, TMsg, TCtx>(
 	const queue: TMsg[] = [];
 
 	async function dispatch(msg: TMsg) {
+		if (!model) {
+			return;
+		}
 		try {
 			const ctx = await program.getCtx();
 
@@ -111,7 +114,7 @@ export async function run<TModel, TMsg, TCtx>(
 			const updated = await program.update({
 				ctx,
 				msg,
-				model: model!,
+				model,
 			});
 			isUpdating = false;
 
@@ -122,11 +125,14 @@ export async function run<TModel, TMsg, TCtx>(
 			updateDebugger?.(model, msg);
 
 			if (queue.length > 0) {
-				const msg = queue.shift()!;
+				const msg = queue.shift();
+				if (!msg) {
+					return;
+				}
 				dispatch(msg);
 			}
 		} catch (error) {
-			program.crash?.({ error });
+			program.crash({ error });
 		}
 	}
 
@@ -144,9 +150,14 @@ export async function run<TModel, TMsg, TCtx>(
 		async function debuggerSetModel(modelNew) {
 			const ctx = await program.getCtx();
 
+			// @ts-expect-error
 			model = modelNew;
 
-			program.render?.({ model: model!, ctx, dispatch });
+			if (!model) {
+				return;
+			}
+
+			program.render?.({ model, ctx, dispatch });
 		},
 	);
 	updateDebugger?.(model, "@INIT");

@@ -12,23 +12,25 @@ import * as FlowVariantUI from "./flow-variant-ui";
 //
 //
 
-type Idle = {
-	t: "idle";
-};
+const Idle = p.obj({ t: p.l("idle") });
+type Idle = p.Infer<typeof Idle>;
 
-type Dragging = {
-	t: "dragging";
-	activeGroupId: Flow.GroupId;
-	autocompleteEdge?: Flow.Edge | null;
-};
+const Dragging = p.obj({
+	t: p.l("dragging"),
+	activeGroupId: Flow.GroupId,
+	autocompleteEdge: p.maybe(Flow.Edge),
+});
+type Dragging = p.Infer<typeof Dragging>;
 
-type Status = Idle | Dragging;
+const Status = p.or(Idle, Dragging);
+type Status = p.Infer<typeof Status>;
 
-export type Model = {
-	pipesBySourceId: Flow.Model["pipesBySourceId"];
-	terminalsByGroupId: Flow.Model["terminalsByGroupId"];
-	status: Status;
-};
+const Model = p.obj({
+	pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
+	terminalsByGroupId: p.partialDict(Flow.GroupId, Flow.Terminal),
+	status: Status,
+});
+export type Model = p.Infer<typeof Model>;
 
 //
 //
@@ -113,6 +115,7 @@ const updateIdle: typeof update = ({ msg, model, flow }) => {
 				status: {
 					t: "dragging",
 					activeGroupId: groupId,
+					autocompleteEdge: null,
 				},
 			};
 		}
