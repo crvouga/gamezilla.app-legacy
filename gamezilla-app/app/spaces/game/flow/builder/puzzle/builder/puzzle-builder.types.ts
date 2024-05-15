@@ -1,17 +1,17 @@
-import type { UserId } from "gamezilla-app/app/@/data";
+import { UserId } from "gamezilla-app/app/@/data";
 import {
 	type FlowVariant,
 	FlowVariantUIEdit,
 	FlowVariantUIPlay,
 } from "../../../@/flow";
-import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
+import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 import { p } from "gamezilla-app/@/core/parser";
 
-export type ModelClient = {};
+export type ModelClient = null;
 
-export const initClient: ModelClient = {};
+export const initClient: ModelClient = null;
 
-export type ModelServer = {};
+export type ModelServer = null;
 
 export type MsgServer = { t: "noop" };
 
@@ -38,13 +38,14 @@ export type MsgToServer = { t: "noop" };
 const Mode = p.or(p.obj({ t: p.l("play") }), p.obj({ t: p.l("edit") }));
 type Mode = p.Infer<typeof Mode>;
 
-export type ModelCore = {
-	t: "puzzle-builder";
-	puzzle: FlowPuzzle;
-	mode: Mode;
-	play: FlowVariantUIPlay.Model;
-	edit: FlowVariantUIEdit.Model;
-};
+export const ModelCore = p.obj({
+	t: p.l("puzzle-builder"),
+	puzzle: FlowPuzzle,
+	mode: Mode,
+	play: FlowVariantUIPlay.Model,
+	edit: FlowVariantUIEdit.Model,
+});
+export type ModelCore = p.Infer<typeof ModelCore>;
 
 export const toCurrentFlow = (modelCore: ModelCore): FlowVariant.Model => {
 	switch (modelCore.mode.t) {
@@ -65,24 +66,18 @@ export const toCurrentFlow = (modelCore: ModelCore): FlowVariant.Model => {
 	}
 };
 
-export type MsgCore =
-	| {
-			t: "puzzle-builder.flow-ui-play";
-			c: FlowVariantUIPlay.Msg;
-	  }
-	| {
-			t: "puzzle-builder.flow-ui-edit";
-			c: FlowVariantUIEdit.Msg;
-	  }
-	| {
-			t: "puzzle-builder.user-clicked-edit-mode-button";
-			userId: UserId;
-	  }
-	| {
-			t: "puzzle-builder.user-clicked-play-mode-button";
-			userId: UserId;
-	  }
-	| {
-			t: "puzzle-builder.user-clicked-exit-button";
-			userId: UserId;
-	  };
+export const MsgCore = p.or(
+	p.obj({ t: p.l("puzzle-builder.flow-ui-play"), c: FlowVariantUIPlay.Msg }),
+	p.obj({ t: p.l("puzzle-builder.flow-ui-edit"), c: FlowVariantUIEdit.Msg }),
+	p.obj({
+		t: p.l("puzzle-builder.user-clicked-edit-mode-button"),
+		userId: UserId,
+	}),
+	p.obj({
+		t: p.l("puzzle-builder.user-clicked-play-mode-button"),
+		userId: UserId,
+	}),
+	p.obj({ t: p.l("puzzle-builder.user-clicked-exit-button"), userId: UserId }),
+);
+
+export type MsgCore = p.Infer<typeof MsgCore>;

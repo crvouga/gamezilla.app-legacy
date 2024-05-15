@@ -1,4 +1,4 @@
-import { PuzzleBuilder } from "./builder";
+import type { PuzzleBuilder } from "./builder";
 import { PuzzleCreate } from "./create";
 import { PuzzleDeleteForever } from "./delete-forever";
 import { PuzzleEditName } from "./edit";
@@ -22,7 +22,6 @@ export type ModelClient =
 
 export const initClient = (): ModelClient => {
 	return {
-		...PuzzleBuilder.initClient,
 		...PuzzleCreate.initClient,
 		...PuzzleList.initClient,
 		...PuzzleEditName.initClient,

@@ -26,8 +26,8 @@ const Fixture = async () => {
 
 describe(import.meta.file, () => {
 	it("should be ok sending code", async () => {
-        const f = await Fixture();
-        const phoneNumber = unwrap(PhoneNumber.fromString("+14802098698"));
+		const f = await Fixture();
+		const phoneNumber = unwrap(PhoneNumber.fromString("+14802098698"));
 		const result = await f.verifySMS.sendCode({
 			phoneNumber,
 			preferredLanguage: "en",
