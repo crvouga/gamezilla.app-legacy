@@ -18,7 +18,7 @@
 		"db-prod:connect": "railway connect Postgres",
 		"test:int": "IS_INTEGRATION_TEST=true bun test",
 		"test:unit": "IS_INTEGRATION_TEST=false bun test",
-		"client:build": "vite build",
+		"client:build": "bun check && vite build",
 		"client:serve": "bun x serve -s dist -p 3001",
 		"client:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla-app/main.client.tsx",
 		"server:cir-deps": "bun x dpdm --progress --no-warning --no-tree ./gamezilla-app/main.server.ts",
