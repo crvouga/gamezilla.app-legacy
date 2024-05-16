@@ -1,4 +1,4 @@
-import { Browser, type Eff } from "gamezilla-app/@/core";
+import { Browser, Eff } from "gamezilla-app/@/core";
 import type { Route } from "gamezilla-app/@/routing/generated/routes";
 import {
 	APP_SOUND,
@@ -25,13 +25,12 @@ const FALLBACK: Route = {
 	t: "space-list",
 };
 
-
 const encodeRoute = (route: Route): string => {
 	return btoa(JSON.stringify(route));
-}
+};
 
-const decodeRoute = (route: string | undefined): Route => {
-	if (!route) {
+const decodeRoute = (route: unknown): Route => {
+	if (typeof route !== "string") {
 		return FALLBACK;
 	}
 	try {
@@ -39,10 +38,10 @@ const decodeRoute = (route: string | undefined): Route => {
 	} catch {
 		return FALLBACK;
 	}
-}
+};
 
 const locationToRoute = (location: Browser.Location): Route => {
-	return decodeRoute(location.query["route"]) ?? FALLBACK;
+	return decodeRoute(location.query["route"]);
 };
 
 export const init = ({
@@ -53,11 +52,15 @@ export const init = ({
 	model: Model;
 	eff?: Eff;
 } => {
+	const currentRoute = locationToRoute(location);
 	return {
 		model: {
-			currentRoute: locationToRoute(location),
+			currentRoute,
 		},
-		eff: Browser.replace("/")
+		eff: Eff.batch([
+			Browser.replace("/"),
+			Browser.pushQueryParam("route", encodeRoute(currentRoute)),
+		]),
 	};
 };
 
@@ -161,10 +164,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 				model: {
 					currentRoute: routeCmd.route,
 				},
-				eff: Browser.replaceQueryParam(
-					"route",
-					encodeRoute(routeCmd.route),
-				),
+				eff: Browser.replaceQueryParam("route", encodeRoute(routeCmd.route)),
 				msgCmd: routeCmd.playSound ? [playSound(APP_SOUND.navBackwardMin)] : [],
 			};
 		}
@@ -179,14 +179,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 //
 //
 
-const onLocationChange = (location: Browser.Location): Msg => {
-	const route = locationToRoute(location);
-
-	if (route) {
-		return { t: "route-changed", route };
-	}
-
-	return { t: "route-changed", route: FALLBACK };
-};
-
-export const subscriptions = Browser.onLocation(onLocationChange);
+export const subscriptions = Browser.onLocation((location) => ({
+	t: "route-changed",
+	route: locationToRoute(location),
+}));
