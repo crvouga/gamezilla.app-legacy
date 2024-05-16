@@ -305,7 +305,9 @@ describe(import.meta.file, () => {
 			puzzleCount: FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
 		});
 
-		const puzzle = f.puzzles[f.puzzles.length - 1]!;
+		const puzzle = f.puzzles[f.puzzles.length - 1];
+
+		if (!puzzle) throw new Error("Puzzle not found");
 
 		const modelCore = f.updateModelCore([
 			{
@@ -425,10 +427,14 @@ describe(import.meta.file, () => {
 		const puzzle = await randomFlowPuzzle();
 		const f = await Fixture({ appendDuplicatesOf: puzzle });
 
+		const puzzleLast = f.puzzles[f.puzzles.length - 1];
+
+		if (!puzzleLast) throw new Error("Puzzle not found");
+
 		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-pack-item",
-				puzzle: f.puzzles[f.puzzles.length - 1]!,
+				puzzle: puzzleLast,
 				puzzleIndex: 0,
 			},
 		]);

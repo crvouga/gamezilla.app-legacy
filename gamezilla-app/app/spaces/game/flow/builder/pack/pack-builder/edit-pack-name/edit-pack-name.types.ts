@@ -1,20 +1,25 @@
-import { type RemoteResult, Result } from "gamezilla-app/@/core";
+import { RemoteResult, Result } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { UserId } from "gamezilla-app/app/@/data";
-import type { FlowPack } from "../../../../@/flow-pack";
-import type { FlowPackName } from "../../../../@/flow-pack/flow-pack-name";
+import { FlowPack } from "../../../../@/flow-pack";
+import { FlowPackName } from "../../../../@/flow-pack/flow-pack-name";
 
 export type MsgClient = MsgCore;
 
 type EditPackNameValidationError = { t: "name-cannot-be-empty" };
 
-export type ModelCore = {
-	pack: FlowPack;
-	draft: string;
-	result: RemoteResult<string, null>;
-	rollback: FlowPackName;
-	validationError: EditPackNameValidationError | null;
-};
+export const EditPackNameValidationError = p.obj({
+	t: p.l("name-cannot-be-empty"),
+});
+
+export const ModelCore = p.obj({
+	pack: FlowPack,
+	draft: p.str,
+	result: RemoteResult.parser(p.str, p.unknown),
+	rollback: FlowPackName,
+	validationError: p.or(EditPackNameValidationError, p.l(null)),
+});
+export type ModelCore = p.Infer<typeof ModelCore>;
 
 export const MsgCore = p.or(
 	p.obj({

@@ -3,9 +3,14 @@
 //
 //
 
+import { p } from "gamezilla-app/@/core/parser";
+
+
 export const LIST_TABS = ["puzzles", "packs"] as const;
 
-export type ListTab = (typeof LIST_TABS)[number];
+export const ListTab = p.enumeration(LIST_TABS);
+
+export type ListTab = p.Infer<typeof ListTab>;
 
 //
 //
@@ -14,11 +19,13 @@ export type ListTab = (typeof LIST_TABS)[number];
 
 export type MsgClient = { t: "user-changed-list-tab"; listTab: ListTab };
 
-export type MsgCore = {
-	t: "user-changed-list-tab";
-	listTab: ListTab;
-};
+export const MsgCore = p.obj({
+	t: p.l("user-changed-list-tab"),
+	listTab: ListTab,
+});
+export type MsgCore = p.Infer<typeof MsgCore>;
 
-export type ModelCore = {
-	listTab: ListTab;
-};
+export const ModelCore = p.obj({
+	listTab: ListTab,
+});
+export type ModelCore = p.Infer<typeof ModelCore>;

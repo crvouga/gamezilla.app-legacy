@@ -62,20 +62,30 @@ export type MsgToClient = {
 //
 //
 
-type Screen =
-	| {
-			t: "screen-add-puzzle";
-	  }
-	| {
-			t: "screen-puzzle-grid";
-	  }
-	| {
-			t: "screen-puzzle";
-			puzzleIndex: number;
-			puzzle: FlowPuzzle;
-			playUI: FlowVariantUIPlay.Model;
-			opened: "more" | null;
-	  };
+export const Screen = p.or(
+	p.obj({
+		t: p.l("screen-add-puzzle"),
+	}),
+	p.obj({
+		t: p.l("screen-puzzle-grid"),
+	}),
+	p.obj({
+		t: p.l("screen-puzzle"),
+		puzzleIndex: p.num,
+		puzzle: FlowPuzzle,
+		playUI: FlowVariantUIPlay.Model,
+		opened: p.maybe(p.l("more")),
+	}),
+);
+
+type Screen = p.Infer<typeof Screen>;
+
+export const ModelCore = p.obj({
+	pack: FlowPack,
+	screen: Screen,
+	slideIndex: p.num,
+	editPackName: EditPackNameTypes.ModelCore,
+});
 
 export type ModelCore = {
 	pack: FlowPack;
@@ -95,7 +105,7 @@ export const MsgCore = p.or(
 	}),
 	p.obj({
 		t: p.l("pack-builder.saved-pack"),
-		saved: p.custom(Result.is(p.is(p.str), p.is(FlowPack.parser)), "invalid"),
+		saved: Result.parser(p.str, FlowPack),
 	}),
 	p.obj({
 		t: p.l("pack-builder.user-opened-add-puzzle-screen"),

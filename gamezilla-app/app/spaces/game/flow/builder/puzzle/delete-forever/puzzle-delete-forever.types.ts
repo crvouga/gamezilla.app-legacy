@@ -1,7 +1,7 @@
-import { type RemoteResult, NotAsked } from "gamezilla-app/@/core";
-import type { UserId } from "gamezilla-app/app/@/data";
-import type { IFlowPuzzleDb } from "../../../@/flow-puzzle/flow-puzzle-db";
-import type { FlowPuzzleId } from "../../../@/flow-puzzle/flow-puzzle-id";
+import { NotAsked, Result, type RemoteResult } from "gamezilla-app/@/core";
+import { p } from "gamezilla-app/@/core/parser";
+import { UserId } from "gamezilla-app/app/@/data";
+import { FlowPuzzleId } from "../../../@/flow-puzzle/flow-puzzle-id";
 
 export type ModelClient = {
 	puzzleDeleteForeverRequest: RemoteResult<string, null>;
@@ -35,16 +35,10 @@ export type MsgServer = { t: "noop" };
 //
 //
 
-export type MsgCore = {
-	t: "user-deleted-puzzle";
-	deleted: Deleted;
-	flowPuzzleId: FlowPuzzleId;
-	userId: UserId;
-};
-
-//
-//
-//
-//
-
-type Deleted = Awaited<ReturnType<IFlowPuzzleDb["zap"]>>;
+export const MsgCore = p.obj({
+	t: p.l("user-deleted-puzzle"),
+	deleted: Result.parser(p.str, p.l(null)),
+	flowPuzzleId: FlowPuzzleId,
+	userId: UserId,
+});
+export type MsgCore = p.Infer<typeof MsgCore>;

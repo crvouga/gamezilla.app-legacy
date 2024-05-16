@@ -1,6 +1,7 @@
 import { PackCreateNew } from "./pack-create-new";
 import { PackList } from "./pack-list";
 import { PackBuilder } from "./pack-builder";
+import { p } from "gamezilla-app/@/core/parser";
 
 //
 //
@@ -52,11 +53,16 @@ export type MsgToClient = PackCreateNew.MsgToClient | PackBuilder.MsgToClient;
 //
 //
 
-export type ModelCore = {
-	packBuilder: PackBuilder.ModelCore | null;
-};
+export const ModelCore = p.obj({
+	packBuilder: p.or(PackBuilder.ModelCore, p.l(null)),
+});
 
-export type MsgCore =
-	| PackCreateNew.MsgCore
-	| PackBuilder.MsgCore
-	| PackList.MsgCore;
+export type ModelCore = p.Infer<typeof ModelCore>;
+
+
+export const MsgCore = p.or(
+	PackCreateNew.MsgCore,
+	PackBuilder.MsgCore,
+	PackList.MsgCore
+);
+export type MsgCore = p.Infer<typeof MsgCore>;

@@ -1,6 +1,7 @@
-import type { RemoteResult, Result } from "gamezilla-app/@/core";
-import type { UserId } from "gamezilla-app/app/@/data";
-import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
+import { type RemoteResult, Result } from "gamezilla-app/@/core";
+import { p } from "gamezilla-app/@/core/parser";
+import { UserId } from "gamezilla-app/app/@/data";
+import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 
 //
 //
@@ -38,8 +39,9 @@ export type MsgToClient = { t: "noop" };
 //
 //
 
-export type MsgCore = {
-	t: "puzzle-builder.saved-puzzle";
-	saved: Result<string, FlowPuzzle>;
-	userId: UserId;
-};
+export const MsgCore = p.obj({
+	t: p.l("puzzle-builder.saved-puzzle"),
+	saved: Result.parser(p.str, FlowPuzzle),
+	userId: UserId,
+});
+export type MsgCore = p.Infer<typeof MsgCore>;
