@@ -1,12 +1,12 @@
+import { Browser, type Eff } from "gamezilla-app/@/core";
+import type { Route } from "gamezilla-app/@/routing/generated/routes";
 import {
 	APP_SOUND,
+	playSound,
 	type ClientEvent,
 	type RouteCmd,
 	type SoundCmd,
-	playSound,
 } from "gamezilla-app/app/@/client";
-import { Browser, type Eff } from "gamezilla-app/@/core";
-import type { Route } from "gamezilla-app/@/routing/generated/routes";
 
 //
 //
@@ -25,8 +25,24 @@ const FALLBACK: Route = {
 	t: "space-list",
 };
 
+
+const encodeRoute = (route: Route): string => {
+	return btoa(JSON.stringify(route));
+}
+
+const decodeRoute = (route: string | undefined): Route => {
+	if (!route) {
+		return FALLBACK;
+	}
+	try {
+		return JSON.parse(atob(route));
+	} catch {
+		return FALLBACK;
+	}
+}
+
 const locationToRoute = (location: Browser.Location): Route => {
-	return RouteCodec.decode(location.query["route"]) ?? FALLBACK;
+	return decodeRoute(location.query["route"]) ?? FALLBACK;
 };
 
 export const init = ({
@@ -41,6 +57,7 @@ export const init = ({
 		model: {
 			currentRoute: locationToRoute(location),
 		},
+		eff: Browser.replace("/")
 	};
 };
 
@@ -97,7 +114,7 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
 				model: {
 					currentRoute: msg.route,
 				},
-				eff: Browser.pushQueryParam("route", RouteCodec.encode(msg.route)),
+				eff: Browser.pushQueryParam("route", encodeRoute(msg.route)),
 				msgCmd: [playSound(APP_SOUND.tap)],
 			};
 		}
@@ -113,22 +130,6 @@ const updateFromMsg: typeof update = ({ msg, model }) => {
 	}
 };
 
-const RouteCodec = {
-	encode: (route: Route): string => {
-		return btoa(JSON.stringify(route));
-	},
-	decode: (route: string | undefined): Route => {
-		if (!route) {
-			return FALLBACK;
-		}
-		try {
-			return JSON.parse(atob(route));
-		} catch {
-			return FALLBACK;
-		}
-	},
-};
-
 const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 	if (!msgCmd) {
 		return { model };
@@ -142,7 +143,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 				model: {
 					currentRoute: routeCmd.route,
 				},
-				eff: Browser.pushQueryParam("route", RouteCodec.encode(routeCmd.route)),
+				eff: Browser.pushQueryParam("route", encodeRoute(routeCmd.route)),
 				msgCmd: routeCmd.playSound ? [playSound(APP_SOUND.navForwardMin)] : [],
 			};
 		}
@@ -162,7 +163,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 				},
 				eff: Browser.replaceQueryParam(
 					"route",
-					RouteCodec.encode(routeCmd.route),
+					encodeRoute(routeCmd.route),
 				),
 				msgCmd: routeCmd.playSound ? [playSound(APP_SOUND.navBackwardMin)] : [],
 			};
