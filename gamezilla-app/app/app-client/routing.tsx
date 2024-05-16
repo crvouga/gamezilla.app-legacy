@@ -179,7 +179,9 @@ const updateFromCmd: typeof update = ({ msgCmd, model }) => {
 //
 //
 
-export const subscriptions = Browser.onLocation((location) => ({
-	t: "route-changed",
-	route: locationToRoute(location),
-}));
+export const subscriptions = Browser.onLocation(
+	(location): Msg => ({
+		t: "route-changed",
+		route: locationToRoute(location),
+	}),
+);
