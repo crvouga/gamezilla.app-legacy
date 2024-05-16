@@ -1,9 +1,10 @@
+import { p } from "gamezilla-app/@/core/parser";
 import { PuzzleBuilder } from "./builder";
 import { PuzzleCreate } from "./create";
 import { PuzzleDeleteForever } from "./delete-forever";
 import { PuzzleEditName } from "./edit";
 import { PuzzleList } from "./list";
-import type { PuzzleSaveChanges } from "./save-changes";
+import { PuzzleSaveChanges } from "./save-changes";
 
 //
 //
@@ -22,7 +23,6 @@ export type ModelClient =
 
 export const initClient = (): ModelClient => {
 	return {
-		...PuzzleBuilder.initClient,
 		...PuzzleCreate.initClient,
 		...PuzzleList.initClient,
 		...PuzzleEditName.initClient,
@@ -79,14 +79,17 @@ export type MsgToClient =
 //
 //
 
-export type MsgCore =
-	| PuzzleBuilder.MsgCore
-	| PuzzleList.MsgCore
-	| PuzzleCreate.MsgCore
-	| PuzzleEditName.MsgCore
-	| PuzzleDeleteForever.MsgCore
-	| PuzzleSaveChanges.MsgCore;
+export const MsgCore = p.or(
+	PuzzleBuilder.MsgCore,
+	PuzzleList.MsgCore,
+	PuzzleCreate.MsgCore,
+	PuzzleEditName.MsgCore,
+	PuzzleDeleteForever.MsgCore,
+	PuzzleSaveChanges.MsgCore,
+);
+export type MsgCore = p.Infer<typeof MsgCore>;
 
-export type ModelCore = {
-	puzzleBuilder: PuzzleBuilder.ModelCore | null;
-};
+export const ModelCore = p.obj({
+	puzzleBuilder: p.maybe(PuzzleBuilder.ModelCore),
+});
+export type ModelCore = p.Infer<typeof ModelCore>;

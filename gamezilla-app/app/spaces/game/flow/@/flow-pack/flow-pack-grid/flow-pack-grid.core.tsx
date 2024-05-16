@@ -1,8 +1,8 @@
-import { NotAsked } from "gamezilla-app/@/core";
-import { RequestResponse } from "gamezilla-app/@/core/request-response";
+import type { RequestResponse } from "gamezilla-app/@/core/request-response";
 import type { ListPuzzlesOutput } from "../../flow-puzzle";
 import type { FlowPuzzle } from "../../flow-puzzle/flow-puzzle";
 import type { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
+import { NotAsked } from "gamezilla-app/@/core";
 
 export type ModelClient = {
 	request: RequestResponse<string, null>;

@@ -19,6 +19,7 @@ import * as FlowUI from "../flow/flow-ui";
 import * as FlowVariant from "./flow-variant";
 import * as FlowVariantDimensions from "./flow-variant-dimensions";
 import * as FlowVariantUI from "./flow-variant-ui";
+import { p } from "gamezilla-app/@/core/parser";
 
 //
 //
@@ -28,10 +29,21 @@ import * as FlowVariantUI from "./flow-variant-ui";
 //
 //
 
-type Form = {
-	terminalsByGroupId: DraftTerminals;
-	dimensions: FlowVariantDimensions.Model;
-};
+const DraftTerminal = p.obj({
+	groupId: Flow.GroupId,
+	startId: Flow.NodeId,
+	endId: p.maybe(Flow.NodeId),
+});
+type DraftTerminal = p.Infer<typeof DraftTerminal>;
+
+const DraftTerminals = p.partialDict(Flow.GroupId, DraftTerminal);
+type DraftTerminals = p.Infer<typeof DraftTerminals>;
+
+const Form = p.obj({
+	terminalsByGroupId: DraftTerminals,
+	dimensions: FlowVariantDimensions.Model,
+});
+type Form = p.Infer<typeof Form>;
 
 const toEmptyForm = ({ flow }: { flow: FlowVariant.Model }): Form => {
 	return {
@@ -40,24 +52,15 @@ const toEmptyForm = ({ flow }: { flow: FlowVariant.Model }): Form => {
 	};
 };
 
-export type Model = {
-	form: History<Form>;
-	opened: "dimensions" | null;
-	dimensions: FlowVariantDimensions.Model;
-};
-
-type DraftTerminals = {
-	[groupId in Flow.GroupId]?: DraftTerminal;
-};
+export const Model = p.obj({
+	form: History.parser(Form),
+	opened: p.maybe(p.l("dimensions")),
+	dimensions: FlowVariantDimensions.Model,
+});
+export type Model = p.Infer<typeof Model>;
 
 export const canClear = (model: Model): boolean => {
 	return Object.keys(History.present(model.form).terminalsByGroupId).length > 0;
-};
-
-type DraftTerminal = {
-	groupId: Flow.GroupId;
-	startId: Flow.NodeId;
-	endId: Flow.NodeId | null | undefined;
 };
 
 export const init = ({ flow }: { flow: FlowVariant.Model }): Model => {
@@ -99,20 +102,23 @@ export const isUnsavedChanges = (
 //
 //
 //
-
-export type Msg =
-	| { t: "dragged-over"; nodeId: Flow.NodeId }
-	| { t: "pressed-up-node"; nodeId: Flow.NodeId }
-	| { t: "pressed-down-node"; nodeId: Flow.NodeId }
-	| { t: "clicked-clear" }
-	| { t: "clicked-undo" }
-	| { t: "clicked-redo" }
-	//
-	| { t: "dimensions-form.clicked-open" }
-	| { t: "dimensions-form.closed" }
-	| { t: "dimensions-form.clicked-cancel" }
-	| { t: "dimensions-form.clicked-save" }
-	| { t: "dimensions-form.inputted"; dimensions: FlowVariantDimensions.Model };
+export const Msg = p.or(
+	p.obj({ t: p.l("dragged-over"), nodeId: Flow.NodeId }),
+	p.obj({ t: p.l("pressed-up-node"), nodeId: Flow.NodeId }),
+	p.obj({ t: p.l("pressed-down-node"), nodeId: Flow.NodeId }),
+	p.obj({ t: p.l("clicked-clear") }),
+	p.obj({ t: p.l("clicked-undo") }),
+	p.obj({ t: p.l("clicked-redo") }),
+	p.obj({ t: p.l("dimensions-form.clicked-open") }),
+	p.obj({ t: p.l("dimensions-form.closed") }),
+	p.obj({ t: p.l("dimensions-form.clicked-cancel") }),
+	p.obj({ t: p.l("dimensions-form.clicked-save") }),
+	p.obj({
+		t: p.l("dimensions-form.inputted"),
+		dimensions: FlowVariantDimensions.Model,
+	}),
+);
+export type Msg = p.Infer<typeof Msg>;
 
 export type Cmd = {
 	t: "play-sound";
@@ -372,6 +378,7 @@ export const toCurrentPlacingGroupId = (model: Model): Flow.GroupId => {
 		}
 	}
 
+	// biome-ignore lint/style/noNonNullAssertion: <explanation>
 	return Flow.GROUP_ID_ORDER[Flow.GROUP_ID_ORDER.length - 1]!;
 };
 
@@ -547,6 +554,7 @@ const ViewTerminal = ({
 }) => {
 	const color = FlowUI.Color.groupIdToHex(groupId);
 	return (
+		// biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
 		<svg className={className} viewBox="-1 -1 2 2">
 			<circle cx="0" cy="0" r="0.8" fill={color} />
 		</svg>

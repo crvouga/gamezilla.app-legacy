@@ -5,6 +5,9 @@
 //
 //
 
+import { p } from "../parser";
+import { parser } from "./result-parser";
+
 /**
  * A `Result` represents the result of an operation that may succeed or fail.
  */
@@ -82,7 +85,7 @@ export const Err = <T>(error: T): Err<T> => {
  * Checks if a result is an error
  */
 export const isErr = <TError, TValue>(
-	result: RemoteResult<TError, TValue>,
+	result: RemoteResultPrivate<TError, TValue>,
 ): result is Err<TError> => {
 	return result.t === "err";
 };
@@ -186,40 +189,46 @@ export const ResultPrivate = {
 //
 //
 
+export const NotAsked: NotAsked = { t: "not-asked" };
+
+export type NotAsked = {
+	t: "not-asked";
+};
+
+export const Loading: Loading = { t: "loading" };
+
+export type Loading = {
+	t: "loading";
+};
+
 export type Remote = NotAsked | Loading;
 
-export type RemoteResult<TError, TValue> =
+export type RemoteResultPrivate<TError, TValue> =
 	| Remote
 	| ResultPrivate<TError, TValue>;
 
-export type NotAsked = { t: "not-asked" };
-export const NotAsked: NotAsked = { t: "not-asked" };
-
-export type Loading = { t: "loading" };
-export const Loading: Loading = { t: "loading" };
-
 export const isLoading = <TError, TValue>(
-	result?: RemoteResult<TError, TValue>,
+	result?: RemoteResultPrivate<TError, TValue>,
 ): result is Loading => {
 	return result?.t === "loading";
 };
 
 export const isNotAsked = <TError, TValue>(
-	result: RemoteResult<TError, TValue>,
+	result: RemoteResultPrivate<TError, TValue>,
 ): result is NotAsked => {
 	return result.t === "not-asked";
 };
 
 export const isPending = <TError, TValue>(
-	result: RemoteResult<TError, TValue>,
+	result: RemoteResultPrivate<TError, TValue>,
 ): result is NotAsked | Loading => {
 	return isNotAsked(result) || isLoading(result);
 };
 
 export const remoteResultMap = <E, A, B>(
-	result: RemoteResult<E, A>,
+	result: RemoteResultPrivate<E, A>,
 	mapper: (a: A) => B,
-): RemoteResult<E, B> => {
+): RemoteResultPrivate<E, B> => {
 	switch (result.t) {
 		case "not-asked":
 		case "loading":
@@ -231,7 +240,19 @@ export const remoteResultMap = <E, A, B>(
 	}
 };
 
-export const RemoteResult = {
+const remoteResultParser = <E, A>(
+	error: p.Parser<E>,
+	value: p.Parser<A>,
+): p.Parser<RemoteResultPrivate<E, A>> => {
+	return p.or(
+		p.obj<NotAsked>({ t: p.l("not-asked") }),
+		p.obj<Loading>({ t: p.l("loading") }),
+		parser(error, value),
+	);
+};
+
+export const RemoteResultPrivate = {
+	parser: remoteResultParser,
 	map: remoteResultMap,
 	Loading,
 	NotAsked,

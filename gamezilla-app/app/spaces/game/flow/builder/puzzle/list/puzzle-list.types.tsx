@@ -1,4 +1,5 @@
-import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
+import { p } from "gamezilla-app/@/core/parser";
+import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
 
 //
 //
@@ -22,7 +23,14 @@ export type MsgToClient = {
 	t: "noop";
 };
 
-export type MsgCore = {
-	t: "puzzle-list.clicked-puzzle-list-item";
-	puzzle: FlowPuzzle;
-};
+export const ModelCore = p.obj({
+	t: p.l("puzzle-list"),
+	puzzle: FlowPuzzle,
+});
+export type ModelCore = p.Infer<typeof ModelCore>;
+
+export const MsgCore = p.obj({
+	t: p.l("puzzle-list.clicked-puzzle-list-item"),
+	puzzle: FlowPuzzle,
+});
+export type MsgCore = p.Infer<typeof MsgCore>;

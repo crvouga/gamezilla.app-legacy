@@ -17,7 +17,7 @@ export const initClient: ModelClient = {
 	packCreateNewRequest: NotAsked,
 };
 
-export type ModelServer = {};
+export type ModelServer = Record<string, unknown>;
 
 //
 //
@@ -47,7 +47,7 @@ export type MsgToClient = {
 
 export const MsgCore = p.obj({
 	t: p.l("user-created-pack"),
-	created: Result.parser(p.str, FlowPack.parser),
+	created: Result.parser(p.str, FlowPack),
 	userId: UserId,
 });
 

@@ -25,7 +25,7 @@ type Dragging = p.Infer<typeof Dragging>;
 const Status = p.or(Idle, Dragging);
 type Status = p.Infer<typeof Status>;
 
-const Model = p.obj({
+export const Model = p.obj({
 	pipesBySourceId: p.dict(Flow.NodeId, Flow.Pipe),
 	terminalsByGroupId: p.partialDict(Flow.GroupId, Flow.Terminal),
 	status: Status,

@@ -73,6 +73,7 @@ const canGoNext = (pack: FlowPack, puzzleIndex: number): boolean => {
 };
 
 export const FlowPack = {
+	...parser,
 	create,
 	add,
 	includes,
@@ -80,5 +81,4 @@ export const FlowPack = {
 	canGoNext,
 	remove,
 	removePuzzleAtIndex,
-	parser,
 };

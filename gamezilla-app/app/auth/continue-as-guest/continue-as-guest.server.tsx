@@ -1,13 +1,11 @@
-import { Ok, isErr, NotAsked } from "gamezilla-app/@/core";
+import { Ok, isErr } from "gamezilla-app/@/core";
 import { UserId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import { sendBack } from "gamezilla-app/app/@/server";
 import type { ServerModule } from "../auth.types";
-import type { ModelClient } from "./continue-as-guest.types";
+import type { ModelServer } from "./continue-as-guest.types";
 
-const initModel: ModelClient = {
-	guestRequest: NotAsked,
-};
+const initModel: ModelServer = null;
 
 const update: ServerModule["update"] = async ({
 	model,
@@ -24,7 +22,7 @@ const update: ServerModule["update"] = async ({
 				phoneNumber: null,
 			};
 
-			const insertedAccount = await deps.AccountDb.insert({
+			const insertedAccount = await deps.accountDb.insert({
 				account: newGuestAccount,
 			});
 
@@ -40,7 +38,7 @@ const update: ServerModule["update"] = async ({
 				};
 			}
 
-			const insertedSession = await deps.SessionDb.insert({
+			const insertedSession = await deps.sessionDb.insert({
 				userId: newGuestAccount.userId,
 				sessionId: msgClient.sessionId,
 			});

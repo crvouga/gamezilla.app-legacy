@@ -17,7 +17,7 @@ import type { FlowPuzzle } from "../@/flow-puzzle/flow-puzzle";
 import type { IFlowPuzzleDb } from "../@/flow-puzzle/flow-puzzle-db/flow-puzzle-db";
 import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
 import { FlowPuzzleList } from "../@/flow-puzzle/flow-puzzle-list";
-import type { ListTabs } from "./list-tabs";
+import { ListTabs } from "./list-tabs";
 import { PackTypes } from "./pack";
 import { PuzzleTypes } from "./puzzle";
 
@@ -153,21 +153,32 @@ export type MsgToClient =
 //
 //
 
-export type MsgCore =
-	| ListTabs.MsgCore
-	| PackTypes.MsgCore
-	| PuzzleTypes.MsgCore;
+export const MsgCore = p.or(
+	ListTabs.MsgCore,
+	PuzzleTypes.MsgCore,
+	PackTypes.MsgCore,
+);
+export type MsgCore = p.Infer<typeof MsgCore>;
 
-type Open = { t: "list" } | { t: "puzzle-builder" } | { t: "pack-builder" };
+const Open = p.or(
+	p.obj({ t: p.l("list") }),
+	p.obj({ t: p.l("puzzle-builder") }),
+	p.obj({ t: p.l("pack-builder") }),
+);
+type Open = p.Infer<typeof Open>;
 
-type BaseModelCore = {
-	opened: Open;
-};
+export const BaseModelCore = p.obj({
+	opened: Open,
+});
+type BaseModelCore = p.Infer<typeof BaseModelCore>;
 
-export type ModelCore = PuzzleTypes.ModelCore &
-	PackTypes.ModelCore &
-	ListTabs.ModelCore &
-	BaseModelCore;
+export const ModelCore = p.and(
+	BaseModelCore,
+	PuzzleTypes.ModelCore,
+	PackTypes.ModelCore,
+	ListTabs.ModelCore,
+);
+export type ModelCore = p.Infer<typeof ModelCore>;
 
 export type UpdateCore = (input: {
 	ctx: SpaceCtx;

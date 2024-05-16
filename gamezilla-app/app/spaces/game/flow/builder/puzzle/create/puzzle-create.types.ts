@@ -1,11 +1,12 @@
 import {
 	Posix,
 	type RemoteResult,
-	type Result,
+	Result,
 	NotAsked,
 } from "gamezilla-app/@/core";
-import type { UserId } from "gamezilla-app/app/@/data";
-import type { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
+import { UserId } from "gamezilla-app/app/@/data";
+import { FlowPuzzle } from "../../../@/flow-puzzle/flow-puzzle";
+import { p } from "gamezilla-app/@/core/parser";
 
 //
 //
@@ -49,8 +50,9 @@ export type MsgToClient = {
 //
 //
 
-export type MsgCore = {
-	t: "user-created-puzzle";
-	created: Result<string, FlowPuzzle>;
-	userId: UserId;
-};
+export const MsgCore = p.obj({
+	t: p.l("user-created-puzzle"),
+	created: Result.parser(p.str, FlowPuzzle),
+	userId: UserId,
+});
+export type MsgCore = p.Infer<typeof MsgCore>;
