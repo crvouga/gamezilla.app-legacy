@@ -1,5 +1,5 @@
 import { p } from "gamezilla-app/@/core/parser";
-import  { FlowPack } from "../../../@/flow-pack/flow-pack";
+import { FlowPack } from "../../../@/flow-pack/flow-pack";
 
 export type ModelClient = {};
 

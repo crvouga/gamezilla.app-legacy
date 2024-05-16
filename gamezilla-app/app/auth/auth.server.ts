@@ -16,11 +16,11 @@ import { ContinueAsGuestServer } from "./continue-as-guest/continue-as-guest.ser
 
 export const getDeps: ServerModule["getDeps"] = async ({ ctx }) => {
 	return {
-		AccountDb: AccountDb({
+		accountDb: AccountDb({
 			t: "postgres",
 			dbConnSql: ctx.dbConnSql,
 		}),
-		SessionDb: SessionDb({
+		sessionDb: SessionDb({
 			t: "postgres-with-db-kv-cache",
 			dbConnSql: ctx.dbConnSql,
 			dbConnKv: ctx.dbConnKv,
@@ -76,7 +76,7 @@ export const toUserIdFromSessionId = async (
 	deps: ServerDeps,
 	sessionId: SessionId,
 ): Promise<UserId | null> => {
-	const found = await deps.SessionDb.findUserIdBySessionId(sessionId);
+	const found = await deps.sessionDb.findUserIdBySessionId(sessionId);
 
 	if (isErr(found)) {
 		return null;
@@ -118,7 +118,7 @@ const updateFromClient: ServerModule["update"] = async ({
 }) => {
 	switch (msgClient?.t) {
 		case "logout": {
-			const zapped = await deps.SessionDb.zapBySessionId(msgClient.sessionId);
+			const zapped = await deps.sessionDb.zapBySessionId(msgClient.sessionId);
 
 			if (zapped.t === "err") {
 				return { model };
@@ -144,13 +144,13 @@ const updateFromClient: ServerModule["update"] = async ({
 const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
 	switch (msgEvt?.t) {
 		case "wire/client-connected": {
-			const foundUserId = await deps.SessionDb.findUserIdBySessionId(
+			const foundUserId = await deps.sessionDb.findUserIdBySessionId(
 				msgEvt.sessionId,
 			);
 
 			const userId = isOk(foundUserId) ? foundUserId.value : null;
 
-			const foundAccount = await deps.AccountDb.findOneByUserId({ userId });
+			const foundAccount = await deps.accountDb.findOneByUserId({ userId });
 
 			const account = isOk(foundAccount) ? foundAccount.value : null;
 
@@ -206,7 +206,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
 				};
 			}
 
-			const inserted = await deps.SessionDb.insert({
+			const inserted = await deps.sessionDb.insert({
 				sessionId: msgEvt.sessionId,
 				userId: msgEvt.account.userId,
 			});

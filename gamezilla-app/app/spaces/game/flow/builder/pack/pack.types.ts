@@ -59,10 +59,9 @@ export const ModelCore = p.obj({
 
 export type ModelCore = p.Infer<typeof ModelCore>;
 
-
 export const MsgCore = p.or(
 	PackCreateNew.MsgCore,
 	PackBuilder.MsgCore,
-	PackList.MsgCore
+	PackList.MsgCore,
 );
 export type MsgCore = p.Infer<typeof MsgCore>;

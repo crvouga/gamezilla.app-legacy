@@ -5,7 +5,6 @@
 
 import { p } from "gamezilla-app/@/core/parser";
 
-
 export const LIST_TABS = ["puzzles", "packs"] as const;
 
 export const ListTab = p.enumeration(LIST_TABS);

@@ -1,70 +1,97 @@
 import { describe, expect, it } from "bun:test";
-import { Posix } from "gamezilla-app/@/core";
-import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
 import { ClientId, SessionId } from "gamezilla-app/app/@/data";
-import type { ServerCtx } from "gamezilla-app/app/@/server";
-import { DbConnKvHashMap } from "gamezilla-app/app/@/server/db-conn-kv/db-conn-kv-impl-hash-map";
-import { Logger } from "gamezilla-app/app/@/server/logger/logger-impl";
-import { smsNoop } from "gamezilla-app/app/@/server/sms";
+import { AppServerFixture } from "gamezilla-app/app/@/server/server-test-env";
 import { AccountDb } from "../@/server/account-db";
 import { SessionDb } from "../@/server/session-db";
-import type { ServerDeps, ServerModule } from "../auth.types";
 import * as AuthServer from "../auth.server";
-import { DbConnSqlNoop } from "gamezilla-app/app/@/server/db-conn-sql";
+import type { ServerDeps } from "../auth.types";
+import { ContinueAsGuestServer } from "./continue-as-guest.server";
+import * as ContinueAsGuestTypes from "./continue-as-guest.types";
 
-const ctx: ServerCtx = {
-	env: "test",
-	sms: smsNoop,
-	dbConnSql: DbConnSqlNoop(),
-	dbConnKv: DbConnKvHashMap(),
-	logger: Logger({ t: "noop" }),
-	now: Posix.now(),
-};
+type Msg =
+	| {
+			msgClient: ContinueAsGuestTypes.MsgToServer & {
+				clientId: ClientId;
+				sessionId: SessionId;
+			};
+	  }
+	| {
+			msg: ContinueAsGuestTypes.MsgServer;
+	  };
 
-const getDeps: ServerModule["getDeps"] = async () => {
-	return {
-		AccountDb: AccountDb({
-			t: "in-memory",
-			delay: async () => {},
-		}),
-		SessionDb: SessionDb({
-			t: "in-memory",
-			delay: async () => {},
-		}),
+export const Fixture = async () => {
+	const f = await AppServerFixture();
+
+	const accountDb = AccountDb({
+		t: "in-memory",
+		delay: async () => {},
+	});
+	const sessionDb = SessionDb({
+		t: "in-memory",
+		delay: async () => {},
+	});
+
+	const updates = async (msgs: Msg[]) => {
+		const updates: Awaited<ReturnType<typeof ContinueAsGuestServer.update>>[] =
+			[];
+		for (const msg of msgs) {
+			const update = await ContinueAsGuestServer.update({
+				...msg,
+				model:
+					updates[updates.length - 1]?.model ?? ContinueAsGuestServer.initModel,
+				ctx: f.ctx,
+				deps: {
+					accountDb: accountDb,
+					sessionDb: sessionDb,
+					timeout: () => new Promise((resolve) => resolve()),
+				},
+			});
+			updates.push(update);
+		}
+		return updates;
+	};
+
+	const update = async (msgs: Msg[]) => {
+		const updates_ = await updates(msgs);
+
+		const update_ = updates_[updates_.length - 1];
+
+		if (!update_) {
+			throw new Error("No updates");
+		}
+
+		return update_;
+	};
+
+	const deps: ServerDeps = {
+		accountDb,
+		sessionDb,
 		timeout: () => new Promise((resolve) => resolve()),
 	};
-};
 
-const clientClickedContinueAsGuestButton =
-	(deps: ServerDeps, clientId: ClientId, sessionId: SessionId) =>
-	async (model: null) => {
-		return AuthServer.update({
-			model,
-			ctx,
-			msgClient: {
-				t: "guest.clicked-continue-as-guest-button",
-				clientId,
-				sessionId,
-			},
-			deps,
-		});
+	return {
+		...f,
+		deps,
+		updates,
+		update,
 	};
-
-export const Fixture = () => {
-	//
 };
 
 describe(import.meta.file, () => {
 	it("should be able to handle request", async () => {
-		const deps = await getDeps({ ctx });
+		const f = await Fixture();
 
 		const clientId = ClientId.generate();
 
-		const output = await AppServerModule.andThen(
-			AuthServer.init({ ctx }),
-			clientClickedContinueAsGuestButton(deps, clientId, SessionId.generate()),
-		);
-
+		const output = await f.update([
+			{
+				msgClient: {
+					t: "guest.clicked-continue-as-guest-button",
+					clientId,
+					sessionId: SessionId.generate(),
+				},
+			},
+		]);
 		expect(
 			output.msgCmd?.some(
 				(msgCmd) =>
@@ -77,15 +104,20 @@ describe(import.meta.file, () => {
 	});
 
 	it("should output a client authenitcated event", async () => {
-		const deps = await getDeps({ ctx });
+		const f = await Fixture();
 
 		const clientId = ClientId.generate();
 		const sessionId = SessionId.generate();
 
-		const output = await AppServerModule.andThen(
-			AuthServer.init({ ctx }),
-			clientClickedContinueAsGuestButton(deps, clientId, sessionId),
-		);
+		const output = await f.update([
+			{
+				msgClient: {
+					t: "guest.clicked-continue-as-guest-button",
+					clientId,
+					sessionId,
+				},
+			},
+		]);
 
 		expect(
 			output.msgEvt?.some(
@@ -99,20 +131,55 @@ describe(import.meta.file, () => {
 	});
 
 	it("should be able to find user id from session id after continuing as guest", async () => {
-		const deps = await getDeps({ ctx });
+		const f = await Fixture();
 
 		const clientId = ClientId.generate();
 		const sessionId = SessionId.generate();
 
-		await AppServerModule.andThen(
-			AuthServer.init({ ctx }),
-			clientClickedContinueAsGuestButton(deps, clientId, sessionId),
-		);
+		await f.update([
+			{
+				msgClient: {
+					t: "guest.clicked-continue-as-guest-button",
+					clientId,
+					sessionId,
+				},
+			},
+		]);
 
-		const userId = await AuthServer.toUserIdFromSessionId(deps, sessionId);
+		const userId = await AuthServer.toUserIdFromSessionId(f.deps, sessionId);
 
 		expect(userId !== null).toBe(true);
 	});
 
-	it.todo("should always use the same guest account for the same session id");
+	it.todo(
+		"should always use the same guest account for the same session id",
+		async () => {
+			const f = await Fixture();
+			const sessionId = SessionId.generate();
+
+			await f.update([
+				{
+					msgClient: {
+						t: "guest.clicked-continue-as-guest-button",
+						clientId: ClientId.generate(),
+						sessionId,
+					},
+				},
+			]);
+
+			await f.update([
+				{
+					msgClient: {
+						t: "guest.clicked-continue-as-guest-button",
+						clientId: ClientId.generate(),
+						sessionId,
+					},
+				},
+			]);
+
+			const userId = await AuthServer.toUserIdFromSessionId(f.deps, sessionId);
+
+			expect(userId !== null).toBe(true);
+		},
+	);
 });

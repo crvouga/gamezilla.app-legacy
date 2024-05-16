@@ -52,8 +52,8 @@ export type ServerModule = AppServerModule<{
 }>;
 
 export type ServerDeps = {
-	AccountDb: IAccountDb;
-	SessionDb: ISessionDb;
+	accountDb: IAccountDb;
+	sessionDb: ISessionDb;
 	timeout: (timeSpan: TimeSpan) => Promise<void>;
 };
 
