@@ -5,8 +5,6 @@
 //
 //
 
-import { p } from "../parser";
-import { parser } from "./result-parser";
 
 /**
  * A `Result` represents the result of an operation that may succeed or fail.
@@ -240,19 +238,9 @@ export const remoteResultMap = <E, A, B>(
 	}
 };
 
-const remoteResultParser = <E, A>(
-	error: p.Parser<E>,
-	value: p.Parser<A>,
-): p.Parser<RemoteResultPrivate<E, A>> => {
-	return p.or(
-		p.obj<NotAsked>({ t: p.l("not-asked") }),
-		p.obj<Loading>({ t: p.l("loading") }),
-		parser(error, value),
-	);
-};
+
 
 export const RemoteResultPrivate = {
-	parser: remoteResultParser,
 	map: remoteResultMap,
 	Loading,
 	NotAsked,
