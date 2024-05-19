@@ -6,7 +6,7 @@ import { SessionDb } from "../@/server/session-db";
 import * as AuthServer from "../auth.server";
 import type { ServerDeps } from "../auth.types";
 import { ContinueAsGuestServer } from "./continue-as-guest.server";
-import * as ContinueAsGuestTypes from "./continue-as-guest.types";
+import type * as ContinueAsGuestTypes from "./continue-as-guest.types";
 
 type Msg =
 	| {
@@ -19,7 +19,7 @@ type Msg =
 			msg: ContinueAsGuestTypes.MsgServer;
 	  };
 
-export const Fixture = async () => {
+const Fixture = async () => {
 	const f = await AppServerFixture();
 
 	const accountDb = AccountDb({
@@ -151,35 +151,43 @@ describe(import.meta.file, () => {
 		expect(userId !== null).toBe(true);
 	});
 
-	it.todo(
-		"should always use the same guest account for the same session id",
-		async () => {
-			const f = await Fixture();
-			const sessionId = SessionId.generate();
+	it("should always use the same guest account for the same session id", async () => {
+		const f = await Fixture();
+		const sessionId = SessionId.generate();
 
-			await f.update([
-				{
-					msgClient: {
-						t: "guest.clicked-continue-as-guest-button",
-						clientId: ClientId.generate(),
-						sessionId,
-					},
+		const before = await AuthServer.toUserIdFromSessionId(f.deps, sessionId);
+
+		await f.update([
+			{
+				msgClient: {
+					t: "guest.clicked-continue-as-guest-button",
+					clientId: ClientId.generate(),
+					sessionId,
 				},
-			]);
+			},
+		]);
 
-			await f.update([
-				{
-					msgClient: {
-						t: "guest.clicked-continue-as-guest-button",
-						clientId: ClientId.generate(),
-						sessionId,
-					},
+		const afterFirst = await AuthServer.toUserIdFromSessionId(
+			f.deps,
+			sessionId,
+		);
+
+		await f.update([
+			{
+				msgClient: {
+					t: "guest.clicked-continue-as-guest-button",
+					clientId: ClientId.generate(),
+					sessionId,
 				},
-			]);
+			},
+		]);
 
-			const userId = await AuthServer.toUserIdFromSessionId(f.deps, sessionId);
+		const afterSecond = await AuthServer.toUserIdFromSessionId(
+			f.deps,
+			sessionId,
+		);
 
-			expect(userId !== null).toBe(true);
-		},
-	);
+		expect(before).toBe(null);
+		expect(afterFirst).toBe(afterSecond);
+	});
 });
