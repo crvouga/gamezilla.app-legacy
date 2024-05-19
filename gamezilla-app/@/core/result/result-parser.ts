@@ -1,7 +1,12 @@
 import { or } from "../parser/parser/parser-or";
 import { Parser } from "../parser/parser/parser-types";
-import { l, obj, } from "../parser/parser/parsers";
-import type { Loading, NotAsked, RemoteResultPrivate, ResultPrivate } from "./result";
+import { l, obj } from "../parser/parser/parsers";
+import type {
+	Loading,
+	NotAsked,
+	RemoteResultPrivate,
+	ResultPrivate,
+} from "./result";
 
 export const parser = <TError, TValue>(
 	errParser: Parser<TError>,

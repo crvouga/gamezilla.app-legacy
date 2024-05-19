@@ -5,7 +5,6 @@
 //
 //
 
-
 /**
  * A `Result` represents the result of an operation that may succeed or fail.
  */
@@ -237,8 +236,6 @@ export const remoteResultMap = <E, A, B>(
 			return ResultPrivate.mapOk(result, mapper);
 	}
 };
-
-
 
 export const RemoteResultPrivate = {
 	map: remoteResultMap,

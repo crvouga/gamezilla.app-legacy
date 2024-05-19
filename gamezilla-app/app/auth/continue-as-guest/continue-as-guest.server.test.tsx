@@ -1,12 +1,18 @@
 import { describe, expect, it } from "bun:test";
 import { ClientId, SessionId } from "gamezilla-app/app/@/data";
-import { AppServerFixture } from "gamezilla-app/app/@/server/server-test-env";
+import {
+	AppServerFixture,
+	AppServerTestEnv,
+} from "gamezilla-app/app/@/server/server-test-env";
 import { AccountDb } from "../@/server/account-db";
 import { SessionDb } from "../@/server/session-db";
 import * as AuthServer from "../auth.server";
 import type { ServerDeps } from "../auth.types";
 import { ContinueAsGuestServer } from "./continue-as-guest.server";
 import type * as ContinueAsGuestTypes from "./continue-as-guest.types";
+import { GuestSessionMappingDb } from "./guest-session-mapping-db";
+import { didSendMsgToClient } from "gamezilla-app/app/@/server";
+import { isOk } from "gamezilla-app/@/core";
 
 type Msg =
 	| {
@@ -19,17 +25,57 @@ type Msg =
 			msg: ContinueAsGuestTypes.MsgServer;
 	  };
 
+const FixtureDeps = async (): Promise<ServerDeps> => {
+	const testEnv = await AppServerTestEnv();
+	const timeout = () => new Promise((resolve) => resolve(null));
+
+	switch (testEnv.t) {
+		case "integration": {
+			const accountDb = AccountDb({
+				t: "postgres",
+				dbConnSql: testEnv.dbConnSql,
+			});
+			const sessionDb = SessionDb({
+				t: "postgres-with-db-kv-cache",
+				dbConnSql: testEnv.dbConnSql,
+				dbConnKv: testEnv.dbConnKv,
+			});
+			const guestSessionMappingDb = GuestSessionMappingDb({
+				t: "postgres",
+				dbConnSql: testEnv.dbConnSql,
+			});
+			return {
+				timeout,
+				accountDb,
+				sessionDb,
+				guestSessionMappingDb,
+			};
+		}
+		case "unit": {
+			const accountDb = AccountDb({
+				t: "in-memory",
+				delay: async () => {},
+			});
+			const sessionDb = SessionDb({
+				t: "in-memory",
+				delay: async () => {},
+			});
+			const guestSessionMappingDb = GuestSessionMappingDb({
+				t: "hash-map",
+			});
+			return {
+				timeout,
+				accountDb,
+				sessionDb,
+				guestSessionMappingDb,
+			};
+		}
+	}
+};
+
 const Fixture = async () => {
 	const f = await AppServerFixture();
-
-	const accountDb = AccountDb({
-		t: "in-memory",
-		delay: async () => {},
-	});
-	const sessionDb = SessionDb({
-		t: "in-memory",
-		delay: async () => {},
-	});
+	const deps = await FixtureDeps();
 
 	const updates = async (msgs: Msg[]) => {
 		const updates: Awaited<ReturnType<typeof ContinueAsGuestServer.update>>[] =
@@ -40,11 +86,7 @@ const Fixture = async () => {
 				model:
 					updates[updates.length - 1]?.model ?? ContinueAsGuestServer.initModel,
 				ctx: f.ctx,
-				deps: {
-					accountDb: accountDb,
-					sessionDb: sessionDb,
-					timeout: () => new Promise((resolve) => resolve()),
-				},
+				deps,
 			});
 			updates.push(update);
 		}
@@ -61,12 +103,6 @@ const Fixture = async () => {
 		}
 
 		return update_;
-	};
-
-	const deps: ServerDeps = {
-		accountDb,
-		sessionDb,
-		timeout: () => new Promise((resolve) => resolve()),
 	};
 
 	return {
@@ -154,6 +190,7 @@ describe(import.meta.file, () => {
 	it("should always use the same guest account for the same session id", async () => {
 		const f = await Fixture();
 		const sessionId = SessionId.generate();
+		const clientId = ClientId.generate();
 
 		const before = await AuthServer.toUserIdFromSessionId(f.deps, sessionId);
 
@@ -161,7 +198,7 @@ describe(import.meta.file, () => {
 			{
 				msgClient: {
 					t: "guest.clicked-continue-as-guest-button",
-					clientId: ClientId.generate(),
+					clientId,
 					sessionId,
 				},
 			},
@@ -176,7 +213,7 @@ describe(import.meta.file, () => {
 			{
 				msgClient: {
 					t: "guest.clicked-continue-as-guest-button",
-					clientId: ClientId.generate(),
+					clientId,
 					sessionId,
 				},
 			},
@@ -187,7 +224,62 @@ describe(import.meta.file, () => {
 			sessionId,
 		);
 
-		expect(before).toBe(null);
-		expect(afterFirst).toBe(afterSecond);
+		await f.update([
+			{
+				msgClient: {
+					t: "guest.clicked-continue-as-guest-button",
+					clientId,
+					sessionId,
+				},
+			},
+		]);
+
+		const afterThird = await AuthServer.toUserIdFromSessionId(
+			f.deps,
+			sessionId,
+		);
+
+		expect(before).toEqual(null);
+		expect(afterFirst).toEqual(afterSecond);
+		expect(afterSecond).toEqual(afterThird);
+	});
+
+	it("should send back ok result after continuing as a guest multiple times", async () => {
+		const f = await Fixture();
+		const sessionId = SessionId.generate();
+		const clientId = ClientId.generate();
+
+		const firstOutput = await f.update([
+			{
+				msgClient: {
+					t: "guest.clicked-continue-as-guest-button",
+					clientId,
+					sessionId,
+				},
+			},
+		]);
+
+		const secondOutput = await f.update([
+			{
+				msgClient: {
+					t: "guest.clicked-continue-as-guest-button",
+					clientId,
+					sessionId,
+				},
+			},
+		]);
+
+		expect(
+			didSendMsgToClient(
+				firstOutput,
+				(msg) => msg.t === "guest.continue-as-guest-result" && isOk(msg.result),
+			),
+		).toBe(true);
+		expect(
+			didSendMsgToClient(
+				secondOutput,
+				(msg) => msg.t === "guest.continue-as-guest-result" && isOk(msg.result),
+			),
+		).toBe(true);
 	});
 });

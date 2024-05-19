@@ -1,4 +1,4 @@
-import { Ok, PhoneNumber } from "gamezilla-app/@/core";
+import { Err, Ok, PhoneNumber } from "gamezilla-app/@/core";
 import type { UserId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import type { IAccountDb } from "./account-db";
@@ -34,6 +34,10 @@ export const AccountDbInMemory = (deps: {
 
 		async insert(input) {
 			await deps.delay();
+			const existing = accounts.get(input.account.userId);
+			if (existing) {
+				return Err("Can not insert account that already exists.");
+			}
 			accounts.set(input.account.userId, input.account);
 			return Ok(null);
 		},

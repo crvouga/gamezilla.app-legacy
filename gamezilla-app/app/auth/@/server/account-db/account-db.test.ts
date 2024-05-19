@@ -71,4 +71,19 @@ describe(import.meta.file, () => {
 		const found = await f.accountDb.findOneByPhoneNumber({ phoneNumber });
 		expect(found).toEqual(Ok(account));
 	});
+
+	it("should error if after inserting an existing account", async () => {
+		const f = await Fixture();
+		const account: UserAccount = {
+			userId: UserId.generate(),
+			role: "guest",
+			createdAt: Posix.now({
+				precision: "seconds",
+			}),
+			phoneNumber: null,
+		};
+		await f.accountDb.insert({ account });
+		const insert = await f.accountDb.insert({ account });
+		expect(insert.t).toBe("err");
+	});
 });

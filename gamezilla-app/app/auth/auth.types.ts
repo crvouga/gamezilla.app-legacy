@@ -15,6 +15,7 @@ import type { ISessionDb } from "./@/server/session-db";
 import type * as AuthSMS from "./auth-sms/auth-sms.types";
 import type { ContinueAsGuest } from "./continue-as-guest";
 import type { Logout } from "./logout";
+import { IGuestSessionMappingDb } from "./continue-as-guest/guest-session-mapping-db";
 
 //
 //
@@ -54,7 +55,8 @@ export type ServerModule = AppServerModule<{
 export type ServerDeps = {
 	accountDb: IAccountDb;
 	sessionDb: ISessionDb;
-	timeout: (timeSpan: TimeSpan) => Promise<void>;
+	guestSessionMappingDb: IGuestSessionMappingDb;
+	timeout: (timeSpan: TimeSpan) => Promise<unknown>;
 };
 
 //

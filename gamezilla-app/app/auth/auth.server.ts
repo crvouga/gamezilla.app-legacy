@@ -7,6 +7,7 @@ import { SessionDb } from "./@/server/session-db";
 import { AuthSMSServer } from "./auth-sms/auth-sms.server";
 import type { MsgToClient, ServerDeps, ServerModule } from "./auth.types";
 import { ContinueAsGuestServer } from "./continue-as-guest/continue-as-guest.server";
+import { GuestSessionMappingDb } from "./continue-as-guest/guest-session-mapping-db";
 
 //
 //
@@ -24,6 +25,10 @@ export const getDeps: ServerModule["getDeps"] = async ({ ctx }) => {
 			t: "postgres-with-db-kv-cache",
 			dbConnSql: ctx.dbConnSql,
 			dbConnKv: ctx.dbConnKv,
+		}),
+		guestSessionMappingDb: GuestSessionMappingDb({
+			t: "postgres",
+			dbConnSql: ctx.dbConnSql,
 		}),
 		timeout: (timeSpan) =>
 			new Promise((resolve) =>

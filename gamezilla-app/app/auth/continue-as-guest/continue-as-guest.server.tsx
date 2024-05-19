@@ -1,4 +1,4 @@
-import { Ok, isErr } from "gamezilla-app/@/core";
+import { Ok, Result, isErr } from "gamezilla-app/@/core";
 import { UserId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import { sendBack } from "gamezilla-app/app/@/server";
@@ -15,6 +15,20 @@ const update: ServerModule["update"] = async ({
 }) => {
 	switch (msgClient?.t) {
 		case "guest.clicked-continue-as-guest-button": {
+			const existingGuestUserId = Result.withDefault(
+				await deps.guestSessionMappingDb.findUserIdBySessionId(
+					msgClient.sessionId,
+				),
+				null,
+			);
+
+			const existingGuestAccount = Result.withDefault(
+				await deps.accountDb.findOneByUserId({
+					userId: existingGuestUserId,
+				}),
+				null,
+			);
+
 			const newGuestAccount: UserAccount = {
 				role: "guest",
 				userId: UserId.generate(),
@@ -22,9 +36,16 @@ const update: ServerModule["update"] = async ({
 				phoneNumber: null,
 			};
 
-			const insertedAccount = await deps.accountDb.insert({
-				account: newGuestAccount,
+			const guestAccount = existingGuestAccount ?? newGuestAccount;
+
+			await deps.guestSessionMappingDb.insert({
+				guestUserId: guestAccount.userId,
+				sessionId: msgClient.sessionId,
 			});
+
+			const insertedAccount = existingGuestAccount
+				? Ok(null)
+				: await deps.accountDb.insert({ account: guestAccount });
 
 			if (isErr(insertedAccount)) {
 				return {
@@ -39,7 +60,7 @@ const update: ServerModule["update"] = async ({
 			}
 
 			const insertedSession = await deps.sessionDb.insert({
-				userId: newGuestAccount.userId,
+				userId: guestAccount.userId,
 				sessionId: msgClient.sessionId,
 			});
 

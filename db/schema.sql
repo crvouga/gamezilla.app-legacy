@@ -189,13 +189,13 @@ CREATE TABLE public.user_account (
 
 
 --
--- Name: user_account_phone_number; Type: TABLE; Schema: public; Owner: -
+-- Name: user_guest_session_mapping; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.user_account_phone_number (
+CREATE TABLE public.user_guest_session_mapping (
     user_id text NOT NULL,
-    phone_number_hash jsonb NOT NULL,
-    created_at timestamp without time zone NOT NULL
+    session_id text NOT NULL,
+    created_at_posix bigint NOT NULL
 );
 
 
@@ -379,6 +379,20 @@ CREATE INDEX idx_game_chess_puzzle_rating ON public.game_chess_puzzle USING btre
 
 
 --
+-- Name: idx_user_guest_session_mapping_session_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_user_guest_session_mapping_session_id ON public.user_guest_session_mapping USING btree (session_id);
+
+
+--
+-- Name: idx_user_guest_session_mapping_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_user_guest_session_mapping_user_id ON public.user_guest_session_mapping USING btree (user_id);
+
+
+--
 -- Name: idx_user_session_created_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -397,14 +411,6 @@ CREATE INDEX idx_user_session_session_id_created_at ON public.user_session USING
 --
 
 CREATE INDEX idx_username ON public.user_profile USING btree (username);
-
-
---
--- Name: user_account_phone_number fk_user_account; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.user_account_phone_number
-    ADD CONSTRAINT fk_user_account FOREIGN KEY (user_id) REFERENCES public.user_account(user_id) ON DELETE CASCADE;
 
 
 --
@@ -430,6 +436,7 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240203025639'),
     ('20240203034127'),
     ('20240203034632'),
+    ('20240203034815'),
     ('20240203034900'),
     ('20240203035440'),
     ('20240203040136'),
@@ -445,4 +452,6 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240508214804'),
     ('20240510025350'),
     ('20240512033531'),
-    ('20240513005516');
+    ('20240513005516'),
+    ('20240519212003'),
+    ('20240519212517');
