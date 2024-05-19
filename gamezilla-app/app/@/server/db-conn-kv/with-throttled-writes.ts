@@ -94,9 +94,9 @@ export const withThrottledWrites = ({
 			scheduleSetMany(entries);
 			return Ok(null);
 		},
-		async zap(key) {
-			scheduleZap(key);
-			return Ok(null);
-		},
+		// async zap(key) {
+		// 	scheduleZap(key);
+		// 	return Ok(null);
+		// },
 	};
 };

@@ -41,7 +41,7 @@ export const SessionDbWithDbKvCache = ({
 			const queried = await SessionDb.findSessionIdsByUserId(userId);
 
 			if (isOk(queried)) {
-				sessionIdsByUserId.set(userId, queried.value);
+				await sessionIdsByUserId.set(userId, queried.value);
 			}
 
 			return queried;
@@ -60,7 +60,7 @@ export const SessionDbWithDbKvCache = ({
 			const queried = await SessionDb.findUserIdBySessionId(sessionId);
 
 			if (isOk(queried) && queried.value) {
-				userIdBySessionId.set(sessionId, queried.value);
+				await userIdBySessionId.set(sessionId, queried.value);
 			}
 
 			return queried;
