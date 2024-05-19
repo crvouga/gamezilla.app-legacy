@@ -16,7 +16,7 @@ const updateFromClient: ServerModule["update"] = async ({
 }) => {
 	switch (msgClient?.t) {
 		case "logout": {
-			const zapped = await deps.sessionDb.zapBySessionId(msgClient.sessionId);			
+			const zapped = await deps.sessionDb.zapBySessionId(msgClient.sessionId);
 
 			if (isErr(zapped)) {
 				return { model };

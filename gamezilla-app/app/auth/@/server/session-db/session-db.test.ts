@@ -97,11 +97,12 @@ describe(import.meta.file, () => {
 		const before = await f.sessionDb.findSessionIdsByUserId(f.userId);
 		await f.sessionDb.zapByUserId(f.userId);
 		const after = await f.sessionDb.findSessionIdsByUserId(f.userId);
-		
-		expect(unwrap(before)).toEqual(f.sessions.filter(s => s.userId === f.userId).map((s) => s.sessionId));
+
+		expect(unwrap(before)).toEqual(
+			f.sessions.filter((s) => s.userId === f.userId).map((s) => s.sessionId),
+		);
 		expect(after.t).toBe("ok");
 		expect(unwrap(after)).toEqual([]);
-
 	});
 
 	it("should be able to zap by session id", async () => {
