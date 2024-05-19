@@ -1,7 +1,7 @@
 import { Result } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { SessionId, UserId } from "gamezilla-app/app/@/data";
-import { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
+import { DbConnKv, IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import type { ISessionDb } from "./session-db";
 
 //
@@ -24,12 +24,12 @@ export type Row = p.Infer<typeof isRow>;
 //
 
 export const SessionDbKV = (input: { dbConn: IDbConnKv }): ISessionDb => {
-	const sessionIdsByUserId = IDbConnKv.instance(
+	const sessionIdsByUserId = DbConnKv.withNamespace(
 		input.dbConn,
 		["auth-session", "session-ids-by-user-id"],
 		p.arr(SessionId),
 	);
-	const userIdBySessionId = IDbConnKv.instance(
+	const userIdBySessionId = DbConnKv.withNamespace(
 		input.dbConn,
 		["auth-session", "user-id-by-session-id"],
 		UserId,

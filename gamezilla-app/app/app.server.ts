@@ -96,32 +96,26 @@ export const getDeps = async ({
 		}),
 
 		async (dbConnKv) =>
-			// biome-ignore lint/correctness/noConstantCondition: <explanation>
-			false
-				? dbConnKv
-				: IDbConnKv.withThrottlingWrites({
-						logger: ILogger.prefix("with-throttling-writes", loggerDbConnKv),
-						dbConnKv: await dbConnKv,
-						throttle: TimeSpan.seconds(3),
-					}),
+			DbConnKv.withThrottledWrites({
+				logger: ILogger.prefix("with-throttled-writes", loggerDbConnKv),
+				dbConnKv: await dbConnKv,
+				throttle: TimeSpan.seconds(3),
+			}),
 
 		async (dbConnKv) =>
-			// biome-ignore lint/correctness/noConstantCondition: <explanation>
-			false
-				? dbConnKv
-				: IDbConnKv.withCache({
-						logger: ILogger.prefix("with-cache", loggerDbConnKv),
-						source: await dbConnKv,
-						cache: await DbConnKv({
-							t: "hash-map",
-							map: LRUCache({
-								maxCapcity: 1000,
-							}),
-						}),
+			DbConnKv.withCache({
+				logger: ILogger.prefix("with-cache", loggerDbConnKv),
+				source: await dbConnKv,
+				cache: await DbConnKv({
+					t: "hash-map",
+					map: LRUCache({
+						maxCapcity: 1000,
 					}),
+				}),
+			}),
 
 		async (dbConnKv) =>
-			IDbConnKv.withReducedParsing({
+			DbConnKv.withReducedParsing({
 				dbConnKv: await dbConnKv,
 				verifiedKeys: new Set(),
 			}),

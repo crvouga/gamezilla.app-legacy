@@ -1,10 +1,10 @@
-import { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
-import type { IGameDb } from "./space-game-db";
-import * as Game from "../../game/game.types";
 import type { SpaceId } from "gamezilla-app/app/@/data";
+import { DbConnKv, IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
+import * as Game from "../../game/game.types";
+import type { IGameDb } from "./space-game-db";
 
 const GameDb = ({ dbConnKv }: { dbConnKv: IDbConnKv }): IGameDb => {
-	const bySpaceId = IDbConnKv.instance<SpaceId, Game.ModelServer>(
+	const bySpaceId = DbConnKv.withNamespace<SpaceId, Game.ModelServer>(
 		dbConnKv,
 		["game", "game-by-id"],
 		Game.ModelServer,

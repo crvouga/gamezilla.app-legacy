@@ -1,6 +1,6 @@
 import { Ok } from "gamezilla-app/@/core";
 import { Profile, type UserId } from "gamezilla-app/app/@/data";
-import { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
+import { DbConnKv, IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import type { IProfileCache } from "./profile-cache";
 
 export const ProfileCacheDbKv = ({
@@ -8,7 +8,7 @@ export const ProfileCacheDbKv = ({
 }: {
 	dbConnKv: IDbConnKv;
 }): IProfileCache => {
-	const profilesKv = IDbConnKv.instance(
+	const profilesKv = DbConnKv.withNamespace(
 		dbConnKv,
 		["spaces", "profile-cache"],
 		Profile,

@@ -1,28 +1,28 @@
-import { SpaceId, type UserId } from "gamezilla-app/app/@/data";
-import { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import { Err, Ok, Result, isErr } from "gamezilla-app/@/core";
+import { p } from "gamezilla-app/@/core/parser";
+import { SpaceId, type UserId } from "gamezilla-app/app/@/data";
+import { DbConnKv, IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import * as Space from "../space";
 import type { ISpacesDb } from "./space-db";
-import { p } from "gamezilla-app/@/core/parser";
 
 export type Deps = {
 	dbConnKv: IDbConnKv;
 };
 
 export const SpacesDb = (deps: Deps): ISpacesDb => {
-	const spacesBySpaceId = IDbConnKv.instance<SpaceId, Space.Model>(
+	const spacesBySpaceId = DbConnKv.withNamespace<SpaceId, Space.Model>(
 		deps.dbConnKv,
 		["spaces", "space-by-id"],
 		Space.Model,
 	);
-	const indexSpaceIdByUserId = IDbConnKv.instance<UserId, SpaceId>(
+	const indexSpaceIdByUserId = DbConnKv.withNamespace<UserId, SpaceId>(
 		deps.dbConnKv,
 		["spaces", "space-id-by-user-id"],
 		SpaceId,
 	);
 
 	const INDEX_SPACE_IDS_KEY_ALL = "all";
-	const indexSpaceIds = IDbConnKv.instance<string, SpaceId[]>(
+	const indexSpaceIds = DbConnKv.withNamespace<string, SpaceId[]>(
 		deps.dbConnKv,
 		["spaces", "space-ids"],
 		p.arr(SpaceId),

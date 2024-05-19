@@ -1,7 +1,7 @@
-import { SessionId } from "gamezilla-app/app/@/data";
-import { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import { Task, isOk } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
+import { SessionId } from "gamezilla-app/app/@/data";
+import { DbConnKv, IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import { Client } from "../wire.types";
 import type { IWireSessionDb } from "./wire-session-db";
 
@@ -10,12 +10,12 @@ export const WireSessionDbKv = ({
 }: {
 	dbConnKv: IDbConnKv;
 }): IWireSessionDb => {
-	const clientsKv = IDbConnKv.instance(
+	const clientsKv = DbConnKv.withNamespace(
 		dbConnKv,
 		["wire-session-db", "clients-by-session-id"],
 		Client,
 	);
-	const sessionIdsKv = IDbConnKv.instance(
+	const sessionIdsKv = DbConnKv.withNamespace(
 		dbConnKv,
 		["wire-session-db", "session-ids-by-user-id"],
 		p.arr(p.custom(SessionId.is, "Invalid session id")),
