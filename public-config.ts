@@ -21,7 +21,7 @@ export const IS_INTEGRATION_TEST = process.env.IS_INTEGRATION_TEST === "true";
 //
 //
 
-export const VDOM_IMPL: VDomImpl = "inferno" as VDomImpl;
+export const VDOM_IMPL: VDomImpl = "react" as VDomImpl;
 
 //
 //
