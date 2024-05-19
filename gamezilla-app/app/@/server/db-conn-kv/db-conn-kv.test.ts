@@ -50,44 +50,53 @@ describe(import.meta.file, () => {
 
 		expect(before).toEqual(Ok(null));
 		expect(after).toEqual(Ok(item));
-    });
-    
-    it("should set many correctly", async () => {
-        const f = await Fixture();
+	});
 
-        const items = [randomItem(), randomItem(), randomItem()];
+	it("should set many correctly", async () => {
+		const f = await Fixture();
 
-        const before = await f.dbConnKv.getMany(items.map((item) => item.id), Item);
+		const items = [randomItem(), randomItem(), randomItem()];
 
-        await f.dbConnKv.setMany(items.map((item) => [item.id, item]));
+		const before = await f.dbConnKv.getMany(
+			items.map((item) => item.id),
+			Item,
+		);
 
-        const after = await f.dbConnKv.getMany(items.map((item) => item.id), Item);
+		await f.dbConnKv.setMany(items.map((item) => [item.id, item]));
 
-        expect(before).toEqual(Ok([]));
-        expect(after).toEqual(Ok(items));
-    })
+		const after = await f.dbConnKv.getMany(
+			items.map((item) => item.id),
+			Item,
+		);
 
-    it("should get correctly", async () => {
-        const f = await Fixture();
+		expect(before).toEqual(Ok([]));
+		expect(after).toEqual(Ok(items));
+	});
 
-        const item = randomItem();
+	it("should get correctly", async () => {
+		const f = await Fixture();
 
-        await f.dbConnKv.set(item.id, item);
+		const item = randomItem();
 
-        const got = await f.dbConnKv.get(item.id, Item);
+		await f.dbConnKv.set(item.id, item);
 
-        expect(got).toEqual(Ok(item));
-    })
+		const got = await f.dbConnKv.get(item.id, Item);
 
-    it("should get many correctly", async () => {
-        const f = await Fixture();
+		expect(got).toEqual(Ok(item));
+	});
 
-        const items = [randomItem(), randomItem(), randomItem()];
+	it("should get many correctly", async () => {
+		const f = await Fixture();
 
-        await f.dbConnKv.setMany(items.map((item) => [item.id, item]));
+		const items = [randomItem(), randomItem(), randomItem()];
 
-        const got = await f.dbConnKv.getMany(items.map((item) => item.id), Item);
+		await f.dbConnKv.setMany(items.map((item) => [item.id, item]));
 
-        expect(got).toEqual(Ok(items));
-    })
+		const got = await f.dbConnKv.getMany(
+			items.map((item) => item.id),
+			Item,
+		);
+
+		expect(got).toEqual(Ok(items));
+	});
 });

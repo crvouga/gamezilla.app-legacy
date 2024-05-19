@@ -44,10 +44,9 @@ export const withCache = ({
 			if (cacheHit) {
 				const end = process.hrtime.bigint();
 				const durationInMicroseconds = (end - start) / BigInt(1000);
+				const keysString = keys.join(", ");
 				logger.info(
-					`CACHED duration=${durationInMicroseconds}µs get: keys=${keys.join(
-						", ",
-					)}`,
+					`CACHED duration=${durationInMicroseconds}µs get: keys=${keysString}`,
 				);
 				return cacheGot;
 			}
