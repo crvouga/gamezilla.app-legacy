@@ -8,6 +8,7 @@ import { AuthSMSServer } from "./auth-sms/auth-sms.server";
 import type { MsgToClient, ServerDeps, ServerModule } from "./auth.types";
 import { ContinueAsGuestServer } from "./continue-as-guest/continue-as-guest.server";
 import { GuestSessionMappingDb } from "./continue-as-guest/guest-session-mapping-db";
+import { LogoutServer } from "./logout/logout.server";
 
 //
 //
@@ -69,10 +70,9 @@ export const init: ServerModule["init"] = async (input) => {
 export const update: ServerModule["update"] = async (input) => {
 	return AppServerModule.andThen(
 		{ model: input.model },
-		(model) => updateFromMsg({ ...input, model }),
-		(model) => updateFromClient({ ...input, model }),
 		(model) => updateFromEvent({ ...input, model }),
 		(model) => updateChild({ ...input, model }),
+		(model) => LogoutServer.update({ ...input, model }),
 		(model) => ContinueAsGuestServer.update({ ...input, model }),
 	);
 };
@@ -109,41 +109,6 @@ const updateChild: ServerModule["update"] = async (input) => {
 		msgCmd: ServerCmd.tag("sms", sms.msgCmd),
 		msgEvt: sms.msgEvt,
 	};
-};
-
-const updateFromMsg: ServerModule["update"] = async ({ model }) => {
-	return { model };
-};
-
-const updateFromClient: ServerModule["update"] = async ({
-	model,
-	msgClient,
-
-	deps,
-}) => {
-	switch (msgClient?.t) {
-		case "logout": {
-			const zapped = await deps.sessionDb.zapBySessionId(msgClient.sessionId);
-
-			if (zapped.t === "err") {
-				return { model };
-			}
-
-			return {
-				model,
-				msgEvt: [
-					{
-						...msgClient,
-						t: "auth/client-unauthenticated",
-					},
-				],
-			};
-		}
-
-		default: {
-			return { model };
-		}
-	}
 };
 
 const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {

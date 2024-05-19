@@ -94,10 +94,14 @@ describe(import.meta.file, () => {
 
 	it("should be able to zap by user id", async () => {
 		const f = await Fixture();
+		const before = await f.sessionDb.findSessionIdsByUserId(f.userId);
 		await f.sessionDb.zapByUserId(f.userId);
-		const sessionIds = await f.sessionDb.findSessionIdsByUserId(f.userId);
-		expect(sessionIds.t).toBe("ok");
-		expect(unwrap(sessionIds)).toEqual([]);
+		const after = await f.sessionDb.findSessionIdsByUserId(f.userId);
+		
+		expect(unwrap(before)).toEqual(f.sessions.filter(s => s.userId === f.userId).map((s) => s.sessionId));
+		expect(after.t).toBe("ok");
+		expect(unwrap(after)).toEqual([]);
+
 	});
 
 	it("should be able to zap by session id", async () => {
