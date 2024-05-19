@@ -97,7 +97,7 @@ export const getDeps = async ({
 
 		async (dbConnKv) =>
 			// biome-ignore lint/correctness/noConstantCondition: <explanation>
-			true
+			false
 				? dbConnKv
 				: IDbConnKv.withThrottlingWrites({
 						logger: ILogger.prefix("with-throttling-writes", loggerDbConnKv),
@@ -107,7 +107,7 @@ export const getDeps = async ({
 
 		async (dbConnKv) =>
 			// biome-ignore lint/correctness/noConstantCondition: <explanation>
-			true
+			false
 				? dbConnKv
 				: IDbConnKv.withCache({
 						logger: ILogger.prefix("with-cache", loggerDbConnKv),
