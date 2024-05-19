@@ -282,4 +282,100 @@ describe(import.meta.file, () => {
 			),
 		).toBe(true);
 	});
+
+	it("should output the same account everytime", async () => {
+		const f = await Fixture();
+		const sessionId = SessionId.generate();
+		const clientId = ClientId.generate();
+
+		const firstOutput = await f.update([
+			{
+				msgClient: {
+					t: "guest.clicked-continue-as-guest-button",
+					clientId,
+					sessionId,
+				},
+			},
+		]);
+
+		const secondOutput = await f.update([
+			{
+				msgClient: {
+					t: "guest.clicked-continue-as-guest-button",
+					clientId,
+					sessionId,
+				},
+			},
+		]);
+
+		const expectedUserId = await AuthServer.toUserIdFromSessionId(
+			f.deps,
+			sessionId,
+		);
+
+		expect(
+			didSendMsgToClient(
+				firstOutput,
+				(msg) =>
+					msg.t === "guest.continue-as-guest-result" &&
+					isOk(msg.result) &&
+					msg.result.value === expectedUserId,
+			),
+		).toBe(true);
+		expect(
+			didSendMsgToClient(
+				secondOutput,
+				(msg) =>
+					msg.t === "guest.continue-as-guest-result" &&
+					isOk(msg.result) &&
+					msg.result.value === expectedUserId,
+			),
+		).toBe(true);
+	});
+
+	it("should output the same account everytime", async () => {
+		const f = await Fixture();
+		const sessionId = SessionId.generate();
+		const clientId = ClientId.generate();
+
+		const firstOutput = await f.update([
+			{
+				msgClient: {
+					t: "guest.clicked-continue-as-guest-button",
+					clientId,
+					sessionId,
+				},
+			},
+		]);
+
+		const secondOutput = await f.update([
+			{
+				msgClient: {
+					t: "guest.clicked-continue-as-guest-button",
+					clientId,
+					sessionId,
+				},
+			},
+		]);
+
+		const expectedUserId = await AuthServer.toUserIdFromSessionId(
+			f.deps,
+			sessionId,
+		);
+
+		expect(
+			firstOutput.msgEvt?.some(
+				(msg) =>
+					msg.t === "auth/client-authenticated" &&
+					msg.account.userId === expectedUserId,
+			),
+		).toBe(true);
+		expect(
+			secondOutput.msgEvt?.some(
+				(msg) =>
+					msg.t === "auth/client-authenticated" &&
+					msg.account.userId === expectedUserId,
+			),
+		).toBe(true);
+	});
 });
