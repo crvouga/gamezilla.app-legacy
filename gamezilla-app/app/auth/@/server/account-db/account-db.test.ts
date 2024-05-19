@@ -86,4 +86,18 @@ describe(import.meta.file, () => {
 		const insert = await f.accountDb.insert({ account });
 		expect(insert.t).toBe("err");
 	});
+
+	it("should find null if finding account by user id and null is passed as user id", async () => {
+		const f = await Fixture();
+		const found = await f.accountDb.findOneByUserId({ userId: null });
+		expect(found).toEqual(Ok(null));
+	});
+
+	it("should find null if user id doesnt exist", async () => {
+		const f = await Fixture();
+		const found = await f.accountDb.findOneByUserId({
+			userId: UserId.generate(),
+		});
+		expect(found).toEqual(Ok(null));
+	});
 });

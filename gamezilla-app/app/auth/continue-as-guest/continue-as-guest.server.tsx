@@ -16,14 +16,16 @@ const continueAsGuest = async ({
 	sessionId: SessionId;
 	now: Posix;
 }): Task<string, UserAccount> => {
-	const existingGuestUserId = Result.withDefault(
-		await deps.guestSessionMappingDb.findUserIdBySessionId(sessionId),
-		null,
-	);
+	const existingGuestUserId =
+		await deps.guestSessionMappingDb.findUserIdBySessionId(sessionId);
+
+	if (isErr(existingGuestUserId)) {
+		return existingGuestUserId;
+	}
 
 	const existingGuestAccount = Result.withDefault(
 		await deps.accountDb.findOneByUserId({
-			userId: existingGuestUserId,
+			userId: existingGuestUserId.value,
 		}),
 		null,
 	);
@@ -35,7 +37,7 @@ const continueAsGuest = async ({
 		phoneNumber: null,
 	};
 
-	const guestAccount = existingGuestAccount ?? newGuestAccount;
+	const guestAccount: UserAccount = existingGuestAccount ?? newGuestAccount;
 
 	await deps.guestSessionMappingDb.insert({
 		guestUserId: guestAccount.userId,
