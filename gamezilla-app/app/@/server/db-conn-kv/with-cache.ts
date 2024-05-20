@@ -1,4 +1,4 @@
-import { Result, Ok } from "gamezilla-app/@/core";
+import { Result } from "gamezilla-app/@/core";
 import { ILogger } from "../logger";
 import { IDbConnKv } from "./db-conn-kv";
 
