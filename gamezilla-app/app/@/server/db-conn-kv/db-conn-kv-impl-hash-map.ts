@@ -8,7 +8,7 @@ export const DbConnKvHashMap = (config?: {
 	const hashMap = config?.map ?? new Map<string, unknown>();
 	return {
 		async get(key, parser) {
-			const got = hashMap.get(key);
+			const got = hashMap.get(key) ?? null;
 
 			const parsed = parser.parse(got);
 

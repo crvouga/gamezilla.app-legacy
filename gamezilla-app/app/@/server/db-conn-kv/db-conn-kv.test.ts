@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import { Ok, TimeSpan, Uuid } from "gamezilla-app/@/core";
-import { AppServerTestEnv } from "../server-test-env";
-import { DbConnKv } from "./db-conn-kv-impl";
 import { p } from "gamezilla-app/@/core/parser";
 import { Logger } from "../logger";
+import { AppServerTestEnv } from "../server-test-env";
+import { DbConnKv } from "./db-conn-kv-impl";
 
 const Fixture = async () => {
 	const testEnv = await AppServerTestEnv();
@@ -69,15 +69,19 @@ const implementations: Implementation[] = [
 		},
 	},
 	{
-		name: "with-throttled-writes",
+		name: "with-throttled-writes-to-source",
 		async Fixture() {
 			const f = await Fixture();
 			return {
 				...f,
-				dbConnKv: DbConnKv.withThrottledWrites({
-					dbConnKv: f.dbConnKv,
+				dbConnKv: DbConnKv.withCache({
+					cache: await DbConnKv({ t: "hash-map" }),
+					source: DbConnKv.withThrottledWrites({
+						dbConnKv: f.dbConnKv,
+						logger: f.logger,
+						throttle: TimeSpan.seconds(10),
+					}),
 					logger: f.logger,
-					throttle: TimeSpan.seconds(10),
 				}),
 			};
 		},
