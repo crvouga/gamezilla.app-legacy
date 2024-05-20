@@ -1,4 +1,4 @@
-import { Result } from "gamezilla-app/@/core";
+import { Result, Ok } from "gamezilla-app/@/core";
 import { ILogger } from "../logger";
 import { IDbConnKv } from "./db-conn-kv";
 
@@ -25,7 +25,7 @@ export const withCache = ({
 				);
 				return cacheGot;
 			}
-			logger.info(`HITTING SOURCE getMany: key=${key}`);
+			logger.info(`HITTING SOURCE get: key=${key}`);
 			const sourceGot = await source.get(key, parser);
 			const sourceHit = Result.withDefault(sourceGot, null);
 			if (sourceHit) {
@@ -46,43 +46,36 @@ export const withCache = ({
 				const durationInMicroseconds = (end - start) / BigInt(1000);
 				const keysString = keys.join(", ");
 				logger.info(
-					`CACHED duration=${durationInMicroseconds}µs get: keys=${keysString}`,
+					`CACHED duration=${durationInMicroseconds}µs getMany: keys=${keysString}`,
 				);
 				return cacheGot;
 			}
 			logger.info(`HITTING SOURCE getMany: keys=${keys.join(", ")}`);
 			const sourceGot = await source.getMany(keys, parser);
-			const sourceHit = Result.withDefault(sourceGot, null);
-			if (sourceHit) {
+			const sourceHit = Result.withDefault(sourceGot, []);
+			if (sourceHit.length > 0) {
 				await cache.setMany(
 					sourceHit.map((value, i) => [keys[i], value] as [string, unknown]),
 				);
 			}
 			const end = process.hrtime.bigint();
 			const durationInMicroseconds = (end - start) / BigInt(1000);
+			const keyString = keys.join(", ");
 			logger.info(
-				`duration=${durationInMicroseconds}µs get: keys=${keys.join(", ")}`,
+				`duration=${durationInMicroseconds}µs getMany: keys=${keyString}`,
 			);
 			return sourceGot;
 		},
 		async set(key, value) {
-			source.set(key, value);
-
+			await source.set(key, value);
 			return cache.set(key, value);
 		},
 		async setMany(entries) {
-			let key = "";
-			for (let i = 0; i < entries.length; i++) {
-				key = `${key},${entries[i]?.[0]}`;
-			}
-
-			source.setMany(entries);
-
+			await source.setMany(entries);
 			return cache.setMany(entries);
 		},
 		async zap(key) {
-			source.zap(key);
-
+			await source.zap(key);
 			return cache.zap(key);
 		},
 	};
