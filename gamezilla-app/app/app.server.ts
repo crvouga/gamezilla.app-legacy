@@ -90,16 +90,16 @@ export const getDeps = async ({
 
 	const dbConnKv = await pipe(
 		DbConnKv({
-			t: "redis",
-			logger: ILogger.prefix("redis", loggerDbConnKv),
-			url: redisUrl,
+			t: "postgres",
+			dbConnSql,
+			logger: ILogger.prefix("postgres", loggerDbConnKv),
 		}),
 
 		async (dbConnKv) =>
 			DbConnKv.withThrottledWrites({
 				logger: ILogger.prefix("with-throttled-writes", loggerDbConnKv),
 				dbConnKv: await dbConnKv,
-				throttle: TimeSpan.seconds(3),
+				throttle: TimeSpan.seconds(5),
 			}),
 
 		async (dbConnKv) =>
