@@ -13,10 +13,7 @@ export const NodeId = p.brand(p.str, "NodeId");
 export type NodeId = p.Infer<typeof NodeId>;
 
 export const createNodeId = (nodeId: string): NodeId => {
-	if (p.is(NodeId)(nodeId)) {
-		return nodeId;
-	}
-	throw new Error("Impossible condition. Invalid node id");
+	return nodeId as NodeId;
 };
 
 export const hasNodeId = (model: Model, nodeId: string): nodeId is NodeId => {
@@ -265,16 +262,12 @@ export const addNode = (model: Model, node: Node): Model => {
 	};
 };
 
-export const deriveEdgeHash = (
-	model: Pick<Model, "edges">,
-): string | number => {
-	return djb2Hash(Object.values(model.edges).sort().join(","));
+export const deriveEdgeHash = (edges: Model["edges"]): string | number => {
+	return djb2Hash(Object.values(edges).sort().join(","));
 };
 
-export const deriveNodeHash = (
-	model: Pick<Model, "nodes">,
-): string | number => {
-	return djb2Hash(Object.values(model.nodes).sort().join(","));
+export const deriveNodeHash = (nodes: Model["nodes"]): string | number => {
+	return djb2Hash(Object.values(nodes).sort().join(","));
 };
 
 /**

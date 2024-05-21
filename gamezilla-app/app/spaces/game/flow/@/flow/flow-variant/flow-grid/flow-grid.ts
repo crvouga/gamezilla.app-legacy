@@ -1,7 +1,7 @@
 import { p } from "gamezilla-app/@/core/parser";
 import { Flow } from "../../flow";
 import * as FlowGridDimensions from "./flow-grid-dimensions";
-import { DELTAS, Position } from "./flow-grid-position";
+import { Position } from "./flow-grid-position";
 
 //
 //
@@ -21,8 +21,12 @@ export const Model = p.and(
 );
 export type Model = p.Infer<typeof Model>;
 
+const toNodeId = (x: number, y: number): Flow.NodeId => {
+	return Flow.createNodeId(x + "," + y);
+};
+
 export const positionToNodeId = (position: Position): Flow.NodeId => {
-	return Flow.createNodeId(`${position.x},${position.y}`);
+	return toNodeId(position.x, position.y);
 };
 
 export const distance =
@@ -55,72 +59,96 @@ export const init = (input: {
 	dimensions: FlowGridDimensions.Model;
 	terminalsByGroupId?: Flow.Model["terminalsByGroupId"];
 }): Model => {
-	let model: Model = {
-		...Flow.init,
+	const model: Model = {
 		t: "flow-grid",
 		width: input.dimensions.width,
 		height: input.dimensions.height,
 		positions: {},
+		edges: {},
+		edgeHash: null,
+		nodeHash: null,
+		Flow: true,
+		nodes: {},
+		terminalsByGroupId: {},
+		pipesBySourceId: {},
 	};
-
 	//
-	// Add nodes
 	//
-
-	for (let x = 0; x < input.dimensions.width; x++) {
-		for (let y = 0; y < input.dimensions.height; y++) {
-			const position: Position = { x, y };
-			model = addNode(model, position);
-		}
-	}
-
 	//
-	// Add edges
 	//
+	const width = input.dimensions.width;
+	const height = input.dimensions.height;
+	const maxX = width - 1;
+	const maxY = height - 1;
+	let x: number;
+	let y: number;
 
-	for (const nodePosition of yieldPositions(model)) {
-		for (const delta of DELTAS) {
-			const to: Position = {
-				x: nodePosition.x + delta.x,
-				y: nodePosition.y + delta.y,
-			};
+	for (x = 0; x < width; x++) {
+		for (y = 0; y < height; y++) {
+			const nodeId = toNodeId(x, y);
+			model.positions[nodeId] = { x, y };
+			model.nodes[nodeId] = { nodeId };
 
-			if (!model.nodes[positionToNodeId(to)]) {
-				continue;
+			const north = toNodeId(x, y - 1);
+			const east = toNodeId(x + 1, y);
+			const south = toNodeId(x, y + 1);
+			const west = toNodeId(x - 1, y);
+
+			if (y > 0) {
+				const edgeNorth: Flow.Edge = {
+					sourceId: nodeId,
+					targetId: north,
+				};
+				const edgeNorthId = Flow.toEdgeId(edgeNorth);
+				model.edges[edgeNorthId] = edgeNorth;
 			}
 
-			const edge: Flow.Edge = {
-				sourceId: positionToNodeId(nodePosition),
-				targetId: positionToNodeId(to),
-			};
+			if (x < maxX) {
+				const edgeEast: Flow.Edge = {
+					sourceId: nodeId,
+					targetId: east,
+				};
+				const edgeEastId = Flow.toEdgeId(edgeEast);
+				model.edges[edgeEastId] = edgeEast;
+			}
 
-			model = { ...model, ...Flow.addEdge(model, edge) };
+			if (y < maxY) {
+				const edgeSouth: Flow.Edge = {
+					sourceId: nodeId,
+					targetId: south,
+				};
+				const edgeSouthId = Flow.toEdgeId(edgeSouth);
+				model.edges[edgeSouthId] = edgeSouth;
+			}
+
+			if (x > 0) {
+				const edgeWest: Flow.Edge = {
+					sourceId: nodeId,
+					targetId: west,
+				};
+				const edgeWestId = Flow.toEdgeId(edgeWest);
+				model.edges[edgeWestId] = edgeWest;
+			}
 		}
 	}
-
 	//
 	// Terminals
 	//
 
-	const terminalsByGroupIdNew: Flow.Model["terminalsByGroupId"] = {};
-
 	for (const groupId in input.terminalsByGroupId) {
-		const terminal = input.terminalsByGroupId[groupId as Flow.GroupId];
+		const terminal = input.terminalsByGroupId[groupId as Flow.GroupId]!;
 
-		if (!terminal) {
-			continue;
-		}
+		const start = model.nodes[terminal.startId];
 
-		const start = toNode(model, terminal.startId);
-
-		const end = terminal?.endId ? toNode(model, terminal.endId) : null;
+		const end = terminal?.endId ? model.nodes[terminal.endId] : null;
 
 		const startNew = start?.nodeId ?? end?.nodeId;
-		const endNew = end?.nodeId === startNew ? null : end?.nodeId;
 
 		if (!startNew) {
 			continue;
 		}
+
+		const endNew = end?.nodeId === startNew ? null : end?.nodeId;
 
 		const terminalNew: Flow.Terminal = {
 			groupId: terminal.groupId,
@@ -128,14 +156,11 @@ export const init = (input: {
 			endId: endNew,
 		};
 
-		terminalsByGroupIdNew[terminalNew.groupId] = terminalNew;
+		model.terminalsByGroupId[terminalNew.groupId] = terminalNew;
 	}
 
-	model.terminalsByGroupId = terminalsByGroupIdNew;
-
-	//
-	//
-	//
+	model.edgeHash = Flow.deriveEdgeHash(model.edges);
+	model.nodeHash = Flow.deriveNodeHash(model.nodes);
 
 	return model;
 };
