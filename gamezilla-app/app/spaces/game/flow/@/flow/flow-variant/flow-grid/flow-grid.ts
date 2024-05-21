@@ -89,45 +89,40 @@ export const init = (input: {
 			model.positions[nodeId] = { x, y };
 			model.nodes[nodeId] = { nodeId };
 
-			const north = toNodeId(x, y - 1);
-			const east = toNodeId(x + 1, y);
-			const south = toNodeId(x, y + 1);
-			const west = toNodeId(x - 1, y);
-
 			if (y > 0) {
+				const north = toNodeId(x, y - 1);
 				const edgeNorth: Flow.Edge = {
 					sourceId: nodeId,
 					targetId: north,
 				};
-				const edgeNorthId = Flow.toEdgeId(edgeNorth);
-				model.edges[edgeNorthId] = edgeNorth;
+				model.edges[Flow.toEdgeId(edgeNorth)] = edgeNorth;
 			}
 
 			if (x < maxX) {
+				const east = toNodeId(x + 1, y);
 				const edgeEast: Flow.Edge = {
 					sourceId: nodeId,
 					targetId: east,
 				};
-				const edgeEastId = Flow.toEdgeId(edgeEast);
-				model.edges[edgeEastId] = edgeEast;
+				model.edges[Flow.toEdgeId(edgeEast)] = edgeEast;
 			}
 
 			if (y < maxY) {
+				const south = toNodeId(x, y + 1);
 				const edgeSouth: Flow.Edge = {
 					sourceId: nodeId,
 					targetId: south,
 				};
-				const edgeSouthId = Flow.toEdgeId(edgeSouth);
-				model.edges[edgeSouthId] = edgeSouth;
+				model.edges[Flow.toEdgeId(edgeSouth)] = edgeSouth;
 			}
 
 			if (x > 0) {
+				const west = toNodeId(x - 1, y);
 				const edgeWest: Flow.Edge = {
 					sourceId: nodeId,
 					targetId: west,
 				};
-				const edgeWestId = Flow.toEdgeId(edgeWest);
-				model.edges[edgeWestId] = edgeWest;
+				model.edges[Flow.toEdgeId(edgeWest)] = edgeWest;
 			}
 		}
 	}
