@@ -70,7 +70,6 @@ const View: ClientModule["View"] = (input) => {
 						const msg = GotFlowPlayMsg({
 							c,
 						});
-						console.log("msg", msg, "c", c);
 						input.dispatch(msg);
 					}}
 					model={input.modelCore.play}
