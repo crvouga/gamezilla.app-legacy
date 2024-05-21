@@ -229,6 +229,9 @@ export const View: ClientModule["View"] = (input) => {
 						/>
 					);
 				}
+				default: {
+					return null;
+				}
 			}
 		}
 		default: {
