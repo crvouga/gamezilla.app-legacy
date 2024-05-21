@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import type { UserId } from "gamezilla-app/app/@/data";
-import { UserAccountRow } from "./account-db-impl-postgres";
+import { UserAccountRow } from "./user-account-db-impl-postgres";
 
 describe(import.meta.file, () => {
 	it("should parse correctly", async () => {

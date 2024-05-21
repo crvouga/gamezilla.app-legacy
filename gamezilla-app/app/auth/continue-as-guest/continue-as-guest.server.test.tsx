@@ -4,8 +4,8 @@ import {
 	AppServerFixture,
 	AppServerTestEnv,
 } from "gamezilla-app/app/@/server/server-test-env";
-import { AccountDb } from "../@/server/account-db";
-import { SessionDb } from "../@/server/session-db";
+import { UserAccountDb } from "../@/server/user-account-db";
+import { UserSessionDb } from "../@/server/user-session-db";
 import * as AuthServer from "../auth.server";
 import type { ServerDeps } from "../auth.types";
 import { ContinueAsGuestServer } from "./continue-as-guest.server";
@@ -31,11 +31,11 @@ const FixtureDeps = async (): Promise<ServerDeps> => {
 
 	switch (testEnv.t) {
 		case "integration": {
-			const accountDb = AccountDb({
+			const accountDb = UserAccountDb({
 				t: "postgres",
 				dbConnSql: testEnv.dbConnSql,
 			});
-			const sessionDb = SessionDb({
+			const sessionDb = UserSessionDb({
 				t: "postgres-with-db-kv-cache",
 				dbConnSql: testEnv.dbConnSql,
 				dbConnKv: testEnv.dbConnKv,
@@ -46,17 +46,17 @@ const FixtureDeps = async (): Promise<ServerDeps> => {
 			});
 			return {
 				timeout,
-				accountDb,
-				sessionDb,
+				userAccountDb: accountDb,
+				userSessionDb: sessionDb,
 				guestSessionMappingDb,
 			};
 		}
 		case "unit": {
-			const accountDb = AccountDb({
+			const accountDb = UserAccountDb({
 				t: "in-memory",
 				delay: async () => {},
 			});
-			const sessionDb = SessionDb({
+			const sessionDb = UserSessionDb({
 				t: "in-memory",
 				delay: async () => {},
 			});
@@ -65,8 +65,8 @@ const FixtureDeps = async (): Promise<ServerDeps> => {
 			});
 			return {
 				timeout,
-				accountDb,
-				sessionDb,
+				userAccountDb: accountDb,
+				userSessionDb: sessionDb,
 				guestSessionMappingDb,
 			};
 		}

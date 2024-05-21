@@ -3,7 +3,7 @@ import { Ok, PhoneNumber, Posix, Result } from "gamezilla-app/@/core";
 import { UserId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
-import { AccountDb } from "./account-db-impl";
+import { UserAccountDb } from "./user-account-db-impl";
 
 const Fixture = async () => {
 	const testEnv = await AppServerTestEnv();
@@ -11,13 +11,16 @@ const Fixture = async () => {
 	switch (testEnv.t) {
 		case "integration": {
 			return {
-				accountDb: AccountDb({ t: "postgres", dbConnSql: testEnv.dbConnSql }),
+				userAccountDb: UserAccountDb({
+					t: "postgres",
+					dbConnSql: testEnv.dbConnSql,
+				}),
 			};
 		}
 
 		case "unit": {
 			return {
-				accountDb: AccountDb({ t: "in-memory", async delay() {} }),
+				userAccountDb: UserAccountDb({ t: "in-memory", async delay() {} }),
 			};
 		}
 	}
@@ -26,7 +29,7 @@ const Fixture = async () => {
 describe(import.meta.file, () => {
 	it("should be able to insert accounts", async () => {
 		const f = await Fixture();
-		const inserted = await f.accountDb.insert({
+		const inserted = await f.userAccountDb.insert({
 			account: {
 				userId: UserId.generate(),
 				role: "guest",
@@ -49,8 +52,10 @@ describe(import.meta.file, () => {
 			}),
 			phoneNumber: null,
 		};
-		await f.accountDb.insert({ account });
-		const found = await f.accountDb.findOneByUserId({ userId: account.userId });
+		await f.userAccountDb.insert({ account });
+		const found = await f.userAccountDb.findOneByUserId({
+			userId: account.userId,
+		});
 		const maybeAccount = Result.withDefault(found, null);
 		expect(maybeAccount).toEqual(account);
 	});
@@ -66,9 +71,9 @@ describe(import.meta.file, () => {
 				precision: "seconds",
 			}),
 		};
-		const insert = await f.accountDb.insert({ account });
+		const insert = await f.userAccountDb.insert({ account });
 		expect(insert.t).toBe("ok");
-		const found = await f.accountDb.findOneByPhoneNumber({ phoneNumber });
+		const found = await f.userAccountDb.findOneByPhoneNumber({ phoneNumber });
 		expect(found).toEqual(Ok(account));
 	});
 
@@ -82,20 +87,20 @@ describe(import.meta.file, () => {
 			}),
 			phoneNumber: null,
 		};
-		await f.accountDb.insert({ account });
-		const insert = await f.accountDb.insert({ account });
+		await f.userAccountDb.insert({ account });
+		const insert = await f.userAccountDb.insert({ account });
 		expect(insert.t).toBe("err");
 	});
 
 	it("should find null if finding account by user id and null is passed as user id", async () => {
 		const f = await Fixture();
-		const found = await f.accountDb.findOneByUserId({ userId: null });
+		const found = await f.userAccountDb.findOneByUserId({ userId: null });
 		expect(found).toEqual(Ok(null));
 	});
 
 	it("should find null if user id doesnt exist", async () => {
 		const f = await Fixture();
-		const found = await f.accountDb.findOneByUserId({
+		const found = await f.userAccountDb.findOneByUserId({
 			userId: UserId.generate(),
 		});
 		expect(found).toEqual(Ok(null));

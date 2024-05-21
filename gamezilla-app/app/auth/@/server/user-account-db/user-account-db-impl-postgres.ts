@@ -10,7 +10,7 @@ import { p } from "gamezilla-app/@/core/parser";
 import { UserId, UserRole } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
-import type { IAccountDb } from "./account-db";
+import type { IUserAccountDb } from "./user-account-db";
 
 export const UserAccountRow = p.obj({
 	user_id: p.str,
@@ -44,11 +44,11 @@ const toAccount = ({
 	return Ok(account);
 };
 
-export const AccountDbPostgres = ({
+export const UserAccountDbPostgres = ({
 	dbConnSql,
 }: {
 	dbConnSql: IDbConnSql;
-}): IAccountDb => {
+}): IUserAccountDb => {
 	return {
 		async findOneByUserId(input) {
 			const queried = await dbConnSql.query(

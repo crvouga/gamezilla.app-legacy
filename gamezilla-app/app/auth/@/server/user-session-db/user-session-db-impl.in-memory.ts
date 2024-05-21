@@ -1,15 +1,15 @@
 import { Ok } from "gamezilla-app/@/core";
 import type { SessionId, UserId } from "gamezilla-app/app/@/data";
-import type { ISessionDb } from "./session-db";
+import type { IUserSessionDb } from "./user-session-db";
 
 const sessionIdsByUserId = new Map<UserId, SessionId[]>();
 const userIdBySessionId = new Map<SessionId, UserId>();
 
-export const SessionDbInMemory = ({
+export const UserSessionDbInMemory = ({
 	delay,
 }: {
 	delay: () => Promise<void>;
-}): ISessionDb => {
+}): IUserSessionDb => {
 	return {
 		async findSessionIdsByUserId(userId: UserId) {
 			await delay();

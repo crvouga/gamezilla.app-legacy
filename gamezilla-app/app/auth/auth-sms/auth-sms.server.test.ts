@@ -8,7 +8,7 @@ import {
 	randomClient,
 } from "gamezilla-app/app/@/server/server-test-env";
 import { AuthSMSTypes } from ".";
-import { AccountDb } from "../@/server/account-db";
+import { UserAccountDb } from "../@/server/user-account-db";
 import { AuthSMSServer } from "./auth-sms.server";
 import { IVerifySMS } from "./verify-sms/verify-sms";
 import { VerifySMS } from "./verify-sms/verify-sms-impl/verify-sms-impl";
@@ -29,7 +29,7 @@ const Fixture = async (input?: { VerifySMS?: IVerifySMS }) => {
 	const depsBase = await AuthSMSServer.getDeps(f);
 	const deps: Awaited<ReturnType<typeof AuthSMSServer.getDeps>> = {
 		...depsBase,
-		AccountDb: AccountDb({
+		AccountDb: UserAccountDb({
 			t: "in-memory",
 			delay: async () => {},
 		}),

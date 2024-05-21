@@ -1,9 +1,9 @@
 import type { IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
-import type { ISessionDb } from "./session-db";
-import { SessionDbInMemory } from "./session-db-impl.in-memory";
-import { SessionDbPostgres } from "./session-db-impl.postgres";
-import { SessionDbWithDbKvCache } from "./session-db-impl.with-db-kv-cache";
+import type { IUserSessionDb } from "./user-session-db";
+import { UserSessionDbInMemory } from "./user-session-db-impl.in-memory";
+import { UserSessionDbPostgres } from "./user-session-db-impl.postgres";
+import { UserSessionDbWithDbKvCache } from "./user-session-db-impl.with-db-kv-cache";
 
 export type Impl =
 	| {
@@ -20,19 +20,19 @@ export type Impl =
 			dbConnKv: IDbConnKv;
 	  };
 
-export const SessionDb = (impl: Impl): ISessionDb => {
+export const UserSessionDb = (impl: Impl): IUserSessionDb => {
 	switch (impl.t) {
 		case "in-memory": {
-			return SessionDbInMemory(impl);
+			return UserSessionDbInMemory(impl);
 		}
 
 		case "postgres": {
-			return SessionDbPostgres(impl);
+			return UserSessionDbPostgres(impl);
 		}
 
 		case "postgres-with-db-kv-cache": {
-			return SessionDbWithDbKvCache({
-				SessionDb: SessionDbPostgres(impl),
+			return UserSessionDbWithDbKvCache({
+				SessionDb: UserSessionDbPostgres(impl),
 				dbConnKv: impl.dbConnKv,
 			});
 		}

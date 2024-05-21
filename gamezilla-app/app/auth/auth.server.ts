@@ -2,8 +2,8 @@ import { Eff, Sub, TimeSpan, isErr, isOk } from "gamezilla-app/@/core";
 import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
 import type { SessionId, UserId } from "gamezilla-app/app/@/data";
 import { ServerCmd, sendToClient } from "gamezilla-app/app/@/server";
-import { AccountDb } from "./@/server/account-db";
-import { SessionDb } from "./@/server/session-db";
+import { UserAccountDb } from "./@/server/user-account-db";
+import { UserSessionDb } from "./@/server/user-session-db";
 import { AuthSMSServer } from "./auth-sms/auth-sms.server";
 import type { MsgToClient, ServerDeps, ServerModule } from "./auth.types";
 import { ContinueAsGuestServer } from "./continue-as-guest/continue-as-guest.server";
@@ -18,11 +18,11 @@ import { LogoutServer } from "./logout/logout.server";
 
 export const getDeps: ServerModule["getDeps"] = async ({ ctx }) => {
 	return {
-		accountDb: AccountDb({
+		userAccountDb: UserAccountDb({
 			t: "postgres",
 			dbConnSql: ctx.dbConnSql,
 		}),
-		sessionDb: SessionDb({
+		userSessionDb: UserSessionDb({
 			t: "postgres-with-db-kv-cache",
 			dbConnSql: ctx.dbConnSql,
 			dbConnKv: ctx.dbConnKv,
@@ -81,7 +81,7 @@ export const toUserIdFromSessionId = async (
 	deps: ServerDeps,
 	sessionId: SessionId,
 ): Promise<UserId | null> => {
-	const found = await deps.sessionDb.findUserIdBySessionId(sessionId);
+	const found = await deps.userSessionDb.findUserIdBySessionId(sessionId);
 
 	if (isErr(found)) {
 		return null;
@@ -114,13 +114,13 @@ const updateChild: ServerModule["update"] = async (input) => {
 const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
 	switch (msgEvt?.t) {
 		case "wire/client-connected": {
-			const foundUserId = await deps.sessionDb.findUserIdBySessionId(
+			const foundUserId = await deps.userSessionDb.findUserIdBySessionId(
 				msgEvt.sessionId,
 			);
 
 			const userId = isOk(foundUserId) ? foundUserId.value : null;
 
-			const foundAccount = await deps.accountDb.findOneByUserId({ userId });
+			const foundAccount = await deps.userAccountDb.findOneByUserId({ userId });
 
 			const account = isOk(foundAccount) ? foundAccount.value : null;
 
@@ -176,7 +176,7 @@ const updateFromEvent: typeof update = async ({ msgEvt, model, deps }) => {
 				};
 			}
 
-			const inserted = await deps.sessionDb.insert({
+			const inserted = await deps.userSessionDb.insert({
 				sessionId: msgEvt.sessionId,
 				userId: msgEvt.account.userId,
 			});

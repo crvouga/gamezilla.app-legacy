@@ -1,11 +1,11 @@
 import { Err, Ok, PhoneNumber } from "gamezilla-app/@/core";
 import type { UserId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
-import type { IAccountDb } from "./account-db";
+import type { IUserAccountDb } from "./user-account-db";
 
-export const AccountDbInMemory = (deps: {
+export const UserAccountDbInMemory = (deps: {
 	delay: () => Promise<void>;
-}): IAccountDb => {
+}): IUserAccountDb => {
 	const accounts = new Map<UserId, UserAccount>();
 	return {
 		async findOneByUserId(input) {

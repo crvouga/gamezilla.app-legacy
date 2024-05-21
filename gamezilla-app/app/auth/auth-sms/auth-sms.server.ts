@@ -21,8 +21,8 @@ import {
 } from "gamezilla-app/app/@/server";
 import { ILogger } from "gamezilla-app/app/@/server/logger";
 import { SMS } from "gamezilla-app/app/@/server/sms";
-import type { IAccountDb } from "../@/server/account-db";
-import { AccountDb } from "../@/server/account-db/account-db-impl";
+import type { IUserAccountDb } from "../@/server/user-account-db";
+import { UserAccountDb } from "../@/server/user-account-db/user-account-db-impl";
 import type { MsgServer, MsgToClient, MsgToServer } from "./auth-sms.types";
 import { VerificationAttemptDb } from "./verify-sms/verification-attempt";
 import { VerificationCodeGenerator } from "./verify-sms/verification-code-generator";
@@ -50,7 +50,7 @@ type Module = AppServerModule<{
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
 	Deps: {
-		AccountDb: IAccountDb;
+		AccountDb: IUserAccountDb;
 		VerifySMS: IVerifySMS;
 	};
 }>;
@@ -109,7 +109,7 @@ const getDeps: Module["getDeps"] = async ({ ctx }) => {
 	const verifySMS = ctx.env === "prod" ? verifySMSTwilio : verifySMSInHouse;
 
 	return {
-		AccountDb: AccountDb({
+		AccountDb: UserAccountDb({
 			t: "postgres",
 			dbConnSql: ctx.dbConnSql,
 		}),
@@ -171,7 +171,7 @@ const handleVerifyCode = async (input: {
 	now: Posix;
 	phoneNumber: PhoneNumber;
 	inputtedCode: string;
-	AccountDb: IAccountDb;
+	AccountDb: IUserAccountDb;
 	VerifySMS: IVerifySMS;
 }): Task<VerifyCodeProblem, UserAccount> => {
 	const verified = await input.VerifySMS.verifyCode({

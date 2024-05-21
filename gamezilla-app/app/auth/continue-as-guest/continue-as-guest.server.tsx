@@ -24,7 +24,7 @@ const continueAsGuest = async ({
 	}
 
 	const existingGuestAccount = Result.withDefault(
-		await deps.accountDb.findOneByUserId({
+		await deps.userAccountDb.findOneByUserId({
 			userId: existingGuestUserId.value,
 		}),
 		null,
@@ -46,13 +46,13 @@ const continueAsGuest = async ({
 
 	const insertedAccount = existingGuestAccount
 		? Ok(null)
-		: await deps.accountDb.insert({ account: guestAccount });
+		: await deps.userAccountDb.insert({ account: guestAccount });
 
 	if (isErr(insertedAccount)) {
 		return insertedAccount;
 	}
 
-	const insertedSession = await deps.sessionDb.insert({
+	const insertedSession = await deps.userSessionDb.insert({
 		userId: guestAccount.userId,
 		sessionId,
 	});

@@ -2,7 +2,7 @@ import { Result, Uuid } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { SessionId, UserId } from "gamezilla-app/app/@/data";
 import type { IDbConnSql } from "gamezilla-app/app/@/server/db-conn-sql";
-import type { ISessionDb } from "./session-db";
+import type { IUserSessionDb } from "./user-session-db";
 
 //
 //
@@ -23,11 +23,11 @@ export type Row = p.Infer<typeof Row>;
 //
 //
 
-export const SessionDbPostgres = ({
+export const UserSessionDbPostgres = ({
 	dbConnSql,
 }: {
 	dbConnSql: IDbConnSql;
-}): ISessionDb => {
+}): IUserSessionDb => {
 	return {
 		async findSessionIdsByUserId(userId: UserId) {
 			const queried = await dbConnSql.query(

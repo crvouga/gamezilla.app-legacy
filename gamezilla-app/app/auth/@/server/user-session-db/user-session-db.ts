@@ -1,7 +1,7 @@
 import type { Result } from "gamezilla-app/@/core";
 import type { SessionId, UserId } from "gamezilla-app/app/@/data";
 
-export type ISessionDb = {
+export type IUserSessionDb = {
 	findSessionIdsByUserId: (
 		userId: UserId,
 	) => Promise<Result<string, SessionId[]>>;

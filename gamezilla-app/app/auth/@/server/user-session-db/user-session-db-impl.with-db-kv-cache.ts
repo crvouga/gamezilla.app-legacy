@@ -1,8 +1,11 @@
 import { Result, isOk } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { SessionId, UserId } from "gamezilla-app/app/@/data";
-import { DbConnKv, IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
-import type { ISessionDb } from "./session-db";
+import {
+	DbConnKv,
+	type IDbConnKv,
+} from "gamezilla-app/app/@/server/db-conn-kv";
+import type { IUserSessionDb } from "./user-session-db";
 
 //
 //
@@ -10,13 +13,13 @@ import type { ISessionDb } from "./session-db";
 //
 //
 
-export const SessionDbWithDbKvCache = ({
+export const UserSessionDbWithDbKvCache = ({
 	SessionDb,
 	dbConnKv,
 }: {
 	dbConnKv: IDbConnKv;
-	SessionDb: ISessionDb;
-}): ISessionDb => {
+	SessionDb: IUserSessionDb;
+}): IUserSessionDb => {
 	const userIdBySessionId = DbConnKv.withNamespace<SessionId, UserId>(
 		dbConnKv,
 		["auth-session", "user-id-by-session-id"],

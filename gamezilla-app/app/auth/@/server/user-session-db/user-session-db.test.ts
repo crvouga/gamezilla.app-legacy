@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
-import { SessionDb } from "./session-db-impl";
+import { UserSessionDb } from "./user-session-db-impl";
 import { SessionId, UserId } from "gamezilla-app/app/@/data";
 import { unwrap } from "gamezilla-app/@/core";
 
@@ -9,7 +9,7 @@ const FixtureVariant = async () => {
 	switch (testEnv.t) {
 		case "integration": {
 			return {
-				sessionDb: SessionDb({
+				userSessionDb: UserSessionDb({
 					t: "postgres-with-db-kv-cache",
 					dbConnKv: testEnv.dbConnKv,
 					dbConnSql: testEnv.dbConnSql,
@@ -19,7 +19,7 @@ const FixtureVariant = async () => {
 
 		case "unit": {
 			return {
-				sessionDb: SessionDb({
+				userSessionDb: UserSessionDb({
 					t: "in-memory",
 					delay: async () => {},
 				}),
@@ -58,7 +58,7 @@ const Fixture = async () => {
 		},
 	] as const;
 	for (const session of sessions) {
-		await f.sessionDb.insert(session);
+		await f.userSessionDb.insert(session);
 	}
 	return {
 		...f,
@@ -74,9 +74,13 @@ describe(import.meta.file, () => {
 			sessionId: SessionId.generate(),
 			userId: UserId.generate(),
 		};
-		const before = await f.sessionDb.findUserIdBySessionId(session.sessionId);
-		const inserted = await f.sessionDb.insert(session);
-		const after = await f.sessionDb.findUserIdBySessionId(session.sessionId);
+		const before = await f.userSessionDb.findUserIdBySessionId(
+			session.sessionId,
+		);
+		const inserted = await f.userSessionDb.insert(session);
+		const after = await f.userSessionDb.findUserIdBySessionId(
+			session.sessionId,
+		);
 		expect(unwrap(before)).toBe(null);
 		expect(inserted.t).toBe("ok");
 		expect(unwrap(after)).toBe(session.userId);
@@ -84,7 +88,7 @@ describe(import.meta.file, () => {
 
 	it("should find session ids by user id", async () => {
 		const f = await Fixture();
-		const sessionIds = await f.sessionDb.findSessionIdsByUserId(f.userId);
+		const sessionIds = await f.userSessionDb.findSessionIdsByUserId(f.userId);
 		expect(sessionIds.t).toBe("ok");
 		const expected = f.sessions
 			.filter((s) => s.userId === f.userId)
@@ -94,9 +98,9 @@ describe(import.meta.file, () => {
 
 	it("should be able to zap by user id", async () => {
 		const f = await Fixture();
-		const before = await f.sessionDb.findSessionIdsByUserId(f.userId);
-		await f.sessionDb.zapByUserId(f.userId);
-		const after = await f.sessionDb.findSessionIdsByUserId(f.userId);
+		const before = await f.userSessionDb.findSessionIdsByUserId(f.userId);
+		await f.userSessionDb.zapByUserId(f.userId);
+		const after = await f.userSessionDb.findSessionIdsByUserId(f.userId);
 
 		expect(unwrap(before)).toEqual(
 			f.sessions.filter((s) => s.userId === f.userId).map((s) => s.sessionId),
@@ -107,8 +111,8 @@ describe(import.meta.file, () => {
 
 	it("should be able to zap by session id", async () => {
 		const f = await Fixture();
-		await f.sessionDb.zapBySessionId(f.sessions[0].sessionId);
-		const sessionIds = await f.sessionDb.findSessionIdsByUserId(f.userId);
+		await f.userSessionDb.zapBySessionId(f.sessions[0].sessionId);
+		const sessionIds = await f.userSessionDb.findSessionIdsByUserId(f.userId);
 		expect(sessionIds.t).toBe("ok");
 		const expected = f.sessions
 			.filter(
