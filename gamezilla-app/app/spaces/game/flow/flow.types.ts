@@ -1,5 +1,5 @@
 import { p } from "gamezilla-app/@/core/parser";
-import type { UserId } from "gamezilla-app/app/@/data";
+import { UserId } from "gamezilla-app/app/@/data";
 import type { GameMainMenu } from "../@/game";
 import type { FlowPack } from "./@/flow-pack";
 import type { FlowPackId } from "./@/flow-pack/flow-pack-id";
@@ -70,7 +70,9 @@ export type MsgToClient =
 	| { t: "builder"; c: BuilderTypes.MsgToClient }
 	| { t: "play"; c: Play.MsgToClient };
 
-export type Mode = "builder" | "play";
+const MODE = ["builder", "play"] as const;
+export const Mode = p.enumeration(MODE);
+export type Mode = p.Infer<typeof Mode>;
 
 //
 //
@@ -80,12 +82,26 @@ export type Mode = "builder" | "play";
 //
 //
 
-export type MsgCore =
-	| { t: "user-changed-mode"; mode: Mode | null; userId: UserId }
-	| { t: "play"; c: Play.MsgCore }
-	| { t: "builder"; c: BuilderTypes.MsgCore };
+export const MsgCore = p.or(
+	p.obj({
+		t: p.l("user-changed-mode"),
+		mode: p.or(Mode, p.l(null)),
+		userId: UserId,
+	}),
+	p.obj({
+		t: p.l("play"),
+		c: Play.MsgCore,
+	}),
+	p.obj({
+		t: p.l("builder"),
+		c: BuilderTypes.MsgCore,
+	}),
+);
+export type MsgCore = p.Infer<typeof MsgCore>;
 
-export type ModelCore =
-	| { t: null }
-	| { t: "builder"; c: BuilderTypes.ModelCore }
-	| { t: "play"; c: Play.ModelCore };
+export const ModelCore = p.or(
+	p.obj({ t: p.l(null) }),
+	p.obj({ t: p.l("builder"), c: BuilderTypes.ModelCore }),
+	p.obj({ t: p.l("play"), c: Play.ModelCore }),
+);
+export type ModelCore = p.Infer<typeof ModelCore>;

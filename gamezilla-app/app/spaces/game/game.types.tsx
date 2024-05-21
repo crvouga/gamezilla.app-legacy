@@ -89,26 +89,26 @@ export const gameNameToString = (gameName: GameName): string => {
 	}
 };
 
-export type ModelCore =
-	| {
-			t: "connect-four";
-			c: ConnectFour.ModelCore;
-	  }
-	| {
-			t: "flow";
-			c: Flow.ModelCore;
-	  };
-
-export const ModelCore = p.custom(
-	(_x: unknown): _x is ModelCore => true,
-	"Invalid model sync",
+export const ModelCore = p.or(
+	p.obj({
+		t: p.l("connect-four"),
+		c: ConnectFour.ModelCore,
+	}),
+	p.obj({
+		t: p.l("flow"),
+		c: Flow.ModelCore,
+	}),
 );
+export type ModelCore = p.Infer<typeof ModelCore>;
 
-export type MsgCore =
-	| { t: "connect-four"; c: ConnectFour.MsgCore }
-	| { t: "flow"; c: Flow.MsgCore };
-
-export const MsgCore = p.custom(
-	(_x: unknown): _x is MsgCore => true,
-	"Invalid msg sync",
+export const MsgCore = p.or(
+	p.obj({
+		t: p.l("connect-four"),
+		c: ConnectFour.MsgCore,
+	}),
+	p.obj({
+		t: p.l("flow"),
+		c: Flow.MsgCore,
+	}),
 );
+export type MsgCore = p.Infer<typeof MsgCore>;

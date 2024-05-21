@@ -2,7 +2,7 @@ import { p } from "gamezilla-app/@/core/parser";
 import { AnyMsg, Namespace } from "gamezilla-app/@/msg";
 import type { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import { FlowVariantUIPlay, type FlowVariant } from "../@/flow";
+import { FlowVariantUIPlay, FlowVariant } from "../@/flow";
 import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
 import { FlowPackList } from "../@/flow-pack";
 
@@ -63,10 +63,11 @@ export const GotFlowPlayMsg = createMsg(
 	}),
 );
 
-export type ModelCore = {
-	play: FlowVariantUIPlay.Model;
-	flow: FlowVariant.Model;
-};
+export const ModelCore = p.obj({
+	play: FlowVariantUIPlay.Model,
+	flow: FlowVariant.Model,
+});
+export type ModelCore = p.Infer<typeof ModelCore>;
 
 type Module = GameCoreModule<{
 	Ctx: SpaceCtx;
