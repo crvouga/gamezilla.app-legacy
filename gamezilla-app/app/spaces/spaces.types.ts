@@ -1,5 +1,5 @@
-import type { Profile, SpaceId, UserId } from "gamezilla-app/app/@/data";
 import type { RequestResponse } from "gamezilla-app/@/core";
+import type { Profile, SpaceId, UserId } from "gamezilla-app/app/@/data";
 import type { AppClientModule } from "../@/architecture/app-client";
 import type { AppServerModule } from "../@/architecture/app-server";
 import type {
@@ -9,14 +9,14 @@ import type {
 	ClientEvent,
 } from "../@/client";
 import type { ServerCmd, ServerCtx, ServerEvent } from "../@/server";
-import type * as Game from "./game/game.types";
 import type { WithEventId, WithEventMeta } from "./@/event";
+import type * as Game from "./game/game.types";
 import type { IProfileCache } from "./profile-cache";
+import type { IGameDb } from "./space-game/space-game-db";
 import type * as Space from "./spaces-core/space";
+import type { ISpacesDb } from "./spaces-core/space-db";
 import type { SpaceEvent } from "./spaces-core/space-event";
 import type * as Spaces from "./spaces-core/spaces-core.client";
-import type { ISpacesDb } from "./spaces-core/space-db";
-import type { IGameDb } from "./space-game/space-game-db";
 
 //
 //
@@ -28,7 +28,6 @@ import type { IGameDb } from "./space-game/space-game-db";
 //
 
 export type ClientModule = AppClientModule<{
-	ModelLocation: ModelLocation;
 	Ctx: AnonymousClientCtx | ClientCtx;
 	MsgCmdIn: never;
 	MsgEvtIn: ClientEvent;
@@ -81,30 +80,6 @@ export type ModelClient = Spaces.Model & {
 	listSpacesRequest: RequestResponse<string, null>;
 };
 
-export type ModelLocation = {
-	filters: {
-		limit: number;
-		offset: number;
-	};
-	screen:
-		| {
-				t: "list";
-		  }
-		| {
-				t: "space";
-				spaceId: SpaceId;
-		  };
-};
-
-export const initLocation: ModelLocation = {
-	filters: {
-		limit: 100,
-		offset: 0,
-	},
-	screen: {
-		t: "list",
-	},
-};
 
 //
 //

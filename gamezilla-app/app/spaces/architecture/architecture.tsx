@@ -1,6 +1,6 @@
 import type { BaseClientCtx, ClientEvent } from "gamezilla-app/app/@/client";
 
-import { Eff, type Sub, batchMsgs } from "gamezilla-app/@/core";
+import { Eff, batchMsgs, type Sub } from "gamezilla-app/@/core";
 import type { VDom } from "gamezilla-app/@/vdom";
 import type { WithEventId } from "../@/event";
 import type { Space } from "../@/space";
@@ -8,7 +8,7 @@ import type { SpaceClientCmd } from "../@/space-client-cmd";
 import type { SpaceEvent } from "../spaces-core";
 import type {
 	ModelClient,
-	ModelLocation,
+
 	MsgClient,
 	MsgToClient,
 	MsgToServer,
@@ -21,7 +21,6 @@ type Ctx = BaseClientCtx & {
 export type Input = {
 	ctx: Ctx;
 	model: ModelClient;
-	modelLocation?: ModelLocation;
 	msg?: MsgClient | null;
 	msgServer?: MsgToClient | null;
 	msgEvt?: ClientEvent | null;
@@ -34,10 +33,6 @@ export type Input = {
 
 export type Output = {
 	model: ModelClient;
-	modelLocation?: {
-		t: "replace" | "push";
-		c: ModelLocation;
-	};
 	eff?: Eff<MsgClient>;
 	msgCmd?: SpaceClientCmd<{
 		MsgClient: MsgClient;

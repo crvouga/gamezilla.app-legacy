@@ -1,19 +1,19 @@
-import { Eff, Sub, batchMsgs, NotAsked } from "gamezilla-app/@/core";
+import { Eff, NotAsked, Sub, batchMsgs } from "gamezilla-app/@/core";
 import { isAnonymous } from "../@/client";
 import { SpaceClientCmd } from "./@/space-client-cmd";
 import {
+	SpaceClientModule,
 	type Input,
 	type Output,
-	SpaceClientModule,
 } from "./architecture/architecture";
 import { CurrentSpaceBottomBar } from "./current-space-bottom-bar/current-space-bottom-bar";
 import { EndSpaceClient } from "./end-space/end-space.client";
-import { SpaceGameClient } from "./space-game/space-game.client";
 import { GoHome } from "./go-home/go-home";
 import { JoinSpaceClient } from "./join-space/join-space.client";
 import { LeaveSpaceClient } from "./leave-space/leave-space.client";
 import { ListSpacesClient } from "./list-spaces/list-spaces.client";
 import { Modals } from "./modals/modals";
+import { SpaceGameClient } from "./space-game/space-game.client";
 import { SpaceClient } from "./space/space.client";
 import { Spaces } from "./spaces-core";
 import type { ClientModule, ModelClient } from "./spaces.types";
@@ -75,12 +75,10 @@ export const updateMain = (input: Input, initial?: Output): Output => {
 			ctx: input.ctx,
 			model: acc.model,
 			msgSpaceEvent: spaceEvent,
-			modelLocation: input.modelLocation,
 		});
 
 		return updateMain(input, {
 			model: updated.model,
-			modelLocation: updated.modelLocation ?? acc.modelLocation,
 			eff: Eff.batch([acc.eff, updated.eff]),
 			msgSpaceEvent: batchMsgs(spaceEventsRest, updated.msgSpaceEvent),
 			msgCmd: batchMsgs(acc.msgCmd, updated.msgCmd),
