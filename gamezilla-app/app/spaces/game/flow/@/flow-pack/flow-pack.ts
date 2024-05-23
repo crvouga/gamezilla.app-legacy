@@ -72,7 +72,7 @@ const canGoNext = (pack: FlowPack, puzzleIndex: number): boolean => {
 	return puzzleIndex < pack.puzzleIds.length - 1;
 };
 
- const random = async (input?: {
+const random = async (input?: {
 	createdBy?: UserId;
 	puzzleIds?: FlowPuzzleId[];
 }): Promise<FlowPack> => {
@@ -90,7 +90,6 @@ const canGoNext = (pack: FlowPack, puzzleIndex: number): boolean => {
 	};
 };
 
-
 export const FlowPack = {
 	...parser,
 	create,
@@ -102,4 +101,3 @@ export const FlowPack = {
 	removePuzzleAtIndex,
 	random,
 };
-

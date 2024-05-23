@@ -80,7 +80,6 @@ export type ModelClient = Spaces.Model & {
 	listSpacesRequest: RequestResponse<string, null>;
 };
 
-
 //
 //
 //

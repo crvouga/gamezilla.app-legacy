@@ -210,7 +210,12 @@ export const update = ({
 		}
 
 		case "dimensions-form.inputted": {
-			return { model: { ...model, dimensions: msg.dimensions } };
+			return {
+				model: {
+					...model,
+					dimensions: msg.dimensions
+				}
+			};
 		}
 
 		case "dimensions-form.clicked-save": {
@@ -245,15 +250,27 @@ export const update = ({
 		case "dimensions-form.clicked-open": {
 			return {
 				model: resetDimensionsForm({ ...model, opened: "dimensions" }),
+				msgCmd: {
+					t: "play-sound",
+					sourceSrc: APP_SOUND.tap,
+				},
 			};
 		}
 
 		case "dimensions-form.closed": {
-			return { model: resetDimensionsForm({ ...model, opened: null }) };
+			return {
+				model: resetDimensionsForm({ ...model, opened: null })
+			};
 		}
 
 		case "dimensions-form.clicked-cancel": {
-			return { model: resetDimensionsForm({ ...model, opened: null }) };
+			return {
+				model: resetDimensionsForm({ ...model, opened: null }),
+				msgCmd: {
+					t: "play-sound",
+					sourceSrc: APP_SOUND.tap,
+				},
+			};
 		}
 	}
 };

@@ -23,7 +23,7 @@ type Ctx = AnonymousClientCtx & {
 export type Input = {
 	ctx: Ctx;
 	model: ModelClient;
-	
+
 	msg?: MsgClient | null;
 	msgServer?: MsgToClient | null;
 	msgEvt?: ClientEvent | null;

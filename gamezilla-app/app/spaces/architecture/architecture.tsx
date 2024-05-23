@@ -8,7 +8,6 @@ import type { SpaceClientCmd } from "../@/space-client-cmd";
 import type { SpaceEvent } from "../spaces-core";
 import type {
 	ModelClient,
-
 	MsgClient,
 	MsgToClient,
 	MsgToServer,
