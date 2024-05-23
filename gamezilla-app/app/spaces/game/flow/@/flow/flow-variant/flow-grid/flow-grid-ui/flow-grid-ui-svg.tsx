@@ -39,7 +39,7 @@ const View = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 	return (
 		<svg
 			className={cn(
-				"w-full touch-none select-none",
+				"w-full touch-none select-none p-[1px]",
 				props.isDragging && "cursor-grabbing",
 				props.disabled && "pointer-events-none",
 				props.className,
