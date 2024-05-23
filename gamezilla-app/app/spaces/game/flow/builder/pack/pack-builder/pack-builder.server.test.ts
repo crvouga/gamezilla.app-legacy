@@ -1,16 +1,17 @@
 import { describe, expect, it } from "bun:test";
 import { Result } from "gamezilla-app/@/core";
 import { withId } from "gamezilla-app/app/spaces/@/event";
-import { randomFlowPack, randomFlowPuzzle } from "../../../@/testing";
+import { FlowPuzzle } from "../../../@/flow-puzzle";
 import { FlowCreateFixtureServer } from "../../@/testing/server";
 import type { ModelCore, MsgCore } from "../../builder.types";
 import { PackBuilderCore } from "./pack-builder.core";
 import { PackBuilderServer } from "./pack-builder.server";
+import { FlowPack } from "../../../@/flow-pack";
 
 const Fixture = async () => {
 	const f = await FlowCreateFixtureServer();
-	const puzzle = await randomFlowPuzzle();
-	const pack = await randomFlowPack({
+	const puzzle = await FlowPuzzle.random();
+	const pack = await FlowPack.random({
 		createdBy: puzzle.createdBy,
 		puzzleIds: [puzzle.id],
 	});
@@ -33,7 +34,7 @@ describe(import.meta.file, () => {
 	it("should save pack after user adds a new puzzle", async () => {
 		const f = await Fixture();
 
-		const puzzle = await randomFlowPuzzle();
+		const puzzle = await FlowPuzzle.random();
 
 		const msgCore = withId<MsgCore>({
 			t: "pack-builder.user-clicked-add-puzzle-item",

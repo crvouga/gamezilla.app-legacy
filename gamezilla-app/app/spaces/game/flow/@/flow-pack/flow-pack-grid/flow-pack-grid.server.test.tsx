@@ -9,9 +9,9 @@ import {
 import { SpaceGameFixtureServer } from "gamezilla-app/app/spaces/game/@/testing/server";
 import { FlowPack, FlowPackDb } from "..";
 import type { FlowServerDeps } from "../../../builder/builder.types";
-import { FlowPuzzleDb } from "../../flow-puzzle";
+import { FlowPuzzle, FlowPuzzleDb } from "../../flow-puzzle";
 import type { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
-import { randomFlowPuzzle } from "../../testing";
+
 import type { ModelServer } from "./flow-pack-grid.core";
 import { FlowPackGridServer } from "./flow-pack-grid.server";
 
@@ -48,7 +48,7 @@ const Fixture = async () => {
 	};
 	const f = await SpaceGameFixtureServer();
 	const client = randomAuthenticatedClient();
-	const puzzle = await randomFlowPuzzle();
+	const puzzle = await FlowPuzzle.random();
 	const somePack = await FlowPack.create({
 		createdBy: client.userId,
 		now: f.ctx.now,

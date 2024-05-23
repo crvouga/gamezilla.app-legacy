@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { andThen } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import type { FlowClientCtx } from "../../../@/flow-ctx";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
-import { randomFlowPack, randomFlowPuzzle } from "../../../@/testing";
+import { FlowPuzzle } from "../../../@/flow-puzzle";
 import {
 	FlowCreateFixtureClient,
 	clickedExitPuzzleButton,
@@ -17,9 +17,9 @@ import {
 	testFlowClientCtx,
 } from "../../@/testing/client";
 import { deriveModelCore } from "../../@/testing/game";
+import { BuilderCore } from "../../builder.core";
 import type { ModelClient, ModelCore } from "../../builder.types";
 import { PackBuilderClient } from "./pack-builder.client";
-import { BuilderCore } from "../../builder.core";
 import { PackBuilderCore } from "./pack-builder.core";
 
 const clickedMoreButton = (ctx: FlowClientCtx) => (model: ModelClient) => {
@@ -48,10 +48,10 @@ const closedMoreDrawer = (ctx: FlowClientCtx) => (model: ModelClient) => {
 
 export const Fixture = async () => {
 	const f = await FlowCreateFixtureClient();
-	const puzzle = await randomFlowPuzzle({
+	const puzzle = await FlowPuzzle.random({
 		createdBy: f.ctx.currentUserId,
 	});
-	const pack = await randomFlowPack({
+	const pack = await FlowPack.random({
 		createdBy: f.ctx.currentUserId,
 		puzzleIds: [puzzle.id],
 	});

@@ -1,14 +1,14 @@
 import { describe, expect, it } from "bun:test";
 import { Result } from "gamezilla-app/@/core";
 import { withId } from "gamezilla-app/app/spaces/@/event";
-import { randomFlowPack } from "../../../../@/testing";
 import { FlowCreateFixtureServer } from "../../../@/testing/server";
 import { EditPackNameCore } from "./edit-pack-name.core";
 import { EditPackNameServer } from "./edit-pack-name.server";
+import { FlowPack } from "../../../../@/flow-pack";
 
 const Fixture = async () => {
 	const f = await FlowCreateFixtureServer();
-	const pack = await randomFlowPack();
+	const pack = await FlowPack.random();
 	await f.deps.FlowPackDb.put(pack);
 	const modelCore = EditPackNameCore.init({ pack });
 

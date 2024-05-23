@@ -3,8 +3,7 @@ import { Ok, Result } from "gamezilla-app/@/core";
 import { UserId } from "gamezilla-app/app/@/data";
 import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
 import { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
-import { randomFlowPack } from "../../testing";
-import type { FlowPack } from "../flow-pack";
+import { FlowPack } from "../flow-pack";
 import { FlowPackName } from "../flow-pack-name";
 import { FlowPackDb } from "./flow-pack-db-impl";
 
@@ -37,14 +36,14 @@ const Fixture = async () => {
 describe(import.meta.file, () => {
 	it("should be able to put", async () => {
 		const f = await Fixture();
-		const pack = await randomFlowPack();
+		const pack = await FlowPack.random();
 		const put = await f.flowPackDb.put(pack);
 		expect(put.t).toBe("ok");
 	});
 
 	it("should be able to get", async () => {
 		const f = await Fixture();
-		const pack = await randomFlowPack();
+		const pack = await FlowPack.random();
 		const before = await f.flowPackDb.get(pack.id);
 		await f.flowPackDb.put(pack);
 		const after = await f.flowPackDb.get(pack.id);
@@ -54,7 +53,7 @@ describe(import.meta.file, () => {
 
 	it("should be able to list", async () => {
 		const f = await Fixture();
-		const pack = await randomFlowPack();
+		const pack = await FlowPack.random();
 		await f.flowPackDb.put(pack);
 		const listed = await f.flowPackDb.list({
 			order: {
@@ -78,11 +77,11 @@ describe(import.meta.file, () => {
 	it("should be able to filter by created by", async () => {
 		const f = await Fixture();
 		const createdBy = UserId.generate();
-		const pack = await randomFlowPack({ createdBy });
+		const pack = await FlowPack.random({ createdBy });
 		await f.flowPackDb.put(pack);
 
 		for (let i = 0; i < 10; i++) {
-			const other = await randomFlowPack();
+			const other = await FlowPack.random();
 			await f.flowPackDb.put(other);
 		}
 
@@ -107,7 +106,7 @@ describe(import.meta.file, () => {
 
 	it("should be able to count", async () => {
 		const f = await Fixture();
-		const pack = await randomFlowPack();
+		const pack = await FlowPack.random();
 		await f.flowPackDb.put(pack);
 		const count = await f.flowPackDb.count({
 			where: {
@@ -119,7 +118,7 @@ describe(import.meta.file, () => {
 
 	it("should be able to zap", async () => {
 		const f = await Fixture();
-		const pack = await randomFlowPack();
+		const pack = await FlowPack.random();
 		await f.flowPackDb.put(pack);
 		const zapped = await f.flowPackDb.zap({
 			deletedBy: pack.createdBy,
@@ -132,7 +131,7 @@ describe(import.meta.file, () => {
 
 	it("should be able to update", async () => {
 		const f = await Fixture();
-		const pack = await randomFlowPack();
+		const pack = await FlowPack.random();
 		await f.flowPackDb.put(pack);
 		const before = Result.withDefault(await f.flowPackDb.get(pack.id), null);
 		const updated: FlowPack = {

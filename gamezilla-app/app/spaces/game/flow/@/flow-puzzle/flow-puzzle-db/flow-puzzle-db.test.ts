@@ -2,8 +2,8 @@ import { describe, expect, it } from "bun:test";
 import { Ok, Posix, Result, TimeSpan, ascend } from "gamezilla-app/@/core";
 import { UserId } from "gamezilla-app/app/@/data";
 import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
-import { randomFlowPuzzle } from "../../testing";
-import type { FlowPuzzle } from "../flow-puzzle";
+
+import { FlowPuzzle } from "../flow-puzzle";
 import { FlowPuzzleName } from "../flow-puzzle-name";
 import { FlowPuzzleDb } from "./flow-puzzle-db-impl";
 
@@ -34,7 +34,7 @@ const Fixture = async () => {
 describe(import.meta.file, () => {
 	it("should be able to insert", async () => {
 		const f = await Fixture();
-		const puzzle = await randomFlowPuzzle();
+		const puzzle = await FlowPuzzle.random();
 		const inserted = await f.flowPuzzleDb.put(puzzle);
 		expect(inserted.t).toBe("ok");
 	});
@@ -42,7 +42,7 @@ describe(import.meta.file, () => {
 	it("should be ok", async () => {
 		const f = await Fixture();
 
-		const puzzle = await randomFlowPuzzle();
+		const puzzle = await FlowPuzzle.random();
 		const before = await f.flowPuzzleDb.get(puzzle.id);
 		const inserted = await f.flowPuzzleDb.put(puzzle);
 		const after = await f.flowPuzzleDb.get(puzzle.id);
@@ -55,7 +55,7 @@ describe(import.meta.file, () => {
 	it("should be able to insert puzzles", async () => {
 		const f = await Fixture();
 
-		const puzzle = await randomFlowPuzzle();
+		const puzzle = await FlowPuzzle.random();
 		const before = await f.flowPuzzleDb.get(puzzle.id);
 		await f.flowPuzzleDb.put(puzzle);
 		const after = await f.flowPuzzleDb.get(puzzle.id);
@@ -67,11 +67,11 @@ describe(import.meta.file, () => {
 	it("should be able to list puzzles by created by", async () => {
 		const f = await Fixture();
 
-		const puzzle = await randomFlowPuzzle();
+		const puzzle = await FlowPuzzle.random();
 		await f.flowPuzzleDb.put(puzzle);
 
 		for (let i = 0; i < 3; i++) {
-			await f.flowPuzzleDb.put(await randomFlowPuzzle());
+			await f.flowPuzzleDb.put(await FlowPuzzle.random());
 		}
 
 		const listed = await f.flowPuzzleDb.list({
@@ -98,13 +98,13 @@ describe(import.meta.file, () => {
 	it("should be able to list puzzles by id", async () => {
 		const f = await Fixture();
 
-		const puzzleA = await randomFlowPuzzle();
+		const puzzleA = await FlowPuzzle.random();
 		await f.flowPuzzleDb.put(puzzleA);
-		const puzzleB = await randomFlowPuzzle();
+		const puzzleB = await FlowPuzzle.random();
 		await f.flowPuzzleDb.put(puzzleB);
 
 		for (let i = 0; i < 1; i++) {
-			await f.flowPuzzleDb.put(await randomFlowPuzzle());
+			await f.flowPuzzleDb.put(await FlowPuzzle.random());
 		}
 
 		const listed = await f.flowPuzzleDb.list({
@@ -135,10 +135,10 @@ describe(import.meta.file, () => {
 
 		const createdBy = UserId.generate();
 		for (let i = 0; i < EXPECTED_COUNT; i++) {
-			await f.flowPuzzleDb.put(await randomFlowPuzzle({ createdBy }));
+			await f.flowPuzzleDb.put(await FlowPuzzle.random({ createdBy }));
 		}
 		for (let i = 0; i < 1; i++) {
-			await f.flowPuzzleDb.put(await randomFlowPuzzle());
+			await f.flowPuzzleDb.put(await FlowPuzzle.random());
 		}
 
 		const counted = await f.flowPuzzleDb.count({
@@ -161,7 +161,7 @@ describe(import.meta.file, () => {
 		const createdBy = UserId.generate();
 		let createdAt = Posix.now();
 		for (let i = 0; i < 5; i++) {
-			const puzzle = await randomFlowPuzzle({ createdBy, createdAt });
+			const puzzle = await FlowPuzzle.random({ createdBy, createdAt });
 			createdAt = Posix.future(createdAt, TimeSpan.seconds(1));
 			puzzles.push(puzzle);
 			await f.flowPuzzleDb.put(puzzle);
@@ -194,7 +194,7 @@ describe(import.meta.file, () => {
 
 	it("should update existing record when upserting", async () => {
 		const f = await Fixture();
-		const puzzle = await randomFlowPuzzle();
+		const puzzle = await FlowPuzzle.random();
 		await f.flowPuzzleDb.put(puzzle);
 		const updatedPuzzle = {
 			...puzzle,
@@ -209,7 +209,7 @@ describe(import.meta.file, () => {
 
 	it("should be able to zap records", async () => {
 		const f = await Fixture();
-		const puzzle = await randomFlowPuzzle();
+		const puzzle = await FlowPuzzle.random();
 		await f.flowPuzzleDb.put(puzzle);
 		const before = Result.withDefault(
 			await f.flowPuzzleDb.get(puzzle.id),

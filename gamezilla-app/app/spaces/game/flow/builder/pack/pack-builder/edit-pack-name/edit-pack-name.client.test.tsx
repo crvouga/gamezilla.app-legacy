@@ -4,7 +4,7 @@ import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import { didShowErrorSm } from "gamezilla-app/app/@/client";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { SpaceGameFixtureClient } from "gamezilla-app/app/spaces/game/@/testing/client";
-import { randomFlowPack } from "../../../../@/testing";
+import { FlowPack } from "../../../../@/flow-pack";
 import { EditPackNameClient } from "./edit-pack-name.client";
 import { EditPackNameCore } from "./edit-pack-name.core";
 import type { MsgCore } from "./edit-pack-name.types";
@@ -12,7 +12,7 @@ import type { MsgCore } from "./edit-pack-name.types";
 const Fixture = async () => {
 	const f = await SpaceGameFixtureClient();
 
-	const pack = await randomFlowPack();
+	const pack = await FlowPack.random();
 
 	const modelCore = EditPackNameCore.init({ pack });
 	const model = null;

@@ -1,7 +1,7 @@
 import { UserId } from "gamezilla-app/app/@/data";
 import { Posix } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
-import { FlowVariant } from "../flow";
+import { FlowVariant, FlowVariantDimensions } from "../flow";
 import { FlowPuzzleId } from "./flow-puzzle-id";
 import { FlowPuzzleName } from "./flow-puzzle-name";
 
@@ -34,7 +34,34 @@ const create = async (input: {
 	};
 };
 
+const random = async (input?: {
+	createdBy?: UserId;
+	createdAt?: Posix;
+}): Promise<FlowPuzzle> => {
+	const createdBy = input?.createdBy ?? UserId.generate();
+	const createdAt = input?.createdAt ?? Posix.now();
+	return {
+		createdAt,
+		createdBy,
+		name: await FlowPuzzleName.generate({
+			count: 0,
+		}),
+		lastUpdatedAt: Posix.now(),
+		lastUpdatedBy: createdBy,
+		id: FlowPuzzleId.generate(),
+		flow: FlowVariant.init({
+			dimensions: FlowVariantDimensions.init({
+				t: "flow-grid",
+				height: 0,
+				width: 0,
+			}),
+			terminalsByGroupId: {},
+		}),
+	};
+};
+
 export const FlowPuzzle = {
 	...parser,
 	create,
+	random,
 };

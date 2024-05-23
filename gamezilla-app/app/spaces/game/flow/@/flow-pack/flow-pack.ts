@@ -72,6 +72,25 @@ const canGoNext = (pack: FlowPack, puzzleIndex: number): boolean => {
 	return puzzleIndex < pack.puzzleIds.length - 1;
 };
 
+ const random = async (input?: {
+	createdBy?: UserId;
+	puzzleIds?: FlowPuzzleId[];
+}): Promise<FlowPack> => {
+	const createdBy = input?.createdBy ?? UserId.generate();
+	return {
+		createdAt: Posix.now(),
+		createdBy: createdBy,
+		id: FlowPackId.generate(),
+		lastUpdatedAt: Posix.now(),
+		lastUpdatedBy: createdBy,
+		name: await FlowPackName.generate({
+			count: 0,
+		}),
+		puzzleIds: input?.puzzleIds ?? [],
+	};
+};
+
+
 export const FlowPack = {
 	...parser,
 	create,
@@ -81,4 +100,6 @@ export const FlowPack = {
 	canGoNext,
 	remove,
 	removePuzzleAtIndex,
+	random,
 };
+

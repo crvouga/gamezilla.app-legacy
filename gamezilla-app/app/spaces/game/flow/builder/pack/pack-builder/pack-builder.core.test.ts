@@ -2,8 +2,9 @@ import { describe, expect, it } from "bun:test";
 import { UserId } from "gamezilla-app/app/@/data";
 import { SpaceGameCoreFixture } from "gamezilla-app/app/spaces/game/@/testing/sync";
 import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
-import type { FlowPuzzle } from "../../../@/flow-puzzle";
-import { randomFlowPack, randomFlowPuzzle } from "../../../@/testing";
+import { FlowPuzzle } from "../../../@/flow-puzzle";
+
+import { FlowPack } from "../../../@/flow-pack";
 import { BuilderCore } from "../../builder.core";
 import type { ModelCore } from "../../builder.types";
 import { PackBuilderCore } from "./pack-builder.core";
@@ -17,13 +18,13 @@ const Fixture = async (input?: {
 	const createdBy = UserId.generate();
 
 	const puzzlesPromises = [
-		randomFlowPuzzle({ createdBy }),
-		randomFlowPuzzle({ createdBy }),
-		randomFlowPuzzle({ createdBy }),
+		FlowPuzzle.random({ createdBy }),
+		FlowPuzzle.random({ createdBy }),
+		FlowPuzzle.random({ createdBy }),
 	];
 
 	for (let i = 0; i < (input?.puzzleCount ?? 0); i++) {
-		puzzlesPromises.push(randomFlowPuzzle({ createdBy }));
+		puzzlesPromises.push(FlowPuzzle.random({ createdBy }));
 	}
 
 	const puzzles = (await Promise.all(puzzlesPromises)) as [
@@ -39,7 +40,7 @@ const Fixture = async (input?: {
 		}
 	}
 
-	const pack = await randomFlowPack({
+	const pack = await FlowPack.random({
 		createdBy,
 		puzzleIds: puzzles.map((puzzle) => puzzle.id),
 	});
@@ -194,7 +195,7 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-next-puzzle-button",
 				userId: f.currentUserId,
-				nextPuzzle: await randomFlowPuzzle({ createdBy: f.currentUserId }),
+				nextPuzzle: await FlowPuzzle.random({ createdBy: f.currentUserId }),
 			},
 		]);
 
@@ -235,7 +236,7 @@ describe(import.meta.file, () => {
 			{
 				t: "pack-builder.puzzle-screen.user-clicked-previous-puzzle-button",
 				userId: f.currentUserId,
-				previousPuzzle: await randomFlowPuzzle({ createdBy: f.currentUserId }),
+				previousPuzzle: await FlowPuzzle.random({ createdBy: f.currentUserId }),
 			},
 		]);
 		expect(
@@ -287,7 +288,7 @@ describe(import.meta.file, () => {
 
 	it("should be able to add new puzzle", async () => {
 		const f = await Fixture();
-		const newPuzzle = await randomFlowPuzzle({ createdBy: f.currentUserId });
+		const newPuzzle = await FlowPuzzle.random({ createdBy: f.currentUserId });
 		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-add-puzzle-item",
@@ -406,7 +407,7 @@ describe(import.meta.file, () => {
 	});
 
 	it("should open the correct level when opening puzzle screen event when there is duplicate puzzles in the pack", async () => {
-		const puzzle = await randomFlowPuzzle();
+		const puzzle = await FlowPuzzle.random();
 		const f = await Fixture({ appendDuplicatesOf: puzzle });
 
 		const modelCore = f.updateModelCore([
@@ -424,7 +425,7 @@ describe(import.meta.file, () => {
 	});
 
 	it("should not open pack item if puzzle is not at index given", async () => {
-		const puzzle = await randomFlowPuzzle();
+		const puzzle = await FlowPuzzle.random();
 		const f = await Fixture({ appendDuplicatesOf: puzzle });
 
 		const puzzleLast = f.puzzles[f.puzzles.length - 1];
