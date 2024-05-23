@@ -105,12 +105,15 @@ export const ViewGame: ClientModule["View"] = (input) => {
 
 const View: ClientModule["View"] = (input) => {
 	return (
-		<div>
+		<div className="w-full h-full flex-1 flex flex-col">
 			<FlowPackListClient.View
 				ctx={input.ctx}
 				dispatch={(c) => input.dispatch({ t: "flow-pack-list", c })}
 				model={input.model.packList}
 			/>
+			<button onClick={input.ctx.onQuit}>
+				back
+			</button>
 		</div>
 	);
 };
