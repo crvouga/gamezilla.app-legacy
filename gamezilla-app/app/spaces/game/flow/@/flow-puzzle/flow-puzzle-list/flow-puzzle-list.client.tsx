@@ -72,10 +72,10 @@ const updatePuzzleList: ClientModule["update"] = (input) => {
 			const puzzles =
 				msgServer.listed.t === "ok" ? msgServer.listed.value.items : [];
 
-			const puzzlesNew = puzzles.reduce(
-				(acc, puzzle) => ({ ...acc, [puzzle.id]: puzzle }),
-				model.puzzles,
-			);
+			const puzzlesNew = { ...model.puzzles };
+			for (const puzzle of puzzles) {
+				puzzlesNew[puzzle.id] = puzzle;
+			}
 
 			return {
 				model: {
@@ -165,6 +165,7 @@ const FlowPuzzleListItem = ({
 	return (
 		<button
 			key={puzzle.id}
+			type="button"
 			className="box-border flex w-full items-center gap-4 border-b border-b-neutral-800 text-left hover:bg-neutral-900 active:opacity-50"
 			onClick={onClick}
 		>
