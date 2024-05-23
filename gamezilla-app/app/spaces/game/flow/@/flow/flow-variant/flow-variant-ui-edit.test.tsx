@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { FlowVariantUIEdit } from ".";
+import { FlowVariantDimensions, FlowVariantUIEdit } from ".";
 import { FlowPuzzle } from "../../flow-puzzle";
 
 const Fixture = async () => {
@@ -37,32 +37,20 @@ const Fixture = async () => {
 };
 
 describe(import.meta.file, () => {
-	it("should make sound opening dimensions form", async () => {
+	it("should make sounds interacting with dimensions form", async () => {
 		const f = await Fixture();
-		const updated = f.update(f.init, [
-			{
-				t: "dimensions-form.clicked-open",
-			},
-		]);
-		expect(updated.msgCmd?.t).toBe("play-sound");
-	});
-	it("should make sound cancelling dimensions form", async () => {
-		const f = await Fixture();
-		const updated = f.update(f.init, [
-			{
-				t: "dimensions-form.clicked-cancel",
-			},
-		]);
-		expect(updated.msgCmd?.t).toBe("play-sound");
-	});
-	
-	it("should make sound saving dimensions form", async () => {
-		const f = await Fixture();
-		const updated = f.update(f.init, [
-			{
-				t: "dimensions-form.clicked-save",
-			},
-		]);
-		expect(updated.msgCmd?.t).toBe("play-sound");
+		const msgs: FlowVariantUIEdit.Msg[] = [
+			{ t: "dimensions-form.clicked-save" },
+			{ t: "dimensions-form.clicked-cancel" },
+			{ t: "dimensions-form.clicked-open" },
+			{ t: "dimensions-form.clicked-cancel" },
+			{ t: "dimensions-form.closed" },
+			{t: 'dimensions-form.inputted', dimensions: FlowVariantDimensions.init({t: 'flow-grid', height: 0, width: 0})},
+		];
+
+		for (const msg of msgs) {
+			const updated = f.update(f.init, [msg]);
+			expect(updated.msgCmd?.t).toBe("play-sound");
+		}
 	});
 });

@@ -213,7 +213,11 @@ export const update = ({
 			return {
 				model: {
 					...model,
-					dimensions: msg.dimensions
+					dimensions: msg.dimensions,
+				},
+				msgCmd: {
+					t: 'play-sound',
+					sourceSrc: APP_SOUND.tap,
 				}
 			};
 		}
@@ -252,14 +256,18 @@ export const update = ({
 				model: resetDimensionsForm({ ...model, opened: "dimensions" }),
 				msgCmd: {
 					t: "play-sound",
-					sourceSrc: APP_SOUND.tap,
+					sourceSrc: APP_SOUND.navForwardMin,
 				},
 			};
 		}
 
 		case "dimensions-form.closed": {
 			return {
-				model: resetDimensionsForm({ ...model, opened: null })
+				model: resetDimensionsForm({ ...model, opened: null }),
+				msgCmd: {
+					t: "play-sound",
+					sourceSrc: APP_SOUND.navBackwardMin,
+				},
 			};
 		}
 
@@ -268,7 +276,7 @@ export const update = ({
 				model: resetDimensionsForm({ ...model, opened: null }),
 				msgCmd: {
 					t: "play-sound",
-					sourceSrc: APP_SOUND.tap,
+					sourceSrc: APP_SOUND.navBackwardMin,
 				},
 			};
 		}
@@ -533,7 +541,7 @@ export const View = (input: { model: Model; dispatch: (m: Msg) => void }) => {
 						onClick={() => dispatch({ t: "dimensions-form.clicked-cancel" })}
 					/>
 					<Button
-						text="Save"
+						text="Change"
 						className="flex-1"
 						variant="contained"
 						color="primary"
