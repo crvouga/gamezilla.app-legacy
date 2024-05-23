@@ -11,7 +11,7 @@ import type { Sub } from "./sub";
 type MaybePromise<T> = T | Promise<T>;
 
 export type ProgramImpure<TMsg, TCtx> = {
-	getCtx: () => MaybePromise<TCtx>;
+	ctx: () => MaybePromise<TCtx>;
 	init: (input: { ctx: TCtx }) => MaybePromise<{ eff?: Eff<TMsg> }>;
 	update: (input: { ctx: TCtx; msg: TMsg }) => MaybePromise<{
 		eff?: Eff<TMsg>;
@@ -65,7 +65,7 @@ export async function run<TMsg, TCtx>(program: ProgramImpure<TMsg, TCtx> & {}) {
 
 	async function dispatch(msg: TMsg) {
 		try {
-			const ctx = await program.getCtx();
+			const ctx = await program.ctx();
 
 			const updated = await program.update({
 				ctx,
@@ -79,7 +79,7 @@ export async function run<TMsg, TCtx>(program: ProgramImpure<TMsg, TCtx> & {}) {
 		}
 	}
 
-	const ctx = await program.getCtx();
+	const ctx = await program.ctx();
 
 	const init = await program.init({ ctx });
 

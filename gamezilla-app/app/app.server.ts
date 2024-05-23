@@ -1,9 +1,4 @@
 import {
-	ServerCmd,
-	type ServerCtx,
-	type ServerEvent,
-} from "gamezilla-app/app/@/server";
-import {
 	Eff,
 	Posix,
 	Sub,
@@ -14,19 +9,15 @@ import {
 } from "gamezilla-app/@/core";
 import { LRUCache } from "gamezilla-app/@/least-recently-used-cache";
 import type { ServerInstance } from "gamezilla-app/@/server";
-import * as AuthServer from "./auth/auth.server";
-import * as LangServer from "./lang/lang.server";
-import * as ProfileServer from "./profile/profile.server";
-import * as SpaceServer from "./spaces/spaces.server";
 import {
-	type IServerTransport,
-	ServerTransport,
-} from "./wire/transport-server";
-import * as WireServer from "./wire/wire.server";
+	ServerCmd,
+	type ServerCtx,
+	type ServerEvent,
+} from "gamezilla-app/app/@/server";
 import { DbConnKv, IDbConnKv } from "./@/server/db-conn-kv";
 import { DbConnSql, type IDbConnSql } from "./@/server/db-conn-sql";
 import { ILogger } from "./@/server/logger/logger";
-import { type ISMS, SMS } from "./@/server/sms";
+import { SMS, type ISMS } from "./@/server/sms";
 import type {
 	ModelServer,
 	MsgServer,
@@ -34,6 +25,15 @@ import type {
 	MsgToServer,
 	MsgToServerMeta,
 } from "./app.types";
+import * as AuthServer from "./auth/auth.server";
+import * as LangServer from "./lang/lang.server";
+import * as ProfileServer from "./profile/profile.server";
+import * as SpaceServer from "./spaces/spaces.server";
+import {
+	ServerTransport,
+	type IServerTransport,
+} from "./wire/transport-server";
+import * as WireServer from "./wire/wire.server";
 
 //
 //
@@ -177,7 +177,7 @@ export const getDeps = async ({
 	};
 };
 
-export const getCtx = () => {
+export const ctx = () => {
 	return { now: Posix.now() };
 };
 
