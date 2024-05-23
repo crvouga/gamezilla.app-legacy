@@ -20,7 +20,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 				return { model };
 			}
 
-			const deleted = await deps.FlowPuzzleDb.zap({
+			const deleted = await deps.flowPuzzleDb.zap({
 				id: puzzleBuilder.puzzle.id,
 				deletedByUserId: msgClient.userId,
 			});

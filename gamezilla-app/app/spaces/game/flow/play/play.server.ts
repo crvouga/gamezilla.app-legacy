@@ -5,6 +5,7 @@ import type {
 	SpaceServerEvent,
 } from "gamezilla-app/app/spaces/@/space";
 import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
+import { FlowPackDb, FlowPackListServer, IFlowPackDb } from "../@/flow-pack";
 import type {
 	ModelCore,
 	ModelServer,
@@ -24,6 +25,9 @@ type ServerModule = GameServerModule<{
 	Ctx: SpaceServerCtx;
 	MsgEvtIn: SpaceServerEvent;
 	MsgCmdOut: SpaceServerCmd<MsgToClient>;
+	Deps: {
+		flowPackDb: IFlowPackDb;
+	}
 }>;
 
 const init: ServerModule["init"] = async () => {
@@ -38,6 +42,23 @@ const update: ServerModule["update"] = async (input) => {
 	};
 };
 
+export const updateFlowPackList: ServerModule["update"] = async (input) => {
+	const updated = FlowPackListServer.update({
+		ctx: input.ctx,
+		deps: input.deps,
+		model: null,
+		msg: input.msg?.t === "flow-pack-list" ? input.msg.c : null,
+		msgClient: input.msgClient?.t === 'flow-pack-list' ? {...input.msgClient, ...input.msgClient.c} : null,
+		msgCmd: input.msgCmd,
+		msgEvt: input.msgEvt,
+	})
+	updated
+	return {
+		model: input.model,
+		
+	}
+}
+
 const subscriptions: ServerModule["subscriptions"] = async () => {
 	return Sub.None;
 };
@@ -46,5 +67,12 @@ export const PlayServer: ServerModule = {
 	init,
 	update,
 	subscriptions,
-	deps: async () => null,
+	deps: async (input) => {
+		return {
+			flowPackDb: FlowPackDb({
+				t: 'db-conn-sql',
+				dbConnSql: input.ctx.dbConnSql,
+			})
+		}
+	},
 };

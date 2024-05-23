@@ -57,6 +57,7 @@ export const translations: Text = {
 	"lang.done": "完了",
 	"lang.loaded-translations": "翻訳が読み込まれました",
 	"app.something-went-wrong": "何かがうまくいかなかった",
+	"app.exit": "出口",
 	en: "英語",
 	es: "スペイン語",
 	ar: "アラビア語",

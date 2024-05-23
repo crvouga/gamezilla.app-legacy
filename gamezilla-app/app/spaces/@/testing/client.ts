@@ -15,6 +15,8 @@ import type { GameName } from "../../game/game.types";
 import { Space, type SpaceEvent } from "../../spaces-core";
 import * as SpaceClient from "../../spaces.client";
 import type * as SpaceCore from "../../spaces.types";
+import { AppClientFixture } from "gamezilla-app/app/@/client/client-test-env";
+import { SpaceClientCtx } from "../space";
 
 //
 //
@@ -92,13 +94,63 @@ const randomProfile = (): Profile => {
 	};
 };
 
-export const SpaceClientFixture = () => {
-	const currentUser = randomProfile();
+export const SpaceClientFixture = async () => {
+	const f = await AppClientFixture();
+	const currentUser = { ...randomProfile(), userId: f.ctx.currentUserId };
 	const userA = randomProfile();
 	const userB = randomProfile();
 	const userC = randomProfile();
 
-	const ctx: ClientCtx = {
+	const spaceId = SpaceId.generate();
+
+	const space = pipe(
+		Space.init,
+		(model) =>
+			Space.appendEvent({
+				model,
+				event: withId({
+					t: "user-started-space",
+					spaceId,
+					userId: currentUser.userId,
+				}),
+			}),
+		(model) =>
+			Space.appendEvent({
+				model,
+				event: withId({
+					t: "user-joined-space",
+					spaceId,
+					userId: userA.userId,
+				}),
+			}),
+		(model) =>
+			Space.appendEvent({
+				model,
+				event: withId({
+					t: "user-joined-space",
+					spaceId,
+					userId: userB.userId,
+				}),
+			}),
+		(model) =>
+			Space.appendEvent({
+				model,
+				event: withId({
+					t: "user-joined-space",
+					spaceId,
+					userId: userC.userId,
+				}),
+			}),
+		(model) => Space.toSpaceStarted(model),
+		(space) => {
+			if (!space) {
+				throw new Error("Invalid fixture. Space is not started.");
+			}
+			return space;
+		},
+	);
+
+	const ctx: SpaceClientCtx = {
 		navigatorLanguage: "en",
 		t: Translator("en"),
 		currentRoute: { n: "spaces", t: "space-list" },
@@ -111,8 +163,10 @@ export const SpaceClientFixture = () => {
 			[userB.userId]: userB,
 			[userC.userId]: userC,
 		},
+		space,
 	};
 	return {
+		...f,
 		ctx,
 		initial: init(ctx),
 		currentUser,

@@ -1,10 +1,10 @@
-import { Sub } from "gamezilla-app/@/core";
-import type { ClientCmd } from "gamezilla-app/app/@/client";
+import { Eff, Sub } from "gamezilla-app/@/core";
 import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@/ui";
-import type { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import type { SpaceClientEvent } from "gamezilla-app/app/spaces/@/space";
-import { GameLayout } from "../../@/game";
+import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
+import { GameLayout, ViewBottomBarExitButton } from "../../@/game";
 import { FlowVariantUIPlay } from "../@/flow";
 import type { FlowClientCtx } from "../@/flow-ctx";
 import { FlowPackListClient } from "../@/flow-pack";
@@ -27,7 +27,7 @@ type ClientModule = GameClientModule<{
 	MsgCore: MsgCore;
 	ModelCore: ModelCore;
 	Ctx: FlowClientCtx;
-	MsgCmdOut: ClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
+	MsgCmdOut: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
 	MsgEvtIn: SpaceClientEvent;
 }>;
 
@@ -39,6 +39,14 @@ const init: ClientModule["init"] = {
 };
 
 const update: ClientModule["update"] = (input) => {
+	return GameClientModule.andThen(
+		{ model: input.model },
+		(model) => updateFlowPackList({ ...input, model }),
+		(model) => updateFlowPlayUI({ ...input, model }),
+	)
+};
+
+const updateFlowPlayUI: ClientModule["update"] = (input) => {
 	switch (input.msg?.t) {
 		case "flow-play-ui": {
 			return { model: input.model, msgCore: [withId(input.msg)] };
@@ -49,18 +57,33 @@ const update: ClientModule["update"] = (input) => {
 	}
 };
 
-// const updateFlowPackList: ClientModule["update"] = (input) => {
-// 	const updated = FlowPackListClient.update({
-// 		ctx: input.ctx,
-// 		model: input.model.packList,
-// 		msg:
-// 			input.msg?.t === "got-flow-pack-list-client-msg"
-// 				? input.msg.c
-// 				: undefined,
-// 	});
+const updateFlowPackList: ClientModule["update"] = (input) => {
+	const updated = FlowPackListClient.update({
+		ctx: input.ctx,
+		model: input.model.packList,
+		msg:
+			input.msg?.t === "flow-pack-list"
+				? input.msg.c
+				: null,
+		msgServer:
+			input.msgServer?.t === "flow-pack-list"
+				? input.msgServer.c
+				: null,
+		msgEvt: input.msgEvt,
+		msgCmd: input.msgCmd,
+	});
 
-// 	return { model: input.model };
-// };
+	return { 
+		model: {
+			...input.model,
+			packList: updated.model,
+		},
+		eff: Eff.tag("flow-pack-list", updated.eff),
+		msgEvt: updated.msgEvt,
+		msgCmd: SpaceClientCmd.tag('flow-pack-list', updated.msgCmd),
+		msgCore: [],
+	};
+};
 
 const subscriptions: ClientModule["subscriptions"] = () => {
 	return Sub.None;
@@ -111,9 +134,10 @@ const View: ClientModule["View"] = (input) => {
 				dispatch={(c) => input.dispatch({ t: "flow-pack-list", c })}
 				model={input.model.packList}
 			/>
-			<button onClick={input.ctx.onQuit}>
-				back
-			</button>
+			<ViewBottomBarExitButton
+				ctx={input.ctx}
+				onClick={input.ctx.onQuit}
+			/>
 		</div>
 	);
 };

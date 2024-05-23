@@ -24,12 +24,10 @@ const inputToSpaceId = (input: Parameters<SpaceServerModule["update"]>[0]) => {
 };
 
 const updateGame: SpaceServerModule["update"] = async (input) => {
-	const { msg, msgEvt, msgClient, msgSpaceEvent, ctx, model, deps } = input;
-
 	const spaceId = inputToSpaceId(input);
 
 	if (!spaceId) {
-		return { model };
+		return { model: input.model };
 	}
 
 	const spaceState = await SpacesCoreServer.getSpaceStarted(
@@ -38,37 +36,37 @@ const updateGame: SpaceServerModule["update"] = async (input) => {
 	);
 
 	if (!spaceState) {
-		return { model };
+		return { model: input.model };
 	}
 
 	if (!spaceState.game) {
-		return { model };
+		return { model: input.model };
 	}
 
-	if (msgClient && !msgClient.userId) {
-		ctx.logger.warn("msgClient is missing userId");
+	if (input.msgClient && !input.msgClient.userId) {
+		input.ctx.logger.warn("msgClient is missing userId");
 	}
 
 	const gameModel = Result.withDefault(
-		await deps.GameDb.getBySpaceId(spaceId),
+		await input.deps.GameDb.getBySpaceId(spaceId),
 		null,
 	);
 
 	const gameUpdated = await GameServer.update({
-		ctx: { ...ctx, space: spaceState },
+		ctx: { ...input.ctx, space: spaceState },
 		model: gameModel ?? GameServer.init(spaceState.game.t),
-		msg: msg?.t === "game" ? msg.c : null,
+		msg: input.msg?.t === "game" ? input.msg.c : null,
 		msgClient:
-			msgClient?.t === "game" && msgClient.userId
-				? { ...msgClient, userId: msgClient.userId, ...msgClient.c }
+			input.msgClient?.t === "game" && input.msgClient.userId
+				? { ...input.msgClient, userId: input.msgClient.userId, ...input.msgClient.c }
 				: null,
-		msgEvt,
+		msgEvt: input.msgEvt,
 		msgCore:
-			msgSpaceEvent?.t === "game"
-				? { ...msgSpaceEvent, ...msgSpaceEvent.c }
+			input.msgSpaceEvent?.t === "game"
+				? { ...input.msgSpaceEvent, ...input.msgSpaceEvent.c }
 				: null,
 		modelCore: spaceState.game,
-		deps: null,
+		deps: input.deps.GameServer,
 	});
 
 	const msgSpaceEventNew = (gameUpdated.msgCore ?? []).map(
@@ -76,7 +74,7 @@ const updateGame: SpaceServerModule["update"] = async (input) => {
 	);
 
 	return {
-		model,
+		model: input.model,
 		eff: Eff.map_((c) => ({ t: "game", c, spaceId }), gameUpdated.eff),
 		msgCmd: SpaceServerCmd.map(gameUpdated.msgCmd, (c) => ({
 			t: "game",

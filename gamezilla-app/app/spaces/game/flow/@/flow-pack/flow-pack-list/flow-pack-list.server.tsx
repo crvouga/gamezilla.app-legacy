@@ -15,7 +15,7 @@ const updateListPacks: ServerModule["update"] = async (input) => {
 
 	switch (msgClient?.t) {
 		case "list-packs": {
-			const listed = await deps.FlowPackDb.list(msgClient.input);
+			const listed = await deps.flowPackDb.list(msgClient.input);
 
 			return {
 				model: input.model,

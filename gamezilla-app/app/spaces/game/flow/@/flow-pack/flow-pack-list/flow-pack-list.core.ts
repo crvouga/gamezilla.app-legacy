@@ -42,7 +42,7 @@ export type ClientModule = AppClientModule<{
 
 export type ServerModule = AppServerModule<{
 	Deps: {
-		FlowPackDb: IFlowPackDb;
+		flowPackDb: IFlowPackDb;
 	};
 	Model: ModelServer;
 	Msg: MsgServer;

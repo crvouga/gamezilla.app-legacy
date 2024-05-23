@@ -56,8 +56,8 @@ export type ServerModule = GameServerModule<{
 }>;
 
 export type FlowServerDeps = {
-	FlowPuzzleDb: IFlowPuzzleDb;
-	FlowPackDb: IFlowPackDb;
+	flowPuzzleDb: IFlowPuzzleDb;
+	flowPackDb: IFlowPackDb;
 };
 
 //

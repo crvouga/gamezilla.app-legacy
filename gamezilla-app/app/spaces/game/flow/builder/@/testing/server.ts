@@ -14,11 +14,11 @@ export const getDeps = async (): Promise<FlowServerDeps> => {
 	switch (testEnv.t) {
 		case "integration": {
 			return {
-				FlowPackDb: FlowPackDb({
+				flowPackDb: FlowPackDb({
 					t: "db-conn-sql",
 					dbConnSql: testEnv.dbConnSql,
 				}),
-				FlowPuzzleDb: FlowPuzzleDb({
+				flowPuzzleDb: FlowPuzzleDb({
 					t: "db-conn-sql",
 					dbConnSql: testEnv.dbConnSql,
 				}),
@@ -26,10 +26,10 @@ export const getDeps = async (): Promise<FlowServerDeps> => {
 		}
 		case "unit": {
 			return {
-				FlowPackDb: FlowPackDb({
+				flowPackDb: FlowPackDb({
 					t: "hash-map",
 				}),
-				FlowPuzzleDb: FlowPuzzleDb({
+				flowPuzzleDb: FlowPuzzleDb({
 					t: "hash-map",
 				}),
 			};

@@ -1,22 +1,22 @@
+import { Sub } from "gamezilla-app/@/core";
 import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
 import type {
 	SpaceServerCtx,
 	SpaceServerEvent,
 } from "gamezilla-app/app/spaces/@/space";
-import { Sub } from "gamezilla-app/@/core";
 import { SpaceServerCmd } from "../../@/space-server-cmd";
-import { BuilderServer } from "./builder/builder.server";
 import { BuilderCore } from "./builder/builder.core";
-import * as Play from "./play/play.types";
-import { PlayServer } from "./play/play.server";
+import { BuilderServer } from "./builder/builder.server";
 import type {
-	ModelServer,
 	ModelCore,
-	MsgServer,
+	ModelServer,
 	MsgCore,
+	MsgServer,
 	MsgToClient,
 	MsgToServer,
 } from "./flow.types";
+import { PlayServer } from "./play/play.server";
+import * as Play from "./play/play.types";
 
 type ServerModule = GameServerModule<{
 	Model: ModelServer;
@@ -28,7 +28,21 @@ type ServerModule = GameServerModule<{
 	Ctx: SpaceServerCtx;
 	MsgEvtIn: SpaceServerEvent;
 	MsgCmdOut: SpaceServerCmd<MsgToClient>;
+	Deps: ServerDeps
 }>;
+
+type ServerDeps = {
+	builder: Awaited<ReturnType<(typeof BuilderServer)['deps']>>
+	play: Awaited<ReturnType<(typeof PlayServer)['deps']>>
+}
+
+const deps: ServerModule["deps"] = async (input) => {
+	return {
+		builder: await BuilderServer.deps(input),
+		play: await PlayServer.deps(input),
+	};
+}
+
 
 const init: ServerModule["init"] = {
 	t: "none",
@@ -39,11 +53,11 @@ const update: ServerModule["update"] = async (input) => {
 		{ model: input.model },
 		//
 		(model) => updatePlay({ ...input, model }),
-		(model) => updateCreate({ ...input, model }),
+		(model) => updateBuilder({ ...input, model }),
 	);
 };
 
-const updateCreate: ServerModule["update"] = async (input) => {
+const updateBuilder: ServerModule["update"] = async (input) => {
 	const updated = await BuilderServer.update({
 		ctx: input.ctx,
 		modelCore:
@@ -62,9 +76,7 @@ const updateCreate: ServerModule["update"] = async (input) => {
 				? { ...input.msgCore, ...input.msgCore.c }
 				: null,
 		msg: input.msg?.t === "builder" ? input.msg.c : null,
-		deps: await BuilderServer.deps({
-			ctx: input.ctx,
-		}),
+		deps: input.deps.builder,
 	});
 
 	const tagged = GameServerModule.tagOutput(
@@ -95,7 +107,7 @@ const updatePlay: ServerModule["update"] = async (input) => {
 				? { ...input.msgCore, ...input.msgCore.c }
 				: null,
 		msg: input.msg?.t === "play" ? input.msg.c : null,
-		deps: null,
+		deps: input.deps.play,
 	});
 
 	const tagged = GameServerModule.tagOutput(
@@ -144,7 +156,5 @@ export const FlowServer: ServerModule = {
 	init,
 	subscriptions,
 	update,
-	async deps() {
-		return null;
-	},
+	deps,
 };

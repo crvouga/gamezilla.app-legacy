@@ -15,7 +15,7 @@ const updateListPuzzles: ServerModule["update"] = async (input) => {
 
 	switch (msgClient?.t) {
 		case "flow-puzzle-list.list-puzzles": {
-			const listed = await deps.FlowPuzzleDb.list(msgClient.input);
+			const listed = await deps.flowPuzzleDb.list(msgClient.input);
 
 			return {
 				model: input.model,

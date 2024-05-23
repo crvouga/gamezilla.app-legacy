@@ -28,7 +28,7 @@ const ListPuzzlesById: Pick<ServerModule, "update"> = {
 	async update(input) {
 		switch (input.msgClient?.t) {
 			case "list-puzzles-by-id": {
-				const listed = await input.deps.FlowPuzzleDb.list({
+				const listed = await input.deps.flowPuzzleDb.list({
 					pagination: {
 						limit: input.msgClient.puzzleIds.length,
 						offset: 0,

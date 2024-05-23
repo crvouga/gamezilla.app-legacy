@@ -11,11 +11,11 @@ import { PuzzleServer } from "./puzzle/puzzle.server";
 
 const deps: ServerModule["deps"] = async (input) => {
 	return {
-		FlowPuzzleDb: FlowPuzzleDb({
+		flowPuzzleDb: FlowPuzzleDb({
 			t: "db-conn-sql",
 			dbConnSql: input.ctx.dbConnSql,
 		}),
-		FlowPackDb: FlowPackDb({
+		flowPackDb: FlowPackDb({
 			t: "db-conn-sql",
 			dbConnSql: input.ctx.dbConnSql,
 		}),

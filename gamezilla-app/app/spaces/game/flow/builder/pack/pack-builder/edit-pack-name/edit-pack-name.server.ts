@@ -20,7 +20,7 @@ const update: ServerModule["update"] = async (input) => {
 				msgCore: input.msgCore,
 			});
 
-			const put = await input.deps.FlowPackDb.put(modelCoreNext.pack);
+			const put = await input.deps.flowPackDb.put(modelCoreNext.pack);
 
 			return {
 				model: input.model,

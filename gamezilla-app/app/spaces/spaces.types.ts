@@ -17,6 +17,7 @@ import type * as Space from "./spaces-core/space";
 import type { ISpacesDb } from "./spaces-core/space-db";
 import type { SpaceEvent } from "./spaces-core/space-event";
 import type * as Spaces from "./spaces-core/spaces-core.client";
+import { GameServer } from "./game/game.server";
 
 //
 //
@@ -59,6 +60,7 @@ export type ServerDeps = {
 	ProfileCache: IProfileCache;
 	SpacesDb: ISpacesDb;
 	GameDb: IGameDb;
+	GameServer: Awaited<ReturnType<(typeof GameServer)['deps']>>
 };
 
 //

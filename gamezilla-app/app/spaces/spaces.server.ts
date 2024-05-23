@@ -15,6 +15,8 @@ import { SpacesCoreServer } from "./spaces-core/spaces-core.server";
 import type { ServerModule } from "./spaces.types";
 import { StartSpaceServer } from "./start-space/start-space.server";
 import { SyncServer } from "./sync/sync.server";
+import { GameServer } from "./game/game.server";
+import { ClientId, SessionId, SpaceId, UserId } from "../@/data";
 
 //
 //
@@ -37,6 +39,25 @@ export const getDeps: ServerModule["getDeps"] = async ({ ctx }) => {
 		GameDb: GameDb({
 			t: "db-conn-kv",
 			dbConnKv: ctx.dbConnKv,
+		}),
+		GameServer: await GameServer.deps({
+			ctx: {
+				clientId: ClientId.generate(),
+				dbConnKv: ctx.dbConnKv,
+				dbConnSql: ctx.dbConnSql,
+				env: ctx.env,
+				logger: ctx.logger,
+				now: ctx.now,
+				sessionId: SessionId.generate(),
+				sms: ctx.sms,
+				space: {
+					hostId: UserId.generate(),
+					spaceId: SpaceId.generate(),
+					users: {},
+					visibility: "public",
+				},
+				currentUserId: UserId.generate(),
+			},
 		}),
 	};
 };

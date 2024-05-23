@@ -16,13 +16,18 @@ if (typeof window !== "undefined" && "customElements" in window) {
 	class IntersectionObserverEmitter extends HTMLElement {
 		private unsubscribe: () => void = () => {};
 		private props: IntersectionObserverEmitterProps | null = null;
-		private intersectionObserver: IntersectionObserver;
+		private intersectionObserver: IntersectionObserver | null = null;
 		private queue: IntersectionObserverEntry[] = [];
 
 		constructor() {
 			super();
 
 			this.attachShadow({ mode: "open" });
+
+			if (!('IntersectionObserver' in window)) {
+				return;
+			}
+
 			this.intersectionObserver = new IntersectionObserver(
 				this.onIntersection,
 				{
@@ -45,11 +50,11 @@ if (typeof window !== "undefined" && "customElements" in window) {
 				}
 			});
 
-			this.intersectionObserver.observe(this);
+			this.intersectionObserver?.observe(this);
 		}
 
 		disconnectedCallback() {
-			this.intersectionObserver.disconnect();
+			this.intersectionObserver?.disconnect();
 			this.unsubscribe();
 		}
 

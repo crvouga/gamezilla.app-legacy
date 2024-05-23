@@ -11,7 +11,8 @@ import type { ModelServer } from "../spaces.types";
 import * as SpacesServer from "../spaces.server";
 
 const clientAListSpaces =
-	(f: ReturnType<typeof SpaceServerFixture>) => (model: ModelServer) => {
+	(f: Awaited<ReturnType<typeof SpaceServerFixture>>) =>
+	(model: ModelServer) => {
 		return SpacesServer.update({
 			ctx: f.ctx,
 			deps: f.deps,
@@ -28,7 +29,7 @@ const clientAListSpaces =
 
 describe(import.meta.file, () => {
 	it("should list spaces when requested", async () => {
-		const f = SpaceServerFixture();
+		const f = await SpaceServerFixture();
 		const spaceId = SpaceId.generate();
 		const output = await AppServerModule.andThen(
 			init(),
@@ -41,7 +42,7 @@ describe(import.meta.file, () => {
 	});
 
 	it("should include the started space in the response", async () => {
-		const f = SpaceServerFixture();
+		const f = await SpaceServerFixture();
 		const spaceId = SpaceId.generate();
 		const output = await AppServerModule.andThen(
 			init(),

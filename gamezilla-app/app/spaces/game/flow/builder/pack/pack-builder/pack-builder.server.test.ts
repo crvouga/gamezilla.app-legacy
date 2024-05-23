@@ -15,8 +15,8 @@ const Fixture = async () => {
 		createdBy: puzzle.createdBy,
 		puzzleIds: [puzzle.id],
 	});
-	await f.deps.FlowPackDb.put(pack);
-	await f.deps.FlowPuzzleDb.put(puzzle);
+	await f.deps.flowPackDb.put(pack);
+	await f.deps.flowPuzzleDb.put(puzzle);
 	const modelCore: ModelCore = {
 		...f.modelCore,
 		packBuilder: PackBuilderCore.init({
@@ -76,7 +76,7 @@ describe(import.meta.file, () => {
 
 		const before = f.pack;
 		const after = Result.withDefault(
-			await f.deps.FlowPackDb.get(f.pack.id),
+			await f.deps.flowPackDb.get(f.pack.id),
 			null,
 		);
 

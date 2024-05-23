@@ -45,7 +45,7 @@ export type ClientModule = AppClientModule<{
 
 export type ServerModule = AppServerModule<{
 	Deps: {
-		FlowPuzzleDb: IFlowPuzzleDb;
+		flowPuzzleDb: IFlowPuzzleDb;
 	};
 	Model: ModelServer;
 	Msg: MsgServer;

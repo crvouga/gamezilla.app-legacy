@@ -13,7 +13,7 @@ import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
 
 describe(import.meta.file, () => {
 	it("should add a new space when recieving a user started space event", async () => {
-		const deps = getDeps();
+		const deps = await getDeps();
 		const spaceId = SpaceId.generate();
 		const client = randomAuthenticatedClient();
 
@@ -30,7 +30,7 @@ describe(import.meta.file, () => {
 	});
 
 	it("should propogate the user started space event to the clients", async () => {
-		const deps = getDeps();
+		const deps = await getDeps();
 		const spaceId = SpaceId.generate();
 		const client = randomAuthenticatedClient();
 

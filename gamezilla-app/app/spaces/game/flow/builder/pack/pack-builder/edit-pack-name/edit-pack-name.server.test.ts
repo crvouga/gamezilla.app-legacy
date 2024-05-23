@@ -9,7 +9,7 @@ import { FlowPack } from "../../../../@/flow-pack";
 const Fixture = async () => {
 	const f = await FlowCreateFixtureServer();
 	const pack = await FlowPack.random();
-	await f.deps.FlowPackDb.put(pack);
+	await f.deps.flowPackDb.put(pack);
 	const modelCore = EditPackNameCore.init({ pack });
 
 	return {
@@ -35,7 +35,7 @@ describe(import.meta.file, () => {
 			}),
 		});
 		const after = Result.withDefault(
-			await f.deps.FlowPackDb.get(f.pack.id),
+			await f.deps.flowPackDb.get(f.pack.id),
 			null,
 		);
 		expect(String(after?.name)).toBe(someNewName);

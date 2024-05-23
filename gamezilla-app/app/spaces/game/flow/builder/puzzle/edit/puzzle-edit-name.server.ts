@@ -51,11 +51,11 @@ const patchName = async (input: {
 	flowPuzzleId: FlowPuzzleId;
 	newName: string;
 	userId: UserId;
-	deps: { FlowPuzzleDb: IFlowPuzzleDb };
+	deps: { flowPuzzleDb: IFlowPuzzleDb };
 }) => {
 	const { flowPuzzleId, newName, userId, deps } = input;
 
-	const result = await deps.FlowPuzzleDb.get(flowPuzzleId);
+	const result = await deps.flowPuzzleDb.get(flowPuzzleId);
 
 	if (isErr(result)) {
 		return result;
@@ -84,7 +84,7 @@ const patchName = async (input: {
 		lastUpdatedBy: userId,
 	};
 
-	const put = await deps.FlowPuzzleDb.put(patched);
+	const put = await deps.flowPuzzleDb.put(patched);
 
 	return put;
 };

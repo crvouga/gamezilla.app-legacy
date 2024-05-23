@@ -1,28 +1,24 @@
 import { Posix } from "gamezilla-app/@/core";
 import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
-import {
-	ClientId,
-	SessionId,
-	UserId,
-	type SpaceId,
-} from "gamezilla-app/app/@/data";
+import { ClientId, SessionId, SpaceId, UserId } from "gamezilla-app/app/@/data";
 import type { ServerCtx } from "gamezilla-app/app/@/server";
 import { DbConnKvHashMap } from "gamezilla-app/app/@/server/db-conn-kv/db-conn-kv-impl-hash-map";
 import { DbConnSqlNoop } from "gamezilla-app/app/@/server/db-conn-sql";
 import { Logger } from "gamezilla-app/app/@/server/logger";
 import { AppServerFixture } from "gamezilla-app/app/@/server/server-test-env";
 import { smsNoop } from "gamezilla-app/app/@/server/sms";
+import { GameServer } from "../../game/game.server";
 import { ProfileCache } from "../../profile-cache";
 import { GameDb } from "../../space-game/space-game-db";
 import type { Space } from "../../spaces-core";
 import { SpacesDb } from "../../spaces-core/space-db";
 import * as SpacesServer from "../../spaces.server";
-import type { ModelServer, ServerDeps } from "../../spaces.types";
 import { EventId } from "../event";
+import type { ModelServer, ServerDeps } from "../../spaces.types";
 
-export const SpaceServerFixture = () => {
-	const f = AppServerFixture();
-	const deps = getDeps();
+export const SpaceServerFixture = async () => {
+	const f = await AppServerFixture();
+	const deps = await getDeps();
 	const clientA = randomAuthenticatedClient();
 	const clientB = randomAuthenticatedClient();
 	const init = SpacesServer.init({ ctx });
@@ -50,12 +46,31 @@ export const init = () => {
 	return SpacesServer.init({ ctx });
 };
 
-export const getDeps = (): ServerDeps => {
+export const getDeps = async (): Promise<ServerDeps> => {
 	const dbConnKv = DbConnKvHashMap();
 	return {
 		ProfileCache: ProfileCache({ t: "db-conn-kv", dbConnKv }),
 		SpacesDb: SpacesDb({ t: "db-conn-kv", dbConnKv }),
 		GameDb: GameDb({ t: "db-conn-kv", dbConnKv }),
+		GameServer: await GameServer.deps({
+			ctx: {
+				clientId: ClientId.generate(),
+				dbConnKv,
+				dbConnSql: DbConnSqlNoop(),
+				env: "test",
+				logger: Logger({ t: "noop" }),
+				now: Posix.now(),
+				sessionId: SessionId.generate(),
+				sms: smsNoop,
+				space: {
+					hostId: UserId.generate(),
+					spaceId: SpaceId.generate(),
+					users: {},
+					visibility: "public",
+				},
+				currentUserId: UserId.generate(),
+			},
+		}),
 	};
 };
 

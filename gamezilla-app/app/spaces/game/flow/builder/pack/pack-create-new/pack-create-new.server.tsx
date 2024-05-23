@@ -16,7 +16,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
 	switch (msgClient?.t) {
 		case "pack-create-new.clicked-create-button": {
-			const counted = await deps.FlowPackDb.count({
+			const counted = await deps.flowPackDb.count({
 				where: {
 					createdBy: msgClient.userId,
 				},
@@ -36,7 +36,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 				puzzleIds: [],
 			};
 
-			const put = await deps.FlowPackDb.put(packNew);
+			const put = await deps.flowPackDb.put(packNew);
 
 			return {
 				model: {

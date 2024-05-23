@@ -18,7 +18,7 @@ const SavePack: Pick<ServerModule, "update"> = {
 					return { model };
 				}
 
-				const saved = await deps.FlowPackDb.put(modelCore.packBuilder.pack);
+				const saved = await deps.flowPackDb.put(modelCore.packBuilder.pack);
 
 				return {
 					model,
@@ -79,7 +79,7 @@ const RemovedPuzzleFromPack: Pick<ServerModule, "update"> = {
 				if (!packNew) {
 					return { model: input.model };
 				}
-				const put = await input.deps.FlowPackDb.put(packNew);
+				const put = await input.deps.flowPackDb.put(packNew);
 				if (isErr(put)) {
 					return { model: input.model };
 				}

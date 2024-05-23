@@ -17,7 +17,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 
 	switch (msgClient?.t) {
 		case "puzzle-create.user-clicked-create-button": {
-			const counted = await deps.FlowPuzzleDb.count({
+			const counted = await deps.flowPuzzleDb.count({
 				where: {
 					createdBy: {
 						equals: msgClient.userId,
@@ -45,7 +45,7 @@ const updateFromClient: ServerModule["update"] = async (input) => {
 				}),
 			});
 
-			const created = await deps.FlowPuzzleDb.put(puzzleNew);
+			const created = await deps.flowPuzzleDb.put(puzzleNew);
 
 			const msgCore: MsgCore = {
 				t: "user-created-puzzle",

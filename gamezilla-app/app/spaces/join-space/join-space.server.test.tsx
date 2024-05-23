@@ -10,7 +10,7 @@ import {
 
 describe(import.meta.file, () => {
 	it("should send a sync message to client that joined a space", async () => {
-		const f = SpaceServerFixture();
+		const f = await SpaceServerFixture();
 
 		const spaceId = SpaceId.generate();
 		const updated = await AppServerModule.andThen(

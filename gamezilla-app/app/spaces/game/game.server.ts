@@ -32,7 +32,20 @@ type ServerModule = GameServerModule<{
 	Ctx: SpaceServerCtx;
 	MsgEvtIn: SpaceServerEvent;
 	MsgCmdOut: SpaceServerCmd<MsgToClient>;
+	Deps: ServerDeps
 }>;
+
+type ServerDeps = {
+	flow: Awaited<ReturnType<typeof FlowServer["deps"]>>;
+}
+
+const deps: ServerModule["deps"] = async (input) => {
+	return {
+		flow: await FlowServer.deps(input),
+	};
+}
+
+
 
 //
 //
@@ -90,7 +103,7 @@ const update: ServerModule["update"] = async (input) => {
 								? { ...input.msgCore, ...input.msgCore.c }
 								: null,
 						msg: input.msg?.t === "flow" ? input.msg.c : null,
-						deps: null,
+						deps: input.deps.flow,
 					});
 
 					const tagged = GameServerModule.tagOutput(
@@ -175,5 +188,5 @@ export const GameServer = {
 	init,
 	update,
 	subscriptions,
-	deps: null,
+	deps,
 };

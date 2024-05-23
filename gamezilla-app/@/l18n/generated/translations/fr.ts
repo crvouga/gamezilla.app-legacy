@@ -55,6 +55,7 @@ export const translations: Text = {
 	"lang.done": "Terminé",
 	"lang.loaded-translations": "Traductions chargées",
 	"app.something-went-wrong": "Quelque chose s'est mal passé",
+	"app.exit": "Sortie",
 	en: "Anglais",
 	es: "Espagnol",
 	ar: "Arabe",

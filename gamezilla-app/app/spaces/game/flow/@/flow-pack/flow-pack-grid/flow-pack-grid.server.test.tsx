@@ -43,8 +43,8 @@ const userObversedGrid =
 
 const Fixture = async () => {
 	const deps: FlowServerDeps = {
-		FlowPackDb: FlowPackDb({ t: "hash-map" }),
-		FlowPuzzleDb: FlowPuzzleDb({ t: "hash-map" }),
+		flowPackDb: FlowPackDb({ t: "hash-map" }),
+		flowPuzzleDb: FlowPuzzleDb({ t: "hash-map" }),
 	};
 	const f = await SpaceGameFixtureServer();
 	const client = randomAuthenticatedClient();
@@ -55,8 +55,8 @@ const Fixture = async () => {
 		puzzleIds: [puzzle.id],
 	});
 
-	await deps.FlowPuzzleDb.put(puzzle);
-	await deps.FlowPackDb.put(somePack);
+	await deps.flowPuzzleDb.put(puzzle);
+	await deps.flowPackDb.put(somePack);
 
 	return { ...f, client, deps };
 };

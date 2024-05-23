@@ -1,18 +1,17 @@
-import { GameMainMenu } from "gamezilla-app/app/spaces/game/@/game";
+import { Sub } from "gamezilla-app/@/core";
+import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
+import { IconGamepad, IconScrewdriverWrench } from "gamezilla-app/app/@/ui";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import type {
 	SpaceClientCtx,
 	SpaceClientEvent,
 } from "gamezilla-app/app/spaces/@/space";
-import { APP_SOUND, ClientCmd, playSound } from "gamezilla-app/app/@/client";
-import { IconGamepad, IconScrewdriverWrench } from "gamezilla-app/app/@/ui";
-import { Sub } from "gamezilla-app/@/core";
+import { GameMainMenu } from "gamezilla-app/app/spaces/game/@/game";
 import { SpaceClientCmd } from "../../@/space-client-cmd";
-import { BuilderClient } from "./builder/builder.client";
-import { PlayClient } from "./play/play.client";
 import { CoverArt } from "./@/flow-cover-art";
 import type { FlowClientCtx } from "./@/flow-ctx";
+import { BuilderClient } from "./builder/builder.client";
 import type {
 	ModelClient,
 	ModelCore,
@@ -21,6 +20,7 @@ import type {
 	MsgToClient,
 	MsgToServer,
 } from "./flow.types";
+import { PlayClient } from "./play/play.client";
 
 //
 //
@@ -95,7 +95,7 @@ const updateChild: ClientModule["update"] = (input) => {
 
 			const tagged = GameClientModule.tagOutput(
 				"play",
-				(msgCmd) => ClientCmd.tag("play", msgCmd),
+				(msgCmd) => SpaceClientCmd.tag("play", msgCmd),
 				updated,
 			);
 
@@ -178,6 +178,10 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 						model: { ...model, t: "none" },
 						msgCmd: [playSound(APP_SOUND.navBackwardMin)],
 					};
+				}
+
+				default: {
+					return { model };
 				}
 			}
 		}

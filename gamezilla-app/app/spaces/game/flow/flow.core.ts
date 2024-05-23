@@ -31,7 +31,6 @@ export const updateCore = ({
 					};
 				}
 				default: {
-					console.error("Invalid modelCore", modelCore);
 					return modelCore;
 				}
 			}
@@ -50,7 +49,6 @@ export const updateCore = ({
 					};
 				}
 				default: {
-					console.error("Invalid modelCore", modelCore);
 					return modelCore;
 				}
 			}
