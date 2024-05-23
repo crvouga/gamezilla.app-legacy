@@ -11,7 +11,6 @@ import { FlowPackListClient } from "../@/flow-pack";
 import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
 import { ViewProfileCard } from "../@/ui";
 import {
-	GotFlowPlayMsg,
 	type ModelClient,
 	type ModelCore,
 	type MsgClient,
@@ -40,21 +39,34 @@ const init: ClientModule["init"] = {
 };
 
 const update: ClientModule["update"] = (input) => {
-	if (GotFlowPlayMsg.is(input.msg)) {
-		return {
-			model: input.model,
-			msgCore: [withId(input.msg)],
-		};
+	switch (input.msg?.t) {
+		case "flow-play-ui": {
+			return { model: input.model, msgCore: [withId(input.msg)] };
+		}
+		default: {
+			return { model: input.model };
+		}
 	}
-
-	return { model: input.model };
 };
+
+// const updateFlowPackList: ClientModule["update"] = (input) => {
+// 	const updated = FlowPackListClient.update({
+// 		ctx: input.ctx,
+// 		model: input.model.packList,
+// 		msg:
+// 			input.msg?.t === "got-flow-pack-list-client-msg"
+// 				? input.msg.c
+// 				: undefined,
+// 	});
+
+// 	return { model: input.model };
+// };
 
 const subscriptions: ClientModule["subscriptions"] = () => {
 	return Sub.None;
 };
 
-const View: ClientModule["View"] = (input) => {
+export const ViewGame: ClientModule["View"] = (input) => {
 	const isPlaying = input.ctx.currentUserId === input.ctx.space.hostId;
 	const isSpectating = !isPlaying;
 	const host = input.ctx.profiles[input.ctx.space.hostId];
@@ -67,10 +79,10 @@ const View: ClientModule["View"] = (input) => {
 
 				<FlowVariantUIPlay.View
 					dispatch={(c) => {
-						const msg = GotFlowPlayMsg({
+						input.dispatch({
+							t: "flow-play-ui",
 							c,
 						});
-						input.dispatch(msg);
 					}}
 					model={input.modelCore.play}
 					disabled={isSpectating}
@@ -88,6 +100,18 @@ const View: ClientModule["View"] = (input) => {
 				</div>
 			)}
 		</GameLayout>
+	);
+};
+
+const View: ClientModule["View"] = (input) => {
+	return (
+		<div>
+			<FlowPackListClient.View
+				ctx={input.ctx}
+				dispatch={(c) => input.dispatch({ t: "flow-pack-list", c })}
+				model={input.model.packList}
+			/>
+		</div>
 	);
 };
 

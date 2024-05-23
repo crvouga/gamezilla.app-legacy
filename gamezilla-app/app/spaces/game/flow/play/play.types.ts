@@ -1,10 +1,9 @@
 import { p } from "gamezilla-app/@/core/parser";
-import { AnyMsg, Namespace } from "gamezilla-app/@/msg";
 import type { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import { FlowVariantUIPlay, FlowVariant } from "../@/flow";
-import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
+import { FlowVariant, FlowVariantUIPlay } from "../@/flow";
 import { FlowPackList } from "../@/flow-pack";
+import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
 
 //
 //
@@ -29,39 +28,33 @@ export type ModelServer = p.Infer<typeof ModelServer>;
 //
 //
 
-export type MsgClient = AnyMsg;
+export type MsgClient =
+	| MsgCore
+	| {
+			t: "flow-pack-list";
+			c: FlowPackList.MsgClient;
+	  };
 
-export type MsgServer = AnyMsg;
+export type MsgServer = {
+	t: "flow-pack-list";
+	c: FlowPackList.MsgServer;
+};
 
-export type MsgToServer = AnyMsg;
+export type MsgToServer = {
+	t: "flow-pack-list";
+	c: FlowPackList.MsgToServer;
+};
 
-export type MsgToClient = AnyMsg;
+export type MsgToClient = {
+	t: "flow-pack-list";
+	c: FlowPackList.MsgToClient;
+};
 
-export const MsgCore = AnyMsg;
+export const MsgCore = p.obj({
+	t: p.l("flow-play-ui"),
+	c: FlowVariantUIPlay.Msg,
+});
 export type MsgCore = p.Infer<typeof MsgCore>;
-
-const createMsg = Namespace("flow-play");
-
-export const GotFlowPackListClientMsg = createMsg(
-	"got-flow-pack-list-client-msg",
-	p.obj({
-		c: FlowPackList.MsgClient,
-	}),
-);
-
-export const GotFlowPackListToClientMsg = createMsg(
-	"got-flow-pack-list-to-client-msg",
-	p.obj({
-		c: FlowPackList.MsgToClient,
-	}),
-);
-
-export const GotFlowPlayMsg = createMsg(
-	"got-flow-play-msg",
-	p.obj({
-		c: FlowVariantUIPlay.Msg,
-	}),
-);
 
 export const ModelCore = p.obj({
 	play: FlowVariantUIPlay.Model,
@@ -86,13 +79,17 @@ export const initCore: Module["initCore"] = () => {
 };
 
 export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
-	if (GotFlowPlayMsg.is(msgCore)) {
-		const gridPlayNew = FlowVariantUIPlay.update({
-			msg: msgCore.c,
-			model: modelCore.play,
-			flow: modelCore.flow,
-		});
-		return { play: gridPlayNew, flow: modelCore.flow };
+	switch (msgCore.t) {
+		case "flow-play-ui": {
+			const gridPlayNew = FlowVariantUIPlay.update({
+				msg: msgCore.c,
+				model: modelCore.play,
+				flow: modelCore.flow,
+			});
+			return { play: gridPlayNew, flow: modelCore.flow };
+		}
+		default: {
+			return modelCore;
+		}
 	}
-	return modelCore;
 };

@@ -1,18 +1,18 @@
+import { Sub } from "gamezilla-app/@/core";
 import type { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-server-v2";
 import type {
 	SpaceServerCtx,
 	SpaceServerEvent,
 } from "gamezilla-app/app/spaces/@/space";
-import { Sub } from "gamezilla-app/@/core";
+import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 import type {
-	MsgCore,
 	ModelCore,
 	ModelServer,
+	MsgCore,
 	MsgServer,
 	MsgToClient,
 	MsgToServer,
 } from "./play.types";
-import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 
 type ServerModule = GameServerModule<{
 	Model: ModelServer;

@@ -45,7 +45,14 @@ describe(import.meta.file, () => {
 			{ t: "dimensions-form.clicked-open" },
 			{ t: "dimensions-form.clicked-cancel" },
 			{ t: "dimensions-form.closed" },
-			{t: 'dimensions-form.inputted', dimensions: FlowVariantDimensions.init({t: 'flow-grid', height: 0, width: 0})},
+			{
+				t: "dimensions-form.inputted",
+				dimensions: FlowVariantDimensions.init({
+					t: "flow-grid",
+					height: 0,
+					width: 0,
+				}),
+			},
 		];
 
 		for (const msg of msgs) {

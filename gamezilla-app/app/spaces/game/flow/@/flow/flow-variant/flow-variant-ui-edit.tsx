@@ -216,9 +216,9 @@ export const update = ({
 					dimensions: msg.dimensions,
 				},
 				msgCmd: {
-					t: 'play-sound',
+					t: "play-sound",
 					sourceSrc: APP_SOUND.tap,
-				}
+				},
 			};
 		}
 
