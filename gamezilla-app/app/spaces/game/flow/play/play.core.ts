@@ -17,6 +17,9 @@ export const initCore: Module["initCore"] = () => {
 			flow,
 		}),
 		flow,
+		screen: {
+			t: "select-pack",
+		},
 	};
 };
 
@@ -28,7 +31,16 @@ export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
 				model: modelCore.play,
 				flow: modelCore.flow,
 			});
-			return { play: gridPlayNew, flow: modelCore.flow };
+			return { ...modelCore, play: gridPlayNew };
+		}
+		case "user-clicked-pack-list-item": {
+			return {
+				...modelCore,
+				screen: {
+					t: "pack",
+					pack: msgCore.pack,
+				},
+			};
 		}
 		default: {
 			return modelCore;
@@ -37,6 +49,6 @@ export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
 };
 
 export const PlayCore = {
-    initCore,
-    updateCore,
-}
+	initCore,
+	updateCore,
+};

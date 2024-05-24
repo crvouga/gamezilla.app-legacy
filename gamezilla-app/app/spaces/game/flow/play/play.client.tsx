@@ -132,7 +132,7 @@ const View: ClientModule["View"] = (input) => {
 			<FlowPackListClient.View
 				ctx={input.ctx}
 				dispatch={(c) => input.dispatch({ t: "flow-pack-list", c })}
-				model={{...input.model.packList, packs: input.model.flowPacks}}
+				model={{ ...input.model.packList, packs: input.model.flowPacks }}
 			/>
 			<ViewBottomBarExitButton ctx={input.ctx} onClick={input.ctx.onQuit} />
 		</div>

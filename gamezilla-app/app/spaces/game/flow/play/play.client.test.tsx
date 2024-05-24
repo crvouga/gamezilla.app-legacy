@@ -45,4 +45,5 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		expectByText(f.render(f.initial), f.ctx.t("flow.play"));
 	});
+	it.todo("should show pack screen after selecting pack", async () => {});
 });

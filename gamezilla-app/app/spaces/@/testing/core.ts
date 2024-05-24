@@ -3,7 +3,7 @@ import { makeSpace } from "./shared";
 import type { SpaceCtx } from "../space";
 import { Space } from "../../spaces-core";
 
-export const SpaceCoreFixture = () => {
+export const SpaceCoreFixture = async () => {
 	const spaceId = SpaceId.generate();
 	const hostId = UserId.generate();
 	const guestId = UserId.generate();

@@ -52,15 +52,31 @@ export type MsgToClient = {
 	c: FlowPackList.MsgToClient;
 };
 
-export const MsgCore = p.obj({
-	t: p.l("flow-play-ui"),
-	c: FlowVariantUIPlay.Msg,
-});
+export const MsgCore = p.or(
+	p.obj({
+		t: p.l("flow-play-ui"),
+		c: FlowVariantUIPlay.Msg,
+	}),
+	p.obj({
+		t: p.l("user-clicked-pack-list-item"),
+		pack: FlowPack,
+	}),
+);
 export type MsgCore = p.Infer<typeof MsgCore>;
+
+const Screen = p.or(
+	p.obj({
+		t: p.l("select-pack"),
+	}),
+	p.obj({
+		t: p.l("pack"),
+		pack: FlowPack,
+	}),
+);
 
 export const ModelCore = p.obj({
 	play: FlowVariantUIPlay.Model,
 	flow: FlowVariant.Model,
+	screen: Screen,
 });
 export type ModelCore = p.Infer<typeof ModelCore>;
-

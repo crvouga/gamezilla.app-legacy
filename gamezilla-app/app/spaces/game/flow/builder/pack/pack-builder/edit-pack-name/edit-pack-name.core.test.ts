@@ -6,7 +6,7 @@ import { EditPackNameCore } from "./edit-pack-name.core";
 import type { ModelCore, MsgCore } from "./edit-pack-name.types";
 
 const Fixture = async () => {
-	const f = SpaceCoreFixture();
+	const f = await SpaceCoreFixture();
 
 	const update = (init: ModelCore, msgs: MsgCore[]) => {
 		return msgs.reduce(
