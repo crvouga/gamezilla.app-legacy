@@ -1,7 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { Err, Ok, PhoneNumber, eq } from "gamezilla-app/@/core";
 import { Route } from "gamezilla-app/@/routing/generated/routes";
-import { expectByText } from "gamezilla-app/@/vdom/vdom-testing";
 import { didPushRoute } from "gamezilla-app/app/@/client";
 import { AppClientFixture } from "gamezilla-app/app/@/client/client-test-env";
 import type { AuthSMSTypes } from ".";
@@ -102,10 +101,12 @@ describe(import.meta.file, () => {
 				},
 			},
 		]);
-		expectByText(
-			f.render(output?.model),
-			f.ctx.t("verify-sms-problem.send-code-hourly-limit-reached"),
-		);
+		const rendered = f.render(output?.model);
+		expect(
+			rendered.hasText(
+				f.ctx.t("verify-sms-problem.send-code-hourly-limit-reached"),
+			),
+		).toBeTruthy();
 	});
 
 	it("should render error message when verify code errors", async () => {
@@ -126,9 +127,11 @@ describe(import.meta.file, () => {
 				},
 			},
 		]);
-		expectByText(
-			f.render(output?.model),
-			f.ctx.t("verify-sms-problem.verification-already-verified"),
-		);
+		const rendered = f.render(output?.model);
+		expect(
+			rendered.hasText(
+				f.ctx.t("verify-sms-problem.verification-already-verified"),
+			),
+		).toBeTruthy();
 	});
 });

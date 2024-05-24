@@ -1,11 +1,29 @@
 import { describe, expect, it } from "bun:test";
-import { ClientFixture } from "../@/testing";
+import { Sub } from "gamezilla-app/@/core";
 import { FlowPack } from "../../@/flow-pack";
-import { expectByText, getByRole } from "gamezilla-app/@/vdom/vdom-testing";
+import { FlowPlayClientFixture } from "../@/testing";
+
+const Fixture = async () => {
+	const f = await FlowPlayClientFixture();
+	const pack = await FlowPack.random()
+	const initial = f.update(f.initial, [
+		{
+			msg: {
+				t: 'user-clicked-open-pack-list-item',
+				pack,
+			}
+		}
+	]);
+	return {
+		...f,
+		initial,
+		pack,
+	};
+}
 
 describe(import.meta.file, () => {
 	it("should render exit button", async () => {
-		const f = await ClientFixture();
+		const f = await FlowPlayClientFixture();
 		const output = f.update(f.initial, [
 			{
 				msg: {
@@ -15,11 +33,11 @@ describe(import.meta.file, () => {
 			},
 		]);
 		const rendered = f.render(output);
-		expectByText(rendered, f.ctx.t("app.exit"));
+		expect(rendered.getByText(f.ctx.t("app.exit"))).toBeTruthy();
 	});
 
 	it("should render pack grid", async () => {
-		const f = await ClientFixture();
+		const f = await FlowPlayClientFixture();
 		const pack = await FlowPack.random();
 		const output = f.update(f.initial, [
 			{
@@ -30,11 +48,11 @@ describe(import.meta.file, () => {
 			},
 		]);
 		const rendered = f.render(output);
-		expect(getByRole(rendered, "grid")).toBeTruthy();
+		expect(rendered.getByRole("grid")).toBeTruthy();
 	});
 
 	it("should exit on exit button click", async () => {
-		const f = await ClientFixture();
+		const f = await FlowPlayClientFixture();
 		const pack = await FlowPack.random();
 		const output = f.update(f.initial, [
 			{
@@ -50,5 +68,14 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(output.modelCore.screen.t).toBe("select-pack");
+	});
+
+	it("should emit msg from clicking exit button", async () => {
+		const f = await Fixture();
+		const rendered = f.render(f.initial);
+		const exitButton = rendered.getByText(f.ctx.t("app.exit"));
+		exitButton?.click()		
+		const msg = await Sub.next(rendered.msgs)
+		expect(msg).toEqual({t: "user-clicked-exit-pack-button",});
 	});
 });

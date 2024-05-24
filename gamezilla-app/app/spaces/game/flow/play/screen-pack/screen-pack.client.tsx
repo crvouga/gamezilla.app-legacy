@@ -34,7 +34,10 @@ const View: ClientModule["View"] = (input) => {
 					slideIndex={0}
 				/>
 			</div>
-			<ViewBottomBarExitButton ctx={input.ctx} onClick={() => {}} />
+			<ViewBottomBarExitButton
+				ctx={input.ctx}
+				onClick={() => input.dispatch({ t: "user-clicked-exit-pack-button" })}
+			/>
 		</div>
 	);
 };

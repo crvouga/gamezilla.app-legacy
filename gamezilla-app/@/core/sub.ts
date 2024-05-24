@@ -5,6 +5,7 @@ export type Sub<Msg> = {
 export type Pub<Msg> = {
 	publish: (msg: Msg) => void;
 	isSubscribed: () => boolean;
+	_last: Msg | null;
 };
 
 export type PubSub<Msg> = Pub<Msg> & Sub<Msg>;
@@ -13,12 +14,14 @@ const create = <Msg>(): PubSub<Msg> => {
 	let runningId = 0;
 	const subscribers = new Map<number, (msg: Msg) => void>();
 	const queue: Msg[] = [];
+	let _last = null;
 
 	return {
-		isSubscribed: () => {
+		_last,
+		isSubscribed() {
 			return subscribers.size > 0;
 		},
-		subscribe: (subscriber) => {
+		subscribe(subscriber) {
 			runningId++;
 			const id = runningId;
 			subscribers.set(id, subscriber);
@@ -26,7 +29,8 @@ const create = <Msg>(): PubSub<Msg> => {
 				subscribers.delete(id);
 			};
 		},
-		publish: (msg: Msg) => {
+		publish(msg: Msg)  {
+			_last = msg;
 			if (subscribers.size === 0) {
 				queue.push(msg);
 				return;
@@ -41,6 +45,19 @@ const create = <Msg>(): PubSub<Msg> => {
 		},
 	};
 };
+
+const next = <A>(sub: Sub<A>) => {
+	return new Promise<A>((resolve) => {
+		const unsubsribe = sub.subscribe((a) => {
+			resolve(a);
+			unsubsribe();
+		});
+	});
+};
+
+const last = <A>(sub: Sub<A>): A | null => {
+	return sub._last
+}
 
 const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
 	return {
@@ -149,7 +166,8 @@ export const Sub = {
 	None,
 	flat,
 	tag,
-
+	last,
+	next,
 	flatMap,
 };
 
@@ -166,5 +184,7 @@ export const PubSub = {
 	tag,
 	flatMap,
 	toSub,
+	next,
+	last,
 	toPub,
 };

@@ -1,33 +1,11 @@
 import type { VDom } from "./vdom";
 import type { VDomImpl } from "./vdom-impl";
 
-export type Render = (vDom: VDom) => void;
-
 export type CreatePortal = (vDom: VDom, container: Element) => VDom;
 
 export let createPortal: CreatePortal | null = null;
 
-export type RenderToString = (vDom: VDom) => string;
-
-export const RenderToString = async (): Promise<RenderToString> => {
-	const ReactDOMServer = await import("react-dom/server");
-	return (vDom) => {
-		const html = ReactDOMServer.renderToString(vDom);
-		return html;
-	};
-};
-
-type RenderToNode = (vDom: VDom) => HTMLElement;
-
-export const RenderToNode = async (): Promise<RenderToNode> => {
-	const renderToString = await RenderToString();
-	const node = document.createElement("div");
-	return (vDom) => {
-		const html = renderToString(vDom);
-		node.innerHTML = html;
-		return node;
-	};
-};
+export type Render = (vDom: VDom) => void;
 
 export const Render = async (
 	vDomImpl: VDomImpl,

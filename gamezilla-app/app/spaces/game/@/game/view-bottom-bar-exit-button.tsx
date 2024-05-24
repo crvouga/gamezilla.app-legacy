@@ -1,4 +1,4 @@
-import { ClientCtx } from "gamezilla-app/app/@/client";
+import type { ClientCtx } from "gamezilla-app/app/@/client";
 import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@/ui";
 
 export const ViewBottomBarExitButton = (input: {

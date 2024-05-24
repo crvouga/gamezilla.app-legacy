@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { RenderToString } from "./render";
+import { RenderToString } from "./render-to-string";
 import { VDom } from "./vdom";
 
 describe(import.meta.file, () => {

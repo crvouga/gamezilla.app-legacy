@@ -1,9 +1,9 @@
 import { Posix } from "gamezilla-app/@/core";
-import { RenderToNode } from "gamezilla-app/@/vdom";
+import type { Route } from "gamezilla-app/@/routing/generated/routes";
+import { TestRender } from "gamezilla-app/@/vdom/test-render";
 import { UserId } from "../data";
 import type { ClientCtx } from "./client-ctx";
 import { Translator } from "./translator";
-import type { Route } from "gamezilla-app/@/routing/generated/routes";
 
 export const AppClientFixture = async (input?: { currentRoute?: Route }) => {
 	const currentUserId = UserId.generate();
@@ -20,7 +20,9 @@ export const AppClientFixture = async (input?: { currentRoute?: Route }) => {
 		t: Translator("en"),
 	};
 
-	const render = await RenderToNode();
+	const render = await TestRender({
+		t: "react",
+	});
 
 	return {
 		ctx,

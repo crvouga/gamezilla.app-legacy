@@ -1,12 +1,12 @@
-import { NonEmpty } from "gamezilla-app/@/core";
-import { WithEventMeta } from "gamezilla-app/app/spaces/@/event";
+import { NonEmpty, PubSub } from "gamezilla-app/@/core";
+import type { WithEventMeta } from "gamezilla-app/app/spaces/@/event";
+import { SpaceCoreFixture } from "gamezilla-app/app/spaces/@/testing/core";
 import { FlowClientFixture } from "../../@/testing";
 import { PlayClient } from "../play.client";
 import { PlayCore } from "../play.core";
-import { ModelCore, MsgClient, MsgCore, MsgToClient } from "../play.types";
-import { SpaceCoreFixture } from "gamezilla-app/app/spaces/@/testing/core";
+import type { ModelCore, MsgClient, MsgCore, MsgToClient } from "../play.types";
 
-export const ClientFixture = async () => {
+export const FlowPlayClientFixture = async () => {
 	const f = await FlowClientFixture();
 	const initCore = PlayCore.initCore(f);
 
@@ -21,16 +21,16 @@ export const ClientFixture = async () => {
 	};
 
 	const render = (output: Output) => {
-		const vdom = (
+		const msgs = PubSub.create<MsgClient>();
+		const rendered = f.render(
 			<PlayClient.View
 				ctx={f.ctx}
-				dispatch={() => {}}
+				dispatch={msgs.publish}
 				model={output.model}
 				modelCore={output.modelCore}
-			/>
+			/>,
 		);
-		const dom = f.render(vdom);
-		return dom;
+		return { ...rendered, msgs };
 	};
 
 	const toModelCore = (outputs: Omit<Output, "modelCore">[]): ModelCore => {

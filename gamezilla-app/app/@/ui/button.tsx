@@ -69,6 +69,7 @@ export const Button = ({
 				!disabled && !loading && " active:opacity-70",
 				loading && "cursor-wait opacity-70",
 			)}
+			role="button"
 			onClick={(msgEvt) => {
 				onClick?.({ stopPropagation: () => msgEvt.stopPropagation() });
 			}}
