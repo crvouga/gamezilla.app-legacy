@@ -19,7 +19,7 @@ import {
 	FlowVariantUIEdit,
 	FlowVariantUIPlay,
 } from "../../../@/flow";
-import { ViewProfileCard } from "../../../@/ui";
+import { ViewProfileCard } from "../../../../@/game/view-profile-card";
 import type { ClientModule } from "../../builder.types";
 import { PuzzleDeleteForeverClient } from "../delete-forever/puzzle-delete-forever.client";
 import { PuzzleEditNameClient } from "../edit/puzzle-edit-name.client";

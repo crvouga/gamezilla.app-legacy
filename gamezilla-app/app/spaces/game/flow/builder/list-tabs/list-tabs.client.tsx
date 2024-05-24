@@ -11,6 +11,7 @@ import { ViewSpaceHostChip } from "../../../@/game";
 import type { ClientModule } from "../builder.types";
 import { PackListClient } from "../pack/pack-list/pack-list.client";
 import { PuzzleListClient } from "../puzzle/list/puzzle-list.client";
+import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
@@ -85,7 +86,9 @@ const View: ClientModule["View"] = (input) => {
 	}
 
 	return (
-		<div className="flex h-full w-full flex-1 flex-col">
+		<div className="flex h-full w-full flex-1 flex-col">			
+			<ViewScreenTitle title={input.ctx.t('flow.builder')} />
+			
 			<Tabs
 				tabs={["puzzles", "packs"]}
 				labels={{

@@ -304,7 +304,7 @@ const View: ClientModule["View"] = (input) => {
 					buttons={[
 						{
 							renderIcon: (props) => <IconGamepad {...props} />,
-							title: "Play",
+							title: ctx.t("flow.play"),
 							description: "Start playing puzzles",
 							onClick: () => {
 								dispatch({

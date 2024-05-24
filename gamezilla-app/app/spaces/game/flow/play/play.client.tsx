@@ -9,7 +9,7 @@ import { FlowVariantUIPlay } from "../@/flow";
 import type { FlowClientCtx } from "../@/flow-ctx";
 import { FlowPackListClient } from "../@/flow-pack";
 import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
-import { ViewProfileCard } from "../@/ui";
+import { ViewProfileCard } from "../../@/game/view-profile-card";
 import {
 	type ModelClient,
 	type ModelCore,
@@ -18,6 +18,7 @@ import {
 	type MsgToClient,
 	type MsgToServer,
 } from "./play.types";
+import { ViewScreenTitle } from "../../@/game/view-screen-title";
 
 type ClientModule = GameClientModule<{
 	Model: ModelClient;
@@ -127,6 +128,9 @@ export const ViewGame: ClientModule["View"] = (input) => {
 const View: ClientModule["View"] = (input) => {
 	return (
 		<div className="w-full h-full flex-1 flex flex-col">
+			<ViewScreenTitle
+				title={input.ctx.t('flow.play')}
+			/>
 			<FlowPackListClient.View
 				ctx={input.ctx}
 				dispatch={(c) => input.dispatch({ t: "flow-pack-list", c })}

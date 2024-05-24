@@ -40,4 +40,8 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		expectByText(f.render(f.initial), f.ctx.t("app.exit"));
 	});
+	it('should say "play"', async () => {
+		const f = await Fixture();
+		expectByText(f.render(f.initial), f.ctx.t("flow.play"));
+	});
 });
