@@ -33,7 +33,7 @@ export const ClientFixture = async () => {
 		return dom;
 	};
 
-	const toModelCore = (outputs: Omit<Output, 'modelCore'>[]): ModelCore => {
+	const toModelCore = (outputs: Omit<Output, "modelCore">[]): ModelCore => {
 		return outputs
 			.flatMap((output) => output.msgCore ?? [])
 			.reduce(
@@ -78,7 +78,6 @@ export const ClientFixture = async () => {
 		updates,
 	};
 };
-
 
 export const CoreFixture = async () => {
 	const f = await SpaceCoreFixture();

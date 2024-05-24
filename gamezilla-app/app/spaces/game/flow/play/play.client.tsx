@@ -12,7 +12,6 @@ import { ClientModule } from "./play.types";
 import { ScreenPackClient } from "./screen-pack/screen-pack.client";
 import { SelectPackScreenClient } from "./screen-select-pack/screen-select-pack.client";
 
-
 const flow = samples["8x8"][0];
 const init: ClientModule["init"] = {
 	play: FlowVariantUIPlay.init({ flow }),
@@ -28,7 +27,7 @@ const update: ClientModule["update"] = (input) => {
 		(model) => updateFlowPackList({ ...input, model }),
 		(model) => updateFlowPlayUI({ ...input, model }),
 		(model) => SelectPackScreenClient.update({ ...input, model }),
-		model => ScreenPackClient.update({ ...input, model }),
+		(model) => ScreenPackClient.update({ ...input, model }),
 	);
 };
 
@@ -121,8 +120,6 @@ const View: ClientModule["View"] = (input) => {
 		}
 	}
 };
-
-
 
 export const ViewFeedItem: ClientModule["ViewFeedItem"] = (_input) => {
 	return null;

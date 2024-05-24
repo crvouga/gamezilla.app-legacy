@@ -58,7 +58,11 @@ const ViewPackPuzzleGridSlide = (props: {
 		);
 	}
 
-	return <div role="grid" className="w-full aspect-square">{columns}</div>;
+	return (
+		<div role="grid" className="w-full aspect-square">
+			{columns}
+		</div>
+	);
 };
 
 const ViewPackPuzzleGrid = (props: {

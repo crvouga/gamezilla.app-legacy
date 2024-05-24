@@ -66,8 +66,8 @@ export const MsgCore = p.or(
 		pack: FlowPack,
 	}),
 	p.obj({
-		t: p.l('user-clicked-exit-pack-button'),
-	})
+		t: p.l("user-clicked-exit-pack-button"),
+	}),
 );
 
 export type MsgCore = p.Infer<typeof MsgCore>;
@@ -89,14 +89,12 @@ export const ModelCore = p.obj({
 });
 export type ModelCore = p.Infer<typeof ModelCore>;
 
-
-// 
-// 
-// 
-// 
-// 
-// 
-
+//
+//
+//
+//
+//
+//
 
 export type ClientModule = GameClientModule<{
 	Model: ModelClient;

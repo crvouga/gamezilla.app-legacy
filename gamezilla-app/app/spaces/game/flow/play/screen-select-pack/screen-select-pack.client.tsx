@@ -6,13 +6,12 @@ import { ClientModule } from "../play.types";
 import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 
-
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
 		(model) => updateFromMsg({ ...input, model }),
 		(model) => updateFromMsgCore({ ...input, model }),
-	)
+	);
 };
 
 const updateFromMsg: ClientModule["update"] = (input) => {
@@ -36,7 +35,7 @@ const updateFromMsgCore: ClientModule["update"] = (input) => {
 		case "user-clicked-pack-list-item": {
 			return {
 				model: input.model,
-				msgCmd: [playSound(APP_SOUND.navForwardMin)]
+				msgCmd: [playSound(APP_SOUND.navForwardMin)],
 			};
 		}
 		default: {
@@ -57,7 +56,7 @@ const View: ClientModule["View"] = (input) => {
 				model={{ ...input.model.packList, packs: input.model.flowPacks }}
 				emits={{
 					clickedPackItem(pack) {
-						input.dispatch({t: 'user-clicked-pack-list-item', pack})
+						input.dispatch({ t: "user-clicked-pack-list-item", pack });
 					},
 				}}
 			/>
@@ -67,6 +66,6 @@ const View: ClientModule["View"] = (input) => {
 };
 
 export const SelectPackScreenClient = {
-    update,
-    View
-}
+	update,
+	View,
+};

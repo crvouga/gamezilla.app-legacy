@@ -11,7 +11,7 @@ export type Verification = {
 	verifiedAt: Posix | null;
 };
 
-export const randomVerification = async (input?: {
+const randomVerification = async (input?: {
 	createdAt?: Posix;
 	codeHash?: Hash | null;
 }): Promise<Verification> => {
@@ -30,4 +30,8 @@ export const randomVerification = async (input?: {
 		expiresAt: Posix.future(createdAt, TimeSpan.minutes(1)),
 		verifiedAt: null,
 	};
+};
+
+export const Verification = {
+	random: randomVerification,
 };

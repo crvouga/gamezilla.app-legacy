@@ -10,27 +10,27 @@ describe(import.meta.file, () => {
 			{
 				t: "user-clicked-pack-list-item",
 				pack: await FlowPack.random(),
-            },
+			},
 		]);
 
 		expect(before.screen.t).toEqual("select-pack");
 		expect(after.screen.t).toEqual("pack");
-    });
-    
-    it('should exit to select pack screen after clicking exit button', async () => {
-        const f = await CoreFixture();
-        const before = f.update(f.init, [
-            {
-                t: 'user-clicked-pack-list-item',
-                pack: await FlowPack.random(),
-            }
-        ])
-        const after = f.update(before, [
-            {
-                t: 'user-clicked-exit-pack-button',
-            }
-        ])
-        expect(before.screen.t).toEqual('pack')
-        expect(after.screen.t).toEqual('select-pack')
-    })
+	});
+
+	it("should exit to select pack screen after clicking exit button", async () => {
+		const f = await CoreFixture();
+		const before = f.update(f.init, [
+			{
+				t: "user-clicked-pack-list-item",
+				pack: await FlowPack.random(),
+			},
+		]);
+		const after = f.update(before, [
+			{
+				t: "user-clicked-exit-pack-button",
+			},
+		]);
+		expect(before.screen.t).toEqual("pack");
+		expect(after.screen.t).toEqual("select-pack");
+	});
 });

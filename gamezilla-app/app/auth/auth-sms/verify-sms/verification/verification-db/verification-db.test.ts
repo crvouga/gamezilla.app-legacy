@@ -8,7 +8,7 @@ import {
 	unwrap,
 } from "gamezilla-app/@/core";
 import { AppServerTestEnv } from "gamezilla-app/app/@/server/server-test-env";
-import { Verification, randomVerification } from "../verification";
+import { Verification } from "../verification";
 import { VerificationDb } from "./verification-db-impl";
 
 const Fixture = async () => {
@@ -38,14 +38,14 @@ type Fixture = Awaited<ReturnType<typeof Fixture>>;
 describe(import.meta.file, () => {
 	it("should be ok inserting records", async () => {
 		const f = await Fixture();
-		const verification = await randomVerification();
+		const verification = await Verification.random();
 		const inserted = await f.verificationDb.put(verification);
 		expect(inserted).toEqual(Ok(null));
 	});
 
 	it("should insert records correctly", async () => {
 		const f = await Fixture();
-		const verification = await randomVerification();
+		const verification = await Verification.random();
 		const before = await f.verificationDb.find({
 			where: {
 				verificationId: {
@@ -67,7 +67,7 @@ describe(import.meta.file, () => {
 
 	it("should upsert records correctly", async () => {
 		const f = await Fixture();
-		const verification = await randomVerification();
+		const verification = await Verification.random();
 		await f.verificationDb.put(verification);
 		const before = await f.verificationDb.find({
 			where: {
@@ -94,7 +94,7 @@ describe(import.meta.file, () => {
 
 	it("should find by phone number", async () => {
 		const f = await Fixture();
-		const verification = await randomVerification();
+		const verification = await Verification.random();
 		await f.verificationDb.put(verification);
 		const found = await f.verificationDb.find({
 			where: {
@@ -203,7 +203,7 @@ describe(import.meta.file, () => {
 			f,
 			start,
 			end,
-			count: 10,
+			count: 6,
 		});
 
 		const found = await f.verificationDb.find({
@@ -282,7 +282,7 @@ describe(import.meta.file, () => {
 
 	it("should allow code hash to be null", async () => {
 		const f = await Fixture();
-		const verification = await randomVerification({
+		const verification = await Verification.random({
 			codeHash: null,
 		});
 		const put = await f.verificationDb.put(verification);
@@ -316,7 +316,7 @@ const insertVerifications = async ({
 	let runningCreatedAt = start;
 
 	for (let i = 0; i < count; i++) {
-		const verification = await randomVerification({
+		const verification = await Verification.random({
 			createdAt: runningCreatedAt,
 		});
 		await f.verificationDb.put(verification);
