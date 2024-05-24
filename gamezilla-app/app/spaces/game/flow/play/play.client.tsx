@@ -2,35 +2,16 @@ import { Eff, Sub } from "gamezilla-app/@/core";
 import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@/ui";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
-import type { SpaceClientEvent } from "gamezilla-app/app/spaces/@/space";
 import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
-import { GameLayout, ViewBottomBarExitButton } from "../../@/game";
+import { GameLayout } from "../../@/game";
+import { ViewProfileCard } from "../../@/game/view-profile-card";
 import { FlowVariantUIPlay } from "../@/flow";
-import type { FlowClientCtx } from "../@/flow-ctx";
 import { FlowPackListClient } from "../@/flow-pack";
 import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
-import { ViewProfileCard } from "../../@/game/view-profile-card";
-import {
-	type ModelClient,
-	type ModelCore,
-	type MsgClient,
-	type MsgCore,
-	type MsgToClient,
-	type MsgToServer,
-} from "./play.types";
-import { ViewScreenTitle } from "../../@/game/view-screen-title";
+import { ClientModule } from "./play.types";
+import { ScreenPackClient } from "./screen-pack/screen-pack.client";
+import { SelectPackScreenClient } from "./screen-select-pack/screen-select-pack.client";
 
-type ClientModule = GameClientModule<{
-	Model: ModelClient;
-	Msg: MsgClient;
-	MsgToClient: MsgToClient;
-	MsgToServer: MsgToServer;
-	MsgCore: MsgCore;
-	ModelCore: ModelCore;
-	Ctx: FlowClientCtx;
-	MsgCmdOut: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
-	MsgEvtIn: SpaceClientEvent;
-}>;
 
 const flow = samples["8x8"][0];
 const init: ClientModule["init"] = {
@@ -46,6 +27,7 @@ const update: ClientModule["update"] = (input) => {
 		{ model: input.model },
 		(model) => updateFlowPackList({ ...input, model }),
 		(model) => updateFlowPlayUI({ ...input, model }),
+		(model) => SelectPackScreenClient.update({ ...input, model }),
 	);
 };
 
@@ -126,18 +108,20 @@ export const ViewGame: ClientModule["View"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-	return (
-		<div className="w-full h-full flex-1 flex flex-col">
-			<ViewScreenTitle title={input.ctx.t("flow.play")} />
-			<FlowPackListClient.View
-				ctx={input.ctx}
-				dispatch={(c) => input.dispatch({ t: "flow-pack-list", c })}
-				model={{ ...input.model.packList, packs: input.model.flowPacks }}
-			/>
-			<ViewBottomBarExitButton ctx={input.ctx} onClick={input.ctx.onQuit} />
-		</div>
-	);
+	switch (input.modelCore.screen.t) {
+		case "pack": {
+			return <ScreenPackClient.View {...input} />;
+		}
+		case "select-pack": {
+			return <SelectPackScreenClient.View {...input} />;
+		}
+		default: {
+			return null;
+		}
+	}
 };
+
+
 
 export const ViewFeedItem: ClientModule["ViewFeedItem"] = (_input) => {
 	return null;

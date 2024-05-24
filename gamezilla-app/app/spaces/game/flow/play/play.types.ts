@@ -4,6 +4,10 @@ import { FlowPack, FlowPackList } from "../@/flow-pack";
 import { FlowPackId } from "../@/flow-pack/flow-pack-id";
 import { FlowPuzzle } from "../@/flow-puzzle";
 import { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { FlowClientCtx } from "../@/flow-ctx";
+import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
+import { SpaceClientEvent } from "gamezilla-app/app/spaces/@/space";
 
 //
 //
@@ -61,7 +65,11 @@ export const MsgCore = p.or(
 		t: p.l("user-clicked-pack-list-item"),
 		pack: FlowPack,
 	}),
+	p.obj({
+		t: p.l('user-clicked-exit-pack-button'),
+	})
 );
+
 export type MsgCore = p.Infer<typeof MsgCore>;
 
 const Screen = p.or(
@@ -80,3 +88,24 @@ export const ModelCore = p.obj({
 	screen: Screen,
 });
 export type ModelCore = p.Infer<typeof ModelCore>;
+
+
+// 
+// 
+// 
+// 
+// 
+// 
+
+
+export type ClientModule = GameClientModule<{
+	Model: ModelClient;
+	Msg: MsgClient;
+	MsgToClient: MsgToClient;
+	MsgToServer: MsgToServer;
+	MsgCore: MsgCore;
+	ModelCore: ModelCore;
+	Ctx: FlowClientCtx;
+	MsgCmdOut: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
+	MsgEvtIn: SpaceClientEvent;
+}>;

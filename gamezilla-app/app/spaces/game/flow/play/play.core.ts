@@ -42,6 +42,14 @@ export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
 				},
 			};
 		}
+		case 'user-clicked-exit-pack-button': {
+			return {
+				...modelCore,
+				screen: {
+					t: 'select-pack',
+				},
+			};
+		}
 		default: {
 			return modelCore;
 		}

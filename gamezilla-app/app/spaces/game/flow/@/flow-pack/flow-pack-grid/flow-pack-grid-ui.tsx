@@ -42,6 +42,7 @@ const ViewPackPuzzleGridSlide = (props: {
 
 			row.push(
 				<div
+					role="gridcell"
 					key={`${y}-${x}`}
 					className="flex aspect-square h-12 w-12 items-center justify-center overflow-hidden p-1 sm:h-16 sm:w-16"
 				>
@@ -57,7 +58,7 @@ const ViewPackPuzzleGridSlide = (props: {
 		);
 	}
 
-	return <div className="w-full aspect-square">{columns}</div>;
+	return <div role="grid" className="w-full aspect-square">{columns}</div>;
 };
 
 const ViewPackPuzzleGrid = (props: {
