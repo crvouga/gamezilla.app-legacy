@@ -2,8 +2,11 @@ import { p } from "gamezilla-app/@/core/parser";
 import type { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
 import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import { FlowVariant, FlowVariantUIPlay } from "../@/flow";
-import { FlowPackList } from "../@/flow-pack";
+import { FlowPack, FlowPackList } from "../@/flow-pack";
 import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
+import { FlowPuzzle } from "../@/flow-puzzle";
+import { FlowPackId } from "../@/flow-pack/flow-pack-id";
+import { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
 
 //
 //
@@ -16,6 +19,8 @@ export type ModelClient = {
 	packList: FlowPackList.ModelClient;
 	play: FlowVariantUIPlay.Model;
 	flow: FlowVariant.Model;
+	flowPuzzles: { [flowPuzzleId: FlowPuzzleId]: FlowPuzzle };
+	flowPacks: { [flowPackId: FlowPackId]: FlowPack };
 };
 
 export const ModelServer = p.obj({});

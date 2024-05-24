@@ -5,34 +5,39 @@ import { FlowClientCtx } from "../@/flow-ctx";
 import { PlayClient } from "./play.client";
 import { ModelClient, initCore } from "./play.types";
 
-
-
 const Fixture = async () => {
 	const f = await SpaceClientFixture();
 	const ctx: FlowClientCtx = {
 		...f.ctx,
 		onQuit() { },
-		
-	}
-	const initialCore = initCore({ ctx, }) 
+		flowPacks: {},
+						flowPuzzles: {},
+	};
+	const initialCore = initCore({ ctx });
 	const render = (model: ModelClient = PlayClient.init) => {
-		const vdom = <PlayClient.View ctx={ctx} dispatch={() => {}} model={model} modelCore={initialCore} />
+		const vdom = (
+			<PlayClient.View
+				ctx={ctx}
+				dispatch={() => {}}
+				model={model}
+				modelCore={initialCore}
+			/>
+		);
 		const dom = f.render(vdom);
-		return dom
-
-	}
+		return dom;
+	};
 	return {
 		...f,
 		initial: PlayClient.init,
 		initialCore,
 		ctx,
-		render
+		render,
 	};
 };
 
 describe(import.meta.file, () => {
 	it("should render exit button", async () => {
-		const f = await Fixture();		
-		expectByText(f.render(f.initial), f.ctx.t("app.exit"))
+		const f = await Fixture();
+		expectByText(f.render(f.initial), f.ctx.t("app.exit"));
 	});
 });

@@ -28,21 +28,20 @@ type ServerModule = GameServerModule<{
 	Ctx: SpaceServerCtx;
 	MsgEvtIn: SpaceServerEvent;
 	MsgCmdOut: SpaceServerCmd<MsgToClient>;
-	Deps: ServerDeps
+	Deps: ServerDeps;
 }>;
 
 type ServerDeps = {
-	builder: Awaited<ReturnType<(typeof BuilderServer)['deps']>>
-	play: Awaited<ReturnType<(typeof PlayServer)['deps']>>
-}
+	builder: Awaited<ReturnType<(typeof BuilderServer)["deps"]>>;
+	play: Awaited<ReturnType<(typeof PlayServer)["deps"]>>;
+};
 
 const deps: ServerModule["deps"] = async (input) => {
 	return {
 		builder: await BuilderServer.deps(input),
 		play: await PlayServer.deps(input),
 	};
-}
-
+};
 
 const init: ServerModule["init"] = {
 	t: "none",

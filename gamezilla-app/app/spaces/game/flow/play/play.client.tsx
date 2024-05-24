@@ -36,6 +36,8 @@ const init: ClientModule["init"] = {
 	play: FlowVariantUIPlay.init({ flow }),
 	flow,
 	packList: FlowPackListClient.initClient,
+	flowPacks: {},
+	flowPuzzles: {},
 };
 
 const update: ClientModule["update"] = (input) => {
@@ -43,7 +45,7 @@ const update: ClientModule["update"] = (input) => {
 		{ model: input.model },
 		(model) => updateFlowPackList({ ...input, model }),
 		(model) => updateFlowPlayUI({ ...input, model }),
-	)
+	);
 };
 
 const updateFlowPlayUI: ClientModule["update"] = (input) => {
@@ -60,27 +62,23 @@ const updateFlowPlayUI: ClientModule["update"] = (input) => {
 const updateFlowPackList: ClientModule["update"] = (input) => {
 	const updated = FlowPackListClient.update({
 		ctx: input.ctx,
-		model: input.model.packList,
-		msg:
-			input.msg?.t === "flow-pack-list"
-				? input.msg.c
-				: null,
+		model: {...input.model.packList, packs: input.model.flowPacks},
+		msg: input.msg?.t === "flow-pack-list" ? input.msg.c : null,
 		msgServer:
-			input.msgServer?.t === "flow-pack-list"
-				? input.msgServer.c
-				: null,
+			input.msgServer?.t === "flow-pack-list" ? input.msgServer.c : null,
 		msgEvt: input.msgEvt,
 		msgCmd: input.msgCmd,
 	});
 
-	return { 
+	return {
 		model: {
 			...input.model,
 			packList: updated.model,
+			flowPacks: updated.model.packs,
 		},
 		eff: Eff.tag("flow-pack-list", updated.eff),
 		msgEvt: updated.msgEvt,
-		msgCmd: SpaceClientCmd.tag('flow-pack-list', updated.msgCmd),
+		msgCmd: SpaceClientCmd.tag("flow-pack-list", updated.msgCmd),
 		msgCore: [],
 	};
 };
@@ -134,10 +132,7 @@ const View: ClientModule["View"] = (input) => {
 				dispatch={(c) => input.dispatch({ t: "flow-pack-list", c })}
 				model={input.model.packList}
 			/>
-			<ViewBottomBarExitButton
-				ctx={input.ctx}
-				onClick={input.ctx.onQuit}
-			/>
+			<ViewBottomBarExitButton ctx={input.ctx} onClick={input.ctx.onQuit} />
 		</div>
 	);
 };

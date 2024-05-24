@@ -24,7 +24,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 
 			this.attachShadow({ mode: "open" });
 
-			if (!('IntersectionObserver' in window)) {
+			if (!("IntersectionObserver" in window)) {
 				return;
 			}
 

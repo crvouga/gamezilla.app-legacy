@@ -60,7 +60,7 @@ export type ServerDeps = {
 	ProfileCache: IProfileCache;
 	SpacesDb: ISpacesDb;
 	GameDb: IGameDb;
-	GameServer: Awaited<ReturnType<(typeof GameServer)['deps']>>
+	GameServer: Awaited<ReturnType<(typeof GameServer)["deps"]>>;
 };
 
 //

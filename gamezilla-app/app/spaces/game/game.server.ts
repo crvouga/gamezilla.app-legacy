@@ -32,20 +32,18 @@ type ServerModule = GameServerModule<{
 	Ctx: SpaceServerCtx;
 	MsgEvtIn: SpaceServerEvent;
 	MsgCmdOut: SpaceServerCmd<MsgToClient>;
-	Deps: ServerDeps
+	Deps: ServerDeps;
 }>;
 
 type ServerDeps = {
-	flow: Awaited<ReturnType<typeof FlowServer["deps"]>>;
-}
+	flow: Awaited<ReturnType<(typeof FlowServer)["deps"]>>;
+};
 
 const deps: ServerModule["deps"] = async (input) => {
 	return {
 		flow: await FlowServer.deps(input),
 	};
-}
-
-
+};
 
 //
 //

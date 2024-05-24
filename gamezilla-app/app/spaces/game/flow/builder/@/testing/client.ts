@@ -26,7 +26,9 @@ export const FlowCreateFixtureClient = async () => {
 	const modelCore = BuilderCore.initCore({ ctx: f.ctx });
 	const ctx: FlowClientCtx = {
 		...f.ctx,
-		onQuit() {},
+		onQuit() { },
+		flowPuzzles: {},
+		flowPacks: {},
 	};
 	return {
 		...f,
@@ -43,7 +45,9 @@ export const initial = {
 export const testFlowClientCtx = async (): Promise<FlowClientCtx> => {
 	return {
 		...(await testSpaceClientCtx()),
-		onQuit() {},
+		onQuit() { },
+		flowPacks: {},
+		flowPuzzles: {},
 	};
 };
 

@@ -82,10 +82,15 @@ const updateChild: ClientModule["update"] = (input) => {
 			const updated = PlayClient.update({
 				ctx: {
 					...ctx,
-					onQuit: () => {},
+					onQuit: () => { },
+					flowPacks: model.packs,
+					flowPuzzles: model.puzzles,
 				},
 				modelCore: modelCore.c,
-				model: model.t === "play" ? model.c : PlayClient.init,
+				model: {
+					...(model.t === "play" ? model.c : PlayClient.init),
+					
+				},
 				msgCmd: msgCmd,
 				msgEvt: msgEvt,
 				msgServer: msgServer?.t === "play" ? msgServer.c : null,
@@ -111,7 +116,12 @@ const updateChild: ClientModule["update"] = (input) => {
 
 		case "builder": {
 			const updated = BuilderClient.update({
-				ctx: { ...ctx, onQuit: () => {} },
+				ctx: {
+					...ctx,
+					onQuit: () => { },
+					flowPacks: model.packs,
+					flowPuzzles: model.puzzles,
+				},
 				modelCore: modelCore.c,
 				model: {
 					...(model.t === "builder" ? model.c : BuilderClient.init),
@@ -227,7 +237,9 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 				PlayClient.subscriptions({
 					ctx: {
 						...input.ctx,
-						onQuit() {},
+						onQuit() { },
+						flowPacks: input.model.packs,
+						flowPuzzles: input.model.puzzles,
 					},
 					modelCore: input.modelCore.c,
 					model: input.model.t === "play" ? input.model.c : PlayClient.init,
@@ -240,7 +252,9 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 				BuilderClient.subscriptions({
 					ctx: {
 						...input.ctx,
-						onQuit() {},
+						onQuit() { },
+						flowPacks: input.model.packs,
+						flowPuzzles: input.model.puzzles,
 					},
 					modelCore: input.modelCore.c,
 					model:
@@ -266,6 +280,8 @@ const View: ClientModule["View"] = (input) => {
 
 	const ctx: FlowClientCtx = {
 		...input.ctx,
+		flowPacks: input.model.packs,
+		flowPuzzles: input.model.puzzles,
 		onQuit: () =>
 			dispatch({
 				t: "msgCore",
@@ -367,7 +383,7 @@ const ViewFeedItem: ClientModule["ViewFeedItem"] = ({
 				case "play": {
 					return (
 						<PlayClient.ViewFeedItem
-							ctx={{ ...ctx, onQuit() {} }}
+							ctx={{ ...ctx, onQuit() {}, flowPacks: {}, flowPuzzles: {} }}
 							dispatch={(c) => dispatch({ t: "play", c })}
 							modelCore={modelCore.c}
 							msgCore={msgCore.c}
@@ -385,7 +401,7 @@ const ViewFeedItem: ClientModule["ViewFeedItem"] = ({
 				case "builder": {
 					return (
 						<BuilderClient.ViewFeedItem
-							ctx={{ ...ctx, onQuit() {} }}
+							ctx={{ ...ctx, onQuit() {}, flowPacks: {}, flowPuzzles: {} }}
 							dispatch={(c) => dispatch({ t: "builder", c })}
 							modelCore={modelCore.c}
 							msgCore={msgCore.c}

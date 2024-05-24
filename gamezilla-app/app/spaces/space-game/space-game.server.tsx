@@ -58,7 +58,11 @@ const updateGame: SpaceServerModule["update"] = async (input) => {
 		msg: input.msg?.t === "game" ? input.msg.c : null,
 		msgClient:
 			input.msgClient?.t === "game" && input.msgClient.userId
-				? { ...input.msgClient, userId: input.msgClient.userId, ...input.msgClient.c }
+				? {
+						...input.msgClient,
+						userId: input.msgClient.userId,
+						...input.msgClient.c,
+					}
 				: null,
 		msgEvt: input.msgEvt,
 		msgCore:
