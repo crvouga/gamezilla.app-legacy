@@ -28,6 +28,7 @@ const update: ClientModule["update"] = (input) => {
 		(model) => updateFlowPackList({ ...input, model }),
 		(model) => updateFlowPlayUI({ ...input, model }),
 		(model) => SelectPackScreenClient.update({ ...input, model }),
+		model => ScreenPackClient.update({ ...input, model }),
 	);
 };
 

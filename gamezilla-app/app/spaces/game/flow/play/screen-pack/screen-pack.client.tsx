@@ -1,8 +1,22 @@
+import { withId } from "gamezilla-app/app/spaces/@/event";
 import { ViewBottomBarExitButton } from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowPackGridUI } from "../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
 import { ClientModule } from "../play.types";
 
+const update: ClientModule["update"] = (input) => {
+    switch (input.msg?.t) {
+        case 'user-clicked-exit-pack-button': {
+            return {
+                model: input.model,
+                msgCore: [withId({ t: 'user-clicked-exit-pack-button', })],
+            }
+        }
+    }
+    return {
+        model: input.model,
+    };
+}
 
 const View: ClientModule["View"] = (input) => {
 	if (input.modelCore.screen.t !== "pack") {
@@ -29,5 +43,6 @@ const View: ClientModule["View"] = (input) => {
 };
 
 export const ScreenPackClient = {
+    update,
 	View,
 };

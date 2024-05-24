@@ -33,4 +33,23 @@ describe(import.meta.file, () => {
 		const rendered = f.render(output)
 		expect(getByRole(rendered, 'grid')).toBeTruthy()
 	})
+
+	it('should exit on exit button click', async () => {
+		const f = await ClientFixture()
+		const pack = await FlowPack.random()
+		const output = f.update(f.initial, [
+			{
+				msg: {
+					t: 'user-clicked-pack-list-item',
+					pack,
+				}
+			},
+			{
+				msg: {
+					t: 'user-clicked-exit-pack-button',
+				}
+			}
+		])
+		expect(output.modelCore.screen.t).toBe('select-pack')
+	})
 })
