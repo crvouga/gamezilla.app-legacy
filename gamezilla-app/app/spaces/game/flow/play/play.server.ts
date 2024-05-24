@@ -37,9 +37,8 @@ const init: ServerModule["init"] = async () => {
 };
 
 const update: ServerModule["update"] = async (input) => {
-	return GameServerModule.andThen(
-		{ model: input.model },
-		(model) => updateFlowPackList({ ...input, model }),
+	return GameServerModule.andThen({ model: input.model }, (model) =>
+		updateFlowPackList({ ...input, model }),
 	);
 };
 

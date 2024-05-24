@@ -2,74 +2,74 @@
 import type { Text } from "../text";
 
 export const translations: Text = {
-  "auth.logged-in-as-guest": "تم تسجيل الدخول كضيف",
-  "auth.logged-in-with-phone": "تم تسجيل الدخول بالهاتف",
-  "auth.current-user-logged-out": "تسجيل الخروج",
-  "auth.current-user-logged-in": "تسجيل الدخول",
-  "auth.continue-as-guest": "المتابعة كضيف",
-  "auth.continue-with-phone": "المتابعة بالهاتف",
-  "auth.or": "أو",
-  "auth.sign-in-to": "تسجيل الدخول إلى",
-  "auth.logged-in": "تم تسجيل الدخول",
-  "auth.logout-of-gamezill.app": "تسجيل الخروج من gamezilla.app",
-  "auth.logout-of-gamezill.app-body": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
-  "verify-sms.code-message": (code) =>
-    `\u0631\u0645\u0632 \u0627\u0644\u062A\u062D\u0642\u0642 \u0627\u0644\u062E\u0627\u0635 \u0628\u0643 \u0647\u0648 ${code}`,
-  "verify-sms-problem.code-incorrect": "الرمز غير صحيح",
-  "verify-sms-problem.verification-expired": "انتهت صلاحية التحقق",
-  "verify-sms-problem.verification-not-found": "لم يتم العثور على التحقق",
-  "verify-sms-problem.verification-already-verified": "تم التحقق بالفعل",
-  "verify-sms-problem.database-error": "خطأ في قاعدة البيانات",
-  "verify-sms-problem.verification-expired-too-many-failed-attempts":
-    "انتهت صلاحية التحقق بسبب عدد كبير من المحاولات الفاشلة",
-  "verify-sms-problem.send-code-hourly-limit-reached":
-    "تم الوصول إلى الحد الساعي. يرجى المحاولة مرة أخرى في وقت لاحق.",
-  "verify-sms-problem.send-code-daily-limit-reached":
-    "تم الوصول إلى الحد اليومي. يرجى المحاولة مرة أخرى في وقت لاحق.",
-  "verify-sms-problem.verification-expired-not-latest-verification":
-    "انتهت صلاحية التحقق لأنها ليست أحدث عملية تحقق",
-  "verify-sms-problem.send-code-limit-reached":
-    "تم الوصول إلى الحد. يرجى المحاولة مرة أخرى في وقت لاحق.",
-  "auth-sms.login-with-phone": "تسجيل الدخول برقم الهاتف",
-  "auth-sms.phone-number": "رقم الهاتف",
-  "auth-sms.send-code": "إرسال الرمز",
-  "auth-sms.country": "بلد",
-  "auth-sms.code": "الرمز",
-  "auth-sms.verify-code": "التحقق من الرمز",
-  "auth-sms.invalid-phone-number": "رقم الهاتف غير صالح",
-  "spaces.current-user-joined-space": "انضم إلى الفضاء",
-  "spaces.other-user-joined-space": (username) =>
-    username
-      ? `${username} \u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
-      : "\u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621",
-  "spaces.space-not-found": "الفضاء غير موجود",
-  "spaces.go-home": "اذهب إلى الصفحة الرئيسية",
-  "spaces.current-user-ended-space": "انتهى الفضاء",
-  "spaces.other-user-ended-space": (username) =>
-    username
-      ? `${username} \u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
-      : "\u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621",
-  "spaces.see-profile": "مشاهدة الملف الشخصي",
-  host: "المضيف",
-  you: "أنت",
-  "flow.play": "لعب",
-  "flow.builder": "باني",
-  "lang.language": "اللغة",
-  "lang.choose-language": "اختر اللغة",
-  "lang.done": "تم",
-  "lang.loaded-translations": "تم تحميل الترجمات",
-  "app.something-went-wrong": "حدث خطأ ما",
-  "app.exit": "خروج",
-  en: "إنجليزي",
-  es: "إسباني",
-  ar: "عربي",
-  de: "ألماني",
-  fr: "فرنسي",
-  hi: "هندي",
-  it: "إيطالي",
-  ja: "ياباني",
-  ko: "كوري",
-  pt: "برتغالي",
-  ru: "روسي",
-  zh: "صيني",
+	"auth.logged-in-as-guest": "تم تسجيل الدخول كضيف",
+	"auth.logged-in-with-phone": "تم تسجيل الدخول بالهاتف",
+	"auth.current-user-logged-out": "تسجيل الخروج",
+	"auth.current-user-logged-in": "تسجيل الدخول",
+	"auth.continue-as-guest": "المتابعة كضيف",
+	"auth.continue-with-phone": "المتابعة بالهاتف",
+	"auth.or": "أو",
+	"auth.sign-in-to": "تسجيل الدخول إلى",
+	"auth.logged-in": "تم تسجيل الدخول",
+	"auth.logout-of-gamezill.app": "تسجيل الخروج من gamezilla.app",
+	"auth.logout-of-gamezill.app-body": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
+	"verify-sms.code-message": (code) =>
+		`\u0631\u0645\u0632 \u0627\u0644\u062A\u062D\u0642\u0642 \u0627\u0644\u062E\u0627\u0635 \u0628\u0643 \u0647\u0648 ${code}`,
+	"verify-sms-problem.code-incorrect": "الرمز غير صحيح",
+	"verify-sms-problem.verification-expired": "انتهت صلاحية التحقق",
+	"verify-sms-problem.verification-not-found": "لم يتم العثور على التحقق",
+	"verify-sms-problem.verification-already-verified": "تم التحقق بالفعل",
+	"verify-sms-problem.database-error": "خطأ في قاعدة البيانات",
+	"verify-sms-problem.verification-expired-too-many-failed-attempts":
+		"انتهت صلاحية التحقق بسبب عدد كبير من المحاولات الفاشلة",
+	"verify-sms-problem.send-code-hourly-limit-reached":
+		"تم الوصول إلى الحد الساعي. يرجى المحاولة مرة أخرى في وقت لاحق.",
+	"verify-sms-problem.send-code-daily-limit-reached":
+		"تم الوصول إلى الحد اليومي. يرجى المحاولة مرة أخرى في وقت لاحق.",
+	"verify-sms-problem.verification-expired-not-latest-verification":
+		"انتهت صلاحية التحقق لأنها ليست أحدث عملية تحقق",
+	"verify-sms-problem.send-code-limit-reached":
+		"تم الوصول إلى الحد. يرجى المحاولة مرة أخرى في وقت لاحق.",
+	"auth-sms.login-with-phone": "تسجيل الدخول برقم الهاتف",
+	"auth-sms.phone-number": "رقم الهاتف",
+	"auth-sms.send-code": "إرسال الرمز",
+	"auth-sms.country": "بلد",
+	"auth-sms.code": "الرمز",
+	"auth-sms.verify-code": "التحقق من الرمز",
+	"auth-sms.invalid-phone-number": "رقم الهاتف غير صالح",
+	"spaces.current-user-joined-space": "انضم إلى الفضاء",
+	"spaces.other-user-joined-space": (username) =>
+		username
+			? `${username} \u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
+			: "\u0627\u0646\u0636\u0645 \u0625\u0644\u0649 \u0627\u0644\u0641\u0636\u0627\u0621",
+	"spaces.space-not-found": "الفضاء غير موجود",
+	"spaces.go-home": "اذهب إلى الصفحة الرئيسية",
+	"spaces.current-user-ended-space": "انتهى الفضاء",
+	"spaces.other-user-ended-space": (username) =>
+		username
+			? `${username} \u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621`
+			: "\u0627\u0646\u062A\u0647\u0649 \u0627\u0644\u0641\u0636\u0627\u0621",
+	"spaces.see-profile": "مشاهدة الملف الشخصي",
+	host: "المضيف",
+	you: "أنت",
+	"flow.play": "لعب",
+	"flow.builder": "باني",
+	"lang.language": "اللغة",
+	"lang.choose-language": "اختر اللغة",
+	"lang.done": "تم",
+	"lang.loaded-translations": "تم تحميل الترجمات",
+	"app.something-went-wrong": "حدث خطأ ما",
+	"app.exit": "خروج",
+	en: "إنجليزي",
+	es: "إسباني",
+	ar: "عربي",
+	de: "ألماني",
+	fr: "فرنسي",
+	hi: "هندي",
+	it: "إيطالي",
+	ja: "ياباني",
+	ko: "كوري",
+	pt: "برتغالي",
+	ru: "روسي",
+	zh: "صيني",
 };

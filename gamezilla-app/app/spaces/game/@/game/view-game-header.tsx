@@ -1,5 +1,6 @@
 import { cn } from "gamezilla-app/app/@/ui";
 import type { VDom } from "gamezilla-app/@/vdom";
+import { ViewScreenTitle } from "./view-screen-title";
 
 export const ViewGameHeader = ({
 	title,
@@ -9,25 +10,20 @@ export const ViewGameHeader = ({
 	renderCoverArt?: (props: { key: string; className: string }) => VDom;
 }) => {
 	return (
-		<section className="flex min-h-fit w-full">
-			<div className="flex h-48 w-full flex-col items-center justify-center gap-4">
-				<p
-					className={cn(
-						"text-center",
-						typeof title === "string"
-							? "text-3xl font-bold"
-							: "flex h-[36px] items-center justify-center font-bold text-neutral-300",
-					)}
-				>
-					{title ?? "No game selected"}
+		<section className="flex w-full flex-col items-center pb-4">
+			{title ? (
+				<ViewScreenTitle title={title} center />
+			) : (
+				<p className="flex h-[36px] items-center justify-center font-bold text-neutral-300 text-center p-4">
+					No game selected
 				</p>
+			)}
 
-				{renderCoverArt({
-					key: title ?? "PLACEHOLDER",
-					className:
-						"w-28 h-28 overflow-hidden rounded-lg border border-white/20",
-				})}
-			</div>
+			{renderCoverArt({
+				key: title ?? "PLACEHOLDER",
+				className:
+					"w-28 h-28 overflow-hidden rounded-lg border border-white/20",
+			})}
 		</section>
 	);
 };

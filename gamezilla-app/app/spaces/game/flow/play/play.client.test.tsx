@@ -9,9 +9,9 @@ const Fixture = async () => {
 	const f = await SpaceClientFixture();
 	const ctx: FlowClientCtx = {
 		...f.ctx,
-		onQuit() { },
+		onQuit() {},
 		flowPacks: {},
-						flowPuzzles: {},
+		flowPuzzles: {},
 	};
 	const initialCore = initCore({ ctx });
 	const render = (model: ModelClient = PlayClient.init) => {

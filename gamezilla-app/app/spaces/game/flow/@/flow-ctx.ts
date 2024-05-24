@@ -10,10 +10,10 @@ export type FlowClientCtx = SpaceClientCtx & {
 	onQuit: () => void;
 	flowPacks: {
 		[flowPackId: FlowPackId]: FlowPack;
-	}
+	};
 	flowPuzzles: {
 		[flowPuzzleId: FlowPuzzleId]: FlowPuzzle;
-	}
+	};
 };
 
 export type FlowCmd =
@@ -36,16 +36,20 @@ export type FlowCmd =
 			};
 	  };
 
-export type FlowClientCmd<T extends ClientCmdTypes> = SpaceClientCmd<T> | FlowCmd;
+export type FlowClientCmd<T extends ClientCmdTypes> =
+	| SpaceClientCmd<T>
+	| FlowCmd;
 
-const toSpaceClientCmds = <T extends ClientCmdTypes,>(cmds: FlowClientCmd<T>[]): SpaceClientCmd<T>[] => {
+const toSpaceClientCmds = <T extends ClientCmdTypes>(
+	cmds: FlowClientCmd<T>[],
+): SpaceClientCmd<T>[] => {
 	return cmds.flatMap((cmd): SpaceClientCmd<T>[] => {
-		if (cmd.t === 'flow') {
-			return []
+		if (cmd.t === "flow") {
+			return [];
 		}
-		return [cmd]
-	})
-}
+		return [cmd];
+	});
+};
 
 export const FlowClientCmd = {
 	toSpaceClientCmds,

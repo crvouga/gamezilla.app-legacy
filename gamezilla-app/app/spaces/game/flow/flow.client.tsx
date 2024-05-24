@@ -82,14 +82,13 @@ const updateChild: ClientModule["update"] = (input) => {
 			const updated = PlayClient.update({
 				ctx: {
 					...ctx,
-					onQuit: () => { },
+					onQuit: () => {},
 					flowPacks: model.packs,
 					flowPuzzles: model.puzzles,
 				},
 				modelCore: modelCore.c,
 				model: {
 					...(model.t === "play" ? model.c : PlayClient.init),
-					
 				},
 				msgCmd: msgCmd,
 				msgEvt: msgEvt,
@@ -118,7 +117,7 @@ const updateChild: ClientModule["update"] = (input) => {
 			const updated = BuilderClient.update({
 				ctx: {
 					...ctx,
-					onQuit: () => { },
+					onQuit: () => {},
 					flowPacks: model.packs,
 					flowPuzzles: model.puzzles,
 				},
@@ -237,7 +236,7 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 				PlayClient.subscriptions({
 					ctx: {
 						...input.ctx,
-						onQuit() { },
+						onQuit() {},
 						flowPacks: input.model.packs,
 						flowPuzzles: input.model.puzzles,
 					},
@@ -252,7 +251,7 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 				BuilderClient.subscriptions({
 					ctx: {
 						...input.ctx,
-						onQuit() { },
+						onQuit() {},
 						flowPacks: input.model.packs,
 						flowPuzzles: input.model.puzzles,
 					},

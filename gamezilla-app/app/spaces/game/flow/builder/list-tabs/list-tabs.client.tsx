@@ -86,9 +86,9 @@ const View: ClientModule["View"] = (input) => {
 	}
 
 	return (
-		<div className="flex h-full w-full flex-1 flex-col">			
-			<ViewScreenTitle title={input.ctx.t('flow.builder')} />
-			
+		<div className="flex h-full w-full flex-1 flex-col">
+			<ViewScreenTitle title={input.ctx.t("flow.builder")} />
+
 			<Tabs
 				tabs={["puzzles", "packs"]}
 				labels={{

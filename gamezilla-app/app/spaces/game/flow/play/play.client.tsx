@@ -63,7 +63,7 @@ const updateFlowPlayUI: ClientModule["update"] = (input) => {
 const updateFlowPackList: ClientModule["update"] = (input) => {
 	const updated = FlowPackListClient.update({
 		ctx: input.ctx,
-		model: {...input.model.packList, packs: input.model.flowPacks},
+		model: { ...input.model.packList, packs: input.model.flowPacks },
 		msg: input.msg?.t === "flow-pack-list" ? input.msg.c : null,
 		msgServer:
 			input.msgServer?.t === "flow-pack-list" ? input.msgServer.c : null,
@@ -128,9 +128,7 @@ export const ViewGame: ClientModule["View"] = (input) => {
 const View: ClientModule["View"] = (input) => {
 	return (
 		<div className="w-full h-full flex-1 flex flex-col">
-			<ViewScreenTitle
-				title={input.ctx.t('flow.play')}
-			/>
+			<ViewScreenTitle title={input.ctx.t("flow.play")} />
 			<FlowPackListClient.View
 				ctx={input.ctx}
 				dispatch={(c) => input.dispatch({ t: "flow-pack-list", c })}
