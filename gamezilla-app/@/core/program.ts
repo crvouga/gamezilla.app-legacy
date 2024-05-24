@@ -11,7 +11,7 @@ import type { Sub } from "./sub";
 type MaybePromise<T> = T | Promise<T>;
 
 export type Program<TModel, TMsg, TCtx> = {
-	getCtx: () => MaybePromise<TCtx>;
+	ctx: () => MaybePromise<TCtx>;
 
 	init: (input: {
 		ctx: TCtx;
@@ -102,7 +102,7 @@ export async function run<TModel, TMsg, TCtx>(
 			return;
 		}
 		try {
-			const ctx = await program.getCtx();
+			const ctx = await program.ctx();
 
 			// This is so we don't overwrite ongoing updates
 			if (isUpdating) {
@@ -136,7 +136,7 @@ export async function run<TModel, TMsg, TCtx>(
 		}
 	}
 
-	const ctx = await program.getCtx();
+	const ctx = await program.ctx();
 
 	const init = await program.init({ ctx });
 
@@ -148,7 +148,7 @@ export async function run<TModel, TMsg, TCtx>(
 	const updateDebugger = await program.debugger?.(
 		model,
 		async function debuggerSetModel(modelNew) {
-			const ctx = await program.getCtx();
+			const ctx = await program.ctx();
 
 			// @ts-expect-error
 			model = modelNew;

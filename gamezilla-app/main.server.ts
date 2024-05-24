@@ -19,7 +19,7 @@ const main = async () => {
 	});
 
 	await ProgramImpure.run({
-		getCtx: AppServer.getCtx,
+		ctx: AppServer.ctx,
 
 		init: (input) => AppServer.init({ ...input, deps }),
 

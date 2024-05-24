@@ -136,7 +136,7 @@ export type Ctx = {
 	navigatorLanguage: LanguageCodeISO_639_1;
 };
 
-export const getCtx = (): Ctx => {
+export const ctx = (): Ctx => {
 	return {
 		now: Posix.now(),
 		location: Browser.location(),
