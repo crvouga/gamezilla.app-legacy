@@ -2,7 +2,7 @@ import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import type { WithEventMeta } from "../../@/event";
 import { BuilderCore } from "./builder/builder.core";
 import type { ModelCore, MsgCore } from "./flow.types";
-import * as Play from "./play/play.types";
+import { PlayCore } from "./play/play.core";
 
 export const initCore = () => {
 	return { t: null };
@@ -23,7 +23,7 @@ export const updateCore = ({
 				case "play": {
 					return {
 						t: "play",
-						c: Play.updateCore({
+						c: PlayCore.updateCore({
 							ctx,
 							msgCore: msgCore.c,
 							modelCore: modelCore.c,
@@ -67,7 +67,7 @@ export const updateCore = ({
 				case "play": {
 					return {
 						t: "play",
-						c: Play.initCore({ ctx }),
+						c: PlayCore.initCore({ ctx }),
 					};
 				}
 

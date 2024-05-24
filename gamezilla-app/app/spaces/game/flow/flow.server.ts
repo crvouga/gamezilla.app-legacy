@@ -15,8 +15,8 @@ import type {
 	MsgToClient,
 	MsgToServer,
 } from "./flow.types";
+import { PlayCore } from "./play/play.core";
 import { PlayServer } from "./play/play.server";
-import * as Play from "./play/play.types";
 
 type ServerModule = GameServerModule<{
 	Model: ModelServer;
@@ -93,7 +93,7 @@ const updatePlay: ServerModule["update"] = async (input) => {
 		modelCore:
 			input.modelCore.t === "play"
 				? input.modelCore.c
-				: Play.initCore({ ctx: input.ctx }),
+				: PlayCore.initCore({ ctx: input.ctx }),
 		model: input.model.t === "play" ? input.model.c : PlayServer.init,
 		msgCmd: input.msgCmd,
 		msgEvt: input.msgEvt,

@@ -1,11 +1,8 @@
 import { p } from "gamezilla-app/@/core/parser";
-import type { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
-import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import { FlowVariant, FlowVariantUIPlay } from "../@/flow";
 import { FlowPack, FlowPackList } from "../@/flow-pack";
-import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
-import { FlowPuzzle } from "../@/flow-puzzle";
 import { FlowPackId } from "../@/flow-pack/flow-pack-id";
+import { FlowPuzzle } from "../@/flow-puzzle";
 import { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
 
 //
@@ -67,34 +64,3 @@ export const ModelCore = p.obj({
 });
 export type ModelCore = p.Infer<typeof ModelCore>;
 
-type Module = GameCoreModule<{
-	Ctx: SpaceCtx;
-	ModelCore: ModelCore;
-	MsgCore: MsgCore;
-}>;
-
-export const initCore: Module["initCore"] = () => {
-	const flow = samples["8x8"][1];
-	return {
-		play: FlowVariantUIPlay.init({
-			flow,
-		}),
-		flow,
-	};
-};
-
-export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
-	switch (msgCore.t) {
-		case "flow-play-ui": {
-			const gridPlayNew = FlowVariantUIPlay.update({
-				msg: msgCore.c,
-				model: modelCore.play,
-				flow: modelCore.flow,
-			});
-			return { play: gridPlayNew, flow: modelCore.flow };
-		}
-		default: {
-			return modelCore;
-		}
-	}
-};

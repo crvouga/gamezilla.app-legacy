@@ -3,7 +3,8 @@ import { expectByText } from "gamezilla-app/@/vdom/vdom-testing";
 import { SpaceClientFixture } from "gamezilla-app/app/spaces/@/testing/client";
 import { FlowClientCtx } from "../@/flow-ctx";
 import { PlayClient } from "./play.client";
-import { ModelClient, initCore } from "./play.types";
+import { ModelClient } from "./play.types";
+import { PlayCore } from "./play.core";
 
 const Fixture = async () => {
 	const f = await SpaceClientFixture();
@@ -13,7 +14,7 @@ const Fixture = async () => {
 		flowPacks: {},
 		flowPuzzles: {},
 	};
-	const initialCore = initCore({ ctx });
+	const initialCore = PlayCore.initCore({ ctx });
 	const render = (model: ModelClient = PlayClient.init) => {
 		const vdom = (
 			<PlayClient.View
