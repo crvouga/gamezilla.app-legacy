@@ -62,7 +62,7 @@ export const MsgCore = p.or(
 		c: FlowVariantUIPlay.Msg,
 	}),
 	p.obj({
-		t: p.l("user-clicked-pack-list-item"),
+		t: p.l("user-clicked-open-pack-list-item"),
 		pack: FlowPack,
 	}),
 	p.obj({

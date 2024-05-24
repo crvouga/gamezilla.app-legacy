@@ -33,7 +33,7 @@ export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
 			});
 			return { ...modelCore, play: gridPlayNew };
 		}
-		case "user-clicked-pack-list-item": {
+		case "user-clicked-open-pack-list-item": {
 			return {
 				...modelCore,
 				screen: {

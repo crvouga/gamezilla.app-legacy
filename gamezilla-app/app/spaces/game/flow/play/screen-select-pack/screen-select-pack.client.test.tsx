@@ -24,7 +24,7 @@ describe(import.meta.file, () => {
 		const updated = f.update(f.initial, [
 			{
 				msg: {
-					t: "user-clicked-pack-list-item",
+					t: "user-clicked-open-pack-list-item",
 					pack,
 				},
 			},
@@ -38,7 +38,7 @@ describe(import.meta.file, () => {
 		const updated = f.update(f.initial, [
 			{
 				msgCore: {
-					t: "user-clicked-pack-list-item",
+					t: "user-clicked-open-pack-list-item",
 					pack,
 					eventId: EventId.generate(),
 					happenedAt: LamportTimestamp.fromNumber(0),

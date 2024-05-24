@@ -16,7 +16,7 @@ const update: ClientModule["update"] = (input) => {
 
 const updateFromMsg: ClientModule["update"] = (input) => {
 	switch (input.msg?.t) {
-		case "user-clicked-pack-list-item": {
+		case "user-clicked-open-pack-list-item": {
 			return {
 				model: input.model,
 				msgCore: [withId(input.msg)],
@@ -32,7 +32,7 @@ const updateFromMsg: ClientModule["update"] = (input) => {
 
 const updateFromMsgCore: ClientModule["update"] = (input) => {
 	switch (input.msgCore?.t) {
-		case "user-clicked-pack-list-item": {
+		case "user-clicked-open-pack-list-item": {
 			return {
 				model: input.model,
 				msgCmd: [playSound(APP_SOUND.navForwardMin)],
@@ -56,7 +56,7 @@ const View: ClientModule["View"] = (input) => {
 				model={{ ...input.model.packList, packs: input.model.flowPacks }}
 				emits={{
 					clickedPackItem(pack) {
-						input.dispatch({ t: "user-clicked-pack-list-item", pack });
+						input.dispatch({ t: "user-clicked-open-pack-list-item", pack });
 					},
 				}}
 			/>

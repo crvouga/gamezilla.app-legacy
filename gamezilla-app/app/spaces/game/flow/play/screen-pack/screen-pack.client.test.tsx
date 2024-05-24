@@ -9,7 +9,7 @@ describe(import.meta.file, () => {
 		const output = f.update(f.initial, [
 			{
 				msg: {
-					t: "user-clicked-pack-list-item",
+					t: "user-clicked-open-pack-list-item",
 					pack: await FlowPack.random(),
 				},
 			},
@@ -24,7 +24,7 @@ describe(import.meta.file, () => {
 		const output = f.update(f.initial, [
 			{
 				msg: {
-					t: "user-clicked-pack-list-item",
+					t: "user-clicked-open-pack-list-item",
 					pack,
 				},
 			},
@@ -39,7 +39,7 @@ describe(import.meta.file, () => {
 		const output = f.update(f.initial, [
 			{
 				msg: {
-					t: "user-clicked-pack-list-item",
+					t: "user-clicked-open-pack-list-item",
 					pack,
 				},
 			},

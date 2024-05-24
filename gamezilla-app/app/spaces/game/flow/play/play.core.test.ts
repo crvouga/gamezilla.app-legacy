@@ -8,7 +8,7 @@ describe(import.meta.file, () => {
 		const before = f.init;
 		const after = f.update(before, [
 			{
-				t: "user-clicked-pack-list-item",
+				t: "user-clicked-open-pack-list-item",
 				pack: await FlowPack.random(),
 			},
 		]);
@@ -21,7 +21,7 @@ describe(import.meta.file, () => {
 		const f = await CoreFixture();
 		const before = f.update(f.init, [
 			{
-				t: "user-clicked-pack-list-item",
+				t: "user-clicked-open-pack-list-item",
 				pack: await FlowPack.random(),
 			},
 		]);
