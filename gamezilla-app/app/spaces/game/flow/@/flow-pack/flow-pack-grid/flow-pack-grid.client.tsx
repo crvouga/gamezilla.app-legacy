@@ -17,7 +17,7 @@ import {
 } from "./flow-pack-grid.core";
 
 type Ctx = SpaceClientCtx & {
-	pack?: FlowPack | null;
+	pack: FlowPack | null;
 };
 
 type ClientModule = AppClientModule<{
@@ -154,7 +154,10 @@ const RequestTimeout: Pick<ClientModule, "update" | "subscriptions"> = {
 export const FlowPackGridClient: Pick<
 	ClientModule,
 	"View" | "update" | "subscriptions" | "init"
-> = {
+> & {
+	initClient: ModelClient;
+} = {
+	initClient,
 	init() {
 		return {
 			model: initClient,

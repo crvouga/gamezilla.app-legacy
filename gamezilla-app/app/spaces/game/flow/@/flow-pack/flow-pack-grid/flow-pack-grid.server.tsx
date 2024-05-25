@@ -5,7 +5,8 @@ import type {
 	SpaceServerEvent,
 } from "gamezilla-app/app/spaces/@/space";
 import type { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
-import type { FlowServerDeps } from "../../../builder/builder.types";
+import { IFlowPuzzleDb } from "../../flow-puzzle";
+import { IFlowPackDb } from "../flow-pack-db";
 import type {
 	ModelServer,
 	MsgServer,
@@ -21,8 +22,13 @@ type ServerModule = AppServerModule<{
 	MsgCmdOut: SpaceServerCmd<MsgToClient>;
 	MsgToClient: MsgToClient;
 	MsgToServer: MsgToServer;
-	Deps: FlowServerDeps;
+	Deps: ServerDeps;
 }>;
+
+type ServerDeps = {
+	flowPuzzleDb: IFlowPuzzleDb;
+	flowPackDb: IFlowPackDb;
+};
 
 const ListPuzzlesById: Pick<ServerModule, "update"> = {
 	async update(input) {

@@ -52,6 +52,7 @@ export const translations: Text = {
 	"spaces.see-profile": "प्रोफ़ाइल देखें",
 	host: "मेज़बान",
 	you: "तुम",
+	"flow.flow": "फ्लो",
 	"flow.play": "खेलें",
 	"flow.builder": "निर्माता",
 	"lang.language": "भाषा",

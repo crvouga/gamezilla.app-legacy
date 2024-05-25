@@ -14,6 +14,8 @@ import type {
 	MsgToClient,
 	MsgToServer,
 } from "./play.types";
+import { FlowPackGridServer } from "../@/flow-pack/flow-pack-grid/flow-pack-grid.server";
+import { FlowPuzzleDb, IFlowPuzzleDb } from "../@/flow-puzzle";
 
 type ServerModule = GameServerModule<{
 	Model: ModelServer;
@@ -27,6 +29,7 @@ type ServerModule = GameServerModule<{
 	MsgCmdOut: SpaceServerCmd<MsgToClient>;
 	Deps: {
 		flowPackDb: IFlowPackDb;
+		flowPuzzleDb: IFlowPuzzleDb;
 	};
 }>;
 
@@ -37,8 +40,10 @@ const init: ServerModule["init"] = async () => {
 };
 
 const update: ServerModule["update"] = async (input) => {
-	return GameServerModule.andThen({ model: input.model }, (model) =>
-		updateFlowPackList({ ...input, model }),
+	return GameServerModule.andThen(
+		{ model: input.model },
+		(model) => updateFlowPackList({ ...input, model }),
+		(model) => updateFlowPackGrid({ ...input, model }),
 	);
 };
 
@@ -64,6 +69,29 @@ const updateFlowPackList: ServerModule["update"] = async (input) => {
 	};
 };
 
+const updateFlowPackGrid: ServerModule["update"] = async (input) => {
+	const updated = await FlowPackGridServer.update({
+		ctx: input.ctx,
+		deps: input.deps,
+		model: {},
+		msg: input.msg?.t === "flow-pack-grid" ? input.msg.c : null,
+		msgClient:
+			input.msgClient?.t === "flow-pack-grid"
+				? { ...input.msgClient, ...input.msgClient.c }
+				: null,
+		msgCmd: input.msgCmd,
+		msgEvt: input.msgEvt,
+	});
+
+	return {
+		model: input.model,
+		eff: Eff.tag("flow-pack-grid", updated.eff),
+		msgCmd: SpaceServerCmd.tag("flow-pack-grid", updated.msgCmd),
+		msgCore: [],
+		msgEvt: updated.msgEvt,
+	};
+};
+
 const subscriptions: ServerModule["subscriptions"] = async () => {
 	return Sub.None;
 };
@@ -75,6 +103,10 @@ export const PlayServer: ServerModule = {
 	deps: async (input) => {
 		return {
 			flowPackDb: FlowPackDb({
+				t: "db-conn-sql",
+				dbConnSql: input.ctx.dbConnSql,
+			}),
+			flowPuzzleDb: FlowPuzzleDb({
 				t: "db-conn-sql",
 				dbConnSql: input.ctx.dbConnSql,
 			}),

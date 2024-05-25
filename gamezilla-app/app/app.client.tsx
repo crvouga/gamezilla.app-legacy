@@ -256,7 +256,7 @@ export const init = (input: {
 //
 //
 
-const SHOULD_LOG = false;
+const SHOULD_LOG = true;
 
 const log = (...msg: unknown[]) => {
 	if (SHOULD_LOG) {
@@ -304,7 +304,11 @@ const updateLoop = (deps: Deps, ctx: Ctx, acc: Output): Output => {
 	const [msgCmd, ...msgCmdRest] = acc.msgCmd;
 
 	if (msgCmd) {
-		log("[msgCmd]", toMsgType(msgCmd));
+		if (msgCmd.t === 'wire') {
+			log("[msgCmd]", toMsgType(msgCmd), toMsgType(msgCmd.c.msg));	
+		} else {
+			log("[msgCmd]", toMsgType(msgCmd));
+		}
 		const updatedCmd = updateChild({
 			deps,
 			ctx,

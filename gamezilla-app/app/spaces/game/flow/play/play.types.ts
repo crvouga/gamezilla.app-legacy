@@ -8,6 +8,7 @@ import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-c
 import { FlowClientCtx } from "../@/flow-ctx";
 import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
 import { SpaceClientEvent } from "gamezilla-app/app/spaces/@/space";
+import { FlowPackGrid } from "../@/flow-pack/flow-pack-grid";
 
 //
 //
@@ -17,11 +18,12 @@ import { SpaceClientEvent } from "gamezilla-app/app/spaces/@/space";
 //
 
 export type ModelClient = {
-	packList: FlowPackList.ModelClient;
-	play: FlowVariantUIPlay.Model;
 	flow: FlowVariant.Model;
+	flowUIPlay: FlowVariantUIPlay.Model;
 	flowPuzzles: { [flowPuzzleId: FlowPuzzleId]: FlowPuzzle };
 	flowPacks: { [flowPackId: FlowPackId]: FlowPack };
+	flowPackGrid: FlowPackGrid.ModelClient;
+	flowPackList: FlowPackList.ModelClient;
 };
 
 export const ModelServer = p.obj({});
@@ -39,22 +41,41 @@ export type MsgClient =
 	| {
 			t: "flow-pack-list";
 			c: FlowPackList.MsgClient;
+	  }
+	| {
+			t: "flow-pack-grid";
+			c: FlowPackGrid.MsgClient;
 	  };
 
-export type MsgServer = {
-	t: "flow-pack-list";
-	c: FlowPackList.MsgServer;
-};
+export type MsgServer =
+	| {
+			t: "flow-pack-list";
+			c: FlowPackList.MsgServer;
+	  }
+	| {
+			t: "flow-pack-grid";
+			c: FlowPackGrid.MsgServer;
+	  };
 
-export type MsgToServer = {
-	t: "flow-pack-list";
-	c: FlowPackList.MsgToServer;
-};
+export type MsgToServer =
+	| {
+			t: "flow-pack-list";
+			c: FlowPackList.MsgToServer;
+	  }
+	| {
+			t: "flow-pack-grid";
+			c: FlowPackGrid.MsgToServer;
+	  };
 
-export type MsgToClient = {
-	t: "flow-pack-list";
-	c: FlowPackList.MsgToClient;
-};
+export type MsgToClient =
+	| {
+			t: "flow-pack-list";
+			c: FlowPackList.MsgToClient;
+	  }
+	| {
+			t: "flow-pack-grid";
+			c: FlowPackGrid.MsgToClient;
+	  };
 
 export const MsgCore = p.or(
 	p.obj({

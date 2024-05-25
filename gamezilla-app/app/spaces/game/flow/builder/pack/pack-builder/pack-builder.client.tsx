@@ -505,7 +505,7 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 
 const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
 	update(input) {
-		const pack = input.modelCore.packBuilder?.pack;
+		const pack = input.modelCore.packBuilder?.pack ?? null;
 
 		const ctx = { ...input.ctx, pack };
 
@@ -547,7 +547,7 @@ const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
 		return Sub.tag(
 			"pack-builder.flow-pack-grid",
 			FlowPackGridClient.subscriptions({
-				ctx: { ...input.ctx, pack },
+				ctx: { ...input.ctx, pack: pack ?? null},
 				model: input.model.packBuilder.flowPackPuzzleGrid,
 			}),
 		);
@@ -640,7 +640,7 @@ export const PackBuilderClient: Pick<
 
 		return (
 			<FlowPackGridClient.View
-				ctx={{ ...input.ctx, pack: modelCore.packBuilder?.pack }}
+				ctx={{ ...input.ctx, pack: modelCore.packBuilder?.pack ?? null }}
 				model={model.packBuilder.flowPackPuzzleGrid}
 				dispatch={(c) =>
 					input.dispatch({ t: "pack-builder.flow-pack-grid", c })

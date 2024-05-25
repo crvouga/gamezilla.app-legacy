@@ -11,12 +11,14 @@ import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
 import { ClientModule } from "./play.types";
 import { ScreenPackClient } from "./screen-pack/screen-pack.client";
 import { SelectPackScreenClient } from "./screen-select-pack/screen-select-pack.client";
+import { FlowPackGridClient } from "../@/flow-pack/flow-pack-grid/flow-pack-grid.client";
 
 const flow = samples["8x8"][0];
 const init: ClientModule["init"] = {
-	play: FlowVariantUIPlay.init({ flow }),
+	flowUIPlay: FlowVariantUIPlay.init({ flow }),
 	flow,
-	packList: FlowPackListClient.initClient,
+	flowPackList: FlowPackListClient.initClient,
+	flowPackGrid: FlowPackGridClient.initClient,
 	flowPacks: {},
 	flowPuzzles: {},
 };
@@ -26,6 +28,7 @@ const update: ClientModule["update"] = (input) => {
 		{ model: input.model },
 		(model) => updateFlowPackList({ ...input, model }),
 		(model) => updateFlowPlayUI({ ...input, model }),
+		(model) => updateFlowPackGrid({ ...input, model }),
 		(model) => SelectPackScreenClient.update({ ...input, model }),
 		(model) => ScreenPackClient.update({ ...input, model }),
 	);
@@ -45,7 +48,7 @@ const updateFlowPlayUI: ClientModule["update"] = (input) => {
 const updateFlowPackList: ClientModule["update"] = (input) => {
 	const updated = FlowPackListClient.update({
 		ctx: input.ctx,
-		model: { ...input.model.packList, packs: input.model.flowPacks },
+		model: { ...input.model.flowPackList, packs: input.model.flowPacks },
 		msg: input.msg?.t === "flow-pack-list" ? input.msg.c : null,
 		msgServer:
 			input.msgServer?.t === "flow-pack-list" ? input.msgServer.c : null,
@@ -56,7 +59,7 @@ const updateFlowPackList: ClientModule["update"] = (input) => {
 	return {
 		model: {
 			...input.model,
-			packList: { ...updated.model, packs: {} },
+			flowPackList: { ...updated.model, packs: {} },
 			flowPacks: updated.model.packs,
 		},
 		eff: Eff.tag("flow-pack-list", updated.eff),
@@ -66,8 +69,37 @@ const updateFlowPackList: ClientModule["update"] = (input) => {
 	};
 };
 
-const subscriptions: ClientModule["subscriptions"] = () => {
-	return Sub.None;
+const updateFlowPackGrid: ClientModule["update"] = (input) => {
+	const updated = FlowPackGridClient.update({
+		ctx: {...input.ctx, pack: input.modelCore.screen.t === 'pack' ? input.modelCore.screen.pack : null},
+		model: { ...input.model.flowPackGrid, puzzles: input.model.flowPuzzles },
+		msg: input.msg?.t === "flow-pack-grid" ? input.msg.c : null,
+		msgServer:
+			input.msgServer?.t === "flow-pack-grid" ? input.msgServer.c : null,
+		msgEvt: input.msgEvt,
+		msgCmd: input.msgCmd,
+	});	
+	return {
+		model: {
+			...input.model,
+			flowPackGrid: { ...updated.model, puzzles: {} },
+			flowPuzzles: updated.model.puzzles,
+		},
+		eff: Eff.tag("flow-pack-grid", updated.eff),
+		msgEvt: updated.msgEvt,
+		msgCmd: SpaceClientCmd.tag("flow-pack-grid", updated.msgCmd),
+		msgCore: [],
+	};
+};
+
+const subscriptions: ClientModule["subscriptions"] = (input) => {
+	return Sub.tag(
+		"flow-pack-grid",
+		FlowPackGridClient.subscriptions({
+			ctx: {...input.ctx, pack: null},
+			model: input.model.flowPackGrid,
+		}),
+	);
 };
 
 export const ViewGame: ClientModule["View"] = (input) => {

@@ -61,6 +61,7 @@ export const PubSub = <T>({
 	});
 
 	return {
+		_last: null,
 		publish(msg) {
 			const payload = encode(msg);
 			dbConnSql.query(
