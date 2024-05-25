@@ -10,8 +10,9 @@ import { FlowPackListClient } from "../@/flow-pack";
 import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
 import { ClientModule } from "./play.types";
 import { ScreenPackClient } from "./screen-pack/screen-pack.client";
-import { SelectPackScreenClient } from "./screen-select-pack/screen-select-pack.client";
+import { ScreenSelectPackClient } from "./screen-select-pack/screen-select-pack.client";
 import { FlowPackGridClient } from "../@/flow-pack/flow-pack-grid/flow-pack-grid.client";
+import { ScreenPuzzleClient } from "./screen-puzzle/screen-puzzle.client";
 
 const flow = samples["8x8"][0];
 const init: ClientModule["init"] = {
@@ -29,7 +30,8 @@ const update: ClientModule["update"] = (input) => {
 		(model) => updateFlowPackList({ ...input, model }),
 		(model) => updateFlowPlayUI({ ...input, model }),
 		(model) => updateFlowPackGrid({ ...input, model }),
-		(model) => SelectPackScreenClient.update({ ...input, model }),
+		(model) => ScreenPuzzleClient.update({ ...input, model }),
+		(model) => ScreenSelectPackClient.update({ ...input, model }),
 		(model) => ScreenPackClient.update({ ...input, model }),
 	);
 };
@@ -74,7 +76,7 @@ const updateFlowPackGrid: ClientModule["update"] = (input) => {
 		ctx: {
 			...input.ctx,
 			pack:
-				input.modelCore.screen.t === "pack"
+				input.modelCore.screen.t === "screen-pack"
 					? input.modelCore.screen.pack
 					: null,
 		},
@@ -147,14 +149,21 @@ export const ViewGame: ClientModule["View"] = (input) => {
 
 const View: ClientModule["View"] = (input) => {
 	switch (input.modelCore.screen.t) {
-		case "pack": {
+		case "screen-pack": {
 			return <ScreenPackClient.View {...input} />;
 		}
-		case "select-pack": {
-			return <SelectPackScreenClient.View {...input} />;
+
+		case "screen-select-pack": {
+			return <ScreenSelectPackClient.View {...input} />;
 		}
+
+		case "screen-puzzle": {
+			return <ScreenPuzzleClient.View {...input} />;
+		}
+
 		default: {
-			return null;
+			const never: never = input.modelCore.screen;
+			return never;
 		}
 	}
 };

@@ -89,17 +89,29 @@ export const MsgCore = p.or(
 	p.obj({
 		t: p.l("user-clicked-exit-pack-button"),
 	}),
+	p.obj({
+		t: p.l("user-clicked-open-puzzle-grid-item"),
+		puzzle: FlowPuzzle,
+	}),
+	p.obj({
+		t: p.l("user-clicked-exit-puzzle-button"),
+	}),
 );
 
 export type MsgCore = p.Infer<typeof MsgCore>;
 
 const Screen = p.or(
 	p.obj({
-		t: p.l("select-pack"),
+		t: p.l("screen-select-pack"),
 	}),
 	p.obj({
-		t: p.l("pack"),
+		t: p.l("screen-pack"),
 		pack: FlowPack,
+	}),
+	p.obj({
+		t: p.l("screen-puzzle"),
+		pack: FlowPack,
+		puzzle: FlowPuzzle,
 	}),
 );
 

@@ -16,12 +16,13 @@ const initial = (_pack: FlowPack) => {
 	};
 };
 
-const userObversedGrid = (ctx: SpaceClientCtx) => (model: ModelClient) => {
+type Ctx = SpaceClientCtx & {
+	pack: FlowPack | null;
+};
+
+const userObversedGrid = (ctx: Ctx) => (model: ModelClient) => {
 	return FlowPackGridClient.update({
-		ctx: {
-			...ctx,
-			pack: null,
-		},
+		ctx,
 		model,
 		msg: {
 			t: "user-observed-grid",
@@ -30,12 +31,9 @@ const userObversedGrid = (ctx: SpaceClientCtx) => (model: ModelClient) => {
 };
 
 const serverListedPuzzlesByIdErr =
-	(ctx: SpaceClientCtx, error: string) => (model: ModelClient) => {
+	(ctx: Ctx, error: string) => (model: ModelClient) => {
 		return FlowPackGridClient.update({
-			ctx: {
-				...ctx,
-				pack: null,
-			},
+			ctx,
 			model,
 			msgServer: {
 				t: "listed-puzzles-by-id",
@@ -48,12 +46,9 @@ const serverListedPuzzlesByIdErr =
 	};
 
 const serverListedPuzzlesByIdOk =
-	(ctx: SpaceClientCtx, puzzles: FlowPuzzle[]) => (model: ModelClient) => {
+	(ctx: Ctx, puzzles: FlowPuzzle[]) => (model: ModelClient) => {
 		return FlowPackGridClient.update({
-			ctx: {
-				...ctx,
-				pack: null,
-			},
+			ctx,
 			model,
 			msgServer: {
 				t: "listed-puzzles-by-id",
@@ -70,14 +65,13 @@ const serverListedPuzzlesByIdOk =
 		});
 	};
 
-const elapsed =
-	(ctx: SpaceClientCtx, timeSpan: TimeSpan) => (model: ModelClient) => {
-		return FlowPackGridClient.update({
-			ctx: { ...ctx, now: Posix.future(ctx.now, timeSpan), pack: null },
-			model,
-			msg: { t: "elapsed" },
-		});
-	};
+const elapsed = (ctx: Ctx, timeSpan: TimeSpan) => (model: ModelClient) => {
+	return FlowPackGridClient.update({
+		ctx: { ...ctx, now: Posix.future(ctx.now, timeSpan) },
+		model,
+		msg: { t: "elapsed" },
+	});
+};
 
 const setup = async (ctx: SpaceClientCtx) => {
 	const puzzle = await FlowPuzzle.create({

@@ -35,6 +35,14 @@ export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
 					throw new Error(`No element with text ${text}`);
 				}
 			},
+			getByRoleAndText(role, text) {
+				try {
+					const element = within(baseElement).getByRole(role, { name: text });
+					return createTestNode(element);
+				} catch {
+					throw new Error(`No element with role ${role} and text ${text}`);
+				}
+			},
 		};
 	};
 

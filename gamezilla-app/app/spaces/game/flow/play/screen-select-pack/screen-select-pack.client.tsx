@@ -65,7 +65,7 @@ const View: ClientModule["View"] = (input) => {
 	);
 };
 
-export const SelectPackScreenClient = {
+export const ScreenSelectPackClient = {
 	update,
 	View,
 };

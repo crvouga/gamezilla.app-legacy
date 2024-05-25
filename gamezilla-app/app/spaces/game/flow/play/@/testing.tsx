@@ -33,16 +33,6 @@ export const FlowPlayClientFixture = async () => {
 		return { ...rendered, msgs };
 	};
 
-	const toModelCore = (outputs: Omit<Output, "modelCore">[]): ModelCore => {
-		return outputs
-			.flatMap((output) => output.msgCore ?? [])
-			.reduce(
-				(modelCore, msgCore) =>
-					PlayCore.updateCore({ ctx: f.ctx, modelCore, msgCore }),
-				initCore,
-			);
-	};
-
 	const updates = (output: Output, msgs: Msg[]): NonEmpty<Output> => {
 		const outputs: NonEmpty<Output> = [output];
 		for (const msg of msgs) {
@@ -50,12 +40,17 @@ export const FlowPlayClientFixture = async () => {
 			const nextOutput = PlayClient.update({
 				model: lastOutput.model,
 				ctx: f.ctx,
-				modelCore: toModelCore(outputs),
+				modelCore: lastOutput.modelCore,
 				...msg,
 			});
+			const nextModelCore = (nextOutput.msgCore ?? []).reduce(
+				(modelCore, msgCore) =>
+					PlayCore.updateCore({ ctx: f.ctx, modelCore, msgCore }),
+				lastOutput.modelCore,
+			);
 			outputs.push({
 				...nextOutput,
-				modelCore: toModelCore([...outputs, nextOutput]),
+				modelCore: nextModelCore,
 			});
 		}
 		return outputs;

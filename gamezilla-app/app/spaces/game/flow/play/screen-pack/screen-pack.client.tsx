@@ -8,10 +8,11 @@ import { FlowPackGridClient } from "../../@/flow-pack/flow-pack-grid/flow-pack-g
 
 const update: ClientModule["update"] = (input) => {
 	switch (input.msg?.t) {
-		case "user-clicked-exit-pack-button": {
+		case "user-clicked-exit-pack-button":
+		case "user-clicked-open-puzzle-grid-item": {
 			return {
 				model: input.model,
-				msgCore: [withId({ t: "user-clicked-exit-pack-button" })],
+				msgCore: [withId(input.msg)],
 			};
 		}
 	}
@@ -23,6 +24,12 @@ const update: ClientModule["update"] = (input) => {
 				msgCmd: [playSound(APP_SOUND.navBackwardMin)],
 			};
 		}
+		case "user-clicked-open-puzzle-grid-item": {
+			return {
+				model: input.model,
+				msgCmd: [playSound(APP_SOUND.navForwardMin)],
+			};
+		}
 	}
 
 	return {
@@ -31,7 +38,7 @@ const update: ClientModule["update"] = (input) => {
 };
 
 const View: ClientModule["View"] = (input) => {
-	if (input.modelCore.screen.t !== "pack") {
+	if (input.modelCore.screen.t !== "screen-pack") {
 		return null;
 	}
 	return (
@@ -47,7 +54,7 @@ const View: ClientModule["View"] = (input) => {
 					}}
 					slots={{
 						grid() {
-							if (input.modelCore.screen.t !== "pack") {
+							if (input.modelCore.screen.t !== "screen-pack") {
 								return null;
 							}
 							return (

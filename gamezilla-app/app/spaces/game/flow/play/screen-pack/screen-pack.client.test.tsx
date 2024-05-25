@@ -5,10 +5,14 @@ import { FlowPlayClientFixture } from "../@/testing";
 import { EventId } from "gamezilla-app/app/spaces/@/event";
 import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import { didPlaySound } from "gamezilla-app/app/@/client";
+import { FlowPuzzle } from "../../@/flow-puzzle";
 
 const Fixture = async () => {
 	const f = await FlowPlayClientFixture();
-	const pack = await FlowPack.random();
+	const puzzle = await FlowPuzzle.random();
+	const pack = await FlowPack.random({
+		puzzleIds: [puzzle.id],
+	});
 	const initial = f.update(f.initial, [
 		{
 			msg: {
@@ -21,6 +25,7 @@ const Fixture = async () => {
 		...f,
 		initial,
 		pack,
+		puzzle,
 	};
 };
 
@@ -46,7 +51,7 @@ describe(import.meta.file, () => {
 		expect(msg).toEqual({ t: "user-clicked-exit-pack-button" });
 	});
 
-	it("should exit on exit button click", async () => {
+	it("should exit to pack list on exit button pack click", async () => {
 		const f = await Fixture();
 		const output = f.update(f.initial, [
 			{
@@ -55,7 +60,7 @@ describe(import.meta.file, () => {
 				},
 			},
 		]);
-		expect(output.modelCore.screen.t).toBe("select-pack");
+		expect(output.modelCore.screen.t).toBe("screen-select-pack");
 	});
 
 	it("should play nav back sound on exit", async () => {
@@ -72,12 +77,34 @@ describe(import.meta.file, () => {
 		expect(didPlaySound(output)).toBe(true);
 	});
 
-	it("should render puzzles in pack", async () => {
+	it("should open puzzle after clicking grid item", async () => {
 		const f = await Fixture();
-		const rendered = f.render(f.initial);
-		rendered;
+		const output = f.update(f.initial, [
+			{
+				msg: {
+					t: "user-clicked-open-puzzle-grid-item",
+					puzzle: f.puzzle,
+				},
+			},
+		]);
+		expect(output.modelCore.screen.t).toBe("screen-puzzle");
+		if (output.modelCore.screen.t === "screen-puzzle") {
+			expect(output.modelCore.screen.puzzle).toEqual(f.puzzle);
+		}
+	});
 
-		// const cells = rendered.getByRole("")
-		// expect(cells.length).toBe(30);
+	it("should play sound after user opens puzzle", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, [
+			{
+				msgCore: {
+					t: "user-clicked-open-puzzle-grid-item",
+					puzzle: f.puzzle,
+					eventId: EventId.generate(),
+					happenedAt: LamportTimestamp.fromNumber(1),
+				},
+			},
+		]);
+		expect(didPlaySound(output)).toBe(true);
 	});
 });

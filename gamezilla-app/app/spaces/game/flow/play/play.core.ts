@@ -18,7 +18,7 @@ export const initCore: Module["initCore"] = () => {
 		}),
 		flow,
 		screen: {
-			t: "select-pack",
+			t: "screen-select-pack",
 		},
 	};
 };
@@ -37,7 +37,7 @@ export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
 			return {
 				...modelCore,
 				screen: {
-					t: "pack",
+					t: "screen-pack",
 					pack: msgCore.pack,
 				},
 			};
@@ -46,9 +46,42 @@ export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
 			return {
 				...modelCore,
 				screen: {
-					t: "select-pack",
+					t: "screen-select-pack",
 				},
 			};
+		}
+		case "user-clicked-open-puzzle-grid-item": {
+			switch (modelCore.screen.t) {
+				case "screen-pack": {
+					return {
+						...modelCore,
+						screen: {
+							t: "screen-puzzle",
+							pack: modelCore.screen.pack,
+							puzzle: msgCore.puzzle,
+						},
+					};
+				}
+				default: {
+					return modelCore;
+				}
+			}
+		}
+		case "user-clicked-exit-puzzle-button": {
+			switch (modelCore.screen.t) {
+				case "screen-puzzle": {
+					return {
+						...modelCore,
+						screen: {
+							t: "screen-pack",
+							pack: modelCore.screen.pack,
+						},
+					};
+				}
+				default: {
+					return modelCore;
+				}
+			}
 		}
 		default: {
 			return modelCore;
