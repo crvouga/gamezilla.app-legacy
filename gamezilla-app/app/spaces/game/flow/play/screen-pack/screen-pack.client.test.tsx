@@ -107,4 +107,8 @@ describe(import.meta.file, () => {
 		]);
 		expect(didPlaySound(output)).toBe(true);
 	});
+
+	it.todo('should render next puzzle button', async () => {
+		// 
+	})
 });
