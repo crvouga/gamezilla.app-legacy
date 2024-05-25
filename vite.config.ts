@@ -31,4 +31,7 @@ const vDomPlugin = () => {
 export default defineConfig({
 	plugins: [tsconfigPaths(), vDomPlugin()],
 	define: { "process.env": process.env },
+	server: {
+		hmr: false
+	}
 });
