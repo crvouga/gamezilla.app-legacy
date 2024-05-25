@@ -71,14 +71,20 @@ const updateFlowPackList: ClientModule["update"] = (input) => {
 
 const updateFlowPackGrid: ClientModule["update"] = (input) => {
 	const updated = FlowPackGridClient.update({
-		ctx: {...input.ctx, pack: input.modelCore.screen.t === 'pack' ? input.modelCore.screen.pack : null},
+		ctx: {
+			...input.ctx,
+			pack:
+				input.modelCore.screen.t === "pack"
+					? input.modelCore.screen.pack
+					: null,
+		},
 		model: { ...input.model.flowPackGrid, puzzles: input.model.flowPuzzles },
 		msg: input.msg?.t === "flow-pack-grid" ? input.msg.c : null,
 		msgServer:
 			input.msgServer?.t === "flow-pack-grid" ? input.msgServer.c : null,
 		msgEvt: input.msgEvt,
 		msgCmd: input.msgCmd,
-	});	
+	});
 	return {
 		model: {
 			...input.model,
@@ -96,7 +102,7 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 	return Sub.tag(
 		"flow-pack-grid",
 		FlowPackGridClient.subscriptions({
-			ctx: {...input.ctx, pack: null},
+			ctx: { ...input.ctx, pack: null },
 			model: input.model.flowPackGrid,
 		}),
 	);

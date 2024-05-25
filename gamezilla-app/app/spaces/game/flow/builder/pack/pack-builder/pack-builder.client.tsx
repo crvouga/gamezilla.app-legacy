@@ -547,7 +547,7 @@ const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
 		return Sub.tag(
 			"pack-builder.flow-pack-grid",
 			FlowPackGridClient.subscriptions({
-				ctx: { ...input.ctx, pack: pack ?? null},
+				ctx: { ...input.ctx, pack: pack ?? null },
 				model: input.model.packBuilder.flowPackPuzzleGrid,
 			}),
 		);

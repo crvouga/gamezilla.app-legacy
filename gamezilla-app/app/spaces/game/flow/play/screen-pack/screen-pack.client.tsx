@@ -39,7 +39,7 @@ const View: ClientModule["View"] = (input) => {
 			<ViewScreenTitle title={input.modelCore.screen.pack.name} />
 			<div className="flex-1 flex flex-col items-center justify-center">
 				<FlowPackGridClient.View
-					ctx={{...input.ctx, pack: null}}
+					ctx={{ ...input.ctx, pack: null }}
 					dispatch={(c) => input.dispatch({ t: "flow-pack-grid", c })}
 					model={{
 						...input.model.flowPackGrid,

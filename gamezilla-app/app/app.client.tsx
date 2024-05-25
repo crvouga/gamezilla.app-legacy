@@ -304,8 +304,8 @@ const updateLoop = (deps: Deps, ctx: Ctx, acc: Output): Output => {
 	const [msgCmd, ...msgCmdRest] = acc.msgCmd;
 
 	if (msgCmd) {
-		if (msgCmd.t === 'wire') {
-			log("[msgCmd]", toMsgType(msgCmd), toMsgType(msgCmd.c.msg));	
+		if (msgCmd.t === "wire") {
+			log("[msgCmd]", toMsgType(msgCmd), toMsgType(msgCmd.c.msg));
 		} else {
 			log("[msgCmd]", toMsgType(msgCmd));
 		}
