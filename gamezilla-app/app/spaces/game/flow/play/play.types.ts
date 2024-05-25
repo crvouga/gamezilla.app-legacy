@@ -7,8 +7,10 @@ import { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { FlowClientCtx } from "../@/flow-ctx";
 import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
-import { SpaceClientEvent } from "gamezilla-app/app/spaces/@/space";
+import { SpaceClientEvent, SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import { FlowPackGrid } from "../@/flow-pack/flow-pack-grid";
+import { ScreenPuzzleTypes } from "./screen-puzzle";
+import { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
 
 //
 //
@@ -96,10 +98,9 @@ export const MsgCore = p.or(
 	p.obj({
 		t: p.l("user-clicked-open-puzzle-grid-item"),
 		puzzle: FlowPuzzle,
+		puzzleIndex: p.num,
 	}),
-	p.obj({
-		t: p.l("user-clicked-exit-puzzle-button"),
-	}),
+	ScreenPuzzleTypes.MsgCore
 );
 
 export type MsgCore = p.Infer<typeof MsgCore>;
@@ -112,12 +113,7 @@ const Screen = p.or(
 		t: p.l("screen-pack"),
 		flowPack: FlowPack,
 	}),
-	p.obj({
-		t: p.l("screen-puzzle"),
-		flowPack: FlowPack,
-		flowPuzzle: FlowPuzzle,
-		flowPlay: FlowVariantUIPlay.Model,
-	}),
+	ScreenPuzzleTypes.ModelCore,
 );
 
 export const ModelCore = p.obj({
@@ -144,4 +140,11 @@ export type ClientModule = GameClientModule<{
 	Ctx: FlowClientCtx;
 	MsgCmdOut: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
 	MsgEvtIn: SpaceClientEvent;
+}>;
+
+
+export type CoreModule = GameCoreModule<{
+	Ctx: SpaceCtx;
+	ModelCore: ModelCore;
+	MsgCore: MsgCore;
 }>;

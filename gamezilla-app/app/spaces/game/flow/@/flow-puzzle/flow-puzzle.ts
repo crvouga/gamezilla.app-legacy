@@ -1,10 +1,7 @@
 import { Posix } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { UserId } from "gamezilla-app/app/@/data";
-import {
-	FlowVariant,
-	FlowVariantDimensions
-} from "../flow";
+import { FlowVariant, FlowVariantDimensions } from "../flow";
 import { FlowGrid } from "../flow/flow-variant/flow-grid";
 import { FlowPuzzleId } from "./flow-puzzle-id";
 import { FlowPuzzleName } from "./flow-puzzle-name";
@@ -60,11 +57,11 @@ const random = async (input?: {
 				width: 2,
 			}),
 			terminalsByGroupId: {
-				"A": {
+				A: {
 					startId: FlowGrid.positionToNodeId({ x: 0, y: 0 }),
 					groupId: "A",
 					endId: FlowGrid.positionToNodeId({ x: 1, y: 1 }),
-				}
+				},
 			},
 		}),
 	};

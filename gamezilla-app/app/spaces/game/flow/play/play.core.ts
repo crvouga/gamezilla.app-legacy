@@ -1,16 +1,9 @@
-import { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
-import { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import { ModelCore, MsgCore } from "./play.types";
-import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
 import { FlowVariantUIPlay } from "../@/flow";
+import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
+import { CoreModule } from "./play.types";
+import { ScreenPuzzleCore } from "./screen-puzzle/screen-puzzle.core";
 
-type Module = GameCoreModule<{
-	Ctx: SpaceCtx;
-	ModelCore: ModelCore;
-	MsgCore: MsgCore;
-}>;
-
-export const initCore: Module["initCore"] = () => {
+const initCore: CoreModule["initCore"] = () => {
 	const flow = samples["8x8"][1];
 	return {
 		play: FlowVariantUIPlay.init({
@@ -23,7 +16,7 @@ export const initCore: Module["initCore"] = () => {
 	};
 };
 
-export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
+const update: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "flow-play-ui": {
 			const gridPlayNew = FlowVariantUIPlay.update({
@@ -62,45 +55,8 @@ export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
 							flowPlay: FlowVariantUIPlay.init({
 								flow: modelCore.flow,
 							}),
+							puzzleIndex: msgCore.puzzleIndex,
 						},
-					};
-				}
-				default: {
-					return modelCore;
-				}
-			}
-		}
-		case "user-clicked-exit-puzzle-button": {
-			switch (modelCore.screen.t) {
-				case "screen-puzzle": {
-					return {
-						...modelCore,
-						screen: {
-							t: "screen-pack",
-							flowPack: modelCore.screen.flowPack,
-						},
-					};
-				}
-				default: {
-					return modelCore;
-				}
-			}
-		}
-		case "got-puzzle-screen-flow-play-msg": {
-			switch (modelCore.screen.t) {
-				case "screen-puzzle": {
-					
-					const flowPlayNew = FlowVariantUIPlay.update({
-						msg: msgCore.c,
-						model: modelCore.screen.flowPlay,
-						flow: modelCore.screen.flowPuzzle.flow,
-					});
-					return {
-						...modelCore,  
-						screen: {
-							...modelCore.screen,
-							flowPlay: flowPlayNew,
-						}
 					};
 				}
 				default: {
@@ -113,6 +69,11 @@ export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
 		}
 	}
 };
+
+const updates = [update,ScreenPuzzleCore.updateCore]
+const updateCore: CoreModule["updateCore"] = ({ modelCore, msgCore, ctx }) => {
+	return updates.reduce((acc, update) => update({ modelCore: acc, msgCore, ctx }), modelCore);
+}
 
 export const PlayCore = {
 	initCore,

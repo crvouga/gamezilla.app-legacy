@@ -12,7 +12,7 @@ const update: ClientModule["update"] = (input) => {
 				msgCore: [withId(input.msg)],
 			};
 		}
-		case 'got-puzzle-screen-flow-play-msg': {
+		case "got-puzzle-screen-flow-play-msg": {
 			return {
 				model: input.model,
 				msgCore: [withId(input.msg)],
@@ -36,9 +36,11 @@ const View: ClientModule["View"] = (input) => {
 			<div className="flex-1 flex flex-col items-center justify-center">
 				<FlowVariantUIPlay.View
 					flow={flowPuzzle.flow}
-					dispatch={(c) => input.dispatch({ t: "got-puzzle-screen-flow-play-msg", c })}
+					dispatch={(c) =>
+						input.dispatch({ t: "got-puzzle-screen-flow-play-msg", c })
+					}
 					model={flowPlay}
-				/>				
+				/>
 			</div>
 			<ViewBottomBarExitButton
 				ctx={input.ctx}

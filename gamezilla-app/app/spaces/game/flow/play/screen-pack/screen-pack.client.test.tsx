@@ -84,6 +84,7 @@ describe(import.meta.file, () => {
 				msg: {
 					t: "user-clicked-open-puzzle-grid-item",
 					puzzle: f.puzzle,
+					puzzleIndex: 0,
 				},
 			},
 		]);
@@ -102,24 +103,28 @@ describe(import.meta.file, () => {
 					puzzle: f.puzzle,
 					eventId: EventId.generate(),
 					happenedAt: LamportTimestamp.fromNumber(1),
+					puzzleIndex: 0,
 				},
 			},
 		]);
 		expect(didPlaySound(output)).toBe(true);
 	});
 
-	it.todo('should render next puzzle button', async () => {
-		// 
-	})
+	it.todo("should render next puzzle button", async () => {
+		//
+	});
 
-	it.todo('should play sound after user clicks next puzzle button', async () => {
-	})
+	it.todo(
+		"should play sound after user clicks next puzzle button",
+		async () => {},
+	);
 
-	it.todo('should render prev puzzle button', async () => {
-		// 
-	})
+	it.todo("should render prev puzzle button", async () => {
+		//
+	});
 
-	it.todo('should play sound after user clicks prev puzzle button', async () => {
-		
-	})
+	it.todo(
+		"should play sound after user clicks prev puzzle button",
+		async () => {},
+	);
 });

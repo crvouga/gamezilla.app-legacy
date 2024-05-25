@@ -1,0 +1,36 @@
+import { p } from "gamezilla-app/@/core/parser";
+import { FlowVariantUIPlay } from "../../@/flow";
+import { FlowPack } from "../../@/flow-pack";
+import { FlowPuzzle } from "../../@/flow-puzzle";
+
+export const MsgCore = p.or(
+	p.obj({
+		t: p.l("got-puzzle-screen-flow-play-msg"),
+		c: FlowVariantUIPlay.Msg,
+	}),
+	p.obj({
+		t: p.l("user-clicked-exit-puzzle-button"),
+	}),
+	p.obj({
+		t: p.l("user-clicked-next-puzzle-button"),
+		nextPuzzle: FlowPuzzle,
+		nextPuzzleIndex: p.num,
+	}),
+	p.obj({
+		t: p.l("user-clicked-prev-puzzle-button"),
+		prevPuzzle: FlowPuzzle,
+		prevPuzzleIndex: p.num,
+	}),
+);
+
+export type MsgCore = p.Infer<typeof MsgCore>;
+
+export const ModelCore = p.obj({
+	t: p.l("screen-puzzle"),
+	flowPack: FlowPack,
+	flowPuzzle: FlowPuzzle,
+	flowPlay: FlowVariantUIPlay.Model,
+	puzzleIndex: p.num,
+});
+
+export type ModelCore = p.Infer<typeof ModelCore>;

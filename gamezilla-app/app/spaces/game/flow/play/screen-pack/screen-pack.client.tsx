@@ -77,6 +77,7 @@ const View: ClientModule["View"] = (input) => {
 													input.dispatch({
 														t: "user-clicked-open-puzzle-grid-item",
 														puzzle,
+														puzzleIndex: props.index,
 													})
 												}
 											/>

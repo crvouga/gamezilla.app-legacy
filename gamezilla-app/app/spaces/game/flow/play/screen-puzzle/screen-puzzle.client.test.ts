@@ -20,6 +20,7 @@ const Fixture = async () => {
 			msg: {
 				t: "user-clicked-open-puzzle-grid-item",
 				puzzle,
+				puzzleIndex: 0,
 			},
 		},
 	]);

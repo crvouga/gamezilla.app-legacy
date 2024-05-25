@@ -26,7 +26,6 @@ export const distance = (
 	}
 };
 
-
 export const init = (input: {
 	dimensions: FlowVariantDimensions.Model;
 	terminalsByGroupId: Flow.Model["terminalsByGroupId"];
