@@ -125,4 +125,9 @@ describe(import.meta.file, () => {
 			expect(before.screen.flowPlay).not.toEqual(after.screen.flowPlay);
 		}
 	});
+
+	it.todo('should go to next puzzle after the user clicks the next button', async () => {
+	})
+	it.todo('should go to prev puzzle after the user clicks the prev button', async () => {
+	})
 });

@@ -111,4 +111,15 @@ describe(import.meta.file, () => {
 	it.todo('should render next puzzle button', async () => {
 		// 
 	})
+
+	it.todo('should play sound after user clicks next puzzle button', async () => {
+	})
+
+	it.todo('should render prev puzzle button', async () => {
+		// 
+	})
+
+	it.todo('should play sound after user clicks prev puzzle button', async () => {
+		
+	})
 });
