@@ -21,12 +21,12 @@ const View: ClientModule["View"] = (input) => {
 	if (input.modelCore.screen.t !== "screen-puzzle") {
 		return null;
 	}
-	const puzzle = input.modelCore.screen.puzzle;
+	const puzzle = input.modelCore.screen.flowPuzzle;
 	return (
 		<div className="w-full flex flex-col flex-1">
 			<ViewScreenTitle title={puzzle.name} />
 			<div className="flex-1"></div>
-			<ViewBottomBarExitButton ctx={input.ctx} onClick={() => {}} />
+			<ViewBottomBarExitButton ctx={input.ctx} onClick={() => input.dispatch({t: 'user-clicked-exit-puzzle-button'})} />
 		</div>
 	);
 };

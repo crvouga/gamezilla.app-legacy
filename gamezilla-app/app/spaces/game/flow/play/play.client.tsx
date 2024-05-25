@@ -77,7 +77,7 @@ const updateFlowPackGrid: ClientModule["update"] = (input) => {
 			...input.ctx,
 			pack:
 				input.modelCore.screen.t === "screen-pack"
-					? input.modelCore.screen.pack
+					? input.modelCore.screen.flowPack
 					: null,
 		},
 		model: { ...input.model.flowPackGrid, puzzles: input.model.flowPuzzles },

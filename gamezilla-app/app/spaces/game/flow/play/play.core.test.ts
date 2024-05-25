@@ -58,7 +58,7 @@ describe(import.meta.file, () => {
 		expect(before.screen.t).toEqual("screen-pack");
 		expect(after.screen.t).toEqual("screen-puzzle");
 		if (after.screen.t === "screen-puzzle") {
-			expect(after.screen.puzzle.id).toEqual(puzzle.id);
+			expect(after.screen.flowPuzzle.id).toEqual(puzzle.id);
 		}
 	});
 

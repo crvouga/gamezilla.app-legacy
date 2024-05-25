@@ -38,7 +38,7 @@ export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
 				...modelCore,
 				screen: {
 					t: "screen-pack",
-					pack: msgCore.pack,
+					flowPack: msgCore.pack,
 				},
 			};
 		}
@@ -57,8 +57,11 @@ export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
 						...modelCore,
 						screen: {
 							t: "screen-puzzle",
-							pack: modelCore.screen.pack,
-							puzzle: msgCore.puzzle,
+							flowPack: modelCore.screen.flowPack,
+							flowPuzzle: msgCore.puzzle,
+							flowPlay: FlowVariantUIPlay.init({
+								flow: modelCore.flow,
+							})
 						},
 					};
 				}
@@ -74,7 +77,7 @@ export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
 						...modelCore,
 						screen: {
 							t: "screen-pack",
-							pack: modelCore.screen.pack,
+							flowPack: modelCore.screen.flowPack,
 						},
 					};
 				}

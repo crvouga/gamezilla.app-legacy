@@ -43,7 +43,7 @@ const View: ClientModule["View"] = (input) => {
 	}
 	return (
 		<div className="w-full h-full flex-1 flex flex-col">
-			<ViewScreenTitle title={input.modelCore.screen.pack.name} />
+			<ViewScreenTitle title={input.modelCore.screen.flowPack.name} />
 			<div className="flex-1 flex flex-col items-center justify-center">
 				<FlowPackGridClient.View
 					ctx={{ ...input.ctx, pack: null }}
@@ -61,7 +61,7 @@ const View: ClientModule["View"] = (input) => {
 								<FlowPackGridUI.ViewPackPuzzleGrid
 									id="pack-puzzle-grid"
 									onSlideIndexChanged={() => {}}
-									puzzleIds={input.modelCore.screen.pack.puzzleIds}
+									puzzleIds={input.modelCore.screen.flowPack.puzzleIds}
 									renderCell={(props) => {
 										if (!props.puzzleId) {
 											return <FlowPackGridUI.ViewEmptyCell />;
@@ -73,7 +73,7 @@ const View: ClientModule["View"] = (input) => {
 										return (
 											<FlowPackGridUI.ViewPuzzleCell
 												index={props.index}
-												onClick={() => {}}
+												onClick={() => input.dispatch({t: 'user-clicked-open-puzzle-grid-item', puzzle})}
 											/>
 										);
 									}}

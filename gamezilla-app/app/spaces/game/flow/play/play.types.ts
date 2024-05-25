@@ -106,12 +106,13 @@ const Screen = p.or(
 	}),
 	p.obj({
 		t: p.l("screen-pack"),
-		pack: FlowPack,
+		flowPack: FlowPack,
 	}),
 	p.obj({
 		t: p.l("screen-puzzle"),
-		pack: FlowPack,
-		puzzle: FlowPuzzle,
+		flowPack: FlowPack,
+		flowPuzzle: FlowPuzzle,
+		flowPlay: FlowVariantUIPlay.Model
 	}),
 );
 
