@@ -83,6 +83,10 @@ export const MsgCore = p.or(
 		c: FlowVariantUIPlay.Msg,
 	}),
 	p.obj({
+		t: p.l("got-puzzle-screen-flow-play-msg"),
+		c: FlowVariantUIPlay.Msg,
+	}),
+	p.obj({
 		t: p.l("user-clicked-open-pack-list-item"),
 		pack: FlowPack,
 	}),
@@ -112,7 +116,7 @@ const Screen = p.or(
 		t: p.l("screen-puzzle"),
 		flowPack: FlowPack,
 		flowPuzzle: FlowPuzzle,
-		flowPlay: FlowVariantUIPlay.Model
+		flowPlay: FlowVariantUIPlay.Model,
 	}),
 );
 

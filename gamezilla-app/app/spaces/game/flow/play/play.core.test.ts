@@ -2,6 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { FlowPack } from "../@/flow-pack";
 import { CoreFixture } from "./@/testing";
 import { FlowPuzzle } from "../@/flow-puzzle";
+import { Flow } from "../@/flow";
 
 describe(import.meta.file, () => {
 	it("should be able to open pack from list", async () => {
@@ -87,5 +88,41 @@ describe(import.meta.file, () => {
 		]);
 		expect(before.screen.t).toEqual("screen-puzzle");
 		expect(after.screen.t).toEqual("screen-pack");
+	});
+
+	it("should update puzzle screen flow play ui", async () => {
+		const f = await CoreFixture();
+		const puzzle = await FlowPuzzle.random();
+		const terminal = Flow.randomTerminal(puzzle.flow)!;
+		const pack = await FlowPack.random({
+			puzzleIds: [puzzle.id],
+		});
+		const before = f.update(f.init, [
+			{
+				t: "user-clicked-open-pack-list-item",
+				pack,
+			},
+			{
+				t: "user-clicked-open-puzzle-grid-item",
+				puzzle,
+			},
+		]);
+
+		const after = f.update(before, [
+			{
+				t: "got-puzzle-screen-flow-play-msg",
+				c: {
+					t: "pressed-down",
+					nodeId: terminal.startId,
+				},
+			},
+		]);
+
+		if (
+			before.screen.t === "screen-puzzle" &&
+			after.screen.t === "screen-puzzle"
+		) {
+			expect(before.screen.flowPlay).not.toEqual(after.screen.flowPlay);
+		}
 	});
 });

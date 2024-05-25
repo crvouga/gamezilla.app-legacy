@@ -61,7 +61,7 @@ const View = (props: FlowUI.FlowViewProps<FlowGrid.Model>) => {
 
 			<ViewCoordinates {...props} />
 
-			{!props.disabled && (
+			{!Boolean(props.disabled) && (
 				<ViewClickable {...props} draggedOver={draggedOver} />
 			)}
 		</svg>

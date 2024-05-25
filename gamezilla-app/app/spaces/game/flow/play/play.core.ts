@@ -61,7 +61,7 @@ export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
 							flowPuzzle: msgCore.puzzle,
 							flowPlay: FlowVariantUIPlay.init({
 								flow: modelCore.flow,
-							})
+							}),
 						},
 					};
 				}
@@ -79,6 +79,28 @@ export const updateCore: Module["updateCore"] = ({ modelCore, msgCore }) => {
 							t: "screen-pack",
 							flowPack: modelCore.screen.flowPack,
 						},
+					};
+				}
+				default: {
+					return modelCore;
+				}
+			}
+		}
+		case "got-puzzle-screen-flow-play-msg": {
+			switch (modelCore.screen.t) {
+				case "screen-puzzle": {
+					
+					const flowPlayNew = FlowVariantUIPlay.update({
+						msg: msgCore.c,
+						model: modelCore.screen.flowPlay,
+						flow: modelCore.screen.flowPuzzle.flow,
+					});
+					return {
+						...modelCore,  
+						screen: {
+							...modelCore.screen,
+							flowPlay: flowPlayNew,
+						}
 					};
 				}
 				default: {

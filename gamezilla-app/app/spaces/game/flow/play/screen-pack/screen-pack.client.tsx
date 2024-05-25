@@ -73,7 +73,12 @@ const View: ClientModule["View"] = (input) => {
 										return (
 											<FlowPackGridUI.ViewPuzzleCell
 												index={props.index}
-												onClick={() => input.dispatch({t: 'user-clicked-open-puzzle-grid-item', puzzle})}
+												onClick={() =>
+													input.dispatch({
+														t: "user-clicked-open-puzzle-grid-item",
+														puzzle,
+													})
+												}
 											/>
 										);
 									}}

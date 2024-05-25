@@ -587,6 +587,26 @@ export const toIndexTerminalByEndId = (_model: Model) => {
 	return {};
 };
 
+export const randomNode = (model: Model): Node | null => {
+	const nodes = Object.values(model.nodes);
+
+	if (nodes.length === 0) {
+		return null;
+	}
+
+	return nodes[Math.floor(Math.random() * nodes.length)] ?? null;
+};
+
+export const randomTerminal = (model: Model): Terminal | null => {
+	const terminals = Object.values(model.terminalsByGroupId);
+
+	if (terminals.length === 0) {
+		return null;
+	}
+
+	return terminals[Math.floor(Math.random() * terminals.length)] ?? null;
+};
+
 /**
  * Find the terminal where the inputted node id is either the start or end node.
  */
