@@ -70,10 +70,13 @@ const update: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 	}
 };
 
-const updates = [update,ScreenPuzzleCore.updateCore]
+const updates = [update, ScreenPuzzleCore.updateCore];
 const updateCore: CoreModule["updateCore"] = ({ modelCore, msgCore, ctx }) => {
-	return updates.reduce((acc, update) => update({ modelCore: acc, msgCore, ctx }), modelCore);
-}
+	return updates.reduce(
+		(acc, update) => update({ modelCore: acc, msgCore, ctx }),
+		modelCore,
+	);
+};
 
 export const PlayCore = {
 	initCore,

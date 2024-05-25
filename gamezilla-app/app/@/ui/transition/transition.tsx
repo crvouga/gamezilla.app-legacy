@@ -12,7 +12,7 @@ export const Transition = ({
 }: TransitionProps & {
 	children?: VDomChildren;
 }) => {
-	transitionSub.publish({
+	transitionSub.pub({
 		type: "props",
 		id,
 		onEnter,

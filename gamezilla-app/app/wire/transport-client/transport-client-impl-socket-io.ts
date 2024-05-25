@@ -35,15 +35,15 @@ export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
 		});
 
 		socket.on("connect", () => {
-			transport.msgEvt.publish({ t: "server-connected" });
+			transport.msgEvt.pub({ t: "server-connected" });
 		});
 
 		socket.on("connect_error", () => {
-			transport.msgEvt.publish({ t: "server-connect-error" });
+			transport.msgEvt.pub({ t: "server-connect-error" });
 		});
 
 		socket.on("disconnect", () => {
-			transport.msgEvt.publish({ t: "server-disconnected" });
+			transport.msgEvt.pub({ t: "server-disconnected" });
 		});
 
 		const sendToServer = (msgs: MsgToServer[]) => {
@@ -61,7 +61,7 @@ export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
 			});
 		};
 
-		transport.toServer.subscribe((msgs) => {
+		transport.toServer.sub((msgs) => {
 			sendToServer(msgs);
 		});
 
@@ -77,13 +77,13 @@ export const ClientTransportSocketIO = async <MsgToServer, MsgToClient>({
 				}
 
 				case "to-client": {
-					transport.toClient.publish(msg.msgs);
+					transport.toClient.pub(msg.msgs);
 					break;
 				}
 			}
 		});
 
-		transport.msgCmd.subscribe((msgCmd) => {
+		transport.msgCmd.sub((msgCmd) => {
 			switch (msgCmd.t) {
 				case "try-reconnect": {
 					socket.connect();

@@ -122,7 +122,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 				codebaseVersionId,
 				sessionId: ws.data.sessionId,
 			});
-			transport.wire.publish({
+			transport.wire.pub({
 				t: "client-connected",
 				clientId: ws.data.clientId,
 				sessionId: ws.data.sessionId,
@@ -130,7 +130,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 		},
 		close(ws: ServerWebSocket<ServerWebSocketData>, _code, _message) {
 			removeClient(ws);
-			transport.wire.publish({
+			transport.wire.pub({
 				t: "client-disconnected",
 				clientId: ws.data.clientId,
 				sessionId: ws.data.sessionId,
@@ -145,7 +145,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 				case codebaseVersionId: {
 					switch (msg.t) {
 						case "to-server": {
-							transport.toServer.publish({
+							transport.toServer.pub({
 								clientId: ws.data.clientId,
 								sessionId: ws.data.sessionId,
 								msgs: msg.msgs,
@@ -153,7 +153,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 							return;
 						}
 						default: {
-							transport.wire.publish({
+							transport.wire.pub({
 								t: "got-bad-msgs",
 								reason: "unknown-msg-type",
 								clientId: ws.data.clientId,
@@ -166,7 +166,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 				}
 
 				default: {
-					transport.wire.publish({
+					transport.wire.pub({
 						t: "got-bad-msgs",
 						reason: "codebase-version-id-mismatch",
 						clientId: ws.data.clientId,
@@ -182,7 +182,7 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 	server._registerFetchHandler(onRequest);
 	server._setWebSocketHandler(websocket);
 
-	transport.wire.publish({ t: "server-started", port: Number.NaN });
+	transport.wire.pub({ t: "server-started", port: Number.NaN });
 
 	//
 	//
@@ -192,13 +192,13 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 	//
 	//
 
-	transport.topicPublish.subscribe((msg) => {
+	transport.topicPublish.sub((msg) => {
 		for (const topic of msg.topics) {
 			server._publish(topic, JSON.stringify(msg.msg));
 		}
 	});
 
-	transport.topicSubscribe.subscribe((msg) => {
+	transport.topicSubscribe.sub((msg) => {
 		const client = clients.get(msg.clientId);
 		if (!client) {
 			return;
@@ -233,13 +233,13 @@ export const ServerTransportBunWebSockets = <MsgToServer, MsgToClient>({
 		});
 	};
 
-	transport.toClientBroadcast.subscribe((msgs) => {
+	transport.toClientBroadcast.sub((msgs) => {
 		for (const client of clients.values()) {
 			send(client, { t: "to-client", msgs, codebaseVersionId });
 		}
 	});
 
-	transport.toClient.subscribe((toClient) => {
+	transport.toClient.sub((toClient) => {
 		for (const clientId in toClient) {
 			const toClientSingle = toClient[clientId as ClientId]!;
 			const client = clients.get(clientId as ClientId);

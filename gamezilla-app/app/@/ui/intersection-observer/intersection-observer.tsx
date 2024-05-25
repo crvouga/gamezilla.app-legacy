@@ -11,7 +11,7 @@ export const IntersectionObserverEmitter = (
 	},
 ) => {
 	// There is some kind of race condition setTimeout fixes
-	setTimeout(() => sub.publish({ type: "props", props }), 1);
+	setTimeout(() => sub.pub({ type: "props", props }), 1);
 
 	return <intersection-observer-dispatcher id={props.id} />;
 };

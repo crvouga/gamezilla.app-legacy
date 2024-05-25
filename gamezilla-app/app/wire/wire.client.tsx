@@ -120,7 +120,7 @@ const updateFromMsg: typeof update = ({ msg, model, transport }) => {
 			return {
 				model: { ...model, state: { t: "server-connecting" } },
 				eff: () => {
-					transport.msgCmd.publish({ t: "try-reconnect" });
+					transport.msgCmd.pub({ t: "try-reconnect" });
 				},
 			};
 		}
@@ -165,7 +165,7 @@ const updateFromCmd: typeof update = ({ msgCmd, model, transport }) => {
 				model,
 				eff: () => {
 					if (wireCmd.msg) {
-						transport.toServer.publish([wireCmd.msg]);
+						transport.toServer.pub([wireCmd.msg]);
 					}
 				},
 			};

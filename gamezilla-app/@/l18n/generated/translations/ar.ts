@@ -61,6 +61,8 @@ export const translations: Text = {
 	"lang.loaded-translations": "تم تحميل الترجمات",
 	"app.something-went-wrong": "حدث خطأ ما",
 	"app.exit": "خروج",
+	"app.next": "التالى",
+	"app.prev": "سابق",
 	en: "إنجليزي",
 	es: "إسباني",
 	ar: "عربي",

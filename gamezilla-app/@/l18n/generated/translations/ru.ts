@@ -63,6 +63,8 @@ export const translations: Text = {
 	"lang.loaded-translations": "Загруженные переводы",
 	"app.something-went-wrong": "Что-то пошло не так",
 	"app.exit": "Выход",
+	"app.next": "Следующий",
+	"app.prev": "Предыдущий",
 	en: "Английский",
 	es: "Испанский",
 	ar: "Арабский",

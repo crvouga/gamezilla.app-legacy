@@ -91,7 +91,7 @@ export async function run<TModel, TMsg, TCtx>(
 			model,
 		});
 		cleanUpSubscriptions();
-		cleanUpSubscriptions = sub.subscribe(dispatch);
+		cleanUpSubscriptions = sub.sub(dispatch);
 	}
 
 	let isUpdating = false;

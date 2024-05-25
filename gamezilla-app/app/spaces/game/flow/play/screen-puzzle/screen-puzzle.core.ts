@@ -1,8 +1,10 @@
 import { FlowVariantUIPlay } from "../../@/flow";
 import { CoreModule } from "../play.types";
 
-
-export const updateCore: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
+export const updateCore: CoreModule["updateCore"] = ({
+	modelCore,
+	msgCore,
+}) => {
 	switch (msgCore.t) {
 		case "user-clicked-exit-puzzle-button": {
 			switch (modelCore.screen.t) {

@@ -1,5 +1,12 @@
-import { Spinner, cn } from "gamezilla-app/app/@/ui";
+import {
+	IconArrowLeftOnRect,
+	IconChevronLeft,
+	IconChevronRight,
+	Spinner,
+	cn,
+} from "gamezilla-app/app/@/ui";
 import type { VDom, VDomChildren } from "gamezilla-app/@/vdom";
+import { Translator } from "gamezilla-app/@/l18n/generated";
 
 type BottomBarButtonAction = {
 	label: string;
@@ -30,8 +37,11 @@ export const ViewBottomButtonBarAction = (props: BottomBarButtonAction) => {
 	const isDisabled = props.disabled || props.loading;
 	return (
 		<button
+			role="button"
 			disabled={isDisabled}
 			key={props.label}
+			name={props.label}
+			aria-label={props.label}
 			onClick={props.onClick}
 			className={cn(
 				"relative flex flex-1 flex-col items-center gap-0.5 p-2 text-sm transition-opacity",
@@ -61,5 +71,48 @@ export const ViewBottomButtonBarAction = (props: BottomBarButtonAction) => {
 				<Spinner className="h-8 w-8" />
 			</div>
 		</button>
+	);
+};
+
+type BottomBarButtonActionPrebuilt = {
+	onClick: () => void;
+	ctx: {
+		t: Translator;
+	};
+};
+
+export const ViewBottomButtonBarActionExit = (
+	props: BottomBarButtonActionPrebuilt,
+) => {
+	return (
+		<ViewBottomButtonBarAction
+			icon={(props) => <IconArrowLeftOnRect {...props} />}
+			label={props.ctx.t("app.exit")}
+			onClick={props.onClick}
+		/>
+	);
+};
+
+export const ViewBottomButtonBarActionNext = (
+	props: BottomBarButtonActionPrebuilt,
+) => {
+	return (
+		<ViewBottomButtonBarAction
+			icon={(props) => <IconChevronRight {...props} />}
+			label={props.ctx.t("app.next")}
+			onClick={props.onClick}
+		/>
+	);
+};
+
+export const ViewBottomButtonBarActionPrev = (
+	props: BottomBarButtonActionPrebuilt,
+) => {
+	return (
+		<ViewBottomButtonBarAction
+			icon={(props) => <IconChevronLeft {...props} />}
+			label={props.ctx.t("app.prev")}
+			onClick={props.onClick}
+		/>
 	);
 };

@@ -32,7 +32,7 @@ export const withDistributedUpdates = ({
 	dbConnKv: IDbConnKv;
 	pubSub: PubSub<DistributedUpdate>;
 }): IDbConnKv & { unsubscribe: () => void } => {
-	const unsubscribe = pubSub.subscribe((update) => {
+	const unsubscribe = pubSub.sub((update) => {
 		switch (update.t) {
 			case DistributedUpdateType.SET: {
 				logger.info(`distributed set: key=${update.k}`);
@@ -59,15 +59,15 @@ export const withDistributedUpdates = ({
 		...dbConnKv,
 		unsubscribe,
 		set(key, value) {
-			pubSub.publish({ t: DistributedUpdateType.SET, k: key, v: value });
+			pubSub.pub({ t: DistributedUpdateType.SET, k: key, v: value });
 			return dbConnKv.set(key, value);
 		},
 		setMany(entries) {
-			pubSub.publish({ t: DistributedUpdateType.SET_MANY, e: entries });
+			pubSub.pub({ t: DistributedUpdateType.SET_MANY, e: entries });
 			return dbConnKv.setMany(entries);
 		},
 		zap(key) {
-			pubSub.publish({ t: DistributedUpdateType.ZAP, k: key });
+			pubSub.pub({ t: DistributedUpdateType.ZAP, k: key });
 			return dbConnKv.zap(key);
 		},
 	};

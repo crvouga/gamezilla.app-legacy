@@ -61,6 +61,8 @@ export const translations: Text = {
 	"lang.loaded-translations": "번역이 로드되었습니다",
 	"app.something-went-wrong": "문제가 발생했습니다",
 	"app.exit": "출구",
+	"app.next": "다음",
+	"app.prev": "이전",
 	en: "영어",
 	es: "스페인어",
 	ar: "아랍어",

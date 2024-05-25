@@ -100,7 +100,7 @@ export const MsgCore = p.or(
 		puzzle: FlowPuzzle,
 		puzzleIndex: p.num,
 	}),
-	ScreenPuzzleTypes.MsgCore
+	ScreenPuzzleTypes.MsgCore,
 );
 
 export type MsgCore = p.Infer<typeof MsgCore>;
@@ -141,7 +141,6 @@ export type ClientModule = GameClientModule<{
 	MsgCmdOut: SpaceClientCmd<{ MsgToServer: MsgToServer; MsgClient: MsgClient }>;
 	MsgEvtIn: SpaceClientEvent;
 }>;
-
 
 export type CoreModule = GameCoreModule<{
 	Ctx: SpaceCtx;

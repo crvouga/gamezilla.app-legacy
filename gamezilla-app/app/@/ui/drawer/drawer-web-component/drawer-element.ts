@@ -43,7 +43,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 		}
 
 		connectedCallback() {
-			this.unsubscribe = drawerSub.subscribe((drawerEvent) => {
+			this.unsubscribe = drawerSub.sub((drawerEvent) => {
 				if (drawerEvent.id === this.getAttribute("id")) {
 					this.props = { ...drawerEvent };
 

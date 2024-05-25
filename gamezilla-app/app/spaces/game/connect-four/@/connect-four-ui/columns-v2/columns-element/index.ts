@@ -56,7 +56,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 			}
 
 			initUI() {
-				const unsubscribe = columnsPropsSub.subscribe((props) => {
+				const unsubscribe = columnsPropsSub.sub((props) => {
 					this.prevProps = this.props;
 					this.props = props;
 					this.syncUI();

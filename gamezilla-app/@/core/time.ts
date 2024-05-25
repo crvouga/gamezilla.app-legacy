@@ -68,8 +68,8 @@ const intervals = new Map<string, PubSub<Posix>>();
 const onTimeout = (intervalId: string, timeSpan: TimeSpan) => {
 	const sub = intervals.get(intervalId);
 
-	if (sub?.isSubscribed()) {
-		sub.publish(Posix.now());
+	if (sub?.isSubbed()) {
+		sub.pub(Posix.now());
 
 		setTimeout(() => {
 			onTimeout(intervalId, timeSpan);
@@ -101,8 +101,8 @@ const interval = <Msg>(
 	}, TimeSpan.toMilliseconds(timeSpan));
 
 	return {
-		subscribe: (subscriber) => {
-			const unsub = subNew.subscribe((msg) => {
+		sub: (subscriber) => {
+			const unsub = subNew.sub((msg) => {
 				subscriber(f(msg));
 			});
 			return () => {

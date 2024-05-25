@@ -34,7 +34,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 
 		connectedCallback() {
 			this.observer.observe(this, { childList: true });
-			this.unsubscribe = transitionSub.subscribe((msgEvt) => {
+			this.unsubscribe = transitionSub.sub((msgEvt) => {
 				if (msgEvt.id === this.getAttribute("id")) {
 					this.props = msgEvt;
 					this.syncUI();

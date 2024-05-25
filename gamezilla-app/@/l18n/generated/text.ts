@@ -7,7 +7,7 @@ import type { Text as Text4 } from "../../../app/spaces/modals/modals.$l18n";
 import type { Text as Text5 } from "../../../app/spaces/game/@/game/chips.$l18n";
 import type { Text as Text6 } from "../../../app/spaces/game/flow/@/flow.$l18n";
 import type { Text as Text7 } from "../../../app/lang/lang.$l18n";
-import type { Text as Text8 } from "../../../app/@/shared.$l18n";
+import type { Text as Text8 } from "../../../app/@/app.$l18n";
 import type { Text as Text9 } from "../../l18n/lang-code-iso-639-1/lang-code-iso-639-1.$l18n";
 
 export type Text = Text0 &

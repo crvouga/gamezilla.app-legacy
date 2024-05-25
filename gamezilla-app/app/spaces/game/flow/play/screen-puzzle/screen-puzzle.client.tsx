@@ -1,8 +1,12 @@
 import { withId } from "gamezilla-app/app/spaces/@/event";
-import { ViewBottomBarExitButton } from "../../../@/game";
+import {
+	ViewBottomButtonBar,
+	ViewBottomButtonBarActionExit,
+	ViewBottomButtonBarActionNext,
+} from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
-import { ClientModule } from "../play.types";
 import { FlowVariantUIPlay } from "../../@/flow";
+import { ClientModule } from "../play.types";
 
 const update: ClientModule["update"] = (input) => {
 	switch (input.msg?.t) {
@@ -30,6 +34,14 @@ const View: ClientModule["View"] = (input) => {
 	}
 	const flowPuzzle = input.modelCore.screen.flowPuzzle;
 	const flowPlay = input.modelCore.screen.flowPlay;
+	const puzzleIndex = input.modelCore.screen.puzzleIndex;
+	//
+	const nextPuzzleIndex = puzzleIndex + 1;
+	const nextPuzzleId =
+		input.modelCore.screen.flowPack.puzzleIds[nextPuzzleIndex];
+	const nextPuzzle = nextPuzzleId
+		? input.model.flowPuzzles[nextPuzzleId]
+		: null;
 	return (
 		<div className="w-full flex flex-col flex-1">
 			<ViewScreenTitle title={flowPuzzle.name} />
@@ -42,10 +54,26 @@ const View: ClientModule["View"] = (input) => {
 					model={flowPlay}
 				/>
 			</div>
-			<ViewBottomBarExitButton
-				ctx={input.ctx}
-				onClick={() => input.dispatch({ t: "user-clicked-exit-puzzle-button" })}
-			/>
+			<ViewBottomButtonBar>
+				<ViewBottomButtonBarActionExit
+					ctx={input.ctx}
+					onClick={() =>
+						input.dispatch({ t: "user-clicked-exit-puzzle-button" })
+					}
+				/>
+				<ViewBottomButtonBarActionNext
+					ctx={input.ctx}
+					onClick={() =>
+						nextPuzzle
+							? input.dispatch({
+									t: "user-clicked-next-puzzle-button",
+									nextPuzzle,
+									nextPuzzleIndex,
+								})
+							: null
+					}
+				/>
+			</ViewBottomButtonBar>
 		</div>
 	);
 };

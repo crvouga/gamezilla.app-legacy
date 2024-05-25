@@ -107,7 +107,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 		ws.onopen = () => {
 			isConnected = true;
 			reconnectAttempts = 0;
-			transport.msgEvt.publish({ t: "server-connected" });
+			transport.msgEvt.pub({ t: "server-connected" });
 			for (const msg of queue) {
 				send(msg);
 			}
@@ -116,7 +116,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 
 		ws.onerror = () => {
 			isConnected = false;
-			transport.msgEvt.publish({ t: "server-connect-error" });
+			transport.msgEvt.pub({ t: "server-connect-error" });
 		};
 
 		ws.onclose = () => {
@@ -126,7 +126,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 			}
 
 			if (reconnectAttempts > MAX_RECONNECT_ATTEMPTS) {
-				transport.msgEvt.publish({ t: "server-disconnected" });
+				transport.msgEvt.pub({ t: "server-disconnected" });
 				return;
 			}
 			reconnectAttempts++;
@@ -146,13 +146,13 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 
 				case "to-client": {
 					if (msg.codebaseVersionId !== codebaseVersionId) {
-						transport.msgEvt.publish({
+						transport.msgEvt.pub({
 							t: "got-bad-msgs",
 							reason: "codebase-version-mismatch",
 						});
 						return;
 					}
-					transport.toClient.publish(msg.msgs);
+					transport.toClient.pub(msg.msgs);
 					return;
 				}
 			}
@@ -187,7 +187,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 		}
 	};
 
-	transport.toServer.subscribe((msgs) => {
+	transport.toServer.sub((msgs) => {
 		send({
 			t: "to-server",
 			msgs,
@@ -195,7 +195,7 @@ export const ClientTransportWebSockets = <MsgToServer, MsgToClient>({
 		});
 	});
 
-	transport.msgCmd.subscribe((msgCmd) => {
+	transport.msgCmd.sub((msgCmd) => {
 		switch (msgCmd.t) {
 			case "try-reconnect": {
 				reconnectAttempts = 0;

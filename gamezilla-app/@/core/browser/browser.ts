@@ -18,7 +18,7 @@ export type Location = {
 
 const locationSub = PubSub.create<Location>();
 const handler = () => {
-	locationSub.publish(location());
+	locationSub.pub(location());
 };
 if (typeof window !== "undefined") {
 	window.addEventListener("popstate", handler);
@@ -179,7 +179,7 @@ export const onDocumentVisibilityState = <T>(
 
 if (typeof document !== "undefined") {
 	document.addEventListener("visibilitychange", () => {
-		documentVisibilityState.publish(document.visibilityState);
+		documentVisibilityState.pub(document.visibilityState);
 	});
 }
 

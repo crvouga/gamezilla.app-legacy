@@ -60,7 +60,7 @@ export async function run<TMsg, TCtx>(program: ProgramImpure<TMsg, TCtx> & {}) {
 			ctx,
 		});
 		cleanUpSubscriptions();
-		cleanUpSubscriptions = sub.subscribe(dispatch);
+		cleanUpSubscriptions = sub.sub(dispatch);
 	}
 
 	async function dispatch(msg: TMsg) {

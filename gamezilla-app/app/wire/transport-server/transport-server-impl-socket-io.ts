@@ -49,13 +49,13 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 
 		const clientId = socket.id as ClientId;
 
-		transport.wire.publish({ t: "client-connected", clientId, sessionId });
+		transport.wire.pub({ t: "client-connected", clientId, sessionId });
 
 		socket.on(
 			"to-server",
 			(msg: MsgClientToMsgServer<MsgToServer>, acknowledge: Function) => {
 				if (msg.codebaseVersionId !== codebaseVersionId) {
-					transport.wire.publish({
+					transport.wire.pub({
 						t: "got-bad-msgs",
 						clientId,
 						msgs: msg.msgs,
@@ -64,7 +64,7 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 					});
 				}
 
-				transport.toServer.publish({
+				transport.toServer.pub({
 					msgs: msg.msgs,
 					clientId: clientId,
 					sessionId: sessionId,
@@ -74,7 +74,7 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 			},
 		);
 
-		const unsubscribe = transport.toClient.subscribe((msgsByClientId) => {
+		const unsubscribe = transport.toClient.sub((msgsByClientId) => {
 			const msgs = msgsByClientId[clientId];
 
 			if (!msgs) {
@@ -93,7 +93,7 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 		socket.on("disconnect", () => {
 			unsubscribe();
 
-			transport.wire.publish({
+			transport.wire.pub({
 				t: "client-disconnected",
 				clientId,
 				sessionId,
@@ -101,7 +101,7 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 		});
 	});
 
-	transport.toClientBroadcast.subscribe((msgs) => {
+	transport.toClientBroadcast.sub((msgs) => {
 		const toClient: MsgServerToMsgClient<MsgToClient> = {
 			t: "to-client",
 			codebaseVersionId,

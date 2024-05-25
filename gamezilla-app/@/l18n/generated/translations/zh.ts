@@ -60,6 +60,8 @@ export const translations: Text = {
 	"lang.loaded-translations": "已加载翻译",
 	"app.something-went-wrong": "出了点问题",
 	"app.exit": "出口",
+	"app.next": "下一个",
+	"app.prev": "以前",
 	en: "英语",
 	es: "西班牙语",
 	ar: "阿拉伯语",

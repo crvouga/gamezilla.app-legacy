@@ -1,11 +1,11 @@
 export type Sub<Msg> = {
-	subscribe: (subscriber: (msg: Msg) => void) => () => void;
+	sub: (subscriber: (msg: Msg) => void) => () => void;	
 };
 
 export type Pub<Msg> = {
-	publish: (msg: Msg) => void;
-	isSubscribed: () => boolean;
-	_last: Msg | null;
+	pub: (msg: Msg) => void;
+	isSubbed: () => boolean;
+	once: (subscriber?: (msg: Msg) => void) => Promise<Msg>;
 };
 
 export type PubSub<Msg> = Pub<Msg> & Sub<Msg>;
@@ -14,14 +14,11 @@ const create = <Msg>(): PubSub<Msg> => {
 	let runningId = 0;
 	const subscribers = new Map<number, (msg: Msg) => void>();
 	const queue: Msg[] = [];
-	let _last = null;
-
-	return {
-		_last,
-		isSubscribed() {
+	return {	
+		isSubbed() {
 			return subscribers.size > 0;
 		},
-		subscribe(subscriber) {
+		sub(subscriber) {
 			runningId++;
 			const id = runningId;
 			subscribers.set(id, subscriber);
@@ -29,8 +26,7 @@ const create = <Msg>(): PubSub<Msg> => {
 				subscribers.delete(id);
 			};
 		},
-		publish(msg: Msg) {
-			_last = msg;
+		pub(msg: Msg) {
 			if (subscribers.size === 0) {
 				queue.push(msg);
 				return;
@@ -43,22 +39,32 @@ const create = <Msg>(): PubSub<Msg> => {
 			}
 			queue.length = 0;
 		},
+		once(subscriber) {
+			return new Promise<Msg>((resolve) => {
+				const unsubscribe = this.sub((a) => {
+					// NOTE: order matters here
+					subscriber?.(a);
+					resolve(a);
+					unsubscribe();
+				});
+			});
+		},
 	};
 };
 
 const next = <A>(sub: Sub<A>) => {
 	return new Promise<A>((resolve) => {
-		const unsubsribe = sub.subscribe((a) => {
+		const unsubscribe = sub.sub((a) => {
 			resolve(a);
-			unsubsribe();
+			unsubscribe();
 		});
 	});
 };
 
 const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
 	return {
-		subscribe: (subscriber) => {
-			return sub.subscribe((a) => {
+		sub: (subscriber) => {
+			return sub.sub((a) => {
 				subscriber(f(a));
 			});
 		},
@@ -67,12 +73,12 @@ const map = <A, B>(sub: Sub<A>, f: (a: A) => B): Sub<B> => {
 
 function flatMap<A, B>(sub: Sub<A>, fn: (value: A) => Sub<B>): Sub<B> {
 	return {
-		subscribe: (subscriber: (msg: B) => void) => {
+		sub: (subscriber: (msg: B) => void) => {
 			const unsubscribeFunctions: Array<() => void> = [];
 
-			const unsubscribeA = sub.subscribe((msgA) => {
+			const unsubscribeA = sub.sub((msgA) => {
 				const subB = fn(msgA);
-				const unsubscribeB = subB.subscribe(subscriber);
+				const unsubscribeB = subB.sub(subscriber);
 				unsubscribeFunctions.push(unsubscribeB);
 			});
 
@@ -87,11 +93,11 @@ function flatMap<A, B>(sub: Sub<A>, fn: (value: A) => Sub<B>): Sub<B> {
 
 const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
 	return {
-		subscribe: (subscriber) => {
+		sub: (subscriber) => {
 			const unsubscribeList: (() => void)[] = [];
 
 			for (const sub of arr) {
-				unsubscribeList.push(sub.subscribe(subscriber));
+				unsubscribeList.push(sub.sub(subscriber));
 			}
 
 			return () => {
@@ -104,13 +110,13 @@ const batch = <Msg>(arr: Sub<Msg>[]): Sub<Msg> => {
 };
 
 const None: Sub<never> = {
-	subscribe: () => () => {},
+	sub: () => () => {},
 };
 
 const flat = <A>(sub: Sub<Iterable<A>>): Sub<A> => {
 	return {
-		subscribe: (subscriber) => {
-			return sub.subscribe((a) => {
+		sub: (subscriber) => {
+			return sub.sub((a) => {
 				for (const b of a) {
 					subscriber(b);
 				}
@@ -128,20 +134,22 @@ const tag = <Tag extends string, Msg>(
 
 const toSub = <Msg>(pubSub: PubSub<Msg>): Sub<Msg> => {
 	return {
-		subscribe: (subscriber) => {
-			return pubSub.subscribe(subscriber);
+		sub: (subscriber) => {
+			return pubSub.sub(subscriber);
 		},
 	};
 };
 
 const toPub = <Msg>(pubSub: PubSub<Msg>): Pub<Msg> => {
-	return {
-		_last: pubSub._last,
-		publish: (msg) => {
-			pubSub.publish(msg);
+	return {		
+		pub(msg) {
+			pubSub.pub(msg);
 		},
-		isSubscribed: () => {
-			return pubSub.isSubscribed();
+		once(subscriber) {
+			return pubSub.once(subscriber);
+		},
+		isSubbed()  {
+			return pubSub.isSubbed();
 		},
 	};
 };

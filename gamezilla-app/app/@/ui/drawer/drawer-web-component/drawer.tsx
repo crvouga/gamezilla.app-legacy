@@ -5,7 +5,7 @@ import "./drawer-element";
 import { drawerSub } from "./drawer-shared";
 
 export const DrawerWebComponent = (props: DrawerProps) => {
-	drawerSub.publish({ type: "props", ...props });
+	drawerSub.pub({ type: "props", ...props });
 	return (
 		<Portal.Entrance portalId="modals">
 			<drawer-element id={props.id} position={props.position}>

@@ -1,11 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { Sub } from "gamezilla-app/@/core";
-import { FlowPack } from "../../@/flow-pack";
-import { FlowPlayClientFixture } from "../@/testing";
-import { EventId } from "gamezilla-app/app/spaces/@/event";
 import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
 import { didPlaySound } from "gamezilla-app/app/@/client";
+import { EventId } from "gamezilla-app/app/spaces/@/event";
+import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
+import { FlowPlayClientFixture } from "../@/testing";
 
 const Fixture = async () => {
 	const f = await FlowPlayClientFixture();
@@ -44,11 +43,11 @@ describe(import.meta.file, () => {
 
 	it("should emit msg from clicking exit button", async () => {
 		const f = await Fixture();
-		const rendered = f.render(f.initial);
-		const exitButton = rendered.getByText(f.ctx.t("app.exit"));
-		exitButton?.click();
-		const msg = await Sub.next(rendered.msgs);
-		expect(msg).toEqual({ t: "user-clicked-exit-pack-button" });
+		const r = f.render(f.initial);
+		const exitButton = r.getByText(f.ctx.t("app.exit"));
+		exitButton.click();
+		const msg = await r.msgs.once()
+		expect(msg.t).toEqual("user-clicked-exit-pack-button");
 	});
 
 	it("should exit to pack list on exit button pack click", async () => {
@@ -109,22 +108,4 @@ describe(import.meta.file, () => {
 		]);
 		expect(didPlaySound(output)).toBe(true);
 	});
-
-	it.todo("should render next puzzle button", async () => {
-		//
-	});
-
-	it.todo(
-		"should play sound after user clicks next puzzle button",
-		async () => {},
-	);
-
-	it.todo("should render prev puzzle button", async () => {
-		//
-	});
-
-	it.todo(
-		"should play sound after user clicks prev puzzle button",
-		async () => {},
-	);
 });

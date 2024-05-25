@@ -55,7 +55,7 @@ export function Translator(languageCode: LanguageCodeISO_639_1): Translator {
 	}
 
 	state.loading[languageCode] = true;
-	translatorSubscriptions.publish({
+	translatorSubscriptions.pub({
 		t: "translator.loading",
 		lang: languageCode,
 	});
@@ -71,7 +71,7 @@ export function Translator(languageCode: LanguageCodeISO_639_1): Translator {
 
 		state.loading[languageCode] = false;
 
-		translatorSubscriptions.publish({
+		translatorSubscriptions.pub({
 			t: "translator.loaded",
 			lang: languageCode,
 		});

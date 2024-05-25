@@ -38,7 +38,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 		}
 
 		connectedCallback() {
-			this.unsubscribe = sub.subscribe((msgEvt) => {
+			this.unsubscribe = sub.sub((msgEvt) => {
 				if (msgEvt.props.id !== this.getAttribute("id")) {
 					return;
 				}

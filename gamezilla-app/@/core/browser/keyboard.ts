@@ -53,7 +53,7 @@ const is = (key: unknown): key is Key => {
 
 export const keyDowns = <T>(callback: (key: Key) => T): Sub<T> => {
 	return {
-		subscribe: (subscriber: (msg: T) => void) => {
+		sub: (subscriber: (msg: T) => void) => {
 			const handler = (msgEvt: KeyboardEvent) => {
 				if (msgEvt.repeat) {
 					return;
@@ -75,7 +75,7 @@ export const keyDowns = <T>(callback: (key: Key) => T): Sub<T> => {
 
 export const keyUps = <T>(callback: (key: Key) => T): Sub<T> => {
 	return {
-		subscribe: (subscriber) => {
+		sub: (subscriber) => {
 			const handler = (msgEvt: KeyboardEvent) => {
 				if (msgEvt.repeat) {
 					return;

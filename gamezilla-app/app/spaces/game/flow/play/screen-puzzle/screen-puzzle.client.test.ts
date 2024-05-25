@@ -1,14 +1,29 @@
 import { describe, expect, it } from "bun:test";
-import { FlowPlayClientFixture } from "../@/testing";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
+import { FlowPlayClientFixture } from "../@/testing";
 
 const Fixture = async () => {
 	const f = await FlowPlayClientFixture();
 	const puzzle = await FlowPuzzle.random();
+	const nextPuzzle = await FlowPuzzle.random();
+	const prevPuzzle = await FlowPuzzle.random();
 	const pack = await FlowPack.random({
-		puzzleIds: [puzzle.id],
+		puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id],
 	});
+	
+	f.initial.model = {
+		...f.initial.model,
+		flowPuzzles: {
+			[puzzle.id]: puzzle,
+			[nextPuzzle.id]: nextPuzzle,
+			[prevPuzzle.id]: prevPuzzle,
+		},
+		flowPacks: {
+			[pack.id]: pack,
+		},
+	}
+
 	const initial = f.update(f.initial, [
 		{
 			msg: {
@@ -20,15 +35,21 @@ const Fixture = async () => {
 			msg: {
 				t: "user-clicked-open-puzzle-grid-item",
 				puzzle,
-				puzzleIndex: 0,
+				puzzleIndex: 1,
 			},
 		},
 	]);
+
 	return {
 		...f,
 		initial,
 		pack,
 		puzzle,
+		puzzleIndex: 1,
+		nextPuzzle,
+		nextPuzzleIndex: 2,
+		prevPuzzle,
+		prevPuzzleIndex: 0,
 	};
 };
 
@@ -41,9 +62,8 @@ describe(import.meta.file, () => {
 
 	it("should render exit button for puzzle screen", async () => {
 		const f = await Fixture();
-		const rendered = f.render(f.initial);
 		expect(
-			rendered.getByRoleAndText("button", f.ctx.t("app.exit")),
+			f.render(f.initial).getByRoleAndText("button", f.ctx.t("app.exit")),
 		).toBeTruthy();
 	});
 
@@ -58,4 +78,34 @@ describe(import.meta.file, () => {
 		]);
 		expect(updated.modelCore.screen.t).toBe("screen-pack");
 	});
+
+	it("should render next puzzle button", async () => {
+		const f = await Fixture();
+		expect(
+			f.render(f.initial).getByRoleAndText("button", f.ctx.t("app.next")),
+		).toBeTruthy();
+	});
+
+	it("should emit msg after clicking next puzzle button", async () => {
+		const f = await Fixture();
+		const rendered = f.render(f.initial);
+		const nextButton = rendered.getByRoleAndText("button", f.ctx.t("app.next"));
+		nextButton.click();
+		const msg = await rendered.msgs.once()
+		expect(msg.t).toBe('user-clicked-next-puzzle-button')
+	});
+
+	it.todo(
+		"should play sound after user clicks next puzzle button",
+		async () => {},
+	);
+
+	it.todo("should render prev puzzle button", async () => {
+		//
+	});
+
+	it.todo(
+		"should play sound after user clicks prev puzzle button",
+		async () => {},
+	);
 });

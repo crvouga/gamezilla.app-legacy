@@ -61,6 +61,8 @@ export const translations: Text = {
 	"lang.loaded-translations": "लोड की गई अनुवाद",
 	"app.something-went-wrong": "कुछ गलत हो गया",
 	"app.exit": "निकास",
+	"app.next": "अगला",
+	"app.prev": "पिछला",
 	en: "अंग्रेज़ी",
 	es: "स्पेनिश",
 	ar: "अरबी",

@@ -244,7 +244,7 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>({
 			return {
 				model,
 				eff: () => {
-					deps.transport.toClientBroadcast.publish([msgCmdChild.msg]);
+					deps.transport.toClientBroadcast.pub([msgCmdChild.msg]);
 				},
 			};
 		}
@@ -272,7 +272,7 @@ const updateFromCmd = async <TMsgToClient, TMsgToServer>({
 						};
 					}
 
-					deps.transport.toClient.publish(toClientPayload);
+					deps.transport.toClient.pub(toClientPayload);
 				},
 			};
 		}
@@ -370,7 +370,7 @@ const sendToSession = async <TMsgToClient, TMsgToServer>({
 		}
 	}
 
-	deps.transport.toClient.publish(toClientPayload);
+	deps.transport.toClient.pub(toClientPayload);
 };
 
 export const subscriptions = <TMsgToServer, TMsgToClient>({

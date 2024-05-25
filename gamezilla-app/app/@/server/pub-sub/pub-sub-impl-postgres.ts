@@ -61,8 +61,10 @@ export const PubSub = <T>({
 	});
 
 	return {
-		_last: null,
-		publish(msg) {
+		once(_subscriber) {
+			throw new Error("Method not implemented.");
+		},
+		pub(msg) {
 			const payload = encode(msg);
 			dbConnSql.query(
 				p.unknown,
@@ -71,11 +73,11 @@ export const PubSub = <T>({
 			);
 		},
 
-		isSubscribed() {
+		isSubbed() {
 			return subscribers.size > 0;
 		},
 
-		subscribe(subscriber) {
+		sub(subscriber) {
 			const subscriberId = runningSubscriberId + 1;
 
 			subscribers.set(subscriberId, subscriber);

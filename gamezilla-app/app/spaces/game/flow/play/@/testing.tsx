@@ -25,7 +25,7 @@ export const FlowPlayClientFixture = async () => {
 		const rendered = f.render(
 			<PlayClient.View
 				ctx={f.ctx}
-				dispatch={msgs.publish}
+				dispatch={msgs.pub}
 				model={output.model}
 				modelCore={output.modelCore}
 			/>,
