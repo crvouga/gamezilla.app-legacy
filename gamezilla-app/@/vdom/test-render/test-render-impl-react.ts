@@ -7,6 +7,23 @@ import { ITestRender, TestNode } from "./test-render";
 export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
 	const rendered = render(vdom);
 
+	const getAttributeDeep = (
+		element: HTMLElement,
+		attribute: string,
+	): string | null => {
+		const attrValue = element.getAttribute(attribute);
+		if (attrValue !== null) {
+			return attrValue;
+		}
+		for (const child of Array.from(element.children)) {
+			const childAttrValue = getAttributeDeep(child as HTMLElement, attribute);
+			if (childAttrValue !== null) {
+				return childAttrValue;
+			}
+		}
+		return null;
+	};
+
 	const createTestNode = (baseElement: VDom): TestNode => {
 		return {
 			hasText(text: string): boolean {
@@ -42,6 +59,9 @@ export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
 				} catch {
 					throw new Error(`No element with role ${role} and text ${text}`);
 				}
+			},
+			getAttribute(attribute) {
+				return getAttributeDeep(baseElement, attribute);
 			},
 		};
 	};

@@ -7,6 +7,7 @@ export type TestNode = {
 	getByRole: (role: AriaRole) => TestNode;
 	getByText: (text: string) => TestNode;
 	getByRoleAndText: (role: AriaRole, text: string) => TestNode;
+	getAttribute: (attribute: string) => string | null;
 };
 
 export type ITestRender = (vdom: VDom) => TestNode;

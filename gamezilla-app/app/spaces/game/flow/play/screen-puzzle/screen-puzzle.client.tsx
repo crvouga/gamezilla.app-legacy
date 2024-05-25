@@ -3,23 +3,36 @@ import {
 	ViewBottomButtonBar,
 	ViewBottomButtonBarActionExit,
 	ViewBottomButtonBarActionNext,
+	ViewBottomButtonBarActionPrev,
 } from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowVariantUIPlay } from "../../@/flow";
 import { ClientModule } from "../play.types";
+import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
 
 const update: ClientModule["update"] = (input) => {
 	switch (input.msg?.t) {
-		case "user-clicked-exit-puzzle-button": {
+		case "user-clicked-exit-puzzle-button":
+		case "user-clicked-next-puzzle-button":
+		case 'user-clicked-prev-puzzle-button':
+		case "got-puzzle-screen-flow-play-msg": {
 			return {
 				model: input.model,
 				msgCore: [withId(input.msg)],
 			};
 		}
-		case "got-puzzle-screen-flow-play-msg": {
+	}
+	switch (input.msgCore?.t) {
+		case "user-clicked-next-puzzle-button": {
 			return {
 				model: input.model,
-				msgCore: [withId(input.msg)],
+				msgCmd: [playSound(APP_SOUND.navForwardMin)],
+			};
+		}
+		case "user-clicked-prev-puzzle-button": {
+			return {
+				model: input.model,
+				msgCmd: [playSound(APP_SOUND.navBackwardMin)],
 			};
 		}
 	}
@@ -35,6 +48,14 @@ const View: ClientModule["View"] = (input) => {
 	const flowPuzzle = input.modelCore.screen.flowPuzzle;
 	const flowPlay = input.modelCore.screen.flowPlay;
 	const puzzleIndex = input.modelCore.screen.puzzleIndex;
+
+	const prevPuzzleIndex = puzzleIndex - 1;
+	const prevPuzzleId =
+		input.modelCore.screen.flowPack.puzzleIds[prevPuzzleIndex];
+	const prevPuzzle = prevPuzzleId
+		? input.model.flowPuzzles[prevPuzzleId]
+		: null;
+
 	//
 	const nextPuzzleIndex = puzzleIndex + 1;
 	const nextPuzzleId =
@@ -43,7 +64,7 @@ const View: ClientModule["View"] = (input) => {
 		? input.model.flowPuzzles[nextPuzzleId]
 		: null;
 	return (
-		<div className="w-full flex flex-col flex-1">
+		<div className="w-full flex flex-col flex-1" data-puzzle-id={flowPuzzle.id}>
 			<ViewScreenTitle title={flowPuzzle.name} />
 			<div className="flex-1 flex flex-col items-center justify-center">
 				<FlowVariantUIPlay.View
@@ -59,6 +80,18 @@ const View: ClientModule["View"] = (input) => {
 					ctx={input.ctx}
 					onClick={() =>
 						input.dispatch({ t: "user-clicked-exit-puzzle-button" })
+					}
+				/>
+				<ViewBottomButtonBarActionPrev
+					ctx={input.ctx}
+					onClick={() =>
+						prevPuzzle
+							? input.dispatch({
+									t: "user-clicked-prev-puzzle-button",
+									prevPuzzle,
+									prevPuzzleIndex,
+								})
+							: null
 					}
 				/>
 				<ViewBottomButtonBarActionNext

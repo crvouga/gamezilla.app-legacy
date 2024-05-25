@@ -46,7 +46,7 @@ describe(import.meta.file, () => {
 		const r = f.render(f.initial);
 		const exitButton = r.getByText(f.ctx.t("app.exit"));
 		exitButton.click();
-		const msg = await r.msgs.once()
+		const msg = await r.msgs.once();
 		expect(msg.t).toEqual("user-clicked-exit-pack-button");
 	});
 

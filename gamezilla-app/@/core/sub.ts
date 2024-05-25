@@ -1,5 +1,5 @@
 export type Sub<Msg> = {
-	sub: (subscriber: (msg: Msg) => void) => () => void;	
+	sub: (subscriber: (msg: Msg) => void) => () => void;
 };
 
 export type Pub<Msg> = {
@@ -14,7 +14,7 @@ const create = <Msg>(): PubSub<Msg> => {
 	let runningId = 0;
 	const subscribers = new Map<number, (msg: Msg) => void>();
 	const queue: Msg[] = [];
-	return {	
+	return {
 		isSubbed() {
 			return subscribers.size > 0;
 		},
@@ -141,14 +141,14 @@ const toSub = <Msg>(pubSub: PubSub<Msg>): Sub<Msg> => {
 };
 
 const toPub = <Msg>(pubSub: PubSub<Msg>): Pub<Msg> => {
-	return {		
+	return {
 		pub(msg) {
 			pubSub.pub(msg);
 		},
 		once(subscriber) {
 			return pubSub.once(subscriber);
 		},
-		isSubbed()  {
+		isSubbed() {
 			return pubSub.isSubbed();
 		},
 	};
