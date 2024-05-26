@@ -58,9 +58,9 @@ const random = async (input?: {
 			}),
 			terminalsByGroupId: {
 				A: {
-					startId: FlowGrid.positionToNodeId({ x: 0, y: 0 }),
+					startId: FlowGrid.toNodeId({ x: 0, y: 0 }),
 					groupId: "A",
-					endId: FlowGrid.positionToNodeId({ x: 1, y: 1 }),
+					endId: FlowGrid.toNodeId({ x: 1, y: 1 }),
 				},
 			},
 		}),

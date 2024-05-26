@@ -52,7 +52,7 @@ const update: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 							flowPack: modelCore.screen.flowPack,
 							puzzleIndex: msgCore.puzzleIndex,
 							flowPuzzle: msgCore.flowPuzzle,
-						})
+						}),
 					};
 				}
 				default: {

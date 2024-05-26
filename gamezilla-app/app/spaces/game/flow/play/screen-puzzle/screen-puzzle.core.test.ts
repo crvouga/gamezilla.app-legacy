@@ -147,15 +147,20 @@ describe(import.meta.file, () => {
 		}
 	});
 
-	it.todo('should go into puzzle solved state after solving', async () => {
+	it.todo("should go into puzzle solved state after solving", async () => {
 		const f = await Fixture();
 		const msgs = pipe(
-			FlowVariantUIPlay.toSolutionMsgs({ flow: f.puzzle.flow, }),
-			msgs => msgs.map((c): MsgCore => ({t: "got-puzzle-screen-flow-play-msg",c,})),
-		)
-		const before = f.init
+			FlowVariantUIPlay.toSolutionMsgs({ flow: f.puzzle.flow }),
+			(msgs) =>
+				msgs.map((c): MsgCore => ({ t: "got-puzzle-screen-flow-play-msg", c })),
+		);
+		const before = f.init;
 		const after = f.update(before, msgs);
-		expect(after.screen.t === 'screen-puzzle' && after.screen.state.t === 'solving').toEqual(true)
-		expect(after.screen.t === 'screen-puzzle' && after.screen.state.t === 'solved').toEqual(true)
-	})
+		expect(
+			after.screen.t === "screen-puzzle" && after.screen.state.t === "solving",
+		).toEqual(true);
+		expect(
+			after.screen.t === "screen-puzzle" && after.screen.state.t === "solved",
+		).toEqual(true);
+	});
 });

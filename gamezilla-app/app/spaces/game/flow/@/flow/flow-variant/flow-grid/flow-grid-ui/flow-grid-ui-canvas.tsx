@@ -144,7 +144,7 @@ const View = ({
 					x * model.width - cellX < cellWidth / 2 &&
 					y * model.height - cellY < cellHeight / 2
 				) {
-					const nodeId = FlowGrid.positionToNodeId({
+					const nodeId = FlowGrid.toNodeId({
 						x: xIndex,
 						y: yIndex,
 					});
@@ -173,7 +173,7 @@ const View = ({
 					x * model.width - cellX < cellWidth / 2 &&
 					y * model.height - cellY < cellHeight / 2
 				) {
-					const nodeId = FlowGrid.positionToNodeId({
+					const nodeId = FlowGrid.toNodeId({
 						x: xIndex,
 						y: yIndex,
 					});
@@ -204,7 +204,7 @@ const View = ({
 					x * model.width - cellX < cellWidth / 2 &&
 					y * model.height - cellY < cellHeight / 2
 				) {
-					const nodeId = FlowGrid.positionToNodeId({
+					const nodeId = FlowGrid.toNodeId({
 						x: xIndex,
 						y: yIndex,
 					});
@@ -237,7 +237,7 @@ const View = ({
 					x * model.width - cellX < cellWidth / 2 &&
 					y * model.height - cellY < cellHeight / 2
 				) {
-					const nodeId = FlowGrid.positionToNodeId({
+					const nodeId = FlowGrid.toNodeId({
 						x: xIndex,
 						y: yIndex,
 					});
@@ -266,7 +266,7 @@ const View = ({
 					x * model.width - cellX < cellWidth / 2 &&
 					y * model.height - cellY < cellHeight / 2
 				) {
-					const nodeId = FlowGrid.positionToNodeId({
+					const nodeId = FlowGrid.toNodeId({
 						x: xIndex,
 						y: yIndex,
 					});
@@ -295,7 +295,7 @@ const View = ({
 					x * model.width - cellX < cellWidth / 2 &&
 					y * model.height - cellY < cellHeight / 2
 				) {
-					const nodeId = FlowGrid.positionToNodeId({
+					const nodeId = FlowGrid.toNodeId({
 						x: xIndex,
 						y: yIndex,
 					});

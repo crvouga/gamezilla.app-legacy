@@ -21,12 +21,12 @@ export const Model = p.and(
 );
 export type Model = p.Infer<typeof Model>;
 
-const toNodeId = (x: number, y: number): Flow.NodeId => {
+const _toNodeId = (x: number, y: number): Flow.NodeId => {
 	return Flow.createNodeId(x + "," + y);
 };
 
-export const positionToNodeId = (position: Position): Flow.NodeId => {
-	return toNodeId(position.x, position.y);
+export const toNodeId = (position: Position): Flow.NodeId => {
+	return _toNodeId(position.x, position.y);
 };
 
 export const distance =
@@ -85,12 +85,12 @@ export const init = (input: {
 
 	for (x = 0; x < width; x++) {
 		for (y = 0; y < height; y++) {
-			const nodeId = toNodeId(x, y);
+			const nodeId = _toNodeId(x, y);
 			model.positions[nodeId] = { x, y };
 			model.nodes[nodeId] = { nodeId };
 
 			if (y > 0) {
-				const north = toNodeId(x, y - 1);
+				const north = _toNodeId(x, y - 1);
 				const edgeNorth: Flow.Edge = {
 					sourceId: nodeId,
 					targetId: north,
@@ -99,7 +99,7 @@ export const init = (input: {
 			}
 
 			if (x < maxX) {
-				const east = toNodeId(x + 1, y);
+				const east = _toNodeId(x + 1, y);
 				const edgeEast: Flow.Edge = {
 					sourceId: nodeId,
 					targetId: east,
@@ -108,7 +108,7 @@ export const init = (input: {
 			}
 
 			if (y < maxY) {
-				const south = toNodeId(x, y + 1);
+				const south = _toNodeId(x, y + 1);
 				const edgeSouth: Flow.Edge = {
 					sourceId: nodeId,
 					targetId: south,
@@ -117,7 +117,7 @@ export const init = (input: {
 			}
 
 			if (x > 0) {
-				const west = toNodeId(x - 1, y);
+				const west = _toNodeId(x - 1, y);
 				const edgeWest: Flow.Edge = {
 					sourceId: nodeId,
 					targetId: west,
@@ -224,7 +224,7 @@ export const toEdge = (model: Model, edgeId: Flow.EdgeId): Edge | null => {
  * Adds a node to the puzzle.
  */
 export const addNode = (model: Model, position: Position): Model => {
-	const nodeId = positionToNodeId(position);
+	const nodeId = toNodeId(position);
 	const added = Flow.addNode(model, { nodeId });
 	return {
 		...model,

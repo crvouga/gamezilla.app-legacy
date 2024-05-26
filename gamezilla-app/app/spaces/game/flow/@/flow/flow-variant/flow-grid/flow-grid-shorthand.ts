@@ -5,23 +5,21 @@ import * as FlowGridDimensions from "./flow-grid-dimensions";
 
 export type Model = NonEmpty<NonEmpty<Flow.GroupId | null>>;
 
+const init = (model: Model): Model => {
+	return model;
+}
+
 type DraftTerminal = {
 	groupId: Flow.GroupId;
 	startId: Flow.NodeId;
 	endId: Flow.NodeId | null;
 };
 
-export function fromShorthand(model: Model): FlowGrid.Model {
-	let grid = FlowGrid.init({
-		dimensions: FlowGridDimensions.init({
-			width: model[0].length,
-			height: model.length,
-		}),
-	});
 
-	const draftTerminals: {
-		[groupId in Flow.GroupId]?: DraftTerminal;
-	} = {};
+const ___ = null;
+
+const toGrid = (model: Model): FlowGrid.Model => {
+	const terminalsByGroupId: FlowGrid.Model["terminalsByGroupId"] = {};
 
 	for (let y = 0; y < model.length; y++) {
 		const row = model[y];
@@ -36,9 +34,7 @@ export function fromShorthand(model: Model): FlowGrid.Model {
 				y,
 			};
 
-			const nodeId = FlowGrid.positionToNodeId(position);
-
-			grid = FlowGrid.addNode(grid, position);
+			const nodeId = FlowGrid.toNodeId(position);
 
 			const groupId = row[x];
 
@@ -46,7 +42,7 @@ export function fromShorthand(model: Model): FlowGrid.Model {
 				continue;
 			}
 
-			const draftTerminal = draftTerminals[groupId];
+			const draftTerminal = terminalsByGroupId[groupId];
 
 			if (!draftTerminal) {
 				const draftTerminalNew: DraftTerminal = {
@@ -54,22 +50,46 @@ export function fromShorthand(model: Model): FlowGrid.Model {
 					startId: nodeId,
 					endId: null,
 				};
-				draftTerminals[groupId] = draftTerminalNew;
+				terminalsByGroupId[groupId] = draftTerminalNew;
 				continue;
 			}
 
-			const added = Flow.addTerminal(grid, {
-				groupId: draftTerminal.groupId,
-				startId: draftTerminal.startId,
+			terminalsByGroupId[groupId] = {
+				...draftTerminal,
 				endId: nodeId,
-			});
-
-			grid = {
-				...grid,
-				...added,
 			};
 		}
 	}
 
+	const grid = FlowGrid.init({
+		dimensions: toDimensions(model),
+		terminalsByGroupId: terminalsByGroupId,
+	});
+
 	return grid;
+}
+
+
+const toDimensions = (model: Model): FlowGridDimensions.Model => {
+	let maxWidth = 0;
+	
+	for(let y = 0; y < model.length; y++) {
+		const row = model[y];
+		if (!row) {
+			continue;
+		}
+		maxWidth = Math.max(maxWidth, row.length);
+	}
+
+	return FlowGridDimensions.init({
+		width: maxWidth,
+		height: model.length,
+	});
+}
+
+export const FlowGridShorthand = {
+	init,
+	___,
+	toDimensions,
+	toGrid,
 }

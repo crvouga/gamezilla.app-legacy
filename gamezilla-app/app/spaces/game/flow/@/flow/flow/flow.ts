@@ -1,4 +1,4 @@
-import { memoize } from "gamezilla-app/@/core";
+import { eq, memoize } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 
 //
@@ -132,6 +132,25 @@ export const isSameTerminalsByGroupId = (
 		}
 	}
 	return true;
+};
+
+export const isSame = (a: Model, b: Model): boolean => {
+	const nodesA = a.nodes;
+	const nodesB = b.nodes;
+	const isSameNodes = eq(nodesA, nodesB);
+
+	const edgesA = a.edges;
+	const edgesB = b.edges;
+	const isSameEdges = eq(edgesA, edgesB);
+
+	const terminalsByGroupIdA = a.terminalsByGroupId;
+	const terminalsByGroupIdB = b.terminalsByGroupId;
+	const isSameTerminals = isSameTerminalsByGroupId(
+		terminalsByGroupIdA,
+		terminalsByGroupIdB,
+	);
+
+	return isSameNodes && isSameEdges && isSameTerminals;
 };
 
 /**

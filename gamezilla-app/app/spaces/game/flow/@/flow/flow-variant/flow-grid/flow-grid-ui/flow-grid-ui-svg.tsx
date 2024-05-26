@@ -283,7 +283,7 @@ const touchEventToNodeId = (msgCore: TouchEvent): Flow.NodeId | null => {
 		return null;
 	}
 	const svgPosition = point.matrixTransform(screenCTM.inverse());
-	const nodeId = FlowGrid.positionToNodeId({
+	const nodeId = FlowGrid.toNodeId({
 		x: Math.floor(svgPosition.x),
 		y: Math.floor(svgPosition.y),
 	});

@@ -103,18 +103,22 @@ export const updateCore: CoreModule["updateCore"] = ({
 	}
 };
 
-const initCore = (input:{flowPack: FlowPack, flowPuzzle: FlowPuzzle, puzzleIndex: number }): ModelCore => {
+const initCore = (input: {
+	flowPack: FlowPack;
+	flowPuzzle: FlowPuzzle;
+	puzzleIndex: number;
+}): ModelCore => {
 	return {
 		...input,
 		flowPlay: FlowVariantUIPlay.init({
 			flow: input.flowPuzzle.flow,
-		}),	
+		}),
 		state: {
 			t: "solving",
 		},
-		t: 'screen-puzzle'
-	}
-} 
+		t: "screen-puzzle",
+	};
+};
 
 export const ScreenPuzzleCore = {
 	updateCore,

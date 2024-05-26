@@ -27,12 +27,12 @@ export type MsgCore = p.Infer<typeof MsgCore>;
 
 export const State = p.or(
 	p.obj({
-		t: p.l('solving'),
+		t: p.l("solving"),
 	}),
 	p.obj({
-		t: p.l('solved'),
+		t: p.l("solved"),
 	}),
-)
+);
 export type State = p.Infer<typeof State>;
 
 export const ModelCore = p.obj({
