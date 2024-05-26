@@ -77,9 +77,9 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 	}
 
 	const edges: Flow.Edge[] = [];
-	
+
 	let currentNodeId: Flow.NodeId = terminal.startId;
-	
+
 	for (let i = 0; i < Math.random() * 10; i++) {
 		const edge = Flow.randomOutEdge(flow, currentNodeId);
 

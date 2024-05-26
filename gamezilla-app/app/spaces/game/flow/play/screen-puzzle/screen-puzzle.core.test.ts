@@ -52,16 +52,17 @@ describe(import.meta.file, () => {
 
 	it("should update puzzle screen flow play ui", async () => {
 		const f = await Fixture();
-		const terminal = Flow.randomTerminal(f.puzzle.flow)!;
-		const after = f.update(f.init, [
-			{
-				t: "got-puzzle-screen-flow-play-msg",
-				c: {
-					t: "pressed-down",
-					nodeId: terminal.startId,
-				},
-			},
-		]);
+		const after = f.update(
+			f.init,
+			FlowVariantUIPlay.randomMsgs({
+				flow: f.puzzle.flow,
+			}).map(
+				(c): MsgCore => ({
+					t: "got-puzzle-screen-flow-play-msg",
+					c,
+				}),
+			),
+		);
 
 		if (
 			f.init.screen.t === "screen-puzzle" &&
@@ -113,15 +114,17 @@ describe(import.meta.file, () => {
 		).toEqual(0);
 	});
 
-	it('should start with empty puzzle after going to next puzzle', async () => {
+	it("should start with empty puzzle after going to next puzzle", async () => {
 		const f = await Fixture();
-		
+
 		const msgs = FlowVariantUIPlay.randomMsgs({
 			flow: f.puzzle.flow,
-		}).map((c): MsgCore => ({
-			t: 'got-puzzle-screen-flow-play-msg',
-			c
-		})) 
+		}).map(
+			(c): MsgCore => ({
+				t: "got-puzzle-screen-flow-play-msg",
+				c,
+			}),
+		);
 
 		const before = f.update(f.init, msgs);
 		const after = f.update(f.init, [
@@ -132,9 +135,14 @@ describe(import.meta.file, () => {
 			},
 		]);
 
-		if(before.screen.t === 'screen-puzzle' && after.screen.t === 'screen-puzzle') {
+		if (
+			before.screen.t === "screen-puzzle" &&
+			after.screen.t === "screen-puzzle"
+		) {
 			expect(before.screen.flowPlay).not.toEqual(after.screen.flowPlay);
-			expect(after.screen.flowPlay).toEqual(FlowVariantUIPlay.init({ flow: f.nextPuzzle.flow }))
+			expect(after.screen.flowPlay).toEqual(
+				FlowVariantUIPlay.init({ flow: f.nextPuzzle.flow }),
+			);
 		}
-	})
+	});
 });
