@@ -82,6 +82,18 @@ describe(import.meta.file, () => {
 		).toBeTruthy();
 	});
 
+	it('should make a sound after clicking exit button', async () => {
+		const f = await Fixture();
+		const updated = f.update(f.initial, [
+			{
+				msgCore: withEventMeta({
+					t: "user-clicked-exit-puzzle-button",
+				}),
+			},
+		]);
+		expect(didPlaySound(updated)).toBe(true);
+	})
+
 	it("should exit to pack after clicking exit puzzle button", async () => {
 		const f = await Fixture();
 		const updated = f.update(f.initial, [
@@ -215,4 +227,10 @@ describe(import.meta.file, () => {
 		const nextButton = r.getByRole("button", f.ctx.t("app.next"));
 		expect(nextButton?.disabled).toBe(true);
 	});
+
+	it('should render which level of the pack is being played', async () => {
+		const f = await Fixture();
+		const r = f.render(f.initial);
+		expect(r.getByRole('heading', `Level ${f.puzzleIndex + 1}`)).toBeTruthy();
+	})
 });

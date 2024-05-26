@@ -23,12 +23,20 @@ const update: ClientModule["update"] = (input) => {
 		}
 	}
 	switch (input.msgCore?.t) {
+		case 'user-clicked-exit-puzzle-button': {
+			return {
+				model: input.model,
+				msgCmd: [playSound(APP_SOUND.navBackwardMin)],
+			};
+		}
+			
 		case "user-clicked-next-puzzle-button": {
 			return {
 				model: input.model,
 				msgCmd: [playSound(APP_SOUND.navForwardMin)],
 			};
 		}
+			
 		case "user-clicked-prev-puzzle-button": {
 			return {
 				model: input.model,
@@ -65,7 +73,7 @@ const View: ClientModule["View"] = (input) => {
 		: null;
 	return (
 		<div className="w-full flex flex-col flex-1" data-puzzle-id={flowPuzzle.id}>
-			<ViewScreenTitle title={flowPuzzle.name} />
+			<ViewScreenTitle title={`Level ${puzzleIndex + 1}`} />
 			<div className="flex-1 flex flex-col items-center justify-center">
 				<FlowVariantUIPlay.View
 					flow={flowPuzzle.flow}
