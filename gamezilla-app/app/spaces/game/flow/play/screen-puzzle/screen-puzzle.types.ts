@@ -25,12 +25,23 @@ export const MsgCore = p.or(
 
 export type MsgCore = p.Infer<typeof MsgCore>;
 
+export const State = p.or(
+	p.obj({
+		t: p.l('solving'),
+	}),
+	p.obj({
+		t: p.l('solved'),
+	}),
+)
+export type State = p.Infer<typeof State>;
+
 export const ModelCore = p.obj({
 	t: p.l("screen-puzzle"),
 	flowPack: FlowPack,
 	flowPuzzle: FlowPuzzle,
 	flowPlay: FlowVariantUIPlay.Model,
 	puzzleIndex: p.num,
+	state: State,
 });
 
 export type ModelCore = p.Infer<typeof ModelCore>;

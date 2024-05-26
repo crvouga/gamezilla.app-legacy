@@ -97,7 +97,7 @@ export const MsgCore = p.or(
 	}),
 	p.obj({
 		t: p.l("user-clicked-open-puzzle-grid-item"),
-		puzzle: FlowPuzzle,
+		flowPuzzle: FlowPuzzle,
 		puzzleIndex: p.num,
 	}),
 	ScreenPuzzleTypes.MsgCore,

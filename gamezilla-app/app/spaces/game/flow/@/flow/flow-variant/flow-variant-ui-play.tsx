@@ -106,6 +106,11 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 	return msgs;
 };
 
+export const toSolutionMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
+	flow
+	return []
+}
+
 //
 //
 //

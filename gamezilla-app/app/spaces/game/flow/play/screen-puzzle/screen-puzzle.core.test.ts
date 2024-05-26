@@ -1,9 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { Flow, FlowVariantUIPlay } from "../../@/flow";
+import { FlowVariantUIPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
 import { CoreFixture } from "../@/testing";
 import { MsgCore } from "./screen-puzzle.types";
+import { pipe } from "gamezilla-app/@/core";
 
 const Fixture = async () => {
 	const f = await CoreFixture();
@@ -22,7 +23,7 @@ const Fixture = async () => {
 		},
 		{
 			t: "user-clicked-open-puzzle-grid-item",
-			puzzle: puzzle,
+			flowPuzzle: puzzle,
 			puzzleIndex,
 		},
 	]);
@@ -146,20 +147,15 @@ describe(import.meta.file, () => {
 		}
 	});
 
-	it.todo('should be in puzzle completed state after the puzzle is completed', async () => {
+	it.todo('should go into puzzle solved state after solving', async () => {
 		const f = await Fixture();
-
-		const msgs = FlowVariantUIPlay.randomMsgs({
-			flow: f.puzzle.flow,
-		}).map(
-			(c): MsgCore => ({
-				t: "got-puzzle-screen-flow-play-msg",
-				c,
-			}),
-		);
-
-		const output = f.update(f.init, []);
-
-		expect(output.screen.t === 'screen-puzzle' && output.screen.state)
+		const msgs = pipe(
+			FlowVariantUIPlay.toSolutionMsgs({ flow: f.puzzle.flow, }),
+			msgs => msgs.map((c): MsgCore => ({t: "got-puzzle-screen-flow-play-msg",c,})),
+		)
+		const before = f.init
+		const after = f.update(before, msgs);
+		expect(after.screen.t === 'screen-puzzle' && after.screen.state.t === 'solving').toEqual(true)
+		expect(after.screen.t === 'screen-puzzle' && after.screen.state.t === 'solved').toEqual(true)
 	})
 });

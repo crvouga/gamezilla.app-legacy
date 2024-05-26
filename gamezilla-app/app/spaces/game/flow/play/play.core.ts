@@ -48,15 +48,11 @@ const update: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 				case "screen-pack": {
 					return {
 						...modelCore,
-						screen: {
-							t: "screen-puzzle",
+						screen: ScreenPuzzleCore.initCore({
 							flowPack: modelCore.screen.flowPack,
-							flowPuzzle: msgCore.puzzle,
-							flowPlay: FlowVariantUIPlay.init({
-								flow: modelCore.flow,
-							}),
 							puzzleIndex: msgCore.puzzleIndex,
-						},
+							flowPuzzle: msgCore.flowPuzzle,
+						})
 					};
 				}
 				default: {

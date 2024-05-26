@@ -1,5 +1,8 @@
-import { Flow, FlowVariantUIPlay } from "../../@/flow";
+import { FlowVariantUIPlay } from "../../@/flow";
+import { FlowPack } from "../../@/flow-pack";
+import { FlowPuzzle } from "../../@/flow-puzzle";
 import { CoreModule } from "../play.types";
+import { ModelCore } from "./screen-puzzle.types";
 
 export const updateCore: CoreModule["updateCore"] = ({
 	modelCore,
@@ -100,6 +103,20 @@ export const updateCore: CoreModule["updateCore"] = ({
 	}
 };
 
+const initCore = (input:{flowPack: FlowPack, flowPuzzle: FlowPuzzle, puzzleIndex: number }): ModelCore => {
+	return {
+		...input,
+		flowPlay: FlowVariantUIPlay.init({
+			flow: input.flowPuzzle.flow,
+		}),	
+		state: {
+			t: "solving",
+		},
+		t: 'screen-puzzle'
+	}
+} 
+
 export const ScreenPuzzleCore = {
 	updateCore,
+	initCore,
 };
