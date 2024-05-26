@@ -1,4 +1,4 @@
-import { Browser, RequestResponse, Result, Sub, isErr } from "gamezilla-app/@/core";
+import { RequestResponse, Result, Sub, isErr } from "gamezilla-app/@/core";
 import { AppClientModule } from "gamezilla-app/app/@/architecture/app-client";
 import { sendToServer, showErrSm } from "gamezilla-app/app/@/client";
 import { IntersectionObserverEmitter } from "gamezilla-app/app/@/ui/intersection-observer";
@@ -184,11 +184,9 @@ export const FlowPackGridClient: Pick<
 	subscriptions(input) {
 		return Sub.batch([
 			RequestTimeout.subscriptions(input),
-			Browser.onInterectionObverivations(input.ctx.containerHtmlId, () => ({
-				
-			})
-				
-			)
+			// Browser.onInterectionObverivations(input.ctx.containerHtmlId, () => ({
+			// })
+			// )
 		
 		]) 
 	},
