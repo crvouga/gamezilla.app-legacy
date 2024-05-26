@@ -65,8 +65,11 @@ const Fixture = async () => {
 
 	const update = (initial: ModelClient, msgs: Input[]) => {
 		const outputs = updates(initial, msgs);
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		return outputs[outputs.length - 1]!;
+		const latestOutput = outputs[outputs.length - 1];
+		if (!latestOutput) {
+			throw new Error("latestOutput is undefined");
+		}
+		return latestOutput;
 	};
 
 	const init = FlowPackGridClient.init({
@@ -102,7 +105,7 @@ const isSubset = <T,>(subArray: T[], superArray: T[]): boolean => {
 	return subArray.every((item) => superArray.includes(item));
 };
 
-const hasSameElements = <T,>(a: T[], b: T[]): boolean => {
+const areEqualSets = <T,>(a: T[], b: T[]): boolean => {
 	return isSubset(a, b) && isSubset(b, a);
 };
 
@@ -135,7 +138,7 @@ describe(import.meta.file, () => {
 				output,
 				(msg) =>
 					msg.t === "list-puzzles-by-id" &&
-					hasSameElements(msg.puzzleIds, f.pack.puzzleIds),
+					areEqualSets(msg.puzzleIds, f.pack.puzzleIds),
 			),
 		).toBe(true);
 	});
