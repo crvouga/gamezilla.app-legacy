@@ -562,6 +562,18 @@ export const pipelineToGroupId = (pipeline: Iterable<Pipe>): GroupId | null => {
 	return null;
 };
 
+export type Pipeline = Pipe[];
+
+export const toPipeline = (model: Model, sourceNodeId: NodeId): Pipe[] => {
+	const pipe = toPipeBySourceId(model, sourceNodeId);
+
+	if (!pipe) {
+		return [];
+	}
+
+	return [pipe, ...toPipeline(model, pipe.edge.targetId)];
+};
+
 export const yieldPipeline = (
 	model: Model,
 	startingNodeId: NodeId,

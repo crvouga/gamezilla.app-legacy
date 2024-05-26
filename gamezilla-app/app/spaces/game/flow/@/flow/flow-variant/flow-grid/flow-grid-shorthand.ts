@@ -3,14 +3,13 @@ import { Flow } from "../../flow";
 import * as FlowGrid from "./flow-grid";
 import * as FlowGridDimensions from "./flow-grid-dimensions";
 
-
-// 
-// 
-// 
+//
+//
+//
 // Model
-// 
-// 
-// 
+//
+//
+//
 
 type Terminal = Flow.GroupId;
 
@@ -28,12 +27,12 @@ type Element = Empty | Terminal | Pipe | TerminalWithPipe;
 
 export type Model = NonEmpty<NonEmpty<Element>>;
 
-// 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
+//
 
 const isLowercase = (string: string): boolean =>
 	string === string.toLowerCase();
@@ -85,25 +84,25 @@ const elementToGroupId = (element: Element): Flow.GroupId | null => {
 	return null;
 };
 
-// 
-// 
-// 
+//
+//
+//
 // Init
-// 
-// 
-// 
+//
+//
+//
 
 const init = (model: Model): Model => {
 	return model;
 };
 
-// 
-// 
-// 
-// 
-// 
-// 
-// 
+//
+//
+//
+//
+//
+//
+//
 
 type DraftTerminal = {
 	groupId: Flow.GroupId;
@@ -389,43 +388,82 @@ const toPipesBySourceIdList = (input: {
 		}
 	}
 
-	const uniqueCombinations: FlowGrid.Model["pipesBySourceId"][] = [];
+	const combinationsWithPipelines = combinations.map((pipesBySourceId) => {
+		const withPipesBySourceId: FlowGrid.Model = {
+			...input.grid,
+			pipesBySourceId,
+		};
 
-	for (const combination of combinations) {
+		const pipelinesByGroupId: {
+			[groupId in Flow.GroupId]?: Flow.Pipeline;
+		} = {};
+
+		for (const groupId in input.grid.terminalsByGroupId) {
+			if (!Flow.isGroupId(groupId)) {
+				continue;
+			}
+			const terminal = input.grid.terminalsByGroupId[groupId];
+			if (!terminal) {
+				continue;
+			}
+			const pipeline = FlowGrid.toPipeline(
+				withPipesBySourceId,
+				terminal.startId,
+			);
+			if (!pipeline) {
+				continue;
+			}
+			pipelinesByGroupId[groupId] = pipeline;
+		}
+
+		const totalPipelineLength = Object.values(pipelinesByGroupId).reduce(
+			(sum, pipeline) => sum + pipeline.length,
+			0,
+		);
+
+		return {
+			pipesBySourceId,
+			pipelinesByGroupId,
+			totalPipelineLength,
+		};
+	});
+
+	const maxPipelineLength = Math.max(
+		...combinationsWithPipelines.map(
+			(combination) => combination.totalPipelineLength,
+		),
+	);
+
+	const combinationsWithMaxPipelineLength = combinationsWithPipelines.filter(
+		(combination) => combination.totalPipelineLength === maxPipelineLength,
+	);
+
+	const uniqueCombinations: typeof combinationsWithMaxPipelineLength = [];
+
+	for (const candidate of combinationsWithMaxPipelineLength) {
 		const isUnique = uniqueCombinations.every(
-			(existingUniqueCombination) =>
+			(existing) =>
 				!Flow.isSamePipesBySourceId(
 					{
 						edges: input.grid.edges,
-						pipesBySourceId: combination,
+						pipesBySourceId: candidate.pipesBySourceId,
 					},
 					{
 						edges: input.grid.edges,
-						pipesBySourceId: existingUniqueCombination,
+						pipesBySourceId: existing.pipesBySourceId,
 					},
 				),
 		);
 
 		if (isUnique) {
-			uniqueCombinations.push(combination);
+			uniqueCombinations.push(candidate);
 		}
 	}
 
-	let maxLength = 0;
+	const uniqueValidPipesBySourceId = uniqueCombinations.map((combination) => combination.pipesBySourceId)
 
-	for (const combination of uniqueCombinations) {
-		const length = Object.keys(combination).length;
-		if (length > maxLength) {
-			maxLength = length;
-		}
-	}
-
-	const maxLengthCombinations = uniqueCombinations.filter(
-		(combination) => Object.keys(combination).length === maxLength,
-	);
-
-	if (NonEmpty.is(maxLengthCombinations)) {
-		return maxLengthCombinations;
+	if (NonEmpty.is(uniqueValidPipesBySourceId)) {
+		return uniqueValidPipesBySourceId
 	}
 
 	return [{}];

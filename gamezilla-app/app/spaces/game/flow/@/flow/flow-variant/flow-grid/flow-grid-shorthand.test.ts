@@ -367,22 +367,20 @@ describe(import.meta.file, () => {
 		expect(isSame).toBe(true);
 	});
 
-	it('should only return grids with the longest paths', async () => {
+	it("should only return grids with the longest paths", async () => {
 		const shorthand = FlowGridShorthand.init([
 			["A", "a", "a"],
 			["a", "a", "a"],
 			["a", "a", "A"],
 		]);
 
-		const grids = FlowGridShorthand.toGrids(shorthand)
+		const grids = FlowGridShorthand.toGrids(shorthand);
 
-		const expected = 2
-		const actual = grids.length
-
-		console.log(grids)
+		const expected = 2;
+		const actual = grids.length;
 
 		expect(actual).toBe(expected);
-	})
+	});
 
 	it("should be able to find longest path", async () => {
 		const shorthand = FlowGridShorthand.init([
