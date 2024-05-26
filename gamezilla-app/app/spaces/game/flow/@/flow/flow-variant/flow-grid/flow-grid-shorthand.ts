@@ -90,11 +90,58 @@ const toTerminalsByGroupId = (
 	return terminalsByGroupId;
 };
 
+const toPipesBySourceIdForTerminal = (input: {
+	model: Model;
+	grid: FlowGrid.Model;
+	terminal: Flow.Terminal;
+}): FlowGrid.Model["pipesBySourceId"] => {
+	const pipesBySourceId: FlowGrid.Model["pipesBySourceId"] = {};
+	let currentNodeId = input.terminal.startId;
+	while (true) {
+		const currentNode = FlowGrid.toNode(input.grid, currentNodeId);
+
+		if (!currentNode) {
+			break;
+		}
+
+		const north = input.model[currentNode.y - 1]?.[currentNode.x];
+		const east = input.model[currentNode.y]?.[currentNode.x + 1];
+		const south = input.model[currentNode.y + 1]?.[currentNode.x];
+		const west = input.model[currentNode.y]?.[currentNode.x - 1];
+
+		for (const direction of [north, east, south, west]) {
+			if (!direction) {
+				continue;
+			}
+
+			if (isPipe(direction)) {
+				continue;
+			}
+
+			if (isTerminalWithPipe(direction)) {
+				continue;
+			}
+
+			if (isTerminal(direction)) {
+				continue;
+			}
+
+			if (isEmpty(direction)) {
+				continue;
+			}
+		}
+
+		break;
+		//
+	}
+	return pipesBySourceId;
+};
+
 const toPipesBySourceId = (input: {
 	model: Model;
 	grid: FlowGrid.Model;
 }): FlowGrid.Model["pipesBySourceId"] => {
-	const pipesBySourceId: FlowGrid.Model["pipesBySourceId"] = {};
+	let pipesBySourceId: FlowGrid.Model["pipesBySourceId"] = {};
 
 	for (const groupId in input.grid.terminalsByGroupId) {
 		const terminal = input.grid.terminalsByGroupId[groupId as Flow.GroupId];
@@ -103,45 +150,16 @@ const toPipesBySourceId = (input: {
 			continue;
 		}
 
-		let currentNodeId = terminal.startId;
-		while (true) {
-			const currentNode = FlowGrid.toNode(input.grid, currentNodeId);
+		const pipesBySourceIdForTerminal = toPipesBySourceIdForTerminal({
+			model: input.model,
+			grid: input.grid,
+			terminal,
+		});
 
-			if (!currentNode) {
-				break;
-			}
-			
-			const north = input.model[currentNode.y - 1]?.[currentNode.x];
-			const east = input.model[currentNode.y]?.[currentNode.x + 1];
-			const south = input.model[currentNode.y + 1]?.[currentNode.x];
-			const west = input.model[currentNode.y]?.[currentNode.x - 1];
-
-			for (const direction of [north, east, south, west]) {
-				if (!direction) {
-					continue
-				}
-				
-				if (isPipe(direction)) {
-					continue
-				}
-				
-				if (isTerminalWithPipe(direction)) {
-					continue
-				}
-				
-				if (isTerminal(direction)) {
-					continue
-				}
-				
-				if (isEmpty(direction)) {
-					continue
-				}
-			}
-
-			
-			break;
-			//
-		}
+		pipesBySourceId = {
+			...pipesBySourceId,
+			...pipesBySourceIdForTerminal,
+		};
 	}
 
 	return pipesBySourceId;

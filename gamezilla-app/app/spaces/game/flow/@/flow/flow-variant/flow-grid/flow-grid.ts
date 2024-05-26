@@ -361,8 +361,7 @@ export const toPipeline = (
 	}
 };
 
-
 export const isSolved = (model: Model): boolean => {
-	model
-	return false
-}
+	model;
+	return false;
+};
