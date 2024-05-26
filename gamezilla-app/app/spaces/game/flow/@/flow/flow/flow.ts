@@ -135,7 +135,7 @@ export const isSameTerminalsByGroupId = (
 };
 
 export const toReversedPipesBySourceId = (
-	model: Model,
+	model: Pick<Model, "pipesBySourceId" | "edges">,
 ): Model["pipesBySourceId"] => {
 	const reversed: Model["pipesBySourceId"] = {};
 	for (const sourceId in model.pipesBySourceId) {
@@ -158,12 +158,15 @@ export const toReversedPipesBySourceId = (
 	return reversed;
 };
 
-export const isSamePipesBySourceId = (left: Model, right: Model): boolean => {
+export const isSamePipesBySourceId = (
+	left: Pick<Model, "pipesBySourceId" | "edges">,
+	right: Pick<Model, "pipesBySourceId" | "edges">,
+): boolean => {
 	const isEqual = eq(left.pipesBySourceId, right.pipesBySourceId);
-	const reversedB = toReversedPipesBySourceId(right)
+	const reversedB = toReversedPipesBySourceId(right);
 	const isEqualReversed = eq(left.pipesBySourceId, reversedB);
 	const isSame = isEqual || isEqualReversed;
-	return isSame
+	return isSame;
 };
 
 export const isSame = (left: Model, right: Model): boolean => {
@@ -287,7 +290,10 @@ export const toNode = (model: Model, nodeId: NodeId): Node | null => {
 /**
  * Finds edge
  */
-export const toEdge = (model: Model, edgeId: EdgeId): Edge | null => {
+export const toEdge = (
+	model: Pick<Model, "edges">,
+	edgeId: EdgeId,
+): Edge | null => {
 	const edge = model.edges[edgeId];
 
 	if (!edge) {

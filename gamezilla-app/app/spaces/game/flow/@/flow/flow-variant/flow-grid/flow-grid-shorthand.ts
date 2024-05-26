@@ -1,4 +1,4 @@
-import type { NonEmpty } from "gamezilla-app/@/core";
+import { NonEmpty } from "gamezilla-app/@/core";
 import { Flow } from "../../flow";
 import * as FlowGrid from "./flow-grid";
 import * as FlowGridDimensions from "./flow-grid-dimensions";
@@ -32,7 +32,6 @@ const isTerminalWithPipe = (element: string): element is TerminalWithPipe =>
 	);
 
 export const isEmpty = (element: string): element is Empty => element === " ";
-
 
 const pipeToGroupId = (pipe: Pipe): Flow.GroupId => {
 	const uppercase = pipe.toUpperCase();
@@ -155,7 +154,6 @@ const DELTAS = [
 	},
 ] as const;
 
-
 const toPipesBySourceIdForTerminal = (input: {
 	model: Model;
 	grid: FlowGrid.Model;
@@ -235,7 +233,7 @@ const toPipesBySourceIdForTerminal = (input: {
 			pipesBySourceId[currentNodeId] = {
 				edgeId,
 				groupId,
-			};			
+			};
 			break;
 		}
 
@@ -310,7 +308,6 @@ const toPipesBySourceIdForTerminal = (input: {
 	return pipesBySourceId;
 };
 
-
 const toPipesBySourceId = (input: {
 	model: Model;
 	grid: FlowGrid.Model;
@@ -338,7 +335,6 @@ const toPipesBySourceId = (input: {
 	return pipesBySourceId;
 };
 
-
 /**
  * Returns a list of all possible pipes for a terminal.
  * @exmaple ```ts
@@ -361,12 +357,12 @@ const toPipesBySourceIdForTerminalList = (input: {
 
 	const findPaths = (
 		currentNodeId: Flow.NodeId,
-		path: FlowGrid.Model["pipesBySourceId"]
+		path: FlowGrid.Model["pipesBySourceId"],
 	) => {
 		if (visitedNodeIds.has(currentNodeId)) {
 			return;
 		}
-		
+
 		visitedNodeIds.add(currentNodeId);
 
 		const currentNode = FlowGrid.toNode(input.grid, currentNodeId);
@@ -438,7 +434,7 @@ const toPipesBySourceIdForTerminalList = (input: {
 				y: currentNode.y + delta.y,
 			};
 			const adjacentNodeId = FlowGrid.toNodeId(adjacentPosition);
-			
+
 			if (visitedNodeIds.has(adjacentNodeId)) {
 				continue;
 			}
@@ -486,8 +482,10 @@ const toPipesBySourceIdForTerminalList = (input: {
 const toPipesBySourceIdList = (input: {
 	model: Model;
 	grid: FlowGrid.Model;
-}): FlowGrid.Model["pipesBySourceId"][] => {
-	const pipesBySourceIdListByGroupId: {[groupId in Flow.GroupId]?: FlowGrid.Model["pipesBySourceId"][]} = {};
+}): NonEmpty<FlowGrid.Model["pipesBySourceId"]> => {
+	const pipesBySourceIdListByGroupId: {
+		[groupId in Flow.GroupId]?: FlowGrid.Model["pipesBySourceId"][];
+	} = {};
 
 	for (const groupId in input.grid.terminalsByGroupId) {
 		const terminal = input.grid.terminalsByGroupId[groupId as Flow.GroupId];
@@ -502,38 +500,83 @@ const toPipesBySourceIdList = (input: {
 			terminal,
 		});
 
-		pipesBySourceIdListByGroupId[terminal.groupId] = [...(pipesBySourceIdListByGroupId[terminal.groupId] ?? []), ...pipesBySourceIdForTerminal];
+		pipesBySourceIdListByGroupId[terminal.groupId] = [
+			...(pipesBySourceIdListByGroupId[terminal.groupId] ?? []),
+			...pipesBySourceIdForTerminal,
+		];
 	}
 
-	const pipesBySourceIdCombinations: FlowGrid.Model["pipesBySourceId"][] = [];
+	const combinations: FlowGrid.Model["pipesBySourceId"][] = [];
 
 	for (const groupId1 in pipesBySourceIdListByGroupId) {
 		if (!Flow.isGroupId(groupId1)) {
-			continue
+			continue;
 		}
 		const paths1 = pipesBySourceIdListByGroupId[groupId1];
 		if (!paths1) {
 			continue;
 		}
+
 		for (const groupId2 in pipesBySourceIdListByGroupId) {
-			if(!Flow.isGroupId(groupId2)) {
+			if (!Flow.isGroupId(groupId2)) {
 				continue;
 			}
+
 			const paths2 = pipesBySourceIdListByGroupId[groupId2];
+
 			if (!paths2) {
 				continue;
 			}
 
 			for (const path1 of paths1) {
 				for (const path2 of paths2) {
-					pipesBySourceIdCombinations.push({ ...path1, ...path2 });
+					combinations.push({ ...path1, ...path2 });
 				}
 			}
 		}
 	}
-	return pipesBySourceIdCombinations;
-};
 
+	const uniqueCombinations: FlowGrid.Model["pipesBySourceId"][] = [];
+
+	for (const combination of combinations) {
+		const isUnique = uniqueCombinations.every(
+			(existingUniqueCombination) =>
+				!Flow.isSamePipesBySourceId(
+					{
+						edges: input.grid.edges,
+						pipesBySourceId: combination,
+					},
+					{
+						edges: input.grid.edges,
+						pipesBySourceId: existingUniqueCombination,
+					},
+				),
+		);
+
+		if (isUnique) {
+			uniqueCombinations.push(combination);
+		}
+	}
+	
+	let maxLength = 0;
+
+	for (const combination of uniqueCombinations) {
+		const length = Object.keys(combination).length;
+		if (length > maxLength) {
+			maxLength = length;
+		}
+	}
+
+	const maxLengthCombinations = uniqueCombinations.filter(
+		(combination) => Object.keys(combination).length === maxLength,
+	);
+
+	if (NonEmpty.is(maxLengthCombinations)) {
+		return maxLengthCombinations;
+	}
+
+	return [{}];
+};
 
 const toDimensions = (model: Model): FlowGridDimensions.Model => {
 	let maxWidth = 0;
@@ -553,33 +596,38 @@ const toDimensions = (model: Model): FlowGridDimensions.Model => {
 };
 
 const toGrid = (model: Model): FlowGrid.Model => {
-	const terminalsByGroupId = toTerminalsByGroupId(model);
-	const dimensions = toDimensions(model);
-	const grid = FlowGrid.init({ dimensions, terminalsByGroupId });
-	const pipesBySourceId = toPipesBySourceId({ grid, model });
-	return {
-		...grid,
-		pipesBySourceId,
-	};
+	// const terminalsByGroupId = toTerminalsByGroupId(model);
+	// const dimensions = toDimensions(model);
+	// const grid = FlowGrid.init({ dimensions, terminalsByGroupId });
+	// const pipesBySourceId = toPipesBySourceId({ grid, model });
+	const grids = toGrids(model);
+	return grids[0];
+	// return {
+	// 	...grid,
+	// 	pipesBySourceId,
+	// };
 };
 
-const toGrids = (model: Model): FlowGrid.Model[] => {
+const toGrids = (model: Model): NonEmpty<FlowGrid.Model> => {
 	const terminalsByGroupId = toTerminalsByGroupId(model);
 	const dimensions = toDimensions(model);
 	const grid = FlowGrid.init({ dimensions, terminalsByGroupId });
 	const pipesBySourceIdList = toPipesBySourceIdList({ grid, model });
-	const grids = pipesBySourceIdList.map((pipesBySourceId): FlowGrid.Model => {
-		return {
-			...grid,
-			pipesBySourceId,
-		};
-	})
-	return grids
-}
+	const grids = NonEmpty.map(
+		pipesBySourceIdList,
+		(pipesBySourceId): FlowGrid.Model => {
+			return {
+				...grid,
+				pipesBySourceId,
+			};
+		},
+	);
+	return grids;
+};
 
 export const FlowGridShorthand = {
 	init,
 	toDimensions,
 	toGrid,
-	toGrids
+	toGrids,
 };

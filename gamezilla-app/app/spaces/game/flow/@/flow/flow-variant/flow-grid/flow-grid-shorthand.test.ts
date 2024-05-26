@@ -359,15 +359,15 @@ describe(import.meta.file, () => {
 					}),
 					groupId: "B",
 				},
-			}
-		})
-		
+			},
+		});
+
 		const isSame = Flow.isSame(actual, expected);
 
 		expect(isSame).toBe(true);
-	})
+	});
 
-	it('should be able to find longest path', async () => {
+	it("should be able to find longest path", async () => {
 		const shorthand = FlowGridShorthand.init([
 			["A", "a", "a"],
 			["a", "a", "a"],
@@ -451,6 +451,6 @@ describe(import.meta.file, () => {
 			},
 		});
 
-		expect(actual.some(actual => Flow.isSame(actual, expected))).toBe(true)
-	})
+		expect(actual.some((actual) => Flow.isSame(actual, expected))).toBe(true);
+	});
 });

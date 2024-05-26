@@ -16,7 +16,12 @@ const last = <T>(xs: NonEmpty<T>): T => {
 	return lastEl;
 };
 
+const map = <T, U>(xs: NonEmpty<T>, f: (x: T) => U): NonEmpty<U> => {
+	return [f(xs[0]), ...xs.slice(1).map(f)];
+};
+
 export const NonEmpty = {
 	is,
 	last,
+	map,
 };
