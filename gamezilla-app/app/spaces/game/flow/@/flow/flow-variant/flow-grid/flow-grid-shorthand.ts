@@ -33,6 +33,41 @@ const isTerminalWithPipe = (element: string): element is TerminalWithPipe =>
 
 export const isEmpty = (element: string): element is Empty => element === " ";
 
+
+const pipeToGroupId = (pipe: Pipe): Flow.GroupId => {
+	const uppercase = pipe.toUpperCase();
+	if (Flow.isGroupId(uppercase)) {
+		return uppercase;
+	}
+	return "A";
+};
+
+const terminalWithPipeToGroupId = (
+	terminalWithPipe: TerminalWithPipe,
+): Flow.GroupId => {
+	const groupId = terminalWithPipe[0];
+	if (Flow.isGroupId(groupId)) {
+		return groupId;
+	}
+	return "A";
+};
+
+const elementToGroupId = (element: Element): Flow.GroupId | null => {
+	if (isPipe(element)) {
+		return pipeToGroupId(element);
+	}
+
+	if (isTerminal(element)) {
+		return element;
+	}
+
+	if (isTerminalWithPipe(element)) {
+		return terminalWithPipeToGroupId(element);
+	}
+
+	return null;
+};
+
 const init = (model: Model): Model => {
 	return model;
 };
@@ -63,22 +98,22 @@ const toTerminalsByGroupId = (
 				y,
 			};
 
-			const nodeId = FlowGrid.toNodeId(position);
+			const elementNodeId = FlowGrid.toNodeId(position);
 
 			const element = row[x];
 
 			if (!element) {
-				continue
+				continue;
 			}
 
 			if (!isTerminal(element) && !isTerminalWithPipe(element)) {
-				continue
+				continue;
 			}
 
 			const elementGroupId = elementToGroupId(element);
 
 			if (!elementGroupId) {
-				continue
+				continue;
 			}
 
 			const draftTerminal = terminalsByGroupId[elementGroupId];
@@ -86,7 +121,7 @@ const toTerminalsByGroupId = (
 			if (!draftTerminal) {
 				const draftTerminalNew: DraftTerminal = {
 					groupId: elementGroupId,
-					startId: nodeId,
+					startId: elementNodeId,
 					endId: null,
 				};
 				terminalsByGroupId[elementGroupId] = draftTerminalNew;
@@ -95,7 +130,7 @@ const toTerminalsByGroupId = (
 
 			terminalsByGroupId[elementGroupId] = {
 				...draftTerminal,
-				endId: nodeId,
+				endId: elementNodeId,
 			};
 		}
 	}
@@ -120,39 +155,8 @@ const DELTAS = [
 		x: -1,
 		y: 0,
 	},
-];
+] as const;
 
-const pipeToGroupId = (pipe: Pipe): Flow.GroupId => {
-	const uppercase = pipe.toUpperCase();
-	if (Flow.isGroupId(uppercase)) {
-		return uppercase;
-	}
-	return "A";
-}
-
-const terminalWithPipeToGroupId = (terminalWithPipe: TerminalWithPipe): Flow.GroupId => {
-	const groupId = terminalWithPipe[0];
-	if (Flow.isGroupId(groupId)) {
-		return groupId;
-	}
-	return "A";
-}
-
-const elementToGroupId = (element: Element): Flow.GroupId | null => {
-	if (isPipe(element)) {
-		return pipeToGroupId(element);
-	}
-
-	if(isTerminal(element)) {
-		return element;
-	}
-
-	if (isTerminalWithPipe(element)) {
-		return terminalWithPipeToGroupId(element);
-	}
-	
-	return null
-}
 
 const toPipesBySourceIdForTerminal = (input: {
 	model: Model;
@@ -167,7 +171,7 @@ const toPipesBySourceIdForTerminal = (input: {
 	let currentNodeId = input.terminal.startId;
 
 	vistedNodeIds.add(currentNodeId);
-	
+
 	for (let i = 0; i < 100; i++) {
 		const currentNode = FlowGrid.toNode(input.grid, currentNodeId);
 
@@ -175,20 +179,19 @@ const toPipesBySourceIdForTerminal = (input: {
 			break;
 		}
 
-		const currentElement = input.model[currentNode.y]?.[currentNode.x];	
+		const currentElement = input.model[currentNode.y]?.[currentNode.x];
 
 		if (!currentElement) {
-			continue			
+			continue;
 		}
-		
 
 		if (isTerminalWithPipe(currentElement)) {
 			let adjacentTerminalNode: Flow.Node | null = null;
 			for (const delta of DELTAS) {
-				const adjacentPosition =  {
+				const adjacentPosition = {
 					x: currentNode.x + delta.x,
 					y: currentNode.y + delta.y,
-				}
+				};
 
 				const adjacentNodeId = FlowGrid.toNodeId(adjacentPosition);
 
@@ -197,10 +200,21 @@ const toPipesBySourceIdForTerminal = (input: {
 				if (!adjacentNode) {
 					continue;
 				}
-			
-				const adjacentElement = input.model[adjacentPosition.y]?.[adjacentPosition.x];
-			
+
+				const adjacentElement =
+					input.model[adjacentPosition.y]?.[adjacentPosition.x];
+
 				if (!adjacentElement) {
+					continue;
+				}
+
+				const adjacentElementGroupId = elementToGroupId(adjacentElement);
+
+				if (!adjacentElementGroupId) {
+					continue;
+				}
+
+				if (adjacentElementGroupId !== groupId) {
 					continue;
 				}
 
@@ -209,9 +223,9 @@ const toPipesBySourceIdForTerminal = (input: {
 					break;
 				}
 			}
-		
+
 			if (!adjacentTerminalNode) {
-				continue
+				continue;
 			}
 
 			const edgeId = Flow.toEdgeId({
@@ -222,10 +236,10 @@ const toPipesBySourceIdForTerminal = (input: {
 			pipesBySourceId[currentNodeId] = {
 				edgeId,
 				groupId,
-			}
+			};
 
 			vistedNodeIds.add(adjacentTerminalNode.nodeId);
-			break
+			break;
 		}
 
 		let adjacentElement: Element | null = null;
@@ -233,38 +247,39 @@ const toPipesBySourceIdForTerminal = (input: {
 		let adjacentNodeId: Flow.NodeId | null = null;
 
 		for (const delta of DELTAS) {
-			const adjacentPosition_ =  {
+			const adjacentPosition_ = {
 				x: currentNode.x + delta.x,
 				y: currentNode.y + delta.y,
-			}
+			};
 			const adjacentNodeId_ = FlowGrid.toNodeId(adjacentPosition_);
 
 			if (vistedNodeIds.has(adjacentNodeId_)) {
 				continue;
 			}
-			
+
 			const adjacentNode_ = FlowGrid.toNode(input.grid, adjacentNodeId_);
 
 			if (!adjacentNode_) {
 				continue;
 			}
 
-			const adjacentElement_ = input.model[adjacentPosition_.y]?.[adjacentPosition_.x];
+			const adjacentElement_ =
+				input.model[adjacentPosition_.y]?.[adjacentPosition_.x];
 
 			if (!adjacentElement_) {
 				continue;
 			}
 
 			const adjacentGroupId = elementToGroupId(adjacentElement_);
-			
+
 			if (!adjacentGroupId) {
-				continue
+				continue;
 			}
 
 			if (adjacentGroupId !== groupId) {
-				continue
+				continue;
 			}
-			
+
 			adjacentElement = adjacentElement_;
 			adjacentPosition = adjacentPosition_;
 			adjacentNodeId = adjacentNodeId_;
@@ -284,16 +299,15 @@ const toPipesBySourceIdForTerminal = (input: {
 		pipesBySourceId[currentNodeId] = {
 			edgeId,
 			groupId,
-		}
+		};
 		currentNodeId = adjacentNodeId;
 
-
 		if (isTerminal(adjacentElement)) {
-			break
+			break;
 		}
 
 		if (isTerminalWithPipe(adjacentElement)) {
-			break
+			break;
 		}
 	}
 	return pipesBySourceId;

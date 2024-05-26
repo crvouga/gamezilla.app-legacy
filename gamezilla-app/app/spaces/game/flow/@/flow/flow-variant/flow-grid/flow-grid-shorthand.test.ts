@@ -290,6 +290,8 @@ describe(import.meta.file, () => {
 			},
 		});
 
-		expect(Flow.isSame(actual, expected)).toBe(true);
+		const isSame = Flow.isSame(actual, expected);
+
+		expect(isSame).toBe(true);
 	});
 });

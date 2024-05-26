@@ -134,10 +134,12 @@ export const isSameTerminalsByGroupId = (
 	return true;
 };
 
-const reversePipesBySourceId = (model: Model, pipesBySourceId: Model["pipesBySourceId"]) => {
+export const toReversedPipesBySourceId = (
+	model: Model,
+): Model["pipesBySourceId"] => {
 	const reversed: Model["pipesBySourceId"] = {};
-	for (const sourceId in pipesBySourceId) {
-		const pipe = pipesBySourceId[sourceId as NodeId];
+	for (const sourceId in model.pipesBySourceId) {
+		const pipe = model.pipesBySourceId[sourceId as NodeId];
 		if (!pipe) {
 			continue;
 		}
@@ -151,38 +153,36 @@ const reversePipesBySourceId = (model: Model, pipesBySourceId: Model["pipesBySou
 				targetId: edge.sourceId,
 			}),
 			groupId: pipe.groupId,
-		}
+		};
 	}
 	return reversed;
-}
+};
 
-export const isSamePipesBySourceId = (
-	model: Model,
-	a: Model["pipesBySourceId"],
-	b: Model["pipesBySourceId"],
-): boolean => {
-	return eq(a, b) || eq(a, reversePipesBySourceId(model, b));
-}
+export const isSamePipesBySourceId = (left: Model, right: Model): boolean => {
+	const isEqual = eq(left.pipesBySourceId, right.pipesBySourceId);
+	const reversedB = toReversedPipesBySourceId(right)
+	const isEqualReversed = eq(left.pipesBySourceId, reversedB);
+	const isSame = isEqual || isEqualReversed;
+	return isSame
+};
 
-export const isSame = (a: Model, b: Model): boolean => {
-	const nodesA = a.nodes;
-	const nodesB = b.nodes;
-	const isSameNodes = eq(nodesA, nodesB);
+export const isSame = (left: Model, right: Model): boolean => {
+	const nodesLeft = left.nodes;
+	const nodesRight = right.nodes;
+	const isSameNodes = eq(nodesLeft, nodesRight);
 
-	const edgesA = a.edges;
-	const edgesB = b.edges;
-	const isSameEdges = eq(edgesA, edgesB);
+	const edgesLeft = left.edges;
+	const edgesRight = right.edges;
+	const isSameEdges = eq(edgesLeft, edgesRight);
 
-	const terminalsByGroupIdA = a.terminalsByGroupId;
-	const terminalsByGroupIdB = b.terminalsByGroupId;
+	const terminalsByGroupIdLeft = left.terminalsByGroupId;
+	const terminalsByGroupIdRight = right.terminalsByGroupId;
 	const isSameTerminals = isSameTerminalsByGroupId(
-		terminalsByGroupIdA,
-		terminalsByGroupIdB,
+		terminalsByGroupIdLeft,
+		terminalsByGroupIdRight,
 	);
 
-	const pipesA = a.pipesBySourceId;
-	const pipesB = b.pipesBySourceId;
-	const isSamePipes = isSamePipesBySourceId(a, pipesA, pipesB);
+	const isSamePipes = isSamePipesBySourceId(left, right);
 
 	return isSamePipes && isSameNodes && isSameEdges && isSameTerminals;
 };

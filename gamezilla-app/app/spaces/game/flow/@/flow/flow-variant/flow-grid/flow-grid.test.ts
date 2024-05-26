@@ -1,5 +1,7 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it, test } from "bun:test";
 import { FlowGrid, FlowGridDimensions, FlowGridShorthand } from ".";
+import { Flow } from "../../flow";
+import { eq } from "gamezilla-app/@/core";
 
 describe(import.meta.file, () => {
 	it("should initialize the model", () => {
@@ -29,6 +31,42 @@ describe(import.meta.file, () => {
 		const expectedMaxNanoseconds = 10 * 1e6;
 
 		expect(actualNanoseconds).toBeLessThan(expectedMaxNanoseconds);
+	});
+
+	test("reverse pipes by source id", () => {
+		const grid = FlowGrid.init({
+			dimensions: FlowGridDimensions.init({
+				height: 2,
+				width: 1,
+			}),
+			terminalsByGroupId: {
+				A: {
+					startId: FlowGrid.toNodeId({ x: 0, y: 0 }),
+					endId: FlowGrid.toNodeId({ x: 0, y: 1 }),
+					groupId: "A",
+				},
+			},
+			pipesBySourceId: {
+				[FlowGrid.toNodeId({ x: 0, y: 0 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 0, y: 0 }),
+						targetId: FlowGrid.toNodeId({ x: 0, y: 1 }),
+					}),
+					groupId: "A",
+				},
+			},
+		});
+		const expected: FlowGrid.Model["pipesBySourceId"] = {
+			[FlowGrid.toNodeId({ x: 0, y: 1 })]: {
+				edgeId: Flow.toEdgeId({
+					targetId: FlowGrid.toNodeId({ x: 0, y: 0 }),
+					sourceId: FlowGrid.toNodeId({ x: 0, y: 1 }),
+				}),
+				groupId: "A",
+			},
+		};
+		const actual = Flow.toReversedPipesBySourceId(grid);
+		expect(eq(actual, expected)).toBe(true);
 	});
 
 	it.todo("should detect if puzzle is solved", () => {
