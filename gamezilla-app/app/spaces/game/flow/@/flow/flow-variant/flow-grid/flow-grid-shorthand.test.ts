@@ -294,4 +294,76 @@ describe(import.meta.file, () => {
 
 		expect(isSame).toBe(true);
 	});
+
+	test("3x3 with A terminal and pipes and B terminal and pipes", async () => {
+		const shorthand = FlowGridShorthand.init([
+			["A", "B", " "],
+			["a", "b", " "],
+			["A", "B", " "],
+		]);
+
+		const actual = FlowGridShorthand.toGrid(shorthand);
+
+		const expected = FlowGrid.init({
+			dimensions: FlowGridShorthand.toDimensions(shorthand),
+			terminalsByGroupId: {
+				A: {
+					startId: FlowGrid.toNodeId({
+						x: 0,
+						y: 0,
+					}),
+					endId: FlowGrid.toNodeId({
+						x: 0,
+						y: 2,
+					}),
+					groupId: "A",
+				},
+				B: {
+					startId: FlowGrid.toNodeId({
+						x: 1,
+						y: 0,
+					}),
+					endId: FlowGrid.toNodeId({
+						x: 1,
+						y: 2,
+					}),
+					groupId: "B",
+				},
+			},
+			pipesBySourceId: {
+				[FlowGrid.toNodeId({ x: 0, y: 0 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 0, y: 0 }),
+						targetId: FlowGrid.toNodeId({ x: 0, y: 1 }),
+					}),
+					groupId: "A",
+				},
+				[FlowGrid.toNodeId({ x: 0, y: 1 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 0, y: 1 }),
+						targetId: FlowGrid.toNodeId({ x: 0, y: 2 }),
+					}),
+					groupId: "A",
+				},
+				[FlowGrid.toNodeId({ x: 1, y: 0 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 1, y: 0 }),
+						targetId: FlowGrid.toNodeId({ x: 1, y: 1 }),
+					}),
+					groupId: "B",
+				},
+				[FlowGrid.toNodeId({ x: 1, y: 1 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 1, y: 1 }),
+						targetId: FlowGrid.toNodeId({ x: 1, y: 2 }),
+					}),
+					groupId: "B",
+				},
+			}
+		})
+		
+		const isSame = Flow.isSame(actual, expected);
+
+		expect(isSame).toBe(true);
+	})
 });
