@@ -1,18 +1,15 @@
 import { Eff, Sub } from "gamezilla-app/@/core";
-import { Button, IconArrowLeftOnRect } from "gamezilla-app/app/@/ui";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
-import { GameLayout } from "../../@/game";
-import { ViewProfileCard } from "../../@/game/view-profile-card";
 import { FlowVariantUIPlay } from "../@/flow";
 import { FlowPackListClient } from "../@/flow-pack";
-import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
-import { ClientModule } from "./play.types";
-import { ScreenPackClient } from "./screen-pack/screen-pack.client";
-import { ScreenSelectPackClient } from "./screen-select-pack/screen-select-pack.client";
 import { FlowPackGridClient } from "../@/flow-pack/flow-pack-grid/flow-pack-grid.client";
+import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
+import type { ClientModule } from "./play.types";
+import { ScreenPackClient } from "./screen-pack/screen-pack.client";
 import { ScreenPuzzleClient } from "./screen-puzzle/screen-puzzle.client";
+import { ScreenSelectPackClient } from "./screen-select-pack/screen-select-pack.client";
 
 const flow = samples["8x8"][0];
 const init: ClientModule["init"] = {
@@ -72,13 +69,19 @@ const updateFlowPackList: ClientModule["update"] = (input) => {
 };
 
 const updateFlowPackGrid: ClientModule["update"] = (input) => {
+	const pack =
+		"flowPack" in input.modelCore.screen
+			? input.modelCore.screen.flowPack
+			: null;
+
+	if (!pack) {
+		return { model: input.model };
+	}
+
 	const updated = FlowPackGridClient.update({
 		ctx: {
 			...input.ctx,
-			pack:
-				input.modelCore.screen.t === "screen-pack"
-					? input.modelCore.screen.flowPack
-					: null,
+			pack,
 		},
 		model: { ...input.model.flowPackGrid, puzzles: input.model.flowPuzzles },
 		msg: input.msg?.t === "flow-pack-grid" ? input.msg.c : null,
@@ -101,57 +104,32 @@ const updateFlowPackGrid: ClientModule["update"] = (input) => {
 };
 
 const subscriptions: ClientModule["subscriptions"] = (input) => {
-	return Sub.tag(
-		"flow-pack-grid",
-		FlowPackGridClient.subscriptions({
-			ctx: { ...input.ctx, pack: null },
-			model: input.model.flowPackGrid,
-		}),
-	);
+	switch (input.modelCore.screen.t) {
+		case "screen-pack":
+		case "screen-puzzle":
+			return Sub.tag(
+				"flow-pack-grid",
+				FlowPackGridClient.subscriptions({
+					ctx: {
+						...input.ctx,
+						pack: input.modelCore.screen.flowPack,
+
+					},
+					model: input.model.flowPackGrid,
+				}),
+			);
+
+		default: {
+			return Sub.None;
+		}
+	}
 };
 
-export const ViewGame: ClientModule["View"] = (input) => {
-	const isPlaying = input.ctx.currentUserId === input.ctx.space.hostId;
-	const isSpectating = !isPlaying;
-	const host = input.ctx.profiles[input.ctx.space.hostId];
-	return (
-		<GameLayout isSpectating={isSpectating}>
-			<div className="flex w-full flex-1 flex-col items-center justify-center">
-				{isSpectating && host && (
-					<ViewProfileCard profile={host} subtitle="Player" />
-				)}
-
-				<FlowVariantUIPlay.View
-					dispatch={(c) => {
-						input.dispatch({
-							t: "flow-play-ui",
-							c,
-						});
-					}}
-					model={input.modelCore.play}
-					disabled={isSpectating}
-					flow={input.modelCore.flow}
-				/>
-			</div>
-			{isPlaying && (
-				<div className="w-full p-4">
-					<Button
-						className="w-full"
-						onClick={input.ctx.onQuit}
-						start={<IconArrowLeftOnRect className="h-6 w-6" />}
-						text="Exit"
-					/>
-				</div>
-			)}
-		</GameLayout>
-	);
-};
-
-const containerHtmlId = "play-container";
 
 const View: ClientModule["View"] = (input) => {
 	return (
-		<div className="w-full flex flex-col h-full" id={containerHtmlId}>
+		<div className="w-full flex flex-col h-full">
+			<FlowPackGridClient.View dispatch={c => input.dispatch({t: "flow-pack-grid", c })} />
 			<ViewScreen {...input} />
 		</div>
 	);
@@ -172,8 +150,7 @@ const ViewScreen: ClientModule["View"] = (input) => {
 		}
 
 		default: {
-			const never: never = input.modelCore.screen;
-			return never;
+			return null;
 		}
 	}
 };

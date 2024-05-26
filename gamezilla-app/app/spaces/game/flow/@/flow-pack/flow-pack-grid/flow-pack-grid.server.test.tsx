@@ -1,19 +1,18 @@
 import { describe, expect, it } from "bun:test";
 import { AppServerModule } from "gamezilla-app/app/@/architecture/app-server";
 import { didSendToClient } from "gamezilla-app/app/@/server";
-import { SpaceServerCtx } from "gamezilla-app/app/spaces/@/space";
+import type { SpaceServerCtx } from "gamezilla-app/app/spaces/@/space";
 import {
-	randomAuthenticatedClient,
 	type AuthenticatedClient,
+	randomAuthenticatedClient,
 } from "gamezilla-app/app/spaces/@/testing/server";
 import { SpaceGameFixtureServer } from "gamezilla-app/app/spaces/game/@/testing/server";
 import { FlowPack, FlowPackDb } from "..";
 import type { FlowServerDeps } from "../../../builder/builder.types";
 import { FlowPuzzle, FlowPuzzleDb } from "../../flow-puzzle";
 import type { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
-
-import type { ModelServer } from "./flow-pack-grid.types";
 import { FlowPackGridServer } from "./flow-pack-grid.server";
+import type { ModelServer } from "./flow-pack-grid.types";
 
 const initial = () => {
 	return {

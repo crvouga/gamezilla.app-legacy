@@ -55,8 +55,8 @@ type ClientModule = GameClientModule<{
 
 const init: ClientModule["init"] = {
 	t: "none",
-	puzzles: {},
-	packs: {},
+	flowPuzzles: {},
+	flowPacks: {},
 };
 
 const update: ClientModule["update"] = (input) => {
@@ -70,31 +70,31 @@ const update: ClientModule["update"] = (input) => {
 };
 
 const updateChild: ClientModule["update"] = (input) => {
-	const { model, modelCore, msgEvt, ctx, msgCmd, msgCore, msgServer, msg } =
-		input;
-
-	switch (modelCore.t) {
+	switch (input.modelCore.t) {
 		case null: {
-			return { model };
+			return { model: input.model };
 		}
 
 		case "play": {
 			const updated = PlayClient.update({
 				ctx: {
-					...ctx,
+					...input.ctx,
 					onQuit: () => {},
-					flowPacks: model.packs,
-					flowPuzzles: model.puzzles,
+					flowPacks: input.model.flowPacks,
+					flowPuzzles: input.model.flowPuzzles,
 				},
-				modelCore: modelCore.c,
+				modelCore: input.modelCore.c,
 				model: {
-					...(model.t === "play" ? model.c : PlayClient.init),
+					...(input.model.t === "play" ? input.model.c : PlayClient.init),
 				},
-				msgCmd: msgCmd,
-				msgEvt: msgEvt,
-				msgServer: msgServer?.t === "play" ? msgServer.c : null,
-				msgCore: msgCore?.t === "play" ? { ...msgCore, ...msgCore.c } : null,
-				msg: msg?.t === "play" ? msg.c : null,
+				msgCmd: input.msgCmd,
+				msgEvt: input.msgEvt,
+				msgServer: input.msgServer?.t === "play" ? input.msgServer.c : null,
+				msgCore:
+					input.msgCore?.t === "play"
+						? { ...input.msgCore, ...input.msgCore.c }
+						: null,
+				msg: input.msg?.t === "play" ? input.msg.c : null,
 			});
 
 			const tagged = GameClientModule.tagOutput(
@@ -107,8 +107,8 @@ const updateChild: ClientModule["update"] = (input) => {
 				...tagged,
 				model: {
 					...tagged.model,
-					puzzles: model.puzzles,
-					packs: model.packs,
+					flowPuzzles: input.model.flowPuzzles,
+					flowPacks: input.model.flowPacks,
 				},
 			};
 		}
@@ -116,22 +116,25 @@ const updateChild: ClientModule["update"] = (input) => {
 		case "builder": {
 			const updated = BuilderClient.update({
 				ctx: {
-					...ctx,
+					...input.ctx,
 					onQuit: () => {},
-					flowPacks: model.packs,
-					flowPuzzles: model.puzzles,
+					flowPacks: input.model.flowPacks,
+					flowPuzzles: input.model.flowPuzzles,
 				},
-				modelCore: modelCore.c,
+				modelCore: input.modelCore.c,
 				model: {
-					...(model.t === "builder" ? model.c : BuilderClient.init),
-					packs: model.packs,
-					puzzles: model.puzzles,
+					...(input.model.t === "builder" ? input.model.c : BuilderClient.init),
+					packs: input.model.flowPacks,
+					puzzles: input.model.flowPuzzles,
 				},
-				msgCmd: msgCmd,
-				msgEvt: msgEvt,
-				msgServer: msgServer?.t === "builder" ? msgServer.c : null,
-				msgCore: msgCore?.t === "builder" ? { ...msgCore, ...msgCore.c } : null,
-				msg: msg?.t === "builder" ? msg.c : null,
+				msgCmd: input.msgCmd,
+				msgEvt: input.msgEvt,
+				msgServer: input.msgServer?.t === "builder" ? input.msgServer.c : null,
+				msgCore:
+					input.msgCore?.t === "builder"
+						? { ...input.msgCore, ...input.msgCore.c }
+						: null,
+				msg: input.msg?.t === "builder" ? input.msg.c : null,
 			});
 
 			const tagged = GameClientModule.tagOutput(
@@ -150,8 +153,8 @@ const updateChild: ClientModule["update"] = (input) => {
 						packs: {},
 						puzzles: {},
 					},
-					packs: updated.model.packs,
-					puzzles: updated.model.puzzles,
+					flowPacks: updated.model.packs,
+					flowPuzzles: updated.model.puzzles,
 				},
 			};
 		}
@@ -237,8 +240,8 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 					ctx: {
 						...input.ctx,
 						onQuit() {},
-						flowPacks: input.model.packs,
-						flowPuzzles: input.model.puzzles,
+						flowPacks: input.model.flowPacks,
+						flowPuzzles: input.model.flowPuzzles,
 					},
 					modelCore: input.modelCore.c,
 					model: input.model.t === "play" ? input.model.c : PlayClient.init,
@@ -252,8 +255,8 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 					ctx: {
 						...input.ctx,
 						onQuit() {},
-						flowPacks: input.model.packs,
-						flowPuzzles: input.model.puzzles,
+						flowPacks: input.model.flowPacks,
+						flowPuzzles: input.model.flowPuzzles,
 					},
 					modelCore: input.modelCore.c,
 					model:
@@ -279,8 +282,8 @@ const View: ClientModule["View"] = (input) => {
 
 	const ctx: FlowClientCtx = {
 		...input.ctx,
-		flowPacks: input.model.packs,
-		flowPuzzles: input.model.puzzles,
+		flowPacks: input.model.flowPacks,
+		flowPuzzles: input.model.flowPuzzles,
 		onQuit: () =>
 			dispatch({
 				t: "msgCore",
@@ -346,8 +349,8 @@ const View: ClientModule["View"] = (input) => {
 						input.model.t === "builder"
 							? {
 									...input.model.c,
-									packs: input.model.packs,
-									puzzles: input.model.puzzles,
+									packs: input.model.flowPacks,
+									puzzles: input.model.flowPuzzles,
 								}
 							: BuilderClient.init
 					}

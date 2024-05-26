@@ -1,30 +1,24 @@
 import { describe, expect, it } from "bun:test";
 import { Posix, RequestResponse, TimeSpan } from "gamezilla-app/@/core";
 import { didSendToServer, didShowErrorSm } from "gamezilla-app/app/@/client";
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import { SpaceClientFixture } from "gamezilla-app/app/spaces/@/testing/client";
 import { FlowPack } from "..";
 import { FlowPuzzle } from "../../flow-puzzle";
-import { FlowPackGridClient } from "./flow-pack-grid.client";
+import {
+	FlowPackGridClient,
+	type FlowPackGridClientCtx,
+} from "./flow-pack-grid.client";
 import type {
 	ModelClient,
 	MsgClient,
 	MsgToClient,
 } from "./flow-pack-grid.types";
 
-type Ctx = SpaceClientCtx & {
-	pack: FlowPack | null;
+type Input = {
+	ctx?: FlowPackGridClientCtx;
+	msg?: MsgClient;
+	msgServer?: MsgToClient;
 };
-
-type Input =
-	| {
-			ctx?: Ctx;
-			msg: MsgClient;
-	  }
-	| {
-			ctx?: Ctx;
-			msgServer: MsgToClient;
-	  };
 
 const Fixture = async () => {
 	const f = await SpaceClientFixture();
@@ -36,7 +30,7 @@ const Fixture = async () => {
 		createdBy: f.ctx.currentUserId,
 	});
 
-	const ctx = {
+	const ctx: FlowPackGridClientCtx = {
 		...f.ctx,
 		pack,
 	};
@@ -72,9 +66,9 @@ const Fixture = async () => {
 		return latestOutput;
 	};
 
-	const init = FlowPackGridClient.init({
-		ctx,
-	});
+	const init = {
+		model: FlowPackGridClient.initClient,
+	};
 
 	return {
 		...f,
@@ -119,6 +113,29 @@ describe(import.meta.file, () => {
 				},
 			},
 		]);
+		expect(
+			didSendToServer(output, (msg) => msg.t === "list-puzzles-by-id"),
+		).toBe(true);
+	});
+
+	it("should not fetch puzzles when all are not missing", async () => {
+		const f = await Fixture();
+		const output = f.update(f.init.model, [
+			msgServerListedByPuzzlesByIdOk([f.puzzle]),
+			{
+				msg: {
+					t: "user-observed-grid",
+				},
+			},
+		]);
+		expect(
+			didSendToServer(output, (msg) => msg.t === "list-puzzles-by-id"),
+		).toBe(false);
+	});
+
+	it("should fetch puzzles when some are missing", async () => {
+		const f = await Fixture();
+		const output = f.update(f.init.model, [{}]);
 		expect(
 			didSendToServer(output, (msg) => msg.t === "list-puzzles-by-id"),
 		).toBe(true);

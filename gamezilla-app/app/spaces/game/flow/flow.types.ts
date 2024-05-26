@@ -15,10 +15,10 @@ import * as Play from "./play/play.types";
 //
 
 export type BaseModelClient = {
-	puzzles: {
+	flowPuzzles: {
 		[flowPuzzleId: FlowPuzzleId]: FlowPuzzle;
 	};
-	packs: {
+	flowPacks: {
 		[flowPackId: FlowPackId]: FlowPack;
 	};
 };

@@ -503,19 +503,21 @@ export const ScreenPuzzle: Pick<ClientModule, "update" | "View"> = {
 //
 //
 
-const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
+const PackPuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
 	update(input) {
 		const pack = input.modelCore.packBuilder?.pack ?? null;
 
-		const ctx = { ...input.ctx, pack };
-
-		const initial = FlowPackGridClient.init({ ctx });
-
-		const model = input.model.packBuilder?.flowPackPuzzleGrid ?? initial.model;
+		if (!pack) {
+			return { model: input.model };
+		}
 
 		const updated = FlowPackGridClient.update({
-			ctx,
-			model: { ...model, puzzles: input.model.puzzles },
+			ctx: { ...input.ctx, pack },
+			model: {
+				...FlowPackGridClient.initClient,
+				...input.model.packBuilder?.flowPackPuzzleGrid,
+				puzzles: input.model.puzzles,
+			},
 			msg: input.msg?.t === "pack-builder.flow-pack-grid" ? input.msg.c : null,
 			msgCmd: input.msgCmd,
 			msgEvt: input.msgEvt,
@@ -544,10 +546,13 @@ const PuzzleGrid: Pick<ClientModule, "update" | "subscriptions"> = {
 	},
 	subscriptions(input) {
 		const pack = input.modelCore.packBuilder?.pack;
+		if (!pack) {
+			return Sub.None;
+		}
 		return Sub.tag(
 			"pack-builder.flow-pack-grid",
 			FlowPackGridClient.subscriptions({
-				ctx: { ...input.ctx, pack: pack ?? null },
+				ctx: { ...input.ctx, pack },
 				model: input.model.packBuilder.flowPackPuzzleGrid,
 			}),
 		);
@@ -628,7 +633,7 @@ export const PackBuilderClient: Pick<
 			(model) => ButtonAddPuzzle.update({ ...input, model }),
 			(model) => ScreenPuzzleGrid.update({ ...input, model }),
 			(model) => ScreenPuzzle.update({ ...input, model }),
-			(model) => PuzzleGrid.update({ ...input, model }),
+			(model) => PackPuzzleGrid.update({ ...input, model }),
 			(model) => ScreenPuzzleMore.update({ ...input, model }),
 			(model) => EditPackName.update({ ...input, model }),
 			(model) => updateRecordPack({ ...input, model }),
@@ -636,41 +641,35 @@ export const PackBuilderClient: Pick<
 	},
 
 	View(input) {
-		const { modelCore, model } = input;
-
 		return (
-			<FlowPackGridClient.View
-				ctx={{ ...input.ctx, pack: modelCore.packBuilder?.pack ?? null }}
-				model={model.packBuilder.flowPackPuzzleGrid}
-				dispatch={(c) =>
-					input.dispatch({ t: "pack-builder.flow-pack-grid", c })
-				}
-				slots={{
-					grid() {
-						switch (modelCore.packBuilder?.screen.t) {
-							case "screen-add-puzzle": {
-								return <ScreenAddPuzzle.View {...input} />;
-							}
-
-							case "screen-puzzle-grid": {
-								return <ScreenPuzzleGrid.View {...input} />;
-							}
-
-							case "screen-puzzle": {
-								return <ScreenPuzzle.View {...input} />;
-							}
-
-							default: {
-								return null;
-							}
-						}
-					},
-				}}
-			/>
+			<div className="w-full h-full flex flex-col">
+				<FlowPackGridClient.View dispatch={c => input.dispatch({t: "pack-builder.flow-pack-grid", c })} />
+				<ViewScreen {...input} />
+			</div>
 		);
 	},
 
 	subscriptions(input) {
-		return PuzzleGrid.subscriptions(input);
+		return PackPuzzleGrid.subscriptions(input);
 	},
+};
+
+const ViewScreen: ClientModule["View"] = (input) => {
+	switch (input.modelCore.packBuilder?.screen.t) {
+		case "screen-add-puzzle": {
+			return <ScreenAddPuzzle.View {...input} />;
+		}
+
+		case "screen-puzzle-grid": {
+			return <ScreenPuzzleGrid.View {...input} />;
+		}
+
+		case "screen-puzzle": {
+			return <ScreenPuzzle.View {...input} />;
+		}
+
+		default: {
+			return null;
+		}
+	}
 };

@@ -96,6 +96,54 @@ export const back: Eff = () => {
 	}, 0);
 };
 
+type State = {
+	entries: PubSub<IntersectionObserverEntry>;
+	observer: IntersectionObserver;
+};
+
+const stateByHtmlId = new Map<string, State>();
+
+export const onIntersections = <T>(
+	htmlId: string,
+	mapper: (entry: IntersectionObserverEntry) => T,
+): Sub<T> => {
+	const state = stateByHtmlId.get(htmlId);
+
+	if (state) {
+		return Sub.map(state.entries, mapper);
+	}
+
+	const element = document.getElementById(htmlId);
+
+	if (!element) {
+		return Sub.None;
+	}
+
+	const pubSub = PubSub.create<IntersectionObserverEntry>();
+
+	const observer = new IntersectionObserver((entries) => {
+		for (const entry of entries) {
+			pubSub.pub(entry);
+		}
+	});
+
+	observer.observe(element);
+
+	stateByHtmlId.set(htmlId, { entries: pubSub, observer });
+
+	return {
+		sub(subscriber) {
+			const unsub = pubSub.sub((msg) => {
+				subscriber(mapper(msg));
+			});
+			return () => {
+				unsub();
+				observer.disconnect();
+			};
+		},
+	};
+};
+
 //
 //
 //

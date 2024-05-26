@@ -101,7 +101,7 @@ const interval = <Msg>(
 	}, TimeSpan.toMilliseconds(timeSpan));
 
 	return {
-		sub: (subscriber) => {
+		sub(subscriber) {
 			const unsub = subNew.sub((msg) => {
 				subscriber(f(msg));
 			});
