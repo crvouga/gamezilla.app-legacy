@@ -2,7 +2,7 @@ import type { NonEmpty } from "gamezilla-app/@/core";
 import { Flow } from "../../flow";
 import * as FlowGrid from "./flow-grid";
 import * as FlowGridDimensions from "./flow-grid-dimensions";
-import { is } from "gamezilla-app/@/core/parser/parser";
+import { FlowGridPosition } from ".";
 
 type AppendLowercase<T extends string> = T extends `${infer U}${infer _L}`
 	? `${U}${Lowercase<U>}`
@@ -22,13 +22,16 @@ const isLowercase = (string: string): boolean =>
 
 const isTerminal = (element: string): element is Terminal =>
 	Flow.isGroupId(element);
+
 const isPipe = (element: string): element is Pipe =>
 	isLowercase(element) && Flow.isGroupId(element.toUpperCase());
+
 const isTerminalWithPipe = (element: string): element is TerminalWithPipe =>
 	Boolean(
 		element[0] && isTerminal(element[0]) && element[1] && isPipe(element[1]),
 	);
-const isEmpty = (element: string): element is Empty => element === " ";
+
+export const isEmpty = (element: string): element is Empty => element === " ";
 
 const init = (model: Model): Model => {
 	return model;
@@ -62,25 +65,35 @@ const toTerminalsByGroupId = (
 
 			const nodeId = FlowGrid.toNodeId(position);
 
-			const groupId = row[x];
+			const element = row[x];
 
-			if (!Flow.isGroupId(groupId)) {
-				continue;
+			if (!element) {
+				continue
 			}
 
-			const draftTerminal = terminalsByGroupId[groupId];
+			if (!isTerminal(element) && !isTerminalWithPipe(element)) {
+				continue
+			}
+
+			const elementGroupId = elementToGroupId(element);
+
+			if (!elementGroupId) {
+				continue
+			}
+
+			const draftTerminal = terminalsByGroupId[elementGroupId];
 
 			if (!draftTerminal) {
 				const draftTerminalNew: DraftTerminal = {
-					groupId,
+					groupId: elementGroupId,
 					startId: nodeId,
 					endId: null,
 				};
-				terminalsByGroupId[groupId] = draftTerminalNew;
+				terminalsByGroupId[elementGroupId] = draftTerminalNew;
 				continue;
 			}
 
-			terminalsByGroupId[groupId] = {
+			terminalsByGroupId[elementGroupId] = {
 				...draftTerminal,
 				endId: nodeId,
 			};
@@ -90,49 +103,198 @@ const toTerminalsByGroupId = (
 	return terminalsByGroupId;
 };
 
+const DELTAS = [
+	{
+		x: 0,
+		y: -1,
+	},
+	{
+		x: 1,
+		y: 0,
+	},
+	{
+		x: 0,
+		y: 1,
+	},
+	{
+		x: -1,
+		y: 0,
+	},
+];
+
+const pipeToGroupId = (pipe: Pipe): Flow.GroupId => {
+	const uppercase = pipe.toUpperCase();
+	if (Flow.isGroupId(uppercase)) {
+		return uppercase;
+	}
+	return "A";
+}
+
+const terminalWithPipeToGroupId = (terminalWithPipe: TerminalWithPipe): Flow.GroupId => {
+	const groupId = terminalWithPipe[0];
+	if (Flow.isGroupId(groupId)) {
+		return groupId;
+	}
+	return "A";
+}
+
+const elementToGroupId = (element: Element): Flow.GroupId | null => {
+	if (isPipe(element)) {
+		return pipeToGroupId(element);
+	}
+
+	if(isTerminal(element)) {
+		return element;
+	}
+
+	if (isTerminalWithPipe(element)) {
+		return terminalWithPipeToGroupId(element);
+	}
+	
+	return null
+}
+
 const toPipesBySourceIdForTerminal = (input: {
 	model: Model;
 	grid: FlowGrid.Model;
 	terminal: Flow.Terminal;
 }): FlowGrid.Model["pipesBySourceId"] => {
 	const pipesBySourceId: FlowGrid.Model["pipesBySourceId"] = {};
+	const vistedNodeIds = new Set<Flow.NodeId>();
+
+	const groupId = input.terminal.groupId;
+
 	let currentNodeId = input.terminal.startId;
-	while (true) {
+
+	vistedNodeIds.add(currentNodeId);
+	
+	for (let i = 0; i < 100; i++) {
 		const currentNode = FlowGrid.toNode(input.grid, currentNodeId);
 
 		if (!currentNode) {
 			break;
 		}
 
-		const north = input.model[currentNode.y - 1]?.[currentNode.x];
-		const east = input.model[currentNode.y]?.[currentNode.x + 1];
-		const south = input.model[currentNode.y + 1]?.[currentNode.x];
-		const west = input.model[currentNode.y]?.[currentNode.x - 1];
+		const currentElement = input.model[currentNode.y]?.[currentNode.x];	
 
-		for (const direction of [north, east, south, west]) {
-			if (!direction) {
-				continue;
+		if (!currentElement) {
+			continue			
+		}
+		
+
+		if (isTerminalWithPipe(currentElement)) {
+			let adjacentTerminalNode: Flow.Node | null = null;
+			for (const delta of DELTAS) {
+				const adjacentPosition =  {
+					x: currentNode.x + delta.x,
+					y: currentNode.y + delta.y,
+				}
+
+				const adjacentNodeId = FlowGrid.toNodeId(adjacentPosition);
+
+				const adjacentNode = FlowGrid.toNode(input.grid, adjacentNodeId);
+
+				if (!adjacentNode) {
+					continue;
+				}
+			
+				const adjacentElement = input.model[adjacentPosition.y]?.[adjacentPosition.x];
+			
+				if (!adjacentElement) {
+					continue;
+				}
+
+				if (isTerminal(adjacentElement)) {
+					adjacentTerminalNode = adjacentNode;
+					break;
+				}
+			}
+		
+			if (!adjacentTerminalNode) {
+				continue
 			}
 
-			if (isPipe(direction)) {
-				continue;
+			const edgeId = Flow.toEdgeId({
+				sourceId: currentNodeId,
+				targetId: adjacentTerminalNode.nodeId,
+			});
+
+			pipesBySourceId[currentNodeId] = {
+				edgeId,
+				groupId,
 			}
 
-			if (isTerminalWithPipe(direction)) {
-				continue;
-			}
-
-			if (isTerminal(direction)) {
-				continue;
-			}
-
-			if (isEmpty(direction)) {
-				continue;
-			}
+			vistedNodeIds.add(adjacentTerminalNode.nodeId);
+			break
 		}
 
-		break;
-		//
+		let adjacentElement: Element | null = null;
+		let adjacentPosition: FlowGridPosition.Position | null = null;
+		let adjacentNodeId: Flow.NodeId | null = null;
+
+		for (const delta of DELTAS) {
+			const adjacentPosition_ =  {
+				x: currentNode.x + delta.x,
+				y: currentNode.y + delta.y,
+			}
+			const adjacentNodeId_ = FlowGrid.toNodeId(adjacentPosition_);
+
+			if (vistedNodeIds.has(adjacentNodeId_)) {
+				continue;
+			}
+			
+			const adjacentNode_ = FlowGrid.toNode(input.grid, adjacentNodeId_);
+
+			if (!adjacentNode_) {
+				continue;
+			}
+
+			const adjacentElement_ = input.model[adjacentPosition_.y]?.[adjacentPosition_.x];
+
+			if (!adjacentElement_) {
+				continue;
+			}
+
+			const adjacentGroupId = elementToGroupId(adjacentElement_);
+			
+			if (!adjacentGroupId) {
+				continue
+			}
+
+			if (adjacentGroupId !== groupId) {
+				continue
+			}
+			
+			adjacentElement = adjacentElement_;
+			adjacentPosition = adjacentPosition_;
+			adjacentNodeId = adjacentNodeId_;
+			break;
+		}
+
+		if (!adjacentElement || !adjacentPosition || !adjacentNodeId) {
+			break;
+		}
+
+		vistedNodeIds.add(currentNodeId);
+
+		const edgeId = Flow.toEdgeId({
+			sourceId: currentNodeId,
+			targetId: adjacentNodeId,
+		});
+		pipesBySourceId[currentNodeId] = {
+			edgeId,
+			groupId,
+		}
+		currentNodeId = adjacentNodeId;
+
+
+		if (isTerminal(adjacentElement)) {
+			break
+		}
+
+		if (isTerminalWithPipe(adjacentElement)) {
+			break
+		}
 	}
 	return pipesBySourceId;
 };
@@ -151,8 +313,7 @@ const toPipesBySourceId = (input: {
 		}
 
 		const pipesBySourceIdForTerminal = toPipesBySourceIdForTerminal({
-			model: input.model,
-			grid: input.grid,
+			...input,
 			terminal,
 		});
 

@@ -134,6 +134,36 @@ export const isSameTerminalsByGroupId = (
 	return true;
 };
 
+const reversePipesBySourceId = (model: Model, pipesBySourceId: Model["pipesBySourceId"]) => {
+	const reversed: Model["pipesBySourceId"] = {};
+	for (const sourceId in pipesBySourceId) {
+		const pipe = pipesBySourceId[sourceId as NodeId];
+		if (!pipe) {
+			continue;
+		}
+		const edge = toEdge(model, pipe.edgeId);
+		if (!edge) {
+			continue;
+		}
+		reversed[edge.targetId] = {
+			edgeId: toEdgeId({
+				sourceId: edge.targetId,
+				targetId: edge.sourceId,
+			}),
+			groupId: pipe.groupId,
+		}
+	}
+	return reversed;
+}
+
+export const isSamePipesBySourceId = (
+	model: Model,
+	a: Model["pipesBySourceId"],
+	b: Model["pipesBySourceId"],
+): boolean => {
+	return eq(a, b) || eq(a, reversePipesBySourceId(model, b));
+}
+
 export const isSame = (a: Model, b: Model): boolean => {
 	const nodesA = a.nodes;
 	const nodesB = b.nodes;
@@ -152,7 +182,7 @@ export const isSame = (a: Model, b: Model): boolean => {
 
 	const pipesA = a.pipesBySourceId;
 	const pipesB = b.pipesBySourceId;
-	const isSamePipes = eq(pipesA, pipesB);
+	const isSamePipes = isSamePipesBySourceId(a, pipesA, pipesB);
 
 	return isSamePipes && isSameNodes && isSameEdges && isSameTerminals;
 };
