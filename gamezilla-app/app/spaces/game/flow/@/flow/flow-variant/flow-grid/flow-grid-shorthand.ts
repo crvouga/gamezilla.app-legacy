@@ -312,6 +312,7 @@ const toPipesBySourceIdForTerminal = (input: {
 	return pipesBySourceId;
 };
 
+
 const toPipesBySourceId = (input: {
 	model: Model;
 	grid: FlowGrid.Model;
@@ -338,6 +339,202 @@ const toPipesBySourceId = (input: {
 
 	return pipesBySourceId;
 };
+
+
+/**
+ * Returns a list of all possible pipes for a terminal.
+ * @exmaple ```ts
+ *  // See how this can have multiple different paths for terminal A.
+ *	const shorthand = FlowGridShorthand.init([
+ * 		["A", "a", "a"],
+ * 		["a", "a", "a"],
+ * 		["a", "a", "A"],
+ * 	]);
+ */
+const toPipesBySourceIdForTerminalList = (input: {
+	model: Model;
+	grid: FlowGrid.Model;
+	terminal: Flow.Terminal;
+}): FlowGrid.Model["pipesBySourceId"][] => {
+	const allPaths: FlowGrid.Model["pipesBySourceId"][] = [];
+	const visitedNodeIds = new Set<Flow.NodeId>();
+
+	const groupId = input.terminal.groupId;
+
+	const findPaths = (
+		currentNodeId: Flow.NodeId,
+		path: FlowGrid.Model["pipesBySourceId"]
+	) => {
+		if (visitedNodeIds.has(currentNodeId)) {
+			return;
+		}
+		
+		visitedNodeIds.add(currentNodeId);
+
+		const currentNode = FlowGrid.toNode(input.grid, currentNodeId);
+		if (!currentNode) {
+			visitedNodeIds.delete(currentNodeId);
+			return;
+		}
+
+		const currentElement = input.model[currentNode.y]?.[currentNode.x];
+		if (!currentElement) {
+			visitedNodeIds.delete(currentNodeId);
+			return;
+		}
+
+		if (isTerminalWithPipe(currentElement)) {
+			let adjacentTerminalNode: Flow.Node | null = null;
+			for (const delta of DELTAS) {
+				const adjacentPosition = {
+					x: currentNode.x + delta.x,
+					y: currentNode.y + delta.y,
+				};
+				const adjacentNodeId = FlowGrid.toNodeId(adjacentPosition);
+				const adjacentNode = FlowGrid.toNode(input.grid, adjacentNodeId);
+
+				if (!adjacentNode) {
+					continue;
+				}
+
+				const adjacentElement =
+					input.model[adjacentPosition.y]?.[adjacentPosition.x];
+				if (!adjacentElement) {
+					continue;
+				}
+
+				const adjacentElementGroupId = elementToGroupId(adjacentElement);
+				if (!adjacentElementGroupId) {
+					continue;
+				}
+
+				if (adjacentElementGroupId !== groupId) {
+					continue;
+				}
+
+				if (isTerminal(adjacentElement)) {
+					adjacentTerminalNode = adjacentNode;
+					break;
+				}
+			}
+
+			if (adjacentTerminalNode) {
+				const edgeId = Flow.toEdgeId({
+					sourceId: currentNodeId,
+					targetId: adjacentTerminalNode.nodeId,
+				});
+				path[currentNodeId] = {
+					edgeId,
+					groupId,
+				};
+				allPaths.push({ ...path });
+			}
+			visitedNodeIds.delete(currentNodeId);
+			return;
+		}
+
+		for (const delta of DELTAS) {
+			const adjacentPosition = {
+				x: currentNode.x + delta.x,
+				y: currentNode.y + delta.y,
+			};
+			const adjacentNodeId = FlowGrid.toNodeId(adjacentPosition);
+			
+			if (visitedNodeIds.has(adjacentNodeId)) {
+				continue;
+			}
+
+			const adjacentNode = FlowGrid.toNode(input.grid, adjacentNodeId);
+			if (!adjacentNode) {
+				continue;
+			}
+
+			const adjacentElement =
+				input.model[adjacentPosition.y]?.[adjacentPosition.x];
+			if (!adjacentElement) {
+				continue;
+			}
+
+			const adjacentGroupId = elementToGroupId(adjacentElement);
+			if (!adjacentGroupId || adjacentGroupId !== groupId) {
+				continue;
+			}
+
+			const edgeId = Flow.toEdgeId({
+				sourceId: currentNodeId,
+				targetId: adjacentNodeId,
+			});
+			const newPath = { ...path };
+			newPath[currentNodeId] = {
+				edgeId,
+				groupId,
+			};
+
+			if (adjacentNodeId === input.terminal.endId) {
+				allPaths.push(newPath);
+				continue;
+			}
+			findPaths(adjacentNodeId, newPath);
+		}
+
+		visitedNodeIds.delete(currentNodeId);
+	};
+
+	findPaths(input.terminal.startId, {});
+	return allPaths;
+};
+
+const toPipesBySourceIdList = (input: {
+	model: Model;
+	grid: FlowGrid.Model;
+}): FlowGrid.Model["pipesBySourceId"][] => {
+	const pipesBySourceIdListByGroupId: {[groupId in Flow.GroupId]?: FlowGrid.Model["pipesBySourceId"][]} = {};
+
+	for (const groupId in input.grid.terminalsByGroupId) {
+		const terminal = input.grid.terminalsByGroupId[groupId as Flow.GroupId];
+
+		if (!terminal) {
+			continue;
+		}
+
+		const pipesBySourceIdForTerminal = toPipesBySourceIdForTerminalList({
+			grid: input.grid,
+			model: input.model,
+			terminal,
+		});
+
+		pipesBySourceIdListByGroupId[terminal.groupId] = [...(pipesBySourceIdListByGroupId[terminal.groupId] ?? []), ...pipesBySourceIdForTerminal];
+	}
+
+	const pipesBySourceIdCombinations: FlowGrid.Model["pipesBySourceId"][] = [];
+
+	for (const groupId1 in pipesBySourceIdListByGroupId) {
+		if (!Flow.isGroupId(groupId1)) {
+			continue
+		}
+		const paths1 = pipesBySourceIdListByGroupId[groupId1];
+		if (!paths1) {
+			continue;
+		}
+		for (const groupId2 in pipesBySourceIdListByGroupId) {
+			if(!Flow.isGroupId(groupId2)) {
+				continue;
+			}
+			const paths2 = pipesBySourceIdListByGroupId[groupId2];
+			if (!paths2) {
+				continue;
+			}
+
+			for (const path1 of paths1) {
+				for (const path2 of paths2) {
+					pipesBySourceIdCombinations.push({ ...path1, ...path2 });
+				}
+			}
+		}
+	}
+	return pipesBySourceIdCombinations;
+};
+
 
 const toDimensions = (model: Model): FlowGridDimensions.Model => {
 	let maxWidth = 0;
@@ -368,7 +565,17 @@ const toGrid = (model: Model): FlowGrid.Model => {
 };
 
 const toGrids = (model: Model): FlowGrid.Model[] => {
-	return [toGrid(model)];
+	const terminalsByGroupId = toTerminalsByGroupId(model);
+	const dimensions = toDimensions(model);
+	const grid = FlowGrid.init({ dimensions, terminalsByGroupId });
+	const pipesBySourceIdList = toPipesBySourceIdList({ grid, model });
+	const grids = pipesBySourceIdList.map((pipesBySourceId): FlowGrid.Model => {
+		return {
+			...grid,
+			pipesBySourceId,
+		};
+	})
+	return grids
 }
 
 export const FlowGridShorthand = {
