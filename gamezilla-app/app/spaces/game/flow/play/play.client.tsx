@@ -104,7 +104,7 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 	return Sub.tag(
 		"flow-pack-grid",
 		FlowPackGridClient.subscriptions({
-			ctx: { ...input.ctx, pack: null },
+			ctx: { ...input.ctx, pack: null},
 			model: input.model.flowPackGrid,
 		}),
 	);
@@ -147,7 +147,17 @@ export const ViewGame: ClientModule["View"] = (input) => {
 	);
 };
 
+const containerHtmlId = "play-container";
+
 const View: ClientModule["View"] = (input) => {
+	return (
+		<div className="w-full flex flex-col h-full" id={containerHtmlId}>
+			<ViewScreen {...input} />
+		</div>
+	)
+};
+
+const ViewScreen: ClientModule["View"] = (input) => {
 	switch (input.modelCore.screen.t) {
 		case "screen-pack": {
 			return <ScreenPackClient.View {...input} />;
