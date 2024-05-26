@@ -32,6 +32,80 @@ export const Model = p.obj({
 });
 export type Model = p.Infer<typeof Model>;
 
+export const init = ({ flow }: { flow: Flow.Model }): Model => {
+	return {
+		pipesBySourceId: flow.pipesBySourceId,
+		terminalsByGroupId: flow.terminalsByGroupId,
+		status: { t: "idle" },
+	};
+};
+
+export const random = ({ flow }: { flow: Flow.Model }): Model => {
+	const initial = init({ flow });
+
+	const terminal = Flow.randomTerminal(flow);
+
+	if (!terminal) {
+		return initial;
+	}
+
+	const edge = Flow.randomOutEdge(flow, terminal.startId);
+
+	if (!edge) {
+		return initial;
+	}
+
+	return {
+		...initial,
+		pipesBySourceId: {
+			[terminal.startId]: {
+				edgeId: Flow.toEdgeId(edge),
+				groupId: terminal.groupId,
+			},
+		},
+		terminalsByGroupId: {
+			[terminal?.groupId]: terminal,
+		},
+	};
+};
+
+export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
+	const terminal = Flow.randomTerminal(flow);
+
+	if (!terminal) {
+		return [];
+	}
+
+	const edges: Flow.Edge[] = [];
+	
+	let currentNodeId: Flow.NodeId = terminal.startId;
+	
+	for (let i = 0; i < Math.random() * 10; i++) {
+		const edge = Flow.randomOutEdge(flow, currentNodeId);
+
+		if (!edge) {
+			break;
+		}
+
+		edges.push(edge);
+	}
+
+	const msgs: Msg[] = [
+		{
+			t: "pressed-down",
+			nodeId: terminal.startId,
+		},
+		...edges.map(
+			(edge): Msg => ({
+				t: "dragged-over",
+				nodeId: edge.targetId,
+			}),
+		),
+	];
+
+	return msgs;
+};
+
 //
 //
 //
@@ -58,14 +132,6 @@ export const Msg = p.or(
 );
 
 export type Msg = p.Infer<typeof Msg>;
-
-export const init = ({ flow }: { flow: Flow.Model }): Model => {
-	return {
-		pipesBySourceId: flow.pipesBySourceId,
-		terminalsByGroupId: flow.terminalsByGroupId,
-		status: { t: "idle" },
-	};
-};
 
 export const update = ({
 	msg,

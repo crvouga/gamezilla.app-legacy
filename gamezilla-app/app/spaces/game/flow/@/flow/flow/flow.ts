@@ -607,6 +607,12 @@ export const randomTerminal = (model: Model): Terminal | null => {
 	return terminals[Math.floor(Math.random() * terminals.length)] ?? null;
 };
 
+export const randomOutEdge = (model: Model, nodeId: NodeId): Edge | null => {
+	const edges = Array.from(yieldEdgesOut(model, nodeId));
+	const randomEdge = edges[Math.floor(Math.random() * edges.length)];
+	return randomEdge ?? null;
+};
+
 /**
  * Find the terminal where the inputted node id is either the start or end node.
  */

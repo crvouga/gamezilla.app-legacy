@@ -120,8 +120,6 @@ const updateServerListedPuzzles: ClientModule["update"] = (input) => {
 	return { model: input.model };
 };
 
-
-
 const updateRequest: ClientModule["update"] = (input) => {
 	return {
 		model: {
@@ -129,11 +127,13 @@ const updateRequest: ClientModule["update"] = (input) => {
 			request: RequestResponse.elapsed(input.model.request, input.ctx.now),
 		},
 	};
-}
+};
 
 const subscriptionsRequest: ClientModule["subscriptions"] = (input) => {
-	return RequestResponse.subscriptions(input.model.request, () => ({ t: "elapsed" }));
-}
+	return RequestResponse.subscriptions(input.model.request, () => ({
+		t: "elapsed",
+	}));
+};
 
 const update: ClientModule["update"] = (input) => {
 	return AppClientModule.andThen(
@@ -154,7 +154,7 @@ const View = (input: { dispatch: (msg: MsgClient) => void }) => {
 };
 
 const subscriptions: ClientModule["subscriptions"] = (input) => {
-	return subscriptionsRequest(input)
+	return subscriptionsRequest(input);
 };
 
 export const FlowPackGridClient = {

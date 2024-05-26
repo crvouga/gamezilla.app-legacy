@@ -113,7 +113,6 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 					ctx: {
 						...input.ctx,
 						pack: input.modelCore.screen.flowPack,
-
 					},
 					model: input.model.flowPackGrid,
 				}),
@@ -125,11 +124,12 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 	}
 };
 
-
 const View: ClientModule["View"] = (input) => {
 	return (
 		<div className="w-full flex flex-col h-full">
-			<FlowPackGridClient.View dispatch={c => input.dispatch({t: "flow-pack-grid", c })} />
+			<FlowPackGridClient.View
+				dispatch={(c) => input.dispatch({ t: "flow-pack-grid", c })}
+			/>
 			<ViewScreen {...input} />
 		</div>
 	);

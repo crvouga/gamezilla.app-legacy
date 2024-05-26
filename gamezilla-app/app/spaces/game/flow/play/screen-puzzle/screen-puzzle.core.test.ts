@@ -1,15 +1,18 @@
 import { describe, expect, it } from "bun:test";
-import { Flow } from "../../@/flow";
+import { Flow, FlowVariantUIPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
 import { CoreFixture } from "../@/testing";
+import { MsgCore } from "./screen-puzzle.types";
 
 const Fixture = async () => {
 	const f = await CoreFixture();
-	const puzzleA = await FlowPuzzle.random();
-	const puzzleB = await FlowPuzzle.random();
+	const puzzle = await FlowPuzzle.random();
+	const puzzleIndex = 0;
+	const nextPuzzle = await FlowPuzzle.random();
+	const nextPuzzleIndex = 1;
 	const pack = await FlowPack.random({
-		puzzleIds: [puzzleA.id, puzzleB.id],
+		puzzleIds: [puzzle.id, nextPuzzle.id],
 	});
 
 	const init = f.update(f.init, [
@@ -19,15 +22,17 @@ const Fixture = async () => {
 		},
 		{
 			t: "user-clicked-open-puzzle-grid-item",
-			puzzle: puzzleA,
-			puzzleIndex: 0,
+			puzzle: puzzle,
+			puzzleIndex,
 		},
 	]);
 
 	return {
 		...f,
-		puzzleA,
-		puzzleB,
+		puzzle,
+		puzzleIndex,
+		nextPuzzle,
+		nextPuzzleIndex,
 		pack,
 		init,
 	};
@@ -47,7 +52,7 @@ describe(import.meta.file, () => {
 
 	it("should update puzzle screen flow play ui", async () => {
 		const f = await Fixture();
-		const terminal = Flow.randomTerminal(f.puzzleA.flow)!;
+		const terminal = Flow.randomTerminal(f.puzzle.flow)!;
 		const after = f.update(f.init, [
 			{
 				t: "got-puzzle-screen-flow-play-msg",
@@ -71,8 +76,8 @@ describe(import.meta.file, () => {
 		const after = f.update(f.init, [
 			{
 				t: "user-clicked-next-puzzle-button",
-				nextPuzzle: f.puzzleB,
-				nextPuzzleIndex: 1,
+				nextPuzzle: f.nextPuzzle,
+				nextPuzzleIndex: f.nextPuzzleIndex,
 			},
 		]);
 
@@ -89,15 +94,15 @@ describe(import.meta.file, () => {
 		const before = f.update(f.init, [
 			{
 				t: "user-clicked-next-puzzle-button",
-				nextPuzzle: f.puzzleB,
-				nextPuzzleIndex: 1,
+				nextPuzzle: f.nextPuzzle,
+				nextPuzzleIndex: f.nextPuzzleIndex,
 			},
 		]);
 		const after = f.update(before, [
 			{
 				t: "user-clicked-prev-puzzle-button",
-				prevPuzzle: f.puzzleA,
-				prevPuzzleIndex: 0,
+				prevPuzzle: f.puzzle,
+				prevPuzzleIndex: f.puzzleIndex,
 			},
 		]);
 		expect(
@@ -107,4 +112,29 @@ describe(import.meta.file, () => {
 			after.screen.t === "screen-puzzle" ? after.screen.puzzleIndex : -1,
 		).toEqual(0);
 	});
+
+	it('should start with empty puzzle after going to next puzzle', async () => {
+		const f = await Fixture();
+		
+		const msgs = FlowVariantUIPlay.randomMsgs({
+			flow: f.puzzle.flow,
+		}).map((c): MsgCore => ({
+			t: 'got-puzzle-screen-flow-play-msg',
+			c
+		})) 
+
+		const before = f.update(f.init, msgs);
+		const after = f.update(f.init, [
+			{
+				t: "user-clicked-next-puzzle-button",
+				nextPuzzle: f.nextPuzzle,
+				nextPuzzleIndex: f.nextPuzzleIndex,
+			},
+		]);
+
+		if(before.screen.t === 'screen-puzzle' && after.screen.t === 'screen-puzzle') {
+			expect(before.screen.flowPlay).not.toEqual(after.screen.flowPlay);
+			expect(after.screen.flowPlay).toEqual(FlowVariantUIPlay.init({ flow: f.nextPuzzle.flow }))
+		}
+	})
 });

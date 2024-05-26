@@ -50,6 +50,9 @@ export const updateCore: CoreModule["updateCore"] = ({
 						...modelCore,
 						screen: {
 							...modelCore.screen,
+							flowPlay: FlowVariantUIPlay.init({
+								flow: msgCore.nextPuzzle.flow,
+							}),
 							flowPuzzle: msgCore.nextPuzzle,
 							puzzleIndex: msgCore.nextPuzzleIndex,
 						},
@@ -67,6 +70,9 @@ export const updateCore: CoreModule["updateCore"] = ({
 						...modelCore,
 						screen: {
 							...modelCore.screen,
+							flowPlay: FlowVariantUIPlay.init({
+								flow: msgCore.prevPuzzle.flow,
+							}),
 							flowPuzzle: msgCore.prevPuzzle,
 							puzzleIndex: msgCore.prevPuzzleIndex,
 						},
