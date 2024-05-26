@@ -6,7 +6,7 @@ import { FlowGridShorthand } from "./flow-grid-shorthand";
 describe(import.meta.file, () => {
 	test("1x1 with A", async () => {
 		const shorthand = FlowGridShorthand.init([["A"]]);
-		const actual =  FlowGridShorthand.toGrid(shorthand);
+		const actual = FlowGridShorthand.toGrid(shorthand);
 		const expected = FlowGrid.init({
 			dimensions: FlowGridShorthand.toDimensions(shorthand),
 			terminalsByGroupId: {
@@ -25,8 +25,8 @@ describe(import.meta.file, () => {
 
 	test("2x2 with A", async () => {
 		const shorthand = FlowGridShorthand.init([
-			["A", null],
-			[null, "A"],
+			["A", " "],
+			[" ", "A"],
 		]);
 
 		const actual = FlowGridShorthand.toGrid(shorthand);
@@ -96,10 +96,10 @@ describe(import.meta.file, () => {
 
 	test("3x3 with A", async () => {
 		const shorthand = FlowGridShorthand.init([
-			["A", null, null],
-			[null, null, null],
-			[null, null, "A"],
-		])
+			["A", " ", " "],
+			[" ", " ", " "],
+			[" ", " ", "A"],
+		]);
 		const actual = FlowGridShorthand.toGrid(shorthand);
 		const expected = FlowGrid.init({
 			dimensions: FlowGridShorthand.toDimensions(shorthand),
@@ -122,10 +122,10 @@ describe(import.meta.file, () => {
 
 	test("3x3 with A and B", async () => {
 		const shorthand = FlowGridShorthand.init([
-			["A", null, "B"],
-			[null, "B", null],
-			[null, null, "A"],
-		])
+			["A", " ", "B"],
+			[" ", "B", " "],
+			[" ", " ", "A"],
+		]);
 		const actual = FlowGridShorthand.toGrid(shorthand);
 		const expected = FlowGrid.init({
 			dimensions: FlowGridShorthand.toDimensions(shorthand),
@@ -141,7 +141,7 @@ describe(import.meta.file, () => {
 					}),
 					groupId: "A",
 				},
-				B:{
+				B: {
 					startId: FlowGrid.toNodeId({
 						x: 2,
 						y: 0,
@@ -156,4 +156,48 @@ describe(import.meta.file, () => {
 		});
 		expect(Flow.isSame(actual, expected)).toBe(true);
 	});
+
+	test('2x2 with terminal and pipe', async () => {
+		const shorthand = FlowGridShorthand.init([
+			["A", " "],
+			["a", "A"],
+		]);
+
+		const actual = FlowGridShorthand.toGrid(shorthand);
+
+		const expected = FlowGrid.init({
+			dimensions: FlowGridShorthand.toDimensions(shorthand),
+			terminalsByGroupId: {
+				A: {
+					startId: FlowGrid.toNodeId({
+						x: 0,
+						y: 0,
+					}),
+					endId: FlowGrid.toNodeId({
+						x: 1,
+						y: 1,
+					}),
+					groupId: "A",
+				},
+			},
+			pipesBySourceId: {
+				[FlowGrid.toNodeId({ x: 0, y: 0 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 0, y: 0 }),
+						targetId: FlowGrid.toNodeId({ x: 0, y: 1 }),
+					}),
+					groupId: "A"
+				},
+				[FlowGrid.toNodeId({ x: 0, y: 1 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 0, y: 1 }),
+						targetId: FlowGrid.toNodeId({ x: 1, y: 1 }),
+					}),
+					groupId: "A"
+				}
+			}
+		});
+		
+		expect(Flow.isSame(actual, expected)).toBe(true);
+	})
 });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { FlowGrid, FlowGridDimensions } from ".";
+import { FlowGrid, FlowGridDimensions, FlowGridShorthand } from ".";
 
 describe(import.meta.file, () => {
 	it("should initialize the model", () => {
@@ -29,5 +29,14 @@ describe(import.meta.file, () => {
 		const expectedMaxNanoseconds = 10 * 1e6;
 
 		expect(actualNanoseconds).toBeLessThan(expectedMaxNanoseconds);
+	});
+
+	it.todo("should detect if puzzle is solved", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", "Cc", "B"],
+			["a", "C", "Bb"],
+			["a", "a", "A"],
+		]);
+		grid
 	});
 });

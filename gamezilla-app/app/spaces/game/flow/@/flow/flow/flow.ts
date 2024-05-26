@@ -150,7 +150,11 @@ export const isSame = (a: Model, b: Model): boolean => {
 		terminalsByGroupIdB,
 	);
 
-	return isSameNodes && isSameEdges && isSameTerminals;
+	const pipesA = a.pipesBySourceId;
+	const pipesB = b.pipesBySourceId;
+	const isSamePipes = eq(pipesA, pipesB);
+
+	return isSamePipes && isSameNodes && isSameEdges && isSameTerminals;
 };
 
 /**

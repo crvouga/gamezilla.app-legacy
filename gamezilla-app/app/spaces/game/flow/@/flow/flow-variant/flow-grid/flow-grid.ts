@@ -58,6 +58,7 @@ export const distance =
 export const init = (input: {
 	dimensions: FlowGridDimensions.Model;
 	terminalsByGroupId?: Flow.Model["terminalsByGroupId"];
+	pipesBySourceId?: Flow.Model["pipesBySourceId"];
 }): Model => {
 	const model: Model = {
 		t: "flow-grid",
@@ -70,7 +71,7 @@ export const init = (input: {
 		Flow: true,
 		nodes: {},
 		terminalsByGroupId: {},
-		pipesBySourceId: {},
+		pipesBySourceId: input.pipesBySourceId ?? {},
 	};
 	//
 	//
