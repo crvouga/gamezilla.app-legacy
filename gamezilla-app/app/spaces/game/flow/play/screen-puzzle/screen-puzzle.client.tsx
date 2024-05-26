@@ -23,20 +23,20 @@ const update: ClientModule["update"] = (input) => {
 		}
 	}
 	switch (input.msgCore?.t) {
-		case 'user-clicked-exit-puzzle-button': {
+		case "user-clicked-exit-puzzle-button": {
 			return {
 				model: input.model,
 				msgCmd: [playSound(APP_SOUND.navBackwardMin)],
 			};
 		}
-			
+
 		case "user-clicked-next-puzzle-button": {
 			return {
 				model: input.model,
 				msgCmd: [playSound(APP_SOUND.navForwardMin)],
 			};
 		}
-			
+
 		case "user-clicked-prev-puzzle-button": {
 			return {
 				model: input.model,

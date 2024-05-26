@@ -27,11 +27,12 @@ export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
 		return {
 			get disabled(): boolean {
 				const ariaDisabled = baseElement.ariaDisabled;
-				const disabled = baseElement instanceof HTMLButtonElement && baseElement.disabled;
+				const disabled =
+					baseElement instanceof HTMLButtonElement && baseElement.disabled;
 				const disabledAttr = baseElement.getAttribute("disabled");
 				const ariaDisabledAttr = baseElement.getAttribute("aria-disabled");
 				return (
-					disabled || 
+					disabled ||
 					ariaDisabled === "true" ||
 					ariaDisabled === "" ||
 					disabledAttr === "true" ||

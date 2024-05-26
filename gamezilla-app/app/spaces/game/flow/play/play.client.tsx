@@ -104,7 +104,7 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 	return Sub.tag(
 		"flow-pack-grid",
 		FlowPackGridClient.subscriptions({
-			ctx: { ...input.ctx, pack: null},
+			ctx: { ...input.ctx, pack: null },
 			model: input.model.flowPackGrid,
 		}),
 	);
@@ -154,7 +154,7 @@ const View: ClientModule["View"] = (input) => {
 		<div className="w-full flex flex-col h-full" id={containerHtmlId}>
 			<ViewScreen {...input} />
 		</div>
-	)
+	);
 };
 
 const ViewScreen: ClientModule["View"] = (input) => {

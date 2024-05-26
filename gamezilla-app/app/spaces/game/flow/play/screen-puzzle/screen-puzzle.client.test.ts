@@ -13,9 +13,9 @@ const Fixture = async () => {
 	const pack = await FlowPack.random({
 		puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id],
 	});
-	const puzzleIndex = 1
-	const prevPuzzleIndex = 0
-	const nextPuzzleIndex = 2
+	const puzzleIndex = 1;
+	const prevPuzzleIndex = 0;
+	const nextPuzzleIndex = 2;
 
 	f.initial.model = {
 		...f.initial.model,
@@ -45,10 +45,10 @@ const Fixture = async () => {
 		},
 	]);
 
-	const firstPuzzle = prevPuzzle
-	const firstPuzzleIndex = 0
-	const lastPuzzle = nextPuzzle
-	const lastPuzzleIndex = 2
+	const firstPuzzle = prevPuzzle;
+	const firstPuzzleIndex = 0;
+	const lastPuzzle = nextPuzzle;
+	const lastPuzzleIndex = 2;
 
 	return {
 		...f,
@@ -60,7 +60,7 @@ const Fixture = async () => {
 		firstPuzzleIndex,
 		lastPuzzle,
 		lastPuzzleIndex,
-		// 
+		//
 		nextPuzzle,
 		nextPuzzleIndex,
 		prevPuzzle,
@@ -82,7 +82,7 @@ describe(import.meta.file, () => {
 		).toBeTruthy();
 	});
 
-	it('should make a sound after clicking exit button', async () => {
+	it("should make a sound after clicking exit button", async () => {
 		const f = await Fixture();
 		const updated = f.update(f.initial, [
 			{
@@ -92,7 +92,7 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(didPlaySound(updated)).toBe(true);
-	})
+	});
 
 	it("should exit to pack after clicking exit puzzle button", async () => {
 		const f = await Fixture();
@@ -228,9 +228,9 @@ describe(import.meta.file, () => {
 		expect(nextButton?.disabled).toBe(true);
 	});
 
-	it('should render which level of the pack is being played', async () => {
+	it("should render which level of the pack is being played", async () => {
 		const f = await Fixture();
 		const r = f.render(f.initial);
-		expect(r.getByRole('heading', `Level ${f.puzzleIndex + 1}`)).toBeTruthy();
-	})
+		expect(r.getByRole("heading", `Level ${f.puzzleIndex + 1}`)).toBeTruthy();
+	});
 });

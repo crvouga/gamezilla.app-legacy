@@ -12,7 +12,7 @@ import type {
 	MsgServer,
 	MsgToClient,
 	MsgToServer,
-} from "./flow-pack-grid.core";
+} from "./flow-pack-grid.types";
 
 type ServerModule = AppServerModule<{
 	Ctx: SpaceServerCtx;

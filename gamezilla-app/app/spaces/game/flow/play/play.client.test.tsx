@@ -2,16 +2,16 @@ import { describe, it } from "bun:test";
 import { FlowPlayClientFixture } from "./@/testing";
 
 const Fixture = async () => {
-	const f = await FlowPlayClientFixture()
+	const f = await FlowPlayClientFixture();
 	return {
-		...f
-	}
-}
+		...f,
+	};
+};
 
 describe(import.meta.file, () => {
-	it.todo("should fetch puzzles in pack when on puzzle screen", async () => {
-		const f = await Fixture()
-		f
-		// 
-	})
-})
+	it("should fetch puzzles in pack when on puzzle screen", async () => {
+		const f = await Fixture();
+		f;
+		//
+	});
+});

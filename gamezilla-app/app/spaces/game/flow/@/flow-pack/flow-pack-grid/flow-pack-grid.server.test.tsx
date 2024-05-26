@@ -12,7 +12,7 @@ import type { FlowServerDeps } from "../../../builder/builder.types";
 import { FlowPuzzle, FlowPuzzleDb } from "../../flow-puzzle";
 import type { FlowPuzzleId } from "../../flow-puzzle/flow-puzzle-id";
 
-import type { ModelServer } from "./flow-pack-grid.core";
+import type { ModelServer } from "./flow-pack-grid.types";
 import { FlowPackGridServer } from "./flow-pack-grid.server";
 
 const initial = () => {

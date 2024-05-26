@@ -14,7 +14,7 @@ import {
 	type MsgClient,
 	type MsgToClient,
 	type MsgToServer,
-} from "./flow-pack-grid.core";
+} from "./flow-pack-grid.types";
 
 type Ctx = SpaceClientCtx & {
 	pack: FlowPack | null;
@@ -187,7 +187,6 @@ export const FlowPackGridClient: Pick<
 			// Browser.onInterectionObverivations(input.ctx.containerHtmlId, () => ({
 			// })
 			// )
-		
-		]) 
+		]);
 	},
 };

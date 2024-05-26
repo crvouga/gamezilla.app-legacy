@@ -1,1 +1,1 @@
-export * as FlowPackGrid from "./flow-pack-grid.core";
+export * as FlowPackGrid from "./flow-pack-grid.types";

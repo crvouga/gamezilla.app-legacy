@@ -16,7 +16,7 @@ describe(import.meta.file, () => {
 	it("should render exit button", async () => {
 		const f = await Fixture();
 		const rendered = f.render(f.initial);
-		expect(rendered.getByRole('button', f.ctx.t("app.exit"))).toBeTruthy();
+		expect(rendered.getByRole("button", f.ctx.t("app.exit"))).toBeTruthy();
 	});
 	it("should render select pack screen", async () => {
 		const f = await Fixture();
