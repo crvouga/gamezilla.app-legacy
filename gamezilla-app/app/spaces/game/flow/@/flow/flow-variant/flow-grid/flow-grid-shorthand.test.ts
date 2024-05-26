@@ -157,7 +157,7 @@ describe(import.meta.file, () => {
 		expect(Flow.isSame(actual, expected)).toBe(true);
 	});
 
-	test('2x2 with terminal and pipe', async () => {
+	test("2x2 with terminal and pipe", async () => {
 		const shorthand = FlowGridShorthand.init([
 			["A", " "],
 			["a", "A"],
@@ -186,18 +186,18 @@ describe(import.meta.file, () => {
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 0 }),
 						targetId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 					}),
-					groupId: "A"
+					groupId: "A",
 				},
 				[FlowGrid.toNodeId({ x: 0, y: 1 })]: {
 					edgeId: Flow.toEdgeId({
 						sourceId: FlowGrid.toNodeId({ x: 0, y: 1 }),
 						targetId: FlowGrid.toNodeId({ x: 1, y: 1 }),
 					}),
-					groupId: "A"
-				}
-			}
+					groupId: "A",
+				},
+			},
 		});
-		
+
 		expect(Flow.isSame(actual, expected)).toBe(true);
-	})
+	});
 });

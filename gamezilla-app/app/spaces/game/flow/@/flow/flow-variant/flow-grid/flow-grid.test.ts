@@ -37,6 +37,6 @@ describe(import.meta.file, () => {
 			["a", "C", "Bb"],
 			["a", "a", "A"],
 		]);
-		grid
+		expect(FlowGrid.isSolved(grid)).toBe(true);
 	});
 });
