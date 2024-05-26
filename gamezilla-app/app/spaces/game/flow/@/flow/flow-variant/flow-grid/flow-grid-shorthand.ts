@@ -172,7 +172,8 @@ const toPipesBySourceIdForTerminal = (input: {
 
 	vistedNodeIds.add(currentNodeId);
 
-	for (let i = 0; i < 100; i++) {
+	const JUST_IN_CASE = 1000;
+	for (let i = 0; i < JUST_IN_CASE; i++) {
 		const currentNode = FlowGrid.toNode(input.grid, currentNodeId);
 
 		if (!currentNode) {
@@ -236,9 +237,7 @@ const toPipesBySourceIdForTerminal = (input: {
 			pipesBySourceId[currentNodeId] = {
 				edgeId,
 				groupId,
-			};
-
-			vistedNodeIds.add(adjacentTerminalNode.nodeId);
+			};			
 			break;
 		}
 
@@ -290,7 +289,7 @@ const toPipesBySourceIdForTerminal = (input: {
 			break;
 		}
 
-		vistedNodeIds.add(currentNodeId);
+		vistedNodeIds.add(adjacentNodeId);
 
 		const edgeId = Flow.toEdgeId({
 			sourceId: currentNodeId,
@@ -368,9 +367,14 @@ const toGrid = (model: Model): FlowGrid.Model => {
 	};
 };
 
+const toGrids = (model: Model): FlowGrid.Model[] => {
+	return [toGrid(model)];
+}
+
 export const FlowGridShorthand = {
 	init,
 	___,
 	toDimensions,
 	toGrid,
+	toGrids
 };

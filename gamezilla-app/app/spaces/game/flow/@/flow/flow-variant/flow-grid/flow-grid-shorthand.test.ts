@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, it, test } from "bun:test";
 import { FlowGrid, FlowGridDimensions } from ".";
 import { Flow } from "../../flow";
 import { FlowGridShorthand } from "./flow-grid-shorthand";
@@ -365,5 +365,92 @@ describe(import.meta.file, () => {
 		const isSame = Flow.isSame(actual, expected);
 
 		expect(isSame).toBe(true);
+	})
+
+	it('should always assume the longest pipeline', async () => {
+		const shorthand = FlowGridShorthand.init([
+			["A", "a", "a"],
+			["a", "a", "a"],
+			["a", "a", "A"],
+		]);
+
+		const actual = FlowGridShorthand.toGrids(shorthand);
+
+		const expected = FlowGrid.init({
+			dimensions: FlowGridShorthand.toDimensions(shorthand),
+			terminalsByGroupId: {
+				A: {
+					startId: FlowGrid.toNodeId({
+						x: 0,
+						y: 0,
+					}),
+					endId: FlowGrid.toNodeId({
+						x: 2,
+						y: 2,
+					}),
+					groupId: "A",
+				},
+			},
+			pipesBySourceId: {
+				[FlowGrid.toNodeId({ x: 0, y: 0 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 0, y: 0 }),
+						targetId: FlowGrid.toNodeId({ x: 0, y: 1 }),
+					}),
+					groupId: "A",
+				},
+				[FlowGrid.toNodeId({ x: 0, y: 1 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 0, y: 1 }),
+						targetId: FlowGrid.toNodeId({ x: 0, y: 2 }),
+					}),
+					groupId: "A",
+				},
+				[FlowGrid.toNodeId({ x: 0, y: 2 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 0, y: 2 }),
+						targetId: FlowGrid.toNodeId({ x: 1, y: 2 }),
+					}),
+					groupId: "A",
+				},
+				[FlowGrid.toNodeId({ x: 1, y: 2 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 1, y: 2 }),
+						targetId: FlowGrid.toNodeId({ x: 1, y: 1 }),
+					}),
+					groupId: "A",
+				},
+				[FlowGrid.toNodeId({ x: 1, y: 1 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 1, y: 1 }),
+						targetId: FlowGrid.toNodeId({ x: 1, y: 0 }),
+					}),
+					groupId: "A",
+				},
+				[FlowGrid.toNodeId({ x: 1, y: 0 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 1, y: 0 }),
+						targetId: FlowGrid.toNodeId({ x: 2, y: 0 }),
+					}),
+					groupId: "A",
+				},
+				[FlowGrid.toNodeId({ x: 2, y: 0 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 2, y: 0 }),
+						targetId: FlowGrid.toNodeId({ x: 2, y: 1 }),
+					}),
+					groupId: "A",
+				},
+				[FlowGrid.toNodeId({ x: 2, y: 1 })]: {
+					edgeId: Flow.toEdgeId({
+						sourceId: FlowGrid.toNodeId({ x: 2, y: 1 }),
+						targetId: FlowGrid.toNodeId({ x: 2, y: 2 }),
+					}),
+					groupId: "A",
+				},
+			},
+		});
+
+		expect(actual.some(actual => Flow.isSame(actual, expected))).toBe(true)
 	})
 });
