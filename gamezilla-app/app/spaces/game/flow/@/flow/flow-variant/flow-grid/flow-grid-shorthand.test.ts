@@ -367,7 +367,7 @@ describe(import.meta.file, () => {
 		expect(isSame).toBe(true);
 	})
 
-	it('should always assume the longest pipeline', async () => {
+	it('should be able to find longest path', async () => {
 		const shorthand = FlowGridShorthand.init([
 			["A", "a", "a"],
 			["a", "a", "a"],

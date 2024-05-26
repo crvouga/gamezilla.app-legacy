@@ -78,8 +78,6 @@ type DraftTerminal = {
 	endId: Flow.NodeId | null;
 };
 
-const ___ = null;
-
 const toTerminalsByGroupId = (
 	model: Model,
 ): FlowGrid.Model["terminalsByGroupId"] => {
@@ -383,6 +381,7 @@ const toPipesBySourceIdForTerminalList = (input: {
 			return;
 		}
 
+		// Special case for terminal with pipe.
 		if (isTerminalWithPipe(currentElement)) {
 			let adjacentTerminalNode: Flow.Node | null = null;
 			for (const delta of DELTAS) {
@@ -580,7 +579,6 @@ const toGrids = (model: Model): FlowGrid.Model[] => {
 
 export const FlowGridShorthand = {
 	init,
-	___,
 	toDimensions,
 	toGrid,
 	toGrids
