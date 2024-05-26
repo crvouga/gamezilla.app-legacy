@@ -1,13 +1,11 @@
-import { VDom } from "../vdom";
-import { AriaRole } from "./aria-role";
+import type { VDom } from "../vdom";
+import type { AriaRole } from "./aria-role";
 
 export type TestNode = {
-	hasText: (text: string) => boolean;
 	click: () => void;
-	getByRole: (role: AriaRole) => TestNode;
-	getByText: (text: string) => TestNode;
-	getByRoleAndText: (role: AriaRole, text: string) => TestNode;
+	getByRole: (ariaRole: AriaRole, ariaName?: string) => TestNode | null;
 	getAttribute: (attribute: string) => string | null;
+	disabled: boolean
 };
 
 export type ITestRender = (vdom: VDom) => TestNode;

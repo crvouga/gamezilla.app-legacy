@@ -16,16 +16,12 @@ describe(import.meta.file, () => {
 	it("should render exit button", async () => {
 		const f = await Fixture();
 		const rendered = f.render(f.initial);
-		expect(
-			rendered.getByText(f.ctx.t("app.exit")).hasText(f.ctx.t("app.exit")),
-		).toBe(true);
+		expect(rendered.getByRole('button', f.ctx.t("app.exit"))).toBeTruthy();
 	});
 	it("should render select pack screen", async () => {
 		const f = await Fixture();
-		const rendered = f.render(f.initial);
-		expect(rendered.getByRole("heading").hasText(f.ctx.t("flow.play"))).toBe(
-			true,
-		);
+		const r = f.render(f.initial);
+		expect(r.getByRole("heading", f.ctx.t("flow.play"))).toBeTruthy();
 	});
 	it("should show pack screen after opening pack", async () => {
 		const f = await Fixture();
@@ -38,8 +34,8 @@ describe(import.meta.file, () => {
 				},
 			},
 		]);
-		const rendered = f.render(updated);
-		expect(rendered.getByRole("heading").hasText(pack.name)).toBe(true);
+		const r = f.render(updated);
+		expect(r.getByRole("heading", pack.name)).toBeTruthy();
 	});
 	it("should make a sound when opening a pack", async () => {
 		const f = await Fixture();

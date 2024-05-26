@@ -32,7 +32,7 @@ describe(import.meta.file, () => {
 	it("should render exit button", async () => {
 		const f = await Fixture();
 		const rendered = f.render(f.initial);
-		expect(rendered.getByText(f.ctx.t("app.exit"))).toBeTruthy();
+		expect(rendered.getByRole("button", f.ctx.t("app.exit"))).toBeTruthy();
 	});
 
 	it("should render pack grid", async () => {
@@ -44,8 +44,8 @@ describe(import.meta.file, () => {
 	it("should emit msg from clicking exit button", async () => {
 		const f = await Fixture();
 		const r = f.render(f.initial);
-		const exitButton = r.getByText(f.ctx.t("app.exit"));
-		exitButton.click();
+		const exitButton = r.getByRole("button", f.ctx.t("app.exit"));
+		exitButton?.click();
 		const msg = await r.msgs.once();
 		expect(msg.t).toEqual("user-clicked-exit-pack-button");
 	});

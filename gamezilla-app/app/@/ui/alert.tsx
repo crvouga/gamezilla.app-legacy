@@ -12,6 +12,8 @@ export const AlertError = ({
 }) => {
 	return (
 		<div
+			role="alert"
+			aria-label={text}
 			className={cn(
 				"flex w-full items-center rounded-md bg-red-500 p-4 text-white",
 				className,

@@ -1,8 +1,7 @@
 import { render, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { VDom } from "../vdom";
-import { AriaRole } from "./aria-role";
-import { ITestRender, TestNode } from "./test-render";
+import type { VDom } from "../vdom";
+import type { ITestRender, TestNode } from "./test-render";
 
 export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
 	const rendered = render(vdom);
@@ -24,40 +23,35 @@ export const TestRenderReact: ITestRender = (vdom: VDom): TestNode => {
 		return null;
 	};
 
-	const createTestNode = (baseElement: VDom): TestNode => {
+	const createTestNode = (baseElement: HTMLElement): TestNode => {
 		return {
-			hasText(text: string): boolean {
-				try {
-					return within(baseElement).getByText(text) !== null;
-				} catch {
-					return false;
-				}
+			get disabled(): boolean {
+				const ariaDisabled = baseElement.ariaDisabled;
+				const disabled = baseElement instanceof HTMLButtonElement && baseElement.disabled;
+				const disabledAttr = baseElement.getAttribute("disabled");
+				const ariaDisabledAttr = baseElement.getAttribute("aria-disabled");
+				return (
+					disabled || 
+					ariaDisabled === "true" ||
+					ariaDisabled === "" ||
+					disabledAttr === "true" ||
+					disabledAttr === "" ||
+					ariaDisabledAttr === "true" ||
+					ariaDisabledAttr === ""
+				);
 			},
 			click(): void {
 				userEvent.click(baseElement);
 			},
-			getByRole(role: AriaRole): TestNode {
+			getByRole(role, name) {
 				try {
-					const element = within(baseElement).getByRole(role);
+					const element = within(baseElement).getByRole(role, { name });
+					if (!element) {
+						return null;
+					}
 					return createTestNode(element);
 				} catch {
 					throw new Error(`No element with role ${role}`);
-				}
-			},
-			getByText(text: string): TestNode {
-				try {
-					const element = within(baseElement).getByText(text);
-					return createTestNode(element);
-				} catch {
-					throw new Error(`No element with text ${text}`);
-				}
-			},
-			getByRoleAndText(role, text) {
-				try {
-					const element = within(baseElement).getByRole(role, { name: text });
-					return createTestNode(element);
-				} catch {
-					throw new Error(`No element with role ${role} and text ${text}`);
 				}
 			},
 			getAttribute(attribute) {

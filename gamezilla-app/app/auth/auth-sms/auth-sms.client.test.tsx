@@ -101,12 +101,12 @@ describe(import.meta.file, () => {
 				},
 			},
 		]);
-		const rendered = f.render(output?.model);
-		expect(
-			rendered.hasText(
-				f.ctx.t("verify-sms-problem.send-code-hourly-limit-reached"),
-			),
-		).toBeTruthy();
+		const r = f.render(output?.model);
+		const alertError = r.getByRole(
+			"alert",
+			f.ctx.t("verify-sms-problem.send-code-hourly-limit-reached"),
+		);
+		expect(alertError).toBeTruthy();
 	});
 
 	it("should render error message when verify code errors", async () => {
@@ -127,11 +127,11 @@ describe(import.meta.file, () => {
 				},
 			},
 		]);
-		const rendered = f.render(output?.model);
-		expect(
-			rendered.hasText(
-				f.ctx.t("verify-sms-problem.verification-already-verified"),
-			),
-		).toBeTruthy();
+		const r = f.render(output?.model);
+		const alertError = r.getByRole(
+			"alert",
+			f.ctx.t("verify-sms-problem.verification-already-verified"),
+		);
+		expect(alertError).toBeTruthy();
 	});
 });

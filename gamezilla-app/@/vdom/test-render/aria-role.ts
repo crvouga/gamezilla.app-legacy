@@ -68,4 +68,3 @@ export type AriaRole =
 	| "tree"
 	| "treegrid"
 	| "treeitem"
-	| (string & {});

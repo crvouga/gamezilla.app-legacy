@@ -1,14 +1,9 @@
 import { describe, expect, it } from "bun:test";
+import { didPlaySound } from "gamezilla-app/app/@/client";
+import { withEventMeta } from "gamezilla-app/app/spaces/@/event";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
 import { FlowPlayClientFixture } from "../@/testing";
-import { didPlaySound } from "gamezilla-app/app/@/client";
-import { LamportTimestamp } from "gamezilla-app/@/lamport-clock";
-import {
-	EventId,
-	WithEventMeta,
-	withEventMeta,
-} from "gamezilla-app/app/spaces/@/event";
 
 const Fixture = async () => {
 	const f = await FlowPlayClientFixture();
@@ -18,6 +13,9 @@ const Fixture = async () => {
 	const pack = await FlowPack.random({
 		puzzleIds: [prevPuzzle.id, puzzle.id, nextPuzzle.id],
 	});
+	const puzzleIndex = 1
+	const prevPuzzleIndex = 0
+	const nextPuzzleIndex = 2
 
 	f.initial.model = {
 		...f.initial.model,
@@ -42,21 +40,31 @@ const Fixture = async () => {
 			msg: {
 				t: "user-clicked-open-puzzle-grid-item",
 				puzzle,
-				puzzleIndex: 1,
+				puzzleIndex,
 			},
 		},
 	]);
+
+	const firstPuzzle = prevPuzzle
+	const firstPuzzleIndex = 0
+	const lastPuzzle = nextPuzzle
+	const lastPuzzleIndex = 2
 
 	return {
 		...f,
 		initial,
 		pack,
 		puzzle,
-		puzzleIndex: 1,
+		puzzleIndex,
+		firstPuzzle,
+		firstPuzzleIndex,
+		lastPuzzle,
+		lastPuzzleIndex,
+		// 
 		nextPuzzle,
-		nextPuzzleIndex: 2,
+		nextPuzzleIndex,
 		prevPuzzle,
-		prevPuzzleIndex: 0,
+		prevPuzzleIndex,
 	};
 };
 
@@ -70,7 +78,7 @@ describe(import.meta.file, () => {
 	it("should render exit button for puzzle screen", async () => {
 		const f = await Fixture();
 		expect(
-			f.render(f.initial).getByRoleAndText("button", f.ctx.t("app.exit")),
+			f.render(f.initial).getByRole("button", f.ctx.t("app.exit")),
 		).toBeTruthy();
 	});
 
@@ -89,15 +97,15 @@ describe(import.meta.file, () => {
 	it("should render next puzzle button", async () => {
 		const f = await Fixture();
 		expect(
-			f.render(f.initial).getByRoleAndText("button", f.ctx.t("app.next")),
+			f.render(f.initial).getByRole("button", f.ctx.t("app.next")),
 		).toBeTruthy();
 	});
 
 	it("should emit msg after clicking next puzzle button", async () => {
 		const f = await Fixture();
 		const rendered = f.render(f.initial);
-		const nextButton = rendered.getByRoleAndText("button", f.ctx.t("app.next"));
-		nextButton.click();
+		const nextButton = rendered.getByRole("button", f.ctx.t("app.next"));
+		nextButton?.click();
 		const msg = await rendered.msgs.once();
 		expect(msg.t).toBe("user-clicked-next-puzzle-button");
 	});
@@ -134,7 +142,7 @@ describe(import.meta.file, () => {
 	it("should render prev puzzle button", async () => {
 		const f = await Fixture();
 		expect(
-			f.render(f.initial).getByRoleAndText("button", f.ctx.t("app.prev")),
+			f.render(f.initial).getByRole("button", f.ctx.t("app.prev")),
 		).toBeTruthy();
 	});
 
@@ -152,7 +160,7 @@ describe(import.meta.file, () => {
 		expect(didPlaySound(output)).toBe(true);
 	});
 
-	it('should render prev puzzle after clicking prev puzzle button', async () => {
+	it("should render prev puzzle after clicking prev puzzle button", async () => {
 		const f = await Fixture();
 		const updated = f.update(f.initial, [
 			{
@@ -165,12 +173,46 @@ describe(import.meta.file, () => {
 		]);
 		const r = f.render(updated);
 		expect(r.getAttribute("data-puzzle-id")).toBe(f.prevPuzzle.id);
-	})
+	});
 
-	it.todo('should emit msg after clicking prev puzzle button', async () => {
-		
-	})
+	it("should emit msg after clicking prev puzzle button", async () => {
+		const f = await Fixture();
+		const rendered = f.render(f.initial);
+		const prevButton = rendered.getByRole("button", f.ctx.t("app.prev"));
+		prevButton?.click();
+		const msg = await rendered.msgs.once();
+		expect(msg.t).toBe("user-clicked-prev-puzzle-button");
+	});
 
-	it.todo('should disable prev puzzle button when on first puzzle', async () => {
-	})
+	it("should disable prev puzzle button when on first puzzle", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, [
+			{
+				msg: {
+					t: "user-clicked-prev-puzzle-button",
+					prevPuzzle: f.prevPuzzle,
+					prevPuzzleIndex: f.prevPuzzleIndex,
+				},
+			},
+		]);
+		const r = f.render(output);
+		const prevButton = r.getByRole("button", f.ctx.t("app.prev"));
+		expect(prevButton?.disabled).toBe(true);
+	});
+
+	it("should disabled next button when on last puzzle", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, [
+			{
+				msg: {
+					t: "user-clicked-next-puzzle-button",
+					nextPuzzle: f.nextPuzzle,
+					nextPuzzleIndex: f.nextPuzzleIndex,
+				},
+			},
+		]);
+		const r = f.render(output);
+		const nextButton = r.getByRole("button", f.ctx.t("app.next"));
+		expect(nextButton?.disabled).toBe(true);
+	});
 });

@@ -41,6 +41,7 @@ export const ViewBottomButtonBarAction = (props: BottomBarButtonAction) => {
 			disabled={isDisabled}
 			key={props.label}
 			name={props.label}
+			aria-disabled={isDisabled}
 			aria-label={props.label}
 			onClick={props.onClick}
 			className={cn(
@@ -79,6 +80,7 @@ type BottomBarButtonActionPrebuilt = {
 	ctx: {
 		t: Translator;
 	};
+	disabled?: boolean;
 };
 
 export const ViewBottomButtonBarActionExit = (
@@ -86,9 +88,9 @@ export const ViewBottomButtonBarActionExit = (
 ) => {
 	return (
 		<ViewBottomButtonBarAction
+			{...props}
 			icon={(props) => <IconArrowLeftOnRect {...props} />}
 			label={props.ctx.t("app.exit")}
-			onClick={props.onClick}
 		/>
 	);
 };
@@ -98,9 +100,9 @@ export const ViewBottomButtonBarActionNext = (
 ) => {
 	return (
 		<ViewBottomButtonBarAction
+			{...props}
 			icon={(props) => <IconChevronRight {...props} />}
 			label={props.ctx.t("app.next")}
-			onClick={props.onClick}
 		/>
 	);
 };
@@ -110,9 +112,9 @@ export const ViewBottomButtonBarActionPrev = (
 ) => {
 	return (
 		<ViewBottomButtonBarAction
+			{...props}
 			icon={(props) => <IconChevronLeft {...props} />}
 			label={props.ctx.t("app.prev")}
-			onClick={props.onClick}
 		/>
 	);
 };

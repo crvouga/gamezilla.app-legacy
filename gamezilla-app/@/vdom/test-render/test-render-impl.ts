@@ -1,4 +1,4 @@
-import { ITestRender } from "./test-render";
+import type { ITestRender } from "./test-render";
 import { TestRenderReact } from "./test-render-impl-react";
 
 export type Impl = {

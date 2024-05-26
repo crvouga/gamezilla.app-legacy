@@ -14,7 +14,7 @@ const update: ClientModule["update"] = (input) => {
 	switch (input.msg?.t) {
 		case "user-clicked-exit-puzzle-button":
 		case "user-clicked-next-puzzle-button":
-		case 'user-clicked-prev-puzzle-button':
+		case "user-clicked-prev-puzzle-button":
 		case "got-puzzle-screen-flow-play-msg": {
 			return {
 				model: input.model,
@@ -84,6 +84,7 @@ const View: ClientModule["View"] = (input) => {
 				/>
 				<ViewBottomButtonBarActionPrev
 					ctx={input.ctx}
+					disabled={puzzleIndex <= 0}
 					onClick={() =>
 						prevPuzzle
 							? input.dispatch({
@@ -96,6 +97,9 @@ const View: ClientModule["View"] = (input) => {
 				/>
 				<ViewBottomButtonBarActionNext
 					ctx={input.ctx}
+					disabled={
+						puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1
+					}
 					onClick={() =>
 						nextPuzzle
 							? input.dispatch({
