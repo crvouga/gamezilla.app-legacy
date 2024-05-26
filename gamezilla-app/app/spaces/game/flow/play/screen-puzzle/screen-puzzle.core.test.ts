@@ -145,4 +145,21 @@ describe(import.meta.file, () => {
 			);
 		}
 	});
+
+	it.todo('should be in puzzle completed state after the puzzle is completed', async () => {
+		const f = await Fixture();
+
+		const msgs = FlowVariantUIPlay.randomMsgs({
+			flow: f.puzzle.flow,
+		}).map(
+			(c): MsgCore => ({
+				t: "got-puzzle-screen-flow-play-msg",
+				c,
+			}),
+		);
+
+		const output = f.update(f.init, []);
+
+		expect(output.screen.t === 'screen-puzzle' && output.screen.state)
+	})
 });

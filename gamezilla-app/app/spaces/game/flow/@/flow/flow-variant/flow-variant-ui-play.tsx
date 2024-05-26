@@ -251,7 +251,7 @@ const updateDragging = ({
 	}
 };
 
-export const toCurrentFlow = ({
+export const deriveFlow = ({
 	model,
 	flow,
 }: {

@@ -1,4 +1,4 @@
-import { FlowVariantUIPlay } from "../../@/flow";
+import { Flow, FlowVariantUIPlay } from "../../@/flow";
 import { CoreModule } from "../play.types";
 
 export const updateCore: CoreModule["updateCore"] = ({
@@ -30,6 +30,17 @@ export const updateCore: CoreModule["updateCore"] = ({
 						model: modelCore.screen.flowPlay,
 						flow: modelCore.screen.flowPuzzle.flow,
 					});
+
+					// const flowNew = FlowVariantUIPlay.deriveFlow({
+					// 	flow: modelCore.screen.flowPuzzle.flow,
+					// 	model: flowPlayNew,
+					// });
+
+					// if (Flow.isCompleted(flowNew)) {
+					// 	//
+					// 	return modelCore
+					// }
+
 					return {
 						...modelCore,
 						screen: {
