@@ -5,38 +5,50 @@ const toPossiblePipelines = function* (input: {
 	groupId: Flow.GroupId;
 	startId: Flow.NodeId;
 	endId: Flow.NodeId;
-	visited: Set<Flow.NodeId>;
 }): Iterable<Flow.Edge[]> {
-	if (input.visited.has(input.startId)) {
-		return;
-	}
+	const queue: Array<{
+		path: Flow.Edge[];
+		currentNode: Flow.NodeId;
+		visited: Set<Flow.NodeId>;
+	}> = [
+		{
+			path: [],
+			currentNode: input.startId,
+			visited: new Set(),
+		},
+	];
 
-	input.visited.add(input.startId);
+	while (queue.length > 0) {
+		const { path, currentNode, visited } = queue.shift()!;
 
-	if (input.startId === input.endId) {
-		yield [];
-		return;
-	}
-
-	for (const edgeOut of Flow.yieldEdgesOut(input.model, input.startId)) {
-		const targetGroupId = Flow.toGroupId(input.model, edgeOut.targetId);
-
-		if (targetGroupId && targetGroupId !== input.groupId) {
+		if (visited.has(currentNode)) {
 			continue;
 		}
 
-		const subPipelines = toPossiblePipelines({
-			...input,
-			startId: edgeOut.targetId,
-			visited: new Set(input.visited),
-		});
+		visited.add(currentNode);
 
-		for (const subPipeline of subPipelines) {
-			yield [edgeOut, ...subPipeline];
+		if (currentNode === input.endId) {
+			yield path;
+			continue;
+		}
+
+		for (const edgeOut of Flow.yieldEdgesOut(input.model, currentNode)) {
+			const targetGroupId = Flow.toGroupId(input.model, edgeOut.targetId);
+
+			if (targetGroupId && targetGroupId !== input.groupId) {
+				continue;
+			}
+
+			const newPath = [...path, edgeOut];
+			const newVisited = new Set(visited);
+
+			queue.push({
+				path: newPath,
+				currentNode: edgeOut.targetId,
+				visited: newVisited,
+			});
 		}
 	}
-
-	input.visited.delete(input.startId);
 };
 
 const drawPipeline = (
@@ -73,7 +85,7 @@ export const solve = function* (model: Flow.Model): Iterable<Flow.Model> {
 		return;
 	}
 
-    for (const terminal of Flow.toTerminals(model)) {
+	for (const terminal of Flow.toTerminals(model)) {
 		if (!terminal.endId) {
 			continue;
 		}
@@ -82,9 +94,8 @@ export const solve = function* (model: Flow.Model): Iterable<Flow.Model> {
 			continue;
 		}
 
-		const possiblePipelines = toPossiblePipelines({
+        const possiblePipelines = toPossiblePipelines({
 			model,
-			visited: new Set(),
 			endId: terminal.endId,
 			groupId: terminal.groupId,
 			startId: terminal.startId,
@@ -95,7 +106,7 @@ export const solve = function* (model: Flow.Model): Iterable<Flow.Model> {
 			for (const solution of solve(drew)) {
 				yield solution;
 			}
-        }
+		}
 		return;
 	}
 };
