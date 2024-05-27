@@ -1,4 +1,5 @@
 import * as Flow from "../flow";
+import { PriorityQueue } from "@datastructures-js/priority-queue";
 
 const toPossiblePipelines = function* (input: {
 	model: Flow.Model;
@@ -15,10 +16,10 @@ const toPossiblePipelines = function* (input: {
 		heuristic: number;
 	};
 
-	const queue: QueueItem[] = [];
+	const queue = new PriorityQueue<QueueItem>((a, b) => a.heuristic - b.heuristic);
 
 	const heuristic = input.distance(input.startId, input.endId);
-	queue.push({
+	queue.enqueue({
 		path: [],
 		currentNode: input.startId,
 		visited: new Set([input.startId]),
@@ -26,10 +27,8 @@ const toPossiblePipelines = function* (input: {
 		heuristic,
 	});
 
-	while (queue.length > 0) {
-		// Use a priority queue to always expand the node with the lowest estimated cost
-		queue.sort((a, b) => a.heuristic - b.heuristic);
-		const { path, currentNode, visited, cost } = queue.shift()!;
+	while (!queue.isEmpty()) {
+		const { path, currentNode, visited, cost } = queue.dequeue()!;
 
 		if (currentNode === input.endId) {
 			yield path;
@@ -49,10 +48,10 @@ const toPossiblePipelines = function* (input: {
 
 			const newPath = [...path, edgeOut];
 			const newVisited = new Set(visited).add(edgeOut.targetId);
-			const newCost = cost + 1; // Assuming uniform cost for each step
+			const newCost = cost + 1;
 			const newHeuristic = newCost + input.distance(edgeOut.targetId, input.endId);
 
-			queue.push({
+			queue.enqueue({
 				path: newPath,
 				currentNode: edgeOut.targetId,
 				visited: newVisited,
@@ -62,6 +61,7 @@ const toPossiblePipelines = function* (input: {
 		}
 	}
 };
+
 
 
 const drawPipeline = (
