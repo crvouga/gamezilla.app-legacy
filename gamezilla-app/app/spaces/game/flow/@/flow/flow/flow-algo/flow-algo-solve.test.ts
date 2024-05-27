@@ -27,7 +27,7 @@ describe(import.meta.file, () => {
 		expect(actual.some(actual => expected.some(expected => Flow.isSame(actual, expected)))).toBe(true);
 	})
 
-	test.todo("find solutions 3x3 with A terminals and B terminals", () => {
+	test("find solutions 3x3 with A terminals and B terminals", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", "B", " "],
 			[" ", " ", " "],
@@ -39,6 +39,27 @@ describe(import.meta.file, () => {
 				["A", "B", " "],
 				["a", "b", " "],
 				["A", "B", " "],
+			])
+		]
+
+		const actual = FlowAlgoSolve.solve(grid);
+
+		expect(actual.some(actual => expected.some(expected => Flow.isSame(actual, expected)))).toBe(true);
+		expect(actual.length).toBe(expected.length);
+    })
+
+    test.todo("find solutions 3x3 with A terminals and B terminals and C terminals", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", "B", "C"],
+			[" ", " ", " "],
+			["A", "B", "C"],
+		]);
+
+		const expected = [
+			FlowGridShorthand.toGrid([
+				["A", "B", "C"],
+				["a", "b", "c"],
+				["A", "B", "C"],
 			])
 		]
 

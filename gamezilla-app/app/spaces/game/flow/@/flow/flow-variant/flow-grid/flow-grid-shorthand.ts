@@ -337,7 +337,7 @@ const toPipesBySourceIdForTerminalList = (input: {
  * Returns a list of all possible pipes for a grid.
  * It will return solutions with the longest pipelines.
  */
-const toPipesBySourceIdList = (input: {
+const toPipesBySourceIdList_ = (input: {
 	model: Model;
 	grid: FlowGrid.Model;
 }): NonEmpty<FlowGrid.Model["pipesBySourceId"]> => {
@@ -476,6 +476,15 @@ const toPipesBySourceIdList = (input: {
 
 	return [{}];
 };
+
+const toPipesBySourceIdList = (input: {
+	model: Model;
+	grid: FlowGrid.Model;
+}): NonEmpty<FlowGrid.Model["pipesBySourceId"]> => {
+	const pipesBySourceIdList = toPipesBySourceIdList_(input);
+
+	return pipesBySourceIdList
+}
 
 const toDimensions = (model: Model): FlowGridDimensions.Model => {
 	let maxWidth = 0;

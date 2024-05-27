@@ -83,20 +83,42 @@ export const toSolutions = (model: Flow.Model): Flow.Model[] => {
 export const solve = (model: Flow.Model): Flow.Model[] => {
     const solutions = toSolutions(model)
 
-    const minimalSolutions = minAllBy(solutions, solution => sumPipelineLengths(solution))
-    
-	return minimalSolutions
+    const minimalSolutions = minAllBy(solutions, toTotalPipelineLength)
+
+    const uniqueSolutions = uniqueWith(minimalSolutions, Flow.isSame)
+
+	return uniqueSolutions
 }
 
-const sumPipelineLengths = (model: Flow.Model): number => {
-    const terminals = Flow.toTerminals(model)
-    const pipelines = terminals.map(terminal => terminal.groupId).map(groupId => Flow.toPipelineByGroupId(model, groupId))
-    const pipelineLengths = pipelines.map(pipeline => pipeline.length)
-    return pipelineLengths.reduce((acc, length) => acc + length, 0)
+
+
+const toTotalPipelineLength = (model: Flow.Model): number => {
+    let total = 0
+    for (const terminal of Flow.yieldTerminals(model)) {
+        for (const _ of Flow.yieldPipeline(model, terminal.startId)) {
+            total += 1
+        }
+    }
+    return total
 }
 
+const uniqueWith = <T>(arr: T[], fn: (left: T, right: T) => boolean): T[] => {
+    const unique: T[] = []
+    for (const left of arr) {
+        if (!unique.some(right => fn(left, right))) {
+            unique.push(left)
+        }
+    }
+    return unique
+}
 
 const minAllBy = <T>(arr: T[], fn: (item: T) => number): T[] => {
-    const min = Math.min(...arr.map(fn))
+    let min = Infinity
+    for (const item of arr) {
+        const value = fn(item)
+        if (value < min) {
+            min = value
+        }
+    }
     return arr.filter(item => fn(item) === min)
 }

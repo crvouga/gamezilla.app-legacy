@@ -597,7 +597,7 @@ export const yieldPipeline = (
 ): Iterable<PipeJoined> => {
 	const pipeline: PipeJoined[] = [];
 
-	const currentNodeId = startingNodeId;
+	let currentNodeId = startingNodeId;
 
 	while (true) {
 		const pipe = toPipeBySourceId(model, currentNodeId);
@@ -607,6 +607,8 @@ export const yieldPipeline = (
 		}
 
 		pipeline.push(pipe);
+
+		currentNodeId = pipe.edge.targetId;
 	}
 };
 
