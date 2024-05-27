@@ -60,13 +60,6 @@ const drawPipeline = (
 ): Flow.Model => {
 	const pipesBySourceId = { ...model.pipesBySourceId };
 
-	for (const sourceId in pipesBySourceId) {
-		const pipe = pipesBySourceId[sourceId as Flow.NodeId]!;
-		if (pipe.groupId === terminal.groupId) {
-			delete pipesBySourceId[sourceId as Flow.NodeId];
-		}
-	}
-
 	for (let i = 0; i < path.length; i++) {
 		const edge = path[i]!;
 		pipesBySourceId[edge.sourceId] = {
@@ -83,24 +76,23 @@ const drawPipeline = (
 
 export const solve = function* (
 	model: Flow.Model,
-    distance: (a: Flow.NodeId, b: Flow.NodeId) => number,
+	distance: (a: Flow.NodeId, b: Flow.NodeId) => number,
 ): Iterable<Flow.Model> {
 	if (Flow.isSolved(model)) {
 		yield model;
 		return;
-    }
-    
-    const terminals = Flow.toTerminals(model);
+	}
 
-    terminals.sort((a, b) => {
-        if (a.endId && b.endId) {
-            return distance(a.startId, a.endId) - distance(b.startId, b.endId);
-        }
-        return 0;
-    });
-    
+	const terminals = Flow.toTerminals(model);
 
-    for (const terminal of terminals) {
+	const sortedTerminals = terminals.sort((a, b) => {
+		if (a.endId && b.endId) {
+			return distance(a.startId, a.endId) - distance(b.startId, b.endId);
+		}
+		return 0;
+	});
+
+	for (const terminal of sortedTerminals) {
 		if (!terminal.endId) {
 			continue;
 		}
