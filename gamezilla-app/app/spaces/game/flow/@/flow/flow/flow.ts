@@ -459,7 +459,7 @@ export const toIndexEdgesOut = (model: Model) => {
 export const toIndexEdgesOutMemoized = memoize({
 	toKey: (model) => model.edgeHash ?? 0,
 	func: toIndexEdgesOut,
-	cacheCapacity: 100,
+	cacheCapacity: 10000,
 });
 
 export const toIndexEdgesIn = (model: Model) => {

@@ -73,7 +73,7 @@ export const solve = function* (model: Flow.Model): Iterable<Flow.Model> {
 		return;
 	}
 
-	for (const terminal of Flow.toTerminals(model)) {
+    for (const terminal of Flow.toTerminals(model)) {
 		if (!terminal.endId) {
 			continue;
 		}
@@ -90,12 +90,13 @@ export const solve = function* (model: Flow.Model): Iterable<Flow.Model> {
 			startId: terminal.startId,
 		});
 
+
 		for (const possiblePipeline of possiblePipelines) {
 			const drew = drawPipeline(model, terminal, possiblePipeline);
 			for (const solution of solve(drew)) {
 				yield solution;
 			}
-		}
+        }
 		return;
 	}
 };
