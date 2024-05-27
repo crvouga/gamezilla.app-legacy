@@ -483,7 +483,7 @@ export const toIndexEdgesIn = (model: Model) => {
 export const yieldEdgesOut = function* (
 	model: Model,
 	sourceNodeId: NodeId,
-): Iterable<Edge & {edgeId: EdgeId}> {
+): Iterable<Edge & { edgeId: EdgeId }> {
 	const indexEdgesOut = toIndexEdgesOutMemoized(model);
 
 	for (const targetId in indexEdgesOut[sourceNodeId]) {
@@ -499,7 +499,7 @@ export const yieldEdgesOut = function* (
 			continue;
 		}
 
-		yield {...edge, edgeId};
+		yield { ...edge, edgeId };
 	}
 };
 
@@ -578,10 +578,7 @@ export const toPipeline = (model: Model, sourceNodeId: NodeId): Pipe[] => {
 	return [pipe, ...toPipeline(model, pipe.edge.targetId)];
 };
 
-export const toPipelineByGroupId = (
-	model: Model,
-	groupId: GroupId,
-): Pipe[] => {
+export const toPipelineByGroupId = (model: Model, groupId: GroupId): Pipe[] => {
 	const terminal = toTerminalByGroupId(model, groupId);
 
 	if (!terminal) {
@@ -589,7 +586,7 @@ export const toPipelineByGroupId = (
 	}
 
 	return toPipeline(model, terminal.startId);
-}
+};
 
 export const yieldPipeline = (
 	model: Model,
@@ -832,4 +829,3 @@ export const isSolved = (model: Model): boolean => {
 			: true,
 	);
 };
-

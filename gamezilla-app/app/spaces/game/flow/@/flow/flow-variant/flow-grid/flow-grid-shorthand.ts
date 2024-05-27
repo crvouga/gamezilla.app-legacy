@@ -318,7 +318,11 @@ const toPipesBySourceIdForTerminalList = (input: {
 			};
 
 			if (adjacentNodeId === input.terminal.endId) {
-				if (isPipe(currentElement) || isTerminalWithPipe(currentElement) || isTerminalWithPipe(adjacentElement)) {
+				if (
+					isPipe(currentElement) ||
+					isTerminalWithPipe(currentElement) ||
+					isTerminalWithPipe(adjacentElement)
+				) {
 					allPaths.push(newPath);
 				}
 				continue;
@@ -364,39 +368,14 @@ const toPipesBySourceIdList_ = (input: {
 		];
 	}
 
-	const combinations: FlowGrid.Model["pipesBySourceId"][] = [];
+	const pipeCombinations = combinations(
+		...Object.values(pipesBySourceIdListByGroupId),
+	).map((combination) =>
+		combination.reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+	);
 
-	for (const groupId1 in pipesBySourceIdListByGroupId) {
-		if (!Flow.isGroupId(groupId1)) {
-			continue;
-		}
-		const paths1 = pipesBySourceIdListByGroupId[groupId1];
-		if (!paths1) {
-			continue;
-		}
-
-		for (const groupId2 in pipesBySourceIdListByGroupId) {
-			if (!Flow.isGroupId(groupId2)) {
-				continue;
-			}
-
-			const paths2 = pipesBySourceIdListByGroupId[groupId2];
-
-			if (!paths2) {
-				continue;
-			}
-
-			for (const path1 of paths1) {
-				for (const path2 of paths2) {
-					combinations.push({ ...path1, ...path2 });
-				}
-			}
-		}
-	}
-
-
-	if (NonEmpty.is(combinations)) {
-		return combinations;
+	if (NonEmpty.is(pipeCombinations)) {
+		return pipeCombinations;
 	}
 
 	return [{}];
@@ -408,13 +387,11 @@ const toPipesBySourceIdList = (input: {
 }): NonEmpty<FlowGrid.Model["pipesBySourceId"]> => {
 	const solutions = toPipesBySourceIdList_(input);
 
-	const maxSolutions = maxAllBy(
-		solutions,
-		(pipesBySourceId) =>
-			toTotalPipelineLength({
-				...input.grid,
-				pipesBySourceId,
-			})
+	const maxSolutions = maxAllBy(solutions, (pipesBySourceId) =>
+		toTotalPipelineLength({
+			...input.grid,
+			pipesBySourceId,
+		}),
 	);
 
 	const uniqueSolutions = uniqueWith(maxSolutions, (left, right) =>
@@ -435,39 +412,63 @@ const toPipesBySourceIdList = (input: {
 	}
 
 	return solutions;
-}
+};
 
 const toTotalPipelineLength = (model: Flow.Model): number => {
-    let total = 0
-    for (const terminal of Flow.yieldTerminals(model)) {
-        for (const _ of Flow.yieldPipeline(model, terminal.startId)) {
-            total += 1
-        }
-    }
-    return total
-}
+	let total = 0;
+	for (const terminal of Flow.yieldTerminals(model)) {
+		for (const _ of Flow.yieldPipeline(model, terminal.startId)) {
+			total += 1;
+		}
+	}
+	return total;
+};
+
+/**
+ * Generates all combinations where each combination includes one element from each array within the given array of arrays.
+ * @param arrays - An array of arrays.
+ * @returns An array of combinations.
+ */
+const combinations = <T>(...arrays: T[][]): T[][] => {
+	const result: T[][] = [];
+
+	const helper = (currentIndex: number, currentCombination: T[]) => {
+		if (currentIndex === arrays.length) {
+			result.push([...currentCombination]);
+			return;
+		}
+
+		for (const element of arrays[currentIndex] ?? []) {
+			currentCombination.push(element);
+			helper(currentIndex + 1, currentCombination);
+			currentCombination.pop();
+		}
+	};
+
+	helper(0, []);
+	return result;
+};
 
 const uniqueWith = <T>(arr: T[], fn: (left: T, right: T) => boolean): T[] => {
-    const unique: T[] = []
-    for (const left of arr) {
-        if (!unique.some(right => fn(left, right))) {
-            unique.push(left)
-        }
-    }
-    return unique
-}
+	const unique: T[] = [];
+	for (const left of arr) {
+		if (!unique.some((right) => fn(left, right))) {
+			unique.push(left);
+		}
+	}
+	return unique;
+};
 
 const maxAllBy = <T>(arr: T[], fn: (item: T) => number): T[] => {
-    let max = -Infinity
-    for (const item of arr) {
-        const value = fn(item)
-        if (value > max) {
-            max = value
-        }
-    }
-    return arr.filter(item => fn(item) === max)
-}
-
+	let max = -Infinity;
+	for (const item of arr) {
+		const value = fn(item);
+		if (value > max) {
+			max = value;
+		}
+	}
+	return arr.filter((item) => fn(item) === max);
+};
 
 const toDimensions = (model: Model): FlowGridDimensions.Model => {
 	let maxWidth = 0;

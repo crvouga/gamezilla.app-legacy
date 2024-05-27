@@ -54,7 +54,7 @@ describe(import.meta.file, () => {
 			[" ", " "],
 		]);
 		expect(Flow.isSolved(grid)).toBe(true);
-	})
+	});
 
 	test("not isSolved with adjacent disconnected A terminals", () => {
 		const grid = FlowGridShorthand.toGrid([
@@ -62,5 +62,5 @@ describe(import.meta.file, () => {
 			["A", " "],
 		]);
 		expect(Flow.isSolved(grid)).toBe(false);
-	})
+	});
 });
