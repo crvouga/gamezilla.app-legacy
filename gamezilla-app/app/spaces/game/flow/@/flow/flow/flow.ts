@@ -190,10 +190,9 @@ export const isSame = (left: Model, right: Model): boolean => {
 	return isSamePipes && isSameNodes && isSameEdges && isSameTerminals;
 };
 
-
 export const countNodes = (model: Model): number => {
 	return Object.keys(model.nodes).length;
-}
+};
 
 /**
  * Represents a connection between two nodes.

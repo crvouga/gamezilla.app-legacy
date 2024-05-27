@@ -9,6 +9,31 @@ type QueueItem = {
 	heuristic: number;
 };
 
+const calculateDirection = (edge: Flow.Edge): string => {
+	if (edge.sourceId === edge.targetId) {
+		return "self";
+	}
+	if (edge.sourceId[0] === edge.targetId[0]) {
+		return "horizontal";
+	}
+	if (edge.sourceId[1] === edge.targetId[1]) {
+		return "vertical";
+	}
+	return "self";
+};
+
+const countTurns = (path: Flow.Edge[]): number => {
+	let turns = 0;
+	for (let i = 1; i < path.length; i++) {
+		const prevDirection = calculateDirection(path[i - 1]!);
+		const currDirection = calculateDirection(path[i]!);
+		if (prevDirection !== currDirection) {
+			turns++;
+		}
+	}
+	return turns;
+};
+
 const toPossiblePipelines = function* (input: {
 	model: Flow.Model;
 	groupId: Flow.GroupId;
@@ -16,9 +41,7 @@ const toPossiblePipelines = function* (input: {
 	endId: Flow.NodeId;
 	distance: (a: Flow.NodeId, b: Flow.NodeId) => number;
 }): Iterable<Flow.Edge[]> {
-	const queue = new MinHeap<QueueItem>(
-		(a, b) => a.heuristic - b.heuristic,
-	);
+	const queue = new MinHeap<QueueItem>((a, b) => a.heuristic - b.heuristic);
 
 	const initialHeuristic = input.distance(input.startId, input.endId);
 	queue.insert({
@@ -51,8 +74,9 @@ const toPossiblePipelines = function* (input: {
 			const newPath = [...path, edgeOut];
 			const newVisited = new Set(visited).add(edgeOut.targetId);
 			const newCost = cost + 1;
+			const turns = countTurns(newPath);
 			const newHeuristic =
-				newCost + input.distance(edgeOut.targetId, input.endId);
+				newCost + input.distance(edgeOut.targetId, input.endId) + turns;
 
 			queue.insert({
 				path: newPath,
