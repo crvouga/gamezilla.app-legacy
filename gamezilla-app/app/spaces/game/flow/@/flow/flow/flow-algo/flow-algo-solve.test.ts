@@ -393,7 +393,7 @@ describe(import.meta.file, () => {
 		}
 	});
 
-	test.todo("find solutions for 11x11 puzzle", () => {
+	test("find solutions for 11x11 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " ", "J", "K", "L"],
 			[" ", " ", "C", "D", "E", " ", "E", " ", " ", " ", " "],
@@ -431,7 +431,7 @@ describe(import.meta.file, () => {
 		}
 	});
 
-	test.todo("find solutions for 12x12 puzzle", () => {
+	test("find solutions for 12x12 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " ", "J", "K", "L", "M"],
 			[" ", " ", "C", "D", "E", " ", "E", " ", " ", " ", " ", " "],
@@ -471,7 +471,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test.todo("find solutions for 13x13 puzzle", () => {
+	test("find solutions for 13x13 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " ", "J", "K", "L", "M", "N"],
 			[" ", " ", "C", "D", "E", " ", "E", " ", " ", " ", " ", " ", " "],

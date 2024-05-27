@@ -5,29 +5,31 @@ const toPossiblePipelines = function* (input: {
 	groupId: Flow.GroupId;
 	startId: Flow.NodeId;
 	endId: Flow.NodeId;
+	distance: (a: Flow.NodeId, b: Flow.NodeId) => number;
 }): Iterable<Flow.Edge[]> {
 	type QueueItem = {
 		path: Flow.Edge[];
 		currentNode: Flow.NodeId;
 		visited: Set<Flow.NodeId>;
+		cost: number;
+		heuristic: number;
 	};
 
 	const queue: QueueItem[] = [];
 
+	const heuristic = input.distance(input.startId, input.endId);
 	queue.push({
 		path: [],
 		currentNode: input.startId,
-		visited: new Set(),
+		visited: new Set([input.startId]),
+		cost: 0,
+		heuristic,
 	});
 
 	while (queue.length > 0) {
-		const { path, currentNode, visited } = queue.shift()!;
-
-		if (visited.has(currentNode)) {
-			continue;
-		}
-
-		visited.add(currentNode);
+		// Use a priority queue to always expand the node with the lowest estimated cost
+		queue.sort((a, b) => a.heuristic - b.heuristic);
+		const { path, currentNode, visited, cost } = queue.shift()!;
 
 		if (currentNode === input.endId) {
 			yield path;
@@ -41,16 +43,26 @@ const toPossiblePipelines = function* (input: {
 				continue;
 			}
 
-            const newPath = [...path, edgeOut];
-			const newVisited = new Set(visited);
+			if (visited.has(edgeOut.targetId)) {
+				continue;
+			}
+
+			const newPath = [...path, edgeOut];
+			const newVisited = new Set(visited).add(edgeOut.targetId);
+			const newCost = cost + 1; // Assuming uniform cost for each step
+			const newHeuristic = newCost + input.distance(edgeOut.targetId, input.endId);
+
 			queue.push({
 				path: newPath,
 				currentNode: edgeOut.targetId,
 				visited: newVisited,
+				cost: newCost,
+				heuristic: newHeuristic,
 			});
 		}
 	}
 };
+
 
 const drawPipeline = (
 	model: Flow.Model,
@@ -104,7 +116,8 @@ export const solve = function* (
 			model,
 			endId: terminal.endId,
 			groupId: terminal.groupId,
-			startId: terminal.startId,
+            startId: terminal.startId,
+            distance,
 		});
 
 		for (const possiblePipeline of possiblePipelines) {
