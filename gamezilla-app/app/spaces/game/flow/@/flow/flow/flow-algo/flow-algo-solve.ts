@@ -1,25 +1,27 @@
 import * as Flow from "../flow";
 
 const toPossiblePipelines = function* (input: {
-	model: Flow.Model;
+    model: Flow.Model;
 	groupId: Flow.GroupId;
 	startId: Flow.NodeId;
 	endId: Flow.NodeId;
 }): Iterable<Flow.Edge[]> {
-	const queue: Array<{
-		path: Flow.Edge[];
-		currentNode: Flow.NodeId;
-		visited: Set<Flow.NodeId>;
-	}> = [
-		{
-			path: [],
-			currentNode: input.startId,
-			visited: new Set(),
-		},
-	];
+    type QueueItem = {
+        path: Flow.Edge[];
+        currentNode: Flow.NodeId;
+        visited: Set<Flow.NodeId>;
+    };
 
+	const queue: QueueItem[] = [];
+    
+    queue.push({
+        path: [],
+        currentNode: input.startId,
+        visited: new Set(),
+    })
+    
 	while (queue.length > 0) {
-		const { path, currentNode, visited } = queue.shift()!;
+		const { path, currentNode, visited } = queue.shift()!
 
 		if (visited.has(currentNode)) {
 			continue;
@@ -37,15 +39,15 @@ const toPossiblePipelines = function* (input: {
 
 			if (targetGroupId && targetGroupId !== input.groupId) {
 				continue;
-			}
-
+            }
+            
 			const newPath = [...path, edgeOut];
 			const newVisited = new Set(visited);
 
 			queue.push({
 				path: newPath,
 				currentNode: edgeOut.targetId,
-				visited: newVisited,
+                visited: newVisited,
 			});
 		}
 	}
@@ -101,11 +103,11 @@ export const solve = function* (model: Flow.Model): Iterable<Flow.Model> {
 			startId: terminal.startId,
         });
         
-		for (const possiblePipeline of possiblePipelines) {
+        for (const possiblePipeline of possiblePipelines) {
 			const drew = drawPipeline(model, terminal, possiblePipeline);
-			for (const solution of solve(drew)) {
-				yield solution;
-			}
+            for (const solution of solve(drew)) {
+                yield solution;
+            }            
 		}
 		return;
 	}
