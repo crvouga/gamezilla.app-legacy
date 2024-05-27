@@ -212,7 +212,37 @@ describe(import.meta.file, () => {
 			),
 		).toBe(true);
 	});
+	
+    test.todo("find solutions for 6x6 puzzle", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", " ", "D", " ", "C", "F"],
+			[" ", " ", "B", " ", "E", " "],
+			[" ", " ", " ", " ", " ", " "],
+			[" ", "D", " ", "C", " ", " "],
+            [" ", "A", "B", "E", " ", " "],
+            ["F", " ", " ", " ", " ", " "],
+		]);
 
+		const expected = [
+			FlowGridShorthand.toGrid([
+				["A", "d", "D", "c", "C", "f"],
+				["a", "d", "B", "c", "E", "f"],
+				["a", "d", "b", "c", "e", "f"],
+				["a", "D", "b", "C", "e", "f"],
+                ["a", "A", "B", "E", "e", "f"],
+                ["F", "f", "f", "f", "f", "f"],
+			]),
+		];
+
+		const actual = FlowAlgoSolve.solve(grid);
+
+		expect(
+			actual.some((actual) =>
+				expected.some((expected) => Flow.isSame(actual, expected)),
+			),
+		).toBe(true);
+    });
+    
 	test.todo("find solutions for 8x8 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " "],
