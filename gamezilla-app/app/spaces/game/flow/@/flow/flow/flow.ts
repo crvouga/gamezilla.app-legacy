@@ -483,7 +483,7 @@ export const toIndexEdgesIn = (model: Model) => {
 export const yieldEdgesOut = function* (
 	model: Model,
 	sourceNodeId: NodeId,
-): Iterable<Edge> {
+): Iterable<Edge & {edgeId: EdgeId}> {
 	const indexEdgesOut = toIndexEdgesOutMemoized(model);
 
 	for (const targetId in indexEdgesOut[sourceNodeId]) {
@@ -499,7 +499,7 @@ export const yieldEdgesOut = function* (
 			continue;
 		}
 
-		yield edge;
+		yield {...edge, edgeId};
 	}
 };
 
@@ -817,3 +817,20 @@ export const isSolved = (model: Model): boolean => {
 			: true,
 	);
 };
+
+export const toAllPaths = (model: Model, startId: NodeId, endId: NodeId): EdgeId[][] => {
+	const allPaths: EdgeId[][] = [];
+
+	for (const edgeOut of yieldEdgesOut(model, startId)) {
+		const subPaths = toAllPaths(model, edgeOut.targetId, endId);
+
+		for (const subPath of subPaths) {
+			allPaths.push([edgeOut.edgeId, ...subPath]);
+		}
+	}
+
+	return allPaths
+}
+export const findSolutions = (_model: Model): Model[] => {
+	return []	
+}

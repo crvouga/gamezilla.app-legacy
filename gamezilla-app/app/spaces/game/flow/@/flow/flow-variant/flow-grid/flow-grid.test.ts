@@ -129,4 +129,48 @@ describe(import.meta.file, () => {
 		]);
 		expect(Flow.isSolved(grid)).toBe(false);
 	})
+
+	test.todo("find solutions 2x2 with A terminals", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", " "],
+			[" ", "A"],
+		]);
+
+		const expected = [
+			FlowGridShorthand.toGrid([
+				["A", " "],
+				["a", "A"],
+			]),
+			FlowGridShorthand.toGrid([
+				["A", "a"],
+				[" ", "A"],
+			]),
+		]
+
+		const actual = Flow.findSolutions(grid);
+
+		expect(actual.length).toBe(expected.length);
+		expect(actual.some(actual => expected.some(expected => Flow.isSame(actual, expected)))).toBe(true);
+	})
+
+	test.todo("find solutions 3x3 with A terminals and B terminals", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", "B", " "],
+			[" ", " ", " "],
+			["A", "B", " "],
+		]);
+
+		const expected = [
+			FlowGridShorthand.toGrid([
+				["A", "B", " "],
+				["a", "b", " "],
+				["A", "B", " "],
+			])
+		]
+
+		const actual = Flow.findSolutions(grid);
+
+		expect(actual.length).toBe(expected.length);
+		expect(actual.some(actual => expected.some(expected => Flow.isSame(actual, expected)))).toBe(true);
+	})
 });
