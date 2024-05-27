@@ -9,18 +9,18 @@ export const toPossiblePipelines = function* (input: {
 	groupId: Flow.GroupId;
 	startId: Flow.NodeId;
 	endId: Flow.NodeId;
-	visited: Set<Flow.NodeId>;
+	visited: {[nodeId: Flow.NodeId]: Flow.NodeId};
 }): Iterable<Flow.Edge[]> {
+    if (input.startId in input.visited) {
+        return;
+    }
+
+    input.visited[input.startId] = input.startId;
+
 	if (input.startId === input.endId) {
 		yield [];
 		return;
 	}
-
-	if (input.visited.has(input.startId)) {
-		return;
-	}
-
-	input.visited.add(input.startId);
 
 	for (const edgeOut of Flow.yieldEdgesOut(input.model, input.startId)) {
 		const targetGroupId = Flow.toGroupId(input.model, edgeOut.targetId);
@@ -32,25 +32,21 @@ export const toPossiblePipelines = function* (input: {
 		const subPipelines = toPossiblePipelines({
 			...input,
 			startId: edgeOut.targetId,
-			visited: new Set(input.visited),
+			visited: { ...input.visited },
 		});
 
 		for (const subPipeline of subPipelines) {
-			const pipeline = [edgeOut, ...subPipeline];
-			yield pipeline;
+			yield [edgeOut, ...subPipeline];
 		}
-	}
-
-	input.visited.delete(input.startId);
+    }
 };
-
 const drawPipeline = (
 	model: Flow.Model,
 	terminal: Flow.Terminal,
 	path: Flow.Edge[],
 ): Flow.Model => {
 	let modelNew = { ...model };
-	for (const edge of path) {
+    for (const edge of path) {
 		modelNew = FlowAlgoDrawPipes.drawPipes(
 			() => 0,
 			modelNew,
@@ -76,30 +72,20 @@ export const toSolutions = function* (model: Flow.Model): Iterable<Flow.Model> {
 			continue;
 		}
 
-		const possiblePipelines = toPossiblePipelines({
-			...terminal,
+		const possiblePipelines = toPossiblePipelines({			
 			model,
-			visited: new Set(),
+			visited: {},
 			endId: terminal.endId,
 			groupId: terminal.groupId,
 			startId: terminal.startId,
 		});
 
-		const solutions: Flow.Model[] = [];
-
 		for (const possiblePipeline of possiblePipelines) {
 			const drew = drawPipeline(model, terminal, possiblePipeline);
-
-			const solutions = Array.from(toSolutions(drew));
-
-			solutions.push(...solutions);
-
-			yield* solutions;
+			yield* toSolutions(drew);
 		}
 
-		if (solutions.length === 0) {
-			break;
-		}
+		break;
 	}
 };
 
