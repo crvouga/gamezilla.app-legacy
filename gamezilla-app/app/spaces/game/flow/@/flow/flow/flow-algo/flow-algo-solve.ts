@@ -1,6 +1,14 @@
 import * as Flow from "../flow";
 import { PriorityQueue } from "@datastructures-js/priority-queue";
 
+type QueueItem = {
+	path: Flow.Edge[];
+	currentNode: Flow.NodeId;
+	visited: Set<Flow.NodeId>;
+	cost: number;
+	heuristic: number;
+};
+
 const toPossiblePipelines = function* (input: {
 	model: Flow.Model;
 	groupId: Flow.GroupId;
@@ -8,15 +16,9 @@ const toPossiblePipelines = function* (input: {
 	endId: Flow.NodeId;
 	distance: (a: Flow.NodeId, b: Flow.NodeId) => number;
 }): Iterable<Flow.Edge[]> {
-	type QueueItem = {
-		path: Flow.Edge[];
-		currentNode: Flow.NodeId;
-		visited: Set<Flow.NodeId>;
-		cost: number;
-		heuristic: number;
-	};
-
-	const queue = new PriorityQueue<QueueItem>((a, b) => a.heuristic - b.heuristic);
+	const queue = new PriorityQueue<QueueItem>(
+		(a, b) => a.heuristic - b.heuristic,
+	);
 
 	const heuristic = input.distance(input.startId, input.endId);
 	queue.enqueue({
@@ -49,7 +51,8 @@ const toPossiblePipelines = function* (input: {
 			const newPath = [...path, edgeOut];
 			const newVisited = new Set(visited).add(edgeOut.targetId);
 			const newCost = cost + 1;
-			const newHeuristic = newCost + input.distance(edgeOut.targetId, input.endId);
+			const newHeuristic =
+				newCost + input.distance(edgeOut.targetId, input.endId);
 
 			queue.enqueue({
 				path: newPath,
@@ -61,8 +64,6 @@ const toPossiblePipelines = function* (input: {
 		}
 	}
 };
-
-
 
 const drawPipeline = (
 	model: Flow.Model,
@@ -116,8 +117,8 @@ export const solve = function* (
 			model,
 			endId: terminal.endId,
 			groupId: terminal.groupId,
-            startId: terminal.startId,
-            distance,
+			startId: terminal.startId,
+			distance,
 		});
 
 		for (const possiblePipeline of possiblePipelines) {

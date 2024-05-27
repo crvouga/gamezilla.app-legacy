@@ -609,7 +609,6 @@ export const yieldPipeline = (
  *
  */
 export const toGroupId = (model: Model, nodeId: NodeId): GroupId | null => {
-
 	for (const pipe of yieldPipes(model)) {
 		if (pipe.edge.sourceId === nodeId) {
 			return pipe.groupId;
@@ -618,7 +617,7 @@ export const toGroupId = (model: Model, nodeId: NodeId): GroupId | null => {
 			return pipe.groupId;
 		}
 	}
-	
+
 	for (const terminal of yieldTerminals(model)) {
 		if (terminal.startId === nodeId) {
 			return terminal.groupId;
