@@ -578,6 +578,19 @@ export const toPipeline = (model: Model, sourceNodeId: NodeId): Pipe[] => {
 	return [pipe, ...toPipeline(model, pipe.edge.targetId)];
 };
 
+export const toPipelineByGroupId = (
+	model: Model,
+	groupId: GroupId,
+): Pipe[] => {
+	const terminal = toTerminalByGroupId(model, groupId);
+
+	if (!terminal) {
+		return [];
+	}
+
+	return toPipeline(model, terminal.startId);
+}
+
 export const yieldPipeline = (
 	model: Model,
 	startingNodeId: NodeId,
@@ -818,19 +831,3 @@ export const isSolved = (model: Model): boolean => {
 	);
 };
 
-export const toAllPaths = (model: Model, startId: NodeId, endId: NodeId): EdgeId[][] => {
-	const allPaths: EdgeId[][] = [];
-
-	for (const edgeOut of yieldEdgesOut(model, startId)) {
-		const subPaths = toAllPaths(model, edgeOut.targetId, endId);
-
-		for (const subPath of subPaths) {
-			allPaths.push([edgeOut.edgeId, ...subPath]);
-		}
-	}
-
-	return allPaths
-}
-export const findSolutions = (_model: Model): Model[] => {
-	return []	
-}

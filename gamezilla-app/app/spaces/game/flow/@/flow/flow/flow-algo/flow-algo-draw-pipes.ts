@@ -206,7 +206,7 @@ const findPipeline = (
 /**
  * Removes all pipes that are part of the pipeline with the inputted group id
  */
-export const removePipeline = (
+const removePipeline = (
 	model: Flow.Model,
 	groupId: Flow.GroupId,
 ): Flow.Model => {
@@ -274,7 +274,7 @@ const addPipeline = (
 /**
  * Returns a list of nodes without a groupId that form the shortest path between the source and target nodes.
  */
-export const findShortestEmptyPipelineBFS = (
+export const _findShortestEmptyPipelineBFS = (
 	model: Flow.Model,
 	sourceId: Flow.NodeId,
 	targetId: Flow.NodeId,
@@ -393,7 +393,7 @@ const openSet = new MinHeap<Flow.NodeId>((a, b) => {
 	return fScoreA - fScoreB;
 });
 
-export const findShortestEmptyPipelineAStar = (
+const findShortestEmptyPipelineAStar = (
 	heuristicScore: (node: Flow.NodeId) => number,
 	model: Flow.Model,
 	sourceId: Flow.NodeId,
