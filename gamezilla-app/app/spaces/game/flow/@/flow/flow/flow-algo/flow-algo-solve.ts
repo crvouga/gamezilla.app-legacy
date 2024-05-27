@@ -2,53 +2,47 @@ import { pipe } from "gamezilla-app/@/core";
 import { FlowGridShorthand } from "../../flow-variant/flow-grid";
 import * as Flow from "../flow";
 import * as FlowAlgoDrawPipes from "./flow-algo-draw-pipes";
-FlowGridShorthand
+FlowGridShorthand;
 
-export const toPossiblePipelines = function*(
-    input: {
-        model: Flow.Model,
-        groupId: Flow.GroupId,
-        startId: Flow.NodeId,
-        endId: Flow.NodeId,
-        visited: Set<Flow.NodeId>
-    }
-): Iterable<Flow.Edge[]> {
-    if (input.startId === input.endId) {
-        yield []
-        return
+export const toPossiblePipelines = function* (input: {
+	model: Flow.Model;
+	groupId: Flow.GroupId;
+	startId: Flow.NodeId;
+	endId: Flow.NodeId;
+	visited: Set<Flow.NodeId>;
+}): Iterable<Flow.Edge[]> {
+	if (input.startId === input.endId) {
+		yield [];
+		return;
 	}
 
 	if (input.visited.has(input.startId)) {
-        return
-	} 
-
-    input.visited.add(input.startId);
-    
-    for (const edgeOut of Flow.yieldEdgesOut(input.model, input.startId)) {
-        const targetGroupId = Flow.toGroupId(input.model, edgeOut.targetId)
-        
-        if (targetGroupId && targetGroupId !== input.groupId) {
-            continue;
-        }
-
-        const subPipelines = toPossiblePipelines(
-            {
-                ...input,
-                startId: edgeOut.targetId,
-                visited: new Set(input.visited)
-                
-            }
-		);
-
-		for (const subPipeline of subPipelines) {
-            const pipeline = [edgeOut, ...subPipeline];
-            yield pipeline            
-        }
+		return;
 	}
 
-    input.visited.delete(input.startId);
-};
+	input.visited.add(input.startId);
 
+	for (const edgeOut of Flow.yieldEdgesOut(input.model, input.startId)) {
+		const targetGroupId = Flow.toGroupId(input.model, edgeOut.targetId);
+
+		if (targetGroupId && targetGroupId !== input.groupId) {
+			continue;
+		}
+
+		const subPipelines = toPossiblePipelines({
+			...input,
+			startId: edgeOut.targetId,
+			visited: new Set(input.visited),
+		});
+
+		for (const subPipeline of subPipelines) {
+			const pipeline = [edgeOut, ...subPipeline];
+			yield pipeline;
+		}
+	}
+
+	input.visited.delete(input.startId);
+};
 
 const drawPipeline = (
 	model: Flow.Model,
@@ -56,7 +50,7 @@ const drawPipeline = (
 	path: Flow.Edge[],
 ): Flow.Model => {
 	let modelNew = { ...model };
-    for (const edge of path) {
+	for (const edge of path) {
 		modelNew = FlowAlgoDrawPipes.drawPipes(
 			() => 0,
 			modelNew,
@@ -69,58 +63,55 @@ const drawPipeline = (
 
 export const toSolutions = function* (model: Flow.Model): Iterable<Flow.Model> {
 	if (Flow.isSolved(model)) {
-        yield model
-        return
-    }
+		yield model;
+		return;
+	}
 
-    for (const terminal of Flow.toTerminals(model)) {
+	for (const terminal of Flow.toTerminals(model)) {
 		if (!terminal.endId) {
 			continue;
 		}
 
-        if (Flow.isConnectedWithPipes(model, terminal.startId, terminal.endId)) {
-            continue;
-        }
-        
-        const possiblePipelines = toPossiblePipelines({
-            ...terminal,
-            model,
-            visited: new Set(),
-            endId: terminal.endId,
-            groupId: terminal.groupId,
-            startId: terminal.startId,
-        })
+		if (Flow.isConnectedWithPipes(model, terminal.startId, terminal.endId)) {
+			continue;
+		}
 
+		const possiblePipelines = toPossiblePipelines({
+			...terminal,
+			model,
+			visited: new Set(),
+			endId: terminal.endId,
+			groupId: terminal.groupId,
+			startId: terminal.startId,
+		});
 
-        const solutions: Flow.Model[] = []
+		const solutions: Flow.Model[] = [];
 
-        for (const possiblePipeline of possiblePipelines) {
-            const drew = drawPipeline(model, terminal, possiblePipeline);
-            
-            const solutions = Array.from(toSolutions(drew))
-            
-            solutions.push(...solutions)
+		for (const possiblePipeline of possiblePipelines) {
+			const drew = drawPipeline(model, terminal, possiblePipeline);
 
-            yield* solutions
-        }
+			const solutions = Array.from(toSolutions(drew));
 
-        if (solutions.length === 0) {
-            break
-        }
+			solutions.push(...solutions);
+
+			yield* solutions;
+		}
+
+		if (solutions.length === 0) {
+			break;
+		}
 	}
 };
 
-
 export const solve = (model: Flow.Model): Flow.Model[] => {
-    const solutions = pipe(
-        model,
-        model => toSolutions(model),
-        solutions => Array.from(solutions),
-        solutions => minAllBy(solutions, toTotalPipelineLength),
-        solutions => uniqueWith(solutions, Flow.isSame),
-    )
+	const solutions = pipe(
+		model,
+		(model) => toSolutions(model),
+		(solutions) => Array.from(solutions),
+		(solutions) => minAllBy(solutions, toTotalPipelineLength),
+		(solutions) => uniqueWith(solutions, Flow.isSame),
+	);
 	return solutions;
-
 };
 
 const toTotalPipelineLength = (model: Flow.Model): number => {
