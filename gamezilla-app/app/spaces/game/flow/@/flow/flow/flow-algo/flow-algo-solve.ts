@@ -20,7 +20,7 @@ const toPossiblePipelines = function* (input: {
         visited: new Set(),
     })
     
-	while (queue.length > 0) {
+    while (queue.length > 0) {
 		const { path, currentNode, visited } = queue.shift()!
 
 		if (visited.has(currentNode)) {
@@ -42,12 +42,12 @@ const toPossiblePipelines = function* (input: {
             }
             
 			const newPath = [...path, edgeOut];
-			const newVisited = new Set(visited);
-
+            const newVisited = new Set(visited);
+            
 			queue.push({
 				path: newPath,
 				currentNode: edgeOut.targetId,
-                visited: newVisited,
+                visited: newVisited
 			});
 		}
 	}
