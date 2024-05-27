@@ -4,7 +4,7 @@ import * as Flow from "../flow";
 import * as FlowAlgoDrawPipes from "./flow-algo-draw-pipes";
 FlowGridShorthand
 
-export const toPossiblePipelines = (
+export const toPossiblePipelines = function*(
     input: {
         model: Flow.Model,
         groupId: Flow.GroupId,
@@ -12,19 +12,18 @@ export const toPossiblePipelines = (
         endId: Flow.NodeId,
         visited: Set<Flow.NodeId>
     }
-): Flow.Edge[][] => {
-	if (input.startId === input.endId) {
-        return [[]]
+): Iterable<Flow.Edge[]> {
+    if (input.startId === input.endId) {
+        yield []
+        return
 	}
 
 	if (input.visited.has(input.startId)) {
-        return []
+        return
 	} 
 
     input.visited.add(input.startId);
     
-    const pipelines: Flow.Edge[][] = []
-
     for (const edgeOut of Flow.yieldEdgesOut(input.model, input.startId)) {
         const targetGroupId = Flow.toGroupId(input.model, edgeOut.targetId)
         
@@ -43,13 +42,11 @@ export const toPossiblePipelines = (
 
 		for (const subPipeline of subPipelines) {
             const pipeline = [edgeOut, ...subPipeline];
-            pipelines.push(pipeline);
+            yield pipeline            
         }
 	}
 
     input.visited.delete(input.startId);
-    
-    return pipelines;
 };
 
 
@@ -94,11 +91,22 @@ export const toSolutions = function* (model: Flow.Model): Iterable<Flow.Model> {
             startId: terminal.startId,
         })
 
+
+        const solutions: Flow.Model[] = []
+
         for (const possiblePipeline of possiblePipelines) {
             const drew = drawPipeline(model, terminal, possiblePipeline);
             
-            yield* toSolutions(drew)
-		}
+            const solutions = Array.from(toSolutions(drew))
+            
+            solutions.push(...solutions)
+
+            yield* solutions
+        }
+
+        if (solutions.length === 0) {
+            break
+        }
 	}
 };
 
@@ -106,7 +114,7 @@ export const toSolutions = function* (model: Flow.Model): Iterable<Flow.Model> {
 export const solve = (model: Flow.Model): Flow.Model[] => {
     const solutions = pipe(
         model,
-        toSolutions,
+        model => toSolutions(model),
         solutions => Array.from(solutions),
         solutions => minAllBy(solutions, toTotalPipelineLength),
         solutions => uniqueWith(solutions, Flow.isSame),

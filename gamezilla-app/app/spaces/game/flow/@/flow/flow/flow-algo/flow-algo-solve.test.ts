@@ -213,7 +213,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 	
-    test.todo("find solutions for 6x6 puzzle", () => {
+    test("find solutions for 6x6 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", "D", " ", "C", "F"],
 			[" ", " ", "B", " ", "E", " "],
@@ -225,7 +225,7 @@ describe(import.meta.file, () => {
 
 		const expected = [
 			FlowGridShorthand.toGrid([
-				["A", "d", "D", "c", "C", "f"],
+				["A", "d", "D", "c", "C", "F"],
 				["a", "d", "B", "c", "E", "f"],
 				["a", "d", "b", "c", "e", "f"],
 				["a", "D", "b", "C", "e", "f"],
@@ -243,7 +243,38 @@ describe(import.meta.file, () => {
 		).toBe(true);
     });
     
-	test.todo("find solutions for 8x8 puzzle", () => {
+    test("find solutions for 7x7 puzzle", () => {
+		const grid = FlowGridShorthand.toGrid([
+			[" ", " ", "C", "D", "E", " ", "E"],
+			[" ", " ", "F", " ", " ", " ", " "],
+			[" ", " ", "G", " ", "H", "I", " "],
+			[" ", " ", " ", " ", "D", " ", " "],
+			[" ", " ", " ", "C", " ", " ", " "],
+			[" ", "F", " ", "G", " ", " ", "H"],
+			[" ", " ", " ", " ", " ", " ", "I"],
+        ]);
+        
+		const expected = [
+			FlowGridShorthand.toGrid([
+				["c", "c", "C", "D", "E", "e", "E"],
+				["c", "f", "F", "d", "h", "h", "h"],
+				["c", "f", "G", "d", "H", "I", "h"],
+				["c", "f", "g", "d", "D", "i", "h"],
+				["c", "f", "g", "C", "c", "i", "h"],
+				["c", "F", "g", "G", "c", "i", "H"],
+				["c", "c", "c", "c", "c", "i", "I"],
+			]),
+		];
+		const actual = FlowAlgoSolve.solve(grid);
+
+		expect(
+			actual.some((actual) =>
+				expected.some((expected) => Flow.isSame(actual, expected)),
+			),
+		).toBe(true);
+        });
+    
+	test("find solutions for 8x8 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " "],
 			[" ", " ", "C", "D", "E", " ", "E", " "],
