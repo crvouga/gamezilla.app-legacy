@@ -445,21 +445,17 @@ export const toIndexEdgesOut = (model: Model) => {
 		{};
 
 	for (const edge of yieldEdges(model)) {
-		indexEdgesOut = {
-			...indexEdgesOut,
-			[edge.sourceId]: {
-				...indexEdgesOut[edge.sourceId],
-				[edge.targetId]: toEdgeId(edge),
-			},
-		};
+		indexEdgesOut[edge.sourceId] = indexEdgesOut[edge.sourceId] ?? {};
+		indexEdgesOut[edge.sourceId]![edge.targetId] = toEdgeId(edge);
 	}
+
 	return indexEdgesOut;
 };
 
 export const toIndexEdgesOutMemoized = memoize({
 	toKey: (model) => model.edgeHash ?? 0,
 	func: toIndexEdgesOut,
-	cacheCapacity: 10000,
+	cacheCapacity: 1000,
 });
 
 export const toIndexEdgesIn = (model: Model) => {

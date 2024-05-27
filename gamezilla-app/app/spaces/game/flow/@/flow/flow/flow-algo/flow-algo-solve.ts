@@ -88,9 +88,8 @@ export const solve = function* (model: Flow.Model): Iterable<Flow.Model> {
 			endId: terminal.endId,
 			groupId: terminal.groupId,
 			startId: terminal.startId,
-		});
-
-
+        });
+        
 		for (const possiblePipeline of possiblePipelines) {
 			const drew = drawPipeline(model, terminal, possiblePipeline);
 			for (const solution of solve(drew)) {

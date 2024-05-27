@@ -259,7 +259,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test.todo("find solutions for 7x7 puzzle", () => {
+	test("find solutions for 7x7 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			[" ", " ", "C", "D", "E", " ", "E"],
 			[" ", " ", "F", " ", " ", " ", " "],
@@ -290,7 +290,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test.todo("find solutions for 8x8 puzzle", () => {
+	test("find solutions for 8x8 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " "],
 			[" ", " ", "C", "D", "E", " ", "E", " "],
