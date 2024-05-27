@@ -46,7 +46,7 @@ export const drawPipes = (
 	nodeIdNew: Flow.NodeId,
 ): Flow.Model => {
 	const newNodeGroupId = Flow.findGroupIdByNodeId(model, nodeIdNew);
-	
+
 	if (newNodeGroupId && newNodeGroupId !== groupId) {
 		return model;
 	}
@@ -56,7 +56,7 @@ export const drawPipes = (
 	if (!terminal) {
 		return model;
 	}
-	
+
 	if (!newNodeGroupId && isTerminalConnected(model, terminal)) {
 		return model;
 	}
@@ -69,7 +69,7 @@ export const drawPipes = (
 
 	const pipelineNew = pipe(
 		existingPipeline,
-		
+
 		(pipeline) =>
 			takeWhile(
 				pipeline,

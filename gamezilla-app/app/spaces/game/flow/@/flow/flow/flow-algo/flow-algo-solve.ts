@@ -1,44 +1,55 @@
+import { pipe } from "gamezilla-app/@/core";
+import { FlowGridShorthand } from "../../flow-variant/flow-grid";
 import * as Flow from "../flow";
 import * as FlowAlgoDrawPipes from "./flow-algo-draw-pipes";
+FlowGridShorthand
 
-export const toCandiatePipeline = function * (
-    model: Flow.Model,
-    groupId: Flow.GroupId,
-	startId: Flow.NodeId,
-	endId: Flow.NodeId,
-	visited: Set<Flow.NodeId> = new Set(),
-): Iterable<Flow.Edge[]> {
-	if (startId === endId) {
-        yield [];
-        return
+export const toPossiblePipelines = (
+    input: {
+        model: Flow.Model,
+        groupId: Flow.GroupId,
+        startId: Flow.NodeId,
+        endId: Flow.NodeId,
+        visited: Set<Flow.NodeId>
+    }
+): Iterable<Flow.Edge[]> => {
+	if (input.startId === input.endId) {
+        return [[]]
 	}
 
-	if (visited.has(startId)) {
-        return
-	}
+	if (input.visited.has(input.startId)) {
+        return []
+	} 
 
-	visited.add(startId);
-    for (const edgeOut of Flow.yieldEdgesOut(model, startId)) {
-        const targetGroupId = Flow.toGroupId(model, edgeOut.targetId)
+    input.visited.add(input.startId);
+    
+    const pipelines: Flow.Edge[][] = []
+
+    for (const edgeOut of Flow.yieldEdgesOut(input.model, input.startId)) {
+        const targetGroupId = Flow.toGroupId(input.model, edgeOut.targetId)
         
-        if (targetGroupId && targetGroupId !== groupId) {
+        if (targetGroupId && targetGroupId !== input.groupId) {
             continue;
         }
 
-		const subPaths = toCandiatePipeline(
-            model,
-            groupId,
-			edgeOut.targetId,
-			endId,
-			new Set(visited),
+        const subPipelines = toPossiblePipelines(
+            {
+                ...input
+                ,
+                startId: edgeOut.targetId
+                
+            }
 		);
 
-		for (const subPath of subPaths) {
-            yield [edgeOut, ...subPath];
-		}
+		for (const subPipeline of subPipelines) {
+            const pipeline = [edgeOut, ...subPipeline];
+            pipelines.push(pipeline);
+        }
 	}
 
-	visited.delete(startId);
+    input.visited.delete(input.startId);
+    
+    return pipelines;
 };
 
 const drawPipeline = (
@@ -58,50 +69,49 @@ const drawPipeline = (
 	return modelNew;
 };
 
-
-const hasPipeline = (model: Flow.Model, path: Flow.Edge[]): boolean => {
-    for (const edge of path) {
-        if (!Flow.toPipeBySourceId(model, edge.sourceId)) {
-            return false;
-        }
-    }
-    return true;
-}
-
 export const toSolutions = function* (model: Flow.Model): Iterable<Flow.Model> {
 	if (Flow.isSolved(model)) {
         yield model
         return
-	}
-	for (const terminal of Flow.toTerminals(model)) {
+    }
+
+    for (const terminal of Flow.toTerminals(model)) {
 		if (!terminal.endId) {
 			continue;
 		}
 
-		if (Flow.isConnectedWithPipes(model, terminal.startId, terminal.endId)) {
-			continue;
-		}
+        if (Flow.isConnectedWithPipes(model, terminal.startId, terminal.endId)) {
+            continue;
+        }
+        
+        const possiblePipelines = toPossiblePipelines({
+            ...terminal,
+            model,
+            visited: new Set(),
+            endId: terminal.endId,
+            groupId: terminal.groupId,
+            startId: terminal.startId,
+        })
 
-		for (const candiate of toCandiatePipeline(model, terminal.groupId, terminal.startId, terminal.endId)) {
-            const drew = drawPipeline(model, terminal, candiate);
-            
-            if (!hasPipeline(drew, candiate)) {
-                continue;
-            }
+        for (const possiblePipeline of possiblePipelines) {
+            const drew = drawPipeline(model, terminal, possiblePipeline);
             
             yield* solve(drew)
 		}
 	}
 };
 
+
 export const solve = (model: Flow.Model): Flow.Model[] => {
-	const solutions = Array.from(toSolutions(model));
+    const solutions = pipe(
+        model,
+        toSolutions,
+        solutions => Array.from(solutions),
+        solutions => minAllBy(solutions, toTotalPipelineLength),
+        solutions => uniqueWith(solutions, Flow.isSame),
+    )
+	return solutions;
 
-	const minimalSolutions = minAllBy(solutions, toTotalPipelineLength);
-
-	const uniqueSolutions = uniqueWith(minimalSolutions, Flow.isSame);
-
-	return uniqueSolutions;
 };
 
 const toTotalPipelineLength = (model: Flow.Model): number => {
