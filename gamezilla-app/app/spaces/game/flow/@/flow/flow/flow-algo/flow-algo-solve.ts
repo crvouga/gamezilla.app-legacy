@@ -1,5 +1,5 @@
+import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
 import * as Flow from "../flow";
-import { PriorityQueue } from "@datastructures-js/priority-queue";
 
 type QueueItem = {
 	path: Flow.Edge[];
@@ -16,12 +16,12 @@ const toPossiblePipelines = function* (input: {
 	endId: Flow.NodeId;
 	distance: (a: Flow.NodeId, b: Flow.NodeId) => number;
 }): Iterable<Flow.Edge[]> {
-	const queue = new PriorityQueue<QueueItem>(
+	const queue = new MinHeap<QueueItem>(
 		(a, b) => a.heuristic - b.heuristic,
 	);
 
 	const initialHeuristic = input.distance(input.startId, input.endId);
-	queue.enqueue({
+	queue.insert({
 		path: [],
 		currentNode: input.startId,
 		visited: new Set([input.startId]),
@@ -30,7 +30,7 @@ const toPossiblePipelines = function* (input: {
 	});
 
 	while (!queue.isEmpty()) {
-		const { path, currentNode, visited, cost } = queue.dequeue()!;
+		const { path, currentNode, visited, cost } = queue.extractMin()!;
 
 		if (currentNode === input.endId) {
 			yield path;
@@ -54,7 +54,7 @@ const toPossiblePipelines = function* (input: {
 			const newHeuristic =
 				newCost + input.distance(edgeOut.targetId, input.endId);
 
-			queue.enqueue({
+			queue.insert({
 				path: newPath,
 				currentNode: edgeOut.targetId,
 				visited: newVisited,
@@ -72,8 +72,7 @@ const drawPipeline = (
 ): Flow.Model => {
 	const pipesBySourceId = { ...model.pipesBySourceId };
 
-	for (let i = 0; i < path.length; i++) {
-		const edge = path[i]!;
+	for (const edge of path) {
 		pipesBySourceId[edge.sourceId] = {
 			edgeId: Flow.toEdgeId(edge),
 			groupId: terminal.groupId,
