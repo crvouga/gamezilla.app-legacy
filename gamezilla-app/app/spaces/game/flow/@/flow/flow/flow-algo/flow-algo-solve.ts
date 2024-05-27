@@ -12,7 +12,7 @@ export const toPossiblePipelines = (
         endId: Flow.NodeId,
         visited: Set<Flow.NodeId>
     }
-): Iterable<Flow.Edge[]> => {
+): Flow.Edge[][] => {
 	if (input.startId === input.endId) {
         return [[]]
 	}
@@ -34,9 +34,9 @@ export const toPossiblePipelines = (
 
         const subPipelines = toPossiblePipelines(
             {
-                ...input
-                ,
-                startId: edgeOut.targetId
+                ...input,
+                startId: edgeOut.targetId,
+                visited: new Set(input.visited)
                 
             }
 		);
@@ -51,6 +51,7 @@ export const toPossiblePipelines = (
     
     return pipelines;
 };
+
 
 const drawPipeline = (
 	model: Flow.Model,
@@ -96,7 +97,7 @@ export const toSolutions = function* (model: Flow.Model): Iterable<Flow.Model> {
         for (const possiblePipeline of possiblePipelines) {
             const drew = drawPipeline(model, terminal, possiblePipeline);
             
-            yield* solve(drew)
+            yield* toSolutions(drew)
 		}
 	}
 };
