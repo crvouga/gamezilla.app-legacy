@@ -201,7 +201,7 @@ describe(import.meta.file, () => {
 		expect(Flow.isSame(actual, expected)).toBe(true);
 	});
 
-	test("2x2 with terminal with pipe", async () => {
+	test("2x2 with adjacent connected terminals", async () => {
 		const shorthand = FlowGridShorthand.init([
 			["Aa", " "],
 			["A", " "],
@@ -237,6 +237,34 @@ describe(import.meta.file, () => {
 
 		expect(Flow.isSame(actual, expected)).toBe(true);
 	});
+
+	test('2x2 with adjacent non-connected terminals', async () => {
+		const shorthand = FlowGridShorthand.init([
+			["A", " "],
+			["A", " "],
+		]);
+
+		const actual = FlowGridShorthand.toGrid(shorthand);
+
+		const expected = FlowGrid.init({
+			dimensions: FlowGridShorthand.toDimensions(shorthand),
+			terminalsByGroupId: {
+				A: {
+					startId: FlowGrid.toNodeId({
+						x: 0,
+						y: 0,
+					}),
+					endId: FlowGrid.toNodeId({
+						x: 0,
+						y: 1,
+					}),
+					groupId: "A",
+				},
+			},
+		});
+
+		expect(Flow.isSame(actual, expected)).toBe(true);
+	})
 
 	test("2x2 with A terminal with pipe and B terminal with pipe", async () => {
 		const shorthand = FlowGridShorthand.init([

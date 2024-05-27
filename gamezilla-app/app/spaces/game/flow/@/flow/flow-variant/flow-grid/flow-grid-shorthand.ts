@@ -318,7 +318,9 @@ const toPipesBySourceIdForTerminalList = (input: {
 			};
 
 			if (adjacentNodeId === input.terminal.endId) {
-				allPaths.push(newPath);
+				if (isPipe(currentElement) || isTerminalWithPipe(currentElement) || isTerminalWithPipe(adjacentElement)) {
+					allPaths.push(newPath);
+				}
 				continue;
 			}
 			findPaths(adjacentNodeId, newPath);
@@ -331,6 +333,10 @@ const toPipesBySourceIdForTerminalList = (input: {
 	return allPaths;
 };
 
+/**
+ * Returns a list of all possible pipes for a grid.
+ * It will return solutions with the longest pipelines.
+ */
 const toPipesBySourceIdList = (input: {
 	model: Model;
 	grid: FlowGrid.Model;
