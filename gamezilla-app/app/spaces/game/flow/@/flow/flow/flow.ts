@@ -822,13 +822,13 @@ export const isConnectedWithPipes = (
 };
 
 export const isSolved = (model: Model): boolean => {
-	for(const terminal of yieldTerminals(model)) {
-		if(!terminal.endId){
+	for (const terminal of yieldTerminals(model)) {
+		if (!terminal.endId) {
 			continue;
 		}
-		if(!isConnectedWithPipes(model, terminal.startId, terminal.endId)){
+		if (!isConnectedWithPipes(model, terminal.startId, terminal.endId)) {
 			return false;
 		}
 	}
-	return true
+	return true;
 };

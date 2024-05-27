@@ -1,21 +1,17 @@
-import { pipe } from "gamezilla-app/@/core";
-import { FlowGridShorthand } from "../../flow-variant/flow-grid";
 import * as Flow from "../flow";
-import * as FlowAlgoDrawPipes from "./flow-algo-draw-pipes";
-FlowGridShorthand;
 
-export const toPossiblePipelines = function* (input: {
+const toPossiblePipelines = function* (input: {
 	model: Flow.Model;
 	groupId: Flow.GroupId;
 	startId: Flow.NodeId;
 	endId: Flow.NodeId;
-	visited: {[nodeId: Flow.NodeId]: Flow.NodeId};
+	visited: Set<Flow.NodeId>;
 }): Iterable<Flow.Edge[]> {
-    if (input.startId in input.visited) {
-        return;
-    }
+	if (input.visited.has(input.startId)) {
+		return;
+	}
 
-    input.visited[input.startId] = input.startId;
+	input.visited.add(input.startId);
 
 	if (input.startId === input.endId) {
 		yield [];
@@ -32,32 +28,46 @@ export const toPossiblePipelines = function* (input: {
 		const subPipelines = toPossiblePipelines({
 			...input,
 			startId: edgeOut.targetId,
-			visited: { ...input.visited },
+			visited: new Set(input.visited),
 		});
 
 		for (const subPipeline of subPipelines) {
 			yield [edgeOut, ...subPipeline];
 		}
-    }
+	}
+
+	input.visited.delete(input.startId);
 };
+
 const drawPipeline = (
 	model: Flow.Model,
 	terminal: Flow.Terminal,
 	path: Flow.Edge[],
 ): Flow.Model => {
-	let modelNew = { ...model };
-    for (const edge of path) {
-		modelNew = FlowAlgoDrawPipes.drawPipes(
-			() => 0,
-			modelNew,
-			terminal.groupId,
-			edge.targetId,
-		);
+	const pipesBySourceId = { ...model.pipesBySourceId };
+
+	for (const sourceId in pipesBySourceId) {
+		const pipe = pipesBySourceId[sourceId as Flow.NodeId]!;
+		if (pipe.groupId === terminal.groupId) {
+			delete pipesBySourceId[sourceId as Flow.NodeId];
+		}
 	}
-	return modelNew;
+
+	for (let i = 0; i < path.length; i++) {
+		const edge = path[i]!;
+		pipesBySourceId[edge.sourceId] = {
+			edgeId: Flow.toEdgeId(edge),
+			groupId: terminal.groupId,
+		};
+	}
+
+	return {
+		...model,
+		pipesBySourceId,
+	};
 };
 
-export const toSolutions = function* (model: Flow.Model): Iterable<Flow.Model> {
+export const solve = function* (model: Flow.Model): Iterable<Flow.Model> {
 	if (Flow.isSolved(model)) {
 		yield model;
 		return;
@@ -72,9 +82,9 @@ export const toSolutions = function* (model: Flow.Model): Iterable<Flow.Model> {
 			continue;
 		}
 
-		const possiblePipelines = toPossiblePipelines({			
+		const possiblePipelines = toPossiblePipelines({
 			model,
-			visited: {},
+			visited: new Set(),
 			endId: terminal.endId,
 			groupId: terminal.groupId,
 			startId: terminal.startId,
@@ -82,51 +92,10 @@ export const toSolutions = function* (model: Flow.Model): Iterable<Flow.Model> {
 
 		for (const possiblePipeline of possiblePipelines) {
 			const drew = drawPipeline(model, terminal, possiblePipeline);
-			yield* toSolutions(drew);
+			for (const solution of solve(drew)) {
+				yield solution;
+			}
 		}
-
-		break;
+		return;
 	}
-};
-
-export const solve = (model: Flow.Model): Flow.Model[] => {
-	const solutions = pipe(
-		model,
-		(model) => toSolutions(model),
-		(solutions) => Array.from(solutions),
-		(solutions) => minAllBy(solutions, toTotalPipelineLength),
-		(solutions) => uniqueWith(solutions, Flow.isSame),
-	);
-	return solutions;
-};
-
-const toTotalPipelineLength = (model: Flow.Model): number => {
-	let total = 0;
-	for (const terminal of Flow.yieldTerminals(model)) {
-		for (const _ of Flow.yieldPipeline(model, terminal.startId)) {
-			total += 1;
-		}
-	}
-	return total;
-};
-
-const uniqueWith = <T>(arr: T[], fn: (left: T, right: T) => boolean): T[] => {
-	const unique: T[] = [];
-	for (const left of arr) {
-		if (!unique.some((right) => fn(left, right))) {
-			unique.push(left);
-		}
-	}
-	return unique;
-};
-
-const minAllBy = <T>(arr: T[], fn: (item: T) => number): T[] => {
-	let min = Infinity;
-	for (const item of arr) {
-		const value = fn(item);
-		if (value < min) {
-			min = value;
-		}
-	}
-	return arr.filter((item) => fn(item) === min);
 };
