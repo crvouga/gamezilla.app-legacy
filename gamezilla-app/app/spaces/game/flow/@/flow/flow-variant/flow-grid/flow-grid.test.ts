@@ -113,4 +113,20 @@ describe(import.meta.file, () => {
 		]);
 		expect(Flow.isSolved(grid)).toBe(true);
 	});
+
+	test("isSolved with adjacent connected A terminals", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["Aa", "A"],
+			[" ", " "],
+		]);
+		expect(Flow.isSolved(grid)).toBe(true);
+	})
+
+	test("not isSolved with adjacent disconnected A terminals", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", " "],
+			["A", " "],
+		]);
+		expect(Flow.isSolved(grid)).toBe(false);
+	})
 });
