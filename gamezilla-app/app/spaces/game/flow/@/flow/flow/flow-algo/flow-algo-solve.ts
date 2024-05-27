@@ -1,66 +1,78 @@
 import * as Flow from "../flow";
 import * as FlowAlgoDrawPipes from "./flow-algo-draw-pipes";
 
-export const toAllPaths = (
-	model: Flow.Model,
+export const toCandiatePipeline = function * (
+    model: Flow.Model,
+    groupId: Flow.GroupId,
 	startId: Flow.NodeId,
 	endId: Flow.NodeId,
 	visited: Set<Flow.NodeId> = new Set(),
-): Flow.Edge[][] => {
+): Iterable<Flow.Edge[]> {
 	if (startId === endId) {
-		return [[]];
+        yield [];
+        return
 	}
 
 	if (visited.has(startId)) {
-		return [];
+        return
 	}
 
 	visited.add(startId);
+    for (const edgeOut of Flow.yieldEdgesOut(model, startId)) {
+        const targetGroupId = Flow.toGroupId(model, edgeOut.targetId)
+        
+        if (targetGroupId && targetGroupId !== groupId) {
+            continue;
+        }
 
-	const allPaths: Flow.Edge[][] = [];
-
-	for (const edgeOut of Flow.yieldEdgesOut(model, startId)) {
-		const subPaths = toAllPaths(
-			model,
+		const subPaths = toCandiatePipeline(
+            model,
+            groupId,
 			edgeOut.targetId,
 			endId,
 			new Set(visited),
 		);
 
 		for (const subPath of subPaths) {
-			allPaths.push([edgeOut, ...subPath]);
+            yield [edgeOut, ...subPath];
 		}
 	}
 
 	visited.delete(startId);
-
-	return allPaths;
 };
 
-const drawPath = (
+const drawPipeline = (
 	model: Flow.Model,
-	groupId: Flow.GroupId,
+	terminal: Flow.Terminal,
 	path: Flow.Edge[],
 ): Flow.Model => {
 	let modelNew = { ...model };
-	for (const edge of path) {
+    for (const edge of path) {
 		modelNew = FlowAlgoDrawPipes.drawPipes(
-			() => Infinity,
+			() => 0,
 			modelNew,
-			groupId,
+			terminal.groupId,
 			edge.targetId,
 		);
 	}
 	return modelNew;
 };
 
-export const toSolutions = (model: Flow.Model): Flow.Model[] => {
+
+const hasPipeline = (model: Flow.Model, path: Flow.Edge[]): boolean => {
+    for (const edge of path) {
+        if (!Flow.toPipeBySourceId(model, edge.sourceId)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+export const toSolutions = function* (model: Flow.Model): Iterable<Flow.Model> {
 	if (Flow.isSolved(model)) {
-		return [model];
+        yield model
+        return
 	}
-
-	const solutions: Flow.Model[] = [];
-
 	for (const terminal of Flow.toTerminals(model)) {
 		if (!terminal.endId) {
 			continue;
@@ -70,33 +82,20 @@ export const toSolutions = (model: Flow.Model): Flow.Model[] => {
 			continue;
 		}
 
-		const allPaths = toAllPaths(model, terminal.startId, terminal.endId);
-
-		for (const path of allPaths) {
-			const drewPath = drawPath(model, terminal.groupId, path);
-
-			if (
-				!Flow.isConnectedWithPipes(drewPath, terminal.startId, terminal.endId)
-			) {
-				continue;
-			}
-
-			if (Flow.isSolved(drewPath)) {
-				solutions.push(drewPath);
-				continue;
-			}
-
-			const subSolutions = solve(drewPath);
-
-			solutions.push(...subSolutions);
+		for (const candiate of toCandiatePipeline(model, terminal.groupId, terminal.startId, terminal.endId)) {
+            const drew = drawPipeline(model, terminal, candiate);
+            
+            if (!hasPipeline(drew, candiate)) {
+                continue;
+            }
+            
+            yield* solve(drew)
 		}
 	}
-
-	return solutions;
 };
 
 export const solve = (model: Flow.Model): Flow.Model[] => {
-	const solutions = toSolutions(model);
+	const solutions = Array.from(toSolutions(model));
 
 	const minimalSolutions = minAllBy(solutions, toTotalPipelineLength);
 

@@ -46,8 +46,7 @@ export const drawPipes = (
 	nodeIdNew: Flow.NodeId,
 ): Flow.Model => {
 	const newNodeGroupId = Flow.findGroupIdByNodeId(model, nodeIdNew);
-
-	// PrmsgCore drawing over other groups
+	
 	if (newNodeGroupId && newNodeGroupId !== groupId) {
 		return model;
 	}
@@ -57,8 +56,7 @@ export const drawPipes = (
 	if (!terminal) {
 		return model;
 	}
-
-	// For UX, prevent drawing from overshooting after terminals is connected
+	
 	if (!newNodeGroupId && isTerminalConnected(model, terminal)) {
 		return model;
 	}
@@ -71,8 +69,7 @@ export const drawPipes = (
 
 	const pipelineNew = pipe(
 		existingPipeline,
-
-		// Cutting off pipeline if user draws over existing pipeline
+		
 		(pipeline) =>
 			takeWhile(
 				pipeline,

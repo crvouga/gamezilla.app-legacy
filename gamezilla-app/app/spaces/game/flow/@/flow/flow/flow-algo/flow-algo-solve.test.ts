@@ -88,47 +88,47 @@ describe(import.meta.file, () => {
 			[" ", " ", "A"],
 		]);
 
-        const expected = [
-            FlowGridShorthand.toGrid([
+		const expected = [
+			FlowGridShorthand.toGrid([
 				["A", " ", " "],
 				["a", " ", " "],
 				["a", "a", "A"],
-            ]),
-            FlowGridShorthand.toGrid([
+			]),
+			FlowGridShorthand.toGrid([
 				["A", "a", "a"],
 				[" ", " ", "a"],
 				[" ", " ", "A"],
-            ]),
-            FlowGridShorthand.toGrid([
+			]),
+			FlowGridShorthand.toGrid([
 				["A", "a", " "],
 				[" ", "a", "a"],
 				[" ", " ", "A"],
-            ]),
-            FlowGridShorthand.toGrid([
+			]),
+			FlowGridShorthand.toGrid([
 				["A", "a", " "],
 				[" ", "a", " "],
 				[" ", "a", "A"],
-            ]),
-             FlowGridShorthand.toGrid([
+			]),
+			FlowGridShorthand.toGrid([
 				["A", "a", " "],
 				[" ", "a", "a"],
 				[" ", " ", "A"],
-            ]),
-            FlowGridShorthand.toGrid([
+			]),
+			FlowGridShorthand.toGrid([
 				["A", " ", " "],
 				["a", "a", "a"],
 				[" ", " ", "A"],
-            ]),
-            FlowGridShorthand.toGrid([
-                ["A", " ", " "],
-                ["a", "a", "a"],
-                [" ", " ", "A"],
-            ]),
-            FlowGridShorthand.toGrid([
-                ["A", " ", " "],
-                ["a", "a", " "],
-                [" ", "a", "A"],
-            ]),
+			]),
+			FlowGridShorthand.toGrid([
+				["A", " ", " "],
+				["a", "a", "a"],
+				[" ", " ", "A"],
+			]),
+			FlowGridShorthand.toGrid([
+				["A", " ", " "],
+				["a", "a", " "],
+				[" ", "a", "A"],
+			]),
 			FlowGridShorthand.toGrid([
 				["A", "a", "a"],
 				["a", "a", "a"],
@@ -143,24 +143,105 @@ describe(import.meta.file, () => {
 				expected.some((expected) => Flow.isSame(actual, expected)),
 			),
 		).toBe(true);
-    });
-    
-    test('find solutions for adjacent terminals', () => {
-        const grid = FlowGridShorthand.toGrid([
+	});
+
+	test("find solutions for adjacent terminals", () => {
+		const grid = FlowGridShorthand.toGrid([
 			["A", "A"],
 			[" ", " "],
-        ]);
+		]);
+		const expected = [
+			FlowGridShorthand.toGrid([
+				["Aa", "A"],
+				[" ", " "],
+			]),
+		];
+		const actual = FlowAlgoSolve.solve(grid);
+		expect(
+			actual.some((actual) =>
+				expected.some((expected) => Flow.isSame(actual, expected)),
+			),
+		).toBe(true);
+	});
+
+	test("find solutions for 3x3 with far A terminals and B terminals and C terminals", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", "C", "C"],
+			[" ", " ", " "],
+			["B", "B", "A"],
+		]);
+		const expected = [
+			FlowGridShorthand.toGrid([
+				["A", "Cc", "C"],
+				["a", "a", "a"],
+				["Bb", "B", "A"],
+			]),
+		];
+		const actual = FlowAlgoSolve.solve(grid);
+		expect(
+			actual.some((actual) =>
+				expected.some((expected) => Flow.isSame(actual, expected)),
+			),
+		).toBe(true);
+    });
+    
+    test("find solutions for 5x5 puzzle", () => {
+        const grid = FlowGridShorthand.toGrid([
+                ["A", " ", "D", " ", "C"],
+                [" ", " ", "B", " ", "E"],
+                [" ", " ", " ", " ", " "],
+                [" ", "D", " ", "C", " "],
+                [" ", "A", "B", "E", " "],
+        ])
+        
         const expected = [
             FlowGridShorthand.toGrid([
-                ["Aa", "A"],
-                [" ", " "],
+                ["A", "d", "D", "c", "C"],
+                ["a", "d", "B", "c", "E"],
+                ["a", "d", "b", "c", "e"],
+                ["a", "D", "b", "C", "e"],
+                ["a", "A", "B", "E", "e"],
             ]),
         ];
+
         const actual = FlowAlgoSolve.solve(grid);
+
         expect(
             actual.some((actual) =>
                 expected.some((expected) => Flow.isSame(actual, expected)),
             ),
         ).toBe(true);
     })
+
+	test.todo("find solutions for 8x8 puzzle", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", " ", " ", "A", "B", " ", " ", " "],
+			[" ", " ", "C", "D", "E", " ", "E", " "],
+			[" ", " ", "F", " ", " ", " ", " ", " "],
+			[" ", " ", "G", " ", "H", "I", " ", " "],
+			[" ", " ", " ", " ", "D", " ", " ", " "],
+			[" ", " ", " ", "C", " ", " ", " ", " "],
+			[" ", "F", " ", "G", " ", " ", "H", "B"],
+			[" ", " ", " ", " ", " ", " ", " ", "I"],
+		]);
+		const expected = [
+			FlowGridShorthand.toGrid([
+				["A", "a", "a", "A", "B", "b", "b", "b"],
+				["c", "c", "C", "D", "E", "e", "E", "b"],
+				["c", "f", "F", "d", "h", "h", "h", "b"],
+				["c", "f", "G", "d", "H", "I", "h", "b"],
+				["c", "f", "g", "d", "D", "i", "h", "b"],
+				["c", "f", "g", "C", "c", "i", "h", "b"],
+				["c", "F", "g", "G", "c", "i", "H", "B"],
+				["c", "c", "c", "c", "c", "i", "i", "I"],
+			]),
+        ];
+        const actual = FlowAlgoSolve.solve(grid);
+
+        expect(
+            actual.some((actual) =>
+                expected.some((expected) => Flow.isSame(actual, expected)),
+            ),
+        ).toBe(true);
+	});
 });
