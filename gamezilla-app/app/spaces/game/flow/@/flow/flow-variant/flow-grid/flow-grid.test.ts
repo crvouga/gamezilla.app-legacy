@@ -69,12 +69,48 @@ describe(import.meta.file, () => {
 		expect(eq(actual, expected)).toBe(true);
 	});
 
-	it.todo("should detect if puzzle is solved", () => {
+	test("isSolved 3x3 with A terminals and A pipes", () => {
 		const grid = FlowGridShorthand.toGrid([
-			["A", "Cc", "B"],
-			["a", "C", "Bb"],
+			["A", " ", " "],
+			["a", " ", " "],
 			["a", "a", "A"],
 		]);
-		expect(FlowGrid.isSolved(grid)).toBe(true);
+		expect(Flow.isSolved(grid)).toBe(true);
+	});
+
+	test("isSolved 3x3 with A terminals", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", " ", " "],
+			["a", " ", " "],
+			["a", " ", "A"],
+		]);
+		expect(Flow.isSolved(grid)).toBe(false);
+	});
+
+	test("not isSolved 3x3 with A terminals and A pipes and B terminals", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", "B", " "],
+			["a", " ", "B"],
+			["a", "a", "A"],
+		]);
+		expect(Flow.isSolved(grid)).toBe(false);
+	});
+
+	test("not isSolved 3x3 with A terminals and A pipes and B terminals and B pipes", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", "B", "b"],
+			["a", " ", "B"],
+			["a", "a", "A"],
+		]);
+		expect(Flow.isSolved(grid)).toBe(true);
+	});
+
+	test("isSolved with A terminals and A pipes long", () => {
+		const grid = FlowGridShorthand.toGrid([
+			["A", "a", "a"],
+			["a", "a", "a"],
+			["a", "a", "A"],
+		]);
+		expect(Flow.isSolved(grid)).toBe(true);
 	});
 });

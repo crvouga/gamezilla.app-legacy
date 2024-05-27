@@ -547,6 +547,10 @@ export const yieldTerminals = function* (model: Model): Iterable<Terminal> {
 	}
 };
 
+export const toTerminals = (model: Model): Terminal[] => {
+	return Array.from(yieldTerminals(model));
+};
+
 export const yieldPipelines = function* (
 	model: Model,
 ): Iterable<Iterable<Pipe>> {
@@ -785,3 +789,31 @@ function djb2Hash(str: string) {
 	}
 	return hash;
 }
+
+export const isConnectedWithPipes = (
+	model: Model,
+	sourceId: NodeId,
+	targetId: NodeId,
+): boolean => {
+	if (sourceId === targetId) {
+		return true;
+	}
+	const pipe = toPipeBySourceId(model, sourceId);
+	if (!pipe) {
+		return false;
+	}
+	const edge = toEdge(model, pipe.edgeId);
+	if (!edge) {
+		return false;
+	}
+	return isConnectedWithPipes(model, edge.targetId, targetId);
+};
+
+export const isSolved = (model: Model): boolean => {
+	const terminals = toTerminals(model);
+	return terminals.every((terminal) =>
+		terminal.endId
+			? isConnectedWithPipes(model, terminal.startId, terminal.endId)
+			: true,
+	);
+};

@@ -360,8 +360,3 @@ export const toPipeline = (
 		currentNodeId = pipe.edge.targetId;
 	}
 };
-
-export const isSolved = (model: Model): boolean => {
-	model;
-	return false;
-};

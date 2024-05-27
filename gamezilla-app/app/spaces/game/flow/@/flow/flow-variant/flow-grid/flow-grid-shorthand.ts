@@ -460,10 +460,12 @@ const toPipesBySourceIdList = (input: {
 		}
 	}
 
-	const uniqueValidPipesBySourceId = uniqueCombinations.map((combination) => combination.pipesBySourceId)
+	const uniqueValidPipesBySourceId = uniqueCombinations.map(
+		(combination) => combination.pipesBySourceId,
+	);
 
 	if (NonEmpty.is(uniqueValidPipesBySourceId)) {
-		return uniqueValidPipesBySourceId
+		return uniqueValidPipesBySourceId;
 	}
 
 	return [{}];
