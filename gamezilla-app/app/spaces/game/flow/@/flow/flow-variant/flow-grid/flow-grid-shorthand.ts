@@ -394,84 +394,9 @@ const toPipesBySourceIdList_ = (input: {
 		}
 	}
 
-	const combinationsWithPipelines = combinations.map((pipesBySourceId) => {
-		const withPipesBySourceId: FlowGrid.Model = {
-			...input.grid,
-			pipesBySourceId,
-		};
 
-		const pipelinesByGroupId: {
-			[groupId in Flow.GroupId]?: Flow.Pipeline;
-		} = {};
-
-		for (const groupId in input.grid.terminalsByGroupId) {
-			if (!Flow.isGroupId(groupId)) {
-				continue;
-			}
-			const terminal = input.grid.terminalsByGroupId[groupId];
-			if (!terminal) {
-				continue;
-			}
-			const pipeline = FlowGrid.toPipeline(
-				withPipesBySourceId,
-				terminal.startId,
-			);
-			if (!pipeline) {
-				continue;
-			}
-			pipelinesByGroupId[groupId] = pipeline;
-		}
-
-		const totalPipelineLength = Object.values(pipelinesByGroupId).reduce(
-			(sum, pipeline) => sum + pipeline.length,
-			0,
-		);
-
-		return {
-			pipesBySourceId,
-			pipelinesByGroupId,
-			totalPipelineLength,
-		};
-	});
-
-	const maxPipelineLength = Math.max(
-		...combinationsWithPipelines.map(
-			(combination) => combination.totalPipelineLength,
-		),
-	);
-
-	const combinationsWithMaxPipelineLength = combinationsWithPipelines.filter(
-		(combination) => combination.totalPipelineLength === maxPipelineLength,
-	);
-
-	const uniqueCombinations: typeof combinationsWithMaxPipelineLength = [];
-
-	for (const candidate of combinationsWithMaxPipelineLength) {
-		const isUnique = uniqueCombinations.every(
-			(existing) =>
-				!Flow.isSamePipesBySourceId(
-					{
-						edges: input.grid.edges,
-						pipesBySourceId: candidate.pipesBySourceId,
-					},
-					{
-						edges: input.grid.edges,
-						pipesBySourceId: existing.pipesBySourceId,
-					},
-				),
-		);
-
-		if (isUnique) {
-			uniqueCombinations.push(candidate);
-		}
-	}
-
-	const uniqueValidPipesBySourceId = uniqueCombinations.map(
-		(combination) => combination.pipesBySourceId,
-	);
-
-	if (NonEmpty.is(uniqueValidPipesBySourceId)) {
-		return uniqueValidPipesBySourceId;
+	if (NonEmpty.is(combinations)) {
+		return combinations;
 	}
 
 	return [{}];
@@ -481,10 +406,68 @@ const toPipesBySourceIdList = (input: {
 	model: Model;
 	grid: FlowGrid.Model;
 }): NonEmpty<FlowGrid.Model["pipesBySourceId"]> => {
-	const pipesBySourceIdList = toPipesBySourceIdList_(input);
+	const solutions = toPipesBySourceIdList_(input);
 
-	return pipesBySourceIdList
+	const maxSolutions = maxAllBy(
+		solutions,
+		(pipesBySourceId) =>
+			toTotalPipelineLength({
+				...input.grid,
+				pipesBySourceId,
+			})
+	);
+
+	const uniqueSolutions = uniqueWith(maxSolutions, (left, right) =>
+		Flow.isSame(
+			{
+				...input.grid,
+				pipesBySourceId: left,
+			},
+			{
+				...input.grid,
+				pipesBySourceId: right,
+			},
+		),
+	);
+
+	if (NonEmpty.is(uniqueSolutions)) {
+		return uniqueSolutions;
+	}
+
+	return solutions;
 }
+
+const toTotalPipelineLength = (model: Flow.Model): number => {
+    let total = 0
+    for (const terminal of Flow.yieldTerminals(model)) {
+        for (const _ of Flow.yieldPipeline(model, terminal.startId)) {
+            total += 1
+        }
+    }
+    return total
+}
+
+const uniqueWith = <T>(arr: T[], fn: (left: T, right: T) => boolean): T[] => {
+    const unique: T[] = []
+    for (const left of arr) {
+        if (!unique.some(right => fn(left, right))) {
+            unique.push(left)
+        }
+    }
+    return unique
+}
+
+const maxAllBy = <T>(arr: T[], fn: (item: T) => number): T[] => {
+    let max = -Infinity
+    for (const item of arr) {
+        const value = fn(item)
+        if (value > max) {
+            max = value
+        }
+    }
+    return arr.filter(item => fn(item) === max)
+}
+
 
 const toDimensions = (model: Model): FlowGridDimensions.Model => {
 	let maxWidth = 0;
