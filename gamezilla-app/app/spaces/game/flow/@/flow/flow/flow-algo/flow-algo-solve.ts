@@ -104,7 +104,7 @@ export const solve = function* (model: Flow.Model): Iterable<Flow.Model> {
         });
         
         for (const possiblePipeline of possiblePipelines) {
-			const drew = drawPipeline(model, terminal, possiblePipeline);
+            const drew = drawPipeline(model, terminal, possiblePipeline)
             for (const solution of solve(drew)) {
                 yield solution;
             }            

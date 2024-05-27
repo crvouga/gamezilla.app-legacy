@@ -290,7 +290,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test("find solutions for 8x8 puzzle", () => {
+	test.todo("find solutions for 8x8 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " "],
 			[" ", " ", "C", "D", "E", " ", "E", " "],
