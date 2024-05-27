@@ -41,9 +41,8 @@ const toPossiblePipelines = function* (input: {
 				continue;
 			}
 
-			const newPath = [...path, edgeOut];
+            const newPath = [...path, edgeOut];
 			const newVisited = new Set(visited);
-
 			queue.push({
 				path: newPath,
 				currentNode: edgeOut.targetId,
@@ -85,14 +84,14 @@ export const solve = function* (
 
 	const terminals = Flow.toTerminals(model);
 
-	const sortedTerminals = terminals.sort((a, b) => {
+	terminals.sort((a, b) => {
 		if (a.endId && b.endId) {
 			return distance(a.startId, a.endId) - distance(b.startId, b.endId);
 		}
 		return 0;
 	});
 
-	for (const terminal of sortedTerminals) {
+	for (const terminal of terminals) {
 		if (!terminal.endId) {
 			continue;
 		}
