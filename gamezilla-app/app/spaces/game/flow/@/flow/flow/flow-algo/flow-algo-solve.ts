@@ -1,27 +1,27 @@
 import * as Flow from "../flow";
 
 const toPossiblePipelines = function* (input: {
-    model: Flow.Model;
+	model: Flow.Model;
 	groupId: Flow.GroupId;
 	startId: Flow.NodeId;
 	endId: Flow.NodeId;
 }): Iterable<Flow.Edge[]> {
-    type QueueItem = {
-        path: Flow.Edge[];
-        currentNode: Flow.NodeId;
-        visited: Set<Flow.NodeId>;
-    };
+	type QueueItem = {
+		path: Flow.Edge[];
+		currentNode: Flow.NodeId;
+		visited: Set<Flow.NodeId>;
+	};
 
 	const queue: QueueItem[] = [];
-    
-    queue.push({
-        path: [],
-        currentNode: input.startId,
-        visited: new Set(),
-    })
-    
-    while (queue.length > 0) {
-		const { path, currentNode, visited } = queue.shift()!
+
+	queue.push({
+		path: [],
+		currentNode: input.startId,
+		visited: new Set(),
+	});
+
+	while (queue.length > 0) {
+		const { path, currentNode, visited } = queue.shift()!;
 
 		if (visited.has(currentNode)) {
 			continue;
@@ -39,15 +39,15 @@ const toPossiblePipelines = function* (input: {
 
 			if (targetGroupId && targetGroupId !== input.groupId) {
 				continue;
-            }
-            
+			}
+
 			const newPath = [...path, edgeOut];
-            const newVisited = new Set(visited);
-            
+			const newVisited = new Set(visited);
+
 			queue.push({
 				path: newPath,
 				currentNode: edgeOut.targetId,
-                visited: newVisited
+				visited: newVisited,
 			});
 		}
 	}
@@ -81,13 +81,26 @@ const drawPipeline = (
 	};
 };
 
-export const solve = function* (model: Flow.Model): Iterable<Flow.Model> {
+export const solve = function* (
+	model: Flow.Model,
+    distance: (a: Flow.NodeId, b: Flow.NodeId) => number,
+): Iterable<Flow.Model> {
 	if (Flow.isSolved(model)) {
 		yield model;
 		return;
-	}
+    }
+    
+    const terminals = Flow.toTerminals(model);
 
-	for (const terminal of Flow.toTerminals(model)) {
+    terminals.sort((a, b) => {
+        if (a.endId && b.endId) {
+            return distance(a.startId, a.endId) - distance(b.startId, b.endId);
+        }
+        return 0;
+    });
+    
+
+    for (const terminal of terminals) {
 		if (!terminal.endId) {
 			continue;
 		}
@@ -96,18 +109,18 @@ export const solve = function* (model: Flow.Model): Iterable<Flow.Model> {
 			continue;
 		}
 
-        const possiblePipelines = toPossiblePipelines({
+		const possiblePipelines = toPossiblePipelines({
 			model,
 			endId: terminal.endId,
 			groupId: terminal.groupId,
 			startId: terminal.startId,
-        });
-        
-        for (const possiblePipeline of possiblePipelines) {
-            const drew = drawPipeline(model, terminal, possiblePipeline)
-            for (const solution of solve(drew)) {
-                yield solution;
-            }            
+		});
+
+		for (const possiblePipeline of possiblePipelines) {
+			const drew = drawPipeline(model, terminal, possiblePipeline);
+			for (const solution of solve(drew, distance)) {
+				yield solution;
+			}
 		}
 		return;
 	}

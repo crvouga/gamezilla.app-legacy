@@ -1,7 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { Flow } from "../../flow";
-import { FlowGridShorthand } from "../../flow-variant/flow-grid";
+import { FlowGrid, FlowGridShorthand } from "../../flow-variant/flow-grid";
 import * as FlowAlgoSolve from "./flow-algo-solve";
+import { FlowVariant } from "../../flow-variant";
 
 const some = <T>(iterable: Iterable<T>, predicate: (value: T) => boolean) => {
 	for (const value of iterable) {
@@ -30,7 +31,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solve(grid, FlowGrid.distance(grid));
 
 		expect(
 			some(actual, (actual) =>
@@ -64,7 +65,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solve(grid, FlowGrid.distance(grid));
 
 		expect(
 			some(actual, (actual) =>
@@ -88,7 +89,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solve(grid, FlowGrid.distance(grid));
 
 		expect(
 			some(actual, (actual) =>
@@ -152,7 +153,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solve(grid, FlowGrid.distance(grid));
 
 		expect(
 			some(actual, (actual) =>
@@ -172,7 +173,7 @@ describe(import.meta.file, () => {
 				[" ", " "],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solve(grid, FlowGrid.distance(grid));
 		expect(
 			some(actual, (actual) =>
 				expected.some((expected) => Flow.isSame(actual, expected)),
@@ -193,7 +194,7 @@ describe(import.meta.file, () => {
 				["Bb", "B", "A"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solve(grid, FlowGrid.distance(grid));
 		expect(
 			some(actual, (actual) =>
 				expected.some((expected) => Flow.isSame(actual, expected)),
@@ -220,7 +221,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solve(grid, FlowGrid.distance(grid));
 
 		expect(
 			some(actual, (actual) =>
@@ -250,7 +251,7 @@ describe(import.meta.file, () => {
 			]),
 		];
 
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solve(grid, FlowGrid.distance(grid));
 
 		expect(
 			some(actual, (actual) =>
@@ -281,7 +282,7 @@ describe(import.meta.file, () => {
 				["c", "c", "c", "c", "c", "i", "I"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solve(grid, FlowGrid.distance(grid));
 
 		expect(
 			some(actual, (actual) =>
@@ -290,7 +291,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test.todo("find solutions for 8x8 puzzle", () => {
+	test("find solutions for 8x8 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " "],
 			[" ", " ", "C", "D", "E", " ", "E", " "],
@@ -313,7 +314,7 @@ describe(import.meta.file, () => {
 				["c", "c", "c", "c", "c", "i", "i", "I"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solve(grid, FlowGrid.distance(grid));
 
 		expect(
 			some(actual, (actual) =>
@@ -322,7 +323,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test.todo("find solutions for 9x9 puzzle", () => {
+	test("find solutions for 9x9 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " ", "J"],
 			[" ", " ", "C", "D", "E", " ", "E", " ", " "],
@@ -347,7 +348,7 @@ describe(import.meta.file, () => {
 				["J", "j", "j", "j", "j", "j", "j", "j", "j"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solve(grid, FlowGrid.distance(grid));
 
 		expect(
 			some(actual, (actual) =>
@@ -356,7 +357,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test.todo("find solutions for 10x10 puzzle", () => {
+	test("find solutions for 10x10 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " ", "J", "K"],
 			[" ", " ", "C", "D", "E", " ", "E", " ", " ", " "],
@@ -383,13 +384,13 @@ describe(import.meta.file, () => {
 				["K", "k", "k", "k", "k", "k", "k", "k", "k", "k"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
 
-		expect(
-			some(actual, (actual) =>
-				expected.some((expected) => Flow.isSame(actual, expected)),
-			),
-		).toBe(true);
+		for (const actual of FlowAlgoSolve.solve(grid, FlowGrid.distance(grid))) {
+			expect(expected.some((expected) => Flow.isSame(actual, expected))).toBe(
+				true,
+			);
+			return;
+		}
 	});
 
 	test.todo("find solutions for 11x11 puzzle", () => {
@@ -421,13 +422,13 @@ describe(import.meta.file, () => {
 				["L", "l", "l", "l", "l", "l", "l", "l", "l", "l", "l"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
 
-		expect(
-			some(actual, (actual) =>
-				expected.some((expected) => Flow.isSame(actual, expected)),
-			),
-		).toBe(true);
+		for (const actual of FlowAlgoSolve.solve(grid, FlowGrid.distance(grid))) {
+			expect(expected.some((expected) => Flow.isSame(actual, expected))).toBe(
+				true,
+			);
+			return;
+		}
 	});
 
 	test.todo("find solutions for 12x12 puzzle", () => {
@@ -461,7 +462,7 @@ describe(import.meta.file, () => {
 				["M", "m", "m", "m", "m", "m", "m", "m", "m", "m", "m", "m"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solve(grid, FlowGrid.distance(grid));
 
 		expect(
 			some(actual, (actual) =>
@@ -503,7 +504,7 @@ describe(import.meta.file, () => {
 				["N", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n", "n"],
 			]),
 		];
-		const actual = FlowAlgoSolve.solve(grid);
+		const actual = FlowAlgoSolve.solve(grid, FlowGrid.distance(grid));
 
 		expect(
 			some(actual, (actual) =>
