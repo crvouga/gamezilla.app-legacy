@@ -20,13 +20,13 @@ const toPossiblePipelines = function* (input: {
 		(a, b) => a.heuristic - b.heuristic,
 	);
 
-	const heuristic = input.distance(input.startId, input.endId);
+	const initialHeuristic = input.distance(input.startId, input.endId);
 	queue.enqueue({
 		path: [],
 		currentNode: input.startId,
 		visited: new Set([input.startId]),
 		cost: 0,
-		heuristic,
+		heuristic: initialHeuristic,
 	});
 
 	while (!queue.isEmpty()) {
