@@ -511,5 +511,5 @@ describe(import.meta.file, () => {
 				expected.some((expected) => Flow.isSame(actual, expected)),
 			),
 		).toBe(true);
-    });
+	});
 });

@@ -1,25 +1,35 @@
 import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
 import * as Flow from "../flow";
 
-
 const calculateDirection = (
 	sourceId: Flow.NodeId,
 	targetId: Flow.NodeId,
-	distance: (a: Flow.NodeId, b: Flow.NodeId) => number
+	distance: (a: Flow.NodeId, b: Flow.NodeId) => number,
 ): string => {
 	const dist = distance(sourceId, targetId);
 	return `${sourceId}${targetId}${dist}`;
 };
 
-
 const countTurns = (
 	path: Flow.Edge[],
-	distance: (a: Flow.NodeId, b: Flow.NodeId) => number
+	distance: (a: Flow.NodeId, b: Flow.NodeId) => number,
 ): number => {
 	let turns = 0;
 	for (let i = 1; i < path.length; i++) {
-		const prevDirection = calculateDirection(path[i - 1]!.sourceId, path[i - 1]!.targetId, distance);
-		const currDirection = calculateDirection(path[i]!.sourceId, path[i]!.targetId, distance);
+		const prevDirection = calculateDirection(
+			// biome-ignore lint/style/noNonNullAssertion: <explanation>
+			path[i - 1]!.sourceId,
+			// biome-ignore lint/style/noNonNullAssertion: <explanation>
+			path[i - 1]!.targetId,
+			distance,
+		);
+		const currDirection = calculateDirection(
+			// biome-ignore lint/style/noNonNullAssertion: <explanation>
+			path[i]!.sourceId,
+			// biome-ignore lint/style/noNonNullAssertion: <explanation>
+			path[i]!.targetId,
+			distance,
+		);
 		if (prevDirection !== currDirection) {
 			turns++;
 		}
@@ -27,23 +37,24 @@ const countTurns = (
 	return turns;
 };
 
-
 const calculateHeuristic = (
-    _model: Flow.Model,
+	_model: Flow.Model,
 	currentNode: Flow.NodeId,
 	endNode: Flow.NodeId,
 	path: Flow.Edge[],
-	distance: (a: Flow.NodeId, b: Flow.NodeId) => number
+	distance: (a: Flow.NodeId, b: Flow.NodeId) => number,
 ): number => {
 	const distanceHeuristic = distance(currentNode, endNode);
-    const turnsHeuristic = countTurns(path, distance);
-    const heuristic = distanceHeuristic + turnsHeuristic * 1.5
-    return heuristic
+	const turnsHeuristic = countTurns(path, distance);
+	const heuristic = distanceHeuristic + turnsHeuristic * 1.5;
+	return heuristic;
 };
 
-
 const normalizePath = (path: Flow.Edge[]): string => {
-	return path.map(edge => `${edge.sourceId}-${edge.targetId}`).sort().join(',');
+	return path
+		.map((edge) => `${edge.sourceId}-${edge.targetId}`)
+		.sort()
+		.join(",");
 };
 
 const toPossiblePipelines = function* (input: {
@@ -53,17 +64,17 @@ const toPossiblePipelines = function* (input: {
 	endId: Flow.NodeId;
 	distance: (a: Flow.NodeId, b: Flow.NodeId) => number;
 }): Iterable<Flow.Edge[]> {
-    type QueueItem = {
-        path: Flow.Edge[];
-        currentNode: Flow.NodeId;
-        visited: Set<Flow.NodeId>;
-        cost: number;
-        heuristic: number;
-    };
+	type QueueItem = {
+		path: Flow.Edge[];
+		currentNode: Flow.NodeId;
+		visited: Set<Flow.NodeId>;
+		cost: number;
+		heuristic: number;
+	};
 
 	const queue = new MinHeap<QueueItem>((a, b) => a.heuristic - b.heuristic);
-	const visitedPaths = new Set<string>(); 
-	
+	const visitedPaths = new Set<string>();
+
 	queue.insert({
 		path: [],
 		currentNode: input.startId,
@@ -73,14 +84,15 @@ const toPossiblePipelines = function* (input: {
 	});
 
 	while (!queue.isEmpty()) {
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
 		const { path, currentNode, visited, cost } = queue.extractMin()!;
 
 		if (currentNode === input.endId) {
-            const normalizedPath = normalizePath(path);
+			const normalizedPath = normalizePath(path);
 			if (!visitedPaths.has(normalizedPath)) {
-                visitedPaths.add(normalizedPath);
-                yield path;
-            }
+				visitedPaths.add(normalizedPath);
+				yield path;
+			}
 			continue;
 		}
 
@@ -98,7 +110,13 @@ const toPossiblePipelines = function* (input: {
 			const newPath = [...path, edgeOut];
 			const newVisited = new Set(visited).add(edgeOut.targetId);
 			const newCost = cost + 1;
-			const heuristic = calculateHeuristic(input.model, edgeOut.targetId, input.endId, newPath, input.distance);
+			const heuristic = calculateHeuristic(
+				input.model,
+				edgeOut.targetId,
+				input.endId,
+				newPath,
+				input.distance,
+			);
 
 			queue.insert({
 				path: newPath,
@@ -107,7 +125,7 @@ const toPossiblePipelines = function* (input: {
 				cost: newCost,
 				heuristic,
 			});
-        }
+		}
 	}
 };
 
@@ -169,10 +187,10 @@ export const solve = function* (
 		for (const possiblePipeline of possiblePipelines) {
 			const drew = drawPipeline(model, terminal, possiblePipeline);
 			for (const solution of solve(drew, distance)) {
-                yield solution;
+				yield solution;
 			}
 		}
-		
-        break
+
+		break;
 	}
 };
