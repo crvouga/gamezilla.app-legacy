@@ -1,8 +1,8 @@
 import { Flow, FlowVariantUIPlay } from "../../@/flow";
-import { FlowPack } from "../../@/flow-pack";
-import { FlowPuzzle } from "../../@/flow-puzzle";
-import { CoreModule } from "../play.types";
-import { ModelCore } from "./screen-puzzle.types";
+import type { FlowPack } from "../../@/flow-pack";
+import type { FlowPuzzle } from "../../@/flow-puzzle";
+import type { CoreModule } from "../play.types";
+import type { ModelCore } from "./screen-puzzle.types";
 
 const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 	switch (msgCore.t) {

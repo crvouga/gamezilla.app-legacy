@@ -1,6 +1,6 @@
 import { isErr } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
-import { IDbConnKv } from "./db-conn-kv";
+import type { IDbConnKv } from "./db-conn-kv";
 
 export const withReducedParsing = ({
 	dbConnKv,
