@@ -31,46 +31,6 @@ const updateCore_: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 						flow: modelCore.screen.flowPuzzle.flow,
 					});
 
-					const flowPrev = FlowVariantUIPlay.deriveFlow({
-						flow: modelCore.screen.flowPuzzle.flow,
-						model: modelCore.screen.flowPlay,
-					});
-
-					const flowNew = FlowVariantUIPlay.deriveFlow({
-						flow: modelCore.screen.flowPuzzle.flow,
-						model: flowPlayNew,
-					});
-
-					const wasSolved = Flow.isSolved(flowPrev);
-					const isSolved = Flow.isSolved(flowNew);
-
-					if (!wasSolved && isSolved) {
-						return {
-							...modelCore,
-							screen: {
-								...modelCore.screen,
-								flowPlay: flowPlayNew,
-								opened: "puzzle-complete",
-								state: {
-									t: "solved",
-								},
-							},
-						};
-					}
-
-					if (isSolved) {
-						return {
-							...modelCore,
-							screen: {
-								...modelCore.screen,
-								flowPlay: flowPlayNew,
-								state: {
-									t: "solved",
-								},
-							},
-						};
-					}
-
 					return {
 						...modelCore,
 						screen: {
@@ -168,8 +128,62 @@ const initCore = (input: {
 	};
 };
 
+const watchPuzzleComplete = (input: {
+	before: ModelCore;
+	after: ModelCore;
+}): ModelCore => {
+	const flowPrev = FlowVariantUIPlay.deriveFlow({
+		flow: input.before.flowPuzzle.flow,
+		model: input.before.flowPlay,
+	});
+
+	const flowNew = FlowVariantUIPlay.deriveFlow({
+		flow: input.after.flowPuzzle.flow,
+		model: input.after.flowPlay,
+	});
+
+	const wasSolved = Flow.isSolved(flowPrev);
+	const isSolved = Flow.isSolved(flowNew);
+
+	if (!wasSolved && isSolved) {
+		return {
+			...input.after,
+			opened: "puzzle-complete",
+			state: {
+				t: "solved",
+			},
+		};
+	}
+
+	if (isSolved) {
+		return {
+			...input.after,
+			state: {
+				t: "solved",
+			},
+		};
+	}
+
+	return {
+		...input.after,
+		state: {
+			t: "solving",
+		},
+	};
+};
+
 const updateCore: CoreModule["updateCore"] = (input) => {
 	const updated = updateCore_(input);
+	if (input.modelCore.screen.t === 'screen-puzzle' && updated.screen.t === "screen-puzzle") {
+		const modelNew = watchPuzzleComplete({
+			before: input.modelCore.screen,
+			after: updated.screen,
+		})
+		return {
+			...updated,
+			screen: modelNew,
+		}
+	}
 	return updated;
 };
 export const ScreenPuzzleCore = {
