@@ -1,6 +1,6 @@
 import { p } from "gamezilla-app/@/core/parser";
 import * as Flow from "../flow/flow";
-import { AlgoDrawPipes } from "../flow/flow-algo";
+import { FlowAlgoDrawPipes, FlowAlgoSolve } from "../flow/flow-algo";
 import * as FlowVariant from "./flow-variant";
 import * as FlowVariantUI from "./flow-variant-ui";
 
@@ -106,10 +106,55 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 	return msgs;
 };
 
-export const toSolutionMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
-	flow;
-	return [];
+
+export const toSolutionMsgs = ({ flow }: { flow: FlowVariant.Model }): Msg[] => {
+	const solutions = FlowAlgoSolve.solve({ distance: FlowVariant.distance(flow) }, flow);
+	
+	const solution = first(solutions)
+
+	if (!solution) {
+		return []
+	}
+
+	const msgs: Msg[] = [];
+
+	
+for (const terminal of Flow.toTerminals(solution)) {
+		msgs.push({
+			t: 'pressed-down',
+			nodeId: terminal.startId,
+		})
+
+		for (const pipe of Flow.toPipeline(solution, terminal.startId)) {
+			const edge = Flow.toEdge(solution, pipe.edgeId);
+			if (!edge) {
+				continue;
+			}
+			msgs.push({
+				t: 'dragged-over',
+				nodeId: edge.targetId,
+			})
+		}
+
+		if(terminal.endId) {
+			msgs.push({
+				t: 'pressed-up',
+				nodeId: terminal.endId,
+			})
+		}
+	}
+	
+	return msgs
 };
+
+
+const first = <T,>(iterable: Iterable<T>): T | null => {
+	for (const item of iterable) {
+		return item;
+	}
+	return null
+}
+
 
 //
 //
@@ -173,7 +218,7 @@ const updateIdle: typeof update = ({ msg, model, flow }) => {
 				return model;
 			}
 
-			const started = AlgoDrawPipes.startDrawPipes(
+			const started = FlowAlgoDrawPipes.startDrawPipes(
 				FlowVariant.distance(current),
 				current,
 				groupId,
@@ -226,7 +271,7 @@ const updateDragging = ({
 				terminalsByGroupId: model.terminalsByGroupId,
 			};
 
-			const extended = AlgoDrawPipes.drawPipes(
+			const extended = FlowAlgoDrawPipes.drawPipes(
 				FlowVariant.distance(current),
 				current,
 				modelCore.activeGroupId,
