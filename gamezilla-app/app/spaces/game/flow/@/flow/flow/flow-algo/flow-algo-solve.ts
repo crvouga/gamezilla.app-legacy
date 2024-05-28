@@ -1,14 +1,6 @@
 import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
 import * as Flow from "../flow";
 
-type QueueItem = {
-	path: Flow.Edge[];
-	currentNode: Flow.NodeId;
-	visited: Set<Flow.NodeId>;
-	cost: number;
-	heuristic: number;
-};
-
 
 const calculateDirection = (
 	sourceId: Flow.NodeId,
@@ -61,6 +53,14 @@ const toPossiblePipelines = function* (input: {
 	endId: Flow.NodeId;
 	distance: (a: Flow.NodeId, b: Flow.NodeId) => number;
 }): Iterable<Flow.Edge[]> {
+    type QueueItem = {
+        path: Flow.Edge[];
+        currentNode: Flow.NodeId;
+        visited: Set<Flow.NodeId>;
+        cost: number;
+        heuristic: number;
+    };
+
 	const queue = new MinHeap<QueueItem>((a, b) => a.heuristic - b.heuristic);
 	const visitedPaths = new Set<string>(); 
 	
