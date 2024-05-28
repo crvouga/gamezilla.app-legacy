@@ -60,7 +60,7 @@ const toPossiblePipelines = function* (input: {
 	startId: Flow.NodeId;
 	endId: Flow.NodeId;
 }): Iterable<Flow.Edge[]> {
-	type QueueItem = {
+	type HeapItem = {
 		path: Flow.Edge[];
 		currentNode: Flow.NodeId;
 		visited: Set<Flow.NodeId>;
@@ -68,10 +68,10 @@ const toPossiblePipelines = function* (input: {
 		heuristic: number;
 	};
 
-	const queue = new MinHeap<QueueItem>((a, b) => a.heuristic - b.heuristic);
+	const minHeap = new MinHeap<HeapItem>((a, b) => a.heuristic - b.heuristic);
 	const visitedPaths = new Set<string>();
 
-	queue.insert({
+	minHeap.insert({
 		path: [],
 		currentNode: input.startId,
 		visited: new Set([input.startId]),
@@ -79,8 +79,8 @@ const toPossiblePipelines = function* (input: {
 		heuristic: input.config.distance(input.startId, input.endId),
 	});
 
-	while (!queue.isEmpty()) {
-		const { path, currentNode, visited, cost } = queue.extractMin()!;
+	while (!minHeap.isEmpty()) {
+		const { path, currentNode, visited, cost } = minHeap.extractMin()!;
 
 		if (currentNode === input.endId) {
 			const normalizedPath = normalizePath(path);
@@ -112,7 +112,7 @@ const toPossiblePipelines = function* (input: {
 				newPath,
 			);
 
-			queue.insert({
+			minHeap.insert({
 				path: newPath,
 				currentNode: edgeOut.targetId,
 				visited: newVisited,
@@ -153,7 +153,7 @@ const solveStep = function* (
 		return;
 	}
 
-	const terminal = terminals[0]
+	const terminal = terminals[0];
 
 	if (!terminal || !terminal.endId) {
 		return;
