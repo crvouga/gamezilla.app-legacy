@@ -9,14 +9,13 @@ type QueueItem = {
 	heuristic: number;
 };
 
-
 const calculateDirection = (
 	sourceId: Flow.NodeId,
 	targetId: Flow.NodeId,
 	distance: (a: Flow.NodeId, b: Flow.NodeId) => number
 ): string => {
-    const dist = distance(sourceId, targetId);
-	return `${sourceId}_${targetId}_${dist}`; 
+	const dist = distance(sourceId, targetId);
+	return `${sourceId}${targetId}${dist}`;
 };
 
 const countTurns = (
@@ -32,6 +31,17 @@ const countTurns = (
 		}
 	}
 	return turns;
+};
+
+const calculateHeuristic = (
+	currentNode: Flow.NodeId,
+	endNode: Flow.NodeId,
+	path: Flow.Edge[],
+	distance: (a: Flow.NodeId, b: Flow.NodeId) => number
+): number => {
+    const distanceHeuristic = distance(currentNode, endNode);
+	const turnsHeuristic = countTurns(path, distance);
+	return distanceHeuristic + turnsHeuristic * 1.5 
 };
 
 const toPossiblePipelines = function* (input: {
@@ -74,16 +84,14 @@ const toPossiblePipelines = function* (input: {
 			const newPath = [...path, edgeOut];
 			const newVisited = new Set(visited).add(edgeOut.targetId);
 			const newCost = cost + 1;
-			const turns = countTurns(newPath, input.distance);
-			const newHeuristic =
-				newCost + input.distance(edgeOut.targetId, input.endId) + turns;
+			const heuristic = calculateHeuristic(edgeOut.targetId, input.endId, newPath, input.distance) 
 
 			queue.insert({
 				path: newPath,
 				currentNode: edgeOut.targetId,
 				visited: newVisited,
 				cost: newCost,
-				heuristic: newHeuristic,
+				heuristic,
 			});
 		}
 	}
