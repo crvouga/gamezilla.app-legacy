@@ -169,9 +169,10 @@ export const solve = function* (
 		for (const possiblePipeline of possiblePipelines) {
 			const drew = drawPipeline(model, terminal, possiblePipeline);
 			for (const solution of solve(drew, distance)) {
-				yield solution;
+                yield solution;
 			}
 		}
-		return;
+		
+        break
 	}
 };
