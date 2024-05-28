@@ -79,7 +79,7 @@ const updateGame: SpaceServerModule["update"] = async (input) => {
 
 	return {
 		model: input.model,
-		eff: Eff.map_((c) => ({ t: "game", c, spaceId }), gameUpdated.eff),
+		eff: Eff.map((c) => ({ t: "game", c, spaceId }), gameUpdated.eff),
 		msgCmd: SpaceServerCmd.map(gameUpdated.msgCmd, (c) => ({
 			t: "game",
 			c,

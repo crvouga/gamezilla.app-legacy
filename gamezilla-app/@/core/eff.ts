@@ -1,5 +1,4 @@
 import type { IO } from "./io";
-import { pipe } from "./utils/pipe";
 
 export type Eff<Msg = never> = (dispatch: (msg: Msg) => void) => void;
 
@@ -10,18 +9,8 @@ const of = <Msg>(msg: Msg): Eff<Msg> => {
 	return eff;
 };
 
-const map =
-	<A, B>(mapper: (a: A) => B) =>
-	(eff: Eff<A>): Eff<B> => {
-		const mappedEff: Eff<B> = (dispatch) => {
-			eff((a) => {
-				dispatch(mapper(a));
-			});
-		};
-		return mappedEff;
-	};
 
-const map_ = <A, B>(
+const map = <A, B>(
 	mapper: (a: A) => B,
 	eff?: Eff<A> | null | undefined,
 ): Eff<B> => {
@@ -54,10 +43,7 @@ const tag = <Tag extends string, Msg>(
 	if (!eff) {
 		return None;
 	}
-	return pipe(
-		eff,
-		map((msg) => ({ t: tagName, c: msg })),
-	);
+	return map((msg) => ({ t: tagName, c: msg }), eff)
 };
 
 const batch = <Msg>(
@@ -97,6 +83,5 @@ export const Eff = {
 	tag,
 	chain,
 	map,
-	map_,
 	of,
 };

@@ -193,7 +193,7 @@ const updateGame: SpaceClientModule["update"] = (input) => {
 			(c) => ({ t: "game", c, spaceId }),
 			(c) => ({ t: "game", c, spaceId }),
 		),
-		eff: Eff.map_((c) => ({ t: "game", c, spaceId }), gameUpdated.eff),
+		eff: Eff.map((c) => ({ t: "game", c, spaceId }), gameUpdated.eff),
 		msgEvt: [],
 		msgSpaceEvent: msgSpaceEventNew,
 	};
