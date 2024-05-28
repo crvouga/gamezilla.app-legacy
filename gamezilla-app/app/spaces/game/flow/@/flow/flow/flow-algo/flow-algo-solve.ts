@@ -63,14 +63,13 @@ const toPossiblePipelines = function* (input: {
 }): Iterable<Flow.Edge[]> {
 	const queue = new MinHeap<QueueItem>((a, b) => a.heuristic - b.heuristic);
 	const visitedPaths = new Set<string>(); 
-
-	const initialHeuristic = input.distance(input.startId, input.endId);
+	
 	queue.insert({
 		path: [],
 		currentNode: input.startId,
 		visited: new Set([input.startId]),
 		cost: 0,
-		heuristic: initialHeuristic,
+		heuristic: input.distance(input.startId, input.endId),
 	});
 
 	while (!queue.isEmpty()) {
