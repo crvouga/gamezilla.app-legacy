@@ -29,6 +29,7 @@ export const updateCore: CoreModule["updateCore"] = ({
 			switch (modelCore.screen.t) {
 				case "screen-puzzle": {
 					const flow = modelCore.screen.flowPuzzle.flow;
+					
 					const flowPlayNew = FlowVariantUIPlay.update({
 						msg: msgCore.c,
 						model: modelCore.screen.flowPlay,
