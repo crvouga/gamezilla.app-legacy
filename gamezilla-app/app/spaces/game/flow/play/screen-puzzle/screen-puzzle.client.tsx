@@ -92,7 +92,6 @@ const updatePuzzleCompleted: ClientModule["update"] = (input) => {
 	const isSolved = after.screen.opened === "puzzle-complete";
 	
 	if (!wasSolved && isSolved) {
-		debugger
 		return {
 			model: input.model,
 			msgCmd: [playSound(APP_SOUND.celebration)],

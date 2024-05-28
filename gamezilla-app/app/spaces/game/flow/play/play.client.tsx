@@ -1,6 +1,5 @@
 import { Eff, Sub } from "gamezilla-app/@/core";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import { withId } from "gamezilla-app/app/spaces/@/event";
 import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
 import { FlowVariantUIPlay } from "../@/flow";
 import { FlowPackListClient } from "../@/flow-pack";
@@ -25,23 +24,11 @@ const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
 		(model) => updateFlowPackList({ ...input, model }),
-		(model) => updateFlowPlayUI({ ...input, model }),
 		(model) => updateFlowPackGrid({ ...input, model }),
 		(model) => ScreenPuzzleClient.update({ ...input, model }),
 		(model) => ScreenSelectPackClient.update({ ...input, model }),
 		(model) => ScreenPackClient.update({ ...input, model }),
 	);
-};
-
-const updateFlowPlayUI: ClientModule["update"] = (input) => {
-	switch (input.msg?.t) {
-		case "flow-play-ui": {
-			return { model: input.model, msgCore: [withId(input.msg)] };
-		}
-		default: {
-			return { model: input.model };
-		}
-	}
 };
 
 const updateFlowPackList: ClientModule["update"] = (input) => {

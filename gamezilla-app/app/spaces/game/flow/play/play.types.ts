@@ -81,14 +81,6 @@ export type MsgToClient =
 
 export const MsgCore = p.or(
 	p.obj({
-		t: p.l("flow-play-ui"),
-		c: FlowVariantUIPlay.Msg,
-	}),
-	p.obj({
-		t: p.l("got-puzzle-screen-flow-play-msg"),
-		c: FlowVariantUIPlay.Msg,
-	}),
-	p.obj({
 		t: p.l("user-clicked-open-pack-list-item"),
 		pack: FlowPack,
 	}),
@@ -117,8 +109,6 @@ const Screen = p.or(
 );
 
 export const ModelCore = p.obj({
-	play: FlowVariantUIPlay.Model,
-	flow: FlowVariant.Model,
 	screen: Screen,
 });
 export type ModelCore = p.Infer<typeof ModelCore>;

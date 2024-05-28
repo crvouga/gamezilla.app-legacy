@@ -17,15 +17,7 @@ const initCore: CoreModule["initCore"] = () => {
 };
 
 const update: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
-	switch (msgCore.t) {
-		case "flow-play-ui": {
-			const gridPlayNew = FlowVariantUIPlay.update({
-				msg: msgCore.c,
-				model: modelCore.play,
-				flow: modelCore.flow,
-			});
-			return { ...modelCore, play: gridPlayNew };
-		}
+	switch (msgCore.t) {		
 		case "user-clicked-open-pack-list-item": {
 			return {
 				...modelCore,
