@@ -90,10 +90,7 @@ const updateWatchPuzzleComplete: ClientModule["update"] = (input) => {
 
 	const wasSolved = before.screen.opened === "puzzle-complete";
 	const isSolved = after.screen.opened === "puzzle-complete";
-
-	console.log("wasSolved", wasSolved);
-	console.log("isSolved", isSolved);
-
+	
 	if (!wasSolved && isSolved) {
 		debugger
 		return {
