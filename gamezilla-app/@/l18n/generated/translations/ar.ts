@@ -55,6 +55,7 @@ export const translations: Text = {
 	"flow.flow": "تدفق",
 	"flow.play": "لعب",
 	"flow.builder": "باني",
+	"flow.puzzle-completed": "تم حل اللغز",
 	"lang.language": "اللغة",
 	"lang.choose-language": "اختر اللغة",
 	"lang.done": "تم",

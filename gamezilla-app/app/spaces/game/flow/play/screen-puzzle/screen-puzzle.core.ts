@@ -4,10 +4,7 @@ import { FlowPuzzle } from "../../@/flow-puzzle";
 import { CoreModule } from "../play.types";
 import { ModelCore } from "./screen-puzzle.types";
 
-export const updateCore: CoreModule["updateCore"] = ({
-	modelCore,
-	msgCore,
-}) => {
+const updateCore_: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "user-clicked-exit-puzzle-button": {
 			switch (modelCore.screen.t) {
@@ -28,20 +25,40 @@ export const updateCore: CoreModule["updateCore"] = ({
 		case "got-puzzle-screen-flow-play-msg": {
 			switch (modelCore.screen.t) {
 				case "screen-puzzle": {
-					const flow = modelCore.screen.flowPuzzle.flow;
-					
 					const flowPlayNew = FlowVariantUIPlay.update({
 						msg: msgCore.c,
 						model: modelCore.screen.flowPlay,
-						flow,
+						flow: modelCore.screen.flowPuzzle.flow,
+					});
+
+					const flowPrev = FlowVariantUIPlay.deriveFlow({
+						flow: modelCore.screen.flowPuzzle.flow,
+						model: modelCore.screen.flowPlay,
 					});
 
 					const flowNew = FlowVariantUIPlay.deriveFlow({
-						flow,
+						flow: modelCore.screen.flowPuzzle.flow,
 						model: flowPlayNew,
 					});
 
-					if (Flow.isSolved(flowNew)) {
+					const wasSolved = Flow.isSolved(flowPrev);
+					const isSolved = Flow.isSolved(flowNew);
+
+					if (!wasSolved && isSolved) {
+						return {
+							...modelCore,
+							screen: {
+								...modelCore.screen,
+								flowPlay: flowPlayNew,
+								opened: "puzzle-complete",
+								state: {
+									t: "solved",
+								},
+							},
+						};
+					}
+
+					if (isSolved) {
 						return {
 							...modelCore,
 							screen: {
@@ -69,6 +86,23 @@ export const updateCore: CoreModule["updateCore"] = ({
 					return modelCore;
 				}
 			}
+		}
+		case "user-closed-puzzle-complete-dialog": {
+			if (
+				modelCore.screen.t === "screen-puzzle" &&
+				modelCore.screen.state.t === "solved" &&
+				modelCore.screen.opened === "puzzle-complete"
+			) {
+				return {
+					...modelCore,
+					screen: {
+						...modelCore.screen,
+						opened: null,
+					},
+				};
+			}
+
+			return modelCore;
 		}
 		case "user-clicked-next-puzzle-button": {
 			switch (modelCore.screen.t) {
@@ -129,10 +163,15 @@ const initCore = (input: {
 		state: {
 			t: "solving",
 		},
+		opened: null,
 		t: "screen-puzzle",
 	};
 };
 
+const updateCore: CoreModule["updateCore"] = (input) => {
+	const updated = updateCore_(input);
+	return updated;
+};
 export const ScreenPuzzleCore = {
 	updateCore,
 	initCore,

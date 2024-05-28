@@ -6,18 +6,18 @@ import { PlayClient } from "../play.client";
 import { PlayCore } from "../play.core";
 import type { ModelCore, MsgClient, MsgCore, MsgToClient } from "../play.types";
 
+export type FixtureUpdateInput = {
+	msg?: MsgClient;
+	msgServer?: MsgToClient;
+	msgCore?: WithEventMeta<MsgCore>;
+};
+
 export const FlowPlayClientFixture = async () => {
 	const f = await FlowClientFixture();
 	const initCore = PlayCore.initCore(f);
 
 	type Output = ReturnType<typeof PlayClient.update> & {
 		modelCore: ModelCore;
-	};
-
-	type Msg = {
-		msg?: MsgClient;
-		msgServer?: MsgToClient;
-		msgCore?: WithEventMeta<MsgCore>;
 	};
 
 	const render = (output: Output) => {
@@ -33,15 +33,18 @@ export const FlowPlayClientFixture = async () => {
 		return { ...rendered, msgs };
 	};
 
-	const updates = (output: Output, msgs: Msg[]): NonEmpty<Output> => {
+	const updates = (
+		output: Output,
+		inputs: FixtureUpdateInput[],
+	): NonEmpty<Output> => {
 		const outputs: NonEmpty<Output> = [output];
-		for (const msg of msgs) {
+		for (const input of inputs) {
 			const lastOutput = NonEmpty.last(outputs);
 			const nextOutput = PlayClient.update({
 				model: lastOutput.model,
 				ctx: f.ctx,
 				modelCore: lastOutput.modelCore,
-				...msg,
+				...input,
 			});
 			const nextModelCore = (nextOutput.msgCore ?? []).reduce(
 				(modelCore, msgCore) =>
@@ -56,7 +59,7 @@ export const FlowPlayClientFixture = async () => {
 		return outputs;
 	};
 
-	const update = (output: Output, msgs: Msg[]): Output => {
+	const update = (output: Output, msgs: FixtureUpdateInput[]): Output => {
 		return NonEmpty.last(updates(output, msgs));
 	};
 

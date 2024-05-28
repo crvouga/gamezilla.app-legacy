@@ -21,6 +21,9 @@ export const MsgCore = p.or(
 		prevPuzzle: FlowPuzzle,
 		prevPuzzleIndex: p.num,
 	}),
+	p.obj({
+		t: p.l("user-closed-puzzle-complete-dialog"),
+	}),
 );
 
 export type MsgCore = p.Infer<typeof MsgCore>;
@@ -42,6 +45,7 @@ export const ModelCore = p.obj({
 	flowPlay: FlowVariantUIPlay.Model,
 	puzzleIndex: p.num,
 	state: State,
+	opened: p.or(p.l("puzzle-complete"), p.l(null)),
 });
 
 export type ModelCore = p.Infer<typeof ModelCore>;

@@ -53,7 +53,7 @@ const random = async (input?: {
 		flow: FlowGridShorthand.toGrid([
 			["A", " "],
 			[" ", "A"],
-		])
+		]),
 	};
 };
 

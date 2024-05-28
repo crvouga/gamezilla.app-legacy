@@ -5,6 +5,7 @@ export * from "./button";
 export * from "./button-vertical";
 export * from "./confirmation-dialog";
 export * from "./confirmation-drawer";
+export * from "./dialog";
 export * from "./divider";
 export * from "./drawer";
 export * from "./empty-state";

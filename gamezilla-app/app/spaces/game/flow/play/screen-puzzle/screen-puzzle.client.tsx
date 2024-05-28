@@ -9,9 +9,11 @@ import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowVariantUIPlay } from "../../@/flow";
 import { ClientModule } from "../play.types";
 import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
+import { Dialog, DialogHeader, DialogSurface } from "gamezilla-app/app/@/ui";
 
 const update: ClientModule["update"] = (input) => {
 	switch (input.msg?.t) {
+		case "user-closed-puzzle-complete-dialog":
 		case "user-clicked-exit-puzzle-button":
 		case "user-clicked-next-puzzle-button":
 		case "user-clicked-prev-puzzle-button":
@@ -71,10 +73,14 @@ const View: ClientModule["View"] = (input) => {
 	const nextPuzzle = nextPuzzleId
 		? input.model.flowPuzzles[nextPuzzleId]
 		: null;
+
 	return (
-		<div className="w-full flex flex-col flex-1" data-puzzle-id={flowPuzzle.id}>
+		<div
+			className="w-full flex flex-col flex-1 overflow-scroll"
+			data-puzzle-id={flowPuzzle.id}
+		>
 			<ViewScreenTitle title={`Level ${puzzleIndex + 1}`} />
-			<div className="flex-1 flex flex-col items-center justify-center">
+			<div className="flex-1 flex flex-col items-center justify-center overflow-y-scroll">
 				<FlowVariantUIPlay.View
 					flow={flowPuzzle.flow}
 					dispatch={(c) =>
@@ -82,6 +88,19 @@ const View: ClientModule["View"] = (input) => {
 					}
 					model={flowPlay}
 				/>
+				<Dialog
+					open={
+						input.modelCore.screen.state.t === "solved" &&
+						input.modelCore.screen.opened === "puzzle-complete"
+					}
+					onClose={() =>
+						input.dispatch({ t: "user-closed-puzzle-complete-dialog" })
+					}
+				>
+					<DialogSurface>
+						<DialogHeader title={input.ctx.t("flow.puzzle-completed")} />
+					</DialogSurface>
+				</Dialog>
 			</div>
 			<ViewBottomButtonBar>
 				<ViewBottomButtonBarActionExit

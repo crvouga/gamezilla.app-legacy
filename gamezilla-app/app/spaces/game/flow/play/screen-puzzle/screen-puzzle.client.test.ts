@@ -1,9 +1,10 @@
 import { describe, expect, it } from "bun:test";
 import { didPlaySound } from "gamezilla-app/app/@/client";
 import { withEventMeta } from "gamezilla-app/app/spaces/@/event";
+import { FlowVariantUIPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
-import { FlowPlayClientFixture } from "../@/testing";
+import { FixtureUpdateInput, FlowPlayClientFixture } from "../@/testing";
 
 const Fixture = async () => {
 	const f = await FlowPlayClientFixture();
@@ -232,5 +233,25 @@ describe(import.meta.file, () => {
 		const f = await Fixture();
 		const r = f.render(f.initial);
 		expect(r.getByRole("heading", `Level ${f.puzzleIndex + 1}`)).toBeTruthy();
+	});
+
+	it("should render puzzle complete message after completing a puzzle", async () => {
+		const f = await Fixture();
+
+		const msgs = FlowVariantUIPlay.toSolutionMsgs({ flow: f.puzzle.flow }).map(
+			(c): FixtureUpdateInput => ({
+				msgCore: withEventMeta({
+					t: "got-puzzle-screen-flow-play-msg",
+					c,
+				}),
+			}),
+		);
+
+		const output = f.update(f.initial, [...msgs]);
+
+		const r = f.render(output);
+		expect(
+			r.getByRole("dialog")?.getByRole('heading', f.ctx.t("flow.puzzle-completed")),
+		).toBeTruthy();
 	});
 });

@@ -28,8 +28,15 @@ const Fixture = async () => {
 		},
 	]);
 
+	const completePuzzleMsgs = pipe(
+		FlowVariantUIPlay.toSolutionMsgs({ flow: puzzle.flow }),
+		(msgs) =>
+			msgs.map((c): MsgCore => ({ t: "got-puzzle-screen-flow-play-msg", c })),
+	);
+
 	return {
 		...f,
+		completePuzzleMsgs,
 		puzzle,
 		puzzleIndex,
 		nextPuzzle,
@@ -149,13 +156,8 @@ describe(import.meta.file, () => {
 
 	it("should go into puzzle solved state after solving", async () => {
 		const f = await Fixture();
-		const msgs = pipe(
-			FlowVariantUIPlay.toSolutionMsgs({ flow: f.puzzle.flow }),
-			(msgs) =>
-				msgs.map((c): MsgCore => ({ t: "got-puzzle-screen-flow-play-msg", c })),
-		);
 		const before = f.init;
-		const after = f.update(before, msgs);
+		const after = f.update(before, f.completePuzzleMsgs);
 		expect(before.screen.t).toBe("screen-puzzle");
 		if (before.screen.t === "screen-puzzle") {
 			expect(before.screen.state.t).toBe("solving");
@@ -165,9 +167,65 @@ describe(import.meta.file, () => {
 			expect(after.screen.state.t).toBe("solved");
 			const flow = FlowVariantUIPlay.deriveFlow({
 				flow: f.puzzle.flow,
-				model: after.screen.flowPlay
-			})
-			expect(Flow.isSolved(flow)).toBe(true)
+				model: after.screen.flowPlay,
+			});
+			expect(Flow.isSolved(flow)).toBe(true);
 		}
+	});
+
+	it("should open puzzle complete dialog after solving", async () => {
+		const f = await Fixture();
+
+		const after = f.update(f.init, f.completePuzzleMsgs);
+
+		expect(
+			after.screen.t === "screen-puzzle" &&
+				after.screen.state.t === "solved" &&
+				after.screen.opened === "puzzle-complete",
+		).toBe(true);
+	});
+
+	it("should be able to close the puzzle complete dialog", async () => {
+		const f = await Fixture();
+		const before = f.update(f.init, f.completePuzzleMsgs);
+		const after = f.update(before, [
+			{
+				t: "user-closed-puzzle-complete-dialog",
+			},
+		]);
+		expect(
+			after.screen.t === "screen-puzzle" &&
+				after.screen.state.t === "solved" &&
+				after.screen.opened === null,
+		).toBe(true);
+	});
+
+	it("should only open puzzle complete dialog when transitions to solved state", async () => {
+		const f = await Fixture();
+		const endId = Flow.randomTerminal(f.puzzle.flow)?.endId;
+
+		if (!endId) throw new Error("endId not found");
+
+		const before = f.update(f.init, [
+			...f.completePuzzleMsgs,
+			{
+				t: "user-closed-puzzle-complete-dialog",
+			},
+		]);
+		const after = f.update(before, [
+			{
+				t: "got-puzzle-screen-flow-play-msg",
+				c: {
+					t: "pressed-up",
+					nodeId: endId,
+				},
+			},
+		]);
+		expect(
+			before.screen.t === "screen-puzzle" && before.screen.opened === null,
+		).toBe(true);
+		expect(
+			after.screen.t === "screen-puzzle" && after.screen.opened === null,
+		).toBe(true);
 	});
 });

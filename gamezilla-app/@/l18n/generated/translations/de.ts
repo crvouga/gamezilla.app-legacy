@@ -51,6 +51,7 @@ export const translations: Text = {
 	"flow.flow": "Fluss",
 	"flow.play": "Spielen",
 	"flow.builder": "Baumeister",
+	"flow.puzzle-completed": "Rätsel gelöst",
 	"lang.language": "Sprache",
 	"lang.choose-language": "Sprache wählen",
 	"lang.done": "Fertig",
