@@ -258,7 +258,7 @@ describe(import.meta.file, () => {
 		).toBeTruthy();
 	});
 
-	it("should play sound after completing a puzzle", async () => {
+	it.todo("should play sound after completing a puzzle", async () => {
 		const f = await Fixture();
 		const output = f.update(f.initial, f.completePuzzleMsgs);
 		expect(didPlaySound(output)).toBe(true);

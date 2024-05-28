@@ -9,7 +9,12 @@ import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowVariantUIPlay } from "../../@/flow";
 import { ClientModule } from "../play.types";
 import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
-import { Button, Dialog, DialogHeader, DialogSurface } from "gamezilla-app/app/@/ui";
+import {
+	Button,
+	Dialog,
+	DialogHeader,
+	DialogSurface,
+} from "gamezilla-app/app/@/ui";
 import { ScreenPuzzleCore } from "./screen-puzzle.core";
 import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 
