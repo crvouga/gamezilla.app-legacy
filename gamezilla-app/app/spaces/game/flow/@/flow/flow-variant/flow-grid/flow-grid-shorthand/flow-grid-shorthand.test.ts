@@ -1,7 +1,7 @@
 import { describe, expect, it, test } from "bun:test";
-import { FlowGrid, FlowGridDimensions } from ".";
-import { Flow } from "../../flow";
-import { FlowGridShorthand } from "./flow-grid-shorthand";
+import { Flow } from "../../../flow";
+import { FlowGrid, FlowGridDimensions } from "../index";
+import * as FlowGridShorthand from "./flow-grid-shorthand";
 
 describe(import.meta.file, () => {
 	test("1x1 with A", async () => {

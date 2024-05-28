@@ -1,7 +1,7 @@
 import { NonEmpty } from "gamezilla-app/@/core";
-import { Flow } from "../../flow";
-import * as FlowGrid from "./flow-grid";
-import * as FlowGridDimensions from "./flow-grid-dimensions";
+import { Flow } from "../../../flow";
+import * as FlowGrid from "../flow-grid";
+import * as FlowGridDimensions from "../flow-grid-dimensions";
 
 //
 //
@@ -23,9 +23,16 @@ type TerminalWithPipe = AppendLowercase<Flow.GroupId>;
 
 type Empty = " ";
 
-type Element = Empty | Terminal | Pipe | TerminalWithPipe;
+export type Element = Empty | Terminal | Pipe | TerminalWithPipe;
 
 export type Model = NonEmpty<NonEmpty<Element>>;
+
+export const isModel = (maybeModel: Element[][]): maybeModel is Model =>
+	NonEmpty.is(maybeModel) &&
+	maybeModel.every(
+		(row) =>
+			NonEmpty.is(row) && row.every((element) => typeof element === "string"),
+	);
 
 //
 //
@@ -92,7 +99,7 @@ const elementToGroupId = (element: Element): Flow.GroupId | null => {
 //
 //
 
-const init = (model: Model): Model => {
+export const init = (model: Model): Model => {
 	return model;
 };
 
@@ -470,7 +477,7 @@ const maxAllBy = <T>(arr: T[], fn: (item: T) => number): T[] => {
 	return arr.filter((item) => fn(item) === max);
 };
 
-const toDimensions = (model: Model): FlowGridDimensions.Model => {
+export const toDimensions = (model: Model): FlowGridDimensions.Model => {
 	let maxWidth = 0;
 
 	for (let y = 0; y < model.length; y++) {
@@ -487,7 +494,7 @@ const toDimensions = (model: Model): FlowGridDimensions.Model => {
 	});
 };
 
-const toGrid = (model: Model): FlowGrid.Model => {
+export const toGrid = (model: Model): FlowGrid.Model => {
 	return toGrids(model)[0];
 };
 
@@ -501,7 +508,7 @@ const toGrid = (model: Model): FlowGrid.Model => {
  * 		["a", "a", "A"],
  * 	]);
  */
-const toGrids = (model: Model): NonEmpty<FlowGrid.Model> => {
+export const toGrids = (model: Model): NonEmpty<FlowGrid.Model> => {
 	const terminalsByGroupId = toTerminalsByGroupId(model);
 	const dimensions = toDimensions(model);
 	const grid = FlowGrid.init({ dimensions, terminalsByGroupId });
@@ -516,11 +523,4 @@ const toGrids = (model: Model): NonEmpty<FlowGrid.Model> => {
 		},
 	);
 	return grids;
-};
-
-export const FlowGridShorthand = {
-	init,
-	toDimensions,
-	toGrid,
-	toGrids,
 };
