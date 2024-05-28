@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { FlowVariantUIPlay } from "../../@/flow";
+import { pipe } from "gamezilla-app/@/core";
+import { Flow, FlowVariantUIPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
 import { CoreFixture } from "../@/testing";
 import { MsgCore } from "./screen-puzzle.types";
-import { pipe } from "gamezilla-app/@/core";
 
 const Fixture = async () => {
 	const f = await CoreFixture();
@@ -156,11 +156,18 @@ describe(import.meta.file, () => {
 		);
 		const before = f.init;
 		const after = f.update(before, msgs);
-		expect(
-			before.screen.t === "screen-puzzle" && before.screen.state.t === "solving",
-		).toEqual(true);
-		expect(
-			after.screen.t === "screen-puzzle" && after.screen.state.t === "solved",
-		).toEqual(true);
+		expect(before.screen.t).toBe("screen-puzzle");
+		if (before.screen.t === "screen-puzzle") {
+			expect(before.screen.state.t).toBe("solving");
+		}
+		expect(after.screen.t).toBe("screen-puzzle");
+		if (after.screen.t === "screen-puzzle") {
+			expect(after.screen.state.t).toBe("solved");
+			const flow = FlowVariantUIPlay.deriveFlow({
+				flow: f.puzzle.flow,
+				model: after.screen.flowPlay
+			})
+			expect(Flow.isSolved(flow)).toBe(true)
+		}
 	});
 });

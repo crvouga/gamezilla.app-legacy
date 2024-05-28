@@ -200,11 +200,7 @@ export const update = ({
 const updateIdle: typeof update = ({ msg, model, flow }) => {
 	switch (msg.t) {
 		case "pressed-down": {
-			const current = {
-				...flow,
-				pipesBySourceId: model.pipesBySourceId,
-				terminalsByGroupId: model.terminalsByGroupId,
-			};
+			const current = deriveFlow({ model, flow });
 
 			const groupId = Flow.toGroupId(current, msg.nodeId);
 

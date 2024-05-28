@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import * as FlowVariantPlay from "./flow-variant-ui-play";
-import { FlowGridShorthand } from "./flow-grid/flow-grid-shorthand";
 import { FlowVariant, FlowVariantUIPlay } from ".";
 import { Flow } from "../flow";
+import { FlowGridShorthand } from "./flow-grid/flow-grid-shorthand";
+import * as FlowVariantPlay from "./flow-variant-ui-play";
 
 const Fixture = ({ flow }: { flow: FlowVariant.Model }) => {
 	const init = FlowVariantPlay.init({ flow });

@@ -46,6 +46,7 @@ export const updateCore: CoreModule["updateCore"] = ({
 							...modelCore,
 							screen: {
 								...modelCore.screen,
+								flowPlay: flowPlayNew,
 								state: {
 									t: "solved",
 								},
