@@ -13,7 +13,7 @@ const some = <T>(iterable: Iterable<T>, predicate: (value: T) => boolean) => {
 };
 
 describe(import.meta.file, () => {
-	test("find solutions 2x2 with A terminals", () => {
+	test("2x2 with A terminals", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " "],
 			[" ", "A"],
@@ -39,7 +39,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test("find solutions 3x3 with A terminals and B terminals", () => {
+	test("3x3 with A terminals and B terminals", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", "B", " "],
 			[" ", " ", " "],
@@ -73,7 +73,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test("find solutions 3x3 with A terminals and B terminals and C terminals", () => {
+	test("3x3 with A terminals and B terminals and C terminals", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", "B", "C"],
 			[" ", " ", " "],
@@ -97,7 +97,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test("find solutions 3x3 with far A terminals", () => {
+	test("3x3 with far A terminals", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			[" ", " ", " "],
@@ -161,7 +161,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test("find solutions for adjacent terminals", () => {
+	test("adjacent terminals", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", "A"],
 			[" ", " "],
@@ -180,7 +180,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test("find solutions for 3x3 with far A terminals and B terminals and C terminals", () => {
+	test("3x3 with far A terminals and B terminals and C terminals", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", "C", "C"],
 			[" ", " ", " "],
@@ -201,7 +201,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test("find solutions for 5x5 puzzle", () => {
+	test("5x5 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", "D", " ", "C"],
 			[" ", " ", "B", " ", "E"],
@@ -229,7 +229,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test("find solutions for 6x6 puzzle", () => {
+	test("6x6 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", "D", " ", "C", "F"],
 			[" ", " ", "B", " ", "E", " "],
@@ -259,7 +259,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test("find solutions for 7x7 puzzle", () => {
+	test("7x7 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			[" ", " ", "C", "D", "E", " ", "E"],
 			[" ", " ", "F", " ", " ", " ", " "],
@@ -290,7 +290,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test("find solutions for 8x8 puzzle", () => {
+	test("8x8 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " "],
 			[" ", " ", "C", "D", "E", " ", "E", " "],
@@ -322,7 +322,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test("find solutions for 9x9 puzzle", () => {
+	test("9x9 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " ", "J"],
 			[" ", " ", "C", "D", "E", " ", "E", " ", " "],
@@ -356,7 +356,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test("find solutions for 10x10 puzzle", () => {
+	test("10x10 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " ", "J", "K"],
 			[" ", " ", "C", "D", "E", " ", "E", " ", " ", " "],
@@ -392,7 +392,7 @@ describe(import.meta.file, () => {
 		}
 	});
 
-	test("find solutions for 11x11 puzzle", () => {
+	test("11x11 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " ", "J", "K", "L"],
 			[" ", " ", "C", "D", "E", " ", "E", " ", " ", " ", " "],
@@ -430,7 +430,7 @@ describe(import.meta.file, () => {
 		}
 	});
 
-	test("find solutions for 12x12 puzzle", () => {
+	test("12x12 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " ", "J", "K", "L", "M"],
 			[" ", " ", "C", "D", "E", " ", "E", " ", " ", " ", " ", " "],
@@ -470,7 +470,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	test("find solutions for 13x13 puzzle", () => {
+	test("13x13 puzzle", () => {
 		const grid = FlowGridShorthand.toGrid([
 			["A", " ", " ", "A", "B", " ", " ", " ", "J", "K", "L", "M", "N"],
 			[" ", " ", "C", "D", "E", " ", "E", " ", " ", " ", " ", " ", " "],
