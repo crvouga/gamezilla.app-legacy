@@ -22,7 +22,7 @@ const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
 		(model) => updateMain({ ...input, model }),
-		(model) => updateWatchPuzzleComplete({ ...input, model }),
+		(model) => updatePuzzleCompleted({ ...input, model }),
 	);
 };
 
@@ -66,7 +66,7 @@ const updateMain: ClientModule["update"] = (input) => {
 	};
 };
 
-const updateWatchPuzzleComplete: ClientModule["update"] = (input) => {
+const updatePuzzleCompleted: ClientModule["update"] = (input) => {
 	if (!input.msgCore) {
 		return {
 			model: input.model,
