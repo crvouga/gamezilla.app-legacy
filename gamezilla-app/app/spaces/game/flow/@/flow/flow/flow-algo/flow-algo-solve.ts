@@ -37,14 +37,16 @@ const countTurns = (
 
 
 const calculateHeuristic = (
+    _model: Flow.Model,
 	currentNode: Flow.NodeId,
 	endNode: Flow.NodeId,
 	path: Flow.Edge[],
 	distance: (a: Flow.NodeId, b: Flow.NodeId) => number
 ): number => {
 	const distanceHeuristic = distance(currentNode, endNode);
-	const turnsHeuristic = countTurns(path, distance);
-	return distanceHeuristic + turnsHeuristic * 1.5;
+    const turnsHeuristic = countTurns(path, distance);
+    const heuristic = distanceHeuristic + turnsHeuristic * 1.5
+    return heuristic
 };
 
 
@@ -75,11 +77,11 @@ const toPossiblePipelines = function* (input: {
 		const { path, currentNode, visited, cost } = queue.extractMin()!;
 
 		if (currentNode === input.endId) {
-			const normalizedPath = normalizePath(path);
+            const normalizedPath = normalizePath(path);
 			if (!visitedPaths.has(normalizedPath)) {
-				visitedPaths.add(normalizedPath);
-				yield path;
-			}
+                visitedPaths.add(normalizedPath);
+                yield path;
+            }
 			continue;
 		}
 
@@ -97,7 +99,7 @@ const toPossiblePipelines = function* (input: {
 			const newPath = [...path, edgeOut];
 			const newVisited = new Set(visited).add(edgeOut.targetId);
 			const newCost = cost + 1;
-			const heuristic = calculateHeuristic(edgeOut.targetId, input.endId, newPath, input.distance);
+			const heuristic = calculateHeuristic(input.model, edgeOut.targetId, input.endId, newPath, input.distance);
 
 			queue.insert({
 				path: newPath,
@@ -106,7 +108,7 @@ const toPossiblePipelines = function* (input: {
 				cost: newCost,
 				heuristic,
 			});
-		}
+        }
 	}
 };
 
