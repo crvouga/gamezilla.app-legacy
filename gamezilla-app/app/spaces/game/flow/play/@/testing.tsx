@@ -46,7 +46,8 @@ export const FlowPlayClientFixture = async () => {
 				modelCore: lastOutput.modelCore,
 				...input,
 			});
-			const nextModelCore = (nextOutput.msgCore ?? []).reduce(
+			const msgCore = [...(input.msgCore ? [input.msgCore] : []), ...(nextOutput.msgCore ?? [])].flat(2);
+			const nextModelCore = msgCore.reduce(
 				(modelCore, msgCore) =>
 					PlayCore.updateCore({ ctx: f.ctx, modelCore, msgCore }),
 				lastOutput.modelCore,
