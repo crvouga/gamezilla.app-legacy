@@ -4,7 +4,7 @@ import { FlowPuzzle } from "../../@/flow-puzzle";
 import { CoreModule } from "../play.types";
 import { ModelCore } from "./screen-puzzle.types";
 
-const updateCore_: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
+const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 	switch (msgCore.t) {
 		case "user-clicked-exit-puzzle-button": {
 			switch (modelCore.screen.t) {
@@ -173,19 +173,23 @@ const watchPuzzleComplete = (input: {
 };
 
 const updateCore: CoreModule["updateCore"] = (input) => {
-	const updated = updateCore_(input);
-	if (input.modelCore.screen.t === 'screen-puzzle' && updated.screen.t === "screen-puzzle") {
+	const updated = updateCoreMain(input);
+	if (
+		input.modelCore.screen.t === "screen-puzzle" &&
+		updated.screen.t === "screen-puzzle"
+	) {
 		const modelNew = watchPuzzleComplete({
 			before: input.modelCore.screen,
 			after: updated.screen,
-		})
+		});
 		return {
 			...updated,
 			screen: modelNew,
-		}
+		};
 	}
 	return updated;
 };
+
 export const ScreenPuzzleCore = {
 	updateCore,
 	initCore,

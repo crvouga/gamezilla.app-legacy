@@ -151,7 +151,12 @@ const View: ClientModule["View"] = (input) => {
 				>
 					<DialogSurface>
 						<DialogHeader title={input.ctx.t("flow.puzzle-completed")} />
-						<Button text="Next puzzle" />
+						{nextPuzzle && (
+							<Button
+								text="Next puzzle"
+								onClick={() => nextPuzzle && input.dispatch({t: 'user-clicked-next-puzzle-button', nextPuzzle, nextPuzzleIndex})}
+							/>
+						)}
 					</DialogSurface>
 				</Dialog>
 			</div>
