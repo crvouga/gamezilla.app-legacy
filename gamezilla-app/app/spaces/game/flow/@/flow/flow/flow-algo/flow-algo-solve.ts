@@ -9,6 +9,7 @@ type QueueItem = {
 	heuristic: number;
 };
 
+
 const calculateDirection = (
 	sourceId: Flow.NodeId,
 	targetId: Flow.NodeId,
@@ -17,6 +18,7 @@ const calculateDirection = (
 	const dist = distance(sourceId, targetId);
 	return `${sourceId}${targetId}${dist}`;
 };
+
 
 const countTurns = (
 	path: Flow.Edge[],
@@ -33,15 +35,21 @@ const countTurns = (
 	return turns;
 };
 
+
 const calculateHeuristic = (
 	currentNode: Flow.NodeId,
 	endNode: Flow.NodeId,
 	path: Flow.Edge[],
 	distance: (a: Flow.NodeId, b: Flow.NodeId) => number
 ): number => {
-    const distanceHeuristic = distance(currentNode, endNode);
+	const distanceHeuristic = distance(currentNode, endNode);
 	const turnsHeuristic = countTurns(path, distance);
-	return distanceHeuristic + turnsHeuristic * 1.5 
+	return distanceHeuristic + turnsHeuristic * 1.5;
+};
+
+
+const normalizePath = (path: Flow.Edge[]): string => {
+	return path.map(edge => `${edge.sourceId}-${edge.targetId}`).sort().join(',');
 };
 
 const toPossiblePipelines = function* (input: {
@@ -52,6 +60,7 @@ const toPossiblePipelines = function* (input: {
 	distance: (a: Flow.NodeId, b: Flow.NodeId) => number;
 }): Iterable<Flow.Edge[]> {
 	const queue = new MinHeap<QueueItem>((a, b) => a.heuristic - b.heuristic);
+	const visitedPaths = new Set<string>(); 
 
 	const initialHeuristic = input.distance(input.startId, input.endId);
 	queue.insert({
@@ -66,7 +75,11 @@ const toPossiblePipelines = function* (input: {
 		const { path, currentNode, visited, cost } = queue.extractMin()!;
 
 		if (currentNode === input.endId) {
-			yield path;
+			const normalizedPath = normalizePath(path);
+			if (!visitedPaths.has(normalizedPath)) {
+				visitedPaths.add(normalizedPath);
+				yield path;
+			}
 			continue;
 		}
 
@@ -84,7 +97,7 @@ const toPossiblePipelines = function* (input: {
 			const newPath = [...path, edgeOut];
 			const newVisited = new Set(visited).add(edgeOut.targetId);
 			const newCost = cost + 1;
-			const heuristic = calculateHeuristic(edgeOut.targetId, input.endId, newPath, input.distance) 
+			const heuristic = calculateHeuristic(edgeOut.targetId, input.endId, newPath, input.distance);
 
 			queue.insert({
 				path: newPath,
