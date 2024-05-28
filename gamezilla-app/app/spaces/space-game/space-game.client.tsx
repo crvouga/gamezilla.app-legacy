@@ -130,52 +130,50 @@ const inputToSpaceId = (input: Parameters<SpaceClientModule["update"]>[0]) => {
 };
 
 const updateGame: SpaceClientModule["update"] = (input) => {
-	const { ctx, model, msgServer, msgEvt, msg, msgSpaceEvent } = input;
-
-	if (!ctx.currentUserId) {
-		return { model };
+	if (!input.ctx.currentUserId) {
+		return { model: input.model };
 	}
 
 	const spaceId = inputToSpaceId(input);
 
 	if (!spaceId) {
-		return { model };
+		return { model: input.model };
 	}
 
-	const spaceState = Spaces.toSpaceStarted(model, spaceId);
+	const spaceState = Spaces.toSpaceStarted(input.model, spaceId);
 
 	if (!spaceState) {
-		return { model };
+		return { model: input.model };
 	}
 
 	const modelCore = spaceState.game;
 
 	if (!modelCore) {
-		return { model };
+		return { model: input.model };
 	}
 
-	const msgSpaceEventWithMeta = msgSpaceEvent?.eventId
-		? Spaces.toEventWithMeta(model, spaceId, msgSpaceEvent?.eventId)
+	const msgSpaceEventWithMeta = input.msgSpaceEvent?.eventId
+		? Spaces.toEventWithMeta(input.model, spaceId, input.msgSpaceEvent?.eventId)
 		: null;
 
-	const gameModel = model.games[spaceId] ?? GameClient.init(modelCore.t);
+	const modelGame = input.model.games[spaceId] ?? GameClient.init(modelCore.t);
 
 	const gameUpdated = GameClient.update({
 		ctx: {
-			...ctx,
+			...input.ctx,
 			space: spaceState,
-			currentUserId: ctx.currentUserId,
+			currentUserId: input.ctx.currentUserId,
 		},
-		model: gameModel,
+		model: modelGame,
 		msgCore:
 			msgSpaceEventWithMeta?.t === "game"
 				? { ...msgSpaceEventWithMeta, ...msgSpaceEventWithMeta.c }
 				: null,
 		modelCore: modelCore,
-		msgServer: msgServer?.t === "game" ? msgServer.c : null,
+		msgServer: input.msgServer?.t === "game" ? input.msgServer.c : null,
 		msgCmd: null,
-		msgEvt,
-		msg: msg?.t === "game" ? msg.c : null,
+		msgEvt: input.msgEvt,
+		msg: input.msg?.t === "game" ? input.msg.c : null,
 	});
 
 	const msgSpaceEventNew = (gameUpdated.msgCore ?? []).map(
@@ -184,9 +182,9 @@ const updateGame: SpaceClientModule["update"] = (input) => {
 
 	return {
 		model: {
-			...model,
+			...input.model,
 			games: {
-				...model.games,
+				...input.model.games,
 				[spaceId]: gameUpdated.model,
 			},
 		},

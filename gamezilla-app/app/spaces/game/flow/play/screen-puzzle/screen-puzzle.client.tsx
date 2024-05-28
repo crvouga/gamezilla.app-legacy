@@ -21,8 +21,8 @@ import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-c
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
-		(model) => updateWatchPuzzleComplete({ ...input, model }),
 		(model) => updateMain({ ...input, model }),
+		(model) => updateWatchPuzzleComplete({ ...input, model }),
 	);
 };
 
