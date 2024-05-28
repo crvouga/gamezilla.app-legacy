@@ -74,9 +74,9 @@ const updateWatchPuzzleComplete: ClientModule["update"] = (input) => {
 	}
 	const before = input.modelCore;
 	const after = ScreenPuzzleCore.updateCore({
-		ctx: input.ctx,
 		modelCore: input.modelCore,
 		msgCore: input.msgCore,
+		ctx: input.ctx,
 	});
 
 	if (
