@@ -51,8 +51,20 @@ const Fixture = async () => {
 	const lastPuzzle = nextPuzzle;
 	const lastPuzzleIndex = 2;
 
+	const completePuzzleMsgs = FlowVariantUIPlay.toSolutionMsgs({
+		flow: puzzle.flow,
+	}).map(
+		(c): FixtureUpdateInput => ({
+			msgCore: withEventMeta({
+				t: "got-puzzle-screen-flow-play-msg",
+				c,
+			}),
+		}),
+	);
+
 	return {
 		...f,
+		completePuzzleMsgs,
 		initial,
 		pack,
 		puzzle,
@@ -237,21 +249,18 @@ describe(import.meta.file, () => {
 
 	it("should render puzzle complete message after completing a puzzle", async () => {
 		const f = await Fixture();
-
-		const msgs = FlowVariantUIPlay.toSolutionMsgs({ flow: f.puzzle.flow }).map(
-			(c): FixtureUpdateInput => ({
-				msgCore: withEventMeta({
-					t: "got-puzzle-screen-flow-play-msg",
-					c,
-				}),
-			}),
-		);
-
-		const output = f.update(f.initial, [...msgs]);
-
+		const output = f.update(f.initial, f.completePuzzleMsgs);
 		const r = f.render(output);
 		expect(
-			r.getByRole("dialog")?.getByRole('heading', f.ctx.t("flow.puzzle-completed")),
+			r
+				.getByRole("dialog")
+				?.getByRole("heading", f.ctx.t("flow.puzzle-completed")),
 		).toBeTruthy();
+	});
+
+	it("should play sound after completing a puzzle", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, f.completePuzzleMsgs);
+		expect(didPlaySound(output)).toBe(true);
 	});
 });

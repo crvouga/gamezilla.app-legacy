@@ -9,9 +9,19 @@ import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowVariantUIPlay } from "../../@/flow";
 import { ClientModule } from "../play.types";
 import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
-import { Dialog, DialogHeader, DialogSurface } from "gamezilla-app/app/@/ui";
+import { Button, Dialog, DialogHeader, DialogSurface } from "gamezilla-app/app/@/ui";
+import { ScreenPuzzleCore } from "./screen-puzzle.core";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 
 const update: ClientModule["update"] = (input) => {
+	return GameClientModule.andThen(
+		{ model: input.model },
+		(model) => updateWatchPuzzleComplete({ ...input, model }),
+		(model) => updateMain({ ...input, model }),
+	);
+};
+
+const updateMain: ClientModule["update"] = (input) => {
 	switch (input.msg?.t) {
 		case "user-closed-puzzle-complete-dialog":
 		case "user-clicked-exit-puzzle-button":
@@ -46,6 +56,43 @@ const update: ClientModule["update"] = (input) => {
 			};
 		}
 	}
+	return {
+		model: input.model,
+	};
+};
+
+const updateWatchPuzzleComplete: ClientModule["update"] = (input) => {
+	if (!input.msgCore) {
+		return {
+			model: input.model,
+		};
+	}
+	const before = input.modelCore;
+	const after = ScreenPuzzleCore.updateCore({
+		ctx: input.ctx,
+		modelCore: input.modelCore,
+		msgCore: input.msgCore,
+	});
+
+	if (
+		before.screen.t !== "screen-puzzle" ||
+		after.screen.t !== "screen-puzzle"
+	) {
+		return {
+			model: input.model,
+		};
+	}
+
+	const wasSolved = before.screen.opened === "puzzle-complete";
+	const isSolved = after.screen.opened === "puzzle-complete";
+
+	if (!wasSolved && isSolved) {
+		return {
+			model: input.model,
+			msgCmd: [playSound(APP_SOUND.celebration)],
+		};
+	}
+
 	return {
 		model: input.model,
 	};
@@ -99,6 +146,7 @@ const View: ClientModule["View"] = (input) => {
 				>
 					<DialogSurface>
 						<DialogHeader title={input.ctx.t("flow.puzzle-completed")} />
+						<Button text="Next puzzle" />
 					</DialogSurface>
 				</Dialog>
 			</div>

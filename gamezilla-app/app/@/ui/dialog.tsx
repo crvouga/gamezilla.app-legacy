@@ -29,7 +29,7 @@ export const Dialog = (props: {
 
 export const DialogSurface = (props: { children: VDomChildren }) => {
 	return (
-		<div className="flex w-80 flex-col gap-6 rounded-lg bg-neutral-950 p-6">
+		<div className="flex w-80 flex-col gap-6 rounded-lg bg-neutral-900 p-6">
 			{props.children}
 		</div>
 	);
