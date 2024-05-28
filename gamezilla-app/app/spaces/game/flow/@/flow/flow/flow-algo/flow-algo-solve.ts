@@ -1,34 +1,31 @@
 import { MinHeap } from "gamezilla-app/@/min-heap/min-heap";
 import * as Flow from "../flow";
 
-const calculateDirection = (
-	sourceId: Flow.NodeId,
-	targetId: Flow.NodeId,
-	distance: (a: Flow.NodeId, b: Flow.NodeId) => number,
-): string => {
-	const dist = distance(sourceId, targetId);
-	return `${sourceId}${targetId}${dist}`;
+export type Config = {
+	distance: (a: Flow.NodeId, b: Flow.NodeId) => number;
 };
 
-const countTurns = (
-	path: Flow.Edge[],
-	distance: (a: Flow.NodeId, b: Flow.NodeId) => number,
-): number => {
+const calculateDirection = (
+	config: Config,
+	sourceId: Flow.NodeId,
+	targetId: Flow.NodeId,
+): string => {
+	const distance = config.distance(sourceId, targetId);
+	return `${sourceId}${targetId}${distance}`;
+};
+
+const countTurns = (config: Config, path: Flow.Edge[]): number => {
 	let turns = 0;
 	for (let i = 1; i < path.length; i++) {
 		const prevDirection = calculateDirection(
-			// biome-ignore lint/style/noNonNullAssertion: <explanation>
+			config,
 			path[i - 1]!.sourceId,
-			// biome-ignore lint/style/noNonNullAssertion: <explanation>
 			path[i - 1]!.targetId,
-			distance,
 		);
 		const currDirection = calculateDirection(
-			// biome-ignore lint/style/noNonNullAssertion: <explanation>
+			config,
 			path[i]!.sourceId,
-			// biome-ignore lint/style/noNonNullAssertion: <explanation>
 			path[i]!.targetId,
-			distance,
 		);
 		if (prevDirection !== currDirection) {
 			turns++;
@@ -38,14 +35,13 @@ const countTurns = (
 };
 
 const calculateHeuristic = (
-	_model: Flow.Model,
+	config: Config,
 	currentNode: Flow.NodeId,
 	endNode: Flow.NodeId,
 	path: Flow.Edge[],
-	distance: (a: Flow.NodeId, b: Flow.NodeId) => number,
 ): number => {
-	const distanceHeuristic = distance(currentNode, endNode);
-	const turnsHeuristic = countTurns(path, distance);
+	const distanceHeuristic = config.distance(currentNode, endNode);
+	const turnsHeuristic = countTurns(config, path);
 	const heuristic = distanceHeuristic + turnsHeuristic * 1.5;
 	return heuristic;
 };
@@ -58,11 +54,11 @@ const normalizePath = (path: Flow.Edge[]): string => {
 };
 
 const toPossiblePipelines = function* (input: {
+	config: Config;
 	model: Flow.Model;
 	groupId: Flow.GroupId;
 	startId: Flow.NodeId;
 	endId: Flow.NodeId;
-	distance: (a: Flow.NodeId, b: Flow.NodeId) => number;
 }): Iterable<Flow.Edge[]> {
 	type QueueItem = {
 		path: Flow.Edge[];
@@ -80,11 +76,10 @@ const toPossiblePipelines = function* (input: {
 		currentNode: input.startId,
 		visited: new Set([input.startId]),
 		cost: 0,
-		heuristic: input.distance(input.startId, input.endId),
+		heuristic: input.config.distance(input.startId, input.endId),
 	});
 
 	while (!queue.isEmpty()) {
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
 		const { path, currentNode, visited, cost } = queue.extractMin()!;
 
 		if (currentNode === input.endId) {
@@ -111,11 +106,10 @@ const toPossiblePipelines = function* (input: {
 			const newVisited = new Set(visited).add(edgeOut.targetId);
 			const newCost = cost + 1;
 			const heuristic = calculateHeuristic(
-				input.model,
+				input.config,
 				edgeOut.targetId,
 				input.endId,
 				newPath,
-				input.distance,
 			);
 
 			queue.insert({
@@ -149,48 +143,51 @@ const drawPipeline = (
 	};
 };
 
-export const solve = function* (
+const solveStep = function* (
+	config: Config,
 	model: Flow.Model,
-	distance: (a: Flow.NodeId, b: Flow.NodeId) => number,
+	terminals: Flow.Terminal[],
 ): Iterable<Flow.Model> {
 	if (Flow.isSolved(model)) {
 		yield model;
 		return;
 	}
 
+	const terminal = terminals[0]
+
+	if (!terminal || !terminal.endId) {
+		return;
+	}
+
+	const possiblePipelines = toPossiblePipelines({
+		config,
+		model,
+		endId: terminal.endId,
+		groupId: terminal.groupId,
+		startId: terminal.startId,
+	});
+
+	for (const possiblePipeline of possiblePipelines) {
+		const drew = drawPipeline(model, terminal, possiblePipeline);
+		yield* solveStep(config, drew, terminals.slice(1));
+	}
+};
+
+export const solve = function* (
+	config: Config,
+	model: Flow.Model,
+): Iterable<Flow.Model> {
 	const terminals = Flow.toTerminals(model);
 
 	terminals.sort((a, b) => {
 		if (a.endId && b.endId) {
-			return distance(a.startId, a.endId) - distance(b.startId, b.endId);
+			return (
+				config.distance(a.startId, a.endId) -
+				config.distance(b.startId, b.endId)
+			);
 		}
 		return 0;
 	});
 
-	for (const terminal of terminals) {
-		if (!terminal.endId) {
-			continue;
-		}
-
-		if (Flow.isConnectedWithPipes(model, terminal.startId, terminal.endId)) {
-			continue;
-		}
-
-		const possiblePipelines = toPossiblePipelines({
-			model,
-			endId: terminal.endId,
-			groupId: terminal.groupId,
-			startId: terminal.startId,
-			distance,
-		});
-
-		for (const possiblePipeline of possiblePipelines) {
-			const drew = drawPipeline(model, terminal, possiblePipeline);
-			for (const solution of solve(drew, distance)) {
-				yield solution;
-			}
-		}
-
-		break;
-	}
+	yield* solveStep(config, model, terminals);
 };
