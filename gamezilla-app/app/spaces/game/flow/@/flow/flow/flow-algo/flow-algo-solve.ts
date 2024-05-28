@@ -9,24 +9,24 @@ type QueueItem = {
 	heuristic: number;
 };
 
-const calculateDirection = (edge: Flow.Edge): string => {
-	if (edge.sourceId === edge.targetId) {
-		return "self";
-	}
-	if (edge.sourceId[0] === edge.targetId[0]) {
-		return "horizontal";
-	}
-	if (edge.sourceId[1] === edge.targetId[1]) {
-		return "vertical";
-	}
-	return "self";
+
+const calculateDirection = (
+	sourceId: Flow.NodeId,
+	targetId: Flow.NodeId,
+	distance: (a: Flow.NodeId, b: Flow.NodeId) => number
+): string => {
+    const dist = distance(sourceId, targetId);
+	return `${sourceId}_${targetId}_${dist}`; 
 };
 
-const countTurns = (path: Flow.Edge[]): number => {
+const countTurns = (
+	path: Flow.Edge[],
+	distance: (a: Flow.NodeId, b: Flow.NodeId) => number
+): number => {
 	let turns = 0;
 	for (let i = 1; i < path.length; i++) {
-		const prevDirection = calculateDirection(path[i - 1]!);
-		const currDirection = calculateDirection(path[i]!);
+		const prevDirection = calculateDirection(path[i - 1]!.sourceId, path[i - 1]!.targetId, distance);
+		const currDirection = calculateDirection(path[i]!.sourceId, path[i]!.targetId, distance);
 		if (prevDirection !== currDirection) {
 			turns++;
 		}
@@ -74,7 +74,7 @@ const toPossiblePipelines = function* (input: {
 			const newPath = [...path, edgeOut];
 			const newVisited = new Set(visited).add(edgeOut.targetId);
 			const newCost = cost + 1;
-			const turns = countTurns(newPath);
+			const turns = countTurns(newPath, input.distance);
 			const newHeuristic =
 				newCost + input.distance(edgeOut.targetId, input.endId) + turns;
 
