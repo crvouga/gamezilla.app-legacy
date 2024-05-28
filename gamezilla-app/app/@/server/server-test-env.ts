@@ -18,10 +18,9 @@ export type ITestEnv =
 	  };
 
 export const AppServerTestEnv = async (): Promise<ITestEnv> => {
-	if (process.env["IS_INTEGRATION_TEST"] === "true") {
+	if (process.env.IS_INTEGRATION_TEST === "true") {
 		const logger = ILogger.prefix("integration-test", Logger({ t: "noop" }));
-
-		const DATABASE_URL = process.env["DATABASE_URL"];
+		const DATABASE_URL = process.env.DATABASE_URL;
 
 		if (!DATABASE_URL) {
 			throw new Error("DATABASE_URL not set");
@@ -33,16 +32,10 @@ export const AppServerTestEnv = async (): Promise<ITestEnv> => {
 			logger: ILogger.prefix("db-conn-sql", logger),
 		});
 
-		const REDIS_URL = process.env["REDIS_URL"];
-
-		if (!REDIS_URL) {
-			throw new Error("REDIS_URL not set");
-		}
-
 		const dbConnKv = await DbConnKv({
-			t: "redis",
+			t: "postgres",
 			logger: ILogger.prefix("db-conn-kv", logger),
-			url: REDIS_URL,
+			dbConnSql,
 		});
 
 		return {

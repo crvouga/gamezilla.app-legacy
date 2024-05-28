@@ -15,7 +15,6 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 	logger: ILogger;
 	codebaseVersionId: string;
 	server: ServerNode;
-	redisUrl: string;
 }): Promise<
 	IServerTransport<{
 		MsgToClient: MsgToClient;
@@ -34,7 +33,7 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 	});
 
 	io.on("connection", (socket) => {
-		const maybeSessionId = socket.handshake.auth["sessionId"];
+		const maybeSessionId = socket.handshake.auth.sessionId;
 
 		const sessionId = SessionId.is(maybeSessionId)
 			? maybeSessionId
@@ -53,7 +52,7 @@ export const ServerTransportSocketIO = async <MsgToServer, MsgToClient>({
 
 		socket.on(
 			"to-server",
-			(msg: MsgClientToMsgServer<MsgToServer>, acknowledge: Function) => {
+			(msg: MsgClientToMsgServer<MsgToServer>, acknowledge: () => void) => {
 				if (msg.codebaseVersionId !== codebaseVersionId) {
 					transport.wire.pub({
 						t: "got-bad-msgs",

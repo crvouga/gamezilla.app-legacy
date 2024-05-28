@@ -14,7 +14,7 @@ import {
 	type ServerCtx,
 	type ServerEvent,
 } from "gamezilla-app/app/@/server";
-import { DbConnKv, IDbConnKv } from "./@/server/db-conn-kv";
+import { DbConnKv, type IDbConnKv } from "./@/server/db-conn-kv";
 import { DbConnSql, type IDbConnSql } from "./@/server/db-conn-sql";
 import { ILogger } from "./@/server/logger/logger";
 import { SMS, type ISMS } from "./@/server/sms";
@@ -68,10 +68,10 @@ export const getDeps = async ({
 	logger: ILogger;
 	server: ServerInstance;
 }): Promise<Deps> => {
-	const databaseUrl = process.env["DATABASE_URL"];
+	const databaseUrl = process.env.DATABASE_URL;
 
 	if (!databaseUrl) {
-		throw new Error(`DATABASE_URL not set`);
+		throw new Error("DATABASE_URL not set");
 	}
 
 	const dbConnSql = await DbConnSql({
@@ -79,12 +79,6 @@ export const getDeps = async ({
 		databaseUrl,
 		logger: ILogger.prefix("db-conn-sql", logger),
 	});
-
-	const redisUrl = process.env["REDIS_URL"];
-
-	if (!redisUrl) {
-		throw new Error(`REDIS_URL not set`);
-	}
 
 	const loggerDbConnKv = ILogger.prefix("db-conn-kv", logger);
 
@@ -129,7 +123,6 @@ export const getDeps = async ({
 	const transport = await ServerTransport<MsgToServer, MsgToClient>({
 		codebaseVersionId,
 		server,
-		redisUrl,
 		logger: ILogger.prefix("transport", logger),
 	});
 
