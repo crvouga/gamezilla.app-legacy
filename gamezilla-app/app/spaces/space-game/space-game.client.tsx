@@ -272,17 +272,17 @@ const View: SpaceClientModule["View"] = (input) => {
 	const { model, ctx, dispatch } = input;
 
 	if (!ctx.space) {
-		return <>Missing space</>;
+		return null
 	}
 
 	if (!ctx.currentUserId) {
-		return <>Missing current user id</>;
+		return null
 	}
 
 	const space = Spaces.toSpaceStarted(model, ctx.space?.spaceId);
 
 	if (!space) {
-		return <>Space not started</>;
+		return null
 	}
 
 	if (space.game) {
