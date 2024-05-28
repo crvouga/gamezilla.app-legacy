@@ -147,7 +147,7 @@ describe(import.meta.file, () => {
 		}
 	});
 
-	it.todo("should go into puzzle solved state after solving", async () => {
+	it("should go into puzzle solved state after solving", async () => {
 		const f = await Fixture();
 		const msgs = pipe(
 			FlowVariantUIPlay.toSolutionMsgs({ flow: f.puzzle.flow }),
@@ -157,7 +157,7 @@ describe(import.meta.file, () => {
 		const before = f.init;
 		const after = f.update(before, msgs);
 		expect(
-			after.screen.t === "screen-puzzle" && after.screen.state.t === "solving",
+			before.screen.t === "screen-puzzle" && before.screen.state.t === "solving",
 		).toEqual(true);
 		expect(
 			after.screen.t === "screen-puzzle" && after.screen.state.t === "solved",

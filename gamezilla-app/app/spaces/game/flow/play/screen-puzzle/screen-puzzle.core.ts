@@ -1,4 +1,4 @@
-import { FlowVariantUIPlay } from "../../@/flow";
+import { Flow, FlowVariantUIPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
 import { CoreModule } from "../play.types";
@@ -28,27 +28,38 @@ export const updateCore: CoreModule["updateCore"] = ({
 		case "got-puzzle-screen-flow-play-msg": {
 			switch (modelCore.screen.t) {
 				case "screen-puzzle": {
+					const flow = modelCore.screen.flowPuzzle.flow;
 					const flowPlayNew = FlowVariantUIPlay.update({
 						msg: msgCore.c,
 						model: modelCore.screen.flowPlay,
-						flow: modelCore.screen.flowPuzzle.flow,
+						flow,
 					});
 
-					// const flowNew = FlowVariantUIPlay.deriveFlow({
-					// 	flow: modelCore.screen.flowPuzzle.flow,
-					// 	model: flowPlayNew,
-					// });
+					const flowNew = FlowVariantUIPlay.deriveFlow({
+						flow,
+						model: flowPlayNew,
+					});
 
-					// if (Flow.isCompleted(flowNew)) {
-					// 	//
-					// 	return modelCore
-					// }
+					if (Flow.isSolved(flowNew)) {
+						return {
+							...modelCore,
+							screen: {
+								...modelCore.screen,
+								state: {
+									t: "solved",
+								},
+							},
+						};
+					}
 
 					return {
 						...modelCore,
 						screen: {
 							...modelCore.screen,
 							flowPlay: flowPlayNew,
+							state: {
+								t: "solving",
+							},
 						},
 					};
 				}

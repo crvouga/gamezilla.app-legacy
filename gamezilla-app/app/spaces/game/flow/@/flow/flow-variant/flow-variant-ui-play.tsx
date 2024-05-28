@@ -106,24 +106,27 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 	return msgs;
 };
 
+export const toSolutionMsgs = ({
+	flow,
+}: { flow: FlowVariant.Model }): Msg[] => {
+	const solutions = FlowAlgoSolve.solve(
+		{ distance: FlowVariant.distance(flow) },
+		flow,
+	);
 
-export const toSolutionMsgs = ({ flow }: { flow: FlowVariant.Model }): Msg[] => {
-	const solutions = FlowAlgoSolve.solve({ distance: FlowVariant.distance(flow) }, flow);
-	
-	const solution = first(solutions)
+	const solution = first(solutions);
 
 	if (!solution) {
-		return []
+		return [];
 	}
 
 	const msgs: Msg[] = [];
 
-	
-for (const terminal of Flow.toTerminals(solution)) {
+	for (const terminal of Flow.toTerminals(solution)) {
 		msgs.push({
-			t: 'pressed-down',
+			t: "pressed-down",
 			nodeId: terminal.startId,
-		})
+		});
 
 		for (const pipe of Flow.toPipeline(solution, terminal.startId)) {
 			const edge = Flow.toEdge(solution, pipe.edgeId);
@@ -131,30 +134,21 @@ for (const terminal of Flow.toTerminals(solution)) {
 				continue;
 			}
 			msgs.push({
-				t: 'dragged-over',
+				t: "dragged-over",
 				nodeId: edge.targetId,
-			})
-		}
-
-		if(terminal.endId) {
-			msgs.push({
-				t: 'pressed-up',
-				nodeId: terminal.endId,
-			})
+			});
 		}
 	}
-	
-	return msgs
-};
 
+	return msgs;
+};
 
 const first = <T,>(iterable: Iterable<T>): T | null => {
 	for (const item of iterable) {
 		return item;
 	}
-	return null
-}
-
+	return null;
+};
 
 //
 //

@@ -1,8 +1,8 @@
 import { Posix } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { UserId } from "gamezilla-app/app/@/data";
-import { FlowVariant, FlowVariantDimensions } from "../flow";
-import { FlowGrid } from "../flow/flow-variant/flow-grid";
+import { FlowVariant } from "../flow";
+import { FlowGridShorthand } from "../flow/flow-variant/flow-grid/flow-grid-shorthand";
 import { FlowPuzzleId } from "./flow-puzzle-id";
 import { FlowPuzzleName } from "./flow-puzzle-name";
 
@@ -50,20 +50,10 @@ const random = async (input?: {
 		lastUpdatedAt: Posix.now(),
 		lastUpdatedBy: createdBy,
 		id: FlowPuzzleId.generate(),
-		flow: FlowVariant.init({
-			dimensions: FlowVariantDimensions.init({
-				t: "flow-grid",
-				height: 2,
-				width: 2,
-			}),
-			terminalsByGroupId: {
-				A: {
-					startId: FlowGrid.toNodeId({ x: 0, y: 0 }),
-					groupId: "A",
-					endId: FlowGrid.toNodeId({ x: 1, y: 1 }),
-				},
-			},
-		}),
+		flow: FlowGridShorthand.toGrid([
+			["A", " "],
+			[" ", "A"],
+		])
 	};
 };
 
