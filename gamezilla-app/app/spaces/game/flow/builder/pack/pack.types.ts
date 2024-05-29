@@ -11,10 +11,7 @@ import { p } from "gamezilla-app/@/core/parser";
 //
 //
 
-type BaseModelClient = {};
-
-export type ModelClient = BaseModelClient &
-	PackCreateNew.ModelClient &
+export type ModelClient = PackCreateNew.ModelClient &
 	PackBuilder.ModelClient &
 	PackList.ModelClient;
 

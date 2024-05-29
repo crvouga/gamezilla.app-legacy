@@ -17,7 +17,7 @@ const initCore: CoreModule["initCore"] = () => {
 };
 
 const update: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
-	switch (msgCore.t) {		
+	switch (msgCore.t) {
 		case "user-clicked-open-pack-list-item": {
 			return {
 				...modelCore,

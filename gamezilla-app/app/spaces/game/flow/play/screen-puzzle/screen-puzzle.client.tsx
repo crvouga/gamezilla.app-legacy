@@ -90,7 +90,7 @@ const updatePuzzleCompleted: ClientModule["update"] = (input) => {
 
 	const wasSolved = before.screen.opened === "puzzle-complete";
 	const isSolved = after.screen.opened === "puzzle-complete";
-	
+
 	if (!wasSolved && isSolved) {
 		return {
 			model: input.model,
@@ -154,7 +154,14 @@ const View: ClientModule["View"] = (input) => {
 						{nextPuzzle && (
 							<Button
 								text="Next puzzle"
-								onClick={() => nextPuzzle && input.dispatch({t: 'user-clicked-next-puzzle-button', nextPuzzle, nextPuzzleIndex})}
+								onClick={() =>
+									nextPuzzle &&
+									input.dispatch({
+										t: "user-clicked-next-puzzle-button",
+										nextPuzzle,
+										nextPuzzleIndex,
+									})
+								}
 							/>
 						)}
 					</DialogSurface>

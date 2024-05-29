@@ -272,17 +272,17 @@ const View: SpaceClientModule["View"] = (input) => {
 	const { model, ctx, dispatch } = input;
 
 	if (!ctx.space) {
-		return null
+		return null;
 	}
 
 	if (!ctx.currentUserId) {
-		return null
+		return null;
 	}
 
 	const space = Spaces.toSpaceStarted(model, ctx.space?.spaceId);
 
 	if (!space) {
-		return null
+		return null;
 	}
 
 	if (space.game) {

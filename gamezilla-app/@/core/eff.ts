@@ -9,7 +9,6 @@ const of = <Msg>(msg: Msg): Eff<Msg> => {
 	return eff;
 };
 
-
 const map = <A, B>(
 	mapper: (a: A) => B,
 	eff?: Eff<A> | null | undefined,
@@ -43,7 +42,7 @@ const tag = <Tag extends string, Msg>(
 	if (!eff) {
 		return None;
 	}
-	return map((msg) => ({ t: tagName, c: msg }), eff)
+	return map((msg) => ({ t: tagName, c: msg }), eff);
 };
 
 const batch = <Msg>(
