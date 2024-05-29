@@ -21,6 +21,7 @@ export const IS_INTEGRATION_TEST = process.env.IS_INTEGRATION_TEST === "true";
 //
 //
 
+// NOTE: pasting sms auth codes into input while using react bugs out. so we're using inferno for now
 export const VDOM_IMPL: VDomImpl = "inferno" as VDomImpl;
 
 //
