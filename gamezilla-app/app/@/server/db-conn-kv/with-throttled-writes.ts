@@ -1,6 +1,6 @@
 import { Ok, TimeSpan } from "gamezilla-app/@/core";
 import type { ILogger } from "../logger/logger";
-import { IDbConnKv } from "./db-conn-kv";
+import type { IDbConnKv } from "./db-conn-kv";
 
 export const withThrottledWrites = ({
 	dbConnKv,
@@ -13,9 +13,9 @@ export const withThrottledWrites = ({
 }): IDbConnKv => {
 	const throttleMs = TimeSpan.toMilliseconds(throttle);
 	const timeouts = new Map<string, ReturnType<typeof setTimeout>>();
-	const lastValues = new Map<string, any[]>();
+	const lastValues = new Map<string, unknown>();
 
-	const scheduleSet = (key: string, value: any) => {
+	const scheduleSet = (key: string, value: unknown) => {
 		if (!timeouts.has(key)) {
 			timeouts.set(
 				key,
@@ -30,14 +30,14 @@ export const withThrottledWrites = ({
 		lastValues.set(key, value);
 	};
 
-	const scheduleSetMany = (entries: [string, any][]) => {
+	const scheduleSetMany = (entries: [string, unknown][]) => {
 		const key = entries.map((entry) => entry[0]).join(",");
 		if (!timeouts.has(key)) {
 			timeouts.set(
 				key,
 				setTimeout(() => {
 					const entriesToSet = lastValues.get(key);
-					dbConnKv.setMany(entriesToSet as [string, any][]);
+					dbConnKv.setMany(entriesToSet as [string, unknown][]);
 					timeouts.delete(key);
 					lastValues.delete(key);
 				}, throttleMs),
@@ -64,7 +64,11 @@ export const withThrottledWrites = ({
 		for (const [key, timeout] of timeouts.entries()) {
 			clearTimeout(timeout);
 			const valueToSet = lastValues.get(key);
-			if (valueToSet && Array.isArray(valueToSet[0])) {
+			if (
+				valueToSet &&
+				Array.isArray(valueToSet) &&
+				Array.isArray(valueToSet[0])
+			) {
 				await dbConnKv.setMany(valueToSet);
 			} else {
 				await dbConnKv.set(key, valueToSet);
@@ -95,8 +99,7 @@ export const withThrottledWrites = ({
 			return Ok(null);
 		},
 		async zap(key) {
-			scheduleZap(key);
-			return Ok(null);
+			return dbConnKv.zap(key);
 		},
 	};
 };
