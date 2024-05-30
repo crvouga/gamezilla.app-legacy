@@ -96,8 +96,11 @@ export const update: ServerModule["update"] = async (input) => {
 	};
 };
 
-const updateMain = async (input: Input, acc?: Output): Promise<Output> => {
-	acc = acc ?? (await updateChild(input));
+const updateMain = async (
+	input: Input,
+	initialAcc?: Output,
+): Promise<Output> => {
+	const acc = initialAcc ?? (await updateChild(input));
 
 	const [spaceEvent, ...spaceEventsRest] = acc.msgSpaceEvent ?? [];
 

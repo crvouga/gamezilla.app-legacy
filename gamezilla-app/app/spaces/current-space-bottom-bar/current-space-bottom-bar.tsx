@@ -72,6 +72,7 @@ const View = ({
 			<div className="h-1 w-full bg-gradient-to-tr from-blue-700  via-blue-600 to-sky-500" />
 			<div className="flex w-full items-center overflow-hidden text-inherit">
 				<button
+					type="button"
 					className="flex flex-1 items-center gap-3 overflow-hidden"
 					onClick={() => dispatch({ t: "clicked-current-space-bottom-bar" })}
 				>

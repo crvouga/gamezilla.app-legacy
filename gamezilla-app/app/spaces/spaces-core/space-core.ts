@@ -1,5 +1,5 @@
-import type { SpaceId, UserId } from "gamezilla-app/app/@/data";
-import { ascend, eq } from "gamezilla-app/@/core";
+import { SpaceId, UserId } from "gamezilla-app/app/@/data";
+import { ascend, eq, pipe } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { CappedOrderedDict } from "gamezilla-app/@/capped-ordered-dict/capped-ordered-dict";
 import { LamportClock, LamportTimestamp } from "gamezilla-app/@/lamport-clock";
@@ -37,6 +37,30 @@ export const init: Model = {
 
 export const isEqual = (left: Model, right: Model) => {
 	return eq(deriveState(left), deriveState(right));
+};
+
+//
+//
+//
+//
+//
+//
+
+export const random = () => {
+	return pipe(
+		init,
+		//
+		(model) =>
+			appendEvent({
+				model,
+				event: {
+					t: "user-started-space",
+					eventId: EventId.generate(),
+					spaceId: SpaceId.generate(),
+					userId: UserId.generate(),
+				},
+			}),
+	);
 };
 
 //

@@ -139,5 +139,6 @@ export const hasEvent = async (
 	eventId: EventId,
 ) => {
 	const space = await getSpaceById(spacesDb, spaceId);
+
 	return Space.hasEvent(space, eventId);
 };
