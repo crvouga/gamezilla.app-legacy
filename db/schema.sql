@@ -204,8 +204,8 @@ CREATE TABLE public.user_guest_session_mapping (
 --
 
 CREATE TABLE public.user_profile (
-    user_id character varying(255) NOT NULL,
-    username character varying(255) DEFAULT NULL::character varying,
+    user_id text NOT NULL,
+    username text NOT NULL,
     avatar_seed text,
     avatar_style text
 );
@@ -454,4 +454,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20240512033531'),
     ('20240513005516'),
     ('20240519212003'),
-    ('20240519212517');
+    ('20240519212517'),
+    ('20240530071956');
