@@ -1,10 +1,10 @@
 import type { SpaceId, UserId } from "gamezilla-app/app/@/data";
 import { Result } from "gamezilla-app/@/core";
 import type { EventId, WithEventId } from "../@/event";
-import * as Space from "./space";
-import type { ISpacesDb } from "./space-db/space-db";
-import type { SpaceEvent } from "./space-event";
-import type * as SpaceState from "./space-state";
+import * as Space from "./space-core";
+import type { ISpaceCoreDb } from "./space-core-db/space-core-db";
+import type { SpaceCoreEvent } from "./space-core-event";
+import type * as SpaceState from "./space-core-state";
 
 //
 //
@@ -14,7 +14,7 @@ import type * as SpaceState from "./space-state";
 //
 
 const listSpaces = async (input: {
-	spacesDb: ISpacesDb;
+	spacesDb: ISpaceCoreDb;
 	limit: number;
 	offset: number;
 	where?: {
@@ -34,7 +34,7 @@ const listSpaces = async (input: {
 };
 
 const getSpaceById = async (
-	spacesDb: ISpacesDb,
+	spacesDb: ISpaceCoreDb,
 	spaceId: SpaceId,
 ): Promise<Space.Model> => {
 	const got = await spacesDb.get(spaceId);
@@ -44,7 +44,7 @@ const getSpaceById = async (
 };
 
 const getSpaceStarted = async (
-	spaceDb: ISpacesDb,
+	spaceDb: ISpaceCoreDb,
 	spaceId?: SpaceId | null,
 ): Promise<SpaceState.Started | null> => {
 	if (!spaceId) {
@@ -73,8 +73,8 @@ const update = async ({
 	spaceEvent,
 	spacesDb,
 }: {
-	spacesDb: ISpacesDb;
-	spaceEvent: WithEventId<SpaceEvent>;
+	spacesDb: ISpaceCoreDb;
+	spaceEvent: WithEventId<SpaceCoreEvent>;
 }) => {
 	const space = await getSpaceById(spacesDb, spaceEvent.spaceId);
 
@@ -87,7 +87,7 @@ const mergeOne = async ({
 	spacesDb,
 	space,
 }: {
-	spacesDb: ISpacesDb;
+	spacesDb: ISpaceCoreDb;
 	space: Space.Model;
 }) => {
 	const spaceId = Space.toSpaceId(space);
@@ -104,7 +104,7 @@ const mergeOne = async ({
 };
 
 const getEventWithMeta = async (
-	spacesDb: ISpacesDb,
+	spacesDb: ISpaceCoreDb,
 	spaceId: SpaceId,
 	eventId: EventId,
 ) => {
@@ -120,7 +120,7 @@ const getEventWithMeta = async (
 };
 
 const getSpaceByUserId = async (
-	spacesDb: ISpacesDb,
+	spacesDb: ISpaceCoreDb,
 	userId: UserId,
 ): Promise<Space.Model | null> => {
 	const got = await spacesDb.getByUserId(userId);
@@ -131,7 +131,7 @@ const getSpaceByUserId = async (
 };
 
 const hasEvent = async (
-	spacesDb: ISpacesDb,
+	spacesDb: ISpaceCoreDb,
 	spaceId: SpaceId,
 	eventId: EventId,
 ) => {

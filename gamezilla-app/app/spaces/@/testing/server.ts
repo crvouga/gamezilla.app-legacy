@@ -10,8 +10,8 @@ import { smsNoop } from "gamezilla-app/app/@/server/sms";
 import { GameServer } from "../../game/game.server";
 import { ProfileCache } from "../../profile-cache";
 import { GameDb } from "../../space-game/space-game-db";
-import type { Space } from "../../spaces-core";
-import { SpacesDb } from "../../spaces-core/space-db";
+import type { SpaceCore } from "../../spaces-core";
+import { SpaceCoreDb } from "../../spaces-core/space-core-db";
 import * as SpacesServer from "../../spaces.server";
 import { EventId } from "../event";
 import type { ModelServer, ServerDeps } from "../../spaces.types";
@@ -50,7 +50,7 @@ export const getDeps = async (): Promise<ServerDeps> => {
 	const dbConnKv = DbConnKvHashMap();
 	return {
 		ProfileCache: ProfileCache({ t: "db-conn-kv", dbConnKv }),
-		SpacesDb: SpacesDb({ t: "db-conn-kv", dbConnKv }),
+		SpacesDb: SpaceCoreDb({ t: "db-conn-kv", dbConnKv }),
 		GameDb: GameDb({ t: "db-conn-kv", dbConnKv }),
 		GameServer: await GameServer.deps({
 			ctx: {
@@ -153,7 +153,7 @@ export const authenticatedClientConnected =
 	};
 
 export const clientCore =
-	(deps: ServerDeps, client: AuthenticatedClient, space: Space.Model) =>
+	(deps: ServerDeps, client: AuthenticatedClient, space: SpaceCore.Model) =>
 	(model: ModelServer) => {
 		return SpacesServer.update({
 			ctx,

@@ -1,6 +1,6 @@
 import { addProfiles, sendToServer } from "gamezilla-app/app/@/client";
 import { SpaceClientModule } from "../architecture/architecture";
-import { Space, Spaces } from "../spaces-core";
+import { SpaceCore, SpacesCoreClient } from "../spaces-core";
 
 const update: SpaceClientModule["update"] = (input) => {
 	return SpaceClientModule.andThen(
@@ -36,7 +36,7 @@ const sendSpaceEventToServer: SpaceClientModule["update"] = ({
 		return { model };
 	}
 
-	const spaceEventWithMeta = Spaces.toEventWithMeta(
+	const spaceEventWithMeta = SpacesCoreClient.toEventWithMeta(
 		model,
 		msgSpaceEvent.spaceId,
 		msgSpaceEvent.eventId,
@@ -85,7 +85,7 @@ const updateCore: SpaceClientModule["update"] = (input) => {
 				? input.ctx.profiles[currentUserId]
 				: null;
 
-			const currentUserSpace = Spaces.toSpaceByUserId({
+			const currentUserSpace = SpacesCoreClient.toSpaceByUserId({
 				model,
 				userId: currentUserId,
 			});
@@ -94,7 +94,7 @@ const updateCore: SpaceClientModule["update"] = (input) => {
 				return { model };
 			}
 
-			const started = Space.startFromLatestSnapshot(currentUserSpace);
+			const started = SpaceCore.startFromLatestSnapshot(currentUserSpace);
 
 			return {
 				model: {
@@ -118,7 +118,10 @@ const updateCore: SpaceClientModule["update"] = (input) => {
 	switch (msgServer?.t) {
 		case "synced":
 		case "current-user-space": {
-			const merged = Spaces.mergeOne({ model, space: msgServer.space });
+			const merged = SpacesCoreClient.mergeOne({
+				model,
+				space: msgServer.space,
+			});
 			return {
 				model: { ...model, ...merged },
 			};

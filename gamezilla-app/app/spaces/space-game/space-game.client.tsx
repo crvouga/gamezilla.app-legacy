@@ -8,7 +8,11 @@ import { gameNameList, gameNameToString } from "../game/game.types";
 import { type WithEventId, withId } from "../@/event";
 import { SpaceClientCmd } from "../@/space-client-cmd";
 import { SpaceClientModule } from "../architecture/architecture";
-import { Space, type SpaceEvent, Spaces } from "../spaces-core";
+import {
+	SpaceCore,
+	type SpaceCoreEvent,
+	SpacesCoreClient,
+} from "../spaces-core";
 import type { MsgClient } from "../spaces.types";
 
 const update: SpaceClientModule["update"] = (input) => {
@@ -27,13 +31,16 @@ const updateFromMsg: SpaceClientModule["update"] = ({ msg, model, ctx }) => {
 		case "clicked-game-tile": {
 			const currentUserId = ctx.currentUserId;
 
-			const currentUserSpaceId = Spaces.toSpaceIdByUserId(model, currentUserId);
+			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
+				model,
+				currentUserId,
+			);
 
 			if (!currentUserId || !currentUserSpaceId) {
 				return { model };
 			}
 
-			const spaceEventNew = withId<SpaceEvent>({
+			const spaceEventNew = withId<SpaceCoreEvent>({
 				t: "user-inputted-game",
 				game: msg.gameName,
 				spaceId: currentUserSpaceId,
@@ -55,7 +62,10 @@ const updateFromCmd: SpaceClientModule["update"] = ({ msgCmd, model, ctx }) => {
 	switch (msgCmd?.t) {
 		case "space/exit-game": {
 			const currentUserId = ctx.currentUserId;
-			const currentUserSpaceId = Spaces.toSpaceIdByUserId(model, currentUserId);
+			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
+				model,
+				currentUserId,
+			);
 			if (!currentUserSpaceId || !currentUserId) {
 				return { model };
 			}
@@ -87,7 +97,7 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
 				return { model };
 			}
 
-			const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
 				model,
 				ctx.currentUserId,
 			);
@@ -140,7 +150,7 @@ const updateGame: SpaceClientModule["update"] = (input) => {
 		return { model: input.model };
 	}
 
-	const spaceState = Spaces.toSpaceStarted(input.model, spaceId);
+	const spaceState = SpacesCoreClient.toSpaceStarted(input.model, spaceId);
 
 	if (!spaceState) {
 		return { model: input.model };
@@ -153,7 +163,11 @@ const updateGame: SpaceClientModule["update"] = (input) => {
 	}
 
 	const msgSpaceEventWithMeta = input.msgSpaceEvent?.eventId
-		? Spaces.toEventWithMeta(input.model, spaceId, input.msgSpaceEvent?.eventId)
+		? SpacesCoreClient.toEventWithMeta(
+				input.model,
+				spaceId,
+				input.msgSpaceEvent?.eventId,
+			)
 		: null;
 
 	const modelGame = input.model.games[spaceId] ?? GameClient.init(modelCore.t);
@@ -177,7 +191,7 @@ const updateGame: SpaceClientModule["update"] = (input) => {
 	});
 
 	const msgSpaceEventNew = (gameUpdated.msgCore ?? []).map(
-		(e): WithEventId<SpaceEvent> => ({ ...e, spaceId, t: "game", c: e }),
+		(e): WithEventId<SpaceCoreEvent> => ({ ...e, spaceId, t: "game", c: e }),
 	);
 
 	return {
@@ -223,7 +237,7 @@ const subscriptionsCurrentUserGame: SpaceClientModule["subscriptions"] = ({
 
 	const clientCtx = { ...ctx, currentUserId };
 
-	const spaceId = Spaces.toSpaceIdByUserId(model, currentUserId);
+	const spaceId = SpacesCoreClient.toSpaceIdByUserId(model, currentUserId);
 
 	if (!spaceId) {
 		return Sub.None;
@@ -235,7 +249,7 @@ const subscriptionsCurrentUserGame: SpaceClientModule["subscriptions"] = ({
 		return Sub.None;
 	}
 
-	const spaceState = Space.toSpaceStarted(spaceModel);
+	const spaceState = SpaceCore.toSpaceStarted(spaceModel);
 
 	if (!spaceState) {
 		return Sub.None;
@@ -279,7 +293,7 @@ const View: SpaceClientModule["View"] = (input) => {
 		return null;
 	}
 
-	const space = Spaces.toSpaceStarted(model, ctx.space?.spaceId);
+	const space = SpacesCoreClient.toSpaceStarted(model, ctx.space?.spaceId);
 
 	if (!space) {
 		return null;

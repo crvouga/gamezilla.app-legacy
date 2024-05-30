@@ -1,4 +1,4 @@
-export * as SpaceState from "./space-state";
-export * as Space from "./space";
-export * as Spaces from "./spaces-core.client";
-export * from "./space-event";
+export * as SpaceCoreState from "./space-core-state";
+export * as SpaceCore from "./space-core";
+export * as SpacesCoreClient from "./spaces-core.client";
+export * from "./space-core-event";

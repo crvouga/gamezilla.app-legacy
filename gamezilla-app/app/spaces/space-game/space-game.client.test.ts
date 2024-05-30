@@ -10,7 +10,7 @@ import {
 	init,
 } from "../@/testing/client";
 import { SpaceClientModule } from "../architecture/architecture";
-import { Spaces } from "../spaces-core";
+import { SpacesCoreClient } from "../spaces-core";
 import * as SpacesClient from "../spaces.client";
 
 describe(import.meta.file, () => {
@@ -38,7 +38,8 @@ describe(import.meta.file, () => {
 			clickedGameTile(ctx, "connect-four"),
 		);
 
-		const gameName = Spaces.toSpaceStarted(output.model, spaceId)?.game?.t;
+		const gameName = SpacesCoreClient.toSpaceStarted(output.model, spaceId)
+			?.game?.t;
 		expect(gameName).toBe("connect-four");
 	});
 
@@ -54,7 +55,7 @@ describe(import.meta.file, () => {
 		);
 
 		const gameName =
-			Spaces.toSpaceStarted(output.model, spaceId)?.game?.t ?? null;
+			SpacesCoreClient.toSpaceStarted(output.model, spaceId)?.game?.t ?? null;
 
 		expect(gameName).toBeNull();
 	});

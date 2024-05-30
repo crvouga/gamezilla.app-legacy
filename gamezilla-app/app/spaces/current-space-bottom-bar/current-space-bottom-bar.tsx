@@ -7,14 +7,14 @@ import {
 import { Avatar, Button } from "gamezilla-app/app/@/ui";
 import { CoverArt } from "../game/game-cover-art";
 import type { SpaceClientModule } from "../architecture/architecture";
-import { Spaces } from "../spaces-core";
+import { SpacesCoreClient } from "../spaces-core";
 import type { ModelClient, MsgClient } from "../spaces.types";
 
 const update: SpaceClientModule["update"] = ({ model, msg, ctx }) => {
 	switch (msg?.t) {
 		case "clicked-current-space-bottom-bar": {
 			const { currentUserId } = ctx;
-			const currentUsersSpaceId = Spaces.toSpaceIdByUserId(
+			const currentUsersSpaceId = SpacesCoreClient.toSpaceIdByUserId(
 				model,
 				currentUserId,
 			);
@@ -57,7 +57,7 @@ const View = ({
 		return null;
 	}
 
-	const space = Spaces.toSpaceStarted(model, userSpaceId);
+	const space = SpacesCoreClient.toSpaceStarted(model, userSpaceId);
 
 	if (!space) {
 		return null;

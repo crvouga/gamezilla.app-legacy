@@ -1,10 +1,10 @@
-import { Space } from "gamezilla-app/app/spaces/@/space";
-import type { UserId } from "gamezilla-app/app/@/data";
 import { p } from "gamezilla-app/@/core/parser";
-import * as Game from "../game/game.types";
-import * as GameGame from "../game/game.core";
+import type { UserId } from "gamezilla-app/app/@/data";
+import { Space } from "gamezilla-app/app/spaces/@/space";
 import { EventId, type EventMeta } from "../@/event";
-import type { SpaceEvent } from "./space-event";
+import * as GameGame from "../game/game.core";
+import * as Game from "../game/game.types";
+import type { SpaceCoreEvent } from "./space-core-event";
 
 //
 //
@@ -74,7 +74,7 @@ export const updateCore = ({
 	msgSpace,
 }: {
 	state: State;
-	msgSpace: SpaceEvent & EventMeta;
+	msgSpace: SpaceCoreEvent & EventMeta;
 }): State => {
 	switch (state.type) {
 		case "ended": {

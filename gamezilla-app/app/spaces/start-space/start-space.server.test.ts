@@ -8,7 +8,7 @@ import {
 	init,
 	userStartedSpace,
 } from "../@/testing/server";
-import { Space } from "../spaces-core";
+import { SpaceCore } from "../spaces-core";
 import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
 
 describe(import.meta.file, () => {
@@ -23,7 +23,7 @@ describe(import.meta.file, () => {
 		);
 
 		expect(
-			Space.toSpaceId(
+			SpaceCore.toSpaceId(
 				await SpacesCoreServer.getSpaceById(deps.SpacesDb, spaceId),
 			),
 		).toBe(spaceId);

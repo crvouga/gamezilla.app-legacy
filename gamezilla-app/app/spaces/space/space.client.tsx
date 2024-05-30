@@ -10,7 +10,7 @@ import { SpaceGameClient } from "../space-game/space-game.client";
 import { JoinSpaceClient } from "../join-space/join-space.client";
 import { LeaveSpaceClient } from "../leave-space/leave-space.client";
 import { Modals } from "../modals/modals";
-import { Spaces } from "../spaces-core";
+import { SpacesCoreClient } from "../spaces-core";
 import type { ModelClient, MsgClient } from "../spaces.types";
 
 const View = (props: {
@@ -19,7 +19,7 @@ const View = (props: {
 	dispatch: (m: MsgClient) => void;
 	spaceId: SpaceId;
 }) => {
-	const spaceState = Spaces.toSpaceState(props.model, props.spaceId);
+	const spaceState = SpacesCoreClient.toSpaceState(props.model, props.spaceId);
 
 	switch (spaceState.type) {
 		case "initial": {
@@ -37,7 +37,7 @@ const View = (props: {
 				space: spaceState,
 			};
 
-			const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
 				props.model,
 				props.ctx.currentUserId,
 			);

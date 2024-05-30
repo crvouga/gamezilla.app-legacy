@@ -7,7 +7,7 @@ import {
 import { Button } from "gamezilla-app/app/@/ui";
 import { withId } from "../@/event";
 import { SpaceClientModule } from "../architecture/architecture";
-import { type SpaceEvent, Spaces } from "../spaces-core";
+import { SpaceCoreEvent, SpacesCoreClient } from "../spaces-core";
 
 const update: SpaceClientModule["update"] = (input) => {
 	return SpaceClientModule.andThen(
@@ -28,7 +28,7 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = ({
 				return { model };
 			}
 
-			const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
 				model,
 				ctx.currentUserId,
 			);
@@ -77,7 +77,7 @@ const updateLeaveSpaceButton: SpaceClientModule["update"] = ({
 				return { model };
 			}
 
-			const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
 				model,
 				ctx.currentUserId,
 			);
@@ -86,7 +86,7 @@ const updateLeaveSpaceButton: SpaceClientModule["update"] = ({
 				return { model };
 			}
 
-			const spaceEventNew = withId<SpaceEvent>({
+			const spaceEventNew = withId<SpaceCoreEvent>({
 				t: "user-left-space",
 				spaceId: currentUserSpaceId,
 				userId: ctx.currentUserId,

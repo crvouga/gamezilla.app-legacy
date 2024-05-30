@@ -14,7 +14,7 @@ import {
 	userLeftSpace,
 	userStartedSpace,
 } from "../@/testing/client";
-import { Spaces } from "../spaces-core";
+import { SpacesCoreClient } from "../spaces-core";
 
 describe(import.meta.file, () => {
 	it("should navigate to list screen after leaving space", () => {
@@ -82,9 +82,9 @@ describe(import.meta.file, () => {
 			clickedLeaveSpaceButton(ctx),
 		);
 
-		expect(Spaces.toSpaceIdByUserId(updated.model, ctx.currentUserId)).toEqual(
-			null,
-		);
+		expect(
+			SpacesCoreClient.toSpaceIdByUserId(updated.model, ctx.currentUserId),
+		).toEqual(null);
 	});
 
 	it("should play sound after leaving", () => {

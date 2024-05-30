@@ -1,6 +1,6 @@
 import { sendToUser } from "gamezilla-app/app/@/server";
 import { SpaceServerModule } from "../architecture/space-server";
-import { Space } from "../spaces-core";
+import { SpaceCore } from "../spaces-core";
 import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
 
 const update: SpaceServerModule["update"] = (input) => {
@@ -24,7 +24,7 @@ const updateFromSpaceEvent: SpaceServerModule["update"] = async (input) => {
 				return { model };
 			}
 
-			const started = Space.startFromLatestSnapshot(space);
+			const started = SpaceCore.startFromLatestSnapshot(space);
 
 			return {
 				model,

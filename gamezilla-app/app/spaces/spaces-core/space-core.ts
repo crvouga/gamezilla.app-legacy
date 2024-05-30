@@ -9,8 +9,8 @@ import {
 	type WithEventId,
 	type WithEventMeta,
 } from "../@/event";
-import { SpaceEvent } from "./space-event";
-import * as SpaceState from "./space-state";
+import { SpaceCoreEvent } from "./space-core-event";
+import * as SpaceState from "./space-core-state";
 
 //
 //
@@ -20,7 +20,7 @@ import * as SpaceState from "./space-state";
 //
 
 export const Model = p.obj({
-	events: p.arr(p.and(EventMeta, SpaceEvent)),
+	events: p.arr(p.and(EventMeta, SpaceCoreEvent)),
 	eventIds: p.dict(EventId, EventId),
 	clock: LamportClock,
 	snapshots: CappedOrderedDict.parser(EventId, SpaceState.State),
@@ -47,7 +47,7 @@ export const isEqual = (left: Model, right: Model) => {
 //
 
 export const startFromLatestSnapshot = (model: Model): Model => {
-	const events: WithEventMeta<SpaceEvent>[] = [];
+	const events: WithEventMeta<SpaceCoreEvent>[] = [];
 	const eventIds: Model["eventIds"] = {};
 
 	for (let i = model.events.length - 1; i >= 0; i--) {
@@ -94,7 +94,7 @@ export const appendEvent = ({
 	event,
 }: {
 	model: Model;
-	event: WithEventId<SpaceEvent>;
+	event: WithEventId<SpaceCoreEvent>;
 }): Model => {
 	if (model.eventIds[event.eventId]) {
 		return model;
@@ -104,7 +104,7 @@ export const appendEvent = ({
 	//
 	//
 
-	const newEvent: WithEventMeta<SpaceEvent> = {
+	const newEvent: WithEventMeta<SpaceCoreEvent> = {
 		...event,
 		happenedAt: LamportClock.toCurrentTime(model.clock),
 	};
@@ -183,7 +183,7 @@ export const deriveState = (model: Model): SpaceState.State => {
 
 	let running = SpaceState.init;
 
-	const events: WithEventMeta<SpaceEvent>[] = [];
+	const events: WithEventMeta<SpaceCoreEvent>[] = [];
 
 	for (let i = model.events.length - 1; i >= 0; i--) {
 		const event = model.events[i]!;

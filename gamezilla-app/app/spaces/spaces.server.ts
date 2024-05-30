@@ -10,7 +10,7 @@ import { ListSpacesServer } from "./list-spaces/list-spaces.server";
 import { ProfileCache } from "./profile-cache";
 import { GameDb } from "./space-game/space-game-db";
 import { SpaceGameServer } from "./space-game/space-game.server";
-import { SpacesDb } from "./spaces-core/space-db";
+import { SpaceCoreDb } from "./spaces-core/space-core-db";
 import { SpacesCoreServer } from "./spaces-core/spaces-core.server";
 import type { ServerModule } from "./spaces.types";
 import { StartSpaceServer } from "./start-space/start-space.server";
@@ -32,7 +32,7 @@ export const getDeps: ServerModule["getDeps"] = async ({ ctx }) => {
 			t: "db-conn-kv",
 			dbConnKv: ctx.dbConnKv,
 		}),
-		SpacesDb: SpacesDb({
+		SpacesDb: SpaceCoreDb({
 			t: "db-conn-kv",
 			dbConnKv: ctx.dbConnKv,
 		}),

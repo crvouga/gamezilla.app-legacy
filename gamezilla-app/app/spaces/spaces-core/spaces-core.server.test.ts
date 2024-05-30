@@ -2,11 +2,11 @@ import { describe, expect, it } from "bun:test";
 import { SpaceId, UserId } from "gamezilla-app/app/@/data";
 import { DbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import { withId } from "../@/event";
-import { SpacesDb } from "./space-db/space-db-impl";
+import { SpaceCoreDb } from "./space-core-db/space-core-db-impl";
 import { SpacesCoreServer } from "./spaces-core.server";
 
 const Fixture = async () => {
-	const spacesDb = SpacesDb({
+	const spacesDb = SpaceCoreDb({
 		t: "db-conn-kv",
 		dbConnKv: await DbConnKv({ t: "hash-map" }),
 	});

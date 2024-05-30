@@ -7,7 +7,7 @@ import {
 import { Button } from "gamezilla-app/app/@/ui";
 import { withId } from "../@/event";
 import { SpaceClientModule } from "../architecture/architecture";
-import { type SpaceEvent, Spaces } from "../spaces-core";
+import { type SpaceCoreEvent, SpacesCoreClient } from "../spaces-core";
 
 const update: SpaceClientModule["update"] = (input) => {
 	return SpaceClientModule.andThen(
@@ -24,7 +24,10 @@ const updateFromAppEvent: SpaceClientModule["update"] = (input) => {
 	switch (msgEvt?.t) {
 		case "auth/unauthenticated": {
 			const { currentUserId } = ctx;
-			const currentUserSpaceId = Spaces.toSpaceIdByUserId(model, currentUserId);
+			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
+				model,
+				currentUserId,
+			);
 			if (!currentUserId || !currentUserSpaceId) {
 				return { model };
 			}
@@ -56,7 +59,7 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
 				return { model };
 			}
 
-			const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
 				model,
 				ctx.currentUserId,
 			);
@@ -135,7 +138,7 @@ const updateEndSpaceButton: SpaceClientModule["update"] = ({
 				return { model };
 			}
 
-			const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
 				model,
 				ctx.currentUserId,
 			);
@@ -144,7 +147,7 @@ const updateEndSpaceButton: SpaceClientModule["update"] = ({
 				return { model };
 			}
 
-			const spaceEventNew = withId<SpaceEvent>({
+			const spaceEventNew = withId<SpaceCoreEvent>({
 				t: "user-ended-space",
 				spaceId: currentUserSpaceId,
 				userId: ctx.currentUserId,

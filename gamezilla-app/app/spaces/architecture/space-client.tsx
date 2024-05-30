@@ -8,7 +8,7 @@ import type { VDom } from "gamezilla-app/@/vdom";
 import type { WithEventId } from "../@/event";
 import type { Space } from "../@/space";
 import type { SpaceClientCmd } from "../@/space-client-cmd";
-import type { SpaceEvent } from "../spaces-core";
+import type { SpaceCoreEvent } from "../spaces-core";
 import type {
 	ModelClient,
 	MsgClient,
@@ -31,7 +31,7 @@ export type Input = {
 		MsgClient: MsgClient;
 		MsgToServer: MsgToServer;
 	}> | null;
-	msgSpaceEvent?: WithEventId<SpaceEvent> | null;
+	msgSpaceEvent?: WithEventId<SpaceCoreEvent> | null;
 };
 
 export type MaybePromise<T> = T | Promise<T>;
@@ -44,7 +44,7 @@ export type Output = {
 		MsgToServer: MsgToServer;
 	}>[];
 	msgEvt?: unknown[];
-	msgSpaceEvent?: WithEventId<SpaceEvent>[];
+	msgSpaceEvent?: WithEventId<SpaceCoreEvent>[];
 };
 
 export type SpaceClientModule = {

@@ -13,9 +13,9 @@ import type { WithEventId, WithEventMeta } from "./@/event";
 import type * as Game from "./game/game.types";
 import type { IProfileCache } from "./profile-cache";
 import type { IGameDb } from "./space-game/space-game-db";
-import type * as Space from "./spaces-core/space";
-import type { ISpacesDb } from "./spaces-core/space-db";
-import type { SpaceEvent } from "./spaces-core/space-event";
+import type * as Space from "./spaces-core/space-core";
+import type { ISpaceCoreDb } from "./spaces-core/space-core-db";
+import type { SpaceCoreEvent } from "./spaces-core/space-core-event";
 import type * as Spaces from "./spaces-core/spaces-core.client";
 import { GameServer } from "./game/game.server";
 
@@ -58,7 +58,7 @@ export type ServerModule = AppServerModule<{
 
 export type ServerDeps = {
 	ProfileCache: IProfileCache;
-	SpacesDb: ISpacesDb;
+	SpacesDb: ISpaceCoreDb;
 	GameDb: IGameDb;
 	GameServer: Awaited<ReturnType<(typeof GameServer)["deps"]>>;
 };
@@ -91,7 +91,7 @@ export type ModelClient = Spaces.Model & {
 //
 
 export type MsgServer =
-	| { t: "event"; c: WithEventId<SpaceEvent> }
+	| { t: "event"; c: WithEventId<SpaceCoreEvent> }
 	| { t: "game"; spaceId: SpaceId; c: Game.MsgServer };
 
 export type MsgClient =
@@ -114,7 +114,7 @@ export type MsgToClient = MsgToClientExtra &
 	(
 		| {
 				t: "event";
-				c: WithEventMeta<SpaceEvent>;
+				c: WithEventMeta<SpaceCoreEvent>;
 		  }
 		| {
 				t: "listed-spaces";
@@ -139,7 +139,7 @@ export type MsgToServer = MsgToServerExtra &
 	(
 		| {
 				t: "event";
-				c: WithEventMeta<SpaceEvent>;
+				c: WithEventMeta<SpaceCoreEvent>;
 		  }
 		| {
 				t: "sync";

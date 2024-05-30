@@ -11,7 +11,7 @@ import {
 	userJoinedSpace,
 	userStartedSpace,
 } from "../@/testing/client";
-import { Spaces } from "../spaces-core";
+import { SpacesCoreClient } from "../spaces-core";
 
 describe(import.meta.file, () => {
 	it("should show some toast after joining space", async () => {
@@ -58,9 +58,9 @@ describe(import.meta.file, () => {
 			clickedJoinSpaceButton(ctx, spaceId),
 		);
 
-		expect(Spaces.toSpaceIdByUserId(joined.model, ctx.currentUserId)).toEqual(
-			spaceId,
-		);
+		expect(
+			SpacesCoreClient.toSpaceIdByUserId(joined.model, ctx.currentUserId),
+		).toEqual(spaceId);
 	});
 
 	it("current user leaving joined space", async () => {
@@ -74,9 +74,9 @@ describe(import.meta.file, () => {
 			clickedLeaveSpaceButton(ctx),
 		);
 
-		expect(Spaces.toSpaceIdByUserId(left.model, ctx.currentUserId)).toEqual(
-			null,
-		);
+		expect(
+			SpacesCoreClient.toSpaceIdByUserId(left.model, ctx.currentUserId),
+		).toEqual(null);
 		//
 	});
 
@@ -97,9 +97,9 @@ describe(import.meta.file, () => {
 			clickedJoinSpaceButton(ctx, SpaceB),
 		);
 
-		expect(Spaces.toSpaceIdByUserId(arranged.model, ctx.currentUserId)).toEqual(
-			SpaceA,
-		);
+		expect(
+			SpacesCoreClient.toSpaceIdByUserId(arranged.model, ctx.currentUserId),
+		).toEqual(SpaceA);
 
 		expect(didShowErrorSm(joined)).toBe(true);
 	});

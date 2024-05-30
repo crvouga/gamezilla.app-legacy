@@ -3,7 +3,7 @@ import { GameServer } from "../game/game.server";
 import type { WithEventId } from "../@/event";
 import { SpaceServerCmd } from "../@/space-server-cmd";
 import { SpaceServerModule } from "../architecture/space-server";
-import type { SpaceEvent } from "../spaces-core";
+import type { SpaceCoreEvent } from "../spaces-core";
 import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
 import type { MsgServer } from "../spaces.types";
 
@@ -74,7 +74,7 @@ const updateGame: SpaceServerModule["update"] = async (input) => {
 	});
 
 	const msgSpaceEventNew = (gameUpdated.msgCore ?? []).map(
-		(e): WithEventId<SpaceEvent> => ({ ...e, spaceId, t: "game", c: e }),
+		(e): WithEventId<SpaceCoreEvent> => ({ ...e, spaceId, t: "game", c: e }),
 	);
 
 	return {
