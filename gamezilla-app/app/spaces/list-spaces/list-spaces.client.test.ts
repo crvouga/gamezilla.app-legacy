@@ -28,9 +28,9 @@ const changeRouteToSpaceList = (ctx: ClientCtx) => {
 };
 
 describe(import.meta.file, () => {
-	it("should request spaces on init if on space list route", async () => {
+	it("should request spaces on init if on space list route", () => {
 		const ctx = Ctx();
-		const output = await init({
+		const output = init({
 			...ctx,
 			currentRoute: { n: "spaces", t: "space-list" },
 		});
@@ -40,9 +40,9 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	it("should send list space request to server initially", async () => {
+	it("should send list space request to server initially", () => {
 		const ctx = Ctx();
-		const output = await init({
+		const output = init({
 			...ctx,
 			currentRoute: { n: "spaces", t: "space-list" },
 		});
@@ -53,18 +53,18 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	it("should request spaces on space list route change", async () => {
+	it("should request spaces on space list route change", () => {
 		const ctx = Ctx();
-		const updated = await AppClientModule.andThen(
+		const updated = AppClientModule.andThen(
 			init(ctx),
 			changeRouteToSpaceList(ctx),
 		);
 		expect(updated.model.listSpacesRequest.t === "loading").toBe(true);
 	});
 
-	it("should timeout request", async () => {
+	it("should timeout request", () => {
 		const ctx = Ctx();
-		const updated = await AppClientModule.andThen(
+		const updated = AppClientModule.andThen(
 			init(ctx),
 			changeRouteToSpaceList(ctx),
 			elapsed(ctx, TimeSpan.minutes(5)),
@@ -75,9 +75,9 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	it("should be ok when server responds with a list of spaces", async () => {
+	it("should be ok when server responds with a list of spaces", () => {
 		const ctx = Ctx();
-		const updated = await AppClientModule.andThen(
+		const updated = AppClientModule.andThen(
 			init(ctx),
 			changeRouteToSpaceList(ctx),
 			serverListedSpaces(ctx),
@@ -85,9 +85,9 @@ describe(import.meta.file, () => {
 		expect(isResponseOk(updated.model.listSpacesRequest)).toBe(true);
 	});
 
-	it("should be ok when server responds with a list of spaces even when it timed out", async () => {
+	it("should be ok when server responds with a list of spaces even when it timed out", () => {
 		const ctx = Ctx();
-		const updated = await AppClientModule.andThen(
+		const updated = AppClientModule.andThen(
 			init(ctx),
 			changeRouteToSpaceList(ctx),
 			elapsed(ctx, TimeSpan.seconds(10)),
@@ -97,10 +97,10 @@ describe(import.meta.file, () => {
 		expect(isResponseOk(updated.model.listSpacesRequest)).toBe(true);
 	});
 
-	it("should navigate to space screen after clicking a space card", async () => {
+	it("should navigate to space screen after clicking a space card", () => {
 		const SpaceA = SpaceId.generate();
 		const ctx = Ctx();
-		const updated = await AppClientModule.andThen(
+		const updated = AppClientModule.andThen(
 			init(ctx),
 			serverListedSpaces(ctx, [SpaceA]),
 			clickSpaceCard(ctx, SpaceA),
@@ -109,10 +109,10 @@ describe(import.meta.file, () => {
 		expect(didPushRoute(updated)).toBe(true);
 	});
 
-	it("should make a nav forward sound when opening a space screen", async () => {
+	it("should make a nav forward sound when opening a space screen", () => {
 		const SpaceA = SpaceId.generate();
 		const ctx = Ctx();
-		const updated = await AppClientModule.andThen(
+		const updated = AppClientModule.andThen(
 			init(ctx),
 			serverListedSpaces(ctx, [SpaceA]),
 			clickSpaceCard(ctx, SpaceA),
@@ -120,10 +120,10 @@ describe(import.meta.file, () => {
 		expect(didPlaySound(updated, APP_SOUND.navForwardMin)).toBe(true);
 	});
 
-	it("should make a sound when closing room screen", async () => {
+	it("should make a sound when closing room screen", () => {
 		const SpaceA = SpaceId.generate();
 		const ctx = Ctx();
-		const updated = await AppClientModule.andThen(
+		const updated = AppClientModule.andThen(
 			init(ctx),
 			serverListedSpaces(ctx, [SpaceA]),
 			clickSpaceCard(ctx, SpaceA),
