@@ -14,7 +14,7 @@ import { GuestSessionMappingDb } from "./guest-session-mapping-db";
 import { didSendMsgToClient } from "gamezilla-app/app/@/server";
 import { isOk } from "gamezilla-app/@/core";
 
-type Msg =
+type Input =
 	| {
 			msgClient: ContinueAsGuestTypes.MsgToServer & {
 				clientId: ClientId;
@@ -77,7 +77,7 @@ const Fixture = async () => {
 	const f = await AppServerFixture();
 	const deps = await FixtureDeps();
 
-	const updates = async (msgs: Msg[]) => {
+	const updates = async (msgs: Input[]) => {
 		const updates: Awaited<ReturnType<typeof ContinueAsGuestServer.update>>[] =
 			[];
 		for (const msg of msgs) {
@@ -93,7 +93,7 @@ const Fixture = async () => {
 		return updates;
 	};
 
-	const update = async (msgs: Msg[]) => {
+	const update = async (msgs: Input[]) => {
 		const updates_ = await updates(msgs);
 
 		const update_ = updates_[updates_.length - 1];
