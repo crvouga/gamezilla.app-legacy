@@ -1,18 +1,15 @@
+import { Eff, Sub } from "gamezilla-app/@/core";
 import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
 import { Button } from "gamezilla-app/app/@/ui";
-import { Eff, Sub } from "gamezilla-app/@/core";
+import { type WithEventId, withId } from "../@/event";
+import { SpaceClientCmd } from "../@/space-client-cmd";
+import { SpaceClientModule } from "../architecture/architecture";
 import { ViewGameHeader, ViewUsersInSpaceList } from "../game/@/game";
 import { CoverArt } from "../game/game-cover-art";
 import { GameClient } from "../game/game.client";
 import { gameNameList, gameNameToString } from "../game/game.types";
-import { type WithEventId, withId } from "../@/event";
-import { SpaceClientCmd } from "../@/space-client-cmd";
-import { SpaceClientModule } from "../architecture/architecture";
-import {
-	SpaceCore,
-	type SpaceCoreEvent,
-	SpacesCoreClient,
-} from "../spaces-core";
+import { SpaceCore, type SpaceCoreEvent } from "../spaces-core";
+import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 import type { MsgClient } from "../spaces.types";
 
 const update: SpaceClientModule["update"] = (input) => {

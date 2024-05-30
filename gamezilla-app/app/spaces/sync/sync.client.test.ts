@@ -21,7 +21,8 @@ import {
 	userStartedSpace,
 } from "../@/testing/client";
 import { makeSpace } from "../@/testing/shared";
-import { SpaceCore, SpacesCoreClient } from "../spaces-core";
+import { SpaceCore } from "../spaces-core";
+import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 
 const hasExcatlyOne = <T>(
 	items: T[],

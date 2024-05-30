@@ -14,7 +14,7 @@ import {
 	userLeftSpace,
 	userStartedSpace,
 } from "../@/testing/client";
-import { SpacesCoreClient } from "../spaces-core";
+import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 
 describe(import.meta.file, () => {
 	it("should navigate to list screen after leaving space", () => {

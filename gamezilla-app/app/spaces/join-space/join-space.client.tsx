@@ -5,12 +5,13 @@ import {
 	showToast,
 } from "gamezilla-app/app/@/client";
 import { Button, TopBar } from "gamezilla-app/app/@/ui";
+import { withId } from "../@/event";
+import { SpaceClientModule } from "../architecture/architecture";
 import { ViewGameHeader, ViewUsersInSpaceList } from "../game/@/game";
 import { CoverArt } from "../game/game-cover-art";
 import { gameNameToString } from "../game/game.types";
-import { withId } from "../@/event";
-import { SpaceClientModule } from "../architecture/architecture";
-import { type SpaceCoreEvent, SpacesCoreClient } from "../spaces-core";
+import type { SpaceCoreEvent } from "../spaces-core";
+import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 
 const update: SpaceClientModule["update"] = (input) => {
 	return SpaceClientModule.andThen(

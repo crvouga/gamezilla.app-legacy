@@ -8,7 +8,7 @@ import {
 import { SpaceId } from "gamezilla-app/app/@/data";
 import { andThen } from "../../@/architecture/app-client";
 import { Ctx, clickedStartSpaceButton, init } from "../@/testing/client";
-import { SpacesCoreClient } from "../spaces-core";
+import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 
 describe(import.meta.file, () => {
 	it("should show toast when current user starts a space", () => {

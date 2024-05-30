@@ -1,16 +1,16 @@
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
+import type { VDom } from "gamezilla-app/@/vdom";
 import type { ClientCtx } from "gamezilla-app/app/@/client";
 import type { SpaceId } from "gamezilla-app/app/@/data";
 import { Button, IconHome, IconUserGroup } from "gamezilla-app/app/@/ui";
-import type { VDom } from "gamezilla-app/@/vdom";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import type { SpaceClientModule } from "../architecture/architecture";
 import { EndSpaceClient } from "../end-space/end-space.client";
 import { Feed } from "../feed/feed";
-import { SpaceGameClient } from "../space-game/space-game.client";
 import { JoinSpaceClient } from "../join-space/join-space.client";
 import { LeaveSpaceClient } from "../leave-space/leave-space.client";
 import { Modals } from "../modals/modals";
-import { SpacesCoreClient } from "../spaces-core";
+import { SpaceGameClient } from "../space-game/space-game.client";
+import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 import type { ModelClient, MsgClient } from "../spaces.types";
 
 const View = (props: {
