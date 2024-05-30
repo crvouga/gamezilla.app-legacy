@@ -51,6 +51,7 @@ export const startFromLatestSnapshot = (model: Model): Model => {
 	const eventIds: Model["eventIds"] = {};
 
 	for (let i = model.events.length - 1; i >= 0; i--) {
+		// biome-ignore lint/style/noNonNullAssertion: <explanation>
 		const event = model.events[i]!;
 
 		const snapshot = CappedOrderedDict.get(model.snapshots, event.eventId);
