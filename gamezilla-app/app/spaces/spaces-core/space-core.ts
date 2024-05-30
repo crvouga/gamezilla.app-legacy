@@ -51,8 +51,11 @@ export const startFromLatestSnapshot = (model: Model): Model => {
 	const eventIds: Model["eventIds"] = {};
 
 	for (let i = model.events.length - 1; i >= 0; i--) {
-		// biome-ignore lint/style/noNonNullAssertion: <explanation>
-		const event = model.events[i]!;
+		const event = model.events[i];
+
+		if (!event) {
+			continue;
+		}
 
 		const snapshot = CappedOrderedDict.get(model.snapshots, event.eventId);
 
@@ -61,10 +64,10 @@ export const startFromLatestSnapshot = (model: Model): Model => {
 
 		if (snapshot) {
 			return {
-				eventIds: events.reduce<Model["eventIds"]>(
-					(acc, event) => ({ ...acc, [event.eventId]: event.eventId }),
-					{},
-				),
+				eventIds: events.reduce<Model["eventIds"]>((acc, event) => {
+					acc[event.eventId] = event.eventId;
+					return acc;
+				}, {}),
 				clock: model.clock,
 				events: events,
 				snapshots: CappedOrderedDict.add(
@@ -187,7 +190,11 @@ export const deriveState = (model: Model): SpaceState.State => {
 	const events: WithEventMeta<SpaceCoreEvent>[] = [];
 
 	for (let i = model.events.length - 1; i >= 0; i--) {
-		const event = model.events[i]!;
+		const event = model.events[i];
+
+		if (!event) {
+			continue;
+		}
 
 		const snapshot = CappedOrderedDict.get(model.snapshots, event.eventId);
 
