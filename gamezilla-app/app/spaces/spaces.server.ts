@@ -11,7 +11,7 @@ import { ProfileCache } from "./profile-cache";
 import { GameDb } from "./space-game/space-game-db";
 import { SpaceGameServer } from "./space-game/space-game.server";
 import { SpaceCoreDb } from "./spaces-core/space-core-db";
-import { SpacesCoreServer } from "./spaces-core/spaces-core.server";
+import * as SpacesCoreServer from "./spaces-core/spaces-core.server";
 import type { ServerModule } from "./spaces.types";
 import { StartSpaceServer } from "./start-space/start-space.server";
 import { SyncServer } from "./sync/sync.server";

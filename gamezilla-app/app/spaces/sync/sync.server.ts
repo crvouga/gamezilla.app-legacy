@@ -7,7 +7,7 @@ import { Result, isErr } from "gamezilla-app/@/core";
 import { SpaceServerModule } from "../architecture/space-server";
 import { SpaceCoreState } from "../spaces-core";
 import * as Space from "../spaces-core/space-core";
-import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
+import * as SpacesCoreServer from "../spaces-core/spaces-core.server";
 import type { MsgToClient, ServerDeps } from "../spaces.types";
 
 //

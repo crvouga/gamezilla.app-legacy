@@ -3,7 +3,7 @@ import { SpaceId, UserId } from "gamezilla-app/app/@/data";
 import { DbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
 import { withId } from "../@/event";
 import { SpaceCoreDb } from "./space-core-db/space-core-db-impl";
-import { SpacesCoreServer } from "./spaces-core.server";
+import * as SpacesCoreServer from "./spaces-core.server";
 
 const Fixture = async () => {
 	const spacesDb = SpaceCoreDb({

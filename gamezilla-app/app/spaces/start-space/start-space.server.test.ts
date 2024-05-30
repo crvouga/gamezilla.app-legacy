@@ -9,7 +9,7 @@ import {
 	userStartedSpace,
 } from "../@/testing/server";
 import { SpaceCore } from "../spaces-core";
-import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
+import * as SpacesCoreServer from "../spaces-core/spaces-core.server";
 
 describe(import.meta.file, () => {
 	it("should add a new space when recieving a user started space event", async () => {

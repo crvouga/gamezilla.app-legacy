@@ -4,7 +4,7 @@ import type { WithEventId } from "../@/event";
 import { SpaceServerCmd } from "../@/space-server-cmd";
 import { SpaceServerModule } from "../architecture/space-server";
 import type { SpaceCoreEvent } from "../spaces-core";
-import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
+import * as SpacesCoreServer from "../spaces-core/spaces-core.server";
 import type { MsgServer } from "../spaces.types";
 
 const inputToSpaceId = (input: Parameters<SpaceServerModule["update"]>[0]) => {

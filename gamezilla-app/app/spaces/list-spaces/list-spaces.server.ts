@@ -1,7 +1,7 @@
 import { sendBack } from "gamezilla-app/app/@/server";
 import type { SpaceServerModule } from "../architecture/space-server";
 import * as Space from "../spaces-core/space-core";
-import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
+import * as SpacesCoreServer from "../spaces-core/spaces-core.server";
 import { Result } from "gamezilla-app/@/core";
 
 //
