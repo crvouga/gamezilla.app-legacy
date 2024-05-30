@@ -18,7 +18,7 @@ const update: SpaceServerModule["update"] = async (input) => {
 	switch (msgClient?.t) {
 		case "list-spaces": {
 			const spaces = await SpacesCoreServer.listSpaces({
-				spacesDb: input.deps.SpacesDb,
+				spacesDb: input.deps.spaceCoreDb,
 				limit: msgClient.limit,
 				offset: msgClient.offset,
 				where: msgClient.where,
@@ -29,7 +29,7 @@ const update: SpaceServerModule["update"] = async (input) => {
 			const userIds = spaces.flatMap((space) => Space.toUserIds(space));
 
 			const profiles = Result.withDefault(
-				await deps.ProfileCache.get(userIds),
+				await deps.profileCache.get(userIds),
 				{},
 			);
 

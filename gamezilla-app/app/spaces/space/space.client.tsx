@@ -123,7 +123,11 @@ const ViewTopBarButton = ({
 	onClick: () => void;
 }) => {
 	return (
-		<button className="grid w-20 place-items-center py-1" onClick={onClick}>
+		<button
+			type="button"
+			className="grid w-20 place-items-center py-1"
+			onClick={onClick}
+		>
 			{icon}
 			<p className="text-xs">{label}</p>
 		</button>

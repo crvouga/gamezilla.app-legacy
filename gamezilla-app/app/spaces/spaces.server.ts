@@ -28,19 +28,19 @@ import { ClientId, SessionId, SpaceId, UserId } from "../@/data";
 
 export const getDeps: ServerModule["getDeps"] = async ({ ctx }) => {
 	return {
-		ProfileCache: ProfileCache({
+		profileCache: ProfileCache({
 			t: "db-conn-kv",
 			dbConnKv: ctx.dbConnKv,
 		}),
-		SpacesDb: SpaceCoreDb({
+		spaceCoreDb: SpaceCoreDb({
 			t: "db-conn-kv",
 			dbConnKv: ctx.dbConnKv,
 		}),
-		GameDb: GameDb({
+		gameDb: GameDb({
 			t: "db-conn-kv",
 			dbConnKv: ctx.dbConnKv,
 		}),
-		GameServer: await GameServer.deps({
+		gameServer: await GameServer.deps({
 			ctx: {
 				clientId: ClientId.generate(),
 				dbConnKv: ctx.dbConnKv,
@@ -149,7 +149,7 @@ const updateChild: SpaceServerModule["update"] = async (input) => {
 	if (
 		input.msgSpaceEvent &&
 		(await SpacesCoreServer.hasEvent(
-			input.deps.SpacesDb,
+			input.deps.spaceCoreDb,
 			input.msgSpaceEvent.spaceId,
 			input.msgSpaceEvent.eventId,
 		))
@@ -179,7 +179,7 @@ const updateSpacesFromSpaceEvent: SpaceServerModule["update"] = async ({
 	}
 
 	await SpacesCoreServer.update({
-		spacesDb: deps.SpacesDb,
+		spacesDb: deps.spaceCoreDb,
 		spaceEvent: msgSpaceEvent,
 	});
 

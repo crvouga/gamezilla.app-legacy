@@ -24,7 +24,7 @@ describe(import.meta.file, () => {
 
 		expect(
 			SpaceCore.toSpaceId(
-				await SpacesCoreServer.getSpaceById(deps.SpacesDb, spaceId),
+				await SpacesCoreServer.getSpaceById(deps.spaceCoreDb, spaceId),
 			),
 		).toBe(spaceId);
 	});

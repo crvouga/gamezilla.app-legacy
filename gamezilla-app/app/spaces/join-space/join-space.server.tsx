@@ -16,7 +16,7 @@ const updateFromSpaceEvent: SpaceServerModule["update"] = async (input) => {
 	switch (msgSpaceEvent?.t) {
 		case "user-joined-space": {
 			const space = await SpacesCoreServer.getSpaceById(
-				deps.SpacesDb,
+				deps.spaceCoreDb,
 				msgSpaceEvent.spaceId,
 			);
 

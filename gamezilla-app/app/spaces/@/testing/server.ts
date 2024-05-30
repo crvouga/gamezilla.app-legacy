@@ -49,10 +49,10 @@ export const init = () => {
 export const getDeps = async (): Promise<ServerDeps> => {
 	const dbConnKv = DbConnKvHashMap();
 	return {
-		ProfileCache: ProfileCache({ t: "db-conn-kv", dbConnKv }),
-		SpacesDb: SpaceCoreDb({ t: "db-conn-kv", dbConnKv }),
-		GameDb: GameDb({ t: "db-conn-kv", dbConnKv }),
-		GameServer: await GameServer.deps({
+		profileCache: ProfileCache({ t: "db-conn-kv", dbConnKv }),
+		spaceCoreDb: SpaceCoreDb({ t: "db-conn-kv", dbConnKv }),
+		gameDb: GameDb({ t: "db-conn-kv", dbConnKv }),
+		gameServer: await GameServer.deps({
 			ctx: {
 				clientId: ClientId.generate(),
 				dbConnKv,

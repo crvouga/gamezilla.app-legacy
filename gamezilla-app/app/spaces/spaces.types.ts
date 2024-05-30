@@ -57,10 +57,10 @@ export type ServerModule = AppServerModule<{
 }>;
 
 export type ServerDeps = {
-	ProfileCache: IProfileCache;
-	SpacesDb: ISpaceCoreDb;
-	GameDb: IGameDb;
-	GameServer: Awaited<ReturnType<(typeof GameServer)["deps"]>>;
+	profileCache: IProfileCache;
+	spaceCoreDb: ISpaceCoreDb;
+	gameDb: IGameDb;
+	gameServer: Awaited<ReturnType<(typeof GameServer)["deps"]>>;
 };
 
 //

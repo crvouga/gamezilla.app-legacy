@@ -31,7 +31,7 @@ const updateGame: SpaceServerModule["update"] = async (input) => {
 	}
 
 	const spaceState = await SpacesCoreServer.getSpaceStarted(
-		input.deps.SpacesDb,
+		input.deps.spaceCoreDb,
 		spaceId,
 	);
 
@@ -48,7 +48,7 @@ const updateGame: SpaceServerModule["update"] = async (input) => {
 	}
 
 	const gameModel = Result.withDefault(
-		await input.deps.GameDb.getBySpaceId(spaceId),
+		await input.deps.gameDb.getBySpaceId(spaceId),
 		null,
 	);
 
@@ -70,7 +70,7 @@ const updateGame: SpaceServerModule["update"] = async (input) => {
 				? { ...input.msgSpaceEvent, ...input.msgSpaceEvent.c }
 				: null,
 		modelCore: spaceState.game,
-		deps: input.deps.GameServer,
+		deps: input.deps.gameServer,
 	});
 
 	const msgSpaceEventNew = (gameUpdated.msgCore ?? []).map(

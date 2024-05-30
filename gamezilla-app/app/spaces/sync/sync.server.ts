@@ -19,7 +19,7 @@ import type { MsgToClient, ServerDeps } from "../spaces.types";
 //
 
 const updateProfileCache: SpaceServerModule["update"] = async (input) => {
-	const added = await input.deps.ProfileCache.add(
+	const added = await input.deps.profileCache.add(
 		input.msgClient?.profiles ?? {},
 	);
 	if (isErr(added)) {
@@ -39,7 +39,7 @@ const updateCore: SpaceServerModule["update"] = async (input) => {
 				{ model },
 				async (model) => {
 					await SpacesCoreServer.mergeOne({
-						spacesDb: deps.SpacesDb,
+						spacesDb: deps.spaceCoreDb,
 						space: msgClient.space,
 					});
 
@@ -53,7 +53,7 @@ const updateCore: SpaceServerModule["update"] = async (input) => {
 					}
 
 					const spaceNew = await SpacesCoreServer.getSpaceById(
-						deps.SpacesDb,
+						deps.spaceCoreDb,
 						spaceId,
 					);
 
@@ -94,7 +94,7 @@ const spacesToProfiles = async (deps: ServerDeps, spaces: Space.Model[]) => {
 		return [];
 	});
 
-	const got = await deps.ProfileCache.get(userIds);
+	const got = await deps.profileCache.get(userIds);
 
 	const profiles = Result.withDefault(got, {});
 
@@ -107,7 +107,7 @@ const updateCurrentUserSpace: SpaceServerModule["update"] = async (input) => {
 	switch (msgEvt?.t) {
 		case "auth/client-authenticated": {
 			const space = await SpacesCoreServer.getSpaceByUserId(
-				deps.SpacesDb,
+				deps.spaceCoreDb,
 				msgEvt.account.userId,
 			);
 
@@ -148,7 +148,7 @@ const sendSpaceEventToClient: SpaceServerModule["update"] = async ({
 	}
 
 	const msgEvtWithMeta = await SpacesCoreServer.getEventWithMeta(
-		deps.SpacesDb,
+		deps.spaceCoreDb,
 		msgSpaceEvent.spaceId,
 		msgSpaceEvent.eventId,
 	);
@@ -158,12 +158,12 @@ const sendSpaceEventToClient: SpaceServerModule["update"] = async ({
 	}
 
 	const spaceState = await SpacesCoreServer.getSpaceStarted(
-		deps.SpacesDb,
+		deps.spaceCoreDb,
 		msgEvtWithMeta.spaceId,
 	);
 
 	const profiles = Result.withDefault(
-		await deps.ProfileCache.get(
+		await deps.profileCache.get(
 			"userId" in msgEvtWithMeta ? [msgEvtWithMeta.userId] : [],
 		),
 		{},
