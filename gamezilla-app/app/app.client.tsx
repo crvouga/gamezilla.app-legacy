@@ -827,7 +827,8 @@ const ViewBottomNavBar = (props: {
 					const isSelected = eq(item.route, props.model.routing.currentRoute);
 					return (
 						<button
-							key={index}
+							type="button"
+							key={item.route.n}
 							onClick={() =>
 								props.dispatch({
 									t: "routing",
