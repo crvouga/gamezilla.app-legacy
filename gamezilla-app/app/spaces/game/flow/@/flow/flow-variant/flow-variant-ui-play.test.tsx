@@ -49,45 +49,8 @@ describe(import.meta.file, () => {
 		expect(Flow.isSolved(after)).toBe(true);
 	});
 
-	it("should play a sound pressing down on a terminal", () => {
-		const flow = FlowGridShorthand.toGrid([
-			["A", " ", " "],
-			[" ", "B", " "],
-			[" ", " ", "A"],
-		]);
-		const f = Fixture({ flow });
 
-		const randomTerminal = Flow.randomTerminal(flow);
-
-		if (!randomTerminal) return;
-
-		const output = FlowVariantUIPlay.update({
-			flow,
-			model: f.init,
-			msg: { t: "pressed-down", nodeId: randomTerminal?.startId },
-		});
-
-		expect(output.msg?.t).toBe("play-sound");
-	});
-
-	it("should not play a sound pressing down empty node", async () => {
-		const flow = FlowGridShorthand.toGrid([
-			["A", " ", " "],
-			[" ", "B", " "],
-			[" ", " ", "A"],
-		]);
-		const f = Fixture({ flow });
-
-		const output = FlowVariantUIPlay.update({
-			flow,
-			model: f.init,
-			msg: { t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 1 }) },
-		});
-
-		expect(Boolean(output.msg)).toBe(false);
-	});
-
-	it("should play a sound after connecting terminals", async () => {
+	it("should output connected terminals event", () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			["a", "B", " "],
@@ -107,6 +70,74 @@ describe(import.meta.file, () => {
 			{ model: f.init },
 		);
 
-		expect(output.msg?.t).toBe("play-sound");
+		expect(output.event?.[0]?.t).toBe("connected-terminals");
 	});
+
+	it('should output started dragging event', () => {
+		const flow = FlowGridShorthand.toGrid([
+			["A", " ", " "],
+			["a", "B", " "],
+			["a", " ", "A"],
+		]);
+		const f = Fixture({ flow });
+
+		const msgs: FlowVariantPlay.Msg[] = [
+			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
+		];
+
+		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
+			(output, msg) =>
+				FlowVariantUIPlay.update({ flow, model: output.model, msg }),
+			{ model: f.init },
+		);
+
+		expect(output.event?.[0]?.t).toBe("started-dragging");
+	})
+
+	it('should output solved event', () => {
+		const flow = FlowGridShorthand.toGrid([
+			["A", " ", " "],
+			["a", "B", " "],
+			["a", " ", "A"],
+		]);
+		const f = Fixture({ flow });
+
+		const msgs: FlowVariantPlay.Msg[] = [
+			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
+			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 1, y: 2 }) },
+			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }) },
+			{ t: "pressed-up", nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }) },
+		];
+
+		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
+			(output, msg) =>
+				FlowVariantUIPlay.update({ flow, model: output.model, msg }),
+			{ model: f.init },
+		);
+
+		expect(output.event?.[0]?.t).toBe("solved");
+	})
+
+	it('should not output solved if not pressed up on terminal', () => {
+		const flow = FlowGridShorthand.toGrid([
+			["A", " ", " "],
+			["a", "B", " "],
+			["a", " ", "A"],
+		]);
+		const f = Fixture({ flow });
+
+		const msgs: FlowVariantPlay.Msg[] = [
+			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
+			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 1, y: 2 }) },
+			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }) },
+		];
+
+		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
+			(output, msg) =>
+				FlowVariantUIPlay.update({ flow, model: output.model, msg }),
+			{ model: f.init },
+		);
+
+		expect(output.event?.[0]?.t).not.toBe('solved');
+	})
 });

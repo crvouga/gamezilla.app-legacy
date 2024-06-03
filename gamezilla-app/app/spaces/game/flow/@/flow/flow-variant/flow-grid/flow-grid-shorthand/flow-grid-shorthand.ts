@@ -287,6 +287,11 @@ const toPipesBySourceIdForTerminalList = (input: {
 			return;
 		}
 
+		const validAdjacent: {
+			adjacentNodeId: Flow.NodeId;
+			adjacentElement: Element;
+		}[] = [];
+
 		for (const delta of DELTAS) {
 			const adjacentPosition = {
 				x: currentNode.x + delta.x,
@@ -299,12 +304,14 @@ const toPipesBySourceIdForTerminalList = (input: {
 			}
 
 			const adjacentNode = FlowGrid.toNode(input.grid, adjacentNodeId);
+
 			if (!adjacentNode) {
 				continue;
 			}
 
 			const adjacentElement =
 				input.model[adjacentPosition.y]?.[adjacentPosition.x];
+
 			if (!adjacentElement) {
 				continue;
 			}
@@ -314,6 +321,10 @@ const toPipesBySourceIdForTerminalList = (input: {
 				continue;
 			}
 
+			validAdjacent.push({ adjacentNodeId, adjacentElement });
+		}
+
+		for (const { adjacentNodeId, adjacentElement } of validAdjacent) {
 			const edgeId = Flow.toEdgeId({
 				sourceId: currentNodeId,
 				targetId: adjacentNodeId,
@@ -335,6 +346,10 @@ const toPipesBySourceIdForTerminalList = (input: {
 				continue;
 			}
 			findPaths(adjacentNodeId, newPath);
+		}
+
+		if (validAdjacent.length === 0) {
+			allPaths.push(path);
 		}
 
 		visitedNodeIds.delete(currentNodeId);

@@ -35,8 +35,8 @@ export type Model = p.Infer<typeof Model>;
 
 export const init = ({ flow }: { flow: Flow.Model }): Model => {
 	return {
-		pipesBySourceId: flow.pipesBySourceId,
-		terminalsByGroupId: flow.terminalsByGroupId,
+		pipesBySourceId: { ...flow.pipesBySourceId },
+		terminalsByGroupId: { ...flow.terminalsByGroupId },
 		status: { t: "idle" },
 	};
 };
@@ -194,23 +194,23 @@ export type Event =
 	  }
 	| {
 			t: "solved";
-	};
-	  
+	  };
+
 export const eventToSound = (event: Event): string | null => {
 	switch (event.t) {
-		case 'connected-terminals': {
+		case "connected-terminals": {
 			return APP_SOUND.tap;
 		}
-		
-		case 'solved': {
+
+		case "solved": {
 			return APP_SOUND.celebration;
 		}
-			
-		case 'started-dragging': {
+
+		case "started-dragging": {
 			return APP_SOUND.tap;
 		}
 	}
-}
+};
 
 export const update = ({
 	msg,
@@ -223,6 +223,7 @@ export const update = ({
 }): {
 	model: Model;
 	msg?: OutMsg;
+	event?: Event[];
 } => {
 	switch (model.status.t) {
 		case "dragging": {
@@ -267,6 +268,11 @@ const updateIdle: typeof update = ({ msg, model, flow }) => {
 					t: "play-sound",
 					src: APP_SOUND.tap,
 				},
+				event: [
+					{
+						t: "started-dragging",
+					},
+				],
 			};
 		}
 
@@ -297,6 +303,7 @@ const updateDragging = ({
 }): {
 	model: Model;
 	msg?: OutMsg;
+	event?: Event[];
 } => {
 	switch (msg.t) {
 		case "dragged-over": {
@@ -345,6 +352,11 @@ const updateDragging = ({
 				return {
 					model: modelNew,
 					msg: { t: "play-sound", src: APP_SOUND.tap },
+					event: [
+						{
+							t: "connected-terminals",
+						},
+					],
 				};
 			}
 
@@ -356,7 +368,20 @@ const updateDragging = ({
 		}
 
 		case "pressed-up": {
-			return { model: { ...model, status: { t: "idle" } } };
+			const current = deriveFlow({ model, flow });
+			const isSolved = Flow.isSolved(current);
+			const modelNew: Model = { ...model, status: { t: "idle" } }
+			if (isSolved) {
+				return {
+					model: modelNew,
+					event: [
+						{
+							t: "solved",
+						},
+					],
+				};
+			}
+			return { model: modelNew };
 		}
 
 		case "left": {
