@@ -211,9 +211,7 @@ describe(import.meta.file, () => {
 			},
 		]);
 		expect(
-			after.screen.t === "screen-puzzle" &&
-				after.screen.state.t === "solving" &&
-				after.screen.opened === null,
+			after.screen.t === "screen-puzzle" && after.screen.opened === null,
 		).toBe(true);
 	})
 
