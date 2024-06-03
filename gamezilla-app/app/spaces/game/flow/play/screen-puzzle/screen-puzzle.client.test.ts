@@ -264,26 +264,26 @@ describe(import.meta.file, () => {
 		expect(didPlaySound(output)).toBe(true);
 	});
 
-	it('should play sound pressing down on a terminal', async () => {
-		const f = await Fixture()
-		const terminal = Flow.randomTerminal(f.puzzle.flow)
-		
+	it("should play sound pressing down on a terminal", async () => {
+		const f = await Fixture();
+		const terminal = Flow.randomTerminal(f.puzzle.flow);
+
 		if (!terminal) {
-			expect(terminal).not.toBe(null)
-			return
+			expect(terminal).not.toBe(null);
+			return;
 		}
 
 		const output = f.update(f.initial, [
 			{
 				msgCore: withEventMeta({
-					t: 'got-puzzle-screen-flow-play-msg',
+					t: "got-puzzle-screen-flow-play-msg",
 					c: {
 						t: "pressed-down",
 						nodeId: terminal.startId,
-					}
+					},
 				}),
 			},
-		])
-		expect(didPlaySound(output)).toBe(true)
-	})
+		]);
+		expect(didPlaySound(output)).toBe(true);
+	});
 });

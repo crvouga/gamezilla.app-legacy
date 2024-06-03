@@ -59,7 +59,7 @@ describe(import.meta.file, () => {
 
 		const randomTerminal = Flow.randomTerminal(flow);
 
-		if(!randomTerminal) return
+		if (!randomTerminal) return;
 
 		const output = FlowVariantUIPlay.update({
 			flow,
@@ -67,10 +67,10 @@ describe(import.meta.file, () => {
 			msg: { t: "pressed-down", nodeId: randomTerminal?.startId },
 		});
 
-		expect(output.msg?.t).toBe('play-sound');
+		expect(output.msg?.t).toBe("play-sound");
 	});
 
-	it('should not play a sound pressing down empty node', async () => {
+	it("should not play a sound pressing down empty node", async () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			[" ", "B", " "],
@@ -81,9 +81,32 @@ describe(import.meta.file, () => {
 		const output = FlowVariantUIPlay.update({
 			flow,
 			model: f.init,
-			msg: { t: "pressed-down", nodeId: FlowGrid.toNodeId({x: 0, y: 1}) },
+			msg: { t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 1 }) },
 		});
 
-		expect(Boolean(output.msg)).toBe(false)
-	})
+		expect(Boolean(output.msg)).toBe(false);
+	});
+
+	it("should play a sound after connecting terminals", async () => {
+		const flow = FlowGridShorthand.toGrid([
+			["A", " ", " "],
+			["a", "B", " "],
+			["a", " ", "A"],
+		]);
+		const f = Fixture({ flow });
+
+		const msgs: FlowVariantPlay.Msg[] = [
+			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
+			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 1, y: 2 }) },
+			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }) },
+		];
+
+		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
+			(output, msg) =>
+				FlowVariantUIPlay.update({ flow, model: output.model, msg }),
+			{ model: f.init },
+		);
+
+		expect(output.msg?.t).toBe("play-sound");
+	});
 });

@@ -180,10 +180,21 @@ export const Msg = p.or(
 
 export type Msg = p.Infer<typeof Msg>;
 
-export type OutCmd = {
-	t: "play-sound"
-	src: string
-}
+export type OutMsg = {
+	t: "play-sound";
+	src: string;
+};
+
+export type Event =
+	| {
+			t: "started-dragging";
+	  }
+	| {
+			t: "connected-terminals";
+	  }
+	| {
+			t: "solved";
+	  };
 
 export const update = ({
 	msg,
@@ -195,7 +206,7 @@ export const update = ({
 	flow: FlowVariant.Model;
 }): {
 	model: Model;
-	msg?: OutCmd
+	msg?: OutMsg;
 } => {
 	switch (model.status.t) {
 		case "dragging": {
@@ -237,9 +248,9 @@ const updateIdle: typeof update = ({ msg, model, flow }) => {
 					},
 				},
 				msg: {
-					t: 'play-sound',
-					src: APP_SOUND.tap
-				}
+					t: "play-sound",
+					src: APP_SOUND.tap,
+				},
 			};
 		}
 
@@ -269,6 +280,7 @@ const updateDragging = ({
 	flow: FlowVariant.Model;
 }): {
 	model: Model;
+	msg?: OutMsg;
 } => {
 	switch (msg.t) {
 		case "dragged-over": {
@@ -292,6 +304,33 @@ const updateDragging = ({
 				terminalsByGroupId: extended.terminalsByGroupId,
 				pipesBySourceId: extended.pipesBySourceId,
 			};
+
+			const activeGroupTerminal = Flow.toTerminalByGroupId(
+				extended,
+				modelCore.activeGroupId,
+			);
+
+			if (!activeGroupTerminal) {
+				return { model: modelNew };
+			}
+
+			const wasConnected = Flow.isConnectedWithPipes(
+				current,
+				activeGroupTerminal.startId,
+				activeGroupTerminal.endId,
+			);
+			const isConnected = Flow.isConnectedWithPipes(
+				extended,
+				activeGroupTerminal.startId,
+				activeGroupTerminal.endId,
+			);
+
+			if (!wasConnected && isConnected) {
+				return {
+					model: modelNew,
+					msg: { t: "play-sound", src: APP_SOUND.tap },
+				};
+			}
 
 			return { model: modelNew };
 		}

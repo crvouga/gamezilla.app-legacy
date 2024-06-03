@@ -63,9 +63,9 @@ const updateMain: ClientModule["update"] = (input) => {
 				msgCmd: [playSound(APP_SOUND.tap)],
 			};
 		}
-			
-		case 'got-puzzle-screen-flow-play-msg': {
-			if (input.modelCore.screen.t !== 'screen-puzzle') {
+
+		case "got-puzzle-screen-flow-play-msg": {
+			if (input.modelCore.screen.t !== "screen-puzzle") {
 				return { model: input.model };
 			}
 
@@ -75,7 +75,7 @@ const updateMain: ClientModule["update"] = (input) => {
 				flow: input.modelCore.screen.flowPuzzle.flow,
 			});
 
-			if (output.msg?.t === 'play-sound') {
+			if (output.msg?.t === "play-sound") {
 				return {
 					model: input.model,
 					msgCmd: [playSound(output.msg.src)],
