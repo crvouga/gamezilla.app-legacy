@@ -239,7 +239,7 @@ updates.push(({ modelCore, msgCore }) => {
 						t: "screen-puzzle",
 						puzzleIndex: modelCore.packBuilder.screen.puzzleIndex,
 						puzzle: modelCore.packBuilder.screen.puzzle,
-						playUI: updated,
+						playUI: updated.model,
 					},
 				},
 			};

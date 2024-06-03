@@ -35,7 +35,7 @@ const updateCoreMain: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 						...modelCore,
 						screen: {
 							...modelCore.screen,
-							flowPlay: flowPlayNew,
+							flowPlay: flowPlayNew.model,
 							state: {
 								t: "solving",
 							},

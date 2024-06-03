@@ -108,7 +108,9 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 
 export const toSolutionMsgs = ({
 	flow,
-}: { flow: FlowVariant.Model }): Msg[] => {
+}: {
+	flow: FlowVariant.Model;
+}): Msg[] => {
 	const solutions = FlowAlgoSolve.solve(
 		{ distance: FlowVariant.distance(flow) },
 		flow,
@@ -185,7 +187,9 @@ export const update = ({
 	msg: Msg;
 	model: Model;
 	flow: FlowVariant.Model;
-}): Model => {
+}): {
+	model: Model;
+} => {
 	switch (model.status.t) {
 		case "dragging": {
 			return updateDragging({ flow, msg, model, modelCore: model.status });
@@ -205,7 +209,7 @@ const updateIdle: typeof update = ({ msg, model, flow }) => {
 			const groupId = Flow.toGroupId(current, msg.nodeId);
 
 			if (!groupId) {
-				return model;
+				return { model };
 			}
 
 			const started = FlowAlgoDrawPipes.startDrawPipes(
@@ -216,26 +220,28 @@ const updateIdle: typeof update = ({ msg, model, flow }) => {
 			);
 
 			return {
-				terminalsByGroupId: started.terminalsByGroupId,
-				pipesBySourceId: started.pipesBySourceId,
-				status: {
-					t: "dragging",
-					activeGroupId: groupId,
-					autocompleteEdge: null,
+				model: {
+					terminalsByGroupId: started.terminalsByGroupId,
+					pipesBySourceId: started.pipesBySourceId,
+					status: {
+						t: "dragging",
+						activeGroupId: groupId,
+						autocompleteEdge: null,
+					},
 				},
 			};
 		}
 
 		case "dragged-over": {
-			return model;
+			return { model };
 		}
 
 		case "pressed-up": {
-			return model;
+			return { model };
 		}
 
 		case "left": {
-			return model;
+			return { model };
 		}
 	}
 };
@@ -250,7 +256,9 @@ const updateDragging = ({
 	model: Model;
 	modelCore: Dragging;
 	flow: FlowVariant.Model;
-}): Model => {
+}): {
+	model: Model;
+} => {
 	switch (msg.t) {
 		case "dragged-over": {
 			const { nodeId } = msg;
@@ -274,19 +282,19 @@ const updateDragging = ({
 				pipesBySourceId: extended.pipesBySourceId,
 			};
 
-			return modelNew;
+			return { model: modelNew };
 		}
 
 		case "pressed-down": {
-			return model;
+			return { model };
 		}
 
 		case "pressed-up": {
-			return { ...model, status: { t: "idle" } };
+			return { model: { ...model, status: { t: "idle" } } };
 		}
 
 		case "left": {
-			return { ...model, status: { t: "idle" } };
+			return { model: { ...model, status: { t: "idle" } } };
 		}
 	}
 };
