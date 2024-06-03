@@ -200,6 +200,23 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
+	it('should close puzzle complete dialog after clicking next puzzle', async () => {
+		const f = await Fixture();
+		const before = f.update(f.init, f.completePuzzleMsgs);
+		const after = f.update(before, [
+			{
+				t: "user-clicked-next-puzzle-button",
+				nextPuzzle: f.nextPuzzle,
+				nextPuzzleIndex: f.nextPuzzleIndex,
+			},
+		]);
+		expect(
+			after.screen.t === "screen-puzzle" &&
+				after.screen.state.t === "solving" &&
+				after.screen.opened === null,
+		).toBe(true);
+	})
+
 	it("should only open puzzle complete dialog when transitions to solved state", async () => {
 		const f = await Fixture();
 		const endId = Flow.randomTerminal(f.puzzle.flow)?.endId;

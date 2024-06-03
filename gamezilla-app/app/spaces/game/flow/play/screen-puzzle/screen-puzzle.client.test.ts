@@ -247,7 +247,7 @@ describe(import.meta.file, () => {
 		expect(r.getByRole("heading", `Level ${f.puzzleIndex + 1}`)).toBeTruthy();
 	});
 
-	it("should render puzzle complete message after completing a puzzle", async () => {
+	it("should render puzzle complete dialog after completing a puzzle", async () => {
 		const f = await Fixture();
 		const output = f.update(f.initial, f.completePuzzleMsgs);
 		const r = f.render(output);
