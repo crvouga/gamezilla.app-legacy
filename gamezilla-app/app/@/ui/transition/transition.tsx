@@ -6,6 +6,7 @@ export const Transition = ({
 	id,
 	onEnter,
 	onExit,
+	onAppear,
 	children,
 	className,
 	mode,
@@ -17,6 +18,7 @@ export const Transition = ({
 		id,
 		onEnter,
 		onExit,
+		onAppear,
 		className: className,
 		mode,
 	});

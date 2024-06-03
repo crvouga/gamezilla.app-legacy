@@ -1,14 +1,20 @@
-import { VDomChildren } from "gamezilla-app/@/vdom";
+import type { VDomChildren } from "gamezilla-app/@/vdom";
 import { cn } from "./ui";
+import { TimeSpan } from "gamezilla-app/@/core";
 
 export const Dialog = (props: {
 	children: VDomChildren;
 	open: boolean;
 	onClose: () => void;
+	delay?: TimeSpan;
 }) => {
+	const delayMs = props.delay ? TimeSpan.toMilliseconds(props.delay) : null;
 	return (
 		<div
 			role="dialog"
+			style={{
+				"transition-delay": props.open ? `${delayMs}ms` : undefined,
+			}}
 			className={cn(
 				"absolute left-0 top-0 grid h-full w-full place-items-center transition-all duration-300 ease-in-out",
 				props.open
@@ -20,6 +26,11 @@ export const Dialog = (props: {
 					return;
 				}
 				props.onClose();
+			}}
+			onKeyDown={(e) => {
+				if (e.key === "Escape") {
+					props.onClose();
+				}
 			}}
 		>
 			{props.children}
