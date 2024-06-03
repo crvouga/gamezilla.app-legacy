@@ -154,8 +154,12 @@ export const toSpaceByUserId = ({
 export const toEventWithMeta = (
 	model: Model,
 	spaceId: SpaceId,
-	msgEvtId: EventId,
+	msgEvtId?: EventId | null,
 ) => {
+	if (!msgEvtId) {
+		return null;
+	}
+
 	const space = model.spaces[spaceId];
 
 	if (!space) {

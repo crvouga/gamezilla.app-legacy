@@ -75,21 +75,22 @@ const init = (gameName: GameName): Module["init"] => {
 //
 
 const update: Module["update"] = (input) => {
-	const { ctx, msg, msgServer, msgCmd, msgEvt, msgCore, modelCore } = input;
-
-	switch (modelCore.t) {
+	switch (input.modelCore.t) {
 		case "connect-four": {
 			const updated = ConnectFour.update({
-				ctx,
-				modelCore: modelCore.c,
+				ctx: input.ctx,
+				modelCore: input.modelCore.c,
 				model:
 					input.model?.t === "connect-four" ? input.model.c : ConnectFour.init,
-				msgCmd: msgCmd,
-				msgEvt: msgEvt,
-				msgServer: msgServer?.t === "connect-four" ? msgServer.c : null,
+				msgCmd: input.msgCmd,
+				msgEvt: input.msgEvt,
+				msgServer:
+					input.msgServer?.t === "connect-four" ? input.msgServer.c : null,
 				msgCore:
-					msgCore?.t === "connect-four" ? { ...msgCore, ...msgCore.c } : null,
-				msg: msg?.t === "connect-four" ? msg.c : null,
+					input.msgCore?.t === "connect-four"
+						? { ...input.msgCore, ...input.msgCore.c }
+						: null,
+				msg: input.msg?.t === "connect-four" ? input.msg.c : null,
 			});
 
 			const tagged = GameClientModule.tagOutput(
@@ -103,14 +104,17 @@ const update: Module["update"] = (input) => {
 
 		case "flow": {
 			const updated = FlowClient.update({
-				ctx: ctx,
-				modelCore: modelCore.c,
+				ctx: input.ctx,
+				modelCore: input.modelCore.c,
 				model: input.model?.t === "flow" ? input.model.c : FlowClient.init,
-				msgCmd: msgCmd,
-				msgEvt: msgEvt,
-				msgServer: msgServer?.t === "flow" ? msgServer.c : null,
-				msgCore: msgCore?.t === "flow" ? { ...msgCore, ...msgCore.c } : null,
-				msg: msg?.t === "flow" ? msg.c : null,
+				msgCmd: input.msgCmd,
+				msgEvt: input.msgEvt,
+				msgServer: input.msgServer?.t === "flow" ? input.msgServer.c : null,
+				msgCore:
+					input.msgCore?.t === "flow"
+						? { ...input.msgCore, ...input.msgCore.c }
+						: null,
+				msg: input.msg?.t === "flow" ? input.msg.c : null,
 			});
 
 			const tagged = GameClientModule.tagOutput(

@@ -1,3 +1,11 @@
+import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
+import {
+	Button,
+	Dialog,
+	DialogHeader,
+	DialogSurface,
+} from "gamezilla-app/app/@/ui";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import {
 	ViewBottomButtonBar,
@@ -7,22 +15,14 @@ import {
 } from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowVariantUIPlay } from "../../@/flow";
-import { ClientModule } from "../play.types";
-import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
-import {
-	Button,
-	Dialog,
-	DialogHeader,
-	DialogSurface,
-} from "gamezilla-app/app/@/ui";
+import type { ClientModule } from "../play.types";
 import { ScreenPuzzleCore } from "./screen-puzzle.core";
-import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
 
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen(
 		{ model: input.model },
-		(model) => updateMain({ ...input, model }),
 		(model) => updatePuzzleCompleted({ ...input, model }),
+		(model) => updateMain({ ...input, model }),
 	);
 };
 
@@ -72,6 +72,7 @@ const updatePuzzleCompleted: ClientModule["update"] = (input) => {
 			model: input.model,
 		};
 	}
+
 	const before = input.modelCore;
 	const after = ScreenPuzzleCore.updateCore({
 		modelCore: input.modelCore,
@@ -90,6 +91,11 @@ const updatePuzzleCompleted: ClientModule["update"] = (input) => {
 
 	const wasSolved = before.screen.opened === "puzzle-complete";
 	const isSolved = after.screen.opened === "puzzle-complete";
+
+	console.log({
+		wasSolved,
+		isSolved,
+	});
 
 	if (!wasSolved && isSolved) {
 		return {

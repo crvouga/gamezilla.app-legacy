@@ -4,7 +4,7 @@ import { withEventMeta } from "gamezilla-app/app/spaces/@/event";
 import { FlowVariantUIPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
-import { FixtureUpdateInput, FlowPlayClientFixture } from "../@/testing";
+import { type FixtureUpdateInput, FlowPlayClientFixture } from "../@/testing";
 
 const Fixture = async () => {
 	const f = await FlowPlayClientFixture();

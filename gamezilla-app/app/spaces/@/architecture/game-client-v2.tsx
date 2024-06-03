@@ -1,58 +1,61 @@
 import { Eff, type Sub } from "gamezilla-app/@/core";
 import type { VDom } from "gamezilla-app/@/vdom";
-import type { WithEventId, WithEventMeta } from "../event";
+import type { WithEventId } from "../event";
 
 //
 //
 //
 //
 //
+
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+type Any = any;
 
 export type GameClientModuleTypes = {
 	/**
 	 * `Ctx` is data passed down from parent modules
 	 */
-	Ctx?: any;
+	Ctx?: Any;
 	/**
 	 * `Model` is the state of the module
 	 */
-	Model?: any;
+	Model?: Any;
 	/**
 	 * `Msg` is a message that is local to the module. Should almost always be past tense like an msgEvt
 	 */
-	Msg?: any;
+	Msg?: Any;
 	/**
 	 * `MsgToClient` is a message to send to the client component of the module
 	 */
-	MsgToClient?: any;
+	MsgToClient?: Any;
 	/**
 	 * `MsgToServer` is a message to send to the client component of the module
 	 */
-	MsgToServer?: any;
+	MsgToServer?: Any;
 	/**
 	 * `MsgCmdIn` is a message from other modules. Usually verbs
 	 */
-	MsgCmdIn?: any;
+	MsgCmdIn?: Any;
 	/**
 	 * `MsgCmdOut` is a message to update some other consuming module. Always present tense verbs. Always Only for one module
 	 */
-	MsgCmdOut?: any;
+	MsgCmdOut?: Any;
 	/**
 	 * `MsgEvtIn` is a message to notify other modules. Usually past tense verbs
 	 */
-	MsgEvtIn?: any;
+	MsgEvtIn?: Any;
 	/**
 	 * `MsgEvtOut` is a message that is only produced by this module. Always past tense verbs
 	 */
-	MsgEvtOut?: any;
+	MsgEvtOut?: Any;
 	/**
 	 *
 	 */
-	MsgCore?: any;
+	MsgCore?: Any;
 	/**
 	 *
 	 */
-	ModelCore?: any;
+	ModelCore?: Any;
 	/**
 	 *  `ViewSlot` is a slot that the module can fill with a view
 	 */
@@ -65,19 +68,19 @@ export type GameClientModuleTypes = {
 
 // Define a more flexible structure for slots and emits
 type SlotInputTypes = {
-	[key: string]: any;
+	[key: string]: Any;
 };
 
 type EmitInputTypes = {
-	[key: string]: any;
+	[key: string]: Any;
 };
 type SlotRenderFunctions<Slots> = Slots extends SlotInputTypes
 	? { [K in keyof Slots]: (input: Slots[K]) => VDom }
-	: {};
+	: Record<string, unknown>;
 
 type EmitFunctions<Emits> = Emits extends EmitInputTypes
 	? { [K in keyof Emits]: (input: Emits[K]) => void }
-	: {};
+	: Record<string, unknown>;
 
 //
 //
@@ -122,7 +125,7 @@ export type Input<T extends GameClientModuleTypes> = {
 	/**
 	 * `msgCore` is an msgEvt of game
 	 */
-	msgCore?: WithEventMeta<T["MsgCore"]> | null;
+	msgCore?: WithEventId<T["MsgCore"]> | null;
 };
 
 //
@@ -271,7 +274,6 @@ const tagOutput = <
 		msgEvt: output.msgEvt,
 		msgCore: output.msgCore?.map((c) => {
 			const child = { ...c };
-			child.eventId = undefined;
 			return {
 				eventId: c.eventId,
 				c: child,

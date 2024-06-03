@@ -1,13 +1,13 @@
+import { Posix, TimeSpan } from "gamezilla-app/@/core";
+import { p } from "gamezilla-app/@/core/parser";
+import { UserId } from "gamezilla-app/app/@/data";
+import { EventId, type WithEventId } from "gamezilla-app/app/spaces/@/event";
+import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
 import type {
 	VsBotGame,
 	VsBotSetup,
 } from "gamezilla-app/app/spaces/game/@/vs-bot";
-import type { SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import { UserId } from "gamezilla-app/app/@/data";
-import { Posix, TimeSpan } from "gamezilla-app/@/core";
-import { type EventMeta, EventId } from "gamezilla-app/app/spaces/@/event";
 import * as ConnectFour from "../@/connect-four";
-import { p } from "gamezilla-app/@/core/parser";
 import { BotLevel } from "./bot-level";
 
 //
@@ -178,7 +178,7 @@ export const updateCore = ({
 	msgCore,
 }: {
 	modelCore: ModelCore;
-	msgCore: MsgCore & EventMeta;
+	msgCore: WithEventId<MsgCore>;
 }): ModelCore => {
 	switch (modelCore.type) {
 		case "setup": {
@@ -362,7 +362,7 @@ export const updateCore = ({
 
 const addError = (
 	modelCore: ModelCore,
-	msgCore: MsgCore & EventMeta,
+	msgCore: WithEventId<MsgCore>,
 	error: EventErr,
 ): ModelCore => {
 	return {

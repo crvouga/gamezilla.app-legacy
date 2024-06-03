@@ -16,8 +16,8 @@ const update: SpaceClientModule["update"] = (input) => {
 	return SpaceClientModule.andThen(
 		{ model: input.model },
 		//
-		(model) => updateFromSpaceEvent({ ...input, model }),
 		(model) => updateGame({ ...input, model }),
+		(model) => updateFromSpaceEvent({ ...input, model }),
 		(model) => updateFromMsg({ ...input, model }),
 		(model) => updateFromCmd({ ...input, model }),
 	);
@@ -159,14 +159,6 @@ const updateGame: SpaceClientModule["update"] = (input) => {
 		return { model: input.model };
 	}
 
-	const msgSpaceEventWithMeta = input.msgSpaceEvent?.eventId
-		? SpacesCoreClient.toEventWithMeta(
-				input.model,
-				spaceId,
-				input.msgSpaceEvent?.eventId,
-			)
-		: null;
-
 	const modelGame = input.model.games[spaceId] ?? GameClient.init(modelCore.t);
 
 	const gameUpdated = GameClient.update({
@@ -177,8 +169,8 @@ const updateGame: SpaceClientModule["update"] = (input) => {
 		},
 		model: modelGame,
 		msgCore:
-			msgSpaceEventWithMeta?.t === "game"
-				? { ...msgSpaceEventWithMeta, ...msgSpaceEventWithMeta.c }
+			input.msgSpaceEvent?.t === "game"
+				? { ...input.msgSpaceEvent, ...input.msgSpaceEvent.c }
 				: null,
 		modelCore: modelCore,
 		msgServer: input.msgServer?.t === "game" ? input.msgServer.c : null,
@@ -353,6 +345,7 @@ const ViewScreenNotInGame: SpaceClientModule["View"] = ({ ctx, dispatch }) => {
 				{gameNameList.map((gameName) => (
 					<div key={gameName}>
 						<button
+							type="button"
 							aria-label={gameName}
 							onClick={() => dispatch({ t: "clicked-game-tile", gameName })}
 							className="flex overflow-hidden rounded-lg border border-neutral-700"
