@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, it, test } from "bun:test";
 import { FlowVariant, FlowVariantUIPlay } from ".";
 import { Flow } from "../flow";
 import { FlowGridShorthand } from "./flow-grid/flow-grid-shorthand";
@@ -49,7 +49,28 @@ describe(import.meta.file, () => {
 		expect(Flow.isSolved(after)).toBe(true);
 	});
 
-	test("play sound on press down terminal", () => {
+	it("should play a sound pressing down on a terminal", () => {
+		const flow = FlowGridShorthand.toGrid([
+			["A", " ", " "],
+			[" ", "B", " "],
+			[" ", " ", "A"],
+		]);
+		const f = Fixture({ flow });
+
+		const randomTerminal = Flow.randomTerminal(flow);
+
+		if(!randomTerminal) return
+
+		const output = FlowVariantUIPlay.update({
+			flow,
+			model: f.init,
+			msg: { t: "pressed-down", nodeId: randomTerminal?.startId },
+		});
+
+		expect(output.msg?.t).toBe('play-sound');
+	});
+
+	it('should not play a sound pressing down empty node', async () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			[" ", "B", " "],
@@ -60,9 +81,9 @@ describe(import.meta.file, () => {
 		const output = FlowVariantUIPlay.update({
 			flow,
 			model: f.init,
-			msg: { t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 0 }) },
+			msg: { t: "pressed-down", nodeId: FlowGrid.toNodeId({x: 0, y: 1}) },
 		});
 
-		output.model;
-	});
+		expect(Boolean(output.msg)).toBe(false)
+	})
 });

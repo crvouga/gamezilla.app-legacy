@@ -3,6 +3,7 @@ import * as Flow from "../flow/flow";
 import { FlowAlgoDrawPipes, FlowAlgoSolve } from "../flow/flow-algo";
 import * as FlowVariant from "./flow-variant";
 import * as FlowVariantUI from "./flow-variant-ui";
+import { APP_SOUND } from "gamezilla-app/app/@/client";
 
 //
 //
@@ -179,6 +180,11 @@ export const Msg = p.or(
 
 export type Msg = p.Infer<typeof Msg>;
 
+export type OutCmd = {
+	t: "play-sound"
+	src: string
+}
+
 export const update = ({
 	msg,
 	model,
@@ -189,6 +195,7 @@ export const update = ({
 	flow: FlowVariant.Model;
 }): {
 	model: Model;
+	msg?: OutCmd
 } => {
 	switch (model.status.t) {
 		case "dragging": {
@@ -229,6 +236,10 @@ const updateIdle: typeof update = ({ msg, model, flow }) => {
 						autocompleteEdge: null,
 					},
 				},
+				msg: {
+					t: 'play-sound',
+					src: APP_SOUND.tap
+				}
 			};
 		}
 
