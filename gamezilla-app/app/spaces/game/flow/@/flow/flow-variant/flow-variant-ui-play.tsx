@@ -200,7 +200,7 @@ export type Event =
 			t: "solved";
 	  };
 
-export const eventToSoundSrc = (event: Event): string | null => {
+export const eventToSoundSrc = (event: Event): string => {
 	switch (event.t) {
 		case "connected-terminals": {
 			return APP_SOUND.tap;

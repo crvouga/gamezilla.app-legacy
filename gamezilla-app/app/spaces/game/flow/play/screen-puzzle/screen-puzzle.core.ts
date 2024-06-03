@@ -142,7 +142,6 @@ const initCore = (input: {
 	};
 };
 
-
 export const ScreenPuzzleCore = {
 	updateCore,
 	initCore,

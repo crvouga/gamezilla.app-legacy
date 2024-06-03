@@ -287,5 +287,9 @@ describe(import.meta.file, () => {
 		expect(didPlaySound(output)).toBe(true);
 	});
 
-	it.todo('should play sound after solving puzzle')
+	it("should play sound after solving puzzle", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, f.completePuzzleMsgs);
+		expect(didPlaySound(output)).toBe(true);
+	});
 });

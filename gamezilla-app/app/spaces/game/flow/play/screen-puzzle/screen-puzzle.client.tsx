@@ -19,13 +19,10 @@ import {
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowVariantUIPlay } from "../../@/flow";
 import type { ClientModule } from "../play.types";
-import { ScreenPuzzleCore } from "./screen-puzzle.core";
 
 const update: ClientModule["update"] = (input) => {
-	return GameClientModule.andThen(
-		{ model: input.model },
-		(model) => updatePuzzleCompleted({ ...input, model }),
-		(model) => updateMain({ ...input, model }),
+	return GameClientModule.andThen({ model: input.model }, (model) =>
+		updateMain({ ...input, model }),
 	);
 };
 
@@ -76,16 +73,10 @@ const updateMain: ClientModule["update"] = (input) => {
 			});
 
 			if (!output.event) {
-				return {model: input.model,
-				};
+				return { model: input.model };
 			}
 
 			const soundSrc = FlowVariantUIPlay.eventToSoundSrc(output.event);
-			
-			if (!soundSrc) {
-				return {model: input.model,
-				};
-			}
 
 			return {
 				model: input.model,
@@ -93,44 +84,6 @@ const updateMain: ClientModule["update"] = (input) => {
 			};
 		}
 	}
-	return {
-		model: input.model,
-	};
-};
-
-const updatePuzzleCompleted: ClientModule["update"] = (input) => {
-	if (!input.msgCore) {
-		return {
-			model: input.model,
-		};
-	}
-
-	const before = input.modelCore;
-	const after = ScreenPuzzleCore.updateCore({
-		modelCore: input.modelCore,
-		msgCore: input.msgCore,
-		ctx: input.ctx,
-	});
-
-	if (
-		before.screen.t !== "screen-puzzle" ||
-		after.screen.t !== "screen-puzzle"
-	) {
-		return {
-			model: input.model,
-		};
-	}
-
-	const wasSolved = before.screen.opened === "puzzle-complete";
-	const isSolved = after.screen.opened === "puzzle-complete";
-
-	if (!wasSolved && isSolved) {
-		return {
-			model: input.model,
-			msgCmd: [playSound(APP_SOUND.celebration)],
-		};
-	}
-
 	return {
 		model: input.model,
 	};

@@ -13,7 +13,7 @@ export const Dialog = (props: {
 		<div
 			role="dialog"
 			style={{
-				"transition-delay": delayMs ? `${delayMs}ms` : undefined,
+				"transition-delay": props.open && delayMs ? `${delayMs}ms` : undefined,
 			}}
 			className={cn(
 				"absolute left-0 top-0 grid h-full w-full place-items-center transition-all duration-300 ease-in-out",
