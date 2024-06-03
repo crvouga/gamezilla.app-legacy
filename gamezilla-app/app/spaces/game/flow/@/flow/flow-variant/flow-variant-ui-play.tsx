@@ -370,7 +370,7 @@ const updateDragging = ({
 		case "pressed-up": {
 			const current = deriveFlow({ model, flow });
 			const isSolved = Flow.isSolved(current);
-			const modelNew: Model = { ...model, status: { t: "idle" } }
+			const modelNew: Model = { ...model, status: { t: "idle" } };
 			if (isSolved) {
 				return {
 					model: modelNew,

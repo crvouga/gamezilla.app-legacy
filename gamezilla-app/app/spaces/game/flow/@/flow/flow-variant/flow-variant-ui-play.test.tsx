@@ -49,7 +49,6 @@ describe(import.meta.file, () => {
 		expect(Flow.isSolved(after)).toBe(true);
 	});
 
-
 	it("should output connected terminals event", () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
@@ -73,7 +72,7 @@ describe(import.meta.file, () => {
 		expect(output.event?.[0]?.t).toBe("connected-terminals");
 	});
 
-	it('should output started dragging event', () => {
+	it("should output started dragging event", () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			["a", "B", " "],
@@ -92,9 +91,9 @@ describe(import.meta.file, () => {
 		);
 
 		expect(output.event?.[0]?.t).toBe("started-dragging");
-	})
+	});
 
-	it('should output solved event', () => {
+	it("should output solved event", () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			["a", "B", " "],
@@ -116,9 +115,9 @@ describe(import.meta.file, () => {
 		);
 
 		expect(output.event?.[0]?.t).toBe("solved");
-	})
+	});
 
-	it('should not output solved if not pressed up on terminal', () => {
+	it("should not output solved if not pressed up on terminal", () => {
 		const flow = FlowGridShorthand.toGrid([
 			["A", " ", " "],
 			["a", "B", " "],
@@ -138,6 +137,6 @@ describe(import.meta.file, () => {
 			{ model: f.init },
 		);
 
-		expect(output.event?.[0]?.t).not.toBe('solved');
-	})
+		expect(output.event?.[0]?.t).not.toBe("solved");
+	});
 });
