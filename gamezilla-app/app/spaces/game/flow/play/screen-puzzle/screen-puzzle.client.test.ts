@@ -286,4 +286,6 @@ describe(import.meta.file, () => {
 		]);
 		expect(didPlaySound(output)).toBe(true);
 	});
+
+	it.todo('should play sound after solving puzzle')
 });

@@ -76,13 +76,15 @@ const updateMain: ClientModule["update"] = (input) => {
 			});
 
 			if (!output.event) {
-				return { model: input.model };
+				return {model: input.model,
+				};
 			}
 
 			const soundSrc = FlowVariantUIPlay.eventToSoundSrc(output.event);
-
+			
 			if (!soundSrc) {
-				return { model: input.model };
+				return {model: input.model,
+				};
 			}
 
 			return {
