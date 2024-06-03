@@ -1,3 +1,22 @@
+import { Sub, TimeSpan } from "gamezilla-app/@/core";
+import {
+	APP_SOUND,
+	type ClientCmd,
+	playSound,
+} from "gamezilla-app/app/@/client";
+import type { UserId } from "gamezilla-app/app/@/data";
+import {
+	IconArrowLeftOnRect,
+	IconArrowRotateLeft,
+	IconRightLeft,
+} from "gamezilla-app/app/@/ui";
+import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import { type WithEventId, withId } from "gamezilla-app/app/spaces/@/event";
+import { FeedItem } from "gamezilla-app/app/spaces/@/feed-item";
+import type {
+	SpaceClientCtx,
+	SpaceClientEvent,
+} from "gamezilla-app/app/spaces/@/space";
 import {
 	GameLayout,
 	ViewBottomButtonBar,
@@ -10,25 +29,6 @@ import {
 	VsBotGame,
 	VsBotSetup,
 } from "gamezilla-app/app/spaces/game/@/vs-bot";
-import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import { type EventMeta, withId } from "gamezilla-app/app/spaces/@/event";
-import { FeedItem } from "gamezilla-app/app/spaces/@/feed-item";
-import type {
-	SpaceClientCtx,
-	SpaceClientEvent,
-} from "gamezilla-app/app/spaces/@/space";
-import {
-	APP_SOUND,
-	type ClientCmd,
-	playSound,
-} from "gamezilla-app/app/@/client";
-import type { UserId } from "gamezilla-app/app/@/data";
-import {
-	IconArrowLeftOnRect,
-	IconArrowRotateLeft,
-	IconRightLeft,
-} from "gamezilla-app/app/@/ui";
-import { Sub, TimeSpan } from "gamezilla-app/@/core";
 import * as ConnectFour from "../@/connect-four";
 import {
 	CoverArt,
@@ -36,16 +36,16 @@ import {
 	PlayerTwoIcon,
 	ViewColumns,
 } from "../@/connect-four-ui";
+import { ALL_BOT_LEVELS, type BotLevel } from "./bot-level";
 import {
 	type ModelClient,
+	type ModelCore,
 	type MsgClient,
 	type MsgCore,
-	type ModelCore,
 	type MsgToClient,
 	type MsgToServer,
 	updateCore,
 } from "./vs-bot.types";
-import { ALL_BOT_LEVELS, type BotLevel } from "./bot-level";
 
 //
 //
@@ -205,7 +205,7 @@ const updateFromMsg =
 const updateSound = (
 	currentUserId: UserId,
 	modelCore: ModelCore,
-	msgCore: MsgCore & EventMeta,
+	msgCore: WithEventId<MsgCore>,
 ): ClientCmd<{
 	MsgToServer: MsgToServer;
 	MsgClient: MsgClient;

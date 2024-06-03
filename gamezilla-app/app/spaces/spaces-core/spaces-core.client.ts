@@ -1,8 +1,8 @@
 import { SpaceId, UserId } from "gamezilla-app/app/@/data";
 import { EventId, type WithEventId } from "../@/event";
-import * as SpaceState from "./space-state";
-import * as Space from "./space";
-import type { SpaceEvent } from "./space-event";
+import * as SpaceState from "./space-core-state";
+import * as Space from "./space-core";
+import type { SpaceCoreEvent } from "./space-core-event";
 import { p } from "gamezilla-app/@/core/parser";
 
 //
@@ -154,8 +154,12 @@ export const toSpaceByUserId = ({
 export const toEventWithMeta = (
 	model: Model,
 	spaceId: SpaceId,
-	msgEvtId: EventId,
+	msgEvtId?: EventId | null,
 ) => {
+	if (!msgEvtId) {
+		return null;
+	}
+
 	const space = model.spaces[spaceId];
 
 	if (!space) {
@@ -217,7 +221,7 @@ export const updateFromSpaceEvent = ({
 	spaceEvent,
 }: {
 	model: Model;
-	spaceEvent: WithEventId<SpaceEvent>;
+	spaceEvent: WithEventId<SpaceCoreEvent>;
 }): {
 	model: Model;
 	err?: UpdateError;
@@ -324,7 +328,7 @@ const appendEvent = ({
 	msgEvt,
 }: {
 	model: Model;
-	msgEvt: WithEventId<SpaceEvent>;
+	msgEvt: WithEventId<SpaceCoreEvent>;
 }): {
 	model: Model;
 } => {

@@ -7,7 +7,7 @@ import {
 	init,
 } from "../@/testing/client";
 import { SpaceClientModule } from "../architecture/space-client";
-import { Spaces } from "../spaces-core";
+import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 
 describe(import.meta.file, () => {
 	it("should open current space when clicking current space bottom bar", async () => {
@@ -23,7 +23,7 @@ describe(import.meta.file, () => {
 			{ model: started.model },
 			clickedCurrentSpaceBottomBar(ctx),
 		);
-		const currentUsersSpaceId = Spaces.toSpaceIdByUserId(
+		const currentUsersSpaceId = SpacesCoreClient.toSpaceIdByUserId(
 			output.model,
 			ctx.currentUserId,
 		);

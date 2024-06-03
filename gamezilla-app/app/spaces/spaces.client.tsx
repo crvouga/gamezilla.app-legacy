@@ -2,9 +2,9 @@ import { Eff, NotAsked, Sub, batchMsgs } from "gamezilla-app/@/core";
 import { isAnonymous } from "../@/client";
 import { SpaceClientCmd } from "./@/space-client-cmd";
 import {
-	SpaceClientModule,
 	type Input,
 	type Output,
+	SpaceClientModule,
 } from "./architecture/architecture";
 import { CurrentSpaceBottomBar } from "./current-space-bottom-bar/current-space-bottom-bar";
 import { EndSpaceClient } from "./end-space/end-space.client";
@@ -15,7 +15,7 @@ import { ListSpacesClient } from "./list-spaces/list-spaces.client";
 import { Modals } from "./modals/modals";
 import { SpaceGameClient } from "./space-game/space-game.client";
 import { SpaceClient } from "./space/space.client";
-import { Spaces } from "./spaces-core";
+import * as SpacesCoreClient from "./spaces-core/spaces-core.client";
 import type { ClientModule, ModelClient } from "./spaces.types";
 import { StartSpaceClient } from "./start-space/start-space.client";
 import { SyncClient } from "./sync/sync.client";
@@ -30,7 +30,7 @@ import { SyncClient } from "./sync/sync.client";
 
 export const init: ClientModule["init"] = ({ ctx }) => {
 	const model: ModelClient = {
-		...Spaces.init,
+		...SpacesCoreClient.init,
 		games: {},
 		modal: null,
 		modalPreviewUserId: null,
@@ -112,7 +112,7 @@ export const updateMain = (input: Input, initial?: Output): Output => {
 const updateChild: SpaceClientModule["update"] = (input) => {
 	if (
 		input.msgSpaceEvent &&
-		Spaces.hasEvent(
+		SpacesCoreClient.hasEvent(
 			input.model,
 			input.msgSpaceEvent.spaceId,
 			input.msgSpaceEvent.eventId,
@@ -125,8 +125,8 @@ const updateChild: SpaceClientModule["update"] = (input) => {
 		{ model: input.model },
 		(model) => EndSpaceClient.update({ ...input, model }),
 		(model) => LeaveSpaceClient.update({ ...input, model }),
-		(model) => updateSpacesFromSpaceEvent({ ...input, model }),
 		(model) => SpaceGameClient.update({ ...input, model }),
+		(model) => updateSpacesFromSpaceEvent({ ...input, model }),
 		(model) => SyncClient.update({ ...input, model }),
 		(model) => StartSpaceClient.update({ ...input, model }),
 		(model) => JoinSpaceClient.update({ ...input, model }),
@@ -145,7 +145,7 @@ const updateSpacesFromSpaceEvent: SpaceClientModule["update"] = ({
 		return { model };
 	}
 
-	const updated = Spaces.updateFromSpaceEvent({
+	const updated = SpacesCoreClient.updateFromSpaceEvent({
 		model,
 		spaceEvent: msgSpaceEvent,
 	});

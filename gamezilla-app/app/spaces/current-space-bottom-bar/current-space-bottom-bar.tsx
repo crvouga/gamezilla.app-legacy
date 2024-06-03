@@ -7,14 +7,14 @@ import {
 import { Avatar, Button } from "gamezilla-app/app/@/ui";
 import { CoverArt } from "../game/game-cover-art";
 import type { SpaceClientModule } from "../architecture/architecture";
-import { Spaces } from "../spaces-core";
+import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 import type { ModelClient, MsgClient } from "../spaces.types";
 
 const update: SpaceClientModule["update"] = ({ model, msg, ctx }) => {
 	switch (msg?.t) {
 		case "clicked-current-space-bottom-bar": {
 			const { currentUserId } = ctx;
-			const currentUsersSpaceId = Spaces.toSpaceIdByUserId(
+			const currentUsersSpaceId = SpacesCoreClient.toSpaceIdByUserId(
 				model,
 				currentUserId,
 			);
@@ -57,7 +57,7 @@ const View = ({
 		return null;
 	}
 
-	const space = Spaces.toSpaceStarted(model, userSpaceId);
+	const space = SpacesCoreClient.toSpaceStarted(model, userSpaceId);
 
 	if (!space) {
 		return null;
@@ -72,6 +72,7 @@ const View = ({
 			<div className="h-1 w-full bg-gradient-to-tr from-blue-700  via-blue-600 to-sky-500" />
 			<div className="flex w-full items-center overflow-hidden text-inherit">
 				<button
+					type="button"
 					className="flex flex-1 items-center gap-3 overflow-hidden"
 					onClick={() => dispatch({ t: "clicked-current-space-bottom-bar" })}
 				>

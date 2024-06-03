@@ -475,7 +475,11 @@ const reconstructPath = (
 	const totalPath = [current];
 
 	while (cameFrom.has(current)) {
-		current = cameFrom.get(current)!;
+		const got = cameFrom.get(current);
+		if (!got) {
+			break;
+		}
+		current = got;
 		totalPath.push(current);
 	}
 

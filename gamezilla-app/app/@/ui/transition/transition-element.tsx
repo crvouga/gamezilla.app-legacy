@@ -27,6 +27,7 @@ if (typeof window !== "undefined" && "customElements" in window) {
 				id: this.getAttribute("id") || "",
 				onEnter: async () => {},
 				onExit: async () => {},
+				onAppear: async () => {},
 				className: "",
 				mode: "in-out",
 			};
@@ -45,6 +46,9 @@ if (typeof window !== "undefined" && "customElements" in window) {
 				Array.from(this.childNodes).forEach((child) => {
 					if (child instanceof HTMLElement) {
 						this.applyTransition(child, "enter");
+						if (this.props.onAppear) {
+							this.props.onAppear(child);
+						}
 					}
 				});
 			}

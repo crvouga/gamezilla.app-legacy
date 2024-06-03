@@ -8,8 +8,8 @@ import {
 	init,
 	userStartedSpace,
 } from "../@/testing/server";
-import { Space } from "../spaces-core";
-import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
+import { SpaceCore } from "../spaces-core";
+import * as SpacesCoreServer from "../spaces-core/spaces-core.server";
 
 describe(import.meta.file, () => {
 	it("should add a new space when recieving a user started space event", async () => {
@@ -23,8 +23,8 @@ describe(import.meta.file, () => {
 		);
 
 		expect(
-			Space.toSpaceId(
-				await SpacesCoreServer.getSpaceById(deps.SpacesDb, spaceId),
+			SpaceCore.toSpaceId(
+				await SpacesCoreServer.getSpaceById(deps.spaceCoreDb, spaceId),
 			),
 		).toBe(spaceId);
 	});

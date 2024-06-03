@@ -17,15 +17,23 @@ const calculateDirection = (
 const countTurns = (config: Config, path: Flow.Edge[]): number => {
 	let turns = 0;
 	for (let i = 1; i < path.length; i++) {
+		const prev = path[i - 1];
+		if (!prev) {
+			continue;
+		}
 		const prevDirection = calculateDirection(
 			config,
-			path[i - 1]!.sourceId,
-			path[i - 1]!.targetId,
+			prev.sourceId,
+			prev.targetId,
 		);
+		const curr = path[i];
+		if (!curr) {
+			continue;
+		}
 		const currDirection = calculateDirection(
 			config,
-			path[i]!.sourceId,
-			path[i]!.targetId,
+			curr.sourceId,
+			curr.targetId,
 		);
 		if (prevDirection !== currDirection) {
 			turns++;
@@ -80,7 +88,13 @@ const toPossiblePipelines = function* (input: {
 	});
 
 	while (!minHeap.isEmpty()) {
-		const { path, currentNode, visited, cost } = minHeap.extractMin()!;
+		const min = minHeap.extractMin();
+
+		if (!min) {
+			break;
+		}
+
+		const { path, currentNode, visited, cost } = min;
 
 		if (currentNode === input.endId) {
 			const normalizedPath = normalizePath(path);

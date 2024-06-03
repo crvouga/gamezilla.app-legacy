@@ -1,10 +1,10 @@
+import { Eff, type Sub } from "gamezilla-app/@/core";
 import type { ClientId, SessionId, UserId } from "gamezilla-app/app/@/data";
 import type { ServerCtx, ServerEvent } from "gamezilla-app/app/@/server";
-import { Eff, type Sub } from "gamezilla-app/@/core";
 import type { WithEventId } from "../@/event";
 import type { Space } from "../@/space";
 import type { SpaceServerCmd } from "../@/space-server-cmd";
-import type { SpaceEvent } from "../spaces-core";
+import type { SpaceCoreEvent } from "../spaces-core";
 import type {
 	ModelServer,
 	MsgServer,
@@ -31,7 +31,7 @@ export type Input = {
 		| null;
 	msgEvt?: ServerEvent | null;
 	msgCmd?: SpaceServerCmd<MsgToClient> | null;
-	msgSpaceEvent?: WithEventId<SpaceEvent> | null;
+	msgSpaceEvent?: WithEventId<SpaceCoreEvent> | null;
 };
 
 export type MaybePromise<T> = T | Promise<T>;
@@ -41,7 +41,7 @@ export type Output = {
 	eff?: Eff<MsgServer>;
 	msgCmd?: SpaceServerCmd<MsgToClient>[];
 	msgEvt?: unknown[];
-	msgSpaceEvent?: WithEventId<SpaceEvent>[];
+	msgSpaceEvent?: WithEventId<SpaceCoreEvent>[];
 };
 
 export type SpaceServerModule = {

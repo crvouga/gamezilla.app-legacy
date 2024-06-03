@@ -1,7 +1,7 @@
 import { sendBack } from "gamezilla-app/app/@/server";
 import type { SpaceServerModule } from "../architecture/space-server";
-import * as Space from "../spaces-core/space";
-import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
+import * as Space from "../spaces-core/space-core";
+import * as SpacesCoreServer from "../spaces-core/spaces-core.server";
 import { Result } from "gamezilla-app/@/core";
 
 //
@@ -18,7 +18,7 @@ const update: SpaceServerModule["update"] = async (input) => {
 	switch (msgClient?.t) {
 		case "list-spaces": {
 			const spaces = await SpacesCoreServer.listSpaces({
-				spacesDb: input.deps.SpacesDb,
+				spacesDb: input.deps.spaceCoreDb,
 				limit: msgClient.limit,
 				offset: msgClient.offset,
 				where: msgClient.where,
@@ -29,7 +29,7 @@ const update: SpaceServerModule["update"] = async (input) => {
 			const userIds = spaces.flatMap((space) => Space.toUserIds(space));
 
 			const profiles = Result.withDefault(
-				await deps.ProfileCache.get(userIds),
+				await deps.profileCache.get(userIds),
 				{},
 			);
 

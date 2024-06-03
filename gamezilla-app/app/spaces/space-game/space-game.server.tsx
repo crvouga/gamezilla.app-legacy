@@ -3,8 +3,8 @@ import { GameServer } from "../game/game.server";
 import type { WithEventId } from "../@/event";
 import { SpaceServerCmd } from "../@/space-server-cmd";
 import { SpaceServerModule } from "../architecture/space-server";
-import type { SpaceEvent } from "../spaces-core";
-import { SpacesCoreServer } from "../spaces-core/spaces-core.server";
+import type { SpaceCoreEvent } from "../spaces-core";
+import * as SpacesCoreServer from "../spaces-core/spaces-core.server";
 import type { MsgServer } from "../spaces.types";
 
 const inputToSpaceId = (input: Parameters<SpaceServerModule["update"]>[0]) => {
@@ -31,7 +31,7 @@ const updateGame: SpaceServerModule["update"] = async (input) => {
 	}
 
 	const spaceState = await SpacesCoreServer.getSpaceStarted(
-		input.deps.SpacesDb,
+		input.deps.spaceCoreDb,
 		spaceId,
 	);
 
@@ -48,7 +48,7 @@ const updateGame: SpaceServerModule["update"] = async (input) => {
 	}
 
 	const gameModel = Result.withDefault(
-		await input.deps.GameDb.getBySpaceId(spaceId),
+		await input.deps.gameDb.getBySpaceId(spaceId),
 		null,
 	);
 
@@ -70,11 +70,11 @@ const updateGame: SpaceServerModule["update"] = async (input) => {
 				? { ...input.msgSpaceEvent, ...input.msgSpaceEvent.c }
 				: null,
 		modelCore: spaceState.game,
-		deps: input.deps.GameServer,
+		deps: input.deps.gameServer,
 	});
 
 	const msgSpaceEventNew = (gameUpdated.msgCore ?? []).map(
-		(e): WithEventId<SpaceEvent> => ({ ...e, spaceId, t: "game", c: e }),
+		(e): WithEventId<SpaceCoreEvent> => ({ ...e, spaceId, t: "game", c: e }),
 	);
 
 	return {

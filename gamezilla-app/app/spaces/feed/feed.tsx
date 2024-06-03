@@ -2,7 +2,8 @@ import { GameClient } from "../game/game.client";
 import type { WithEventId } from "../@/event";
 import { FeedItem } from "../@/feed-item";
 import type { SpaceClientCtx } from "../@/space";
-import { type SpaceEvent, type SpaceState, Spaces } from "../spaces-core";
+import type { SpaceCoreEvent, SpaceCoreState } from "../spaces-core";
+import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 import type { ModelClient, MsgClient } from "../spaces.types";
 
 const View = ({
@@ -10,14 +11,14 @@ const View = ({
 	ctx,
 	model,
 }: {
-	spaceState: SpaceState.State;
+	spaceState: SpaceCoreState.State;
 	dispatch: (m: MsgClient) => void;
 	model: ModelClient;
 	ctx: SpaceClientCtx;
 }) => {
 	const msgEvt =
 		spaceState.type === "started"
-			? Spaces.toEventWithMeta(
+			? SpacesCoreClient.toEventWithMeta(
 					model,
 					spaceState.spaceId,
 					spaceState.latestEvent,
@@ -39,8 +40,8 @@ const ViewFeedItem = ({
 	state,
 }: {
 	ctx: SpaceClientCtx;
-	msgEvt: WithEventId<SpaceEvent>;
-	state: SpaceState.Started;
+	msgEvt: WithEventId<SpaceCoreEvent>;
+	state: SpaceCoreState.Started;
 }) => {
 	switch (msgEvt.t) {
 		case "game": {

@@ -8,7 +8,7 @@ import {
 import { SpaceId } from "gamezilla-app/app/@/data";
 import { andThen } from "../../@/architecture/app-client";
 import { Ctx, clickedStartSpaceButton, init } from "../@/testing/client";
-import { Spaces } from "../spaces-core";
+import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 
 describe(import.meta.file, () => {
 	it("should show toast when current user starts a space", () => {
@@ -26,9 +26,9 @@ describe(import.meta.file, () => {
 
 		const started = andThen(init(ctx), clickedStartSpaceButton(ctx, spaceId));
 
-		expect(Spaces.toSpaceIdByUserId(started.model, ctx.currentUserId)).toEqual(
-			spaceId,
-		);
+		expect(
+			SpacesCoreClient.toSpaceIdByUserId(started.model, ctx.currentUserId),
+		).toEqual(spaceId);
 	});
 
 	it("should redirect after starting a space", () => {

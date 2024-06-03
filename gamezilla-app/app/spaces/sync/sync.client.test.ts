@@ -21,7 +21,8 @@ import {
 	userStartedSpace,
 } from "../@/testing/client";
 import { makeSpace } from "../@/testing/shared";
-import { Space, Spaces } from "../spaces-core";
+import { SpaceCore } from "../spaces-core";
+import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 
 const hasExcatlyOne = <T>(
 	items: T[],
@@ -70,13 +71,15 @@ describe(import.meta.file, () => {
 
 		const output = andThen(init(ctx), gotSpace(ctx, someSpace));
 
-		const listed = Spaces.listSpaces({
+		const listed = SpacesCoreClient.listSpaces({
 			model: output.model,
 			offset: 0,
 			limit: Number.POSITIVE_INFINITY,
 		});
 
-		expect(listed.some((space) => Space.isEqual(space, someSpace))).toBe(true);
+		expect(listed.some((space) => SpaceCore.isEqual(space, someSpace))).toBe(
+			true,
+		);
 	});
 
 	it("should merge current user's space when recieved from server", () => {
@@ -91,7 +94,8 @@ describe(import.meta.file, () => {
 		);
 
 		expect(
-			Spaces.toSpaceIdByUserId(updated.model, ctx.currentUserId) === spaceId,
+			SpacesCoreClient.toSpaceIdByUserId(updated.model, ctx.currentUserId) ===
+				spaceId,
 		).toBe(true);
 	});
 

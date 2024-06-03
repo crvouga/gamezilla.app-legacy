@@ -1,5 +1,5 @@
-import { Ok, Posix, Result, Task, isErr } from "gamezilla-app/@/core";
-import { SessionId, UserId } from "gamezilla-app/app/@/data";
+import { Ok, type Posix, Result, type Task, isErr } from "gamezilla-app/@/core";
+import { type SessionId, UserId } from "gamezilla-app/app/@/data";
 import type { UserAccount } from "gamezilla-app/app/@/data/account";
 import { sendBack } from "gamezilla-app/app/@/server";
 import type { ServerDeps, ServerModule } from "../auth.types";

@@ -3,7 +3,7 @@ import { Avatar, cn } from "gamezilla-app/app/@/ui";
 import { ViewSpaceHostChip, ViewYouChip } from "../game/@/game";
 import { CoverArt } from "../game/game-cover-art";
 import { gameNameToString } from "../game/game.types";
-import type { SpaceState } from "../spaces-core";
+import type { SpaceCoreState } from "../spaces-core";
 
 const MAX_AVATAR_COUNT = 3;
 
@@ -13,7 +13,7 @@ export const ViewSpaceCard = ({
 	onClick,
 }: {
 	ctx: BaseClientCtx;
-	state: SpaceState.Started;
+	state: SpaceCoreState.Started;
 	onClick?: () => void;
 }) => {
 	const host = ctx.profiles[state.hostId];

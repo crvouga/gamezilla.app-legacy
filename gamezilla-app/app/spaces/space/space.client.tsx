@@ -1,16 +1,16 @@
-import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
+import type { VDom } from "gamezilla-app/@/vdom";
 import type { ClientCtx } from "gamezilla-app/app/@/client";
 import type { SpaceId } from "gamezilla-app/app/@/data";
 import { Button, IconHome, IconUserGroup } from "gamezilla-app/app/@/ui";
-import type { VDom } from "gamezilla-app/@/vdom";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import type { SpaceClientModule } from "../architecture/architecture";
 import { EndSpaceClient } from "../end-space/end-space.client";
 import { Feed } from "../feed/feed";
-import { SpaceGameClient } from "../space-game/space-game.client";
 import { JoinSpaceClient } from "../join-space/join-space.client";
 import { LeaveSpaceClient } from "../leave-space/leave-space.client";
 import { Modals } from "../modals/modals";
-import { Spaces } from "../spaces-core";
+import { SpaceGameClient } from "../space-game/space-game.client";
+import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 import type { ModelClient, MsgClient } from "../spaces.types";
 
 const View = (props: {
@@ -19,7 +19,7 @@ const View = (props: {
 	dispatch: (m: MsgClient) => void;
 	spaceId: SpaceId;
 }) => {
-	const spaceState = Spaces.toSpaceState(props.model, props.spaceId);
+	const spaceState = SpacesCoreClient.toSpaceState(props.model, props.spaceId);
 
 	switch (spaceState.type) {
 		case "initial": {
@@ -37,7 +37,7 @@ const View = (props: {
 				space: spaceState,
 			};
 
-			const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
 				props.model,
 				props.ctx.currentUserId,
 			);
@@ -123,7 +123,11 @@ const ViewTopBarButton = ({
 	onClick: () => void;
 }) => {
 	return (
-		<button className="grid w-20 place-items-center py-1" onClick={onClick}>
+		<button
+			type="button"
+			className="grid w-20 place-items-center py-1"
+			onClick={onClick}
+		>
 			{icon}
 			<p className="text-xs">{label}</p>
 		</button>

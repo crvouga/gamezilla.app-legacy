@@ -8,7 +8,7 @@ import { SpaceId } from "gamezilla-app/app/@/data";
 import { Button } from "gamezilla-app/app/@/ui";
 import { withId } from "../@/event";
 import { SpaceClientModule } from "../architecture/architecture";
-import type { SpaceEvent } from "../spaces-core";
+import type { SpaceCoreEvent } from "../spaces-core";
 
 const update: SpaceClientModule["update"] = (input) => {
 	return SpaceClientModule.andThen(
@@ -65,7 +65,7 @@ const updateStartSpaceButton: SpaceClientModule["update"] = (input) => {
 				return { model };
 			}
 
-			const spaceEventNew = withId<SpaceEvent>({
+			const spaceEventNew = withId<SpaceCoreEvent>({
 				t: "user-started-space",
 				spaceId: msg.spaceId,
 				userId: ctx.currentUserId,

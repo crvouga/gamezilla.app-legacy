@@ -47,18 +47,6 @@ export const withThrottledWrites = ({
 		lastValues.set(key, entries);
 	};
 
-	const scheduleZap = (key: string) => {
-		if (!timeouts.has(key)) {
-			timeouts.set(
-				key,
-				setTimeout(() => {
-					dbConnKv.zap(key);
-					timeouts.delete(key);
-				}, throttleMs),
-			);
-		}
-	};
-
 	const flush = async () => {
 		logger.info("Flushing throttled writes");
 		for (const [key, timeout] of timeouts.entries()) {
@@ -97,9 +85,6 @@ export const withThrottledWrites = ({
 		async setMany(entries) {
 			scheduleSetMany(entries);
 			return Ok(null);
-		},
-		async zap(key) {
-			return dbConnKv.zap(key);
 		},
 	};
 };

@@ -1,15 +1,18 @@
 import { Err, Ok, Result, isErr } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { SpaceId, type UserId } from "gamezilla-app/app/@/data";
-import { DbConnKv, IDbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
-import * as Space from "../space";
-import type { ISpacesDb } from "./space-db";
+import {
+	DbConnKv,
+	type IDbConnKv,
+} from "gamezilla-app/app/@/server/db-conn-kv";
+import * as Space from "../space-core";
+import type { ISpaceCoreDb } from "./space-core-db";
 
 export type Deps = {
 	dbConnKv: IDbConnKv;
 };
 
-export const SpacesDb = (deps: Deps): ISpacesDb => {
+export const ScoreCoreDb = (deps: Deps): ISpaceCoreDb => {
 	const spacesBySpaceId = DbConnKv.withNamespace<SpaceId, Space.Model>(
 		deps.dbConnKv,
 		["spaces", "space-by-id"],

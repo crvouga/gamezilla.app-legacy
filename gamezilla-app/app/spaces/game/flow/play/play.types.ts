@@ -1,16 +1,19 @@
 import { p } from "gamezilla-app/@/core/parser";
-import { FlowVariant, FlowVariantUIPlay } from "../@/flow";
-import { FlowPack, FlowPackList } from "../@/flow-pack";
-import { FlowPackId } from "../@/flow-pack/flow-pack-id";
+import type { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
+import type { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
+import type {
+	SpaceClientEvent,
+	SpaceCtx,
+} from "gamezilla-app/app/spaces/@/space";
+import type { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
+import type { FlowVariant, FlowVariantUIPlay } from "../@/flow";
+import type { FlowClientCtx } from "../@/flow-ctx";
+import { FlowPack, type FlowPackList } from "../@/flow-pack";
+import type { FlowPackGrid } from "../@/flow-pack/flow-pack-grid";
+import type { FlowPackId } from "../@/flow-pack/flow-pack-id";
 import { FlowPuzzle } from "../@/flow-puzzle";
-import { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
-import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-client-v2";
-import { FlowClientCtx } from "../@/flow-ctx";
-import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
-import { SpaceClientEvent, SpaceCtx } from "gamezilla-app/app/spaces/@/space";
-import { FlowPackGrid } from "../@/flow-pack/flow-pack-grid";
+import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";
 import { ScreenPuzzleTypes } from "./screen-puzzle";
-import { GameCoreModule } from "gamezilla-app/app/spaces/@/architecture/game-sync";
 
 //
 //

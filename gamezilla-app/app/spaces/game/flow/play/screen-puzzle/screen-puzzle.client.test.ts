@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
 import { didPlaySound } from "gamezilla-app/app/@/client";
 import { withEventMeta } from "gamezilla-app/app/spaces/@/event";
-import { FlowVariantUIPlay } from "../../@/flow";
+import { Flow, FlowVariantUIPlay } from "../../@/flow";
 import { FlowPack } from "../../@/flow-pack";
 import { FlowPuzzle } from "../../@/flow-puzzle";
-import { FixtureUpdateInput, FlowPlayClientFixture } from "../@/testing";
+import { type FixtureUpdateInput, FlowPlayClientFixture } from "../@/testing";
 
 const Fixture = async () => {
 	const f = await FlowPlayClientFixture();
@@ -259,6 +259,35 @@ describe(import.meta.file, () => {
 	});
 
 	it("should play sound after completing a puzzle", async () => {
+		const f = await Fixture();
+		const output = f.update(f.initial, f.completePuzzleMsgs);
+		expect(didPlaySound(output)).toBe(true);
+	});
+
+	it("should play sound pressing down on a terminal", async () => {
+		const f = await Fixture();
+		const terminal = Flow.randomTerminal(f.puzzle.flow);
+
+		if (!terminal) {
+			expect(terminal).not.toBe(null);
+			return;
+		}
+
+		const output = f.update(f.initial, [
+			{
+				msgCore: withEventMeta({
+					t: "got-puzzle-screen-flow-play-msg",
+					c: {
+						t: "pressed-down",
+						nodeId: terminal.startId,
+					},
+				}),
+			},
+		]);
+		expect(didPlaySound(output)).toBe(true);
+	});
+
+	it("should play sound after solving puzzle", async () => {
 		const f = await Fixture();
 		const output = f.update(f.initial, f.completePuzzleMsgs);
 		expect(didPlaySound(output)).toBe(true);

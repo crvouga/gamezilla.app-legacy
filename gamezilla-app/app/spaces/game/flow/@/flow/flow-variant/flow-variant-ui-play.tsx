@@ -3,6 +3,7 @@ import * as Flow from "../flow/flow";
 import { FlowAlgoDrawPipes, FlowAlgoSolve } from "../flow/flow-algo";
 import * as FlowVariant from "./flow-variant";
 import * as FlowVariantUI from "./flow-variant-ui";
+import { APP_SOUND } from "gamezilla-app/app/@/client";
 
 //
 //
@@ -34,8 +35,8 @@ export type Model = p.Infer<typeof Model>;
 
 export const init = ({ flow }: { flow: Flow.Model }): Model => {
 	return {
-		pipesBySourceId: flow.pipesBySourceId,
-		terminalsByGroupId: flow.terminalsByGroupId,
+		pipesBySourceId: { ...flow.pipesBySourceId },
+		terminalsByGroupId: { ...flow.terminalsByGroupId },
 		status: { t: "idle" },
 	};
 };
@@ -108,7 +109,9 @@ export const randomMsgs = ({ flow }: { flow: Flow.Model }): Msg[] => {
 
 export const toSolutionMsgs = ({
 	flow,
-}: { flow: FlowVariant.Model }): Msg[] => {
+}: {
+	flow: FlowVariant.Model;
+}): Msg[] => {
 	const solutions = FlowAlgoSolve.solve(
 		{ distance: FlowVariant.distance(flow) },
 		flow,
@@ -123,6 +126,10 @@ export const toSolutionMsgs = ({
 	const msgs: Msg[] = [];
 
 	for (const terminal of Flow.toTerminals(solution)) {
+		if (!terminal.endId) {
+			continue;
+		}
+
 		msgs.push({
 			t: "pressed-down",
 			nodeId: terminal.startId,
@@ -138,6 +145,11 @@ export const toSolutionMsgs = ({
 				nodeId: edge.targetId,
 			});
 		}
+
+		msgs.push({
+			t: "pressed-up",
+			nodeId: terminal.endId,
+		});
 	}
 
 	return msgs;
@@ -177,6 +189,33 @@ export const Msg = p.or(
 
 export type Msg = p.Infer<typeof Msg>;
 
+export type Event =
+	| {
+			t: "started-dragging";
+	  }
+	| {
+			t: "connected-terminals";
+	  }
+	| {
+			t: "solved";
+	  };
+
+export const eventToSoundSrc = (event: Event): string => {
+	switch (event.t) {
+		case "connected-terminals": {
+			return APP_SOUND.tap;
+		}
+
+		case "solved": {
+			return APP_SOUND.celebration;
+		}
+
+		case "started-dragging": {
+			return APP_SOUND.tap;
+		}
+	}
+};
+
 export const update = ({
 	msg,
 	model,
@@ -185,7 +224,10 @@ export const update = ({
 	msg: Msg;
 	model: Model;
 	flow: FlowVariant.Model;
-}): Model => {
+}): {
+	model: Model;
+	event?: Event;
+} => {
 	switch (model.status.t) {
 		case "dragging": {
 			return updateDragging({ flow, msg, model, modelCore: model.status });
@@ -205,7 +247,7 @@ const updateIdle: typeof update = ({ msg, model, flow }) => {
 			const groupId = Flow.toGroupId(current, msg.nodeId);
 
 			if (!groupId) {
-				return model;
+				return { model };
 			}
 
 			const started = FlowAlgoDrawPipes.startDrawPipes(
@@ -216,26 +258,31 @@ const updateIdle: typeof update = ({ msg, model, flow }) => {
 			);
 
 			return {
-				terminalsByGroupId: started.terminalsByGroupId,
-				pipesBySourceId: started.pipesBySourceId,
-				status: {
-					t: "dragging",
-					activeGroupId: groupId,
-					autocompleteEdge: null,
+				model: {
+					terminalsByGroupId: started.terminalsByGroupId,
+					pipesBySourceId: started.pipesBySourceId,
+					status: {
+						t: "dragging",
+						activeGroupId: groupId,
+						autocompleteEdge: null,
+					},
+				},
+				event: {
+					t: "started-dragging",
 				},
 			};
 		}
 
 		case "dragged-over": {
-			return model;
+			return { model };
 		}
 
 		case "pressed-up": {
-			return model;
+			return { model };
 		}
 
 		case "left": {
-			return model;
+			return { model };
 		}
 	}
 };
@@ -250,7 +297,10 @@ const updateDragging = ({
 	model: Model;
 	modelCore: Dragging;
 	flow: FlowVariant.Model;
-}): Model => {
+}): {
+	model: Model;
+	event?: Event;
+} => {
 	switch (msg.t) {
 		case "dragged-over": {
 			const { nodeId } = msg;
@@ -274,19 +324,54 @@ const updateDragging = ({
 				pipesBySourceId: extended.pipesBySourceId,
 			};
 
-			return modelNew;
+			return { model: modelNew };
 		}
 
 		case "pressed-down": {
-			return model;
+			return { model };
 		}
 
 		case "pressed-up": {
-			return { ...model, status: { t: "idle" } };
+			const current = deriveFlow({ model, flow });
+			const isSolved = Flow.isSolved(current);
+			const modelNew: Model = { ...model, status: { t: "idle" } };
+			if (isSolved) {
+				return {
+					model: modelNew,
+					event: {
+						t: "solved",
+					},
+				};
+			}
+			const activeGroupTerminal = Flow.toTerminalByGroupId(
+				current,
+				modelCore.activeGroupId,
+			);
+
+			if (!activeGroupTerminal) {
+				return { model: modelNew };
+			}			
+			
+			const isConnected = Flow.isConnectedWithPipes(
+				current,
+				activeGroupTerminal.startId,
+				activeGroupTerminal.endId,
+			);
+
+			if (isConnected) {
+				return {
+					model: modelNew,
+					event: {
+						t: "connected-terminals",
+					},
+				};
+			}
+
+			return { model: modelNew };
 		}
 
 		case "left": {
-			return { ...model, status: { t: "idle" } };
+			return { model: { ...model, status: { t: "idle" } } };
 		}
 	}
 };

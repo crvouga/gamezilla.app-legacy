@@ -10,8 +10,8 @@ import { ListSpacesServer } from "./list-spaces/list-spaces.server";
 import { ProfileCache } from "./profile-cache";
 import { GameDb } from "./space-game/space-game-db";
 import { SpaceGameServer } from "./space-game/space-game.server";
-import { SpacesDb } from "./spaces-core/space-db";
-import { SpacesCoreServer } from "./spaces-core/spaces-core.server";
+import { SpaceCoreDb } from "./spaces-core/space-core-db";
+import * as SpacesCoreServer from "./spaces-core/spaces-core.server";
 import type { ServerModule } from "./spaces.types";
 import { StartSpaceServer } from "./start-space/start-space.server";
 import { SyncServer } from "./sync/sync.server";
@@ -28,19 +28,19 @@ import { ClientId, SessionId, SpaceId, UserId } from "../@/data";
 
 export const getDeps: ServerModule["getDeps"] = async ({ ctx }) => {
 	return {
-		ProfileCache: ProfileCache({
+		profileCache: ProfileCache({
 			t: "db-conn-kv",
 			dbConnKv: ctx.dbConnKv,
 		}),
-		SpacesDb: SpacesDb({
+		spaceCoreDb: SpaceCoreDb({
 			t: "db-conn-kv",
 			dbConnKv: ctx.dbConnKv,
 		}),
-		GameDb: GameDb({
+		gameDb: GameDb({
 			t: "db-conn-kv",
 			dbConnKv: ctx.dbConnKv,
 		}),
-		GameServer: await GameServer.deps({
+		gameServer: await GameServer.deps({
 			ctx: {
 				clientId: ClientId.generate(),
 				dbConnKv: ctx.dbConnKv,
@@ -96,8 +96,11 @@ export const update: ServerModule["update"] = async (input) => {
 	};
 };
 
-const updateMain = async (input: Input, acc?: Output): Promise<Output> => {
-	acc = acc ?? (await updateChild(input));
+const updateMain = async (
+	input: Input,
+	initialAcc?: Output,
+): Promise<Output> => {
+	const acc = initialAcc ?? (await updateChild(input));
 
 	const [spaceEvent, ...spaceEventsRest] = acc.msgSpaceEvent ?? [];
 
@@ -146,7 +149,7 @@ const updateChild: SpaceServerModule["update"] = async (input) => {
 	if (
 		input.msgSpaceEvent &&
 		(await SpacesCoreServer.hasEvent(
-			input.deps.SpacesDb,
+			input.deps.spaceCoreDb,
 			input.msgSpaceEvent.spaceId,
 			input.msgSpaceEvent.eventId,
 		))
@@ -176,7 +179,7 @@ const updateSpacesFromSpaceEvent: SpaceServerModule["update"] = async ({
 	}
 
 	await SpacesCoreServer.update({
-		spacesDb: deps.SpacesDb,
+		spacesDb: deps.spaceCoreDb,
 		spaceEvent: msgSpaceEvent,
 	});
 

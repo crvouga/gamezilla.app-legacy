@@ -5,12 +5,13 @@ import {
 	showToast,
 } from "gamezilla-app/app/@/client";
 import { Button, TopBar } from "gamezilla-app/app/@/ui";
+import { withId } from "../@/event";
+import { SpaceClientModule } from "../architecture/architecture";
 import { ViewGameHeader, ViewUsersInSpaceList } from "../game/@/game";
 import { CoverArt } from "../game/game-cover-art";
 import { gameNameToString } from "../game/game.types";
-import { withId } from "../@/event";
-import { SpaceClientModule } from "../architecture/architecture";
-import { type SpaceEvent, Spaces } from "../spaces-core";
+import type { SpaceCoreEvent } from "../spaces-core";
+import * as SpacesCoreClient from "../spaces-core/spaces-core.client";
 
 const update: SpaceClientModule["update"] = (input) => {
 	return SpaceClientModule.andThen(
@@ -33,7 +34,7 @@ const updateFromJoinSpaceButton: SpaceClientModule["update"] = ({
 				return { model };
 			}
 
-			const spaceEventNew = withId<SpaceEvent>({
+			const spaceEventNew = withId<SpaceCoreEvent>({
 				t: "user-joined-space",
 				spaceId: msg.spaceId,
 				userId: currentUserId,
@@ -56,7 +57,10 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
 
 	switch (msgSpaceEvent?.t) {
 		case "user-joined-space": {
-			const error = Spaces.toErrorByEvenId(model, msgSpaceEvent.eventId);
+			const error = SpacesCoreClient.toErrorByEvenId(
+				model,
+				msgSpaceEvent.eventId,
+			);
 
 			switch (error?.t) {
 				case "user-already-in-a-space": {
@@ -71,7 +75,7 @@ const updateFromSpaceEvent: SpaceClientModule["update"] = (input) => {
 				}
 			}
 
-			const currentUserSpaceId = Spaces.toSpaceIdByUserId(
+			const currentUserSpaceId = SpacesCoreClient.toSpaceIdByUserId(
 				model,
 				ctx.currentUserId,
 			);
@@ -108,7 +112,10 @@ const View: SpaceClientModule["View"] = (input) => {
 		return null;
 	}
 
-	const spaceState = Spaces.toSpaceState(input.model, input.ctx.space.spaceId);
+	const spaceState = SpacesCoreClient.toSpaceState(
+		input.model,
+		input.ctx.space.spaceId,
+	);
 
 	if (spaceState.type !== "started") {
 		return null;

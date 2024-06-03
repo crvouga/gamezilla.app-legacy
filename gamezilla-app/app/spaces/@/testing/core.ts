@@ -1,13 +1,13 @@
 import { SpaceId, UserId } from "gamezilla-app/app/@/data";
 import { makeSpace } from "./shared";
 import type { SpaceCtx } from "../space";
-import { Space } from "../../spaces-core";
+import { SpaceCore } from "../../spaces-core";
 
 export const SpaceCoreFixture = async () => {
 	const spaceId = SpaceId.generate();
 	const hostId = UserId.generate();
 	const guestId = UserId.generate();
-	const spaceState = Space.toSpaceStarted(
+	const spaceState = SpaceCore.toSpaceStarted(
 		makeSpace({ spaceId, hostId, guestId }),
 	);
 	if (!spaceState) {

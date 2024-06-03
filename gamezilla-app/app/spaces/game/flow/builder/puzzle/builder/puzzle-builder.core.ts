@@ -31,7 +31,7 @@ const updateCore = ({
 				...modelCore,
 				puzzleBuilder: {
 					...modelCore.puzzleBuilder,
-					play: updated,
+					play: updated.model,
 				},
 			};
 		}

@@ -806,7 +806,7 @@ function djb2Hash(str: string) {
 export const isConnectedWithPipes = (
 	model: Model,
 	sourceId: NodeId,
-	targetId: NodeId,
+	targetId?: NodeId | null,
 ): boolean => {
 	if (sourceId === targetId) {
 		return true;

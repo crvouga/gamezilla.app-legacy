@@ -1,5 +1,5 @@
-import type { SpaceId, UserId } from "gamezilla-app/app/@/data";
-import { ascend, eq } from "gamezilla-app/@/core";
+import { SpaceId, UserId } from "gamezilla-app/app/@/data";
+import { ascend, eq, pipe } from "gamezilla-app/@/core";
 import { p } from "gamezilla-app/@/core/parser";
 import { CappedOrderedDict } from "gamezilla-app/@/capped-ordered-dict/capped-ordered-dict";
 import { LamportClock, LamportTimestamp } from "gamezilla-app/@/lamport-clock";
@@ -9,8 +9,8 @@ import {
 	type WithEventId,
 	type WithEventMeta,
 } from "../@/event";
-import { SpaceEvent } from "./space-event";
-import * as SpaceState from "./space-state";
+import { SpaceCoreEvent } from "./space-core-event";
+import * as SpaceState from "./space-core-state";
 
 //
 //
@@ -20,7 +20,7 @@ import * as SpaceState from "./space-state";
 //
 
 export const Model = p.obj({
-	events: p.arr(p.and(EventMeta, SpaceEvent)),
+	events: p.arr(p.and(EventMeta, SpaceCoreEvent)),
 	eventIds: p.dict(EventId, EventId),
 	clock: LamportClock,
 	snapshots: CappedOrderedDict.parser(EventId, SpaceState.State),
@@ -46,12 +46,40 @@ export const isEqual = (left: Model, right: Model) => {
 //
 //
 
+export const random = () => {
+	return pipe(
+		init,
+		//
+		(model) =>
+			appendEvent({
+				model,
+				event: {
+					t: "user-started-space",
+					eventId: EventId.generate(),
+					spaceId: SpaceId.generate(),
+					userId: UserId.generate(),
+				},
+			}),
+	);
+};
+
+//
+//
+//
+//
+//
+//
+
 export const startFromLatestSnapshot = (model: Model): Model => {
-	const events: WithEventMeta<SpaceEvent>[] = [];
+	const events: WithEventMeta<SpaceCoreEvent>[] = [];
 	const eventIds: Model["eventIds"] = {};
 
 	for (let i = model.events.length - 1; i >= 0; i--) {
-		const event = model.events[i]!;
+		const event = model.events[i];
+
+		if (!event) {
+			continue;
+		}
 
 		const snapshot = CappedOrderedDict.get(model.snapshots, event.eventId);
 
@@ -60,10 +88,10 @@ export const startFromLatestSnapshot = (model: Model): Model => {
 
 		if (snapshot) {
 			return {
-				eventIds: events.reduce<Model["eventIds"]>(
-					(acc, event) => ({ ...acc, [event.eventId]: event.eventId }),
-					{},
-				),
+				eventIds: events.reduce<Model["eventIds"]>((acc, event) => {
+					acc[event.eventId] = event.eventId;
+					return acc;
+				}, {}),
 				clock: model.clock,
 				events: events,
 				snapshots: CappedOrderedDict.add(
@@ -94,7 +122,7 @@ export const appendEvent = ({
 	event,
 }: {
 	model: Model;
-	event: WithEventId<SpaceEvent>;
+	event: WithEventId<SpaceCoreEvent>;
 }): Model => {
 	if (model.eventIds[event.eventId]) {
 		return model;
@@ -104,7 +132,7 @@ export const appendEvent = ({
 	//
 	//
 
-	const newEvent: WithEventMeta<SpaceEvent> = {
+	const newEvent: WithEventMeta<SpaceCoreEvent> = {
 		...event,
 		happenedAt: LamportClock.toCurrentTime(model.clock),
 	};
@@ -183,10 +211,14 @@ export const deriveState = (model: Model): SpaceState.State => {
 
 	let running = SpaceState.init;
 
-	const events: WithEventMeta<SpaceEvent>[] = [];
+	const events: WithEventMeta<SpaceCoreEvent>[] = [];
 
 	for (let i = model.events.length - 1; i >= 0; i--) {
-		const event = model.events[i]!;
+		const event = model.events[i];
+
+		if (!event) {
+			continue;
+		}
 
 		const snapshot = CappedOrderedDict.get(model.snapshots, event.eventId);
 

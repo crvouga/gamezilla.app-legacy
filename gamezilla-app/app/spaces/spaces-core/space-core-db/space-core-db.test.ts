@@ -1,35 +1,16 @@
 import { describe, expect, it } from "bun:test";
-import { SpacesDb } from "./space-db-impl";
+import { Ok } from "gamezilla-app/@/core";
 import { DbConnKv } from "gamezilla-app/app/@/server/db-conn-kv";
-import * as Space from "../space";
-import { Ok, pipe } from "gamezilla-app/@/core";
-import { EventId } from "../../@/event";
-import { SpaceId, UserId } from "gamezilla-app/app/@/data";
-
-const generateSpace = () => {
-	return pipe(
-		Space.init,
-		//
-		(space) =>
-			Space.appendEvent({
-				model: space,
-				event: {
-					t: "user-started-space",
-					eventId: EventId.generate(),
-					spaceId: SpaceId.generate(),
-					userId: UserId.generate(),
-				},
-			}),
-	);
-};
+import * as SpaceCore from "../space-core";
+import { SpaceCoreDb } from "./space-core-db-impl";
 
 const Fixture = async () => {
-	const spacesDb = SpacesDb({
+	const spacesDb = SpaceCoreDb({
 		t: "db-conn-kv",
 		dbConnKv: await DbConnKv({ t: "hash-map" }),
 	});
 
-	const spaceA = generateSpace();
+	const spaceA = SpaceCore.random();
 
 	return {
 		spacesDb,
@@ -41,7 +22,7 @@ describe(import.meta.file, () => {
 	it("should work", async () => {
 		const f = await Fixture();
 
-		const spaceId = Space.toSpaceStarted(f.spaceA)?.spaceId ?? null;
+		const spaceId = SpaceCore.toSpaceStarted(f.spaceA)?.spaceId ?? null;
 
 		const before = await f.spacesDb.get(spaceId);
 
