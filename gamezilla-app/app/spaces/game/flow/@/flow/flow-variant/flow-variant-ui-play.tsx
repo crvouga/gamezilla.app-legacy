@@ -194,7 +194,23 @@ export type Event =
 	  }
 	| {
 			t: "solved";
-	  };
+	};
+	  
+export const eventToSound = (event: Event): string | null => {
+	switch (event.t) {
+		case 'connected-terminals': {
+			return APP_SOUND.tap;
+		}
+		
+		case 'solved': {
+			return APP_SOUND.celebration;
+		}
+			
+		case 'started-dragging': {
+			return APP_SOUND.tap;
+		}
+	}
+}
 
 export const update = ({
 	msg,
