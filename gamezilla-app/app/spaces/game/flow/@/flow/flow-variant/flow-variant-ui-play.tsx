@@ -324,35 +324,6 @@ const updateDragging = ({
 				pipesBySourceId: extended.pipesBySourceId,
 			};
 
-			const activeGroupTerminal = Flow.toTerminalByGroupId(
-				extended,
-				modelCore.activeGroupId,
-			);
-
-			if (!activeGroupTerminal) {
-				return { model: modelNew };
-			}
-
-			const wasConnected = Flow.isConnectedWithPipes(
-				current,
-				activeGroupTerminal.startId,
-				activeGroupTerminal.endId,
-			);
-			const isConnected = Flow.isConnectedWithPipes(
-				extended,
-				activeGroupTerminal.startId,
-				activeGroupTerminal.endId,
-			);
-
-			if (!wasConnected && isConnected) {
-				return {
-					model: modelNew,
-					event: {
-						t: "connected-terminals",
-					},
-				};
-			}
-
 			return { model: modelNew };
 		}
 
@@ -372,6 +343,30 @@ const updateDragging = ({
 					},
 				};
 			}
+			const activeGroupTerminal = Flow.toTerminalByGroupId(
+				current,
+				modelCore.activeGroupId,
+			);
+
+			if (!activeGroupTerminal) {
+				return { model: modelNew };
+			}			
+			
+			const isConnected = Flow.isConnectedWithPipes(
+				current,
+				activeGroupTerminal.startId,
+				activeGroupTerminal.endId,
+			);
+
+			if (isConnected) {
+				return {
+					model: modelNew,
+					event: {
+						t: "connected-terminals",
+					},
+				};
+			}
+
 			return { model: modelNew };
 		}
 

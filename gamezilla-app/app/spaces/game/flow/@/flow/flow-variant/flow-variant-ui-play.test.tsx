@@ -51,7 +51,7 @@ describe(import.meta.file, () => {
 
 	it("should output connected terminals event", () => {
 		const flow = FlowGridShorthand.toGrid([
-			["A", " ", " "],
+			["A", " ", "B"],
 			["a", "B", " "],
 			["a", " ", "A"],
 		]);
@@ -61,6 +61,7 @@ describe(import.meta.file, () => {
 			{ t: "pressed-down", nodeId: FlowGrid.toNodeId({ x: 0, y: 2 }) },
 			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 1, y: 2 }) },
 			{ t: "dragged-over", nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }) },
+			{ t: "pressed-up", nodeId: FlowGrid.toNodeId({ x: 2, y: 2 }) },
 		];
 
 		const output = msgs.reduce<ReturnType<typeof FlowVariantUIPlay.update>>(
