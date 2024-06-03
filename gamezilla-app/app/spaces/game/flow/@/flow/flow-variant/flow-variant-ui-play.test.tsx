@@ -69,7 +69,7 @@ describe(import.meta.file, () => {
 			{ model: f.init },
 		);
 
-		expect(output.event?.[0]?.t).toBe("connected-terminals");
+		expect(output.event?.t).toBe("connected-terminals");
 	});
 
 	it("should output started dragging event", () => {
@@ -90,7 +90,7 @@ describe(import.meta.file, () => {
 			{ model: f.init },
 		);
 
-		expect(output.event?.[0]?.t).toBe("started-dragging");
+		expect(output.event?.t).toBe("started-dragging");
 	});
 
 	it("should output solved event", () => {
@@ -114,7 +114,7 @@ describe(import.meta.file, () => {
 			{ model: f.init },
 		);
 
-		expect(output.event?.[0]?.t).toBe("solved");
+		expect(output.event?.t).toBe("solved");
 	});
 
 	it("should not output solved if not pressed up on terminal", () => {
@@ -137,6 +137,6 @@ describe(import.meta.file, () => {
 			{ model: f.init },
 		);
 
-		expect(output.event?.[0]?.t).not.toBe("solved");
+		expect(output.event?.t).not.toBe("solved");
 	});
 });

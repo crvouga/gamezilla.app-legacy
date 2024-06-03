@@ -75,15 +75,19 @@ const updateMain: ClientModule["update"] = (input) => {
 				flow: input.modelCore.screen.flowPuzzle.flow,
 			});
 
-			if (output.msg?.t === "play-sound") {
-				return {
-					model: input.model,
-					msgCmd: [playSound(output.msg.src)],
-				};
+			if (!output.event) {
+				return { model: input.model };
+			}
+
+			const soundSrc = FlowVariantUIPlay.eventToSoundSrc(output.event);
+
+			if (!soundSrc) {
+				return { model: input.model };
 			}
 
 			return {
 				model: input.model,
+				msgCmd: [playSound(soundSrc)],
 			};
 		}
 	}

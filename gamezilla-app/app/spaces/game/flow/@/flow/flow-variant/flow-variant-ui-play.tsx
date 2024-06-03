@@ -126,6 +126,10 @@ export const toSolutionMsgs = ({
 	const msgs: Msg[] = [];
 
 	for (const terminal of Flow.toTerminals(solution)) {
+		if (!terminal.endId) {
+			continue;
+		}
+
 		msgs.push({
 			t: "pressed-down",
 			nodeId: terminal.startId,
@@ -141,6 +145,11 @@ export const toSolutionMsgs = ({
 				nodeId: edge.targetId,
 			});
 		}
+
+		msgs.push({
+			t: "pressed-up",
+			nodeId: terminal.endId,
+		});
 	}
 
 	return msgs;
@@ -180,11 +189,6 @@ export const Msg = p.or(
 
 export type Msg = p.Infer<typeof Msg>;
 
-export type OutMsg = {
-	t: "play-sound";
-	src: string;
-};
-
 export type Event =
 	| {
 			t: "started-dragging";
@@ -196,7 +200,7 @@ export type Event =
 			t: "solved";
 	  };
 
-export const eventToSound = (event: Event): string | null => {
+export const eventToSoundSrc = (event: Event): string | null => {
 	switch (event.t) {
 		case "connected-terminals": {
 			return APP_SOUND.tap;
@@ -222,8 +226,7 @@ export const update = ({
 	flow: FlowVariant.Model;
 }): {
 	model: Model;
-	msg?: OutMsg;
-	event?: Event[];
+	event?: Event;
 } => {
 	switch (model.status.t) {
 		case "dragging": {
@@ -264,15 +267,9 @@ const updateIdle: typeof update = ({ msg, model, flow }) => {
 						autocompleteEdge: null,
 					},
 				},
-				msg: {
-					t: "play-sound",
-					src: APP_SOUND.tap,
+				event: {
+					t: "started-dragging",
 				},
-				event: [
-					{
-						t: "started-dragging",
-					},
-				],
 			};
 		}
 
@@ -302,8 +299,7 @@ const updateDragging = ({
 	flow: FlowVariant.Model;
 }): {
 	model: Model;
-	msg?: OutMsg;
-	event?: Event[];
+	event?: Event;
 } => {
 	switch (msg.t) {
 		case "dragged-over": {
@@ -351,12 +347,9 @@ const updateDragging = ({
 			if (!wasConnected && isConnected) {
 				return {
 					model: modelNew,
-					msg: { t: "play-sound", src: APP_SOUND.tap },
-					event: [
-						{
-							t: "connected-terminals",
-						},
-					],
+					event: {
+						t: "connected-terminals",
+					},
 				};
 			}
 
@@ -374,11 +367,9 @@ const updateDragging = ({
 			if (isSolved) {
 				return {
 					model: modelNew,
-					event: [
-						{
-							t: "solved",
-						},
-					],
+					event: {
+						t: "solved",
+					},
 				};
 			}
 			return { model: modelNew };
