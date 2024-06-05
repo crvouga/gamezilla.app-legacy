@@ -55,7 +55,7 @@ const View: ClientModule["View"] = (input) => {
 				dispatch={(c) => input.dispatch({ t: "flow-pack-list", c })}
 				model={{
 					...input.model.flowPackList,
-					packs: input.model.flowPacks
+					packs: input.model.flowPacks,
 				}}
 				emits={{
 					clickedPackItem(pack) {

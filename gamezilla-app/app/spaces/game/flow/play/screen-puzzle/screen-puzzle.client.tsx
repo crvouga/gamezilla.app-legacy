@@ -211,7 +211,7 @@ const View: ClientModule["View"] = (input) => {
 	);
 };
 
-const CheckmarkAnimation = (input: { open: boolean, duration: TimeSpan }) => {	
+const CheckmarkAnimation = (input: { open: boolean; duration: TimeSpan }) => {
 	return (
 		<Transition
 			id="checkmark"
@@ -222,7 +222,9 @@ const CheckmarkAnimation = (input: { open: boolean, duration: TimeSpan }) => {
 				await new Promise((r) => setTimeout(r, 50));
 				node.style.opacity = "1";
 				node.style.transform = "scale(1)";
-				await new Promise((r) => setTimeout(r, TimeSpan.toMilliseconds(input.duration)));
+				await new Promise((r) =>
+					setTimeout(r, TimeSpan.toMilliseconds(input.duration)),
+				);
 				node.style.opacity = "0";
 				node.style.transform = "scale(0.8)";
 			}}
