@@ -2,8 +2,9 @@ import { APP_SOUND, playSound } from "gamezilla-app/app/@/client";
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { ViewBottomBarExitButton } from "../../../@/game";
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
-import { FlowPackGridUI } from "../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
+import { FlowPackPuzzlesGridUI } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
 import type { ClientModule } from "../play.types";
+import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
 
 const update: ClientModule["update"] = (input) => {
 	switch (input.msg?.t) {
@@ -41,42 +42,47 @@ const View: ClientModule["View"] = (input) => {
 		return null;
 	}
 	return (
-		<div className="w-full h-full flex-1 flex flex-col">
-			<ViewScreenTitle title={input.modelCore.screen.flowPack.name} />
-			<div className="flex-1 flex flex-col items-center justify-center">
-				<FlowPackGridUI.ViewPackPuzzleGrid
-					id="pack-puzzle-grid"
-					onSlideIndexChanged={() => {}}
-					puzzleIds={input.modelCore.screen.flowPack.puzzleIds}
-					renderCell={(props) => {
-						if (!props.puzzleId) {
-							return <FlowPackGridUI.ViewEmptyCell />;
-						}
-						const puzzle = input.model.flowPuzzles[props.puzzleId];
-						if (!puzzle) {
-							return <FlowPackGridUI.ViewLoadingCell />;
-						}
-						return (
-							<FlowPackGridUI.ViewPuzzleCell
-								index={props.index}
-								onClick={() =>
-									input.dispatch({
-										t: "user-clicked-open-puzzle-grid-item",
-										flowPuzzle: puzzle,
-										puzzleIndex: props.index,
-									})
-								}
-							/>
-						);
-					}}
-					slideIndex={0}
+		<>
+			<FlowPackPuzzlesGridClient.View
+				dispatch={(c) => input.dispatch({ t: "flow-pack-grid", c })}
+			/>
+			<div className="flex h-full w-full flex-1 flex-col">
+				<ViewScreenTitle title={input.modelCore.screen.flowPack.name} />
+				<div className="flex flex-1 flex-col items-center justify-center">
+					<FlowPackPuzzlesGridUI.ViewPackPuzzleGrid
+						id="pack-puzzle-grid"
+						onSlideIndexChanged={() => {}}
+						puzzleIds={input.modelCore.screen.flowPack.puzzleIds}
+						renderCell={(props) => {
+							if (!props.puzzleId) {
+								return <FlowPackPuzzlesGridUI.ViewEmptyCell />;
+							}
+							const puzzle = input.model.flowPuzzles[props.puzzleId];
+							if (!puzzle) {
+								return <FlowPackPuzzlesGridUI.ViewLoadingCell />;
+							}
+							return (
+								<FlowPackPuzzlesGridUI.ViewPuzzleCell
+									index={props.index}
+									onClick={() =>
+										input.dispatch({
+											t: "user-clicked-open-puzzle-grid-item",
+											flowPuzzle: puzzle,
+											puzzleIndex: props.index,
+										})
+									}
+								/>
+							);
+						}}
+						slideIndex={0}
+					/>
+				</div>
+				<ViewBottomBarExitButton
+					ctx={input.ctx}
+					onClick={() => input.dispatch({ t: "user-clicked-exit-pack-button" })}
 				/>
 			</div>
-			<ViewBottomBarExitButton
-				ctx={input.ctx}
-				onClick={() => input.dispatch({ t: "user-clicked-exit-pack-button" })}
-			/>
-		</div>
+		</>
 	);
 };
 

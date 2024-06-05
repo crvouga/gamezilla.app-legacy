@@ -149,7 +149,7 @@ const ViewLoadingCell = () => {
 	);
 };
 
-export const FlowPackGridUI = {
+export const FlowPackPuzzlesGridUI = {
 	PER_SLIDE_ITEM_COUNT,
 	ROW_COUNT,
 	COLUMN_COUNT,

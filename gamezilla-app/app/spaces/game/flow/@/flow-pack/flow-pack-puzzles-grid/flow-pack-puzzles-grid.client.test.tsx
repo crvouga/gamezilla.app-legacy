@@ -5,17 +5,17 @@ import { SpaceClientFixture } from "gamezilla-app/app/spaces/@/testing/client";
 import { FlowPack } from "..";
 import { FlowPuzzle } from "../../flow-puzzle";
 import {
-	FlowPackGridClient,
-	type FlowPackGridClientCtx,
-} from "./flow-pack-grid.client";
+	FlowPackPuzzlesGridClient,
+	type FlowPackGridClientCtx as FlowPackPuzzlesGridClientCtx,
+} from "./flow-pack-puzzles-grid.client";
 import type {
 	ModelClient,
 	MsgClient,
 	MsgToClient,
-} from "./flow-pack-grid.types";
+} from "./flow-pack-puzzles-grid.types";
 
 type Input = {
-	ctx?: FlowPackGridClientCtx;
+	ctx?: FlowPackPuzzlesGridClientCtx;
 	msg?: MsgClient;
 	msgServer?: MsgToClient;
 };
@@ -30,13 +30,13 @@ const Fixture = async () => {
 		createdBy: f.ctx.currentUserId,
 	});
 
-	const ctx: FlowPackGridClientCtx = {
+	const ctx: FlowPackPuzzlesGridClientCtx = {
 		...f.ctx,
 		pack,
 	};
 
 	const updates = (initial: ModelClient, msgs: Input[]) => {
-		const outputs: ReturnType<typeof FlowPackGridClient.update>[] = [
+		const outputs: ReturnType<typeof FlowPackPuzzlesGridClient.update>[] = [
 			{
 				model: initial,
 			},
@@ -45,7 +45,7 @@ const Fixture = async () => {
 		let model = initial;
 
 		for (const msg of msgs) {
-			const outputNew = FlowPackGridClient.update({
+			const outputNew = FlowPackPuzzlesGridClient.update({
 				ctx,
 				model,
 				...msg,
@@ -67,7 +67,7 @@ const Fixture = async () => {
 	};
 
 	const init = {
-		model: FlowPackGridClient.initClient,
+		model: FlowPackPuzzlesGridClient.initClient,
 	};
 
 	return {

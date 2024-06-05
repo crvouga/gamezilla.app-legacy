@@ -12,7 +12,7 @@ import type {
 	MsgServer,
 	MsgToClient,
 	MsgToServer,
-} from "./flow-pack-grid.types";
+} from "./flow-pack-puzzles-grid.types";
 
 type ServerModule = AppServerModule<{
 	Ctx: SpaceServerCtx;
@@ -63,7 +63,7 @@ const ListPuzzlesById: Pick<ServerModule, "update"> = {
 	},
 };
 
-export const FlowPackGridServer: Pick<ServerModule, "update"> = {
+export const FlowPackPuzzlesGridServer: Pick<ServerModule, "update"> = {
 	async update(input) {
 		return AppServerModule.andThen(
 			{ model: input.model },

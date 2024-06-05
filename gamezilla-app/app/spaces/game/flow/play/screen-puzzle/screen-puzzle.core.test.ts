@@ -200,7 +200,7 @@ describe(import.meta.file, () => {
 		).toBe(true);
 	});
 
-	it('should close puzzle complete dialog after clicking next puzzle', async () => {
+	it("should close puzzle complete dialog after clicking next puzzle", async () => {
 		const f = await Fixture();
 		const before = f.update(f.init, f.completePuzzleMsgs);
 		const after = f.update(before, [
@@ -213,7 +213,7 @@ describe(import.meta.file, () => {
 		expect(
 			after.screen.t === "screen-puzzle" && after.screen.opened === null,
 		).toBe(true);
-	})
+	});
 
 	it("should only open puzzle complete dialog when transitions to solved state", async () => {
 		const f = await Fixture();

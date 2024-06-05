@@ -14,7 +14,7 @@ import {
 	type MsgClient,
 	type MsgToClient,
 	type MsgToServer,
-} from "./flow-pack-grid.types";
+} from "./flow-pack-puzzles-grid.types";
 
 export type FlowPackGridClientCtx = SpaceClientCtx & {
 	pack: FlowPack;
@@ -157,7 +157,7 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 	return subscriptionsRequest(input);
 };
 
-export const FlowPackGridClient = {
+export const FlowPackPuzzlesGridClient = {
 	initClient,
 	update,
 	View,

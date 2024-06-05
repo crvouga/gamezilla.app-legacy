@@ -350,8 +350,8 @@ const updateDragging = ({
 
 			if (!activeGroupTerminal) {
 				return { model: modelNew };
-			}			
-			
+			}
+
 			const isConnected = Flow.isConnectedWithPipes(
 				current,
 				activeGroupTerminal.startId,

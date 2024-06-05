@@ -3,7 +3,7 @@ import { GameServerModule } from "gamezilla-app/app/spaces/@/architecture/game-s
 import { withId } from "gamezilla-app/app/spaces/@/event";
 import { SpaceServerCmd } from "gamezilla-app/app/spaces/@/space-server-cmd";
 
-import { FlowPackGridServer } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid.server";
+import { FlowPackPuzzlesGridServer } from "../../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.server";
 import type { ServerModule } from "../../builder.types";
 import { EditPackNameServer } from "./edit-pack-name/edit-pack-name.server";
 import { PackBuilderCore } from "./pack-builder.core";
@@ -43,7 +43,7 @@ const PuzzleGrid: Pick<ServerModule, "update"> = {
 
 		const ctx = { ...input.ctx, pack };
 
-		const updated = await FlowPackGridServer.update({
+		const updated = await FlowPackPuzzlesGridServer.update({
 			ctx,
 			model: {},
 			msg: input.msg?.t === "pack-builder.flow-pack-grid" ? input.msg.c : null,

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { UserId } from "gamezilla-app/app/@/data";
 import { SpaceGameCoreFixture } from "gamezilla-app/app/spaces/game/@/testing/sync";
-import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
+import { FlowPackPuzzlesGridUI } from "../../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
 import { FlowPuzzle } from "../../../@/flow-puzzle";
 
 import { FlowPack } from "../../../@/flow-pack";
@@ -303,7 +303,7 @@ describe(import.meta.file, () => {
 
 	it("should be on the correct slide index after exiting the puzzle screen", async () => {
 		const f = await Fixture({
-			puzzleCount: FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
+			puzzleCount: FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1,
 		});
 
 		const puzzle = f.puzzles[f.puzzles.length - 1];
@@ -322,7 +322,7 @@ describe(import.meta.file, () => {
 			},
 		]);
 
-		const expected = FlowPackGridUI.toSlideIndex(
+		const expected = FlowPackPuzzlesGridUI.toSlideIndex(
 			modelCore.packBuilder?.pack.puzzleIds.indexOf(puzzle.id) ?? 0,
 		);
 		const actual = PackBuilderCore.toSlideIndex(modelCore.packBuilder);
@@ -331,7 +331,7 @@ describe(import.meta.file, () => {
 
 	it("should allow user to change slide", async () => {
 		const f = await Fixture({
-			puzzleCount: FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
+			puzzleCount: FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1,
 		});
 
 		const modelCore = f.updateModelCore([
@@ -347,10 +347,10 @@ describe(import.meta.file, () => {
 
 	it("should prevent slide index from going out of bounds", async () => {
 		const f = await Fixture({
-			puzzleCount: FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
+			puzzleCount: FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1,
 		});
-		const expectedSlide = FlowPackGridUI.toSlideIndex(
-			FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
+		const expectedSlide = FlowPackPuzzlesGridUI.toSlideIndex(
+			FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1,
 		);
 		const modelCore = f.updateModelCore([
 			{
@@ -366,7 +366,7 @@ describe(import.meta.file, () => {
 
 	it("should be on the correct slide when closing the add puzzle screen", async () => {
 		const f = await Fixture({
-			puzzleCount: FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
+			puzzleCount: FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1,
 		});
 
 		const modelCore = f.updateModelCore([
@@ -390,9 +390,9 @@ describe(import.meta.file, () => {
 
 	it("should open the correct level when opening puzzle screen", async () => {
 		const f = await Fixture({
-			puzzleCount: FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1,
+			puzzleCount: FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1,
 		});
-		const indexNextPage = FlowPackGridUI.PER_SLIDE_ITEM_COUNT + 1;
+		const indexNextPage = FlowPackPuzzlesGridUI.PER_SLIDE_ITEM_COUNT + 1;
 		const modelCore = f.updateModelCore([
 			{
 				t: "pack-builder.user-clicked-pack-item",

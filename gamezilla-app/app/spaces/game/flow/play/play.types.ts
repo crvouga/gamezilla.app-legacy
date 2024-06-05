@@ -9,7 +9,7 @@ import type { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd
 import type { FlowVariant, FlowVariantUIPlay } from "../@/flow";
 import type { FlowClientCtx } from "../@/flow-ctx";
 import { FlowPack, type FlowPackList } from "../@/flow-pack";
-import type { FlowPackGrid } from "../@/flow-pack/flow-pack-grid";
+import type { FlowPackGrid } from "../@/flow-pack/flow-pack-puzzles-grid";
 import type { FlowPackId } from "../@/flow-pack/flow-pack-id";
 import { FlowPuzzle } from "../@/flow-puzzle";
 import type { FlowPuzzleId } from "../@/flow-puzzle/flow-puzzle-id";

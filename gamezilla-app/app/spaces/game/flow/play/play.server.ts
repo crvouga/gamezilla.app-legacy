@@ -14,7 +14,7 @@ import type {
 	MsgToClient,
 	MsgToServer,
 } from "./play.types";
-import { FlowPackGridServer } from "../@/flow-pack/flow-pack-grid/flow-pack-grid.server";
+import { FlowPackPuzzlesGridServer } from "../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.server";
 import { FlowPuzzleDb, IFlowPuzzleDb } from "../@/flow-puzzle";
 
 type ServerModule = GameServerModule<{
@@ -70,7 +70,7 @@ const updateFlowPackList: ServerModule["update"] = async (input) => {
 };
 
 const updateFlowPackGrid: ServerModule["update"] = async (input) => {
-	const updated = await FlowPackGridServer.update({
+	const updated = await FlowPackPuzzlesGridServer.update({
 		ctx: input.ctx,
 		deps: input.deps,
 		model: {},

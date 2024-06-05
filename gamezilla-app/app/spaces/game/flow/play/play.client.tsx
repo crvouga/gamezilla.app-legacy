@@ -3,7 +3,7 @@ import { GameClientModule } from "gamezilla-app/app/spaces/@/architecture/game-c
 import { SpaceClientCmd } from "gamezilla-app/app/spaces/@/space-client-cmd";
 import { FlowVariantUIPlay } from "../@/flow";
 import { FlowPackListClient } from "../@/flow-pack";
-import { FlowPackGridClient } from "../@/flow-pack/flow-pack-grid/flow-pack-grid.client";
+import { FlowPackPuzzlesGridClient } from "../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
 import { samples } from "../@/flow/flow-variant/flow-grid/flow-grid-samples";
 import type { ClientModule } from "./play.types";
 import { ScreenPackClient } from "./screen-pack/screen-pack.client";
@@ -15,7 +15,7 @@ const init: ClientModule["init"] = {
 	flowUIPlay: FlowVariantUIPlay.init({ flow }),
 	flow,
 	flowPackList: FlowPackListClient.initClient,
-	flowPackGrid: FlowPackGridClient.initClient,
+	flowPackGrid: FlowPackPuzzlesGridClient.initClient,
 	flowPacks: {},
 	flowPuzzles: {},
 };
@@ -65,7 +65,7 @@ const updateFlowPackGrid: ClientModule["update"] = (input) => {
 		return { model: input.model };
 	}
 
-	const updated = FlowPackGridClient.update({
+	const updated = FlowPackPuzzlesGridClient.update({
 		ctx: {
 			...input.ctx,
 			pack,
@@ -96,7 +96,7 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 		case "screen-puzzle":
 			return Sub.tag(
 				"flow-pack-grid",
-				FlowPackGridClient.subscriptions({
+				FlowPackPuzzlesGridClient.subscriptions({
 					ctx: {
 						...input.ctx,
 						pack: input.modelCore.screen.flowPack,
@@ -114,9 +114,6 @@ const subscriptions: ClientModule["subscriptions"] = (input) => {
 const View: ClientModule["View"] = (input) => {
 	return (
 		<div className="w-full flex flex-col h-full">
-			<FlowPackGridClient.View
-				dispatch={(c) => input.dispatch({ t: "flow-pack-grid", c })}
-			/>
 			<ViewScreen {...input} />
 		</div>
 	);

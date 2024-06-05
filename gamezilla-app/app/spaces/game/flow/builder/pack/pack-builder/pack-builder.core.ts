@@ -1,7 +1,7 @@
 import { isErr } from "gamezilla-app/@/core";
 import { FlowVariantUIPlay } from "../../../@/flow";
 import { FlowPack } from "../../../@/flow-pack/flow-pack";
-import { FlowPackGridUI } from "../../../@/flow-pack/flow-pack-grid/flow-pack-grid-ui";
+import { FlowPackPuzzlesGridUI } from "../../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid-ui";
 import type { UpdateCore } from "../../builder.types";
 import { EditPackNameCore } from "./edit-pack-name/edit-pack-name.core";
 import type { ModelCore } from "./pack-builder.types";
@@ -171,7 +171,7 @@ updates.push(({ modelCore, msgCore }) => {
 				return modelCore;
 			}
 
-			const slideIndex = FlowPackGridUI.toSlideIndex(puzzleIndex);
+			const slideIndex = FlowPackPuzzlesGridUI.toSlideIndex(puzzleIndex);
 
 			return {
 				...modelCore,
@@ -405,7 +405,7 @@ updates.push((input) => {
 		...input.modelCore,
 		packBuilder: {
 			...input.modelCore.packBuilder,
-			slideIndex: FlowPackGridUI.clampSlideIndex(
+			slideIndex: FlowPackPuzzlesGridUI.clampSlideIndex(
 				input.modelCore.packBuilder.slideIndex,
 				input.modelCore.packBuilder.pack.puzzleIds.length,
 			),

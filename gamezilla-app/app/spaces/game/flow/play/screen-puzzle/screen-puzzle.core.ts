@@ -88,7 +88,10 @@ const updateCore: CoreModule["updateCore"] = ({ modelCore, msgCore }) => {
 							flowPlay: FlowVariantUIPlay.init({
 								flow: msgCore.nextPuzzle.flow,
 							}),
-							opened: modelCore.screen.opened === 'puzzle-complete' ? null : modelCore.screen.opened,
+							opened:
+								modelCore.screen.opened === "puzzle-complete"
+									? null
+									: modelCore.screen.opened,
 							flowPuzzle: msgCore.nextPuzzle,
 							puzzleIndex: msgCore.nextPuzzleIndex,
 						},
