@@ -19,6 +19,7 @@ import {
 import { ViewScreenTitle } from "../../../@/game/view-screen-title";
 import { FlowVariantUIPlay } from "../../@/flow";
 import type { ClientModule } from "../play.types";
+import { FlowPackPuzzlesGridClient } from "../../@/flow-pack/flow-pack-puzzles-grid/flow-pack-puzzles-grid.client";
 
 const update: ClientModule["update"] = (input) => {
 	return GameClientModule.andThen({ model: input.model }, (model) =>
@@ -113,93 +114,99 @@ const View: ClientModule["View"] = (input) => {
 		: null;
 
 	return (
-		<div
-			className="flex w-full flex-1 flex-col overflow-scroll"
-			data-puzzle-id={flowPuzzle.id}
-		>
-			<ViewScreenTitle title={`Level ${puzzleIndex + 1}`} />
-			<div className="relative flex flex-1 flex-col items-center justify-center overflow-y-scroll">
-				<FlowVariantUIPlay.View
-					key={flowPuzzle.id}
-					flow={flowPuzzle.flow}
-					dispatch={(c) =>
-						input.dispatch({ t: "got-puzzle-screen-flow-play-msg", c })
-					}
-					model={flowPlay}
-				/>
+		<>
+			<FlowPackPuzzlesGridClient.View
+				dispatch={(c) => input.dispatch({ t: "flow-pack-grid", c })}
+			/>
+			<div
+				className="flex w-full flex-1 flex-col overflow-scroll"
+				data-puzzle-id={flowPuzzle.id}
+			>
+				<ViewScreenTitle title={`Level ${puzzleIndex + 1}`} />
+				<div className="relative flex flex-1 flex-col items-center justify-center overflow-y-scroll">
+					<FlowVariantUIPlay.View
+						key={flowPuzzle.id}
+						flow={flowPuzzle.flow}
+						dispatch={(c) =>
+							input.dispatch({ t: "got-puzzle-screen-flow-play-msg", c })
+						}
+						model={flowPlay}
+					/>
 
-				<CheckmarkPopin
-					open={
-						input.modelCore.screen.state.t === "solved" &&
-						input.modelCore.screen.opened === "puzzle-complete"
-					}
-				/>
+					<CheckmarkPopin
+						open={
+							input.modelCore.screen.state.t === "solved" &&
+							input.modelCore.screen.opened === "puzzle-complete"
+						}
+					/>
 
-				<Dialog
-					delay={TimeSpan.seconds(1)}
-					open={
-						input.modelCore.screen.state.t === "solved" &&
-						input.modelCore.screen.opened === "puzzle-complete"
-					}
-					onClose={() =>
-						input.dispatch({ t: "user-closed-puzzle-complete-dialog" })
-					}
-				>
-					<DialogSurface>
-						<DialogHeader title={input.ctx.t("flow.puzzle-completed")} />
-						{nextPuzzle && (
-							<Button
-								text="Next puzzle"
-								onClick={() =>
-									nextPuzzle &&
-									input.dispatch({
+					<Dialog
+						delay={TimeSpan.seconds(1)}
+						open={
+							input.modelCore.screen.state.t === "solved" &&
+							input.modelCore.screen.opened === "puzzle-complete"
+						}
+						onClose={() =>
+							input.dispatch({ t: "user-closed-puzzle-complete-dialog" })
+						}
+					>
+						<DialogSurface>
+							<DialogHeader title={input.ctx.t("flow.puzzle-completed")} />
+							{nextPuzzle && (
+								<Button
+									text="Next puzzle"
+									onClick={() =>
+										nextPuzzle &&
+										input.dispatch({
+											t: "user-clicked-next-puzzle-button",
+											nextPuzzle,
+											nextPuzzleIndex,
+										})
+									}
+								/>
+							)}
+						</DialogSurface>
+					</Dialog>
+				</div>
+				<ViewBottomButtonBar>
+					<ViewBottomButtonBarActionExit
+						ctx={input.ctx}
+						onClick={() =>
+							input.dispatch({ t: "user-clicked-exit-puzzle-button" })
+						}
+					/>
+					<ViewBottomButtonBarActionPrev
+						ctx={input.ctx}
+						disabled={puzzleIndex <= 0}
+						onClick={() =>
+							prevPuzzle
+								? input.dispatch({
+										t: "user-clicked-prev-puzzle-button",
+										prevPuzzle,
+										prevPuzzleIndex,
+									})
+								: null
+						}
+					/>
+					<ViewBottomButtonBarActionNext
+						ctx={input.ctx}
+						disabled={
+							puzzleIndex >=
+							input.modelCore.screen.flowPack.puzzleIds.length - 1
+						}
+						onClick={() =>
+							nextPuzzle
+								? input.dispatch({
 										t: "user-clicked-next-puzzle-button",
 										nextPuzzle,
 										nextPuzzleIndex,
 									})
-								}
-							/>
-						)}
-					</DialogSurface>
-				</Dialog>
+								: null
+						}
+					/>
+				</ViewBottomButtonBar>
 			</div>
-			<ViewBottomButtonBar>
-				<ViewBottomButtonBarActionExit
-					ctx={input.ctx}
-					onClick={() =>
-						input.dispatch({ t: "user-clicked-exit-puzzle-button" })
-					}
-				/>
-				<ViewBottomButtonBarActionPrev
-					ctx={input.ctx}
-					disabled={puzzleIndex <= 0}
-					onClick={() =>
-						prevPuzzle
-							? input.dispatch({
-									t: "user-clicked-prev-puzzle-button",
-									prevPuzzle,
-									prevPuzzleIndex,
-								})
-							: null
-					}
-				/>
-				<ViewBottomButtonBarActionNext
-					ctx={input.ctx}
-					disabled={
-						puzzleIndex >= input.modelCore.screen.flowPack.puzzleIds.length - 1
-					}
-					onClick={() =>
-						nextPuzzle
-							? input.dispatch({
-									t: "user-clicked-next-puzzle-button",
-									nextPuzzle,
-									nextPuzzleIndex,
-								})
-							: null
-					}
-				/>
-			</ViewBottomButtonBar>
-		</div>
+		</>
 	);
 };
 
