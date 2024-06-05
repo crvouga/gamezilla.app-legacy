@@ -231,7 +231,7 @@ const CheckmarkAnimation = (input: { open: boolean, duration: TimeSpan }) => {
 		>
 			{input.open && (
 				<div className="absolute inset-0 flex items-center justify-center opacity-0">
-					<IconCheckmark className="aspect-square w-full opacity-40" />
+					<IconCheckmark className="aspect-square w-full opacity-50" />
 				</div>
 			)}
 		</Transition>
