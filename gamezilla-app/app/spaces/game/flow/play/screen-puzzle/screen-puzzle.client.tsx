@@ -133,11 +133,12 @@ const View: ClientModule["View"] = (input) => {
 						model={flowPlay}
 					/>
 
-					<CheckmarkPopin
+					<CheckmarkAnimation
 						open={
 							input.modelCore.screen.state.t === "solved" &&
 							input.modelCore.screen.opened === "puzzle-complete"
 						}
+						duration={TimeSpan.seconds(1)}
 					/>
 
 					<Dialog
@@ -210,7 +211,7 @@ const View: ClientModule["View"] = (input) => {
 	);
 };
 
-const CheckmarkPopin = (input: { open: boolean }) => {
+const CheckmarkAnimation = (input: { open: boolean, duration: TimeSpan }) => {	
 	return (
 		<Transition
 			id="checkmark"
@@ -221,7 +222,7 @@ const CheckmarkPopin = (input: { open: boolean }) => {
 				await new Promise((r) => setTimeout(r, 50));
 				node.style.opacity = "1";
 				node.style.transform = "scale(1)";
-				await new Promise((r) => setTimeout(r, 950));
+				await new Promise((r) => setTimeout(r, TimeSpan.toMilliseconds(input.duration)));
 				node.style.opacity = "0";
 				node.style.transform = "scale(0.8)";
 			}}
