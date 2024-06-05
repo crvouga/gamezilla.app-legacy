@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from "bun:test";
-import { FlowVariant, FlowVariantUIPlay } from ".";
+import { type FlowVariant, FlowVariantUIPlay } from ".";
 import { Flow } from "../flow";
 import { FlowGridShorthand } from "./flow-grid/flow-grid-shorthand";
 import * as FlowVariantPlay from "./flow-variant-ui-play";
