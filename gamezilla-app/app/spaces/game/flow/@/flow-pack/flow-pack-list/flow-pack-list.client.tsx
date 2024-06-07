@@ -12,18 +12,25 @@ import { sendToServer, showErrSm } from "gamezilla-app/app/@/client";
 import { IconBox, Spinner, cn } from "gamezilla-app/app/@/ui";
 import { EmptyState } from "gamezilla-app/app/@/ui/empty-state";
 import { IntersectionObserverEmitter } from "gamezilla-app/app/@/ui/intersection-observer";
-import { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
+import type { SpaceClientCtx } from "gamezilla-app/app/spaces/@/space";
 import type { FlowPack } from "../flow-pack";
-import { ModelClient, initClient, type ClientModule } from "./flow-pack-list.core";
+import {
+	type ModelClient,
+	initClient,
+	type ClientModule,
+} from "./flow-pack-list.core";
 
-const init = (input: { ctx: SpaceClientCtx;  packs: ModelClient['packs']}): ReturnType<ClientModule['update']> => {
+const init = (input: {
+	ctx: SpaceClientCtx;
+	packs: ModelClient["packs"];
+}): ReturnType<ClientModule["update"]> => {
 	return {
 		model: {
 			request: NotAsked,
 			packs: input.packs,
 		},
-	}
-}
+	};
+};
 
 const update: ClientModule["update"] = (input) => {
 	return AppClientModule.andThen(
